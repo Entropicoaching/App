@@ -60,7 +60,7 @@ export default function AthleteView({ session }) {
     if (q.length < 2) { setSearchResults([]); return }
     setSearching(true)
     try {
-      const url = `https://dk.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&search_simple=1&action=process&json=1&page_size=6&fields=product_name,brands,nutriments`
+  const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&search_simple=1&action=process&json=1&cc=dk&lc=da&page_size=6&fields=product_name,brands,nutriments`
       const res = await fetch(url)
       const data = await res.json()
       const products = (data.products || []).filter(p =>
