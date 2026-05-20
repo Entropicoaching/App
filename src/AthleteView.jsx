@@ -1,31 +1,59 @@
+import { useState, useEffect } from 'react'
+import { supabase } from './supabase'
+
 const LOCAL_FOODS = [
   { name: 'Havregryn', kcal100: 370, protein100: 13, carb100: 58, fat100: 7 },
+  { name: 'Havregrød (kogt med vand)', kcal100: 68, protein100: 2, carb100: 12, fat100: 1 },
   { name: 'Kyllingebryst', kcal100: 110, protein100: 23, carb100: 0, fat100: 2 },
+  { name: 'Kyllingelår', kcal100: 177, protein100: 18, carb100: 0, fat100: 12 },
   { name: 'Oksekød 8% fedt', kcal100: 172, protein100: 20, carb100: 0, fat100: 10 },
+  { name: 'Oksekød 15% fedt', kcal100: 215, protein100: 18, carb100: 0, fat100: 16 },
   { name: 'Æg', kcal100: 143, protein100: 13, carb100: 1, fat100: 10 },
+  { name: 'Æggehvide', kcal100: 52, protein100: 11, carb100: 1, fat100: 0 },
   { name: 'Skyr naturel', kcal100: 63, protein100: 11, carb100: 4, fat100: 0 },
   { name: 'Kvark naturel', kcal100: 67, protein100: 12, carb100: 4, fat100: 1 },
   { name: 'Græsk yoghurt 2%', kcal100: 73, protein100: 10, carb100: 4, fat100: 2 },
-  { name: 'Mælk minimælk', kcal100: 42, protein100: 3, carb100: 5, fat100: 0 },
-  { name: 'Pasta kogt', kcal100: 131, protein100: 5, carb100: 25, fat100: 1 },
-  { name: 'Ris kogt', kcal100: 130, protein100: 3, carb100: 28, fat100: 0 },
-  { name: 'Kartofler kogte', kcal100: 87, protein100: 2, carb100: 19, fat100: 0 },
-  { name: 'Laks', kcal100: 206, protein100: 20, carb100: 0, fat100: 14 },
-  { name: 'Tun i vand', kcal100: 103, protein100: 23, carb100: 0, fat100: 1 },
-  { name: 'Rugbrød', kcal100: 220, protein100: 8, carb100: 40, fat100: 3 },
-  { name: 'Proteinpulver whey', kcal100: 380, protein100: 75, carb100: 8, fat100: 5 },
-  { name: 'Banan', kcal100: 89, protein100: 1, carb100: 23, fat100: 0 },
-  { name: 'Æble', kcal100: 52, protein100: 0, carb100: 14, fat100: 0 },
-  { name: 'Mandler', kcal100: 579, protein100: 21, carb100: 22, fat100: 50 },
-  { name: 'Peanutbutter', kcal100: 588, protein100: 25, carb100: 20, fat100: 50 },
+  { name: 'Græsk yoghurt 0%', kcal100: 57, protein100: 10, carb100: 4, fat100: 0 },
   { name: 'Cottage cheese', kcal100: 98, protein100: 11, carb100: 3, fat100: 4 },
   { name: 'Hytteost', kcal100: 98, protein100: 11, carb100: 3, fat100: 4 },
-  { name: 'Chokolademælk', kcal100: 70, protein100: 3, carb100: 12, fat100: 1 },
+  { name: 'Mælk minimælk', kcal100: 42, protein100: 3, carb100: 5, fat100: 1 },
+  { name: 'Mælk sødmælk', kcal100: 61, protein100: 3, carb100: 5, fat100: 4 },
+  { name: 'Pasta tør', kcal100: 352, protein100: 13, carb100: 70, fat100: 2 },
+  { name: 'Pasta kogt', kcal100: 131, protein100: 5, carb100: 25, fat100: 1 },
+  { name: 'Ris tør', kcal100: 361, protein100: 7, carb100: 79, fat100: 1 },
+  { name: 'Ris kogt', kcal100: 130, protein100: 3, carb100: 28, fat100: 0 },
+  { name: 'Kartofler kogte', kcal100: 87, protein100: 2, carb100: 19, fat100: 0 },
+  { name: 'Søde kartofler', kcal100: 86, protein100: 2, carb100: 20, fat100: 0 },
+  { name: 'Laks', kcal100: 206, protein100: 20, carb100: 0, fat100: 14 },
+  { name: 'Tun i vand', kcal100: 103, protein100: 23, carb100: 0, fat100: 1 },
+  { name: 'Torsk', kcal100: 82, protein100: 18, carb100: 0, fat100: 1 },
+  { name: 'Rugbrød', kcal100: 220, protein100: 8, carb100: 40, fat100: 3 },
+  { name: 'Franskbrød', kcal100: 265, protein100: 9, carb100: 50, fat100: 3 },
+  { name: 'Proteinpulver whey', kcal100: 380, protein100: 75, carb100: 8, fat100: 5 },
+  { name: 'Proteinbar', kcal100: 350, protein100: 30, carb100: 35, fat100: 10 },
+  { name: 'Banan', kcal100: 89, protein100: 1, carb100: 23, fat100: 0 },
+  { name: 'Æble', kcal100: 52, protein100: 0, carb100: 14, fat100: 0 },
+  { name: 'Appelsin', kcal100: 47, protein100: 1, carb100: 12, fat100: 0 },
+  { name: 'Mandler', kcal100: 579, protein100: 21, carb100: 22, fat100: 50 },
+  { name: 'Valnødder', kcal100: 654, protein100: 15, carb100: 14, fat100: 65 },
+  { name: 'Peanutbutter', kcal100: 588, protein100: 25, carb100: 20, fat100: 50 },
   { name: 'Broccoli', kcal100: 34, protein100: 3, carb100: 7, fat100: 0 },
   { name: 'Spinat', kcal100: 23, protein100: 3, carb100: 4, fat100: 0 },
+  { name: 'Gulerod', kcal100: 41, protein100: 1, carb100: 10, fat100: 0 },
+  { name: 'Avokado', kcal100: 160, protein100: 2, carb100: 9, fat100: 15 },
+  { name: 'Olivenolie', kcal100: 884, protein100: 0, carb100: 0, fat100: 100 },
+  { name: 'Smør', kcal100: 717, protein100: 1, carb100: 1, fat100: 81 },
+  { name: 'Chokolademælk', kcal100: 70, protein100: 3, carb100: 12, fat100: 1 },
+  { name: 'Appelsinjuice', kcal100: 45, protein100: 1, carb100: 10, fat100: 0 },
+  { name: 'Rejer', kcal100: 85, protein100: 18, carb100: 1, fat100: 1 },
+  { name: 'Svinekød (nakkefilet)', kcal100: 195, protein100: 18, carb100: 0, fat100: 14 },
+  { name: 'Bacon', kcal100: 417, protein100: 13, carb100: 1, fat100: 42 },
+  { name: 'Müsli', kcal100: 360, protein100: 10, carb100: 65, fat100: 7 },
+  { name: 'Cornflakes', kcal100: 357, protein100: 7, carb100: 84, fat100: 1 },
+  { name: 'Chokolade mørk 70%', kcal100: 546, protein100: 5, carb100: 46, fat100: 38 },
+  { name: 'Linser kogte', kcal100: 116, protein100: 9, carb100: 20, fat100: 0 },
+  { name: 'Kikærter kogte', kcal100: 164, protein100: 9, carb100: 27, fat100: 3 },
 ]
-import { useState, useEffect } from 'react'
-import { supabase } from './supabase'
 
 const s = {
   wrap: { minHeight: '100vh', background: '#141410', color: '#edeae2', fontFamily: "'IBM Plex Sans', sans-serif", fontWeight: 300 },
@@ -50,12 +78,10 @@ export default function AthleteView({ session }) {
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
-  const [searching, setSearching] = useState(false)
   const [selectedFood, setSelectedFood] = useState(null)
   const [amount, setAmount] = useState(100)
   const [showManual, setShowManual] = useState(false)
   const [manual, setManual] = useState({ name: '', kcal: '', protein: '', carb: '' })
-  const [searchTimeout, setSearchTimeout] = useState(null)
 
   useEffect(() => { fetchAthlete() }, [])
 
@@ -82,58 +108,23 @@ export default function AthleteView({ session }) {
     setLogs(data || [])
   }
 
-  async function searchFood(q) {
-  if (q.length < 2) { setSearchResults([]); return }
-
-  // Vis lokale resultater øjeblikkeligt
-  const local = LOCAL_FOODS.filter(f =>
-    f.name.toLowerCase().includes(q.toLowerCase())
-  ).map(f => ({ ...f, isLocal: true }))
-  setSearchResults(local)
-
-  // Søg derefter i API
-  setSearching(true)
-  try {
-    const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&search_simple=1&action=process&json=1&cc=dk&lc=da&page_size=6&fields=product_name,brands,nutriments`
-    const res = await fetch(url)
-    const data = await res.json()
-    const api = (data.products || []).filter(p =>
-      p.product_name && p.nutriments?.['energy-kcal_100g'] != null
-    ).map(p => ({
-      name: p.product_name,
-      kcal100: p.nutriments['energy-kcal_100g'] || 0,
-      protein100: p.nutriments['proteins_100g'] || 0,
-      carb100: p.nutriments['carbohydrates_100g'] || 0,
-      fat100: p.nutriments['fat_100g'] || 0,
-      brand: p.brands || '',
-      isLocal: false,
-    }))
-    setSearchResults([...local, ...api])
-  } catch (e) {}
-  setSearching(false)
-}
-
   function onSearchInput(e) {
     const q = e.target.value
     setSearchQuery(q)
     setSelectedFood(null)
-    clearTimeout(searchTimeout)
-    setSearchTimeout(setTimeout(() => searchFood(q), 350))
+    if (q.length < 2) { setSearchResults([]); return }
+    const results = LOCAL_FOODS.filter(f =>
+      f.name.toLowerCase().includes(q.toLowerCase())
+    )
+    setSearchResults(results)
   }
 
-  
-  function selectFood(p) {
-  setSelectedFood({
-    name: p.name || p.product_name,
-    kcal100: p.kcal100 ?? p.nutriments?.['energy-kcal_100g'] ?? 0,
-    protein100: p.protein100 ?? p.nutriments?.['proteins_100g'] ?? 0,
-    carb100: p.carb100 ?? p.nutriments?.['carbohydrates_100g'] ?? 0,
-    fat100: p.fat100 ?? p.nutriments?.['fat_100g'] ?? 0,
-  })
-  setSearchQuery(p.name || p.product_name)
-  setSearchResults([])
-  setAmount(100)
-}
+  function selectFood(f) {
+    setSelectedFood(f)
+    setSearchQuery(f.name)
+    setSearchResults([])
+    setAmount(100)
+  }
 
   async function addFromSearch() {
     if (!selectedFood || !athlete) return
@@ -180,7 +171,6 @@ export default function AthleteView({ session }) {
   const kcalPct = athlete?.kcal_target ? Math.min(100, Math.round(totKcal / athlete.kcal_target * 100)) : 0
   const proteinPct = athlete?.protein_target ? Math.min(100, Math.round(totProtein / athlete.protein_target * 100)) : 0
 
-  // Donut chart data
   const pKcal = totProtein * 4
   const cKcal = totCarb * 4
   const fKcal = totFat * 9
@@ -221,7 +211,6 @@ export default function AthleteView({ session }) {
       </div>
 
       <div style={s.page}>
-        {/* Header */}
         <div style={{ marginBottom: '1.5rem' }}>
           <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>
             God <em style={{ fontStyle: 'italic', color: '#7a7770' }}>{greeting}</em>.
@@ -258,42 +247,31 @@ export default function AthleteView({ session }) {
             <input
               style={s.fieldInput}
               type="text"
-              placeholder="Søg efter fødevare... (f.eks. havregrød, kylling)"
+              placeholder="Søg... (kylling, havregryn, pasta...)"
               value={searchQuery}
               onChange={onSearchInput}
               autoComplete="off"
             />
-            {searching && (
-              <div style={{ position: 'absolute', right: '0.75rem', top: '50%', transform: 'translateY(-50%)', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844' }}>Søger...</div>
-            )}
           </div>
 
-          {/* Search results dropdown */}
+          {/* Search results */}
           {searchResults.length > 0 && (
             <div style={{ background: '#141410', border: '1px solid rgba(237,234,226,0.13)', marginBottom: '0.75rem', maxHeight: '240px', overflowY: 'auto' }}>
-              {searchResults.map((p, i) => {
-                const kcal = Math.round(p.nutriments['energy-kcal_100g'] || 0)
-                const protein = Math.round(p.nutriments['proteins_100g'] || 0)
-                const carb = Math.round(p.nutriments['carbohydrates_100g'] || 0)
-                return (
-                  <div
-                    key={i}
-                    onClick={() => selectFood(p)}
-                    style={{ padding: '0.75rem 1rem', cursor: 'pointer', borderBottom: '1px solid rgba(237,234,226,0.07)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(200,146,58,0.08)'}
-                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                  >
-                    <div>
-                      <div style={{ fontSize: '0.88rem', color: '#edeae2' }}>{p.product_name}</div>
-                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#4a4844' }}>{p.brands || ''}</div>
-                    </div>
-                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#7a7770', textAlign: 'right', flexShrink: 0, marginLeft: '1rem' }}>
-                      {kcal} kcal · P: {protein}g · K: {carb}g<br />
-                      <span style={{ color: '#4a4844' }}>pr. 100g</span>
-                    </div>
+              {searchResults.map((f, i) => (
+                <div
+                  key={i}
+                  onClick={() => selectFood(f)}
+                  style={{ padding: '0.75rem 1rem', cursor: 'pointer', borderBottom: '1px solid rgba(237,234,226,0.07)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(200,146,58,0.08)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                >
+                  <div style={{ fontSize: '0.88rem', color: '#edeae2' }}>{f.name}</div>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#7a7770', textAlign: 'right', flexShrink: 0, marginLeft: '1rem' }}>
+                    {f.kcal100} kcal · P: {f.protein100}g · K: {f.carb100}g<br />
+                    <span style={{ color: '#4a4844' }}>pr. 100g</span>
                   </div>
-                )
-              })}
+                </div>
+              ))}
             </div>
           )}
 
@@ -336,10 +314,6 @@ export default function AthleteView({ session }) {
               <button style={s.btnPrimary} onClick={addManual}>Tilføj</button>
             </div>
           )}
-
-          <div style={{ marginTop: '0.75rem', fontSize: '0.72rem', color: '#3e3c38', lineHeight: 1.6 }}>
-            Data fra <a href="https://world.openfoodfacts.org" target="_blank" rel="noreferrer" style={{ color: '#4a4844', textDecoration: 'none' }}>Open Food Facts</a>. Sammenlign med <a href="https://frida.fooddata.dk" target="_blank" rel="noreferrer" style={{ color: '#4a4844', textDecoration: 'none' }}>frida.fooddata.dk</a> (DTU). Data kan variere.
-          </div>
         </div>
 
         {/* Meal log */}
@@ -382,7 +356,6 @@ export default function AthleteView({ session }) {
                 </tbody>
               </table>
 
-              {/* Macro donut */}
               {totKcal > 0 && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', paddingTop: '1rem', borderTop: '1px solid rgba(237,234,226,0.07)' }}>
                   <div style={{ position: 'relative', flexShrink: 0 }}>
