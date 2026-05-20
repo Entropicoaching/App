@@ -1,3 +1,29 @@
+const LOCAL_FOODS = [
+  { name: 'Havregryn', kcal100: 370, protein100: 13, carb100: 58, fat100: 7 },
+  { name: 'Kyllingebryst', kcal100: 110, protein100: 23, carb100: 0, fat100: 2 },
+  { name: 'Oksekød 8% fedt', kcal100: 172, protein100: 20, carb100: 0, fat100: 10 },
+  { name: 'Æg', kcal100: 143, protein100: 13, carb100: 1, fat100: 10 },
+  { name: 'Skyr naturel', kcal100: 63, protein100: 11, carb100: 4, fat100: 0 },
+  { name: 'Kvark naturel', kcal100: 67, protein100: 12, carb100: 4, fat100: 1 },
+  { name: 'Græsk yoghurt 2%', kcal100: 73, protein100: 10, carb100: 4, fat100: 2 },
+  { name: 'Mælk minimælk', kcal100: 42, protein100: 3, carb100: 5, fat100: 0 },
+  { name: 'Pasta kogt', kcal100: 131, protein100: 5, carb100: 25, fat100: 1 },
+  { name: 'Ris kogt', kcal100: 130, protein100: 3, carb100: 28, fat100: 0 },
+  { name: 'Kartofler kogte', kcal100: 87, protein100: 2, carb100: 19, fat100: 0 },
+  { name: 'Laks', kcal100: 206, protein100: 20, carb100: 0, fat100: 14 },
+  { name: 'Tun i vand', kcal100: 103, protein100: 23, carb100: 0, fat100: 1 },
+  { name: 'Rugbrød', kcal100: 220, protein100: 8, carb100: 40, fat100: 3 },
+  { name: 'Proteinpulver whey', kcal100: 380, protein100: 75, carb100: 8, fat100: 5 },
+  { name: 'Banan', kcal100: 89, protein100: 1, carb100: 23, fat100: 0 },
+  { name: 'Æble', kcal100: 52, protein100: 0, carb100: 14, fat100: 0 },
+  { name: 'Mandler', kcal100: 579, protein100: 21, carb100: 22, fat100: 50 },
+  { name: 'Peanutbutter', kcal100: 588, protein100: 25, carb100: 20, fat100: 50 },
+  { name: 'Cottage cheese', kcal100: 98, protein100: 11, carb100: 3, fat100: 4 },
+  { name: 'Hytteost', kcal100: 98, protein100: 11, carb100: 3, fat100: 4 },
+  { name: 'Chokolademælk', kcal100: 70, protein100: 3, carb100: 12, fat100: 1 },
+  { name: 'Broccoli', kcal100: 34, protein100: 3, carb100: 7, fat100: 0 },
+  { name: 'Spinat', kcal100: 23, protein100: 3, carb100: 4, fat100: 0 },
+]
 import { useState, useEffect } from 'react'
 import { supabase } from './supabase'
 
@@ -57,21 +83,35 @@ export default function AthleteView({ session }) {
   }
 
   async function searchFood(q) {
-    if (q.length < 2) { setSearchResults([]); return }
-    setSearching(true)
-    try {
-  const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&search_simple=1&action=process&json=1&cc=dk&lc=da&page_size=6&fields=product_name,brands,nutriments`
-      const res = await fetch(url)
-      const data = await res.json()
-      const products = (data.products || []).filter(p =>
-        p.product_name && p.nutriments?.['energy-kcal_100g'] != null
-      )
-      setSearchResults(products)
-    } catch (e) {
-      setSearchResults([])
-    }
-    setSearching(false)
-  }
+  if (q.length < 2) { setSearchResults([]); return }
+
+  // Vis lokale resultater øjeblikkeligt
+  const local = LOCAL_FOODS.filter(f =>
+    f.name.toLowerCase().includes(q.toLowerCase())
+  ).map(f => ({ ...f, isLocal: true }))
+  setSearchResults(local)
+
+  // Søg derefter i API
+  setSearching(true)
+  try {
+    const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&search_simple=1&action=process&json=1&cc=dk&lc=da&page_size=6&fields=product_name,brands,nutriments`
+    const res = await fetch(url)
+    const data = await res.json()
+    const api = (data.products || []).filter(p =>
+      p.product_name && p.nutriments?.['energy-kcal_100g'] != null
+    ).map(p => ({
+      name: p.product_name,
+      kcal100: p.nutriments['energy-kcal_100g'] || 0,
+      protein100: p.nutriments['proteins_100g'] || 0,
+      carb100: p.nutriments['carbohydrates_100g'] || 0,
+      fat100: p.nutriments['fat_100g'] || 0,
+      brand: p.brands || '',
+      isLocal: false,
+    }))
+    setSearchResults([...local, ...api])
+  } catch (e) {}
+  setSearching(false)
+}
 
   function onSearchInput(e) {
     const q = e.target.value
@@ -81,18 +121,19 @@ export default function AthleteView({ session }) {
     setSearchTimeout(setTimeout(() => searchFood(q), 350))
   }
 
+  
   function selectFood(p) {
-    setSelectedFood({
-      name: p.product_name,
-      kcal100: p.nutriments['energy-kcal_100g'] || 0,
-      protein100: p.nutriments['proteins_100g'] || 0,
-      carb100: p.nutriments['carbohydrates_100g'] || 0,
-      fat100: p.nutriments['fat_100g'] || 0,
-    })
-    setSearchQuery(p.product_name)
-    setSearchResults([])
-    setAmount(100)
-  }
+  setSelectedFood({
+    name: p.name || p.product_name,
+    kcal100: p.kcal100 ?? p.nutriments?.['energy-kcal_100g'] ?? 0,
+    protein100: p.protein100 ?? p.nutriments?.['proteins_100g'] ?? 0,
+    carb100: p.carb100 ?? p.nutriments?.['carbohydrates_100g'] ?? 0,
+    fat100: p.fat100 ?? p.nutriments?.['fat_100g'] ?? 0,
+  })
+  setSearchQuery(p.name || p.product_name)
+  setSearchResults([])
+  setAmount(100)
+}
 
   async function addFromSearch() {
     if (!selectedFood || !athlete) return
