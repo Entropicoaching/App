@@ -71,10 +71,14 @@ export default function Dashboard({ session }) {
   const [weekForm, setWeekForm] = useState({ week_number: '', block_name: '', coach_note: '' })
   const [sessionForm, setSessionForm] = useState({ title: '' })
   const [exerciseForm, setExerciseForm] = useState({ name: '', sets: '', reps: '', intensity: '', note: '' })
+  const [athleteLogs, setAthleteLogs] = useState([])
 
   useEffect(() => { fetchAthletes() }, [])
   useEffect(() => {
-    if (activeTab === 'program' && selectedAthlete) fetchWeeks(selectedAthlete.id)
+    if (activeTab === 'program' && selectedAthlete) {
+      fetchWeeks(selectedAthlete.id)
+      fetchAthleteLogs(selectedAthlete.id)
+    }
   }, [activeTab, selectedAthlete?.id])
 
   async function fetchAthletes() {
@@ -221,6 +225,16 @@ export default function Dashboard({ session }) {
     }
     fetchWeeks(selectedAthlete.id)
     setOpenWeekId(newWeek.id)
+  }
+
+  async function fetchAthleteLogs(athleteId) {
+    const { data } = await supabase
+      .from('exercise_logs')
+      .select('id, set_number, weight, reps_completed, note, logged_at, exercise_id, exercises(id, name, sets, reps, intensity, session_id, sessions(id, title, weeks(week_number, block_name)))')
+      .eq('athlete_id', athleteId)
+      .order('logged_at', { ascending: false })
+      .limit(300)
+    setAthleteLogs(data || [])
   }
 
   async function addAthlete() {
@@ -754,6 +768,73 @@ export default function Dashboard({ session }) {
                 ))}
               </div>
             )}
+
+            {/* TRÆNINGSLOG */}
+            {activeTab === 'program' && (() => {
+              const grouped = {}
+              for (const log of athleteLogs) {
+                const ex = log.exercises
+                const sess = ex?.sessions
+                const date = log.logged_at?.slice(0, 10) || ''
+                const sessId = sess?.id || 'unknown'
+                const key = `${date}|${sessId}`
+                if (!grouped[key]) {
+                  grouped[key] = {
+                    date,
+                    sessionTitle: sess?.title || '—',
+                    weekNum: sess?.weeks?.week_number,
+                    exerciseMap: {},
+                  }
+                }
+                const exId = log.exercise_id
+                if (!grouped[key].exerciseMap[exId]) {
+                  grouped[key].exerciseMap[exId] = {
+                    name: ex?.name || '—',
+                    planned: [ex?.sets && `${ex.sets} sæt`, ex?.reps && `× ${ex.reps}`, ex?.intensity].filter(Boolean).join(' '),
+                    sets: [],
+                  }
+                }
+                grouped[key].exerciseMap[exId].sets.push({ n: log.set_number, weight: log.weight, reps: log.reps_completed, note: log.note })
+              }
+              const logSessions = Object.values(grouped).sort((a, b) => b.date.localeCompare(a.date))
+
+              return (
+                <div style={{ marginTop: '2rem', borderTop: '1px solid rgba(237,234,226,0.07)', paddingTop: '1.5rem' }}>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '1.25rem' }}>
+                    Træningslog
+                  </div>
+
+                  {logSessions.length === 0 ? (
+                    <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                      Ingen loggede træninger endnu
+                    </div>
+                  ) : logSessions.map((sess, i) => (
+                    <div key={i} style={{ marginBottom: '1.5rem', paddingBottom: '1.5rem', borderBottom: '1px solid rgba(237,234,226,0.05)' }}>
+                      <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'baseline', marginBottom: '0.5rem' }}>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#c8923a', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{sess.date}</div>
+                        {sess.weekNum && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', textTransform: 'uppercase' }}>Uge {sess.weekNum}</div>}
+                      </div>
+                      <div style={{ fontSize: '0.92rem', color: '#edeae2', marginBottom: '0.75rem' }}>{sess.sessionTitle}</div>
+                      {Object.values(sess.exerciseMap).map((ex, j) => (
+                        <div key={j} style={{ marginBottom: '0.75rem', paddingLeft: '0.75rem', borderLeft: '2px solid rgba(237,234,226,0.07)' }}>
+                          <div style={{ fontSize: '0.85rem', color: '#b8b4a8', marginBottom: '0.2rem' }}>{ex.name}</div>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770', marginBottom: '0.35rem' }}>Plan: {ex.planned}</div>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                            {ex.sets.sort((a, b) => a.n - b.n).map(set => (
+                              <div key={set.n} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', background: '#242420', padding: '0.2rem 0.5rem', color: '#edeae2' }}>
+                                <span style={{ color: '#4a4844' }}>S{set.n} </span>
+                                {set.weight}kg × {set.reps}
+                                {set.note && <span style={{ color: '#7a7770', marginLeft: '0.35rem', fontStyle: 'italic' }}>{set.note}</span>}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              )
+            })()}
 
             {/* TAB: NOTER */}
             {activeTab === 'noter' && (

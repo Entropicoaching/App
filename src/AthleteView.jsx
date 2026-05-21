@@ -187,29 +187,38 @@ export default function AthleteView({ session }) {
     for (const log of (data || [])) {
       inputs[`${log.exercise_id}_${log.set_number}`] = {
         weight: log.weight?.toString() || '',
-        reps: log.reps_completed?.toString() || '',
+        note: log.note || '',
       }
     }
     setLogInputs(prev => ({ ...prev, ...inputs }))
   }
 
-  async function logSet(exerciseId, setNumber) {
+  async function logSet(exerciseId, setNumber, totalSets, repsCompleted) {
     const key = `${exerciseId}_${setNumber}`
     const input = logInputs[key] || {}
+    const payload = {
+      weight: parseFloat(input.weight) || 0,
+      reps_completed: parseInt(repsCompleted) || 0,
+      note: input.note || null,
+    }
     const existing = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber)
     if (existing) {
-      await supabase.from('exercise_logs').update({
-        weight: parseFloat(input.weight) || 0,
-        reps_completed: parseInt(input.reps) || 0,
-      }).eq('id', existing.id)
+      await supabase.from('exercise_logs').update(payload).eq('id', existing.id)
     } else {
       await supabase.from('exercise_logs').insert({
         exercise_id: exerciseId,
         athlete_id: athlete.id,
         set_number: setNumber,
-        weight: parseFloat(input.weight) || 0,
-        reps_completed: parseInt(input.reps) || 0,
+        ...payload,
       })
+    }
+    // Auto-fill next set weight if empty
+    if (setNumber < totalSets) {
+      const nextKey = `${exerciseId}_${setNumber + 1}`
+      setLogInputs(p => ({
+        ...p,
+        [nextKey]: { weight: p[nextKey]?.weight || input.weight, note: p[nextKey]?.note || '' },
+      }))
     }
     fetchExerciseLogs(athlete.id, currentWeek)
   }
@@ -453,33 +462,39 @@ export default function AthleteView({ session }) {
                                 {Array.from({ length: ex.sets || 0 }, (_, i) => i + 1).map(setNum => {
                                   const key = `${ex.id}_${setNum}`
                                   const logged = exerciseLogs.find(l => l.exercise_id === ex.id && l.set_number === setNum)
-                                  const input = logInputs[key] || { weight: '', reps: '' }
+                                  const input = logInputs[key] || { weight: '', note: '' }
                                   return (
-                                    <div key={setNum} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.6rem' }}>
-                                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '52px' }}>
-                                        Sæt {setNum}
+                                    <div key={setNum} style={{ marginBottom: '0.75rem' }}>
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.3rem' }}>
+                                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '52px' }}>
+                                          Sæt {setNum}
+                                        </div>
+                                        <input
+                                          style={{ ...s.fieldInput, maxWidth: '90px', padding: '0.65rem 0.5rem', fontSize: '1.1rem', textAlign: 'center' }}
+                                          type="number"
+                                          placeholder="kg"
+                                          value={input.weight}
+                                          onChange={e => setLogInputs(p => ({ ...p, [key]: { ...p[key], weight: e.target.value } }))}
+                                        />
+                                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.88rem', color: '#c8923a', whiteSpace: 'nowrap' }}>
+                                          × {ex.reps || '—'}
+                                        </span>
+                                        <button
+                                          style={{ ...s.btnPrimary, padding: '0.65rem 1rem', fontSize: '0.65rem', background: logged ? '#6cba6c' : '#c8923a' }}
+                                          onClick={() => logSet(ex.id, setNum, ex.sets, ex.reps)}
+                                        >
+                                          {logged ? '✓' : 'Log'}
+                                        </button>
                                       </div>
-                                      <input
-                                        style={{ ...s.fieldInput, maxWidth: '90px', padding: '0.65rem 0.5rem', fontSize: '1.1rem', textAlign: 'center' }}
-                                        type="number"
-                                        placeholder="kg"
-                                        value={input.weight}
-                                        onChange={e => setLogInputs(p => ({ ...p, [key]: { ...p[key], weight: e.target.value } }))}
-                                      />
-                                      <span style={{ color: '#4a4844', fontSize: '1rem' }}>×</span>
-                                      <input
-                                        style={{ ...s.fieldInput, maxWidth: '72px', padding: '0.65rem 0.5rem', fontSize: '1.1rem', textAlign: 'center' }}
-                                        type="number"
-                                        placeholder="reps"
-                                        value={input.reps}
-                                        onChange={e => setLogInputs(p => ({ ...p, [key]: { ...p[key], reps: e.target.value } }))}
-                                      />
-                                      <button
-                                        style={{ ...s.btnPrimary, padding: '0.65rem 1rem', fontSize: '0.65rem', background: logged ? '#6cba6c' : '#c8923a' }}
-                                        onClick={() => logSet(ex.id, setNum)}
-                                      >
-                                        {logged ? '✓' : 'Log'}
-                                      </button>
+                                      <div style={{ paddingLeft: 'calc(52px + 0.75rem)' }}>
+                                        <input
+                                          style={{ ...s.fieldInput, fontSize: '0.75rem', padding: '0.3rem 0.6rem', color: '#7a7770', fontStyle: 'italic' }}
+                                          type="text"
+                                          placeholder="Tilføj note..."
+                                          value={input.note}
+                                          onChange={e => setLogInputs(p => ({ ...p, [key]: { ...p[key], note: e.target.value } }))}
+                                        />
+                                      </div>
                                     </div>
                                   )
                                 })}
