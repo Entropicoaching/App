@@ -59,6 +59,9 @@ export default function Dashboard({ session }) {
   const [saving, setSaving] = useState(false)
 
   // Program state
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' && window.innerWidth < 768)
+
   const [weeks, setWeeks] = useState([])
   const [openWeekId, setOpenWeekId] = useState(null)
   const [openSessionId, setOpenSessionId] = useState(null)
@@ -72,6 +75,12 @@ export default function Dashboard({ session }) {
   const [sessionForm, setSessionForm] = useState({ title: '' })
   const [exerciseForm, setExerciseForm] = useState({ name: '', sets: '', reps: '', intensity: '', note: '' })
   const [athleteLogs, setAthleteLogs] = useState([])
+
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handler)
+    return () => window.removeEventListener('resize', handler)
+  }, [])
 
   useEffect(() => { fetchAthletes() }, [])
   useEffect(() => {
@@ -318,7 +327,20 @@ export default function Dashboard({ session }) {
 
   return (
     <div style={s.wrap}>
-      <aside style={s.sidebar}>
+      {isMobile && sidebarOpen && (
+        <div
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', zIndex: 199 }}
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+      <aside style={{
+        ...s.sidebar,
+        ...(isMobile ? {
+          transform: sidebarOpen ? 'translateX(0)' : 'translateX(-100%)',
+          transition: 'transform 0.25s ease',
+          zIndex: 200,
+        } : {}),
+      }}>
         <div style={s.sidebarLogo}>
           <div style={s.wordmark}>Entropi<span style={{ color: '#c8923a' }}>.</span></div>
           <div style={s.sub}>Coach Portal</div>
@@ -333,9 +355,21 @@ export default function Dashboard({ session }) {
         </div>
       </aside>
 
-      <main style={s.main}>
+      <main style={{ ...s.main, ...(isMobile ? { marginLeft: 0 } : {}) }}>
         <div style={s.topbar}>
-          <div style={s.topbarTitle}>{view === 'list' ? 'Atleter' : a?.name}</div>
+          {isMobile && (
+            <button
+              onClick={() => setSidebarOpen(o => !o)}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#7a7770', padding: '0.25rem', display: 'flex', alignItems: 'center', marginRight: '0.75rem' }}
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                <line x1="3" y1="5" x2="17" y2="5" />
+                <line x1="3" y1="10" x2="17" y2="10" />
+                <line x1="3" y1="15" x2="17" y2="15" />
+              </svg>
+            </button>
+          )}
+          <div style={{ ...s.topbarTitle, flex: 1 }}>{view === 'list' ? 'Atleter' : a?.name}</div>
           {view === 'list' && <button style={s.btnPrimary} onClick={() => setShowAddModal(true)}>+ Tilføj atlet</button>}
         </div>
 
