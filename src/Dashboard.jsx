@@ -9,7 +9,6 @@ function initials(name) {
 }
 
 const s = {
-  // Layout
   wrap: { minHeight: '100vh', background: '#141410', color: '#edeae2', fontFamily: "'IBM Plex Sans', sans-serif", fontWeight: 300, display: 'flex' },
   sidebar: { width: '220px', minHeight: '100vh', background: '#1c1c18', borderRight: '1px solid rgba(237,234,226,0.07)', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, bottom: 0 },
   sidebarLogo: { padding: '1.5rem 1.25rem 1.25rem', borderBottom: '1px solid rgba(237,234,226,0.07)' },
@@ -21,39 +20,26 @@ const s = {
   topbar: { height: '52px', borderBottom: '1px solid rgba(237,234,226,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 2rem', background: 'rgba(20,20,16,0.95)', position: 'sticky', top: 0, zIndex: 50 },
   topbarTitle: { fontFamily: "'Playfair Display', serif", fontSize: '1rem', fontWeight: 400, color: '#edeae2' },
   page: { padding: '2rem' },
-
-  // Buttons
   btnPrimary: { background: '#c8923a', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', border: 'none', padding: '0.5rem 1rem', cursor: 'pointer' },
   btnGhost: { background: 'transparent', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', border: '1px solid rgba(237,234,226,0.13)', padding: '0.5rem 1rem', cursor: 'pointer' },
   btnDanger: { background: 'transparent', color: '#e05555', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.08em', textTransform: 'uppercase', border: '1px solid rgba(224,85,85,0.3)', padding: '0.4rem 0.85rem', cursor: 'pointer' },
   btnEdit: { background: 'transparent', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase', border: '1px solid rgba(237,234,226,0.1)', padding: '0.2rem 0.55rem', cursor: 'pointer' },
-
-  // Cards
+  btnSm: { background: 'transparent', color: '#c8923a', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.08em', textTransform: 'uppercase', border: '1px solid rgba(200,146,58,0.3)', padding: '0.2rem 0.5rem', cursor: 'pointer' },
   card: { background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)', padding: '1.5rem', marginBottom: '1.5rem' },
   cardLabel: { fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
-
-  // Form
   fieldLabel: { fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.35rem' },
   fieldInput: { width: '100%', background: '#141410', border: '1px solid rgba(237,234,226,0.13)', color: '#edeae2', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.88rem', fontWeight: 300, padding: '0.55rem 0.75rem', outline: 'none' },
   fieldSelect: { width: '100%', background: '#141410', border: '1px solid rgba(237,234,226,0.13)', color: '#edeae2', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', padding: '0.55rem 0.75rem', outline: 'none', appearance: 'none', cursor: 'pointer' },
-
-  // Athlete list
   grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1px', background: 'rgba(237,234,226,0.07)', border: '1px solid rgba(237,234,226,0.07)' },
   athleteCard: { background: '#141410', padding: '1.25rem 1.5rem', cursor: 'pointer', borderTop: '2px solid transparent', display: 'flex', alignItems: 'center', gap: '1rem' },
   avatar: { width: '40px', height: '40px', borderRadius: '50%', background: '#242420', border: '1px solid rgba(237,234,226,0.13)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Playfair Display', serif", fontSize: '0.9rem', color: '#c8923a', flexShrink: 0 },
   badge: (status) => ({ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0.2rem 0.5rem', background: statusColors[status] + '22', color: statusColors[status] }),
-
-  // Profile tabs
   tabs: { display: 'flex', borderBottom: '1px solid rgba(237,234,226,0.07)', marginBottom: '1.5rem' },
-  tab: (active) => ({ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0.65rem 1.25rem', cursor: 'pointer', color: active ? '#c8923a' : '#7a7770', borderBottom: active ? '2px solid #c8923a' : '2px solid transparent', marginBottom: '-1px', background: 'none', border: 'none', borderBottom: active ? '2px solid #c8923a' : '2px solid transparent' }),
-
-  // Stats
+  tab: (active) => ({ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0.65rem 1.25rem', cursor: 'pointer', color: active ? '#c8923a' : '#7a7770', background: 'none', border: 'none', borderBottom: active ? '2px solid #c8923a' : '2px solid transparent', marginBottom: '-1px' }),
   statRow: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1px', background: 'rgba(237,234,226,0.07)', marginTop: '0.75rem' },
   statCell: { background: '#1c1c18', padding: '1rem 0.75rem' },
   statNum: { fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', color: '#edeae2', lineHeight: 1 },
   statLabel: { fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844', marginTop: '0.3rem' },
-
-  // Modal
   overlay: { position: 'fixed', inset: 0, background: 'rgba(14,14,10,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200 },
   modal: { background: '#1c1c18', border: '1px solid rgba(237,234,226,0.13)', width: '100%', maxWidth: '440px', padding: '2rem' },
   modalTitle: { fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', fontWeight: 400, color: '#edeae2', marginBottom: '1.5rem' },
@@ -62,7 +48,7 @@ const s = {
 export default function Dashboard({ session }) {
   const [athletes, setAthletes] = useState([])
   const [loading, setLoading] = useState(true)
-  const [view, setView] = useState('list') // 'list' | 'profile'
+  const [view, setView] = useState('list')
   const [selectedAthlete, setSelectedAthlete] = useState(null)
   const [activeTab, setActiveTab] = useState('oversigt')
   const [editing, setEditing] = useState(null)
@@ -72,15 +58,169 @@ export default function Dashboard({ session }) {
   const [editData, setEditData] = useState({})
   const [saving, setSaving] = useState(false)
 
+  // Program state
+  const [weeks, setWeeks] = useState([])
+  const [openWeekId, setOpenWeekId] = useState(null)
+  const [openSessionId, setOpenSessionId] = useState(null)
+  const [addingWeek, setAddingWeek] = useState(false)
+  const [addingSession, setAddingSession] = useState(null)
+  const [addingExercise, setAddingExercise] = useState(null)
+  const [editingWeek, setEditingWeek] = useState(null)
+  const [editingSession, setEditingSession] = useState(null)
+  const [editingExercise, setEditingExercise] = useState(null)
+  const [weekForm, setWeekForm] = useState({ week_number: '', block_name: '', coach_note: '' })
+  const [sessionForm, setSessionForm] = useState({ title: '' })
+  const [exerciseForm, setExerciseForm] = useState({ name: '', sets: '', reps: '', intensity: '', note: '' })
+
   useEffect(() => { fetchAthletes() }, [])
+  useEffect(() => {
+    if (activeTab === 'program' && selectedAthlete) fetchWeeks(selectedAthlete.id)
+  }, [activeTab, selectedAthlete?.id])
 
   async function fetchAthletes() {
-    const { data, error } = await supabase
-      .from('athletes')
-      .select('*')
-      .order('name')
+    const { data, error } = await supabase.from('athletes').select('*').order('name')
     if (!error) setAthletes(data || [])
     setLoading(false)
+  }
+
+  async function fetchWeeks(athleteId) {
+    const { data } = await supabase
+      .from('weeks')
+      .select('*, sessions(*, exercises(*))')
+      .eq('athlete_id', athleteId)
+      .order('week_number')
+    setWeeks((data || []).map(w => ({
+      ...w,
+      sessions: (w.sessions || [])
+        .sort((a, b) => a.session_order - b.session_order)
+        .map(s => ({ ...s, exercises: (s.exercises || []).sort((a, b) => a.exercise_order - b.exercise_order) }))
+    })))
+  }
+
+  async function addWeek() {
+    const nextNum = weeks.length > 0 ? Math.max(...weeks.map(w => w.week_number)) + 1 : 1
+    await supabase.from('weeks').insert({
+      athlete_id: selectedAthlete.id,
+      week_number: weekForm.week_number ? parseInt(weekForm.week_number) : nextNum,
+      block_name: weekForm.block_name || null,
+      coach_note: weekForm.coach_note || null,
+    })
+    setAddingWeek(false)
+    setWeekForm({ week_number: '', block_name: '', coach_note: '' })
+    fetchWeeks(selectedAthlete.id)
+  }
+
+  async function updateWeek(weekId) {
+    await supabase.from('weeks').update({
+      week_number: parseInt(weekForm.week_number),
+      block_name: weekForm.block_name || null,
+      coach_note: weekForm.coach_note || null,
+    }).eq('id', weekId)
+    setEditingWeek(null)
+    fetchWeeks(selectedAthlete.id)
+  }
+
+  async function deleteWeek(weekId) {
+    if (!window.confirm('Slet denne uge og alle dens træninger?')) return
+    await supabase.from('weeks').delete().eq('id', weekId)
+    if (openWeekId === weekId) setOpenWeekId(null)
+    fetchWeeks(selectedAthlete.id)
+  }
+
+  async function addSession(weekId) {
+    const week = weeks.find(w => w.id === weekId)
+    const nextOrder = week?.sessions?.length || 0
+    await supabase.from('sessions').insert({
+      week_id: weekId,
+      title: sessionForm.title || 'Træning',
+      session_order: nextOrder,
+    })
+    setAddingSession(null)
+    setSessionForm({ title: '' })
+    fetchWeeks(selectedAthlete.id)
+  }
+
+  async function updateSession(sessionId) {
+    await supabase.from('sessions').update({ title: sessionForm.title }).eq('id', sessionId)
+    setEditingSession(null)
+    fetchWeeks(selectedAthlete.id)
+  }
+
+  async function deleteSession(sessionId) {
+    if (!window.confirm('Slet denne træning?')) return
+    await supabase.from('sessions').delete().eq('id', sessionId)
+    if (openSessionId === sessionId) setOpenSessionId(null)
+    fetchWeeks(selectedAthlete.id)
+  }
+
+  async function addExercise(sessionId) {
+    const week = weeks.find(w => w.sessions?.some(s => s.id === sessionId))
+    const session = week?.sessions?.find(s => s.id === sessionId)
+    const nextOrder = session?.exercises?.length || 0
+    await supabase.from('exercises').insert({
+      session_id: sessionId,
+      name: exerciseForm.name || 'Øvelse',
+      sets: parseInt(exerciseForm.sets) || null,
+      reps: exerciseForm.reps || null,
+      intensity: exerciseForm.intensity || null,
+      note: exerciseForm.note || null,
+      exercise_order: nextOrder,
+    })
+    setAddingExercise(null)
+    setExerciseForm({ name: '', sets: '', reps: '', intensity: '', note: '' })
+    fetchWeeks(selectedAthlete.id)
+  }
+
+  async function updateExercise(exerciseId) {
+    await supabase.from('exercises').update({
+      name: exerciseForm.name,
+      sets: parseInt(exerciseForm.sets) || null,
+      reps: exerciseForm.reps || null,
+      intensity: exerciseForm.intensity || null,
+      note: exerciseForm.note || null,
+    }).eq('id', exerciseId)
+    setEditingExercise(null)
+    fetchWeeks(selectedAthlete.id)
+  }
+
+  async function deleteExercise(exerciseId) {
+    await supabase.from('exercises').delete().eq('id', exerciseId)
+    fetchWeeks(selectedAthlete.id)
+  }
+
+  async function copyWeek(weekId) {
+    const week = weeks.find(w => w.id === weekId)
+    if (!week) return
+    const nextNum = Math.max(...weeks.map(w => w.week_number)) + 1
+    const { data: newWeek } = await supabase.from('weeks').insert({
+      athlete_id: selectedAthlete.id,
+      week_number: nextNum,
+      block_name: week.block_name,
+      coach_note: week.coach_note,
+    }).select().single()
+    if (!newWeek) return
+    for (const session of (week.sessions || [])) {
+      const { data: newSession } = await supabase.from('sessions').insert({
+        week_id: newWeek.id,
+        title: session.title,
+        session_order: session.session_order,
+      }).select().single()
+      if (newSession) {
+        for (const ex of (session.exercises || [])) {
+          await supabase.from('exercises').insert({
+            session_id: newSession.id,
+            name: ex.name,
+            sets: ex.sets,
+            reps: ex.reps,
+            intensity: ex.intensity,
+            note: ex.note,
+            exercise_order: ex.exercise_order,
+          })
+        }
+      }
+    }
+    fetchWeeks(selectedAthlete.id)
+    setOpenWeekId(newWeek.id)
   }
 
   async function addAthlete() {
@@ -102,13 +242,9 @@ export default function Dashboard({ session }) {
     setSaving(false)
   }
 
-  async function saveEdit(field) {
+  async function saveEdit() {
     setSaving(true)
-    const { data, error } = await supabase
-      .from('athletes')
-      .update(editData)
-      .eq('id', selectedAthlete.id)
-      .select().single()
+    const { data, error } = await supabase.from('athletes').update(editData).eq('id', selectedAthlete.id).select().single()
     if (!error) {
       setSelectedAthlete(data)
       setAthletes(prev => prev.map(a => a.id === data.id ? data : a))
@@ -129,6 +265,15 @@ export default function Dashboard({ session }) {
     setActiveTab('oversigt')
     setEditing(null)
     setView('profile')
+    setWeeks([])
+    setOpenWeekId(null)
+    setOpenSessionId(null)
+    setAddingWeek(false)
+    setAddingSession(null)
+    setAddingExercise(null)
+    setEditingWeek(null)
+    setEditingSession(null)
+    setEditingExercise(null)
   }
 
   function startEdit(section, data) {
@@ -140,9 +285,25 @@ export default function Dashboard({ session }) {
   const total = a ? (a.squat || 0) + (a.bench || 0) + (a.deadlift || 0) : 0
   const trainingTotal = a ? (a.training_squat || 0) + (a.training_bench || 0) + (a.training_deadlift || 0) : 0
 
+  const exFormRow = (
+    <div style={{ display: 'grid', gridTemplateColumns: '2fr 0.5fr 0.7fr 0.8fr 1.5fr', gap: '0.5rem', alignItems: 'end' }}>
+      {[['Navn', 'name', 'text'], ['Sæt', 'sets', 'number'], ['Reps', 'reps', 'text'], ['Intensitet', 'intensity', 'text'], ['Note', 'note', 'text']].map(([label, key, type]) => (
+        <div key={key}>
+          <div style={s.fieldLabel}>{label}</div>
+          <input
+            style={{ ...s.fieldInput, fontSize: '0.8rem', padding: '0.4rem 0.6rem' }}
+            type={type}
+            placeholder={label}
+            value={exerciseForm[key]}
+            onChange={e => setExerciseForm(p => ({ ...p, [key]: e.target.value }))}
+          />
+        </div>
+      ))}
+    </div>
+  )
+
   return (
     <div style={s.wrap}>
-      {/* SIDEBAR */}
       <aside style={s.sidebar}>
         <div style={s.sidebarLogo}>
           <div style={s.wordmark}>Entropi<span style={{ color: '#c8923a' }}>.</span></div>
@@ -158,15 +319,10 @@ export default function Dashboard({ session }) {
         </div>
       </aside>
 
-      {/* MAIN */}
       <main style={s.main}>
         <div style={s.topbar}>
-          <div style={s.topbarTitle}>
-            {view === 'list' ? 'Atleter' : a?.name}
-          </div>
-          {view === 'list' && (
-            <button style={s.btnPrimary} onClick={() => setShowAddModal(true)}>+ Tilføj atlet</button>
-          )}
+          <div style={s.topbarTitle}>{view === 'list' ? 'Atleter' : a?.name}</div>
+          {view === 'list' && <button style={s.btnPrimary} onClick={() => setShowAddModal(true)}>+ Tilføj atlet</button>}
         </div>
 
         {/* LIST VIEW */}
@@ -180,7 +336,6 @@ export default function Dashboard({ session }) {
                 {athletes.length} atlet{athletes.length !== 1 ? 'er' : ''}
               </div>
             </div>
-
             {loading ? (
               <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Indlæser...</div>
             ) : athletes.length === 0 ? (
@@ -188,13 +343,9 @@ export default function Dashboard({ session }) {
             ) : (
               <div style={s.grid}>
                 {athletes.map(athlete => (
-                  <div
-                    key={athlete.id}
-                    style={s.athleteCard}
-                    onClick={() => openProfile(athlete)}
+                  <div key={athlete.id} style={s.athleteCard} onClick={() => openProfile(athlete)}
                     onMouseEnter={e => { e.currentTarget.style.background = '#1c1c18'; e.currentTarget.style.borderTop = '2px solid #c8923a' }}
-                    onMouseLeave={e => { e.currentTarget.style.background = '#141410'; e.currentTarget.style.borderTop = '2px solid transparent' }}
-                  >
+                    onMouseLeave={e => { e.currentTarget.style.background = '#141410'; e.currentTarget.style.borderTop = '2px solid transparent' }}>
                     <div style={s.avatar}>{initials(athlete.name)}</div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: '0.92rem', color: '#edeae2' }}>{athlete.name}</div>
@@ -213,21 +364,15 @@ export default function Dashboard({ session }) {
         {/* PROFILE VIEW */}
         {view === 'profile' && a && (
           <div style={s.page}>
-            <button
-              onClick={() => setView('list')}
-              style={{ background: 'none', border: 'none', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', cursor: 'pointer', marginBottom: '1.75rem', padding: 0 }}
-            >
+            <button onClick={() => setView('list')} style={{ background: 'none', border: 'none', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', cursor: 'pointer', marginBottom: '1.75rem', padding: 0 }}>
               ← Tilbage til atleter
             </button>
 
-            {/* Profile header */}
             <div style={{ ...s.card, display: 'grid', gridTemplateColumns: 'auto 1fr auto', gap: '1.5rem', alignItems: 'center', marginBottom: '1.5rem' }}>
               <div style={{ ...s.avatar, width: '56px', height: '56px', fontSize: '1.3rem' }}>{initials(a.name)}</div>
               <div>
                 <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.5rem', fontWeight: 400, color: '#edeae2' }}>{a.name}</div>
-                <div style={{ fontSize: '0.8rem', color: '#7a7770', marginTop: '0.2rem' }}>
-                  {a.email}{a.age ? ' · ' + a.age + ' år' : ''}
-                </div>
+                <div style={{ fontSize: '0.8rem', color: '#7a7770', marginTop: '0.2rem' }}>{a.email}{a.age ? ' · ' + a.age + ' år' : ''}</div>
               </div>
               <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
                 <span style={s.badge(a.status)}>{statusLabels[a.status]}</span>
@@ -235,19 +380,16 @@ export default function Dashboard({ session }) {
               </div>
             </div>
 
-            {/* Tabs */}
             <div style={s.tabs}>
-              {['oversigt', 'kost', 'noter'].map(tab => (
-                <button key={tab} style={s.tab(activeTab === tab)} onClick={() => { setActiveTab(tab); setEditing(null) }}>
-                  {tab === 'oversigt' ? 'Oversigt' : tab === 'kost' ? 'Kost & mål' : 'Noter'}
-                </button>
+              {[['oversigt', 'Oversigt'], ['kost', 'Kost & mål'], ['program', 'Program'], ['noter', 'Noter']].map(([key, label]) => (
+                <button key={key} style={s.tab(activeTab === key)} onClick={() => { setActiveTab(key); setEditing(null) }}>{label}</button>
               ))}
             </div>
 
             {/* TAB: OVERSIGT */}
             {activeTab === 'oversigt' && (
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-                  <div style={s.card}>
+                <div style={s.card}>
                   <div style={s.cardLabel}>
                     Resultater
                     <button style={s.btnEdit} onClick={() => startEdit('stats', { squat: a.squat, bench: a.bench, deadlift: a.deadlift, training_squat: a.training_squat, training_bench: a.training_bench, training_deadlift: a.training_deadlift, status: a.status, weight_class: a.weight_class, age: a.age })}>Rediger</button>
@@ -284,7 +426,7 @@ export default function Dashboard({ session }) {
                       </div>
                       <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
                         <button style={s.btnGhost} onClick={() => setEditing(null)}>Annuller</button>
-                        <button style={s.btnPrimary} onClick={() => saveEdit('stats')} disabled={saving}>{saving ? 'Gemmer...' : 'Gem'}</button>
+                        <button style={s.btnPrimary} onClick={() => saveEdit()} disabled={saving}>{saving ? 'Gemmer...' : 'Gem'}</button>
                       </div>
                     </div>
                   ) : (
@@ -308,14 +450,8 @@ export default function Dashboard({ session }) {
                         </div>
                       </div>
                       <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(237,234,226,0.07)', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                        <div>
-                          <div style={s.fieldLabel}>Comp total</div>
-                          <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', color: '#edeae2' }}>{total} <span style={{ fontSize: '0.9rem', color: '#7a7770' }}>kg</span></div>
-                        </div>
-                        <div>
-                          <div style={s.fieldLabel}>Trænings total</div>
-                          <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', color: '#7a7770' }}>{trainingTotal} <span style={{ fontSize: '0.9rem', color: '#4a4844' }}>kg</span></div>
-                        </div>
+                        <div><div style={s.fieldLabel}>Comp total</div><div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', color: '#edeae2' }}>{total} <span style={{ fontSize: '0.9rem', color: '#7a7770' }}>kg</span></div></div>
+                        <div><div style={s.fieldLabel}>Trænings total</div><div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', color: '#7a7770' }}>{trainingTotal} <span style={{ fontSize: '0.9rem', color: '#4a4844' }}>kg</span></div></div>
                       </div>
                     </div>
                   )}
@@ -393,24 +529,19 @@ export default function Dashboard({ session }) {
                           <input style={s.fieldInput} type="number" value={editData.protein_target || ''} onChange={e => setEditData(p => ({ ...p, protein_target: e.target.value }))} />
                         </div>
                       </div>
-                      <button
-                        style={{ ...s.btnGhost, marginBottom: '1rem' }}
-                        onClick={() => {
-                          const { sex, bodyweight: bw, height, activity, goal } = editData
-                          const age = a.age || 25
-                          if (!bw || !height) return
-                          const bmr = sex === 'f' ? 10 * bw + 6.25 * height - 5 * age - 161 : 10 * bw + 6.25 * height - 5 * age + 5
-                          let tdee = Math.round(bmr * activity)
-                          if (goal === 'cut') tdee -= 300
-                          if (goal === 'bulk') tdee += 200
-                          setEditData(p => ({ ...p, kcal_target: tdee, protein_target: Math.round(bw * 2.2) }))
-                        }}
-                      >
-                        Beregn TDEE og udfyld
-                      </button>
+                      <button style={{ ...s.btnGhost, marginBottom: '1rem' }} onClick={() => {
+                        const { sex, bodyweight: bw, height, activity, goal } = editData
+                        const age = a.age || 25
+                        if (!bw || !height) return
+                        const bmr = sex === 'f' ? 10 * bw + 6.25 * height - 5 * age - 161 : 10 * bw + 6.25 * height - 5 * age + 5
+                        let tdee = Math.round(bmr * activity)
+                        if (goal === 'cut') tdee -= 300
+                        if (goal === 'bulk') tdee += 200
+                        setEditData(p => ({ ...p, kcal_target: tdee, protein_target: Math.round(bw * 2.2) }))
+                      }}>Beregn TDEE og udfyld</button>
                       <div style={{ display: 'flex', gap: '0.75rem' }}>
                         <button style={s.btnGhost} onClick={() => setEditing(null)}>Annuller</button>
-                        <button style={s.btnPrimary} onClick={() => saveEdit('setup')} disabled={saving}>{saving ? 'Gemmer...' : 'Gem'}</button>
+                        <button style={s.btnPrimary} onClick={() => saveEdit()} disabled={saving}>{saving ? 'Gemmer...' : 'Gem'}</button>
                       </div>
                     </div>
                   ) : (
@@ -431,6 +562,199 @@ export default function Dashboard({ session }) {
               </div>
             )}
 
+            {/* TAB: PROGRAM */}
+            {activeTab === 'program' && (
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#7a7770' }}>
+                    {weeks.length} uge{weeks.length !== 1 ? 'r' : ''}
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    {weeks.length > 0 && (
+                      <button style={s.btnGhost} onClick={() => copyWeek(weeks[weeks.length - 1].id)}>
+                        Kopiér seneste uge →
+                      </button>
+                    )}
+                    <button style={s.btnPrimary} onClick={() => { setAddingWeek(true); setWeekForm({ week_number: '', block_name: '', coach_note: '' }) }}>
+                      + Ny uge
+                    </button>
+                  </div>
+                </div>
+
+                {/* Add week form */}
+                {addingWeek && (
+                  <div style={{ background: '#1c1c18', border: '1px solid rgba(200,146,58,0.3)', padding: '1.25rem', marginBottom: '1rem' }}>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.75rem' }}>Ny uge</div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '0.5fr 1fr 2fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                      {[['Uge nr.', 'week_number', 'number'], ['Blok navn', 'block_name', 'text'], ['Coach-note', 'coach_note', 'text']].map(([label, key, type]) => (
+                        <div key={key}>
+                          <div style={s.fieldLabel}>{label}</div>
+                          <input style={s.fieldInput} type={type} placeholder={label} value={weekForm[key]} onChange={e => setWeekForm(p => ({ ...p, [key]: e.target.value }))} />
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <button style={s.btnGhost} onClick={() => setAddingWeek(false)}>Annuller</button>
+                      <button style={s.btnPrimary} onClick={addWeek}>Tilføj uge</button>
+                    </div>
+                  </div>
+                )}
+
+                {weeks.length === 0 && !addingWeek && (
+                  <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '2rem 0' }}>
+                    Ingen uger endnu — tilføj den første
+                  </div>
+                )}
+
+                {weeks.map(week => (
+                  <div key={week.id} style={{ marginBottom: '0.75rem' }}>
+                    {/* Week header */}
+                    {editingWeek === week.id ? (
+                      <div style={{ background: '#1c1c18', border: '1px solid rgba(200,146,58,0.3)', padding: '1.25rem', marginBottom: '0.5rem' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '0.5fr 1fr 2fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                          {[['Uge nr.', 'week_number', 'number'], ['Blok navn', 'block_name', 'text'], ['Coach-note', 'coach_note', 'text']].map(([label, key, type]) => (
+                            <div key={key}>
+                              <div style={s.fieldLabel}>{label}</div>
+                              <input style={s.fieldInput} type={type} value={weekForm[key]} onChange={e => setWeekForm(p => ({ ...p, [key]: e.target.value }))} />
+                            </div>
+                          ))}
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                          <button style={s.btnGhost} onClick={() => setEditingWeek(null)}>Annuller</button>
+                          <button style={s.btnPrimary} onClick={() => updateWeek(week.id)}>Gem</button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div
+                        style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)', borderLeft: openWeekId === week.id ? '3px solid #c8923a' : '3px solid transparent', padding: '1rem 1.25rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                        onClick={() => setOpenWeekId(openWeekId === week.id ? null : week.id)}
+                      >
+                        <div>
+                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a' }}>Uge {week.week_number}</span>
+                          {week.block_name && <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#edeae2', marginLeft: '0.75rem' }}>{week.block_name}</span>}
+                          {week.coach_note && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#7a7770', marginTop: '0.2rem' }}>{week.coach_note}</div>}
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', textTransform: 'uppercase' }}>{week.sessions?.length || 0} træninger</span>
+                          <button style={s.btnEdit} onClick={e => { e.stopPropagation(); setEditingWeek(week.id); setWeekForm({ week_number: week.week_number, block_name: week.block_name || '', coach_note: week.coach_note || '' }) }}>Rediger</button>
+                          <button style={s.btnDanger} onClick={e => { e.stopPropagation(); deleteWeek(week.id) }}>Slet</button>
+                          <span style={{ color: '#4a4844', fontSize: '0.65rem', marginLeft: '0.25rem' }}>{openWeekId === week.id ? '▲' : '▼'}</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Sessions (expanded week) */}
+                    {openWeekId === week.id && (
+                      <div style={{ marginLeft: '1.5rem', borderLeft: '2px solid rgba(200,146,58,0.15)', paddingLeft: '1rem', paddingTop: '0.5rem', paddingBottom: '0.5rem' }}>
+                        {(week.sessions || []).map(session => (
+                          <div key={session.id} style={{ marginBottom: '0.5rem' }}>
+                            {/* Session header */}
+                            {editingSession === session.id ? (
+                              <div style={{ background: '#141410', border: '1px solid rgba(200,146,58,0.2)', padding: '0.75rem', marginBottom: '0.4rem' }}>
+                                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-end', marginBottom: '0.5rem' }}>
+                                  <div style={{ flex: 1 }}>
+                                    <div style={s.fieldLabel}>Titel</div>
+                                    <input style={s.fieldInput} type="text" value={sessionForm.title} onChange={e => setSessionForm(p => ({ ...p, title: e.target.value }))} />
+                                  </div>
+                                </div>
+                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                  <button style={s.btnGhost} onClick={() => setEditingSession(null)}>Annuller</button>
+                                  <button style={s.btnPrimary} onClick={() => updateSession(session.id)}>Gem</button>
+                                </div>
+                              </div>
+                            ) : (
+                              <div
+                                style={{ background: '#181816', border: '1px solid rgba(237,234,226,0.06)', padding: '0.75rem 1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                                onClick={() => setOpenSessionId(openSessionId === session.id ? null : session.id)}
+                              >
+                                <div>
+                                  <div style={{ fontSize: '0.88rem', color: '#edeae2' }}>{session.title}</div>
+                                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: '0.15rem' }}>
+                                    {session.exercises?.length || 0} øvelser
+                                  </div>
+                                </div>
+                                <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                                  <button style={s.btnEdit} onClick={e => { e.stopPropagation(); setEditingSession(session.id); setSessionForm({ title: session.title }) }}>Rediger</button>
+                                  <button style={s.btnDanger} onClick={e => { e.stopPropagation(); deleteSession(session.id) }}>Slet</button>
+                                  <span style={{ color: '#4a4844', fontSize: '0.6rem', marginLeft: '0.2rem' }}>{openSessionId === session.id ? '▲' : '▼'}</span>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Exercises (expanded session) */}
+                            {openSessionId === session.id && (
+                              <div style={{ background: '#141410', border: '1px solid rgba(237,234,226,0.06)', borderTop: 'none', padding: '0.75rem' }}>
+                                {(session.exercises || []).map(ex => (
+                                  <div key={ex.id}>
+                                    {editingExercise === ex.id ? (
+                                      <div style={{ padding: '0.5rem 0', borderBottom: '1px solid rgba(237,234,226,0.06)', marginBottom: '0.5rem' }}>
+                                        {exFormRow}
+                                        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                                          <button style={s.btnGhost} onClick={() => setEditingExercise(null)}>Annuller</button>
+                                          <button style={s.btnPrimary} onClick={() => updateExercise(ex.id)}>Gem</button>
+                                        </div>
+                                      </div>
+                                    ) : (
+                                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.45rem 0', borderBottom: '1px solid rgba(237,234,226,0.04)' }}>
+                                        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'baseline', flex: 1 }}>
+                                          <div style={{ fontSize: '0.85rem', color: '#b8b4a8', minWidth: '120px' }}>{ex.name}</div>
+                                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770' }}>
+                                            {ex.sets && `${ex.sets} sæt`}{ex.reps && ` × ${ex.reps}`}{ex.intensity && ` · ${ex.intensity}`}
+                                          </div>
+                                          {ex.note && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', fontStyle: 'italic' }}>{ex.note}</div>}
+                                        </div>
+                                        <div style={{ display: 'flex', gap: '0.3rem', flexShrink: 0 }}>
+                                          <button style={s.btnEdit} onClick={() => { setEditingExercise(ex.id); setExerciseForm({ name: ex.name, sets: ex.sets || '', reps: ex.reps || '', intensity: ex.intensity || '', note: ex.note || '' }) }}>✎</button>
+                                          <button style={s.btnDanger} onClick={() => deleteExercise(ex.id)}>✕</button>
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                ))}
+
+                                {/* Add exercise */}
+                                {addingExercise === session.id ? (
+                                  <div style={{ paddingTop: '0.75rem' }}>
+                                    {exFormRow}
+                                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                                      <button style={s.btnGhost} onClick={() => setAddingExercise(null)}>Annuller</button>
+                                      <button style={s.btnPrimary} onClick={() => addExercise(session.id)}>Tilføj</button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <button style={{ ...s.btnSm, marginTop: '0.5rem' }} onClick={() => { setAddingExercise(session.id); setExerciseForm({ name: '', sets: '', reps: '', intensity: '', note: '' }) }}>
+                                    + Tilføj øvelse
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+
+                        {/* Add session */}
+                        {addingSession === week.id ? (
+                          <div style={{ background: '#141410', border: '1px solid rgba(200,146,58,0.2)', padding: '0.75rem', marginTop: '0.5rem' }}>
+                            <div style={{ marginBottom: '0.5rem' }}>
+                              <div style={s.fieldLabel}>Titel</div>
+                              <input style={s.fieldInput} type="text" placeholder="f.eks. Træning A" value={sessionForm.title} onChange={e => setSessionForm(p => ({ ...p, title: e.target.value }))} />
+                            </div>
+                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                              <button style={s.btnGhost} onClick={() => setAddingSession(null)}>Annuller</button>
+                              <button style={s.btnPrimary} onClick={() => addSession(week.id)}>Tilføj</button>
+                            </div>
+                          </div>
+                        ) : (
+                          <button style={{ ...s.btnGhost, marginTop: '0.5rem', fontSize: '0.54rem' }} onClick={() => { setAddingSession(week.id); setSessionForm({ title: '' }) }}>
+                            + Tilføj træning
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
             {/* TAB: NOTER */}
             {activeTab === 'noter' && (
               <div style={s.card}>
@@ -440,14 +764,10 @@ export default function Dashboard({ session }) {
                 </div>
                 {editing === 'notes' ? (
                   <div>
-                    <textarea
-                      style={{ ...s.fieldInput, minHeight: '120px', resize: 'vertical', lineHeight: 1.7 }}
-                      value={editData.notes}
-                      onChange={e => setEditData(p => ({ ...p, notes: e.target.value }))}
-                    />
+                    <textarea style={{ ...s.fieldInput, minHeight: '120px', resize: 'vertical', lineHeight: 1.7 }} value={editData.notes} onChange={e => setEditData(p => ({ ...p, notes: e.target.value }))} />
                     <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
                       <button style={s.btnGhost} onClick={() => setEditing(null)}>Annuller</button>
-                      <button style={s.btnPrimary} onClick={() => saveEdit('notes')} disabled={saving}>{saving ? 'Gemmer...' : 'Gem'}</button>
+                      <button style={s.btnPrimary} onClick={() => saveEdit()} disabled={saving}>{saving ? 'Gemmer...' : 'Gem'}</button>
                     </div>
                   </div>
                 ) : (
@@ -461,7 +781,6 @@ export default function Dashboard({ session }) {
         )}
       </main>
 
-      {/* MODAL: ADD ATHLETE */}
       {showAddModal && (
         <div style={s.overlay} onClick={e => e.target === e.currentTarget && setShowAddModal(false)}>
           <div style={s.modal}>
@@ -488,7 +807,6 @@ export default function Dashboard({ session }) {
         </div>
       )}
 
-      {/* MODAL: DELETE */}
       {showDeleteModal && (
         <div style={s.overlay} onClick={e => e.target === e.currentTarget && setShowDeleteModal(false)}>
           <div style={s.modal}>
