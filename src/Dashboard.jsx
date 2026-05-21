@@ -805,6 +805,36 @@ export default function Dashboard({ session }) {
 
             {/* TRÆNINGSLOG */}
             {activeTab === 'program' && (() => {
+              // Build trend index: exName → sorted [{ date, avg }]
+              const trendEntries = {}
+              for (const log of athleteLogs) {
+                const name = log.exercises?.name
+                if (!name) continue
+                const date = log.logged_at?.slice(0, 10) || ''
+                const tk = `${name}|${date}`
+                if (!trendEntries[tk]) trendEntries[tk] = { name, date, weights: [] }
+                if (log.weight) trendEntries[tk].weights.push(log.weight)
+              }
+              const trendIndex = {}
+              for (const { name, date, weights } of Object.values(trendEntries)) {
+                if (!trendIndex[name]) trendIndex[name] = []
+                if (weights.length > 0) trendIndex[name].push({ date, avg: weights.reduce((a, b) => a + b, 0) / weights.length })
+              }
+              for (const arr of Object.values(trendIndex)) arr.sort((a, b) => a.date.localeCompare(b.date))
+
+              function getTrend(exName, currentDate) {
+                const history = (trendIndex[exName] || []).filter(e => e.date <= currentDate)
+                if (history.length < 2) return null
+                const curr = history[history.length - 1]
+                const prev = history[history.length - 2]
+                if (curr.date !== currentDate) return null
+                const diff = Math.round((curr.avg - prev.avg) * 10) / 10
+                if (diff > 0.4) return { text: `↑ +${diff}kg siden sidst`, color: '#6cba6c' }
+                if (diff < -0.4) return { text: `↓ ${Math.abs(diff)}kg siden sidst`, color: '#e05555' }
+                return { text: '= Samme som sidst', color: '#7a7770' }
+              }
+
+              // Group logs by date + session
               const grouped = {}
               for (const log of athleteLogs) {
                 const ex = log.exercises
@@ -812,19 +842,14 @@ export default function Dashboard({ session }) {
                 const date = log.logged_at?.slice(0, 10) || ''
                 const sessId = sess?.id || 'unknown'
                 const key = `${date}|${sessId}`
-                if (!grouped[key]) {
-                  grouped[key] = {
-                    date,
-                    sessionTitle: sess?.title || '—',
-                    weekNum: sess?.weeks?.week_number,
-                    exerciseMap: {},
-                  }
-                }
+                if (!grouped[key]) grouped[key] = { date, sessionTitle: sess?.title || '—', weekNum: sess?.weeks?.week_number, exerciseMap: {} }
                 const exId = log.exercise_id
                 if (!grouped[key].exerciseMap[exId]) {
                   grouped[key].exerciseMap[exId] = {
                     name: ex?.name || '—',
-                    planned: [ex?.sets && `${ex.sets} sæt`, ex?.reps && `× ${ex.reps}`, ex?.intensity].filter(Boolean).join(' '),
+                    plannedSets: ex?.sets || 0,
+                    plannedReps: ex?.reps || '',
+                    intensity: ex?.intensity || '',
                     sets: [],
                   }
                 }
@@ -842,30 +867,83 @@ export default function Dashboard({ session }) {
                     <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
                       Ingen loggede træninger endnu
                     </div>
-                  ) : logSessions.map((sess, i) => (
-                    <div key={i} style={{ marginBottom: '1.5rem', paddingBottom: '1.5rem', borderBottom: '1px solid rgba(237,234,226,0.05)' }}>
-                      <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'baseline', marginBottom: '0.5rem' }}>
-                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#c8923a', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{sess.date}</div>
-                        {sess.weekNum && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', textTransform: 'uppercase' }}>Uge {sess.weekNum}</div>}
-                      </div>
-                      <div style={{ fontSize: '0.92rem', color: '#edeae2', marginBottom: '0.75rem' }}>{sess.sessionTitle}</div>
-                      {Object.values(sess.exerciseMap).map((ex, j) => (
-                        <div key={j} style={{ marginBottom: '0.75rem', paddingLeft: '0.75rem', borderLeft: '2px solid rgba(237,234,226,0.07)' }}>
-                          <div style={{ fontSize: '0.85rem', color: '#b8b4a8', marginBottom: '0.2rem' }}>{ex.name}</div>
-                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770', marginBottom: '0.35rem' }}>Plan: {ex.planned}</div>
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                            {ex.sets.sort((a, b) => a.n - b.n).map(set => (
-                              <div key={set.n} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', background: '#242420', padding: '0.2rem 0.5rem', color: '#edeae2' }}>
-                                <span style={{ color: '#4a4844' }}>S{set.n} </span>
-                                {set.weight}kg × {set.reps}
-                                {set.note && <span style={{ color: '#7a7770', marginLeft: '0.35rem', fontStyle: 'italic' }}>{set.note}</span>}
+                  ) : logSessions.map((sess, i) => {
+                    const exercises = Object.values(sess.exerciseMap)
+                    const totalPlanned = exercises.reduce((acc, ex) => acc + ex.plannedSets, 0)
+                    const totalLogged = exercises.reduce((acc, ex) => acc + ex.sets.length, 0)
+                    const allWeights = exercises.flatMap(ex => ex.sets.map(s => s.weight || 0)).filter(w => w > 0)
+                    const sessAvg = allWeights.length > 0 ? Math.round(allWeights.reduce((a, b) => a + b, 0) / allWeights.length * 10) / 10 : 0
+
+                    return (
+                      <div key={i} style={{ marginBottom: '1.75rem', paddingBottom: '1.75rem', borderBottom: '1px solid rgba(237,234,226,0.05)' }}>
+                        {/* Session header */}
+                        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                          <div>
+                            <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'baseline', marginBottom: '0.25rem' }}>
+                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#c8923a', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{sess.date}</div>
+                              {sess.weekNum && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', textTransform: 'uppercase' }}>Uge {sess.weekNum}</div>}
+                            </div>
+                            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#edeae2' }}>{sess.sessionTitle}</div>
+                          </div>
+                          <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: totalLogged >= totalPlanned && totalPlanned > 0 ? '#6cba6c' : '#7a7770', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                              {totalLogged}/{totalPlanned} sæt
+                            </div>
+                            {sessAvg > 0 && (
+                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', textTransform: 'uppercase', marginTop: '0.15rem' }}>
+                                Ø {sessAvg} kg
                               </div>
-                            ))}
+                            )}
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  ))}
+
+                        {/* Exercises */}
+                        {exercises.map((ex, j) => {
+                          const sortedSets = [...ex.sets].sort((a, b) => a.n - b.n)
+                          const weights = sortedSets.map(s => s.weight || 0).filter(w => w > 0)
+                          const exAvg = weights.length > 0 ? Math.round(weights.reduce((a, b) => a + b, 0) / weights.length * 10) / 10 : 0
+                          const maxW = weights.length > 0 ? Math.max(...weights) : 0
+                          const completion = ex.plannedSets > 0 ? Math.min(1, ex.sets.length / ex.plannedSets) : 0
+                          const trend = getTrend(ex.name, sess.date)
+                          const planText = [ex.plannedSets && `${ex.plannedSets} sæt`, ex.plannedReps && `× ${ex.plannedReps}`, ex.intensity].filter(Boolean).join(' · ')
+                          const borderColor = completion >= 1 ? '#6cba6c' : completion > 0 ? '#c8923a' : 'rgba(237,234,226,0.07)'
+
+                          return (
+                            <div key={j} style={{ marginBottom: '1rem', paddingLeft: '0.75rem', borderLeft: `2px solid ${borderColor}` }}>
+                              <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '0.15rem' }}>
+                                <div style={{ fontSize: '0.85rem', color: '#b8b4a8' }}>{ex.name}</div>
+                                {trend && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: trend.color, letterSpacing: '0.06em', flexShrink: 0, marginLeft: '0.75rem' }}>{trend.text}</div>}
+                              </div>
+                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', marginBottom: '0.4rem' }}>
+                                Plan: {planText}
+                              </div>
+                              {ex.plannedSets > 0 && (
+                                <div style={{ marginBottom: '0.45rem' }}>
+                                  <div style={{ height: '3px', background: '#242420', borderRadius: '2px', marginBottom: '0.25rem' }}>
+                                    <div style={{ height: '3px', width: `${completion * 100}%`, background: completion >= 1 ? '#6cba6c' : '#c8923a', borderRadius: '2px' }} />
+                                  </div>
+                                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844' }}>{ex.sets.length}/{ex.plannedSets} sæt</div>
+                                    {exAvg > 0 && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#7a7770' }}>Ø {exAvg}kg{maxW > exAvg ? ` · maks ${maxW}kg` : ''}</div>}
+                                  </div>
+                                </div>
+                              )}
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+                                {sortedSets.map(set => (
+                                  <div key={set.n} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.08)', padding: '0.2rem 0.5rem', color: '#edeae2' }}>
+                                    <span style={{ color: '#4a4844' }}>S{set.n} </span>
+                                    <span style={{ color: '#c8923a' }}>{set.weight}kg</span>
+                                    {set.reps && <span style={{ color: '#7a7770' }}> × {set.reps}</span>}
+                                    {set.note && <span style={{ color: '#4a4844', marginLeft: '0.3rem', fontStyle: 'italic' }}>{set.note}</span>}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )
+                  })}
                 </div>
               )
             })()}
