@@ -389,14 +389,14 @@ export default function AthleteView({ session }) {
             ) : (
               <>
                 <div style={{ marginBottom: '1.5rem' }}>
-                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.4rem' }}>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.4rem' }}>
                     Uge {currentWeek.week_number}
                   </div>
                   <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>
                     {currentWeek.block_name || 'Dit program'}.
                   </h1>
                   {currentWeek.coach_note && (
-                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#7a7770', marginTop: '0.4rem', letterSpacing: '0.04em' }}>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.78rem', color: '#7a7770', marginTop: '0.5rem', letterSpacing: '0.04em' }}>
                       {currentWeek.coach_note}
                     </div>
                   )}
@@ -419,13 +419,13 @@ export default function AthleteView({ session }) {
                       >
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                           <div>
-                            <div style={{ ...s.cardLabel, marginBottom: '0.3rem' }}>{session.title}</div>
-                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                            <div style={{ ...s.cardLabel, marginBottom: '0.3rem', fontSize: '0.72rem' }}>{session.title}</div>
+                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                               {(session.exercises || []).length} øvelser · {loggedSets}/{totalSets} sæt logget
                             </div>
                           </div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                            {isDone && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#6cba6c', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Færdig ✓</span>}
+                            {isDone && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#6cba6c', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Færdig ✓</span>}
                             <span style={{ color: '#4a4844', fontSize: '0.65rem' }}>{isOpen ? '▲' : '▼'}</span>
                           </div>
                         </div>
@@ -440,12 +440,12 @@ export default function AthleteView({ session }) {
                               <div key={ex.id} style={{ marginBottom: isLast ? 0 : '1.25rem', paddingBottom: isLast ? 0 : '1.25rem', borderBottom: isLast ? 'none' : '1px solid rgba(237,234,226,0.06)' }}>
                                 {/* Exercise info */}
                                 <div style={{ marginBottom: '0.6rem' }}>
-                                  <div style={{ fontSize: '0.9rem', color: '#edeae2', marginBottom: '0.15rem' }}>{ex.name}</div>
-                                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                                  <div style={{ fontSize: '1.05rem', color: '#edeae2', marginBottom: '0.25rem' }}>{ex.name}</div>
+                                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.78rem', color: '#c8923a', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.1rem' }}>
                                     {[ex.sets && `${ex.sets} sæt`, ex.reps && `× ${ex.reps}`, ex.intensity && ex.intensity].filter(Boolean).join(' · ')}
                                   </div>
                                   {ex.note && (
-                                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', marginTop: '0.15rem', fontStyle: 'italic' }}>{ex.note}</div>
+                                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#7a7770', marginTop: '0.1rem', fontStyle: 'italic' }}>{ex.note}</div>
                                   )}
                                 </div>
 
