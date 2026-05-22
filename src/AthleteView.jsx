@@ -370,7 +370,55 @@ export default function AthleteView({ session }) {
 
             <div style={s.card}>
               <div style={s.cardLabel}>Mit program</div>
-              <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Intet program tilknyttet endnu.</div>
+              {!currentWeek ? (
+                <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Intet program tilknyttet endnu.</div>
+              ) : (
+                <>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem', marginBottom: '0.75rem' }}>
+                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a' }}>
+                      Uge {currentWeek.week_number}
+                    </span>
+                    {currentWeek.block_name && (
+                      <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#edeae2' }}>
+                        {currentWeek.block_name}
+                      </span>
+                    )}
+                  </div>
+                  {(currentWeek.sessions || []).length === 0 ? (
+                    <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen træninger i denne uge endnu.</div>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                      {(currentWeek.sessions || []).map(sess => (
+                        <button
+                          key={sess.id}
+                          onClick={() => { setTab('program'); setProgOpenSession(sess.id) }}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            background: 'rgba(237,234,226,0.03)',
+                            border: '1px solid rgba(237,234,226,0.07)',
+                            color: '#edeae2',
+                            padding: '0.6rem 0.75rem',
+                            cursor: 'pointer',
+                            width: '100%',
+                            textAlign: 'left',
+                            fontFamily: "'IBM Plex Sans', sans-serif",
+                            fontWeight: 300,
+                          }}
+                          onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(200,146,58,0.35)'}
+                          onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(237,234,226,0.07)'}
+                        >
+                          <span style={{ fontSize: '0.88rem' }}>{sess.title}</span>
+                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', flexShrink: 0, marginLeft: '0.75rem' }}>
+                            {(sess.exercises || []).length} øvelser →
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
             </div>
 
             <div style={s.card}>
