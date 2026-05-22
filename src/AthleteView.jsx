@@ -108,6 +108,15 @@ const NAV_ITEMS = [
     ),
   },
   {
+    key: 'beskeder',
+    label: 'Beskeder',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+      </svg>
+    ),
+  },
+  {
     key: 'profil',
     label: 'Profil',
     icon: (
@@ -131,6 +140,10 @@ export default function AthleteView({ session }) {
   const [showManual, setShowManual] = useState(false)
   const [manual, setManual] = useState({ name: '', kcal: '', protein: '', carb: '' })
 
+  // Messages state
+  const [messages, setMessages] = useState([])
+  const [messageInput, setMessageInput] = useState('')
+
   // Program state
   const [currentWeek, setCurrentWeek] = useState(null)
   const [progOpenSession, setProgOpenSession] = useState(null)
@@ -138,6 +151,7 @@ export default function AthleteView({ session }) {
   const [logInputs, setLogInputs] = useState({})
 
   useEffect(() => { fetchAthlete() }, [])
+  useEffect(() => { if (tab === 'beskeder' && athlete) fetchAthleteMessages() }, [tab, athlete?.id])
 
   async function fetchAthlete() {
     const { data, error } = await supabase
@@ -149,6 +163,7 @@ export default function AthleteView({ session }) {
       setAthlete(data)
       fetchLogs(data.id)
       fetchProgram(data.id)
+      fetchAthleteMessages(data.id)
     }
     setLoading(false)
   }
@@ -221,6 +236,33 @@ export default function AthleteView({ session }) {
       }))
     }
     fetchExerciseLogs(athlete.id, currentWeek)
+  }
+
+  async function fetchAthleteMessages(id) {
+    const athleteId = id || athlete?.id
+    if (!athleteId) return
+    const { data } = await supabase.from('messages').select('*').eq('athlete_id', athleteId).order('created_at')
+    setMessages(data || [])
+  }
+
+  async function sendAthleteMessage() {
+    if (!messageInput.trim() || !athlete) return
+    await supabase.from('messages').insert({ athlete_id: athlete.id, sender_role: 'athlete', content: messageInput.trim() })
+    setMessageInput('')
+    fetchAthleteMessages(athlete.id)
+  }
+
+  function formatMsgTime(ts) {
+    const d = new Date(ts)
+    const now = new Date()
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    const msgDay = new Date(d.getFullYear(), d.getMonth(), d.getDate())
+    const dayDiff = Math.floor((today - msgDay) / 86400000)
+    const time = d.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' })
+    if (dayDiff === 0) return time
+    if (dayDiff === 1) return `I går ${time}`
+    if (dayDiff < 7) return d.toLocaleDateString('da-DK', { weekday: 'long' }) + ' ' + time
+    return d.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' }) + ' ' + time
   }
 
   async function fetchLogs(athleteId) {
@@ -421,9 +463,21 @@ export default function AthleteView({ session }) {
               )}
             </div>
 
-            <div style={s.card}>
+            <div style={{ ...s.card, cursor: 'pointer' }} onClick={() => setTab('beskeder')}
+              onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(200,146,58,0.25)'}
+              onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(237,234,226,0.07)'}
+            >
               <div style={s.cardLabel}>Seneste besked fra coach</div>
-              <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen beskeder endnu.</div>
+              {(() => {
+                const lastCoach = [...messages].reverse().find(m => m.sender_role === 'coach')
+                if (!lastCoach) return <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen beskeder endnu.</div>
+                return (
+                  <>
+                    <div style={{ fontSize: '0.88rem', color: '#edeae2', lineHeight: 1.6, marginBottom: '0.4rem' }}>{lastCoach.content}</div>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{formatMsgTime(lastCoach.created_at)}</div>
+                  </>
+                )
+              })()}
             </div>
 
             {progressBars}
@@ -734,6 +788,79 @@ export default function AthleteView({ session }) {
                   )}
                 </>
               )}
+            </div>
+          </>
+        )}
+
+        {/* BESKEDER */}
+        {tab === 'beskeder' && (
+          <>
+            <div style={{ marginBottom: '1.5rem' }}>
+              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Beskeder</div>
+              <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Din coach.</h1>
+            </div>
+
+            <div style={s.card}>
+              {/* Pinned messages */}
+              {messages.filter(m => m.pinned).length > 0 && (
+                <div style={{ marginBottom: '1.25rem', paddingBottom: '1.25rem', borderBottom: '1px solid rgba(237,234,226,0.07)' }}>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.6rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#c8923a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17H19V13L15 9V4H9V9L5 13V17Z"/>
+                    </svg>
+                    Fastgjorte beskeder
+                  </div>
+                  {messages.filter(m => m.pinned).map(msg => (
+                    <div key={msg.id} style={{ background: 'rgba(200,146,58,0.06)', border: '1px solid rgba(200,146,58,0.18)', padding: '0.65rem 0.75rem', marginBottom: '0.4rem' }}>
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.25rem' }}>
+                        {msg.sender_role === 'coach' ? 'Coach' : 'Dig'} · {formatMsgTime(msg.created_at)}
+                      </div>
+                      <div style={{ fontSize: '0.88rem', color: '#edeae2', lineHeight: 1.55 }}>{msg.content}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Message thread */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.25rem', maxHeight: '460px', overflowY: 'auto' }}>
+                {messages.length === 0 ? (
+                  <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen beskeder endnu. Send en besked til din coach.</div>
+                ) : messages.map(msg => {
+                  const isMe = msg.sender_role === 'athlete'
+                  return (
+                    <div key={msg.id} style={{ display: 'flex', flexDirection: isMe ? 'row-reverse' : 'row', alignItems: 'flex-end', gap: '0.4rem' }}>
+                      <div style={{ maxWidth: '78%' }}>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.2rem', textAlign: isMe ? 'right' : 'left' }}>
+                          {formatMsgTime(msg.created_at)}
+                        </div>
+                        <div style={{
+                          background: isMe ? 'rgba(200,146,58,0.11)' : '#141410',
+                          border: isMe ? '1px solid rgba(200,146,58,0.22)' : '1px solid rgba(237,234,226,0.07)',
+                          padding: '0.6rem 0.8rem',
+                          fontSize: '0.88rem',
+                          color: '#edeae2',
+                          lineHeight: 1.55,
+                        }}>
+                          {msg.content}
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+
+              {/* Send input */}
+              <div style={{ display: 'flex', gap: '0.5rem', borderTop: '1px solid rgba(237,234,226,0.07)', paddingTop: '1rem' }}>
+                <input
+                  style={{ ...s.fieldInput, flex: 1 }}
+                  type="text"
+                  placeholder="Skriv en besked til din coach..."
+                  value={messageInput}
+                  onChange={e => setMessageInput(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && sendAthleteMessage()}
+                />
+                <button style={s.btnPrimary} onClick={sendAthleteMessage}>Send</button>
+              </div>
             </div>
           </>
         )}

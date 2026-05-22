@@ -58,6 +58,11 @@ export default function Dashboard({ session }) {
   const [editData, setEditData] = useState({})
   const [saving, setSaving] = useState(false)
 
+  // Messages state
+  const [messages, setMessages] = useState([])
+  const [messageInput, setMessageInput] = useState('')
+  const [latestMessages, setLatestMessages] = useState({})
+
   // Program state
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' && window.innerWidth < 768)
@@ -90,9 +95,16 @@ export default function Dashboard({ session }) {
     }
   }, [activeTab, selectedAthlete?.id])
 
+  useEffect(() => {
+    if (activeTab === 'beskeder' && selectedAthlete) fetchMessages(selectedAthlete.id)
+  }, [activeTab, selectedAthlete?.id])
+
   async function fetchAthletes() {
     const { data, error } = await supabase.from('athletes').select('*').order('name')
-    if (!error) setAthletes(data || [])
+    if (!error) {
+      setAthletes(data || [])
+      if (data?.length) fetchLatestMessages(data.map(a => a.id))
+    }
     setLoading(false)
   }
 
@@ -236,6 +248,46 @@ export default function Dashboard({ session }) {
     setOpenWeekId(newWeek.id)
   }
 
+  async function fetchLatestMessages(athleteIds) {
+    const { data } = await supabase.from('messages').select('*').in('athlete_id', athleteIds).order('created_at', { ascending: false })
+    const latest = {}
+    for (const msg of (data || [])) {
+      if (!latest[msg.athlete_id]) latest[msg.athlete_id] = msg
+    }
+    setLatestMessages(latest)
+  }
+
+  async function fetchMessages(athleteId) {
+    const { data } = await supabase.from('messages').select('*').eq('athlete_id', athleteId).order('created_at')
+    setMessages(data || [])
+  }
+
+  async function sendCoachMessage() {
+    if (!messageInput.trim() || !selectedAthlete) return
+    await supabase.from('messages').insert({ athlete_id: selectedAthlete.id, sender_role: 'coach', content: messageInput.trim() })
+    setMessageInput('')
+    fetchMessages(selectedAthlete.id)
+    fetchLatestMessages(athletes.map(a => a.id))
+  }
+
+  async function togglePin(messageId, currentPinned) {
+    await supabase.from('messages').update({ pinned: !currentPinned }).eq('id', messageId)
+    fetchMessages(selectedAthlete.id)
+  }
+
+  function formatMsgTime(ts) {
+    const d = new Date(ts)
+    const now = new Date()
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    const msgDay = new Date(d.getFullYear(), d.getMonth(), d.getDate())
+    const dayDiff = Math.floor((today - msgDay) / 86400000)
+    const time = d.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' })
+    if (dayDiff === 0) return time
+    if (dayDiff === 1) return `I går ${time}`
+    if (dayDiff < 7) return d.toLocaleDateString('da-DK', { weekday: 'long' }) + ' ' + time
+    return d.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' }) + ' ' + time
+  }
+
   async function fetchAthleteLogs(athleteId) {
     const { data } = await supabase
       .from('exercise_logs')
@@ -288,6 +340,8 @@ export default function Dashboard({ session }) {
     setActiveTab('oversigt')
     setEditing(null)
     setView('profile')
+    setMessages([])
+    setMessageInput('')
     setWeeks([])
     setOpenWeekId(null)
     setOpenSessionId(null)
@@ -400,6 +454,14 @@ export default function Dashboard({ session }) {
                       <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#4a4844' }}>
                         {athlete.weight_class ? athlete.weight_class + 'kg' : 'Ingen vægtklasse'} · {athlete.email || 'Ingen email'}
                       </div>
+                      {latestMessages[athlete.id] && (
+                        <div style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.72rem', color: '#4a4844', marginTop: '0.25rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          <span style={{ color: latestMessages[athlete.id].sender_role === 'coach' ? '#7a7770' : '#c8923a' }}>
+                            {latestMessages[athlete.id].sender_role === 'coach' ? 'Du: ' : `${athlete.name.split(' ')[0]}: `}
+                          </span>
+                          {latestMessages[athlete.id].content}
+                        </div>
+                      )}
                     </div>
                     <span style={s.badge(athlete.status)}>{statusLabels[athlete.status]}</span>
                   </div>
@@ -429,7 +491,7 @@ export default function Dashboard({ session }) {
             </div>
 
             <div style={s.tabs}>
-              {[['oversigt', 'Oversigt'], ['kost', 'Kost & mål'], ['program', 'Program'], ['noter', 'Noter']].map(([key, label]) => (
+              {[['oversigt', 'Oversigt'], ['kost', 'Kost & mål'], ['program', 'Program'], ['noter', 'Noter'], ['beskeder', 'Beskeder']].map(([key, label]) => (
                 <button key={key} style={s.tab(activeTab === key)} onClick={() => { setActiveTab(key); setEditing(null) }}>{label}</button>
               ))}
             </div>
@@ -968,6 +1030,92 @@ export default function Dashboard({ session }) {
                     {a.notes || 'Ingen noter endnu.'}
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* TAB: BESKEDER */}
+            {activeTab === 'beskeder' && (
+              <div style={s.card}>
+                <div style={s.cardLabel}>Beskeder med {a.name}</div>
+
+                {/* Pinned messages */}
+                {messages.filter(m => m.pinned).length > 0 && (
+                  <div style={{ marginBottom: '1.25rem', paddingBottom: '1.25rem', borderBottom: '1px solid rgba(237,234,226,0.07)' }}>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.6rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#c8923a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17H19V13L15 9V4H9V9L5 13V17Z"/>
+                      </svg>
+                      Fastgjorte
+                    </div>
+                    {messages.filter(m => m.pinned).map(msg => (
+                      <div key={msg.id} style={{ background: 'rgba(200,146,58,0.06)', border: '1px solid rgba(200,146,58,0.18)', padding: '0.65rem 0.75rem', marginBottom: '0.4rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.75rem' }}>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.25rem' }}>
+                            {msg.sender_role === 'coach' ? 'Coach' : a.name} · {formatMsgTime(msg.created_at)}
+                          </div>
+                          <div style={{ fontSize: '0.88rem', color: '#edeae2', lineHeight: 1.55 }}>{msg.content}</div>
+                        </div>
+                        <button onClick={() => togglePin(msg.id, msg.pinned)} title="Løsn" style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#c8923a', padding: '0.1rem', flexShrink: 0 }}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                            <path d="M5 17H19V13L15 9V4H9V9L5 13V17Z M12 17v5" strokeWidth="2"/>
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Message thread */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.25rem', maxHeight: '420px', overflowY: 'auto', paddingRight: '0.25rem' }}>
+                  {messages.length === 0 ? (
+                    <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen beskeder endnu.</div>
+                  ) : messages.map(msg => {
+                    const isCoach = msg.sender_role === 'coach'
+                    return (
+                      <div key={msg.id} style={{ display: 'flex', flexDirection: isCoach ? 'row-reverse' : 'row', alignItems: 'flex-end', gap: '0.4rem' }}>
+                        <div style={{ maxWidth: '72%' }}>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.2rem', textAlign: isCoach ? 'right' : 'left' }}>
+                            {formatMsgTime(msg.created_at)}
+                          </div>
+                          <div style={{
+                            background: isCoach ? 'rgba(200,146,58,0.11)' : '#1c1c18',
+                            border: isCoach ? '1px solid rgba(200,146,58,0.22)' : '1px solid rgba(237,234,226,0.07)',
+                            padding: '0.6rem 0.8rem',
+                            fontSize: '0.88rem',
+                            color: '#edeae2',
+                            lineHeight: 1.55,
+                          }}>
+                            {msg.content}
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => togglePin(msg.id, msg.pinned)}
+                          title={msg.pinned ? 'Løsn' : 'Fastgør'}
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: msg.pinned ? '#c8923a' : '#2e2e2a', padding: '0.3rem', flexShrink: 0, marginBottom: '0.1rem', transition: 'color 0.15s' }}
+                          onMouseEnter={e => e.currentTarget.style.color = '#c8923a'}
+                          onMouseLeave={e => e.currentTarget.style.color = msg.pinned ? '#c8923a' : '#2e2e2a'}
+                        >
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill={msg.pinned ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17H19V13L15 9V4H9V9L5 13V17Z"/>
+                          </svg>
+                        </button>
+                      </div>
+                    )
+                  })}
+                </div>
+
+                {/* Send input */}
+                <div style={{ display: 'flex', gap: '0.5rem', borderTop: '1px solid rgba(237,234,226,0.07)', paddingTop: '1rem' }}>
+                  <input
+                    style={{ ...s.fieldInput, flex: 1 }}
+                    type="text"
+                    placeholder="Skriv en besked..."
+                    value={messageInput}
+                    onChange={e => setMessageInput(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && sendCoachMessage()}
+                  />
+                  <button style={s.btnPrimary} onClick={sendCoachMessage}>Send</button>
+                </div>
               </div>
             )}
           </div>
