@@ -82,6 +82,7 @@ export default function Dashboard({ session }) {
   const [athleteLogs, setAthleteLogs] = useState([])
   const [editingRecommended, setEditingRecommended] = useState(null)
   const [recommendedInput, setRecommendedInput] = useState('')
+  const [copyingExercise, setCopyingExercise] = useState(null)
 
   useEffect(() => {
     const handler = () => setIsMobile(window.innerWidth < 768)
@@ -177,6 +178,35 @@ export default function Dashboard({ session }) {
     if (!window.confirm('Slet denne træning?')) return
     await supabase.from('sessions').delete().eq('id', sessionId)
     if (openSessionId === sessionId) setOpenSessionId(null)
+    fetchWeeks(selectedAthlete.id)
+  }
+
+  async function reorderSession(weekId, sessionId, direction) {
+    const week = weeks.find(w => w.id === weekId)
+    const sorted = [...(week?.sessions || [])].sort((a, b) => a.session_order - b.session_order)
+    const idx = sorted.findIndex(s => s.id === sessionId)
+    const swapIdx = direction === 'up' ? idx - 1 : idx + 1
+    if (swapIdx < 0 || swapIdx >= sorted.length) return
+    const a = sorted[idx], b = sorted[swapIdx]
+    await supabase.from('sessions').update({ session_order: b.session_order }).eq('id', a.id)
+    await supabase.from('sessions').update({ session_order: a.session_order }).eq('id', b.id)
+    fetchWeeks(selectedAthlete.id)
+  }
+
+  async function copyExerciseToSession(ex, targetSessionId) {
+    const targetSession = weeks.flatMap(w => w.sessions || []).find(s => s.id === targetSessionId)
+    const nextOrder = targetSession?.exercises?.length || 0
+    await supabase.from('exercises').insert({
+      session_id: targetSessionId,
+      name: ex.name,
+      sets: ex.sets,
+      reps: ex.reps,
+      intensity: ex.intensity,
+      note: ex.note,
+      recommended_weight: ex.recommended_weight ?? null,
+      exercise_order: nextOrder,
+    })
+    setCopyingExercise(null)
     fetchWeeks(selectedAthlete.id)
   }
 
@@ -820,7 +850,7 @@ export default function Dashboard({ session }) {
                     {/* Sessions (expanded week) */}
                     {openWeekId === week.id && (
                       <div style={{ marginLeft: '1.5rem', borderLeft: '2px solid rgba(200,146,58,0.15)', paddingLeft: '1rem', paddingTop: '0.5rem', paddingBottom: '0.5rem' }}>
-                        {(week.sessions || []).map(session => (
+                        {(week.sessions || []).map((session, sessionIdx, sessionsArr) => (
                           <div key={session.id} style={{ marginBottom: '0.5rem' }}>
                             {/* Session header */}
                             {editingSession === session.id ? (
@@ -848,6 +878,8 @@ export default function Dashboard({ session }) {
                                   </div>
                                 </div>
                                 <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                                  <button style={{ ...s.btnEdit, opacity: sessionIdx === 0 ? 0.25 : 1 }} onClick={e => { e.stopPropagation(); reorderSession(week.id, session.id, 'up') }} disabled={sessionIdx === 0}>↑</button>
+                                  <button style={{ ...s.btnEdit, opacity: sessionIdx === sessionsArr.length - 1 ? 0.25 : 1 }} onClick={e => { e.stopPropagation(); reorderSession(week.id, session.id, 'down') }} disabled={sessionIdx === sessionsArr.length - 1}>↓</button>
                                   <button style={s.btnEdit} onClick={e => { e.stopPropagation(); setEditingSession(session.id); setSessionForm({ title: session.title }) }}>Rediger</button>
                                   <button style={s.btnDanger} onClick={e => { e.stopPropagation(); deleteSession(session.id) }}>Slet</button>
                                   <span style={{ color: '#4a4844', fontSize: '0.6rem', marginLeft: '0.2rem' }}>{openSessionId === session.id ? '▲' : '▼'}</span>
@@ -913,7 +945,24 @@ export default function Dashboard({ session }) {
                                             })()
                                           )}
                                         </div>
-                                        <div style={{ display: 'flex', gap: '0.3rem', flexShrink: 0, marginLeft: '0.5rem' }}>
+                                        <div style={{ display: 'flex', gap: '0.3rem', flexShrink: 0, marginLeft: '0.5rem', alignItems: 'flex-start' }}>
+                                          {copyingExercise === ex.id ? (
+                                            <>
+                                              <select
+                                                style={{ ...s.fieldInput, fontSize: '0.65rem', padding: '0.2rem 0.4rem', width: 'auto', cursor: 'pointer' }}
+                                                defaultValue=""
+                                                onChange={e => { if (e.target.value) copyExerciseToSession(ex, e.target.value) }}
+                                              >
+                                                <option value="" disabled>Kopiér til...</option>
+                                                {(week.sessions || []).filter(s => s.id !== session.id).map(s => (
+                                                  <option key={s.id} value={s.id}>{s.title}</option>
+                                                ))}
+                                              </select>
+                                              <button style={{ ...s.btnGhost, fontSize: '0.55rem', padding: '0.2rem 0.4rem' }} onClick={() => setCopyingExercise(null)}>✕</button>
+                                            </>
+                                          ) : (
+                                            <button style={s.btnEdit} onClick={() => setCopyingExercise(ex.id)}>Kopiér</button>
+                                          )}
                                           <button style={s.btnEdit} onClick={() => { setEditingExercise(ex.id); const { intensityPrefix, intensity } = parseIntensity(ex.intensity); setExerciseForm({ name: ex.name, sets: ex.sets || '', reps: ex.reps || '', intensity, intensityPrefix, note: ex.note || '' }) }}>✎</button>
                                           <button style={s.btnDanger} onClick={() => deleteExercise(ex.id)}>✕</button>
                                         </div>
