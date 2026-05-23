@@ -128,7 +128,7 @@ const NAV_ITEMS = [
   },
 ]
 
-export default function AthleteView({ session, onExitPreview }) {
+export default function AthleteView({ session, onExitPreview, role }) {
   const [tab, setTab] = useState('hjem')
   const [athlete, setAthlete] = useState(null)
   const [logs, setLogs] = useState([])
@@ -411,14 +411,22 @@ export default function AthleteView({ session, onExitPreview }) {
   const days = ['søndag', 'mandag', 'tirsdag', 'onsdag', 'torsdag', 'fredag', 'lørdag']
   const months = ['januar', 'februar', 'marts', 'april', 'maj', 'juni', 'juli', 'august', 'september', 'oktober', 'november', 'december']
 
+  const backBtn = onExitPreview && (
+    <button
+      onClick={onExitPreview}
+      style={{ background: 'rgba(200,146,58,0.12)', color: '#c8923a', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', border: '1px solid rgba(200,146,58,0.35)', padding: '0.35rem 0.85rem', cursor: 'pointer' }}
+    >← Coach view</button>
+  )
+
   if (loading) return (
     <div style={{ minHeight: '100vh', background: '#141410', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '1.5rem', color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
       {loadError ? (
         <>
           <div style={{ color: '#7a7770' }}>Kunne ikke indlæse data.</div>
-          <button style={s.btnGhost} onClick={() => window.location.reload()}>Prøv igen</button>
+          {backBtn || <button style={s.btnGhost} onClick={() => window.location.reload()}>Prøv igen</button>}
         </>
       ) : 'Indlæser...'}
+      {!loadError && backBtn}
     </div>
   )
 
@@ -426,7 +434,7 @@ export default function AthleteView({ session, onExitPreview }) {
     <div style={{ minHeight: '100vh', background: '#141410', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '1rem' }}>
       <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Din konto er ikke tilknyttet en atlet endnu.</div>
       <div style={{ color: '#4a4844', fontSize: '0.82rem' }}>Kontakt din coach for at få adgang.</div>
-      <button style={s.btnGhost} onClick={() => supabase.auth.signOut()}>Log ud</button>
+      {backBtn || <button style={s.btnGhost} onClick={() => supabase.auth.signOut()}>Log ud</button>}
     </div>
   )
 
@@ -456,12 +464,7 @@ export default function AthleteView({ session, onExitPreview }) {
       <div style={s.topbar}>
         <div style={s.logo}>Entropi<span style={{ color: '#c8923a' }}>.</span></div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          {onExitPreview && (
-            <button
-              onClick={onExitPreview}
-              style={{ background: 'rgba(200,146,58,0.12)', color: '#c8923a', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', border: '1px solid rgba(200,146,58,0.35)', padding: '0.35rem 0.85rem', cursor: 'pointer' }}
-            >← Tilbage til coach</button>
-          )}
+          {backBtn}
           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844' }}>{today()}</div>
         </div>
       </div>

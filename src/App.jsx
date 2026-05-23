@@ -47,10 +47,10 @@ function App() {
 
   if (!session) return <Auth />
   if (role === 'coach') {
-    if (previewMode) return <AthleteView session={session} onExitPreview={() => setPreviewMode(false)} />
+    if (previewMode) return <AthleteView session={session} role={role} onExitPreview={() => setPreviewMode(false)} />
     return <Dashboard session={session} onPreviewAthlete={() => setPreviewMode(true)} />
   }
-  return <AthleteView session={session} />
+  return <AthleteView session={session} role={role} />
 }
 
 export default App
