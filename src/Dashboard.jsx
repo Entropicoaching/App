@@ -93,8 +93,13 @@ function LineChart({ series, height = 130 }) {
   )
 }
 
-function buildLiftSeries(logs, keyword) {
-  const matched = logs.filter(l => (l.exercises?.name || '').toLowerCase().includes(keyword) && l.weight > 0)
+function buildLiftSeries(logs, keyword, nameToCat, category) {
+  const useCategory = nameToCat && category && Object.keys(nameToCat).length > 0
+  const matched = logs.filter(l => {
+    const name = l.exercises?.name || ''
+    if (useCategory) return nameToCat[name] === category && l.weight > 0
+    return name.toLowerCase().includes(keyword) && l.weight > 0
+  })
   if (!matched.length) return { hasData: false, actualData: [], plannedData: [] }
   const byDate = {}
   for (const log of matched) {
@@ -153,13 +158,21 @@ export default function Dashboard({ session }) {
   const [recommendedInput, setRecommendedInput] = useState('')
   const [copyingExercise, setCopyingExercise] = useState(null)
 
+  const [exerciseLibrary, setExerciseLibrary] = useState([])
+  const [exerciseSearchOpen, setExerciseSearchOpen] = useState(false)
+  const [editingLibraryEx, setEditingLibraryEx] = useState(null)
+  const [libraryEditForm, setLibraryEditForm] = useState({ name: '', category: '' })
+  const [addingLibraryEx, setAddingLibraryEx] = useState(false)
+  const [libraryAddForm, setLibraryAddForm] = useState({ name: '', category: 'Accessory' })
+  const [librarySearch, setLibrarySearch] = useState('')
+
   useEffect(() => {
     const handler = () => setIsMobile(window.innerWidth < 768)
     window.addEventListener('resize', handler)
     return () => window.removeEventListener('resize', handler)
   }, [])
 
-  useEffect(() => { fetchAthletes() }, [])
+  useEffect(() => { fetchAthletes(); fetchExerciseLibrary() }, [])
   useEffect(() => {
     if ((activeTab === 'program' || activeTab === 'analyse') && selectedAthlete) {
       fetchWeeks(selectedAthlete.id)
@@ -281,6 +294,48 @@ export default function Dashboard({ session }) {
     })
     setCopyingExercise(null)
     fetchWeeks(selectedAthlete.id)
+  }
+
+  async function fetchExerciseLibrary() {
+    const { data } = await supabase.from('exercise_library').select('*').order('category').order('name')
+    setExerciseLibrary(data || [])
+  }
+
+  async function addLibraryExercise() {
+    if (!libraryAddForm.name.trim()) return
+    await supabase.from('exercise_library').insert({
+      coach_id: session.user.id,
+      name: libraryAddForm.name.trim(),
+      category: libraryAddForm.category || 'Accessory',
+    })
+    setAddingLibraryEx(false)
+    setLibraryAddForm({ name: '', category: 'Accessory' })
+    fetchExerciseLibrary()
+  }
+
+  async function updateLibraryExercise(id) {
+    if (!libraryEditForm.name.trim()) return
+    await supabase.from('exercise_library').update({
+      name: libraryEditForm.name.trim(),
+      category: libraryEditForm.category,
+    }).eq('id', id)
+    setEditingLibraryEx(null)
+    fetchExerciseLibrary()
+  }
+
+  async function deleteLibraryExercise(id) {
+    if (!window.confirm('Slet øvelse fra biblioteket?')) return
+    await supabase.from('exercise_library').delete().eq('id', id)
+    fetchExerciseLibrary()
+  }
+
+  async function addToLibraryQuick(name) {
+    await supabase.from('exercise_library').insert({
+      coach_id: session.user.id,
+      name,
+      category: 'Accessory',
+    })
+    fetchExerciseLibrary()
   }
 
   function buildIntensity() {
@@ -532,53 +587,105 @@ export default function Dashboard({ session }) {
     }
   }
 
-  const exFormRow = (
-    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 0.5fr 0.7fr minmax(200px, 2fr) 1.5fr', gap: '0.5rem', alignItems: 'end' }}>
-      {[['Navn', 'name', 'text'], ['Sæt', 'sets', 'number'], ['Reps', 'reps', 'text']].map(([label, key, type]) => (
-        <div key={key}>
-          <div style={s.fieldLabel}>{label}</div>
+  const exFormRow = (() => {
+    const searchLower = (exerciseForm.name || '').toLowerCase()
+    const grouped = {}
+    for (const ex of exerciseLibrary) {
+      const cat = ex.category || 'Andet'
+      if (!grouped[cat]) grouped[cat] = []
+      if (ex.name.toLowerCase().includes(searchLower)) grouped[cat].push(ex)
+    }
+    const filteredCategories = Object.entries(grouped).filter(([, exs]) => exs.length > 0)
+    const exactMatch = exerciseLibrary.some(e => e.name.toLowerCase() === searchLower && searchLower !== '')
+    const showDropdown = exerciseSearchOpen && (filteredCategories.length > 0 || (exerciseForm.name.trim() && !exactMatch))
+
+    return (
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 0.5fr 0.7fr minmax(200px, 2fr) 1.5fr', gap: '0.5rem', alignItems: 'end' }}>
+        <div style={{ position: 'relative' }}>
+          <div style={s.fieldLabel}>Navn</div>
           <input
             style={{ ...s.fieldInput, fontSize: '0.8rem', padding: '0.4rem 0.6rem' }}
-            type={type}
-            placeholder={label}
-            value={exerciseForm[key]}
-            onChange={e => setExerciseForm(p => ({ ...p, [key]: e.target.value }))}
+            type="text"
+            placeholder="Søg øvelse..."
+            value={exerciseForm.name}
+            autoComplete="off"
+            onChange={e => { setExerciseForm(p => ({ ...p, name: e.target.value })); setExerciseSearchOpen(true) }}
+            onFocus={() => setExerciseSearchOpen(true)}
+            onBlur={() => setTimeout(() => setExerciseSearchOpen(false), 180)}
           />
+          {showDropdown && (
+            <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: '#1c1c18', border: '1px solid rgba(237,234,226,0.13)', borderTop: 'none', zIndex: 100, maxHeight: '240px', overflowY: 'auto' }}>
+              {filteredCategories.map(([cat, exs]) => (
+                <div key={cat}>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a', padding: '0.3rem 0.6rem 0.15rem', background: 'rgba(14,14,10,0.7)', position: 'sticky', top: 0 }}>{cat}</div>
+                  {exs.map(ex => (
+                    <div
+                      key={ex.id}
+                      onMouseDown={e => { e.preventDefault(); setExerciseForm(p => ({ ...p, name: ex.name })); setExerciseSearchOpen(false) }}
+                      style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem', color: '#b8b4a8', cursor: 'pointer' }}
+                      onMouseEnter={e => e.currentTarget.style.background = 'rgba(237,234,226,0.06)'}
+                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                    >{ex.name}</div>
+                  ))}
+                </div>
+              ))}
+              {exerciseForm.name.trim() && !exactMatch && (
+                <div
+                  onMouseDown={e => { e.preventDefault(); addToLibraryQuick(exerciseForm.name.trim()); setExerciseSearchOpen(false) }}
+                  style={{ padding: '0.4rem 0.75rem', fontSize: '0.68rem', color: '#c8923a', cursor: 'pointer', borderTop: '1px solid rgba(237,234,226,0.07)', fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.06em' }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(200,146,58,0.08)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                >+ Tilføj "{exerciseForm.name.trim()}" til bibliotek</div>
+              )}
+            </div>
+          )}
         </div>
-      ))}
-      <div>
-        <div style={s.fieldLabel}>Intensitet</div>
-        <div style={{ display: 'flex', gap: '0.25rem' }}>
-          <select
-            style={{ ...s.fieldInput, fontSize: '0.72rem', padding: '0.4rem 0.3rem', width: 'auto', flexShrink: 0, cursor: 'pointer' }}
-            value={exerciseForm.intensityPrefix}
-            onChange={e => setExerciseForm(p => ({ ...p, intensityPrefix: e.target.value }))}
-          >
-            <option value="RPE">RPE</option>
-            <option value="%">%</option>
-            <option value="Fri tekst">Fri</option>
-          </select>
+        {[['Sæt', 'sets', 'number'], ['Reps', 'reps', 'text']].map(([label, key, type]) => (
+          <div key={key}>
+            <div style={s.fieldLabel}>{label}</div>
+            <input
+              style={{ ...s.fieldInput, fontSize: '0.8rem', padding: '0.4rem 0.6rem' }}
+              type={type}
+              placeholder={label}
+              value={exerciseForm[key]}
+              onChange={e => setExerciseForm(p => ({ ...p, [key]: e.target.value }))}
+            />
+          </div>
+        ))}
+        <div>
+          <div style={s.fieldLabel}>Intensitet</div>
+          <div style={{ display: 'flex', gap: '0.25rem' }}>
+            <select
+              style={{ ...s.fieldInput, fontSize: '0.72rem', padding: '0.4rem 0.3rem', width: 'auto', flexShrink: 0, cursor: 'pointer' }}
+              value={exerciseForm.intensityPrefix}
+              onChange={e => setExerciseForm(p => ({ ...p, intensityPrefix: e.target.value }))}
+            >
+              <option value="RPE">RPE</option>
+              <option value="%">%</option>
+              <option value="Fri tekst">Fri</option>
+            </select>
+            <input
+              style={{ ...s.fieldInput, fontSize: '0.8rem', padding: '0.4rem 0.6rem', flex: 1, minWidth: 0 }}
+              type={exerciseForm.intensityPrefix === 'Fri tekst' ? 'text' : 'number'}
+              placeholder={exerciseForm.intensityPrefix === 'RPE' ? 'f.eks. 8' : exerciseForm.intensityPrefix === '%' ? 'f.eks. 80' : 'tekst...'}
+              value={exerciseForm.intensity}
+              onChange={e => setExerciseForm(p => ({ ...p, intensity: e.target.value }))}
+            />
+          </div>
+        </div>
+        <div>
+          <div style={s.fieldLabel}>Note</div>
           <input
-            style={{ ...s.fieldInput, fontSize: '0.8rem', padding: '0.4rem 0.6rem', flex: 1, minWidth: 0 }}
-            type={exerciseForm.intensityPrefix === 'Fri tekst' ? 'text' : 'number'}
-            placeholder={exerciseForm.intensityPrefix === 'RPE' ? 'f.eks. 8' : exerciseForm.intensityPrefix === '%' ? 'f.eks. 80' : 'tekst...'}
-            value={exerciseForm.intensity}
-            onChange={e => setExerciseForm(p => ({ ...p, intensity: e.target.value }))}
+            style={{ ...s.fieldInput, fontSize: '0.8rem', padding: '0.4rem 0.6rem' }}
+            type="text"
+            placeholder="Note"
+            value={exerciseForm.note}
+            onChange={e => setExerciseForm(p => ({ ...p, note: e.target.value }))}
           />
         </div>
       </div>
-      <div>
-        <div style={s.fieldLabel}>Note</div>
-        <input
-          style={{ ...s.fieldInput, fontSize: '0.8rem', padding: '0.4rem 0.6rem' }}
-          type="text"
-          placeholder="Note"
-          value={exerciseForm.note}
-          onChange={e => setExerciseForm(p => ({ ...p, note: e.target.value }))}
-        />
-      </div>
-    </div>
-  )
+    )
+  })()
 
   return (
     <div style={s.wrap}>
@@ -607,7 +714,8 @@ export default function Dashboard({ session }) {
           <div style={s.sub}>Coach Portal</div>
         </div>
         <nav style={{ flex: 1, padding: '1rem 0' }}>
-          <div style={s.navItem(true)}>Atleter</div>
+          <div style={s.navItem(view === 'list' || view === 'profile')} onClick={() => { setView('list'); setSidebarOpen(false) }}>Atleter</div>
+          <div style={s.navItem(view === 'library')} onClick={() => { setView('library'); setSidebarOpen(false) }}>Bibliotek</div>
         </nav>
         <div style={s.sidebarFooter}>
           <div style={{ color: '#7a7770', marginBottom: '0.3rem' }}>Marc Schlichting</div>
@@ -630,9 +738,103 @@ export default function Dashboard({ session }) {
               </svg>
             </button>
           )}
-          <div style={{ ...s.topbarTitle, flex: 1 }}>{view === 'list' ? 'Atleter' : a?.name}</div>
+          <div style={{ ...s.topbarTitle, flex: 1 }}>{view === 'library' ? 'Øvelsesbibliotek' : view === 'list' ? 'Atleter' : a?.name}</div>
           {view === 'list' && <button style={s.btnPrimary} onClick={() => setShowAddModal(true)}>+ Tilføj atlet</button>}
         </div>
+
+        {/* LIBRARY VIEW */}
+        {view === 'library' && (() => {
+          const searchLower = librarySearch.toLowerCase()
+          const filteredLib = exerciseLibrary.filter(e =>
+            e.name.toLowerCase().includes(searchLower) || (e.category || '').toLowerCase().includes(searchLower)
+          )
+          const libCategories = [...new Set(filteredLib.map(e => e.category || 'Andet'))].sort()
+          const knownCats = [...new Set(['Squat', 'Bænkpres', 'Dødløft', 'Rygøvelser', 'Skuldre', 'Triceps', 'Biceps', 'Ben', 'Core', 'Greb og carry', 'Accessory', ...exerciseLibrary.map(e => e.category).filter(Boolean)])].sort()
+
+          return (
+            <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'flex-end', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1.75rem' }}>
+                <div>
+                  <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2' }}>
+                    Øvelses<em style={{ fontStyle: 'italic', color: '#7a7770' }}>bibliotek.</em>
+                  </h1>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844', marginTop: '0.25rem' }}>
+                    {exerciseLibrary.length} øvelser · {[...new Set(exerciseLibrary.map(e => e.category).filter(Boolean))].length} kategorier
+                  </div>
+                </div>
+                <button style={s.btnPrimary} onClick={() => { setAddingLibraryEx(true); setLibraryAddForm({ name: '', category: 'Accessory' }) }}>+ Tilføj øvelse</button>
+              </div>
+
+              <div style={{ marginBottom: '1.5rem' }}>
+                <input
+                  style={{ ...s.fieldInput, maxWidth: '360px' }}
+                  type="text"
+                  placeholder="Søg på navn eller kategori..."
+                  value={librarySearch}
+                  onChange={e => setLibrarySearch(e.target.value)}
+                />
+              </div>
+
+              {addingLibraryEx && (
+                <div style={{ background: '#1c1c18', border: '1px solid rgba(200,146,58,0.3)', padding: '1.25rem', marginBottom: '1.5rem' }}>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.75rem' }}>Ny øvelse</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                    <div>
+                      <div style={s.fieldLabel}>Navn</div>
+                      <input style={s.fieldInput} type="text" placeholder="Øvelsesnavn" value={libraryAddForm.name} onChange={e => setLibraryAddForm(p => ({ ...p, name: e.target.value }))} onKeyDown={e => e.key === 'Enter' && addLibraryExercise()} autoFocus />
+                    </div>
+                    <div>
+                      <div style={s.fieldLabel}>Kategori</div>
+                      <input style={s.fieldInput} type="text" list="lib-cats-add" placeholder="kategori..." value={libraryAddForm.category} onChange={e => setLibraryAddForm(p => ({ ...p, category: e.target.value }))} />
+                      <datalist id="lib-cats-add">{knownCats.map(c => <option key={c} value={c} />)}</datalist>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button style={s.btnGhost} onClick={() => setAddingLibraryEx(false)}>Annuller</button>
+                    <button style={s.btnPrimary} onClick={addLibraryExercise}>Tilføj</button>
+                  </div>
+                </div>
+              )}
+
+              {libCategories.length === 0 ? (
+                <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '3rem 0' }}>Ingen øvelser matcher søgningen</div>
+              ) : libCategories.map(cat => (
+                <div key={cat} style={{ ...s.card, marginBottom: '1rem' }}>
+                  <div style={s.cardLabel}>{cat} <span style={{ color: '#4a4844', fontWeight: 400 }}>{filteredLib.filter(e => (e.category || 'Andet') === cat).length}</span></div>
+                  {filteredLib.filter(e => (e.category || 'Andet') === cat).map((ex, i, arr) => (
+                    <div key={ex.id} style={{ borderBottom: i < arr.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none' }}>
+                      {editingLibraryEx === ex.id ? (
+                        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr auto', gap: '0.5rem', alignItems: 'end', padding: '0.5rem 0' }}>
+                          <div>
+                            <div style={s.fieldLabel}>Navn</div>
+                            <input style={{ ...s.fieldInput, fontSize: '0.85rem', padding: '0.35rem 0.6rem' }} value={libraryEditForm.name} onChange={e => setLibraryEditForm(p => ({ ...p, name: e.target.value }))} onKeyDown={e => { if (e.key === 'Enter') updateLibraryExercise(ex.id); if (e.key === 'Escape') setEditingLibraryEx(null) }} autoFocus />
+                          </div>
+                          <div>
+                            <div style={s.fieldLabel}>Kategori</div>
+                            <input style={{ ...s.fieldInput, fontSize: '0.85rem', padding: '0.35rem 0.6rem' }} type="text" list="lib-cats-edit" value={libraryEditForm.category} onChange={e => setLibraryEditForm(p => ({ ...p, category: e.target.value }))} />
+                            <datalist id="lib-cats-edit">{knownCats.map(c => <option key={c} value={c} />)}</datalist>
+                          </div>
+                          <div style={{ display: 'flex', gap: '0.4rem', paddingBottom: isMobile ? 0 : '0.05rem' }}>
+                            <button style={s.btnPrimary} onClick={() => updateLibraryExercise(ex.id)}>Gem</button>
+                            <button style={s.btnGhost} onClick={() => setEditingLibraryEx(null)}>✕</button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.5rem 0', gap: '0.5rem' }}>
+                          <div style={{ fontSize: '0.88rem', color: '#b8b4a8' }}>{ex.name}</div>
+                          <div style={{ display: 'flex', gap: '0.35rem', flexShrink: 0 }}>
+                            <button style={s.btnEdit} onClick={() => { setEditingLibraryEx(ex.id); setLibraryEditForm({ name: ex.name, category: ex.category || '' }) }}>✎</button>
+                            <button style={s.btnDanger} onClick={() => deleteLibraryExercise(ex.id)}>✕</button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          )
+        })()}
 
         {/* LIST VIEW */}
         {view === 'list' && (
@@ -714,9 +916,11 @@ export default function Dashboard({ session }) {
               const lastActivityDate = athleteLogs.length ? athleteLogs[0]?.logged_at.slice(0, 10) : null
               const totalSets4w = recentLogs.length
 
-              const squatS = buildLiftSeries(athleteLogs, 'squat')
-              const benchS = buildLiftSeries(athleteLogs, 'bænk')
-              const deadS = buildLiftSeries(athleteLogs, 'dødl')
+              const nameToCat = {}
+              for (const ex of exerciseLibrary) { if (ex.name && ex.category) nameToCat[ex.name] = ex.category }
+              const squatS = buildLiftSeries(athleteLogs, 'squat', nameToCat, 'Squat')
+              const benchS = buildLiftSeries(athleteLogs, 'bænk', nameToCat, 'Bænkpres')
+              const deadS = buildLiftSeries(athleteLogs, 'dødl', nameToCat, 'Dødløft')
               const lifts = [
                 { label: 'Squat', s: squatS },
                 { label: 'Bænkpres', s: benchS },
