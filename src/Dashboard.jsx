@@ -232,7 +232,8 @@ export default function Dashboard({ session }) {
 
   async function saveRecommendedWeight(exerciseId) {
     const val = recommendedInput.trim() ? parseFloat(recommendedInput) : null
-    await supabase.from('exercises').update({ recommended_weight: val }).eq('id', exerciseId)
+    const { error } = await supabase.from('exercises').update({ recommended_weight: val }).eq('id', exerciseId)
+    if (error) { alert(`Kunne ikke gemme: ${error.message}`); return }
     setEditingRecommended(null)
     fetchWeeks(selectedAthlete.id)
   }

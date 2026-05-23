@@ -133,6 +133,7 @@ export default function AthleteView({ session }) {
   const [athlete, setAthlete] = useState(null)
   const [logs, setLogs] = useState([])
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
   const [selectedFood, setSelectedFood] = useState(null)
@@ -153,6 +154,12 @@ export default function AthleteView({ session }) {
 
   useEffect(() => { fetchAthlete() }, [])
   useEffect(() => { if (tab === 'beskeder' && athlete) fetchAthleteMessages() }, [tab, athlete?.id])
+
+  useEffect(() => {
+    if (!loading) return
+    const timer = setTimeout(() => setLoadError(true), 10000)
+    return () => clearTimeout(timer)
+  }, [loading])
 
   async function fetchAthlete() {
     const { data, error } = await supabase
@@ -376,8 +383,13 @@ export default function AthleteView({ session }) {
   const months = ['januar', 'februar', 'marts', 'april', 'maj', 'juni', 'juli', 'august', 'september', 'oktober', 'november', 'december']
 
   if (loading) return (
-    <div style={{ minHeight: '100vh', background: '#141410', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-      Indlæser...
+    <div style={{ minHeight: '100vh', background: '#141410', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '1.5rem', color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+      {loadError ? (
+        <>
+          <div style={{ color: '#7a7770' }}>Kunne ikke indlæse data.</div>
+          <button style={s.btnGhost} onClick={() => window.location.reload()}>Prøv igen</button>
+        </>
+      ) : 'Indlæser...'}
     </div>
   )
 
