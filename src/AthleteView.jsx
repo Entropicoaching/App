@@ -574,11 +574,15 @@ export default function AthleteView({ session }) {
                                 {/* Exercise info */}
                                 <div style={{ marginBottom: '0.6rem' }}>
                                   <div style={{ fontSize: '1.05rem', color: '#edeae2', marginBottom: '0.1rem' }}>{ex.name}</div>
-                                  {lastLogByExerciseName[ex.name] && (
+                                  {ex.recommended_weight != null ? (
+                                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#c8923a', marginBottom: '0.2rem' }}>
+                                      Anbefalet: {ex.recommended_weight}kg
+                                    </div>
+                                  ) : lastLogByExerciseName[ex.name] ? (
                                     <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#4a4844', marginBottom: '0.2rem' }}>
                                       Sidst: {lastLogByExerciseName[ex.name].weight}kg × {lastLogByExerciseName[ex.name].reps_completed} reps
                                     </div>
-                                  )}
+                                  ) : null}
                                   <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.78rem', color: '#c8923a', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.1rem' }}>
                                     {[ex.sets && `${ex.sets} sæt`, ex.reps && `× ${ex.reps}`, ex.intensity && ex.intensity].filter(Boolean).join(' · ')}
                                   </div>

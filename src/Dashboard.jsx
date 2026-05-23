@@ -80,6 +80,8 @@ export default function Dashboard({ session }) {
   const [sessionForm, setSessionForm] = useState({ title: '' })
   const [exerciseForm, setExerciseForm] = useState({ name: '', sets: '', reps: '', intensity: '', intensityPrefix: 'RPE', note: '' })
   const [athleteLogs, setAthleteLogs] = useState([])
+  const [editingRecommended, setEditingRecommended] = useState(null)
+  const [recommendedInput, setRecommendedInput] = useState('')
 
   useEffect(() => {
     const handler = () => setIsMobile(window.innerWidth < 768)
@@ -225,6 +227,13 @@ export default function Dashboard({ session }) {
 
   async function deleteExercise(exerciseId) {
     await supabase.from('exercises').delete().eq('id', exerciseId)
+    fetchWeeks(selectedAthlete.id)
+  }
+
+  async function saveRecommendedWeight(exerciseId) {
+    const val = recommendedInput.trim() ? parseFloat(recommendedInput) : null
+    await supabase.from('exercises').update({ recommended_weight: val }).eq('id', exerciseId)
+    setEditingRecommended(null)
     fetchWeeks(selectedAthlete.id)
   }
 
@@ -377,8 +386,16 @@ export default function Dashboard({ session }) {
   const total = a ? (a.squat || 0) + (a.bench || 0) + (a.deadlift || 0) : 0
   const trainingTotal = a ? (a.training_squat || 0) + (a.training_bench || 0) + (a.training_deadlift || 0) : 0
 
+  const lastLogPerExercise = {}
+  for (const log of athleteLogs) {
+    const name = log.exercises?.name
+    if (name && !lastLogPerExercise[name] && (log.weight > 0 || log.reps_completed > 0)) {
+      lastLogPerExercise[name] = { weight: log.weight, reps_completed: log.reps_completed }
+    }
+  }
+
   const exFormRow = (
-    <div style={{ display: 'grid', gridTemplateColumns: '2fr 0.5fr 0.7fr 0.8fr 1.5fr', gap: '0.5rem', alignItems: 'end' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: '2fr 0.5fr 0.7fr minmax(200px, 2fr) 1.5fr', gap: '0.5rem', alignItems: 'end' }}>
       {[['Navn', 'name', 'text'], ['Sæt', 'sets', 'number'], ['Reps', 'reps', 'text']].map(([label, key, type]) => (
         <div key={key}>
           <div style={s.fieldLabel}>{label}</div>
@@ -851,15 +868,51 @@ export default function Dashboard({ session }) {
                                         </div>
                                       </div>
                                     ) : (
-                                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.45rem 0', borderBottom: '1px solid rgba(237,234,226,0.04)' }}>
-                                        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'baseline', flex: 1 }}>
-                                          <div style={{ fontSize: '0.85rem', color: '#b8b4a8', minWidth: '120px' }}>{ex.name}</div>
-                                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770' }}>
-                                            {ex.sets && `${ex.sets} sæt`}{ex.reps && ` × ${ex.reps}`}{ex.intensity && ` · ${ex.intensity}`}
+                                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', padding: '0.45rem 0', borderBottom: '1px solid rgba(237,234,226,0.04)' }}>
+                                        <div style={{ flex: 1 }}>
+                                          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'baseline' }}>
+                                            <div style={{ fontSize: '0.85rem', color: '#b8b4a8', minWidth: '120px' }}>{ex.name}</div>
+                                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770' }}>
+                                              {ex.sets && `${ex.sets} sæt`}{ex.reps && ` × ${ex.reps}`}{ex.intensity && ` · ${ex.intensity}`}
+                                            </div>
+                                            {ex.note && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', fontStyle: 'italic' }}>{ex.note}</div>}
                                           </div>
-                                          {ex.note && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', fontStyle: 'italic' }}>{ex.note}</div>}
+                                          {editingRecommended === ex.id ? (
+                                            <div style={{ display: 'flex', gap: '0.25rem', marginTop: '0.3rem', alignItems: 'center' }}>
+                                              <input
+                                                style={{ ...s.fieldInput, fontSize: '0.72rem', padding: '0.2rem 0.4rem', width: '80px' }}
+                                                type="number"
+                                                placeholder="kg"
+                                                value={recommendedInput}
+                                                onChange={e => setRecommendedInput(e.target.value)}
+                                                onKeyDown={e => { if (e.key === 'Enter') saveRecommendedWeight(ex.id); if (e.key === 'Escape') setEditingRecommended(null) }}
+                                                autoFocus
+                                              />
+                                              <button style={{ ...s.btnPrimary, fontSize: '0.55rem', padding: '0.2rem 0.5rem' }} onClick={() => saveRecommendedWeight(ex.id)}>Gem</button>
+                                              <button style={{ ...s.btnGhost, fontSize: '0.55rem', padding: '0.2rem 0.5rem' }} onClick={() => setEditingRecommended(null)}>Annuller</button>
+                                            </div>
+                                          ) : (
+                                            (() => {
+                                              const last = lastLogPerExercise[ex.name]
+                                              if (ex.recommended_weight != null) return (
+                                                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#c8923a', marginTop: '0.2rem', cursor: 'pointer' }} onClick={() => { setEditingRecommended(ex.id); setRecommendedInput(ex.recommended_weight.toString()) }}>
+                                                  Anbefalet: {ex.recommended_weight}kg ✎
+                                                </div>
+                                              )
+                                              if (last) return (
+                                                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#4a4844', marginTop: '0.2rem', cursor: 'pointer' }} onClick={() => { setEditingRecommended(ex.id); setRecommendedInput('') }}>
+                                                  Sidst logget: {last.weight}kg × {last.reps_completed} reps ✎
+                                                </div>
+                                              )
+                                              return (
+                                                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#3a3835', marginTop: '0.2rem', cursor: 'pointer' }} onClick={() => { setEditingRecommended(ex.id); setRecommendedInput('') }}>
+                                                  + sæt anbefalet vægt
+                                                </div>
+                                              )
+                                            })()
+                                          )}
                                         </div>
-                                        <div style={{ display: 'flex', gap: '0.3rem', flexShrink: 0 }}>
+                                        <div style={{ display: 'flex', gap: '0.3rem', flexShrink: 0, marginLeft: '0.5rem' }}>
                                           <button style={s.btnEdit} onClick={() => { setEditingExercise(ex.id); const { intensityPrefix, intensity } = parseIntensity(ex.intensity); setExerciseForm({ name: ex.name, sets: ex.sets || '', reps: ex.reps || '', intensity, intensityPrefix, note: ex.note || '' }) }}>✎</button>
                                           <button style={s.btnDanger} onClick={() => deleteExercise(ex.id)}>✕</button>
                                         </div>
