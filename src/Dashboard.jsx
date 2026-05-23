@@ -45,6 +45,74 @@ const s = {
   modalTitle: { fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', fontWeight: 400, color: '#edeae2', marginBottom: '1.5rem' },
 }
 
+function LineChart({ series, height = 130 }) {
+  const allPts = series.flatMap(s => s.data)
+  if (!allPts.length) return (
+    <div style={{ height, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.08em' }}>
+      Ingen data endnu
+    </div>
+  )
+  const ys = allPts.map(p => p.y)
+  const rawMin = Math.min(...ys), rawMax = Math.max(...ys)
+  const pad = (rawMax - rawMin) * 0.1 || 5
+  const minY = rawMin - pad, maxY = rawMax + pad
+  const rangeY = maxY - minY
+  const W = 500, H = height, pL = 44, pR = 10, pT = 14, pB = 26
+  const cW = W - pL - pR, cH = H - pT - pB
+  const tx = (i, n) => pL + (n > 1 ? i / (n - 1) : 0.5) * cW
+  const ty = v => pT + cH - ((v - minY) / rangeY) * cH
+  const yTicks = [Math.round(rawMin), Math.round((rawMin + rawMax) / 2), Math.round(rawMax)]
+  const xRef = series.find(s => s.data.length > 0)?.data || []
+  const xIdxs = xRef.length <= 4 ? xRef.map((_, i) => i)
+    : [0, Math.round((xRef.length - 1) / 3), Math.round((xRef.length - 1) * 2 / 3), xRef.length - 1]
+  return (
+    <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ display: 'block' }}>
+      {yTicks.map((v, i) => (
+        <g key={i}>
+          <line x1={pL} y1={ty(v)} x2={W - pR} y2={ty(v)} stroke="rgba(237,234,226,0.07)" strokeWidth="1" />
+          <text x={pL - 5} y={ty(v) + 3.5} textAnchor="end" fill="#4a4844" fontSize="9" fontFamily="IBM Plex Mono">{v}</text>
+        </g>
+      ))}
+      {series.map((s, si) => {
+        if (!s.data.length) return null
+        const n = s.data.length
+        const path = s.data.map((p, i) => `${i ? 'L' : 'M'}${tx(i, n).toFixed(1)},${ty(p.y).toFixed(1)}`).join('')
+        return (
+          <g key={si}>
+            <path d={path} fill="none" stroke={s.color} strokeWidth="1.75" strokeLinejoin="round" strokeLinecap="round" strokeDasharray={s.dashed ? '5,3' : undefined} />
+            {s.data.map((p, i) => <circle key={i} cx={tx(i, n)} cy={ty(p.y)} r="2.5" fill={s.color} />)}
+          </g>
+        )
+      })}
+      {xIdxs.filter((v, i, a) => a.indexOf(v) === i).map(i => (
+        <text key={i} x={tx(i, xRef.length)} y={H - 4} textAnchor="middle" fill="#4a4844" fontSize="9" fontFamily="IBM Plex Mono">
+          {xRef[i]?.label}
+        </text>
+      ))}
+    </svg>
+  )
+}
+
+function buildLiftSeries(logs, keyword) {
+  const matched = logs.filter(l => (l.exercises?.name || '').toLowerCase().includes(keyword) && l.weight > 0)
+  if (!matched.length) return { hasData: false, actualData: [], plannedData: [] }
+  const byDate = {}
+  for (const log of matched) {
+    const date = log.logged_at.slice(0, 10)
+    if (!byDate[date]) byDate[date] = { max: 0, planned: null }
+    if (log.weight > byDate[date].max) byDate[date].max = log.weight
+    const rw = log.exercises?.recommended_weight
+    if (rw != null && byDate[date].planned === null) byDate[date].planned = rw
+  }
+  const sorted = Object.entries(byDate).sort(([a], [b]) => a.localeCompare(b))
+  const lbl = date => { const d = new Date(date + 'T12:00:00'); return `${d.getDate()}/${d.getMonth() + 1}` }
+  return {
+    hasData: true,
+    actualData: sorted.map(([date, d]) => ({ y: d.max, label: lbl(date) })),
+    plannedData: sorted.filter(([, d]) => d.planned != null).map(([date, d]) => ({ y: d.planned, label: lbl(date) })),
+  }
+}
+
 export default function Dashboard({ session }) {
   const [athletes, setAthletes] = useState([])
   const [loading, setLoading] = useState(true)
@@ -93,7 +161,7 @@ export default function Dashboard({ session }) {
 
   useEffect(() => { fetchAthletes() }, [])
   useEffect(() => {
-    if (activeTab === 'program' && selectedAthlete) {
+    if ((activeTab === 'program' || activeTab === 'analyse') && selectedAthlete) {
       fetchWeeks(selectedAthlete.id)
       fetchAthleteLogs(selectedAthlete.id)
     }
@@ -104,7 +172,7 @@ export default function Dashboard({ session }) {
   }, [activeTab, selectedAthlete?.id])
 
   useEffect(() => {
-    if (activeTab === 'oversigt' && selectedAthlete) fetchAthleteWeightLogs(selectedAthlete.id)
+    if ((activeTab === 'oversigt' || activeTab === 'analyse') && selectedAthlete) fetchAthleteWeightLogs(selectedAthlete.id)
   }, [activeTab, selectedAthlete?.id])
 
   async function fetchAthletes() {
@@ -351,10 +419,10 @@ export default function Dashboard({ session }) {
   async function fetchAthleteLogs(athleteId) {
     const { data } = await supabase
       .from('exercise_logs')
-      .select('id, set_number, weight, reps_completed, note, logged_at, exercise_id, exercises(id, name, sets, reps, intensity, session_id, sessions(id, title, weeks(week_number, block_name)))')
+      .select('id, set_number, weight, reps_completed, note, logged_at, exercise_id, exercises(id, name, sets, reps, intensity, recommended_weight, session_id, sessions(id, title, weeks(week_number, block_name)))')
       .eq('athlete_id', athleteId)
       .order('logged_at', { ascending: false })
-      .limit(300)
+      .limit(500)
     setAthleteLogs(data || [])
   }
 
@@ -364,7 +432,7 @@ export default function Dashboard({ session }) {
       .select('*')
       .eq('athlete_id', athleteId)
       .order('logged_at', { ascending: false })
-      .limit(14)
+      .limit(90)
     setAthleteWeightLogs(data || [])
   }
 
@@ -624,10 +692,160 @@ export default function Dashboard({ session }) {
             </div>
 
             <div style={s.tabs}>
-              {[['oversigt', 'Oversigt'], ['kost', 'Kost & mål'], ['program', 'Program'], ['noter', 'Noter'], ['beskeder', 'Beskeder']].map(([key, label]) => (
+              {[['oversigt', 'Oversigt'], ['kost', 'Kost & mål'], ['program', 'Program'], ['noter', 'Noter'], ['analyse', 'Analyse'], ['beskeder', 'Beskeder']].map(([key, label]) => (
                 <button key={key} style={s.tab(activeTab === key)} onClick={() => { setActiveTab(key); setEditing(null) }}>{label}</button>
               ))}
             </div>
+
+            {/* TAB: ANALYSE */}
+            {activeTab === 'analyse' && (() => {
+              const now = new Date()
+              const d28 = new Date(now); d28.setDate(now.getDate() - 28)
+              const d28str = d28.toISOString().slice(0, 10)
+              const recentLogs = athleteLogs.filter(l => l.logged_at.slice(0, 10) >= d28str)
+              const completedSessionIds = new Set(recentLogs.map(l => l.exercises?.session_id).filter(Boolean))
+              const totalPlannedSessions = weeks.reduce((s, w) => s + (w.sessions?.length || 0), 0)
+              const lastActivityDate = athleteLogs.length ? athleteLogs[0]?.logged_at.slice(0, 10) : null
+              const totalSets4w = recentLogs.length
+
+              const squatS = buildLiftSeries(athleteLogs, 'squat')
+              const benchS = buildLiftSeries(athleteLogs, 'bænk')
+              const deadS = buildLiftSeries(athleteLogs, 'dødl')
+              const lifts = [
+                { label: 'Squat', s: squatS },
+                { label: 'Bænkpres', s: benchS },
+                { label: 'Dødløft', s: deadS },
+              ]
+
+              const weightChartData = [...athleteWeightLogs]
+                .sort((a, b) => a.logged_at.localeCompare(b.logged_at))
+                .map(l => { const d = new Date(l.logged_at + 'T12:00:00'); return { y: l.weight, label: `${d.getDate()}/${d.getMonth() + 1}` } })
+
+              const sessionMap = {}
+              for (const log of athleteLogs) {
+                const sid = log.exercises?.session_id
+                if (!sid) continue
+                if (!sessionMap[sid]) sessionMap[sid] = { id: sid, title: log.exercises?.sessions?.title || 'Ukendt', date: log.logged_at.slice(0, 10), setsLogged: 0, exSets: {} }
+                if (log.logged_at.slice(0, 10) > sessionMap[sid].date) sessionMap[sid].date = log.logged_at.slice(0, 10)
+                sessionMap[sid].setsLogged++
+                if (!sessionMap[sid].exSets[log.exercise_id]) sessionMap[sid].exSets[log.exercise_id] = log.exercises?.sets || 0
+              }
+              const recentSessions = Object.values(sessionMap)
+                .sort((a, b) => b.date.localeCompare(a.date))
+                .slice(0, 10)
+                .map(s => ({ ...s, plannedSets: Object.values(s.exSets).reduce((acc, v) => acc + v, 0) }))
+
+              const fmtDate = date => new Date(date + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })
+              const hasPlanVsActual = lifts.some(l => l.s.plannedData.length > 0)
+
+              return (
+                <div>
+                  {/* 1. Træningsoverblik */}
+                  <div style={s.card}>
+                    <div style={s.cardLabel}>Træningsoverblik</div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', background: 'rgba(237,234,226,0.07)', marginBottom: '1rem' }}>
+                      {[
+                        ['Sessioner (4 uger)', completedSessionIds.size],
+                        ['Sæt logget (4 uger)', totalSets4w],
+                        ['Sessioner i program', totalPlannedSessions || '—'],
+                        ['Seneste aktivitet', lastActivityDate ? fmtDate(lastActivityDate) : '—'],
+                      ].map(([label, value]) => (
+                        <div key={label} style={{ background: '#1c1c18', padding: '1rem' }}>
+                          <div style={s.fieldLabel}>{label}</div>
+                          <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', color: '#edeae2', lineHeight: 1 }}>{value}</div>
+                        </div>
+                      ))}
+                    </div>
+                    {totalPlannedSessions > 0 && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.08em', whiteSpace: 'nowrap' }}>
+                          Compliance
+                        </div>
+                        <div style={{ flex: 1, height: '3px', background: '#242420', borderRadius: '2px', maxWidth: '180px' }}>
+                          <div style={{ height: '3px', width: `${Math.min(100, Math.round(completedSessionIds.size / totalPlannedSessions * 100))}%`, background: '#c8923a', borderRadius: '2px' }} />
+                        </div>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#c8923a' }}>
+                          {completedSessionIds.size}/{totalPlannedSessions}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* 2. Primære løft */}
+                  <div style={s.card}>
+                    <div style={s.cardLabel}>Primære løft — sværeste sæt per session</div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
+                      {lifts.map(({ label, s: ls }) => (
+                        <div key={label}>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.5rem' }}>{label}</div>
+                          <LineChart series={[{ data: ls.actualData, color: '#c8923a' }]} />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 3. Planlagt vs faktisk */}
+                  {hasPlanVsActual && (
+                    <div style={s.card}>
+                      <div style={s.cardLabel}>
+                        Planlagt vs faktisk
+                        <div style={{ display: 'flex', gap: '1rem' }}>
+                          {[['#c8923a', false, 'Faktisk'], ['#7a7770', true, 'Planlagt']].map(([color, dashed, lbl]) => (
+                            <span key={lbl} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color, textTransform: 'none', letterSpacing: 0, fontWeight: 400 }}>
+                              <svg width="16" height="8" style={{ flexShrink: 0 }}>
+                                <line x1="0" y1="4" x2="16" y2="4" stroke={color} strokeWidth="1.75" strokeDasharray={dashed ? '4,3' : undefined} />
+                              </svg>
+                              {lbl}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
+                        {lifts.map(({ label, s: ls }) => (
+                          <div key={label}>
+                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.5rem' }}>{label}</div>
+                            <LineChart series={[
+                              { data: ls.actualData, color: '#c8923a' },
+                              { data: ls.plannedData, color: '#7a7770', dashed: true },
+                            ]} />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 4. Kropsvægt */}
+                  {weightChartData.length > 1 && (
+                    <div style={s.card}>
+                      <div style={s.cardLabel}>Kropsvægt</div>
+                      <LineChart series={[{ data: weightChartData, color: '#6cba6c' }]} height={120} />
+                    </div>
+                  )}
+
+                  {/* 5. Seneste sessioner */}
+                  <div style={s.card}>
+                    <div style={s.cardLabel}>Seneste sessioner</div>
+                    {recentSessions.length === 0 ? (
+                      <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen loggede sessioner endnu.</div>
+                    ) : recentSessions.map((sess, i) => (
+                      <div key={sess.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.6rem 0', borderBottom: i < recentSessions.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none' }}>
+                        <div>
+                          <div style={{ fontSize: '0.88rem', color: '#b8b4a8' }}>{sess.title}</div>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', marginTop: '0.15rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{fmtDate(sess.date)}</div>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem' }}>
+                            <span style={{ color: sess.plannedSets > 0 && sess.setsLogged >= sess.plannedSets ? '#6cba6c' : '#c8923a' }}>{sess.setsLogged}</span>
+                            {sess.plannedSets > 0 && <span style={{ color: '#4a4844' }}>/{sess.plannedSets}</span>}
+                          </div>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#4a4844' }}>sæt</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )
+            })()}
 
             {/* TAB: OVERSIGT */}
             {activeTab === 'oversigt' && (
