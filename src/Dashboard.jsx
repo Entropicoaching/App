@@ -118,7 +118,7 @@ function buildLiftSeries(logs, keyword, nameToCat, category) {
   }
 }
 
-export default function Dashboard({ session }) {
+export default function Dashboard({ session, onPreviewAthlete }) {
   const [athletes, setAthletes] = useState([])
   const [loading, setLoading] = useState(true)
   const [view, setView] = useState('list')
@@ -720,7 +720,10 @@ export default function Dashboard({ session }) {
         <div style={s.sidebarFooter}>
           <div style={{ color: '#7a7770', marginBottom: '0.3rem' }}>Marc Schlichting</div>
           <div style={{ fontSize: '0.7rem' }}>{session.user.email}</div>
-          <button onClick={() => supabase.auth.signOut()} style={{ ...s.btnGhost, marginTop: '0.75rem', width: '100%' }}>Log ud</button>
+          {onPreviewAthlete && (
+            <button onClick={onPreviewAthlete} style={{ ...s.btnPrimary, marginTop: '0.75rem', width: '100%' }}>Se som atlet</button>
+          )}
+          <button onClick={() => supabase.auth.signOut()} style={{ ...s.btnGhost, marginTop: '0.5rem', width: '100%' }}>Log ud</button>
         </div>
       </aside>
 

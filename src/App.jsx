@@ -44,8 +44,13 @@ function App() {
     </div>
   )
 
+  const [previewMode, setPreviewMode] = useState(false)
+
   if (!session) return <Auth />
-  if (role === 'coach') return <Dashboard session={session} />
+  if (role === 'coach') {
+    if (previewMode) return <AthleteView session={session} onExitPreview={() => setPreviewMode(false)} />
+    return <Dashboard session={session} onPreviewAthlete={() => setPreviewMode(true)} />
+  }
   return <AthleteView session={session} />
 }
 

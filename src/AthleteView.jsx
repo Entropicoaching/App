@@ -128,7 +128,7 @@ const NAV_ITEMS = [
   },
 ]
 
-export default function AthleteView({ session }) {
+export default function AthleteView({ session, onExitPreview }) {
   const [tab, setTab] = useState('hjem')
   const [athlete, setAthlete] = useState(null)
   const [logs, setLogs] = useState([])
@@ -455,7 +455,15 @@ export default function AthleteView({ session }) {
       {/* Topbar */}
       <div style={s.topbar}>
         <div style={s.logo}>Entropi<span style={{ color: '#c8923a' }}>.</span></div>
-        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844' }}>{today()}</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          {onExitPreview && (
+            <button
+              onClick={onExitPreview}
+              style={{ background: 'rgba(200,146,58,0.12)', color: '#c8923a', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', border: '1px solid rgba(200,146,58,0.35)', padding: '0.35rem 0.85rem', cursor: 'pointer' }}
+            >← Tilbage til coach</button>
+          )}
+          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844' }}>{today()}</div>
+        </div>
       </div>
 
       {/* Page content */}
