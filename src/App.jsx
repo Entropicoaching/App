@@ -9,6 +9,7 @@ function App() {
   const [role, setRole] = useState(null)
   const [loading, setLoading] = useState(true)
   const [previewMode, setPreviewMode] = useState(false)
+  const [coachAthleteId, setCoachAthleteId] = useState(null)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -47,8 +48,8 @@ function App() {
 
   if (!session) return <Auth />
   if (role === 'coach') {
-    if (previewMode) return <AthleteView session={session} role={role} onExitPreview={() => setPreviewMode(false)} />
-    return <Dashboard session={session} onPreviewAthlete={() => setPreviewMode(true)} />
+    if (previewMode) return <AthleteView session={session} role={role} coachAthleteId={coachAthleteId} onExitPreview={() => { setPreviewMode(false); setCoachAthleteId(null) }} />
+    return <Dashboard session={session} onPreviewAthlete={(athleteId) => { setCoachAthleteId(athleteId || null); setPreviewMode(true) }} />
   }
   return <AthleteView session={session} role={role} />
 }

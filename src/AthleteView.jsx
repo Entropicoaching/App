@@ -128,7 +128,7 @@ const NAV_ITEMS = [
   },
 ]
 
-export default function AthleteView({ session, onExitPreview, role }) {
+export default function AthleteView({ session, onExitPreview, role, coachAthleteId }) {
   const [tab, setTab] = useState('hjem')
   const [athlete, setAthlete] = useState(null)
   const [logs, setLogs] = useState([])
@@ -165,11 +165,11 @@ export default function AthleteView({ session, onExitPreview, role }) {
   }, [loading])
 
   async function fetchAthlete() {
-    const { data, error } = await supabase
-      .from('athletes')
-      .select('*')
-      .eq('email', session.user.email)
-      .single()
+    const query = supabase.from('athletes').select('*')
+    const { data, error } = await (coachAthleteId
+      ? query.eq('id', coachAthleteId)
+      : query.eq('email', session.user.email)
+    ).single()
     if (!error && data) {
       setAthlete(data)
       fetchLogs(data.id)
