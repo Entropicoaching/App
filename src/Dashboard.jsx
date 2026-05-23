@@ -533,7 +533,7 @@ export default function Dashboard({ session }) {
   }
 
   const exFormRow = (
-    <div style={{ display: 'grid', gridTemplateColumns: '2fr 0.5fr 0.7fr minmax(200px, 2fr) 1.5fr', gap: '0.5rem', alignItems: 'end' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 0.5fr 0.7fr minmax(200px, 2fr) 1.5fr', gap: '0.5rem', alignItems: 'end' }}>
       {[['Navn', 'name', 'text'], ['Sæt', 'sets', 'number'], ['Reps', 'reps', 'text']].map(([label, key, type]) => (
         <div key={key}>
           <div style={s.fieldLabel}>{label}</div>
@@ -582,6 +582,12 @@ export default function Dashboard({ session }) {
 
   return (
     <div style={s.wrap}>
+      {isMobile && (
+        <style>{`
+          button { min-height: 44px !important; }
+          input, select, textarea { font-size: 16px !important; }
+        `}</style>
+      )}
       {isMobile && sidebarOpen && (
         <div
           style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', zIndex: 199 }}
@@ -610,7 +616,7 @@ export default function Dashboard({ session }) {
         </div>
       </aside>
 
-      <main style={{ ...s.main, ...(isMobile ? { marginLeft: 0 } : {}) }}>
+      <main style={{ ...s.main, ...(isMobile ? { marginLeft: 0, overflowX: 'hidden' } : {}) }}>
         <div style={s.topbar}>
           {isMobile && (
             <button
@@ -630,7 +636,7 @@ export default function Dashboard({ session }) {
 
         {/* LIST VIEW */}
         {view === 'list' && (
-          <div style={s.page}>
+          <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
             <div style={{ marginBottom: '1.75rem' }}>
               <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2' }}>
                 Dine <em style={{ fontStyle: 'italic', color: '#7a7770' }}>atleter.</em>
@@ -674,12 +680,12 @@ export default function Dashboard({ session }) {
 
         {/* PROFILE VIEW */}
         {view === 'profile' && a && (
-          <div style={s.page}>
+          <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
             <button onClick={() => setView('list')} style={{ background: 'none', border: 'none', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', cursor: 'pointer', marginBottom: '1.75rem', padding: 0 }}>
               ← Tilbage til atleter
             </button>
 
-            <div style={{ ...s.card, display: 'grid', gridTemplateColumns: 'auto 1fr auto', gap: '1.5rem', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <div style={{ ...s.card, display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'auto 1fr auto', gap: isMobile ? '0.75rem' : '1.5rem', alignItems: 'center', marginBottom: '1.5rem' }}>
               <div style={{ ...s.avatar, width: '56px', height: '56px', fontSize: '1.3rem' }}>{initials(a.name)}</div>
               <div>
                 <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.5rem', fontWeight: 400, color: '#edeae2' }}>{a.name}</div>
@@ -691,9 +697,9 @@ export default function Dashboard({ session }) {
               </div>
             </div>
 
-            <div style={s.tabs}>
+            <div style={{ ...s.tabs, overflowX: 'auto', flexWrap: 'nowrap', WebkitOverflowScrolling: 'touch' }}>
               {[['oversigt', 'Oversigt'], ['kost', 'Kost & mål'], ['program', 'Program'], ['noter', 'Noter'], ['analyse', 'Analyse'], ['beskeder', 'Beskeder']].map(([key, label]) => (
-                <button key={key} style={s.tab(activeTab === key)} onClick={() => { setActiveTab(key); setEditing(null) }}>{label}</button>
+                <button key={key} style={{ ...s.tab(activeTab === key), whiteSpace: 'nowrap', flexShrink: 0 }} onClick={() => { setActiveTab(key); setEditing(null) }}>{label}</button>
               ))}
             </div>
 
@@ -743,7 +749,7 @@ export default function Dashboard({ session }) {
                   {/* 1. Træningsoverblik */}
                   <div style={s.card}>
                     <div style={s.cardLabel}>Træningsoverblik</div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', background: 'rgba(237,234,226,0.07)', marginBottom: '1rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: '1px', background: 'rgba(237,234,226,0.07)', marginBottom: '1rem' }}>
                       {[
                         ['Sessioner (4 uger)', completedSessionIds.size],
                         ['Sæt logget (4 uger)', totalSets4w],
@@ -774,7 +780,7 @@ export default function Dashboard({ session }) {
                   {/* 2. Primære løft */}
                   <div style={s.card}>
                     <div style={s.cardLabel}>Primære løft — sværeste sæt per session</div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '1.5rem' }}>
                       {lifts.map(({ label, s: ls }) => (
                         <div key={label}>
                           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.5rem' }}>{label}</div>
@@ -800,7 +806,7 @@ export default function Dashboard({ session }) {
                           ))}
                         </div>
                       </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '1.5rem' }}>
                         {lifts.map(({ label, s: ls }) => (
                           <div key={label}>
                             <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.5rem' }}>{label}</div>
@@ -849,7 +855,7 @@ export default function Dashboard({ session }) {
 
             {/* TAB: OVERSIGT */}
             {activeTab === 'oversigt' && (
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1.5rem' }}>
                 <div style={s.card}>
                   <div style={s.cardLabel}>
                     Resultater
@@ -960,7 +966,7 @@ export default function Dashboard({ session }) {
                   </div>
                   {editing === 'setup' ? (
                     <div>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.75rem', marginBottom: '1rem' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: '0.75rem', marginBottom: '1rem' }}>
                         <div>
                           <div style={s.fieldLabel}>Køn</div>
                           <select style={s.fieldSelect} value={editData.sex} onChange={e => setEditData(p => ({ ...p, sex: e.target.value }))}>
@@ -987,7 +993,7 @@ export default function Dashboard({ session }) {
                           </select>
                         </div>
                       </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem', marginBottom: '1rem' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '0.75rem', marginBottom: '1rem' }}>
                         <div>
                           <div style={s.fieldLabel}>Mål</div>
                           <select style={s.fieldSelect} value={editData.goal} onChange={e => setEditData(p => ({ ...p, goal: e.target.value }))}>
@@ -1021,7 +1027,7 @@ export default function Dashboard({ session }) {
                       </div>
                     </div>
                   ) : (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: '1rem' }}>
                       {[
                         ['Køn', a.sex === 'm' ? 'Mand' : a.sex === 'f' ? 'Kvinde' : 'Ikke angivet'],
                         ['Kropsvægt', a.bodyweight ? a.bodyweight + ' kg' : 'Ikke angivet'],
@@ -1041,7 +1047,7 @@ export default function Dashboard({ session }) {
             {/* TAB: PROGRAM */}
             {activeTab === 'program' && (
               <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1.5rem' }}>
                   <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#7a7770' }}>
                     {weeks.length} uge{weeks.length !== 1 ? 'r' : ''}
                   </div>
@@ -1061,7 +1067,7 @@ export default function Dashboard({ session }) {
                 {addingWeek && (
                   <div style={{ background: '#1c1c18', border: '1px solid rgba(200,146,58,0.3)', padding: '1.25rem', marginBottom: '1rem' }}>
                     <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.75rem' }}>Ny uge</div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '0.5fr 1fr 2fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '0.5fr 1fr 2fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
                       {[['Uge nr.', 'week_number', 'number'], ['Blok navn', 'block_name', 'text'], ['Coach-note', 'coach_note', 'text']].map(([label, key, type]) => (
                         <div key={key}>
                           <div style={s.fieldLabel}>{label}</div>
@@ -1087,7 +1093,7 @@ export default function Dashboard({ session }) {
                     {/* Week header */}
                     {editingWeek === week.id ? (
                       <div style={{ background: '#1c1c18', border: '1px solid rgba(200,146,58,0.3)', padding: '1.25rem', marginBottom: '0.5rem' }}>
-                        <div style={{ display: 'grid', gridTemplateColumns: '0.5fr 1fr 2fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '0.5fr 1fr 2fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
                           {[['Uge nr.', 'week_number', 'number'], ['Blok navn', 'block_name', 'text'], ['Coach-note', 'coach_note', 'text']].map(([label, key, type]) => (
                             <div key={key}>
                               <div style={s.fieldLabel}>{label}</div>
@@ -1102,7 +1108,7 @@ export default function Dashboard({ session }) {
                       </div>
                     ) : (
                       <div
-                        style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)', borderLeft: openWeekId === week.id ? '3px solid #c8923a' : '3px solid transparent', padding: '1rem 1.25rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                        style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)', borderLeft: openWeekId === week.id ? '3px solid #c8923a' : '3px solid transparent', padding: '1rem 1.25rem', cursor: 'pointer', display: 'flex', alignItems: isMobile ? 'flex-start' : 'center', justifyContent: 'space-between', gap: '0.5rem' }}
                         onClick={() => setOpenWeekId(openWeekId === week.id ? null : week.id)}
                       >
                         <div>
@@ -1110,7 +1116,7 @@ export default function Dashboard({ session }) {
                           {week.block_name && <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#edeae2', marginLeft: '0.75rem' }}>{week.block_name}</span>}
                           {week.coach_note && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#7a7770', marginTop: '0.2rem' }}>{week.coach_note}</div>}
                         </div>
-                        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                           <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', textTransform: 'uppercase' }}>{week.sessions?.length || 0} træninger</span>
                           <button style={s.btnEdit} onClick={e => { e.stopPropagation(); setEditingWeek(week.id); setWeekForm({ week_number: week.week_number, block_name: week.block_name || '', coach_note: week.coach_note || '' }) }}>Rediger</button>
                           <button style={s.btnDanger} onClick={e => { e.stopPropagation(); deleteWeek(week.id) }}>Slet</button>
@@ -1121,7 +1127,7 @@ export default function Dashboard({ session }) {
 
                     {/* Sessions (expanded week) */}
                     {openWeekId === week.id && (
-                      <div style={{ marginLeft: '1.5rem', borderLeft: '2px solid rgba(200,146,58,0.15)', paddingLeft: '1rem', paddingTop: '0.5rem', paddingBottom: '0.5rem' }}>
+                      <div style={{ marginLeft: isMobile ? '0.5rem' : '1.5rem', borderLeft: '2px solid rgba(200,146,58,0.15)', paddingLeft: isMobile ? '0.5rem' : '1rem', paddingTop: '0.5rem', paddingBottom: '0.5rem' }}>
                         {(week.sessions || []).map((session, sessionIdx, sessionsArr) => (
                           <div key={session.id} style={{ marginBottom: '0.5rem' }}>
                             {/* Session header */}
@@ -1140,16 +1146,16 @@ export default function Dashboard({ session }) {
                               </div>
                             ) : (
                               <div
-                                style={{ background: '#181816', border: '1px solid rgba(237,234,226,0.06)', padding: '0.75rem 1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                                style={{ background: '#181816', border: '1px solid rgba(237,234,226,0.06)', padding: '0.75rem 1rem', cursor: 'pointer', display: 'flex', alignItems: isMobile ? 'flex-start' : 'center', justifyContent: 'space-between', gap: '0.5rem' }}
                                 onClick={() => setOpenSessionId(openSessionId === session.id ? null : session.id)}
                               >
-                                <div>
+                                <div style={{ flex: 1, minWidth: 0 }}>
                                   <div style={{ fontSize: '0.88rem', color: '#edeae2' }}>{session.title}</div>
                                   <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: '0.15rem' }}>
                                     {session.exercises?.length || 0} øvelser
                                   </div>
                                 </div>
-                                <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                                <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexShrink: 0, flexWrap: 'wrap' }}>
                                   <button style={{ ...s.btnEdit, opacity: sessionIdx === 0 ? 0.25 : 1 }} onClick={e => { e.stopPropagation(); reorderSession(week.id, session.id, 'up') }} disabled={sessionIdx === 0}>↑</button>
                                   <button style={{ ...s.btnEdit, opacity: sessionIdx === sessionsArr.length - 1 ? 0.25 : 1 }} onClick={e => { e.stopPropagation(); reorderSession(week.id, session.id, 'down') }} disabled={sessionIdx === sessionsArr.length - 1}>↓</button>
                                   <button style={s.btnEdit} onClick={e => { e.stopPropagation(); setEditingSession(session.id); setSessionForm({ title: session.title }) }}>Rediger</button>
@@ -1173,7 +1179,7 @@ export default function Dashboard({ session }) {
                                         </div>
                                       </div>
                                     ) : (
-                                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', padding: '0.45rem 0', borderBottom: '1px solid rgba(237,234,226,0.04)' }}>
+                                      <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'stretch' : 'flex-start', justifyContent: 'space-between', padding: '0.45rem 0', borderBottom: '1px solid rgba(237,234,226,0.04)', gap: isMobile ? '0.4rem' : 0 }}>
                                         <div style={{ flex: 1 }}>
                                           <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'baseline' }}>
                                             <div style={{ fontSize: '0.85rem', color: '#b8b4a8', minWidth: '120px' }}>{ex.name}</div>
@@ -1217,7 +1223,7 @@ export default function Dashboard({ session }) {
                                             })()
                                           )}
                                         </div>
-                                        <div style={{ display: 'flex', gap: '0.3rem', flexShrink: 0, marginLeft: '0.5rem', alignItems: 'flex-start' }}>
+                                        <div style={{ display: 'flex', gap: '0.3rem', flexShrink: 0, marginLeft: isMobile ? 0 : '0.5rem', alignItems: 'flex-start', flexWrap: 'wrap' }}>
                                           {copyingExercise === ex.id ? (
                                             <>
                                               <select
