@@ -896,19 +896,19 @@ export default function Dashboard({ session }) {
                                             (() => {
                                               const last = lastLogPerExercise[ex.name]
                                               if (ex.recommended_weight != null) return (
-                                                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#c8923a', marginTop: '0.2rem', cursor: 'pointer' }} onClick={() => { setEditingRecommended(ex.id); setRecommendedInput(ex.recommended_weight.toString()) }}>
-                                                  Anbefalet: {ex.recommended_weight}kg ✎
+                                                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#c8923a', marginTop: '0.25rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }} onClick={() => { setEditingRecommended(ex.id); setRecommendedInput(ex.recommended_weight.toString()) }}>
+                                                  Anbefalet: {ex.recommended_weight}kg <span style={{ opacity: 0.6 }}>✎</span>
                                                 </div>
                                               )
                                               if (last) return (
-                                                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#4a4844', marginTop: '0.2rem', cursor: 'pointer' }} onClick={() => { setEditingRecommended(ex.id); setRecommendedInput('') }}>
-                                                  Sidst logget: {last.weight}kg × {last.reps_completed} reps ✎
+                                                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#7a7770', marginTop: '0.25rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }} onClick={() => { setEditingRecommended(ex.id); setRecommendedInput('') }}>
+                                                  Sidst logget: {last.weight}kg × {last.reps_completed} reps <span style={{ opacity: 0.6 }}>✎</span>
                                                 </div>
                                               )
                                               return (
-                                                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#3a3835', marginTop: '0.2rem', cursor: 'pointer' }} onClick={() => { setEditingRecommended(ex.id); setRecommendedInput('') }}>
-                                                  + sæt anbefalet vægt
-                                                </div>
+                                                <button style={{ ...s.btnSm, marginTop: '0.25rem', fontSize: '0.5rem' }} onClick={() => { setEditingRecommended(ex.id); setRecommendedInput('') }}>
+                                                  + Anbefalet vægt
+                                                </button>
                                               )
                                             })()
                                           )}
