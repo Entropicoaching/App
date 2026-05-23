@@ -149,6 +149,7 @@ export default function AthleteView({ session }) {
   const [progOpenSession, setProgOpenSession] = useState(null)
   const [exerciseLogs, setExerciseLogs] = useState([])
   const [logInputs, setLogInputs] = useState({})
+  const [lastLogByExerciseName, setLastLogByExerciseName] = useState({})
 
   useEffect(() => { fetchAthlete() }, [])
   useEffect(() => { if (tab === 'beskeder' && athlete) fetchAthleteMessages() }, [tab, athlete?.id])
@@ -184,6 +185,7 @@ export default function AthleteView({ session }) {
       }
       setCurrentWeek(week)
       fetchExerciseLogs(athleteId, week)
+      fetchLastLogs(athleteId, week)
     }
   }
 
@@ -206,6 +208,26 @@ export default function AthleteView({ session }) {
       }
     }
     setLogInputs(prev => ({ ...prev, ...inputs }))
+  }
+
+  async function fetchLastLogs(athleteId, week) {
+    const exerciseNames = [...new Set((week?.sessions || []).flatMap(s => (s.exercises || []).map(e => e.name)))]
+    if (exerciseNames.length === 0) return
+    const { data } = await supabase
+      .from('exercise_logs')
+      .select('weight, reps_completed, logged_at, exercises(name)')
+      .eq('athlete_id', athleteId)
+      .order('logged_at', { ascending: false })
+      .limit(500)
+    if (!data) return
+    const map = {}
+    for (const log of data) {
+      const name = log.exercises?.name
+      if (name && !map[name] && (log.weight > 0 || log.reps_completed > 0)) {
+        map[name] = { weight: log.weight, reps_completed: log.reps_completed }
+      }
+    }
+    setLastLogByExerciseName(map)
   }
 
   async function logSet(exerciseId, setNumber, totalSets, repsCompleted) {
@@ -551,7 +573,12 @@ export default function AthleteView({ session }) {
                               <div key={ex.id} style={{ marginBottom: isLast ? 0 : '1.25rem', paddingBottom: isLast ? 0 : '1.25rem', borderBottom: isLast ? 'none' : '1px solid rgba(237,234,226,0.06)' }}>
                                 {/* Exercise info */}
                                 <div style={{ marginBottom: '0.6rem' }}>
-                                  <div style={{ fontSize: '1.05rem', color: '#edeae2', marginBottom: '0.25rem' }}>{ex.name}</div>
+                                  <div style={{ fontSize: '1.05rem', color: '#edeae2', marginBottom: '0.1rem' }}>{ex.name}</div>
+                                  {lastLogByExerciseName[ex.name] && (
+                                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#4a4844', marginBottom: '0.2rem' }}>
+                                      Sidst: {lastLogByExerciseName[ex.name].weight}kg × {lastLogByExerciseName[ex.name].reps_completed} reps
+                                    </div>
+                                  )}
                                   <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.78rem', color: '#c8923a', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.1rem' }}>
                                     {[ex.sets && `${ex.sets} sæt`, ex.reps && `× ${ex.reps}`, ex.intensity && ex.intensity].filter(Boolean).join(' · ')}
                                   </div>

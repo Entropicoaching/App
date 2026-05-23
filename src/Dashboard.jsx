@@ -78,7 +78,7 @@ export default function Dashboard({ session }) {
   const [editingExercise, setEditingExercise] = useState(null)
   const [weekForm, setWeekForm] = useState({ week_number: '', block_name: '', coach_note: '' })
   const [sessionForm, setSessionForm] = useState({ title: '' })
-  const [exerciseForm, setExerciseForm] = useState({ name: '', sets: '', reps: '', intensity: '', note: '' })
+  const [exerciseForm, setExerciseForm] = useState({ name: '', sets: '', reps: '', intensity: '', intensityPrefix: 'RPE', note: '' })
   const [athleteLogs, setAthleteLogs] = useState([])
 
   useEffect(() => {
@@ -178,6 +178,21 @@ export default function Dashboard({ session }) {
     fetchWeeks(selectedAthlete.id)
   }
 
+  function buildIntensity() {
+    const v = exerciseForm.intensity.trim()
+    if (!v) return null
+    if (exerciseForm.intensityPrefix === 'RPE') return `RPE ${v}`
+    if (exerciseForm.intensityPrefix === '%') return `${v}%`
+    return v
+  }
+
+  function parseIntensity(stored) {
+    if (!stored) return { intensityPrefix: 'RPE', intensity: '' }
+    if (stored.startsWith('RPE ')) return { intensityPrefix: 'RPE', intensity: stored.slice(4) }
+    if (stored.endsWith('%')) return { intensityPrefix: '%', intensity: stored.slice(0, -1) }
+    return { intensityPrefix: 'Fri tekst', intensity: stored }
+  }
+
   async function addExercise(sessionId) {
     const week = weeks.find(w => w.sessions?.some(s => s.id === sessionId))
     const session = week?.sessions?.find(s => s.id === sessionId)
@@ -187,12 +202,12 @@ export default function Dashboard({ session }) {
       name: exerciseForm.name || 'Øvelse',
       sets: parseInt(exerciseForm.sets) || null,
       reps: exerciseForm.reps || null,
-      intensity: exerciseForm.intensity || null,
+      intensity: buildIntensity(),
       note: exerciseForm.note || null,
       exercise_order: nextOrder,
     })
     setAddingExercise(null)
-    setExerciseForm({ name: '', sets: '', reps: '', intensity: '', note: '' })
+    setExerciseForm({ name: '', sets: '', reps: '', intensity: '', intensityPrefix: 'RPE', note: '' })
     fetchWeeks(selectedAthlete.id)
   }
 
@@ -201,7 +216,7 @@ export default function Dashboard({ session }) {
       name: exerciseForm.name,
       sets: parseInt(exerciseForm.sets) || null,
       reps: exerciseForm.reps || null,
-      intensity: exerciseForm.intensity || null,
+      intensity: buildIntensity(),
       note: exerciseForm.note || null,
     }).eq('id', exerciseId)
     setEditingExercise(null)
@@ -364,7 +379,7 @@ export default function Dashboard({ session }) {
 
   const exFormRow = (
     <div style={{ display: 'grid', gridTemplateColumns: '2fr 0.5fr 0.7fr 0.8fr 1.5fr', gap: '0.5rem', alignItems: 'end' }}>
-      {[['Navn', 'name', 'text'], ['Sæt', 'sets', 'number'], ['Reps', 'reps', 'text'], ['Intensitet', 'intensity', 'text'], ['Note', 'note', 'text']].map(([label, key, type]) => (
+      {[['Navn', 'name', 'text'], ['Sæt', 'sets', 'number'], ['Reps', 'reps', 'text']].map(([label, key, type]) => (
         <div key={key}>
           <div style={s.fieldLabel}>{label}</div>
           <input
@@ -376,6 +391,37 @@ export default function Dashboard({ session }) {
           />
         </div>
       ))}
+      <div>
+        <div style={s.fieldLabel}>Intensitet</div>
+        <div style={{ display: 'flex', gap: '0.25rem' }}>
+          <select
+            style={{ ...s.fieldInput, fontSize: '0.72rem', padding: '0.4rem 0.3rem', width: 'auto', flexShrink: 0, cursor: 'pointer' }}
+            value={exerciseForm.intensityPrefix}
+            onChange={e => setExerciseForm(p => ({ ...p, intensityPrefix: e.target.value }))}
+          >
+            <option value="RPE">RPE</option>
+            <option value="%">%</option>
+            <option value="Fri tekst">Fri</option>
+          </select>
+          <input
+            style={{ ...s.fieldInput, fontSize: '0.8rem', padding: '0.4rem 0.6rem', flex: 1, minWidth: 0 }}
+            type={exerciseForm.intensityPrefix === 'Fri tekst' ? 'text' : 'number'}
+            placeholder={exerciseForm.intensityPrefix === 'RPE' ? 'f.eks. 8' : exerciseForm.intensityPrefix === '%' ? 'f.eks. 80' : 'tekst...'}
+            value={exerciseForm.intensity}
+            onChange={e => setExerciseForm(p => ({ ...p, intensity: e.target.value }))}
+          />
+        </div>
+      </div>
+      <div>
+        <div style={s.fieldLabel}>Note</div>
+        <input
+          style={{ ...s.fieldInput, fontSize: '0.8rem', padding: '0.4rem 0.6rem' }}
+          type="text"
+          placeholder="Note"
+          value={exerciseForm.note}
+          onChange={e => setExerciseForm(p => ({ ...p, note: e.target.value }))}
+        />
+      </div>
     </div>
   )
 
@@ -814,7 +860,7 @@ export default function Dashboard({ session }) {
                                           {ex.note && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', fontStyle: 'italic' }}>{ex.note}</div>}
                                         </div>
                                         <div style={{ display: 'flex', gap: '0.3rem', flexShrink: 0 }}>
-                                          <button style={s.btnEdit} onClick={() => { setEditingExercise(ex.id); setExerciseForm({ name: ex.name, sets: ex.sets || '', reps: ex.reps || '', intensity: ex.intensity || '', note: ex.note || '' }) }}>✎</button>
+                                          <button style={s.btnEdit} onClick={() => { setEditingExercise(ex.id); const { intensityPrefix, intensity } = parseIntensity(ex.intensity); setExerciseForm({ name: ex.name, sets: ex.sets || '', reps: ex.reps || '', intensity, intensityPrefix, note: ex.note || '' }) }}>✎</button>
                                           <button style={s.btnDanger} onClick={() => deleteExercise(ex.id)}>✕</button>
                                         </div>
                                       </div>
@@ -832,7 +878,7 @@ export default function Dashboard({ session }) {
                                     </div>
                                   </div>
                                 ) : (
-                                  <button style={{ ...s.btnSm, marginTop: '0.5rem' }} onClick={() => { setAddingExercise(session.id); setExerciseForm({ name: '', sets: '', reps: '', intensity: '', note: '' }) }}>
+                                  <button style={{ ...s.btnSm, marginTop: '0.5rem' }} onClick={() => { setAddingExercise(session.id); setExerciseForm({ name: '', sets: '', reps: '', intensity: '', intensityPrefix: 'RPE', note: '' }) }}>
                                     + Tilføj øvelse
                                   </button>
                                 )}
