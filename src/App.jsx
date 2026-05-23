@@ -8,6 +8,7 @@ function App() {
   const [session, setSession] = useState(null)
   const [role, setRole] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [previewMode, setPreviewMode] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -43,8 +44,6 @@ function App() {
       Indlæser...
     </div>
   )
-
-  const [previewMode, setPreviewMode] = useState(false)
 
   if (!session) return <Auth />
   if (role === 'coach') {
