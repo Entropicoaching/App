@@ -80,6 +80,7 @@ export default function Dashboard({ session }) {
   const [sessionForm, setSessionForm] = useState({ title: '' })
   const [exerciseForm, setExerciseForm] = useState({ name: '', sets: '', reps: '', intensity: '', intensityPrefix: 'RPE', note: '' })
   const [athleteLogs, setAthleteLogs] = useState([])
+  const [athleteWeightLogs, setAthleteWeightLogs] = useState([])
   const [editingRecommended, setEditingRecommended] = useState(null)
   const [recommendedInput, setRecommendedInput] = useState('')
   const [copyingExercise, setCopyingExercise] = useState(null)
@@ -100,6 +101,10 @@ export default function Dashboard({ session }) {
 
   useEffect(() => {
     if (activeTab === 'beskeder' && selectedAthlete) fetchMessages(selectedAthlete.id)
+  }, [activeTab, selectedAthlete?.id])
+
+  useEffect(() => {
+    if (activeTab === 'oversigt' && selectedAthlete) fetchAthleteWeightLogs(selectedAthlete.id)
   }, [activeTab, selectedAthlete?.id])
 
   async function fetchAthletes() {
@@ -353,6 +358,16 @@ export default function Dashboard({ session }) {
     setAthleteLogs(data || [])
   }
 
+  async function fetchAthleteWeightLogs(athleteId) {
+    const { data } = await supabase
+      .from('weight_logs')
+      .select('*')
+      .eq('athlete_id', athleteId)
+      .order('logged_at', { ascending: false })
+      .limit(14)
+    setAthleteWeightLogs(data || [])
+  }
+
   async function addAthlete() {
     if (!newAthlete.name.trim()) return
     setSaving(true)
@@ -398,6 +413,7 @@ export default function Dashboard({ session }) {
     setMessages([])
     setMessageInput('')
     setWeeks([])
+    setAthleteWeightLogs([])
     setOpenWeekId(null)
     setOpenSessionId(null)
     setAddingWeek(false)
@@ -416,6 +432,29 @@ export default function Dashboard({ session }) {
   const a = selectedAthlete
   const total = a ? (a.squat || 0) + (a.bench || 0) + (a.deadlift || 0) : 0
   const trainingTotal = a ? (a.training_squat || 0) + (a.training_bench || 0) + (a.training_deadlift || 0) : 0
+
+  const currentWeight = (() => {
+    if (!athleteWeightLogs.length) return null
+    const recent = athleteWeightLogs.slice(0, 5).map(l => l.weight)
+    if (recent.length >= 5) {
+      const sorted = [...recent].sort((a, b) => a - b)
+      return sorted[Math.floor(sorted.length / 2)]
+    }
+    return Math.round((recent.reduce((s, v) => s + v, 0) / recent.length) * 10) / 10
+  })()
+
+  const weightTrend = (() => {
+    if (athleteWeightLogs.length < 2) return null
+    const now = new Date()
+    const d7 = new Date(now); d7.setDate(now.getDate() - 7)
+    const d14 = new Date(now); d14.setDate(now.getDate() - 14)
+    const thisWeek = athleteWeightLogs.filter(l => new Date(l.logged_at) >= d7).map(l => l.weight)
+    const prevWeek = athleteWeightLogs.filter(l => { const d = new Date(l.logged_at); return d >= d14 && d < d7 }).map(l => l.weight)
+    if (!thisWeek.length || !prevWeek.length) return null
+    const thisAvg = thisWeek.reduce((s, v) => s + v, 0) / thisWeek.length
+    const prevAvg = prevWeek.reduce((s, v) => s + v, 0) / prevWeek.length
+    return Math.round((thisAvg - prevAvg) * 10) / 10
+  })()
 
   const lastLogPerExercise = {}
   for (const log of athleteLogs) {
@@ -657,6 +696,21 @@ export default function Dashboard({ session }) {
                         <div><div style={s.fieldLabel}>Comp total</div><div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', color: '#edeae2' }}>{total} <span style={{ fontSize: '0.9rem', color: '#7a7770' }}>kg</span></div></div>
                         <div><div style={s.fieldLabel}>Trænings total</div><div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', color: '#7a7770' }}>{trainingTotal} <span style={{ fontSize: '0.9rem', color: '#4a4844' }}>kg</span></div></div>
                       </div>
+                      {currentWeight !== null && (
+                        <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(237,234,226,0.07)' }}>
+                          <div style={s.fieldLabel}>Aktuel kropsvægt</div>
+                          <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', flexWrap: 'wrap' }}>
+                            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', color: '#edeae2' }}>
+                              {currentWeight} <span style={{ fontSize: '0.9rem', color: '#7a7770', fontFamily: "'IBM Plex Sans', sans-serif", fontWeight: 300 }}>kg</span>
+                            </div>
+                            {weightTrend !== null && (
+                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: weightTrend > 0 ? '#c8923a' : weightTrend < 0 ? '#6cba6c' : '#7a7770' }}>
+                                {weightTrend > 0 ? '↑ +' : weightTrend < 0 ? '↓ ' : '→ '}{weightTrend}kg siden forrige uge
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

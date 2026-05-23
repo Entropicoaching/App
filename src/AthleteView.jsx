@@ -151,6 +151,9 @@ export default function AthleteView({ session }) {
   const [exerciseLogs, setExerciseLogs] = useState([])
   const [logInputs, setLogInputs] = useState({})
   const [lastLogByExerciseName, setLastLogByExerciseName] = useState({})
+  const [weightLogs, setWeightLogs] = useState([])
+  const [weightInput, setWeightInput] = useState('')
+  const [savingWeight, setSavingWeight] = useState(false)
 
   useEffect(() => { fetchAthlete() }, [])
   useEffect(() => { if (tab === 'beskeder' && athlete) fetchAthleteMessages() }, [tab, athlete?.id])
@@ -172,6 +175,7 @@ export default function AthleteView({ session }) {
       fetchLogs(data.id)
       fetchProgram(data.id)
       fetchAthleteMessages(data.id)
+      fetchWeightLogs(data.id)
     }
     setLoading(false)
   }
@@ -265,6 +269,31 @@ export default function AthleteView({ session }) {
       }))
     }
     fetchExerciseLogs(athlete.id, currentWeek)
+  }
+
+  async function fetchWeightLogs(athleteId) {
+    const { data } = await supabase
+      .from('weight_logs')
+      .select('*')
+      .eq('athlete_id', athleteId)
+      .order('logged_at', { ascending: false })
+      .limit(14)
+    setWeightLogs(data || [])
+  }
+
+  async function logWeight() {
+    if (!weightInput || !athlete) return
+    setSavingWeight(true)
+    const todayStr = today()
+    const existing = weightLogs.find(l => l.logged_at === todayStr)
+    if (existing) {
+      await supabase.from('weight_logs').update({ weight: parseFloat(weightInput) }).eq('id', existing.id)
+    } else {
+      await supabase.from('weight_logs').insert({ athlete_id: athlete.id, weight: parseFloat(weightInput), logged_at: todayStr })
+    }
+    setSavingWeight(false)
+    setWeightInput('')
+    fetchWeightLogs(athlete.id)
   }
 
   async function fetchAthleteMessages(id) {
@@ -513,6 +542,64 @@ export default function AthleteView({ session }) {
                 )
               })()}
             </div>
+
+            {(() => {
+              const todayStr = today()
+              const todayLog = weightLogs.find(l => l.logged_at === todayStr)
+              const showInput = !todayLog || weightInput !== ''
+              const last7 = Array.from({ length: 7 }, (_, i) => {
+                const d = new Date(); d.setDate(d.getDate() - (6 - i))
+                const dayLabels = ['Sø', 'Ma', 'Ti', 'On', 'To', 'Fr', 'Lø']
+                return { date: d.toISOString().slice(0, 10), label: dayLabels[d.getDay()] }
+              })
+              return (
+                <div style={s.card}>
+                  <div style={s.cardLabel}>Kropsvægt</div>
+                  {showInput ? (
+                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '0.75rem' }}>
+                      <input
+                        style={{ ...s.fieldInput, maxWidth: '90px', fontSize: '1rem', padding: '0.5rem 0.6rem' }}
+                        type="number"
+                        step="0.1"
+                        placeholder="kg"
+                        value={weightInput}
+                        onChange={e => setWeightInput(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && logWeight()}
+                      />
+                      <button style={s.btnPrimary} onClick={logWeight} disabled={savingWeight || !weightInput}>
+                        {savingWeight ? '...' : 'Log'}
+                      </button>
+                      {todayLog && (
+                        <button style={s.btnGhost} onClick={() => setWeightInput('')}>Annuller</button>
+                      )}
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                      <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', color: '#edeae2' }}>{todayLog.weight}</span>
+                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#7a7770' }}>kg · logget i dag</span>
+                      <button style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.2rem 0.5rem', marginLeft: '0.25rem' }} onClick={() => setWeightInput(todayLog.weight.toString())}>Ret</button>
+                    </div>
+                  )}
+                  <div style={{ display: 'flex', gap: '0.25rem' }}>
+                    {last7.map((day, i) => {
+                      const log = weightLogs.find(l => l.logged_at === day.date)
+                      const isToday = day.date === todayStr
+                      return (
+                        <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.2rem' }}>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#c8923a', minHeight: '0.65rem' }}>
+                            {log ? log.weight : ''}
+                          </div>
+                          <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: log ? '#c8923a' : '#242420', border: isToday && !log ? '1px solid #4a4844' : 'none', flexShrink: 0 }} />
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: isToday ? '#7a7770' : '#4a4844', textTransform: 'uppercase' }}>
+                            {day.label}
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )
+            })()}
 
             {progressBars}
           </>
