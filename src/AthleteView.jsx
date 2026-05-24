@@ -880,7 +880,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
                                   return (
                                     <div key={setNum} style={{ marginBottom: '0.75rem' }}>
-                                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.3rem', flexWrap: 'wrap' }}>
+                                      {/* Row 1: weight + log + skip */}
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
                                         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '52px' }}>
                                           Sæt {setNum}
                                         </div>
@@ -894,14 +895,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                         <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.88rem', color: '#c8923a', whiteSpace: 'nowrap' }}>
                                           × {ex.reps || '—'}
                                         </span>
-                                        <input
-                                          style={{ ...s.fieldInput, maxWidth: '62px', padding: '0.65rem 0.4rem', fontSize: '1rem', textAlign: 'center' }}
-                                          type="number"
-                                          placeholder="RPE"
-                                          min="1" max="10" step="0.5"
-                                          value={rpeVal}
-                                          onChange={e => setLogInputs(p => ({ ...p, [key]: { ...p[key], rpe: e.target.value } }))}
-                                        />
                                         <button
                                           style={{ ...s.btnPrimary, padding: '0.65rem 1rem', fontSize: '0.65rem', background: logged ? '#6cba6c' : '#c8923a' }}
                                           onClick={() => logSet(ex.id, setNum, ex.sets, ex.reps, plannedRpe)}
@@ -913,9 +906,19 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                           onClick={() => skipSet(ex.id, setNum, plannedRpe)}
                                         >Spring over</button>
                                       </div>
-                                      <div style={{ paddingLeft: 'calc(52px + 0.5rem)' }}>
+                                      {/* Row 2: RPE + note */}
+                                      <div style={{ paddingLeft: 'calc(52px + 0.5rem)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.08em', whiteSpace: 'nowrap' }}>RPE</span>
                                         <input
-                                          style={{ ...s.fieldInput, fontSize: '0.75rem', padding: '0.3rem 0.6rem', color: '#7a7770', fontStyle: 'italic' }}
+                                          style={{ ...s.fieldInput, maxWidth: '62px', padding: '0.3rem 0.4rem', fontSize: '0.95rem', textAlign: 'center' }}
+                                          type="number"
+                                          placeholder={plannedRpe != null ? plannedRpe.toString() : '—'}
+                                          min="1" max="10" step="0.5"
+                                          value={rpeVal}
+                                          onChange={e => setLogInputs(p => ({ ...p, [key]: { ...p[key], rpe: e.target.value } }))}
+                                        />
+                                        <input
+                                          style={{ ...s.fieldInput, flex: 1, fontSize: '0.75rem', padding: '0.3rem 0.6rem', color: '#7a7770', fontStyle: 'italic' }}
                                           type="text"
                                           placeholder="Tilføj note..."
                                           value={input.note}
