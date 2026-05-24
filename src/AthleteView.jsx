@@ -191,6 +191,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       : query.eq('email', session.user.email)
     ).maybeSingle()
     if (data) {
+      if (!coachAthleteId && !data.user_id) {
+        await supabase.rpc('claim_athlete_profile')
+      }
       setAthlete(data)
       fetchLogs(data.id)
       fetchProgram(data.id)
