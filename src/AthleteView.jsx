@@ -165,6 +165,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [readinessLog, setReadinessLog] = useState(null)
   const [readinessInput, setReadinessInput] = useState({ sleep: '', energy: null, motivation: null, stress: null, soreZones: [] })
   const [savingReadiness, setSavingReadiness] = useState(false)
+  const [readinessError, setReadinessError] = useState(null)
 
   useEffect(() => { fetchAthlete() }, [])
   useEffect(() => { if (tab === 'beskeder' && athlete) fetchAthleteMessages() }, [tab, athlete?.id])
@@ -220,8 +221,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   async function saveReadiness() {
     if (!athlete || !readinessInput.energy || !readinessInput.motivation || !readinessInput.stress) return
     setSavingReadiness(true)
+    setReadinessError(null)
     const score = calcReadinessScore(readinessInput)
-    await supabase.from('readiness_logs').insert({
+    const payload = {
       athlete_id: athlete.id,
       logged_date: today(),
       sleep_hours: parseFloat(readinessInput.sleep) || null,
@@ -230,9 +232,14 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       stress: readinessInput.stress,
       sore_zones: readinessInput.soreZones.length > 0 ? readinessInput.soreZones : null,
       readiness_score: score,
-    })
+    }
+    const { error } = await supabase.from('readiness_logs').insert(payload)
     setSavingReadiness(false)
-    fetchReadiness(athlete.id)
+    if (error) {
+      setReadinessError(error.message)
+    } else {
+      setReadinessLog({ ...payload })
+    }
   }
 
   async function fetchProgram(athleteId) {
@@ -613,6 +620,11 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                   </div>
                 </div>
 
+                {readinessError && (
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#e05555', marginBottom: '0.75rem', letterSpacing: '0.06em' }}>
+                    Fejl: {readinessError}
+                  </div>
+                )}
                 <button
                   style={{ ...s.btnPrimary, width: '100%', opacity: (!readinessInput.energy || !readinessInput.motivation || !readinessInput.stress) ? 0.45 : 1 }}
                   onClick={saveReadiness}
