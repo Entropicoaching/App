@@ -164,6 +164,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [weightInput, setWeightInput] = useState('')
   const [savingWeight, setSavingWeight] = useState(false)
 
+  // PR toast state
+  const [prToast, setPrToast] = useState(null)
+  const [prToastFading, setPrToastFading] = useState(false)
+
   // Readiness state
   const [readinessLog, setReadinessLog] = useState(null)
   const [readinessInput, setReadinessInput] = useState({ sleep: '', energy: null, motivation: null, stress: null, soreness: null, soreZones: [] })
@@ -353,6 +357,36 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       }))
     }
     fetchExerciseLogs(athlete.id, currentWeek)
+
+    // PR detection
+    if (payload.weight > 0) {
+      const exerciseName = allWeeks
+        .flatMap(w => w.sessions || [])
+        .flatMap(s => s.exercises || [])
+        .find(e => e.id === exerciseId)?.name
+      if (exerciseName) {
+        const { data: prData } = await supabase
+          .from('personal_records')
+          .select('weight')
+          .eq('athlete_id', athlete.id)
+          .eq('exercise_name', exerciseName)
+          .order('weight', { ascending: false })
+          .limit(1)
+        const currentPR = prData?.[0]?.weight ?? 0
+        if (payload.weight > currentPR) {
+          await supabase.from('personal_records').insert({
+            athlete_id: athlete.id,
+            exercise_name: exerciseName,
+            weight: payload.weight,
+            reps: parseInt(repsCompleted) || null,
+          })
+          setPrToast(exerciseName)
+          setPrToastFading(false)
+          setTimeout(() => setPrToastFading(true), 2400)
+          setTimeout(() => setPrToast(null), 3000)
+        }
+      }
+    }
   }
 
   async function skipSet(exerciseId, setNumber, plannedRpe) {
@@ -567,6 +601,20 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   return (
     <div style={s.wrap}>
+      {/* PR toast */}
+      {prToast && (
+        <div style={{
+          position: 'fixed', top: '1.25rem', left: '50%', transform: 'translateX(-50%)',
+          background: '#1c1c18', border: '1px solid rgba(200,146,58,0.55)',
+          padding: '0.65rem 1.4rem', zIndex: 9999, whiteSpace: 'nowrap',
+          fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem',
+          color: '#c8923a', letterSpacing: '0.08em',
+          boxShadow: '0 4px 24px rgba(0,0,0,0.55)',
+          opacity: prToastFading ? 0 : 1, transition: 'opacity 0.6s ease',
+        }}>
+          🏆 Ny PR på {prToast}!
+        </div>
+      )}
       {/* Topbar */}
       <div style={s.topbar}>
         <div style={s.logo}>Entropi<span style={{ color: '#c8923a' }}>.</span></div>

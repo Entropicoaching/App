@@ -167,6 +167,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [athleteLogs, setAthleteLogs] = useState([])
   const [athleteWeightLogs, setAthleteWeightLogs] = useState([])
   const [athleteReadiness, setAthleteReadiness] = useState([])
+  const [athletePRs, setAthletePRs] = useState([])
   const [editingRecommended, setEditingRecommended] = useState(null)
   const [recommendedInput, setRecommendedInput] = useState('')
   const [copyingExercise, setCopyingExercise] = useState(null)
@@ -202,6 +203,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     if ((activeTab === 'oversigt' || activeTab === 'analyse') && selectedAthlete) {
       fetchAthleteWeightLogs(selectedAthlete.id)
       fetchAthleteReadiness(selectedAthlete.id)
+      fetchAthletePRs(selectedAthlete.id)
     }
   }, [activeTab, selectedAthlete?.id])
 
@@ -516,6 +518,24 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       .order('logged_date', { ascending: false })
       .limit(90)
     setAthleteReadiness(data || [])
+  }
+
+  async function fetchAthletePRs(athleteId) {
+    const { data } = await supabase
+      .from('personal_records')
+      .select('*')
+      .eq('athlete_id', athleteId)
+      .order('logged_at', { ascending: false })
+    if (!data) { setAthletePRs([]); return }
+    const seen = new Set()
+    const prs = []
+    for (const pr of data) {
+      if (!seen.has(pr.exercise_name)) {
+        seen.add(pr.exercise_name)
+        prs.push(pr)
+      }
+    }
+    setAthletePRs(prs)
   }
 
   async function addAthlete() {
@@ -1417,6 +1437,26 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     <button style={{ ...s.btnGhost, alignSelf: 'flex-start', marginTop: '0.5rem' }} onClick={() => { setActiveTab('kost'); setEditing('setup') }}>Rediger mål</button>
                   </div>
                 </div>
+              </div>
+
+              {/* PRs */}
+              <div style={{ ...s.card, marginTop: '1.5rem' }}>
+                <div style={s.cardLabel}>Rekorder</div>
+                {athletePRs.length === 0 ? (
+                  <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen PR'er registreret endnu.</div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                    {athletePRs.map(pr => (
+                      <div key={pr.id} style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.5rem' }}>
+                        <span style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.88rem', color: '#edeae2', fontWeight: 300 }}>{pr.exercise_name}</span>
+                        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'baseline', flexShrink: 0 }}>
+                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.95rem', color: '#c8923a' }}>{pr.weight} kg</span>
+                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', letterSpacing: '0.06em' }}>{pr.logged_at.slice(0, 10)}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
               </div>
             )}
