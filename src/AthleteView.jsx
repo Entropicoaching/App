@@ -168,6 +168,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [prToast, setPrToast] = useState(null)
   const [prToastFading, setPrToastFading] = useState(false)
 
+  // Session feedback state
+  const [dismissedFeedback, setDismissedFeedback] = useState(new Set())
+  const [feedbackInputs, setFeedbackInputs] = useState({})
+
   // Readiness state
   const [readinessLog, setReadinessLog] = useState(null)
   const [readinessInput, setReadinessInput] = useState({ sleep: '', energy: null, motivation: null, stress: null, soreness: null, soreZones: [] })
@@ -413,6 +417,19 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       toSkip.map(setNum => ({ exercise_id: ex.id, athlete_id: athlete.id, set_number: setNum, skipped: true, weight: 0, reps_completed: 0, rpe_planned: plannedRpe ?? null }))
     )
     fetchExerciseLogs(athlete.id, currentWeek)
+  }
+
+  async function saveFeedback(sessionId) {
+    const input = feedbackInputs[sessionId] || {}
+    if (!input.rating) return
+    await supabase.from('sessions').update({
+      athlete_rating: input.rating,
+      athlete_comment: input.comment || null,
+    }).eq('id', sessionId)
+    setAllWeeks(prev => prev.map(w => ({
+      ...w,
+      sessions: (w.sessions || []).map(s => s.id === sessionId ? { ...s, athlete_rating: input.rating, athlete_comment: input.comment || null } : s),
+    })))
   }
 
   async function fetchWeightLogs(athleteId) {
@@ -1126,6 +1143,40 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                             })}
                             {(session.exercises || []).length === 0 && (
                               <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen øvelser i denne træning endnu.</div>
+                            )}
+                            {isDone && isCurrentWeek && !session.athlete_rating && !dismissedFeedback.has(session.id) && (
+                              <div style={{ marginTop: '1rem', padding: '1rem', background: 'rgba(200,146,58,0.05)', border: '1px solid rgba(200,146,58,0.15)' }}>
+                                <div style={{ ...s.cardLabel, marginBottom: '0.75rem' }}>Træningsfeedback</div>
+                                <div style={{ marginBottom: '0.75rem' }}>
+                                  <div style={s.fieldLabel}>Hvordan gik træningen?</div>
+                                  <div style={{ display: 'flex', gap: '0.4rem', marginTop: '0.35rem' }}>
+                                    {[1, 2, 3, 4, 5].map(n => {
+                                      const fi = feedbackInputs[session.id] || {}
+                                      return (
+                                        <button key={n}
+                                          onClick={() => setFeedbackInputs(p => ({ ...p, [session.id]: { ...(p[session.id] || {}), rating: n } }))}
+                                          style={{ width: '40px', height: '40px', border: fi.rating === n ? '2px solid #c8923a' : '1px solid rgba(237,234,226,0.13)', background: fi.rating === n ? 'rgba(200,146,58,0.15)' : 'transparent', color: fi.rating === n ? '#c8923a' : '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.95rem', cursor: 'pointer' }}
+                                        >{n}</button>
+                                      )
+                                    })}
+                                  </div>
+                                </div>
+                                <textarea
+                                  style={{ ...s.fieldInput, minHeight: '60px', resize: 'vertical', fontSize: '0.82rem', lineHeight: 1.6, boxSizing: 'border-box' }}
+                                  placeholder="Tilføj en kommentar..."
+                                  maxLength={200}
+                                  value={(feedbackInputs[session.id] || {}).comment || ''}
+                                  onChange={e => setFeedbackInputs(p => ({ ...p, [session.id]: { ...(p[session.id] || {}), comment: e.target.value } }))}
+                                />
+                                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem' }}>
+                                  <button style={s.btnGhost} onClick={() => setDismissedFeedback(p => new Set([...p, session.id]))}>Spring over</button>
+                                  <button
+                                    style={{ ...s.btnPrimary, opacity: !(feedbackInputs[session.id]?.rating) ? 0.4 : 1 }}
+                                    onClick={() => saveFeedback(session.id)}
+                                    disabled={!feedbackInputs[session.id]?.rating}
+                                  >Gem feedback</button>
+                                </div>
+                              </div>
                             )}
                           </div>
                         )}

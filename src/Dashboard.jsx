@@ -508,7 +508,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   async function fetchAthleteLogs(athleteId) {
     const { data } = await supabase
       .from('exercise_logs')
-      .select('id, set_number, weight, reps_completed, note, logged_at, rpe_actual, skipped, exercise_id, exercises(id, name, sets, reps, intensity, recommended_weight, session_id, sessions(id, title, weeks(week_number, block_name)))')
+      .select('id, set_number, weight, reps_completed, note, logged_at, rpe_actual, skipped, exercise_id, exercises(id, name, sets, reps, intensity, recommended_weight, session_id, sessions(id, title, athlete_rating, athlete_comment, weeks(week_number, block_name)))')
       .eq('athlete_id', athleteId)
       .order('logged_at', { ascending: false })
       .limit(500)
@@ -1887,7 +1887,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 const date = log.logged_at?.slice(0, 10) || ''
                 const sessId = sess?.id || 'unknown'
                 const key = `${date}|${sessId}`
-                if (!grouped[key]) grouped[key] = { date, sessionTitle: sess?.title || '—', weekNum: sess?.weeks?.week_number, exerciseMap: {} }
+                if (!grouped[key]) grouped[key] = { date, sessionTitle: sess?.title || '—', weekNum: sess?.weeks?.week_number, sessionRating: sess?.athlete_rating ?? null, sessionComment: sess?.athlete_comment ?? null, exerciseMap: {} }
                 const exId = log.exercise_id
                 if (!grouped[key].exerciseMap[exId]) {
                   grouped[key].exerciseMap[exId] = {
@@ -1941,6 +1941,17 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                             )}
                           </div>
                         </div>
+
+                        {sess.sessionRating && (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#c8923a', letterSpacing: '0.04em' }}>
+                              {'★'.repeat(sess.sessionRating)}{'☆'.repeat(5 - sess.sessionRating)}
+                            </div>
+                            {sess.sessionComment && (
+                              <div style={{ fontSize: '0.75rem', color: '#7a7770', fontStyle: 'italic' }}>{sess.sessionComment}</div>
+                            )}
+                          </div>
+                        )}
 
                         {/* Exercises */}
                         {exercises.map((ex, j) => {
