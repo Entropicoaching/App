@@ -163,7 +163,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   // Readiness state
   const [readinessLog, setReadinessLog] = useState(null)
-  const [readinessInput, setReadinessInput] = useState({ sleep: '', energy: null, motivation: null, stress: null, soreZones: [] })
+  const [readinessInput, setReadinessInput] = useState({ sleep: '', energy: null, motivation: null, stress: null, soreness: null, soreZones: [] })
   const [savingReadiness, setSavingReadiness] = useState(false)
   const [readinessError, setReadinessError] = useState(null)
 
@@ -204,7 +204,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     setReadinessLog(data || null)
   }
 
-  function calcReadinessScore({ sleep, energy, motivation, stress }) {
+  function calcReadinessScore({ sleep, energy, motivation, stress, soreness }) {
     let score = 100
     const h = parseFloat(sleep) || 0
     if (h > 0) {
@@ -215,11 +215,12 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     if (energy) score += (energy - 3) * 10
     if (motivation) score += (motivation - 3) * 8
     if (stress) score += (stress - 3) * -8
+    if (soreness) score += (soreness - 3) * -8
     return Math.max(0, Math.min(100, Math.round(score)))
   }
 
   async function saveReadiness() {
-    if (!athlete || !readinessInput.energy || !readinessInput.motivation || !readinessInput.stress) return
+    if (!athlete || !readinessInput.energy || !readinessInput.motivation || !readinessInput.stress || !readinessInput.soreness) return
     setSavingReadiness(true)
     setReadinessError(null)
     const score = calcReadinessScore(readinessInput)
@@ -230,6 +231,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       energy: readinessInput.energy,
       motivation: readinessInput.motivation,
       stress: readinessInput.stress,
+      soreness_level: readinessInput.soreness,
       sore_zones: readinessInput.soreZones.length > 0 ? readinessInput.soreZones : null,
       readiness_score: score,
     }
@@ -644,9 +646,15 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                   </div>
                 </div>
 
-                {[['energy', 'Energiniveau'], ['motivation', 'Motivation'], ['stress', 'Stress']].map(([key, label]) => (
+                {[
+                  ['energy', 'Energiniveau', '1 = ingen energi  ·  5 = fuld energi'],
+                  ['motivation', 'Motivation', '1 = ingen lyst  ·  5 = klar til at løfte'],
+                  ['stress', 'Stress', '1 = helt rolig  ·  5 = meget stresset'],
+                  ['soreness', 'Muskelømhed', '1 = ingen ømhed  ·  5 = meget øm'],
+                ].map(([key, label, hint]) => (
                   <div key={key} style={{ marginBottom: '1rem' }}>
-                    <div style={s.fieldLabel}>{label}{key === 'stress' ? ' (5 = meget stresset)' : ''}</div>
+                    <div style={s.fieldLabel}>{label}</div>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', letterSpacing: '0.06em', marginBottom: '0.4rem' }}>{hint}</div>
                     <div style={{ display: 'flex', gap: '0.4rem' }}>
                       {[1, 2, 3, 4, 5].map(v => (
                         <button key={v}
@@ -659,7 +667,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 ))}
 
                 <div style={{ marginBottom: '1.25rem' }}>
-                  <div style={s.fieldLabel}>Ømhed (vælg relevante)</div>
+                  <div style={s.fieldLabel}>Lokal ømhed <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', letterSpacing: '0.04em', textTransform: 'none', fontWeight: 400 }}>(valgfrit)</span></div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                     {['Ben', 'Ryg', 'Skuldre/Arme', 'Core'].map(zone => {
                       const sel = readinessInput.soreZones.includes(zone)
@@ -679,9 +687,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                   </div>
                 )}
                 <button
-                  style={{ ...s.btnPrimary, width: '100%', opacity: (!readinessInput.energy || !readinessInput.motivation || !readinessInput.stress) ? 0.45 : 1 }}
+                  style={{ ...s.btnPrimary, width: '100%', opacity: (!readinessInput.energy || !readinessInput.motivation || !readinessInput.stress || !readinessInput.soreness) ? 0.45 : 1 }}
                   onClick={saveReadiness}
-                  disabled={savingReadiness || !readinessInput.energy || !readinessInput.motivation || !readinessInput.stress}
+                  disabled={savingReadiness || !readinessInput.energy || !readinessInput.motivation || !readinessInput.stress || !readinessInput.soreness}
                 >{savingReadiness ? 'Gemmer...' : 'Log parathed'}</button>
               </div>
             ) : (() => {
@@ -693,12 +701,17 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 <div style={{ ...s.card, background: sig.bg }}>
                   <div style={s.cardLabel}>Dagens parathed</div>
                   <div style={{ fontSize: '1.05rem', color: sig.color, marginBottom: '0.75rem' }}>{sig.text}</div>
-                  <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '1.6rem', fontWeight: 500, color: sig.color, marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>
+                    {readinessLog.readiness_score}
+                    <span style={{ fontSize: '0.6rem', color: '#4a4844', fontWeight: 400, marginLeft: '0.3rem' }}>/ 100</span>
+                  </div>
+                  <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>
                     {readinessLog.sleep_hours != null && <div><div style={s.fieldLabel}>Søvn</div><div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.85rem', color: '#edeae2' }}>{readinessLog.sleep_hours}t</div></div>}
                     {readinessLog.energy != null && <div><div style={s.fieldLabel}>Energi</div><div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.85rem', color: '#edeae2' }}>{readinessLog.energy}/5</div></div>}
                     {readinessLog.motivation != null && <div><div style={s.fieldLabel}>Motivation</div><div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.85rem', color: '#edeae2' }}>{readinessLog.motivation}/5</div></div>}
                     {readinessLog.stress != null && <div><div style={s.fieldLabel}>Stress</div><div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.85rem', color: '#edeae2' }}>{readinessLog.stress}/5</div></div>}
-                    {readinessLog.sore_zones?.length > 0 && <div><div style={s.fieldLabel}>Ømhed</div><div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770' }}>{readinessLog.sore_zones.join(', ')}</div></div>}
+                    {readinessLog.soreness_level != null && <div><div style={s.fieldLabel}>Ømhed</div><div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.85rem', color: '#edeae2' }}>{readinessLog.soreness_level}/5</div></div>}
+                    {readinessLog.sore_zones?.length > 0 && <div><div style={s.fieldLabel}>Lokalt</div><div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770' }}>{readinessLog.sore_zones.join(', ')}</div></div>}
                   </div>
                 </div>
               )
