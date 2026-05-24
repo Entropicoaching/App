@@ -880,41 +880,54 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 </>
               ) : (
                 <>
-                  {/* Week navigation */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
-                    <button
-                      style={{ ...s.btnGhost, fontSize: '0.58rem', padding: '0.4rem 0.75rem', opacity: viewingWeekIdx === 0 ? 0.25 : 1 }}
-                      disabled={viewingWeekIdx === 0}
-                      onClick={() => {
-                        const ni = viewingWeekIdx - 1
-                        setViewingWeekIdx(ni)
-                        setProgOpenSession(null)
-                        fetchPastLogs(allWeeks[ni], athlete.id)
-                      }}
-                    >← Forrige uge</button>
-                    <div style={{ textAlign: 'center', flex: 1, padding: '0 0.5rem' }}>
-                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a' }}>
-                        Uge {viewedWeek.week_number}
-                        {!isCurrentWeek && <span style={{ color: '#4a4844', marginLeft: '0.5em' }}>· historisk</span>}
+                  {/* Week header — navigation only shown when multiple weeks exist */}
+                  <div style={{ marginBottom: '1.25rem' }}>
+                    {allWeeks.length > 1 ? (
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <button
+                          style={{ ...s.btnGhost, fontSize: '0.58rem', padding: '0.4rem 0.75rem', opacity: viewingWeekIdx === 0 ? 0.25 : 1 }}
+                          disabled={viewingWeekIdx === 0}
+                          onClick={() => {
+                            const ni = viewingWeekIdx - 1
+                            setViewingWeekIdx(ni)
+                            setProgOpenSession(null)
+                            fetchPastLogs(allWeeks[ni], athlete.id)
+                          }}
+                        >← Forrige uge</button>
+                        <div style={{ textAlign: 'center', flex: 1, padding: '0 0.5rem' }}>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a' }}>
+                            Uge {viewedWeek.week_number}
+                            {!isCurrentWeek && <span style={{ color: '#4a4844', marginLeft: '0.5em' }}>· historisk</span>}
+                          </div>
+                          {viewedWeek.block_name && (
+                            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.1rem', color: '#edeae2', marginTop: '0.1rem' }}>{viewedWeek.block_name}</div>
+                          )}
+                        </div>
+                        <button
+                          style={{ ...s.btnGhost, fontSize: '0.58rem', padding: '0.4rem 0.75rem', opacity: isCurrentWeek ? 0.25 : 1 }}
+                          disabled={isCurrentWeek}
+                          onClick={() => {
+                            const ni = viewingWeekIdx + 1
+                            setViewingWeekIdx(ni)
+                            setProgOpenSession(null)
+                            if (ni < latestWeekIdx) {
+                              fetchPastLogs(allWeeks[ni], athlete.id)
+                            } else {
+                              setPastLogs([])
+                            }
+                          }}
+                        >Næste uge →</button>
                       </div>
-                      {viewedWeek.block_name && (
-                        <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.1rem', color: '#edeae2', marginTop: '0.1rem' }}>{viewedWeek.block_name}</div>
-                      )}
-                    </div>
-                    <button
-                      style={{ ...s.btnGhost, fontSize: '0.58rem', padding: '0.4rem 0.75rem', opacity: isCurrentWeek ? 0.25 : 1 }}
-                      disabled={isCurrentWeek}
-                      onClick={() => {
-                        const ni = viewingWeekIdx + 1
-                        setViewingWeekIdx(ni)
-                        setProgOpenSession(null)
-                        if (ni < latestWeekIdx) {
-                          fetchPastLogs(allWeeks[ni], athlete.id)
-                        } else {
-                          setPastLogs([])
-                        }
-                      }}
-                    >Næste uge →</button>
+                    ) : (
+                      <div>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.4rem' }}>
+                          Uge {viewedWeek.week_number}
+                        </div>
+                        <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>
+                          {viewedWeek.block_name || 'Dit program'}.
+                        </h1>
+                      </div>
+                    )}
                   </div>
 
                   {viewedWeek.coach_note && (
