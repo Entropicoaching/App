@@ -368,7 +368,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       .select('*')
       .eq('athlete_id', athleteId)
       .order('logged_at', { ascending: false })
-      .limit(14)
+      .limit(30)
     setWeightLogs(data || [])
   }
 
@@ -735,24 +735,91 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
             </div>
 
             {(() => {
+              const sorted = [...weightLogs].sort((a, b) => a.logged_at > b.logged_at ? 1 : -1)
               const todayStr = today()
               const todayLog = weightLogs.find(l => l.logged_at === todayStr)
               const showInput = !todayLog || weightInput !== ''
-              const last7 = Array.from({ length: 7 }, (_, i) => {
-                const d = new Date(); d.setDate(d.getDate() - (6 - i))
-                const dayLabels = ['Sø', 'Ma', 'Ti', 'On', 'To', 'Fr', 'Lø']
-                return { date: d.toISOString().slice(0, 10), label: dayLabels[d.getDay()] }
-              })
+              const chartEntries = sorted.slice(-30)
+              const hasChart = chartEntries.length >= 2
+
+              // Median of last 5 as current weight
+              const last5 = sorted.slice(-5).map(l => l.weight).sort((a, b) => a - b)
+              const currentWeight = last5.length > 0 ? last5[Math.floor(last5.length / 2)] : null
+
+              // Trend: avg of last 7 vs avg of prior 7
+              let trendText = null
+              if (sorted.length >= 4) {
+                const r = sorted.slice(-7).map(l => l.weight)
+                const p = sorted.slice(Math.max(0, sorted.length - 14), sorted.length - 7).map(l => l.weight)
+                if (r.length >= 2 && p.length >= 1) {
+                  const rAvg = r.reduce((s, v) => s + v, 0) / r.length
+                  const pAvg = p.reduce((s, v) => s + v, 0) / p.length
+                  const diff = rAvg - pAvg
+                  if (Math.abs(diff) < 0.3) trendText = '= stabil'
+                  else if (diff > 0) trendText = `↑ +${diff.toFixed(1)}kg siden forrige uge`
+                  else trendText = `↓ ${Math.abs(diff).toFixed(1)}kg siden forrige uge`
+                }
+              }
+
+              // SVG line chart
+              let chartEl = null
+              if (hasChart) {
+                const W = 400, H = 100, PL = 30, PR = 4, PT = 8, PB = 18
+                const ws = chartEntries.map(l => l.weight)
+                const minW = Math.min(...ws) - 0.5
+                const maxW = Math.max(...ws) + 0.5
+                const range = maxW - minW
+                const cx = i => PL + (i / (chartEntries.length - 1)) * (W - PL - PR)
+                const cy = w => PT + (1 - (w - minW) / range) * (H - PT - PB)
+                const pts = chartEntries.map((l, i) => `${cx(i).toFixed(1)},${cy(l.weight).toFixed(1)}`).join(' ')
+                const labelIs = chartEntries.length > 2
+                  ? [0, Math.floor((chartEntries.length - 1) / 2), chartEntries.length - 1]
+                  : [0, chartEntries.length - 1]
+
+                chartEl = (
+                  <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block', margin: '0.25rem 0' }}>
+                    <line x1={PL} y1={PT} x2={PL} y2={H - PB} stroke="rgba(237,234,226,0.06)" strokeWidth="1" />
+                    <line x1={PL} y1={H - PB} x2={W - PR} y2={H - PB} stroke="rgba(237,234,226,0.06)" strokeWidth="1" />
+                    <text x={PL - 3} y={PT + 5} textAnchor="end" fontSize="7" fill="#4a4844" fontFamily="IBM Plex Mono,monospace">{Math.max(...ws).toFixed(1)}</text>
+                    <text x={PL - 3} y={H - PB} textAnchor="end" fontSize="7" fill="#4a4844" fontFamily="IBM Plex Mono,monospace">{Math.min(...ws).toFixed(1)}</text>
+                    <polyline points={pts} fill="none" stroke="#c8923a" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" />
+                    {chartEntries.map((l, i) => (
+                      <circle key={i} cx={cx(i)} cy={cy(l.weight)} r={i === chartEntries.length - 1 ? 3.5 : 2} fill={i === chartEntries.length - 1 ? '#edeae2' : '#c8923a'} />
+                    ))}
+                    {labelIs.map(i => (
+                      <text key={i} x={cx(i)} y={H - 2} textAnchor={i === 0 ? 'start' : i === chartEntries.length - 1 ? 'end' : 'middle'} fontSize="7" fill="#4a4844" fontFamily="IBM Plex Mono,monospace">
+                        {chartEntries[i].logged_at.slice(5).replace('-', '/')}
+                      </text>
+                    ))}
+                  </svg>
+                )
+              }
+
               return (
                 <div style={s.card}>
                   <div style={s.cardLabel}>Kropsvægt</div>
+
+                  {currentWeight != null && (
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem', marginBottom: '0.25rem' }}>
+                      <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', color: '#edeae2', lineHeight: 1 }}>{currentWeight}</span>
+                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#7a7770' }}>kg</span>
+                      {trendText && (
+                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770', letterSpacing: '0.04em' }}>{trendText}</span>
+                      )}
+                    </div>
+                  )}
+
+                  {hasChart ? chartEl : (
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#4a4844', margin: '0.5rem 0 0.75rem', letterSpacing: '0.04em' }}>
+                      Log din vægt for at se udviklingen
+                    </div>
+                  )}
+
                   {showInput ? (
-                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '0.75rem' }}>
+                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginTop: '0.5rem' }}>
                       <input
                         style={{ ...s.fieldInput, maxWidth: '90px', fontSize: '1rem', padding: '0.5rem 0.6rem' }}
-                        type="number"
-                        step="0.1"
-                        placeholder="kg"
+                        type="number" step="0.1" placeholder="kg"
                         value={weightInput}
                         onChange={e => setWeightInput(e.target.value)}
                         onKeyDown={e => e.key === 'Enter' && logWeight()}
@@ -760,34 +827,14 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                       <button style={s.btnPrimary} onClick={logWeight} disabled={savingWeight || !weightInput}>
                         {savingWeight ? '...' : 'Log'}
                       </button>
-                      {todayLog && (
-                        <button style={s.btnGhost} onClick={() => setWeightInput('')}>Annuller</button>
-                      )}
+                      {todayLog && <button style={s.btnGhost} onClick={() => setWeightInput('')}>Annuller</button>}
                     </div>
                   ) : (
-                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                      <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', color: '#edeae2' }}>{todayLog.weight}</span>
-                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#7a7770' }}>kg · logget i dag</span>
-                      <button style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.2rem 0.5rem', marginLeft: '0.25rem' }} onClick={() => setWeightInput(todayLog.weight.toString())}>Ret</button>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>
+                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#4a4844', letterSpacing: '0.06em' }}>Logget i dag · {todayLog.weight} kg</span>
+                      <button style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.2rem 0.5rem' }} onClick={() => setWeightInput(todayLog.weight.toString())}>Ret</button>
                     </div>
                   )}
-                  <div style={{ display: 'flex', gap: '0.25rem' }}>
-                    {last7.map((day, i) => {
-                      const log = weightLogs.find(l => l.logged_at === day.date)
-                      const isToday = day.date === todayStr
-                      return (
-                        <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.2rem' }}>
-                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#c8923a', minHeight: '0.65rem' }}>
-                            {log ? log.weight : ''}
-                          </div>
-                          <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: log ? '#c8923a' : '#242420', border: isToday && !log ? '1px solid #4a4844' : 'none', flexShrink: 0 }} />
-                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: isToday ? '#7a7770' : '#4a4844', textTransform: 'uppercase' }}>
-                            {day.label}
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
                 </div>
               )
             })()}
