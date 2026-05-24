@@ -218,6 +218,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [latestMessages, setLatestMessages] = useState({})
   const [unreadCounts, setUnreadCounts] = useState({})
 
+  // Export state
+  const [exportingTraening, setExportingTraening] = useState(false)
+  const [exportingBackup, setExportingBackup] = useState(false)
+
   // Program state
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' && window.innerWidth < 768)
@@ -669,6 +673,111 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     setView('list')
   }
 
+  function downloadJSON(data, filename) {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${filename}.json`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  async function exportTraeningsdata() {
+    setExportingTraening(true)
+    const dateStr = new Date().toISOString().slice(0, 10)
+    const { data: allAthletes } = await supabase.from('athletes').select('*').order('name')
+    const result = { exported_at: new Date().toISOString(), athletes: [] }
+
+    for (const ath of (allAthletes || [])) {
+      const [prsRes, readRes, wgtRes, logsRes] = await Promise.all([
+        supabase.from('personal_records').select('*').eq('athlete_id', ath.id).order('logged_at'),
+        supabase.from('readiness_logs').select('*').eq('athlete_id', ath.id).order('logged_date'),
+        supabase.from('weight_logs').select('*').eq('athlete_id', ath.id).order('logged_at'),
+        supabase.from('exercise_logs')
+          .select('*, exercises(id, name, sets, reps, intensity, session_id, sessions(id, title, athlete_rating, athlete_comment, weeks(week_number, block_name)))')
+          .eq('athlete_id', ath.id)
+          .order('logged_at'),
+      ])
+
+      const sessionDays = {}
+      for (const log of (logsRes.data || [])) {
+        const ex = log.exercises
+        const sess = ex?.sessions
+        const date = log.logged_at.slice(0, 10)
+        const key = `${ex?.session_id}_${date}`
+        if (!sessionDays[key]) {
+          sessionDays[key] = {
+            date,
+            title: sess?.title || '',
+            week_number: sess?.weeks?.week_number ?? null,
+            block_name: sess?.weeks?.block_name ?? null,
+            athlete_rating: sess?.athlete_rating ?? null,
+            athlete_comment: sess?.athlete_comment ?? null,
+            exerciseMap: {},
+          }
+        }
+        const exId = log.exercise_id
+        if (!sessionDays[key].exerciseMap[exId]) {
+          sessionDays[key].exerciseMap[exId] = {
+            name: ex?.name ?? null,
+            category: exerciseLibrary.find(e => e.name.toLowerCase() === (ex?.name || '').toLowerCase())?.category ?? null,
+            planned_sets: ex?.sets ?? null,
+            planned_reps: ex?.reps ?? null,
+            planned_intensity: ex?.intensity ?? null,
+            logs: [],
+          }
+        }
+        sessionDays[key].exerciseMap[exId].logs.push({
+          set_number: log.set_number,
+          weight: log.weight,
+          reps_completed: log.reps_completed,
+          rpe_planned: log.rpe_planned,
+          rpe_actual: log.rpe_actual,
+          skipped: log.skipped,
+          note: log.note,
+        })
+      }
+
+      const sessions = Object.values(sessionDays)
+        .sort((a, b) => a.date.localeCompare(b.date))
+        .map(({ exerciseMap, ...rest }) => ({
+          ...rest,
+          exercises: Object.values(exerciseMap).map(ex => ({
+            ...ex,
+            logs: ex.logs.sort((a, b) => a.set_number - b.set_number),
+          })),
+        }))
+
+      result.athletes.push({
+        name: ath.name,
+        email: ath.email,
+        weight_class: ath.weight_class,
+        age: ath.age,
+        personal_records: (prsRes.data || []).map(pr => ({ exercise_name: pr.exercise_name, weight: pr.weight, reps: pr.reps, logged_at: pr.logged_at })),
+        readiness_logs: (readRes.data || []).map(r => ({ logged_date: r.logged_date, sleep_hours: r.sleep_hours, energy: r.energy, motivation: r.motivation, stress: r.stress, soreness_level: r.soreness_level, sore_zones: r.sore_zones, readiness_score: r.readiness_score })),
+        weight_logs: (wgtRes.data || []).map(w => ({ weight: w.weight, logged_at: w.logged_at })),
+        sessions,
+      })
+    }
+
+    downloadJSON(result, `entropi-traening-${dateStr}`)
+    setExportingTraening(false)
+  }
+
+  async function exportBackup() {
+    setExportingBackup(true)
+    const dateStr = new Date().toISOString().slice(0, 10)
+    const tables = ['athletes', 'weeks', 'sessions', 'exercises', 'exercise_logs', 'meal_logs', 'weight_logs', 'readiness_logs', 'personal_records', 'messages']
+    const backup = { exported_at: new Date().toISOString(), tables: {} }
+    for (const table of tables) {
+      const { data } = await supabase.from(table).select('*')
+      backup.tables[table] = data || []
+    }
+    downloadJSON(backup, `entropi-backup-${dateStr}`)
+    setExportingBackup(false)
+  }
+
   function openProfile(athlete, tab = 'oversigt') {
     setSelectedAthlete(athlete)
     setActiveTab(tab)
@@ -897,6 +1006,18 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               <button onClick={() => setPreviewPickerOpen(false)} style={{ ...s.btnGhost, fontSize: '0.48rem', padding: '0.2rem 0.5rem', marginTop: '0.3rem', width: '100%' }}>Annuller</button>
             </div>
           )}
+          <div style={{ borderTop: '1px solid rgba(237,234,226,0.07)', marginTop: '0.75rem', paddingTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+            <button
+              onClick={exportTraeningsdata}
+              disabled={exportingTraening}
+              style={{ background: 'transparent', color: exportingTraening ? '#4a4844' : '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase', border: '1px solid rgba(237,234,226,0.08)', padding: '0.35rem 0.6rem', cursor: exportingTraening ? 'default' : 'pointer', width: '100%', textAlign: 'left' }}
+            >{exportingTraening ? '...' : '↓ Træningsdata'}</button>
+            <button
+              onClick={exportBackup}
+              disabled={exportingBackup}
+              style={{ background: 'transparent', color: exportingBackup ? '#4a4844' : '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase', border: '1px solid rgba(237,234,226,0.08)', padding: '0.35rem 0.6rem', cursor: exportingBackup ? 'default' : 'pointer', width: '100%', textAlign: 'left' }}
+            >{exportingBackup ? '...' : '↓ Sikkerhedskopi'}</button>
+          </div>
           <button onClick={() => supabase.auth.signOut()} style={{ ...s.btnGhost, marginTop: '0.5rem', width: '100%' }}>Log ud</button>
         </div>
       </aside>
