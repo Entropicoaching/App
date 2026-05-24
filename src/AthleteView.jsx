@@ -165,12 +165,13 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   }, [loading])
 
   async function fetchAthlete() {
+    if (!coachAthleteId && role !== 'athlete') { setLoading(false); return }
     const query = supabase.from('athletes').select('*')
-    const { data, error } = await (coachAthleteId
+    const { data } = await (coachAthleteId
       ? query.eq('id', coachAthleteId)
       : query.eq('email', session.user.email)
-    ).single()
-    if (!error && data) {
+    ).maybeSingle()
+    if (data) {
       setAthlete(data)
       fetchLogs(data.id)
       fetchProgram(data.id)

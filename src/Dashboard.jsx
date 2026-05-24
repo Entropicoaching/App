@@ -158,6 +158,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [recommendedInput, setRecommendedInput] = useState('')
   const [copyingExercise, setCopyingExercise] = useState(null)
 
+  const [previewPickerOpen, setPreviewPickerOpen] = useState(false)
   const [exerciseLibrary, setExerciseLibrary] = useState([])
   const [exerciseSearchOpen, setExerciseSearchOpen] = useState(false)
   const [editingLibraryEx, setEditingLibraryEx] = useState(null)
@@ -720,11 +721,26 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         <div style={s.sidebarFooter}>
           <div style={{ color: '#7a7770', marginBottom: '0.3rem' }}>Marc Schlichting</div>
           <div style={{ fontSize: '0.7rem' }}>{session.user.email}</div>
-          {onPreviewAthlete && (
-            <button onClick={() => {
-              const match = athletes.find(a => a.email === session.user.email)
-              onPreviewAthlete(match?.id)
-            }} style={{ ...s.btnPrimary, marginTop: '0.75rem', width: '100%' }}>Se som atlet</button>
+          {onPreviewAthlete && !previewPickerOpen && (
+            <button
+              onClick={() => setPreviewPickerOpen(true)}
+              style={{ ...s.btnPrimary, marginTop: '0.75rem', width: '100%' }}
+            >Se som atlet</button>
+          )}
+          {onPreviewAthlete && previewPickerOpen && (
+            <div style={{ marginTop: '0.75rem', background: '#141410', border: '1px solid rgba(200,146,58,0.3)', padding: '0.5rem' }}>
+              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.4rem' }}>Vælg profil</div>
+              {athletes.map(a => (
+                <div
+                  key={a.id}
+                  onClick={() => { setPreviewPickerOpen(false); onPreviewAthlete(a.id) }}
+                  style={{ padding: '0.4rem 0.5rem', fontSize: '0.8rem', color: '#b8b4a8', cursor: 'pointer', borderRadius: '1px' }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(237,234,226,0.06)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                >{a.name}</div>
+              ))}
+              <button onClick={() => setPreviewPickerOpen(false)} style={{ ...s.btnGhost, fontSize: '0.48rem', padding: '0.2rem 0.5rem', marginTop: '0.3rem', width: '100%' }}>Annuller</button>
+            </div>
           )}
           <button onClick={() => supabase.auth.signOut()} style={{ ...s.btnGhost, marginTop: '0.5rem', width: '100%' }}>Log ud</button>
         </div>
