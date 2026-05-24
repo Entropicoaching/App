@@ -329,8 +329,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     const map = {}
     for (const log of data) {
       const name = log.exercises?.name
-      if (name && !map[name] && (log.weight > 0 || log.reps_completed > 0)) {
-        map[name] = { weight: log.weight, reps_completed: log.reps_completed }
+      if (name && !map[name.toLowerCase()] && (log.weight > 0 || log.reps_completed > 0)) {
+        map[name.toLowerCase()] = { weight: log.weight, reps_completed: log.reps_completed }
       }
     }
     setLastLogByExerciseName(map)
@@ -1127,9 +1127,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                       <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#c8923a', marginBottom: '0.2rem' }}>
                                         Anbefalet: {ex.recommended_weight}kg
                                       </div>
-                                    ) : lastLogByExerciseName[ex.name] ? (
+                                    ) : lastLogByExerciseName[ex.name.toLowerCase()] ? (
                                       <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#4a4844', marginBottom: '0.2rem' }}>
-                                        Sidst: {lastLogByExerciseName[ex.name].weight}kg × {lastLogByExerciseName[ex.name].reps_completed} reps
+                                        Sidst: {lastLogByExerciseName[ex.name.toLowerCase()].weight}kg × {lastLogByExerciseName[ex.name.toLowerCase()].reps_completed} reps
                                       </div>
                                     ) : null)}
                                     <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.78rem', color: '#c8923a', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.1rem' }}>

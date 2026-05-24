@@ -178,7 +178,7 @@ function buildLiftSeries(logs, keyword, nameToCat, category) {
   const useCategory = nameToCat && category && Object.keys(nameToCat).length > 0
   const matched = logs.filter(l => {
     const name = l.exercises?.name || ''
-    if (useCategory) return nameToCat[name] === category && l.weight > 0
+    if (useCategory) return nameToCat[name.toLowerCase()] === category && l.weight > 0
     return name.toLowerCase().includes(keyword) && l.weight > 0
   })
   if (!matched.length) return { hasData: false, actualData: [], plannedData: [] }
@@ -407,10 +407,13 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
   async function updateLibraryExercise(id) {
     if (!libraryEditForm.name.trim()) return
-    await supabase.from('exercise_library').update({
-      name: libraryEditForm.name.trim(),
-      category: libraryEditForm.category,
-    }).eq('id', id)
+    const oldName = exerciseLibrary.find(e => e.id === id)?.name
+    const newName = libraryEditForm.name.trim()
+    await supabase.from('exercise_library').update({ name: newName, category: libraryEditForm.category }).eq('id', id)
+    if (oldName && oldName !== newName) {
+      await supabase.from('exercises').update({ name: newName }).eq('name', oldName)
+      await supabase.from('personal_records').update({ exercise_name: newName }).eq('exercise_name', oldName)
+    }
     setEditingLibraryEx(null)
     fetchExerciseLibrary()
   }
@@ -428,6 +431,13 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       category: 'Accessory',
     })
     fetchExerciseLibrary()
+  }
+
+  function canonicalName(typed) {
+    if (!typed.trim()) return typed
+    const lower = typed.trim().toLowerCase()
+    const match = exerciseLibrary.find(e => e.name.toLowerCase() === lower)
+    return match ? match.name : typed.trim()
   }
 
   function buildIntensity() {
@@ -451,7 +461,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     const nextOrder = session?.exercises?.length || 0
     await supabase.from('exercises').insert({
       session_id: sessionId,
-      name: exerciseForm.name || 'Øvelse',
+      name: canonicalName(exerciseForm.name) || 'Øvelse',
       sets: parseInt(exerciseForm.sets) || null,
       reps: exerciseForm.reps || null,
       intensity: buildIntensity(),
@@ -465,7 +475,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
   async function updateExercise(exerciseId) {
     await supabase.from('exercises').update({
-      name: exerciseForm.name,
+      name: canonicalName(exerciseForm.name),
       sets: parseInt(exerciseForm.sets) || null,
       reps: exerciseForm.reps || null,
       intensity: buildIntensity(),
@@ -754,6 +764,11 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             onFocus={() => setExerciseSearchOpen(true)}
             onBlur={() => setTimeout(() => setExerciseSearchOpen(false), 180)}
           />
+          {exerciseForm.name.trim() && !exactMatch && !exerciseSearchOpen && (
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#c8923a', marginTop: '0.2rem', letterSpacing: '0.06em' }}>
+              Ikke i bibliotek — tilføj via dropdown
+            </div>
+          )}
           {showDropdown && (
             <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: '#1c1c18', border: '1px solid rgba(237,234,226,0.13)', borderTop: 'none', zIndex: 100, maxHeight: '240px', overflowY: 'auto' }}>
               {filteredCategories.map(([cat, exs]) => (
@@ -1115,7 +1130,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               const totalSets4w = recentLogs.length
 
               const nameToCat = {}
-              for (const ex of exerciseLibrary) { if (ex.name && ex.category) nameToCat[ex.name] = ex.category }
+              for (const ex of exerciseLibrary) { if (ex.name && ex.category) nameToCat[ex.name.toLowerCase()] = ex.category }
               const squatS = buildLiftSeries(athleteLogs, 'squat', nameToCat, 'Squat')
               const benchS = buildLiftSeries(athleteLogs, 'bænk', nameToCat, 'Bænkpres')
               const deadS = buildLiftSeries(athleteLogs, 'dødl', nameToCat, 'Dødløft')
@@ -1261,7 +1276,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     const lbl = date => { const d = new Date(date + 'T12:00:00'); return `${d.getDate()}/${d.getMonth() + 1}` }
 
                     function buildRpeSeries(category) {
-                      const filtered = logsWithRpe.filter(l => nameToCat[l.exercises?.name || ''] === category)
+                      const filtered = logsWithRpe.filter(l => nameToCat[(l.exercises?.name || '').toLowerCase()] === category)
                       if (!filtered.length) return { actualData: [], plannedData: [] }
                       const dateMap = {}
                       for (const log of filtered) {
