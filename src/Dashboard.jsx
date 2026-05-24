@@ -147,6 +147,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [messages, setMessages] = useState([])
   const [messageInput, setMessageInput] = useState('')
   const [latestMessages, setLatestMessages] = useState({})
+  const [unreadCounts, setUnreadCounts] = useState({})
 
   // Program state
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -196,7 +197,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   }, [activeTab, selectedAthlete?.id])
 
   useEffect(() => {
-    if (activeTab === 'beskeder' && selectedAthlete) fetchMessages(selectedAthlete.id)
+    if (activeTab === 'beskeder' && selectedAthlete) {
+      fetchMessages(selectedAthlete.id)
+      markMessagesRead(selectedAthlete.id)
+    }
   }, [activeTab, selectedAthlete?.id])
 
   useEffect(() => {
@@ -453,10 +457,21 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   async function fetchLatestMessages(athleteIds) {
     const { data } = await supabase.from('messages').select('*').in('athlete_id', athleteIds).order('created_at', { ascending: false })
     const latest = {}
+    const unread = {}
     for (const msg of (data || [])) {
       if (!latest[msg.athlete_id]) latest[msg.athlete_id] = msg
+      if (msg.sender_role === 'athlete' && !msg.read_by_coach) {
+        unread[msg.athlete_id] = (unread[msg.athlete_id] || 0) + 1
+      }
     }
     setLatestMessages(latest)
+    setUnreadCounts(unread)
+  }
+
+  async function markMessagesRead(athleteId) {
+    if (!unreadCounts[athleteId]) return
+    await supabase.from('messages').update({ read_by_coach: true }).eq('athlete_id', athleteId).eq('sender_role', 'athlete').eq('read_by_coach', false)
+    setUnreadCounts(prev => { const n = { ...prev }; delete n[athleteId]; return n })
   }
 
   async function fetchMessages(athleteId) {
@@ -575,9 +590,9 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     setView('list')
   }
 
-  function openProfile(athlete) {
+  function openProfile(athlete, tab = 'oversigt') {
     setSelectedAthlete(athlete)
-    setActiveTab('oversigt')
+    setActiveTab(tab)
     setEditing(null)
     setView('profile')
     setMessages([])
@@ -930,30 +945,66 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             ) : athletes.length === 0 ? (
               <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '3rem 0' }}>Ingen atleter endnu — tilføj din første</div>
             ) : (
-              <div style={s.grid}>
-                {athletes.map(athlete => (
-                  <div key={athlete.id} style={s.athleteCard} onClick={() => openProfile(athlete)}
-                    onMouseEnter={e => { e.currentTarget.style.background = '#1c1c18'; e.currentTarget.style.borderTop = '2px solid #c8923a' }}
-                    onMouseLeave={e => { e.currentTarget.style.background = '#141410'; e.currentTarget.style.borderTop = '2px solid transparent' }}>
-                    <div style={s.avatar}>{initials(athlete.name)}</div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: '0.92rem', color: '#edeae2' }}>{athlete.name}</div>
-                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#4a4844' }}>
-                        {athlete.weight_class ? athlete.weight_class + 'kg' : 'Ingen vægtklasse'} · {athlete.email || 'Ingen email'}
-                      </div>
-                      {latestMessages[athlete.id] && (
-                        <div style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.72rem', color: '#4a4844', marginTop: '0.25rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          <span style={{ color: latestMessages[athlete.id].sender_role === 'coach' ? '#7a7770' : '#c8923a' }}>
-                            {latestMessages[athlete.id].sender_role === 'coach' ? 'Du: ' : `${athlete.name.split(' ')[0]}: `}
-                          </span>
-                          {latestMessages[athlete.id].content}
-                        </div>
-                      )}
+              <>
+                {(() => {
+                  const athletesWithMsgs = athletes
+                    .filter(a => latestMessages[a.id] && latestMessages[a.id].sender_role === 'athlete')
+                    .sort((a, b) => latestMessages[b.id].created_at.localeCompare(latestMessages[a.id].created_at))
+                  if (!athletesWithMsgs.length) return null
+                  return (
+                    <div style={{ ...s.card, marginBottom: '1.75rem' }}>
+                      <div style={s.cardLabel}>Seneste beskeder</div>
+                      {athletesWithMsgs.map((athlete, i, arr) => {
+                        const msg = latestMessages[athlete.id]
+                        const isUnread = (unreadCounts[athlete.id] || 0) > 0
+                        return (
+                          <div key={athlete.id} onClick={() => openProfile(athlete, 'beskeder')}
+                            style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.65rem 0', borderBottom: i < arr.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none', cursor: 'pointer' }}>
+                            <div style={{ position: 'relative', flexShrink: 0 }}>
+                              <div style={{ ...s.avatar, width: '32px', height: '32px', fontSize: '0.72rem' }}>{initials(athlete.name)}</div>
+                              {isUnread && <div style={{ position: 'absolute', top: -2, right: -2, width: 8, height: 8, borderRadius: '50%', background: '#c8923a', border: '2px solid #1c1c18' }} />}
+                            </div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ fontSize: '0.82rem', color: isUnread ? '#edeae2' : '#b8b4a8' }}>{athlete.name}</div>
+                              <div style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.72rem', color: isUnread ? '#c8923a' : '#4a4844', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {msg.content.slice(0, 60)}{msg.content.length > 60 ? '…' : ''}
+                              </div>
+                            </div>
+                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', flexShrink: 0 }}>{formatMsgTime(msg.created_at)}</div>
+                          </div>
+                        )
+                      })}
                     </div>
-                    <span style={s.badge(athlete.status)}>{statusLabels[athlete.status]}</span>
-                  </div>
-                ))}
-              </div>
+                  )
+                })()}
+                <div style={s.grid}>
+                  {athletes.map(athlete => (
+                    <div key={athlete.id} style={s.athleteCard} onClick={() => openProfile(athlete)}
+                      onMouseEnter={e => { e.currentTarget.style.background = '#1c1c18'; e.currentTarget.style.borderTop = '2px solid #c8923a' }}
+                      onMouseLeave={e => { e.currentTarget.style.background = '#141410'; e.currentTarget.style.borderTop = '2px solid transparent' }}>
+                      <div style={{ position: 'relative', flexShrink: 0 }}>
+                        <div style={s.avatar}>{initials(athlete.name)}</div>
+                        {(unreadCounts[athlete.id] || 0) > 0 && <div style={{ position: 'absolute', top: -2, right: -2, width: 8, height: 8, borderRadius: '50%', background: '#c8923a', border: '2px solid #141410' }} />}
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: '0.92rem', color: '#edeae2' }}>{athlete.name}</div>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#4a4844' }}>
+                          {athlete.weight_class ? athlete.weight_class + 'kg' : 'Ingen vægtklasse'} · {athlete.email || 'Ingen email'}
+                        </div>
+                        {latestMessages[athlete.id] && (
+                          <div style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.72rem', color: '#4a4844', marginTop: '0.25rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            <span style={{ color: latestMessages[athlete.id].sender_role === 'coach' ? '#7a7770' : '#c8923a' }}>
+                              {latestMessages[athlete.id].sender_role === 'coach' ? 'Du: ' : `${athlete.name.split(' ')[0]}: `}
+                            </span>
+                            {latestMessages[athlete.id].content}
+                          </div>
+                        )}
+                      </div>
+                      <span style={s.badge(athlete.status)}>{statusLabels[athlete.status]}</span>
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
           </div>
         )}
