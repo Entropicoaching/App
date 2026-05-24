@@ -93,6 +93,75 @@ function LineChart({ series, height = 130 }) {
   )
 }
 
+function BarChart({ bars, height = 110 }) {
+  if (!bars.length) return null
+  const maxVal = Math.max(...bars.map(b => b.value), 1)
+  const W = 500, H = height, pL = 32, pR = 10, pT = 20, pB = 26
+  const cW = W - pL - pR, cH = H - pT - pB
+  const step = cW / bars.length
+  const bw = Math.floor(step * 0.65)
+  const yAt = v => pT + cH - (v / maxVal) * cH
+  return (
+    <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ display: 'block' }}>
+      {[0, Math.round(maxVal / 2), maxVal].map((v, i) => (
+        <g key={i}>
+          <line x1={pL} y1={yAt(v)} x2={W - pR} y2={yAt(v)} stroke="rgba(237,234,226,0.05)" strokeWidth="1" />
+          <text x={pL - 4} y={yAt(v) + 3.5} textAnchor="end" fill="#4a4844" fontSize="9" fontFamily="IBM Plex Mono">{v}</text>
+        </g>
+      ))}
+      {bars.map((bar, i) => {
+        const x = pL + step * i + (step - bw) / 2
+        const bh = Math.max(1, (bar.value / maxVal) * cH)
+        const y = pT + cH - bh
+        const fill = bar.highlight ? '#e05555' : '#c8923a'
+        return (
+          <g key={i}>
+            <rect x={x} y={y} width={bw} height={bh} fill={fill} opacity="0.75" />
+            {bar.value > 0 && <text x={x + bw / 2} y={y - 3} textAnchor="middle" fill={bar.highlight ? '#e05555' : '#7a7770'} fontSize="8" fontFamily="IBM Plex Mono">{bar.value}</text>}
+            <text x={x + bw / 2} y={H - 4} textAnchor="middle" fill="#4a4844" fontSize="9" fontFamily="IBM Plex Mono">{bar.label}</text>
+          </g>
+        )
+      })}
+    </svg>
+  )
+}
+
+function ScatterPlot({ points, height = 130 }) {
+  if (points.length < 3) return (
+    <div style={{ height, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.08em' }}>
+      Ikke nok data endnu
+    </div>
+  )
+  const W = 500, H = height, pL = 44, pR = 16, pT = 16, pB = 30
+  const cW = W - pL - pR, cH = H - pT - pB
+  const ys = points.map(p => p.y)
+  const minY = Math.min(...ys, -1), maxY = Math.max(...ys, 1)
+  const rangeY = maxY - minY || 1
+  const tx = v => pL + ((v - 20) / 80) * cW
+  const ty = v => pT + cH - ((v - minY) / rangeY) * cH
+  const yTicks = [-2, -1, 0, 1, 2].filter(v => v >= minY - 0.5 && v <= maxY + 0.5)
+  return (
+    <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ display: 'block' }}>
+      <line x1={pL} y1={ty(0)} x2={W - pR} y2={ty(0)} stroke="rgba(237,234,226,0.13)" strokeWidth="1" strokeDasharray="4,3" />
+      {yTicks.map(v => (
+        <g key={v}>
+          <line x1={pL} y1={ty(v)} x2={W - pR} y2={ty(v)} stroke="rgba(237,234,226,0.04)" strokeWidth="1" />
+          <text x={pL - 4} y={ty(v) + 3.5} textAnchor="end" fill="#4a4844" fontSize="9" fontFamily="IBM Plex Mono">{v > 0 ? '+' : ''}{v}</text>
+        </g>
+      ))}
+      {[25, 50, 60, 75].map(v => (
+        <g key={v}>
+          <line x1={tx(v)} y1={pT} x2={tx(v)} y2={pT + cH} stroke={v === 60 ? 'rgba(224,85,85,0.2)' : 'rgba(237,234,226,0.04)'} strokeWidth="1" />
+          <text x={tx(v)} y={H - 4} textAnchor="middle" fill="#4a4844" fontSize="9" fontFamily="IBM Plex Mono">{v}</text>
+        </g>
+      ))}
+      {points.map((p, i) => (
+        <circle key={i} cx={tx(p.x)} cy={ty(p.y)} r="4.5" fill={p.x < 60 ? '#e05555' : '#6cba6c'} opacity="0.7" />
+      ))}
+    </svg>
+  )
+}
+
 function readinessSignal(score) {
   if (score >= 75) return { color: '#6cba6c', text: 'Kroppen er klar 💪', bg: 'rgba(108,186,108,0.07)' }
   if (score >= 50) return { color: '#c8923a', text: 'Tag det lidt roligt i dag', bg: 'rgba(200,146,58,0.07)' }
@@ -1361,6 +1430,242 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                       </>
                     )
                   })()}
+
+                  {/* === EXTENDED ANALYSE === */}
+                  {(() => {
+                    // Build session rating map (session_id → { date, rating })
+                    const sessRatingMap = {}
+                    for (const log of athleteLogs) {
+                      const sid = log.exercises?.session_id
+                      const rating = log.exercises?.sessions?.athlete_rating
+                      if (sid && rating != null && !sessRatingMap[sid]) {
+                        sessRatingMap[sid] = { date: log.logged_at.slice(0, 10), rating }
+                      }
+                    }
+
+                    // --- 1. Restitutionssignal ---
+                    const sortedRead = [...athleteReadiness].sort((a, b) => b.logged_date.localeCompare(a.logged_date))
+                    let streak60 = 0
+                    for (const r of sortedRead) { if (r.readiness_score < 60) streak60++; else break }
+                    const logsWithPlannedRpe = athleteLogs.filter(l => !l.skipped && l.rpe_actual != null && parsePlannedRpe(l.exercises?.intensity) != null)
+                    const recentRpeDevs = logsWithPlannedRpe.slice(-20).map(l => l.rpe_actual - parsePlannedRpe(l.exercises?.intensity))
+                    const avgRpeDev30 = recentRpeDevs.length > 0 ? recentRpeDevs.reduce((a, b) => a + b, 0) / recentRpeDevs.length : 0
+                    const overtrainingAlert = streak60 >= 3 && avgRpeDev30 > 0.5
+
+                    // --- 2. Belastningsoverblik (weekly volume) ---
+                    const weekVol = {}
+                    for (const log of athleteLogs) {
+                      if (log.skipped) continue
+                      const wn = log.exercises?.sessions?.weeks?.week_number
+                      if (!wn) continue
+                      if (!weekVol[wn]) weekVol[wn] = { logged: 0, planned: 0 }
+                      weekVol[wn].logged++
+                    }
+                    for (const week of weeks) {
+                      const wn = week.week_number
+                      if (!weekVol[wn]) weekVol[wn] = { logged: 0, planned: 0 }
+                      for (const sess of (week.sessions || []))
+                        for (const ex of (sess.exercises || []))
+                          weekVol[wn].planned += ex.sets || 0
+                    }
+                    const weekBars = Object.entries(weekVol)
+                      .sort(([a], [b]) => parseInt(a) - parseInt(b))
+                      .slice(-8)
+                      .map(([wn, d]) => ({ label: `U${wn}`, value: d.logged, planned: d.planned, highlight: d.planned > 0 && d.logged / d.planned < 0.7 }))
+
+                    // --- 3. Readiness vs RPE scatter ---
+                    const trainingDayData = {}
+                    for (const log of athleteLogs) {
+                      if (log.skipped) continue
+                      const date = log.logged_at.slice(0, 10)
+                      const p = parsePlannedRpe(log.exercises?.intensity)
+                      if (log.rpe_actual != null && p != null) {
+                        if (!trainingDayData[date]) trainingDayData[date] = { rpeDevs: [] }
+                        trainingDayData[date].rpeDevs.push(log.rpe_actual - p)
+                      }
+                    }
+                    for (const r of athleteReadiness) {
+                      if (trainingDayData[r.logged_date]) trainingDayData[r.logged_date].readiness = r.readiness_score
+                    }
+                    const scatterPoints = Object.entries(trainingDayData)
+                      .filter(([, d]) => d.readiness != null && d.rpeDevs.length > 0)
+                      .map(([, d]) => ({ x: d.readiness, y: Math.round(d.rpeDevs.reduce((a, b) => a + b, 0) / d.rpeDevs.length * 10) / 10 }))
+                    const lowRead = scatterPoints.filter(p => p.x < 60)
+                    const highRead = scatterPoints.filter(p => p.x >= 60)
+                    const avgDevLow = lowRead.length > 0 ? Math.round(lowRead.reduce((a, b) => a + b.y, 0) / lowRead.length * 10) / 10 : null
+                    const avgDevHigh = highRead.length > 0 ? Math.round(highRead.reduce((a, b) => a + b.y, 0) / highRead.length * 10) / 10 : null
+                    const readInsight = avgDevLow != null && avgDevHigh != null
+                      ? avgDevLow > avgDevHigh + 0.5
+                        ? `Når readiness er under 60 løfter ${a.name.split(' ')[0]} typisk over planlagt RPE (Ø ${avgDevLow > 0 ? '+' : ''}${avgDevLow} vs ${avgDevHigh > 0 ? '+' : ''}${avgDevHigh})`
+                        : `Ingen klar sammenhæng mellem parathed og RPE-afvigelse (data: ${scatterPoints.length} træningsdage)`
+                      : null
+
+                    // --- 4. Sleep vs feedback ---
+                    const sleepFeedbackPairs = []
+                    for (const r of athleteReadiness) {
+                      if (r.sleep_hours == null) continue
+                      const sessionsOnDay = Object.values(sessRatingMap).filter(s => s.date === r.logged_date)
+                      if (sessionsOnDay.length > 0) {
+                        const avgRating = sessionsOnDay.reduce((a, b) => a + b.rating, 0) / sessionsOnDay.length
+                        sleepFeedbackPairs.push({ sleep: r.sleep_hours, rating: avgRating })
+                      }
+                    }
+                    const sleepBuckets = {}
+                    for (const p of sleepFeedbackPairs) {
+                      const b = p.sleep < 6 ? '<6t' : p.sleep < 7 ? '6-7t' : p.sleep < 8 ? '7-8t' : '8t+'
+                      if (!sleepBuckets[b]) sleepBuckets[b] = []
+                      sleepBuckets[b].push(p.rating)
+                    }
+                    const sleepBucketAvgs = Object.entries(sleepBuckets)
+                      .sort(([a], [b]) => a.localeCompare(b))
+                      .map(([k, vs]) => ({ bucket: k, avg: Math.round(vs.reduce((a, b) => a + b, 0) / vs.length * 10) / 10, n: vs.length }))
+                    const bestBucket = sleepBucketAvgs.length > 0 ? sleepBucketAvgs.reduce((best, cur) => cur.avg > best.avg ? cur : best, sleepBucketAvgs[0]) : null
+
+                    // --- 5. Lift trend ---
+                    function liftTrend(data) {
+                      if (data.length < 3) return null
+                      const half = Math.ceil(data.length / 2)
+                      const avg = arr => arr.reduce((a, b) => a + b.y, 0) / arr.length
+                      const diff = avg(data.slice(-half)) - avg(data.slice(0, half))
+                      if (diff > 2) return { text: '↑ Fremgang', color: '#6cba6c' }
+                      if (diff < -2) return { text: '↓ Tilbagegang', color: '#e05555' }
+                      return { text: '→ Stabilt', color: '#c8923a' }
+                    }
+                    function trendLine(data) {
+                      const n = data.length
+                      if (n < 2) return []
+                      const xs = data.map((_, i) => i), ys = data.map(d => d.y)
+                      const sx = xs.reduce((a, b) => a + b, 0), sy = ys.reduce((a, b) => a + b, 0)
+                      const sxy = xs.reduce((a, xi, i) => a + xi * ys[i], 0), sx2 = xs.reduce((a, xi) => a + xi * xi, 0)
+                      const slope = (n * sxy - sx * sy) / (n * sx2 - sx * sx)
+                      const intercept = (sy - slope * sx) / n
+                      return [{ y: intercept, label: data[0].label }, { y: intercept + slope * (n - 1), label: data[n - 1].label }]
+                    }
+
+                    return (
+                      <>
+                        {overtrainingAlert && (
+                          <div style={{ ...s.card, borderLeft: '3px solid #e05555', background: 'rgba(224,85,85,0.06)' }}>
+                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#e05555', marginBottom: '0.5rem' }}>
+                              ⚠ Mulig overtræning — overvej deload
+                            </div>
+                            <div style={{ fontSize: '0.82rem', color: '#b8b4a8' }}>
+                              Parathed under 60 i {streak60} dage i træk og RPE konsekvent over planlagt (Ø +{Math.round(avgRpeDev30 * 10) / 10}). Overvej en deload-uge eller hviledage.
+                            </div>
+                          </div>
+                        )}
+
+                        {weekBars.length > 0 && (
+                          <div style={s.card}>
+                            <div style={s.cardLabel}>Belastningsoverblik — sæt per uge</div>
+                            <BarChart bars={weekBars} height={110} />
+                            <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
+                              {[['#c8923a', 'Normal'], ['#e05555', 'Under 70% compliance']].map(([color, lbl]) => (
+                                <span key={lbl} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color }}>
+                                  <span style={{ width: 10, height: 10, background: color, display: 'inline-block', opacity: 0.75, flexShrink: 0 }} />{lbl}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {scatterPoints.length >= 3 && (
+                          <div style={s.card}>
+                            <div style={s.cardLabel}>Readiness vs RPE-afvigelse</div>
+                            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1.5rem', alignItems: 'start' }}>
+                              <div>
+                                <ScatterPlot points={scatterPoints} height={130} />
+                                <div style={{ display: 'flex', gap: '1rem', marginTop: '0.4rem' }}>
+                                  {[['#6cba6c', 'Readiness ≥ 60'], ['#e05555', 'Readiness < 60']].map(([color, lbl]) => (
+                                    <span key={lbl} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color }}>
+                                      <svg width="8" height="8"><circle cx="4" cy="4" r="4" fill={color} opacity="0.7" /></svg>{lbl}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '0.75rem', paddingTop: isMobile ? 0 : '1rem' }}>
+                                {avgDevLow != null && (
+                                  <div style={{ background: '#141410', padding: '0.75rem' }}>
+                                    <div style={s.fieldLabel}>Lav readiness (&lt;60)</div>
+                                    <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.2rem', color: avgDevLow > 0.5 ? '#e05555' : '#edeae2' }}>{avgDevLow > 0 ? '+' : ''}{avgDevLow}</div>
+                                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#4a4844', textTransform: 'uppercase' }}>Ø RPE-afvigelse</div>
+                                  </div>
+                                )}
+                                {avgDevHigh != null && (
+                                  <div style={{ background: '#141410', padding: '0.75rem' }}>
+                                    <div style={s.fieldLabel}>Høj readiness (≥60)</div>
+                                    <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.2rem', color: '#edeae2' }}>{avgDevHigh > 0 ? '+' : ''}{avgDevHigh}</div>
+                                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#4a4844', textTransform: 'uppercase' }}>Ø RPE-afvigelse</div>
+                                  </div>
+                                )}
+                                {readInsight && (
+                                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#7a7770', lineHeight: 1.6, letterSpacing: '0.02em' }}>{readInsight}</div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {sleepFeedbackPairs.length >= 2 && (
+                          <div style={s.card}>
+                            <div style={s.cardLabel}>Søvn vs. træningsfeedback</div>
+                            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
+                              {sleepBucketAvgs.map(({ bucket, avg, n }) => (
+                                <div key={bucket} style={{ textAlign: 'center', padding: '0.75rem 1rem', background: '#141410', border: '1px solid rgba(237,234,226,0.07)', flex: '1 1 60px', minWidth: '60px' }}>
+                                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.3rem' }}>{bucket}</div>
+                                  <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', color: avg >= 4 ? '#6cba6c' : avg >= 3 ? '#c8923a' : '#e05555' }}>{avg}</div>
+                                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', color: '#4a4844', textTransform: 'uppercase', marginTop: '0.1rem' }}>{n} log{n !== 1 ? 's' : ''}</div>
+                                </div>
+                              ))}
+                            </div>
+                            {bestBucket && (
+                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#7a7770', letterSpacing: '0.04em' }}>
+                                Bedste træningsfeedback ved {bestBucket.bucket} søvn — Ø {bestBucket.avg}/5
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {lifts.some(l => l.s.actualData.length >= 3) && (
+                          <div style={s.card}>
+                            <div style={s.cardLabel}>
+                              Fremgang på primære løft
+                              <div style={{ display: 'flex', gap: '1rem' }}>
+                                {[['#c8923a', false, 'Løftet'], ['rgba(200,146,58,0.4)', true, 'Trend']].map(([color, dashed, lbl]) => (
+                                  <span key={lbl} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color, textTransform: 'none', letterSpacing: 0, fontWeight: 400 }}>
+                                    <svg width="16" height="8" style={{ flexShrink: 0 }}>
+                                      <line x1="0" y1="4" x2="16" y2="4" stroke={color} strokeWidth="1.75" strokeDasharray={dashed ? '4,3' : undefined} />
+                                    </svg>
+                                    {lbl}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '1.5rem' }}>
+                              {lifts.map(({ label, s: ls }) => {
+                                if (ls.actualData.length < 2) return null
+                                const trend = liftTrend(ls.actualData)
+                                const tl = trendLine(ls.actualData)
+                                return (
+                                  <div key={label}>
+                                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.35rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                      <span>{label}</span>
+                                      {trend && <span style={{ color: trend.color, letterSpacing: '0.06em' }}>{trend.text}</span>}
+                                    </div>
+                                    <LineChart series={[
+                                      { data: ls.actualData, color: '#c8923a' },
+                                      { data: tl, color: 'rgba(200,146,58,0.4)', dashed: true },
+                                    ]} height={100} />
+                                  </div>
+                                )
+                              })}
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    )
+                  })()}
+
                 </div>
               )
             })()}
