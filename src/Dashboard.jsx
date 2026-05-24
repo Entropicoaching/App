@@ -93,6 +93,12 @@ function LineChart({ series, height = 130 }) {
   )
 }
 
+function parsePlannedRpe(intensity) {
+  if (!intensity) return null
+  const m = intensity.match(/RPE\s*(\d+(?:[.,]\d+)?)/i)
+  return m ? parseFloat(m[1].replace(',', '.')) : null
+}
+
 function buildLiftSeries(logs, keyword, nameToCat, category) {
   const useCategory = nameToCat && category && Object.keys(nameToCat).length > 0
   const matched = logs.filter(l => {
@@ -475,7 +481,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   async function fetchAthleteLogs(athleteId) {
     const { data } = await supabase
       .from('exercise_logs')
-      .select('id, set_number, weight, reps_completed, note, logged_at, exercise_id, exercises(id, name, sets, reps, intensity, recommended_weight, session_id, sessions(id, title, weeks(week_number, block_name)))')
+      .select('id, set_number, weight, reps_completed, note, logged_at, rpe_actual, skipped, exercise_id, exercises(id, name, sets, reps, intensity, recommended_weight, session_id, sessions(id, title, weeks(week_number, block_name)))')
       .eq('athlete_id', athleteId)
       .order('logged_at', { ascending: false })
       .limit(500)
@@ -1075,6 +1081,120 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                       </div>
                     ))}
                   </div>
+
+                  {/* 6. RPE analyse */}
+                  {(() => {
+                    const rpeCategories = ['Squat', 'Bænkpres', 'Dødløft']
+                    const logsWithRpe = athleteLogs.filter(l => l.rpe_actual != null && !l.skipped)
+                    if (logsWithRpe.length === 0) return null
+
+                    const lbl = date => { const d = new Date(date + 'T12:00:00'); return `${d.getDate()}/${d.getMonth() + 1}` }
+
+                    function buildRpeSeries(category) {
+                      const filtered = logsWithRpe.filter(l => nameToCat[l.exercises?.name || ''] === category)
+                      if (!filtered.length) return { actualData: [], plannedData: [] }
+                      const dateMap = {}
+                      for (const log of filtered) {
+                        const date = log.logged_at.slice(0, 10)
+                        if (!dateMap[date]) dateMap[date] = { actual: [], planned: [] }
+                        dateMap[date].actual.push(log.rpe_actual)
+                        const p = parsePlannedRpe(log.exercises?.intensity)
+                        if (p) dateMap[date].planned.push(p)
+                      }
+                      const dates = Object.keys(dateMap).sort()
+                      const avg = arr => arr.reduce((a, b) => a + b, 0) / arr.length
+                      return {
+                        actualData: dates.map(date => ({ y: Math.round(avg(dateMap[date].actual) * 10) / 10, label: lbl(date) })),
+                        plannedData: dates.filter(d => dateMap[d].planned.length > 0).map(date => ({ y: Math.round(avg(dateMap[date].planned) * 10) / 10, label: lbl(date) })),
+                      }
+                    }
+
+                    const rpeSeries = rpeCategories.map(cat => ({ label: cat, ...buildRpeSeries(cat) }))
+                    const hasRpeCharts = rpeSeries.some(s => s.actualData.length > 0)
+
+                    // RPE afvigelse
+                    const deviations = logsWithRpe.map(l => {
+                      const p = parsePlannedRpe(l.exercises?.intensity)
+                      return p != null ? l.rpe_actual - p : null
+                    }).filter(d => d !== null)
+                    const avgDev = deviations.length > 0 ? Math.round(deviations.reduce((a, b) => a + b, 0) / deviations.length * 10) / 10 : null
+
+                    // Fatigue trend: session-level avg RPE over time
+                    const sessRpeMap = {}
+                    for (const log of logsWithRpe) {
+                      const date = log.logged_at.slice(0, 10)
+                      if (!sessRpeMap[date]) sessRpeMap[date] = []
+                      sessRpeMap[date].push(log.rpe_actual)
+                    }
+                    const sessRpeDates = Object.keys(sessRpeMap).sort()
+                    const sessRpeAvgs = sessRpeDates.map(d => sessRpeMap[d].reduce((a, b) => a + b, 0) / sessRpeMap[d].length)
+                    const last3 = sessRpeAvgs.slice(-3)
+                    const fatigueWarning = last3.length >= 3 && last3[2] > last3[1] + 0.1 && last3[1] > last3[0] + 0.1
+
+                    return (
+                      <>
+                        {fatigueWarning && (
+                          <div style={{ ...s.card, borderLeft: '3px solid #c8923a', background: 'rgba(200,146,58,0.06)' }}>
+                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.5rem' }}>
+                              ⚠ Stigende RPE-trend
+                            </div>
+                            <div style={{ fontSize: '0.82rem', color: '#b8b4a8' }}>
+                              RPE har steget i de seneste {last3.length} sessioner ({last3.map(v => Math.round(v * 10) / 10).join(' → ')}). Dette kan indikere akkumuleret træthed.
+                            </div>
+                          </div>
+                        )}
+
+                        {avgDev != null && (
+                          <div style={s.card}>
+                            <div style={s.cardLabel}>RPE afvigelse</div>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1px', background: 'rgba(237,234,226,0.07)' }}>
+                              {[
+                                ['Gns. afvigelse', `${avgDev > 0 ? '+' : ''}${avgDev}`, avgDev > 1 ? '#c8923a' : avgDev < -0.5 ? '#6cba6c' : '#edeae2'],
+                                ['Sæt med RPE', deviations.length, '#edeae2'],
+                              ].map(([label, value, color]) => (
+                                <div key={label} style={{ background: '#1c1c18', padding: '1rem' }}>
+                                  <div style={s.fieldLabel}>{label}</div>
+                                  <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', color, lineHeight: 1 }}>{value}</div>
+                                </div>
+                              ))}
+                            </div>
+                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', marginTop: '0.75rem', letterSpacing: '0.06em' }}>
+                              Positiv afvigelse = faktisk RPE højere end planlagt
+                            </div>
+                          </div>
+                        )}
+
+                        {hasRpeCharts && (
+                          <div style={s.card}>
+                            <div style={s.cardLabel}>
+                              RPE — planlagt vs faktisk
+                              <div style={{ display: 'flex', gap: '1rem' }}>
+                                {[['#c8923a', false, 'Faktisk'], ['#7a7770', true, 'Planlagt']].map(([color, dashed, lbl]) => (
+                                  <span key={lbl} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color, textTransform: 'none', letterSpacing: 0, fontWeight: 400 }}>
+                                    <svg width="16" height="8" style={{ flexShrink: 0 }}>
+                                      <line x1="0" y1="4" x2="16" y2="4" stroke={color} strokeWidth="1.75" strokeDasharray={dashed ? '4,3' : undefined} />
+                                    </svg>
+                                    {lbl}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '1.5rem' }}>
+                              {rpeSeries.map(({ label, actualData, plannedData }) => actualData.length > 0 && (
+                                <div key={label}>
+                                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.5rem' }}>{label}</div>
+                                  <LineChart series={[
+                                    { data: actualData, color: '#c8923a' },
+                                    { data: plannedData, color: '#7a7770', dashed: true },
+                                  ]} height={110} />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    )
+                  })()}
                 </div>
               )
             })()}
@@ -1568,7 +1688,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     sets: [],
                   }
                 }
-                grouped[key].exerciseMap[exId].sets.push({ n: log.set_number, weight: log.weight, reps: log.reps_completed, note: log.note })
+                grouped[key].exerciseMap[exId].sets.push({ n: log.set_number, weight: log.weight, reps: log.reps_completed, note: log.note, rpe_actual: log.rpe_actual, rpe_planned: parsePlannedRpe(log.exercises?.intensity), skipped: log.skipped })
               }
               const logSessions = Object.values(grouped).sort((a, b) => b.date.localeCompare(a.date))
 
@@ -1644,14 +1764,29 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                                 </div>
                               )}
                               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
-                                {sortedSets.map(set => (
-                                  <div key={set.n} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.08)', padding: '0.2rem 0.5rem', color: '#edeae2' }}>
-                                    <span style={{ color: '#4a4844' }}>S{set.n} </span>
-                                    <span style={{ color: '#c8923a' }}>{set.weight}kg</span>
-                                    {set.reps && <span style={{ color: '#7a7770' }}> × {set.reps}</span>}
-                                    {set.note && <span style={{ color: '#4a4844', marginLeft: '0.3rem', fontStyle: 'italic' }}>{set.note}</span>}
-                                  </div>
-                                ))}
+                                {sortedSets.map(set => {
+                                  if (set.skipped) return (
+                                    <div key={set.n} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.06)', padding: '0.2rem 0.5rem', color: '#4a4844' }}>
+                                      <span>S{set.n} </span><span>✕</span>
+                                    </div>
+                                  )
+                                  const rpeColor = set.rpe_actual != null && set.rpe_planned != null
+                                    ? (set.rpe_actual >= set.rpe_planned + 1 ? '#c8923a' : Math.abs(set.rpe_actual - set.rpe_planned) <= 0.5 ? '#6cba6c' : '#edeae2')
+                                    : '#7a7770'
+                                  return (
+                                    <div key={set.n} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.08)', padding: '0.2rem 0.5rem', color: '#edeae2' }}>
+                                      <span style={{ color: '#4a4844' }}>S{set.n} </span>
+                                      <span style={{ color: '#c8923a' }}>{set.weight}kg</span>
+                                      {set.reps && <span style={{ color: '#7a7770' }}> × {set.reps}</span>}
+                                      {set.rpe_actual != null && (
+                                        <span style={{ color: rpeColor, marginLeft: '0.3rem' }}>
+                                          RPE {set.rpe_actual}{set.rpe_planned != null ? `/${set.rpe_planned}` : ''}
+                                        </span>
+                                      )}
+                                      {set.note && <span style={{ color: '#4a4844', marginLeft: '0.3rem', fontStyle: 'italic' }}>{set.note}</span>}
+                                    </div>
+                                  )
+                                })}
                               </div>
                             </div>
                           )
