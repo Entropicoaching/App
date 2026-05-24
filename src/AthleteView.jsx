@@ -153,6 +153,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   // Program state
   const [currentWeek, setCurrentWeek] = useState(null)
+  const [allWeeks, setAllWeeks] = useState([])
+  const [viewingWeekIdx, setViewingWeekIdx] = useState(0)
+  const [pastLogs, setPastLogs] = useState([])
   const [progOpenSession, setProgOpenSession] = useState(null)
   const [exerciseLogs, setExerciseLogs] = useState([])
   const [logInputs, setLogInputs] = useState({})
@@ -249,19 +252,32 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       .from('weeks')
       .select('*, sessions(*, exercises(*))')
       .eq('athlete_id', athleteId)
-      .order('week_number', { ascending: false })
-      .limit(1)
-    if (data && data[0]) {
-      const week = {
-        ...data[0],
-        sessions: (data[0].sessions || [])
-          .sort((a, b) => a.session_order - b.session_order)
-          .map(s => ({ ...s, exercises: (s.exercises || []).sort((a, b) => a.exercise_order - b.exercise_order) }))
-      }
-      setCurrentWeek(week)
-      fetchExerciseLogs(athleteId, week)
-      fetchLastLogs(athleteId, week)
-    }
+      .order('week_number', { ascending: true })
+    if (!data || data.length === 0) return
+    const weeks = data.map(w => ({
+      ...w,
+      sessions: (w.sessions || [])
+        .sort((a, b) => a.session_order - b.session_order)
+        .map(s => ({ ...s, exercises: (s.exercises || []).sort((a, b) => a.exercise_order - b.exercise_order) }))
+    }))
+    setAllWeeks(weeks)
+    const latestIdx = weeks.length - 1
+    setViewingWeekIdx(latestIdx)
+    const latestWeek = weeks[latestIdx]
+    setCurrentWeek(latestWeek)
+    fetchExerciseLogs(athleteId, latestWeek)
+    fetchLastLogs(athleteId, latestWeek)
+  }
+
+  async function fetchPastLogs(week, athleteId) {
+    const exerciseIds = (week?.sessions || []).flatMap(s => (s.exercises || []).map(e => e.id))
+    if (exerciseIds.length === 0) { setPastLogs([]); return }
+    const { data } = await supabase
+      .from('exercise_logs')
+      .select('*')
+      .eq('athlete_id', athleteId)
+      .in('exercise_id', exerciseIds)
+    setPastLogs(data || [])
   }
 
   async function fetchExerciseLogs(athleteId, week) {
@@ -844,184 +860,225 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         )}
 
         {/* PROGRAM */}
-        {tab === 'program' && (
-          <>
-            {!currentWeek ? (
-              <>
-                <div style={{ marginBottom: '1.5rem' }}>
-                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Program</div>
-                  <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Dit program.</h1>
-                </div>
-                <div style={s.card}>
-                  <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Intet program tilknyttet endnu.</div>
-                </div>
-              </>
-            ) : (
-              <>
-                <div style={{ marginBottom: '1.5rem' }}>
-                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.4rem' }}>
-                    Uge {currentWeek.week_number}
+        {tab === 'program' && (() => {
+          const latestWeekIdx = allWeeks.length - 1
+          const viewedWeek = allWeeks[viewingWeekIdx] || null
+          const isCurrentWeek = viewingWeekIdx === latestWeekIdx
+          const logsForView = isCurrentWeek ? exerciseLogs : pastLogs
+
+          return (
+            <>
+              {allWeeks.length === 0 ? (
+                <>
+                  <div style={{ marginBottom: '1.5rem' }}>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Program</div>
+                    <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Dit program.</h1>
                   </div>
-                  <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>
-                    {currentWeek.block_name || 'Dit program'}.
-                  </h1>
-                  {currentWeek.coach_note && (
-                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.78rem', color: '#7a7770', marginTop: '0.5rem', letterSpacing: '0.04em' }}>
-                      {currentWeek.coach_note}
-                    </div>
-                  )}
-                </div>
-
-                {(currentWeek.sessions || []).map(session => {
-                  const isOpen = progOpenSession === session.id
-                  const sessionExIds = (session.exercises || []).map(e => e.id)
-                  const sessionLogs = exerciseLogs.filter(l => sessionExIds.includes(l.exercise_id))
-                  const totalSets = (session.exercises || []).reduce((acc, e) => acc + (e.sets || 0), 0)
-                  const loggedSets = sessionLogs.length
-                  const isDone = totalSets > 0 && loggedSets >= totalSets
-
-                  return (
-                    <div key={session.id} style={{ marginBottom: '0.75rem' }}>
-                      {/* Session card header */}
-                      <div
-                        style={{ ...s.card, marginBottom: 0, cursor: 'pointer', borderLeft: isDone ? '3px solid #6cba6c' : isOpen ? '3px solid #c8923a' : '3px solid transparent' }}
-                        onClick={() => setProgOpenSession(isOpen ? null : session.id)}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <div>
-                            <div style={{ ...s.cardLabel, marginBottom: '0.3rem', fontSize: '0.72rem' }}>{session.title}</div>
-                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                              {(session.exercises || []).length} øvelser · {loggedSets}/{totalSets} sæt logget
-                            </div>
-                          </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                            {isDone && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#6cba6c', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Færdig ✓</span>}
-                            <span style={{ color: '#4a4844', fontSize: '0.65rem' }}>{isOpen ? '▲' : '▼'}</span>
-                          </div>
-                        </div>
+                  <div style={s.card}>
+                    <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Intet program tilknyttet endnu.</div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Week navigation */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+                    <button
+                      style={{ ...s.btnGhost, fontSize: '0.58rem', padding: '0.4rem 0.75rem', opacity: viewingWeekIdx === 0 ? 0.25 : 1 }}
+                      disabled={viewingWeekIdx === 0}
+                      onClick={() => {
+                        const ni = viewingWeekIdx - 1
+                        setViewingWeekIdx(ni)
+                        setProgOpenSession(null)
+                        fetchPastLogs(allWeeks[ni], athlete.id)
+                      }}
+                    >← Forrige uge</button>
+                    <div style={{ textAlign: 'center', flex: 1, padding: '0 0.5rem' }}>
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a' }}>
+                        Uge {viewedWeek.week_number}
+                        {!isCurrentWeek && <span style={{ color: '#4a4844', marginLeft: '0.5em' }}>· historisk</span>}
                       </div>
-
-                      {/* Exercises */}
-                      {isOpen && (
-                        <div style={{ background: '#181816', border: '1px solid rgba(237,234,226,0.07)', borderTop: 'none', padding: '1rem' }}>
-                          {(session.exercises || []).map((ex, exIdx) => {
-                            const isLast = exIdx === (session.exercises.length - 1)
-                            return (
-                              <div key={ex.id} style={{ marginBottom: isLast ? 0 : '1.25rem', paddingBottom: isLast ? 0 : '1.25rem', borderBottom: isLast ? 'none' : '1px solid rgba(237,234,226,0.06)' }}>
-                                {/* Exercise info */}
-                                <div style={{ marginBottom: '0.6rem' }}>
-                                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.1rem' }}>
-                                    <div style={{ fontSize: '1.05rem', color: '#edeae2' }}>{ex.name}</div>
-                                    <button
-                                      style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.2rem 0.5rem', flexShrink: 0, color: '#4a4844', borderColor: 'rgba(237,234,226,0.08)' }}
-                                      onClick={() => skipExercise(ex)}
-                                    >Spring øvelse over</button>
-                                  </div>
-                                  {ex.recommended_weight != null ? (
-                                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#c8923a', marginBottom: '0.2rem' }}>
-                                      Anbefalet: {ex.recommended_weight}kg
-                                    </div>
-                                  ) : lastLogByExerciseName[ex.name] ? (
-                                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#4a4844', marginBottom: '0.2rem' }}>
-                                      Sidst: {lastLogByExerciseName[ex.name].weight}kg × {lastLogByExerciseName[ex.name].reps_completed} reps
-                                    </div>
-                                  ) : null}
-                                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.78rem', color: '#c8923a', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.1rem' }}>
-                                    {[ex.sets && `${ex.sets} sæt`, ex.reps && `× ${ex.reps}`, ex.intensity && ex.intensity].filter(Boolean).join(' · ')}
-                                  </div>
-                                  {ex.note && (
-                                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#7a7770', marginTop: '0.1rem', fontStyle: 'italic' }}>{ex.note}</div>
-                                  )}
-                                </div>
-
-                                {/* Set logging rows */}
-                                {Array.from({ length: ex.sets || 0 }, (_, i) => i + 1).map(setNum => {
-                                  const key = `${ex.id}_${setNum}`
-                                  const logged = exerciseLogs.find(l => l.exercise_id === ex.id && l.set_number === setNum)
-                                  const input = logInputs[key] || { weight: '', note: '', rpe: '' }
-                                  const plannedRpe = parsePlannedRpe(ex.intensity)
-                                  const rpeVal = input.rpe !== '' ? input.rpe : (plannedRpe != null ? plannedRpe.toString() : '')
-
-                                  if (logged?.skipped) return (
-                                    <div key={setNum} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '52px' }}>Sæt {setNum}</div>
-                                      <span style={{ color: '#4a4844', fontSize: '1rem' }}>✕</span>
-                                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Sprunget over</span>
-                                    </div>
-                                  )
-
-                                  return (
-                                    <div key={setNum} style={{ marginBottom: '0.75rem' }}>
-                                      {/* Row 1: weight + log + skip */}
-                                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
-                                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '52px' }}>
-                                          Sæt {setNum}
-                                        </div>
-                                        <input
-                                          style={{ ...s.fieldInput, maxWidth: '82px', padding: '0.65rem 0.5rem', fontSize: '1.1rem', textAlign: 'center' }}
-                                          type="number"
-                                          placeholder="kg"
-                                          value={input.weight}
-                                          onChange={e => setLogInputs(p => ({ ...p, [key]: { ...p[key], weight: e.target.value } }))}
-                                        />
-                                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.88rem', color: '#c8923a', whiteSpace: 'nowrap' }}>
-                                          × {ex.reps || '—'}
-                                        </span>
-                                        <button
-                                          style={{ ...s.btnPrimary, padding: '0.65rem 1rem', fontSize: '0.65rem', background: logged ? '#6cba6c' : '#c8923a' }}
-                                          onClick={() => logSet(ex.id, setNum, ex.sets, ex.reps, plannedRpe)}
-                                        >
-                                          {logged ? '✓' : 'Log'}
-                                        </button>
-                                        <button
-                                          style={{ ...s.btnGhost, padding: '0.65rem 0.75rem', fontSize: '0.55rem', color: '#4a4844', borderColor: 'rgba(237,234,226,0.08)' }}
-                                          onClick={() => skipSet(ex.id, setNum, plannedRpe)}
-                                        >Spring over</button>
-                                      </div>
-                                      {/* Row 2: RPE + note */}
-                                      <div style={{ paddingLeft: 'calc(52px + 0.5rem)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.08em', whiteSpace: 'nowrap' }}>RPE</span>
-                                        <input
-                                          style={{ ...s.fieldInput, maxWidth: '62px', padding: '0.3rem 0.4rem', fontSize: '0.95rem', textAlign: 'center' }}
-                                          type="number"
-                                          placeholder={plannedRpe != null ? plannedRpe.toString() : '—'}
-                                          min="1" max="10" step="0.5"
-                                          value={rpeVal}
-                                          onChange={e => setLogInputs(p => ({ ...p, [key]: { ...p[key], rpe: e.target.value } }))}
-                                        />
-                                        <input
-                                          style={{ ...s.fieldInput, flex: 1, fontSize: '0.75rem', padding: '0.3rem 0.6rem', color: '#7a7770', fontStyle: 'italic' }}
-                                          type="text"
-                                          placeholder="Tilføj note..."
-                                          value={input.note}
-                                          onChange={e => setLogInputs(p => ({ ...p, [key]: { ...p[key], note: e.target.value } }))}
-                                        />
-                                      </div>
-                                    </div>
-                                  )
-                                })}
-                              </div>
-                            )
-                          })}
-
-                          {(session.exercises || []).length === 0 && (
-                            <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen øvelser i denne træning endnu.</div>
-                          )}
-                        </div>
+                      {viewedWeek.block_name && (
+                        <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.1rem', color: '#edeae2', marginTop: '0.1rem' }}>{viewedWeek.block_name}</div>
                       )}
                     </div>
-                  )
-                })}
-
-                {(currentWeek.sessions || []).length === 0 && (
-                  <div style={s.card}>
-                    <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen træninger i denne uge endnu.</div>
+                    <button
+                      style={{ ...s.btnGhost, fontSize: '0.58rem', padding: '0.4rem 0.75rem', opacity: isCurrentWeek ? 0.25 : 1 }}
+                      disabled={isCurrentWeek}
+                      onClick={() => {
+                        const ni = viewingWeekIdx + 1
+                        setViewingWeekIdx(ni)
+                        setProgOpenSession(null)
+                        if (ni < latestWeekIdx) {
+                          fetchPastLogs(allWeeks[ni], athlete.id)
+                        } else {
+                          setPastLogs([])
+                        }
+                      }}
+                    >Næste uge →</button>
                   </div>
-                )}
-              </>
-            )}
-          </>
-        )}
+
+                  {viewedWeek.coach_note && (
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.75rem', color: '#7a7770', marginBottom: '1rem', letterSpacing: '0.04em' }}>
+                      {viewedWeek.coach_note}
+                    </div>
+                  )}
+
+                  {(viewedWeek.sessions || []).map(session => {
+                    const isOpen = progOpenSession === session.id
+                    const sessionExIds = (session.exercises || []).map(e => e.id)
+                    const sessionLogs = logsForView.filter(l => sessionExIds.includes(l.exercise_id))
+                    const totalSets = (session.exercises || []).reduce((acc, e) => acc + (e.sets || 0), 0)
+                    const loggedSets = sessionLogs.filter(l => !l.skipped).length
+                    const isDone = totalSets > 0 && loggedSets >= totalSets
+
+                    return (
+                      <div key={session.id} style={{ marginBottom: '0.75rem' }}>
+                        <div
+                          style={{ ...s.card, marginBottom: 0, cursor: 'pointer', borderLeft: isDone ? '3px solid #6cba6c' : isOpen ? '3px solid #c8923a' : '3px solid transparent' }}
+                          onClick={() => setProgOpenSession(isOpen ? null : session.id)}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <div>
+                              <div style={{ ...s.cardLabel, marginBottom: '0.3rem', fontSize: '0.72rem' }}>{session.title}</div>
+                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                                {(session.exercises || []).length} øvelser · {loggedSets}/{totalSets} sæt logget
+                              </div>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                              {isDone && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#6cba6c', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Færdig ✓</span>}
+                              <span style={{ color: '#4a4844', fontSize: '0.65rem' }}>{isOpen ? '▲' : '▼'}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {isOpen && (
+                          <div style={{ background: '#181816', border: '1px solid rgba(237,234,226,0.07)', borderTop: 'none', padding: '1rem' }}>
+                            {(session.exercises || []).map((ex, exIdx) => {
+                              const isLast = exIdx === session.exercises.length - 1
+                              return (
+                                <div key={ex.id} style={{ marginBottom: isLast ? 0 : '1.25rem', paddingBottom: isLast ? 0 : '1.25rem', borderBottom: isLast ? 'none' : '1px solid rgba(237,234,226,0.06)' }}>
+                                  <div style={{ marginBottom: '0.6rem' }}>
+                                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.1rem' }}>
+                                      <div style={{ fontSize: '1.05rem', color: '#edeae2' }}>{ex.name}</div>
+                                      {isCurrentWeek && (
+                                        <button
+                                          style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.2rem 0.5rem', flexShrink: 0, color: '#4a4844', borderColor: 'rgba(237,234,226,0.08)' }}
+                                          onClick={() => skipExercise(ex)}
+                                        >Spring øvelse over</button>
+                                      )}
+                                    </div>
+                                    {isCurrentWeek && (ex.recommended_weight != null ? (
+                                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#c8923a', marginBottom: '0.2rem' }}>
+                                        Anbefalet: {ex.recommended_weight}kg
+                                      </div>
+                                    ) : lastLogByExerciseName[ex.name] ? (
+                                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#4a4844', marginBottom: '0.2rem' }}>
+                                        Sidst: {lastLogByExerciseName[ex.name].weight}kg × {lastLogByExerciseName[ex.name].reps_completed} reps
+                                      </div>
+                                    ) : null)}
+                                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.78rem', color: '#c8923a', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.1rem' }}>
+                                      {[ex.sets && `${ex.sets} sæt`, ex.reps && `× ${ex.reps}`, ex.intensity && ex.intensity].filter(Boolean).join(' · ')}
+                                    </div>
+                                    {ex.note && (
+                                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#7a7770', marginTop: '0.1rem', fontStyle: 'italic' }}>{ex.note}</div>
+                                    )}
+                                  </div>
+
+                                  {Array.from({ length: ex.sets || 0 }, (_, i) => i + 1).map(setNum => {
+                                    const key = `${ex.id}_${setNum}`
+                                    const logged = logsForView.find(l => l.exercise_id === ex.id && l.set_number === setNum)
+
+                                    if (!isCurrentWeek) {
+                                      return (
+                                        <div key={setNum} style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', marginBottom: '0.5rem' }}>
+                                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '52px' }}>Sæt {setNum}</div>
+                                          {logged?.skipped ? (
+                                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#4a4844' }}>✕ Sprunget over</span>
+                                          ) : logged ? (
+                                            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'baseline' }}>
+                                              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.85rem', color: '#edeae2' }}>{logged.weight}kg × {logged.reps_completed}</span>
+                                              {logged.rpe_actual != null && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#7a7770' }}>RPE {logged.rpe_actual}</span>}
+                                              {logged.note && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#4a4844', fontStyle: 'italic' }}>{logged.note}</span>}
+                                            </div>
+                                          ) : (
+                                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#4a4844' }}>—</span>
+                                          )}
+                                        </div>
+                                      )
+                                    }
+
+                                    const input = logInputs[key] || { weight: '', note: '', rpe: '' }
+                                    const plannedRpe = parsePlannedRpe(ex.intensity)
+                                    const rpeVal = input.rpe !== '' ? input.rpe : (plannedRpe != null ? plannedRpe.toString() : '')
+
+                                    if (logged?.skipped) return (
+                                      <div key={setNum} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '52px' }}>Sæt {setNum}</div>
+                                        <span style={{ color: '#4a4844', fontSize: '1rem' }}>✕</span>
+                                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Sprunget over</span>
+                                      </div>
+                                    )
+
+                                    return (
+                                      <div key={setNum} style={{ marginBottom: '0.75rem' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
+                                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '52px' }}>
+                                            Sæt {setNum}
+                                          </div>
+                                          <input
+                                            style={{ ...s.fieldInput, maxWidth: '82px', padding: '0.65rem 0.5rem', fontSize: '1.1rem', textAlign: 'center' }}
+                                            type="number" placeholder="kg" value={input.weight}
+                                            onChange={e => setLogInputs(p => ({ ...p, [key]: { ...p[key], weight: e.target.value } }))}
+                                          />
+                                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.88rem', color: '#c8923a', whiteSpace: 'nowrap' }}>× {ex.reps || '—'}</span>
+                                          <button
+                                            style={{ ...s.btnPrimary, padding: '0.65rem 1rem', fontSize: '0.65rem', background: logged ? '#6cba6c' : '#c8923a' }}
+                                            onClick={() => logSet(ex.id, setNum, ex.sets, ex.reps, plannedRpe)}
+                                          >{logged ? '✓' : 'Log'}</button>
+                                          <button
+                                            style={{ ...s.btnGhost, padding: '0.65rem 0.75rem', fontSize: '0.55rem', color: '#4a4844', borderColor: 'rgba(237,234,226,0.08)' }}
+                                            onClick={() => skipSet(ex.id, setNum, plannedRpe)}
+                                          >Spring over</button>
+                                        </div>
+                                        <div style={{ paddingLeft: 'calc(52px + 0.5rem)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.08em', whiteSpace: 'nowrap' }}>RPE</span>
+                                          <input
+                                            style={{ ...s.fieldInput, maxWidth: '62px', padding: '0.3rem 0.4rem', fontSize: '0.95rem', textAlign: 'center' }}
+                                            type="number" placeholder={plannedRpe != null ? plannedRpe.toString() : '—'} min="1" max="10" step="0.5"
+                                            value={rpeVal}
+                                            onChange={e => setLogInputs(p => ({ ...p, [key]: { ...p[key], rpe: e.target.value } }))}
+                                          />
+                                          <input
+                                            style={{ ...s.fieldInput, flex: 1, fontSize: '0.75rem', padding: '0.3rem 0.6rem', color: '#7a7770', fontStyle: 'italic' }}
+                                            type="text" placeholder="Tilføj note..." value={input.note}
+                                            onChange={e => setLogInputs(p => ({ ...p, [key]: { ...p[key], note: e.target.value } }))}
+                                          />
+                                        </div>
+                                      </div>
+                                    )
+                                  })}
+                                </div>
+                              )
+                            })}
+                            {(session.exercises || []).length === 0 && (
+                              <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen øvelser i denne træning endnu.</div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+
+                  {(viewedWeek.sessions || []).length === 0 && (
+                    <div style={s.card}>
+                      <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen træninger i denne uge endnu.</div>
+                    </div>
+                  )}
+                </>
+              )}
+            </>
+          )
+        })()}
 
         {/* KOST */}
         {tab === 'kost' && (
