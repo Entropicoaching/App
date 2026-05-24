@@ -573,8 +573,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   if (!athlete) return (
     <div style={{ minHeight: '100vh', background: '#141410', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '1rem' }}>
-      <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Din konto er ikke tilknyttet en atlet endnu.</div>
-      <div style={{ color: '#4a4844', fontSize: '0.82rem' }}>Kontakt din coach for at få adgang.</div>
+      <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Din konto er ikke tilknyttet en coach endnu.</div>
+      <div style={{ color: '#4a4844', fontSize: '0.82rem' }}>Kontakt din coach — din e-mail skal registreres.</div>
       {backBtn || <button style={s.btnGhost} onClick={() => supabase.auth.signOut()}>Log ud</button>}
     </div>
   )
