@@ -161,6 +161,11 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [weightInput, setWeightInput] = useState('')
   const [savingWeight, setSavingWeight] = useState(false)
 
+  // Readiness state
+  const [readinessLog, setReadinessLog] = useState(null)
+  const [readinessInput, setReadinessInput] = useState({ sleep: '', energy: null, motivation: null, stress: null, soreZones: [] })
+  const [savingReadiness, setSavingReadiness] = useState(false)
+
   useEffect(() => { fetchAthlete() }, [])
   useEffect(() => { if (tab === 'beskeder' && athlete) fetchAthleteMessages() }, [tab, athlete?.id])
 
@@ -183,8 +188,51 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       fetchProgram(data.id)
       fetchAthleteMessages(data.id)
       fetchWeightLogs(data.id)
+      fetchReadiness(data.id)
     }
     setLoading(false)
+  }
+
+  async function fetchReadiness(athleteId) {
+    const { data } = await supabase
+      .from('readiness_logs')
+      .select('*')
+      .eq('athlete_id', athleteId)
+      .eq('logged_date', today())
+      .maybeSingle()
+    setReadinessLog(data || null)
+  }
+
+  function calcReadinessScore({ sleep, energy, motivation, stress }) {
+    let score = 100
+    const h = parseFloat(sleep) || 0
+    if (h > 0) {
+      if (h < 6) score -= 25
+      else if (h < 7) score -= 10
+      else if (h > 9) score -= 5
+    }
+    if (energy) score += (energy - 3) * 10
+    if (motivation) score += (motivation - 3) * 8
+    if (stress) score += (stress - 3) * -8
+    return Math.max(0, Math.min(100, Math.round(score)))
+  }
+
+  async function saveReadiness() {
+    if (!athlete || !readinessInput.energy || !readinessInput.motivation || !readinessInput.stress) return
+    setSavingReadiness(true)
+    const score = calcReadinessScore(readinessInput)
+    await supabase.from('readiness_logs').insert({
+      athlete_id: athlete.id,
+      logged_date: today(),
+      sleep_hours: parseFloat(readinessInput.sleep) || null,
+      energy: readinessInput.energy,
+      motivation: readinessInput.motivation,
+      stress: readinessInput.stress,
+      sore_zones: readinessInput.soreZones.length > 0 ? readinessInput.soreZones : null,
+      readiness_score: score,
+    })
+    setSavingReadiness(false)
+    fetchReadiness(athlete.id)
   }
 
   async function fetchProgram(athleteId) {
@@ -517,6 +565,79 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 {days[now.getDay()]} d. {now.getDate()}. {months[now.getMonth()]} {now.getFullYear()}
               </div>
             </div>
+
+            {/* Readiness check */}
+            {!readinessLog ? (
+              <div style={s.card}>
+                <div style={s.cardLabel}>Dagens parathed</div>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <div style={s.fieldLabel}>Søvn</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <input
+                      type="number" min="0" max="24" step="0.5" placeholder="timer"
+                      value={readinessInput.sleep}
+                      onChange={e => setReadinessInput(p => ({ ...p, sleep: e.target.value }))}
+                      style={{ ...s.fieldInput, maxWidth: '90px', fontSize: '1.1rem', padding: '0.5rem 0.6rem', textAlign: 'center' }}
+                    />
+                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#7a7770', letterSpacing: '0.06em' }}>timer</span>
+                  </div>
+                </div>
+
+                {[['energy', 'Energiniveau'], ['motivation', 'Motivation'], ['stress', 'Stress']].map(([key, label]) => (
+                  <div key={key} style={{ marginBottom: '1rem' }}>
+                    <div style={s.fieldLabel}>{label}{key === 'stress' ? ' (5 = meget stresset)' : ''}</div>
+                    <div style={{ display: 'flex', gap: '0.4rem' }}>
+                      {[1, 2, 3, 4, 5].map(v => (
+                        <button key={v}
+                          onClick={() => setReadinessInput(p => ({ ...p, [key]: v }))}
+                          style={{ flex: 1, padding: '0.9rem 0', fontFamily: "'IBM Plex Mono', monospace", fontSize: '1rem', fontWeight: 500, border: `1px solid ${readinessInput[key] === v ? '#c8923a' : 'rgba(237,234,226,0.13)'}`, background: readinessInput[key] === v ? 'rgba(200,146,58,0.15)' : '#141410', color: readinessInput[key] === v ? '#c8923a' : '#7a7770', cursor: 'pointer' }}
+                        >{v}</button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+
+                <div style={{ marginBottom: '1.25rem' }}>
+                  <div style={s.fieldLabel}>Ømhed (vælg relevante)</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    {['Ben', 'Ryg', 'Skuldre/Arme', 'Core'].map(zone => {
+                      const sel = readinessInput.soreZones.includes(zone)
+                      return (
+                        <button key={zone}
+                          onClick={() => setReadinessInput(p => ({ ...p, soreZones: sel ? p.soreZones.filter(z => z !== zone) : [...p.soreZones, zone] }))}
+                          style={{ padding: '0.5rem 0.9rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', border: `1px solid ${sel ? '#c8923a' : 'rgba(237,234,226,0.13)'}`, background: sel ? 'rgba(200,146,58,0.15)' : '#141410', color: sel ? '#c8923a' : '#7a7770', cursor: 'pointer' }}
+                        >{zone}</button>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                <button
+                  style={{ ...s.btnPrimary, width: '100%', opacity: (!readinessInput.energy || !readinessInput.motivation || !readinessInput.stress) ? 0.45 : 1 }}
+                  onClick={saveReadiness}
+                  disabled={savingReadiness || !readinessInput.energy || !readinessInput.motivation || !readinessInput.stress}
+                >{savingReadiness ? 'Gemmer...' : 'Log parathed'}</button>
+              </div>
+            ) : (() => {
+              const sc = readinessLog.readiness_score
+              const sig = sc >= 75 ? { color: '#6cba6c', text: 'Kroppen er klar 💪', bg: 'rgba(108,186,108,0.07)' }
+                : sc >= 50 ? { color: '#c8923a', text: 'Tag det lidt roligt i dag', bg: 'rgba(200,146,58,0.07)' }
+                : { color: '#e05555', text: 'Overvej en let session i dag', bg: 'rgba(224,85,85,0.07)' }
+              return (
+                <div style={{ ...s.card, background: sig.bg }}>
+                  <div style={s.cardLabel}>Dagens parathed</div>
+                  <div style={{ fontSize: '1.05rem', color: sig.color, marginBottom: '0.75rem' }}>{sig.text}</div>
+                  <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+                    {readinessLog.sleep_hours != null && <div><div style={s.fieldLabel}>Søvn</div><div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.85rem', color: '#edeae2' }}>{readinessLog.sleep_hours}t</div></div>}
+                    {readinessLog.energy != null && <div><div style={s.fieldLabel}>Energi</div><div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.85rem', color: '#edeae2' }}>{readinessLog.energy}/5</div></div>}
+                    {readinessLog.motivation != null && <div><div style={s.fieldLabel}>Motivation</div><div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.85rem', color: '#edeae2' }}>{readinessLog.motivation}/5</div></div>}
+                    {readinessLog.stress != null && <div><div style={s.fieldLabel}>Stress</div><div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.85rem', color: '#edeae2' }}>{readinessLog.stress}/5</div></div>}
+                    {readinessLog.sore_zones?.length > 0 && <div><div style={s.fieldLabel}>Ømhed</div><div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770' }}>{readinessLog.sore_zones.join(', ')}</div></div>}
+                  </div>
+                </div>
+              )
+            })()}
 
             <div style={s.card}>
               <div style={s.cardLabel}>Mit program</div>

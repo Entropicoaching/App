@@ -93,6 +93,12 @@ function LineChart({ series, height = 130 }) {
   )
 }
 
+function readinessSignal(score) {
+  if (score >= 75) return { color: '#6cba6c', text: 'Kroppen er klar 💪', bg: 'rgba(108,186,108,0.07)' }
+  if (score >= 50) return { color: '#c8923a', text: 'Tag det lidt roligt i dag', bg: 'rgba(200,146,58,0.07)' }
+  return { color: '#e05555', text: 'Overvej en let session i dag', bg: 'rgba(224,85,85,0.07)' }
+}
+
 function parsePlannedRpe(intensity) {
   if (!intensity) return null
   const m = intensity.match(/RPE\s*(\d+(?:[.,]\d+)?)/i)
@@ -160,6 +166,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [exerciseForm, setExerciseForm] = useState({ name: '', sets: '', reps: '', intensity: '', intensityPrefix: 'RPE', note: '' })
   const [athleteLogs, setAthleteLogs] = useState([])
   const [athleteWeightLogs, setAthleteWeightLogs] = useState([])
+  const [athleteReadiness, setAthleteReadiness] = useState([])
   const [editingRecommended, setEditingRecommended] = useState(null)
   const [recommendedInput, setRecommendedInput] = useState('')
   const [copyingExercise, setCopyingExercise] = useState(null)
@@ -192,7 +199,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   }, [activeTab, selectedAthlete?.id])
 
   useEffect(() => {
-    if ((activeTab === 'oversigt' || activeTab === 'analyse') && selectedAthlete) fetchAthleteWeightLogs(selectedAthlete.id)
+    if ((activeTab === 'oversigt' || activeTab === 'analyse') && selectedAthlete) {
+      fetchAthleteWeightLogs(selectedAthlete.id)
+      fetchAthleteReadiness(selectedAthlete.id)
+    }
   }, [activeTab, selectedAthlete?.id])
 
   async function fetchAthletes() {
@@ -496,6 +506,16 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       .order('logged_at', { ascending: false })
       .limit(90)
     setAthleteWeightLogs(data || [])
+  }
+
+  async function fetchAthleteReadiness(athleteId) {
+    const { data } = await supabase
+      .from('readiness_logs')
+      .select('*')
+      .eq('athlete_id', athleteId)
+      .order('logged_date', { ascending: false })
+      .limit(90)
+    setAthleteReadiness(data || [])
   }
 
   async function addAthlete() {
@@ -1195,12 +1215,100 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                       </>
                     )
                   })()}
+
+                  {/* 7. Readiness analyse */}
+                  {(() => {
+                    if (athleteReadiness.length === 0) return null
+                    const fmtR = date => { const d = new Date(date + 'T12:00:00'); return `${d.getDate()}/${d.getMonth() + 1}` }
+                    const scoreData = [...athleteReadiness].reverse().map(r => ({ y: r.readiness_score, label: fmtR(r.logged_date) }))
+                    const d14str = new Date(Date.now() - 14 * 86400000).toISOString().slice(0, 10)
+                    const last14 = athleteReadiness.filter(r => r.logged_date >= d14str)
+                    const sleepEntries = last14.filter(r => r.sleep_hours != null)
+                    const avgSleep = sleepEntries.length > 0 ? Math.round(sleepEntries.reduce((s, r) => s + r.sleep_hours, 0) / sleepEntries.length * 10) / 10 : null
+                    const soreMap = {}
+                    for (const r of athleteReadiness) for (const z of (r.sore_zones || [])) soreMap[z] = (soreMap[z] || 0) + 1
+                    const topZones = Object.entries(soreMap).sort((a, b) => b[1] - a[1]).slice(0, 4)
+                    const sorted = [...athleteReadiness].sort((a, b) => b.logged_date.localeCompare(a.logged_date))
+                    let lowStreak = 0
+                    for (const r of sorted) { if (r.readiness_score < 50) lowStreak++; else break }
+
+                    return (
+                      <>
+                        {lowStreak >= 3 && (
+                          <div style={{ ...s.card, borderLeft: '3px solid #e05555', background: 'rgba(224,85,85,0.05)' }}>
+                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#e05555', marginBottom: '0.5rem' }}>
+                              ⚠ Lav parathed {lowStreak} dage i træk
+                            </div>
+                            <div style={{ fontSize: '0.82rem', color: '#b8b4a8' }}>
+                              Atleten har haft parathedsscore under 50 i {lowStreak} dage i træk. Overvej en lettere session eller fri dag.
+                            </div>
+                          </div>
+                        )}
+                        <div style={s.card}>
+                          <div style={s.cardLabel}>Parathed over tid</div>
+                          {scoreData.length > 1
+                            ? <LineChart series={[{ data: scoreData, color: '#6cba6c' }]} height={110} />
+                            : <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ikke nok data endnu.</div>}
+                        </div>
+                        <div style={s.card}>
+                          <div style={s.cardLabel}>Parathed — nøgletal</div>
+                          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)', gap: '1px', background: 'rgba(237,234,226,0.07)', marginBottom: topZones.length > 0 ? '1rem' : 0 }}>
+                            {[
+                              ['Logs i alt', athleteReadiness.length],
+                              ['Gns. søvn (2 uger)', avgSleep != null ? `${avgSleep}t` : '—'],
+                              ['Seneste score', athleteReadiness[0]?.readiness_score ?? '—'],
+                            ].map(([label, value]) => (
+                              <div key={label} style={{ background: '#1c1c18', padding: '1rem' }}>
+                                <div style={s.fieldLabel}>{label}</div>
+                                <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', color: '#edeae2', lineHeight: 1 }}>{value}</div>
+                              </div>
+                            ))}
+                          </div>
+                          {topZones.length > 0 && (
+                            <div>
+                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.5rem' }}>Hyppigst ømme zoner</div>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                                {topZones.map(([zone, count]) => (
+                                  <div key={zone} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.08)', padding: '0.2rem 0.6rem', color: '#b8b4a8' }}>
+                                    {zone} <span style={{ color: '#4a4844' }}>× {count}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </>
+                    )
+                  })()}
                 </div>
               )
             })()}
 
             {/* TAB: OVERSIGT */}
             {activeTab === 'oversigt' && (
+              <div>
+              {(() => {
+                const todayStr = new Date().toISOString().slice(0, 10)
+                const todayR = athleteReadiness.find(r => r.logged_date === todayStr)
+                if (!todayR) return null
+                const sig = readinessSignal(todayR.readiness_score)
+                return (
+                  <div style={{ ...s.card, background: sig.bg, marginBottom: '1.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+                      <div>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.3rem' }}>Parathed i dag</div>
+                        <div style={{ fontSize: '0.95rem', color: sig.color }}>{sig.text}</div>
+                      </div>
+                      <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap' }}>
+                        {todayR.sleep_hours != null && <div style={{ textAlign: 'center' }}><div style={s.fieldLabel}>Søvn</div><div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.8rem', color: '#edeae2' }}>{todayR.sleep_hours}t</div></div>}
+                        {todayR.energy != null && <div style={{ textAlign: 'center' }}><div style={s.fieldLabel}>Energi</div><div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.8rem', color: '#edeae2' }}>{todayR.energy}/5</div></div>}
+                        {todayR.stress != null && <div style={{ textAlign: 'center' }}><div style={s.fieldLabel}>Stress</div><div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.8rem', color: '#edeae2' }}>{todayR.stress}/5</div></div>}
+                        {todayR.sore_zones?.length > 0 && <div><div style={s.fieldLabel}>Ømhed</div><div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#7a7770' }}>{todayR.sore_zones.join(', ')}</div></div>}
+                      </div>
+                    </div>
+                  </div>
+                )
+              })()}
               <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1.5rem' }}>
                 <div style={s.card}>
                   <div style={s.cardLabel}>
@@ -1299,6 +1407,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     <button style={{ ...s.btnGhost, alignSelf: 'flex-start', marginTop: '0.5rem' }} onClick={() => { setActiveTab('kost'); setEditing('setup') }}>Rediger mål</button>
                   </div>
                 </div>
+              </div>
               </div>
             )}
 
