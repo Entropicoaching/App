@@ -622,7 +622,17 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       if (!grouped[cat]) grouped[cat] = []
       if (ex.name.toLowerCase().includes(searchLower)) grouped[cat].push(ex)
     }
-    const filteredCategories = Object.entries(grouped).filter(([, exs]) => exs.length > 0)
+    const competitionOrder = ['Squat', 'Bænkpres', 'Dødløft']
+    const filteredCategories = Object.entries(grouped)
+      .filter(([, exs]) => exs.length > 0)
+      .sort(([a], [b]) => {
+        const ai = competitionOrder.indexOf(a)
+        const bi = competitionOrder.indexOf(b)
+        if (ai !== -1 && bi !== -1) return ai - bi
+        if (ai !== -1) return -1
+        if (bi !== -1) return 1
+        return a.localeCompare(b)
+      })
     const exactMatch = exerciseLibrary.some(e => e.name.toLowerCase() === searchLower && searchLower !== '')
     const showDropdown = exerciseSearchOpen && (filteredCategories.length > 0 || (exerciseForm.name.trim() && !exactMatch))
 
