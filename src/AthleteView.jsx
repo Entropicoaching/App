@@ -286,6 +286,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [allWeeks, setAllWeeks] = useState([])
   const [viewingWeekIdx, setViewingWeekIdx] = useState(0)
   const [pastLogs, setPastLogs] = useState([])
+  const [allExerciseLogs, setAllExerciseLogs] = useState([])
   const [progOpenSession, setProgOpenSession] = useState(null)
   const [exerciseLogs, setExerciseLogs] = useState([])
   const [logInputs, setLogInputs] = useState({})
@@ -411,6 +412,18 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     setCurrentWeek(latestWeek)
     fetchExerciseLogs(athleteId, latestWeek)
     fetchLastLogs(athleteId, latestWeek)
+    fetchAllExerciseLogs(athleteId, weeks)
+  }
+
+  async function fetchAllExerciseLogs(athleteId, weeks) {
+    const allExIds = weeks.flatMap(w => (w.sessions || []).flatMap(s => (s.exercises || []).map(e => e.id)))
+    if (allExIds.length === 0) return
+    const { data } = await supabase
+      .from('exercise_logs')
+      .select('exercise_id, skipped')
+      .eq('athlete_id', athleteId)
+      .in('exercise_id', allExIds)
+    setAllExerciseLogs(data || [])
   }
 
   async function fetchPastLogs(week, athleteId) {
@@ -1153,6 +1166,73 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 </>
               ) : (
                 <>
+                  {/* Periodization timeline */}
+                  {allWeeks.length > 1 && (() => {
+                    const compDate = athlete?.competition_date
+                    const compMs = compDate ? new Date(compDate + 'T12:00:00') - new Date() : null
+                    const weeksToComp = compMs != null ? Math.ceil(compMs / (7 * 24 * 3600 * 1000)) : null
+                    const compWeekIdx = weeksToComp != null
+                      ? Math.min(allWeeks.length - 1, Math.max(0, latestWeekIdx + weeksToComp - 1))
+                      : null
+
+                    const compliancePerWeek = allWeeks.map(week => {
+                      const exIds = new Set((week.sessions || []).flatMap(s => (s.exercises || []).map(e => e.id)))
+                      const weekLogs = allExerciseLogs.filter(l => exIds.has(l.exercise_id))
+                      if (weekLogs.length === 0) return null
+                      const total = (week.sessions || []).flatMap(s => s.exercises || []).reduce((acc, e) => acc + (e.sets || 0), 0)
+                      const logged = weekLogs.filter(l => !l.skipped).length
+                      return total > 0 ? Math.round(logged / total * 100) : null
+                    })
+
+                    return (
+                      <div style={{ marginBottom: '1rem' }}>
+                        {weeksToComp != null && weeksToComp > 0 && (
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#c8923a', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>
+                            🏆 {weeksToComp} uger til stævne
+                          </div>
+                        )}
+                        {weeksToComp != null && weeksToComp <= 0 && (
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#6cba6c', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>
+                            🏆 Stævne passeret
+                          </div>
+                        )}
+                        <div style={{ overflowX: 'auto', display: 'flex', gap: '0.3rem', paddingBottom: '0.35rem' }}>
+                          {allWeeks.map((week, idx) => {
+                            const isCurrent = idx === latestWeekIdx
+                            const isViewing = idx === viewingWeekIdx
+                            const isComp = idx === compWeekIdx
+                            const pct = compliancePerWeek[idx]
+                            let bg = '#1c1c18', border = 'rgba(237,234,226,0.1)'
+                            if (isCurrent) { bg = 'rgba(200,146,58,0.18)'; border = '#c8923a' }
+                            else if (pct != null) {
+                              bg = pct >= 80 ? 'rgba(108,186,108,0.12)' : pct >= 50 ? 'rgba(200,146,58,0.1)' : 'rgba(224,85,85,0.1)'
+                              border = pct >= 80 ? 'rgba(108,186,108,0.35)' : pct >= 50 ? 'rgba(200,146,58,0.25)' : 'rgba(224,85,85,0.25)'
+                            }
+                            if (isViewing && !isCurrent) border = '#edeae2'
+                            return (
+                              <div
+                                key={week.id}
+                                style={{ minWidth: '42px', height: '50px', flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: bg, border: `1px solid ${border}`, cursor: 'pointer', position: 'relative', outline: isViewing ? `2px solid ${isCurrent ? '#c8923a' : '#edeae2'}` : 'none', outlineOffset: '-1px' }}
+                                onClick={() => {
+                                  setViewingWeekIdx(idx)
+                                  setProgOpenSession(null)
+                                  if (idx < latestWeekIdx) fetchPastLogs(allWeeks[idx], athlete.id)
+                                  else setPastLogs([])
+                                }}
+                              >
+                                {isComp && <div style={{ position: 'absolute', top: '-9px', fontSize: '0.6rem', lineHeight: 1 }}>🏆</div>}
+                                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', color: isCurrent ? '#c8923a' : '#7a7770', letterSpacing: '0.05em' }}>U{week.week_number}</div>
+                                {pct != null && (
+                                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', color: pct >= 80 ? '#6cba6c' : pct >= 50 ? '#c8923a' : '#e05555', marginTop: '0.1rem' }}>{pct}%</div>
+                                )}
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )
+                  })()}
+
                   {/* Week header — navigation only shown when multiple weeks exist */}
                   <div style={{ marginBottom: '1.25rem' }}>
                     {allWeeks.length > 1 ? (
@@ -1206,6 +1286,13 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                   {viewedWeek.coach_note && (
                     <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.75rem', color: '#7a7770', marginBottom: '1rem', letterSpacing: '0.04em' }}>
                       {viewedWeek.coach_note}
+                    </div>
+                  )}
+
+                  {viewedWeek.block_description && (
+                    <div style={{ borderLeft: '2px solid rgba(200,146,58,0.3)', paddingLeft: '0.75rem', marginBottom: '1rem' }}>
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.3rem' }}>Fra din coach</div>
+                      <div style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.85rem', fontWeight: 300, color: '#7a7770', fontStyle: 'italic', lineHeight: 1.6 }}>{viewedWeek.block_description}</div>
                     </div>
                   )}
 

@@ -235,7 +235,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [editingWeek, setEditingWeek] = useState(null)
   const [editingSession, setEditingSession] = useState(null)
   const [editingExercise, setEditingExercise] = useState(null)
-  const [weekForm, setWeekForm] = useState({ week_number: '', block_name: '', coach_note: '' })
+  const [weekForm, setWeekForm] = useState({ week_number: '', block_name: '', coach_note: '', block_description: '' })
   const [sessionForm, setSessionForm] = useState({ title: '' })
   const [exerciseForm, setExerciseForm] = useState({ name: '', sets: '', reps: '', intensity: '', intensityPrefix: 'RPE', note: '' })
   const [athleteLogs, setAthleteLogs] = useState([])
@@ -314,9 +314,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       week_number: weekForm.week_number ? parseInt(weekForm.week_number) : nextNum,
       block_name: weekForm.block_name || null,
       coach_note: weekForm.coach_note || null,
+      block_description: weekForm.block_description || null,
     })
     setAddingWeek(false)
-    setWeekForm({ week_number: '', block_name: '', coach_note: '' })
+    setWeekForm({ week_number: '', block_name: '', coach_note: '', block_description: '' })
     fetchWeeks(selectedAthlete.id)
   }
 
@@ -325,6 +326,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       week_number: parseInt(weekForm.week_number),
       block_name: weekForm.block_name || null,
       coach_note: weekForm.coach_note || null,
+      block_description: weekForm.block_description || null,
     }).eq('id', weekId)
     setEditingWeek(null)
     fetchWeeks(selectedAthlete.id)
@@ -511,6 +513,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       week_number: nextNum,
       block_name: week.block_name,
       coach_note: week.coach_note,
+      block_description: week.block_description,
     }).select().single()
     if (!newWeek) return
     for (const session of (week.sessions || [])) {
@@ -1835,7 +1838,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 <div style={s.card}>
                   <div style={s.cardLabel}>
                     Resultater
-                    <button style={s.btnEdit} onClick={() => startEdit('stats', { squat: a.squat, bench: a.bench, deadlift: a.deadlift, training_squat: a.training_squat, training_bench: a.training_bench, training_deadlift: a.training_deadlift, status: a.status, weight_class: a.weight_class, age: a.age })}>Rediger</button>
+                    <button style={s.btnEdit} onClick={() => startEdit('stats', { squat: a.squat, bench: a.bench, deadlift: a.deadlift, training_squat: a.training_squat, training_bench: a.training_bench, training_deadlift: a.training_deadlift, status: a.status, weight_class: a.weight_class, age: a.age, competition_date: a.competition_date || '' })}>Rediger</button>
                   </div>
                   {editing === 'stats' ? (
                     <div>
@@ -1866,6 +1869,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                           <option value="peaking">Peaking</option>
                           <option value="offseason">Off-season</option>
                         </select>
+                      </div>
+                      <div style={{ marginBottom: '0.75rem' }}>
+                        <div style={s.fieldLabel}>Stævnedato</div>
+                        <input style={s.fieldInput} type="date" value={editData.competition_date || ''} onChange={e => setEditData(prev => ({ ...prev, competition_date: e.target.value || null }))} />
                       </div>
                       <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
                         <button style={s.btnGhost} onClick={() => setEditing(null)}>Annuller</button>
@@ -1911,6 +1918,21 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                           </div>
                         </div>
                       )}
+                      {a.competition_date && (() => {
+                        const compMs = new Date(a.competition_date + 'T12:00:00') - new Date()
+                        const weeksLeft = Math.ceil(compMs / (7 * 24 * 3600 * 1000))
+                        return (
+                          <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(237,234,226,0.07)' }}>
+                            <div style={s.fieldLabel}>Stævne</div>
+                            <div style={{ fontSize: '0.9rem', color: '#edeae2' }}>
+                              {new Date(a.competition_date + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'long', year: 'numeric' })}
+                            </div>
+                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', marginTop: '0.3rem', color: weeksLeft > 0 ? '#c8923a' : '#6cba6c' }}>
+                              {weeksLeft > 0 ? `${weeksLeft} uger til stævne` : 'Stævne passeret'}
+                            </div>
+                          </div>
+                        )
+                      })()}
                     </div>
                   )}
                 </div>
@@ -2060,6 +2082,77 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   </div>
                 </div>
 
+                {/* Block overview grid */}
+                {weeks.length > 0 && (() => {
+                  const compDate = selectedAthlete?.competition_date
+                  const compMs = compDate ? new Date(compDate + 'T12:00:00') - new Date() : null
+                  const weeksToComp = compMs != null ? Math.ceil(compMs / (7 * 24 * 3600 * 1000)) : null
+                  const latestWeekNum = weeks[weeks.length - 1]?.week_number
+                  const compWeekNum = weeksToComp != null ? latestWeekNum + weeksToComp - 1 : null
+
+                  const complianceByWeekNum = {}
+                  for (const log of athleteLogs) {
+                    const wn = log.exercises?.sessions?.weeks?.week_number
+                    if (wn == null || log.skipped) continue
+                    complianceByWeekNum[wn] = (complianceByWeekNum[wn] || 0) + 1
+                  }
+                  const totalSetsByWeekNum = {}
+                  for (const week of weeks) {
+                    totalSetsByWeekNum[week.week_number] = (week.sessions || [])
+                      .flatMap(s => s.exercises || [])
+                      .reduce((acc, e) => acc + (e.sets || 0), 0)
+                  }
+
+                  return (
+                    <div style={{ marginBottom: '1.5rem' }}>
+                      {compDate && weeksToComp != null && (
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: weeksToComp > 0 ? '#c8923a' : '#6cba6c', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>
+                          {weeksToComp > 0 ? `${weeksToComp} uger til stævne` : 'Stævne passeret'} · {new Date(compDate + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        </div>
+                      )}
+                      <div style={{ overflowX: 'auto', display: 'flex', gap: '0.5rem', paddingBottom: '0.5rem' }}>
+                        {weeks.map(week => {
+                          const isLatest = week.week_number === latestWeekNum
+                          const isCompWeek = compWeekNum != null && week.week_number === compWeekNum
+                          const isPostComp = compWeekNum != null && week.week_number > compWeekNum
+                          const logged = complianceByWeekNum[week.week_number] || 0
+                          const total = totalSetsByWeekNum[week.week_number] || 0
+                          const pct = total > 0 && logged > 0 ? Math.round(logged / total * 100) : null
+                          const pctColor = pct == null ? '#4a4844' : pct >= 80 ? '#6cba6c' : pct >= 50 ? '#c8923a' : '#e05555'
+                          return (
+                            <div
+                              key={week.id}
+                              style={{
+                                minWidth: '90px', flexShrink: 0,
+                                background: isLatest ? 'rgba(200,146,58,0.1)' : '#1c1c18',
+                                border: `1px solid ${isLatest ? '#c8923a' : isCompWeek ? 'rgba(108,186,108,0.5)' : 'rgba(237,234,226,0.07)'}`,
+                                padding: '0.65rem 0.75rem',
+                                cursor: 'pointer',
+                                opacity: isPostComp ? 0.35 : 1,
+                              }}
+                              onClick={() => {
+                                setOpenWeekId(week.id)
+                                setTimeout(() => document.getElementById(`week-row-${week.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50)
+                              }}
+                            >
+                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: isLatest ? '#c8923a' : '#7a7770', marginBottom: '0.2rem' }}>
+                                UGE {week.week_number}{isCompWeek ? ' 🏆' : ''}
+                              </div>
+                              {week.block_name && (
+                                <div style={{ fontSize: '0.76rem', color: '#edeae2', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '120px' }}>{week.block_name}</div>
+                              )}
+                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#4a4844', marginTop: '0.25rem' }}>{week.sessions?.length || 0} træninger</div>
+                              {pct != null && (
+                                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: pctColor, marginTop: '0.2rem' }}>{pct}%</div>
+                              )}
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )
+                })()}
+
                 {/* Add week form */}
                 {addingWeek && (
                   <div style={{ background: '#1c1c18', border: '1px solid rgba(200,146,58,0.3)', padding: '1.25rem', marginBottom: '1rem' }}>
@@ -2071,6 +2164,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                           <input style={s.fieldInput} type={type} placeholder={label} value={weekForm[key]} onChange={e => setWeekForm(p => ({ ...p, [key]: e.target.value }))} />
                         </div>
                       ))}
+                    </div>
+                    <div style={{ marginBottom: '0.75rem' }}>
+                      <div style={s.fieldLabel}>Blok-beskrivelse</div>
+                      <textarea style={{ ...s.fieldInput, minHeight: '72px', resize: 'vertical', lineHeight: 1.5 }} placeholder="Forklar formålet med denne blok…" value={weekForm.block_description} onChange={e => setWeekForm(p => ({ ...p, block_description: e.target.value }))} />
                     </div>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                       <button style={s.btnGhost} onClick={() => setAddingWeek(false)}>Annuller</button>
@@ -2086,7 +2183,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 )}
 
                 {weeks.map(week => (
-                  <div key={week.id} style={{ marginBottom: '0.75rem' }}>
+                  <div key={week.id} id={`week-row-${week.id}`} style={{ marginBottom: '0.75rem' }}>
                     {/* Week header */}
                     {editingWeek === week.id ? (
                       <div style={{ background: '#1c1c18', border: '1px solid rgba(200,146,58,0.3)', padding: '1.25rem', marginBottom: '0.5rem' }}>
@@ -2097,6 +2194,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                               <input style={s.fieldInput} type={type} value={weekForm[key]} onChange={e => setWeekForm(p => ({ ...p, [key]: e.target.value }))} />
                             </div>
                           ))}
+                        </div>
+                        <div style={{ marginBottom: '0.75rem' }}>
+                          <div style={s.fieldLabel}>Blok-beskrivelse</div>
+                          <textarea style={{ ...s.fieldInput, minHeight: '72px', resize: 'vertical', lineHeight: 1.5 }} placeholder="Forklar formålet med denne blok…" value={weekForm.block_description} onChange={e => setWeekForm(p => ({ ...p, block_description: e.target.value }))} />
                         </div>
                         <div style={{ display: 'flex', gap: '0.5rem' }}>
                           <button style={s.btnGhost} onClick={() => setEditingWeek(null)}>Annuller</button>
@@ -2112,10 +2213,11 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                           <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a' }}>Uge {week.week_number}</span>
                           {week.block_name && <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#edeae2', marginLeft: '0.75rem' }}>{week.block_name}</span>}
                           {week.coach_note && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#7a7770', marginTop: '0.2rem' }}>{week.coach_note}</div>}
+                          {week.block_description && <div style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.78rem', color: '#4a4844', fontStyle: 'italic', marginTop: '0.2rem' }}>{week.block_description}</div>}
                         </div>
                         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                           <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', textTransform: 'uppercase' }}>{week.sessions?.length || 0} træninger</span>
-                          <button style={s.btnEdit} onClick={e => { e.stopPropagation(); setEditingWeek(week.id); setWeekForm({ week_number: week.week_number, block_name: week.block_name || '', coach_note: week.coach_note || '' }) }}>Rediger</button>
+                          <button style={s.btnEdit} onClick={e => { e.stopPropagation(); setEditingWeek(week.id); setWeekForm({ week_number: week.week_number, block_name: week.block_name || '', coach_note: week.coach_note || '', block_description: week.block_description || '' }) }}>Rediger</button>
                           <button style={s.btnDanger} onClick={e => { e.stopPropagation(); deleteWeek(week.id) }}>Slet</button>
                           <span style={{ color: '#4a4844', fontSize: '0.65rem', marginLeft: '0.25rem' }}>{openWeekId === week.id ? '▲' : '▼'}</span>
                         </div>
