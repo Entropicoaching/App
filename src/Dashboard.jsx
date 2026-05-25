@@ -1,6 +1,26 @@
 import { useState, useEffect } from 'react'
 import { supabase } from './supabase'
 
+const BLOCK_PALETTE = ['#4e8fcf','#c8923a','#6cba6c','#9b6bd4','#cf6b4e','#4ec8b4']
+function blockColor(name) {
+  if (!name) return '#4a4844'
+  let h = 0
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0
+  return BLOCK_PALETTE[h % BLOCK_PALETTE.length]
+}
+function computePhases(weeks) {
+  if (!weeks.length) return []
+  const phases = []
+  let cur = { name: weeks[0].block_name || null, weeks: [weeks[0]] }
+  for (let i = 1; i < weeks.length; i++) {
+    const n = weeks[i].block_name || null
+    if (n === cur.name) cur.weeks.push(weeks[i])
+    else { phases.push(cur); cur = { name: n, weeks: [weeks[i]] } }
+  }
+  phases.push(cur)
+  return phases
+}
+
 const statusLabels = { active: 'Aktiv', peaking: 'Peaking', offseason: 'Off-season' }
 const statusColors = { active: '#6cba6c', peaking: '#c8923a', offseason: '#7a7770' }
 
@@ -2123,13 +2143,73 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                       .reduce((acc, e) => acc + (e.sets || 0), 0)
                   }
 
+                  const phases = computePhases(weeks)
+
                   return (
                     <div style={{ marginBottom: '1.5rem' }}>
                       {compDate && weeksToComp != null && (
-                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: weeksToComp > 0 ? '#c8923a' : '#6cba6c', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: weeksToComp > 0 ? '#c8923a' : '#6cba6c', letterSpacing: '0.1em', marginBottom: '0.75rem' }}>
                           {weeksToComp > 0 ? `${weeksToComp} uger til stævne` : 'Stævne passeret'} · {new Date(compDate + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short', year: 'numeric' })}
                         </div>
                       )}
+
+                      {/* Phase bar */}
+                      {phases.some(p => p.name) && (
+                        <div style={{ marginBottom: '1rem' }}>
+                          <div style={{ display: 'flex', height: '36px', gap: '2px', marginBottom: '0.5rem' }}>
+                            {phases.map((phase, pi) => {
+                              const color = blockColor(phase.name)
+                              const firstWeekId = phase.weeks[0].id
+                              return (
+                                <div
+                                  key={pi}
+                                  title={phase.name ? `${phase.name} · ${phase.weeks.length} uger` : `${phase.weeks.length} uger (ingen blok)`}
+                                  style={{
+                                    flex: `${phase.weeks.length} 0 0`,
+                                    background: phase.name ? color + '22' : 'rgba(237,234,226,0.04)',
+                                    border: `1px solid ${phase.name ? color + '55' : 'rgba(237,234,226,0.1)'}`,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    cursor: 'pointer',
+                                    overflow: 'hidden',
+                                    minWidth: 0,
+                                  }}
+                                  onClick={() => {
+                                    setOpenWeekId(firstWeekId)
+                                    setTimeout(() => document.getElementById(`week-row-${firstWeekId}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50)
+                                  }}
+                                >
+                                  {phase.name && (
+                                    <span style={{
+                                      fontFamily: "'IBM Plex Mono', monospace",
+                                      fontSize: '0.48rem',
+                                      letterSpacing: '0.08em',
+                                      textTransform: 'uppercase',
+                                      color,
+                                      whiteSpace: 'nowrap',
+                                      overflow: 'hidden',
+                                      textOverflow: 'ellipsis',
+                                      padding: '0 8px',
+                                    }}>{phase.name} · {phase.weeks.length}u</span>
+                                  )}
+                                </div>
+                              )
+                            })}
+                          </div>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+                            {phases.filter(p => p.name).map((phase, pi) => (
+                              <div key={pi} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                                <div style={{ width: '7px', height: '7px', background: blockColor(phase.name), flexShrink: 0 }} />
+                                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#7a7770', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                                  {phase.name} — {phase.weeks.length} {phase.weeks.length === 1 ? 'uge' : 'uger'}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
                       <div style={{ overflowX: 'auto', display: 'flex', gap: '0.5rem', paddingBottom: '0.5rem' }}>
                         {weeks.map(week => {
                           const isLatest = week.week_number === latestWeekNum

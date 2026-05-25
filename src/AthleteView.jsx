@@ -1,6 +1,26 @@
 import { useState, useEffect } from 'react'
 import { supabase } from './supabase'
 
+const BLOCK_PALETTE = ['#4e8fcf','#c8923a','#6cba6c','#9b6bd4','#cf6b4e','#4ec8b4']
+function blockColor(name) {
+  if (!name) return '#4a4844'
+  let h = 0
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0
+  return BLOCK_PALETTE[h % BLOCK_PALETTE.length]
+}
+function computePhases(weeks) {
+  if (!weeks.length) return []
+  const phases = []
+  let cur = { name: weeks[0].block_name || null, weeks: [weeks[0]] }
+  for (let i = 1; i < weeks.length; i++) {
+    const n = weeks[i].block_name || null
+    if (n === cur.name) cur.weeks.push(weeks[i])
+    else { phases.push(cur); cur = { name: n, weeks: [weeks[i]] } }
+  }
+  phases.push(cur)
+  return phases
+}
+
 const LOCAL_FOODS = [
   // Mejeri
   { name: 'Mælk minimælk', kcal100: 42, protein100: 3, carb100: 5, fat100: 1 },
@@ -1166,68 +1186,106 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 </>
               ) : (
                 <>
-                  {/* Periodization timeline */}
+                  {/* Phase bar */}
                   {allWeeks.length > 0 && (() => {
                     const compDate = athlete?.competition_date
                     const compMs = compDate ? new Date(compDate + 'T12:00:00') - new Date() : null
                     const weeksToComp = compMs != null ? Math.ceil(compMs / (7 * 24 * 3600 * 1000)) : null
-                    const compWeekIdx = weeksToComp != null
-                      ? Math.min(allWeeks.length - 1, Math.max(0, latestWeekIdx + weeksToComp - 1))
-                      : null
 
-                    const compliancePerWeek = allWeeks.map(week => {
-                      const exIds = new Set((week.sessions || []).flatMap(s => (s.exercises || []).map(e => e.id)))
-                      const weekLogs = allExerciseLogs.filter(l => exIds.has(l.exercise_id))
-                      if (weekLogs.length === 0) return null
-                      const total = (week.sessions || []).flatMap(s => s.exercises || []).reduce((acc, e) => acc + (e.sets || 0), 0)
-                      const logged = weekLogs.filter(l => !l.skipped).length
-                      return total > 0 ? Math.round(logged / total * 100) : null
-                    })
+                    const phases = computePhases(allWeeks)
+                    const totalWeeks = allWeeks.length
+
+                    // Find which phase the current (latest) week belongs to
+                    let currentPhaseName = null, weekInPhase = 0, phaseTotalWeeks = 0
+                    let ps = 0
+                    for (const phase of phases) {
+                      if (ps + phase.weeks.length > latestWeekIdx) {
+                        currentPhaseName = phase.name
+                        weekInPhase = latestWeekIdx - ps + 1
+                        phaseTotalWeeks = phase.weeks.length
+                        break
+                      }
+                      ps += phase.weeks.length
+                    }
+
+                    const markerPct = (latestWeekIdx + 0.5) / totalWeeks * 100
 
                     return (
-                      <div style={{ marginBottom: '1rem' }}>
+                      <div style={{ marginBottom: '1.25rem' }}>
                         {weeksToComp != null && weeksToComp > 0 && (
-                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#c8923a', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#c8923a', letterSpacing: '0.1em', marginBottom: '0.6rem' }}>
                             🏆 {weeksToComp} uger til stævne
                           </div>
                         )}
                         {weeksToComp != null && weeksToComp <= 0 && (
-                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#6cba6c', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#6cba6c', letterSpacing: '0.1em', marginBottom: '0.6rem' }}>
                             🏆 Stævne passeret
                           </div>
                         )}
-                        <div style={{ overflowX: 'auto', display: 'flex', gap: '0.3rem', paddingBottom: '0.35rem' }}>
-                          {allWeeks.map((week, idx) => {
-                            const isCurrent = idx === latestWeekIdx
-                            const isViewing = idx === viewingWeekIdx
-                            const isComp = idx === compWeekIdx
-                            const pct = compliancePerWeek[idx]
-                            let bg = '#1c1c18', border = 'rgba(237,234,226,0.1)'
-                            if (isCurrent) { bg = 'rgba(200,146,58,0.18)'; border = '#c8923a' }
-                            else if (pct != null) {
-                              bg = pct >= 80 ? 'rgba(108,186,108,0.12)' : pct >= 50 ? 'rgba(200,146,58,0.1)' : 'rgba(224,85,85,0.1)'
-                              border = pct >= 80 ? 'rgba(108,186,108,0.35)' : pct >= 50 ? 'rgba(200,146,58,0.25)' : 'rgba(224,85,85,0.25)'
-                            }
-                            if (isViewing && !isCurrent) border = '#edeae2'
-                            return (
-                              <div
-                                key={week.id}
-                                style={{ minWidth: '42px', height: '50px', flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: bg, border: `1px solid ${border}`, cursor: 'pointer', position: 'relative', outline: isViewing ? `2px solid ${isCurrent ? '#c8923a' : '#edeae2'}` : 'none', outlineOffset: '-1px' }}
-                                onClick={() => {
-                                  setViewingWeekIdx(idx)
-                                  setProgOpenSession(null)
-                                  if (idx < latestWeekIdx) fetchPastLogs(allWeeks[idx], athlete.id)
-                                  else setPastLogs([])
-                                }}
-                              >
-                                {isComp && <div style={{ position: 'absolute', top: '-9px', fontSize: '0.6rem', lineHeight: 1 }}>🏆</div>}
-                                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', color: isCurrent ? '#c8923a' : '#7a7770', letterSpacing: '0.05em' }}>U{week.week_number}</div>
-                                {pct != null && (
-                                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', color: pct >= 80 ? '#6cba6c' : pct >= 50 ? '#c8923a' : '#e05555', marginTop: '0.1rem' }}>{pct}%</div>
-                                )}
-                              </div>
-                            )
-                          })}
+
+                        {/* Proportional phase bar with marker */}
+                        <div style={{ position: 'relative', paddingBottom: '2.5rem' }}>
+                          <div style={{ display: 'flex', height: '30px', gap: '2px' }}>
+                            {phases.map((phase, pi) => {
+                              const color = blockColor(phase.name)
+                              const phaseStartIdx = phases.slice(0, pi).reduce((a, p) => a + p.weeks.length, 0)
+                              return (
+                                <div
+                                  key={pi}
+                                  style={{
+                                    flex: `${phase.weeks.length} 0 0`,
+                                    background: phase.name ? color + '28' : 'rgba(237,234,226,0.05)',
+                                    border: `1px solid ${phase.name ? color + '60' : 'rgba(237,234,226,0.1)'}`,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    cursor: 'pointer',
+                                    overflow: 'hidden',
+                                    minWidth: 0,
+                                  }}
+                                  onClick={() => {
+                                    setViewingWeekIdx(phaseStartIdx)
+                                    setProgOpenSession(null)
+                                    if (phaseStartIdx < latestWeekIdx) fetchPastLogs(allWeeks[phaseStartIdx], athlete.id)
+                                    else setPastLogs([])
+                                  }}
+                                >
+                                  {phase.name && phase.weeks.length >= 2 && (
+                                    <span style={{
+                                      fontFamily: "'IBM Plex Mono', monospace",
+                                      fontSize: '0.42rem',
+                                      letterSpacing: '0.07em',
+                                      textTransform: 'uppercase',
+                                      color,
+                                      whiteSpace: 'nowrap',
+                                      overflow: 'hidden',
+                                      textOverflow: 'ellipsis',
+                                      padding: '0 6px',
+                                    }}>{phase.name}</span>
+                                  )}
+                                </div>
+                              )
+                            })}
+                          </div>
+
+                          {/* Marker arrow at current week */}
+                          <div style={{
+                            position: 'absolute',
+                            left: `${markerPct}%`,
+                            top: '30px',
+                            transform: 'translateX(-50%)',
+                            pointerEvents: 'none',
+                          }}>
+                            <div style={{ color: '#c8923a', fontSize: '0.6rem', lineHeight: 1, textAlign: 'center' }}>▲</div>
+                          </div>
+
+                          {/* Phase info text */}
+                          <div style={{ marginTop: '1rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.09em', textTransform: 'uppercase' }}>
+                            {currentPhaseName && (
+                              <span style={{ color: blockColor(currentPhaseName) }}>{currentPhaseName} · Uge {weekInPhase} af {phaseTotalWeeks} · </span>
+                            )}
+                            <span style={{ color: '#4a4844' }}>Total uge {latestWeekIdx + 1} af {totalWeeks}</span>
+                          </div>
                         </div>
                       </div>
                     )
