@@ -1870,10 +1870,6 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                           <option value="offseason">Off-season</option>
                         </select>
                       </div>
-                      <div style={{ marginBottom: '0.75rem' }}>
-                        <div style={s.fieldLabel}>Stævnedato</div>
-                        <input style={s.fieldInput} type="date" value={editData.competition_date || ''} onChange={e => setEditData(prev => ({ ...prev, competition_date: e.target.value || null }))} />
-                      </div>
                       <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
                         <button style={s.btnGhost} onClick={() => setEditing(null)}>Annuller</button>
                         <button style={s.btnPrimary} onClick={() => saveEdit()} disabled={saving}>{saving ? 'Gemmer...' : 'Gem'}</button>
@@ -1918,21 +1914,6 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                           </div>
                         </div>
                       )}
-                      {a.competition_date && (() => {
-                        const compMs = new Date(a.competition_date + 'T12:00:00') - new Date()
-                        const weeksLeft = Math.ceil(compMs / (7 * 24 * 3600 * 1000))
-                        return (
-                          <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(237,234,226,0.07)' }}>
-                            <div style={s.fieldLabel}>Stævne</div>
-                            <div style={{ fontSize: '0.9rem', color: '#edeae2' }}>
-                              {new Date(a.competition_date + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'long', year: 'numeric' })}
-                            </div>
-                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', marginTop: '0.3rem', color: weeksLeft > 0 ? '#c8923a' : '#6cba6c' }}>
-                              {weeksLeft > 0 ? `${weeksLeft} uger til stævne` : 'Stævne passeret'}
-                            </div>
-                          </div>
-                        )
-                      })()}
                     </div>
                   )}
                 </div>
@@ -1951,6 +1932,45 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     <button style={{ ...s.btnGhost, alignSelf: 'flex-start', marginTop: '0.5rem' }} onClick={() => { setActiveTab('kost'); setEditing('setup') }}>Rediger mål</button>
                   </div>
                 </div>
+              </div>
+
+              {/* Competition date card */}
+              <div style={{ ...s.card, marginTop: '1.5rem' }}>
+                <div style={s.cardLabel}>
+                  Næste stævne
+                  {editing !== 'competition' && (
+                    <button style={s.btnEdit} onClick={() => startEdit('competition', { competition_date: a.competition_date || '' })}>
+                      {a.competition_date ? 'Rediger' : 'Tilføj dato'}
+                    </button>
+                  )}
+                </div>
+                {editing === 'competition' ? (
+                  <div>
+                    <div style={{ marginBottom: '0.75rem' }}>
+                      <div style={s.fieldLabel}>Stævnedato</div>
+                      <input style={s.fieldInput} type="date" value={editData.competition_date || ''} onChange={e => setEditData(prev => ({ ...prev, competition_date: e.target.value || null }))} />
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.75rem' }}>
+                      <button style={s.btnGhost} onClick={() => setEditing(null)}>Annuller</button>
+                      <button style={s.btnPrimary} onClick={() => saveEdit()} disabled={saving}>{saving ? 'Gemmer...' : 'Gem'}</button>
+                    </div>
+                  </div>
+                ) : a.competition_date ? (() => {
+                  const compMs = new Date(a.competition_date + 'T12:00:00') - new Date()
+                  const weeksLeft = Math.ceil(compMs / (7 * 24 * 3600 * 1000))
+                  return (
+                    <div>
+                      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', color: '#edeae2', marginBottom: '0.4rem' }}>
+                        {new Date(a.competition_date + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'long', year: 'numeric' })}
+                      </div>
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.75rem', color: weeksLeft > 0 ? '#c8923a' : '#6cba6c', letterSpacing: '0.06em' }}>
+                        {weeksLeft > 0 ? `${weeksLeft} uger til stævne` : 'Stævne passeret'}
+                      </div>
+                    </div>
+                  )
+                })() : (
+                  <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen stævnedato sat endnu.</div>
+                )}
               </div>
 
               {/* PRs */}

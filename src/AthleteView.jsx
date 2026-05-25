@@ -1167,7 +1167,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               ) : (
                 <>
                   {/* Periodization timeline */}
-                  {allWeeks.length > 1 && (() => {
+                  {allWeeks.length > 0 && (() => {
                     const compDate = athlete?.competition_date
                     const compMs = compDate ? new Date(compDate + 'T12:00:00') - new Date() : null
                     const weeksToComp = compMs != null ? Math.ceil(compMs / (7 * 24 * 3600 * 1000)) : null
