@@ -278,6 +278,8 @@ const NAV_ITEMS = [
   },
 ]
 
+const RPE_VALUES = [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10]
+
 function parsePlannedRpe(intensity) {
   if (!intensity) return null
   const m = intensity.match(/RPE\s*(\d+(?:[.,]\d+)?)/i)
@@ -318,6 +320,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   // PR toast state
   const [prToast, setPrToast] = useState(null)
   const [prToastFading, setPrToastFading] = useState(false)
+  const [setConfirm, setSetConfirm] = useState({})
+  const [skipConfirmEx, setSkipConfirmEx] = useState(null)
+  const [openRpePicker, setOpenRpePicker] = useState(null)
 
   // Session feedback state
   const [dismissedFeedback, setDismissedFeedback] = useState(new Set())
@@ -502,6 +507,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   async function logSet(exerciseId, setNumber, totalSets, repsCompleted, plannedRpe) {
     const key = `${exerciseId}_${setNumber}`
     const input = logInputs[key] || {}
+    setSetConfirm(p => { const n = { ...p }; delete n[key]; return n })
     const payload = {
       weight: parseFloat(input.weight) || 0,
       reps_completed: parseInt(repsCompleted) || 0,
@@ -511,16 +517,26 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       skipped: false,
     }
     const existing = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber)
+    let error
     if (existing) {
-      await supabase.from('exercise_logs').update(payload).eq('id', existing.id)
+      ;({ error } = await supabase.from('exercise_logs').update(payload).eq('id', existing.id))
     } else {
-      await supabase.from('exercise_logs').insert({
+      ;({ error } = await supabase.from('exercise_logs').insert({
         exercise_id: exerciseId,
         athlete_id: athlete.id,
         set_number: setNumber,
         ...payload,
-      })
+      }))
     }
+    if (error) {
+      setSetConfirm(p => ({ ...p, [key]: 'error' }))
+      return
+    }
+    setSetConfirm(p => ({ ...p, [key]: 'saved' }))
+    setTimeout(() => {
+      setSetConfirm(p => ({ ...p, [key]: 'fading' }))
+      setTimeout(() => setSetConfirm(p => { const n = { ...p }; delete n[key]; return n }), 300)
+    }, 1700)
     // Auto-fill next set weight if empty
     if (setNumber < totalSets) {
       const nextKey = `${exerciseId}_${setNumber + 1}`
@@ -583,6 +599,14 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       toSkip.map(setNum => ({ exercise_id: ex.id, athlete_id: athlete.id, set_number: setNum, skipped: true, weight: 0, reps_completed: 0, rpe_planned: plannedRpe ?? null }))
     )
     fetchExerciseLogs(athlete.id, currentWeek)
+  }
+
+  async function unskipSet(exerciseId, setNumber) {
+    const existing = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber)
+    if (existing) {
+      await supabase.from('exercise_logs').delete().eq('id', existing.id)
+      fetchExerciseLogs(athlete.id, currentWeek)
+    }
   }
 
   async function saveFeedback(sessionId) {
@@ -844,6 +868,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   return (
     <div style={s.wrap}>
+      {openRpePicker && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 199 }} onClick={() => setOpenRpePicker(null)} />
+      )}
       {/* PR toast */}
       {prToast && (
         <div style={{
@@ -1391,12 +1418,30 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                   <div style={{ marginBottom: '0.6rem' }}>
                                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.1rem' }}>
                                       <div style={{ fontSize: '1.05rem', color: '#edeae2' }}>{ex.name}</div>
-                                      {isCurrentWeek && (
-                                        <button
-                                          style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.2rem 0.5rem', flexShrink: 0, color: '#4a4844', borderColor: 'rgba(237,234,226,0.08)' }}
-                                          onClick={() => skipExercise(ex)}
-                                        >Spring øvelse over</button>
-                                      )}
+                                      {isCurrentWeek && (() => {
+                                        const allSetsLogged = Array.from({ length: ex.sets || 0 }, (_, i) => i + 1)
+                                          .every(setNum => exerciseLogs.find(l => l.exercise_id === ex.id && l.set_number === setNum))
+                                        if (allSetsLogged) return null
+                                        if (skipConfirmEx === ex.id) return (
+                                          <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexShrink: 0 }}>
+                                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#7a7770', letterSpacing: '0.06em' }}>Er du sikker?</span>
+                                            <button
+                                              style={{ ...s.btnGhost, fontSize: '0.48rem', padding: '0.2rem 0.5rem', color: '#e05555', borderColor: 'rgba(224,85,85,0.3)' }}
+                                              onClick={() => { skipExercise(ex); setSkipConfirmEx(null) }}
+                                            >Ja</button>
+                                            <button
+                                              style={{ ...s.btnGhost, fontSize: '0.48rem', padding: '0.2rem 0.5rem' }}
+                                              onClick={() => setSkipConfirmEx(null)}
+                                            >Annuller</button>
+                                          </div>
+                                        )
+                                        return (
+                                          <button
+                                            style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.2rem 0.5rem', flexShrink: 0, color: '#4a4844', borderColor: 'rgba(237,234,226,0.08)' }}
+                                            onClick={() => setSkipConfirmEx(ex.id)}
+                                          >Spring øvelse over</button>
+                                        )
+                                      })()}
                                     </div>
                                     {isCurrentWeek && (ex.recommended_weight != null ? (
                                       <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#c8923a', marginBottom: '0.2rem' }}>
@@ -1440,13 +1485,16 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
                                     const input = logInputs[key] || { weight: '', note: '', rpe: '' }
                                     const plannedRpe = parsePlannedRpe(ex.intensity)
-                                    const rpeVal = input.rpe !== '' ? input.rpe : (plannedRpe != null ? plannedRpe.toString() : '')
 
                                     if (logged?.skipped) return (
                                       <div key={setNum} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
                                         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '52px' }}>Sæt {setNum}</div>
                                         <span style={{ color: '#4a4844', fontSize: '1rem' }}>✕</span>
                                         <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Sprunget over</span>
+                                        <button
+                                          style={{ ...s.btnGhost, fontSize: '0.48rem', padding: '0.2rem 0.5rem', color: '#7a7770' }}
+                                          onClick={() => unskipSet(ex.id, setNum)}
+                                        >Fortryd</button>
                                       </div>
                                     )
 
@@ -1472,19 +1520,89 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                           >Spring over</button>
                                         </div>
                                         <div style={{ paddingLeft: 'calc(52px + 0.5rem)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.08em', whiteSpace: 'nowrap' }}>RPE</span>
-                                          <input
-                                            style={{ ...s.fieldInput, maxWidth: '62px', padding: '0.3rem 0.4rem', fontSize: '0.95rem', textAlign: 'center' }}
-                                            type="number" placeholder={plannedRpe != null ? plannedRpe.toString() : '—'} min="1" max="10" step="0.5"
-                                            value={rpeVal}
-                                            onChange={e => setLogInputs(p => ({ ...p, [key]: { ...p[key], rpe: e.target.value } }))}
-                                          />
+                                          <div style={{ position: 'relative' }}>
+                                            <button
+                                              onClick={() => setOpenRpePicker(openRpePicker === key ? null : key)}
+                                              style={{
+                                                background: input.rpe ? 'rgba(200,146,58,0.15)' : 'rgba(237,234,226,0.04)',
+                                                border: `1px solid ${input.rpe ? 'rgba(200,146,58,0.4)' : 'rgba(237,234,226,0.13)'}`,
+                                                color: input.rpe ? '#c8923a' : '#7a7770',
+                                                fontFamily: "'IBM Plex Mono', monospace",
+                                                fontSize: '0.6rem',
+                                                letterSpacing: '0.08em',
+                                                padding: '0.3rem 0.6rem',
+                                                cursor: 'pointer',
+                                                whiteSpace: 'nowrap',
+                                              }}
+                                            >RPE {input.rpe || (plannedRpe != null ? plannedRpe : 8)}</button>
+                                            {openRpePicker === key && (
+                                              <div
+                                                ref={node => { if (node) { const sel = node.querySelector('[data-selected="true"]'); if (sel) sel.scrollIntoView({ block: 'nearest', behavior: 'instant' }) } }}
+                                                style={{
+                                                  position: 'absolute',
+                                                  bottom: '100%',
+                                                  left: 0,
+                                                  background: '#1c1c18',
+                                                  border: '1px solid rgba(237,234,226,0.13)',
+                                                  zIndex: 200,
+                                                  maxHeight: '200px',
+                                                  overflowY: 'auto',
+                                                  minWidth: '80px',
+                                                  marginBottom: '2px',
+                                                  boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
+                                                }}
+                                              >
+                                                {RPE_VALUES.map(v => {
+                                                  const cur = parseFloat(input.rpe !== '' ? input.rpe : (plannedRpe != null ? plannedRpe : 8))
+                                                  const isSelected = cur === v
+                                                  return (
+                                                    <button
+                                                      key={v}
+                                                      data-selected={isSelected ? 'true' : 'false'}
+                                                      onClick={() => {
+                                                        setLogInputs(p => ({ ...p, [key]: { ...p[key], rpe: v.toString() } }))
+                                                        setOpenRpePicker(null)
+                                                      }}
+                                                      style={{
+                                                        display: 'block',
+                                                        width: '100%',
+                                                        background: isSelected ? 'rgba(200,146,58,0.15)' : 'transparent',
+                                                        color: isSelected ? '#c8923a' : '#edeae2',
+                                                        border: 'none',
+                                                        borderBottom: '1px solid rgba(237,234,226,0.07)',
+                                                        fontFamily: "'IBM Plex Mono', monospace",
+                                                        fontSize: '0.72rem',
+                                                        padding: '0.5rem 0.75rem',
+                                                        cursor: 'pointer',
+                                                        textAlign: 'left',
+                                                        letterSpacing: '0.04em',
+                                                      }}
+                                                    >{v}</button>
+                                                  )
+                                                })}
+                                              </div>
+                                            )}
+                                          </div>
                                           <input
                                             style={{ ...s.fieldInput, flex: 1, fontSize: '0.75rem', padding: '0.3rem 0.6rem', color: '#7a7770', fontStyle: 'italic' }}
                                             type="text" placeholder="Tilføj note..." value={input.note}
                                             onChange={e => setLogInputs(p => ({ ...p, [key]: { ...p[key], note: e.target.value } }))}
                                           />
                                         </div>
+                                        {setConfirm[key] && (
+                                          <div style={{
+                                            paddingLeft: 'calc(52px + 0.5rem)',
+                                            fontFamily: "'IBM Plex Mono', monospace",
+                                            fontSize: '0.52rem',
+                                            letterSpacing: '0.08em',
+                                            color: setConfirm[key] === 'error' ? '#e05555' : '#6cba6c',
+                                            marginTop: '0.2rem',
+                                            opacity: setConfirm[key] === 'fading' ? 0 : 1,
+                                            transition: 'opacity 0.3s ease',
+                                          }}>
+                                            {setConfirm[key] === 'error' ? 'Fejl — prøv igen' : 'Gemt ✓'}
+                                          </div>
+                                        )}
                                       </div>
                                     )
                                   })}
