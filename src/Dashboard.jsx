@@ -188,6 +188,14 @@ function readinessSignal(score) {
   return { color: '#e05555', text: 'Overvej en let session i dag', bg: 'rgba(224,85,85,0.07)' }
 }
 
+function formatLastSeen(ts) {
+  if (!ts) return null
+  const diffDays = Math.floor((Date.now() - new Date(ts)) / 86400000)
+  const dotColor = diffDays <= 2 ? '#6cba6c' : diffDays <= 7 ? '#c8923a' : '#4a4844'
+  const text = diffDays === 0 ? 'Aktiv i dag' : diffDays <= 7 ? 'Aktiv denne uge' : `Sidst aktiv: ${diffDays} dage siden`
+  return { text, dotColor }
+}
+
 function parsePlannedRpe(intensity) {
   if (!intensity) return null
   const m = intensity.match(/RPE\s*(\d+(?:[.,]\d+)?)/i)
@@ -237,6 +245,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [messageInput, setMessageInput] = useState('')
   const [latestMessages, setLatestMessages] = useState({})
   const [unreadCounts, setUnreadCounts] = useState({})
+  const [profilesLastSeen, setProfilesLastSeen] = useState({})
 
   // Export state
   const [exportingTraening, setExportingTraening] = useState(false)
@@ -308,9 +317,23 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     const { data, error } = await supabase.from('athletes').select('*').order('name')
     if (!error) {
       setAthletes(data || [])
-      if (data?.length) fetchLatestMessages(data.map(a => a.id))
+      if (data?.length) {
+        fetchLatestMessages(data.map(a => a.id))
+        fetchProfilesLastSeen(data)
+      }
     }
     setLoading(false)
+  }
+
+  async function fetchProfilesLastSeen(athletesList) {
+    const userIds = athletesList.map(a => a.user_id).filter(Boolean)
+    if (!userIds.length) return
+    const { data } = await supabase.from('profiles').select('id, last_seen').in('id', userIds)
+    if (data) {
+      const map = {}
+      for (const p of data) map[p.id] = p.last_seen
+      setProfilesLastSeen(map)
+    }
   }
 
   async function fetchWeeks(athleteId) {
@@ -1219,6 +1242,16 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#4a4844' }}>
                           {athlete.weight_class ? athlete.weight_class + 'kg' : 'Ingen vægtklasse'} · {athlete.email || 'Ingen email'}
                         </div>
+                        {(() => {
+                          const ls = formatLastSeen(profilesLastSeen[athlete.user_id])
+                          if (!ls) return null
+                          return (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.2rem' }}>
+                              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: ls.dotColor, flexShrink: 0 }} />
+                              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.06em', color: '#7a7770' }}>{ls.text}</span>
+                            </div>
+                          )
+                        })()}
                         {latestMessages[athlete.id] && (
                           <div style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.72rem', color: '#4a4844', marginTop: '0.25rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             <span style={{ color: latestMessages[athlete.id].sender_role === 'coach' ? '#7a7770' : '#c8923a' }}>
@@ -1249,6 +1282,16 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               <div>
                 <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.5rem', fontWeight: 400, color: '#edeae2' }}>{a.name}</div>
                 <div style={{ fontSize: '0.8rem', color: '#7a7770', marginTop: '0.2rem' }}>{a.email}{a.age ? ' · ' + a.age + ' år' : ''}</div>
+                {(() => {
+                  const ls = formatLastSeen(profilesLastSeen[a.user_id])
+                  if (!ls) return null
+                  return (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.3rem' }}>
+                      <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: ls.dotColor, flexShrink: 0 }} />
+                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.07em', color: ls.dotColor }}>{ls.text}</span>
+                    </div>
+                  )
+                })()}
               </div>
               <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
                 <span style={s.badge(a.status)}>{statusLabels[a.status]}</span>
@@ -1832,6 +1875,17 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             {/* TAB: OVERSIGT */}
             {activeTab === 'oversigt' && (
               <div>
+              {(() => {
+                const rawTs = profilesLastSeen[a.user_id]
+                if (!rawTs) return null
+                const d = new Date(rawTs)
+                const exact = d.toLocaleDateString('da-DK', { day: 'numeric', month: 'long', year: 'numeric' }) + ' kl. ' + d.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' })
+                return (
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', color: '#4a4844', marginBottom: '1rem' }}>
+                    Sidst aktiv: {exact}
+                  </div>
+                )
+              })()}
               {(() => {
                 const todayStr = new Date().toISOString().slice(0, 10)
                 const todayR = athleteReadiness.find(r => r.logged_date === todayStr)

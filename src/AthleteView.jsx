@@ -357,6 +357,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       if (!coachAthleteId && !data.user_id) {
         await supabase.rpc('claim_athlete_profile')
       }
+      if (!coachAthleteId) {
+        supabase.from('profiles').update({ last_seen: new Date().toISOString() }).eq('id', session.user.id)
+      }
       setAthlete(data)
       fetchLogs(data.id)
       fetchProgram(data.id)
