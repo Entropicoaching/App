@@ -14,23 +14,33 @@ function App() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
-      if (session) fetchRole(session.user.id)
+      if (session) fetchRole(session.user.id, session.user.email)
       else setLoading(false)
     })
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
-      if (session) fetchRole(session.user.id)
+      if (session) fetchRole(session.user.id, session.user.email)
       else { setRole(null); setLoading(false) }
     })
     return () => subscription.unsubscribe()
   }, [])
 
-  async function fetchRole(userId) {
-    const { data } = await supabase
+  async function fetchRole(userId, email) {
+    let { data } = await supabase
       .from('profiles')
       .select('role')
       .eq('id', userId)
-      .single()
+      .maybeSingle()
+
+    if (!data) {
+      const { data: created } = await supabase
+        .from('profiles')
+        .insert({ id: userId, role: 'athlete', email })
+        .select('role')
+        .maybeSingle()
+      data = created
+    }
+
     setRole(data?.role || 'athlete')
     setLoading(false)
   }
