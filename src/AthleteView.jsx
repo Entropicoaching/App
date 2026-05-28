@@ -989,6 +989,31 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     }
   }
 
+  async function autoCompleteSession(session) {
+    const exerciseIds = (session.exercises || []).map(e => e.id)
+    if (exerciseIds.length === 0) return
+    const { data: existing } = await supabase
+      .from('exercise_logs')
+      .select('exercise_id, set_number')
+      .eq('athlete_id', athlete.id)
+      .in('exercise_id', exerciseIds)
+    const logged = new Set((existing || []).map(l => `${l.exercise_id}_${l.set_number}`))
+    const rows = []
+    for (const ex of (session.exercises || [])) {
+      const weight = parseFloat(ex.recommended_weight) || 0
+      const reps = parseInt(ex.reps) || 0
+      for (let n = 1; n <= (ex.sets || 0); n++) {
+        if (logged.has(`${ex.id}_${n}`)) continue
+        rows.push({ exercise_id: ex.id, athlete_id: athlete.id, set_number: n, weight, reps_completed: reps, note: null, rpe_actual: null, rpe_planned: null, skipped: false })
+      }
+    }
+    if (rows.length === 0) return
+    await supabase.from('exercise_logs').insert(rows)
+    fetchExerciseLogs(athlete.id, currentWeek)
+    fetchPastLogs(allWeeks[viewingWeekIdx], athlete.id)
+    fetchAllExerciseLogs(athlete.id, allWeeks)
+  }
+
   async function deleteLog(id) {
     await supabase.from('meal_logs').delete().eq('id', id)
     fetchLogs(athlete.id)
@@ -1685,6 +1710,15 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
                         {isOpen && (
                           <div style={{ background: '#181816', border: '1px solid rgba(237,234,226,0.07)', borderTop: 'none', padding: '1rem' }}>
+
+                            {!isDone && (
+                              <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
+                                <button
+                                  style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.3rem 0.65rem', color: '#7a7770', borderColor: 'rgba(237,234,226,0.1)' }}
+                                  onClick={e => { e.stopPropagation(); if (window.confirm('Udfyld alle manglende sæt med anbefalet vægt?')) autoCompleteSession(session) }}
+                                >Auto-udfyld med anbefalet vægt</button>
+                              </div>
+                            )}
 
                             {/* WARMUP CARD — generel mobilisering */}
                             {(() => {
