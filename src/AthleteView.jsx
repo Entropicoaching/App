@@ -328,6 +328,11 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [dismissedFeedback, setDismissedFeedback] = useState(new Set())
   const [feedbackInputs, setFeedbackInputs] = useState({})
 
+  // Warmup state
+  const [warmupTemplates, setWarmupTemplates] = useState([])
+  const [warmupChecked, setWarmupChecked] = useState({})
+  const [warmupExpanded, setWarmupExpanded] = useState(new Set())
+
   // Onboarding
   const [onboarded, setOnboarded] = useState(() => !!localStorage.getItem('entropi_onboarded'))
 
@@ -366,8 +371,38 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       fetchAthleteMessages(data.id)
       fetchWeightLogs(data.id)
       fetchReadiness(data.id)
+      fetchWarmupTemplates(data.id)
     }
     setLoading(false)
+  }
+
+  async function fetchWarmupTemplates(athleteId) {
+    const { data } = await supabase
+      .from('warmup_templates')
+      .select('*')
+      .eq('athlete_id', athleteId)
+    setWarmupTemplates(data || [])
+  }
+
+  function detectSessionCategory(session) {
+    for (const ex of session.exercises || []) {
+      const n = (ex.name || '').toLowerCase()
+      if (n.includes('squat')) return 'Squat'
+      if (n.includes('bænk') || n.includes('bench')) return 'Bænkpres'
+      if (n.includes('dødl') || n.includes('deadlift')) return 'Dødløft'
+    }
+    return null
+  }
+
+  function calcWarmupSets(workingWeight) {
+    const r = w => Math.round(w / 2.5) * 2.5
+    return [
+      { pct: 'Bar', weight: 20, reps: 10 },
+      { pct: '40%', weight: r(workingWeight * 0.4), reps: 5 },
+      { pct: '60%', weight: r(workingWeight * 0.6), reps: 3 },
+      { pct: '75%', weight: r(workingWeight * 0.75), reps: 2 },
+      { pct: '90%', weight: r(workingWeight * 0.9), reps: 1 },
+    ]
   }
 
   async function fetchReadiness(athleteId) {
@@ -1414,6 +1449,104 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
                         {isOpen && (
                           <div style={{ background: '#181816', border: '1px solid rgba(237,234,226,0.07)', borderTop: 'none', padding: '1rem' }}>
+
+                            {/* WARMUP CARD */}
+                            {(() => {
+                              const category = detectSessionCategory(session)
+                              if (!category) return null
+                              const template = warmupTemplates.find(t => t.exercise_category === category)
+                              const maxWeight = Math.max(
+                                ...(session.exercises || []).map(e => e.recommended_weight || 0),
+                                0
+                              )
+                              const warmupSets = maxWeight >= 20 ? calcWarmupSets(maxWeight) : []
+                              if (!template && warmupSets.length === 0) return null
+
+                              const isExpanded = warmupExpanded.has(session.id)
+                              const checked = warmupChecked[session.id] || {}
+                              const totalSteps = (template?.steps?.length || 0) + warmupSets.length
+                              const doneCount = Object.values(checked).filter(Boolean).length
+
+                              return (
+                                <div style={{ marginBottom: '1.25rem', background: '#141410', border: '1px solid rgba(200,146,58,0.18)', borderLeft: '3px solid #c8923a' }}>
+                                  <div
+                                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem 1rem', cursor: 'pointer' }}
+                                    onClick={() => setWarmupExpanded(prev => {
+                                      const next = new Set(prev)
+                                      next.has(session.id) ? next.delete(session.id) : next.add(session.id)
+                                      return next
+                                    })}
+                                  >
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a' }}>Opvarmning — {category}</span>
+                                      {doneCount > 0 && (
+                                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#6cba6c', letterSpacing: '0.06em' }}>{doneCount}/{totalSteps}</span>
+                                      )}
+                                    </div>
+                                    <span style={{ color: '#4a4844', fontSize: '0.6rem' }}>{isExpanded ? '▲' : '▼'}</span>
+                                  </div>
+
+                                  {isExpanded && (
+                                    <div style={{ padding: '0 1rem 1rem' }}>
+                                      {template?.steps?.length > 0 && (
+                                        <div style={{ marginBottom: warmupSets.length > 0 ? '1rem' : 0 }}>
+                                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.5rem' }}>Fra coach</div>
+                                          {template.steps.map((step, i) => {
+                                            const key = `step_${i}`
+                                            const done = checked[key]
+                                            return (
+                                              <div
+                                                key={i}
+                                                style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.4rem', cursor: 'pointer' }}
+                                                onClick={() => setWarmupChecked(prev => ({
+                                                  ...prev,
+                                                  [session.id]: { ...(prev[session.id] || {}), [key]: !done }
+                                                }))}
+                                              >
+                                                <div style={{ width: '16px', height: '16px', border: `1px solid ${done ? '#6cba6c' : 'rgba(237,234,226,0.2)'}`, background: done ? 'rgba(108,186,108,0.15)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                                  {done && <span style={{ color: '#6cba6c', fontSize: '0.65rem', lineHeight: 1 }}>✓</span>}
+                                                </div>
+                                                <span style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.85rem', fontWeight: 300, color: done ? '#4a4844' : '#b8b4a8', textDecoration: done ? 'line-through' : 'none' }}>{step}</span>
+                                              </div>
+                                            )
+                                          })}
+                                        </div>
+                                      )}
+
+                                      {warmupSets.length > 0 && (
+                                        <div>
+                                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.5rem' }}>Opvarmningssæt ({maxWeight}kg arbejdsvægt)</div>
+                                          {warmupSets.map((ws, i) => {
+                                            const key = `warmup_${i}`
+                                            const done = checked[key]
+                                            return (
+                                              <div
+                                                key={i}
+                                                style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.4rem', cursor: 'pointer' }}
+                                                onClick={() => setWarmupChecked(prev => ({
+                                                  ...prev,
+                                                  [session.id]: { ...(prev[session.id] || {}), [key]: !done }
+                                                }))}
+                                              >
+                                                <div style={{ width: '16px', height: '16px', border: `1px solid ${done ? '#6cba6c' : 'rgba(237,234,226,0.2)'}`, background: done ? 'rgba(108,186,108,0.15)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                                  {done && <span style={{ color: '#6cba6c', fontSize: '0.65rem', lineHeight: 1 }}>✓</span>}
+                                                </div>
+                                                <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'baseline' }}>
+                                                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: done ? '#4a4844' : '#c8923a', letterSpacing: '0.06em', minWidth: '32px' }}>{ws.pct}</span>
+                                                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.85rem', color: done ? '#4a4844' : '#edeae2', textDecoration: done ? 'line-through' : 'none' }}>{ws.weight}kg</span>
+                                                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#7a7770' }}>× {ws.reps}</span>
+                                                </div>
+                                              </div>
+                                            )
+                                          })}
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              )
+                            })()}
+
                             {(session.exercises || []).map((ex, exIdx) => {
                               const isLast = exIdx === session.exercises.length - 1
                               return (
@@ -1508,8 +1641,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                             Sæt {setNum}
                                           </div>
                                           <input
-                                            style={{ ...s.fieldInput, maxWidth: '82px', padding: '0.65rem 0.5rem', fontSize: '1.1rem', textAlign: 'center' }}
-                                            type="number" placeholder="kg" value={input.weight}
+                                            style={{ ...s.fieldInput, width: '80px', minWidth: '80px', flexShrink: 0, padding: '0.65rem 0.5rem', fontSize: '1.1rem', textAlign: 'center' }}
+                                            type="number" inputMode="decimal" placeholder="kg" value={input.weight}
                                             onChange={e => setLogInputs(p => ({ ...p, [key]: { ...p[key], weight: e.target.value } }))}
                                           />
                                           <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.88rem', color: '#c8923a', whiteSpace: 'nowrap' }}>× {ex.reps || '—'}</span>
