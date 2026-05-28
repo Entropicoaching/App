@@ -338,6 +338,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [customFoods, setCustomFoods] = useState([])
   const [showCreateFood, setShowCreateFood] = useState(false)
   const [createFood, setCreateFood] = useState({ name: '', kcal100: '', protein100: '', carb100: '', fat100: '' })
+  const [mealTemplates, setMealTemplates] = useState([])
+  const [showTemplates, setShowTemplates] = useState(false)
+  const [showSaveTemplate, setShowSaveTemplate] = useState(false)
+  const [templateNameInput, setTemplateNameInput] = useState('')
 
   // Messages state
   const [messages, setMessages] = useState([])
@@ -408,6 +412,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       setAthlete(data)
       fetchLogs(data.id)
       fetchCustomFoods(data.id)
+      fetchMealTemplates(data.id)
       fetchProgram(data.id)
       fetchAthleteMessages(data.id)
       fetchWeightLogs(data.id)
@@ -761,6 +766,54 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       .eq('date', today())
       .order('created_at')
     setLogs(data || [])
+  }
+
+  async function fetchMealTemplates(athleteId) {
+    const { data } = await supabase
+      .from('meal_templates')
+      .select('*')
+      .eq('athlete_id', athleteId)
+      .order('created_at', { ascending: false })
+    setMealTemplates(data || [])
+  }
+
+  async function copyYesterday() {
+    const d = new Date()
+    d.setDate(d.getDate() - 1)
+    const yStr = d.toISOString().slice(0, 10)
+    const { data } = await supabase
+      .from('meal_logs')
+      .select('meal, kcal, protein, carb, fat')
+      .eq('athlete_id', athlete.id)
+      .eq('date', yStr)
+    if (!data || data.length === 0) return
+    await supabase.from('meal_logs').insert(
+      data.map(item => ({ ...item, athlete_id: athlete.id, date: today() }))
+    )
+    fetchLogs(athlete.id)
+  }
+
+  async function saveTemplate() {
+    if (!templateNameInput.trim() || !logs.length || !athlete) return
+    const items = logs.map(({ meal, kcal, protein, carb, fat }) => ({ meal, kcal, protein, carb, fat }))
+    await supabase.from('meal_templates').insert({ athlete_id: athlete.id, name: templateNameInput.trim(), items })
+    fetchMealTemplates(athlete.id)
+    setShowSaveTemplate(false)
+    setTemplateNameInput('')
+  }
+
+  async function logTemplate(template) {
+    if (!athlete) return
+    await supabase.from('meal_logs').insert(
+      template.items.map(item => ({ ...item, athlete_id: athlete.id, date: today() }))
+    )
+    fetchLogs(athlete.id)
+    setShowTemplates(false)
+  }
+
+  async function deleteTemplate(id) {
+    await supabase.from('meal_templates').delete().eq('id', id)
+    setMealTemplates(prev => prev.filter(t => t.id !== id))
   }
 
   async function fetchCustomFoods(athleteId) {
@@ -1883,6 +1936,40 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
             <div style={s.card}>
               <div style={s.cardLabel}>Tilføj fødevare</div>
 
+              <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                <button
+                  style={{ ...s.btnGhost, fontSize: '0.52rem', padding: '0.4rem 0.75rem', flex: 1 }}
+                  onClick={copyYesterday}
+                >Kopier i går</button>
+                <button
+                  style={{ ...s.btnGhost, fontSize: '0.52rem', padding: '0.4rem 0.75rem', flex: 1, color: showTemplates ? '#c8923a' : '#7a7770', borderColor: showTemplates ? 'rgba(200,146,58,0.4)' : undefined }}
+                  onClick={() => setShowTemplates(!showTemplates)}
+                >Skabeloner{mealTemplates.length > 0 ? ` (${mealTemplates.length})` : ''}</button>
+              </div>
+
+              {showTemplates && (
+                <div style={{ marginBottom: '0.75rem', background: '#141410', border: '1px solid rgba(237,234,226,0.07)' }}>
+                  {mealTemplates.length === 0 ? (
+                    <div style={{ padding: '0.75rem 1rem', fontSize: '0.8rem', color: '#4a4844' }}>Ingen skabeloner endnu — log et måltid og gem det nedenfor.</div>
+                  ) : (
+                    mealTemplates.map(t => (
+                      <div key={t.id} style={{ padding: '0.75rem 1rem', borderBottom: '1px solid rgba(237,234,226,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}>
+                        <div>
+                          <div style={{ fontSize: '0.88rem', color: '#edeae2', marginBottom: '0.2rem' }}>{t.name}</div>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770' }}>
+                            {t.items.length} madvarer · {t.items.reduce((a, i) => a + (i.kcal || 0), 0)} kcal
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.4rem', flexShrink: 0 }}>
+                          <button style={{ ...s.btnPrimary, padding: '0.4rem 0.75rem', fontSize: '0.52rem' }} onClick={() => logTemplate(t)}>Log alt</button>
+                          <button onClick={() => deleteTemplate(t.id)} style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.7rem', padding: '0.4rem' }}>✕</button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+
               <div style={{ position: 'relative', marginBottom: '0.75rem' }}>
                 <input
                   style={s.fieldInput}
@@ -2008,6 +2095,26 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                       </tr>
                     </tbody>
                   </table>
+
+                  <div style={{ marginBottom: '0.75rem' }}>
+                    <button
+                      style={{ background: 'none', border: 'none', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: showSaveTemplate ? '#c8923a' : '#7a7770', cursor: 'pointer', padding: 0 }}
+                      onClick={() => setShowSaveTemplate(!showSaveTemplate)}
+                    >{showSaveTemplate ? '− Skjul' : '+ Gem som skabelon'}</button>
+                    {showSaveTemplate && (
+                      <div style={{ marginTop: '0.5rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                        <input
+                          style={{ ...s.fieldInput, flex: 1 }}
+                          type="text"
+                          placeholder="Fx Morgenmad, Pre-workout..."
+                          value={templateNameInput}
+                          onChange={e => setTemplateNameInput(e.target.value)}
+                          onKeyDown={e => e.key === 'Enter' && saveTemplate()}
+                        />
+                        <button style={{ ...s.btnPrimary, padding: '0.55rem 0.75rem', fontSize: '0.55rem', flexShrink: 0 }} onClick={saveTemplate}>Gem</button>
+                      </div>
+                    )}
+                  </div>
 
                   {totKcal > 0 && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', paddingTop: '1rem', borderTop: '1px solid rgba(237,234,226,0.07)' }}>
