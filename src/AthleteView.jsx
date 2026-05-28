@@ -1701,8 +1701,14 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                 {(session.exercises || []).length} øvelser · {loggedSets}/{totalSets} sæt logget
                               </div>
                             </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                               {isDone && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#6cba6c', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Færdig ✓</span>}
+                              {!isDone && totalSets > 0 && (
+                                <button
+                                  style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.3rem 0.6rem', color: '#c8923a', borderColor: 'rgba(200,146,58,0.35)' }}
+                                  onClick={e => { e.stopPropagation(); if (window.confirm('Udfyld alle manglende sæt med anbefalet vægt?')) autoCompleteSession(session) }}
+                                >Auto-udfyld</button>
+                              )}
                               <span style={{ color: '#4a4844', fontSize: '0.65rem' }}>{isOpen ? '▲' : '▼'}</span>
                             </div>
                           </div>
@@ -1710,15 +1716,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
                         {isOpen && (
                           <div style={{ background: '#181816', border: '1px solid rgba(237,234,226,0.07)', borderTop: 'none', padding: '1rem' }}>
-
-                            {!isDone && (
-                              <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
-                                <button
-                                  style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.3rem 0.65rem', color: '#7a7770', borderColor: 'rgba(237,234,226,0.1)' }}
-                                  onClick={e => { e.stopPropagation(); if (window.confirm('Udfyld alle manglende sæt med anbefalet vægt?')) autoCompleteSession(session) }}
-                                >Auto-udfyld med anbefalet vægt</button>
-                              </div>
-                            )}
 
                             {/* WARMUP CARD — generel mobilisering */}
                             {(() => {
