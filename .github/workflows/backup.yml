@@ -1,8 +1,8 @@
-name: Daily Supabase Backup
+name: Supabase Backup
 
 on:
   schedule:
-    - cron: '0 2 * * *'
+    - cron: '0 */6 * * *'
   workflow_dispatch:
 
 jobs:
@@ -39,30 +39,31 @@ jobs:
               '$existing + {($t): $data}')
           done
 
-          echo "$COMBINED" | jq '.' > "backups/backup-${DATE}.json"
-          echo "Backup created: backups/backup-${DATE}.json"
+          TIMESTAMP=$(date -u '+%Y-%m-%dT%H%M')
+          echo "$COMBINED" | jq '.' > "backups/backup-${TIMESTAMP}.json"
+          echo "Backup created: backups/backup-${TIMESTAMP}.json"
 
       - name: Remove backups older than 30 days
         run: |
-          CUTOFF=$(date -u -d '30 days ago' '+%Y-%m-%d')
+          CUTOFF=$(date -u -d '30 days ago' '+%Y-%m-%dT0000')
           for FILE in backups/backup-*.json; do
             [ -f "$FILE" ] || continue
-            FILEDATE=$(basename "$FILE" .json | sed 's/backup-//')
-            if [[ "$FILEDATE" < "$CUTOFF" ]]; then
-              echo "Removing old backup: $FILE (${FILEDATE} < ${CUTOFF})"
+            FILETS=$(basename "$FILE" .json | sed 's/backup-//')
+            if [[ "$FILETS" < "$CUTOFF" ]]; then
+              echo "Removing old backup: $FILE"
               git rm -f "$FILE"
             fi
           done
 
       - name: Commit and push
         run: |
-          DATE=$(date -u '+%Y-%m-%d')
+          TIMESTAMP=$(date -u '+%Y-%m-%dT%H%M')
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add backups/
           if git diff --staged --quiet; then
             echo "Nothing to commit"
           else
-            git commit -m "chore: daily backup ${DATE}"
+            git commit -m "chore: backup ${TIMESTAMP}"
             git push
           fi
