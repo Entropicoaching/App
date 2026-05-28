@@ -991,28 +991,45 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   async function autoCompleteSession(session) {
     const exerciseIds = (session.exercises || []).map(e => e.id)
-    if (exerciseIds.length === 0) return
-    const { data: existing } = await supabase
+    if (exerciseIds.length === 0) { alert('FEJL: Ingen øvelser fundet i sessionen.'); return }
+
+    // DIAGNOSTICS: show exercise sets values
+    const exDiag = (session.exercises || []).map(e => `${e.name}: sets=${e.sets}, id=${e.id}`).join('\n')
+    alert(`DIAGNOSE — ${exerciseIds.length} øvelse(r):\n${exDiag}`)
+
+    const { data: existing, error: fetchErr } = await supabase
       .from('exercise_logs')
-      .select('exercise_id, set_number')
+      .select('exercise_id, set_number, logged_at')
       .eq('athlete_id', athlete.id)
       .in('exercise_id', exerciseIds)
+    if (fetchErr) { alert('FEJL ved hentning: ' + fetchErr.message); return }
+
+    alert(`DIAGNOSE — existing logs hentet: ${existing?.length ?? 0}\n${(existing || []).slice(0, 5).map(l => `ex=${l.exercise_id} sæt=${l.set_number} dato=${l.logged_at?.slice(0,10)}`).join('\n')}`)
+
     const logged = new Set((existing || []).map(l => `${l.exercise_id}_${l.set_number}`))
     const rows = []
     for (const ex of (session.exercises || [])) {
       const last = lastLogByExerciseName[ex.name?.toLowerCase()]
       const weight = last?.weight ?? parseFloat(ex.recommended_weight) ?? 0
       const reps = last?.reps_completed ?? parseInt(ex.reps) ?? 0
-      for (let n = 1; n <= (ex.sets || 0); n++) {
+      for (let n = 1; n <= (parseInt(ex.sets) || 0); n++) {
         if (logged.has(`${ex.id}_${n}`)) continue
         rows.push({ exercise_id: ex.id, athlete_id: athlete.id, set_number: n, weight, reps_completed: reps, note: null, rpe_actual: null, rpe_planned: null, skipped: false })
       }
     }
-    if (rows.length === 0) return
-    await supabase.from('exercise_logs').insert(rows)
-    fetchExerciseLogs(athlete.id, currentWeek)
-    fetchPastLogs(allWeeks[viewingWeekIdx], athlete.id)
-    fetchAllExerciseLogs(athlete.id, allWeeks)
+
+    if (rows.length === 0) {
+      alert(`Alle sæt allerede logget.\nExisting: ${existing?.length ?? 0} logs\nExercises: ${(session.exercises || []).map(e => `${e.name} sets=${e.sets}`).join(', ')}`)
+      return
+    }
+
+    const { error: insertErr } = await supabase.from('exercise_logs').insert(rows)
+    if (insertErr) { alert('FEJL ved indsætning: ' + insertErr.message); return }
+
+    alert(`${rows.length} sæt udfyldt.`)
+    await fetchExerciseLogs(athlete.id, currentWeek)
+    await fetchPastLogs(allWeeks[viewingWeekIdx], athlete.id)
+    await fetchAllExerciseLogs(athlete.id, allWeeks)
   }
 
   async function deleteLog(id) {
