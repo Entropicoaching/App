@@ -203,6 +203,43 @@ const LOCAL_FOODS = [
   // Snacks og sødt
   { name: 'Havrebar', kcal100: 380, protein100: 8, carb100: 62, fat100: 12 },
   { name: 'Mørk chokolade 70%', kcal100: 546, protein100: 5, carb100: 46, fat100: 38 },
+  { name: 'Mælkechokolade', kcal100: 535, protein100: 8, carb100: 57, fat100: 30 },
+  { name: 'Hvid chokolade', kcal100: 539, protein100: 6, carb100: 60, fat100: 30 },
+  { name: 'Nøddecreme (nutella)', kcal100: 539, protein100: 6, carb100: 58, fat100: 31 },
+  { name: 'Riskager naturel', kcal100: 385, protein100: 8, carb100: 82, fat100: 3 },
+  { name: 'Popcorn luftpoppet', kcal100: 375, protein100: 11, carb100: 74, fat100: 4 },
+  { name: 'Chips', kcal100: 536, protein100: 7, carb100: 53, fat100: 34 },
+  { name: 'Kiks/digestive', kcal100: 480, protein100: 7, carb100: 65, fat100: 21 },
+  { name: 'Sukker', kcal100: 400, protein100: 0, carb100: 100, fat100: 0 },
+  { name: 'Ahornsirup', kcal100: 260, protein100: 0, carb100: 67, fat100: 0 },
+  // Planteprodukter
+  { name: 'Tofu fast', kcal100: 76, protein100: 8, carb100: 2, fat100: 4 },
+  { name: 'Tofu silke', kcal100: 55, protein100: 5, carb100: 2, fat100: 3 },
+  { name: 'Edamame bønner', kcal100: 121, protein100: 11, carb100: 9, fat100: 5 },
+  { name: 'Seitan', kcal100: 120, protein100: 25, carb100: 4, fat100: 2 },
+  { name: 'Tempeh', kcal100: 193, protein100: 19, carb100: 9, fat100: 11 },
+  // Færdigretter og street food
+  { name: 'Kebabkød', kcal100: 220, protein100: 18, carb100: 2, fat100: 16 },
+  { name: 'Falafel', kcal100: 333, protein100: 13, carb100: 32, fat100: 18 },
+  { name: 'Pizza (gennemsnit)', kcal100: 266, protein100: 11, carb100: 33, fat100: 10 },
+  // Tilbehør og krydderier
+  { name: 'Sennep', kcal100: 60, protein100: 4, carb100: 6, fat100: 3 },
+  { name: 'Remoulade', kcal100: 328, protein100: 1, carb100: 13, fat100: 30 },
+  { name: 'Dressing let', kcal100: 90, protein100: 1, carb100: 12, fat100: 4 },
+  { name: 'Dressing normal', kcal100: 330, protein100: 1, carb100: 8, fat100: 32 },
+  { name: 'Pesto', kcal100: 430, protein100: 6, carb100: 7, fat100: 43 },
+  { name: 'Tomatpuré', kcal100: 82, protein100: 4, carb100: 16, fat100: 0 },
+  { name: 'Salsa', kcal100: 36, protein100: 2, carb100: 7, fat100: 0 },
+  // Dansk klassisk tilbehør
+  { name: 'Rødkål', kcal100: 92, protein100: 1, carb100: 22, fat100: 0 },
+  { name: 'Agurkesalat', kcal100: 20, protein100: 1, carb100: 4, fat100: 0 },
+  { name: 'Kartoffelmos', kcal100: 95, protein100: 2, carb100: 17, fat100: 3 },
+  // Drikkevarer udvidet
+  { name: 'Proteinmælk', kcal100: 42, protein100: 6, carb100: 3, fat100: 1 },
+  { name: 'Kaffe sort', kcal100: 2, protein100: 0, carb100: 0, fat100: 0 },
+  { name: 'Te uden sukker', kcal100: 1, protein100: 0, carb100: 0, fat100: 0 },
+  { name: 'Cola', kcal100: 42, protein100: 0, carb100: 11, fat100: 0 },
+  { name: 'Cola zero', kcal100: 0, protein100: 0, carb100: 0, fat100: 0 },
 ]
 
 const s = {
@@ -298,6 +335,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [amount, setAmount] = useState(100)
   const [showManual, setShowManual] = useState(false)
   const [manual, setManual] = useState({ name: '', kcal: '', protein: '', carb: '' })
+  const [customFoods, setCustomFoods] = useState([])
+  const [showCreateFood, setShowCreateFood] = useState(false)
+  const [createFood, setCreateFood] = useState({ name: '', kcal100: '', protein100: '', carb100: '', fat100: '' })
 
   // Messages state
   const [messages, setMessages] = useState([])
@@ -367,6 +407,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       }
       setAthlete(data)
       fetchLogs(data.id)
+      fetchCustomFoods(data.id)
       fetchProgram(data.id)
       fetchAthleteMessages(data.id)
       fetchWeightLogs(data.id)
@@ -722,15 +763,24 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     setLogs(data || [])
   }
 
+  async function fetchCustomFoods(athleteId) {
+    const { data } = await supabase
+      .from('custom_foods')
+      .select('*')
+      .eq('athlete_id', athleteId)
+      .order('created_at', { ascending: false })
+    setCustomFoods(data || [])
+  }
+
   function onSearchInput(e) {
     const q = e.target.value
     setSearchQuery(q)
     setSelectedFood(null)
     if (q.length < 2) { setSearchResults([]); return }
-    const results = LOCAL_FOODS.filter(f =>
-      f.name.toLowerCase().includes(q.toLowerCase())
-    )
-    setSearchResults(results)
+    const ql = q.toLowerCase()
+    const custom = customFoods.filter(f => f.name.toLowerCase().includes(ql)).map(f => ({ ...f, isCustom: true }))
+    const builtin = LOCAL_FOODS.filter(f => f.name.toLowerCase().includes(ql))
+    setSearchResults([...custom, ...builtin])
   }
 
   function selectFood(f) {
@@ -771,6 +821,26 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     setManual({ name: '', kcal: '', protein: '', carb: '' })
     setShowManual(false)
     fetchLogs(athlete.id)
+  }
+
+  async function saveCustomFood() {
+    if (!createFood.name.trim() || !athlete) return
+    const food = {
+      athlete_id: athlete.id,
+      name: createFood.name.trim(),
+      kcal100: parseFloat(createFood.kcal100) || 0,
+      protein100: parseFloat(createFood.protein100) || 0,
+      carb100: parseFloat(createFood.carb100) || 0,
+      fat100: parseFloat(createFood.fat100) || 0,
+    }
+    const { data } = await supabase.from('custom_foods').insert(food).select().maybeSingle()
+    if (data) {
+      const saved = { ...data, isCustom: true }
+      setCustomFoods(prev => [saved, ...prev])
+      selectFood(saved)
+      setShowCreateFood(false)
+      setCreateFood({ name: '', kcal100: '', protein100: '', carb100: '', fat100: '' })
+    }
   }
 
   async function deleteLog(id) {
@@ -1834,7 +1904,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                       onMouseEnter={e => e.currentTarget.style.background = 'rgba(200,146,58,0.08)'}
                       onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                     >
-                      <div style={{ fontSize: '0.88rem', color: '#edeae2' }}>{f.name}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <span style={{ fontSize: '0.88rem', color: '#edeae2' }}>{f.name}</span>
+                        {f.isCustom && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#c8923a', border: '1px solid rgba(200,146,58,0.4)', padding: '0.1rem 0.3rem' }}>din</span>}
+                      </div>
                       <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#7a7770', textAlign: 'right', flexShrink: 0, marginLeft: '1rem' }}>
                         {f.kcal100} kcal · P: {f.protein100}g · K: {f.carb100}g<br />
                         <span style={{ color: '#4a4844' }}>pr. 100g</span>
@@ -1862,23 +1935,33 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               )}
 
               <button
-                style={{ background: 'none', border: 'none', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: showManual ? '#c8923a' : '#7a7770', cursor: 'pointer', padding: 0 }}
-                onClick={() => setShowManual(!showManual)}
+                style={{ background: 'none', border: 'none', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: showCreateFood ? '#c8923a' : '#7a7770', cursor: 'pointer', padding: 0 }}
+                onClick={() => setShowCreateFood(!showCreateFood)}
               >
-                {showManual ? '− Skjul manuel indtastning' : '+ Tilføj manuelt'}
+                {showCreateFood ? '− Skjul' : '+ Opret ny fødevare'}
               </button>
 
-              {showManual && (
-                <div style={{ marginTop: '0.75rem', padding: '1rem', background: '#141410', border: '1px solid rgba(237,234,226,0.07)' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '0.6rem', marginBottom: '0.75rem' }}>
-                    {[['Navn', 'name', 'text', 'Beskrivelse'], ['Kcal', 'kcal', 'number', '0'], ['Protein (g)', 'protein', 'number', '0'], ['Kulhydrat (g)', 'carb', 'number', '0']].map(([label, key, type, placeholder]) => (
+              {showCreateFood && (
+                <div style={{ marginTop: '0.75rem', padding: '1rem', background: '#141410', border: '1px solid rgba(200,146,58,0.2)' }}>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.75rem' }}>
+                    Makroer pr. 100g — gemmes til din personlige liste
+                  </div>
+                  <div style={{ marginBottom: '0.6rem' }}>
+                    <div style={s.fieldLabel}>Navn</div>
+                    <input style={s.fieldInput} type="text" placeholder="Fx hjemmelavet lasagne" value={createFood.name} onChange={e => setCreateFood(p => ({ ...p, name: e.target.value }))} />
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '0.6rem', marginBottom: '0.75rem' }}>
+                    {[['Kcal', 'kcal100'], ['Protein (g)', 'protein100'], ['Kulhydrat (g)', 'carb100'], ['Fedt (g)', 'fat100']].map(([label, key]) => (
                       <div key={key}>
                         <div style={s.fieldLabel}>{label}</div>
-                        <input style={s.fieldInput} type={type} placeholder={placeholder} value={manual[key]} onChange={e => setManual(p => ({ ...p, [key]: e.target.value }))} />
+                        <input style={s.fieldInput} type="number" inputMode="decimal" placeholder="0" value={createFood[key]} onChange={e => setCreateFood(p => ({ ...p, [key]: e.target.value }))} />
                       </div>
                     ))}
                   </div>
-                  <button style={s.btnPrimary} onClick={addManual}>Tilføj</button>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button style={s.btnPrimary} onClick={saveCustomFood}>Gem og log</button>
+                    <button style={s.btnGhost} onClick={() => { setShowCreateFood(false); setCreateFood({ name: '', kcal100: '', protein100: '', carb100: '', fat100: '' }) }}>Annuller</button>
+                  </div>
                 </div>
               )}
             </div>
