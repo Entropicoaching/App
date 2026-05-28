@@ -1000,8 +1000,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     const logged = new Set((existing || []).map(l => `${l.exercise_id}_${l.set_number}`))
     const rows = []
     for (const ex of (session.exercises || [])) {
-      const weight = parseFloat(ex.recommended_weight) || 0
-      const reps = parseInt(ex.reps) || 0
+      const last = lastLogByExerciseName[ex.name?.toLowerCase()]
+      const weight = last?.weight ?? parseFloat(ex.recommended_weight) ?? 0
+      const reps = last?.reps_completed ?? parseInt(ex.reps) ?? 0
       for (let n = 1; n <= (ex.sets || 0); n++) {
         if (logged.has(`${ex.id}_${n}`)) continue
         rows.push({ exercise_id: ex.id, athlete_id: athlete.id, set_number: n, weight, reps_completed: reps, note: null, rpe_actual: null, rpe_planned: null, skipped: false })
@@ -1706,7 +1707,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                               {!isDone && totalSets > 0 && (
                                 <button
                                   style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.3rem 0.6rem', color: '#c8923a', borderColor: 'rgba(200,146,58,0.35)' }}
-                                  onClick={e => { e.stopPropagation(); if (window.confirm('Udfyld alle manglende sæt med anbefalet vægt?')) autoCompleteSession(session) }}
+                                  onClick={e => { e.stopPropagation(); if (window.confirm('Udfyld manglende sæt med sidst loggede vægt og reps?')) autoCompleteSession(session) }}
                                 >Auto-udfyld</button>
                               )}
                               <span style={{ color: '#4a4844', fontSize: '0.65rem' }}>{isOpen ? '▲' : '▼'}</span>
