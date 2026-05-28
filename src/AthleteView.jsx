@@ -342,6 +342,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [showTemplates, setShowTemplates] = useState(false)
   const [showSaveTemplate, setShowSaveTemplate] = useState(false)
   const [templateNameInput, setTemplateNameInput] = useState('')
+  const [historicalMealLogs, setHistoricalMealLogs] = useState([])
 
   // Messages state
   const [messages, setMessages] = useState([])
@@ -413,6 +414,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       fetchLogs(data.id)
       fetchCustomFoods(data.id)
       fetchMealTemplates(data.id)
+      fetchHistoricalMealLogs(data.id)
       fetchProgram(data.id)
       fetchAthleteMessages(data.id)
       fetchWeightLogs(data.id)
@@ -768,6 +770,18 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     setLogs(data || [])
   }
 
+  async function fetchHistoricalMealLogs(athleteId) {
+    const from = new Date()
+    from.setDate(from.getDate() - 28)
+    const { data } = await supabase
+      .from('meal_logs')
+      .select('date, kcal')
+      .eq('athlete_id', athleteId)
+      .gte('date', from.toISOString().slice(0, 10))
+      .order('date')
+    setHistoricalMealLogs(data || [])
+  }
+
   async function fetchMealTemplates(athleteId) {
     const { data } = await supabase
       .from('meal_templates')
@@ -916,6 +930,26 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const pLen = (pKcal / macroTotal) * circ
   const cLen = (cKcal / macroTotal) * circ
   const fLen = (fKcal / macroTotal) * circ
+
+  const tdeeEstimate = (() => {
+    const kcalByDate = {}
+    for (const log of historicalMealLogs) {
+      kcalByDate[log.date] = (kcalByDate[log.date] || 0) + (log.kcal || 0)
+    }
+    const kcalDays = Object.values(kcalByDate)
+    if (kcalDays.length < 7) return { ready: false, missingKcalDays: Math.max(0, 7 - kcalDays.length) }
+    const wLogs = [...weightLogs].sort((a, b) => a.logged_at > b.logged_at ? 1 : -1)
+    if (wLogs.length < 2) return { ready: false, missingWeight: true }
+    const oldest = wLogs[0]
+    const newest = wLogs[wLogs.length - 1]
+    const daySpan = (new Date(newest.logged_at) - new Date(oldest.logged_at)) / 86400000
+    if (daySpan < 7) return { ready: false, missingWeight: true }
+    const avgKcal = kcalDays.reduce((a, b) => a + b, 0) / kcalDays.length
+    const weightChangePrDay = (newest.weight - oldest.weight) / daySpan
+    const tdee = Math.round(avgKcal - weightChangePrDay * 7700)
+    const confidence = kcalDays.length >= 14 && daySpan >= 21 ? 'høj' : kcalDays.length >= 10 && daySpan >= 14 ? 'moderat' : 'lav'
+    return { ready: true, tdee, avgKcal: Math.round(avgKcal), kcalDays: kcalDays.length, daySpan: Math.round(daySpan), confidence }
+  })()
 
   const now = new Date()
   const hour = now.getHours()
@@ -1931,6 +1965,43 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
             </div>
 
             {progressBars}
+
+            {/* TDEE estimate */}
+            <div style={{ ...s.card, marginBottom: '1.5rem' }}>
+              <div style={s.cardLabel}>Estimeret TDEE</div>
+              {!tdeeEstimate.ready ? (
+                <div style={{ fontSize: '0.82rem', color: '#4a4844' }}>
+                  {tdeeEstimate.missingWeight
+                    ? 'Vej dig mindst 2 gange med 7 dages mellemrum for at aktivere dette estimat.'
+                    : `Log kalorier i mindst ${tdeeEstimate.missingKcalDays} dage mere for at aktivere dette estimat.`}
+                </div>
+              ) : (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', marginBottom: '0.6rem' }}>
+                    <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '2rem', color: '#edeae2', lineHeight: 1 }}>{tdeeEstimate.tdee}</span>
+                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#7a7770' }}>kcal/dag</span>
+                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: tdeeEstimate.confidence === 'høj' ? '#6cba6c' : tdeeEstimate.confidence === 'moderat' ? '#c8923a' : '#7a7770', border: `1px solid ${tdeeEstimate.confidence === 'høj' ? 'rgba(108,186,108,0.4)' : tdeeEstimate.confidence === 'moderat' ? 'rgba(200,146,58,0.4)' : 'rgba(122,119,112,0.3)'}`, padding: '0.15rem 0.4rem', marginLeft: '0.25rem' }}>{tdeeEstimate.confidence} sikkerhed</span>
+                  </div>
+                  {athlete.kcal_target && (() => {
+                    const diff = athlete.kcal_target - tdeeEstimate.tdee
+                    const absDiff = Math.abs(diff)
+                    if (absDiff < 100) return (
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#7a7770', marginBottom: '0.5rem' }}>
+                        Dit mål matcher vedligeholdelse <span style={{ color: '#6cba6c' }}>≈</span>
+                      </div>
+                    )
+                    return (
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#7a7770', marginBottom: '0.5rem' }}>
+                        Dit mål er <span style={{ color: diff > 0 ? '#6cba6c' : '#c8923a' }}>{diff > 0 ? '+' : ''}{diff} kcal</span> ift. vedligeholdelse — {diff > 0 ? 'overskud (bulk)' : 'underskud (cut)'}
+                      </div>
+                    )
+                  })()}
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', letterSpacing: '0.06em' }}>
+                    Baseret på {tdeeEstimate.kcalDays} dages kalorielogging · {tdeeEstimate.daySpan} dages vægtdata · gns. {tdeeEstimate.avgKcal} kcal/dag
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* Search */}
             <div style={s.card}>
