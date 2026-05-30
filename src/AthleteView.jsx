@@ -439,6 +439,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   useEffect(() => { fetchAthlete() }, [])
   useEffect(() => { if (tab === 'beskeder' && athlete) fetchAthleteMessages() }, [tab, athlete?.id])
+  useEffect(() => { if (tab === 'stævnedag' && athlete) fetchMeetPlan(athlete.id) }, [tab, athlete?.id])
 
   useEffect(() => {
     if (!loading) return
