@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from './supabase'
 
 const BLOCK_PALETTE = ['#4e8fcf','#c8923a','#6cba6c','#9b6bd4','#cf6b4e','#4ec8b4']
@@ -242,34 +242,29 @@ const LOCAL_FOODS = [
   { name: 'Cola zero', kcal100: 0, protein100: 0, carb100: 0, fat100: 0 },
 ]
 
-const MOBILITY_LIBRARY = {
-  'Hofte & baller': [
-    { id: 'm-9090', name: '90/90 hofte stretch', desc: '30 sek. pr. side', focus: ['Squat', 'Dødløft'] },
-    { id: 'm-hip-circles', name: 'Hip circles', desc: '10 reps pr. retning pr. side', focus: ['Squat', 'Dødløft'] },
-    { id: 'm-glute-bridge', name: 'Glute bridge', desc: '15 reps', focus: ['Squat', 'Dødløft'] },
-    { id: 'm-pigeon', name: 'Pigeon stretch', desc: '45 sek. pr. side', focus: ['Squat', 'Dødløft'] },
-    { id: 'm-hip-flexor', name: 'Hoftebøjer stretch knæliggende', desc: '30 sek. pr. side', focus: ['Squat', 'Dødløft'] },
+const WARMUP_BASE = {
+  Squat: [
+    { id: 'sq-1', name: 'Bodyweight squat', desc: 'Stå med skulderbredde. Sæt dig så dybt ned som muligt og hold et par sekunder fornede — hælene skal blive i gulvet. Fokus på at åbne hofterne.', label: '10 reps', type: 'reps' },
+    { id: 'sq-2', name: 'Hip circles', desc: 'Stå på ét ben, løft det andet knæ til hoftehøjde og lav store, langsomme cirkler med hoften — udad og bagud. Åbner hofteleddet i alle retninger.', label: '10 reps pr. side', type: 'reps' },
+    { id: 'sq-3', name: 'Glute bridge', desc: 'Lig på ryggen med bøjede knæ og fødder fladt i gulvet. Skub hofterne op og klem ballerne hårdt i toppen — hold et sekund. Sænk roligt ned.', label: '15 reps', type: 'reps' },
   ],
-  'Ankel & knæ': [
-    { id: 'm-ankle', name: 'Ankelmobilitet mod væg', desc: '10 reps pr. ben', focus: ['Squat'] },
-    { id: 'm-bw-squat', name: 'Dyb bodyweight squat med pause', desc: '10 reps', focus: ['Squat'] },
-    { id: 'm-calf', name: 'Lægstræk mod væg', desc: '30 sek. pr. side', focus: ['Squat'] },
+  Bænkpres: [
+    { id: 'bp-1', name: 'Skuldercirkler', desc: 'Lav store, langsomme cirkler med skuldrene — fremad og bagud. Hold armene let løftede. Varm skulderleddene grundigt op inden belastning.', label: '10 reps pr. retning', type: 'reps' },
+    { id: 'bp-2', name: 'Bryststretch i dørkarmen', desc: 'Sæt underarmen lodret mod en dørkarme med albuen i 90 grader. Drej kroppen væk fra armen og hold. Mærk strækket tværs over brystet og foran skulderen.', label: '20 sek pr. side', type: 'timer', duration: 20 },
+    { id: 'bp-3', name: 'Håndled rotation', desc: 'Hold armene fremad og lav fulde, langsomme rotationer i håndleddene begge veje. Stræk fingrene ud og luk dem igen. Vigtigt for greb og håndledsstabilitet.', label: '10 reps pr. retning', type: 'reps' },
   ],
-  'Ryg & core': [
-    { id: 'm-cat-cow', name: 'Cat-cow', desc: '10 reps', focus: ['Dødløft', 'Squat'] },
-    { id: 'm-thorax-rot', name: 'Thorax rotation siddende', desc: '10 pr. side', focus: ['Dødløft', 'Bænkpres'] },
-    { id: 'm-hip-hinge', name: 'Hip hinge med stang mod væg', desc: '10 reps', focus: ['Dødløft'] },
-    { id: 'm-ham', name: 'Liggende hamstringstræk', desc: '30 sek. pr. side', focus: ['Dødløft'] },
-    { id: 'm-dead-bug', name: 'Dead bug', desc: '8 reps pr. side', focus: ['Dødløft', 'Squat'] },
+  Dødløft: [
+    { id: 'dl-1', name: 'Cat-cow', desc: 'Kom på alle fire med hænder under skuldre og knæ under hofter. Veksler mellem at runde ryggen helt op mod loftet (kat) og synke den ned mod gulvet (ko). Hold et sekund i hvert yderpunkt.', label: '10 reps', type: 'reps' },
+    { id: 'dl-2', name: 'Hip hinge mod væg', desc: 'Stå en håndbredde fra en væg med let bøjede knæ. Skub hofterne bagud til de rammer væggen mens du holder ryggen neutral og ret. Dette er præcis dødløft-bevægelsen — øv den her.', label: '10 reps', type: 'reps' },
+    { id: 'dl-3', name: 'Glute bridge', desc: 'Lig på ryggen, knæ bøjet, fødder fladt. Skub hofterne op og klem ballerne hårdt. Aktiverer baglår og baller som er primærmotorer i dødløft.', label: '15 reps', type: 'reps' },
   ],
-  'Skulder & bryst': [
-    { id: 'm-shoulder', name: 'Skuldercirkler frem og tilbage', desc: '10 pr. retning', focus: ['Bænkpres'] },
-    { id: 'm-thorax-ext', name: 'Thorax extension over rulle', desc: '30 sek.', focus: ['Bænkpres'] },
-    { id: 'm-band-pull', name: 'Band pull-apart', desc: '15 reps', focus: ['Bænkpres'] },
-    { id: 'm-chest', name: 'Bryststretch i dørkarmen', desc: '20 sek. pr. side', focus: ['Bænkpres'] },
-    { id: 'm-wrist', name: 'Håndled rotation og stræk', desc: '10 pr. retning', focus: ['Bænkpres'] },
-    { id: 'm-lat', name: 'Lat stretch mod rack', desc: '30 sek. pr. side', focus: ['Bænkpres', 'Dødløft'] },
-  ],
+}
+
+const WARMUP_ADDONS = {
+  Hofte: { id: 'add-hofte', name: '90/90 hofte stretch', desc: 'Sid på gulvet med ét ben bøjet 90 grader foran dig og ét ben 90 grader ude til siden. Læn langsomt frem over det forreste ben og hold. Mærk strækket i ydersiden af hoften og ballerne.', label: '30 sek pr. side', type: 'timer', duration: 30 },
+  Ankel: { id: 'add-ankel', name: 'Ankelmobilitet mod væg', desc: 'Stå med tåspidsen tæt mod en væg. Skub forsigtigt knæet frem til det rammer væggen — hold hælen i gulvet. Flyt foden gradvist længere væk. Forbedrer ankelmobilitet til squat.', label: '10 reps pr. ben', type: 'reps' },
+  Ryg: { id: 'add-ryg', name: 'Thorax rotation', desc: 'Sid på hug eller på hælene med hænderne flettet bag nakken. Roter overkroppen langsomt til én side, hold et sekund og roter til den anden. Hold hofterne stille — kun overkroppen roterer.', label: '10 reps pr. side', type: 'reps' },
+  Skulder: { id: 'add-skulder', name: 'Thorax extension over rulle', desc: 'Rul et håndklæde eller brug en skumrulle og læg det tværs under øvre ryg (mellem skulderblade). Læn overkroppen forsigtigt bagover med hænderne bag nakken og åbn brystet.', label: '30 sek', type: 'timer', duration: 30 },
 }
 
 const s = {
@@ -416,8 +411,15 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [warmupChecked, setWarmupChecked] = useState({})
   const [warmupExpanded, setWarmupExpanded] = useState(new Set())
   const [exWarmupExpanded, setExWarmupExpanded] = useState(new Set())
-  const [mobilFocus, setMobilFocus] = useState('Alle')
-  const [mobilChecked, setMobilChecked] = useState(new Set())
+  const [warmupPhase, setWarmupPhase] = useState('focus')
+  const [warmupFocus, setWarmupFocus] = useState(null)
+  const [warmupProblems, setWarmupProblems] = useState(new Set())
+  const [warmupExercises, setWarmupExercises] = useState([])
+  const [warmupStep, setWarmupStep] = useState(0)
+  const [timerSeconds, setTimerSeconds] = useState(0)
+  const [timerActive, setTimerActive] = useState(false)
+  const [timerDone, setTimerDone] = useState(false)
+  const timerRef = useRef(null)
 
   // Stævnedag state
   const [meetType, setMeetType] = useState('sbd')
@@ -443,6 +445,26 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   useEffect(() => { fetchAthlete() }, [])
   useEffect(() => { if (tab === 'beskeder' && athlete) fetchAthleteMessages() }, [tab, athlete?.id])
   useEffect(() => { if (tab === 'stævnedag' && athlete) fetchMeetPlan(athlete.id) }, [tab, athlete?.id])
+
+  useEffect(() => {
+    if (tab === 'opvarmning' && currentWeek && warmupPhase === 'focus' && !warmupFocus) {
+      for (const session of currentWeek.sessions || []) {
+        for (const ex of session.exercises || []) {
+          const n = (ex.name || '').toLowerCase()
+          if (n.includes('squat')) { setWarmupFocus('Squat'); return }
+          if (n.includes('bænk') || n.includes('bench')) { setWarmupFocus('Bænkpres'); return }
+          if (n.includes('dødl') || n.includes('deadlift')) { setWarmupFocus('Dødløft'); return }
+        }
+      }
+    }
+  }, [tab, currentWeek])
+
+  useEffect(() => {
+    if (!timerActive) return
+    if (timerSeconds <= 0) { setTimerActive(false); setTimerDone(true); return }
+    timerRef.current = setTimeout(() => setTimerSeconds(s => s - 1), 1000)
+    return () => clearTimeout(timerRef.current)
+  }, [timerActive, timerSeconds])
 
   useEffect(() => {
     if (!loading) return
@@ -2444,122 +2466,184 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
         {/* OPVARMNING */}
         {tab === 'opvarmning' && (() => {
-          const FOCUSES = ['Alle', 'Squat', 'Bænkpres', 'Dødløft']
-          const allExercises = Object.entries(MOBILITY_LIBRARY).flatMap(([area, items]) =>
-            items.map(ex => ({ ...ex, area }))
-          )
-          const visible = mobilFocus === 'Alle'
-            ? allExercises
-            : allExercises.filter(ex => ex.focus.includes(mobilFocus))
-          const byArea = {}
-          for (const ex of visible) {
-            if (!byArea[ex.area]) byArea[ex.area] = []
-            byArea[ex.area].push(ex)
+          const FOCUSES = ['Squat', 'Bænkpres', 'Dødløft']
+          const PROBLEMS = ['Hofte', 'Ankel', 'Ryg', 'Skulder']
+
+          function startGuide() {
+            const base = WARMUP_BASE[warmupFocus] || []
+            const coachSteps = (warmupTemplates.find(t => t.exercise_category === warmupFocus)?.steps || [])
+              .map((step, i) => ({ id: `coach_${i}`, name: step, desc: '', label: '', type: 'reps' }))
+            const addons = [...warmupProblems].map(p => WARMUP_ADDONS[p]).filter(Boolean)
+            const all = [...base, ...addons, ...coachSteps]
+            setWarmupExercises(all)
+            setWarmupStep(0)
+            setTimerActive(false)
+            setTimerSeconds(0)
+            setTimerDone(false)
+            setWarmupPhase('guide')
           }
-          const coachSteps = mobilFocus !== 'Alle'
-            ? (warmupTemplates.find(t => t.exercise_category === mobilFocus)?.steps || [])
-            : []
-          const totalVisible = visible.length + coachSteps.length
-          const doneCount = [...mobilChecked].filter(id =>
-            visible.some(ex => ex.id === id) || id.startsWith('coach_')
-          ).length
 
-          return (
+          function goToStep(idx) {
+            setWarmupStep(idx)
+            setTimerActive(false)
+            setTimerDone(false)
+            const ex = warmupExercises[idx]
+            setTimerSeconds(ex?.type === 'timer' ? ex.duration : 0)
+          }
+
+          function resetWarmup() {
+            setWarmupPhase('focus')
+            setWarmupFocus(null)
+            setWarmupProblems(new Set())
+            setWarmupExercises([])
+            setWarmupStep(0)
+            setTimerActive(false)
+            setTimerSeconds(0)
+            setTimerDone(false)
+          }
+
+          // FASE: FOKUS
+          if (warmupPhase === 'focus') return (
             <>
-              <div style={{ marginBottom: '1.5rem' }}>
+              <div style={{ marginBottom: '1.75rem' }}>
                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Opvarmning</div>
-                <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>
-                  Mobilisering.
-                </h1>
-                {doneCount > 0 && (
-                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#6cba6c', letterSpacing: '0.08em', marginTop: '0.4rem' }}>
-                    {doneCount}/{totalVisible} gennemført
-                  </div>
-                )}
+                <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Hvad træner du i dag?</h1>
+                {warmupFocus && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#c8923a', marginTop: '0.4rem', letterSpacing: '0.06em' }}>Auto-detekteret fra dit program</div>}
               </div>
-
-              {/* Focus filter */}
-              <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginBottom: '2rem' }}>
                 {FOCUSES.map(f => (
-                  <button
-                    key={f}
-                    onClick={() => setMobilFocus(f)}
-                    style={{
-                      fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500,
-                      letterSpacing: '0.1em', textTransform: 'uppercase', border: 'none', cursor: 'pointer',
-                      padding: '0.4rem 0.85rem',
-                      background: mobilFocus === f ? '#c8923a' : 'rgba(237,234,226,0.07)',
-                      color: mobilFocus === f ? '#141410' : '#7a7770',
-                    }}
-                  >{f}</button>
+                  <button key={f} onClick={() => setWarmupFocus(f)} style={{
+                    background: warmupFocus === f ? '#c8923a' : '#1c1c18',
+                    border: `1px solid ${warmupFocus === f ? '#c8923a' : 'rgba(237,234,226,0.1)'}`,
+                    color: warmupFocus === f ? '#141410' : '#edeae2',
+                    fontFamily: "'Playfair Display', serif", fontSize: '1.15rem', fontWeight: 400,
+                    padding: '1rem 1.25rem', cursor: 'pointer', textAlign: 'left',
+                  }}>{f}</button>
                 ))}
               </div>
-
-              {/* Coach steps for selected focus */}
-              {coachSteps.length > 0 && (
-                <div style={{ ...s.card, borderColor: 'rgba(200,146,58,0.25)' }}>
-                  <div style={s.cardLabel}>Fra din coach — {mobilFocus}</div>
-                  {coachSteps.map((step, i) => {
-                    const id = `coach_${i}`
-                    const done = mobilChecked.has(id)
-                    return (
-                      <div
-                        key={i}
-                        style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.5rem 0', borderBottom: i < coachSteps.length - 1 ? '1px solid rgba(237,234,226,0.06)' : 'none', cursor: 'pointer' }}
-                        onClick={() => setMobilChecked(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n })}
-                      >
-                        <div style={{ width: '18px', height: '18px', border: `1px solid ${done ? '#6cba6c' : 'rgba(237,234,226,0.2)'}`, background: done ? 'rgba(108,186,108,0.15)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                          {done && <span style={{ color: '#6cba6c', fontSize: '0.7rem' }}>✓</span>}
-                        </div>
-                        <span style={{ fontSize: '0.88rem', color: done ? '#4a4844' : '#edeae2', textDecoration: done ? 'line-through' : 'none' }}>{step}</span>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-
-              {/* Library grouped by body area */}
-              {Object.entries(byArea).map(([area, exercises]) => (
-                <div key={area} style={{ marginBottom: '1.25rem' }}>
-                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.6rem' }}>{area}</div>
-                  <div style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)' }}>
-                    {exercises.map((ex, i) => {
-                      const done = mobilChecked.has(ex.id)
-                      return (
-                        <div
-                          key={ex.id}
-                          style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem 1rem', borderBottom: i < exercises.length - 1 ? '1px solid rgba(237,234,226,0.06)' : 'none', cursor: 'pointer' }}
-                          onClick={() => setMobilChecked(prev => { const n = new Set(prev); n.has(ex.id) ? n.delete(ex.id) : n.add(ex.id); return n })}
-                        >
-                          <div style={{ width: '18px', height: '18px', border: `1px solid ${done ? '#6cba6c' : 'rgba(237,234,226,0.2)'}`, background: done ? 'rgba(108,186,108,0.15)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                            {done && <span style={{ color: '#6cba6c', fontSize: '0.7rem' }}>✓</span>}
-                          </div>
-                          <div style={{ flex: 1 }}>
-                            <div style={{ fontSize: '0.88rem', color: done ? '#4a4844' : '#edeae2', textDecoration: done ? 'line-through' : 'none' }}>{ex.name}</div>
-                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', marginTop: '0.1rem' }}>{ex.desc}</div>
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
-              ))}
-
-              {totalVisible === 0 && (
-                <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-                  Ingen øvelser for dette fokus
-                </div>
-              )}
-
-              {doneCount > 0 && (
-                <button
-                  style={{ ...s.btnGhost, width: '100%', padding: '0.65rem', textAlign: 'center', marginTop: '0.5rem' }}
-                  onClick={() => setMobilChecked(new Set())}
-                >
-                  Nulstil
+              {warmupFocus && (
+                <button style={{ ...s.btnPrimary, width: '100%', padding: '0.85rem', fontSize: '0.62rem' }}
+                  onClick={() => setWarmupPhase('problems')}>
+                  Næste →
                 </button>
               )}
             </>
+          )
+
+          // FASE: PROBLEMER
+          if (warmupPhase === 'problems') return (
+            <>
+              <div style={{ marginBottom: '1.75rem' }}>
+                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>{warmupFocus}</div>
+                <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Hvad er stramt eller tungt i dag?</h1>
+                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', marginTop: '0.4rem' }}>Valgfrit — vælg 0-2 områder</div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem', marginBottom: '2rem' }}>
+                {PROBLEMS.map(p => {
+                  const on = warmupProblems.has(p)
+                  return (
+                    <button key={p} onClick={() => setWarmupProblems(prev => { const n = new Set(prev); n.has(p) ? n.delete(p) : (n.size < 2 && n.add(p)); return n })} style={{
+                      background: on ? 'rgba(200,146,58,0.15)' : '#1c1c18',
+                      border: `1px solid ${on ? '#c8923a' : 'rgba(237,234,226,0.1)'}`,
+                      color: on ? '#c8923a' : '#7a7770',
+                      fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', fontWeight: 500,
+                      letterSpacing: '0.1em', textTransform: 'uppercase',
+                      padding: '0.85rem', cursor: 'pointer',
+                    }}>{p}</button>
+                  )
+                })}
+              </div>
+              <div style={{ display: 'flex', gap: '0.6rem' }}>
+                <button style={{ ...s.btnGhost, flex: 1, padding: '0.75rem' }} onClick={() => setWarmupPhase('focus')}>← Tilbage</button>
+                <button style={{ ...s.btnPrimary, flex: 2, padding: '0.75rem', fontSize: '0.62rem' }} onClick={startGuide}>
+                  Start opvarmning ({(WARMUP_BASE[warmupFocus]?.length || 0) + warmupProblems.size} øvelser)
+                </button>
+              </div>
+            </>
+          )
+
+          // FASE: GUIDE
+          if (warmupPhase === 'guide') {
+            const ex = warmupExercises[warmupStep]
+            const isLast = warmupStep === warmupExercises.length - 1
+            const pct = Math.round(((warmupStep) / warmupExercises.length) * 100)
+
+            if (!ex) return null
+
+            return (
+              <>
+                {/* Progress */}
+                <div style={{ marginBottom: '1.75rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', letterSpacing: '0.08em' }}>
+                      {warmupFocus} · Øvelse {warmupStep + 1} af {warmupExercises.length}
+                    </div>
+                    <button style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem' }} onClick={resetWarmup}>✕ Afslut</button>
+                  </div>
+                  <div style={{ height: '2px', background: 'rgba(237,234,226,0.07)', borderRadius: '1px' }}>
+                    <div style={{ height: '100%', background: '#c8923a', width: `${pct}%`, transition: 'width 0.3s ease' }} />
+                  </div>
+                </div>
+
+                {/* Exercise card */}
+                <div style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)', padding: '1.75rem', marginBottom: '1.25rem', minHeight: '220px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div>
+                    <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', fontWeight: 400, color: '#edeae2', marginBottom: '1rem', lineHeight: 1.2 }}>{ex.name}</h2>
+                    {ex.desc && <p style={{ fontSize: '0.9rem', color: '#b8b4a8', lineHeight: 1.75, margin: 0 }}>{ex.desc}</p>}
+                  </div>
+                  <div style={{ marginTop: '1.5rem' }}>
+                    {ex.type === 'timer' ? (
+                      <div>
+                        <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '3rem', color: timerDone ? '#6cba6c' : '#c8923a', lineHeight: 1, marginBottom: '0.75rem' }}>
+                          {timerDone ? '✓' : timerSeconds > 0 ? timerSeconds : ex.duration}
+                          {!timerDone && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.9rem', color: '#7a7770', marginLeft: '0.4rem' }}>sek</span>}
+                        </div>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#7a7770', letterSpacing: '0.08em', marginBottom: '0.75rem' }}>{ex.label}</div>
+                        {!timerDone ? (
+                          <button style={{ ...s.btnGhost, padding: '0.5rem 1.25rem' }} onClick={() => {
+                            if (!timerActive && timerSeconds === 0) setTimerSeconds(ex.duration)
+                            setTimerActive(a => !a)
+                          }}>
+                            {timerActive ? '⏸ Pause' : timerSeconds > 0 ? '▶ Fortsæt' : '▶ Start timer'}
+                          </button>
+                        ) : (
+                          <button style={{ ...s.btnGhost, padding: '0.5rem 1.25rem' }} onClick={() => { setTimerSeconds(ex.duration); setTimerDone(false); setTimerActive(false) }}>
+                            ↺ Gentag (anden side)
+                          </button>
+                        )}
+                      </div>
+                    ) : (
+                      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.5rem', color: '#c8923a' }}>{ex.label}</div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Navigation */}
+                <div style={{ display: 'flex', gap: '0.6rem' }}>
+                  {warmupStep > 0 && (
+                    <button style={{ ...s.btnGhost, padding: '0.75rem 1rem' }} onClick={() => goToStep(warmupStep - 1)}>←</button>
+                  )}
+                  <button
+                    style={{ ...s.btnPrimary, flex: 1, padding: '0.85rem', fontSize: '0.62rem' }}
+                    onClick={() => isLast ? setWarmupPhase('done') : goToStep(warmupStep + 1)}
+                  >
+                    {isLast ? 'Afslut opvarmning ✓' : 'Næste øvelse →'}
+                  </button>
+                </div>
+              </>
+            )
+          }
+
+          // FASE: DONE
+          return (
+            <div style={{ textAlign: 'center', paddingTop: '3rem' }}>
+              <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '3rem', color: '#6cba6c', marginBottom: '1rem' }}>✓</div>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', fontWeight: 400, color: '#edeae2', marginBottom: '0.5rem' }}>Opvarmning færdig.</h2>
+              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#4a4844', letterSpacing: '0.08em', marginBottom: '2rem' }}>
+                {warmupExercises.length} øvelser gennemført
+              </div>
+              <button style={{ ...s.btnGhost, padding: '0.75rem 1.5rem' }} onClick={resetWarmup}>Start forfra</button>
+            </div>
           )
         })()}
 
