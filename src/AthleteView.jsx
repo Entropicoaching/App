@@ -2749,14 +2749,33 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           }
 
           // STANDBY — ingen stævneplan
-          if (!hasMeetPlan) return (
+          if (!hasMeetPlan) {
+            const compDate = athlete.competition_date
+            const daysLeft = compDate ? Math.ceil((new Date(compDate + 'T12:00:00') - new Date()) / 86400000) : null
+            return (
             <>
               <div style={{ marginBottom: '2rem' }}>
                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Stævne</div>
-                <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Ingen stævne<br />planlagt.</h1>
-                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#4a4844', letterSpacing: '0.06em', lineHeight: 1.7, marginTop: '0.75rem' }}>
-                  Din coach har ikke sat en stævneplan endnu. Kontakt din coach hvis du har et stævne på vej.
-                </div>
+                {compDate && daysLeft > 0 ? (
+                  <>
+                    <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>
+                      {daysLeft} dage<br />til stævne.
+                    </h1>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#c8923a', letterSpacing: '0.08em', marginTop: '0.6rem' }}>
+                      {new Date(compDate + 'T12:00:00').toLocaleDateString('da-DK', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                    </div>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace', monospace", fontSize: '0.52rem', color: '#4a4844', letterSpacing: '0.06em', marginTop: '0.5rem' }}>
+                      Din coach har endnu ikke sat forsøgsplan.
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Ingen stævne<br />planlagt.</h1>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#4a4844', letterSpacing: '0.06em', lineHeight: 1.7, marginTop: '0.75rem' }}>
+                      Din coach har ikke sat en stævneplan endnu.
+                    </div>
+                  </>
+                )}
               </div>
 
               {(athlete.squat || athlete.bench || athlete.deadlift) && (
@@ -2777,7 +2796,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 </div>
               )}
             </>
-          )
+          )}
 
           return (
             <>
