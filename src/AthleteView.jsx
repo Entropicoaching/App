@@ -388,6 +388,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   // Messages state
   const [messages, setMessages] = useState([])
+  const [unreadMsgCount, setUnreadMsgCount] = useState(0)
   const [messageInput, setMessageInput] = useState('')
 
   // Program state
@@ -454,7 +455,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [readinessError, setReadinessError] = useState(null)
 
   useEffect(() => { fetchAthlete() }, [])
-  useEffect(() => { if (tab === 'beskeder' && athlete) fetchAthleteMessages() }, [tab, athlete?.id])
+  useEffect(() => { if (tab === 'beskeder' && athlete) { fetchAthleteMessages(); markMessagesAsRead() } }, [tab, athlete?.id])
   useEffect(() => { if (tab === 'stævnedag' && athlete) fetchMeetPlan(athlete.id) }, [tab, athlete?.id])
 
   useEffect(() => {
@@ -908,7 +909,18 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     const athleteId = id || athlete?.id
     if (!athleteId) return
     const { data } = await supabase.from('messages').select('*').eq('athlete_id', athleteId).order('created_at')
-    setMessages(data || [])
+    const msgs = data || []
+    setMessages(msgs)
+    const lsKey = `entropi_lastMsgRead_${athleteId}`
+    const lastRead = localStorage.getItem(lsKey) || '1970-01-01'
+    const unread = msgs.filter(m => m.sender_role === 'coach' && m.created_at > lastRead).length
+    setUnreadMsgCount(unread)
+  }
+
+  function markMessagesAsRead() {
+    if (!athlete) return
+    localStorage.setItem(`entropi_lastMsgRead_${athlete.id}`, new Date().toISOString())
+    setUnreadMsgCount(0)
   }
 
   async function sendAthleteMessage() {
@@ -2964,7 +2976,12 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               transition: 'color 0.15s ease',
             }}
           >
-            {icon}
+            <div style={{ position: 'relative' }}>
+              {icon}
+              {key === 'beskeder' && unreadMsgCount > 0 && (
+                <div style={{ position: 'absolute', top: -3, right: -4, width: '8px', height: '8px', borderRadius: '50%', background: '#c8923a', border: '1.5px solid #1c1c18' }} />
+              )}
+            </div>
             <span>{label}</span>
           </button>
         ))}

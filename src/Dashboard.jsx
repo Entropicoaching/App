@@ -1137,7 +1137,14 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           <div style={s.sub}>Coach Portal</div>
         </div>
         <nav style={{ flex: 1, padding: '1rem 0' }}>
-          <div style={s.navItem(view === 'list' || view === 'profile')} onClick={() => { setView('list'); setSidebarOpen(false) }}>Atleter</div>
+          <div style={{ ...s.navItem(view === 'list' || view === 'profile'), justifyContent: 'space-between' }} onClick={() => { setView('list'); setSidebarOpen(false) }}>
+            <span>Atleter</span>
+            {Object.values(unreadCounts).reduce((s, n) => s + n, 0) > 0 && (
+              <span style={{ background: '#c8923a', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', fontWeight: 700, borderRadius: '999px', padding: '0.1rem 0.4rem', minWidth: '16px', textAlign: 'center' }}>
+                {Object.values(unreadCounts).reduce((s, n) => s + n, 0)}
+              </span>
+            )}
+          </div>
           <div style={s.navItem(view === 'library')} onClick={() => { setView('library'); setSidebarOpen(false) }}>Bibliotek</div>
         </nav>
         <div style={s.sidebarFooter}>
