@@ -470,7 +470,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       fetchWeightLogs(data.id)
       fetchReadiness(data.id)
       fetchWarmupTemplates(data.id)
-      if (!coachAthleteId) fetchMeetPlan(data.id)
+      fetchMeetPlan(data.id)
     }
     setLoading(false)
   }
