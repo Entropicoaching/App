@@ -422,6 +422,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   // Stævnedag state
   const [meetType, setMeetType] = useState('sbd')
   const [meetPlanNotes, setMeetPlanNotes] = useState('')
+  const [meetWarmupEditing, setMeetWarmupEditing] = useState(null)
+  const [meetWarmupDraft, setMeetWarmupDraft] = useState([])
+  const [meetWarmupOverrides, setMeetWarmupOverrides] = useState({})
   const [meetAttempts, setMeetAttempts] = useState({
     squat:    [{ w: '', r: null }, { w: '', r: null }, { w: '', r: null }],
     bench:    [{ w: '', r: null }, { w: '', r: null }, { w: '', r: null }],
@@ -2671,21 +2674,66 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                       })}
                     </div>
 
-                    {/* Competition warmup based on opener */}
+                    {/* Competition warmup */}
                     {warmup.length > 0 && (
                       <div style={{ background: '#141410', border: '1px solid rgba(237,234,226,0.07)', borderLeft: '2px solid rgba(200,146,58,0.3)' }}>
-                        <div style={{ padding: '0.5rem 0.75rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770' }}>
-                          Opvarmning til åbner {opener}kg
-                        </div>
-                        <div style={{ padding: '0 0.75rem 0.6rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                          {warmup.map((ws, i) => (
-                            <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)', padding: '0.4rem 0.6rem', minWidth: '52px' }}>
-                              <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#edeae2' }}>{ws.weight}</span>
-                              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', color: '#4a4844', marginTop: '0.1rem' }}>× {ws.reps}</span>
-                              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.42rem', color: '#c8923a', marginTop: '0.1rem' }}>{ws.pct}</span>
+                        <div style={{ padding: '0.5rem 0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770' }}>
+                            Opvarmning til åbner {opener}kg
+                          </span>
+                          {meetWarmupEditing === key ? (
+                            <div style={{ display: 'flex', gap: '0.35rem' }}>
+                              <button style={{ ...s.btnGhost, fontSize: '0.48rem', padding: '0.2rem 0.5rem' }} onClick={() => setMeetWarmupEditing(null)}>Annuller</button>
+                              <button style={{ ...s.btnPrimary, fontSize: '0.48rem', padding: '0.2rem 0.5rem' }} onClick={() => {
+                                setMeetWarmupOverrides(prev => ({ ...prev, [key]: meetWarmupDraft }))
+                                setMeetWarmupEditing(null)
+                              }}>Gem</button>
                             </div>
-                          ))}
+                          ) : (
+                            <button style={{ ...s.btnGhost, fontSize: '0.46rem', padding: '0.15rem 0.45rem' }} onClick={() => {
+                              setMeetWarmupEditing(key)
+                              setMeetWarmupDraft((meetWarmupOverrides[key] || warmup).map(ws => ({ ...ws })))
+                            }}>Rediger</button>
+                          )}
                         </div>
+
+                        {meetWarmupEditing === key ? (
+                          <div style={{ padding: '0 0.75rem 0.75rem' }}>
+                            {meetWarmupDraft.map((ws, i) => (
+                              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
+                                <input
+                                  type="number"
+                                  value={ws.weight}
+                                  onChange={e => setMeetWarmupDraft(prev => prev.map((s, j) => j === i ? { ...s, weight: parseFloat(e.target.value) || 0 } : s))}
+                                  style={{ width: '64px', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.15)', color: '#edeae2', fontFamily: "'Playfair Display', serif", fontSize: '1rem', padding: '0.3rem 0.4rem', outline: 'none', textAlign: 'center' }}
+                                />
+                                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844' }}>kg ×</span>
+                                <input
+                                  type="number"
+                                  value={ws.reps}
+                                  onChange={e => setMeetWarmupDraft(prev => prev.map((s, j) => j === i ? { ...s, reps: parseInt(e.target.value) || 1 } : s))}
+                                  style={{ width: '40px', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.15)', color: '#edeae2', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.8rem', padding: '0.3rem 0.4rem', outline: 'none', textAlign: 'center' }}
+                                />
+                                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844' }}>reps</span>
+                                <button style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#e05555', cursor: 'pointer', fontSize: '0.7rem' }} onClick={() => setMeetWarmupDraft(prev => prev.filter((_, j) => j !== i))}>✕</button>
+                              </div>
+                            ))}
+                            <button style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.25rem 0.6rem', marginTop: '0.25rem' }} onClick={() => {
+                              const last = meetWarmupDraft[meetWarmupDraft.length - 1]
+                              setMeetWarmupDraft(prev => [...prev, { weight: last ? last.weight + 10 : 20, reps: 1, pct: '' }])
+                            }}>+ Tilføj sæt</button>
+                          </div>
+                        ) : (
+                          <div style={{ padding: '0 0.75rem 0.6rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                            {(meetWarmupOverrides[key] || warmup).map((ws, i) => (
+                              <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)', padding: '0.4rem 0.6rem', minWidth: '52px' }}>
+                                <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#edeae2' }}>{ws.weight}</span>
+                                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', color: '#4a4844', marginTop: '0.1rem' }}>× {ws.reps}</span>
+                                {ws.pct && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.42rem', color: '#c8923a', marginTop: '0.1rem' }}>{ws.pct}</span>}
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
