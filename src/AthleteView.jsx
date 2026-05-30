@@ -343,12 +343,11 @@ const NAV_ITEMS = [
     ),
   },
   {
-    key: 'profil',
-    label: 'Profil',
+    key: 'stævnedag',
+    label: 'Stævne',
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round">
-        <circle cx="12" cy="7" r="4" />
-        <path d="M4 21v-1a8 8 0 0 1 16 0v1" />
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
       </svg>
     ),
   },
@@ -419,6 +418,14 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [exWarmupExpanded, setExWarmupExpanded] = useState(new Set())
   const [mobilFocus, setMobilFocus] = useState('Alle')
   const [mobilChecked, setMobilChecked] = useState(new Set())
+
+  // Stævnedag state
+  const [meetType, setMeetType] = useState('sbd')
+  const [meetAttempts, setMeetAttempts] = useState({
+    squat:    [{ w: '', r: null }, { w: '', r: null }, { w: '', r: null }],
+    bench:    [{ w: '', r: null }, { w: '', r: null }, { w: '', r: null }],
+    deadlift: [{ w: '', r: null }, { w: '', r: null }, { w: '', r: null }],
+  })
 
   // Onboarding
   const [onboarded, setOnboarded] = useState(() => !!localStorage.getItem('entropi_onboarded'))
@@ -2537,50 +2544,158 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           )
         })()}
 
-        {/* PROFIL */}
-        {tab === 'profil' && (
-          <>
-            <div style={{ marginBottom: '1.5rem' }}>
-              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Profil</div>
-              <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>
-                {athlete.name || session.user.email.split('@')[0]}.
-              </h1>
-            </div>
+        {/* STÆVNEDAG */}
+        {tab === 'stævnedag' && (() => {
+          const round = w => Math.round(w / 2.5) * 2.5
 
-            <div style={s.card}>
-              <div style={s.cardLabel}>Konto</div>
-              {[
-                ['Navn', athlete.name || '—'],
-                ['E-mail', session.user.email],
-              ].map(([label, val]) => (
-                <div key={label} style={{ marginBottom: '1rem' }}>
-                  <div style={s.fieldLabel}>{label}</div>
-                  <div style={{ fontSize: '0.88rem', color: '#edeae2' }}>{val}</div>
+          function calcCompWarmup(opener) {
+            if (!opener || opener <= 20) return []
+            return [
+              { weight: 20, reps: 5, pct: 'Stang' },
+              { weight: round(opener * 0.50), reps: 3, pct: '50%' },
+              { weight: round(opener * 0.70), reps: 2, pct: '70%' },
+              { weight: round(opener * 0.85), reps: 1, pct: '85%' },
+              { weight: round(opener * 0.93), reps: 1, pct: '93%' },
+            ].filter((s, i, arr) => i === 0 || s.weight !== arr[i - 1].weight)
+          }
+
+          function setAttempt(lift, idx, field, val) {
+            setMeetAttempts(prev => {
+              const next = { ...prev, [lift]: prev[lift].map((a, i) => i === idx ? { ...a, [field]: val } : a) }
+              return next
+            })
+          }
+
+          function bestLift(lift) {
+            const good = meetAttempts[lift].filter(a => a.r === 'good' && parseFloat(a.w) > 0)
+            if (!good.length) return null
+            return Math.max(...good.map(a => parseFloat(a.w)))
+          }
+
+          const lifts = meetType === 'sbd'
+            ? [{ key: 'squat', label: 'Squat' }, { key: 'bench', label: 'Bænkpres' }, { key: 'deadlift', label: 'Dødløft' }]
+            : [{ key: 'bench', label: 'Bænkpres' }]
+
+          const total = lifts.reduce((sum, l) => sum + (bestLift(l.key) || 0), 0)
+          const allHaveBest = lifts.every(l => bestLift(l.key) !== null)
+
+          return (
+            <>
+              <div style={{ marginBottom: '1.5rem' }}>
+                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Stævnedag</div>
+                <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>
+                  {athlete.name?.split(' ')[0] || 'Atlet'}.
+                </h1>
+              </div>
+
+              {/* Type toggle */}
+              <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '1.75rem' }}>
+                {[['sbd', 'SBD'], ['bench', 'Bænkpres']].map(([key, label]) => (
+                  <button key={key} onClick={() => setMeetType(key)} style={{
+                    fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', fontWeight: 500,
+                    letterSpacing: '0.1em', textTransform: 'uppercase', border: 'none', cursor: 'pointer',
+                    padding: '0.5rem 1.1rem',
+                    background: meetType === key ? '#c8923a' : 'rgba(237,234,226,0.07)',
+                    color: meetType === key ? '#141410' : '#7a7770',
+                  }}>{label}</button>
+                ))}
+              </div>
+
+              {/* Lift sections */}
+              {lifts.map(({ key, label }) => {
+                const attempts = meetAttempts[key]
+                const best = bestLift(key)
+                const opener = parseFloat(attempts[0].w) || 0
+                const warmup = calcCompWarmup(opener)
+
+                return (
+                  <div key={key} style={{ marginBottom: '1.75rem' }}>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.75rem' }}>
+                      {label}
+                      {best && <span style={{ color: '#6cba6c', marginLeft: '0.75rem' }}>Bedste: {best} kg</span>}
+                    </div>
+
+                    {/* Attempt rows */}
+                    <div style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)', marginBottom: '0.75rem' }}>
+                      {attempts.map((att, i) => {
+                        const done = att.r !== null
+                        const bg = att.r === 'good' ? 'rgba(108,186,108,0.08)' : att.r === 'fail' ? 'rgba(224,85,85,0.08)' : 'transparent'
+                        const border = att.r === 'good' ? 'rgba(108,186,108,0.25)' : att.r === 'fail' ? 'rgba(224,85,85,0.25)' : 'rgba(237,234,226,0.07)'
+                        return (
+                          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem 1rem', borderBottom: i < 2 ? `1px solid rgba(237,234,226,0.06)` : 'none', background: bg, borderLeft: `3px solid ${border}` }}>
+                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.08em', minWidth: '24px' }}>{i + 1}.</div>
+                            <input
+                              type="number"
+                              placeholder="kg"
+                              value={att.w}
+                              onChange={e => setAttempt(key, i, 'w', e.target.value)}
+                              style={{ width: '72px', background: 'transparent', border: 'none', borderBottom: '1px solid rgba(237,234,226,0.2)', color: '#edeae2', fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', fontWeight: 400, outline: 'none', padding: '0.1rem 0', textAlign: 'center' }}
+                            />
+                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844' }}>kg</div>
+                            <div style={{ display: 'flex', gap: '0.4rem', marginLeft: 'auto' }}>
+                              <button
+                                onClick={() => setAttempt(key, i, 'r', att.r === 'good' ? null : 'good')}
+                                style={{ background: att.r === 'good' ? 'rgba(108,186,108,0.2)' : 'transparent', border: `1px solid ${att.r === 'good' ? '#6cba6c' : 'rgba(237,234,226,0.15)'}`, color: att.r === 'good' ? '#6cba6c' : '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', padding: '0.4rem 0.7rem', cursor: 'pointer', minWidth: '42px' }}
+                              >✓</button>
+                              <button
+                                onClick={() => setAttempt(key, i, 'r', att.r === 'fail' ? null : 'fail')}
+                                style={{ background: att.r === 'fail' ? 'rgba(224,85,85,0.2)' : 'transparent', border: `1px solid ${att.r === 'fail' ? '#e05555' : 'rgba(237,234,226,0.15)'}`, color: att.r === 'fail' ? '#e05555' : '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', padding: '0.4rem 0.7rem', cursor: 'pointer', minWidth: '42px' }}
+                              >✕</button>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+
+                    {/* Competition warmup based on opener */}
+                    {warmup.length > 0 && (
+                      <div style={{ background: '#141410', border: '1px solid rgba(237,234,226,0.07)', borderLeft: '2px solid rgba(200,146,58,0.3)' }}>
+                        <div style={{ padding: '0.5rem 0.75rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770' }}>
+                          Opvarmning til åbner {opener}kg
+                        </div>
+                        <div style={{ padding: '0 0.75rem 0.6rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                          {warmup.map((ws, i) => (
+                            <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)', padding: '0.4rem 0.6rem', minWidth: '52px' }}>
+                              <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#edeae2' }}>{ws.weight}</span>
+                              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', color: '#4a4844', marginTop: '0.1rem' }}>× {ws.reps}</span>
+                              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.42rem', color: '#c8923a', marginTop: '0.1rem' }}>{ws.pct}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+
+              {/* Total */}
+              {total > 0 && (
+                <div style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)', padding: '1.25rem', marginTop: '0.5rem' }}>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: allHaveBest ? '#6cba6c' : '#7a7770', marginBottom: '0.35rem' }}>
+                    {allHaveBest ? 'Total' : 'Foreløbig total'}
+                  </div>
+                  <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '2.4rem', fontWeight: 400, color: '#edeae2', lineHeight: 1 }}>
+                    {total} <span style={{ fontSize: '1rem', color: '#7a7770' }}>kg</span>
+                  </div>
                 </div>
-              ))}
-            </div>
+              )}
 
-            <div style={s.card}>
-              <div style={s.cardLabel}>Mål</div>
-              {[
-                ['Kalorieindtag', athlete.kcal_target ? `${athlete.kcal_target} kcal` : '—'],
-                ['Proteinindtag', athlete.protein_target ? `${athlete.protein_target} g` : '—'],
-              ].map(([label, val]) => (
-                <div key={label} style={{ marginBottom: '1rem' }}>
-                  <div style={s.fieldLabel}>{label}</div>
-                  <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.2rem', color: '#c8923a' }}>{val}</div>
-                </div>
-              ))}
-            </div>
-
-            <button
-              style={{ ...s.btnGhost, width: '100%', padding: '0.75rem', textAlign: 'center' }}
-              onClick={() => supabase.auth.signOut()}
-            >
-              Log ud
-            </button>
-          </>
-        )}
+              {/* Reset */}
+              {total > 0 && (
+                <button
+                  style={{ ...s.btnGhost, width: '100%', padding: '0.65rem', textAlign: 'center', marginTop: '1rem' }}
+                  onClick={() => setMeetAttempts({
+                    squat:    [{ w: '', r: null }, { w: '', r: null }, { w: '', r: null }],
+                    bench:    [{ w: '', r: null }, { w: '', r: null }, { w: '', r: null }],
+                    deadlift: [{ w: '', r: null }, { w: '', r: null }, { w: '', r: null }],
+                  })}
+                >
+                  Nulstil
+                </button>
+              )}
+            </>
+          )
+        })()}
       </div>
 
       {/* Bottom navigation */}
