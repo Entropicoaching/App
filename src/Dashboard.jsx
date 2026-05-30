@@ -279,6 +279,11 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [recommendedInput, setRecommendedInput] = useState('')
   const [copyingExercise, setCopyingExercise] = useState(null)
 
+  // Meet plan state
+  const [meetPlan, setMeetPlan] = useState(null)
+  const [meetPlanForm, setMeetPlanForm] = useState({ meet_type: 'sbd', squat1: '', squat2: '', squat3: '', bench1: '', bench2: '', bench3: '', dead1: '', dead2: '', dead3: '', notes: '' })
+  const [savingMeetPlan, setSavingMeetPlan] = useState(false)
+
   const [previewPickerOpen, setPreviewPickerOpen] = useState(false)
   const [exerciseLibrary, setExerciseLibrary] = useState([])
   const [exerciseSearchOpen, setExerciseSearchOpen] = useState(false)
@@ -320,6 +325,12 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   useEffect(() => {
     if (activeTab === 'opvarmning' && selectedAthlete) {
       fetchWarmupTemplates(selectedAthlete.id)
+    }
+  }, [activeTab, selectedAthlete?.id])
+
+  useEffect(() => {
+    if (activeTab === 'stævne' && selectedAthlete) {
+      fetchMeetPlan(selectedAthlete.id)
     }
   }, [activeTab, selectedAthlete?.id])
 
@@ -702,6 +713,34 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       }
     }
     setAthletePRs(prs)
+  }
+
+  async function fetchMeetPlan(athleteId) {
+    const { data } = await supabase.from('meet_plans').select('*').eq('athlete_id', athleteId).maybeSingle()
+    setMeetPlan(data || null)
+    setMeetPlanForm({
+      meet_type: data?.meet_type || 'sbd',
+      squat1: data?.squat1 ?? '', squat2: data?.squat2 ?? '', squat3: data?.squat3 ?? '',
+      bench1: data?.bench1 ?? '', bench2: data?.bench2 ?? '', bench3: data?.bench3 ?? '',
+      dead1: data?.dead1 ?? '', dead2: data?.dead2 ?? '', dead3: data?.dead3 ?? '',
+      notes: data?.notes || '',
+    })
+  }
+
+  async function saveMeetPlan(athleteId) {
+    setSavingMeetPlan(true)
+    const payload = {
+      athlete_id: athleteId,
+      meet_type: meetPlanForm.meet_type,
+      squat1: meetPlanForm.squat1 || null, squat2: meetPlanForm.squat2 || null, squat3: meetPlanForm.squat3 || null,
+      bench1: meetPlanForm.bench1 || null, bench2: meetPlanForm.bench2 || null, bench3: meetPlanForm.bench3 || null,
+      dead1: meetPlanForm.dead1 || null, dead2: meetPlanForm.dead2 || null, dead3: meetPlanForm.dead3 || null,
+      notes: meetPlanForm.notes || null,
+      updated_at: new Date().toISOString(),
+    }
+    await supabase.from('meet_plans').upsert(payload, { onConflict: 'athlete_id' })
+    await fetchMeetPlan(athleteId)
+    setSavingMeetPlan(false)
   }
 
   async function fetchWarmupTemplates(athleteId) {
@@ -1373,7 +1412,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             </div>
 
             <div style={{ ...s.tabs, overflowX: 'auto', flexWrap: 'nowrap', WebkitOverflowScrolling: 'touch' }}>
-              {[['oversigt', 'Oversigt'], ['kost', 'Kost & mål'], ['program', 'Program'], ['noter', 'Noter'], ['analyse', 'Analyse'], ['opvarmning', 'Opvarmning'], ['beskeder', 'Beskeder']].map(([key, label]) => (
+              {[['oversigt', 'Oversigt'], ['kost', 'Kost & mål'], ['program', 'Program'], ['noter', 'Noter'], ['analyse', 'Analyse'], ['opvarmning', 'Opvarmning'], ['stævne', 'Stævne'], ['beskeder', 'Beskeder']].map(([key, label]) => (
                 <button key={key} style={{ ...s.tab(activeTab === key), whiteSpace: 'nowrap', flexShrink: 0 }} onClick={() => { setActiveTab(key); setEditing(null) }}>{label}</button>
               ))}
             </div>
@@ -2972,6 +3011,85 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             })()}
 
             {/* TAB: NOTER */}
+            {activeTab === 'stævne' && (() => {
+              const isEditing = true
+              const lifts = meetPlanForm.meet_type === 'sbd'
+                ? [{ key: 'squat', label: 'Squat' }, { key: 'bench', label: 'Bænkpres' }, { key: 'deadlift', label: 'Dødløft' }]
+                : [{ key: 'bench', label: 'Bænkpres' }]
+              const fieldMap = { squat: ['squat1','squat2','squat3'], bench: ['bench1','bench2','bench3'], deadlift: ['dead1','dead2','dead3'] }
+
+              return (
+                <div style={s.card}>
+                  <div style={s.cardLabel}>
+                    Stævneplan — {a.name.split(' ')[0]}
+                    {meetPlan && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#6cba6c', marginLeft: '0.75rem' }}>Gemt</span>}
+                  </div>
+
+                  {/* Type toggle */}
+                  <div style={{ marginBottom: '1.25rem' }}>
+                    <div style={s.fieldLabel}>Stævnetype</div>
+                    <div style={{ display: 'flex', gap: '0.4rem' }}>
+                      {[['sbd', 'SBD'], ['bench', 'Kun bænkpres']].map(([key, label]) => (
+                        <button key={key} onClick={() => setMeetPlanForm(p => ({ ...p, meet_type: key }))} style={{
+                          fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500,
+                          letterSpacing: '0.1em', textTransform: 'uppercase', border: 'none', cursor: 'pointer',
+                          padding: '0.4rem 0.85rem',
+                          background: meetPlanForm.meet_type === key ? '#c8923a' : 'rgba(237,234,226,0.07)',
+                          color: meetPlanForm.meet_type === key ? '#141410' : '#7a7770',
+                        }}>{label}</button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Attempt inputs per lift */}
+                  {lifts.map(({ key, label }) => (
+                    <div key={key} style={{ marginBottom: '1.25rem' }}>
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#edeae2', marginBottom: '0.6rem' }}>{label}</div>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
+                        {fieldMap[key].map((field, i) => (
+                          <div key={field}>
+                            <div style={s.fieldLabel}>{i + 1}. forsøg</div>
+                            <input
+                              type="number"
+                              placeholder="kg"
+                              value={meetPlanForm[field]}
+                              onChange={e => setMeetPlanForm(p => ({ ...p, [field]: e.target.value }))}
+                              style={{ ...s.fieldInput, textAlign: 'center' }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Notes */}
+                  <div style={{ marginBottom: '1.25rem' }}>
+                    <div style={s.fieldLabel}>Note til atleten</div>
+                    <textarea
+                      style={{ ...s.fieldInput, minHeight: '72px', resize: 'vertical', lineHeight: 1.7 }}
+                      placeholder="Taktik, strategi, påmindelser..."
+                      value={meetPlanForm.notes}
+                      onChange={e => setMeetPlanForm(p => ({ ...p, notes: e.target.value }))}
+                    />
+                  </div>
+
+                  <button style={s.btnPrimary} onClick={() => saveMeetPlan(a.id)} disabled={savingMeetPlan}>
+                    {savingMeetPlan ? 'Gemmer...' : 'Gem plan'}
+                  </button>
+
+                  {meetPlan && (
+                    <button style={{ ...s.btnDanger, marginLeft: '0.75rem' }} onClick={async () => {
+                      await supabase.from('meet_plans').delete().eq('athlete_id', a.id)
+                      setMeetPlan(null)
+                      setMeetPlanForm({ meet_type: 'sbd', squat1: '', squat2: '', squat3: '', bench1: '', bench2: '', bench3: '', dead1: '', dead2: '', dead3: '', notes: '' })
+                    }}>
+                      Slet plan
+                    </button>
+                  )}
+                </div>
+              )
+            })()}
+
             {activeTab === 'noter' && (
               <div style={s.card}>
                 <div style={s.cardLabel}>

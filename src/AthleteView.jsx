@@ -421,6 +421,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   // Stævnedag state
   const [meetType, setMeetType] = useState('sbd')
+  const [meetPlanNotes, setMeetPlanNotes] = useState('')
   const [meetAttempts, setMeetAttempts] = useState({
     squat:    [{ w: '', r: null }, { w: '', r: null }, { w: '', r: null }],
     bench:    [{ w: '', r: null }, { w: '', r: null }, { w: '', r: null }],
@@ -469,8 +470,22 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       fetchWeightLogs(data.id)
       fetchReadiness(data.id)
       fetchWarmupTemplates(data.id)
+      if (!coachAthleteId) fetchMeetPlan(data.id)
     }
     setLoading(false)
+  }
+
+  async function fetchMeetPlan(athleteId) {
+    const { data } = await supabase.from('meet_plans').select('*').eq('athlete_id', athleteId).maybeSingle()
+    if (data) {
+      setMeetType(data.meet_type || 'sbd')
+      setMeetPlanNotes(data.notes || '')
+      setMeetAttempts({
+        squat:    [{ w: data.squat1 ?? '', r: null }, { w: data.squat2 ?? '', r: null }, { w: data.squat3 ?? '', r: null }],
+        bench:    [{ w: data.bench1 ?? '', r: null }, { w: data.bench2 ?? '', r: null }, { w: data.bench3 ?? '', r: null }],
+        deadlift: [{ w: data.dead1  ?? '', r: null }, { w: data.dead2  ?? '', r: null }, { w: data.dead3  ?? '', r: null }],
+      })
+    }
   }
 
   async function fetchWarmupTemplates(athleteId) {
@@ -2587,6 +2602,14 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                   {athlete.name?.split(' ')[0] || 'Atlet'}.
                 </h1>
               </div>
+
+              {/* Coach note */}
+              {meetPlanNotes && (
+                <div style={{ ...s.card, borderColor: 'rgba(200,146,58,0.25)', marginBottom: '1.5rem' }}>
+                  <div style={s.cardLabel}>Fra din coach</div>
+                  <div style={{ fontSize: '0.88rem', color: '#edeae2', lineHeight: 1.7 }}>{meetPlanNotes}</div>
+                </div>
+              )}
 
               {/* Type toggle */}
               <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '1.75rem' }}>
