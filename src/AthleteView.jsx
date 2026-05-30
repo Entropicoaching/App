@@ -242,27 +242,33 @@ const LOCAL_FOODS = [
   { name: 'Cola zero', kcal100: 0, protein100: 0, carb100: 0, fat100: 0 },
 ]
 
-const MOBILITY_WARMUP = {
-  Squat: [
-    '90/90 hofte stretch — 30 sek. pr. side',
-    'Ankelmobilitet mod væg — 10 reps pr. ben',
-    'Dyb bodyweight squat med pause fornede — 10 reps',
-    'Hip circles — 10 reps pr. retning pr. side',
-    'Glute bridge — 15 reps',
+const MOBILITY_LIBRARY = {
+  'Hofte & baller': [
+    { id: 'm-9090', name: '90/90 hofte stretch', desc: '30 sek. pr. side', focus: ['Squat', 'Dødløft'] },
+    { id: 'm-hip-circles', name: 'Hip circles', desc: '10 reps pr. retning pr. side', focus: ['Squat', 'Dødløft'] },
+    { id: 'm-glute-bridge', name: 'Glute bridge', desc: '15 reps', focus: ['Squat', 'Dødløft'] },
+    { id: 'm-pigeon', name: 'Pigeon stretch', desc: '45 sek. pr. side', focus: ['Squat', 'Dødløft'] },
+    { id: 'm-hip-flexor', name: 'Hoftebøjer stretch knæliggende', desc: '30 sek. pr. side', focus: ['Squat', 'Dødløft'] },
   ],
-  Bænkpres: [
-    'Skuldercirkler frem og tilbage — 10 pr. retning',
-    'Thorax extension over stol eller rulle — 30 sek.',
-    'Band pull-apart / arme vandret ud med stræk — 15 reps',
-    'Bryststretch i dørkarmen — 20 sek. pr. side',
-    'Håndled rotation og stræk — 10 pr. retning',
+  'Ankel & knæ': [
+    { id: 'm-ankle', name: 'Ankelmobilitet mod væg', desc: '10 reps pr. ben', focus: ['Squat'] },
+    { id: 'm-bw-squat', name: 'Dyb bodyweight squat med pause', desc: '10 reps', focus: ['Squat'] },
+    { id: 'm-calf', name: 'Lægstræk mod væg', desc: '30 sek. pr. side', focus: ['Squat'] },
   ],
-  Dødløft: [
-    'Cat-cow — 10 reps',
-    'Hip hinge med stang mod væg — 10 reps',
-    'Liggende hamstringstræk — 30 sek. pr. side',
-    'Thorax rotation siddende — 10 pr. side',
-    'Glute bridge — 15 reps',
+  'Ryg & core': [
+    { id: 'm-cat-cow', name: 'Cat-cow', desc: '10 reps', focus: ['Dødløft', 'Squat'] },
+    { id: 'm-thorax-rot', name: 'Thorax rotation siddende', desc: '10 pr. side', focus: ['Dødløft', 'Bænkpres'] },
+    { id: 'm-hip-hinge', name: 'Hip hinge med stang mod væg', desc: '10 reps', focus: ['Dødløft'] },
+    { id: 'm-ham', name: 'Liggende hamstringstræk', desc: '30 sek. pr. side', focus: ['Dødløft'] },
+    { id: 'm-dead-bug', name: 'Dead bug', desc: '8 reps pr. side', focus: ['Dødløft', 'Squat'] },
+  ],
+  'Skulder & bryst': [
+    { id: 'm-shoulder', name: 'Skuldercirkler frem og tilbage', desc: '10 pr. retning', focus: ['Bænkpres'] },
+    { id: 'm-thorax-ext', name: 'Thorax extension over rulle', desc: '30 sek.', focus: ['Bænkpres'] },
+    { id: 'm-band-pull', name: 'Band pull-apart', desc: '15 reps', focus: ['Bænkpres'] },
+    { id: 'm-chest', name: 'Bryststretch i dørkarmen', desc: '20 sek. pr. side', focus: ['Bænkpres'] },
+    { id: 'm-wrist', name: 'Håndled rotation og stræk', desc: '10 pr. retning', focus: ['Bænkpres'] },
+    { id: 'm-lat', name: 'Lat stretch mod rack', desc: '30 sek. pr. side', focus: ['Bænkpres', 'Dødløft'] },
   ],
 }
 
@@ -315,6 +321,15 @@ const NAV_ITEMS = [
         <line x1="6" y1="7" x2="6" y2="22" />
         <line x1="21" y1="2" x2="21" y2="22" />
         <path d="M17 2a4 4 0 0 1 4 4" />
+      </svg>
+    ),
+  },
+  {
+    key: 'opvarmning',
+    label: 'Opvarmning',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
       </svg>
     ),
   },
@@ -402,6 +417,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [warmupChecked, setWarmupChecked] = useState({})
   const [warmupExpanded, setWarmupExpanded] = useState(new Set())
   const [exWarmupExpanded, setExWarmupExpanded] = useState(new Set())
+  const [mobilFocus, setMobilFocus] = useState('Alle')
+  const [mobilChecked, setMobilChecked] = useState(new Set())
 
   // Onboarding
   const [onboarded, setOnboarded] = useState(() => !!localStorage.getItem('entropi_onboarded'))
@@ -467,69 +484,41 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     return null
   }
 
-  function calcWarmupSets(workingWeight, reps = 1) {
-    const r = w => Math.max(20, Math.round(w / 2.5) * 2.5)
-    const n = parseInt(reps) || 1
+  function calcWarmupSets(workingWeight, plannedReps = 1) {
+    if (!workingWeight || workingWeight <= 20) return []
+    const round = w => Math.max(20, Math.round(w / 2.5) * 2.5)
+    const n = parseInt(plannedReps) || 1
 
-    // Singles/doubles — prøver at aktivere CNS fuldt ud, top sæt 92-95%
-    if (n <= 2) {
-      if (workingWeight <= 80) return [
-        { pct: 'Bar', weight: 20, reps: 5 },
-        { pct: '50%', weight: r(workingWeight * 0.5), reps: 3 },
-        { pct: '70%', weight: r(workingWeight * 0.7), reps: 2 },
-        { pct: '85%', weight: r(workingWeight * 0.85), reps: 1 },
-        { pct: '93%', weight: r(workingWeight * 0.93), reps: 1 },
-      ]
-      if (workingWeight <= 160) return [
-        { pct: 'Bar', weight: 20, reps: 5 },
-        { pct: '40%', weight: r(workingWeight * 0.4), reps: 3 },
-        { pct: '58%', weight: r(workingWeight * 0.58), reps: 2 },
-        { pct: '73%', weight: r(workingWeight * 0.73), reps: 2 },
-        { pct: '85%', weight: r(workingWeight * 0.85), reps: 1 },
-        { pct: '93%', weight: r(workingWeight * 0.93), reps: 1 },
-      ]
-      return [
-        { pct: 'Bar', weight: 20, reps: 5 },
-        { pct: '35%', weight: r(workingWeight * 0.35), reps: 3 },
-        { pct: '50%', weight: r(workingWeight * 0.5), reps: 2 },
-        { pct: '65%', weight: r(workingWeight * 0.65), reps: 2 },
-        { pct: '78%', weight: r(workingWeight * 0.78), reps: 1 },
-        { pct: '88%', weight: r(workingWeight * 0.88), reps: 1 },
-        { pct: '93%', weight: r(workingWeight * 0.93), reps: 1 },
-      ]
+    // Number of warmup sets and ceiling percentage based on rep range
+    let numSets, topPct
+    if (n <= 2)      { numSets = 6; topPct = 0.92 }
+    else if (n <= 4) { numSets = 5; topPct = 0.87 }
+    else if (n <= 6) { numSets = 4; topPct = 0.80 }
+    else if (n <= 9) { numSets = 3; topPct = 0.73 }
+    else             { numSets = 2; topPct = 0.60 }
+
+    // Fewer sets for lighter working weights
+    if (workingWeight <= 60)  numSets = Math.min(numSets, 3)
+    else if (workingWeight <= 100) numSets = Math.min(numSets, 4)
+
+    const top = round(workingWeight * topPct)
+
+    // Evenly spaced weights from bar (20kg) to top, deduplicated
+    const weights = []
+    for (let i = 0; i < numSets; i++) {
+      const w = round(20 + (top - 20) * i / (numSets - 1))
+      if (!weights.length || weights[weights.length - 1] !== w) weights.push(w)
     }
 
-    // 3-5 reps — moderat priming, top sæt ~82-85% (undgå at trætte musklerne)
-    if (n <= 5) {
-      if (workingWeight <= 80) return [
-        { pct: 'Bar', weight: 20, reps: 5 },
-        { pct: '50%', weight: r(workingWeight * 0.5), reps: 4 },
-        { pct: '72%', weight: r(workingWeight * 0.72), reps: 2 },
-        { pct: '85%', weight: r(workingWeight * 0.85), reps: 1 },
-      ]
-      return [
-        { pct: 'Bar', weight: 20, reps: 5 },
-        { pct: '40%', weight: r(workingWeight * 0.4), reps: 4 },
-        { pct: '60%', weight: r(workingWeight * 0.6), reps: 3 },
-        { pct: '75%', weight: r(workingWeight * 0.75), reps: 2 },
-        { pct: '85%', weight: r(workingWeight * 0.85), reps: 1 },
-      ]
-    }
-
-    // 6-8 reps — let priming, top sæt ~75% (sættet er allerede submaximalt)
-    if (n <= 8) {
-      return [
-        { pct: 'Bar', weight: 20, reps: 8 },
-        { pct: '50%', weight: r(workingWeight * 0.5), reps: 5 },
-        { pct: '75%', weight: r(workingWeight * 0.75), reps: 3 },
-      ]
-    }
-
-    // 9+ reps — minimal opvarmning, sættet er konditionspræget
-    return [
-      { pct: 'Bar', weight: 20, reps: 10 },
-      { pct: '55%', weight: r(workingWeight * 0.55), reps: 5 },
-    ]
+    return weights.map((w, i, arr) => {
+      const pos = arr.length > 1 ? i / (arr.length - 1) : 0
+      let reps
+      if (n <= 2)      reps = pos < 0.35 ? 3 : pos < 0.65 ? 2 : 1
+      else if (n <= 4) reps = pos < 0.3 ? 4 : pos < 0.6 ? 3 : pos < 0.85 ? 2 : 1
+      else if (n <= 6) reps = pos < 0.4 ? 5 : pos < 0.75 ? 3 : 2
+      else             reps = pos < 0.5 ? 5 : 3
+      return { weight: w, reps, pct: `${Math.round((w / workingWeight) * 100)}%` }
+    })
   }
 
   async function fetchReadiness(athleteId) {
@@ -1727,70 +1716,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                         {isOpen && (
                           <div style={{ background: '#181816', border: '1px solid rgba(237,234,226,0.07)', borderTop: 'none', padding: '1rem' }}>
 
-                            {/* WARMUP CARD — generel mobilisering */}
-                            {(() => {
-                              const category = detectSessionCategory(session)
-                              if (!category) return null
-                              const builtIn = MOBILITY_WARMUP[category] || []
-                              const template = warmupTemplates.find(t => t.exercise_category === category)
-                              const allSteps = [
-                                ...builtIn.map(s => ({ text: s, source: 'builtin' })),
-                                ...(template?.steps || []).map(s => ({ text: s, source: 'coach' })),
-                              ]
-                              if (allSteps.length === 0) return null
-
-                              const isExpanded = warmupExpanded.has(session.id)
-                              const checked = warmupChecked[session.id] || {}
-                              const doneCount = Object.values(checked).filter(Boolean).length
-
-                              return (
-                                <div style={{ marginBottom: '1.25rem', background: '#141410', border: '1px solid rgba(200,146,58,0.18)', borderLeft: '3px solid #c8923a' }}>
-                                  <div
-                                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem 1rem', cursor: 'pointer' }}
-                                    onClick={() => setWarmupExpanded(prev => {
-                                      const next = new Set(prev)
-                                      next.has(session.id) ? next.delete(session.id) : next.add(session.id)
-                                      return next
-                                    })}
-                                  >
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a' }}>Generel mobilisering — {category}</span>
-                                      {doneCount > 0 && (
-                                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#6cba6c', letterSpacing: '0.06em' }}>{doneCount}/{allSteps.length}</span>
-                                      )}
-                                    </div>
-                                    <span style={{ color: '#4a4844', fontSize: '0.6rem' }}>{isExpanded ? '▲' : '▼'}</span>
-                                  </div>
-
-                                  {isExpanded && (
-                                    <div style={{ padding: '0 1rem 1rem' }}>
-                                      {allSteps.map((step, i) => {
-                                        const key = `step_${i}`
-                                        const done = checked[key]
-                                        return (
-                                          <div
-                                            key={i}
-                                            style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.4rem', cursor: 'pointer' }}
-                                            onClick={() => setWarmupChecked(prev => ({
-                                              ...prev,
-                                              [session.id]: { ...(prev[session.id] || {}), [key]: !done }
-                                            }))}
-                                          >
-                                            <div style={{ width: '16px', height: '16px', border: `1px solid ${done ? '#6cba6c' : 'rgba(237,234,226,0.2)'}`, background: done ? 'rgba(108,186,108,0.15)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                                              {done && <span style={{ color: '#6cba6c', fontSize: '0.65rem', lineHeight: 1 }}>✓</span>}
-                                            </div>
-                                            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
-                                              <span style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.85rem', fontWeight: 300, color: done ? '#4a4844' : '#b8b4a8', textDecoration: done ? 'line-through' : 'none' }}>{step.text}</span>
-                                              {step.source === 'coach' && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.42rem', color: '#c8923a', border: '1px solid rgba(200,146,58,0.3)', padding: '0.1rem 0.3rem', flexShrink: 0 }}>coach</span>}
-                                            </div>
-                                          </div>
-                                        )
-                                      })}
-                                    </div>
-                                  )}
-                                </div>
-                              )
-                            })()}
 
                             {(session.exercises || []).map((ex, exIdx) => {
                               const isLast = exIdx === session.exercises.length - 1
@@ -2446,6 +2371,127 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
             </div>
           </>
         )}
+
+        {/* OPVARMNING */}
+        {tab === 'opvarmning' && (() => {
+          const FOCUSES = ['Alle', 'Squat', 'Bænkpres', 'Dødløft']
+          const allExercises = Object.entries(MOBILITY_LIBRARY).flatMap(([area, items]) =>
+            items.map(ex => ({ ...ex, area }))
+          )
+          const visible = mobilFocus === 'Alle'
+            ? allExercises
+            : allExercises.filter(ex => ex.focus.includes(mobilFocus))
+          const byArea = {}
+          for (const ex of visible) {
+            if (!byArea[ex.area]) byArea[ex.area] = []
+            byArea[ex.area].push(ex)
+          }
+          const coachSteps = mobilFocus !== 'Alle'
+            ? (warmupTemplates.find(t => t.exercise_category === mobilFocus)?.steps || [])
+            : []
+          const totalVisible = visible.length + coachSteps.length
+          const doneCount = [...mobilChecked].filter(id =>
+            visible.some(ex => ex.id === id) || id.startsWith('coach_')
+          ).length
+
+          return (
+            <>
+              <div style={{ marginBottom: '1.5rem' }}>
+                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Opvarmning</div>
+                <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>
+                  Mobilisering.
+                </h1>
+                {doneCount > 0 && (
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#6cba6c', letterSpacing: '0.08em', marginTop: '0.4rem' }}>
+                    {doneCount}/{totalVisible} gennemført
+                  </div>
+                )}
+              </div>
+
+              {/* Focus filter */}
+              <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+                {FOCUSES.map(f => (
+                  <button
+                    key={f}
+                    onClick={() => setMobilFocus(f)}
+                    style={{
+                      fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500,
+                      letterSpacing: '0.1em', textTransform: 'uppercase', border: 'none', cursor: 'pointer',
+                      padding: '0.4rem 0.85rem',
+                      background: mobilFocus === f ? '#c8923a' : 'rgba(237,234,226,0.07)',
+                      color: mobilFocus === f ? '#141410' : '#7a7770',
+                    }}
+                  >{f}</button>
+                ))}
+              </div>
+
+              {/* Coach steps for selected focus */}
+              {coachSteps.length > 0 && (
+                <div style={{ ...s.card, borderColor: 'rgba(200,146,58,0.25)' }}>
+                  <div style={s.cardLabel}>Fra din coach — {mobilFocus}</div>
+                  {coachSteps.map((step, i) => {
+                    const id = `coach_${i}`
+                    const done = mobilChecked.has(id)
+                    return (
+                      <div
+                        key={i}
+                        style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.5rem 0', borderBottom: i < coachSteps.length - 1 ? '1px solid rgba(237,234,226,0.06)' : 'none', cursor: 'pointer' }}
+                        onClick={() => setMobilChecked(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n })}
+                      >
+                        <div style={{ width: '18px', height: '18px', border: `1px solid ${done ? '#6cba6c' : 'rgba(237,234,226,0.2)'}`, background: done ? 'rgba(108,186,108,0.15)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          {done && <span style={{ color: '#6cba6c', fontSize: '0.7rem' }}>✓</span>}
+                        </div>
+                        <span style={{ fontSize: '0.88rem', color: done ? '#4a4844' : '#edeae2', textDecoration: done ? 'line-through' : 'none' }}>{step}</span>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+
+              {/* Library grouped by body area */}
+              {Object.entries(byArea).map(([area, exercises]) => (
+                <div key={area} style={{ marginBottom: '1.25rem' }}>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.6rem' }}>{area}</div>
+                  <div style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)' }}>
+                    {exercises.map((ex, i) => {
+                      const done = mobilChecked.has(ex.id)
+                      return (
+                        <div
+                          key={ex.id}
+                          style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem 1rem', borderBottom: i < exercises.length - 1 ? '1px solid rgba(237,234,226,0.06)' : 'none', cursor: 'pointer' }}
+                          onClick={() => setMobilChecked(prev => { const n = new Set(prev); n.has(ex.id) ? n.delete(ex.id) : n.add(ex.id); return n })}
+                        >
+                          <div style={{ width: '18px', height: '18px', border: `1px solid ${done ? '#6cba6c' : 'rgba(237,234,226,0.2)'}`, background: done ? 'rgba(108,186,108,0.15)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                            {done && <span style={{ color: '#6cba6c', fontSize: '0.7rem' }}>✓</span>}
+                          </div>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontSize: '0.88rem', color: done ? '#4a4844' : '#edeae2', textDecoration: done ? 'line-through' : 'none' }}>{ex.name}</div>
+                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', marginTop: '0.1rem' }}>{ex.desc}</div>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              ))}
+
+              {totalVisible === 0 && (
+                <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                  Ingen øvelser for dette fokus
+                </div>
+              )}
+
+              {doneCount > 0 && (
+                <button
+                  style={{ ...s.btnGhost, width: '100%', padding: '0.65rem', textAlign: 'center', marginTop: '0.5rem' }}
+                  onClick={() => setMobilChecked(new Set())}
+                >
+                  Nulstil
+                </button>
+              )}
+            </>
+          )
+        })()}
 
         {/* PROFIL */}
         {tab === 'profil' && (
