@@ -495,8 +495,17 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     const round = w => Math.round(w / 2.5) * 2.5
     const n = parseInt(plannedReps) || 1
 
-    // Accessory work: max 1 warmup set at ~60%, or nothing if working weight is light
+    // Accessory work: 1 set at 60%, or 2 sets for high-load machines (benpress/leg press)
     if (!isMainLift(exName)) {
+      const nm = (exName || '').toLowerCase()
+      const isHighLoad = nm.includes('benpress') || nm.includes('leg press') || nm.includes('benpres')
+      if (isHighLoad) {
+        const sets = []
+        const w1 = round(workingWeight * 0.50), w2 = round(workingWeight * 0.75)
+        if (w1 > 20 && workingWeight - w1 >= 20) sets.push({ weight: w1, reps: 5, pct: '50%' })
+        if (w2 > 20 && workingWeight - w2 >= 15 && (!sets.length || w2 - sets[sets.length - 1].weight >= 10)) sets.push({ weight: w2, reps: 3, pct: '75%' })
+        return sets
+      }
       const w = round(workingWeight * 0.60)
       if (w <= 20 || workingWeight - w < 15) return []
       return [{ weight: w, reps: 6, pct: '60%' }]
