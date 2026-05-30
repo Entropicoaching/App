@@ -253,18 +253,27 @@ const WARMUP_BASE = {
     { id: 'bp-2', name: 'Bryststretch i dørkarmen', desc: 'Sæt underarmen lodret mod en dørkarme med albuen i 90 grader. Drej kroppen væk fra armen og hold. Mærk strækket tværs over brystet og foran skulderen.', label: '20 sek pr. side', type: 'timer', duration: 20 },
     { id: 'bp-3', name: 'Håndled rotation', desc: 'Hold armene fremad og lav fulde, langsomme rotationer i håndleddene begge veje. Stræk fingrene ud og luk dem igen. Vigtigt for greb og håndledsstabilitet.', label: '10 reps pr. retning', type: 'reps' },
   ],
-  Dødløft: [
-    { id: 'dl-1', name: 'Cat-cow', desc: 'Kom på alle fire med hænder under skuldre og knæ under hofter. Veksler mellem at runde ryggen helt op mod loftet (kat) og synke den ned mod gulvet (ko). Hold et sekund i hvert yderpunkt.', label: '10 reps', type: 'reps' },
-    { id: 'dl-2', name: 'Hip hinge mod væg', desc: 'Stå en håndbredde fra en væg med let bøjede knæ. Skub hofterne bagud til de rammer væggen mens du holder ryggen neutral og ret. Dette er præcis dødløft-bevægelsen — øv den her.', label: '10 reps', type: 'reps' },
-    { id: 'dl-3', name: 'Glute bridge', desc: 'Lig på ryggen, knæ bøjet, fødder fladt. Skub hofterne op og klem ballerne hårdt. Aktiverer baglår og baller som er primærmotorer i dødløft.', label: '15 reps', type: 'reps' },
+  'Dødløft — Konventionel': [
+    { id: 'dlk-1', name: 'Cat-cow', desc: 'Kom på alle fire. Veksler mellem at runde ryggen helt op (kat) og synke den ned mod gulvet (ko). Hold et sekund i hvert yderpunkt. Mobiliserer hele rygsøjlen.', label: '10 reps', type: 'reps' },
+    { id: 'dlk-2', name: 'Hip hinge mod væg', desc: 'Stå en håndbredde fra en væg med let bøjede knæ. Skub hofterne bagud til de rammer væggen mens ryggen holder sig neutral. Dette er præcis konventionel dødløft-bevægelsen.', label: '10 reps', type: 'reps' },
+    { id: 'dlk-3', name: 'Glute bridge', desc: 'Lig på ryggen, knæ bøjet, fødder fladt. Skub hofterne op og klem ballerne hårdt i toppen. Aktiverer baglår og baller som primærmotorer i dødløft.', label: '15 reps', type: 'reps' },
+  ],
+  'Dødløft — Sumo': [
+    { id: 'dls-1', name: 'Sumo squat med pause', desc: 'Stå bredt med tæerne pegende udad — samme bredde som din sumo-stance. Sæt dig roligt ned og hold et par sekunder fornede. Aktiverer lysken og åbner hofteleddet til din stance.', label: '10 reps', type: 'reps' },
+    { id: 'dls-2', name: 'Adduktor stretch siddende', desc: 'Sid på gulvet med benene spredt bredt ud til siderne. Læn langsomt fremad fra hoften med ret ryg og hold. Mærk strækket i inderlårene — afgørende for sumo-stance.', label: '30 sek', type: 'timer', duration: 30 },
+    { id: 'dls-3', name: 'Hip external rotation (liggende)', desc: 'Lig på ryggen. Kryds det ene ben over det andet knæ og træk begge ben mod brystet. Mærk strækket dybt i ballerne og hofteleddet. Åbner den eksterne rotation som sumo kræver.', label: '30 sek pr. side', type: 'timer', duration: 30 },
   ],
 }
 
 const WARMUP_ADDONS = {
-  Hofte: { id: 'add-hofte', name: '90/90 hofte stretch', desc: 'Sid på gulvet med ét ben bøjet 90 grader foran dig og ét ben 90 grader ude til siden. Læn langsomt frem over det forreste ben og hold. Mærk strækket i ydersiden af hoften og ballerne.', label: '30 sek pr. side', type: 'timer', duration: 30 },
-  Ankel: { id: 'add-ankel', name: 'Ankelmobilitet mod væg', desc: 'Stå med tåspidsen tæt mod en væg. Skub forsigtigt knæet frem til det rammer væggen — hold hælen i gulvet. Flyt foden gradvist længere væk. Forbedrer ankelmobilitet til squat.', label: '10 reps pr. ben', type: 'reps' },
-  Ryg: { id: 'add-ryg', name: 'Thorax rotation', desc: 'Sid på hug eller på hælene med hænderne flettet bag nakken. Roter overkroppen langsomt til én side, hold et sekund og roter til den anden. Hold hofterne stille — kun overkroppen roterer.', label: '10 reps pr. side', type: 'reps' },
-  Skulder: { id: 'add-skulder', name: 'Thorax extension over rulle', desc: 'Rul et håndklæde eller brug en skumrulle og læg det tværs under øvre ryg (mellem skulderblade). Læn overkroppen forsigtigt bagover med hænderne bag nakken og åbn brystet.', label: '30 sek', type: 'timer', duration: 30 },
+  'Hofte / baller': { id: 'add-hofte', name: '90/90 hofte stretch', desc: 'Sid på gulvet med ét ben bøjet 90 grader foran dig og ét ben 90 grader ude til siden. Læn langsomt frem over det forreste ben. Mærk strækket i ydersiden af hoften og ballerne.', label: '30 sek pr. side', type: 'timer', duration: 30 },
+  'Lyske / inderlår': { id: 'add-lyske', name: 'Cossack squat', desc: 'Stå meget bredt. Skift vægten til ét ben og sæt dig ned i den side mens det andet ben strækkes ud til siden med tåen opad. Mærk strækket dybt i lysken og inderlåret. Skift side.', label: '8 reps pr. side', type: 'reps' },
+  'Lænde': { id: 'add-laende', name: 'Child\'s pose', desc: 'Sæt dig på hug og læn overkroppen fremad mod gulvet med armene strakt ud foran dig. Lad lænden synke ned og ånd dybt ind i ryggen. Aflaster og strækker lænden.', label: '30 sek', type: 'timer', duration: 30 },
+  'Øvre ryg': { id: 'add-oevreryg', name: 'Thorax extension over rulle', desc: 'Læg en rullet håndklæde eller skumrulle tværs under øvre ryg mellem skulderbladene. Læn forsigtigt bagover med hænderne bag nakken og åbn brystet mod loftet.', label: '30 sek', type: 'timer', duration: 30 },
+  'Ankel': { id: 'add-ankel', name: 'Ankelmobilitet mod væg', desc: 'Stå med tåspidsen tæt mod en væg. Skub forsigtigt knæet frem til det rammer væggen — hold hælen i gulvet. Flyt foden gradvist længere væk efterhånden.', label: '10 reps pr. ben', type: 'reps' },
+  'Knæ': { id: 'add-knae', name: 'Quadriceps stretch stående', desc: 'Stå på ét ben og træk det andet bens fod op mod ballerne — hold om anklen. Hold knæene samlet og skub hofterne let fremad for at intensivere strækket foran låret.', label: '30 sek pr. side', type: 'timer', duration: 30 },
+  'Skulder': { id: 'add-skulder', name: 'Thorax rotation siddende', desc: 'Sid på hug eller på hælene med hænderne bag nakken. Roter overkroppen langsomt til én side og hold et sekund. Hold hofterne stille — kun overkroppen roterer.', label: '10 reps pr. side', type: 'reps' },
+  'Nakke / trapez': { id: 'add-nakke', name: 'Nakke side-stretch', desc: 'Sid eller stå opret. Læn langsomt øret mod skulderen til du mærker et stræk i siden af nakken og toppen af trapezius. Hold stille — undgå at trække skulderen op.', label: '20 sek pr. side', type: 'timer', duration: 20 },
 }
 
 const s = {
@@ -413,6 +422,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [exWarmupExpanded, setExWarmupExpanded] = useState(new Set())
   const [warmupPhase, setWarmupPhase] = useState('focus')
   const [warmupFocus, setWarmupFocus] = useState(null)
+  const [warmupSubtype, setWarmupSubtype] = useState(null)
   const [warmupProblems, setWarmupProblems] = useState(new Set())
   const [warmupExercises, setWarmupExercises] = useState([])
   const [warmupStep, setWarmupStep] = useState(0)
@@ -453,6 +463,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           const n = (ex.name || '').toLowerCase()
           if (n.includes('squat')) { setWarmupFocus('Squat'); return }
           if (n.includes('bænk') || n.includes('bench')) { setWarmupFocus('Bænkpres'); return }
+          if (n.includes('sumo')) { setWarmupFocus('Dødløft'); setWarmupSubtype('Sumo'); return }
           if (n.includes('dødl') || n.includes('deadlift')) { setWarmupFocus('Dødløft'); return }
         }
       }
@@ -2467,11 +2478,14 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         {/* OPVARMNING */}
         {tab === 'opvarmning' && (() => {
           const FOCUSES = ['Squat', 'Bænkpres', 'Dødløft']
-          const PROBLEMS = ['Hofte', 'Ankel', 'Ryg', 'Skulder']
+          const PROBLEMS = ['Hofte / baller', 'Lyske / inderlår', 'Lænde', 'Øvre ryg', 'Ankel', 'Knæ', 'Skulder', 'Nakke / trapez']
+          const baseKey = warmupFocus === 'Dødløft' ? `Dødløft — ${warmupSubtype}` : warmupFocus
+          const focusReady = warmupFocus && (warmupFocus !== 'Dødløft' || warmupSubtype)
 
           function startGuide() {
-            const base = WARMUP_BASE[warmupFocus] || []
-            const coachSteps = (warmupTemplates.find(t => t.exercise_category === warmupFocus)?.steps || [])
+            const base = WARMUP_BASE[baseKey] || []
+            const coachFocusKey = warmupFocus === 'Dødløft' ? 'Dødløft' : warmupFocus
+            const coachSteps = (warmupTemplates.find(t => t.exercise_category === coachFocusKey)?.steps || [])
               .map((step, i) => ({ id: `coach_${i}`, name: step, desc: '', label: '', type: 'reps' }))
             const addons = [...warmupProblems].map(p => WARMUP_ADDONS[p]).filter(Boolean)
             const all = [...base, ...addons, ...coachSteps]
@@ -2494,6 +2508,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           function resetWarmup() {
             setWarmupPhase('focus')
             setWarmupFocus(null)
+            setWarmupSubtype(null)
             setWarmupProblems(new Set())
             setWarmupExercises([])
             setWarmupStep(0)
@@ -2508,20 +2523,39 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               <div style={{ marginBottom: '1.75rem' }}>
                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Opvarmning</div>
                 <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Hvad træner du i dag?</h1>
-                {warmupFocus && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#c8923a', marginTop: '0.4rem', letterSpacing: '0.06em' }}>Auto-detekteret fra dit program</div>}
+                {warmupFocus && !warmupSubtype && warmupFocus !== 'Dødløft' && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#c8923a', marginTop: '0.4rem', letterSpacing: '0.06em' }}>Auto-detekteret fra dit program</div>}
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginBottom: '2rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginBottom: '1.25rem' }}>
                 {FOCUSES.map(f => (
-                  <button key={f} onClick={() => setWarmupFocus(f)} style={{
-                    background: warmupFocus === f ? '#c8923a' : '#1c1c18',
+                  <button key={f} onClick={() => { setWarmupFocus(f); if (f !== 'Dødløft') setWarmupSubtype(null) }} style={{
+                    background: warmupFocus === f ? 'rgba(200,146,58,0.15)' : '#1c1c18',
                     border: `1px solid ${warmupFocus === f ? '#c8923a' : 'rgba(237,234,226,0.1)'}`,
-                    color: warmupFocus === f ? '#141410' : '#edeae2',
+                    color: warmupFocus === f ? '#c8923a' : '#edeae2',
                     fontFamily: "'Playfair Display', serif", fontSize: '1.15rem', fontWeight: 400,
                     padding: '1rem 1.25rem', cursor: 'pointer', textAlign: 'left',
                   }}>{f}</button>
                 ))}
               </div>
-              {warmupFocus && (
+
+              {warmupFocus === 'Dødløft' && (
+                <div style={{ marginBottom: '1.25rem', paddingLeft: '0.5rem', borderLeft: '2px solid rgba(200,146,58,0.3)' }}>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '0.6rem' }}>Variant</div>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    {['Konventionel', 'Sumo'].map(st => (
+                      <button key={st} onClick={() => setWarmupSubtype(st)} style={{
+                        flex: 1, background: warmupSubtype === st ? '#c8923a' : '#1c1c18',
+                        border: `1px solid ${warmupSubtype === st ? '#c8923a' : 'rgba(237,234,226,0.1)'}`,
+                        color: warmupSubtype === st ? '#141410' : '#7a7770',
+                        fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', fontWeight: 500,
+                        letterSpacing: '0.1em', textTransform: 'uppercase',
+                        padding: '0.65rem', cursor: 'pointer',
+                      }}>{st}</button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {focusReady && (
                 <button style={{ ...s.btnPrimary, width: '100%', padding: '0.85rem', fontSize: '0.62rem' }}
                   onClick={() => setWarmupPhase('problems')}>
                   Næste →
@@ -2533,12 +2567,12 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           // FASE: PROBLEMER
           if (warmupPhase === 'problems') return (
             <>
-              <div style={{ marginBottom: '1.75rem' }}>
-                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>{warmupFocus}</div>
-                <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Hvad er stramt eller tungt i dag?</h1>
-                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', marginTop: '0.4rem' }}>Valgfrit — vælg 0-2 områder</div>
+              <div style={{ marginBottom: '1.5rem' }}>
+                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>{baseKey}</div>
+                <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Hvad er stramt eller tungt i dag?</h1>
+                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', marginTop: '0.4rem' }}>Valgfrit — vælg op til 2 områder</div>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem', marginBottom: '2rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '1.5rem' }}>
                 {PROBLEMS.map(p => {
                   const on = warmupProblems.has(p)
                   return (
@@ -2546,9 +2580,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                       background: on ? 'rgba(200,146,58,0.15)' : '#1c1c18',
                       border: `1px solid ${on ? '#c8923a' : 'rgba(237,234,226,0.1)'}`,
                       color: on ? '#c8923a' : '#7a7770',
-                      fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', fontWeight: 500,
-                      letterSpacing: '0.1em', textTransform: 'uppercase',
-                      padding: '0.85rem', cursor: 'pointer',
+                      fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500,
+                      letterSpacing: '0.08em', textTransform: 'uppercase',
+                      padding: '0.75rem 0.5rem', cursor: 'pointer', textAlign: 'center',
                     }}>{p}</button>
                   )
                 })}
@@ -2556,7 +2590,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               <div style={{ display: 'flex', gap: '0.6rem' }}>
                 <button style={{ ...s.btnGhost, flex: 1, padding: '0.75rem' }} onClick={() => setWarmupPhase('focus')}>← Tilbage</button>
                 <button style={{ ...s.btnPrimary, flex: 2, padding: '0.75rem', fontSize: '0.62rem' }} onClick={startGuide}>
-                  Start opvarmning ({(WARMUP_BASE[warmupFocus]?.length || 0) + warmupProblems.size} øvelser)
+                  Start opvarmning ({(WARMUP_BASE[baseKey]?.length || 0) + warmupProblems.size} øvelser)
                 </button>
               </div>
             </>
