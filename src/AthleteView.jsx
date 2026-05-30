@@ -432,6 +432,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const timerRef = useRef(null)
 
   // Stævnedag state
+  const [hasMeetPlan, setHasMeetPlan] = useState(false)
   const [meetType, setMeetType] = useState('sbd')
   const [meetPlanNotes, setMeetPlanNotes] = useState('')
   const [meetWarmupEditing, setMeetWarmupEditing] = useState(null)
@@ -514,6 +515,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   async function fetchMeetPlan(athleteId) {
     const { data } = await supabase.from('meet_plans').select('*').eq('athlete_id', athleteId).maybeSingle()
+    setHasMeetPlan(!!data)
     if (data) {
       setMeetType(data.meet_type || 'sbd')
       setMeetPlanNotes(data.notes || '')
@@ -2716,6 +2718,55 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           const total = lifts.reduce((sum, l) => sum + (bestLift(l.key) || 0), 0)
           const allHaveBest = lifts.every(l => bestLift(l.key) !== null)
 
+          async function markGoodAndSave(key, i) {
+            const current = meetAttempts[key]
+            const isAlreadyGood = current[i].r === 'good'
+            setAttempt(key, i, 'r', isAlreadyGood ? null : 'good')
+            if (!isAlreadyGood && athlete && !coachAthleteId) {
+              const updated = current.map((a, j) => j === i ? { ...a, r: 'good' } : a)
+              const good = updated.filter(a => a.r === 'good' && parseFloat(a.w) > 0)
+              if (!good.length) return
+              const best = Math.max(...good.map(a => parseFloat(a.w)))
+              const colMap = { squat: 'squat', bench: 'bench', deadlift: 'deadlift' }
+              const col = colMap[key]
+              if (col) {
+                await supabase.rpc('update_competition_max', { p_lift: col, p_weight: best })
+                setAthlete(prev => ({ ...prev, [col]: best }))
+              }
+            }
+          }
+
+          // STANDBY — ingen stævneplan
+          if (!hasMeetPlan) return (
+            <>
+              <div style={{ marginBottom: '2rem' }}>
+                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Stævne</div>
+                <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Ingen stævne<br />planlagt.</h1>
+                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#4a4844', letterSpacing: '0.06em', lineHeight: 1.7, marginTop: '0.75rem' }}>
+                  Din coach har ikke sat en stævneplan endnu. Kontakt din coach hvis du har et stævne på vej.
+                </div>
+              </div>
+
+              {(athlete.squat || athlete.bench || athlete.deadlift) && (
+                <div style={s.card}>
+                  <div style={s.cardLabel}>Konkurrencemaks</div>
+                  {[['Squat', athlete.squat], ['Bænkpres', athlete.bench], ['Dødløft', athlete.deadlift]].map(([label, val]) => val ? (
+                    <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '0.6rem 0', borderBottom: '1px solid rgba(237,234,226,0.06)' }}>
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{label}</div>
+                      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', color: '#edeae2' }}>{val} <span style={{ fontSize: '0.7rem', color: '#4a4844' }}>kg</span></div>
+                    </div>
+                  ) : null)}
+                  {(athlete.squat && athlete.bench && athlete.deadlift) && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', paddingTop: '0.75rem' }}>
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#c8923a', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Total</div>
+                      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', color: '#c8923a' }}>{(athlete.squat || 0) + (athlete.bench || 0) + (athlete.deadlift || 0)} <span style={{ fontSize: '0.8rem', color: '#7a7770' }}>kg</span></div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </>
+          )
+
           return (
             <>
               <div style={{ marginBottom: '1.5rem' }}>
@@ -2779,7 +2830,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                             <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844' }}>kg</div>
                             <div style={{ display: 'flex', gap: '0.4rem', marginLeft: 'auto' }}>
                               <button
-                                onClick={() => setAttempt(key, i, 'r', att.r === 'good' ? null : 'good')}
+                                onClick={() => markGoodAndSave(key, i)}
                                 style={{ background: att.r === 'good' ? 'rgba(108,186,108,0.2)' : 'transparent', border: `1px solid ${att.r === 'good' ? '#6cba6c' : 'rgba(237,234,226,0.15)'}`, color: att.r === 'good' ? '#6cba6c' : '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', padding: '0.4rem 0.7rem', cursor: 'pointer', minWidth: '42px' }}
                               >✓</button>
                               <button
