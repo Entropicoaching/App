@@ -271,6 +271,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [athleteWeightLogs, setAthleteWeightLogs] = useState([])
   const [athleteReadiness, setAthleteReadiness] = useState([])
   const [athletePRs, setAthletePRs] = useState([])
+  const [warmupTemplates, setWarmupTemplates] = useState([])
+  const [editingWarmup, setEditingWarmup] = useState(null)
+  const [warmupDraftSteps, setWarmupDraftSteps] = useState([])
+  const [warmupNewStep, setWarmupNewStep] = useState('')
   const [editingRecommended, setEditingRecommended] = useState(null)
   const [recommendedInput, setRecommendedInput] = useState('')
   const [copyingExercise, setCopyingExercise] = useState(null)
@@ -310,6 +314,12 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       fetchAthleteWeightLogs(selectedAthlete.id)
       fetchAthleteReadiness(selectedAthlete.id)
       fetchAthletePRs(selectedAthlete.id)
+    }
+  }, [activeTab, selectedAthlete?.id])
+
+  useEffect(() => {
+    if (activeTab === 'opvarmning' && selectedAthlete) {
+      fetchWarmupTemplates(selectedAthlete.id)
     }
   }, [activeTab, selectedAthlete?.id])
 
@@ -417,6 +427,18 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     const a = sorted[idx], b = sorted[swapIdx]
     await supabase.from('sessions').update({ session_order: b.session_order }).eq('id', a.id)
     await supabase.from('sessions').update({ session_order: a.session_order }).eq('id', b.id)
+    fetchWeeks(selectedAthlete.id)
+  }
+
+  async function reorderExercise(sessionId, exerciseId, direction) {
+    const session = weeks.flatMap(w => w.sessions || []).find(s => s.id === sessionId)
+    const sorted = [...(session?.exercises || [])].sort((a, b) => a.exercise_order - b.exercise_order)
+    const idx = sorted.findIndex(e => e.id === exerciseId)
+    const swapIdx = direction === 'up' ? idx - 1 : idx + 1
+    if (swapIdx < 0 || swapIdx >= sorted.length) return
+    const a = sorted[idx], b = sorted[swapIdx]
+    await supabase.from('exercises').update({ exercise_order: b.exercise_order }).eq('id', a.id)
+    await supabase.from('exercises').update({ exercise_order: a.exercise_order }).eq('id', b.id)
     fetchWeeks(selectedAthlete.id)
   }
 
@@ -680,6 +702,36 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       }
     }
     setAthletePRs(prs)
+  }
+
+  async function fetchWarmupTemplates(athleteId) {
+    const { data } = await supabase
+      .from('warmup_templates')
+      .select('*')
+      .or(`athlete_id.eq.${athleteId},athlete_id.is.null`)
+    setWarmupTemplates(data || [])
+  }
+
+  async function saveWarmupTemplate(category, steps, athleteId) {
+    const existing = warmupTemplates.find(t => t.exercise_category === category && t.athlete_id === athleteId)
+    if (existing) {
+      await supabase.from('warmup_templates').update({ steps }).eq('id', existing.id)
+    } else {
+      await supabase.from('warmup_templates').insert({
+        coach_id: session.user.id,
+        athlete_id: athleteId,
+        exercise_category: category,
+        steps,
+      })
+    }
+    fetchWarmupTemplates(selectedAthlete.id)
+    setEditingWarmup(null)
+    setWarmupNewStep('')
+  }
+
+  async function deleteWarmupTemplate(templateId) {
+    await supabase.from('warmup_templates').delete().eq('id', templateId)
+    fetchWarmupTemplates(selectedAthlete.id)
   }
 
   async function addAthlete() {
@@ -1300,7 +1352,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             </div>
 
             <div style={{ ...s.tabs, overflowX: 'auto', flexWrap: 'nowrap', WebkitOverflowScrolling: 'touch' }}>
-              {[['oversigt', 'Oversigt'], ['kost', 'Kost & mål'], ['program', 'Program'], ['noter', 'Noter'], ['analyse', 'Analyse'], ['beskeder', 'Beskeder']].map(([key, label]) => (
+              {[['oversigt', 'Oversigt'], ['kost', 'Kost & mål'], ['program', 'Program'], ['noter', 'Noter'], ['analyse', 'Analyse'], ['opvarmning', 'Opvarmning'], ['beskeder', 'Beskeder']].map(([key, label]) => (
                 <button key={key} style={{ ...s.tab(activeTab === key), whiteSpace: 'nowrap', flexShrink: 0 }} onClick={() => { setActiveTab(key); setEditing(null) }}>{label}</button>
               ))}
             </div>
@@ -1872,6 +1924,186 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               )
             })()}
 
+            {/* TAB: OPVARMNING */}
+            {activeTab === 'opvarmning' && (() => {
+              const CATEGORIES = ['Squat', 'Bænkpres', 'Dødløft']
+              const athleteId = a.id
+
+              function getTemplate(category, forAthleteId) {
+                return warmupTemplates.find(t => t.exercise_category === category && t.athlete_id === forAthleteId)
+              }
+
+              function startEdit(category, forAthleteId) {
+                const tpl = getTemplate(category, forAthleteId)
+                setEditingWarmup({ category, athleteId: forAthleteId })
+                setWarmupDraftSteps(tpl ? [...tpl.steps] : [])
+                setWarmupNewStep('')
+              }
+
+              return (
+                <div>
+                  <div style={{ ...s.card, marginBottom: '0.5rem' }}>
+                    <div style={s.cardLabel}>Atlet-specifik opvarmning — {a.name.split(' ')[0]}</div>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', letterSpacing: '0.06em', marginBottom: '1.25rem' }}>
+                      Tilsidesætter standard. Vises til atleten når de åbner en session med det pågældende løft.
+                    </div>
+                    {CATEGORIES.map(category => {
+                      const tpl = getTemplate(category, athleteId)
+                      const stdTpl = getTemplate(category, null)
+                      const isEditing = editingWarmup?.category === category && editingWarmup?.athleteId === athleteId
+                      return (
+                        <div key={category} style={{ marginBottom: '1.25rem', paddingBottom: '1.25rem', borderBottom: '1px solid rgba(237,234,226,0.06)' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.6rem' }}>
+                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#edeae2' }}>{category}</div>
+                            <div style={{ display: 'flex', gap: '0.4rem' }}>
+                              {tpl && !isEditing && (
+                                <button style={s.btnDanger} onClick={() => deleteWarmupTemplate(tpl.id)}>Slet</button>
+                              )}
+                              {!isEditing && (
+                                <button style={s.btnEdit} onClick={() => startEdit(category, athleteId)}>
+                                  {tpl ? 'Rediger' : 'Opret'}
+                                </button>
+                              )}
+                            </div>
+                          </div>
+
+                          {!isEditing && !tpl && stdTpl && (
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}>
+                              <div style={{ fontFamily: "'IBM Plex Mono', monospace', monospace", fontSize: '0.52rem', color: '#4a4844', fontStyle: 'italic' }}>Bruger standard ({stdTpl.steps.length} trin)</div>
+                              <button style={s.btnEdit} onClick={() => { setEditingWarmup({ category, athleteId }); setWarmupDraftSteps([...stdTpl.steps]); setWarmupNewStep('') }}>Tilpas til atlet</button>
+                            </div>
+                          )}
+                          {!isEditing && !tpl && !stdTpl && (
+                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen skabelon sat</div>
+                          )}
+                          {!isEditing && tpl && (
+                            <ol style={{ margin: 0, paddingLeft: '1.2rem' }}>
+                              {tpl.steps.map((step, i) => (
+                                <li key={i} style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.84rem', color: '#b8b4a8', marginBottom: '0.25rem' }}>{step}</li>
+                              ))}
+                            </ol>
+                          )}
+
+                          {isEditing && (
+                            <div>
+                              <ol style={{ margin: '0 0 0.75rem', paddingLeft: '1.2rem' }}>
+                                {warmupDraftSteps.map((step, i) => (
+                                  <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
+                                    <span style={{ flex: 1, fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.84rem', color: '#b8b4a8' }}>{step}</span>
+                                    <button
+                                      style={{ ...s.btnEdit, fontSize: '0.48rem', padding: '0.1rem 0.4rem', color: '#e05555', borderColor: 'rgba(224,85,85,0.25)' }}
+                                      onClick={() => setWarmupDraftSteps(prev => prev.filter((_, j) => j !== i))}
+                                    >✕</button>
+                                  </li>
+                                ))}
+                              </ol>
+                              <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                                <input
+                                  style={{ ...s.fieldInput, flex: 1, fontSize: '0.82rem', padding: '0.4rem 0.6rem' }}
+                                  placeholder='F.eks. "Hip circles 2×10"'
+                                  value={warmupNewStep}
+                                  onChange={e => setWarmupNewStep(e.target.value)}
+                                  onKeyDown={e => {
+                                    if (e.key === 'Enter' && warmupNewStep.trim()) {
+                                      setWarmupDraftSteps(prev => [...prev, warmupNewStep.trim()])
+                                      setWarmupNewStep('')
+                                    }
+                                  }}
+                                />
+                                <button
+                                  style={s.btnEdit}
+                                  onClick={() => { if (warmupNewStep.trim()) { setWarmupDraftSteps(prev => [...prev, warmupNewStep.trim()]); setWarmupNewStep('') } }}
+                                >+ Tilføj</button>
+                              </div>
+                              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                <button style={s.btnGhost} onClick={() => { setEditingWarmup(null); setWarmupNewStep('') }}>Annuller</button>
+                                <button style={s.btnPrimary} onClick={() => saveWarmupTemplate(category, warmupDraftSteps, athleteId)} disabled={saving}>Gem</button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+
+                  <div style={s.card}>
+                    <div style={s.cardLabel}>Standard opvarmning — alle atleter</div>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', letterSpacing: '0.06em', marginBottom: '1.25rem' }}>
+                      Bruges hvis ingen atlet-specifik skabelon er sat.
+                    </div>
+                    {CATEGORIES.map(category => {
+                      const stdTpl = getTemplate(category, null)
+                      const isEditing = editingWarmup?.category === category && editingWarmup?.athleteId === null
+                      return (
+                        <div key={category} style={{ marginBottom: '1.25rem', paddingBottom: '1.25rem', borderBottom: '1px solid rgba(237,234,226,0.06)' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.6rem' }}>
+                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770' }}>{category}</div>
+                            <div style={{ display: 'flex', gap: '0.4rem' }}>
+                              {stdTpl && !isEditing && (
+                                <button style={s.btnDanger} onClick={() => deleteWarmupTemplate(stdTpl.id)}>Slet</button>
+                              )}
+                              {!isEditing && (
+                                <button style={s.btnEdit} onClick={() => { setEditingWarmup({ category, athleteId: null }); setWarmupDraftSteps(stdTpl ? [...stdTpl.steps] : []); setWarmupNewStep('') }}>
+                                  {stdTpl ? 'Rediger' : 'Opret'}
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                          {!isEditing && !stdTpl && (
+                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen standard sat</div>
+                          )}
+                          {!isEditing && stdTpl && (
+                            <ol style={{ margin: 0, paddingLeft: '1.2rem' }}>
+                              {stdTpl.steps.map((step, i) => (
+                                <li key={i} style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.84rem', color: '#b8b4a8', marginBottom: '0.25rem' }}>{step}</li>
+                              ))}
+                            </ol>
+                          )}
+                          {isEditing && (
+                            <div>
+                              <ol style={{ margin: '0 0 0.75rem', paddingLeft: '1.2rem' }}>
+                                {warmupDraftSteps.map((step, i) => (
+                                  <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
+                                    <span style={{ flex: 1, fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.84rem', color: '#b8b4a8' }}>{step}</span>
+                                    <button
+                                      style={{ ...s.btnEdit, fontSize: '0.48rem', padding: '0.1rem 0.4rem', color: '#e05555', borderColor: 'rgba(224,85,85,0.25)' }}
+                                      onClick={() => setWarmupDraftSteps(prev => prev.filter((_, j) => j !== i))}
+                                    >✕</button>
+                                  </li>
+                                ))}
+                              </ol>
+                              <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                                <input
+                                  style={{ ...s.fieldInput, flex: 1, fontSize: '0.82rem', padding: '0.4rem 0.6rem' }}
+                                  placeholder='F.eks. "Foam roll 5 min"'
+                                  value={warmupNewStep}
+                                  onChange={e => setWarmupNewStep(e.target.value)}
+                                  onKeyDown={e => {
+                                    if (e.key === 'Enter' && warmupNewStep.trim()) {
+                                      setWarmupDraftSteps(prev => [...prev, warmupNewStep.trim()])
+                                      setWarmupNewStep('')
+                                    }
+                                  }}
+                                />
+                                <button
+                                  style={s.btnEdit}
+                                  onClick={() => { if (warmupNewStep.trim()) { setWarmupDraftSteps(prev => [...prev, warmupNewStep.trim()]); setWarmupNewStep('') } }}
+                                >+ Tilføj</button>
+                              </div>
+                              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                <button style={s.btnGhost} onClick={() => { setEditingWarmup(null); setWarmupNewStep('') }}>Annuller</button>
+                                <button style={s.btnPrimary} onClick={() => saveWarmupTemplate(category, warmupDraftSteps, null)} disabled={saving}>Gem</button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )
+            })()}
+
             {/* TAB: OVERSIGT */}
             {activeTab === 'oversigt' && (
               <div>
@@ -2421,7 +2653,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                             {/* Exercises (expanded session) */}
                             {openSessionId === session.id && (
                               <div style={{ background: '#141410', border: '1px solid rgba(237,234,226,0.06)', borderTop: 'none', padding: '0.75rem' }}>
-                                {(session.exercises || []).map(ex => (
+                                {(session.exercises || []).map((ex, exIdx, exArr) => (
                                   <div key={ex.id}>
                                     {editingExercise === ex.id ? (
                                       <div style={{ padding: '0.5rem 0', borderBottom: '1px solid rgba(237,234,226,0.06)', marginBottom: '0.5rem' }}>
@@ -2494,6 +2726,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                                           ) : (
                                             <button style={s.btnEdit} onClick={() => setCopyingExercise(ex.id)}>Kopiér</button>
                                           )}
+                                          <button style={{ ...s.btnEdit, opacity: exIdx === 0 ? 0.25 : 1 }} disabled={exIdx === 0} onClick={() => reorderExercise(session.id, ex.id, 'up')}>↑</button>
+                                          <button style={{ ...s.btnEdit, opacity: exIdx === exArr.length - 1 ? 0.25 : 1 }} disabled={exIdx === exArr.length - 1} onClick={() => reorderExercise(session.id, ex.id, 'down')}>↓</button>
                                           <button style={s.btnEdit} onClick={() => { setEditingExercise(ex.id); const { intensityPrefix, intensity } = parseIntensity(ex.intensity); setExerciseForm({ name: ex.name, sets: ex.sets || '', reps: ex.reps || '', intensity, intensityPrefix, note: ex.note || '' }) }}>✎</button>
                                           <button style={s.btnDanger} onClick={() => deleteExercise(ex.id)}>✕</button>
                                         </div>
