@@ -484,41 +484,76 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     return null
   }
 
-  function calcWarmupSets(workingWeight, plannedReps = 1) {
+  function isMainLift(name) {
+    const n = (name || '').toLowerCase()
+    if (n.includes('romanian') || n.includes('rdl') || n.includes('stiff') || n.includes('front squat') || n.includes('hack') || n.includes('goblet') || n.includes('sumo')) return false
+    return n.includes('squat') || n.includes('bænk') || n.includes('bench') || n.includes('dødl') || n.includes('deadlift')
+  }
+
+  function calcWarmupSets(workingWeight, plannedReps = 1, exName = '') {
     if (!workingWeight || workingWeight <= 20) return []
-    const round = w => Math.max(20, Math.round(w / 2.5) * 2.5)
+    const round = w => Math.round(w / 2.5) * 2.5
     const n = parseInt(plannedReps) || 1
 
-    // Number of warmup sets and ceiling percentage based on rep range
-    let numSets, topPct
-    if (n <= 2)      { numSets = 6; topPct = 0.92 }
-    else if (n <= 4) { numSets = 5; topPct = 0.87 }
-    else if (n <= 6) { numSets = 4; topPct = 0.80 }
-    else if (n <= 9) { numSets = 3; topPct = 0.73 }
-    else             { numSets = 2; topPct = 0.60 }
-
-    // Fewer sets for lighter working weights
-    if (workingWeight <= 60)  numSets = Math.min(numSets, 3)
-    else if (workingWeight <= 100) numSets = Math.min(numSets, 4)
-
-    const top = round(workingWeight * topPct)
-
-    // Evenly spaced weights from bar (20kg) to top, deduplicated
-    const weights = []
-    for (let i = 0; i < numSets; i++) {
-      const w = round(20 + (top - 20) * i / (numSets - 1))
-      if (!weights.length || weights[weights.length - 1] !== w) weights.push(w)
+    // Accessory work: max 1 warmup set at ~60%, or nothing if working weight is light
+    if (!isMainLift(exName)) {
+      const w = round(workingWeight * 0.60)
+      if (w <= 20 || workingWeight - w < 15) return []
+      return [{ weight: w, reps: 6, pct: '60%' }]
     }
 
-    return weights.map((w, i, arr) => {
-      const pos = arr.length > 1 ? i / (arr.length - 1) : 0
-      let reps
-      if (n <= 2)      reps = pos < 0.35 ? 3 : pos < 0.65 ? 2 : 1
-      else if (n <= 4) reps = pos < 0.3 ? 4 : pos < 0.6 ? 3 : pos < 0.85 ? 2 : 1
-      else if (n <= 6) reps = pos < 0.4 ? 5 : pos < 0.75 ? 3 : 2
-      else             reps = pos < 0.5 ? 5 : 3
-      return { weight: w, reps, pct: `${Math.round((w / workingWeight) * 100)}%` }
-    })
+    // Percentage targets based on rep range.
+    // For heavy sets (≤4 reps): last warmup at ~95% to prime CNS, gradvist mindre hop mod toppen.
+    // For higher reps: færre sæt, lavere topprocentage (sættet er allerede submaximalt).
+    let targets
+    if (n <= 2) {
+      targets = [
+        { pct: 0.40, reps: 3 },
+        { pct: 0.57, reps: 2 },
+        { pct: 0.70, reps: 2 },
+        { pct: 0.82, reps: 1 },
+        { pct: 0.92, reps: 1 },
+        { pct: 0.97, reps: 1 },
+      ]
+    } else if (n <= 4) {
+      targets = [
+        { pct: 0.40, reps: n },
+        { pct: 0.57, reps: n },
+        { pct: 0.73, reps: n },
+        { pct: 0.87, reps: 2 },
+        { pct: 0.95, reps: 1 },
+      ]
+    } else if (n <= 6) {
+      targets = [
+        { pct: 0.45, reps: n },
+        { pct: 0.65, reps: Math.ceil(n * 0.7) },
+        { pct: 0.82, reps: 2 },
+      ]
+    } else if (n <= 9) {
+      targets = [
+        { pct: 0.50, reps: Math.min(n, 8) },
+        { pct: 0.75, reps: 4 },
+      ]
+    } else {
+      targets = [{ pct: 0.60, reps: 6 }]
+    }
+
+    // Limit number of loaded sets based on working weight
+    const maxSets = workingWeight < 80 ? 2 : workingWeight < 130 ? 3 : workingWeight < 200 ? 4 : 5
+
+    const raw = []
+    for (const { pct, reps } of targets) {
+      const w = round(workingWeight * pct)
+      if (w <= 20) continue
+      if (raw.length && w - raw[raw.length - 1].weight < 10) continue // skip tiny jumps
+      if (w >= workingWeight) continue
+      raw.push({ weight: w, reps, pct: `${Math.round(pct * 100)}%` })
+    }
+
+    return [
+      { weight: 20, reps: 5, pct: 'Stang' },
+      ...raw.slice(-maxSets),
+    ]
   }
 
   async function fetchReadiness(athleteId) {
@@ -1770,7 +1805,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                   {isCurrentWeek && (() => {
                                     const w = ex.recommended_weight || lastLogByExerciseName[ex.name?.toLowerCase()]?.weight
                                     if (!w || w < 20) return null
-                                    const sets = calcWarmupSets(w, ex.reps)
+                                    const sets = calcWarmupSets(w, ex.reps, ex.name)
                                     const exKey = ex.id
                                     const isOpen = exWarmupExpanded.has(exKey)
                                     const exChecked = warmupChecked[exKey] || {}
