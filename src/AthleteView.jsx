@@ -648,6 +648,22 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     setReadinessLog(data || null)
   }
 
+  function suggestNextWeight(exName, intensity) {
+    const targetRpe = parsePlannedRpe(intensity)
+    if (!targetRpe) return null
+    const hist = exerciseHistory[exName?.toLowerCase()] || []
+    if (!hist.length) return null
+    const lastSession = hist[0]
+    if (lastSession.date === today()) return null // currently logging this session
+    const setsWithRpe = lastSession.sets.filter(s => s.rpe != null && s.weight > 0)
+    if (!setsWithRpe.length) return null
+    const ref = setsWithRpe[setsWithRpe.length - 1]
+    const roundTo25 = w => Math.round(w / 2.5) * 2.5
+    const suggested = roundTo25(ref.weight * (1 + (targetRpe - ref.rpe) * 0.03))
+    if (suggested <= 0) return null
+    return { weight: suggested, fromRpe: ref.rpe, baseWeight: ref.weight }
+  }
+
   function calcReadinessScore({ sleep, energy, motivation, stress, soreness }) {
     let score = 100
     const h = parseFloat(sleep) || 0
@@ -1934,11 +1950,21 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                     </div>
                                     {isCurrentWeek && (
                                       <>
-                                        {ex.recommended_weight != null && (
+                                        {ex.recommended_weight != null ? (
                                           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#c8923a', marginBottom: '0.2rem' }}>
                                             Anbefalet: {ex.recommended_weight}kg
                                           </div>
-                                        )}
+                                        ) : (() => {
+                                          const s = suggestNextWeight(ex.name, ex.intensity)
+                                          if (!s) return null
+                                          const diff = s.weight - s.baseWeight
+                                          const diffStr = diff > 0 ? `+${diff}` : diff < 0 ? `${diff}` : '='
+                                          return (
+                                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#c8923a', marginBottom: '0.2rem' }}>
+                                              Forslag: {s.weight} kg <span style={{ color: '#7a7770' }}>({diffStr} kg · RPE {s.fromRpe})</span>
+                                            </div>
+                                          )
+                                        })()}
                                         {(exerciseHistory[ex.name?.toLowerCase()] || []).map(({ date, sets }) => {
                                           const d = new Date(date + 'T12:00:00')
                                           const label = `${d.getDate()}/${d.getMonth() + 1}`
