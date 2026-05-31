@@ -401,6 +401,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [exerciseLogs, setExerciseLogs] = useState([])
   const [logInputs, setLogInputs] = useState({})
   const [lastLogByExerciseName, setLastLogByExerciseName] = useState({})
+  const [exerciseHistory, setExerciseHistory] = useState({})
   const [weightLogs, setWeightLogs] = useState([])
   const [weightInput, setWeightInput] = useState('')
   const [savingWeight, setSavingWeight] = useState(false)
@@ -707,6 +708,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     setCurrentWeek(latestWeek)
     fetchExerciseLogs(athleteId, latestWeek)
     fetchLastLogs(athleteId, latestWeek)
+    fetchExerciseHistory(athleteId)
     fetchAllExerciseLogs(athleteId, weeks)
   }
 
@@ -770,6 +772,33 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       }
     }
     setLastLogByExerciseName(map)
+  }
+
+  async function fetchExerciseHistory(athleteId) {
+    const { data } = await supabase
+      .from('exercise_logs')
+      .select('weight, reps_completed, rpe_actual, logged_at, set_number, exercises(name)')
+      .eq('athlete_id', athleteId)
+      .eq('skipped', false)
+      .gt('weight', 0)
+      .order('logged_at', { ascending: false })
+      .limit(1500)
+    if (!data) return
+    const byName = {}
+    for (const log of data) {
+      const name = log.exercises?.name?.toLowerCase()
+      if (!name) continue
+      const date = log.logged_at.slice(0, 10)
+      if (!byName[name]) byName[name] = {}
+      if (!byName[name][date]) byName[name][date] = []
+      byName[name][date].push({ weight: log.weight, reps: log.reps_completed, rpe: log.rpe_actual, set: log.set_number })
+    }
+    const history = {}
+    for (const [name, dateMap] of Object.entries(byName)) {
+      const dates = Object.keys(dateMap).sort().reverse().slice(0, 3)
+      history[name] = dates.map(date => ({ date, sets: dateMap[date].sort((a, b) => a.set - b.set) }))
+    }
+    setExerciseHistory(history)
   }
 
   async function logSet(exerciseId, setNumber, totalSets, repsCompleted, plannedRpe) {
@@ -1903,15 +1932,25 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                         )
                                       })()}
                                     </div>
-                                    {isCurrentWeek && (ex.recommended_weight != null ? (
-                                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#c8923a', marginBottom: '0.2rem' }}>
-                                        Anbefalet: {ex.recommended_weight}kg
-                                      </div>
-                                    ) : lastLogByExerciseName[ex.name.toLowerCase()] ? (
-                                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#4a4844', marginBottom: '0.2rem' }}>
-                                        Sidst: {lastLogByExerciseName[ex.name.toLowerCase()].weight}kg × {lastLogByExerciseName[ex.name.toLowerCase()].reps_completed} reps
-                                      </div>
-                                    ) : null)}
+                                    {isCurrentWeek && (
+                                      <>
+                                        {ex.recommended_weight != null && (
+                                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#c8923a', marginBottom: '0.2rem' }}>
+                                            Anbefalet: {ex.recommended_weight}kg
+                                          </div>
+                                        )}
+                                        {(exerciseHistory[ex.name?.toLowerCase()] || []).map(({ date, sets }) => {
+                                          const d = new Date(date + 'T12:00:00')
+                                          const label = `${d.getDate()}/${d.getMonth() + 1}`
+                                          const setsStr = sets.map(s => `${s.weight}×${s.reps}${s.rpe ? ` @${s.rpe}` : ''}`).join('  ')
+                                          return (
+                                            <div key={date} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#4a4844', marginBottom: '0.1rem' }}>
+                                              <span style={{ color: '#7a7770', marginRight: '0.5rem' }}>{label}</span>{setsStr}
+                                            </div>
+                                          )
+                                        })}
+                                      </>
+                                    )}
                                     <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.78rem', color: '#c8923a', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.1rem' }}>
                                       {[ex.sets && `${ex.sets} sæt`, ex.reps && `× ${ex.reps}`, ex.intensity && ex.intensity].filter(Boolean).join(' · ')}
                                     </div>
