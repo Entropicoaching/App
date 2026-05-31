@@ -554,7 +554,12 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   function calcWarmupSets(workingWeight, plannedReps = 1, exName = '') {
     if (!workingWeight || workingWeight <= 20) return []
-    const round = w => Math.round(w / 2.5) * 2.5
+    const round = w => {
+      const pct = w / workingWeight
+      if (pct < 0.60) return Math.round(w / 10) * 10
+      if (pct < 0.85) return Math.round(w / 5) * 5
+      return Math.round(w / 2.5) * 2.5
+    }
     const n = parseInt(plannedReps) || 1
 
     // Accessory work: 1 set at 60%, or 2 sets for high-load machines (benpress/leg press)
@@ -577,12 +582,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     let targets
     if (n <= 2) {
       targets = [
-        { pct: 0.40, reps: 3 },
-        { pct: 0.57, reps: 2 },
-        { pct: 0.70, reps: 2 },
-        { pct: 0.82, reps: 1 },
-        { pct: 0.92, reps: 1 },
-        { pct: 0.97, reps: 1 },
+        { pct: 0.47, reps: 3 },
+        { pct: 0.73, reps: 2 },
+        { pct: 0.87, reps: 1 },
+        { pct: 0.95, reps: 1 },
       ]
     } else if (n <= 4) {
       targets = [
@@ -612,7 +615,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     }
 
     // Limit number of loaded sets based on working weight
-    const maxSets = workingWeight < 60 ? 2 : workingWeight < 130 ? 3 : workingWeight < 200 ? 4 : 5
+    const maxSets = workingWeight < 60 ? 2 : workingWeight < 100 ? 3 : workingWeight < 200 ? 4 : 5
 
     // Minimum jump scales with working weight — 8% floor at 5kg so light benchers don't lose top sets
     const minJump = Math.max(5, workingWeight * 0.08)
