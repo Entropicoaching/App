@@ -1543,7 +1543,59 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     </div>
                   )}
 
-                  {/* 4. Kropsvægt */}
+                  {/* 4. Ugentligt volumen */}
+                  {(() => {
+                    function buildWeeklyVolume(category) {
+                      const weekMap = {}
+                      for (const log of athleteLogs) {
+                        if (log.skipped || !log.weight || !log.reps_completed) continue
+                        const cat = nameToCat[(log.exercises?.name || '').toLowerCase()]
+                        if (cat !== category) continue
+                        const d = new Date(log.logged_at.slice(0, 10) + 'T12:00:00')
+                        const day = d.getDay() || 7
+                        const monday = new Date(d); monday.setDate(d.getDate() - day + 1)
+                        const weekKey = monday.toISOString().slice(0, 10)
+                        weekMap[weekKey] = (weekMap[weekKey] || 0) + log.weight * log.reps_completed
+                      }
+                      const weeks = Object.keys(weekMap).sort().slice(-10)
+                      return weeks.map(w => {
+                        const d = new Date(w + 'T12:00:00')
+                        return { y: Math.round(weekMap[w] / 100) / 10, label: `${d.getDate()}/${d.getMonth() + 1}` }
+                      })
+                    }
+                    const volLifts = [
+                      { label: 'Squat', data: buildWeeklyVolume('Squat'), color: '#c8923a' },
+                      { label: 'Bænkpres', data: buildWeeklyVolume('Bænkpres'), color: '#6cba6c' },
+                      { label: 'Dødløft', data: buildWeeklyVolume('Dødløft'), color: '#6b9fd4' },
+                    ]
+                    if (!volLifts.some(l => l.data.length > 1)) return null
+                    return (
+                      <div style={s.card}>
+                        <div style={s.cardLabel}>
+                          Ugentligt volumen
+                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#4a4844', fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>tons (vægt × reps / 1000)</span>
+                        </div>
+                        <div style={{ display: 'flex', gap: '1.25rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
+                          {volLifts.map(({ label, color, data }) => data.length > 0 && (
+                            <span key={label} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color }}>
+                              <svg width="16" height="8"><line x1="0" y1="4" x2="16" y2="4" stroke={color} strokeWidth="1.75" /></svg>
+                              {label}
+                            </span>
+                          ))}
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '1.5rem' }}>
+                          {volLifts.map(({ label, data, color }) => data.length > 1 && (
+                            <div key={label}>
+                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.5rem' }}>{label}</div>
+                              <LineChart series={[{ data, color }]} height={110} />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )
+                  })()}
+
+                  {/* 5. Kropsvægt */}
                   {weightChartData.length > 1 && (
                     <div style={s.card}>
                       <div style={s.cardLabel}>Kropsvægt</div>
