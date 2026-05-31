@@ -573,9 +573,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       return [{ weight: w, reps: 6, pct: '60%' }]
     }
 
-    // Percentage targets based on rep range.
-    // For heavy sets (≤4 reps): last warmup at ~95% to prime CNS, gradvist mindre hop mod toppen.
-    // For higher reps: færre sæt, lavere topprocentage (sættet er allerede submaximalt).
+    // Last warmup always close to working weight so the body feels the load before the work set.
     let targets
     if (n <= 2) {
       targets = [
@@ -596,17 +594,21 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       ]
     } else if (n <= 6) {
       targets = [
-        { pct: 0.45, reps: n },
-        { pct: 0.65, reps: Math.ceil(n * 0.7) },
-        { pct: 0.82, reps: 2 },
+        { pct: 0.55, reps: n },
+        { pct: 0.73, reps: Math.ceil(n * 0.7) },
+        { pct: 0.90, reps: 2 },
       ]
     } else if (n <= 9) {
       targets = [
-        { pct: 0.50, reps: Math.min(n, 8) },
-        { pct: 0.75, reps: 4 },
+        { pct: 0.60, reps: Math.min(n, 6) },
+        { pct: 0.80, reps: 4 },
+        { pct: 0.90, reps: 2 },
       ]
     } else {
-      targets = [{ pct: 0.60, reps: 6 }]
+      targets = [
+        { pct: 0.60, reps: 6 },
+        { pct: 0.80, reps: 4 },
+      ]
     }
 
     // Limit number of loaded sets based on working weight
