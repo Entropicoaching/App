@@ -610,13 +610,16 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     }
 
     // Limit number of loaded sets based on working weight
-    const maxSets = workingWeight < 80 ? 2 : workingWeight < 130 ? 3 : workingWeight < 200 ? 4 : 5
+    const maxSets = workingWeight < 60 ? 2 : workingWeight < 130 ? 3 : workingWeight < 200 ? 4 : 5
+
+    // Minimum jump scales with working weight — 8% floor at 5kg so light benchers don't lose top sets
+    const minJump = Math.max(5, workingWeight * 0.08)
 
     const raw = []
     for (const { pct, reps } of targets) {
       const w = round(workingWeight * pct)
       if (w <= 20) continue
-      if (raw.length && w - raw[raw.length - 1].weight < 10) continue // skip tiny jumps
+      if (raw.length && w - raw[raw.length - 1].weight < minJump) continue
       if (w >= workingWeight) continue
       raw.push({ weight: w, reps, pct: `${Math.round(pct * 100)}%` })
     }
