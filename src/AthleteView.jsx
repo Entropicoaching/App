@@ -416,6 +416,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [dismissedFeedback, setDismissedFeedback] = useState(new Set())
   const [feedbackInputs, setFeedbackInputs] = useState({})
 
+  const [showRpeGuide, setShowRpeGuide] = useState(false)
+
   // Warmup state
   const [warmupTemplates, setWarmupTemplates] = useState([])
   const [warmupChecked, setWarmupChecked] = useState({})
@@ -1294,6 +1296,33 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       {openRpePicker && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 199 }} onClick={() => setOpenRpePicker(null)} />
       )}
+      {showRpeGuide && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 9000, background: 'rgba(0,0,0,0.72)', display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setShowRpeGuide(false)}>
+          <div onClick={e => e.stopPropagation()} style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.13)', borderRadius: '12px 12px 0 0', width: '100%', maxWidth: '480px', padding: '1.5rem 1.25rem 2rem', fontFamily: "'IBM Plex Mono', monospace" }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.1rem' }}>
+              <span style={{ fontSize: '0.62rem', letterSpacing: '0.12em', color: '#c8923a', textTransform: 'uppercase' }}>RPE-skala (RTS)</span>
+              <button onClick={() => setShowRpeGuide(false)} style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '1rem', lineHeight: 1 }}>✕</button>
+            </div>
+            {[
+              { rpe: '10',  label: 'Ingen gentagelser tilbage' },
+              { rpe: '9.5', label: 'Muligvis 1 tilbage' },
+              { rpe: '9',   label: '1 tilbage' },
+              { rpe: '8.5', label: '1–2 tilbage' },
+              { rpe: '8',   label: '2 tilbage' },
+              { rpe: '7.5', label: '2–3 tilbage' },
+              { rpe: '7',   label: '3 tilbage' },
+              { rpe: '6.5', label: '3–4 tilbage' },
+              { rpe: '6',   label: '4 tilbage' },
+              { rpe: '5.5', label: '4–5 tilbage' },
+            ].map(({ rpe, label }) => (
+              <div key={rpe} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.45rem 0', borderBottom: '1px solid rgba(237,234,226,0.06)' }}>
+                <span style={{ fontSize: '0.82rem', color: '#c8923a', minWidth: '36px', textAlign: 'right' }}>{rpe}</span>
+                <span style={{ fontSize: '0.72rem', color: '#edeae2', letterSpacing: '0.02em' }}>{label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       {/* PR toast */}
       {prToast && (
         <div style={{
@@ -2068,6 +2097,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                               </div>
                                             )}
                                           </div>
+                                          <button
+                                            onClick={() => setShowRpeGuide(true)}
+                                            style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.75rem', padding: '0.3rem 0.2rem', lineHeight: 1, flexShrink: 0 }}
+                                          >ℹ</button>
                                           <input
                                             style={{ ...s.fieldInput, flex: 1, fontSize: '0.75rem', padding: '0.3rem 0.6rem', color: '#7a7770', fontStyle: 'italic' }}
                                             type="text" placeholder="Tilføj note..." value={input.note}
