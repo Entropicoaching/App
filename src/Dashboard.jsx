@@ -271,6 +271,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [athleteWeightLogs, setAthleteWeightLogs] = useState([])
   const [athleteReadiness, setAthleteReadiness] = useState([])
   const [athletePRs, setAthletePRs] = useState([])
+  const [athletePRHistory, setAthletePRHistory] = useState([])
   const [warmupTemplates, setWarmupTemplates] = useState([])
   const [editingWarmup, setEditingWarmup] = useState(null)
   const [warmupDraftSteps, setWarmupDraftSteps] = useState([])
@@ -703,7 +704,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       .select('*')
       .eq('athlete_id', athleteId)
       .order('logged_at', { ascending: false })
-    if (!data) { setAthletePRs([]); return }
+    if (!data) { setAthletePRs([]); setAthletePRHistory([]); return }
+    setAthletePRHistory(data)
     const seen = new Set()
     const prs = []
     for (const pr of data) {
@@ -1500,7 +1502,59 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     )}
                   </div>
 
-                  {/* 2. Primære løft */}
+                  {/* 2. Træningskonsistens heatmap */}
+                  {(() => {
+                    const trainingDates = new Set(athleteLogs.map(l => l.logged_at.slice(0, 10)))
+                    const todayDate = new Date()
+                    const WEEKS = 16, CELL = 22, GAP = 3, STEP = CELL + GAP
+                    const PAD_LEFT = 18, PAD_TOP = 20
+                    const W = PAD_LEFT + WEEKS * STEP + 2
+                    const H = PAD_TOP + 7 * STEP
+                    const monday = new Date(todayDate)
+                    monday.setDate(todayDate.getDate() - ((todayDate.getDay() || 7) - 1) - (WEEKS - 1) * 7)
+                    monday.setHours(12, 0, 0, 0)
+                    const todayStr = todayDate.toISOString().slice(0, 10)
+                    const cells = []
+                    const monthLabels = []
+                    for (let w = 0; w < WEEKS; w++) {
+                      for (let d = 0; d < 7; d++) {
+                        const dt = new Date(monday); dt.setDate(monday.getDate() + w * 7 + d)
+                        const str = dt.toISOString().slice(0, 10)
+                        cells.push({ w, d, str, trained: trainingDates.has(str), today: str === todayStr, future: dt > todayDate })
+                      }
+                      const wd = new Date(monday); wd.setDate(monday.getDate() + w * 7)
+                      if (wd.getDate() <= 7) monthLabels.push({ w, label: ['Jan','Feb','Mar','Apr','Maj','Jun','Jul','Aug','Sep','Okt','Nov','Dec'][wd.getMonth()] })
+                    }
+                    const totalDays = cells.filter(c => !c.future && c.trained).length
+                    const totalPossible = cells.filter(c => !c.future).length
+                    const pct = totalPossible > 0 ? Math.round(totalDays / totalPossible * 100) : 0
+                    return (
+                      <div style={s.card}>
+                        <div style={{ ...s.cardLabel, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+                          <span>Træningskonsistens</span>
+                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#c8923a', fontWeight: 400, letterSpacing: '0.04em', textTransform: 'none' }}>{totalDays} dage · {pct}% de seneste {WEEKS} uger</span>
+                        </div>
+                        <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ display: 'block' }}>
+                          {['M','','O','','F','','S'].map((lbl, i) => lbl && (
+                            <text key={i} x={PAD_LEFT - 4} y={PAD_TOP + i * STEP + CELL / 2 + 3.5} textAnchor="end" fill="#4a4844" fontSize="9" fontFamily="IBM Plex Mono">{lbl}</text>
+                          ))}
+                          {monthLabels.map(({ w, label }) => (
+                            <text key={w} x={PAD_LEFT + w * STEP + CELL / 2} y={11} textAnchor="middle" fill="#7a7770" fontSize="9" fontFamily="IBM Plex Mono">{label}</text>
+                          ))}
+                          {cells.map(({ w, d, trained, today, future }) => (
+                            <rect key={`${w}-${d}`} x={PAD_LEFT + w * STEP} y={PAD_TOP + d * STEP} width={CELL} height={CELL} rx={4}
+                              fill={future ? 'rgba(237,234,226,0.02)' : trained ? '#c8923a' : '#1c1c18'}
+                              opacity={future ? 0.3 : trained ? 0.82 : 1}
+                              stroke={today ? 'rgba(200,146,58,0.6)' : 'rgba(237,234,226,0.05)'}
+                              strokeWidth={today ? 1.5 : 0.5}
+                            />
+                          ))}
+                        </svg>
+                      </div>
+                    )
+                  })()}
+
+                  {/* 3. Primære løft */}
                   <div style={s.card}>
                     <div style={s.cardLabel}>Primære løft — sværeste sæt per session</div>
                     <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '1.5rem' }}>
@@ -1595,7 +1649,53 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     )
                   })()}
 
-                  {/* 5. Kropsvægt */}
+                  {/* 5. PR-tidslinje */}
+                  {athletePRHistory.length > 0 && (() => {
+                    const mainLifts = ['squat', 'bænk', 'bench', 'dødl', 'deadlift']
+                    const isMain = name => mainLifts.some(k => name.toLowerCase().includes(k))
+                    const fmtPRDate = d => { const dt = new Date(d + 'T12:00:00'); return `${dt.getDate()} ${['jan','feb','mar','apr','maj','jun','jul','aug','sep','okt','nov','dec'][dt.getMonth()]} ${dt.getFullYear()}` }
+                    const grouped = {}
+                    for (const pr of athletePRHistory) {
+                      if (!grouped[pr.exercise_name]) grouped[pr.exercise_name] = []
+                      grouped[pr.exercise_name].push(pr)
+                    }
+                    const mainEntries = Object.entries(grouped).filter(([name]) => isMain(name))
+                    const otherEntries = Object.entries(grouped).filter(([name]) => !isMain(name))
+                    const ordered = [...mainEntries, ...otherEntries].slice(0, 6)
+                    if (!ordered.length) return null
+                    return (
+                      <div style={s.card}>
+                        <div style={s.cardLabel}>PR-tidslinje</div>
+                        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: '1.25rem' }}>
+                          {ordered.map(([name, prs]) => {
+                            const sorted = [...prs].sort((a, b) => a.logged_at.localeCompare(b.logged_at))
+                            const latest = sorted[sorted.length - 1]
+                            return (
+                              <div key={name}>
+                                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: isMain(name) ? '#c8923a' : '#7a7770', marginBottom: '0.5rem' }}>{name}</div>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                                  {sorted.map((pr, i) => {
+                                    const isLatest = i === sorted.length - 1
+                                    return (
+                                      <div key={pr.id} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                                        <div style={{ width: 6, height: 6, borderRadius: '50%', background: isLatest ? '#c8923a' : 'rgba(237,234,226,0.15)', flexShrink: 0 }} />
+                                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', color: isLatest ? '#edeae2' : '#7a7770', fontWeight: isLatest ? 500 : 400 }}>
+                                          {pr.weight} kg{pr.reps > 1 ? ` × ${pr.reps}` : ''}
+                                        </span>
+                                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', marginLeft: 'auto' }}>{fmtPRDate(pr.logged_at.slice(0, 10))}</span>
+                                      </div>
+                                    )
+                                  })}
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )
+                  })()}
+
+                  {/* 6. Kropsvægt */}
                   {weightChartData.length > 1 && (
                     <div style={s.card}>
                       <div style={s.cardLabel}>Kropsvægt</div>
