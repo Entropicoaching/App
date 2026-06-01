@@ -12,16 +12,20 @@ jobs:
       contents: write
 
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout repo
+        shell: bash
+        run: |
+          git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git repo
+          cd repo
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          echo "REPO_DIR=$(pwd)" >> "$GITHUB_ENV"
 
       - name: Fetch all tables
+        shell: bash
         env:
           SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        shell: bash
         run: |
           TABLES="athletes exercise_logs readiness_logs weight_logs meal_logs messages personal_records weeks sessions exercises meet_plans warmup_templates exercise_library"
           TIMESTAMP=$(date -u '+%Y-%m-%dT%H%M')
@@ -46,10 +50,10 @@ jobs:
       - name: Commit to backup branch
         shell: bash
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          cd "$REPO_DIR"
 
           if git ls-remote --exit-code origin backup > /dev/null 2>&1; then
+            git fetch origin backup
             git checkout backup
           else
             git checkout --orphan backup
