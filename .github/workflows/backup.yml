@@ -17,22 +17,28 @@ jobs:
         run: |
           TABLES="athletes exercise_logs readiness_logs weight_logs meal_logs messages personal_records weeks sessions exercises meet_plans warmup_templates exercise_library"
           TIMESTAMP=$(date -u '+%Y-%m-%dT%H%M')
-          COMBINED='{}'
 
           for TABLE in $TABLES; do
             echo "Fetching $TABLE..."
-            DATA=$(curl -sf \
+            curl -sf \
               -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
               -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
               -H "Accept: application/json" \
-              "${SUPABASE_URL}/rest/v1/${TABLE}?select=*&limit=1000000" || echo "[]")
-            COMBINED=$(echo "$COMBINED" | jq --argjson data "$DATA" --arg t "$TABLE" '. + {($t): $data}')
+              "${SUPABASE_URL}/rest/v1/${TABLE}?select=*&limit=1000000" \
+              > "/tmp/table_${TABLE}.json" || echo "[]" > "/tmp/table_${TABLE}.json"
           done
 
-          echo "$COMBINED" | jq '.' > "/tmp/backup.json"
+          echo '{}' > /tmp/combined.json
+          for TABLE in $TABLES; do
+            jq --slurpfile data "/tmp/table_${TABLE}.json" --arg t "$TABLE" \
+              '. + {($t): $data[0]}' /tmp/combined.json > /tmp/combined_new.json
+            mv /tmp/combined_new.json /tmp/combined.json
+          done
+
+          cp /tmp/combined.json /tmp/backup.json
           echo "TIMESTAMP=${TIMESTAMP}" >> "$GITHUB_ENV"
           echo "Row counts:"
-          echo "$COMBINED" | jq 'to_entries[] | "\(.key): \(.value | length)"'
+          jq 'to_entries[] | "\(.key): \(.value | length)"' /tmp/backup.json
 
       - name: Push to backup branch via GitHub API
         env:
