@@ -424,6 +424,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [warmupChecked, setWarmupChecked] = useState({})
   const [warmupExpanded, setWarmupExpanded] = useState(new Set())
   const [exWarmupExpanded, setExWarmupExpanded] = useState(new Set())
+  const [exWarmupWeightOverride, setExWarmupWeightOverride] = useState({})
+  const [exWarmupWeightEditing, setExWarmupWeightEditing] = useState(null)
   const [warmupPhase, setWarmupPhase] = useState('focus')
   const [warmupFocus, setWarmupFocus] = useState(null)
   const [warmupSubtype, setWarmupSubtype] = useState(null)
@@ -1987,13 +1989,15 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
                                   {/* Per-øvelse opvarmningssæt */}
                                   {isCurrentWeek && (() => {
-                                    const w = ex.recommended_weight || lastLogByExerciseName[ex.name?.toLowerCase()]?.weight
+                                    const baseW = ex.recommended_weight || lastLogByExerciseName[ex.name?.toLowerCase()]?.weight
+                                    const exKey = ex.id
+                                    const w = exWarmupWeightOverride[exKey] ?? baseW
                                     if (!w || w < 20) return null
                                     const sets = calcWarmupSets(w, ex.reps, ex.name)
-                                    const exKey = ex.id
                                     const isOpen = exWarmupExpanded.has(exKey)
                                     const exChecked = warmupChecked[exKey] || {}
                                     const doneCnt = Object.values(exChecked).filter(Boolean).length
+                                    const isEditingWeight = exWarmupWeightEditing === exKey
                                     return (
                                       <div style={{ marginBottom: '0.75rem', border: '1px solid rgba(237,234,226,0.07)', borderLeft: '2px solid rgba(200,146,58,0.3)' }}>
                                         <div
@@ -2005,7 +2009,34 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                           })}
                                         >
                                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770' }}>Opvarmningssæt — {w}kg</span>
+                                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770' }}>Opvarmningssæt —</span>
+                                            {isEditingWeight ? (
+                                              <input
+                                                autoFocus
+                                                type="number"
+                                                defaultValue={w}
+                                                style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', width: '52px', background: 'rgba(200,146,58,0.1)', border: '1px solid rgba(200,146,58,0.5)', color: '#c8923a', padding: '0 4px', textAlign: 'center' }}
+                                                onClick={e => e.stopPropagation()}
+                                                onKeyDown={e => {
+                                                  if (e.key === 'Enter') {
+                                                    const val = parseFloat(e.target.value)
+                                                    if (val >= 20) setExWarmupWeightOverride(prev => ({ ...prev, [exKey]: val }))
+                                                    setExWarmupWeightEditing(null)
+                                                  }
+                                                  if (e.key === 'Escape') setExWarmupWeightEditing(null)
+                                                }}
+                                                onBlur={e => {
+                                                  const val = parseFloat(e.target.value)
+                                                  if (val >= 20) setExWarmupWeightOverride(prev => ({ ...prev, [exKey]: val }))
+                                                  setExWarmupWeightEditing(null)
+                                                }}
+                                              />
+                                            ) : (
+                                              <span
+                                                style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: exWarmupWeightOverride[exKey] ? '#c8923a' : '#7a7770', textDecoration: 'underline dotted', cursor: 'text' }}
+                                                onClick={e => { e.stopPropagation(); setExWarmupWeightEditing(exKey) }}
+                                              >{w}kg</span>
+                                            )}
                                             {doneCnt > 0 && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', color: '#6cba6c' }}>{doneCnt}/{sets.length}</span>}
                                           </div>
                                           <span style={{ color: '#4a4844', fontSize: '0.55rem' }}>{isOpen ? '▲' : '▼'}</span>
