@@ -11,7 +11,6 @@ jobs:
 
     steps:
       - name: Fetch Supabase data
-        shell: bash
         env:
           SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
@@ -36,16 +35,13 @@ jobs:
           echo "$COMBINED" | jq 'to_entries[] | "\(.key): \(.value | length)"'
 
       - name: Push to backup branch via GitHub API
-        shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
         run: |
-          set -e
           FILENAME="backups/backup-${TIMESTAMP}.json"
           CONTENT=$(base64 -w 0 /tmp/backup.json)
 
-          # Ensure backup branch exists
           BRANCH_EXISTS=$(curl -sf \
             -H "Authorization: token ${GH_TOKEN}" \
             "https://api.github.com/repos/${REPO}/git/refs/heads/backup" && echo "yes" || echo "no")
@@ -62,8 +58,6 @@ jobs:
               -d "{\"ref\":\"refs/heads/backup\",\"sha\":\"${MAIN_SHA}\"}"
           fi
 
-          # Upload backup file
-          echo "Uploading ${FILENAME}..."
           jq -n \
             --arg msg "backup ${TIMESTAMP}" \
             --arg content "$CONTENT" \
@@ -76,25 +70,4 @@ jobs:
             "https://api.github.com/repos/${REPO}/contents/${FILENAME}" \
             --data @/tmp/payload.json
 
-          echo "Backup pushed: ${FILENAME}"
-
-          # Delete backups older than 30 days
-          CUTOFF=$(date -u -d '30 days ago' '+%Y-%m-%dT%H%M')
-          FILES=$(curl -sf \
-            -H "Authorization: token ${GH_TOKEN}" \
-            "https://api.github.com/repos/${REPO}/contents/backups?ref=backup" | jq -r '.[] | .name' || echo "")
-
-          for NAME in $FILES; do
-            FILETS=$(echo "$NAME" | sed 's/backup-//' | sed 's/.json//')
-            if [[ "$FILETS" < "$CUTOFF" ]]; then
-              echo "Deleting old backup: $NAME"
-              FILE_SHA=$(curl -sf \
-                -H "Authorization: token ${GH_TOKEN}" \
-                "https://api.github.com/repos/${REPO}/contents/backups/${NAME}?ref=backup" | jq -r '.sha')
-              curl -sf -X DELETE \
-                -H "Authorization: token ${GH_TOKEN}" \
-                -H "Content-Type: application/json" \
-                "https://api.github.com/repos/${REPO}/contents/backups/${NAME}" \
-                -d "{\"message\":\"remove old backup ${NAME}\",\"sha\":\"${FILE_SHA}\",\"branch\":\"backup\"}"
-            fi
-          done
+          echo "Done: ${FILENAME}"
