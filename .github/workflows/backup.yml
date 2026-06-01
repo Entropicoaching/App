@@ -5,6 +5,9 @@ on:
     - cron: '0 */6 * * *'
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   backup:
     runs-on: ubuntu-latest
@@ -12,14 +15,22 @@ jobs:
       contents: write
 
     steps:
-      - name: Checkout repo
+      - name: Debug environment
         shell: bash
         run: |
-          git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git repo
-          cd repo
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          echo "REPO_DIR=$(pwd)" >> "$GITHUB_ENV"
+          set -x
+          echo "Runner OS: $RUNNER_OS"
+          echo "bash version: $BASH_VERSION"
+          which git && git --version
+          which curl && curl --version | head -1
+          which jq && jq --version
+          echo "GITHUB_REPOSITORY: $GITHUB_REPOSITORY"
+          echo "Token present: ${{ secrets.GITHUB_TOKEN != '' }}"
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Fetch all tables
         shell: bash
@@ -27,6 +38,7 @@ jobs:
           SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
+          set -x
           TABLES="athletes exercise_logs readiness_logs weight_logs meal_logs messages personal_records weeks sessions exercises meet_plans warmup_templates exercise_library"
           TIMESTAMP=$(date -u '+%Y-%m-%dT%H%M')
           COMBINED='{}'
@@ -50,7 +62,9 @@ jobs:
       - name: Commit to backup branch
         shell: bash
         run: |
-          cd "$REPO_DIR"
+          set -x
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
           if git ls-remote --exit-code origin backup > /dev/null 2>&1; then
             git fetch origin backup
@@ -68,7 +82,6 @@ jobs:
             [ -f "$FILE" ] || continue
             FILETS=$(basename "$FILE" .json | sed 's/backup-//')
             if [[ "$FILETS" < "$CUTOFF" ]]; then
-              echo "Removing old backup: $FILE"
               rm -f "$FILE"
             fi
           done
