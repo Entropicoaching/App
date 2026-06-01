@@ -5,40 +5,17 @@ on:
     - cron: '0 */6 * * *'
   workflow_dispatch:
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   backup:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
-      - name: Debug environment
-        shell: bash
-        run: |
-          set -x
-          echo "Runner OS: $RUNNER_OS"
-          echo "bash version: $BASH_VERSION"
-          which git && git --version
-          which curl && curl --version | head -1
-          which jq && jq --version
-          echo "GITHUB_REPOSITORY: $GITHUB_REPOSITORY"
-          echo "Token present: ${{ secrets.GITHUB_TOKEN != '' }}"
-
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Fetch all tables
+      - name: Fetch Supabase data
         shell: bash
         env:
           SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
-          set -x
           TABLES="athletes exercise_logs readiness_logs weight_logs meal_logs messages personal_records weeks sessions exercises meet_plans warmup_templates exercise_library"
           TIMESTAMP=$(date -u '+%Y-%m-%dT%H%M')
           COMBINED='{}'
@@ -53,43 +30,71 @@ jobs:
             COMBINED=$(echo "$COMBINED" | jq --argjson data "$DATA" --arg t "$TABLE" '. + {($t): $data}')
           done
 
-          echo "$COMBINED" | jq '.' > "/tmp/backup-${TIMESTAMP}.json"
-          echo "BACKUP_FILE=/tmp/backup-${TIMESTAMP}.json" >> "$GITHUB_ENV"
+          echo "$COMBINED" | jq '.' > "/tmp/backup.json"
           echo "TIMESTAMP=${TIMESTAMP}" >> "$GITHUB_ENV"
           echo "Row counts:"
           echo "$COMBINED" | jq 'to_entries[] | "\(.key): \(.value | length)"'
 
-      - name: Commit to backup branch
+      - name: Push to backup branch via GitHub API
         shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
         run: |
-          set -x
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          set -e
+          FILENAME="backups/backup-${TIMESTAMP}.json"
+          CONTENT=$(base64 -w 0 /tmp/backup.json)
 
-          if git ls-remote --exit-code origin backup > /dev/null 2>&1; then
-            git fetch origin backup
-            git checkout backup
-          else
-            git checkout --orphan backup
-            git rm -rf . --quiet 2>/dev/null || true
+          # Ensure backup branch exists
+          BRANCH_EXISTS=$(curl -sf \
+            -H "Authorization: token ${GH_TOKEN}" \
+            "https://api.github.com/repos/${REPO}/git/refs/heads/backup" && echo "yes" || echo "no")
+
+          if [ "$BRANCH_EXISTS" = "no" ]; then
+            echo "Creating backup branch..."
+            MAIN_SHA=$(curl -sf \
+              -H "Authorization: token ${GH_TOKEN}" \
+              "https://api.github.com/repos/${REPO}/git/refs/heads/main" | jq -r '.object.sha')
+            curl -sf -X POST \
+              -H "Authorization: token ${GH_TOKEN}" \
+              -H "Content-Type: application/json" \
+              "https://api.github.com/repos/${REPO}/git/refs" \
+              -d "{\"ref\":\"refs/heads/backup\",\"sha\":\"${MAIN_SHA}\"}"
           fi
 
-          mkdir -p backups
-          cp "$BACKUP_FILE" "backups/backup-${TIMESTAMP}.json"
+          # Upload backup file
+          echo "Uploading ${FILENAME}..."
+          jq -n \
+            --arg msg "backup ${TIMESTAMP}" \
+            --arg content "$CONTENT" \
+            --arg branch "backup" \
+            '{message: $msg, content: $content, branch: $branch}' > /tmp/payload.json
 
+          curl -sf -X PUT \
+            -H "Authorization: token ${GH_TOKEN}" \
+            -H "Content-Type: application/json" \
+            "https://api.github.com/repos/${REPO}/contents/${FILENAME}" \
+            --data @/tmp/payload.json
+
+          echo "Backup pushed: ${FILENAME}"
+
+          # Delete backups older than 30 days
           CUTOFF=$(date -u -d '30 days ago' '+%Y-%m-%dT%H%M')
-          for FILE in backups/backup-*.json; do
-            [ -f "$FILE" ] || continue
-            FILETS=$(basename "$FILE" .json | sed 's/backup-//')
+          FILES=$(curl -sf \
+            -H "Authorization: token ${GH_TOKEN}" \
+            "https://api.github.com/repos/${REPO}/contents/backups?ref=backup" | jq -r '.[] | .name' || echo "")
+
+          for NAME in $FILES; do
+            FILETS=$(echo "$NAME" | sed 's/backup-//' | sed 's/.json//')
             if [[ "$FILETS" < "$CUTOFF" ]]; then
-              rm -f "$FILE"
+              echo "Deleting old backup: $NAME"
+              FILE_SHA=$(curl -sf \
+                -H "Authorization: token ${GH_TOKEN}" \
+                "https://api.github.com/repos/${REPO}/contents/backups/${NAME}?ref=backup" | jq -r '.sha')
+              curl -sf -X DELETE \
+                -H "Authorization: token ${GH_TOKEN}" \
+                -H "Content-Type: application/json" \
+                "https://api.github.com/repos/${REPO}/contents/backups/${NAME}" \
+                -d "{\"message\":\"remove old backup ${NAME}\",\"sha\":\"${FILE_SHA}\",\"branch\":\"backup\"}"
             fi
           done
-
-          git add backups/
-          if git diff --staged --quiet; then
-            echo "Nothing to commit"
-          else
-            git commit -m "backup ${TIMESTAMP}"
-            git push origin backup
-          fi
