@@ -13,56 +13,53 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Fetch all tables
         env:
           SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        shell: bash
         run: |
-          set -euo pipefail
-          TABLES=(athletes exercise_logs readiness_logs weight_logs meal_logs messages personal_records weeks sessions exercises meet_plans warmup_templates exercise_library)
+          TABLES="athletes exercise_logs readiness_logs weight_logs meal_logs messages personal_records weeks sessions exercises meet_plans warmup_templates exercise_library"
           TIMESTAMP=$(date -u '+%Y-%m-%dT%H%M')
-
           COMBINED='{}'
-          for TABLE in "${TABLES[@]}"; do
+
+          for TABLE in $TABLES; do
             echo "Fetching $TABLE..."
             DATA=$(curl -sf \
               -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
               -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
               -H "Accept: application/json" \
-              "${SUPABASE_URL}/rest/v1/${TABLE}?select=*&limit=1000000")
-            COMBINED=$(jq -n \
-              --argjson existing "$COMBINED" \
-              --argjson data "$DATA" \
-              --arg t "$TABLE" \
-              '$existing + {($t): $data}')
+              "${SUPABASE_URL}/rest/v1/${TABLE}?select=*&limit=1000000" || echo "[]")
+            COMBINED=$(echo "$COMBINED" | jq --argjson data "$DATA" --arg t "$TABLE" '. + {($t): $data}')
           done
 
           echo "$COMBINED" | jq '.' > "/tmp/backup-${TIMESTAMP}.json"
-          echo "BACKUP_FILE=/tmp/backup-${TIMESTAMP}.json" >> $GITHUB_ENV
-          echo "TIMESTAMP=${TIMESTAMP}" >> $GITHUB_ENV
+          echo "BACKUP_FILE=/tmp/backup-${TIMESTAMP}.json" >> "$GITHUB_ENV"
+          echo "TIMESTAMP=${TIMESTAMP}" >> "$GITHUB_ENV"
           echo "Row counts:"
           echo "$COMBINED" | jq 'to_entries[] | "\(.key): \(.value | length)"'
 
       - name: Commit to backup branch
+        shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Switch to backup branch (orphan if first time)
           if git ls-remote --exit-code origin backup > /dev/null 2>&1; then
-            git fetch origin backup
             git checkout backup
           else
             git checkout --orphan backup
-            git rm -rf . --quiet || true
+            git rm -rf . --quiet 2>/dev/null || true
           fi
 
           mkdir -p backups
           cp "$BACKUP_FILE" "backups/backup-${TIMESTAMP}.json"
 
-          # Remove backups older than 30 days
-          CUTOFF=$(date -u -d '30 days ago' '+%Y-%m-%dT0000')
+          CUTOFF=$(date -u -d '30 days ago' '+%Y-%m-%dT%H%M')
           for FILE in backups/backup-*.json; do
             [ -f "$FILE" ] || continue
             FILETS=$(basename "$FILE" .json | sed 's/backup-//')
