@@ -46,7 +46,6 @@ jobs:
           REPO: ${{ github.repository }}
         run: |
           FILENAME="backups/backup-${TIMESTAMP}.json"
-          CONTENT=$(base64 -w 0 /tmp/backup.json)
 
           BRANCH_EXISTS=$(curl -sf \
             -H "Authorization: token ${GH_TOKEN}" \
@@ -64,11 +63,12 @@ jobs:
               -d "{\"ref\":\"refs/heads/backup\",\"sha\":\"${MAIN_SHA}\"}"
           fi
 
+          base64 -w 0 /tmp/backup.json > /tmp/content.b64
           jq -n \
+            --rawfile content /tmp/content.b64 \
             --arg msg "backup ${TIMESTAMP}" \
-            --arg content "$CONTENT" \
             --arg branch "backup" \
-            '{message: $msg, content: $content, branch: $branch}' > /tmp/payload.json
+            '{message: $msg, content: ($content | rtrimstr("\n")), branch: $branch}' > /tmp/payload.json
 
           curl -sf -X PUT \
             -H "Authorization: token ${GH_TOKEN}" \
