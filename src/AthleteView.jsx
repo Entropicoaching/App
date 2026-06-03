@@ -1888,7 +1888,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                     const sessionLogs = logsForView.filter(l => sessionExIds.includes(l.exercise_id))
                     const totalSets = (session.exercises || []).reduce((acc, e) => acc + (e.sets || 0), 0)
                     const loggedSets = sessionLogs.filter(l => !l.skipped).length
-                    const isDone = totalSets > 0 && loggedSets >= totalSets
+                    const isDone = totalSets > 0 && sessionLogs.length >= totalSets
 
                     return (
                       <div key={session.id} style={{ marginBottom: '0.75rem' }}>
@@ -1900,7 +1900,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                             <div>
                               <div style={{ ...s.cardLabel, marginBottom: '0.3rem', fontSize: '0.72rem' }}>{session.title}</div>
                               <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                                {(session.exercises || []).length} øvelser · {loggedSets}/{totalSets} sæt logget
+                                {(session.exercises || []).length} øvelser · {loggedSets}/{totalSets} sæt logget{sessionLogs.filter(l => l.skipped).length > 0 ? ` · ${sessionLogs.filter(l => l.skipped).length} skippet` : ''}
                               </div>
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
