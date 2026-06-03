@@ -293,6 +293,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [addingLibraryEx, setAddingLibraryEx] = useState(false)
   const [libraryAddForm, setLibraryAddForm] = useState({ name: '', category: 'Accessory' })
   const [librarySearch, setLibrarySearch] = useState('')
+  const [showAiExport, setShowAiExport] = useState(false)
+  const [aiExportWeeks, setAiExportWeeks] = useState(8)
+  const [aiExportText, setAiExportText] = useState('')
+  const [aiExportCopied, setAiExportCopied] = useState(false)
 
   useEffect(() => {
     const handler = () => setIsMobile(window.innerWidth < 768)
@@ -820,6 +824,172 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     a.download = `${filename}.json`
     a.click()
     URL.revokeObjectURL(url)
+  }
+
+  function generateAIReport(weeksBack) {
+    const ath = selectedAthlete
+    if (!ath) return
+
+    const cutoff = new Date()
+    cutoff.setDate(cutoff.getDate() - weeksBack * 7)
+    const cutoffStr = cutoff.toISOString().slice(0, 10)
+
+    const fmtDato = str => new Date(str + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short', year: 'numeric' })
+    const fmtDatoShort = str => new Date(str + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })
+    const pad = (str, len) => String(str).padEnd(len)
+
+    // Byg sessions fra athleteLogs
+    const sessionMap = {}
+    for (const log of athleteLogs) {
+      const ex = log.exercises
+      const sess = ex?.sessions
+      const week = sess?.weeks
+      const date = log.logged_at.slice(0, 10)
+      if (date < cutoffStr) continue
+      const key = `${ex?.session_id}_${date}`
+      if (!sessionMap[key]) {
+        sessionMap[key] = {
+          date,
+          title: sess?.title || 'Ukendt session',
+          week_number: week?.week_number ?? null,
+          block_name: week?.block_name ?? null,
+          athlete_rating: sess?.athlete_rating ?? null,
+          athlete_comment: sess?.athlete_comment ?? null,
+          exercises: {},
+        }
+      }
+      const exId = log.exercise_id
+      if (!sessionMap[key].exercises[exId]) {
+        sessionMap[key].exercises[exId] = {
+          name: ex?.name ?? 'Ukendt øvelse',
+          planned_sets: ex?.sets ?? null,
+          planned_reps: ex?.reps ?? null,
+          planned_intensity: ex?.intensity ?? null,
+          sets: [],
+        }
+      }
+      sessionMap[key].exercises[exId].sets.push({
+        set_number: log.set_number,
+        weight: log.weight,
+        reps: log.reps_completed,
+        rpe_planned: log.rpe_planned,
+        rpe_actual: log.rpe_actual,
+        skipped: log.skipped,
+      })
+    }
+
+    const sessions = Object.values(sessionMap).sort((a, b) => a.date.localeCompare(b.date))
+
+    // Grupper sessions per uge
+    const weekGroups = {}
+    for (const sess of sessions) {
+      const wk = sess.week_number ?? 'Ukendt'
+      const wkKey = `${String(wk).padStart(3, '0')}_${sess.block_name || ''}`
+      if (!weekGroups[wkKey]) weekGroups[wkKey] = { week_number: wk, block_name: sess.block_name, sessions: [] }
+      weekGroups[wkKey].sessions.push(sess)
+    }
+
+    const periodStart = sessions.length ? fmtDatoShort(sessions[0].date) : '—'
+    const periodEnd = sessions.length ? fmtDatoShort(sessions[sessions.length - 1].date) : '—'
+
+    const filteredWeight = athleteWeightLogs.filter(l => l.logged_at >= cutoffStr).sort((a, b) => a.logged_at.localeCompare(b.logged_at))
+    const filteredReadiness = athleteReadiness.filter(l => l.logged_date >= cutoffStr).sort((a, b) => a.logged_date.localeCompare(b.logged_date))
+    const filteredPRs = athletePRs.filter(l => (l.logged_at || '').slice(0, 10) >= cutoffStr).sort((a, b) => (a.logged_at || '').localeCompare(b.logged_at || ''))
+
+    const avgWeight = filteredWeight.length ? (filteredWeight.reduce((s, l) => s + l.weight, 0) / filteredWeight.length).toFixed(1) : null
+
+    let lines = []
+
+    lines.push('═══════════════════════════════════════════════════════')
+    lines.push(`ATLET:    ${ath.name}`)
+    lines.push(`PERIODE:  Seneste ${weeksBack} uger (${periodStart} – ${periodEnd})`)
+    lines.push(``)
+    const maxes = [
+      ath.squat ? `Squat ${ath.squat}kg` : null,
+      ath.bench ? `Bænk ${ath.bench}kg` : null,
+      ath.deadlift ? `Dødløft ${ath.deadlift}kg` : null,
+    ].filter(Boolean)
+    if (maxes.length) lines.push(`KONKURRENCEMAXES: ${maxes.join(' | ')}`)
+    const trainMaxes = [
+      ath.training_squat ? `Squat ${ath.training_squat}kg` : null,
+      ath.training_bench ? `Bænk ${ath.training_bench}kg` : null,
+      ath.training_deadlift ? `Dødløft ${ath.training_deadlift}kg` : null,
+    ].filter(Boolean)
+    if (trainMaxes.length) lines.push(`TRÆNINGSMAXES:    ${trainMaxes.join(' | ')}`)
+    if (ath.competition_date) lines.push(`STÆVNE:           ${fmtDato(ath.competition_date)}`)
+    if (avgWeight) lines.push(`KROPSVÆGT:        ${avgWeight}kg gns (${filteredWeight.length} målinger)`)
+    lines.push('═══════════════════════════════════════════════════════')
+    lines.push('')
+
+    // Træningslog
+    lines.push('── TRÆNINGSLOG ─────────────────────────────────────────')
+    lines.push('')
+
+    if (Object.keys(weekGroups).length === 0) {
+      lines.push('Ingen træningslog i perioden.')
+    } else {
+      for (const wkKey of Object.keys(weekGroups).sort()) {
+        const wg = weekGroups[wkKey]
+        lines.push(`Uge ${wg.week_number}${wg.block_name ? ` — ${wg.block_name}` : ''}`)
+        for (const sess of wg.sessions) {
+          const ratingStr = sess.athlete_rating ? ` [Rating: ${sess.athlete_rating}/10]` : ' [Ikke rated]'
+          lines.push(`  ▸ ${sess.title} [${fmtDatoShort(sess.date)}]${ratingStr}`)
+          if (sess.athlete_comment) lines.push(`    Kommentar: "${sess.athlete_comment}"`)
+          for (const ex of Object.values(sess.exercises)) {
+            const planStr = [
+              ex.planned_sets && ex.planned_reps ? `${ex.planned_sets}×${ex.planned_reps}` : null,
+              ex.planned_intensity ? `@${ex.planned_intensity}` : null,
+            ].filter(Boolean).join(' ')
+            lines.push(`    ${pad(ex.name, 24)}${planStr ? `Plan: ${planStr}` : ''}`)
+            const sortedSets = ex.sets.sort((a, b) => a.set_number - b.set_number)
+            for (const set of sortedSets) {
+              if (set.skipped) {
+                lines.push(`      Sæt ${set.set_number}: [skippet]`)
+              } else {
+                const rpeStr = set.rpe_actual != null ? `  RPE ${set.rpe_actual}` : ''
+                lines.push(`      Sæt ${set.set_number}: ${set.weight}kg × ${set.reps}${rpeStr}`)
+              }
+            }
+          }
+        }
+        lines.push('')
+      }
+    }
+
+    // PRs i perioden
+    if (filteredPRs.length > 0) {
+      lines.push('── PERSONLIGE REKORDER (i perioden) ────────────────────')
+      lines.push('')
+      for (const pr of filteredPRs) {
+        lines.push(`  ${pad(pr.exercise_name, 20)} ${pr.weight}kg × ${pr.reps}  (${fmtDatoShort(pr.logged_at.slice(0, 10))})`)
+      }
+      lines.push('')
+    }
+
+    // Readiness
+    if (filteredReadiness.length > 0) {
+      lines.push('── READINESS ───────────────────────────────────────────')
+      lines.push('')
+      lines.push(`  ${pad('Dato', 12)}${pad('Søvn', 8)}${pad('Energi', 9)}${pad('Stress', 9)}Score`)
+      for (const r of filteredReadiness) {
+        lines.push(`  ${pad(fmtDatoShort(r.logged_date), 12)}${pad(r.sleep_hours != null ? r.sleep_hours + 't' : '—', 8)}${pad(r.energy != null ? r.energy + '/10' : '—', 9)}${pad(r.stress != null ? r.stress + '/10' : '—', 9)}${r.readiness_score ?? '—'}`)
+      }
+      lines.push('')
+    }
+
+    // Vægt
+    if (filteredWeight.length > 0) {
+      lines.push('── KROPSVÆGT ───────────────────────────────────────────')
+      lines.push('')
+      for (const w of filteredWeight) {
+        lines.push(`  ${fmtDatoShort(w.logged_at)}   ${w.weight}kg`)
+      }
+      lines.push('')
+    }
+
+    lines.push('═══════════════════════════════════════════════════════')
+
+    setAiExportText(lines.join('\n'))
   }
 
   async function exportTraeningsdata() {
@@ -1471,6 +1641,49 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
               return (
                 <div>
+                  {/* AI Rapport */}
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
+                    <button style={{ ...s.btnGhost, fontSize: '0.6rem', padding: '0.4rem 0.9rem', color: '#c8923a', borderColor: 'rgba(200,146,58,0.35)' }} onClick={() => { setAiExportText(''); setShowAiExport(true) }}>AI Rapport</button>
+                  </div>
+
+                  {showAiExport && (
+                    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }} onClick={() => setShowAiExport(false)}>
+                      <div style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.12)', padding: '1.5rem', width: '100%', maxWidth: '680px', maxHeight: '85vh', display: 'flex', flexDirection: 'column', gap: '1rem' }} onClick={e => e.stopPropagation()}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <div style={s.cardLabel}>AI Rapport — {selectedAthlete?.name}</div>
+                          <button style={{ background: 'none', border: 'none', color: '#7a7770', cursor: 'pointer', fontSize: '1rem' }} onClick={() => setShowAiExport(false)}>✕</button>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                          <span style={s.fieldLabel}>Periode:</span>
+                          {[4, 8, 12, 16].map(n => (
+                            <button key={n} style={{ ...s.btnGhost, fontSize: '0.55rem', padding: '0.3rem 0.7rem', color: aiExportWeeks === n ? '#c8923a' : '#7a7770', borderColor: aiExportWeeks === n ? 'rgba(200,146,58,0.5)' : 'rgba(237,234,226,0.15)', background: aiExportWeeks === n ? 'rgba(200,146,58,0.08)' : 'transparent' }} onClick={() => setAiExportWeeks(n)}>{n} uger</button>
+                          ))}
+                          <input
+                            type="number" min="1" max="52"
+                            value={aiExportWeeks}
+                            onChange={e => setAiExportWeeks(Math.max(1, parseInt(e.target.value) || 1))}
+                            style={{ ...s.input, width: '60px', padding: '0.3rem 0.5rem', fontSize: '0.7rem', textAlign: 'center' }}
+                          />
+                          <button style={{ ...s.btnPrimary, fontSize: '0.6rem', padding: '0.4rem 0.9rem' }} onClick={() => generateAIReport(aiExportWeeks)}>Generer</button>
+                        </div>
+                        {aiExportText && (
+                          <>
+                            <textarea
+                              readOnly
+                              value={aiExportText}
+                              style={{ flex: 1, minHeight: '340px', background: '#141410', border: '1px solid rgba(237,234,226,0.1)', color: '#edeae2', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', lineHeight: 1.6, padding: '0.75rem', resize: 'vertical', outline: 'none' }}
+                              onClick={e => e.target.select()}
+                            />
+                            <button
+                              style={{ ...s.btnPrimary, fontSize: '0.6rem', padding: '0.5rem 1rem', alignSelf: 'flex-end', background: aiExportCopied ? '#4a7a4a' : undefined }}
+                              onClick={() => { navigator.clipboard.writeText(aiExportText); setAiExportCopied(true); setTimeout(() => setAiExportCopied(false), 2000) }}
+                            >{aiExportCopied ? '✓ Kopieret!' : 'Kopiér til udklipsholder'}</button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
                   {/* 1. Træningsoverblik */}
                   <div style={s.card}>
                     <div style={s.cardLabel}>Træningsoverblik</div>
