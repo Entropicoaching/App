@@ -294,6 +294,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [libraryAddForm, setLibraryAddForm] = useState({ name: '', category: 'Accessory' })
   const [librarySearch, setLibrarySearch] = useState('')
   const [athleteWeekSummary, setAthleteWeekSummary] = useState({})
+  const [hiddenAthleteIds, setHiddenAthleteIds] = useState(() => {
+    try { return new Set(JSON.parse(localStorage.getItem('entropi_hidden_athletes') || '[]')) } catch { return new Set() }
+  })
+  const [showHiddenAthletes, setShowHiddenAthletes] = useState(false)
   const [showAiExport, setShowAiExport] = useState(false)
   const [aiExportWeeks, setAiExportWeeks] = useState(8)
   const [aiExportText, setAiExportText] = useState('')
@@ -1329,7 +1333,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         </div>
         <nav style={{ flex: 1, padding: '0.75rem 0', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', padding: '0 1.25rem', marginBottom: '0.35rem' }}>Atleter</div>
-          {athletes.map(ath => {
+          {athletes.filter(a => !hiddenAthleteIds.has(a.id)).map(ath => {
             const isActive = (view === 'profile' || view === 'list') && selectedAthlete?.id === ath.id
             const unread = unreadCounts[ath.id] || 0
             const ws = athleteWeekSummary[ath.id]
@@ -1535,41 +1539,69 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             ) : (
               <>
                 {/* Ugeplan oversigt */}
-                <div style={{ ...s.card, marginBottom: '1.75rem' }}>
-                  <div style={s.cardLabel}>Ugeplan</div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-                    {athletes.map((ath, i, arr) => {
-                      const ws = athleteWeekSummary[ath.id]
-                      const hasSessions = ws && ws.session_count > 0
-                      return (
-                        <div
-                          key={ath.id}
-                          onClick={() => openProfile(ath, 'program')}
-                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.6rem 0', borderBottom: i < arr.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none', cursor: 'pointer', gap: '1rem' }}
-                        >
-                          <div style={{ fontSize: '0.88rem', color: '#edeae2', minWidth: '140px' }}>{ath.name}</div>
-                          {ws ? (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1 }}>
-                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#7a7770' }}>Uge {ws.week_number}{ws.block_name ? ` — ${ws.block_name}` : ''}</div>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                                <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: hasSessions ? '#6cba6c' : '#c8923a', flexShrink: 0 }} />
-                                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: hasSessions ? '#6cba6c' : '#c8923a' }}>
-                                  {hasSessions ? `${ws.session_count} session${ws.session_count !== 1 ? 'er' : ''}` : 'Ingen sessioner'}
-                                </span>
+                {(() => {
+                  const visibleAthletes = athletes.filter(a => !hiddenAthleteIds.has(a.id))
+                  const hiddenAthletes = athletes.filter(a => hiddenAthleteIds.has(a.id))
+                  const displayAthletes = showHiddenAthletes ? athletes : visibleAthletes
+                  const toggleHide = (e, athId) => {
+                    e.stopPropagation()
+                    setHiddenAthleteIds(prev => {
+                      const next = new Set(prev)
+                      if (next.has(athId)) next.delete(athId); else next.add(athId)
+                      localStorage.setItem('entropi_hidden_athletes', JSON.stringify([...next]))
+                      return next
+                    })
+                  }
+                  return (
+                    <div style={{ ...s.card, marginBottom: '1.75rem' }}>
+                      <div style={s.cardLabel}>Ugeplan</div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+                        {displayAthletes.map((ath, i, arr) => {
+                          const ws = athleteWeekSummary[ath.id]
+                          const hasSessions = ws && ws.session_count > 0
+                          const isHidden = hiddenAthleteIds.has(ath.id)
+                          return (
+                            <div
+                              key={ath.id}
+                              style={{ display: 'flex', alignItems: 'center', padding: '0.6rem 0', borderBottom: i < arr.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none', gap: '1rem', opacity: isHidden ? 0.4 : 1 }}
+                            >
+                              <div onClick={() => !isHidden && openProfile(ath, 'program')} style={{ display: 'flex', alignItems: 'center', flex: 1, gap: '1rem', cursor: isHidden ? 'default' : 'pointer', minWidth: 0 }}>
+                                <div style={{ fontSize: '0.88rem', color: '#edeae2', minWidth: '140px', flexShrink: 0 }}>{ath.name}</div>
+                                {ws ? (
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#7a7770' }}>Uge {ws.week_number}{ws.block_name ? ` — ${ws.block_name}` : ''}</div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                                      <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: hasSessions ? '#6cba6c' : '#c8923a', flexShrink: 0 }} />
+                                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: hasSessions ? '#6cba6c' : '#c8923a' }}>
+                                        {hasSessions ? `${ws.session_count} session${ws.session_count !== 1 ? 'er' : ''}` : 'Ingen sessioner'}
+                                      </span>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                                    <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#4a4844', flexShrink: 0 }} />
+                                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844' }}>Ingen program</span>
+                                  </div>
+                                )}
                               </div>
+                              <button
+                                onClick={e => toggleHide(e, ath.id)}
+                                title={isHidden ? 'Vis igen' : 'Skjul'}
+                                style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', padding: '0.1rem 0.3rem', flexShrink: 0, lineHeight: 1 }}
+                              >{isHidden ? '↩' : '✕'}</button>
                             </div>
-                          ) : (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flex: 1 }}>
-                              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#4a4844', flexShrink: 0 }} />
-                              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844' }}>Ingen program</span>
-                            </div>
-                          )}
-                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#4a4844' }}>→</span>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
+                          )
+                        })}
+                      </div>
+                      {hiddenAthletes.length > 0 && (
+                        <button
+                          onClick={() => setShowHiddenAthletes(p => !p)}
+                          style={{ background: 'none', border: 'none', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#4a4844', cursor: 'pointer', marginTop: '0.75rem', padding: 0 }}
+                        >{showHiddenAthletes ? 'Skjul skjulte' : `Vis ${hiddenAthletes.length} skjult${hiddenAthletes.length !== 1 ? 'e' : ''}`}</button>
+                      )}
+                    </div>
+                  )
+                })()}
 
                 {(() => {
                   const athletesWithMsgs = athletes
