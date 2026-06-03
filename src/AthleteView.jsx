@@ -968,15 +968,17 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     const { data } = await supabase.from('messages').select('*').eq('athlete_id', athleteId).order('created_at')
     const msgs = data || []
     setMessages(msgs)
-    const lsKey = `entropi_lastMsgRead_${athleteId}`
-    const lastRead = localStorage.getItem(lsKey) || '1970-01-01'
-    const unread = msgs.filter(m => m.sender_role === 'coach' && m.created_at > lastRead).length
+    const unread = msgs.filter(m => m.sender_role === 'coach' && !m.read_at).length
     setUnreadMsgCount(unread)
   }
 
-  function markMessagesAsRead() {
+  async function markMessagesAsRead() {
     if (!athlete) return
-    localStorage.setItem(`entropi_lastMsgRead_${athlete.id}`, new Date().toISOString())
+    await supabase.from('messages')
+      .update({ read_at: new Date().toISOString() })
+      .eq('athlete_id', athlete.id)
+      .eq('sender_role', 'coach')
+      .is('read_at', null)
     setUnreadMsgCount(0)
   }
 
