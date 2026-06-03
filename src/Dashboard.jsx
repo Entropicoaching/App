@@ -293,6 +293,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [addingLibraryEx, setAddingLibraryEx] = useState(false)
   const [libraryAddForm, setLibraryAddForm] = useState({ name: '', category: 'Accessory' })
   const [librarySearch, setLibrarySearch] = useState('')
+  const [athleteWeekSummary, setAthleteWeekSummary] = useState({})
   const [showAiExport, setShowAiExport] = useState(false)
   const [aiExportWeeks, setAiExportWeeks] = useState(8)
   const [aiExportText, setAiExportText] = useState('')
@@ -346,9 +347,27 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       if (data?.length) {
         fetchLatestMessages(data.map(a => a.id))
         fetchProfilesLastSeen(data)
+        fetchAthleteWeekSummaries(data.map(a => a.id))
       }
     }
     setLoading(false)
+  }
+
+  async function fetchAthleteWeekSummaries(athleteIds) {
+    if (!athleteIds.length) return
+    const { data } = await supabase
+      .from('weeks')
+      .select('athlete_id, week_number, block_name, sessions(id)')
+      .in('athlete_id', athleteIds)
+    if (!data) return
+    const summary = {}
+    for (const w of data) {
+      const aid = w.athlete_id
+      if (!summary[aid] || w.week_number > summary[aid].week_number) {
+        summary[aid] = { week_number: w.week_number, block_name: w.block_name, session_count: (w.sessions || []).length }
+      }
+    }
+    setAthleteWeekSummary(summary)
   }
 
   async function fetchProfilesLastSeen(athletesList) {
@@ -1308,18 +1327,45 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           <div style={s.wordmark}>Entropi<span style={{ color: '#c8923a' }}>.</span></div>
           <div style={s.sub}>Coach Portal</div>
         </div>
-        <nav style={{ flex: 1, padding: '1rem 0' }}>
-          <div style={{ ...s.navItem(view === 'list' || view === 'profile'), justifyContent: 'space-between' }} onClick={() => { setView('list'); setSidebarOpen(false) }}>
-            <span>Atleter</span>
-            {Object.values(unreadCounts).reduce((s, n) => s + n, 0) > 0 && (
-              <span style={{ background: '#c8923a', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', fontWeight: 700, borderRadius: '999px', padding: '0.1rem 0.4rem', minWidth: '16px', textAlign: 'center' }}>
-                {Object.values(unreadCounts).reduce((s, n) => s + n, 0)}
-              </span>
-            )}
-          </div>
-          <div style={s.navItem(view === 'library')} onClick={() => { setView('library'); setSidebarOpen(false) }}>Bibliotek</div>
+        <nav style={{ flex: 1, padding: '0.75rem 0', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', padding: '0 1.25rem', marginBottom: '0.35rem' }}>Atleter</div>
+          {athletes.map(ath => {
+            const isActive = (view === 'profile' || view === 'list') && selectedAthlete?.id === ath.id
+            const unread = unreadCounts[ath.id] || 0
+            const ws = athleteWeekSummary[ath.id]
+            return (
+              <div
+                key={ath.id}
+                onClick={() => { openProfile(ath); setSidebarOpen(false) }}
+                style={{ padding: '0.55rem 1.25rem', cursor: 'pointer', borderLeft: isActive ? '2px solid #c8923a' : '2px solid transparent', background: isActive ? 'rgba(200,146,58,0.08)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}
+                onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'rgba(237,234,226,0.03)' }}
+                onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'transparent' }}
+              >
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: isActive ? '#c8923a' : '#b8b4a8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ath.name.split(' ')[0]}</div>
+                  {ws ? (
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: ws.session_count > 0 ? '#6cba6c' : '#7a7770', marginTop: '0.1rem', letterSpacing: '0.04em' }}>
+                      {ws.session_count > 0 ? `uge ${ws.week_number} · ${ws.session_count} sess` : `uge ${ws.week_number} · ingen sess`}
+                    </div>
+                  ) : (
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#4a4844', marginTop: '0.1rem' }}>ingen program</div>
+                  )}
+                </div>
+                {unread > 0 && (
+                  <span style={{ background: '#c8923a', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', fontWeight: 700, borderRadius: '999px', padding: '0.1rem 0.35rem', flexShrink: 0 }}>{unread}</span>
+                )}
+              </div>
+            )
+          })}
+          {athletes.length === 0 && (
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', padding: '0.5rem 1.25rem' }}>Ingen atleter</div>
+          )}
         </nav>
         <div style={s.sidebarFooter}>
+          <div
+            onClick={() => { setView('library'); setSidebarOpen(false) }}
+            style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: view === 'library' ? '#c8923a' : '#4a4844', cursor: 'pointer', marginBottom: '0.75rem' }}
+          >Øvelsesbibliotek</div>
           <div style={{ color: '#7a7770', marginBottom: '0.3rem' }}>Marc Schlichting</div>
           <div style={{ fontSize: '0.7rem' }}>{session.user.email}</div>
           {onPreviewAthlete && !previewPickerOpen && (
@@ -1488,6 +1534,43 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '3rem 0' }}>Ingen atleter endnu — tilføj din første</div>
             ) : (
               <>
+                {/* Ugeplan oversigt */}
+                <div style={{ ...s.card, marginBottom: '1.75rem' }}>
+                  <div style={s.cardLabel}>Ugeplan</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+                    {athletes.map((ath, i, arr) => {
+                      const ws = athleteWeekSummary[ath.id]
+                      const hasSessions = ws && ws.session_count > 0
+                      return (
+                        <div
+                          key={ath.id}
+                          onClick={() => openProfile(ath, 'program')}
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.6rem 0', borderBottom: i < arr.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none', cursor: 'pointer', gap: '1rem' }}
+                        >
+                          <div style={{ fontSize: '0.88rem', color: '#edeae2', minWidth: '140px' }}>{ath.name}</div>
+                          {ws ? (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1 }}>
+                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#7a7770' }}>Uge {ws.week_number}{ws.block_name ? ` — ${ws.block_name}` : ''}</div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                                <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: hasSessions ? '#6cba6c' : '#c8923a', flexShrink: 0 }} />
+                                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: hasSessions ? '#6cba6c' : '#c8923a' }}>
+                                  {hasSessions ? `${ws.session_count} session${ws.session_count !== 1 ? 'er' : ''}` : 'Ingen sessioner'}
+                                </span>
+                              </div>
+                            </div>
+                          ) : (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flex: 1 }}>
+                              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#4a4844', flexShrink: 0 }} />
+                              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844' }}>Ingen program</span>
+                            </div>
+                          )}
+                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#4a4844' }}>→</span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+
                 {(() => {
                   const athletesWithMsgs = athletes
                     .filter(a => latestMessages[a.id] && latestMessages[a.id].sender_role === 'athlete')
