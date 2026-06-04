@@ -3220,15 +3220,22 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                                 const color = blockColor(phase.name)
                                 const firstWeekId = phase.weeks[0].id
                                 const pct = (phase.weeks.length / totalPhaseWeeks) * 100
+
+                                // Completion: sum logged vs total sets across all weeks in this phase
+                                const phaseLogged = phase.weeks.reduce((s, w) => s + (complianceByWeekNum[w.week_number] || 0), 0)
+                                const phaseTotal = phase.weeks.reduce((s, w) => s + (totalSetsByWeekNum[w.week_number] || 0), 0)
+                                const phasePct = phaseTotal > 0 ? phaseLogged / phaseTotal : 0
+                                const isDone = phaseTotal > 0 && phasePct >= 0.8
+
                                 return (
                                   <div
                                     key={pi}
-                                    title={phase.name ? `${phase.name} · ${phase.weeks.length} uger` : `${phase.weeks.length} uger (ingen blok)`}
+                                    title={phase.name ? `${phase.name} · ${phase.weeks.length} uger${isDone ? ' · Fuldendt ✓' : phaseTotal > 0 ? ` · ${Math.round(phasePct * 100)}%` : ''}` : `${phase.weeks.length} uger`}
                                     style={{
                                       width: `${pct}%`, flexShrink: 0,
-                                      background: phase.name ? color + '22' : 'rgba(237,234,226,0.04)',
-                                      border: `1px solid ${phase.name ? color + '55' : 'rgba(237,234,226,0.1)'}`,
-                                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                      background: isDone ? color + '55' : phase.name ? color + '22' : 'rgba(237,234,226,0.04)',
+                                      border: `1px solid ${isDone ? color + 'cc' : phase.name ? color + '55' : 'rgba(237,234,226,0.1)'}`,
+                                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px',
                                       cursor: 'pointer', overflow: 'hidden', minWidth: 0, boxSizing: 'border-box',
                                     }}
                                     onClick={() => {
@@ -3236,8 +3243,9 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                                       setTimeout(() => document.getElementById(`week-row-${firstWeekId}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50)
                                     }}
                                   >
+                                    {isDone && <span style={{ color, fontSize: '0.55rem', lineHeight: 1, flexShrink: 0 }}>✓</span>}
                                     {phase.name && (
-                                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.08em', textTransform: 'uppercase', color, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', padding: '0 8px' }}>
+                                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.08em', textTransform: 'uppercase', color, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', padding: isDone ? '0 4px 0 0' : '0 8px' }}>
                                         {phase.name} · {phase.weeks.length}u
                                       </span>
                                     )}
@@ -3256,14 +3264,19 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                             )}
                           </div>
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
-                            {phases.filter(p => p.name).map((phase, pi) => (
-                              <div key={pi} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                                <div style={{ width: '7px', height: '7px', background: blockColor(phase.name), flexShrink: 0 }} />
-                                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#7a7770', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
-                                  {phase.name} — {phase.weeks.length} {phase.weeks.length === 1 ? 'uge' : 'uger'}
-                                </span>
-                              </div>
-                            ))}
+                            {phases.filter(p => p.name).map((phase, pi) => {
+                              const phaseLogged = phase.weeks.reduce((s, w) => s + (complianceByWeekNum[w.week_number] || 0), 0)
+                              const phaseTotal = phase.weeks.reduce((s, w) => s + (totalSetsByWeekNum[w.week_number] || 0), 0)
+                              const isDone = phaseTotal > 0 && phaseLogged / phaseTotal >= 0.8
+                              return (
+                                <div key={pi} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                                  <div style={{ width: '7px', height: '7px', background: blockColor(phase.name), flexShrink: 0, opacity: isDone ? 1 : 0.5 }} />
+                                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: isDone ? '#b8b4a8' : '#7a7770', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                                    {phase.name} — {phase.weeks.length} {phase.weeks.length === 1 ? 'uge' : 'uger'}{isDone ? ' ✓' : ''}
+                                  </span>
+                                </div>
+                              )
+                            })}
                           </div>
                         </div>
                         )
