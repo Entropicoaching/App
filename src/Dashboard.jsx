@@ -1455,7 +1455,6 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             </button>
           )}
           <div style={{ ...s.topbarTitle, flex: 1 }}>{view === 'library' ? 'Øvelsesbibliotek' : view === 'list' ? 'Atleter' : a?.name}</div>
-          {view === 'list' && <button style={s.btnPrimary} onClick={() => setShowAddModal(true)}>+ Tilføj atlet</button>}
         </div>
 
         {/* LIBRARY VIEW */}
@@ -1555,13 +1554,16 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         {/* LIST VIEW */}
         {view === 'list' && (
           <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
-            <div style={{ marginBottom: '1.75rem' }}>
-              <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2' }}>
-                Dine <em style={{ fontStyle: 'italic', color: '#7a7770' }}>atleter.</em>
-              </h1>
-              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844', marginTop: '0.25rem' }}>
-                {athletes.length} atlet{athletes.length !== 1 ? 'er' : ''}
+            <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '1.75rem', flexWrap: 'wrap', gap: '1rem' }}>
+              <div>
+                <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', margin: 0 }}>
+                  Overblik
+                </h1>
+                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844', marginTop: '0.25rem' }}>
+                  {athletes.filter(a => !hiddenAthleteIds.has(a.id)).length} aktive atleter
+                </div>
               </div>
+              <button style={s.btnPrimary} onClick={() => setShowAddModal(true)}>+ Tilføj atlet</button>
             </div>
             {loading ? (
               <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Indlæser...</div>
@@ -1683,43 +1685,6 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     </div>
                   )
                 })()}
-                <div style={s.grid}>
-                  {athletes.map(athlete => (
-                    <div key={athlete.id} style={s.athleteCard} onClick={() => openProfile(athlete)}
-                      onMouseEnter={e => { e.currentTarget.style.background = '#1c1c18'; e.currentTarget.style.borderTop = '2px solid #c8923a' }}
-                      onMouseLeave={e => { e.currentTarget.style.background = '#141410'; e.currentTarget.style.borderTop = '2px solid transparent' }}>
-                      <div style={{ position: 'relative', flexShrink: 0 }}>
-                        <div style={s.avatar}>{initials(athlete.name)}</div>
-                        {(unreadCounts[athlete.id] || 0) > 0 && <div style={{ position: 'absolute', top: -2, right: -2, width: 8, height: 8, borderRadius: '50%', background: '#c8923a', border: '2px solid #141410' }} />}
-                      </div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: '0.92rem', color: '#edeae2' }}>{athlete.name}</div>
-                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#4a4844' }}>
-                          {athlete.weight_class ? athlete.weight_class + 'kg' : 'Ingen vægtklasse'} · {athlete.email || 'Ingen email'}
-                        </div>
-                        {(() => {
-                          const ls = formatLastSeen(profilesLastSeen[athlete.user_id])
-                          if (!ls) return null
-                          return (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.2rem' }}>
-                              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: ls.dotColor, flexShrink: 0 }} />
-                              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.06em', color: '#7a7770' }}>{ls.text}</span>
-                            </div>
-                          )
-                        })()}
-                        {latestMessages[athlete.id] && (
-                          <div style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.72rem', color: '#4a4844', marginTop: '0.25rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                            <span style={{ color: latestMessages[athlete.id].sender_role === 'coach' ? '#7a7770' : '#c8923a' }}>
-                              {latestMessages[athlete.id].sender_role === 'coach' ? 'Du: ' : `${athlete.name.split(' ')[0]}: `}
-                            </span>
-                            {latestMessages[athlete.id].content}
-                          </div>
-                        )}
-                      </div>
-                      <span style={s.badge(athlete.status)}>{statusLabels[athlete.status]}</span>
-                    </div>
-                  ))}
-                </div>
               </>
             )}
           </div>
@@ -3066,18 +3031,16 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                       {/* Tidslinje */}
                       {totalWeeks > 0 && planStartDate && (
                         <div style={{ marginBottom: '1rem' }}>
-                          <div style={{ display: 'flex', height: '28px', borderRadius: '2px', overflow: 'hidden', marginBottom: '0.4rem' }}>
-                            {blockPlan.map((block, i) => (
-                              <div key={block.id} title={`${block.name}: ${block.weeks} uge${block.weeks !== 1 ? 'r' : ''}`}
-                                style={{ flex: block.weeks, background: blockColor(block.name), display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                                {block.weeks >= 2 && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#141410', fontWeight: 600, letterSpacing: '0.06em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', padding: '0 4px' }}>{block.name}</span>}
-                              </div>
-                            ))}
-                            {compDateObj && endDate && diffDays > 0 && (
-                              <div style={{ width: `${Math.min(diffDays / (totalWeeks * 7) * 100, 30)}%`, background: 'rgba(237,234,226,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.42rem', color: '#4a4844' }}>stævne</span>
-                              </div>
-                            )}
+                          <div style={{ display: 'flex', width: '100%', height: '32px', borderRadius: '2px', overflow: 'hidden', marginBottom: '0.5rem' }}>
+                            {blockPlan.map((block) => {
+                              const pct = (block.weeks / totalWeeks) * 100
+                              return (
+                                <div key={block.id} title={`${block.name}: ${block.weeks} uge${block.weeks !== 1 ? 'r' : ''}`}
+                                  style={{ width: `${pct}%`, flexShrink: 0, background: blockColor(block.name), display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                                  {block.weeks >= 2 && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#141410', fontWeight: 600, letterSpacing: '0.06em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', padding: '0 6px' }}>{block.name}</span>}
+                                </div>
+                              )
+                            })}
                           </div>
                           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#7a7770' }}>{fmtShort(new Date(planStartDate + 'T12:00:00'))}</span>
