@@ -2984,7 +2984,16 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     {weeks.length} uge{weeks.length !== 1 ? 'r' : ''}
                   </div>
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <button style={{ ...s.btnGhost, color: showBlockPlanner ? '#c8923a' : '#7a7770', borderColor: showBlockPlanner ? 'rgba(200,146,58,0.4)' : undefined }} onClick={() => setShowBlockPlanner(p => !p)}>
+                    <button style={{ ...s.btnGhost, color: showBlockPlanner ? '#c8923a' : '#7a7770', borderColor: showBlockPlanner ? 'rgba(200,146,58,0.4)' : undefined }} onClick={() => {
+                      if (!showBlockPlanner) {
+                        const weeksWithDate = weeks.filter(w => w.start_date).sort((a, b) => b.week_number - a.week_number)
+                        const suggestDate = weeksWithDate.length
+                          ? new Date(new Date(weeksWithDate[0].start_date + 'T12:00:00').getTime() + 7 * 24 * 3600 * 1000).toISOString().slice(0, 10)
+                          : new Date().toISOString().slice(0, 10)
+                        setPlanStartDate(suggestDate)
+                      }
+                      setShowBlockPlanner(p => !p)
+                    }}>
                       Periodiseringsplan
                     </button>
                     {weeks.length > 0 && (
@@ -3020,8 +3029,43 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     <div style={{ background: '#1c1c18', border: '1px solid rgba(200,146,58,0.3)', padding: '1.25rem', marginBottom: '1.5rem' }}>
                       <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '1rem' }}>Periodiseringsplan</div>
 
+                      {/* Eksisterende uger — tilknyt blokke */}
+                      {weeks.length > 0 && (() => {
+                        const [assignEdits, setAssignEdits] = React.useState(() => Object.fromEntries(weeks.map(w => [w.id, w.block_name || ''])))
+                        const saveAssignments = async () => {
+                          await Promise.all(weeks.map(w => {
+                            const newName = assignEdits[w.id] || null
+                            if (newName === (w.block_name || null)) return Promise.resolve()
+                            return supabase.from('weeks').update({ block_name: newName }).eq('id', w.id)
+                          }))
+                          fetchWeeks(selectedAthlete.id)
+                        }
+                        return (
+                          <div style={{ marginBottom: '1.25rem', paddingBottom: '1.25rem', borderBottom: '1px solid rgba(237,234,226,0.07)' }}>
+                            <div style={{ ...s.fieldLabel, marginBottom: '0.6rem' }}>Tilknyt blok til eksisterende uger</div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginBottom: '0.75rem' }}>
+                              {weeks.map(w => (
+                                <div key={w.id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770', minWidth: '52px' }}>Uge {w.week_number}</span>
+                                  {w.start_date && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#4a4844', minWidth: '80px' }}>{new Date(w.start_date + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })}</span>}
+                                  <select
+                                    value={assignEdits[w.id] || ''}
+                                    onChange={e => setAssignEdits(p => ({ ...p, [w.id]: e.target.value }))}
+                                    style={{ ...s.fieldSelect, padding: '0.25rem 0.5rem', fontSize: '0.62rem', flex: 1, maxWidth: '180px' }}
+                                  >
+                                    <option value="">— ingen blok —</option>
+                                    {BLOCK_NAMES.map(n => <option key={n} value={n}>{n}</option>)}
+                                  </select>
+                                </div>
+                              ))}
+                            </div>
+                            <button style={{ ...s.btnGhost, fontSize: '0.52rem', padding: '0.3rem 0.75rem' }} onClick={saveAssignments}>Gem tilknytninger</button>
+                          </div>
+                        )
+                      })()}
+
                       <div style={{ marginBottom: '1rem' }}>
-                        <div style={s.fieldLabel}>Program startdato</div>
+                        <div style={s.fieldLabel}>Nye uger — startdato{weeks.length > 0 && <span style={{ color: '#4a4844', fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}> (fortsætter fra uge {Math.max(...weeks.map(w => w.week_number)) + 1})</span>}</div>
                         <input style={{ ...s.fieldInput, maxWidth: '180px' }} type="date" value={planStartDate} onChange={e => setPlanStartDate(e.target.value)} />
                       </div>
 
@@ -3131,16 +3175,21 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                       {/* Phase bar */}
                       {phases.some(p => p.name) && (
                         <div style={{ marginBottom: '1rem' }}>
-                          <div style={{ display: 'flex', height: '36px', gap: '2px', marginBottom: '0.5rem' }}>
+                          {(() => {
+                            const totalPhaseWeeks = phases.reduce((s, p) => s + p.weeks.length, 0)
+                            return (
+                          <div style={{ display: 'flex', width: '100%', height: '36px', gap: '2px', marginBottom: '0.5rem', overflow: 'hidden' }}>
                             {phases.map((phase, pi) => {
                               const color = blockColor(phase.name)
                               const firstWeekId = phase.weeks[0].id
+                              const pct = (phase.weeks.length / totalPhaseWeeks) * 100
                               return (
                                 <div
                                   key={pi}
                                   title={phase.name ? `${phase.name} · ${phase.weeks.length} uger` : `${phase.weeks.length} uger (ingen blok)`}
                                   style={{
-                                    flex: `${phase.weeks.length} 0 0`,
+                                    width: `${pct}%`,
+                                    flexShrink: 0,
                                     background: phase.name ? color + '22' : 'rgba(237,234,226,0.04)',
                                     border: `1px solid ${phase.name ? color + '55' : 'rgba(237,234,226,0.1)'}`,
                                     display: 'flex',
@@ -3149,6 +3198,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                                     cursor: 'pointer',
                                     overflow: 'hidden',
                                     minWidth: 0,
+                                    boxSizing: 'border-box',
                                   }}
                                   onClick={() => {
                                     setOpenWeekId(firstWeekId)
@@ -3172,6 +3222,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                               )
                             })}
                           </div>
+                          )})()}
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
                             {phases.filter(p => p.name).map((phase, pi) => (
                               <div key={pi} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
