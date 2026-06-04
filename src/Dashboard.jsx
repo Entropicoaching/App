@@ -3197,56 +3197,64 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                       )}
 
                       {/* Phase bar */}
-                      {phases.some(p => p.name) && (
+                      {phases.some(p => p.name) && (() => {
+                        const totalPhaseWeeks = phases.reduce((s, p) => s + p.weeks.length, 0)
+
+                        // Today arrow position
+                        const weeksWithStart = weeks.filter(w => w.start_date).sort((a, b) => a.week_number - b.week_number)
+                        let todayPct = null
+                        if (weeksWithStart.length >= 1) {
+                          const programStart = new Date(weeksWithStart[0].start_date + 'T12:00:00')
+                          const lastW = weeksWithStart[weeksWithStart.length - 1]
+                          const programEnd = new Date(new Date(lastW.start_date + 'T12:00:00').getTime() + 7 * 24 * 3600 * 1000)
+                          const today = new Date(); today.setHours(12, 0, 0, 0)
+                          const raw = (today - programStart) / (programEnd - programStart) * 100
+                          if (raw > 0 && raw < 100) todayPct = raw
+                        }
+
+                        return (
                         <div style={{ marginBottom: '1rem' }}>
-                          {(() => {
-                            const totalPhaseWeeks = phases.reduce((s, p) => s + p.weeks.length, 0)
-                            return (
-                          <div style={{ display: 'flex', width: '100%', height: '36px', gap: '2px', marginBottom: '0.5rem', overflow: 'hidden' }}>
-                            {phases.map((phase, pi) => {
-                              const color = blockColor(phase.name)
-                              const firstWeekId = phase.weeks[0].id
-                              const pct = (phase.weeks.length / totalPhaseWeeks) * 100
-                              return (
-                                <div
-                                  key={pi}
-                                  title={phase.name ? `${phase.name} · ${phase.weeks.length} uger` : `${phase.weeks.length} uger (ingen blok)`}
-                                  style={{
-                                    width: `${pct}%`,
-                                    flexShrink: 0,
-                                    background: phase.name ? color + '22' : 'rgba(237,234,226,0.04)',
-                                    border: `1px solid ${phase.name ? color + '55' : 'rgba(237,234,226,0.1)'}`,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    cursor: 'pointer',
-                                    overflow: 'hidden',
-                                    minWidth: 0,
-                                    boxSizing: 'border-box',
-                                  }}
-                                  onClick={() => {
-                                    setOpenWeekId(firstWeekId)
-                                    setTimeout(() => document.getElementById(`week-row-${firstWeekId}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50)
-                                  }}
-                                >
-                                  {phase.name && (
-                                    <span style={{
-                                      fontFamily: "'IBM Plex Mono', monospace",
-                                      fontSize: '0.48rem',
-                                      letterSpacing: '0.08em',
-                                      textTransform: 'uppercase',
-                                      color,
-                                      whiteSpace: 'nowrap',
-                                      overflow: 'hidden',
-                                      textOverflow: 'ellipsis',
-                                      padding: '0 8px',
-                                    }}>{phase.name} · {phase.weeks.length}u</span>
-                                  )}
+                          <div style={{ position: 'relative', marginBottom: todayPct != null ? '1.4rem' : '0.5rem' }}>
+                            <div style={{ display: 'flex', width: '100%', height: '36px', gap: '2px', overflow: 'hidden' }}>
+                              {phases.map((phase, pi) => {
+                                const color = blockColor(phase.name)
+                                const firstWeekId = phase.weeks[0].id
+                                const pct = (phase.weeks.length / totalPhaseWeeks) * 100
+                                return (
+                                  <div
+                                    key={pi}
+                                    title={phase.name ? `${phase.name} · ${phase.weeks.length} uger` : `${phase.weeks.length} uger (ingen blok)`}
+                                    style={{
+                                      width: `${pct}%`, flexShrink: 0,
+                                      background: phase.name ? color + '22' : 'rgba(237,234,226,0.04)',
+                                      border: `1px solid ${phase.name ? color + '55' : 'rgba(237,234,226,0.1)'}`,
+                                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                      cursor: 'pointer', overflow: 'hidden', minWidth: 0, boxSizing: 'border-box',
+                                    }}
+                                    onClick={() => {
+                                      setOpenWeekId(firstWeekId)
+                                      setTimeout(() => document.getElementById(`week-row-${firstWeekId}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50)
+                                    }}
+                                  >
+                                    {phase.name && (
+                                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.08em', textTransform: 'uppercase', color, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', padding: '0 8px' }}>
+                                        {phase.name} · {phase.weeks.length}u
+                                      </span>
+                                    )}
+                                  </div>
+                                )
+                              })}
+                            </div>
+                            {todayPct != null && (
+                              <>
+                                <div style={{ position: 'absolute', top: 0, bottom: 0, left: `${todayPct}%`, width: '2px', background: '#edeae2', transform: 'translateX(-50%)', pointerEvents: 'none', zIndex: 2 }} />
+                                <div style={{ position: 'absolute', top: '100%', left: `${todayPct}%`, transform: 'translateX(-50%)', paddingTop: '3px', display: 'flex', flexDirection: 'column', alignItems: 'center', pointerEvents: 'none' }}>
+                                  <div style={{ width: 0, height: 0, borderLeft: '4px solid transparent', borderRight: '4px solid transparent', borderTop: '5px solid #edeae2' }} />
+                                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.42rem', color: '#7a7770', whiteSpace: 'nowrap', marginTop: '2px' }}>i dag</span>
                                 </div>
-                              )
-                            })}
+                              </>
+                            )}
                           </div>
-                          )})()}
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
                             {phases.filter(p => p.name).map((phase, pi) => (
                               <div key={pi} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
@@ -3258,7 +3266,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                             ))}
                           </div>
                         </div>
-                      )}
+                        )
+                      })()}
 
                       <div style={{ overflowX: 'auto', display: 'flex', gap: '0.5rem', paddingBottom: '0.5rem', width: '100%' }}>
                         {weeks.map(week => {
