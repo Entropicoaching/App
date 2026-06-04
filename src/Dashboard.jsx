@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from './supabase'
 
+const BLOCK_NAMES = ['Akkumulering', 'Intensificering', 'Peak', 'Deload', 'GPP', 'Hypertrofi', 'Styrke', 'Transition']
 const BLOCK_PALETTE = ['#4e8fcf','#c8923a','#6cba6c','#9b6bd4','#cf6b4e','#4ec8b4']
 function blockColor(name) {
   if (!name) return '#4a4844'
@@ -264,7 +265,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [editingWeek, setEditingWeek] = useState(null)
   const [editingSession, setEditingSession] = useState(null)
   const [editingExercise, setEditingExercise] = useState(null)
-  const [weekForm, setWeekForm] = useState({ week_number: '', block_name: '', coach_note: '', block_description: '' })
+  const [weekForm, setWeekForm] = useState({ week_number: '', block_name: '', coach_note: '', block_description: '', start_date: '' })
+  const [showBlockPlanner, setShowBlockPlanner] = useState(false)
+  const [blockPlan, setBlockPlan] = useState([{ id: 1, name: 'Akkumulering', weeks: 4 }, { id: 2, name: 'Intensificering', weeks: 3 }, { id: 3, name: 'Peak', weeks: 2 }, { id: 4, name: 'Deload', weeks: 1 }])
+  const [planStartDate, setPlanStartDate] = useState(() => new Date().toISOString().slice(0, 10))
   const [sessionForm, setSessionForm] = useState({ title: '' })
   const [exerciseForm, setExerciseForm] = useState({ name: '', sets: '', reps: '', intensity: '', intensityPrefix: 'RPE', note: '' })
   const [athleteLogs, setAthleteLogs] = useState([])
@@ -361,14 +365,14 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     if (!athleteIds.length) return
     const { data } = await supabase
       .from('weeks')
-      .select('athlete_id, week_number, block_name, sessions(id)')
+      .select('athlete_id, week_number, block_name, start_date, sessions(id)')
       .in('athlete_id', athleteIds)
     if (!data) return
     const summary = {}
     for (const w of data) {
       const aid = w.athlete_id
       if (!summary[aid] || w.week_number > summary[aid].week_number) {
-        summary[aid] = { week_number: w.week_number, block_name: w.block_name, session_count: (w.sessions || []).length }
+        summary[aid] = { week_number: w.week_number, block_name: w.block_name, start_date: w.start_date, session_count: (w.sessions || []).length }
       }
     }
     setAthleteWeekSummary(summary)
@@ -407,9 +411,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       block_name: weekForm.block_name || null,
       coach_note: weekForm.coach_note || null,
       block_description: weekForm.block_description || null,
+      start_date: weekForm.start_date || null,
     })
     setAddingWeek(false)
-    setWeekForm({ week_number: '', block_name: '', coach_note: '', block_description: '' })
+    setWeekForm({ week_number: '', block_name: '', coach_note: '', block_description: '', start_date: '' })
     fetchWeeks(selectedAthlete.id)
   }
 
@@ -419,9 +424,35 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       block_name: weekForm.block_name || null,
       coach_note: weekForm.coach_note || null,
       block_description: weekForm.block_description || null,
+      start_date: weekForm.start_date || null,
     }).eq('id', weekId)
     setEditingWeek(null)
     fetchWeeks(selectedAthlete.id)
+  }
+
+  async function generateWeeksFromPlan() {
+    if (!selectedAthlete || !planStartDate || !blockPlan.length) return
+    const nextNum = weeks.length > 0 ? Math.max(...weeks.map(w => w.week_number)) + 1 : 1
+    const rows = []
+    let weekNum = nextNum
+    let currentDate = new Date(planStartDate + 'T12:00:00')
+    for (const block of blockPlan) {
+      for (let i = 0; i < (block.weeks || 1); i++) {
+        rows.push({
+          athlete_id: selectedAthlete.id,
+          week_number: weekNum++,
+          block_name: block.name || null,
+          start_date: currentDate.toISOString().slice(0, 10),
+          coach_note: null,
+          block_description: null,
+        })
+        currentDate = new Date(currentDate.getTime() + 7 * 24 * 3600 * 1000)
+      }
+    }
+    await supabase.from('weeks').insert(rows)
+    setShowBlockPlanner(false)
+    fetchWeeks(selectedAthlete.id)
+    fetchAthleteWeekSummaries(weeks.map(w => w.athlete_id).filter(Boolean).concat([selectedAthlete.id]).filter((v, i, a) => a.indexOf(v) === i))
   }
 
   async function deleteWeek(weekId) {
@@ -1567,18 +1598,36 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                             >
                               <div onClick={() => !isHidden && openProfile(ath, 'program')} style={{ display: 'flex', alignItems: 'center', flex: 1, gap: '1rem', cursor: isHidden ? 'default' : 'pointer', minWidth: 0 }}>
                                 <div style={{ fontSize: '0.88rem', color: '#edeae2', minWidth: '140px', flexShrink: 0 }}>{ath.name}</div>
-                                {ws ? (
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#7a7770' }}>Uge {ws.week_number}{ws.block_name ? ` — ${ws.block_name}` : ''}</div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                                      <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: hasSessions ? '#6cba6c' : '#c8923a', flexShrink: 0 }} />
-                                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: hasSessions ? '#6cba6c' : '#c8923a' }}>
-                                        {hasSessions ? `${ws.session_count} session${ws.session_count !== 1 ? 'er' : ''}` : 'Ingen sessioner'}
-                                      </span>
+                                {ws ? (() => {
+                                  const today = new Date(); today.setHours(12,0,0,0)
+                                  const weekStart = ws.start_date ? new Date(ws.start_date + 'T12:00:00') : null
+                                  const weekEnd = weekStart ? new Date(weekStart.getTime() + 6 * 24 * 3600 * 1000) : null
+                                  const isActive = weekStart && weekEnd && today >= weekStart && today <= weekEnd
+                                  const isOverdue = weekEnd && today > weekEnd
+                                  const isSoon = weekStart && !isActive && !isOverdue && (weekStart - today) <= 3 * 24 * 3600 * 1000
+                                  const dotColor = !ws.start_date ? (hasSessions ? '#6cba6c' : '#c8923a') : isActive ? '#6cba6c' : isOverdue ? '#e05555' : isSoon ? '#c8923a' : '#7a7770'
+                                  const statusText = !ws.start_date
+                                    ? (hasSessions ? `${ws.session_count} sess` : 'Ingen sess')
+                                    : isActive ? 'Aktiv uge'
+                                    : isOverdue ? 'Mangler ny uge'
+                                    : isSoon ? 'Starter snart'
+                                    : `Starter ${weekStart.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })}`
+                                  return (
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1, minWidth: 0, flexWrap: 'wrap' }}>
+                                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#7a7770', whiteSpace: 'nowrap' }}>
+                                        Uge {ws.week_number}{ws.block_name ? ` — ${ws.block_name}` : ''}
+                                        {ws.start_date && <span style={{ color: '#4a4844', marginLeft: '0.4rem' }}>
+                                          {weekStart.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })}–{weekEnd.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })}
+                                        </span>}
+                                      </div>
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexShrink: 0 }}>
+                                        <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: dotColor }} />
+                                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: dotColor }}>{statusText}</span>
+                                      </div>
                                     </div>
-                                  </div>
-                                ) : (
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                                  )
+                                })() : (
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flex: 1 }}>
                                     <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#4a4844', flexShrink: 0 }} />
                                     <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844' }}>Ingen program</span>
                                   </div>
@@ -2944,16 +2993,120 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     {weeks.length} uge{weeks.length !== 1 ? 'r' : ''}
                   </div>
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button style={{ ...s.btnGhost, color: showBlockPlanner ? '#c8923a' : '#7a7770', borderColor: showBlockPlanner ? 'rgba(200,146,58,0.4)' : undefined }} onClick={() => setShowBlockPlanner(p => !p)}>
+                      Periodiseringsplan
+                    </button>
                     {weeks.length > 0 && (
                       <button style={s.btnGhost} onClick={() => copyWeek(weeks[weeks.length - 1].id)}>
                         Kopiér seneste uge →
                       </button>
                     )}
-                    <button style={s.btnPrimary} onClick={() => { setAddingWeek(true); setWeekForm({ week_number: '', block_name: '', coach_note: '' }) }}>
+                    <button style={s.btnPrimary} onClick={() => {
+                      const weeksWithDate = weeks.filter(w => w.start_date).sort((a, b) => b.week_number - a.week_number)
+                      const suggestDate = weeksWithDate.length
+                        ? new Date(new Date(weeksWithDate[0].start_date + 'T12:00:00').getTime() + 7 * 24 * 3600 * 1000).toISOString().slice(0, 10)
+                        : new Date().toISOString().slice(0, 10)
+                      setAddingWeek(true)
+                      setWeekForm({ week_number: '', block_name: '', coach_note: '', block_description: '', start_date: suggestDate })
+                    }}>
                       + Ny uge
                     </button>
                   </div>
                 </div>
+
+                {/* Periodiseringsplan panel */}
+                {showBlockPlanner && (() => {
+                  const totalWeeks = blockPlan.reduce((s, b) => s + (b.weeks || 0), 0)
+                  const endDate = totalWeeks > 0 && planStartDate
+                    ? new Date(new Date(planStartDate + 'T12:00:00').getTime() + totalWeeks * 7 * 24 * 3600 * 1000 - 24 * 3600 * 1000)
+                    : null
+                  const compDate = selectedAthlete?.competition_date
+                  const compDateObj = compDate ? new Date(compDate + 'T12:00:00') : null
+                  const diffDays = endDate && compDateObj ? Math.round((compDateObj - endDate) / (24 * 3600 * 1000)) : null
+                  const fmtD = d => d.toLocaleDateString('da-DK', { day: 'numeric', month: 'short', year: 'numeric' })
+                  const fmtShort = d => d.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })
+                  return (
+                    <div style={{ background: '#1c1c18', border: '1px solid rgba(200,146,58,0.3)', padding: '1.25rem', marginBottom: '1.5rem' }}>
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '1rem' }}>Periodiseringsplan</div>
+
+                      <div style={{ marginBottom: '1rem' }}>
+                        <div style={s.fieldLabel}>Program startdato</div>
+                        <input style={{ ...s.fieldInput, maxWidth: '180px' }} type="date" value={planStartDate} onChange={e => setPlanStartDate(e.target.value)} />
+                      </div>
+
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
+                        {blockPlan.map((block, i) => (
+                          <div key={block.id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                            <div style={{ width: '10px', height: '10px', borderRadius: '2px', background: blockColor(block.name), flexShrink: 0 }} />
+                            <select
+                              value={block.name}
+                              onChange={e => setBlockPlan(p => p.map((b, j) => j === i ? { ...b, name: e.target.value } : b))}
+                              style={{ ...s.fieldSelect, width: '160px', padding: '0.35rem 0.6rem', fontSize: '0.72rem' }}
+                            >
+                              {BLOCK_NAMES.map(n => <option key={n} value={n}>{n}</option>)}
+                            </select>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                              <input
+                                type="number" min="1" max="20"
+                                value={block.weeks}
+                                onChange={e => setBlockPlan(p => p.map((b, j) => j === i ? { ...b, weeks: Math.max(1, parseInt(e.target.value) || 1) } : b))}
+                                style={{ ...s.fieldInput, width: '52px', padding: '0.35rem 0.5rem', fontSize: '0.72rem', textAlign: 'center' }}
+                              />
+                              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770' }}>uge{block.weeks !== 1 ? 'r' : ''}</span>
+                            </div>
+                            <button onClick={() => setBlockPlan(p => p.filter((_, j) => j !== i))} style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.7rem', padding: '0.1rem 0.3rem' }}>✕</button>
+                          </div>
+                        ))}
+                        <button
+                          onClick={() => setBlockPlan(p => [...p, { id: Date.now(), name: BLOCK_NAMES[0], weeks: 2 }])}
+                          style={{ ...s.btnGhost, fontSize: '0.52rem', padding: '0.3rem 0.7rem', alignSelf: 'flex-start', marginTop: '0.25rem' }}
+                        >+ Tilføj blok</button>
+                      </div>
+
+                      {/* Tidslinje */}
+                      {totalWeeks > 0 && planStartDate && (
+                        <div style={{ marginBottom: '1rem' }}>
+                          <div style={{ display: 'flex', height: '28px', borderRadius: '2px', overflow: 'hidden', marginBottom: '0.4rem' }}>
+                            {blockPlan.map((block, i) => (
+                              <div key={block.id} title={`${block.name}: ${block.weeks} uge${block.weeks !== 1 ? 'r' : ''}`}
+                                style={{ flex: block.weeks, background: blockColor(block.name), display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                                {block.weeks >= 2 && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#141410', fontWeight: 600, letterSpacing: '0.06em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', padding: '0 4px' }}>{block.name}</span>}
+                              </div>
+                            ))}
+                            {compDateObj && endDate && diffDays > 0 && (
+                              <div style={{ width: `${Math.min(diffDays / (totalWeeks * 7) * 100, 30)}%`, background: 'rgba(237,234,226,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.42rem', color: '#4a4844' }}>stævne</span>
+                              </div>
+                            )}
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#7a7770' }}>{fmtShort(new Date(planStartDate + 'T12:00:00'))}</span>
+                            {endDate && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#7a7770' }}>slutter {fmtShort(endDate)}</span>}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Status */}
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', marginBottom: '1rem' }}>
+                        <span style={{ color: '#7a7770' }}>Total: {totalWeeks} uger</span>
+                        {endDate && <span style={{ color: '#7a7770' }}> · slutter {fmtD(endDate)}</span>}
+                        {diffDays != null && (
+                          <span style={{ marginLeft: '0.75rem', color: diffDays >= 0 ? '#6cba6c' : '#e05555', fontWeight: 600 }}>
+                            {diffDays >= 0 ? `✓ ${diffDays} dage før stævne` : `⚠ ${Math.abs(diffDays)} dage efter stævne`}
+                          </span>
+                        )}
+                        {!compDate && <span style={{ color: '#4a4844', marginLeft: '0.75rem' }}>— sæt stævnedato i Oversigt for tjek</span>}
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <button style={s.btnGhost} onClick={() => setShowBlockPlanner(false)}>Luk</button>
+                        <button style={s.btnPrimary} onClick={generateWeeksFromPlan} disabled={!planStartDate || totalWeeks === 0}>
+                          Opret {totalWeeks} uger
+                        </button>
+                      </div>
+                    </div>
+                  )
+                })()}
 
                 {/* Block overview grid */}
                 {weeks.length > 0 && (() => {
@@ -3090,13 +3243,24 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 {addingWeek && (
                   <div style={{ background: '#1c1c18', border: '1px solid rgba(200,146,58,0.3)', padding: '1.25rem', marginBottom: '1rem' }}>
                     <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.75rem' }}>Ny uge</div>
-                    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '0.5fr 1fr 2fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                      {[['Uge nr.', 'week_number', 'number'], ['Blok navn', 'block_name', 'text'], ['Coach-note', 'coach_note', 'text']].map(([label, key, type]) => (
-                        <div key={key}>
-                          <div style={s.fieldLabel}>{label}</div>
-                          <input style={s.fieldInput} type={type} placeholder={label} value={weekForm[key]} onChange={e => setWeekForm(p => ({ ...p, [key]: e.target.value }))} />
-                        </div>
-                      ))}
+                    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '0.5fr 1fr 1fr 1.5fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                      <div>
+                        <div style={s.fieldLabel}>Uge nr.</div>
+                        <input style={s.fieldInput} type="number" placeholder="Auto" value={weekForm.week_number} onChange={e => setWeekForm(p => ({ ...p, week_number: e.target.value }))} />
+                      </div>
+                      <div>
+                        <div style={s.fieldLabel}>Startdato</div>
+                        <input style={s.fieldInput} type="date" value={weekForm.start_date} onChange={e => setWeekForm(p => ({ ...p, start_date: e.target.value }))} />
+                      </div>
+                      <div>
+                        <div style={s.fieldLabel}>Blok</div>
+                        <input style={s.fieldInput} list="block-names-list" placeholder="Vælg blok…" value={weekForm.block_name} onChange={e => setWeekForm(p => ({ ...p, block_name: e.target.value }))} />
+                        <datalist id="block-names-list">{BLOCK_NAMES.map(n => <option key={n} value={n} />)}</datalist>
+                      </div>
+                      <div>
+                        <div style={s.fieldLabel}>Coach-note</div>
+                        <input style={s.fieldInput} type="text" placeholder="Note…" value={weekForm.coach_note} onChange={e => setWeekForm(p => ({ ...p, coach_note: e.target.value }))} />
+                      </div>
                     </div>
                     <div style={{ marginBottom: '0.75rem' }}>
                       <div style={s.fieldLabel}>Blok-beskrivelse</div>
@@ -3120,13 +3284,23 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     {/* Week header */}
                     {editingWeek === week.id ? (
                       <div style={{ background: '#1c1c18', border: '1px solid rgba(200,146,58,0.3)', padding: '1.25rem', marginBottom: '0.5rem' }}>
-                        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '0.5fr 1fr 2fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                          {[['Uge nr.', 'week_number', 'number'], ['Blok navn', 'block_name', 'text'], ['Coach-note', 'coach_note', 'text']].map(([label, key, type]) => (
-                            <div key={key}>
-                              <div style={s.fieldLabel}>{label}</div>
-                              <input style={s.fieldInput} type={type} value={weekForm[key]} onChange={e => setWeekForm(p => ({ ...p, [key]: e.target.value }))} />
-                            </div>
-                          ))}
+                        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '0.5fr 1fr 1fr 1.5fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                          <div>
+                            <div style={s.fieldLabel}>Uge nr.</div>
+                            <input style={s.fieldInput} type="number" value={weekForm.week_number} onChange={e => setWeekForm(p => ({ ...p, week_number: e.target.value }))} />
+                          </div>
+                          <div>
+                            <div style={s.fieldLabel}>Startdato</div>
+                            <input style={s.fieldInput} type="date" value={weekForm.start_date} onChange={e => setWeekForm(p => ({ ...p, start_date: e.target.value }))} />
+                          </div>
+                          <div>
+                            <div style={s.fieldLabel}>Blok</div>
+                            <input style={s.fieldInput} list="block-names-list" value={weekForm.block_name} onChange={e => setWeekForm(p => ({ ...p, block_name: e.target.value }))} />
+                          </div>
+                          <div>
+                            <div style={s.fieldLabel}>Coach-note</div>
+                            <input style={s.fieldInput} type="text" value={weekForm.coach_note} onChange={e => setWeekForm(p => ({ ...p, coach_note: e.target.value }))} />
+                          </div>
                         </div>
                         <div style={{ marginBottom: '0.75rem' }}>
                           <div style={s.fieldLabel}>Blok-beskrivelse</div>
@@ -3143,14 +3317,17 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                         onClick={() => setOpenWeekId(openWeekId === week.id ? null : week.id)}
                       >
                         <div>
-                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a' }}>Uge {week.week_number}</span>
-                          {week.block_name && <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#edeae2', marginLeft: '0.75rem' }}>{week.block_name}</span>}
+                          <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', flexWrap: 'wrap' }}>
+                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a' }}>Uge {week.week_number}</span>
+                            {week.start_date && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', letterSpacing: '0.06em' }}>{new Date(week.start_date + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })} – {new Date(new Date(week.start_date + 'T12:00:00').getTime() + 6 * 24 * 3600 * 1000).toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })}</span>}
+                            {week.block_name && <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#edeae2' }}>{week.block_name}</span>}
+                          </div>
                           {week.coach_note && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#7a7770', marginTop: '0.2rem' }}>{week.coach_note}</div>}
                           {week.block_description && <div style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.78rem', color: '#4a4844', fontStyle: 'italic', marginTop: '0.2rem' }}>{week.block_description}</div>}
                         </div>
                         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                           <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', textTransform: 'uppercase' }}>{week.sessions?.length || 0} træninger</span>
-                          <button style={s.btnEdit} onClick={e => { e.stopPropagation(); setEditingWeek(week.id); setWeekForm({ week_number: week.week_number, block_name: week.block_name || '', coach_note: week.coach_note || '', block_description: week.block_description || '' }) }}>Rediger</button>
+                          <button style={s.btnEdit} onClick={e => { e.stopPropagation(); setEditingWeek(week.id); setWeekForm({ week_number: week.week_number, block_name: week.block_name || '', coach_note: week.coach_note || '', block_description: week.block_description || '', start_date: week.start_date || '' }) }}>Rediger</button>
                           <button style={s.btnDanger} onClick={e => { e.stopPropagation(); deleteWeek(week.id) }}>Slet</button>
                           <span style={{ color: '#4a4844', fontSize: '0.65rem', marginLeft: '0.25rem' }}>{openWeekId === week.id ? '▲' : '▼'}</span>
                         </div>
