@@ -300,6 +300,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [libraryAddForm, setLibraryAddForm] = useState({ name: '', category: 'Accessory' })
   const [librarySearch, setLibrarySearch] = useState('')
   const [athleteWeekSummary, setAthleteWeekSummary] = useState({})
+  const [athleteLastLogs, setAthleteLastLogs] = useState({})
   const [hiddenAthleteIds, setHiddenAthleteIds] = useState(() => {
     try { return new Set(JSON.parse(localStorage.getItem('entropi_hidden_athletes') || '[]')) } catch { return new Set() }
   })
@@ -358,9 +359,26 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         fetchLatestMessages(data.map(a => a.id))
         fetchProfilesLastSeen(data)
         fetchAthleteWeekSummaries(data.map(a => a.id))
+        fetchAthleteLastLogs(data.map(a => a.id))
       }
     }
     setLoading(false)
+  }
+
+  async function fetchAthleteLastLogs(athleteIds) {
+    if (!athleteIds.length) return
+    const { data } = await supabase
+      .from('exercise_logs')
+      .select('athlete_id, logged_at')
+      .in('athlete_id', athleteIds)
+      .eq('skipped', false)
+      .order('logged_at', { ascending: false })
+    if (!data) return
+    const map = {}
+    for (const log of data) {
+      if (!map[log.athlete_id]) map[log.athlete_id] = log.logged_at.slice(0, 10)
+    }
+    setAthleteLastLogs(map)
   }
 
   async function fetchAthleteWeekSummaries(athleteIds) {
@@ -1628,24 +1646,35 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                               <div onClick={() => !isHidden && openProfile(ath, 'program')} style={{ display: 'flex', alignItems: 'center', flex: 1, gap: '1rem', cursor: isHidden ? 'default' : 'pointer', minWidth: 0 }}>
                                 <div style={{ fontSize: '0.88rem', color: '#edeae2', minWidth: '140px', flexShrink: 0 }}>{ath.name}</div>
                                 {ws ? (() => {
-                                  const today = new Date(); today.setHours(12,0,0,0)
+                                  const todayStr = new Date().toISOString().slice(0, 10)
+                                  const today = new Date(todayStr + 'T12:00:00')
+                                  const lastLogDate = athleteLastLogs[ath.id]
+                                  const daysSinceLog = lastLogDate ? Math.floor((today - new Date(lastLogDate + 'T12:00:00')) / (24 * 3600 * 1000)) : null
+
                                   const weekStart = ws.start_date ? new Date(ws.start_date + 'T12:00:00') : null
                                   const weekEnd = weekStart ? new Date(weekStart.getTime() + 6 * 24 * 3600 * 1000) : null
-                                  const isActive = weekStart && weekEnd && today >= weekStart && today <= weekEnd
-                                  const isOverdue = weekEnd && today > weekEnd
-                                  const isSoon = weekStart && !isActive && !isOverdue && (weekStart - today) <= 3 * 24 * 3600 * 1000
-                                  const dotColor = !ws.start_date ? (hasSessions ? '#6cba6c' : '#c8923a') : isActive ? '#6cba6c' : isOverdue ? '#e05555' : isSoon ? '#c8923a' : '#7a7770'
-                                  const statusText = !ws.start_date
-                                    ? (hasSessions ? `${ws.session_count} sess` : 'Ingen sess')
-                                    : isActive ? 'Aktiv uge'
-                                    : isOverdue ? 'Mangler ny uge'
-                                    : isSoon ? 'Starter snart'
-                                    : `Starter ${weekStart.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })}`
+                                  const isWeekActive = weekStart && weekEnd && today >= weekStart && today <= weekEnd
+                                  const isWeekOverdue = weekEnd && today > weekEnd
+                                  const isWeekSoon = weekStart && !isWeekActive && !isWeekOverdue && (weekStart - today) <= 3 * 24 * 3600 * 1000
+
+                                  // Primær status: baseret på start_date hvis sat, ellers på seneste log
+                                  let dotColor, statusText
+                                  if (ws.start_date) {
+                                    dotColor = isWeekActive ? '#6cba6c' : isWeekOverdue ? '#e05555' : isWeekSoon ? '#c8923a' : '#7a7770'
+                                    statusText = isWeekActive ? 'Aktiv uge' : isWeekOverdue ? 'Mangler ny uge' : isWeekSoon ? 'Starter snart' : `Starter ${weekStart.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })}`
+                                  } else if (daysSinceLog != null) {
+                                    dotColor = daysSinceLog <= 4 ? '#6cba6c' : daysSinceLog <= 8 ? '#c8923a' : '#e05555'
+                                    statusText = daysSinceLog === 0 ? 'Trænet i dag' : daysSinceLog === 1 ? 'Trænet i går' : `Trænet for ${daysSinceLog} dage siden`
+                                  } else {
+                                    dotColor = hasSessions ? '#7a7770' : '#4a4844'
+                                    statusText = hasSessions ? `${ws.session_count} sess` : 'Ingen sess'
+                                  }
+
                                   return (
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1, minWidth: 0, flexWrap: 'wrap' }}>
                                       <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#7a7770', whiteSpace: 'nowrap' }}>
                                         Uge {ws.week_number}{ws.block_name ? ` — ${ws.block_name}` : ''}
-                                        {ws.start_date && <span style={{ color: '#4a4844', marginLeft: '0.4rem' }}>
+                                        {ws.start_date && weekStart && weekEnd && <span style={{ color: '#4a4844', marginLeft: '0.4rem' }}>
                                           {weekStart.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })}–{weekEnd.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })}
                                         </span>}
                                       </div>
