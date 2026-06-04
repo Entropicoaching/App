@@ -269,6 +269,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [showBlockPlanner, setShowBlockPlanner] = useState(false)
   const [blockPlan, setBlockPlan] = useState([{ id: 1, name: 'Akkumulering', weeks: 4 }, { id: 2, name: 'Intensificering', weeks: 3 }, { id: 3, name: 'Peak', weeks: 2 }, { id: 4, name: 'Deload', weeks: 1 }])
   const [planStartDate, setPlanStartDate] = useState(() => new Date().toISOString().slice(0, 10))
+  const [assignEdits, setAssignEdits] = useState({})
   const [sessionForm, setSessionForm] = useState({ title: '' })
   const [exerciseForm, setExerciseForm] = useState({ name: '', sets: '', reps: '', intensity: '', intensityPrefix: 'RPE', note: '' })
   const [athleteLogs, setAthleteLogs] = useState([])
@@ -2991,6 +2992,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                           ? new Date(new Date(weeksWithDate[0].start_date + 'T12:00:00').getTime() + 7 * 24 * 3600 * 1000).toISOString().slice(0, 10)
                           : new Date().toISOString().slice(0, 10)
                         setPlanStartDate(suggestDate)
+                        setAssignEdits(Object.fromEntries(weeks.map(w => [w.id, w.block_name || ''])))
                       }
                       setShowBlockPlanner(p => !p)
                     }}>
@@ -3030,39 +3032,35 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                       <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '1rem' }}>Periodiseringsplan</div>
 
                       {/* Eksisterende uger — tilknyt blokke */}
-                      {weeks.length > 0 && (() => {
-                        const [assignEdits, setAssignEdits] = React.useState(() => Object.fromEntries(weeks.map(w => [w.id, w.block_name || ''])))
-                        const saveAssignments = async () => {
-                          await Promise.all(weeks.map(w => {
-                            const newName = assignEdits[w.id] || null
-                            if (newName === (w.block_name || null)) return Promise.resolve()
-                            return supabase.from('weeks').update({ block_name: newName }).eq('id', w.id)
-                          }))
-                          fetchWeeks(selectedAthlete.id)
-                        }
-                        return (
-                          <div style={{ marginBottom: '1.25rem', paddingBottom: '1.25rem', borderBottom: '1px solid rgba(237,234,226,0.07)' }}>
-                            <div style={{ ...s.fieldLabel, marginBottom: '0.6rem' }}>Tilknyt blok til eksisterende uger</div>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginBottom: '0.75rem' }}>
-                              {weeks.map(w => (
-                                <div key={w.id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770', minWidth: '52px' }}>Uge {w.week_number}</span>
-                                  {w.start_date && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#4a4844', minWidth: '80px' }}>{new Date(w.start_date + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })}</span>}
-                                  <select
-                                    value={assignEdits[w.id] || ''}
-                                    onChange={e => setAssignEdits(p => ({ ...p, [w.id]: e.target.value }))}
-                                    style={{ ...s.fieldSelect, padding: '0.25rem 0.5rem', fontSize: '0.62rem', flex: 1, maxWidth: '180px' }}
-                                  >
-                                    <option value="">— ingen blok —</option>
-                                    {BLOCK_NAMES.map(n => <option key={n} value={n}>{n}</option>)}
-                                  </select>
-                                </div>
-                              ))}
-                            </div>
-                            <button style={{ ...s.btnGhost, fontSize: '0.52rem', padding: '0.3rem 0.75rem' }} onClick={saveAssignments}>Gem tilknytninger</button>
+                      {weeks.length > 0 && (
+                        <div style={{ marginBottom: '1.25rem', paddingBottom: '1.25rem', borderBottom: '1px solid rgba(237,234,226,0.07)' }}>
+                          <div style={{ ...s.fieldLabel, marginBottom: '0.6rem' }}>Tilknyt blok til eksisterende uger</div>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginBottom: '0.75rem' }}>
+                            {weeks.map(w => (
+                              <div key={w.id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770', minWidth: '52px' }}>Uge {w.week_number}</span>
+                                {w.start_date && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#4a4844', minWidth: '80px' }}>{new Date(w.start_date + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })}</span>}
+                                <select
+                                  value={assignEdits[w.id] ?? w.block_name ?? ''}
+                                  onChange={e => setAssignEdits(p => ({ ...p, [w.id]: e.target.value }))}
+                                  style={{ ...s.fieldSelect, padding: '0.25rem 0.5rem', fontSize: '0.62rem', flex: 1, maxWidth: '180px' }}
+                                >
+                                  <option value="">— ingen blok —</option>
+                                  {BLOCK_NAMES.map(n => <option key={n} value={n}>{n}</option>)}
+                                </select>
+                              </div>
+                            ))}
                           </div>
-                        )
-                      })()}
+                          <button style={{ ...s.btnGhost, fontSize: '0.52rem', padding: '0.3rem 0.75rem' }} onClick={async () => {
+                            await Promise.all(weeks.map(w => {
+                              const newName = assignEdits[w.id] !== undefined ? (assignEdits[w.id] || null) : (w.block_name || null)
+                              if (newName === (w.block_name || null)) return Promise.resolve()
+                              return supabase.from('weeks').update({ block_name: newName }).eq('id', w.id)
+                            }))
+                            fetchWeeks(selectedAthlete.id)
+                          }}>Gem tilknytninger</button>
+                        </div>
+                      )}
 
                       <div style={{ marginBottom: '1rem' }}>
                         <div style={s.fieldLabel}>Nye uger — startdato{weeks.length > 0 && <span style={{ color: '#4a4844', fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}> (fortsætter fra uge {Math.max(...weeks.map(w => w.week_number)) + 1})</span>}</div>
