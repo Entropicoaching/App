@@ -283,6 +283,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [editingRecommended, setEditingRecommended] = useState(null)
   const [recommendedInput, setRecommendedInput] = useState('')
   const [copyingExercise, setCopyingExercise] = useState(null)
+  const [copyingSession, setCopyingSession] = useState(null)
 
   // Meet plan state
   const [meetPlan, setMeetPlan] = useState(null)
@@ -509,6 +510,31 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     const a = sorted[idx], b = sorted[swapIdx]
     await supabase.from('exercises').update({ exercise_order: b.exercise_order }).eq('id', a.id)
     await supabase.from('exercises').update({ exercise_order: a.exercise_order }).eq('id', b.id)
+    fetchWeeks(selectedAthlete.id)
+  }
+
+  async function copySessionToWeek(session, targetWeekId) {
+    const targetWeek = weeks.find(w => w.id === targetWeekId)
+    const nextOrder = targetWeek?.sessions?.length || 0
+    const { data: newSession } = await supabase.from('sessions').insert({
+      week_id: targetWeekId,
+      title: session.title,
+      session_order: nextOrder,
+    }).select().single()
+    if (!newSession) return
+    for (const ex of (session.exercises || [])) {
+      await supabase.from('exercises').insert({
+        session_id: newSession.id,
+        name: ex.name,
+        sets: ex.sets,
+        reps: ex.reps,
+        intensity: ex.intensity,
+        note: ex.note,
+        recommended_weight: ex.recommended_weight ?? null,
+        exercise_order: ex.exercise_order,
+      })
+    }
+    setCopyingSession(null)
     fetchWeeks(selectedAthlete.id)
   }
 
@@ -3330,6 +3356,24 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                                 <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexShrink: 0, flexWrap: 'wrap' }}>
                                   <button style={{ ...s.btnEdit, opacity: sessionIdx === 0 ? 0.25 : 1 }} onClick={e => { e.stopPropagation(); reorderSession(week.id, session.id, 'up') }} disabled={sessionIdx === 0}>↑</button>
                                   <button style={{ ...s.btnEdit, opacity: sessionIdx === sessionsArr.length - 1 ? 0.25 : 1 }} onClick={e => { e.stopPropagation(); reorderSession(week.id, session.id, 'down') }} disabled={sessionIdx === sessionsArr.length - 1}>↓</button>
+                                  {copyingSession === session.id ? (
+                                    <>
+                                      <select
+                                        style={{ ...s.fieldInput, fontSize: '0.6rem', padding: '0.2rem 0.4rem', width: 'auto', cursor: 'pointer' }}
+                                        defaultValue=""
+                                        onChange={e => { if (e.target.value) copySessionToWeek(session, e.target.value) }}
+                                        onClick={e => e.stopPropagation()}
+                                      >
+                                        <option value="" disabled>Kopiér til uge...</option>
+                                        {weeks.filter(w => w.id !== week.id).map(w => (
+                                          <option key={w.id} value={w.id}>Uge {w.week_number}{w.block_name ? ` — ${w.block_name}` : ''}</option>
+                                        ))}
+                                      </select>
+                                      <button style={{ ...s.btnGhost, fontSize: '0.55rem', padding: '0.2rem 0.4rem' }} onClick={e => { e.stopPropagation(); setCopyingSession(null) }}>✕</button>
+                                    </>
+                                  ) : (
+                                    <button style={s.btnEdit} onClick={e => { e.stopPropagation(); setCopyingSession(session.id) }}>Kopiér</button>
+                                  )}
                                   <button style={s.btnEdit} onClick={e => { e.stopPropagation(); setEditingSession(session.id); setSessionForm({ title: session.title }) }}>Rediger</button>
                                   <button style={s.btnDanger} onClick={e => { e.stopPropagation(); deleteSession(session.id) }}>Slet</button>
                                   <span style={{ color: '#4a4844', fontSize: '0.6rem', marginLeft: '0.2rem' }}>{openSessionId === session.id ? '▲' : '▼'}</span>
@@ -3404,9 +3448,17 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                                                 onChange={e => { if (e.target.value) copyExerciseToSession(ex, e.target.value) }}
                                               >
                                                 <option value="" disabled>Kopiér til...</option>
-                                                {(week.sessions || []).filter(s => s.id !== session.id).map(s => (
-                                                  <option key={s.id} value={s.id}>{s.title}</option>
-                                                ))}
+                                                {weeks.map(w => {
+                                                  const otherSessions = (w.sessions || []).filter(s => s.id !== session.id)
+                                                  if (!otherSessions.length) return null
+                                                  return (
+                                                    <optgroup key={w.id} label={`Uge ${w.week_number}${w.block_name ? ` — ${w.block_name}` : ''}`}>
+                                                      {otherSessions.map(s => (
+                                                        <option key={s.id} value={s.id}>{s.title}</option>
+                                                      ))}
+                                                    </optgroup>
+                                                  )
+                                                })}
                                               </select>
                                               <button style={{ ...s.btnGhost, fontSize: '0.55rem', padding: '0.2rem 0.4rem' }} onClick={() => setCopyingExercise(null)}>✕</button>
                                             </>
