@@ -391,8 +391,19 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     const summary = {}
     for (const w of data) {
       const aid = w.athlete_id
-      if (!summary[aid] || w.week_number > summary[aid].week_number) {
-        summary[aid] = { week_number: w.week_number, block_name: w.block_name, start_date: w.start_date, session_count: (w.sessions || []).length }
+      const sessionCount = (w.sessions || []).length
+      if (!summary[aid]) {
+        summary[aid] = { week_number: w.week_number, block_name: w.block_name, start_date: w.start_date, session_count: sessionCount }
+      } else {
+        // Prefer latest week with sessions; if tie or no sessions anywhere, prefer highest week_number
+        const cur = summary[aid]
+        const curHasSess = cur.session_count > 0
+        const newHasSess = sessionCount > 0
+        if (newHasSess && (!curHasSess || w.week_number > cur.week_number)) {
+          summary[aid] = { week_number: w.week_number, block_name: w.block_name, start_date: w.start_date, session_count: sessionCount }
+        } else if (!newHasSess && !curHasSess && w.week_number > cur.week_number) {
+          summary[aid] = { week_number: w.week_number, block_name: w.block_name, start_date: w.start_date, session_count: sessionCount }
+        }
       }
     }
     setAthleteWeekSummary(summary)
@@ -1646,41 +1657,27 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                               <div onClick={() => !isHidden && openProfile(ath, 'program')} style={{ display: 'flex', alignItems: 'center', flex: 1, gap: '1rem', cursor: isHidden ? 'default' : 'pointer', minWidth: 0 }}>
                                 <div style={{ fontSize: '0.88rem', color: '#edeae2', minWidth: '140px', flexShrink: 0 }}>{ath.name}</div>
                                 {ws ? (() => {
-                                  const todayStr = new Date().toISOString().slice(0, 10)
-                                  const today = new Date(todayStr + 'T12:00:00')
+                                  const today = new Date(); today.setHours(12, 0, 0, 0)
                                   const lastLogDate = athleteLastLogs[ath.id]
-                                  const daysSinceLog = lastLogDate ? Math.floor((today - new Date(lastLogDate + 'T12:00:00')) / (24 * 3600 * 1000)) : null
-
-                                  const weekStart = ws.start_date ? new Date(ws.start_date + 'T12:00:00') : null
-                                  const weekEnd = weekStart ? new Date(weekStart.getTime() + 6 * 24 * 3600 * 1000) : null
-                                  const isWeekActive = weekStart && weekEnd && today >= weekStart && today <= weekEnd
-                                  const isWeekOverdue = weekEnd && today > weekEnd
-                                  const isWeekSoon = weekStart && !isWeekActive && !isWeekOverdue && (weekStart - today) <= 3 * 24 * 3600 * 1000
-
-                                  // Primær status: baseret på start_date hvis sat, ellers på seneste log
-                                  let dotColor, statusText
-                                  if (ws.start_date) {
-                                    dotColor = isWeekActive ? '#6cba6c' : isWeekOverdue ? '#e05555' : isWeekSoon ? '#c8923a' : '#7a7770'
-                                    statusText = isWeekActive ? 'Aktiv uge' : isWeekOverdue ? 'Mangler ny uge' : isWeekSoon ? 'Starter snart' : `Starter ${weekStart.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })}`
-                                  } else if (daysSinceLog != null) {
-                                    dotColor = daysSinceLog <= 4 ? '#6cba6c' : daysSinceLog <= 8 ? '#c8923a' : '#e05555'
-                                    statusText = daysSinceLog === 0 ? 'Trænet i dag' : daysSinceLog === 1 ? 'Trænet i går' : `Trænet for ${daysSinceLog} dage siden`
-                                  } else {
-                                    dotColor = hasSessions ? '#7a7770' : '#4a4844'
-                                    statusText = hasSessions ? `${ws.session_count} sess` : 'Ingen sess'
-                                  }
-
+                                  const daysSinceLog = lastLogDate
+                                    ? Math.floor((today - new Date(lastLogDate + 'T12:00:00')) / (24 * 3600 * 1000))
+                                    : null
+                                  const dotColor = daysSinceLog == null ? '#4a4844'
+                                    : daysSinceLog <= 4 ? '#6cba6c'
+                                    : daysSinceLog <= 8 ? '#c8923a'
+                                    : '#e05555'
+                                  const logText = daysSinceLog == null ? 'Ingen logs'
+                                    : daysSinceLog === 0 ? 'I dag'
+                                    : daysSinceLog === 1 ? 'I går'
+                                    : `${daysSinceLog}d siden`
                                   return (
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1, minWidth: 0, flexWrap: 'wrap' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1, minWidth: 0 }}>
                                       <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#7a7770', whiteSpace: 'nowrap' }}>
-                                        Uge {ws.week_number}{ws.block_name ? ` — ${ws.block_name}` : ''}
-                                        {ws.start_date && weekStart && weekEnd && <span style={{ color: '#4a4844', marginLeft: '0.4rem' }}>
-                                          {weekStart.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })}–{weekEnd.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })}
-                                        </span>}
+                                        Uge {ws.week_number}{ws.block_name ? ` — ${ws.block_name}` : ''} · {ws.session_count} sess
                                       </div>
                                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexShrink: 0 }}>
                                         <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: dotColor }} />
-                                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: dotColor }}>{statusText}</span>
+                                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: dotColor }}>{logText}</span>
                                       </div>
                                     </div>
                                   )
