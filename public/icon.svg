@@ -28,18 +28,18 @@
        Venstre-enderne flugter og danner E'ets ryg; bløde runde ender. -->
   <g fill="none" stroke-linecap="round" stroke-linejoin="round">
     <!-- blød glød bag -->
-    <g stroke="#d77f2a" stroke-width="44" opacity="0.5" filter="url(#glow)">
-      <path d="M176 182 L 176 330"/>
-      <path d="M176 182 C 240 169 300 195 356 182"/>
-      <path d="M176 256 C 230 247 286 267 312 256"/>
-      <path d="M176 330 C 240 343 300 317 356 330"/>
+    <g stroke="#d77f2a" stroke-width="30" opacity="0.4" filter="url(#glow)">
+      <path d="M178 168 C 173 232 173 280 178 344"/>
+      <path d="M178 170 C 240 162 302 178 358 170"/>
+      <path d="M178 256 C 228 250 278 264 304 256"/>
+      <path d="M178 342 C 240 350 302 334 358 342"/>
     </g>
-    <!-- selve stregerne: lodret ryg + tre afdæmpede bølge-arme -->
-    <g stroke="url(#flame)" stroke-width="42">
-      <path d="M176 182 L 176 330"/>
-      <path d="M176 182 C 240 169 300 195 356 182"/>
-      <path d="M176 256 C 230 247 286 267 312 256"/>
-      <path d="M176 330 C 240 343 300 317 356 330"/>
+    <!-- selve stregerne: tynd lodret ryg + tre fine, fladt-svungne arme -->
+    <g stroke="url(#flame)" stroke-width="23">
+      <path d="M178 168 C 173 232 173 280 178 344"/>
+      <path d="M178 170 C 240 162 302 178 358 170"/>
+      <path d="M178 256 C 228 250 278 264 304 256"/>
+      <path d="M178 342 C 240 350 302 334 358 342"/>
     </g>
   </g>
 </svg>
