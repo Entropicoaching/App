@@ -1,47 +1,59 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
   <defs>
-    <!-- Varm, levende mørk baggrund med dybde -->
-    <radialGradient id="bg" cx="38%" cy="30%" r="90%">
-      <stop offset="0%" stop-color="#2a2823"/>
-      <stop offset="52%" stop-color="#161512"/>
-      <stop offset="100%" stop-color="#0b0a08"/>
+    <!-- Varm, levende mørk baggrund -->
+    <radialGradient id="bg" cx="50%" cy="40%" r="92%">
+      <stop offset="0%" stop-color="#2c2620"/>
+      <stop offset="50%" stop-color="#161311"/>
+      <stop offset="100%" stop-color="#0a0807"/>
     </radialGradient>
-    <!-- Blødt amber-skær bag E'et -->
-    <radialGradient id="glow" cx="50%" cy="47%" r="48%">
-      <stop offset="0%" stop-color="#c8923a" stop-opacity="0.42"/>
-      <stop offset="65%" stop-color="#c8923a" stop-opacity="0.06"/>
-      <stop offset="100%" stop-color="#c8923a" stop-opacity="0"/>
+    <!-- Flamme-skær: varmt, stiger opad -->
+    <radialGradient id="glowOuter" cx="50%" cy="55%" r="52%">
+      <stop offset="0%" stop-color="#e0641a" stop-opacity="0.40"/>
+      <stop offset="60%" stop-color="#e0641a" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="#e0641a" stop-opacity="0"/>
     </radialGradient>
-    <!-- Belyst amber til glyfen -->
-    <linearGradient id="amber" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#f2cd83"/>
-      <stop offset="44%" stop-color="#c8923a"/>
-      <stop offset="100%" stop-color="#94661f"/>
+    <radialGradient id="glowInner" cx="50%" cy="45%" r="44%">
+      <stop offset="0%" stop-color="#ffc257" stop-opacity="0.55"/>
+      <stop offset="55%" stop-color="#ffc257" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#ffc257" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Flamme-gradient: gulglød i top -> amber -> ember nederst -->
+    <linearGradient id="flame" x1="0.4" y1="0" x2="0.55" y2="1">
+      <stop offset="0%" stop-color="#ffe6a3"/>
+      <stop offset="30%" stop-color="#f8ba4e"/>
+      <stop offset="64%" stop-color="#de8b2b"/>
+      <stop offset="100%" stop-color="#bd5016"/>
     </linearGradient>
-    <!-- Top-sheen for et glaslook -->
     <linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#ffffff" stop-opacity="0.10"/>
       <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
     </linearGradient>
-    <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%">
-      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.6"/>
+    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="10" stdDeviation="18" flood-color="#000000" flood-opacity="0.55"/>
+    </filter>
+    <filter id="blurGlow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="10"/>
     </filter>
   </defs>
 
   <rect width="512" height="512" fill="url(#bg)"/>
-  <rect width="512" height="512" fill="url(#glow)"/>
+  <rect width="512" height="512" fill="url(#glowOuter)"/>
+  <rect width="512" height="512" fill="url(#glowInner)"/>
   <rect width="512" height="300" fill="url(#sheen)"/>
 
-  <!-- "E" + signatur-punktum med skygge -->
-  <g filter="url(#shadow)">
-    <g fill="url(#amber)">
-      <rect x="150" y="140" width="58" height="232" rx="15"/>
-      <rect x="150" y="140" width="196" height="58" rx="15"/>
-      <rect x="150" y="227" width="150" height="58" rx="15"/>
-      <rect x="150" y="314" width="196" height="58" rx="15"/>
-      <circle cx="386" cy="345" r="27"/>
+  <!-- Blødt "E" i flamme-gradient. Pille-formede bjælker; armene smalner opad
+       som en flamme (top kortest, bund bredest). Punktum fjernet. -->
+  <g filter="url(#soft)">
+    <g fill="url(#flame)">
+      <rect x="156" y="146" width="60" height="220" rx="30"/>
+      <rect x="156" y="146" width="174" height="60" rx="30"/>
+      <rect x="156" y="226" width="150" height="60" rx="30"/>
+      <rect x="156" y="306" width="200" height="60" rx="30"/>
     </g>
   </g>
-  <!-- Lys-kant øverst på glyfen for "belyst" effekt -->
-  <rect x="158" y="144" width="180" height="7" rx="3.5" fill="#fff4de" opacity="0.3"/>
+
+  <!-- Varm kerne-glød inde i glyfen -->
+  <ellipse cx="205" cy="252" rx="64" ry="120" fill="#ffd57a" opacity="0.15" filter="url(#blurGlow)"/>
+  <!-- Lys-kant øverst for "belyst" flamme-effekt -->
+  <rect x="166" y="151" width="150" height="7" rx="3.5" fill="#fff3d6" opacity="0.32"/>
 </svg>
