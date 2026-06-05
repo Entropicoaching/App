@@ -348,6 +348,21 @@ function today() {
   return new Date().toISOString().slice(0, 10)
 }
 
+// Forskyd en yyyy-mm-dd-streng med et antal dage (UTC, så det matcher today()).
+function shiftDate(str, days) {
+  const d = new Date(str + 'T00:00:00Z')
+  d.setUTCDate(d.getUTCDate() + days)
+  return d.toISOString().slice(0, 10)
+}
+
+// Pæn dansk etiket for en kost-dato relativt til i dag.
+function dateLabel(str) {
+  if (str === today()) return 'I dag'
+  if (str === shiftDate(today(), -1)) return 'I går'
+  const d = new Date(str + 'T12:00:00Z')
+  return d.toLocaleDateString('da-DK', { weekday: 'short', day: 'numeric', month: 'short' })
+}
+
 const NAV_ITEMS = [
   {
     key: 'hjem',
@@ -441,6 +456,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [templateNameInput, setTemplateNameInput] = useState('')
   const [historicalMealLogs, setHistoricalMealLogs] = useState([])
   const [frequentFoods, setFrequentFoods] = useState([])
+  const [kostDate, setKostDate] = useState(today())
   const [editingLogId, setEditingLogId] = useState(null)
   const [editGrams, setEditGrams] = useState('')
   const [editMacros, setEditMacros] = useState({ kcal: '', protein: '', carb: '', fat: '' })
@@ -519,6 +535,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [readinessError, setReadinessError] = useState(null)
 
   useEffect(() => { fetchAthlete() }, [])
+  useEffect(() => { if (athlete) fetchLogs(athlete.id, kostDate) }, [kostDate, athlete?.id])
   useEffect(() => { if (tab === 'beskeder' && athlete) { fetchAthleteMessages(); markMessagesAsRead() } }, [tab, athlete?.id])
   useEffect(() => { if (tab === 'stævnedag' && athlete) fetchMeetPlan(athlete.id) }, [tab, athlete?.id])
 
@@ -1062,12 +1079,12 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     return d.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' }) + ' ' + time
   }
 
-  async function fetchLogs(athleteId) {
+  async function fetchLogs(athleteId, date = kostDate) {
     const { data } = await supabase
       .from('meal_logs')
       .select('*')
       .eq('athlete_id', athleteId)
-      .eq('date', today())
+      .eq('date', date)
       .order('created_at')
     setLogs(data || [])
   }
@@ -1106,7 +1123,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   async function quickLogFood(f) {
     if (!athlete) return
     await supabase.from('meal_logs').insert({
-      athlete_id: athlete.id, date: today(),
+      athlete_id: athlete.id, date: kostDate,
       meal: f.meal, kcal: f.kcal, protein: f.protein, carb: f.carb, fat: f.fat,
     })
     fetchLogs(athlete.id)
@@ -1122,9 +1139,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   }
 
   async function copyYesterday() {
-    const d = new Date()
-    d.setDate(d.getDate() - 1)
-    const yStr = d.toISOString().slice(0, 10)
+    const yStr = shiftDate(kostDate, -1) // dagen før den viste dag
     const { data } = await supabase
       .from('meal_logs')
       .select('meal, kcal, protein, carb, fat')
@@ -1132,7 +1147,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       .eq('date', yStr)
     if (!data || data.length === 0) return
     await supabase.from('meal_logs').insert(
-      data.map(item => ({ ...item, athlete_id: athlete.id, date: today() }))
+      data.map(item => ({ ...item, athlete_id: athlete.id, date: kostDate }))
     )
     fetchLogs(athlete.id)
   }
@@ -1149,7 +1164,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   async function logTemplate(template) {
     if (!athlete) return
     await supabase.from('meal_logs').insert(
-      template.items.map(item => ({ ...item, athlete_id: athlete.id, date: today() }))
+      template.items.map(item => ({ ...item, athlete_id: athlete.id, date: kostDate }))
     )
     fetchLogs(athlete.id)
     setShowTemplates(false)
@@ -1204,7 +1219,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       : `${selectedFood.name} · ${amount} ${unit.label} (${Math.round(grams)} g)`
     await supabase.from('meal_logs').insert({
       athlete_id: athlete.id,
-      date: today(),
+      date: kostDate,
       meal: label,
       kcal: Math.round(selectedFood.kcal100 * ratio),
       protein: Math.round(selectedFood.protein100 * ratio),
@@ -2416,9 +2431,25 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         {/* KOST */}
         {tab === 'kost' && (
           <>
-            <div style={{ marginBottom: '1.5rem' }}>
+            <div style={{ marginBottom: '1rem' }}>
               <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Kost</div>
               <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Kostlog.</h1>
+            </div>
+
+            {/* Dato-navigator */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)', padding: '0.4rem 0.5rem' }}>
+              <button onClick={() => setKostDate(d => shiftDate(d, -1))} style={{ ...s.btnGhost, fontSize: '0.7rem', padding: '0.35rem 0.8rem' }}>←</button>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#c8923a' }}>{dateLabel(kostDate)}</div>
+                {kostDate !== today() && (
+                  <button onClick={() => setKostDate(today())} style={{ background: 'none', border: 'none', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: '#4a4844', cursor: 'pointer', padding: '0.1rem 0' }}>↺ tilbage til i dag</button>
+                )}
+              </div>
+              <button
+                onClick={() => kostDate < today() && setKostDate(d => shiftDate(d, 1))}
+                disabled={kostDate >= today()}
+                style={{ ...s.btnGhost, fontSize: '0.7rem', padding: '0.35rem 0.8rem', opacity: kostDate >= today() ? 0.25 : 1 }}
+              >→</button>
             </div>
 
             {progressBars}
@@ -2670,7 +2701,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
             {/* Meal log */}
             <div style={s.card}>
-              <div style={s.cardLabel}>Dagens måltider — {today()}</div>
+              <div style={s.cardLabel}>{kostDate === today() ? 'Dagens måltider' : `Måltider — ${dateLabel(kostDate)}`}</div>
 
               {logs.length === 0 ? (
                 <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen måltider logget endnu i dag.</div>
