@@ -21,6 +21,27 @@ function computePhases(weeks) {
   return phases
 }
 
+// Den "aktive" uge = den seneste uge der er startet (start_date <= i dag).
+// Uger uden start_date regnes som tilgængelige nu. Fremtidige uger (oprettet af
+// periodiseringsplanlæggeren) udelukkes, så atleten lander på — og kan logge —
+// sin nuværende træningsuge, ikke en tom fremtidig uge.
+function computeActiveWeekIdx(weeks) {
+  if (!weeks || !weeks.length) return 0
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  let active = -1
+  weeks.forEach((w, i) => {
+    let isFuture = false
+    if (w.start_date) {
+      const d = new Date(w.start_date)
+      d.setHours(0, 0, 0, 0)
+      isFuture = d > today
+    }
+    if (!isFuture) active = i
+  })
+  return active >= 0 ? active : 0
+}
+
 const LOCAL_FOODS = [
   // Mejeri
   { name: 'Mælk minimælk', kcal100: 42, protein100: 3, carb100: 5, fat100: 1 },
@@ -720,12 +741,12 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         .map(s => ({ ...s, exercises: (s.exercises || []).sort((a, b) => a.exercise_order - b.exercise_order) }))
     }))
     setAllWeeks(weeks)
-    const latestIdx = weeks.length - 1
-    setViewingWeekIdx(latestIdx)
-    const latestWeek = weeks[latestIdx]
-    setCurrentWeek(latestWeek)
-    fetchExerciseLogs(athleteId, latestWeek)
-    fetchLastLogs(athleteId, latestWeek)
+    const activeIdx = computeActiveWeekIdx(weeks)
+    setViewingWeekIdx(activeIdx)
+    const activeWeek = weeks[activeIdx]
+    setCurrentWeek(activeWeek)
+    fetchExerciseLogs(athleteId, activeWeek)
+    fetchLastLogs(athleteId, activeWeek)
     fetchExerciseHistory(athleteId)
     fetchAllExerciseLogs(athleteId, weeks)
   }
@@ -1691,9 +1712,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
         {/* PROGRAM */}
         {tab === 'program' && (() => {
-          const latestWeekIdx = allWeeks.length - 1
+          const activeWeekIdx = computeActiveWeekIdx(allWeeks)
           const viewedWeek = allWeeks[viewingWeekIdx] || null
-          const isCurrentWeek = viewingWeekIdx === latestWeekIdx
+          const isCurrentWeek = viewingWeekIdx === activeWeekIdx
           const logsForView = isCurrentWeek ? exerciseLogs : pastLogs
 
           return (
@@ -1723,20 +1744,20 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                     const phases = computePhases(allWeeks)
                     const totalWeeks = allWeeks.length
 
-                    // Find which phase the current (latest) week belongs to
+                    // Find which phase the active (current) week belongs to
                     let currentPhaseName = null, weekInPhase = 0, phaseTotalWeeks = 0
                     let ps = 0
                     for (const phase of phases) {
-                      if (ps + phase.weeks.length > latestWeekIdx) {
+                      if (ps + phase.weeks.length > activeWeekIdx) {
                         currentPhaseName = phase.name
-                        weekInPhase = latestWeekIdx - ps + 1
+                        weekInPhase = activeWeekIdx - ps + 1
                         phaseTotalWeeks = phase.weeks.length
                         break
                       }
                       ps += phase.weeks.length
                     }
 
-                    const markerPct = (latestWeekIdx + 0.5) / totalWeeks * 100
+                    const markerPct = (activeWeekIdx + 0.5) / totalWeeks * 100
 
                     return (
                       <div style={{ marginBottom: '1.25rem' }}>
@@ -1774,7 +1795,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                   onClick={() => {
                                     setViewingWeekIdx(phaseStartIdx)
                                     setProgOpenSession(null)
-                                    if (phaseStartIdx < latestWeekIdx) fetchPastLogs(allWeeks[phaseStartIdx], athlete.id)
+                                    if (phaseStartIdx < activeWeekIdx) fetchPastLogs(allWeeks[phaseStartIdx], athlete.id)
                                     else setPastLogs([])
                                   }}
                                 >
@@ -1812,7 +1833,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                             {currentPhaseName && (
                               <span style={{ color: blockColor(currentPhaseName) }}>{currentPhaseName} · Uge {weekInPhase} af {phaseTotalWeeks} · </span>
                             )}
-                            <span style={{ color: '#4a4844' }}>Total uge {latestWeekIdx + 1} af {totalWeeks}</span>
+                            <span style={{ color: '#4a4844' }}>Total uge {activeWeekIdx + 1} af {totalWeeks}</span>
                           </div>
                         </div>
                       </div>
@@ -1849,7 +1870,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                             const ni = viewingWeekIdx + 1
                             setViewingWeekIdx(ni)
                             setProgOpenSession(null)
-                            if (ni < latestWeekIdx) {
+                            if (ni < activeWeekIdx) {
                               fetchPastLogs(allWeeks[ni], athlete.id)
                             } else {
                               setPastLogs([])
