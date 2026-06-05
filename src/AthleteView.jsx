@@ -439,6 +439,14 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [mealTemplates, setMealTemplates] = useState([])
   const [showTemplates, setShowTemplates] = useState(false)
   const [showSaveTemplate, setShowSaveTemplate] = useState(false)
+  // Stregkode-scanner
+  const [showScanner, setShowScanner] = useState(false)
+  const [scanStatus, setScanStatus] = useState('idle') // idle|starting|scanning|looking-up|error
+  const [scanError, setScanError] = useState('')
+  const [manualBarcode, setManualBarcode] = useState('')
+  const videoRef = useRef(null)
+  const scanStreamRef = useRef(null)
+  const scanActiveRef = useRef(false)
   const [templateNameInput, setTemplateNameInput] = useState('')
   const [historicalMealLogs, setHistoricalMealLogs] = useState([])
 
@@ -1219,6 +1227,103 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       setCreateFood({ name: '', kcal100: '', protein100: '', carb100: '', fat100: '', unit_label: '', unit_grams: '' })
     }
   }
+
+  // Slår en stregkode op i Open Food Facts og prefiller opret-fødevare-formen.
+  async function lookupBarcode(rawCode) {
+    const code = String(rawCode || '').replace(/\D/g, '')
+    if (code.length < 6) { setScanError('Ugyldig stregkode'); setScanStatus('error'); return }
+    setScanStatus('looking-up')
+    setScanError('')
+    try {
+      const res = await fetch(`https://world.openfoodfacts.org/api/v2/product/${code}.json?fields=product_name,brands,nutriments,serving_quantity`)
+      const json = await res.json()
+      if (json.status !== 1 || !json.product) {
+        setScanError('Produktet blev ikke fundet. Opret det manuelt nedenfor.')
+        setScanStatus('error')
+        return
+      }
+      const p = json.product
+      const n = p.nutriments || {}
+      const kcal = n['energy-kcal_100g'] ?? (n['energy_100g'] ? Math.round(n['energy_100g'] / 4.184) : '')
+      const name = [p.product_name, p.brands ? `(${p.brands.split(',')[0].trim()})` : ''].filter(Boolean).join(' ').trim() || `Stregkode ${code}`
+      const servingG = Number(p.serving_quantity) > 0 ? Math.round(Number(p.serving_quantity)) : ''
+      stopScanner()
+      setSearchQuery('')
+      setSearchResults([])
+      setSelectedFood(null)
+      setShowCreateFood(true)
+      setCreateFood({
+        name,
+        kcal100: kcal !== '' ? String(Math.round(kcal)) : '',
+        protein100: n['proteins_100g'] != null ? String(round1(n['proteins_100g'])) : '',
+        carb100: n['carbohydrates_100g'] != null ? String(round1(n['carbohydrates_100g'])) : '',
+        fat100: n['fat_100g'] != null ? String(round1(n['fat_100g'])) : '',
+        unit_label: servingG ? 'portion' : '',
+        unit_grams: servingG ? String(servingG) : '',
+      })
+    } catch {
+      setScanError('Kunne ikke hente data (tjek netværk). Opret manuelt nedenfor.')
+      setScanStatus('error')
+    }
+  }
+
+  function round1(v) { return Math.round(Number(v) * 10) / 10 }
+
+  function stopScanner() {
+    scanActiveRef.current = false
+    if (scanStreamRef.current) {
+      scanStreamRef.current.getTracks().forEach(t => t.stop())
+      scanStreamRef.current = null
+    }
+    setShowScanner(false)
+    setScanStatus('idle')
+  }
+
+  async function startScanner() {
+    setManualBarcode('')
+    setScanError('')
+    setShowScanner(true)
+    if (!('BarcodeDetector' in window)) {
+      // Ingen native scanner (fx iOS Safari) — vis manuel indtastning i stedet.
+      setScanStatus('error')
+      setScanError('Din browser understøtter ikke kamera-scanning. Indtast stregkoden manuelt herunder (virker på alle enheder).')
+      return
+    }
+    setScanStatus('starting')
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+      scanStreamRef.current = stream
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream
+        await videoRef.current.play()
+      }
+      const detector = new window.BarcodeDetector({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e'] })
+      scanActiveRef.current = true
+      setScanStatus('scanning')
+      const tick = async () => {
+        if (!scanActiveRef.current || !videoRef.current) return
+        try {
+          const codes = await detector.detect(videoRef.current)
+          if (codes && codes.length > 0) {
+            scanActiveRef.current = false
+            lookupBarcode(codes[0].rawValue)
+            return
+          }
+        } catch { /* enkelt frame fejlede — fortsæt */ }
+        if (scanActiveRef.current) requestAnimationFrame(tick)
+      }
+      requestAnimationFrame(tick)
+    } catch {
+      setScanStatus('error')
+      setScanError('Kunne ikke åbne kameraet. Giv adgang i browseren, eller indtast stregkoden manuelt.')
+    }
+  }
+
+  // Ryd op i kamera-stream hvis komponenten unmountes mens scanneren kører.
+  useEffect(() => () => {
+    scanActiveRef.current = false
+    if (scanStreamRef.current) scanStreamRef.current.getTracks().forEach(t => t.stop())
+  }, [])
 
   async function autoCompleteSession(session) {
     const exerciseIds = (session.exercises || []).map(e => e.id)
@@ -2394,9 +2499,57 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               )}
             </div>
 
+            {/* Stregkode-scanner overlay */}
+            {showScanner && (
+              <div style={{ position: 'fixed', inset: 0, background: 'rgba(10,10,8,0.94)', zIndex: 1000, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
+                <div style={{ width: '100%', maxWidth: '420px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a' }}>Scan stregkode</div>
+                    <button onClick={stopScanner} style={{ background: 'none', border: 'none', color: '#7a7770', fontSize: '1.1rem', cursor: 'pointer', lineHeight: 1 }}>✕</button>
+                  </div>
+
+                  {(scanStatus === 'starting' || scanStatus === 'scanning' || scanStatus === 'looking-up') && (
+                    <div style={{ position: 'relative', width: '100%', aspectRatio: '4/3', background: '#000', overflow: 'hidden', border: '1px solid rgba(200,146,58,0.3)' }}>
+                      <video ref={videoRef} playsInline muted style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <div style={{ position: 'absolute', top: '50%', left: '10%', right: '10%', height: '2px', background: '#c8923a', boxShadow: '0 0 8px #c8923a', transform: 'translateY(-50%)' }} />
+                    </div>
+                  )}
+
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: scanStatus === 'error' ? '#e05555' : '#7a7770', marginTop: '0.75rem', lineHeight: 1.6, minHeight: '1.2rem', textAlign: 'center' }}>
+                    {scanStatus === 'starting' && 'Åbner kamera…'}
+                    {scanStatus === 'scanning' && 'Hold stregkoden inden for stregen'}
+                    {scanStatus === 'looking-up' && 'Henter ernæring…'}
+                    {scanStatus === 'error' && scanError}
+                  </div>
+
+                  {/* Manuel indtastning — virker på alle enheder (også iOS) */}
+                  <div style={{ marginTop: '1rem', borderTop: '1px solid rgba(237,234,226,0.1)', paddingTop: '1rem' }}>
+                    <div style={s.fieldLabel}>Eller indtast stregkode manuelt</div>
+                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.3rem' }}>
+                      <input
+                        style={{ ...s.fieldInput, flex: 1 }}
+                        type="text"
+                        inputMode="numeric"
+                        placeholder="fx 5701234567890"
+                        value={manualBarcode}
+                        onChange={e => setManualBarcode(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && lookupBarcode(manualBarcode)}
+                      />
+                      <button style={{ ...s.btnPrimary, flexShrink: 0 }} onClick={() => lookupBarcode(manualBarcode)} disabled={scanStatus === 'looking-up'}>Slå op</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Search */}
             <div style={s.card}>
               <div style={s.cardLabel}>Tilføj fødevare</div>
+
+              <button
+                style={{ ...s.btnPrimary, width: '100%', fontSize: '0.6rem', padding: '0.6rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+                onClick={startScanner}
+              >📷 Scan stregkode</button>
 
               <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem' }}>
                 <button
