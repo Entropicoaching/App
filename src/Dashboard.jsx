@@ -302,6 +302,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [athleteWeekSummary, setAthleteWeekSummary] = useState({})
   const [athleteLastLogs, setAthleteLastLogs] = useState({})
   const [calendarWeeks, setCalendarWeeks] = useState({}) // athlete_id -> [{week_number, block_name, start_date, session_count, exercise_count}]
+  const [athleteCurrentWeek, setAthleteCurrentWeek] = useState({}) // athlete_id -> ugenummer for seneste logg. træning
   const [hiddenAthleteIds, setHiddenAthleteIds] = useState(() => {
     try { return new Set(JSON.parse(localStorage.getItem('entropi_hidden_athletes') || '[]')) } catch { return new Set() }
   })
@@ -319,7 +320,11 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
   useEffect(() => { fetchAthletes(); fetchExerciseLibrary() }, [])
   useEffect(() => {
-    if (view === 'calendar' && athletes.length) fetchCalendarWeeks(athletes.map(a => a.id))
+    if (view === 'calendar' && athletes.length) {
+      const ids = athletes.map(a => a.id)
+      fetchCalendarWeeks(ids)
+      fetchCalendarProgress(ids)
+    }
   }, [view, athletes])
   useEffect(() => {
     if ((activeTab === 'program' || activeTab === 'analyse') && selectedAthlete) {
@@ -435,6 +440,26 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     // Sortér uger pr. atlet efter ugenummer (stigende)
     for (const aid in map) map[aid].sort((a, b) => a.week_number - b.week_number)
     setCalendarWeeks(map)
+  }
+
+  // Find hvilket ugenummer hver atlet sidst loggede træning i (= hvor de er nu).
+  async function fetchCalendarProgress(athleteIds) {
+    if (!athleteIds.length) return
+    const since = new Date(); since.setDate(since.getDate() - 180)
+    const { data } = await supabase
+      .from('exercise_logs')
+      .select('athlete_id, logged_at, exercises(sessions(weeks(week_number)))')
+      .in('athlete_id', athleteIds)
+      .gte('logged_at', since.toISOString())
+      .order('logged_at', { ascending: false })
+    if (!data) return
+    const map = {}
+    for (const log of data) {
+      if (map[log.athlete_id] != null) continue // har allerede den seneste for denne atlet
+      const wn = log.exercises?.sessions?.weeks?.week_number
+      if (wn != null) map[log.athlete_id] = wn
+    }
+    setAthleteCurrentWeek(map)
   }
 
   async function fetchProfilesLastSeen(athletesList) {
@@ -1646,25 +1671,32 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           const dayMs = 86400000
           const visibleAthletes = athletes.filter(a => !hiddenAthleteIds.has(a.id))
 
-          // Udled status pr. atlet direkte fra det du har inputtet:
-          // findes der en uge — og er der faktisk oprettet øvelser i den seneste uge?
+          // Udled status pr. atlet ud fra HVOR DE ER NU (seneste loggede uge) og
+          // hvor mange FYLDTE uger (med øvelser) der ligger foran dem.
           const board = visibleAthletes.map(a => {
             const weeks = calendarWeeks[a.id] || []
-            const latest = weeks.length ? weeks[weeks.length - 1] : null
-            const planned = weeks.filter(w => w.exercise_count > 0)
-            const maxPlannedWeekNo = planned.length ? planned[planned.length - 1].week_number : null
+            const planned = weeks.filter(w => w.exercise_count > 0)            // uger du har lagt øvelser i
+            const maxPlannedWeekNo = planned.length ? Math.max(...planned.map(w => w.week_number)) : null
+            const minPlannedWeekNo = planned.length ? Math.min(...planned.map(w => w.week_number)) : null
+            // Hvor atleten er nu: seneste loggede uge. Ingen logs → lige før første fyldte uge.
+            const loggedWeek = athleteCurrentWeek[a.id] ?? null
+            const ref = loggedWeek != null ? loggedWeek : (minPlannedWeekNo != null ? minPlannedWeekNo - 1 : null)
+            const filledAhead = ref != null ? planned.filter(w => w.week_number > ref).length : planned.length
             const lastLog = athleteLastLogs[a.id]
             const daysSince = lastLog ? Math.floor((today0 - new Date(lastLog + 'T12:00:00')) / dayMs) : null
-            let status // ready | empty | none
-            if (!latest) status = 'none'
-            else if (latest.exercise_count === 0) status = 'empty'
+            let status // ready | low | runout | empty | none
+            if (weeks.length === 0) status = 'none'
+            else if (planned.length === 0) status = 'empty'          // uger findes, men ingen øvelser
+            else if (filledAhead <= 0) status = 'runout'             // trænet igennem alt planlagt
+            else if (filledAhead === 1) status = 'low'               // kun én fyldt uge tilbage
             else status = 'ready'
-            return { a, weeks, latest, maxPlannedWeekNo, daysSince, status }
+            return { a, weeks, planned, loggedWeek, maxPlannedWeekNo, filledAhead, daysSince, status }
           })
-          const needs = board.filter(b => b.status !== 'ready')
-          const reasonText = (b) => b.status === 'none'
-            ? 'Intet program oprettet'
-            : `Seneste uge (uge ${b.latest.week_number}) mangler øvelser`
+          // Kun de røde tilstande kræver handling; "low" (gul) er en blød reminder.
+          const needs = board.filter(b => b.status === 'none' || b.status === 'empty' || b.status === 'runout')
+          const reasonText = (b) => b.status === 'none' ? 'Intet program oprettet'
+            : b.status === 'empty' ? 'Uger oprettet, men ingen øvelser'
+            : 'Trænet igennem alt — planlæg næste blok'
           const lastText = (d) => d == null ? 'Ingen logs' : d === 0 ? 'I dag' : d === 1 ? 'I går' : `${d}d siden`
           const lastColor = (d) => d == null ? '#4a4844' : d <= 4 ? '#6cba6c' : d <= 8 ? '#c8923a' : '#e05555'
 
@@ -1698,18 +1730,19 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 {board.length === 0 ? (
                   <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', padding: '1rem 0' }}>Ingen atleter</div>
                 ) : board.map((b, i) => {
-                  const chip = b.status === 'ready' ? { t: '✓ Klar', c: '#6cba6c' }
+                  const chip = b.status === 'ready' ? { t: `✓ Klar · ${b.filledAhead} uger frem`, c: '#6cba6c' }
+                    : b.status === 'low' ? { t: '⚠ 1 uge tilbage', c: '#c8923a' }
+                    : b.status === 'runout' ? { t: '✗ Planlæg næste blok', c: '#e05555' }
                     : b.status === 'empty' ? { t: '⚠ Mangler øvelser', c: '#c8923a' }
                     : { t: '✗ Intet program', c: '#e05555' }
+                  const detail = b.weeks.length === 0 ? 'Ingen uger oprettet'
+                    : b.planned.length === 0 ? `${b.weeks.length} uger oprettet · ingen øvelser endnu`
+                    : `${b.loggedWeek != null ? `Træner uge ${b.loggedWeek}` : 'Ikke startet'} · ${b.filledAhead} fyldte uger frem · planlagt til uge ${b.maxPlannedWeekNo}`
                   return (
                     <div key={b.a.id} onClick={() => openProfile(b.a, 'program')}
                       style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.7rem 0', borderBottom: i < board.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none', cursor: 'pointer', flexWrap: 'wrap' }}>
                       <div style={{ fontSize: '0.9rem', color: '#edeae2', minWidth: '130px', flexShrink: 0 }}>{b.a.name}</div>
-                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#7a7770', flex: 1, minWidth: '160px' }}>
-                        {b.latest
-                          ? <>Seneste: uge {b.latest.week_number}{b.latest.block_name ? ` · ${b.latest.block_name}` : ''} · {b.latest.session_count} sess · {b.latest.exercise_count} øv{b.maxPlannedWeekNo != null ? ` · planlagt til uge ${b.maxPlannedWeekNo}` : ''}</>
-                          : 'Ingen uger oprettet'}
-                      </div>
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#7a7770', flex: 1, minWidth: '160px' }}>{detail}</div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexShrink: 0 }}>
                         <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: lastColor(b.daysSince) }} />
                         <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: lastColor(b.daysSince), minWidth: '64px' }}>{lastText(b.daysSince)}</span>
@@ -1720,7 +1753,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 })}
               </div>
               <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', marginTop: '0.75rem', letterSpacing: '0.05em', lineHeight: 1.7 }}>
-                "Klar" = seneste uge har mindst én øvelse. "Mangler øvelser" = ugen findes, men du har ikke lagt øvelser ind endnu. Prikken viser hvornår atleten sidst loggede træning.
+                Status ud fra hvor langt atleten er trænet (seneste loggede uge) og hvor mange uger med øvelser der ligger foran. "Planlæg næste blok" = de har trænet igennem alt du har lagt ind. "1 uge tilbage" = blød reminder. Prikken = sidst loggede træning.
               </div>
             </div>
           )
