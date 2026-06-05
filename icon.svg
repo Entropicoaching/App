@@ -42,15 +42,15 @@
     C 214 398 182 368 182 326
     C 182 280 214 232 256 168 Z"/>
 
-  <!-- Flammens krop — bløde, organiske linjer -->
+  <!-- Flammens krop — én flydende linje, toppen bøjer som en flamme-tunge -->
   <path fill="url(#flame)" d="
-    M256 156
-    C 268 196 286 224 300 256
-    C 318 296 322 318 318 342
-    C 311 380 284 400 256 400
-    C 228 400 201 380 194 342
-    C 190 318 194 296 212 256
-    C 226 224 244 196 256 156 Z"/>
+    M286 150
+    C 286 196 300 226 312 258
+    C 326 296 326 320 318 346
+    C 309 382 284 402 256 402
+    C 226 402 200 380 194 342
+    C 189 314 198 292 220 258
+    C 244 220 270 196 286 150 Z"/>
 
   <!-- Varm kerne, der gløder indefra -->
   <path fill="url(#core)" filter="url(#coreSoft)" opacity="0.9" d="
