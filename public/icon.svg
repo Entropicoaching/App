@@ -1,45 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
   <defs>
-    <radialGradient id="bg" cx="50%" cy="46%" r="85%">
-      <stop offset="0%" stop-color="#1b1714"/>
-      <stop offset="55%" stop-color="#0e0c0a"/>
+    <radialGradient id="bg" cx="50%" cy="44%" r="85%">
+      <stop offset="0%" stop-color="#1d1916"/>
+      <stop offset="55%" stop-color="#100e0c"/>
       <stop offset="100%" stop-color="#070605"/>
     </radialGradient>
-    <radialGradient id="aura" cx="50%" cy="50%" r="46%">
-      <stop offset="0%" stop-color="#e08a2e" stop-opacity="0.30"/>
-      <stop offset="60%" stop-color="#e08a2e" stop-opacity="0.06"/>
-      <stop offset="100%" stop-color="#e08a2e" stop-opacity="0"/>
+    <radialGradient id="aura" cx="50%" cy="48%" r="42%">
+      <stop offset="0%" stop-color="#c8923a" stop-opacity="0.22"/>
+      <stop offset="70%" stop-color="#c8923a" stop-opacity="0.04"/>
+      <stop offset="100%" stop-color="#c8923a" stop-opacity="0"/>
     </radialGradient>
-    <!-- Varm flamme-gradient over hele glyfen (top guld -> bund ember) -->
-    <linearGradient id="flame" gradientUnits="userSpaceOnUse" x1="256" y1="150" x2="256" y2="368">
-      <stop offset="0%" stop-color="#f7d488"/>
-      <stop offset="42%" stop-color="#e6a541"/>
-      <stop offset="100%" stop-color="#bd5a1d"/>
-    </linearGradient>
-    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
-      <feGaussianBlur stdDeviation="11"/>
-    </filter>
   </defs>
 
   <rect width="512" height="512" fill="url(#bg)"/>
   <rect width="512" height="512" fill="url(#aura)"/>
 
-  <!-- Et "E" tegnet som tre flydende bølge-streger (ingen hård bjælke).
-       Venstre-enderne flugter og danner E'ets ryg; bløde runde ender. -->
-  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-    <!-- blød glød bag -->
-    <g stroke="#d77f2a" stroke-width="30" opacity="0.4" filter="url(#glow)">
-      <path d="M178 168 C 173 232 173 280 178 344"/>
-      <path d="M178 170 C 222 163 278 177 320 170"/>
-      <path d="M178 256 C 214 251 250 263 280 256"/>
-      <path d="M178 342 C 222 349 278 335 320 342"/>
-    </g>
-    <!-- selve stregerne: tynd lodret ryg + tre fine, fladt-svungne arme -->
-    <g stroke="url(#flame)" stroke-width="23">
-      <path d="M178 168 C 173 232 173 280 178 344"/>
-      <path d="M178 170 C 222 163 278 177 320 170"/>
-      <path d="M178 256 C 214 251 250 263 280 256"/>
-      <path d="M178 342 C 222 349 278 335 320 342"/>
-    </g>
-  </g>
+  <text x="256" y="372" text-anchor="middle"
+    font-family="Helvetica, Arial, sans-serif" font-size="340" font-weight="600"
+    fill="#c8923a">E</text>
 </svg>
