@@ -30,16 +30,16 @@
     <!-- blød glød bag -->
     <g stroke="#d77f2a" stroke-width="30" opacity="0.4" filter="url(#glow)">
       <path d="M178 168 C 173 232 173 280 178 344"/>
-      <path d="M178 170 C 240 162 302 178 358 170"/>
-      <path d="M178 256 C 228 250 278 264 304 256"/>
-      <path d="M178 342 C 240 350 302 334 358 342"/>
+      <path d="M178 170 C 222 163 278 177 320 170"/>
+      <path d="M178 256 C 214 251 250 263 280 256"/>
+      <path d="M178 342 C 222 349 278 335 320 342"/>
     </g>
     <!-- selve stregerne: tynd lodret ryg + tre fine, fladt-svungne arme -->
     <g stroke="url(#flame)" stroke-width="23">
       <path d="M178 168 C 173 232 173 280 178 344"/>
-      <path d="M178 170 C 240 162 302 178 358 170"/>
-      <path d="M178 256 C 228 250 278 264 304 256"/>
-      <path d="M178 342 C 240 350 302 334 358 342"/>
+      <path d="M178 170 C 222 163 278 177 320 170"/>
+      <path d="M178 256 C 214 251 250 263 280 256"/>
+      <path d="M178 342 C 222 349 278 335 320 342"/>
     </g>
   </g>
 </svg>
