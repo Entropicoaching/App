@@ -263,6 +263,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
   const [weeks, setWeeks] = useState([])
   const [openWeekId, setOpenWeekId] = useState(null)
+  const [programBlockStart, setProgramBlockStart] = useState(null) // hvilken blok vises i program-listen (week_number for 1. uge, eller 'all')
   const [openSessionId, setOpenSessionId] = useState(null)
   const [addingWeek, setAddingWeek] = useState(false)
   const [addingSession, setAddingSession] = useState(null)
@@ -381,6 +382,28 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
   function askConfirm(message, onConfirm) {
     setConfirmDialog({ message, onConfirm })
+  }
+
+  // --- Program-fane: blok-accordion (vis én blok ad gangen) ---
+  function programActiveStart() {
+    if (programBlockStart === 'all') return 'all'
+    const phases = computePhases(weeks)
+    if (programBlockStart != null && phases.some(p => p.weeks[0].week_number === programBlockStart)) return programBlockStart
+    const openPhase = openWeekId ? phases.find(p => p.weeks.some(w => w.id === openWeekId)) : null
+    return (openPhase || phases[phases.length - 1])?.weeks[0]?.week_number ?? null
+  }
+  function programShownWeeks() {
+    if (programBlockStart === 'all') return weeks
+    const phases = computePhases(weeks)
+    const start = programActiveStart()
+    const ph = phases.find(p => p.weeks[0].week_number === start)
+    return ph ? ph.weeks : weeks
+  }
+  function gotoWeek(week) {
+    const ph = computePhases(weeks).find(p => p.weeks.some(w => w.id === week.id))
+    if (ph) setProgramBlockStart(ph.weeks[0].week_number)
+    setOpenWeekId(week.id)
+    setTimeout(() => document.getElementById(`week-row-${week.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 60)
   }
 
   async function fetchAthletes() {
@@ -1300,6 +1323,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     setWeeks([])
     setAthleteWeightLogs([])
     setOpenWeekId(null)
+    setProgramBlockStart(null)
     setOpenSessionId(null)
     setAddingWeek(false)
     setAddingSession(null)
@@ -3480,7 +3504,6 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                                 let cumPct = 0
                                 return phases.map((phase, pi) => {
                                   const color = blockColor(phase.name)
-                                  const firstWeekId = phase.weeks[0].id
                                   const pct = (phase.weeks.length / totalPhaseWeeks) * 100
                                   const phaseStart = cumPct
                                   const phaseEnd = cumPct + pct
@@ -3510,10 +3533,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                                         cursor: 'pointer', overflow: 'hidden', minWidth: 0, boxSizing: 'border-box',
                                         opacity: !isDone && !isActive && todayPct != null && phase.name ? 0.5 : 1,
                                       }}
-                                      onClick={() => {
-                                        setOpenWeekId(firstWeekId)
-                                        setTimeout(() => document.getElementById(`week-row-${firstWeekId}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50)
-                                      }}
+                                      onClick={() => gotoWeek(phase.weeks[0])}
                                     >
                                       {isDone && <span style={{ color, fontSize: '0.52rem', lineHeight: 1, flexShrink: 0, opacity: 0.9 }}>✓</span>}
                                       {phase.name && (
@@ -3586,10 +3606,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                                 cursor: 'pointer',
                                 opacity: isPostComp ? 0.35 : 1,
                               }}
-                              onClick={() => {
-                                setOpenWeekId(week.id)
-                                setTimeout(() => document.getElementById(`week-row-${week.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50)
-                              }}
+                              onClick={() => gotoWeek(week)}
                             >
                               <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: isLatest ? '#c8923a' : '#7a7770', marginBottom: '0.2rem' }}>
                                 UGE {week.week_number}{isCompWeek ? ' 🏆' : ''}
@@ -3649,7 +3666,32 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   </div>
                 )}
 
-                {weeks.map(week => (
+                {/* Blok-faner: vis kun én bloks uger ad gangen, så listen ikke bliver uoverskuelig */}
+                {weeks.length > 0 && (() => {
+                  const phases = computePhases(weeks)
+                  if (phases.length <= 1 && programBlockStart !== 'all') return null // kun én blok → ingen grund til faner
+                  const active = programActiveStart()
+                  const chip = (key, label, isActive, color) => (
+                    <button key={key} onClick={() => { setProgramBlockStart(key); setOpenWeekId(null) }}
+                      style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.04em', padding: '0.4rem 0.7rem', cursor: 'pointer',
+                        background: isActive ? (color ? color + '22' : 'rgba(200,146,58,0.15)') : 'transparent',
+                        border: `1px solid ${isActive ? (color ? color + '88' : 'rgba(200,146,58,0.5)') : 'rgba(237,234,226,0.12)'}`,
+                        color: isActive ? (color || '#c8923a') : '#7a7770' }}>{label}</button>
+                  )
+                  return (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '1rem' }}>
+                      {phases.map((phase) => {
+                        const start = phase.weeks[0].week_number
+                        const end = phase.weeks[phase.weeks.length - 1].week_number
+                        const range = start === end ? `uge ${start}` : `uge ${start}–${end}`
+                        return chip(start, `${phase.name || 'Uden blok'} · ${range}`, active === start, phase.name ? blockColor(phase.name) : null)
+                      })}
+                      {chip('all', `Alle (${weeks.length})`, programBlockStart === 'all', null)}
+                    </div>
+                  )
+                })()}
+
+                {programShownWeeks().map(week => (
                   <div key={week.id} id={`week-row-${week.id}`} style={{ marginBottom: '0.75rem' }}>
                     {/* Week header */}
                     {editingWeek === week.id ? (
