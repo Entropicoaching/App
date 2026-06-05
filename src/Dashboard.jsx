@@ -255,7 +255,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [flash, setFlash] = useState(null)
   const [confirmDialog, setConfirmDialog] = useState(null)
   const flashTimerRef = useRef(null)
-  const [lastBackup, setLastBackup] = useState(() => localStorage.getItem('entropi_last_backup') || null)
+  const [lastBackup, setLastBackup] = useState(null) // synces via profiles.last_backup_at
 
   // Program state
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -311,9 +311,9 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [snoozedAthletes, setSnoozedAthletes] = useState(() => {
     try { return JSON.parse(localStorage.getItem('entropi_calendar_snooze') || '{}') } catch { return {} }
   })
-  const [hiddenAthleteIds, setHiddenAthleteIds] = useState(() => {
-    try { return new Set(JSON.parse(localStorage.getItem('entropi_hidden_athletes') || '[]')) } catch { return new Set() }
-  })
+  // Skjulte atleter synces nu via athletes.hidden i DB (på tværs af enheder),
+  // ikke localStorage. Sættet fyldes fra fetchAthletes.
+  const [hiddenAthleteIds, setHiddenAthleteIds] = useState(new Set())
   const [showHiddenAthletes, setShowHiddenAthletes] = useState(false)
   const [showAiExport, setShowAiExport] = useState(false)
   const [aiExportWeeks, setAiExportWeeks] = useState(8)
@@ -326,7 +326,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     return () => window.removeEventListener('resize', handler)
   }, [])
 
-  useEffect(() => { fetchAthletes(); fetchExerciseLibrary() }, [])
+  useEffect(() => { fetchAthletes(); fetchExerciseLibrary(); fetchLastBackup() }, [])
   useEffect(() => {
     if (view === 'calendar' && athletes.length) {
       const ids = athletes.map(a => a.id)
@@ -368,6 +368,11 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     }
   }, [activeTab, selectedAthlete?.id])
 
+  async function fetchLastBackup() {
+    const { data } = await supabase.from('profiles').select('last_backup_at').eq('id', session.user.id).maybeSingle()
+    if (data?.last_backup_at) setLastBackup(data.last_backup_at)
+  }
+
   function showFlash(message, kind = 'info') {
     if (flashTimerRef.current) clearTimeout(flashTimerRef.current)
     setFlash({ message, kind })
@@ -382,6 +387,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     const { data, error } = await supabase.from('athletes').select('*').order('name')
     if (!error) {
       setAthletes(data || [])
+      setHiddenAthleteIds(new Set((data || []).filter(a => a.hidden).map(a => a.id)))
       if (data?.length) {
         fetchLatestMessages(data.map(a => a.id))
         fetchProfilesLastSeen(data)
@@ -1278,8 +1284,9 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       backup.tables[table] = data || []
     }
     downloadJSON(backup, `entropi-backup-${dateStr}`)
-    localStorage.setItem('entropi_last_backup', new Date().toISOString())
-    setLastBackup(new Date().toISOString())
+    const now = new Date().toISOString()
+    await supabase.from('profiles').update({ last_backup_at: now }).eq('id', session.user.id)
+    setLastBackup(now)
     setExportingBackup(false)
   }
 
@@ -1883,14 +1890,15 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   const visibleAthletes = athletes.filter(a => !hiddenAthleteIds.has(a.id))
                   const hiddenAthletes = athletes.filter(a => hiddenAthleteIds.has(a.id))
                   const displayAthletes = showHiddenAthletes ? athletes : visibleAthletes
-                  const toggleHide = (e, athId) => {
+                  const toggleHide = async (e, athId) => {
                     e.stopPropagation()
+                    const willHide = !hiddenAthleteIds.has(athId)
                     setHiddenAthleteIds(prev => {
                       const next = new Set(prev)
-                      if (next.has(athId)) next.delete(athId); else next.add(athId)
-                      localStorage.setItem('entropi_hidden_athletes', JSON.stringify([...next]))
+                      if (willHide) next.add(athId); else next.delete(athId)
                       return next
                     })
+                    await supabase.from('athletes').update({ hidden: willHide }).eq('id', athId)
                   }
                   return (
                     <div style={{ ...s.card, marginBottom: '1.75rem' }}>
