@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <!-- Varm, levende mørk baggrund med dybde -->
+    <radialGradient id="bg" cx="38%" cy="30%" r="90%">
+      <stop offset="0%" stop-color="#2a2823"/>
+      <stop offset="52%" stop-color="#161512"/>
+      <stop offset="100%" stop-color="#0b0a08"/>
+    </radialGradient>
+    <!-- Blødt amber-skær bag E'et -->
+    <radialGradient id="glow" cx="50%" cy="47%" r="48%">
+      <stop offset="0%" stop-color="#c8923a" stop-opacity="0.42"/>
+      <stop offset="65%" stop-color="#c8923a" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#c8923a" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Belyst amber til glyfen -->
+    <linearGradient id="amber" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f2cd83"/>
+      <stop offset="44%" stop-color="#c8923a"/>
+      <stop offset="100%" stop-color="#94661f"/>
+    </linearGradient>
+    <!-- Top-sheen for et glaslook -->
+    <linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <rect width="512" height="512" fill="url(#glow)"/>
+  <rect width="512" height="300" fill="url(#sheen)"/>
+
+  <!-- "E" + signatur-punktum med skygge -->
+  <g filter="url(#shadow)">
+    <g fill="url(#amber)">
+      <rect x="150" y="140" width="58" height="232" rx="15"/>
+      <rect x="150" y="140" width="196" height="58" rx="15"/>
+      <rect x="150" y="227" width="150" height="58" rx="15"/>
+      <rect x="150" y="314" width="196" height="58" rx="15"/>
+      <circle cx="386" cy="345" r="27"/>
+    </g>
+  </g>
+  <!-- Lys-kant øverst på glyfen for "belyst" effekt -->
+  <rect x="158" y="144" width="180" height="7" rx="3.5" fill="#fff4de" opacity="0.3"/>
+</svg>
