@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from './supabase'
 
 const BLOCK_NAMES = ['Akkumulering', 'Intensificering', 'Peak', 'Deload', 'GPP', 'Hypertrofi', 'Styrke', 'Transition']
@@ -251,6 +251,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   // Export state
   const [exportingTraening, setExportingTraening] = useState(false)
   const [exportingBackup, setExportingBackup] = useState(false)
+  // In-app toast + bekræftelses-modal (erstatter native alert/confirm)
+  const [flash, setFlash] = useState(null)
+  const [confirmDialog, setConfirmDialog] = useState(null)
+  const flashTimerRef = useRef(null)
   const [lastBackup, setLastBackup] = useState(() => localStorage.getItem('entropi_last_backup') || null)
 
   // Program state
@@ -363,6 +367,16 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       fetchMeetPlan(selectedAthlete.id)
     }
   }, [activeTab, selectedAthlete?.id])
+
+  function showFlash(message, kind = 'info') {
+    if (flashTimerRef.current) clearTimeout(flashTimerRef.current)
+    setFlash({ message, kind })
+    flashTimerRef.current = setTimeout(() => setFlash(null), 3000)
+  }
+
+  function askConfirm(message, onConfirm) {
+    setConfirmDialog({ message, onConfirm })
+  }
 
   async function fetchAthletes() {
     const { data, error } = await supabase.from('athletes').select('*').order('name')
@@ -553,11 +567,12 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     fetchAthleteWeekSummaries(weeks.map(w => w.athlete_id).filter(Boolean).concat([selectedAthlete.id]).filter((v, i, a) => a.indexOf(v) === i))
   }
 
-  async function deleteWeek(weekId) {
-    if (!window.confirm('Slet denne uge og alle dens træninger?')) return
-    await supabase.from('weeks').delete().eq('id', weekId)
-    if (openWeekId === weekId) setOpenWeekId(null)
-    fetchWeeks(selectedAthlete.id)
+  function deleteWeek(weekId) {
+    askConfirm('Slet denne uge og alle dens træninger?', async () => {
+      await supabase.from('weeks').delete().eq('id', weekId)
+      if (openWeekId === weekId) setOpenWeekId(null)
+      fetchWeeks(selectedAthlete.id)
+    })
   }
 
   async function addSession(weekId) {
@@ -579,11 +594,12 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     fetchWeeks(selectedAthlete.id)
   }
 
-  async function deleteSession(sessionId) {
-    if (!window.confirm('Slet denne træning?')) return
-    await supabase.from('sessions').delete().eq('id', sessionId)
-    if (openSessionId === sessionId) setOpenSessionId(null)
-    fetchWeeks(selectedAthlete.id)
+  function deleteSession(sessionId) {
+    askConfirm('Slet denne træning?', async () => {
+      await supabase.from('sessions').delete().eq('id', sessionId)
+      if (openSessionId === sessionId) setOpenSessionId(null)
+      fetchWeeks(selectedAthlete.id)
+    })
   }
 
   async function reorderSession(weekId, sessionId, direction) {
@@ -682,10 +698,11 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     fetchExerciseLibrary()
   }
 
-  async function deleteLibraryExercise(id) {
-    if (!window.confirm('Slet øvelse fra biblioteket?')) return
-    await supabase.from('exercise_library').delete().eq('id', id)
-    fetchExerciseLibrary()
+  function deleteLibraryExercise(id) {
+    askConfirm('Slet øvelse fra biblioteket?', async () => {
+      await supabase.from('exercise_library').delete().eq('id', id)
+      fetchExerciseLibrary()
+    })
   }
 
   async function addToLibraryQuick(name) {
@@ -757,7 +774,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   async function saveRecommendedWeight(exerciseId) {
     const val = recommendedInput.trim() ? parseFloat(recommendedInput) : null
     const { error } = await supabase.from('exercises').update({ recommended_weight: val }).eq('id', exerciseId)
-    if (error) { alert(`Kunne ikke gemme: ${error.message}`); return }
+    if (error) { showFlash(`Kunne ikke gemme: ${error.message}`, 'error'); return }
     setEditingRecommended(null)
     fetchWeeks(selectedAthlete.id)
   }
@@ -1463,6 +1480,28 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
   return (
     <div style={s.wrap}>
+      {/* Toast */}
+      {flash && (
+        <div style={{
+          position: 'fixed', top: '1.25rem', left: '50%', transform: 'translateX(-50%)',
+          background: '#1c1c18', border: `1px solid ${flash.kind === 'error' ? 'rgba(224,85,85,0.55)' : 'rgba(200,146,58,0.55)'}`,
+          padding: '0.65rem 1.4rem', zIndex: 10000, maxWidth: '90vw',
+          fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', letterSpacing: '0.06em',
+          color: flash.kind === 'error' ? '#e05555' : '#c8923a', boxShadow: '0 4px 24px rgba(0,0,0,0.55)',
+        }}>{flash.message}</div>
+      )}
+      {/* Bekræftelses-modal */}
+      {confirmDialog && (
+        <div onClick={() => setConfirmDialog(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(10,10,8,0.6)', zIndex: 10001, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.13)', padding: '1.5rem', maxWidth: '360px', width: '100%', boxShadow: '0 8px 40px rgba(0,0,0,0.6)' }}>
+            <div style={{ fontSize: '0.95rem', color: '#edeae2', lineHeight: 1.5, marginBottom: '1.25rem' }}>{confirmDialog.message}</div>
+            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+              <button style={s.btnGhost} onClick={() => setConfirmDialog(null)}>Annuller</button>
+              <button style={{ ...s.btnPrimary, background: '#e05555', borderColor: '#e05555', color: '#141410' }} onClick={() => { const fn = confirmDialog.onConfirm; setConfirmDialog(null); fn && fn() }}>Bekræft</button>
+            </div>
+          </div>
+        </div>
+      )}
       {isMobile && (
         <style>{`
           button { min-height: 44px !important; }

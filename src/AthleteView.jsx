@@ -489,6 +489,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [undoToast, setUndoToast] = useState(null)
   const undoTimerRef = useRef(null)
   const messagesEndRef = useRef(null)
+  // In-app toast + bekræftelses-modal (erstatter native alert/confirm)
+  const [flash, setFlash] = useState(null)
+  const [confirmDialog, setConfirmDialog] = useState(null)
+  const flashTimerRef = useRef(null)
   const [skipConfirmEx, setSkipConfirmEx] = useState(null)
   const [openRpePicker, setOpenRpePicker] = useState(null)
 
@@ -1267,14 +1271,14 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   async function autoCompleteSession(session) {
     const exerciseIds = (session.exercises || []).map(e => e.id)
-    if (exerciseIds.length === 0) { alert('Ingen øvelser fundet i sessionen.'); return }
+    if (exerciseIds.length === 0) { showFlash('Ingen øvelser fundet i sessionen.', 'error'); return }
 
     const { data: existing, error: fetchErr } = await supabase
       .from('exercise_logs')
       .select('exercise_id, set_number')
       .eq('athlete_id', athlete.id)
       .in('exercise_id', exerciseIds)
-    if (fetchErr) { alert('Fejl ved hentning af eksisterende logs: ' + fetchErr.message); return }
+    if (fetchErr) { showFlash('Fejl ved hentning: ' + fetchErr.message, 'error'); return }
 
     const logged = new Set((existing || []).map(l => `${l.exercise_id}_${l.set_number}`))
     const rows = []
@@ -1289,14 +1293,14 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     }
 
     if (rows.length === 0) {
-      alert('Alle sæt er allerede logget.')
+      showFlash('Alle sæt er allerede logget.')
       return
     }
 
     const { error: insertErr } = await supabase.from('exercise_logs').insert(rows)
-    if (insertErr) { alert('Fejl ved indsætning: ' + insertErr.message); return }
+    if (insertErr) { showFlash('Fejl ved indsætning: ' + insertErr.message, 'error'); return }
 
-    alert(`${rows.length} sæt udfyldt.`)
+    showFlash(`${rows.length} sæt udfyldt.`)
     await fetchExerciseLogs(athlete.id, currentWeek)
     await fetchPastLogs(allWeeks[viewingWeekIdx], athlete.id)
     await fetchAllExerciseLogs(athlete.id, allWeeks)
@@ -1311,6 +1315,16 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       restore: { athlete_id: athlete.id, date: l.date, meal: l.meal, kcal: l.kcal, protein: l.protein, carb: l.carb, fat: l.fat },
     })
     undoTimerRef.current = setTimeout(() => setUndoToast(null), 5000)
+  }
+
+  function showFlash(message, kind = 'info') {
+    if (flashTimerRef.current) clearTimeout(flashTimerRef.current)
+    setFlash({ message, kind })
+    flashTimerRef.current = setTimeout(() => setFlash(null), 3000)
+  }
+
+  function askConfirm(message, onConfirm) {
+    setConfirmDialog({ message, onConfirm })
   }
 
   async function undoDelete() {
@@ -1572,6 +1586,28 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         }}>
           <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#b8b4a8', letterSpacing: '0.06em' }}>{undoToast.label}</span>
           <button onClick={undoDelete} style={{ ...s.btnGhost, fontSize: '0.58rem', padding: '0.3rem 0.7rem', color: '#c8923a', borderColor: 'rgba(200,146,58,0.45)' }}>Fortryd</button>
+        </div>
+      )}
+      {/* Toast */}
+      {flash && (
+        <div style={{
+          position: 'fixed', top: '1.25rem', left: '50%', transform: 'translateX(-50%)',
+          background: '#1c1c18', border: `1px solid ${flash.kind === 'error' ? 'rgba(224,85,85,0.55)' : 'rgba(200,146,58,0.55)'}`,
+          padding: '0.65rem 1.4rem', zIndex: 10000, maxWidth: '90vw',
+          fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', letterSpacing: '0.06em',
+          color: flash.kind === 'error' ? '#e05555' : '#c8923a', boxShadow: '0 4px 24px rgba(0,0,0,0.55)',
+        }}>{flash.message}</div>
+      )}
+      {/* Bekræftelses-modal */}
+      {confirmDialog && (
+        <div onClick={() => setConfirmDialog(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(10,10,8,0.6)', zIndex: 10001, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.13)', padding: '1.5rem', maxWidth: '360px', width: '100%', boxShadow: '0 8px 40px rgba(0,0,0,0.6)' }}>
+            <div style={{ fontSize: '0.95rem', color: '#edeae2', lineHeight: 1.5, marginBottom: '1.25rem' }}>{confirmDialog.message}</div>
+            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+              <button style={s.btnGhost} onClick={() => setConfirmDialog(null)}>Annuller</button>
+              <button style={s.btnPrimary} onClick={() => { const fn = confirmDialog.onConfirm; setConfirmDialog(null); fn && fn() }}>Bekræft</button>
+            </div>
+          </div>
         </div>
       )}
       {/* Topbar */}
@@ -2109,7 +2145,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                               {!isDone && totalSets > 0 && (
                                 <button
                                   style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.3rem 0.6rem', color: '#c8923a', borderColor: 'rgba(200,146,58,0.35)' }}
-                                  onClick={e => { e.stopPropagation(); if (window.confirm('Udfyld manglende sæt med sidst loggede vægt og reps?')) autoCompleteSession(session) }}
+                                  onClick={e => { e.stopPropagation(); askConfirm('Udfyld manglende sæt med sidst loggede vægt og reps?', () => autoCompleteSession(session)) }}
                                 >Auto-udfyld</button>
                               )}
                               <span style={{ color: '#4a4844', fontSize: '0.65rem' }}>{isOpen ? '▲' : '▼'}</span>
