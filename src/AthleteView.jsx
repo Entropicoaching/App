@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Fragment } from 'react'
 import { supabase } from './supabase'
 
 const BLOCK_PALETTE = ['#4e8fcf','#c8923a','#6cba6c','#9b6bd4','#cf6b4e','#4ec8b4']
@@ -441,6 +441,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [templateNameInput, setTemplateNameInput] = useState('')
   const [historicalMealLogs, setHistoricalMealLogs] = useState([])
   const [frequentFoods, setFrequentFoods] = useState([])
+  const [editingLogId, setEditingLogId] = useState(null)
+  const [editGrams, setEditGrams] = useState('')
+  const [editMacros, setEditMacros] = useState({ kcal: '', protein: '', carb: '', fat: '' })
 
   // Messages state
   const [messages, setMessages] = useState([])
@@ -1275,6 +1278,53 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   async function deleteLog(id) {
     await supabase.from('meal_logs').delete().eq('id', id)
+    fetchLogs(athlete.id)
+  }
+
+  // Find gram-mængden i et logget måltidsnavn, fx "Kyllingebryst · 250 g" eller
+  // "... (300 g)". Returnerer { base, grams } eller null hvis den ikke kan læses.
+  function parseLoggedGrams(meal) {
+    const m = String(meal).match(/(\d+)\s*g\)?\s*$/)
+    if (!m) return null
+    const grams = parseInt(m[1])
+    if (!grams) return null
+    return { base: String(meal).split(' · ')[0], grams }
+  }
+
+  function startEditLog(l) {
+    setEditingLogId(l.id)
+    const parsed = parseLoggedGrams(l.meal)
+    if (parsed) setEditGrams(String(parsed.grams))
+    else setEditGrams('')
+    setEditMacros({ kcal: String(l.kcal ?? ''), protein: String(l.protein ?? ''), carb: String(l.carb ?? ''), fat: String(l.fat ?? '') })
+  }
+
+  async function saveEditLog(l) {
+    const parsed = parseLoggedGrams(l.meal)
+    let update
+    if (parsed) {
+      // Gram-skalering: vægt op/ned proportionalt og opdater gram i navnet.
+      const newGrams = parseFloat(editGrams) || 0
+      if (newGrams <= 0) return
+      const factor = newGrams / parsed.grams
+      update = {
+        meal: `${parsed.base} · ${Math.round(newGrams)} g`,
+        kcal: Math.round((l.kcal || 0) * factor),
+        protein: Math.round((l.protein || 0) * factor),
+        carb: Math.round((l.carb || 0) * factor),
+        fat: Math.round((l.fat || 0) * factor),
+      }
+    } else {
+      // Fallback: rediger makroerne direkte.
+      update = {
+        kcal: parseInt(editMacros.kcal) || 0,
+        protein: parseInt(editMacros.protein) || 0,
+        carb: parseInt(editMacros.carb) || 0,
+        fat: parseInt(editMacros.fat) || 0,
+      }
+    }
+    await supabase.from('meal_logs').update(update).eq('id', l.id)
+    setEditingLogId(null)
     fetchLogs(athlete.id)
   }
 
@@ -2638,18 +2688,48 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                       </tr>
                     </thead>
                     <tbody>
-                      {logs.map(l => (
-                        <tr key={l.id} style={{ fontSize: '0.85rem' }}>
+                      {logs.map(l => {
+                        const editing = editingLogId === l.id
+                        const parsed = parseLoggedGrams(l.meal)
+                        return (
+                        <Fragment key={l.id}>
+                        <tr style={{ fontSize: '0.85rem', opacity: editing ? 0.5 : 1 }}>
                           <td style={{ padding: '0.45rem 0', color: '#b8b4a8' }}>{l.meal}</td>
                           <td style={{ textAlign: 'right', padding: '0.45rem 0', color: '#c8923a', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.75rem' }}>{l.kcal}</td>
                           <td style={{ textAlign: 'right', padding: '0.45rem 0', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem' }}>{l.protein}g</td>
                           <td style={{ textAlign: 'right', padding: '0.45rem 0', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem' }}>{l.carb}g</td>
                           <td style={{ textAlign: 'right', padding: '0.45rem 0', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem' }}>{l.fat}g</td>
-                          <td style={{ textAlign: 'right', padding: '0.45rem 0' }}>
-                            <button onClick={() => deleteLog(l.id)} style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.7rem', padding: 0 }}>✕</button>
+                          <td style={{ textAlign: 'right', padding: '0.45rem 0', whiteSpace: 'nowrap' }}>
+                            <button onClick={() => editing ? setEditingLogId(null) : startEditLog(l)} title="Rediger" style={{ background: 'none', border: 'none', color: editing ? '#c8923a' : '#4a4844', cursor: 'pointer', fontSize: '0.7rem', padding: '0 0.3rem' }}>✎</button>
+                            <button onClick={() => deleteLog(l.id)} title="Slet" style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.7rem', padding: 0 }}>✕</button>
                           </td>
                         </tr>
-                      ))}
+                        {editing && (
+                          <tr>
+                            <td colSpan={6} style={{ padding: '0.5rem 0 0.75rem' }}>
+                              <div style={{ background: '#141410', border: '1px solid rgba(200,146,58,0.2)', padding: '0.75rem', display: 'flex', alignItems: 'flex-end', gap: '0.6rem', flexWrap: 'wrap' }}>
+                                {parsed ? (
+                                  <div>
+                                    <div style={s.fieldLabel}>Ny mængde (g)</div>
+                                    <input style={{ ...s.fieldInput, maxWidth: '100px' }} type="number" inputMode="decimal" autoFocus value={editGrams} onChange={e => setEditGrams(e.target.value)} onKeyDown={e => e.key === 'Enter' && saveEditLog(l)} />
+                                  </div>
+                                ) : (
+                                  [['Kcal', 'kcal'], ['Protein', 'protein'], ['Kulh.', 'carb'], ['Fedt', 'fat']].map(([label, key]) => (
+                                    <div key={key}>
+                                      <div style={s.fieldLabel}>{label}</div>
+                                      <input style={{ ...s.fieldInput, maxWidth: '70px' }} type="number" inputMode="decimal" value={editMacros[key]} onChange={e => setEditMacros(p => ({ ...p, [key]: e.target.value }))} />
+                                    </div>
+                                  ))
+                                )}
+                                <button style={s.btnPrimary} onClick={() => saveEditLog(l)}>Gem</button>
+                                <button style={s.btnGhost} onClick={() => setEditingLogId(null)}>Annuller</button>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                        </Fragment>
+                        )
+                      })}
                       <tr style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', borderTop: '1px solid rgba(237,234,226,0.07)' }}>
                         <td style={{ padding: '0.5rem 0', color: '#7a7770', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Total</td>
                         <td style={{ textAlign: 'right', padding: '0.5rem 0', color: '#c8923a' }}>{totKcal}</td>
