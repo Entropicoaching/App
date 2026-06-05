@@ -440,6 +440,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [showSaveTemplate, setShowSaveTemplate] = useState(false)
   const [templateNameInput, setTemplateNameInput] = useState('')
   const [historicalMealLogs, setHistoricalMealLogs] = useState([])
+  const [frequentFoods, setFrequentFoods] = useState([])
 
   // Messages state
   const [messages, setMessages] = useState([])
@@ -564,6 +565,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       fetchCustomFoods(data.id)
       fetchMealTemplates(data.id)
       fetchHistoricalMealLogs(data.id)
+      fetchFrequentFoods(data.id)
       fetchProgram(data.id)
       fetchAthleteMessages(data.id)
       fetchWeightLogs(data.id)
@@ -1077,6 +1079,34 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       .gte('date', from.toISOString().slice(0, 10))
       .order('date')
     setHistoricalMealLogs(data || [])
+  }
+
+  // Find de fødevarer atleten oftest logger (sidste 30 dage) til hurtig gen-log.
+  async function fetchFrequentFoods(athleteId) {
+    const from = new Date()
+    from.setDate(from.getDate() - 30)
+    const { data } = await supabase
+      .from('meal_logs')
+      .select('meal, kcal, protein, carb, fat, date')
+      .eq('athlete_id', athleteId)
+      .gte('date', from.toISOString().slice(0, 10))
+      .order('date', { ascending: false })
+    const map = new Map()
+    for (const l of data || []) {
+      if (!map.has(l.meal)) map.set(l.meal, { meal: l.meal, kcal: l.kcal, protein: l.protein, carb: l.carb, fat: l.fat, count: 0 })
+      map.get(l.meal).count++
+    }
+    const list = [...map.values()].filter(f => f.count >= 2).sort((a, b) => b.count - a.count).slice(0, 8)
+    setFrequentFoods(list)
+  }
+
+  async function quickLogFood(f) {
+    if (!athlete) return
+    await supabase.from('meal_logs').insert({
+      athlete_id: athlete.id, date: today(),
+      meal: f.meal, kcal: f.kcal, protein: f.protein, carb: f.carb, fat: f.fat,
+    })
+    fetchLogs(athlete.id)
   }
 
   async function fetchMealTemplates(athleteId) {
@@ -2383,6 +2413,26 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
             {/* Search */}
             <div style={s.card}>
               <div style={s.cardLabel}>Tilføj fødevare</div>
+
+              {frequentFoods.length > 0 && (
+                <div style={{ marginBottom: '0.75rem' }}>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.4rem' }}>Ofte brugt — tryk for at logge</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                    {frequentFoods.map((f, i) => (
+                      <button
+                        key={i}
+                        onClick={() => quickLogFood(f)}
+                        title={`${f.meal} · ${f.kcal} kcal · P ${f.protein}g`}
+                        style={{ ...s.btnGhost, fontSize: '0.55rem', padding: '0.35rem 0.6rem', display: 'flex', alignItems: 'center', gap: '0.35rem', maxWidth: '100%' }}
+                      >
+                        <span style={{ color: '#c8923a' }}>+</span>
+                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '140px', color: '#b8b4a8' }}>{f.meal}</span>
+                        <span style={{ color: '#4a4844' }}>{f.kcal}kcal</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem' }}>
                 <button
