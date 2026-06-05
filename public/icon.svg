@@ -1,59 +1,66 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
   <defs>
-    <!-- Varm, levende mørk baggrund -->
-    <radialGradient id="bg" cx="50%" cy="40%" r="92%">
-      <stop offset="0%" stop-color="#2c2620"/>
-      <stop offset="50%" stop-color="#161311"/>
-      <stop offset="100%" stop-color="#0a0807"/>
+    <!-- Dyb, mørk baggrund med en anelse varme i midten -->
+    <radialGradient id="bg" cx="50%" cy="52%" r="80%">
+      <stop offset="0%" stop-color="#1a1613"/>
+      <stop offset="55%" stop-color="#0e0c0a"/>
+      <stop offset="100%" stop-color="#060504"/>
     </radialGradient>
-    <!-- Flamme-skær: varmt, stiger opad -->
-    <radialGradient id="glowOuter" cx="50%" cy="55%" r="52%">
-      <stop offset="0%" stop-color="#e0641a" stop-opacity="0.40"/>
-      <stop offset="60%" stop-color="#e0641a" stop-opacity="0.07"/>
-      <stop offset="100%" stop-color="#e0641a" stop-opacity="0"/>
+    <!-- Blødt varmt skær omkring flammen -->
+    <radialGradient id="aura" cx="50%" cy="58%" r="40%">
+      <stop offset="0%" stop-color="#e08a2e" stop-opacity="0.34"/>
+      <stop offset="55%" stop-color="#e08a2e" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#e08a2e" stop-opacity="0"/>
     </radialGradient>
-    <radialGradient id="glowInner" cx="50%" cy="45%" r="44%">
-      <stop offset="0%" stop-color="#ffc257" stop-opacity="0.55"/>
-      <stop offset="55%" stop-color="#ffc257" stop-opacity="0.10"/>
-      <stop offset="100%" stop-color="#ffc257" stop-opacity="0"/>
-    </radialGradient>
-    <!-- Flamme-gradient: gulglød i top -> amber -> ember nederst -->
-    <linearGradient id="flame" x1="0.4" y1="0" x2="0.55" y2="1">
-      <stop offset="0%" stop-color="#ffe6a3"/>
-      <stop offset="30%" stop-color="#f8ba4e"/>
-      <stop offset="64%" stop-color="#de8b2b"/>
-      <stop offset="100%" stop-color="#bd5016"/>
+    <!-- Flammens krop: dyb ember i bund -> amber -> blød guld i toppen -->
+    <linearGradient id="flame" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f7d488"/>
+      <stop offset="38%" stop-color="#e4a23f"/>
+      <stop offset="100%" stop-color="#a8481a"/>
     </linearGradient>
-    <linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.10"/>
-      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    <!-- Varm kerne -->
+    <linearGradient id="core" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff0c8"/>
+      <stop offset="100%" stop-color="#f3ab44"/>
     </linearGradient>
-    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%">
-      <feDropShadow dx="0" dy="10" stdDeviation="18" flood-color="#000000" flood-opacity="0.55"/>
+    <filter id="soft" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="16"/>
     </filter>
-    <filter id="blurGlow" x="-60%" y="-60%" width="220%" height="220%">
-      <feGaussianBlur stdDeviation="10"/>
+    <filter id="coreSoft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="6"/>
     </filter>
   </defs>
 
   <rect width="512" height="512" fill="url(#bg)"/>
-  <rect width="512" height="512" fill="url(#glowOuter)"/>
-  <rect width="512" height="512" fill="url(#glowInner)"/>
-  <rect width="512" height="300" fill="url(#sheen)"/>
+  <rect width="512" height="512" fill="url(#aura)"/>
 
-  <!-- Blødt "E" i flamme-gradient. Pille-formede bjælker; armene smalner opad
-       som en flamme (top kortest, bund bredest). Punktum fjernet. -->
-  <g filter="url(#soft)">
-    <g fill="url(#flame)">
-      <rect x="156" y="146" width="60" height="220" rx="30"/>
-      <rect x="156" y="146" width="174" height="60" rx="30"/>
-      <rect x="156" y="226" width="150" height="60" rx="30"/>
-      <rect x="156" y="306" width="200" height="60" rx="30"/>
-    </g>
-  </g>
+  <!-- Blød glød-halo bag flammen -->
+  <path filter="url(#soft)" opacity="0.55" fill="#d77f2a" d="
+    M256 168
+    C 298 232 330 280 330 326
+    C 330 368 298 398 256 398
+    C 214 398 182 368 182 326
+    C 182 280 214 232 256 168 Z"/>
 
-  <!-- Varm kerne-glød inde i glyfen -->
-  <ellipse cx="205" cy="252" rx="64" ry="120" fill="#ffd57a" opacity="0.15" filter="url(#blurGlow)"/>
-  <!-- Lys-kant øverst for "belyst" flamme-effekt -->
-  <rect x="166" y="151" width="150" height="7" rx="3.5" fill="#fff3d6" opacity="0.32"/>
+  <!-- Flammens krop — bløde, organiske linjer -->
+  <path fill="url(#flame)" d="
+    M256 156
+    C 268 196 286 224 300 256
+    C 318 296 322 318 318 342
+    C 311 380 284 400 256 400
+    C 228 400 201 380 194 342
+    C 190 318 194 296 212 256
+    C 226 224 244 196 256 156 Z"/>
+
+  <!-- Varm kerne, der gløder indefra -->
+  <path fill="url(#core)" filter="url(#coreSoft)" opacity="0.9" d="
+    M256 248
+    C 264 272 276 290 282 312
+    C 287 332 284 350 272 362
+    C 264 370 248 370 240 362
+    C 228 350 225 332 230 312
+    C 236 290 248 272 256 248 Z"/>
+
+  <!-- Lille blød lys-glød i toppen af kernen -->
+  <ellipse cx="256" cy="300" rx="20" ry="34" fill="#fff3d6" opacity="0.5" filter="url(#coreSoft)"/>
 </svg>
