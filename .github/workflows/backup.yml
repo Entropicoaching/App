@@ -87,22 +87,3 @@ jobs:
             --data @/tmp/payload.json
 
           echo "Done: ${FILENAME}"
-
-      - name: Off-site kopi til Backblaze B2
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.B2_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.B2_APP_KEY }}
-          B2_BUCKET: ${{ secrets.B2_BUCKET }}
-          B2_ENDPOINT: ${{ secrets.B2_S3_ENDPOINT }}
-        run: |
-          # Springes pænt over hvis B2-secrets ikke er sat endnu — så den eksisterende
-          # GitHub-backup kører uændret videre indtil du har konfigureret off-site.
-          if [ -z "${AWS_ACCESS_KEY_ID}" ] || [ -z "${B2_BUCKET}" ] || [ -z "${B2_ENDPOINT}" ]; then
-            echo "B2 ikke konfigureret (mangler secrets) — springer off-site upload over."
-            exit 0
-          fi
-          gzip -c /tmp/backup.json > "/tmp/backup-${TIMESTAMP}.json.gz"
-          aws s3 cp "/tmp/backup-${TIMESTAMP}.json.gz" \
-            "s3://${B2_BUCKET}/backups/backup-${TIMESTAMP}.json.gz" \
-            --endpoint-url "${B2_ENDPOINT}"
-          echo "Off-site backup uploadet til B2: backups/backup-${TIMESTAMP}.json.gz"
