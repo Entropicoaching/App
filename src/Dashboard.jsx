@@ -22,6 +22,26 @@ function computePhases(weeks) {
   return phases
 }
 
+// Mandag (kl. 00:00 lokal) i ugen som datoen falder i.
+function mondayOf(d) {
+  const x = new Date(d)
+  x.setHours(0, 0, 0, 0)
+  const day = (x.getDay() + 6) % 7 // man=0 ... søn=6
+  x.setDate(x.getDate() - day)
+  return x
+}
+
+// ISO 8601 ugenummer.
+function isoWeekNum(d) {
+  const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()))
+  const day = (t.getUTCDay() + 6) % 7
+  t.setUTCDate(t.getUTCDate() - day + 3)
+  const firstThu = new Date(Date.UTC(t.getUTCFullYear(), 0, 4))
+  const fday = (firstThu.getUTCDay() + 6) % 7
+  firstThu.setUTCDate(firstThu.getUTCDate() - fday + 3)
+  return 1 + Math.round((t - firstThu) / (7 * 24 * 3600 * 1000))
+}
+
 const statusLabels = { active: 'Aktiv', peaking: 'Peaking', offseason: 'Off-season' }
 const statusColors = { active: '#6cba6c', peaking: '#c8923a', offseason: '#7a7770' }
 
@@ -301,6 +321,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [librarySearch, setLibrarySearch] = useState('')
   const [athleteWeekSummary, setAthleteWeekSummary] = useState({})
   const [athleteLastLogs, setAthleteLastLogs] = useState({})
+  const [calendarWeeks, setCalendarWeeks] = useState({}) // athlete_id -> [{week_number, block_name, start_date, session_count}]
+  const [calendarStartIdx, setCalendarStartIdx] = useState(0) // antal uger forskudt fra denne uge
   const [hiddenAthleteIds, setHiddenAthleteIds] = useState(() => {
     try { return new Set(JSON.parse(localStorage.getItem('entropi_hidden_athletes') || '[]')) } catch { return new Set() }
   })
@@ -317,6 +339,9 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   }, [])
 
   useEffect(() => { fetchAthletes(); fetchExerciseLibrary() }, [])
+  useEffect(() => {
+    if (view === 'calendar' && athletes.length) fetchCalendarWeeks(athletes.map(a => a.id))
+  }, [view, athletes])
   useEffect(() => {
     if ((activeTab === 'program' || activeTab === 'analyse') && selectedAthlete) {
       fetchWeeks(selectedAthlete.id)
@@ -407,6 +432,26 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       }
     }
     setAthleteWeekSummary(summary)
+  }
+
+  async function fetchCalendarWeeks(athleteIds) {
+    if (!athleteIds.length) return
+    const { data } = await supabase
+      .from('weeks')
+      .select('athlete_id, week_number, block_name, start_date, sessions(id)')
+      .in('athlete_id', athleteIds)
+    if (!data) return
+    const map = {}
+    for (const w of data) {
+      if (!map[w.athlete_id]) map[w.athlete_id] = []
+      map[w.athlete_id].push({
+        week_number: w.week_number,
+        block_name: w.block_name,
+        start_date: w.start_date,
+        session_count: (w.sessions || []).length,
+      })
+    }
+    setCalendarWeeks(map)
   }
 
   async function fetchProfilesLastSeen(athletesList) {
@@ -1454,6 +1499,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         </nav>
         <div style={s.sidebarFooter}>
           <div
+            onClick={() => { setView('calendar'); setSelectedAthlete(null); setSidebarOpen(false) }}
+            style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: view === 'calendar' ? '#c8923a' : '#4a4844', cursor: 'pointer', marginBottom: '0.75rem' }}
+          >📅 Kalender</div>
+          <div
             onClick={() => { setView('library'); setSidebarOpen(false) }}
             style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: view === 'library' ? '#c8923a' : '#4a4844', cursor: 'pointer', marginBottom: '0.75rem' }}
           >Øvelsesbibliotek</div>
@@ -1510,7 +1559,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               </svg>
             </button>
           )}
-          <div style={{ ...s.topbarTitle, flex: 1 }}>{view === 'library' ? 'Øvelsesbibliotek' : view === 'list' ? 'Atleter' : a?.name}</div>
+          <div style={{ ...s.topbarTitle, flex: 1 }}>{view === 'library' ? 'Øvelsesbibliotek' : view === 'calendar' ? 'Kalender' : view === 'list' ? 'Atleter' : a?.name}</div>
         </div>
 
         {/* LIBRARY VIEW */}
@@ -1608,6 +1657,144 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         })()}
 
         {/* LIST VIEW */}
+        {/* CALENDAR VIEW */}
+        {view === 'calendar' && (() => {
+          const NUM_COLS = isMobile ? 5 : 9
+          const today0 = new Date(); today0.setHours(0, 0, 0, 0)
+          const baseMonday = mondayOf(today0)
+          baseMonday.setDate(baseMonday.getDate() + calendarStartIdx * 7)
+          const cols = Array.from({ length: NUM_COLS }, (_, c) => {
+            const m = new Date(baseMonday); m.setDate(m.getDate() + c * 7); return m
+          })
+          const todayColIdx = Math.round((mondayOf(today0) - baseMonday) / (7 * 86400000))
+          const visibleAthletes = athletes.filter(a => !hiddenAthleteIds.has(a.id))
+          const dayMs = 86400000
+
+          // Status pr. atlet ift. om programmet dækker den kommende tid.
+          const athleteStatus = (aid) => {
+            const ws = (calendarWeeks[aid] || []).filter(w => w.start_date)
+            const withSess = ws.filter(w => w.session_count > 0)
+            if (withSess.length === 0) return { kind: 'none' }
+            const maxStart = withSess.reduce((mx, w) => {
+              const t = new Date(w.start_date).getTime(); return t > mx ? t : mx
+            }, 0)
+            const coverageEnd = maxStart + 7 * dayMs // programmet dækker 7 dage fra sidste uges start
+            if (coverageEnd <= today0.getTime()) return { kind: 'expired', end: coverageEnd }
+            if (coverageEnd <= today0.getTime() + 7 * dayMs) return { kind: 'soon', end: coverageEnd }
+            return { kind: 'ok', end: coverageEnd }
+          }
+
+          // Find uge-celle for en given kolonne (matcher på den uge start_date falder i).
+          const weekForCol = (aid, colMonday) => {
+            const ws = calendarWeeks[aid] || []
+            const matches = ws.filter(w => w.start_date && mondayOf(w.start_date).getTime() === colMonday.getTime())
+            if (matches.length === 0) return null
+            // Foretræk uge med sessioner hvis der er flere
+            return matches.sort((a, b) => b.session_count - a.session_count)[0]
+          }
+
+          const needsAttention = visibleAthletes
+            .map(a => ({ a, st: athleteStatus(a.id) }))
+            .filter(x => x.st.kind === 'expired' || x.st.kind === 'soon' || x.st.kind === 'none')
+
+          const fmtDate = (d) => `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`
+
+          return (
+            <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
+              <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <div>
+                  <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', margin: 0 }}>Programkalender</h1>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844', marginTop: '0.25rem' }}>
+                    Hvem har planlagt træning · hvem mangler program
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                  <button style={{ ...s.btnGhost, fontSize: '0.6rem', padding: '0.4rem 0.7rem' }} onClick={() => setCalendarStartIdx(i => i - 1)}>←</button>
+                  <button style={{ ...s.btnGhost, fontSize: '0.55rem', padding: '0.4rem 0.7rem', opacity: calendarStartIdx === 0 ? 0.4 : 1 }} onClick={() => setCalendarStartIdx(0)}>I dag</button>
+                  <button style={{ ...s.btnGhost, fontSize: '0.6rem', padding: '0.4rem 0.7rem' }} onClick={() => setCalendarStartIdx(i => i + 1)}>→</button>
+                </div>
+              </div>
+
+              {/* Advarsel: mangler program */}
+              {needsAttention.length > 0 && (
+                <div style={{ ...s.card, marginBottom: '1.5rem', borderColor: 'rgba(224,85,85,0.3)' }}>
+                  <div style={{ ...s.cardLabel, color: '#e05555' }}>⚠ Kræver opdatering ({needsAttention.length})</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem', marginTop: '0.5rem' }}>
+                    {needsAttention.map(({ a, st }) => {
+                      const msg = st.kind === 'none' ? 'Ingen dateret program'
+                        : st.kind === 'expired' ? `Program udløb ${fmtDate(new Date(st.end))}`
+                        : `Program udløber ${fmtDate(new Date(st.end))}`
+                      const col = st.kind === 'soon' ? '#c8923a' : '#e05555'
+                      return (
+                        <div key={a.id} onClick={() => openProfile(a, 'program')} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', padding: '0.3rem 0' }}>
+                          <span style={{ fontSize: '0.85rem', color: '#edeae2' }}>{a.name}</span>
+                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: col }}>{msg}</span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Kalender-grid */}
+              <div style={{ ...s.card, overflowX: 'auto' }}>
+                <div style={{ minWidth: isMobile ? '520px' : 'auto' }}>
+                  {/* Header række */}
+                  <div style={{ display: 'grid', gridTemplateColumns: `140px repeat(${NUM_COLS}, 1fr)`, gap: '3px', marginBottom: '3px' }}>
+                    <div />
+                    {cols.map((m, c) => (
+                      <div key={c} style={{ textAlign: 'center', padding: '0.3rem 0', background: c === todayColIdx ? 'rgba(200,146,58,0.12)' : 'transparent' }}>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: c === todayColIdx ? '#c8923a' : '#7a7770', letterSpacing: '0.05em' }}>Uge {isoWeekNum(m)}</div>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#4a4844' }}>{fmtDate(m)}</div>
+                      </div>
+                    ))}
+                  </div>
+                  {/* Atlet rækker */}
+                  {visibleAthletes.length === 0 ? (
+                    <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', padding: '1rem 0' }}>Ingen atleter</div>
+                  ) : visibleAthletes.map(a => (
+                    <div key={a.id} style={{ display: 'grid', gridTemplateColumns: `140px repeat(${NUM_COLS}, 1fr)`, gap: '3px', marginBottom: '3px' }}>
+                      <div onClick={() => openProfile(a, 'program')} style={{ fontSize: '0.72rem', color: '#b8b4a8', display: 'flex', alignItems: 'center', cursor: 'pointer', paddingRight: '0.5rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{a.name}</div>
+                      {cols.map((m, c) => {
+                        const w = weekForCol(a.id, m)
+                        if (!w) {
+                          return <div key={c} style={{ minHeight: '38px', background: c === todayColIdx ? 'rgba(200,146,58,0.05)' : 'rgba(237,234,226,0.02)', border: '1px solid rgba(237,234,226,0.04)' }} />
+                        }
+                        const hasSess = w.session_count > 0
+                        const col = blockColor(w.block_name)
+                        return (
+                          <div
+                            key={c}
+                            onClick={() => openProfile(a, 'program')}
+                            title={`${w.block_name || 'Uge ' + w.week_number} · ${w.session_count} sessioner`}
+                            style={{
+                              minHeight: '38px', cursor: 'pointer', padding: '0.25rem',
+                              display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '1px',
+                              background: hasSess ? col + '28' : 'transparent',
+                              border: `1px solid ${hasSess ? col + '70' : 'rgba(224,85,85,0.4)'}`,
+                            }}
+                          >
+                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: hasSess ? col : '#e05555', textAlign: 'center', lineHeight: 1.2, overflow: 'hidden' }}>
+                              {w.block_name ? w.block_name.slice(0, 10) : `Uge ${w.week_number}`}
+                            </div>
+                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', color: hasSess ? '#7a7770' : '#e05555' }}>
+                              {hasSess ? `${w.session_count} sess` : '0 sess'}
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', marginTop: '0.75rem', letterSpacing: '0.05em', lineHeight: 1.7 }}>
+                Farvede felter = planlagt uge (matchet på ugens startdato). Rød kant = uge uden sessioner. Tomme felter = ingen uge planlagt.<br />
+                Atleter uden startdatoer på deres uger vises ikke i gridet — sæt startdatoer via Program → periodiseringsplanlægger.
+              </div>
+            </div>
+          )
+        })()}
+
         {view === 'list' && (
           <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
             <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '1.75rem', flexWrap: 'wrap', gap: '1rem' }}>
