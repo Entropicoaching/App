@@ -21,14 +21,24 @@ function computePhases(weeks) {
   return phases
 }
 
-// Den "aktive" uge = den seneste uge der er startet (start_date <= i dag).
-// Uger uden start_date regnes som tilgængelige nu. Fremtidige uger (oprettet af
-// periodiseringsplanlæggeren) udelukkes, så atleten lander på — og kan logge —
-// sin nuværende træningsuge, ikke en tom fremtidig uge.
+// Den "aktive" uge atleten lander på.
+// 1) Foretræk en dateret uge hvis 7-dages-spænd indeholder i dag (den uge man
+//    reelt træner i nu) — så man ikke hopper forbi til et højere ugenummer uden dato.
+// 2) Ellers: seneste ikke-fremtidige uge (uger uden start_date tæller som tilgængelige,
+//    fremtidige datoer udelukkes, så man ikke lander på en tom planlagt uge).
 function computeActiveWeekIdx(weeks) {
   if (!weeks || !weeks.length) return 0
   const today = new Date()
   today.setHours(0, 0, 0, 0)
+  const dayMs = 86400000
+  let containing = -1
+  weeks.forEach((w, i) => {
+    if (!w.start_date) return
+    const d = new Date(w.start_date)
+    d.setHours(0, 0, 0, 0)
+    if (d <= today && today < new Date(d.getTime() + 7 * dayMs)) containing = i
+  })
+  if (containing >= 0) return containing
   let active = -1
   weeks.forEach((w, i) => {
     let isFuture = false
