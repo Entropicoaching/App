@@ -1,66 +1,43 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
   <defs>
-    <!-- Dyb, mørk baggrund med en anelse varme i midten -->
-    <radialGradient id="bg" cx="50%" cy="52%" r="80%">
-      <stop offset="0%" stop-color="#1a1613"/>
+    <radialGradient id="bg" cx="50%" cy="46%" r="85%">
+      <stop offset="0%" stop-color="#1b1714"/>
       <stop offset="55%" stop-color="#0e0c0a"/>
-      <stop offset="100%" stop-color="#060504"/>
+      <stop offset="100%" stop-color="#070605"/>
     </radialGradient>
-    <!-- Blødt varmt skær omkring flammen -->
-    <radialGradient id="aura" cx="50%" cy="58%" r="40%">
-      <stop offset="0%" stop-color="#e08a2e" stop-opacity="0.34"/>
-      <stop offset="55%" stop-color="#e08a2e" stop-opacity="0.08"/>
+    <radialGradient id="aura" cx="50%" cy="50%" r="46%">
+      <stop offset="0%" stop-color="#e08a2e" stop-opacity="0.30"/>
+      <stop offset="60%" stop-color="#e08a2e" stop-opacity="0.06"/>
       <stop offset="100%" stop-color="#e08a2e" stop-opacity="0"/>
     </radialGradient>
-    <!-- Flammens krop: dyb ember i bund -> amber -> blød guld i toppen -->
-    <linearGradient id="flame" x1="0" y1="0" x2="0" y2="1">
+    <!-- Varm flamme-gradient over hele glyfen (top guld -> bund ember) -->
+    <linearGradient id="flame" gradientUnits="userSpaceOnUse" x1="256" y1="150" x2="256" y2="368">
       <stop offset="0%" stop-color="#f7d488"/>
-      <stop offset="38%" stop-color="#e4a23f"/>
-      <stop offset="100%" stop-color="#a8481a"/>
+      <stop offset="42%" stop-color="#e6a541"/>
+      <stop offset="100%" stop-color="#bd5a1d"/>
     </linearGradient>
-    <!-- Varm kerne -->
-    <linearGradient id="core" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#fff0c8"/>
-      <stop offset="100%" stop-color="#f3ab44"/>
-    </linearGradient>
-    <filter id="soft" x="-80%" y="-80%" width="260%" height="260%">
-      <feGaussianBlur stdDeviation="16"/>
-    </filter>
-    <filter id="coreSoft" x="-60%" y="-60%" width="220%" height="220%">
-      <feGaussianBlur stdDeviation="6"/>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="11"/>
     </filter>
   </defs>
 
   <rect width="512" height="512" fill="url(#bg)"/>
   <rect width="512" height="512" fill="url(#aura)"/>
 
-  <!-- Blød glød-halo bag flammen -->
-  <path filter="url(#soft)" opacity="0.55" fill="#d77f2a" d="
-    M256 168
-    C 298 232 330 280 330 326
-    C 330 368 298 398 256 398
-    C 214 398 182 368 182 326
-    C 182 280 214 232 256 168 Z"/>
-
-  <!-- Flammens krop — én flydende linje, toppen bøjer som en flamme-tunge -->
-  <path fill="url(#flame)" d="
-    M286 150
-    C 286 196 300 226 312 258
-    C 326 296 326 320 318 346
-    C 309 382 284 402 256 402
-    C 226 402 200 380 194 342
-    C 189 314 198 292 220 258
-    C 244 220 270 196 286 150 Z"/>
-
-  <!-- Varm kerne, der gløder indefra -->
-  <path fill="url(#core)" filter="url(#coreSoft)" opacity="0.9" d="
-    M256 248
-    C 264 272 276 290 282 312
-    C 287 332 284 350 272 362
-    C 264 370 248 370 240 362
-    C 228 350 225 332 230 312
-    C 236 290 248 272 256 248 Z"/>
-
-  <!-- Lille blød lys-glød i toppen af kernen -->
-  <ellipse cx="256" cy="300" rx="20" ry="34" fill="#fff3d6" opacity="0.5" filter="url(#coreSoft)"/>
+  <!-- Et "E" tegnet som tre flydende bølge-streger (ingen hård bjælke).
+       Venstre-enderne flugter og danner E'ets ryg; bløde runde ender. -->
+  <g fill="none" stroke-linecap="round">
+    <!-- blød glød bag -->
+    <g stroke="#d77f2a" stroke-width="44" opacity="0.5" filter="url(#glow)">
+      <path d="M176 184 C 238 156 300 210 356 180"/>
+      <path d="M176 258 C 230 234 286 282 312 258"/>
+      <path d="M176 332 C 238 360 300 306 356 336"/>
+    </g>
+    <!-- selve stregerne -->
+    <g stroke="url(#flame)" stroke-width="42">
+      <path d="M176 184 C 238 156 300 210 356 180"/>
+      <path d="M176 258 C 230 234 286 282 312 258"/>
+      <path d="M176 332 C 238 360 300 306 356 336"/>
+    </g>
+  </g>
 </svg>
