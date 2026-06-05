@@ -405,6 +405,23 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     setOpenWeekId(week.id)
     setTimeout(() => document.getElementById(`week-row-${week.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 60)
   }
+  // Hvor meget har atleten logget i en session: grøn=fuldt, amber=i gang, grå=intet.
+  function sessionLogStatus(session) {
+    const total = (session.exercises || []).reduce((a, e) => a + (e.sets || 0), 0)
+    let logged = 0
+    for (const log of athleteLogs) {
+      if (!log.skipped && log.exercises?.session_id === session.id) logged++
+    }
+    let kind
+    if (total > 0) {
+      logged = Math.min(logged, total)
+      kind = logged === 0 ? 'none' : logged >= total ? 'done' : 'partial'
+    } else {
+      kind = logged > 0 ? 'done' : 'none' // øvelser uden sæt-mål: vis blot om der er logget
+    }
+    const color = kind === 'done' ? '#6cba6c' : kind === 'partial' ? '#c8923a' : '#3a3a36'
+    return { kind, logged, total, color }
+  }
 
   async function fetchAthletes() {
     const { data, error } = await supabase.from('athletes').select('*').order('name')
@@ -3767,11 +3784,19 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                               </div>
                             ) : (
                               <div
-                                style={{ background: '#181816', border: '1px solid rgba(237,234,226,0.06)', padding: '0.75rem 1rem', cursor: 'pointer', display: 'flex', alignItems: isMobile ? 'flex-start' : 'center', justifyContent: 'space-between', gap: '0.5rem' }}
+                                style={{ background: '#181816', border: '1px solid rgba(237,234,226,0.06)', borderLeft: `3px solid ${sessionLogStatus(session).color}`, padding: '0.75rem 1rem', cursor: 'pointer', display: 'flex', alignItems: isMobile ? 'flex-start' : 'center', justifyContent: 'space-between', gap: '0.5rem' }}
                                 onClick={() => setOpenSessionId(openSessionId === session.id ? null : session.id)}
                               >
                                 <div style={{ flex: 1, minWidth: 0 }}>
-                                  <div style={{ fontSize: '0.88rem', color: '#edeae2' }}>{session.title}</div>
+                                  <div style={{ fontSize: '0.88rem', color: '#edeae2', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                    {session.title}
+                                    {(() => {
+                                      const st = sessionLogStatus(session)
+                                      if (st.total === 0 && st.logged === 0) return null
+                                      const label = st.kind === 'done' ? '✓ Logget' : st.kind === 'partial' ? `${st.logged}/${st.total} sæt` : 'Ikke logget'
+                                      return <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: st.color, border: `1px solid ${st.color}66`, padding: '0.12rem 0.4rem' }}>{label}</span>
+                                    })()}
+                                  </div>
                                   <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: '0.15rem' }}>
                                     {session.exercises?.length || 0} øvelser
                                   </div>
