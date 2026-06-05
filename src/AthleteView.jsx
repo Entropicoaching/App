@@ -485,6 +485,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [prToast, setPrToast] = useState(null)
   const [prToastFading, setPrToastFading] = useState(false)
   const [setConfirm, setSetConfirm] = useState({})
+  // Fortryd-toast (sletning) + beskeder auto-scroll
+  const [undoToast, setUndoToast] = useState(null)
+  const undoTimerRef = useRef(null)
+  const messagesEndRef = useRef(null)
   const [skipConfirmEx, setSkipConfirmEx] = useState(null)
   const [openRpePicker, setOpenRpePicker] = useState(null)
 
@@ -537,6 +541,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   useEffect(() => { fetchAthlete() }, [])
   useEffect(() => { if (athlete) fetchLogs(athlete.id, kostDate) }, [kostDate, athlete?.id])
   useEffect(() => { if (tab === 'beskeder' && athlete) { fetchAthleteMessages(); markMessagesAsRead() } }, [tab, athlete?.id])
+  useEffect(() => { if (tab === 'beskeder') messagesEndRef.current?.scrollIntoView({ block: 'end' }) }, [messages, tab])
   useEffect(() => { if (tab === 'stævnedag' && athlete) fetchMeetPlan(athlete.id) }, [tab, athlete?.id])
 
   useEffect(() => {
@@ -759,7 +764,13 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   }
 
   async function saveReadiness() {
-    if (!athlete || !readinessInput.energy || !readinessInput.motivation || !readinessInput.stress || !readinessInput.soreness) return
+    if (!athlete) return
+    const missing = []
+    if (!readinessInput.energy) missing.push('energi')
+    if (!readinessInput.motivation) missing.push('motivation')
+    if (!readinessInput.stress) missing.push('stress')
+    if (!readinessInput.soreness) missing.push('ømhed')
+    if (missing.length) { setReadinessError('Mangler: ' + missing.join(', ')); return }
     setSavingReadiness(true)
     setReadinessError(null)
     const score = calcReadinessScore(readinessInput)
@@ -1291,8 +1302,23 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     await fetchAllExerciseLogs(athlete.id, allWeeks)
   }
 
-  async function deleteLog(id) {
-    await supabase.from('meal_logs').delete().eq('id', id)
+  async function deleteLog(l) {
+    await supabase.from('meal_logs').delete().eq('id', l.id)
+    fetchLogs(athlete.id)
+    if (undoTimerRef.current) clearTimeout(undoTimerRef.current)
+    setUndoToast({
+      label: 'Måltid slettet',
+      restore: { athlete_id: athlete.id, date: l.date, meal: l.meal, kcal: l.kcal, protein: l.protein, carb: l.carb, fat: l.fat },
+    })
+    undoTimerRef.current = setTimeout(() => setUndoToast(null), 5000)
+  }
+
+  async function undoDelete() {
+    const t = undoToast
+    if (!t) return
+    if (undoTimerRef.current) clearTimeout(undoTimerRef.current)
+    setUndoToast(null)
+    await supabase.from('meal_logs').insert(t.restore)
     fetchLogs(athlete.id)
   }
 
@@ -1535,6 +1561,19 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           🏆 Ny PR på {prToast}!
         </div>
       )}
+      {/* Fortryd-toast */}
+      {undoToast && (
+        <div style={{
+          position: 'fixed', bottom: '1.5rem', left: '50%', transform: 'translateX(-50%)',
+          background: '#1c1c18', border: '1px solid rgba(237,234,226,0.18)',
+          padding: '0.6rem 0.75rem 0.6rem 1.1rem', zIndex: 9999, whiteSpace: 'nowrap',
+          display: 'flex', alignItems: 'center', gap: '0.9rem',
+          boxShadow: '0 4px 24px rgba(0,0,0,0.55)',
+        }}>
+          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#b8b4a8', letterSpacing: '0.06em' }}>{undoToast.label}</span>
+          <button onClick={undoDelete} style={{ ...s.btnGhost, fontSize: '0.58rem', padding: '0.3rem 0.7rem', color: '#c8923a', borderColor: 'rgba(200,146,58,0.45)' }}>Fortryd</button>
+        </div>
+      )}
       {/* Topbar */}
       <div style={s.topbar}>
         <div style={s.logo}>Entropi<span style={{ color: '#c8923a' }}>.</span></div>
@@ -1678,13 +1717,26 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
                 {readinessError && (
                   <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#e05555', marginBottom: '0.75rem', letterSpacing: '0.06em' }}>
-                    Fejl: {readinessError}
+                    {readinessError}
                   </div>
                 )}
+                {(() => {
+                  const missing = []
+                  if (!readinessInput.energy) missing.push('energi')
+                  if (!readinessInput.motivation) missing.push('motivation')
+                  if (!readinessInput.stress) missing.push('stress')
+                  if (!readinessInput.soreness) missing.push('ømhed')
+                  if (!missing.length) return null
+                  return (
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#c8923a', marginBottom: '0.6rem', letterSpacing: '0.05em' }}>
+                      Udfyld {missing.join(', ')} for at logge
+                    </div>
+                  )
+                })()}
                 <button
                   style={{ ...s.btnPrimary, width: '100%', opacity: (!readinessInput.energy || !readinessInput.motivation || !readinessInput.stress || !readinessInput.soreness) ? 0.45 : 1 }}
                   onClick={saveReadiness}
-                  disabled={savingReadiness || !readinessInput.energy || !readinessInput.motivation || !readinessInput.stress || !readinessInput.soreness}
+                  disabled={savingReadiness}
                 >{savingReadiness ? 'Gemmer...' : 'Log parathed'}</button>
               </div>
             ) : (() => {
@@ -2732,7 +2784,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                           <td style={{ textAlign: 'right', padding: '0.45rem 0', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem' }}>{l.fat}g</td>
                           <td style={{ textAlign: 'right', padding: '0.45rem 0', whiteSpace: 'nowrap' }}>
                             <button onClick={() => editing ? setEditingLogId(null) : startEditLog(l)} title="Rediger" style={{ background: 'none', border: 'none', color: editing ? '#c8923a' : '#4a4844', cursor: 'pointer', fontSize: '0.7rem', padding: '0 0.3rem' }}>✎</button>
-                            <button onClick={() => deleteLog(l.id)} title="Slet" style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.7rem', padding: 0 }}>✕</button>
+                            <button onClick={() => deleteLog(l)} title="Slet" style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.7rem', padding: 0 }}>✕</button>
                           </td>
                         </tr>
                         {editing && (
@@ -2892,6 +2944,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                     </div>
                   )
                 })}
+                <div ref={messagesEndRef} />
               </div>
 
               {/* Send input */}
