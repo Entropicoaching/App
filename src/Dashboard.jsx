@@ -1905,8 +1905,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                               key={ath.id}
                               style={{ display: 'flex', alignItems: 'center', padding: '0.6rem 0', borderBottom: i < arr.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none', gap: '1rem', opacity: isHidden ? 0.4 : 1 }}
                             >
-                              <div onClick={() => !isHidden && openProfile(ath, 'program')} style={{ display: 'flex', alignItems: 'center', flex: 1, gap: '1rem', cursor: isHidden ? 'default' : 'pointer', minWidth: 0 }}>
-                                <div style={{ fontSize: '0.88rem', color: '#edeae2', minWidth: '140px', flexShrink: 0 }}>{ath.name}</div>
+                              <div onClick={() => !isHidden && openProfile(ath, 'program')} style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', flex: 1, gap: isMobile ? '0.2rem' : '1rem', cursor: isHidden ? 'default' : 'pointer', minWidth: 0 }}>
+                                <div style={{ fontSize: '0.88rem', color: '#edeae2', minWidth: isMobile ? 0 : '140px', flexShrink: 0, maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ath.name}</div>
                                 {ws ? (() => {
                                   const today = new Date(); today.setHours(12, 0, 0, 0)
                                   const lastLogDate = athleteLastLogs[ath.id]
@@ -1922,8 +1922,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                                     : daysSinceLog === 1 ? 'I går'
                                     : `${daysSinceLog}d siden`
                                   return (
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1, minWidth: 0 }}>
-                                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#7a7770', whiteSpace: 'nowrap' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1, minWidth: 0, maxWidth: '100%' }}>
+                                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#7a7770', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0 }}>
                                         Uge {ws.week_number}{ws.block_name ? ` — ${ws.block_name}` : ''} · {ws.session_count} sess
                                       </div>
                                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexShrink: 0 }}>
