@@ -263,6 +263,40 @@ const LOCAL_FOODS = [
   { name: 'Cola zero', kcal100: 0, protein100: 0, carb100: 0, fat100: 0 },
 ]
 
+// Alternative portionsenheder for udvalgte fødevarer (ud over gram).
+// grams = gennemsnitlig vægt af én enhed. Gør logging hurtigere — fx "2 stk" i
+// stedet for at skulle gætte gram. Nøgle = fødevarens navn i LOCAL_FOODS.
+const PORTION_UNITS = {
+  'Æg helt': [{ label: 'stk', grams: 60 }],
+  'Æggehvide': [{ label: 'stk', grams: 33 }],
+  'Æggeblomme': [{ label: 'stk', grams: 17 }],
+  'Kyllingebryst': [{ label: 'stk', grams: 150 }],
+  'Banan': [{ label: 'stk', grams: 120 }],
+  'Æble': [{ label: 'stk', grams: 180 }],
+  'Appelsin': [{ label: 'stk', grams: 150 }],
+  'Pære': [{ label: 'stk', grams: 170 }],
+  'Rugbrød': [{ label: 'skive', grams: 35 }],
+  'Knækbrød': [{ label: 'stk', grams: 10 }],
+  'Gulerod': [{ label: 'stk', grams: 70 }],
+  'Tomat': [{ label: 'stk', grams: 90 }],
+  'Proteinbar': [{ label: 'stk', grams: 60 }],
+  'Havregryn': [{ label: 'dl', grams: 35 }],
+}
+
+// Returnerer tilgængelige enheder for en fødevare. Gram er altid først (standard).
+// Indbyggede fødevarer slår op i PORTION_UNITS; egne fødevarer kan have én
+// brugerdefineret enhed via unit_label/unit_grams.
+function unitsForFood(food) {
+  const units = [{ label: 'g', grams: 1 }]
+  if (!food) return units
+  if (food.isCustom && food.unit_label && food.unit_grams > 0) {
+    units.push({ label: food.unit_label, grams: Number(food.unit_grams) })
+  } else if (PORTION_UNITS[food.name]) {
+    units.push(...PORTION_UNITS[food.name])
+  }
+  return units
+}
+
 const WARMUP_BASE = {
   Squat: [
     { id: 'sq-1', name: 'Bodyweight squat', desc: 'Stå med skulderbredde. Sæt dig så dybt ned som muligt og hold et par sekunder fornede — hælene skal blive i gulvet. Fokus på at åbne hofterne.', label: '10 reps', type: 'reps' },
@@ -396,11 +430,12 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [searchResults, setSearchResults] = useState([])
   const [selectedFood, setSelectedFood] = useState(null)
   const [amount, setAmount] = useState(100)
+  const [unitIdx, setUnitIdx] = useState(0)
   const [showManual, setShowManual] = useState(false)
   const [manual, setManual] = useState({ name: '', kcal: '', protein: '', carb: '' })
   const [customFoods, setCustomFoods] = useState([])
   const [showCreateFood, setShowCreateFood] = useState(false)
-  const [createFood, setCreateFood] = useState({ name: '', kcal100: '', protein100: '', carb100: '', fat100: '' })
+  const [createFood, setCreateFood] = useState({ name: '', kcal100: '', protein100: '', carb100: '', fat100: '', unit_label: '', unit_grams: '' })
   const [mealTemplates, setMealTemplates] = useState([])
   const [showTemplates, setShowTemplates] = useState(false)
   const [showSaveTemplate, setShowSaveTemplate] = useState(false)
@@ -1117,16 +1152,26 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     setSelectedFood(f)
     setSearchQuery(f.name)
     setSearchResults([])
-    setAmount(100)
+    // Hvis fødevaren har en stk-enhed, default til 1 af den (hurtigere); ellers 100 g.
+    const units = unitsForFood(f)
+    if (units.length > 1) { setUnitIdx(1); setAmount(1) }
+    else { setUnitIdx(0); setAmount(100) }
   }
 
   async function addFromSearch() {
     if (!selectedFood || !athlete) return
-    const ratio = amount / 100
+    const units = unitsForFood(selectedFood)
+    const unit = units[unitIdx] || units[0]
+    const grams = amount * unit.grams
+    const ratio = grams / 100
+    // Beskriv portionen i navnet når enheden ikke er gram, så loggen er læsbar.
+    const label = unit.label === 'g'
+      ? `${selectedFood.name} · ${Math.round(grams)} g`
+      : `${selectedFood.name} · ${amount} ${unit.label} (${Math.round(grams)} g)`
     await supabase.from('meal_logs').insert({
       athlete_id: athlete.id,
       date: today(),
-      meal: selectedFood.name,
+      meal: label,
       kcal: Math.round(selectedFood.kcal100 * ratio),
       protein: Math.round(selectedFood.protein100 * ratio),
       carb: Math.round(selectedFood.carb100 * ratio),
@@ -1162,6 +1207,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       protein100: parseFloat(createFood.protein100) || 0,
       carb100: parseFloat(createFood.carb100) || 0,
       fat100: parseFloat(createFood.fat100) || 0,
+      unit_label: createFood.unit_label.trim() || null,
+      unit_grams: parseFloat(createFood.unit_grams) || null,
     }
     const { data } = await supabase.from('custom_foods').insert(food).select().maybeSingle()
     if (data) {
@@ -1169,7 +1216,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       setCustomFoods(prev => [saved, ...prev])
       selectFood(saved)
       setShowCreateFood(false)
-      setCreateFood({ name: '', kcal100: '', protein100: '', carb100: '', fat100: '' })
+      setCreateFood({ name: '', kcal100: '', protein100: '', carb100: '', fat100: '', unit_label: '', unit_grams: '' })
     }
   }
 
@@ -2419,22 +2466,55 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 </div>
               )}
 
-              {selectedFood && (
+              {selectedFood && (() => {
+                const units = unitsForFood(selectedFood)
+                const unit = units[unitIdx] || units[0]
+                const grams = amount * unit.grams
+                const ratio = grams / 100
+                const quickAmounts = unit.label === 'g' ? [50, 100, 150, 200, 250] : [1, 2, 3, 4]
+                return (
                 <div style={{ background: 'rgba(200,146,58,0.06)', border: '1px solid rgba(200,146,58,0.2)', padding: '1rem', marginBottom: '0.75rem' }}>
                   <div style={{ fontSize: '0.88rem', color: '#edeae2', marginBottom: '0.4rem' }}>{selectedFood.name}</div>
                   <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#7a7770', marginBottom: '0.75rem' }}>
-                    {Math.round(selectedFood.kcal100 * amount / 100)} kcal · P: {Math.round(selectedFood.protein100 * amount / 100)}g · K: {Math.round(selectedFood.carb100 * amount / 100)}g · F: {Math.round(selectedFood.fat100 * amount / 100)}g
+                    {Math.round(selectedFood.kcal100 * ratio)} kcal · P: {Math.round(selectedFood.protein100 * ratio)}g · K: {Math.round(selectedFood.carb100 * ratio)}g · F: {Math.round(selectedFood.fat100 * ratio)}g
+                    {unit.label !== 'g' && <span style={{ color: '#4a4844' }}> · {Math.round(grams)} g</span>}
                   </div>
+
+                  {/* Enhedsvælger — kun vist når fødevaren har mere end gram */}
+                  {units.length > 1 && (
+                    <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '0.6rem' }}>
+                      {units.map((u, ui) => (
+                        <button
+                          key={ui}
+                          onClick={() => { setUnitIdx(ui); setAmount(u.label === 'g' ? 100 : 1) }}
+                          style={{ ...s.btnGhost, fontSize: '0.55rem', padding: '0.3rem 0.7rem', color: ui === unitIdx ? '#c8923a' : '#7a7770', borderColor: ui === unitIdx ? 'rgba(200,146,58,0.5)' : undefined }}
+                        >{u.label === 'g' ? 'Gram' : u.label}</button>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Hurtig-mængder */}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', marginBottom: '0.6rem' }}>
+                    {quickAmounts.map(q => (
+                      <button
+                        key={q}
+                        onClick={() => setAmount(q)}
+                        style={{ ...s.btnGhost, fontSize: '0.55rem', padding: '0.3rem 0.6rem', color: amount === q ? '#c8923a' : '#7a7770', borderColor: amount === q ? 'rgba(200,146,58,0.5)' : undefined }}
+                      >{q}{unit.label === 'g' ? 'g' : ` ${unit.label}`}</button>
+                    ))}
+                  </div>
+
                   <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-end' }}>
                     <div>
-                      <div style={s.fieldLabel}>Mængde (g)</div>
-                      <input style={{ ...s.fieldInput, maxWidth: '100px' }} type="number" value={amount} onChange={e => setAmount(parseFloat(e.target.value) || 0)} />
+                      <div style={s.fieldLabel}>Mængde ({unit.label})</div>
+                      <input style={{ ...s.fieldInput, maxWidth: '100px' }} type="number" inputMode="decimal" value={amount} onChange={e => setAmount(parseFloat(e.target.value) || 0)} />
                     </div>
                     <button style={s.btnPrimary} onClick={addFromSearch}>Tilføj</button>
                     <button style={s.btnGhost} onClick={() => { setSelectedFood(null); setSearchQuery('') }}>Annuller</button>
                   </div>
                 </div>
-              )}
+                )
+              })()}
 
               <button
                 style={{ background: 'none', border: 'none', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: showCreateFood ? '#c8923a' : '#7a7770', cursor: 'pointer', padding: 0 }}
@@ -2460,9 +2540,22 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                       </div>
                     ))}
                   </div>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>
+                    Valgfri enhed — gør det muligt at logge i stk/portion i stedet for gram
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem', marginBottom: '0.75rem' }}>
+                    <div>
+                      <div style={s.fieldLabel}>Enhed (navn)</div>
+                      <input style={s.fieldInput} type="text" placeholder="fx stk, portion, skive" value={createFood.unit_label} onChange={e => setCreateFood(p => ({ ...p, unit_label: e.target.value }))} />
+                    </div>
+                    <div>
+                      <div style={s.fieldLabel}>Gram pr. enhed</div>
+                      <input style={s.fieldInput} type="number" inputMode="decimal" placeholder="fx 150" value={createFood.unit_grams} onChange={e => setCreateFood(p => ({ ...p, unit_grams: e.target.value }))} />
+                    </div>
+                  </div>
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
                     <button style={s.btnPrimary} onClick={saveCustomFood}>Gem og log</button>
-                    <button style={s.btnGhost} onClick={() => { setShowCreateFood(false); setCreateFood({ name: '', kcal100: '', protein100: '', carb100: '', fat100: '' }) }}>Annuller</button>
+                    <button style={s.btnGhost} onClick={() => { setShowCreateFood(false); setCreateFood({ name: '', kcal100: '', protein100: '', carb100: '', fat100: '', unit_label: '', unit_grams: '' }) }}>Annuller</button>
                   </div>
                 </div>
               )}
