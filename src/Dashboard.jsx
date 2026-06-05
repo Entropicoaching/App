@@ -303,6 +303,9 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [athleteLastLogs, setAthleteLastLogs] = useState({})
   const [calendarWeeks, setCalendarWeeks] = useState({}) // athlete_id -> [{week_number, block_name, start_date, session_count, exercise_count}]
   const [athleteCurrentWeek, setAthleteCurrentWeek] = useState({}) // athlete_id -> ugenummer for seneste logg. træning
+  const [snoozedAthletes, setSnoozedAthletes] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('entropi_calendar_snooze') || '{}') } catch { return {} }
+  })
   const [hiddenAthleteIds, setHiddenAthleteIds] = useState(() => {
     try { return new Set(JSON.parse(localStorage.getItem('entropi_hidden_athletes') || '[]')) } catch { return new Set() }
   })
@@ -460,6 +463,16 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       if (wn != null) map[log.athlete_id] = wn
     }
     setAthleteCurrentWeek(map)
+  }
+
+  // Udsæt opmærksomhed på en atlet til en dato (ISO yyyy-mm-dd). null = fjern udsættelse.
+  function snoozeAthlete(athId, untilDate) {
+    setSnoozedAthletes(prev => {
+      const next = { ...prev }
+      if (untilDate) next[athId] = untilDate; else delete next[athId]
+      localStorage.setItem('entropi_calendar_snooze', JSON.stringify(next))
+      return next
+    })
   }
 
   async function fetchProfilesLastSeen(athletesList) {
@@ -1672,33 +1685,37 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           const visibleAthletes = athletes.filter(a => !hiddenAthleteIds.has(a.id))
 
           // Udled status pr. atlet ud fra HVOR DE ER NU (seneste loggede uge) og
-          // hvor mange FYLDTE uger (med øvelser) der ligger foran dem.
+          // hvor mange FYLDTE uger (med øvelser) der er tilbage fra og med den uge.
+          // "Runway" tæller den nuværende uge MED — så en atlet hvis næste uge er
+          // fyldt har runway >= 2 = Klar (i stedet for falsk "planlæg næste").
           const board = visibleAthletes.map(a => {
             const weeks = calendarWeeks[a.id] || []
             const planned = weeks.filter(w => w.exercise_count > 0)            // uger du har lagt øvelser i
             const maxPlannedWeekNo = planned.length ? Math.max(...planned.map(w => w.week_number)) : null
             const minPlannedWeekNo = planned.length ? Math.min(...planned.map(w => w.week_number)) : null
-            // Hvor atleten er nu: seneste loggede uge. Ingen logs → lige før første fyldte uge.
             const loggedWeek = athleteCurrentWeek[a.id] ?? null
-            const ref = loggedWeek != null ? loggedWeek : (minPlannedWeekNo != null ? minPlannedWeekNo - 1 : null)
-            const filledAhead = ref != null ? planned.filter(w => w.week_number > ref).length : planned.length
+            const ref = loggedWeek != null ? loggedWeek : minPlannedWeekNo   // hvor de er nu (eller starten)
+            const runway = ref != null ? planned.filter(w => w.week_number >= ref).length : planned.length
             const lastLog = athleteLastLogs[a.id]
             const daysSince = lastLog ? Math.floor((today0 - new Date(lastLog + 'T12:00:00')) / dayMs) : null
-            let status // ready | low | runout | empty | none
+            let status // ready | low | empty | none
             if (weeks.length === 0) status = 'none'
             else if (planned.length === 0) status = 'empty'          // uger findes, men ingen øvelser
-            else if (filledAhead <= 0) status = 'runout'             // trænet igennem alt planlagt
-            else if (filledAhead === 1) status = 'low'               // kun én fyldt uge tilbage
+            else if (runway <= 1) status = 'low'                     // kun den nuværende uge tilbage
             else status = 'ready'
-            return { a, weeks, planned, loggedWeek, maxPlannedWeekNo, filledAhead, daysSince, status }
+            const snoozedUntil = snoozedAthletes[a.id] || null
+            const isSnoozed = snoozedUntil && new Date(snoozedUntil) > today0
+            return { a, weeks, planned, loggedWeek, maxPlannedWeekNo, runway, daysSince, status, snoozedUntil, isSnoozed }
           })
-          // Kun de røde tilstande kræver handling; "low" (gul) er en blød reminder.
-          const needs = board.filter(b => b.status === 'none' || b.status === 'empty' || b.status === 'runout')
           const reasonText = (b) => b.status === 'none' ? 'Intet program oprettet'
             : b.status === 'empty' ? 'Uger oprettet, men ingen øvelser'
-            : 'Trænet igennem alt — planlæg næste blok'
+            : 'Sidste fyldte uge nu — planlæg næste'
+          // Kun ikke-klar OG ikke-snoozede kræver handling.
+          const needs = board.filter(b => b.status !== 'ready' && !b.isSnoozed)
+          const snoozedNeeds = board.filter(b => b.status !== 'ready' && b.isSnoozed)
           const lastText = (d) => d == null ? 'Ingen logs' : d === 0 ? 'I dag' : d === 1 ? 'I går' : `${d}d siden`
           const lastColor = (d) => d == null ? '#4a4844' : d <= 4 ? '#6cba6c' : d <= 8 ? '#c8923a' : '#e05555'
+          const fmtDate = (d) => `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`
 
           return (
             <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
@@ -1709,15 +1726,44 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 </div>
               </div>
 
-              {/* Kræver handling — atleter uden program eller uden øvelser i seneste uge */}
+              {/* Kræver handling — uden program / uden øvelser / sidste uge nu */}
               {needs.length > 0 && (
                 <div style={{ ...s.card, marginBottom: '1.5rem', borderColor: 'rgba(224,85,85,0.3)' }}>
                   <div style={{ ...s.cardLabel, color: '#e05555' }}>⚠ Kræver din opmærksomhed ({needs.length})</div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.1rem', marginTop: '0.5rem' }}>
-                    {needs.map(b => (
-                      <div key={b.a.id} onClick={() => openProfile(b.a, 'program')} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', padding: '0.4rem 0', borderBottom: '1px solid rgba(237,234,226,0.04)' }}>
-                        <span style={{ fontSize: '0.85rem', color: '#edeae2' }}>{b.a.name}</span>
-                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: b.status === 'none' ? '#e05555' : '#c8923a' }}>{reasonText(b)}</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', marginTop: '0.5rem' }}>
+                    {needs.map(b => {
+                      const snooze = (days) => { const d = new Date(); d.setDate(d.getDate() + days); snoozeAthlete(b.a.id, d.toISOString().slice(0, 10)) }
+                      return (
+                        <div key={b.a.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', padding: '0.5rem 0', borderBottom: '1px solid rgba(237,234,226,0.04)', flexWrap: 'wrap' }}>
+                          <div onClick={() => openProfile(b.a, 'program')} style={{ cursor: 'pointer', flex: 1, minWidth: '140px' }}>
+                            <span style={{ fontSize: '0.85rem', color: '#edeae2' }}>{b.a.name}</span>
+                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: b.status === 'none' ? '#e05555' : '#c8923a', marginLeft: '0.6rem' }}>{reasonText(b)}</span>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', flexShrink: 0 }}>
+                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: '#4a4844' }}>Udsæt</span>
+                            <button onClick={() => snooze(3)} style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.25rem 0.45rem' }}>3d</button>
+                            <button onClick={() => snooze(7)} style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.25rem 0.45rem' }}>7d</button>
+                            <input type="date" onChange={e => e.target.value && snoozeAthlete(b.a.id, e.target.value)} style={{ ...s.fieldInput, fontSize: '0.55rem', padding: '0.2rem 0.3rem', width: '120px' }} />
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Udsatte atleter */}
+              {snoozedNeeds.length > 0 && (
+                <div style={{ ...s.card, marginBottom: '1.5rem' }}>
+                  <div style={s.cardLabel}>Udsat ({snoozedNeeds.length})</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', marginTop: '0.5rem' }}>
+                    {snoozedNeeds.map(b => (
+                      <div key={b.a.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', padding: '0.4rem 0', borderBottom: '1px solid rgba(237,234,226,0.04)' }}>
+                        <span style={{ fontSize: '0.82rem', color: '#7a7770' }}>{b.a.name}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexShrink: 0 }}>
+                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844' }}>udsat til {fmtDate(new Date(b.snoozedUntil))}</span>
+                          <button onClick={() => snoozeAthlete(b.a.id, null)} style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.25rem 0.45rem' }}>Vis nu</button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -1730,14 +1776,14 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 {board.length === 0 ? (
                   <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', padding: '1rem 0' }}>Ingen atleter</div>
                 ) : board.map((b, i) => {
-                  const chip = b.status === 'ready' ? { t: `✓ Klar · ${b.filledAhead} uger frem`, c: '#6cba6c' }
-                    : b.status === 'low' ? { t: '⚠ 1 uge tilbage', c: '#c8923a' }
-                    : b.status === 'runout' ? { t: '✗ Planlæg næste blok', c: '#e05555' }
+                  const chip = b.isSnoozed ? { t: `⏾ Udsat`, c: '#7a7770' }
+                    : b.status === 'ready' ? { t: `✓ Klar · ${b.runway} uger`, c: '#6cba6c' }
+                    : b.status === 'low' ? { t: '⚠ Sidste uge — planlæg næste', c: '#c8923a' }
                     : b.status === 'empty' ? { t: '⚠ Mangler øvelser', c: '#c8923a' }
                     : { t: '✗ Intet program', c: '#e05555' }
                   const detail = b.weeks.length === 0 ? 'Ingen uger oprettet'
                     : b.planned.length === 0 ? `${b.weeks.length} uger oprettet · ingen øvelser endnu`
-                    : `${b.loggedWeek != null ? `Træner uge ${b.loggedWeek}` : 'Ikke startet'} · ${b.filledAhead} fyldte uger frem · planlagt til uge ${b.maxPlannedWeekNo}`
+                    : `${b.loggedWeek != null ? `Træner uge ${b.loggedWeek}` : 'Ikke startet'} · ${b.runway} fyldte uger tilbage · planlagt til uge ${b.maxPlannedWeekNo}`
                   return (
                     <div key={b.a.id} onClick={() => openProfile(b.a, 'program')}
                       style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.7rem 0', borderBottom: i < board.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none', cursor: 'pointer', flexWrap: 'wrap' }}>
@@ -1753,7 +1799,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 })}
               </div>
               <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', marginTop: '0.75rem', letterSpacing: '0.05em', lineHeight: 1.7 }}>
-                Status ud fra hvor langt atleten er trænet (seneste loggede uge) og hvor mange uger med øvelser der ligger foran. "Planlæg næste blok" = de har trænet igennem alt du har lagt ind. "1 uge tilbage" = blød reminder. Prikken = sidst loggede træning.
+                "Klar · N uger" = N fyldte uger tilbage fra og med den uge atleten træner nu. "Sidste uge — planlæg næste" = kun den nuværende uge er fyldt. Brug "Udsæt" hvis du allerede har styr på det og ikke vil mindes om det i nogle dage. Prikken = sidst loggede træning.
               </div>
             </div>
           )
