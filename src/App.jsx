@@ -1,8 +1,22 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { supabase } from './supabase'
 import Auth from './Auth'
-import Dashboard from './Dashboard'
-import AthleteView from './AthleteView'
+
+// Lazy-load de to store views, så atleter ikke downloader coach-dashboardet (og
+// omvendt). Halverer det første bundt der skal hentes på mobil.
+const Dashboard = lazy(() => import('./Dashboard'))
+const AthleteView = lazy(() => import('./AthleteView'))
+
+const loaderScreen = (
+  <div style={{
+    minHeight: '100vh', background: '#141410', display: 'flex',
+    alignItems: 'center', justifyContent: 'center',
+    fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem',
+    letterSpacing: '0.12em', textTransform: 'uppercase', color: '#4a4844',
+  }}>
+    Indlæser...
+  </div>
+)
 
 function App() {
   const [session, setSession] = useState(null)
@@ -45,23 +59,19 @@ function App() {
     setLoading(false)
   }
 
-  if (loading) return (
-    <div style={{
-      minHeight: '100vh', background: '#141410', display: 'flex',
-      alignItems: 'center', justifyContent: 'center',
-      fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem',
-      letterSpacing: '0.12em', textTransform: 'uppercase', color: '#4a4844',
-    }}>
-      Indlæser...
-    </div>
-  )
+  if (loading) return loaderScreen
 
   if (!session) return <Auth />
+
+  let viewEl
   if (role === 'coach') {
-    if (previewMode) return <AthleteView session={session} role={role} coachAthleteId={coachAthleteId} onExitPreview={() => { setPreviewMode(false); setCoachAthleteId(null) }} />
-    return <Dashboard session={session} onPreviewAthlete={(athleteId) => { setCoachAthleteId(athleteId || null); setPreviewMode(true) }} />
+    viewEl = previewMode
+      ? <AthleteView session={session} role={role} coachAthleteId={coachAthleteId} onExitPreview={() => { setPreviewMode(false); setCoachAthleteId(null) }} />
+      : <Dashboard session={session} onPreviewAthlete={(athleteId) => { setCoachAthleteId(athleteId || null); setPreviewMode(true) }} />
+  } else {
+    viewEl = <AthleteView session={session} role={role} />
   }
-  return <AthleteView session={session} role={role} />
+  return <Suspense fallback={loaderScreen}>{viewEl}</Suspense>
 }
 
 export default App

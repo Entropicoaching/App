@@ -432,7 +432,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [amount, setAmount] = useState(100)
   const [unitIdx, setUnitIdx] = useState(0)
   const [showManual, setShowManual] = useState(false)
-  const [manual, setManual] = useState({ name: '', kcal: '', protein: '', carb: '' })
+  const [manual, setManual] = useState({ name: '', kcal: '', protein: '', carb: '', fat: '' })
   const [customFoods, setCustomFoods] = useState([])
   const [showCreateFood, setShowCreateFood] = useState(false)
   const [createFood, setCreateFood] = useState({ name: '', kcal100: '', protein100: '', carb100: '', fat100: '', unit_label: '', unit_grams: '' })
@@ -1194,9 +1194,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       kcal: parseInt(manual.kcal) || 0,
       protein: parseInt(manual.protein) || 0,
       carb: parseInt(manual.carb) || 0,
-      fat: 0,
+      fat: parseInt(manual.fat) || 0,
     })
-    setManual({ name: '', kcal: '', protein: '', carb: '' })
+    setManual({ name: '', kcal: '', protein: '', carb: '', fat: '' })
     setShowManual(false)
     fetchLogs(athlete.id)
   }
@@ -2463,10 +2463,24 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                         {f.isShared && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#6cba6c', border: '1px solid rgba(108,186,108,0.4)', padding: '0.1rem 0.3rem' }}>delt</span>}
                         {(f.isCustom || f.isShared) && f.unit_label && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', color: '#7a7770' }}>1 {f.unit_label} = {f.unit_grams}g</span>}
                       </div>
-                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#7a7770', textAlign: 'right', flexShrink: 0, marginLeft: '1rem' }}>
-                        {f.kcal100} kcal · P: {f.protein100}g · K: {f.carb100}g<br />
-                        <span style={{ color: '#4a4844' }}>pr. 100g</span>
-                      </div>
+                      {(() => {
+                        const u = unitsForFood(f).find(x => x.label !== 'g')
+                        return (
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#7a7770', textAlign: 'right', flexShrink: 0, marginLeft: '1rem' }}>
+                            {u ? (
+                              <>
+                                {Math.round(f.kcal100 * u.grams / 100)} kcal · P: {Math.round(f.protein100 * u.grams / 100)}g<br />
+                                <span style={{ color: '#4a4844' }}>pr. {u.label} ({u.grams}g)</span>
+                              </>
+                            ) : (
+                              <>
+                                {f.kcal100} kcal · P: {f.protein100}g · K: {f.carb100}g<br />
+                                <span style={{ color: '#4a4844' }}>pr. 100g</span>
+                              </>
+                            )}
+                          </div>
+                        )
+                      })()}
                     </div>
                   ))}
                 </div>
@@ -2566,6 +2580,39 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
                     <button style={s.btnPrimary} onClick={saveCustomFood}>Gem og log</button>
                     <button style={s.btnGhost} onClick={() => { setShowCreateFood(false); setCreateFood({ name: '', kcal100: '', protein100: '', carb100: '', fat100: '', unit_label: '', unit_grams: '' }) }}>Annuller</button>
+                  </div>
+                </div>
+              )}
+
+              <div style={{ marginTop: '0.6rem' }}>
+                <button
+                  style={{ background: 'none', border: 'none', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: showManual ? '#c8923a' : '#7a7770', cursor: 'pointer', padding: 0 }}
+                  onClick={() => setShowManual(!showManual)}
+                >
+                  {showManual ? '− Skjul' : '+ Hurtig manuel (kun denne dag)'}
+                </button>
+              </div>
+
+              {showManual && (
+                <div style={{ marginTop: '0.75rem', padding: '1rem', background: '#141410', border: '1px solid rgba(200,146,58,0.2)' }}>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.75rem' }}>
+                    Engangs-log — gemmes ikke som fødevare (fx restaurant/takeaway)
+                  </div>
+                  <div style={{ marginBottom: '0.6rem' }}>
+                    <div style={s.fieldLabel}>Navn</div>
+                    <input style={s.fieldInput} type="text" placeholder="Fx pizza ude" value={manual.name} onChange={e => setManual(p => ({ ...p, name: e.target.value }))} />
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '0.6rem', marginBottom: '0.75rem' }}>
+                    {[['Kcal', 'kcal'], ['Protein (g)', 'protein'], ['Kulhydrat (g)', 'carb'], ['Fedt (g)', 'fat']].map(([label, key]) => (
+                      <div key={key}>
+                        <div style={s.fieldLabel}>{label}</div>
+                        <input style={s.fieldInput} type="number" inputMode="decimal" placeholder="0" value={manual[key]} onChange={e => setManual(p => ({ ...p, [key]: e.target.value }))} />
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button style={s.btnPrimary} onClick={addManual}>Log</button>
+                    <button style={s.btnGhost} onClick={() => { setShowManual(false); setManual({ name: '', kcal: '', protein: '', carb: '', fat: '' }) }}>Annuller</button>
                   </div>
                 </div>
               )}
