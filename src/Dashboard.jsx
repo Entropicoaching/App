@@ -251,6 +251,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   // Export state
   const [exportingTraening, setExportingTraening] = useState(false)
   const [exportingBackup, setExportingBackup] = useState(false)
+  const [lastBackup, setLastBackup] = useState(() => localStorage.getItem('entropi_last_backup') || null)
 
   // Program state
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -1253,13 +1254,15 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   async function exportBackup() {
     setExportingBackup(true)
     const dateStr = new Date().toISOString().slice(0, 10)
-    const tables = ['athletes', 'weeks', 'sessions', 'exercises', 'exercise_logs', 'meal_logs', 'weight_logs', 'readiness_logs', 'personal_records', 'messages']
+    const tables = ['athletes', 'weeks', 'sessions', 'exercises', 'exercise_logs', 'meal_logs', 'weight_logs', 'readiness_logs', 'personal_records', 'messages', 'meet_plans', 'warmup_templates', 'exercise_library', 'custom_foods', 'meal_templates']
     const backup = { exported_at: new Date().toISOString(), tables: {} }
     for (const table of tables) {
       const { data } = await supabase.from(table).select('*')
       backup.tables[table] = data || []
     }
     downloadJSON(backup, `entropi-backup-${dateStr}`)
+    localStorage.setItem('entropi_last_backup', new Date().toISOString())
+    setLastBackup(new Date().toISOString())
     setExportingBackup(false)
   }
 
@@ -1561,6 +1564,18 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               disabled={exportingBackup}
               style={{ background: 'transparent', color: exportingBackup ? '#4a4844' : '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase', border: '1px solid rgba(237,234,226,0.08)', padding: '0.35rem 0.6rem', cursor: exportingBackup ? 'default' : 'pointer', width: '100%', textAlign: 'left' }}
             >{exportingBackup ? '...' : '↓ Sikkerhedskopi'}</button>
+            {(() => {
+              const days = lastBackup ? Math.floor((Date.now() - new Date(lastBackup)) / 86400000) : null
+              const stale = days == null || days >= 7
+              return (
+                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.04em', color: stale ? '#c8923a' : '#4a4844', paddingLeft: '0.1rem' }}>
+                  {days == null ? '⚠ aldrig taget — husk at gemme i din Drive'
+                    : days === 0 ? '✓ taget i dag'
+                    : stale ? `⚠ ${days} dage siden — tag en ny`
+                    : `✓ ${days} dage siden`}
+                </div>
+              )
+            })()}
           </div>
           <button onClick={() => supabase.auth.signOut()} style={{ ...s.btnGhost, marginTop: '0.5rem', width: '100%' }}>Log ud</button>
         </div>
