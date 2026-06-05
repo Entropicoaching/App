@@ -436,6 +436,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [customFoods, setCustomFoods] = useState([])
   const [showCreateFood, setShowCreateFood] = useState(false)
   const [createFood, setCreateFood] = useState({ name: '', kcal100: '', protein100: '', carb100: '', fat100: '', unit_label: '', unit_grams: '' })
+  const [shareFood, setShareFood] = useState(true)
   const [mealTemplates, setMealTemplates] = useState([])
   const [showTemplates, setShowTemplates] = useState(false)
   const [showSaveTemplate, setShowSaveTemplate] = useState(false)
@@ -1137,12 +1138,12 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   }
 
   async function fetchCustomFoods(athleteId) {
+    // RLS returnerer delte fødevarer (is_shared) + egne. Tag 'mine' til badges/sletning.
     const { data } = await supabase
       .from('custom_foods')
       .select('*')
-      .eq('athlete_id', athleteId)
-      .order('created_at', { ascending: false })
-    setCustomFoods(data || [])
+      .order('name', { ascending: true })
+    setCustomFoods((data || []).map(f => ({ ...f, mine: f.athlete_id === athleteId })))
   }
 
   function onSearchInput(e) {
@@ -1151,7 +1152,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     setSelectedFood(null)
     if (q.length < 2) { setSearchResults([]); return }
     const ql = q.toLowerCase()
-    const custom = customFoods.filter(f => f.name.toLowerCase().includes(ql)).map(f => ({ ...f, isCustom: true }))
+    const custom = customFoods
+      .filter(f => f.name.toLowerCase().includes(ql))
+      .map(f => ({ ...f, isCustom: f.mine, isShared: !f.mine }))
     const builtin = LOCAL_FOODS.filter(f => f.name.toLowerCase().includes(ql))
     setSearchResults([...custom, ...builtin])
   }
@@ -1217,10 +1220,11 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       fat100: parseFloat(createFood.fat100) || 0,
       unit_label: createFood.unit_label.trim() || null,
       unit_grams: parseFloat(createFood.unit_grams) || null,
+      is_shared: shareFood,
     }
     const { data } = await supabase.from('custom_foods').insert(food).select().maybeSingle()
     if (data) {
-      const saved = { ...data, isCustom: true }
+      const saved = { ...data, isCustom: true, mine: true }
       setCustomFoods(prev => [saved, ...prev])
       selectFood(saved)
       setShowCreateFood(false)
@@ -2609,6 +2613,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                         <span style={{ fontSize: '0.88rem', color: '#edeae2' }}>{f.name}</span>
                         {f.isCustom && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#c8923a', border: '1px solid rgba(200,146,58,0.4)', padding: '0.1rem 0.3rem' }}>din</span>}
+                        {f.isShared && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#6cba6c', border: '1px solid rgba(108,186,108,0.4)', padding: '0.1rem 0.3rem' }}>delt</span>}
+                        {(f.isCustom || f.isShared) && f.unit_label && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', color: '#7a7770' }}>1 {f.unit_label} = {f.unit_grams}g</span>}
                       </div>
                       <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#7a7770', textAlign: 'right', flexShrink: 0, marginLeft: '1rem' }}>
                         {f.kcal100} kcal · P: {f.protein100}g · K: {f.carb100}g<br />
@@ -2706,6 +2712,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                       <input style={s.fieldInput} type="number" inputMode="decimal" placeholder="fx 150" value={createFood.unit_grams} onChange={e => setCreateFood(p => ({ ...p, unit_grams: e.target.value }))} />
                     </div>
                   </div>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem', cursor: 'pointer' }}>
+                    <input type="checkbox" checked={shareFood} onChange={e => setShareFood(e.target.checked)} style={{ accentColor: '#c8923a', width: '16px', height: '16px' }} />
+                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#b8b4a8' }}>Del med alle atleter (fælles bibliotek)</span>
+                  </label>
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
                     <button style={s.btnPrimary} onClick={saveCustomFood}>Gem og log</button>
                     <button style={s.btnGhost} onClick={() => { setShowCreateFood(false); setCreateFood({ name: '', kcal100: '', protein100: '', carb100: '', fat100: '', unit_label: '', unit_grams: '' }) }}>Annuller</button>
