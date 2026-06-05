@@ -26,18 +26,20 @@
 
   <!-- Et "E" tegnet som tre flydende bølge-streger (ingen hård bjælke).
        Venstre-enderne flugter og danner E'ets ryg; bløde runde ender. -->
-  <g fill="none" stroke-linecap="round">
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
     <!-- blød glød bag -->
     <g stroke="#d77f2a" stroke-width="44" opacity="0.5" filter="url(#glow)">
-      <path d="M176 184 C 238 156 300 210 356 180"/>
-      <path d="M176 258 C 230 234 286 282 312 258"/>
-      <path d="M176 332 C 238 360 300 306 356 336"/>
+      <path d="M176 182 L 176 330"/>
+      <path d="M176 182 C 240 169 300 195 356 182"/>
+      <path d="M176 256 C 230 247 286 267 312 256"/>
+      <path d="M176 330 C 240 343 300 317 356 330"/>
     </g>
-    <!-- selve stregerne -->
+    <!-- selve stregerne: lodret ryg + tre afdæmpede bølge-arme -->
     <g stroke="url(#flame)" stroke-width="42">
-      <path d="M176 184 C 238 156 300 210 356 180"/>
-      <path d="M176 258 C 230 234 286 282 312 258"/>
-      <path d="M176 332 C 238 360 300 306 356 336"/>
+      <path d="M176 182 L 176 330"/>
+      <path d="M176 182 C 240 169 300 195 356 182"/>
+      <path d="M176 256 C 230 247 286 267 312 256"/>
+      <path d="M176 330 C 240 343 300 317 356 330"/>
     </g>
   </g>
 </svg>
