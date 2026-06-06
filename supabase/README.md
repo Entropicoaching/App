@@ -31,15 +31,20 @@ det 1:1 til endpointet og gemme de rigtige datapunkter.
 ---
 
 ## 3. Auth
-Tre headers — brug en **hemmelig** nøgle (`sb_secret_...`), aldrig den offentlige:
+Tre headers — brug den **hemmelige** nøgle (`sb_secret_...`), aldrig den offentlige:
 ```
 apikey:        <sb_secret-nøgle>
 Authorization: Bearer <sb_secret-nøgle>
 Content-Type:  application/json
 ```
-Marc giver dig nøglen ad hoc når der skal sættes program op (Supabase → Project
-Settings → API → Secret keys). ⚠️ Den giver fuld DB-adgang — må aldrig i frontend
-eller git. Den offentlige `sb_publishable_`-nøgle virker IKKE (bevidst låst ude).
+
+**Hvor finder du nøglen:** læs `SUPABASE_SECRET_KEY` fra `.env.local` (lokal,
+git-ignoreret fil i projektroden). **Bed IKKE Marc om at indsætte nøglen i chatten**
+— så slipper han for at rulle den hver gang. Mangler den i `.env.local`, så bed ham
+om at lægge den dér (Supabase → Project Settings → API → Secret keys → create).
+
+⚠️ Nøglen giver fuld DB-adgang — må aldrig i frontend, git eller en chat-besked.
+Den offentlige `sb_publishable_`-nøgle virker IKKE (bevidst låst ude af funktionen).
 
 ---
 
