@@ -504,6 +504,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [undoToast, setUndoToast] = useState(null)
   const undoTimerRef = useRef(null)
   const messagesEndRef = useRef(null)
+  // Session-kort refs, så vi kan scrolle en nyåbnet session op i toppen
+  // (accordion: når en session over kollapser, hopper layoutet ellers så man
+  // lander midt/nederst i den nye session i stedet for ved første øvelse).
+  const sessionRefs = useRef({})
   // In-app toast + bekræftelses-modal (erstatter native alert/confirm)
   const [flash, setFlash] = useState(null)
   const [confirmDialog, setConfirmDialog] = useState(null)
@@ -842,6 +846,18 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     fetchLastLogs(athleteId, activeWeek)
     fetchExerciseHistory(athleteId)
     fetchAllExerciseLogs(athleteId, weeks)
+  }
+
+  // Åbn/luk en session i programmet. Ved åbning scrolles dens header op i
+  // toppen (efter accordion'en har foldet/foldet ud), så man altid lander ved
+  // første øvelse — ikke midt/nederst i sessionen.
+  function openSession(sessionId) {
+    setProgOpenSession(sessionId)
+    if (sessionId) {
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        sessionRefs.current[sessionId]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }))
+    }
   }
 
   async function fetchAllExerciseLogs(athleteId, weeks) {
@@ -1691,7 +1707,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                       {(currentWeek.sessions || []).map(sess => (
                         <button
                           key={sess.id}
-                          onClick={() => { setTab('program'); setProgOpenSession(sess.id) }}
+                          onClick={() => { setTab('program'); openSession(sess.id) }}
                           style={{
                             display: 'flex',
                             alignItems: 'center',
@@ -2247,10 +2263,14 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                     const isDone = totalSets > 0 && sessionLogs.length >= totalSets
 
                     return (
-                      <div key={session.id} style={{ marginBottom: '0.75rem' }}>
+                      <div
+                        key={session.id}
+                        ref={el => { sessionRefs.current[session.id] = el }}
+                        style={{ marginBottom: '0.75rem', scrollMarginTop: '64px' }}
+                      >
                         <div
                           style={{ ...s.card, marginBottom: 0, cursor: 'pointer', borderLeft: isDone ? '3px solid #6cba6c' : isOpen ? '3px solid #c8923a' : '3px solid transparent' }}
-                          onClick={() => setProgOpenSession(isOpen ? null : session.id)}
+                          onClick={() => openSession(isOpen ? null : session.id)}
                         >
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                             <div>
