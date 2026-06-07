@@ -22,3 +22,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Atlet-data & genererede rapporter — PERSONDATA, må ikke i (offentligt) repo
+supabase/marc-*
+supabase/regitze-*
+supabase/create-marc-week1.ps1
+supabase/send-blok1-marc.ps1
+supabase/send-marc-blok2.ps1
+supabase/send-regitze-vm.ps1
+ugentlig-review-*.md
+
+# Lokale Claude Code-indstillinger (per maskine)
+.claude/settings.local.json
