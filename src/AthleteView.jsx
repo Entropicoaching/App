@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, Fragment } from 'react'
-import { supabase } from './supabase'
+import { supabase, withRetry } from './supabase'
 
 const BLOCK_PALETTE = ['#4e8fcf','#c8923a','#6cba6c','#9b6bd4','#cf6b4e','#4ec8b4']
 function blockColor(name) {
@@ -590,11 +590,15 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   async function fetchAthlete() {
     if (!coachAthleteId && role !== 'athlete') { setLoading(false); return }
-    const query = supabase.from('athletes').select('*')
-    const { data } = await (coachAthleteId
-      ? query.eq('id', coachAthleteId)
-      : query.eq('email', session.user.email)
-    ).maybeSingle()
+    const { data, error } = await withRetry(() =>
+      (coachAthleteId
+        ? supabase.from('athletes').select('*').eq('id', coachAthleteId)
+        : supabase.from('athletes').select('*').eq('email', session.user.email)
+      ).maybeSingle()
+    )
+    // Reel fejl: vis fejl/retry-skærmen i stedet for misvisende "ikke tilknyttet".
+    // (Bliver i loading-tilstanden, som renderer loadError-grenen med "Prøv igen".)
+    if (error) { setLoadError(true); return }
     if (data) {
       if (!coachAthleteId && !data.user_id) {
         await supabase.rpc('claim_athlete_profile')

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { supabase } from './supabase'
+import { supabase, withRetry } from './supabase'
 
 const BLOCK_NAMES = ['Akkumulering', 'Intensificering', 'Peak', 'Deload', 'GPP', 'Hypertrofi', 'Styrke', 'Transition']
 const BLOCK_PALETTE = ['#4e8fcf','#c8923a','#6cba6c','#9b6bd4','#cf6b4e','#4ec8b4']
@@ -231,6 +231,7 @@ function buildLiftSeries(logs, keyword, nameToCat, category) {
 export default function Dashboard({ session, onPreviewAthlete }) {
   const [athletes, setAthletes] = useState([])
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(false)
   const [view, setView] = useState('list')
   const [selectedAthlete, setSelectedAthlete] = useState(null)
   const [activeTab, setActiveTab] = useState('oversigt')
@@ -424,16 +425,17 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   }
 
   async function fetchAthletes() {
-    const { data, error } = await supabase.from('athletes').select('*').order('name')
-    if (!error) {
-      setAthletes(data || [])
-      setHiddenAthleteIds(new Set((data || []).filter(a => a.hidden).map(a => a.id)))
-      if (data?.length) {
-        fetchLatestMessages(data.map(a => a.id))
-        fetchProfilesLastSeen(data)
-        fetchAthleteWeekSummaries(data.map(a => a.id))
-        fetchAthleteLastLogs(data.map(a => a.id))
-      }
+    setLoadError(false)
+    const { data, error } = await withRetry(() => supabase.from('athletes').select('*').order('name'))
+    // Reel fejl efter retries: vis fejl/retry i stedet for misvisende "ingen atleter".
+    if (error) { setLoadError(true); setLoading(false); return }
+    setAthletes(data || [])
+    setHiddenAthleteIds(new Set((data || []).filter(a => a.hidden).map(a => a.id)))
+    if (data?.length) {
+      fetchLatestMessages(data.map(a => a.id))
+      fetchProfilesLastSeen(data)
+      fetchAthleteWeekSummaries(data.map(a => a.id))
+      fetchAthleteLastLogs(data.map(a => a.id))
     }
     setLoading(false)
   }
@@ -1922,6 +1924,11 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             </div>
             {loading ? (
               <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Indlæser...</div>
+            ) : loadError ? (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '0.75rem', padding: '3rem 0' }}>
+                <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Kunne ikke indlæse atleter.</div>
+                <button style={s.btnGhost} onClick={() => { setLoading(true); fetchAthletes() }}>Prøv igen</button>
+              </div>
             ) : athletes.length === 0 ? (
               <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '3rem 0' }}>Ingen atleter endnu — tilføj din første</div>
             ) : (
