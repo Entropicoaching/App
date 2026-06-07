@@ -1138,9 +1138,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [currentWeek, setCurrentWeek] = useState(null)
   const [allWeeks, setAllWeeks] = useState([])
   const [viewingWeekIdx, setViewingWeekIdx] = useState(0)
-  // Periodiserings-bjælke: ældre blokke (før den aktuelle) er foldet sammen som
-  // standard, så fokus er på den blok atleten reelt træner i nu. Foldes ud ved tap.
-  const [showOldPhases, setShowOldPhases] = useState(false)
   const [pastLogs, setPastLogs] = useState([])
   const [allExerciseLogs, setAllExerciseLogs] = useState([])
   const [progOpenSession, setProgOpenSession] = useState(null)
@@ -2650,7 +2647,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 </>
               ) : (
                 <>
-                  {/* Phase bar */}
+                  {/* Periodisering — uge-stepper */}
                   {allWeeks.length > 0 && (() => {
                     const compDate = athlete?.competition_date
                     const compMs = compDate ? new Date(compDate + 'T12:00:00') - new Date() : null
@@ -2659,173 +2656,123 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                     const phases = computePhases(allWeeks)
                     const totalWeeks = allWeeks.length
 
-                    // Find which phase the active (current) week belongs to
-                    let currentPhaseName = null, weekInPhase = 0, phaseTotalWeeks = 0
-                    let activePhaseIdx = 0
-                    let ps = 0
+                    // Globalt start-index pr. fase
+                    const phaseStart = []
+                    { let acc = 0; for (const p of phases) { phaseStart.push(acc); acc += p.weeks.length } }
+
+                    // Fasen for den uge man KIGGER på (så navigation føles sammenhængende)
+                    let viewedPhaseIdx = 0
                     for (let i = 0; i < phases.length; i++) {
-                      const phase = phases[i]
-                      if (ps + phase.weeks.length > activeWeekIdx) {
-                        currentPhaseName = phase.name
-                        weekInPhase = activeWeekIdx - ps + 1
-                        phaseTotalWeeks = phase.weeks.length
-                        activePhaseIdx = i
-                        break
-                      }
-                      ps += phase.weeks.length
+                      if (phaseStart[i] + phases[i].weeks.length > viewingWeekIdx) { viewedPhaseIdx = i; break }
+                    }
+                    const phase = phases[viewedPhaseIdx]
+                    const startGlobal = phaseStart[viewedPhaseIdx]
+                    const color = phase.name ? blockColor(phase.name) : '#7a7770'
+
+                    const fmt = ds => new Date(ds + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })
+                    const firstDate = phase.weeks[0]?.start_date
+                    const lastStart = phase.weeks[phase.weeks.length - 1]?.start_date
+                    const dateRange = firstDate && lastStart
+                      ? `${fmt(firstDate)} – ${fmt(new Date(new Date(lastStart + 'T12:00:00').getTime() + 6 * 86400000).toISOString().slice(0, 10))}`
+                      : null
+
+                    const goToWeek = (gi) => {
+                      setViewingWeekIdx(gi)
+                      setProgOpenSession(null)
+                      if (gi < activeWeekIdx) fetchPastLogs(allWeeks[gi], athlete.id)
+                      else setPastLogs([])
                     }
 
-                    // Byg de segmenter bjælken faktisk tegner. Blokke FØR den aktuelle
-                    // foldes sammen til ét smalt segment (fast vægt) så de fylder mindre
-                    // — medmindre atleten har foldet dem ud. Hvert segment bærer sit
-                    // reelle uge-startindeks, så tap stadig hopper til rette uge.
-                    const OLD_SEG_WEIGHT = 1.2
-                    const hasOldPhases = activePhaseIdx > 0
-                    const collapseOld = hasOldPhases && !showOldPhases
-                    const segments = []
-                    if (collapseOld) {
-                      const oldPhases = phases.slice(0, activePhaseIdx)
-                      const oldWeeks = oldPhases.reduce((a, p) => a + p.weeks.length, 0)
-                      segments.push({ collapsed: true, weight: OLD_SEG_WEIGHT, startIdx: 0, weekCount: oldWeeks })
-                      let idx = oldWeeks
-                      for (let i = activePhaseIdx; i < phases.length; i++) {
-                        segments.push({ phase: phases[i], weight: phases[i].weeks.length, startIdx: idx })
-                        idx += phases[i].weeks.length
-                      }
-                    } else {
-                      let idx = 0
-                      for (const phase of phases) {
-                        segments.push({ phase, weight: phase.weeks.length, startIdx: idx })
-                        idx += phase.weeks.length
-                      }
-                    }
-                    const totalWeight = segments.reduce((a, sg) => a + sg.weight, 0)
+                    const prevPhase = viewedPhaseIdx > 0 ? phases[viewedPhaseIdx - 1] : null
+                    const nextPhase = viewedPhaseIdx < phases.length - 1 ? phases[viewedPhaseIdx + 1] : null
+                    const viewedInPhase = viewingWeekIdx - startGlobal + 1
 
-                    // Marker-position i bjælkens egne vægt-enheder (ikke rå uge-andel),
-                    // så pilen rammer rigtigt også når ældre blokke er foldet sammen.
-                    let markerWeight = 0
-                    for (const sg of segments) {
-                      if (sg.collapsed) { markerWeight += sg.weight; continue }
-                      if (sg.startIdx + sg.phase.weeks.length > activeWeekIdx) {
-                        markerWeight += (activeWeekIdx - sg.startIdx + 0.5)
-                        break
-                      }
-                      markerWeight += sg.weight
+                    const chipStyle = {
+                      background: 'none', border: 'none', cursor: 'pointer', padding: '0.2rem 0',
+                      fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.06em',
+                      color: '#7a7770', whiteSpace: 'nowrap', maxWidth: '45%', overflow: 'hidden', textOverflow: 'ellipsis',
                     }
-                    const markerPct = markerWeight / totalWeight * 100
 
                     return (
-                      <div style={{ marginBottom: '1.25rem' }}>
+                      <div style={{ marginBottom: '1.5rem' }}>
                         {weeksToComp != null && weeksToComp > 0 && (
-                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#c8923a', letterSpacing: '0.1em', marginBottom: '0.6rem' }}>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#c8923a', letterSpacing: '0.1em', marginBottom: '0.7rem' }}>
                             🏆 {weeksToComp} uger til stævne
                           </div>
                         )}
                         {weeksToComp != null && weeksToComp <= 0 && (
-                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#6cba6c', letterSpacing: '0.1em', marginBottom: '0.6rem' }}>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#6cba6c', letterSpacing: '0.1em', marginBottom: '0.7rem' }}>
                             🏆 Stævne passeret
                           </div>
                         )}
 
-                        {/* Proportional phase bar with marker */}
-                        <div style={{ position: 'relative', paddingBottom: '2.5rem' }}>
-                          <div style={{ display: 'flex', height: '30px', gap: '2px' }}>
-                            {segments.map((sg, si) => {
-                              if (sg.collapsed) {
-                                // Sammenfoldet ældre-blok-pille — tap folder ud
-                                return (
-                                  <div
-                                    key="old"
-                                    title="Vis tidligere blokke"
-                                    style={{
-                                      flex: `${sg.weight} 0 0`,
-                                      background: 'rgba(237,234,226,0.04)',
-                                      border: '1px dashed rgba(237,234,226,0.18)',
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      justifyContent: 'center',
-                                      cursor: 'pointer',
-                                      overflow: 'hidden',
-                                      minWidth: 0,
-                                    }}
-                                    onClick={() => setShowOldPhases(true)}
-                                  >
-                                    <span style={{
-                                      fontFamily: "'IBM Plex Mono', monospace",
-                                      fontSize: '0.5rem',
-                                      letterSpacing: '0.04em',
-                                      color: '#4a4844',
-                                      whiteSpace: 'nowrap',
-                                    }}>‹‹</span>
-                                  </div>
-                                )
-                              }
-                              const phase = sg.phase
-                              const color = blockColor(phase.name)
-                              const phaseStartIdx = sg.startIdx
-                              return (
-                                <div
-                                  key={si}
+                        {/* Blok-skift */}
+                        {(prevPhase || nextPhase) && (
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
+                            {prevPhase
+                              ? <button style={chipStyle} onClick={() => goToWeek(phaseStart[viewedPhaseIdx - 1])}>‹ {prevPhase.name || 'Tidligere'}</button>
+                              : <span />}
+                            {nextPhase
+                              ? <button style={{ ...chipStyle, textAlign: 'right' }} onClick={() => goToWeek(phaseStart[viewedPhaseIdx + 1])}>{nextPhase.name || 'Næste blok'} ›</button>
+                              : <span />}
+                          </div>
+                        )}
+
+                        {/* Blok-header */}
+                        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '1rem' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0 }}>
+                            <span style={{ width: '9px', height: '9px', borderRadius: '50%', background: color, flexShrink: 0 }} />
+                            <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', color: '#edeae2', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {phase.name || 'Ingen blok'}
+                            </span>
+                          </div>
+                          {dateRange && (
+                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#7a7770', letterSpacing: '0.04em', whiteSpace: 'nowrap' }}>{dateRange}</span>
+                          )}
+                        </div>
+
+                        {/* Uge-prikker */}
+                        <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+                          {phase.weeks.map((w, j) => {
+                            const gi = startGlobal + j
+                            const isViewed = gi === viewingWeekIdx
+                            const isActive = gi === activeWeekIdx
+                            const isDone = gi < activeWeekIdx
+                            return (
+                              <div key={w.id} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 0, position: 'relative' }}>
+                                {j > 0 && (
+                                  <div style={{ position: 'absolute', top: '10px', right: '50%', left: '-50%', height: '2px', background: gi <= activeWeekIdx ? color + 'aa' : 'rgba(237,234,226,0.12)' }} />
+                                )}
+                                <button
+                                  onClick={() => goToWeek(gi)}
                                   style={{
-                                    flex: `${sg.weight} 0 0`,
-                                    background: phase.name ? color + '28' : 'rgba(237,234,226,0.05)',
-                                    border: `1px solid ${phase.name ? color + '60' : 'rgba(237,234,226,0.1)'}`,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    cursor: 'pointer',
-                                    overflow: 'hidden',
-                                    minWidth: 0,
-                                  }}
-                                  onClick={() => {
-                                    setViewingWeekIdx(phaseStartIdx)
-                                    setProgOpenSession(null)
-                                    if (phaseStartIdx < activeWeekIdx) fetchPastLogs(allWeeks[phaseStartIdx], athlete.id)
-                                    else setPastLogs([])
+                                    position: 'relative', zIndex: 1,
+                                    width: isViewed ? '22px' : '20px', height: isViewed ? '22px' : '20px', borderRadius: '50%',
+                                    background: isViewed ? color : isDone ? color + 'cc' : isActive ? color + '33' : 'transparent',
+                                    border: `2px solid ${isViewed || isActive ? color : isDone ? color + 'cc' : 'rgba(237,234,226,0.22)'}`,
+                                    boxShadow: isViewed ? `0 0 0 4px ${color}22` : 'none',
+                                    cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    transition: 'all 0.15s ease',
                                   }}
                                 >
-                                  {phase.name && phase.weeks.length >= 2 && (
-                                    <span style={{
-                                      fontFamily: "'IBM Plex Mono', monospace",
-                                      fontSize: '0.42rem',
-                                      letterSpacing: '0.07em',
-                                      textTransform: 'uppercase',
-                                      color,
-                                      whiteSpace: 'nowrap',
-                                      overflow: 'hidden',
-                                      textOverflow: 'ellipsis',
-                                      padding: '0 6px',
-                                    }}>{phase.name}</span>
-                                  )}
-                                </div>
-                              )
-                            })}
-                          </div>
+                                  {isDone && !isViewed && <span style={{ color: '#141410', fontSize: '0.62rem', lineHeight: 1 }}>✓</span>}
+                                </button>
+                                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: isViewed ? color : isDone ? '#7a7770' : '#4a4844', marginTop: '0.45rem' }}>
+                                  {w.week_number}
+                                </span>
+                              </div>
+                            )
+                          })}
+                        </div>
 
-                          {/* Marker arrow at current week */}
-                          <div style={{
-                            position: 'absolute',
-                            left: `${markerPct}%`,
-                            top: '30px',
-                            transform: 'translateX(-50%)',
-                            pointerEvents: 'none',
-                          }}>
-                            <div style={{ color: '#c8923a', fontSize: '0.6rem', lineHeight: 1, textAlign: 'center' }}>▲</div>
-                          </div>
-
-                          {/* Phase info text */}
-                          <div style={{ marginTop: '1rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.09em', textTransform: 'uppercase' }}>
-                            {currentPhaseName && (
-                              <span style={{ color: blockColor(currentPhaseName) }}>{currentPhaseName} · Uge {weekInPhase} af {phaseTotalWeeks} · </span>
-                            )}
-                            <span style={{ color: '#4a4844' }}>Total uge {activeWeekIdx + 1} af {totalWeeks}</span>
-                            {hasOldPhases && showOldPhases && (
-                              <span
-                                onClick={() => setShowOldPhases(false)}
-                                style={{ color: '#4a4844', cursor: 'pointer', marginLeft: '0.6em', borderBottom: '1px dotted #4a4844' }}
-                              >· skjul ældre</span>
-                            )}
-                          </div>
+                        {/* Caption */}
+                        <div style={{ marginTop: '0.9rem', textAlign: 'center', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                          {viewingWeekIdx === activeWeekIdx
+                            ? <span style={{ color }}>● Du er her · uge {viewedInPhase} af {phase.weeks.length}</span>
+                            : viewingWeekIdx > activeWeekIdx
+                              ? <span style={{ color: '#7a7770' }}>Planlagt · uge {viewedInPhase} af {phase.weeks.length}</span>
+                              : <span style={{ color: '#7a7770' }}>Historisk · uge {viewedInPhase} af {phase.weeks.length}</span>}
+                          <span style={{ color: '#4a4844' }}> · total {activeWeekIdx + 1}/{totalWeeks}</span>
                         </div>
                       </div>
                     )
