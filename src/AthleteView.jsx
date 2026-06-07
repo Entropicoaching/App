@@ -658,7 +658,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   function isMainLift(name) {
     const n = (name || '').toLowerCase()
-    if (n.includes('romanian') || n.includes('rdl') || n.includes('stiff') || n.includes('front squat') || n.includes('hack') || n.includes('goblet') || n.includes('sumo')) return false
+    // Variationer der trænes som accessory (lettere ramp). Bemærk: 'sumo' er IKKE
+    // her — sumo dødløft er et primært konkurrenceløft og skal have fuld
+    // opvarmnings-ramp (ellers ender et tungt topsæt med kun ét spring op).
+    if (n.includes('romanian') || n.includes('rumæn') || n.includes('rdl') || n.includes('stiff') || n.includes('front squat') || n.includes('hack') || n.includes('goblet')) return false
     return n.includes('squat') || n.includes('bænk') || n.includes('bench') || n.includes('dødl') || n.includes('deadlift')
   }
 
