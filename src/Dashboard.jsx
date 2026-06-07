@@ -3511,110 +3511,61 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                         </div>
                       )}
 
-                      {/* Phase bar */}
+                      {/* Blok-tidslinje (overblik) */}
                       {phases.some(p => p.name) && (() => {
-                        const totalPhaseWeeks = phases.reduce((s, p) => s + p.weeks.length, 0)
-
-                        // Today arrow position
-                        const weeksWithStart = weeks.filter(w => w.start_date).sort((a, b) => a.week_number - b.week_number)
-                        let todayPct = null
-                        if (weeksWithStart.length >= 1) {
-                          const programStart = new Date(weeksWithStart[0].start_date + 'T12:00:00')
-                          const lastW = weeksWithStart[weeksWithStart.length - 1]
-                          const programEnd = new Date(new Date(lastW.start_date + 'T12:00:00').getTime() + 7 * 24 * 3600 * 1000)
-                          const today = new Date(); today.setHours(12, 0, 0, 0)
-                          const raw = (today - programStart) / (programEnd - programStart) * 100
-                          if (raw > 0 && raw < 100) todayPct = raw
-                        }
-
+                        const today = new Date(); today.setHours(12, 0, 0, 0)
+                        const fmt = ds => new Date(ds + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })
                         return (
-                        <div style={{ marginBottom: '1rem' }}>
-                          <div style={{ position: 'relative', marginBottom: todayPct != null ? '1.4rem' : '0.5rem' }}>
-                            <div style={{ display: 'flex', width: '100%', height: '36px', gap: '2px', overflow: 'hidden' }}>
-                              {(() => {
-                                // Calculate cumulative start% per phase for position-based status
-                                let cumPct = 0
-                                return phases.map((phase, pi) => {
-                                  const color = blockColor(phase.name)
-                                  const pct = (phase.weeks.length / totalPhaseWeeks) * 100
-                                  const phaseStart = cumPct
-                                  const phaseEnd = cumPct + pct
-                                  cumPct += pct
-
-                                  // Status: date-based if todayPct available, log-based as fallback
-                                  let isDone = false
-                                  let isActive = false
-                                  if (todayPct != null) {
-                                    isDone = phaseEnd <= todayPct
-                                    isActive = phaseStart <= todayPct && todayPct < phaseEnd
-                                  } else {
-                                    const phaseLogged = phase.weeks.reduce((s, w) => s + (complianceByWeekNum[w.week_number] || 0), 0)
-                                    const phaseTotal = phase.weeks.reduce((s, w) => s + (totalSetsByWeekNum[w.week_number] || 0), 0)
-                                    isDone = phaseTotal > 0 && phaseLogged / phaseTotal >= 0.8
-                                  }
-
-                                  return (
-                                    <div
-                                      key={pi}
-                                      title={`${phase.name || 'Ingen blok'} · ${phase.weeks.length} uger${isDone ? ' · Fuldendt' : isActive ? ' · Aktiv' : ''}`}
-                                      style={{
-                                        width: `${pct}%`, flexShrink: 0,
-                                        background: isDone ? color + '66' : isActive ? color + '44' : phase.name ? color + '18' : 'rgba(237,234,226,0.04)',
-                                        border: `1px solid ${isDone ? color + 'aa' : isActive ? color + '77' : phase.name ? color + '44' : 'rgba(237,234,226,0.1)'}`,
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px',
-                                        cursor: 'pointer', overflow: 'hidden', minWidth: 0, boxSizing: 'border-box',
-                                        opacity: !isDone && !isActive && todayPct != null && phase.name ? 0.5 : 1,
-                                      }}
-                                      onClick={() => gotoWeek(phase.weeks[0])}
-                                    >
-                                      {isDone && <span style={{ color, fontSize: '0.52rem', lineHeight: 1, flexShrink: 0, opacity: 0.9 }}>✓</span>}
-                                      {phase.name && (
-                                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.08em', textTransform: 'uppercase', color, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', padding: '0 6px' }}>
-                                          {phase.name} · {phase.weeks.length}u
-                                        </span>
-                                      )}
-                                    </div>
-                                  )
-                                })
-                              })()}
-                            </div>
-                            {todayPct != null && (
-                              <>
-                                <div style={{ position: 'absolute', top: 0, bottom: 0, left: `${todayPct}%`, width: '2px', background: '#edeae2', transform: 'translateX(-50%)', pointerEvents: 'none', zIndex: 2 }} />
-                                <div style={{ position: 'absolute', top: '100%', left: `${todayPct}%`, transform: 'translateX(-50%)', paddingTop: '3px', display: 'flex', flexDirection: 'column', alignItems: 'center', pointerEvents: 'none' }}>
-                                  <div style={{ width: 0, height: 0, borderLeft: '4px solid transparent', borderRight: '4px solid transparent', borderTop: '5px solid #edeae2' }} />
-                                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.42rem', color: '#7a7770', whiteSpace: 'nowrap', marginTop: '2px' }}>i dag</span>
-                                </div>
-                              </>
-                            )}
-                          </div>
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
-                            {(() => {
-                              let cumPct = 0
-                              return phases.filter(p => p.name).map((phase, pi) => {
-                                const pct = (phase.weeks.length / totalPhaseWeeks) * 100
-                                const phaseEnd = cumPct + pct
-                                cumPct += pct
-                                let isDone = false
-                                if (todayPct != null) {
-                                  isDone = phaseEnd <= todayPct
-                                } else {
-                                  const phaseLogged = phase.weeks.reduce((s, w) => s + (complianceByWeekNum[w.week_number] || 0), 0)
-                                  const phaseTotal = phase.weeks.reduce((s, w) => s + (totalSetsByWeekNum[w.week_number] || 0), 0)
-                                  isDone = phaseTotal > 0 && phaseLogged / phaseTotal >= 0.8
-                                }
-                                return (
-                                  <div key={pi} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                                    <div style={{ width: '7px', height: '7px', background: blockColor(phase.name), flexShrink: 0, opacity: isDone ? 1 : 0.4 }} />
-                                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: isDone ? '#b8b4a8' : '#7a7770', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
-                                      {phase.name} — {phase.weeks.length} {phase.weeks.length === 1 ? 'uge' : 'uger'}{isDone ? ' ✓' : ''}
-                                    </span>
+                          <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.5rem', marginBottom: '1rem' }}>
+                            {phases.map((phase, pi) => {
+                              const color = phase.name ? blockColor(phase.name) : '#7a7770'
+                              const first = phase.weeks[0]
+                              const last = phase.weeks[phase.weeks.length - 1]
+                              const range = first.week_number === last.week_number
+                                ? `uge ${first.week_number}`
+                                : `uge ${first.week_number}–${last.week_number}`
+                              const fd = first.start_date, ld = last.start_date
+                              const dates = fd && ld
+                                ? `${fmt(fd)} – ${fmt(new Date(new Date(ld + 'T12:00:00').getTime() + 6 * 86400000).toISOString().slice(0, 10))}`
+                                : null
+                              let isDone = false, isActive = false
+                              if (fd && ld) {
+                                const blockStart = new Date(fd + 'T12:00:00')
+                                const blockEnd = new Date(new Date(ld + 'T12:00:00').getTime() + 7 * 86400000)
+                                isDone = today >= blockEnd
+                                isActive = today >= blockStart && today < blockEnd
+                              }
+                              return (
+                                <div
+                                  key={pi}
+                                  onClick={() => gotoWeek(first)}
+                                  style={{
+                                    minWidth: '128px', flexShrink: 0, cursor: 'pointer',
+                                    background: isActive ? color + '1f' : '#1c1c18',
+                                    border: `1px solid ${isActive ? color : isDone ? color + '55' : 'rgba(237,234,226,0.08)'}`,
+                                    borderLeft: `3px solid ${phase.name ? color : 'rgba(237,234,226,0.15)'}`,
+                                    padding: '0.7rem 0.8rem',
+                                    opacity: !phase.name || (!isActive && !isDone && fd) ? 0.78 : 1,
+                                  }}
+                                >
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.35rem' }}>
+                                    <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: color, flexShrink: 0 }} />
+                                    <span style={{ fontSize: '0.82rem', color: '#edeae2', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{phase.name || 'Uden blok'}</span>
+                                    {isDone && <span style={{ color, fontSize: '0.6rem', lineHeight: 1 }}>✓</span>}
+                                    {isActive && (
+                                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.4rem', letterSpacing: '0.1em', textTransform: 'uppercase', color, border: `1px solid ${color}`, padding: '1px 4px', borderRadius: '2px' }}>nu</span>
+                                    )}
                                   </div>
-                                )
-                              })
-                            })()}
+                                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: '#7a7770' }}>
+                                    {range} · {phase.weeks.length}u
+                                  </div>
+                                  {dates && (
+                                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#4a4844', marginTop: '0.18rem' }}>{dates}</div>
+                                  )}
+                                </div>
+                              )
+                            })}
                           </div>
-                        </div>
                         )
                       })()}
 
