@@ -480,6 +480,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [currentWeek, setCurrentWeek] = useState(null)
   const [allWeeks, setAllWeeks] = useState([])
   const [viewingWeekIdx, setViewingWeekIdx] = useState(0)
+  // Periodiserings-bjælke: ældre blokke (før den aktuelle) er foldet sammen som
+  // standard, så fokus er på den blok atleten reelt træner i nu. Foldes ud ved tap.
+  const [showOldPhases, setShowOldPhases] = useState(false)
   const [pastLogs, setPastLogs] = useState([])
   const [allExerciseLogs, setAllExerciseLogs] = useState([])
   const [progOpenSession, setProgOpenSession] = useState(null)
@@ -1973,18 +1976,58 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
                     // Find which phase the active (current) week belongs to
                     let currentPhaseName = null, weekInPhase = 0, phaseTotalWeeks = 0
+                    let activePhaseIdx = 0
                     let ps = 0
-                    for (const phase of phases) {
+                    for (let i = 0; i < phases.length; i++) {
+                      const phase = phases[i]
                       if (ps + phase.weeks.length > activeWeekIdx) {
                         currentPhaseName = phase.name
                         weekInPhase = activeWeekIdx - ps + 1
                         phaseTotalWeeks = phase.weeks.length
+                        activePhaseIdx = i
                         break
                       }
                       ps += phase.weeks.length
                     }
 
-                    const markerPct = (activeWeekIdx + 0.5) / totalWeeks * 100
+                    // Byg de segmenter bjælken faktisk tegner. Blokke FØR den aktuelle
+                    // foldes sammen til ét smalt segment (fast vægt) så de fylder mindre
+                    // — medmindre atleten har foldet dem ud. Hvert segment bærer sit
+                    // reelle uge-startindeks, så tap stadig hopper til rette uge.
+                    const OLD_SEG_WEIGHT = 1.2
+                    const hasOldPhases = activePhaseIdx > 0
+                    const collapseOld = hasOldPhases && !showOldPhases
+                    const segments = []
+                    if (collapseOld) {
+                      const oldPhases = phases.slice(0, activePhaseIdx)
+                      const oldWeeks = oldPhases.reduce((a, p) => a + p.weeks.length, 0)
+                      segments.push({ collapsed: true, weight: OLD_SEG_WEIGHT, startIdx: 0, weekCount: oldWeeks })
+                      let idx = oldWeeks
+                      for (let i = activePhaseIdx; i < phases.length; i++) {
+                        segments.push({ phase: phases[i], weight: phases[i].weeks.length, startIdx: idx })
+                        idx += phases[i].weeks.length
+                      }
+                    } else {
+                      let idx = 0
+                      for (const phase of phases) {
+                        segments.push({ phase, weight: phase.weeks.length, startIdx: idx })
+                        idx += phase.weeks.length
+                      }
+                    }
+                    const totalWeight = segments.reduce((a, sg) => a + sg.weight, 0)
+
+                    // Marker-position i bjælkens egne vægt-enheder (ikke rå uge-andel),
+                    // så pilen rammer rigtigt også når ældre blokke er foldet sammen.
+                    let markerWeight = 0
+                    for (const sg of segments) {
+                      if (sg.collapsed) { markerWeight += sg.weight; continue }
+                      if (sg.startIdx + sg.phase.weeks.length > activeWeekIdx) {
+                        markerWeight += (activeWeekIdx - sg.startIdx + 0.5)
+                        break
+                      }
+                      markerWeight += sg.weight
+                    }
+                    const markerPct = markerWeight / totalWeight * 100
 
                     return (
                       <div style={{ marginBottom: '1.25rem' }}>
@@ -2002,14 +2045,44 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                         {/* Proportional phase bar with marker */}
                         <div style={{ position: 'relative', paddingBottom: '2.5rem' }}>
                           <div style={{ display: 'flex', height: '30px', gap: '2px' }}>
-                            {phases.map((phase, pi) => {
+                            {segments.map((sg, si) => {
+                              if (sg.collapsed) {
+                                // Sammenfoldet ældre-blok-pille — tap folder ud
+                                return (
+                                  <div
+                                    key="old"
+                                    title="Vis tidligere blokke"
+                                    style={{
+                                      flex: `${sg.weight} 0 0`,
+                                      background: 'rgba(237,234,226,0.04)',
+                                      border: '1px dashed rgba(237,234,226,0.18)',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      cursor: 'pointer',
+                                      overflow: 'hidden',
+                                      minWidth: 0,
+                                    }}
+                                    onClick={() => setShowOldPhases(true)}
+                                  >
+                                    <span style={{
+                                      fontFamily: "'IBM Plex Mono', monospace",
+                                      fontSize: '0.5rem',
+                                      letterSpacing: '0.04em',
+                                      color: '#4a4844',
+                                      whiteSpace: 'nowrap',
+                                    }}>‹‹</span>
+                                  </div>
+                                )
+                              }
+                              const phase = sg.phase
                               const color = blockColor(phase.name)
-                              const phaseStartIdx = phases.slice(0, pi).reduce((a, p) => a + p.weeks.length, 0)
+                              const phaseStartIdx = sg.startIdx
                               return (
                                 <div
-                                  key={pi}
+                                  key={si}
                                   style={{
-                                    flex: `${phase.weeks.length} 0 0`,
+                                    flex: `${sg.weight} 0 0`,
                                     background: phase.name ? color + '28' : 'rgba(237,234,226,0.05)',
                                     border: `1px solid ${phase.name ? color + '60' : 'rgba(237,234,226,0.1)'}`,
                                     display: 'flex',
@@ -2061,6 +2134,12 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                               <span style={{ color: blockColor(currentPhaseName) }}>{currentPhaseName} · Uge {weekInPhase} af {phaseTotalWeeks} · </span>
                             )}
                             <span style={{ color: '#4a4844' }}>Total uge {activeWeekIdx + 1} af {totalWeeks}</span>
+                            {hasOldPhases && showOldPhases && (
+                              <span
+                                onClick={() => setShowOldPhases(false)}
+                                style={{ color: '#4a4844', cursor: 'pointer', marginLeft: '0.6em', borderBottom: '1px dotted #4a4844' }}
+                              >· skjul ældre</span>
+                            )}
                           </div>
                         </div>
                       </div>
