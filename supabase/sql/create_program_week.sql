@@ -11,9 +11,9 @@
 --   headers: apikey + Authorization: Bearer <service_role>
 --   body: { "p_payload": { ...se nedenfor... } }
 --
--- p_payload:
+-- p_payload (BEMÆRK: "week" ignoreres — ugenummer auto-tildeles = max+1):
 -- {
---   "athleteId": "uuid", "week": 1, "blockName": "Blok 1", "coachNote": "...",
+--   "athleteId": "uuid", "blockName": "Blok 1", "coachNote": "...",
 --   "sessions": [
 --     { "day": "sunday", "label": "Sek bænk",
 --       "exercises": [
@@ -56,7 +56,6 @@ declare
   v_exercise_count int := 0;
 begin
   v_athlete_id  := nullif(p_payload->>'athleteId', '')::uuid;
-  v_week_number := nullif(p_payload->>'week', '')::int;
 
   if v_athlete_id is null then
     raise exception 'athleteId mangler';
@@ -64,6 +63,14 @@ begin
   if not exists (select 1 from athletes where id = v_athlete_id) then
     raise exception 'athlete_not_found' using errcode = 'P0002';
   end if;
+
+  -- Ugenummer tildeles ALTID automatisk = atletens højeste eksisterende + 1.
+  -- Caller-angivet "week" ignoreres bevidst: det var kilden til week_number-
+  -- kollisioner (to uger med samme nummer fragmenterede periodiserings-visningen).
+  select coalesce(max(week_number), 0) + 1
+    into v_week_number
+  from weeks
+  where athlete_id = v_athlete_id;
 
   insert into weeks (athlete_id, week_number, block_name, coach_note)
   values (

@@ -1941,6 +1941,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           const activeWeekIdx = computeActiveWeekIdx(allWeeks)
           const viewedWeek = allWeeks[viewingWeekIdx] || null
           const isCurrentWeek = viewingWeekIdx === activeWeekIdx
+          const isFutureWeek = viewingWeekIdx > activeWeekIdx
           const logsForView = isCurrentWeek ? exerciseLogs : pastLogs
 
           return (
@@ -2069,6 +2070,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                   {/* Week header — navigation only shown when multiple weeks exist */}
                   <div style={{ marginBottom: '1.25rem' }}>
                     {allWeeks.length > 1 ? (
+                      <>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <button
                           style={{ ...s.btnGhost, fontSize: '0.58rem', padding: '0.4rem 0.75rem', opacity: viewingWeekIdx === 0 ? 0.25 : 1 }}
@@ -2083,15 +2085,20 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                         <div style={{ textAlign: 'center', flex: 1, padding: '0 0.5rem' }}>
                           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a' }}>
                             Uge {viewedWeek.week_number}
-                            {!isCurrentWeek && <span style={{ color: '#4a4844', marginLeft: '0.5em' }}>· historisk</span>}
+                            {isFutureWeek && (
+                              <span style={{ color: '#4a4844', marginLeft: '0.5em' }}>
+                                · planlagt{viewedWeek.start_date ? ` · fra ${new Date(viewedWeek.start_date + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })}` : ''}
+                              </span>
+                            )}
+                            {!isCurrentWeek && !isFutureWeek && <span style={{ color: '#4a4844', marginLeft: '0.5em' }}>· historisk</span>}
                           </div>
                           {viewedWeek.block_name && (
                             <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.1rem', color: '#edeae2', marginTop: '0.1rem' }}>{viewedWeek.block_name}</div>
                           )}
                         </div>
                         <button
-                          style={{ ...s.btnGhost, fontSize: '0.58rem', padding: '0.4rem 0.75rem', opacity: isCurrentWeek ? 0.25 : 1 }}
-                          disabled={isCurrentWeek}
+                          style={{ ...s.btnGhost, fontSize: '0.58rem', padding: '0.4rem 0.75rem', opacity: viewingWeekIdx >= allWeeks.length - 1 ? 0.25 : 1 }}
+                          disabled={viewingWeekIdx >= allWeeks.length - 1}
                           onClick={() => {
                             const ni = viewingWeekIdx + 1
                             setViewingWeekIdx(ni)
@@ -2104,6 +2111,19 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                           }}
                         >Næste uge →</button>
                       </div>
+                      {!isCurrentWeek && (
+                        <div style={{ textAlign: 'center', marginTop: '0.6rem' }}>
+                          <button
+                            style={{ ...s.btnGhost, fontSize: '0.52rem', padding: '0.3rem 0.7rem', color: '#c8923a', borderColor: 'rgba(200,146,58,0.35)' }}
+                            onClick={() => {
+                              setViewingWeekIdx(activeWeekIdx)
+                              setProgOpenSession(null)
+                              setPastLogs([])
+                            }}
+                          >↩ Tilbage til denne uge</button>
+                        </div>
+                      )}
+                      </>
                     ) : (
                       <div>
                         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.4rem' }}>

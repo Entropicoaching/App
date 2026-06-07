@@ -53,7 +53,6 @@ Den offentlige `sb_publishable_`-nøgle virker IKKE (bevidst låst ude af funkti
 {
   "p_payload": {
     "athleteId": "uuid (skal findes i athletes)",
-    "week": 1,
     "blockName": "Blok 1",
     "coachNote": "valgfri note til atleten",
     "sessions": [
@@ -85,8 +84,10 @@ Fejler + ruller alt tilbage hvis `athleteId` mangler/ikke findes.
 
 ## 5. Workflow
 1. **Atlet:** find `athletes.id` — `GET /rest/v1/athletes?email=eq.<email>&select=id,name`
-2. **Ugenummer:** hold fortløbende ift. atletens eksisterende uger. Slå evt. højeste
-   `week_number` op først. Spørg ved tvivl.
+2. **Ugenummer:** sættes AUTOMATISK af endpointet (= atletens højeste `week_number` + 1).
+   Du behøver IKKE slå det op eller sende `week` — feltet ignoreres bevidst, så to uger
+   aldrig kan få samme nummer (det fragmenterede periodiserings-visningen tidligere).
+   Send blokkens uger i rækkefølge (ét kald pr. uge) → de nummereres fortløbende.
 3. **Byg JSON** ud fra det Marc dikterer, kald endpointet.
 4. **Rapportér** uge/sessioner/øvelser + hvad der blev null.
 
