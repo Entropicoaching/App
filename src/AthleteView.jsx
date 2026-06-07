@@ -454,7 +454,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
   const [selectedFood, setSelectedFood] = useState(null)
-  const [amount, setAmount] = useState(100)
+  // Rå streng (ikke number) så feltet kan ryddes/skrives frit — fx "0" eller
+  // midlertidigt tomt — uden at snappe tilbage til 0. Parses hvor der regnes.
+  const [amount, setAmount] = useState('100')
   const [unitIdx, setUnitIdx] = useState(0)
   const [customFoods, setCustomFoods] = useState([])
   const [showCreateFood, setShowCreateFood] = useState(false)
@@ -1235,20 +1237,21 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     setSearchResults([])
     // Hvis fødevaren har en stk-enhed, default til 1 af den (hurtigere); ellers 100 g.
     const units = unitsForFood(f)
-    if (units.length > 1) { setUnitIdx(1); setAmount(1) }
-    else { setUnitIdx(0); setAmount(100) }
+    if (units.length > 1) { setUnitIdx(1); setAmount('1') }
+    else { setUnitIdx(0); setAmount('100') }
   }
 
   async function addFromSearch() {
     if (!selectedFood || !athlete) return
     const units = unitsForFood(selectedFood)
     const unit = units[unitIdx] || units[0]
-    const grams = amount * unit.grams
+    const amt = parseFloat(amount) || 0
+    const grams = amt * unit.grams
     const ratio = grams / 100
     // Beskriv portionen i navnet når enheden ikke er gram, så loggen er læsbar.
     const label = unit.label === 'g'
       ? `${selectedFood.name} · ${Math.round(grams)} g`
-      : `${selectedFood.name} · ${amount} ${unit.label} (${Math.round(grams)} g)`
+      : `${selectedFood.name} · ${amt} ${unit.label} (${Math.round(grams)} g)`
     await supabase.from('meal_logs').insert({
       athlete_id: athlete.id,
       date: kostDate,
@@ -2468,8 +2471,16 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                           </div>
                                           <input
                                             style={{ ...s.fieldInput, width: '80px', minWidth: '80px', flexShrink: 0, padding: '0.65rem 0.5rem', fontSize: '1.1rem', textAlign: 'center' }}
-                                            type="number" inputMode="decimal" placeholder="kg" value={input.weight}
-                                            onChange={e => setLogInputs(p => ({ ...p, [key]: { ...p[key], weight: e.target.value } }))}
+                                            type="text" inputMode="decimal" placeholder="kg" value={input.weight}
+                                            onChange={e => {
+                                              // type=text + inputMode=decimal: numerisk tastatur, men fuld
+                                              // kontrol — så feltet kan ryddes helt og "0" kan skrives.
+                                              // Dansk komma → punktum; kun cifre + ét decimaltegn.
+                                              const v = e.target.value.replace(',', '.')
+                                              if (v === '' || /^\d*\.?\d*$/.test(v)) {
+                                                setLogInputs(p => ({ ...p, [key]: { ...p[key], weight: v } }))
+                                              }
+                                            }}
                                           />
                                           <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.88rem', color: '#c8923a', whiteSpace: 'nowrap' }}>× {ex.reps || '—'}</span>
                                           <button
@@ -2803,7 +2814,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               {selectedFood && (() => {
                 const units = unitsForFood(selectedFood)
                 const unit = units[unitIdx] || units[0]
-                const grams = amount * unit.grams
+                const amt = parseFloat(amount) || 0
+                const grams = amt * unit.grams
                 const ratio = grams / 100
                 const quickAmounts = unit.label === 'g' ? [50, 100, 150, 200, 250] : [1, 2, 3, 4]
                 return (
@@ -2820,7 +2832,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                       {units.map((u, ui) => (
                         <button
                           key={ui}
-                          onClick={() => { setUnitIdx(ui); setAmount(u.label === 'g' ? 100 : 1) }}
+                          onClick={() => { setUnitIdx(ui); setAmount(u.label === 'g' ? '100' : '1') }}
                           style={{ ...s.btnGhost, fontSize: '0.55rem', padding: '0.3rem 0.7rem', color: ui === unitIdx ? '#c8923a' : '#7a7770', borderColor: ui === unitIdx ? 'rgba(200,146,58,0.5)' : undefined }}
                         >{u.label === 'g' ? 'Gram' : u.label}</button>
                       ))}
@@ -2832,8 +2844,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                     {quickAmounts.map(q => (
                       <button
                         key={q}
-                        onClick={() => setAmount(q)}
-                        style={{ ...s.btnGhost, fontSize: '0.55rem', padding: '0.3rem 0.6rem', color: amount === q ? '#c8923a' : '#7a7770', borderColor: amount === q ? 'rgba(200,146,58,0.5)' : undefined }}
+                        onClick={() => setAmount(String(q))}
+                        style={{ ...s.btnGhost, fontSize: '0.55rem', padding: '0.3rem 0.6rem', color: amt === q ? '#c8923a' : '#7a7770', borderColor: amt === q ? 'rgba(200,146,58,0.5)' : undefined }}
                       >{q}{unit.label === 'g' ? 'g' : ` ${unit.label}`}</button>
                     ))}
                   </div>
@@ -2841,7 +2853,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                   <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-end' }}>
                     <div>
                       <div style={s.fieldLabel}>Mængde ({unit.label})</div>
-                      <input style={{ ...s.fieldInput, maxWidth: '100px' }} type="number" inputMode="decimal" value={amount} onChange={e => setAmount(parseFloat(e.target.value) || 0)} />
+                      <input style={{ ...s.fieldInput, maxWidth: '100px' }} type="number" inputMode="decimal" value={amount} onChange={e => setAmount(e.target.value)} />
                     </div>
                     <button style={s.btnPrimary} onClick={addFromSearch}>Tilføj</button>
                     <button style={s.btnGhost} onClick={() => { setSelectedFood(null); setSearchQuery('') }}>Annuller</button>
