@@ -2062,6 +2062,14 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               <div>
                 <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.5rem', fontWeight: 400, color: '#edeae2' }}>{a.name}</div>
                 <div style={{ fontSize: '0.8rem', color: '#7a7770', marginTop: '0.2rem' }}>{a.email}{a.age ? ' · ' + a.age + ' år' : ''}</div>
+                <div
+                  onClick={() => { navigator.clipboard?.writeText(a.id); showFlash('Atlet-ID kopieret') }}
+                  title="Klik for at kopiere — bruges som athleteId i cowork-scripts"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.04em', color: '#4a4844', marginTop: '0.3rem', cursor: 'pointer', wordBreak: 'break-all' }}
+                >
+                  <span>ID: {a.id}</span>
+                  <span style={{ color: '#7a7770' }}>⧉</span>
+                </div>
                 {(() => {
                   const ls = formatLastSeen(profilesLastSeen[a.user_id])
                   if (!ls) return null
