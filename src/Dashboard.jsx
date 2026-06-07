@@ -3603,6 +3603,84 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                         )
                       })()}
 
+                      {/* Periodiserings-graf: volumen (søjler) + intensitet (linje) */}
+                      {weeks.length >= 2 && (() => {
+                        const today = new Date(); today.setHours(12, 0, 0, 0)
+                        const weekData = weeks.map(w => {
+                          const exs = (w.sessions || []).flatMap(s => s.exercises || [])
+                          const sets = exs.reduce((a, e) => a + (e.sets || 0), 0)
+                          let rpeSum = 0, rpeSets = 0
+                          for (const e of exs) {
+                            const txt = /rpe/i.test(e.intensity || '') ? e.intensity : ''
+                            const m = /([0-9]+(?:[.,][0-9]+)?)/.exec(txt || '')
+                            if (m && e.sets) { rpeSum += parseFloat(m[1].replace(',', '.')) * e.sets; rpeSets += e.sets }
+                          }
+                          let active = false
+                          if (w.start_date) {
+                            const ws = new Date(w.start_date + 'T12:00:00')
+                            active = today >= ws && today < new Date(ws.getTime() + 7 * 86400000)
+                          }
+                          return { w, sets, avgRpe: rpeSets ? rpeSum / rpeSets : null, color: w.block_name ? blockColor(w.block_name) : '#7a7770', active }
+                        })
+                        const n = weekData.length
+                        const hasRpe = weekData.some(d => d.avgRpe != null)
+                        const maxSets = Math.max(1, ...weekData.map(d => d.sets))
+                        const PAD_L = 8, PAD_R = 8, PAD_T = 12, PAD_B = 18
+                        const colW = 40, H = 150
+                        const W = PAD_L + PAD_R + n * colW
+                        const chartH = H - PAD_T - PAD_B
+                        const rpeMin = 5, rpeMax = 10
+                        const cx = i => PAD_L + i * colW + colW / 2
+                        const barW = Math.min(22, colW * 0.5)
+                        const yVol = v => PAD_T + chartH * (1 - v / maxSets)
+                        const yRpe = r => PAD_T + chartH * (1 - (Math.min(rpeMax, Math.max(rpeMin, r)) - rpeMin) / (rpeMax - rpeMin))
+                        const rpePts = weekData.map((d, i) => d.avgRpe != null ? `${cx(i)},${yRpe(d.avgRpe)}` : null).filter(Boolean).join(' ')
+
+                        return (
+                          <div style={{ marginBottom: '1.5rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '0.5rem' }}>
+                              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844' }}>Volumen &amp; intensitet</span>
+                              <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#7a7770' }}>
+                                <span style={{ width: '8px', height: '8px', background: 'rgba(237,234,226,0.3)' }} /> sæt/uge
+                              </span>
+                              {hasRpe && (
+                                <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#7a7770' }}>
+                                  <span style={{ width: '12px', height: '2px', background: '#c8923a' }} /> ø RPE
+                                </span>
+                              )}
+                            </div>
+                            <div style={{ overflowX: 'auto', paddingBottom: '0.25rem' }}>
+                              <svg viewBox={`0 0 ${W} ${H}`} width={n > 8 ? W : '100%'} height={H} preserveAspectRatio="xMinYMid meet" style={{ display: 'block', maxWidth: '100%' }}>
+                                {/* baseline */}
+                                <line x1={PAD_L} y1={PAD_T + chartH} x2={W - PAD_R} y2={PAD_T + chartH} stroke="rgba(237,234,226,0.12)" strokeWidth="1" />
+                                {/* volume bars */}
+                                {weekData.map((d, i) => {
+                                  const h = chartH * d.sets / maxSets
+                                  return (
+                                    <g key={d.w.id}>
+                                      <rect
+                                        x={cx(i) - barW / 2} y={yVol(d.sets)} width={barW} height={h}
+                                        fill={d.color + (d.active ? 'dd' : '66')}
+                                        stroke={d.active ? d.color : 'none'} strokeWidth={d.active ? 1.5 : 0}
+                                        rx="2"
+                                      />
+                                      <text x={cx(i)} y={PAD_T + chartH + 12} textAnchor="middle" fontSize="7" fill={d.active ? '#c8923a' : '#7a7770'} fontFamily="'IBM Plex Mono', monospace">{d.w.week_number}</text>
+                                    </g>
+                                  )
+                                })}
+                                {/* intensity line */}
+                                {hasRpe && rpePts && (
+                                  <polyline points={rpePts} fill="none" stroke="#c8923a" strokeWidth="1.5" strokeLinejoin="round" />
+                                )}
+                                {hasRpe && weekData.map((d, i) => d.avgRpe != null && (
+                                  <circle key={'c' + d.w.id} cx={cx(i)} cy={yRpe(d.avgRpe)} r={d.active ? 3 : 2.2} fill="#1c1c18" stroke="#c8923a" strokeWidth="1.5" />
+                                ))}
+                              </svg>
+                            </div>
+                          </div>
+                        )
+                      })()}
+
                       <div style={{ overflowX: 'auto', display: 'flex', gap: '0.5rem', paddingBottom: '0.5rem', width: '100%' }}>
                         {weeks.map(week => {
                           const isLatest = week.week_number === latestWeekNum
