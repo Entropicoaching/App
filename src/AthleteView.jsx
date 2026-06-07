@@ -308,38 +308,694 @@ function unitsForFood(food) {
 }
 
 const WARMUP_BASE = {
-  Squat: [
-    { id: 'sq-1', name: 'Bodyweight squat', desc: 'Stå med skulderbredde. Sæt dig så dybt ned som muligt og hold et par sekunder fornede — hælene skal blive i gulvet. Fokus på at åbne hofterne.', label: '10 reps', type: 'reps' },
-    { id: 'sq-2', name: 'Hip circles', desc: 'Stå på ét ben, løft det andet knæ til hoftehøjde og lav store, langsomme cirkler med hoften — udad og bagud. Åbner hofteleddet i alle retninger.', label: '10 reps pr. side', type: 'reps' },
-    { id: 'sq-3', name: 'Glute bridge', desc: 'Lig på ryggen med bøjede knæ og fødder fladt i gulvet. Skub hofterne op og klem ballerne hårdt i toppen — hold et sekund. Sænk roligt ned.', label: '15 reps', type: 'reps' },
+  'Squat': [
+    {
+      slot: 'Hofte- og ankelmobilitet',
+      options: [
+        {
+          id: 'sq-mob-1',
+          name: 'Hip circles',
+          desc: 'Stå på ét ben og løft det andet knæ til hoftehøjde. Lav store, langsomme cirkler med hoften — udad og bagud. Åbner hofteleddet i alle retninger og forbereder det dybe squat.',
+          label: '10 reps pr. side',
+          type: 'reps',
+        },
+        {
+          id: 'sq-mob-2',
+          name: 'Ankel-vægstræk',
+          desc: 'Stå med tåen ca. 10 cm fra en væg og bøj knæet fremad, til det rører væggen — hælen skal blive i gulvet. Flyt tåen gradvist længere fra væggen. Forbedrer dorsifleksion, der er afgørende for din squat-dybde.',
+          label: '10 reps pr. side',
+          type: 'reps',
+        },
+        {
+          id: 'sq-mob-3',
+          name: '90/90 hofterotation',
+          desc: 'Sid på gulvet med det ene ben foran (90°) og det andet til siden (90°). Skub forsigtigt hoften fremad mod det forreste ben og hold. Rammer ekstern og intern rotation i hoften — vigtigt for at komme dybt i squatten.',
+          label: '30 sek pr. side',
+          type: 'timer',
+          duration: 30,
+        },
+        {
+          id: 'sq-mob-4',
+          name: 'Couch stretch',
+          desc: 'Sæt det ene knæ mod en væg med skinnebenet fladt op ad væggen, det andet ben foran i et lungestep. Hold ryggen ret og skub hoften frem, til du mærker stræk foran i hoften og låret. Løsner hoftefleksoren, der spænder og begrænser oprejsthed under squat.',
+          label: '30 sek pr. side',
+          type: 'timer',
+          duration: 30,
+        },
+      ],
+    },
+    {
+      slot: 'Balle- og låraktivering',
+      options: [
+        {
+          id: 'sq-akt-1',
+          name: 'Glute bridge',
+          desc: 'Lig på ryggen med bøjede knæ og fødder fladt i gulvet. Skub hofterne op og klem ballerne hårdt i toppen — hold et sekund. Sænk roligt ned. Aktiverer ballerne, som er primær driver i squatten.',
+          label: '15 reps',
+          type: 'reps',
+        },
+        {
+          id: 'sq-akt-2',
+          name: 'Clamshell med elastik',
+          desc: 'Lig på siden med elastik over knæene, knæene bøjet ca. 45° og hæle samlet. Løft det øverste knæ som en musling der åbner sig — hold et sekund øverst. Aktiverer gluteus medius, der holder knæene ude i squat.',
+          label: '12 reps pr. side',
+          type: 'reps',
+        },
+        {
+          id: 'sq-akt-3',
+          name: 'Single-leg glute bridge',
+          desc: 'Lig på ryggen, det ene ben strakt, det andet bøjet med fod i gulvet. Skub hoften op og hold ryggen ret — undgå at dreje. Isolerer og styrker ballerne ét ben ad gangen, og afslører eventuelle ubalancer.',
+          label: '10 reps pr. side',
+          type: 'reps',
+        },
+        {
+          id: 'sq-akt-4',
+          name: 'Isometrisk abduktion mod væg',
+          desc: 'Stå i et let squat med ryggen mod en væg. Pres begge knæ aktivt udad — som om du vil sprede gulvet under dine fødder — og hold. Programmerer det udadpres i knæene der er kritisk i hele squatten.',
+          label: '20 sek',
+          type: 'timer',
+          duration: 20,
+        },
+      ],
+    },
+    {
+      slot: 'Squat-mønster',
+      options: [
+        {
+          id: 'sq-mov-1',
+          name: 'Bodyweight squat med pause',
+          desc: 'Stå med skulderbredde. Sæt dig så dybt ned som muligt og hold 2-3 sekunder fornede — hælene skal blive i gulvet. Fokus på at åbne hofterne og holde brystet oppe.',
+          label: '10 reps',
+          type: 'reps',
+        },
+        {
+          id: 'sq-mov-2',
+          name: 'Squat til bænk',
+          desc: 'Sæt en bænk bag dig i squathøjde. Sæt dig roligt ned til du rører bænken let — hold positionen et sekund og rejs dig. Hjælper dig med at sætte dybden og positionen uden at tænke over det.',
+          label: '8 reps',
+          type: 'reps',
+        },
+        {
+          id: 'sq-mov-3',
+          name: 'Squat med hælhøjning',
+          desc: 'Placer hælene på en vægtskive eller et sammenrullet håndklæde. Sæt dig dybt ned med ryggen ret og knæene pegende over tæerne. Reducerer ankelbegrænsningen og giver dig adgang til dybde og position med det samme.',
+          label: '10 reps',
+          type: 'reps',
+        },
+        {
+          id: 'sq-mov-4',
+          name: 'Tempo squat 3-0-1',
+          desc: 'Sæt dig ned over 3 sekunder, ingen pause forneden, rejs dig normalt. Hold fuldt styr på bevægelsen hele vejen ned — undgå at "falde" de sidste centimeter. Bygger kontrol og kropsbevidsthed i hele bevægelsesforløbet.',
+          label: '6 reps',
+          type: 'reps',
+        },
+      ],
+    },
   ],
-  Bænkpres: [
-    { id: 'bp-1', name: 'Skuldercirkler', desc: 'Lav store, langsomme cirkler med skuldrene — fremad og bagud. Hold armene let løftede. Varm skulderleddene grundigt op inden belastning.', label: '10 reps pr. retning', type: 'reps' },
-    { id: 'bp-2', name: 'Bryststretch i dørkarmen', desc: 'Sæt underarmen lodret mod en dørkarme med albuen i 90 grader. Drej kroppen væk fra armen og hold. Mærk strækket tværs over brystet og foran skulderen.', label: '20 sek pr. side', type: 'timer', duration: 20 },
-    { id: 'bp-3', name: 'Håndled rotation', desc: 'Hold armene fremad og lav fulde, langsomme rotationer i håndleddene begge veje. Stræk fingrene ud og luk dem igen. Vigtigt for greb og håndledsstabilitet.', label: '10 reps pr. retning', type: 'reps' },
+
+  'Bænkpres': [
+    {
+      slot: 'Skulder- og brystmobilitet',
+      options: [
+        {
+          id: 'bp-mob-1',
+          name: 'Thorax extension over skumrulle',
+          desc: 'Placer skumrullen tværs under øvre ryg mellem skulderbladene. Læn forsigtigt bagover med hænderne bag nakken og åbn brystet mod loftet — flyt rullen et par centimeter op og gentag. Forbedrer thorakal ekstension, der giver bedre arch og skulderposition i bænk.',
+          label: '30 sek',
+          type: 'timer',
+          duration: 30,
+        },
+        {
+          id: 'bp-mob-2',
+          name: 'Bryststretch mod væg',
+          desc: 'Placer din underarm lodret på en væg med albuen i skulderhøjde. Drej langsomt overkroppen væk fra væggen, til du mærker stræk i brystet. Hold og vejrtræk dybt. Åbner pectoralis major, der strammer op ved hyppig bænkpres.',
+          label: '30 sek pr. side',
+          type: 'timer',
+          duration: 30,
+        },
+        {
+          id: 'bp-mob-3',
+          name: 'Håndklæde shoulder dislocates',
+          desc: 'Hold et håndklæde bredt foran dig med strakte arme. Før det langsomt over hovedet og ned bag ryggen i en rolig bue — hold grebet bredt nok til at det er komfortabelt, og indsnævr gradvist. Mobiliserer skulderleddet i hele dets bevægeudslag.',
+          label: '10 reps',
+          type: 'reps',
+        },
+        {
+          id: 'bp-mob-4',
+          name: 'Skuldercirkler',
+          desc: 'Stå oprejst med armene langs siden. Lav store, langsomme cirkler med skuldrene — frem, op, bagud og ned. Løsner skulderleddet og øger blodgennemstrømningen i rotatorerne inden bænk.',
+          label: '10 reps pr. retning',
+          type: 'reps',
+        },
+      ],
+    },
+    {
+      slot: 'Scapula- og rotatorcuffaktivering',
+      options: [
+        {
+          id: 'bp-akt-1',
+          name: 'Scapula push-up',
+          desc: 'I push-up-position med strakte arme, lad skulderbladen synke passivt mod hinanden. Pres dem derefter aktivt fra hinanden og rund øvre ryg. Hold armene strakte hele vejen. Træner scapula-kontrol, der er kritisk for stabil og sikker bænkpres.',
+          label: '12 reps',
+          type: 'reps',
+        },
+        {
+          id: 'bp-akt-2',
+          name: 'Band pull-apart',
+          desc: 'Hold elastikken foran dig på skulderbredde med strakte arme. Træk den fra hinanden og før hænderne ud til siden — skulderbladene trækkes mod hinanden. Aktiverer øvre ryg og rotatorerne, der holder skulderen stabil under pres.',
+          label: '15 reps',
+          type: 'reps',
+        },
+        {
+          id: 'bp-akt-3',
+          name: 'Ekstern rotation med elastik',
+          desc: 'Fastgør en elastik i hoftehøjde og stå siden til. Hold overarmen tæt mod kroppen med albuen bøjet 90° og roter underarmen udad mod modstanden — hold et sekund. Aktiverer rotatorerne, der er underaktive og skadestilbøjelige hos bænkpressere.',
+          label: '12 reps pr. side',
+          type: 'reps',
+        },
+        {
+          id: 'bp-akt-4',
+          name: 'YWT-løft på gulvet',
+          desc: 'Lig på maven og løft armene i Y-, W- og T-position ved at klemme skulderbladen mod hinanden — hold 2 sekunder i hver. Aktiverer hele den øvre rygs stabilisatorer i én øvelse.',
+          label: '8 reps pr. position',
+          type: 'reps',
+        },
+      ],
+    },
+    {
+      slot: 'Pres- og bænkmønster',
+      options: [
+        {
+          id: 'bp-mov-1',
+          name: 'Push-up med pause',
+          desc: 'Sænk dig ned til brystet næsten rører gulvet og hold 2 sekunder — armene tæt mod kroppen som i bænk. Pres dig op med fuldt styr. Bygger den samme spænding og tempo-kontrol du har brug for under bænkpres.',
+          label: '8 reps',
+          type: 'reps',
+        },
+        {
+          id: 'bp-mov-2',
+          name: 'Tom-stang bænk med opsætningsfokus',
+          desc: 'Brug den tomme stang til at øve arch, ben-drive og scapula-retræktion. Tag 2-3 sæt med fuldt fokus på opsætning — ikke på at løfte tungt. Mærk alt klikke på plads inden du lægger vægt på.',
+          label: '8 reps',
+          type: 'reps',
+        },
+        {
+          id: 'bp-mov-3',
+          name: 'Pike push-up',
+          desc: 'Start i push-up-position og gå med hænderne tæt mod fødderne så hoften er høj. Bøj albuerne og sænk issen mod gulvet — pres tilbage op. Aktiverer skulderleddet fra en anden vinkel og forbedrer overordnet stabilitet i presøvelser.',
+          label: '8 reps',
+          type: 'reps',
+        },
+      ],
+    },
   ],
+
   'Dødløft — Konventionel': [
-    { id: 'dlk-1', name: 'Cat-cow', desc: 'Kom på alle fire. Veksler mellem at runde ryggen helt op (kat) og synke den ned mod gulvet (ko). Hold et sekund i hvert yderpunkt. Mobiliserer hele rygsøjlen.', label: '10 reps', type: 'reps' },
-    { id: 'dlk-2', name: 'Hip hinge mod væg', desc: 'Stå en håndbredde fra en væg med let bøjede knæ. Skub hofterne bagud til de rammer væggen mens ryggen holder sig neutral. Dette er præcis konventionel dødløft-bevægelsen.', label: '10 reps', type: 'reps' },
-    { id: 'dlk-3', name: 'Glute bridge', desc: 'Lig på ryggen, knæ bøjet, fødder fladt. Skub hofterne op og klem ballerne hårdt i toppen. Aktiverer baglår og baller som primærmotorer i dødløft.', label: '15 reps', type: 'reps' },
+    {
+      slot: 'Ryg- og hoftemobilitet',
+      options: [
+        {
+          id: 'dk-mob-1',
+          name: 'Cat-cow',
+          desc: 'Kom på alle fire med håndled under skuldre og knæ under hofter. Synk maven mod gulvet og løft brystet (cow) — afrund derefter ryggen fuldt og tryk lænden mod loftet (cat). Varmer rygsøjlen op i hele bevægeudslaget.',
+          label: '10 reps',
+          type: 'reps',
+        },
+        {
+          id: 'dk-mob-2',
+          name: 'Stående baglårsstræk med sving',
+          desc: 'Stå med let bøjede knæ og hæng overkroppen afslappet ned mod gulvet. Sving langsomt overkroppen fra side til side og mærk stræk langs baglårene. Forbereder baglårene og lænden dynamisk til hinge-bevægelsen.',
+          label: '30 sek',
+          type: 'timer',
+          duration: 30,
+        },
+        {
+          id: 'dk-mob-3',
+          name: 'Hip flexor lunge-stræk',
+          desc: 'Træd et langt skridt frem og sænk det bageste knæ mod gulvet. Hold ryggen oprejst og skub hoften fremad, til du mærker stræk foran i det bageste lår og hofte. Åbner hoftefleksoren, der hæmmer fuldt hoftestræk i toppen af dødløft.',
+          label: '30 sek pr. side',
+          type: 'timer',
+          duration: 30,
+        },
+        {
+          id: 'dk-mob-4',
+          name: 'Jefferson curl',
+          desc: 'Stå oprejst og rul langsomt ned fra nakken — hagen til brystet, ryg rundes, fingre hænger mod gulvet. Rejs dig igen i omvendt rækkefølge. Hold det roligt og kontrolleret; mobiliserer hele rygsøjlen og baglårene samlet.',
+          label: '6 reps',
+          type: 'reps',
+        },
+      ],
+    },
+    {
+      slot: 'Balle- og baglåraktivering',
+      options: [
+        {
+          id: 'dk-akt-1',
+          name: 'Glute bridge',
+          desc: 'Lig på ryggen med bøjede knæ og fødder fladt i gulvet. Skub hofterne op og klem ballerne hårdt i toppen — hold et sekund. Aktiverer ballerne, der driver hofteekstensionen i toppen af dødløft.',
+          label: '15 reps',
+          type: 'reps',
+        },
+        {
+          id: 'dk-akt-2',
+          name: 'Prone hip extension',
+          desc: 'Lig på maven med strakte ben. Spænd ballerne og løft ét ben fra gulvet med strakt knæ — hold 2 sekunder. Skift ben. Aktiverer gluteus maximus og baglåret isoleret uden at belaste lænden.',
+          label: '10 reps pr. side',
+          type: 'reps',
+        },
+        {
+          id: 'dk-akt-3',
+          name: 'Single-leg hip hinge',
+          desc: 'Stå på ét ben og fold dig fremover fra hoften med neutral ryg — stræk det frie ben bagud som modvægt. Kom op igen ved at klemme ballemusklen. Aktiverer og koordinerer balle, baglår og core ét ben ad gangen.',
+          label: '8 reps pr. side',
+          type: 'reps',
+        },
+        {
+          id: 'dk-akt-4',
+          name: 'Nordic curl forberedelse',
+          desc: 'Fastgør fødder under en barre eller tungt bænk. Sænk dig langsomt fremad fra knæene med ret krop og brug hænderne til at bryde faldet — kom aktivt tilbage. Aktiverer baglårene eksentrisk i netop den vinkel de arbejder i dødløft.',
+          label: '5 reps',
+          type: 'reps',
+        },
+      ],
+    },
+    {
+      slot: 'Hip-hinge-mønster',
+      options: [
+        {
+          id: 'dk-mov-1',
+          name: 'Hip hinge mod væg',
+          desc: 'Stå ca. 30 cm fra en væg. Pres bagenden bagud og rør væggen let, hold rygsøjlen neutral og knæene let bøjet. Lær dig at hinge fra hoften — ikke fra lænden — inden du lægger vægt på stangen.',
+          label: '10 reps',
+          type: 'reps',
+        },
+        {
+          id: 'dk-mov-2',
+          name: 'BW good morning',
+          desc: 'Stå oprejst med hænderne bag nakken. Fold langsomt overkroppen fremad fra hoften med let bøjede knæ og neutral ryg — stop når du mærker stræk i baglårene. Rejs dig ved at spænde ballerne. Indøver hip-hinge med fuld kropsbevidsthed.',
+          label: '10 reps',
+          type: 'reps',
+        },
+        {
+          id: 'dk-mov-3',
+          name: 'RDL med tom stang',
+          desc: 'Hold stangen foran lårene med skulderbredt greb. Skub hofterne bagud og sænk stangen langs lårene med neutral ryg — stop ved moderat stræk i baglårene. Rejs dig og pres hofterne frem i toppen. Opvarmning og indstilling til bevægelsesmønstret i ét.',
+          label: '8 reps',
+          type: 'reps',
+        },
+        {
+          id: 'dk-mov-4',
+          name: 'Dødløft med tom stang',
+          desc: 'Sæt stangen på gulvet og tag fat med dit normale greb. Sæt dig ned i startposition, spænd core og lats — "bøj stangen" mentalt — og rejs dig langsomt over 3 sekunder. Mærk positionen og spændet inden du lægger vægt på.',
+          label: '5 reps',
+          type: 'reps',
+        },
+      ],
+    },
   ],
+
   'Dødløft — Sumo': [
-    { id: 'dls-1', name: 'Sumo squat med pause', desc: 'Stå bredt med tæerne pegende udad — samme bredde som din sumo-stance. Sæt dig roligt ned og hold et par sekunder fornede. Aktiverer lysken og åbner hofteleddet til din stance.', label: '10 reps', type: 'reps' },
-    { id: 'dls-2', name: 'Adduktor stretch siddende', desc: 'Sid på gulvet med benene spredt bredt ud til siderne. Læn langsomt fremad fra hoften med ret ryg og hold. Mærk strækket i inderlårene — afgørende for sumo-stance.', label: '30 sek', type: 'timer', duration: 30 },
-    { id: 'dls-3', name: 'Hip external rotation (liggende)', desc: 'Lig på ryggen. Kryds det ene ben over det andet knæ og træk begge ben mod brystet. Mærk strækket dybt i ballerne og hofteleddet. Åbner den eksterne rotation som sumo kræver.', label: '30 sek pr. side', type: 'timer', duration: 30 },
+    {
+      slot: 'Hofte- og lyskemobilitet',
+      options: [
+        {
+          id: 'ds-mob-1',
+          name: 'Sumo squat med pause',
+          desc: 'Stå bredt med tæerne pegende udad — samme bredde som din sumo-stance. Sæt dig roligt ned og hold 3 sekunder fornede. Aktiverer lysken og åbner hofteleddet til din stance.',
+          label: '10 reps',
+          type: 'reps',
+        },
+        {
+          id: 'ds-mob-2',
+          name: 'Frøstræk',
+          desc: 'Kom ned på alle fire og glid begge knæ bredt ud til siden med tæerne pegende udad. Skub forsigtigt hoften bagud og ned og lad lysken strække. Hold og vejrtræk dybt ind i det stramme område.',
+          label: '30 sek',
+          type: 'timer',
+          duration: 30,
+        },
+        {
+          id: 'ds-mob-3',
+          name: 'Adduktor stretch siddende',
+          desc: 'Sid på gulvet med benene spredt bredt ud til siderne. Læn langsomt fremad fra hoften med ret ryg og hold. Mærk strækket i inderlårene — afgørende for sumo-stance.',
+          label: '30 sek',
+          type: 'timer',
+          duration: 30,
+        },
+        {
+          id: 'ds-mob-4',
+          name: 'Sidelunge',
+          desc: 'Stå med benene i skulderbredde. Tag et langt skridt til siden og sænk dig ned over det ene bøjede ben, mens det andet forbliver strakt. Skub tilbage til midten. Strækker adduktorerne dynamisk og forbereder hoften til ekstern rotation i sumo.',
+          label: '8 reps pr. side',
+          type: 'reps',
+        },
+      ],
+    },
+    {
+      slot: 'Balle- og hofteabduktoraktivering',
+      options: [
+        {
+          id: 'ds-akt-1',
+          name: 'Clamshell med elastik',
+          desc: 'Lig på siden med elastik over knæene, knæene bøjet ca. 45° og hæle samlet. Løft det øverste knæ som en musling der åbner sig — hold et sekund. Aktiverer gluteus medius, der trækker knæene ud i sumo-stance.',
+          label: '15 reps pr. side',
+          type: 'reps',
+        },
+        {
+          id: 'ds-akt-2',
+          name: 'Fire hydrant',
+          desc: 'Kom på alle fire med håndled under skuldre. Løft det ene knæ ud til siden i 90° med hoften stabil — hold et sekund og sænk roligt. Rammer hofteabduktion og ekstern rotation direkte i det mønster sumo kræver.',
+          label: '12 reps pr. side',
+          type: 'reps',
+        },
+        {
+          id: 'ds-akt-3',
+          name: 'Sidestep med elastik',
+          desc: 'Placer elastik over knæene. Sæt dig i en let sumo-squat og tag korte skridt til siden med konstant spænd i elastikken — knæene peger ud hele vejen. Aktiverer gluteus medius og sætter mønstret for udadpres i sumo.',
+          label: '10 skridt pr. side',
+          type: 'reps',
+        },
+        {
+          id: 'ds-akt-4',
+          name: 'Stående hofteabduktion med elastik',
+          desc: 'Placer elastik over knæene og hold til en væg for balance. Løft det ene ben ud til siden mod modstanden — hold et sekund. Kontrolleret ned. Isoleret abduktoraktivering, der forbereder hoften til at presse knæene ud i sumo.',
+          label: '12 reps pr. side',
+          type: 'reps',
+        },
+      ],
+    },
+    {
+      slot: 'Sumo-stance-mønster',
+      options: [
+        {
+          id: 'ds-mov-1',
+          name: 'Sumo dødløft med tom stang',
+          desc: 'Tag din normale sumo-stance med tæerne udad og grebet smalt inden for benene. Sæt dig ned i startposition og mærk at knæene peger over tæerne — spænd hofteabduktorerne. Rejs dig langsomt og pres hoften frem i toppen.',
+          label: '6 reps',
+          type: 'reps',
+        },
+        {
+          id: 'ds-mov-2',
+          name: 'Sumo RDL med tom stang',
+          desc: 'Stå i din sumo-stance med tæerne udad. Skub hofterne bagud og sænk overkroppen fremad med neutral ryg — knæene forbliver let bøjet. Mærk baglår og adduktorer strækkes. Kombinerer hip-hinge med den brede stance.',
+          label: '8 reps',
+          type: 'reps',
+        },
+        {
+          id: 'ds-mov-3',
+          name: 'Sumo squat side-to-side',
+          desc: 'Stå i sumo-stance og sæt dig ned til parallelt. Rock forsigtigt fra side til side og skift vægt fra det ene ben til det andet. Mærk lysken åbne og find din optimale knæ-over-tå-linje i stancen.',
+          label: '10 reps (5 pr. side)',
+          type: 'reps',
+        },
+      ],
+    },
   ],
-}
+};
 
 const WARMUP_ADDONS = {
-  'Hofte / baller': { id: 'add-hofte', name: '90/90 hofte stretch', desc: 'Sid på gulvet med ét ben bøjet 90 grader foran dig og ét ben 90 grader ude til siden. Læn langsomt frem over det forreste ben. Mærk strækket i ydersiden af hoften og ballerne.', label: '30 sek pr. side', type: 'timer', duration: 30 },
-  'Lyske / inderlår': { id: 'add-lyske', name: 'Cossack squat', desc: 'Stå meget bredt. Skift vægten til ét ben og sæt dig ned i den side mens det andet ben strækkes ud til siden med tåen opad. Mærk strækket dybt i lysken og inderlåret. Skift side.', label: '8 reps pr. side', type: 'reps' },
-  'Lænde': { id: 'add-laende', name: 'Child\'s pose', desc: 'Sæt dig på hug og læn overkroppen fremad mod gulvet med armene strakt ud foran dig. Lad lænden synke ned og ånd dybt ind i ryggen. Aflaster og strækker lænden.', label: '30 sek', type: 'timer', duration: 30 },
-  'Øvre ryg': { id: 'add-oevreryg', name: 'Thorax extension over rulle', desc: 'Læg en rullet håndklæde eller skumrulle tværs under øvre ryg mellem skulderbladene. Læn forsigtigt bagover med hænderne bag nakken og åbn brystet mod loftet.', label: '30 sek', type: 'timer', duration: 30 },
-  'Ankel': { id: 'add-ankel', name: 'Ankelmobilitet mod væg', desc: 'Stå med tåspidsen tæt mod en væg. Skub forsigtigt knæet frem til det rammer væggen — hold hælen i gulvet. Flyt foden gradvist længere væk efterhånden.', label: '10 reps pr. ben', type: 'reps' },
-  'Knæ': { id: 'add-knae', name: 'Quadriceps stretch stående', desc: 'Stå på ét ben og træk det andet bens fod op mod ballerne — hold om anklen. Hold knæene samlet og skub hofterne let fremad for at intensivere strækket foran låret.', label: '30 sek pr. side', type: 'timer', duration: 30 },
-  'Skulder': { id: 'add-skulder', name: 'Thorax rotation siddende', desc: 'Sid på hug eller på hælene med hænderne bag nakken. Roter overkroppen langsomt til én side og hold et sekund. Hold hofterne stille — kun overkroppen roterer.', label: '10 reps pr. side', type: 'reps' },
-  'Nakke / trapez': { id: 'add-nakke', name: 'Nakke side-stretch', desc: 'Sid eller stå opret. Læn langsomt øret mod skulderen til du mærker et stræk i siden af nakken og toppen af trapezius. Hold stille — undgå at trække skulderen op.', label: '20 sek pr. side', type: 'timer', duration: 20 },
-}
+  'Hofte / baller': {
+    slot: 'Hofte / baller',
+    options: [
+      {
+        id: 'add-hofte-1',
+        name: '90/90 hofterotation',
+        desc: 'Sid på gulvet med det ene ben foran (90°) og det andet til siden (90°). Skub forsigtigt hoften fremad mod det forreste ben og hold — skift side. Rammer ekstern og intern rotation i hoften samlet.',
+        label: '30 sek pr. side',
+        type: 'timer',
+        duration: 30,
+      },
+      {
+        id: 'add-hofte-2',
+        name: 'Due-stræk',
+        desc: 'Fra push-up-position, før det ene knæ frem og læg det diagonalt foran dig med skinnebenet på gulvet. Sænk hofterne ned og læn overkroppen fremad — undgå at dreje ryggen. Dyb piriformis- og hoftestretch der rammer det ingen stræk kan nå.',
+        label: '30 sek pr. side',
+        type: 'timer',
+        duration: 30,
+      },
+      {
+        id: 'add-hofte-3',
+        name: 'Hip circles',
+        desc: 'Stå på ét ben, løft det andet knæ og lav store, langsomme cirkler med hoften — udad og bagud. Åbner hofteleddet dynamisk i alle retninger og øger ledvæsken.',
+        label: '10 reps pr. side',
+        type: 'reps',
+      },
+      {
+        id: 'add-hofte-4',
+        name: 'Glute bridge med lang pause',
+        desc: 'Lig på ryggen med bøjede knæ. Skub hofterne op og klem ballerne hårdt — hold 5 sekunder i toppen. Sænk roligt. Kombinerer stræk af hoftefleksoren med direkte og bevidst balleaktivering.',
+        label: '8 reps',
+        type: 'reps',
+      },
+    ],
+  },
+
+  'Lyske / inderlår': {
+    slot: 'Lyske / inderlår',
+    options: [
+      {
+        id: 'add-lyske-1',
+        name: 'Frøstræk',
+        desc: 'Kom ned på alle fire og glid begge knæ bredt ud til siden med tæerne udad. Skub forsigtigt hoften bagud og ned og lad lysken strække. Hold og vejrtræk dybt ind i det stramme område.',
+        label: '30 sek',
+        type: 'timer',
+        duration: 30,
+      },
+      {
+        id: 'add-lyske-2',
+        name: 'Sidelunge',
+        desc: 'Stå med benene i skulderbredde. Tag et langt skridt til siden og sænk dig ned over det ene bøjede ben, mens det andet forbliver strakt. Skub tilbage til midten. Strækker adduktorerne dynamisk og mærker dem arbejde i bevægelse.',
+        label: '8 reps pr. side',
+        type: 'reps',
+      },
+      {
+        id: 'add-lyske-3',
+        name: 'Adduktor stretch siddende',
+        desc: 'Sid på gulvet med benene spredt bredt ud til siderne. Læn langsomt fremad fra hoften med ret ryg og hold. Mærk strækket i inderlårene — hold positionen og vejrtræk roligt.',
+        label: '30 sek',
+        type: 'timer',
+        duration: 30,
+      },
+      {
+        id: 'add-lyske-4',
+        name: 'Sumo squat med side-to-side rock',
+        desc: 'Stå bredt med tæerne udad og sæt dig ned i sumo-squat. Rock forsigtigt fra side til side og lad inderlårene åbne dynamisk. God til akut stramhed der giver sig med bevægelse.',
+        label: '10 reps',
+        type: 'reps',
+      },
+    ],
+  },
+
+  'Lænde': {
+    slot: 'Lænde',
+    options: [
+      {
+        id: 'add-laende-1',
+        name: 'Cat-cow',
+        desc: 'Kom på alle fire. Synk maven mod gulvet og løft brystet (cow) — afrund derefter ryggen fuldt og tryk lænden mod loftet (cat). Mobiliserer hele rygsøjlen og reducerer stivhed i lænden.',
+        label: '10 reps',
+        type: 'reps',
+      },
+      {
+        id: 'add-laende-2',
+        name: 'Liggende knæ-til-bryst',
+        desc: 'Lig på ryggen. Træk det ene knæ op mod brystet og hold det med begge hænder — det andet ben forbliver strakt i gulvet. Hold og skift. Let dekompressions-øvelse for lænde og SI-led.',
+        label: '20 sek pr. side',
+        type: 'timer',
+        duration: 20,
+      },
+      {
+        id: 'add-laende-3',
+        name: 'Liggende trunk rotation',
+        desc: 'Lig på ryggen med bøjede knæ. Lad begge knæ falde langsomt til den ene side mens skuldrene forbliver i gulvet — kom roligt tilbage og fald til den anden side. Roterer og løsner de lumbale facetled.',
+        label: '8 reps pr. side',
+        type: 'reps',
+      },
+      {
+        id: 'add-laende-4',
+        name: "Child's pose",
+        desc: 'Sid tilbage på hælene med knæene spredt og stræk armene fremad på gulvet. Lad panden hvile i gulvet og vejrtræk dybt — mærk lænden åbne for hvert udåndedrag. Passiv dekompression der virker godt ved akut stivhed.',
+        label: '30 sek',
+        type: 'timer',
+        duration: 30,
+      },
+    ],
+  },
+
+  'Øvre ryg': {
+    slot: 'Øvre ryg',
+    options: [
+      {
+        id: 'add-oevreR-1',
+        name: 'Thorax extension over skumrulle',
+        desc: 'Læg skumrullen tværs under øvre ryg. Læn forsigtigt bagover med hænderne bag nakken og åbn brystet mod loftet — flyt rullen op ad rygsøjlen og gentag. Mobiliserer thorakal ekstension, kritisk for bænkpres og dødløft-setup.',
+        label: '30 sek',
+        type: 'timer',
+        duration: 30,
+      },
+      {
+        id: 'add-oevreR-2',
+        name: 'Thorakal rotation siddende',
+        desc: 'Sid på gulvet og hold en stang eller håndklæde vandret bag nakken. Roter langsomt overkroppen til den ene side og hold — undgå at dreje fra lænden. Forbedrer thorakal rotation, der er vigtig for bænkopsætning og lat-engagement i dødløft.',
+        label: '8 reps pr. side',
+        type: 'reps',
+      },
+      {
+        id: 'add-oevreR-3',
+        name: 'Band pull-apart',
+        desc: 'Hold elastikken foran dig på skulderbredde med strakte arme. Træk den fra hinanden og hold 2 sekunder med skulderbladene inde. Aktiverer rhomboider og mid-traps, der holder den øvre ryg stabil under alle tunge løft.',
+        label: '15 reps',
+        type: 'reps',
+      },
+      {
+        id: 'add-oevreR-4',
+        name: 'YWT-løft på gulvet',
+        desc: 'Lig på maven og løft armene i Y-, W- og T-position ved at klemme skulderbladen mod hinanden — hold 2 sekunder i hver position. Aktiverer hele den øvre rygs stabilisatorer og rotatorerne på én gang.',
+        label: '8 reps pr. position',
+        type: 'reps',
+      },
+    ],
+  },
+
+  'Ankel': {
+    slot: 'Ankel',
+    options: [
+      {
+        id: 'add-ankel-1',
+        name: 'Ankelcirkler',
+        desc: 'Sid på en bænk eller stå på ét ben. Løft foden let og lav store, langsomme cirkler med anklen — begge retninger. Løsner ledbåndet og øger ledvæsken i anklen inden belastning.',
+        label: '10 reps pr. retning pr. side',
+        type: 'reps',
+      },
+      {
+        id: 'add-ankel-2',
+        name: 'Ankel-vægstræk',
+        desc: 'Stå med tåen ca. 10 cm fra en væg og bøj knæet fremad til det rører væggen — hælen skal blive i gulvet. Flyt tåen gradvist længere fra væggen. Forbedrer dorsifleksion, der er afgørende for knæ-over-tå og squat-dybde.',
+        label: '10 reps pr. side',
+        type: 'reps',
+      },
+      {
+        id: 'add-ankel-3',
+        name: 'Eccentric heel drop',
+        desc: 'Stå med forfoden på en vægtskive eller let forhøjning. Rejs dig på tå og sænk derefter hælen langsomt ned under skiven over 3 sekunder. Strækker achillessenen og ankelkapslen eksentrisk — effektiv ved stive ankler.',
+        label: '10 reps pr. side',
+        type: 'reps',
+      },
+      {
+        id: 'add-ankel-4',
+        name: 'Ankelmobilitet med elastik',
+        desc: 'Fastgør en elastik lavt (fx rundt om en stangstøtte) og placer den stramt over anklens forside. Træd fremad så elastikken trækker bagud. Bøj knæet fremad over tåen gentagne gange. Elastikken mobiliserer ledbåndet mere effektivt end stræk alene.',
+        label: '10 reps pr. side',
+        type: 'reps',
+      },
+    ],
+  },
+
+  'Knæ': {
+    slot: 'Knæ',
+    options: [
+      {
+        id: 'add-knae-1',
+        name: 'Quad stretch stående',
+        desc: 'Stå på ét ben, hold anklen på det bøjede ben og træk hælen mod sædet — hold knæene samlet. Hold en finger mod en væg for balance. Strækker quadriceps, der er primærbelastet i squat og påvirker knæets bevægelighed.',
+        label: '30 sek pr. side',
+        type: 'timer',
+        duration: 30,
+      },
+      {
+        id: 'add-knae-2',
+        name: 'Bensving',
+        desc: 'Stå ved en væg og sving det ene ben frem og tilbage som et pendul — afslappet, roligt og med stigende udslag. Løsner hoften og knæet dynamisk og øger blodgennemstrømning i knæleddet inden belastning.',
+        label: '15 reps pr. side',
+        type: 'reps',
+      },
+      {
+        id: 'add-knae-3',
+        name: 'Vægstøttet squat med knæsporing',
+        desc: 'Stå med ryggen mod en væg og gled langsomt ned i et halvt squat. Pres bevidst knæene udad over den 2. tå og hold 3 sekunder — rejs dig. Træner korrekt knæ-tracking og reducerer stress på knæets inderside.',
+        label: '8 reps',
+        type: 'reps',
+      },
+      {
+        id: 'add-knae-4',
+        name: 'Terminal knee extension med elastik',
+        desc: 'Fastgør en elastik bag om knæet og træd fremad så den trækker. Stå på ét ben med let bøjet knæ og stræk det fuldt ud — spænd låret. Aktiverer VMO (den indre del af quadriceps), der stabiliserer knæet under løft.',
+        label: '15 reps pr. side',
+        type: 'reps',
+      },
+    ],
+  },
+
+  'Skulder': {
+    slot: 'Skulder',
+    options: [
+      {
+        id: 'add-skulder-1',
+        name: 'Skuldercirkler',
+        desc: 'Stå oprejst med armene langs siden. Lav store, langsomme cirkler med skuldrene fremad og bagud. Løsner kapslen og øger blodgennemstrømning i rotatorerne inden bænkpres eller tunge dødløft.',
+        label: '10 reps pr. retning',
+        type: 'reps',
+      },
+      {
+        id: 'add-skulder-2',
+        name: 'Håndklæde shoulder dislocates',
+        desc: 'Hold et håndklæde bredt foran dig med strakte arme. Før det langsomt over hovedet og ned bag ryggen i en rolig bue — indsnævr grebet gradvist. Mobiliserer skulderleddet i hele dets bevægeudslag.',
+        label: '10 reps',
+        type: 'reps',
+      },
+      {
+        id: 'add-skulder-3',
+        name: 'Cross-body skulderstræk',
+        desc: 'Træk den ene arm vandret hen foran brystet med den modsatte hånd og pres let. Mærk stræk i den bageste del af skulderen. Posterior capsule er hyppigt stram hos bænkpressere og dødløftere.',
+        label: '20 sek pr. side',
+        type: 'timer',
+        duration: 20,
+      },
+      {
+        id: 'add-skulder-4',
+        name: 'Ekstern rotation med elastik',
+        desc: 'Fastgør en elastik i hoftehøjde. Hold overarmen tæt mod kroppen med albuen bøjet 90° og roter underarmen udad mod modstanden — hold et sekund. Aktiverer rotatorerne, der beskytter skulderen under pres og pull.',
+        label: '12 reps pr. side',
+        type: 'reps',
+      },
+    ],
+  },
+
+  'Nakke / trapez': {
+    slot: 'Nakke / trapez',
+    options: [
+      {
+        id: 'add-nakke-1',
+        name: 'Nakkestretch til siden',
+        desc: 'Sid eller stå oprejst. Lad øret falde roligt mod skulderen — ingen tvang. Hold og mærk stræk langs siden af nakken og ned i øvre trapez. Åbner op for de muskler der strammes af stangbæring og tunge dødløft.',
+        label: '20 sek pr. side',
+        type: 'timer',
+        duration: 20,
+      },
+      {
+        id: 'add-nakke-2',
+        name: 'Chin tuck',
+        desc: 'Sid oprejst og træk hagen direkte bagud — som om du laver en "dobbelt hage". Hold 5 sekunder og slip. Korrigerer fremskudt hoved-position og aktiverer de dybe nakkefleksorer, som aflaster de stramme øvre trapezmuskler.',
+        label: '10 reps',
+        type: 'reps',
+      },
+      {
+        id: 'add-nakke-3',
+        name: 'Øvre trapez-stræk med bænk',
+        desc: 'Sid på en bænk og hold fast i kanten med den ene hånd. Læn nakken til den modsatte side og brug den fri hånd til at trække hovedet let videre. Direkte stræk i øvre trapez, der spænder under stangbæring og tunge løft.',
+        label: '20 sek pr. side',
+        type: 'timer',
+        duration: 20,
+      },
+      {
+        id: 'add-nakke-4',
+        name: 'Halve nakke-cirkler',
+        desc: 'Lad hagen falde til brystet og rul langsomt hovedet til den ene skulder, videre bagover og til den anden skulder — undgå fulde 360° med kold nakke. Hold det roligt og kontrolleret. Løsner cervikale facetled og øvre trapez.',
+        label: '5 reps pr. retning',
+        type: 'reps',
+      },
+    ],
+  },
+};
 
 const s = {
   wrap: { minHeight: '100vh', background: '#141410', color: '#edeae2', fontFamily: "'IBM Plex Sans', sans-serif", fontWeight: 300 },
@@ -534,6 +1190,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [warmupProblems, setWarmupProblems] = useState(new Set())
   const [warmupExercises, setWarmupExercises] = useState([])
   const [warmupStep, setWarmupStep] = useState(0)
+  // Valgt øvelses-option pr. slot i opvarmnings-guiden (slot-index → option-index).
+  // Nulstilles ved hver guide-start, så default altid er den første variant.
+  const [warmupChoice, setWarmupChoice] = useState({})
   const [timerSeconds, setTimerSeconds] = useState(0)
   const [timerActive, setTimerActive] = useState(false)
   const [timerDone, setTimerDone] = useState(false)
@@ -3155,13 +3814,16 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           const focusReady = warmupFocus && (warmupFocus !== 'Dødløft' || warmupSubtype)
 
           function startGuide() {
+            // Hvert slot er { slot, options: [...] }. Atleten vælger én option pr.
+            // slot i guiden (default = den første). Coach-trin bliver slots med ét valg.
             const base = WARMUP_BASE[baseKey] || []
             const coachFocusKey = warmupFocus === 'Dødløft' ? 'Dødløft' : warmupFocus
             const coachSteps = (warmupTemplates.find(t => t.exercise_category === coachFocusKey)?.steps || [])
-              .map((step, i) => ({ id: `coach_${i}`, name: step, desc: '', label: '', type: 'reps' }))
+              .map((step, i) => ({ slot: 'Fra din coach', options: [{ id: `coach_${i}`, name: step, desc: '', label: '', type: 'reps' }] }))
             const addons = [...warmupProblems].map(p => WARMUP_ADDONS[p]).filter(Boolean)
-            const all = [...base, ...addons, ...coachSteps]
-            setWarmupExercises(all)
+            const slots = [...base, ...addons, ...coachSteps]
+            setWarmupExercises(slots)
+            setWarmupChoice({})   // friskt valg hver gang → default option 0
             setWarmupStep(0)
             setTimerActive(false)
             setTimerSeconds(0)
@@ -3173,8 +3835,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
             setWarmupStep(idx)
             setTimerActive(false)
             setTimerDone(false)
-            const ex = warmupExercises[idx]
-            setTimerSeconds(ex?.type === 'timer' ? ex.duration : 0)
+            const slot = warmupExercises[idx]
+            const opt = slot?.options?.[warmupChoice[idx] ?? 0]
+            setTimerSeconds(opt?.type === 'timer' ? opt.duration : 0)
           }
 
           function resetWarmup() {
@@ -3183,6 +3846,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
             setWarmupSubtype(null)
             setWarmupProblems(new Set())
             setWarmupExercises([])
+            setWarmupChoice({})
             setWarmupStep(0)
             setTimerActive(false)
             setTimerSeconds(0)
@@ -3270,9 +3934,22 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
           // FASE: GUIDE
           if (warmupPhase === 'guide') {
-            const ex = warmupExercises[warmupStep]
+            const slot = warmupExercises[warmupStep]
+            if (!slot) return null
+            const choiceIdx = warmupChoice[warmupStep] ?? 0
+            const ex = slot.options[choiceIdx] || slot.options[0]
+            const hasChoices = slot.options.length > 1
             const isLast = warmupStep === warmupExercises.length - 1
             const pct = Math.round(((warmupStep) / warmupExercises.length) * 100)
+
+            // Skift variant inden for slottet — nulstil timeren (ny varighed kan gælde)
+            const chooseVariant = (i) => {
+              setWarmupChoice(c => ({ ...c, [warmupStep]: i }))
+              setTimerActive(false)
+              setTimerDone(false)
+              const opt = slot.options[i]
+              setTimerSeconds(opt?.type === 'timer' ? opt.duration : 0)
+            }
 
             if (!ex) return null
 
@@ -3290,6 +3967,34 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                     <div style={{ height: '100%', background: '#c8923a', width: `${pct}%`, transition: 'width 0.3s ease' }} />
                   </div>
                 </div>
+
+                {/* Variant-vælger — kun når slottet har flere øvelser at vælge imellem */}
+                {hasChoices && (
+                  <div style={{ marginBottom: '1rem' }}>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>
+                      Vælg øvelse · {slot.slot}
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                      {slot.options.map((opt, i) => {
+                        const on = i === choiceIdx
+                        return (
+                          <button
+                            key={opt.id}
+                            onClick={() => chooseVariant(i)}
+                            style={{
+                              background: on ? 'rgba(200,146,58,0.15)' : '#1c1c18',
+                              border: `1px solid ${on ? '#c8923a' : 'rgba(237,234,226,0.1)'}`,
+                              color: on ? '#c8923a' : '#7a7770',
+                              fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500,
+                              letterSpacing: '0.03em', padding: '0.45rem 0.7rem', cursor: 'pointer',
+                              textAlign: 'left', lineHeight: 1.3,
+                            }}
+                          >{opt.name}</button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
 
                 {/* Exercise card */}
                 <div style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)', padding: '1.75rem', marginBottom: '1.25rem', minHeight: '220px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
