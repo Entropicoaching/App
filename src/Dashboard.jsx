@@ -273,6 +273,9 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [editingSession, setEditingSession] = useState(null)
   const [editingExercise, setEditingExercise] = useState(null)
   const [weekForm, setWeekForm] = useState({ week_number: '', block_name: '', coach_note: '', block_description: '', start_date: '' })
+  // Inline omdøbning af en blok i periodiserings-tidslinjen (id på blokkens første uge)
+  const [renamingBlock, setRenamingBlock] = useState(null)
+  const [renameValue, setRenameValue] = useState('')
   const [showBlockPlanner, setShowBlockPlanner] = useState(false)
   const [blockPlan, setBlockPlan] = useState([{ id: 1, name: 'Akkumulering', weeks: 4 }, { id: 2, name: 'Intensificering', weeks: 3 }, { id: 3, name: 'Peak', weeks: 2 }, { id: 4, name: 'Deload', weeks: 1 }])
   const [planStartDate, setPlanStartDate] = useState(() => new Date().toISOString().slice(0, 10))
@@ -3516,7 +3519,11 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                         const today = new Date(); today.setHours(12, 0, 0, 0)
                         const fmt = ds => new Date(ds + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })
                         return (
-                          <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.5rem', marginBottom: '1rem' }}>
+                          <div style={{ marginBottom: '1.25rem' }}>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.6rem' }}>
+                            Periodisering · klik ✎ for at omdøbe blok
+                          </div>
+                          <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
                             {phases.map((phase, pi) => {
                               const color = phase.name ? blockColor(phase.name) : '#7a7770'
                               const first = phase.weeks[0]
@@ -3550,10 +3557,36 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                                 >
                                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.35rem' }}>
                                     <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: color, flexShrink: 0 }} />
-                                    <span style={{ fontSize: '0.82rem', color: '#edeae2', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{phase.name || 'Uden blok'}</span>
-                                    {isDone && <span style={{ color, fontSize: '0.6rem', lineHeight: 1 }}>✓</span>}
-                                    {isActive && (
-                                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.4rem', letterSpacing: '0.1em', textTransform: 'uppercase', color, border: `1px solid ${color}`, padding: '1px 4px', borderRadius: '2px' }}>nu</span>
+                                    {renamingBlock === first.id ? (
+                                      <input
+                                        autoFocus
+                                        value={renameValue}
+                                        onClick={e => e.stopPropagation()}
+                                        onChange={e => setRenameValue(e.target.value)}
+                                        onKeyDown={e => { if (e.key === 'Enter') e.target.blur(); if (e.key === 'Escape') setRenamingBlock(null) }}
+                                        onBlur={async () => {
+                                          const name = renameValue.trim() || null
+                                          setRenamingBlock(null)
+                                          if (name !== (phase.name || null)) {
+                                            await supabase.from('weeks').update({ block_name: name }).in('id', phase.weeks.map(w => w.id))
+                                            fetchWeeks(selectedAthlete.id)
+                                          }
+                                        }}
+                                        style={{ flex: 1, minWidth: 0, background: '#141410', border: `1px solid ${color}`, color: '#edeae2', fontSize: '0.78rem', padding: '2px 5px' }}
+                                      />
+                                    ) : (
+                                      <>
+                                        <span style={{ fontSize: '0.82rem', color: '#edeae2', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{phase.name || 'Uden blok'}</span>
+                                        {isDone && <span style={{ color, fontSize: '0.6rem', lineHeight: 1 }}>✓</span>}
+                                        {isActive && (
+                                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.4rem', letterSpacing: '0.1em', textTransform: 'uppercase', color, border: `1px solid ${color}`, padding: '1px 4px', borderRadius: '2px' }}>nu</span>
+                                        )}
+                                        <button
+                                          onClick={e => { e.stopPropagation(); setRenameValue(phase.name || ''); setRenamingBlock(first.id) }}
+                                          title="Omdøb blok"
+                                          style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#7a7770', cursor: 'pointer', fontSize: '0.7rem', padding: '0 2px', flexShrink: 0 }}
+                                        >✎</button>
+                                      </>
                                     )}
                                   </div>
                                   <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: '#7a7770' }}>
@@ -3565,6 +3598,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                                 </div>
                               )
                             })}
+                          </div>
                           </div>
                         )
                       })()}
