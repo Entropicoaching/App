@@ -313,6 +313,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [athleteLastLogs, setAthleteLastLogs] = useState({})
   const [calendarWeeks, setCalendarWeeks] = useState({}) // athlete_id -> [{week_number, block_name, start_date, session_count, exercise_count}]
   const [athleteCurrentWeek, setAthleteCurrentWeek] = useState({}) // athlete_id -> ugenummer for seneste logg. træning
+  const [timelineEdit, setTimelineEdit] = useState(null) // { athleteId, weeks, name, block, firstStartIso } — åbent dato-panel i kalender-tidslinjen
   const [snoozedAthletes, setSnoozedAthletes] = useState(() => {
     try { return JSON.parse(localStorage.getItem('entropi_calendar_snooze') || '{}') } catch { return {} }
   })
@@ -491,7 +492,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     if (!athleteIds.length) return
     const { data } = await supabase
       .from('weeks')
-      .select('athlete_id, week_number, block_name, start_date, sessions(id, exercises(id))')
+      .select('id, athlete_id, week_number, block_name, start_date, sessions(id, exercises(id))')
       .in('athlete_id', athleteIds)
     if (!data) return
     const map = {}
@@ -499,6 +500,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       if (!map[w.athlete_id]) map[w.athlete_id] = []
       const sessions = w.sessions || []
       map[w.athlete_id].push({
+        id: w.id,
         week_number: w.week_number,
         block_name: w.block_name,
         start_date: w.start_date,
@@ -512,6 +514,23 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   }
 
   // Find hvilket ugenummer hver atlet sidst loggede træning i (= hvor de er nu).
+  // Sætter en bloks startdato fra kalender-tidslinjen og cascader fortløbende
+  // datoer ud på hver uge i blokken (uge N = startdato + 7×(N − førsteUgeNr)).
+  // Giver hver uge en eksplicit start_date → tidslinje + phase bar/board firmer op.
+  async function setBlockStartDate(athleteId, blockWeeks, isoDate) {
+    if (!isoDate || !blockWeeks?.length) return
+    const sorted = [...blockWeeks].sort((a, b) => a.week_number - b.week_number)
+    const base = new Date(isoDate + 'T12:00:00')
+    const firstNo = sorted[0].week_number
+    await Promise.all(sorted.map(w => {
+      const d = new Date(base.getTime() + (w.week_number - firstNo) * 7 * 86400000)
+      const ds = d.toISOString().slice(0, 10)
+      return w.start_date === ds ? null : supabase.from('weeks').update({ start_date: ds }).eq('id', w.id)
+    }))
+    await fetchCalendarWeeks(athletes.map(a => a.id))
+    if (selectedAthlete?.id === athleteId) fetchWeeks(athleteId)
+  }
+
   async function fetchCalendarProgress(athleteIds) {
     if (!athleteIds.length) return
     const since = new Date(); since.setDate(since.getDate() - 180)
@@ -1839,6 +1858,157 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   {board.length - needs.length} af {board.length} klar · har du husket at planlægge deres træning?
                 </div>
               </div>
+
+              {/* Tidslinje — alle atleters blokke på tværs af tid */}
+              {(() => {
+                const COL_W = isMobile ? 40 : 48
+                const NAME_W = isMobile ? 88 : 132
+                const ROW_H = 34
+                const mondayOf = (d) => { const x = new Date(d); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x }
+                const isoOf = (d) => d.toISOString().slice(0, 10)
+
+                const rows = visibleAthletes.map(a => {
+                  const wks = calendarWeeks[a.id] || []
+                  const anchor = wks.find(w => w.start_date) // wks er sorteret stigende → tidligste daterede
+                  const weekDate = anchor
+                    ? (no) => new Date(new Date(anchor.start_date + 'T12:00:00').getTime() + (no - anchor.week_number) * 7 * dayMs)
+                    : null
+                  return { a, wks, phases: computePhases(wks), maxLoggedWk: athleteCurrentWeek[a.id] ?? null, weekDate, hasAnchor: !!anchor }
+                })
+                const placed = rows.filter(r => r.hasAnchor)
+                const tray = rows.filter(r => !r.hasAnchor && r.wks.length > 0)
+
+                // Global kolonneskala (ISO-uger). Pad én uge i hver ende.
+                let minMon = mondayOf(today0), maxMon = mondayOf(today0)
+                for (const r of placed) for (const w of r.wks) {
+                  const m = mondayOf(r.weekDate(w.week_number))
+                  if (m < minMon) minMon = m
+                  if (m > maxMon) maxMon = m
+                }
+                minMon = new Date(minMon.getTime() - 7 * dayMs)
+                maxMon = new Date(maxMon.getTime() + 7 * dayMs)
+                const nCols = Math.min(Math.round((maxMon - minMon) / (7 * dayMs)) + 1, 60)
+                const colOf = (d) => Math.round((mondayOf(d) - minMon) / (7 * dayMs))
+                const todayCol = colOf(today0)
+                const trackW = nCols * COL_W
+                const cols = Array.from({ length: nCols }, (_, i) => new Date(minMon.getTime() + i * 7 * dayMs))
+
+                const openEdit = (r, ph) => {
+                  const first = ph.weeks[0]
+                  const firstStartIso = first.start_date || (r.weekDate ? isoOf(r.weekDate(first.week_number)) : isoOf(today0))
+                  setTimelineEdit({ athleteId: r.a.id, weeks: ph.weeks, name: r.a.name, block: ph.name || 'Uden blok', firstStartIso })
+                }
+
+                return (
+                  <div style={{ ...s.card, marginBottom: '1.5rem' }}>
+                    <div style={s.cardLabel}>Tidslinje</div>
+
+                    {placed.length === 0 ? (
+                      <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', padding: '0.75rem 0' }}>
+                        Ingen atleter med datoer endnu — sæt en startdato nedenfor, så lægger blokkene sig her.
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', marginTop: '0.5rem', border: '1px solid rgba(237,234,226,0.06)' }}>
+                        {/* Sticky navne-kolonne */}
+                        <div style={{ flexShrink: 0, width: NAME_W, borderRight: '1px solid rgba(237,234,226,0.08)', background: '#16160f' }}>
+                          <div style={{ height: 22, borderBottom: '1px solid rgba(237,234,226,0.06)' }} />
+                          {placed.map(r => (
+                            <div key={r.a.id} onClick={() => openProfile(r.a, 'program')}
+                              style={{ height: ROW_H, display: 'flex', alignItems: 'center', padding: '0 0.5rem', cursor: 'pointer', borderBottom: '1px solid rgba(237,234,226,0.04)', fontSize: isMobile ? '0.72rem' : '0.8rem', color: '#edeae2', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {r.a.name}
+                            </div>
+                          ))}
+                        </div>
+                        {/* Scrollbart spor */}
+                        <div style={{ overflowX: 'auto', flex: 1 }}>
+                          <div style={{ width: trackW }}>
+                            {/* Dato-header */}
+                            <div style={{ display: 'flex', height: 22, borderBottom: '1px solid rgba(237,234,226,0.06)' }}>
+                              {cols.map((d, i) => (
+                                <div key={i} style={{ width: COL_W, flexShrink: 0, textAlign: 'center', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.42rem', color: i === todayCol ? '#c8923a' : '#4a4844', background: i === todayCol ? 'rgba(200,146,58,0.08)' : 'transparent', lineHeight: '22px' }}>
+                                  {d.getDate()}/{d.getMonth() + 1}
+                                </div>
+                              ))}
+                            </div>
+                            {/* Rækker */}
+                            {placed.map(r => (
+                              <div key={r.a.id} style={{ position: 'relative', height: ROW_H, borderBottom: '1px solid rgba(237,234,226,0.04)' }}>
+                                {/* i dag-linje */}
+                                {todayCol >= 0 && todayCol < nCols && (
+                                  <div style={{ position: 'absolute', left: todayCol * COL_W + COL_W / 2, top: 0, bottom: 0, width: 1, background: 'rgba(200,146,58,0.4)' }} />
+                                )}
+                                {r.phases.map((ph, pi) => {
+                                  const first = ph.weeks[0], last = ph.weeks[ph.weeks.length - 1]
+                                  const c0 = colOf(r.weekDate(first.week_number))
+                                  const c1 = colOf(r.weekDate(last.week_number))
+                                  const color = ph.name ? blockColor(ph.name) : '#4a4844'
+                                  const isDone = r.maxLoggedWk != null && last.week_number < r.maxLoggedWk
+                                  const isActive = r.maxLoggedWk != null && first.week_number <= r.maxLoggedWk && r.maxLoggedWk <= last.week_number
+                                  const range = first.week_number === last.week_number ? `u${first.week_number}` : `u${first.week_number}–${last.week_number}`
+                                  return (
+                                    <div key={pi} title={`${ph.name || 'Uden blok'} · ${range}`}
+                                      onClick={() => openEdit(r, ph)}
+                                      style={{
+                                        position: 'absolute', left: c0 * COL_W + 2, width: Math.max((c1 - c0 + 1) * COL_W - 4, COL_W - 4),
+                                        top: 5, height: ROW_H - 12, cursor: 'pointer', borderRadius: 3, overflow: 'hidden',
+                                        background: isActive ? color + '33' : color + (isDone ? '14' : '22'),
+                                        border: `1px solid ${isActive ? color : color + '66'}`, opacity: isDone ? 0.7 : 1,
+                                        display: 'flex', alignItems: 'center', gap: '0.25rem', padding: '0 0.35rem',
+                                      }}>
+                                      <span style={{ width: 6, height: 6, borderRadius: '50%', background: color, flexShrink: 0 }} />
+                                      <span style={{ fontSize: '0.6rem', color: '#edeae2', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{ph.name || 'Uden blok'}</span>
+                                      {isDone && <span style={{ color, fontSize: '0.55rem', flexShrink: 0 }}>✓</span>}
+                                      {isActive && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.4rem', textTransform: 'uppercase', color, flexShrink: 0 }}>nu</span>}
+                                    </div>
+                                  )
+                                })}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Dato-redigerings-panel */}
+                    {timelineEdit && (
+                      <div style={{ marginTop: '0.75rem', padding: '0.6rem 0.75rem', background: '#16160f', border: '1px solid rgba(200,146,58,0.3)', borderRadius: 3 }}>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.4rem' }}>
+                          Startdato — {timelineEdit.name} · {timelineEdit.block}
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                          <button style={{ ...s.btnGhost, fontSize: '0.6rem', padding: '0.3rem 0.5rem' }}
+                            onClick={() => { const d = new Date(timelineEdit.firstStartIso + 'T12:00:00'); const iso = isoOf(new Date(d.getTime() - 7 * dayMs)); setTimelineEdit(p => ({ ...p, firstStartIso: iso })); setBlockStartDate(timelineEdit.athleteId, timelineEdit.weeks, iso) }}>‹ 1 uge</button>
+                          <input type="date" value={timelineEdit.firstStartIso}
+                            onChange={e => { if (e.target.value) { setTimelineEdit(p => ({ ...p, firstStartIso: e.target.value })); setBlockStartDate(timelineEdit.athleteId, timelineEdit.weeks, e.target.value) } }}
+                            style={{ ...s.fieldInput, fontSize: '0.7rem', padding: '0.25rem 0.4rem', width: 'auto' }} />
+                          <button style={{ ...s.btnGhost, fontSize: '0.6rem', padding: '0.3rem 0.5rem' }}
+                            onClick={() => { const d = new Date(timelineEdit.firstStartIso + 'T12:00:00'); const iso = isoOf(new Date(d.getTime() + 7 * dayMs)); setTimelineEdit(p => ({ ...p, firstStartIso: iso })); setBlockStartDate(timelineEdit.athleteId, timelineEdit.weeks, iso) }}>1 uge ›</button>
+                          <button style={{ ...s.btnGhost, fontSize: '0.6rem', padding: '0.3rem 0.5rem', marginLeft: 'auto' }} onClick={() => setTimelineEdit(null)}>Luk</button>
+                        </div>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#4a4844', marginTop: '0.35rem', lineHeight: 1.6 }}>
+                          Sætter blokkens første uge til datoen og fordeler resten af ugerne fortløbende (7 dage pr. uge).
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Ikke planlagt-bakke */}
+                    {tray.length > 0 && (
+                      <div style={{ marginTop: '0.75rem' }}>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.4rem' }}>
+                          Ikke planlagt på kalenderen ({tray.length})
+                        </div>
+                        {tray.map(r => (
+                          <div key={r.a.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', padding: '0.4rem 0', borderBottom: '1px solid rgba(237,234,226,0.04)', flexWrap: 'wrap' }}>
+                            <span onClick={() => openProfile(r.a, 'program')} style={{ fontSize: '0.82rem', color: '#edeae2', cursor: 'pointer' }}>{r.a.name}</span>
+                            <button style={{ ...s.btnGhost, fontSize: '0.55rem', padding: '0.25rem 0.5rem' }}
+                              onClick={() => r.phases[0] && openEdit(r, r.phases[0])}>Sæt startdato</button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )
+              })()}
 
               {/* Kræver handling — uden program / uden øvelser / sidste uge nu */}
               {needs.length > 0 && (
