@@ -21,6 +21,24 @@ function computePhases(weeks) {
   phases.push(cur)
   return phases
 }
+// Det nuværende ugenummer for en atlet: foretræk den uge hvis udledte datospænd
+// (anker + 7 dage pr. uge) dækker i dag — ellers fald tilbage til seneste loggede
+// uge. Holder coach-kalender, phase bar og atlet-view enige om "nu".
+function currentWeekNo(weeks, maxLoggedWk) {
+  if (!weeks?.length) return maxLoggedWk ?? null
+  const sorted = [...weeks].sort((a, b) => a.week_number - b.week_number)
+  const anchor = sorted.find(w => w.start_date)
+  if (anchor) {
+    const today = new Date(); today.setHours(0, 0, 0, 0)
+    const anchorMs = new Date(anchor.start_date + 'T12:00:00').getTime()
+    for (const w of sorted) {
+      const d = new Date(anchorMs + (w.week_number - anchor.week_number) * 7 * 86400000)
+      d.setHours(0, 0, 0, 0)
+      if (d <= today && today < new Date(d.getTime() + 7 * 86400000)) return w.week_number
+    }
+  }
+  return maxLoggedWk ?? null
+}
 
 const statusLabels = { active: 'Aktiv', peaking: 'Peaking', offseason: 'Off-season' }
 const statusColors = { active: '#6cba6c', peaking: '#c8923a', offseason: '#7a7770' }
@@ -1873,7 +1891,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   const weekDate = anchor
                     ? (no) => new Date(new Date(anchor.start_date + 'T12:00:00').getTime() + (no - anchor.week_number) * 7 * dayMs)
                     : null
-                  return { a, wks, phases: computePhases(wks), maxLoggedWk: athleteCurrentWeek[a.id] ?? null, weekDate, hasAnchor: !!anchor }
+                  return { a, wks, phases: computePhases(wks), currentWk: currentWeekNo(wks, athleteCurrentWeek[a.id] ?? null), weekDate, hasAnchor: !!anchor }
                 })
                 const placed = rows.filter(r => r.hasAnchor)
                 const tray = rows.filter(r => !r.hasAnchor && r.wks.length > 0)
@@ -1942,8 +1960,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                                   const c0 = colOf(r.weekDate(first.week_number))
                                   const c1 = colOf(r.weekDate(last.week_number))
                                   const color = ph.name ? blockColor(ph.name) : '#4a4844'
-                                  const isDone = r.maxLoggedWk != null && last.week_number < r.maxLoggedWk
-                                  const isActive = r.maxLoggedWk != null && first.week_number <= r.maxLoggedWk && r.maxLoggedWk <= last.week_number
+                                  const isDone = r.currentWk != null && last.week_number < r.currentWk
+                                  const isActive = r.currentWk != null && first.week_number <= r.currentWk && r.currentWk <= last.week_number
                                   const range = first.week_number === last.week_number ? `u${first.week_number}` : `u${first.week_number}–${last.week_number}`
                                   return (
                                     <div key={pi} title={`${ph.name || 'Uden blok'} · ${range}`}
@@ -3686,6 +3704,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   // (som ofte mangler), hvor den gamle rene dato-logik fejlede.
                   const loggedWeekNums = weeks.map(w => w.week_number).filter(wn => (complianceByWeekNum[wn] || 0) > 0)
                   const maxLoggedWk = loggedWeekNums.length ? Math.max(...loggedWeekNums) : null
+                  // Foretræk daterede uger (samme "nu" som kalender + atlet); ellers logget fremdrift.
+                  const currentWk = currentWeekNo(weeks, maxLoggedWk)
 
                   const phases = computePhases(weeks)
 
@@ -3719,12 +3739,11 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                                 ? `${fmt(fd)} – ${fmt(new Date(new Date(ld + 'T12:00:00').getTime() + 6 * 86400000).toISOString().slice(0, 10))}`
                                 : null
                               let isDone = false, isActive = false
-                              if (maxLoggedWk != null) {
-                                // Primært: atletens faktiske fremdrift. Forbi blokken
-                                // (logget i en senere uge) = fuldført; den nuværende
-                                // uge ligger i blokken = aktiv.
-                                isDone = last.week_number < maxLoggedWk
-                                isActive = first.week_number <= maxLoggedWk && maxLoggedWk <= last.week_number
+                              if (currentWk != null) {
+                                // Nuværende uge (dato-foretrukket, ellers logget fremdrift).
+                                // Forbi blokken = fuldført; uge i blokken = aktiv.
+                                isDone = last.week_number < currentWk
+                                isActive = first.week_number <= currentWk && currentWk <= last.week_number
                               } else if (fd && ld) {
                                 // Ingen logs endnu → fald tilbage til datoer hvis sat.
                                 const blockStart = new Date(fd + 'T12:00:00')

@@ -52,6 +52,23 @@ function computeActiveWeekIdx(weeks) {
   return active >= 0 ? active : 0
 }
 
+// Udled en uges startdato fra den tidligste daterede uge (anker + 7 dage pr.
+// uge), så selv delvist daterede atleter får et datointerval på hver uge —
+// samme princip som coach-kalenderen, så datoerne er konsistente på tværs af
+// appen. Returnerer null hvis ingen uge har en dato.
+function weekStartDate(weeks, weekNumber) {
+  if (!weeks?.length) return null
+  const anchor = [...weeks].sort((a, b) => a.week_number - b.week_number).find(w => w.start_date)
+  if (!anchor) return null
+  return new Date(new Date(anchor.start_date + 'T12:00:00').getTime() + (weekNumber - anchor.week_number) * 7 * 86400000)
+}
+function fmtWeekRange(start) {
+  if (!start) return null
+  const end = new Date(start.getTime() + 6 * 86400000)
+  const f = (d) => d.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })
+  return `${f(start)} – ${f(end)}`
+}
+
 const LOCAL_FOODS = [
   // Mejeri
   { name: 'Mælk minimælk', kcal100: 42, protein100: 3, carb100: 5, fat100: 1 },
@@ -2348,7 +2365,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 <>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem', marginBottom: '0.75rem' }}>
                     <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a' }}>
-                      Uge {currentWeek.week_number}
+                      Uge {currentWeek.week_number}{(() => { const r = fmtWeekRange(weekStartDate(allWeeks, currentWeek.week_number)); return r ? ` · ${r}` : '' })()}
                     </span>
                     {currentWeek.block_name && (
                       <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#edeae2' }}>
@@ -2625,6 +2642,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         {tab === 'program' && (() => {
           const activeWeekIdx = computeActiveWeekIdx(allWeeks)
           const viewedWeek = allWeeks[viewingWeekIdx] || null
+          const viewedRange = viewedWeek ? fmtWeekRange(weekStartDate(allWeeks, viewedWeek.week_number)) : null
           const isCurrentWeek = viewingWeekIdx === activeWeekIdx
           const isFutureWeek = viewingWeekIdx > activeWeekIdx
           const logsForView = isCurrentWeek ? exerciseLogs : pastLogs
@@ -2772,6 +2790,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                             : viewingWeekIdx > activeWeekIdx
                               ? <span style={{ color: '#7a7770' }}>Planlagt · uge {viewedInPhase} af {phase.weeks.length}</span>
                               : <span style={{ color: '#7a7770' }}>Historisk · uge {viewedInPhase} af {phase.weeks.length}</span>}
+                          {viewedRange && <span style={{ color: '#4a4844' }}> · {viewedRange}</span>}
                           <span style={{ color: '#4a4844' }}> · total {activeWeekIdx + 1}/{totalWeeks}</span>
                         </div>
                       </div>
@@ -2795,12 +2814,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                         >← Forrige uge</button>
                         <div style={{ textAlign: 'center', flex: 1, padding: '0 0.5rem' }}>
                           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a' }}>
-                            Uge {viewedWeek.week_number}
-                            {isFutureWeek && (
-                              <span style={{ color: '#4a4844', marginLeft: '0.5em' }}>
-                                · planlagt{viewedWeek.start_date ? ` · fra ${new Date(viewedWeek.start_date + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })}` : ''}
-                              </span>
-                            )}
+                            Uge {viewedWeek.week_number}{viewedRange ? ` · ${viewedRange}` : ''}
+                            {isFutureWeek && <span style={{ color: '#4a4844', marginLeft: '0.5em' }}>· planlagt</span>}
                             {!isCurrentWeek && !isFutureWeek && <span style={{ color: '#4a4844', marginLeft: '0.5em' }}>· historisk</span>}
                           </div>
                           {viewedWeek.block_name && (
