@@ -3511,6 +3511,12 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                       .reduce((acc, e) => acc + (e.sets || 0), 0)
                   }
 
+                  // Højeste ugenummer atleten faktisk har logget i = den uge de
+                  // træner nu. Driver blok-fremdrift uafhængigt af start_date/sets
+                  // (som ofte mangler), hvor den gamle rene dato-logik fejlede.
+                  const loggedWeekNums = weeks.map(w => w.week_number).filter(wn => (complianceByWeekNum[wn] || 0) > 0)
+                  const maxLoggedWk = loggedWeekNums.length ? Math.max(...loggedWeekNums) : null
+
                   const phases = computePhases(weeks)
 
                   return (
@@ -3543,7 +3549,14 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                                 ? `${fmt(fd)} – ${fmt(new Date(new Date(ld + 'T12:00:00').getTime() + 6 * 86400000).toISOString().slice(0, 10))}`
                                 : null
                               let isDone = false, isActive = false
-                              if (fd && ld) {
+                              if (maxLoggedWk != null) {
+                                // Primært: atletens faktiske fremdrift. Forbi blokken
+                                // (logget i en senere uge) = fuldført; den nuværende
+                                // uge ligger i blokken = aktiv.
+                                isDone = last.week_number < maxLoggedWk
+                                isActive = first.week_number <= maxLoggedWk && maxLoggedWk <= last.week_number
+                              } else if (fd && ld) {
+                                // Ingen logs endnu → fald tilbage til datoer hvis sat.
                                 const blockStart = new Date(fd + 'T12:00:00')
                                 const blockEnd = new Date(new Date(ld + 'T12:00:00').getTime() + 7 * 86400000)
                                 isDone = today >= blockEnd
@@ -3559,7 +3572,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                                     border: `1px solid ${isActive ? color : isDone ? color + '55' : 'rgba(237,234,226,0.08)'}`,
                                     borderLeft: `3px solid ${phase.name ? color : 'rgba(237,234,226,0.15)'}`,
                                     padding: '0.7rem 0.8rem',
-                                    opacity: !phase.name || (!isActive && !isDone && fd) ? 0.78 : 1,
+                                    opacity: !phase.name || (!isActive && !isDone) ? 0.78 : 1,
                                   }}
                                 >
                                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.35rem' }}>
