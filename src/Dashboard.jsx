@@ -561,8 +561,11 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     setWeeks((data || []).map(w => ({
       ...w,
       sessions: (w.sessions || [])
-        .sort((a, b) => a.session_order - b.session_order)
-        .map(s => ({ ...s, exercises: (s.exercises || []).sort((a, b) => a.exercise_order - b.exercise_order) }))
+        // Sekundær sortering på id giver dage med ens session_order en STABIL,
+        // deterministisk rækkefølge — samme som reorderSession bruger, så ↑↓
+        // altid flytter den dag man tror.
+        .sort((a, b) => (a.session_order - b.session_order) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
+        .map(s => ({ ...s, exercises: (s.exercises || []).sort((a, b) => (a.exercise_order - b.exercise_order) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0)) }))
     })))
   }
 
@@ -655,25 +658,29 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
   async function reorderSession(weekId, sessionId, direction) {
     const week = weeks.find(w => w.id === weekId)
-    const sorted = [...(week?.sessions || [])].sort((a, b) => a.session_order - b.session_order)
+    const sorted = [...(week?.sessions || [])].sort((a, b) => (a.session_order - b.session_order) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
     const idx = sorted.findIndex(s => s.id === sessionId)
     const swapIdx = direction === 'up' ? idx - 1 : idx + 1
-    if (swapIdx < 0 || swapIdx >= sorted.length) return
-    const a = sorted[idx], b = sorted[swapIdx]
-    await supabase.from('sessions').update({ session_order: b.session_order }).eq('id', a.id)
-    await supabase.from('sessions').update({ session_order: a.session_order }).eq('id', b.id)
+    if (idx < 0 || swapIdx < 0 || swapIdx >= sorted.length) return
+    ;[sorted[idx], sorted[swapIdx]] = [sorted[swapIdx], sorted[idx]]
+    // Renummerér HELE ugen fortløbende (0,1,2,...). Robust selv når flere dage
+    // delte samme session_order — en simpel ombytning af to ens værdier ville
+    // ellers ikke ændre noget (årsag til at logget-importerede uger sad fast).
+    await Promise.all(sorted.map((sn, i) =>
+      sn.session_order === i ? null : supabase.from('sessions').update({ session_order: i }).eq('id', sn.id)))
     fetchWeeks(selectedAthlete.id)
   }
 
   async function reorderExercise(sessionId, exerciseId, direction) {
     const session = weeks.flatMap(w => w.sessions || []).find(s => s.id === sessionId)
-    const sorted = [...(session?.exercises || [])].sort((a, b) => a.exercise_order - b.exercise_order)
+    const sorted = [...(session?.exercises || [])].sort((a, b) => (a.exercise_order - b.exercise_order) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
     const idx = sorted.findIndex(e => e.id === exerciseId)
     const swapIdx = direction === 'up' ? idx - 1 : idx + 1
-    if (swapIdx < 0 || swapIdx >= sorted.length) return
-    const a = sorted[idx], b = sorted[swapIdx]
-    await supabase.from('exercises').update({ exercise_order: b.exercise_order }).eq('id', a.id)
-    await supabase.from('exercises').update({ exercise_order: a.exercise_order }).eq('id', b.id)
+    if (idx < 0 || swapIdx < 0 || swapIdx >= sorted.length) return
+    ;[sorted[idx], sorted[swapIdx]] = [sorted[swapIdx], sorted[idx]]
+    // Samme robuste renummerering som for dage (mod dublerede exercise_order).
+    await Promise.all(sorted.map((ex, i) =>
+      ex.exercise_order === i ? null : supabase.from('exercises').update({ exercise_order: i }).eq('id', ex.id)))
     fetchWeeks(selectedAthlete.id)
   }
 
