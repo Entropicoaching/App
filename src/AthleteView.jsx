@@ -68,6 +68,8 @@ function fmtWeekRange(start) {
   const f = (d) => d.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })
   return `${f(start)} – ${f(end)}`
 }
+// Valgfri fast ugedag pr. session (0=mandag .. 6=søndag). null = ingen fast dag.
+const WEEKDAYS_LONG = ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag', 'Søndag']
 
 const LOCAL_FOODS = [
   // Mejeri
@@ -2895,7 +2897,12 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                         >
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                             <div>
-                              <div style={{ ...s.cardLabel, marginBottom: '0.3rem', fontSize: '0.72rem' }}>{session.title}</div>
+                              <div style={{ ...s.cardLabel, marginBottom: '0.3rem', fontSize: '0.72rem', display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                                {session.title}
+                                {session.weekday != null && WEEKDAYS_LONG[session.weekday] && (
+                                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.04em', color: '#c8923a', border: '1px solid rgba(200,146,58,0.4)', padding: '0.1rem 0.35rem' }}>{WEEKDAYS_LONG[session.weekday]}</span>
+                                )}
+                              </div>
                               <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                                 {(session.exercises || []).length} øvelser · {loggedSets}/{totalSets} sæt logget{sessionLogs.filter(l => l.skipped).length > 0 ? ` · ${sessionLogs.filter(l => l.skipped).length} skippet` : ''}
                               </div>

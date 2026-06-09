@@ -39,6 +39,9 @@ function currentWeekNo(weeks, maxLoggedWk) {
   }
   return maxLoggedWk ?? null
 }
+// Valgfri fast ugedag pr. session (0=mandag .. 6=søndag). null = fleksibel (Træning 1/2/3).
+const WEEKDAYS_SHORT = ['Man', 'Tir', 'Ons', 'Tor', 'Fre', 'Lør', 'Søn']
+const WEEKDAYS_LONG = ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag', 'Søndag']
 
 const statusLabels = { active: 'Aktiv', peaking: 'Peaking', offseason: 'Off-season' }
 const statusColors = { active: '#6cba6c', peaking: '#c8923a', offseason: '#7a7770' }
@@ -298,7 +301,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [blockPlan, setBlockPlan] = useState([{ id: 1, name: 'Akkumulering', weeks: 4 }, { id: 2, name: 'Intensificering', weeks: 3 }, { id: 3, name: 'Peak', weeks: 2 }, { id: 4, name: 'Deload', weeks: 1 }])
   const [planStartDate, setPlanStartDate] = useState(() => new Date().toISOString().slice(0, 10))
   const [assignEdits, setAssignEdits] = useState({})
-  const [sessionForm, setSessionForm] = useState({ title: '' })
+  const [sessionForm, setSessionForm] = useState({ title: '', weekday: null })
   const [exerciseForm, setExerciseForm] = useState({ name: '', sets: '', reps: '', intensity: '', intensityPrefix: 'RPE', note: '' })
   const [athleteLogs, setAthleteLogs] = useState([])
   const [athleteWeightLogs, setAthleteWeightLogs] = useState([])
@@ -673,14 +676,15 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       week_id: weekId,
       title: sessionForm.title || 'Træning',
       session_order: nextOrder,
+      weekday: sessionForm.weekday ?? null,
     })
     setAddingSession(null)
-    setSessionForm({ title: '' })
+    setSessionForm({ title: '', weekday: null })
     fetchWeeks(selectedAthlete.id)
   }
 
   async function updateSession(sessionId) {
-    await supabase.from('sessions').update({ title: sessionForm.title }).eq('id', sessionId)
+    await supabase.from('sessions').update({ title: sessionForm.title, weekday: sessionForm.weekday ?? null }).eq('id', sessionId)
     setEditingSession(null)
     fetchWeeks(selectedAthlete.id)
   }
@@ -1459,6 +1463,24 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     }
     return logs[0]
   }
+
+  // Delt ugedags-vælger (bruges i både rediger- og tilføj-session-formen).
+  const weekdayPicker = (
+    <div style={{ marginBottom: '0.5rem' }}>
+      <div style={s.fieldLabel}>Fast ugedag (valgfri)</div>
+      <div style={{ display: 'flex', gap: '0.25rem', flexWrap: 'wrap' }}>
+        {WEEKDAYS_SHORT.map((d, i) => {
+          const active = sessionForm.weekday === i
+          return (
+            <button key={i} onClick={() => setSessionForm(p => ({ ...p, weekday: active ? null : i }))}
+              style={{ ...s.btnSm, fontSize: '0.55rem', padding: '0.25rem 0.5rem', background: active ? 'rgba(200,146,58,0.18)' : 'transparent', borderColor: active ? '#c8923a' : 'rgba(237,234,226,0.12)', color: active ? '#c8923a' : '#7a7770' }}>{d}</button>
+          )
+        })}
+        <button onClick={() => setSessionForm(p => ({ ...p, weekday: null }))}
+          style={{ ...s.btnSm, fontSize: '0.55rem', padding: '0.25rem 0.5rem', background: 'transparent', borderColor: sessionForm.weekday == null ? '#c8923a' : 'rgba(237,234,226,0.12)', color: sessionForm.weekday == null ? '#c8923a' : '#7a7770' }}>Ingen</button>
+      </div>
+    </div>
+  )
 
   const exFormRow = (() => {
     const searchLower = (exerciseForm.name || '').toLowerCase()
@@ -4064,6 +4086,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                                     <input style={s.fieldInput} type="text" value={sessionForm.title} onChange={e => setSessionForm(p => ({ ...p, title: e.target.value }))} />
                                   </div>
                                 </div>
+                                {weekdayPicker}
                                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                                   <button style={s.btnGhost} onClick={() => setEditingSession(null)}>Annuller</button>
                                   <button style={s.btnPrimary} onClick={() => updateSession(session.id)}>Gem</button>
@@ -4077,6 +4100,9 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                                 <div style={{ flex: 1, minWidth: 0 }}>
                                   <div style={{ fontSize: '0.88rem', color: '#edeae2', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                                     {session.title}
+                                    {session.weekday != null && WEEKDAYS_LONG[session.weekday] && (
+                                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: '#c8923a', border: '1px solid rgba(200,146,58,0.4)', padding: '0.12rem 0.4rem' }}>{WEEKDAYS_LONG[session.weekday]}</span>
+                                    )}
                                     {(() => {
                                       const st = sessionLogStatus(session)
                                       if (st.total === 0 && st.logged === 0) return null
@@ -4109,7 +4135,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                                   ) : (
                                     <button style={s.btnEdit} onClick={e => { e.stopPropagation(); setCopyingSession(session.id) }}>Kopiér</button>
                                   )}
-                                  <button style={s.btnEdit} onClick={e => { e.stopPropagation(); setEditingSession(session.id); setSessionForm({ title: session.title }) }}>Rediger</button>
+                                  <button style={s.btnEdit} onClick={e => { e.stopPropagation(); setEditingSession(session.id); setSessionForm({ title: session.title, weekday: session.weekday ?? null }) }}>Rediger</button>
                                   <button style={s.btnDanger} onClick={e => { e.stopPropagation(); deleteSession(session.id) }}>Slet</button>
                                   <span style={{ color: '#4a4844', fontSize: '0.6rem', marginLeft: '0.2rem' }}>{openSessionId === session.id ? '▲' : '▼'}</span>
                                 </div>
@@ -4236,13 +4262,14 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                               <div style={s.fieldLabel}>Titel</div>
                               <input style={s.fieldInput} type="text" placeholder="f.eks. Træning A" value={sessionForm.title} onChange={e => setSessionForm(p => ({ ...p, title: e.target.value }))} />
                             </div>
+                            {weekdayPicker}
                             <div style={{ display: 'flex', gap: '0.5rem' }}>
                               <button style={s.btnGhost} onClick={() => setAddingSession(null)}>Annuller</button>
                               <button style={s.btnPrimary} onClick={() => addSession(week.id)}>Tilføj</button>
                             </div>
                           </div>
                         ) : (
-                          <button style={{ ...s.btnGhost, marginTop: '0.5rem', fontSize: '0.54rem' }} onClick={() => { setAddingSession(week.id); setSessionForm({ title: '' }) }}>
+                          <button style={{ ...s.btnGhost, marginTop: '0.5rem', fontSize: '0.54rem' }} onClick={() => { setAddingSession(week.id); setSessionForm({ title: '', weekday: null }) }}>
                             + Tilføj træning
                           </button>
                         )}
