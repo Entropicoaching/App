@@ -2323,7 +2323,6 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
                         {displayAthletes.map((ath, i, arr) => {
                           const ws = athleteWeekSummary[ath.id]
-                          const hasSessions = ws && ws.session_count > 0
                           const isHidden = hiddenAthleteIds.has(ath.id)
                           return (
                             <div
@@ -2748,7 +2747,6 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: '1.25rem' }}>
                           {ordered.map(([name, prs]) => {
                             const sorted = [...prs].sort((a, b) => a.logged_at.localeCompare(b.logged_at))
-                            const latest = sorted[sorted.length - 1]
                             return (
                               <div key={name}>
                                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: isMain(name) ? '#c8923a' : '#7a7770', marginBottom: '0.5rem' }}>{name}</div>
@@ -4644,7 +4642,6 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
             {/* TAB: NOTER */}
             {activeTab === 'stævne' && (() => {
-              const isEditing = true
               const lifts = meetPlanForm.meet_type === 'sbd'
                 ? [{ key: 'squat', label: 'Squat' }, { key: 'bench', label: 'Bænkpres' }, { key: 'deadlift', label: 'Dødløft' }]
                 : [{ key: 'bench', label: 'Bænkpres' }]

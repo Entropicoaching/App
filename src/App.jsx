@@ -118,6 +118,7 @@ function App() {
 
   if (loading) return loaderScreen
 
+  // eslint-disable-next-line react-hooks/refs -- resolveRef læses kun inde i retry-callbacken (event handler), ikke under render
   if (loadError) return errorScreen(() => {
     setLoadError(false)
     setLoading(true)

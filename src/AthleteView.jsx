@@ -1158,7 +1158,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [allWeeks, setAllWeeks] = useState([])
   const [viewingWeekIdx, setViewingWeekIdx] = useState(0)
   const [pastLogs, setPastLogs] = useState([])
-  const [allExerciseLogs, setAllExerciseLogs] = useState([])
   const [progOpenSession, setProgOpenSession] = useState(null)
   const [exerciseLogs, setExerciseLogs] = useState([])
   const [logInputs, setLogInputs] = useState({})
@@ -1196,7 +1195,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   // Warmup state
   const [warmupTemplates, setWarmupTemplates] = useState([])
   const [warmupChecked, setWarmupChecked] = useState({})
-  const [warmupExpanded, setWarmupExpanded] = useState(new Set())
   const [exWarmupExpanded, setExWarmupExpanded] = useState(new Set())
   const [exWarmupWeightOverride, setExWarmupWeightOverride] = useState({})
   const [exWarmupWeightEditing, setExWarmupWeightEditing] = useState(null)
@@ -1243,6 +1241,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   useEffect(() => { if (tab === 'beskeder') messagesEndRef.current?.scrollIntoView({ block: 'end' }) }, [messages, tab])
   useEffect(() => { if (tab === 'stævnedag' && athlete) { fetchMeetPlan(athlete.id); fetchMeetResults(athlete.id) } }, [tab, athlete?.id])
 
+  /* eslint-disable react-hooks/set-state-in-effect -- bevidst: seeder initial opvarmnings-fokus fra programmet + driver nedtællings-timeren */
   useEffect(() => {
     if (tab === 'opvarmning' && currentWeek && warmupPhase === 'focus' && !warmupFocus) {
       for (const session of currentWeek.sessions || []) {
@@ -1263,6 +1262,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     timerRef.current = setTimeout(() => setTimerSeconds(s => s - 1), 1000)
     return () => clearTimeout(timerRef.current)
   }, [timerActive, timerSeconds])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   useEffect(() => {
     if (!loading) return
@@ -1334,16 +1334,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       .select('*')
       .eq('athlete_id', athleteId)
     setWarmupTemplates(data || [])
-  }
-
-  function detectSessionCategory(session) {
-    for (const ex of session.exercises || []) {
-      const n = (ex.name || '').toLowerCase()
-      if (n.includes('squat')) return 'Squat'
-      if (n.includes('bænk') || n.includes('bench')) return 'Bænkpres'
-      if (n.includes('dødl') || n.includes('deadlift')) return 'Dødløft'
-    }
-    return null
   }
 
   function isMainLift(name) {
@@ -1531,7 +1521,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     fetchExerciseLogs(athleteId, activeWeek)
     fetchLastLogs(athleteId, activeWeek)
     fetchExerciseHistory(athleteId)
-    fetchAllExerciseLogs(athleteId, weeks)
   }
 
   // Åbn/luk en session i programmet. Ved åbning scrolles dens header op i
@@ -1546,16 +1535,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     }
   }
 
-  async function fetchAllExerciseLogs(athleteId, weeks) {
-    const allExIds = weeks.flatMap(w => (w.sessions || []).flatMap(s => (s.exercises || []).map(e => e.id)))
-    if (allExIds.length === 0) return
-    const { data } = await supabase
-      .from('exercise_logs')
-      .select('exercise_id, skipped')
-      .eq('athlete_id', athleteId)
-      .in('exercise_id', allExIds)
-    setAllExerciseLogs(data || [])
-  }
 
   async function fetchPastLogs(week, athleteId) {
     const exerciseIds = (week?.sessions || []).flatMap(s => (s.exercises || []).map(e => e.id))
@@ -2028,7 +2007,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     showFlash(`${rows.length} sæt udfyldt.`)
     await fetchExerciseLogs(athlete.id, currentWeek)
     await fetchPastLogs(allWeeks[viewingWeekIdx], athlete.id)
-    await fetchAllExerciseLogs(athlete.id, allWeeks)
   }
 
   async function deleteLog(l) {
@@ -4221,7 +4199,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                     {/* Attempt rows */}
                     <div style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)', marginBottom: '0.75rem' }}>
                       {attempts.map((att, i) => {
-                        const done = att.r !== null
                         const bg = att.r === 'good' ? 'rgba(108,186,108,0.08)' : att.r === 'fail' ? 'rgba(224,85,85,0.08)' : 'transparent'
                         const border = att.r === 'good' ? 'rgba(108,186,108,0.25)' : att.r === 'fail' ? 'rgba(224,85,85,0.25)' : 'rgba(237,234,226,0.07)'
                         return (
