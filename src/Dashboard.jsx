@@ -298,6 +298,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [renamingBlock, setRenamingBlock] = useState(null)
   const [renameValue, setRenameValue] = useState('')
   const [showBlockPlanner, setShowBlockPlanner] = useState(false)
+  const [calBlockAthlete, setCalBlockAthlete] = useState(null) // {id, name} når kalender-blok-byggeren er åben
   const [blockPlan, setBlockPlan] = useState([{ id: 1, name: 'Akkumulering', weeks: 4 }, { id: 2, name: 'Intensificering', weeks: 3 }, { id: 3, name: 'Peak', weeks: 2 }, { id: 4, name: 'Deload', weeks: 1 }])
   const [planStartDate, setPlanStartDate] = useState(() => new Date().toISOString().slice(0, 10))
   const [assignEdits, setAssignEdits] = useState({})
@@ -641,16 +642,20 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     fetchWeeks(selectedAthlete.id)
   }
 
-  async function generateWeeksFromPlan() {
-    if (!selectedAthlete || !planStartDate || !blockPlan.length) return
-    const nextNum = weeks.length > 0 ? Math.max(...weeks.map(w => w.week_number)) + 1 : 1
+  // Genererer tomme uger ud fra blockPlan for en atlet. Default = den valgte atlet
+  // (Program-fanen), men kan kaldes med en athleteId fra kalenderen.
+  async function generateWeeksFromPlan(athleteId = selectedAthlete?.id) {
+    if (!athleteId || !planStartDate || !blockPlan.length) return
+    // Find atletens eksisterende uger fra den rigtige kilde (Program-fane vs kalender).
+    const existing = athleteId === selectedAthlete?.id ? weeks : (calendarWeeks[athleteId] || [])
+    const nextNum = existing.length > 0 ? Math.max(...existing.map(w => w.week_number)) + 1 : 1
     const rows = []
     let weekNum = nextNum
     let currentDate = new Date(planStartDate + 'T12:00:00')
     for (const block of blockPlan) {
       for (let i = 0; i < (block.weeks || 1); i++) {
         rows.push({
-          athlete_id: selectedAthlete.id,
+          athlete_id: athleteId,
           week_number: weekNum++,
           block_name: block.name || null,
           start_date: currentDate.toISOString().slice(0, 10),
@@ -662,8 +667,55 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     }
     await supabase.from('weeks').insert(rows)
     setShowBlockPlanner(false)
-    fetchWeeks(selectedAthlete.id)
-    fetchAthleteWeekSummaries(weeks.map(w => w.athlete_id).filter(Boolean).concat([selectedAthlete.id]).filter((v, i, a) => a.indexOf(v) === i))
+    setCalBlockAthlete(null)
+    if (athleteId === selectedAthlete?.id) fetchWeeks(athleteId)
+    await fetchCalendarWeeks(athletes.map(a => a.id))
+    fetchAthleteWeekSummaries(athletes.map(a => a.id))
+  }
+
+  // Bygger til kalender-blok-opstilling: returnerer blok-sekvens-editoren (delt UI).
+  function blockSequenceRows() {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
+        {blockPlan.map((block, i) => (
+          <div key={block.id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div style={{ width: '10px', height: '10px', borderRadius: '2px', background: blockColor(block.name), flexShrink: 0 }} />
+            <select
+              value={block.name}
+              onChange={e => setBlockPlan(p => p.map((b, j) => j === i ? { ...b, name: e.target.value } : b))}
+              style={{ ...s.fieldSelect, width: '160px', padding: '0.35rem 0.6rem', fontSize: '0.72rem' }}
+            >
+              {BLOCK_NAMES.map(n => <option key={n} value={n}>{n}</option>)}
+            </select>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <input
+                type="number" min="1" max="20"
+                value={block.weeks}
+                onChange={e => setBlockPlan(p => p.map((b, j) => j === i ? { ...b, weeks: Math.max(1, parseInt(e.target.value) || 1) } : b))}
+                style={{ ...s.fieldInput, width: '52px', padding: '0.35rem 0.5rem', fontSize: '0.72rem', textAlign: 'center' }}
+              />
+              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770' }}>uge{block.weeks !== 1 ? 'r' : ''}</span>
+            </div>
+            <button onClick={() => setBlockPlan(p => p.filter((_, j) => j !== i))} style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.7rem', padding: '0.1rem 0.3rem' }}>✕</button>
+          </div>
+        ))}
+        <button
+          onClick={() => setBlockPlan(p => [...p, { id: Date.now(), name: BLOCK_NAMES[0], weeks: 2 }])}
+          style={{ ...s.btnGhost, fontSize: '0.52rem', padding: '0.3rem 0.7rem', alignSelf: 'flex-start', marginTop: '0.25rem' }}
+        >+ Tilføj blok</button>
+      </div>
+    )
+  }
+
+  // Åbn kalender-blok-byggeren for en atlet; seed startdato efter deres sidste daterede uge (ellers i dag).
+  function openCalBlockBuilder(a) {
+    const wks = calendarWeeks[a.id] || []
+    const dated = wks.filter(w => w.start_date).sort((x, y) => y.week_number - x.week_number)
+    const seed = dated.length
+      ? new Date(new Date(dated[0].start_date + 'T12:00:00').getTime() + 7 * 24 * 3600 * 1000).toISOString().slice(0, 10)
+      : new Date().toISOString().slice(0, 10)
+    setPlanStartDate(seed)
+    setCalBlockAthlete({ id: a.id, name: a.name })
   }
 
   function deleteWeek(weekId) {
@@ -2090,7 +2142,17 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
                 return (
                   <div style={{ ...s.card, marginBottom: '1.5rem' }}>
-                    <div style={s.cardLabel}>Tidslinje</div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      <div style={s.cardLabel}>Tidslinje</div>
+                      <select
+                        value=""
+                        onChange={e => { const a = visibleAthletes.find(x => x.id === e.target.value); if (a) openCalBlockBuilder(a) }}
+                        style={{ ...s.fieldSelect, fontSize: '0.6rem', padding: '0.3rem 0.5rem', width: 'auto', color: '#c8923a', borderColor: 'rgba(200,146,58,0.4)' }}
+                      >
+                        <option value="">+ Opstil blokke for…</option>
+                        {visibleAthletes.map(a => <option key={a.id} value={a.id} style={{ color: '#edeae2' }}>{a.name}</option>)}
+                      </select>
+                    </div>
 
                     {placed.length === 0 ? (
                       <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', padding: '0.75rem 0' }}>
@@ -2189,12 +2251,68 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                         {tray.map(r => (
                           <div key={r.a.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', padding: '0.4rem 0', borderBottom: '1px solid rgba(237,234,226,0.04)', flexWrap: 'wrap' }}>
                             <span onClick={() => openProfile(r.a, 'program')} style={{ fontSize: '0.82rem', color: '#edeae2', cursor: 'pointer' }}>{r.a.name}</span>
-                            <button style={{ ...s.btnGhost, fontSize: '0.55rem', padding: '0.25rem 0.5rem' }}
-                              onClick={() => r.phases[0] && openEdit(r, r.phases[0])}>Sæt startdato</button>
+                            <div style={{ display: 'flex', gap: '0.4rem' }}>
+                              <button style={{ ...s.btnGhost, fontSize: '0.55rem', padding: '0.25rem 0.5rem' }}
+                                onClick={() => r.phases[0] && openEdit(r, r.phases[0])}>Sæt startdato</button>
+                              <button style={{ ...s.btnGhost, fontSize: '0.55rem', padding: '0.25rem 0.5rem', color: '#c8923a', borderColor: 'rgba(200,146,58,0.4)' }}
+                                onClick={() => openCalBlockBuilder(r.a)}>+ blok</button>
+                            </div>
                           </div>
                         ))}
                       </div>
                     )}
+
+                    {/* Kalender-blok-bygger — opstil/forlæng en atlets blokke direkte her */}
+                    {calBlockAthlete && (() => {
+                      const ath = athletes.find(x => x.id === calBlockAthlete.id)
+                      const existing = calendarWeeks[calBlockAthlete.id] || []
+                      const nextNum = existing.length ? Math.max(...existing.map(w => w.week_number)) + 1 : 1
+                      const totalWeeks = blockPlan.reduce((sum, b) => sum + (b.weeks || 0), 0)
+                      const endDate = totalWeeks > 0 && planStartDate
+                        ? new Date(new Date(planStartDate + 'T12:00:00').getTime() + totalWeeks * 7 * dayMs - dayMs) : null
+                      const compObj = ath?.competition_date ? new Date(ath.competition_date + 'T12:00:00') : null
+                      const diffDays = endDate && compObj ? Math.round((compObj - endDate) / dayMs) : null
+                      const fmtD = d => d.toLocaleDateString('da-DK', { day: 'numeric', month: 'short', year: 'numeric' })
+                      return (
+                        <div style={{ marginTop: '0.75rem', padding: '1rem', background: '#16160f', border: '1px solid rgba(200,146,58,0.3)', borderRadius: 3 }}>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.75rem' }}>
+                            Opstil blokke — {calBlockAthlete.name}{existing.length ? ` · fortsætter fra uge ${nextNum}` : ''}
+                          </div>
+                          <div style={{ marginBottom: '0.75rem' }}>
+                            <div style={s.fieldLabel}>Startdato</div>
+                            <input style={{ ...s.fieldInput, maxWidth: '180px' }} type="date" value={planStartDate} onChange={e => setPlanStartDate(e.target.value)} />
+                          </div>
+                          {blockSequenceRows()}
+                          {totalWeeks > 0 && planStartDate && (
+                            <div style={{ display: 'flex', width: '100%', height: '26px', borderRadius: '2px', overflow: 'hidden', marginBottom: '0.5rem' }}>
+                              {blockPlan.map(block => {
+                                const pct = (block.weeks / totalWeeks) * 100
+                                return (
+                                  <div key={block.id} title={`${block.name}: ${block.weeks} uge${block.weeks !== 1 ? 'r' : ''}`}
+                                    style={{ width: `${pct}%`, flexShrink: 0, background: blockColor(block.name), display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                                    {block.weeks >= 2 && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', color: '#141410', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', padding: '0 6px' }}>{block.name}</span>}
+                                  </div>
+                                )
+                              })}
+                            </div>
+                          )}
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', marginBottom: '0.85rem' }}>
+                            <span style={{ color: '#7a7770' }}>Total: {totalWeeks} uger</span>
+                            {endDate && <span style={{ color: '#7a7770' }}> · slutter {fmtD(endDate)}</span>}
+                            {diffDays != null && (
+                              <span style={{ marginLeft: '0.6rem', color: diffDays >= 0 ? '#6cba6c' : '#e05555', fontWeight: 600 }}>
+                                {diffDays >= 0 ? `✓ ${diffDays} dage før stævne` : `⚠ ${Math.abs(diffDays)} dage efter stævne`}
+                              </span>
+                            )}
+                            {!compObj && <span style={{ color: '#4a4844', marginLeft: '0.6rem' }}>— ingen stævnedato sat</span>}
+                          </div>
+                          <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            <button style={s.btnGhost} onClick={() => setCalBlockAthlete(null)}>Annuller</button>
+                            <button style={s.btnPrimary} disabled={!planStartDate || totalWeeks === 0} onClick={() => generateWeeksFromPlan(calBlockAthlete.id)}>Opret {totalWeeks} uger</button>
+                          </div>
+                        </div>
+                      )
+                    })()}
                   </div>
                 )
               })()}
