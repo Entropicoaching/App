@@ -1221,6 +1221,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [meetWarmupEditing, setMeetWarmupEditing] = useState(null)
   const [meetWarmupDraft, setMeetWarmupDraft] = useState([])
   const [meetWarmupOverrides, setMeetWarmupOverrides] = useState({})
+  const [meetResults, setMeetResults] = useState([])
   const [meetAttempts, setMeetAttempts] = useState({
     squat:    [{ w: '', r: null }, { w: '', r: null }, { w: '', r: null }],
     bench:    [{ w: '', r: null }, { w: '', r: null }, { w: '', r: null }],
@@ -1240,7 +1241,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   useEffect(() => { if (athlete) fetchLogs(athlete.id, kostDate) }, [kostDate, athlete?.id])
   useEffect(() => { if (tab === 'beskeder' && athlete) { fetchAthleteMessages(); markMessagesAsRead() } }, [tab, athlete?.id])
   useEffect(() => { if (tab === 'beskeder') messagesEndRef.current?.scrollIntoView({ block: 'end' }) }, [messages, tab])
-  useEffect(() => { if (tab === 'stævnedag' && athlete) fetchMeetPlan(athlete.id) }, [tab, athlete?.id])
+  useEffect(() => { if (tab === 'stævnedag' && athlete) { fetchMeetPlan(athlete.id); fetchMeetResults(athlete.id) } }, [tab, athlete?.id])
 
   useEffect(() => {
     if (tab === 'opvarmning' && currentWeek && warmupPhase === 'focus' && !warmupFocus) {
@@ -1299,6 +1300,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       fetchReadiness(data.id)
       fetchWarmupTemplates(data.id)
       fetchMeetPlan(data.id)
+      fetchMeetResults(data.id)
     }
     setLoading(false)
   }
@@ -1315,6 +1317,15 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         deadlift: [{ w: data.dead1  ?? '', r: null }, { w: data.dead2  ?? '', r: null }, { w: data.dead3  ?? '', r: null }],
       })
     }
+  }
+
+  async function fetchMeetResults(athleteId) {
+    const { data } = await supabase
+      .from('meet_results')
+      .select('*')
+      .eq('athlete_id', athleteId)
+      .order('meet_date', { ascending: false })
+    setMeetResults(data || [])
   }
 
   async function fetchWarmupTemplates(athleteId) {
@@ -4080,6 +4091,38 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
             }
           }
 
+          const meetHistoryCard = meetResults.length > 0 ? (
+            <div style={{ ...s.card, marginTop: '1.5rem' }}>
+              <div style={s.cardLabel}>Tidligere stævner</div>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: "'IBM Plex Mono', monospace" }}>
+                  <thead>
+                    <tr style={{ textAlign: 'left', color: '#4a4844', fontSize: '0.46rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                      <th style={{ padding: '0.35rem 0.4rem 0.35rem 0', fontWeight: 500 }}>Dato</th>
+                      <th style={{ padding: '0.35rem 0.4rem', fontWeight: 500 }}>Stævne</th>
+                      <th style={{ padding: '0.35rem 0.4rem', fontWeight: 500, textAlign: 'right' }}>S</th>
+                      <th style={{ padding: '0.35rem 0.4rem', fontWeight: 500, textAlign: 'right' }}>B</th>
+                      <th style={{ padding: '0.35rem 0.4rem', fontWeight: 500, textAlign: 'right' }}>D</th>
+                      <th style={{ padding: '0.35rem 0 0.35rem 0.4rem', fontWeight: 500, textAlign: 'right' }}>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {meetResults.map(m => (
+                      <tr key={m.id} style={{ borderTop: '1px solid rgba(237,234,226,0.06)', fontSize: '0.72rem', color: '#edeae2' }}>
+                        <td style={{ padding: '0.5rem 0.4rem 0.5rem 0', whiteSpace: 'nowrap' }}>{new Date(m.meet_date + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short', year: '2-digit' })}</td>
+                        <td style={{ padding: '0.5rem 0.4rem', color: '#b8b4a8', fontFamily: "'IBM Plex Sans', sans-serif" }}>{m.meet_name || '—'}</td>
+                        <td style={{ padding: '0.5rem 0.4rem', textAlign: 'right', color: m.squat != null ? '#edeae2' : '#3a3a36' }}>{m.squat != null ? m.squat : '–'}</td>
+                        <td style={{ padding: '0.5rem 0.4rem', textAlign: 'right', color: m.bench != null ? '#edeae2' : '#3a3a36' }}>{m.bench != null ? m.bench : '–'}</td>
+                        <td style={{ padding: '0.5rem 0.4rem', textAlign: 'right', color: m.deadlift != null ? '#edeae2' : '#3a3a36' }}>{m.deadlift != null ? m.deadlift : '–'}</td>
+                        <td style={{ padding: '0.5rem 0 0.5rem 0.4rem', textAlign: 'right', color: '#c8923a' }}>{m.total != null ? m.total : '–'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ) : null
+
           // STANDBY — ingen stævneplan
           if (!hasMeetPlan) {
             const compDate = athlete.competition_date
@@ -4127,6 +4170,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                   )}
                 </div>
               )}
+              {meetHistoryCard}
             </>
           )}
 
@@ -4297,6 +4341,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                   Nulstil
                 </button>
               )}
+              {meetHistoryCard}
             </>
           )
         })()}

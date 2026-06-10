@@ -322,6 +322,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [meetPlanForm, setMeetPlanForm] = useState({ meet_type: 'sbd', squat1: '', squat2: '', squat3: '', bench1: '', bench2: '', bench3: '', dead1: '', dead2: '', dead3: '', notes: '' })
   const [savingMeetPlan, setSavingMeetPlan] = useState(false)
 
+  // Meet results (historik)
+  const [meetResults, setMeetResults] = useState([])
+  const [meetResultForm, setMeetResultForm] = useState(null) // null = lukket
+
   const [previewPickerOpen, setPreviewPickerOpen] = useState(false)
   const [exerciseLibrary, setExerciseLibrary] = useState([])
   const [exerciseSearchOpen, setExerciseSearchOpen] = useState(false)
@@ -380,6 +384,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       fetchAthleteWeightLogs(selectedAthlete.id)
       fetchAthleteReadiness(selectedAthlete.id)
       fetchAthletePRs(selectedAthlete.id)
+      fetchMeetResults(selectedAthlete.id)
     }
   }, [activeTab, selectedAthlete?.id])
 
@@ -1014,6 +1019,15 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     setAthletePRs(prs)
   }
 
+  async function fetchMeetResults(athleteId) {
+    const { data } = await supabase
+      .from('meet_results')
+      .select('*')
+      .eq('athlete_id', athleteId)
+      .order('meet_date', { ascending: false })
+    setMeetResults(data || [])
+  }
+
   async function fetchMeetPlan(athleteId) {
     const { data } = await supabase.from('meet_plans').select('*').eq('athlete_id', athleteId).maybeSingle()
     setMeetPlan(data || null)
@@ -1100,6 +1114,79 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     }
     setEditing(null)
     setSaving(false)
+  }
+
+  // Åbn "Registrér stævneresultat"-modal; forudfyld fra atletens stævneplan hvis den findes.
+  async function openMeetResult() {
+    if (!selectedAthlete) return
+    const { data: mp } = await supabase.from('meet_plans').select('*').eq('athlete_id', selectedAthlete.id).maybeSingle()
+    const type = mp?.meet_type || 'sbd'
+    const sbd = type === 'sbd'
+    setMeetResultForm({
+      meet_date: selectedAthlete.competition_date || new Date().toISOString().slice(0, 10),
+      meet_name: '',
+      contest: { squat: sbd, bench: true, deadlift: sbd },
+      squat: mp?.squat3 ?? selectedAthlete.squat ?? '',
+      bench: mp?.bench3 ?? selectedAthlete.bench ?? '',
+      deadlift: mp?.dead3 ?? selectedAthlete.deadlift ?? '',
+      bodyweight: '',
+      notes: '',
+      setOffseason: true,
+      clearDate: true,
+      newDate: '',
+      savePR: true,
+    })
+  }
+
+  async function saveMeetResult() {
+    const f = meetResultForm
+    if (!f || !selectedAthlete) return
+    const picked = ['squat', 'bench', 'deadlift'].filter(k => f.contest[k])
+    if (!picked.length) { showFlash('Vælg mindst ét løft', 'error'); return }
+    setSaving(true)
+    const vals = {}
+    picked.forEach(k => { vals[k] = (f[k] === '' || f[k] == null) ? null : parseFloat(f[k]) })
+    const total = picked.reduce((sum, k) => sum + (vals[k] || 0), 0)
+    const meet_type = picked.length === 3 ? 'sbd' : picked.length === 1 ? picked[0] : 'custom'
+    const { error: insErr } = await supabase.from('meet_results').insert({
+      athlete_id: selectedAthlete.id,
+      meet_date: f.meet_date,
+      meet_name: f.meet_name.trim() || null,
+      meet_type,
+      squat: vals.squat ?? null, bench: vals.bench ?? null, deadlift: vals.deadlift ?? null,
+      total: total || null,
+      bodyweight: f.bodyweight ? parseFloat(f.bodyweight) : null,
+      notes: f.notes.trim() || null,
+    })
+    if (insErr) { showFlash('Kunne ikke gemme resultat', 'error'); setSaving(false); return }
+    // Opdater kun de konkurrerede løfts maks + status/dato.
+    const upd = {}
+    picked.forEach(k => { if (vals[k] != null) upd[k] = vals[k] })
+    if (f.setOffseason) upd.status = 'offseason'
+    if (f.clearDate) upd.competition_date = null
+    else if (f.newDate) upd.competition_date = f.newDate
+    if (Object.keys(upd).length) {
+      const { data: updated } = await supabase.from('athletes').update(upd).eq('id', selectedAthlete.id).select().single()
+      if (updated) { setSelectedAthlete(updated); setAthletes(prev => prev.map(x => x.id === updated.id ? updated : x)) }
+    }
+    if (f.savePR) {
+      const labelMap = { squat: 'Squat', bench: 'Bænkpres', deadlift: 'Dødløft' }
+      const prRows = picked.filter(k => vals[k] != null).map(k => ({ athlete_id: selectedAthlete.id, exercise_name: labelMap[k], weight: vals[k], reps: 1, logged_at: f.meet_date }))
+      if (prRows.length) await supabase.from('personal_records').insert(prRows)
+    }
+    await fetchMeetResults(selectedAthlete.id)
+    await fetchAthletePRs(selectedAthlete.id)
+    setMeetResultForm(null)
+    setSaving(false)
+    showFlash('Stævneresultat registreret', 'success')
+  }
+
+  function deleteMeetResult(id) {
+    askConfirm('Slet dette stævneresultat?', async () => {
+      await supabase.from('meet_results').delete().eq('id', id)
+      setMeetResults(prev => prev.filter(m => m.id !== id))
+      showFlash('Resultat slettet', 'success')
+    })
   }
 
   async function deleteAthlete() {
@@ -3394,9 +3481,12 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 <div style={s.cardLabel}>
                   Næste stævne
                   {editing !== 'competition' && (
-                    <button style={s.btnEdit} onClick={() => startEdit('competition', { competition_date: a.competition_date || '' })}>
-                      {a.competition_date ? 'Rediger' : 'Tilføj dato'}
-                    </button>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <button style={s.btnEdit} onClick={() => openMeetResult()}>Registrér resultat</button>
+                      <button style={s.btnEdit} onClick={() => startEdit('competition', { competition_date: a.competition_date || '' })}>
+                        {a.competition_date ? 'Rediger' : 'Tilføj dato'}
+                      </button>
+                    </div>
                   )}
                 </div>
                 {editing === 'competition' ? (
@@ -3425,6 +3515,45 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   )
                 })() : (
                   <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen stævnedato sat endnu.</div>
+                )}
+              </div>
+
+              {/* Stævnehistorik */}
+              <div style={{ ...s.card, marginTop: '1.5rem' }}>
+                <div style={s.cardLabel}>Stævnehistorik</div>
+                {meetResults.length === 0 ? (
+                  <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen stævner registreret endnu.</div>
+                ) : (
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: "'IBM Plex Mono', monospace" }}>
+                      <thead>
+                        <tr style={{ textAlign: 'left', color: '#4a4844', fontSize: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                          <th style={{ padding: '0.4rem 0.5rem 0.4rem 0', fontWeight: 500 }}>Dato</th>
+                          <th style={{ padding: '0.4rem 0.5rem', fontWeight: 500 }}>Stævne</th>
+                          <th style={{ padding: '0.4rem 0.5rem', fontWeight: 500, textAlign: 'right' }}>S</th>
+                          <th style={{ padding: '0.4rem 0.5rem', fontWeight: 500, textAlign: 'right' }}>B</th>
+                          <th style={{ padding: '0.4rem 0.5rem', fontWeight: 500, textAlign: 'right' }}>D</th>
+                          <th style={{ padding: '0.4rem 0.5rem', fontWeight: 500, textAlign: 'right' }}>Total</th>
+                          <th style={{ padding: '0.4rem 0 0.4rem 0.5rem' }}></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {meetResults.map(m => (
+                          <tr key={m.id} style={{ borderTop: '1px solid rgba(237,234,226,0.07)', fontSize: '0.78rem', color: '#edeae2' }}>
+                            <td style={{ padding: '0.5rem 0.5rem 0.5rem 0', whiteSpace: 'nowrap' }}>{new Date(m.meet_date + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short', year: '2-digit' })}</td>
+                            <td style={{ padding: '0.5rem', color: '#b8b4a8', fontFamily: "'IBM Plex Sans', sans-serif" }}>{m.meet_name || <span style={{ color: '#4a4844' }}>—</span>}</td>
+                            <td style={{ padding: '0.5rem', textAlign: 'right', color: m.squat != null ? '#edeae2' : '#3a3a36' }}>{m.squat != null ? m.squat : '–'}</td>
+                            <td style={{ padding: '0.5rem', textAlign: 'right', color: m.bench != null ? '#edeae2' : '#3a3a36' }}>{m.bench != null ? m.bench : '–'}</td>
+                            <td style={{ padding: '0.5rem', textAlign: 'right', color: m.deadlift != null ? '#edeae2' : '#3a3a36' }}>{m.deadlift != null ? m.deadlift : '–'}</td>
+                            <td style={{ padding: '0.5rem', textAlign: 'right', color: '#c8923a' }}>{m.total != null ? m.total : '–'}</td>
+                            <td style={{ padding: '0.5rem 0 0.5rem 0.5rem', textAlign: 'right' }}>
+                              <button onClick={() => deleteMeetResult(m.id)} style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.85rem', padding: 0 }} title="Slet">✕</button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 )}
               </div>
 
@@ -4641,6 +4770,80 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           </div>
         )}
       </main>
+
+      {meetResultForm && (() => {
+        const f = meetResultForm
+        const set = (patch) => setMeetResultForm(p => ({ ...p, ...patch }))
+        const picked = ['squat', 'bench', 'deadlift'].filter(k => f.contest[k])
+        const previewTotal = picked.reduce((sum, k) => sum + (parseFloat(f[k]) || 0), 0)
+        return (
+          <div style={s.overlay} onClick={e => e.target === e.currentTarget && setMeetResultForm(null)}>
+            <div style={{ ...s.modal, maxWidth: '480px', maxHeight: '88vh', overflowY: 'auto' }}>
+              <div style={s.modalTitle}>Registrér stævneresultat — {selectedAthlete?.name?.split(' ')[0]}</div>
+
+              <div style={{ marginBottom: '0.75rem' }}>
+                <div style={s.fieldLabel}>Stævnedato</div>
+                <input style={s.fieldInput} type="date" value={f.meet_date} onChange={e => set({ meet_date: e.target.value })} />
+              </div>
+              <div style={{ marginBottom: '1.1rem' }}>
+                <div style={s.fieldLabel}>Stævnenavn (valgfrit)</div>
+                <input style={s.fieldInput} type="text" placeholder="f.eks. DM i bænkpres 2026" value={f.meet_name} onChange={e => set({ meet_name: e.target.value })} />
+              </div>
+
+              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.6rem' }}>Konkurrerede løft</div>
+              {[['squat', 'Squat'], ['bench', 'Bænkpres'], ['deadlift', 'Dødløft']].map(([k, label]) => (
+                <div key={k} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', minWidth: '130px', cursor: 'pointer', fontSize: '0.85rem', color: f.contest[k] ? '#edeae2' : '#7a7770' }}>
+                    <input type="checkbox" checked={f.contest[k]} onChange={() => setMeetResultForm(p => ({ ...p, contest: { ...p.contest, [k]: !p.contest[k] } }))} />
+                    {label}
+                  </label>
+                  <input style={{ ...s.fieldInput, flex: 1, opacity: f.contest[k] ? 1 : 0.35 }} type="number" inputMode="decimal" placeholder="kg" disabled={!f.contest[k]} value={f.contest[k] ? f[k] : ''} onChange={e => set({ [k]: e.target.value })} />
+                </div>
+              ))}
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: '0.5rem', marginBottom: '1.1rem', paddingTop: '0.6rem', borderTop: '1px solid rgba(237,234,226,0.07)' }}>
+                <span style={s.fieldLabel}>Total</span>
+                <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', color: '#edeae2' }}>{previewTotal || 0} <span style={{ fontSize: '0.8rem', color: '#7a7770' }}>kg</span></span>
+              </div>
+
+              <div style={{ marginBottom: '1.1rem' }}>
+                <div style={s.fieldLabel}>Kropsvægt ved indvejning (valgfrit)</div>
+                <input style={s.fieldInput} type="number" inputMode="decimal" placeholder="kg" value={f.bodyweight} onChange={e => set({ bodyweight: e.target.value })} />
+              </div>
+              <div style={{ marginBottom: '1.25rem' }}>
+                <div style={s.fieldLabel}>Note (valgfrit)</div>
+                <textarea style={{ ...s.fieldInput, minHeight: '60px', resize: 'vertical' }} value={f.notes} onChange={e => set({ notes: e.target.value })} />
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem', marginBottom: '1.25rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', cursor: 'pointer', fontSize: '0.85rem', color: '#b8b4a8' }}>
+                  <input type="checkbox" checked={f.setOffseason} onChange={() => set({ setOffseason: !f.setOffseason })} />
+                  Sæt status til Off-season
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', cursor: 'pointer', fontSize: '0.85rem', color: '#b8b4a8' }}>
+                  <input type="checkbox" checked={f.clearDate} onChange={() => set({ clearDate: !f.clearDate })} />
+                  Ryd stævnedato
+                </label>
+                {!f.clearDate && (
+                  <div style={{ marginLeft: '1.4rem' }}>
+                    <div style={s.fieldLabel}>Ny stævnedato (valgfrit)</div>
+                    <input style={s.fieldInput} type="date" value={f.newDate} onChange={e => set({ newDate: e.target.value })} />
+                  </div>
+                )}
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', cursor: 'pointer', fontSize: '0.85rem', color: '#b8b4a8' }}>
+                  <input type="checkbox" checked={f.savePR} onChange={() => set({ savePR: !f.savePR })} />
+                  Gem som rekord (PR)
+                </label>
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+                <button style={s.btnGhost} onClick={() => setMeetResultForm(null)}>Annuller</button>
+                <button style={s.btnPrimary} onClick={() => saveMeetResult()} disabled={saving}>{saving ? 'Gemmer...' : 'Gem resultat'}</button>
+              </div>
+            </div>
+          </div>
+        )
+      })()}
 
       {showAddModal && (
         <div style={s.overlay} onClick={e => e.target === e.currentTarget && setShowAddModal(false)}>
