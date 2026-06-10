@@ -363,7 +363,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
   useEffect(() => { fetchAthletes(); fetchExerciseLibrary(); fetchLastBackup() }, [])
   useEffect(() => {
-    if (view === 'calendar' && athletes.length) {
+    if ((view === 'calendar' || view === 'list') && athletes.length) {
       const ids = athletes.map(a => a.id)
       fetchCalendarWeeks(ids)
       fetchCalendarProgress(ids)
@@ -719,6 +719,28 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       : new Date().toISOString().slice(0, 10)
     setPlanStartDate(seed)
     setCalBlockAthlete({ id: a.id, name: a.name })
+  }
+
+  // Beregner programmerings-status pr. atlet (samme logik som kalender-boardet):
+  // none = intet program, empty = uger men ingen øvelser, low = sidste fyldte uge nu, ready = ok.
+  function computeBoard(list) {
+    const today0 = new Date(); today0.setHours(0, 0, 0, 0)
+    return list.map(a => {
+      const weeks = calendarWeeks[a.id] || []
+      const planned = weeks.filter(w => w.exercise_count > 0)
+      const minPlannedWeekNo = planned.length ? Math.min(...planned.map(w => w.week_number)) : null
+      const loggedWeek = athleteCurrentWeek[a.id] ?? null
+      const ref = loggedWeek != null ? loggedWeek : minPlannedWeekNo
+      const runway = ref != null ? planned.filter(w => w.week_number >= ref).length : planned.length
+      let status
+      if (weeks.length === 0) status = 'none'
+      else if (planned.length === 0) status = 'empty'
+      else if (runway <= 1) status = 'low'
+      else status = 'ready'
+      const snoozedUntil = snoozedAthletes[a.id] || null
+      const isSnoozed = snoozedUntil && new Date(snoozedUntil) > today0
+      return { a, status, runway, isSnoozed }
+    })
   }
 
   // Hop direkte ind i coachens egen atlet-profil (preview) for hurtig logging.
@@ -2457,6 +2479,62 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '3rem 0' }}>Ingen atleter endnu — tilføj din første</div>
             ) : (
               <>
+                {/* Hurtig-handlinger — store tap-targets, mobil-først */}
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)', gap: '0.6rem', marginBottom: '1.5rem' }}>
+                  {[
+                    { icon: '⚡', label: 'Min træning', onClick: goToMyProfile },
+                    { icon: '📅', label: 'Kalender', onClick: () => { setSelectedAthlete(null); setView('calendar') } },
+                    { icon: '＋', label: 'Tilføj atlet', onClick: () => setShowAddModal(true) },
+                    { icon: '📚', label: 'Bibliotek', onClick: () => setView('library') },
+                  ].map(qa => (
+                    <button key={qa.label} onClick={qa.onClick}
+                      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.35rem', minHeight: '64px', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.08)', borderRadius: 4, cursor: 'pointer', padding: '0.75rem 0.5rem' }}>
+                      <span style={{ fontSize: '1.2rem', lineHeight: 1 }}>{qa.icon}</span>
+                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#b8b4a8' }}>{qa.label}</span>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Kræver handling — programmering + ulæste beskeder */}
+                {(() => {
+                  const visible = athletes.filter(a => !hiddenAthleteIds.has(a.id))
+                  const board = computeBoard(visible)
+                  const needs = board.filter(b => b.status !== 'ready' && !b.isSnoozed)
+                  const unread = visible.filter(a => (unreadCounts[a.id] || 0) > 0)
+                  const reason = st => st === 'none' ? 'Intet program' : st === 'empty' ? 'Mangler øvelser' : 'Sidste uge — planlæg næste'
+                  const reasonColor = st => st === 'none' ? '#e05555' : '#c8923a'
+                  if (!needs.length && !unread.length) {
+                    return (
+                      <div style={{ ...s.card, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#6cba6c', flexShrink: 0 }} />
+                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.06em', color: '#7a7770' }}>Alt kører — ingen mangler lige nu</span>
+                      </div>
+                    )
+                  }
+                  return (
+                    <div style={{ ...s.card, marginBottom: '1.5rem', borderColor: 'rgba(200,146,58,0.25)' }}>
+                      <div style={s.cardLabel}>Kræver handling</div>
+                      {needs.map((b, i) => (
+                        <div key={b.a.id} onClick={() => openProfile(b.a, 'program')}
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', padding: '0.6rem 0', borderBottom: (i < needs.length - 1 || unread.length) ? '1px solid rgba(237,234,226,0.05)' : 'none', cursor: 'pointer', minHeight: '44px' }}>
+                          <span style={{ fontSize: '0.85rem', color: '#edeae2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{b.a.name}</span>
+                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: reasonColor(b.status), textAlign: 'right', flexShrink: 0 }}>{reason(b.status)} →</span>
+                        </div>
+                      ))}
+                      {unread.map((a, i) => (
+                        <div key={'u' + a.id} onClick={() => openProfile(a, 'beskeder')}
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', padding: '0.6rem 0', borderBottom: i < unread.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none', cursor: 'pointer', minHeight: '44px' }}>
+                          <span style={{ fontSize: '0.85rem', color: '#edeae2', display: 'flex', alignItems: 'center', gap: '0.4rem', minWidth: 0 }}>
+                            <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#c8923a', flexShrink: 0 }} />
+                            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{a.name}</span>
+                          </span>
+                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#c8923a', flexShrink: 0 }}>Ulæst besked →</span>
+                        </div>
+                      ))}
+                    </div>
+                  )
+                })()}
+
                 {/* Ugeplan oversigt */}
                 {(() => {
                   const visibleAthletes = athletes.filter(a => !hiddenAthleteIds.has(a.id))
@@ -2474,7 +2552,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   }
                   return (
                     <div style={{ ...s.card, marginBottom: '1.75rem' }}>
-                      <div style={s.cardLabel}>Ugeplan</div>
+                      <div style={s.cardLabel}>Dine atleter</div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
                         {displayAthletes.map((ath, i, arr) => {
                           const ws = athleteWeekSummary[ath.id]
