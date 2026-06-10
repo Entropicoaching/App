@@ -1278,7 +1278,37 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
     const avgWeight = filteredWeight.length ? (filteredWeight.reduce((s, l) => s + l.weight, 0) / filteredWeight.length).toFixed(1) : null
 
+    // Nøgletal til AI-resumé
+    let loggedSets = 0, skippedSets = 0, rpeSum = 0, rpeCount = 0
+    for (const sess of sessions) {
+      for (const ex of Object.values(sess.exercises)) {
+        for (const set of ex.sets) {
+          if (set.skipped) { skippedSets++; continue }
+          loggedSets++
+          if (set.rpe_actual != null) { rpeSum += Number(set.rpe_actual); rpeCount++ }
+        }
+      }
+    }
+    const avgRpe = rpeCount ? (rpeSum / rpeCount).toFixed(1) : null
+    const weightsAsc = filteredWeight
+    const weightStart = weightsAsc.length ? weightsAsc[0].weight : null
+    const weightEnd = weightsAsc.length ? weightsAsc[weightsAsc.length - 1].weight : null
+    const weightDelta = (weightStart != null && weightEnd != null) ? (weightEnd - weightStart).toFixed(1) : null
+    const avgReadiness = filteredReadiness.length ? Math.round(filteredReadiness.reduce((s, r) => s + (r.readiness_score || 0), 0) / filteredReadiness.length) : null
+
     let lines = []
+
+    // Instruktion til AI (så coachen bare kan paste og få en analyse)
+    lines.push('INSTRUKTION TIL AI')
+    lines.push('Du er en erfaren styrkeløftcoach (squat/bænk/dødløft). Nedenfor er rådata')
+    lines.push('for én atlet over en periode. Svar på dansk, kortfattet og handlingsorienteret:')
+    lines.push('  1) Fremgang & tendenser — vægt på stængerne, RPE vs. plan, est. 1RM-udvikling.')
+    lines.push('  2) Restitution — mønstre i søvn/energi/motivation/stress/ømhed vs. præstation.')
+    lines.push('  3) Røde flag — stagnation, høj RPE ved let vægt, lav konsistens, uønsket vægtændring.')
+    lines.push('  4) Konkrete forslag til næste blok — volumen, intensitet, øvelsesvalg, evt. deload.')
+    lines.push('Skalaer: energi/motivation/stress/ømhed = 1–5 · readiness-score = 0–100 · RPE = 6–10.')
+    lines.push('Antag intet om data der ikke findes; nævn det hvis noget mangler.')
+    lines.push('')
 
     lines.push('═══════════════════════════════════════════════════════')
     lines.push(`ATLET:    ${ath.name}`)
@@ -1299,6 +1329,16 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     if (ath.competition_date) lines.push(`STÆVNE:           ${fmtDato(ath.competition_date)}`)
     if (avgWeight) lines.push(`KROPSVÆGT:        ${avgWeight}kg gns (${filteredWeight.length} målinger)`)
     lines.push('═══════════════════════════════════════════════════════')
+    lines.push('')
+
+    // Nøgletal
+    lines.push('── NØGLETAL (perioden) ─────────────────────────────────')
+    lines.push('')
+    lines.push(`  Træningspas:     ${sessions.length} over ${Object.keys(weekGroups).length} uger`)
+    lines.push(`  Loggede sæt:     ${loggedSets}${skippedSets ? ` (+ ${skippedSets} skippet)` : ''}`)
+    if (avgRpe) lines.push(`  Gns. RPE:        ${avgRpe}`)
+    if (avgReadiness != null) lines.push(`  Gns. readiness:  ${avgReadiness}/100 (${filteredReadiness.length} check-ins)`)
+    if (weightDelta != null) lines.push(`  Vægtudvikling:   ${weightStart}kg → ${weightEnd}kg (${weightDelta > 0 ? '+' : ''}${weightDelta}kg)`)
     lines.push('')
 
     // Træningslog
@@ -1348,11 +1388,18 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
     // Readiness
     if (filteredReadiness.length > 0) {
-      lines.push('── READINESS ───────────────────────────────────────────')
+      lines.push('── READINESS (energi/motiv./stress/ømhed = 1–5) ────────')
       lines.push('')
-      lines.push(`  ${pad('Dato', 12)}${pad('Søvn', 8)}${pad('Energi', 9)}${pad('Stress', 9)}Score`)
+      lines.push(`  ${pad('Dato', 10)}${pad('Søvn', 7)}${pad('Energi', 8)}${pad('Motiv.', 8)}${pad('Stress', 8)}${pad('Ømhed', 8)}Score`)
       for (const r of filteredReadiness) {
-        lines.push(`  ${pad(fmtDatoShort(r.logged_date), 12)}${pad(r.sleep_hours != null ? r.sleep_hours + 't' : '—', 8)}${pad(r.energy != null ? r.energy + '/10' : '—', 9)}${pad(r.stress != null ? r.stress + '/10' : '—', 9)}${r.readiness_score ?? '—'}`)
+        lines.push(`  ${pad(fmtDatoShort(r.logged_date), 10)}${pad(r.sleep_hours != null ? r.sleep_hours + 't' : '—', 7)}${pad(r.energy != null ? r.energy + '/5' : '—', 8)}${pad(r.motivation != null ? r.motivation + '/5' : '—', 8)}${pad(r.stress != null ? r.stress + '/5' : '—', 8)}${pad(r.soreness_level != null ? r.soreness_level + '/5' : '—', 8)}${r.readiness_score != null ? r.readiness_score + '/100' : '—'}`)
+      }
+      const zoneCounts = {}
+      for (const r of filteredReadiness) for (const z of (r.sore_zones || [])) zoneCounts[z] = (zoneCounts[z] || 0) + 1
+      const zones = Object.entries(zoneCounts).sort((a, b) => b[1] - a[1])
+      if (zones.length) {
+        lines.push('')
+        lines.push(`  Hyppigste ømme zoner: ${zones.map(([z, n]) => `${z} (${n}x)`).join(', ')}`)
       }
       lines.push('')
     }
@@ -1363,6 +1410,21 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       lines.push('')
       for (const w of filteredWeight) {
         lines.push(`  ${fmtDatoShort(w.logged_at)}   ${w.weight}kg`)
+      }
+      lines.push('')
+    }
+
+    // Stævnehistorik
+    if (meetResults.length > 0) {
+      lines.push('── STÆVNEHISTORIK ──────────────────────────────────────')
+      lines.push('')
+      for (const m of [...meetResults].reverse()) {
+        const parts = [
+          m.squat != null ? `S ${m.squat}` : null,
+          m.bench != null ? `B ${m.bench}` : null,
+          m.deadlift != null ? `D ${m.deadlift}` : null,
+        ].filter(Boolean).join(' / ')
+        lines.push(`  ${pad(fmtDatoShort(m.meet_date), 12)}${pad(m.meet_name || '—', 22)}${parts}${m.total != null ? `  = ${m.total}kg` : ''}`)
       }
       lines.push('')
     }
