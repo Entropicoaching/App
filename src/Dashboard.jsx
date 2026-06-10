@@ -1899,10 +1899,23 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           <div style={s.sub}>Coach Portal</div>
         </div>
         <nav style={{ flex: 1, padding: '0.75rem 0', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
-          <div
-            onClick={() => { setView('list'); setSelectedAthlete(null); setSidebarOpen(false) }}
-            style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: view === 'list' ? '#c8923a' : '#7a7770', cursor: 'pointer', padding: '0.5rem 1.25rem', marginBottom: '0.5rem' }}
-          >⌂ Forside</div>
+          {[
+            { icon: '⌂', label: 'Forside', active: view === 'list', onClick: () => { setView('list'); setSelectedAthlete(null); setSidebarOpen(false) } },
+            { icon: '⚡', label: 'Min træning', active: false, onClick: () => { setSidebarOpen(false); goToMyProfile() } },
+            { icon: '📅', label: 'Kalender', active: view === 'calendar', onClick: () => { setView('calendar'); setSelectedAthlete(null); setSidebarOpen(false) } },
+            { icon: '📚', label: 'Bibliotek', active: view === 'library', onClick: () => { setView('library'); setSelectedAthlete(null); setSidebarOpen(false) } },
+          ].map(item => (
+            <div
+              key={item.label}
+              onClick={item.onClick}
+              style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.55rem 1.25rem', cursor: 'pointer', borderLeft: item.active ? '2px solid #c8923a' : '2px solid transparent', background: item.active ? 'rgba(200,146,58,0.08)' : 'transparent', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: item.active ? '#c8923a' : '#b8b4a8' }}
+              onMouseEnter={e => { if (!item.active) e.currentTarget.style.background = 'rgba(237,234,226,0.03)' }}
+              onMouseLeave={e => { if (!item.active) e.currentTarget.style.background = 'transparent' }}
+            >
+              <span style={{ fontSize: '0.85rem', width: '1rem', textAlign: 'center', flexShrink: 0 }}>{item.icon}</span>{item.label}
+            </div>
+          ))}
+          <div style={{ borderTop: '1px solid rgba(237,234,226,0.06)', margin: '0.6rem 1.25rem' }} />
           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', padding: '0 1.25rem', marginBottom: '0.35rem' }}>Atleter</div>
           {athletes.filter(a => !hiddenAthleteIds.has(a.id)).map(ath => {
             const isActive = (view === 'profile' || view === 'list') && selectedAthlete?.id === ath.id
@@ -1937,14 +1950,6 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           )}
         </nav>
         <div style={s.sidebarFooter}>
-          <div
-            onClick={() => { setView('calendar'); setSelectedAthlete(null); setSidebarOpen(false) }}
-            style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: view === 'calendar' ? '#c8923a' : '#4a4844', cursor: 'pointer', marginBottom: '0.75rem' }}
-          >📅 Kalender</div>
-          <div
-            onClick={() => { setView('library'); setSidebarOpen(false) }}
-            style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: view === 'library' ? '#c8923a' : '#4a4844', cursor: 'pointer', marginBottom: '0.75rem' }}
-          >Øvelsesbibliotek</div>
           <div style={{ color: '#7a7770', marginBottom: '0.3rem' }}>Marc Schlichting</div>
           <div style={{ fontSize: '0.7rem' }}>{session.user.email}</div>
           {onPreviewAthlete && !previewPickerOpen && (
