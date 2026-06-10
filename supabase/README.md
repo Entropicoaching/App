@@ -161,3 +161,61 @@ Invoke-RestMethod -Method Post `
 > Bemærk: med `curl`/Invoke-RestMethod kan æøå i body give "invalid json" hvis
 > shell-encoding driller — læg da payloaden i en UTF-8 fil og send med
 > `curl --data-binary @fil.json`.
+
+---
+
+## 10. Kost-madplaner — `create_meal_plan` (fulde dage)
+
+Kost-pendant til `create_program_week`: skub en eller flere **fulde dags-madplaner**
+ind for en atlet i ét kald, atomisk. Hver "dag" bliver en **meal_template** — atleten
+ser den under "Skabeloner" i Kost-fanen og trykker **"Log alt"** for at logge hele
+dagen på én gang. Kan valgfrit sætte atletens kcal/protein-mål samtidig.
+
+**URL:**
+```
+POST https://dsqgaxwgtcbqgphsofav.supabase.co/rest/v1/rpc/create_meal_plan
+```
+Samme auth som programmer (sektion 3): den **hemmelige** service_role-nøgle fra
+`.env.local` → `SUPABASE_SECRET_KEY`. Kildekode: `supabase/sql/create_meal_plan.sql`
+(allerede kørt i Supabase).
+
+**Din rolle:** samme som ved programmer — trofast indtastningsværktøj. Opfind ALDRIG
+makroer/mængder Marc ikke har givet. Makroer opgives **pr. item** (du/Marc har tallene).
+
+**Body — rig JSON pakket i `p_payload`:**
+```json
+{
+  "p_payload": {
+    "athleteId": "uuid (skal findes i athletes)",
+    "kcalTarget": 3000,
+    "proteinTarget": 200,
+    "days": [
+      { "name": "Dag 1 · 3000 kcal", "items": [
+        { "meal": "Havregryn 100g + skyr 200g", "kcal": 520, "protein": 38, "carb": 70, "fat": 9 },
+        { "meal": "Kylling 200g + ris 150g",     "kcal": 610, "protein": 55, "carb": 65, "fat": 12 }
+      ] }
+    ]
+  }
+}
+```
+- `kcalTarget` / `proteinTarget`: **valgfri** — sætter `athletes.kcal_target` / `protein_target` (kun de angivne).
+- `days[]`: hver dag → én meal_template. `name` defaulter til "Dagsplan N". Tomme dage (ingen items) springes over.
+- `items[]`: `meal` (tekst) + makroer (`kcal`/`protein`/`carb`/`fat`, rundes til heltal). Samme form som en log-linje.
+
+Svar: `{ "athlete_id": "...", "days_created": 1, "items_total": 2, "kcal_target": 3000, "protein_target": 200 }`
+Fejler + ruller alt tilbage hvis `athleteId` mangler/ikke findes.
+
+**Test (PowerShell):**
+```powershell
+$key  = "DIN-SB_SECRET-NØGLE"
+$body = @'
+{ "p_payload": { "athleteId": "ATLET-UUID", "kcalTarget": 3000, "proteinTarget": 200,
+  "days": [ { "name": "Dag 1", "items": [
+    { "meal": "Havregryn + skyr", "kcal": 520, "protein": 38, "carb": 70, "fat": 9 },
+    { "meal": "Kylling + ris",    "kcal": 610, "protein": 55, "carb": 65, "fat": 12 } ] } ] } }
+'@
+Invoke-RestMethod -Method Post `
+  -Uri "https://dsqgaxwgtcbqgphsofav.supabase.co/rest/v1/rpc/create_meal_plan" `
+  -Headers @{ apikey = $key; Authorization = "Bearer $key" } `
+  -ContentType "application/json" -Body $body
+```
