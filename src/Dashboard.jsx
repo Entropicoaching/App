@@ -281,6 +281,9 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
   // Program state
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  // "Min profil"-genvej: hvilken atlet er coachen selv (gemt i localStorage).
+  const [myAthleteId, setMyAthleteId] = useState(() => localStorage.getItem('entropi_my_athlete_id') || null)
+  const [pickingMine, setPickingMine] = useState(false)
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' && window.innerWidth < 768)
 
   const [weeks, setWeeks] = useState([])
@@ -717,6 +720,33 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     setPlanStartDate(seed)
     setCalBlockAthlete({ id: a.id, name: a.name })
   }
+
+  // Hop direkte ind i coachens egen atlet-profil (preview) for hurtig logging.
+  // Første gang (eller hvis den gemte ikke findes): åbn picker i "vælg din egen"-mode.
+  function goToMyProfile() {
+    if (!onPreviewAthlete) return
+    if (myAthleteId && athletes.some(a => a.id === myAthleteId)) {
+      onPreviewAthlete(myAthleteId)
+    } else {
+      setPickingMine(true)
+      setPreviewPickerOpen(true)
+      setSidebarOpen(true)
+    }
+  }
+
+  // Tastaturgenvej: tast "M" (uden for input-felter) → min profil.
+  useEffect(() => {
+    function onKey(e) {
+      if (e.ctrlKey || e.metaKey || e.altKey) return
+      const t = e.target
+      const tag = t?.tagName
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || t?.isContentEditable) return
+      if (e.key === 'm' || e.key === 'M') { e.preventDefault(); goToMyProfile() }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [myAthleteId, athletes])
 
   function deleteWeek(weekId) {
     askConfirm('Slet denne uge og alle dens træninger?', async () => {
@@ -1893,23 +1923,23 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           <div style={{ fontSize: '0.7rem' }}>{session.user.email}</div>
           {onPreviewAthlete && !previewPickerOpen && (
             <button
-              onClick={() => setPreviewPickerOpen(true)}
+              onClick={() => { setPickingMine(false); setPreviewPickerOpen(true) }}
               style={{ ...s.btnPrimary, marginTop: '0.75rem', width: '100%' }}
             >Se som atlet</button>
           )}
           {onPreviewAthlete && previewPickerOpen && (
             <div style={{ marginTop: '0.75rem', background: '#141410', border: '1px solid rgba(200,146,58,0.3)', padding: '0.5rem' }}>
-              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.4rem' }}>Vælg profil</div>
+              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.4rem' }}>{pickingMine ? 'Vælg din egen profil (huskes)' : 'Vælg profil'}</div>
               {athletes.map(a => (
                 <div
                   key={a.id}
-                  onClick={() => { setPreviewPickerOpen(false); onPreviewAthlete(a.id) }}
+                  onClick={() => { setPreviewPickerOpen(false); if (pickingMine) { localStorage.setItem('entropi_my_athlete_id', a.id); setMyAthleteId(a.id); setPickingMine(false) } onPreviewAthlete(a.id) }}
                   style={{ padding: '0.4rem 0.5rem', fontSize: '0.8rem', color: '#b8b4a8', cursor: 'pointer', borderRadius: '1px' }}
                   onMouseEnter={e => e.currentTarget.style.background = 'rgba(237,234,226,0.06)'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 >{a.name}</div>
               ))}
-              <button onClick={() => setPreviewPickerOpen(false)} style={{ ...s.btnGhost, fontSize: '0.48rem', padding: '0.2rem 0.5rem', marginTop: '0.3rem', width: '100%' }}>Annuller</button>
+              <button onClick={() => { setPreviewPickerOpen(false); setPickingMine(false) }} style={{ ...s.btnGhost, fontSize: '0.48rem', padding: '0.2rem 0.5rem', marginTop: '0.3rem', width: '100%' }}>Annuller</button>
             </div>
           )}
           <div style={{ borderTop: '1px solid rgba(237,234,226,0.07)', marginTop: '0.75rem', paddingTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
@@ -1955,6 +1985,13 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             </button>
           )}
           <div style={{ ...s.topbarTitle, flex: 1 }}>{view === 'library' ? 'Øvelsesbibliotek' : view === 'calendar' ? 'Kalender' : view === 'list' ? 'Atleter' : a?.name}</div>
+          {onPreviewAthlete && (
+            <button
+              onClick={goToMyProfile}
+              title="Min træning — hop til din egen profil (tast M)"
+              style={{ ...s.btnPrimary, fontSize: '0.55rem', padding: '0.4rem 0.8rem', whiteSpace: 'nowrap' }}
+            >⚡ Min træning</button>
+          )}
         </div>
 
         {/* LIBRARY VIEW */}
