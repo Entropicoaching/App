@@ -1144,6 +1144,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [historicalMealLogs, setHistoricalMealLogs] = useState([])
   const [frequentFoods, setFrequentFoods] = useState([])
   const [kostDate, setKostDate] = useState(today())
+  const [showTdee, setShowTdee] = useState(false)
   const [editingLogId, setEditingLogId] = useState(null)
   const [editGrams, setEditGrams] = useState('')
   const [editMacros, setEditMacros] = useState({ kcal: '', protein: '', carb: '', fat: '' })
@@ -1948,6 +1949,31 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     setSelectedFood(null)
     setSearchQuery('')
     fetchLogs(athlete.id)
+  }
+
+  // Hurtig-tilføj direkte fra søgeresultatet: 1 stk-enhed hvis den findes, ellers 100 g.
+  // Rydder IKKE søgningen, så man kan trykke + på flere varer i træk (multi-add).
+  async function quickAddSearchFood(f) {
+    if (!athlete) return
+    const units = unitsForFood(f)
+    const unit = units.length > 1 ? units[1] : units[0]
+    const amt = unit.label === 'g' ? 100 : 1
+    const grams = amt * unit.grams
+    const ratio = grams / 100
+    const label = unit.label === 'g'
+      ? `${f.name} · ${Math.round(grams)} g`
+      : `${f.name} · ${amt} ${unit.label} (${Math.round(grams)} g)`
+    await supabase.from('meal_logs').insert({
+      athlete_id: athlete.id,
+      date: kostDate,
+      meal: label,
+      kcal: Math.round(f.kcal100 * ratio),
+      protein: Math.round(f.protein100 * ratio),
+      carb: Math.round(f.carb100 * ratio),
+      fat: Math.round(f.fat100 * ratio),
+    })
+    fetchLogs(athlete.id)
+    showFlash(`${f.name} tilføjet`)
   }
 
   async function saveCustomFood() {
@@ -3306,40 +3332,50 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
             {progressBars}
 
-            {/* TDEE estimate */}
+            {/* TDEE estimate — kompakt, foldes ud */}
             <div style={{ ...s.card, marginBottom: '1.5rem' }}>
-              <div style={s.cardLabel}>Estimeret TDEE</div>
               {!tdeeEstimate.ready ? (
-                <div style={{ fontSize: '0.82rem', color: '#4a4844' }}>
-                  {tdeeEstimate.missingWeight
-                    ? 'Vej dig mindst 2 gange med 7 dages mellemrum for at aktivere dette estimat.'
-                    : `Log kalorier i mindst ${tdeeEstimate.missingKcalDays} dage mere for at aktivere dette estimat.`}
-                </div>
+                <>
+                  <div style={s.cardLabel}>Estimeret TDEE</div>
+                  <div style={{ fontSize: '0.82rem', color: '#4a4844' }}>
+                    {tdeeEstimate.missingWeight
+                      ? 'Vej dig mindst 2 gange med 7 dages mellemrum for at aktivere dette estimat.'
+                      : `Log kalorier i mindst ${tdeeEstimate.missingKcalDays} dage mere for at aktivere dette estimat.`}
+                  </div>
+                </>
               ) : (
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', marginBottom: '0.6rem' }}>
-                    <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '2rem', color: '#edeae2', lineHeight: 1 }}>{tdeeEstimate.tdee}</span>
-                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#7a7770' }}>kcal/dag</span>
-                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: tdeeEstimate.confidence === 'høj' ? '#6cba6c' : tdeeEstimate.confidence === 'moderat' ? '#c8923a' : '#7a7770', border: `1px solid ${tdeeEstimate.confidence === 'høj' ? 'rgba(108,186,108,0.4)' : tdeeEstimate.confidence === 'moderat' ? 'rgba(200,146,58,0.4)' : 'rgba(122,119,112,0.3)'}`, padding: '0.15rem 0.4rem', marginLeft: '0.25rem' }}>{tdeeEstimate.confidence} sikkerhed</span>
+                <>
+                  <div onClick={() => setShowTdee(v => !v)} style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.5rem', cursor: 'pointer' }}>
+                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844' }}>Estimeret TDEE</span>
+                    <span style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
+                      <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', color: '#edeae2', lineHeight: 1 }}>{tdeeEstimate.tdee}</span>
+                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#7a7770' }}>kcal/dag</span>
+                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: tdeeEstimate.confidence === 'høj' ? '#6cba6c' : tdeeEstimate.confidence === 'moderat' ? '#c8923a' : '#7a7770', border: `1px solid ${tdeeEstimate.confidence === 'høj' ? 'rgba(108,186,108,0.4)' : tdeeEstimate.confidence === 'moderat' ? 'rgba(200,146,58,0.4)' : 'rgba(122,119,112,0.3)'}`, padding: '0.15rem 0.4rem' }}>{tdeeEstimate.confidence}</span>
+                      <span style={{ color: '#4a4844', fontSize: '0.7rem' }}>{showTdee ? '⌃' : '⌄'}</span>
+                    </span>
                   </div>
-                  {athlete.kcal_target && (() => {
-                    const diff = athlete.kcal_target - tdeeEstimate.tdee
-                    const absDiff = Math.abs(diff)
-                    if (absDiff < 100) return (
-                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#7a7770', marginBottom: '0.5rem' }}>
-                        Dit mål matcher vedligeholdelse <span style={{ color: '#6cba6c' }}>≈</span>
+                  {showTdee && (
+                    <div style={{ marginTop: '0.75rem' }}>
+                      {athlete.kcal_target && (() => {
+                        const diff = athlete.kcal_target - tdeeEstimate.tdee
+                        const absDiff = Math.abs(diff)
+                        if (absDiff < 100) return (
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#7a7770', marginBottom: '0.5rem' }}>
+                            Dit mål matcher vedligeholdelse <span style={{ color: '#6cba6c' }}>≈</span>
+                          </div>
+                        )
+                        return (
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#7a7770', marginBottom: '0.5rem' }}>
+                            Dit mål er <span style={{ color: diff > 0 ? '#6cba6c' : '#c8923a' }}>{diff > 0 ? '+' : ''}{diff} kcal</span> ift. vedligeholdelse — {diff > 0 ? 'overskud (bulk)' : 'underskud (cut)'}
+                          </div>
+                        )
+                      })()}
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', letterSpacing: '0.06em' }}>
+                        Baseret på {tdeeEstimate.kcalDays} dages kalorielogging · {tdeeEstimate.daySpan} dages vægtdata · gns. {tdeeEstimate.avgKcal} kcal/dag
                       </div>
-                    )
-                    return (
-                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#7a7770', marginBottom: '0.5rem' }}>
-                        Dit mål er <span style={{ color: diff > 0 ? '#6cba6c' : '#c8923a' }}>{diff > 0 ? '+' : ''}{diff} kcal</span> ift. vedligeholdelse — {diff > 0 ? 'overskud (bulk)' : 'underskud (cut)'}
-                      </div>
-                    )
-                  })()}
-                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', letterSpacing: '0.06em' }}>
-                    Baseret på {tdeeEstimate.kcalDays} dages kalorielogging · {tdeeEstimate.daySpan} dages vægtdata · gns. {tdeeEstimate.avgKcal} kcal/dag
-                  </div>
-                </div>
+                    </div>
+                  )}
+                </>
               )}
             </div>
 
@@ -3413,6 +3449,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               </div>
 
               {searchResults.length > 0 && (
+                <>
+                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.35rem' }}>Tryk + for hurtig-log · tryk navnet for at vælge mængde</div>
                 <div style={{ background: '#141410', border: '1px solid rgba(237,234,226,0.13)', marginBottom: '0.75rem', maxHeight: '240px', overflowY: 'auto' }}>
                   {searchResults.map((f, i) => (
                     <div
@@ -3428,27 +3466,35 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                         {f.isShared && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#6cba6c', border: '1px solid rgba(108,186,108,0.4)', padding: '0.1rem 0.3rem' }}>delt</span>}
                         {(f.isCustom || f.isShared) && f.unit_label && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', color: '#7a7770' }}>1 {f.unit_label} = {f.unit_grams}g</span>}
                       </div>
-                      {(() => {
-                        const u = unitsForFood(f).find(x => x.label !== 'g')
-                        return (
-                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#7a7770', textAlign: 'right', flexShrink: 0, marginLeft: '1rem' }}>
-                            {u ? (
-                              <>
-                                {Math.round(f.kcal100 * u.grams / 100)} kcal · P: {Math.round(f.protein100 * u.grams / 100)}g<br />
-                                <span style={{ color: '#4a4844' }}>pr. {u.label} ({u.grams}g)</span>
-                              </>
-                            ) : (
-                              <>
-                                {f.kcal100} kcal · P: {f.protein100}g · K: {f.carb100}g<br />
-                                <span style={{ color: '#4a4844' }}>pr. 100g</span>
-                              </>
-                            )}
-                          </div>
-                        )
-                      })()}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexShrink: 0, marginLeft: '1rem' }}>
+                        {(() => {
+                          const u = unitsForFood(f).find(x => x.label !== 'g')
+                          return (
+                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#7a7770', textAlign: 'right' }}>
+                              {u ? (
+                                <>
+                                  {Math.round(f.kcal100 * u.grams / 100)} kcal · P: {Math.round(f.protein100 * u.grams / 100)}g<br />
+                                  <span style={{ color: '#4a4844' }}>pr. {u.label} ({u.grams}g)</span>
+                                </>
+                              ) : (
+                                <>
+                                  {f.kcal100} kcal · P: {f.protein100}g · K: {f.carb100}g<br />
+                                  <span style={{ color: '#4a4844' }}>pr. 100g</span>
+                                </>
+                              )}
+                            </div>
+                          )
+                        })()}
+                        <button
+                          onClick={e => { e.stopPropagation(); quickAddSearchFood(f) }}
+                          title="Hurtig-tilføj 1 portion — tryk navnet for at vælge mængde"
+                          style={{ flexShrink: 0, width: '30px', height: '30px', borderRadius: '50%', border: '1px solid rgba(200,146,58,0.5)', background: 'rgba(200,146,58,0.1)', color: '#c8923a', cursor: 'pointer', fontSize: '1.1rem', lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        >+</button>
+                      </div>
                     </div>
                   ))}
                 </div>
+                </>
               )}
 
               {selectedFood && (() => {
