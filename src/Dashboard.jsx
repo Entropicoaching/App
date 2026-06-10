@@ -1894,11 +1894,15 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           zIndex: 200,
         } : {}),
       }}>
-        <div style={s.sidebarLogo}>
+        <div style={{ ...s.sidebarLogo, cursor: 'pointer' }} onClick={() => { setView('list'); setSelectedAthlete(null); setSidebarOpen(false) }}>
           <div style={s.wordmark}>Entropi<span style={{ color: '#c8923a' }}>.</span></div>
           <div style={s.sub}>Coach Portal</div>
         </div>
         <nav style={{ flex: 1, padding: '0.75rem 0', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+          <div
+            onClick={() => { setView('list'); setSelectedAthlete(null); setSidebarOpen(false) }}
+            style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: view === 'list' ? '#c8923a' : '#7a7770', cursor: 'pointer', padding: '0.5rem 1.25rem', marginBottom: '0.5rem' }}
+          >⌂ Forside</div>
           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', padding: '0 1.25rem', marginBottom: '0.35rem' }}>Atleter</div>
           {athletes.filter(a => !hiddenAthleteIds.has(a.id)).map(ath => {
             const isActive = (view === 'profile' || view === 'list') && selectedAthlete?.id === ath.id
