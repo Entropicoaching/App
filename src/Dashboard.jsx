@@ -2206,8 +2206,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             const runway = ref != null ? planned.filter(w => w.week_number >= ref).length : planned.length
             const lastLog = athleteLastLogs[a.id]
             const daysSince = lastLog ? Math.floor((today0 - new Date(lastLog + 'T12:00:00')) / dayMs) : null
-            let status // ready | low | empty | none
-            if (weeks.length === 0) status = 'none'
+            const holiday = holidayInfo(a)
+            let status // ready | low | empty | none | ferie
+            if (holiday?.onHoliday) status = 'ferie'                 // på ferie → ingen handling
+            else if (weeks.length === 0) status = 'none'
             else if (planned.length === 0) status = 'empty'          // uger findes, men ingen øvelser
             else if (runway <= 1) status = 'low'                     // kun den nuværende uge tilbage
             else status = 'ready'
@@ -2218,9 +2220,9 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           const reasonText = (b) => b.status === 'none' ? 'Intet program oprettet'
             : b.status === 'empty' ? 'Uger oprettet, men ingen øvelser'
             : 'Sidste fyldte uge nu — planlæg næste'
-          // Kun ikke-klar OG ikke-snoozede kræver handling.
-          const needs = board.filter(b => b.status !== 'ready' && !b.isSnoozed)
-          const snoozedNeeds = board.filter(b => b.status !== 'ready' && b.isSnoozed)
+          // Kun ikke-klar, ikke-ferie OG ikke-snoozede kræver handling.
+          const needs = board.filter(b => b.status !== 'ready' && b.status !== 'ferie' && !b.isSnoozed)
+          const snoozedNeeds = board.filter(b => b.status !== 'ready' && b.status !== 'ferie' && b.isSnoozed)
           const lastText = (d) => d == null ? 'Ingen logs' : d === 0 ? 'I dag' : d === 1 ? 'I går' : `${d}d siden`
           const lastColor = (d) => d == null ? '#4a4844' : d <= 4 ? '#6cba6c' : d <= 8 ? '#c8923a' : '#e05555'
           const fmtDate = (d) => `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`
@@ -2501,7 +2503,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 {board.length === 0 ? (
                   <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', padding: '1rem 0' }}>Ingen atleter</div>
                 ) : board.map((b, i) => {
-                  const chip = b.isSnoozed ? { t: `⏾ Udsat`, c: '#7a7770' }
+                  const chip = b.status === 'ferie' ? { t: '🌴 Ferie', c: '#5b9bb5' }
+                    : b.isSnoozed ? { t: `⏾ Udsat`, c: '#7a7770' }
                     : b.status === 'ready' ? { t: `✓ Klar · ${b.runway} uger`, c: '#6cba6c' }
                     : b.status === 'low' ? { t: '⚠ Sidste uge — planlæg næste', c: '#c8923a' }
                     : b.status === 'empty' ? { t: '⚠ Mangler øvelser', c: '#c8923a' }

@@ -2182,6 +2182,12 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const days = ['søndag', 'mandag', 'tirsdag', 'onsdag', 'torsdag', 'fredag', 'lørdag']
   const months = ['januar', 'februar', 'marts', 'april', 'maj', 'juni', 'juli', 'august', 'september', 'oktober', 'november', 'december']
 
+  // Ferie: atleten er sat på ferie (ingen slutdato, eller slutdato i dag/fremtid).
+  const onHoliday = athlete?.status === 'ferie' && (!athlete.vacation_until || athlete.vacation_until >= today())
+  const holidayReturn = athlete?.vacation_until
+    ? (() => { const d = new Date(athlete.vacation_until + 'T12:00:00'); return `${d.getDate()}. ${months[d.getMonth()]}` })()
+    : null
+
   const backBtn = onExitPreview && (
     <button
       onClick={onExitPreview}
@@ -2380,7 +2386,26 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       <div style={s.page}>
 
         {/* HJEM */}
-        {tab === 'hjem' && (
+        {tab === 'hjem' && onHoliday && (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '3rem 1.25rem', minHeight: '60vh', justifyContent: 'center' }}>
+            <div style={{ fontSize: '3.5rem', lineHeight: 1, marginBottom: '1.25rem' }}>🌴</div>
+            <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.9rem', fontWeight: 400, color: '#edeae2', margin: 0 }}>
+              Du er på <em style={{ fontStyle: 'italic', color: '#5b9bb5' }}>ferie</em>
+            </h1>
+            <div style={{ fontSize: '0.95rem', color: '#7a7770', marginTop: '0.85rem', maxWidth: '320px', lineHeight: 1.5 }}>
+              Nyd pausen — lad kroppen restituere. Din træning venter, når du er tilbage.
+            </div>
+            {holidayReturn && (
+              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#5b9bb5', marginTop: '1.5rem', padding: '0.5rem 1rem', border: '1px solid rgba(91,155,181,0.3)', borderRadius: 4 }}>
+                Tilbage d. {holidayReturn}
+              </div>
+            )}
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.06em', color: '#4a4844', marginTop: '1.75rem' }}>
+              Vil du alligevel træne? Åbn Program-fanen nedenfor.
+            </div>
+          </div>
+        )}
+        {tab === 'hjem' && !onHoliday && (
           <>
             <div style={{ marginBottom: '1.5rem' }}>
               <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>
