@@ -772,7 +772,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       let status
       if (weeks.length === 0) status = 'none'
       else if (planned.length === 0) status = 'empty'
-      else if (runway <= 1) status = 'low'
+      else if (runway <= 0) status = 'out'         // forbi sidste planlagte uge = løbet tør
+      else if (runway === 1) status = 'lastweek'   // i sidste planlagte uge, dækket ugen ud
       else status = 'ready'
       const snoozedUntil = snoozedAthletes[a.id] || null
       const isSnoozed = snoozedUntil && new Date(snoozedUntil) > today0
@@ -2543,15 +2544,32 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   ))}
                 </div>
 
-                {/* Kræver handling — programmering + ulæste beskeder */}
+                {/* Prioritet — rangeret: mest akut øverst, weekend-planlægning nederst */}
                 {(() => {
                   const visible = athletes.filter(a => !hiddenAthleteIds.has(a.id))
                   const board = computeBoard(visible)
-                  const needs = board.filter(b => b.status !== 'ready' && !b.isSnoozed)
-                  const unread = visible.filter(a => (unreadCounts[a.id] || 0) > 0)
-                  const reason = st => st === 'none' ? 'Intet program' : st === 'empty' ? 'Mangler øvelser' : 'Sidste uge — planlæg næste'
-                  const reasonColor = st => st === 'none' ? '#e05555' : '#c8923a'
-                  if (!needs.length && !unread.length) {
+                  const boardByAid = Object.fromEntries(board.map(b => [b.a.id, b]))
+                  // Lavere rank = mere akut. none > empty > løbet tør > besked > sidste uge (weekend).
+                  const progReason = b => {
+                    if (!b || b.isSnoozed) return null
+                    if (b.status === 'none') return { rank: 0, label: 'Intet program', color: '#e05555' }
+                    if (b.status === 'empty') return { rank: 1, label: 'Mangler øvelser', color: '#e05555' }
+                    if (b.status === 'out') return { rank: 2, label: 'Løbet tør — planlæg nu', color: '#e05555' }
+                    if (b.status === 'lastweek') return { rank: 4, label: 'Planlæg i weekenden', color: '#c8923a' }
+                    return null
+                  }
+                  const items = visible.map(a => {
+                    const prog = progReason(boardByAid[a.id])
+                    const hasUnread = (unreadCounts[a.id] || 0) > 0
+                    const msg = hasUnread ? { rank: 3, label: 'Ulæst besked', color: '#c8923a' } : null
+                    const cands = [prog && { ...prog, tab: 'program' }, msg && { ...msg, tab: 'beskeder' }].filter(Boolean)
+                    if (!cands.length) return null
+                    cands.sort((x, y) => x.rank - y.rank)
+                    const primary = cands[0]
+                    return { a, primary, alsoUnread: hasUnread && primary.tab !== 'beskeder' }
+                  }).filter(Boolean)
+                  items.sort((x, y) => x.primary.rank - y.primary.rank)
+                  if (!items.length) {
                     return (
                       <div style={{ ...s.card, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                         <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#6cba6c', flexShrink: 0 }} />
@@ -2561,22 +2579,16 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   }
                   return (
                     <div style={{ ...s.card, marginBottom: '1.5rem', borderColor: 'rgba(200,146,58,0.25)' }}>
-                      <div style={s.cardLabel}>Kræver handling</div>
-                      {needs.map((b, i) => (
-                        <div key={b.a.id} onClick={() => openProfile(b.a, 'program')}
-                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', padding: '0.6rem 0', borderBottom: (i < needs.length - 1 || unread.length) ? '1px solid rgba(237,234,226,0.05)' : 'none', cursor: 'pointer', minHeight: '44px' }}>
-                          <span style={{ fontSize: '0.85rem', color: '#edeae2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{b.a.name}</span>
-                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: reasonColor(b.status), textAlign: 'right', flexShrink: 0 }}>{reason(b.status)} →</span>
-                        </div>
-                      ))}
-                      {unread.map((a, i) => (
-                        <div key={'u' + a.id} onClick={() => openProfile(a, 'beskeder')}
-                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', padding: '0.6rem 0', borderBottom: i < unread.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none', cursor: 'pointer', minHeight: '44px' }}>
-                          <span style={{ fontSize: '0.85rem', color: '#edeae2', display: 'flex', alignItems: 'center', gap: '0.4rem', minWidth: 0 }}>
-                            <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#c8923a', flexShrink: 0 }} />
-                            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{a.name}</span>
+                      <div style={s.cardLabel}>Prioritet</div>
+                      {items.map((it, i) => (
+                        <div key={it.a.id} onClick={() => openProfile(it.a, it.primary.tab)}
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', padding: '0.6rem 0', borderBottom: i < items.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none', cursor: 'pointer', minHeight: '44px' }}>
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0 }}>
+                            <span style={{ width: 7, height: 7, borderRadius: '50%', background: it.primary.color, flexShrink: 0 }} />
+                            <span style={{ fontSize: '0.85rem', color: '#edeae2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{it.a.name}</span>
+                            {it.alsoUnread && <span title="Ulæst besked" style={{ color: '#c8923a', fontSize: '0.7rem', flexShrink: 0 }}>✉</span>}
                           </span>
-                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#c8923a', flexShrink: 0 }}>Ulæst besked →</span>
+                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: it.primary.color, textAlign: 'right', flexShrink: 0 }}>{it.primary.label} →</span>
                         </div>
                       ))}
                     </div>
