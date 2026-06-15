@@ -309,6 +309,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [exerciseForm, setExerciseForm] = useState({ name: '', sets: '', reps: '', intensity: '', intensityPrefix: 'RPE', note: '' })
   const [athleteLogs, setAthleteLogs] = useState([])
   const [openLogWeeks, setOpenLogWeeks] = useState(null) // null = standard (seneste uge åben); ellers Set af åbne ugenumre
+  const [logExerciseFilter, setLogExerciseFilter] = useState(null) // Log-fane: null = alle øvelser; ellers øvelsesnavn
   const [weeklyActivity, setWeeklyActivity] = useState({}) // athlete_id → { sessions, sets } for indeværende uge
   const [athleteWeightLogs, setAthleteWeightLogs] = useState([])
   const [athleteReadiness, setAthleteReadiness] = useState([])
@@ -4863,6 +4864,22 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 return next
               })
 
+              // Øvelses-filter: liste over loggede øvelser + progression for den valgte
+              const exerciseNames = [...new Set(athleteLogs.map(l => l.exercises?.name).filter(Boolean))]
+                .sort((a, b) => a.localeCompare(b, 'da'))
+              const filterName = logExerciseFilter && exerciseNames.includes(logExerciseFilter) ? logExerciseFilter : null
+              const e1rmOf = s => (s.weight || 0) * (1 + (s.reps || 1) / 30)
+              const progression = filterName ? logSessions.map(sess => {
+                const entries = Object.values(sess.exerciseMap).filter(ex => ex.name === filterName)
+                if (!entries.length) return null
+                const sets = entries.flatMap(e => e.sets).filter(s => !s.skipped && (s.weight || 0) > 0)
+                if (!sets.length) return null
+                const sortedSets = [...sets].sort((a, b) => a.n - b.n)
+                const best = sets.reduce((m, s) => (e1rmOf(s) > m.v ? { v: e1rmOf(s), s } : m), { v: 0, s: null })
+                const planText = [entries[0].plannedSets && `${entries[0].plannedSets} sæt`, entries[0].plannedReps && `× ${entries[0].plannedReps}`, entries[0].intensity].filter(Boolean).join(' · ')
+                return { date: sess.date, weekNum: sess.weekNum, sortedSets, e1rm: Math.round(best.v * 10) / 10, planText }
+              }).filter(Boolean) : []
+
               const renderSession = (sess, i) => {
                     const exercises = Object.values(sess.exerciseMap)
                     const totalPlanned = exercises.reduce((acc, ex) => acc + ex.plannedSets, 0)
@@ -4976,27 +4993,89 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                       <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
                         Ingen loggede træninger endnu
                       </div>
-                    ) : weekGroups.map(g => {
-                      const open = openSet.has(g.key)
-                      return (
-                        <div key={g.key} style={{ marginBottom: '0.5rem' }}>
-                          <button onClick={() => toggleWeek(g.key)} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.08)', borderRadius: 4, padding: '0.65rem 0.85rem', cursor: 'pointer', marginBottom: open ? '1rem' : 0 }}>
-                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#edeae2' }}>
-                              {g.weekNum != null ? `Uge ${g.weekNum}` : 'Uden uge'}
-                            </span>
-                            <span style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexShrink: 0 }}>
-                              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770' }}>{g.sessions.length} træning{g.sessions.length === 1 ? '' : 'er'} · {g.totalSets} sæt</span>
-                              <span style={{ color: '#c8923a', fontSize: '0.7rem' }}>{open ? '▾' : '▸'}</span>
-                            </span>
-                          </button>
-                          {open && (
-                            <div style={{ paddingLeft: '0.25rem' }}>
-                              {g.sessions.map((sess, i) => renderSession(sess, i))}
-                            </div>
-                          )}
+                    ) : (
+                      <>
+                        {/* Øvelses-filter */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
+                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770' }}>Øvelse</span>
+                          <select
+                            value={filterName || ''}
+                            onChange={e => setLogExerciseFilter(e.target.value || null)}
+                            style={{ background: '#1c1c18', color: '#edeae2', border: '1px solid rgba(237,234,226,0.15)', borderRadius: 4, padding: '0.4rem 0.6rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', cursor: 'pointer', maxWidth: '100%' }}
+                          >
+                            <option value="">Alle øvelser</option>
+                            {exerciseNames.map(n => <option key={n} value={n}>{n}</option>)}
+                          </select>
                         </div>
-                      )
-                    })}
+
+                        {filterName ? (
+                          progression.length === 0 ? (
+                            <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                              Ingen loggede sæt for {filterName} endnu
+                            </div>
+                          ) : (
+                            <div>
+                              <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.1rem', color: '#edeae2', marginBottom: '1rem' }}>{filterName}</div>
+                              {progression.map((row, idx) => {
+                                const older = progression[idx + 1]
+                                let delta = null
+                                if (older && row.e1rm > 0 && older.e1rm > 0) {
+                                  const d = Math.round((row.e1rm - older.e1rm) * 10) / 10
+                                  delta = d > 0.4 ? { text: `↑ +${d}kg e1RM`, color: '#6cba6c' }
+                                    : d < -0.4 ? { text: `↓ ${Math.abs(d)}kg e1RM`, color: '#e05555' }
+                                    : { text: '= samme', color: '#7a7770' }
+                                }
+                                return (
+                                  <div key={row.date + idx} style={{ marginBottom: '1rem', paddingBottom: '1rem', borderBottom: '1px solid rgba(237,234,226,0.05)' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '0.75rem', marginBottom: '0.4rem' }}>
+                                      <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'baseline', minWidth: 0 }}>
+                                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#c8923a', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{row.date}</span>
+                                        {row.weekNum != null && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', textTransform: 'uppercase' }}>Uge {row.weekNum}</span>}
+                                      </div>
+                                      <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'baseline', flexShrink: 0 }}>
+                                        {row.e1rm > 0 && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#b8b4a8' }}>e1RM {row.e1rm}kg</span>}
+                                        {delta && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: delta.color, letterSpacing: '0.06em' }}>{delta.text}</span>}
+                                      </div>
+                                    </div>
+                                    {row.planText && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', marginBottom: '0.4rem' }}>Plan: {row.planText}</div>}
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+                                      {row.sortedSets.map(set => (
+                                        <div key={set.n} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.08)', padding: '0.2rem 0.5rem', color: '#edeae2' }}>
+                                          <span style={{ color: '#4a4844' }}>S{set.n} </span>
+                                          <span style={{ color: '#c8923a' }}>{set.weight}kg</span>
+                                          {set.reps && <span style={{ color: '#7a7770' }}> × {set.reps}</span>}
+                                          {set.rpe_actual != null && <span style={{ color: '#7a7770', marginLeft: '0.3rem' }}>RPE {set.rpe_actual}{set.rpe_planned != null ? `/${set.rpe_planned}` : ''}</span>}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )
+                              })}
+                            </div>
+                          )
+                        ) : weekGroups.map(g => {
+                          const open = openSet.has(g.key)
+                          return (
+                            <div key={g.key} style={{ marginBottom: '0.5rem' }}>
+                              <button onClick={() => toggleWeek(g.key)} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.08)', borderRadius: 4, padding: '0.65rem 0.85rem', cursor: 'pointer', marginBottom: open ? '1rem' : 0 }}>
+                                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#edeae2' }}>
+                                  {g.weekNum != null ? `Uge ${g.weekNum}` : 'Uden uge'}
+                                </span>
+                                <span style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexShrink: 0 }}>
+                                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770' }}>{g.sessions.length} træning{g.sessions.length === 1 ? '' : 'er'} · {g.totalSets} sæt</span>
+                                  <span style={{ color: '#c8923a', fontSize: '0.7rem' }}>{open ? '▾' : '▸'}</span>
+                                </span>
+                              </button>
+                              {open && (
+                                <div style={{ paddingLeft: '0.25rem' }}>
+                                  {g.sessions.map((sess, i) => renderSession(sess, i))}
+                                </div>
+                              )}
+                            </div>
+                          )
+                        })}
+                      </>
+                    )}
                   </div>
                 )
             })()}
