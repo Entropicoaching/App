@@ -308,6 +308,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [sessionForm, setSessionForm] = useState({ title: '', weekday: null })
   const [exerciseForm, setExerciseForm] = useState({ name: '', sets: '', reps: '', intensity: '', intensityPrefix: 'RPE', note: '' })
   const [athleteLogs, setAthleteLogs] = useState([])
+  const [openLogWeeks, setOpenLogWeeks] = useState(null) // null = standard (seneste uge åben); ellers Set af åbne ugenumre
+  const [weeklyActivity, setWeeklyActivity] = useState({}) // athlete_id → { sessions, sets } for indeværende uge
   const [athleteWeightLogs, setAthleteWeightLogs] = useState([])
   const [athleteReadiness, setAthleteReadiness] = useState([])
   const [athletePRs, setAthletePRs] = useState([])
@@ -370,7 +372,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     }
   }, [view, athletes])
   useEffect(() => {
-    if ((activeTab === 'program' || activeTab === 'analyse') && selectedAthlete) {
+    if ((activeTab === 'program' || activeTab === 'analyse' || activeTab === 'log') && selectedAthlete) {
       fetchWeeks(selectedAthlete.id)
       fetchAthleteLogs(selectedAthlete.id)
     }
@@ -470,8 +472,40 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       fetchProfilesLastSeen(data)
       fetchAthleteWeekSummaries(data.map(a => a.id))
       fetchAthleteLastLogs(data.map(a => a.id))
+      fetchWeeklyActivity(data.map(a => a.id))
     }
     setLoading(false)
+  }
+
+  // Mandag i indeværende ISO-uge (lokal tid), som Date kl. 00:00.
+  function isoMonday(d = new Date()) {
+    const x = new Date(d)
+    const day = (x.getDay() + 6) % 7 // 0=mandag
+    x.setDate(x.getDate() - day)
+    x.setHours(0, 0, 0, 0)
+    return x
+  }
+
+  // Pr. atlet: antal loggede træninger (unikke datoer) + antal sæt i indeværende uge.
+  async function fetchWeeklyActivity(athleteIds) {
+    if (!athleteIds.length) return
+    const { data } = await supabase
+      .from('exercise_logs')
+      .select('athlete_id, logged_at')
+      .in('athlete_id', athleteIds)
+      .eq('skipped', false)
+      .gte('logged_at', isoMonday().toISOString())
+    if (!data) return
+    const map = {}
+    for (const log of data) {
+      const aid = log.athlete_id
+      if (!map[aid]) map[aid] = { dates: new Set(), sets: 0 }
+      map[aid].dates.add(log.logged_at.slice(0, 10))
+      map[aid].sets++
+    }
+    const summary = {}
+    for (const aid in map) summary[aid] = { sessions: map[aid].dates.size, sets: map[aid].sets }
+    setWeeklyActivity(summary)
   }
 
   async function fetchAthleteLastLogs(athleteIds) {
@@ -2544,6 +2578,49 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   )
                 })()}
 
+                {/* Denne uge — tvær-atlet aktivitet */}
+                {(() => {
+                  const visible = athletes.filter(a => !hiddenAthleteIds.has(a.id))
+                  if (!visible.length) return null
+                  const rows = visible
+                    .map(a => ({ a, act: weeklyActivity[a.id] || { sessions: 0, sets: 0 } }))
+                    .sort((x, y) => y.act.sessions - x.act.sessions || y.act.sets - x.act.sets)
+                  const activeCount = rows.filter(r => r.act.sessions > 0).length
+                  return (
+                    <div style={{ ...s.card, marginBottom: '1.5rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem' }}>
+                        <div style={s.cardLabel}>Denne uge</div>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770', letterSpacing: '0.06em' }}>{activeCount}/{rows.length} har trænet</div>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 0, marginTop: '0.5rem' }}>
+                        {rows.map((r, i) => {
+                          const has = r.act.sessions > 0
+                          return (
+                            <div key={r.a.id} onClick={() => openProfile(r.a, 'log')}
+                              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', padding: '0.5rem 0', borderBottom: i < rows.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none', cursor: 'pointer', minHeight: '40px', opacity: has ? 1 : 0.5 }}>
+                              <span style={{ fontSize: '0.82rem', color: '#edeae2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>{r.a.name}</span>
+                              <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
+                                {has ? (
+                                  <>
+                                    <span style={{ display: 'flex', gap: '0.2rem' }}>
+                                      {Array.from({ length: Math.min(r.act.sessions, 6) }).map((_, k) => (
+                                        <span key={k} style={{ width: 7, height: 7, borderRadius: '50%', background: '#6cba6c' }} />
+                                      ))}
+                                    </span>
+                                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#7a7770' }}>{r.act.sessions} træning{r.act.sessions === 1 ? '' : 'er'} · {r.act.sets} sæt</span>
+                                  </>
+                                ) : (
+                                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#4a4844' }}>Intet endnu</span>
+                                )}
+                              </span>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )
+                })()}
+
                 {/* Ugeplan oversigt */}
                 {(() => {
                   const visibleAthletes = athletes.filter(a => !hiddenAthleteIds.has(a.id))
@@ -2698,7 +2775,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             </div>
 
             <div style={{ ...s.tabs, overflowX: 'auto', flexWrap: 'nowrap', WebkitOverflowScrolling: 'touch' }}>
-              {[['oversigt', 'Oversigt'], ['kost', 'Kost & mål'], ['program', 'Program'], ['noter', 'Noter'], ['analyse', 'Analyse'], ['opvarmning', 'Opvarmning'], ['stævne', 'Stævne'], ['beskeder', 'Beskeder']].map(([key, label]) => (
+              {[['oversigt', 'Oversigt'], ['kost', 'Kost & mål'], ['program', 'Program'], ['log', 'Log'], ['noter', 'Noter'], ['analyse', 'Analyse'], ['opvarmning', 'Opvarmning'], ['stævne', 'Stævne'], ['beskeder', 'Beskeder']].map(([key, label]) => (
                 <button key={key} style={{ ...s.tab(activeTab === key), whiteSpace: 'nowrap', flexShrink: 0 }} onClick={() => { setActiveTab(key); setEditing(null) }}>{label}</button>
               ))}
             </div>
@@ -4712,7 +4789,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             )}
 
             {/* TRÆNINGSLOG */}
-            {activeTab === 'program' && (() => {
+            {activeTab === 'log' && (() => {
               // Build trend index: exName → sorted [{ date, avg }]
               const trendEntries = {}
               for (const log of athleteLogs) {
@@ -4765,17 +4842,28 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               }
               const logSessions = Object.values(grouped).sort((a, b) => b.date.localeCompare(a.date))
 
-              return (
-                <div style={{ marginTop: '2rem', borderTop: '1px solid rgba(237,234,226,0.07)', paddingTop: '1.5rem' }}>
-                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '1.25rem' }}>
-                    Træningslog
-                  </div>
+              // Gruppér loggede træninger pr. uge (seneste uge øverst), sammenklappelige
+              const wgMap = {}
+              const weekGroups = []
+              for (const sess of logSessions) {
+                const key = sess.weekNum != null ? sess.weekNum : '—'
+                if (!wgMap[key]) { wgMap[key] = { key, weekNum: sess.weekNum, sessions: [], latestDate: sess.date, totalSets: 0 }; weekGroups.push(wgMap[key]) }
+                const g = wgMap[key]
+                g.sessions.push(sess)
+                if (sess.date > g.latestDate) g.latestDate = sess.date
+                g.totalSets += Object.values(sess.exerciseMap).reduce((acc, ex) => acc + ex.sets.length, 0)
+              }
+              weekGroups.sort((a, b) => b.latestDate.localeCompare(a.latestDate))
+              const latestKey = weekGroups[0]?.key
+              const openSet = openLogWeeks ?? new Set(latestKey != null ? [latestKey] : [])
+              const toggleWeek = key => setOpenLogWeeks(prev => {
+                const base = prev ?? new Set(latestKey != null ? [latestKey] : [])
+                const next = new Set(base)
+                if (next.has(key)) next.delete(key); else next.add(key)
+                return next
+              })
 
-                  {logSessions.length === 0 ? (
-                    <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-                      Ingen loggede træninger endnu
-                    </div>
-                  ) : logSessions.map((sess, i) => {
+              const renderSession = (sess, i) => {
                     const exercises = Object.values(sess.exerciseMap)
                     const totalPlanned = exercises.reduce((acc, ex) => acc + ex.plannedSets, 0)
                     const totalLogged = exercises.reduce((acc, ex) => acc + ex.sets.length, 0)
@@ -4877,9 +4965,40 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                         })}
                       </div>
                     )
-                  })}
-                </div>
-              )
+                }
+
+                return (
+                  <div style={{ marginTop: '1.5rem' }}>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '1.25rem' }}>
+                      Træningslog
+                    </div>
+                    {logSessions.length === 0 ? (
+                      <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                        Ingen loggede træninger endnu
+                      </div>
+                    ) : weekGroups.map(g => {
+                      const open = openSet.has(g.key)
+                      return (
+                        <div key={g.key} style={{ marginBottom: '0.5rem' }}>
+                          <button onClick={() => toggleWeek(g.key)} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.08)', borderRadius: 4, padding: '0.65rem 0.85rem', cursor: 'pointer', marginBottom: open ? '1rem' : 0 }}>
+                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#edeae2' }}>
+                              {g.weekNum != null ? `Uge ${g.weekNum}` : 'Uden uge'}
+                            </span>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexShrink: 0 }}>
+                              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770' }}>{g.sessions.length} træning{g.sessions.length === 1 ? '' : 'er'} · {g.totalSets} sæt</span>
+                              <span style={{ color: '#c8923a', fontSize: '0.7rem' }}>{open ? '▾' : '▸'}</span>
+                            </span>
+                          </button>
+                          {open && (
+                            <div style={{ paddingLeft: '0.25rem' }}>
+                              {g.sessions.map((sess, i) => renderSession(sess, i))}
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                )
             })()}
 
             {/* TAB: NOTER */}
