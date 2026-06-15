@@ -43,8 +43,24 @@ function currentWeekNo(weeks, maxLoggedWk) {
 const WEEKDAYS_SHORT = ['Man', 'Tir', 'Ons', 'Tor', 'Fre', 'Lør', 'Søn']
 const WEEKDAYS_LONG = ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag', 'Søndag']
 
-const statusLabels = { active: 'Aktiv', peaking: 'Peaking', offseason: 'Off-season' }
-const statusColors = { active: '#6cba6c', peaking: '#c8923a', offseason: '#7a7770' }
+const statusLabels = { active: 'Aktiv', peaking: 'Peaking', offseason: 'Off-season', ferie: 'Ferie' }
+const statusColors = { active: '#6cba6c', peaking: '#c8923a', offseason: '#7a7770', ferie: '#5b9bb5' }
+
+// Ferie-status: returnerer { onHoliday, until } eller null hvis ikke på ferie.
+// onHoliday = ingen slutdato eller slutdato >= i dag. Ellers er ferien slut (tilbage).
+function holidayInfo(a) {
+  if (a?.status !== 'ferie') return null
+  const until = a.vacation_until || null
+  const onHoliday = !until || until >= new Date().toISOString().slice(0, 10)
+  return { onHoliday, until }
+}
+function ferieBadgeLabel(info) {
+  if (info?.until) {
+    const d = new Date(info.until + 'T12:00:00')
+    return `Ferie til ${d.getDate()}/${d.getMonth() + 1}`
+  }
+  return 'Ferie'
+}
 
 function initials(name) {
   return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
@@ -769,15 +785,18 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       // ellers seneste loggede uge, ellers første planlagte uge.
       const ref = currentWeekNo(weeks, loggedWeek) ?? minPlannedWeekNo
       const runway = ref != null ? planned.filter(w => w.week_number >= ref).length : planned.length
+      const holiday = holidayInfo(a)
+      const returned = holiday && !holiday.onHoliday // ferie slut → skal genaktiveres/planlægges
       let status
-      if (weeks.length === 0) status = 'none'
+      if (holiday?.onHoliday) status = 'ferie'      // på ferie → uden for Prioritet
+      else if (weeks.length === 0) status = 'none'
       else if (planned.length === 0) status = 'empty'
       else if (runway <= 0) status = 'out'         // forbi sidste planlagte uge = løbet tør
       else if (runway === 1) status = 'lastweek'   // i sidste planlagte uge, dækket ugen ud
       else status = 'ready'
       const snoozedUntil = snoozedAthletes[a.id] || null
       const isSnoozed = snoozedUntil && new Date(snoozedUntil) > today0
-      return { a, status, runway, isSnoozed }
+      return { a, status, runway, isSnoozed, returned }
     })
   }
 
@@ -1249,7 +1268,14 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
   async function saveEdit() {
     setSaving(true)
-    const { data, error } = await supabase.from('athletes').update(editData).eq('id', selectedAthlete.id).select().single()
+    const payload = { ...editData }
+    // Tomme dato-felter må ikke sendes som '' til date-kolonner (Postgres-fejl).
+    for (const k of ['competition_date', 'vacation_until']) {
+      if (payload[k] === '') payload[k] = null
+    }
+    // Rydder man feriedatoen mens status ikke er ferie, så nulstil den helt.
+    if (payload.status && payload.status !== 'ferie') payload.vacation_until = null
+    const { data, error } = await supabase.from('athletes').update(payload).eq('id', selectedAthlete.id).select().single()
     if (!error) {
       setSelectedAthlete(data)
       setAthletes(prev => prev.map(a => a.id === data.id ? data : a))
@@ -2552,6 +2578,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   // Lavere rank = mere akut. none > empty > løbet tør > besked > sidste uge (weekend).
                   const progReason = b => {
                     if (!b || b.isSnoozed) return null
+                    if (b.status === 'ferie') return null // på ferie → ikke i Prioritet
+                    if (b.returned) return { rank: 2, label: 'Tilbage fra ferie — planlæg', color: '#c8923a' }
                     if (b.status === 'none') return { rank: 0, label: 'Intet program', color: '#e05555' }
                     if (b.status === 'empty') return { rank: 1, label: 'Mangler øvelser', color: '#e05555' }
                     if (b.status === 'out') return { rank: 2, label: 'Løbet tør — planlæg nu', color: '#e05555' }
@@ -2612,10 +2640,15 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 0, marginTop: '0.5rem' }}>
                         {rows.map((r, i) => {
                           const has = r.act.sessions > 0
+                          const hol = holidayInfo(r.a)
+                          const onHol = hol?.onHoliday
                           return (
                             <div key={r.a.id} onClick={() => openProfile(r.a, 'log')}
-                              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', padding: '0.5rem 0', borderBottom: i < rows.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none', cursor: 'pointer', minHeight: '40px', opacity: has ? 1 : 0.5 }}>
-                              <span style={{ fontSize: '0.82rem', color: '#edeae2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>{r.a.name}</span>
+                              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', padding: '0.5rem 0', borderBottom: i < rows.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none', cursor: 'pointer', minHeight: '40px', opacity: has || onHol ? 1 : 0.5 }}>
+                              <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', minWidth: 0 }}>
+                                <span style={{ fontSize: '0.82rem', color: '#edeae2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>{r.a.name}</span>
+                                {onHol && <span style={{ ...s.badge('ferie'), flexShrink: 0 }}>{ferieBadgeLabel(hol)}</span>}
+                              </span>
                               <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
                                 {has ? (
                                   <>
@@ -2627,7 +2660,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                                     <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#7a7770' }}>{r.act.sessions} træning{r.act.sessions === 1 ? '' : 'er'} · {r.act.sets} sæt</span>
                                   </>
                                 ) : (
-                                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#4a4844' }}>Intet endnu</span>
+                                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: onHol ? '#5b9bb5' : '#4a4844' }}>{onHol ? 'På ferie' : 'Intet endnu'}</span>
                                 )}
                               </span>
                             </div>
@@ -2666,7 +2699,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                               style={{ display: 'flex', alignItems: 'center', padding: '0.6rem 0', borderBottom: i < arr.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none', gap: '1rem', opacity: isHidden ? 0.4 : 1 }}
                             >
                               <div onClick={() => !isHidden && openProfile(ath, 'program')} style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', flex: 1, gap: isMobile ? '0.2rem' : '1rem', cursor: isHidden ? 'default' : 'pointer', minWidth: 0 }}>
-                                <div style={{ fontSize: '0.88rem', color: '#edeae2', minWidth: isMobile ? 0 : '140px', flexShrink: 0, maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ath.name}</div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', minWidth: isMobile ? 0 : '140px', flexShrink: 0, maxWidth: '100%' }}>
+                                  <div style={{ fontSize: '0.88rem', color: '#edeae2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>{ath.name}</div>
+                                  {(() => { const h = holidayInfo(ath); return h?.onHoliday ? <span style={{ ...s.badge('ferie'), flexShrink: 0 }}>{ferieBadgeLabel(h)}</span> : null })()}
+                                </div>
                                 {ws ? (() => {
                                   const today = new Date(); today.setHours(12, 0, 0, 0)
                                   const lastLogDate = athleteLastLogs[ath.id]
@@ -3805,7 +3841,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 <div style={s.card}>
                   <div style={s.cardLabel}>
                     Resultater
-                    <button style={s.btnEdit} onClick={() => startEdit('stats', { squat: a.squat, bench: a.bench, deadlift: a.deadlift, training_squat: a.training_squat, training_bench: a.training_bench, training_deadlift: a.training_deadlift, status: a.status, weight_class: a.weight_class, age: a.age, competition_date: a.competition_date || '' })}>Rediger</button>
+                    <button style={s.btnEdit} onClick={() => startEdit('stats', { squat: a.squat, bench: a.bench, deadlift: a.deadlift, training_squat: a.training_squat, training_bench: a.training_bench, training_deadlift: a.training_deadlift, status: a.status, weight_class: a.weight_class, age: a.age, competition_date: a.competition_date || '', vacation_until: a.vacation_until || '' })}>Rediger</button>
                   </div>
                   {editing === 'stats' ? (
                     <div>
@@ -3835,8 +3871,16 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                           <option value="active">Aktiv</option>
                           <option value="peaking">Peaking</option>
                           <option value="offseason">Off-season</option>
+                          <option value="ferie">Ferie</option>
                         </select>
                       </div>
+                      {editData.status === 'ferie' && (
+                        <div style={{ marginBottom: '0.75rem' }}>
+                          <div style={s.fieldLabel}>Tilbage d. <span style={{ textTransform: 'none', fontWeight: 400, color: '#4a4844' }}>(valgfrit — tom = indtil du ændrer status)</span></div>
+                          <input style={s.fieldInput} type="date" value={editData.vacation_until || ''} onChange={e => setEditData(prev => ({ ...prev, vacation_until: e.target.value }))} />
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', marginTop: '0.3rem', letterSpacing: '0.04em' }}>Atleten er ude af Prioritet under ferien og dukker op igen som "planlæg" når datoen er passeret.</div>
+                        </div>
+                      )}
                       <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
                         <button style={s.btnGhost} onClick={() => setEditing(null)}>Annuller</button>
                         <button style={s.btnPrimary} onClick={() => saveEdit()} disabled={saving}>{saving ? 'Gemmer...' : 'Gem'}</button>
@@ -5405,6 +5449,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 <option value="active">Aktiv</option>
                 <option value="peaking">Peaking</option>
                 <option value="offseason">Off-season</option>
+                <option value="ferie">Ferie</option>
               </select>
             </div>
             <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
