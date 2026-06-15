@@ -765,7 +765,9 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       const planned = weeks.filter(w => w.exercise_count > 0)
       const minPlannedWeekNo = planned.length ? Math.min(...planned.map(w => w.week_number)) : null
       const loggedWeek = athleteCurrentWeek[a.id] ?? null
-      const ref = loggedWeek != null ? loggedWeek : minPlannedWeekNo
+      // Dato-bevidst "nu" (samme som tidslinjen): ugen hvis datospænd dækker i dag,
+      // ellers seneste loggede uge, ellers første planlagte uge.
+      const ref = currentWeekNo(weeks, loggedWeek) ?? minPlannedWeekNo
       const runway = ref != null ? planned.filter(w => w.week_number >= ref).length : planned.length
       let status
       if (weeks.length === 0) status = 'none'
@@ -1491,7 +1493,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         const wg = weekGroups[wkKey]
         lines.push(`Uge ${wg.week_number}${wg.block_name ? ` — ${wg.block_name}` : ''}`)
         for (const sess of wg.sessions) {
-          const ratingStr = sess.athlete_rating ? ` [Rating: ${sess.athlete_rating}/10]` : ' [Ikke rated]'
+          const ratingStr = sess.athlete_rating ? ` [Rating: ${sess.athlete_rating}/5]` : ' [Ikke rated]'
           lines.push(`  ▸ ${sess.title} [${fmtDatoShort(sess.date)}]${ratingStr}`)
           if (sess.athlete_comment) lines.push(`    Kommentar: "${sess.athlete_comment}"`)
           for (const ex of Object.values(sess.exercises)) {
@@ -2171,7 +2173,9 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             const maxPlannedWeekNo = planned.length ? Math.max(...planned.map(w => w.week_number)) : null
             const minPlannedWeekNo = planned.length ? Math.min(...planned.map(w => w.week_number)) : null
             const loggedWeek = athleteCurrentWeek[a.id] ?? null
-            const ref = loggedWeek != null ? loggedWeek : minPlannedWeekNo   // hvor de er nu (eller starten)
+            // Dato-bevidst "nu" (samme som tidslinjen): ugen hvis datospænd dækker i dag,
+            // ellers seneste loggede uge, ellers første planlagte uge.
+            const ref = currentWeekNo(weeks, loggedWeek) ?? minPlannedWeekNo   // hvor de er nu
             const runway = ref != null ? planned.filter(w => w.week_number >= ref).length : planned.length
             const lastLog = athleteLastLogs[a.id]
             const daysSince = lastLog ? Math.floor((today0 - new Date(lastLog + 'T12:00:00')) / dayMs) : null
@@ -3739,20 +3743,49 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 const todayR = athleteReadiness.find(r => r.logged_date === todayStr)
                 if (!todayR) return null
                 const sig = readinessSignal(todayR.readiness_score)
+                const prevR = athleteReadiness.find(r => r.logged_date < todayStr)
+                let trend = null
+                if (prevR && todayR.readiness_score != null && prevR.readiness_score != null) {
+                  const d = todayR.readiness_score - prevR.readiness_score
+                  trend = d > 2 ? { text: `↑ +${d} vs. sidst`, color: '#6cba6c' }
+                    : d < -2 ? { text: `↓ ${d} vs. sidst`, color: '#e05555' }
+                    : { text: '= som sidst', color: '#7a7770' }
+                }
+                const params = [
+                  todayR.sleep_hours != null && ['Søvn', `${todayR.sleep_hours}t`],
+                  todayR.energy != null && ['Energi', `${todayR.energy}/5`],
+                  todayR.motivation != null && ['Motivation', `${todayR.motivation}/5`],
+                  todayR.stress != null && ['Stress', `${todayR.stress}/5`],
+                  todayR.soreness_level != null && ['Ømhed', `${todayR.soreness_level}/5`],
+                ].filter(Boolean)
                 return (
                   <div style={{ ...s.card, background: sig.bg, marginBottom: '1.5rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
-                      <div>
-                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.3rem' }}>Parathed i dag</div>
-                        <div style={{ fontSize: '0.95rem', color: sig.color }}>{sig.text}</div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.9rem' }}>
+                        <div>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.3rem' }}>Parathed i dag</div>
+                          <div style={{ fontSize: '0.95rem', color: sig.color }}>{sig.text}</div>
+                          {trend && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: trend.color, letterSpacing: '0.06em', marginTop: '0.25rem' }}>{trend.text}</div>}
+                        </div>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '1.6rem', fontWeight: 500, color: sig.color, letterSpacing: '-0.02em', lineHeight: 1 }}>
+                          {todayR.readiness_score}<span style={{ fontSize: '0.55rem', color: '#4a4844', fontWeight: 400, marginLeft: '0.2rem' }}>/100</span>
+                        </div>
                       </div>
-                      <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap' }}>
-                        {todayR.sleep_hours != null && <div style={{ textAlign: 'center' }}><div style={s.fieldLabel}>Søvn</div><div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.8rem', color: '#edeae2' }}>{todayR.sleep_hours}t</div></div>}
-                        {todayR.energy != null && <div style={{ textAlign: 'center' }}><div style={s.fieldLabel}>Energi</div><div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.8rem', color: '#edeae2' }}>{todayR.energy}/5</div></div>}
-                        {todayR.stress != null && <div style={{ textAlign: 'center' }}><div style={s.fieldLabel}>Stress</div><div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.8rem', color: '#edeae2' }}>{todayR.stress}/5</div></div>}
-                        {todayR.sore_zones?.length > 0 && <div><div style={s.fieldLabel}>Ømhed</div><div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#7a7770' }}>{todayR.sore_zones.join(', ')}</div></div>}
+                      <div style={{ display: 'flex', gap: '1.1rem', flexWrap: 'wrap' }}>
+                        {params.map(([label, val]) => (
+                          <div key={label} style={{ textAlign: 'center' }}>
+                            <div style={s.fieldLabel}>{label}</div>
+                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.8rem', color: '#edeae2' }}>{val}</div>
+                          </div>
+                        ))}
                       </div>
                     </div>
+                    {todayR.sore_zones?.length > 0 && (
+                      <div style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
+                        <div style={s.fieldLabel}>Lokal ømhed</div>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#7a7770' }}>{todayR.sore_zones.join(', ')}</div>
+                      </div>
+                    )}
                   </div>
                 )
               })()}
