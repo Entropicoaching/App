@@ -1456,17 +1456,29 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   }
 
   function calcReadinessScore({ sleep, energy, motivation, stress, soreness }) {
-    let score = 100
+    // Vægtet model: hvert element scores 0-100 og vægtes til samlet parathed.
+    // Neutrale svar (3/5 + 7-9t søvn) → ~63; kun friske svar nærmer sig 100.
+    const sub = [] // [delscore, vægt]
     const h = parseFloat(sleep) || 0
     if (h > 0) {
-      if (h < 6) score -= 25
-      else if (h < 7) score -= 10
-      else if (h > 9) score -= 5
+      let sleepScore
+      if (h >= 7 && h <= 9) sleepScore = 100
+      else if (h > 9 && h <= 10) sleepScore = 85
+      else if (h >= 6 && h < 7) sleepScore = 80
+      else if (h >= 5 && h < 6) sleepScore = 55
+      else if (h > 10) sleepScore = 70
+      else sleepScore = 30 // < 5t
+      sub.push([sleepScore, 0.25])
     }
-    if (energy) score += (energy - 3) * 10
-    if (motivation) score += (motivation - 3) * 8
-    if (stress) score += (stress - 3) * -8
-    if (soreness) score += (soreness - 3) * -8
+    const lin = v => ((v - 1) / 4) * 100 // 1→0, 3→50, 5→100 (højere = bedre)
+    const inv = v => ((5 - v) / 4) * 100 // 1→100, 3→50, 5→0 (lavere = bedre)
+    if (energy) sub.push([lin(energy), 0.25])
+    if (motivation) sub.push([lin(motivation), 0.15])
+    if (stress) sub.push([inv(stress), 0.15])
+    if (soreness) sub.push([inv(soreness), 0.20])
+    if (!sub.length) return null
+    const totalW = sub.reduce((a, [, w]) => a + w, 0)
+    const score = sub.reduce((a, [s, w]) => a + s * w, 0) / totalW
     return Math.max(0, Math.min(100, Math.round(score)))
   }
 
@@ -1658,32 +1670,48 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     }
     fetchExerciseLogs(athlete.id, currentWeek)
 
-    // PR detection
-    if (payload.weight > 0) {
+    // PR-detektion (est. 1RM-baseret, Epley) — skelner vægt/rep/styrke-PR
+    const newReps = parseInt(repsCompleted) || 0
+    if (payload.weight > 0 && newReps > 0) {
       const exerciseName = allWeeks
         .flatMap(w => w.sessions || [])
         .flatMap(s => s.exercises || [])
         .find(e => e.id === exerciseId)?.name
       if (exerciseName) {
+        const e1rm = r => (r.weight || 0) * (1 + (r.reps || 1) / 30)
+        const newSet = { weight: payload.weight, reps: newReps }
         const { data: prData } = await supabase
           .from('personal_records')
-          .select('weight')
+          .select('weight, reps')
           .eq('athlete_id', athlete.id)
           .eq('exercise_name', exerciseName)
-          .order('weight', { ascending: false })
-          .limit(1)
-        const currentPR = prData?.[0]?.weight ?? 0
-        if (payload.weight > currentPR) {
-          await supabase.from('personal_records').insert({
-            athlete_id: athlete.id,
-            exercise_name: exerciseName,
-            weight: payload.weight,
-            reps: parseInt(repsCompleted) || null,
-          })
-          setPrToast(exerciseName)
-          setPrToastFading(false)
-          setTimeout(() => setPrToastFading(true), 2400)
-          setTimeout(() => setPrToast(null), 3000)
+        const rows = prData || []
+        const savePR = () => supabase.from('personal_records').insert({
+          athlete_id: athlete.id,
+          exercise_name: exerciseName,
+          weight: newSet.weight,
+          reps: newSet.reps,
+        })
+        if (rows.length === 0) {
+          // Allerførste registrering på øvelsen → gem baseline uden notifikation
+          await savePR()
+        } else {
+          const bestWeight = Math.max(...rows.map(r => r.weight || 0))
+          const bestE1rm = Math.max(...rows.map(e1rm))
+          // Flest reps tidligere på en vægt mindst lige så tung som det nye sæt
+          const repsAtWeight = rows.filter(r => (r.weight || 0) >= newSet.weight).map(r => r.reps || 0)
+          const bestRepsAtWeight = repsAtWeight.length ? Math.max(...repsAtWeight) : 0
+          let prType = null
+          if (newSet.weight > bestWeight) prType = 'vægt'
+          else if (bestRepsAtWeight > 0 && newSet.reps > bestRepsAtWeight) prType = 'rep'
+          else if (e1rm(newSet) > bestE1rm * 1.001) prType = 'styrke'
+          if (prType) {
+            await savePR()
+            setPrToast({ name: exerciseName, type: prType })
+            setPrToastFading(false)
+            setTimeout(() => setPrToastFading(true), 2400)
+            setTimeout(() => setPrToast(null), 3000)
+          }
         }
       }
     }
@@ -2301,7 +2329,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           boxShadow: '0 4px 24px rgba(0,0,0,0.55)',
           opacity: prToastFading ? 0 : 1, transition: 'opacity 0.6s ease',
         }}>
-          🏆 Ny PR på {prToast}!
+          {prToast.type === 'vægt' ? '🏆 Ny vægt-PR' : prToast.type === 'rep' ? '🔥 Ny rep-PR' : '⚡ Stærkeste sæt'} på {prToast.name}!
         </div>
       )}
       {/* Fortryd-toast */}
