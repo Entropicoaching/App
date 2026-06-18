@@ -4131,11 +4131,11 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Mobilitet</div>
                 <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Hvad har du brug for?</h1>
               </div>
-              <Door icon="⚡" title="Varm op" sub="Før dagens løft" onClick={() => setMobilityMode('opvarmning')} />
+              <Door icon="⚡" title="Varm op" sub="Inden du løfter" onClick={() => setMobilityMode('opvarmning')} />
               <Door icon="↻" title="Daglig mobilitet" subColor={hasRoutine && streak > 0 ? '#c8923a' : '#7a7770'}
-                sub={hasRoutine ? `🔥 ${streak} dag${streak === 1 ? '' : 'e'} i træk${doneToday ? ' · gjort i dag' : ''}` : 'Design din rutine · streak'}
+                sub={hasRoutine ? `🔥 ${streak} dag${streak === 1 ? '' : 'e'} i træk${doneToday ? ' · gjort i dag' : ''}` : 'Sæt din faste rutine op'}
                 onClick={() => setMobilityMode('daglig')} />
-              <Door icon="✦" title="Hurtig" sub="Stiv lige nu? Grib din rutine" onClick={() => { setHurtigAreas(new Set()); setHurtigPhase('pick'); setMobilityMode('hurtig') }} />
+              <Door icon="✦" title="Hurtig" sub="Tag den når du er stram" onClick={() => { setHurtigAreas(new Set()); setHurtigPhase('pick'); setMobilityMode('hurtig') }} />
             </>
           )
         })()}
@@ -4402,7 +4402,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           const PROBLEMS = ['Hofte / baller', 'Lyske / inderlår', 'Lænde', 'Øvre ryg', 'Ankel', 'Knæ', 'Skulder', 'Nakke / trapez']
           const LIFTS = [{ k: 'squat', l: 'Squat' }, { k: 'bench', l: 'Bænkpres' }, { k: 'deadlift', l: 'Dødløft' }]
           const SITTING = [{ k: 'low', l: 'Lidt' }, { k: 'med', l: 'En del' }, { k: 'high', l: 'Meget' }]
-          const TIMING = [{ k: 'morgen', l: 'Morgen' }, { k: 'aften', l: 'Aften' }, { k: 'any', l: 'Vilkårligt' }]
           const readOnly = !!coachAthleteId
           const streak = mobilityStreak(mobilityLogs)
           const doneToday = mobilityLogs.includes(today())
@@ -4437,10 +4436,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               <>
                 <div style={{ marginBottom: '1.5rem' }}>
                   <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Daglig mobilisering</div>
-                  <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Design din daglige rutine</h1>
-                  <div style={{ fontSize: '0.82rem', color: '#7a7770', marginTop: '0.5rem', lineHeight: 1.6 }}>Fem spørgsmål, så bygger vi et forslag du selv kan finjustere. Tænkt til de 21 timer væk fra stangen.</div>
+                  <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Sæt din rutine op</h1>
+                  <div style={{ fontSize: '0.82rem', color: '#7a7770', marginTop: '0.5rem', lineHeight: 1.6 }}>Svar på fire korte spørgsmål, så foreslår vi en rutine. Du kan altid ændre den bagefter.</div>
                 </div>
-                <Q label="Hvor lang tid har du om dagen?">
+                <Q label="Hvor lang tid vil du bruge?">
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem' }}>
                     {[5, 10, 15].map(t => <button key={t} onClick={() => setMobilityIntake(i => ({ ...i, time: t }))} style={chipBtn(mobilityIntake.time === t)}>{t} min</button>)}
                   </div>
@@ -4450,24 +4449,19 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                     {SITTING.map(o => <button key={o.k} onClick={() => setMobilityIntake(i => ({ ...i, sitting: o.k }))} style={chipBtn(mobilityIntake.sitting === o.k)}>{o.l}</button>)}
                   </div>
                 </Q>
-                <Q label="Hvilke løft vil du forbedre positioner i? (vælg flere)">
+                <Q label="Hvilke løft vil du blive bedre til? (vælg flere)">
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem' }}>
                     {LIFTS.map(o => <button key={o.k} onClick={() => setMobilityIntake(i => ({ ...i, lifts: toggleInArray(i.lifts, o.k) }))} style={chipBtn(mobilityIntake.lifts.includes(o.k))}>{o.l}</button>)}
                   </div>
                 </Q>
-                <Q label="Hvad er stramt for tiden? (valgfrit)">
+                <Q label="Er noget stramt for tiden? (valgfrit)">
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
                     {PROBLEMS.map(p => <button key={p} onClick={() => setMobilityIntake(i => ({ ...i, problems: toggleInArray(i.problems, p) }))} style={chipBtn(mobilityIntake.problems.includes(p))}>{p}</button>)}
                   </div>
                 </Q>
-                <Q label="Hvornår laver du den helst?">
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem' }}>
-                    {TIMING.map(o => <button key={o.k} onClick={() => setMobilityIntake(i => ({ ...i, timing: o.k }))} style={chipBtn(mobilityIntake.timing === o.k)}>{o.l}</button>)}
-                  </div>
-                </Q>
                 <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.5rem' }}>
                   {mobilityRoutine && <button style={{ ...s.btnGhost, flex: 1, padding: '0.8rem' }} onClick={() => setMobilityPhase('daily')}>Annuller</button>}
-                  <button style={{ ...s.btnPrimary, flex: 2, padding: '0.85rem', fontSize: '0.62rem' }} onClick={buildFromIntake}>Byg mit forslag →</button>
+                  <button style={{ ...s.btnPrimary, flex: 2, padding: '0.85rem', fontSize: '0.62rem' }} onClick={buildFromIntake}>Se mit forslag →</button>
                 </div>
               </>
             )
@@ -4485,7 +4479,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 <div style={{ marginBottom: '1.25rem' }}>
                   <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Din rutine · {mobilitySlots.length} øvelser · ~{estMin} min</div>
                   <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Finjustér</h1>
-                  <div style={{ fontSize: '0.82rem', color: '#7a7770', marginTop: '0.5rem', lineHeight: 1.6 }}>Byt øvelse i hvert område, fjern det du ikke vil have, og tilføj områder. Det er din rutine.</div>
+                  <div style={{ fontSize: '0.82rem', color: '#7a7770', marginTop: '0.5rem', lineHeight: 1.6 }}>Skift øvelser, fjern dem du ikke vil have, eller tilføj flere. Gem når du er klar.</div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.25rem' }}>
                   {mobilitySlots.map((sl, idx) => {
@@ -4622,7 +4616,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
               {/* Ærlig framing */}
               <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', lineHeight: 1.7, letterSpacing: '0.04em', marginBottom: '1.25rem' }}>
-                Hvad det gør: bedre positioner (dybde, bue, lockout), mindre stivhed fra stillesidning og sundere led. Hvad det ikke er: en genvej til hurtigere restitution. Konsistens er det der virker — hellere 5 min hver dag end 30 min en gang om ugen.
+5 minutter hver dag slår 30 minutter en gang om ugen. Målet er bedre positioner og mindre stivhed — ikke hurtigere restitution.
               </div>
 
               {!readOnly && (
