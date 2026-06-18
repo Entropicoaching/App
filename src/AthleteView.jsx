@@ -1023,56 +1023,56 @@ const WARMUP_ADDONS = {
 // Gjort VÆK fra træning → længere hold er fint (modsat pre-lift-opvarmning, hvor
 // lange statiske stræk koster styrke). Format = samme som WARMUP_BASE-options.
 const MOBILITY_AREAS = [
-  { id: 'ankel', label: 'Ankel-dorsifleksion' },
-  { id: 'hofte', label: 'Dyb hofte' },
-  { id: 'hoftefleksor', label: 'Hoftefleksor-længde' },
-  { id: 'baller', label: 'Balle-aktivering' },
-  { id: 'tryg', label: 'Bryghvirvler (t-ryg)' },
+  { id: 'ankel', label: 'Ankel-bevægelighed' },
+  { id: 'hofte', label: 'Hofteåbning' },
+  { id: 'hoftefleksor', label: 'Hoftebøjere' },
+  { id: 'baller', label: 'Balleaktivering' },
+  { id: 'tryg', label: 'Brystryg' },
   { id: 'skulder', label: 'Skulder / lat' },
-  { id: 'lyske', label: 'Lyske / adduktor' },
+  { id: 'lyske', label: 'Lyske / inderlår' },
   { id: 'laend', label: 'Lænde-aflastning' },
 ]
 
 const MOBILITY_LIBRARY = {
   ankel: [
-    { id: 'mob-ankel-1', name: 'Ankel-vægstræk', desc: 'Stå med tåen ca. 10 cm fra en væg og pres knæet fremad, til det rører væggen — hælen bliver i gulvet. Flyt tåen længere væk for mere udfordring. Den vigtigste enkeltfaktor for squat-dybde: god dorsifleksion lader knæet vandre frem så du kan sidde lavt med oprejst overkrop.', label: '8 reps pr. side', type: 'reps' },
-    { id: 'mob-ankel-2', name: 'Knælende lægstræk', desc: 'Sæt det ene knæ i gulvet og det andet fod fladt foran. Skub knæet ud over tæerne og hold, mens hælen presses ned. Strækker læggen og lægger længde på akillessenen — hold roligt og træk vejret ind i strækket.', label: '40 sek pr. side', type: 'timer', duration: 40 },
-    { id: 'mob-ankel-3', name: 'Banded ankel-glid', desc: 'Læg et elastik om foran på anklen, fastgjort bagud, så det trækker skinnebenet bagud. Pres knæet frem over tæerne i gentagne, bløde glid. Elastikken giver leddet plads og forbedrer dorsifleksion mere effektivt end stræk alene.', label: '12 reps pr. side', type: 'reps' },
+    { id: 'mob-ankel-1', name: 'Ankel-vægstræk', desc: 'Stå med tåen ca. 10 cm fra en væg og pres knæet fremad, til det rører væggen — hælen skal blive i gulvet. Flyt tåen længere væk, når det bliver let. Det vigtigste for squat-dybde er, at anklen kan bøje nok til at knæet kan vandre frem over tæerne — så kan du sidde lavt med oprejst overkrop.', label: '8 reps pr. side', type: 'reps' },
+    { id: 'mob-ankel-2', name: 'Knælende lægstræk', desc: 'Sæt det ene knæ i gulvet og den anden fod fladt foran dig. Skub knæet ud over tæerne og hold, mens du presser hælen ned. Strækker læggen og akillessenen — hold roligt og træk vejret ind i strækket.', label: '40 sek pr. side', type: 'timer', duration: 40 },
+    { id: 'mob-ankel-3', name: 'Ankel-glid med elastik', desc: 'Bind et elastik fast i lav højde og læg løkken om anklen forfra, så det trækker anklen bagud. Pres knæet frem over tæerne i rolige, gentagne glid. Elastikken giver leddet plads og løsner anklen mere end et stræk alene.', label: '12 reps pr. side', type: 'reps' },
   ],
   hofte: [
-    { id: 'mob-hofte-1', name: '90/90 hofterotation', desc: 'Sid på gulvet med det ene ben foran (90°) og det andet til siden (90°). Skub forsigtigt hoften fremad mod det forreste ben, hold, og skift side. Rammer både ekstern og intern rotation — afgørende for at komme dybt i squat uden at lænden runder.', label: '40 sek pr. side', type: 'timer', duration: 40 },
-    { id: 'mob-hofte-2', name: 'Dyb squat-hold', desc: 'Sæt dig i bunden af en squat med fødderne fladt og hold dig nede ved at skubbe knæene ud med albuerne. Læn vægten lidt rundt og find de stramme punkter. Lærer hofte, ankel og lænd at acceptere den dybe position under tid.', label: '45 sek', type: 'timer', duration: 45 },
-    { id: 'mob-hofte-3', name: 'Due-stræk', desc: 'Fra firfodsstående, før det ene knæ frem og læg skinnebenet diagonalt foran dig. Sænk hofterne og læn overkroppen fremad med lige ryg. Dyb stræk af piriformis og bagerste hofte — det område der ofte spænder og blokerer dybden.', label: '40 sek pr. side', type: 'timer', duration: 40 },
+    { id: 'mob-hofte-1', name: '90/90 hofterotation', desc: 'Sid på gulvet med det ene ben bøjet foran dig (90°) og det andet ud til siden (90°). Skub forsigtigt hoften frem mod det forreste ben, hold, og skift side. Rammer både udad- og indadrotation i hoften — afgørende for at komme dybt i squat uden at lænden runder.', label: '40 sek pr. side', type: 'timer', duration: 40 },
+    { id: 'mob-hofte-2', name: 'Dyb squat-hold', desc: 'Sæt dig ned i bunden af en squat med fødderne fladt, og hold dig nede ved at skubbe knæene ud med albuerne. Flyt vægten lidt rundt og find de stramme punkter. Lærer hofte, ankel og lænd at falde til ro i den dybe position.', label: '45 sek', type: 'timer', duration: 45 },
+    { id: 'mob-hofte-3', name: 'Due-stræk', desc: 'Fra alle fire, før det ene knæ frem og læg skinnebenet skråt foran dig. Sænk hofterne og læn overkroppen frem med rank ryg. Dybt stræk af den dybe ballemuskel og bagsiden af hoften — det område der ofte spænder og blokerer dybden.', label: '40 sek pr. side', type: 'timer', duration: 40 },
   ],
   hoftefleksor: [
-    { id: 'mob-hfx-1', name: 'Couch stretch', desc: 'Sæt det ene knæ mod en væg med skinnebenet op ad væggen, det andet ben foran i lunge. Hold ryggen ret og klem ballen, mens du skubber hoften frem. Den mest direkte modgift mod stillesidning: forkortede hoftefleksorer trækker bækkenet frem og presser lænden.', label: '45 sek pr. side', type: 'timer', duration: 45 },
-    { id: 'mob-hfx-2', name: 'Knælende hoftefleksor-stræk', desc: 'Knæl på det ene knæ, det andet fod foran. Klem ballen på det knælende ben og skub hoften langsomt frem, til du mærker stræk foran i hoften. Undgå at svaje i lænden — bevægelsen skal komme fra hoften, ikke ryggen.', label: '40 sek pr. side', type: 'timer', duration: 40 },
-    { id: 'mob-hfx-3', name: 'Verdens største stræk', desc: 'Fra en lunge, sæt hånden i gulvet inden for forreste fod og roter den anden arm op mod loftet. Åbner hoftefleksor, lyske og bryghvirvler i én flydende bevægelse — en effektiv helkrops-reset efter en dag på stolen.', label: '6 reps pr. side', type: 'reps' },
+    { id: 'mob-hfx-1', name: 'Hoftebøjer-stræk mod væg', desc: 'Knæl foran en væg og sæt det bageste skinneben lodret op ad væggen, så hælen peger op. Sæt den anden fod fladt foran dig i et stort skridt. Klem ballen på det bageste ben og skub hoften frem med rank ryg, til du mærker stræk foran i hoften og låret. Den mest direkte modgift mod stillesidning, hvor hoftebøjerne bliver korte og trækker bækkenet i svaj.', label: '45 sek pr. side', type: 'timer', duration: 45 },
+    { id: 'mob-hfx-2', name: 'Knælende hoftebøjer-stræk', desc: 'Knæl på det ene knæ med den anden fod fladt foran dig. Klem ballen på det knælende ben og skub hoften langsomt frem, til du mærker stræk foran i hoften. Undgå at svaje i lænden — bevægelsen skal komme fra hoften, ikke fra ryggen.', label: '40 sek pr. side', type: 'timer', duration: 40 },
+    { id: 'mob-hfx-3', name: 'Udfald med rotation', desc: 'Tag et stort skridt frem til et udfald, sæt hånden i gulvet inden for den forreste fod, og drej den anden arm op mod loftet med blikket efter hånden. Åbner hoftebøjer, lyske og brystryg i én bevægelse — en effektiv reset for hele kroppen efter en dag på stolen.', label: '6 reps pr. side', type: 'reps' },
   ],
   baller: [
-    { id: 'mob-baller-1', name: 'Glute bridge m. lang pause', desc: 'Lig på ryggen med bøjede knæ. Skub hofterne op og klem ballerne hårdt — hold 5 sekunder i toppen og sænk roligt. Vækker de baller som stillesidning sætter i dvale, så de tager belastningen i stedet for lænden.', label: '10 reps', type: 'reps' },
-    { id: 'mob-baller-2', name: 'Banded sidegang', desc: 'Læg et elastik om knæ eller ankler, gå i halv-squat og tag kontrollerede skridt til siden uden at lade knæene falde ind. Aktiverer gluteus medius — den stabilisator der holder knæene ude under squat og dødløft.', label: '10 skridt pr. side', type: 'reps' },
-    { id: 'mob-baller-3', name: 'Enkeltbens glute bridge', desc: 'Glute bridge med ét ben strakt ud. Skub op gennem hælen på det bøjede ben og klem ballen i toppen. Afslører og retter side-til-side-forskelle i balle-styrke som ofte stammer fra at sidde skævt.', label: '8 reps pr. side', type: 'reps' },
+    { id: 'mob-baller-1', name: 'Hofteløft med pause', desc: 'Lig på ryggen med bøjede knæ. Skub hofterne op og klem ballerne hårdt — hold 5 sekunder i toppen og sænk roligt. Vækker de baller som stillesidning sætter i dvale, så de tager belastningen i stedet for lænden.', label: '10 reps', type: 'reps' },
+    { id: 'mob-baller-2', name: 'Sidegang med elastik', desc: 'Læg et elastik om knæ eller ankler, gå i halv squat og tag kontrollerede skridt til siden uden at lade knæene falde ind. Aktiverer den mellemste ballemuskel — stabilisatoren der holder knæene ude under squat og dødløft.', label: '10 skridt pr. side', type: 'reps' },
+    { id: 'mob-baller-3', name: 'Hofteløft på ét ben', desc: 'Lav et hofteløft med det ene ben strakt lige ud. Skub op gennem hælen på det bøjede ben og klem ballen i toppen. Afslører og retter forskelle i ballestyrke fra side til side, som ofte stammer fra at sidde skævt.', label: '8 reps pr. side', type: 'reps' },
   ],
   tryg: [
-    { id: 'mob-tryg-1', name: 'T-ryg ekstension over rulle', desc: 'Læg en skumrulle på tværs under de øvre bryghvirvler, støt nakken med hænderne og bøj forsigtigt bagover hen over rullen. Flyt rullen op og ned ad ryggen. Genvinder den ekstension som foroverbøjet siddning fjerner — direkte forudsætning for en stabil bænk-bue.', label: '8 reps', type: 'reps' },
-    { id: 'mob-tryg-2', name: 'Open book rotation', desc: 'Lig på siden med knæene bøjet og armene strakt ud foran. Åbn den øverste arm i en stor bue mod den anden side og følg den med blikket, mens knæene bliver i gulvet. Genskaber rotation i brystryggen og åbner brystet efter timer foroverbøjet.', label: '6 reps pr. side', type: 'reps' },
-    { id: 'mob-tryg-3', name: 'Katte-kamel', desc: 'På alle fire, skift langsomt mellem at runde ryggen mod loftet (kat) og synke ned i et svaj (kamel). Bevæg hele rygsøjlen segment for segment. Smører hele rygsøjlen og bryder den fastlåste C-form en stol presser dig ind i.', label: '8 reps', type: 'reps' },
+    { id: 'mob-tryg-1', name: 'Brystryg over skumrulle', desc: 'Læg en skumrulle på tværs under den øverste del af brystryggen, støt nakken med hænderne og bøj forsigtigt bagover hen over rullen. Flyt rullen lidt op og ned. Genvinder den bagoverbøjning som foroverbøjet siddning tager fra dig — en direkte forudsætning for en stabil bænk-bue.', label: '8 reps', type: 'reps' },
+    { id: 'mob-tryg-2', name: 'Bogåbning', desc: 'Lig på siden med knæene bøjet op og armene strakt ud foran dig. Åbn den øverste arm i en stor bue over til den anden side og følg hånden med blikket, mens knæene bliver i gulvet. Genskaber rotation i brystryggen og åbner brystet efter mange timer foroverbøjet.', label: '6 reps pr. side', type: 'reps' },
+    { id: 'mob-tryg-3', name: 'Katte-kamel', desc: 'På alle fire, skift langsomt mellem at runde ryggen op mod loftet (kat) og synke ned i et svaj (kamel). Bevæg rygsøjlen led for led. Smører hele ryggen og bryder den krumme holdning en stol presser dig ind i.', label: '8 reps', type: 'reps' },
   ],
   skulder: [
-    { id: 'mob-skulder-1', name: 'Lat-stræk i dørkarm', desc: 'Tag fat om en dørkarm eller stang, sæt hoften bagud og lad overkroppen hænge, så lat og skulder strækkes. Stramme lats begrænser både overhead-position og en god bænk-bue — slip dem løs her.', label: '40 sek pr. side', type: 'timer', duration: 40 },
-    { id: 'mob-skulder-2', name: 'Skulder-dislokationer', desc: 'Hold en pind eller et elastik med bredt greb og før den langsomt fra forsiden af hoften op over hovedet og ned bag ryggen — kun så bredt at du kan holde armene strakte. Åbner brystet og forbedrer skulderens rotation gradvist.', label: '8 reps', type: 'reps' },
-    { id: 'mob-skulder-3', name: 'Brystvæg-stræk', desc: 'Stil dig i en døråbning og læg underarmen op ad karmen i 90°. Træd forsigtigt frem, til du mærker stræk over brystet. Modvirker de fremrullede skuldre fra tastatur og telefon — vigtigt for et sundt bænkpres.', label: '40 sek pr. side', type: 'timer', duration: 40 },
+    { id: 'mob-skulder-1', name: 'Lat-stræk i dørkarm', desc: 'Tag fat om en dørkarm eller stang, sæt hoften bagud og lad overkroppen hænge, så siden af ryggen og skulderen strækkes. Stramme lats begrænser både armene over hovedet og en god bænk-bue — slip dem løs her.', label: '40 sek pr. side', type: 'timer', duration: 40 },
+    { id: 'mob-skulder-2', name: 'Skulder-rotation med pind', desc: 'Hold en pind eller et elastik med bredt greb og før den langsomt fra forsiden af hofterne op over hovedet og ned bag ryggen — kun så smalt som du kan med strakte arme. Åbner brystet og forbedrer skuldrenes bevægelighed lidt efter lidt.', label: '8 reps', type: 'reps' },
+    { id: 'mob-skulder-3', name: 'Bryststræk i døråbning', desc: 'Stil dig i en døråbning og læg underarmen op ad karmen i en ret vinkel. Træd forsigtigt frem, til du mærker stræk over brystet. Modvirker de fremrullede skuldre fra tastatur og telefon — vigtigt for et sundt bænkpres.', label: '40 sek pr. side', type: 'timer', duration: 40 },
   ],
   lyske: [
-    { id: 'mob-lyske-1', name: 'Frøstræk', desc: 'På alle fire, glid knæene bredt ud med tæerne udad. Skub hoften langsomt bagud og ned og lad lysken strække. Vejrtræk dybt ind i det stramme område — bedre adduktor-længde giver en bredere, mere stabil squat-stance.', label: '45 sek', type: 'timer', duration: 45 },
-    { id: 'mob-lyske-2', name: 'Cossack-squat', desc: 'Stå bredt og skift vægten ned over det ene bøjede ben, mens det andet er strakt med tæerne op. Skift roligt side til side. Dynamisk adduktor-mobilitet under let belastning — bygger styrke i yderpositionen, ikke bare passivt stræk.', label: '6 reps pr. side', type: 'reps' },
-    { id: 'mob-lyske-3', name: 'Adduktor-rock', desc: 'På alle fire, stræk det ene ben ud til siden med foden fladt. Rock hoften langsomt bagud mod hælen og frem igen. Kontrolleret, gentaget stræk af inderlåret der tåles bedre end et langt passivt hold.', label: '10 reps pr. side', type: 'reps' },
+    { id: 'mob-lyske-1', name: 'Frøstræk', desc: 'På alle fire, glid knæene bredt ud til siden med tæerne udad. Skub hoften langsomt bagud og ned, og lad inderlårene strække. Træk vejret dybt ind i det stramme område — bedre bevægelighed i inderlårene giver en bredere, mere stabil squat-stilling.', label: '45 sek', type: 'timer', duration: 45 },
+    { id: 'mob-lyske-2', name: 'Cossack-squat', desc: 'Stå bredt og skift vægten ned over det ene bøjede ben, mens det andet er strakt med tåen op. Skift roligt fra side til side. Dynamisk bevægelighed i inderlårene under let belastning — bygger styrke yderst i bevægelsen, ikke bare passivt stræk.', label: '6 reps pr. side', type: 'reps' },
+    { id: 'mob-lyske-3', name: 'Knælende inderlår-stræk', desc: 'På alle fire, stræk det ene ben ud til siden med foden fladt i gulvet. Gynge hoften langsomt bagud mod hælen og frem igen. Kontrolleret, gentaget stræk af inderlåret, der føles bedre end et langt passivt hold.', label: '10 reps pr. side', type: 'reps' },
   ],
   laend: [
-    { id: 'mob-laend-1', name: 'Knæ-til-bryst', desc: 'Lig på ryggen og træk begge knæ blødt op mod brystet. Rock let fra side til side. Aflaster lænden og giver de små rygmuskler en pause efter en dag under kompression — rart, ikke et præstationsstræk.', label: '40 sek', type: 'timer', duration: 40 },
-    { id: 'mob-laend-2', name: 'Liggende rygrotation', desc: 'Lig på ryggen, før det ene knæ over til modsatte side, mens skuldrene bliver i gulvet og blikket går den anden vej. Blød rotation der løsner lænd og hofte samtidig. Hold og træk vejret roligt.', label: '40 sek pr. side', type: 'timer', duration: 40 },
-    { id: 'mob-laend-3', name: 'Barnets stilling', desc: 'Sæt dig tilbage på hælene med armene strakt frem og panden mod gulvet. Træk vejret ned i lænden og lad ryggen runde blødt. En enkel decompression der afslutter rutinen og skifter kroppen over i ro.', label: '45 sek', type: 'timer', duration: 45 },
+    { id: 'mob-laend-1', name: 'Knæ-til-bryst', desc: 'Lig på ryggen og træk begge knæ blødt op mod brystet. Gynge let fra side til side. Aflaster lænden og giver de små rygmuskler en pause efter en dag i sammenpresset stilling — rart, ikke et præstationsstræk.', label: '40 sek', type: 'timer', duration: 40 },
+    { id: 'mob-laend-2', name: 'Liggende rygrotation', desc: 'Lig på ryggen og før det ene knæ over til den modsatte side, mens skuldrene bliver i gulvet og blikket går den anden vej. Blød rotation der løsner lænd og hofte på én gang. Hold og træk vejret roligt.', label: '40 sek pr. side', type: 'timer', duration: 40 },
+    { id: 'mob-laend-3', name: 'Barnets stilling', desc: 'Sæt dig tilbage på hælene med armene strakt frem og panden mod gulvet. Træk vejret ned i lænden og lad ryggen runde blødt. En enkel aflastning der afslutter rutinen og skifter kroppen over i ro.', label: '45 sek', type: 'timer', duration: 45 },
   ],
 }
 
