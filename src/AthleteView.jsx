@@ -4135,7 +4135,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               <Door icon="↻" title="Daglig mobilitet" subColor={hasRoutine && streak > 0 ? '#c8923a' : '#7a7770'}
                 sub={hasRoutine ? `🔥 ${streak} dag${streak === 1 ? '' : 'e'} i træk${doneToday ? ' · gjort i dag' : ''}` : 'Design din rutine · streak'}
                 onClick={() => setMobilityMode('daglig')} />
-              <Door icon="✦" title="Hurtig" sub="Stiv lige nu? ~5 min — ingen opsætning" onClick={() => { setHurtigPhase('pick'); setMobilityMode('hurtig') }} />
+              <Door icon="✦" title="Hurtig" sub="Stiv lige nu? Grib din rutine" onClick={() => { setHurtigAreas(new Set()); setHurtigPhase('pick'); setMobilityMode('hurtig') }} />
             </>
           )
         })()}
@@ -4643,27 +4643,41 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           const goStep = idx => { setHurtigStep(idx); setTimerActive(false); setTimerDone(false); const ex = exForSlot(hurtigSlots[idx]); setTimerSeconds(ex?.type === 'timer' ? ex.duration : 0) }
 
           if (hurtigPhase === 'pick') {
-            const toggle = id => setHurtigAreas(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n })
-            const fullBody = ['ankel', 'hofte', 'hoftefleksor', 'tryg', 'baller']
+            // Hurtig bruger SAMME øvelser som din daglige rutine — ingen separat liste.
+            if (!mobilitySlots.length) {
+              return (
+                <>
+                  <div style={{ marginBottom: '1.5rem' }}>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Hurtig mobilisering</div>
+                    <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Du mangler en rutine</h1>
+                    <div style={{ fontSize: '0.82rem', color: '#7a7770', marginTop: '0.5rem', lineHeight: 1.6 }}>Hurtig griber bare øvelser fra din daglige rutine. Design den først — så tager det få sekunder at gribe dele af den her.</div>
+                  </div>
+                  <button style={{ ...s.btnPrimary, width: '100%', padding: '0.85rem', fontSize: '0.62rem' }} onClick={() => setMobilityMode('daglig')}>Design din rutine →</button>
+                </>
+              )
+            }
+            const toggle = area => setHurtigAreas(prev => { const n = new Set(prev); n.has(area) ? n.delete(area) : n.add(area); return n })
+            const selectedSlots = mobilitySlots.filter(sl => hurtigAreas.has(sl.area))
             return (
               <>
                 <div style={{ marginBottom: '1.5rem' }}>
                   <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Hurtig mobilisering</div>
-                  <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Hvad er stramt lige nu?</h1>
-                  <div style={{ fontSize: '0.82rem', color: '#7a7770', marginTop: '0.5rem', lineHeight: 1.6 }}>Vælg områder, eller tag hele kroppen. Ingen opsætning — og det tæller stadig på din streak.</div>
+                  <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Hvad trænger lige nu?</h1>
+                  <div style={{ fontSize: '0.82rem', color: '#7a7770', marginTop: '0.5rem', lineHeight: 1.6 }}>Tag hele din rutine, eller bare det der er stramt. Det tæller på din streak.</div>
                 </div>
-                <button style={{ ...s.btnPrimary, width: '100%', padding: '1rem', fontSize: '0.66rem', marginBottom: '1.25rem' }} onClick={() => startGuide(fullBody.map(area => ({ area, choiceIdx: 0 })))}>
-                  Hele kroppen · {fullBody.length} øvelser · ~5 min
+                <button style={{ ...s.btnPrimary, width: '100%', padding: '1rem', fontSize: '0.66rem', marginBottom: '1.25rem' }} onClick={() => startGuide(mobilitySlots)}>
+                  Hele rutinen · {mobilitySlots.length} øvelser
                 </button>
-                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.6rem' }}>Eller vælg områder</div>
+                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.6rem' }}>Eller vælg fra din rutine</div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '1.25rem' }}>
-                  {MOBILITY_AREAS.map(a => {
-                    const on = hurtigAreas.has(a.id)
-                    return <button key={a.id} onClick={() => toggle(a.id)} style={{ background: on ? 'rgba(200,146,58,0.15)' : '#1c1c18', border: `1px solid ${on ? '#c8923a' : 'rgba(237,234,226,0.1)'}`, color: on ? '#c8923a' : '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', fontWeight: 500, letterSpacing: '0.04em', padding: '0.7rem 0.5rem', cursor: 'pointer', textAlign: 'center' }}>{a.label}</button>
+                  {mobilitySlots.map(sl => {
+                    const on = hurtigAreas.has(sl.area)
+                    const ex = exForSlot(sl)
+                    return <button key={sl.area} onClick={() => toggle(sl.area)} style={{ background: on ? 'rgba(200,146,58,0.15)' : '#1c1c18', border: `1px solid ${on ? '#c8923a' : 'rgba(237,234,226,0.1)'}`, color: on ? '#c8923a' : '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', fontWeight: 500, letterSpacing: '0.04em', padding: '0.7rem 0.5rem', cursor: 'pointer', textAlign: 'center' }}>{ex?.name || areaLabel(sl.area)}</button>
                   })}
                 </div>
-                <button style={{ ...s.btnPrimary, width: '100%', padding: '0.85rem', fontSize: '0.62rem', opacity: hurtigAreas.size ? 1 : 0.5 }} disabled={!hurtigAreas.size} onClick={() => startGuide([...hurtigAreas].map(area => ({ area, choiceIdx: 0 })))}>
-                  Start ({hurtigAreas.size} {hurtigAreas.size === 1 ? 'område' : 'områder'})
+                <button style={{ ...s.btnPrimary, width: '100%', padding: '0.85rem', fontSize: '0.62rem', opacity: selectedSlots.length ? 1 : 0.5 }} disabled={!selectedSlots.length} onClick={() => startGuide(selectedSlots)}>
+                  Start ({selectedSlots.length} {selectedSlots.length === 1 ? 'øvelse' : 'øvelser'})
                 </button>
               </>
             )
