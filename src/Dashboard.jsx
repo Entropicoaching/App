@@ -297,6 +297,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [flash, setFlash] = useState(null)
   const [confirmDialog, setConfirmDialog] = useState(null)
   const flashTimerRef = useRef(null)
+  const snoozeMigratedRef = useRef(false) // engangs-flyt af localStorage-snoozes til DB
   const [lastBackup, setLastBackup] = useState(null) // synces via profiles.last_backup_at
 
   // Program state
@@ -366,6 +367,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [calendarWeeks, setCalendarWeeks] = useState({}) // athlete_id -> [{week_number, block_name, start_date, session_count, exercise_count}]
   const [athleteCurrentWeek, setAthleteCurrentWeek] = useState({}) // athlete_id -> ugenummer for seneste logg. træning
   const [timelineEdit, setTimelineEdit] = useState(null) // { athleteId, weeks, name, block, firstStartIso } — åbent dato-panel i kalender-tidslinjen
+  // Kilde = athletes.snooze_until (DB). localStorage bruges kun som midlertidig seed for
+  // straks-visning + migreres væk ved første load (se snoozeMigratedRef-effekt).
   const [snoozedAthletes, setSnoozedAthletes] = useState(() => {
     try { return JSON.parse(localStorage.getItem('entropi_calendar_snooze') || '{}') } catch { return {} }
   })
@@ -385,6 +388,22 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   }, [])
 
   useEffect(() => { fetchAthletes(); fetchExerciseLibrary(); fetchLastBackup() }, [])
+  // Engangs-migrering: flyt evt. gamle localStorage-snoozes ind i DB, så de ikke tabes
+  // når snooze nu synces via athletes.snooze_until. Kører én gang når atleter er hentet.
+  useEffect(() => {
+    if (snoozeMigratedRef.current || !athletes.length) return
+    snoozeMigratedRef.current = true
+    let local
+    try { local = JSON.parse(localStorage.getItem('entropi_calendar_snooze') || '{}') } catch { local = {} }
+    const entries = Object.entries(local).filter(([id, until]) => until && athletes.some(a => a.id === id))
+    if (entries.length) {
+      Promise.all(entries.map(([id, until]) => supabase.from('athletes').update({ snooze_until: until }).eq('id', id)))
+        .then(() => { localStorage.removeItem('entropi_calendar_snooze'); fetchAthletes() })
+    } else {
+      localStorage.removeItem('entropi_calendar_snooze')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [athletes])
   useEffect(() => {
     if ((view === 'calendar' || view === 'list') && athletes.length) {
       const ids = athletes.map(a => a.id)
@@ -488,6 +507,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     if (error) { setLoadError(true); setLoading(false); return }
     setAthletes(data || [])
     setHiddenAthleteIds(new Set((data || []).filter(a => a.hidden).map(a => a.id)))
+    // Snooze synces nu via athletes.snooze_until i DB (cross-device), ikke localStorage.
+    setSnoozedAthletes(Object.fromEntries((data || []).filter(a => a.snooze_until).map(a => [a.id, a.snooze_until])))
     if (data?.length) {
       fetchLatestMessages(data.map(a => a.id))
       fetchProfilesLastSeen(data)
@@ -636,13 +657,14 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   }
 
   // Udsæt opmærksomhed på en atlet til en dato (ISO yyyy-mm-dd). null = fjern udsættelse.
-  function snoozeAthlete(athId, untilDate) {
+  // Persisteres i athletes.snooze_until så det følger med på tværs af enheder.
+  async function snoozeAthlete(athId, untilDate) {
     setSnoozedAthletes(prev => {
       const next = { ...prev }
       if (untilDate) next[athId] = untilDate; else delete next[athId]
-      localStorage.setItem('entropi_calendar_snooze', JSON.stringify(next))
       return next
     })
+    await supabase.from('athletes').update({ snooze_until: untilDate || null }).eq('id', athId)
   }
 
   async function fetchProfilesLastSeen(athletesList) {
@@ -1658,6 +1680,30 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         lines.push('')
         lines.push(`  Hyppigste ømme zoner: ${zones.map(([z, n]) => `${z} (${n}x)`).join(', ')}`)
       }
+      // Korrelations-hint: gns. RPE på lav-readiness-dage (<50) vs. gode dage (≥75).
+      // Samme dato-tærskler som atlet-appens readinessSignal. Viser om træning føles
+      // tungere når atleten er upklar → input til restitutions-vurdering (pkt. 2).
+      const readinessByDate = {}
+      for (const r of filteredReadiness) if (r.readiness_score != null) readinessByDate[r.logged_date] = r.readiness_score
+      let lowRpeSum = 0, lowRpeN = 0, hiRpeSum = 0, hiRpeN = 0
+      for (const sess of sessions) {
+        const score = readinessByDate[sess.date]
+        if (score == null) continue
+        for (const ex of Object.values(sess.exercises)) {
+          for (const set of ex.sets) {
+            if (set.skipped || set.rpe_actual == null) continue
+            if (score < 50) { lowRpeSum += Number(set.rpe_actual); lowRpeN++ }
+            else if (score >= 75) { hiRpeSum += Number(set.rpe_actual); hiRpeN++ }
+          }
+        }
+      }
+      if (lowRpeN >= 2 && hiRpeN >= 2) {
+        const lowAvg = (lowRpeSum / lowRpeN).toFixed(1), hiAvg = (hiRpeSum / hiRpeN).toFixed(1)
+        const diff = (lowRpeSum / lowRpeN) - (hiRpeSum / hiRpeN)
+        const tolk = diff >= 0.5 ? ' → træning føles tungere på upklare dage' : diff <= -0.5 ? ' → træning føles lettere på upklare dage (uventet)' : ' → ingen tydelig forskel'
+        lines.push('')
+        lines.push(`  RPE vs. readiness: ${lowAvg} på lav-readiness-dage (<50, ${lowRpeN} sæt) vs. ${hiAvg} på gode dage (≥75, ${hiRpeN} sæt)${tolk}`)
+      }
       lines.push('')
     }
 
@@ -2296,22 +2342,29 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             const lastLog = athleteLastLogs[a.id]
             const daysSince = lastLog ? Math.floor((today0 - new Date(lastLog + 'T12:00:00')) / dayMs) : null
             const holiday = holidayInfo(a)
-            let status // ready | low | empty | none | ferie
+            const returned = holiday && !holiday.onHoliday           // ferie slut → skal genaktiveres/planlægges
+            let status // ready | lastweek | out | empty | none | ferie (samme rangering som forsidens computeBoard)
             if (holiday?.onHoliday) status = 'ferie'                 // på ferie → ingen handling
             else if (weeks.length === 0) status = 'none'
             else if (planned.length === 0) status = 'empty'          // uger findes, men ingen øvelser
-            else if (runway <= 1) status = 'low'                     // kun den nuværende uge tilbage
+            else if (runway <= 0) status = 'out'                     // forbi sidste planlagte uge = løbet tør
+            else if (runway === 1) status = 'lastweek'               // sidste planlagte uge, dækket ugen ud
             else status = 'ready'
             const snoozedUntil = snoozedAthletes[a.id] || null
             const isSnoozed = snoozedUntil && new Date(snoozedUntil) > today0
-            return { a, weeks, planned, loggedWeek, maxPlannedWeekNo, runway, daysSince, status, snoozedUntil, isSnoozed }
+            return { a, weeks, planned, loggedWeek, maxPlannedWeekNo, runway, daysSince, status, snoozedUntil, isSnoozed, returned }
           })
-          const reasonText = (b) => b.status === 'none' ? 'Intet program oprettet'
+          const reasonText = (b) => b.returned ? 'Tilbage fra ferie — planlæg'
+            : b.status === 'none' ? 'Intet program oprettet'
             : b.status === 'empty' ? 'Uger oprettet, men ingen øvelser'
-            : 'Sidste fyldte uge nu — planlæg næste'
-          // Kun ikke-klar, ikke-ferie OG ikke-snoozede kræver handling.
-          const needs = board.filter(b => b.status !== 'ready' && b.status !== 'ferie' && !b.isSnoozed)
-          const snoozedNeeds = board.filter(b => b.status !== 'ready' && b.status !== 'ferie' && b.isSnoozed)
+            : b.status === 'out' ? 'Løbet tør — planlæg næste blok'
+            : 'Sidste planlagte uge — planlæg i weekenden'
+          // Rang (lavere = mere akut), matcher forsidens progReason: none>empty>(returned/out)>lastweek.
+          const statusRank = (b) => b.status === 'none' ? 0 : b.status === 'empty' ? 1 : (b.returned || b.status === 'out') ? 2 : b.status === 'lastweek' ? 4 : 5
+          // Kræver handling = ikke-klar (eller tilbage fra ferie), ikke på ferie. Rangeret mest akut øverst.
+          const wouldNeed = (b) => b.status !== 'ferie' && (b.status !== 'ready' || b.returned)
+          const needs = board.filter(b => wouldNeed(b) && !b.isSnoozed).sort((x, y) => statusRank(x) - statusRank(y))
+          const snoozedNeeds = board.filter(b => wouldNeed(b) && b.isSnoozed)
           const lastText = (d) => d == null ? 'Ingen logs' : d === 0 ? 'I dag' : d === 1 ? 'I går' : `${d}d siden`
           const lastColor = (d) => d == null ? '#4a4844' : d <= 4 ? '#6cba6c' : d <= 8 ? '#c8923a' : '#e05555'
           const fmtDate = (d) => `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`
@@ -2594,8 +2647,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 ) : board.map((b, i) => {
                   const chip = b.status === 'ferie' ? { t: '🌴 Ferie', c: '#5b9bb5' }
                     : b.isSnoozed ? { t: `⏾ Udsat`, c: '#7a7770' }
+                    : b.returned ? { t: '🌴→ Tilbage fra ferie — planlæg', c: '#c8923a' }
                     : b.status === 'ready' ? { t: `✓ Klar · ${b.runway} uger`, c: '#6cba6c' }
-                    : b.status === 'low' ? { t: '⚠ Sidste uge — planlæg næste', c: '#c8923a' }
+                    : b.status === 'lastweek' ? { t: '⚠ Sidste uge — planlæg i weekenden', c: '#c8923a' }
+                    : b.status === 'out' ? { t: '⚠ Løbet tør — planlæg nu', c: '#e05555' }
                     : b.status === 'empty' ? { t: '⚠ Mangler øvelser', c: '#c8923a' }
                     : { t: '✗ Intet program', c: '#e05555' }
                   const detail = b.weeks.length === 0 ? 'Ingen uger oprettet'
