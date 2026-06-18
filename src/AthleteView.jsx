@@ -1162,6 +1162,63 @@ function CountdownRing({ total, remaining, done }) {
   )
 }
 
+// Ét guide-trin i mobiliserings-flowet. Deles af Daglig og Hurtig (samme look som
+// opvarmningens guide + CountdownRing). Timer-state ejes af forælderen og sendes ind.
+function MobilityGuideStep({ heading, step, total, onExit, areaLabel, ex, opts, choiceIdx, onChoose, timerSeconds, timerActive, timerDone, setTimerSeconds, setTimerActive, setTimerDone, onPrev, onNext, isLast }) {
+  const hasChoices = opts.length > 1
+  const pct = Math.round((step / total) * 100)
+  return (
+    <>
+      <div style={{ marginBottom: '1.75rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', letterSpacing: '0.08em' }}>{heading} · Øvelse {step + 1} af {total}</div>
+          <button style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem' }} onClick={onExit}>✕ Afslut</button>
+        </div>
+        <div style={{ height: '2px', background: 'rgba(237,234,226,0.07)', borderRadius: '1px' }}>
+          <div style={{ height: '100%', background: '#c8923a', width: `${pct}%`, transition: 'width 0.3s ease' }} />
+        </div>
+      </div>
+      {hasChoices && (
+        <div style={{ marginBottom: '1rem' }}>
+          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Vælg øvelse · {areaLabel}</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+            {opts.map((opt, i) => <button key={opt.id} onClick={() => onChoose(i)} style={{ background: i === choiceIdx ? 'rgba(200,146,58,0.15)' : '#1c1c18', border: `1px solid ${i === choiceIdx ? '#c8923a' : 'rgba(237,234,226,0.1)'}`, color: i === choiceIdx ? '#c8923a' : '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, padding: '0.45rem 0.7rem', cursor: 'pointer', textAlign: 'left', lineHeight: 1.3 }}>{opt.name}</button>)}
+          </div>
+        </div>
+      )}
+      <div style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)', padding: '1.75rem', marginBottom: '1.25rem', minHeight: '220px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <div>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', fontWeight: 400, color: '#edeae2', marginBottom: '1rem', lineHeight: 1.2 }}>{ex.name}</h2>
+          {ex.desc && <p style={{ fontSize: '0.9rem', color: '#b8b4a8', lineHeight: 1.75, margin: 0 }}>{ex.desc}</p>}
+        </div>
+        <div style={{ marginTop: '1.5rem' }}>
+          {ex.type === 'timer' ? (
+            <div>
+              <div style={{ marginBottom: '0.85rem' }}>
+                <CountdownRing total={ex.duration} remaining={timerSeconds > 0 ? timerSeconds : ex.duration} done={timerDone} />
+              </div>
+              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#7a7770', letterSpacing: '0.08em', marginBottom: '0.75rem' }}>{ex.label}</div>
+              {!timerDone ? (
+                <button style={{ ...s.btnGhost, padding: '0.5rem 1.25rem' }} onClick={() => { if (!timerActive && timerSeconds === 0) setTimerSeconds(ex.duration); setTimerActive(a => !a) }}>
+                  {timerActive ? '⏸ Pause' : timerSeconds > 0 ? '▶ Fortsæt' : '▶ Start timer'}
+                </button>
+              ) : (
+                <button style={{ ...s.btnGhost, padding: '0.5rem 1.25rem' }} onClick={() => { setTimerSeconds(ex.duration); setTimerDone(false); setTimerActive(false) }}>↺ Gentag (anden side)</button>
+              )}
+            </div>
+          ) : (
+            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.5rem', color: '#c8923a' }}>{ex.label}</div>
+          )}
+        </div>
+      </div>
+      <div style={{ display: 'flex', gap: '0.6rem' }}>
+        {onPrev && <button style={{ ...s.btnGhost, padding: '0.75rem 1rem' }} onClick={onPrev}>←</button>}
+        <button style={{ ...s.btnPrimary, flex: 1, padding: '0.85rem', fontSize: '0.62rem' }} onClick={onNext}>{isLast ? 'Afslut ✓' : 'Næste øvelse →'}</button>
+      </div>
+    </>
+  )
+}
+
 function today() {
   return new Date().toISOString().slice(0, 10)
 }
@@ -1213,15 +1270,6 @@ const NAV_ITEMS = [
         <line x1="6" y1="7" x2="6" y2="22" />
         <line x1="21" y1="2" x2="21" y2="22" />
         <path d="M17 2a4 4 0 0 1 4 4" />
-      </svg>
-    ),
-  },
-  {
-    key: 'opvarmning',
-    label: 'Opvarmning',
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
       </svg>
     ),
   },
@@ -1356,6 +1404,13 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [timerDone, setTimerDone] = useState(false)
   const timerRef = useRef(null)
 
+  // Mobilitet-hub state — fanen er en intent-landing (null) med tre døre
+  const [mobilityMode, setMobilityMode] = useState(null) // null=landing | 'opvarmning' | 'daglig' | 'hurtig'
+  const [hurtigPhase, setHurtigPhase] = useState('pick')  // 'pick' | 'guide' | 'done'
+  const [hurtigSlots, setHurtigSlots] = useState([])
+  const [hurtigStep, setHurtigStep] = useState(0)
+  const [hurtigAreas, setHurtigAreas] = useState(() => new Set())
+
   // Daglig mobilisering state
   const [mobilityRoutine, setMobilityRoutine] = useState(null) // gemt mobility_routines-række el. null
   const [mobilityLogs, setMobilityLogs] = useState([])          // [logged_date] (yyyy-mm-dd)
@@ -1397,7 +1452,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   /* eslint-disable react-hooks/set-state-in-effect -- bevidst: seeder initial opvarmnings-fokus fra programmet + driver nedtællings-timeren */
   useEffect(() => {
-    if (tab === 'opvarmning' && currentWeek && warmupPhase === 'focus' && !warmupFocus) {
+    if (tab === 'mobilisering' && mobilityMode === 'opvarmning' && currentWeek && warmupPhase === 'focus' && !warmupFocus) {
       for (const session of currentWeek.sessions || []) {
         for (const ex of session.exercises || []) {
           const n = (ex.name || '').toLowerCase()
@@ -1408,7 +1463,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         }
       }
     }
-  }, [tab, currentWeek])
+  }, [tab, currentWeek, mobilityMode])
 
   useEffect(() => {
     if (!timerActive) return
@@ -4055,8 +4110,43 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           </>
         )}
 
-        {/* OPVARMNING */}
-        {tab === 'opvarmning' && (() => {
+        {/* MOBILITET-HUB — intent-landing (tre døre) */}
+        {tab === 'mobilisering' && mobilityMode === null && (() => {
+          const streak = mobilityStreak(mobilityLogs)
+          const doneToday = mobilityLogs.includes(today())
+          const hasRoutine = !!mobilityRoutine
+          const Door = ({ icon, title, sub, subColor, onClick }) => (
+            <button onClick={onClick} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '1rem', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.1)', padding: '1.1rem 1.25rem', cursor: 'pointer', textAlign: 'left', marginBottom: '0.75rem' }}>
+              <span style={{ fontSize: '1.4rem', lineHeight: 1, flexShrink: 0, width: 28, textAlign: 'center' }}>{icon}</span>
+              <span style={{ minWidth: 0, flex: 1 }}>
+                <span style={{ display: 'block', fontFamily: "'Playfair Display', serif", fontSize: '1.2rem', color: '#edeae2', lineHeight: 1.2 }}>{title}</span>
+                <span style={{ display: 'block', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.05em', color: subColor || '#7a7770', marginTop: '0.3rem' }}>{sub}</span>
+              </span>
+              <span style={{ color: '#4a4844', fontSize: '1.1rem', flexShrink: 0 }}>›</span>
+            </button>
+          )
+          return (
+            <>
+              <div style={{ marginBottom: '1.5rem' }}>
+                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Mobilitet</div>
+                <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Hvad har du brug for?</h1>
+              </div>
+              <Door icon="⚡" title="Varm op" sub="Før dagens løft" onClick={() => setMobilityMode('opvarmning')} />
+              <Door icon="↻" title="Daglig mobilitet" subColor={hasRoutine && streak > 0 ? '#c8923a' : '#7a7770'}
+                sub={hasRoutine ? `🔥 ${streak} dag${streak === 1 ? '' : 'e'} i træk${doneToday ? ' · gjort i dag' : ''}` : 'Design din rutine · streak'}
+                onClick={() => setMobilityMode('daglig')} />
+              <Door icon="✦" title="Hurtig" sub="Stiv lige nu? ~5 min — ingen opsætning" onClick={() => { setHurtigPhase('pick'); setMobilityMode('hurtig') }} />
+            </>
+          )
+        })()}
+
+        {/* Tilbage til landing — vises over enhver valgt mode */}
+        {tab === 'mobilisering' && mobilityMode && (
+          <button onClick={() => setMobilityMode(null)} style={{ background: 'none', border: 'none', color: '#7a7770', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.08em', padding: '0 0 1rem 0' }}>‹ Mobilitet</button>
+        )}
+
+        {/* OPVARMNING (hub-mode) */}
+        {tab === 'mobilisering' && mobilityMode === 'opvarmning' && (() => {
           const FOCUSES = ['Squat', 'Bænkpres', 'Dødløft']
           const PROBLEMS = ['Hofte / baller', 'Lyske / inderlår', 'Lænde', 'Øvre ryg', 'Ankel', 'Knæ', 'Skulder', 'Nakke / trapez']
           const baseKey = warmupFocus === 'Dødløft' ? `Dødløft — ${warmupSubtype}` : warmupFocus
@@ -4306,8 +4396,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           )
         })()}
 
-        {/* DAGLIG MOBILISERING */}
-        {tab === 'mobilisering' && (() => {
+        {/* DAGLIG MOBILISERING (hub-mode) */}
+        {tab === 'mobilisering' && mobilityMode === 'daglig' && (() => {
           if (!mobilityLoaded) return <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#4a4844', padding: '2rem 0' }}>Indlæser…</div>
           const PROBLEMS = ['Hofte / baller', 'Lyske / inderlår', 'Lænde', 'Øvre ryg', 'Ankel', 'Knæ', 'Skulder', 'Nakke / trapez']
           const LIFTS = [{ k: 'squat', l: 'Squat' }, { k: 'bench', l: 'Bænkpres' }, { k: 'deadlift', l: 'Dødløft' }]
@@ -4434,73 +4524,26 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
             )
           }
 
-          // ───── GUIDE: trin-for-trin ─────
+          // ───── GUIDE: trin-for-trin (delt komponent) ─────
           if (mobilityPhase === 'guide') {
             const slot = mobilitySlots[mobilityStep]
             if (!slot) return null
             const ex = exForSlot(slot)
             if (!ex) return null
             const opts = MOBILITY_LIBRARY[slot.area] || []
-            const hasChoices = opts.length > 1
-            const choiceIdx = slot.choiceIdx ?? 0
             const isLast = mobilityStep === mobilitySlots.length - 1
-            const pct = Math.round((mobilityStep / mobilitySlots.length) * 100)
-            const chooseVariant = ci => {
-              setMobilitySlots(prev => prev.map((sl, i) => i === mobilityStep ? { ...sl, choiceIdx: ci } : sl))
-              setTimerActive(false); setTimerDone(false)
-              const o = opts[ci]; setTimerSeconds(o?.type === 'timer' ? o.duration : 0)
-            }
             return (
-              <>
-                <div style={{ marginBottom: '1.75rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', letterSpacing: '0.08em' }}>Mobilitet · Øvelse {mobilityStep + 1} af {mobilitySlots.length}</div>
-                    <button style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem' }} onClick={() => setMobilityPhase('daily')}>✕ Afslut</button>
-                  </div>
-                  <div style={{ height: '2px', background: 'rgba(237,234,226,0.07)', borderRadius: '1px' }}>
-                    <div style={{ height: '100%', background: '#c8923a', width: `${pct}%`, transition: 'width 0.3s ease' }} />
-                  </div>
-                </div>
-                {hasChoices && (
-                  <div style={{ marginBottom: '1rem' }}>
-                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Vælg øvelse · {areaLabel(slot.area)}</div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-                      {opts.map((opt, i) => <button key={opt.id} onClick={() => chooseVariant(i)} style={{ background: i === choiceIdx ? 'rgba(200,146,58,0.15)' : '#1c1c18', border: `1px solid ${i === choiceIdx ? '#c8923a' : 'rgba(237,234,226,0.1)'}`, color: i === choiceIdx ? '#c8923a' : '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, padding: '0.45rem 0.7rem', cursor: 'pointer', textAlign: 'left', lineHeight: 1.3 }}>{opt.name}</button>)}
-                    </div>
-                  </div>
-                )}
-                <div style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)', padding: '1.75rem', marginBottom: '1.25rem', minHeight: '220px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                  <div>
-                    <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', fontWeight: 400, color: '#edeae2', marginBottom: '1rem', lineHeight: 1.2 }}>{ex.name}</h2>
-                    {ex.desc && <p style={{ fontSize: '0.9rem', color: '#b8b4a8', lineHeight: 1.75, margin: 0 }}>{ex.desc}</p>}
-                  </div>
-                  <div style={{ marginTop: '1.5rem' }}>
-                    {ex.type === 'timer' ? (
-                      <div>
-                        <div style={{ marginBottom: '0.85rem' }}>
-                          <CountdownRing total={ex.duration} remaining={timerSeconds > 0 ? timerSeconds : ex.duration} done={timerDone} />
-                        </div>
-                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#7a7770', letterSpacing: '0.08em', marginBottom: '0.75rem' }}>{ex.label}</div>
-                        {!timerDone ? (
-                          <button style={{ ...s.btnGhost, padding: '0.5rem 1.25rem' }} onClick={() => { if (!timerActive && timerSeconds === 0) setTimerSeconds(ex.duration); setTimerActive(a => !a) }}>
-                            {timerActive ? '⏸ Pause' : timerSeconds > 0 ? '▶ Fortsæt' : '▶ Start timer'}
-                          </button>
-                        ) : (
-                          <button style={{ ...s.btnGhost, padding: '0.5rem 1.25rem' }} onClick={() => { setTimerSeconds(ex.duration); setTimerDone(false); setTimerActive(false) }}>↺ Gentag (anden side)</button>
-                        )}
-                      </div>
-                    ) : (
-                      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.5rem', color: '#c8923a' }}>{ex.label}</div>
-                    )}
-                  </div>
-                </div>
-                <div style={{ display: 'flex', gap: '0.6rem' }}>
-                  {mobilityStep > 0 && <button style={{ ...s.btnGhost, padding: '0.75rem 1rem' }} onClick={() => goStep(mobilityStep - 1)}>←</button>}
-                  <button style={{ ...s.btnPrimary, flex: 1, padding: '0.85rem', fontSize: '0.62rem' }} onClick={() => { if (isLast) { logMobilityToday(); setMobilityPhase('done') } else goStep(mobilityStep + 1) }}>
-                    {isLast ? 'Afslut ✓' : 'Næste øvelse →'}
-                  </button>
-                </div>
-              </>
+              <MobilityGuideStep
+                heading="Mobilitet" step={mobilityStep} total={mobilitySlots.length}
+                onExit={() => setMobilityPhase('daily')}
+                areaLabel={areaLabel(slot.area)} ex={ex} opts={opts} choiceIdx={slot.choiceIdx ?? 0}
+                onChoose={ci => { setMobilitySlots(prev => prev.map((sl, i) => i === mobilityStep ? { ...sl, choiceIdx: ci } : sl)); setTimerActive(false); setTimerDone(false); const o = opts[ci]; setTimerSeconds(o?.type === 'timer' ? o.duration : 0) }}
+                timerSeconds={timerSeconds} timerActive={timerActive} timerDone={timerDone}
+                setTimerSeconds={setTimerSeconds} setTimerActive={setTimerActive} setTimerDone={setTimerDone}
+                onPrev={mobilityStep > 0 ? () => goStep(mobilityStep - 1) : null}
+                onNext={() => { if (isLast) { logMobilityToday(); setMobilityPhase('done') } else goStep(mobilityStep + 1) }}
+                isLast={isLast}
+              />
             )
           }
 
@@ -4589,6 +4632,78 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 </div>
               )}
             </>
+          )
+        })()}
+
+        {/* HURTIG MOBILISERING (hub-mode) — spontant, ingen opsætning, tæller på streak */}
+        {tab === 'mobilisering' && mobilityMode === 'hurtig' && (() => {
+          const areaLabel = id => MOBILITY_AREAS.find(a => a.id === id)?.label || id
+          const exForSlot = slot => { const opts = MOBILITY_LIBRARY[slot.area] || []; return opts[slot.choiceIdx ?? 0] || opts[0] }
+          const startGuide = slots => { setHurtigSlots(slots); setHurtigStep(0); setTimerActive(false); setTimerSeconds(0); setTimerDone(false); setHurtigPhase('guide') }
+          const goStep = idx => { setHurtigStep(idx); setTimerActive(false); setTimerDone(false); const ex = exForSlot(hurtigSlots[idx]); setTimerSeconds(ex?.type === 'timer' ? ex.duration : 0) }
+
+          if (hurtigPhase === 'pick') {
+            const toggle = id => setHurtigAreas(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n })
+            const fullBody = ['ankel', 'hofte', 'hoftefleksor', 'tryg', 'baller']
+            return (
+              <>
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Hurtig mobilisering</div>
+                  <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Hvad er stramt lige nu?</h1>
+                  <div style={{ fontSize: '0.82rem', color: '#7a7770', marginTop: '0.5rem', lineHeight: 1.6 }}>Vælg områder, eller tag hele kroppen. Ingen opsætning — og det tæller stadig på din streak.</div>
+                </div>
+                <button style={{ ...s.btnPrimary, width: '100%', padding: '1rem', fontSize: '0.66rem', marginBottom: '1.25rem' }} onClick={() => startGuide(fullBody.map(area => ({ area, choiceIdx: 0 })))}>
+                  Hele kroppen · {fullBody.length} øvelser · ~5 min
+                </button>
+                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.6rem' }}>Eller vælg områder</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '1.25rem' }}>
+                  {MOBILITY_AREAS.map(a => {
+                    const on = hurtigAreas.has(a.id)
+                    return <button key={a.id} onClick={() => toggle(a.id)} style={{ background: on ? 'rgba(200,146,58,0.15)' : '#1c1c18', border: `1px solid ${on ? '#c8923a' : 'rgba(237,234,226,0.1)'}`, color: on ? '#c8923a' : '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', fontWeight: 500, letterSpacing: '0.04em', padding: '0.7rem 0.5rem', cursor: 'pointer', textAlign: 'center' }}>{a.label}</button>
+                  })}
+                </div>
+                <button style={{ ...s.btnPrimary, width: '100%', padding: '0.85rem', fontSize: '0.62rem', opacity: hurtigAreas.size ? 1 : 0.5 }} disabled={!hurtigAreas.size} onClick={() => startGuide([...hurtigAreas].map(area => ({ area, choiceIdx: 0 })))}>
+                  Start ({hurtigAreas.size} {hurtigAreas.size === 1 ? 'område' : 'områder'})
+                </button>
+              </>
+            )
+          }
+
+          if (hurtigPhase === 'guide') {
+            const slot = hurtigSlots[hurtigStep]
+            if (!slot) return null
+            const ex = exForSlot(slot)
+            if (!ex) return null
+            const opts = MOBILITY_LIBRARY[slot.area] || []
+            const isLast = hurtigStep === hurtigSlots.length - 1
+            return (
+              <MobilityGuideStep
+                heading="Hurtig" step={hurtigStep} total={hurtigSlots.length}
+                onExit={() => setHurtigPhase('pick')}
+                areaLabel={areaLabel(slot.area)} ex={ex} opts={opts} choiceIdx={slot.choiceIdx ?? 0}
+                onChoose={ci => { setHurtigSlots(prev => prev.map((sl, i) => i === hurtigStep ? { ...sl, choiceIdx: ci } : sl)); setTimerActive(false); setTimerDone(false); const o = opts[ci]; setTimerSeconds(o?.type === 'timer' ? o.duration : 0) }}
+                timerSeconds={timerSeconds} timerActive={timerActive} timerDone={timerDone}
+                setTimerSeconds={setTimerSeconds} setTimerActive={setTimerActive} setTimerDone={setTimerDone}
+                onPrev={hurtigStep > 0 ? () => goStep(hurtigStep - 1) : null}
+                onNext={() => { if (isLast) { logMobilityToday(); setHurtigPhase('done') } else goStep(hurtigStep + 1) }}
+                isLast={isLast}
+              />
+            )
+          }
+
+          // DONE
+          const newStreak = mobilityStreak(mobilityLogs.includes(today()) ? mobilityLogs : [today(), ...mobilityLogs])
+          return (
+            <div style={{ textAlign: 'center', paddingTop: '3rem' }}>
+              <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '3rem', color: '#6cba6c', marginBottom: '1rem' }}>✓</div>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', fontWeight: 400, color: '#edeae2', marginBottom: '0.5rem' }}>Færdig.</h2>
+              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#c8923a', letterSpacing: '0.06em', marginBottom: '0.4rem' }}>🔥 {newStreak} dag{newStreak === 1 ? '' : 'e'} i træk</div>
+              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#4a4844', letterSpacing: '0.08em', marginBottom: '2rem' }}>{hurtigSlots.length} øvelser gennemført</div>
+              <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'center' }}>
+                <button style={{ ...s.btnGhost, padding: '0.75rem 1.25rem' }} onClick={() => { setHurtigAreas(new Set()); setHurtigPhase('pick') }}>Tag en til</button>
+                <button style={{ ...s.btnPrimary, padding: '0.75rem 1.25rem' }} onClick={() => setMobilityMode(null)}>Til mobilitet</button>
+              </div>
+            </div>
           )
         })()}
 
