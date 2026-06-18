@@ -234,6 +234,10 @@ function formatLastSeen(ts) {
   return { text, dotColor }
 }
 
+// Maks. antal sæt-rækker hentet pr. atlet (Log-fane + AI-rapport). Hævet fra 500 så
+// lange perioder ikke afkortes lydløst i rapporten; bruges også til afkortnings-advarsel.
+const ATHLETE_LOGS_LIMIT = 2000
+
 function parsePlannedRpe(intensity) {
   if (!intensity) return null
   const m = intensity.match(/RPE\s*(\d+(?:[.,]\d+)?)/i)
@@ -1134,10 +1138,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   async function fetchAthleteLogs(athleteId) {
     const { data } = await supabase
       .from('exercise_logs')
-      .select('id, set_number, weight, reps_completed, note, logged_at, rpe_actual, skipped, exercise_id, exercises(id, name, sets, reps, intensity, recommended_weight, session_id, sessions(id, title, athlete_rating, athlete_comment, weeks(week_number, block_name)))')
+      .select('id, set_number, weight, reps_completed, note, logged_at, rpe_actual, rpe_planned, skipped, exercise_id, exercises(id, name, sets, reps, intensity, recommended_weight, session_id, sessions(id, title, athlete_rating, athlete_comment, weeks(week_number, block_name)))')
       .eq('athlete_id', athleteId)
       .order('logged_at', { ascending: false })
-      .limit(500)
+      .limit(ATHLETE_LOGS_LIMIT)
     setAthleteLogs(data || [])
   }
 
@@ -1413,6 +1417,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           planned_sets: ex?.sets ?? null,
           planned_reps: ex?.reps ?? null,
           planned_intensity: ex?.intensity ?? null,
+          planned_rpe_int: parsePlannedRpe(ex?.intensity), // fallback når sæt ikke har eget rpe_planned
           sets: [],
         }
       }
@@ -1447,17 +1452,22 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     const avgWeight = filteredWeight.length ? (filteredWeight.reduce((s, l) => s + l.weight, 0) / filteredWeight.length).toFixed(1) : null
 
     // Nøgletal til AI-resumé
-    let loggedSets = 0, skippedSets = 0, rpeSum = 0, rpeCount = 0
+    let loggedSets = 0, skippedSets = 0, rpeSum = 0, rpeCount = 0, rpeDevSum = 0, rpeDevCount = 0
     for (const sess of sessions) {
       for (const ex of Object.values(sess.exercises)) {
         for (const set of ex.sets) {
           if (set.skipped) { skippedSets++; continue }
           loggedSets++
-          if (set.rpe_actual != null) { rpeSum += Number(set.rpe_actual); rpeCount++ }
+          if (set.rpe_actual != null) {
+            rpeSum += Number(set.rpe_actual); rpeCount++
+            const planRpe = set.rpe_planned ?? ex.planned_rpe_int
+            if (planRpe != null) { rpeDevSum += Number(set.rpe_actual) - planRpe; rpeDevCount++ }
+          }
         }
       }
     }
     const avgRpe = rpeCount ? (rpeSum / rpeCount).toFixed(1) : null
+    const avgRpeDev = rpeDevCount ? (rpeDevSum / rpeDevCount) : null
     const weightsAsc = filteredWeight
     const weightStart = weightsAsc.length ? weightsAsc[0].weight : null
     const weightEnd = weightsAsc.length ? weightsAsc[weightsAsc.length - 1].weight : null
@@ -1475,6 +1485,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     lines.push('  3) Røde flag — stagnation, høj RPE ved let vægt, lav konsistens, uønsket vægtændring.')
     lines.push('  4) Konkrete forslag til næste blok — volumen, intensitet, øvelsesvalg, evt. deload.')
     lines.push('Skalaer: energi/motivation/stress/ømhed = 1–5 · readiness-score = 0–100 · RPE = 6–10.')
+    lines.push('Brug digest-tabellerne EST. 1RM-UDVIKLING og UGENTLIGT TONNAGE til fremgang/volumen;')
+    lines.push('i træningsloggen betyder "RPE 8 (plan 7)" faktisk vs. planlagt RPE for sættet.')
     lines.push('Antag intet om data der ikke findes; nævn det hvis noget mangler.')
     lines.push('')
 
@@ -1505,9 +1517,83 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     lines.push(`  Træningspas:     ${sessions.length} over ${Object.keys(weekGroups).length} uger`)
     lines.push(`  Loggede sæt:     ${loggedSets}${skippedSets ? ` (+ ${skippedSets} skippet)` : ''}`)
     if (avgRpe) lines.push(`  Gns. RPE:        ${avgRpe}`)
+    if (avgRpeDev != null) {
+      const sign = avgRpeDev > 0 ? '+' : ''
+      const tolk = avgRpeDev >= 0.5 ? ' (tungere end planlagt)' : avgRpeDev <= -0.5 ? ' (lettere end planlagt)' : ' (på plan)'
+      lines.push(`  RPE vs. plan:    ${sign}${avgRpeDev.toFixed(1)}${tolk} · ${rpeDevCount} sæt m. plan`)
+    }
     if (avgReadiness != null) lines.push(`  Gns. readiness:  ${avgReadiness}/100 (${filteredReadiness.length} check-ins)`)
     if (weightDelta != null) lines.push(`  Vægtudvikling:   ${weightStart}kg → ${weightEnd}kg (${weightDelta > 0 ? '+' : ''}${weightDelta}kg)`)
     lines.push('')
+
+    // Afkortnings-advarsel: ramte vi fetch-grænsen, og er ældste hentede sæt nyere end
+    // periodens start, så mangler de ældste uger i rapporten (lydløst datatab uden dette).
+    const oldestLogged = athleteLogs.length ? athleteLogs[athleteLogs.length - 1].logged_at.slice(0, 10) : null
+    if (athleteLogs.length >= ATHLETE_LOGS_LIMIT && oldestLogged && oldestLogged > cutoffStr) {
+      lines.push(`⚠ BEMÆRK: træningsdata er afkortet ved ${ATHLETE_LOGS_LIMIT} sæt — log før ${fmtDatoShort(oldestLogged)} mangler. Vælg færre uger for fuld dækning.`)
+      lines.push('')
+    }
+
+    // Est. 1RM-udvikling + ugentligt tonnage pr. hovedløft (digest før den rå log)
+    const nameToCat = {}
+    for (const ex of exerciseLibrary) { if (ex.name && ex.category) nameToCat[ex.name.toLowerCase()] = ex.category }
+    const mainCats = [['Squat', 'Squat'], ['Bænk', 'Bænkpres'], ['Dødløft', 'Dødløft']]
+    const epley = (w, r) => w * (1 + r / 30)
+    const wkLbl = w => { const d = new Date(w + 'T12:00:00'); return `${d.getDate()}/${d.getMonth() + 1}` }
+    const isoMon = dateStr => {
+      const d = new Date(dateStr + 'T12:00:00'); const day = d.getDay() || 7
+      d.setDate(d.getDate() - day + 1); return d.toISOString().slice(0, 10)
+    }
+    const e1rmByCat = {}     // cat -> { date -> bedste e1RM }
+    const tonByCatWeek = {}  // cat -> { mandagsnøgle -> kg-volumen }
+    const weekKeysSet = new Set()
+    for (const sess of sessions) {
+      for (const ex of Object.values(sess.exercises)) {
+        const cat = nameToCat[ex.name.toLowerCase()]
+        if (!cat) continue
+        for (const set of ex.sets) {
+          if (set.skipped || !set.weight || !set.reps) continue
+          const e = epley(Number(set.weight), Number(set.reps))
+          if (!e1rmByCat[cat]) e1rmByCat[cat] = {}
+          if (!(sess.date in e1rmByCat[cat]) || e > e1rmByCat[cat][sess.date]) e1rmByCat[cat][sess.date] = e
+          const wk = isoMon(sess.date)
+          weekKeysSet.add(wk)
+          if (!tonByCatWeek[cat]) tonByCatWeek[cat] = {}
+          tonByCatWeek[cat][wk] = (tonByCatWeek[cat][wk] || 0) + Number(set.weight) * Number(set.reps)
+        }
+      }
+    }
+
+    const e1rmLines = []
+    for (const [lbl, cat] of mainCats) {
+      const m = e1rmByCat[cat]
+      if (!m) continue
+      const dates = Object.keys(m).sort()
+      const pts = dates.map(d => `${Math.round(m[d])} (${fmtDatoShort(d)})`)
+      const first = Math.round(m[dates[0]]), last = Math.round(m[dates[dates.length - 1]])
+      const delta = last - first, pct = first ? Math.round((delta / first) * 100) : 0
+      const trend = dates.length > 1 ? `   Δ ${delta > 0 ? '+' : ''}${delta}kg (${pct > 0 ? '+' : ''}${pct}%)` : ''
+      e1rmLines.push(`  ${pad(lbl, 10)}${pts.join(' · ')}${trend}`)
+    }
+    if (e1rmLines.length) {
+      lines.push('── EST. 1RM-UDVIKLING (Epley, bedste sæt pr. dag) ──────')
+      lines.push('')
+      lines.push(...e1rmLines)
+      lines.push('')
+    }
+
+    const weekKeys = [...weekKeysSet].sort()
+    if (weekKeys.length && Object.keys(tonByCatWeek).length) {
+      lines.push('── UGENTLIGT TONNAGE (tons = vægt × reps / 1000) ───────')
+      lines.push('')
+      lines.push(`  ${pad('', 10)}${weekKeys.map(w => pad(wkLbl(w), 7)).join('')}`)
+      for (const [lbl, cat] of mainCats) {
+        const m = tonByCatWeek[cat]
+        if (!m) continue
+        lines.push(`  ${pad(lbl, 10)}${weekKeys.map(w => pad(m[w] != null ? (Math.round(m[w] / 100) / 10).toFixed(1) : '—', 7)).join('')}`)
+      }
+      lines.push('')
+    }
 
     // Træningslog
     lines.push('── TRÆNINGSLOG ─────────────────────────────────────────')
@@ -1534,7 +1620,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               if (set.skipped) {
                 lines.push(`      Sæt ${set.set_number}: [skippet]`)
               } else {
-                const rpeStr = set.rpe_actual != null ? `  RPE ${set.rpe_actual}` : ''
+                const planRpe = set.rpe_planned ?? ex.planned_rpe_int
+                const rpeStr = set.rpe_actual != null
+                  ? `  RPE ${set.rpe_actual}${planRpe != null ? ` (plan ${planRpe})` : ''}`
+                  : (planRpe != null ? `  RPE plan ${planRpe}` : '')
                 lines.push(`      Sæt ${set.set_number}: ${set.weight}kg × ${set.reps}${rpeStr}`)
               }
             }
