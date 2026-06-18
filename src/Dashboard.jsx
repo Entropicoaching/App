@@ -336,6 +336,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [athleteReadiness, setAthleteReadiness] = useState([])
   const [athletePRs, setAthletePRs] = useState([])
   const [athletePRHistory, setAthletePRHistory] = useState([])
+  const [athleteMobility, setAthleteMobility] = useState(null) // { hasRoutine, slots, logs:[date] } for valgt atlet
   const [warmupTemplates, setWarmupTemplates] = useState([])
   const [editingWarmup, setEditingWarmup] = useState(null)
   const [warmupDraftSteps, setWarmupDraftSteps] = useState([])
@@ -431,6 +432,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       fetchAthleteReadiness(selectedAthlete.id)
       fetchAthletePRs(selectedAthlete.id)
       fetchMeetResults(selectedAthlete.id)
+      if (activeTab === 'oversigt') fetchAthleteMobility(selectedAthlete.id)
     }
   }, [activeTab, selectedAthlete?.id])
 
@@ -445,6 +447,20 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       fetchMeetPlan(selectedAthlete.id)
     }
   }, [activeTab, selectedAthlete?.id])
+
+  // Coach-read af atletens mobiliserings-konsistens (RLS: coach læser egne atleters rækker).
+  async function fetchAthleteMobility(athleteId) {
+    setAthleteMobility(null)
+    const [routineRes, logsRes] = await Promise.all([
+      supabase.from('mobility_routines').select('config').eq('athlete_id', athleteId).maybeSingle(),
+      supabase.from('mobility_logs').select('logged_date').eq('athlete_id', athleteId).order('logged_date', { ascending: false }).limit(60),
+    ])
+    setAthleteMobility({
+      hasRoutine: !!routineRes.data,
+      slots: routineRes.data?.config?.slots?.length || 0,
+      logs: (logsRes.data || []).map(l => l.logged_date),
+    })
+  }
 
   async function fetchLastBackup() {
     const { data } = await supabase.from('profiles').select('last_backup_at').eq('id', session.user.id).maybeSingle()
@@ -3930,6 +3946,40 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 return (
                   <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', color: '#4a4844', marginBottom: '1rem' }}>
                     Sidst aktiv: {exact}
+                  </div>
+                )
+              })()}
+              {(() => {
+                const m = athleteMobility
+                if (!m) return null
+                const todayStr = new Date().toISOString().slice(0, 10)
+                const shift = (str, days) => { const d = new Date(str + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + days); return d.toISOString().slice(0, 10) }
+                if (!m.hasRoutine) {
+                  return (
+                    <div style={{ ...s.card, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}>
+                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844' }}>Daglig mobilitet</span>
+                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#7a7770' }}>Ingen rutine designet endnu</span>
+                    </div>
+                  )
+                }
+                const set = new Set(m.logs)
+                let cursor = todayStr; if (!set.has(cursor)) cursor = shift(cursor, -1)
+                let streak = 0; while (set.has(cursor)) { streak++; cursor = shift(cursor, -1) }
+                const last30 = m.logs.filter(d => d >= shift(todayStr, -29)).length
+                const grid = Array.from({ length: 14 }, (_, i) => { const d = shift(todayStr, -(13 - i)); return { d, done: set.has(d) } })
+                return (
+                  <div style={{ ...s.card, marginBottom: '1.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.7rem' }}>
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844' }}>Daglig mobilitet</div>
+                      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.1rem', color: streak > 0 ? '#c8923a' : '#7a7770' }}>🔥 {streak} <span style={{ fontSize: '0.7rem', color: '#7a7770' }}>dag{streak === 1 ? '' : 'e'} i træk</span></div>
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.2rem' }}>
+                      {grid.map(g => <div key={g.d} title={g.d} style={{ flex: 1, height: 18, borderRadius: 2, background: g.done ? '#6cba6c' : 'rgba(237,234,226,0.06)' }} />)}
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.4rem' }}>
+                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#4a4844', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Seneste 14 dage</span>
+                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#7a7770' }}>{last30}/30 dage · {m.slots} øvelser</span>
+                    </div>
                   </div>
                 )
               })()}
