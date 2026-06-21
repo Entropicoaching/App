@@ -1884,9 +1884,11 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     setExportingBackup(false)
   }
 
-  function openProfile(athlete, tab = 'hub') {
+  // Man lander altid på Home/hub når en atlet åbnes — uanset hvor man klikker
+  // fra (sidebar, prioritets-liste, beskeder osv.). Hubben er den faste indgang.
+  function openProfile(athlete) {
     setSelectedAthlete(athlete)
-    setActiveTab(tab)
+    setActiveTab('hub')
     setEditing(null)
     setView('profile')
     setMessages([])
@@ -3029,7 +3031,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               const activeLabel = navItems.find(n => n.key === activeTab)?.label
               return (
                 <div style={{ marginBottom: '1.5rem' }}>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.1rem', borderBottom: '1px solid rgba(237,234,226,0.07)' }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: isMobile ? '0' : '0.1rem', justifyContent: isMobile ? 'space-between' : 'flex-start', borderBottom: '1px solid rgba(237,234,226,0.07)' }}>
                     {navItems.map(n => {
                       const active = activeTab === n.key
                       return (
@@ -3040,7 +3042,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                           style={{
                             position: 'relative', background: active ? 'rgba(200,146,58,0.12)' : 'none', border: 'none',
                             borderBottom: active ? '2px solid #c8923a' : '2px solid transparent', marginBottom: '-1px',
-                            color: active ? '#c8923a' : '#7a7770', cursor: 'pointer', padding: '0.55rem 0.7rem',
+                            color: active ? '#c8923a' : '#7a7770', cursor: 'pointer', padding: isMobile ? '0.5rem 0.3rem' : '0.55rem 0.7rem',
                             display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color 0.12s, background 0.12s',
                           }}
                           onMouseEnter={e => { if (!active) e.currentTarget.style.color = '#b8b4a8' }}
