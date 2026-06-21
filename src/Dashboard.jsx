@@ -445,6 +445,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   useEffect(() => {
     if (activeTab === 'stævne' && selectedAthlete) {
       fetchMeetPlan(selectedAthlete.id)
+      fetchMeetResults(selectedAthlete.id)
+      fetchAthletePRs(selectedAthlete.id)
     }
   }, [activeTab, selectedAthlete?.id])
 
@@ -1211,15 +1213,14 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       .order('logged_at', { ascending: false })
     if (!data) { setAthletePRs([]); setAthletePRHistory([]); return }
     setAthletePRHistory(data)
-    const seen = new Set()
-    const prs = []
+    // Vis den tungeste registrering pr. øvelse som rekord — ikke blot den seneste —
+    // så et lavere (fx stævne-)løft aldrig vises som aktuel rekord.
+    const bestByName = {}
     for (const pr of data) {
-      if (!seen.has(pr.exercise_name)) {
-        seen.add(pr.exercise_name)
-        prs.push(pr)
-      }
+      const cur = bestByName[pr.exercise_name]
+      if (!cur || (pr.weight || 0) > (cur.weight || 0)) bestByName[pr.exercise_name] = pr
     }
-    setAthletePRs(prs)
+    setAthletePRs(Object.values(bestByName))
   }
 
   async function fetchMeetResults(athleteId) {
@@ -1369,9 +1370,11 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       notes: f.notes.trim() || null,
     })
     if (insErr) { showFlash('Kunne ikke gemme resultat', 'error'); setSaving(false); return }
-    // Opdater kun de konkurrerede løfts maks + status/dato.
+    // Opdater kun de konkurrerede løfts maks (+ status/dato) — og kun hvis det nye
+    // resultat faktisk er tungere end atletens nuværende maks. Et lavere stævneløft
+    // må ikke trumfe en eksisterende rekord.
     const upd = {}
-    picked.forEach(k => { if (vals[k] != null) upd[k] = vals[k] })
+    picked.forEach(k => { if (vals[k] != null && vals[k] > (parseFloat(selectedAthlete[k]) || 0)) upd[k] = vals[k] })
     if (f.setOffseason) upd.status = 'offseason'
     if (f.clearDate) upd.competition_date = null
     else if (f.newDate) upd.competition_date = f.newDate
@@ -1381,7 +1384,20 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     }
     if (f.savePR) {
       const labelMap = { squat: 'Squat', bench: 'Bænkpres', deadlift: 'Dødløft' }
-      const prRows = picked.filter(k => vals[k] != null).map(k => ({ athlete_id: selectedAthlete.id, exercise_name: labelMap[k], weight: vals[k], reps: 1, logged_at: f.meet_date }))
+      const candidates = picked.filter(k => vals[k] != null)
+      // Hent nuværende bedste pr. løft, så vi kun gemmer en PR hvis stævnet slår den.
+      const { data: existingPRs } = await supabase
+        .from('personal_records')
+        .select('exercise_name, weight')
+        .eq('athlete_id', selectedAthlete.id)
+        .in('exercise_name', candidates.map(k => labelMap[k]))
+      const bestByName = {}
+      for (const pr of (existingPRs || [])) {
+        bestByName[pr.exercise_name] = Math.max(bestByName[pr.exercise_name] || 0, pr.weight || 0)
+      }
+      const prRows = candidates
+        .filter(k => vals[k] > (bestByName[labelMap[k]] || 0))
+        .map(k => ({ athlete_id: selectedAthlete.id, exercise_name: labelMap[k], weight: vals[k], reps: 1, logged_at: f.meet_date }))
       if (prRows.length) await supabase.from('personal_records').insert(prRows)
     }
     await fetchMeetResults(selectedAthlete.id)
@@ -4183,65 +4199,6 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen stævnedato sat endnu.</div>
                 )}
               </div>
-
-              {/* Stævnehistorik */}
-              <div style={{ ...s.card, marginTop: '1.5rem' }}>
-                <div style={s.cardLabel}>Stævnehistorik</div>
-                {meetResults.length === 0 ? (
-                  <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen stævner registreret endnu.</div>
-                ) : (
-                  <div style={{ overflowX: 'auto' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: "'IBM Plex Mono', monospace" }}>
-                      <thead>
-                        <tr style={{ textAlign: 'left', color: '#4a4844', fontSize: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-                          <th style={{ padding: '0.4rem 0.5rem 0.4rem 0', fontWeight: 500 }}>Dato</th>
-                          <th style={{ padding: '0.4rem 0.5rem', fontWeight: 500 }}>Stævne</th>
-                          <th style={{ padding: '0.4rem 0.5rem', fontWeight: 500, textAlign: 'right' }}>S</th>
-                          <th style={{ padding: '0.4rem 0.5rem', fontWeight: 500, textAlign: 'right' }}>B</th>
-                          <th style={{ padding: '0.4rem 0.5rem', fontWeight: 500, textAlign: 'right' }}>D</th>
-                          <th style={{ padding: '0.4rem 0.5rem', fontWeight: 500, textAlign: 'right' }}>Total</th>
-                          <th style={{ padding: '0.4rem 0 0.4rem 0.5rem' }}></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {meetResults.map(m => (
-                          <tr key={m.id} style={{ borderTop: '1px solid rgba(237,234,226,0.07)', fontSize: '0.78rem', color: '#edeae2' }}>
-                            <td style={{ padding: '0.5rem 0.5rem 0.5rem 0', whiteSpace: 'nowrap' }}>{new Date(m.meet_date + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short', year: '2-digit' })}</td>
-                            <td style={{ padding: '0.5rem', color: '#b8b4a8', fontFamily: "'IBM Plex Sans', sans-serif" }}>{m.meet_name || <span style={{ color: '#4a4844' }}>—</span>}</td>
-                            <td style={{ padding: '0.5rem', textAlign: 'right', color: m.squat != null ? '#edeae2' : '#3a3a36' }}>{m.squat != null ? m.squat : '–'}</td>
-                            <td style={{ padding: '0.5rem', textAlign: 'right', color: m.bench != null ? '#edeae2' : '#3a3a36' }}>{m.bench != null ? m.bench : '–'}</td>
-                            <td style={{ padding: '0.5rem', textAlign: 'right', color: m.deadlift != null ? '#edeae2' : '#3a3a36' }}>{m.deadlift != null ? m.deadlift : '–'}</td>
-                            <td style={{ padding: '0.5rem', textAlign: 'right', color: '#c8923a' }}>{m.total != null ? m.total : '–'}</td>
-                            <td style={{ padding: '0.5rem 0 0.5rem 0.5rem', textAlign: 'right' }}>
-                              <button onClick={() => deleteMeetResult(m.id)} style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.85rem', padding: 0 }} title="Slet">✕</button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
-
-              {/* PRs */}
-              <div style={{ ...s.card, marginTop: '1.5rem' }}>
-                <div style={s.cardLabel}>Rekorder</div>
-                {athletePRs.length === 0 ? (
-                  <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen PR'er registreret endnu.</div>
-                ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                    {athletePRs.map(pr => (
-                      <div key={pr.id} style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.5rem' }}>
-                        <span style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.88rem', color: '#edeae2', fontWeight: 300 }}>{pr.exercise_name}</span>
-                        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'baseline', flexShrink: 0 }}>
-                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.95rem', color: '#c8923a' }}>{pr.weight} kg</span>
-                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', letterSpacing: '0.06em' }}>{pr.logged_at.slice(0, 10)}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
               </div>
             )}
 
@@ -5374,6 +5331,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               const fieldMap = { squat: ['squat1','squat2','squat3'], bench: ['bench1','bench2','bench3'], deadlift: ['dead1','dead2','dead3'] }
 
               return (
+                <>
                 <div style={s.card}>
                   <div style={s.cardLabel}>
                     Stævneplan — {a.name.split(' ')[0]}
@@ -5442,6 +5400,69 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     </button>
                   )}
                 </div>
+
+                {/* Stævnehistorik */}
+                <div style={{ ...s.card, marginTop: '1.5rem' }}>
+                  <div style={s.cardLabel}>
+                    Stævnehistorik
+                    <button style={s.btnEdit} onClick={() => openMeetResult()}>Registrér resultat</button>
+                  </div>
+                  {meetResults.length === 0 ? (
+                    <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen stævner registreret endnu.</div>
+                  ) : (
+                    <div style={{ overflowX: 'auto' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: "'IBM Plex Mono', monospace" }}>
+                        <thead>
+                          <tr style={{ textAlign: 'left', color: '#4a4844', fontSize: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                            <th style={{ padding: '0.4rem 0.5rem 0.4rem 0', fontWeight: 500 }}>Dato</th>
+                            <th style={{ padding: '0.4rem 0.5rem', fontWeight: 500 }}>Stævne</th>
+                            <th style={{ padding: '0.4rem 0.5rem', fontWeight: 500, textAlign: 'right' }}>S</th>
+                            <th style={{ padding: '0.4rem 0.5rem', fontWeight: 500, textAlign: 'right' }}>B</th>
+                            <th style={{ padding: '0.4rem 0.5rem', fontWeight: 500, textAlign: 'right' }}>D</th>
+                            <th style={{ padding: '0.4rem 0.5rem', fontWeight: 500, textAlign: 'right' }}>Total</th>
+                            <th style={{ padding: '0.4rem 0 0.4rem 0.5rem' }}></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {meetResults.map(m => (
+                            <tr key={m.id} style={{ borderTop: '1px solid rgba(237,234,226,0.07)', fontSize: '0.78rem', color: '#edeae2' }}>
+                              <td style={{ padding: '0.5rem 0.5rem 0.5rem 0', whiteSpace: 'nowrap' }}>{new Date(m.meet_date + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short', year: '2-digit' })}</td>
+                              <td style={{ padding: '0.5rem', color: '#b8b4a8', fontFamily: "'IBM Plex Sans', sans-serif" }}>{m.meet_name || <span style={{ color: '#4a4844' }}>—</span>}</td>
+                              <td style={{ padding: '0.5rem', textAlign: 'right', color: m.squat != null ? '#edeae2' : '#3a3a36' }}>{m.squat != null ? m.squat : '–'}</td>
+                              <td style={{ padding: '0.5rem', textAlign: 'right', color: m.bench != null ? '#edeae2' : '#3a3a36' }}>{m.bench != null ? m.bench : '–'}</td>
+                              <td style={{ padding: '0.5rem', textAlign: 'right', color: m.deadlift != null ? '#edeae2' : '#3a3a36' }}>{m.deadlift != null ? m.deadlift : '–'}</td>
+                              <td style={{ padding: '0.5rem', textAlign: 'right', color: '#c8923a' }}>{m.total != null ? m.total : '–'}</td>
+                              <td style={{ padding: '0.5rem 0 0.5rem 0.5rem', textAlign: 'right' }}>
+                                <button onClick={() => deleteMeetResult(m.id)} style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.85rem', padding: 0 }} title="Slet">✕</button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+
+                {/* PRs */}
+                <div style={{ ...s.card, marginTop: '1.5rem' }}>
+                  <div style={s.cardLabel}>Rekorder</div>
+                  {athletePRs.length === 0 ? (
+                    <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen PR'er registreret endnu.</div>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                      {athletePRs.map(pr => (
+                        <div key={pr.id} style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.5rem' }}>
+                          <span style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.88rem', color: '#edeae2', fontWeight: 300 }}>{pr.exercise_name}</span>
+                          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'baseline', flexShrink: 0 }}>
+                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.95rem', color: '#c8923a' }}>{pr.weight} kg</span>
+                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', letterSpacing: '0.06em' }}>{pr.logged_at.slice(0, 10)}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                </>
               )
             })()}
 

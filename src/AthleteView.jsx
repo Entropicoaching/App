@@ -1882,7 +1882,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       weight: parseFloat(input.weight) || 0,
       reps_completed: parseInt(repsCompleted) || 0,
       note: input.note || null,
-      rpe_actual: input.rpe ? parseFloat(input.rpe) : null,
+      // Ingen egen RPE valgt → gem den planlagte RPE, så vi altid har data at
+      // autoregulere på. Rører atleten vælgeren, gemmes deres værdi i stedet.
+      rpe_actual: input.rpe ? parseFloat(input.rpe) : (plannedRpe ?? null),
       rpe_planned: plannedRpe ?? null,
       skipped: false,
     }
@@ -2291,9 +2293,11 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       const last = lastLogByExerciseName[ex.name?.toLowerCase()]
       const weight = last?.weight ?? parseFloat(ex.recommended_weight) ?? 0
       const reps = last?.reps_completed ?? parseInt(ex.reps) ?? 0
+      // Ikke-skippede sæt får planlagt RPE som faktisk RPE (samme logik som logSet).
+      const plannedRpe = parsePlannedRpe(ex.intensity)
       for (let n = 1; n <= (parseInt(ex.sets) || 0); n++) {
         if (logged.has(`${ex.id}_${n}`)) continue
-        rows.push({ exercise_id: ex.id, athlete_id: athlete.id, set_number: n, weight, reps_completed: reps, note: null, rpe_actual: null, rpe_planned: null, skipped: false })
+        rows.push({ exercise_id: ex.id, athlete_id: athlete.id, set_number: n, weight, reps_completed: reps, note: null, rpe_actual: plannedRpe ?? null, rpe_planned: plannedRpe ?? null, skipped: false })
       }
     }
 
