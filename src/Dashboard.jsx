@@ -3023,12 +3023,13 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               </div>
             </div>
 
+            {/* Slank genvejsbar — kun de hyppigste. Resten nås via hub-kortene. */}
             <div style={{ ...s.tabs, flexWrap: 'wrap', rowGap: '0.25rem' }}>
-              {[['hub', 'Hjem'], ['oversigt', 'Oversigt'], ['kost', 'Kost & mål'], ['program', 'Program'], ['log', 'Log'], ['noter', 'Noter'], ['analyse', 'Analyse'], ['opvarmning', 'Opvarmning'], ['stævne', 'Stævne'], ['beskeder', 'Beskeder']].map(([key, label]) => (
+              {[['hub', 'Hjem'], ['program', 'Program'], ['log', 'Log']].map(([key, label]) => (
                 <button key={key} style={{ ...s.tab(activeTab === key), whiteSpace: 'nowrap', flexShrink: 0, display: 'flex', alignItems: 'center', gap: '0.3rem' }} onClick={() => { setActiveTab(key); setEditing(null) }}>
                   {key === 'hub' && <span style={{ fontSize: '0.85rem', lineHeight: 1 }}>⌂</span>}
                   {label}
-                  {key === 'beskeder' && unreadCounts[a.id] > 0 && <span style={{ background: '#c8923a', color: '#141410', borderRadius: '999px', fontSize: '0.5rem', padding: '0.05rem 0.3rem', fontWeight: 600 }}>{unreadCounts[a.id]}</span>}
+                  {key === 'hub' && unreadCounts[a.id] > 0 && <span style={{ background: '#c8923a', color: '#141410', borderRadius: '999px', fontSize: '0.5rem', padding: '0.05rem 0.3rem', fontWeight: 600 }}>{unreadCounts[a.id]}</span>}
                 </button>
               ))}
             </div>
