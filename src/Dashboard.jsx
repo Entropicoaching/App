@@ -46,6 +46,21 @@ const WEEKDAYS_LONG = ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lør
 const statusLabels = { active: 'Aktiv', peaking: 'Peaking', offseason: 'Off-season', ferie: 'Ferie' }
 const statusColors = { active: '#6cba6c', peaking: '#c8923a', offseason: '#7a7770', ferie: '#5b9bb5' }
 
+// Sektioner vist som kort på atlet-hubben (coach-landingsside). Rækkefølgen
+// matcher fane-bar'en; ikonet er en kompakt 24×24 stroke-SVG.
+const ic = (d) => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">{d}</svg>
+const HUB_SECTIONS = [
+  { key: 'oversigt', label: 'Oversigt', desc: 'Maks, kropsvægt & status', icon: ic(<><rect x="3" y="3" width="7" height="9" rx="1" /><rect x="14" y="3" width="7" height="5" rx="1" /><rect x="14" y="12" width="7" height="9" rx="1" /><rect x="3" y="16" width="7" height="5" rx="1" /></>) },
+  { key: 'kost', label: 'Kost & mål', desc: 'Kcal- og proteinmål', icon: ic(<><path d="M3 2v7a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V2" /><line x1="5" y1="11" x2="5" y2="22" /><path d="M17 2c-1.5 1-2 3-2 5v6h4V2" /><line x1="17" y1="13" x2="17" y2="22" /></>) },
+  { key: 'program', label: 'Program', desc: 'Ugeplan & sessioner', icon: ic(<><line x1="6" y1="12" x2="18" y2="12" /><rect x="2.5" y="9" width="3.5" height="6" rx="1" /><rect x="18" y="9" width="3.5" height="6" rx="1" /></>) },
+  { key: 'log', label: 'Log', desc: 'Træningslog & historik', icon: ic(<><path d="M4 4h16v16H4z" /><line x1="8" y1="9" x2="16" y2="9" /><line x1="8" y1="13" x2="16" y2="13" /><line x1="8" y1="17" x2="12" y2="17" /></>) },
+  { key: 'analyse', label: 'Analyse', desc: 'Grafer & belastning', icon: ic(<><line x1="3" y1="21" x2="21" y2="21" /><polyline points="4 15 9 10 13 14 20 6" /></>) },
+  { key: 'opvarmning', label: 'Opvarmning', desc: 'Mobilitet & rutiner', icon: ic(<><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></>) },
+  { key: 'stævne', label: 'Stævne', desc: 'Plan, historik & rekorder', icon: ic(<><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></>) },
+  { key: 'noter', label: 'Noter', desc: 'Coach-noter', icon: ic(<><path d="M4 3h12l4 4v14H4z" /><polyline points="16 3 16 7 20 7" /><line x1="8" y1="12" x2="16" y2="12" /><line x1="8" y1="16" x2="13" y2="16" /></>) },
+  { key: 'beskeder', label: 'Beskeder', desc: 'Chat med atleten', icon: ic(<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />) },
+]
+
 // Ferie-status: returnerer { onHoliday, until } eller null hvis ikke på ferie.
 // onHoliday = ingen slutdato eller slutdato >= i dag. Ellers er ferien slut (tilbage).
 function holidayInfo(a) {
@@ -275,7 +290,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [loadError, setLoadError] = useState(false)
   const [view, setView] = useState('list')
   const [selectedAthlete, setSelectedAthlete] = useState(null)
-  const [activeTab, setActiveTab] = useState('oversigt')
+  const [activeTab, setActiveTab] = useState('hub')
   const [editing, setEditing] = useState(null)
   const [showAddModal, setShowAddModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -434,6 +449,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       fetchMeetResults(selectedAthlete.id)
       if (activeTab === 'oversigt') fetchAthleteMobility(selectedAthlete.id)
     }
+    // Hubben viser dagens parathed i statuslinjen.
+    if (activeTab === 'hub' && selectedAthlete) fetchAthleteReadiness(selectedAthlete.id)
   }, [activeTab, selectedAthlete?.id])
 
   useEffect(() => {
@@ -1867,7 +1884,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     setExportingBackup(false)
   }
 
-  function openProfile(athlete, tab = 'oversigt') {
+  function openProfile(athlete, tab = 'hub') {
     setSelectedAthlete(athlete)
     setActiveTab(tab)
     setEditing(null)
@@ -3006,11 +3023,74 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               </div>
             </div>
 
-            <div style={{ ...s.tabs, overflowX: 'auto', flexWrap: 'nowrap', WebkitOverflowScrolling: 'touch' }}>
-              {[['oversigt', 'Oversigt'], ['kost', 'Kost & mål'], ['program', 'Program'], ['log', 'Log'], ['noter', 'Noter'], ['analyse', 'Analyse'], ['opvarmning', 'Opvarmning'], ['stævne', 'Stævne'], ['beskeder', 'Beskeder']].map(([key, label]) => (
-                <button key={key} style={{ ...s.tab(activeTab === key), whiteSpace: 'nowrap', flexShrink: 0 }} onClick={() => { setActiveTab(key); setEditing(null) }}>{label}</button>
+            <div style={{ ...s.tabs, flexWrap: 'wrap', rowGap: '0.25rem' }}>
+              {[['hub', 'Hjem'], ['oversigt', 'Oversigt'], ['kost', 'Kost & mål'], ['program', 'Program'], ['log', 'Log'], ['noter', 'Noter'], ['analyse', 'Analyse'], ['opvarmning', 'Opvarmning'], ['stævne', 'Stævne'], ['beskeder', 'Beskeder']].map(([key, label]) => (
+                <button key={key} style={{ ...s.tab(activeTab === key), whiteSpace: 'nowrap', flexShrink: 0, display: 'flex', alignItems: 'center', gap: '0.3rem' }} onClick={() => { setActiveTab(key); setEditing(null) }}>
+                  {key === 'hub' && <span style={{ fontSize: '0.85rem', lineHeight: 1 }}>⌂</span>}
+                  {label}
+                  {key === 'beskeder' && unreadCounts[a.id] > 0 && <span style={{ background: '#c8923a', color: '#141410', borderRadius: '999px', fontSize: '0.5rem', padding: '0.05rem 0.3rem', fontWeight: 600 }}>{unreadCounts[a.id]}</span>}
+                </button>
               ))}
             </div>
+
+            {/* TAB: HUB — coach-landingsside med status + sektionsnavigation */}
+            {activeTab === 'hub' && (() => {
+              const todayStr = new Date().toISOString().slice(0, 10)
+              const todayR = athleteReadiness.find(r => r.logged_date === todayStr)
+              const sig = todayR && todayR.readiness_score != null ? readinessSignal(todayR.readiness_score) : null
+              const trainings = weeklyActivity[a.id]?.sessions ?? 0
+              const unread = unreadCounts[a.id] ?? 0
+              const compDate = a.competition_date
+              const weeksToComp = compDate ? Math.ceil((new Date(compDate + 'T12:00:00') - new Date()) / (7 * 24 * 3600 * 1000)) : null
+              const stat = [
+                sig && { label: 'Parathed i dag', value: todayR.readiness_score, sub: sig.text, color: sig.color },
+                { label: 'Træninger denne uge', value: trainings, sub: weeklyActivity[a.id]?.sets ? `${weeklyActivity[a.id].sets} sæt` : 'logget', color: '#edeae2' },
+                { label: 'Ulæste beskeder', value: unread, sub: unread > 0 ? 'fra atleten' : 'ingen nye', color: unread > 0 ? '#c8923a' : '#7a7770' },
+                weeksToComp != null && { label: 'Til stævne', value: weeksToComp > 0 ? weeksToComp : '0', sub: weeksToComp > 0 ? 'uger' : 'passeret', color: '#c8923a' },
+              ].filter(Boolean)
+              return (
+                <div>
+                  {/* Statuslinje */}
+                  {stat.length > 0 && (
+                    <div style={{ ...s.card, display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : `repeat(${stat.length}, 1fr)`, gap: '1rem' }}>
+                      {stat.map((st, i) => (
+                        <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', borderLeft: i > 0 && !isMobile ? '1px solid rgba(237,234,226,0.07)' : 'none', paddingLeft: i > 0 && !isMobile ? '1rem' : 0 }}>
+                          <div style={s.fieldLabel}>{st.label}</div>
+                          <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem' }}>
+                            <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', color: st.color, lineHeight: 1 }}>{st.value}</span>
+                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770', letterSpacing: '0.06em' }}>{st.sub}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Sektionsgitter */}
+                  <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)', gap: '1rem' }}>
+                    {HUB_SECTIONS.map(sec => (
+                      <button
+                        key={sec.key}
+                        onClick={() => { setActiveTab(sec.key); setEditing(null) }}
+                        style={{
+                          background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)', textAlign: 'left',
+                          padding: '1.25rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '0.6rem',
+                          position: 'relative', transition: 'border-color 0.15s, background 0.15s',
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(200,146,58,0.4)'; e.currentTarget.style.background = '#211f1a' }}
+                        onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(237,234,226,0.07)'; e.currentTarget.style.background = '#1c1c18' }}
+                      >
+                        <div style={{ color: '#c8923a' }}>{sec.icon}</div>
+                        <div style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '1rem', color: '#edeae2', fontWeight: 400 }}>{sec.label}</div>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#7a7770', letterSpacing: '0.04em', lineHeight: 1.4 }}>{sec.desc}</div>
+                        {sec.key === 'beskeder' && unread > 0 && (
+                          <span style={{ position: 'absolute', top: '1rem', right: '1rem', background: '#c8923a', color: '#141410', borderRadius: '999px', fontSize: '0.55rem', padding: '0.1rem 0.4rem', fontWeight: 600 }}>{unread}</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )
+            })()}
 
             {/* TAB: ANALYSE */}
             {activeTab === 'analyse' && (() => {
