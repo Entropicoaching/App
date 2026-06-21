@@ -3023,16 +3023,43 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               </div>
             </div>
 
-            {/* Slank genvejsbar — kun de hyppigste. Resten nås via hub-kortene. */}
-            <div style={{ ...s.tabs, flexWrap: 'wrap', rowGap: '0.25rem' }}>
-              {[['hub', 'Hjem'], ['program', 'Program'], ['log', 'Log']].map(([key, label]) => (
-                <button key={key} style={{ ...s.tab(activeTab === key), whiteSpace: 'nowrap', flexShrink: 0, display: 'flex', alignItems: 'center', gap: '0.3rem' }} onClick={() => { setActiveTab(key); setEditing(null) }}>
-                  {key === 'hub' && <span style={{ fontSize: '0.85rem', lineHeight: 1 }}>⌂</span>}
-                  {label}
-                  {key === 'hub' && unreadCounts[a.id] > 0 && <span style={{ background: '#c8923a', color: '#141410', borderRadius: '999px', fontSize: '0.5rem', padding: '0.05rem 0.3rem', fontWeight: 600 }}>{unreadCounts[a.id]}</span>}
-                </button>
-              ))}
-            </div>
+            {/* Kompakt ikon-bar — alle sektioner ét tap væk, ingen vandret scroll. */}
+            {(() => {
+              const navItems = [{ key: 'hub', label: 'Hjem', icon: ic(<path d="M3 9.5L12 2l9 7.5V21H15v-7H9v7H3V9.5z" />) }, ...HUB_SECTIONS]
+              const activeLabel = navItems.find(n => n.key === activeTab)?.label
+              return (
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.1rem', borderBottom: '1px solid rgba(237,234,226,0.07)' }}>
+                    {navItems.map(n => {
+                      const active = activeTab === n.key
+                      return (
+                        <button
+                          key={n.key}
+                          title={n.label}
+                          onClick={() => { setActiveTab(n.key); setEditing(null) }}
+                          style={{
+                            position: 'relative', background: active ? 'rgba(200,146,58,0.12)' : 'none', border: 'none',
+                            borderBottom: active ? '2px solid #c8923a' : '2px solid transparent', marginBottom: '-1px',
+                            color: active ? '#c8923a' : '#7a7770', cursor: 'pointer', padding: '0.55rem 0.7rem',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color 0.12s, background 0.12s',
+                          }}
+                          onMouseEnter={e => { if (!active) e.currentTarget.style.color = '#b8b4a8' }}
+                          onMouseLeave={e => { if (!active) e.currentTarget.style.color = '#7a7770' }}
+                        >
+                          {n.icon}
+                          {n.key === 'beskeder' && unreadCounts[a.id] > 0 && (
+                            <span style={{ position: 'absolute', top: '0.25rem', right: '0.25rem', background: '#c8923a', color: '#141410', borderRadius: '999px', fontSize: '0.45rem', minWidth: '0.85rem', height: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600 }}>{unreadCounts[a.id]}</span>
+                          )}
+                        </button>
+                      )
+                    })}
+                  </div>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginTop: '0.6rem' }}>
+                    {activeLabel}
+                  </div>
+                </div>
+              )
+            })()}
 
             {/* TAB: HUB — coach-landingsside med status + sektionsnavigation */}
             {activeTab === 'hub' && (() => {
