@@ -2709,7 +2709,15 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                     <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen træninger i denne uge endnu.</div>
                   ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                      {(currentWeek.sessions || []).map(sess => (
+                      {(() => {
+                        const sessDone = s => (s.exercises || []).length > 0 && (s.exercises || []).every(ex => exerciseLogs.some(l => l.exercise_id === ex.id))
+                        const nextS = (currentWeek.sessions || []).find(s => !sessDone(s))
+                        return (currentWeek.sessions || []).map(sess => {
+                        const done = sessDone(sess)
+                        const isNext = nextS && sess.id === nextS.id
+                        const started = !done && (sess.exercises || []).some(ex => exerciseLogs.some(l => l.exercise_id === ex.id))
+                        const wdLabel = sess.weekday != null ? WEEKDAYS_LONG[sess.weekday] : null
+                        return (
                         <button
                           key={sess.id}
                           onClick={() => { setTab('program'); openSession(sess.id) }}
@@ -2717,8 +2725,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
-                            background: 'rgba(237,234,226,0.03)',
-                            border: '1px solid rgba(237,234,226,0.07)',
+                            background: isNext ? 'rgba(200,146,58,0.1)' : 'rgba(237,234,226,0.03)',
+                            border: `1px solid ${isNext ? 'rgba(200,146,58,0.45)' : 'rgba(237,234,226,0.07)'}`,
                             color: '#edeae2',
                             padding: '0.6rem 0.75rem',
                             cursor: 'pointer',
@@ -2726,16 +2734,23 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                             textAlign: 'left',
                             fontFamily: "'IBM Plex Sans', sans-serif",
                             fontWeight: 300,
+                            opacity: done ? 0.55 : 1,
                           }}
-                          onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(200,146,58,0.35)'}
-                          onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(237,234,226,0.07)'}
+                          onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(200,146,58,0.55)'}
+                          onMouseLeave={e => e.currentTarget.style.borderColor = isNext ? 'rgba(200,146,58,0.45)' : 'rgba(237,234,226,0.07)'}
                         >
-                          <span style={{ fontSize: '0.88rem' }}>{sess.title}</span>
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0 }}>
+                            {isNext && <span style={{ color: '#c8923a', fontSize: '0.7rem', flexShrink: 0 }}>▶</span>}
+                            {done && <span style={{ color: '#6cba6c', fontSize: '0.8rem', flexShrink: 0 }}>✓</span>}
+                            <span style={{ fontSize: '0.88rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sess.title}</span>
+                            {isNext && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#141410', background: '#c8923a', padding: '0.1rem 0.35rem', flexShrink: 0 }}>{started ? 'Fortsæt' : 'Næste'}</span>}
+                            {!isNext && !done && wdLabel && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: '#7a7770', flexShrink: 0 }}>{wdLabel}</span>}
+                          </span>
                           <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', flexShrink: 0, marginLeft: '0.75rem' }}>
                             {(sess.exercises || []).length} øvelser →
                           </span>
                         </button>
-                      ))}
+                      )}) })()}
                     </div>
                   )}
                 </>
