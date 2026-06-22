@@ -1145,6 +1145,15 @@ function liftsFromWeek(week) {
   return [...found]
 }
 
+// Byg de konkrete øvelses-slots ud fra intaken: anbefalede områder + en TILFÆLDIG
+// øvelse pr. område (frisk session hver gang, udnytter de 5 øvelser pr. område).
+function slotsFromIntake(intake) {
+  return buildMobilityRoutine(intake).map(area => {
+    const count = (MOBILITY_LIBRARY[area] || []).length
+    return { area, choiceIdx: count > 1 ? Math.floor(Math.random() * count) : 0 }
+  })
+}
+
 const s = {
   wrap: { minHeight: '100vh', background: '#141410', color: '#edeae2', fontFamily: "'IBM Plex Sans', sans-serif", fontWeight: 300 },
   topbar: { height: '52px', borderBottom: '1px solid rgba(237,234,226,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1.5rem', background: '#1c1c18', position: 'sticky', top: 0, zIndex: 50 },
@@ -4110,9 +4119,11 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               <Door icon="⚡" title="Varm op" sub="Inden du løfter" onClick={() => setMobilityMode('opvarmning')} />
               <Door icon="✦" title="Mobilitet" sub="Byg en session — tag den når du er stram"
                 onClick={() => {
-                  const lifts = liftsFromWeek(currentWeek)
-                  setMobilityIntake(i => ({ ...i, lifts: lifts.length ? lifts : i.lifts }))
-                  setMobilitySlots([]); setMobilityStep(0); setMobilityPhase('intake'); setMobilityMode('mobilitet')
+                  // Land direkte på et forslag (løft fra ugens program) — ingen formular-port.
+                  const intake = { time: 10, sitting: 'med', lifts: liftsFromWeek(currentWeek), problems: [] }
+                  setMobilityIntake(intake)
+                  setMobilitySlots(slotsFromIntake(intake))
+                  setMobilityStep(0); setMobilityPhase('design'); setMobilityMode('mobilitet')
                 }} />
             </>
           )
@@ -4384,13 +4395,14 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           const estMin = mobilitySlots.length <= 4 ? 5 : mobilitySlots.length <= 6 ? 10 : 15
 
           function buildFromIntake() {
-            const ids = buildMobilityRoutine(mobilityIntake)
-            // Tilfældig øvelse pr. område → frisk session hver gang (ikke altid samme #0).
-            setMobilitySlots(ids.map(area => {
-              const count = (MOBILITY_LIBRARY[area] || []).length
-              return { area, choiceIdx: count > 1 ? Math.floor(Math.random() * count) : 0 }
-            }))
+            setMobilitySlots(slotsFromIntake(mobilityIntake))
             setMobilityPhase('design')
+          }
+          // Skift tid inline på forslaget → genbyg uden at gå tilbage til "Flere valg".
+          function setSessionTime(t) {
+            const intake = { ...mobilityIntake, time: t }
+            setMobilityIntake(intake)
+            setMobilitySlots(slotsFromIntake(intake))
           }
           function startGuide() {
             setMobilityStep(0); setTimerActive(false); setTimerSeconds(0); setTimerDone(false); setMobilityPhase('guide')
@@ -4414,8 +4426,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               <>
                 <div style={{ marginBottom: '1.5rem' }}>
                   <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Mobilitet</div>
-                  <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Byg en session</h1>
-                  <div style={{ fontSize: '0.82rem', color: '#7a7770', marginTop: '0.5rem', lineHeight: 1.6 }}>Vi foreslår en session ud fra dine løft og hvad der er stramt lige nu. Du kan altid bytte øvelser bagefter.</div>
+                  <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Flere valg</h1>
+                  <div style={{ fontSize: '0.82rem', color: '#7a7770', marginTop: '0.5rem', lineHeight: 1.6 }}>Fortæl hvad der er stramt, så rammer forslaget bedre. Løftene er valgt fra dit program.</div>
                 </div>
                 <Q label="Hvor lang tid vil du bruge?">
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem' }}>
@@ -4438,7 +4450,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                   </div>
                 </Q>
                 <div style={{ marginTop: '0.5rem' }}>
-                  <button style={{ ...s.btnPrimary, width: '100%', padding: '0.85rem', fontSize: '0.62rem' }} onClick={buildFromIntake}>Se mit forslag →</button>
+                  <button style={{ ...s.btnPrimary, width: '100%', padding: '0.85rem', fontSize: '0.62rem' }} onClick={buildFromIntake}>Opdater forslag →</button>
                 </div>
               </>
             )
@@ -4455,8 +4467,14 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               <>
                 <div style={{ marginBottom: '1.25rem' }}>
                   <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Din session · {mobilitySlots.length} øvelser · ~{estMin} min</div>
-                  <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Tilpas</h1>
+                  <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Din session</h1>
                   <div style={{ fontSize: '0.82rem', color: '#7a7770', marginTop: '0.5rem', lineHeight: 1.6 }}>Skift øvelser, fjern dem du ikke vil have, eller tilføj flere. Start når du er klar.</div>
+                </div>
+                <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '1.25rem' }}>
+                  {[5, 10, 15].map(t => {
+                    const on = mobilityIntake.time === t
+                    return <button key={t} onClick={() => setSessionTime(t)} style={{ flex: 1, background: on ? 'rgba(200,146,58,0.15)' : '#1c1c18', border: `1px solid ${on ? '#c8923a' : 'rgba(237,234,226,0.1)'}`, color: on ? '#c8923a' : '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.06em', padding: '0.55rem', cursor: 'pointer' }}>{t} min</button>
+                  })}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.25rem' }}>
                   {mobilitySlots.map((sl, idx) => {
@@ -4488,7 +4506,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                   </div>
                 )}
                 <div style={{ display: 'flex', gap: '0.6rem' }}>
-                  <button style={{ ...s.btnGhost, flex: 1, padding: '0.8rem' }} onClick={() => setMobilityPhase('intake')}>← Svar igen</button>
+                  <button style={{ ...s.btnGhost, flex: 1, padding: '0.8rem' }} onClick={() => setMobilityPhase('intake')}>Flere valg</button>
                   <button style={{ ...s.btnPrimary, flex: 2, padding: '0.85rem', fontSize: '0.62rem', opacity: mobilitySlots.length ? 1 : 0.5 }} disabled={!mobilitySlots.length} onClick={startGuide}>Start →</button>
                 </div>
               </>
