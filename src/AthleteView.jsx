@@ -1479,6 +1479,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   // Readiness state
   const [readinessLog, setReadinessLog] = useState(null)
+  const [lastReadiness, setLastReadiness] = useState(null) // seneste tidligere log → "samme som i går"
   const [readinessInput, setReadinessInput] = useState({ sleep: '', energy: null, motivation: null, stress: null, soreness: null, soreZones: [] })
   const [savingReadiness, setSavingReadiness] = useState(false)
   const [readinessError, setReadinessError] = useState(null)
@@ -1695,6 +1696,15 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       .eq('logged_date', today())
       .maybeSingle()
     setReadinessLog(data || null)
+    const { data: prev } = await supabase
+      .from('readiness_logs')
+      .select('*')
+      .eq('athlete_id', athleteId)
+      .lt('logged_date', today())
+      .order('logged_date', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+    setLastReadiness(prev || null)
   }
 
   function suggestNextWeight(exName, intensity) {
@@ -2760,7 +2770,22 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
             {/* Readiness check */}
             {!readinessLog ? (
               <div style={s.card}>
-                <div style={s.cardLabel}>Dagens parathed</div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                  <div style={{ ...s.cardLabel, marginBottom: 0 }}>Dagens parathed</div>
+                  {lastReadiness && (
+                    <button
+                      onClick={() => setReadinessInput({
+                        sleep: lastReadiness.sleep_hours != null ? String(lastReadiness.sleep_hours) : '',
+                        energy: lastReadiness.energy ?? null,
+                        motivation: lastReadiness.motivation ?? null,
+                        stress: lastReadiness.stress ?? null,
+                        soreness: lastReadiness.soreness_level ?? null,
+                        soreZones: lastReadiness.sore_zones || [],
+                      })}
+                      style={{ background: 'none', border: '1px solid rgba(237,234,226,0.13)', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.06em', textTransform: 'uppercase', padding: '0.35rem 0.6rem', cursor: 'pointer', flexShrink: 0 }}
+                    >↺ Samme som sidst</button>
+                  )}
+                </div>
 
                 <div style={{ marginBottom: '1rem' }}>
                   <div style={s.fieldLabel}>Søvn</div>
