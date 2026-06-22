@@ -2986,6 +2986,32 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 </>
               ) : (
                 <>
+                  {/* Readiness → træning: ærlig autoregulerings-cue ud fra dagens parathed
+                      (kun aktuel uge; readinessLog er allerede i state). */}
+                  {isCurrentWeek && readinessLog && readinessLog.readiness_score != null && readinessLog.readiness_score < 75 && (() => {
+                    const sc = readinessLog.readiness_score
+                    const low = sc < 50
+                    return (
+                      <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start', padding: '0.85rem 1rem', marginBottom: '1.25rem', background: low ? 'rgba(224,85,85,0.07)' : 'rgba(200,146,58,0.07)', border: `1px solid ${low ? 'rgba(224,85,85,0.25)' : 'rgba(200,146,58,0.2)'}` }}>
+                        <span style={{ color: low ? '#e05555' : '#c8923a', fontSize: '1rem', lineHeight: 1, flexShrink: 0 }}>{low ? '⚠' : '◐'}</span>
+                        <div>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: low ? '#e05555' : '#c8923a', marginBottom: '0.3rem' }}>Parathed {sc}/100 i dag</div>
+                          <div style={{ fontSize: '0.82rem', color: '#b8b4a8', lineHeight: 1.6 }}>
+                            {low
+                              ? 'Lav parathed. Overvej at skrue intensiteten ned, droppe de sidste sæt, eller tage en let session — og skriv til din coach hvis det varer ved.'
+                              : 'Moderat parathed. Kør planen, men lyt til kroppen og pres ikke topsæt hvis det føles tungt.'}
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })()}
+                  {isCurrentWeek && !readinessLog && (
+                    <button onClick={() => setTab('hjem')} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: '100%', textAlign: 'left', padding: '0.7rem 1rem', marginBottom: '1.25rem', background: 'rgba(200,146,58,0.05)', border: '1px solid rgba(200,146,58,0.13)', cursor: 'pointer' }}>
+                      <span style={{ color: '#c8923a', fontSize: '0.9rem', flexShrink: 0 }}>◐</span>
+                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#c8923a', letterSpacing: '0.06em', lineHeight: 1.5 }}>Log dagens parathed for en tilpasset anbefaling →</span>
+                    </button>
+                  )}
+
                   {/* Periodisering — uge-stepper */}
                   {allWeeks.length > 0 && (() => {
                     const compDate = athlete?.competition_date
