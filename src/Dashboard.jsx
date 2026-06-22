@@ -2784,11 +2784,16 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     if (b.status === 'lastweek') return { rank: 4, label: 'Planlæg i weekenden', color: '#c8923a' }
                     return null
                   }
+                  const todayStr = new Date().toISOString().slice(0, 10)
                   const items = visible.map(a => {
                     const prog = progReason(boardByAid[a.id])
                     const hasUnread = (unreadCounts[a.id] || 0) > 0
                     const msg = hasUnread ? { rank: 3, label: 'Ulæst besked', color: '#c8923a' } : null
-                    const cands = [prog && { ...prog, tab: 'program' }, msg && { ...msg, tab: 'beskeder' }].filter(Boolean)
+                    // Stævne passeret men status stadig peaking → mind coach om at registrere resultat.
+                    const meetDue = a.status === 'peaking' && a.competition_date && a.competition_date < todayStr
+                      ? { rank: 3, label: 'Stævne passeret — registrér resultat', color: '#c8923a', tab: 'stævne' }
+                      : null
+                    const cands = [prog && { ...prog, tab: 'program' }, meetDue, msg && { ...msg, tab: 'beskeder' }].filter(Boolean)
                     if (!cands.length) return null
                     cands.sort((x, y) => x.rank - y.rank)
                     const primary = cands[0]
