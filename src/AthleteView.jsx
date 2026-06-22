@@ -4980,9 +4980,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         })()}
       </div>
 
-      {/* Bottom navigation */}
+      {/* Bottom navigation — Stævne vises kun når den er relevant (stævnedato/plan),
+          ellers fylder den en fast plads for de 7/8 atleter uden et stævne på vej. */}
       <nav style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: '#1c1c18', borderTop: '1px solid rgba(237,234,226,0.07)', display: 'flex', zIndex: 100 }}>
-        {NAV_ITEMS.map(({ key, label, icon }) => (
+        {NAV_ITEMS.filter(n => n.key !== 'stævnedag' || athlete?.competition_date || hasMeetPlan).map(({ key, label, icon }) => (
           <button
             key={key}
             onClick={() => setTab(key)}
