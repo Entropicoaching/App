@@ -1398,6 +1398,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [pastLogs, setPastLogs] = useState([])
   const [progOpenSession, setProgOpenSession] = useState(null)
   const [exerciseLogs, setExerciseLogs] = useState([])
+  const [prs, setPrs] = useState([]) // atletens egne rekorder (personal_records)
   const [logInputs, setLogInputs] = useState({})
   const [lastLogByExerciseName, setLastLogByExerciseName] = useState({})
   const [exerciseHistory, setExerciseHistory] = useState({})
@@ -1546,11 +1547,21 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       fetchAthleteMessages(data.id)
       fetchWeightLogs(data.id)
       fetchReadiness(data.id)
+      fetchPRs(data.id)
       fetchWarmupTemplates(data.id)
       fetchMeetPlan(data.id)
       fetchMeetResults(data.id)
     }
     setLoading(false)
+  }
+
+  async function fetchPRs(athleteId) {
+    const { data } = await supabase
+      .from('personal_records')
+      .select('exercise_name, weight, reps, created_at')
+      .eq('athlete_id', athleteId)
+      .order('created_at', { ascending: false })
+    setPrs(data || [])
   }
 
   async function fetchMeetPlan(athleteId) {
@@ -2950,6 +2961,54 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                       <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#4a4844', letterSpacing: '0.06em' }}>Logget i dag · {todayLog.weight} kg</span>
                       <button style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.2rem 0.5rem' }} onClick={() => setWeightInput(todayLog.weight.toString())}>Ret</button>
                     </div>
+                  )}
+                </div>
+              )
+            })()}
+
+            {/* Dine rekorder — maks + bedste løft pr. øvelse (motivation; data findes allerede) */}
+            {(() => {
+              const hasMax = athlete.squat || athlete.bench || athlete.deadlift
+              const bestByEx = {}
+              for (const r of prs) {
+                const cur = bestByEx[r.exercise_name]
+                if (!cur || (r.weight || 0) > cur.weight) bestByEx[r.exercise_name] = { weight: r.weight || 0, reps: r.reps || 0 }
+              }
+              const bestList = Object.entries(bestByEx).map(([name, v]) => ({ name, ...v })).sort((a, b) => b.weight - a.weight).slice(0, 6)
+              if (!hasMax && !bestList.length) return null
+              return (
+                <div style={s.card}>
+                  <div style={s.cardLabel}>Dine rekorder</div>
+                  {hasMax && (
+                    <>
+                      <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', marginBottom: bestList.length ? '1.1rem' : 0 }}>
+                        {[['Squat', athlete.squat], ['Bænk', athlete.bench], ['Dødløft', athlete.deadlift]].map(([label, val]) => (
+                          <div key={label}>
+                            <div style={s.fieldLabel}>{label}</div>
+                            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.5rem', color: val ? '#edeae2' : '#3a3a36', lineHeight: 1 }}>{val || '–'}<span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#7a7770', marginLeft: '0.2rem' }}>kg</span></div>
+                          </div>
+                        ))}
+                        {(athlete.squat && athlete.bench && athlete.deadlift) ? (
+                          <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
+                            <div style={s.fieldLabel}>Total</div>
+                            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.5rem', color: '#c8923a', lineHeight: 1 }}>{(athlete.squat || 0) + (athlete.bench || 0) + (athlete.deadlift || 0)}<span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#7a7770', marginLeft: '0.2rem' }}>kg</span></div>
+                          </div>
+                        ) : null}
+                      </div>
+                    </>
+                  )}
+                  {bestList.length > 0 && (
+                    <>
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Bedste løft pr. øvelse</div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                        {bestList.map((b, i) => (
+                          <div key={b.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '0.75rem', padding: '0.4rem 0', borderBottom: i < bestList.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none' }}>
+                            <span style={{ fontSize: '0.85rem', color: '#edeae2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{b.name}</span>
+                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#c8923a', whiteSpace: 'nowrap', flexShrink: 0 }}>{b.weight} kg{b.reps ? ` × ${b.reps}` : ''}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </>
                   )}
                 </div>
               )
