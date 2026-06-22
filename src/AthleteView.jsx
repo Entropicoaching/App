@@ -1123,6 +1123,8 @@ function buildMobilityRoutine(intake) {
   else if (intake.sitting === 'med') { bump('hoftefleksor', 1); bump('tryg', 0.75); bump('baller', 0.75) }
   // Problemzoner vægter tungest (akut oplevet stivhed)
   for (const p of (intake.problems || [])) for (const id of (MOBILITY_PROBLEM_MAP[p] || [])) bump(id, 2.5)
+  // Dagens readiness-ømhed (auto fra check-in) vægter også højt
+  for (const id of (intake.soreAreas || [])) bump(id, 2)
   // Vælg top-N, behold den kanoniske MOBILITY_AREAS-rækkefølge for et roligt flow
   const ranked = [...MOBILITY_AREAS].map(a => a.id).sort((x, y) => score[y] - score[x])
   const chosen = new Set(ranked.slice(0, n))
@@ -1143,6 +1145,20 @@ function liftsFromWeek(week) {
     }
   }
   return [...found]
+}
+
+// Readiness-loggens grove ømhedszoner (Ben/Ryg/Skuldre/Core) → mobilitets-områder,
+// så dagens selvrapporterede ømhed automatisk kan vægte forslaget.
+const SORE_ZONE_TO_AREAS = {
+  'Ben': ['hofte', 'lyske', 'ankel'],
+  'Ryg': ['tryg', 'laend'],
+  'Skuldre/Arme': ['skulder', 'tryg'],
+  'Core': ['laend', 'hoftefleksor'],
+}
+function areasFromSoreZones(zones) {
+  const out = new Set()
+  for (const z of zones || []) for (const a of (SORE_ZONE_TO_AREAS[z] || [])) out.add(a)
+  return [...out]
 }
 
 // Byg de konkrete øvelses-slots ud fra intaken: anbefalede områder + en TILFÆLDIG
@@ -1439,7 +1455,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   // Mobilitets-session (on-demand: byg en session nu, ingen persistens/streak)
   const [mobilityPhase, setMobilityPhase] = useState('intake')  // 'intake' | 'design' | 'guide' | 'done'
-  const [mobilityIntake, setMobilityIntake] = useState({ time: 10, sitting: 'med', lifts: [], problems: [] })
+  const [mobilityIntake, setMobilityIntake] = useState({ time: 10, sitting: 'med', lifts: [], problems: [], soreAreas: [] })
   const [mobilitySlots, setMobilitySlots] = useState([])        // valgte øvelser: [{ area, choiceIdx }]
   const [mobilityStep, setMobilityStep] = useState(0)
 
@@ -4119,8 +4135,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               <Door icon="⚡" title="Varm op" sub="Inden du løfter" onClick={() => setMobilityMode('opvarmning')} />
               <Door icon="✦" title="Mobilitet" sub="Byg en session — tag den når du er stram"
                 onClick={() => {
-                  // Land direkte på et forslag (løft fra ugens program) — ingen formular-port.
-                  const intake = { time: 10, sitting: 'med', lifts: liftsFromWeek(currentWeek), problems: [] }
+                  // Land direkte på et forslag (løft fra ugens program + dagens ømhed) — ingen formular-port.
+                  const intake = { time: 10, sitting: 'med', lifts: liftsFromWeek(currentWeek), problems: [], soreAreas: areasFromSoreZones(readinessLog?.sore_zones) }
                   setMobilityIntake(intake)
                   setMobilitySlots(slotsFromIntake(intake))
                   setMobilityStep(0); setMobilityPhase('design'); setMobilityMode('mobilitet')
@@ -4469,6 +4485,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                   <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Din session · {mobilitySlots.length} øvelser · ~{estMin} min</div>
                   <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Din session</h1>
                   <div style={{ fontSize: '0.82rem', color: '#7a7770', marginTop: '0.5rem', lineHeight: 1.6 }}>Skift øvelser, fjern dem du ikke vil have, eller tilføj flere. Start når du er klar.</div>
+                  {mobilityIntake.soreAreas?.length > 0 && readinessLog?.sore_zones?.length > 0 && (
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#c8923a', letterSpacing: '0.04em', marginTop: '0.6rem' }}>✓ Tilpasset efter dagens ømhed: {readinessLog.sore_zones.join(', ')}</div>
+                  )}
                 </div>
                 <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '1.25rem' }}>
                   {[5, 10, 15].map(t => {
