@@ -1038,41 +1038,57 @@ const MOBILITY_LIBRARY = {
     { id: 'mob-ankel-1', name: 'Ankel-vægstræk', desc: 'Stå med tåen ca. 10 cm fra en væg og pres knæet fremad, til det rører væggen — hælen skal blive i gulvet. Flyt tåen længere væk, når det bliver let. Det vigtigste for squat-dybde er, at anklen kan bøje nok til at knæet kan vandre frem over tæerne — så kan du sidde lavt med oprejst overkrop.', label: '8 reps pr. side', type: 'reps' },
     { id: 'mob-ankel-2', name: 'Knælende lægstræk', desc: 'Sæt det ene knæ i gulvet og den anden fod fladt foran dig. Skub knæet ud over tæerne og hold, mens du presser hælen ned. Strækker læggen og akillessenen — hold roligt og træk vejret ind i strækket.', label: '40 sek pr. side', type: 'timer', duration: 40 },
     { id: 'mob-ankel-3', name: 'Ankel-glid med elastik', desc: 'Bind et elastik fast i lav højde og læg løkken om anklen forfra, så det trækker anklen bagud. Pres knæet frem over tæerne i rolige, gentagne glid. Elastikken giver leddet plads og løsner anklen mere end et stræk alene.', label: '12 reps pr. side', type: 'reps' },
+    { id: 'mob-ankel-4', name: 'Lægstræk på trappekant', desc: 'Stil forfoden på kanten af et trin og lad hælen synke ned under trinnet med strakt knæ. Hold roligt og skift ben. Strækker læggen i fuld længde — en stram læg begrænser hvor langt knæet kan vandre frem, og dermed hvor dybt du kan sidde.', label: '40 sek pr. side', type: 'timer', duration: 40 },
+    { id: 'mob-ankel-5', name: 'Ankel-cirkler', desc: 'Løft den ene fod og tegn store, langsomme cirkler i luften med tæerne — begge veje. Smører ankelleddet hele vejen rundt og er en nem måde at vække anklerne på, før de skal arbejde i bunden af et løft.', label: '10 cirkler pr. vej', type: 'reps' },
   ],
   hofte: [
     { id: 'mob-hofte-1', name: '90/90 hofterotation', desc: 'Sid på gulvet med det ene ben bøjet foran dig (90°) og det andet ud til siden (90°). Skub forsigtigt hoften frem mod det forreste ben, hold, og skift side. Rammer både udad- og indadrotation i hoften — afgørende for at komme dybt i squat uden at lænden runder.', label: '40 sek pr. side', type: 'timer', duration: 40 },
     { id: 'mob-hofte-2', name: 'Dyb squat-hold', desc: 'Sæt dig ned i bunden af en squat med fødderne fladt, og hold dig nede ved at skubbe knæene ud med albuerne. Flyt vægten lidt rundt og find de stramme punkter. Lærer hofte, ankel og lænd at falde til ro i den dybe position.', label: '45 sek', type: 'timer', duration: 45 },
     { id: 'mob-hofte-3', name: 'Due-stræk', desc: 'Fra alle fire, før det ene knæ frem og læg skinnebenet skråt foran dig. Sænk hofterne og læn overkroppen frem med rank ryg. Dybt stræk af den dybe ballemuskel og bagsiden af hoften — det område der ofte spænder og blokerer dybden.', label: '40 sek pr. side', type: 'timer', duration: 40 },
+    { id: 'mob-hofte-4', name: 'Hofte-cirkler på alle fire', desc: 'Stå på alle fire og løft det ene knæ ud til siden, før det i en stor cirkel frem og tilbage uden at vride i ryggen. Aktiv, kontrolleret bevægelse helt ud i hoftens yderpositioner — bygger bevægelighed du faktisk kan bruge under stangen.', label: '8 cirkler pr. side', type: 'reps' },
+    { id: 'mob-hofte-5', name: 'Dybt squat-hold med rotation', desc: 'Sid i bunden af en dyb squat med fødderne fladt, og drej skiftevis det ene knæ ind mod gulvet. Kombinerer den dybe position med rotation i hoften, så du både åbner og styrer leddet dér hvor squatten er sværest.', label: '6 reps pr. side', type: 'reps' },
   ],
   hoftefleksor: [
     { id: 'mob-hfx-1', name: 'Hoftebøjer-stræk mod væg', desc: 'Knæl foran en væg og sæt det bageste skinneben lodret op ad væggen, så hælen peger op. Sæt den anden fod fladt foran dig i et stort skridt. Klem ballen på det bageste ben og skub hoften frem med rank ryg, til du mærker stræk foran i hoften og låret. Den mest direkte modgift mod stillesidning, hvor hoftebøjerne bliver korte og trækker bækkenet i svaj.', label: '45 sek pr. side', type: 'timer', duration: 45 },
     { id: 'mob-hfx-2', name: 'Knælende hoftebøjer-stræk', desc: 'Knæl på det ene knæ med den anden fod fladt foran dig. Klem ballen på det knælende ben og skub hoften langsomt frem, til du mærker stræk foran i hoften. Undgå at svaje i lænden — bevægelsen skal komme fra hoften, ikke fra ryggen.', label: '40 sek pr. side', type: 'timer', duration: 40 },
     { id: 'mob-hfx-3', name: 'Udfald med rotation', desc: 'Tag et stort skridt frem til et udfald, sæt hånden i gulvet inden for den forreste fod, og drej den anden arm op mod loftet med blikket efter hånden. Åbner hoftebøjer, lyske og brystryg i én bevægelse — en effektiv reset for hele kroppen efter en dag på stolen.', label: '6 reps pr. side', type: 'reps' },
+    { id: 'mob-hfx-4', name: 'Stående hoftebøjer-stræk', desc: 'Stå i et stort skridt, bøj det forreste knæ og klem ballen på det bageste ben, mens du skubber hoften frem. Samme stræk som den knælende, men stående — nemt at tage hvor som helst, fx i en pause fra skrivebordet.', label: '40 sek pr. side', type: 'timer', duration: 40 },
+    { id: 'mob-hfx-5', name: 'Edderkop-udfald med rok', desc: 'Tag et stort skridt frem til et dybt udfald og sæt begge hænder i gulvet inden for foden. Rok blødt frem og tilbage i positionen. Åbner hoftebøjer og lyske på én gang og gør stive hofter klar til at arbejde.', label: '6 reps pr. side', type: 'reps' },
   ],
   baller: [
     { id: 'mob-baller-1', name: 'Hofteløft med pause', desc: 'Lig på ryggen med bøjede knæ. Skub hofterne op og klem ballerne hårdt — hold 5 sekunder i toppen og sænk roligt. Vækker de baller som stillesidning sætter i dvale, så de tager belastningen i stedet for lænden.', label: '10 reps', type: 'reps' },
     { id: 'mob-baller-2', name: 'Sidegang med elastik', desc: 'Læg et elastik om knæ eller ankler, gå i halv squat og tag kontrollerede skridt til siden uden at lade knæene falde ind. Aktiverer den mellemste ballemuskel — stabilisatoren der holder knæene ude under squat og dødløft.', label: '10 skridt pr. side', type: 'reps' },
     { id: 'mob-baller-3', name: 'Hofteløft på ét ben', desc: 'Lav et hofteløft med det ene ben strakt lige ud. Skub op gennem hælen på det bøjede ben og klem ballen i toppen. Afslører og retter forskelle i ballestyrke fra side til side, som ofte stammer fra at sidde skævt.', label: '8 reps pr. side', type: 'reps' },
+    { id: 'mob-baller-4', name: 'Muslingen', desc: 'Lig på siden med bøjede knæ samlet og åbn det øverste knæ opad uden at vippe bækkenet bagud — gerne med et elastik om knæene. Vækker den mellemste ballemuskel, der holder knæet ude og bækkenet stabilt under squat og dødløft.', label: '12 reps pr. side', type: 'reps' },
+    { id: 'mob-baller-5', name: 'Diagonalløft på alle fire', desc: 'Stå på alle fire og stræk modsat arm og ben ud i en lige linje, hold et øjeblik, og skift side. Træner balle og dybe rygmuskler til at holde kroppen stiv — netop den kontrol du bruger til at holde ryggen neutral i dødløft.', label: '8 reps pr. side', type: 'reps' },
   ],
   tryg: [
     { id: 'mob-tryg-1', name: 'Brystryg over skumrulle', desc: 'Læg en skumrulle på tværs under den øverste del af brystryggen, støt nakken med hænderne og bøj forsigtigt bagover hen over rullen. Flyt rullen lidt op og ned. Genvinder den bagoverbøjning som foroverbøjet siddning tager fra dig — en direkte forudsætning for en stabil bænk-bue.', label: '8 reps', type: 'reps' },
     { id: 'mob-tryg-2', name: 'Bogåbning', desc: 'Lig på siden med knæene bøjet op og armene strakt ud foran dig. Åbn den øverste arm i en stor bue over til den anden side og følg hånden med blikket, mens knæene bliver i gulvet. Genskaber rotation i brystryggen og åbner brystet efter mange timer foroverbøjet.', label: '6 reps pr. side', type: 'reps' },
     { id: 'mob-tryg-3', name: 'Katte-kamel', desc: 'På alle fire, skift langsomt mellem at runde ryggen op mod loftet (kat) og synke ned i et svaj (kamel). Bevæg rygsøjlen led for led. Smører hele ryggen og bryder den krumme holdning en stol presser dig ind i.', label: '8 reps', type: 'reps' },
+    { id: 'mob-tryg-4', name: 'Tråd nålen', desc: 'Stå på alle fire, før den ene arm ind under kroppen og drej overkroppen med, og åbn så samme arm op mod loftet og følg hånden med blikket. Genvinder rotationen i brystryggen, som en foroverbøjet kontordag gradvist stjæler.', label: '6 reps pr. side', type: 'reps' },
+    { id: 'mob-tryg-5', name: 'Væg-engle', desc: 'Stå med ryggen mod en væg og pres lænd, skuldre og håndrygge mod væggen. Glid armene langsomt op og ned som en sne-engel uden at miste kontakten. Lærer brystryggen at strække sig og skuldrene at arbejde frit — nyttigt for både bænk og løft over hovedet.', label: '8 reps', type: 'reps' },
   ],
   skulder: [
     { id: 'mob-skulder-1', name: 'Lat-stræk i dørkarm', desc: 'Tag fat om en dørkarm eller stang, sæt hoften bagud og lad overkroppen hænge, så siden af ryggen og skulderen strækkes. Stramme lats begrænser både armene over hovedet og en god bænk-bue — slip dem løs her.', label: '40 sek pr. side', type: 'timer', duration: 40 },
     { id: 'mob-skulder-2', name: 'Skulder-rotation med pind', desc: 'Hold en pind eller et elastik med bredt greb og før den langsomt fra forsiden af hofterne op over hovedet og ned bag ryggen — kun så smalt som du kan med strakte arme. Åbner brystet og forbedrer skuldrenes bevægelighed lidt efter lidt.', label: '8 reps', type: 'reps' },
     { id: 'mob-skulder-3', name: 'Bryststræk i døråbning', desc: 'Stil dig i en døråbning og læg underarmen op ad karmen i en ret vinkel. Træd forsigtigt frem, til du mærker stræk over brystet. Modvirker de fremrullede skuldre fra tastatur og telefon — vigtigt for et sundt bænkpres.', label: '40 sek pr. side', type: 'timer', duration: 40 },
+    { id: 'mob-skulder-4', name: 'Passiv stanghæng', desc: 'Tag fat i en bom med strakt greb og lad kroppen hænge afslappet, så skuldrene strækkes ud. Aflaster og åbner skulderleddet og strækker hele siden af ryggen — en behagelig modvægt til timer med foroverbøjede skuldre.', label: '30 sek', type: 'timer', duration: 30 },
+    { id: 'mob-skulder-5', name: 'Lat-stræk på bænk', desc: 'Knæl foran en bænk, læg albuerne på kanten og sænk brystet ned mod gulvet med strakte arme. Strækker siden af ryggen og brystryggen på én gang — godt for både armene over hovedet og en stabil bænk-bue.', label: '40 sek', type: 'timer', duration: 40 },
   ],
   lyske: [
     { id: 'mob-lyske-1', name: 'Frøstræk', desc: 'På alle fire, glid knæene bredt ud til siden med tæerne udad. Skub hoften langsomt bagud og ned, og lad inderlårene strække. Træk vejret dybt ind i det stramme område — bedre bevægelighed i inderlårene giver en bredere, mere stabil squat-stilling.', label: '45 sek', type: 'timer', duration: 45 },
     { id: 'mob-lyske-2', name: 'Cossack-squat', desc: 'Stå bredt og skift vægten ned over det ene bøjede ben, mens det andet er strakt med tåen op. Skift roligt fra side til side. Dynamisk bevægelighed i inderlårene under let belastning — bygger styrke yderst i bevægelsen, ikke bare passivt stræk.', label: '6 reps pr. side', type: 'reps' },
     { id: 'mob-lyske-3', name: 'Knælende inderlår-stræk', desc: 'På alle fire, stræk det ene ben ud til siden med foden fladt i gulvet. Gynge hoften langsomt bagud mod hælen og frem igen. Kontrolleret, gentaget stræk af inderlåret, der føles bedre end et langt passivt hold.', label: '10 reps pr. side', type: 'reps' },
+    { id: 'mob-lyske-4', name: 'Sommerfugl-stræk', desc: 'Sid med fodsålerne mod hinanden og lad knæene synke mod gulvet, mens du sidder rank. Pres eventuelt blidt på knæene med albuerne. Roligt stræk af inderlårene, der giver mere plads til en bred squat-stilling.', label: '45 sek', type: 'timer', duration: 45 },
+    { id: 'mob-lyske-5', name: 'Bredbenet foroverbøjning', desc: 'Stå bredt med strakte ben og tæerne lidt udad, og fold langsomt forover med rank ryg, til du mærker stræk i inderlår og baglår. Hold og træk vejret ned i strækket. Åbner inderlårene i en stilling tæt på sumo-træk og bred squat.', label: '40 sek', type: 'timer', duration: 40 },
   ],
   laend: [
     { id: 'mob-laend-1', name: 'Knæ-til-bryst', desc: 'Lig på ryggen og træk begge knæ blødt op mod brystet. Gynge let fra side til side. Aflaster lænden og giver de små rygmuskler en pause efter en dag i sammenpresset stilling — rart, ikke et præstationsstræk.', label: '40 sek', type: 'timer', duration: 40 },
     { id: 'mob-laend-2', name: 'Liggende rygrotation', desc: 'Lig på ryggen og før det ene knæ over til den modsatte side, mens skuldrene bliver i gulvet og blikket går den anden vej. Blød rotation der løsner lænd og hofte på én gang. Hold og træk vejret roligt.', label: '40 sek pr. side', type: 'timer', duration: 40 },
     { id: 'mob-laend-3', name: 'Barnets stilling', desc: 'Sæt dig tilbage på hælene med armene strakt frem og panden mod gulvet. Træk vejret ned i lænden og lad ryggen runde blødt. En enkel aflastning der afslutter rutinen og skifter kroppen over i ro.', label: '45 sek', type: 'timer', duration: 45 },
+    { id: 'mob-laend-4', name: 'Bækken-vip på ryggen', desc: 'Lig på ryggen med bøjede knæ og vip bækkenet blidt, så lænden skiftevis presses ned i gulvet og løftes til et lille svaj. Små, rolige bevægelser. Lærer dig at styre bækkenet og løsner en stiv lænd uden belastning.', label: '12 reps', type: 'reps' },
+    { id: 'mob-laend-5', name: 'Vinduesviskere', desc: 'Lig på ryggen med bøjede knæ samlet og lad dem falde langsomt fra side til side som viskere, mens skuldrene bliver i gulvet. Blød rotation der løsner lænd og hofte og afslutter rutinen roligt.', label: '8 reps pr. side', type: 'reps' },
   ],
 }
 
@@ -1113,15 +1129,20 @@ function buildMobilityRoutine(intake) {
   return MOBILITY_AREAS.map(a => a.id).filter(id => chosen.has(id))
 }
 
-// Aktuel streak = antal sammenhængende dage tilbage fra i dag (eller i går, hvis i dag
-// ikke er gjort endnu) med en mobiliserings-log. dates = array af yyyy-mm-dd.
-function mobilityStreak(dates) {
-  const set = new Set(dates)
-  let cursor = today()
-  if (!set.has(cursor)) cursor = shiftDate(cursor, -1) // streak lever videre indtil dagen er forbi
-  let streak = 0
-  while (set.has(cursor)) { streak++; cursor = shiftDate(cursor, -1) }
-  return streak
+// Hvilke hovedløft træner atleten i den aktuelle uge? Bruges til at forudvælge løft
+// i mobilitets-intaken, så forslaget rammer det de faktisk laver (samme detektion
+// som opvarmningen). Returnerer ['squat'|'bench'|'deadlift'].
+function liftsFromWeek(week) {
+  const found = new Set()
+  for (const sess of week?.sessions || []) {
+    for (const ex of sess.exercises || []) {
+      const n = (ex.name || '').toLowerCase()
+      if (n.includes('squat')) found.add('squat')
+      if (n.includes('bænk') || n.includes('bench')) found.add('bench')
+      if (n.includes('dødl') || n.includes('deadlift') || n.includes('sumo')) found.add('deadlift')
+    }
+  }
+  return [...found]
 }
 
 const s = {
@@ -1162,8 +1183,8 @@ function CountdownRing({ total, remaining, done }) {
   )
 }
 
-// Ét guide-trin i mobiliserings-flowet. Deles af Daglig og Hurtig (samme look som
-// opvarmningens guide + CountdownRing). Timer-state ejes af forælderen og sendes ind.
+// Ét guide-trin i mobiliserings-sessionen (samme look som opvarmningens guide +
+// CountdownRing). Timer-state ejes af forælderen og sendes ind.
 function MobilityGuideStep({ heading, step, total, onExit, areaLabel, ex, opts, choiceIdx, onChoose, timerSeconds, timerActive, timerDone, setTimerSeconds, setTimerActive, setTimerDone, onPrev, onNext, isLast }) {
   const hasChoices = opts.length > 1
   const pct = Math.round((step / total) * 100)
@@ -1405,21 +1426,13 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const timerRef = useRef(null)
 
   // Mobilitet-hub state — fanen er en intent-landing (null) med tre døre
-  const [mobilityMode, setMobilityMode] = useState(null) // null=landing | 'opvarmning' | 'daglig' | 'hurtig'
-  const [hurtigPhase, setHurtigPhase] = useState('pick')  // 'pick' | 'guide' | 'done'
-  const [hurtigSlots, setHurtigSlots] = useState([])
-  const [hurtigStep, setHurtigStep] = useState(0)
-  const [hurtigAreas, setHurtigAreas] = useState(() => new Set())
+  const [mobilityMode, setMobilityMode] = useState(null) // null=landing | 'opvarmning' | 'mobilitet'
 
-  // Daglig mobilisering state
-  const [mobilityRoutine, setMobilityRoutine] = useState(null) // gemt mobility_routines-række el. null
-  const [mobilityLogs, setMobilityLogs] = useState([])          // [logged_date] (yyyy-mm-dd)
-  const [mobilityLoaded, setMobilityLoaded] = useState(false)
-  const [mobilityPhase, setMobilityPhase] = useState(null)      // 'intake' | 'design' | 'daily' | 'guide' | 'done'
-  const [mobilityIntake, setMobilityIntake] = useState({ time: 10, sitting: 'med', lifts: [], problems: [], timing: 'any' })
-  const [mobilitySlots, setMobilitySlots] = useState([])        // arbejds-rutine: [{ area, choiceIdx }]
+  // Mobilitets-session (on-demand: byg en session nu, ingen persistens/streak)
+  const [mobilityPhase, setMobilityPhase] = useState('intake')  // 'intake' | 'design' | 'guide' | 'done'
+  const [mobilityIntake, setMobilityIntake] = useState({ time: 10, sitting: 'med', lifts: [], problems: [] })
+  const [mobilitySlots, setMobilitySlots] = useState([])        // valgte øvelser: [{ area, choiceIdx }]
   const [mobilityStep, setMobilityStep] = useState(0)
-  const [savingMobility, setSavingMobility] = useState(false)
 
   // Stævnedag state
   const [hasMeetPlan, setHasMeetPlan] = useState(false)
@@ -1472,44 +1485,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     return () => clearTimeout(timerRef.current)
   }, [timerActive, timerSeconds])
 
-  useEffect(() => { if (tab === 'mobilisering' && athlete) fetchMobility(athlete.id) }, [tab, athlete?.id])
-
-  async function fetchMobility(athleteId) {
-    const [routineRes, logsRes] = await Promise.all([
-      supabase.from('mobility_routines').select('*').eq('athlete_id', athleteId).maybeSingle(),
-      supabase.from('mobility_logs').select('logged_date').eq('athlete_id', athleteId).order('logged_date', { ascending: false }).limit(120),
-    ])
-    const routine = routineRes.data || null
-    setMobilityRoutine(routine)
-    setMobilityLogs((logsRes.data || []).map(l => l.logged_date))
-    setMobilityLoaded(true)
-    if (routine?.config?.slots?.length) {
-      setMobilitySlots(routine.config.slots)
-      if (routine.config.intake) setMobilityIntake(routine.config.intake)
-      setMobilityPhase(p => (p === 'guide' || p === 'done') ? p : 'daily')
-    } else {
-      setMobilityPhase(p => p ? p : 'intake')
-    }
-  }
-
-  async function saveMobilityRoutine() {
-    if (!athlete || coachAthleteId) return // coach-preview skriver ikke
-    setSavingMobility(true)
-    const config = { intake: mobilityIntake, slots: mobilitySlots }
-    const { data } = await supabase.from('mobility_routines')
-      .upsert({ athlete_id: athlete.id, config, updated_at: new Date().toISOString() }, { onConflict: 'athlete_id' })
-      .select().maybeSingle()
-    if (data) setMobilityRoutine(data)
-    setSavingMobility(false)
-    setMobilityPhase('daily')
-  }
-
-  async function logMobilityToday() {
-    if (!athlete || coachAthleteId) return
-    const d = today()
-    if (!mobilityLogs.includes(d)) setMobilityLogs(prev => [d, ...prev])
-    await supabase.from('mobility_logs').upsert({ athlete_id: athlete.id, logged_date: d }, { onConflict: 'athlete_id,logged_date' })
-  }
   /* eslint-enable react-hooks/set-state-in-effect */
 
   useEffect(() => {
@@ -4116,9 +4091,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
         {/* MOBILITET-HUB — intent-landing (tre døre) */}
         {tab === 'mobilisering' && mobilityMode === null && (() => {
-          const streak = mobilityStreak(mobilityLogs)
-          const doneToday = mobilityLogs.includes(today())
-          const hasRoutine = !!mobilityRoutine
           const Door = ({ icon, title, sub, subColor, onClick }) => (
             <button onClick={onClick} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '1rem', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.1)', padding: '1.1rem 1.25rem', cursor: 'pointer', textAlign: 'left', marginBottom: '0.75rem' }}>
               <span style={{ fontSize: '1.4rem', lineHeight: 1, flexShrink: 0, width: 28, textAlign: 'center' }}>{icon}</span>
@@ -4136,10 +4108,12 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Hvad har du brug for?</h1>
               </div>
               <Door icon="⚡" title="Varm op" sub="Inden du løfter" onClick={() => setMobilityMode('opvarmning')} />
-              <Door icon="↻" title="Daglig mobilitet" subColor={hasRoutine && streak > 0 ? '#c8923a' : '#7a7770'}
-                sub={hasRoutine ? `🔥 ${streak} dag${streak === 1 ? '' : 'e'} i træk${doneToday ? ' · gjort i dag' : ''}` : 'Sæt din faste rutine op'}
-                onClick={() => setMobilityMode('daglig')} />
-              <Door icon="✦" title="Hurtig" sub="Tag den når du er stram" onClick={() => { setHurtigAreas(new Set()); setHurtigPhase('pick'); setMobilityMode('hurtig') }} />
+              <Door icon="✦" title="Mobilitet" sub="Byg en session — tag den når du er stram"
+                onClick={() => {
+                  const lifts = liftsFromWeek(currentWeek)
+                  setMobilityIntake(i => ({ ...i, lifts: lifts.length ? lifts : i.lifts }))
+                  setMobilitySlots([]); setMobilityStep(0); setMobilityPhase('intake'); setMobilityMode('mobilitet')
+                }} />
             </>
           )
         })()}
@@ -4401,21 +4375,21 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         })()}
 
         {/* DAGLIG MOBILISERING (hub-mode) */}
-        {tab === 'mobilisering' && mobilityMode === 'daglig' && (() => {
-          if (!mobilityLoaded) return <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#4a4844', padding: '2rem 0' }}>Indlæser…</div>
+        {tab === 'mobilisering' && mobilityMode === 'mobilitet' && (() => {
           const PROBLEMS = ['Hofte / baller', 'Lyske / inderlår', 'Lænde', 'Øvre ryg', 'Ankel', 'Knæ', 'Skulder', 'Nakke / trapez']
           const LIFTS = [{ k: 'squat', l: 'Squat' }, { k: 'bench', l: 'Bænkpres' }, { k: 'deadlift', l: 'Dødløft' }]
           const SITTING = [{ k: 'low', l: 'Lidt' }, { k: 'med', l: 'En del' }, { k: 'high', l: 'Meget' }]
-          const readOnly = !!coachAthleteId
-          const streak = mobilityStreak(mobilityLogs)
-          const doneToday = mobilityLogs.includes(today())
           const areaLabel = id => MOBILITY_AREAS.find(a => a.id === id)?.label || id
           const exForSlot = slot => { const opts = MOBILITY_LIBRARY[slot.area] || []; return opts[slot.choiceIdx ?? 0] || opts[0] }
           const estMin = mobilitySlots.length <= 4 ? 5 : mobilitySlots.length <= 6 ? 10 : 15
 
           function buildFromIntake() {
             const ids = buildMobilityRoutine(mobilityIntake)
-            setMobilitySlots(ids.map(area => ({ area, choiceIdx: 0 })))
+            // Tilfældig øvelse pr. område → frisk session hver gang (ikke altid samme #0).
+            setMobilitySlots(ids.map(area => {
+              const count = (MOBILITY_LIBRARY[area] || []).length
+              return { area, choiceIdx: count > 1 ? Math.floor(Math.random() * count) : 0 }
+            }))
             setMobilityPhase('design')
           }
           function startGuide() {
@@ -4427,7 +4401,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           }
           const toggleInArray = (arr, v) => arr.includes(v) ? arr.filter(x => x !== v) : [...arr, v]
 
-          // ───── INTAKE: design din egen rutine ─────
+          // ───── INTAKE: hvad skal sessionen ramme ─────
           if (mobilityPhase === 'intake') {
             const chipBtn = (on) => ({ background: on ? 'rgba(200,146,58,0.15)' : '#1c1c18', border: `1px solid ${on ? '#c8923a' : 'rgba(237,234,226,0.1)'}`, color: on ? '#c8923a' : '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '0.7rem 0.5rem', cursor: 'pointer', textAlign: 'center' })
             const Q = ({ label, children }) => (
@@ -4439,9 +4413,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
             return (
               <>
                 <div style={{ marginBottom: '1.5rem' }}>
-                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Daglig mobilisering</div>
-                  <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Sæt din rutine op</h1>
-                  <div style={{ fontSize: '0.82rem', color: '#7a7770', marginTop: '0.5rem', lineHeight: 1.6 }}>Svar på fire korte spørgsmål, så foreslår vi en rutine. Du kan altid ændre den bagefter.</div>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Mobilitet</div>
+                  <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Byg en session</h1>
+                  <div style={{ fontSize: '0.82rem', color: '#7a7770', marginTop: '0.5rem', lineHeight: 1.6 }}>Vi foreslår en session ud fra dine løft og hvad der er stramt lige nu. Du kan altid bytte øvelser bagefter.</div>
                 </div>
                 <Q label="Hvor lang tid vil du bruge?">
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem' }}>
@@ -4453,7 +4427,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                     {SITTING.map(o => <button key={o.k} onClick={() => setMobilityIntake(i => ({ ...i, sitting: o.k }))} style={chipBtn(mobilityIntake.sitting === o.k)}>{o.l}</button>)}
                   </div>
                 </Q>
-                <Q label="Hvilke løft vil du blive bedre til? (vælg flere)">
+                <Q label="Hvilke løft fokuserer du på? (forudvalgt fra dit program)">
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem' }}>
                     {LIFTS.map(o => <button key={o.k} onClick={() => setMobilityIntake(i => ({ ...i, lifts: toggleInArray(i.lifts, o.k) }))} style={chipBtn(mobilityIntake.lifts.includes(o.k))}>{o.l}</button>)}
                   </div>
@@ -4463,9 +4437,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                     {PROBLEMS.map(p => <button key={p} onClick={() => setMobilityIntake(i => ({ ...i, problems: toggleInArray(i.problems, p) }))} style={chipBtn(mobilityIntake.problems.includes(p))}>{p}</button>)}
                   </div>
                 </Q>
-                <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.5rem' }}>
-                  {mobilityRoutine && <button style={{ ...s.btnGhost, flex: 1, padding: '0.8rem' }} onClick={() => setMobilityPhase('daily')}>Annuller</button>}
-                  <button style={{ ...s.btnPrimary, flex: 2, padding: '0.85rem', fontSize: '0.62rem' }} onClick={buildFromIntake}>Se mit forslag →</button>
+                <div style={{ marginTop: '0.5rem' }}>
+                  <button style={{ ...s.btnPrimary, width: '100%', padding: '0.85rem', fontSize: '0.62rem' }} onClick={buildFromIntake}>Se mit forslag →</button>
                 </div>
               </>
             )
@@ -4481,9 +4454,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
             return (
               <>
                 <div style={{ marginBottom: '1.25rem' }}>
-                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Din rutine · {mobilitySlots.length} øvelser · ~{estMin} min</div>
-                  <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Finjustér</h1>
-                  <div style={{ fontSize: '0.82rem', color: '#7a7770', marginTop: '0.5rem', lineHeight: 1.6 }}>Skift øvelser, fjern dem du ikke vil have, eller tilføj flere. Gem når du er klar.</div>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Din session · {mobilitySlots.length} øvelser · ~{estMin} min</div>
+                  <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Tilpas</h1>
+                  <div style={{ fontSize: '0.82rem', color: '#7a7770', marginTop: '0.5rem', lineHeight: 1.6 }}>Skift øvelser, fjern dem du ikke vil have, eller tilføj flere. Start når du er klar.</div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.25rem' }}>
                   {mobilitySlots.map((sl, idx) => {
@@ -4516,7 +4489,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 )}
                 <div style={{ display: 'flex', gap: '0.6rem' }}>
                   <button style={{ ...s.btnGhost, flex: 1, padding: '0.8rem' }} onClick={() => setMobilityPhase('intake')}>← Svar igen</button>
-                  <button style={{ ...s.btnPrimary, flex: 2, padding: '0.85rem', fontSize: '0.62rem', opacity: mobilitySlots.length ? 1 : 0.5 }} disabled={!mobilitySlots.length || savingMobility} onClick={saveMobilityRoutine}>{savingMobility ? 'Gemmer…' : 'Gem rutine ✓'}</button>
+                  <button style={{ ...s.btnPrimary, flex: 2, padding: '0.85rem', fontSize: '0.62rem', opacity: mobilitySlots.length ? 1 : 0.5 }} disabled={!mobilitySlots.length} onClick={startGuide}>Start →</button>
                 </div>
               </>
             )
@@ -4533,13 +4506,13 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
             return (
               <MobilityGuideStep
                 heading="Mobilitet" step={mobilityStep} total={mobilitySlots.length}
-                onExit={() => setMobilityPhase('daily')}
+                onExit={() => setMobilityPhase('design')}
                 areaLabel={areaLabel(slot.area)} ex={ex} opts={opts} choiceIdx={slot.choiceIdx ?? 0}
                 onChoose={ci => { setMobilitySlots(prev => prev.map((sl, i) => i === mobilityStep ? { ...sl, choiceIdx: ci } : sl)); setTimerActive(false); setTimerDone(false); const o = opts[ci]; setTimerSeconds(o?.type === 'timer' ? o.duration : 0) }}
                 timerSeconds={timerSeconds} timerActive={timerActive} timerDone={timerDone}
                 setTimerSeconds={setTimerSeconds} setTimerActive={setTimerActive} setTimerDone={setTimerDone}
                 onPrev={mobilityStep > 0 ? () => goStep(mobilityStep - 1) : null}
-                onNext={() => { if (isLast) { logMobilityToday(); setMobilityPhase('done') } else goStep(mobilityStep + 1) }}
+                onNext={() => { if (isLast) setMobilityPhase('done'); else goStep(mobilityStep + 1) }}
                 isLast={isLast}
               />
             )
@@ -4547,176 +4520,19 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
           // ───── DONE ─────
           if (mobilityPhase === 'done') {
-            const newStreak = mobilityStreak(mobilityLogs.includes(today()) ? mobilityLogs : [today(), ...mobilityLogs])
             return (
               <div style={{ textAlign: 'center', paddingTop: '3rem' }}>
                 <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '3rem', color: '#6cba6c', marginBottom: '1rem' }}>✓</div>
-                <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', fontWeight: 400, color: '#edeae2', marginBottom: '0.5rem' }}>Mobilisering færdig.</h2>
-                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#c8923a', letterSpacing: '0.06em', marginBottom: '0.4rem' }}>🔥 {newStreak} dag{newStreak === 1 ? '' : 'e'} i træk</div>
+                <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', fontWeight: 400, color: '#edeae2', marginBottom: '0.5rem' }}>Mobilitet færdig.</h2>
                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#4a4844', letterSpacing: '0.08em', marginBottom: '2rem' }}>{mobilitySlots.length} øvelser gennemført</div>
-                <button style={{ ...s.btnGhost, padding: '0.75rem 1.5rem' }} onClick={() => setMobilityPhase('daily')}>Tilbage</button>
+                <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'center' }}>
+                  <button style={{ ...s.btnGhost, padding: '0.75rem 1.25rem' }} onClick={() => { setMobilitySlots([]); setMobilityStep(0); setMobilityPhase('intake') }}>Byg en ny</button>
+                  <button style={{ ...s.btnPrimary, padding: '0.75rem 1.25rem' }} onClick={() => setMobilityMode(null)}>Til mobilitet</button>
+                </div>
               </div>
             )
           }
-
-          // ───── DAILY (standard, når en rutine findes) ─────
-          if (!mobilitySlots.length) {
-            // Coach-preview af atlet uden rutine
-            return (
-              <div style={{ paddingTop: '1rem' }}>
-                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Daglig mobilisering</div>
-                {readOnly
-                  ? <div style={{ fontSize: '0.88rem', color: '#7a7770', marginTop: '1rem' }}>Atleten har ikke designet en mobiliserings-rutine endnu.</div>
-                  : <button style={{ ...s.btnPrimary, padding: '0.85rem 1.5rem', fontSize: '0.62rem', marginTop: '1rem' }} onClick={() => setMobilityPhase('intake')}>Design din rutine →</button>}
-              </div>
-            )
-          }
-          const grid = Array.from({ length: 14 }, (_, i) => { const d = shiftDate(today(), -(13 - i)); return { d, done: mobilityLogs.includes(d) } })
-          const last30 = mobilityLogs.filter(d => d >= shiftDate(today(), -29)).length
-          return (
-            <>
-              <div style={{ marginBottom: '1.25rem' }}>
-                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Daglig mobilisering</div>
-                <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Dagens mobilitet</h1>
-              </div>
-
-              {/* Streak + historik */}
-              <div style={{ ...s.card, marginBottom: '1.25rem' }}>
-                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
-                  <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.5rem', color: streak > 0 ? '#c8923a' : '#7a7770' }}>🔥 {streak} <span style={{ fontSize: '0.8rem', color: '#7a7770' }}>dag{streak === 1 ? '' : 'e'} i træk</span></div>
-                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770' }}>{last30}/30 dage</div>
-                </div>
-                <div style={{ display: 'flex', gap: '0.25rem' }}>
-                  {grid.map(g => <div key={g.d} title={g.d} style={{ flex: 1, height: 22, borderRadius: 2, background: g.done ? '#6cba6c' : 'rgba(237,234,226,0.06)' }} />)}
-                </div>
-                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#4a4844', letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: '0.4rem' }}>Seneste 14 dage</div>
-              </div>
-
-              {/* Start / status */}
-              {!readOnly && (doneToday ? (
-                <div style={{ ...s.card, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.6rem', borderColor: 'rgba(108,186,108,0.3)' }}>
-                  <span style={{ color: '#6cba6c', fontSize: '1.1rem' }}>✓</span>
-                  <span style={{ fontSize: '0.88rem', color: '#b8b4a8' }}>Gjort i dag — godt arbejde. Du kan køre den igen hvis du vil.</span>
-                </div>
-              ) : null)}
-              {!readOnly && (
-                <button style={{ ...s.btnPrimary, width: '100%', padding: '1rem', fontSize: '0.66rem', marginBottom: '1.25rem' }} onClick={startGuide}>
-                  {doneToday ? 'Kør igen' : 'Start dagens mobilisering'} · {mobilitySlots.length} øvelser · ~{estMin} min
-                </button>
-              )}
-
-              {/* Rutine-oversigt */}
-              <div style={{ ...s.card, marginBottom: '1.25rem' }}>
-                <div style={s.cardLabel}>Din rutine</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.4rem' }}>
-                  {mobilitySlots.map((sl, i) => { const ex = exForSlot(sl); return (
-                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '0.75rem', padding: '0.35rem 0', borderBottom: i < mobilitySlots.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none' }}>
-                      <span style={{ fontSize: '0.85rem', color: '#edeae2' }}>{ex?.name || areaLabel(sl.area)}</span>
-                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#7a7770', whiteSpace: 'nowrap' }}>{ex?.label || ''}</span>
-                    </div>
-                  )})}
-                </div>
-              </div>
-
-              {/* Ærlig framing */}
-              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', lineHeight: 1.7, letterSpacing: '0.04em', marginBottom: '1.25rem' }}>
-5 minutter hver dag slår 30 minutter en gang om ugen. Målet er bedre positioner og mindre stivhed — ikke hurtigere restitution.
-              </div>
-
-              {!readOnly && (
-                <div style={{ display: 'flex', gap: '0.6rem' }}>
-                  <button style={{ ...s.btnGhost, flex: 1, padding: '0.75rem', fontSize: '0.58rem' }} onClick={() => setMobilityPhase('design')}>Rediger rutine</button>
-                  <button style={{ ...s.btnGhost, flex: 1, padding: '0.75rem', fontSize: '0.58rem' }} onClick={() => setMobilityPhase('intake')}>Design forfra</button>
-                </div>
-              )}
-            </>
-          )
-        })()}
-
-        {/* HURTIG MOBILISERING (hub-mode) — spontant, ingen opsætning, tæller på streak */}
-        {tab === 'mobilisering' && mobilityMode === 'hurtig' && (() => {
-          const areaLabel = id => MOBILITY_AREAS.find(a => a.id === id)?.label || id
-          const exForSlot = slot => { const opts = MOBILITY_LIBRARY[slot.area] || []; return opts[slot.choiceIdx ?? 0] || opts[0] }
-          const startGuide = slots => { setHurtigSlots(slots); setHurtigStep(0); setTimerActive(false); setTimerSeconds(0); setTimerDone(false); setHurtigPhase('guide') }
-          const goStep = idx => { setHurtigStep(idx); setTimerActive(false); setTimerDone(false); const ex = exForSlot(hurtigSlots[idx]); setTimerSeconds(ex?.type === 'timer' ? ex.duration : 0) }
-
-          if (hurtigPhase === 'pick') {
-            // Hurtig bruger SAMME øvelser som din daglige rutine — ingen separat liste.
-            if (!mobilitySlots.length) {
-              return (
-                <>
-                  <div style={{ marginBottom: '1.5rem' }}>
-                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Hurtig mobilisering</div>
-                    <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Du mangler en rutine</h1>
-                    <div style={{ fontSize: '0.82rem', color: '#7a7770', marginTop: '0.5rem', lineHeight: 1.6 }}>Hurtig griber bare øvelser fra din daglige rutine. Design den først — så tager det få sekunder at gribe dele af den her.</div>
-                  </div>
-                  <button style={{ ...s.btnPrimary, width: '100%', padding: '0.85rem', fontSize: '0.62rem' }} onClick={() => setMobilityMode('daglig')}>Design din rutine →</button>
-                </>
-              )
-            }
-            const toggle = area => setHurtigAreas(prev => { const n = new Set(prev); n.has(area) ? n.delete(area) : n.add(area); return n })
-            const selectedSlots = mobilitySlots.filter(sl => hurtigAreas.has(sl.area))
-            return (
-              <>
-                <div style={{ marginBottom: '1.5rem' }}>
-                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Hurtig mobilisering</div>
-                  <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Hvad trænger lige nu?</h1>
-                  <div style={{ fontSize: '0.82rem', color: '#7a7770', marginTop: '0.5rem', lineHeight: 1.6 }}>Tag hele din rutine, eller bare det der er stramt. Det tæller på din streak.</div>
-                </div>
-                <button style={{ ...s.btnPrimary, width: '100%', padding: '1rem', fontSize: '0.66rem', marginBottom: '1.25rem' }} onClick={() => startGuide(mobilitySlots)}>
-                  Hele rutinen · {mobilitySlots.length} øvelser
-                </button>
-                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.6rem' }}>Eller vælg fra din rutine</div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '1.25rem' }}>
-                  {mobilitySlots.map(sl => {
-                    const on = hurtigAreas.has(sl.area)
-                    const ex = exForSlot(sl)
-                    return <button key={sl.area} onClick={() => toggle(sl.area)} style={{ background: on ? 'rgba(200,146,58,0.15)' : '#1c1c18', border: `1px solid ${on ? '#c8923a' : 'rgba(237,234,226,0.1)'}`, color: on ? '#c8923a' : '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', fontWeight: 500, letterSpacing: '0.04em', padding: '0.7rem 0.5rem', cursor: 'pointer', textAlign: 'center' }}>{ex?.name || areaLabel(sl.area)}</button>
-                  })}
-                </div>
-                <button style={{ ...s.btnPrimary, width: '100%', padding: '0.85rem', fontSize: '0.62rem', opacity: selectedSlots.length ? 1 : 0.5 }} disabled={!selectedSlots.length} onClick={() => startGuide(selectedSlots)}>
-                  Start ({selectedSlots.length} {selectedSlots.length === 1 ? 'øvelse' : 'øvelser'})
-                </button>
-              </>
-            )
-          }
-
-          if (hurtigPhase === 'guide') {
-            const slot = hurtigSlots[hurtigStep]
-            if (!slot) return null
-            const ex = exForSlot(slot)
-            if (!ex) return null
-            const opts = MOBILITY_LIBRARY[slot.area] || []
-            const isLast = hurtigStep === hurtigSlots.length - 1
-            return (
-              <MobilityGuideStep
-                heading="Hurtig" step={hurtigStep} total={hurtigSlots.length}
-                onExit={() => setHurtigPhase('pick')}
-                areaLabel={areaLabel(slot.area)} ex={ex} opts={opts} choiceIdx={slot.choiceIdx ?? 0}
-                onChoose={ci => { setHurtigSlots(prev => prev.map((sl, i) => i === hurtigStep ? { ...sl, choiceIdx: ci } : sl)); setTimerActive(false); setTimerDone(false); const o = opts[ci]; setTimerSeconds(o?.type === 'timer' ? o.duration : 0) }}
-                timerSeconds={timerSeconds} timerActive={timerActive} timerDone={timerDone}
-                setTimerSeconds={setTimerSeconds} setTimerActive={setTimerActive} setTimerDone={setTimerDone}
-                onPrev={hurtigStep > 0 ? () => goStep(hurtigStep - 1) : null}
-                onNext={() => { if (isLast) { logMobilityToday(); setHurtigPhase('done') } else goStep(hurtigStep + 1) }}
-                isLast={isLast}
-              />
-            )
-          }
-
-          // DONE
-          const newStreak = mobilityStreak(mobilityLogs.includes(today()) ? mobilityLogs : [today(), ...mobilityLogs])
-          return (
-            <div style={{ textAlign: 'center', paddingTop: '3rem' }}>
-              <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '3rem', color: '#6cba6c', marginBottom: '1rem' }}>✓</div>
-              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', fontWeight: 400, color: '#edeae2', marginBottom: '0.5rem' }}>Færdig.</h2>
-              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#c8923a', letterSpacing: '0.06em', marginBottom: '0.4rem' }}>🔥 {newStreak} dag{newStreak === 1 ? '' : 'e'} i træk</div>
-              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#4a4844', letterSpacing: '0.08em', marginBottom: '2rem' }}>{hurtigSlots.length} øvelser gennemført</div>
-              <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'center' }}>
-                <button style={{ ...s.btnGhost, padding: '0.75rem 1.25rem' }} onClick={() => { setHurtigAreas(new Set()); setHurtigPhase('pick') }}>Tag en til</button>
-                <button style={{ ...s.btnPrimary, padding: '0.75rem 1.25rem' }} onClick={() => setMobilityMode(null)}>Til mobilitet</button>
-              </div>
-            </div>
-          )
+          return null
         })()}
 
         {/* STÆVNEDAG */}
