@@ -2335,6 +2335,42 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     await fetchPastLogs(allWeeks[viewingWeekIdx], athlete.id)
   }
 
+  // Markér alle ikke-loggede sæt i sessionen som sprunget over. Bruges når atleten
+  // ikke nåede hele træningen og bare vil lukke den (fjerner "Fortsæt"-naget) uden
+  // at fabrikere gennemførte sæt — i modsætning til autoCompleteSession.
+  async function skipRemainingSets(session) {
+    const exerciseIds = (session.exercises || []).map(e => e.id)
+    if (exerciseIds.length === 0) { showFlash('Ingen øvelser fundet i sessionen.', 'error'); return }
+
+    const { data: existing, error: fetchErr } = await supabase
+      .from('exercise_logs')
+      .select('exercise_id, set_number')
+      .eq('athlete_id', athlete.id)
+      .in('exercise_id', exerciseIds)
+    if (fetchErr) { showFlash('Fejl ved hentning: ' + fetchErr.message, 'error'); return }
+
+    const logged = new Set((existing || []).map(l => `${l.exercise_id}_${l.set_number}`))
+    const rows = []
+    for (const ex of (session.exercises || [])) {
+      for (let n = 1; n <= (parseInt(ex.sets) || 0); n++) {
+        if (logged.has(`${ex.id}_${n}`)) continue
+        rows.push({ exercise_id: ex.id, athlete_id: athlete.id, set_number: n, weight: null, reps_completed: null, note: null, rpe_actual: null, rpe_planned: null, skipped: true })
+      }
+    }
+
+    if (rows.length === 0) {
+      showFlash('Alle sæt er allerede logget.')
+      return
+    }
+
+    const { error: insertErr } = await supabase.from('exercise_logs').insert(rows)
+    if (insertErr) { showFlash('Fejl ved indsætning: ' + insertErr.message, 'error'); return }
+
+    showFlash(`${rows.length} sæt sprunget over.`)
+    await fetchExerciseLogs(athlete.id, currentWeek)
+    await fetchPastLogs(allWeeks[viewingWeekIdx], athlete.id)
+  }
+
   async function deleteLog(l) {
     await supabase.from('meal_logs').delete().eq('id', l.id)
     fetchLogs(athlete.id)
@@ -3351,13 +3387,19 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                 {(session.exercises || []).length} øvelser · {loggedSets}/{totalSets} sæt logget{sessionLogs.filter(l => l.skipped).length > 0 ? ` · ${sessionLogs.filter(l => l.skipped).length} skippet` : ''}
                               </div>
                             </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                               {isDone && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#6cba6c', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Færdig ✓</span>}
                               {!isDone && totalSets > 0 && (
-                                <button
-                                  style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.3rem 0.6rem', color: '#c8923a', borderColor: 'rgba(200,146,58,0.35)' }}
-                                  onClick={e => { e.stopPropagation(); askConfirm('Udfyld manglende sæt med sidst loggede vægt og reps?', () => autoCompleteSession(session)) }}
-                                >Auto-udfyld</button>
+                                <>
+                                  <button
+                                    style={{ ...s.btnGhost, fontSize: '0.62rem', padding: '0.35rem 0.7rem', color: '#7a7770', borderColor: 'rgba(237,234,226,0.18)' }}
+                                    onClick={e => { e.stopPropagation(); askConfirm('Spring de resterende sæt over? De markeres som ikke gennemført, så træningen lukkes.', () => skipRemainingSets(session)) }}
+                                  >Spring resten over</button>
+                                  <button
+                                    style={{ ...s.btnGhost, fontSize: '0.62rem', padding: '0.35rem 0.7rem', color: '#c8923a', borderColor: 'rgba(200,146,58,0.35)' }}
+                                    onClick={e => { e.stopPropagation(); askConfirm('Udfyld manglende sæt med sidst loggede vægt og reps? Brug kun hvis du faktisk lavede sættene.', () => autoCompleteSession(session)) }}
+                                  >Auto-udfyld</button>
+                                </>
                               )}
                               <span style={{ color: '#4a4844', fontSize: '0.65rem' }}>{isOpen ? '▲' : '▼'}</span>
                             </div>
