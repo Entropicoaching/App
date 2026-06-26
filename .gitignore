@@ -26,11 +26,18 @@ dist-ssr
 # Atlet-data & genererede rapporter — PERSONDATA, må ikke i (offentligt) repo
 supabase/marc-*
 supabase/regitze-*
+supabase/emma-*
+supabase/henrik-*
 supabase/create-marc-week1.ps1
 supabase/send-blok1-marc.ps1
 supabase/send-marc-blok2.ps1
 supabase/send-regitze-vm.ps1
+supabase/send-emma-*
+supabase/send-henrik-*
 ugentlig-review-*.md
+
+# Separat website-arbejde, hører ikke til app-repoet
+Hjemmeside/
 
 # Lokale Claude Code-indstillinger (per maskine)
 .claude/settings.local.json
