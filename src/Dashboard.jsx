@@ -1036,6 +1036,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     if (!v) return null
     if (exerciseForm.intensityPrefix === 'RPE') return `RPE ${v}`
     if (exerciseForm.intensityPrefix === '%') return `${v}%`
+    // "Tid": coachen skriver bare et tal → gem som "N sek" (atlet-appens stopur
+    // forstår det via parseDuration). Hvis coachen selv tilføjer enhed/tekst
+    // (fx "30 pr side"), bevares det.
+    if (exerciseForm.intensityPrefix === 'Tid') return /\d\s*(sek|sec|min|s)\b/i.test(v) ? v : `${v} sek`
     return v
   }
 
@@ -1043,6 +1047,9 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     if (!stored) return { intensityPrefix: 'RPE', intensity: '' }
     if (stored.startsWith('RPE ')) return { intensityPrefix: 'RPE', intensity: stored.slice(4) }
     if (stored.endsWith('%')) return { intensityPrefix: '%', intensity: stored.slice(0, -1) }
+    // Ren "N sek" → vis igen som Tid med bare tallet
+    const m = stored.match(/^(\d+)\s*sek$/i)
+    if (m) return { intensityPrefix: 'Tid', intensity: m[1] }
     return { intensityPrefix: 'Fri tekst', intensity: stored }
   }
 
@@ -2059,12 +2066,13 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             >
               <option value="RPE">RPE</option>
               <option value="%">%</option>
+              <option value="Tid">Tid</option>
               <option value="Fri tekst">Fri</option>
             </select>
             <input
               style={{ ...s.fieldInput, fontSize: '0.8rem', padding: '0.4rem 0.6rem', flex: 1, minWidth: 0 }}
               type={exerciseForm.intensityPrefix === 'Fri tekst' ? 'text' : 'number'}
-              placeholder={exerciseForm.intensityPrefix === 'RPE' ? 'f.eks. 8' : exerciseForm.intensityPrefix === '%' ? 'f.eks. 80' : 'tekst...'}
+              placeholder={exerciseForm.intensityPrefix === 'RPE' ? 'f.eks. 8' : exerciseForm.intensityPrefix === '%' ? 'f.eks. 80' : exerciseForm.intensityPrefix === 'Tid' ? 'sek, f.eks. 20' : 'tekst...'}
               value={exerciseForm.intensity}
               onChange={e => setExerciseForm(p => ({ ...p, intensity: e.target.value }))}
             />

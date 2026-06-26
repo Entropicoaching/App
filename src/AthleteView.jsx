@@ -1208,6 +1208,57 @@ function CountdownRing({ total, remaining, done }) {
   )
 }
 
+// Find en holdetid (i sekunder) i en øvelses reps/intensity-tekst. Genkender
+// "30 sek", "50s", "1 min", "1:30" m.m. Returnerer { seconds, text } eller null,
+// hvor text er den rå streng der matchede (så fx "pr side" kan vises).
+function parseDuration(...parts) {
+  for (const p of parts) {
+    if (!p) continue
+    const str = String(p).trim()
+    const low = str.toLowerCase()
+    let m = low.match(/(\d+):(\d{2})/)
+    if (m) return { seconds: +m[1] * 60 + +m[2], text: str }
+    m = low.match(/(\d+(?:[.,]\d+)?)\s*min/)
+    if (m) return { seconds: Math.round(parseFloat(m[1].replace(',', '.')) * 60), text: str }
+    m = low.match(/(\d+)\s*(?:sek|sec|s)\b/)
+    if (m) return { seconds: +m[1], text: str }
+  }
+  return null
+}
+
+// Selvstændigt stopur til tids-øvelser (fx planke) i programmet. Samme look og
+// adfærd som mobilitetens timer (CountdownRing + start/pause/fortsæt/gentag), men
+// med sin EGEN state så flere kan stå på siden uden at kollidere med hinanden
+// eller med den delte mobilitets-timer.
+function ExerciseTimer({ duration, label }) {
+  const [seconds, setSeconds] = useState(0)
+  const [active, setActive] = useState(false)
+  const [done, setDone] = useState(false)
+  const ref = useRef(null)
+  useEffect(() => {
+    if (!active) return
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (seconds <= 0) { setActive(false); setDone(true); return }
+    ref.current = setTimeout(() => setSeconds(s => s - 1), 1000)
+    return () => clearTimeout(ref.current)
+  }, [active, seconds])
+  return (
+    <div style={{ marginBottom: '0.75rem', textAlign: 'center' }}>
+      <div style={{ marginBottom: '0.6rem' }}>
+        <CountdownRing total={duration} remaining={seconds > 0 ? seconds : duration} done={done} />
+      </div>
+      {label && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#7a7770', letterSpacing: '0.08em', marginBottom: '0.6rem' }}>{label}</div>}
+      {!done ? (
+        <button style={{ ...s.btnGhost, padding: '0.5rem 1.25rem' }} onClick={() => { if (!active && seconds === 0) setSeconds(duration); setActive(a => !a) }}>
+          {active ? '⏸ Pause' : seconds > 0 ? '▶ Fortsæt' : '▶ Start timer'}
+        </button>
+      ) : (
+        <button style={{ ...s.btnGhost, padding: '0.5rem 1.25rem' }} onClick={() => { setSeconds(duration); setDone(false); setActive(false) }}>↺ Gentag</button>
+      )}
+    </div>
+  )
+}
+
 // Ét guide-trin i mobiliserings-sessionen (samme look som opvarmningens guide +
 // CountdownRing). Timer-state ejes af forælderen og sendes ind.
 function MobilityGuideStep({ heading, step, total, onExit, areaLabel, ex, opts, choiceIdx, onChoose, timerSeconds, timerActive, timerDone, setTimerSeconds, setTimerActive, setTimerDone, onPrev, onNext, isLast }) {
@@ -3560,6 +3611,13 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                         )}
                                       </div>
                                     )
+                                  })()}
+
+                                  {/* Stopur for tids-øvelser (fx planke) — samme som ved mobilitet */}
+                                  {isCurrentWeek && (() => {
+                                    const dur = parseDuration(ex.reps, ex.intensity)
+                                    if (!dur) return null
+                                    return <ExerciseTimer key={`tmr_${ex.id}`} duration={dur.seconds} label={dur.text} />
                                   })()}
 
                                   {Array.from({ length: ex.sets || 0 }, (_, i) => i + 1).map(setNum => {
