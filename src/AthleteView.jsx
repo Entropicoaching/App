@@ -1506,7 +1506,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [mobilityMode, setMobilityMode] = useState(null) // null=landing | 'opvarmning' | 'mobilitet'
 
   // Mobilitets-session (on-demand: byg en session nu, ingen persistens/streak)
-  const [mobilityPhase, setMobilityPhase] = useState('intake')  // 'intake' | 'design' | 'guide' | 'done'
+  const [mobilityPhase, setMobilityPhase] = useState('design')  // 'design' | 'guide' | 'done' (intake-porten droppet)
   const [mobilityIntake, setMobilityIntake] = useState({ time: 10, sitting: 'med', lifts: [], problems: [], soreAreas: [] })
   const [mobilitySlots, setMobilitySlots] = useState([])        // valgte øvelser: [{ area, choiceIdx }]
   const [mobilityStep, setMobilityStep] = useState(0)
@@ -4634,22 +4634,23 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
         {/* DAGLIG MOBILISERING (hub-mode) */}
         {tab === 'mobilisering' && mobilityMode === 'mobilitet' && (() => {
-          const PROBLEMS = ['Hofte / baller', 'Lyske / inderlår', 'Lænde', 'Øvre ryg', 'Ankel', 'Knæ', 'Skulder', 'Nakke / trapez']
-          const LIFTS = [{ k: 'squat', l: 'Squat' }, { k: 'bench', l: 'Bænkpres' }, { k: 'deadlift', l: 'Dødløft' }]
-          const SITTING = [{ k: 'low', l: 'Lidt' }, { k: 'med', l: 'En del' }, { k: 'high', l: 'Meget' }]
           const areaLabel = id => MOBILITY_AREAS.find(a => a.id === id)?.label || id
           const exForSlot = slot => { const opts = MOBILITY_LIBRARY[slot.area] || []; return opts[slot.choiceIdx ?? 0] || opts[0] }
           const estMin = mobilitySlots.length <= 4 ? 5 : mobilitySlots.length <= 6 ? 10 : 15
 
-          function buildFromIntake() {
-            setMobilitySlots(slotsFromIntake(mobilityIntake))
-            setMobilityPhase('design')
-          }
-          // Skift tid inline på forslaget → genbyg uden at gå tilbage til "Flere valg".
+          // Skift tid inline på forslaget → genbyg uden formular-port.
           function setSessionTime(t) {
             const intake = { ...mobilityIntake, time: t }
             setMobilityIntake(intake)
             setMobilitySlots(slotsFromIntake(intake))
+          }
+          // Byg et friskt forslag forfra (samme kilde som døren: løft fra ugens
+          // program + dagens ømhed) og land på design.
+          function rebuildSuggestion() {
+            const intake = { time: 10, sitting: 'med', lifts: liftsFromWeek(currentWeek), problems: [], soreAreas: areasFromSoreZones(readinessLog?.sore_zones) }
+            setMobilityIntake(intake)
+            setMobilitySlots(slotsFromIntake(intake))
+            setMobilityStep(0); setMobilityPhase('design')
           }
           function startGuide() {
             setMobilityStep(0); setTimerActive(false); setTimerSeconds(0); setTimerDone(false); setMobilityPhase('guide')
@@ -4657,50 +4658,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           function goStep(idx) {
             setMobilityStep(idx); setTimerActive(false); setTimerDone(false)
             const ex = exForSlot(mobilitySlots[idx]); setTimerSeconds(ex?.type === 'timer' ? ex.duration : 0)
-          }
-          const toggleInArray = (arr, v) => arr.includes(v) ? arr.filter(x => x !== v) : [...arr, v]
-
-          // ───── INTAKE: hvad skal sessionen ramme ─────
-          if (mobilityPhase === 'intake') {
-            const chipBtn = (on) => ({ background: on ? 'rgba(200,146,58,0.15)' : '#1c1c18', border: `1px solid ${on ? '#c8923a' : 'rgba(237,234,226,0.1)'}`, color: on ? '#c8923a' : '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '0.7rem 0.5rem', cursor: 'pointer', textAlign: 'center' })
-            const Q = ({ label, children }) => (
-              <div style={{ marginBottom: '1.4rem' }}>
-                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.6rem' }}>{label}</div>
-                {children}
-              </div>
-            )
-            return (
-              <>
-                <div style={{ marginBottom: '1.5rem' }}>
-                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Mobilitet</div>
-                  <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Flere valg</h1>
-                  <div style={{ fontSize: '0.82rem', color: '#7a7770', marginTop: '0.5rem', lineHeight: 1.6 }}>Fortæl hvad der er stramt, så rammer forslaget bedre. Løftene er valgt fra dit program.</div>
-                </div>
-                <Q label="Hvor lang tid vil du bruge?">
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem' }}>
-                    {[5, 10, 15].map(t => <button key={t} onClick={() => setMobilityIntake(i => ({ ...i, time: t }))} style={chipBtn(mobilityIntake.time === t)}>{t} min</button>)}
-                  </div>
-                </Q>
-                <Q label="Hvor meget sidder du typisk ned?">
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem' }}>
-                    {SITTING.map(o => <button key={o.k} onClick={() => setMobilityIntake(i => ({ ...i, sitting: o.k }))} style={chipBtn(mobilityIntake.sitting === o.k)}>{o.l}</button>)}
-                  </div>
-                </Q>
-                <Q label="Hvilke løft fokuserer du på? (forudvalgt fra dit program)">
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem' }}>
-                    {LIFTS.map(o => <button key={o.k} onClick={() => setMobilityIntake(i => ({ ...i, lifts: toggleInArray(i.lifts, o.k) }))} style={chipBtn(mobilityIntake.lifts.includes(o.k))}>{o.l}</button>)}
-                  </div>
-                </Q>
-                <Q label="Er noget stramt for tiden? (valgfrit)">
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
-                    {PROBLEMS.map(p => <button key={p} onClick={() => setMobilityIntake(i => ({ ...i, problems: toggleInArray(i.problems, p) }))} style={chipBtn(mobilityIntake.problems.includes(p))}>{p}</button>)}
-                  </div>
-                </Q>
-                <div style={{ marginTop: '0.5rem' }}>
-                  <button style={{ ...s.btnPrimary, width: '100%', padding: '0.85rem', fontSize: '0.62rem' }} onClick={buildFromIntake}>Opdater forslag →</button>
-                </div>
-              </>
-            )
           }
 
           // ───── DESIGN: finjustér rutinen ─────
@@ -4755,10 +4712,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                     </div>
                   </div>
                 )}
-                <div style={{ display: 'flex', gap: '0.6rem' }}>
-                  <button style={{ ...s.btnGhost, flex: 1, padding: '0.8rem' }} onClick={() => setMobilityPhase('intake')}>Flere valg</button>
-                  <button style={{ ...s.btnPrimary, flex: 2, padding: '0.85rem', fontSize: '0.62rem', opacity: mobilitySlots.length ? 1 : 0.5 }} disabled={!mobilitySlots.length} onClick={startGuide}>Start →</button>
-                </div>
+                <button style={{ ...s.btnPrimary, width: '100%', padding: '0.85rem', fontSize: '0.62rem', opacity: mobilitySlots.length ? 1 : 0.5 }} disabled={!mobilitySlots.length} onClick={startGuide}>Start →</button>
               </>
             )
           }
@@ -4794,7 +4748,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', fontWeight: 400, color: '#edeae2', marginBottom: '0.5rem' }}>Mobilitet færdig.</h2>
                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#4a4844', letterSpacing: '0.08em', marginBottom: '2rem' }}>{mobilitySlots.length} øvelser gennemført</div>
                 <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'center' }}>
-                  <button style={{ ...s.btnGhost, padding: '0.75rem 1.25rem' }} onClick={() => { setMobilitySlots([]); setMobilityStep(0); setMobilityPhase('intake') }}>Byg en ny</button>
+                  <button style={{ ...s.btnGhost, padding: '0.75rem 1.25rem' }} onClick={rebuildSuggestion}>Byg en ny</button>
                   <button style={{ ...s.btnPrimary, padding: '0.75rem 1.25rem' }} onClick={() => setMobilityMode(null)}>Til mobilitet</button>
                 </div>
               </div>
