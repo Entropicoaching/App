@@ -3101,7 +3101,13 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 const cur = bestByEx[r.exercise_name]
                 if (!cur || (r.weight || 0) > cur.weight) bestByEx[r.exercise_name] = { weight: r.weight || 0, reps: r.reps || 0 }
               }
-              const bestList = Object.entries(bestByEx).map(([name, v]) => ({ name, ...v })).sort((a, b) => b.weight - a.weight).slice(0, 6)
+              // Prioritér hovedløft/konkurrenceløft (squat/bænk/dødløft + varianter) før
+              // accessory: ellers kan et tungt assistance-løft skubbe et mere relevant løft
+              // ud af top-6. Inden for hver gruppe sorteres efter vægt.
+              const bestList = Object.entries(bestByEx)
+                .map(([name, v]) => ({ name, ...v, main: isMainLift(name) }))
+                .sort((a, b) => (b.main - a.main) || (b.weight - a.weight))
+                .slice(0, 6)
               if (!hasMax && !bestList.length) return null
               return (
                 <div style={s.card}>
