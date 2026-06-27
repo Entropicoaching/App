@@ -338,6 +338,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [renameValue, setRenameValue] = useState('')
   const [showBlockPlanner, setShowBlockPlanner] = useState(false)
   const [calBlockAthlete, setCalBlockAthlete] = useState(null) // {id, name} når kalender-blok-byggeren er åben
+  const [hoverCell, setHoverCell] = useState(null) // {aid, col} = tom kalender-celle der hoveres (klik = opret uge)
   const [blockPlan, setBlockPlan] = useState([{ id: 1, name: 'Akkumulering', weeks: 4 }, { id: 2, name: 'Intensificering', weeks: 3 }, { id: 3, name: 'Peak', weeks: 2 }, { id: 4, name: 'Deload', weeks: 1 }])
   const [planStartDate, setPlanStartDate] = useState(() => new Date().toISOString().slice(0, 10))
   const [assignEdits, setAssignEdits] = useState({})
@@ -770,6 +771,26 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     if (athleteId === selectedAthlete?.id) fetchWeeks(athleteId)
     await fetchCalendarWeeks(athletes.map(a => a.id))
     fetchAthleteWeekSummaries(athletes.map(a => a.id))
+  }
+
+  // Opretter ÉN tom uge (ingen sessioner/øvelser) for en atlet med en eksplicit
+  // startdato — bruges når coachen klikker på en tom celle i kalender-tidslinjen.
+  // week_number udledes af kalderen (se onEmptyCellClick) så ugen lægger sig præcis
+  // hvor der blev klikket og holder anker-modellen konsistent. Samme insert-form
+  // som addWeek/generateWeeksFromPlan.
+  async function createCalendarWeek(athleteId, weekNumber, isoDate) {
+    await supabase.from('weeks').insert({
+      athlete_id: athleteId,
+      week_number: weekNumber,
+      block_name: null,
+      coach_note: null,
+      block_description: null,
+      start_date: isoDate,
+    })
+    await fetchCalendarWeeks(athletes.map(a => a.id))
+    fetchAthleteWeekSummaries(athletes.map(a => a.id))
+    if (selectedAthlete?.id === athleteId) fetchWeeks(athleteId)
+    showFlash('Uge oprettet — åbn atleten for at lægge øvelser ind.')
   }
 
   // Bygger til kalender-blok-opstilling: returnerer blok-sekvens-editoren (delt UI).
@@ -2461,6 +2482,27 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   setTimelineEdit({ athleteId: r.a.id, weeks: ph.weeks, name: r.a.name, block: ph.name || 'Uden blok', firstStartIso })
                 }
 
+                // Hvilket ugenummer "hører til" kolonne i for en atlet, ud fra anker-modellen
+                // (anker + 1 ugenr pr. kolonne). Giver den nye uge en start_date der matcher
+                // dens position, så bjælken lægger sig præcis hvor der blev klikket.
+                const cellWeekNo = (r, i) => {
+                  const anchor = r.wks.find(w => w.start_date)
+                  if (!anchor) return null
+                  const anchorCol = colOf(new Date(anchor.start_date + 'T12:00:00'))
+                  return anchor.week_number + (i - anchorCol)
+                }
+                // Lokal-sikker yyyy-mm-dd (cols[] er lokal midnat; isoOf/toISOString ville
+                // rulle en dag tilbage i dansk tidszone → mandag blev til søndag).
+                const isoLocal = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+                // Klik på en tom celle → bekræft → opret én tom uge på den dato.
+                const onEmptyCellClick = (r, i, d) => {
+                  const newNo = cellWeekNo(r, i)
+                  if (newNo == null || newNo < 1) { showFlash('Kan ikke oprette en uge før programmets start.', 'error'); return }
+                  if (r.wks.some(w => w.week_number === newNo)) { showFlash('Der er allerede en uge her.', 'error'); return }
+                  const label = d.toLocaleDateString('da-DK', { weekday: 'long', day: 'numeric', month: 'long' })
+                  askConfirm(`Opret uge for ${r.a.name} med start ${label}?`, () => createCalendarWeek(r.a.id, newNo, isoLocal(d)))
+                }
+
                 return (
                   <div style={{ ...s.card, marginBottom: '1.5rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', flexWrap: 'wrap' }}>
@@ -2480,6 +2522,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                         Ingen atleter med datoer endnu — sæt en startdato nedenfor, så lægger blokkene sig her.
                       </div>
                     ) : (
+                      <>
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.06em', color: '#4a4844', marginTop: '0.4rem' }}>
+                        Tip: tryk på en tom celle for at oprette en uge på den dato.
+                      </div>
                       <div style={{ display: 'flex', marginTop: '0.5rem', border: '1px solid rgba(237,234,226,0.06)' }}>
                         {/* Sticky navne-kolonne */}
                         <div style={{ flexShrink: 0, width: NAME_W, borderRight: '1px solid rgba(237,234,226,0.08)', background: '#16160f' }}>
@@ -2503,11 +2549,39 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                               ))}
                             </div>
                             {/* Rækker */}
-                            {placed.map(r => (
+                            {placed.map(r => {
+                              // Kolonner der allerede er dækket af en blok-bjælke (så vi kun gør
+                              // de TOMME celler klikbare → opret-uge).
+                              const covered = new Set()
+                              for (const ph of r.phases) {
+                                const a0 = colOf(r.weekDate(ph.weeks[0].week_number))
+                                const a1 = colOf(r.weekDate(ph.weeks[ph.weeks.length - 1].week_number))
+                                for (let c = a0; c <= a1; c++) covered.add(c)
+                              }
+                              return (
                               <div key={r.a.id} style={{ position: 'relative', height: ROW_H, borderBottom: '1px solid rgba(237,234,226,0.04)' }}>
+                                {/* Tomme celler: klik = opret uge på den dato (kun gyldige slots:
+                                    ledig + ugenummer >= 1). Ligger under bjælkerne i DOM → bjælker
+                                    fanger deres egne klik. */}
+                                {cols.map((d, i) => {
+                                  if (covered.has(i)) return null
+                                  const newNo = cellWeekNo(r, i)
+                                  if (newNo == null || newNo < 1 || r.wks.some(w => w.week_number === newNo)) return null
+                                  const hov = hoverCell && hoverCell.aid === r.a.id && hoverCell.col === i
+                                  return (
+                                    <div key={`cell${i}`}
+                                      onClick={() => onEmptyCellClick(r, i, d)}
+                                      onMouseEnter={() => setHoverCell({ aid: r.a.id, col: i })}
+                                      onMouseLeave={() => setHoverCell(null)}
+                                      title={`+ Opret uge · ${d.getDate()}/${d.getMonth() + 1}`}
+                                      style={{ position: 'absolute', left: i * COL_W, top: 0, width: COL_W, height: ROW_H, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', background: hov ? 'rgba(200,146,58,0.08)' : 'transparent' }}>
+                                      {hov && <span style={{ color: '#c8923a', fontSize: '0.8rem', opacity: 0.8, lineHeight: 1 }}>+</span>}
+                                    </div>
+                                  )
+                                })}
                                 {/* i dag-linje */}
                                 {todayCol >= 0 && todayCol < nCols && (
-                                  <div style={{ position: 'absolute', left: todayCol * COL_W + COL_W / 2, top: 0, bottom: 0, width: 1, background: 'rgba(200,146,58,0.4)' }} />
+                                  <div style={{ position: 'absolute', left: todayCol * COL_W + COL_W / 2, top: 0, bottom: 0, width: 1, background: 'rgba(200,146,58,0.4)', pointerEvents: 'none' }} />
                                 )}
                                 {r.phases.map((ph, pi) => {
                                   const first = ph.weeks[0], last = ph.weeks[ph.weeks.length - 1]
@@ -2535,10 +2609,12 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                                   )
                                 })}
                               </div>
-                            ))}
+                              )
+                            })}
                           </div>
                         </div>
                       </div>
+                      </>
                     )}
 
                     {/* Dato-redigerings-panel */}
