@@ -52,6 +52,20 @@ function computeActiveWeekIdx(weeks) {
   return active >= 0 ? active : 0
 }
 
+// En uge regnes som fuldt logget når hver session har lige så mange logs som
+// planlagte sæt (skippede/auto-udfyldte sæt tæller med — samme "done"-regel
+// som per-session isDone i programmet). Tomme uger/sessioner tæller som ikke-done.
+function weekFullyLogged(week, logs) {
+  const sessions = week?.sessions || []
+  if (!sessions.length) return false
+  return sessions.every(s => {
+    const total = (s.exercises || []).reduce((a, e) => a + (e.sets || 0), 0)
+    if (total === 0) return false
+    const ids = new Set((s.exercises || []).map(e => e.id))
+    return logs.filter(l => ids.has(l.exercise_id)).length >= total
+  })
+}
+
 // Udled en uges startdato fra den tidligste daterede uge (anker + 7 dage pr.
 // uge), så selv delvist daterede atleter får et datointerval på hver uge —
 // samme princip som coach-kalenderen, så datoerne er konsistente på tværs af
@@ -1846,13 +1860,37 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         .map(s => ({ ...s, exercises: (s.exercises || []).sort((a, b) => a.exercise_order - b.exercise_order) }))
     }))
     setAllWeeks(weeks)
-    const activeIdx = computeActiveWeekIdx(weeks)
+    const dateIdx = computeActiveWeekIdx(weeks)
+    // Lås næste uge op tidligt: er den dato-aktuelle uge fuldt logget, og findes
+    // der en næste uge med indhold, så ryk den aktive uge frem — så atleten kan
+    // se næste uges anbefalede vægte/opvarmning og logge i forvejen før mandag.
+    // Sker KUN ved 100% færdiglogning; en glemt dag holder den aktuelle uge aktiv.
+    let activeIdx = dateIdx
+    const next = weeks[dateIdx + 1]
+    const nextHasContent = (next?.sessions || []).some(s => (s.exercises || []).length > 0)
+    if (nextHasContent) {
+      const dateLogs = await fetchWeekLogs(athleteId, weeks[dateIdx])
+      if (weekFullyLogged(weeks[dateIdx], dateLogs)) activeIdx = dateIdx + 1
+    }
     setViewingWeekIdx(activeIdx)
     const activeWeek = weeks[activeIdx]
     setCurrentWeek(activeWeek)
     fetchExerciseLogs(athleteId, activeWeek)
     fetchLastLogs(athleteId, activeWeek)
     fetchExerciseHistory(athleteId)
+  }
+
+  // Henter en uges logs (kun det nødvendige til færdig-tjek) og returnerer dem,
+  // i modsætning til fetchExerciseLogs der sætter state.
+  async function fetchWeekLogs(athleteId, week) {
+    const exerciseIds = (week?.sessions || []).flatMap(s => (s.exercises || []).map(e => e.id))
+    if (exerciseIds.length === 0) return []
+    const { data } = await supabase
+      .from('exercise_logs')
+      .select('exercise_id')
+      .eq('athlete_id', athleteId)
+      .in('exercise_id', exerciseIds)
+    return data || []
   }
 
   // Åbn/luk en session i programmet. Ved åbning scrolles dens header op i
@@ -3153,7 +3191,11 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
         {/* PROGRAM */}
         {tab === 'program' && (() => {
-          const activeWeekIdx = computeActiveWeekIdx(allWeeks)
+          // Følg den aktive uge der blev ankret i fetchProgram (kan være rykket
+          // frem til næste uge når den aktuelle er fuldt logget). Fald tilbage til
+          // den rene dato-beregning hvis ankeret ikke findes.
+          const anchoredIdx = allWeeks.findIndex(w => w.id === currentWeek?.id)
+          const activeWeekIdx = anchoredIdx >= 0 ? anchoredIdx : computeActiveWeekIdx(allWeeks)
           const viewedWeek = allWeeks[viewingWeekIdx] || null
           const viewedRange = viewedWeek ? fmtWeekRange(weekStartDate(allWeeks, viewedWeek.week_number)) : null
           const isCurrentWeek = viewingWeekIdx === activeWeekIdx
