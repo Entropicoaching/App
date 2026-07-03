@@ -2775,6 +2775,11 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         <div style={s.logo}>Entropi<span style={{ color: '#c8923a' }}>.</span></div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           {backBtn}
+          <button
+            onClick={() => window.open('videocoach.html', '_blank')}
+            title="VideoCoach — analysér dine løft"
+            style={{ background: 'transparent', border: '1px solid rgba(237,234,226,0.13)', color: '#7a7770', fontSize: '0.85rem', lineHeight: 1, padding: '0.35rem 0.5rem', cursor: 'pointer', borderRadius: 4 }}
+          >🎥</button>
           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844' }}>{today()}</div>
         </div>
       </div>
