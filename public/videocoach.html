@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Entropi VideoCoach</title>
+<style>
+  :root { --bg:#111; --panel:#1c1c1e; --accent:#e63946; --text:#eee; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--text); font-family:system-ui,sans-serif;
+         display:flex; flex-direction:column; height:100vh; }
+  header { padding:10px 16px; background:var(--panel); display:flex;
+           align-items:center; gap:12px; flex-wrap:wrap; }
+  header h1 { font-size:18px; color:var(--accent); margin-right:8px; }
+  #stage { flex:1; display:flex; justify-content:center; align-items:center;
+           overflow:hidden; position:relative; }
+  canvas { max-width:100%; max-height:100%; cursor:crosshair; touch-action:none; }
+  @media (max-width: 700px) {
+    button, select, input[type=color] { padding:10px 12px; font-size:14px; }
+    header, footer { gap:6px; padding:8px; }
+    #timeLabel { min-width:0; font-size:12px; }
+  }
+  footer { padding:10px 16px; background:var(--panel); display:flex;
+           align-items:center; gap:10px; flex-wrap:wrap; }
+  button, select, input[type=color] { background:#2c2c2e; color:var(--text);
+    border:1px solid #444; border-radius:8px; padding:8px 14px; font-size:15px;
+    cursor:pointer; }
+  button:hover { background:#3a3a3c; }
+  button.active { background:var(--accent); border-color:var(--accent); }
+  #recordBtn { background:var(--accent); font-weight:bold; }
+  #recordBtn.recording { animation:blink 1s infinite; }
+  @keyframes blink { 50% { opacity:.5; } }
+  #dropHint { position:absolute; font-size:20px; color:#888; text-align:center; }
+  a#downloadLink { color:#4cd964; font-weight:bold; text-decoration:none; }
+  #scrubRow { display:flex; align-items:center; gap:12px; padding:8px 16px;
+              background:var(--panel); border-top:1px solid #333; }
+  #scrub { flex:1; accent-color:var(--accent); height:24px; cursor:pointer; }
+  #timeLabel { font-variant-numeric:tabular-nums; font-size:15px; min-width:190px;
+               text-align:right; }
+  #timeLabel.paused { color:#ffd60a; font-weight:bold; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Entropi VideoCoach</h1>
+  <button id="openBtn">📂 Åbn video</button>
+  <input type="file" id="fileInput" accept="video/*" hidden>
+  <select id="speed">
+    <option value="1">Normal fart</option>
+    <option value="0.5">½ fart</option>
+    <option value="0.25">¼ fart</option>
+  </select>
+  <button id="playBtn">▶ Afspil (mellemrum)</button>
+  <button id="backBtn">⏪ Frame (←)</button>
+  <button id="fwdBtn">⏩ Frame (→)</button>
+  <button id="gridBtn">⊞ Grid</button>
+</header>
+<div id="stage">
+  <div id="dropHint">Træk en video herind<br>eller klik "Åbn video"</div>
+  <canvas id="canvas" width="1280" height="720" hidden></canvas>
+</div>
+<div id="scrubRow">
+  <button id="trimInBtn" title="Klip: start her">⟦</button>
+  <button id="trimOutBtn" title="Klip: slut her">⟧</button>
+  <button id="trimResetBtn" title="Fjern klip">✕</button>
+  <input type="range" id="scrub" min="0" max="10000" value="0">
+  <span id="timeLabel">—</span>
+</div>
+<footer>
+  <button id="scrubToolBtn" class="tool">✋ Spol</button>
+  <button id="loopBtn">🔁 Loop</button>
+  <button id="penBtn" class="tool active">✏️ Tegn</button>
+  <button id="lineBtn" class="tool">📏 Linje</button>
+  <button id="angleBtn" class="tool">📐 Vinkel (3 klik)</button>
+  <button id="eraseBtn" class="tool">🧽 Visk</button>
+  <button id="allBtn" style="background:#2e5cff;font-weight:bold">⚡ Analysér løft</button>
+  <label style="display:flex;align-items:center;gap:4px;font-size:14px">
+    <input type="checkbox" id="withPoseChk"> 🦴</label>
+  <button id="barBtn">🎯 Stangbane</button>
+  <button id="calibBtn">📏 Kalibrér</button>
+  <button id="poseBtn">🦴 Skelet</button>
+  <input type="color" id="color" value="#e63946" title="Farve">
+  <button id="undoBtn">↩ Fortryd</button>
+  <button id="clearBtn">🗑 Ryd tegning</button>
+  <span style="flex:1"></span>
+  <select id="athleteSel">
+    <option value="">Atlet?</option>
+    <option>Marc</option><option>Regitze</option><option>Emma</option>
+    <option>Henrik</option><option>Carina</option><option>Bente</option>
+    <option>Gæst</option>
+  </select>
+  <select id="liftSel">
+    <option value="">Øvelse?</option>
+    <option>Squat</option><option>Bænkpres</option><option>Dødløft</option>
+    <option>Sumo dødløft</option>
+  </select>
+  <input type="text" id="loadInput" placeholder="kg/RPE (valgfri)" size="11"
+         style="background:#2c2c2e; color:var(--text); border:1px solid #444;
+                border-radius:8px; padding:8px;">
+  <input type="text" id="biasInput" placeholder="kendt tendens (fx roterer i squat)"
+         size="24" style="background:#2c2c2e; color:var(--text);
+         border:1px solid #444; border-radius:8px; padding:8px;">
+  <button id="aiBtn">🤖 AI-analyse</button>
+  <button id="saveBtn">💾 Gem analyse</button>
+  <button id="recordBtn">🎙 Optag feedback</button>
+  <span id="recTime"></span>
+  <a id="downloadLink" hidden>💾 Hent færdig video</a>
+</footer>
+<div id="aiPanel" hidden style="position:fixed; right:16px; top:70px; width:340px;
+  max-height:70vh; overflow:auto; background:rgba(20,20,22,.96); border:1px solid #444;
+  border-radius:12px; padding:16px; font-size:14px; line-height:1.5; z-index:10;
+  white-space:pre-wrap;">
+  <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+    <strong style="color:#e63946">AI-analyse</strong>
+    <button onclick="document.getElementById('aiPanel').hidden=true"
+            style="padding:2px 10px">✕</button>
+  </div>
+  <div id="aiText">…</div>
+</div>
+<video id="video" hidden></video>
+<script>
+const video = document.getElementById('video');
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const dropHint = document.getElementById('dropHint');
+let strokes = [];          // færdige tegninger
+let current = null;        // igangværende streg
+let anglePts = [];         // klik til vinkelværktøj
+let tool = 'pen';
+
+// ---------- Video ind ----------
+document.getElementById('openBtn').onclick = () =>
+  document.getElementById('fileInput').click();
+document.getElementById('fileInput').onchange = e =>
+  loadFile(e.target.files[0]);
+document.body.addEventListener('dragover', e => e.preventDefault());
+document.body.addEventListener('drop', e => {
+  e.preventDefault();
+  if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]);
+});
+
+let rendering = false;
+function loadFile(file) {
+  video.src = URL.createObjectURL(file);
+  strokes = []; anglePts = [];
+  // nulstil alt der hører til den GAMLE video
+  cmPerPx = null; calibPts = [];
+  calibBtn.textContent = '📏 Kalibrér';
+  trimStart = 0; trimEnd = Infinity;
+  document.getElementById('trimInBtn').classList.remove('active');
+  document.getElementById('trimOutBtn').classList.remove('active');
+  scrub.style.background = '';
+  aiPanel.hidden = true;
+  video.onloadedmetadata = () => {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.hidden = false;
+    dropHint.hidden = true;
+    video.pause();
+    if (!rendering) { rendering = true; requestAnimationFrame(render); }
+  };
+}
+
+// ---------- Afspilning ----------
+const playBtn = document.getElementById('playBtn');
+playBtn.onclick = togglePlay;
+function togglePlay() {
+  if (!video.src) return;
+  if (video.paused) {
+    if (video.currentTime < trimStart || video.currentTime >= trimEndEff())
+      video.currentTime = trimStart;          // start altid inde i klippet
+    video.play(); playBtn.textContent = '⏸ Pause (mellemrum)';
+  }
+  else { video.pause(); playBtn.textContent = '▶ Afspil (mellemrum)'; }
+}
+document.getElementById('speed').onchange = e =>
+  video.playbackRate = parseFloat(e.target.value);
+const FRAME = 1 / 30;
+document.getElementById('backBtn').onclick = () => step(-FRAME);
+document.getElementById('fwdBtn').onclick = () => step(FRAME);
+function step(dt) {
+  video.pause();
+  playBtn.textContent = '▶ Afspil (mellemrum)';
+  video.currentTime = Math.max(0, Math.min(video.duration, video.currentTime + dt));
+}
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+  if (e.code === 'ArrowLeft') step(-FRAME);
+  if (e.code === 'ArrowRight') step(FRAME);
+});
+
+// ---------- Tegneværktøjer ----------
+const tools = { scrubToolBtn:'scrub', penBtn:'pen', lineBtn:'line',
+                angleBtn:'angle', eraseBtn:'erase' };
+// loop: afspil løftet forfra igen og igen (inden for klippet)
+let looping = false;
+document.getElementById('loopBtn').onclick = e => {
+  looping = !looping;
+  e.target.classList.toggle('active', looping);
+};
+for (const [id, name] of Object.entries(tools)) {
+  document.getElementById(id).onclick = () => {
+    tool = name; anglePts = [];
+    document.querySelectorAll('.tool').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  };
+}
+const colorInput = document.getElementById('color');
+document.getElementById('undoBtn').onclick = () => strokes.pop();
+document.getElementById('clearBtn').onclick = () => { strokes = []; anglePts = []; };
+
+function pos(e) {
+  const r = canvas.getBoundingClientRect();
+  return { x: (e.clientX - r.left) * canvas.width / r.width,
+           y: (e.clientY - r.top) * canvas.height / r.height };
+}
+
+// ---------- Viskelæder ----------
+function strokePoints(s) {
+  if (s.type === 'pen' || s.type === 'path') return s.pts;
+  const sample = (a, b) => Array.from({length: 20}, (_, i) => ({
+    x: a.x + (b.x - a.x) * i / 19, y: a.y + (b.y - a.y) * i / 19 }));
+  if (s.type === 'line') return sample(s.a, s.b);
+  if (s.type === 'angle') return [...sample(s.pts[0], s.pts[1]),
+                                  ...sample(s.pts[1], s.pts[2])];
+  return [];
+}
+function eraseAt(p) {
+  const r = canvas.width / 45;
+  strokes = strokes.filter(s =>
+    !strokePoints(s).some(q => (q.x-p.x)**2 + (q.y-p.y)**2 < r*r));
+}
+
+canvas.addEventListener('pointerdown', e => {
+  canvas.setPointerCapture(e.pointerId);
+  const p = pos(e);
+  if (showGrid && e.shiftKey) {                 // Shift+træk = flyt grid
+    gridDrag = { px: p.x - gridOffset.x, py: p.y - gridOffset.y };
+    return;
+  }
+  if (wizard) {
+    wizardClick(p);
+    return;
+  }
+  if (awaitCalib) {
+    calibPts.push(p);
+    if (calibPts.length === 2) {
+      const d = Math.hypot(calibPts[0].x - calibPts[1].x,
+                           calibPts[0].y - calibPts[1].y);
+      cmPerPx = 45 / d;                       // IPF-skive = 45 cm diameter
+      awaitCalib = false; calibPts = [];
+      calibBtn.textContent = '📏 Kalibreret ✓';
+      calibBtn.classList.remove('active');
+      strokes.filter(s => s.type === 'path').forEach(analyzePath);
+    }
+    return;
+  }
+  if (awaitBarClick) { startBarTracking(p); return; }
+  if (tool === 'scrub') {
+    current = { type:'scrubbing', startX: e.clientX, startT: video.currentTime,
+                moved: false };
+    video.pause();
+    playBtn.textContent = '▶ Afspil (mellemrum)';
+    return;
+  }
+  if (tool === 'erase') { current = { type:'erasing' }; eraseAt(p); return; }
+  if (tool === 'pen') current = { type:'pen', color:colorInput.value, pts:[p] };
+  if (tool === 'line') current = { type:'line', color:colorInput.value, a:p, b:p };
+  if (tool === 'angle') {
+    anglePts.push(p);
+    if (anglePts.length === 3) {
+      strokes.push({ type:'angle', color:colorInput.value, pts:anglePts });
+      anglePts = [];
+    }
+  }
+});
+canvas.addEventListener('pointermove', e => {
+  if (gridDrag) {
+    const p = pos(e);
+    gridOffset = { x: p.x - gridDrag.px, y: p.y - gridDrag.py };
+    return;
+  }
+  if (!current) return;
+  if (current.type === 'scrubbing') {
+    // fingertræk/musetræk hen over videoen = spol (8 px pr. frame)
+    const dx = e.clientX - current.startX;
+    if (Math.abs(dx) > 4) current.moved = true;
+    const t = current.startT + Math.round(dx / 8) * FRAME;
+    video.currentTime = Math.max(trimStart, Math.min(trimEndEff() - FRAME, t));
+    return;
+  }
+  if (current.type === 'erasing') { eraseAt(pos(e)); return; }
+  if (current.type === 'pen') {
+    // getCoalescedEvents giver ALLE musens målepunkter -> flydende streg
+    const evts = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+    evts.forEach(ev => current.pts.push(pos(ev)));
+  }
+  if (current.type === 'line') current.b = pos(e);
+});
+window.addEventListener('pointerup', () => {
+  gridDrag = null;
+  if (current && current.type === 'scrubbing') {
+    if (!current.moved) togglePlay();      // tap uden træk = play/pause
+    current = null;
+    return;
+  }
+  if (current && current.type !== 'erasing') strokes.push(current);
+  current = null;
+});
+
+// Musehjul over videoen = spol frame for frame (som WL Analysis)
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  step(e.deltaY > 0 ? FRAME : -FRAME);
+}, { passive: false });
+
+// ---------- Tegning på canvas ----------
+function drawStroke(s) {
+  ctx.strokeStyle = s.color; ctx.fillStyle = s.color;
+  ctx.lineWidth = Math.max(3, canvas.width / 400); ctx.lineCap = 'round';
+  if (s.type === 'pen') {
+    // Udglattet kurve gennem midtpunkter -> ingen kantede streger
+    const pts = s.pts;
+    ctx.beginPath();
+    if (pts.length < 3) {
+      pts.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y));
+    } else {
+      ctx.moveTo(pts[0].x, pts[0].y);
+      for (let i = 1; i < pts.length - 1; i++) {
+        const mx = (pts[i].x + pts[i+1].x) / 2, my = (pts[i].y + pts[i+1].y) / 2;
+        ctx.quadraticCurveTo(pts[i].x, pts[i].y, mx, my);
+      }
+      ctx.lineTo(pts[pts.length-1].x, pts[pts.length-1].y);
+    }
+    ctx.stroke();
+  }
+  if (s.type === 'line') {
+    ctx.beginPath(); ctx.moveTo(s.a.x, s.a.y); ctx.lineTo(s.b.x, s.b.y); ctx.stroke();
+  }
+  if (s.type === 'path') {
+    ctx.save();
+    ctx.lineWidth = Math.max(4, canvas.width / 300);
+    if (s.vel) {
+      // farve efter fart: rød = langsom (sticking point), grøn = hurtig
+      for (let i = 1; i < s.pts.length; i++) {
+        const hue = Math.max(0, Math.min(120, Math.abs(s.vel[i]) / 0.8 * 120));
+        ctx.strokeStyle = `hsl(${hue},90%,55%)`;
+        ctx.beginPath();
+        ctx.moveTo(s.pts[i-1].x, s.pts[i-1].y);
+        ctx.lineTo(s.pts[i].x, s.pts[i].y);
+        ctx.stroke();
+      }
+      ctx.strokeStyle = s.color; ctx.fillStyle = s.color;
+    } else {
+      ctx.shadowColor = s.color; ctx.shadowBlur = 8;
+      ctx.beginPath();
+      s.pts.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y));
+      ctx.stroke();
+    }
+    // prik + aktuel fart ved banens punkt på nuværende tidspunkt
+    const f = Math.max(0, Math.min(s.pts.length - 1,
+      Math.round(video.currentTime * 30) - s.startFrame));
+    const cur = s.pts[f];
+    if (cur) {
+      ctx.beginPath(); ctx.arc(cur.x, cur.y, ctx.lineWidth * 1.6, 0, 7); ctx.fill();
+      if (s.vel) {
+        ctx.font = `bold ${Math.max(18, canvas.width/55)}px sans-serif`;
+        ctx.fillStyle = '#fff'; ctx.strokeStyle = 'rgba(0,0,0,.7)'; ctx.lineWidth = 4;
+        const label = `${Math.abs(s.vel[f] || 0).toFixed(2)} m/s`;
+        ctx.strokeText(label, cur.x + 18, cur.y + 6);
+        ctx.fillText(label, cur.x + 18, cur.y + 6);
+      }
+    }
+    ctx.restore();
+  }
+  if (s.type === 'pose') {
+    const f = Math.max(0, Math.min(s.frames.length - 1,
+      Math.round(video.currentTime * 30) - s.startFrame));
+    const lm = s.frames[f];
+    if (!lm) return;
+    const pt = i => ({ x: lm[i].x * canvas.width, y: lm[i].y * canvas.height });
+    // tegn KUN den side kameraet ser bedst - den skjulte side er gætteri
+    const left = (lm[23].visibility || 0) + (lm[25].visibility || 0) >=
+                 (lm[24].visibility || 0) + (lm[26].visibility || 0);
+    const side = left
+      ? { sh:11, el:13, wr:15, hip:23, knee:25, ank:27, foot:31 }
+      : { sh:12, el:14, wr:16, hip:24, knee:26, ank:28, foot:32 };
+    const LINKS = [[side.sh, side.el], [side.el, side.wr],
+                   [side.sh, side.hip], [side.hip, side.knee],
+                   [side.knee, side.ank], [side.ank, side.foot]];
+    ctx.save();
+    ctx.strokeStyle = 'rgba(0,212,255,0.9)';
+    ctx.lineWidth = Math.max(3, canvas.width / 450);
+    LINKS.forEach(([a, b]) => {
+      const A = pt(a), B = pt(b);
+      ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.stroke();
+    });
+    Object.values(side).forEach(i => {
+      const p = pt(i);
+      ctx.fillStyle = '#00d4ff';
+      ctx.beginPath(); ctx.arc(p.x, p.y, ctx.lineWidth * 1.4, 0, 7); ctx.fill();
+    });
+    const ang = (A, B, C) => {
+      let d = Math.abs((Math.atan2(A.y-B.y, A.x-B.x) -
+                        Math.atan2(C.y-B.y, C.x-B.x)) * 180 / Math.PI);
+      return d > 180 ? 360 - d : d;
+    };
+    ctx.font = `bold ${Math.max(16, canvas.width/60)}px sans-serif`;
+    ctx.fillStyle = '#00d4ff'; ctx.strokeStyle = 'rgba(0,0,0,.7)'; ctx.lineWidth = 4;
+    const kneeP = pt(side.knee), hipP = pt(side.hip);
+    const kneeA = ang(pt(side.hip), kneeP, pt(side.ank)).toFixed(0);
+    const hipA = ang(pt(side.sh), hipP, pt(side.knee)).toFixed(0);
+    ctx.strokeText(`knæ ${kneeA}°`, kneeP.x + 12, kneeP.y);
+    ctx.fillText(`knæ ${kneeA}°`, kneeP.x + 12, kneeP.y);
+    ctx.strokeText(`hofte ${hipA}°`, hipP.x + 12, hipP.y);
+    ctx.fillText(`hofte ${hipA}°`, hipP.x + 12, hipP.y);
+    ctx.restore();
+  }
+  if (s.type === 'angle') {
+    const [a, b, c] = s.pts;
+    ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+    ctx.lineTo(c.x, c.y); ctx.stroke();
+    const v1 = Math.atan2(a.y - b.y, a.x - b.x);
+    const v2 = Math.atan2(c.y - b.y, c.x - b.x);
+    let deg = Math.abs((v1 - v2) * 180 / Math.PI);
+    if (deg > 180) deg = 360 - deg;
+    ctx.font = `bold ${Math.max(22, canvas.width/40)}px sans-serif`;
+    ctx.fillText(deg.toFixed(0) + '°', b.x + 14, b.y - 14);
+  }
+}
+
+// ---------- Klip (kun selve løftet) ----------
+let trimStart = 0, trimEnd = Infinity;
+const trimEndEff = () => Math.min(video.duration || Infinity, trimEnd);
+document.getElementById('trimInBtn').onclick = e => {
+  trimStart = video.currentTime;
+  if (trimStart >= trimEnd) trimEnd = Infinity;
+  e.target.classList.add('active');
+  paintTrim();
+};
+document.getElementById('trimOutBtn').onclick = e => {
+  trimEnd = video.currentTime;
+  if (trimEnd <= trimStart) trimStart = 0;
+  e.target.classList.add('active');
+  paintTrim();
+};
+document.getElementById('trimResetBtn').onclick = () => {
+  trimStart = 0; trimEnd = Infinity;
+  document.getElementById('trimInBtn').classList.remove('active');
+  document.getElementById('trimOutBtn').classList.remove('active');
+  paintTrim();
+};
+function paintTrim() {
+  if (!video.duration) return;
+  const a = trimStart / video.duration * 100;
+  const b = trimEndEff() / video.duration * 100;
+  scrub.style.background = (trimStart > 0 || trimEnd !== Infinity)
+    ? `linear-gradient(to right, #333 ${a}%, rgba(230,57,70,.6) ${a}%,
+       rgba(230,57,70,.6) ${b}%, #333 ${b}%)`
+    : '';
+}
+
+// ---------- Tidslinje ----------
+const scrub = document.getElementById('scrub');
+const timeLabel = document.getElementById('timeLabel');
+let scrubbing = false;
+scrub.addEventListener('input', () => {
+  if (!video.duration) return;
+  scrubbing = true;
+  video.pause();
+  playBtn.textContent = '▶ Afspil (mellemrum)';
+  video.currentTime = scrub.value / 10000 * video.duration;
+});
+scrub.addEventListener('change', () => scrubbing = false);
+
+function updateTimeline() {
+  if (!video.duration) return;
+  if (!video.paused && video.currentTime >= trimEndEff()) {   // klip-slut
+    if (looping) {
+      video.currentTime = trimStart;                          // 🔁 forfra
+    } else {
+      video.pause();
+      playBtn.textContent = '▶ Afspil (mellemrum)';
+    }
+  }
+  if (!scrubbing) scrub.value = Math.round(video.currentTime / video.duration * 10000);
+  const f = Math.round(video.currentTime * 30);
+  const status = video.paused ? '⏸ PAUSE' : '▶';
+  const klip = (trimStart > 0 || trimEnd !== Infinity)
+    ? ` · klip ${trimStart.toFixed(1)}-${trimEndEff().toFixed(1)}s` : '';
+  timeLabel.textContent = `${status} · ${video.currentTime.toFixed(2)}s · frame ${f}${klip}`;
+  timeLabel.classList.toggle('paused', video.paused);
+}
+
+// ---------- Koordinat-grid ----------
+let showGrid = false;
+const gridBtn = document.getElementById('gridBtn');
+gridBtn.onclick = () => {
+  showGrid = !showGrid;
+  gridBtn.classList.toggle('active', showGrid);
+};
+let gridOffset = { x: 0, y: 0 };
+let gridDrag = null;
+function drawGrid() {
+  const cell = canvas.height / 20;               // kvadratiske felter, finere net
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+  ctx.fillStyle = 'rgba(255,255,255,0.7)';
+  ctx.lineWidth = 1;
+  ctx.font = `${Math.max(11, canvas.width/90)}px sans-serif`;
+  const ox = ((gridOffset.x % cell) + cell) % cell;
+  const oy = ((gridOffset.y % cell) + cell) % cell;
+  let n = 0;
+  for (let y = oy; y < canvas.height; y += cell, n++) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+    if (n % 2 === 0) ctx.fillText(n, 4, y - 3);
+  }
+  for (let x = ox; x < canvas.width; x += cell) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+  }
+  // kraftig lodret pejlelinje - flytter med når du trækker grid'et
+  const ref = canvas.width / 2 + gridOffset.x;
+  ctx.strokeStyle = 'rgba(255,230,10,0.75)';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(ref, 0); ctx.lineTo(ref, canvas.height); ctx.stroke();
+  ctx.restore();
+}
+
+function drawVelPanel() {
+  const path = strokes.find(s => s.type === 'path' && s.reps && s.reps.length);
+  if (!path) return;
+  const fs = Math.max(16, canvas.width / 60);
+  const lines = path.reps.map((r, i) => {
+    const loss = i ? Math.round((1 - r.mcv / path.reps[0].mcv) * 100) : null;
+    return `Rep ${i+1}:  ${r.mcv.toFixed(2)} m/s` +
+           (loss !== null ? `   ${loss >= 0 ? '−' : '+'}${Math.abs(loss)}%` : '');
+  });
+  ctx.save();
+  ctx.font = `bold ${fs}px sans-serif`;
+  const w = Math.max(...lines.map(l => ctx.measureText(l).width)) + fs * 1.5;
+  ctx.fillStyle = 'rgba(0,0,0,0.6)';
+  ctx.fillRect(10, 10, w, (lines.length + 0.6) * fs * 1.3);
+  lines.forEach((l, i) => {
+    const loss = i ? 1 - path.reps[i].mcv / path.reps[0].mcv : 0;
+    ctx.fillStyle = loss > 0.2 ? '#ff453a' : loss > 0.1 ? '#ffd60a' : '#4cd964';
+    ctx.fillText(l, 10 + fs * 0.7, 10 + (i + 1.1) * fs * 1.3);
+  });
+  ctx.restore();
+}
+
+function render() {
+  if (video.videoWidth) ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  if (showGrid) drawGrid();
+  strokes.forEach(drawStroke);
+  if (current) drawStroke(current);
+  [...anglePts, ...calibPts].forEach(p => {
+    ctx.fillStyle = colorInput.value;
+    ctx.beginPath(); ctx.arc(p.x, p.y, 6, 0, 7); ctx.fill();
+  });
+  drawVelPanel();
+  updateTimeline();
+  requestAnimationFrame(render);
+}
+
+// ---------- Stangbane (automatisk sporing) ----------
+const barBtn = document.getElementById('barBtn');
+let awaitBarClick = false, tracking = false;
+
+// ---------- Kalibrering (skive = 45 cm) ----------
+const calibBtn = document.getElementById('calibBtn');
+let awaitCalib = false, calibPts = [], cmPerPx = null;
+calibBtn.onclick = () => {
+  if (!video.src) { alert('Åbn en video først'); return; }
+  awaitCalib = true; calibPts = [];
+  calibBtn.textContent = '👆 Klik skivens TOP og BUND';
+  calibBtn.classList.add('active');
+};
+const ocan = document.createElement('canvas');
+const octx = ocan.getContext('2d', { willReadFrequently: true });
+
+barBtn.onclick = () => {
+  if (tracking) { tracking = false; return; }
+  if (!video.src) { alert('Åbn en video først'); return; }
+  video.pause();
+  awaitBarClick = true;
+  barBtn.textContent = '👆 Klik på skivens midte';
+  barBtn.classList.add('active');
+};
+
+function grabGray(x, y, size) {
+  const half = size >> 1;
+  const d = octx.getImageData(x - half, y - half, size, size).data;
+  const g = new Float32Array(size * size);
+  for (let i = 0; i < g.length; i++)
+    g[i] = d[i*4] * .3 + d[i*4+1] * .59 + d[i*4+2] * .11;
+  return g;
+}
+
+function ssd(a, b) {
+  let s = 0;
+  for (let i = 0; i < a.length; i++) { const d = a[i] - b[i]; s += d * d; }
+  return s;
+}
+
+function seekTo(t) {
+  return new Promise(res => {
+    video.onseeked = () => { video.onseeked = null; res(); };
+    video.currentTime = t;
+  });
+}
+
+function analyzePath(path) {
+  if (!cmPerPx || path.pts.length < 8) return;
+  const n = path.pts.length;
+  // udglattet lodret position (5-frames glidende snit mod 30fps-støj)
+  const y = path.pts.map(p => p.y);
+  const ys = y.map((_, i) => {
+    let s = 0, c = 0;
+    for (let j = Math.max(0, i-2); j <= Math.min(n-1, i+2); j++) { s += y[j]; c++; }
+    return s / c;
+  });
+  // lodret fart i m/s (+ = opad). 30 fps.
+  path.vel = ys.map((_, i) => i ? (ys[i-1] - ys[i]) * cmPerPx / 100 * 30 : 0);
+  // rep-detektion: sammenhængende opadgående bevægelse over 40% af totalvandring
+  const range = Math.max(...ys) - Math.min(...ys);
+  path.reps = [];
+  let start = null;
+  for (let i = 1; i <= n; i++) {
+    const up = i < n && path.vel[i] > 0.05;
+    if (up && start === null) start = i;
+    if (!up && start !== null) {
+      if (ys[start] - ys[i-1] > range * 0.4) {
+        const seg = path.vel.slice(start, i);
+        path.reps.push({ mcv: seg.reduce((a,b) => a+b, 0) / seg.length });
+      }
+      start = null;
+    }
+  }
+}
+
+async function startBarTracking(p0) {
+  awaitBarClick = false;
+  tracking = true;
+  barBtn.textContent = '⏹ Stop sporing';
+  ocan.width = canvas.width; ocan.height = canvas.height;
+  const P = Math.max(27, Math.round(canvas.width / 32) | 1);  // patch-størrelse
+  const R = Math.round(canvas.width / 20);                     // søgeradius
+  const startT = video.currentTime;
+  const startFrame = Math.round(startT * 30);
+  // Klik midt i en eksisterende bane = RET den herfra (klip og fortsæt)
+  let path = strokes.findLast ? strokes.findLast(s => s.type === 'path'
+    && startFrame >= s.startFrame && startFrame < s.startFrame + s.pts.length) : null;
+  if (path) {
+    path.pts = path.pts.slice(0, startFrame - path.startFrame);
+    path.pts.push(p0);
+  } else {
+    path = { type:'path', color:colorInput.value, pts:[p0], startFrame };
+    strokes.push(path);
+  }
+  octx.drawImage(video, 0, 0, ocan.width, ocan.height);
+  let patch = grabGray(p0.x, p0.y, P);
+  let cur = { ...p0 };
+  let vel = { x: 0, y: 0 };        // hastighed -> forudsig næste position
+  let emaBest = null;              // typisk match-score -> okklusionsdetektion
+
+  while (tracking && video.currentTime + FRAME < trimEndEff()) {
+    await seekTo(video.currentTime + FRAME);
+    if (poseHook && poseLandmarker) {
+      // kun hvert 2. frame (dobbelt fart) - hullerne udfyldes i smoothPose
+      if (poseHook.frames.length % 2 === 0) {
+        const res = poseLandmarker.detectForVideo(video, performance.now());
+        poseHook.frames.push((res.landmarks && res.landmarks[0]) || null);
+      } else {
+        poseHook.frames.push(null);
+      }
+    }
+    octx.drawImage(video, 0, 0, ocan.width, ocan.height);
+    // søg omkring FORUDSAGT position (position + hastighed)
+    const pred = { x: cur.x + vel.x, y: cur.y + vel.y };
+    const W = 2 * R + P;
+    const wx = Math.round(Math.max(0, Math.min(ocan.width - W, pred.x - W / 2)));
+    const wy = Math.round(Math.max(0, Math.min(ocan.height - W, pred.y - W / 2)));
+    const wd = octx.getImageData(wx, wy, W, W).data;
+    const wg = new Float32Array(W * W);
+    for (let i = 0; i < wg.length; i++)
+      wg[i] = wd[i*4] * .3 + wd[i*4+1] * .59 + wd[i*4+2] * .11;
+    // Lys-uafhængig matching: begge felter gøres nul-middel før sammenligning,
+    // så skygge/lysskift på skiven ikke ødelægger genkendelsen.
+    let pMean = 0, pCnt = 0;
+    for (let py = 0; py < P; py += 2)
+      for (let px = 0; px < P; px += 2) { pMean += patch[py*P+px]; pCnt++; }
+    pMean /= pCnt;
+    const cost = (ox, oy, cap) => {
+      let wMean = 0;
+      for (let py = 0; py < P; py += 2) {
+        const row = (oy + py) * W + ox;
+        for (let px = 0; px < P; px += 2) wMean += wg[row + px];
+      }
+      wMean /= pCnt;
+      let s = 0;
+      for (let py = 0; py < P && s < cap; py += 2) {
+        const row = (oy + py) * W + ox, prow = py * P;
+        for (let px = 0; px < P; px += 2) {
+          const d = (wg[row + px] - wMean) - (patch[prow + px] - pMean);
+          s += d * d;
+        }
+      }
+      return s;
+    };
+    // grov søgning (stride 2) ...
+    let best = 1e18, bo = { x: 0, y: 0 };
+    for (let oy = 0; oy + P <= W; oy += 2)
+      for (let ox = 0; ox + P <= W; ox += 2) {
+        const s = cost(ox, oy, best);
+        if (s < best) { best = s; bo = { x: ox, y: oy }; }
+      }
+    // ... så finjustering pixel for pixel omkring bedste match
+    for (let oy = Math.max(0, bo.y-2); oy <= Math.min(W-P, bo.y+2); oy++)
+      for (let ox = Math.max(0, bo.x-2); ox <= Math.min(W-P, bo.x+2); ox++) {
+        const s = cost(ox, oy, best);
+        if (s < best) { best = s; bo = { x: ox, y: oy }; }
+      }
+    const nx = wx + bo.x + P/2, ny = wy + bo.y + P/2;
+    vel = { x: (nx - cur.x) * .7 + vel.x * .3,
+            y: (ny - cur.y) * .7 + vel.y * .3 };
+    cur = { x: nx, y: ny };
+    path.pts.push({ ...cur });
+    // opdater kun skabelonen ved GODT match (ellers er skiven nok dækket)
+    emaBest = emaBest === null ? best : emaBest * .9 + best * .1;
+    if (best < emaBest * 2.2) {
+      const nyt = grabGray(nx, ny, P);
+      for (let i = 0; i < patch.length; i++) patch[i] = patch[i] * .85 + nyt[i] * .15;
+    }
+    const pct = Math.round(video.currentTime / video.duration * 100);
+    barBtn.textContent = `⏹ Stop sporing (${pct}%)`;
+    if (analyzing) allBtn.textContent = `⏹ Stop analyse (${pct}%)`;
+  }
+  tracking = false;
+  barBtn.textContent = '🎯 Stangbane';
+  barBtn.classList.remove('active');
+  analyzePath(path);
+  await seekTo(startT);
+}
+
+// ---------- Skelet (MediaPipe pose - gratis, lokal) ----------
+const poseBtn = document.getElementById('poseBtn');
+let posing = false, poseLandmarker = null;
+
+async function loadPose() {
+  if (poseLandmarker) return;
+  poseBtn.textContent = '⏳ Henter model...';
+  const vision = await import(
+    'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14');
+  const files = await vision.FilesetResolver.forVisionTasks(
+    'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm');
+  poseLandmarker = await vision.PoseLandmarker.createFromOptions(files, {
+    baseOptions: { modelAssetPath:
+      'https://storage.googleapis.com/mediapipe-models/pose_landmarker/' +
+      'pose_landmarker_heavy/float16/1/pose_landmarker_heavy.task' },
+    runningMode: 'VIDEO', numPoses: 1 });
+}
+
+poseBtn.onclick = async () => {
+  if (posing) { posing = false; return; }
+  if (!video.src) { alert('Åbn en video først'); return; }
+  try { await loadPose(); } catch (e) {
+    alert('Kunne ikke hente skelet-modellen - kræver internet første gang.');
+    poseBtn.textContent = '🦴 Skelet'; return;
+  }
+  posing = true;
+  video.pause();
+  strokes = strokes.filter(s => s.type !== 'pose');   // én skelet-analyse ad gangen
+  const startT = video.currentTime;
+  const pose = { type:'pose', frames: [], startFrame: Math.round(startT * 30) };
+  strokes.push(pose);
+  while (posing && video.currentTime + FRAME < trimEndEff()) {
+    const res = poseLandmarker.detectForVideo(video, performance.now());
+    pose.frames.push((res.landmarks && res.landmarks[0]) || null);
+    poseBtn.textContent =
+      `⏹ Stop skelet (${Math.round(video.currentTime / video.duration * 100)}%)`;
+    await seekTo(video.currentTime + FRAME);
+  }
+  posing = false;
+  smoothPose(pose);
+  poseBtn.textContent = '🦴 Skelet';
+  await seekTo(startT);
+};
+
+function boneFilter(pose) {
+  // Knogler har konstant længde. Frames hvor "knoglerne" pludselig ændrer
+  // længde >25% er fejlmålinger -> kasseres (udfyldes bagefter fra naboer).
+  const BONES = [[23,25],[25,27],[24,26],[26,28],[11,23],[12,24]];
+  const F = pose.frames;
+  const len = (lm, [a,b]) => Math.hypot(lm[a].x-lm[b].x, lm[a].y-lm[b].y);
+  const med = a => { const s=[...a].sort((x,y)=>x-y); return s[s.length>>1]; };
+  const medians = BONES.map(b =>
+    med(F.filter(lm => lm).map(lm => len(lm, b))));
+  let rejected = 0;
+  for (let i = 0; i < F.length; i++) {
+    if (!F[i]) continue;
+    const bad = BONES.filter((b, k) =>
+      Math.abs(len(F[i], b) - medians[k]) > medians[k] * 0.25).length;
+    if (bad >= 2) { F[i] = null; rejected++; }   // 2+ umulige knogler = fejlframe
+  }
+  pose.rejectedFrames = rejected;
+}
+
+function snapWristsToBar(pose, path) {
+  // Domæneviden: hænderne ER på stangen (dødløft: greb, squat: greb på stang).
+  // Vi kender stangens position PRÆCIST fra trackeren -> lås håndled til den,
+  // hvis de i forvejen følger stangen nogenlunde (ellers er det fx bænk-spot).
+  const F = pose.frames;
+  const barAt = i => path.pts[Math.max(0, Math.min(path.pts.length - 1, i))];
+  for (const w of [15, 16]) {
+    const dists = [];
+    F.forEach((lm, i) => {
+      if (!lm) return;
+      const b = barAt(i);
+      dists.push(Math.hypot(lm[w].x * canvas.width - b.x,
+                            lm[w].y * canvas.height - b.y));
+    });
+    if (!dists.length) continue;
+    const med = dists.sort((a, b) => a - b)[dists.length >> 1];
+    if (med < canvas.width * 0.12) {          // håndleddet følger stangen -> lås det
+      F.forEach((lm, i) => {
+        if (!lm) return;
+        const b = barAt(i);
+        lm[w].y = b.y / canvas.height;         // højden er stangens (sikker viden)
+        lm[w].x = (lm[w].x + b.x / canvas.width) / 2;  // x blandes 50/50
+      });
+    }
+  }
+}
+
+function smoothPose(pose) {
+  boneFilter(pose);
+  const F = pose.frames, n = F.length;
+  // udfyld huller (frames uden skelet) med nærmeste nabo
+  for (let i = 0; i < n; i++) {
+    if (!F[i]) {
+      for (let d = 1; d < n; d++) {
+        if (F[i-d]) { F[i] = F[i-d]; break; }
+        if (F[i+d]) { F[i] = F[i+d]; break; }
+      }
+    }
+  }
+  // glidende snit (±2 frames) per landmark -> fjerner sitren/hop
+  const out = F.map((lm, i) => {
+    if (!lm) return null;
+    return lm.map((_, k) => {
+      let sx = 0, sy = 0, sv = 0, c = 0;
+      for (let j = Math.max(0, i-2); j <= Math.min(n-1, i+2); j++) {
+        if (F[j] && F[j][k]) {
+          sx += F[j][k].x; sy += F[j][k].y;
+          sv += F[j][k].visibility || 0; c++;
+        }
+      }
+      return { x: sx/c, y: sy/c, visibility: sv/c };
+    });
+  });
+  pose.frames = out;
+  plantFeet(pose);
+}
+
+function plantFeet(pose) {
+  // Fødder flytter sig ikke i et løft: lås ankel/fod til medianen af de
+  // frames hvor modellen faktisk KAN se dem (i stedet for at gætte bag skiverne)
+  const FOOT = [27, 28, 29, 30, 31, 32];
+  const med = a => { const s = [...a].sort((x, y) => x - y);
+                     return s[s.length >> 1]; };
+  for (const k of FOOT) {
+    const seen = pose.frames.filter(lm => lm && lm[k] && lm[k].visibility > 0.55);
+    if (seen.length < pose.frames.length * 0.1) continue;  // aldrig set ordentligt
+    const fx = med(seen.map(lm => lm[k].x));
+    const fy = med(seen.map(lm => lm[k].y));
+    pose.frames.forEach(lm => {
+      if (lm && lm[k]) { lm[k].x = fx; lm[k].y = fy; lm[k].visibility = 1; }
+    });
+  }
+}
+
+// ---------- ⚡ Alt-i-én analyse (guidet, 3 klik) ----------
+const allBtn = document.getElementById('allBtn');
+let wizard = null, analyzing = false;
+
+allBtn.onclick = async () => {
+  if (analyzing) { analyzing = false; tracking = false; posing = false; return; }
+  if (!video.src) { alert('Åbn en video først'); return; }
+  video.pause();
+  wizard = { step: 0, pts: [] };
+  allBtn.textContent = '1/3: klik skivens TOP';
+  allBtn.classList.add('active');
+};
+
+function wizardClick(p) {
+  wizard.pts.push(p);
+  wizard.step++;
+  if (wizard.step === 1) allBtn.textContent = '2/3: klik skivens BUND';
+  if (wizard.step === 2) allBtn.textContent = '3/3: klik skivens MIDTE';
+  if (wizard.step === 3) {
+    const [top, bund, midte] = wizard.pts;
+    cmPerPx = 45 / Math.hypot(top.x - bund.x, top.y - bund.y);
+    calibBtn.textContent = '📏 Kalibreret ✓';
+    wizard = null;
+    runFullAnalysis(midte);
+  }
+}
+
+async function runFullAnalysis(barPt) {
+  analyzing = true;
+  allBtn.textContent = '⏳ Forbereder...';
+  let withPose = document.getElementById('withPoseChk').checked;
+  if (withPose) { try { await loadPose(); } catch { withPose = false; } }
+  if (withPose) strokes = strokes.filter(s => s.type !== 'pose');
+  const startT = video.currentTime;
+  const startFrame = Math.round(startT * 30);
+  const pose = { type:'pose', frames: [], startFrame };
+  if (withPose) strokes.push(pose);
+  // stangbane + skelet i SAMME gennemløb
+  poseHook = withPose ? pose : null;
+  await startBarTracking(barPt);
+  poseHook = null;
+  if (withPose) {
+    smoothPose(pose);
+    const barPath = strokes.find(s => s.type === 'path');
+    if (barPath) snapWristsToBar(pose, barPath);
+  }
+  analyzing = false;
+  allBtn.textContent = '⚡ Analysér løft';
+  allBtn.classList.remove('active');
+  // tilbage til normal afspilningshastighed efter analyse
+  document.getElementById('speed').value = '1';
+  video.playbackRate = 1;
+}
+
+let poseHook = null;
+
+// ---------- 🤖 AI-analyse (lokal Ollama) ----------
+const aiBtn = document.getElementById('aiBtn');
+const aiPanel = document.getElementById('aiPanel');
+const aiText = document.getElementById('aiText');
+
+let lastVals = null;   // strukturerede tal til den regelbaserede vurdering
+
+function collectMetrics() {
+  const path = strokes.find(s => s.type === 'path' && s.vel);
+  if (!path) return null;
+  const m = [];
+  lastVals = {};
+  const ys = path.pts.map(p => p.y);
+  const rangePx = Math.max(...ys) - Math.min(...ys);
+  if (cmPerPx) {
+    lastVals.romCm = +(rangePx * cmPerPx).toFixed(0);
+    m.push(`Vandring (ROM): ${lastVals.romCm} cm`);
+  }
+  if (path.reps && path.reps.length) {
+    path.reps.forEach((r, i) => {
+      const loss = i ? ` (fartfald ${Math.round((1 - r.mcv/path.reps[0].mcv)*100)}%)` : '';
+      m.push(`Rep ${i+1}: gennemsnitsfart ${r.mcv.toFixed(2)} m/s${loss}`);
+    });
+    lastVals.repCount = path.reps.length;
+    lastVals.lossPct = path.reps.length > 1 ? Math.round(
+      (1 - path.reps[path.reps.length-1].mcv / path.reps[0].mcv) * 100) : null;
+  }
+  // sticking point: langsomste opadgående punkt (midt i bevægelsen)
+  let minV = 1e9, minI = -1;
+  path.vel.forEach((v, i) => {
+    if (v > 0.02 && v < minV) { minV = v; minI = i; }
+  });
+  if (minI > 0) {
+    const hPct = Math.round((Math.max(...ys) - ys[minI]) / rangePx * 100);
+    const hCm = cmPerPx ? ` = ${((Math.max(...ys) - ys[minI]) * cmPerPx).toFixed(0)} cm over bundposition` : '';
+    m.push(`Sticking point: ved ${hPct}% af vandringen${hCm} (fart ${minV.toFixed(2)} m/s)`);
+    lastVals.stickPct = hPct;
+    // fartfald fra topfart til sticking point (jævnhed af løftet)
+    const peakV = Math.max(...path.vel);
+    if (peakV > 0.05) {
+      lastVals.dipPct = Math.round((1 - minV / peakV) * 100);
+      m.push(`Fartfald fra topfart til sticking point: ` +
+             `${lastVals.dipPct}% (lavt tal = jævnt løft)`);
+    }
+  }
+  // vandret afvigelse MED retning ift. startposition
+  const xs = path.pts.map(p => p.x);
+  const x0 = xs[0];
+  const maxR = Math.max(...xs) - x0, maxL = x0 - Math.min(...xs);
+  if (cmPerPx) {
+    const parts = [];
+    if (maxR * cmPerPx > 1) parts.push(`${(maxR * cmPerPx).toFixed(1)} cm mod højre`);
+    if (maxL * cmPerPx > 1) parts.push(`${(maxL * cmPerPx).toFixed(1)} cm mod venstre`);
+    m.push(`Vandret afvigelse ift. startposition (set fra kameraet): ` +
+           (parts.join(' og ') || 'under 1 cm'));
+    lastVals.driftCm = Math.max(maxR, maxL) * cmPerPx;
+  }
+  // ledvinkler fra skelet, hvis det findes
+  const pose = strokes.find(s => s.type === 'pose' && s.frames.some(f => f));
+  if (pose && minI > 0) {
+    // kvalitetsvagt: skelettet skal være stabilt gennem HELE løftet,
+    // ellers udelades vinkler helt (et enkelt misset punkt må ikke forvride analysen)
+    const valid = pose.frames.filter(f => f);
+    const stability = valid.length
+      ? valid.reduce((a, f) => a + Math.min(
+          (f[23].visibility||0) + (f[25].visibility||0),
+          (f[24].visibility||0) + (f[26].visibility||0)) / 2, 0) / valid.length
+      : 0;
+    const lm = pose.frames[Math.min(pose.frames.length - 1, minI)];
+    if (stability < 0.55 || !lm) {
+      m.push('Skelet-analyse: UDELADT (for lav sporingskvalitet til at være pålidelig)');
+    } else {
+      const left = (lm[23].visibility||0) >= (lm[24].visibility||0);
+      const [sh, hip, knee, ank] = left ? [11,23,25,27] : [12,24,26,28];
+      const vis = [sh, hip, knee, ank]
+        .reduce((a, i) => a + (lm[i].visibility || 0), 0) / 4;
+      if (vis > 0.6) {
+        const ang = (A,B,C) => {
+          let d = Math.abs((Math.atan2(A.y-B.y,A.x-B.x) -
+                            Math.atan2(C.y-B.y,C.x-B.x)) * 180/Math.PI);
+          return (d > 180 ? 360 - d : d).toFixed(0);
+        };
+        m.push(`Ved sticking point (2D-estimat, vejledende): ` +
+               `knævinkel ~${ang(lm[hip],lm[knee],lm[ank])}°, ` +
+               `hoftevinkel ~${ang(lm[sh],lm[hip],lm[knee])}°`);
+      }
+    }
+  }
+  return m.join('\n');
+}
+
+// Fag-reference per øvelse - hvad AI'en skal måle op imod
+// Baseret på Stronger by Science' guides + VBT-forskning. Godkendt af Marc 3/7-2026.
+const TEKNIK = {
+  'Squat':
+    'Stangen skal lodret over midtfod hele vejen - afvigelse er symptom på et ' +
+    'underliggende problem. Sticking point LIGE OVER PARALLEL er permanent ' +
+    'biomekanik (90%+ misser dér) - bedøm ikke at det findes, men farten IND i ' +
+    'det: god teknik = maksimal acceleration ud af hullet, derefter "fold ud" ' +
+    '(skuldre tilbage i stangen, hofte frem under stangen). RØDE FLAG: stangen ' +
+    'driver frem (vægt mod tå), hoften skyder op før stangen (good morning, ' +
+    'hoftevinklen lukker), stort fartfald allerede i hullet (positionstab/' +
+    'bracing). Reference: 1RM-fart ca. 0.25-0.30 m/s.',
+  'Bænkpres':
+    'J-kurven ER korrekt teknik: fra brystet skråt TILBAGE mod skuldrene - ' +
+    '10-25 cm vandret bevægelse er sundt, ikke en fejl. Sticking point typisk ' +
+    '8-15 cm over brystet efter den indledende acceleration. Kvalitetsmål: LILLE ' +
+    'fartfald fra topfart til sticking point = effektiv bane (elite taber langt ' +
+    'mindre fart end begyndere, og forskellen er primært banen). RØDE FLAG: ' +
+    'lodret bane eller bane mod fødderne (albuer for langt ude), fart der dør ' +
+    'ved lockout (triceps), asymmetri mellem reps. Reference: 1RM ca. 0.15-0.20 m/s.',
+  'Dødløft':
+    'Stangen lodret og TÆT på skinneben/midtfod; skuldre en anelse foran stangen ' +
+    'ved start. Ingen stretch-reflex: langsom start fra gulv er normal. Sticking ' +
+    'point ved/lige under knæ er det klassiske mønster. RØDE FLAG: stangen ' +
+    'svinger UD omkring knæet (væk fra kroppen = ryggen betaler), hoften skyder ' +
+    'op først (benene bliver færdige før stangen letter = rygløft), fart der ' +
+    'falder mod lockout (hoftestrækning/balder). Reference: 1RM ca. 0.20-0.25 m/s.',
+  'Sumo dødløft':
+    '20-25% kortere vandring end konventionel, oprejst torso, skuldre DIREKTE ' +
+    'over stangen (ikke foran). Langsomt fra gulvet er FORVENTET (quads/' +
+    'adduktorer arbejder tungt dér) - bedøm det ikke som svaghed. Lockout skal ' +
+    'til gengæld være hurtig. RØDE FLAG: knæene falder ind, hoften starter for ' +
+    'højt (mister benvinklen), stor vandret afvigelse, langsom lockout (hofte). ' +
+    'Reference: 1RM ca. 0.20-0.25 m/s.',
+};
+
+// Deterministisk vurdering: tallene mod teknik-grænseværdierne. Ingen AI-gætteri.
+function evaluateFindings(lift, v) {
+  const f = [];
+  const sq = lift === 'Squat', bp = lift === 'Bænkpres';
+  const dl = lift === 'Dødløft', sumo = lift === 'Sumo dødløft';
+  if (v.driftCm != null) {
+    if (bp) {
+      if (v.driftCm >= 10 && v.driftCm <= 25)
+        f.push(`OK: vandret bevægelse ${v.driftCm.toFixed(0)} cm - sund J-kurve`);
+      else if (v.driftCm < 8)
+        f.push(`FLAG: kun ${v.driftCm.toFixed(0)} cm vandret - banen er for lodret (tjek albuer)`);
+    } else {
+      const max = sq ? 5 : 4;
+      f.push(v.driftCm <= max
+        ? `OK: vandret afvigelse ${v.driftCm.toFixed(1)} cm - stangen holder linjen`
+        : `FLAG: vandret afvigelse ${v.driftCm.toFixed(1)} cm (grænse ~${max} cm) - stangen forlader den lodrette linje`);
+    }
+  }
+  if (v.stickPct != null) {
+    const normal = sq ? [40, 65] : bp ? [15, 45] : dl ? [30, 60] : [0, 45];
+    f.push(v.stickPct >= normal[0] && v.stickPct <= normal[1]
+      ? `OK: sticking point ved ${v.stickPct}% - klassisk placering for ${lift.toLowerCase()}`
+      : `FLAG: sticking point ved ${v.stickPct}% - atypisk for ${lift.toLowerCase()} (normalt ${normal[0]}-${normal[1]}%)`);
+  }
+  if (v.dipPct != null) {
+    f.push(v.dipPct <= 55
+      ? `OK: jævnt løft (fartfald til sticking point ${v.dipPct}%)`
+      : `FLAG: stort fartfald til sticking point (${v.dipPct}%) - farten ind i sticking point er lav`);
+  }
+  if (v.lossPct != null) {
+    f.push(v.lossPct < 10 ? `OK: fartfald over sættet ${v.lossPct}% - god friskhed`
+      : v.lossPct <= 20 ? `OBS: fartfald over sættet ${v.lossPct}% - moderat udtrætning`
+      : `FLAG: fartfald over sættet ${v.lossPct}% - over klassisk VBT-stopgrænse (20%)`);
+  }
+  if (sumo && v.dipPct != null && v.stickPct != null && v.stickPct < 20)
+    f.push('NOTE: lav fart nær gulvet er FORVENTET i sumo - ikke et fund i sig selv');
+  return f;
+}
+
+aiBtn.onclick = async () => {
+  let metrics = collectMetrics();
+  if (!metrics) { alert('Kør ⚡ Analysér løft først'); return; }
+  const ath = document.getElementById('athleteSel').value;
+  const lift = document.getElementById('liftSel').value;
+  const load = document.getElementById('loadInput').value.trim();
+  if (!lift) { alert('Vælg øvelse først - fortolkningen afhænger af den'); return; }
+  const bias = document.getElementById('biasInput').value.trim();
+  const findings = evaluateFindings(lift, lastVals || {});
+  metrics = `Atlet: ${ath || 'ukendt'}\nØvelse: ${lift}\n` +
+            `Belastning: ${load || 'ikke angivet'}\n` +
+            (bias ? `Coachens kendte tendens for atleten: ${bias}\n` : '') + metrics +
+            (findings.length ? `\n\nFÆRDIGE FUND (regelbaseret, stol på disse):\n` +
+             findings.join('\n') : '');
+  aiPanel.hidden = false;
+  aiText.textContent = '⏳ Din lokale model tænker (normalt 5-20 sek)...';
+  aiBtn.disabled = true;
+  const abort = new AbortController();
+  const kill = setTimeout(() => abort.abort(), 90000);   // maks 90 sek, så slipper knappen
+  try {
+    const r = await fetch('http://localhost:11434/api/chat', {
+      method: 'POST',
+      signal: abort.signal,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'qwen3:8b', stream: false, think: false,
+        options: { temperature: 0.3 },
+        messages: [
+          { role: 'system', content:
+            'Du er assistenttræner for en erfaren IPF-styrkeløftcoach. Du får ' +
+            'målinger OG en liste FÆRDIGE FUND, som allerede er vurderet mod ' +
+            'øvelsens grænseværdier. DIN OPGAVE ER KUN AT FORMULERE FUNDENE ' +
+            'som kort coach-feedback - du må IKKE tilføje nye vurderinger, ' +
+            'ikke omfortolke OK til problem eller omvendt, og ikke bedømme ' +
+            'absolutte hastigheder. Er der angivet en kendt tendens, så sig ' +
+            'eksplicit om fundene be- eller afkræfter den. Svar på dansk i ' +
+            'PRÆCIS dette format:\n✓ FUNGERER: ...\n⚠ VIGTIGSTE FUND: ...\n' +
+            '→ FOKUS: ...\nMaks 70 ord.\n\nEKSEMPEL på perfekt svar (squat, ' +
+            'fund: OK afvigelse 2 cm, FLAG stort fartfald 68% til sticking ' +
+            'point, OK fartfald over sæt 8%):\n✓ FUNGERER: Stangen holder ' +
+            'linjen flot, og friskheden er god sættet igennem.\n⚠ VIGTIGSTE ' +
+            'FUND: Farten dør på vej ind i sticking point - der mangler ' +
+            'acceleration ud af hullet.\n→ FOKUS: Cue maksimal fart fra ' +
+            'bunden: "skub gulvet væk, skuldrene tilbage i stangen".' +
+            (TEKNIK[lift] ? '\n\nREFERENCE FOR ' + lift.toUpperCase() +
+             ' (baggrund):\n' + TEKNIK[lift] : '') + '\n/no_think' },
+          { role: 'user', content: metrics }]
+      })
+    });
+    const j = await r.json();
+    let t = j.message.content;
+    if (t.includes('</think>')) t = t.split('</think>').pop();
+    aiText.textContent = `MÅLINGER\n${metrics}\n\nVURDERING\n${t.trim()}`;
+  } catch (e) {
+    aiText.textContent = (e.name === 'AbortError'
+      ? 'Modellen svarede ikke inden for 90 sek - prøv igen (første kald efter '
+        + 'genstart er langsomt, mens modellen loades).'
+      : 'Kunne ikke nå Ollama. Tjek at Ollama kører, og at OLLAMA_ORIGINS er '
+        + 'sat (se GUIDE.md).')
+      + '\n\nFÆRDIGE FUND (brugbare uden AI):\n' + metrics;
+  } finally {
+    clearTimeout(kill);
+    aiBtn.disabled = false;
+  }
+};
+
+// ---------- 💾 Gem analyse (til entropi-agent\analyses -> Supabase) ----------
+const saveBtn = document.getElementById('saveBtn');
+let analysesDir = null;   // huskes for sessionen; vælges én gang
+
+async function getAnalysesDir() {
+  if (analysesDir) return analysesDir;
+  alert('Vælg mappen entropi-agent\\analyses (kun første gang pr. session)');
+  analysesDir = await window.showDirectoryPicker({ mode: 'readwrite' });
+  return analysesDir;
+}
+
+saveBtn.onclick = async () => {
+  const metrics = collectMetrics();
+  if (!metrics || !lastVals) { alert('Kør ⚡ Analysér løft først'); return; }
+  const ath = document.getElementById('athleteSel').value || 'Gæst';
+  const lift = document.getElementById('liftSel').value;
+  if (!lift) { alert('Vælg øvelse først'); return; }
+  const path = strokes.find(s => s.type === 'path' && s.vel);
+  const data = {
+    athlete_name: ath,
+    lift,
+    load_note: document.getElementById('loadInput').value.trim() || null,
+    bias_note: document.getElementById('biasInput').value.trim() || null,
+    rom_cm: lastVals.romCm ?? null,
+    loss_pct: lastVals.lossPct ?? null,
+    stick_pct: lastVals.stickPct ?? null,
+    dip_pct: lastVals.dipPct ?? null,
+    drift_cm: lastVals.driftCm != null ? +lastVals.driftCm.toFixed(1) : null,
+    reps: path && path.reps ? path.reps.map(r => +r.mcv.toFixed(3)) : null,
+    findings: evaluateFindings(lift, lastVals),
+    ai_text: aiPanel.hidden ? null : aiText.textContent,
+    analyzed_at: new Date().toISOString(),
+  };
+  const name = `analyse-${ath.toLowerCase()}-${Date.now()}.json`;
+  try {
+    const dir = await getAnalysesDir();
+    const fh = await dir.getFileHandle(name, { create: true });
+    const w = await fh.createWritable();
+    await w.write(JSON.stringify(data, null, 2));
+    await w.close();
+    saveBtn.textContent = '💾 Gemt ✓';
+    setTimeout(() => saveBtn.textContent = '💾 Gem analyse', 2500);
+  } catch (e) {
+    if (e.name === 'AbortError') return;
+    // fallback: almindelig download
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)]));
+    a.download = name;
+    a.click();
+  }
+};
+
+// ---------- Optagelse (canvas + mikrofon) ----------
+const recordBtn = document.getElementById('recordBtn');
+const recTime = document.getElementById('recTime');
+const downloadLink = document.getElementById('downloadLink');
+let recorder = null, chunks = [], timer = null, t0 = 0;
+
+recordBtn.onclick = async () => {
+  if (recorder && recorder.state === 'recording') { stopRec(); return; }
+  if (!video.src) { alert('Åbn en video først'); return; }
+  let mic;
+  try {
+    mic = await navigator.mediaDevices.getUserMedia({ audio: {
+      echoCancellation: true, noiseSuppression: true } });
+  } catch { alert('Kunne ikke få adgang til mikrofonen'); return; }
+
+  const stream = new MediaStream([
+    ...canvas.captureStream(30).getVideoTracks(),
+    ...mic.getAudioTracks(),
+  ]);
+  const mime = ['video/mp4;codecs=avc1,mp4a.40.2', 'video/mp4',
+                'video/webm;codecs=vp9,opus', 'video/webm']
+    .find(m => MediaRecorder.isTypeSupported(m)) || '';
+  recorder = new MediaRecorder(stream, { mimeType: mime,
+    videoBitsPerSecond: 5_000_000 });
+  chunks = [];
+  recorder.ondataavailable = e => e.data.size && chunks.push(e.data);
+  recorder.onstop = () => saveRec(mime, mic);
+  recorder.start(1000);
+  t0 = Date.now();
+  timer = setInterval(() => {
+    const s = Math.floor((Date.now() - t0) / 1000);
+    recTime.textContent = `● ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+  }, 500);
+  recordBtn.textContent = '⏹ Stop optagelse';
+  recordBtn.classList.add('recording');
+  downloadLink.hidden = true;
+};
+
+function stopRec() {
+  recorder.stop();
+  clearInterval(timer);
+  recTime.textContent = '';
+  recordBtn.textContent = '🎙 Optag feedback';
+  recordBtn.classList.remove('recording');
+}
+
+// ---------- To versioner, én fil ----------
+// Desktop (file://) eller ?coach=1 = FULD version (AI, skelet, gem, optag).
+// Online i appen = SLANK version: video, frame-spoling, klip, tegning, stangbane+fart.
+const FULL_MODE = location.protocol === 'file:' ||
+                  new URLSearchParams(location.search).has('coach');
+if (!FULL_MODE) {
+  ['poseBtn', 'aiBtn', 'saveBtn', 'recordBtn', 'athleteSel', 'liftSel',
+   'loadInput', 'biasInput', 'withPoseChk'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) (el.closest('label') || el).style.display = 'none';
+  });
+  document.getElementById('scrubToolBtn').click();  // atleter starter i spole-tilstand
+}
+
+function saveRec(mime, mic) {
+  mic.getTracks().forEach(t => t.stop());
+  const ext = mime.includes('mp4') ? 'mp4' : 'webm';
+  const blob = new Blob(chunks, { type: mime });
+  const d = new Date().toISOString().slice(0, 10);
+  downloadLink.href = URL.createObjectURL(blob);
+  downloadLink.download = `feedback-${d}.${ext}`;
+  downloadLink.textContent = `💾 Hent færdig video (.${ext})`;
+  downloadLink.hidden = false;
+}
+</script>
+</body>
+</html>
