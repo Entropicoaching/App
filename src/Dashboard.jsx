@@ -2260,7 +2260,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               )
             })()}
           </div>
-          <button onClick={() => window.open('videocoach.html', '_blank')} style={{ ...s.btnGhost, marginTop: '0.5rem', width: '100%' }}>🎥 VideoCoach</button>
+          <button onClick={() => window.open('videocoach.html?coach=1', '_blank')} style={{ ...s.btnGhost, marginTop: '0.5rem', width: '100%' }}>🎥 VideoCoach</button>
           <button onClick={() => supabase.auth.signOut()} style={{ ...s.btnGhost, marginTop: '0.5rem', width: '100%' }}>Log ud</button>
         </div>
       </aside>
