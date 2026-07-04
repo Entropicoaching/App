@@ -4,10 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>Entropi VideoCoach</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root { --bg:#111; --panel:#1c1c1e; --accent:#e63946; --text:#eee; }
+  /* Entropi-tema: samme mørke bund og guld-accent som appen */
+  :root { --bg:#141410; --panel:#1c1a16; --accent:#c8923a; --text:#edeae2;
+          --dim:#7a7770; --line:rgba(237,234,226,0.08); }
   * { box-sizing:border-box; margin:0; padding:0; }
-  body { background:var(--bg); color:var(--text); font-family:system-ui,sans-serif;
+  body { background:var(--bg); color:var(--text);
+         font-family:'IBM Plex Mono', monospace;
          display:flex; flex-direction:column; height:100vh; }
   header { padding:10px 16px; background:var(--panel); display:flex;
            align-items:center; gap:12px; flex-wrap:wrap; }
@@ -22,12 +27,15 @@
   }
   footer { padding:10px 16px; background:var(--panel); display:flex;
            align-items:center; gap:10px; flex-wrap:wrap; }
-  button, select, input[type=color] { background:#2c2c2e; color:var(--text);
-    border:1px solid #444; border-radius:8px; padding:8px 14px; font-size:15px;
-    cursor:pointer; }
-  button:hover { background:#3a3a3c; }
-  button.active { background:var(--accent); border-color:var(--accent); }
-  #recordBtn { background:var(--accent); font-weight:bold; }
+  button, select, input[type=color] { background:transparent; color:var(--text);
+    border:1px solid var(--line); border-radius:2px; padding:8px 14px;
+    font-size:13px; font-family:'IBM Plex Mono', monospace; cursor:pointer;
+    letter-spacing:0.06em; text-transform:uppercase; }
+  button:hover { border-color:var(--accent); color:var(--accent); }
+  button.active { background:var(--accent); border-color:var(--accent);
+                  color:#141410; font-weight:600; }
+  #recordBtn { border-color:var(--accent); color:var(--accent); font-weight:600; }
+  #recordBtn.recording { background:var(--accent); color:#141410; }
   #recordBtn.recording { animation:blink 1s infinite; }
   @keyframes blink { 50% { opacity:.5; } }
   #dropHint { position:absolute; font-size:20px; color:#888; text-align:center; }
@@ -37,7 +45,98 @@
   #scrub { flex:1; accent-color:var(--accent); height:24px; cursor:pointer; }
   #timeLabel { font-variant-numeric:tabular-nums; font-size:15px; min-width:190px;
                text-align:right; }
-  #timeLabel.paused { color:#ffd60a; font-weight:bold; }
+  #timeLabel.paused { color:var(--accent); font-weight:bold; }
+  #scrubRow { position:relative; }
+  .trimHandle { position:absolute; top:2px; width:26px; height:26px; line-height:26px;
+    text-align:center; background:var(--accent); color:#141410; border-radius:2px;
+    font-weight:bold; cursor:ew-resize; touch-action:none; z-index:3; }
+  /* Guide-tekst: øverst, halvgennemsigtig og KLIK-GENNEMSIGTIG (pointer-events:
+     none) - så den aldrig står i vejen for det, man skal trykke på */
+  #banner { position:fixed; top:10px; left:50%; transform:translateX(-50%);
+    background:rgba(20,20,16,.8); color:var(--text); font-size:14px;
+    font-weight:600; letter-spacing:0.05em; padding:8px 16px; border-radius:2px;
+    border:1px solid var(--accent); z-index:20; text-align:center; max-width:92vw;
+    pointer-events:none; }
+  /* ---- SLANK/MOBIL-TILSTAND (atleter) ---- */
+  body.slim header { display:none; }
+  body.slim #stage { position:fixed; inset:0; }
+  body.slim footer { position:fixed; left:0; right:0; bottom:0; z-index:10;
+    justify-content:space-around; background:rgba(20,20,22,.94);
+    padding:10px 6px calc(10px + env(safe-area-inset-bottom)); }
+  body.slim footer button { font-size:20px; padding:12px 14px; border-radius:14px; }
+  body.slim #scrubRow { position:fixed; left:0; right:0; bottom:66px; z-index:10;
+    background:rgba(20,20,22,.7); border-top:none; }
+  body.slim #timeLabel { min-width:0; font-size:11px; }
+  body.slim #openSmall { position:fixed; top:10px; left:10px; z-index:10; }
+  body.slim #dropHint { font-size:24px; border:2px dashed #555; border-radius:16px;
+    padding:40px 30px; cursor:pointer; }
+  /* ---- WOW-lag: flydende glas-bjælke, ikon-knapper, slank guld-tidslinje ---- */
+  body.slim #stage { background:radial-gradient(ellipse at center,#1a1812 0%,#0d0c09 100%); }
+  body.slim footer { left:12px; right:12px; bottom:12px; border-radius:24px;
+    background:rgba(20,20,16,.7); backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px); border:1px solid var(--line);
+    box-shadow:0 10px 34px rgba(0,0,0,.55); padding:8px 4px; }
+  body.slim footer button { border:none; background:transparent;
+    border-radius:16px; transition:transform .12s, background .15s; }
+  body.slim footer button:active { transform:scale(.88); }
+  body.slim footer button.active { background:rgba(200,146,58,.16); color:var(--accent); }
+  /* atlet: store ikoner med små labels under */
+  body.athlete footer button { font-size:26px; padding:6px 12px; display:flex;
+    flex-direction:column; align-items:center; gap:3px; }
+  body.athlete footer button::after { font-size:9px; letter-spacing:.14em;
+    color:var(--dim); text-transform:uppercase; font-weight:500; }
+  body.athlete #playBtn::after { content:'Afspil'; }
+  body.athlete #allBtn::after  { content:'Bane'; }
+  body.athlete #penBtn::after  { content:'Tegn'; }
+  body.athlete #undoBtn::after { content:'Fortryd'; }
+  body.athlete #loopBtn::after { content:'Loop'; }
+  body.athlete footer button.active::after { color:var(--accent); }
+  /* coach online: glas-toplinje + ombrydelig bundbjælke med alle værktøjer */
+  body.coachweb header { display:flex; position:fixed; top:0; left:0; right:0;
+    z-index:9; background:rgba(20,20,16,.72); backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line); }
+  body.coachweb footer { justify-content:center; gap:4px; }
+  body.coachweb footer button, body.coachweb footer select,
+  body.coachweb footer input { font-size:12px; padding:8px 10px; }
+  body.coachweb #scrubRow { bottom:80px; }
+  body.coachweb #moreBar { position:fixed; left:12px; right:12px; bottom:130px;
+    z-index:11; display:flex; flex-wrap:wrap; gap:6px; justify-content:center;
+    background:rgba(20,20,16,.85); backdrop-filter:blur(16px);
+    border:1px solid var(--line); border-radius:18px; padding:12px;
+    box-shadow:0 10px 34px rgba(0,0,0,.55); }
+  body.coachweb #moreBar[hidden] { display:none; }
+  body.coachweb #moreBar button, body.coachweb #moreBar select,
+  body.coachweb #moreBar input { font-size:12px; padding:8px 10px; }
+  body.coachweb #openSmall { top:auto; bottom:8px; left:8px; display:none; }
+  body.slim #scrubRow { bottom:118px; background:transparent; border:none;
+    padding:6px 10px; gap:8px; }
+  #backS, #fwdS { display:none; }
+  body.slim #backS, body.slim #fwdS { display:flex; align-items:center;
+    justify-content:center; width:42px; height:42px; border-radius:50%;
+    padding:0; font-size:24px; background:rgba(20,20,16,.7);
+    backdrop-filter:blur(12px); border:1px solid var(--line); flex-shrink:0; }
+  body.slim #backS:active, body.slim #fwdS:active { transform:scale(.88);
+    color:var(--accent); }
+  body.slim #scrub { -webkit-appearance:none; appearance:none; height:4px;
+    background:#3a362c; border-radius:2px; }
+  body.slim #scrub::-webkit-slider-thumb { -webkit-appearance:none; width:16px;
+    height:16px; border-radius:50%; background:var(--accent);
+    box-shadow:0 0 10px rgba(200,146,58,.9); }
+  body.slim .trimHandle { width:24px; height:24px; border-radius:50%; top:15px;
+    font-size:0; box-shadow:0 0 10px rgba(200,146,58,.75);
+    border:2px solid #141410; }
+  body.slim #openSmall { width:44px; height:44px; border-radius:50%; padding:0;
+    font-size:19px; background:rgba(20,20,16,.7); backdrop-filter:blur(12px);
+    border:1px solid var(--line); }
+  /* zen: minimér alle kontroller, så videoen står helt ren */
+  #zenBtn { display:none; }
+  body.slim #zenBtn { display:flex; align-items:center; justify-content:center;
+    position:fixed; top:10px; right:10px; z-index:15; width:44px; height:44px;
+    border-radius:50%; padding:0; font-size:18px;
+    background:rgba(20,20,16,.7); backdrop-filter:blur(12px);
+    border:1px solid var(--line); }
+  body.zen footer, body.zen #scrubRow, body.zen #moreBar,
+  body.zen #openSmall, body.zen header { display:none !important; }
 </style>
 </head>
 <body>
@@ -63,9 +162,15 @@
   <button id="trimInBtn" title="Klip: start her">⟦</button>
   <button id="trimOutBtn" title="Klip: slut her">⟧</button>
   <button id="trimResetBtn" title="Fjern klip">✕</button>
+  <button id="backS">‹</button>
   <input type="range" id="scrub" min="0" max="10000" value="0">
+  <button id="fwdS">›</button>
   <span id="timeLabel">—</span>
+  <div id="hIn" class="trimHandle" hidden>⟦</div>
+  <div id="hOut" class="trimHandle" hidden>⟧</div>
 </div>
+<div id="banner" hidden></div>
+<button id="openSmall" hidden>📂</button>
 <footer>
   <button id="scrubToolBtn" class="tool">✋ Spol</button>
   <button id="loopBtn">🔁 Loop</button>
@@ -73,7 +178,7 @@
   <button id="lineBtn" class="tool">📏 Linje</button>
   <button id="angleBtn" class="tool">📐 Vinkel (3 klik)</button>
   <button id="eraseBtn" class="tool">🧽 Visk</button>
-  <button id="allBtn" style="background:#2e5cff;font-weight:bold">⚡ Analysér løft</button>
+  <button id="allBtn" style="border-color:#c8923a;color:#c8923a;font-weight:600">⚡ Analysér løft</button>
   <label style="display:flex;align-items:center;gap:4px;font-size:14px">
     <input type="checkbox" id="withPoseChk"> 🦴</label>
   <button id="barBtn">🎯 Stangbane</button>
@@ -117,7 +222,12 @@
   </div>
   <div id="aiText">…</div>
 </div>
-<video id="video" hidden></video>
+<!-- playsinline er KRITISK for mobil: uden den nægter iPhone/Android at afspille
+     en video der tegnes til canvas. Og "hidden" blokerer afkodning på iOS -
+     derfor parkeres afspilleren usynligt i hjørnet i stedet. -->
+<video id="video" playsinline webkit-playsinline preload="metadata"
+       style="position:fixed; left:0; top:0; width:2px; height:2px; opacity:0;
+              pointer-events:none;"></video>
 <script>
 const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
@@ -127,6 +237,17 @@ let strokes = [];          // færdige tegninger
 let current = null;        // igangværende streg
 let anglePts = [];         // klik til vinkelværktøj
 let tool = 'pen';
+// Tre tilstande, én fil:
+// DESKTOP (file://)    = klassisk fuldt værksted inkl. AI
+// COACHWEB (?coach=1)  = moderne glas-layout MED alle coach-værktøjer
+// ATHLETE (ellers)     = moderne glas-layout, kun se/spole/klippe/bane/pen
+const DESKTOP = location.protocol === 'file:';
+const COACHWEB = !DESKTOP && new URLSearchParams(location.search).has('coach');
+const SLIM = !DESKTOP;              // moderne layout (atlet OG coach online)
+const ATHLETE = SLIM && !COACHWEB;
+// ︎ tvinger TEKST-gengivelse (monokrom glyf) i stedet for farvet emoji
+const playLabel = playing => SLIM ? (playing ? '❚❚' : '▶︎')
+  : (playing ? '⏸ Pause (mellemrum)' : '▶ Afspil (mellemrum)');
 
 // ---------- Video ind ----------
 document.getElementById('openBtn').onclick = () =>
@@ -157,6 +278,8 @@ function loadFile(file) {
     canvas.hidden = false;
     dropHint.hidden = true;
     video.pause();
+    // tving første frame frem - ellers er skærmen SORT på mobil indtil play
+    video.currentTime = 0.01;
     if (!rendering) { rendering = true; requestAnimationFrame(render); }
   };
 }
@@ -169,18 +292,20 @@ function togglePlay() {
   if (video.paused) {
     if (video.currentTime < trimStart || video.currentTime >= trimEndEff())
       video.currentTime = trimStart;          // start altid inde i klippet
-    video.play(); playBtn.textContent = '⏸ Pause (mellemrum)';
+    video.play(); playBtn.textContent = playLabel(true);
   }
-  else { video.pause(); playBtn.textContent = '▶ Afspil (mellemrum)'; }
+  else { video.pause(); playBtn.textContent = playLabel(false); }
 }
 document.getElementById('speed').onchange = e =>
   video.playbackRate = parseFloat(e.target.value);
 const FRAME = 1 / 30;
 document.getElementById('backBtn').onclick = () => step(-FRAME);
 document.getElementById('fwdBtn').onclick = () => step(FRAME);
+document.getElementById('backS').onclick = () => step(-FRAME);
+document.getElementById('fwdS').onclick = () => step(FRAME);
 function step(dt) {
   video.pause();
-  playBtn.textContent = '▶ Afspil (mellemrum)';
+  playBtn.textContent = playLabel(false);
   video.currentTime = Math.max(0, Math.min(video.duration, video.currentTime + dt));
 }
 document.addEventListener('keydown', e => {
@@ -243,6 +368,7 @@ canvas.addEventListener('pointerdown', e => {
     wizardClick(p);
     return;
   }
+  if (awaitBox) { boxDrag = { a: p, b: p }; return; }
   if (awaitCalib) {
     calibPts.push(p);
     if (calibPts.length === 2) {
@@ -261,7 +387,7 @@ canvas.addEventListener('pointerdown', e => {
     current = { type:'scrubbing', startX: e.clientX, startT: video.currentTime,
                 moved: false };
     video.pause();
-    playBtn.textContent = '▶ Afspil (mellemrum)';
+    playBtn.textContent = playLabel(false);
     return;
   }
   if (tool === 'erase') { current = { type:'erasing' }; eraseAt(p); return; }
@@ -281,6 +407,7 @@ canvas.addEventListener('pointermove', e => {
     gridOffset = { x: p.x - gridDrag.px, y: p.y - gridDrag.py };
     return;
   }
+  if (boxDrag) { boxDrag.b = pos(e); return; }
   if (!current) return;
   if (current.type === 'scrubbing') {
     // fingertræk/musetræk hen over videoen = spol (8 px pr. frame)
@@ -299,6 +426,25 @@ canvas.addEventListener('pointermove', e => {
   if (current.type === 'line') current.b = pos(e);
 });
 window.addEventListener('pointerup', () => {
+  if (boxDrag) {
+    const m = 0.15;   // 15% luft-margin hele vejen rundt
+    const x = Math.min(boxDrag.a.x, boxDrag.b.x), y = Math.min(boxDrag.a.y, boxDrag.b.y);
+    const w = Math.abs(boxDrag.b.x - boxDrag.a.x), h = Math.abs(boxDrag.b.y - boxDrag.a.y);
+    if (w > 40 && h > 40) {
+      poseBox = {
+        x: Math.max(0, Math.round(x - w * m)),
+        y: Math.max(0, Math.round(y - h * m)),
+        w: Math.round(Math.min(canvas.width - Math.max(0, x - w*m), w * (1 + 2*m))),
+        h: Math.round(Math.min(canvas.height - Math.max(0, y - h*m), h * (1 + 2*m))),
+      };
+      awaitBox = false; say('');
+      const r = boxResolve; boxResolve = null; boxDrag = null;
+      if (r) r(poseBox);
+      return;
+    }
+    boxDrag = null;
+    return;
+  }
   gridDrag = null;
   if (current && current.type === 'scrubbing') {
     if (!current.moved) togglePlay();      // tap uden træk = play/pause
@@ -386,9 +532,14 @@ function drawStroke(s) {
     const side = left
       ? { sh:11, el:13, wr:15, hip:23, knee:25, ank:27, foot:31 }
       : { sh:12, el:14, wr:16, hip:24, knee:26, ank:28, foot:32 };
-    const LINKS = [[side.sh, side.el], [side.el, side.wr],
-                   [side.sh, side.hip], [side.hip, side.knee],
+    // Armen tegnes KUN når modellen tydeligt ser den - bag skiven gætter den
+    // bare (og i squat/DL er armen alligevel låst på stangen og irrelevant)
+    const LINKS = [[side.sh, side.hip], [side.hip, side.knee],
                    [side.knee, side.ank], [side.ank, side.foot]];
+    if ((lm[side.el].visibility || 0) > 0.65 &&
+        (lm[side.wr].visibility || 0) > 0.65) {
+      LINKS.push([side.sh, side.el], [side.el, side.wr]);
+    }
     ctx.save();
     ctx.strokeStyle = 'rgba(0,212,255,0.9)';
     ctx.lineWidth = Math.max(3, canvas.width / 450);
@@ -396,7 +547,7 @@ function drawStroke(s) {
       const A = pt(a), B = pt(b);
       ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.stroke();
     });
-    Object.values(side).forEach(i => {
+    [...new Set(LINKS.flat())].forEach(i => {
       const p = pt(i);
       ctx.fillStyle = '#00d4ff';
       ctx.beginPath(); ctx.arc(p.x, p.y, ctx.lineWidth * 1.4, 0, 7); ctx.fill();
@@ -456,8 +607,8 @@ function paintTrim() {
   const a = trimStart / video.duration * 100;
   const b = trimEndEff() / video.duration * 100;
   scrub.style.background = (trimStart > 0 || trimEnd !== Infinity)
-    ? `linear-gradient(to right, #333 ${a}%, rgba(230,57,70,.6) ${a}%,
-       rgba(230,57,70,.6) ${b}%, #333 ${b}%)`
+    ? `linear-gradient(to right, #3a362c ${a}%, rgba(200,146,58,.55) ${a}%,
+       rgba(200,146,58,.55) ${b}%, #3a362c ${b}%)`
     : '';
 }
 
@@ -469,19 +620,55 @@ scrub.addEventListener('input', () => {
   if (!video.duration) return;
   scrubbing = true;
   video.pause();
-  playBtn.textContent = '▶ Afspil (mellemrum)';
+  playBtn.textContent = playLabel(false);
   video.currentTime = scrub.value / 10000 * video.duration;
 });
 scrub.addEventListener('change', () => scrubbing = false);
 
+// Trækbare klip-håndtag på tidslinjen (mobil)
+const hIn = document.getElementById('hIn');
+const hOut = document.getElementById('hOut');
+function positionHandles() {
+  if (hIn.hidden || !video.duration) return;
+  const left = scrub.offsetLeft, w = scrub.offsetWidth;
+  hIn.style.left = (left + trimStart / video.duration * w - 13) + 'px';
+  hOut.style.left = (left + trimEndEff() / video.duration * w - 13) + 'px';
+}
+function handleDrag(handle, isStart) {
+  handle.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    handle.setPointerCapture(e.pointerId);
+    const move = ev => {
+      const r = scrub.getBoundingClientRect();
+      const pct = Math.max(0, Math.min(1, (ev.clientX - r.left) / r.width));
+      const t = pct * video.duration;
+      if (isStart) trimStart = Math.min(t, trimEndEff() - 0.2);
+      else trimEnd = Math.max(t, trimStart + 0.2);
+      video.pause();
+      video.currentTime = t;               // vis frame mens man trækker
+      playBtn.textContent = playLabel(false);
+      paintTrim();
+    };
+    const up = () => {
+      handle.removeEventListener('pointermove', move);
+      handle.removeEventListener('pointerup', up);
+    };
+    handle.addEventListener('pointermove', move);
+    handle.addEventListener('pointerup', up);
+  });
+}
+handleDrag(hIn, true);
+handleDrag(hOut, false);
+
 function updateTimeline() {
   if (!video.duration) return;
+  positionHandles();
   if (!video.paused && video.currentTime >= trimEndEff()) {   // klip-slut
     if (looping) {
       video.currentTime = trimStart;                          // 🔁 forfra
     } else {
       video.pause();
-      playBtn.textContent = '▶ Afspil (mellemrum)';
+      playBtn.textContent = playLabel(false);
     }
   }
   if (!scrubbing) scrub.value = Math.round(video.currentTime / video.duration * 10000);
@@ -558,7 +745,36 @@ function render() {
     ctx.fillStyle = colorInput.value;
     ctx.beginPath(); ctx.arc(p.x, p.y, 6, 0, 7); ctx.fill();
   });
+  if (boxDrag) {                     // preview af atlet-firkanten
+    ctx.save();
+    ctx.strokeStyle = '#c8923a'; ctx.setLineDash([8, 6]);
+    ctx.lineWidth = Math.max(2, canvas.width / 500);
+    ctx.strokeRect(Math.min(boxDrag.a.x, boxDrag.b.x),
+                   Math.min(boxDrag.a.y, boxDrag.b.y),
+                   Math.abs(boxDrag.b.x - boxDrag.a.x),
+                   Math.abs(boxDrag.b.y - boxDrag.a.y));
+    ctx.restore();
+  }
   drawVelPanel();
+  // Stor tydelig play-knap midt på videoen (atlet-version, når der er pause -
+  // men ikke under 🎯-guiden, hvor man skal trykke på skiven)
+  if (SLIM && video.videoWidth && video.paused && !current &&
+      !wizard && !awaitBarClick && !awaitCalib && !analyzing) {
+    const cx = canvas.width / 2, cy = canvas.height / 2;
+    const r = Math.min(canvas.width, canvas.height) * 0.11;
+    ctx.save();
+    ctx.fillStyle = 'rgba(20,20,16,0.72)';
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.fill();
+    ctx.strokeStyle = '#c8923a'; ctx.lineWidth = Math.max(2, r * 0.07);
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.stroke();
+    ctx.fillStyle = '#c8923a';
+    ctx.beginPath();
+    ctx.moveTo(cx - r * 0.30, cy - r * 0.48);
+    ctx.lineTo(cx - r * 0.30, cy + r * 0.48);
+    ctx.lineTo(cx + r * 0.55, cy);
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
   updateTimeline();
   requestAnimationFrame(render);
 }
@@ -668,12 +884,8 @@ async function startBarTracking(p0) {
     await seekTo(video.currentTime + FRAME);
     if (poseHook && poseLandmarker) {
       // kun hvert 2. frame (dobbelt fart) - hullerne udfyldes i smoothPose
-      if (poseHook.frames.length % 2 === 0) {
-        const res = poseLandmarker.detectForVideo(video, performance.now());
-        poseHook.frames.push((res.landmarks && res.landmarks[0]) || null);
-      } else {
-        poseHook.frames.push(null);
-      }
+      poseHook.frames.push(
+        poseHook.frames.length % 2 === 0 ? detectMapped() : null);
     }
     octx.drawImage(video, 0, 0, ocan.width, ocan.height);
     // søg omkring FORUDSAGT position (position + hastighed)
@@ -734,7 +946,10 @@ async function startBarTracking(p0) {
     }
     const pct = Math.round(video.currentTime / video.duration * 100);
     barBtn.textContent = `⏹ Stop sporing (${pct}%)`;
-    if (analyzing) allBtn.textContent = `⏹ Stop analyse (${pct}%)`;
+    if (analyzing) {
+      if (!ATHLETE) allBtn.textContent = `⏹ Stop analyse (${pct}%)`;
+      if (SLIM) say(`Analyserer stangbanen · ${pct}%`);
+    }
   }
   tracking = false;
   barBtn.textContent = '🎯 Stangbane';
@@ -746,6 +961,37 @@ async function startBarTracking(p0) {
 // ---------- Skelet (MediaPipe pose - gratis, lokal) ----------
 const poseBtn = document.getElementById('poseBtn');
 let posing = false, poseLandmarker = null;
+// ROI-beskæring: skelettet analyserer kun udsnittet omkring atleten (langt
+// bedre præcision, når atleten er lille i billedet - standardtrick i sport)
+let awaitBox = false, boxDrag = null, poseBox = null, boxResolve = null;
+const ccan = document.createElement('canvas');
+const cctx = ccan.getContext('2d');
+
+function getAthleteBox() {
+  return new Promise(res => {
+    awaitBox = true; boxResolve = res;
+    say('Træk en firkant rundt om HELE atleten (med lidt luft)');
+  });
+}
+
+function detectMapped() {
+  let src = video;
+  if (poseBox) {
+    ccan.width = poseBox.w; ccan.height = poseBox.h;
+    cctx.drawImage(video, poseBox.x, poseBox.y, poseBox.w, poseBox.h,
+                   0, 0, poseBox.w, poseBox.h);
+    src = ccan;
+  }
+  const res = poseLandmarker.detectForVideo(src, performance.now());
+  let lm = (res.landmarks && res.landmarks[0]) || null;
+  if (lm && poseBox) {
+    lm = lm.map(q => ({
+      x: (poseBox.x + q.x * poseBox.w) / canvas.width,
+      y: (poseBox.y + q.y * poseBox.h) / canvas.height,
+      visibility: q.visibility }));
+  }
+  return lm;
+}
 
 async function loadPose() {
   if (poseLandmarker) return;
@@ -774,9 +1020,9 @@ poseBtn.onclick = async () => {
   const startT = video.currentTime;
   const pose = { type:'pose', frames: [], startFrame: Math.round(startT * 30) };
   strokes.push(pose);
+  await getAthleteBox();
   while (posing && video.currentTime + FRAME < trimEndEff()) {
-    const res = poseLandmarker.detectForVideo(video, performance.now());
-    pose.frames.push((res.landmarks && res.landmarks[0]) || null);
+    pose.frames.push(detectMapped());
     poseBtn.textContent =
       `⏹ Stop skelet (${Math.round(video.currentTime / video.duration * 100)}%)`;
     await seekTo(video.currentTime + FRAME);
@@ -889,16 +1135,20 @@ allBtn.onclick = async () => {
   if (!video.src) { alert('Åbn en video først'); return; }
   video.pause();
   wizard = { step: 0, pts: [] };
-  allBtn.textContent = '1/3: klik skivens TOP';
+  if (!ATHLETE) allBtn.textContent = '1/3: klik skivens TOP';
+  say('Spol til lige før løftet starter · 1/3 · Tryk på skivens TOP');
   allBtn.classList.add('active');
 };
 
 function wizardClick(p) {
   wizard.pts.push(p);
   wizard.step++;
-  if (wizard.step === 1) allBtn.textContent = '2/3: klik skivens BUND';
-  if (wizard.step === 2) allBtn.textContent = '3/3: klik skivens MIDTE';
+  if (wizard.step === 1) { if (!ATHLETE) allBtn.textContent = '2/3: klik skivens BUND';
+                           say('2/3 · Tryk på skivens BUND'); }
+  if (wizard.step === 2) { if (!ATHLETE) allBtn.textContent = '3/3: klik skivens MIDTE';
+                           say('3/3 · Tryk på skivens MIDTE'); }
   if (wizard.step === 3) {
+    say('');
     const [top, bund, midte] = wizard.pts;
     cmPerPx = 45 / Math.hypot(top.x - bund.x, top.y - bund.y);
     calibBtn.textContent = '📏 Kalibreret ✓';
@@ -912,6 +1162,7 @@ async function runFullAnalysis(barPt) {
   allBtn.textContent = '⏳ Forbereder...';
   let withPose = document.getElementById('withPoseChk').checked;
   if (withPose) { try { await loadPose(); } catch { withPose = false; } }
+  if (withPose) { analyzing = false; await getAthleteBox(); analyzing = true; }
   if (withPose) strokes = strokes.filter(s => s.type !== 'pose');
   const startT = video.currentTime;
   const startFrame = Math.round(startT * 30);
@@ -927,8 +1178,9 @@ async function runFullAnalysis(barPt) {
     if (barPath) snapWristsToBar(pose, barPath);
   }
   analyzing = false;
-  allBtn.textContent = '⚡ Analysér løft';
+  allBtn.textContent = ATHLETE ? '◎' : '⚡ Analysér løft';
   allBtn.classList.remove('active');
+  say('');
   // tilbage til normal afspilningshastighed efter analyse
   document.getElementById('speed').value = '1';
   video.playbackRate = 1;
@@ -1116,6 +1368,11 @@ aiBtn.onclick = async () => {
             (bias ? `Coachens kendte tendens for atleten: ${bias}\n` : '') + metrics +
             (findings.length ? `\n\nFÆRDIGE FUND (regelbaseret, stol på disse):\n` +
              findings.join('\n') : '');
+  if (COACHWEB) {                 // online: vis fundene direkte, uden LLM
+    aiPanel.hidden = false;
+    aiText.textContent = metrics;
+    return;
+  }
   aiPanel.hidden = false;
   aiText.textContent = '⏳ Din lokale model tænker (normalt 5-20 sek)...';
   aiBtn.disabled = true;
@@ -1268,16 +1525,83 @@ function stopRec() {
 
 // ---------- To versioner, én fil ----------
 // Desktop (file://) eller ?coach=1 = FULD version (AI, skelet, gem, optag).
-// Online i appen = SLANK version: video, frame-spoling, klip, tegning, stangbane+fart.
-const FULL_MODE = location.protocol === 'file:' ||
-                  new URLSearchParams(location.search).has('coach');
-if (!FULL_MODE) {
+// Online i appen = SLANK mobil-version: se, spol, loop, stangbane, simpel pen.
+const banner = document.getElementById('banner');
+function say(txt) {
+  banner.textContent = txt;
+  banner.hidden = !txt;
+}
+if (SLIM) {
+  document.body.classList.add('slim');
+  document.getElementById('hIn').hidden = false;
+  document.getElementById('hOut').hidden = false;
+  const openSmall = document.getElementById('openSmall');
+  openSmall.hidden = false;
+  openSmall.onclick = () => document.getElementById('fileInput').click();
+  dropHint.textContent = '📂 Tryk her og vælg din løftevideo';
+  dropHint.onclick = () => document.getElementById('fileInput').click();
+  playBtn.textContent = '▶';
+  // ⌄ = minimér alle kontroller (zen), ⌃ = hent dem tilbage
+  const zenBtn = document.createElement('button');
+  zenBtn.id = 'zenBtn';
+  zenBtn.textContent = '⌄';
+  zenBtn.onclick = () => {
+    const zen = document.body.classList.toggle('zen');
+    zenBtn.textContent = zen ? '⌃' : '⌄';
+  };
+  document.body.appendChild(zenBtn);
+}
+if (COACHWEB) {
+  document.body.classList.add('coachweb');
+  // alt er tilgængeligt undtagen det, der er dubleret af det nye layout
+  ['trimInBtn', 'trimOutBtn', 'backBtn', 'fwdBtn', 'openBtn'].forEach(id =>
+    document.getElementById(id).style.display = 'none');
+  // online kan AI'en ikke nås - knappen viser i stedet de regelbaserede fund
+  aiBtn.textContent = '≡ Fund';
+  // sekundære værktøjer flyttes til en sammenklappelig "Mere"-bakke,
+  // så bundbjælken kun fylder ÉN række
+  const moreBar = document.createElement('div');
+  moreBar.id = 'moreBar';
+  moreBar.hidden = true;
+  document.body.appendChild(moreBar);
+  ['scrubToolBtn', 'lineBtn', 'angleBtn', 'eraseBtn', 'color', 'clearBtn',
+   'withPoseChk', 'athleteSel', 'liftSel', 'loadInput', 'biasInput',
+   'aiBtn', 'saveBtn', 'recTime', 'downloadLink'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) moreBar.appendChild(el.closest('label') || el);
+  });
+  const moreBtn = document.createElement('button');
+  moreBtn.textContent = '⋯ Mere';
+  moreBtn.onclick = () => {
+    moreBar.hidden = !moreBar.hidden;
+    moreBtn.classList.toggle('active', !moreBar.hidden);
+  };
+  document.querySelector('footer').appendChild(moreBtn);
+}
+if (ATHLETE) {
+  document.body.classList.add('athlete');
+  // skjul ALT undtagen: play, bane(🎯), pen, fortryd, loop
   ['poseBtn', 'aiBtn', 'saveBtn', 'recordBtn', 'athleteSel', 'liftSel',
-   'loadInput', 'biasInput', 'withPoseChk'].forEach(id => {
+   'loadInput', 'biasInput', 'withPoseChk', 'speed', 'backBtn', 'fwdBtn',
+   'gridBtn', 'openBtn', 'scrubToolBtn', 'lineBtn', 'angleBtn', 'eraseBtn',
+   'clearBtn', 'color', 'barBtn', 'calibBtn', 'trimInBtn', 'trimOutBtn',
+   'trimResetBtn', 'downloadLink', 'recTime'].forEach(id => {
     const el = document.getElementById(id);
     if (el) (el.closest('label') || el).style.display = 'none';
   });
-  document.getElementById('scrubToolBtn').click();  // atleter starter i spole-tilstand
+  allBtn.textContent = '◎';
+  document.getElementById('penBtn').textContent = '✎︎';
+  document.getElementById('undoBtn').textContent = '↺';
+  document.getElementById('loopBtn').textContent = '⟲';
+  playBtn.textContent = '▶︎';
+  document.getElementById('timeLabel').style.display = 'none';
+  // ✏️ er en TÆND/SLUK for tegning - ellers er fingeren spole-gestus
+  tool = 'scrub';
+  document.getElementById('penBtn').classList.remove('active');
+  document.getElementById('penBtn').onclick = e => {
+    tool = (tool === 'pen') ? 'scrub' : 'pen';
+    e.target.classList.toggle('active', tool === 'pen');
+  };
 }
 
 function saveRec(mime, mic) {
@@ -1289,31 +1613,6 @@ function saveRec(mime, mic) {
   downloadLink.download = `feedback-${d}.${ext}`;
   downloadLink.textContent = `💾 Hent færdig video (.${ext})`;
   downloadLink.hidden = false;
-}
-
-// ---------- Atlet-mode: ?mode=athlete ----------
-// Forenklet visning: KUN stangbane + hastighed + frame-by-frame. Ingen AI/gem/tegn.
-// Coach åbner uden parameter og får det fulde værktøj.
-if (new URLSearchParams(location.search).get('mode') === 'athlete') {
-  document.body.classList.add('athlete-mode');
-  const h1 = document.querySelector('h1');
-  if (h1) h1.textContent = '🎥 Analysér dit løft';
-  // Skjul alt coach-only (AI, gem, optag, tegneværktøjer, vælgere)
-  ['gridBtn','trimInBtn','trimOutBtn','trimResetBtn','penBtn','lineBtn','angleBtn',
-   'eraseBtn','allBtn','poseBtn','color','undoBtn','clearBtn','athleteSel','liftSel',
-   'loadInput','biasInput','aiBtn','saveBtn','recordBtn','recTime','downloadLink']
-    .forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
-  const pose = document.getElementById('withPoseChk');
-  if (pose && pose.closest('label')) pose.closest('label').style.display = 'none';
-  // Kort trin-guide så det er nemt at bruge
-  const guide = document.createElement('div');
-  guide.style.cssText = 'padding:8px 16px;font-size:14px;color:#c8923a;' +
-    'background:rgba(200,146,58,.08);border-bottom:1px solid rgba(200,146,58,.2)';
-  guide.innerHTML = '<b>Sådan måler du stanghastighed:</b> ' +
-    '1) 📂 Åbn din video &nbsp;→&nbsp; 2) 📏 Kalibrér (klik skivens top + bund) ' +
-    '&nbsp;→&nbsp; 3) 🎯 Stangbane (klik skivens midte). ' +
-    'Brug ⏪ ⏩ til at spole billede-for-billede.';
-  document.querySelector('header').insertAdjacentElement('afterend', guide);
 }
 </script>
 </body>
