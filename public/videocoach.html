@@ -90,6 +90,7 @@
   body.athlete #penBtn::after  { content:'Tegn'; }
   body.athlete #undoBtn::after { content:'Fortryd'; }
   body.athlete #loopBtn::after { content:'Loop'; }
+  body.athlete #ghostBtn::after { content:'Ghost'; }
   body.athlete footer button.active::after { color:var(--accent); }
   /* coach online: glas-toplinje + ombrydelig bundbjælke med alle værktøjer */
   body.coachweb header { display:flex; position:fixed; top:0; left:0; right:0;
@@ -174,6 +175,7 @@
 <footer>
   <button id="scrubToolBtn" class="tool">✋ Spol</button>
   <button id="loopBtn">🔁 Loop</button>
+  <button id="ghostBtn">👻 Ghost</button>
   <button id="penBtn" class="tool active">✏️ Tegn</button>
   <button id="lineBtn" class="tool">📏 Linje</button>
   <button id="angleBtn" class="tool">📐 Vinkel (3 klik)</button>
@@ -185,6 +187,11 @@
   <button id="calibBtn">📏 Kalibrér</button>
   <button id="poseBtn">🦴 Skelet</button>
   <input type="color" id="color" value="#e63946" title="Farve">
+  <select id="brushSel" title="Penselstørrelse">
+    <option value="1">Tynd</option>
+    <option value="2" selected>Mellem</option>
+    <option value="3.5">Tyk</option>
+  </select>
   <button id="undoBtn">↩ Fortryd</button>
   <button id="clearBtn">🗑 Ryd tegning</button>
   <span style="flex:1"></span>
@@ -280,6 +287,10 @@ function loadFile(file) {
     video.pause();
     // tving første frame frem - ellers er skærmen SORT på mobil indtil play
     video.currentTime = 0.01;
+    if (typeof ATHLETE !== 'undefined' && ATHLETE) {
+      say('Træk = spol · Tap = afspil · ◎ = din stangbane');
+      setTimeout(() => say(''), 5000);
+    }
     if (!rendering) { rendering = true; requestAnimationFrame(render); }
   };
 }
@@ -318,6 +329,17 @@ document.addEventListener('keydown', e => {
 // ---------- Tegneværktøjer ----------
 const tools = { scrubToolBtn:'scrub', penBtn:'pen', lineBtn:'line',
                 angleBtn:'angle', eraseBtn:'erase' };
+// 👻 rep-ghost: frys ét reps bane som reference og sammenlign de næste
+document.getElementById('ghostBtn').onclick = e => {
+  const p = strokes.find(s => s.type === 'path' && s.reps && s.reps.length > 1);
+  if (!p) { alert('Kør 🎯 bane først (kræver mindst 2 reps)'); return; }
+  p.ghostRep = (p.ghostRep == null) ? 0
+    : (p.ghostRep + 1 >= p.reps.length ? null : p.ghostRep + 1);
+  e.target.textContent = p.ghostRep == null ? (ATHLETE ? '👻' : '👻 Ghost')
+    : (ATHLETE ? `👻${p.ghostRep + 1}` : `👻 Rep ${p.ghostRep + 1}`);
+  e.target.classList.toggle('active', p.ghostRep != null);
+};
+
 // loop: afspil løftet forfra igen og igen (inden for klippet)
 let looping = false;
 document.getElementById('loopBtn').onclick = e => {
@@ -368,6 +390,18 @@ canvas.addEventListener('pointerdown', e => {
     wizardClick(p);
     return;
   }
+  // tryk på en rep-linje i fartpanelet = vælg/fravælg som ghost
+  const hit = !wizard && !awaitBox && !awaitCalib && !awaitBarClick &&
+    velPanelHits.find(h =>
+      p.x >= h.x && p.x <= h.x + h.w && p.y >= h.y && p.y <= h.y + h.h);
+  if (hit) {
+    hit.path.ghostRep = hit.path.ghostRep === hit.idx ? null : hit.idx;
+    const gb = document.getElementById('ghostBtn');
+    gb.textContent = hit.path.ghostRep == null ? (ATHLETE ? '👻' : '👻 Ghost')
+      : (ATHLETE ? `👻${hit.idx + 1}` : `👻 Rep ${hit.idx + 1}`);
+    gb.classList.toggle('active', hit.path.ghostRep != null);
+    return;
+  }
   if (awaitBox) { boxDrag = { a: p, b: p }; return; }
   if (awaitCalib) {
     calibPts.push(p);
@@ -391,8 +425,9 @@ canvas.addEventListener('pointerdown', e => {
     return;
   }
   if (tool === 'erase') { current = { type:'erasing' }; eraseAt(p); return; }
-  if (tool === 'pen') current = { type:'pen', color:colorInput.value, pts:[p] };
-  if (tool === 'line') current = { type:'line', color:colorInput.value, a:p, b:p };
+  const bsize = +document.getElementById('brushSel').value;
+  if (tool === 'pen') current = { type:'pen', color:colorInput.value, size:bsize, pts:[p] };
+  if (tool === 'line') current = { type:'line', color:colorInput.value, size:bsize, a:p, b:p };
   if (tool === 'angle') {
     anglePts.push(p);
     if (anglePts.length === 3) {
@@ -464,7 +499,8 @@ canvas.addEventListener('wheel', e => {
 // ---------- Tegning på canvas ----------
 function drawStroke(s) {
   ctx.strokeStyle = s.color; ctx.fillStyle = s.color;
-  ctx.lineWidth = Math.max(3, canvas.width / 400); ctx.lineCap = 'round';
+  ctx.lineWidth = Math.max(3, canvas.width / 400) * ((s.size || 2) / 2);
+  ctx.lineCap = 'round';
   if (s.type === 'pen') {
     // Udglattet kurve gennem midtpunkter -> ingen kantede streger
     const pts = s.pts;
@@ -487,7 +523,38 @@ function drawStroke(s) {
   if (s.type === 'path') {
     ctx.save();
     ctx.lineWidth = Math.max(4, canvas.width / 300);
-    if (s.vel) {
+    if (s.vel && s.ghostRep != null && s.reps && s.reps[s.ghostRep]) {
+      // GHOST-tilstand: hele banen dæmpet, ghost-rep hvid stiplet,
+      // det rep du står i vises med fartfarver ovenpå
+      const f = Math.max(0, Math.round(video.currentTime * 30) - s.startFrame);
+      ctx.globalAlpha = 0.18;
+      ctx.strokeStyle = '#edeae2';
+      ctx.beginPath();
+      s.pts.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y));
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+      const g = s.reps[s.ghostRep];
+      ctx.setLineDash([10, 7]);
+      ctx.strokeStyle = '#edeae2';
+      ctx.beginPath();
+      for (let i = g.start; i <= g.end && i < s.pts.length; i++)
+        i === g.start ? ctx.moveTo(s.pts[i].x, s.pts[i].y)
+                      : ctx.lineTo(s.pts[i].x, s.pts[i].y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      const cur = s.reps.find(r => f >= r.start && f <= r.end);
+      if (cur && cur !== g) {
+        for (let i = Math.max(1, cur.start); i <= cur.end && i < s.pts.length; i++) {
+          const hue = Math.max(0, Math.min(120, Math.abs(s.vel[i]) / 0.8 * 120));
+          ctx.strokeStyle = `hsl(${hue},90%,55%)`;
+          ctx.beginPath();
+          ctx.moveTo(s.pts[i-1].x, s.pts[i-1].y);
+          ctx.lineTo(s.pts[i].x, s.pts[i].y);
+          ctx.stroke();
+        }
+      }
+      ctx.fillStyle = s.color;
+    } else if (s.vel) {
       // farve efter fart: rød = langsom (sticking point), grøn = hurtig
       for (let i = 1; i < s.pts.length; i++) {
         const hue = Math.max(0, Math.min(120, Math.abs(s.vel[i]) / 0.8 * 120));
@@ -714,7 +781,9 @@ function drawGrid() {
   ctx.restore();
 }
 
+let velPanelHits = [];   // klik-områder for rep-linjerne (ghost-valg)
 function drawVelPanel() {
+  velPanelHits = [];
   const path = strokes.find(s => s.type === 'path' && s.reps && s.reps.length);
   if (!path) return;
   const fs = Math.max(16, canvas.width / 60);
@@ -727,12 +796,18 @@ function drawVelPanel() {
   ctx.font = `bold ${fs}px sans-serif`;
   const w = Math.max(...lines.map(l => ctx.measureText(l).width)) + fs * 1.5;
   ctx.fillStyle = 'rgba(0,0,0,0.6)';
-  ctx.fillRect(10, 10, w, (lines.length + 0.6) * fs * 1.3);
+  ctx.fillRect(10, 10, w, (lines.length + 1.5) * fs * 1.3);
   lines.forEach((l, i) => {
     const loss = i ? 1 - path.reps[i].mcv / path.reps[0].mcv : 0;
     ctx.fillStyle = loss > 0.2 ? '#ff453a' : loss > 0.1 ? '#ffd60a' : '#4cd964';
-    ctx.fillText(l, 10 + fs * 0.7, 10 + (i + 1.1) * fs * 1.3);
+    const ly = 10 + (i + 1.1) * fs * 1.3;
+    ctx.fillText((path.ghostRep === i ? '👻 ' : '') + l, 10 + fs * 0.7, ly);
+    velPanelHits.push({ x: 10, y: ly - fs, w, h: fs * 1.3, idx: i, path });
   });
+  ctx.fillStyle = 'rgba(237,234,226,0.55)';
+  ctx.font = `${fs * 0.62}px 'IBM Plex Mono', monospace`;
+  ctx.fillText('grøn=hurtig · rød=langsom · tryk på rep = sammenlign',
+               10 + fs * 0.7, 10 + (lines.length + 1.1) * fs * 1.3);
   ctx.restore();
 }
 
@@ -841,17 +916,46 @@ function analyzePath(path) {
   // rep-detektion: sammenhængende opadgående bevægelse over 40% af totalvandring
   const range = Math.max(...ys) - Math.min(...ys);
   path.reps = [];
-  let start = null;
+  let start = null, prevEnd = 0;
   for (let i = 1; i <= n; i++) {
     const up = i < n && path.vel[i] > 0.05;
     if (up && start === null) start = i;
     if (!up && start !== null) {
       if (ys[start] - ys[i-1] > range * 0.4) {
         const seg = path.vel.slice(start, i);
-        path.reps.push({ mcv: seg.reduce((a,b) => a+b, 0) / seg.length });
+        // tempo: excentrisk/pause i spannet mellem forrige rep og denne
+        let ecc = 0, pause = 0;
+        for (let j = prevEnd; j < start; j++) {
+          if (path.vel[j] < -0.05) ecc++;
+          else if (Math.abs(path.vel[j]) <= 0.05) pause++;
+        }
+        path.reps.push({
+          start, end: i,
+          mcv: seg.reduce((a,b) => a+b, 0) / seg.length,
+          peak: Math.max(...seg),
+          conS: +((i - start) / 30).toFixed(2),
+          eccS: +(ecc / 30).toFixed(2),
+          pauseS: +(pause / 30).toFixed(2),
+        });
+        prevEnd = i;
       }
       start = null;
     }
+  }
+  // bane-effektivitet: lodret vandring / total banelængde (1.0 = perfekt lodret)
+  let plen = 0;
+  for (let i = 1; i < n; i++)
+    plen += Math.hypot(path.pts[i].x - path.pts[i-1].x, ys[i] - ys[i-1]);
+  path.effPct = plen > 0 ? Math.round(range / plen * 100) : null;
+  // hysterese: vandret forskel mellem ned- og op-banen (positionstab)
+  const dx = [], ux = [];
+  path.vel.forEach((v, i) => {
+    if (v < -0.05) dx.push(path.pts[i].x);
+    if (v > 0.05) ux.push(path.pts[i].x);
+  });
+  if (dx.length > 3 && ux.length > 3 && cmPerPx) {
+    const m = a => a.reduce((s, q) => s + q, 0) / a.length;
+    path.hystCm = +(Math.abs(m(ux) - m(dx)) * cmPerPx).toFixed(1);
   }
 }
 
@@ -1134,13 +1238,56 @@ allBtn.onclick = async () => {
   if (analyzing) { analyzing = false; tracking = false; posing = false; return; }
   if (!video.src) { alert('Åbn en video først'); return; }
   video.pause();
-  wizard = { step: 0, pts: [] };
-  if (!ATHLETE) allBtn.textContent = '1/3: klik skivens TOP';
-  say('Spol til lige før løftet starter · 1/3 · Tryk på skivens TOP');
+  ocan.width = canvas.width; ocan.height = canvas.height;
+  wizard = { step: 0, pts: [], auto: true };
+  if (!ATHLETE) allBtn.textContent = 'Klik på skivens MIDTE';
+  say('Spol til lige før løftet starter · Tryk ÉN gang midt på skiven');
   allBtn.classList.add('active');
 };
 
+// AUTO-KALIBRERING: find skivens kant ud fra ét klik i centrum.
+// Scanner udad langs 16 retninger efter kontrast-spring; median-radius = skiven.
+function autoCalib(center) {
+  octx.drawImage(video, 0, 0, ocan.width, ocan.height);
+  const maxR = Math.min(canvas.width, canvas.height) * 0.45;
+  const img = octx.getImageData(0, 0, ocan.width, ocan.height).data;
+  const g = (x, y) => {
+    const i = ((y|0) * ocan.width + (x|0)) * 4;
+    return img[i] * .3 + img[i+1] * .59 + img[i+2] * .11;
+  };
+  const radii = [];
+  for (let a = 0; a < 16; a++) {
+    const dx = Math.cos(a * Math.PI / 8), dy = Math.sin(a * Math.PI / 8);
+    let prev = g(center.x, center.y), best = 0, bestJump = 0;
+    for (let r = 8; r < maxR; r += 2) {
+      const v = g(center.x + dx * r, center.y + dy * r);
+      const jump = Math.abs(v - prev);
+      if (jump > bestJump) { bestJump = jump; best = r; }
+      prev = v;
+    }
+    if (bestJump > 28) radii.push(best);
+  }
+  if (radii.length < 6) return null;          // for usikkert -> manuel fallback
+  radii.sort((x, y) => x - y);
+  return 45 / (2 * radii[radii.length >> 1]); // cm pr. px
+}
+
 function wizardClick(p) {
+  if (wizard.auto) {                    // ét klik: auto-find skivens kant
+    const scale = autoCalib(p);
+    if (scale) {
+      cmPerPx = scale;
+      calibBtn.textContent = '📏 Auto-kalibreret ✓';
+      wizard = null; say('');
+      runFullAnalysis(p);
+      return;
+    }
+    // kant ikke fundet -> fald tilbage til manuel 3-kliks-guide
+    wizard.auto = false; wizard.step = 0; wizard.pts = [];
+    say('Kunne ikke finde skivens kant · 1/3 · Tryk på skivens TOP');
+    if (!ATHLETE) allBtn.textContent = '1/3: klik skivens TOP';
+    return;
+  }
   wizard.pts.push(p);
   wizard.step++;
   if (wizard.step === 1) { if (!ATHLETE) allBtn.textContent = '2/3: klik skivens BUND';
@@ -1209,8 +1356,17 @@ function collectMetrics() {
   if (path.reps && path.reps.length) {
     path.reps.forEach((r, i) => {
       const loss = i ? ` (fartfald ${Math.round((1 - r.mcv/path.reps[0].mcv)*100)}%)` : '';
-      m.push(`Rep ${i+1}: gennemsnitsfart ${r.mcv.toFixed(2)} m/s${loss}`);
+      const tempo = r.conS ? ` · tempo ${r.eccS}s ned/${r.pauseS}s pause/${r.conS}s op`
+                           + ` · peak ${r.peak.toFixed(2)} m/s` : '';
+      m.push(`Rep ${i+1}: snitfart ${r.mcv.toFixed(2)} m/s${loss}${tempo}`);
     });
+    if (path.effPct != null)
+      m.push(`Bane-effektivitet: ${path.effPct}% (lodret vandring/banelængde)`);
+    if (path.hystCm != null)
+      m.push(`Hysterese ned/op: ${path.hystCm} cm vandret forskel mellem ` +
+             `nedtur og optur`);
+    lastVals.effPct = path.effPct;
+    lastVals.hystCm = path.hystCm;
     lastVals.repCount = path.reps.length;
     lastVals.lossPct = path.reps.length > 1 ? Math.round(
       (1 - path.reps[path.reps.length-1].mcv / path.reps[0].mcv) * 100) : null;
@@ -1273,6 +1429,22 @@ function collectMetrics() {
         m.push(`Ved sticking point (2D-estimat, vejledende): ` +
                `knævinkel ~${ang(lm[hip],lm[knee],lm[ank])}°, ` +
                `hoftevinkel ~${ang(lm[sh],lm[hip],lm[knee])}°`);
+        // FUSION: hofte-før-stang i første ~0.2s af første optur
+        const rep0 = path.reps && path.reps[0];
+        if (rep0 && rep0.start != null) {
+          const f0 = rep0.start;
+          const f1 = Math.min(f0 + 6, pose.frames.length - 1, path.pts.length - 1);
+          const l0 = pose.frames[f0], l1 = pose.frames[f1];
+          if (l0 && l1 && f1 > f0) {
+            const hipRise = (l0[hip].y - l1[hip].y) * canvas.height;
+            const barRise = path.pts[f0].y - path.pts[f1].y;
+            if (barRise > 2) {
+              lastVals.hipRatio = +(hipRise / barRise).toFixed(2);
+              m.push(`Hofte-før-stang (første 0.2s af opturen): hoften stiger ` +
+                     `${lastVals.hipRatio}x stangens løft (≈1.0 = synkront)`);
+            }
+          }
+        }
       }
     }
   }
@@ -1348,6 +1520,18 @@ function evaluateFindings(lift, v) {
     f.push(v.lossPct < 10 ? `OK: fartfald over sættet ${v.lossPct}% - god friskhed`
       : v.lossPct <= 20 ? `OBS: fartfald over sættet ${v.lossPct}% - moderat udtrætning`
       : `FLAG: fartfald over sættet ${v.lossPct}% - over klassisk VBT-stopgrænse (20%)`);
+  }
+  if (v.effPct != null && !bp) {
+    f.push(v.effPct >= 90
+      ? `OK: bane-effektivitet ${v.effPct}% - stangen går den korte vej`
+      : `FLAG: bane-effektivitet kun ${v.effPct}% (grænse ~90%) - meget vandret omvej`);
+  }
+  if (v.hystCm != null && !bp && v.hystCm > 4)
+    f.push(`FLAG: ${v.hystCm} cm forskel mellem ned- og opbane - positionen ændrer sig undervejs`);
+  if (sq && v.hipRatio != null) {
+    f.push(v.hipRatio <= 1.4
+      ? `OK: hofte og stang rejser sig synkront ud af hullet (${v.hipRatio}x)`
+      : `FLAG: hoften stiger ${v.hipRatio}x hurtigere end stangen ud af hullet - good morning-mønster`);
   }
   if (sumo && v.dipPct != null && v.stickPct != null && v.stickPct < 20)
     f.push('NOTE: lav fart nær gulvet er FORVENTET i sumo - ikke et fund i sig selv');
@@ -1454,6 +1638,14 @@ saveBtn.onclick = async () => {
     dip_pct: lastVals.dipPct ?? null,
     drift_cm: lastVals.driftCm != null ? +lastVals.driftCm.toFixed(1) : null,
     reps: path && path.reps ? path.reps.map(r => +r.mcv.toFixed(3)) : null,
+    extra: {   // individuelle baseline-metrikker (median/MAD beregnes af agenten)
+      hip_ratio: lastVals.hipRatio ?? null,
+      eff_pct: lastVals.effPct ?? null,
+      hyst_cm: lastVals.hystCm ?? null,
+      tempo: path && path.reps ? path.reps.map(r =>
+        ({ ecc: r.eccS, pause: r.pauseS, con: r.conS, peak: +r.peak.toFixed(2) }))
+        : null,
+    },
     findings: evaluateFindings(lift, lastVals),
     ai_text: aiPanel.hidden ? null : aiText.textContent,
     analyzed_at: new Date().toISOString(),
@@ -1584,7 +1776,7 @@ if (ATHLETE) {
   ['poseBtn', 'aiBtn', 'saveBtn', 'recordBtn', 'athleteSel', 'liftSel',
    'loadInput', 'biasInput', 'withPoseChk', 'speed', 'backBtn', 'fwdBtn',
    'gridBtn', 'openBtn', 'scrubToolBtn', 'lineBtn', 'angleBtn', 'eraseBtn',
-   'clearBtn', 'color', 'barBtn', 'calibBtn', 'trimInBtn', 'trimOutBtn',
+   'clearBtn', 'color', 'brushSel', 'barBtn', 'calibBtn', 'trimInBtn', 'trimOutBtn',
    'trimResetBtn', 'downloadLink', 'recTime'].forEach(id => {
     const el = document.getElementById(id);
     if (el) (el.closest('label') || el).style.display = 'none';
@@ -1593,6 +1785,7 @@ if (ATHLETE) {
   document.getElementById('penBtn').textContent = '✎︎';
   document.getElementById('undoBtn').textContent = '↺';
   document.getElementById('loopBtn').textContent = '⟲';
+  document.getElementById('ghostBtn').textContent = '👻';
   playBtn.textContent = '▶︎';
   document.getElementById('timeLabel').style.display = 'none';
   // ✏️ er en TÆND/SLUK for tegning - ellers er fingeren spole-gestus
