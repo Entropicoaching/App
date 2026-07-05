@@ -1475,6 +1475,11 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [prToast, setPrToast] = useState(null)
   const [prToastFading, setPrToastFading] = useState(false)
   const [setConfirm, setSetConfirm] = useState({})
+  // Serialiseret skrivning pr. sæt-nøgle (exerciseId_setNumber). Hurtige gentagne
+  // tryk på samme sæt (fx en vægtkorrektion mens den forrige skrivning stadig
+  // kører) må hverken lave dubletter eller tabe den nyeste værdi: første skrivning
+  // INSERT'er og fanger rækkens rigtige id, resten UPDATE'er samme række.
+  const setWriteRef = useRef({}) // key -> { realId, chain }
   // Fortryd-toast (sletning) + beskeder auto-scroll
   const [undoToast, setUndoToast] = useState(null)
   const undoTimerRef = useRef(null)
@@ -1991,6 +1996,32 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     setExerciseHistory(history)
   }
 
+  // Skriver ét sæt til databasen, serialiseret pr. nøgle. Fordi skridtene kædes
+  // (chain.then), ser en efterfølgende skrivning altid det rigtige id fra den
+  // foregående INSERT → aldrig dubletter, og seneste værdi vinder. Returnerer
+  // { data, error } fra det underliggende kald, så kalderen kan rulle tilbage.
+  function persistSetLog(key, exerciseId, setNumber, payload, realExistingId) {
+    const ref = setWriteRef.current[key] || (setWriteRef.current[key] = { realId: null, chain: Promise.resolve() })
+    if (realExistingId) ref.realId = realExistingId
+    const task = ref.chain.then(async () => {
+      if (ref.realId) {
+        const upd = await queueWrite(() => supabase.from('exercise_logs').update(payload).eq('id', ref.realId).select('id'))
+        if (upd.error) return upd                                   // transient fejl → lad kalderen vise fejl/retry (ingen dublet)
+        if (Array.isArray(upd.data) && upd.data.length) return upd  // rækken blev opdateret
+        ref.realId = null                                           // rækken findes ikke mere (fx slettet) → INSERT nedenfor
+      }
+      const res = await queueWrite(() => supabase
+        .from('exercise_logs')
+        .insert({ exercise_id: exerciseId, athlete_id: athlete.id, set_number: setNumber, ...payload })
+        .select('id').single())
+      if (res?.data?.id) ref.realId = res.data.id
+      return res
+    })
+    // Hold kæden i live selv hvis en skrivning fejler/kaster.
+    ref.chain = task.then(() => {}, () => {})
+    return task
+  }
+
   async function logSet(exerciseId, setNumber, totalSets, repsCompleted, plannedRpe) {
     const key = `${exerciseId}_${setNumber}`
     const input = logInputs[key] || {}
@@ -2004,6 +2035,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       rpe_planned: plannedRpe ?? null,
       skipped: false,
     }
+    // Kun en rigtig (bekræftet) række afgør INSERT vs. UPDATE i databasen — en
+    // optimistisk række har ikke et gyldigt db-id at opdatere på.
+    const realExisting = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber && !l._optimistic)
     const existing = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber)
 
     // OPTIMISTISK: vis fluebenet ØJEBLIKKELIGT og skriv i baggrunden. Atleten skal
@@ -2036,15 +2070,19 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       }))
     }
 
-    // Baggrundsskrivning med retry-kø. Ved fejl: vis en diskret fejl og rul den
-    // optimistiske række tilbage, så UI matcher virkeligheden.
-    const { error } = await queueWrite(() => existing
-      ? supabase.from('exercise_logs').update(payload).eq('id', existing.id)
-      : supabase.from('exercise_logs').insert({ exercise_id: exerciseId, athlete_id: athlete.id, set_number: setNumber, ...payload }))
+    // Baggrundsskrivning: serialiseret pr. sæt-nøgle + retry-kø (se persistSetLog).
+    // Ved fejl: vis en diskret fejl og rul den optimistiske ændring tilbage, så
+    // UI matcher virkeligheden.
+    const { error } = await persistSetLog(key, exerciseId, setNumber, payload, realExisting?.id)
     if (error) {
       clearTimeout(fadeTimer)
       setSetConfirm(p => ({ ...p, [key]: 'error' }))
-      if (!existing) setExerciseLogs(prev => prev.filter(l => l.id !== optimisticId))
+      if (realExisting) {
+        // Fortryd den optimistiske opdatering — sæt rækken tilbage til db-værdien.
+        setExerciseLogs(prev => prev.map(l => l.id === realExisting.id ? realExisting : l))
+      } else {
+        setExerciseLogs(prev => prev.filter(l => !(l._optimistic && l.exercise_id === exerciseId && l.set_number === setNumber)))
+      }
       return
     }
     fetchExerciseLogs(athlete.id, currentWeek)
