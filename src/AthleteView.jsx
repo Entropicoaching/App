@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, Fragment } from 'react'
-import { supabase, withRetry } from './supabase'
+import { supabase, withRetry, queueWrite } from './supabase'
 
 const BLOCK_PALETTE = ['#4e8fcf','#c8923a','#6cba6c','#9b6bd4','#cf6b4e','#4ec8b4']
 function blockColor(name) {
@@ -1925,9 +1925,16 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       .select('*')
       .eq('athlete_id', athleteId)
       .in('exercise_id', exerciseIds)
-    setExerciseLogs(data || [])
+    const rows = data || []
+    setExerciseLogs(prev => {
+      // Behold endnu-ikke-bekræftede optimistiske rækker (baggrundsskrivning stadig
+      // i kø), så et flueben ikke blinker væk mens en anden skrivning er undervejs.
+      const pending = prev.filter(l => l._optimistic &&
+        !rows.some(r => r.exercise_id === l.exercise_id && r.set_number === l.set_number))
+      return [...rows, ...pending]
+    })
     const inputs = {}
-    for (const log of (data || [])) {
+    for (const log of rows) {
       inputs[`${log.exercise_id}_${log.set_number}`] = {
         weight: log.weight?.toString() || '',
         note: log.note || '',
@@ -1987,7 +1994,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   async function logSet(exerciseId, setNumber, totalSets, repsCompleted, plannedRpe) {
     const key = `${exerciseId}_${setNumber}`
     const input = logInputs[key] || {}
-    setSetConfirm(p => { const n = { ...p }; delete n[key]; return n })
     const payload = {
       weight: parseFloat(input.weight) || 0,
       reps_completed: parseInt(repsCompleted) || 0,
@@ -1999,26 +2005,28 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       skipped: false,
     }
     const existing = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber)
-    let error
+
+    // OPTIMISTISK: vis fluebenet ØJEBLIKKELIGT og skriv i baggrunden. Atleten skal
+    // aldrig vente på netværket for at se at sættet er registreret — det var netop
+    // ventetiden (op til ~60s på det første kald efter app-åbning) der var buggen.
+    const optimisticId = `optimistic_${key}`
     if (existing) {
-      ;({ error } = await supabase.from('exercise_logs').update(payload).eq('id', existing.id))
+      setExerciseLogs(prev => prev.map(l => l.id === existing.id ? { ...l, ...payload } : l))
     } else {
-      ;({ error } = await supabase.from('exercise_logs').insert({
-        exercise_id: exerciseId,
-        athlete_id: athlete.id,
-        set_number: setNumber,
-        ...payload,
-      }))
-    }
-    if (error) {
-      setSetConfirm(p => ({ ...p, [key]: 'error' }))
-      return
+      setExerciseLogs(prev => [
+        ...prev,
+        { id: optimisticId, exercise_id: exerciseId, athlete_id: athlete.id, set_number: setNumber, ...payload, _optimistic: true },
+      ])
     }
     setSetConfirm(p => ({ ...p, [key]: 'saved' }))
-    setTimeout(() => {
-      setSetConfirm(p => ({ ...p, [key]: 'fading' }))
-      setTimeout(() => setSetConfirm(p => { const n = { ...p }; delete n[key]; return n }), 300)
-    }, 1700)
+    let fadeTimer
+    const scheduleFade = () => {
+      fadeTimer = setTimeout(() => {
+        setSetConfirm(p => ({ ...p, [key]: 'fading' }))
+        setTimeout(() => setSetConfirm(p => { const n = { ...p }; delete n[key]; return n }), 300)
+      }, 1700)
+    }
+    scheduleFade()
     // Auto-fill next set weight if empty
     if (setNumber < totalSets) {
       const nextKey = `${exerciseId}_${setNumber + 1}`
@@ -2026,6 +2034,18 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         ...p,
         [nextKey]: { weight: p[nextKey]?.weight || input.weight, note: p[nextKey]?.note || '' },
       }))
+    }
+
+    // Baggrundsskrivning med retry-kø. Ved fejl: vis en diskret fejl og rul den
+    // optimistiske række tilbage, så UI matcher virkeligheden.
+    const { error } = await queueWrite(() => existing
+      ? supabase.from('exercise_logs').update(payload).eq('id', existing.id)
+      : supabase.from('exercise_logs').insert({ exercise_id: exerciseId, athlete_id: athlete.id, set_number: setNumber, ...payload }))
+    if (error) {
+      clearTimeout(fadeTimer)
+      setSetConfirm(p => ({ ...p, [key]: 'error' }))
+      if (!existing) setExerciseLogs(prev => prev.filter(l => l.id !== optimisticId))
+      return
     }
     fetchExerciseLogs(athlete.id, currentWeek)
 
