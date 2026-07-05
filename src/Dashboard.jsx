@@ -291,6 +291,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [view, setView] = useState('list')
   const [selectedAthlete, setSelectedAthlete] = useState(null)
   const [activeTab, setActiveTab] = useState('hub')
+  const [navMenuOpen, setNavMenuOpen] = useState(false) // "Mere"-menu i sektions-navigationen
   const [editing, setEditing] = useState(null)
   const [showAddModal, setShowAddModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -3099,40 +3100,79 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               </div>
             </div>
 
-            {/* Kompakt ikon-bar — alle sektioner ét tap væk, ingen vandret scroll. */}
+            {/* Sektions-navigation: de sektioner man bruger dagligt står som
+                tydelige TEKST-faner; resten ligger i en "Mere"-menu. Erstatter den
+                gamle ikon-kun-bar, hvor man ikke kunne se hvad hver knap var. */}
             {(() => {
-              const navItems = [{ key: 'hub', label: 'Hjem', icon: ic(<path d="M3 9.5L12 2l9 7.5V21H15v-7H9v7H3V9.5z" />) }, ...HUB_SECTIONS]
-              const activeLabel = navItems.find(n => n.key === activeTab)?.label
+              const navItems = [{ key: 'hub', label: 'Hjem' }, ...HUB_SECTIONS]
+              const EMOJI = { hub: '🏠', oversigt: '📊', kost: '🍽️', program: '🏋️', log: '📓', analyse: '📈', opvarmning: '🔥', stævne: '🏆', noter: '🗒️', beskeder: '💬' }
+              const PRIMARY = ['hub', 'program', 'log', 'beskeder']
+              const primary = PRIMARY.map(k => navItems.find(n => n.key === k)).filter(Boolean)
+              const more = navItems.filter(n => !PRIMARY.includes(n.key))
+              const activeInMore = more.some(n => n.key === activeTab)
+              const activeMoreLabel = more.find(n => n.key === activeTab)?.label
+              const go = (key) => { setActiveTab(key); setEditing(null); setNavMenuOpen(false) }
+              const tabBtn = (active) => ({
+                position: 'relative', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem',
+                fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase',
+                padding: isMobile ? '0.6rem 0.7rem' : '0.65rem 1.1rem', cursor: 'pointer',
+                color: active ? '#c8923a' : '#7a7770', background: 'none', border: 'none',
+                borderBottom: active ? '2px solid #c8923a' : '2px solid transparent',
+                marginBottom: '-1px', whiteSpace: 'nowrap',
+              })
               return (
-                <div style={{ marginBottom: '1.5rem' }}>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: isMobile ? '0' : '0.1rem', justifyContent: isMobile ? 'space-between' : 'flex-start', borderBottom: '1px solid rgba(237,234,226,0.07)' }}>
-                    {navItems.map(n => {
+                <div style={{ marginBottom: '1.5rem', position: 'relative' }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.1rem', borderBottom: '1px solid rgba(237,234,226,0.07)' }}>
+                    {primary.map(n => {
                       const active = activeTab === n.key
                       return (
                         <button
                           key={n.key}
-                          title={n.label}
-                          onClick={() => { setActiveTab(n.key); setEditing(null) }}
-                          style={{
-                            position: 'relative', background: active ? 'rgba(200,146,58,0.12)' : 'none', border: 'none',
-                            borderBottom: active ? '2px solid #c8923a' : '2px solid transparent', marginBottom: '-1px',
-                            color: active ? '#c8923a' : '#7a7770', cursor: 'pointer', padding: isMobile ? '0.5rem 0.3rem' : '0.55rem 0.7rem',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color 0.12s, background 0.12s',
-                          }}
+                          onClick={() => go(n.key)}
+                          style={tabBtn(active)}
                           onMouseEnter={e => { if (!active) e.currentTarget.style.color = '#b8b4a8' }}
                           onMouseLeave={e => { if (!active) e.currentTarget.style.color = '#7a7770' }}
                         >
-                          {n.icon}
+                          <span style={{ marginRight: '0.35rem' }}>{EMOJI[n.key]}</span>{n.label}
                           {n.key === 'beskeder' && unreadCounts[a.id] > 0 && (
-                            <span style={{ position: 'absolute', top: '0.25rem', right: '0.25rem', background: '#c8923a', color: '#141410', borderRadius: '999px', fontSize: '0.45rem', minWidth: '0.85rem', height: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600 }}>{unreadCounts[a.id]}</span>
+                            <span style={{ position: 'absolute', top: '0.15rem', right: '0.05rem', background: '#c8923a', color: '#141410', borderRadius: '999px', fontSize: '0.45rem', minWidth: '0.85rem', height: '0.85rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, padding: '0 0.15rem' }}>{unreadCounts[a.id]}</span>
                           )}
                         </button>
                       )
                     })}
+                    <button
+                      onClick={() => setNavMenuOpen(o => !o)}
+                      style={{ ...tabBtn(activeInMore), display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                      onMouseEnter={e => { if (!activeInMore) e.currentTarget.style.color = '#b8b4a8' }}
+                      onMouseLeave={e => { if (!activeInMore) e.currentTarget.style.color = '#7a7770' }}
+                    >
+                      {activeInMore ? <><span style={{ marginRight: '0.35rem' }}>{EMOJI[activeTab]}</span>{activeMoreLabel}</> : 'Mere'}
+                      <span style={{ fontSize: '0.5rem', transform: navMenuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }}>▾</span>
+                    </button>
                   </div>
-                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginTop: '0.6rem' }}>
-                    {activeLabel}
-                  </div>
+
+                  {navMenuOpen && (
+                    <>
+                      {/* usynligt lag: klik udenfor lukker menuen */}
+                      <div onClick={() => setNavMenuOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 40 }} />
+                      <div style={{ position: 'absolute', right: 0, top: '100%', marginTop: '0.25rem', zIndex: 41, background: '#1c1c18', border: '1px solid rgba(237,234,226,0.13)', boxShadow: '0 10px 30px rgba(0,0,0,0.5)', minWidth: '11rem', padding: '0.3rem 0' }}>
+                        {more.map(n => {
+                          const active = activeTab === n.key
+                          return (
+                            <button
+                              key={n.key}
+                              onClick={() => go(n.key)}
+                              style={{ display: 'block', width: '100%', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0.6rem 1rem', cursor: 'pointer', background: active ? 'rgba(200,146,58,0.1)' : 'none', border: 'none', borderLeft: active ? '2px solid #c8923a' : '2px solid transparent', color: active ? '#c8923a' : '#b8b4a8' }}
+                              onMouseEnter={e => { e.currentTarget.style.color = '#edeae2' }}
+                              onMouseLeave={e => { e.currentTarget.style.color = active ? '#c8923a' : '#b8b4a8' }}
+                            >
+                              <span style={{ display: 'inline-block', width: '1.5rem' }}>{EMOJI[n.key]}</span>{n.label}
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </>
+                  )}
                 </div>
               )
             })()}
