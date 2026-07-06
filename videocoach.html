@@ -150,6 +150,19 @@
     border:1px solid var(--line); }
   body.zen footer, body.zen #scrubRow, body.zen #moreBar,
   body.zen #openSmall, body.zen header { display:none !important; }
+  /* analyse-ark (coach online): glider op fra bunden efter ⚡-analysen */
+  #sheet { position:fixed; left:0; right:0; bottom:0; z-index:30;
+    background:rgba(20,20,16,.96); backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px); border:1px solid var(--line);
+    border-bottom:none; border-radius:20px 20px 0 0; max-height:75vh;
+    overflow:auto; padding:14px 16px calc(16px + env(safe-area-inset-bottom));
+    transform:translateY(105%); transition:transform .25s ease; }
+  #sheet.open { transform:translateY(0); }
+  #sheet h2 { font-size:13px; color:var(--accent); letter-spacing:.12em;
+    text-transform:uppercase; }
+  #sheetMeta { display:flex; flex-wrap:wrap; gap:6px; margin:12px 0; }
+  #sheetMeta select, #sheetMeta input { font-size:12px; padding:8px 10px; }
+  #sheetText { white-space:pre-wrap; font-size:13px; line-height:1.55; }
   #closeBtn { display:none; }
   body.slim #closeBtn { display:flex; align-items:center; justify-content:center;
     position:fixed; top:10px; right:62px; z-index:15; width:44px; height:44px;
@@ -1449,6 +1462,9 @@ async function runFullAnalysis(barPt) {
   // tilbage til normal afspilningshastighed efter analyse
   document.getElementById('speed').value = '1';
   video.playbackRate = 1;
+  // coach online: vis analyse-arket med tal og fund med det samme
+  if (COACHWEB && openSheetFn && strokes.some(s => s.type === 'path' && s.vel))
+    openSheetFn();
 }
 
 let poseHook = null;
@@ -1457,6 +1473,7 @@ let poseHook = null;
 const aiBtn = document.getElementById('aiBtn');
 const aiPanel = document.getElementById('aiPanel');
 const aiText = document.getElementById('aiText');
+let openSheetFn = null;   // sættes af coach-online-layoutet (analyse-arket)
 
 let lastVals = null;   // strukturerede tal til den regelbaserede vurdering
 
@@ -1656,7 +1673,24 @@ function evaluateFindings(lift, v) {
   return f;
 }
 
+// Samlet rapport-tekst (målinger + regelbaserede fund). Bruges af
+// analyse-arket - genberegnes live når atlet/øvelse/kg/tendens ændres.
+function buildReport() {
+  const metrics = collectMetrics();
+  if (!metrics) return null;
+  const ath = document.getElementById('athleteSel').value;
+  const lift = document.getElementById('liftSel').value;
+  const load = document.getElementById('loadInput').value.trim();
+  const bias = document.getElementById('biasInput').value.trim();
+  const findings = lift ? evaluateFindings(lift, lastVals || {}) : [];
+  return `Atlet: ${ath || 'ukendt'}\nØvelse: ${lift || '(vælg øvelse for at få fund)'}\n` +
+    `Belastning: ${load || 'ikke angivet'}\n` +
+    (bias ? `Kendt tendens: ${bias}\n` : '') + metrics +
+    (findings.length ? `\n\nFUND (regelbaseret):\n` + findings.join('\n') : '');
+}
+
 aiBtn.onclick = async () => {
+  if (COACHWEB) { if (openSheetFn) openSheetFn(); return; }
   let metrics = collectMetrics();
   if (!metrics) { alert('Kør ⚡ Analysér løft først'); return; }
   const ath = document.getElementById('athleteSel').value;
@@ -1670,11 +1704,6 @@ aiBtn.onclick = async () => {
             (bias ? `Coachens kendte tendens for atleten: ${bias}\n` : '') + metrics +
             (findings.length ? `\n\nFÆRDIGE FUND (regelbaseret, stol på disse):\n` +
              findings.join('\n') : '');
-  if (COACHWEB) {                 // online: vis fundene direkte, uden LLM
-    aiPanel.hidden = false;
-    aiText.textContent = metrics;
-    return;
-  }
   aiPanel.hidden = false;
   aiText.textContent = '⏳ Din lokale model tænker (normalt 5-20 sek)...';
   aiBtn.disabled = true;
@@ -1733,6 +1762,8 @@ let analysesDir = null;   // huskes for sessionen; vælges én gang
 
 async function getAnalysesDir() {
   if (analysesDir) return analysesDir;
+  if (!window.showDirectoryPicker)        // mobil: intet mappevalg -> download
+    throw new Error('mappevalg ikke muligt her');
   alert('Vælg mappen entropi-agent\\analyses (kun første gang pr. session)');
   analysesDir = await window.showDirectoryPicker({ mode: 'readwrite' });
   return analysesDir;
@@ -1934,6 +1965,42 @@ if (COACHWEB) {
       orig.call(el, e);
     };
   });
+  // ---- analyse-ark: rep-tal + fund + atlet/øvelse/kg + gem, ét sted ----
+  const sheet = document.createElement('div');
+  sheet.id = 'sheet';
+  document.body.appendChild(sheet);
+  const shHead = document.createElement('div');
+  shHead.style.cssText =
+    'display:flex;justify-content:space-between;align-items:center';
+  shHead.innerHTML = '<h2>Analyse & fund</h2>';
+  const shClose = document.createElement('button');
+  shClose.textContent = '✕'; shClose.style.padding = '4px 12px';
+  shClose.onclick = () => sheet.classList.remove('open');
+  shHead.appendChild(shClose);
+  sheet.appendChild(shHead);
+  const shMeta = document.createElement('div');
+  shMeta.id = 'sheetMeta';
+  sheet.appendChild(shMeta);
+  ['athleteSel', 'liftSel', 'loadInput', 'biasInput'].forEach(id =>
+    shMeta.appendChild(document.getElementById(id)));
+  const shText = document.createElement('div');
+  shText.id = 'sheetText';
+  sheet.appendChild(shText);
+  const shSave = document.createElement('div');
+  shSave.style.marginTop = '12px';
+  shSave.appendChild(saveBtn);
+  sheet.appendChild(shSave);
+  openSheetFn = () => {
+    shText.textContent = buildReport() ||
+      'Ingen analyse endnu - kør ⚡ Analysér løft først.';
+    sheet.classList.add('open');
+  };
+  // fund genberegnes live, når coachen retter felterne
+  ['athleteSel', 'liftSel', 'loadInput', 'biasInput'].forEach(id =>
+    document.getElementById(id).addEventListener('change', () => {
+      if (sheet.classList.contains('open'))
+        shText.textContent = buildReport() || '';
+    }));
   layoutBars();
   setTimeout(layoutBars, 400);
 }
