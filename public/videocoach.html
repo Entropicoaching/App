@@ -138,6 +138,12 @@
     border:1px solid var(--line); }
   body.zen footer, body.zen #scrubRow, body.zen #moreBar,
   body.zen #openSmall, body.zen header { display:none !important; }
+  #closeBtn { display:none; }
+  body.slim #closeBtn { display:flex; align-items:center; justify-content:center;
+    position:fixed; top:10px; right:62px; z-index:15; width:44px; height:44px;
+    border-radius:50%; padding:0; font-size:17px;
+    background:rgba(20,20,16,.7); backdrop-filter:blur(12px);
+    border:1px solid var(--line); }
 </style>
 </head>
 <body>
@@ -279,9 +285,19 @@ function loadFile(file) {
   document.getElementById('trimOutBtn').classList.remove('active');
   scrub.style.background = '';
   aiPanel.hidden = true;
+  video.onerror = () => {
+    canvas.hidden = true; dropHint.hidden = false;
+    say('Videoen kan ikke afkodes på denne enhed (typisk iPhone-HEVC på ' +
+        'Android). Optag i "Mest kompatibel"/H.264 og prøv igen.');
+    setTimeout(() => say(''), 9000);
+  };
   video.onloadedmetadata = () => {
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    // MOBIL-FIX: canvas i fuld 4K gør ALT trægt (tegning, touch, sporing).
+    // Nedskaleret canvas mister intet analytisk ved ~1280 px på mobil.
+    const maxSide = SLIM ? 1280 : 1920;
+    vidScale = Math.min(1, maxSide / Math.max(video.videoWidth, video.videoHeight));
+    canvas.width = Math.round(video.videoWidth * vidScale);
+    canvas.height = Math.round(video.videoHeight * vidScale);
     canvas.hidden = false;
     dropHint.hidden = true;
     video.pause();
@@ -310,6 +326,10 @@ function togglePlay() {
 document.getElementById('speed').onchange = e =>
   video.playbackRate = parseFloat(e.target.value);
 const FRAME = 1 / 30;
+// rVFC = analysér frames under AFSPILNING i stedet for seek pr. frame -
+// 10-30x hurtigere på mobil, og med præcise tidsstempler pr. frame
+const HAS_RVFC = 'requestVideoFrameCallback' in HTMLVideoElement.prototype;
+let vidScale = 1;   // canvas-px pr. video-px (nedskalering af store videoer)
 document.getElementById('backBtn').onclick = () => step(-FRAME);
 document.getElementById('fwdBtn').onclick = () => step(FRAME);
 document.getElementById('backS').onclick = () => step(-FRAME);
@@ -401,6 +421,13 @@ canvas.addEventListener('pointerdown', e => {
       : (ATHLETE ? `👻${hit.idx + 1}` : `👻 Rep ${hit.idx + 1}`);
     gb.classList.toggle('active', hit.path.ghostRep != null);
     return;
+  }
+  // den store play-knap midt på videoen skal VIRKE som knap (uanset værktøj)
+  if (SLIM && video.videoWidth && video.paused && !wizard && !awaitBox &&
+      !awaitCalib && !awaitBarClick && !analyzing) {
+    const cx = canvas.width / 2, cy = canvas.height / 2;
+    const r = Math.min(canvas.width, canvas.height) * 0.11;
+    if ((p.x-cx)**2 + (p.y-cy)**2 < r*r) { togglePlay(); return; }
   }
   if (awaitBox) { boxDrag = { a: p, b: p }; return; }
   if (awaitCalib) {
@@ -497,6 +524,17 @@ canvas.addEventListener('wheel', e => {
 }, { passive: false });
 
 // ---------- Tegning på canvas ----------
+// Find sample-index for et tidspunkt. Nye analyser gemmer PRÆCISE tider pr.
+// punkt (times) - gamle antog fast 30 fps og bruger startFrame-fallback.
+function idxAtTime(s, t) {
+  const T = s.times;
+  if (T && T.length) {
+    let lo = 0, hi = T.length - 1;
+    while (lo < hi) { const m = (lo + hi) >> 1; T[m] < t ? lo = m + 1 : hi = m; }
+    return lo;
+  }
+  return Math.round(t * 30) - s.startFrame;
+}
 function drawStroke(s) {
   ctx.strokeStyle = s.color; ctx.fillStyle = s.color;
   ctx.lineWidth = Math.max(3, canvas.width / 400) * ((s.size || 2) / 2);
@@ -526,7 +564,7 @@ function drawStroke(s) {
     if (s.vel && s.ghostRep != null && s.reps && s.reps[s.ghostRep]) {
       // GHOST-tilstand: hele banen dæmpet, ghost-rep hvid stiplet,
       // det rep du står i vises med fartfarver ovenpå
-      const f = Math.max(0, Math.round(video.currentTime * 30) - s.startFrame);
+      const f = Math.max(0, idxAtTime(s, video.currentTime));
       ctx.globalAlpha = 0.18;
       ctx.strokeStyle = '#edeae2';
       ctx.beginPath();
@@ -573,7 +611,7 @@ function drawStroke(s) {
     }
     // prik + aktuel fart ved banens punkt på nuværende tidspunkt
     const f = Math.max(0, Math.min(s.pts.length - 1,
-      Math.round(video.currentTime * 30) - s.startFrame));
+      idxAtTime(s, video.currentTime)));
     const cur = s.pts[f];
     if (cur) {
       ctx.beginPath(); ctx.arc(cur.x, cur.y, ctx.lineWidth * 1.6, 0, 7); ctx.fill();
@@ -589,7 +627,7 @@ function drawStroke(s) {
   }
   if (s.type === 'pose') {
     const f = Math.max(0, Math.min(s.frames.length - 1,
-      Math.round(video.currentTime * 30) - s.startFrame));
+      idxAtTime(s, video.currentTime)));
     const lm = s.frames[f];
     if (!lm) return;
     const pt = i => ({ x: lm[i].x * canvas.width, y: lm[i].y * canvas.height });
@@ -911,8 +949,17 @@ function analyzePath(path) {
     for (let j = Math.max(0, i-2); j <= Math.min(n-1, i+2); j++) { s += y[j]; c++; }
     return s / c;
   });
-  // lodret fart i m/s (+ = opad). 30 fps.
-  path.vel = ys.map((_, i) => i ? (ys[i-1] - ys[i]) * cmPerPx / 100 * 30 : 0);
+  // lodret fart i m/s (+ = opad). Bruger de FAKTISKE frame-tider når de
+  // findes (rVFC) - antagelsen om fast 30 fps gav forkert fart på mobil,
+  // hvor telefoner optager 60/120 fps og afspilningen dropper frames.
+  const t = (path.times && path.times.length === n)
+    ? path.times
+    : ys.map((_, i) => (path.startFrame + i) / 30);
+  path.vel = ys.map((_, i) => {
+    if (!i) return 0;
+    const dt = Math.max(1 / 240, t[i] - t[i-1]);
+    return (ys[i-1] - ys[i]) * cmPerPx / 100 / dt;
+  });
   // rep-detektion: sammenhængende opadgående bevægelse over 40% af totalvandring
   const range = Math.max(...ys) - Math.min(...ys);
   path.reps = [];
@@ -925,17 +972,18 @@ function analyzePath(path) {
         const seg = path.vel.slice(start, i);
         // tempo: excentrisk/pause i spannet mellem forrige rep og denne
         let ecc = 0, pause = 0;
-        for (let j = prevEnd; j < start; j++) {
-          if (path.vel[j] < -0.05) ecc++;
-          else if (Math.abs(path.vel[j]) <= 0.05) pause++;
+        for (let j = Math.max(1, prevEnd); j < start; j++) {
+          const dt = t[j] - t[j-1];
+          if (path.vel[j] < -0.05) ecc += dt;
+          else if (Math.abs(path.vel[j]) <= 0.05) pause += dt;
         }
         path.reps.push({
           start, end: i,
           mcv: seg.reduce((a,b) => a+b, 0) / seg.length,
           peak: Math.max(...seg),
-          conS: +((i - start) / 30).toFixed(2),
-          eccS: +(ecc / 30).toFixed(2),
-          pauseS: +(pause / 30).toFixed(2),
+          conS: +(t[Math.min(i, n-1)] - t[start]).toFixed(2),
+          eccS: +ecc.toFixed(2),
+          pauseS: +pause.toFixed(2),
         });
         prevEnd = i;
       }
@@ -967,15 +1015,17 @@ async function startBarTracking(p0) {
   const P = Math.max(27, Math.round(canvas.width / 32) | 1);  // patch-størrelse
   const R = Math.round(canvas.width / 20);                     // søgeradius
   const startT = video.currentTime;
-  const startFrame = Math.round(startT * 30);
+  const startFrame = Math.round(startT * 30);   // fallback-info til gamle baner
   // Klik midt i en eksisterende bane = RET den herfra (klip og fortsæt)
-  let path = strokes.findLast ? strokes.findLast(s => s.type === 'path'
-    && startFrame >= s.startFrame && startFrame < s.startFrame + s.pts.length) : null;
+  let path = strokes.findLast ? strokes.findLast(s => s.type === 'path' && s.times
+    && startT >= s.times[0] && startT < s.times[s.times.length - 1]) : null;
   if (path) {
-    path.pts = path.pts.slice(0, startFrame - path.startFrame);
-    path.pts.push(p0);
+    const cut = Math.max(0, idxAtTime(path, startT));
+    path.pts = path.pts.slice(0, cut);
+    path.times = path.times.slice(0, cut);
+    path.pts.push(p0); path.times.push(startT);
   } else {
-    path = { type:'path', color:colorInput.value, pts:[p0], startFrame };
+    path = { type:'path', color:colorInput.value, pts:[p0], times:[startT], startFrame };
     strokes.push(path);
   }
   octx.drawImage(video, 0, 0, ocan.width, ocan.height);
@@ -984,12 +1034,12 @@ async function startBarTracking(p0) {
   let vel = { x: 0, y: 0 };        // hastighed -> forudsig næste position
   let emaBest = null;              // typisk match-score -> okklusionsdetektion
 
-  while (tracking && video.currentTime + FRAME < trimEndEff()) {
-    await seekTo(video.currentTime + FRAME);
+  const processFrame = tNow => {
     if (poseHook && poseLandmarker) {
       // kun hvert 2. frame (dobbelt fart) - hullerne udfyldes i smoothPose
       poseHook.frames.push(
         poseHook.frames.length % 2 === 0 ? detectMapped() : null);
+      poseHook.times.push(tNow);
     }
     octx.drawImage(video, 0, 0, ocan.width, ocan.height);
     // søg omkring FORUDSAGT position (position + hastighed)
@@ -1042,20 +1092,57 @@ async function startBarTracking(p0) {
             y: (ny - cur.y) * .7 + vel.y * .3 };
     cur = { x: nx, y: ny };
     path.pts.push({ ...cur });
+    path.times.push(tNow);
     // opdater kun skabelonen ved GODT match (ellers er skiven nok dækket)
     emaBest = emaBest === null ? best : emaBest * .9 + best * .1;
     if (best < emaBest * 2.2) {
       const nyt = grabGray(nx, ny, P);
       for (let i = 0; i < patch.length; i++) patch[i] = patch[i] * .85 + nyt[i] * .15;
     }
-    const pct = Math.round(video.currentTime / video.duration * 100);
+    const pct = Math.round(tNow / video.duration * 100);
     barBtn.textContent = `⏹ Stop sporing (${pct}%)`;
     if (analyzing) {
       if (!ATHLETE) allBtn.textContent = `⏹ Stop analyse (${pct}%)`;
       if (SLIM) say(`Analyserer stangbanen · ${pct}%`);
     }
+  };
+
+  if (HAS_RVFC) {
+    // MOBIL-FIX: afspil videoen og analysér de VISTE frames via
+    // requestVideoFrameCallback. Seek pr. frame (den gamle metode) er
+    // 10-30x langsommere på telefoner, og Android hopper/duplikerer frames
+    // ved seek - det var derfor banen glitchede. Lav hastighed giver
+    // beregningen ro til at følge med på svage telefoner.
+    const oldRate = video.playbackRate, oldMuted = video.muted;
+    video.muted = true;
+    video.playbackRate = poseHook ? 0.25 : 0.5;
+    await new Promise(res => {
+      const done = () => {
+        video.removeEventListener('pause', done);
+        video.removeEventListener('ended', done);
+        res();
+      };
+      video.addEventListener('pause', done);
+      video.addEventListener('ended', done);
+      const stepFn = (now, meta) => {
+        if (!tracking || meta.mediaTime + FRAME >= trimEndEff()) { done(); return; }
+        processFrame(meta.mediaTime);
+        video.requestVideoFrameCallback(stepFn);
+      };
+      video.requestVideoFrameCallback(stepFn);
+      video.play().catch(done);
+    });
+    video.pause();
+    video.playbackRate = oldRate; video.muted = oldMuted;
+  } else {
+    // fallback (ældre browsere uden rVFC): seek frame for frame som før
+    while (tracking && video.currentTime + FRAME < trimEndEff()) {
+      await seekTo(video.currentTime + FRAME);
+      processFrame(video.currentTime);
+    }
   }
   tracking = false;
+  playBtn.textContent = playLabel(false);
   barBtn.textContent = '🎯 Stangbane';
   barBtn.classList.remove('active');
   analyzePath(path);
@@ -1082,7 +1169,9 @@ function detectMapped() {
   let src = video;
   if (poseBox) {
     ccan.width = poseBox.w; ccan.height = poseBox.h;
-    cctx.drawImage(video, poseBox.x, poseBox.y, poseBox.w, poseBox.h,
+    // poseBox er i CANVAS-koordinater; kildeudsnittet skal være i VIDEO-px
+    cctx.drawImage(video, poseBox.x / vidScale, poseBox.y / vidScale,
+                   poseBox.w / vidScale, poseBox.h / vidScale,
                    0, 0, poseBox.w, poseBox.h);
     src = ccan;
   }
@@ -1122,10 +1211,12 @@ poseBtn.onclick = async () => {
   video.pause();
   strokes = strokes.filter(s => s.type !== 'pose');   // én skelet-analyse ad gangen
   const startT = video.currentTime;
-  const pose = { type:'pose', frames: [], startFrame: Math.round(startT * 30) };
+  const pose = { type:'pose', frames: [], times: [],
+                 startFrame: Math.round(startT * 30) };
   strokes.push(pose);
   await getAthleteBox();
   while (posing && video.currentTime + FRAME < trimEndEff()) {
+    pose.times.push(video.currentTime);
     pose.frames.push(detectMapped());
     poseBtn.textContent =
       `⏹ Stop skelet (${Math.round(video.currentTime / video.duration * 100)}%)`;
@@ -1162,7 +1253,9 @@ function snapWristsToBar(pose, path) {
   // hvis de i forvejen følger stangen nogenlunde (ellers er det fx bænk-spot).
   const F = pose.frames;
   const barAt = i => path.pts[Math.max(0, Math.min(path.pts.length - 1, i))];
-  for (const w of [15, 16]) {
+  // håndled (15,16): fuld lås. Skuldre (11,12): blød forankring - i squat
+  // sidder stangen PÅ skulderen, så stangens højde stabiliserer punktet.
+  for (const [w, thr, blend] of [[15,.12,1], [16,.12,1], [11,.07,.6], [12,.07,.6]]) {
     const dists = [];
     F.forEach((lm, i) => {
       if (!lm) return;
@@ -1172,12 +1265,13 @@ function snapWristsToBar(pose, path) {
     });
     if (!dists.length) continue;
     const med = dists.sort((a, b) => a - b)[dists.length >> 1];
-    if (med < canvas.width * 0.12) {          // håndleddet følger stangen -> lås det
+    if (med < canvas.width * thr) {           // punktet følger stangen -> forankr
       F.forEach((lm, i) => {
         if (!lm) return;
         const b = barAt(i);
-        lm[w].y = b.y / canvas.height;         // højden er stangens (sikker viden)
-        lm[w].x = (lm[w].x + b.x / canvas.width) / 2;  // x blandes 50/50
+        lm[w].y = lm[w].y * (1 - blend) + (b.y / canvas.height) * blend;
+        if (blend === 1)
+          lm[w].x = (lm[w].x + b.x / canvas.width) / 2;
       });
     }
   }
@@ -1250,9 +1344,19 @@ allBtn.onclick = async () => {
 function autoCalib(center) {
   octx.drawImage(video, 0, 0, ocan.width, ocan.height);
   const maxR = Math.min(canvas.width, canvas.height) * 0.45;
-  const img = octx.getImageData(0, 0, ocan.width, ocan.height).data;
+  // MOBIL-FIX: læs kun udsnittet omkring klikket - getImageData på hele
+  // billedet fik telefoner til at fryse. Og CLAMP til udsnittet: den gamle
+  // kode læste videre ind i næste pixelrække ved billedkanten (index-wrap),
+  // hvilket gav falske kant-fund og dermed skæv auto-kalibrering.
+  const x0 = Math.max(0, Math.round(center.x - maxR - 2));
+  const y0 = Math.max(0, Math.round(center.y - maxR - 2));
+  const rw = Math.max(1, Math.min(ocan.width - x0, Math.round(2 * maxR + 4)));
+  const rh = Math.max(1, Math.min(ocan.height - y0, Math.round(2 * maxR + 4)));
+  const img = octx.getImageData(x0, y0, rw, rh).data;
   const g = (x, y) => {
-    const i = ((y|0) * ocan.width + (x|0)) * 4;
+    const xi = Math.max(x0, Math.min(x0 + rw - 1, x | 0));
+    const yi = Math.max(y0, Math.min(y0 + rh - 1, y | 0));
+    const i = ((yi - y0) * rw + (xi - x0)) * 4;
     return img[i] * .3 + img[i+1] * .59 + img[i+2] * .11;
   };
   const radii = [];
@@ -1313,7 +1417,7 @@ async function runFullAnalysis(barPt) {
   if (withPose) strokes = strokes.filter(s => s.type !== 'pose');
   const startT = video.currentTime;
   const startFrame = Math.round(startT * 30);
-  const pose = { type:'pose', frames: [], startFrame };
+  const pose = { type:'pose', frames: [], times: [], startFrame };
   if (withPose) strokes.push(pose);
   // stangbane + skelet i SAMME gennemløb
   poseHook = withPose ? pose : null;
@@ -1723,6 +1827,21 @@ function say(txt) {
   banner.textContent = txt;
   banner.hidden = !txt;
 }
+// MOBIL-FIX: bjælkerne er fixed med HÅRDKODEDE afstande - når footeren
+// ombryder til flere rækker på smalle skærme, lå tidslinjen oven i knapperne.
+// Mål den faktiske højde og stabl tidslinje + Mere-bakke ovenover.
+function layoutBars() {
+  if (!SLIM) return;
+  const foot = document.querySelector('footer');
+  const row = document.getElementById('scrubRow');
+  const base = (parseFloat(getComputedStyle(foot).bottom) || 0) + foot.offsetHeight;
+  row.style.bottom = (base + 10) + 'px';
+  const mb = document.getElementById('moreBar');
+  if (mb && !mb.hidden)
+    mb.style.bottom = (base + 10 + row.offsetHeight + 8) + 'px';
+}
+window.addEventListener('resize', layoutBars);
+window.addEventListener('orientationchange', () => setTimeout(layoutBars, 150));
 if (SLIM) {
   document.body.classList.add('slim');
   document.getElementById('hIn').hidden = false;
@@ -1734,6 +1853,18 @@ if (SLIM) {
   dropHint.onclick = () => document.getElementById('fileInput').click();
   playBtn.textContent = '▶';
   // ⌄ = minimér alle kontroller (zen), ⌃ = hent dem tilbage
+  // ✕ = vej TILBAGE til appen (lukker fanen eller går tilbage)
+  const closeBtn = document.createElement('button');
+  closeBtn.id = 'closeBtn';
+  closeBtn.textContent = '✕';
+  closeBtn.onclick = () => {
+    window.close();
+    setTimeout(() => {
+      if (!window.closed)
+        history.length > 1 ? history.back() : (location.href = '/');
+    }, 150);
+  };
+  document.body.appendChild(closeBtn);
   const zenBtn = document.createElement('button');
   zenBtn.id = 'zenBtn';
   zenBtn.textContent = '⌄';
@@ -1742,6 +1873,8 @@ if (SLIM) {
     zenBtn.textContent = zen ? '⌃' : '⌄';
   };
   document.body.appendChild(zenBtn);
+  layoutBars();
+  setTimeout(layoutBars, 400);   // igen når font/ikoner er landet
 }
 if (COACHWEB) {
   document.body.classList.add('coachweb');
@@ -1767,8 +1900,11 @@ if (COACHWEB) {
   moreBtn.onclick = () => {
     moreBar.hidden = !moreBar.hidden;
     moreBtn.classList.toggle('active', !moreBar.hidden);
+    layoutBars();
   };
   document.querySelector('footer').appendChild(moreBtn);
+  layoutBars();
+  setTimeout(layoutBars, 400);
 }
 if (ATHLETE) {
   document.body.classList.add('athlete');
