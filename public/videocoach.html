@@ -96,9 +96,21 @@
   body.coachweb header { display:flex; position:fixed; top:0; left:0; right:0;
     z-index:9; background:rgba(20,20,16,.72); backdrop-filter:blur(14px);
     border-bottom:1px solid var(--line); }
-  body.coachweb footer { justify-content:center; gap:4px; }
-  body.coachweb footer button, body.coachweb footer select,
-  body.coachweb footer input { font-size:12px; padding:8px 10px; }
+  body.coachweb footer { justify-content:space-around; gap:2px; }
+  /* coach-mobil: samme ikon+label-knapper som atletversionen */
+  body.coachweb footer button { font-size:24px; padding:6px 10px; border:none;
+    display:flex; flex-direction:column; align-items:center; gap:3px; }
+  body.coachweb footer button::after { font-size:9px; letter-spacing:.14em;
+    color:var(--dim); text-transform:uppercase; font-weight:500; }
+  body.coachweb #allBtn::after  { content:'Analysér'; }
+  body.coachweb #ghostBtn::after { content:'Ghost'; }
+  body.coachweb #loopBtn::after { content:'Loop'; }
+  body.coachweb #penBtn::after  { content:'Tegn'; }
+  body.coachweb #undoBtn::after { content:'Fortryd'; }
+  body.coachweb #moreBtn::after { content:'Mere'; }
+  body.coachweb footer button.active::after { color:var(--accent); }
+  body.coachweb footer select, body.coachweb footer input
+    { font-size:12px; padding:8px 10px; }
   body.coachweb #scrubRow { bottom:80px; }
   body.coachweb #moreBar { position:fixed; left:12px; right:12px; bottom:130px;
     z-index:11; display:flex; flex-wrap:wrap; gap:6px; justify-content:center;
@@ -355,8 +367,8 @@ document.getElementById('ghostBtn').onclick = e => {
   if (!p) { alert('Kør 🎯 bane først (kræver mindst 2 reps)'); return; }
   p.ghostRep = (p.ghostRep == null) ? 0
     : (p.ghostRep + 1 >= p.reps.length ? null : p.ghostRep + 1);
-  e.target.textContent = p.ghostRep == null ? (ATHLETE ? '👻' : '👻 Ghost')
-    : (ATHLETE ? `👻${p.ghostRep + 1}` : `👻 Rep ${p.ghostRep + 1}`);
+  e.target.textContent = p.ghostRep == null ? (SLIM ? '👻' : '👻 Ghost')
+    : (SLIM ? `👻${p.ghostRep + 1}` : `👻 Rep ${p.ghostRep + 1}`);
   e.target.classList.toggle('active', p.ghostRep != null);
 };
 
@@ -417,8 +429,8 @@ canvas.addEventListener('pointerdown', e => {
   if (hit) {
     hit.path.ghostRep = hit.path.ghostRep === hit.idx ? null : hit.idx;
     const gb = document.getElementById('ghostBtn');
-    gb.textContent = hit.path.ghostRep == null ? (ATHLETE ? '👻' : '👻 Ghost')
-      : (ATHLETE ? `👻${hit.idx + 1}` : `👻 Rep ${hit.idx + 1}`);
+    gb.textContent = hit.path.ghostRep == null ? (SLIM ? '👻' : '👻 Ghost')
+      : (SLIM ? `👻${hit.idx + 1}` : `👻 Rep ${hit.idx + 1}`);
     gb.classList.toggle('active', hit.path.ghostRep != null);
     return;
   }
@@ -1102,9 +1114,9 @@ async function startBarTracking(p0) {
     const pct = Math.round(tNow / video.duration * 100);
     barBtn.textContent = `⏹ Stop sporing (${pct}%)`;
     if (analyzing) {
-      if (!ATHLETE) allBtn.textContent = `⏹ Stop analyse (${pct}%)`;
+      if (!SLIM) allBtn.textContent = `⏹ Stop analyse (${pct}%)`;
       if (SLIM) say(`Analyserer stangbanen · ${pct}%`);
-    }
+    } else if (SLIM) say(`Sporer stangbanen · ${pct}%`);
   };
 
   if (HAS_RVFC) {
@@ -1145,6 +1157,7 @@ async function startBarTracking(p0) {
   playBtn.textContent = playLabel(false);
   barBtn.textContent = '🎯 Stangbane';
   barBtn.classList.remove('active');
+  if (SLIM && !analyzing) say('');
   analyzePath(path);
   await seekTo(startT);
 }
@@ -1334,7 +1347,7 @@ allBtn.onclick = async () => {
   video.pause();
   ocan.width = canvas.width; ocan.height = canvas.height;
   wizard = { step: 0, pts: [], auto: true };
-  if (!ATHLETE) allBtn.textContent = 'Klik på skivens MIDTE';
+  if (!SLIM) allBtn.textContent = 'Klik på skivens MIDTE';
   say('Spol til lige før løftet starter · Tryk ÉN gang midt på skiven');
   allBtn.classList.add('active');
 };
@@ -1389,14 +1402,14 @@ function wizardClick(p) {
     // kant ikke fundet -> fald tilbage til manuel 3-kliks-guide
     wizard.auto = false; wizard.step = 0; wizard.pts = [];
     say('Kunne ikke finde skivens kant · 1/3 · Tryk på skivens TOP');
-    if (!ATHLETE) allBtn.textContent = '1/3: klik skivens TOP';
+    if (!SLIM) allBtn.textContent = '1/3: klik skivens TOP';
     return;
   }
   wizard.pts.push(p);
   wizard.step++;
-  if (wizard.step === 1) { if (!ATHLETE) allBtn.textContent = '2/3: klik skivens BUND';
+  if (wizard.step === 1) { if (!SLIM) allBtn.textContent = '2/3: klik skivens BUND';
                            say('2/3 · Tryk på skivens BUND'); }
-  if (wizard.step === 2) { if (!ATHLETE) allBtn.textContent = '3/3: klik skivens MIDTE';
+  if (wizard.step === 2) { if (!SLIM) allBtn.textContent = '3/3: klik skivens MIDTE';
                            say('3/3 · Tryk på skivens MIDTE'); }
   if (wizard.step === 3) {
     say('');
@@ -1410,7 +1423,8 @@ function wizardClick(p) {
 
 async function runFullAnalysis(barPt) {
   analyzing = true;
-  allBtn.textContent = '⏳ Forbereder...';
+  if (!SLIM) allBtn.textContent = '⏳ Forbereder...';
+  else say('Forbereder analysen ...');
   let withPose = document.getElementById('withPoseChk').checked;
   if (withPose) { try { await loadPose(); } catch { withPose = false; } }
   if (withPose) { analyzing = false; await getAthleteBox(); analyzing = true; }
@@ -1429,7 +1443,7 @@ async function runFullAnalysis(barPt) {
     if (barPath) snapWristsToBar(pose, barPath);
   }
   analyzing = false;
-  allBtn.textContent = ATHLETE ? '◎' : '⚡ Analysér løft';
+  allBtn.textContent = ATHLETE ? '◎' : SLIM ? '⚡' : '⚡ Analysér løft';
   allBtn.classList.remove('active');
   say('');
   // tilbage til normal afspilningshastighed efter analyse
@@ -1889,20 +1903,37 @@ if (COACHWEB) {
   moreBar.id = 'moreBar';
   moreBar.hidden = true;
   document.body.appendChild(moreBar);
-  ['scrubToolBtn', 'lineBtn', 'angleBtn', 'eraseBtn', 'color', 'clearBtn',
-   'withPoseChk', 'athleteSel', 'liftSel', 'loadInput', 'biasInput',
+  ['scrubToolBtn', 'barBtn', 'calibBtn', 'poseBtn', 'withPoseChk',
+   'lineBtn', 'angleBtn', 'eraseBtn', 'color', 'brushSel', 'clearBtn',
+   'recordBtn', 'athleteSel', 'liftSel', 'loadInput', 'biasInput',
    'aiBtn', 'saveBtn', 'recTime', 'downloadLink'].forEach(id => {
     const el = document.getElementById(id);
     if (el) moreBar.appendChild(el.closest('label') || el);
   });
+  // kerneknapperne får atlet-stil: stort ikon, lille label (CSS ::after)
+  allBtn.textContent = '⚡';
+  document.getElementById('penBtn').textContent = '✎︎';
+  document.getElementById('undoBtn').textContent = '↺';
+  document.getElementById('loopBtn').textContent = '⟲';
+  document.getElementById('ghostBtn').textContent = '👻';
   const moreBtn = document.createElement('button');
-  moreBtn.textContent = '⋯ Mere';
+  moreBtn.id = 'moreBtn';
+  moreBtn.textContent = '⋯';
   moreBtn.onclick = () => {
     moreBar.hidden = !moreBar.hidden;
     moreBtn.classList.toggle('active', !moreBar.hidden);
     layoutBars();
   };
   document.querySelector('footer').appendChild(moreBtn);
+  // værktøjer der starter en klik-guide/optagelse lukker selv Mere-bakken,
+  // så den ikke står i vejen for det, man skal klikke på i videoen
+  ['barBtn', 'calibBtn', 'poseBtn', 'recordBtn', 'aiBtn'].forEach(id => {
+    const el = document.getElementById(id), orig = el.onclick;
+    el.onclick = e => {
+      moreBar.hidden = true; moreBtn.classList.remove('active'); layoutBars();
+      orig.call(el, e);
+    };
+  });
   layoutBars();
   setTimeout(layoutBars, 400);
 }
