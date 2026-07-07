@@ -2151,6 +2151,30 @@ function stopRec() {
 // ---------- To versioner, én fil ----------
 // Desktop (file://) eller ?coach=1 = FULD version (AI, skelet, gem, optag).
 // Online i appen = SLANK mobil-version: se, spol, loop, stangbane, simpel pen.
+// ---------- 📤 "Del til VideoCoach" (Android share target) ----------
+// Service workeren gemmer den delte video i Cache Storage og sender os
+// hertil med ?shared=1 - saml den op og åbn den direkte.
+if ('serviceWorker' in navigator && location.protocol !== 'file:')
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+if (new URLSearchParams(location.search).has('shared')) {
+  (async () => {
+    try {
+      const cache = await caches.open('shared-video');
+      const res = await cache.match('/shared-video-file');
+      if (res) {
+        const blob = await res.blob();
+        const name = decodeURIComponent(
+          res.headers.get('X-File-Name') || 'video.mp4');
+        await cache.delete('/shared-video-file');
+        loadFile(new File([blob], name, { type: blob.type }));
+      } else {
+        say('Ingen delt video fundet - vælg den med 📂');
+        setTimeout(() => say(''), 5000);
+      }
+    } catch {}
+  })();
+}
+
 // ---------- 📷 Filmguide ----------
 const guidePanel = document.getElementById('guidePanel');
 document.getElementById('guideBtn').onclick = () => guidePanel.hidden = false;
