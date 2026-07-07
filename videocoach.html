@@ -234,10 +234,12 @@
     <div>💡 Jævnt lys - undgå <b>modlys</b> fra vindue eller lampe bag løfteren.</div>
     <div>🎞 1080p er rigeligt. Deler du fra iPhone: optag i
       "Mest kompatibel" (H.264).</div>
-    <div>✂️ Klip <b>ikke</b> videoen i galleriet først - brug klippe-håndtagene
-      herinde. (Android: Google Fotos gemmer tit kun redigeringen inde i
-      Fotos-appen - filen ændres ikke, og så kan vælgeren ikke finde den.
-      Skal du endelig: vælg "Gem kopi" og find filen via Filer-appen.)</div>
+    <div>🎬 Film <b>korte klip</b> - ét sæt pr. video, start optagelsen lige
+      før løftet. Lange videoer er tunge at åbne på telefonen. Finklip med
+      ⟦ ⟧-håndtagene herinde.</div>
+    <div>✂️ Redigerer du alligevel i Google Fotos: vælg <b>"Gem kopi"</b> og
+      find filen via Filer-appen - ellers ændres selve filen ikke, og
+      vælgeren kan ikke finde din redigering.</div>
     <button onclick="document.getElementById('guidePanel').hidden=true"
             style="margin-top:10px">OK, forstået</button>
   </div>
@@ -338,6 +340,23 @@ document.body.addEventListener('drop', e => {
   if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]);
 });
 
+// ---------- Skærm-vågelås ----------
+// Videoen tegnes på canvas, så OS'et ser ingen "videoafspilning" og lader
+// skærmen gå i dvale midt i visningen (især Android). Wake Lock holder den
+// tændt, så længe der er en video åben og siden er synlig.
+let wakeLock = null;
+async function keepAwake() {
+  try {
+    if ('wakeLock' in navigator && !wakeLock && video.src) {
+      wakeLock = await navigator.wakeLock.request('screen');
+      wakeLock.addEventListener('release', () => { wakeLock = null; });
+    }
+  } catch {}   // afvist (fx lavt batteri) = acceptabelt, ingen fejl
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') keepAwake();
+});
+
 let rendering = false;
 let curUrl = null;
 function loadFile(file) {
@@ -377,6 +396,7 @@ function loadFile(file) {
         .catch(() => { video.muted = false; video.currentTime = 0.01; });
     else { video.pause(); video.muted = false; video.currentTime = 0.01; }
     playBtn.textContent = playLabel(false);
+    keepAwake();
     if (typeof ATHLETE !== 'undefined' && ATHLETE) {
       say('Træk = spol · Tap = afspil · ◎ = din stangbane');
       setTimeout(() => say(''), 5000);
