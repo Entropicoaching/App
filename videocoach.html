@@ -299,8 +299,10 @@ document.body.addEventListener('drop', e => {
 });
 
 let rendering = false;
+let curUrl = null;
 function loadFile(file) {
-  video.src = URL.createObjectURL(file);
+  if (!file) return;
+  if (curUrl) URL.revokeObjectURL(curUrl);   // frigiv forrige video (mobil-RAM)
   strokes = []; anglePts = [];
   // nulstil alt der hører til den GAMLE video
   cmPerPx = null; calibPts = [];
@@ -310,13 +312,14 @@ function loadFile(file) {
   document.getElementById('trimOutBtn').classList.remove('active');
   scrub.style.background = '';
   aiPanel.hidden = true;
-  video.onerror = () => {
-    canvas.hidden = true; dropHint.hidden = false;
-    say('Videoen kan ikke afkodes på denne enhed (typisk iPhone-HEVC på ' +
-        'Android). Optag i "Mest kompatibel"/H.264 og prøv igen.');
-    setTimeout(() => say(''), 9000);
-  };
-  video.onloadedmetadata = () => {
+  say('Åbner videoen ...');
+  // ANDROID-FIX: videoWidth er på mange Android-enheder først klar ved
+  // 'loadeddata' - venter man kun på 'loadedmetadata' bliver canvas aldrig
+  // sat op, og skærmen ser "død" ud. Lyt på begge, kør én gang.
+  let started = false;
+  const begin = () => {
+    if (started || !video.videoWidth) return;
+    started = true;
     // MOBIL-FIX: canvas i fuld 4K gør ALT trægt (tegning, touch, sporing).
     // Nedskaleret canvas mister intet analytisk ved ~1280 px på mobil.
     const maxSide = SLIM ? 1280 : 1920;
@@ -325,15 +328,40 @@ function loadFile(file) {
     canvas.height = Math.round(video.videoHeight * vidScale);
     canvas.hidden = false;
     dropHint.hidden = true;
-    video.pause();
-    // tving første frame frem - ellers er skærmen SORT på mobil indtil play
-    video.currentTime = 0.01;
+    // ANDROID-FIX: tving første frame frem med kort LYDLØS afspilning -
+    // seek til 0.01 kan hænge før 'canplay' og efterlod sort skærm.
+    video.muted = true;
+    const pp = video.play();
+    if (pp && pp.then)
+      pp.then(() => { video.pause(); video.muted = false; })
+        .catch(() => { video.muted = false; video.currentTime = 0.01; });
+    else { video.pause(); video.muted = false; video.currentTime = 0.01; }
+    playBtn.textContent = playLabel(false);
     if (typeof ATHLETE !== 'undefined' && ATHLETE) {
       say('Træk = spol · Tap = afspil · ◎ = din stangbane');
       setTimeout(() => say(''), 5000);
-    }
+    } else say('');
     if (!rendering) { rendering = true; requestAnimationFrame(render); }
   };
+  video.onloadedmetadata = begin;
+  video.onloadeddata = begin;
+  video.onerror = () => {
+    const c = video.error ? video.error.code : 0;   // 4 = format/kilde afvist
+    canvas.hidden = true; dropHint.hidden = false;
+    say(c === 4
+      ? 'Formatet understøttes ikke på denne enhed (typisk HEVC). Optag i ' +
+        '"Mest kompatibel"/H.264 og prøv igen.'
+      : `Videoen kunne ikke læses (fejlkode ${c || '?'}). Prøv at vælge den igen.`);
+    setTimeout(() => say(''), 10000);
+  };
+  setTimeout(() => { if (!started && !video.error)
+    say('Loader stadig ... store videoer tager lidt tid'); }, 4000);
+  setTimeout(() => { if (!started && !video.error)
+    say('Videoen ser ud til at hænge - prøv en mindre fil eller H.264-format'); },
+    15000);
+  curUrl = URL.createObjectURL(file);
+  video.src = curUrl;
+  video.load();
 }
 
 // ---------- Afspilning ----------
