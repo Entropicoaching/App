@@ -1078,6 +1078,93 @@ function analyzePath(path, retrimmed) {
   }
 }
 
+// SKIVE-RECENTRERING v2 (rotationsfix): template-punktet roterer MED skiven
+// og giver kunstige U-buer i banen. Skivens cirkelkant er rotations-invariant,
+// så centrum måles løbende via kantscan - men målingerne føres ALDRIG tilbage
+// ind i den kørende matcher (det destabiliserede sporingen, bevist i test).
+// De anvendes som udglattet offset-korrektion på banen EFTER endt sporing,
+// og kun når strålerne er enige om ÉN cirkel med den kalibrerede radius.
+// Værste fald er dermed altid = ingen korrektion (dagens adfærd).
+function recenterOnPlate(pt) {
+  try {
+    if (!cmPerPx) return null;
+    const rExp = 22.5 / cmPerPx;                // forventet skiveradius i px
+    if (rExp < 14) return null;
+    const M = Math.round(rExp * 1.6);
+    const x0 = Math.max(0, Math.round(pt.x - M));
+    const y0 = Math.max(0, Math.round(pt.y - M));
+    const w = Math.min(ocan.width - x0, 2 * M);
+    const h = Math.min(ocan.height - y0, 2 * M);
+    if (w < rExp || h < rExp) return null;
+    const d = octx.getImageData(x0, y0, w, h).data;
+    const gg = (x, y) => {
+      const xi = Math.max(x0, Math.min(x0 + w - 1, x | 0));
+      const yi = Math.max(y0, Math.min(y0 + h - 1, y | 0));
+      const i = ((yi - y0) * w + (xi - x0)) * 4;
+      return d[i] * .3 + d[i+1] * .59 + d[i+2] * .11;
+    };
+    // smalt bånd om forventet radius (±18%) - indre ringe/tekst/naboskiver
+    // kan ikke kapre strålerne
+    const edges = [];
+    for (let a = 0; a < 16; a++) {
+      const dx = Math.cos(a * Math.PI / 8), dy = Math.sin(a * Math.PI / 8);
+      let prev = gg(pt.x + dx * rExp * .78, pt.y + dy * rExp * .78);
+      let bestR = 0, bestJ = 0;
+      for (let r = rExp * .82; r <= rExp * 1.18; r += 2) {
+        const v = gg(pt.x + dx * r, pt.y + dy * r);
+        const j = Math.abs(v - prev);
+        if (j > bestJ) { bestJ = j; bestR = r; }
+        prev = v;
+      }
+      edges.push(bestJ > 26 ? bestR : null);
+    }
+    let sx = 0, sy = 0, npair = 0;
+    const radii = [];
+    for (let a = 0; a < 8; a++) {
+      const r1 = edges[a], r2 = edges[a + 8];
+      if (r1 == null || r2 == null) continue;
+      const off = (r1 - r2) / 2;
+      sx += off * Math.cos(a * Math.PI / 8);
+      sy += off * Math.sin(a * Math.PI / 8);
+      radii.push((r1 + r2) / 2);
+      npair++;
+    }
+    if (npair < 6) return null;
+    // valider: parrene enige om radius, radius ligner kalibreringen,
+    // og korrektionen er en lille justering - ellers stoles der IKKE på den
+    const mR = radii.reduce((s, r) => s + r, 0) / npair;
+    const spread = Math.sqrt(radii.reduce((s, r) => s + (r - mR) ** 2, 0) / npair);
+    if (spread > rExp * 0.055) return null;
+    if (Math.abs(mR - rExp) > rExp * 0.15) return null;
+    const cx = 2 * sx / npair, cy = 2 * sy / npair;
+    if (Math.hypot(cx, cy) > rExp * 0.25) return null;
+    return { x: cx, y: cy };
+  } catch { return null; }        // må ALDRIG kunne vælte sporingen
+}
+
+// Anvend de validerede centrum-målinger som udglattet korrektion på banen.
+// Kræver rimelig dækning - ellers røres banen ikke.
+function applyPlateCenter(path, rcSamples) {
+  if (rcSamples.length < 8 ||
+      rcSamples.length < (path.pts.length / 2) * 0.25) return;
+  const med = a => { const q = [...a].sort((x, y) => x - y); return q[q.length >> 1]; };
+  const sm = rcSamples.map((s0, k) => {
+    const nb = rcSamples.slice(Math.max(0, k - 2), k + 3);
+    return { i: s0.i, dx: med(nb.map(q => q.dx)), dy: med(nb.map(q => q.dy)) };
+  });
+  path.pts = path.pts.map((p, i) => {
+    let a = sm[0], b = sm[sm.length - 1];
+    for (let k = 0; k < sm.length; k++) {
+      if (sm[k].i <= i) a = sm[k];
+      if (sm[k].i >= i) { b = sm[k]; break; }
+    }
+    const t = b.i === a.i ? 0 : (i - a.i) / (b.i - a.i);
+    return { x: p.x + a.dx + (b.dx - a.dx) * t,
+             y: p.y + a.dy + (b.dy - a.dy) * t };
+  });
+  path.rcCount = rcSamples.length;   // til fejlsøgning
+}
+
 async function startBarTracking(p0) {
   awaitBarClick = false;
   tracking = true;
@@ -1104,6 +1191,7 @@ async function startBarTracking(p0) {
   let cur = { ...p0 };
   let vel = { x: 0, y: 0 };        // hastighed -> forudsig næste position
   let emaBest = null;              // typisk match-score -> okklusionsdetektion
+  const rcSamples = [];            // validerede skive-centrum-målinger
 
   const processFrame = tNow => {
     if (poseHook && poseLandmarker) {
@@ -1171,6 +1259,12 @@ async function startBarTracking(p0) {
       vel = { x: (nx - cur.x) * .7 + vel.x * .3,
               y: (ny - cur.y) * .7 + vel.y * .3 };
       cur = { x: nx, y: ny };
+      // mål skivens centrum parallelt (hver 2. punkt) - røres IKKE her,
+      // anvendes som korrektion efter endt sporing (se applyPlateCenter)
+      if (path.pts.length % 2 === 0) {
+        const c = recenterOnPlate(cur);
+        if (c) rcSamples.push({ i: path.pts.length, dx: c.x, dy: c.y });
+      }
       emaBest = emaBest === null ? best : emaBest * .9 + best * .1;
       // opdater kun skabelonen ved GODT match (ellers er skiven nok dækket)
       if (best < emaBest * 2.2) {
@@ -1236,6 +1330,7 @@ async function startBarTracking(p0) {
   barBtn.textContent = '🎯 Stangbane';
   barBtn.classList.remove('active');
   if (SLIM && !analyzing) say('');
+  applyPlateCenter(path, rcSamples);   // rotationskorrektion (kun hvis valid)
   analyzePath(path);
   // ærlig kvalitetsmelding: brugeren SKAL vide, når banen er upræcis
   const badPct = path.lowConf && path.pts.length
