@@ -369,6 +369,7 @@ const playBtn = document.getElementById('playBtn');
 playBtn.onclick = togglePlay;
 function togglePlay() {
   if (!video.src) return;
+  if (tracking || analyzing) return;   // rør ikke afspilningen under analyse
   if (video.paused) {
     if (video.currentTime < trimStart || video.currentTime >= trimEndEff())
       video.currentTime = trimStart;          // start altid inde i klippet
@@ -454,6 +455,7 @@ function eraseAt(p) {
 
 canvas.addEventListener('pointerdown', e => {
   canvas.setPointerCapture(e.pointerId);
+  if (tracking) return;   // tap/spol må ikke afbryde en kørende sporing
   const p = pos(e);
   if (showGrid && e.shiftKey) {                 // Shift+træk = flyt grid
     gridDrag = { px: p.x - gridOffset.x, py: p.y - gridOffset.y };
@@ -492,7 +494,7 @@ canvas.addEventListener('pointerdown', e => {
       awaitCalib = false; calibPts = [];
       calibBtn.textContent = '📏 Kalibreret ✓';
       calibBtn.classList.remove('active');
-      strokes.filter(s => s.type === 'path').forEach(analyzePath);
+      strokes.filter(s => s.type === 'path').forEach(p => analyzePath(p));
     }
     return;
   }
@@ -776,6 +778,7 @@ const timeLabel = document.getElementById('timeLabel');
 let scrubbing = false;
 scrub.addEventListener('input', () => {
   if (!video.duration) return;
+  if (tracking) return;   // tidslinjen låst under sporing (ellers dør analysen)
   scrubbing = true;
   video.pause();
   playBtn.textContent = playLabel(false);
@@ -822,7 +825,7 @@ function updateTimeline() {
   if (!video.duration) return;
   positionHandles();
   if (!video.paused && video.currentTime >= trimEndEff()) {   // klip-slut
-    if (looping) {
+    if (looping && !tracking) {   // (aldrig loop-hop midt i en sporing!)
       video.currentTime = trimStart;                          // 🔁 forfra
     } else {
       video.pause();
@@ -875,7 +878,7 @@ function drawGrid() {
 let velPanelHits = [];   // klik-områder for rep-linjerne (ghost-valg)
 function drawVelPanel() {
   velPanelHits = [];
-  const path = strokes.find(s => s.type === 'path' && s.reps && s.reps.length);
+  const path = strokes.filter(s => s.type === 'path' && s.reps && s.reps.length).pop();
   if (!path) return;
   const fs = Math.max(16, canvas.width / 60);
   const lines = path.reps.map((r, i) => {
@@ -992,7 +995,7 @@ function seekTo(t) {
   });
 }
 
-function analyzePath(path) {
+function analyzePath(path, retrimmed) {
   if (!cmPerPx || path.pts.length < 8) return;
   const n = path.pts.length;
   // udglattet lodret position (5-frames glidende snit mod 30fps-støj)
@@ -1041,6 +1044,21 @@ function analyzePath(path) {
         prevEnd = i;
       }
       start = null;
+    }
+  }
+  // AUTO-TRIM: alt før første og efter sidste rep (±0.6s) er typisk tilgang,
+  // afsætning og re-rack - junk der forurener ROM, drift, sticking point og
+  // effektivitet. Klip banen til selve arbejdet og regn forfra.
+  if (!retrimmed && path.reps.length) {
+    const tA = t[path.reps[0].start];
+    const tB = t[Math.min(n - 1, path.reps[path.reps.length - 1].end)];
+    let lo = 0; while (lo < n - 1 && t[lo] < tA - 0.6) lo++;
+    let hi = n - 1; while (hi > 0 && t[hi] > tB + 0.6) hi--;
+    if (lo > 3 || hi < n - 4) {
+      path.pts = path.pts.slice(lo, hi + 1);
+      if (path.times) path.times = path.times.slice(lo, hi + 1);
+      path.startFrame += lo;              // fallback-tegning (gamle baner)
+      return analyzePath(path, true);
     }
   }
   // bane-effektivitet: lodret vandring / total banelængde (1.0 = perfekt lodret)
@@ -1140,18 +1158,29 @@ async function startBarTracking(p0) {
         const s = cost(ox, oy, best);
         if (s < best) { best = s; bo = { x: ox, y: oy }; }
       }
-    const nx = wx + bo.x + P/2, ny = wy + bo.y + P/2;
-    vel = { x: (nx - cur.x) * .7 + vel.x * .3,
-            y: (ny - cur.y) * .7 + vel.y * .3 };
-    cur = { x: nx, y: ny };
+    if (emaBest !== null && best > emaBest * 6) {
+      // skiven er formentlig DÆKKET (rack-stolpe, ben, hånd): glid videre
+      // på forudsigelsen i stedet for at hoppe til et forkert match -
+      // trackeren samler tråden op, når skiven dukker frem igen
+      cur = { x: Math.max(0, Math.min(ocan.width, pred.x)),
+              y: Math.max(0, Math.min(ocan.height, pred.y)) };
+      vel = { x: vel.x * .92, y: vel.y * .92 };  // dæmpes - ingen evig glidning
+      path.lowConf = (path.lowConf || 0) + 1;
+    } else {
+      const nx = wx + bo.x + P/2, ny = wy + bo.y + P/2;
+      vel = { x: (nx - cur.x) * .7 + vel.x * .3,
+              y: (ny - cur.y) * .7 + vel.y * .3 };
+      cur = { x: nx, y: ny };
+      emaBest = emaBest === null ? best : emaBest * .9 + best * .1;
+      // opdater kun skabelonen ved GODT match (ellers er skiven nok dækket)
+      if (best < emaBest * 2.2) {
+        const nyt = grabGray(nx, ny, P);
+        for (let i = 0; i < patch.length; i++)
+          patch[i] = patch[i] * .85 + nyt[i] * .15;
+      }
+    }
     path.pts.push({ ...cur });
     path.times.push(tNow);
-    // opdater kun skabelonen ved GODT match (ellers er skiven nok dækket)
-    emaBest = emaBest === null ? best : emaBest * .9 + best * .1;
-    if (best < emaBest * 2.2) {
-      const nyt = grabGray(nx, ny, P);
-      for (let i = 0; i < patch.length; i++) patch[i] = patch[i] * .85 + nyt[i] * .15;
-    }
     const pct = Math.round(tNow / video.duration * 100);
     barBtn.textContent = `⏹ Stop sporing (${pct}%)`;
     if (analyzing) {
@@ -1187,6 +1216,14 @@ async function startBarTracking(p0) {
     });
     video.pause();
     video.playbackRate = oldRate; video.muted = oldMuted;
+    // iOS-strømsparetilstand kan afvise play() -> næsten ingen punkter.
+    // Fald da automatisk tilbage til seek-metoden i stedet for at fejle tavst.
+    if (tracking && path.pts.length < 5) {
+      while (tracking && video.currentTime + FRAME < trimEndEff()) {
+        await seekTo(video.currentTime + FRAME);
+        processFrame(video.currentTime);
+      }
+    }
   } else {
     // fallback (ældre browsere uden rVFC): seek frame for frame som før
     while (tracking && video.currentTime + FRAME < trimEndEff()) {
@@ -1200,6 +1237,14 @@ async function startBarTracking(p0) {
   barBtn.classList.remove('active');
   if (SLIM && !analyzing) say('');
   analyzePath(path);
+  // ærlig kvalitetsmelding: brugeren SKAL vide, når banen er upræcis
+  const badPct = path.lowConf && path.pts.length
+    ? Math.round(path.lowConf / path.pts.length * 100) : 0;
+  if (badPct > 15) {
+    say(`⚠ Skiven var skjult/utydelig i ${badPct}% af sporingen - ` +
+        `banen kan være upræcis. Frit udsyn til skiven giver bedst resultat.`);
+    setTimeout(() => say(''), 8000);
+  }
   await seekTo(startT);
 }
 
@@ -1427,7 +1472,9 @@ function autoCalib(center) {
   }
   if (radii.length < 6) return null;          // for usikkert -> manuel fallback
   radii.sort((x, y) => x - y);
-  return 45 / (2 * radii[radii.length >> 1]); // cm pr. px
+  const rad = radii[radii.length >> 1];
+  if (rad < 12) return null;    // "skive" på få px kan ikke bære en måling
+  return 45 / (2 * rad);                      // cm pr. px
 }
 
 function wizardClick(p) {
@@ -1470,6 +1517,7 @@ async function runFullAnalysis(barPt) {
   if (withPose) { try { await loadPose(); } catch { withPose = false; } }
   if (withPose) { analyzing = false; await getAthleteBox(); analyzing = true; }
   if (withPose) strokes = strokes.filter(s => s.type !== 'pose');
+  strokes = strokes.filter(s => s.type !== 'path');  // ⚡ erstatter gammel bane
   const startT = video.currentTime;
   const startFrame = Math.round(startT * 30);
   const pose = { type:'pose', frames: [], times: [], startFrame };
@@ -1480,7 +1528,7 @@ async function runFullAnalysis(barPt) {
   poseHook = null;
   if (withPose) {
     smoothPose(pose);
-    const barPath = strokes.find(s => s.type === 'path');
+    const barPath = strokes.filter(s => s.type === 'path').pop();
     if (barPath) snapWristsToBar(pose, barPath);
   }
   analyzing = false;
@@ -1506,10 +1554,15 @@ let openSheetFn = null;   // sættes af coach-online-layoutet (analyse-arket)
 let lastVals = null;   // strukturerede tal til den regelbaserede vurdering
 
 function collectMetrics() {
-  const path = strokes.find(s => s.type === 'path' && s.vel);
+  const path = strokes.filter(s => s.type === 'path' && s.vel).pop();
   if (!path) return null;
   const m = [];
   lastVals = {};
+  if (path.lowConf && path.pts.length &&
+      path.lowConf / path.pts.length > 0.15)
+    m.push(`OBS: sporingen var usikker i ` +
+      `${Math.round(path.lowConf / path.pts.length * 100)}% af tiden ` +
+      `(skive skjult/utydelig) - tag tallene med forbehold`);
   const ys = path.pts.map(p => p.y);
   const rangePx = Math.max(...ys) - Math.min(...ys);
   if (cmPerPx) {
@@ -1807,7 +1860,7 @@ saveBtn.onclick = async () => {
   const ath = document.getElementById('athleteSel').value || 'Gæst';
   const lift = document.getElementById('liftSel').value;
   if (!lift) { alert('Vælg øvelse først'); return; }
-  const path = strokes.find(s => s.type === 'path' && s.vel);
+  const path = strokes.filter(s => s.type === 'path' && s.vel).pop();
   const data = {
     athlete_name: ath,
     lift,
