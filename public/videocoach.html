@@ -150,6 +150,22 @@
     border:1px solid var(--line); }
   body.zen footer, body.zen #scrubRow, body.zen #moreBar,
   body.zen #openSmall, body.zen header { display:none !important; }
+  /* 📷 filmguide: hjælp kameraet, så hjælper du analysen */
+  #guidePanel { position:fixed; inset:0; z-index:40; display:flex;
+    align-items:center; justify-content:center; background:rgba(0,0,0,.55); }
+  #guidePanel[hidden] { display:none; }
+  #guideCard { background:rgba(28,26,22,.97); border:1px solid var(--accent);
+    border-radius:16px; max-width:430px; width:88vw; max-height:80vh;
+    overflow:auto; padding:18px 20px; font-size:13px; line-height:1.55; }
+  #guideCard h2 { color:var(--accent); font-size:14px; letter-spacing:.1em;
+    text-transform:uppercase; margin-bottom:12px; }
+  #guideCard div { margin-bottom:9px; }
+  #guideCard b { color:var(--accent); font-weight:600; }
+  #guideSmall { display:none; }
+  body.slim #guideSmall { display:block; position:fixed; top:10px; left:62px;
+    z-index:10; width:44px; height:44px; border-radius:50%; padding:0;
+    font-size:18px; background:rgba(20,20,16,.7); backdrop-filter:blur(12px);
+    border:1px solid var(--line); }
   /* analyse-ark (coach online): glider op fra bunden efter ⚡-analysen */
   #sheet { position:fixed; left:0; right:0; bottom:0; z-index:30;
     background:rgba(20,20,16,.96); backdrop-filter:blur(16px);
@@ -185,6 +201,7 @@
   <button id="backBtn">⏪ Frame (←)</button>
   <button id="fwdBtn">⏩ Frame (→)</button>
   <button id="gridBtn">⊞ Grid</button>
+  <button id="guideBtn">📷 Filmguide</button>
 </header>
 <div id="stage">
   <div id="dropHint">Træk en video herind<br>eller klik "Åbn video"</div>
@@ -202,6 +219,23 @@
   <div id="hOut" class="trimHandle" hidden>⟧</div>
 </div>
 <div id="banner" hidden></div>
+<div id="guidePanel" hidden>
+  <div id="guideCard">
+    <h2>📷 Sådan filmer du til analysen</h2>
+    <div>📐 Film fra <b>siden</b>, vinkelret på stangen - kameraet i stanghøjde.</div>
+    <div>📏 <b>2-4 meters</b> afstand: hele løftet i billedet, og skiven skal
+      være stor og tydelig.</div>
+    <div>🚫 <b>Frit udsyn til skiven hele løftet</b> - ingen rack-stolper,
+      tasker eller makkere foran.</div>
+    <div>📱 Telefonen <b>helt stille</b> - stativ, eller læn den mod noget.
+      Ingen zoom undervejs.</div>
+    <div>💡 Jævnt lys - undgå <b>modlys</b> fra vindue eller lampe bag løfteren.</div>
+    <div>🎞 1080p er rigeligt. Deler du fra iPhone: optag i
+      "Mest kompatibel" (H.264).</div>
+    <button onclick="document.getElementById('guidePanel').hidden=true"
+            style="margin-top:10px">OK, forstået</button>
+  </div>
+</div>
 <button id="openSmall" hidden>📂</button>
 <footer>
   <button id="scrubToolBtn" class="tool">✋ Spol</button>
@@ -2090,6 +2124,13 @@ function stopRec() {
 // ---------- To versioner, én fil ----------
 // Desktop (file://) eller ?coach=1 = FULD version (AI, skelet, gem, optag).
 // Online i appen = SLANK mobil-version: se, spol, loop, stangbane, simpel pen.
+// ---------- 📷 Filmguide ----------
+const guidePanel = document.getElementById('guidePanel');
+document.getElementById('guideBtn').onclick = () => guidePanel.hidden = false;
+guidePanel.onclick = e => {          // tap udenfor kortet = luk
+  if (e.target === guidePanel) guidePanel.hidden = true;
+};
+
 const banner = document.getElementById('banner');
 function say(txt) {
   banner.textContent = txt;
@@ -2119,6 +2160,12 @@ if (SLIM) {
   openSmall.onclick = () => document.getElementById('fileInput').click();
   dropHint.textContent = '📂 Tryk her og vælg din løftevideo';
   dropHint.onclick = () => document.getElementById('fileInput').click();
+  // 📷 rund filmguide-knap ved siden af 📂 (mobil)
+  const gs = document.createElement('button');
+  gs.id = 'guideSmall';
+  gs.textContent = '📷';
+  gs.onclick = () => guidePanel.hidden = false;
+  document.body.appendChild(gs);
   playBtn.textContent = '▶';
   // ⌄ = minimér alle kontroller (zen), ⌃ = hent dem tilbage
   // ✕ = vej TILBAGE til appen (lukker fanen eller går tilbage)
