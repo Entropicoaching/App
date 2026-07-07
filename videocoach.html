@@ -1078,55 +1078,6 @@ function analyzePath(path, retrimmed) {
   }
 }
 
-// SKIVE-RECENTRERING: template-punktet roterer MED skiven og kører i en bue
-// om navet -> kunstige U-former i banen. Skivens cirkelkant er rotations-
-// invariant: scan 16 retninger efter kanten og find geometrisk centrum.
-// Kræver kalibrering (kender forventet radius). Returnerer korrektion el. null.
-function recenterOnPlate(pt) {
-  if (!cmPerPx) return null;
-  const rExp = 22.5 / cmPerPx;                 // forventet skiveradius i px
-  if (rExp < 14) return null;
-  const M = Math.round(rExp * 1.6);
-  const x0 = Math.max(0, Math.round(pt.x - M));
-  const y0 = Math.max(0, Math.round(pt.y - M));
-  const w = Math.min(ocan.width - x0, 2 * M), h = Math.min(ocan.height - y0, 2 * M);
-  if (w < rExp || h < rExp) return null;
-  const d = octx.getImageData(x0, y0, w, h).data;
-  const gg = (x, y) => {
-    const xi = Math.max(x0, Math.min(x0 + w - 1, x | 0));
-    const yi = Math.max(y0, Math.min(y0 + h - 1, y | 0));
-    const i = ((yi - y0) * w + (xi - x0)) * 4;
-    return d[i] * .3 + d[i+1] * .59 + d[i+2] * .11;
-  };
-  const edges = [];
-  for (let a = 0; a < 16; a++) {
-    const dx = Math.cos(a * Math.PI / 8), dy = Math.sin(a * Math.PI / 8);
-    let prev = gg(pt.x + dx * rExp * .5, pt.y + dy * rExp * .5);
-    let bestR = 0, bestJ = 0;
-    for (let r = rExp * .55; r <= rExp * 1.45; r += 2) {
-      const v = gg(pt.x + dx * r, pt.y + dy * r);
-      const j = Math.abs(v - prev);
-      if (j > bestJ) { bestJ = j; bestR = r; }
-      prev = v;
-    }
-    edges.push(bestJ > 22 ? bestR : null);
-  }
-  // modstående stråle-par: kortere afstand til kant = centrum ligger den vej
-  let sx = 0, sy = 0, npair = 0;
-  for (let a = 0; a < 8; a++) {
-    const r1 = edges[a], r2 = edges[a + 8];
-    if (r1 == null || r2 == null) continue;
-    const off = (r1 - r2) / 2;
-    sx += off * Math.cos(a * Math.PI / 8);
-    sy += off * Math.sin(a * Math.PI / 8);
-    npair++;
-  }
-  if (npair < 4) return null;
-  const cx = 2 * sx / npair, cy = 2 * sy / npair;
-  if (Math.hypot(cx, cy) > rExp * .5) return null;   // for vild -> stol ikke på den
-  return { x: cx, y: cy };
-}
-
 async function startBarTracking(p0) {
   awaitBarClick = false;
   tracking = true;
@@ -1149,13 +1100,6 @@ async function startBarTracking(p0) {
     strokes.push(path);
   }
   octx.drawImage(video, 0, 0, ocan.width, ocan.height);
-  // snap klikket til skivens geometriske centrum, FØR templaten indlæses -
-  // så er referencen navet og ikke et vilkårligt roterende punkt på skiven
-  const c0 = recenterOnPlate(p0);
-  if (c0) {
-    p0 = { x: p0.x + c0.x, y: p0.y + c0.y };
-    path.pts[path.pts.length - 1] = { ...p0 };
-  }
   let patch = grabGray(p0.x, p0.y, P);
   let cur = { ...p0 };
   let vel = { x: 0, y: 0 };        // hastighed -> forudsig næste position
@@ -1227,12 +1171,6 @@ async function startBarTracking(p0) {
       vel = { x: (nx - cur.x) * .7 + vel.x * .3,
               y: (ny - cur.y) * .7 + vel.y * .3 };
       cur = { x: nx, y: ny };
-      // hver 3. frame: træk punktet mod skivens centrum (dæmpet 50%) -
-      // modvirker rotations-drift uden at kunne rykke punktet abrupt
-      if (path.pts.length % 3 === 0) {
-        const c = recenterOnPlate(cur);
-        if (c) cur = { x: cur.x + c.x * .5, y: cur.y + c.y * .5 };
-      }
       emaBest = emaBest === null ? best : emaBest * .9 + best * .1;
       // opdater kun skabelonen ved GODT match (ellers er skiven nok dækket)
       if (best < emaBest * 2.2) {
