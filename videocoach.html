@@ -150,6 +150,22 @@
     border:1px solid var(--line); }
   body.zen footer, body.zen #scrubRow, body.zen #moreBar,
   body.zen #openSmall, body.zen header { display:none !important; }
+  /* 📷 filmguide: hjælp kameraet, så hjælper du analysen */
+  #guidePanel { position:fixed; inset:0; z-index:40; display:flex;
+    align-items:center; justify-content:center; background:rgba(0,0,0,.55); }
+  #guidePanel[hidden] { display:none; }
+  #guideCard { background:rgba(28,26,22,.97); border:1px solid var(--accent);
+    border-radius:16px; max-width:430px; width:88vw; max-height:80vh;
+    overflow:auto; padding:18px 20px; font-size:13px; line-height:1.55; }
+  #guideCard h2 { color:var(--accent); font-size:14px; letter-spacing:.1em;
+    text-transform:uppercase; margin-bottom:12px; }
+  #guideCard div { margin-bottom:9px; }
+  #guideCard b { color:var(--accent); font-weight:600; }
+  #guideSmall { display:none; }
+  body.slim #guideSmall { display:block; position:fixed; top:10px; left:62px;
+    z-index:10; width:44px; height:44px; border-radius:50%; padding:0;
+    font-size:18px; background:rgba(20,20,16,.7); backdrop-filter:blur(12px);
+    border:1px solid var(--line); }
   /* analyse-ark (coach online): glider op fra bunden efter ⚡-analysen */
   #sheet { position:fixed; left:0; right:0; bottom:0; z-index:30;
     background:rgba(20,20,16,.96); backdrop-filter:blur(16px);
@@ -185,6 +201,7 @@
   <button id="backBtn">⏪ Frame (←)</button>
   <button id="fwdBtn">⏩ Frame (→)</button>
   <button id="gridBtn">⊞ Grid</button>
+  <button id="guideBtn">📷 Filmguide</button>
 </header>
 <div id="stage">
   <div id="dropHint">Træk en video herind<br>eller klik "Åbn video"</div>
@@ -202,6 +219,23 @@
   <div id="hOut" class="trimHandle" hidden>⟧</div>
 </div>
 <div id="banner" hidden></div>
+<div id="guidePanel" hidden>
+  <div id="guideCard">
+    <h2>📷 Sådan filmer du til analysen</h2>
+    <div>📐 Film fra <b>siden</b>, vinkelret på stangen - kameraet i stanghøjde.</div>
+    <div>📏 <b>2-4 meters</b> afstand: hele løftet i billedet, og skiven skal
+      være stor og tydelig.</div>
+    <div>🚫 <b>Frit udsyn til skiven hele løftet</b> - ingen rack-stolper,
+      tasker eller makkere foran.</div>
+    <div>📱 Telefonen <b>helt stille</b> - stativ, eller læn den mod noget.
+      Ingen zoom undervejs.</div>
+    <div>💡 Jævnt lys - undgå <b>modlys</b> fra vindue eller lampe bag løfteren.</div>
+    <div>🎞 1080p er rigeligt. Deler du fra iPhone: optag i
+      "Mest kompatibel" (H.264).</div>
+    <button onclick="document.getElementById('guidePanel').hidden=true"
+            style="margin-top:10px">OK, forstået</button>
+  </div>
+</div>
 <button id="openSmall" hidden>📂</button>
 <footer>
   <button id="scrubToolBtn" class="tool">✋ Spol</button>
@@ -1188,6 +1222,21 @@ async function startBarTracking(p0) {
   }
   octx.drawImage(video, 0, 0, ocan.width, ocan.height);
   let patch = grabGray(p0.x, p0.y, P);
+  // patchens egen varians = skala-korrekt reference for "hvor dårligt må
+  // et match være". Uden den fryser tærsklerne fast efter en stille start.
+  const calcPatchVar = () => {
+    let m = 0, c = 0;
+    for (let py = 0; py < P; py += 2)
+      for (let px = 0; px < P; px += 2) { m += patch[py*P+px]; c++; }
+    m /= c;
+    let v = 0;
+    for (let py = 0; py < P; py += 2)
+      for (let px = 0; px < P; px += 2) {
+        const d0 = patch[py*P+px] - m; v += d0 * d0;
+      }
+    return v;
+  };
+  let patchVar = calcPatchVar();
   let cur = { ...p0 };
   let vel = { x: 0, y: 0 };        // hastighed -> forudsig næste position
   let emaBest = null;              // typisk match-score -> okklusionsdetektion
@@ -1246,32 +1295,46 @@ async function startBarTracking(p0) {
         const s = cost(ox, oy, best);
         if (s < best) { best = s; bo = { x: ox, y: oy }; }
       }
-    if (emaBest !== null && best > emaBest * 6) {
-      // skiven er formentlig DÆKKET (rack-stolpe, ben, hånd): glid videre
-      // på forudsigelsen i stedet for at hoppe til et forkert match -
-      // trackeren samler tråden op, når skiven dukker frem igen
-      cur = { x: Math.max(0, Math.min(ocan.width, pred.x)),
-              y: Math.max(0, Math.min(ocan.height, pred.y)) };
-      vel = { x: vel.x * .92, y: vel.y * .92 };  // dæmpes - ingen evig glidning
-      path.lowConf = (path.lowConf || 0) + 1;
-    } else {
-      const nx = wx + bo.x + P/2, ny = wy + bo.y + P/2;
-      vel = { x: (nx - cur.x) * .7 + vel.x * .3,
-              y: (ny - cur.y) * .7 + vel.y * .3 };
-      cur = { x: nx, y: ny };
-      // mål skivens centrum parallelt (hver 2. punkt) - røres IKKE her,
-      // anvendes som korrektion efter endt sporing (se applyPlateCenter)
-      if (path.pts.length % 2 === 0) {
-        const c = recenterOnPlate(cur);
-        if (c) rcSamples.push({ i: path.pts.length, dx: c.x, dy: c.y });
-      }
-      emaBest = emaBest === null ? best : emaBest * .9 + best * .1;
-      // opdater kun skabelonen ved GODT match (ellers er skiven nok dækket)
-      if (best < emaBest * 2.2) {
-        const nyt = grabGray(nx, ny, P);
-        for (let i = 0; i < patch.length; i++)
-          patch[i] = patch[i] * .85 + nyt[i] * .15;
-      }
+    let nx = wx + bo.x + P/2, ny = wy + bo.y + P/2;
+    let uncertain = false;
+    // KONTINUITET: en vægtstang teleporterer ikke. Kræver bedste match et
+    // usandsynligt spring fra forudsigelsen, gensøges TÆT på den, og det
+    // nære bedste vælges. (Erstatter okklusions-glidningen, som kunne
+    // fryse fast efter stille start og løbe løbsk efter ét dårligt match -
+    // bevist i test-riggen.)
+    if (Math.hypot(nx - pred.x, ny - pred.y) > R * 0.6) {
+      let b2 = 1e18, bo2 = null;
+      for (let oy = 0; oy + P <= W; oy += 2)
+        for (let ox = 0; ox + P <= W; ox += 2) {
+          if (Math.hypot(wx + ox + P/2 - pred.x,
+                         wy + oy + P/2 - pred.y) > R * 0.45) continue;
+          const s2 = cost(ox, oy, b2);
+          if (s2 < b2) { b2 = s2; bo2 = { x: ox, y: oy }; }
+        }
+      if (bo2) { nx = wx + bo2.x + P/2; ny = wy + bo2.y + P/2; best = b2; }
+      uncertain = true;
+    }
+    if (emaBest !== null && best > Math.max(emaBest * 6, patchVar * 0.35))
+      uncertain = true;                    // dårligt match = usikker frame
+    if (uncertain) path.lowConf = (path.lowConf || 0) + 1;
+    vel = { x: (nx - cur.x) * .7 + vel.x * .3,
+            y: (ny - cur.y) * .7 + vel.y * .3 };
+    cur = { x: nx, y: ny };
+    // mål skivens centrum parallelt (hver 2. punkt) - røres IKKE her,
+    // anvendes som korrektion efter endt sporing (se applyPlateCenter)
+    if (path.pts.length % 2 === 0) {
+      const c = recenterOnPlate(cur);
+      if (c) rcSamples.push({ i: path.pts.length, dx: c.x, dy: c.y });
+    }
+    // patchVar-gulve: tærsklerne kan aldrig kollapse efter en stille start
+    emaBest = emaBest === null
+      ? Math.max(best, patchVar * 0.06)
+      : Math.max(emaBest * .9 + best * .1, patchVar * 0.05);
+    if (best < Math.max(emaBest * 2.2, patchVar * 0.12)) {
+      const nyt = grabGray(nx, ny, P);
+      for (let i = 0; i < patch.length; i++)
+        patch[i] = patch[i] * .85 + nyt[i] * .15;
+      patchVar = calcPatchVar();
     }
     path.pts.push({ ...cur });
     path.times.push(tNow);
@@ -2061,6 +2124,13 @@ function stopRec() {
 // ---------- To versioner, én fil ----------
 // Desktop (file://) eller ?coach=1 = FULD version (AI, skelet, gem, optag).
 // Online i appen = SLANK mobil-version: se, spol, loop, stangbane, simpel pen.
+// ---------- 📷 Filmguide ----------
+const guidePanel = document.getElementById('guidePanel');
+document.getElementById('guideBtn').onclick = () => guidePanel.hidden = false;
+guidePanel.onclick = e => {          // tap udenfor kortet = luk
+  if (e.target === guidePanel) guidePanel.hidden = true;
+};
+
 const banner = document.getElementById('banner');
 function say(txt) {
   banner.textContent = txt;
@@ -2090,6 +2160,12 @@ if (SLIM) {
   openSmall.onclick = () => document.getElementById('fileInput').click();
   dropHint.textContent = '📂 Tryk her og vælg din løftevideo';
   dropHint.onclick = () => document.getElementById('fileInput').click();
+  // 📷 rund filmguide-knap ved siden af 📂 (mobil)
+  const gs = document.createElement('button');
+  gs.id = 'guideSmall';
+  gs.textContent = '📷';
+  gs.onclick = () => guidePanel.hidden = false;
+  document.body.appendChild(gs);
   playBtn.textContent = '▶';
   // ⌄ = minimér alle kontroller (zen), ⌃ = hent dem tilbage
   // ✕ = vej TILBAGE til appen (lukker fanen eller går tilbage)
