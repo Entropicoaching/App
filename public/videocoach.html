@@ -1787,6 +1787,10 @@ aiBtn.onclick = async () => {
 // ---------- 💾 Gem analyse (til entropi-agent\analyses -> Supabase) ----------
 const saveBtn = document.getElementById('saveBtn');
 let analysesDir = null;   // huskes for sessionen; vælges én gang
+// ærlig knap: på mobil findes mappevalg ikke - der downloades en JSON-fil
+const saveLabel = window.showDirectoryPicker
+  ? '💾 Gem analyse' : '💾 Gem (downloader fil)';
+saveBtn.textContent = saveLabel;
 
 async function getAnalysesDir() {
   if (analysesDir) return analysesDir;
@@ -1835,16 +1839,30 @@ saveBtn.onclick = async () => {
     await w.write(JSON.stringify(data, null, 2));
     await w.close();
     saveBtn.textContent = '💾 Gemt ✓';
-    setTimeout(() => saveBtn.textContent = '💾 Gem analyse', 2500);
+    setTimeout(() => saveBtn.textContent = saveLabel, 2500);
   } catch (e) {
     if (e.name === 'AbortError') return;
-    // fallback: almindelig download
+    // fallback: almindelig download (mobil, eller hvis mappevalg fejler)
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)]));
     a.download = name;
     a.click();
+    saveBtn.textContent = '💾 Downloadet ✓';
+    setTimeout(() => saveBtn.textContent = saveLabel, 2500);
   }
 };
+
+// ---------- Husk sidste valg (mindre friktion, session til session) ----------
+try {
+  const A = localStorage.getItem('vc_athlete');
+  const L = localStorage.getItem('vc_lift');
+  if (A) document.getElementById('athleteSel').value = A;
+  if (L) document.getElementById('liftSel').value = L;
+} catch {}
+document.getElementById('athleteSel').addEventListener('change', e => {
+  try { localStorage.setItem('vc_athlete', e.target.value); } catch {} });
+document.getElementById('liftSel').addEventListener('change', e => {
+  try { localStorage.setItem('vc_lift', e.target.value); } catch {} });
 
 // ---------- Optagelse (canvas + mikrofon) ----------
 const recordBtn = document.getElementById('recordBtn');
