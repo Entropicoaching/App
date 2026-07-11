@@ -455,7 +455,15 @@ function loadFile(file) {
     if (typeof ATHLETE !== 'undefined' && ATHLETE) {
       say('Træk = spol · Tap = afspil · ◎ = din stangbane');
       setTimeout(() => say(''), 5000);
-    } else say('');
+    } else {
+      // TRÆNINGSMODE-armering: første tryk på skiven = analyse.
+      // Spoler/afspiller/tegner man i stedet, afvæbnes den lydløst.
+      ocan.width = canvas.width; ocan.height = canvas.height;
+      wizard = { step: 0, pts: [], auto: true, session: true };
+      allBtn.classList.add('active');
+      if (!SLIM) allBtn.textContent = 'Tryk på skiven = analysér';
+      say('⚡ Tryk på skiven = analysér hele sættet · eller brug knapperne som normalt');
+    }
     if (!rendering) { rendering = true; requestAnimationFrame(render); }
   };
   video.onloadedmetadata = begin;
@@ -484,6 +492,7 @@ const playBtn = document.getElementById('playBtn');
 playBtn.onclick = togglePlay;
 document.getElementById('playBtn2').onclick = togglePlay;
 function togglePlay() {
+  disarmSession();                     // afspilning = coachen vil se, ikke analysere (endnu)
   const tv = curVid();                 // ⇄ step 2: kontrollerne styrer side B
   if (!tv.src) return;
   if (tracking || analyzing) return;   // rør ikke afspilningen under analyse
@@ -509,6 +518,7 @@ document.getElementById('fwdBtn').onclick = () => step(FRAME);
 document.getElementById('backS').onclick = () => step(-FRAME);
 document.getElementById('fwdS').onclick = () => step(FRAME);
 function step(dt) {
+  disarmSession();
   const tv = curVid();
   tv.pause();
   playBtn.textContent = playLabel(false);
@@ -543,6 +553,7 @@ document.getElementById('loopBtn').onclick = e => {
 };
 for (const [id, name] of Object.entries(tools)) {
   document.getElementById(id).onclick = () => {
+    disarmSession();
     tool = name; anglePts = [];
     document.querySelectorAll('.tool').forEach(b => b.classList.remove('active'));
     document.getElementById(id).classList.add('active');
@@ -1016,6 +1027,7 @@ paintMute();
 const timeLabel = document.getElementById('timeLabel');
 let scrubbing = false;
 scrub.addEventListener('input', () => {
+  disarmSession();
   const tv = curVid();
   if (!tv.duration) return;
   if (tracking) return;   // tidslinjen låst under sporing (ellers dør analysen)
@@ -1995,7 +2007,45 @@ function autoCalib(center) {
   return 45 / (2 * rad);                      // cm pr. px
 }
 
+// ---------- 🏋️ TRÆNINGSMODE (Marcs mål: "svinge op og tale ud fra") ----------
+// Efter videovalg i coach-tilstande armeres ⚡ automatisk: FØRSTE tryk på
+// skiven = fuld analyse. Bruges et andet værktøj i stedet (spol, play,
+// tegn), afvæbnes den lydløst. Efter analysen: auto-klip+loop om sættet,
+// ½ fart, INTET ark i vejen - coachen skal tale, ikke læse. Max 3 tryk.
+let sessionRun = false;
+function disarmSession() {
+  if (wizard && wizard.session) {
+    wizard = null;
+    allBtn.classList.remove('active');
+    allBtn.textContent = ATHLETE ? '◎' : SLIM ? '⚡' : 'Analysér løft';
+    say('');
+  }
+}
+function applySessionView() {
+  const path = strokes.filter(s => s.type === 'path' && s.times
+    && s.reps && s.reps.length).pop();
+  if (!path) return;
+  const t = path.times;
+  trimStart = Math.max(0, t[Math.min(path.reps[0].start, t.length - 1)] - 0.8);
+  trimEnd = Math.min(video.duration || Infinity,
+    t[Math.min(path.reps[path.reps.length - 1].end, t.length - 1)] + 0.5);
+  document.getElementById('trimInBtn').classList.add('active');
+  document.getElementById('trimOutBtn').classList.add('active');
+  paintTrim();
+  looping = true;
+  document.getElementById('loopBtn').classList.add('active');
+  document.getElementById('speed').value = '0.5';
+  video.playbackRate = 0.5;
+  video.currentTime = trimStart;
+  video.play().catch(() => {});
+  say(ATHLETE
+    ? 'Dit sæt i ½ fart · grøn = hurtig, rød = langsom · tryk på et rep-tal for at sammenligne'
+    : 'Klip + loop om sættet · ½ fart · klar til at tale 🎙');
+  setTimeout(() => say(''), ATHLETE ? 5500 : 4200);
+}
+
 function wizardClick(p) {
+  if (wizard && wizard.session) sessionRun = true;
   if (wizard.auto) {                    // ét klik: auto-find skivens kant
     const scale = autoCalib(p);
     if (scale) {
@@ -2042,9 +2092,16 @@ async function runFullAnalysis(barPt) {
   // tilbage til normal afspilningshastighed efter analyse
   document.getElementById('speed').value = '1';
   video.playbackRate = 1;
-  // coach online: vis analyse-arket med tal og fund med det samme
-  if (COACHWEB && openSheetFn && strokes.some(s => s.type === 'path' && s.vel))
+  if (sessionRun || ATHLETE) {
+    // TRÆNINGSMODE (coach) og ATLETENS MAGISKE ØJEBLIK: efter analysen
+    // ruller ens eget sæt automatisk i ½ fart med farttal - nul ekstra tryk
+    sessionRun = false;
+    applySessionView();
+  } else if (COACHWEB && openSheetFn &&
+             strokes.some(s => s.type === 'path' && s.vel)) {
+    // coach online: vis analyse-arket med tal og fund med det samme
     openSheetFn();
+  }
 }
 
 // ---------- 🤖 AI-analyse (lokal Ollama) ----------
@@ -3097,9 +3154,14 @@ function updateGuideLift() {
     'Bænkpres': '🎯 <b>BÆNK:</b> kamera i <b>stanghøjde ved brystet</b>, ren ' +
       'side. Hele banen (bryst → lockout) og albuen skal kunne ses.',
   };
-  document.getElementById('guideLift').innerHTML =
-    t[l] || '🎯 Vælg <b>øvelse</b> nederst, så viser guiden højde og vinkel ' +
-            'til netop dét løft.';
+  document.getElementById('guideLift').innerHTML = t[l] ||
+    (ATHLETE
+      // atleten HAR ingen øvelsesvælger - giv den generelle tommelfinger-
+      // regel i stedet for en blindgyde
+      ? '🎯 Film fra <b>siden</b>: kamera i <b>hoftehøjde</b> til squat, ' +
+        '<b>knæhøjde</b> til dødløft - og hele løftet i billedet.'
+      : '🎯 Vælg <b>øvelse</b> nederst, så viser guiden højde og vinkel ' +
+        'til netop dét løft.');
 }
 document.getElementById('guideBtn').onclick = () => {
   updateGuideLift();
