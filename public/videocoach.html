@@ -953,6 +953,23 @@ function mskelAnglesAt(s, tSec) {
         kn = L(s.top.knee, s.bot.knee), an = L(s.top.ank, s.bot.ank);
   return { chain: 'leg', knee: ang(hip, kn, an), hip: ang(sh, hip, kn) };
 }
+// alle led ved et givet tidspunkt (til stroboskop m.m.)
+function mskelJointsAt(s, tSec) {
+  const PTS2 = s.path.fullPts || s.path.pts;
+  const TMS2 = s.path.fullTimes || s.path.times;
+  const bj = Math.max(0, Math.min(PTS2.length - 1,
+    idxAtTime({ times: TMS2 }, tSec)));
+  let d = (PTS2[bj].y - s.topBarY) / (s.botBarY - s.topBarY);
+  d = Math.max(0, Math.min(1, d));
+  const L = (a, b) => ({ x: a.x + (b.x - a.x) * d, y: a.y + (b.y - a.y) * d });
+  const order = s.order || ['sh', 'hip', 'knee', 'ank'];
+  const J = {};
+  for (const k of order) {
+    if (!s.top[k] || !s.bot[k]) return null;
+    J[k] = L(s.top[k], s.bot[k]);
+  }
+  return { J, order };
+}
 // Skelet ved et VILKÅRLIGT tidspunkt i valgfri farve - bruges både til
 // normal visning og til dobbelt-skelet i rep-overlay (A + B hver sin farve)
 
@@ -1263,6 +1280,14 @@ function drawVelPanel() {
 }
 
 function render() {
+  // TERMISK RO: når intet bevæger sig (pause, ingen tegning/analyse),
+  // tegnes kun hver 3. frame. Telefonen holder sig kold under en session
+  // -> mindre thermal throttling -> mindre lag når det GÆLDER.
+  if (video.paused && !current && !tracking && !analyzing && !scrubbing &&
+      !cmp && !mskelClicks && (render._idle = (render._idle || 0) + 1) % 3) {
+    requestAnimationFrame(render);
+    return;
+  }
   if (video.videoWidth) {
     if (cmp) { driveCompare(); drawVideoCompare(); }
     else ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -1716,7 +1741,11 @@ async function startBarTracking(p0) {
     // beregningen ro til at følge med på svage telefoner.
     const oldRate = video.playbackRate, oldMuted = video.muted;
     video.muted = true;
-    video.playbackRate = 0.5;
+    // IN-SESSION-FART: analysen skal vaere hurtig ved racket. Matcheren
+    // bruger faa ms pr. frame, og times-baseret matematik + kontinuitets-
+    // regel taaler droppede frames - saa fuld fart paa desktop, 0.75 paa
+    // mobil (termisk buffer). Var 0.5 = dobbelt ventetid.
+    video.playbackRate = DESKTOP ? 1.0 : 0.75;
     await new Promise(res => {
       const done = () => {
         video.removeEventListener('pause', done);
@@ -2364,19 +2393,74 @@ aiBtn.onclick = async () => {
 // ---------- Delbart RESULTATKORT (PNG i Entropi-stil, til atleten) ----------
 function drawCardPath(g, path, x, y, w, h) {
   g.strokeStyle = 'rgba(237,234,226,.12)'; g.lineWidth = 1; g.strokeRect(x, y, w, h);
+  // STROBOSKOP: findes et klik-skelet, vises bevaegelsens AFTRYK - banen
+  // plus skelettet ved bund (guld), sticking point (cyan) og lockout (hvid)
+  const mskel = strokes.filter(s2 => s2.type === 'mskel').pop();
+  const t = path.times;
+  let moments = [];
+  if (mskel && t && t.length === path.pts.length) {
+    const ys0 = path.pts.map(p => p.y);
+    const iBot = ys0.indexOf(Math.max(...ys0));
+    const iTop = ys0.indexOf(Math.min(...ys0));
+    let minV = 1e9, iStick = -1;
+    path.vel.forEach((v, i) => { if (v > 0.02 && v < minV) { minV = v; iStick = i; } });
+    moments = [
+      { t: t[iBot], col: '#c8923a', navn: 'bund', a: 0.95 },
+      iStick > 0 ? { t: t[iStick], col: '#00d4ff', navn: 'sticking', a: 0.8 } : null,
+      { t: t[iTop], col: '#edeae2', navn: 'lockout', a: 0.55 },
+    ].filter(Boolean).map(mo => ({ ...mo, jo: mskelJointsAt(mskel, mo.t) }))
+     .filter(mo => mo.jo);
+  }
   g.font = "600 18px 'IBM Plex Mono', monospace"; g.fillStyle = '#c8923a';
-  g.textAlign = 'left'; g.fillText('STANGBANE', x + 14, y + 28);
+  g.textAlign = 'left';
+  g.fillText(moments.length ? 'STROBOSKOP' : 'STANGBANE', x + 14, y + 28);
   const pts = path.pts, xs = pts.map(p => p.x), ys = pts.map(p => p.y);
-  const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+  let minX = Math.min(...xs), maxX = Math.max(...xs),
+      minY = Math.min(...ys), maxY = Math.max(...ys);
+  // udvid rammen saa hele skelettet er med
+  moments.forEach(mo => Object.values(mo.jo.J).forEach(p => {
+    if (p.x < minX) minX = p.x; if (p.x > maxX) maxX = p.x;
+    if (p.y < minY) minY = p.y; if (p.y > maxY) maxY = p.y;
+  }));
   const bw = maxX - minX || 1, bh = maxY - minY || 1, pad = 44;
   const k = Math.min((w - pad * 2) / bw, (h - 60 - pad) / bh);
   const ox = x + (w - bw * k) / 2, oy = y + 44 + (h - 44 - bh * k) / 2;
   const X = px => ox + (px - minX) * k, Y = py => oy + (py - minY) * k;
-  g.lineWidth = 3;
+  g.lineWidth = moments.length ? 2.5 : 3;
   for (let i = 1; i < pts.length; i++) {
     const hue = Math.max(0, Math.min(120, Math.abs(path.vel[i] || 0) / 0.8 * 120));
     g.strokeStyle = `hsl(${hue},90%,55%)`;
     g.beginPath(); g.moveTo(X(pts[i - 1].x), Y(pts[i - 1].y)); g.lineTo(X(pts[i].x), Y(pts[i].y)); g.stroke();
+  }
+  // skeletterne oven paa banen + diskret legende
+  moments.forEach(mo => {
+    g.save();
+    g.globalAlpha = mo.a;
+    g.strokeStyle = mo.col; g.fillStyle = mo.col;
+    g.lineWidth = 2.5; g.lineJoin = 'round'; g.lineCap = 'round';
+    g.beginPath();
+    mo.jo.order.forEach((kk, i) => {
+      const p = mo.jo.J[kk];
+      i ? g.lineTo(X(p.x), Y(p.y)) : g.moveTo(X(p.x), Y(p.y));
+    });
+    g.stroke();
+    mo.jo.order.forEach(kk => {
+      const p = mo.jo.J[kk];
+      g.beginPath(); g.arc(X(p.x), Y(p.y), 4, 0, 7); g.fill();
+    });
+    g.restore();
+  });
+  if (moments.length) {
+    g.font = "16px 'IBM Plex Mono', monospace";
+    let lx = x + 14;
+    moments.forEach(mo => {
+      g.fillStyle = mo.col;
+      g.fillText('●', lx, y + h - 14);
+      lx += 20;
+      g.fillStyle = '#a8a49c';
+      g.fillText(mo.navn, lx, y + h - 14);
+      lx += g.measureText(mo.navn).width + 22;
+    });
   }
 }
 function drawCardVel(g, path, x, y, w, h) {
@@ -2399,7 +2483,10 @@ function drawCardVel(g, path, x, y, w, h) {
 function buildResultCard() {
   const path = strokes.filter(s => s.type === 'path' && s.vel).pop();
   if (!path || !path.pts || !path.pts.length) { alert('Kør ⚡ Analysér løft først'); return; }
-  const W = 1080, Hc = 1350, cv = document.createElement('canvas');
+  // STORY-FORMAT (1080x1920): paneler i FULD bredde, stablet - to halve
+  // paneler side om side var "cramped" paa telefon (Marc, iPhone 15 Pro).
+  // 9:16 = Instagram/besked-format -> mere delbart af samme aarsag.
+  const W = 1080, Hc = 1920, cv = document.createElement('canvas');
   cv.width = W; cv.height = Hc;
   const g = cv.getContext('2d');
   g.fillStyle = '#141410'; g.fillRect(0, 0, W, Hc);
@@ -2420,42 +2507,43 @@ function buildResultCard() {
   g.beginPath(); g.moveTo(PAD, 184); g.lineTo(W - PAD, 184); g.stroke();
   g.font = "600 20px 'IBM Plex Mono', monospace"; g.fillStyle = '#c8923a';
   g.fillText('NØGLETAL', PAD, 238);
-  g.font = "28px 'IBM Plex Mono', monospace";
+  g.font = "31px 'IBM Plex Mono', monospace";
   let y = 292;
   keyNumbers().forEach(r => {
     g.fillStyle = '#7a7770'; g.textAlign = 'left'; g.fillText(r[0], PAD, y);
     g.fillStyle = '#edeae2'; g.textAlign = 'right'; g.fillText(r[1], W - PAD, y);
-    y += 48;
+    y += 54;
   });
   g.textAlign = 'left';
-  const pT = y + 26, pH = 360, pW = (W - PAD * 2 - 40) / 2;
-  drawCardPath(g, path, PAD, pT, pW, pH);
-  drawCardVel(g, path, PAD + pW + 40, pT, pW, pH);
+  const pT = y + 26, pW2 = W - PAD * 2;
+  const stroboH = 640, velH = 290;
+  drawCardPath(g, path, PAD, pT, pW2, stroboH);
+  drawCardVel(g, path, PAD, pT + stroboH + 28, pW2, velH);
   // ---- REFERAT: kort regelbaseret opsummering af saettet ----
   g.textAlign = 'left';
-  let ry = pT + pH + 44;
+  let ry = pT + stroboH + 28 + velH + 48;
   g.font = "600 20px 'IBM Plex Mono', monospace"; g.fillStyle = '#c8923a';
   g.fillText('REFERAT', PAD, ry); ry += 36;
   const reps = path.reps || [];
   const best = reps.length ? Math.max(...reps.map(r => r.mcv)).toFixed(2) : '–';
   const sumLine = `${reps.length || 1} rep${(reps.length === 1) ? '' : 's'} · bedste ${best} m/s` +
     (lastVals && lastVals.lossPct != null ? ` · fartfald ${lastVals.lossPct}% over sættet` : '');
-  g.font = "24px 'IBM Plex Mono', monospace"; g.fillStyle = '#edeae2';
-  g.fillText(sumLine, PAD, ry); ry += 42;
+  g.font = "28px 'IBM Plex Mono', monospace"; g.fillStyle = '#edeae2';
+  g.fillText(sumLine, PAD, ry); ry += 46;
   const wrap = (text, maxW) => { const words = text.split(' '), lines = []; let c = '';
     for (const w of words) { const t = c ? c + ' ' + w : w;
       if (g.measureText(t).width > maxW && c) { lines.push(c); c = w; } else c = t; }
     if (c) lines.push(c); return lines; };
   // TEMPO PR. REP: ned/pause/op i sekunder - kontrol og timing sort på hvidt
   if (reps.length && reps[0].eccS != null) {
-    g.font = "20px 'IBM Plex Mono', monospace"; g.fillStyle = '#a8a49c';
+    g.font = "23px 'IBM Plex Mono', monospace"; g.fillStyle = '#a8a49c';
     const tl = 'Tempo ned/pause/op: ' + reps.map((r, i) =>
       `R${i + 1} ${r.eccS}/${r.pauseS}/${r.conS}s`).join('  ·  ');
     for (const line of wrap(tl, W - PAD * 2)) {
       if (ry > Hc - 140) break;
-      g.fillText(line, PAD, ry); ry += 28;
+      g.fillText(line, PAD, ry); ry += 32;
     }
-    ry += 12;
+    ry += 14;
   }
   // TONE: opmuntrende foerst (styrker), konstruktivt bagefter (fokus - ikke fejl)
   const finds = lift ? evaluateFindings(lift, lastVals || {}) : [];
@@ -2463,16 +2551,16 @@ function buildResultCard() {
   const flags = finds.filter(f => f.startsWith('FLAG'));
   const section = (title, col, mark, items) => {
     if (!items.length || ry > Hc - 120) return;
-    g.font = "600 17px 'IBM Plex Mono', monospace"; g.fillStyle = col;
-    g.fillText(title, PAD, ry); ry += 30;
-    g.font = "22px 'IBM Plex Mono', monospace";
+    g.font = "600 20px 'IBM Plex Mono', monospace"; g.fillStyle = col;
+    g.fillText(title, PAD, ry); ry += 34;
+    g.font = "25px 'IBM Plex Mono', monospace";
     for (const f of items) {
       if (ry > Hc - 100) break;
       const txt = f.replace(/^(OK|FLAG|OBS|NOTE):\s*/, '');
       g.fillStyle = col; g.fillText(mark, PAD, ry);
       g.fillStyle = '#d9d6cf';
-      for (const line of wrap(txt, W - PAD * 2 - 34)) { g.fillText(line, PAD + 28, ry); ry += 30; if (ry > Hc - 100) break; }
-      ry += 4;
+      for (const line of wrap(txt, W - PAD * 2 - 36)) { g.fillText(line, PAD + 32, ry); ry += 34; if (ry > Hc - 100) break; }
+      ry += 5;
     }
     ry += 10;
   };
