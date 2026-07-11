@@ -100,6 +100,8 @@
   body.athlete #undoBtn::after { content:'Fortryd'; }
   body.athlete #loopBtn::after { content:'Loop'; }
   body.athlete #ghostBtn::after { content:'Ghost'; }
+  body.athlete #exportBtn::after { content:'Video'; }
+  body.athlete #downloadLink { font-size:13px; padding:6px 10px; }
   body.athlete footer button.active::after { color:var(--accent); }
   /* coach online: glas-toplinje + ombrydelig bundbjælke med alle værktøjer */
   body.coachweb header { display:flex; position:fixed; top:0; left:0; right:0;
@@ -2775,6 +2777,7 @@ let exporting = false;
 async function exportVideo() {
   if ((recorder && recorder.state === 'recording') || exporting) return;
   if (!video.src) { alert('Åbn en video først'); return; }
+  disarmSession();   // eksporten afspiller videoen - ingen armeret wizard
   const mime = ['video/mp4;codecs=avc1', 'video/mp4',
                 'video/webm;codecs=vp9', 'video/webm', 'video/webm;codecs=vp8']
     .find(m => MediaRecorder.isTypeSupported(m)) || '';
@@ -2796,7 +2799,8 @@ async function exportVideo() {
     if (video.ended || video.currentTime >= endT - 0.03) {
       video.pause();
       if (recorder && recorder.state === 'recording') recorder.stop();
-      say('Video gemt ✓ — hent den nederst i ⋯ Mere');
+      say(ATHLETE ? 'Video gemt ✓ — tryk på det grønne link for at hente den'
+                  : 'Video gemt ✓ — hent den nederst i ⋯ Mere');
       setTimeout(() => say(''), 4000);
       return;
     }
@@ -3318,12 +3322,13 @@ if (COACHWEB) {
 if (ATHLETE) {
   document.body.classList.add('athlete');
   // skjul ALT undtagen: play, bane(🎯), pen, fortryd, loop
-  ['aiBtn', 'saveBtn', 'cardBtn', 'exportBtn', 'recordBtn', 'athleteSel', 'liftSel',
+  // atleten FÅR: ⬇ Gem video (deres løft m. bane = delbar stolthed) + link
+  ['aiBtn', 'saveBtn', 'cardBtn', 'recordBtn', 'athleteSel', 'liftSel',
    'loadInput', 'biasInput', 'speed', 'backBtn', 'fwdBtn',
    'gridBtn', 'openBtn', 'scrubToolBtn', 'lineBtn', 'angleBtn', 'eraseBtn',
    'graphBtn', 'mskelBtn',
    'clearBtn', 'color', 'brushSel', 'barBtn', 'calibBtn', 'trimInBtn', 'trimOutBtn',
-   'trimResetBtn', 'downloadLink', 'recTime'].forEach(id => {
+   'trimResetBtn', 'recTime'].forEach(id => {
     const el = document.getElementById(id);
     if (el) (el.closest('label') || el).style.display = 'none';
   });
@@ -3332,6 +3337,8 @@ if (ATHLETE) {
   document.getElementById('undoBtn').textContent = '↺';
   document.getElementById('loopBtn').textContent = '⟲';
   document.getElementById('ghostBtn').textContent = '👻';
+  const exB = document.getElementById('exportBtn');
+  if (exB) exB.textContent = '⬇';
   playBtn.textContent = '▶︎';
   document.getElementById('timeLabel').style.display = 'none';
   // ✏️ er en TÆND/SLUK for tegning - ellers er fingeren spole-gestus
