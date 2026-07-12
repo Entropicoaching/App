@@ -448,3 +448,23 @@ analytics/rapport (giver foerst mening ved 3+ sessioner pr. atlet),
 K-protokol-vaerktoejet ved 30+ analyser, score paa coach-kort efter K3.
 VENTER PAA MARC: test af 💾 v2 (gem en analyse, tjek banner-kg + at
 JSON'en har bar_path) -> go -> deploy.
+
+CYKLUS 11 - SIDSTE FAELLES (Marc gaar i seng, "kun gode minder"):
+COACH-RO-PAKKEN (kun vaerksted, backup: videocoach.backup-sidste-
+faelles.html):
+- SKELET-PLACERING I FULD RO: body.placing skjuler header/footer/
+  bakker/zen/luk under punkt-placering (ankel/knae sidder nederst -
+  praecis hvor bjaelken laa). Tidslinjen bevares (skal spole top/bund).
+  🦴 flyder op som "✕ afbryd" oppe til hoejre (dataset.prev gemmer/
+  gendanner knaptekst). Afsluttes ved buildMskel ELLER ✕.
+- Punkt-tryk har FORTRINSRET: mskelClicks tjekkes foer fartpanel/graf/
+  play-cirkel i pointerdown (foer kunne centrum-tryk starte AFSPILNING
+  midt i placeringen - fikset). togglePlay blokeret under placering
+  (ogsaa mellemrumstast). Gammel dublet-check fjernet (verificeret: 1
+  check + 1 definition).
+- Coach-footer slanket 8 -> 6: graphBtn + ghostBtn til Mere (ghost
+  styres alligevel via rep-tal-tryk). ::after-labels footer-scopet
+  (ingen dobbelt-labels i Mere). mskelBtn ikoniseret i coachweb.
+DEPLOY-STATUS: IKKE deployet (jernregel R2: Marcs test foerst). Naar
+Marc har telefontestet skelet-flowet: Opus deployer med standard-
+flowet (copy til public + commit + push). Alt andet er allerede live.
