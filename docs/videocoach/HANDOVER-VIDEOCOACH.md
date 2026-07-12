@@ -376,3 +376,75 @@ allerede for atleter (default-til, kan ikke slaas fra af dem) - flugter
 med fase 3-forslag A, men er formelt hans call. FORSLAG (ikke bygget):
 atlet-resultatkort (fase 3B), "min bedste rep"-markering, og paa sigt
 personlig fremgangs-linje naar VBT-data findes.
+
+DEPLOY 3 (Marcs go): 4e4f01c - TRAENINGSMODE + atletens magiske
+oejeblik + filmguide-fix er LIVE. Fartgraf for atleter: Marc besluttede
+TIL. Al projektviden (handover/roadmap/overgangsplan/opgavekort + 3
+test-rigs) er nu OGSAA versioneret i entropi-app/docs/videocoach/ -
+overlever disk-doed og foelger med repoet. Dev-server (5173) koerer
+stadig paa Marcs PC - kan lukkes med at draebe node-processen, eller
+bare lade vaere til naeste genstart. INTET udestaar i vaerkstedet -
+master == live pr. denne commit.
+
+CYKLUS 8: ATLET-VIDEOEKSPORT aabnet (kun vaerksted): ⬇ Video-knap i
+atlet-footeren (ikon+label) -> eksporterer klippet m. bane/tal braendt
+ind (mp4 paa iPhone) -> groent hentelink + atlet-venlig besked.
+disarmSession foer eksport (armeret wizard maa ikke aede taps under
+afspilningen). TEST: atlet-view -> ◎-analyse -> ⬇ -> afspilningen
+koerer klippet igennem -> tryk groent link -> gem paa telefonen.
+
+DEPLOY 4: 5cde399 - atlet-videoeksport LIVE. Marc livetester selv.
+Master == live. Alt dokumenteret. Fable signing off.
+
+## BAR-TRACKER FREDNING (sidste verifikation, Fable 8/7)
+Frys-rig: GROEN paa alle scenarier. Master == live (hash-verificeret).
+Trackerens INVARIANTER - bryd dem ALDRIG uden rig-bevis foerst:
+1. Tider, aldrig index, naar bane parres med andet (pose, skelet).
+2. Kontinuitetsregel (spring > R*0.6 -> gensoeg naert) - ingen coast.
+3. patchVar-gulve under emaBest og template-porten (stille start).
+4. Frys-vagt v1 uaendret: original-template + recenter-validering.
+   Cirkel-scan-reloker og template-hygiejne er MODBEVIST - genopfind
+   dem ikke.
+5. Korrektioner foedes ALDRIG live ind i matcheren (kun post-hoc).
+6. Enhver aendring: reproducer i rig -> fix -> alle scenarier groenne
+   -> port -> Marc tester -> deploy paa go.
+Marc finder forbedringspunkter gennem praksis - det er planen. Traceren
+er fredet; alt andet maa gerne udvikle sig.
+
+CYKLUS 9 (Fables allersidste, Marc til traening): FRAMEWORK.md faerdig-
+gjort og committet (f9d4914) - Entropi-score v1 (komponenter, normali-
+sering, vaegte, kalibreringsprotokol K1-K4, visningsregler, pseudokode),
+VBT-matematik (fit-krav, MVT, e1RM-interval, dagsform-taerskler),
+flag-motor F1-F6 m. stoejvaern, datamodel-migrationer M1-M4 inkl.
+bar_path-format (muliggoer teknik-tvillingen), atletrejse-stadier,
+KPI'er (+anti-KPI), tekniske triggere T1-T3, risici, 8 AABNE
+BESLUTNINGER (B1-B8) og implementerings-koe til Opus. FELTLOG.md
+skabelon klar m. dags dato. OPUS: start med Marcs B-svar, saa koeen
+i FRAMEWORK sektion 11. Byg intet foer B-svarene.
+
+CYKLUS 10 (efter Marcs B-svar, han traener): FRAMEWORK EKSEKVERET:
+- B5/B6: Supabase-migration KOERT (videocoach_framework_m1_m2):
+  video_analyses += load_kg, rpe, bar_path, low_conf_pct, schema_v,
+  score, score_components, score_version. Nye tabeller athlete_baselines
+  + athlete_lv_profiles (RLS taendt, deny-by-default, python bruger
+  service-noegle). Tabellen var tom -> nul risiko.
+- 💾 v2 i MASTEREN (kun vaerksted, VENTER GO): parseLoad (kg/RPE af
+  fritekst, viser parsed vaerdi i banner saa fejlparse fanges straks),
+  compressBarPath (<=120 pkt delta-kodet, cm_per_px med), low_conf_pct,
+  schema_v:2. Importeren virker UAENDRET (feltnavne matcher kolonner).
+- entropi_agent/scoring.py: Entropi-score v1 praecis efter FRAMEWORK
+  sektion 3 (ankre foer baseline, median/MAD efter, vaegte 30/20/25/25,
+  lowConf-vagt). SELVTEST GROEN: rent saet 94, rodet 15, usikker afvist.
+- entropi_agent/lv_profile.py: VBT efter sektion 4 (vaegtet fit m.
+  60-dages halveringstid, modenhedskrav, MVT pr atlet PR LOEFT (B3),
+  e1RM som interval, dagsform beta 4/8%). SELVTEST GROEN: e1RM 204
+  (202-206) mod syntetisk sandhed 205, r2 .998.
+- run_weekly.bat kalder nu scoring + lv_profile efter import (verificeret
+  mod live DB: rene no-ops uden data).
+- B7: Llama er DEPRECATED (droppes som retning) men koden bevares til
+  alternativ er valgt - roer den ikke, byg ikke videre paa den.
+NAESTE I KOEEN (til Opus, kraever DATA foerst): flag-motor F1-F6 ind i
+analytics/rapport (giver foerst mening ved 3+ sessioner pr. atlet),
+K-protokol-vaerktoejet ved 30+ analyser, score paa coach-kort efter K3.
+VENTER PAA MARC: test af 💾 v2 (gem en analyse, tjek banner-kg + at
+JSON'en har bar_path) -> go -> deploy.

@@ -323,3 +323,23 @@ Indtil da: en fil, chunked writes, syntaks-tjek, backups. Det virker.
   Hver bygges som alt andet: lokalt, testet, Marcs go, deploy.
 
 _Slut. Framework'et er levende: aendr det her, foer koden aendres._
+
+=====================================================================
+## 12. MARCS BESLUTNINGER (8/7-2026 - dette er LOV)
+=====================================================================
+  B1 GO:  score-kalibrering starter stille (rapport-only, K-protokol
+          foer nogen atlet ser den).
+  B2 GO:  startvaegte 30/20/25/25 proeves - justeres af K-protokollen.
+  B3 GO m. KRAV: MVT er ALTID pr. atlet PR. LOEFT (aldrig delt paa
+          tvaers af loeft). Spec'en overholder det - fasthold det.
+  B4 AABEN: Marc har ikke set dagsform saadan foer - START med 4%/8%
+          som hypotese, kalibrer via feltlog + hans reaktioner paa
+          flags. Marker dagsform-noter som "beta" i rapporten.
+  B5 GO:  M1-migration + kg/RPE-parser. Navne-mapping forbi Marc.
+  B6 GO:  bar_path gemmes, koblet paa ATLETEN (kontekst over tid) -
+          dvs. athlete_id-koblingen (B5) er forudsaetningen. Byg begge.
+  B7 GO m. KRAV: Llama DROPPES som retning, men koden SLETTES IKKE
+          foer et alternativ er besluttet (evt. Claude-knap). Markér
+          som deprecated i docs; ryd op senere.
+  B8 GO (for nu): atletrejse-oplaasning. Funktioner kan laases op for
+          alle senere, hvis praksis viser det.
