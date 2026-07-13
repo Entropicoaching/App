@@ -319,6 +319,7 @@
   <button id="eraseBtn" class="tool">🧽 Visk</button>
   <button id="allBtn" style="border-color:#c8923a;color:#c8923a;font-weight:600">Analysér løft</button>
   <button id="graphBtn">📈 Kurve</button>
+  <button id="fpBtn">◈ Fingeraftryk</button>
   <button id="mskelBtn">🦴 Skelet</button>
   <button id="barBtn">🎯 Stangbane</button>
   <button id="calibBtn">📏 Kalibrér</button>
@@ -557,6 +558,14 @@ document.getElementById('ghostBtn').onclick = e => {
   e.target.textContent = p.ghostRep == null ? (SLIM ? '👻' : '👻 Ghost')
     : (SLIM ? `👻${p.ghostRep + 1}` : `👻 Rep ${p.ghostRep + 1}`);
   e.target.classList.toggle('active', p.ghostRep != null);
+};
+
+// ◈ fingeraftryk: alle reps' baner oven på hinanden (bundt-konsistens)
+document.getElementById('fpBtn').onclick = e => {
+  const p = strokes.find(s => s.type === 'path' && s.reps && s.reps.length > 1);
+  if (!p) { alert('Kør 🎯 bane først (kræver mindst 2 reps)'); return; }
+  fingerprint = !fingerprint;
+  e.currentTarget.classList.toggle('active', fingerprint);
 };
 
 // loop: afspil løftet forfra igen og igen (inden for klippet)
@@ -1369,6 +1378,50 @@ function drawVelPanel() {
   ctx.restore();
 }
 
+// ---------- ◈ REP-FINGERAFTRYK ----------
+// Alle reps' baner lagt oven på hinanden, justeret til FÆLLES start-anker:
+// opstillings-forskelle fjernes, så man ser ren bane-konsistens. Stramt
+// bundt = ens hver gang; vifter det ud = nedbrud/træthed. Coach-facing.
+let fingerprint = false;
+function drawFingerprint(s) {
+  if (!s.pts || !s.reps || s.reps.length < 2) { drawStroke(s); return; }
+  const anchor = s.pts[s.reps[0].start];
+  ctx.save();
+  ctx.lineWidth = Math.max(2.5, canvas.width / 520);
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  const bottomX = [];
+  s.reps.forEach((r, k) => {
+    const ox = anchor.x - s.pts[r.start].x, oy = anchor.y - s.pts[r.start].y;
+    const hue = 188 + k * (110 / Math.max(1, s.reps.length - 1));  // cyan → guld pr. rep
+    ctx.strokeStyle = `hsla(${hue},78%,60%,.62)`;
+    ctx.beginPath();
+    let maxY = -Infinity, mxX = anchor.x;
+    for (let i = r.start; i <= Math.min(r.end, s.pts.length - 1); i++) {
+      const x = s.pts[i].x + ox, y = s.pts[i].y + oy;
+      i === r.start ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      if (s.pts[i].y > maxY) { maxY = s.pts[i].y; mxX = x; }
+    }
+    ctx.stroke();
+    bottomX.push(mxX);
+  });
+  ctx.restore();
+  // læsbar overskrift + spredning i bund (hvis kalibreret)
+  ctx.save();
+  const fs = Math.max(14, canvas.width / 64);
+  ctx.font = `bold ${fs}px 'IBM Plex Mono', monospace`;
+  let lbl = `◈ Fingeraftryk · ${s.reps.length} reps`;
+  if (cmPerPx && bottomX.length > 1) {
+    const spread = (Math.max(...bottomX) - Math.min(...bottomX)) * cmPerPx;
+    lbl += ` · spredning i bund ${spread.toFixed(1)} cm`;
+  }
+  ctx.fillStyle = 'rgba(20,20,16,.66)';
+  const tw = ctx.measureText(lbl).width;
+  ctx.fillRect(12, 12, tw + 22, fs * 1.7);
+  ctx.fillStyle = '#c8923a';
+  ctx.fillText(lbl, 23, 12 + fs * 1.2);
+  ctx.restore();
+}
+
 function render() {
   // TERMISK RO: når intet bevæger sig (pause, ingen tegning/analyse),
   // tegnes kun hver 3. frame. Telefonen holder sig kold under en session
@@ -1387,6 +1440,7 @@ function render() {
   strokes.forEach(s => {
     if (cmp && (s.type === 'path' || s.type === 'pose' || s.type === 'mskel'))
       return;
+    if (fingerprint && s.type === 'path') { drawFingerprint(s); return; }
     drawStroke(s);
   });
   if (current) drawStroke(current);
@@ -2421,6 +2475,64 @@ function evaluateFindings(lift, v) {
   return f;
 }
 
+// CUE-BIBLIOTEK: mønster i tallene -> forslag til en coaching-cue. KUN til
+// coachen (vises i analyse-arket, aldrig auto til atleten) og bevidst formet
+// som UDKAST i Marcs stil - han vælger og former sin egen ordlyd. Hver cue
+// hænger på et konkret fund, så det aldrig bliver løs gætteri.
+function suggestCues(lift, v) {
+  const c = [];
+  const sq = lift === 'Squat', bp = lift === 'Bænkpres';
+  const dl = lift === 'Dødløft', sumo = lift === 'Sumo dødløft';
+  if (sq) {
+    if (v.hipRatio != null && v.hipRatio > 1.4)
+      c.push([`"Bryst op – hofte og bryst rejser sig SAMMEN"`,
+              `hoften skyder ${v.hipRatio}x hurtigere op end stangen (good morning)`]);
+    if (v.driftCm != null && v.driftCm > 5)
+      c.push([`"Vægten i hælene – træk stangen ind over midtfod"`,
+              `${(+v.driftCm).toFixed(1)} cm vandret drift`]);
+    if (v.effPct != null && v.effPct < 90)
+      c.push([`"Fold ud – skuldre tilbage i stangen, hofte frem under"`,
+              `bane-effektivitet ${v.effPct}% (omvej)`]);
+    if (v.dipPct != null && v.dipPct > 55)
+      c.push([`"Eksplodér ud af hullet – maks fart fra første tomme"`,
+              `fart dør ${v.dipPct}% ind i sticking point`]);
+  }
+  if (bp) {
+    if (v.driftCm != null && v.driftCm < 8)
+      c.push([`"Styr stangen skråt op mod skuldrene – ikke lodret"`,
+              `kun ${(+v.driftCm).toFixed(1)} cm J-kurve (for lodret)`]);
+    if (v.foreDev != null && v.foreDev > 15)
+      c.push([`"Underarmen lodret i bunden – albuen ind under stangen"`,
+              `underarm ${v.foreDev}° fra lodret`]);
+    if (v.dipPct != null && v.dipPct > 55)
+      c.push([`"Pres eksplosivt fra brystet – ingen tøven i bunden"`,
+              `stort fartfald (${v.dipPct}%) ind i sticking point`]);
+  }
+  if (dl) {
+    if (v.driftCm != null && v.driftCm > 4)
+      c.push([`"Hold stangen tæt – skrab skinnebenene, spænd lats"`,
+              `${(+v.driftCm).toFixed(1)} cm ud fra kroppen`]);
+    if (v.dipPct != null && v.dipPct > 55)
+      c.push([`"Skub gulvet væk – lad hofte og skuldre rejse sig sammen"`,
+              `fart dør ${v.dipPct}% (hofte skyder op før stangen letter?)`]);
+    if (v.hystCm != null && v.hystCm > 4)
+      c.push([`"Samme linje ned og op – styr excentrisk kontrolleret"`,
+              `${(+v.hystCm).toFixed(1)} cm forskel ned/op`]);
+  }
+  if (sumo) {
+    if (v.driftCm != null && v.driftCm > 4)
+      c.push([`"Stangen ind til dig – spænd lats, træk gulvet fra hinanden"`,
+              `${(+v.driftCm).toFixed(1)} cm vandret afvigelse`]);
+    if (v.dipPct != null && v.stickPct != null && v.stickPct > 45 && v.dipPct > 55)
+      c.push([`"Hofte igennem til lockout – bryst op, hofte frem"`,
+              `sticking højt (${v.stickPct}%) + stort fartfald (${v.dipPct}%) = langsom lockout`]);
+  }
+  if (v.lossPct != null && v.lossPct > 20)
+    c.push([`"Sæt en streg her – eller længere pause næste sæt"`,
+            `fartfald over sættet ${v.lossPct}% (over VBT-stopgrænsen)`]);
+  return c.slice(0, 4);
+}
+
 // Samlet rapport-tekst (målinger + regelbaserede fund). Bruges af
 // analyse-arket - genberegnes live når atlet/øvelse/kg/tendens ændres.
 function buildReport() {
@@ -2431,10 +2543,13 @@ function buildReport() {
   const load = document.getElementById('loadInput').value.trim();
   const bias = document.getElementById('biasInput').value.trim();
   const findings = lift ? evaluateFindings(lift, lastVals || {}) : [];
+  const cues = lift ? suggestCues(lift, lastVals || {}) : [];
   return `Atlet: ${ath || 'ukendt'}\nØvelse: ${lift || '(vælg øvelse for at få fund)'}\n` +
     `Belastning: ${load || 'ikke angivet'}\n` +
     (bias ? `Kendt tendens: ${bias}\n` : '') + metrics +
-    (findings.length ? `\n\nFUND (regelbaseret):\n` + findings.join('\n') : '');
+    (findings.length ? `\n\nFUND (regelbaseret):\n` + findings.join('\n') : '') +
+    (cues.length ? `\n\nFORSLAG TIL CUES (dine ord – vælg selv):\n` +
+      cues.map(x => `• ${x[0]}\n   ↳ ${x[1]}`).join('\n') : '');
 }
 
 // RUNDE 20: rene NØGLETAL til AI-panelet (erstatter det rå metrics-dump)
@@ -3397,7 +3512,7 @@ if (COACHWEB) {
   moreBar.hidden = true;
   document.body.appendChild(moreBar);
   // ghostBtn BLIVER paa hovedbjaelken (Marc bruger den hyppigt) - resten i Mere
-  ['scrubToolBtn', 'barBtn', 'calibBtn', 'cmpBtn', 'graphBtn',
+  ['scrubToolBtn', 'barBtn', 'calibBtn', 'cmpBtn', 'graphBtn', 'fpBtn',
    'lineBtn', 'angleBtn', 'eraseBtn', 'color', 'brushSel', 'clearBtn',
    'recordBtn', 'athleteSel', 'liftSel', 'loadInput', 'biasInput',
    'aiBtn', 'saveBtn', 'cardBtn', 'exportBtn', 'recTime', 'downloadLink', 'repCmpBtn'].forEach(id => {
@@ -3476,7 +3591,7 @@ if (ATHLETE) {
   ['aiBtn', 'saveBtn', 'cardBtn', 'recordBtn', 'athleteSel', 'liftSel',
    'loadInput', 'biasInput', 'speed', 'backBtn', 'fwdBtn',
    'gridBtn', 'openBtn', 'scrubToolBtn', 'lineBtn', 'angleBtn', 'eraseBtn',
-   'graphBtn', 'mskelBtn',
+   'graphBtn', 'fpBtn', 'mskelBtn',
    'clearBtn', 'color', 'brushSel', 'barBtn', 'calibBtn', 'trimInBtn', 'trimOutBtn',
    'trimResetBtn', 'recTime'].forEach(id => {
     const el = document.getElementById(id);
@@ -3509,7 +3624,7 @@ if (DESKTOP) {
   tray.hidden = true;
   document.body.appendChild(tray);
   ['scrubToolBtn', 'loopBtn', 'lineBtn', 'angleBtn', 'eraseBtn',
-   'graphBtn', 'barBtn', 'calibBtn', 'color', 'brushSel', 'clearBtn',
+   'graphBtn', 'fpBtn', 'barBtn', 'calibBtn', 'color', 'brushSel', 'clearBtn',
    'athleteSel', 'liftSel', 'loadInput', 'biasInput',
    'aiBtn', 'saveBtn', 'cardBtn', 'exportBtn', 'recTime', 'downloadLink'].forEach(id => {
     const el = document.getElementById(id);
