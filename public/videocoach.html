@@ -114,12 +114,12 @@
   body.coachweb footer button::after { font-size:9px; letter-spacing:.14em;
     color:var(--dim); text-transform:uppercase; font-weight:500; }
   body.coachweb #allBtn::after  { content:'Analysér'; }
-  body.coachweb #ghostBtn::after { content:'Ghost'; }
+  body.coachweb footer #ghostBtn::after { content:'Ghost'; }
   body.coachweb #loopBtn::after { content:'Loop'; }
   body.coachweb #penBtn::after  { content:'Tegn'; }
   body.coachweb #undoBtn::after { content:'Fortryd'; }
   body.coachweb #moreBtn::after { content:'Mere'; }
-  body.coachweb #graphBtn::after { content:'Kurve'; }
+  body.coachweb footer #graphBtn::after { content:'Kurve'; }
   body.coachweb #mskelBtn::after { content:'Skelet'; }
   body.coachweb footer button.active::after { color:var(--accent); }
   body.coachweb footer select, body.coachweb footer input
@@ -163,6 +163,16 @@
     border:1px solid var(--line); }
   body.zen footer, body.zen #scrubRow, body.zen #moreBar,
   body.zen #openSmall, body.zen header { display:none !important; }
+  /* skelet-punkter placeres i FULD RO: alt undtagen tidslinjen viger
+     (ankel/knae sidder nederst i billedet - praecis hvor bjaelken laa) */
+  body.placing footer, body.placing header, body.placing #moreBar,
+  body.placing #deskTray, body.placing #openSmall, body.placing #guideSmall,
+  body.placing #zenBtn, body.placing #closeBtn
+    { display:none !important; }
+  body.placing #mskelBtn { display:flex !important; position:fixed;
+    top:10px; right:10px; z-index:31; background:rgba(20,20,16,.85);
+    border:1px solid var(--accent); color:var(--accent);
+    border-radius:10px; padding:10px 16px; }
   /* 📷 filmguide: hjælp kameraet, så hjælper du analysen */
   #guidePanel { position:fixed; inset:0; z-index:40; display:flex;
     align-items:center; justify-content:center; background:rgba(0,0,0,.55); }
@@ -419,6 +429,7 @@ function loadFile(file) {
   if (curUrl) URL.revokeObjectURL(curUrl);   // frigiv forrige video (mobil-RAM)
   endCompare();                              // ny video 1 = ud af ⇄-tilstand
   strokes = []; anglePts = [];
+  if (typeof resetZoom === 'function') resetZoom();   // ny video = 1x zoom
   // nulstil alt der hører til den GAMLE video
   cmPerPx = null; calibPts = [];
   shOffset = null; awaitShClick = null;   // skulder-kalibrering pr. video
@@ -494,6 +505,7 @@ const playBtn = document.getElementById('playBtn');
 playBtn.onclick = togglePlay;
 document.getElementById('playBtn2').onclick = togglePlay;
 function togglePlay() {
+  if (mskelClicks) return;             // ingen afspilning midt i punkt-placering
   disarmSession();                     // afspilning = coachen vil se, ikke analysere (endnu)
   const tv = curVid();                 // ⇄ step 2: kontrollerne styrer side B
   if (!tv.src) return;
@@ -588,6 +600,7 @@ function eraseAt(p) {
 }
 
 canvas.addEventListener('pointerdown', e => {
+  if (pinch) return;      // to-finger zoom kører - ignorér enkelt-tryk
   canvas.setPointerCapture(e.pointerId);
   if (tracking) return;   // tap/spol må ikke afbryde en kørende sporing
   const p = pos(e);
@@ -599,6 +612,9 @@ canvas.addEventListener('pointerdown', e => {
     wizardClick(p);
     return;
   }
+  // skelet-punkter har FORTRINSRET over alle andre klik-zoner (fartpanel,
+  // graf, play-cirkel) - et punkt-tryk maa aldrig blive til noget andet
+  if (mskelClicks) { mskelStep(p); return; }
   // tryk på en rep-linje i fartpanelet = vælg/fravælg som ghost
   const hit = !wizard && !awaitBox && !awaitCalib && !awaitBarClick &&
     velPanelHits.find(h =>
@@ -629,7 +645,6 @@ canvas.addEventListener('pointerdown', e => {
     const r = Math.min(canvas.width, canvas.height) * 0.11;
     if ((p.x-cx)**2 + (p.y-cy)**2 < r*r) { togglePlay(); return; }
   }
-  if (mskelClicks) { mskelStep(p); return; }
   if (awaitBox) { boxDrag = { a: p, b: p }; return; }
   if (awaitCalib) {
     calibPts.push(p);
@@ -665,6 +680,7 @@ canvas.addEventListener('pointerdown', e => {
   }
 });
 canvas.addEventListener('pointermove', e => {
+  if (pinch) return;      // to-finger zoom kører
   if (gridDrag) {
     const p = pos(e);
     gridOffset = { x: p.x - gridDrag.px, y: p.y - gridDrag.py };
@@ -689,6 +705,7 @@ canvas.addEventListener('pointermove', e => {
   if (current.type === 'line') current.b = pos(e);
 });
 window.addEventListener('pointerup', () => {
+  if (pinch) return;      // zoom-gest afsluttes af touchend, ikke her
   if (boxDrag) {
     const m = 0.15;   // 15% luft-margin hele vejen rundt
     const x = Math.min(boxDrag.a.x, boxDrag.b.x), y = Math.min(boxDrag.a.y, boxDrag.b.y);
@@ -733,6 +750,54 @@ canvas.addEventListener('wheel', e => {
   e.preventDefault();
   step(e.deltaY > 0 ? FRAME : -FRAME);
 }, { passive: false });
+
+// ---------- Pinch-to-zoom (mobil) ----------
+// TO fingre zoomer + panorerer videoen; ÉN finger er uroert (tegn/placer/
+// klik). Zoom laegges som CSS-transform paa canvas - pos() bruger
+// getBoundingClientRect, som afspejler transformen, saa alle klik mapper
+// stadig korrekt (zoom = ekstra praecision ved skelet-punkter paa lille skaerm).
+let zoom = { s: 1, x: 0, y: 0 };
+let pinch = null;
+function applyZoom() {
+  canvas.style.transformOrigin = '0 0';
+  canvas.style.transform = zoom.s === 1 ? ''
+    : `translate(${zoom.x}px,${zoom.y}px) scale(${zoom.s})`;
+}
+function resetZoom() { zoom = { s: 1, x: 0, y: 0 }; applyZoom(); }
+function pinchMid(t) {
+  return { x: (t[0].clientX + t[1].clientX) / 2,
+           y: (t[0].clientY + t[1].clientY) / 2,
+           d: Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY) };
+}
+canvas.addEventListener('touchstart', e => {
+  if (e.touches.length < 2) return;
+  const m = pinchMid(e.touches);
+  const r = canvas.getBoundingClientRect();
+  // base = canvas' u-transformerede top-venstre (transform-origin 0 0 giver
+  // r.left = base + translate), konstant under gesten
+  pinch = { base: { x: r.left - zoom.x, y: r.top - zoom.y },
+            m0: m, s0: zoom.s, x0: zoom.x, y0: zoom.y };
+  current = null; boxDrag = null; gridDrag = null; anglePts = [];  // annullér evt. paabegyndt enkelt-tryk
+  e.preventDefault();
+}, { passive: false });
+canvas.addEventListener('touchmove', e => {
+  if (!pinch || e.touches.length < 2) return;
+  e.preventDefault();
+  const m = pinchMid(e.touches);
+  const s = Math.max(1, Math.min(4, pinch.s0 * m.d / pinch.m0.d));
+  // hold punktet under fingrenes midte fast -> zoom OG pan i samme gest
+  const Lx = (pinch.m0.x - pinch.base.x - pinch.x0) / pinch.s0;
+  const Ly = (pinch.m0.y - pinch.base.y - pinch.y0) / pinch.s0;
+  zoom = { s, x: m.x - pinch.base.x - s * Lx, y: m.y - pinch.base.y - s * Ly };
+  applyZoom();
+}, { passive: false });
+function endPinch(e) {
+  if (!pinch || e.touches.length >= 2) return;  // stadig 2 fingre? behold gesten
+  pinch = null;
+  if (zoom.s <= 1.03) resetZoom();               // pinchet helt ud = nulstil pænt
+}
+canvas.addEventListener('touchend', endPinch);
+canvas.addEventListener('touchcancel', endPinch);
 
 // ---------- Tegning på canvas ----------
 // Find sample-index for et tidspunkt. Nye analyser gemmer PRÆCISE tider pr.
@@ -804,15 +869,26 @@ function drawStroke(s) {
       }
       ctx.fillStyle = s.color;
     } else if (s.vel) {
-      // farve efter fart: rød = langsom (sticking point), grøn = hurtig
-      for (let i = 1; i < s.pts.length; i++) {
-        const hue = Math.max(0, Math.min(120, Math.abs(s.vel[i]) / 0.8 * 120));
-        ctx.strokeStyle = `hsl(${hue},90%,55%)`;
-        ctx.beginPath();
-        ctx.moveTo(s.pts[i-1].x, s.pts[i-1].y);
-        ctx.lineTo(s.pts[i].x, s.pts[i].y);
-        ctx.stroke();
-      }
+      // farve efter fart: rød = langsom (sticking point), grøn = hurtig.
+      // Tegn KUN inde i rep-vinduerne (præcis som ghost gør) - ellers tager
+      // den samlede bane opstilling/walkout FØR første rep + overgangene
+      // MELLEM reps med, og de laver et falsk spejlvendt "J-hook" nær bunden.
+      // Reps er rene hver for sig; junk'en imellem hører ikke til løftet.
+      // Uden reps (enkelt bevægelse): tegn hele banen.
+      const segs = s.reps && s.reps.length
+        ? s.reps.map(r => [Math.max(1, r.start + 1),
+                           Math.min(s.pts.length - 1, r.end)])
+        : [[1, s.pts.length - 1]];
+      segs.forEach(([a, b]) => {
+        for (let i = a; i <= b; i++) {
+          const hue = Math.max(0, Math.min(120, Math.abs(s.vel[i]) / 0.8 * 120));
+          ctx.strokeStyle = `hsl(${hue},90%,55%)`;
+          ctx.beginPath();
+          ctx.moveTo(s.pts[i-1].x, s.pts[i-1].y);
+          ctx.lineTo(s.pts[i].x, s.pts[i].y);
+          ctx.stroke();
+        }
+      });
       ctx.strokeStyle = s.color; ctx.fillStyle = s.color;
     } else {
       ctx.shadowColor = s.color; ctx.shadowBlur = 8;
@@ -1755,11 +1831,12 @@ async function startBarTracking(p0) {
     // beregningen ro til at følge med på svage telefoner.
     const oldRate = video.playbackRate, oldMuted = video.muted;
     video.muted = true;
-    // IN-SESSION-FART: analysen skal vaere hurtig ved racket. Matcheren
-    // bruger faa ms pr. frame, og times-baseret matematik + kontinuitets-
-    // regel taaler droppede frames - saa fuld fart paa desktop, 0.75 paa
-    // mobil (termisk buffer). Var 0.5 = dobbelt ventetid.
-    video.playbackRate = DESKTOP ? 1.0 : 0.75;
+    // IN-SESSION-FART: desktop dekoder hver frame, saa fuld fart er trygt.
+    // Paa MOBIL dropper hurtig afspilning frames paa svage telefoner ->
+    // skiven flytter sig laengere end soegevinduet mellem to behandlede
+    // frames -> trackeren mister laasen og flyver rundt (Marcs app-bug,
+    // begge views). 0.5 = faerre drop = laasen holder. Reverteret fra 0.75.
+    video.playbackRate = DESKTOP ? 1.0 : 0.5;
     await new Promise(res => {
       const done = () => {
         video.removeEventListener('pause', done);
@@ -1851,10 +1928,24 @@ function boneFilter(pose) {
 let mskelClicks = null;
 document.getElementById('mskelBtn').onclick = () => {
   if (tracking || analyzing) return;
+  if (mskelClicks) {                       // tryk igen = annullér placering
+    mskelClicks = null;
+    document.body.classList.remove('placing');
+    const b = document.getElementById('mskelBtn');
+    if (b.dataset.prev) { b.textContent = b.dataset.prev; delete b.dataset.prev; }
+    b.classList.remove('active');
+    layoutBars(); say('');
+    return;
+  }
   const path = strokes.filter(s => s.type === 'path' && s.times).pop();
   if (!path) { alert('Kør ⚡ Analysér løft først (skelettet følger stangen)'); return; }
   video.pause();
   playBtn.textContent = playLabel(false);
+  document.body.classList.add('placing');  // fuld ro til praecise tryk
+  const mb2 = document.getElementById('mskelBtn');
+  mb2.dataset.prev = mb2.textContent;
+  mb2.textContent = '✕ afbryd';
+  layoutBars();
   // RUNDE 15: KEYFRAME-SKELET. Auto-tracking af knæ/hofte fejlede på rigtige
   // videoer (sort sleeve mod mørk baggrund, perspektiv-forkortning, rack-
   // distraktorer). I stedet klikker coachen skelettet ved TOPPEN og ved BUNDEN;
@@ -1904,7 +1995,11 @@ function barYAt(path, t) {
 // RUNDE 15: byg keyframe-skelettet. Ingen tracking - to klik-poser (top+bund)
 // gemmes; interpolationen sker ved TEGNING (drawStroke), drevet af stanghøjden.
 function buildMskel(m) {
-  document.getElementById('mskelBtn').classList.remove('active');
+  const mb3 = document.getElementById('mskelBtn');
+  mb3.classList.remove('active');
+  if (mb3.dataset.prev) { mb3.textContent = mb3.dataset.prev; delete mb3.dataset.prev; }
+  document.body.classList.remove('placing');
+  layoutBars();
   const topY = m.top._barY, botY = m.bot._barY;
   if (Math.abs(botY - topY) < 8) {
     alert('Vælg en tydelig TOP og BUND - stangen skal have flyttet sig tydeligt mellem de to klik-sæt');
@@ -2657,6 +2752,38 @@ async function getAnalysesDir() {
   return analysesDir;
 }
 
+// FRAMEWORK 2.2/2.3 (Marcs B5+B6): kg/RPE parses ved GEM (og VISES, saa
+// fejlparse opdages straks), og banens punkter gemmes komprimeret -
+// det er teknik-tvillingens og VBT-profilens braendstof.
+function parseLoad(txt) {
+  if (!txt) return { kg: null, rpe: null };
+  const rpeM = txt.match(/(?:@|rpe\s*)(\d+(?:[.,]\d+)?)/i);
+  const rest = txt.replace(/(?:@|rpe)\s*\d+(?:[.,]\d+)?/i, '');
+  const kgM = rest.match(/(\d+(?:[.,]\d+)?)/);
+  return {
+    kg: kgM ? parseFloat(kgM[1].replace(',', '.')) : null,
+    rpe: rpeM ? parseFloat(rpeM[1].replace(',', '.')) : null,
+  };
+}
+function compressBarPath(path) {
+  const pts = path.pts, tms = path.times;
+  if (!pts || !tms || pts.length < 8) return null;
+  const N = Math.min(120, pts.length);
+  const idx = [];
+  for (let i = 0; i < N; i++)
+    idx.push(Math.round(i * (pts.length - 1) / (N - 1)));
+  const xs = idx.map(i => Math.round(pts[i].x));
+  const ys = idx.map(i => Math.round(pts[i].y));
+  const dx = [], dy = [];
+  for (let i = 1; i < N; i++) { dx.push(xs[i] - xs[i-1]); dy.push(ys[i] - ys[i-1]); }
+  return { v: 1,
+    t0: +tms[idx[0]].toFixed(3),
+    dt: +(((tms[idx[N - 1]] - tms[idx[0]]) / (N - 1)) || 0).toFixed(4),
+    x0: xs[0], y0: ys[0], dx, dy,
+    cm_per_px: cmPerPx ? +cmPerPx.toFixed(5) : null,
+    w: canvas.width, h: canvas.height };
+}
+
 saveBtn.onclick = async () => {
   const metrics = collectMetrics();
   if (!metrics || !lastVals) { alert('Kør ⚡ Analysér løft først'); return; }
@@ -2664,9 +2791,16 @@ saveBtn.onclick = async () => {
   const lift = document.getElementById('liftSel').value;
   if (!lift) { alert('Vælg øvelse først'); return; }
   const path = strokes.filter(s => s.type === 'path' && s.vel).pop();
+  const parsed = parseLoad(document.getElementById('loadInput').value.trim());
   const data = {
+    schema_v: 2,
     athlete_name: ath,
     lift,
+    load_kg: parsed.kg,
+    rpe: parsed.rpe,
+    low_conf_pct: path && path.lowConf && path.pts.length
+      ? +((path.lowConf / path.pts.length) * 100).toFixed(1) : 0,
+    bar_path: path ? compressBarPath(path) : null,
     load_note: document.getElementById('loadInput').value.trim() || null,
     bias_note: document.getElementById('biasInput').value.trim() || null,
     rom_cm: lastVals.romCm ?? null,
@@ -2700,6 +2834,10 @@ saveBtn.onclick = async () => {
     await w.close();
     saveBtn.textContent = '💾 Gemt ✓';
     setTimeout(() => saveBtn.textContent = saveLabel, 2500);
+    // vis det PARSEDE tal - fejlparse skal opdages nu, ikke i rapporten
+    say(`💾 ${ath} · ${lift} · ${parsed.kg != null ? parsed.kg + ' kg' : 'ingen kg!'}` +
+        (parsed.rpe != null ? ` @ ${parsed.rpe}` : ''));
+    setTimeout(() => say(''), 3500);
   } catch (e) {
     if (e.name === 'AbortError') return;
     // fallback: almindelig download (mobil, eller hvis mappevalg fejler)
@@ -3136,10 +3274,20 @@ function driveCompare() {
     if (!v2.paused) v2.pause();
     if (Math.abs(v2.currentTime - target) > 0.04) v2.currentTime = target;
   } else {
-    v2.playbackRate = video.playbackRate;
+    // MOBIL-LAG-FIX: seek under afspilning er dyrt (saerligt to dekodere af
+    // SAMME fil i rep-overlay) - hyppige korrektions-seeks fik videoen til at
+    // hakke. I stedet holdes v2 i takt ved at NUDGE dens fart lidt op/ned saa
+    // den glider tilbage i synk. Hard-seek kun ved store spring (loop-genstart).
     if (v2.paused && target > 0.01 && target < v2.duration - 0.1)
       v2.play().catch(() => {});
-    if (Math.abs(v2.currentTime - target) > 0.12) v2.currentTime = target;
+    const drift = v2.currentTime - target;        // + = v2 er foran masteren
+    if (Math.abs(drift) > 0.35) {
+      v2.currentTime = target;                     // loop-genstart e.l. - ét seek
+      v2.playbackRate = video.playbackRate;
+    } else {
+      v2.playbackRate = video.playbackRate *
+        (drift > 0.05 ? 0.9 : drift < -0.05 ? 1.1 : 1);
+    }
   }
 }
 
@@ -3248,7 +3396,8 @@ if (COACHWEB) {
   moreBar.id = 'moreBar';
   moreBar.hidden = true;
   document.body.appendChild(moreBar);
-  ['scrubToolBtn', 'barBtn', 'calibBtn', 'cmpBtn',
+  // ghostBtn BLIVER paa hovedbjaelken (Marc bruger den hyppigt) - resten i Mere
+  ['scrubToolBtn', 'barBtn', 'calibBtn', 'cmpBtn', 'graphBtn',
    'lineBtn', 'angleBtn', 'eraseBtn', 'color', 'brushSel', 'clearBtn',
    'recordBtn', 'athleteSel', 'liftSel', 'loadInput', 'biasInput',
    'aiBtn', 'saveBtn', 'cardBtn', 'exportBtn', 'recTime', 'downloadLink', 'repCmpBtn'].forEach(id => {
@@ -3261,6 +3410,7 @@ if (COACHWEB) {
   document.getElementById('undoBtn').textContent = '↺';
   document.getElementById('loopBtn').textContent = '⟲';
   document.getElementById('ghostBtn').textContent = '👻';
+  document.getElementById('mskelBtn').textContent = '🦴';
   const moreBtn = document.createElement('button');
   moreBtn.id = 'moreBtn';
   moreBtn.textContent = '⋯';
