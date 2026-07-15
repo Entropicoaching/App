@@ -1972,16 +1972,21 @@ async function startBarTracking(p0) {
   };
   let patchVar = calcPatchVar();
   let cur = { ...p0 };
-  let vel = { x: 0, y: 0 };        // hastighed -> forudsig næste position
+  let vel = { x: 0, y: 0 };        // px/sekund -> forudsig næste position
+  let prevTrackT = startT;
+  let dtNom = FRAME;                // robust start ved duplikeret første rVFC-timestamp
   let emaBest = null;              // typisk match-score -> okklusionsdetektion
   const rcSamples = [];            // validerede skive-centrum-målinger
 
   const processFrame = tNow => {
     octx.drawImage(video, 0, 0, ocan.width, ocan.height);
-    // søg omkring FORUDSAGT position (position + hastighed).
-    // (dt-normalisering forsøgt 14/7 - matcheren var fin, dt ramte forkert mål
-    // og gjorde starten værre; rullet tilbage. Se rig for robust dt hvis nødvendigt.)
-    const pred = { x: cur.x + vel.x, y: cur.y + vel.y };
+    // Mobil kan springe videoframes over eller levere næsten ens timestamps.
+    // Normalisér derfor bevægelsen efter reel videotid, men clamp glitches mod
+    // den løbende frame-cadence. Rig-testet uden regression på lange/stille sæt.
+    const rawDt = Math.max(1e-4, tNow - prevTrackT);
+    dtNom = dtNom * .9 + Math.min(dtNom * 3, Math.max(dtNom * .3, rawDt)) * .1;
+    const dt = Math.max(dtNom, Math.min(dtNom * 3, rawDt));
+    const pred = { x: cur.x + vel.x * dt, y: cur.y + vel.y * dt };
     const W = 2 * R + P;
     const wx = Math.round(Math.max(0, Math.min(ocan.width - W, pred.x - W / 2)));
     const wy = Math.round(Math.max(0, Math.min(ocan.height - W, pred.y - W / 2)));
@@ -2047,8 +2052,8 @@ async function startBarTracking(p0) {
     if (emaBest !== null && best > Math.max(emaBest * 6, patchVar * 0.35))
       uncertain = true;                    // dårligt match = usikker frame
     if (uncertain) path.lowConf = (path.lowConf || 0) + 1;
-    vel = { x: (nx - cur.x) * .7 + vel.x * .3,
-            y: (ny - cur.y) * .7 + vel.y * .3 };
+    vel = { x: ((nx - cur.x) / dt) * .7 + vel.x * .3,
+            y: ((ny - cur.y) / dt) * .7 + vel.y * .3 };
     cur = { x: nx, y: ny };
     // mål skivens centrum + kør frys-vagt HVERT frame (var hvert 2.).
     // RIG-BEVIST (tracker-freeze-rig.js): halv cadence lod lange sæt forblive
@@ -2097,6 +2102,7 @@ async function startBarTracking(p0) {
         patch[i] = patch[i] * .85 + nyt[i] * .15;
       patchVar = calcPatchVar();
     }
+    prevTrackT = tNow;
     path.pts.push({ ...cur });
     path.times.push(tNow);
     const pct = Math.round(tNow / video.duration * 100);
