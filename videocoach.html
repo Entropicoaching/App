@@ -118,7 +118,8 @@
   body.coachweb #loopBtn::after { content:'Loop'; }
   body.coachweb #penBtn::after  { content:'Tegn'; }
   body.coachweb #undoBtn::after { content:'Fortryd'; }
-  body.coachweb #moreBtn::after { content:'Mere'; }
+  body.coachweb #moreBtn::after { content:'Fordyb'; }
+  body.coachweb #moreBtn[hidden] { display:none; }
   body.coachweb footer #graphBtn::after { content:'Kurve'; }
   body.coachweb #mskelBtn::after { content:'Skelet'; }
   body.coachweb footer button.active::after { color:var(--accent); }
@@ -432,6 +433,7 @@ function loadFile(file) {
   strokes = []; anglePts = [];
   if (typeof resetZoom === 'function') resetZoom();   // ny video = 1x zoom
   plateConfirm = null;                                // ryd evt. skive-ring
+  if (setCoachLayer) setCoachLayer(1);                // ny video → ren Lag 1
   // nulstil alt der hører til den GAMLE video
   cmPerPx = null; calibPts = [];
   shOffset = null; awaitShClick = null;   // skulder-kalibrering pr. video
@@ -1251,6 +1253,7 @@ function drawGrid() {
 // Kurve-knappen cykler: SKJULT → FART (m/s) → KRAFT (acceleration = drive/
 // eksplosivitet, m/s²) → SKJULT. Samme graf, to linser - ingen ekstra rod.
 let showVelGraph = true;
+let showVelBar = true;      // separat: Lag 2 kan vise søjlen uden kurven
 let graphAccel = false;    // KRAFT-lens: vis acceleration i stedet for fart
 let graphMode = 1;         // 0 = skjult, 1 = fart, 2 = kraft
 let velGraphHit = null;    // klik-område -> spol videoen derhen
@@ -1407,7 +1410,7 @@ function drawVelGraph() {
 // sig på mobil). Afrundet + gradient + temporalt udglattet = blød, ikke kantet.
 let velBarRaw = 0, velBarSpeed = 0;   // to-trins udglatning -> blød "tidevands"-bølge
 function drawVelBar() {
-  if (!showVelGraph || cmp || mskelClicks) return;
+  if (!showVelBar || cmp || mskelClicks) return;
   const path = strokes.filter(s => s.type === 'path' && s.vel && s.times).pop();
   if (!path || path.vel.length < 8) return;
   const i = Math.max(0, Math.min(path.vel.length - 1, idxAtTime(path, video.currentTime)));
@@ -1560,6 +1563,15 @@ function drawFingerprint(s) {
 }
 
 function render() {
+  // ANALYSE-RO: template-matchingen kører på samme hovedtråd som canvas.
+  // 60 fulde canvas-tegninger/s stjal tid fra rVFC på svage telefoner og gav
+  // hakkende preview + droppede analyseframes. 20 fps er rigeligt ved mobilens
+  // analysefart på 0.5, mens trackeren får markant mere CPU mellem frames.
+  if ((tracking || analyzing) &&
+      (render._analysisTick = ((render._analysisTick || 0) + 1) % 3)) {
+    requestAnimationFrame(render);
+    return;
+  }
   // TERMISK RO: når intet bevæger sig (pause, ingen tegning/analyse),
   // tegnes kun hver 3. frame. Telefonen holder sig kold under en session
   // -> mindre thermal throttling -> mindre lag når det GÆLDER.
@@ -1690,6 +1702,23 @@ function seekTo(t) {
 function analyzePath(path, retrimmed) {
   if (!cmPerPx || path.pts.length < 8) return;
   const n = path.pts.length;
+  // SPIKE-REPARATION (kun 1. kald): enkelte frames hvor matcheren hoppede til
+  // et forkert match (kant/distraktor) og kom tilbage = et synligt "spring" i
+  // banen. Erstat KUN punkter der afviger skarpt fra deres median-vindue -
+  // median bevarer ægte bevægelse i ALLE hastigheder OG vendingerne (top/bund)
+  // og fjerner kun spidserne. (Matcheren er fin live; dette renser banen så
+  // tegning/tal/kort/cues alle får den samme rene bane.)
+  if (!retrimmed) {
+    const med = arr => { const s = [...arr].sort((a, b) => a - b); return s[s.length >> 1]; };
+    const thr = Math.max(8, canvas.width * 0.02);
+    for (let i = 0; i < n; i++) {
+      const wx = [], wy = [];
+      for (let j = Math.max(0, i - 2); j <= Math.min(n - 1, i + 2); j++) { wx.push(path.pts[j].x); wy.push(path.pts[j].y); }
+      const mx = med(wx), my = med(wy);
+      if (Math.hypot(path.pts[i].x - mx, path.pts[i].y - my) > thr)
+        path.pts[i] = { x: mx, y: my };
+    }
+  }
   // udglattet lodret position (5-frames glidende snit mod 30fps-støj)
   const y = path.pts.map(p => p.y);
   const ys = y.map((_, i) => {
@@ -1708,34 +1737,57 @@ function analyzePath(path, retrimmed) {
     const dt = Math.max(1 / 240, t[i] - t[i-1]);
     return (ys[i-1] - ys[i]) * cmPerPx / 100 / dt;
   });
-  // rep-detektion: sammenhængende opadgående bevægelse over 40% af totalvandring
+  // Rep-detektion: start ved tydelig optur, men behold samme rep gennem korte
+  // stilstande/sticking points. Den gamle logik afsluttede ved første frame
+  // under 0.05 m/s og kunne derfor klippe 20-32% af en tung optur væk.
+  // Et rep slutter nu først ved en reel nedadgående vending (3 frames).
   const range = Math.max(...ys) - Math.min(...ys);
   path.reps = [];
-  let start = null, prevEnd = 0;
+  let start = null, lastUp = null, downRun = 0, prevEnd = 0;
+  const bottomAnchor = from => {
+    let best = from, maxY = ys[from];
+    for (let j = from - 1; j > prevEnd; j--) {
+      if (path.vel[j] < -0.05) break; // reel nedtur før rep-starten
+      if (ys[j] > maxY) { maxY = ys[j]; best = j; }
+    }
+    return best;
+  };
   for (let i = 1; i <= n; i++) {
     const up = i < n && path.vel[i] > 0.05;
-    if (up && start === null) start = i;
-    if (!up && start !== null) {
-      if (ys[start] - ys[i-1] > range * 0.4) {
-        const seg = path.vel.slice(start, i);
+    const down = i < n && path.vel[i] < -0.05;
+    if (start === null) {
+      if (up) { start = i; lastUp = i; downRun = 0; }
+      continue;
+    }
+    if (up) { lastUp = i; downRun = 0; }
+    else if (down) downRun++;
+    else downRun = 0; // stilstand/sticking splitter ikke reppet
+
+    if (i === n || downRun >= 3) {
+      const repStart = bottomAnchor(start);
+      const repEnd = Math.min(n - 1, (lastUp == null ? i - 1 : lastUp + 1));
+      if (ys[repStart] - ys[repEnd] > range * 0.4) {
+        // Bevar den hidtidige fart-definition (>0.05 m/s), så normale reps
+        // ikke ændrer VBT-tal; kun rep-vinduet og den tegnede start udvides.
+        const seg = path.vel.slice(repStart, repEnd + 1).filter(v => v > 0.05);
         // tempo: excentrisk/pause i spannet mellem forrige rep og denne
         let ecc = 0, pause = 0;
-        for (let j = Math.max(1, prevEnd); j < start; j++) {
+        for (let j = Math.max(1, prevEnd); j < repStart; j++) {
           const dt = t[j] - t[j-1];
           if (path.vel[j] < -0.05) ecc += dt;
           else if (Math.abs(path.vel[j]) <= 0.05) pause += dt;
         }
         path.reps.push({
-          start, end: i,
+          start: repStart, end: repEnd,
           mcv: seg.reduce((a,b) => a+b, 0) / seg.length,
           peak: Math.max(...seg),
-          conS: +(t[Math.min(i, n-1)] - t[start]).toFixed(2),
+          conS: +(t[repEnd] - t[repStart]).toFixed(2),
           eccS: +ecc.toFixed(2),
           pauseS: +pause.toFixed(2),
         });
-        prevEnd = i;
+        prevEnd = repEnd;
       }
-      start = null;
+      start = null; lastUp = null; downRun = 0;
     }
   }
   // AUTO-TRIM: alt før første og efter sidste rep (±0.6s) er typisk tilgang,
@@ -1747,13 +1799,21 @@ function analyzePath(path, retrimmed) {
     // med - ellers "starter banen fra bunden" på rep 1 (Marcs fund: øverste ~1/4
     // af nedturen manglede). Dødløft (ingen nedtur før 1. træk) falder tilbage
     // til det gamle 0.6s-lead-in.
-    let k = path.reps[0].start;
-    while (k > 1 && Math.abs(path.vel[k]) < 0.05 &&
-           t[path.reps[0].start] - t[k] < 0.5) k--;      // spring en kort bund-pause
-    let hadDescent = false;
-    while (k > 1 && path.vel[k] < -0.05) { k--; hadDescent = true; }
-    const tStart = hadDescent ? t[Math.max(0, k)] - 0.3       // top af nedtur + lille buffer
-                              : t[path.reps[0].start] - 0.6;  // ingen nedtur (dødløft)
+    // TOPPEN af rep 1's nedtur findes robust via HØJDE, ikke fart: gå tilbage
+    // fra bunden indtil stangen er nær sit HØJESTE punkt før bunden. En kort
+    // langsom frame midt i nedturen (fart under tærskel et øjeblik) narrer os
+    // IKKE længere til at tro vi er ved toppen - det klippede før den øverste
+    // del af rep 1 væk ("springer fra"/"vidste ikke starten"). Dødløft (stang
+    // starter lavt, ingen nedtur før 1. træk) falder tilbage til 0.6s lead-in.
+    const r0 = path.reps[0].start;
+    const topY = Math.min(...ys.slice(0, r0 + 1));   // højeste stang (mindst y) før bunden
+    let k = r0, hadDescent = false;
+    while (k > 1 && ys[k] - topY > range * 0.08) {   // stadig et stykke under toppen
+      if (path.vel[k] < -0.05) hadDescent = true;
+      k--;
+    }
+    const tStart = hadDescent ? t[Math.max(0, k)] - 0.2       // top af nedtur + lille buffer
+                              : t[r0] - 0.6;                  // ingen nedtur (dødløft)
     const tB = t[Math.min(n - 1, path.reps[path.reps.length - 1].end)];
     let lo = 0; while (lo < n - 1 && t[lo] < tStart) lo++;
     let hi = n - 1; while (hi > 0 && t[hi] > tB + 0.6) hi--;
@@ -1918,7 +1978,9 @@ async function startBarTracking(p0) {
 
   const processFrame = tNow => {
     octx.drawImage(video, 0, 0, ocan.width, ocan.height);
-    // søg omkring FORUDSAGT position (position + hastighed)
+    // søg omkring FORUDSAGT position (position + hastighed).
+    // (dt-normalisering forsøgt 14/7 - matcheren var fin, dt ramte forkert mål
+    // og gjorde starten værre; rullet tilbage. Se rig for robust dt hvis nødvendigt.)
     const pred = { x: cur.x + vel.x, y: cur.y + vel.y };
     const W = 2 * R + P;
     const wx = Math.round(Math.max(0, Math.min(ocan.width - W, pred.x - W / 2)));
@@ -2387,6 +2449,8 @@ async function runFullAnalysis(barPt) {
   // tilbage til normal afspilningshastighed efter analyse
   document.getElementById('speed').value = '1';
   video.playbackRate = 1;
+  // analyse færdig → Lag 2 (Fordyb-knappen dukker op i coach-visningen)
+  if (setCoachLayer && strokes.some(s => s.type === 'path' && s.vel)) setCoachLayer(2);
   if (sessionRun || ATHLETE) {
     // TRÆNINGSMODE (coach) og ATLETENS MAGISKE ØJEBLIK: efter analysen
     // ruller ens eget sæt automatisk i ½ fart med farttal - nul ekstra tryk
@@ -2404,6 +2468,7 @@ const aiBtn = document.getElementById('aiBtn');
 const aiPanel = document.getElementById('aiPanel');
 const aiText = document.getElementById('aiText');
 let openSheetFn = null;   // sættes af coach-online-layoutet (analyse-arket)
+let setCoachLayer = null; // sættes af COACHWEB: 1=ren · 2=efter analyse · 3=Fordyb
 
 let lastVals = null;   // strukturerede tal til den regelbaserede vurdering
 
@@ -3644,6 +3709,8 @@ if (SLIM) {
 }
 if (COACHWEB) {
   document.body.classList.add('coachweb');
+  // Lag 2 = bane + den enkle fart-søjle. Kurve/kraft åbnes bevidst i Lag 3.
+  graphMode = 0; applyGraphMode(); showVelBar = true;
   // alt er tilgængeligt undtagen det, der er dubleret af det nye layout
   ['trimInBtn', 'trimOutBtn', 'backBtn', 'fwdBtn', 'openBtn'].forEach(id =>
     document.getElementById(id).style.display = 'none');
@@ -3655,11 +3722,14 @@ if (COACHWEB) {
   moreBar.id = 'moreBar';
   moreBar.hidden = true;
   document.body.appendChild(moreBar);
-  // ghostBtn BLIVER paa hovedbjaelken (Marc bruger den hyppigt) - resten i Mere
-  ['scrubToolBtn', 'barBtn', 'calibBtn', 'cmpBtn', 'graphBtn', 'fpBtn',
+  // LAG 3 (Fordyb): alt det avancerede i tray'en. Skelet + ghost flyttet HERIND
+  // så Lag 1-bjælken er ren (kun transport + Tegn + ⚡). Rækkefølge = grupper:
+  // analyse/vinkler · sammenlign · tegn · fund/gem/kort.
+  ['mskelBtn', 'graphBtn', 'fpBtn', 'barBtn', 'calibBtn',
+   'ghostBtn', 'cmpBtn', 'repCmpBtn',
    'lineBtn', 'angleBtn', 'eraseBtn', 'color', 'brushSel', 'clearBtn',
    'recordBtn', 'athleteSel', 'liftSel', 'loadInput', 'biasInput',
-   'aiBtn', 'saveBtn', 'cardBtn', 'exportBtn', 'recTime', 'downloadLink', 'repCmpBtn'].forEach(id => {
+   'aiBtn', 'saveBtn', 'cardBtn', 'exportBtn', 'recTime', 'downloadLink', 'scrubToolBtn'].forEach(id => {
     const el = document.getElementById(id);
     if (el) moreBar.appendChild(el.closest('label') || el);
   });
@@ -3672,13 +3742,22 @@ if (COACHWEB) {
   document.getElementById('mskelBtn').textContent = '🦴';
   const moreBtn = document.createElement('button');
   moreBtn.id = 'moreBtn';
-  moreBtn.textContent = '⋯';
+  moreBtn.textContent = '⌄';          // ::after-label = 'Fordyb'
+  moreBtn.hidden = true;              // LAG 1: skjult indtil analyse (Lag 2)
   moreBtn.onclick = () => {
     moreBar.hidden = !moreBar.hidden;
     moreBtn.classList.toggle('active', !moreBar.hidden);
     layoutBars();
   };
   document.querySelector('footer').appendChild(moreBtn);
+  // LAG-STYRING: Lag 1 = ren bjælke (Fordyb skjult). Efter ⚡-analyse → Lag 2
+  // (Fordyb dukker op). Fordyb åbner Lag 3 (tray'en). Ny video → Lag 1 igen.
+  setCoachLayer = (n) => {
+    if (n <= 1) { moreBar.hidden = true; moreBtn.classList.remove('active'); moreBtn.hidden = true; }
+    else moreBtn.hidden = false;
+    layoutBars();
+  };
+  setCoachLayer(1);
   // værktøjer der starter en klik-guide/optagelse lukker selv Mere-bakken,
   // så den ikke står i vejen for det, man skal klikke på i videoen
   ['barBtn', 'calibBtn', 'recordBtn', 'aiBtn', 'cmpBtn'].forEach(id => {
@@ -3745,7 +3824,7 @@ if (ATHLETE) {
   // ATLET = ren visning: KERNEN (tracker, ring-bekræftelse, fart-farvet bane)
   // men UDEN de analytiske ekstra-features. Fart-graf + søjle slås fra (coach-
   // værktøj); kraft-lens/fingeraftryk/skelet/fund er allerede skjult.
-  graphMode = 0; showVelGraph = false; graphAccel = false;
+  graphMode = 0; showVelGraph = false; showVelBar = false; graphAccel = false;
   document.getElementById('penBtn').textContent = '✎︎';
   document.getElementById('undoBtn').textContent = '↺';
   document.getElementById('loopBtn').textContent = '⟲';
