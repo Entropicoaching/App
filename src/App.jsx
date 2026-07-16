@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react'
 import { supabase, withRetry } from './supabase'
 import Auth from './Auth'
+import ErrorBoundary from './ErrorBoundary'
 
 // Lazy-load de to store views, så atleter ikke downloader coach-dashboardet (og
 // omvendt). Halverer det første bundt der skal hentes på mobil.
@@ -136,7 +137,7 @@ function App() {
   } else {
     viewEl = <AthleteView session={session} role={role} />
   }
-  return <Suspense fallback={loaderScreen}>{viewEl}</Suspense>
+  return <ErrorBoundary><Suspense fallback={loaderScreen}>{viewEl}</Suspense></ErrorBoundary>
 }
 
 export default App
