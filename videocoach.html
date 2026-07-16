@@ -189,7 +189,7 @@
   body.coachweb #moreBtn::after { content:'Fordyb'; }
   body.coachweb #moreBtn[hidden] { display:none; }
   body.coachweb footer #graphBtn::after { content:'Kurve'; }
-  body.coachweb #mskelBtn::after { content:'Skelet'; }
+  body.coachweb #mskelBtn::after { content:'Positioner'; }
   body.coachweb footer button.active::after { color:var(--accent); }
   body.coachweb footer select, body.coachweb footer input
     { font-size:12px; padding:8px 10px; }
@@ -202,6 +202,9 @@
   body.coachweb #moreBar[hidden] { display:none; }
   body.coachweb #moreBar button, body.coachweb #moreBar select,
   body.coachweb #moreBar input { font-size:12px; padding:8px 10px; }
+  body.coachweb #moreBar .coachFeatured, body.desktop #deskTray .coachFeatured {
+    border-color:rgba(200,146,58,.38); background:rgba(200,146,58,.09);
+    color:var(--accent); }
   body.coachweb #openSmall { top:auto; bottom:8px; left:8px; display:none; }
   body.slim #scrubRow { bottom:118px; background:transparent; border:none;
     padding:6px 10px; gap:8px; }
@@ -351,7 +354,48 @@
     text-transform:uppercase; }
   #sheetMeta { display:flex; flex-wrap:wrap; gap:6px; margin:12px 0; }
   #sheetMeta select, #sheetMeta input { font-size:12px; padding:8px 10px; }
-  #sheetText { white-space:pre-wrap; font-size:13px; line-height:1.55; }
+  #sheetText { font-size:13px; line-height:1.55; }
+  .coachFeedback { display:grid; gap:14px; }
+  .coachFeedbackHero { display:flex; align-items:flex-start; justify-content:space-between;
+    gap:14px; padding:14px; border:1px solid rgba(200,146,58,.22); border-radius:14px;
+    background:linear-gradient(145deg,rgba(200,146,58,.09),rgba(237,234,226,.025)); }
+  .coachFeedbackHero small, .coachSectionLabel { display:block; color:var(--accent);
+    font-size:9px; font-weight:600; letter-spacing:.18em; text-transform:uppercase; }
+  .coachFeedbackHero h3 { margin:3px 0 1px; font-family:system-ui,sans-serif;
+    font-size:17px; letter-spacing:-.02em; }
+  .coachFeedbackHero p { margin:0; color:var(--dim); font-size:11px; }
+  .measureQuality { flex:0 0 auto; padding:6px 9px; border-radius:999px;
+    font-size:9px; letter-spacing:.08em; text-transform:uppercase; border:1px solid var(--line); }
+  .measureQuality.high { color:#78d89a; border-color:rgba(120,216,154,.3); }
+  .measureQuality.medium { color:#e6bd72; border-color:rgba(230,189,114,.32); }
+  .measureQuality.low { color:#ff8d87; border-color:rgba(255,141,135,.34); }
+  .athleteBrief { display:grid; gap:8px; }
+  .feedbackCard { padding:12px 13px; border-radius:12px;
+    border:1px solid rgba(237,234,226,.08); background:rgba(237,234,226,.025); }
+  .feedbackCard[data-kind="good"] { border-left:3px solid #78d89a; }
+  .feedbackCard[data-kind="focus"] { border-left:3px solid #e6bd72; }
+  .feedbackCard[data-kind="next"] { border-left:3px solid var(--accent);
+    background:rgba(200,146,58,.08); }
+  .feedbackCard b { display:block; margin-bottom:3px; font-size:12px; }
+  .feedbackCard p { margin:0; color:rgba(237,234,226,.72); font-size:12px; line-height:1.45; }
+  .feedbackEvidence { margin-top:7px !important; color:var(--dim) !important;
+    font-family:'IBM Plex Mono',monospace; font-size:9px !important; }
+  .coachDetail { display:grid; gap:8px; }
+  .coachDetailRow { padding:10px 0; border-bottom:1px solid rgba(237,234,226,.07); }
+  .coachDetailRow:last-child { border-bottom:0; }
+  .coachDetailRow b { display:block; font-size:11px; margin-bottom:2px; }
+  .coachDetailRow span { display:block; color:var(--dim); font-size:10px; line-height:1.45; }
+  .coachNumbers { display:grid; gap:0; border:1px solid rgba(237,234,226,.07);
+    border-radius:12px; overflow:hidden; }
+  .coachNumber { display:flex; justify-content:space-between; gap:12px;
+    padding:8px 10px; border-bottom:1px solid rgba(237,234,226,.06); }
+  .coachNumber:last-child { border-bottom:0; }
+  .coachNumber span { color:var(--dim); font-size:10px; }
+  .coachNumber b { text-align:right; font-family:'IBM Plex Mono',monospace; font-size:10px; }
+  .coachAddPosition { width:100%; margin-top:2px; padding:10px 12px;
+    border:1px dashed rgba(0,212,255,.35); color:#67dff5; background:rgba(0,212,255,.05); }
+  .coachAiDraft { margin-top:14px; padding-top:14px; border-top:1px solid var(--line); }
+  body.desktop #aiPanel { width:min(460px,calc(100vw - 32px)); }
   #closeBtn { display:none; }
   body.slim #closeBtn { display:flex; align-items:center; justify-content:center;
     position:fixed; top:10px; right:62px; z-index:15; width:44px; height:44px;
@@ -1800,6 +1844,28 @@ function render() {
                    Math.abs(boxDrag.b.y - boxDrag.a.y));
     ctx.restore();
   }
+  // Klik-skelet: vis den kæde coachen allerede har sat i den aktuelle position.
+  // Punkterne er coachens måling; previewet gør fejl synlige, før næste position.
+  if (mskelClicks) {
+    const bag = mskelClicks.phase === 'top' ? mskelClicks.top : mskelClicks.bot;
+    const keys = mskelClicks.order.filter(k => bag[k]);
+    ctx.save();
+    ctx.strokeStyle = '#00d4ff'; ctx.fillStyle = '#00d4ff';
+    ctx.lineWidth = Math.max(3, canvas.width / 450);
+    if (keys.length) {
+      ctx.beginPath();
+      keys.forEach((k, i) => i ? ctx.lineTo(bag[k].x, bag[k].y)
+                               : ctx.moveTo(bag[k].x, bag[k].y));
+      ctx.stroke();
+      keys.forEach((k, i) => {
+        const p = bag[k];
+        ctx.beginPath(); ctx.arc(p.x, p.y, Math.max(6, canvas.width / 180), 0, 7); ctx.fill();
+        ctx.font = `bold ${Math.max(14, canvas.width / 75)}px sans-serif`;
+        ctx.fillText(String(i + 1), p.x + 10, p.y - 8);
+      });
+    }
+    ctx.restore();
+  }
   drawVelPanel();
   drawVelGraph();
   drawVelBar();
@@ -2834,7 +2900,25 @@ let awaitBox = false, boxDrag = null, poseBox = null, boxResolve = null;
 // hofte+knæ TRACKES med samme metode som skiven, anklen står fast.
 // Alle punkter er enten coachens eller vores egen gennemtestede trackers.
 let mskelClicks = null;
-document.getElementById('mskelBtn').onclick = () => {
+// MSKEL_KEYTIME_MODEL_START
+function mskelKeyTimes(path, lift) {
+  const pts = path.pts, times = path.times;
+  const reps = path.reps || [];
+  if (!pts.length || !times || times.length !== pts.length || !reps.length)
+    return { topTime: video.currentTime, botTime: video.currentTime };
+  const first = reps[0], last = reps[reps.length - 1];
+  const isPull = lift === 'Dødløft' || lift === 'Sumo dødløft';
+  const botIndex = Math.max(0, Math.min(pts.length - 1, first.start));
+  let topIndex;
+  if (isPull) topIndex = Math.max(0, Math.min(pts.length - 1, last.end));
+  else {
+    topIndex = 0;
+    for (let i = 1; i <= botIndex; i++) if (pts[i].y < pts[topIndex].y) topIndex = i;
+  }
+  return { topTime: times[topIndex], botTime: times[botIndex] };
+}
+// MSKEL_KEYTIME_MODEL_END
+document.getElementById('mskelBtn').onclick = async () => {
   if (tracking || analyzing) return;
   if (mskelClicks) {                       // tryk igen = annullér placering
     mskelClicks = null;
@@ -2847,6 +2931,8 @@ document.getElementById('mskelBtn').onclick = () => {
   }
   const path = strokes.filter(s => s.type === 'path' && s.times).pop();
   if (!path) { alert('Kør ⚡ Analysér løft først (skelettet følger stangen)'); return; }
+  const liftK = document.getElementById('liftSel').value;
+  if (!liftK) { alert('Vælg øvelse først — bænk bruger arm-punkter, de andre løft bruger ben-punkter'); return; }
   video.pause();
   playBtn.textContent = playLabel(false);
   document.body.classList.add('placing');  // fuld ro til praecise tryk
@@ -2861,34 +2947,40 @@ document.getElementById('mskelBtn').onclick = () => {
   // stisk, virker altid, håndterer perspektiv (begge klik er ægte positioner).
   // KÆDE PR. LØFT (roadmap pkt. 3): squat/DL/sumo = BEN-kæde,
   // bænkpres = ARM-kæde (albue/underarm er dét, der betyder noget dér)
-  const liftK = document.getElementById('liftSel').value;
   const arm = liftK === 'Bænkpres';
+  const keyTimes = mskelKeyTimes(path, liftK);
+  await seekTo(keyTimes.topTime);
   mskelClicks = { phase: 'top', chain: arm ? 'arm' : 'leg', lift: liftK,
     order: arm ? ['sh', 'el', 'wr'] : ['sh', 'hip', 'knee', 'ank'],
     step: 0, top: {}, bot: {}, path,
+    topTime: keyTimes.topTime, botTime: keyTimes.botTime, seeking: false,
     topName: arm ? 'LOCKOUT (strakte arme)' : 'TOPPEN (stående)',
     botName: arm ? 'BRYSTET (stangen nede)' : 'BUNDEN (dybest)' };
   document.getElementById('mskelBtn').classList.add('active');   // lys op mens punkter placeres
-  say(`TOP 1/${mskelClicks.order.length} · Spol til ${mskelClicks.topName} og klik SKULDERLEDDET`);
+  say(`POSITION 1/2 · ${mskelClicks.topName} · punkt 1/${mskelClicks.order.length}: SKULDER`);
 };
 const MSKEL_LBL = { sh: 'klik SKULDERLEDDET', hip: 'klik HOFTEN (hoftekammen)',
   knee: 'klik KNÆET', ank: 'klik ANKLEN',
   el: 'klik ALBUEN', wr: 'klik HÅNDLEDDET (grebet på stangen)' };
-function mskelStep(p) {
+async function mskelStep(p) {
   const m = mskelClicks;
+  if (!m || m.seeking) return;
   const bag = m.phase === 'top' ? m.top : m.bot;
   bag[m.order[m.step]] = { ...p };
   bag._barY = barYAt(m.path, video.currentTime);   // stangens y = dybde-reference
   m.step++;
   const N = m.order.length;
   if (m.step < N) {
-    const n = m.phase === 'top' ? 'TOP' : 'BUND';
-    say(`${n} ${m.step + 1}/${N} · ${MSKEL_LBL[m.order[m.step]]}`);
+    const n = m.phase === 'top' ? 'POSITION 1/2' : 'POSITION 2/2';
+    say(`${n} · punkt ${m.step + 1}/${N}: ${MSKEL_LBL[m.order[m.step]].replace('klik ', '')}`);
     return;
   }
   if (m.phase === 'top') {                          // skift til bund-fasen
-    m.phase = 'bot'; m.step = 0;
-    say(`BUND 1/${N} · Spol til ${m.botName} og klik SKULDERLEDDET`);
+    m.seeking = true;
+    await seekTo(m.botTime);
+    if (mskelClicks !== m) return;
+    m.phase = 'bot'; m.step = 0; m.seeking = false;
+    say(`POSITION 2/2 · ${m.botName} · punkt 1/${N}: SKULDER`);
     return;
   }
   mskelClicks = null;
@@ -2919,8 +3011,9 @@ function buildMskel(m) {
     lift: m.lift, top: pick(m.top), bot: pick(m.bot),
     topBarY: topY, botBarY: botY });
   say(m.chain === 'arm'
-    ? 'Keyframe-skelet klar ✓ · skulder/albue/håndled interpoleres af stanghøjden'
-    : 'Keyframe-skelet klar ✓ · skulder/hofte/knæ/ankel interpoleres af stanghøjden');
+    ? 'Positionsmåling klar ✓ · albue og underarm er nu med i feedbacken'
+    : 'Positionsmåling klar ✓ · knæ, hofte og torso er nu med som baseline');
+  if (COACHWEB && openSheetFn) setTimeout(() => openSheetFn(), 180);
   setTimeout(() => say(''), 3200);
 }
 
@@ -3148,10 +3241,11 @@ function collectMetrics() {
   if (!path) return null;
   const m = [];
   lastVals = {};
-  if (path.lowConf && path.pts.length &&
-      path.lowConf / path.pts.length > 0.15)
+  lastVals.lowConfPct = path.pts.length
+    ? Math.round((path.lowConf || 0) / path.pts.length * 100) : 0;
+  if (lastVals.lowConfPct > 15)
     m.push(`OBS: sporingen var usikker i ` +
-      `${Math.round(path.lowConf / path.pts.length * 100)}% af tiden ` +
+      `${lastVals.lowConfPct}% af tiden ` +
       `(skive skjult/utydelig) - tag tallene med forbehold`);
   const ys = path.pts.map(p => p.y);
   const rangePx = Math.max(...ys) - Math.min(...ys);
@@ -3174,26 +3268,48 @@ function collectMetrics() {
     lastVals.effPct = path.effPct;
     lastVals.hystCm = path.hystCm;
     lastVals.repCount = path.reps.length;
+    lastVals.repSpeeds = path.reps.map(r => +r.mcv.toFixed(2));
+    lastVals.bestRep = lastVals.repSpeeds.indexOf(Math.max(...lastVals.repSpeeds)) + 1;
+    lastVals.slowestRep = lastVals.repSpeeds.indexOf(Math.min(...lastVals.repSpeeds)) + 1;
     lastVals.lossPct = path.reps.length > 1 ? Math.round(
       (1 - path.reps[path.reps.length-1].mcv / path.reps[0].mcv) * 100) : null;
-  }
-  // sticking point: langsomste opadgående punkt (midt i bevægelsen)
-  let minV = 1e9, minI = -1;
-  path.vel.forEach((v, i) => {
-    if (v > 0.02 && v < minV) { minV = v; minI = i; }
-  });
-  if (minI > 0) {
-    const hPct = Math.round((Math.max(...ys) - ys[minI]) / rangePx * 100);
-    const hCm = cmPerPx ? ` = ${((Math.max(...ys) - ys[minI]) * cmPerPx).toFixed(0)} cm over bundposition` : '';
-    m.push(`Sticking point: ved ${hPct}% af vandringen${hCm} (fart ${minV.toFixed(2)} m/s)`);
-    lastVals.stickPct = hPct;
-    // fartfald fra topfart til sticking point (jævnhed af løftet)
-    const peakV = Math.max(...path.vel);
-    if (peakV > 0.05) {
-      lastVals.dipPct = Math.round((1 - minV / peakV) * 100);
-      m.push(`Fartfald fra topfart til sticking point: ` +
-             `${lastVals.dipPct}% (lavt tal = jævnt løft)`);
+    if (cmPerPx && path.reps.length > 1) {
+      const bottoms = path.reps.map(r => Math.max(
+        ...ys.slice(Math.max(0, r.start), Math.min(ys.length, r.end + 1))));
+      lastVals.bottomSpreadCm = +((Math.max(...bottoms) - Math.min(...bottoms)) *
+        cmPerPx).toFixed(1);
+      m.push(`Bundposition på tværs af reps: ${lastVals.bottomSpreadCm} cm spredning`);
     }
+  }
+  // Sticking point måles KUN midt i hvert koncentriske rep. Overgange,
+  // walkout og lockout-stilstand gav før falske "sticking points".
+  const stickSamples = [];
+  for (const [ri, r] of (path.reps || []).entries()) {
+    const y0 = ys[r.start], y1 = ys[r.end], repRange = y0 - y1;
+    if (!(repRange > 2)) continue;
+    let minV = Infinity, minI = -1;
+    for (let i = r.start; i <= r.end; i++) {
+      const progress = (y0 - ys[i]) / repRange;
+      const v = path.vel[i];
+      if (progress >= 0.1 && progress <= 0.9 && v > 0.02 && v < minV) {
+        minV = v; minI = i;
+      }
+    }
+    if (minI >= 0 && r.peak > 0.05) stickSamples.push({
+      rep: ri + 1, pct: Math.round((y0 - ys[minI]) / repRange * 100),
+      dip: Math.round((1 - minV / r.peak) * 100), vel: minV
+    });
+  }
+  if (stickSamples.length) {
+    const med = a => { const q = [...a].sort((x,y) => x-y); return q[q.length >> 1]; };
+    lastVals.stickPct = med(stickSamples.map(s => s.pct));
+    lastVals.dipPct = med(stickSamples.map(s => s.dip));
+    const worst = [...stickSamples].sort((a,b) => b.dip - a.dip)[0];
+    lastVals.stickWorstRep = worst.rep;
+    lastVals.stickSamples = stickSamples;
+    const hCm = cmPerPx ? ` (${(rangePx * lastVals.stickPct / 100 * cmPerPx).toFixed(0)} cm over bund)` : '';
+    m.push(`Sticking point (median over reps): ${lastVals.stickPct}% af vandringen${hCm}`);
+    m.push(`Fartfald ind i sticking point: ${lastVals.dipPct}% · tydeligst på rep ${worst.rep}`);
   }
   // vandret afvigelse MED retning ift. startposition
   const xs = path.pts.map(p => p.x);
@@ -3209,7 +3325,7 @@ function collectMetrics() {
   }
   // RUNDE 18: ledvinkler fra KEYFRAME-skelettet (klik-skelet) -> ind i AI-analysen.
   // (Erstatter det gamle MediaPipe-'pose'-skelet, som ikke bruges mere.)
-  const mskel = strokes.find(s => s.type === 'mskel');
+  const mskel = strokes.filter(s => s.type === 'mskel').pop();
   if (mskel && mskel.bot) {
     const angM = (A, B, C) => {
       let d = Math.abs((Math.atan2(A.y - B.y, A.x - B.x) -
@@ -3223,13 +3339,15 @@ function collectMetrics() {
         Math.atan2(b.el.x - b.wr.x, b.el.y - b.wr.y) * 180 / Math.PI));
       m.push(`Ledvinkler i BUNDEN (coach-sat klik-skelet): ` +
              `albuevinkel ${lastVals.elbowAngle}°, underarm ` +
-             `${lastVals.foreDev}° fra lodret (0° = optimal kraftoverførsel)`);
+             `${lastVals.foreDev}° fra lodret (0° = lodret reference)`);
     } else {
       lastVals.kneeAngle = angM(b.hip, b.knee, b.ank);
       lastVals.hipAngle  = angM(b.sh, b.hip, b.knee);
+      lastVals.torsoFromVertical = Math.round(Math.abs(
+        Math.atan2(b.sh.x - b.hip.x, b.hip.y - b.sh.y) * 180 / Math.PI));
       m.push(`Ledvinkler i BUNDEN (coach-sat klik-skelet): ` +
-             `knævinkel ${lastVals.kneeAngle}°, hoftevinkel ${lastVals.hipAngle}° ` +
-             `(mindre vinkel = dybere/mere lukket led)`);
+             `knæ ${lastVals.kneeAngle}°, hofte ${lastVals.hipAngle}°, ` +
+             `torso ${lastVals.torsoFromVertical}° fra lodret (positions-baseline)`);
     }
   }
   // RUNDE 19: REP-TIL-REP sammenligning - fart + led-vinkel pr. rep (skelettet
@@ -3413,6 +3531,152 @@ function suggestCues(lift, v) {
   return c.slice(0, 4);
 }
 
+// COACH_FEEDBACK_MODEL_START
+// Ét prioriteret, deterministisk feedbacklag. Ingen nye biomekaniske påstande:
+// observation → betydning → næste handling skal kunne føres tilbage til et tal.
+function buildCoachFeedback(lift, v = {}) {
+  const strengths = [], priorities = [], context = [];
+  const addStrength = (title, athlete, evidence) =>
+    strengths.push({ title, athlete, evidence });
+  const addPriority = (score, title, athlete, why, action, evidence) =>
+    priorities.push({ score, title, athlete, why, action, evidence });
+  const n = x => Number.isFinite(+x) ? +x : null;
+  const drift = n(v.driftCm), dip = n(v.dipPct), loss = n(v.lossPct);
+  const eff = n(v.effPct), hyst = n(v.hystCm), spread = n(v.bottomSpreadCm);
+  const low = n(v.lowConfPct) || 0, stick = n(v.stickPct);
+  const sq = lift === 'Squat', bp = lift === 'Bænkpres';
+  const dl = lift === 'Dødløft', sumo = lift === 'Sumo dødløft';
+
+  if (low > 15) addPriority(120, 'Kontrollér banen først',
+    'Vi skal lige sikre målingen, før vi ændrer noget.',
+    `Trackeren holdt sidste sikre punkt i ${low}% af sættet.`,
+    'Se banen igennem frame for frame. Kør analysen igen, hvis den forlader skiven.',
+    `${low}% lav sikkerhed`);
+  else context.push({ title:'Målekvalitet', text:`Tracker-sikkerhed ${100-low}%` });
+
+  if (drift != null) {
+    if (bp) {
+      if (drift >= 10 && drift <= 25) addStrength('Baneretningen ser sund ud',
+        'Stangen bevæger sig kontrolleret tilbage mod skuldrene.',
+        `${drift.toFixed(1)} cm vandret bevægelse`);
+      else if (drift < 8) addPriority(78, 'Meget lodret bænkpresbane',
+        'Fokusér på retningen fra brystet tilbage mod skuldrene.',
+        'En næsten lodret bane kan gøre overgangen gennem sticking point tungere.',
+        'Behold touchpointet og pres skråt tilbage — kontrollér albuen under stangen.',
+        `${drift.toFixed(1)} cm vandret bevægelse`);
+      else if (drift > 28) addPriority(66, 'Stor vandret bevægelse',
+        'Banen flytter sig meget på tværs.',
+        'En stor omvej kan koste fart, men kameraretning og touchpoint skal kontrolleres visuelt.',
+        'Sammenlign touchpoint og lockout over samme skulderlinje.',
+        `${drift.toFixed(1)} cm vandret bevægelse`);
+    } else {
+      const max = sq ? 5 : 4;
+      if (drift <= max) addStrength('Stangen holder linjen',
+        'Du holder stangen tæt på den samme lodrette linje.',
+        `${drift.toFixed(1)} cm vandret afvigelse`);
+      else addPriority(86, 'Stangen forlader den lodrette linje',
+        'Hold fokus på en mere stabil stanglinje.',
+        'Vandret bevægelse øger banelængden og kan flytte belastningen væk fra din stærke position.',
+        sq ? 'Gentag med samme dybde og tryk over midtfod; se om driften gentager sig.'
+           : 'Hold stangen tæt og spænd lats, før du bygger mere fart.',
+        `${drift.toFixed(1)} cm afvigelse · reference ca. ${max} cm`);
+    }
+  }
+
+  if (bp && n(v.foreDev) != null) {
+    const fore = n(v.foreDev);
+    if (fore <= 10) addStrength('Underarmen står stabilt',
+      'Underarmen er tæt på lodret i bundpositionen.', `${fore}° fra lodret`);
+    else if (fore > 15) addPriority(92, 'Underarmen er ikke under stangen',
+      'Få albuen mere ind under stangen i bundpositionen.',
+      'En skæv kraftlinje kan koste kraft fra brystet.',
+      'Brug positionsmålingen som reference og justér greb, touchpoint eller albueplacering én ting ad gangen.',
+      `${fore}° fra lodret · coach-sat positionsmåling`);
+  }
+
+  if (dip != null) {
+    if (dip <= 55) addStrength('Farten hænger sammen',
+      'Du holder bedre fart gennem den svære del af løftet.', `${dip}% fartfald ind i sticking point`);
+    else {
+      const action = bp ? 'Bevar spændingen på brystet og pres med retning tilbage fra første bevægelse.'
+        : sq ? 'Bevar trykket i bunden og accelerér fra første bevægelse — uden at ændre stanglinjen.'
+        : stick != null && stick > 60 ? 'Hold stangen tæt og afslut hoftestrækket uden at jage stangen frem.'
+        : 'Byg spænding før stangen letter og fortsæt med at skubbe gulvet væk.';
+      addPriority(80, 'Farten falder tydeligt i den svære del',
+        'Målet er at tage mere fart med ind i den svære del af løftet.',
+        `Medianfarten falder ${dip}% ind i sticking point.`, action,
+        `${dip}% fartfald · tydeligst rep ${v.stickWorstRep || '–'}`);
+    }
+  }
+
+  if (loss != null) {
+    if (loss < 10) addStrength('Sættet holder sig stabilt',
+      'Farten er stabil fra første til sidste rep.', `${loss}% fartfald over sættet`);
+    else if (loss > 20) addPriority(96, 'Tydelig udtrætning over sættet',
+      'De sidste reps mister markant fart.',
+      'Fartfaldet er over den klassiske 20%-grænse og kan ændre kvaliteten af de sidste reps.',
+      'Overvej at stoppe sættet her, reducere reps eller give længere pause næste sæt.',
+      `${loss}% fartfald · langsomste rep ${v.slowestRep || '–'}`);
+    else addPriority(48, 'Moderat fartfald over sættet',
+      'Sættet bliver gradvist tungere, men holder endnu sammen.',
+      'Fartfaldet viser begyndende udtrætning, ikke nødvendigvis en teknikfejl.',
+      'Hold samme plan og se, om stanglinje eller bundposition ændrer sig på sidste rep.',
+      `${loss}% fartfald`);
+  }
+
+  if (!bp && eff != null) {
+    if (eff >= 90) addStrength('Banen er effektiv',
+      'Stangen tager en kort og direkte vej.', `${eff}% bane-effektivitet`);
+    else addPriority(58, 'Banen tager en omvej',
+      'Gør banen mere direkte uden at forcere tempoet.',
+      'Ekstra vandret bevægelse øger den samlede banelængde.',
+      'Brug stangbanen som visuel reference og ret kun den største afvigelse først.',
+      `${eff}% bane-effektivitet`);
+  }
+  if (!bp && hyst != null && hyst > 4) addPriority(54, 'Ned- og opbanen er forskellige',
+    'Prøv at vende i den samme linje, som du kom ned i.',
+    'En stor forskel kan pege på, at positionen ændres i vendingen.',
+    'Sammenlign bunden frame for frame; ret opspænd eller balance før du ændrer tempo.',
+    `${hyst.toFixed(1)} cm forskel mellem ned- og opbane`);
+
+  if ((sq || bp) && spread != null) {
+    if (spread <= 1.5) addStrength('Bundpositionen gentages',
+      sq ? 'Du rammer en ensartet dybde gennem sættet.' : 'Du rammer en ensartet bundposition.',
+      `${spread.toFixed(1)} cm spredning`);
+    else if (spread > 3) addPriority(62, 'Bundpositionen flytter sig mellem reps',
+      'Gør bundpositionen mere ens fra rep til rep.',
+      'En flyttende bund gør både fart og stangbane sværere at sammenligne.',
+      sq ? 'Vælg én tydelig dybdereference og gentag den på næste sæt.'
+         : 'Kontrollér touchpoint og opspænd på første og sidste rep.',
+      `${spread.toFixed(1)} cm spredning`);
+  }
+
+  if (stick != null) context.push({ title:'Sticking point',
+    text:`${stick}% af vandringen${sumo && stick < 25 ? ' · lav placering er forventelig i sumo' : ''}` });
+  if (v.kneeAngle != null) context.push({ title:'Positions-baseline',
+    text:`knæ ${v.kneeAngle}° · hofte ${v.hipAngle}° · torso ${v.torsoFromVertical}° fra lodret` });
+  if (v.elbowAngle != null) context.push({ title:'Positions-baseline',
+    text:`albue ${v.elbowAngle}° · underarm ${v.foreDev}° fra lodret` });
+
+  priorities.sort((a,b) => b.score - a.score);
+  const primary = priorities[0] || null;
+  const strength = strengths[0] || null;
+  return {
+    quality: low > 15 ? 'low' : low > 5 ? 'medium' : 'high',
+    strength,
+    primary,
+    secondary: priorities.slice(1, 3),
+    strengths: strengths.slice(0, 3),
+    context,
+    athlete: {
+      works: strength ? strength.athlete : 'Sættet er målt — brug videoen som fælles reference.',
+      focus: primary ? primary.athlete : 'Der er ikke ét tydeligt problem, som kræver en ændring.',
+      next: primary ? primary.action : 'Gentag samme plan og se efter samme stanglinje næste sæt.'
+    }
+  };
+}
+// COACH_FEEDBACK_MODEL_END
+
 // Samlet rapport-tekst (målinger + regelbaserede fund). Bruges af
 // analyse-arket - genberegnes live når atlet/øvelse/kg/tendens ændres.
 function buildReport() {
@@ -3459,6 +3723,55 @@ function keyNumbers() {
 }
 const escHtml = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
+function buildCoachReportHtml(showAddPosition = true) {
+  const metrics = collectMetrics();
+  if (!metrics) return null;
+  const ath = document.getElementById('athleteSel').value || 'Atlet';
+  const lift = document.getElementById('liftSel').value;
+  const load = document.getElementById('loadInput').value.trim();
+  const bias = document.getElementById('biasInput').value.trim();
+  if (!lift) return '<div class="feedbackCard" data-kind="focus"><b>Vælg øvelse</b>' +
+    '<p>Feedbacken bliver først fagligt brugbar, når øvelsen er valgt.</p></div>';
+  const fb = buildCoachFeedback(lift, lastVals || {});
+  const E = x => escHtml(String(x == null ? '' : x));
+  const q = { high:'Høj målekvalitet', medium:'Godkendt målekvalitet',
+              low:'Kontrollér målingen' }[fb.quality];
+  const strengthEvidence = fb.strength && fb.strength.evidence
+    ? `<p class="feedbackEvidence">${E(fb.strength.evidence)}</p>` : '';
+  const focusEvidence = fb.primary && fb.primary.evidence
+    ? `<p class="feedbackEvidence">${E(fb.primary.evidence)}</p>` : '';
+  const detailRows = [];
+  if (fb.primary) detailRows.push(
+    `<div class="coachDetailRow"><b>${E(fb.primary.title)}</b>` +
+    `<span>${E(fb.primary.why)} · ${E(fb.primary.evidence)}</span></div>`);
+  else detailRows.push('<div class="coachDetailRow"><b>Ingen tydeligt hovedflag</b>' +
+    '<span>Behold planen og brug næste sæt til at se, om mønstret gentager sig.</span></div>');
+  fb.secondary.forEach(x => detailRows.push(
+    `<div class="coachDetailRow"><b>${E(x.title)}</b>` +
+    `<span>${E(x.why)} · ${E(x.evidence)}</span></div>`));
+  fb.context.forEach(x => detailRows.push(
+    `<div class="coachDetailRow"><b>${E(x.title)}</b><span>${E(x.text)}</span></div>`));
+  if (bias) detailRows.push(`<div class="coachDetailRow"><b>Kendt tendens</b>` +
+    `<span>${E(bias)} · sammenhold den manuelt med videoen; systemet gætter ikke ud fra fritekst.</span></div>`);
+  const numbers = keyNumbers().map(r =>
+    `<div class="coachNumber"><span>${E(r[0])}</span><b>${E(r[1])}</b></div>`).join('');
+  const hasPosition = strokes.some(s => s.type === 'mskel');
+  const addPosition = showAddPosition && !hasPosition
+    ? '<button class="coachAddPosition" data-add-position>＋ Tilføj positionsmåling</button>' : '';
+  return `<div class="coachFeedback">` +
+    `<div class="coachFeedbackHero"><div><small>Coach-feedback</small>` +
+    `<h3>${E(ath)} · ${E(lift)}</h3><p>${E(load || 'Belastning ikke angivet')}</p></div>` +
+    `<span class="measureQuality ${E(fb.quality)}">${E(q)}</span></div>` +
+    `<section class="athleteBrief"><span class="coachSectionLabel">Det kan du sige til atleten</span>` +
+    `<div class="feedbackCard" data-kind="good"><b>Det fungerer</b><p>${E(fb.athlete.works)}</p>${strengthEvidence}</div>` +
+    `<div class="feedbackCard" data-kind="focus"><b>Vigtigste fokus</b><p>${E(fb.athlete.focus)}</p>${focusEvidence}</div>` +
+    `<div class="feedbackCard" data-kind="next"><b>Næste sæt</b><p>${E(fb.athlete.next)}</p></div></section>` +
+    `<section><span class="coachSectionLabel">Coachens grundlag</span>` +
+    `<div class="coachDetail">${detailRows.join('')}</div>${addPosition}</section>` +
+    (numbers ? `<section><span class="coachSectionLabel">Nøgletal</span><div class="coachNumbers">${numbers}</div></section>` : '') +
+    `</div>`;
+}
+
 aiBtn.onclick = async () => {
   if (COACHWEB) { if (openSheetFn) openSheetFn(); return; }
   let metrics = collectMetrics();
@@ -3468,14 +3781,17 @@ aiBtn.onclick = async () => {
   const load = document.getElementById('loadInput').value.trim();
   if (!lift) { alert('Vælg øvelse først - fortolkningen afhænger af den'); return; }
   const bias = document.getElementById('biasInput').value.trim();
-  const findings = evaluateFindings(lift, lastVals || {});
+  const feedback = buildCoachFeedback(lift, lastVals || {});
+  const baseFeedbackHtml = buildCoachReportHtml(false);
   metrics = `Atlet: ${ath || 'ukendt'}\nØvelse: ${lift}\n` +
-            `Belastning: ${load || 'ikke angivet'}\n` +
-            (bias ? `Coachens kendte tendens for atleten: ${bias}\n` : '') + metrics +
-            (findings.length ? `\n\nFÆRDIGE FUND (regelbaseret, stol på disse):\n` +
-             findings.join('\n') : '');
+             `Belastning: ${load || 'ikke angivet'}\n` +
+             (bias ? `Coachens kendte tendens for atleten: ${bias}\n` : '') + metrics +
+             `\n\nFASTLÅST FEEDBACKMODEL (må ikke ændres):\n` +
+             JSON.stringify(feedback.athlete);
   aiPanel.hidden = false;
-  aiText.textContent = '⏳ Din lokale model tænker (normalt 5-20 sek)...';
+  aiText.innerHTML = baseFeedbackHtml +
+    '<div class="coachAiDraft"><span class="coachSectionLabel">Valgfri formulering</span>' +
+    '<p style="color:var(--dim);margin:6px 0 0">Den lokale model formulerer de fastlåste fund…</p></div>';
   aiBtn.disabled = true;
   const abort = new AbortController();
   const kill = setTimeout(() => abort.abort(), 90000);   // maks 90 sek, så slipper knappen
@@ -3489,50 +3805,31 @@ aiBtn.onclick = async () => {
         options: { temperature: 0.3 },
         messages: [
           { role: 'system', content:
-            'Du er assistenttræner for en erfaren IPF-styrkeløftcoach. Du får ' +
-            'målinger OG en liste FÆRDIGE FUND, som allerede er vurderet mod ' +
-            'øvelsens grænseværdier. DIN OPGAVE ER KUN AT FORMULERE FUNDENE ' +
-            'som kort coach-feedback - du må IKKE tilføje nye vurderinger, ' +
-            'ikke omfortolke OK til problem eller omvendt, og ikke bedømme ' +
-            'absolutte hastigheder. Led-vinkler fra klik-skelettet må bruges ' +
-            'som STØTTE til et fund (fx dybde/torso), ikke som selvstændig dom. ' +
-            'Er der angivet en kendt tendens, så sig ' +
-            'eksplicit om fundene be- eller afkræfter den. Svar på dansk i ' +
-            'PRÆCIS dette format:\n✓ FUNGERER: ...\n⚠ VIGTIGSTE FUND: ...\n' +
-            '→ FOKUS: ...\n' +
-            '↕ OVER SÆTTET (KUN hvis der er flere reps): hvad ændrer sig fra ' +
-            'første til sidste rep - både fart OG led-vinkel i bunden (fx ' +
-            'dybde der åbner ved udtrætning). Brug REP-TIL-REP-tallene.\n' +
-            'Maks 55 ord i ALT. Vær konkret: brug tal fra målingerne, ' +
-            'én kort linje pr. punkt, ingen indledning eller fyldord.\n\n' +
-            'EKSEMPEL på perfekt svar (squat, ' +
-            'fund: OK afvigelse 2 cm, FLAG stort fartfald 68% til sticking ' +
-            'point, OK fartfald over sæt 8%):\n✓ FUNGERER: Stangen holder ' +
-            'linjen flot, og friskheden er god sættet igennem.\n⚠ VIGTIGSTE ' +
-            'FUND: Farten dør på vej ind i sticking point - der mangler ' +
-            'acceleration ud af hullet.\n→ FOKUS: Cue maksimal fart fra ' +
-            'bunden: "skub gulvet væk, skuldrene tilbage i stangen".' +
-            (TEKNIK[lift] ? '\n\nREFERENCE FOR ' + lift.toUpperCase() +
-             ' (baggrund):\n' + TEKNIK[lift] : '') + '\n/no_think' },
+            'Du formulerer et allerede fastlåst, deterministisk feedbackresultat ' +
+            'for en erfaren IPF-coach. Du må IKKE tilføje fund, årsager, cues, ' +
+            'diagnoser eller ændre prioriteten. Du må kun gøre de tre værdier i ' +
+            'FASTLÅST FEEDBACKMODEL kortere og mere naturlige på dansk. ' +
+            'En kendt tendens i fritekst må ikke be- eller afkræftes. Svar i ' +
+            'PRÆCIS dette format:\n✓ DET FUNGERER: ...\n⚠ FOKUS: ...\n' +
+            '→ NÆSTE SÆT: ...\nMaks 50 ord i alt, ingen indledning.' +
+             (TEKNIK[lift] ? '\n\nREFERENCE FOR ' + lift.toUpperCase() +
+              ' (baggrund):\n' + TEKNIK[lift] : '') + '\n/no_think' },
           { role: 'user', content: metrics }]
       })
     });
     const j = await r.json();
     let t = j.message.content;
     if (t.includes('</think>')) t = t.split('</think>').pop();
-    const knRows = keyNumbers().map(r =>
-      `<div style="display:flex;justify-content:space-between;gap:16px;padding:3px 0;border-bottom:1px solid rgba(237,234,226,.06)"><span style="color:#8a8a92">${r[0]}</span><span style="color:#edeae2;text-align:right;font-variant-numeric:tabular-nums">${escHtml(r[1])}</span></div>`).join('');
-    const head = c => `<div style="color:#c8923a;font-weight:600;letter-spacing:.14em;font-size:11px;margin:0 0 6px">${c}</div>`;
-    aiText.innerHTML = head('NØGLETAL') + knRows +
-      `<div style="margin-top:14px">${head('VURDERING')}` +
-      `<div style="white-space:pre-wrap;line-height:1.55">${escHtml(t.trim())}</div></div>`;
+    aiText.innerHTML = baseFeedbackHtml +
+      `<div class="coachAiDraft"><span class="coachSectionLabel">Valgfri AI-formulering</span>` +
+      `<div style="white-space:pre-wrap;line-height:1.55;margin-top:6px">${escHtml(t.trim())}</div></div>`;
   } catch (e) {
-    aiText.textContent = (e.name === 'AbortError'
-      ? 'Modellen svarede ikke inden for 90 sek - prøv igen (første kald efter '
-        + 'genstart er langsomt, mens modellen loades).'
-      : 'Kunne ikke nå Ollama. Tjek at Ollama kører, og at OLLAMA_ORIGINS er '
-        + 'sat (se GUIDE.md).')
-      + '\n\nFÆRDIGE FUND (brugbare uden AI):\n' + metrics;
+    const msg = e.name === 'AbortError'
+      ? 'Den lokale model svarede ikke. Den målte feedback ovenfor er stadig klar.'
+      : 'Lokal AI er ikke tilgængelig. Den målte feedback ovenfor kræver ikke AI.';
+    aiText.innerHTML = baseFeedbackHtml +
+      `<div class="coachAiDraft"><span class="coachSectionLabel">AI-formulering</span>` +
+      `<p style="color:var(--dim);margin:6px 0 0">${escHtml(msg)}</p></div>`;
   } finally {
     clearTimeout(kill);
     aiBtn.disabled = false;
@@ -4386,7 +4683,7 @@ if (COACHWEB) {
   ['trimInBtn', 'trimOutBtn', 'backBtn', 'fwdBtn', 'openBtn'].forEach(id =>
     document.getElementById(id).style.display = 'none');
   // online kan AI'en ikke nås - knappen viser i stedet de regelbaserede fund
-  aiBtn.textContent = '≡ Fund';
+  aiBtn.textContent = '≡ Feedback';
   // sekundære værktøjer flyttes til en sammenklappelig "Mere"-bakke,
   // så bundbjælken kun fylder ÉN række
   const moreBar = document.createElement('div');
@@ -4396,14 +4693,16 @@ if (COACHWEB) {
   // LAG 3 (Fordyb): alt det avancerede i tray'en. Skelet + ghost flyttet HERIND
   // så Lag 1-bjælken er ren (kun transport + Tegn + ⚡). Rækkefølge = grupper:
   // analyse/vinkler · sammenlign · tegn · fund/gem/kort.
-  ['mskelBtn', 'graphBtn', 'fpBtn', 'barBtn', 'calibBtn',
+  ['mskelBtn', 'aiBtn', 'graphBtn', 'fpBtn', 'barBtn', 'calibBtn',
    'ghostBtn', 'cmpBtn', 'repCmpBtn',
    'lineBtn', 'angleBtn', 'eraseBtn', 'color', 'brushSel', 'clearBtn',
    'recordBtn', 'athleteSel', 'liftSel', 'loadInput', 'biasInput',
-   'aiBtn', 'saveBtn', 'cardBtn', 'exportBtn', 'recTime', 'downloadLink', 'scrubToolBtn'].forEach(id => {
+   'saveBtn', 'cardBtn', 'exportBtn', 'recTime', 'downloadLink', 'scrubToolBtn'].forEach(id => {
     const el = document.getElementById(id);
     if (el) moreBar.appendChild(el.closest('label') || el);
   });
+  document.getElementById('mskelBtn').classList.add('coachFeatured');
+  aiBtn.classList.add('coachFeatured');
   // kerneknapperne får atlet-stil: stort ikon, lille label (CSS ::after)
   allBtn.textContent = '⚡';
   document.getElementById('penBtn').textContent = '✎︎';
@@ -4446,7 +4745,7 @@ if (COACHWEB) {
   const shHead = document.createElement('div');
   shHead.style.cssText =
     'display:flex;justify-content:space-between;align-items:center';
-  shHead.innerHTML = '<h2>Analyse & fund</h2>';
+  shHead.innerHTML = '<h2>Coach-feedback</h2>';
   const shClose = document.createElement('button');
   shClose.textContent = '✕'; shClose.style.padding = '4px 12px';
   shClose.onclick = () => sheet.classList.remove('open');
@@ -4464,16 +4763,25 @@ if (COACHWEB) {
   shSave.style.marginTop = '12px';
   shSave.appendChild(saveBtn);
   sheet.appendChild(shSave);
+  const renderCoachSheet = () => {
+    const html = buildCoachReportHtml(true);
+    shText.innerHTML = html ||
+      '<div class="feedbackCard" data-kind="focus"><b>Ingen analyse endnu</b>' +
+      '<p>Kør ⚡ Analysér løft først.</p></div>';
+    const addPosition = shText.querySelector('[data-add-position]');
+    if (addPosition) addPosition.onclick = () => {
+      sheet.classList.remove('open');
+      document.getElementById('mskelBtn').click();
+    };
+  };
   openSheetFn = () => {
-    shText.textContent = buildReport() ||
-      'Ingen analyse endnu - kør ⚡ Analysér løft først.';
+    renderCoachSheet();
     sheet.classList.add('open');
   };
   // fund genberegnes live, når coachen retter felterne
   ['athleteSel', 'liftSel', 'loadInput', 'biasInput'].forEach(id =>
     document.getElementById(id).addEventListener('change', () => {
-      if (sheet.classList.contains('open'))
-        shText.textContent = buildReport() || '';
+      if (sheet.classList.contains('open')) renderCoachSheet();
     }));
   layoutBars();
   setTimeout(layoutBars, 400);
@@ -4607,17 +4915,20 @@ if (DESKTOP) {
   // Lag 3: analyse → sammenligning → tegning → kontekst/resultater.
   // Headerens gamle knapmylder flyttes også hertil; topbaren beholder kun
   // brand, flow, Åbn video og Filmguide.
-  ['mskelBtn', 'graphBtn', 'fpBtn', 'barBtn', 'calibBtn',
+  ['mskelBtn', 'aiBtn', 'graphBtn', 'fpBtn', 'barBtn', 'calibBtn',
    'ghostBtn', 'cmpBtn', 'repCmpBtn', 'ovlBtn', 'blendBtn',
    'backBtn', 'fwdBtn', 'gridBtn', 'loopBtn',
    'scrubToolBtn', 'lineBtn', 'angleBtn', 'eraseBtn',
    'color', 'brushSel', 'clearBtn',
    'athleteSel', 'liftSel', 'loadInput', 'biasInput',
-   'aiBtn', 'saveBtn', 'cardBtn', 'recordBtn', 'exportBtn',
+   'saveBtn', 'cardBtn', 'recordBtn', 'exportBtn',
    'recTime', 'downloadLink'].forEach(id => {
     const el = document.getElementById(id);
     if (el) tray.appendChild(el.closest('label') || el);
   });
+  document.getElementById('mskelBtn').classList.add('coachFeatured');
+  aiBtn.classList.add('coachFeatured');
+  aiBtn.textContent = 'Coach-feedback';
   const moreB = document.createElement('button');
   moreB.id = 'desktopMoreBtn';
   moreB.textContent = '⌄ Fordyb';
@@ -4673,7 +4984,7 @@ if (DESKTOP) {
     fwdBtn:    _sv("<path d='M11 6l6 6-6 6'/><path d='M6 6v12'/>"),
     gridBtn:   _sv("<rect x='4' y='4' width='16' height='16' rx='1'/><path d='M4 12h16M12 4v16'/>")
   };
-  const LBL = { penBtn:'Tegn', mskelBtn:'Skelet', undoBtn:'Fortryd',
+  const LBL = { penBtn:'Tegn', mskelBtn:'Positioner', undoBtn:'Fortryd',
                 openBtn:'Åbn video', guideBtn:'Filmguide', repCmpBtn:'Rep-overlay' };
   const ONLY = { backBtn:'Frame tilbage (←)', fwdBtn:'Frame frem (→)', gridBtn:'Grid' };
   for (const id in ICON) {
