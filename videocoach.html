@@ -197,6 +197,55 @@
     border:1px solid var(--line); border-radius:14px; padding:14px;
     box-shadow:0 10px 34px rgba(0,0,0,.55); }
   #deskTray[hidden] { display:none; }
+  /* Coach-desktop: rolig arbejdsramme + synligt 3-trins-flow. Alt er scoped
+     til .desktop, så athlete/coachweb beholder deres nuværende UI urørt. */
+  #coachFlow { display:none; }
+  body.desktop header { flex:none; min-height:62px; margin:12px 12px 0;
+    padding:8px 10px 8px 16px; flex-wrap:nowrap; gap:8px;
+    background:rgba(28,26,22,.9); border:1px solid var(--line);
+    border-radius:14px; box-shadow:0 12px 36px rgba(0,0,0,.22); }
+  body.desktop header .brandmark { flex:none; margin-right:18px; }
+  body.desktop #coachFlow { display:flex; align-items:center; justify-content:center;
+    flex:1; min-width:300px; gap:9px; color:var(--dim); }
+  body.desktop #coachFlow .flowStep { display:flex; align-items:center; gap:7px;
+    padding:7px 10px; border-radius:9px; font-size:11px;
+    letter-spacing:.1em; text-transform:uppercase; white-space:nowrap; }
+  body.desktop #coachFlow .flowStep b { display:grid; place-items:center;
+    width:21px; height:21px; border:1px solid rgba(237,234,226,.14);
+    border-radius:50%; font-size:10px; font-weight:500; }
+  body.desktop #coachFlow .flowStep.done { color:rgba(237,234,226,.48); }
+  body.desktop #coachFlow .flowStep.done b { color:var(--accent);
+    border-color:rgba(200,146,58,.35); }
+  body.desktop #coachFlow .flowStep.active { color:var(--text);
+    background:rgba(200,146,58,.10); }
+  body.desktop #coachFlow .flowStep.active b { color:#141410;
+    background:var(--accent); border-color:var(--accent); font-weight:600; }
+  body.desktop #coachFlow i { width:24px; height:1px; background:var(--line); }
+  body.desktop header button { border-color:transparent; border-radius:9px; }
+  body.desktop #openBtn { color:#141410; background:var(--accent);
+    border-color:var(--accent); font-weight:600; }
+  body.desktop #openBtn:hover { color:#141410; filter:brightness(1.08); }
+  body.desktop #guideBtn { color:var(--dim); }
+  body.desktop #playBtn { display:none; }
+  body.desktop #stage { margin:10px 12px; border-radius:12px;
+    background:radial-gradient(ellipse at center,#1a1812 0%,#0f0e0b 100%); }
+  body.desktop #scrubRow { flex:none; margin:0 12px; padding:7px 12px;
+    background:rgba(28,26,22,.92); border:1px solid var(--line);
+    border-bottom:0; border-radius:12px 12px 0 0; }
+  body.desktop #speed { width:126px; padding:7px 9px; border-radius:8px;
+    border-color:transparent; background:rgba(237,234,226,.04); }
+  body.desktop footer { flex:none; min-height:58px; margin:0 12px 12px;
+    padding:8px 10px; gap:5px; flex-wrap:nowrap;
+    background:rgba(28,26,22,.94); border:1px solid var(--line);
+    border-radius:0 0 12px 12px; }
+  body.desktop footer button { border-color:transparent; border-radius:9px;
+    padding:9px 12px; }
+  body.desktop footer #allBtn { color:#141410 !important;
+    background:var(--accent); border-color:var(--accent) !important; }
+  body.desktop #desktopMoreBtn { margin-left:auto; }
+  body.desktop #deskTray { right:12px; left:12px; max-width:none;
+    max-height:42vh; overflow:auto; justify-content:flex-end;
+    background:rgba(20,20,16,.96); backdrop-filter:blur(16px); }
   /* 👥 rep-vælger: klikbar tabel */
   #repPick { position:fixed; inset:0; z-index:41; display:flex;
     align-items:center; justify-content:center; background:rgba(0,0,0,.55); }
@@ -432,7 +481,7 @@ function loadFile(file) {
   endCompare();                              // ny video 1 = ud af ⇄-tilstand
   strokes = []; anglePts = [];
   if (typeof resetZoom === 'function') resetZoom();   // ny video = 1x zoom
-  plateConfirm = null;                                // ryd evt. skive-ring
+  plateConfirm = null; awaitLockPoint = null;         // ryd evt. skive-ring/låsepunkt
   if (setCoachLayer) setCoachLayer(1);                // ny video → ren Lag 1
   // nulstil alt der hører til den GAMLE video
   cmPerPx = null; calibPts = [];
@@ -618,6 +667,19 @@ canvas.addEventListener('pointerdown', e => {
   const p = pos(e);
   if (showGrid && e.shiftKey) {                 // Shift+træk = flyt grid
     gridDrag = { px: p.x - gridOffset.x, py: p.y - gridOffset.y };
+    return;
+  }
+  // COACH: geometrisk skivecentrum og visuelt låsepunkt er to ting.
+  // Ringen giver målestokken; coachens tydelige nav/logo-punkt giver templaten.
+  if (awaitLockPoint) {
+    const a = awaitLockPoint;
+    if (Math.hypot(p.x - a.x, p.y - a.y) > a.r * .4) {
+      say('Vælg et tydeligt punkt i den lille ring tæt på skivens nav');
+      return;
+    }
+    awaitLockPoint = null; plateConfirm = null;
+    allBtn.classList.remove('active');
+    runFullAnalysis(p);
     return;
   }
   // Skive-ring i hånden: MIDTEN = flyt · KANTEN = ændr størrelse · LANGT ude = ny detektion
@@ -1599,13 +1661,19 @@ function render() {
   });
   // BEKRÆFTELSES-RING: det auto-detekterede skive-omrids (venter på ⚡).
   // Coachen ser om låsningen sidder rigtigt, før analysen køres.
-  if (plateConfirm) {
-    const { x, y, r } = plateConfirm;
+  if (plateConfirm || awaitLockPoint) {
+    const { x, y, r } = plateConfirm || awaitLockPoint;
     ctx.save();
     ctx.strokeStyle = '#c8923a';
     ctx.shadowColor = 'rgba(200,146,58,.85)'; ctx.shadowBlur = 14;
     ctx.lineWidth = Math.max(2.5, canvas.width / 380);
     ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.stroke();
+    if (awaitLockPoint) {
+      ctx.setLineDash([7, 7]);
+      ctx.strokeStyle = '#edeae2';
+      ctx.beginPath(); ctx.arc(x, y, r * .4, 0, 7); ctx.stroke();
+      ctx.setLineDash([]);
+    }
     ctx.shadowBlur = 0;
     ctx.strokeStyle = 'rgba(255,255,255,.6)';
     ctx.lineWidth = Math.max(1, canvas.width / 950);
@@ -2124,9 +2192,12 @@ async function startBarTracking(p0) {
     // IN-SESSION-FART: desktop dekoder hver frame, saa fuld fart er trygt.
     // Paa MOBIL dropper hurtig afspilning frames paa svage telefoner ->
     // skiven flytter sig laengere end soegevinduet mellem to behandlede
-    // frames -> trackeren mister laasen og flyver rundt (Marcs app-bug,
-    // begge views). 0.5 = faerre drop = laasen holder. Reverteret fra 0.75.
-    video.playbackRate = DESKTOP ? 1.0 : 0.5;
+    // frames -> trackeren mister laasen netop omkring squat-vendingen.
+    // Rig 16/7: bund+okklusion gik fra 87 px maxfejl ved 0.5x-cadence til
+    // 9 px ved 0.25x. Det tager laengere, men prioriterer en brugbar bane.
+    // Coach-mobil tester 0.25x; athlete bliver på den allerede live 0.5x,
+    // indtil coach-flowet er visuelt godkendt på rigtige løft.
+    video.playbackRate = DESKTOP ? 1.0 : COACHWEB ? 0.25 : 0.5;
     await new Promise(res => {
       const done = () => {
         video.removeEventListener('pause', done);
@@ -2297,14 +2368,26 @@ let awaitShClick = null;      // {pose, path} mens vi venter på klikket
 const allBtn = document.getElementById('allBtn');
 let wizard = null, analyzing = false;
 let plateConfirm = null;   // {x,y,r} detekteret skive-ring der venter på bekræftelse
+let awaitLockPoint = null; // coach: vælg karakteristisk feature nær navet
 let plateDrag = null;      // {mode:'move'|'resize', ox, oy} mens ringen justeres i hånden
 
 allBtn.onclick = async () => {
   if (analyzing) { analyzing = false; tracking = false; return; }
+  if (awaitLockPoint) {
+    say('Klik på et tydeligt punkt i den lille ring tæt på skivens nav');
+    return;
+  }
   // BEKRÆFT skive-ringen (WL-Analysis-stil): coachen har set omridset og
   // trykker ⚡ igen for at køre analysen på den bekræftede skive.
   if (plateConfirm) {
-    const c = plateConfirm; plateConfirm = null; wizard = null;
+    const c = plateConfirm; wizard = null;
+    if (DESKTOP || COACHWEB) {
+      awaitLockPoint = { ...c };
+      allBtn.textContent = 'Klik låsepunkt på skiven';
+      say('Sidste trin · klik på et tydeligt nav, bolt eller logo i den lille ring');
+      return;
+    }
+    plateConfirm = null;
     allBtn.classList.remove('active');
     runFullAnalysis({ x: c.x, y: c.y });
     return;
@@ -2365,6 +2448,12 @@ function autoCalib(center) {
 // ½ fart, INTET ark i vejen - coachen skal tale, ikke læse. Max 3 tryk.
 let sessionRun = false;
 function disarmSession() {
+  if (awaitLockPoint) {
+    awaitLockPoint = null; plateConfirm = null; wizard = null;
+    allBtn.classList.remove('active');
+    allBtn.textContent = ATHLETE ? '◎' : SLIM ? '⚡' : 'Analysér løft';
+    say('');
+  }
   if (plateConfirm) {           // coachen gik videre uden at bekræfte ringen
     plateConfirm = null; wizard = null;
     allBtn.classList.remove('active');
@@ -2474,7 +2563,7 @@ const aiBtn = document.getElementById('aiBtn');
 const aiPanel = document.getElementById('aiPanel');
 const aiText = document.getElementById('aiText');
 let openSheetFn = null;   // sættes af coach-online-layoutet (analyse-arket)
-let setCoachLayer = null; // sættes af COACHWEB: 1=ren · 2=efter analyse · 3=Fordyb
+let setCoachLayer = null; // sættes af coach-layout: 1=ren · 2=efter analyse · 3=Fordyb
 
 let lastVals = null;   // strukturerede tal til den regelbaserede vurdering
 
@@ -3849,42 +3938,85 @@ if (ATHLETE) {
 }
 
 if (DESKTOP) {
-  // RUNDE 15: RADIKAL oprydning. Kun kernen står i bjælken:
-  //   ⚡ Analysér · ✏️ Tegn · 🦴 Skelet · ↩ Fortryd · 🎙 Optag · ⋯ Mere
-  // ALT andet i ⋯-bakken. Målet: lækkert simpelt, professionelt for atleterne.
+  document.body.classList.add('desktop');
+  // Coach-desktop følger nu samme 3 lag som coachweb, mens athlete er urørt:
+  // 1 Video/analysér → 2 Bane/fart → 3 Fordyb med alle specialværktøjer.
+  graphMode = 0; applyGraphMode(); showVelBar = true;
+  const flow = document.createElement('div');
+  flow.id = 'coachFlow';
+  flow.setAttribute('aria-label', 'Analyseflow');
+  flow.innerHTML =
+    "<span class='flowStep' data-step='1'><b>1</b>Video</span><i></i>" +
+    "<span class='flowStep' data-step='2'><b>2</b>Bane</span><i></i>" +
+    "<span class='flowStep' data-step='3'><b>3</b>Fordyb</span>";
+  document.querySelector('header .brandmark').after(flow);
+  const updateDesktopFlow = n => {
+    flow.querySelectorAll('.flowStep').forEach(el => {
+      const step = +el.dataset.step;
+      el.classList.toggle('active', step === n);
+      el.classList.toggle('done', step < n);
+    });
+  };
+
+  // Afspilningsfart hører til transport/tidslinje, ikke i programmets top.
+  document.getElementById('playBtn2').after(document.getElementById('speed'));
   const tray = document.createElement('div');
   tray.id = 'deskTray';
   tray.hidden = true;
   document.body.appendChild(tray);
-  ['scrubToolBtn', 'loopBtn', 'lineBtn', 'angleBtn', 'eraseBtn',
-   'graphBtn', 'fpBtn', 'barBtn', 'calibBtn', 'color', 'brushSel', 'clearBtn',
+  // Lag 3: analyse → sammenligning → tegning → kontekst/resultater.
+  // Headerens gamle knapmylder flyttes også hertil; topbaren beholder kun
+  // brand, flow, Åbn video og Filmguide.
+  ['mskelBtn', 'graphBtn', 'fpBtn', 'barBtn', 'calibBtn',
+   'ghostBtn', 'cmpBtn', 'repCmpBtn', 'ovlBtn', 'blendBtn',
+   'backBtn', 'fwdBtn', 'gridBtn', 'loopBtn',
+   'scrubToolBtn', 'lineBtn', 'angleBtn', 'eraseBtn',
+   'color', 'brushSel', 'clearBtn',
    'athleteSel', 'liftSel', 'loadInput', 'biasInput',
-   'aiBtn', 'saveBtn', 'cardBtn', 'exportBtn', 'recTime', 'downloadLink'].forEach(id => {
+   'aiBtn', 'saveBtn', 'cardBtn', 'recordBtn', 'exportBtn',
+   'recTime', 'downloadLink'].forEach(id => {
     const el = document.getElementById(id);
     if (el) tray.appendChild(el.closest('label') || el);
   });
   const moreB = document.createElement('button');
-  moreB.textContent = '⋯ Mere';
+  moreB.id = 'desktopMoreBtn';
+  moreB.textContent = '⌄ Fordyb';
+  moreB.hidden = true;
   moreB.onclick = () => {
     tray.hidden = !tray.hidden;
     moreB.classList.toggle('active', !tray.hidden);
     tray.style.bottom =
       (document.querySelector('footer').offsetHeight + 10) + 'px';
+    updateDesktopFlow(tray.hidden ? 2 : 3);
   };
   const foot = document.querySelector('footer');
   const sp = foot.querySelector('span[style*="flex"]'); if (sp) sp.remove();
-  // rækkefølge i bjælken: Analysér → Tegn → Skelet → Fortryd → Optag … Mere
-  ['allBtn', 'penBtn', 'mskelBtn', 'ghostBtn', 'undoBtn', 'recordBtn'].forEach(id => {
+  // Lag 1 er bevidst lille. Fordyb bliver først synlig, når banen er klar.
+  ['allBtn', 'penBtn', 'undoBtn'].forEach(id => {
     const el = document.getElementById(id); if (el) foot.appendChild(el);
   });
-  moreB.style.marginLeft = 'auto';   // skub Mere helt til højre
   foot.appendChild(moreB);
-  // værktøjer med klik-guide/optagelse lukker selv bakken
-  ['barBtn', 'calibBtn', 'recordBtn'].forEach(id => {
-    const el = document.getElementById(id), orig = el.onclick;
-    if (!el) return;
+  setCoachLayer = n => {
+    if (n <= 1) {
+      tray.hidden = true;
+      moreB.hidden = true;
+      moreB.classList.remove('active');
+      updateDesktopFlow(1);
+    } else {
+      moreB.hidden = false;
+      updateDesktopFlow(tray.hidden ? 2 : 3);
+    }
+  };
+  setCoachLayer(1);
+  // Værktøjer med klik-guide/optagelse lukker Fordyb, så videoen er fri.
+  ['barBtn', 'calibBtn', 'recordBtn', 'aiBtn', 'cmpBtn',
+   'repCmpBtn', 'mskelBtn', 'lineBtn', 'angleBtn', 'eraseBtn'].forEach(id => {
+    const el = document.getElementById(id); if (!el) return;
+    const orig = el.onclick;
     el.onclick = e => {
-      tray.hidden = true; moreB.classList.remove('active');
+      tray.hidden = true;
+      moreB.classList.remove('active');
+      if (!moreB.hidden) updateDesktopFlow(2);
       if (orig) orig.call(el, e);
     };
   });
@@ -3911,7 +4043,7 @@ if (DESKTOP) {
     else el.innerHTML = ICON[id] + '<span>' + LBL[id] + '</span>';
   }
   moreB.classList.add('iconbtn');
-  moreB.innerHTML = "<svg viewBox='0 0 24 24' width='16' height='16' fill='currentColor' stroke='none'><circle cx='5' cy='12' r='1.7'/><circle cx='12' cy='12' r='1.7'/><circle cx='19' cy='12' r='1.7'/></svg><span>Mere</span>";
+  moreB.innerHTML = "<svg viewBox='0 0 24 24' width='16' height='16' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round'><path d='m6 9 6 6 6-6'/></svg><span>Fordyb</span>";
 }
 
 
