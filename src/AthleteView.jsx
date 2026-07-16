@@ -2965,11 +2965,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         <div style={s.logo}>Entropi<span style={{ color: '#c8923a' }}>.</span></div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           {backBtn}
-          <button
-            onClick={() => window.open('videocoach.html?mode=athlete', '_blank')}
-            title="VideoCoach — mål stanghastighed på dine løft"
-            style={{ background: 'transparent', border: '1px solid rgba(237,234,226,0.13)', color: '#7a7770', fontSize: '0.85rem', lineHeight: 1, padding: '0.35rem 0.5rem', cursor: 'pointer', borderRadius: 4 }}
-          >🎥</button>
           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844' }}>{today()}</div>
         </div>
       </div>
@@ -3400,6 +3395,30 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
             )}
 
             {progressBars}
+
+            {/* VideoCoach — flyttet fra topbaren ned som selvstændigt kort */}
+            <div
+              onClick={() => window.open('videocoach.html?mode=athlete', '_blank')}
+              onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(200,146,58,0.4)'}
+              onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(237,234,226,0.07)'}
+              style={{ ...s.card, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem' }}
+            >
+              <div style={{ width: 46, height: 46, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(200,146,58,0.35)', borderRadius: 4, background: 'rgba(200,146,58,0.08)' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c8923a" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="6" width="13" height="12" rx="2" />
+                  <path d="M15 10.5 22 7v10l-7-3.5" />
+                </svg>
+              </div>
+              <div style={{ minWidth: 0 }}>
+                <div style={{ ...s.cardLabel, marginBottom: '0.2rem' }}>VideoCoach</div>
+                <div style={{ fontSize: '0.85rem', color: '#edeae2', lineHeight: 1.4 }}>
+                  Film dit løft og mål stanghastighed
+                </div>
+                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', marginTop: '0.3rem' }}>
+                  Åbn kamera-analyse →
+                </div>
+              </div>
+            </div>
           </>
         )}
 
