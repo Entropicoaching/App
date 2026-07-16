@@ -187,6 +187,45 @@ function WeeklyTonnageChart({ data }) {
   )
 }
 
+// Multi-linje graf over ugentligt bedste e1RM (Epley: vægt × (1 + reps/30))
+// pr. hovedløft. Svarer på "bliver jeg stærkere?" direkte på forsiden.
+function E1RMChart({ series }) {
+  const drawn = series.filter(sr => sr.points.length >= 2)
+  if (!drawn.length) return null
+  const W = 400, H = 150, PL = 8, PR = 40, PT = 10, PB = 16
+  const allKeys = [...new Set(drawn.flatMap(sr => sr.points.map(p => p.weekStart)))].sort()
+  if (allKeys.length < 2) return null
+  const allVals = drawn.flatMap(sr => sr.points.map(p => p.val))
+  const minV = Math.min(...allVals), maxV = Math.max(...allVals)
+  const range = (maxV - minV) || 1
+  const x = k => PL + (allKeys.indexOf(k) / (allKeys.length - 1)) * (W - PL - PR)
+  const y = v => PT + (1 - (v - minV) / range) * (H - PT - PB)
+  const mono = 'IBM Plex Mono,monospace'
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block' }}>
+      <line x1={PL} y1={H - PB} x2={W - PR} y2={H - PB} stroke="rgba(237,234,226,0.08)" strokeWidth="1" />
+      {drawn.map(sr => {
+        const pts = sr.points.map(p => `${x(p.weekStart).toFixed(1)},${y(p.val).toFixed(1)}`).join(' ')
+        const last = sr.points[sr.points.length - 1]
+        return (
+          <g key={sr.label}>
+            <polyline points={pts} fill="none" stroke={sr.color} strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round" />
+            {sr.points.map(p => <circle key={p.weekStart} cx={x(p.weekStart)} cy={y(p.val)} r="2" fill={sr.color} />)}
+            <text x={x(last.weekStart) + 5} y={y(last.val) + 3} fontSize="7.5" fill={sr.color} fontFamily={mono}>
+              {Math.round(last.val)}
+            </text>
+          </g>
+        )
+      })}
+      {[allKeys[0], allKeys[allKeys.length - 1]].map((k, i) => (
+        <text key={k} x={x(k)} y={H - 4} textAnchor={i === 0 ? 'start' : 'end'} fontSize="7" fill="#4a4844" fontFamily={mono}>
+          {k.slice(5).replace('-', '/')}
+        </text>
+      ))}
+    </svg>
+  )
+}
+
 const LOCAL_FOODS = [
   // Mejeri
   { name: 'Mælk minimælk', kcal100: 42, protein100: 3, carb100: 5, fat100: 1 },
@@ -1570,6 +1609,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [lastLogByExerciseName, setLastLogByExerciseName] = useState({})
   const [exerciseHistory, setExerciseHistory] = useState({})
   const [weeklyTonnage, setWeeklyTonnage] = useState([])
+  const [liftProgress, setLiftProgress] = useState([])
   const [weightLogs, setWeightLogs] = useState([])
   const [weightInput, setWeightInput] = useState('')
   const [savingWeight, setSavingWeight] = useState(false)
@@ -1989,13 +2029,13 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     fetchWeeklyTonnage(athleteId)
   }
 
-  // Ugentlig tonnage (sum af vægt × reps) til forsidens volumen-graf.
-  // Grupperes på ugens mandag ud fra logged_at; seneste ~12 ugers logs.
+  // Ugentlig tonnage (sum af vægt × reps) + ugentligt bedste e1RM pr. hovedløft
+  // til forsidens grafer. Grupperes på ugens mandag ud fra logged_at; ~12 ugers logs.
   async function fetchWeeklyTonnage(athleteId) {
     const since = new Date(Date.now() - 84 * 86400000).toISOString()
     const { data } = await supabase
       .from('exercise_logs')
-      .select('weight, reps_completed, logged_at')
+      .select('weight, reps_completed, logged_at, exercises(name)')
       .eq('athlete_id', athleteId)
       .eq('skipped', false)
       .gt('weight', 0)
@@ -2003,18 +2043,43 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       .order('logged_at', { ascending: true })
       .limit(4000)
     if (!data) return
+    // Kun stang-varianter tæller med i hovedløfts-e1RM — maskiner/håndvægte
+    // (belt squat, hack squat, DB-pres ...) giver misvisende høje tal.
+    const NON_BARBELL = /belt|hack|split|bulgar|goblet|smith|pendul|maskine|machine|leg press|sissy|db |dumbbell|håndvægt/
+    const LIFTS = [
+      { label: 'Squat', color: '#4e8fcf', match: n => n.includes('squat') && !NON_BARBELL.test(n) },
+      { label: 'Bænk', color: '#c8923a', match: n => (n.includes('bænk') || n.includes('bench')) && !NON_BARBELL.test(n) },
+      { label: 'Dødløft', color: '#6cba6c', match: n => (n.includes('dødløft') || n.includes('deadlift') || /(^|\s)dl(\s|$)/.test(n)) && !NON_BARBELL.test(n) },
+    ]
     const byWeek = {}
+    const liftByWeek = LIFTS.map(() => ({}))
     for (const l of data) {
       const d = new Date(l.logged_at)
       d.setHours(12, 0, 0, 0)
       d.setDate(d.getDate() - ((d.getDay() + 6) % 7)) // tilbage til mandag
       const key = d.toISOString().slice(0, 10)
       byWeek[key] = (byWeek[key] || 0) + (l.weight || 0) * (l.reps_completed || 0)
+      const name = (l.exercises?.name || '').toLowerCase()
+      const reps = l.reps_completed || 0
+      if (name && reps >= 1 && reps <= 12) {
+        const e1rm = l.weight * (1 + reps / 30) // Epley
+        LIFTS.forEach((lift, i) => {
+          if (lift.match(name) && e1rm > (liftByWeek[i][key] || 0)) liftByWeek[i][key] = e1rm
+        })
+      }
     }
     const rows = Object.entries(byWeek)
       .sort((a, b) => (a[0] < b[0] ? -1 : 1))
       .map(([weekStart, total]) => ({ weekStart, total: Math.round(total) }))
     setWeeklyTonnage(rows.slice(-10))
+    setLiftProgress(LIFTS.map((lift, i) => ({
+      label: lift.label,
+      color: lift.color,
+      points: Object.entries(liftByWeek[i])
+        .sort((a, b) => (a[0] < b[0] ? -1 : 1))
+        .map(([weekStart, val]) => ({ weekStart, val }))
+        .slice(-10),
+    })))
   }
 
   // Henter en uges logs (kun det nødvendige til færdig-tjek) og returnerer dem,
@@ -2822,6 +2887,46 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     </div>
   )
 
+  // Kompakt kost-status til forsiden: ét slankt, klikbart kort i stedet for to
+  // store. Fylder minimalt når der ikke er logget noget ("mindre in your face"),
+  // og viser tal + tynde bars når dagen er i gang. Kost-fanen har den fulde visning.
+  const kostCompact = (
+    <div
+      onClick={() => setTab('kost')}
+      onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(200,146,58,0.3)'}
+      onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(237,234,226,0.07)'}
+      style={{ ...s.card, cursor: 'pointer', padding: '0.7rem 1rem', marginBottom: '1.5rem' }}
+    >
+      {(totKcal > 0 || totProtein > 0) ? (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+          <span style={{ ...s.cardLabel, marginBottom: 0, flexShrink: 0 }}>Kost i dag</span>
+          {[
+            { val: totKcal, target: athlete.kcal_target, unit: 'kcal', pct: kcalPct, color: '#c8923a' },
+            { val: totProtein, target: athlete.protein_target, unit: 'g protein', pct: proteinPct, color: '#6cba6c' },
+          ].map(({ val, target, unit, pct, color }) => (
+            <span key={unit} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0 }}>
+              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#edeae2', whiteSpace: 'nowrap' }}>
+                {val}<span style={{ color: '#7a7770' }}> / {target || '?'} {unit}</span>
+              </span>
+              <span style={{ width: 44, height: 3, background: '#242420', borderRadius: 2, flexShrink: 0 }}>
+                <span style={{ display: 'block', width: `${Math.min(pct, 100)}%`, height: 3, background: color, borderRadius: 2 }} />
+              </span>
+            </span>
+          ))}
+          <span style={{ marginLeft: 'auto', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#4a4844' }}>→</span>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <span style={{ ...s.cardLabel, marginBottom: 0 }}>Kost</span>
+          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#4a4844', letterSpacing: '0.05em' }}>
+            Ingen måltider logget i dag
+          </span>
+          <span style={{ marginLeft: 'auto', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#4a4844' }}>→</span>
+        </div>
+      )}
+    </div>
+  )
+
   if (!onboarded && !coachAthleteId) {
     return (
       <div style={{ minHeight: '100vh', background: '#141410', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
@@ -3394,7 +3499,24 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               </div>
             )}
 
-            {progressBars}
+            {liftProgress.some(sr => sr.points.length >= 2) && (
+              <div style={s.card}>
+                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.35rem', flexWrap: 'wrap' }}>
+                  <div style={{ ...s.cardLabel, marginBottom: 0 }}>Styrkeudvikling</div>
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', letterSpacing: '0.06em', textTransform: 'uppercase' }}>bedste e1RM pr. uge, kg</span>
+                </div>
+                <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.5rem' }}>
+                  {liftProgress.filter(sr => sr.points.length >= 2).map(sr => (
+                    <span key={sr.label} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: '#7a7770' }}>
+                      <span style={{ width: 10, height: 2, background: sr.color, display: 'inline-block' }} />{sr.label}
+                    </span>
+                  ))}
+                </div>
+                <E1RMChart series={liftProgress} />
+              </div>
+            )}
+
+            {kostCompact}
 
             {/* VideoCoach — flyttet fra topbaren ned som selvstændigt kort */}
             <div
