@@ -84,6 +84,108 @@ function fmtWeekRange(start) {
 }
 // Valgfri fast ugedag pr. session (0=mandag .. 6=søndag). null = ingen fast dag.
 const WEEKDAYS_LONG = ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag', 'Søndag']
+const WEEKDAYS_SHORT = ['Man', 'Tir', 'Ons', 'Tor', 'Fre', 'Lør', 'Søn']
+
+// Ugekalender på forsiden: 7 celler (man-søn) med ugens sessioner placeret på
+// deres weekday. Grøn = færdiglogget, gul = næste session, ring = i dag.
+// Klik på en dag med session åbner den i Program-fanen.
+function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession }) {
+  const sessions = week?.sessions || []
+  if (!sessions.length) return null
+  const sessDone = s => (s.exercises || []).length > 0 &&
+    (s.exercises || []).every(ex => exerciseLogs.some(l => l.exercise_id === ex.id))
+  const nextS = sessions.find(s => !sessDone(s))
+  const today = new Date(); today.setHours(0, 0, 0, 0)
+  const days = [...Array(7)].map((_, wd) => {
+    let date = null
+    if (weekStart) { date = new Date(weekStart.getTime() + wd * 86400000); date.setHours(0, 0, 0, 0) }
+    return { wd, date, sessions: sessions.filter(s => s.weekday === wd) }
+  })
+  const flex = sessions.filter(s => s.weekday == null)
+  const mono = "'IBM Plex Mono', monospace"
+  return (
+    <div style={{ marginBottom: '1.25rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '0.3rem' }}>
+        {days.map(d => {
+          const isToday = d.date && d.date.getTime() === today.getTime()
+          const has = d.sessions.length > 0
+          const allDone = has && d.sessions.every(sessDone)
+          const isNext = nextS && d.sessions.some(s => s.id === nextS.id)
+          const border = isNext ? 'rgba(200,146,58,0.55)' : allDone ? 'rgba(108,186,108,0.4)' : has ? 'rgba(237,234,226,0.14)' : 'rgba(237,234,226,0.06)'
+          const bg = isNext ? 'rgba(200,146,58,0.1)' : allDone ? 'rgba(108,186,108,0.06)' : has ? 'rgba(237,234,226,0.03)' : 'transparent'
+          const open = has ? (d.sessions.find(s => !sessDone(s)) || d.sessions[0]) : null
+          return (
+            <button
+              key={d.wd}
+              onClick={() => open && onOpenSession(open.id)}
+              title={d.sessions.map(s => s.title).join(' · ') || undefined}
+              style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.2rem',
+                padding: '0.45rem 0.1rem 0.4rem', background: bg,
+                border: `1px solid ${border}`, borderRadius: 2,
+                outline: isToday ? '1px solid rgba(237,234,226,0.4)' : 'none', outlineOffset: 1,
+                cursor: has ? 'pointer' : 'default', fontFamily: mono,
+              }}
+            >
+              <span style={{ fontSize: '0.46rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: isToday ? '#edeae2' : '#4a4844' }}>
+                {WEEKDAYS_SHORT[d.wd]}
+              </span>
+              <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '0.85rem', lineHeight: 1, color: has ? '#edeae2' : '#4a4844' }}>
+                {d.date ? d.date.getDate() : '·'}
+              </span>
+              <span style={{ fontSize: '0.55rem', lineHeight: 1, height: '0.6rem', color: allDone ? '#6cba6c' : isNext ? '#c8923a' : has ? '#7a7770' : 'transparent' }}>
+                {allDone ? '✓' : has ? '●' : '·'}
+              </span>
+            </button>
+          )
+        })}
+      </div>
+      {flex.length > 0 && (
+        <div style={{ fontFamily: mono, fontSize: '0.5rem', letterSpacing: '0.06em', color: '#4a4844', marginTop: '0.35rem' }}>
+          + {flex.length} fleksibel{flex.length > 1 ? 'le' : ''} session{flex.length > 1 ? 'er' : ''} uden fast dag
+        </div>
+      )}
+    </div>
+  )
+}
+
+// Søjlediagram over ugentlig tonnage (sum af vægt × reps pr. uge, seneste ~10
+// uger). Seneste uge fremhæves; første/største/seneste søjle får værdi-label.
+function WeeklyTonnageChart({ data }) {
+  if (!data || data.length < 2) return null
+  const W = 400, H = 120, PL = 6, PR = 6, PT = 16, PB = 18
+  const max = Math.max(...data.map(d => d.total))
+  if (!max) return null
+  const bw = (W - PL - PR) / data.length
+  const mono = 'IBM Plex Mono,monospace'
+  const fmt = t => t >= 10000 ? `${Math.round(t / 1000)}t` : t >= 1000 ? `${(t / 1000).toFixed(1).replace('.', ',')}t` : `${Math.round(t)}`
+  const maxIdx = data.findIndex(d => d.total === max)
+  const labelIs = new Set([0, maxIdx, data.length - 1])
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block' }}>
+      <line x1={PL} y1={H - PB} x2={W - PR} y2={H - PB} stroke="rgba(237,234,226,0.08)" strokeWidth="1" />
+      {data.map((d, i) => {
+        const h = (d.total / max) * (H - PT - PB)
+        const x = PL + i * bw
+        const last = i === data.length - 1
+        return (
+          <g key={d.weekStart}>
+            <rect x={x + bw * 0.18} y={H - PB - h} width={bw * 0.64} height={Math.max(h, 1.5)}
+              fill={last ? '#c8923a' : 'rgba(200,146,58,0.35)'} />
+            {labelIs.has(i) && (
+              <text x={x + bw / 2} y={H - PB - h - 4} textAnchor="middle" fontSize="7.5"
+                fill={last ? '#edeae2' : '#7a7770'} fontFamily={mono}>{fmt(d.total)}</text>
+            )}
+            {(i === 0 || last) && (
+              <text x={x + bw / 2} y={H - 6} textAnchor="middle" fontSize="7"
+                fill="#4a4844" fontFamily={mono}>{d.weekStart.slice(5).replace('-', '/')}</text>
+            )}
+          </g>
+        )
+      })}
+    </svg>
+  )
+}
 
 const LOCAL_FOODS = [
   // Mejeri
@@ -1467,6 +1569,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [logInputs, setLogInputs] = useState({})
   const [lastLogByExerciseName, setLastLogByExerciseName] = useState({})
   const [exerciseHistory, setExerciseHistory] = useState({})
+  const [weeklyTonnage, setWeeklyTonnage] = useState([])
   const [weightLogs, setWeightLogs] = useState([])
   const [weightInput, setWeightInput] = useState('')
   const [savingWeight, setSavingWeight] = useState(false)
@@ -1883,6 +1986,35 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     fetchExerciseLogs(athleteId, activeWeek)
     fetchLastLogs(athleteId, activeWeek)
     fetchExerciseHistory(athleteId)
+    fetchWeeklyTonnage(athleteId)
+  }
+
+  // Ugentlig tonnage (sum af vægt × reps) til forsidens volumen-graf.
+  // Grupperes på ugens mandag ud fra logged_at; seneste ~12 ugers logs.
+  async function fetchWeeklyTonnage(athleteId) {
+    const since = new Date(Date.now() - 84 * 86400000).toISOString()
+    const { data } = await supabase
+      .from('exercise_logs')
+      .select('weight, reps_completed, logged_at')
+      .eq('athlete_id', athleteId)
+      .eq('skipped', false)
+      .gt('weight', 0)
+      .gte('logged_at', since)
+      .order('logged_at', { ascending: true })
+      .limit(4000)
+    if (!data) return
+    const byWeek = {}
+    for (const l of data) {
+      const d = new Date(l.logged_at)
+      d.setHours(12, 0, 0, 0)
+      d.setDate(d.getDate() - ((d.getDay() + 6) % 7)) // tilbage til mandag
+      const key = d.toISOString().slice(0, 10)
+      byWeek[key] = (byWeek[key] || 0) + (l.weight || 0) * (l.reps_completed || 0)
+    }
+    const rows = Object.entries(byWeek)
+      .sort((a, b) => (a[0] < b[0] ? -1 : 1))
+      .map(([weekStart, total]) => ({ weekStart, total: Math.round(total) }))
+    setWeeklyTonnage(rows.slice(-10))
   }
 
   // Henter en uges logs (kun det nødvendige til færdig-tjek) og returnerer dem,
@@ -2876,6 +3008,15 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               </div>
             </div>
 
+            {currentWeek && (
+              <WeekCalendar
+                week={currentWeek}
+                weekStart={weekStartDate(allWeeks, currentWeek.week_number)}
+                exerciseLogs={exerciseLogs}
+                onOpenSession={(id) => { setTab('program'); openSession(id) }}
+              />
+            )}
+
             {!readinessLog && logs.length === 0 && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.85rem 1rem', background: 'rgba(200,146,58,0.05)', border: '1px solid rgba(200,146,58,0.13)', marginBottom: '1.25rem' }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c8923a" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
@@ -3247,6 +3388,16 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 </div>
               )
             })()}
+
+            {weeklyTonnage.length >= 2 && (
+              <div style={s.card}>
+                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.6rem' }}>
+                  <div style={{ ...s.cardLabel, marginBottom: 0 }}>Ugentlig volumen</div>
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', letterSpacing: '0.06em', textTransform: 'uppercase' }}>vægt × reps · t = ton</span>
+                </div>
+                <WeeklyTonnageChart data={weeklyTonnage} />
+              </div>
+            )}
 
             {progressBars}
           </>
