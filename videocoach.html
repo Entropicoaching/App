@@ -575,6 +575,10 @@ function togglePlay() {
 }
 document.getElementById('speed').onchange = e =>
   video.playbackRate = parseFloat(e.target.value);
+// Coach-flowet gennemgås i normal fart; præcise stop klares med frame-knapperne.
+// Athlete beholder de eksisterende fartvalg, indtil coach-versionen er godkendt.
+if (DESKTOP || COACHWEB)
+  document.querySelectorAll('#speed option:not([value="1"])').forEach(o => o.remove());
 const FRAME = 1 / 30;
 // rVFC = analysér frames under AFSPILNING i stedet for seek pr. frame -
 // 10-30x hurtigere på mobil, og med præcise tidsstempler pr. frame
@@ -743,7 +747,10 @@ canvas.addEventListener('pointerdown', e => {
     }
     return;
   }
-  if (awaitBarClick) { startBarTracking(p); return; }
+  if (awaitBarClick) {
+    ((DESKTOP || COACHWEB) ? startMultipointTracking(p) : startBarTracking(p));
+    return;
+  }
   if (tool === 'scrub') {
     current = { type:'scrubbing', startX: e.clientX, startT: video.currentTime,
                 moved: false };
@@ -940,21 +947,31 @@ function drawStroke(s) {
       ctx.globalAlpha = 0.18;
       ctx.strokeStyle = '#edeae2';
       ctx.beginPath();
-      s.pts.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y));
+      let ghostPenUp = true;
+      s.pts.forEach((p, i) => {
+        if (s.valid && s.valid[i] === false) { ghostPenUp = true; return; }
+        ghostPenUp ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+        ghostPenUp = false;
+      });
       ctx.stroke();
       ctx.globalAlpha = 1;
       const g = s.reps[s.ghostRep];
       ctx.setLineDash([10, 7]);
       ctx.strokeStyle = '#edeae2';
       ctx.beginPath();
-      for (let i = g.start; i <= g.end && i < s.pts.length; i++)
-        i === g.start ? ctx.moveTo(s.pts[i].x, s.pts[i].y)
+      let ghostRepPenUp = true;
+      for (let i = g.start; i <= g.end && i < s.pts.length; i++) {
+        if (s.valid && s.valid[i] === false) { ghostRepPenUp = true; continue; }
+        ghostRepPenUp ? ctx.moveTo(s.pts[i].x, s.pts[i].y)
                       : ctx.lineTo(s.pts[i].x, s.pts[i].y);
+        ghostRepPenUp = false;
+      }
       ctx.stroke();
       ctx.setLineDash([]);
       const cur = s.reps.find(r => f >= r.start && f <= r.end);
       if (cur && cur !== g) {
         for (let i = Math.max(1, cur.start); i <= cur.end && i < s.pts.length; i++) {
+          if (s.valid && (s.valid[i] === false || s.valid[i-1] === false)) continue;
           const hue = Math.max(0, Math.min(120, Math.abs(s.vel[i]) / 0.8 * 120));
           ctx.strokeStyle = `hsl(${hue},90%,55%)`;
           ctx.beginPath();
@@ -977,6 +994,7 @@ function drawStroke(s) {
         : [[1, s.pts.length - 1]];
       segs.forEach(([a, b]) => {
         for (let i = a; i <= b; i++) {
+          if (s.valid && (s.valid[i] === false || s.valid[i-1] === false)) continue;
           const hue = Math.max(0, Math.min(120, Math.abs(s.vel[i]) / 0.8 * 120));
           ctx.strokeStyle = `hsl(${hue},90%,55%)`;
           ctx.beginPath();
@@ -989,7 +1007,12 @@ function drawStroke(s) {
     } else {
       ctx.shadowColor = s.color; ctx.shadowBlur = 8;
       ctx.beginPath();
-      s.pts.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y));
+      let pathPenUp = true;
+      s.pts.forEach((p, i) => {
+        if (s.valid && s.valid[i] === false) { pathPenUp = true; return; }
+        pathPenUp ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+        pathPenUp = false;
+      });
       ctx.stroke();
     }
     // prik + aktuel fart ved banens punkt på nuværende tidspunkt
@@ -1999,6 +2022,451 @@ function applyPlateCenter(path, rcSamples) {
   path.rcCount = rcSamples.length;   // til fejlsøgning
 }
 
+// ---------- WHOLE-PLATE POWERLIFT TRACKER ----------
+// Coachens bekræftede ring ER identiteten: hele skiven vurderes via cirkelkant,
+// rotationsuafhængigt farve-/lyshistogram og polar struktur. Et logo, rack eller
+// sleeve kan derfor ikke alene overtage låsen. Athlete beholder den gamle
+// point-tracker, indtil coach-versionen er godkendt på rigtige sæt.
+const PL_ANG = 24, PL_TAU = Math.PI * 2;
+const plClamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const plMedian = a => { const q = [...a].sort((x,y) => x-y); return q[q.length >> 1]; };
+
+function plCapture(x, y, w, h) {
+  const x0 = Math.max(0, Math.floor(x)), y0 = Math.max(0, Math.floor(y));
+  const x1 = Math.min(ocan.width, Math.ceil(x + w));
+  const y1 = Math.min(ocan.height, Math.ceil(y + h));
+  const rw = Math.max(1, x1-x0), rh = Math.max(1, y1-y0);
+  return { x0, y0, w:rw, h:rh, cw:ocan.width, ch:ocan.height,
+           rgba:octx.getImageData(x0,y0,rw,rh).data };
+}
+function plRGB(f,x,y) {
+  const lx=plClamp(Math.round(x)-f.x0,0,f.w-1), ly=plClamp(Math.round(y)-f.y0,0,f.h-1);
+  const i=(ly*f.w+lx)*4; return [f.rgba[i],f.rgba[i+1],f.rgba[i+2]];
+}
+function plGray(f,x,y) { const c=plRGB(f,x,y); return c[0]*.3+c[1]*.59+c[2]*.11; }
+function plHSV(R,G,B) {
+  let r=R/255,g=G/255,b=B/255; const mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn;
+  let h=0;if(d)h=mx===r?((g-b)/d)%6:mx===g?(b-r)/d+2:(r-g)/d+4;
+  return [((h/6+1)%1),mx?d/mx:0,mx];
+}
+function plRadialDesc(f,c,r) {
+  const raw=[.18,.42,.66,.86,1.12].map(fr=>{
+    const v=[];for(let a=0;a<PL_ANG;a++){const q=a*PL_TAU/PL_ANG;v.push(plGray(f,c.x+Math.cos(q)*r*fr,c.y+Math.sin(q)*r*fr));}
+    return plMedian(v);
+  });
+  const m=raw.reduce((s,v)=>s+v,0)/raw.length;
+  const sd=Math.sqrt(raw.reduce((s,v)=>s+(v-m)**2,0)/raw.length)||1;
+  return raw.map(v=>(v-m)/sd);
+}
+function plColorDesc(f,c,r) {
+  const out=[];
+  for(const fr of [.18,.42,.66,.82]) {
+    const rr=[],gg=[],bb=[],vv=[];
+    for(let a=0;a<PL_ANG;a++) {
+      const q=a*PL_TAU/PL_ANG,[R,G,B]=plRGB(f,c.x+Math.cos(q)*r*fr,c.y+Math.sin(q)*r*fr),sum=R+G+B+1;
+      rr.push(R/sum);gg.push(G/sum);bb.push(B/sum);vv.push((R+G+B)/(3*255));
+    }
+    out.push(plMedian(rr),plMedian(gg),plMedian(bb),plMedian(vv));
+  }
+  return out;
+}
+function plHistogram(f,c,r) {
+  const hist=new Float32Array(96);let n=0;const st=Math.max(2,r/7);
+  for(let dy=-r*.82;dy<=r*.82;dy+=st)for(let dx=-r*.82;dx<=r*.82;dx+=st){
+    if(dx*dx+dy*dy>r*r*.82*.82)continue;
+    const [R,G,B]=plRGB(f,c.x+dx,c.y+dy),[h,s,v]=plHSV(R,G,B);
+    const hb=Math.min(7,h*8|0),sb=Math.min(2,s*3|0),vb=Math.min(3,v*4|0);
+    hist[(hb*3+sb)*4+vb]++;n++;
+  }
+  for(let i=0;i<hist.length;i++)hist[i]/=n||1;
+  return hist;
+}
+function plHistIntersection(a,b) { let s=0;for(let i=0;i<a.length;i++)s+=Math.min(a[i],b[i]);return s; }
+function plPolarDesc(f,c,r) {
+  const rings=[.22,.48,.74],sectors=8,data=[],valid=[];
+  for(let a=0;a<sectors;a++)for(const fr of rings){
+    const q=a*PL_TAU/sectors,xf=c.x+Math.cos(q)*r*fr,yf=c.y+Math.sin(q)*r*fr;
+    const [R,G,B]=plRGB(f,xf,yf),sum=R+G+B+1;
+    data.push(R/sum,G/sum,(R+G+B)/(3*255));
+    valid.push(xf>=0&&xf<f.cw&&yf>=0&&yf<f.ch);
+  }
+  return {data,valid,sectors,rings:rings.length};
+}
+function plPolarDistance(model,cand) {
+  let best=1e9;
+  for(let sh=0;sh<model.sectors;sh++){
+    let s=0,n=0;
+    for(let a=0;a<model.sectors;a++)for(let r=0;r<model.rings;r++){
+      const mi=a*model.rings+r;if(!model.valid[mi])continue;
+      const ci=((a+sh)%model.sectors)*model.rings+r;
+      for(let k=0;k<3;k++){const d=model.data[mi*3+k]-cand.data[ci*3+k];s+=d*d;n++;}
+    }
+    best=Math.min(best,Math.sqrt(s/Math.max(1,n)));
+  }
+  return best;
+}
+function plEvidence(f,c,r,model) {
+  if(c.x<r*.45||c.x>f.cw-r*.45||c.y<r*.45||c.y>f.ch-r*.45)
+    return {score:-1e9,circle:0,cover:0,app:99,color:99,hist:0,polar:99,pairCover:0};
+  const strengths=[],offsets=[],edgeFr=[];
+  for(let a=0;a<PL_ANG;a++){
+    const q=a*PL_TAU/PL_ANG,dx=Math.cos(q),dy=Math.sin(q);let best=0,bestOff=1,bestFr=1;
+    for(let fr=.78;fr<=1.22;fr+=.055){
+      const inside=plGray(f,c.x+dx*r*(fr-.035),c.y+dy*r*(fr-.035));
+      const outside=plGray(f,c.x+dx*r*(fr+.035),c.y+dy*r*(fr+.035));
+      const off=Math.abs(fr-1),s=Math.abs(outside-inside)*Math.exp(-(off*off)/(.14*.14));
+      if(s>best){best=s;bestOff=off;bestFr=fr;}
+    }
+    strengths.push(best);offsets.push(bestOff);edgeFr.push(bestFr);
+  }
+  const ranked=strengths.map((s,i)=>({s,o:offsets[i]})).sort((a,b)=>b.s-a.s);
+  const keep=ranked.slice(0,Math.round(PL_ANG*.7));
+  const edge=keep.reduce((s,q)=>s+q.s,0)/keep.length;
+  const cover=strengths.filter(s=>s>14).length/PL_ANG,radial=plMedian(keep.map(q=>q.o));
+  const pairs=[];for(let a=0;a<PL_ANG/2;a++)if(strengths[a]>14&&strengths[a+PL_ANG/2]>14)pairs.push((edgeFr[a]+edgeFr[a+PL_ANG/2])/2);
+  const pairCover=pairs.length/(PL_ANG/2),pairDev=pairs.length?plMedian(pairs.map(v=>Math.abs(v-1))):1;
+  const pairSpread=pairs.length?Math.sqrt(pairs.reduce((s,v)=>s+(v-1)**2,0)/pairs.length):1;
+  const d=plRadialDesc(f,c,r),app=Math.sqrt(d.reduce((s,v,i)=>s+(v-model.desc[i])**2,0)/d.length);
+  const cd=plColorDesc(f,c,r),color=Math.sqrt(cd.reduce((s,v,i)=>s+(v-model.color[i])**2,0)/cd.length);
+  const hist=plHistIntersection(model.hist,plHistogram(f,c,r));
+  const polar=plPolarDistance(model.polar,plPolarDesc(f,c,r));
+  const circle=edge*(.45+.35*cover+.20*pairCover)-radial*40-pairDev*85-pairSpread*35;
+  return {score:circle-app*18-color*80-(1-hist)*75-polar*150,circle,cover,app,color,hist,polar,pairCover};
+}
+function plSearch(f,pred,r,model,radius,step) {
+  const candidates=[];
+  const x0=plClamp(pred.x-radius,r*.45,f.cw-r*.45),x1=plClamp(pred.x+radius,r*.45,f.cw-r*.45);
+  const y0=plClamp(pred.y-radius,r*.45,f.ch-r*.45),y1=plClamp(pred.y+radius,r*.45,f.ch-r*.45);
+  for(let y=y0;y<=y1;y+=step)for(let x=x0;x<=x1;x+=step){
+    const e=plEvidence(f,{x,y},r,model),dist=Math.hypot(x-pred.x,y-pred.y)/r;
+    candidates.push({x,y,...e,total:e.score-dist*2.5});
+  }
+  if(!candidates.length)return null;
+  const paired=candidates.filter(q=>q.pairCover>=.4&&q.cover>=.5),pool=paired.length?paired:candidates;
+  const maxCircle=Math.max(...pool.map(q=>q.circle));
+  const eligible=pool.filter(q=>q.circle>=Math.max(8,maxCircle*.70)).sort((a,b)=>b.total-a.total);
+  let best=eligible[0]||pool.sort((a,b)=>b.circle-a.circle)[0],second=eligible[1]||null;
+  const fine=Math.max(1,step/3),b0=best;
+  for(let y=b0.y-step;y<=b0.y+step;y+=fine)for(let x=b0.x-step;x<=b0.x+step;x+=fine){
+    const e=plEvidence(f,{x,y},r,model),dist=Math.hypot(x-pred.x,y-pred.y)/r;
+    const q={x,y,...e,total:e.score-dist*2.5};
+    if(q.pairCover>=.4&&q.cover>=.5&&q.circle>=Math.max(8,maxCircle*.70)&&q.total>best.total)best=q;
+  }
+  best.margin=second?best.total-second.total:99;return best;
+}
+function plGlobalSearch(f,pred,r,model) {
+  const step=Math.max(4,r*.12),candidates=[];
+  for(let y=r*.5;y<f.ch-r*.5;y+=step)
+    for(let x=Math.max(r*.5,pred.x-2*r);x<=Math.min(f.cw-r*.5,pred.x+2*r);x+=step){
+      const e=plEvidence(f,{x,y},r,model);candidates.push({x,y,...e,total:e.score});
+    }
+  const paired=candidates.filter(q=>q.pairCover>=.4&&q.cover>=.5),pool=paired.length?paired:candidates;
+  if(!pool.length)return null;
+  const maxCircle=Math.max(...pool.map(q=>q.circle));
+  const eligible=pool.filter(q=>q.circle>=Math.max(8,maxCircle*.70)).sort((a,b)=>b.total-a.total);
+  let best=eligible[0]||pool.sort((a,b)=>b.circle-a.circle)[0];
+  const fine=plSearch(f,best,r,model,step*1.5,Math.max(2,step/2));
+  if(fine&&fine.score>best.score)best=fine;return best;
+}
+
+async function startPowerliftTracking(p0) {
+  awaitBarClick=false;tracking=true;barBtn.textContent='⏹ Stop sporing';
+  ocan.width=canvas.width;ocan.height=canvas.height;
+  const r=Math.max(14,p0.r||22.5/cmPerPx),startT=video.currentTime;
+  const path={type:'path',color:colorInput.value,pts:[{x:p0.x,y:p0.y}],times:[startT],
+    startFrame:Math.round(startT*30),plateTracker:'whole-v1',plateRadius:r};
+  strokes.push(path);
+  octx.drawImage(video,0,0,ocan.width,ocan.height);
+  const init=plCapture(p0.x-r*1.5,p0.y-r*1.5,r*3,r*3);
+  const model={desc:plRadialDesc(init,p0,r),color:plColorDesc(init,p0,r),
+    hist:plHistogram(init,p0,r),polar:plPolarDesc(init,p0,r)};
+  const base=plEvidence(init,p0,r,model);
+  let cur={x:p0.x,y:p0.y},vel={x:0,y:0},prevT=startT,lost=0,pending=null;
+  let gapStrikes=0,lastSlowT=-Infinity;
+
+  const processFrame=tNow=>{
+    octx.drawImage(video,0,0,ocan.width,ocan.height);
+    const dt=Math.max(FRAME,tNow-prevT),pred={x:cur.x+vel.x*dt,y:cur.y+vel.y*dt};
+    // Hvis mobilen ikke kan holde kildeframes, sænkes coach-afspilningen før
+    // trackeren får lov at fortsætte et helt sæt ved ubrugelig 4-fps cadence.
+    if(HAS_RVFC&&COACHWEB){
+      if(dt>FRAME*2.5)gapStrikes++;else gapStrikes=Math.max(0,gapStrikes-1);
+      if(gapStrikes>=2&&tNow-lastSlowT>1&&video.playbackRate>.1){
+        video.playbackRate=Math.max(.1,video.playbackRate*.5);
+        path.playbackSlowdowns=(path.playbackSlowdowns||0)+1;
+        lastSlowT=tNow;gapStrikes=0;
+      }
+    }
+    const normalR=Math.max(r*.42,Math.hypot(vel.x,vel.y)*dt*.65+r*.35);
+    const retryR=lost?r*(.75+Math.min(.5,dt*2)):0;
+    const localR=Math.min(r*1.5,Math.max(normalR,retryR)),step=Math.max(3,r*.075);
+    const pad=localR+r*1.35+step*2;
+    const local=plCapture(pred.x-pad,pred.y-pad,pad*2,pad*2);
+    const hit=plSearch(local,pred,r,model,localR,step);
+    const good=hit&&hit.circle>Math.max(9,base.circle*.32)&&hit.cover>=.5&&
+      hit.pairCover>=.4&&hit.app<2.6;
+    if(good){
+      const iv={x:(hit.x-cur.x)/dt,y:(hit.y-cur.y)/dt};
+      vel={x:vel.x*.35+iv.x*.65,y:vel.y*.35+iv.y*.65};
+      cur={x:hit.x,y:hit.y};lost=0;pending=null;
+    }else{
+      lost++;path.lowConf=(path.lowConf||0)+1;
+      let global=null;
+      if(lost>=2){
+        const full=plCapture(0,0,ocan.width,ocan.height);
+        global=plGlobalSearch(full,pred,r,model);
+      }
+      const strong=global&&global.circle>Math.max(13,base.circle*.48)&&
+        global.cover>=.5&&global.pairCover>=.4&&global.app<2.1;
+      if(strong){
+        const confirmR=r*(.5+Math.min(.75,dt*3));
+        if(pending&&Math.hypot(global.x-pending.x,global.y-pending.y)<confirmR){
+          const iv={x:(global.x-cur.x)/dt,y:(global.y-cur.y)/dt};
+          vel={x:iv.x*.5,y:iv.y*.5};cur={x:global.x,y:global.y};lost=0;pending=null;
+        }else pending={x:global.x,y:global.y};
+      }else pending=null;
+      if(lost){cur={x:pred.x,y:pred.y};vel={x:vel.x*.82,y:vel.y*.82};}
+    }
+    path.pts.push({...cur});path.times.push(tNow);prevT=tNow;
+    const pct=Math.round(tNow/video.duration*100);
+    barBtn.textContent=`⏹ Stop sporing (${pct}%)`;
+    if(analyzing){if(!SLIM)allBtn.textContent=`Stop analyse (${pct}%)`;if(SLIM)say(`Analyserer skiven · ${pct}%`);}
+  };
+
+  if(HAS_RVFC){
+    const oldRate=video.playbackRate,oldMuted=video.muted;video.muted=true;
+    video.playbackRate=DESKTOP?1:COACHWEB?.25:.5;
+    await new Promise(res=>{
+      const done=()=>{video.removeEventListener('pause',done);video.removeEventListener('ended',done);res();};
+      video.addEventListener('pause',done);video.addEventListener('ended',done);
+      const stepFn=(now,meta)=>{
+        if(!tracking||meta.mediaTime+FRAME>=trimEndEff()){done();return;}
+        processFrame(meta.mediaTime);video.requestVideoFrameCallback(stepFn);
+      };
+      video.requestVideoFrameCallback(stepFn);video.play().catch(done);
+    });
+    video.pause();video.playbackRate=oldRate;video.muted=oldMuted;
+    if(tracking&&path.pts.length<5){
+      while(tracking&&video.currentTime+FRAME<trimEndEff()){
+        await seekTo(video.currentTime+FRAME);processFrame(video.currentTime);
+      }
+    }
+  }else{
+    while(tracking&&video.currentTime+FRAME<trimEndEff()){
+      await seekTo(video.currentTime+FRAME);processFrame(video.currentTime);
+    }
+  }
+  tracking=false;playBtn.textContent=playLabel(false);barBtn.textContent='🎯 Stangbane';
+  barBtn.classList.remove('active');if(SLIM&&!analyzing)say('');
+  analyzePath(path);
+  const badPct=path.lowConf&&path.pts.length?Math.round(path.lowConf/path.pts.length*100):0;
+  if(badPct>15){
+    say(`⚠ Skiven var skjult/utydelig i ${badPct}% af sporingen · banen kan være upræcis`);
+    setTimeout(()=>{if(!awaitShClick)say('');},8000);
+  }
+  await seekTo(startT);
+}
+
+// ---------- MULTIPOINT FORWARD/BACKWARD TRACKER (COACH) ----------
+// Coachen markerer centrum én gang. Flere lokale billeddetaljer følges fra
+// frame til frame og skal kunne findes både frem og tilbage. Ved lav sikkerhed
+// fryser punktet i stedet for at søge globalt og hoppe til sleeve/rack/krop.
+const mpClamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const mpMedian = values => {
+  const a = [...values].sort((x, y) => x - y);
+  return a.length ? a[a.length >> 1] : NaN;
+};
+
+function mpFrame() {
+  const rgba = octx.getImageData(0, 0, ocan.width, ocan.height).data;
+  const gray = new Float32Array(ocan.width * ocan.height);
+  for (let i = 0; i < gray.length; i++)
+    gray[i] = rgba[i*4] * .3 + rgba[i*4+1] * .59 + rgba[i*4+2] * .11;
+  return { gray, w:ocan.width, h:ocan.height };
+}
+
+function mpGoodFeatures(frame, center, radius, maxCount=36) {
+  const { gray:g, w, h } = frame, candidates=[];
+  const rr=Math.max(14,radius*.78), border=8;
+  const x0=Math.max(border,Math.floor(center.x-rr));
+  const x1=Math.min(w-border-1,Math.ceil(center.x+rr));
+  const y0=Math.max(border,Math.floor(center.y-rr));
+  const y1=Math.min(h-border-1,Math.ceil(center.y+rr));
+  for(let y=y0;y<=y1;y+=2)for(let x=x0;x<=x1;x+=2){
+    if((x-center.x)**2+(y-center.y)**2>rr**2)continue;
+    let a=0,b=0,c=0;
+    for(let yy=-2;yy<=2;yy++)for(let xx=-2;xx<=2;xx++){
+      const i=(y+yy)*w+x+xx,ix=(g[i+1]-g[i-1])*.5,iy=(g[i+w]-g[i-w])*.5;
+      a+=ix*ix;b+=ix*iy;c+=iy*iy;
+    }
+    const tr=a+c,disc=Math.sqrt(Math.max(0,(a-c)*(a-c)+4*b*b));
+    const eig=(tr-disc)*.5;
+    if(eig>350)candidates.push({x,y,score:eig});
+  }
+  candidates.sort((p,q)=>q.score-p.score);
+  const out=[];
+  for(const p of candidates){
+    if(out.every(q=>(p.x-q.x)**2+(p.y-q.y)**2>64))out.push(p);
+    if(out.length>=maxCount)break;
+  }
+  return out;
+}
+
+function mpPatchStats(frame,x,y,pr){
+  const {gray:g,w,h}=frame;
+  if(x-pr<1||y-pr<1||x+pr>=w-1||y+pr>=h-1)return null;
+  let mean=0,n=0;
+  for(let yy=-pr;yy<=pr;yy++)for(let xx=-pr;xx<=pr;xx++){mean+=g[(y+yy)*w+x+xx];n++;}
+  mean/=n;let variance=0;
+  for(let yy=-pr;yy<=pr;yy++)for(let xx=-pr;xx<=pr;xx++){
+    const d=g[(y+yy)*w+x+xx]-mean;variance+=d*d;
+  }
+  return {mean,variance};
+}
+
+function mpZnssd(a,b,ax,ay,bx,by,pr,as){
+  const bs=mpPatchStats(b,bx,by,pr);
+  if(!as||!bs||as.variance<900||bs.variance<900)return Infinity;
+  let cross=0;
+  for(let yy=-pr;yy<=pr;yy++)for(let xx=-pr;xx<=pr;xx++)
+    cross+=(a.gray[(ay+yy)*a.w+ax+xx]-as.mean)*(b.gray[(by+yy)*b.w+bx+xx]-bs.mean);
+  return 1-mpClamp(cross/Math.sqrt(as.variance*bs.variance),-1,1);
+}
+
+function mpMatchPoint(from,to,p,pred,search,pr=4){
+  const ax=Math.round(p.x),ay=Math.round(p.y),as=mpPatchStats(from,ax,ay,pr);
+  if(!as||as.variance<900)return null;
+  const cx=Math.round(pred.x),cy=Math.round(pred.y);let best=null,second=Infinity;
+  const consider=(x,y)=>{
+    const cost=mpZnssd(from,to,ax,ay,x,y,pr,as);
+    if(!Number.isFinite(cost))return;
+    if(!best||cost<best.cost){if(best)second=best.cost;best={x,y,cost};}
+    else if(cost<second)second=cost;
+  };
+  for(let y=cy-search;y<=cy+search;y+=2)
+    for(let x=cx-search;x<=cx+search;x+=2)consider(x,y);
+  if(!best)return null;
+  const coarse={...best};
+  for(let y=coarse.y-2;y<=coarse.y+2;y++)
+    for(let x=coarse.x-2;x<=coarse.x+2;x++)consider(x,y);
+  best.margin=Number.isFinite(second)?second-best.cost:1;
+  return best;
+}
+
+async function startMultipointTracking(p0) {
+  awaitBarClick=false;tracking=true;barBtn.textContent='⏹ Stop sporing';
+  ocan.width=canvas.width;ocan.height=canvas.height;
+  const radius=Math.max(14,p0.r||(cmPerPx?22.5/cmPerPx:canvas.width/16));
+  const startT=video.currentTime,startFrame=Math.round(startT*30);
+  let path=strokes.findLast?strokes.findLast(s=>s.type==='path'&&s.times&&
+    startT>=s.times[0]&&startT<s.times[s.times.length-1]):null;
+  if(path){
+    const cut=Math.max(0,idxAtTime(path,startT));
+    path.pts=path.pts.slice(0,cut);path.times=path.times.slice(0,cut);
+    path.valid=(path.valid||path.pts.map(()=>true)).slice(0,cut);
+    path.pts.push({x:p0.x,y:p0.y});path.times.push(startT);path.valid.push(true);
+  }else{
+    path={type:'path',color:colorInput.value,pts:[{x:p0.x,y:p0.y}],times:[startT],
+      valid:[true],startFrame,barTracker:'multipoint-fb-v1',plateRadius:radius};
+    strokes.push(path);
+  }
+  octx.drawImage(video,0,0,ocan.width,ocan.height);
+  let anchorFrame=mpFrame(),anchorTime=startT,cur={x:p0.x,y:p0.y},vel={x:0,y:0};
+  let features=mpGoodFeatures(anchorFrame,cur,radius),lost=0,gapStrikes=0,lastSlowT=-Infinity;
+  if(features.length<5){
+    tracking=false;path.lowConf=(path.lowConf||0)+1;
+    say('⚠ For få tydelige detaljer ved punktet · vælg et tydeligt område omkring skivens nav');
+    await seekTo(startT);return;
+  }
+
+  const processFrame=tNow=>{
+    octx.drawImage(video,0,0,ocan.width,ocan.height);
+    const currentFrame=mpFrame(),dt=Math.max(1e-3,tNow-anchorTime);
+    if(HAS_RVFC&&COACHWEB){
+      if(dt>FRAME*2.5)gapStrikes++;else gapStrikes=Math.max(0,gapStrikes-1);
+      if(gapStrikes>=2&&tNow-lastSlowT>1&&video.playbackRate>.1){
+        video.playbackRate=Math.max(.1,video.playbackRate*.5);
+        path.playbackSlowdowns=(path.playbackSlowdowns||0)+1;
+        lastSlowT=tNow;gapStrikes=0;
+      }
+    }
+    const pred={x:cur.x+vel.x*dt,y:cur.y+vel.y*dt};
+    const search=Math.round(mpClamp(radius*.18+Math.hypot(vel.x,vel.y)*dt*.35,12,radius*.65));
+    const moves=[];
+    for(const p of features){
+      const pp={x:p.x+(pred.x-cur.x),y:p.y+(pred.y-cur.y)};
+      const fwd=mpMatchPoint(anchorFrame,currentFrame,p,pp,search);
+      if(!fwd||fwd.cost>.42)continue;
+      const back=mpMatchPoint(currentFrame,anchorFrame,fwd,p,Math.max(4,Math.round(search*.35)));
+      if(!back)continue;
+      const fb=Math.hypot(back.x-p.x,back.y-p.y);
+      if(fb>2.5)continue;
+      moves.push({p,q:{x:fwd.x,y:fwd.y},dx:fwd.x-p.x,dy:fwd.y-p.y,fb});
+    }
+    let accepted=false,kept=[];
+    if(moves.length>=5){
+      const mdx=mpMedian(moves.map(q=>q.dx)),mdy=mpMedian(moves.map(q=>q.dy));
+      const residuals=moves.map(q=>Math.hypot(q.dx-mdx,q.dy-mdy)),mad=mpMedian(residuals);
+      kept=moves.filter((q,i)=>residuals[i]<=Math.max(3,3*mad));
+      const nx=cur.x+mpMedian(kept.map(q=>q.dx)),ny=cur.y+mpMedian(kept.map(q=>q.dy));
+      const jump=Math.hypot(nx-cur.x,ny-cur.y);
+      const maxJump=radius*.75+Math.hypot(vel.x,vel.y)*dt*.45;
+      if(kept.length>=5&&jump<=maxJump){
+        let nextFeatures=mpGoodFeatures(currentFrame,{x:nx,y:ny},radius);
+        if(nextFeatures.length<5)nextFeatures=kept.map(q=>({x:q.q.x,y:q.q.y})).slice(0,36);
+        if(nextFeatures.length>=5){
+          const iv={x:(nx-cur.x)/dt,y:(ny-cur.y)/dt};
+          vel={x:vel.x*.35+iv.x*.65,y:vel.y*.35+iv.y*.65};cur={x:nx,y:ny};
+          anchorFrame=currentFrame;anchorTime=tNow;features=nextFeatures;accepted=true;lost=0;
+        }
+      }
+    }
+    if(!accepted){
+      lost++;vel={x:vel.x*.75,y:vel.y*.75};path.lowConf=(path.lowConf||0)+1;
+    }
+    path.pts.push({...cur});path.times.push(tNow);path.valid.push(accepted);
+    const pct=Math.round(tNow/video.duration*100);
+    barBtn.textContent=`⏹ Stop sporing (${pct}%)`;
+    if(analyzing){
+      if(!SLIM)allBtn.textContent=`Stop analyse (${pct}%)`;
+      if(SLIM)say(accepted?`Analyserer stangbanen · ${pct}%`:`Holder sidste sikre punkt · ${pct}%`);
+    }
+  };
+
+  if(HAS_RVFC){
+    const oldRate=video.playbackRate,oldMuted=video.muted;video.muted=true;
+    video.playbackRate=DESKTOP?1:COACHWEB?.25:.5;
+    await new Promise(res=>{
+      const done=()=>{video.removeEventListener('pause',done);video.removeEventListener('ended',done);res();};
+      video.addEventListener('pause',done);video.addEventListener('ended',done);
+      const stepFn=(now,meta)=>{
+        if(!tracking||meta.mediaTime+FRAME>=trimEndEff()){done();return;}
+        processFrame(meta.mediaTime);video.requestVideoFrameCallback(stepFn);
+      };
+      video.requestVideoFrameCallback(stepFn);video.play().catch(done);
+    });
+    video.pause();video.playbackRate=oldRate;video.muted=oldMuted;
+    if(tracking&&path.pts.length<5){
+      while(tracking&&video.currentTime+FRAME<trimEndEff()){
+        await seekTo(video.currentTime+FRAME);processFrame(video.currentTime);
+      }
+    }
+  }else{
+    while(tracking&&video.currentTime+FRAME<trimEndEff()){
+      await seekTo(video.currentTime+FRAME);processFrame(video.currentTime);
+    }
+  }
+  tracking=false;playBtn.textContent=playLabel(false);barBtn.textContent='🎯 Stangbane';
+  barBtn.classList.remove('active');if(SLIM&&!analyzing)say('');
+  analyzePath(path);
+  const badPct=path.lowConf&&path.pts.length?Math.round(path.lowConf/path.pts.length*100):0;
+  if(badPct>5){
+    say(`⚠ Trackeren holdt sidste sikre punkt i ${badPct}% af sættet · kontrollér banen`);
+    setTimeout(()=>{if(!awaitShClick)say('');},8000);
+  }
+  await seekTo(startT);
+}
+
 async function startBarTracking(p0) {
   awaitBarClick = false;
   tracking = true;
@@ -2045,6 +2513,8 @@ async function startBarTracking(p0) {
   let dtNom = FRAME;                // robust start ved duplikeret første rVFC-timestamp
   let emaBest = null;              // typisk match-score -> okklusionsdetektion
   const rcSamples = [];            // validerede skive-centrum-målinger
+  let gapStrikes = 0;              // coach-mobil: vedvarende droppede videoframes
+  let lastSlowT = -Infinity;
 
   const processFrame = tNow => {
     octx.drawImage(video, 0, 0, ocan.width, ocan.height);
@@ -2052,6 +2522,21 @@ async function startBarTracking(p0) {
     // Normalisér derfor bevægelsen efter reel videotid, men clamp glitches mod
     // den løbende frame-cadence. Rig-testet uden regression på lange/stille sæt.
     const rawDt = Math.max(1e-4, tNow - prevTrackT);
+    // RIG 16/7 · IMG_0860.MOV: 12 fps kildecadence fulgte skiven med 7 px
+    // maxfejl; vedvarende 4 fps driftede permanent ned på krop/sleeve.
+    // 0.25x er normalt nok, men lange sæt kan varme en mobil op. Ser vi to
+    // multi-frame-huller, sænkes KUN coach-mobil adaptivt, så de efterfølgende
+    // kildeframes igen kan behandles. Athlete og desktop bevares uændret.
+    if (HAS_RVFC && COACHWEB) {
+      if (rawDt > FRAME * 2.5) gapStrikes++;
+      else gapStrikes = Math.max(0, gapStrikes - 1);
+      if (gapStrikes >= 2 && tNow - lastSlowT > 1 && video.playbackRate > 0.1) {
+        video.playbackRate = Math.max(0.1, video.playbackRate * 0.5);
+        path.playbackSlowdowns = (path.playbackSlowdowns || 0) + 1;
+        lastSlowT = tNow;
+        gapStrikes = 0;
+      }
+    }
     dtNom = dtNom * .9 + Math.min(dtNom * 3, Math.max(dtNom * .3, rawDt)) * .1;
     const dt = Math.max(dtNom, Math.min(dtNom * 3, rawDt));
     const pred = { x: cur.x + vel.x * dt, y: cur.y + vel.y * dt };
@@ -2381,15 +2866,9 @@ allBtn.onclick = async () => {
   // trykker ⚡ igen for at køre analysen på den bekræftede skive.
   if (plateConfirm) {
     const c = plateConfirm; wizard = null;
-    if (DESKTOP || COACHWEB) {
-      awaitLockPoint = { ...c };
-      allBtn.textContent = 'Klik låsepunkt på skiven';
-      say('Sidste trin · klik på et tydeligt nav, bolt eller logo i den lille ring');
-      return;
-    }
     plateConfirm = null;
     allBtn.classList.remove('active');
-    runFullAnalysis({ x: c.x, y: c.y });
+    runFullAnalysis({ x: c.x, y: c.y, r: c.r });
     return;
   }
   if (cmp) { alert('Afslut ⇄ sammenligning først'); return; }
@@ -2445,7 +2924,7 @@ function autoCalib(center) {
 // Efter videovalg i coach-tilstande armeres ⚡ automatisk: FØRSTE tryk på
 // skiven = fuld analyse. Bruges et andet værktøj i stedet (spol, play,
 // tegn), afvæbnes den lydløst. Efter analysen: auto-klip+loop om sættet,
-// ½ fart, INTET ark i vejen - coachen skal tale, ikke læse. Max 3 tryk.
+// Loop i normal fart, INTET ark i vejen - coachen skal tale, ikke læse. Max 3 tryk.
 let sessionRun = false;
 function disarmSession() {
   if (awaitLockPoint) {
@@ -2480,13 +2959,14 @@ function applySessionView() {
   paintTrim();
   looping = true;
   document.getElementById('loopBtn').classList.add('active');
-  document.getElementById('speed').value = '0.5';
-  video.playbackRate = 0.5;
+  const reviewRate = ATHLETE ? 0.5 : 1;
+  document.getElementById('speed').value = String(reviewRate);
+  video.playbackRate = reviewRate;
   video.currentTime = trimStart;
   video.play().catch(() => {});
   say(ATHLETE
     ? 'Dit sæt i ½ fart · grøn = hurtig, rød = langsom · tryk på et rep-tal for at sammenligne'
-    : 'Klip + loop om sættet · ½ fart · klar til at tale 🎙');
+    : 'Klip + loop om sættet · normal fart · brug frame-knapperne til detaljer 🎙');
   setTimeout(() => say(''), ATHLETE ? 5500 : 4200);
 }
 
@@ -2525,7 +3005,7 @@ function wizardClick(p) {
     cmPerPx = 45 / Math.hypot(top.x - bund.x, top.y - bund.y);
     calibBtn.textContent = '📏 Kalibreret ✓';
     wizard = null;
-    runFullAnalysis(midte);
+    runFullAnalysis({ ...midte, r: 22.5 / cmPerPx });
   }
 }
 
@@ -2536,7 +3016,9 @@ async function runFullAnalysis(barPt) {
   // RUNDE 20: MediaPipe-skelettet er fjernet (keyframe-skelet erstattede det).
   // ⚡ sporer nu KUN stangbanen.
   strokes = strokes.filter(s => s.type !== 'path');  // ⚡ erstatter gammel bane
-  await startBarTracking(barPt);
+  await ((DESKTOP || COACHWEB)
+    ? startMultipointTracking(barPt)
+    : startBarTracking(barPt));
   analyzing = false;
   allBtn.textContent = ATHLETE ? '◎' : SLIM ? '⚡' : 'Analysér løft';
   allBtn.classList.remove('active');
@@ -2548,7 +3030,7 @@ async function runFullAnalysis(barPt) {
   if (setCoachLayer && strokes.some(s => s.type === 'path' && s.vel)) setCoachLayer(2);
   if (sessionRun || ATHLETE) {
     // TRÆNINGSMODE (coach) og ATLETENS MAGISKE ØJEBLIK: efter analysen
-    // ruller ens eget sæt automatisk i ½ fart med farttal - nul ekstra tryk
+    // ruller sættet automatisk med farttal - coach i normal fart, athlete i ½
     sessionRun = false;
     applySessionView();
   } else if (COACHWEB && openSheetFn &&
