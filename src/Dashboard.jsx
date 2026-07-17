@@ -46,6 +46,16 @@ const WEEKDAYS_LONG = ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lør
 const statusLabels = { active: 'Aktiv', peaking: 'Peaking', offseason: 'Off-season', ferie: 'Ferie' }
 const statusColors = { active: '#6cba6c', peaking: '#c8923a', offseason: '#7a7770', ferie: '#5b9bb5' }
 
+// Ikoner til forsidens hændelses-feed (bruges på både mobil og desktop)
+const FEED_ICONS = {
+  alert: <><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></>,
+  msg: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />,
+  pr: <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />,
+  lift: <><line x1="6" y1="12" x2="18" y2="12" /><rect x="2.5" y="9" width="3.5" height="6" rx="1" /><rect x="18" y="9" width="3.5" height="6" rx="1" /></>,
+  cal: <><rect x="3" y="5" width="18" height="16" rx="2" /><line x1="3" y1="10" x2="21" y2="10" /></>,
+  info: <><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></>,
+}
+
 // Sektioner vist som kort på atlet-hubben (coach-landingsside). Rækkefølgen
 // matcher fane-bar'en; ikonet er en kompakt 24×24 stroke-SVG.
 const ic = (d) => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">{d}</svg>
@@ -902,6 +912,60 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       const isSnoozed = snoozedUntil && new Date(snoozedUntil) > today0
       return { a, status, runway, isSnoozed, returned }
     })
+  }
+
+  // Fælles hændelses-feed til forsiden (mobil + desktop): programmangler øverst,
+  // så beskeder m. preview, lav readiness, PR'er, dagens sessioner og planlægnings-noter.
+  function buildTodayFeed(visible) {
+    const byId = Object.fromEntries(visible.map(a2 => [a2.id, a2]))
+    const first = n => (n || '').split(' ')[0]
+    const todayStr = new Date().toISOString().slice(0, 10)
+    const items = []
+    for (const b of computeBoard(visible)) {
+      if (b.isSnoozed) continue
+      if (b.status === 'ferie') {
+        // Ferie uden slutdato bliver aldrig automatisk aktiv igen — flag den,
+        // så atleten ikke forsvinder fra radaren for evigt.
+        if (!b.a.vacation_until) items.push({ rank: 6, aid: b.a.id, icon: 'info', color: '#5b9bb5', text: `${first(b.a.name)} står på ferie uden slutdato`, sub: 'stadig rigtigt? ret status under Oversigt', tab: 'oversigt' })
+        continue
+      }
+      if (b.returned) items.push({ rank: 0, aid: b.a.id, icon: 'alert', color: '#c8923a', text: `${first(b.a.name)} er tilbage fra ferie`, sub: 'planlæg og genaktivér', tab: 'oversigt' })
+      if (b.status === 'none') items.push({ rank: 0, aid: b.a.id, icon: 'alert', color: '#e05555', text: `${first(b.a.name)}: intet program`, sub: 'planlæg nu', tab: 'program' })
+      else if (b.status === 'empty') items.push({ rank: 0, aid: b.a.id, icon: 'alert', color: '#e05555', text: `${first(b.a.name)}: ugen mangler øvelser`, sub: 'planlæg nu', tab: 'program' })
+      else if (b.status === 'out') items.push({ rank: 0, aid: b.a.id, icon: 'alert', color: '#e05555', text: `${first(b.a.name)}: løbet tør for uger`, sub: 'planlæg nu', tab: 'program' })
+      else if (b.status === 'lastweek') items.push({ rank: 5, aid: b.a.id, icon: 'cal', color: '#c8923a', text: `${first(b.a.name)}: sidste uge i blokken`, sub: 'planlæg i weekenden', tab: 'program' })
+    }
+    for (const a2 of visible) {
+      if (a2.status === 'peaking' && a2.competition_date && a2.competition_date < todayStr)
+        items.push({ rank: 1, aid: a2.id, icon: 'pr', color: '#c8923a', text: `${first(a2.name)}: stævne passeret`, sub: 'registrér resultatet', tab: 'stævne' })
+    }
+    for (const [aid, cnt] of Object.entries(unreadCounts)) {
+      if (cnt > 0 && byId[aid]) {
+        const t = inboxThreads[aid]
+        const prev = t?.sender_role === 'athlete' ? (t.content || '') : ''
+        items.push({ rank: 1, aid, icon: 'msg', color: '#c8923a', text: `${cnt} ny${cnt > 1 ? 'e' : ''} besked${cnt > 1 ? 'er' : ''} fra ${first(byId[aid].name)}`, sub: prev ? `"${prev.slice(0, 46)}${prev.length > 46 ? '…' : ''}"` : null, tab: 'beskeder' })
+      }
+    }
+    for (const r of todayData.readiness) {
+      if (byId[r.athlete_id] && r.readiness_score != null && r.readiness_score < 50)
+        items.push({ rank: 2, aid: r.athlete_id, icon: 'alert', color: '#e05555', text: `${first(byId[r.athlete_id].name)}: readiness ${r.readiness_score} — lav`, sub: r.sleep_hours != null ? `søvn ${r.sleep_hours}t` : null, tab: 'oversigt' })
+    }
+    for (const p of todayData.prs) {
+      if (byId[p.athlete_id]) items.push({ rank: 3, aid: p.athlete_id, icon: 'pr', color: '#c8923a', text: `${first(byId[p.athlete_id].name)} satte PR: ${p.exercise_name} ${p.weight} kg${p.reps ? ` × ${p.reps}` : ''}`, sub: null, tab: 'log' })
+    }
+    const sessAgg = {}
+    for (const l of todayData.logs) {
+      const o = (sessAgg[l.athlete_id] ??= { titles: new Set(), sets: 0, rpes: [] })
+      o.titles.add(l.exercises?.sessions?.title || 'session')
+      if (!l.skipped) { o.sets++; if (l.rpe_actual != null) o.rpes.push(Number(l.rpe_actual)) }
+    }
+    for (const [aid, o] of Object.entries(sessAgg)) {
+      if (!byId[aid]) continue
+      const avg = o.rpes.length ? (o.rpes.reduce((x, y2) => x + y2, 0) / o.rpes.length).toFixed(1) : null
+      items.push({ rank: 4, aid, icon: 'lift', color: '#6cba6c', text: `${first(byId[aid].name)} loggede ${[...o.titles].join(' + ')}`, sub: `${o.sets} sæt${avg ? ` · snit-RPE ${avg}` : ''}`, tab: 'log' })
+    }
+    items.sort((x, y) => x.rank - y.rank)
+    return items
   }
 
   // Hop direkte ind i coachens egen atlet-profil (preview) for hurtig logging.
@@ -3014,47 +3078,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     if (tx !== ty) return tx - ty
                     return x.name.localeCompare(y.name)
                   })
-                  const items = []
-                  for (const b of computeBoard(visible)) {
-                    if (b.isSnoozed || b.status === 'ferie') continue
-                    if (b.status === 'none') items.push({ rank: 0, aid: b.a.id, icon: 'alert', color: '#e05555', text: `${first(b.a.name)}: intet program`, sub: 'planlæg nu', tab: 'program' })
-                    else if (b.status === 'empty') items.push({ rank: 0, aid: b.a.id, icon: 'alert', color: '#e05555', text: `${first(b.a.name)}: ugen mangler øvelser`, sub: 'planlæg nu', tab: 'program' })
-                    else if (b.status === 'out') items.push({ rank: 0, aid: b.a.id, icon: 'alert', color: '#e05555', text: `${first(b.a.name)}: løbet tør for uger`, sub: 'planlæg nu', tab: 'program' })
-                    else if (b.status === 'lastweek') items.push({ rank: 5, aid: b.a.id, icon: 'cal', color: '#c8923a', text: `${first(b.a.name)}: sidste uge i blokken`, sub: 'planlæg i weekenden', tab: 'program' })
-                  }
-                  for (const [aid, cnt] of Object.entries(unreadCounts)) {
-                    if (cnt > 0 && byId[aid]) {
-                      const t = inboxThreads[aid]
-                      const prev = t?.sender_role === 'athlete' ? (t.content || '') : ''
-                      items.push({ rank: 1, aid, icon: 'msg', color: '#c8923a', text: `${cnt} ny${cnt > 1 ? 'e' : ''} besked${cnt > 1 ? 'er' : ''} fra ${first(byId[aid].name)}`, sub: prev ? `"${prev.slice(0, 46)}${prev.length > 46 ? '…' : ''}"` : null, tab: 'beskeder' })
-                    }
-                  }
-                  for (const r of todayData.readiness) {
-                    if (byId[r.athlete_id] && r.readiness_score != null && r.readiness_score < 50)
-                      items.push({ rank: 2, aid: r.athlete_id, icon: 'alert', color: '#e05555', text: `${first(byId[r.athlete_id].name)}: readiness ${r.readiness_score} — lav`, sub: r.sleep_hours != null ? `søvn ${r.sleep_hours}t` : null, tab: 'oversigt' })
-                  }
-                  for (const p of todayData.prs) {
-                    if (byId[p.athlete_id]) items.push({ rank: 3, aid: p.athlete_id, icon: 'pr', color: '#c8923a', text: `${first(byId[p.athlete_id].name)} satte PR: ${p.exercise_name} ${p.weight} kg${p.reps ? ` × ${p.reps}` : ''}`, sub: null, tab: 'log' })
-                  }
-                  const sessAgg = {}
-                  for (const l of todayData.logs) {
-                    const o = (sessAgg[l.athlete_id] ??= { titles: new Set(), sets: 0, rpes: [] })
-                    o.titles.add(l.exercises?.sessions?.title || 'session')
-                    if (!l.skipped) { o.sets++; if (l.rpe_actual != null) o.rpes.push(Number(l.rpe_actual)) }
-                  }
-                  for (const [aid, o] of Object.entries(sessAgg)) {
-                    if (!byId[aid]) continue
-                    const avg = o.rpes.length ? (o.rpes.reduce((x, y2) => x + y2, 0) / o.rpes.length).toFixed(1) : null
-                    items.push({ rank: 4, aid, icon: 'lift', color: '#6cba6c', text: `${first(byId[aid].name)} loggede ${[...o.titles].join(' + ')}`, sub: `${o.sets} sæt${avg ? ` · snit-RPE ${avg}` : ''}`, tab: 'log' })
-                  }
-                  items.sort((x, y) => x.rank - y.rank)
-                  const ICONS = {
-                    alert: <><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></>,
-                    msg: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />,
-                    pr: <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />,
-                    lift: <><line x1="6" y1="12" x2="18" y2="12" /><rect x="2.5" y="9" width="3.5" height="6" rx="1" /><rect x="18" y="9" width="3.5" height="6" rx="1" /></>,
-                    cal: <><rect x="3" y="5" width="18" height="16" rx="2" /><line x1="3" y1="10" x2="21" y2="10" /></>,
-                  }
+                  const items = buildTodayFeed(visible)
                   return (
                     <>
                       <div style={{ display: 'flex', gap: '0.7rem', overflowX: 'auto', paddingBottom: '0.5rem', marginBottom: '1rem', WebkitOverflowScrolling: 'touch' }}>
@@ -3083,7 +3107,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                             <div key={i} onClick={() => byId[it.aid] && openProfile(byId[it.aid], it.tab)}
                               style={{ ...s.card, marginBottom: 0, padding: '0.7rem 0.85rem', cursor: 'pointer', ...(it.rank === 0 ? { borderColor: 'rgba(224,85,85,0.3)' } : {}) }}>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={it.color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>{ICONS[it.icon]}</svg>
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={it.color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>{FEED_ICONS[it.icon]}</svg>
                                 <span style={{ fontSize: '0.85rem', color: '#edeae2', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>{it.text}</span>
                                 <span style={{ color: '#4a4844', fontSize: '0.7rem', flexShrink: 0 }}>→</span>
                               </div>
@@ -3112,58 +3136,30 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   ))}
                 </div>}
 
-                {/* Prioritet — rangeret: mest akut øverst, weekend-planlægning nederst */}
+                {/* Prioritet & i dag — samme hændelses-feed som mobilen (buildTodayFeed):
+                    programmangler, beskeder m. preview, lav readiness, PR'er, dagens sessioner */}
                 {!isMobile && (() => {
-                  const visible = athletes.filter(a => !hiddenAthleteIds.has(a.id))
-                  const board = computeBoard(visible)
-                  const boardByAid = Object.fromEntries(board.map(b => [b.a.id, b]))
-                  // Lavere rank = mere akut. none > empty > løbet tør > besked > sidste uge (weekend).
-                  const progReason = b => {
-                    if (!b || b.isSnoozed) return null
-                    if (b.status === 'ferie') return null // på ferie → ikke i Prioritet
-                    if (b.returned) return { rank: 2, label: 'Tilbage fra ferie — planlæg', color: '#c8923a' }
-                    if (b.status === 'none') return { rank: 0, label: 'Intet program', color: '#e05555' }
-                    if (b.status === 'empty') return { rank: 1, label: 'Mangler øvelser', color: '#e05555' }
-                    if (b.status === 'out') return { rank: 2, label: 'Løbet tør — planlæg nu', color: '#e05555' }
-                    if (b.status === 'lastweek') return { rank: 4, label: 'Planlæg i weekenden', color: '#c8923a' }
-                    return null
-                  }
-                  const todayStr = new Date().toISOString().slice(0, 10)
-                  const items = visible.map(a => {
-                    const prog = progReason(boardByAid[a.id])
-                    const hasUnread = (unreadCounts[a.id] || 0) > 0
-                    const msg = hasUnread ? { rank: 3, label: 'Ulæst besked', color: '#c8923a' } : null
-                    // Stævne passeret men status stadig peaking → mind coach om at registrere resultat.
-                    const meetDue = a.status === 'peaking' && a.competition_date && a.competition_date < todayStr
-                      ? { rank: 3, label: 'Stævne passeret — registrér resultat', color: '#c8923a', tab: 'stævne' }
-                      : null
-                    const cands = [prog && { ...prog, tab: 'program' }, meetDue, msg && { ...msg, tab: 'beskeder' }].filter(Boolean)
-                    if (!cands.length) return null
-                    cands.sort((x, y) => x.rank - y.rank)
-                    const primary = cands[0]
-                    return { a, primary, alsoUnread: hasUnread && primary.tab !== 'beskeder' }
-                  }).filter(Boolean)
-                  items.sort((x, y) => x.primary.rank - y.primary.rank)
+                  const visible = athletes.filter(a3 => !hiddenAthleteIds.has(a3.id))
+                  const byId = Object.fromEntries(visible.map(a3 => [a3.id, a3]))
+                  const items = buildTodayFeed(visible)
                   if (!items.length) {
                     return (
                       <div style={{ ...s.card, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                         <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#6cba6c', flexShrink: 0 }} />
-                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.06em', color: '#7a7770' }}>Alt kører — ingen mangler lige nu</span>
+                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.06em', color: '#7a7770' }}>Alt kører — ingen hændelser i dag</span>
                       </div>
                     )
                   }
                   return (
                     <div style={{ ...s.card, marginBottom: '1.5rem', borderColor: 'rgba(200,146,58,0.25)' }}>
-                      <div style={s.cardLabel}>Prioritet</div>
-                      {items.map((it, i) => (
-                        <div key={it.a.id} onClick={() => openProfile(it.a, it.primary.tab)}
-                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', padding: '0.6rem 0', borderBottom: i < items.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none', cursor: 'pointer', minHeight: '44px' }}>
-                          <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0 }}>
-                            <span style={{ width: 7, height: 7, borderRadius: '50%', background: it.primary.color, flexShrink: 0 }} />
-                            <span style={{ fontSize: '0.85rem', color: '#edeae2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{it.a.name}</span>
-                            {it.alsoUnread && <span title="Ulæst besked" style={{ color: '#c8923a', fontSize: '0.7rem', flexShrink: 0 }}>✉</span>}
-                          </span>
-                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: it.primary.color, textAlign: 'right', flexShrink: 0 }}>{it.primary.label} →</span>
+                      <div style={s.cardLabel}>Prioritet & i dag</div>
+                      {items.slice(0, 16).map((it, i, arr) => (
+                        <div key={i} onClick={() => byId[it.aid] && openProfile(byId[it.aid], it.tab)}
+                          style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.55rem 0', borderBottom: i < arr.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none', cursor: 'pointer', minHeight: '40px' }}>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={it.color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>{FEED_ICONS[it.icon]}</svg>
+                          <span style={{ fontSize: '0.85rem', color: '#edeae2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flexShrink: 0, maxWidth: '55%' }}>{it.text}</span>
+                          {it.sub && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#7a7770', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0, flex: 1 }}>{it.sub}</span>}
+                          <span style={{ marginLeft: 'auto', color: '#4a4844', fontSize: '0.7rem', flexShrink: 0 }}>→</span>
                         </div>
                       ))}
                     </div>
