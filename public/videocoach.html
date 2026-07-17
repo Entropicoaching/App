@@ -448,6 +448,8 @@
   .coachNumber b { text-align:right; font-family:'IBM Plex Mono',monospace; font-size:10px; }
   .coachAddPosition { width:100%; margin-top:2px; padding:10px 12px;
     border:1px dashed rgba(0,212,255,.35); color:#67dff5; background:rgba(0,212,255,.05); }
+  .coachAddPosition.hasPosition { border-style:solid; border-color:rgba(200,146,58,.28);
+    color:var(--accent); background:rgba(200,146,58,.06); }
   .coachAiDraft { margin-top:14px; padding-top:14px; border-top:1px solid var(--line); }
   body.desktop #aiPanel { width:min(460px,calc(100vw - 32px)); }
   #closeBtn { display:none; }
@@ -3246,6 +3248,8 @@ function buildMskel(m) {
     ? `3 positionsmålinger klar ✓ · albue og underarm er med${q > 25 ? ' · tjek klikpunkterne' : ''}`
     : `3 positionsmålinger klar ✓ · ryggen følger sticking point${q > 25 ? ' · tjek klikpunkterne' : ''}`);
   if (COACHWEB && openSheetFn) setTimeout(() => openSheetFn(), 180);
+  else if (DESKTOP && openDesktopFeedbackFn)
+    setTimeout(() => openDesktopFeedbackFn(), 180);
   setTimeout(() => say(''), 3200);
 }
 
@@ -3464,6 +3468,7 @@ const aiBtn = document.getElementById('aiBtn');
 const aiPanel = document.getElementById('aiPanel');
 const aiText = document.getElementById('aiText');
 let openSheetFn = null;   // sættes af coach-online-layoutet (analyse-arket)
+let openDesktopFeedbackFn = null; // åbner målte fund efter færdig positionsmåling
 let setCoachLayer = null; // sættes af coach-layout: 1=ren · 2=efter analyse · 3=Fordyb
 
 let lastVals = null;   // strukturerede tal til den regelbaserede vurdering
@@ -4146,8 +4151,8 @@ function buildCoachReportHtml(showAddPosition = true) {
   const numbers = keyNumbers().map(r =>
     `<div class="coachNumber"><span>${E(r[0])}</span><b>${E(r[1])}</b></div>`).join('');
   const hasPosition = strokes.some(s => s.type === 'mskel');
-  const addPosition = showAddPosition && !hasPosition
-    ? '<button class="coachAddPosition" data-add-position>＋ Tilføj positionsmåling</button>' : '';
+  const positionAction = showAddPosition && hasPosition
+    ? '<button class="coachAddPosition hasPosition" data-add-position>↻ Mål positioner igen</button>' : '';
   return `<div class="coachFeedback">` +
     `<div class="coachFeedbackHero"><div><small>Coach-feedback</small>` +
     `<h3>${E(ath)} · ${E(lift)}</h3><p>${E(variation || 'Standard')} · ${E(load || 'Belastning ikke angivet')}</p></div>` +
@@ -4157,10 +4162,27 @@ function buildCoachReportHtml(showAddPosition = true) {
     `<div class="feedbackCard" data-kind="focus"><b>Vigtigste fokus</b><p>${E(fb.athlete.focus)}</p>${focusEvidence}</div>` +
     `<div class="feedbackCard" data-kind="next"><b>Næste sæt</b><p>${E(fb.athlete.next)}</p></div></section>` +
     `<section><span class="coachSectionLabel">Coachens grundlag</span>` +
-    `<div class="coachDetail">${detailRows.join('')}</div>${addPosition}</section>` +
+    `<div class="coachDetail">${detailRows.join('')}</div>${positionAction}</section>` +
     (numbers ? `<section><span class="coachSectionLabel">Nøgletal</span><div class="coachNumbers">${numbers}</div></section>` : '') +
     `</div>`;
 }
+
+function bindPositionAction(root, beforeStart) {
+  const action = root && root.querySelector('[data-add-position]');
+  if (!action) return;
+  action.onclick = () => {
+    if (beforeStart) beforeStart();
+    document.getElementById('mskelBtn').click();
+  };
+}
+
+openDesktopFeedbackFn = () => {
+  const html = buildCoachReportHtml(true);
+  if (!html) return;
+  aiPanel.hidden = false;
+  aiText.innerHTML = html;
+  bindPositionAction(aiText, () => { aiPanel.hidden = true; });
+};
 
 aiBtn.onclick = async () => {
   if (COACHWEB) { if (openSheetFn) openSheetFn(); return; }
@@ -4173,7 +4195,7 @@ aiBtn.onclick = async () => {
   if (!lift) { alert('Vælg øvelse først - fortolkningen afhænger af den'); return; }
   const bias = document.getElementById('biasInput').value.trim();
   const feedback = buildCoachFeedback(lift, lastVals || {});
-  const baseFeedbackHtml = buildCoachReportHtml(false);
+  const baseFeedbackHtml = buildCoachReportHtml(true);
   metrics = `Atlet: ${ath || 'ukendt'}\nØvelse: ${lift}\n` +
              (variation ? `Variation: ${variation}\n` : '') +
              `Belastning: ${load || 'ikke angivet'}\n` +
@@ -4181,9 +4203,13 @@ aiBtn.onclick = async () => {
              `\n\nFASTLÅST FEEDBACKMODEL (må ikke ændres):\n` +
              JSON.stringify(feedback.athlete);
   aiPanel.hidden = false;
-  aiText.innerHTML = baseFeedbackHtml +
+  const renderDesktopFeedback = extra => {
+    aiText.innerHTML = baseFeedbackHtml + extra;
+    bindPositionAction(aiText, () => { aiPanel.hidden = true; });
+  };
+  renderDesktopFeedback(
     '<div class="coachAiDraft"><span class="coachSectionLabel">Valgfri formulering</span>' +
-    '<p style="color:var(--dim);margin:6px 0 0">Den lokale model formulerer de fastlåste fund…</p></div>';
+    '<p style="color:var(--dim);margin:6px 0 0">Den lokale model formulerer de fastlåste fund…</p></div>');
   aiBtn.disabled = true;
   const abort = new AbortController();
   const kill = setTimeout(() => abort.abort(), 90000);   // maks 90 sek, så slipper knappen
@@ -4212,16 +4238,16 @@ aiBtn.onclick = async () => {
     const j = await r.json();
     let t = j.message.content;
     if (t.includes('</think>')) t = t.split('</think>').pop();
-    aiText.innerHTML = baseFeedbackHtml +
+    renderDesktopFeedback(
       `<div class="coachAiDraft"><span class="coachSectionLabel">Valgfri AI-formulering</span>` +
-      `<div style="white-space:pre-wrap;line-height:1.55;margin-top:6px">${escHtml(t.trim())}</div></div>`;
+      `<div style="white-space:pre-wrap;line-height:1.55;margin-top:6px">${escHtml(t.trim())}</div></div>`);
   } catch (e) {
     const msg = e.name === 'AbortError'
       ? 'Den lokale model svarede ikke. Den målte feedback ovenfor er stadig klar.'
       : 'Lokal AI er ikke tilgængelig. Den målte feedback ovenfor kræver ikke AI.';
-    aiText.innerHTML = baseFeedbackHtml +
+    renderDesktopFeedback(
       `<div class="coachAiDraft"><span class="coachSectionLabel">AI-formulering</span>` +
-      `<p style="color:var(--dim);margin:6px 0 0">${escHtml(msg)}</p></div>`;
+      `<p style="color:var(--dim);margin:6px 0 0">${escHtml(msg)}</p></div>`);
   } finally {
     clearTimeout(kill);
     aiBtn.disabled = false;
@@ -5328,11 +5354,9 @@ if (COACHWEB) {
     shText.innerHTML = html ||
       '<div class="feedbackCard" data-kind="focus"><b>Ingen analyse endnu</b>' +
       '<p>Kør ⚡ Analysér løft først.</p></div>';
-    const addPosition = shText.querySelector('[data-add-position]');
-    if (addPosition) addPosition.onclick = () => {
+    bindPositionAction(shText, () => {
       sheet.classList.remove('open');
-      document.getElementById('mskelBtn').click();
-    };
+    });
   };
   openSheetFn = () => {
     renderCoachSheet();
