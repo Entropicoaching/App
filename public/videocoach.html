@@ -559,6 +559,9 @@
     <option>Squat</option><option>Bænkpres</option><option>Dødløft</option>
     <option>Sumo dødløft</option>
   </select>
+  <select id="variationSel" title="Løftevariation">
+    <option value="">Standard / konkurrence</option>
+  </select>
   <input type="text" id="loadInput" placeholder="kg/RPE (valgfri)" size="11"
          style="background:#2c2c2e; color:var(--text); border:1px solid #444;
                 border-radius:8px; padding:8px;">
@@ -1215,21 +1218,109 @@ function drawStroke(s) {
   }
 }
 
-// RUNDE 19: keyframe-skelettet ved et VILKÅRLIGT tidspunkt/farve - så det kan
-// tegnes dobbelt i rep-overlay (rep A cyan + rep B orange).
-function drawMskelAt(s, tSec, col, showLabels) {
+// MSKEL_GEOMETRY_MODEL_START
+// Et menneskes overarm, torso og laar bliver ikke laengere under et loeft.
+// Den gamle model interpolerede hvert led uafhaengigt og kunne derfor straekke
+// isaer skulder->hofte. Nu interpoleres segmenternes RETNING, mens en robust
+// faelles laengde bevares gennem hele bevaegelsen.
+function mskelSegmentStats(s) {
+  const chain = s.chain === 'arm' ? ['wr', 'el', 'sh'] : ['ank', 'knee', 'hip', 'sh'];
+  const poses = [s.top, s.stick, s.bot].filter(Boolean);
+  const lengths = {}, deltas = [];
+  for (let i = 1; i < chain.length; i++) {
+    const a = chain[i - 1], b = chain[i];
+    if (poses.length < 2 || poses.some(p => !p[a] || !p[b])) continue;
+    const measured = poses.map(p => Math.hypot(p[b].x - p[a].x, p[b].y - p[a].y));
+    const key = `${a}:${b}`;
+    // Geometrisk middel daemper et enkelt for langt klik bedre end et simpelt snit.
+    lengths[key] = Math.max(2, Math.exp(
+      measured.reduce((sum, len) => sum + Math.log(Math.max(1, len)), 0) / measured.length));
+    const mean = measured.reduce((sum, len) => sum + len, 0) / measured.length;
+    deltas.push({ key, pct: (Math.max(...measured) - Math.min(...measured)) / Math.max(1, mean) * 100 });
+  }
+  const max = deltas.length ? Math.max(...deltas.map(x => x.pct)) : 0;
+  const mean = deltas.length ? deltas.reduce((n, x) => n + x.pct, 0) / deltas.length : 0;
+  return { lengths, deltas, maxDeltaPct: +max.toFixed(1), meanDeltaPct: +mean.toFixed(1) };
+}
+
+function mskelPoseAtDepth(s, depth, useStick = true, torsoDepth = depth) {
+  const d = Math.max(0, Math.min(1, depth));
+  const td = Math.max(0, Math.min(1, Number.isFinite(torsoDepth) ? torsoDepth : d));
+  const order = s.order || (s.chain === 'arm' ? ['sh', 'el', 'wr'] : ['sh', 'hip', 'knee', 'ank']);
+  for (const k of order) if (!s.top[k] || !s.bot[k]) return null;
+  const hasStick = useStick && s.stick && order.every(k => s.stick[k]);
+  let stickDepth = Number.isFinite(s.stickDepth) ? s.stickDepth :
+    (s.stickBarY - s.topBarY) / (s.botBarY - s.topBarY);
+  stickDepth = Number.isFinite(stickDepth) ? Math.max(.05, Math.min(.95, stickDepth)) : .5;
+  const phaseAt = q => ({
+    from: hasStick && q <= stickDepth ? s.top : hasStick ? s.stick : s.top,
+    to: hasStick && q <= stickDepth ? s.stick : hasStick ? s.bot : s.bot,
+    u: hasStick
+      ? (q <= stickDepth ? q / stickDepth : (q - stickDepth) / (1 - stickDepth))
+      : q
+  });
+  const basePhase = phaseAt(d);
+  const L = (a, b, u) => ({ x: a.x + (b.x - a.x) * u, y: a.y + (b.y - a.y) * u });
+  const direct = Object.fromEntries(order.map(k =>
+    [k, L(basePhase.from[k], basePhase.to[k], basePhase.u)]));
+  const chain = s.chain === 'arm' ? ['wr', 'el', 'sh'] : ['ank', 'knee', 'hip', 'sh'];
+  const stats = s.segmentLengths ? { lengths: s.segmentLengths } : mskelSegmentStats(s);
+  const J = { [chain[0]]: direct[chain[0]] };
+  for (let i = 1; i < chain.length; i++) {
+    const a = chain[i - 1], b = chain[i];
+    // Fod, knae og hofte foelger fortsat stangdybden. Kun torsoens retning
+    // foelger rep-tiden, saa et hurtigt stangryk ikke retter ryggen for tidligt.
+    const phase = s.chain !== 'arm' && a === 'hip' && b === 'sh'
+      ? phaseAt(td) : basePhase;
+    const { from, to, u } = phase;
+    const at = Math.atan2(from[b].y - from[a].y, from[b].x - from[a].x);
+    const ab = Math.atan2(to[b].y - to[a].y, to[b].x - to[a].x);
+    const da = Math.atan2(Math.sin(ab - at), Math.cos(ab - at));
+    const angle = at + da * u;
+    const len = stats.lengths[`${a}:${b}`] ||
+      Math.hypot(direct[b].x - direct[a].x, direct[b].y - direct[a].y);
+    J[b] = { x: J[a].x + Math.cos(angle) * len,
+             y: J[a].y + Math.sin(angle) * len };
+  }
+  return { J, order, depth: d, torsoDepth: td };
+}
+// MSKEL_GEOMETRY_MODEL_END
+
+function mskelPoseAtTime(s, tSec) {
   const PTS2 = s.path.fullPts || s.path.pts;
   const TMS2 = s.path.fullTimes || s.path.times;
   const bj = Math.max(0, Math.min(PTS2.length - 1, idxAtTime({ times: TMS2 }, tSec)));
   let d = (PTS2[bj].y - s.topBarY) / (s.botBarY - s.topBarY);
   d = Math.max(0, Math.min(1, d));
-  const L = (a, b) => ({ x: a.x + (b.x - a.x) * d, y: a.y + (b.y - a.y) * d });
-  const order = s.order || ['sh', 'hip', 'knee', 'ank'];
-  const J = {};
-  for (const k of order) {
-    if (!s.top[k] || !s.bot[k]) return;
-    J[k] = L(s.top[k], s.bot[k]);
-  }
+  // Sticking-positionen er klikket paa vej OP og maa ikke forvrænge
+  // excentrikken. Farten er beregnet paa den trimmede bane, saa den slås op
+  // via tid i stedet for bj (som kan pege ind i den utrimmmede fullPts-bane).
+  const vi = s.path.vel && s.path.times
+    ? Math.max(0, Math.min(s.path.vel.length - 1, idxAtTime(s.path, tSec))) : -1;
+  const reps = s.path.reps || [];
+  const activeRep = s.path.times && reps.find(rep => {
+    const a = s.path.times[Math.max(0, Math.min(s.path.times.length - 1, rep.start))];
+    const b = s.path.times[Math.max(0, Math.min(s.path.times.length - 1, rep.end))];
+    return Number.isFinite(a) && Number.isFinite(b) && tSec >= a && tSec <= b;
+  });
+  const useStick = !!(s.stick && (activeRep || (vi >= 0 && s.path.vel[vi] > 0.02)));
+  const templateRatio = mskelStickTimeRatio(s.path, s.stickTime);
+  const timedTorsoDepth = activeRep
+    ? mskelTorsoDepthForRep(s.path, activeRep, tSec, s.stickDepth, templateRatio) : d;
+  // Ren tidsstyring kunne se afkoblet ud fra hofte/stang. En kontrolleret
+  // hybrid beholder den senere torso-timing, men lader 35% af fasen foelge
+  // den faktiske kaede. Det giver synkronitet uden den gamle tidlige opretning.
+  const torsoDepth = activeRep ? mskelHybridTorsoDepth(d, timedTorsoDepth) : d;
+  const pose = mskelPoseAtDepth(s, d, useStick, torsoDepth);
+  return pose ? { ...pose, PTS2, TMS2, bj } : null;
+}
+
+// RUNDE 19: keyframe-skelettet ved et VILKÅRLIGT tidspunkt/farve - så det kan
+// tegnes dobbelt i rep-overlay (rep A cyan + rep B orange).
+function drawMskelAt(s, tSec, col, showLabels) {
+  const pose = mskelPoseAtTime(s, tSec);
+  if (!pose) return;
+  const { PTS2, bj, order, J } = pose;
   const ang2 = (A, B, C) => {
     let dd = Math.abs((Math.atan2(A.y - B.y, A.x - B.x) -
                        Math.atan2(C.y - B.y, C.x - B.x)) * 180 / Math.PI);
@@ -1272,8 +1363,8 @@ function drawMskelAt(s, tSec, col, showLabels) {
       if (s.lift === 'Dødløft' || s.lift === 'Sumo dødløft')
         put(`ryg ${Math.round(90 - vLod)}° over gulv`, midT);
       else put(`torso ${Math.round(vLod)}° frem`, midT);
-      // MIDTFOD-LINJE: den klassiske cue "stangen over midtfod" gjort
-      // synlig - lodret reference gennem ankelpunktet
+      // ANKELREFERENCE: lodret linje gennem det faktisk klikkede ankelpunkt.
+      // Vi kalder den ikke midtfod; det ville kraeve et separat fodpunkt.
       ctx.save();
       ctx.strokeStyle = 'rgba(237,234,226,.35)';
       ctx.setLineDash([4, 7]);
@@ -1310,43 +1401,32 @@ function drawMskelAt(s, tSec, col, showLabels) {
 }
 // led-vinkler (knæ/hofte) fra keyframe-skelettet ved et givet tidspunkt
 function mskelAnglesAt(s, tSec) {
-  const PTS2 = s.path.fullPts || s.path.pts, TMS2 = s.path.fullTimes || s.path.times;
-  const bj = Math.max(0, Math.min(PTS2.length - 1, idxAtTime({ times: TMS2 }, tSec)));
-  let d = (PTS2[bj].y - s.topBarY) / (s.botBarY - s.topBarY);
-  d = Math.max(0, Math.min(1, d));
-  const L = (a, b) => ({ x: a.x + (b.x - a.x) * d, y: a.y + (b.y - a.y) * d });
+  const pose = mskelPoseAtTime(s, tSec);
+  if (!pose) return null;
+  const J = pose.J;
   const ang = (A, B, C) => {
     let x = Math.abs((Math.atan2(A.y - B.y, A.x - B.x) -
                       Math.atan2(C.y - B.y, C.x - B.x)) * 180 / Math.PI);
     return Math.round(x > 180 ? 360 - x : x);
   };
   if (s.chain === 'arm') {
-    const sh = L(s.top.sh, s.bot.sh), el = L(s.top.el, s.bot.el),
-          wr = L(s.top.wr, s.bot.wr);
+    const sh = J.sh, el = J.el, wr = J.wr;
     return { chain: 'arm', elbow: ang(sh, el, wr),
       foreDev: Math.round(Math.abs(
         Math.atan2(el.x - wr.x, el.y - wr.y) * 180 / Math.PI)) };
   }
-  const sh = L(s.top.sh, s.bot.sh), hip = L(s.top.hip, s.bot.hip),
-        kn = L(s.top.knee, s.bot.knee), an = L(s.top.ank, s.bot.ank);
-  return { chain: 'leg', knee: ang(hip, kn, an), hip: ang(sh, hip, kn) };
+  const sh = J.sh, hip = J.hip, kn = J.knee, an = J.ank;
+  const torso = Math.round(Math.abs(
+    Math.atan2(sh.x - hip.x, hip.y - sh.y) * 180 / Math.PI));
+  const shank = Math.round(Math.abs(
+    Math.atan2(kn.x - an.x, an.y - kn.y) * 180 / Math.PI));
+  return { chain: 'leg', knee: ang(hip, kn, an), hip: ang(sh, hip, kn),
+    torsoFromVertical: torso, shankFromVertical: shank };
 }
 // alle led ved et givet tidspunkt (til stroboskop m.m.)
 function mskelJointsAt(s, tSec) {
-  const PTS2 = s.path.fullPts || s.path.pts;
-  const TMS2 = s.path.fullTimes || s.path.times;
-  const bj = Math.max(0, Math.min(PTS2.length - 1,
-    idxAtTime({ times: TMS2 }, tSec)));
-  let d = (PTS2[bj].y - s.topBarY) / (s.botBarY - s.topBarY);
-  d = Math.max(0, Math.min(1, d));
-  const L = (a, b) => ({ x: a.x + (b.x - a.x) * d, y: a.y + (b.y - a.y) * d });
-  const order = s.order || ['sh', 'hip', 'knee', 'ank'];
-  const J = {};
-  for (const k of order) {
-    if (!s.top[k] || !s.bot[k]) return null;
-    J[k] = L(s.top[k], s.bot[k]);
-  }
-  return { J, order };
+  const pose = mskelPoseAtTime(s, tSec);
+  return pose ? { J: pose.J, order: pose.order } : null;
 }
 // Skelet ved et VILKÅRLIGT tidspunkt i valgfri farve - bruges både til
 // normal visning og til dobbelt-skelet i rep-overlay (A + B hver sin farve)
@@ -1901,7 +1981,7 @@ function render() {
   // Klik-skelet: vis den kæde coachen allerede har sat i den aktuelle position.
   // Punkterne er coachens måling; previewet gør fejl synlige, før næste position.
   if (mskelClicks) {
-    const bag = mskelClicks.phase === 'top' ? mskelClicks.top : mskelClicks.bot;
+    const bag = mskelClicks[mskelClicks.phase];
     const keys = mskelClicks.order.filter(k => bag[k]);
     ctx.save();
     ctx.strokeStyle = '#00d4ff'; ctx.fillStyle = '#00d4ff';
@@ -2955,11 +3035,82 @@ let awaitBox = false, boxDrag = null, poseBox = null, boxResolve = null;
 // Alle punkter er enten coachens eller vores egen gennemtestede trackers.
 let mskelClicks = null;
 // MSKEL_KEYTIME_MODEL_START
+function mskelRepStick(path, rep) {
+  const pts = path.pts || [];
+  if (!pts.length || !rep) return { index: -1, progress: .5 };
+  const start = Math.max(0, Math.min(pts.length - 1, rep.start));
+  const end = Math.max(start, Math.min(pts.length - 1, rep.end));
+  const repRange = pts[start].y - pts[end].y;
+  let index = -1, minV = Infinity, midIndex = start, midDelta = Infinity;
+  if (repRange > 2) {
+    for (let i = start; i <= end; i++) {
+      const progress = (pts[start].y - pts[i].y) / repRange;
+      if (progress < .1 || progress > .9) continue;
+      const md = Math.abs(progress - .5);
+      if (md < midDelta) { midDelta = md; midIndex = i; }
+      const v = path.vel && path.vel[i];
+      if (Number.isFinite(v) && v > .02 && v < minV) { minV = v; index = i; }
+    }
+  }
+  if (index < 0) index = midIndex;
+  const progress = repRange > 2
+    ? Math.max(0, Math.min(1, (pts[start].y - pts[index].y) / repRange)) : .5;
+  return { index, progress };
+}
+
+function mskelStickTimeRatio(path, stickTime) {
+  const times = path.times || [], reps = path.reps || [];
+  if (!times.length || !reps.length || !Number.isFinite(stickTime)) return NaN;
+  const rep = reps[0];
+  const start = Math.max(0, Math.min(times.length - 1, rep.start));
+  const end = Math.max(start, Math.min(times.length - 1, rep.end));
+  const tBot = times[start], tTop = times[end];
+  if (!Number.isFinite(tBot) || !Number.isFinite(tTop) || tTop <= tBot) return NaN;
+  return Math.max(.15, Math.min(.85, (stickTime - tBot) / (tTop - tBot)));
+}
+
+function mskelHybridTorsoDepth(barDepth, timedDepth, timedWeight = .65) {
+  const b = Math.max(0, Math.min(1, Number.isFinite(barDepth) ? barDepth : .5));
+  if (!Number.isFinite(timedDepth)) return b;
+  const t = Math.max(0, Math.min(1, timedDepth));
+  const w = Math.max(0, Math.min(1, timedWeight));
+  return b * (1 - w) + t * w;
+}
+
+// Torsoens keyframes afvikles efter faktisk TID i opstigningen, ikke efter
+// stanghoejden. Dermed kan hofterne/stangen accelerere uden at skulderlinjen
+// kunstigt springer direkte mod lockout. Resultatet er stadig 1 ved bund og 0
+// ved top, saa det kan bruges direkte af den eksisterende geometrimodel.
+function mskelTorsoDepthForRep(path, rep, tSec, stickDepth = .5, templateRatio = NaN) {
+  const times = path.times || [];
+  if (!times.length || !rep) return NaN;
+  const start = Math.max(0, Math.min(times.length - 1, rep.start));
+  const end = Math.max(start, Math.min(times.length - 1, rep.end));
+  const stick = mskelRepStick(path, rep);
+  const si = Math.max(start, Math.min(end, stick.index));
+  const tBot = times[start], tTop = times[end];
+  // Alle reps bruger den ratio, som coachen faktisk klikkede i rep 1.
+  // Per-rep velocity er kun fallback; ellers kunne en enkelt kamerarystelse
+  // flytte sticking-framen og sende skulderen frem i netop den rep.
+  const tStick = Number.isFinite(templateRatio)
+    ? tBot + (tTop - tBot) * Math.max(.15, Math.min(.85, templateRatio))
+    : times[si];
+  if (![tBot, tStick, tTop, tSec].every(Number.isFinite) || tTop <= tBot) return NaN;
+  const sd = Math.max(.05, Math.min(.95, Number.isFinite(stickDepth) ? stickDepth : .5));
+  if (tSec <= tBot) return 1;
+  if (tSec >= tTop) return 0;
+  if (tStick <= tBot || tStick >= tTop) return 1 - (tSec - tBot) / (tTop - tBot);
+  if (tSec <= tStick)
+    return 1 + (sd - 1) * ((tSec - tBot) / (tStick - tBot));
+  return sd * (1 - (tSec - tStick) / (tTop - tStick));
+}
+
 function mskelKeyTimes(path, lift) {
   const pts = path.pts, times = path.times;
   const reps = path.reps || [];
   if (!pts.length || !times || times.length !== pts.length || !reps.length)
-    return { topTime: video.currentTime, botTime: video.currentTime };
+    return { topTime: video.currentTime, botTime: video.currentTime,
+             stickTime: video.currentTime, stickIndex: -1, stickDepth: .5 };
   const first = reps[0], last = reps[reps.length - 1];
   const isPull = lift === 'Dødløft' || lift === 'Sumo dødløft';
   const botIndex = Math.max(0, Math.min(pts.length - 1, first.start));
@@ -2969,7 +3120,15 @@ function mskelKeyTimes(path, lift) {
     topIndex = 0;
     for (let i = 1; i <= botIndex; i++) if (pts[i].y < pts[topIndex].y) topIndex = i;
   }
-  return { topTime: times[topIndex], botTime: times[botIndex] };
+  // Tredje keyframe er et faktisk tidspunkt i den koncentriske fase: den
+  // langsomste valide frame mellem 10 og 90% af rep 1. Hvis fartdata mangler,
+  // bruges framen nærmest 50% af stangens vandring (gammel-fil fallback).
+  const stick = mskelRepStick(path, first);
+  const stickIndex = Math.max(botIndex, Math.min(pts.length - 1, stick.index));
+  // Geometrien bruger top=0/bund=1; ascent-progress er derfor inverteret.
+  const stickDepth = Math.max(.05, Math.min(.95, 1 - stick.progress));
+  return { topTime: times[topIndex], botTime: times[botIndex],
+           stickTime: times[stickIndex], stickIndex, stickDepth };
 }
 // MSKEL_KEYTIME_MODEL_END
 document.getElementById('mskelBtn').onclick = async () => {
@@ -2994,11 +3153,11 @@ document.getElementById('mskelBtn').onclick = async () => {
   mb2.dataset.prev = mb2.textContent;
   mb2.textContent = '✕ afbryd';
   layoutBars();
-  // RUNDE 15: KEYFRAME-SKELET. Auto-tracking af knæ/hofte fejlede på rigtige
+  // KEYFRAME-SKELET. Auto-tracking af knæ/hofte fejlede på rigtige
   // videoer (sort sleeve mod mørk baggrund, perspektiv-forkortning, rack-
-  // distraktorer). I stedet klikker coachen skelettet ved TOPPEN og ved BUNDEN;
-  // stangens højde driver interpolationen for alle frames imellem. Determini-
-  // stisk, virker altid, håndterer perspektiv (begge klik er ægte positioner).
+  // distraktorer). Coachen klikker derfor TOP, BUND og det målte STICKING
+  // POINT. Den tredje virkelige position forhindrer torsoen i at rette sig op
+  // tidligere end den faktisk gør på vej op.
   // KÆDE PR. LØFT (roadmap pkt. 3): squat/DL/sumo = BEN-kæde,
   // bænkpres = ARM-kæde (albue/underarm er dét, der betyder noget dér)
   const arm = liftK === 'Bænkpres';
@@ -3006,12 +3165,14 @@ document.getElementById('mskelBtn').onclick = async () => {
   await seekTo(keyTimes.topTime);
   mskelClicks = { phase: 'top', chain: arm ? 'arm' : 'leg', lift: liftK,
     order: arm ? ['sh', 'el', 'wr'] : ['sh', 'hip', 'knee', 'ank'],
-    step: 0, top: {}, bot: {}, path,
-    topTime: keyTimes.topTime, botTime: keyTimes.botTime, seeking: false,
+    step: 0, top: {}, bot: {}, stick: {}, path,
+    topTime: keyTimes.topTime, botTime: keyTimes.botTime,
+    stickTime: keyTimes.stickTime, stickDepth: keyTimes.stickDepth, seeking: false,
     topName: arm ? 'LOCKOUT (strakte arme)' : 'TOPPEN (stående)',
-    botName: arm ? 'BRYSTET (stangen nede)' : 'BUNDEN (dybest)' };
+    botName: arm ? 'BRYSTET (stangen nede)' : 'BUNDEN (dybest)',
+    stickName: 'STICKING POINT (langsommest på vej op)' };
   document.getElementById('mskelBtn').classList.add('active');   // lys op mens punkter placeres
-  say(`POSITION 1/2 · ${mskelClicks.topName} · punkt 1/${mskelClicks.order.length}: SKULDER`);
+  say(`POSITION 1/3 · ${mskelClicks.topName} · punkt 1/${mskelClicks.order.length}: SKULDER`);
 };
 const MSKEL_LBL = { sh: 'klik SKULDERLEDDET', hip: 'klik HOFTEN (hoftekammen)',
   knee: 'klik KNÆET', ank: 'klik ANKLEN',
@@ -3019,13 +3180,14 @@ const MSKEL_LBL = { sh: 'klik SKULDERLEDDET', hip: 'klik HOFTEN (hoftekammen)',
 async function mskelStep(p) {
   const m = mskelClicks;
   if (!m || m.seeking) return;
-  const bag = m.phase === 'top' ? m.top : m.bot;
+  const bag = m[m.phase];
   bag[m.order[m.step]] = { ...p };
   bag._barY = barYAt(m.path, video.currentTime);   // stangens y = dybde-reference
   m.step++;
   const N = m.order.length;
   if (m.step < N) {
-    const n = m.phase === 'top' ? 'POSITION 1/2' : 'POSITION 2/2';
+    const n = m.phase === 'top' ? 'POSITION 1/3' :
+              m.phase === 'bot' ? 'POSITION 2/3' : 'POSITION 3/3';
     say(`${n} · punkt ${m.step + 1}/${N}: ${MSKEL_LBL[m.order[m.step]].replace('klik ', '')}`);
     return;
   }
@@ -3034,7 +3196,15 @@ async function mskelStep(p) {
     await seekTo(m.botTime);
     if (mskelClicks !== m) return;
     m.phase = 'bot'; m.step = 0; m.seeking = false;
-    say(`POSITION 2/2 · ${m.botName} · punkt 1/${N}: SKULDER`);
+    say(`POSITION 2/3 · ${m.botName} · punkt 1/${N}: SKULDER`);
+    return;
+  }
+  if (m.phase === 'bot') {                          // mål den reelle opstigning
+    m.seeking = true;
+    await seekTo(m.stickTime);
+    if (mskelClicks !== m) return;
+    m.phase = 'stick'; m.step = 0; m.seeking = false;
+    say(`POSITION 3/3 · ${m.stickName} · punkt 1/${N}: SKULDER`);
     return;
   }
   mskelClicks = null;
@@ -3046,27 +3216,35 @@ function barYAt(path, t) {
   const j = Math.max(0, Math.min(PTS.length - 1, idxAtTime({ times: TMS }, t)));
   return PTS[j].y;
 }
-// RUNDE 15: byg keyframe-skelettet. Ingen tracking - to klik-poser (top+bund)
-// gemmes; interpolationen sker ved TEGNING (drawStroke), drevet af stanghøjden.
+// Byg keyframe-skelettet. Ingen led-tracking: tre coach-satte positioner
+// (top+bund+sticking) gemmes og bruges fasebevidst under tegning.
 function buildMskel(m) {
   const mb3 = document.getElementById('mskelBtn');
   mb3.classList.remove('active');
   if (mb3.dataset.prev) { mb3.textContent = mb3.dataset.prev; delete mb3.dataset.prev; }
   document.body.classList.remove('placing');
   layoutBars();
-  const topY = m.top._barY, botY = m.bot._barY;
+  const topY = m.top._barY, botY = m.bot._barY, stickY = m.stick._barY;
   if (Math.abs(botY - topY) < 8) {
     alert('Vælg en tydelig TOP og BUND - stangen skal have flyttet sig tydeligt mellem de to klik-sæt');
     return;
   }
   strokes = strokes.filter(s => s.type !== 'pose' && s.type !== 'mskel');
   const pick = bag => Object.fromEntries(m.order.map(k => [k, bag[k]]));
+  const top = pick(m.top), bot = pick(m.bot), stick = pick(m.stick);
+  const stickDepth = Math.max(.05, Math.min(.95, (stickY - topY) / (botY - topY)));
+  const segmentQuality = mskelSegmentStats({ chain:m.chain, order:m.order, top, stick, bot });
   strokes.push({ type: 'mskel', path: m.path, chain: m.chain, order: m.order,
-    lift: m.lift, top: pick(m.top), bot: pick(m.bot),
-    topBarY: topY, botBarY: botY });
+    lift: m.lift, top, bot, stick, topTime:m.topTime, botTime:m.botTime,
+    stickTime:m.stickTime, topBarY:topY, botBarY:botY, stickBarY:stickY,
+    stickDepth, segmentLengths:segmentQuality.lengths,
+    segmentQuality:{ maxDeltaPct:segmentQuality.maxDeltaPct,
+                     meanDeltaPct:segmentQuality.meanDeltaPct,
+                     deltas:segmentQuality.deltas } });
+  const q = segmentQuality.maxDeltaPct;
   say(m.chain === 'arm'
-    ? 'Positionsmåling klar ✓ · albue og underarm er nu med i feedbacken'
-    : 'Positionsmåling klar ✓ · knæ, hofte og torso er nu med som baseline');
+    ? `3 positionsmålinger klar ✓ · albue og underarm er med${q > 25 ? ' · tjek klikpunkterne' : ''}`
+    : `3 positionsmålinger klar ✓ · ryggen følger sticking point${q > 25 ? ' · tjek klikpunkterne' : ''}`);
   if (COACHWEB && openSheetFn) setTimeout(() => openSheetFn(), 180);
   setTimeout(() => say(''), 3200);
 }
@@ -3295,6 +3473,7 @@ function collectMetrics() {
   if (!path) return null;
   const m = [];
   lastVals = {};
+  lastVals.variation = document.getElementById('variationSel').value || null;
   lastVals.lowConfPct = path.pts.length
     ? Math.round((path.lowConf || 0) / path.pts.length * 100) : 0;
   if (lastVals.lowConfPct > 15)
@@ -3381,12 +3560,23 @@ function collectMetrics() {
   // (Erstatter det gamle MediaPipe-'pose'-skelet, som ikke bruges mere.)
   const mskel = strokes.filter(s => s.type === 'mskel').pop();
   if (mskel && mskel.bot) {
+    if (mskel.segmentQuality) {
+      lastVals.positionModelQualityPct = mskel.segmentQuality.maxDeltaPct;
+      m.push(`Positionsmodel: største forskel i segmentlængde mellem klikpositionerne ` +
+             `${lastVals.positionModelQualityPct}%` +
+             (lastVals.positionModelQualityPct > 25 ? ' (kontrollér klikpunkterne)' : ''));
+    }
     const angM = (A, B, C) => {
       let d = Math.abs((Math.atan2(A.y - B.y, A.x - B.x) -
                         Math.atan2(C.y - B.y, C.x - B.x)) * 180 / Math.PI);
       return +(d > 180 ? 360 - d : d).toFixed(0);
     };
     const b = mskel.bot;
+    const TT = path.fullTimes || path.times, PP = path.fullPts || path.pts;
+    const barPointAt = t => {
+      const i = Math.max(0, Math.min(PP.length - 1, idxAtTime({ times:TT }, t)));
+      return PP[i];
+    };
     if (mskel.chain === 'arm') {
       lastVals.elbowAngle = angM(b.sh, b.el, b.wr);
       lastVals.foreDev = Math.round(Math.abs(
@@ -3394,14 +3584,80 @@ function collectMetrics() {
       m.push(`Ledvinkler i BUNDEN (coach-sat klik-skelet): ` +
              `albuevinkel ${lastVals.elbowAngle}°, underarm ` +
              `${lastVals.foreDev}° fra lodret (0° = lodret reference)`);
+      if (mskel.stick) {
+        const s = mskel.stick;
+        lastVals.stickElbowAngle = angM(s.sh, s.el, s.wr);
+        lastVals.stickForeDev = Math.round(Math.abs(
+          Math.atan2(s.el.x - s.wr.x, s.el.y - s.wr.y) * 180 / Math.PI));
+        m.push(`Ledvinkler i STICKING POINT (coach-sat på vej op): ` +
+               `albue ${lastVals.stickElbowAngle}°, underarm ` +
+               `${lastVals.stickForeDev}° fra lodret`);
+        lastVals.elbowExtensionToStickDeg =
+          lastVals.stickElbowAngle - lastVals.elbowAngle;
+        lastVals.forearmChangeToStickDeg = lastVals.stickForeDev - lastVals.foreDev;
+      }
+      if (cmPerPx && mskel.top && mskel.topTime != null && mskel.botTime != null) {
+        const bp = barPointAt(mskel.botTime), tp = barPointAt(mskel.topTime);
+        lastVals.benchBottomShoulderOffsetCm =
+          +(Math.abs(bp.x - b.sh.x) * cmPerPx).toFixed(1);
+        lastVals.benchTopShoulderOffsetCm =
+          +(Math.abs(tp.x - mskel.top.sh.x) * cmPerPx).toFixed(1);
+        lastVals.benchTowardShoulderCm = +(lastVals.benchBottomShoulderOffsetCm -
+          lastVals.benchTopShoulderOffsetCm).toFixed(1);
+        if (mskel.stick && mskel.stickTime != null) {
+          const sp = barPointAt(mskel.stickTime);
+          lastVals.benchStickShoulderOffsetCm =
+            +(Math.abs(sp.x - mskel.stick.sh.x) * cmPerPx).toFixed(1);
+        }
+        m.push(`Bænkebanens retning: stangen kommer ` +
+          `${lastVals.benchTowardShoulderCm >= 0 ? lastVals.benchTowardShoulderCm + ' cm tættere på' : Math.abs(lastVals.benchTowardShoulderCm) + ' cm længere fra'} ` +
+          `den målte skulderlinje fra bryst til lockout`);
+      }
     } else {
       lastVals.kneeAngle = angM(b.hip, b.knee, b.ank);
       lastVals.hipAngle  = angM(b.sh, b.hip, b.knee);
       lastVals.torsoFromVertical = Math.round(Math.abs(
         Math.atan2(b.sh.x - b.hip.x, b.hip.y - b.sh.y) * 180 / Math.PI));
+      lastVals.shankFromVertical = Math.round(Math.abs(
+        Math.atan2(b.knee.x - b.ank.x, b.ank.y - b.knee.y) * 180 / Math.PI));
       m.push(`Ledvinkler i BUNDEN (coach-sat klik-skelet): ` +
              `knæ ${lastVals.kneeAngle}°, hofte ${lastVals.hipAngle}°, ` +
-             `torso ${lastVals.torsoFromVertical}° fra lodret (positions-baseline)`);
+             `torso ${lastVals.torsoFromVertical}° og skinneben ` +
+             `${lastVals.shankFromVertical}° fra lodret (positions-baseline)`);
+      if (mskel.stick) {
+        const s = mskel.stick;
+        lastVals.stickKneeAngle = angM(s.hip, s.knee, s.ank);
+        lastVals.stickHipAngle = angM(s.sh, s.hip, s.knee);
+        lastVals.stickTorsoFromVertical = Math.round(Math.abs(
+          Math.atan2(s.sh.x - s.hip.x, s.hip.y - s.sh.y) * 180 / Math.PI));
+        lastVals.stickShankFromVertical = Math.round(Math.abs(
+          Math.atan2(s.knee.x - s.ank.x, s.ank.y - s.knee.y) * 180 / Math.PI));
+        m.push(`Ledvinkler i STICKING POINT (coach-sat på vej op): ` +
+               `knæ ${lastVals.stickKneeAngle}°, hofte ${lastVals.stickHipAngle}°, ` +
+               `torso ${lastVals.stickTorsoFromVertical}° og skinneben ` +
+               `${lastVals.stickShankFromVertical}° fra lodret`);
+        lastVals.kneeExtensionToStickDeg =
+          lastVals.stickKneeAngle - lastVals.kneeAngle;
+        lastVals.hipExtensionToStickDeg =
+          lastVals.stickHipAngle - lastVals.hipAngle;
+        // Positiv = torsoen er blevet mere vandret/fremadlænet. Negativ = mere oprejst.
+        lastVals.torsoChangeToStickDeg =
+          lastVals.stickTorsoFromVertical - lastVals.torsoFromVertical;
+        lastVals.shankChangeToStickDeg =
+          lastVals.stickShankFromVertical - lastVals.shankFromVertical;
+        m.push(`Strategi bund→sticking: knæ +${lastVals.kneeExtensionToStickDeg}°, ` +
+               `hofte +${lastVals.hipExtensionToStickDeg}°, torso ` +
+               `${lastVals.torsoChangeToStickDeg > 0 ? '+' : ''}${lastVals.torsoChangeToStickDeg}° ` +
+               `(positiv = mere fremadlænet)`);
+      }
+      if (cmPerPx && mskel.botTime != null) {
+        const bp = barPointAt(mskel.botTime);
+        lastVals.hipMomentArmCm = +(Math.abs(b.hip.x - bp.x) * cmPerPx).toFixed(1);
+        lastVals.barAnkleOffsetCm = +((bp.x - b.ank.x) * cmPerPx).toFixed(1);
+        m.push(`Bundposition: vandret stang↔hofte ${lastVals.hipMomentArmCm} cm · ` +
+               `stang ift. ankelreference ${lastVals.barAnkleOffsetCm > 0 ? '+' : ''}` +
+               `${lastVals.barAnkleOffsetCm} cm`);
+      }
     }
   }
   // RUNDE 19: REP-TIL-REP sammenligning - fart + led-vinkel pr. rep (skelettet
@@ -3422,10 +3678,11 @@ function collectMetrics() {
           if (path.pts[j].y > maxY) maxY = path.pts[j].y;
         let d = (maxY - ms.topBarY) / (ms.botBarY - ms.topBarY);
         d = Math.max(0, Math.min(1, d));
-        const L = (a, b) => ({ x: a.x + (b.x - a.x) * d, y: a.y + (b.y - a.y) * d });
-        const sh = L(ms.top.sh, ms.bot.sh), hip = L(ms.top.hip, ms.bot.hip),
-              kn = L(ms.top.knee, ms.bot.knee), an = L(ms.top.ank, ms.bot.ank);
-        s += `, knæ ${angR(hip, kn, an)}°, hofte ${angR(sh, hip, kn)}°`;
+        const poseR = mskelPoseAtDepth(ms, d);
+        if (poseR) {
+          const { sh, hip, knee:kn, ank:an } = poseR.J;
+          s += `, knæ ${angR(hip, kn, an)}°, hofte ${angR(sh, hip, kn)}°`;
+        }
       }
       return s;
     });
@@ -3434,40 +3691,35 @@ function collectMetrics() {
   return m.join('\n');
 }
 
-// Fag-reference per øvelse - hvad AI'en skal måle op imod
-// Baseret på Stronger by Science' guides + VBT-forskning. Godkendt af Marc 3/7-2026.
+// Fag-reference per øvelse. Modellen leder efter målte ÆNDRINGER og
+// gentagelighed — ikke én universel idealvinkel. Greb, stance, barplacering,
+// kropsproportioner, belastning og den valgte variation ændrer strategien.
 const TEKNIK = {
   'Squat':
-    'Stangen skal lodret over midtfod hele vejen - afvigelse er symptom på et ' +
-    'underliggende problem. Sticking point LIGE OVER PARALLEL er permanent ' +
-    'biomekanik (90%+ misser dér) - bedøm ikke at det findes, men farten IND i ' +
-    'det: god teknik = maksimal acceleration ud af hullet, derefter "fold ud" ' +
-    '(skuldre tilbage i stangen, hofte frem under stangen). RØDE FLAG: stangen ' +
-    'driver frem (vægt mod tå), hoften skyder op før stangen (good morning, ' +
-    'hoftevinklen lukker), stort fartfald allerede i hullet (positionstab/' +
-    'bracing). Reference: 1RM-fart ca. 0.25-0.30 m/s.',
+    'Vurder først gyldig dybde ved konkurrencesquat, derefter gentagelig bund, ' +
+    'stabil stanglinje og koordination fra bund til sticking point. High-bar/' +
+    'smal stance og low-bar/bred stance fordeler knæ- og hoftemoment forskelligt; ' +
+    'en bestemt torsovinkel er derfor ikke automatisk god eller dårlig. Et ' +
+    'relevant fund kræver en målt ændring: fx at knæene åbner samtidig med at ' +
+    'torsoen falder tydeligt frem, især hvis mønstret vokser med træthed.',
   'Bænkpres':
-    'J-kurven ER korrekt teknik: fra brystet skråt TILBAGE mod skuldrene - ' +
-    '10-25 cm vandret bevægelse er sundt, ikke en fejl. Sticking point typisk ' +
-    '8-15 cm over brystet efter den indledende acceleration. Kvalitetsmål: LILLE ' +
-    'fartfald fra topfart til sticking point = effektiv bane (elite taber langt ' +
-    'mindre fart end begyndere, og forskellen er primært banen). RØDE FLAG: ' +
-    'lodret bane eller bane mod fødderne (albuer for langt ude), fart der dør ' +
-    'ved lockout (triceps), asymmetri mellem reps. Reference: 1RM ca. 0.15-0.20 m/s.',
+    'Vurder først stabil start, gentageligt touch, eventuel pause og fuld lockout. ' +
+    'Stangen bevæger sig ofte fra touchpoint tilbage mod skulderlinjen, men greb, ' +
+    'arch og bevægeudslag ændrer både bane og sticking region. Derfor bruges ikke ' +
+    'et fast antal vandrette centimeter som facit: retningen måles mod den ' +
+    'coach-satte skulderlinje og kombineres med underarmens position og fartfald.',
   'Dødløft':
-    'Stangen lodret og TÆT på skinneben/midtfod; skuldre en anelse foran stangen ' +
-    'ved start. Ingen stretch-reflex: langsom start fra gulv er normal. Sticking ' +
-    'point ved/lige under knæ er det klassiske mønster. RØDE FLAG: stangen ' +
-    'svinger UD omkring knæet (væk fra kroppen = ryggen betaler), hoften skyder ' +
-    'op først (benene bliver færdige før stangen letter = rygløft), fart der ' +
-    'falder mod lockout (hoftestrækning/balder). Reference: 1RM ca. 0.20-0.25 m/s.',
+    'Vurder først en kontrolleret stang tæt på kroppen, fuld knæ-/hoftelockout ' +
+    'og gentagelig startposition. Konventionel dødløft er mere hoftekrævende og ' +
+    'ofte mere sekventiel end squat; en ændret torsovinkel er derfor ikke alene ' +
+    'en fejl. Flag kun et tydeligt positionsskift, når torso, knæ/hoftestrækning ' +
+    'og stangbane peger samme vej, og sammenlign med atletens stærke reps.',
   'Sumo dødløft':
-    '20-25% kortere vandring end konventionel, oprejst torso, skuldre DIREKTE ' +
-    'over stangen (ikke foran). Langsomt fra gulvet er FORVENTET (quads/' +
-    'adduktorer arbejder tungt dér) - bedøm det ikke som svaghed. Lockout skal ' +
-    'til gengæld være hurtig. RØDE FLAG: knæene falder ind, hoften starter for ' +
-    'højt (mister benvinklen), stor vandret afvigelse, langsom lockout (hofte). ' +
-    'Reference: 1RM ca. 0.20-0.25 m/s.',
+    'Sumo har typisk mere oprejst torso, kortere stangvandring og større bidrag ' +
+    'fra knæ samt frontal/transversal stabilisering end konventionel. Langsom ' +
+    'start fra gulvet er ikke i sig selv et problem. Vurder stangens nærhed, ' +
+    'om startpositionen holdes frem mod sticking point, og om et højt fartfald ' +
+    'gentager sig — uden faste universelle vinkel- eller ROM-grænser.',
 };
 
 // Deterministisk vurdering: tallene mod teknik-grænseværdierne. Ingen AI-gætteri.
@@ -3475,12 +3727,12 @@ function evaluateFindings(lift, v) {
   const f = [];
   const sq = lift === 'Squat', bp = lift === 'Bænkpres';
   const dl = lift === 'Dødløft', sumo = lift === 'Sumo dødløft';
+  const variation = String(v.variation || '');
+  const alteredRom = /deficit|block|box|rumænsk|front|safety|incline/i.test(variation);
   if (v.driftCm != null) {
     if (bp) {
-      if (v.driftCm >= 10 && v.driftCm <= 25)
-        f.push(`OK: vandret bevægelse ${v.driftCm.toFixed(0)} cm - sund J-kurve`);
-      else if (v.driftCm < 8)
-        f.push(`FLAG: kun ${v.driftCm.toFixed(0)} cm vandret - banen er for lodret (tjek albuer)`);
+      f.push(`NOTE: samlet vandret bevægelse ${v.driftCm.toFixed(1)} cm; ` +
+             `retningen vurderes mod den målte skulderlinje`);
     } else {
       const max = sq ? 5 : 4;
       f.push(v.driftCm <= max
@@ -3490,9 +3742,11 @@ function evaluateFindings(lift, v) {
   }
   if (v.stickPct != null) {
     const normal = sq ? [40, 65] : bp ? [15, 45] : dl ? [30, 60] : [0, 45];
-    f.push(v.stickPct >= normal[0] && v.stickPct <= normal[1]
-      ? `OK: sticking point ved ${v.stickPct}% - klassisk placering for ${lift.toLowerCase()}`
-      : `FLAG: sticking point ved ${v.stickPct}% - atypisk for ${lift.toLowerCase()} (normalt ${normal[0]}-${normal[1]}%)`);
+    f.push(alteredRom
+      ? `NOTE: sticking point ved ${v.stickPct}% · ${variation} ændrer ROM/position, så sammenlign med samme variation`
+      : v.stickPct >= normal[0] && v.stickPct <= normal[1]
+      ? `NOTE: sticking point ved ${v.stickPct}% - inden for et almindeligt område for ${lift.toLowerCase()}`
+      : `NOTE: sticking point ved ${v.stickPct}% - uden for det typiske forskningsområde ${normal[0]}-${normal[1]}%, men vurder mod atletens egen baseline`);
   }
   if (v.dipPct != null) {
     f.push(v.dipPct <= 55
@@ -3511,10 +3765,20 @@ function evaluateFindings(lift, v) {
   }
   if (v.hystCm != null && !bp && v.hystCm > 4)
     f.push(`FLAG: ${v.hystCm} cm forskel mellem ned- og opbane - positionen ændrer sig undervejs`);
-  if (sq && v.hipRatio != null) {
-    f.push(v.hipRatio <= 1.4
-      ? `OK: hofte og stang rejser sig synkront ud af hullet (${v.hipRatio}x)`
-      : `FLAG: hoften stiger ${v.hipRatio}x hurtigere end stangen ud af hullet - good morning-mønster`);
+  const poseOK = v.positionModelQualityPct == null || v.positionModelQualityPct <= 25;
+  if (poseOK && !bp && v.torsoChangeToStickDeg != null &&
+      v.kneeExtensionToStickDeg != null && v.hipExtensionToStickDeg != null) {
+    const th = sq ? 6 : sumo ? 7 : 9;
+    f.push(v.torsoChangeToStickDeg > th && v.kneeExtensionToStickDeg > 10
+      ? `OBS: torsoen bliver ${v.torsoChangeToStickDeg}° mere fremadlænet frem mod sticking point, mens knæet åbner ${v.kneeExtensionToStickDeg}°`
+      : `NOTE: bund→sticking: torso ${v.torsoChangeToStickDeg > 0 ? '+' : ''}${v.torsoChangeToStickDeg}°, knæ +${v.kneeExtensionToStickDeg}°, hofte +${v.hipExtensionToStickDeg}°`);
+  }
+  if (poseOK && bp && v.benchTowardShoulderCm != null) {
+    f.push(v.benchTowardShoulderCm < -2
+      ? `OBS: stangen ender ${Math.abs(v.benchTowardShoulderCm).toFixed(1)} cm længere fra skulderlinjen end ved touch`
+      : v.benchTowardShoulderCm > 2
+        ? `OK: stangen bevæger sig ${v.benchTowardShoulderCm.toFixed(1)} cm tættere på skulderlinjen fra touch til lockout`
+        : `NOTE: bænkebanen holder næsten samme afstand til skulderlinjen`);
   }
   if (sumo && v.dipPct != null && v.stickPct != null && v.stickPct < 20)
     f.push('NOTE: lav fart nær gulvet er FORVENTET i sumo - ikke et fund i sig selv');
@@ -3536,9 +3800,10 @@ function suggestCues(lift, v) {
   const sq = lift === 'Squat', bp = lift === 'Bænkpres';
   const dl = lift === 'Dødløft', sumo = lift === 'Sumo dødløft';
   if (sq) {
-    if (v.hipRatio != null && v.hipRatio > 1.4)
-      c.push([`"Bryst op – hofte og bryst rejser sig SAMMEN"`,
-              `hoften skyder ${v.hipRatio}x hurtigere op end stangen (good morning)`]);
+    if ((v.positionModelQualityPct == null || v.positionModelQualityPct <= 25) &&
+        v.torsoChangeToStickDeg > 6 && v.kneeExtensionToStickDeg > 10)
+      c.push([`"Bevar overkropsvinklen – hofte og skuldre rejser sig sammen"`,
+              `torso +${v.torsoChangeToStickDeg}° mere frem · knæ +${v.kneeExtensionToStickDeg}° frem mod sticking`]);
     if (v.driftCm != null && v.driftCm > 5)
       c.push([`"Vægten i hælene – træk stangen ind over midtfod"`,
               `${(+v.driftCm).toFixed(1)} cm vandret drift`]);
@@ -3550,9 +3815,10 @@ function suggestCues(lift, v) {
               `fart dør ${v.dipPct}% ind i sticking point`]);
   }
   if (bp) {
-    if (v.driftCm != null && v.driftCm < 8)
-      c.push([`"Styr stangen skråt op mod skuldrene – ikke lodret"`,
-              `kun ${(+v.driftCm).toFixed(1)} cm J-kurve (for lodret)`]);
+    if ((v.positionModelQualityPct == null || v.positionModelQualityPct <= 25) &&
+        v.benchTowardShoulderCm != null && v.benchTowardShoulderCm < -2)
+      c.push([`"Pres tilbage mod skulderlinjen – ikke mod fødderne"`,
+              `${Math.abs(v.benchTowardShoulderCm).toFixed(1)} cm længere fra skulderlinjen ved lockout`]);
     if (v.foreDev != null && v.foreDev > 15)
       c.push([`"Underarmen lodret i bunden – albuen ind under stangen"`,
               `underarm ${v.foreDev}° fra lodret`]);
@@ -3570,6 +3836,10 @@ function suggestCues(lift, v) {
     if (v.hystCm != null && v.hystCm > 4)
       c.push([`"Samme linje ned og op – styr excentrisk kontrolleret"`,
               `${(+v.hystCm).toFixed(1)} cm forskel ned/op`]);
+    if ((v.positionModelQualityPct == null || v.positionModelQualityPct <= 25) &&
+        v.torsoChangeToStickDeg > 9 && v.kneeExtensionToStickDeg > 10)
+      c.push([`"Byg spænding før stangen letter – hold positionen fra gulvet"`,
+              `torso +${v.torsoChangeToStickDeg}° mere frem frem mod sticking`]);
   }
   if (sumo) {
     if (v.driftCm != null && v.driftCm > 4)
@@ -3598,6 +3868,14 @@ function buildCoachFeedback(lift, v = {}) {
   const drift = n(v.driftCm), dip = n(v.dipPct), loss = n(v.lossPct);
   const eff = n(v.effPct), hyst = n(v.hystCm), spread = n(v.bottomSpreadCm);
   const low = n(v.lowConfPct) || 0, stick = n(v.stickPct);
+  const poseQ = n(v.positionModelQualityPct);
+  const poseReliable = poseQ == null || poseQ <= 25;
+  const torsoShift = n(v.torsoChangeToStickDeg);
+  const kneeExt = n(v.kneeExtensionToStickDeg);
+  const hipExt = n(v.hipExtensionToStickDeg);
+  const towardShoulder = n(v.benchTowardShoulderCm);
+  const variation = String(v.variation || '');
+  const alteredRom = /deficit|block|box|rumænsk|front|safety|incline/i.test(variation);
   const sq = lift === 'Squat', bp = lift === 'Bænkpres';
   const dl = lift === 'Dødløft', sumo = lift === 'Sumo dødløft';
 
@@ -3607,22 +3885,15 @@ function buildCoachFeedback(lift, v = {}) {
     'Se banen igennem frame for frame. Kør analysen igen, hvis den forlader skiven.',
     `${low}% lav sikkerhed`);
   else context.push({ title:'Målekvalitet', text:`Tracker-sikkerhed ${100-low}%` });
+  if (variation) context.push({ title:'Variation',
+    text:variation + (alteredRom ? ' · ROM og sticking-position sammenlignes kun med samme variation' : '') });
 
   if (drift != null) {
     if (bp) {
-      if (drift >= 10 && drift <= 25) addStrength('Baneretningen ser sund ud',
-        'Stangen bevæger sig kontrolleret tilbage mod skuldrene.',
-        `${drift.toFixed(1)} cm vandret bevægelse`);
-      else if (drift < 8) addPriority(78, 'Meget lodret bænkpresbane',
-        'Fokusér på retningen fra brystet tilbage mod skuldrene.',
-        'En næsten lodret bane kan gøre overgangen gennem sticking point tungere.',
-        'Behold touchpointet og pres skråt tilbage — kontrollér albuen under stangen.',
-        `${drift.toFixed(1)} cm vandret bevægelse`);
-      else if (drift > 28) addPriority(66, 'Stor vandret bevægelse',
-        'Banen flytter sig meget på tværs.',
-        'En stor omvej kan koste fart, men kameraretning og touchpoint skal kontrolleres visuelt.',
-        'Sammenlign touchpoint og lockout over samme skulderlinje.',
-        `${drift.toFixed(1)} cm vandret bevægelse`);
+      // Retningen kan ikke afgøres af magnitude alene; kameraet kan stå på
+      // begge sider. Skulderlinje-målet nedenfor giver den meningsfulde retning.
+      context.push({ title:'Vandret bænkebane',
+        text:`${drift.toFixed(1)} cm samlet bevægelse · retning vurderes mod skulderlinjen` });
     } else {
       const max = sq ? 5 : 4;
       if (drift <= max) addStrength('Stangen holder linjen',
@@ -3646,6 +3917,37 @@ function buildCoachFeedback(lift, v = {}) {
       'En skæv kraftlinje kan koste kraft fra brystet.',
       'Brug positionsmålingen som reference og justér greb, touchpoint eller albueplacering én ting ad gangen.',
       `${fore}° fra lodret · coach-sat positionsmåling`);
+  }
+
+  if (bp && poseReliable && towardShoulder != null) {
+    const topOffset = n(v.benchTopShoulderOffsetCm);
+    if (towardShoulder > 2) addStrength('Stangen søger mod skulderlinjen',
+      'Fra brystet bevæger stangen sig tilbage mod skulderlinjen.',
+      `${towardShoulder.toFixed(1)} cm tættere på skulderlinjen` +
+      (topOffset != null ? ` · ${topOffset.toFixed(1)} cm afstand ved lockout` : ''));
+    else if (towardShoulder < -2) addPriority(88, 'Stangen bevæger sig væk fra skulderlinjen',
+      'Styr presset tilbage mod skulderlinjen i stedet for mod fødderne.',
+      'Retningen øger afstanden mellem stang og skulder, men greb og touchpoint skal stadig vurderes sammen.',
+      'Behold opspændet og test én lille ændring i pressets retning; sammenlign derefter samme belastning.',
+      `${Math.abs(towardShoulder).toFixed(1)} cm længere fra skulderlinjen`);
+    else context.push({ title:'Bænkebanens retning',
+      text:`Næsten samme afstand til skulderlinjen fra bryst til lockout (${towardShoulder.toFixed(1)} cm ændring)` });
+  }
+
+  if (!bp && poseReliable && torsoShift != null && kneeExt != null && hipExt != null) {
+    const threshold = sq ? 6 : sumo ? 7 : 9;
+    if (torsoShift > threshold && kneeExt > 10) addPriority(sq ? 90 : 74,
+      'Overkroppen falder frem mod sticking point',
+      'Bevar forbindelsen mellem overkrop og hofte gennem den første del af opstigningen.',
+      'Knæene åbner, mens torsoen bliver mere fremadlænet; det er en målt positionsændring, ikke automatisk en fejl.',
+      sq ? 'Sammenlign med din bedste rep og hold samme tryk gennem foden, mens hofte og skuldre rejser sig sammen.'
+         : 'Byg spænding før stangen letter og sammenlign, om samme positionsskift gentager sig på de bedste reps.',
+      `torso +${torsoShift}° · knæ +${kneeExt}° · hofte +${hipExt}° fra bund til sticking`);
+    else if (Math.abs(torsoShift) <= 5) addStrength('Overkropsvinklen holder sig stabil',
+      'Torsoen ændrer kun lidt vinkel frem mod sticking point.',
+      `torso ${torsoShift > 0 ? '+' : ''}${torsoShift}° · knæ +${kneeExt}° · hofte +${hipExt}°`);
+    else context.push({ title:'Strategi bund → sticking',
+      text:`torso ${torsoShift > 0 ? '+' : ''}${torsoShift}° · knæ +${kneeExt}° · hofte +${hipExt}°` });
   }
 
   if (dip != null) {
@@ -3706,11 +4008,25 @@ function buildCoachFeedback(lift, v = {}) {
   }
 
   if (stick != null) context.push({ title:'Sticking point',
-    text:`${stick}% af vandringen${sumo && stick < 25 ? ' · lav placering er forventelig i sumo' : ''}` });
+    text:`${stick}% af vandringen` +
+      (alteredRom ? ' · variationsspecifik reference' :
+       sumo && stick < 25 ? ' · lav placering er forventelig i sumo' : '') });
   if (v.kneeAngle != null) context.push({ title:'Positions-baseline',
-    text:`knæ ${v.kneeAngle}° · hofte ${v.hipAngle}° · torso ${v.torsoFromVertical}° fra lodret` });
+    text:`knæ ${v.kneeAngle}° · hofte ${v.hipAngle}° · torso ${v.torsoFromVertical}° ` +
+         (n(v.shankFromVertical) != null ? `· skinneben ${v.shankFromVertical}° fra lodret` : 'fra lodret') });
+  if (v.stickKneeAngle != null) context.push({ title:'Sticking-position (målt)',
+    text:`knæ ${v.stickKneeAngle}° · hofte ${v.stickHipAngle}° · torso ${v.stickTorsoFromVertical}° ` +
+         `· skinneben ${v.stickShankFromVertical}° fra lodret` });
   if (v.elbowAngle != null) context.push({ title:'Positions-baseline',
     text:`albue ${v.elbowAngle}° · underarm ${v.foreDev}° fra lodret` });
+  if (v.stickElbowAngle != null) context.push({ title:'Sticking-position (målt)',
+    text:`albue ${v.stickElbowAngle}° · underarm ${v.stickForeDev}° fra lodret` });
+  if (n(v.positionModelQualityPct) != null) context.push({
+    title:'Positionskvalitet',
+    text:n(v.positionModelQualityPct) <= 25
+      ? `Segmenterne stemmer sammen inden for ${n(v.positionModelQualityPct)}% på tværs af de tre positioner`
+      : `Klikpunkterne varierer ${n(v.positionModelQualityPct)}% · brug vinklerne som grov baseline eller mål igen`
+  });
 
   priorities.sort((a,b) => b.score - a.score);
   const primary = priorities[0] || null;
@@ -3738,11 +4054,13 @@ function buildReport() {
   if (!metrics) return null;
   const ath = document.getElementById('athleteSel').value;
   const lift = document.getElementById('liftSel').value;
+  const variation = document.getElementById('variationSel').value;
   const load = document.getElementById('loadInput').value.trim();
   const bias = document.getElementById('biasInput').value.trim();
   const findings = lift ? evaluateFindings(lift, lastVals || {}) : [];
   const cues = lift ? suggestCues(lift, lastVals || {}) : [];
   return `Atlet: ${ath || 'ukendt'}\nØvelse: ${lift || '(vælg øvelse for at få fund)'}\n` +
+    (variation ? `Variation: ${variation}\n` : '') +
     `Belastning: ${load || 'ikke angivet'}\n` +
     (bias ? `Coach-note: ${bias}\n` : '') + metrics +
     (findings.length ? `\n\nFUND (regelbaseret):\n` + findings.join('\n') : '') +
@@ -3770,9 +4088,26 @@ function keyNumbers() {
       (+v.driftCm).toFixed(1) + ' cm' + (v.effPct != null ? `  ·  effektivitet ${v.effPct}%` : '')]);
   if (v.romCm != null) rows.push(['ROM', (+v.romCm).toFixed(0) + ' cm']);
   if (v.hystCm != null) rows.push(['Ned/op-forskel', (+v.hystCm).toFixed(1) + ' cm']);
-  if (v.kneeAngle != null) rows.push(['Dybde (klik-skelet)', `knæ ${v.kneeAngle}°  ·  hofte ${v.hipAngle}°`]);
+  if (v.kneeAngle != null) rows.push(['Bundposition',
+    `knæ ${v.kneeAngle}°  ·  hofte ${v.hipAngle}°  ·  torso ${v.torsoFromVertical}°` +
+    (v.shankFromVertical != null ? `  ·  skinneben ${v.shankFromVertical}°` : '')]);
+  if (v.stickKneeAngle != null) rows.push(['Sticking-position (målt)',
+    `knæ ${v.stickKneeAngle}°  ·  hofte ${v.stickHipAngle}°  ·  torso ${v.stickTorsoFromVertical}°` +
+    (v.stickShankFromVertical != null ? `  ·  skinneben ${v.stickShankFromVertical}°` : '')]);
+  if (v.torsoChangeToStickDeg != null) rows.push(['Strategi bund → sticking',
+    `torso ${v.torsoChangeToStickDeg > 0 ? '+' : ''}${v.torsoChangeToStickDeg}°  ·  ` +
+    `knæ +${v.kneeExtensionToStickDeg}°  ·  hofte +${v.hipExtensionToStickDeg}°`]);
+  if (v.hipMomentArmCm != null) rows.push(['Stangens relation i bunden',
+    `hofteafstand ${v.hipMomentArmCm} cm  ·  ankelreference ${v.barAnkleOffsetCm > 0 ? '+' : ''}${v.barAnkleOffsetCm} cm`]);
+  if (v.positionModelQualityPct != null) rows.push(['Positionskvalitet',
+    `${v.positionModelQualityPct}% største segmentforskel`]);
   if (v.elbowAngle != null) rows.push(['Bund (klik-skelet)',
     `albue ${v.elbowAngle}°  ·  underarm ${v.foreDev}° fra lodret`]);
+  if (v.stickElbowAngle != null) rows.push(['Sticking-position (målt)',
+    `albue ${v.stickElbowAngle}°  ·  underarm ${v.stickForeDev}° fra lodret`]);
+  if (v.benchTowardShoulderCm != null) rows.push(['Bænkebane mod skulderlinje',
+    `${v.benchTowardShoulderCm > 0 ? '+' : ''}${v.benchTowardShoulderCm} cm ` +
+    `(positiv = tættere på ved lockout)`]);
   return rows;
 }
 const escHtml = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -3782,6 +4117,7 @@ function buildCoachReportHtml(showAddPosition = true) {
   if (!metrics) return null;
   const ath = document.getElementById('athleteSel').value || 'Atlet';
   const lift = document.getElementById('liftSel').value;
+  const variation = document.getElementById('variationSel').value;
   const load = document.getElementById('loadInput').value.trim();
   const bias = document.getElementById('biasInput').value.trim();
   if (!lift) return '<div class="feedbackCard" data-kind="focus"><b>Vælg øvelse</b>' +
@@ -3814,7 +4150,7 @@ function buildCoachReportHtml(showAddPosition = true) {
     ? '<button class="coachAddPosition" data-add-position>＋ Tilføj positionsmåling</button>' : '';
   return `<div class="coachFeedback">` +
     `<div class="coachFeedbackHero"><div><small>Coach-feedback</small>` +
-    `<h3>${E(ath)} · ${E(lift)}</h3><p>${E(load || 'Belastning ikke angivet')}</p></div>` +
+    `<h3>${E(ath)} · ${E(lift)}</h3><p>${E(variation || 'Standard')} · ${E(load || 'Belastning ikke angivet')}</p></div>` +
     `<span class="measureQuality ${E(fb.quality)}">${E(q)}</span></div>` +
     `<section class="athleteBrief"><span class="coachSectionLabel">Det kan du sige til atleten</span>` +
     `<div class="feedbackCard" data-kind="good"><b>Det fungerer</b><p>${E(fb.athlete.works)}</p>${strengthEvidence}</div>` +
@@ -3832,12 +4168,14 @@ aiBtn.onclick = async () => {
   if (!metrics) { alert('Kør ⚡ Analysér løft først'); return; }
   const ath = document.getElementById('athleteSel').value;
   const lift = document.getElementById('liftSel').value;
+  const variation = document.getElementById('variationSel').value;
   const load = document.getElementById('loadInput').value.trim();
   if (!lift) { alert('Vælg øvelse først - fortolkningen afhænger af den'); return; }
   const bias = document.getElementById('biasInput').value.trim();
   const feedback = buildCoachFeedback(lift, lastVals || {});
   const baseFeedbackHtml = buildCoachReportHtml(false);
   metrics = `Atlet: ${ath || 'ukendt'}\nØvelse: ${lift}\n` +
+             (variation ? `Variation: ${variation}\n` : '') +
              `Belastning: ${load || 'ikke angivet'}\n` +
              (bias ? `Coach-note: ${bias}\n` : '') + metrics +
              `\n\nFASTLÅST FEEDBACKMODEL (må ikke ændres):\n` +
@@ -3999,10 +4337,11 @@ function buildResultCard() {
   g.fillText('VIDEOCOACH', PAD + ew + 22, 100);
   const ath = document.getElementById('athleteSel').value || '';
   const lift = document.getElementById('liftSel').value || '';
+  const variation = document.getElementById('variationSel').value || '';
   const load = document.getElementById('loadInput').value.trim();
   const date = new Date().toLocaleDateString('da-DK');
   g.font = "26px 'IBM Plex Mono', monospace"; g.fillStyle = '#edeae2';
-  g.fillText([ath, lift, load, date].filter(Boolean).join('   ·   '), PAD, 152);
+  g.fillText([ath, lift, variation, load, date].filter(Boolean).join('   ·   '), PAD, 152);
   g.strokeStyle = 'rgba(237,234,226,.12)'; g.lineWidth = 1;
   g.beginPath(); g.moveTo(PAD, 184); g.lineTo(W - PAD, 184); g.stroke();
   g.font = "600 20px 'IBM Plex Mono', monospace"; g.fillStyle = '#c8923a';
@@ -4142,6 +4481,7 @@ saveBtn.onclick = async () => {
     schema_v: 2,
     athlete_name: ath,
     lift,
+    variation: document.getElementById('variationSel').value || null,
     load_kg: parsed.kg,
     rpe: parsed.rpe,
     low_conf_pct: path && path.lowConf && path.pts.length
@@ -4161,8 +4501,29 @@ saveBtn.onclick = async () => {
       hyst_cm: lastVals.hystCm ?? null,
       knee_angle: lastVals.kneeAngle ?? null,   // RUNDE 18: fra klik-skelettet
       hip_angle: lastVals.hipAngle ?? null,
+      torso_from_vertical: lastVals.torsoFromVertical ?? null,
+      shank_from_vertical: lastVals.shankFromVertical ?? null,
+      stick_knee_angle: lastVals.stickKneeAngle ?? null,
+      stick_hip_angle: lastVals.stickHipAngle ?? null,
+      stick_torso_from_vertical: lastVals.stickTorsoFromVertical ?? null,
+      stick_shank_from_vertical: lastVals.stickShankFromVertical ?? null,
+      knee_extension_to_stick_deg: lastVals.kneeExtensionToStickDeg ?? null,
+      hip_extension_to_stick_deg: lastVals.hipExtensionToStickDeg ?? null,
+      torso_change_to_stick_deg: lastVals.torsoChangeToStickDeg ?? null,
+      shank_change_to_stick_deg: lastVals.shankChangeToStickDeg ?? null,
+      hip_moment_arm_cm: lastVals.hipMomentArmCm ?? null,
+      bar_ankle_offset_cm: lastVals.barAnkleOffsetCm ?? null,
+      position_model_quality_pct: lastVals.positionModelQualityPct ?? null,
       elbow_angle: lastVals.elbowAngle ?? null, // bænk (arm-kæde)
       forearm_dev: lastVals.foreDev ?? null,
+      stick_elbow_angle: lastVals.stickElbowAngle ?? null,
+      stick_forearm_dev: lastVals.stickForeDev ?? null,
+      elbow_extension_to_stick_deg: lastVals.elbowExtensionToStickDeg ?? null,
+      forearm_change_to_stick_deg: lastVals.forearmChangeToStickDeg ?? null,
+      bench_toward_shoulder_cm: lastVals.benchTowardShoulderCm ?? null,
+      bench_bottom_shoulder_offset_cm: lastVals.benchBottomShoulderOffsetCm ?? null,
+      bench_stick_shoulder_offset_cm: lastVals.benchStickShoulderOffsetCm ?? null,
+      bench_top_shoulder_offset_cm: lastVals.benchTopShoulderOffsetCm ?? null,
       tempo: path && path.reps ? path.reps.map(r =>
         ({ ecc: r.eccS, pause: r.pauseS, con: r.conS, peak: +r.peak.toFixed(2) }))
         : null,
@@ -4196,17 +4557,52 @@ saveBtn.onclick = async () => {
   }
 };
 
-// ---------- Husk sidste valg (mindre friktion, session til session) ----------
+// ---------- Variationer + husk sidste valg ----------
+// Ét eksplicit valg er mere ærligt end at gætte high/low bar, greb eller ROM
+// fra et 2D-klip. Variation bruges som kontekst og til at undgå falske flags.
+const LIFT_VARIATIONS = {
+  'Squat': ['Konkurrence squat', 'Low-bar squat', 'High-bar squat',
+    'Pause squat', 'Tempo squat', 'Front squat', 'Safety-bar squat', 'Box squat'],
+  'Bænkpres': ['Konkurrence bænk (pause)', 'Touch-and-go bænk',
+    'Close-grip bænk', 'Wide-grip bænk', 'Spoto press', 'Incline bænk'],
+  'Dødløft': ['Konkurrence konventionel', 'Pause deadlift',
+    'Deficit deadlift', 'Block pull', 'Rumænsk dødløft'],
+  'Sumo dødløft': ['Konkurrence sumo', 'Pause sumo', 'Deficit sumo', 'Sumo block pull']
+};
+function fillVariationSelect(select, lift, preferred = '') {
+  const values = LIFT_VARIATIONS[lift] || [];
+  select.innerHTML = '';
+  if (!values.length) {
+    const o = document.createElement('option'); o.value = ''; o.textContent = 'Variation?';
+    select.appendChild(o); select.disabled = true; return;
+  }
+  values.forEach(value => {
+    const o = document.createElement('option'); o.value = value; o.textContent = value;
+    select.appendChild(o);
+  });
+  select.disabled = false;
+  if (preferred && values.includes(preferred)) select.value = preferred;
+}
+const variationSel = document.getElementById('variationSel');
 try {
   const A = localStorage.getItem('vc_athlete');
   const L = localStorage.getItem('vc_lift');
+  const V = localStorage.getItem('vc_variation');
   if (A) document.getElementById('athleteSel').value = A;
   if (L) document.getElementById('liftSel').value = L;
+  fillVariationSelect(variationSel, L || '', V || '');
 } catch {}
 document.getElementById('athleteSel').addEventListener('change', e => {
   try { localStorage.setItem('vc_athlete', e.target.value); } catch {} });
 document.getElementById('liftSel').addEventListener('change', e => {
-  try { localStorage.setItem('vc_lift', e.target.value); } catch {} });
+  fillVariationSelect(variationSel, e.target.value);
+  try {
+    localStorage.setItem('vc_lift', e.target.value);
+    localStorage.setItem('vc_variation', variationSel.value);
+  } catch {}
+});
+variationSel.addEventListener('change', e => {
+  try { localStorage.setItem('vc_variation', e.target.value); } catch {} });
 
 // ---------- Optagelse (canvas + mikrofon) ----------
 const recordBtn = document.getElementById('recordBtn');
@@ -4752,6 +5148,7 @@ if (COACHWEB) {
   // saa de samme vaerdier bagefter kan vises og rettes i feedback-arket.
   const sourceAthlete = document.getElementById('athleteSel');
   const sourceLift = document.getElementById('liftSel');
+  const sourceVariation = document.getElementById('variationSel');
   const sourceLoad = document.getElementById('loadInput');
   const sourceNote = document.getElementById('biasInput');
   const setup = document.createElement('div');
@@ -4766,6 +5163,8 @@ if (COACHWEB) {
   setupAthlete.id = 'coachSetupAthlete';
   const setupLift = sourceLift.cloneNode(true);
   setupLift.id = 'coachSetupLift';
+  const setupVariation = sourceVariation.cloneNode(true);
+  setupVariation.id = 'coachSetupVariation';
   const setupLoad = document.createElement('input');
   setupLoad.id = 'coachSetupLoad'; setupLoad.type = 'text';
   setupLoad.placeholder = 'fx 180 kg / RPE 8'; setupLoad.value = sourceLoad.value;
@@ -4781,6 +5180,7 @@ if (COACHWEB) {
   setupFields.append(
     setupField('Atlet', setupAthlete),
     setupField('Øvelse', setupLift),
+    setupField('Variation', setupVariation),
     setupField('Kg / RPE', setupLoad),
     setupField('Notat', setupNote, true)
   );
@@ -4798,16 +5198,27 @@ if (COACHWEB) {
   dropHint.appendChild(setup);
   dropHint.onclick = e => { if (e.target === dropHint) document.getElementById('fileInput').click(); };
   const syncSetup = () => {
+    const liftChanged = sourceLift.value !== setupLift.value;
     sourceAthlete.value = setupAthlete.value;
     sourceLift.value = setupLift.value;
+    if (liftChanged) {
+      fillVariationSelect(setupVariation, setupLift.value);
+      fillVariationSelect(sourceVariation, setupLift.value, setupVariation.value);
+    }
+    sourceVariation.value = setupVariation.value;
     sourceLoad.value = setupLoad.value.trim();
     sourceNote.value = setupNote.value.trim();
+    try {
+      localStorage.setItem('vc_athlete', sourceAthlete.value);
+      localStorage.setItem('vc_lift', sourceLift.value);
+      localStorage.setItem('vc_variation', sourceVariation.value);
+    } catch {}
     setupStart.disabled = !setupAthlete.value || !setupLift.value;
     setupStatus.textContent = setupStart.disabled
       ? 'Vælg atlet og øvelse for at fortsætte.'
       : 'Klar · kg/RPE og notat er valgfrit.';
   };
-  [setupAthlete, setupLift, setupLoad, setupNote].forEach(el =>
+  [setupAthlete, setupLift, setupVariation, setupLoad, setupNote].forEach(el =>
     el.addEventListener('input', syncSetup));
   setupStart.onclick = e => {
     e.stopPropagation(); syncSetup();
@@ -4838,7 +5249,7 @@ if (COACHWEB) {
    'gridBtn', 'guideBtn',
    'ghostBtn', 'cmpBtn', 'repCmpBtn',
    'lineBtn', 'angleBtn', 'eraseBtn', 'color', 'brushSel', 'clearBtn',
-   'recordBtn', 'athleteSel', 'liftSel', 'loadInput', 'biasInput',
+   'recordBtn', 'athleteSel', 'liftSel', 'variationSel', 'loadInput', 'biasInput',
    'saveBtn', 'cardBtn', 'exportBtn', 'recTime', 'downloadLink', 'scrubToolBtn'].forEach(id => {
     const el = document.getElementById(id);
     if (el) moreBar.appendChild(el.closest('label') || el);
@@ -4903,7 +5314,7 @@ if (COACHWEB) {
   const shMeta = document.createElement('div');
   shMeta.id = 'sheetMeta';
   sheet.appendChild(shMeta);
-  ['athleteSel', 'liftSel', 'loadInput', 'biasInput'].forEach(id =>
+  ['athleteSel', 'liftSel', 'variationSel', 'loadInput', 'biasInput'].forEach(id =>
     shMeta.appendChild(document.getElementById(id)));
   const shText = document.createElement('div');
   shText.id = 'sheetText';
@@ -4929,7 +5340,7 @@ if (COACHWEB) {
     updateCoachFlow(3);
   };
   // fund genberegnes live, når coachen retter felterne
-  ['athleteSel', 'liftSel', 'loadInput', 'biasInput'].forEach(id =>
+  ['athleteSel', 'liftSel', 'variationSel', 'loadInput', 'biasInput'].forEach(id =>
     document.getElementById(id).addEventListener('change', () => {
       if (sheet.classList.contains('open')) renderCoachSheet();
     }));
@@ -4941,7 +5352,7 @@ if (ATHLETE) {
   // Athlete er et selvstændigt produktlag: video, stangbane, tegn og gem.
   // Coach-fund og tekniske målinger må ikke skabe støj i atletens oplevelse.
   ['aiBtn', 'saveBtn', 'cardBtn', 'recordBtn', 'athleteSel', 'liftSel',
-    'loadInput', 'biasInput', 'speed', 'backBtn', 'fwdBtn',
+    'variationSel', 'loadInput', 'biasInput', 'speed', 'backBtn', 'fwdBtn',
     'gridBtn', 'openBtn', 'scrubToolBtn', 'lineBtn', 'angleBtn', 'eraseBtn',
     'graphBtn', 'fpBtn', 'mskelBtn', 'ghostBtn', 'loopBtn',
     'clearBtn', 'color', 'brushSel', 'barBtn', 'calibBtn', 'trimInBtn', 'trimOutBtn',
@@ -5070,7 +5481,7 @@ if (DESKTOP) {
    'backBtn', 'fwdBtn', 'gridBtn', 'loopBtn',
    'scrubToolBtn', 'lineBtn', 'angleBtn', 'eraseBtn',
    'color', 'brushSel', 'clearBtn',
-   'athleteSel', 'liftSel', 'loadInput', 'biasInput',
+   'athleteSel', 'liftSel', 'variationSel', 'loadInput', 'biasInput',
    'saveBtn', 'cardBtn', 'recordBtn', 'exportBtn',
    'recTime', 'downloadLink'].forEach(id => {
     const el = document.getElementById(id);
