@@ -2270,22 +2270,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         </div>
       </aside>
 
-      <main style={{ ...s.main, ...(isMobile ? { marginLeft: 0, overflowX: 'hidden' } : {}) }}>
+      <main style={{ ...s.main, ...(isMobile ? { marginLeft: 0, overflowX: 'hidden', paddingBottom: '76px' } : {}) }}>
         <div style={s.topbar}>
-          {isMobile && (
-            <button
-              onClick={() => setSidebarOpen(o => !o)}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#7a7770', padding: '0.25rem', display: 'flex', alignItems: 'center', marginRight: '0.75rem' }}
-            >
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                <line x1="3" y1="5" x2="17" y2="5" />
-                <line x1="3" y1="10" x2="17" y2="10" />
-                <line x1="3" y1="15" x2="17" y2="15" />
-              </svg>
-            </button>
-          )}
           <div style={{ ...s.topbarTitle, flex: 1 }}>{view === 'library' ? 'Øvelsesbibliotek' : view === 'calendar' ? 'Kalender' : view === 'list' ? 'Atleter' : a?.name}</div>
-          {onPreviewAthlete && (
+          {onPreviewAthlete && !isMobile && (
             <button
               onClick={goToMyProfile}
               title="Min træning — hop til din egen profil (tast M)"
@@ -2293,6 +2281,61 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             >⚡ Min træning</button>
           )}
         </div>
+
+        {/* Mobil bundnavigation — erstatter hamburger-menuen som primær navigation.
+            Samme mønster som atlet-appen: 4 faste punkter, guld = aktiv.
+            "Menu" åbner sidebaren (atleter, eksport, VideoCoach, log ud). */}
+        {isMobile && (
+          <nav style={{
+            position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 150,
+            display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
+            background: '#171713', borderTop: '1px solid rgba(237,234,226,0.09)',
+            paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+          }}>
+            {[
+              {
+                key: 'list', label: 'Forside', active: view === 'list' && !selectedAthlete,
+                onClick: () => { setView('list'); setSelectedAthlete(null); setSidebarOpen(false) },
+                icon: <><path d="M3 10.5 12 3l9 7.5" /><path d="M5 9.5V21h14V9.5" /></>,
+              },
+              {
+                key: 'calendar', label: 'Kalender', active: view === 'calendar',
+                onClick: () => { setView('calendar'); setSelectedAthlete(null); setSidebarOpen(false) },
+                icon: <><rect x="3" y="5" width="18" height="16" rx="2" /><line x1="3" y1="10" x2="21" y2="10" /><line x1="8" y1="3" x2="8" y2="7" /><line x1="16" y1="3" x2="16" y2="7" /></>,
+              },
+              {
+                key: 'mine', label: 'Min træning', active: false,
+                onClick: () => { setSidebarOpen(false); goToMyProfile() },
+                icon: <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />,
+              },
+              {
+                key: 'menu', label: 'Menu', active: sidebarOpen,
+                onClick: () => setSidebarOpen(o => !o),
+                icon: <><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" /></>,
+              },
+            ].map(item => {
+              const totalUnread = item.key === 'menu' ? Object.values(unreadCounts).reduce((a2, b) => a2 + b, 0) : 0
+              return (
+                <button
+                  key={item.key}
+                  onClick={item.onClick}
+                  style={{
+                    position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center',
+                    justifyContent: 'center', gap: '0.25rem', padding: '0.55rem 0 0.5rem',
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    color: item.active ? '#c8923a' : '#7a7770',
+                  }}
+                >
+                  <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">{item.icon}</svg>
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>{item.label}</span>
+                  {totalUnread > 0 && (
+                    <span style={{ position: 'absolute', top: '0.3rem', right: 'calc(50% - 1.15rem)', background: '#c8923a', color: '#141410', borderRadius: '999px', fontSize: '0.44rem', minWidth: '0.85rem', height: '0.85rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, padding: '0 0.15rem', fontFamily: "'IBM Plex Mono', monospace" }}>{totalUnread}</span>
+                  )}
+                </button>
+              )
+            })}
+          </nav>
+        )}
 
         {/* LIBRARY VIEW */}
         {view === 'library' && (() => {
@@ -2826,8 +2869,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '3rem 0' }}>Ingen atleter endnu — tilføj din første</div>
             ) : (
               <>
-                {/* Hurtig-handlinger — store tap-targets, mobil-først */}
-                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)', gap: '0.6rem', marginBottom: '1.5rem' }}>
+                {/* Hurtig-handlinger — kun desktop; på mobil dækker bundnavigationen behovet */}
+                {!isMobile && <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.6rem', marginBottom: '1.5rem' }}>
                   {[
                     { icon: '⚡', label: 'Min træning', onClick: goToMyProfile },
                     { icon: '📅', label: 'Kalender', onClick: () => { setSelectedAthlete(null); setView('calendar') } },
@@ -2840,7 +2883,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                       <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#b8b4a8' }}>{qa.label}</span>
                     </button>
                   ))}
-                </div>
+                </div>}
 
                 {/* Prioritet — rangeret: mest akut øverst, weekend-planlægning nederst */}
                 {(() => {
@@ -3074,19 +3117,20 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               ← Tilbage til atleter
             </button>
 
-            <div style={{ ...s.card, display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'auto 1fr auto', gap: isMobile ? '0.75rem' : '1.5rem', alignItems: 'center', marginBottom: '1.5rem' }}>
-              <div style={{ ...s.avatar, width: '56px', height: '56px', fontSize: '1.3rem' }}>{initials(a.name)}</div>
-              <div>
-                <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.5rem', fontWeight: 400, color: '#edeae2' }}>{a.name}</div>
-                <div style={{ fontSize: '0.8rem', color: '#7a7770', marginTop: '0.2rem' }}>{a.email}{a.age ? ' · ' + a.age + ' år' : ''}</div>
-                <div
+            <div style={{ ...s.card, display: isMobile ? 'flex' : 'grid', gridTemplateColumns: isMobile ? undefined : 'auto 1fr auto', alignItems: 'center', gap: isMobile ? '0.85rem' : '1.5rem', marginBottom: '1.5rem', ...(isMobile ? { flexWrap: 'wrap', padding: '0.85rem 1rem' } : {}) }}>
+              <div style={{ ...s.avatar, width: isMobile ? '44px' : '56px', height: isMobile ? '44px' : '56px', fontSize: isMobile ? '1rem' : '1.3rem', flexShrink: 0 }}>{initials(a.name)}</div>
+              <div style={isMobile ? { flex: 1, minWidth: 0 } : undefined}>
+                <div style={{ fontFamily: "'Playfair Display', serif", fontSize: isMobile ? '1.2rem' : '1.5rem', fontWeight: 400, color: '#edeae2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: isMobile ? 'nowrap' : 'normal' }}>{a.name}</div>
+                {!isMobile && <div style={{ fontSize: '0.8rem', color: '#7a7770', marginTop: '0.2rem' }}>{a.email}{a.age ? ' · ' + a.age + ' år' : ''}</div>}
+                {/* Det lange atlet-ID er skjult på mobil — det bruges kun til scripts på desktop */}
+                {!isMobile && <div
                   onClick={() => { navigator.clipboard?.writeText(a.id); showFlash('Atlet-ID kopieret') }}
                   title="Klik for at kopiere — bruges som athleteId i cowork-scripts"
                   style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.04em', color: '#4a4844', marginTop: '0.3rem', cursor: 'pointer', wordBreak: 'break-all' }}
                 >
                   <span>ID: {a.id}</span>
                   <span style={{ color: '#7a7770' }}>⧉</span>
-                </div>
+                </div>}
                 {(() => {
                   const ls = formatLastSeen(profilesLastSeen[a.user_id])
                   if (!ls) return null
