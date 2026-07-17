@@ -1,7 +1,11 @@
-# Plan: kost-agent (punkt 3) og push-notifikationer (punkt 4)
+# Plan: kost-agent (punkt 3)
 
-Skrevet 2026-07-16 af Claude som del af forbedringer-1. De to punkter er bevidst
-IKKE halv-implementeret — de kræver et par beslutninger fra Marc først.
+Skrevet 2026-07-16 af Claude som del af forbedringer-1.
+
+BESLUTNING 2026-07-16: Push-notifikationer (tidligere punkt 4) er FRAVALGT af
+Marc — atleterne åbner appen af sig selv når det er relevant, de skal ikke
+"remindes". Den tekniske køreplan er bevaret nederst hvis behovet opstår
+senere (fx ulæste coach-beskeder), men intet skal bygges nu.
 
 ## Kost-agent (create_meal_plan er klar og venter)
 
@@ -21,9 +25,9 @@ forudsigeligt, men generisk) eller vil Marc selv skrive/redigere dem med appen
 som "hurtig-indtaster"? Anbefaling: regelbaseret udkast + Marc-review, samme
 princip som ugeplan-udkastene.
 
-## Web push-notifikationer
+## Web push-notifikationer (FRAVALGT — kun arkiveret køreplan)
 
-Mål: "ny besked fra coach", "din session i dag kl. X" og "husk readiness".
+Mål var: "ny besked fra coach", "din session i dag kl. X" og "husk readiness".
 
 1. VAPID-nøglepar genereres én gang; public key i frontend, private key som
    Supabase secret (kræver dashboard/CLI — kan ikke sættes via MCP).
