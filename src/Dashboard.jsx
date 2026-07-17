@@ -329,6 +329,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [openSessionId, setOpenSessionId] = useState(null)
   const [addingWeek, setAddingWeek] = useState(false)
   const [addingSession, setAddingSession] = useState(null)
+  // Auto-udkast til næste uge via edge functionen draft-next-week:
+  // null = skjult, {loading} = henter, {data} = preview klar, {error} = fejl.
+  const [weekDraft, setWeekDraft] = useState(null)
+  const [sendingDraft, setSendingDraft] = useState(false)
   const [addingExercise, setAddingExercise] = useState(null)
   const [editingWeek, setEditingWeek] = useState(null)
   const [editingSession, setEditingSession] = useState(null)
@@ -4506,6 +4510,26 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                         Kopiér seneste uge →
                       </button>
                     )}
+                    {weeks.length > 0 && (
+                      <button
+                        style={{ ...s.btnGhost, color: weekDraft ? '#c8923a' : '#7a7770', borderColor: weekDraft ? 'rgba(200,146,58,0.4)' : undefined }}
+                        disabled={weekDraft?.loading}
+                        onClick={async () => {
+                          if (weekDraft) { setWeekDraft(null); return }
+                          setWeekDraft({ loading: true })
+                          const { data, error } = await supabase.functions.invoke('draft-next-week', {
+                            body: { mode: 'preview', athlete_id: selectedAthlete.id },
+                          })
+                          if (error || data?.error) {
+                            let msg = data?.error || error?.message || 'Ukendt fejl'
+                            try { const body = await error?.context?.json(); if (body?.error) msg = body.error } catch { /* behold msg */ }
+                            setWeekDraft({ error: msg })
+                          } else setWeekDraft({ data })
+                        }}
+                      >
+                        {weekDraft?.loading ? 'Genererer…' : '⚡ Generér næste uge'}
+                      </button>
+                    )}
                     <button style={s.btnPrimary} onClick={() => {
                       const weeksWithDate = weeks.filter(w => w.start_date).sort((a, b) => b.week_number - a.week_number)
                       const suggestDate = weeksWithDate.length
@@ -4518,6 +4542,65 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     </button>
                   </div>
                 </div>
+
+                {/* Auto-udkast panel (draft-next-week edge function) */}
+                {weekDraft && !weekDraft.loading && (
+                  <div style={{ background: '#1c1c18', border: '1px solid rgba(200,146,58,0.3)', padding: '1.25rem', marginBottom: '1.5rem' }}>
+                    {weekDraft.error ? (
+                      <>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#e05555', lineHeight: 1.6, marginBottom: '0.75rem' }}>{weekDraft.error}</div>
+                        <button style={s.btnGhost} onClick={() => setWeekDraft(null)}>Luk</button>
+                      </>
+                    ) : (
+                      <>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.75rem' }}>
+                          Udkast: uge {weekDraft.data.draft.p_payload.week} · start {weekDraft.data.draft.start_date}
+                        </div>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770', marginBottom: '0.85rem' }}>
+                          Kopieret fra uge {weekDraft.data.source_week.week_number} ({weekDraft.data.source_week.block_name || 'uden blok'})
+                          {' · '}{weekDraft.data.draft.p_payload.sessions.length} sessioner
+                        </div>
+                        {weekDraft.data.changes.length > 0 ? (
+                          <div style={{ marginBottom: '0.85rem' }}>
+                            <div style={{ ...s.fieldLabel, marginBottom: '0.4rem' }}>Automatiske justeringer</div>
+                            {weekDraft.data.changes.map((c, i) => (
+                              <div key={i} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#edeae2', lineHeight: 1.7 }}>• {c}</div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#7a7770', marginBottom: '0.85rem' }}>Ingen automatiske justeringer — ren kopi af kildeugen.</div>
+                        )}
+                        {weekDraft.data.warnings.length > 0 && (
+                          <div style={{ marginBottom: '0.85rem' }}>
+                            {weekDraft.data.warnings.map((w, i) => (
+                              <div key={i} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#c8923a', lineHeight: 1.7 }}>⚠ {w}</div>
+                            ))}
+                          </div>
+                        )}
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                          <button style={s.btnPrimary} disabled={sendingDraft} onClick={async () => {
+                            setSendingDraft(true)
+                            const { data, error } = await supabase.functions.invoke('draft-next-week', {
+                              body: { mode: 'commit', athlete_id: selectedAthlete.id, payload: weekDraft.data.draft },
+                            })
+                            setSendingDraft(false)
+                            if (error || data?.error) {
+                              let msg = data?.error || error?.message || 'Ukendt fejl'
+                              try { const body = await error?.context?.json(); if (body?.error) msg = body.error } catch { /* behold msg */ }
+                              setWeekDraft({ error: msg })
+                              return
+                            }
+                            setWeekDraft(null)
+                            fetchWeeks(selectedAthlete.id)
+                          }}>
+                            {sendingDraft ? 'Sender…' : 'Send til atleten'}
+                          </button>
+                          <button style={s.btnGhost} disabled={sendingDraft} onClick={() => setWeekDraft(null)}>Annuller</button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
 
                 {/* Periodiseringsplan panel */}
                 {showBlockPlanner && (() => {
