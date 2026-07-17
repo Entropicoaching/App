@@ -333,6 +333,12 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   // null = skjult, {loading} = henter, {data} = preview klar, {error} = fejl.
   const [weekDraft, setWeekDraft] = useState(null)
   const [sendingDraft, setSendingDraft] = useState(false)
+  // Mobil "I dag"-forside + samlet indbakke: dagens aktivitet på tværs af atleter
+  // og seneste besked pr. atlet. Hentes én gang ved load og ved view-skift.
+  const [todayData, setTodayData] = useState({ logs: [], readiness: [], prs: [] })
+  const [inboxThreads, setInboxThreads] = useState({})
+  const [menuSheetOpen, setMenuSheetOpen] = useState(false)
+  const [sheetPreviewPick, setSheetPreviewPick] = useState(false)
   const [addingExercise, setAddingExercise] = useState(null)
   const [editingWeek, setEditingWeek] = useState(null)
   const [editingSession, setEditingSession] = useState(null)
@@ -470,6 +476,11 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       fetchAthletePRs(selectedAthlete.id)
     }
   }, [activeTab, selectedAthlete?.id])
+
+  // Mobil-forside og indbakke: genindlæs dagens feed når man lander på dem.
+  useEffect(() => {
+    if (view === 'list' || view === 'inbox') fetchTodayAndInbox()
+  }, [view])
 
   async function fetchLastBackup() {
     const { data } = await supabase.from('profiles').select('last_backup_at').eq('id', session.user.id).maybeSingle()
@@ -701,6 +712,28 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       for (const p of data) map[p.id] = p.last_seen
       setProfilesLastSeen(map)
     }
+  }
+
+  // Dagens aktivitet (logs/readiness/PR) på tværs af atleter + seneste besked
+  // pr. atlet — driver mobil-forsidens feed, atlet-chips og indbakken.
+  async function fetchTodayAndInbox() {
+    const todayStr = new Date().toISOString().slice(0, 10)
+    const [logsQ, readyQ, prsQ, msgQ] = await Promise.all([
+      supabase.from('exercise_logs')
+        .select('athlete_id, rpe_actual, skipped, logged_at, exercises(name, sessions(title))')
+        .gte('logged_at', todayStr).limit(2000),
+      supabase.from('readiness_logs')
+        .select('athlete_id, readiness_score, sleep_hours').eq('logged_date', todayStr),
+      supabase.from('personal_records')
+        .select('athlete_id, exercise_name, weight, reps, logged_at').gte('logged_at', todayStr),
+      supabase.from('messages')
+        .select('athlete_id, content, created_at, sender_role, read_at')
+        .order('created_at', { ascending: false }).limit(300),
+    ])
+    setTodayData({ logs: logsQ.data || [], readiness: readyQ.data || [], prs: prsQ.data || [] })
+    const threads = {}
+    for (const m of msgQ.data || []) if (!threads[m.athlete_id]) threads[m.athlete_id] = m
+    setInboxThreads(threads)
   }
 
   async function fetchWeeks(athleteId) {
@@ -2272,7 +2305,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
       <main style={{ ...s.main, ...(isMobile ? { marginLeft: 0, overflowX: 'hidden', paddingBottom: '76px' } : {}) }}>
         <div style={s.topbar}>
-          <div style={{ ...s.topbarTitle, flex: 1 }}>{view === 'library' ? 'Øvelsesbibliotek' : view === 'calendar' ? 'Kalender' : view === 'list' ? 'Atleter' : a?.name}</div>
+          <div style={{ ...s.topbarTitle, flex: 1 }}>{view === 'library' ? 'Øvelsesbibliotek' : view === 'calendar' ? 'Kalender' : view === 'inbox' ? 'Beskeder' : view === 'list' ? (isMobile ? 'Entropi Coach' : 'Atleter') : a?.name}</div>
           {onPreviewAthlete && !isMobile && (
             <button
               onClick={goToMyProfile}
@@ -2295,26 +2328,26 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             {[
               {
                 key: 'list', label: 'Forside', active: view === 'list' && !selectedAthlete,
-                onClick: () => { setView('list'); setSelectedAthlete(null); setSidebarOpen(false) },
+                onClick: () => { setView('list'); setSelectedAthlete(null); setSidebarOpen(false); setMenuSheetOpen(false) },
                 icon: <><path d="M3 10.5 12 3l9 7.5" /><path d="M5 9.5V21h14V9.5" /></>,
               },
               {
-                key: 'calendar', label: 'Kalender', active: view === 'calendar',
-                onClick: () => { setView('calendar'); setSelectedAthlete(null); setSidebarOpen(false) },
-                icon: <><rect x="3" y="5" width="18" height="16" rx="2" /><line x1="3" y1="10" x2="21" y2="10" /><line x1="8" y1="3" x2="8" y2="7" /><line x1="16" y1="3" x2="16" y2="7" /></>,
+                key: 'inbox', label: 'Beskeder', active: view === 'inbox',
+                onClick: () => { setView('inbox'); setSelectedAthlete(null); setSidebarOpen(false); setMenuSheetOpen(false) },
+                icon: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />,
               },
               {
                 key: 'mine', label: 'Min træning', active: false,
-                onClick: () => { setSidebarOpen(false); goToMyProfile() },
+                onClick: () => { setSidebarOpen(false); setMenuSheetOpen(false); goToMyProfile() },
                 icon: <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />,
               },
               {
-                key: 'menu', label: 'Menu', active: sidebarOpen,
-                onClick: () => setSidebarOpen(o => !o),
+                key: 'menu', label: 'Menu', active: menuSheetOpen,
+                onClick: () => { setSheetPreviewPick(false); setMenuSheetOpen(o => !o) },
                 icon: <><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" /></>,
               },
             ].map(item => {
-              const totalUnread = item.key === 'menu' ? Object.values(unreadCounts).reduce((a2, b) => a2 + b, 0) : 0
+              const totalUnread = item.key === 'inbox' ? Object.values(unreadCounts).reduce((a2, b) => a2 + b, 0) : 0
               return (
                 <button
                   key={item.key}
@@ -2335,6 +2368,103 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               )
             })}
           </nav>
+        )}
+
+        {/* Mobil menu-ark: sekundære handlinger i et bund-ark i stedet for
+            desktop-sidebaren presset ind fra siden. */}
+        {isMobile && menuSheetOpen && (
+          <>
+            <div onClick={() => setMenuSheetOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 205 }} />
+            <div style={{ position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 210, background: '#1c1c18', borderTop: '1px solid rgba(237,234,226,0.12)', borderRadius: '14px 14px 0 0', padding: '0.85rem 1rem calc(1.1rem + env(safe-area-inset-bottom, 0px))' }}>
+              <div style={{ width: 36, height: 4, background: 'rgba(237,234,226,0.2)', borderRadius: 2, margin: '0 auto 0.8rem' }} />
+              {sheetPreviewPick ? (
+                <>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.6rem' }}>Se som atlet</div>
+                  <div style={{ maxHeight: '40vh', overflowY: 'auto' }}>
+                    {athletes.map(a2 => (
+                      <div key={a2.id}
+                        onClick={() => { setMenuSheetOpen(false); setSheetPreviewPick(false); onPreviewAthlete && onPreviewAthlete(a2.id) }}
+                        style={{ padding: '0.65rem 0.25rem', fontSize: '0.9rem', color: '#b8b4a8', cursor: 'pointer', borderBottom: '1px solid rgba(237,234,226,0.05)' }}
+                      >{a2.name}</div>
+                    ))}
+                  </div>
+                  <button onClick={() => setSheetPreviewPick(false)} style={{ ...s.btnGhost, marginTop: '0.75rem', width: '100%' }}>← Tilbage</button>
+                </>
+              ) : (
+                <>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                    {[
+                      { label: 'Kalender', onClick: () => { setMenuSheetOpen(false); setSelectedAthlete(null); setView('calendar') }, icon: <><rect x="3" y="5" width="18" height="16" rx="2" /><line x1="3" y1="10" x2="21" y2="10" /><line x1="8" y1="3" x2="8" y2="7" /><line x1="16" y1="3" x2="16" y2="7" /></> },
+                      { label: 'Bibliotek', onClick: () => { setMenuSheetOpen(false); setSelectedAthlete(null); setView('library') }, icon: <><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></> },
+                      { label: 'VideoCoach', onClick: () => { setMenuSheetOpen(false); window.open('videocoach.html?coach=1&v=20260716-coachflow', '_blank') }, icon: <><rect x="2" y="6" width="13" height="12" rx="2" /><path d="M15 10.5 22 7v10l-7-3.5" /></> },
+                      { label: 'Se som atlet', onClick: () => setSheetPreviewPick(true), icon: <><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></> },
+                    ].map(m => (
+                      <button key={m.label} onClick={m.onClick}
+                        style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.35rem', padding: '0.8rem 0.5rem', background: '#16150f', border: '1px solid rgba(237,234,226,0.1)', borderRadius: 8, cursor: 'pointer', color: '#b8b4a8' }}>
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">{m.icon}</svg>
+                        <span style={{ fontSize: '0.72rem' }}>{m.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                  <div style={{ borderTop: '1px solid rgba(237,234,226,0.07)', paddingTop: '0.6rem', display: 'flex', flexDirection: 'column' }}>
+                    <button onClick={() => { setMenuSheetOpen(false); setShowAddModal(true) }} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#b8b4a8', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>+ Tilføj atlet</button>
+                    <button onClick={exportTraeningsdata} disabled={exportingTraening} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>{exportingTraening ? '...' : '↓ Træningsdata'}</button>
+                    <button onClick={exportBackup} disabled={exportingBackup} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>{exportingBackup ? '...' : '↓ Sikkerhedskopi'}</button>
+                    <button onClick={() => supabase.auth.signOut()} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>Log ud</button>
+                  </div>
+                </>
+              )}
+            </div>
+          </>
+        )}
+
+        {/* INDBAKKE — samlet beskedoverblik på tværs af atleter */}
+        {view === 'inbox' && (
+          <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
+            <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', margin: '0 0 1.25rem' }}>
+              Beskeder<span style={{ color: '#c8923a' }}>.</span>
+            </h1>
+            {(() => {
+              const visible = athletes.filter(a2 => !hiddenAthleteIds.has(a2.id))
+              const rows = visible
+                .map(a2 => ({ a: a2, last: inboxThreads[a2.id] || null, unread: unreadCounts[a2.id] || 0 }))
+                .sort((x, y) => {
+                  if ((x.unread > 0) !== (y.unread > 0)) return x.unread > 0 ? -1 : 1
+                  return (y.last?.created_at || '').localeCompare(x.last?.created_at || '')
+                })
+              const fmtT = ts => {
+                if (!ts) return ''
+                const d = new Date(ts); const now = new Date()
+                const sameDay = d.toDateString() === now.toDateString()
+                return sameDay ? d.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' })
+                  : d.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })
+              }
+              return (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  {rows.map(r => (
+                    <div key={r.a.id} onClick={() => openProfile(r.a, 'beskeder')}
+                      style={{ ...s.card, marginBottom: 0, padding: '0.75rem 0.9rem', cursor: 'pointer', ...(r.unread > 0 ? { borderColor: 'rgba(200,146,58,0.35)' } : {}) }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <div style={{ ...s.avatar, width: 40, height: 40, fontSize: '0.85rem', flexShrink: 0 }}>{initials(r.a.name)}</div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.5rem' }}>
+                            <span style={{ fontSize: '0.9rem', color: '#edeae2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.a.name}</span>
+                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', flexShrink: 0 }}>{fmtT(r.last?.created_at)}</span>
+                          </div>
+                          <div style={{ fontSize: '0.75rem', color: r.unread > 0 ? '#b8b4a8' : '#7a7770', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: '0.15rem' }}>
+                            {r.last ? `${r.last.sender_role === 'coach' ? 'Dig: ' : ''}${r.last.content}` : <span style={{ fontStyle: 'italic', color: '#4a4844' }}>Ingen beskeder endnu</span>}
+                          </div>
+                        </div>
+                        {r.unread > 0 && (
+                          <span style={{ background: '#c8923a', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', fontWeight: 700, borderRadius: '999px', padding: '0.15rem 0.4rem', flexShrink: 0 }}>{r.unread}</span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )
+            })()}
+          </div>
         )}
 
         {/* LIBRARY VIEW */}
@@ -2847,16 +2977,18 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
         {view === 'list' && (
           <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
-            <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '1.75rem', flexWrap: 'wrap', gap: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: isMobile ? '1.1rem' : '1.75rem', flexWrap: 'wrap', gap: '1rem' }}>
               <div>
                 <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', margin: 0 }}>
-                  Overblik
+                  {isMobile ? <>I dag<span style={{ color: '#c8923a' }}>.</span></> : 'Overblik'}
                 </h1>
                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844', marginTop: '0.25rem' }}>
-                  {athletes.filter(a => !hiddenAthleteIds.has(a.id)).length} aktive atleter
+                  {isMobile
+                    ? new Date().toLocaleDateString('da-DK', { weekday: 'long', day: 'numeric', month: 'long' })
+                    : `${athletes.filter(a => !hiddenAthleteIds.has(a.id)).length} aktive atleter`}
                 </div>
               </div>
-              <button style={s.btnPrimary} onClick={() => setShowAddModal(true)}>+ Tilføj atlet</button>
+              {!isMobile && <button style={s.btnPrimary} onClick={() => setShowAddModal(true)}>+ Tilføj atlet</button>}
             </div>
             {loading ? (
               <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Indlæser...</div>
@@ -2869,6 +3001,101 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '3rem 0' }}>Ingen atleter endnu — tilføj din første</div>
             ) : (
               <>
+                {/* MOBIL: atlet-chips + dagens hændelses-feed (desktop har listerne nedenfor) */}
+                {isMobile && (() => {
+                  const visible = athletes.filter(a2 => !hiddenAthleteIds.has(a2.id))
+                  const byId = Object.fromEntries(visible.map(a2 => [a2.id, a2]))
+                  const trained = new Set(todayData.logs.map(l => l.athlete_id))
+                  const first = n => (n || '').split(' ')[0]
+                  const chips = [...visible].sort((x, y) => {
+                    const ux = (unreadCounts[x.id] || 0) > 0 ? 0 : 1, uy = (unreadCounts[y.id] || 0) > 0 ? 0 : 1
+                    if (ux !== uy) return ux - uy
+                    const tx = trained.has(x.id) ? 0 : 1, ty = trained.has(y.id) ? 0 : 1
+                    if (tx !== ty) return tx - ty
+                    return x.name.localeCompare(y.name)
+                  })
+                  const items = []
+                  for (const b of computeBoard(visible)) {
+                    if (b.isSnoozed || b.status === 'ferie') continue
+                    if (b.status === 'none') items.push({ rank: 0, aid: b.a.id, icon: 'alert', color: '#e05555', text: `${first(b.a.name)}: intet program`, sub: 'planlæg nu', tab: 'program' })
+                    else if (b.status === 'empty') items.push({ rank: 0, aid: b.a.id, icon: 'alert', color: '#e05555', text: `${first(b.a.name)}: ugen mangler øvelser`, sub: 'planlæg nu', tab: 'program' })
+                    else if (b.status === 'out') items.push({ rank: 0, aid: b.a.id, icon: 'alert', color: '#e05555', text: `${first(b.a.name)}: løbet tør for uger`, sub: 'planlæg nu', tab: 'program' })
+                    else if (b.status === 'lastweek') items.push({ rank: 5, aid: b.a.id, icon: 'cal', color: '#c8923a', text: `${first(b.a.name)}: sidste uge i blokken`, sub: 'planlæg i weekenden', tab: 'program' })
+                  }
+                  for (const [aid, cnt] of Object.entries(unreadCounts)) {
+                    if (cnt > 0 && byId[aid]) {
+                      const t = inboxThreads[aid]
+                      const prev = t?.sender_role === 'athlete' ? (t.content || '') : ''
+                      items.push({ rank: 1, aid, icon: 'msg', color: '#c8923a', text: `${cnt} ny${cnt > 1 ? 'e' : ''} besked${cnt > 1 ? 'er' : ''} fra ${first(byId[aid].name)}`, sub: prev ? `"${prev.slice(0, 46)}${prev.length > 46 ? '…' : ''}"` : null, tab: 'beskeder' })
+                    }
+                  }
+                  for (const r of todayData.readiness) {
+                    if (byId[r.athlete_id] && r.readiness_score != null && r.readiness_score < 50)
+                      items.push({ rank: 2, aid: r.athlete_id, icon: 'alert', color: '#e05555', text: `${first(byId[r.athlete_id].name)}: readiness ${r.readiness_score} — lav`, sub: r.sleep_hours != null ? `søvn ${r.sleep_hours}t` : null, tab: 'oversigt' })
+                  }
+                  for (const p of todayData.prs) {
+                    if (byId[p.athlete_id]) items.push({ rank: 3, aid: p.athlete_id, icon: 'pr', color: '#c8923a', text: `${first(byId[p.athlete_id].name)} satte PR: ${p.exercise_name} ${p.weight} kg${p.reps ? ` × ${p.reps}` : ''}`, sub: null, tab: 'log' })
+                  }
+                  const sessAgg = {}
+                  for (const l of todayData.logs) {
+                    const o = (sessAgg[l.athlete_id] ??= { titles: new Set(), sets: 0, rpes: [] })
+                    o.titles.add(l.exercises?.sessions?.title || 'session')
+                    if (!l.skipped) { o.sets++; if (l.rpe_actual != null) o.rpes.push(Number(l.rpe_actual)) }
+                  }
+                  for (const [aid, o] of Object.entries(sessAgg)) {
+                    if (!byId[aid]) continue
+                    const avg = o.rpes.length ? (o.rpes.reduce((x, y2) => x + y2, 0) / o.rpes.length).toFixed(1) : null
+                    items.push({ rank: 4, aid, icon: 'lift', color: '#6cba6c', text: `${first(byId[aid].name)} loggede ${[...o.titles].join(' + ')}`, sub: `${o.sets} sæt${avg ? ` · snit-RPE ${avg}` : ''}`, tab: 'log' })
+                  }
+                  items.sort((x, y) => x.rank - y.rank)
+                  const ICONS = {
+                    alert: <><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></>,
+                    msg: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />,
+                    pr: <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />,
+                    lift: <><line x1="6" y1="12" x2="18" y2="12" /><rect x="2.5" y="9" width="3.5" height="6" rx="1" /><rect x="18" y="9" width="3.5" height="6" rx="1" /></>,
+                    cal: <><rect x="3" y="5" width="18" height="16" rx="2" /><line x1="3" y1="10" x2="21" y2="10" /></>,
+                  }
+                  return (
+                    <>
+                      <div style={{ display: 'flex', gap: '0.7rem', overflowX: 'auto', paddingBottom: '0.5rem', marginBottom: '1rem', WebkitOverflowScrolling: 'touch' }}>
+                        {chips.map(a2 => {
+                          const hol = holidayInfo(a2)
+                          const ring = hol?.onHoliday ? '#5b9bb5' : (unreadCounts[a2.id] || 0) > 0 ? '#c8923a' : trained.has(a2.id) ? '#6cba6c' : 'rgba(237,234,226,0.16)'
+                          return (
+                            <div key={a2.id} onClick={() => openProfile(a2)} style={{ textAlign: 'center', cursor: 'pointer', flexShrink: 0, width: 56 }}>
+                              <div style={{ width: 48, height: 48, borderRadius: '50%', border: `2px solid ${ring}`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#edeae2', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', margin: '0 auto', background: '#1c1c18', position: 'relative' }}>
+                                {initials(a2.name)}
+                                {(unreadCounts[a2.id] || 0) > 0 && <span style={{ position: 'absolute', top: -3, right: -3, minWidth: 15, height: 15, borderRadius: '50%', background: '#c8923a', color: '#141410', fontSize: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontFamily: "'IBM Plex Mono', monospace" }}>{unreadCounts[a2.id]}</span>}
+                              </div>
+                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#7a7770', marginTop: '0.3rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{first(a2.name)}</div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                      {items.length === 0 ? (
+                        <div style={{ ...s.card, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#6cba6c', flexShrink: 0 }} />
+                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.06em', color: '#7a7770' }}>Roligt — ingen hændelser endnu i dag</span>
+                        </div>
+                      ) : (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                          {items.slice(0, 14).map((it, i) => (
+                            <div key={i} onClick={() => byId[it.aid] && openProfile(byId[it.aid], it.tab)}
+                              style={{ ...s.card, marginBottom: 0, padding: '0.7rem 0.85rem', cursor: 'pointer', ...(it.rank === 0 ? { borderColor: 'rgba(224,85,85,0.3)' } : {}) }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={it.color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>{ICONS[it.icon]}</svg>
+                                <span style={{ fontSize: '0.85rem', color: '#edeae2', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>{it.text}</span>
+                                <span style={{ color: '#4a4844', fontSize: '0.7rem', flexShrink: 0 }}>→</span>
+                              </div>
+                              {it.sub && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770', marginTop: '0.25rem', paddingLeft: '1.65rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{it.sub}</div>}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  )
+                })()}
+
                 {/* Hurtig-handlinger — kun desktop; på mobil dækker bundnavigationen behovet */}
                 {!isMobile && <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.6rem', marginBottom: '1.5rem' }}>
                   {[
@@ -2886,7 +3113,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 </div>}
 
                 {/* Prioritet — rangeret: mest akut øverst, weekend-planlægning nederst */}
-                {(() => {
+                {!isMobile && (() => {
                   const visible = athletes.filter(a => !hiddenAthleteIds.has(a.id))
                   const board = computeBoard(visible)
                   const boardByAid = Object.fromEntries(board.map(b => [b.a.id, b]))
@@ -2944,7 +3171,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 })()}
 
                 {/* Denne uge — tvær-atlet aktivitet */}
-                {(() => {
+                {!isMobile && (() => {
                   const visible = athletes.filter(a => !hiddenAthleteIds.has(a.id))
                   if (!visible.length) return null
                   const rows = visible
@@ -2992,7 +3219,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 })()}
 
                 {/* Ugeplan oversigt */}
-                {(() => {
+                {!isMobile && (() => {
                   const visibleAthletes = athletes.filter(a => !hiddenAthleteIds.has(a.id))
                   const hiddenAthletes = athletes.filter(a => hiddenAthleteIds.has(a.id))
                   const displayAthletes = showHiddenAthletes ? athletes : visibleAthletes
