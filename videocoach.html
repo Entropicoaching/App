@@ -219,7 +219,8 @@
     { font-size:12px; padding:8px 10px; }
   body.coachweb #scrubRow { bottom:80px; }
   body.coachweb #moreBar { position:fixed; left:12px; right:12px; bottom:130px;
-    z-index:11; display:flex; flex-wrap:wrap; gap:6px; justify-content:center;
+    z-index:11; display:grid; grid-template-columns:1fr; gap:8px; align-content:start;
+    max-height:62vh; overflow:auto;
     background:rgba(20,20,16,.85); backdrop-filter:blur(16px);
     border:1px solid var(--line); border-radius:18px; padding:12px;
     box-shadow:0 10px 34px rgba(0,0,0,.55); }
@@ -229,6 +230,18 @@
   body.coachweb #moreBar .coachFeatured, body.desktop #deskTray .coachFeatured {
     border-color:rgba(200,146,58,.38); background:rgba(200,146,58,.09);
     color:var(--accent); }
+  .coachToolGroup { min-width:0; padding:10px; border:1px solid rgba(237,234,226,.07);
+    border-radius:12px; background:rgba(237,234,226,.018); }
+  .coachToolGroup.primary { border-color:rgba(200,146,58,.2);
+    background:linear-gradient(145deg,rgba(200,146,58,.07),rgba(237,234,226,.018)); }
+  .coachToolHead { display:flex; align-items:baseline; justify-content:space-between;
+    gap:10px; margin-bottom:8px; }
+  .coachToolHead b { color:var(--text); font-size:10px; letter-spacing:.14em;
+    text-transform:uppercase; }
+  .coachToolHead span { color:var(--dim); font-size:9px; text-align:right; }
+  .coachToolBody { display:flex; flex-wrap:wrap; align-items:center; gap:6px; }
+  .coachToolBody .nextAction { border-color:var(--accent) !important;
+    box-shadow:0 0 0 1px rgba(200,146,58,.24),0 8px 20px rgba(0,0,0,.2); }
   body.slim.coachweb #openSmall, body.slim.coachweb #guideSmall { display:none; }
   body.slim.coachweb #playBtn2 { display:flex !important; align-items:center; justify-content:center;
     width:38px; height:38px; min-width:38px; flex:0 0 38px; padding:0;
@@ -369,8 +382,15 @@
     background:var(--accent); border-color:var(--accent) !important; }
   body.desktop #desktopMoreBtn { margin-left:auto; }
   body.desktop #deskTray { right:12px; left:12px; max-width:none;
-    max-height:42vh; overflow:auto; justify-content:flex-end;
+    max-height:48vh; overflow:auto; display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr)); align-items:start;
     background:rgba(20,20,16,.96); backdrop-filter:blur(16px); }
+  body.desktop #deskTray[hidden] { display:none; }
+  body.desktop #deskTray .coachToolGroup.context { grid-column:1/-1; }
+  @media(max-width:900px) {
+    body.desktop #deskTray { grid-template-columns:1fr 1fr; }
+    body.desktop #deskTray .coachToolGroup.context { grid-column:1/-1; }
+  }
   /* 👥 rep-vælger: klikbar tabel */
   #repPick { position:fixed; inset:0; z-index:41; display:flex;
     align-items:center; justify-content:center; background:rgba(0,0,0,.55); }
@@ -446,6 +466,18 @@
   .coachNumber:last-child { border-bottom:0; }
   .coachNumber span { color:var(--dim); font-size:10px; }
   .coachNumber b { text-align:right; font-family:'IBM Plex Mono',monospace; font-size:10px; }
+  .coachEvidenceDetails { border:1px solid rgba(237,234,226,.08); border-radius:12px;
+    background:rgba(237,234,226,.018); overflow:hidden; }
+  .coachEvidenceDetails summary { display:flex; align-items:center; justify-content:space-between;
+    gap:12px; padding:11px 12px; cursor:pointer; list-style:none; user-select:none; }
+  .coachEvidenceDetails summary::-webkit-details-marker { display:none; }
+  .coachEvidenceDetails summary span { color:var(--text); font-size:11px; font-weight:600; }
+  .coachEvidenceDetails summary small { color:var(--dim); font-size:9px; }
+  .coachEvidenceDetails summary::after { content:'⌄'; color:var(--accent); font-size:14px;
+    transition:transform .18s ease; }
+  .coachEvidenceDetails[open] summary::after { transform:rotate(180deg); }
+  .coachEvidenceDetails[open] summary { border-bottom:1px solid rgba(237,234,226,.07); }
+  .coachEvidenceBody { display:grid; gap:14px; padding:12px; }
   .coachAddPosition { width:100%; margin-top:2px; padding:10px 12px;
     border:1px dashed rgba(0,212,255,.35); color:#67dff5; background:rgba(0,212,255,.05); }
   .coachAddPosition.hasPosition { border-style:solid; border-color:rgba(200,146,58,.28);
@@ -4148,11 +4180,17 @@ function buildCoachReportHtml(showAddPosition = true) {
     `<div class="coachDetailRow"><b>${E(x.title)}</b><span>${E(x.text)}</span></div>`));
   if (bias) detailRows.push(`<div class="coachDetailRow"><b>Coach-note</b>` +
     `<span>${E(bias)} · vises som kontekst; systemet gætter ikke ud fra fritekst.</span></div>`);
-  const numbers = keyNumbers().map(r =>
+  const numberRows = keyNumbers();
+  const numbers = numberRows.map(r =>
     `<div class="coachNumber"><span>${E(r[0])}</span><b>${E(r[1])}</b></div>`).join('');
   const hasPosition = strokes.some(s => s.type === 'mskel');
   const positionAction = showAddPosition && hasPosition
     ? '<button class="coachAddPosition hasPosition" data-add-position>↻ Mål positioner igen</button>' : '';
+  const positionQuality = Number(lastVals && lastVals.positionModelQualityPct);
+  const evidenceOpen = fb.quality === 'low' ||
+    (Number.isFinite(positionQuality) && positionQuality > 25) ? ' open' : '';
+  const evidenceMeta = `${detailRows.length} observationer` +
+    (numberRows.length ? ` · ${numberRows.length} nøgletal` : '');
   return `<div class="coachFeedback">` +
     `<div class="coachFeedbackHero"><div><small>Coach-feedback</small>` +
     `<h3>${E(ath)} · ${E(lift)}</h3><p>${E(variation || 'Standard')} · ${E(load || 'Belastning ikke angivet')}</p></div>` +
@@ -4161,9 +4199,12 @@ function buildCoachReportHtml(showAddPosition = true) {
     `<div class="feedbackCard" data-kind="good"><b>Det fungerer</b><p>${E(fb.athlete.works)}</p>${strengthEvidence}</div>` +
     `<div class="feedbackCard" data-kind="focus"><b>Vigtigste fokus</b><p>${E(fb.athlete.focus)}</p>${focusEvidence}</div>` +
     `<div class="feedbackCard" data-kind="next"><b>Næste sæt</b><p>${E(fb.athlete.next)}</p></div></section>` +
-    `<section><span class="coachSectionLabel">Coachens grundlag</span>` +
+    `<details class="coachEvidenceDetails"${evidenceOpen}>` +
+    `<summary><span>Målinger og coachens grundlag</span><small>${E(evidenceMeta)}</small></summary>` +
+    `<div class="coachEvidenceBody"><section><span class="coachSectionLabel">Coachens grundlag</span>` +
     `<div class="coachDetail">${detailRows.join('')}</div>${positionAction}</section>` +
     (numbers ? `<section><span class="coachSectionLabel">Nøgletal</span><div class="coachNumbers">${numbers}</div></section>` : '') +
+    `</div></details>` +
     `</div>`;
 }
 
@@ -4495,10 +4536,265 @@ function compressBarPath(path) {
     w: canvas.width, h: canvas.height };
 }
 
+// ---------- VideoCoach v3 database bridge (feature-gated) ----------
+// Kun ?bridge=v3 aktiverer appbroen. Uden flaget er den eksisterende lokale
+// schema-v2 filgemning byte-for-byte samme brugerflow som før.
+const VC_V3_BRIDGE_ENABLED = new URLSearchParams(location.search).get('bridge') === 'v3';
+const VC_V3_MESSAGE_PREFIX = 'entropi:videocoach:v3';
+const vcV3Pending = new Map();
+const vcV3AnalysisIds = new WeakMap();
+let vcV3BridgeReady = false;
+
+function vcV3Uuid() {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function')
+    return crypto.randomUUID();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 3 | 8);
+    return v.toString(16);
+  });
+}
+
+function vcV3Slug(value, fallback) {
+  const slug = String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+  return slug || fallback;
+}
+
+function vcV3Lift(lift) {
+  if (lift === 'Squat') return 'squat';
+  if (lift === 'Bænkpres') return 'bench';
+  if (lift === 'Dødløft' || lift === 'Sumo dødløft') return 'deadlift';
+  return null;
+}
+
+function vcV3Variation(lift, variation) {
+  const base = variation || ({
+    'Squat': 'competition_squat',
+    'Bænkpres': 'competition_bench',
+    'Dødløft': 'competition_conventional',
+    'Sumo dødløft': 'competition_sumo',
+  }[lift]);
+  return vcV3Slug(base, 'standard');
+}
+
+function vcV3Metric(value, unit, method, eligible = false, confidence = null) {
+  if (value == null || (typeof value === 'number' && !Number.isFinite(value))) return null;
+  return { value, unit, method, eligible_for_baseline: eligible,
+    confidence, source_refs: [] };
+}
+
+function vcV3Metrics(v) {
+  const out = {};
+  const add = (key, value, unit, method, eligible = false, confidence = null) => {
+    const metric = vcV3Metric(value, unit, method, eligible, confidence);
+    if (metric) out[key] = metric;
+  };
+  const poseConfidence = v.positionModelQualityPct == null ? null
+    : Math.max(0, Math.min(1, 1 - v.positionModelQualityPct / 100));
+  add('rom_cm', v.romCm, 'cm', 'tracked_path_calibrated_v1', true, null);
+  add('velocity_loss_pct', v.lossPct, 'pct', 'rep_mcv_change_v1', true, null);
+  add('sticking_height_pct', v.stickPct, 'pct', 'mid_rep_min_velocity_v1', true, null);
+  add('sticking_velocity_dip_pct', v.dipPct, 'pct', 'mid_rep_min_velocity_v1', true, null);
+  add('bar_drift_cm', v.driftCm, 'cm', 'tracked_path_calibrated_v1', true, null);
+  add('path_efficiency_pct', v.effPct, 'pct', 'vertical_over_total_path_v1', true, null);
+  add('path_hysteresis_cm', v.hystCm, 'cm', 'eccentric_concentric_delta_v1', true, null);
+  add('position_quality_delta_pct', v.positionModelQualityPct, 'pct',
+    'three_position_segment_consistency_v1', false, poseConfidence);
+  add('knee_angle_bottom_deg', v.kneeAngle, 'deg', 'three_position_skeleton_v3', true, poseConfidence);
+  add('hip_angle_bottom_deg', v.hipAngle, 'deg', 'three_position_skeleton_v3', true, poseConfidence);
+  add('torso_from_vertical_bottom_deg', v.torsoFromVertical, 'deg',
+    'three_position_skeleton_v3', true, poseConfidence);
+  add('torso_change_to_sticking_deg', v.torsoChangeToStickDeg, 'deg',
+    'three_position_skeleton_v3', true, poseConfidence);
+  add('knee_extension_to_sticking_deg', v.kneeExtensionToStickDeg, 'deg',
+    'three_position_skeleton_v3', true, poseConfidence);
+  add('hip_extension_to_sticking_deg', v.hipExtensionToStickDeg, 'deg',
+    'three_position_skeleton_v3', true, poseConfidence);
+  add('elbow_angle_bottom_deg', v.elbowAngle, 'deg', 'three_position_skeleton_v3', true, poseConfidence);
+  add('forearm_from_vertical_bottom_deg', v.foreDev, 'deg',
+    'three_position_skeleton_v3', true, poseConfidence);
+  add('bench_toward_shoulder_cm', v.benchTowardShoulderCm, 'cm',
+    'three_position_skeleton_v3', true, poseConfidence);
+  return out;
+}
+
+function vcV3Reps(path) {
+  return (path && path.reps || []).map((rep, index) => {
+    const conStart = Number(path.times && path.times[rep.start]);
+    const end = Number(path.times && path.times[rep.end]);
+    const lead = Math.max(0, Number(rep.eccS || 0) + Number(rep.pauseS || 0));
+    const start = Number.isFinite(conStart) ? Math.max(0, conStart - lead) : 0;
+    const finish = Number.isFinite(end) ? Math.max(start, end) : start;
+    const metrics = {};
+    const add = (key, value, unit, method, eligible = true) => {
+      const metric = vcV3Metric(value, unit, method, eligible, null);
+      if (metric) metrics[key] = metric;
+    };
+    add('mean_concentric_velocity_m_s', rep.mcv == null ? null : +rep.mcv.toFixed(3),
+      'm_s', 'bar_velocity_phase_v1');
+    add('peak_concentric_velocity_m_s', rep.peak == null ? null : +rep.peak.toFixed(3),
+      'm_s', 'bar_velocity_phase_v1');
+    add('eccentric_s', rep.eccS, 's', 'bar_velocity_phase_v1');
+    add('pause_s', rep.pauseS, 's', 'bar_velocity_phase_v1');
+    add('concentric_s', rep.conS, 's', 'bar_velocity_phase_v1');
+    return { index: index + 1, start_s: +start.toFixed(3), end_s: +finish.toFixed(3),
+      valid: finish > start, quality_flags: [], metrics };
+  });
+}
+
+function vcV3BarPath(path) {
+  const p = path ? compressBarPath(path) : null;
+  if (!p) return null;
+  return { encoding: 'delta_int', version: 1,
+    coordinate_system: 'video_pixels_top_left', t0_s: p.t0, dt_s: p.dt,
+    x0: p.x0, y0: p.y0, dx: p.dx, dy: p.dy,
+    cm_per_px: p.cm_per_px > 0 ? p.cm_per_px : null,
+    width_px: p.w, height_px: p.h };
+}
+
+function vcV3Findings(items, lowConfPct) {
+  const confidence = lowConfPct > 15 ? 0.55 : 0.85;
+  return (items || []).map((summary, index) => {
+    const kind = /^OK:/i.test(summary) ? 'works'
+      : /^(FLAG|OBS):/i.test(summary) ? 'focus'
+      : /^NOTE:/i.test(summary) ? 'context' : 'uncertain';
+    return { id: `finding_${index + 1}_${vcV3Slug(summary.slice(0, 40), 'item')}`,
+      kind, summary, evidence_refs: ['metrics'], confidence };
+  });
+}
+
+function buildV3AnalysisPayload({ athleteId, athleteName, lift, variation,
+  parsed, path, vals, legacy }) {
+  let clientId = path && vcV3AnalysisIds.get(path);
+  if (!clientId) {
+    clientId = vcV3Uuid();
+    if (path) vcV3AnalysisIds.set(path, clientId);
+  }
+  const reps = vcV3Reps(path);
+  const lowConfPct = legacy.low_conf_pct == null ? null : legacy.low_conf_pct;
+  const flags = [];
+  if (lowConfPct > 15) flags.push('tracker_lost');
+  if (!reps.length) flags.push('rep_segmentation_uncertain');
+  if (vals.positionModelQualityPct > 25) flags.push('position_measurement_uncertain');
+  const findings = vcV3Findings(legacy.findings, lowConfPct || 0);
+  const cues = suggestCues(lift, vals).slice(0, 2);
+  return {
+    schema_version: 3, client_analysis_id: clientId,
+    athlete_id: athleteId || null, athlete_display_name: athleteName || null,
+    source_mode: 'coach_web', status: 'draft', lift: vcV3Lift(lift),
+    variation: vcV3Variation(lift, variation), load_kg: parsed.kg,
+    rpe: parsed.rpe, reps_count: reps.length, analyzed_at: legacy.analyzed_at,
+    session_context: { training_session_id: null, program_item_id: null,
+      coach_note_snapshot: legacy.bias_note },
+    capture_context: { camera_side: 'unknown', camera_angle_deg: null, fps: null,
+      width_px: video.videoWidth || canvas.width || null,
+      height_px: video.videoHeight || canvas.height || null,
+      cropped: null, fingerprint: null },
+    versions: { engine: 'videocoach-3.0.0', tracker: 'whole-plate-multipoint-2026-07-19',
+      skeleton: 'three-position-time-driven-2026-07-19',
+      feedback: 'coach-feedback-step3-2026-07-19' },
+    quality: { low_conf_pct: lowConfPct,
+      position_quality_pct: vals.positionModelQualityPct ?? null,
+      flags, note: null },
+    metrics: vcV3Metrics(vals), reps, bar_path: vcV3BarPath(path), skeleton: null,
+    findings, coach_note: null,
+    athlete_feedback: {
+      works: findings.filter(f => f.kind === 'works').slice(0, 2)
+        .map(f => ({ text: f.summary.replace(/^OK:\s*/i, ''), evidence_refs: [f.id] })),
+      focus: findings.filter(f => f.kind === 'focus').slice(0, 2)
+        .map(f => ({ text: f.summary.replace(/^(FLAG|OBS):\s*/i, ''), evidence_refs: [f.id] })),
+      next_set: cues.map(c => ({ text: String(c[0]).replace(/^"|"$/g, ''),
+        evidence_refs: ['metrics'] })),
+    },
+    ai_draft: null,
+  };
+}
+
+function vcV3DatabaseRow(payload, legacy) {
+  return {
+    client_analysis_id: payload.client_analysis_id,
+    athlete_id: payload.athlete_id,
+    athlete_name: payload.athlete_display_name,
+    source_mode: payload.source_mode, status: payload.status,
+    lift: payload.lift, variation: payload.variation,
+    load_kg: payload.load_kg, rpe: payload.rpe,
+    reps_count: payload.reps_count, rep_details: payload.reps,
+    session_context: payload.session_context, capture_context: payload.capture_context,
+    schema_version: 3, schema_v: 3,
+    engine_version: payload.versions.engine, tracker_version: payload.versions.tracker,
+    skeleton_version: payload.versions.skeleton, feedback_version: payload.versions.feedback,
+    low_conf_pct: payload.quality.low_conf_pct,
+    position_quality_pct: payload.quality.position_quality_pct,
+    quality_flags: payload.quality.flags, metrics: payload.metrics,
+    skeleton: payload.skeleton, findings: payload.findings,
+    coach_note: payload.coach_note, athlete_feedback: payload.athlete_feedback,
+    ai_draft: payload.ai_draft, bar_path: payload.bar_path,
+    analyzed_at: payload.analyzed_at,
+    reps: legacy.reps || [], load_note: legacy.load_note,
+    bias_note: legacy.bias_note, rom_cm: legacy.rom_cm,
+    loss_pct: legacy.loss_pct, stick_pct: legacy.stick_pct,
+    dip_pct: legacy.dip_pct, drift_cm: legacy.drift_cm,
+    extra: legacy.extra, ai_text: legacy.ai_text,
+  };
+}
+
+function vcV3RequestSave(row) {
+  if (!VC_V3_BRIDGE_ENABLED || !vcV3BridgeReady || !window.opener)
+    return Promise.reject(new Error('VideoCoach er ikke forbundet til coach-appen'));
+  const requestId = vcV3Uuid();
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      vcV3Pending.delete(requestId);
+      reject(new Error('Coach-appen svarede ikke inden for 12 sekunder'));
+    }, 12000);
+    vcV3Pending.set(requestId, { resolve, reject, timer });
+    window.opener.postMessage({ type: `${VC_V3_MESSAGE_PREFIX}:save-draft`,
+      requestId, row }, location.origin);
+  });
+}
+
+if (VC_V3_BRIDGE_ENABLED) {
+  window.addEventListener('message', event => {
+    if (event.origin !== location.origin || event.source !== window.opener) return;
+    const msg = event.data || {};
+    if (msg.type === `${VC_V3_MESSAGE_PREFIX}:config`) {
+      const athleteSelect = document.getElementById('athleteSel');
+      const remembered = athleteSelect.value;
+      athleteSelect.innerHTML = '<option value="">Atlet?</option>';
+      (msg.athletes || []).forEach(athlete => {
+        if (!athlete || !athlete.id || !athlete.name) return;
+        const option = document.createElement('option');
+        option.value = athlete.name; option.textContent = athlete.name;
+        option.dataset.athleteId = athlete.id;
+        athleteSelect.appendChild(option);
+      });
+      if ([...athleteSelect.options].some(o => o.value === remembered))
+        athleteSelect.value = remembered;
+      vcV3BridgeReady = true;
+      window.opener.postMessage({ type: `${VC_V3_MESSAGE_PREFIX}:config-ack`,
+        athleteCount: athleteSelect.options.length - 1 }, event.origin);
+      return;
+    }
+    if (msg.type === `${VC_V3_MESSAGE_PREFIX}:save-result`) {
+      const pending = vcV3Pending.get(msg.requestId);
+      if (!pending) return;
+      clearTimeout(pending.timer); vcV3Pending.delete(msg.requestId);
+      if (msg.ok) pending.resolve(msg.data);
+      else pending.reject(new Error(msg.error || 'Analysen kunne ikke gemmes'));
+    }
+  });
+  const announce = () => window.opener && window.opener.postMessage({
+    type: `${VC_V3_MESSAGE_PREFIX}:ready`, schemaVersion: 3 }, location.origin);
+  announce(); setTimeout(announce, 800);
+}
+
 saveBtn.onclick = async () => {
   const metrics = collectMetrics();
   if (!metrics || !lastVals) { alert('Kør ⚡ Analysér løft først'); return; }
-  const ath = document.getElementById('athleteSel').value || 'Gæst';
+  const athleteSelect = document.getElementById('athleteSel');
+  const selectedAthlete = athleteSelect.selectedOptions[0];
+  const ath = athleteSelect.value || 'Gæst';
+  const athleteId = selectedAthlete && selectedAthlete.dataset.athleteId || null;
   const lift = document.getElementById('liftSel').value;
   if (!lift) { alert('Vælg øvelse først'); return; }
   const path = strokes.filter(s => s.type === 'path' && s.vel).pop();
@@ -4558,6 +4854,24 @@ saveBtn.onclick = async () => {
     ai_text: aiPanel.hidden ? null : aiText.textContent,
     analyzed_at: new Date().toISOString(),
   };
+  if (VC_V3_BRIDGE_ENABLED) {
+    if (!athleteId) { alert('Vælg en atlet fra coach-appen først'); return; }
+    try {
+      const payload = buildV3AnalysisPayload({ athleteId, athleteName: ath, lift,
+        variation: document.getElementById('variationSel').value, parsed,
+        path, vals: lastVals, legacy: data });
+      if (!payload.lift) throw new Error('Løftet kan ikke normaliseres til v3');
+      const saved = await vcV3RequestSave(vcV3DatabaseRow(payload, data));
+      saveBtn.textContent = '💾 Gemt i appen ✓';
+      setTimeout(() => saveBtn.textContent = saveLabel, 2500);
+      say(`💾 ${ath} · ${lift} · draft gemt` + (saved && saved.id ? ' ✓' : ''));
+      setTimeout(() => say(''), 3500);
+      return;
+    } catch (error) {
+      alert(`Analysen blev ikke gemt i appen: ${error.message}`);
+      return;
+    }
+  }
   const name = `analyse-${ath.toLowerCase()}-${Date.now()}.json`;
   try {
     const dir = await getAnalysesDir();
@@ -5151,6 +5465,42 @@ if (SLIM) {
   layoutBars();
   setTimeout(layoutBars, 400);   // igen når font/ikoner er landet
 }
+function appendCoachToolGroup(parent, title, hint, ids, className = '') {
+  const group = document.createElement('section');
+  group.className = `coachToolGroup ${className}`.trim();
+  const head = document.createElement('div');
+  head.className = 'coachToolHead';
+  const name = document.createElement('b'); name.textContent = title;
+  const note = document.createElement('span'); note.textContent = hint;
+  head.append(name, note);
+  const body = document.createElement('div');
+  body.className = 'coachToolBody';
+  const added = new Set();
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const item = el.closest('label') || el;
+    if (added.has(item)) return;
+    added.add(item); body.appendChild(item);
+  });
+  if (!body.children.length) return null;
+  group.append(head, body); parent.appendChild(group);
+  return group;
+}
+
+function updateCoachToolGuidance(root) {
+  if (!root) return;
+  root.querySelectorAll('.nextAction').forEach(el => el.classList.remove('nextAction'));
+  const primary = root.querySelector('.coachToolGroup.primary');
+  if (!primary) return;
+  const hasPosition = strokes.some(s => s.type === 'mskel');
+  const target = primary.querySelector(hasPosition ? '#aiBtn' : '#mskelBtn');
+  if (target) target.classList.add('nextAction');
+  const hint = primary.querySelector('.coachToolHead span');
+  if (hint) hint.textContent = hasPosition
+    ? 'Næste: se coach-feedback' : 'Næste: mål positioner';
+}
+
 if (COACHWEB) {
   document.body.classList.add('coachweb');
   // Samme synlige 3-trins-flow som Coach-desktop, men komprimeret til mobil.
@@ -5271,15 +5621,16 @@ if (COACHWEB) {
   // LAG 3 (Fordyb): alt det avancerede i tray'en. Skelet + ghost flyttet HERIND
   // så Lag 1-bjælken er ren (kun transport + Tegn + ⚡). Rækkefølge = grupper:
   // analyse/vinkler · sammenlign · tegn · fund/gem/kort.
-  ['mskelBtn', 'aiBtn', 'graphBtn', 'fpBtn', 'barBtn', 'calibBtn',
-   'gridBtn', 'guideBtn',
-   'ghostBtn', 'cmpBtn', 'repCmpBtn',
-   'lineBtn', 'angleBtn', 'eraseBtn', 'color', 'brushSel', 'clearBtn',
-   'recordBtn', 'athleteSel', 'liftSel', 'variationSel', 'loadInput', 'biasInput',
-   'saveBtn', 'cardBtn', 'exportBtn', 'recTime', 'downloadLink', 'scrubToolBtn'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) moreBar.appendChild(el.closest('label') || el);
-  });
+  appendCoachToolGroup(moreBar, 'Analyse', 'Positioner, kurver og fund',
+    ['mskelBtn', 'aiBtn', 'graphBtn', 'fpBtn', 'barBtn', 'calibBtn'], 'primary');
+  appendCoachToolGroup(moreBar, 'Sammenlign', 'Reps og videoer',
+    ['ghostBtn', 'cmpBtn', 'repCmpBtn', 'gridBtn', 'guideBtn']);
+  appendCoachToolGroup(moreBar, 'Tegn & del', 'Markér og eksportér',
+    ['lineBtn', 'angleBtn', 'eraseBtn', 'color', 'brushSel', 'clearBtn',
+     'recordBtn', 'saveBtn', 'cardBtn', 'exportBtn', 'recTime',
+     'downloadLink', 'scrubToolBtn']);
+  appendCoachToolGroup(moreBar, 'Kontekst', 'Atlet og løft',
+    ['athleteSel', 'liftSel', 'variationSel', 'loadInput', 'biasInput'], 'context');
   document.getElementById('mskelBtn').classList.add('coachFeatured');
   aiBtn.classList.add('coachFeatured');
   // kerneknapperne får atlet-stil: stort ikon, lille label (CSS ::after)
@@ -5296,6 +5647,7 @@ if (COACHWEB) {
   moreBtn.onclick = () => {
     moreBar.hidden = !moreBar.hidden;
     moreBtn.classList.toggle('active', !moreBar.hidden);
+    if (!moreBar.hidden) updateCoachToolGuidance(moreBar);
     updateCoachFlow(moreBar.hidden ? 2 : 3);
     layoutBars();
   };
@@ -5500,17 +5852,17 @@ if (DESKTOP) {
   // Lag 3: analyse → sammenligning → tegning → kontekst/resultater.
   // Headerens gamle knapmylder flyttes også hertil; topbaren beholder kun
   // brand, flow, Åbn video og Filmguide.
-  ['mskelBtn', 'aiBtn', 'graphBtn', 'fpBtn', 'barBtn', 'calibBtn',
-   'ghostBtn', 'cmpBtn', 'repCmpBtn', 'ovlBtn', 'blendBtn',
-   'backBtn', 'fwdBtn', 'gridBtn', 'loopBtn',
-   'scrubToolBtn', 'lineBtn', 'angleBtn', 'eraseBtn',
-   'color', 'brushSel', 'clearBtn',
-   'athleteSel', 'liftSel', 'variationSel', 'loadInput', 'biasInput',
-   'saveBtn', 'cardBtn', 'recordBtn', 'exportBtn',
-   'recTime', 'downloadLink'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) tray.appendChild(el.closest('label') || el);
-  });
+  appendCoachToolGroup(tray, 'Analyse', 'Positioner, kurver og fund',
+    ['mskelBtn', 'aiBtn', 'graphBtn', 'fpBtn', 'barBtn', 'calibBtn'], 'primary');
+  appendCoachToolGroup(tray, 'Sammenlign', 'Reps og videoer',
+    ['ghostBtn', 'cmpBtn', 'repCmpBtn', 'ovlBtn', 'blendBtn',
+     'backBtn', 'fwdBtn', 'gridBtn', 'loopBtn']);
+  appendCoachToolGroup(tray, 'Tegn & del', 'Markér og eksportér',
+    ['scrubToolBtn', 'lineBtn', 'angleBtn', 'eraseBtn', 'color', 'brushSel',
+     'clearBtn', 'saveBtn', 'cardBtn', 'recordBtn', 'exportBtn',
+     'recTime', 'downloadLink']);
+  appendCoachToolGroup(tray, 'Kontekst', 'Atlet og løft',
+    ['athleteSel', 'liftSel', 'variationSel', 'loadInput', 'biasInput'], 'context');
   document.getElementById('mskelBtn').classList.add('coachFeatured');
   aiBtn.classList.add('coachFeatured');
   aiBtn.textContent = 'Coach-feedback';
@@ -5521,6 +5873,7 @@ if (DESKTOP) {
   moreB.onclick = () => {
     tray.hidden = !tray.hidden;
     moreB.classList.toggle('active', !tray.hidden);
+    if (!tray.hidden) updateCoachToolGuidance(tray);
     tray.style.bottom =
       (document.querySelector('footer').offsetHeight + 10) + 'px';
     updateDesktopFlow(tray.hidden ? 2 : 3);
