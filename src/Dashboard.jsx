@@ -83,6 +83,11 @@ function validateVideoCoachV3Row(row, athletes) {
   return null
 }
 
+function videoCoachSavedIdentityMatches(saved, requested) {
+  return !!saved && saved.client_analysis_id === requested?.client_analysis_id &&
+    saved.athlete_id === requested?.athlete_id
+}
+
 const VIDEOCOACH_STATUS = {
   draft: { label: 'Kladde', color: '#c8923a' },
   coach_approved: { label: 'Godkendt', color: '#6cba6c' },
@@ -520,6 +525,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [aiExportCopied, setAiExportCopied] = useState(false)
   const videoCoachAthletesRef = useRef([])
   const videoCoachClientsRef = useRef(new Set())
+  const videoCoachSelectedAthleteRef = useRef(null)
 
   useEffect(() => {
     const handler = () => setIsMobile(window.innerWidth < 768)
@@ -539,6 +545,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       try { client.postMessage(config, window.location.origin) } catch {}
     }
   }, [athletes])
+
+  useEffect(() => {
+    videoCoachSelectedAthleteRef.current = selectedAthlete?.id || null
+  }, [selectedAthlete?.id])
 
   useEffect(() => {
     const onVideoCoachMessage = async event => {
@@ -561,20 +571,26 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       if (validationError) { reply({ ok: false, error: validationError }); return }
 
       let result = await supabase.from('video_analyses').insert(message.row)
-        .select('id,status,created_at').single()
+        .select('id,client_analysis_id,athlete_id,status,created_at').single()
       // Samme analyseresultat kan gensendes efter et timeout. Den unikke
       // client_analysis_id gør gentagelsen idempotent uden en ny række.
       if (result.error?.code === '23505') {
         result = await supabase.from('video_analyses')
-          .select('id,status,created_at')
+          .select('id,client_analysis_id,athlete_id,status,created_at')
           .eq('client_analysis_id', message.row.client_analysis_id).single()
       }
       if (result.error) {
         reply({ ok: false, error: result.error.message || 'Databasen afviste analysen' })
         return
       }
+      if (!videoCoachSavedIdentityMatches(result.data, message.row)) {
+        reply({ ok: false, error: 'Databasen returnerede analysen på en forkert atlet' })
+        return
+      }
       reply({ ok: true, data: result.data })
       showFlash('Videoanalyse gemt som kladde', 'success')
+      if (videoCoachSelectedAthleteRef.current === result.data.athlete_id)
+        fetchVideoCoachHistory(result.data.athlete_id)
     }
     window.addEventListener('message', onVideoCoachMessage)
     return () => window.removeEventListener('message', onVideoCoachMessage)
