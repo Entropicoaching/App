@@ -46,6 +46,43 @@ const WEEKDAYS_LONG = ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lør
 const statusLabels = { active: 'Aktiv', peaking: 'Peaking', offseason: 'Off-season', ferie: 'Ferie' }
 const statusColors = { active: '#6cba6c', peaking: '#c8923a', offseason: '#7a7770', ferie: '#5b9bb5' }
 
+const VIDEOCOACH_V3_PREFIX = 'entropi:videocoach:v3'
+const VIDEOCOACH_V3_URL = 'videocoach.html?coach=1&bridge=v3&v=20260719-v3bridge'
+const VIDEOCOACH_V3_COLUMNS = new Set([
+  'client_analysis_id', 'athlete_id', 'athlete_name', 'source_mode', 'status',
+  'lift', 'variation', 'load_kg', 'rpe', 'reps_count', 'rep_details',
+  'session_context', 'capture_context', 'schema_version', 'schema_v',
+  'engine_version', 'tracker_version', 'skeleton_version', 'feedback_version',
+  'low_conf_pct', 'position_quality_pct', 'quality_flags', 'metrics', 'skeleton',
+  'findings', 'coach_note', 'athlete_feedback', 'ai_draft', 'bar_path',
+  'analyzed_at', 'reps', 'load_note', 'bias_note', 'rom_cm', 'loss_pct',
+  'stick_pct', 'dip_pct', 'drift_cm', 'extra', 'ai_text',
+])
+
+function openVideoCoachV3() {
+  window.open(VIDEOCOACH_V3_URL, '_blank')
+}
+
+function validateVideoCoachV3Row(row, athletes) {
+  if (!row || typeof row !== 'object' || Array.isArray(row))
+    return 'Ugyldig analysepayload'
+  if (Object.keys(row).some(key => !VIDEOCOACH_V3_COLUMNS.has(key)))
+    return 'Analysen indeholder et felt, som coach-broen ikke tillader'
+  if (row.schema_version !== 3 || row.schema_v !== 3 || row.status !== 'draft')
+    return 'Kun schema-v3 drafts kan gemmes gennem coach-broen'
+  if (row.source_mode !== 'coach_web') return 'Ugyldig analysekilde'
+  if (!['squat', 'bench', 'deadlift'].includes(row.lift)) return 'Ugyldigt løft'
+  if (!/^[a-z0-9]+([._-][a-z0-9]+)*$/.test(row.variation || ''))
+    return 'Ugyldig variation'
+  if (!athletes.some(athlete => athlete.id === row.athlete_id))
+    return 'Atleten tilhører ikke den indloggede coach'
+  if (!Array.isArray(row.reps) || row.reps.some(value => typeof value !== 'number'))
+    return 'Legacy reps skal være numeriske'
+  if (!Array.isArray(row.rep_details) || row.reps_count !== row.rep_details.length)
+    return 'Repantal og repdetaljer stemmer ikke'
+  return null
+}
+
 // Ikoner til forsidens hændelses-feed (bruges på både mobil og desktop)
 const FEED_ICONS = {
   alert: <><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></>,
@@ -418,11 +455,66 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [aiExportWeeks, setAiExportWeeks] = useState(8)
   const [aiExportText, setAiExportText] = useState('')
   const [aiExportCopied, setAiExportCopied] = useState(false)
+  const videoCoachAthletesRef = useRef([])
+  const videoCoachClientsRef = useRef(new Set())
 
   useEffect(() => {
     const handler = () => setIsMobile(window.innerWidth < 768)
     window.addEventListener('resize', handler)
     return () => window.removeEventListener('resize', handler)
+  }, [])
+
+  // Same-origin beskedbro: VideoCoach får kun en ufarlig atletliste og kan
+  // bede den allerede autentificerede app om at indsætte én valideret draft.
+  // Ingen access-token, service key eller intern coachnote sendes til URL'en.
+  useEffect(() => {
+    videoCoachAthletesRef.current = athletes
+    const config = { type: `${VIDEOCOACH_V3_PREFIX}:config`,
+      athletes: athletes.map(({ id, name }) => ({ id, name })) }
+    for (const client of videoCoachClientsRef.current) {
+      if (!client || client.closed) { videoCoachClientsRef.current.delete(client); continue }
+      try { client.postMessage(config, window.location.origin) } catch {}
+    }
+  }, [athletes])
+
+  useEffect(() => {
+    const onVideoCoachMessage = async event => {
+      if (event.origin !== window.location.origin || !event.source) return
+      const message = event.data || {}
+      if (message.type === `${VIDEOCOACH_V3_PREFIX}:ready`) {
+        videoCoachClientsRef.current.add(event.source)
+        event.source.postMessage({ type: `${VIDEOCOACH_V3_PREFIX}:config`,
+          athletes: videoCoachAthletesRef.current.map(({ id, name }) => ({ id, name })) },
+        event.origin)
+        return
+      }
+      if (message.type !== `${VIDEOCOACH_V3_PREFIX}:save-draft`) return
+      const reply = result => {
+        try { event.source.postMessage({ type: `${VIDEOCOACH_V3_PREFIX}:save-result`,
+          requestId: message.requestId, ...result }, event.origin) } catch {}
+      }
+      const validationError = validateVideoCoachV3Row(message.row,
+        videoCoachAthletesRef.current)
+      if (validationError) { reply({ ok: false, error: validationError }); return }
+
+      let result = await supabase.from('video_analyses').insert(message.row)
+        .select('id,status,created_at').single()
+      // Samme analyseresultat kan gensendes efter et timeout. Den unikke
+      // client_analysis_id gør gentagelsen idempotent uden en ny række.
+      if (result.error?.code === '23505') {
+        result = await supabase.from('video_analyses')
+          .select('id,status,created_at')
+          .eq('client_analysis_id', message.row.client_analysis_id).single()
+      }
+      if (result.error) {
+        reply({ ok: false, error: result.error.message || 'Databasen afviste analysen' })
+        return
+      }
+      reply({ ok: true, data: result.data })
+      showFlash('Videoanalyse gemt som kladde', 'success')
+    }
+    window.addEventListener('message', onVideoCoachMessage)
+    return () => window.removeEventListener('message', onVideoCoachMessage)
   }, [])
 
   useEffect(() => { fetchAthletes(); fetchExerciseLibrary(); fetchLastBackup() }, [])
@@ -2367,7 +2459,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 const row = { background: 'transparent', border: 'none', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.4rem 0.1rem', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.06em', color: '#7a7770', textAlign: 'left' }
                 return (
                   <>
-                    <button onClick={() => window.open('videocoach.html?coach=1&v=20260716-coachflow', '_blank')} style={row}
+                    <button onClick={openVideoCoachV3} style={row}
                       onMouseEnter={e => e.currentTarget.style.color = '#b8b4a8'} onMouseLeave={e => e.currentTarget.style.color = '#7a7770'}>
                       <span>VideoCoach</span><span>→</span>
                     </button>
@@ -2489,7 +2581,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     {[
                       { label: 'Kalender', onClick: () => { setMenuSheetOpen(false); setSelectedAthlete(null); setView('calendar') }, icon: <><rect x="3" y="5" width="18" height="16" rx="2" /><line x1="3" y1="10" x2="21" y2="10" /><line x1="8" y1="3" x2="8" y2="7" /><line x1="16" y1="3" x2="16" y2="7" /></> },
                       { label: 'Bibliotek', onClick: () => { setMenuSheetOpen(false); setSelectedAthlete(null); setView('library') }, icon: <><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></> },
-                      { label: 'VideoCoach', onClick: () => { setMenuSheetOpen(false); window.open('videocoach.html?coach=1&v=20260716-coachflow', '_blank') }, icon: <><rect x="2" y="6" width="13" height="12" rx="2" /><path d="M15 10.5 22 7v10l-7-3.5" /></> },
+                      { label: 'VideoCoach', onClick: () => { setMenuSheetOpen(false); openVideoCoachV3() }, icon: <><rect x="2" y="6" width="13" height="12" rx="2" /><path d="M15 10.5 22 7v10l-7-3.5" /></> },
                       { label: 'Se som atlet', onClick: () => setSheetPreviewPick(true), icon: <><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></> },
                     ].map(m => (
                       <button key={m.label} onClick={m.onClick}
@@ -3359,7 +3451,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 })()}
                 {/* VideoCoach — hurtig adgang nederst på forsiden (samme kort som atlet-appen) */}
                 <div
-                  onClick={() => window.open('videocoach.html?coach=1&v=20260716-coachflow', '_blank')}
+                  onClick={openVideoCoachV3}
                   onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(200,146,58,0.4)'}
                   onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(237,234,226,0.07)'}
                   style={{ ...s.card, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem', marginTop: isMobile ? '1rem' : 0 }}
