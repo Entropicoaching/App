@@ -47,7 +47,7 @@ const statusLabels = { active: 'Aktiv', peaking: 'Peaking', offseason: 'Off-seas
 const statusColors = { active: '#6cba6c', peaking: '#c8923a', offseason: '#7a7770', ferie: '#5b9bb5' }
 
 const VIDEOCOACH_V3_PREFIX = 'entropi:videocoach:v3'
-const VIDEOCOACH_V3_URL = 'videocoach.html?coach=1&bridge=v3&v=20260719-v3bridge'
+const VIDEOCOACH_V3_URL = 'videocoach.html?coach=1&bridge=v3&v=20260719-homeanchor'
 const VIDEOCOACH_V3_COLUMNS = new Set([
   'client_analysis_id', 'athlete_id', 'athlete_name', 'source_mode', 'status',
   'lift', 'variation', 'load_kg', 'rpe', 'reps_count', 'rep_details',
