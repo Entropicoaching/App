@@ -2687,6 +2687,18 @@ async function startMultipointTracking(p0) {
   octx.drawImage(video,0,0,ocan.width,ocan.height);
   let anchorFrame=mpFrame(),anchorTime=startT,cur={x:p0.x,y:p0.y},vel={x:0,y:0};
   let features=mpGoodFeatures(anchorFrame,cur,radius),lost=0,gapStrikes=0,lastSlowT=-Infinity;
+  // Multipoint er fortsat hovedtrackeren. Skivemodellen bruges KUN som
+  // identitetsvagt ved tynd konsensus og som et lokalt "hjemmeanker", når
+  // stangen vender tilbage til startpositionen mellem reps. Dermed kan et
+  // gulvslag ikke gøre sleeve/gulv til den nye identitet, men vi genindfører
+  // heller ikke den tidligere globale plate-tracker som primær tracker.
+  const plateInit=plCapture(p0.x-radius*1.5,p0.y-radius*1.5,radius*3,radius*3);
+  const plateModel={desc:plRadialDesc(plateInit,p0,radius),
+    color:plColorDesc(plateInit,p0,radius),hist:plHistogram(plateInit,p0,radius),
+    polar:plPolarDesc(plateInit,p0,radius)};
+  const plateBase=plEvidence(plateInit,p0,radius,plateModel);
+  const plateIdentityUsable=plateBase.circle>8&&plateBase.cover>=.35;
+  let homePending=null;
   if(features.length<5){
     tracking=false;path.lowConf=(path.lowConf||0)+1;
     say('⚠ For få tydelige detaljer ved punktet · vælg et tydeligt område omkring skivens nav');
@@ -2727,18 +2739,49 @@ async function startMultipointTracking(p0) {
       const nx=cur.x+mpMedian(kept.map(q=>q.dx)),ny=cur.y+mpMedian(kept.map(q=>q.dy));
       const jump=Math.hypot(nx-cur.x,ny-cur.y);
       const maxJump=radius*.75+Math.hypot(vel.x,vel.y)*dt*.45;
-      if(kept.length>=5&&jump<=maxJump){
+      let identityOK=true;
+      if(plateIdentityUsable&&(kept.length<8||lost>0)){
+        const pad=radius*1.45;
+        const idFrame=plCapture(nx-pad,ny-pad,pad*2,pad*2);
+        const e=plEvidence(idFrame,{x:nx,y:ny},radius,plateModel);
+        identityOK=e.circle>Math.max(8,plateBase.circle*.30)&&e.cover>=.42&&
+          e.pairCover>=.30&&e.app<2.8;
+      }
+      if(kept.length>=5&&jump<=maxJump&&identityOK){
         let nextFeatures=mpGoodFeatures(currentFrame,{x:nx,y:ny},radius);
         if(nextFeatures.length<5)nextFeatures=kept.map(q=>({x:q.q.x,y:q.q.y})).slice(0,36);
         if(nextFeatures.length>=5){
           const iv={x:(nx-cur.x)/dt,y:(ny-cur.y)/dt};
           vel={x:vel.x*.35+iv.x*.65,y:vel.y*.35+iv.y*.65};cur={x:nx,y:ny};
           anchorFrame=currentFrame;anchorTime=tNow;features=nextFeatures;accepted=true;lost=0;
+          homePending=null;
         }
       }
     }
     if(!accepted){
       lost++;vel={x:vel.x*.75,y:vel.y*.75};path.lowConf=(path.lowConf||0)+1;
+      // Hvis identiteten blev tabt under et gulvslag/vending, må trackeren
+      // først genstarte ved den oprindelige rep-position og efter to enige
+      // frames. Ingen global jagt gennem billedet: sleeve/krop kan derfor ikke
+      // kapre resten af sættet.
+      if(plateIdentityUsable&&lost>=2){
+        const homeR=radius*1.15,step=Math.max(3,radius*.10);
+        const pad=homeR+radius*1.4+step*2;
+        const homeFrame=plCapture(p0.x-pad,p0.y-pad,pad*2,pad*2);
+        const found=plSearch(homeFrame,p0,radius,plateModel,homeR,step);
+        const strong=found&&found.circle>Math.max(9,plateBase.circle*.34)&&
+          found.cover>=.45&&found.pairCover>=.35&&found.app<2.6;
+        if(strong){
+          if(homePending&&Math.hypot(found.x-homePending.x,found.y-homePending.y)<radius*.45){
+            const recovered=mpGoodFeatures(currentFrame,found,radius);
+            if(recovered.length>=5){
+              cur={x:found.x,y:found.y};vel={x:0,y:0};anchorFrame=currentFrame;
+              anchorTime=tNow;features=recovered;accepted=true;lost=0;homePending=null;
+              path.homeRecoveries=(path.homeRecoveries||0)+1;
+            }
+          }else homePending={x:found.x,y:found.y};
+        }else homePending=null;
+      }
     }
     path.pts.push({...cur});path.times.push(tNow);path.valid.push(accepted);
     const pct=Math.round(tNow/video.duration*100);
@@ -2751,7 +2794,10 @@ async function startMultipointTracking(p0) {
 
   if(HAS_RVFC){
     const oldRate=video.playbackRate,oldMuted=video.muted;video.muted=true;
-    video.playbackRate=DESKTOP?1:COACHWEB?.25:.5;
+    // Start langsomt på coach-mobil i stedet for først at reagere efter tabte
+    // frames. 0.1x giver svage telefoner tid til hvert kildeframe; brugerens
+    // normale videoafspilning nulstilles fortsat til 1x efter analysen.
+    video.playbackRate=DESKTOP?1:COACHWEB?.1:.5;
     await new Promise(res=>{
       const done=()=>{video.removeEventListener('pause',done);video.removeEventListener('ended',done);res();};
       video.addEventListener('pause',done);video.addEventListener('ended',done);
