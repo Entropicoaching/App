@@ -2599,6 +2599,28 @@ function mpFrame() {
   return { gray, w:ocan.width, h:ocan.height };
 }
 
+const mpYieldToUI = () => new Promise(resolve => {
+  if (globalThis.scheduler && typeof globalThis.scheduler.yield === 'function')
+    globalThis.scheduler.yield().then(resolve, resolve);
+  else if (document.hidden) setTimeout(resolve, 0);
+  else requestAnimationFrame(() => resolve());
+});
+
+async function mpFrameCooperative() {
+  // ImageData tages synkront, mens rVFC stadig peger paa det korrekte
+  // videoframe. Selve graaskaleringen deles derefter op, saa mobilens UI kan
+  // tegne status/video mellem bidderne uden at aendre pixelgrundlaget.
+  const rgba = octx.getImageData(0, 0, ocan.width, ocan.height).data;
+  const gray = new Float32Array(ocan.width * ocan.height);
+  const chunk = Math.max(ocan.width * 64, 131072);
+  for (let i = 0; i < gray.length; i++) {
+    gray[i] = rgba[i*4] * .3 + rgba[i*4+1] * .59 + rgba[i*4+2] * .11;
+    if (COACHWEB && i + 1 < gray.length && (i + 1) % chunk === 0)
+      await mpYieldToUI();
+  }
+  return { gray, w:ocan.width, h:ocan.height };
+}
+
 function mpGoodFeatures(frame, center, radius, maxCount=36) {
   const { gray:g, w, h } = frame, candidates=[];
   const rr=Math.max(14,radius*.78), border=8;
@@ -2707,9 +2729,11 @@ async function startMultipointTracking(p0) {
     await seekTo(startT);return false;
   }
 
-  const processFrame=tNow=>{
+  const processFrame=async tNow=>{
     octx.drawImage(video,0,0,ocan.width,ocan.height);
-    const currentFrame=mpFrame(),dt=Math.max(1e-3,tNow-anchorTime);
+    const currentFrame=COACHWEB?await mpFrameCooperative():mpFrame();
+    if(!tracking)return false;
+    const dt=Math.max(1e-3,tNow-anchorTime);
     if(HAS_RVFC&&COACHWEB){
       if(dt>FRAME*2.5)gapStrikes++;else gapStrikes=Math.max(0,gapStrikes-1);
       if(gapStrikes>=2&&tNow-lastSlowT>1&&video.playbackRate>.1){
@@ -2721,7 +2745,12 @@ async function startMultipointTracking(p0) {
     const pred={x:cur.x+vel.x*dt,y:cur.y+vel.y*dt};
     const search=Math.round(mpClamp(radius*.18+Math.hypot(vel.x,vel.y)*dt*.35,12,radius*.65));
     const moves=[];
-    for(const p of features){
+    for(let featureIndex=0;featureIndex<features.length;featureIndex++){
+      if(COACHWEB&&featureIndex>0&&featureIndex%12===0){
+        await mpYieldToUI();
+        if(!tracking)return false;
+      }
+      const p=features[featureIndex];
       const pp={x:p.x+(pred.x-cur.x),y:p.y+(pred.y-cur.y)};
       const fwd=mpMatchPoint(anchorFrame,currentFrame,p,pp,search);
       if(!fwd||fwd.cost>.42)continue;
@@ -2790,6 +2819,7 @@ async function startMultipointTracking(p0) {
       if(!SLIM)allBtn.textContent=`Stop analyse (${pct}%)`;
       if(SLIM)say(accepted?`Analyserer stangbanen · ${pct}%`:`Holder sidste sikre punkt · ${pct}%`);
     }
+    return true;
   };
 
   if(HAS_RVFC){
@@ -2801,21 +2831,23 @@ async function startMultipointTracking(p0) {
     await new Promise(res=>{
       const done=()=>{video.removeEventListener('pause',done);video.removeEventListener('ended',done);res();};
       video.addEventListener('pause',done);video.addEventListener('ended',done);
-      const stepFn=(now,meta)=>{
+      const stepFn=async(now,meta)=>{
         if(!tracking||meta.mediaTime+FRAME>=trimEndEff()){done();return;}
-        processFrame(meta.mediaTime);video.requestVideoFrameCallback(stepFn);
+        const processed=await processFrame(meta.mediaTime);
+        if(processed===false||!tracking){done();return;}
+        if(!video.ended)video.requestVideoFrameCallback(stepFn);
       };
       video.requestVideoFrameCallback(stepFn);video.play().catch(done);
     });
     video.pause();video.playbackRate=oldRate;video.muted=oldMuted;
     if(tracking&&path.pts.length<5){
       while(tracking&&video.currentTime+FRAME<trimEndEff()){
-        await seekTo(video.currentTime+FRAME);processFrame(video.currentTime);
+        await seekTo(video.currentTime+FRAME);await processFrame(video.currentTime);
       }
     }
   }else{
     while(tracking&&video.currentTime+FRAME<trimEndEff()){
-      await seekTo(video.currentTime+FRAME);processFrame(video.currentTime);
+      await seekTo(video.currentTime+FRAME);await processFrame(video.currentTime);
     }
   }
   tracking=false;playBtn.textContent=playLabel(false);barBtn.textContent='🎯 Stangbane';
