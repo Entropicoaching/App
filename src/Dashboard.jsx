@@ -83,6 +83,64 @@ function validateVideoCoachV3Row(row, athletes) {
   return null
 }
 
+const VIDEOCOACH_STATUS = {
+  draft: { label: 'Kladde', color: '#c8923a' },
+  coach_approved: { label: 'Godkendt', color: '#6cba6c' },
+  shared: { label: 'Delt med atlet', color: '#67dff5' },
+  invalid: { label: 'Ugyldig', color: '#cf6b4e' },
+}
+const VIDEOCOACH_LIFTS = { squat: 'Squat', bench: 'Bænkpres', deadlift: 'Dødløft' }
+const VIDEOCOACH_METRICS = [
+  { key: 'rom_cm', label: 'ROM' },
+  { key: 'bar_drift_cm', label: 'Vandret drift' },
+  { key: 'velocity_loss_pct', label: 'Farttab' },
+  { key: 'path_efficiency_pct', label: 'Baneeffektivitet' },
+]
+
+function videoCoachMetric(analysis, key) {
+  const metric = analysis?.metrics?.[key]
+  const value = Number(metric?.value)
+  return Number.isFinite(value) ? { ...metric, value } : null
+}
+
+function videoCoachBaseline(baselines, analysis, key) {
+  const metric = videoCoachMetric(analysis, key)
+  if (!metric) return null
+  return (baselines || []).find(item => item.lift === analysis.lift &&
+    item.variation === analysis.variation && item.metric_key === key &&
+    item.metric_method === metric.method) || null
+}
+
+function videoCoachMetricText(metric) {
+  if (!metric) return '—'
+  const digits = Math.abs(metric.value) >= 10 ? 0 : 1
+  const value = metric.value.toLocaleString('da-DK', { maximumFractionDigits: digits })
+  const unit = ({ cm: 'cm', pct: '%', m_s: 'm/s', deg: '°', s: 's' })[metric.unit] || metric.unit || ''
+  return `${value}${unit ? ` ${unit}` : ''}`
+}
+
+function videoCoachBaselineText(baseline, metric) {
+  if (!baseline || !metric || baseline.n_analyses < 3) return null
+  const delta = metric.value - Number(baseline.median)
+  const sign = delta > 0 ? '+' : ''
+  const unit = metric.unit === 'pct' ? '%' : metric.unit || ''
+  return `${sign}${delta.toLocaleString('da-DK', { maximumFractionDigits: 1 })}${unit ? ` ${unit}` : ''} vs. personlig median · n=${baseline.n_analyses}`
+}
+
+function videoCoachVariationLabel(lift, variation) {
+  const labels = {
+    competition_squat: 'Konkurrence squat',
+    konkurrence_squat: 'Konkurrence squat',
+    competition_bench: 'Konkurrence bænkpres',
+    konkurrence_baenk: 'Konkurrence bænkpres',
+    competition_conventional: 'Konventionelt dødløft',
+    competition_sumo: 'Sumo dødløft',
+  }
+  if (labels[variation]) return labels[variation]
+  if (!variation || variation === 'standard') return VIDEOCOACH_LIFTS[lift] || 'Standard'
+  return variation.replaceAll('_', ' ')
+}
+
 // Ikoner til forsidens hændelses-feed (bruges på både mobil og desktop)
 const FEED_ICONS = {
   alert: <><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></>,
@@ -411,6 +469,11 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [athleteReadiness, setAthleteReadiness] = useState([])
   const [athletePRs, setAthletePRs] = useState([])
   const [athletePRHistory, setAthletePRHistory] = useState([])
+  const [videoAnalyses, setVideoAnalyses] = useState([])
+  const [videoBaselines, setVideoBaselines] = useState([])
+  const [videoAnalysisLoading, setVideoAnalysisLoading] = useState(false)
+  const [videoAnalysisError, setVideoAnalysisError] = useState(null)
+  const [videoLiftFilter, setVideoLiftFilter] = useState('all')
   const [warmupTemplates, setWarmupTemplates] = useState([])
   const [editingWarmup, setEditingWarmup] = useState(null)
   const [warmupDraftSteps, setWarmupDraftSteps] = useState([])
@@ -564,6 +627,13 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     }
     // Hubben viser dagens parathed i statuslinjen.
     if (activeTab === 'hub' && selectedAthlete) fetchAthleteReadiness(selectedAthlete.id)
+  }, [activeTab, selectedAthlete?.id])
+
+  useEffect(() => {
+    if (activeTab === 'analyse' && selectedAthlete) {
+      setVideoLiftFilter('all')
+      fetchVideoCoachHistory(selectedAthlete.id)
+    }
   }, [activeTab, selectedAthlete?.id])
 
   useEffect(() => {
@@ -1412,6 +1482,32 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       .order('logged_at', { ascending: false })
       .limit(ATHLETE_LOGS_LIMIT)
     setAthleteLogs(data || [])
+  }
+
+  async function fetchVideoCoachHistory(athleteId) {
+    setVideoAnalysisLoading(true)
+    setVideoAnalysisError(null)
+    const [historyResult, baselineResult] = await Promise.all([
+      supabase.from('video_analyses')
+        .select('id,client_analysis_id,lift,variation,load_kg,rpe,reps_count,status,analyzed_at,created_at,low_conf_pct,position_quality_pct,quality_flags,metrics,athlete_feedback,findings,engine_version,tracker_version')
+        .eq('athlete_id', athleteId)
+        .order('analyzed_at', { ascending: false })
+        .limit(30),
+      supabase.from('athlete_baselines_v3')
+        .select('lift,variation,metric_key,metric_method,baseline_version,median,mad,n_analyses,n_reps,last_analyzed_at')
+        .eq('athlete_id', athleteId)
+        .order('last_analyzed_at', { ascending: false }),
+    ])
+    if (historyResult.error || baselineResult.error) {
+      setVideoAnalysisError(historyResult.error?.message || baselineResult.error?.message ||
+        'Videoanalyserne kunne ikke hentes')
+      setVideoAnalyses(historyResult.data || [])
+      setVideoBaselines(baselineResult.data || [])
+    } else {
+      setVideoAnalyses(historyResult.data || [])
+      setVideoBaselines(baselineResult.data || [])
+    }
+    setVideoAnalysisLoading(false)
   }
 
   async function fetchAthleteWeightLogs(athleteId) {
@@ -3693,6 +3789,13 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
               const fmtDate = date => new Date(date + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })
               const hasPlanVsActual = lifts.some(l => l.s.plannedData.length > 0)
+              const filteredVideoAnalyses = videoLiftFilter === 'all'
+                ? videoAnalyses : videoAnalyses.filter(item => item.lift === videoLiftFilter)
+              const draftVideoCount = videoAnalyses.filter(item => item.status === 'draft').length
+              const approvedVideoCount = videoAnalyses.filter(item =>
+                item.status === 'coach_approved' || item.status === 'shared').length
+              const baselineReadyCount = videoBaselines.filter(item => item.n_analyses >= 5).length
+              const latestVideo = videoAnalyses[0] || null
 
               return (
                 <div>
@@ -3738,6 +3841,118 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                       </div>
                     </div>
                   )}
+
+                  {/* VideoCoach v3 · individuel historik (read-only første lag) */}
+                  <div style={{ ...s.card, borderColor: 'rgba(200,146,58,0.24)', background: 'linear-gradient(145deg, rgba(200,146,58,0.055), #1c1c18 38%)' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+                      <div>
+                        <div style={s.cardLabel}>VideoCoach · individuelle bevægelsesanalyser</div>
+                        <div style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.78rem', color: '#b8b4a8', marginTop: '0.35rem', maxWidth: '620px', lineHeight: 1.5 }}>
+                          Samme atlet, løft og variation sammenlignes over tid. Kun coach-godkendte analyser må forme den personlige baseline.
+                        </div>
+                      </div>
+                      <button style={{ ...s.btnPrimary, fontSize: '0.58rem', padding: '0.45rem 0.8rem' }} onClick={openVideoCoachV3}>
+                        Ny videoanalyse →
+                      </button>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, minmax(0,1fr))' : 'repeat(4, minmax(0,1fr))', gap: '1px', background: 'rgba(237,234,226,0.07)', marginBottom: '1rem' }}>
+                      {[
+                        ['Analyser', videoAnalyses.length],
+                        ['Afventer coach', draftVideoCount],
+                        ['Godkendte', approvedVideoCount],
+                        ['Baseline klar', baselineReadyCount],
+                      ].map(([label, value]) => (
+                        <div key={label} style={{ background: '#191915', padding: '0.85rem' }}>
+                          <div style={s.fieldLabel}>{label}</div>
+                          <div style={{ fontFamily: "'Playfair Display', serif", color: '#edeae2', fontSize: '1.25rem' }}>{value}</div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.9rem' }}>
+                      {[['all', 'Alle'], ['squat', 'Squat'], ['bench', 'Bænk'], ['deadlift', 'Dødløft']].map(([key, label]) => (
+                        <button key={key} onClick={() => setVideoLiftFilter(key)} style={{ ...s.btnGhost, padding: '0.3rem 0.65rem', fontSize: '0.52rem', color: videoLiftFilter === key ? '#c8923a' : '#7a7770', borderColor: videoLiftFilter === key ? 'rgba(200,146,58,0.42)' : 'rgba(237,234,226,0.1)', background: videoLiftFilter === key ? 'rgba(200,146,58,0.07)' : 'transparent' }}>
+                          {label}
+                        </button>
+                      ))}
+                      {latestVideo && (
+                        <span style={{ marginLeft: isMobile ? 0 : 'auto', fontFamily: "'IBM Plex Mono', monospace", color: '#7a7770', fontSize: '0.5rem' }}>
+                          Senest {new Date(latestVideo.analyzed_at).toLocaleDateString('da-DK')}
+                        </span>
+                      )}
+                    </div>
+
+                    {videoAnalysisLoading && (
+                      <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', padding: '1rem 0' }}>Henter bevægelsesanalyser…</div>
+                    )}
+                    {videoAnalysisError && !videoAnalysisLoading && (
+                      <div style={{ border: '1px solid rgba(207,107,78,0.28)', background: 'rgba(207,107,78,0.06)', padding: '0.85rem', color: '#d79a83', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', lineHeight: 1.5 }}>
+                        Historikken kunne ikke hentes. <button onClick={() => fetchVideoCoachHistory(selectedAthlete.id)} style={{ background: 'none', border: 0, padding: 0, color: '#c8923a', cursor: 'pointer', font: 'inherit' }}>Prøv igen</button>
+                      </div>
+                    )}
+                    {!videoAnalysisLoading && !videoAnalysisError && filteredVideoAnalyses.length === 0 && (
+                      <div style={{ border: '1px dashed rgba(237,234,226,0.12)', padding: isMobile ? '1rem' : '1.3rem', textAlign: 'center' }}>
+                        <div style={{ color: '#b8b4a8', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.76rem', marginBottom: '0.35rem' }}>
+                          {videoAnalyses.length ? 'Ingen analyser for dette løft endnu.' : 'Første bevægelsesprofil er ikke oprettet endnu.'}
+                        </div>
+                        <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', lineHeight: 1.5 }}>
+                          Efter 3 godkendte analyser vises en foreløbig personlig retning. Ved 5+ kan baseline bruges i feedback.
+                        </div>
+                      </div>
+                    )}
+
+                    {!videoAnalysisLoading && filteredVideoAnalyses.length > 0 && (
+                      <div style={{ display: 'grid', gap: '0.65rem' }}>
+                        {filteredVideoAnalyses.slice(0, isMobile ? 4 : 8).map(analysis => {
+                          const status = VIDEOCOACH_STATUS[analysis.status] || VIDEOCOACH_STATUS.draft
+                          const feedback = analysis.athlete_feedback || {}
+                          const focus = feedback.focus?.[0]?.text
+                          const nextSet = feedback.next_set?.[0]?.text
+                          return (
+                            <div key={analysis.id || analysis.client_analysis_id} style={{ border: '1px solid rgba(237,234,226,0.075)', background: 'rgba(20,20,16,0.58)', padding: isMobile ? '0.8rem' : '0.95rem' }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.8rem', flexWrap: 'wrap' }}>
+                                <div>
+                                  <div style={{ color: '#edeae2', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.8rem' }}>
+                                    {VIDEOCOACH_LIFTS[analysis.lift] || analysis.lift} · {videoCoachVariationLabel(analysis.lift, analysis.variation)}
+                                  </div>
+                                  <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', marginTop: '0.25rem' }}>
+                                    {new Date(analysis.analyzed_at).toLocaleDateString('da-DK')} · {analysis.load_kg != null ? `${analysis.load_kg} kg` : 'kg ikke angivet'} · {analysis.reps_count || 0} reps{analysis.rpe != null ? ` · RPE ${analysis.rpe}` : ''}
+                                  </div>
+                                </div>
+                                <span style={{ color: status.color, border: `1px solid ${status.color}55`, background: `${status.color}10`, padding: '0.2rem 0.45rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                                  {status.label}
+                                </span>
+                              </div>
+
+                              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, minmax(0,1fr))' : 'repeat(4, minmax(0,1fr))', gap: '0.5rem', marginTop: '0.75rem' }}>
+                                {VIDEOCOACH_METRICS.map(def => {
+                                  const metric = videoCoachMetric(analysis, def.key)
+                                  if (!metric) return null
+                                  const baseline = videoCoachBaseline(videoBaselines, analysis, def.key)
+                                  const baselineText = videoCoachBaselineText(baseline, metric)
+                                  return (
+                                    <div key={def.key} style={{ minWidth: 0 }}>
+                                      <div style={s.fieldLabel}>{def.label}</div>
+                                      <div style={{ color: '#edeae2', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.64rem' }}>{videoCoachMetricText(metric)}</div>
+                                      {baselineText && <div style={{ color: '#7a9f78', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.43rem', marginTop: '0.18rem', lineHeight: 1.35 }}>{baselineText}</div>}
+                                    </div>
+                                  )
+                                })}
+                              </div>
+
+                              {(focus || nextSet) && (
+                                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '0.5rem', marginTop: '0.75rem' }}>
+                                  {focus && <div style={{ borderLeft: '2px solid #c8923a', paddingLeft: '0.55rem' }}><div style={s.fieldLabel}>Fokus</div><div style={{ color: '#b8b4a8', fontSize: '0.66rem', lineHeight: 1.45 }}>{focus}</div></div>}
+                                  {nextSet && <div style={{ borderLeft: '2px solid #6cba6c', paddingLeft: '0.55rem' }}><div style={s.fieldLabel}>Næste sæt</div><div style={{ color: '#b8b4a8', fontSize: '0.66rem', lineHeight: 1.45 }}>{nextSet}</div></div>}
+                                </div>
+                              )}
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )}
+                  </div>
 
                   {/* 1. Træningsoverblik */}
                   <div style={s.card}>
