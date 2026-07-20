@@ -47,7 +47,7 @@ const statusLabels = { active: 'Aktiv', peaking: 'Peaking', offseason: 'Off-seas
 const statusColors = { active: '#6cba6c', peaking: '#c8923a', offseason: '#7a7770', ferie: '#5b9bb5' }
 
 const VIDEOCOACH_V3_PREFIX = 'entropi:videocoach:v3'
-const VIDEOCOACH_V3_URL = 'videocoach.html?coach=1&bridge=v3&v=20260719-cooperativeui'
+const VIDEOCOACH_V3_URL = 'videocoach.html?coach=1&bridge=v3&v=20260720-coach-review'
 const VIDEOCOACH_V3_COLUMNS = new Set([
   'client_analysis_id', 'athlete_id', 'athlete_name', 'source_mode', 'status',
   'lift', 'variation', 'load_kg', 'rpe', 'reps_count', 'rep_details',
@@ -61,6 +61,14 @@ const VIDEOCOACH_V3_COLUMNS = new Set([
 
 function openVideoCoachV3() {
   window.open(VIDEOCOACH_V3_URL, '_blank')
+}
+
+function videoCoachBridgeConfig(athletes, selectedAthleteId) {
+  return {
+    type: `${VIDEOCOACH_V3_PREFIX}:config`,
+    athletes: (athletes || []).map(({ id, name }) => ({ id, name })),
+    selectedAthleteId: selectedAthleteId || null,
+  }
 }
 
 function validateVideoCoachV3Row(row, athletes) {
@@ -130,6 +138,32 @@ function videoCoachBaselineText(baseline, metric) {
   const sign = delta > 0 ? '+' : ''
   const unit = metric.unit === 'pct' ? '%' : metric.unit || ''
   return `${sign}${delta.toLocaleString('da-DK', { maximumFractionDigits: 1 })}${unit ? ` ${unit}` : ''} vs. personlig median · n=${baseline.n_analyses}`
+}
+
+function videoCoachPathPreview(barPath) {
+  if (!barPath || !Array.isArray(barPath.dx) || !Array.isArray(barPath.dy) ||
+      barPath.dx.length !== barPath.dy.length || barPath.dx.length > 240 ||
+      !Number.isFinite(Number(barPath.x0)) || !Number.isFinite(Number(barPath.y0))) return null
+  let x = Number(barPath.x0), y = Number(barPath.y0)
+  const points = [{ x, y }]
+  for (let i = 0; i < barPath.dx.length; i++) {
+    const dx = Number(barPath.dx[i]), dy = Number(barPath.dy[i])
+    if (!Number.isFinite(dx) || !Number.isFinite(dy) || Math.abs(dx) > 1000 || Math.abs(dy) > 1000)
+      return null
+    x += dx; y += dy; points.push({ x, y })
+  }
+  if (points.length < 2) return null
+  const xs = points.map(point => point.x), ys = points.map(point => point.y)
+  const minX = Math.min(...xs), maxX = Math.max(...xs)
+  const minY = Math.min(...ys), maxY = Math.max(...ys)
+  const width = Math.max(30, maxX - minX), height = Math.max(60, maxY - minY)
+  const padX = Math.max(12, width * 0.22), padY = Math.max(12, height * 0.1)
+  return {
+    points: points.map(point => `${point.x},${point.y}`).join(' '),
+    viewBox: `${minX - padX} ${minY - padY} ${width + padX * 2} ${height + padY * 2}`,
+    start: points[0], end: points[points.length - 1], referenceX: points[0].x,
+    y1: minY - padY, y2: maxY + padY,
+  }
 }
 
 function videoCoachVariationLabel(lift, variation) {
@@ -479,6 +513,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [videoAnalysisLoading, setVideoAnalysisLoading] = useState(false)
   const [videoAnalysisError, setVideoAnalysisError] = useState(null)
   const [videoLiftFilter, setVideoLiftFilter] = useState('all')
+  const [videoAnalysisUpdatingId, setVideoAnalysisUpdatingId] = useState(null)
+  const [videoAnalysisReview, setVideoAnalysisReview] = useState(null)
+  const [videoAnalysisReviewLoadingId, setVideoAnalysisReviewLoadingId] = useState(null)
+  const [videoAnalysisReviewError, setVideoAnalysisReviewError] = useState(null)
   const [warmupTemplates, setWarmupTemplates] = useState([])
   const [editingWarmup, setEditingWarmup] = useState(null)
   const [warmupDraftSteps, setWarmupDraftSteps] = useState([])
@@ -538,16 +576,23 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   // Ingen access-token, service key eller intern coachnote sendes til URL'en.
   useEffect(() => {
     videoCoachAthletesRef.current = athletes
-    const config = { type: `${VIDEOCOACH_V3_PREFIX}:config`,
-      athletes: athletes.map(({ id, name }) => ({ id, name })) }
+    const config = videoCoachBridgeConfig(athletes, videoCoachSelectedAthleteRef.current)
     for (const client of videoCoachClientsRef.current) {
       if (!client || client.closed) { videoCoachClientsRef.current.delete(client); continue }
-      try { client.postMessage(config, window.location.origin) } catch {}
+      try { client.postMessage(config, window.location.origin) }
+      catch { videoCoachClientsRef.current.delete(client) }
     }
   }, [athletes])
 
   useEffect(() => {
     videoCoachSelectedAthleteRef.current = selectedAthlete?.id || null
+    const config = videoCoachBridgeConfig(videoCoachAthletesRef.current,
+      videoCoachSelectedAthleteRef.current)
+    for (const client of videoCoachClientsRef.current) {
+      if (!client || client.closed) { videoCoachClientsRef.current.delete(client); continue }
+      try { client.postMessage(config, window.location.origin) }
+      catch { videoCoachClientsRef.current.delete(client) }
+    }
   }, [selectedAthlete?.id])
 
   useEffect(() => {
@@ -556,15 +601,45 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       const message = event.data || {}
       if (message.type === `${VIDEOCOACH_V3_PREFIX}:ready`) {
         videoCoachClientsRef.current.add(event.source)
-        event.source.postMessage({ type: `${VIDEOCOACH_V3_PREFIX}:config`,
-          athletes: videoCoachAthletesRef.current.map(({ id, name }) => ({ id, name })) },
-        event.origin)
+        event.source.postMessage(videoCoachBridgeConfig(videoCoachAthletesRef.current,
+          videoCoachSelectedAthleteRef.current), event.origin)
+        return
+      }
+      if (message.type === `${VIDEOCOACH_V3_PREFIX}:baseline-request`) {
+        const reply = result => {
+          try { event.source.postMessage({ type: `${VIDEOCOACH_V3_PREFIX}:baseline-result`,
+            requestId: message.requestId, athleteId: message.athleteId, ...result }, event.origin); return true }
+          catch { return false }
+        }
+        if (!videoCoachClientsRef.current.has(event.source)) {
+          reply({ ok: false, error: 'VideoCoach-forbindelsen er ikke registreret' })
+          return
+        }
+        if (typeof message.requestId !== 'string' || message.requestId.length > 100 ||
+            !videoCoachAthletesRef.current.some(athlete => athlete.id === message.athleteId)) {
+          reply({ ok: false, error: 'Ugyldig baseline-forespørgsel' })
+          return
+        }
+        const { data, error } = await supabase.from('athlete_baselines_v3')
+          .select('lift,variation,metric_key,metric_method,baseline_version,median,mad,n_analyses,n_reps,last_analyzed_at')
+          .eq('athlete_id', message.athleteId)
+          .order('last_analyzed_at', { ascending: false })
+        if (error) {
+          reply({ ok: false, error: error.message || 'Baseline kunne ikke hentes' })
+          return
+        }
+        reply({ ok: true, baselines: (data || []).filter(item =>
+          item && ['squat', 'bench', 'deadlift'].includes(item.lift) &&
+          typeof item.variation === 'string' && typeof item.metric_key === 'string' &&
+          typeof item.metric_method === 'string' && Number.isFinite(Number(item.median)) &&
+          Number(item.n_analyses) >= 1) })
         return
       }
       if (message.type !== `${VIDEOCOACH_V3_PREFIX}:save-draft`) return
       const reply = result => {
         try { event.source.postMessage({ type: `${VIDEOCOACH_V3_PREFIX}:save-result`,
-          requestId: message.requestId, ...result }, event.origin) } catch {}
+          requestId: message.requestId, ...result }, event.origin); return true }
+        catch { return false }
       }
       const validationError = validateVideoCoachV3Row(message.row,
         videoCoachAthletesRef.current)
@@ -646,8 +721,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   }, [activeTab, selectedAthlete?.id])
 
   useEffect(() => {
-    if (activeTab === 'analyse' && selectedAthlete) {
-      setVideoLiftFilter('all')
+    if ((activeTab === 'hub' || activeTab === 'analyse') && selectedAthlete) {
       fetchVideoCoachHistory(selectedAthlete.id)
     }
   }, [activeTab, selectedAthlete?.id])
@@ -1505,7 +1579,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     setVideoAnalysisError(null)
     const [historyResult, baselineResult] = await Promise.all([
       supabase.from('video_analyses')
-        .select('id,client_analysis_id,lift,variation,load_kg,rpe,reps_count,status,analyzed_at,created_at,low_conf_pct,position_quality_pct,quality_flags,metrics,athlete_feedback,findings,engine_version,tracker_version')
+        .select('id,client_analysis_id,source_mode,lift,variation,load_kg,rpe,reps_count,status,analyzed_at,created_at,low_conf_pct,position_quality_pct,quality_flags,metrics,athlete_feedback,findings,engine_version,tracker_version')
         .eq('athlete_id', athleteId)
         .order('analyzed_at', { ascending: false })
         .limit(30),
@@ -1524,6 +1598,62 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       setVideoBaselines(baselineResult.data || [])
     }
     setVideoAnalysisLoading(false)
+  }
+
+  async function reviewVideoAnalysis(analysis, nextStatus) {
+    if (!selectedAthlete?.id || !analysis?.id || videoAnalysisUpdatingId) return
+    if (!['draft', 'coach_approved', 'invalid'].includes(nextStatus)) return
+    setVideoAnalysisUpdatingId(analysis.id)
+    setVideoAnalysisError(null)
+    try {
+      let query = supabase.from('video_analyses')
+        .update({ status: nextStatus })
+        .eq('id', analysis.id)
+        .eq('athlete_id', selectedAthlete.id)
+      if (analysis.client_analysis_id)
+        query = query.eq('client_analysis_id', analysis.client_analysis_id)
+      const { data, error } = await query
+        .select('id,client_analysis_id,athlete_id,status').single()
+      if (error) throw error
+      if (!data || data.id !== analysis.id || data.athlete_id !== selectedAthlete.id ||
+          data.status !== nextStatus)
+        throw new Error('Databasen bekræftede ikke den valgte analyse')
+      await fetchVideoCoachHistory(selectedAthlete.id)
+      setVideoAnalysisReview(current => current?.id === analysis.id
+        ? { ...current, status: nextStatus } : current)
+      const message = nextStatus === 'coach_approved'
+        ? 'Videoanalyse godkendt til personlig baseline'
+        : nextStatus === 'invalid'
+          ? 'Videoanalyse udeladt fra personlig baseline'
+          : 'Videoanalyse flyttet tilbage til kladde'
+      showFlash(message, 'success')
+    } catch (error) {
+      setVideoAnalysisError(error.message || 'Analysens status kunne ikke opdateres')
+      showFlash('Videoanalysen kunne ikke opdateres', 'error')
+    } finally {
+      setVideoAnalysisUpdatingId(null)
+    }
+  }
+
+  async function openVideoAnalysisReview(analysis) {
+    if (!selectedAthlete?.id || !analysis?.id || videoAnalysisReviewLoadingId) return
+    setVideoAnalysisReviewLoadingId(analysis.id)
+    setVideoAnalysisReviewError(null)
+    try {
+      const { data, error } = await supabase.from('video_analyses')
+        .select('id,client_analysis_id,athlete_id,source_mode,lift,variation,load_kg,rpe,reps_count,status,analyzed_at,low_conf_pct,position_quality_pct,quality_flags,metrics,findings,athlete_feedback,bar_path,session_context,engine_version,tracker_version,skeleton_version,feedback_version')
+        .eq('id', analysis.id)
+        .eq('athlete_id', selectedAthlete.id)
+        .single()
+      if (error) throw error
+      if (!data || data.id !== analysis.id || data.athlete_id !== selectedAthlete.id)
+        throw new Error('Databasen returnerede reviewdata for en forkert analyse')
+      setVideoAnalysisReview(data)
+    } catch (error) {
+      setVideoAnalysisReviewError(error.message || 'Målingen kunne ikke åbnes')
+    } finally {
+      setVideoAnalysisReviewLoadingId(null)
+    }
   }
 
   async function fetchAthleteWeightLogs(athleteId) {
@@ -2211,6 +2341,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   // Man lander altid på Home/hub når en atlet åbnes — uanset hvor man klikker
   // fra (sidebar, prioritets-liste, beskeder osv.). Hubben er den faste indgang.
   function openProfile(athlete) {
+    setVideoAnalysisReview(null)
+    setVideoAnalysisReviewError(null)
     setSelectedAthlete(athlete)
     setActiveTab('hub')
     setEditing(null)
@@ -3711,12 +3843,14 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               const sig = todayR && todayR.readiness_score != null ? readinessSignal(todayR.readiness_score) : null
               const trainings = weeklyActivity[a.id]?.sessions ?? 0
               const unread = unreadCounts[a.id] ?? 0
+              const pendingVideoCount = videoAnalyses.filter(item => item.status === 'draft').length
               const compDate = a.competition_date
               const weeksToComp = compDate ? Math.ceil((new Date(compDate + 'T12:00:00') - new Date()) / (7 * 24 * 3600 * 1000)) : null
               const stat = [
                 sig && { label: 'Parathed i dag', value: todayR.readiness_score, sub: sig.text, color: sig.color },
                 { label: 'Træninger denne uge', value: trainings, sub: weeklyActivity[a.id]?.sets ? `${weeklyActivity[a.id].sets} sæt` : 'logget', color: '#edeae2' },
                 { label: 'Ulæste beskeder', value: unread, sub: unread > 0 ? 'fra atleten' : 'ingen nye', color: unread > 0 ? '#c8923a' : '#7a7770' },
+                pendingVideoCount > 0 && { label: 'Målinger til review', value: pendingVideoCount, sub: 'afventer dig', color: '#67dff5' },
                 weeksToComp != null && { label: 'Til stævne', value: weeksToComp > 0 ? weeksToComp : '0', sub: weeksToComp > 0 ? 'uger' : 'passeret', color: '#c8923a' },
               ].filter(Boolean)
               return (
@@ -3755,6 +3889,9 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#7a7770', letterSpacing: '0.04em', lineHeight: 1.4 }}>{sec.desc}</div>
                         {sec.key === 'beskeder' && unread > 0 && (
                           <span style={{ position: 'absolute', top: '1rem', right: '1rem', background: '#c8923a', color: '#141410', borderRadius: '999px', fontSize: '0.55rem', padding: '0.1rem 0.4rem', fontWeight: 600 }}>{unread}</span>
+                        )}
+                        {sec.key === 'analyse' && pendingVideoCount > 0 && (
+                          <span style={{ position: 'absolute', top: '1rem', right: '1rem', background: '#67dff5', color: '#141410', borderRadius: '999px', fontSize: '0.55rem', padding: '0.1rem 0.4rem', fontWeight: 600 }}>{pendingVideoCount}</span>
                         )}
                       </button>
                     ))}
@@ -3904,7 +4041,12 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     )}
                     {videoAnalysisError && !videoAnalysisLoading && (
                       <div style={{ border: '1px solid rgba(207,107,78,0.28)', background: 'rgba(207,107,78,0.06)', padding: '0.85rem', color: '#d79a83', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', lineHeight: 1.5 }}>
-                        Historikken kunne ikke hentes. <button onClick={() => fetchVideoCoachHistory(selectedAthlete.id)} style={{ background: 'none', border: 0, padding: 0, color: '#c8923a', cursor: 'pointer', font: 'inherit' }}>Prøv igen</button>
+                        {videoAnalysisError} <button onClick={() => fetchVideoCoachHistory(selectedAthlete.id)} style={{ background: 'none', border: 0, padding: 0, color: '#c8923a', cursor: 'pointer', font: 'inherit' }}>Prøv igen</button>
+                      </div>
+                    )}
+                    {videoAnalysisReviewError && (
+                      <div style={{ border: '1px solid rgba(207,107,78,0.28)', background: 'rgba(207,107,78,0.06)', padding: '0.7rem 0.85rem', color: '#d79a83', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', lineHeight: 1.5, marginBottom: '0.7rem' }}>
+                        {videoAnalysisReviewError}
                       </div>
                     )}
                     {!videoAnalysisLoading && !videoAnalysisError && filteredVideoAnalyses.length === 0 && (
@@ -3925,6 +4067,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                           const feedback = analysis.athlete_feedback || {}
                           const focus = feedback.focus?.[0]?.text
                           const nextSet = feedback.next_set?.[0]?.text
+                          const updating = videoAnalysisUpdatingId === analysis.id
                           return (
                             <div key={analysis.id || analysis.client_analysis_id} style={{ border: '1px solid rgba(237,234,226,0.075)', background: 'rgba(20,20,16,0.58)', padding: isMobile ? '0.8rem' : '0.95rem' }}>
                               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.8rem', flexWrap: 'wrap' }}>
@@ -3935,10 +4078,20 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                                   <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', marginTop: '0.25rem' }}>
                                     {new Date(analysis.analyzed_at).toLocaleDateString('da-DK')} · {analysis.load_kg != null ? `${analysis.load_kg} kg` : 'kg ikke angivet'} · {analysis.reps_count || 0} reps{analysis.rpe != null ? ` · RPE ${analysis.rpe}` : ''}
                                   </div>
+                                  {analysis.source_mode === 'athlete_submission' && (
+                                    <div style={{ color: '#67dff5', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', marginTop: '0.3rem', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                                      Sendt af atleten
+                                    </div>
+                                  )}
                                 </div>
-                                <span style={{ color: status.color, border: `1px solid ${status.color}55`, background: `${status.color}10`, padding: '0.2rem 0.45rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                                  {status.label}
-                                </span>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                                  <button disabled={videoAnalysisReviewLoadingId === analysis.id} onClick={() => openVideoAnalysisReview(analysis)} style={{ ...s.btnGhost, padding: '0.24rem 0.5rem', fontSize: '0.46rem', opacity: videoAnalysisReviewLoadingId === analysis.id ? 0.55 : 0.9 }}>
+                                    {videoAnalysisReviewLoadingId === analysis.id ? 'Åbner…' : 'Gennemgå måling'}
+                                  </button>
+                                  <span style={{ color: status.color, border: `1px solid ${status.color}55`, background: `${status.color}10`, padding: '0.2rem 0.45rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                                    {status.label}
+                                  </span>
+                                </div>
                               </div>
 
                               <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, minmax(0,1fr))' : 'repeat(4, minmax(0,1fr))', gap: '0.5rem', marginTop: '0.75rem' }}>
@@ -3961,6 +4114,40 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                                 <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '0.5rem', marginTop: '0.75rem' }}>
                                   {focus && <div style={{ borderLeft: '2px solid #c8923a', paddingLeft: '0.55rem' }}><div style={s.fieldLabel}>Fokus</div><div style={{ color: '#b8b4a8', fontSize: '0.66rem', lineHeight: 1.45 }}>{focus}</div></div>}
                                   {nextSet && <div style={{ borderLeft: '2px solid #6cba6c', paddingLeft: '0.55rem' }}><div style={s.fieldLabel}>Næste sæt</div><div style={{ color: '#b8b4a8', fontSize: '0.66rem', lineHeight: 1.45 }}>{nextSet}</div></div>}
+                                </div>
+                              )}
+
+                              {analysis.status === 'draft' && (
+                                <div style={{ marginTop: '0.85rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(237,234,226,0.07)', display: 'flex', alignItems: isMobile ? 'stretch' : 'center', justifyContent: 'space-between', gap: '0.7rem', flexDirection: isMobile ? 'column' : 'row' }}>
+                                  <div style={{ color: '#8f8b82', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', lineHeight: 1.45 }}>
+                                    Kontrollér bane og feedback. Godkend kun en brugbar måling.
+                                  </div>
+                                  <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap' }}>
+                                    <button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'coach_approved')} style={{ ...s.btnPrimary, padding: '0.38rem 0.7rem', fontSize: '0.52rem', background: '#4f7d50', opacity: updating ? 0.55 : 1 }}>
+                                      {updating ? 'Gemmer…' : 'Godkend til baseline'}
+                                    </button>
+                                    <button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'invalid')} style={{ ...s.btnGhost, padding: '0.38rem 0.7rem', fontSize: '0.52rem', opacity: updating ? 0.55 : 1 }}>
+                                      Udelad
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
+
+                              {analysis.status === 'coach_approved' && (
+                                <div style={{ marginTop: '0.75rem', paddingTop: '0.65rem', borderTop: '1px solid rgba(237,234,226,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.65rem', flexWrap: 'wrap' }}>
+                                  <span style={{ color: '#7a9f78', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem' }}>Indgår i personlig baseline</span>
+                                  <button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'invalid')} style={{ ...s.btnGhost, padding: '0.28rem 0.55rem', fontSize: '0.46rem', opacity: updating ? 0.55 : 0.78 }}>
+                                    {updating ? 'Gemmer…' : 'Fjern fra baseline'}
+                                  </button>
+                                </div>
+                              )}
+
+                              {analysis.status === 'invalid' && (
+                                <div style={{ marginTop: '0.75rem', paddingTop: '0.65rem', borderTop: '1px solid rgba(237,234,226,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.65rem', flexWrap: 'wrap' }}>
+                                  <span style={{ color: '#b07b68', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem' }}>Tæller ikke med i baseline</span>
+                                  <button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'draft')} style={{ ...s.btnGhost, padding: '0.28rem 0.55rem', fontSize: '0.46rem', opacity: updating ? 0.55 : 0.9 }}>
+                                    {updating ? 'Gemmer…' : 'Tilbage til kladde'}
+                                  </button>
                                 </div>
                               )}
                             </div>
@@ -6491,6 +6678,89 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           </div>
         )}
       </main>
+
+      {videoAnalysisReview && (() => {
+        const analysis = videoAnalysisReview
+        const status = VIDEOCOACH_STATUS[analysis.status] || VIDEOCOACH_STATUS.draft
+        const pathPreview = videoCoachPathPreview(analysis.bar_path)
+        const findings = Array.isArray(analysis.findings)
+          ? analysis.findings.filter(item => item && typeof item.summary === 'string').slice(0, 6) : []
+        const baselineSnapshot = Array.isArray(analysis.session_context?.baseline_snapshot)
+          ? analysis.session_context.baseline_snapshot : []
+        const athleteNote = typeof analysis.session_context?.athlete_note === 'string'
+          ? analysis.session_context.athlete_note.trim() : ''
+        const updating = videoAnalysisUpdatingId === analysis.id
+        return (
+          <div role="dialog" aria-modal="true" style={{ ...s.overlay, padding: isMobile ? '0.5rem' : '1.5rem', zIndex: 10020 }} onClick={e => e.target === e.currentTarget && setVideoAnalysisReview(null)}>
+            <div style={{ ...s.modal, width: '100%', maxWidth: '760px', maxHeight: isMobile ? '96vh' : '90vh', overflowY: 'auto', padding: isMobile ? '1rem' : '1.4rem' }} onClick={e => e.stopPropagation()}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', marginBottom: '1rem' }}>
+                <div>
+                  <div style={s.cardLabel}>Gennemgå måling</div>
+                  <div style={{ fontFamily: "'Playfair Display', serif", fontSize: isMobile ? '1.15rem' : '1.4rem', color: '#edeae2', marginTop: '0.25rem' }}>
+                    {VIDEOCOACH_LIFTS[analysis.lift] || analysis.lift} · {videoCoachVariationLabel(analysis.lift, analysis.variation)}
+                  </div>
+                  <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', marginTop: '0.3rem' }}>
+                    {new Date(analysis.analyzed_at).toLocaleDateString('da-DK')} · {analysis.load_kg != null ? `${analysis.load_kg} kg` : 'kg ikke angivet'} · {analysis.reps_count || 0} reps{analysis.rpe != null ? ` · RPE ${analysis.rpe}` : ''}
+                  </div>
+                  {analysis.source_mode === 'athlete_submission' && <div style={{ color: '#67dff5', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem', marginTop: '0.35rem', letterSpacing: '0.04em', textTransform: 'uppercase' }}>Sendt af atleten</div>}
+                </div>
+                <button onClick={() => setVideoAnalysisReview(null)} style={{ ...s.btnGhost, padding: '0.28rem 0.55rem', flexShrink: 0 }}>Luk</button>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'minmax(220px,0.8fr) minmax(0,1.2fr)', gap: '0.9rem' }}>
+                <div style={{ border: '1px solid rgba(237,234,226,0.09)', background: '#141410', minHeight: '260px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.8rem' }}>
+                  {pathPreview ? (
+                    <svg viewBox={pathPreview.viewBox} width="100%" height="260" preserveAspectRatio="xMidYMid meet" style={{ display: 'block', overflow: 'visible' }}>
+                      <line x1={pathPreview.referenceX} y1={pathPreview.y1} x2={pathPreview.referenceX} y2={pathPreview.y2} stroke="rgba(237,234,226,0.16)" strokeWidth="1" strokeDasharray="5 5" vectorEffect="non-scaling-stroke" />
+                      <polyline points={pathPreview.points} fill="none" stroke="#c8923a" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+                      <circle cx={pathPreview.start.x} cy={pathPreview.start.y} r="4" fill="#67dff5" vectorEffect="non-scaling-stroke" />
+                      <circle cx={pathPreview.end.x} cy={pathPreview.end.y} r="4" fill="#edeae2" vectorEffect="non-scaling-stroke" />
+                    </svg>
+                  ) : (
+                    <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', lineHeight: 1.5, textAlign: 'center' }}>Ingen gyldig, gemt stangbane på denne analyse.</div>
+                  )}
+                </div>
+
+                <div>
+                  <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.8rem' }}>
+                    <span style={{ color: status.color, border: `1px solid ${status.color}55`, padding: '0.22rem 0.45rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', textTransform: 'uppercase' }}>{status.label}</span>
+                    <span style={{ color: Number(analysis.low_conf_pct) > 15 ? '#cf6b4e' : '#7a9f78', border: '1px solid rgba(237,234,226,0.1)', padding: '0.22rem 0.45rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem' }}>Lav tracking-confidence {Number(analysis.low_conf_pct || 0).toLocaleString('da-DK', { maximumFractionDigits: 1 })}%</span>
+                    {analysis.position_quality_pct != null && <span style={{ color: Number(analysis.position_quality_pct) > 25 ? '#cf6b4e' : '#7a9f78', border: '1px solid rgba(237,234,226,0.1)', padding: '0.22rem 0.45rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem' }}>Positionsafvigelse {Number(analysis.position_quality_pct).toLocaleString('da-DK', { maximumFractionDigits: 1 })}%</span>}
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: '0.6rem', marginBottom: '0.9rem' }}>
+                    {VIDEOCOACH_METRICS.map(def => {
+                      const metric = videoCoachMetric(analysis, def.key)
+                      if (!metric) return null
+                      const baseline = videoCoachBaseline(videoBaselines, analysis, def.key)
+                      return <div key={def.key}><div style={s.fieldLabel}>{def.label}</div><div style={{ color: '#edeae2', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.68rem' }}>{videoCoachMetricText(metric)}</div>{videoCoachBaselineText(baseline, metric) && <div style={{ color: '#7a9f78', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', marginTop: '0.18rem', lineHeight: 1.35 }}>{videoCoachBaselineText(baseline, metric)}</div>}</div>
+                    })}
+                  </div>
+
+                  {findings.length > 0 && <div style={{ borderTop: '1px solid rgba(237,234,226,0.07)', paddingTop: '0.75rem' }}><div style={s.fieldLabel}>Fund</div><div style={{ display: 'grid', gap: '0.4rem', marginTop: '0.4rem' }}>{findings.map((finding, index) => <div key={finding.id || index} style={{ color: finding.kind === 'focus' ? '#d79a83' : finding.kind === 'works' ? '#8caf88' : '#b8b4a8', fontSize: '0.66rem', lineHeight: 1.45 }}>{finding.summary}</div>)}</div></div>}
+                  {baselineSnapshot.length > 0 && <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', lineHeight: 1.45, marginTop: '0.75rem' }}>Personlig baseline blev brugt på {baselineSnapshot.length} tydelig{baselineSnapshot.length === 1 ? 't' : 'e'} signal{baselineSnapshot.length === 1 ? '' : 'er'}.</div>}
+                </div>
+              </div>
+
+              {athleteNote && (
+                <div style={{ marginTop: '0.9rem', borderLeft: '2px solid #67dff5', background: 'rgba(103,223,245,0.04)', padding: '0.7rem 0.8rem' }}>
+                  <div style={s.fieldLabel}>Atletens notat</div>
+                  <div style={{ color: '#c7c3b9', fontSize: '0.7rem', lineHeight: 1.5, whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', marginTop: '0.3rem' }}>{athleteNote}</div>
+                </div>
+              )}
+
+              <div style={{ marginTop: '1rem', paddingTop: '0.85rem', borderTop: '1px solid rgba(237,234,226,0.08)' }}>
+                <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', lineHeight: 1.45, marginBottom: '0.7rem' }}>Reviewet viser den gemte måling. Originalvideoen lagres ikke i appen endnu.</div>
+                <div style={{ display: 'flex', gap: '0.55rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                  {analysis.status === 'draft' && <><button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'invalid')} style={{ ...s.btnGhost, opacity: updating ? 0.55 : 1 }}>{updating ? 'Gemmer…' : 'Udelad måling'}</button><button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'coach_approved')} style={{ ...s.btnPrimary, background: '#4f7d50', opacity: updating ? 0.55 : 1 }}>{updating ? 'Gemmer…' : 'Godkend til baseline'}</button></>}
+                  {analysis.status === 'coach_approved' && <button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'invalid')} style={{ ...s.btnGhost, opacity: updating ? 0.55 : 1 }}>{updating ? 'Gemmer…' : 'Fjern fra baseline'}</button>}
+                  {analysis.status === 'invalid' && <button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'draft')} style={{ ...s.btnGhost, opacity: updating ? 0.55 : 1 }}>{updating ? 'Gemmer…' : 'Tilbage til kladde'}</button>}
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      })()}
 
       {meetResultForm && (() => {
         const f = meetResultForm

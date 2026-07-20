@@ -1,6 +1,40 @@
 import { useState, useEffect, useRef, Fragment } from 'react'
 import { supabase, withRetry, queueWrite } from './supabase'
 
+const ATHLETE_VIDEOCOACH_PREFIX = 'entropi:videocoach:v3'
+const ATHLETE_VIDEOCOACH_URL = 'videocoach.html?mode=athlete&bridge=athlete-v1&v=20260720-athlete-submit-v2'
+const ATHLETE_VIDEOCOACH_COLUMNS = new Set([
+  'client_analysis_id', 'athlete_id', 'athlete_name', 'source_mode', 'status',
+  'lift', 'variation', 'load_kg', 'rpe', 'reps_count', 'rep_details',
+  'session_context', 'capture_context', 'schema_version', 'schema_v',
+  'engine_version', 'tracker_version', 'skeleton_version', 'feedback_version',
+  'low_conf_pct', 'position_quality_pct', 'quality_flags', 'metrics', 'skeleton',
+  'findings', 'coach_note', 'athlete_feedback', 'ai_draft', 'bar_path',
+  'analyzed_at', 'reps', 'load_note', 'bias_note', 'rom_cm', 'loss_pct',
+  'stick_pct', 'dip_pct', 'drift_cm', 'extra', 'ai_text',
+])
+
+function validateAthleteVideoCoachRow(row, athleteId) {
+  if (!row || typeof row !== 'object' || Array.isArray(row)) return 'Ugyldig analysepayload'
+  if (Object.keys(row).some(key => !ATHLETE_VIDEOCOACH_COLUMNS.has(key)))
+    return 'Analysen indeholder et felt, som atletbroen ikke tillader'
+  if (row.schema_version !== 3 || row.schema_v !== 3 || row.status !== 'draft')
+    return 'Kun schema-v3 kladder kan sendes til coachen'
+  if (row.source_mode !== 'athlete_submission' || row.athlete_id !== athleteId)
+    return 'Analysen er ikke knyttet til den indloggede atlet'
+  if (!['squat', 'bench', 'deadlift'].includes(row.lift)) return 'Ugyldigt løft'
+  if (!/^[a-z0-9]+([._-][a-z0-9]+)*$/.test(row.variation || ''))
+    return 'Ugyldig variation'
+  if (!Array.isArray(row.reps) || row.reps.some(value => typeof value !== 'number'))
+    return 'Repdata skal være numeriske'
+  if (!Array.isArray(row.rep_details) || row.reps_count !== row.rep_details.length)
+    return 'Repantal og repdetaljer stemmer ikke'
+  const athleteNote = row.session_context?.athlete_note
+  if (athleteNote != null && (typeof athleteNote !== 'string' || athleteNote.length > 1000))
+    return 'Notatet til coachen er ugyldigt eller for langt'
+  return null
+}
+
 const BLOCK_PALETTE = ['#4e8fcf','#c8923a','#6cba6c','#9b6bd4','#cf6b4e','#4ec8b4']
 function blockColor(name) {
   if (!name) return '#4a4844'
@@ -1566,6 +1600,8 @@ function parsePlannedRpe(intensity) {
 export default function AthleteView({ session, onExitPreview, role, coachAthleteId }) {
   const [tab, setTab] = useState('hjem')
   const [athlete, setAthlete] = useState(null)
+  const athleteVideoCoachRef = useRef(null)
+  const athleteVideoCoachClientsRef = useRef(new Set())
   const [logs, setLogs] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
@@ -1696,6 +1732,79 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [readinessInput, setReadinessInput] = useState({ sleep: '', energy: null, motivation: null, stress: null, soreness: null, soreZones: [] })
   const [savingReadiness, setSavingReadiness] = useState(false)
   const [readinessError, setReadinessError] = useState(null)
+
+  useEffect(() => {
+    athleteVideoCoachRef.current = athlete
+    if (!athlete?.id) return
+    const config = { type: `${ATHLETE_VIDEOCOACH_PREFIX}:config`,
+      athletes: [{ id: athlete.id, name: athlete.name }], selectedAthleteId: athlete.id,
+      submissionMode: 'athlete' }
+    for (const client of athleteVideoCoachClientsRef.current) {
+      if (!client || client.closed) { athleteVideoCoachClientsRef.current.delete(client); continue }
+      try { client.postMessage(config, window.location.origin) }
+      catch { athleteVideoCoachClientsRef.current.delete(client) }
+    }
+  }, [athlete])
+
+  useEffect(() => {
+    const onAthleteVideoCoachMessage = async event => {
+      if (event.origin !== window.location.origin || !event.source) return
+      const message = event.data || {}
+      const currentAthlete = athleteVideoCoachRef.current
+      if (message.type === `${ATHLETE_VIDEOCOACH_PREFIX}:ready`) {
+        if (!currentAthlete?.id) return
+        athleteVideoCoachClientsRef.current.add(event.source)
+        event.source.postMessage({ type: `${ATHLETE_VIDEOCOACH_PREFIX}:config`,
+          athletes: [{ id: currentAthlete.id, name: currentAthlete.name }],
+          selectedAthleteId: currentAthlete.id, submissionMode: 'athlete' }, event.origin)
+        return
+      }
+      if (message.type !== `${ATHLETE_VIDEOCOACH_PREFIX}:save-draft`) return
+      const reply = result => {
+        try { event.source.postMessage({ type: `${ATHLETE_VIDEOCOACH_PREFIX}:save-result`,
+          requestId: message.requestId, ...result }, event.origin); return true }
+        catch { return false }
+      }
+      if (!athleteVideoCoachClientsRef.current.has(event.source) || !currentAthlete?.id) {
+        reply({ ok: false, error: 'VideoCoach-forbindelsen er ikke registreret' })
+        return
+      }
+      const validationError = validateAthleteVideoCoachRow(message.row, currentAthlete.id)
+      if (validationError) { reply({ ok: false, error: validationError }); return }
+      const safeRow = {
+        ...message.row,
+        athlete_id: currentAthlete.id,
+        athlete_name: currentAthlete.name,
+        source_mode: 'athlete_submission',
+        status: 'draft',
+        coach_note: null,
+        bias_note: null,
+        session_context: {
+          training_session_id: null,
+          program_item_id: null,
+          coach_note_snapshot: null,
+          baseline_snapshot: [],
+          athlete_note: typeof message.row.session_context?.athlete_note === 'string'
+            ? (message.row.session_context.athlete_note.trim().slice(0, 1000) || null)
+            : null,
+        },
+      }
+      const result = await supabase.from('video_analyses').insert(safeRow)
+      if (result.error?.code === '23505') {
+        reply({ ok: true, data: { client_analysis_id: safeRow.client_analysis_id,
+          athlete_id: currentAthlete.id, status: 'draft', duplicate: true } })
+        return
+      }
+      if (result.error) {
+        reply({ ok: false, error: result.error.message || 'Analysen kunne ikke sendes' })
+        return
+      }
+      reply({ ok: true, data: { client_analysis_id: safeRow.client_analysis_id,
+        athlete_id: currentAthlete.id, status: 'draft' } })
+    }
+    window.addEventListener('message', onAthleteVideoCoachMessage)
+    return () => window.removeEventListener('message', onAthleteVideoCoachMessage)
+  }, [])
 
   useEffect(() => { fetchAthlete() }, [])
   useEffect(() => { if (athlete) fetchLogs(athlete.id, kostDate) }, [kostDate, athlete?.id])
@@ -3520,7 +3629,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
             {/* VideoCoach — flyttet fra topbaren ned som selvstændigt kort */}
             <div
-              onClick={() => window.open('videocoach.html?mode=athlete', '_blank')}
+              onClick={() => athlete?.id && window.open(role === 'athlete'
+                ? ATHLETE_VIDEOCOACH_URL : 'videocoach.html?mode=athlete', '_blank')}
               onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(200,146,58,0.4)'}
               onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(237,234,226,0.07)'}
               style={{ ...s.card, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem' }}
