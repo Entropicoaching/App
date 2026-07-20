@@ -4305,6 +4305,7 @@ function buildCoachReportHtml(showAddPosition = true) {
   if (!lift) return '<div class="feedbackCard" data-kind="focus"><b>Vælg øvelse</b>' +
     '<p>Feedbacken bliver først fagligt brugbar, når øvelsen er valgt.</p></div>';
   const fb = buildCoachFeedback(lift, lastVals || {});
+  const personal = vcV3CurrentBaselineInsights(lift, variation, lastVals || {});
   const E = x => escHtml(String(x == null ? '' : x));
   const q = { high:'Høj målekvalitet', medium:'Godkendt målekvalitet',
               low:'Kontrollér målingen' }[fb.quality];
@@ -4323,6 +4324,15 @@ function buildCoachReportHtml(showAddPosition = true) {
     `<span>${E(x.why)} · ${E(x.evidence)}</span></div>`));
   fb.context.forEach(x => detailRows.push(
     `<div class="coachDetailRow"><b>${E(x.title)}</b><span>${E(x.text)}</span></div>`));
+  personal.findings.forEach(item => detailRows.push(
+    `<div class="coachDetailRow"><b>Personlig baseline</b>` +
+    `<span>${E(item.summary.replace(/^(OK|OBS|NOTE):\s*/i, ''))}</span></div>`));
+  if (personal.blockedByQuality) detailRows.push(
+    '<div class="coachDetailRow"><b>Personlig baseline ikke brugt</b>' +
+    '<span>Trackingen var for usikker til en ansvarlig sammenligning.</span></div>');
+  else if (personal.comparedCount > 0 && personal.findings.length === 0) detailRows.push(
+    '<div class="coachDetailRow"><b>Personlig baseline</b>' +
+    '<span>Målingen ligger inden for atletens normale variation for samme øvelse.</span></div>');
   if (bias) detailRows.push(`<div class="coachDetailRow"><b>Coach-note</b>` +
     `<span>${E(bias)} · vises som kontekst; systemet gætter ikke ud fra fritekst.</span></div>`);
   const numberRows = keyNumbers();
@@ -4336,6 +4346,12 @@ function buildCoachReportHtml(showAddPosition = true) {
     (Number.isFinite(positionQuality) && positionQuality > 25) ? ' open' : '';
   const evidenceMeta = `${detailRows.length} observationer` +
     (numberRows.length ? ` · ${numberRows.length} nøgletal` : '');
+  const personalHeadline = personal.findings.find(item =>
+    item.kind === 'focus' || item.kind === 'works');
+  const personalCard = personalHeadline
+    ? `<div class="feedbackCard" data-kind="${personalHeadline.kind === 'focus' ? 'focus' : 'good'}">` +
+      `<b>Mod egen baseline</b><p>${E(personalHeadline.summary.replace(/^(OK|OBS):\s*/i, ''))}</p></div>`
+    : '';
   return `<div class="coachFeedback">` +
     `<div class="coachFeedbackHero"><div><small>Coach-feedback</small>` +
     `<h3>${E(ath)} · ${E(lift)}</h3><p>${E(variation || 'Standard')} · ${E(load || 'Belastning ikke angivet')}</p></div>` +
@@ -4343,7 +4359,7 @@ function buildCoachReportHtml(showAddPosition = true) {
     `<section class="athleteBrief"><span class="coachSectionLabel">Det kan du sige til atleten</span>` +
     `<div class="feedbackCard" data-kind="good"><b>Det fungerer</b><p>${E(fb.athlete.works)}</p>${strengthEvidence}</div>` +
     `<div class="feedbackCard" data-kind="focus"><b>Vigtigste fokus</b><p>${E(fb.athlete.focus)}</p>${focusEvidence}</div>` +
-    `<div class="feedbackCard" data-kind="next"><b>Næste sæt</b><p>${E(fb.athlete.next)}</p></div></section>` +
+    `<div class="feedbackCard" data-kind="next"><b>Næste sæt</b><p>${E(fb.athlete.next)}</p></div>${personalCard}</section>` +
     `<details class="coachEvidenceDetails"${evidenceOpen}>` +
     `<summary><span>Målinger og coachens grundlag</span><small>${E(evidenceMeta)}</small></summary>` +
     `<div class="coachEvidenceBody"><section><span class="coachSectionLabel">Coachens grundlag</span>` +
@@ -4684,11 +4700,17 @@ function compressBarPath(path) {
 // ---------- VideoCoach v3 database bridge (feature-gated) ----------
 // Kun ?bridge=v3 aktiverer appbroen. Uden flaget er den eksisterende lokale
 // schema-v2 filgemning byte-for-byte samme brugerflow som før.
-const VC_V3_BRIDGE_ENABLED = new URLSearchParams(location.search).get('bridge') === 'v3';
+const VC_V3_BRIDGE_MODE = new URLSearchParams(location.search).get('bridge');
+const VC_V3_COACH_BRIDGE = VC_V3_BRIDGE_MODE === 'v3';
+const VC_V3_ATHLETE_BRIDGE = VC_V3_BRIDGE_MODE === 'athlete-v1';
+const VC_V3_BRIDGE_ENABLED = VC_V3_COACH_BRIDGE || VC_V3_ATHLETE_BRIDGE;
 const VC_V3_MESSAGE_PREFIX = 'entropi:videocoach:v3';
 const vcV3Pending = new Map();
 const vcV3AnalysisIds = new WeakMap();
+const vcV3BaselinePending = new Map();
+const vcV3BaselineCache = new Map();
 let vcV3BridgeReady = false;
+let vcV3ConfigSeen = false;
 
 function vcV3Uuid() {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function')
@@ -4763,6 +4785,70 @@ function vcV3Metrics(v) {
   return out;
 }
 
+function vcV3BaselineInsights(baselines, lift, variation, metrics, lowConfPct) {
+  const result = { findings: [], used: [], comparedCount: 0,
+    blockedByQuality: Number(lowConfPct) > 15 };
+  if (result.blockedByQuality || !Array.isArray(baselines)) return result;
+  const definitions = [
+    { key:'bar_drift_cm', label:'Den vandrette drift', better:'lower', min:1.5 },
+    { key:'path_efficiency_pct', label:'Baneeffektiviteten', better:'higher', min:2 },
+    { key:'velocity_loss_pct', label:'Farttabet gennem sættet', better:'lower', min:5 },
+  ];
+  const candidates = [];
+  definitions.forEach(def => {
+    const metric = metrics && metrics[def.key];
+    if (!metric || !Number.isFinite(Number(metric.value))) return;
+    const baseline = baselines.find(item => item && item.lift === lift &&
+      item.variation === variation && item.metric_key === def.key &&
+      item.metric_method === metric.method);
+    if (!baseline || Number(baseline.n_analyses) < 3 ||
+        !Number.isFinite(Number(baseline.median))) return;
+    result.comparedCount++;
+    const value = Number(metric.value), median = Number(baseline.median);
+    const delta = value - median, absDelta = Math.abs(delta);
+    const mad = Math.abs(Number(baseline.mad));
+    const severity = Number.isFinite(mad) && mad > 0
+      ? absDelta / (mad * 1.4826) : absDelta / def.min;
+    if (absDelta < def.min || severity < 1.5) return;
+    const n = Number(baseline.n_analyses);
+    const better = def.better === 'higher' ? delta > 0 : delta < 0;
+    const direction = delta > 0 ? 'højere' : 'lavere';
+    const digits = absDelta >= 10 ? 0 : 1;
+    const amount = absDelta.toLocaleString('da-DK', { maximumFractionDigits: digits });
+    const unit = metric.unit === 'pct' ? 'procentpoint' : (metric.unit || '');
+    const preliminary = n < 5;
+    const prefix = preliminary ? 'NOTE' : (better ? 'OK' : 'OBS');
+    const summary = `${prefix}: ${def.label} var ${amount}${unit ? ` ${unit}` : ''} ` +
+      `${direction} end atletens median for samme variation (n=${n}).`;
+    candidates.push({
+      finding: { id:`baseline_${def.key}`, kind: preliminary ? 'context' :
+        (better ? 'works' : 'focus'), summary, evidence_refs:[def.key],
+        confidence: preliminary ? 0.65 : 0.88 },
+      used: { metric_key:def.key, metric_method:metric.method,
+        baseline_version:baseline.baseline_version || null, median,
+        mad:Number.isFinite(mad) ? mad : null, n_analyses:n,
+        observed_value:value, delta:+delta.toFixed(3) },
+      severity,
+    });
+  });
+  candidates.sort((a, b) => b.severity - a.severity);
+  candidates.slice(0, 2).forEach(item => {
+    result.findings.push(item.finding); result.used.push(item.used);
+  });
+  return result;
+}
+
+function vcV3CurrentBaselineInsights(lift, variation, vals) {
+  const athleteSelect = document.getElementById('athleteSel');
+  const selected = athleteSelect && athleteSelect.selectedOptions[0];
+  const athleteId = selected && selected.dataset.athleteId;
+  const path = strokes.filter(s => s.type === 'path' && s.vel).pop();
+  const lowConfPct = path && path.lowConf && path.pts.length
+    ? (path.lowConf / path.pts.length) * 100 : 0;
+  return vcV3BaselineInsights(vcV3BaselineCache.get(athleteId) || [],
+    vcV3Lift(lift), vcV3Variation(lift, variation), vcV3Metrics(vals || {}), lowConfPct);
+}
+
 function vcV3Reps(path) {
   return (path && path.reps || []).map((rep, index) => {
     const conStart = Number(path.times && path.times[rep.start]);
@@ -4809,7 +4895,7 @@ function vcV3Findings(items, lowConfPct) {
 }
 
 function buildV3AnalysisPayload({ athleteId, athleteName, lift, variation,
-  parsed, path, vals, legacy }) {
+  parsed, path, vals, legacy, baselines = [], sourceMode = 'coach_web' }) {
   let clientId = path && vcV3AnalysisIds.get(path);
   if (!clientId) {
     clientId = vcV3Uuid();
@@ -4821,33 +4907,41 @@ function buildV3AnalysisPayload({ athleteId, athleteName, lift, variation,
   if (lowConfPct > 15) flags.push('tracker_lost');
   if (!reps.length) flags.push('rep_segmentation_uncertain');
   if (vals.positionModelQualityPct > 25) flags.push('position_measurement_uncertain');
-  const findings = vcV3Findings(legacy.findings, lowConfPct || 0);
+  const normalizedLift = vcV3Lift(lift);
+  const normalizedVariation = vcV3Variation(lift, variation);
+  const v3Metrics = vcV3Metrics(vals);
+  const ruleFindings = vcV3Findings(legacy.findings, lowConfPct || 0);
+  const personal = vcV3BaselineInsights(baselines, normalizedLift,
+    normalizedVariation, v3Metrics, lowConfPct || 0);
+  const findings = [...personal.findings, ...ruleFindings];
   const cues = suggestCues(lift, vals).slice(0, 2);
   return {
     schema_version: 3, client_analysis_id: clientId,
     athlete_id: athleteId || null, athlete_display_name: athleteName || null,
-    source_mode: 'coach_web', status: 'draft', lift: vcV3Lift(lift),
-    variation: vcV3Variation(lift, variation), load_kg: parsed.kg,
+    source_mode: sourceMode, status: 'draft', lift: normalizedLift,
+    variation: normalizedVariation, load_kg: parsed.kg,
     rpe: parsed.rpe, reps_count: reps.length, analyzed_at: legacy.analyzed_at,
     session_context: { training_session_id: null, program_item_id: null,
-      coach_note_snapshot: legacy.bias_note },
+      coach_note_snapshot: legacy.bias_note,
+      athlete_note: sourceMode === 'athlete_submission' ? (legacy.athlete_note || null) : null,
+      baseline_snapshot: personal.used },
     capture_context: { camera_side: 'unknown', camera_angle_deg: null, fps: null,
       width_px: video.videoWidth || canvas.width || null,
       height_px: video.videoHeight || canvas.height || null,
       cropped: null, fingerprint: null },
     versions: { engine: 'videocoach-3.0.0', tracker: 'whole-plate-multipoint-2026-07-19',
       skeleton: 'three-position-time-driven-2026-07-19',
-      feedback: 'coach-feedback-step3-2026-07-19' },
+      feedback: 'coach-feedback-baseline-v1-2026-07-20' },
     quality: { low_conf_pct: lowConfPct,
       position_quality_pct: vals.positionModelQualityPct ?? null,
       flags, note: null },
-    metrics: vcV3Metrics(vals), reps, bar_path: vcV3BarPath(path), skeleton: null,
+    metrics: v3Metrics, reps, bar_path: vcV3BarPath(path), skeleton: null,
     findings, coach_note: null,
     athlete_feedback: {
       works: findings.filter(f => f.kind === 'works').slice(0, 2)
-        .map(f => ({ text: f.summary.replace(/^OK:\s*/i, ''), evidence_refs: [f.id] })),
+        .map(f => ({ text: f.summary.replace(/^(OK|OBS|NOTE):\s*/i, ''), evidence_refs: [f.id] })),
       focus: findings.filter(f => f.kind === 'focus').slice(0, 2)
-        .map(f => ({ text: f.summary.replace(/^(FLAG|OBS):\s*/i, ''), evidence_refs: [f.id] })),
+        .map(f => ({ text: f.summary.replace(/^(FLAG|OBS|NOTE):\s*/i, ''), evidence_refs: [f.id] })),
       next_set: cues.map(c => ({ text: String(c[0]).replace(/^"|"$/g, ''),
         evidence_refs: ['metrics'] })),
     },
@@ -4898,6 +4992,31 @@ function vcV3RequestSave(row) {
   });
 }
 
+function vcV3RequestBaselines(athleteId, force = false) {
+  if (!VC_V3_COACH_BRIDGE || !vcV3BridgeReady || !window.opener || !athleteId)
+    return Promise.reject(new Error('Personlig baseline er ikke tilgængelig'));
+  if (!force && vcV3BaselineCache.has(athleteId))
+    return Promise.resolve(vcV3BaselineCache.get(athleteId));
+  for (const pending of vcV3BaselinePending.values()) {
+    if (pending.athleteId === athleteId) return pending.promise;
+  }
+  const requestId = vcV3Uuid();
+  let resolvePending, rejectPending;
+  const promise = new Promise((resolve, reject) => {
+    resolvePending = resolve; rejectPending = reject;
+  });
+  const timer = setTimeout(() => {
+    vcV3BaselinePending.delete(requestId);
+    rejectPending(new Error('Coach-appen svarede ikke med personlig baseline'));
+  }, 8000);
+  vcV3BaselinePending.set(requestId, {
+    athleteId, promise, resolve: resolvePending, reject: rejectPending, timer
+  });
+  window.opener.postMessage({ type: `${VC_V3_MESSAGE_PREFIX}:baseline-request`,
+    requestId, athleteId }, location.origin);
+  return promise;
+}
+
 if (VC_V3_BRIDGE_ENABLED) {
   window.addEventListener('message', event => {
     if (event.origin !== location.origin || event.source !== window.opener) return;
@@ -4905,6 +5024,8 @@ if (VC_V3_BRIDGE_ENABLED) {
     if (msg.type === `${VC_V3_MESSAGE_PREFIX}:config`) {
       const athleteSelect = document.getElementById('athleteSel');
       const remembered = athleteSelect.value;
+      const rememberedId = athleteSelect.selectedOptions[0] &&
+        athleteSelect.selectedOptions[0].dataset.athleteId;
       athleteSelect.innerHTML = '<option value="">Atlet?</option>';
       (msg.athletes || []).forEach(athlete => {
         if (!athlete || !athlete.id || !athlete.name) return;
@@ -4913,11 +5034,37 @@ if (VC_V3_BRIDGE_ENABLED) {
         option.dataset.athleteId = athlete.id;
         athleteSelect.appendChild(option);
       });
-      if ([...athleteSelect.options].some(o => o.value === remembered))
+      const preferredId = vcV3ConfigSeen ? rememberedId : (msg.selectedAthleteId || rememberedId);
+      const preferredOption = [...athleteSelect.options].find(o =>
+        preferredId && o.dataset.athleteId === preferredId);
+      if (preferredOption) athleteSelect.value = preferredOption.value;
+      else if ([...athleteSelect.options].some(o => o.value === remembered))
         athleteSelect.value = remembered;
       vcV3BridgeReady = true;
+      vcV3ConfigSeen = true;
+      const selectedId = athleteSelect.selectedOptions[0] &&
+        athleteSelect.selectedOptions[0].dataset.athleteId;
+      if (VC_V3_COACH_BRIDGE && selectedId)
+        vcV3RequestBaselines(selectedId).catch(() => {});
       window.opener.postMessage({ type: `${VC_V3_MESSAGE_PREFIX}:config-ack`,
         athleteCount: athleteSelect.options.length - 1 }, event.origin);
+      return;
+    }
+    if (msg.type === `${VC_V3_MESSAGE_PREFIX}:baseline-result`) {
+      const pending = vcV3BaselinePending.get(msg.requestId);
+      if (!pending) return;
+      clearTimeout(pending.timer); vcV3BaselinePending.delete(msg.requestId);
+      if (msg.athleteId !== pending.athleteId) {
+        pending.reject(new Error('Coach-appen returnerede baseline for en forkert atlet'));
+        return;
+      }
+      if (!msg.ok) {
+        pending.reject(new Error(msg.error || 'Personlig baseline kunne ikke hentes'));
+        return;
+      }
+      const rows = Array.isArray(msg.baselines) ? msg.baselines : [];
+      vcV3BaselineCache.set(pending.athleteId, rows);
+      pending.resolve(rows);
       return;
     }
     if (msg.type === `${VC_V3_MESSAGE_PREFIX}:save-result`) {
@@ -4956,6 +5103,9 @@ saveBtn.onclick = async () => {
     bar_path: path ? compressBarPath(path) : null,
     load_note: document.getElementById('loadInput').value.trim() || null,
     bias_note: document.getElementById('biasInput').value.trim() || null,
+    athlete_note: VC_V3_ATHLETE_BRIDGE
+      ? (document.getElementById('athleteNoteInput')?.value.trim().slice(0, 1000) || null)
+      : null,
     rom_cm: lastVals.romCm ?? null,
     loss_pct: lastVals.lossPct ?? null,
     stick_pct: lastVals.stickPct ?? null,
@@ -5000,16 +5150,29 @@ saveBtn.onclick = async () => {
     analyzed_at: new Date().toISOString(),
   };
   if (VC_V3_BRIDGE_ENABLED) {
-    if (!athleteId) { alert('Vælg en atlet fra coach-appen først'); return; }
+    if (!athleteId) { alert(VC_V3_ATHLETE_BRIDGE
+      ? 'Din atletprofil kunne ikke forbindes. Åbn VideoCoach fra appen igen.'
+      : 'Vælg en atlet fra coach-appen først'); return; }
     try {
+      let baselines = [];
+      if (VC_V3_COACH_BRIDGE) {
+        baselines = vcV3BaselineCache.get(athleteId) || [];
+        try { baselines = await vcV3RequestBaselines(athleteId, true); }
+        catch (baselineError) {
+          if (!baselines.length) say('Personlig baseline kunne ikke hentes · analysen gemmes uden');
+        }
+      }
       const payload = buildV3AnalysisPayload({ athleteId, athleteName: ath, lift,
         variation: document.getElementById('variationSel').value, parsed,
-        path, vals: lastVals, legacy: data });
+        path, vals: lastVals, legacy: data, baselines,
+        sourceMode: VC_V3_ATHLETE_BRIDGE ? 'athlete_submission' : 'coach_web' });
       if (!payload.lift) throw new Error('Løftet kan ikke normaliseres til v3');
       const saved = await vcV3RequestSave(vcV3DatabaseRow(payload, data));
-      saveBtn.textContent = '💾 Gemt i appen ✓';
-      setTimeout(() => saveBtn.textContent = saveLabel, 2500);
-      say(`💾 ${ath} · ${lift} · draft gemt` + (saved && saved.id ? ' ✓' : ''));
+      saveBtn.textContent = VC_V3_ATHLETE_BRIDGE ? 'Sendt til coach ✓' : '💾 Gemt i appen ✓';
+      setTimeout(() => saveBtn.textContent = VC_V3_ATHLETE_BRIDGE ? 'Send til coach' : saveLabel, 2500);
+      say(VC_V3_ATHLETE_BRIDGE
+        ? `Sendt til coach · ${lift}`
+        : `💾 ${ath} · ${lift} · draft gemt` + (saved && saved.id ? ' ✓' : ''));
       setTimeout(() => say(''), 3500);
       return;
     } catch (error) {
@@ -5078,7 +5241,12 @@ try {
   fillVariationSelect(variationSel, L || '', V || '');
 } catch {}
 document.getElementById('athleteSel').addEventListener('change', e => {
-  try { localStorage.setItem('vc_athlete', e.target.value); } catch {} });
+  try { localStorage.setItem('vc_athlete', e.target.value); } catch {}
+  if (!VC_V3_COACH_BRIDGE) return;
+  const selected = e.target.selectedOptions[0];
+  const athleteId = selected && selected.dataset.athleteId;
+  if (athleteId) vcV3RequestBaselines(athleteId).catch(() => {});
+});
 document.getElementById('liftSel').addEventListener('change', e => {
   fillVariationSelect(variationSel, e.target.value);
   try {
@@ -5905,6 +6073,74 @@ if (ATHLETE) {
   const exB = document.getElementById('exportBtn');
   [playBtn, allBtn, penB, undoB, exB].forEach(el => athleteFooter.appendChild(el));
 
+  const athleteSendBtn = document.createElement('button');
+  athleteSendBtn.id = 'athleteSendBtn';
+  athleteSendBtn.textContent = 'Send';
+  athleteSendBtn.title = 'Send målingen til din coach';
+  athleteSendBtn.hidden = true;
+  athleteFooter.appendChild(athleteSendBtn);
+
+  const athleteSubmitSheet = document.createElement('div');
+  athleteSubmitSheet.id = 'athleteSubmitSheet';
+  athleteSubmitSheet.hidden = true;
+  athleteSubmitSheet.style.cssText =
+    'position:fixed;inset:0;z-index:420;background:rgba(10,10,8,.78);' +
+    'display:flex;align-items:flex-end;justify-content:center;padding:12px';
+  const athleteSubmitCard = document.createElement('div');
+  athleteSubmitCard.style.cssText =
+    'width:min(520px,100%);max-height:88vh;overflow:auto;background:#1c1c18;' +
+    'border:1px solid rgba(237,234,226,.14);border-radius:14px 14px 6px 6px;padding:18px';
+  const athleteSubmitHead = document.createElement('div');
+  athleteSubmitHead.style.cssText =
+    'display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px';
+  athleteSubmitHead.innerHTML = '<div><small style="color:#c8923a;font:600 10px IBM Plex Mono;letter-spacing:.12em;text-transform:uppercase">Til din coach</small>' +
+    '<h2 style="margin:4px 0 5px;font-size:20px">Send stangbanen</h2>' +
+    '<p style="margin:0;color:#8f8b82;font-size:13px;line-height:1.45">Tilføj løftet. Målingen lander som kladde og bliver først en del af din profil, når din coach har gennemgået den.</p></div>';
+  const athleteSubmitClose = document.createElement('button');
+  athleteSubmitClose.textContent = 'Luk';
+  athleteSubmitClose.style.flexShrink = '0';
+  athleteSubmitClose.onclick = () => { athleteSubmitSheet.hidden = true; };
+  athleteSubmitHead.appendChild(athleteSubmitClose);
+  athleteSubmitCard.appendChild(athleteSubmitHead);
+  const athleteSubmitFields = document.createElement('div');
+  athleteSubmitFields.style.cssText = 'display:grid;gap:9px;margin-bottom:14px';
+  const addAthleteSubmitField = (label, element) => {
+    const wrap = document.createElement('label');
+    wrap.style.cssText = 'display:grid;gap:5px;color:#8f8b82;font:500 10px IBM Plex Mono;letter-spacing:.08em;text-transform:uppercase';
+    wrap.appendChild(document.createTextNode(label));
+    element.style.display = '';
+    element.style.width = '100%';
+    element.style.boxSizing = 'border-box';
+    wrap.appendChild(element); athleteSubmitFields.appendChild(wrap);
+  };
+  addAthleteSubmitField('Løft', document.getElementById('liftSel'));
+  addAthleteSubmitField('Variation', document.getElementById('variationSel'));
+  addAthleteSubmitField('Belastning / RPE (valgfri)', document.getElementById('loadInput'));
+  const athleteNoteInput = document.createElement('textarea');
+  athleteNoteInput.id = 'athleteNoteInput';
+  athleteNoteInput.rows = 3;
+  athleteNoteInput.maxLength = 1000;
+  athleteNoteInput.placeholder = 'Hvad vil du gerne have coachens blik på?';
+  athleteNoteInput.style.resize = 'vertical';
+  addAthleteSubmitField('Notat til coach (valgfrit)', athleteNoteInput);
+  athleteSubmitCard.appendChild(athleteSubmitFields);
+  saveBtn.style.display = '';
+  saveBtn.style.width = '100%';
+  saveBtn.textContent = 'Send til coach';
+  athleteSubmitCard.appendChild(saveBtn);
+  athleteSubmitSheet.appendChild(athleteSubmitCard);
+  athleteSubmitSheet.onclick = e => {
+    if (e.target === athleteSubmitSheet) athleteSubmitSheet.hidden = true;
+  };
+  document.body.appendChild(athleteSubmitSheet);
+  athleteSendBtn.onclick = () => {
+    if (!VC_V3_ATHLETE_BRIDGE || !vcV3BridgeReady) {
+      alert('Forbindelsen til appen er ikke klar. Luk VideoCoach og åbn den fra appen igen.');
+      return;
+    }
+    athleteSubmitSheet.hidden = false;
+  };
+
   const athleteStartBtn = document.createElement('button');
   athleteStartBtn.id = 'athleteStartBtn';
   athleteStartBtn.textContent = '↤';
@@ -5941,6 +6177,7 @@ if (ATHLETE) {
     athleteFooter.style.display = empty ? 'none' : '';
     document.getElementById('scrubRow').style.display = empty ? 'none' : '';
     athleteStatus.hidden = empty || !info;
+    athleteSendBtn.hidden = !(state === 'done' && VC_V3_ATHLETE_BRIDGE);
     if (info) {
       athleteStatus.querySelector('b').textContent = info[0];
       athleteStatus.querySelector('span').textContent = detail || info[1];
