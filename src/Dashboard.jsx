@@ -2,6 +2,23 @@ import { useState, useEffect, useRef } from 'react'
 import { supabase, withRetry } from './supabase'
 
 const BLOCK_NAMES = ['Akkumulering', 'Intensificering', 'Peak', 'Deload', 'GPP', 'Hypertrofi', 'Styrke', 'Transition']
+
+// Periodiserings-skabeloner: hurtig-start til blok-planlæggeren. Kun udgangspunkter
+// Marc former videre — ikke faste programmer.
+const BLOCK_PRESETS = [
+  { label: 'Peaking mod stævne', desc: '11 uger', blocks: [
+    { name: 'Akkumulering', weeks: 4 }, { name: 'Intensificering', weeks: 4 }, { name: 'Peak', weeks: 2 }, { name: 'Deload', weeks: 1 },
+  ] },
+  { label: 'Grundstyrke', desc: '9 uger', blocks: [
+    { name: 'Hypertrofi', weeks: 4 }, { name: 'Styrke', weeks: 4 }, { name: 'Deload', weeks: 1 },
+  ] },
+  { label: 'Off-season', desc: '11 uger', blocks: [
+    { name: 'GPP', weeks: 3 }, { name: 'Hypertrofi', weeks: 4 }, { name: 'Styrke', weeks: 3 }, { name: 'Deload', weeks: 1 },
+  ] },
+  { label: 'Kort blok', desc: '6 uger', blocks: [
+    { name: 'Akkumulering', weeks: 3 }, { name: 'Intensificering', weeks: 2 }, { name: 'Deload', weeks: 1 },
+  ] },
+]
 const BLOCK_PALETTE = ['#4e8fcf','#c8923a','#6cba6c','#9b6bd4','#cf6b4e','#4ec8b4']
 function blockColor(name) {
   if (!name) return '#4a4844'
@@ -5483,6 +5500,23 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     <div style={{ background: '#1c1c18', border: '1px solid rgba(200,146,58,0.3)', padding: '1.25rem', marginBottom: '1.5rem' }}>
                       <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '1rem' }}>Periodiseringsplan</div>
 
+                      {/* Skabeloner — hurtig-start, form videre efter behov */}
+                      <div style={{ marginBottom: '1.25rem', paddingBottom: '1.25rem', borderBottom: '1px solid rgba(237,234,226,0.07)' }}>
+                        <div style={{ ...s.fieldLabel, marginBottom: '0.5rem' }}>Skabelon — hurtig-start</div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                          {BLOCK_PRESETS.map(preset => (
+                            <button
+                              key={preset.label}
+                              onClick={() => setBlockPlan(preset.blocks.map((b, i) => ({ id: Date.now() + i, ...b })))}
+                              style={{ ...s.btnGhost, fontSize: '0.56rem', padding: '0.4rem 0.7rem', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '0.1rem', lineHeight: 1.2 }}
+                            >
+                              <span style={{ color: '#b8b4a8' }}>{preset.label}</span>
+                              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', color: '#7a7770', letterSpacing: '0.04em' }}>{preset.desc}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
                       {/* Eksisterende uger — tilknyt blokke */}
                       {weeks.length > 0 && (
                         <div style={{ marginBottom: '1.25rem', paddingBottom: '1.25rem', borderBottom: '1px solid rgba(237,234,226,0.07)' }}>
@@ -5516,7 +5550,23 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
                       <div style={{ marginBottom: '1rem' }}>
                         <div style={s.fieldLabel}>Nye uger — startdato{weeks.length > 0 && <span style={{ color: '#4a4844', fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}> (fortsætter fra uge {Math.max(...weeks.map(w => w.week_number)) + 1})</span>}</div>
-                        <input style={{ ...s.fieldInput, maxWidth: '180px' }} type="date" value={planStartDate} onChange={e => setPlanStartDate(e.target.value)} />
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+                          <input style={{ ...s.fieldInput, maxWidth: '180px' }} type="date" value={planStartDate} onChange={e => setPlanStartDate(e.target.value)} />
+                          {/* Regn baglæns: sæt startdato så planen slutter ugen før stævnet.
+                              Snap til mandag, så uge 1 starter på en normal træningsuge. */}
+                          {compDate && totalWeeks > 0 && (
+                            <button
+                              style={{ ...s.btnGhost, fontSize: '0.54rem', padding: '0.4rem 0.75rem' }}
+                              onClick={() => {
+                                const comp = new Date(compDate + 'T12:00:00')
+                                const start = new Date(comp.getTime() - totalWeeks * 7 * 24 * 3600 * 1000)
+                                const dow = (start.getDay() + 6) % 7 // 0=mandag
+                                start.setDate(start.getDate() - dow) // snap tilbage til mandag
+                                setPlanStartDate(start.toISOString().slice(0, 10))
+                              }}
+                            >← Regn baglæns fra stævne</button>
+                          )}
+                        </div>
                       </div>
 
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
