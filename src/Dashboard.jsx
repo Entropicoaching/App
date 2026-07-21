@@ -1010,7 +1010,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         .select('athlete_id, rpe_actual, skipped, logged_at, exercises(name, sessions(id, title, athlete_rating, athlete_comment))')
         .gte('logged_at', todayStr).limit(2000),
       supabase.from('readiness_logs')
-        .select('athlete_id, readiness_score, sleep_hours').eq('logged_date', todayStr),
+        .select('athlete_id, readiness_score, sleep_hours, sore_zones').eq('logged_date', todayStr),
       supabase.from('personal_records')
         .select('athlete_id, exercise_name, weight, reps, logged_at').gte('logged_at', todayStr),
       supabase.from('messages')
@@ -1224,8 +1224,13 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       }
     }
     for (const r of todayData.readiness) {
-      if (byId[r.athlete_id] && r.readiness_score != null && r.readiness_score < 50)
-        items.push({ rank: 2, aid: r.athlete_id, icon: 'alert', color: '#e05555', text: `${first(byId[r.athlete_id].name)}: readiness ${r.readiness_score} — lav`, sub: r.sleep_hours != null ? `søvn ${r.sleep_hours}t` : null, tab: 'oversigt' })
+      if (byId[r.athlete_id] && r.readiness_score != null && r.readiness_score < 50) {
+        // Sub-tekst: søvn + hvor de er ømme (skades-signal coachen bør se).
+        const parts = []
+        if (r.sleep_hours != null) parts.push(`søvn ${r.sleep_hours}t`)
+        if (Array.isArray(r.sore_zones) && r.sore_zones.length) parts.push(`ømt: ${r.sore_zones.join(', ')}`)
+        items.push({ rank: 2, aid: r.athlete_id, icon: 'alert', color: '#e05555', text: `${first(byId[r.athlete_id].name)}: readiness ${r.readiness_score} — lav`, sub: parts.join(' · ') || null, tab: 'oversigt' })
+      }
     }
     for (const p of todayData.prs) {
       if (byId[p.athlete_id]) items.push({ rank: 3, aid: p.athlete_id, icon: 'pr', color: '#c8923a', text: `${first(byId[p.athlete_id].name)} satte PR: ${p.exercise_name} ${p.weight} kg${p.reps ? ` × ${p.reps}` : ''}`, sub: null, tab: 'log' })
