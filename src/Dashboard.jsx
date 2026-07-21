@@ -2105,7 +2105,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     lines.push('LÆSENØGLE: energi/motivation/stress/ømhed = 1-5 · readiness = 0-100 · RPE = 6-10.')
     lines.push('Digest-tabellerne EST. 1RM-UDVIKLING og UGENTLIGT TONNAGE er dit primære grundlag for')
     lines.push('fremgang og volumen. I loggen betyder "RPE 8 (plan 7)" faktisk vs. planlagt RPE for sættet.')
-    lines.push('Antag intet om data der ikke findes.')
+    lines.push('Læg vægt på atletens MÅL og COACH-NOTER øverst når du vurderer relevans, prioritering')
+    lines.push('og individuelle hensyn (fx skader). Antag intet om data der ikke findes.')
     lines.push('')
 
     lines.push('═══════════════════════════════════════════════════════')
@@ -2126,6 +2127,13 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     if (trainMaxes.length) lines.push(`TRÆNINGSMAXES:    ${trainMaxes.join(' | ')}`)
     if (ath.competition_date) lines.push(`STÆVNE:           ${fmtDato(ath.competition_date)}`)
     if (avgWeight) lines.push(`KROPSVÆGT:        ${avgWeight}kg gns (${filteredWeight.length} målinger)`)
+    // Mål og coach-noter giver AI'en den kontekst (skader, fokus, individuelle
+    // hensyn) der gør analysen nuanceret frem for generisk.
+    if (ath.goal && ath.goal.trim()) lines.push(`MÅL:              ${ath.goal.trim()}`)
+    if (ath.notes && ath.notes.trim()) {
+      lines.push('COACH-NOTER (kontekst, skader, hensyn):')
+      ath.notes.trim().split('\n').forEach(l => lines.push(`  ${l}`))
+    }
     lines.push('═══════════════════════════════════════════════════════')
     lines.push('')
 
