@@ -1926,7 +1926,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     if (n.includes('romanian') || n.includes('rumæn') || n.includes('rdl') || n.includes('stiff') || n.includes('front squat') || n.includes('hack') || n.includes('goblet')) return false
     if (n.includes('squat') || n.includes('bænk') || n.includes('bench') || n.includes('dødl') || n.includes('deadlift')) return true
     // Barbell overhead press (fx Henriks OHP) er et hovedløft og skal have fuld
-    // opvarmnings-ramp. Kun tydelige stang-varianter — ikke DB/maskine/skulderpres-accessory.
+    // opvarmnings-ramp. Udeluk accessories der tilfældigvis rammer "overhead"
+    // (fx "Overhead triceps extension") og håndvægts-varianter.
+    if (n.includes('triceps') || n.includes('extension') || n.includes('raise') || n.includes('fly') || n.includes('db ') || n.includes('dumbbell') || n.includes('håndvægt')) return false
     return n.includes('ohp') || n.includes('overhead') || n.includes('militar') || n.includes('push press') || n.includes('strict pres') || n.includes('split jerk')
   }
 
