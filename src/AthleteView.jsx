@@ -2223,7 +2223,24 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         rpe: log.rpe_actual?.toString() || '',
       }
     }
-    setLogInputs(prev => ({ ...prev, ...inputs }))
+    // Forudfyld vægt-feltet med den anbefalede vægt for endnu-ikke-loggede sæt,
+    // så atleten bare trykker Log hvis vægten passer (sparer at taste samme kg
+    // for hvert sæt). 0 kg (bodyweight/vælg-selv) forudfyldes ikke.
+    const prefills = {}
+    for (const sess of (week?.sessions || [])) {
+      for (const ex of (sess.exercises || [])) {
+        const rw = ex.recommended_weight
+        if (!(rw > 0)) continue
+        for (let setNum = 1; setNum <= (ex.sets || 0); setNum++) {
+          const k = `${ex.id}_${setNum}`
+          if (inputs[k]) continue // allerede logget
+          prefills[k] = { weight: rw.toString(), note: '', rpe: '' }
+        }
+      }
+    }
+    // Rækkefølge: prefills = default, prev bevarer hvad atleten selv har tastet/
+    // ryddet, inputs (loggede værdier) vinder altid.
+    setLogInputs(prev => ({ ...prefills, ...prev, ...inputs }))
   }
 
   async function fetchLastLogs(athleteId, week) {
