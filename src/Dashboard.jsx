@@ -2112,7 +2112,17 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     // Est. 1RM-udvikling + ugentligt tonnage pr. hovedløft (digest før den rå log)
     const nameToCat = {}
     for (const ex of exerciseLibrary) { if (ex.name && ex.category) nameToCat[ex.name.toLowerCase()] = ex.category }
-    const mainCats = [['Squat', 'Squat'], ['Bænk', 'Bænkpres'], ['Dødløft', 'Dødløft']]
+    // OHP har ingen bibliotekskategori — genkend barbell overhead press på navn
+    // (samme regler som atlet-siden) og behandl det som en "OHP"-kategori. Sådan
+    // kommer OHP-fokuserede atleter (fx Henrik) med i digest-tabellerne.
+    const ohpRe = /ohp|overhead|militar|push press|strict pres|split jerk/
+    const ohpExclude = /triceps|extension|raise|fly|db |dumbbell|håndvægt/
+    const catFor = name => {
+      const n = (name || '').toLowerCase()
+      if (ohpRe.test(n) && !ohpExclude.test(n)) return 'OHP'
+      return nameToCat[n] || null
+    }
+    const mainCats = [['Squat', 'Squat'], ['Bænk', 'Bænkpres'], ['Dødløft', 'Dødløft'], ['OHP', 'OHP']]
     const epley = (w, r) => w * (1 + r / 30)
     const wkLbl = w => { const d = new Date(w + 'T12:00:00'); return `${d.getDate()}/${d.getMonth() + 1}` }
     const isoMon = dateStr => {
@@ -2124,7 +2134,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     const weekKeysSet = new Set()
     for (const sess of sessions) {
       for (const ex of Object.values(sess.exercises)) {
-        const cat = nameToCat[ex.name.toLowerCase()]
+        const cat = catFor(ex.name)
         if (!cat) continue
         for (const set of ex.sets) {
           if (set.skipped || !set.weight || !set.reps) continue
