@@ -3949,10 +3949,14 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               const squatS = buildLiftSeries(athleteLogs, 'squat', nameToCat, 'Squat')
               const benchS = buildLiftSeries(athleteLogs, 'bænk', nameToCat, 'Bænkpres')
               const deadS = buildLiftSeries(athleteLogs, 'dødl', nameToCat, 'Dødløft')
+              // OHP vises kun for atleter der faktisk træner det (keyword-match, ingen
+              // egen kategori) — så intet ændrer sig for rene SBD-atleter.
+              const ohpS = buildLiftSeries(athleteLogs, 'ohp', nameToCat, '')
               const lifts = [
                 { label: 'Squat', s: squatS },
                 { label: 'Bænkpres', s: benchS },
                 { label: 'Dødløft', s: deadS },
+                ...(ohpS.hasData ? [{ label: 'OHP', s: ohpS }] : []),
               ]
 
               const weightChartData = [...athleteWeightLogs]
@@ -4276,7 +4280,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   {/* 3. Primære løft */}
                   <div style={s.card}>
                     <div style={s.cardLabel}>Primære løft — sværeste sæt per session</div>
-                    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '1.5rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : `repeat(${lifts.length}, 1fr)`, gap: '1.5rem' }}>
                       {lifts.map(({ label, s: ls }) => (
                         <div key={label}>
                           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.5rem' }}>{label}</div>
@@ -4302,7 +4306,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                           ))}
                         </div>
                       </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '1.5rem' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : `repeat(${lifts.length}, 1fr)`, gap: '1.5rem' }}>
                         {lifts.map(({ label, s: ls }) => (
                           <div key={label}>
                             <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.5rem' }}>{label}</div>
