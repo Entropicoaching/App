@@ -1007,7 +1007,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     const todayStr = new Date().toISOString().slice(0, 10)
     const [logsQ, readyQ, prsQ, msgQ] = await Promise.all([
       supabase.from('exercise_logs')
-        .select('athlete_id, rpe_actual, skipped, logged_at, exercises(name, sessions(title))')
+        .select('athlete_id, rpe_actual, skipped, logged_at, exercises(name, sessions(id, title, athlete_rating, athlete_comment))')
         .gte('logged_at', todayStr).limit(2000),
       supabase.from('readiness_logs')
         .select('athlete_id, readiness_score, sleep_hours').eq('logged_date', todayStr),
@@ -1229,6 +1229,22 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     }
     for (const p of todayData.prs) {
       if (byId[p.athlete_id]) items.push({ rank: 3, aid: p.athlete_id, icon: 'pr', color: '#c8923a', text: `${first(byId[p.athlete_id].name)} satte PR: ${p.exercise_name} ${p.weight} kg${p.reps ? ` × ${p.reps}` : ''}`, sub: null, tab: 'log' })
+    }
+    // Session-feedback fra dagens træning: en kommentar fra atleten eller en lav
+    // rating (≤2) er coach-signal. Dedup pr. session-id (mange logs deler session).
+    const seenSess = new Set()
+    for (const l of todayData.logs) {
+      const s = l.exercises?.sessions
+      if (!s || !s.id || seenSess.has(s.id) || !byId[l.athlete_id]) continue
+      seenSess.add(s.id)
+      const name = first(byId[l.athlete_id].name)
+      const title = s.title || 'session'
+      const comment = (s.athlete_comment || '').trim()
+      if (comment) {
+        items.push({ rank: 2, aid: l.athlete_id, icon: 'msg', color: '#c8923a', text: `${name} kommenterede ${title}`, sub: `"${comment.slice(0, 48)}${comment.length > 48 ? '…' : ''}"`, tab: 'log' })
+      } else if (s.athlete_rating != null && s.athlete_rating <= 2) {
+        items.push({ rank: 2, aid: l.athlete_id, icon: 'alert', color: '#e05555', text: `${name} ratede ${title} ${s.athlete_rating}/5`, sub: 'lav score — tjek hvorfor', tab: 'log' })
+      }
     }
     const sessAgg = {}
     for (const l of todayData.logs) {
