@@ -1439,7 +1439,7 @@ function ExerciseTimer({ duration, label }) {
       {label && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#7a7770', letterSpacing: '0.08em', marginBottom: '0.6rem' }}>{label}</div>}
       {!done ? (
         <button style={{ ...s.btnGhost, padding: '0.5rem 1.25rem' }} onClick={() => { if (!active && seconds === 0) setSeconds(duration); setActive(a => !a) }}>
-          {active ? '⏸ Pause' : seconds > 0 ? '▶ Fortsæt' : '▶ Start timer'}
+          {active ? '⏸ Pause' : (seconds > 0 && seconds < duration) ? '▶ Fortsæt' : '▶ Start timer'}
         </button>
       ) : (
         <button style={{ ...s.btnGhost, padding: '0.5rem 1.25rem' }} onClick={() => { setSeconds(duration); setDone(false); setActive(false) }}>↺ Gentag</button>
@@ -1486,7 +1486,7 @@ function MobilityGuideStep({ heading, step, total, onExit, areaLabel, ex, opts, 
               <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#7a7770', letterSpacing: '0.08em', marginBottom: '0.75rem' }}>{ex.label}</div>
               {!timerDone ? (
                 <button style={{ ...s.btnGhost, padding: '0.5rem 1.25rem' }} onClick={() => { if (!timerActive && timerSeconds === 0) setTimerSeconds(ex.duration); setTimerActive(a => !a) }}>
-                  {timerActive ? '⏸ Pause' : timerSeconds > 0 ? '▶ Fortsæt' : '▶ Start timer'}
+                  {timerActive ? '⏸ Pause' : (timerSeconds > 0 && timerSeconds < ex.duration) ? '▶ Fortsæt' : '▶ Start timer'}
                 </button>
               ) : (
                 <button style={{ ...s.btnGhost, padding: '0.5rem 1.25rem' }} onClick={() => { setTimerSeconds(ex.duration); setTimerDone(false); setTimerActive(false) }}>↺ Gentag (anden side)</button>
@@ -1924,90 +1924,59 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     // her — sumo dødløft er et primært konkurrenceløft og skal have fuld
     // opvarmnings-ramp (ellers ender et tungt topsæt med kun ét spring op).
     if (n.includes('romanian') || n.includes('rumæn') || n.includes('rdl') || n.includes('stiff') || n.includes('front squat') || n.includes('hack') || n.includes('goblet')) return false
-    return n.includes('squat') || n.includes('bænk') || n.includes('bench') || n.includes('dødl') || n.includes('deadlift')
+    if (n.includes('squat') || n.includes('bænk') || n.includes('bench') || n.includes('dødl') || n.includes('deadlift')) return true
+    // Barbell overhead press (fx Henriks OHP) er et hovedløft og skal have fuld
+    // opvarmnings-ramp. Kun tydelige stang-varianter — ikke DB/maskine/skulderpres-accessory.
+    return n.includes('ohp') || n.includes('overhead') || n.includes('militar') || n.includes('push press') || n.includes('strict pres') || n.includes('split jerk')
   }
 
   function calcWarmupSets(workingWeight, plannedReps = 1, exName = '') {
-    if (!workingWeight || workingWeight <= 20) return []
-    const round = w => {
-      const pct = w / workingWeight
-      if (pct < 0.60) return Math.round(w / 10) * 10
-      if (pct < 0.85) return Math.round(w / 5) * 5
-      return Math.round(w / 2.5) * 2.5
-    }
+    const W = workingWeight
+    if (!W || W <= 20) return []
     const n = parseInt(plannedReps) || 1
 
-    // Accessory work: 1 set at 60%, or 2 sets for high-load machines (benpress/leg press)
+    // Rund til fornuftige spring: 5 kg lavt/midt, 2,5 kg tæt på arbejdsvægt.
+    // (Tidligere rundede vi til nærmeste 10 i bunden — det gav de mærkelige spring.)
+    const smartRound = w => (w / W >= 0.85 ? Math.round(w / 2.5) * 2.5 : Math.round(w / 5) * 5)
+
+    // Warmup-reps afhænger KUN af hvor tæt vi er på arbejdsvægten (ikke af
+    // arbejdssættets reps) — man varmer op med flere reps let og tapper opad.
+    const repsFor = p => p >= 0.88 ? 1 : p >= 0.78 ? 2 : p >= 0.60 ? 3 : 5
+
+    // Accessory: kort ramp (1 sæt, 2 for tunge maskiner). Aldrig under stangen.
     if (!isMainLift(exName)) {
       const nm = (exName || '').toLowerCase()
       const isHighLoad = nm.includes('benpress') || nm.includes('leg press') || nm.includes('benpres')
-      if (isHighLoad) {
-        const sets = []
-        const w1 = round(workingWeight * 0.50), w2 = round(workingWeight * 0.75)
-        if (w1 > 20 && workingWeight - w1 >= 20) sets.push({ weight: w1, reps: 5, pct: '50%' })
-        if (w2 > 20 && workingWeight - w2 >= 15 && (!sets.length || w2 - sets[sets.length - 1].weight >= 10)) sets.push({ weight: w2, reps: 3, pct: '75%' })
-        return sets
+      const stops = isHighLoad ? [0.50, 0.75] : [0.60]
+      const out = []
+      for (const p of stops) {
+        const w = smartRound(W * p)
+        if (w <= 20 || w >= W || W - w < 10) continue
+        if (out.length && w - out[out.length - 1].weight < 10) continue
+        out.push({ weight: w, reps: p < 0.6 ? 5 : p < 0.75 ? 4 : 3, pct: `${Math.round(p * 100)}%` })
       }
-      const w = round(workingWeight * 0.60)
-      if (w <= 20 || workingWeight - w < 15) return []
-      return [{ weight: w, reps: 6, pct: '60%' }]
+      return out
     }
 
-    // Last warmup always close to working weight so the body feels the load before the work set.
-    let targets
-    if (n <= 2) {
-      targets = [
-        { pct: 0.47, reps: 3 },
-        { pct: 0.73, reps: 2 },
-        { pct: 0.87, reps: 1 },
-        { pct: 0.95, reps: 1 },
-      ]
-    } else if (n <= 4) {
-      targets = [
-        { pct: 0.40, reps: n },
-        { pct: 0.57, reps: n },
-        { pct: 0.73, reps: n },
-        { pct: 0.87, reps: 2 },
-        { pct: 0.95, reps: 1 },
-      ]
-    } else if (n <= 6) {
-      targets = [
-        { pct: 0.55, reps: n },
-        { pct: 0.73, reps: Math.ceil(n * 0.7) },
-        { pct: 0.90, reps: 2 },
-      ]
-    } else if (n <= 9) {
-      targets = [
-        { pct: 0.60, reps: Math.min(n, 6) },
-        { pct: 0.80, reps: 4 },
-        { pct: 0.90, reps: 2 },
-      ]
-    } else {
-      targets = [
-        { pct: 0.60, reps: 6 },
-        { pct: 0.80, reps: 4 },
-      ]
+    // Hovedløft: jævn ramp fra stang op til tæt på arbejdsvægt.
+    // - topPct: sidste opvarmning tættere på arbejdsvægt ved singler end ved høje reps.
+    // - antal sæt skalerer med hvor tungt der løftes (længere ramp = flere sæt).
+    // - ease-out fordeling: største spring i MIDTEN, mindste lige før arbejdssættet.
+    const topPct = n <= 2 ? 0.92 : n <= 4 ? 0.88 : 0.85
+    const startPct = 0.40
+    const nSets = W < 50 ? 2 : W < 80 ? 3 : W < 120 ? 4 : W < 180 ? 5 : 6
+
+    const out = [{ weight: 20, reps: 5, pct: 'Stang' }]
+    for (let i = 0; i < nSets; i++) {
+      const t = nSets === 1 ? 1 : i / (nSets - 1)          // 0..1
+      const p = startPct + (topPct - startPct) * (1 - Math.pow(1 - t, 1.6))
+      const w = smartRound(W * p)
+      if (w <= 20 || w >= W) continue
+      const prev = out[out.length - 1].weight
+      if (w - prev < 5) continue                            // for tæt på forrige → drop
+      out.push({ weight: w, reps: repsFor(p), pct: `${Math.round(p * 100)}%` })
     }
-
-    // Limit number of loaded sets based on working weight
-    const maxSets = workingWeight < 60 ? 2 : workingWeight < 100 ? 3 : workingWeight < 200 ? 4 : 5
-
-    // Minimum jump scales with working weight — 8% floor at 5kg so light benchers don't lose top sets
-    const minJump = Math.max(5, workingWeight * 0.08)
-
-    const raw = []
-    for (const { pct, reps } of targets) {
-      const w = round(workingWeight * pct)
-      if (w <= 20) continue
-      if (raw.length && w - raw[raw.length - 1].weight < minJump) continue
-      if (w >= workingWeight) continue
-      raw.push({ weight: w, reps, pct: `${Math.round(pct * 100)}%` })
-    }
-
-    return [
-      { weight: 20, reps: 5, pct: 'Stang' },
-      ...raw.slice(-maxSets),
-    ]
+    return out
   }
 
   async function fetchReadiness(athleteId) {
