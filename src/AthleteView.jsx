@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, Fragment } from 'react'
 import { supabase, withRetry, queueWrite } from './supabase'
 
 const ATHLETE_VIDEOCOACH_PREFIX = 'entropi:videocoach:v3'
-const ATHLETE_VIDEOCOACH_URL = 'videocoach.html?mode=athlete&bridge=athlete-v1&v=20260722-athlete-flow-v1'
+const ATHLETE_VIDEOCOACH_URL = 'videocoach.html?mode=athlete&bridge=athlete-v1&v=20260722-athlete-bridge-v2'
 const ATHLETE_VIDEOCOACH_COLUMNS = new Set([
   'client_analysis_id', 'athlete_id', 'athlete_name', 'source_mode', 'status',
   'lift', 'variation', 'load_kg', 'rpe', 'reps_count', 'rep_details',
@@ -1643,7 +1643,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [tab, setTab] = useState('hjem')
   const [athlete, setAthlete] = useState(null)
   const athleteVideoCoachRef = useRef(null)
+  const athleteVideoCoachFrameRef = useRef(null)
   const athleteVideoCoachClientsRef = useRef(new Set())
+  const [athleteVideoCoachOpen, setAthleteVideoCoachOpen] = useState(false)
   const [sharedVideoAnalyses, setSharedVideoAnalyses] = useState([])
   const [sharedVideoLoading, setSharedVideoLoading] = useState(false)
   const [sharedVideoError, setSharedVideoError] = useState(null)
@@ -1797,6 +1799,13 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       if (event.origin !== window.location.origin || !event.source) return
       const message = event.data || {}
       const currentAthlete = athleteVideoCoachRef.current
+      if (message.type === `${ATHLETE_VIDEOCOACH_PREFIX}:close`) {
+        const frameWindow = athleteVideoCoachFrameRef.current?.contentWindow
+        if (event.source !== frameWindow && !athleteVideoCoachClientsRef.current.has(event.source)) return
+        athleteVideoCoachClientsRef.current.delete(event.source)
+        setAthleteVideoCoachOpen(false)
+        return
+      }
       if (message.type === `${ATHLETE_VIDEOCOACH_PREFIX}:ready`) {
         if (!currentAthlete?.id) return
         athleteVideoCoachClientsRef.current.add(event.source)
@@ -3150,6 +3159,22 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   return (
     <div style={s.wrap}>
+      {role === 'athlete' && athleteVideoCoachOpen && (
+        <div
+          role="dialog"
+          aria-label="VideoCoach"
+          style={{ position: 'fixed', inset: 0, zIndex: 12000, background: '#0f0e0b' }}
+        >
+          <iframe
+            ref={athleteVideoCoachFrameRef}
+            src={ATHLETE_VIDEOCOACH_URL}
+            title="VideoCoach"
+            allow="fullscreen"
+            allowFullScreen
+            style={{ display: 'block', width: '100%', height: '100%', border: 0, background: '#0f0e0b' }}
+          />
+        </div>
+      )}
       {openRpePicker && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 199 }} onClick={() => setOpenRpePicker(null)} />
       )}
@@ -3684,8 +3709,11 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
             {/* VideoCoach — flyttet fra topbaren ned som selvstændigt kort */}
             <div
-              onClick={() => athlete?.id && window.open(role === 'athlete'
-                ? ATHLETE_VIDEOCOACH_URL : 'videocoach.html?mode=athlete', '_blank')}
+              onClick={() => {
+                if (!athlete?.id) return
+                if (role === 'athlete') { setAthleteVideoCoachOpen(true); return }
+                window.open('videocoach.html?mode=athlete', '_blank')
+              }}
               onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(200,146,58,0.4)'}
               onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(237,234,226,0.07)'}
               style={{ ...s.card, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem' }}
