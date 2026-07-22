@@ -529,6 +529,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [inboxThreads, setInboxThreads] = useState({})
   const [videoReviewQueue, setVideoReviewQueue] = useState([])
   const [videoReviewQueueError, setVideoReviewQueueError] = useState(null)
+  const [videoReviewRequest, setVideoReviewRequest] = useState(null)
+  const videoReviewOpenedRef = useRef(null)
   const [menuSheetOpen, setMenuSheetOpen] = useState(false)
   const [sheetPreviewPick, setSheetPreviewPick] = useState(false)
   const [sidebarMoreOpen, setSidebarMoreOpen] = useState(false)
@@ -776,6 +778,18 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       fetchVideoCoachHistory(selectedAthlete.id)
     }
   }, [activeTab, selectedAthlete?.id])
+
+  // Et tryk i den samlede indbakke skifter først atlet og åbner derefter
+  // den konkrete måling. Rækkefølgen forhindrer reviewdata fra en anden
+  // atlet i kortvarigt at blive vist under den forkerte profil.
+  useEffect(() => {
+    const target = videoReviewRequest?.item
+    if (!target || selectedAthlete?.id !== target.athlete_id ||
+        videoReviewOpenedRef.current === videoReviewRequest.token) return
+    videoReviewOpenedRef.current = videoReviewRequest.token
+    openVideoAnalysisReview(target)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [videoReviewRequest, selectedAthlete?.id])
 
   useEffect(() => {
     if (activeTab === 'opvarmning' && selectedAthlete) {
@@ -3100,7 +3114,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                       if (!athlete) return null
                       const receivedAt = item.created_at || item.analyzed_at
                       return (
-                        <button key={item.id} onClick={() => { setVideoLiftFilter(item.lift || 'all'); openProfile(athlete, 'analyse') }}
+                        <button key={item.id} onClick={() => { setVideoReviewRequest({ item, token: `${item.id}:${Date.now()}` }); setVideoLiftFilter(item.lift || 'all'); openProfile(athlete, 'analyse') }}
                           style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', width: '100%', padding: '0.62rem 0.7rem', border: '1px solid rgba(237,234,226,0.075)', background: '#171713', color: '#edeae2', cursor: 'pointer', textAlign: 'left' }}>
                           <span style={{ minWidth: 0 }}>
                             <span style={{ display: 'block', fontSize: '0.78rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{athlete.name}</span>
