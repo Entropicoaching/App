@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, Fragment } from 'react'
 import { supabase, withRetry, queueWrite } from './supabase'
 
 const ATHLETE_VIDEOCOACH_PREFIX = 'entropi:videocoach:v3'
-const ATHLETE_VIDEOCOACH_URL = 'videocoach.html?mode=athlete&bridge=athlete-v1&v=20260720-athlete-submit-v2'
+const ATHLETE_VIDEOCOACH_URL = 'videocoach.html?mode=athlete&bridge=athlete-v1&v=20260722-athlete-flow-v1'
 const ATHLETE_VIDEOCOACH_COLUMNS = new Set([
   'client_analysis_id', 'athlete_id', 'athlete_name', 'source_mode', 'status',
   'lift', 'variation', 'load_kg', 'rpe', 'reps_count', 'rep_details',
