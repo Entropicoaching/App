@@ -1647,7 +1647,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
   async function reviewVideoAnalysis(analysis, nextStatus) {
     if (!selectedAthlete?.id || !analysis?.id || videoAnalysisUpdatingId) return
-    if (!['draft', 'coach_approved', 'invalid'].includes(nextStatus)) return
+    if (!['draft', 'coach_approved', 'shared', 'invalid'].includes(nextStatus)) return
+    if (nextStatus === 'shared' && analysis.status !== 'coach_approved') return
     setVideoAnalysisUpdatingId(analysis.id)
     setVideoAnalysisError(null)
     try {
@@ -1668,9 +1669,11 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         ? { ...current, status: nextStatus } : current)
       const message = nextStatus === 'coach_approved'
         ? 'Videoanalyse godkendt til personlig baseline'
-        : nextStatus === 'invalid'
-          ? 'Videoanalyse udeladt fra personlig baseline'
-          : 'Videoanalyse flyttet tilbage til kladde'
+        : nextStatus === 'shared'
+          ? 'Feedback delt med atleten'
+          : nextStatus === 'invalid'
+            ? 'Videoanalyse udeladt fra personlig baseline'
+            : 'Videoanalyse flyttet tilbage til kladde'
       showFlash(message, 'success')
     } catch (error) {
       setVideoAnalysisError(error.message || 'Analysens status kunne ikke opdateres')
@@ -4272,9 +4275,20 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                               {analysis.status === 'coach_approved' && (
                                 <div style={{ marginTop: '0.75rem', paddingTop: '0.65rem', borderTop: '1px solid rgba(237,234,226,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.65rem', flexWrap: 'wrap' }}>
                                   <span style={{ color: '#7a9f78', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem' }}>Indgår i personlig baseline</span>
-                                  <button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'invalid')} style={{ ...s.btnGhost, padding: '0.28rem 0.55rem', fontSize: '0.46rem', opacity: updating ? 0.55 : 0.78 }}>
-                                    {updating ? 'Gemmer…' : 'Fjern fra baseline'}
-                                  </button>
+                                  <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                                    <button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'shared')} style={{ ...s.btnPrimary, padding: '0.34rem 0.62rem', fontSize: '0.48rem', background: '#3f7c87', opacity: updating ? 0.55 : 1 }}>
+                                      {updating ? 'Deler…' : 'Del med atlet'}
+                                    </button>
+                                    <button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'invalid')} style={{ ...s.btnGhost, padding: '0.28rem 0.55rem', fontSize: '0.46rem', opacity: updating ? 0.55 : 0.78 }}>
+                                      Fjern fra baseline
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
+
+                              {analysis.status === 'shared' && (
+                                <div style={{ marginTop: '0.75rem', paddingTop: '0.65rem', borderTop: '1px solid rgba(237,234,226,0.07)', color: '#67dff5', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem' }}>
+                                  Synlig for atleten · indgår fortsat i personlig baseline
                                 </div>
                               )}
 
@@ -6858,6 +6872,16 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           ? analysis.session_context.baseline_snapshot : []
         const athleteNote = typeof analysis.session_context?.athlete_note === 'string'
           ? analysis.session_context.athlete_note.trim() : ''
+        const athleteFeedback = analysis.athlete_feedback || {}
+        const athleteFeedbackSections = [
+          ['Det fungerer', athleteFeedback.works, '#8caf88'],
+          ['Atletens fokus', athleteFeedback.focus, '#d79a83'],
+          ['Næste gang', athleteFeedback.next_set, '#c9b47f'],
+        ].map(([label, items, color]) => ({
+          label,
+          color,
+          items: Array.isArray(items) ? items.filter(item => item?.text).slice(0, 2) : [],
+        })).filter(section => section.items.length > 0)
         const updating = videoAnalysisUpdatingId === analysis.id
         return (
           <div role="dialog" aria-modal="true" style={{ ...s.overlay, padding: isMobile ? '0.5rem' : '1.5rem', zIndex: 10020 }} onClick={e => e.target === e.currentTarget && setVideoAnalysisReview(null)}>
@@ -6918,11 +6942,28 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 </div>
               )}
 
+              <div style={{ marginTop: '0.9rem', border: '1px solid rgba(103,223,245,0.18)', background: 'rgba(103,223,245,0.035)', padding: '0.75rem 0.8rem' }}>
+                <div style={{ ...s.fieldLabel, color: '#67dff5' }}>Det atleten ser</div>
+                {athleteFeedbackSections.length > 0 ? (
+                  <div style={{ display: 'grid', gap: '0.65rem', marginTop: '0.55rem' }}>
+                    {athleteFeedbackSections.map(section => (
+                      <div key={section.label}>
+                        <div style={{ ...s.fieldLabel, marginBottom: '0.22rem' }}>{section.label}</div>
+                        {section.items.map((item, index) => <div key={index} style={{ color: section.color, fontSize: '0.68rem', lineHeight: 1.45 }}>{item.text}</div>)}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div style={{ color: '#7a7770', fontSize: '0.66rem', lineHeight: 1.45, marginTop: '0.35rem' }}>Målingen har ingen særskilt tekstfeedback. Atleten vil kun se den godkendte stangbane.</div>
+                )}
+              </div>
+
               <div style={{ marginTop: '1rem', paddingTop: '0.85rem', borderTop: '1px solid rgba(237,234,226,0.08)' }}>
                 <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', lineHeight: 1.45, marginBottom: '0.7rem' }}>Reviewet viser den gemte måling. Originalvideoen lagres ikke i appen endnu.</div>
                 <div style={{ display: 'flex', gap: '0.55rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                   {analysis.status === 'draft' && <><button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'invalid')} style={{ ...s.btnGhost, opacity: updating ? 0.55 : 1 }}>{updating ? 'Gemmer…' : 'Udelad måling'}</button><button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'coach_approved')} style={{ ...s.btnPrimary, background: '#4f7d50', opacity: updating ? 0.55 : 1 }}>{updating ? 'Gemmer…' : 'Godkend til baseline'}</button></>}
-                  {analysis.status === 'coach_approved' && <button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'invalid')} style={{ ...s.btnGhost, opacity: updating ? 0.55 : 1 }}>{updating ? 'Gemmer…' : 'Fjern fra baseline'}</button>}
+                  {analysis.status === 'coach_approved' && <><button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'invalid')} style={{ ...s.btnGhost, opacity: updating ? 0.55 : 1 }}>{updating ? 'Gemmer…' : 'Fjern fra baseline'}</button><button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'shared')} style={{ ...s.btnPrimary, background: '#3f7c87', opacity: updating ? 0.55 : 1 }}>{updating ? 'Deler…' : 'Del feedback med atlet'}</button></>}
+                  {analysis.status === 'shared' && <button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'invalid')} style={{ ...s.btnGhost, opacity: updating ? 0.55 : 1 }}>{updating ? 'Gemmer…' : 'Skjul og udelad måling'}</button>}
                   {analysis.status === 'invalid' && <button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'draft')} style={{ ...s.btnGhost, opacity: updating ? 0.55 : 1 }}>{updating ? 'Gemmer…' : 'Tilbage til kladde'}</button>}
                 </div>
               </div>

@@ -35,6 +35,48 @@ function validateAthleteVideoCoachRow(row, athleteId) {
   return null
 }
 
+const ATHLETE_VIDEO_LIFTS = { squat: 'Squat', bench: 'Bænkpres', deadlift: 'Dødløft' }
+
+function athleteVideoVariationLabel(lift, variation) {
+  const labels = {
+    competition_squat: 'Konkurrence squat',
+    konkurrence_squat: 'Konkurrence squat',
+    competition_bench: 'Konkurrence bænkpres',
+    konkurrence_baenk: 'Konkurrence bænkpres',
+    competition_conventional: 'Konventionelt dødløft',
+    competition_sumo: 'Sumo dødløft',
+  }
+  if (labels[variation]) return labels[variation]
+  if (!variation || variation === 'standard') return ATHLETE_VIDEO_LIFTS[lift] || 'Standard'
+  return variation.replaceAll('_', ' ')
+}
+
+function athleteVideoPathPreview(barPath) {
+  if (!barPath || !Array.isArray(barPath.dx) || !Array.isArray(barPath.dy) ||
+      barPath.dx.length !== barPath.dy.length || barPath.dx.length > 240 ||
+      !Number.isFinite(Number(barPath.x0)) || !Number.isFinite(Number(barPath.y0))) return null
+  let x = Number(barPath.x0), y = Number(barPath.y0)
+  const path = [{ x, y }]
+  for (let i = 0; i < barPath.dx.length; i++) {
+    const dx = Number(barPath.dx[i]), dy = Number(barPath.dy[i])
+    if (!Number.isFinite(dx) || !Number.isFinite(dy) || Math.abs(dx) > 1000 || Math.abs(dy) > 1000)
+      return null
+    x += dx; y += dy; path.push({ x, y })
+  }
+  if (path.length < 2) return null
+  const xs = path.map(point => point.x), ys = path.map(point => point.y)
+  const minX = Math.min(...xs), maxX = Math.max(...xs)
+  const minY = Math.min(...ys), maxY = Math.max(...ys)
+  const width = Math.max(30, maxX - minX), height = Math.max(60, maxY - minY)
+  const padX = Math.max(12, width * 0.22), padY = Math.max(12, height * 0.1)
+  return {
+    points: path.map(point => `${point.x},${point.y}`).join(' '),
+    viewBox: `${minX - padX} ${minY - padY} ${width + padX * 2} ${height + padY * 2}`,
+    start: path[0], end: path[path.length - 1], referenceX: path[0].x,
+    y1: minY - padY, y2: maxY + padY,
+  }
+}
+
 const BLOCK_PALETTE = ['#4e8fcf','#c8923a','#6cba6c','#9b6bd4','#cf6b4e','#4ec8b4']
 function blockColor(name) {
   if (!name) return '#4a4844'
@@ -1602,6 +1644,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [athlete, setAthlete] = useState(null)
   const athleteVideoCoachRef = useRef(null)
   const athleteVideoCoachClientsRef = useRef(new Set())
+  const [sharedVideoAnalyses, setSharedVideoAnalyses] = useState([])
+  const [sharedVideoLoading, setSharedVideoLoading] = useState(false)
+  const [sharedVideoError, setSharedVideoError] = useState(null)
+  const [openSharedVideoId, setOpenSharedVideoId] = useState(null)
   const [logs, setLogs] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
@@ -1808,6 +1854,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   useEffect(() => { fetchAthlete() }, [])
   useEffect(() => { if (athlete) fetchLogs(athlete.id, kostDate) }, [kostDate, athlete?.id])
+  useEffect(() => {
+    if (role === 'athlete' && athlete?.id) fetchSharedVideoAnalyses()
+  }, [role, athlete?.id])
   useEffect(() => { if (tab === 'beskeder' && athlete) { fetchAthleteMessages(); markMessagesAsRead() } }, [tab, athlete?.id])
   useEffect(() => { if (tab === 'beskeder') messagesEndRef.current?.scrollIntoView({ block: 'end' }) }, [messages, tab])
   useEffect(() => { if (tab === 'stævnedag' && athlete) { fetchMeetPlan(athlete.id); fetchMeetResults(athlete.id) } }, [tab, athlete?.id])
@@ -1876,6 +1925,24 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       fetchMeetResults(data.id)
     }
     setLoading(false)
+  }
+
+  async function fetchSharedVideoAnalyses() {
+    setSharedVideoLoading(true)
+    setSharedVideoError(null)
+    const { data, error } = await supabase.rpc('get_my_shared_video_analyses_v3', {
+      p_limit: 6,
+      p_offset: 0,
+    })
+    if (error) {
+      setSharedVideoError(error.message || 'Dine analyser kunne ikke hentes')
+      setSharedVideoLoading(false)
+      return
+    }
+    const analyses = Array.isArray(data) ? data.filter(item => item && item.id) : []
+    setSharedVideoAnalyses(analyses)
+    setOpenSharedVideoId(analyses[0]?.id || null)
+    setSharedVideoLoading(false)
   }
 
   async function fetchPRs(athleteId) {
@@ -3639,6 +3706,70 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 </div>
               </div>
             </div>
+
+            {role === 'athlete' && (sharedVideoLoading || sharedVideoError || sharedVideoAnalyses.length > 0) && (
+              <div style={s.card}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '0.7rem', marginBottom: '0.8rem' }}>
+                  <div>
+                    <div style={{ ...s.cardLabel, marginBottom: '0.2rem' }}>Feedback fra din coach</div>
+                    <div style={{ color: '#7a7770', fontSize: '0.68rem', lineHeight: 1.4 }}>Godkendte bevægelsesanalyser og næste fokus.</div>
+                  </div>
+                  {!sharedVideoLoading && <button onClick={fetchSharedVideoAnalyses} style={{ ...s.btnGhost, padding: '0.3rem 0.55rem', fontSize: '0.5rem', flexShrink: 0 }}>Opdatér</button>}
+                </div>
+
+                {sharedVideoLoading && <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', padding: '0.5rem 0' }}>Henter analyser…</div>}
+                {sharedVideoError && !sharedVideoLoading && (
+                  <div style={{ color: '#d79a83', fontSize: '0.66rem', lineHeight: 1.45 }}>{sharedVideoError}</div>
+                )}
+
+                {!sharedVideoLoading && !sharedVideoError && sharedVideoAnalyses.length > 0 && (
+                  <div style={{ display: 'grid', gap: '0.55rem' }}>
+                    {sharedVideoAnalyses.map(analysis => {
+                      const open = openSharedVideoId === analysis.id
+                      const preview = athleteVideoPathPreview(analysis.bar_path)
+                      const feedback = analysis.athlete_feedback || {}
+                      const works = Array.isArray(feedback.works) ? feedback.works.filter(item => item?.text).slice(0, 2) : []
+                      const focus = Array.isArray(feedback.focus) ? feedback.focus.filter(item => item?.text).slice(0, 2) : []
+                      const nextSet = Array.isArray(feedback.next_set) ? feedback.next_set.filter(item => item?.text).slice(0, 2) : []
+                      return (
+                        <div key={analysis.id} style={{ border: '1px solid rgba(237,234,226,0.08)', background: 'rgba(20,20,16,0.55)' }}>
+                          <button onClick={() => setOpenSharedVideoId(open ? null : analysis.id)} style={{ width: '100%', border: 0, background: 'transparent', color: '#edeae2', cursor: 'pointer', padding: '0.75rem', textAlign: 'left', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.7rem' }}>
+                            <span style={{ minWidth: 0 }}>
+                              <span style={{ display: 'block', fontSize: '0.78rem' }}>{ATHLETE_VIDEO_LIFTS[analysis.lift] || analysis.lift} · {athleteVideoVariationLabel(analysis.lift, analysis.variation)}</span>
+                              <span style={{ display: 'block', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', marginTop: '0.25rem' }}>
+                                {new Date(analysis.analyzed_at).toLocaleDateString('da-DK')}{analysis.load_kg != null ? ` · ${analysis.load_kg} kg` : ''}{analysis.reps_count ? ` · ${analysis.reps_count} reps` : ''}{analysis.rpe != null ? ` · RPE ${analysis.rpe}` : ''}
+                              </span>
+                            </span>
+                            <span style={{ color: '#c8923a', fontSize: '0.75rem', transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s', flexShrink: 0 }}>⌄</span>
+                          </button>
+
+                          {open && (
+                            <div style={{ borderTop: '1px solid rgba(237,234,226,0.07)', padding: '0.75rem', display: 'grid', gridTemplateColumns: '1fr', gap: '0.8rem' }}>
+                              {preview && (
+                                <div style={{ minHeight: '170px', background: '#141410', border: '1px solid rgba(237,234,226,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.6rem' }}>
+                                  <svg viewBox={preview.viewBox} width="100%" height="170" preserveAspectRatio="xMidYMid meet" style={{ display: 'block', overflow: 'visible' }}>
+                                    <line x1={preview.referenceX} y1={preview.y1} x2={preview.referenceX} y2={preview.y2} stroke="rgba(237,234,226,0.14)" strokeWidth="1" strokeDasharray="5 5" vectorEffect="non-scaling-stroke" />
+                                    <polyline points={preview.points} fill="none" stroke="#c8923a" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+                                    <circle cx={preview.start.x} cy={preview.start.y} r="4" fill="#67dff5" vectorEffect="non-scaling-stroke" />
+                                    <circle cx={preview.end.x} cy={preview.end.y} r="4" fill="#edeae2" vectorEffect="non-scaling-stroke" />
+                                  </svg>
+                                </div>
+                              )}
+                              <div style={{ display: 'grid', gap: '0.7rem' }}>
+                                {works.length > 0 && <div><div style={s.fieldLabel}>Det fungerer</div>{works.map((item, index) => <div key={index} style={{ color: '#9fbd9a', fontSize: '0.68rem', lineHeight: 1.45, marginTop: '0.25rem' }}>{item.text}</div>)}</div>}
+                                {focus.length > 0 && <div><div style={s.fieldLabel}>Dit fokus</div>{focus.map((item, index) => <div key={index} style={{ color: '#d79a83', fontSize: '0.68rem', lineHeight: 1.45, marginTop: '0.25rem' }}>{item.text}</div>)}</div>}
+                                {nextSet.length > 0 && <div><div style={s.fieldLabel}>Næste gang</div>{nextSet.map((item, index) => <div key={index} style={{ color: '#c9b47f', fontSize: '0.68rem', lineHeight: 1.45, marginTop: '0.25rem' }}>{item.text}</div>)}</div>}
+                                {!works.length && !focus.length && !nextSet.length && <div style={{ color: '#7a7770', fontSize: '0.66rem', lineHeight: 1.45 }}>Coachen har delt målingen uden en særskilt tekstkommentar.</div>}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
           </>
         )}
 
