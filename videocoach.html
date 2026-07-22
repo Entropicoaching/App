@@ -4745,6 +4745,8 @@ const VC_V3_COACH_BRIDGE = VC_V3_BRIDGE_MODE === 'v3';
 const VC_V3_ATHLETE_BRIDGE = VC_V3_BRIDGE_MODE === 'athlete-v1';
 const VC_V3_BRIDGE_ENABLED = VC_V3_COACH_BRIDGE || VC_V3_ATHLETE_BRIDGE;
 const VC_V3_MESSAGE_PREFIX = 'entropi:videocoach:v3';
+const VC_V3_EMBEDDED = window.parent !== window;
+const VC_V3_HOST = VC_V3_EMBEDDED ? window.parent : window.opener;
 const vcV3Pending = new Map();
 const vcV3AnalysisIds = new WeakMap();
 const vcV3BaselinePending = new Map();
@@ -5018,7 +5020,7 @@ function vcV3DatabaseRow(payload, legacy) {
 }
 
 function vcV3RequestSave(row) {
-  if (!VC_V3_BRIDGE_ENABLED || !vcV3BridgeReady || !window.opener)
+  if (!VC_V3_BRIDGE_ENABLED || !vcV3BridgeReady || !VC_V3_HOST)
     return Promise.reject(new Error('VideoCoach er ikke forbundet til coach-appen'));
   const requestId = vcV3Uuid();
   return new Promise((resolve, reject) => {
@@ -5027,13 +5029,13 @@ function vcV3RequestSave(row) {
       reject(new Error('Coach-appen svarede ikke inden for 12 sekunder'));
     }, 12000);
     vcV3Pending.set(requestId, { resolve, reject, timer });
-    window.opener.postMessage({ type: `${VC_V3_MESSAGE_PREFIX}:save-draft`,
+    VC_V3_HOST.postMessage({ type: `${VC_V3_MESSAGE_PREFIX}:save-draft`,
       requestId, row }, location.origin);
   });
 }
 
 function vcV3RequestBaselines(athleteId, force = false) {
-  if (!VC_V3_COACH_BRIDGE || !vcV3BridgeReady || !window.opener || !athleteId)
+  if (!VC_V3_COACH_BRIDGE || !vcV3BridgeReady || !VC_V3_HOST || !athleteId)
     return Promise.reject(new Error('Personlig baseline er ikke tilgængelig'));
   if (!force && vcV3BaselineCache.has(athleteId))
     return Promise.resolve(vcV3BaselineCache.get(athleteId));
@@ -5052,14 +5054,14 @@ function vcV3RequestBaselines(athleteId, force = false) {
   vcV3BaselinePending.set(requestId, {
     athleteId, promise, resolve: resolvePending, reject: rejectPending, timer
   });
-  window.opener.postMessage({ type: `${VC_V3_MESSAGE_PREFIX}:baseline-request`,
+  VC_V3_HOST.postMessage({ type: `${VC_V3_MESSAGE_PREFIX}:baseline-request`,
     requestId, athleteId }, location.origin);
   return promise;
 }
 
 if (VC_V3_BRIDGE_ENABLED) {
   window.addEventListener('message', event => {
-    if (event.origin !== location.origin || event.source !== window.opener) return;
+    if (event.origin !== location.origin || event.source !== VC_V3_HOST) return;
     const msg = event.data || {};
     if (msg.type === `${VC_V3_MESSAGE_PREFIX}:config`) {
       const athleteSelect = document.getElementById('athleteSel');
@@ -5086,7 +5088,7 @@ if (VC_V3_BRIDGE_ENABLED) {
         athleteSelect.selectedOptions[0].dataset.athleteId;
       if (VC_V3_COACH_BRIDGE && selectedId)
         vcV3RequestBaselines(selectedId).catch(() => {});
-      window.opener.postMessage({ type: `${VC_V3_MESSAGE_PREFIX}:config-ack`,
+      VC_V3_HOST.postMessage({ type: `${VC_V3_MESSAGE_PREFIX}:config-ack`,
         athleteCount: athleteSelect.options.length - 1 }, event.origin);
       return;
     }
@@ -5115,7 +5117,7 @@ if (VC_V3_BRIDGE_ENABLED) {
       else pending.reject(new Error(msg.error || 'Analysen kunne ikke gemmes'));
     }
   });
-  const announce = () => window.opener && window.opener.postMessage({
+  const announce = () => VC_V3_HOST && VC_V3_HOST.postMessage({
     type: `${VC_V3_MESSAGE_PREFIX}:ready`, schemaVersion: 3 }, location.origin);
   announce(); setTimeout(announce, 800);
 }
@@ -5804,6 +5806,10 @@ if (SLIM) {
   closeBtn.id = 'closeBtn';
   closeBtn.textContent = '✕';
   closeBtn.onclick = () => {
+    if (VC_V3_ATHLETE_BRIDGE && VC_V3_EMBEDDED && VC_V3_HOST) {
+      VC_V3_HOST.postMessage({ type: `${VC_V3_MESSAGE_PREFIX}:close` }, location.origin);
+      return;
+    }
     window.close();
     setTimeout(() => {
       if (!window.closed)
