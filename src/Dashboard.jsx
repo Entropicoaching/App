@@ -183,6 +183,28 @@ function videoCoachPathPreview(barPath) {
   }
 }
 
+function videoCoachFeedbackDraft(feedback) {
+  const source = feedback && typeof feedback === 'object' ? feedback : {}
+  const text = key => Array.isArray(source[key])
+    ? source[key].filter(item => item && typeof item.text === 'string')
+      .slice(0, 2).map(item => item.text.trim()).filter(Boolean).join('\n')
+    : ''
+  return { works: text('works'), focus: text('focus'), next_set: text('next_set') }
+}
+
+function videoCoachFeedbackPayload(existing, draft) {
+  const source = existing && typeof existing === 'object' ? existing : {}
+  const section = key => String(draft?.[key] || '').split(/\r?\n/)
+    .map(text => text.trim()).filter(Boolean).slice(0, 2)
+    .map((text, index) => ({
+      ...(source[key]?.[index] && typeof source[key][index] === 'object' ? source[key][index] : {}),
+      text,
+      evidence_refs: Array.isArray(source[key]?.[index]?.evidence_refs)
+        ? source[key][index].evidence_refs : ['coach_review'],
+    }))
+  return { ...source, works: section('works'), focus: section('focus'), next_set: section('next_set') }
+}
+
 function videoCoachVariationLabel(lift, variation) {
   const labels = {
     competition_squat: 'Konkurrence squat',
@@ -541,6 +563,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [videoAnalysisReview, setVideoAnalysisReview] = useState(null)
   const [videoAnalysisReviewLoadingId, setVideoAnalysisReviewLoadingId] = useState(null)
   const [videoAnalysisReviewError, setVideoAnalysisReviewError] = useState(null)
+  const [videoAnalysisFeedbackDraft, setVideoAnalysisFeedbackDraft] = useState({ works: '', focus: '', next_set: '' })
+  const [videoAnalysisFeedbackDirty, setVideoAnalysisFeedbackDirty] = useState(false)
   const [warmupTemplates, setWarmupTemplates] = useState([])
   const [editingWarmup, setEditingWarmup] = useState(null)
   const [warmupDraftSteps, setWarmupDraftSteps] = useState([])
@@ -1649,6 +1673,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     if (!selectedAthlete?.id || !analysis?.id || videoAnalysisUpdatingId) return
     if (!['draft', 'coach_approved', 'shared', 'invalid'].includes(nextStatus)) return
     if (nextStatus === 'shared' && analysis.status !== 'coach_approved') return
+    if (nextStatus === 'shared' && videoAnalysisFeedbackDirty) {
+      showFlash('Gem feedbacken før du deler den', 'error')
+      return
+    }
     setVideoAnalysisUpdatingId(analysis.id)
     setVideoAnalysisError(null)
     try {
@@ -1683,6 +1711,48 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     }
   }
 
+  async function saveVideoAnalysisFeedback(analysis) {
+    if (!selectedAthlete?.id || !analysis?.id || videoAnalysisUpdatingId) return
+    if (!['draft', 'coach_approved'].includes(analysis.status)) return
+    const values = Object.values(videoAnalysisFeedbackDraft).map(value => String(value || '').trim())
+    if (values.some(value => value.length > 600)) {
+      showFlash('Hvert feedbackfelt må højst være 600 tegn', 'error')
+      return
+    }
+    const athleteFeedback = videoCoachFeedbackPayload(analysis.athlete_feedback,
+      videoAnalysisFeedbackDraft)
+    setVideoAnalysisUpdatingId(analysis.id)
+    setVideoAnalysisReviewError(null)
+    try {
+      let query = supabase.from('video_analyses')
+        .update({ athlete_feedback: athleteFeedback,
+          feedback_version: 'coach-edited-v1-2026-07-22' })
+        .eq('id', analysis.id)
+        .eq('athlete_id', selectedAthlete.id)
+      if (analysis.client_analysis_id)
+        query = query.eq('client_analysis_id', analysis.client_analysis_id)
+      const { data, error } = await query
+        .select('id,client_analysis_id,athlete_id,status,athlete_feedback,feedback_version').single()
+      if (error) throw error
+      if (!data || data.id !== analysis.id || data.athlete_id !== selectedAthlete.id)
+        throw new Error('Databasen bekræftede ikke feedbacken')
+      setVideoAnalyses(current => current.map(item => item.id === analysis.id
+        ? { ...item, athlete_feedback: data.athlete_feedback,
+          feedback_version: data.feedback_version } : item))
+      setVideoAnalysisReview(current => current?.id === analysis.id
+        ? { ...current, athlete_feedback: data.athlete_feedback,
+          feedback_version: data.feedback_version } : current)
+      setVideoAnalysisFeedbackDraft(videoCoachFeedbackDraft(data.athlete_feedback))
+      setVideoAnalysisFeedbackDirty(false)
+      showFlash('Feedback gemt', 'success')
+    } catch (error) {
+      setVideoAnalysisReviewError(error.message || 'Feedbacken kunne ikke gemmes')
+      showFlash('Feedbacken kunne ikke gemmes', 'error')
+    } finally {
+      setVideoAnalysisUpdatingId(null)
+    }
+  }
+
   async function openVideoAnalysisReview(analysis) {
     if (!selectedAthlete?.id || !analysis?.id || videoAnalysisReviewLoadingId) return
     setVideoAnalysisReviewLoadingId(analysis.id)
@@ -1697,6 +1767,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       if (!data || data.id !== analysis.id || data.athlete_id !== selectedAthlete.id)
         throw new Error('Databasen returnerede reviewdata for en forkert analyse')
       setVideoAnalysisReview(data)
+      setVideoAnalysisFeedbackDraft(videoCoachFeedbackDraft(data.athlete_feedback))
+      setVideoAnalysisFeedbackDirty(false)
     } catch (error) {
       setVideoAnalysisReviewError(error.message || 'Målingen kunne ikke åbnes')
     } finally {
@@ -6882,9 +6954,15 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           color,
           items: Array.isArray(items) ? items.filter(item => item?.text).slice(0, 2) : [],
         })).filter(section => section.items.length > 0)
+        const feedbackEditable = analysis.status === 'draft' || analysis.status === 'coach_approved'
+        const feedbackEditorFields = [
+          ['works', 'Det fungerer'],
+          ['focus', 'Atletens fokus'],
+          ['next_set', 'Næste gang'],
+        ]
         const updating = videoAnalysisUpdatingId === analysis.id
         return (
-          <div role="dialog" aria-modal="true" style={{ ...s.overlay, padding: isMobile ? '0.5rem' : '1.5rem', zIndex: 10020 }} onClick={e => e.target === e.currentTarget && setVideoAnalysisReview(null)}>
+          <div role="dialog" aria-modal="true" style={{ ...s.overlay, padding: isMobile ? '0.5rem' : '1.5rem', zIndex: 10020 }} onClick={e => { if (e.target === e.currentTarget) { setVideoAnalysisReview(null); setVideoAnalysisFeedbackDirty(false) } }}>
             <div style={{ ...s.modal, width: '100%', maxWidth: '760px', maxHeight: isMobile ? '96vh' : '90vh', overflowY: 'auto', padding: isMobile ? '1rem' : '1.4rem' }} onClick={e => e.stopPropagation()}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', marginBottom: '1rem' }}>
                 <div>
@@ -6897,7 +6975,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   </div>
                   {analysis.source_mode === 'athlete_submission' && <div style={{ color: '#67dff5', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem', marginTop: '0.35rem', letterSpacing: '0.04em', textTransform: 'uppercase' }}>Sendt af atleten</div>}
                 </div>
-                <button onClick={() => setVideoAnalysisReview(null)} style={{ ...s.btnGhost, padding: '0.28rem 0.55rem', flexShrink: 0 }}>Luk</button>
+                <button onClick={() => { setVideoAnalysisReview(null); setVideoAnalysisFeedbackDirty(false) }} style={{ ...s.btnGhost, padding: '0.28rem 0.55rem', flexShrink: 0 }}>Luk</button>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'minmax(220px,0.8fr) minmax(0,1.2fr)', gap: '0.9rem' }}>
@@ -6944,7 +7022,25 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
               <div style={{ marginTop: '0.9rem', border: '1px solid rgba(103,223,245,0.18)', background: 'rgba(103,223,245,0.035)', padding: '0.75rem 0.8rem' }}>
                 <div style={{ ...s.fieldLabel, color: '#67dff5' }}>Det atleten ser</div>
-                {athleteFeedbackSections.length > 0 ? (
+                {feedbackEditable ? (
+                  <div style={{ display: 'grid', gap: '0.7rem', marginTop: '0.55rem' }}>
+                    {feedbackEditorFields.map(([key, label]) => (
+                      <label key={key} style={{ display: 'grid', gap: '0.3rem' }}>
+                        <span style={s.fieldLabel}>{label}</span>
+                        <textarea rows="2" maxLength="600" value={videoAnalysisFeedbackDraft[key]} disabled={updating}
+                          placeholder={key === 'works' ? 'Hvad skal atleten tage med som positivt?' : key === 'focus' ? 'Hvad er det vigtigste fokus?' : 'Hvad skal atleten gøre næste gang?'}
+                          onChange={event => { setVideoAnalysisFeedbackDraft(current => ({ ...current, [key]: event.target.value })); setVideoAnalysisFeedbackDirty(true) }}
+                          style={{ width: '100%', boxSizing: 'border-box', resize: 'vertical', minHeight: '58px', border: '1px solid rgba(237,234,226,0.12)', background: '#141410', color: '#edeae2', padding: '0.55rem 0.6rem', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.68rem', lineHeight: 1.45 }} />
+                      </label>
+                    ))}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.6rem', flexWrap: 'wrap' }}>
+                      <span style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem' }}>Én linje pr. punkt · højst 2 punkter pr. felt</span>
+                      <button disabled={!videoAnalysisFeedbackDirty || updating} onClick={() => saveVideoAnalysisFeedback(analysis)} style={{ ...s.btnPrimary, padding: '0.36rem 0.65rem', fontSize: '0.5rem', opacity: !videoAnalysisFeedbackDirty || updating ? 0.5 : 1 }}>
+                        {updating ? 'Gemmer…' : videoAnalysisFeedbackDirty ? 'Gem feedback' : 'Feedback gemt ✓'}
+                      </button>
+                    </div>
+                  </div>
+                ) : athleteFeedbackSections.length > 0 ? (
                   <div style={{ display: 'grid', gap: '0.65rem', marginTop: '0.55rem' }}>
                     {athleteFeedbackSections.map(section => (
                       <div key={section.label}>
@@ -6962,7 +7058,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', lineHeight: 1.45, marginBottom: '0.7rem' }}>Reviewet viser den gemte måling. Originalvideoen lagres ikke i appen endnu.</div>
                 <div style={{ display: 'flex', gap: '0.55rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                   {analysis.status === 'draft' && <><button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'invalid')} style={{ ...s.btnGhost, opacity: updating ? 0.55 : 1 }}>{updating ? 'Gemmer…' : 'Udelad måling'}</button><button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'coach_approved')} style={{ ...s.btnPrimary, background: '#4f7d50', opacity: updating ? 0.55 : 1 }}>{updating ? 'Gemmer…' : 'Godkend til baseline'}</button></>}
-                  {analysis.status === 'coach_approved' && <><button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'invalid')} style={{ ...s.btnGhost, opacity: updating ? 0.55 : 1 }}>{updating ? 'Gemmer…' : 'Fjern fra baseline'}</button><button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'shared')} style={{ ...s.btnPrimary, background: '#3f7c87', opacity: updating ? 0.55 : 1 }}>{updating ? 'Deler…' : 'Del feedback med atlet'}</button></>}
+                  {analysis.status === 'coach_approved' && <><button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'invalid')} style={{ ...s.btnGhost, opacity: updating ? 0.55 : 1 }}>{updating ? 'Gemmer…' : 'Fjern fra baseline'}</button><button disabled={updating || videoAnalysisFeedbackDirty} onClick={() => reviewVideoAnalysis(analysis, 'shared')} style={{ ...s.btnPrimary, background: '#3f7c87', opacity: updating || videoAnalysisFeedbackDirty ? 0.5 : 1 }}>{updating ? 'Deler…' : videoAnalysisFeedbackDirty ? 'Gem feedback først' : 'Del feedback med atlet'}</button></>}
                   {analysis.status === 'shared' && <button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'invalid')} style={{ ...s.btnGhost, opacity: updating ? 0.55 : 1 }}>{updating ? 'Gemmer…' : 'Skjul og udelad måling'}</button>}
                   {analysis.status === 'invalid' && <button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'draft')} style={{ ...s.btnGhost, opacity: updating ? 0.55 : 1 }}>{updating ? 'Gemmer…' : 'Tilbage til kladde'}</button>}
                 </div>

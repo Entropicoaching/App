@@ -160,7 +160,16 @@
   body.athlete #athleteFlow .athFlowStep[data-complete="true"] { color:#78d89a; }
   body.athlete #athleteFlow .athFlowStep[data-current="true"] {
     color:var(--accent); background:rgba(200,146,58,.12); }
-  body.athlete #athleteStatus { top:105px; }
+  body.athlete #athleteStatus { top:52px; width:min(82vw,360px); padding:9px 12px; }
+  /* Når videoen er valgt, skal guiden ikke dække motivet. Vis kun det
+     aktuelle trin som en lille chip; start-guiden bor ved tidslinjen. */
+  body.athlete:not([data-athlete-state="empty"]) #athleteBrand { display:none; }
+  body.athlete:not([data-athlete-state="empty"]) #athleteFlow {
+    top:12px; display:block; width:auto; min-width:86px; padding:3px; }
+  body.athlete:not([data-athlete-state="empty"]) #athleteFlow .athFlowStep {
+    display:none; padding:4px 8px; }
+  body.athlete:not([data-athlete-state="empty"]) #athleteFlow .athFlowStep[data-current="true"] {
+    display:flex; }
   body.athlete footer { display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
     align-items:stretch; gap:2px; padding:6px; border-radius:20px; }
   body.athlete footer > span { display:none; }
@@ -171,10 +180,23 @@
   body.athlete #exportBtn::after { content:'Gem'; }
   body.athlete footer button:disabled { opacity:.52; }
   body.athlete #scrubRow { left:12px !important; right:12px !important;
-    bottom:98px !important; padding:8px; gap:6px; border-radius:18px;
+    bottom:98px; padding:8px; gap:6px; border-radius:18px;
     background:rgba(18,17,14,.82); border:1px solid rgba(237,234,226,.09);
     backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
     box-shadow:0 10px 30px rgba(0,0,0,.35); }
+  body.athlete #athleteStartGuide { position:absolute; left:0; right:0;
+    bottom:calc(100% + 8px); display:flex; align-items:center; justify-content:space-between;
+    gap:10px; padding:8px 9px 8px 12px; border:1px solid rgba(200,146,58,.28);
+    border-radius:14px; background:rgba(18,17,14,.9); backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px); box-shadow:0 10px 26px rgba(0,0,0,.34); }
+  body.athlete #athleteStartGuide[hidden] { display:none; }
+  body.athlete #athleteStartGuide span { min-width:0; color:rgba(237,234,226,.68);
+    font-size:10px; line-height:1.35; }
+  body.athlete #athleteMarkStartBtn { flex:0 0 auto; min-width:112px; padding:9px 11px;
+    border-radius:10px; color:#141410; background:var(--accent); border-color:var(--accent);
+    font-size:10px; font-weight:650; letter-spacing:.04em; }
+  body.athlete #athleteMarkStartBtn[data-set="true"] { color:#d9f2df;
+    background:rgba(64,139,87,.28); border-color:rgba(120,216,154,.48); }
   body.athlete #playBtn2 { display:none !important; }
   body.athlete #athleteStartBtn { display:flex; align-items:center; justify-content:center;
     width:38px; height:38px; flex:0 0 38px; padding:0; border-radius:50%;
@@ -6086,7 +6108,7 @@ if (ATHLETE) {
   const athleteFlow = document.createElement('div');
   athleteFlow.id = 'athleteFlow';
   athleteFlow.setAttribute('aria-label', 'Forløb');
-  athleteFlow.innerHTML = ['Video', 'Skive', 'Analyse', 'Send'].map((label, index) =>
+  athleteFlow.innerHTML = ['Video', 'Klargør', 'Analyse', 'Send'].map((label, index) =>
     `<span class="athFlowStep"><b>${index + 1}</b>${label}</span>`).join('');
   document.body.appendChild(athleteFlow);
 
@@ -6176,6 +6198,47 @@ if (ATHLETE) {
     setAthleteSubmitOpen(true);
   };
 
+  // Trin 2: trim-start skal kunne sættes uden at åbne en ekstra menu eller
+  // ramme en lille skjult trimknap. Handlingen ligger direkte ved tidslinjen.
+  const athleteStartGuide = document.createElement('div');
+  athleteStartGuide.id = 'athleteStartGuide';
+  athleteStartGuide.hidden = true;
+  const athleteStartGuideText = document.createElement('span');
+  const athleteMarkStartBtn = document.createElement('button');
+  athleteMarkStartBtn.id = 'athleteMarkStartBtn';
+  athleteMarkStartBtn.type = 'button';
+  athleteMarkStartBtn.textContent = 'Sæt start her';
+  athleteMarkStartBtn.dataset.set = 'false';
+  athleteMarkStartBtn.setAttribute('aria-label', 'Sæt analysens start ved det viste billede');
+  athleteStartGuide.append(athleteStartGuideText, athleteMarkStartBtn);
+  document.getElementById('scrubRow').appendChild(athleteStartGuide);
+
+  const athleteTime = sec => {
+    const value = Math.max(0, sec || 0);
+    const whole = Math.floor(value);
+    return `${Math.floor(whole / 60)}:${String(whole % 60).padStart(2, '0')}.${Math.floor((value % 1) * 10)}`;
+  };
+  const resetAthleteStartGuide = () => {
+    athleteMarkStartBtn.dataset.set = 'false';
+    athleteMarkStartBtn.textContent = 'Sæt start her';
+    athleteStartGuideText.textContent = 'Spol til lige før løftet starter';
+  };
+  athleteMarkStartBtn.onclick = () => {
+    if (!video.src || tracking || analyzing) return;
+    video.pause();
+    const latestStart = Number.isFinite(trimEndEff())
+      ? Math.max(0, trimEndEff() - 0.2)
+      : Math.max(0, video.duration || video.currentTime);
+    trimStart = Math.max(0, Math.min(video.currentTime, latestStart));
+    document.getElementById('trimInBtn').classList.add('active');
+    paintTrim();
+    video.currentTime = trimStart;
+    playBtn.textContent = playLabel(false);
+    athleteMarkStartBtn.dataset.set = 'true';
+    athleteMarkStartBtn.textContent = 'Start sat ✓';
+    athleteStartGuideText.textContent = `Start ${athleteTime(trimStart)} · tryk Stangbane`;
+  };
+
   const athleteStartBtn = document.createElement('button');
   athleteStartBtn.id = 'athleteStartBtn';
   athleteStartBtn.textContent = '↤';
@@ -6199,7 +6262,7 @@ if (ATHLETE) {
 
   setAthleteState = (state, detail = '') => {
     const states = {
-      ready: ['Klar til stangbane', 'Træk i tidslinjen, eller brug frame-knapperne. Tryk derefter Stangbane.', 'Stangbane', 'ready'],
+      ready: ['Find starten', 'Spol til lige før løftet, og tryk Sæt start her.', 'Stangbane', 'ready'],
       target: ['Markér skiven', 'Tryk én gang midt på den skive, du vil følge.', 'Vælg skive', 'ready'],
       confirm: ['Tjek ringen', 'Rammes skiven rigtigt? Justér om nødvendigt — tryk så Start.', 'Start', 'ready'],
       analyzing: ['Vi følger stangen', 'Hold siden åben, mens hele sættet gennemgås.', 'Stop', 'ready'],
@@ -6212,7 +6275,14 @@ if (ATHLETE) {
     document.body.dataset.athleteState = state;
     athleteFooter.style.display = empty ? 'none' : '';
     document.getElementById('scrubRow').style.display = empty ? 'none' : '';
+    requestAnimationFrame(layoutBars);
     athleteStatus.hidden = empty || !info;
+    athleteStartGuide.hidden = state !== 'ready';
+    if (state === 'ready') {
+      resetAthleteStartGuide();
+      // Start-guiden ved tidslinjen erstatter det store statuskort i dette trin.
+      athleteStatus.hidden = true;
+    }
     athleteSendBtn.hidden = !(state === 'done' && VC_V3_ATHLETE_BRIDGE);
     const currentStep = state === 'empty' ? 1
       : (state === 'ready' || state === 'target' || state === 'confirm' || state === 'error') ? 2
