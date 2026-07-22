@@ -144,6 +144,23 @@
     font-size:10px; line-height:1.4; }
   body.athlete #athleteStatus[data-tone="ready"] { border-color:rgba(200,146,58,.32); }
   body.athlete #athleteStatus[data-tone="done"] b { color:#78d89a; }
+  body.athlete #athleteFlow { position:fixed; top:58px; left:50%;
+    transform:translateX(-50%); z-index:13; display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px; width:min(88vw,430px);
+    padding:5px; border:1px solid rgba(237,234,226,.08); border-radius:13px;
+    background:rgba(18,17,14,.72); backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px); pointer-events:none; }
+  body.athlete #athleteFlow .athFlowStep { display:flex; align-items:center;
+    justify-content:center; gap:4px; min-width:0; padding:5px 3px; border-radius:9px;
+    color:rgba(237,234,226,.34); font-size:8px; letter-spacing:.07em;
+    text-transform:uppercase; white-space:nowrap; }
+  body.athlete #athleteFlow .athFlowStep b { display:grid; place-items:center;
+    width:15px; height:15px; flex:0 0 15px; border:1px solid currentColor;
+    border-radius:50%; font-size:7px; }
+  body.athlete #athleteFlow .athFlowStep[data-complete="true"] { color:#78d89a; }
+  body.athlete #athleteFlow .athFlowStep[data-current="true"] {
+    color:var(--accent); background:rgba(200,146,58,.12); }
+  body.athlete #athleteStatus { top:105px; }
   body.athlete footer { display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
     align-items:stretch; gap:2px; padding:6px; border-radius:20px; }
   body.athlete footer > span { display:none; }
@@ -647,6 +664,7 @@ const COACHWEB = !DESKTOP && MODE_PARAMS.has('coach');
 const SLIM = !DESKTOP;              // moderne layout (atlet OG coach online)
 const ATHLETE = SLIM && !COACHWEB;
 let setAthleteState = null;         // Athlete v2: ét roligt, guidet flow
+let setAthleteSubmitOpen = null;    // Athlete v3: sendearket må kun åbne i sidste trin
 // ︎ tvinger TEKST-gengivelse (monokrom glyf) i stedet for farvet emoji
 const playLabel = playing => SLIM ? (playing ? '❚❚' : '▶︎')
   : (playing ? '⏸ Pause (mellemrum)' : '▶ Afspil (mellemrum)');
@@ -5170,6 +5188,10 @@ saveBtn.onclick = async () => {
       const saved = await vcV3RequestSave(vcV3DatabaseRow(payload, data));
       saveBtn.textContent = VC_V3_ATHLETE_BRIDGE ? 'Sendt til coach ✓' : '💾 Gemt i appen ✓';
       setTimeout(() => saveBtn.textContent = VC_V3_ATHLETE_BRIDGE ? 'Send til coach' : saveLabel, 2500);
+      if (VC_V3_ATHLETE_BRIDGE) {
+        if (setAthleteState) setAthleteState('sent');
+        if (setAthleteSubmitOpen) setAthleteSubmitOpen(false);
+      }
       say(VC_V3_ATHLETE_BRIDGE
         ? `Sendt til coach · ${lift}`
         : `💾 ${ath} · ${lift} · draft gemt` + (saved && saved.id ? ' ✓' : ''));
@@ -6061,6 +6083,13 @@ if (ATHLETE) {
   athleteStatus.innerHTML = '<b></b><span></span>';
   document.body.appendChild(athleteStatus);
 
+  const athleteFlow = document.createElement('div');
+  athleteFlow.id = 'athleteFlow';
+  athleteFlow.setAttribute('aria-label', 'Forløb');
+  athleteFlow.innerHTML = ['Video', 'Skive', 'Analyse', 'Send'].map((label, index) =>
+    `<span class="athFlowStep"><b>${index + 1}</b>${label}</span>`).join('');
+  document.body.appendChild(athleteFlow);
+
   dropHint.innerHTML =
     '<span class="athKicker">Din VideoCoach</span>' +
     '<strong>Se din stangbane</strong>' +
@@ -6085,7 +6114,12 @@ if (ATHLETE) {
   athleteSubmitSheet.hidden = true;
   athleteSubmitSheet.style.cssText =
     'position:fixed;inset:0;z-index:420;background:rgba(10,10,8,.78);' +
-    'display:flex;align-items:flex-end;justify-content:center;padding:12px';
+    'align-items:flex-end;justify-content:center;padding:12px';
+  setAthleteSubmitOpen = open => {
+    athleteSubmitSheet.hidden = !open;
+    athleteSubmitSheet.style.display = open ? 'flex' : 'none';
+    document.body.style.overflow = open ? 'hidden' : '';
+  };
   const athleteSubmitCard = document.createElement('div');
   athleteSubmitCard.style.cssText =
     'width:min(520px,100%);max-height:88vh;overflow:auto;background:#1c1c18;' +
@@ -6099,7 +6133,7 @@ if (ATHLETE) {
   const athleteSubmitClose = document.createElement('button');
   athleteSubmitClose.textContent = 'Luk';
   athleteSubmitClose.style.flexShrink = '0';
-  athleteSubmitClose.onclick = () => { athleteSubmitSheet.hidden = true; };
+  athleteSubmitClose.onclick = () => setAthleteSubmitOpen(false);
   athleteSubmitHead.appendChild(athleteSubmitClose);
   athleteSubmitCard.appendChild(athleteSubmitHead);
   const athleteSubmitFields = document.createElement('div');
@@ -6130,15 +6164,16 @@ if (ATHLETE) {
   athleteSubmitCard.appendChild(saveBtn);
   athleteSubmitSheet.appendChild(athleteSubmitCard);
   athleteSubmitSheet.onclick = e => {
-    if (e.target === athleteSubmitSheet) athleteSubmitSheet.hidden = true;
+    if (e.target === athleteSubmitSheet) setAthleteSubmitOpen(false);
   };
   document.body.appendChild(athleteSubmitSheet);
+  setAthleteSubmitOpen(false);
   athleteSendBtn.onclick = () => {
     if (!VC_V3_ATHLETE_BRIDGE || !vcV3BridgeReady) {
       alert('Forbindelsen til appen er ikke klar. Luk VideoCoach og åbn den fra appen igen.');
       return;
     }
-    athleteSubmitSheet.hidden = false;
+    setAthleteSubmitOpen(true);
   };
 
   const athleteStartBtn = document.createElement('button');
@@ -6169,6 +6204,7 @@ if (ATHLETE) {
       confirm: ['Tjek ringen', 'Rammes skiven rigtigt? Justér om nødvendigt — tryk så Start.', 'Start', 'ready'],
       analyzing: ['Vi følger stangen', 'Hold siden åben, mens hele sættet gennemgås.', 'Stop', 'ready'],
       done: ['Stangbanen er klar', 'Grøn er hurtig. Rød viser, hvor stangen bevæger sig langsommere.', 'Ny bane', 'done'],
+      sent: ['Sendt til din coach', 'Din måling ligger klar til coachens gennemgang.', 'Ny bane', 'done'],
       error: ['Prøv igen', 'Vi mistede skiven. Vælg et tydeligt punkt tæt på navet.', 'Prøv igen', 'ready']
     };
     const info = states[state];
@@ -6178,6 +6214,14 @@ if (ATHLETE) {
     document.getElementById('scrubRow').style.display = empty ? 'none' : '';
     athleteStatus.hidden = empty || !info;
     athleteSendBtn.hidden = !(state === 'done' && VC_V3_ATHLETE_BRIDGE);
+    const currentStep = state === 'empty' ? 1
+      : (state === 'ready' || state === 'target' || state === 'confirm' || state === 'error') ? 2
+      : state === 'analyzing' ? 3 : 4;
+    athleteFlow.querySelectorAll('.athFlowStep').forEach((step, index) => {
+      const stepNumber = index + 1;
+      step.dataset.current = String(stepNumber === currentStep);
+      step.dataset.complete = String(stepNumber < currentStep || state === 'sent');
+    });
     if (info) {
       athleteStatus.querySelector('b').textContent = info[0];
       athleteStatus.querySelector('span').textContent = detail || info[1];
