@@ -527,6 +527,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   // og seneste besked pr. atlet. Hentes én gang ved load og ved view-skift.
   const [todayData, setTodayData] = useState({ logs: [], readiness: [], prs: [] })
   const [inboxThreads, setInboxThreads] = useState({})
+  const [videoReviewQueue, setVideoReviewQueue] = useState([])
+  const [videoReviewQueueError, setVideoReviewQueueError] = useState(null)
   const [menuSheetOpen, setMenuSheetOpen] = useState(false)
   const [sheetPreviewPick, setSheetPreviewPick] = useState(false)
   const [sidebarMoreOpen, setSidebarMoreOpen] = useState(false)
@@ -712,6 +714,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       }
       reply({ ok: true, data: result.data })
       showFlash('Videoanalyse gemt som kladde', 'success')
+      fetchVideoReviewQueue()
       if (videoCoachSelectedAthleteRef.current === result.data.athlete_id)
         fetchVideoCoachHistory(result.data.athlete_id)
     }
@@ -790,7 +793,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
   // Mobil-forside og indbakke: genindlæs dagens feed når man lander på dem.
   useEffect(() => {
-    if (view === 'list' || view === 'inbox') fetchTodayAndInbox()
+    if (view === 'list' || view === 'inbox') {
+      fetchTodayAndInbox()
+      fetchVideoReviewQueue()
+    }
   }, [view])
 
   async function fetchLastBackup() {
@@ -1045,6 +1051,22 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     const threads = {}
     for (const m of msgQ.data || []) if (!threads[m.athlete_id]) threads[m.athlete_id] = m
     setInboxThreads(threads)
+  }
+
+  // Coachens samlede VideoCoach-indbakke. Kun kladder hentes, og listen
+  // indeholder kun metadata nok til at finde den rigtige atlet og måling.
+  async function fetchVideoReviewQueue() {
+    setVideoReviewQueueError(null)
+    const { data, error } = await supabase.from('video_analyses')
+      .select('id,client_analysis_id,athlete_id,lift,variation,load_kg,reps_count,analyzed_at,created_at,source_mode,status')
+      .eq('status', 'draft')
+      .order('created_at', { ascending: false })
+      .limit(50)
+    if (error) {
+      setVideoReviewQueueError(error.message || 'VideoCoach-køen kunne ikke hentes')
+      return
+    }
+    setVideoReviewQueue((data || []).filter(item => item?.id && item?.athlete_id && item.status === 'draft'))
   }
 
   async function fetchWeeks(athleteId) {
@@ -1693,6 +1715,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           data.status !== nextStatus)
         throw new Error('Databasen bekræftede ikke den valgte analyse')
       await fetchVideoCoachHistory(selectedAthlete.id)
+      fetchVideoReviewQueue()
       setVideoAnalysisReview(current => current?.id === analysis.id
         ? { ...current, status: nextStatus } : current)
       const message = nextStatus === 'coach_approved'
@@ -2547,11 +2570,11 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
   // Man lander altid på Home/hub når en atlet åbnes — uanset hvor man klikker
   // fra (sidebar, prioritets-liste, beskeder osv.). Hubben er den faste indgang.
-  function openProfile(athlete) {
+  function openProfile(athlete, initialTab = 'hub') {
     setVideoAnalysisReview(null)
     setVideoAnalysisReviewError(null)
     setSelectedAthlete(athlete)
-    setActiveTab('hub')
+    setActiveTab(initialTab)
     setEditing(null)
     setView('profile')
     setMessages([])
@@ -2817,7 +2840,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             { icon: <><path d="M3 10.5 12 3l9 7.5" /><path d="M5 9.5V21h14V9.5" /></>, label: 'Forside', active: view === 'list', onClick: () => { setView('list'); setSelectedAthlete(null); setSidebarOpen(false) } },
             { icon: <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />, label: 'Min træning', active: false, onClick: () => { setSidebarOpen(false); goToMyProfile() } },
             { icon: <><rect x="3" y="5" width="18" height="16" rx="2" /><line x1="3" y1="10" x2="21" y2="10" /><line x1="8" y1="3" x2="8" y2="7" /><line x1="16" y1="3" x2="16" y2="7" /></>, label: 'Kalender', active: view === 'calendar', onClick: () => { setView('calendar'); setSelectedAthlete(null); setSidebarOpen(false) } },
-            { icon: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />, label: 'Beskeder', active: view === 'inbox', badge: Object.values(unreadCounts).reduce((x, y) => x + y, 0), onClick: () => { setView('inbox'); setSelectedAthlete(null); setSidebarOpen(false) } },
+            { icon: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />, label: 'Indbakke', active: view === 'inbox', badge: Object.values(unreadCounts).reduce((x, y) => x + y, 0) + videoReviewQueue.length, onClick: () => { setView('inbox'); setSelectedAthlete(null); setSidebarOpen(false) } },
             { icon: <><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></>, label: 'Bibliotek', active: view === 'library', onClick: () => { setView('library'); setSelectedAthlete(null); setSidebarOpen(false) } },
           ].map(item => (
             <div
@@ -2937,7 +2960,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
       <main style={{ ...s.main, ...(isMobile ? { marginLeft: 0, overflowX: 'hidden', paddingBottom: '76px' } : {}) }}>
         <div style={s.topbar}>
-          <div style={{ ...s.topbarTitle, flex: 1 }}>{view === 'library' ? 'Øvelsesbibliotek' : view === 'calendar' ? 'Kalender' : view === 'inbox' ? 'Beskeder' : view === 'list' ? (isMobile ? 'Entropi Coach' : 'Atleter') : a?.name}</div>
+          <div style={{ ...s.topbarTitle, flex: 1 }}>{view === 'library' ? 'Øvelsesbibliotek' : view === 'calendar' ? 'Kalender' : view === 'inbox' ? 'Indbakke' : view === 'list' ? (isMobile ? 'Entropi Coach' : 'Atleter') : a?.name}</div>
           {onPreviewAthlete && !isMobile && (
             <button
               onClick={goToMyProfile}
@@ -2964,7 +2987,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 icon: <><path d="M3 10.5 12 3l9 7.5" /><path d="M5 9.5V21h14V9.5" /></>,
               },
               {
-                key: 'inbox', label: 'Beskeder', active: view === 'inbox',
+                key: 'inbox', label: 'Indbakke', active: view === 'inbox',
                 onClick: () => { setView('inbox'); setSelectedAthlete(null); setSidebarOpen(false); setMenuSheetOpen(false) },
                 icon: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />,
               },
@@ -2979,7 +3002,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 icon: <><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" /></>,
               },
             ].map(item => {
-              const totalUnread = item.key === 'inbox' ? Object.values(unreadCounts).reduce((a2, b) => a2 + b, 0) : 0
+              const totalUnread = item.key === 'inbox' ? Object.values(unreadCounts).reduce((a2, b) => a2 + b, 0) + videoReviewQueue.length : 0
               return (
                 <button
                   key={item.key}
@@ -3058,8 +3081,43 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         {view === 'inbox' && (
           <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
             <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', margin: '0 0 1.25rem' }}>
-              Beskeder<span style={{ color: '#c8923a' }}>.</span>
+              Indbakke<span style={{ color: '#c8923a' }}>.</span>
             </h1>
+            {(videoReviewQueue.length > 0 || videoReviewQueueError) && (
+              <div style={{ ...s.card, marginBottom: '1rem', borderColor: 'rgba(103,223,245,0.25)', background: 'rgba(103,223,245,0.035)', padding: '0.85rem' }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem', marginBottom: videoReviewQueue.length ? '0.65rem' : 0 }}>
+                  <div>
+                    <div style={{ ...s.cardLabel, color: '#67dff5' }}>VideoCoach · til review</div>
+                    <div style={{ color: '#7a7770', fontSize: '0.66rem', marginTop: '0.2rem' }}>Nye målinger sendt af atleterne.</div>
+                  </div>
+                  {videoReviewQueue.length > 0 && <span style={{ background: '#67dff5', color: '#141410', borderRadius: '999px', minWidth: '1.35rem', height: '1.35rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 0.35rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', fontWeight: 700 }}>{videoReviewQueue.length}</span>}
+                </div>
+                {videoReviewQueueError && <div style={{ color: '#d79a83', fontSize: '0.64rem', lineHeight: 1.45 }}>{videoReviewQueueError}</div>}
+                {videoReviewQueue.length > 0 && (
+                  <div style={{ display: 'grid', gap: '0.4rem' }}>
+                    {videoReviewQueue.map(item => {
+                      const athlete = athletes.find(a2 => a2.id === item.athlete_id)
+                      if (!athlete) return null
+                      const receivedAt = item.created_at || item.analyzed_at
+                      return (
+                        <button key={item.id} onClick={() => { setVideoLiftFilter(item.lift || 'all'); openProfile(athlete, 'analyse') }}
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', width: '100%', padding: '0.62rem 0.7rem', border: '1px solid rgba(237,234,226,0.075)', background: '#171713', color: '#edeae2', cursor: 'pointer', textAlign: 'left' }}>
+                          <span style={{ minWidth: 0 }}>
+                            <span style={{ display: 'block', fontSize: '0.78rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{athlete.name}</span>
+                            <span style={{ display: 'block', marginTop: '0.18rem', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem' }}>
+                              {VIDEOCOACH_LIFTS[item.lift] || item.lift} · {videoCoachVariationLabel(item.lift, item.variation)}{item.load_kg != null ? ` · ${item.load_kg} kg` : ''}{item.reps_count ? ` · ${item.reps_count} reps` : ''}
+                            </span>
+                          </span>
+                          <span style={{ flexShrink: 0, color: '#67dff5', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem' }}>
+                            {receivedAt ? new Date(receivedAt).toLocaleDateString('da-DK', { day: 'numeric', month: 'short' }) : 'Gennemgå'} →
+                          </span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
             {(() => {
               const visible = athletes.filter(a2 => !hiddenAthleteIds.has(a2.id))
               const rows = visible
