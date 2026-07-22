@@ -569,6 +569,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [videoAnalysisReviewError, setVideoAnalysisReviewError] = useState(null)
   const [videoAnalysisFeedbackDraft, setVideoAnalysisFeedbackDraft] = useState({ works: '', focus: '', next_set: '' })
   const [videoAnalysisFeedbackDirty, setVideoAnalysisFeedbackDirty] = useState(false)
+  const [videoAnalysisCloseWarning, setVideoAnalysisCloseWarning] = useState(false)
   const [warmupTemplates, setWarmupTemplates] = useState([])
   const [editingWarmup, setEditingWarmup] = useState(null)
   const [warmupDraftSteps, setWarmupDraftSteps] = useState([])
@@ -1781,6 +1782,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           feedback_version: data.feedback_version } : current)
       setVideoAnalysisFeedbackDraft(videoCoachFeedbackDraft(data.athlete_feedback))
       setVideoAnalysisFeedbackDirty(false)
+      setVideoAnalysisCloseWarning(false)
       showFlash('Feedback gemt', 'success')
     } catch (error) {
       setVideoAnalysisReviewError(error.message || 'Feedbacken kunne ikke gemmes')
@@ -1788,6 +1790,22 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     } finally {
       setVideoAnalysisUpdatingId(null)
     }
+  }
+
+  function closeVideoAnalysisReview() {
+    if (videoAnalysisFeedbackDirty) {
+      setVideoAnalysisCloseWarning(true)
+      return
+    }
+    setVideoAnalysisReview(null)
+    setVideoAnalysisReviewError(null)
+    setVideoAnalysisCloseWarning(false)
+  }
+
+  function discardVideoAnalysisFeedback(analysis) {
+    setVideoAnalysisFeedbackDraft(videoCoachFeedbackDraft(analysis?.athlete_feedback))
+    setVideoAnalysisFeedbackDirty(false)
+    setVideoAnalysisCloseWarning(false)
   }
 
   async function openVideoAnalysisReview(analysis) {
@@ -1806,6 +1824,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       setVideoAnalysisReview(data)
       setVideoAnalysisFeedbackDraft(videoCoachFeedbackDraft(data.athlete_feedback))
       setVideoAnalysisFeedbackDirty(false)
+      setVideoAnalysisCloseWarning(false)
     } catch (error) {
       setVideoAnalysisReviewError(error.message || 'Målingen kunne ikke åbnes')
     } finally {
@@ -7034,7 +7053,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         ]
         const updating = videoAnalysisUpdatingId === analysis.id
         return (
-          <div role="dialog" aria-modal="true" style={{ ...s.overlay, padding: isMobile ? '0.5rem' : '1.5rem', zIndex: 10020 }} onClick={e => { if (e.target === e.currentTarget) { setVideoAnalysisReview(null); setVideoAnalysisFeedbackDirty(false) } }}>
+          <div role="dialog" aria-modal="true" style={{ ...s.overlay, padding: isMobile ? '0.5rem' : '1.5rem', zIndex: 10020 }} onClick={e => { if (e.target === e.currentTarget) closeVideoAnalysisReview() }}>
             <div style={{ ...s.modal, width: '100%', maxWidth: '760px', maxHeight: isMobile ? '96vh' : '90vh', overflowY: 'auto', padding: isMobile ? '1rem' : '1.4rem' }} onClick={e => e.stopPropagation()}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', marginBottom: '1rem' }}>
                 <div>
@@ -7047,7 +7066,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   </div>
                   {analysis.source_mode === 'athlete_submission' && <div style={{ color: '#67dff5', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem', marginTop: '0.35rem', letterSpacing: '0.04em', textTransform: 'uppercase' }}>Sendt af atleten</div>}
                 </div>
-                <button onClick={() => { setVideoAnalysisReview(null); setVideoAnalysisFeedbackDirty(false) }} style={{ ...s.btnGhost, padding: '0.28rem 0.55rem', flexShrink: 0 }}>Luk</button>
+                <button onClick={closeVideoAnalysisReview} style={{ ...s.btnGhost, padding: '0.28rem 0.55rem', flexShrink: 0 }}>Luk</button>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'minmax(220px,0.8fr) minmax(0,1.2fr)', gap: '0.9rem' }}>
@@ -7101,15 +7120,19 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                         <span style={s.fieldLabel}>{label}</span>
                         <textarea rows="2" maxLength="600" value={videoAnalysisFeedbackDraft[key]} disabled={updating}
                           placeholder={key === 'works' ? 'Hvad skal atleten tage med som positivt?' : key === 'focus' ? 'Hvad er det vigtigste fokus?' : 'Hvad skal atleten gøre næste gang?'}
-                          onChange={event => { setVideoAnalysisFeedbackDraft(current => ({ ...current, [key]: event.target.value })); setVideoAnalysisFeedbackDirty(true) }}
+                          onChange={event => { setVideoAnalysisFeedbackDraft(current => ({ ...current, [key]: event.target.value })); setVideoAnalysisFeedbackDirty(true); setVideoAnalysisCloseWarning(false) }}
                           style={{ width: '100%', boxSizing: 'border-box', resize: 'vertical', minHeight: '58px', border: '1px solid rgba(237,234,226,0.12)', background: '#141410', color: '#edeae2', padding: '0.55rem 0.6rem', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.68rem', lineHeight: 1.45 }} />
                       </label>
                     ))}
+                    {videoAnalysisCloseWarning && <div style={{ border: '1px solid rgba(200,146,58,0.28)', background: 'rgba(200,146,58,0.065)', color: '#c9b58f', padding: '0.55rem 0.65rem', fontSize: '0.62rem', lineHeight: 1.45 }}>Du har ugemte ændringer. Gem dem, eller vælg Fortryd ændringer før du lukker.</div>}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.6rem', flexWrap: 'wrap' }}>
                       <span style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem' }}>Én linje pr. punkt · højst 2 punkter pr. felt</span>
-                      <button disabled={!videoAnalysisFeedbackDirty || updating} onClick={() => saveVideoAnalysisFeedback(analysis)} style={{ ...s.btnPrimary, padding: '0.36rem 0.65rem', fontSize: '0.5rem', opacity: !videoAnalysisFeedbackDirty || updating ? 0.5 : 1 }}>
-                        {updating ? 'Gemmer…' : videoAnalysisFeedbackDirty ? 'Gem feedback' : 'Feedback gemt ✓'}
-                      </button>
+                      <span style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap' }}>
+                        {videoAnalysisFeedbackDirty && <button disabled={updating} onClick={() => discardVideoAnalysisFeedback(analysis)} style={{ ...s.btnGhost, padding: '0.36rem 0.65rem', fontSize: '0.5rem', opacity: updating ? 0.5 : 1 }}>Fortryd ændringer</button>}
+                        <button disabled={!videoAnalysisFeedbackDirty || updating} onClick={() => saveVideoAnalysisFeedback(analysis)} style={{ ...s.btnPrimary, padding: '0.36rem 0.65rem', fontSize: '0.5rem', opacity: !videoAnalysisFeedbackDirty || updating ? 0.5 : 1 }}>
+                          {updating ? 'Gemmer…' : videoAnalysisFeedbackDirty ? 'Gem feedback' : 'Feedback gemt ✓'}
+                        </button>
+                      </span>
                     </div>
                   </div>
                 ) : athleteFeedbackSections.length > 0 ? (
