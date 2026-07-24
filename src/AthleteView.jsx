@@ -3163,6 +3163,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   return (
     <div style={s.wrap}>
+      {/* TEMP DIAG build-stamp — viser hvilken bundle enheden faktisk kørte. Fjern efter fix. */}
+      <div style={{ position: 'fixed', bottom: 2, left: 4, zIndex: 20000, fontSize: '0.5rem', lineHeight: 1, color: '#4a4844', fontFamily: 'monospace', pointerEvents: 'none' }}>
+        b:{typeof __BUILD_ID__ !== 'undefined' ? __BUILD_ID__ : '?'} r:{role || '?'}
+      </div>
       {role === 'athlete' && athleteVideoCoachOpen && (
         <div
           role="dialog"
