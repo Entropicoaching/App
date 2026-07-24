@@ -64,7 +64,7 @@ const statusLabels = { active: 'Aktiv', peaking: 'Peaking', offseason: 'Off-seas
 const statusColors = { active: '#6cba6c', peaking: '#c8923a', offseason: '#7a7770', ferie: '#5b9bb5' }
 
 const VIDEOCOACH_V3_PREFIX = 'entropi:videocoach:v3'
-const VIDEOCOACH_V3_URL = 'videocoach.html?coach=1&bridge=v3&v=20260724-coach-fit'
+const VIDEOCOACH_V3_URL = 'videocoach.html?coach=1&bridge=v3&v=20260724-coach-send'
 const VIDEOCOACH_V3_COLUMNS = new Set([
   'client_analysis_id', 'athlete_id', 'athlete_name', 'source_mode', 'status',
   'lift', 'variation', 'load_kg', 'rpe', 'reps_count', 'rep_details',
@@ -614,6 +614,9 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const videoCoachClientsRef = useRef(new Set())
   const videoCoachSelectedAthleteRef = useRef(null)
   const videoCoachFrameRef = useRef(null)
+  // Efter en coach-send til en ANDEN atlet: husk målingen, så vi kan tilbyde
+  // "Del med atlet" når iframen lukkes (dialogen kan ikke ses bag iframen).
+  const videoCoachPendingShareRef = useRef(null)
   // VideoCoach åbnes som iframe i coach-portalen (ikke popup), så Marc kan
   // optage/gemme sin egen og atleternes træning uden at skifte konto/fane.
   const [videoCoachOpen, setVideoCoachOpen] = useState(false)
@@ -664,6 +667,19 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         if (event.source !== frameWindow && !videoCoachClientsRef.current.has(event.source)) return
         videoCoachClientsRef.current.delete(event.source)
         setVideoCoachOpen(false)
+        // Efter lukning: tilbyd at gennemgå + dele den netop sendte måling med
+        // atleten (kun for en anden atlet). Dialogen kan først ses nu, hvor
+        // iframe-overlayet er væk. Del-kæden bor i review-køen (indbakken).
+        const pend = videoCoachPendingShareRef.current
+        videoCoachPendingShareRef.current = null
+        if (pend) {
+          const ath = videoCoachAthletesRef.current.find(a => a.id === pend.athleteId)
+          setConfirmDialog({
+            message: `Sendt ✓ — vil du gennemgå og dele målingen med ${ath?.name || 'atleten'} nu?`,
+            confirmLabel: 'Del med atlet', kind: 'primary',
+            onConfirm: () => { setView('inbox'); setSelectedAthlete(null) },
+          })
+        }
         return
       }
       if (message.type === `${VIDEOCOACH_V3_PREFIX}:baseline-request`) {
@@ -724,7 +740,14 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         return
       }
       reply({ ok: true, data: result.data })
-      showFlash('Videoanalyse gemt som kladde', 'success')
+      // Læs fra localStorage (kilden bag myAthleteId) for at undgå stale closure
+      // i denne [] -deps-effekt.
+      const selfAthleteId = localStorage.getItem('entropi_my_athlete_id')
+      const isSelf = !!selfAthleteId && result.data.athlete_id === selfAthleteId
+      // Del-med-atlet giver kun mening for en ANDEN atlet; egne målinger lander
+      // bare i køen. Tilbuddet vises når iframen lukkes (se :close-handleren).
+      videoCoachPendingShareRef.current = isSelf ? null : { id: result.data.id, athleteId: result.data.athlete_id }
+      showFlash(isSelf ? 'Sendt ✓ — i din egen kø' : 'Sendt ✓ — i review-køen', 'success')
       fetchVideoReviewQueue()
       if (videoCoachSelectedAthleteRef.current === result.data.athlete_id)
         fetchVideoCoachHistory(result.data.athlete_id)
@@ -2862,7 +2885,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             <div style={{ fontSize: '0.95rem', color: '#edeae2', lineHeight: 1.5, marginBottom: '1.25rem' }}>{confirmDialog.message}</div>
             <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
               <button style={s.btnGhost} onClick={() => setConfirmDialog(null)}>Annuller</button>
-              <button style={{ ...s.btnPrimary, background: '#e05555', borderColor: '#e05555', color: '#141410' }} onClick={() => { const fn = confirmDialog.onConfirm; setConfirmDialog(null); fn && fn() }}>Bekræft</button>
+              <button style={confirmDialog.kind === 'primary'
+                ? { ...s.btnPrimary }
+                : { ...s.btnPrimary, background: '#e05555', borderColor: '#e05555', color: '#141410' }}
+                onClick={() => { const fn = confirmDialog.onConfirm; setConfirmDialog(null); fn && fn() }}>{confirmDialog.confirmLabel || 'Bekræft'}</button>
             </div>
           </div>
         </div>

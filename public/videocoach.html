@@ -701,6 +701,7 @@ const SLIM = !DESKTOP;              // moderne layout (atlet OG coach online)
 const ATHLETE = SLIM && !COACHWEB;
 let setAthleteState = null;         // Athlete v2: ét roligt, guidet flow
 let setAthleteSubmitOpen = null;    // Athlete v3: sendearket må kun åbne i sidste trin
+let coachFlowTo = null;             // Coach: ryk 4-trins-flowet (sat i COACHWEB-blokken)
 // ︎ tvinger TEKST-gengivelse (monokrom glyf) i stedet for farvet emoji
 const playLabel = playing => SLIM ? (playing ? '❚❚' : '▶︎')
   : (playing ? '⏸ Pause (mellemrum)' : '▶ Afspil (mellemrum)');
@@ -5255,14 +5256,18 @@ saveBtn.onclick = async () => {
         sourceMode: VC_V3_ATHLETE_BRIDGE ? 'athlete_submission' : 'coach_web' });
       if (!payload.lift) throw new Error('Løftet kan ikke normaliseres til v3');
       const saved = await vcV3RequestSave(vcV3DatabaseRow(payload, data));
-      saveBtn.textContent = VC_V3_ATHLETE_BRIDGE ? 'Sendt til coach ✓' : '💾 Gemt i appen ✓';
-      setTimeout(() => saveBtn.textContent = VC_V3_ATHLETE_BRIDGE ? 'Send til coach' : saveLabel, 2500);
+      saveBtn.textContent = VC_V3_ATHLETE_BRIDGE ? 'Sendt til coach ✓'
+        : COACHWEB ? 'Sendt ✓' : '💾 Gemt i appen ✓';
+      setTimeout(() => saveBtn.textContent = VC_V3_ATHLETE_BRIDGE ? 'Send til coach'
+        : COACHWEB ? '📨 Send analyse' : saveLabel, 2500);
       if (VC_V3_ATHLETE_BRIDGE) {
         if (setAthleteState) setAthleteState('sent');
         if (setAthleteSubmitOpen) setAthleteSubmitOpen(false);
       }
+      if (COACHWEB && coachFlowTo) coachFlowTo(4);   // trin 4 · Send = gennemført
       say(VC_V3_ATHLETE_BRIDGE
         ? `Sendt til coach · ${lift}`
+        : COACHWEB ? `Sendt ✓ · ${lift}`
         : `💾 ${ath} · ${lift} · draft gemt` + (saved && saved.id ? ' ✓' : ''));
       setTimeout(() => say(''), 3500);
       return;
@@ -5933,7 +5938,8 @@ if (COACHWEB) {
   coachFlow.innerHTML =
     "<span class='flowStep' data-step='1'><b>1</b>Start</span><i></i>" +
     "<span class='flowStep' data-step='2'><b>2</b>Bane</span><i></i>" +
-    "<span class='flowStep' data-step='3'><b>3</b>Feedback</span>";
+    "<span class='flowStep' data-step='3'><b>3</b>Feedback</span><i></i>" +
+    "<span class='flowStep' data-step='4'><b>4</b>Send</span>";
   document.querySelector('header .brandmark').after(coachFlow);
   const updateCoachFlow = n => {
     coachFlow.querySelectorAll('.flowStep').forEach(el => {
@@ -5942,6 +5948,9 @@ if (COACHWEB) {
       el.classList.toggle('done', step < n);
     });
   };
+  coachFlowTo = updateCoachFlow;   // gør flow-skift naaeligt fra gem/send-handleren
+  // Coach-gem ER en send: tydelig CTA som atleternes trin 4.
+  saveBtn.textContent = '📨 Send analyse';
 
   // Trin 1: saml konteksten, foer videoen fylder skaermen. Felterne er kloner,
   // saa de samme vaerdier bagefter kan vises og rettes i feedback-arket.
