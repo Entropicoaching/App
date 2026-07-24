@@ -3720,7 +3720,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               onClick={() => {
                 if (!athlete?.id) return
                 if (role === 'athlete') { setAthleteVideoCoachOpen(true); return }
-                window.open('videocoach.html?mode=athlete', '_blank')
+                // Coach-preview kan ikke sende: RLS tillader kun atleten selv at
+                // oprette sin egen draft (created_by = auth.uid()). Åbn derfor ikke
+                // et blindt værktøj uden bridge — forklar det ærligt i stedet.
+                alert('VideoCoach-indsendelse sker fra atletens egen login. Dette er en coach-forhåndsvisning, så du kan ikke sende herfra.')
               }}
               onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(200,146,58,0.4)'}
               onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(237,234,226,0.07)'}
