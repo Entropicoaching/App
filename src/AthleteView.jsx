@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, Fragment } from 'react'
 import { supabase, withRetry, queueWrite } from './supabase'
 
 const ATHLETE_VIDEOCOACH_PREFIX = 'entropi:videocoach:v3'
-const ATHLETE_VIDEOCOACH_URL = 'videocoach.html?mode=athlete&bridge=athlete-v1&v=20260724-ios-diag'
+const ATHLETE_VIDEOCOACH_URL = 'videocoach.html?mode=athlete&bridge=athlete-v1&v=20260724-2'
 const ATHLETE_VIDEOCOACH_COLUMNS = new Set([
   'client_analysis_id', 'athlete_id', 'athlete_name', 'source_mode', 'status',
   'lift', 'variation', 'load_kg', 'rpe', 'reps_count', 'rep_details',
@@ -1807,10 +1807,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         return
       }
       if (message.type === `${ATHLETE_VIDEOCOACH_PREFIX}:ready`) {
-        // TEMP DIAG — bekræft altid at forælderen hørte :ready (før athlete-guard),
-        // så iframen kan logge at handshaket nåede hertil. Fjern efter fix.
-        try { event.source.postMessage({ type: `${ATHLETE_VIDEOCOACH_PREFIX}:ready-ack`,
-          hadAthlete: !!currentAthlete?.id }, event.origin) } catch { /* noop */ }
         if (!currentAthlete?.id) return
         athleteVideoCoachClientsRef.current.add(event.source)
         event.source.postMessage({ type: `${ATHLETE_VIDEOCOACH_PREFIX}:config`,
@@ -3163,10 +3159,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   return (
     <div style={s.wrap}>
-      {/* TEMP DIAG build-stamp — viser hvilken bundle enheden faktisk kørte. Fjern efter fix. */}
-      <div style={{ position: 'fixed', bottom: 2, left: 4, zIndex: 20000, fontSize: '0.5rem', lineHeight: 1, color: '#4a4844', fontFamily: 'monospace', pointerEvents: 'none' }}>
-        b:{typeof __BUILD_ID__ !== 'undefined' ? __BUILD_ID__ : '?'} r:{role || '?'}
-      </div>
       {role === 'athlete' && athleteVideoCoachOpen && (
         <div
           role="dialog"
