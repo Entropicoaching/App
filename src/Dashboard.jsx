@@ -64,7 +64,7 @@ const statusLabels = { active: 'Aktiv', peaking: 'Peaking', offseason: 'Off-seas
 const statusColors = { active: '#6cba6c', peaking: '#c8923a', offseason: '#7a7770', ferie: '#5b9bb5' }
 
 const VIDEOCOACH_V3_PREFIX = 'entropi:videocoach:v3'
-const VIDEOCOACH_V3_URL = 'videocoach.html?coach=1&bridge=v3&v=20260720-coach-review'
+const VIDEOCOACH_V3_URL = 'videocoach.html?coach=1&bridge=v3&v=20260724-coach-iframe'
 const VIDEOCOACH_V3_COLUMNS = new Set([
   'client_analysis_id', 'athlete_id', 'athlete_name', 'source_mode', 'status',
   'lift', 'variation', 'load_kg', 'rpe', 'reps_count', 'rep_details',
@@ -75,10 +75,6 @@ const VIDEOCOACH_V3_COLUMNS = new Set([
   'analyzed_at', 'reps', 'load_note', 'bias_note', 'rom_cm', 'loss_pct',
   'stick_pct', 'dip_pct', 'drift_cm', 'extra', 'ai_text',
 ])
-
-function openVideoCoachV3() {
-  window.open(VIDEOCOACH_V3_URL, '_blank')
-}
 
 function videoCoachBridgeConfig(athletes, selectedAthleteId) {
   return {
@@ -617,6 +613,11 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const videoCoachAthletesRef = useRef([])
   const videoCoachClientsRef = useRef(new Set())
   const videoCoachSelectedAthleteRef = useRef(null)
+  const videoCoachFrameRef = useRef(null)
+  // VideoCoach åbnes som iframe i coach-portalen (ikke popup), så Marc kan
+  // optage/gemme sin egen og atleternes træning uden at skifte konto/fane.
+  const [videoCoachOpen, setVideoCoachOpen] = useState(false)
+  const openVideoCoachV3 = () => setVideoCoachOpen(true)
 
   useEffect(() => {
     const handler = () => setIsMobile(window.innerWidth < 768)
@@ -656,6 +657,13 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         videoCoachClientsRef.current.add(event.source)
         event.source.postMessage(videoCoachBridgeConfig(videoCoachAthletesRef.current,
           videoCoachSelectedAthleteRef.current), event.origin)
+        return
+      }
+      if (message.type === `${VIDEOCOACH_V3_PREFIX}:close`) {
+        const frameWindow = videoCoachFrameRef.current?.contentWindow
+        if (event.source !== frameWindow && !videoCoachClientsRef.current.has(event.source)) return
+        videoCoachClientsRef.current.delete(event.source)
+        setVideoCoachOpen(false)
         return
       }
       if (message.type === `${VIDEOCOACH_V3_PREFIX}:baseline-request`) {
@@ -2822,6 +2830,21 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
   return (
     <div style={s.wrap}>
+      {/* VideoCoach som iframe — coachen optager/gemmer for en valgt atlet (inkl.
+          sig selv) uden at forlade portalen. Luk sker via VideoCoachs egen ✕,
+          der poster :close til broen ovenfor. */}
+      {videoCoachOpen && (
+        <div role="dialog" aria-label="VideoCoach" style={{ position: 'fixed', inset: 0, zIndex: 12000, background: '#0f0e0b' }}>
+          <iframe
+            ref={videoCoachFrameRef}
+            src={VIDEOCOACH_V3_URL}
+            title="VideoCoach"
+            allow="fullscreen"
+            allowFullScreen
+            style={{ display: 'block', width: '100%', height: '100%', border: 0, background: '#0f0e0b' }}
+          />
+        </div>
+      )}
       {/* Toast */}
       {flash && (
         <div style={{

@@ -5811,7 +5811,9 @@ if (SLIM) {
   closeBtn.id = 'closeBtn';
   closeBtn.textContent = '✕';
   closeBtn.onclick = () => {
-    if (VC_V3_ATHLETE_BRIDGE && VC_V3_EMBEDDED && VC_V3_HOST) {
+    // Indlejret i appen (atlet- ELLER coach-iframe): bed værten lukke overlayet.
+    // window.close() virker ikke for en iframe, så uden dette hænger coach-iframen.
+    if (VC_V3_BRIDGE_ENABLED && VC_V3_EMBEDDED && VC_V3_HOST) {
       VC_V3_HOST.postMessage({ type: `${VC_V3_MESSAGE_PREFIX}:close` }, location.origin);
       return;
     }
