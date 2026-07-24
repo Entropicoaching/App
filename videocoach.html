@@ -4753,6 +4753,10 @@ const vcV3BaselinePending = new Map();
 const vcV3BaselineCache = new Map();
 let vcV3BridgeReady = false;
 let vcV3ConfigSeen = false;
+// TEMP DIAG (iOS bridge) — fjern efter fix. Sporer handshake-tilstand så
+// "Forbindelsen er ikke klar"-alerten kan dumpe hvorfor på en rigtig iPhone.
+const vcV3Diag = { announce: 0, hostPresent: !!VC_V3_HOST,
+  embedded: VC_V3_EMBEDDED, origin: location.origin, msgs: [] };
 
 function vcV3Uuid() {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function')
@@ -5061,6 +5065,14 @@ function vcV3RequestBaselines(athleteId, force = false) {
 
 if (VC_V3_BRIDGE_ENABLED) {
   window.addEventListener('message', event => {
+    // TEMP DIAG — log ALT før guarden, så vi ser afviste config/ack på iOS.
+    try {
+      vcV3Diag.msgs.push({
+        t: String(event.data && event.data.type || '?').replace(VC_V3_MESSAGE_PREFIX + ':', ''),
+        om: event.origin === location.origin, sm: event.source === VC_V3_HOST,
+        h: event.data && 'hadAthlete' in event.data ? (event.data.hadAthlete ? 1 : 0) : '' });
+      if (vcV3Diag.msgs.length > 10) vcV3Diag.msgs.shift();
+    } catch (e) {}
     if (event.origin !== location.origin || event.source !== VC_V3_HOST) return;
     const msg = event.data || {};
     if (msg.type === `${VC_V3_MESSAGE_PREFIX}:config`) {
@@ -5117,8 +5129,8 @@ if (VC_V3_BRIDGE_ENABLED) {
       else pending.reject(new Error(msg.error || 'Analysen kunne ikke gemmes'));
     }
   });
-  const announce = () => VC_V3_HOST && VC_V3_HOST.postMessage({
-    type: `${VC_V3_MESSAGE_PREFIX}:ready`, schemaVersion: 3 }, location.origin);
+  const announce = () => { vcV3Diag.announce++; return VC_V3_HOST && VC_V3_HOST.postMessage({
+    type: `${VC_V3_MESSAGE_PREFIX}:ready`, schemaVersion: 3 }, location.origin); };
   announce(); setTimeout(announce, 800);
 }
 
@@ -6198,7 +6210,14 @@ if (ATHLETE) {
   setAthleteSubmitOpen(false);
   athleteSendBtn.onclick = () => {
     if (!VC_V3_ATHLETE_BRIDGE || !vcV3BridgeReady) {
-      alert('Forbindelsen til appen er ikke klar. Luk VideoCoach og åbn den fra appen igen.');
+      // TEMP DIAG — dump handshake-tilstand i alerten, så vi kan aflæse A/B/C på iPhone.
+      const diag = 'DIAG v20260724-ios-diag\n'
+        + `embedded=${vcV3Diag.embedded} host=${vcV3Diag.hostPresent}\n`
+        + `ready=${vcV3BridgeReady} cfgSeen=${vcV3ConfigSeen} announce=${vcV3Diag.announce}\n`
+        + `origin=${vcV3Diag.origin}\n`
+        + `msgs(${vcV3Diag.msgs.length}):\n`
+        + (vcV3Diag.msgs.map(m => `${m.t} om=${m.om ? 1 : 0} sm=${m.sm ? 1 : 0}${m.h !== '' ? ' h=' + m.h : ''}`).join('\n') || '(ingen)');
+      alert('Forbindelsen til appen er ikke klar. Luk VideoCoach og åbn den fra appen igen.\n\n' + diag);
       return;
     }
     setAthleteSubmitOpen(true);
