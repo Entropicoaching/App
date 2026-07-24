@@ -488,6 +488,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   // Messages state
   const [messages, setMessages] = useState([])
   const [messageInput, setMessageInput] = useState('')
+  const [coachMsgTrack, setCoachMsgTrack] = useState('besked')  // 'teknik' | 'besked'
   const [latestMessages, setLatestMessages] = useState({})
   const [unreadCounts, setUnreadCounts] = useState({})
   const [profilesLastSeen, setProfilesLastSeen] = useState({})
@@ -790,9 +791,9 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   useEffect(() => {
     if (activeTab === 'beskeder' && selectedAthlete) {
       fetchMessages(selectedAthlete.id)
-      markMessagesRead(selectedAthlete.id)
+      markMessagesRead(selectedAthlete.id, coachMsgTrack)
     }
-  }, [activeTab, selectedAthlete?.id])
+  }, [activeTab, selectedAthlete?.id, coachMsgTrack])
 
   useEffect(() => {
     if ((activeTab === 'oversigt' || activeTab === 'analyse') && selectedAthlete) {
@@ -1664,10 +1665,17 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     setUnreadCounts(unread)
   }
 
-  async function markMessagesRead(athleteId) {
-    if (!unreadCounts[athleteId]) return
-    await supabase.from('messages').update({ read_by_coach: true }).eq('athlete_id', athleteId).eq('sender_role', 'athlete').eq('read_by_coach', false)
-    setUnreadCounts(prev => { const n = { ...prev }; delete n[athleteId]; return n })
+  async function markMessagesRead(athleteId, track) {
+    // Markér kun det aktive spor som læst, så det andet spors ulæst-tæller består.
+    await supabase.from('messages').update({ read_by_coach: true })
+      .eq('athlete_id', athleteId).eq('sender_role', 'athlete').eq('category', track).eq('read_by_coach', false)
+    setUnreadCounts(prev => {
+      const remaining = messages.filter(m => m.sender_role === 'athlete' && !m.read_by_coach
+        && (m.category || 'besked') !== track).length
+      const n = { ...prev }
+      if (remaining > 0) n[athleteId] = remaining; else delete n[athleteId]
+      return n
+    })
   }
 
   async function fetchMessages(athleteId) {
@@ -1677,7 +1685,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
   async function sendCoachMessage() {
     if (!messageInput.trim() || !selectedAthlete) return
-    await supabase.from('messages').insert({ athlete_id: selectedAthlete.id, sender_role: 'coach', content: messageInput.trim() })
+    await supabase.from('messages').insert({ athlete_id: selectedAthlete.id, sender_role: 'coach', content: messageInput.trim(), category: coachMsgTrack })
     setMessageInput('')
     fetchMessages(selectedAthlete.id)
     fetchLatestMessages(athletes.map(a => a.id))
@@ -6986,12 +6994,37 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             )}
 
             {/* TAB: BESKEDER */}
-            {activeTab === 'beskeder' && (
+            {activeTab === 'beskeder' && (() => {
+              const trackOf = m => (m.category || 'besked') === 'teknik' ? 'teknik' : 'besked'
+              const shownMsgs = messages.filter(m => trackOf(m) === coachMsgTrack)
+              const pinnedMsgs = messages.filter(m => m.pinned && trackOf(m) === coachMsgTrack)
+              const beskedUnread = messages.filter(m => trackOf(m) === 'besked' && m.sender_role === 'athlete' && !m.read_by_coach).length
+              const teknikUnread = messages.filter(m => trackOf(m) === 'teknik' && m.sender_role === 'athlete' && !m.read_by_coach).length
+              const trackTab = (id, label, count) => {
+                const on = coachMsgTrack === id
+                return (
+                  <button onClick={() => setCoachMsgTrack(id)} style={{ flex: 1, padding: '0.5rem', background: on ? 'rgba(200,146,58,0.12)' : 'transparent', border: `1px solid ${on ? 'rgba(200,146,58,0.4)' : 'rgba(237,234,226,0.1)'}`, color: on ? '#c8923a' : '#7a7770', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.07em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
+                    {label}
+                    {count > 0 && <span style={{ background: '#c8923a', color: '#141410', borderRadius: 999, minWidth: 15, height: 15, fontSize: '0.5rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>{count}</span>}
+                  </button>
+                )
+              }
+              return (
               <div style={s.card}>
                 <div style={s.cardLabel}>Beskeder med {a.name}</div>
 
-                {/* Pinned messages */}
-                {messages.filter(m => m.pinned).length > 0 && (
+                <div style={{ display: 'flex', gap: '0.4rem', margin: '0.6rem 0 1rem' }}>
+                  {trackTab('teknik', 'Teknik & løft', teknikUnread)}
+                  {trackTab('besked', 'Beskeder', beskedUnread)}
+                </div>
+                {coachMsgTrack === 'teknik' && (
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#7a7770', letterSpacing: '0.05em', marginBottom: '0.9rem', lineHeight: 1.5 }}>
+                    Tekniske cues og formsnak. Videoanalyser gennemgås og deles via review-køen.
+                  </div>
+                )}
+
+                {/* Pinned messages (aktivt spor) */}
+                {pinnedMsgs.length > 0 && (
                   <div style={{ marginBottom: '1.25rem', paddingBottom: '1.25rem', borderBottom: '1px solid rgba(237,234,226,0.07)' }}>
                     <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.6rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                       <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#c8923a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -6999,7 +7032,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                       </svg>
                       Fastgjorte
                     </div>
-                    {messages.filter(m => m.pinned).map(msg => (
+                    {pinnedMsgs.map(msg => (
                       <div key={msg.id} style={{ background: 'rgba(200,146,58,0.06)', border: '1px solid rgba(200,146,58,0.18)', padding: '0.65rem 0.75rem', marginBottom: '0.4rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.75rem' }}>
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.25rem' }}>
@@ -7019,9 +7052,9 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
                 {/* Message thread */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.25rem', maxHeight: '420px', overflowY: 'auto', paddingRight: '0.25rem' }}>
-                  {messages.length === 0 ? (
-                    <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen beskeder endnu.</div>
-                  ) : messages.map(msg => {
+                  {shownMsgs.length === 0 ? (
+                    <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>{coachMsgTrack === 'teknik' ? 'Ingen teknik-beskeder endnu.' : 'Ingen beskeder endnu.'}</div>
+                  ) : shownMsgs.map(msg => {
                     const isCoach = msg.sender_role === 'coach'
                     return (
                       <div key={msg.id} style={{ display: 'flex', flexDirection: isCoach ? 'row-reverse' : 'row', alignItems: 'flex-end', gap: '0.4rem' }}>
@@ -7061,7 +7094,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   <input
                     style={{ ...s.fieldInput, flex: 1 }}
                     type="text"
-                    placeholder="Skriv en besked..."
+                    placeholder={coachMsgTrack === 'teknik' ? 'Teknik-cue eller formsnak…' : 'Skriv en besked...'}
                     value={messageInput}
                     onChange={e => setMessageInput(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && sendCoachMessage()}
@@ -7069,7 +7102,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   <button style={s.btnPrimary} onClick={sendCoachMessage}>Send</button>
                 </div>
               </div>
-            )}
+              )
+            })()}
           </div>
         )}
       </main>
