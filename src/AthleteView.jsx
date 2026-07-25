@@ -3922,7 +3922,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
                     const prevPhase = viewedPhaseIdx > 0 ? phases[viewedPhaseIdx - 1] : null
                     const nextPhase = viewedPhaseIdx < phases.length - 1 ? phases[viewedPhaseIdx + 1] : null
-                    const viewedInPhase = viewingWeekIdx - startGlobal + 1
 
                     const chipStyle = {
                       background: 'none', border: 'none', cursor: 'pointer', padding: '0.2rem 0',
@@ -4004,11 +4003,13 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
                         {/* Caption */}
                         <div style={{ marginTop: '0.9rem', textAlign: 'center', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                          {/* Brug det faktiske week_number, så caption og blok-overskrift
+                              aldrig modsiger hinanden (fx uge 0 der før stod som "uge 1 af 1"). */}
                           {viewingWeekIdx === activeWeekIdx
-                            ? <span style={{ color }}>● Du er her · uge {viewedInPhase} af {phase.weeks.length}</span>
+                            ? <span style={{ color }}>● Du er her · uge {viewedWeek?.week_number}</span>
                             : viewingWeekIdx > activeWeekIdx
-                              ? <span style={{ color: '#7a7770' }}>Planlagt · uge {viewedInPhase} af {phase.weeks.length}</span>
-                              : <span style={{ color: '#7a7770' }}>Historisk · uge {viewedInPhase} af {phase.weeks.length}</span>}
+                              ? <span style={{ color: '#7a7770' }}>Planlagt · uge {viewedWeek?.week_number}</span>
+                              : <span style={{ color: '#7a7770' }}>Historisk · uge {viewedWeek?.week_number}</span>}
                           {viewedRange && <span style={{ color: '#4a4844' }}> · {viewedRange}</span>}
                           <span style={{ color: '#4a4844' }}> · total {activeWeekIdx + 1}/{totalWeeks}</span>
                         </div>
