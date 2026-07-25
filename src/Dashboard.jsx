@@ -490,6 +490,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [messages, setMessages] = useState([])
   const [messageInput, setMessageInput] = useState('')
   const [coachMsgTrack, setCoachMsgTrack] = useState('besked')  // 'teknik' | 'besked'
+  const [unreadByTrack, setUnreadByTrack] = useState({})   // {aid: {teknik, besked}} — feed-opdeling
+  const [latestByTrack, setLatestByTrack] = useState({})   // {aid: {teknik: msg, besked: msg}} — preview pr. spor
   const [latestMessages, setLatestMessages] = useState({})
   const [unreadCounts, setUnreadCounts] = useState({})
   const [profilesLastSeen, setProfilesLastSeen] = useState({})
@@ -1353,11 +1355,20 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       if (a2.status === 'peaking' && a2.competition_date && a2.competition_date < todayStr)
         items.push({ rank: 1, aid: a2.id, icon: 'pr', color: '#c8923a', text: `${first(a2.name)}: stævne passeret`, sub: 'registrér resultatet', tab: 'stævne' })
     }
-    for (const [aid, cnt] of Object.entries(unreadCounts)) {
-      if (cnt > 0 && byId[aid]) {
-        const t = inboxThreads[aid]
-        const prev = t?.sender_role === 'athlete' ? (t.content || '') : ''
-        items.push({ rank: 1, aid, icon: 'msg', color: '#c8923a', text: `${cnt} ny${cnt > 1 ? 'e' : ''} besked${cnt > 1 ? 'er' : ''} fra ${first(byId[aid].name)}`, sub: prev ? `"${prev.slice(0, 46)}${prev.length > 46 ? '…' : ''}"` : null, tab: 'beskeder' })
+    // Ulæste beskeder opdelt i de to spor, så teknik-snak fremstår som teknik og
+    // ikke drukner i almindelig besked. Teknik pushes først = højere i feeden.
+    for (const aid of Object.keys(byId)) {
+      const tr = unreadByTrack[aid]
+      if (!tr) continue
+      if (tr.teknik > 0) {
+        const m = latestByTrack[aid]?.teknik
+        const prev = m?.sender_role === 'athlete' ? (m.content || '') : ''
+        items.push({ rank: 1, aid, icon: 'lift', color: '#67dff5', text: `${tr.teknik} teknik-besked${tr.teknik > 1 ? 'er' : ''} fra ${first(byId[aid].name)}`, sub: prev ? `"${prev.slice(0, 44)}${prev.length > 44 ? '…' : ''}"` : 'teknik & løft', tab: 'beskeder', track: 'teknik' })
+      }
+      if (tr.besked > 0) {
+        const m = latestByTrack[aid]?.besked
+        const prev = m?.sender_role === 'athlete' ? (m.content || '') : ''
+        items.push({ rank: 1, aid, icon: 'msg', color: '#c8923a', text: `${tr.besked} ny besked${tr.besked > 1 ? 'er' : ''} fra ${first(byId[aid].name)}`, sub: prev ? `"${prev.slice(0, 46)}${prev.length > 46 ? '…' : ''}"` : null, tab: 'beskeder', track: 'besked' })
       }
     }
     for (const r of todayData.readiness) {
@@ -1699,14 +1710,23 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     const { data } = await supabase.from('messages').select('*').in('athlete_id', athleteIds).order('created_at', { ascending: false })
     const latest = {}
     const unread = {}
+    const unreadTrack = {}
+    const latestTrack = {}
     for (const msg of (data || [])) {
       if (!latest[msg.athlete_id]) latest[msg.athlete_id] = msg
+      const cat = (msg.category || 'besked') === 'teknik' ? 'teknik' : 'besked'
+      const lt = (latestTrack[msg.athlete_id] ??= {})
+      if (!lt[cat]) lt[cat] = msg
       if (msg.sender_role === 'athlete' && !msg.read_by_coach) {
         unread[msg.athlete_id] = (unread[msg.athlete_id] || 0) + 1
+        const u = (unreadTrack[msg.athlete_id] ??= { teknik: 0, besked: 0 })
+        u[cat]++
       }
     }
     setLatestMessages(latest)
     setUnreadCounts(unread)
+    setUnreadByTrack(unreadTrack)
+    setLatestByTrack(latestTrack)
   }
 
   async function markMessagesRead(athleteId, track) {
