@@ -678,7 +678,18 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           setConfirmDialog({
             message: `Sendt ✓ — vil du gennemgå og dele målingen med ${ath?.name || 'atleten'} nu?`,
             confirmLabel: 'Del med atlet', kind: 'primary',
-            onConfirm: () => { setView('inbox'); setSelectedAthlete(null) },
+            // Åbn review-modalen for netop denne måling (samme sti som indbakken),
+            // så coachen kan tilføje feedback → godkende → dele. Uden dette landede
+            // man i indbakken uden valgt atlet, hvor reviewet ikke kunne åbnes.
+            onConfirm: () => {
+              const full = videoCoachAthletesRef.current.find(a => a.id === pend.athleteId)
+              if (full) {
+                setVideoReviewRequest({ item: { id: pend.id, athlete_id: pend.athleteId }, token: `${pend.id}:${Date.now()}` })
+                openProfile(full, 'analyse')
+              } else {
+                setView('inbox'); setSelectedAthlete(null)
+              }
+            },
           })
         }
         return

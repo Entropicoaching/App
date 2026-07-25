@@ -1867,7 +1867,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   useEffect(() => {
     if (role === 'athlete' && athlete?.id) fetchSharedVideoAnalyses()
   }, [role, athlete?.id])
-  useEffect(() => { if (tab === 'beskeder' && athlete) { fetchAthleteMessages(); markTrackRead(msgTrack) } }, [tab, athlete?.id, msgTrack])
+  useEffect(() => { if (tab === 'beskeder' && athlete) { fetchAthleteMessages(); markTrackRead(msgTrack); if (msgTrack === 'teknik') fetchSharedVideoAnalyses() } }, [tab, athlete?.id, msgTrack])
   useEffect(() => { if (tab === 'beskeder') messagesEndRef.current?.scrollIntoView({ block: 'end' }) }, [messages, tab])
   useEffect(() => { if (tab === 'stævnedag' && athlete) { fetchMeetPlan(athlete.id); fetchMeetResults(athlete.id) } }, [tab, athlete?.id])
 
@@ -2588,22 +2588,24 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   // også de delte målinger (athlete_seen_at), så coachen kan se at feedback er set.
   async function markTrackRead(track) {
     if (!athlete) return
-    const now = new Date().toISOString()
     await supabase.from('messages')
-      .update({ read_at: now })
+      .update({ read_at: new Date().toISOString() })
       .eq('athlete_id', athlete.id)
       .eq('sender_role', 'coach')
       .eq('category', track)
       .is('read_at', null)
-    if (track === 'teknik') {
-      const unseen = sharedVideoAnalyses.filter(a => !a.athlete_seen_at).map(a => a.id)
-      if (unseen.length) {
-        // Fejl her (RLS/net) må ikke vælte beskedvisningen; markeringen prøves igen næste gang.
-        const { error } = await supabase.from('video_analyses').update({ athlete_seen_at: now }).in('id', unseen)
-        if (!error) setSharedVideoAnalyses(prev => prev.map(a => a.athlete_seen_at ? a : { ...a, athlete_seen_at: now }))
-      }
-    }
     fetchAthleteMessages(athlete.id)
+  }
+
+  // Markér én delt måling som set når atleten åbner den ("Se måling"), så
+  // coachen kan se at feedbacken faktisk er set (parity med read_by_coach).
+  async function markVideoSeen(id) {
+    const target = sharedVideoAnalyses.find(a => a.id === id)
+    if (!target || target.athlete_seen_at) return
+    const now = new Date().toISOString()
+    // Fejl her (RLS/net) må ikke vælte visningen; prøves igen næste åbning.
+    const { error } = await supabase.from('video_analyses').update({ athlete_seen_at: now }).eq('id', id)
+    if (!error) setSharedVideoAnalyses(prev => prev.map(a => a.id === id ? { ...a, athlete_seen_at: now } : a))
   }
 
   async function sendAthleteMessage() {
@@ -2639,7 +2641,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         const nextSet = Array.isArray(feedback.next_set) ? feedback.next_set.filter(item => item?.text).slice(0, 2) : []
         return (
           <div key={analysis.id} style={{ border: '1px solid rgba(237,234,226,0.08)', background: 'rgba(20,20,16,0.55)' }}>
-            <button onClick={() => setOpenSharedVideoId(open ? null : analysis.id)} style={{ width: '100%', border: 0, background: 'transparent', color: '#edeae2', cursor: 'pointer', padding: '0.75rem', textAlign: 'left', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.7rem' }}>
+            <button onClick={() => { const opening = !open; setOpenSharedVideoId(opening ? analysis.id : null); if (opening) markVideoSeen(analysis.id) }} style={{ width: '100%', border: 0, background: 'transparent', color: '#edeae2', cursor: 'pointer', padding: '0.75rem', textAlign: 'left', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.7rem' }}>
               <span style={{ minWidth: 0 }}>
                 <span style={{ display: 'block', fontSize: '0.78rem' }}>
                   {!analysis.athlete_seen_at && <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: '#c8923a', marginRight: 6, verticalAlign: 'middle' }} />}
