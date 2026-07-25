@@ -223,6 +223,7 @@ const FEED_ICONS = {
   lift: <><line x1="6" y1="12" x2="18" y2="12" /><rect x="2.5" y="9" width="3.5" height="6" rx="1" /><rect x="18" y="9" width="3.5" height="6" rx="1" /></>,
   cal: <><rect x="3" y="5" width="18" height="16" rx="2" /><line x1="3" y1="10" x2="21" y2="10" /></>,
   info: <><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></>,
+  video: <><rect x="2" y="6" width="13" height="12" rx="2" /><path d="M15 10.5 22 7v10l-7-3.5" /></>,
 }
 
 // Sektioner vist som kort på atlet-hubben (coach-landingsside). Rækkefølgen
@@ -1116,7 +1117,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   async function fetchVideoReviewQueue() {
     setVideoReviewQueueError(null)
     const { data, error } = await supabase.from('video_analyses')
-      .select('id,client_analysis_id,athlete_id,lift,variation,load_kg,reps_count,analyzed_at,created_at,source_mode,status')
+      .select('id,client_analysis_id,athlete_id,lift,variation,load_kg,reps_count,analyzed_at,created_at,source_mode,status,session_context')
       .eq('status', 'draft')
       .order('created_at', { ascending: false })
       .limit(50)
@@ -1297,11 +1298,43 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
   // Fælles hændelses-feed til forsiden (mobil + desktop): programmangler øverst,
   // så beskeder m. preview, lav readiness, PR'er, dagens sessioner og planlægnings-noter.
+  // Åbn et feed-item. Video-items (review) fører direkte til den konkrete måling
+  // (samme sti som indbakken/"Del med atlet"); besked-items lander i det rette spor.
+  const openFeedItem = it => {
+    const ath = athletes.find(a => a.id === it.aid)
+    if (!ath) return
+    if (it.review) {
+      setVideoReviewRequest({ item: it.review, token: `${it.review.id}:${Date.now()}` })
+      openProfile(ath, 'analyse')
+    } else {
+      if (it.track) setCoachMsgTrack(it.track)
+      openProfile(ath, it.tab)
+    }
+  }
+
+  const FEED_LIFT_LABEL = { squat: 'Squat', bench: 'Bænk', deadlift: 'Dødløft' }
+  const feedWaitLabel = ts => {
+    const h = Math.floor((Date.now() - new Date(ts).getTime()) / 3600000)
+    if (!Number.isFinite(h) || h < 1) return 'lige nu'
+    if (h < 24) return `${h} t`
+    return `${Math.floor(h / 24)} d`
+  }
+
   function buildTodayFeed(visible) {
     const byId = Object.fromEntries(visible.map(a2 => [a2.id, a2]))
     const first = n => (n || '').split(' ')[0]
     const todayStr = new Date().toISOString().slice(0, 10)
     const items = []
+    // Atlet-indsendte løft der venter på gennemgang — en direkte henvendelse fra
+    // atleten. Rangeres højt (kun program-kritiske rank-0 ligger over).
+    for (const v of videoReviewQueue) {
+      if (v.source_mode !== 'athlete_submission' || v.status !== 'draft' || !byId[v.athlete_id]) continue
+      const note = (v.session_context?.athlete_note || '').trim()
+      items.push({ rank: 1, aid: v.athlete_id, icon: 'video', color: '#c8923a',
+        text: `${first(byId[v.athlete_id].name)} sendte ${FEED_LIFT_LABEL[v.lift] || v.lift || 'et løft'} til gennemgang`,
+        sub: `ventet ${feedWaitLabel(v.created_at)}${note ? ` · "${note.slice(0, 42)}${note.length > 42 ? '…' : ''}"` : ''}`,
+        review: { id: v.id, athlete_id: v.athlete_id } })
+    }
     for (const b of computeBoard(visible)) {
       if (b.isSnoozed) continue
       if (b.status === 'ferie') {
@@ -3799,7 +3832,6 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 {/* MOBIL: atlet-chips + dagens hændelses-feed (desktop har listerne nedenfor) */}
                 {isMobile && (() => {
                   const visible = athletes.filter(a2 => !hiddenAthleteIds.has(a2.id))
-                  const byId = Object.fromEntries(visible.map(a2 => [a2.id, a2]))
                   const trained = new Set(todayData.logs.map(l => l.athlete_id))
                   const first = n => (n || '').split(' ')[0]
                   const chips = [...visible].sort((x, y) => {
@@ -3835,7 +3867,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                       ) : (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                           {items.slice(0, 14).map((it, i) => (
-                            <div key={i} onClick={() => byId[it.aid] && openProfile(byId[it.aid], it.tab)}
+                            <div key={i} onClick={() => openFeedItem(it)}
                               style={{ ...s.card, marginBottom: 0, padding: '0.7rem 0.85rem', cursor: 'pointer', ...(it.rank === 0 ? { borderColor: 'rgba(224,85,85,0.3)' } : {}) }}>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={it.color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>{FEED_ICONS[it.icon]}</svg>
@@ -3871,7 +3903,6 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     programmangler, beskeder m. preview, lav readiness, PR'er, dagens sessioner */}
                 {!isMobile && (() => {
                   const visible = athletes.filter(a3 => !hiddenAthleteIds.has(a3.id))
-                  const byId = Object.fromEntries(visible.map(a3 => [a3.id, a3]))
                   const items = buildTodayFeed(visible)
                   if (!items.length) {
                     return (
@@ -3885,7 +3916,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     <div style={{ ...s.card, marginBottom: '1.5rem', borderColor: 'rgba(200,146,58,0.25)' }}>
                       <div style={s.cardLabel}>Prioritet & i dag</div>
                       {items.slice(0, 16).map((it, i, arr) => (
-                        <div key={i} onClick={() => byId[it.aid] && openProfile(byId[it.aid], it.tab)}
+                        <div key={i} onClick={() => openFeedItem(it)}
                           style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.55rem 0', borderBottom: i < arr.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none', cursor: 'pointer', minHeight: '40px' }}>
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={it.color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>{FEED_ICONS[it.icon]}</svg>
                           <span style={{ fontSize: '0.85rem', color: '#edeae2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flexShrink: 0, maxWidth: '55%' }}>{it.text}</span>
