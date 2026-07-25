@@ -529,6 +529,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [inboxThreads, setInboxThreads] = useState({})
   const [videoReviewQueue, setVideoReviewQueue] = useState([])
   const [videoReviewQueueError, setVideoReviewQueueError] = useState(null)
+  const [videoUnseenFeedback, setVideoUnseenFeedback] = useState([])  // delt >2 dage, ikke set af atlet
   const [videoReviewRequest, setVideoReviewRequest] = useState(null)
   const videoReviewOpenedRef = useRef(null)
   const [menuSheetOpen, setMenuSheetOpen] = useState(false)
@@ -857,6 +858,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     if (view === 'list' || view === 'inbox') {
       fetchTodayAndInbox()
       fetchVideoReviewQueue()
+      fetchVideoUnseenFeedback()
     }
   }, [view])
 
@@ -1128,6 +1130,21 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       return
     }
     setVideoReviewQueue((data || []).filter(item => item?.id && item?.athlete_id && item.status === 'draft'))
+  }
+
+  // Delt feedback som atleten IKKE har åbnet efter >2 dage. Tærskel = 2 dage:
+  // giver atleten et rimeligt vindue (træner/åbner ikke appen dagligt); under
+  // det ville støje, 2+ dage betyder at coachingen ikke er landet. Lavt rangeret.
+  async function fetchVideoUnseenFeedback() {
+    const cutoff = new Date(Date.now() - 2 * 86400000).toISOString()
+    const { data } = await supabase.from('video_analyses')
+      .select('id,athlete_id,lift,shared_at')
+      .eq('status', 'shared')
+      .is('athlete_seen_at', null)
+      .lt('shared_at', cutoff)
+      .order('shared_at', { ascending: true })
+      .limit(50)
+    setVideoUnseenFeedback(data || [])
   }
 
   async function fetchWeeks(athleteId) {
@@ -1409,6 +1426,16 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       if (!byId[aid]) continue
       const avg = o.rpes.length ? (o.rpes.reduce((x, y2) => x + y2, 0) / o.rpes.length).toFixed(1) : null
       items.push({ rank: 4, aid, icon: 'lift', color: '#6cba6c', text: `${first(byId[aid].name)} loggede ${[...o.titles].join(' + ')}`, sub: `${o.sets} sæt${avg ? ` · snit-RPE ${avg}` : ''}`, tab: 'log' })
+    }
+    // Lavt-rangeret: delt feedback atleten ikke har åbnet efter >2 dage — værd
+    // at vide (coachingen er ikke landet), men ingen alarm (dæmpet grå).
+    for (const v of videoUnseenFeedback) {
+      if (!byId[v.athlete_id]) continue
+      const days = Math.max(0, Math.floor((Date.now() - new Date(v.shared_at).getTime()) / 86400000))
+      items.push({ rank: 5, aid: v.athlete_id, icon: 'info', color: '#7a7770',
+        text: `${first(byId[v.athlete_id].name)} har ikke set din feedback endnu`,
+        sub: `${FEED_LIFT_LABEL[v.lift] || v.lift || 'løft'} · delt ${days} dag${days === 1 ? '' : 'e'} siden`,
+        review: { id: v.id, athlete_id: v.athlete_id } })
     }
     items.sort((x, y) => x.rank - y.rank)
     return items
