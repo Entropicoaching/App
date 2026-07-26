@@ -108,7 +108,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        540,
+        800,
         80
       ],
       "notesInFlow": true,
@@ -130,7 +130,7 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
-        800,
+        1060,
         80
       ],
       "notesInFlow": true,
@@ -145,7 +145,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1060,
+        1320,
         80
       ],
       "notesInFlow": true,
@@ -165,6 +165,21 @@
       ],
       "notesInFlow": true,
       "notes": "The app is primary. Email only retains alert signals, unread messages at least 6 hours old, and video drafts at least 24 hours old."
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\nconst json = item.json;\n\njson.subject = String(json.subject || '')\n  .replace('ting kræver et kig', 'uløste ting kræver stadig dit blik');\njson.html = String(json.html || '')\n  .replace('Din coach-indbakke', 'Noget kræver stadig dit blik')\n  .replace(\n    'Kun åbne handlinger. Ingen videofiler eller beskedindhold er sendt gennem n8n.',\n    'Denne mail er kun en sikkerhedsline, fordi en vigtig eller ældre sag stadig står åben i appen. Ingen videofiler eller beskedindhold er sendt gennem n8n.'\n  )\n  .replace('Automatisk morgenbriefing', 'Automatisk sikkerhedsline');\n\nreturn [item];"
+      },
+      "id": "9f3a7058-5c2a-4b59-9c52-5109d7e4c813",
+      "name": "Frame fallback email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        540,
+        80
+      ],
+      "notesInFlow": true,
+      "notes": "Makes it explicit that email is a safety net for an unresolved app item, not a daily briefing."
     }
   ],
   "connections": {
@@ -213,6 +228,17 @@
       ]
     },
     "Build briefing": {
+      "main": [
+        [
+          {
+            "node": "Frame fallback email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Frame fallback email": {
       "main": [
         [
           {

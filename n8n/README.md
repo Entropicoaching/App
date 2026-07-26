@@ -20,6 +20,9 @@ Context-level signals and newly received messages/videos stay in the app and do
 not trigger email. Missing or invalid timestamps fail safe into the fallback email
 instead of silently hiding an unresolved item.
 
+The subject, heading and footer explicitly describe the message as an automatic
+safety net for an unresolved app item rather than a daily or morning briefing.
+
 Message bodies, coach notes, video files and storage URLs are deliberately not
 returned by the database function or passed through n8n.
 
