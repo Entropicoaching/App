@@ -1,0 +1,270 @@
+{
+  "id": "8d6b7a5f-54a5-4b78-9713-cc9cf7890ae6",
+  "name": "Entropi - Coach Briefing v1",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "2f3f0b41-cc8c-4453-8553-fb50767ee735",
+      "name": "Manual test",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -760,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 0 12-21 * * *"
+            }
+          ]
+        }
+      },
+      "id": "2ce0bc4a-185f-470e-849c-f859b16af2df",
+      "name": "Daily catch-up 12:00–21:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -760,
+        -20
+      ],
+      "notesInFlow": true,
+      "notes": "Checks hourly from 12:00 through 21:00 Europe/Copenhagen. Sends at most one briefing per calendar day."
+    },
+    {
+      "parameters": {
+        "jsCode": "const config = {\n  supabaseUrl: 'https://dsqgaxwgtcbqgphsofav.supabase.co',\n  coachId: '5c635d4d-c73a-44f7-a010-f444c3567dc7',\n  coachEmail: 'coach@entropicoaching.dk',\n  appUrl: 'https://app.entropicoaching.dk/?coach=inbox',\n};\n\nconst missing = Object.entries(config)\n  .filter(([, value]) => !value || value.startsWith('REPLACE_WITH_'))\n  .map(([key]) => key);\n\nif (missing.length) {\n  throw new Error(`Coach Briefing configuration missing: ${missing.join(', ')}`);\n}\n\nreturn [{ json: config }];"
+      },
+      "id": "e3ae074e-951d-4452-81a1-574029b21a23",
+      "name": "Configuration",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -500,
+        80
+      ],
+      "notesInFlow": true,
+      "notes": "Non-secret values only. Keep the Supabase service-role key in an n8n Supabase credential, never in this node."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Configuration').first().json.supabaseUrl.replace(/\\/$/, '') + '/rest/v1/rpc/entropi_coach_briefing_v1' }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ p_coach_id: $('Configuration').first().json.coachId }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "6840fba5-f250-46f3-8b35-08ce43db5a80",
+      "name": "Fetch coach briefing",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -240,
+        80
+      ],
+      "notesInFlow": true,
+      "notes": "After import, select an n8n Supabase credential containing the project URL and service-role secret."
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\nconst config = $('Configuration').first().json;\nconst messages = Array.isArray(data.unread_messages) ? data.unread_messages : [];\nconst videos = Array.isArray(data.video_drafts) ? data.video_drafts : [];\nconst signals = Array.isArray(data.training_signals) ? data.training_signals : [];\nconst unreadCount = messages.reduce((sum, item) => sum + Number(item.unread_count || 0), 0);\nconst total = unreadCount + videos.length + signals.length;\nconst briefingDate = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Copenhagen', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());\n\n// Returning no items ends the workflow: no empty morning email.\nif (total === 0) return [];\n\nconst esc = (value) => String(value ?? '')\n  .replaceAll('&', '&amp;')\n  .replaceAll('<', '&lt;')\n  .replaceAll('>', '&gt;')\n  .replaceAll('\\\"', '&quot;')\n  .replaceAll(\"'\", '&#039;');\nconst when = (value) => value\n  ? new Intl.DateTimeFormat('da-DK', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Europe/Copenhagen' }).format(new Date(value))\n  : '';\nconst section = (title, count, rows) => rows.length\n  ? `<section style=\"margin:0 0 22px\"><h2 style=\"font-size:17px;margin:0 0 8px;color:#edeae2\">${esc(title)} <span style=\"color:#c8923a\">${count}</span></h2>${rows.join('')}</section>`\n  : '';\nconst row = (title, detail) => `<div style=\"padding:10px 0;border-top:1px solid #34342e\"><div style=\"font-weight:650;color:#edeae2\">${esc(title)}</div><div style=\"font-size:13px;line-height:1.5;color:#aaa79f;margin-top:2px\">${esc(detail)}</div></div>`;\n\nconst messageRows = messages.map(item => row(\n  item.athlete_name,\n  `${item.unread_count} ulæst${Number(item.unread_count) === 1 ? '' : 'e'} · ${item.track === 'teknik' ? 'Teknik & løft' : 'Besked'} · senest ${when(item.latest_at)}`\n));\nconst videoRows = videos.map(item => {\n  const lift = [item.lift, item.variation].filter(Boolean).join(' · ') || 'Videoanalyse';\n  const load = item.load_kg == null ? '' : ` · ${item.load_kg} kg`;\n  const reps = item.reps_count == null ? '' : ` · ${item.reps_count} reps`;\n  return row(item.athlete_name, `${lift}${load}${reps} · modtaget ${when(item.created_at)}`);\n});\nconst signalRows = signals.map(item => row(\n  item.headline || item.athlete_name,\n  `${item.severity === 'alert' ? 'Kræver et kig' : 'Kontekst'} · ${item.detail || item.detector}`\n));\n\nconst appUrl = config.appUrl.replace(/\\/$/, '');\nconst subject = `Entropi Coach · ${total} ting kræver et kig`;\nconst html = `<div style=\"background:#141410;padding:28px 18px;font-family:Arial,sans-serif\"><div style=\"max-width:620px;margin:auto;background:#1c1c18;border:1px solid #34342e;padding:24px\"><div style=\"font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:#c8923a;margin-bottom:8px\">Entropi Coach</div><h1 style=\"font-size:24px;line-height:1.2;color:#edeae2;margin:0 0 8px\">Din coach-indbakke</h1><p style=\"color:#aaa79f;margin:0 0 24px;line-height:1.5\">Kun åbne handlinger. Ingen videofiler eller beskedindhold er sendt gennem n8n.</p>${section('Beskeder', unreadCount, messageRows)}${section('Videoanalyser', videos.length, videoRows)}${section('Træningssignaler', signals.length, signalRows)}<a href=\"${esc(appUrl)}\" style=\"display:inline-block;background:#c8923a;color:#141410;text-decoration:none;font-weight:700;padding:11px 16px;border-radius:3px\">Åbn coach-indbakken</a><p style=\"font-size:11px;color:#68665f;margin:22px 0 0\">Automatisk morgenbriefing · Europe/Copenhagen</p></div></div>`;\n\nconst fingerprintData = {\n  recipient: config.coachEmail,\n  messages: messages.map(item => [item.athlete_id, item.track, item.unread_count, item.latest_at]),\n  videos: videos.map(item => item.id),\n  signals: signals.map(item => [item.athlete_id, item.detector, item.severity, item.metrics]),\n};\nconst source = JSON.stringify(fingerprintData);\nlet hash = 2166136261;\nfor (let i = 0; i < source.length; i++) {\n  hash ^= source.charCodeAt(i);\n  hash = Math.imul(hash, 16777619);\n}\n\nreturn [{ json: { recipient: config.coachEmail, subject, html, total, briefingDate, digestHash: `v1-${(hash >>> 0).toString(16)}` } }];"
+      },
+      "id": "01a149a6-d29d-4b8c-832e-6ae4c2f702f4",
+      "name": "Build briefing",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        280,
+        80
+      ],
+      "notesInFlow": true,
+      "notes": "Builds a compact Danish email from metadata only. Returns zero items when the inbox is empty."
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\nconst state = $getWorkflowStaticData('global');\nif (state.lastDeliveredDate === item.json.briefingDate) return [];\nreturn [item];"
+      },
+      "id": "36b721cf-95b7-4bc8-9c9a-35213f5e56be",
+      "name": "Skip if sent today",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        540,
+        80
+      ],
+      "notesInFlow": true,
+      "notes": "Stops later checks after one successful briefing has been delivered on the same Copenhagen calendar day."
+    },
+    {
+      "parameters": {
+        "fromEmail": "Entropi Coach <coach@entropicoaching.dk>",
+        "toEmail": "={{ $json.recipient }}",
+        "subject": "={{ $json.subject }}",
+        "emailFormat": "html",
+        "html": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "2f1636a9-b108-4237-bf7e-33adac05df8e",
+      "name": "Send coach briefing",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        800,
+        80
+      ],
+      "notesInFlow": true,
+      "notes": "Uses the coach@entropicoaching.dk mailbox through an n8n SMTP credential."
+    },
+    {
+      "parameters": {
+        "jsCode": "const briefing = $('Build briefing').first().json;\nconst state = $getWorkflowStaticData('global');\nstate.lastDigestHash = briefing.digestHash;\nstate.lastDeliveredAt = new Date().toISOString();\nstate.lastDeliveredDate = briefing.briefingDate;\nreturn [{ json: { delivered: true, deliveredAt: state.lastDeliveredAt, deliveredDate: state.lastDeliveredDate, digestHash: state.lastDigestHash, itemCount: briefing.total } }];"
+      },
+      "id": "45434272-5a5e-4df4-8834-e8f46dfc3bb3",
+      "name": "Record successful delivery",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1060,
+        80
+      ],
+      "notesInFlow": true,
+      "notes": "Stores the successful delivery date, timestamp and digest hash. No message content is persisted in workflow state."
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\nconst now = Date.now();\nconst messageAgeMs = 6 * 60 * 60 * 1000;\nconst videoAgeMs = 24 * 60 * 60 * 1000;\n\nconst isOlderThan = (value, ageMs) => {\n  if (!value) return true;\n  const timestamp = new Date(value).getTime();\n  return !Number.isFinite(timestamp) || now - timestamp >= ageMs;\n};\n\nconst messages = (Array.isArray(data.unread_messages) ? data.unread_messages : [])\n  .filter(item => isOlderThan(item.latest_at, messageAgeMs));\nconst videos = (Array.isArray(data.video_drafts) ? data.video_drafts : [])\n  .filter(item => isOlderThan(item.created_at, videoAgeMs));\nconst signals = (Array.isArray(data.training_signals) ? data.training_signals : [])\n  .filter(item => item.severity === 'alert');\n\n// The app is the primary inbox. Email is only a safety net when an\n// important or old item is still unresolved.\nif (messages.length === 0 && videos.length === 0 && signals.length === 0) return [];\n\nreturn [{\n  json: {\n    ...data,\n    unread_messages: messages,\n    video_drafts: videos,\n    training_signals: signals,\n    fallback_policy: {\n      message_age_hours: 6,\n      video_age_hours: 24,\n      signal_severity: 'alert'\n    }\n  }\n}];"
+      },
+      "id": "76e9421e-79ad-4aa2-b832-c7ec7835b8d9",
+      "name": "Keep unresolved backup items",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        20,
+        80
+      ],
+      "notesInFlow": true,
+      "notes": "The app is primary. Email only retains alert signals, unread messages at least 6 hours old, and video drafts at least 24 hours old."
+    }
+  ],
+  "connections": {
+    "Manual test": {
+      "main": [
+        [
+          {
+            "node": "Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configuration": {
+      "main": [
+        [
+          {
+            "node": "Fetch coach briefing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch coach briefing": {
+      "main": [
+        [
+          {
+            "node": "Keep unresolved backup items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keep unresolved backup items": {
+      "main": [
+        [
+          {
+            "node": "Build briefing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build briefing": {
+      "main": [
+        [
+          {
+            "node": "Skip if sent today",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send coach briefing": {
+      "main": [
+        [
+          {
+            "node": "Record successful delivery",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily catch-up 12:00–21:00": {
+      "main": [
+        [
+          {
+            "node": "Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Skip if sent today": {
+      "main": [
+        [
+          {
+            "node": "Send coach briefing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Copenhagen",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all"
+  },
+  "versionId": "31b06a83-fd9a-4868-b706-ae8a703c2c3c",
+  "tags": []
+}

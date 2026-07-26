@@ -475,7 +475,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [athletes, setAthletes] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
-  const [view, setView] = useState('list')
+  const [view, setView] = useState(() => {
+    if (typeof window === 'undefined') return 'list'
+    return new URLSearchParams(window.location.search).get('coach') === 'inbox' ? 'inbox' : 'list'
+  })
   const [selectedAthlete, setSelectedAthlete] = useState(null)
   const [activeTab, setActiveTab] = useState('hub')
   const [navMenuOpen, setNavMenuOpen] = useState(false) // "Mere"-menu i sektions-navigationen
@@ -859,15 +862,34 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     }
   }, [activeTab, selectedAthlete?.id])
 
-  // Mobil-forside og indbakke: genindlæs dagens feed når man lander på dem.
+  // Coachens forside og indbakke holdes friske ved navigation, tilbagevenden
+  // til appen og et roligt interval, mens fanen er synlig.
   useEffect(() => {
-    if (view === 'list' || view === 'inbox') {
-      fetchTodayActivity()
-      fetchVideoReviewQueue()
-      fetchTrainingSignals()
-      if (videoCoachAthletesRef.current.length) {
-        fetchLatestMessages(videoCoachAthletesRef.current.map(athlete => athlete.id))
-      }
+    if (view !== 'list' && view !== 'inbox') return undefined
+    let refreshing = false
+    const refreshInbox = async () => {
+      if (refreshing) return
+      refreshing = true
+      const athleteIds = videoCoachAthletesRef.current.map(athlete => athlete.id)
+      const requests = [fetchTodayActivity(), fetchVideoReviewQueue(), fetchTrainingSignals()]
+      if (athleteIds.length) requests.push(fetchLatestMessages(athleteIds))
+      await Promise.allSettled(requests)
+      refreshing = false
+    }
+
+    const refreshWhenVisible = () => {
+      if (document.visibilityState === 'visible') refreshInbox()
+    }
+
+    refreshInbox()
+    window.addEventListener('focus', refreshWhenVisible)
+    document.addEventListener('visibilitychange', refreshWhenVisible)
+    const intervalId = window.setInterval(refreshWhenVisible, 5 * 60 * 1000)
+
+    return () => {
+      window.removeEventListener('focus', refreshWhenVisible)
+      document.removeEventListener('visibilitychange', refreshWhenVisible)
+      window.clearInterval(intervalId)
     }
   }, [view])
 
@@ -2904,7 +2926,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             { icon: <><path d="M3 10.5 12 3l9 7.5" /><path d="M5 9.5V21h14V9.5" /></>, label: 'Forside', active: view === 'list', onClick: () => { setView('list'); setSelectedAthlete(null); setSidebarOpen(false) } },
             { icon: <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />, label: 'Min træning', active: false, onClick: () => { setSidebarOpen(false); goToMyProfile() } },
             { icon: <><rect x="3" y="5" width="18" height="16" rx="2" /><line x1="3" y1="10" x2="21" y2="10" /><line x1="8" y1="3" x2="8" y2="7" /><line x1="16" y1="3" x2="16" y2="7" /></>, label: 'Kalender', active: view === 'calendar', onClick: () => { setView('calendar'); setSelectedAthlete(null); setSidebarOpen(false) } },
-            { icon: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />, label: 'Indbakke', active: view === 'inbox', badge: Object.values(unreadCounts).reduce((x, y) => x + y, 0) + videoReviewQueue.length, onClick: () => { setView('inbox'); setSelectedAthlete(null); setSidebarOpen(false) } },
+            { icon: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />, label: 'Indbakke', active: view === 'inbox', badge: Object.values(unreadCounts).reduce((x, y) => x + y, 0) + videoReviewQueue.length + trainingSignals.length, onClick: () => { setView('inbox'); setSelectedAthlete(null); setSidebarOpen(false) } },
             { icon: <><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></>, label: 'Bibliotek', active: view === 'library', onClick: () => { setView('library'); setSelectedAthlete(null); setSidebarOpen(false) } },
           ].map(item => (
             <div
@@ -3066,7 +3088,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 icon: <><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" /></>,
               },
             ].map(item => {
-              const totalUnread = item.key === 'inbox' ? Object.values(unreadCounts).reduce((a2, b) => a2 + b, 0) + videoReviewQueue.length : 0
+              const totalUnread = item.key === 'inbox' ? Object.values(unreadCounts).reduce((a2, b) => a2 + b, 0) + videoReviewQueue.length + trainingSignals.length : 0
               return (
                 <button
                   key={item.key}
@@ -3806,6 +3828,69 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             : visibleAthletes
           const unreadTotal = Object.values(unreadCounts).reduce((sum, count) => sum + count, 0)
           const inboxTotal = unreadTotal + videoReviewQueue.length + trainingSignals.length
+          const unreadMessageTracks = visibleAthletes.flatMap(athlete => ['teknik', 'besked'].map(track => ({
+            athlete,
+            track,
+            last: latestByTrack[athlete.id]?.[track] || null,
+            unread: unreadByTrack[athlete.id]?.[track] || 0,
+          }))).filter(row => row.last && row.unread > 0)
+            .sort((x, y) => (y.last?.created_at || '').localeCompare(x.last?.created_at || ''))
+          const signalPriorityItems = trainingSignals.map((signal, index) => {
+            const athlete = visibleAthletes.find(item => item.id === signal.o_athlete_id)
+            if (!athlete) return null
+            const alert = signal.o_severity === 'alert'
+            const detectorLabel = signal.o_detector === 'dropout' ? 'Træningsmængde'
+              : signal.o_detector === 'stagnation' ? 'Udvikling'
+                : signal.o_detector === 'rpe_drift' ? 'RPE' : 'Træning'
+            return {
+              key: `signal-${signal.o_athlete_id}-${signal.o_detector}-${index}`,
+              kind: 'signal', athlete, signal,
+              rank: alert ? 0 : 3,
+              color: alert ? '#e05555' : '#c8923a',
+              label: detectorLabel,
+              title: signal.o_headline,
+              detail: signal.o_detail,
+            }
+          }).filter(Boolean)
+          const messagePriorityItems = unreadMessageTracks.map(row => ({
+            key: `message-${row.athlete.id}-${row.track}`,
+            kind: 'message', athlete: row.athlete, track: row.track,
+            rank: 1, color: row.track === 'teknik' ? '#67dff5' : '#c8923a',
+            label: row.track === 'teknik' ? 'Teknik & løft' : 'Besked',
+            title: row.athlete.name,
+            detail: row.last.content,
+            createdAt: row.last.created_at,
+            count: row.unread,
+          }))
+          const videoPriorityItems = videoReviewQueue.map(item => {
+            const athlete = visibleAthletes.find(candidate => candidate.id === item.athlete_id)
+            if (!athlete) return null
+            return {
+              key: `video-${item.id}`,
+              kind: 'video', athlete, video: item,
+              rank: 2, color: '#67dff5', label: 'Video',
+              title: athlete.name,
+              detail: `${VIDEOCOACH_LIFTS[item.lift] || item.lift} · ${videoCoachVariationLabel(item.lift, item.variation)}${item.load_kg != null ? ` · ${item.load_kg} kg` : ''}`,
+              createdAt: item.created_at || item.analyzed_at,
+            }
+          }).filter(Boolean)
+          const priorityItems = [...signalPriorityItems, ...messagePriorityItems, ...videoPriorityItems]
+            .sort((x, y) => x.rank - y.rank || (y.createdAt || '').localeCompare(x.createdAt || ''))
+          const priorityPreview = priorityItems.slice(0, isMobile ? 3 : 4)
+          const openPriorityItem = item => {
+            if (item.kind === 'signal') {
+              openProfile(item.athlete, 'log')
+              return
+            }
+            if (item.kind === 'message') {
+              setCoachMsgTrack(item.track)
+              openProfile(item.athlete, 'beskeder')
+              return
+            }
+            setVideoReviewRequest({ item: item.video, token: `${item.video.id}:${Date.now()}` })
+            setVideoLiftFilter(item.video.lift || 'all')
+            openProfile(item.athlete, 'analyse')
+          }
           const homeActions = [
             {
               key: 'training',
@@ -3822,15 +3907,6 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               color: '#67dff5',
               onClick: openVideoCoachV3,
               icon: <><rect x="2" y="6" width="13" height="12" rx="2" /><path d="M15 10.5 22 7v10l-7-3.5" /></>,
-            },
-            {
-              key: 'inbox',
-              label: 'Coach-indbakke',
-              sub: inboxTotal > 0 ? `${inboxTotal} ting kræver et kig` : 'Alt er set',
-              color: inboxTotal > 0 ? '#c8923a' : '#6cba6c',
-              onClick: () => { setView('inbox'); setSelectedAthlete(null) },
-              icon: <><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></>,
-              badge: inboxTotal,
             },
           ]
 
@@ -3853,10 +3929,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, minmax(0, 1fr))' : 'repeat(3, minmax(0, 1fr))', gap: isMobile ? '0.55rem' : '0.75rem', marginBottom: isMobile ? '1.25rem' : '1.75rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: isMobile ? '0.55rem' : '0.75rem', marginBottom: isMobile ? '0.85rem' : '1rem' }}>
                 {homeActions.map(action => (
                   <button key={action.key} onClick={action.onClick}
-                    style={{ position: 'relative', display: 'flex', flexDirection: isMobile && action.key !== 'inbox' ? 'column' : 'row', alignItems: isMobile && action.key !== 'inbox' ? 'flex-start' : 'center', gap: '0.75rem', minHeight: isMobile ? (action.key === 'inbox' ? 76 : 108) : 96, gridColumn: isMobile && action.key === 'inbox' ? '1 / -1' : 'auto', padding: isMobile ? '0.85rem' : '1rem 1.1rem', background: '#1c1c18', border: `1px solid ${action.key === 'inbox' && inboxTotal > 0 ? 'rgba(200,146,58,0.3)' : 'rgba(237,234,226,0.08)'}`, borderRadius: 5, cursor: 'pointer', color: '#edeae2', textAlign: 'left' }}>
+                    style={{ position: 'relative', display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', gap: '0.75rem', minHeight: isMobile ? 108 : 96, padding: isMobile ? '0.85rem' : '1rem 1.1rem', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.08)', borderRadius: 5, cursor: 'pointer', color: '#edeae2', textAlign: 'left' }}>
                     <span style={{ width: 36, height: 36, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: `1px solid ${action.color}55`, background: `${action.color}0f`, color: action.color, borderRadius: 4 }}>
                       <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">{action.icon}</svg>
                     </span>
@@ -3864,9 +3940,63 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                       <span style={{ display: 'block', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: isMobile ? '0.84rem' : '0.92rem', color: '#edeae2', lineHeight: 1.25 }}>{action.label}</span>
                       <span style={{ display: 'block', marginTop: '0.2rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: action.color, letterSpacing: '0.035em', lineHeight: 1.35 }}>{action.sub}</span>
                     </span>
-                    {action.badge > 0 && <span style={{ position: 'absolute', top: '0.65rem', right: '0.65rem', minWidth: 20, height: 20, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 0.3rem', borderRadius: '999px', background: '#c8923a', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', fontWeight: 700 }}>{action.badge}</span>}
                   </button>
                 ))}
+              </div>
+
+              <div style={{ ...s.card, marginBottom: isMobile ? '0.85rem' : '1rem', padding: 0, overflow: 'hidden', borderColor: inboxTotal > 0 ? 'rgba(200,146,58,0.28)' : 'rgba(108,186,108,0.2)' }}>
+                <button onClick={() => { setView('inbox'); setSelectedAthlete(null) }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', width: '100%', minHeight: 64, padding: isMobile ? '0.75rem 0.85rem' : '0.8rem 1rem', border: 'none', borderBottom: priorityPreview.length ? '1px solid rgba(237,234,226,0.06)' : 'none', background: inboxTotal > 0 ? 'rgba(200,146,58,0.035)' : 'rgba(108,186,108,0.025)', color: '#edeae2', cursor: 'pointer', textAlign: 'left' }}>
+                  <span style={{ width: 36, height: 36, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: `1px solid ${inboxTotal > 0 ? 'rgba(200,146,58,0.35)' : 'rgba(108,186,108,0.3)'}`, background: inboxTotal > 0 ? 'rgba(200,146,58,0.07)' : 'rgba(108,186,108,0.06)', color: inboxTotal > 0 ? '#c8923a' : '#6cba6c', borderRadius: 4 }}>
+                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
+                  </span>
+                  <span style={{ minWidth: 0, flex: 1 }}>
+                    <span style={{ display: 'block', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.92rem', color: '#edeae2' }}>Kræver dit blik</span>
+                    <span style={{ display: 'block', marginTop: '0.16rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: inboxTotal > 0 ? '#c8923a' : '#6cba6c', letterSpacing: '0.035em' }}>{inboxTotal > 0 ? `${inboxTotal} åbne ting · vigtigste først` : 'Alt er set lige nu'}</span>
+                  </span>
+                  {inboxTotal > 0 && <span style={{ minWidth: 22, height: 22, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 0.32rem', borderRadius: '999px', background: '#c8923a', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', fontWeight: 700 }}>{inboxTotal}</span>}
+                  <span style={{ color: '#7a7770', fontSize: '0.75rem' }}>→</span>
+                </button>
+
+                {priorityPreview.length > 0 && (
+                  <div style={{ padding: isMobile ? '0.2rem 0.85rem 0.35rem' : '0.25rem 1rem 0.4rem' }}>
+                    {priorityPreview.map((item, index) => {
+                      const signalUpdating = item.kind === 'signal' && trainingSignalUpdatingKey === `${item.signal.o_athlete_id}:${item.signal.o_detector}`
+                      return (
+                        <div key={item.key} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minHeight: 58, borderBottom: index < priorityPreview.length - 1 ? '1px solid rgba(237,234,226,0.055)' : 'none' }}>
+                          <button onClick={() => openPriorityItem(item)}
+                            style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', minWidth: 0, flex: 1, minHeight: 52, padding: '0.35rem 0', border: 'none', background: 'transparent', cursor: 'pointer', textAlign: 'left' }}>
+                            <span style={{ width: 8, height: 8, flexShrink: 0, borderRadius: '50%', background: item.color, boxShadow: `0 0 0 3px ${item.color}18` }} />
+                            <span style={{ minWidth: 0, flex: 1 }}>
+                              <span style={{ display: 'flex', alignItems: 'center', gap: '0.38rem', minWidth: 0 }}>
+                                <span style={{ color: '#edeae2', fontSize: '0.78rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.title}</span>
+                                <span style={{ flexShrink: 0, color: item.color, border: `1px solid ${item.color}44`, padding: '0.08rem 0.3rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.4rem', letterSpacing: '0.05em', textTransform: 'uppercase' }}>{item.label}</span>
+                              </span>
+                              <span style={{ display: 'block', marginTop: '0.14rem', color: '#7a7770', fontSize: '0.66rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.detail}</span>
+                            </span>
+                            {item.count > 0 && <span style={{ minWidth: 19, height: 19, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 0.25rem', borderRadius: '999px', background: '#c8923a', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem', fontWeight: 700 }}>{item.count}</span>}
+                            <span style={{ color: item.color, flexShrink: 0, fontSize: '0.7rem' }}>→</span>
+                          </button>
+                          {item.kind === 'signal' && (
+                            <button disabled={signalUpdating} onClick={() => handleTrainingSignal(item.signal, 'acknowledge')}
+                              style={{ ...s.btnGhost, minHeight: 34, padding: '0.25rem 0.45rem', fontSize: '0.43rem', opacity: signalUpdating ? 0.45 : 0.8, flexShrink: 0 }}>{signalUpdating ? '…' : 'Set'}</button>
+                          )}
+                        </div>
+                      )
+                    })}
+                    {priorityItems.length > priorityPreview.length && (
+                      <button onClick={() => { setView('inbox'); setSelectedAthlete(null) }} style={{ width: '100%', minHeight: 38, padding: '0.4rem 0 0.2rem', border: 'none', background: 'transparent', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.05em', cursor: 'pointer', textAlign: 'left' }}>
+                        + {priorityItems.length - priorityPreview.length} flere i indbakken
+                      </button>
+                    )}
+                  </div>
+                )}
+
+                {!priorityPreview.length && (trainingSignalsError || videoReviewQueueError) && (
+                  <button onClick={() => { setView('inbox'); setSelectedAthlete(null) }} style={{ width: '100%', minHeight: 44, padding: '0.55rem 0.85rem', border: 'none', borderTop: '1px solid rgba(224,85,85,0.14)', background: 'rgba(224,85,85,0.025)', color: '#d79a83', fontSize: '0.64rem', cursor: 'pointer', textAlign: 'left' }}>
+                    Noget kunne ikke indlæses · åbn indbakken for detaljer
+                  </button>
+                )}
               </div>
 
               <div style={{ ...s.card, marginBottom: 0, padding: isMobile ? '0.8rem 0.9rem' : '1rem 1.2rem' }}>
