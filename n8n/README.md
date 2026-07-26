@@ -10,6 +10,8 @@ The file has been import-tested against n8n Community Edition 2.31.6.
 
 It includes:
 
+- a fail-closed contract check for the RPC schema version, timestamp, coach
+  identity and required arrays before any prioritization or email logic runs;
 - unread athlete-message counts that are at least 6 hours old, grouped by athlete
   and conversation track;
 - pending VideoCoach drafts at least 24 hours old (metadata only, never video files);
@@ -73,6 +75,10 @@ returned by the database function or passed through n8n.
 
 - No fallback-worthy items: `Keep unresolved backup items` returns no items, so
   the mail server is not called.
+- Malformed or mismatched RPC response: `Validate briefing contract` throws a
+  metadata-only error without response values, so the shared error monitor can
+  report the failed node instead of the workflow silently treating bad data as an
+  empty inbox.
 - Already delivered today: `Skip if sent today` returns no items.
 - Mail delivery failure: delivery state is not updated, so the briefing can retry later.
 - Supabase failure: the workflow fails before email and appears in n8n's
