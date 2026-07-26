@@ -9,8 +9,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -760,
-        180
+        -820,
+        100
       ]
     },
     {
@@ -29,8 +29,8 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        -760,
-        -20
+        -820,
+        -100
       ],
       "notesInFlow": true,
       "notes": "Checks hourly from 12:00 through 21:00 Europe/Copenhagen. Sends at most one briefing per calendar day."
@@ -44,8 +44,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -500,
-        80
+        -560,
+        0
       ],
       "notesInFlow": true,
       "notes": "Non-secret values only. Keep the Supabase service-role key in an n8n Supabase credential, never in this node."
@@ -78,8 +78,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -240,
-        80
+        -300,
+        0
       ],
       "notesInFlow": true,
       "notes": "After import, select an n8n Supabase credential containing the project URL and service-role secret."
@@ -93,8 +93,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        280,
-        80
+        360,
+        0
       ],
       "notesInFlow": true,
       "notes": "Builds a compact Danish email from metadata only. Returns zero items when the inbox is empty."
@@ -108,8 +108,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        800,
-        80
+        880,
+        0
       ],
       "notesInFlow": true,
       "notes": "Stops later checks after one successful briefing has been delivered on the same Copenhagen calendar day."
@@ -130,8 +130,8 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
-        1060,
-        80
+        1320,
+        0
       ],
       "notesInFlow": true,
       "notes": "Uses the coach@entropicoaching.dk mailbox through an n8n SMTP credential."
@@ -145,8 +145,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1320,
-        80
+        1580,
+        0
       ],
       "notesInFlow": true,
       "notes": "Stores the successful delivery date, timestamp and digest hash. No message content is persisted in workflow state."
@@ -160,8 +160,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        20,
-        80
+        100,
+        0
       ],
       "notesInFlow": true,
       "notes": "The app is primary. Email only retains alert signals, unread messages at least 6 hours old, and video drafts at least 24 hours old."
@@ -175,11 +175,75 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        540,
-        80
+        620,
+        0
       ],
       "notesInFlow": true,
       "notes": "Makes it explicit that email is a safety net for an unresolved app item, not a daily briefing."
+    },
+    {
+      "parameters": {
+        "content": "## 1 · INDSAMLING\nStarter manuelt eller hver time kl. 12–21. Henter kun briefing-metadata fra Supabase — aldrig videoer eller beskedindhold.",
+        "height": 440,
+        "width": 900,
+        "color": 5
+      },
+      "id": "e79085d5-9c12-4f49-a001-428c745b8801",
+      "name": "Stage 1 - Indsamling",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -960,
+        -260
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 2 · PRIORITERING\nBeholder kun det, der stadig kræver handling: alerts straks, ulæste beskeder efter 6 timer og video-udkast efter 24 timer. Et tomt resultat stopper her.",
+        "height": 440,
+        "width": 1080,
+        "color": 6
+      },
+      "id": "ba092972-0ad0-4478-a302-47116d19a9be",
+      "name": "Stage 2 - Prioritering",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -20,
+        -260
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 3 · LEVERING\nSender højst én sikkerhedsmail pr. dag og registrerer først leveringen, når SMTP har accepteret mailen.",
+        "height": 440,
+        "width": 660,
+        "color": 4
+      },
+      "id": "c2db4364-a244-4027-932f-ef01a2183e8d",
+      "name": "Stage 3 - Levering",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1160,
+        -260
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## SIKKERHEDSNET\nProduktionsfejl sendes til **Entropi – Automation Error Monitor v1** via workflow-indstillingen. Fejlmonitoren viser kun workflow, node og execution-ID og begrænser gentagelser til én mail hver 6. time.",
+        "height": 260,
+        "width": 660,
+        "color": 7
+      },
+      "id": "9131eaca-81ae-497a-a416-868551b0539d",
+      "name": "Linked error monitor",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1160,
+        240
+      ]
     }
   ],
   "connections": {
@@ -292,6 +356,6 @@
     "saveDataSuccessExecution": "all",
     "errorWorkflow": "c2c8a96a-8fd1-4f3a-9b28-36b09c729c4e"
   },
-  "versionId": "31b06a83-fd9a-4868-b706-ae8a703c2c3c",
+  "versionId": "50c89ad0-c8b6-44c8-88c8-57da4319d1bd",
   "tags": []
 }
