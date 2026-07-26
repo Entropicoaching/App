@@ -19,6 +19,8 @@ It includes:
 - duplicate suppression based on the last successfully delivered briefing.
 - an explicit test-delivery gate: manual/editor runs can render the fallback
   email for inspection but can never reach the SMTP node.
+- a clearly synthetic `Eksempelatlet` item when a manual/editor preview has no
+  real fallback-worthy items; production remains empty and sends nothing.
 
 Context-level signals and newly received messages/videos stay in the app and do
 not trigger email. Missing or invalid timestamps fail safe into the fallback email
@@ -85,6 +87,9 @@ returned by the database function or passed through n8n.
 - Already delivered today: `Skip if sent today` returns no items.
 - Manual/editor execution: daily suppression is bypassed for preview, then
   `Block test delivery` returns no items before SMTP. No email is sent.
+- Empty manual/editor preview: `Keep unresolved backup items` inserts one
+  synthetic `Eksempelatlet` message so the email layout can be inspected. The
+  synthetic item exists only inside that test execution.
 - Mail delivery failure: delivery state is not updated, so the briefing can retry later.
 - Supabase failure: the workflow fails before email and appears in n8n's
   execution log.

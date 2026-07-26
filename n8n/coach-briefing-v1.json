@@ -183,7 +183,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const data = $input.first().json;\nconst now = Date.now();\nconst messageAgeMs = 6 * 60 * 60 * 1000;\nconst videoAgeMs = 24 * 60 * 60 * 1000;\n\nconst isOlderThan = (value, ageMs) => {\n  if (!value) return true;\n  const timestamp = new Date(value).getTime();\n  return !Number.isFinite(timestamp) || now - timestamp >= ageMs;\n};\n\nconst messages = (Array.isArray(data.unread_messages) ? data.unread_messages : [])\n  .filter(item => isOlderThan(item.latest_at, messageAgeMs));\nconst videos = (Array.isArray(data.video_drafts) ? data.video_drafts : [])\n  .filter(item => isOlderThan(item.created_at, videoAgeMs));\nconst signals = (Array.isArray(data.training_signals) ? data.training_signals : [])\n  .filter(item => item.severity === 'alert');\n\n// The app is the primary inbox. Email is only a safety net when an\n// important or old item is still unresolved.\nif (messages.length === 0 && videos.length === 0 && signals.length === 0) return [];\n\nreturn [{\n  json: {\n    ...data,\n    unread_messages: messages,\n    video_drafts: videos,\n    training_signals: signals,\n    fallback_policy: {\n      message_age_hours: 6,\n      video_age_hours: 24,\n      signal_severity: 'alert'\n    }\n  }\n}];"
+        "jsCode": "const data = $input.first().json;\nconst now = Date.now();\nconst messageAgeMs = 6 * 60 * 60 * 1000;\nconst videoAgeMs = 24 * 60 * 60 * 1000;\n\nconst isOlderThan = (value, ageMs) => {\n  if (!value) return true;\n  const timestamp = new Date(value).getTime();\n  return !Number.isFinite(timestamp) || now - timestamp >= ageMs;\n};\n\nconst messages = (Array.isArray(data.unread_messages) ? data.unread_messages : [])\n  .filter(item => isOlderThan(item.latest_at, messageAgeMs));\nconst videos = (Array.isArray(data.video_drafts) ? data.video_drafts : [])\n  .filter(item => isOlderThan(item.created_at, videoAgeMs));\nconst signals = (Array.isArray(data.training_signals) ? data.training_signals : [])\n  .filter(item => item.severity === 'alert');\nconst isEmpty = messages.length === 0 && videos.length === 0 && signals.length === 0;\nconst isTest = $execution.mode === 'test';\n\n// Production stays silent when nothing requires fallback. A manual/editor run\n// gets one clearly synthetic item so the full email can always be inspected.\nif (isEmpty && !isTest) return [];\nconst previewMessages = isEmpty ? [{\n  athlete_id: 'preview-only',\n  athlete_name: 'Eksempelatlet',\n  track: 'besked',\n  unread_count: 1,\n  latest_at: new Date(now - messageAgeMs).toISOString()\n}] : messages;\n\nreturn [{\n  json: {\n    ...data,\n    unread_messages: previewMessages,\n    video_drafts: videos,\n    training_signals: signals,\n    preview_only: isEmpty && isTest,\n    fallback_policy: {\n      message_age_hours: 6,\n      video_age_hours: 24,\n      signal_severity: 'alert'\n    }\n  }\n}];"
       },
       "id": "76e9421e-79ad-4aa2-b832-c7ec7835b8d9",
       "name": "Keep unresolved backup items",
@@ -194,7 +194,7 @@
         0
       ],
       "notesInFlow": true,
-      "notes": "The app is primary. Email only retains alert signals, unread messages at least 6 hours old, and video drafts at least 24 hours old."
+      "notes": "Production keeps only unresolved fallback items. An empty manual/editor run receives one synthetic Eksempelatlet item for preview; it is blocked before SMTP."
     },
     {
       "parameters": {
@@ -408,6 +408,6 @@
     "saveDataSuccessExecution": "all",
     "errorWorkflow": "c2c8a96a-8fd1-4f3a-9b28-36b09c729c4e"
   },
-  "versionId": "09ebd157-9f03-4566-8a29-a72783d344f1",
+  "versionId": "5db3af97-22c6-405a-a7e1-c47f108370c4",
   "tags": []
 }
