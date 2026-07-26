@@ -289,7 +289,8 @@
     "executionOrder": "v1",
     "timezone": "Europe/Copenhagen",
     "saveDataErrorExecution": "all",
-    "saveDataSuccessExecution": "all"
+    "saveDataSuccessExecution": "all",
+    "errorWorkflow": "c2c8a96a-8fd1-4f3a-9b28-36b09c729c4e"
   },
   "versionId": "31b06a83-fd9a-4868-b706-ae8a703c2c3c",
   "tags": []

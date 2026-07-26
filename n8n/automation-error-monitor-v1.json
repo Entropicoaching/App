@@ -1,0 +1,117 @@
+{
+  "id": "c2c8a96a-8fd1-4f3a-9b28-36b09c729c4e",
+  "name": "Entropi - Automation Error Monitor v1",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "2c23bd40-e40d-44d2-858f-a23a9caf879d",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -360,
+        80
+      ],
+      "notesInFlow": true,
+      "notes": "Runs only for production workflow failures linked through settings.errorWorkflow. Manual tests do not trigger it."
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json || {};\nconst workflow = data.workflow || {};\nconst execution = data.execution || {};\nconst workflowId = String(workflow.id || 'unknown').slice(0, 100);\nconst workflowName = String(workflow.name || 'Ukendt workflow').slice(0, 120);\nconst executionId = String(execution.id || '').slice(0, 100);\nconst failedNode = String(execution.lastNodeExecuted || 'Ukendt node').slice(0, 120);\nconst mode = String(execution.mode || data.trigger?.mode || 'production').slice(0, 40);\nconst now = Date.now();\nconst cooldownMs = 6 * 60 * 60 * 1000;\nconst state = $getWorkflowStaticData('global');\nconst lastSent = Number(state.lastNotifiedAtByWorkflow?.[workflowId] || 0);\n\n// One alert per failing workflow every six hours. The timestamp is written only\n// after SMTP succeeds, so a mail failure never suppresses the next attempt.\nif (lastSent && now - lastSent < cooldownMs) return [];\n\nconst esc = value => String(value ?? '')\n  .replaceAll('&', '&amp;')\n  .replaceAll('<', '&lt;')\n  .replaceAll('>', '&gt;')\n  .replaceAll('\\\"', '&quot;')\n  .replaceAll(\"'\", '&#039;');\nconst localRoot = 'http://127.0.0.1:5678';\nconst suppliedUrl = String(execution.url || '');\nconst safeUrl = suppliedUrl.startsWith(`${localRoot}/`)\n  ? suppliedUrl\n  : `${localRoot}/home/executions`;\nconst occurredAt = new Intl.DateTimeFormat('da-DK', {\n  dateStyle: 'short', timeStyle: 'short', timeZone: 'Europe/Copenhagen'\n}).format(new Date());\nconst subject = `Entropi n8n · ${workflowName} kræver et kig`;\nconst html = `<div style=\"background:#141410;padding:28px 18px;font-family:Arial,sans-serif\"><div style=\"max-width:620px;margin:auto;background:#1c1c18;border:1px solid #34342e;padding:24px\"><div style=\"font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:#d79a83;margin-bottom:8px\">Entropi Automation</div><h1 style=\"font-size:23px;line-height:1.2;color:#edeae2;margin:0 0 8px\">En automation stoppede</h1><p style=\"color:#aaa79f;margin:0 0 20px;line-height:1.5\">Åbn n8n og gennemgå execution-loggen. Mailen indeholder bevidst ingen rå fejltekst, payloads eller atletdata.</p><div style=\"padding:10px 0;border-top:1px solid #34342e;color:#edeae2\"><strong>${esc(workflowName)}</strong><div style=\"font-size:13px;line-height:1.6;color:#aaa79f;margin-top:4px\">Node: ${esc(failedNode)} · Kørsel: ${esc(executionId || 'ukendt')} · Mode: ${esc(mode)} · ${esc(occurredAt)}</div></div><a href=\"${esc(safeUrl)}\" style=\"display:inline-block;margin-top:18px;background:#c8923a;color:#141410;text-decoration:none;font-weight:700;padding:11px 16px;border-radius:3px\">Åbn execution-loggen</a><p style=\"font-size:11px;color:#68665f;margin:22px 0 0\">Automatisk fejlmonitor · højst én mail pr. workflow hver 6. time</p></div></div>`;\n\nreturn [{ json: {\n  recipient: 'coach@entropicoaching.dk',\n  subject,\n  html,\n  workflowId,\n  executionId,\n  notifiedAt: now\n} }];"
+      },
+      "id": "dbb36c07-6033-46a2-8f83-0128bb010a1f",
+      "name": "Build safe error alert",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -100,
+        80
+      ],
+      "notesInFlow": true,
+      "notes": "Builds a metadata-only alert and suppresses repeats for six hours. Raw errors, stacks and execution payloads are excluded."
+    },
+    {
+      "parameters": {
+        "fromEmail": "Entropi n8n <coach@entropicoaching.dk>",
+        "toEmail": "={{ $json.recipient }}",
+        "subject": "={{ $json.subject }}",
+        "emailFormat": "html",
+        "html": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "0f67d711-c7d6-4b0e-8fb1-cf1289c554aa",
+      "name": "Send error alert",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        160,
+        80
+      ],
+      "notesInFlow": true,
+      "notes": "Bind the existing coach SMTP credential. No raw error data is transmitted."
+    },
+    {
+      "parameters": {
+        "jsCode": "const alert = $('Build safe error alert').first().json;\nconst state = $getWorkflowStaticData('global');\nstate.lastNotifiedAtByWorkflow = state.lastNotifiedAtByWorkflow || {};\nstate.lastNotifiedAtByWorkflow[alert.workflowId] = alert.notifiedAt;\nreturn [{ json: {\n  recorded: true,\n  workflowId: alert.workflowId,\n  executionId: alert.executionId,\n  notifiedAt: alert.notifiedAt\n} }];"
+      },
+      "id": "8dcf823b-4790-4ae4-94df-4feaf1efeef9",
+      "name": "Record successful alert",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        420,
+        80
+      ],
+      "notesInFlow": true,
+      "notes": "Writes the cooldown timestamp only after SMTP succeeds."
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Build safe error alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build safe error alert": {
+      "main": [
+        [
+          {
+            "node": "Send error alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send error alert": {
+      "main": [
+        [
+          {
+            "node": "Record successful alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Copenhagen",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "7767d06e-7c0d-478e-b334-3bd4c778f5df",
+  "tags": []
+}

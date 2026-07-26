@@ -23,6 +23,28 @@ instead of silently hiding an unresolved item.
 The subject, heading and footer explicitly describe the message as an automatic
 safety net for an unresolved app item rather than a daily or morning briefing.
 
+## Automation Error Monitor v1
+
+`automation-error-monitor-v1.json` is a shared Error Trigger workflow for
+production failures. `Coach Briefing v1` references it through
+`settings.errorWorkflow`.
+
+The alert contains only the workflow name, failed node, execution id, execution
+mode, time and a loopback-only n8n execution link. Raw error messages, stack
+traces, payloads, athlete data and credentials are deliberately excluded.
+Repeated failures from the same workflow are limited to one email every six
+hours. The cooldown is recorded only after SMTP succeeds.
+
+Deployment order matters:
+
+1. Import the error monitor and bind the existing coach SMTP credential.
+2. Publish the error monitor.
+3. Import and publish the coach briefing with its `errorWorkflow` setting.
+4. Restart n8n and verify both published versions plus the briefing link.
+
+Error workflows run for production failures only. Manual/test executions do not
+trigger the monitor, which prevents an accidental test email during validation.
+
 Message bodies, coach notes, video files and storage URLs are deliberately not
 returned by the database function or passed through n8n.
 
