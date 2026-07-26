@@ -479,6 +479,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [messages, setMessages] = useState([])
   const [messageInput, setMessageInput] = useState('')
   const [coachMsgTrack, setCoachMsgTrack] = useState('besked')  // 'teknik' | 'besked'
+  const [unreadByTrack, setUnreadByTrack] = useState({})
+  const [latestByTrack, setLatestByTrack] = useState({})
   const [unreadCounts, setUnreadCounts] = useState({})
   const [profilesLastSeen, setProfilesLastSeen] = useState({})
 
@@ -509,10 +511,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   // null = skjult, {loading} = henter, {data} = preview klar, {error} = fejl.
   const [weekDraft, setWeekDraft] = useState(null)
   const [sendingDraft, setSendingDraft] = useState(false)
-  // Mobil "I dag"-forside + samlet indbakke: dagens aktivitet på tværs af atleter
-  // og seneste besked pr. atlet. Hentes én gang ved load og ved view-skift.
-  const [todayData, setTodayData] = useState({ logs: [], readiness: [], prs: [] })
-  const [inboxThreads, setInboxThreads] = useState({})
+  // Dagens træningslogs bruges til de små aktivitetsmarkeringer i navigationen.
+  const [todayData, setTodayData] = useState({ logs: [] })
   const [videoReviewQueue, setVideoReviewQueue] = useState([])
   const [videoReviewQueueError, setVideoReviewQueueError] = useState(null)
   const [trainingSignals, setTrainingSignals] = useState([])
@@ -843,9 +843,12 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   // Mobil-forside og indbakke: genindlæs dagens feed når man lander på dem.
   useEffect(() => {
     if (view === 'list' || view === 'inbox') {
-      fetchTodayAndInbox()
+      fetchTodayActivity()
       fetchVideoReviewQueue()
       fetchTrainingSignals()
+      if (videoCoachAthletesRef.current.length) {
+        fetchLatestMessages(videoCoachAthletesRef.current.map(athlete => athlete.id))
+      }
     }
   }, [view])
 
@@ -1081,26 +1084,15 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     }
   }
 
-  // Dagens aktivitet (logs/readiness/PR) på tværs af atleter + seneste besked
-  // pr. atlet — driver mobil-forsidens feed, atlet-chips og indbakken.
-  async function fetchTodayAndInbox() {
+  // Kun dagens træningslogs. Beskedindbakken drives af fetchLatestMessages,
+  // så vi ikke henter de samme beskeder gennem to parallelle dataveje.
+  async function fetchTodayActivity() {
     const todayStr = new Date().toISOString().slice(0, 10)
-    const [logsQ, readyQ, prsQ, msgQ] = await Promise.all([
-      supabase.from('exercise_logs')
-        .select('athlete_id, rpe_actual, skipped, logged_at, exercises(name, sessions(id, title, athlete_rating, athlete_comment))')
-        .gte('logged_at', todayStr).limit(2000),
-      supabase.from('readiness_logs')
-        .select('athlete_id, readiness_score, sleep_hours, sore_zones').eq('logged_date', todayStr),
-      supabase.from('personal_records')
-        .select('athlete_id, exercise_name, weight, reps, logged_at').gte('logged_at', todayStr),
-      supabase.from('messages')
-        .select('athlete_id, content, created_at, sender_role, read_at')
-        .order('created_at', { ascending: false }).limit(300),
-    ])
-    setTodayData({ logs: logsQ.data || [], readiness: readyQ.data || [], prs: prsQ.data || [] })
-    const threads = {}
-    for (const m of msgQ.data || []) if (!threads[m.athlete_id]) threads[m.athlete_id] = m
-    setInboxThreads(threads)
+    const { data } = await supabase.from('exercise_logs')
+      .select('athlete_id, logged_at')
+      .gte('logged_at', todayStr)
+      .limit(2000)
+    setTodayData({ logs: data || [] })
   }
 
   // Coachens samlede VideoCoach-indbakke. Kun kladder hentes, og listen
@@ -1571,25 +1563,30 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   async function fetchLatestMessages(athleteIds) {
     const { data } = await supabase.from('messages').select('*').in('athlete_id', athleteIds).order('created_at', { ascending: false })
     const unread = {}
+    const unreadTrack = {}
+    const latestTrack = {}
     for (const msg of (data || [])) {
+      const track = (msg.category || 'besked') === 'teknik' ? 'teknik' : 'besked'
+      const latest = (latestTrack[msg.athlete_id] ??= {})
+      if (!latest[track]) latest[track] = msg
       if (msg.sender_role === 'athlete' && !msg.read_by_coach) {
         unread[msg.athlete_id] = (unread[msg.athlete_id] || 0) + 1
+        const byTrack = (unreadTrack[msg.athlete_id] ??= { teknik: 0, besked: 0 })
+        byTrack[track]++
       }
     }
     setUnreadCounts(unread)
+    setUnreadByTrack(unreadTrack)
+    setLatestByTrack(latestTrack)
   }
 
   async function markMessagesRead(athleteId, track) {
     // Markér kun det aktive spor som læst, så det andet spors ulæst-tæller består.
     await supabase.from('messages').update({ read_by_coach: true })
       .eq('athlete_id', athleteId).eq('sender_role', 'athlete').eq('category', track).eq('read_by_coach', false)
-    setUnreadCounts(prev => {
-      const remaining = messages.filter(m => m.sender_role === 'athlete' && !m.read_by_coach
-        && (m.category || 'besked') !== track).length
-      const n = { ...prev }
-      if (remaining > 0) n[athleteId] = remaining; else delete n[athleteId]
-      return n
-    })
+    setMessages(prev => prev.map(message => message.sender_role === 'athlete' &&
+      (message.category || 'besked') === track ? { ...message, read_by_coach: true } : message))
+    await fetchLatestMessages(athletes.map(athlete => athlete.id))
   }
 
   async function fetchMessages(athleteId) {
@@ -3160,42 +3157,56 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               </div>
             )}
             {(() => {
-              const visible = athletes.filter(a2 => !hiddenAthleteIds.has(a2.id))
-              const rows = visible
-                .map(a2 => ({ a: a2, last: inboxThreads[a2.id] || null, unread: unreadCounts[a2.id] || 0 }))
+              const visible = athletes.filter(athlete => !hiddenAthleteIds.has(athlete.id))
+              const rows = visible.flatMap(athlete => ['teknik', 'besked'].map(track => ({
+                athlete,
+                track,
+                last: latestByTrack[athlete.id]?.[track] || null,
+                unread: unreadByTrack[athlete.id]?.[track] || 0,
+              }))).filter(row => row.last)
                 .sort((x, y) => {
                   if ((x.unread > 0) !== (y.unread > 0)) return x.unread > 0 ? -1 : 1
                   return (y.last?.created_at || '').localeCompare(x.last?.created_at || '')
                 })
               const fmtT = ts => {
-                if (!ts) return ''
-                const d = new Date(ts); const now = new Date()
-                const sameDay = d.toDateString() === now.toDateString()
-                return sameDay ? d.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' })
-                  : d.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })
+                const date = new Date(ts); const now = new Date()
+                return date.toDateString() === now.toDateString()
+                  ? date.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' })
+                  : date.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })
               }
               return (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  {rows.map(r => (
-                    <div key={r.a.id} onClick={() => openProfile(r.a, 'beskeder')}
-                      style={{ ...s.card, marginBottom: 0, padding: '0.75rem 0.9rem', cursor: 'pointer', ...(r.unread > 0 ? { borderColor: 'rgba(200,146,58,0.35)' } : {}) }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <div style={{ ...s.avatar, width: 40, height: 40, fontSize: '0.85rem', flexShrink: 0 }}>{initials(r.a.name)}</div>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.5rem' }}>
-                            <span style={{ fontSize: '0.9rem', color: '#edeae2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.a.name}</span>
-                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', flexShrink: 0 }}>{fmtT(r.last?.created_at)}</span>
-                          </div>
-                          <div style={{ fontSize: '0.75rem', color: r.unread > 0 ? '#b8b4a8' : '#7a7770', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: '0.15rem' }}>
-                            {r.last ? `${r.last.sender_role === 'coach' ? 'Dig: ' : ''}${r.last.content}` : <span style={{ fontStyle: 'italic', color: '#4a4844' }}>Ingen beskeder endnu</span>}
-                          </div>
-                        </div>
-                        {r.unread > 0 && (
-                          <span style={{ background: '#c8923a', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', fontWeight: 700, borderRadius: '999px', padding: '0.15rem 0.4rem', flexShrink: 0 }}>{r.unread}</span>
-                        )}
-                      </div>
+                <div style={{ ...s.card, marginBottom: 0, padding: '0.85rem 0.9rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem', marginBottom: rows.length ? '0.45rem' : 0 }}>
+                    <div style={s.cardLabel}>Beskeder</div>
+                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#4a4844' }}>{rows.filter(row => row.unread > 0).length} ulæste spor</span>
+                  </div>
+                  {rows.length === 0 ? (
+                    <div style={{ color: '#4a4844', fontSize: '0.7rem', padding: '0.45rem 0' }}>Ingen samtaler endnu. Start en besked fra atletens profil.</div>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      {rows.map((row, index) => {
+                        const technique = row.track === 'teknik'
+                        const trackColor = technique ? '#67dff5' : '#7a7770'
+                        return (
+                          <button key={`${row.athlete.id}-${row.track}`} onClick={() => { setCoachMsgTrack(row.track); openProfile(row.athlete, 'beskeder') }}
+                            style={{ display: 'flex', alignItems: 'center', gap: '0.7rem', width: '100%', minHeight: 58, padding: '0.55rem 0', border: 'none', borderBottom: index < rows.length - 1 ? '1px solid rgba(237,234,226,0.055)' : 'none', background: 'transparent', cursor: 'pointer', textAlign: 'left' }}>
+                            <span style={{ ...s.avatar, width: 36, height: 36, fontSize: '0.75rem', flexShrink: 0, borderColor: row.unread > 0 ? 'rgba(200,146,58,0.5)' : 'rgba(237,234,226,0.13)' }}>{initials(row.athlete.name)}</span>
+                            <span style={{ flex: 1, minWidth: 0 }}>
+                              <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', minWidth: 0 }}>
+                                <span style={{ fontSize: '0.84rem', color: '#edeae2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.athlete.name}</span>
+                                <span style={{ color: trackColor, border: `1px solid ${trackColor}44`, padding: '0.08rem 0.3rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.4rem', letterSpacing: '0.05em', textTransform: 'uppercase', flexShrink: 0 }}>{technique ? 'Teknik & løft' : 'Besked'}</span>
+                              </span>
+                              <span style={{ display: 'block', marginTop: '0.16rem', color: row.unread > 0 ? '#b8b4a8' : '#7a7770', fontSize: '0.7rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.last.sender_role === 'coach' ? 'Dig: ' : ''}{row.last.content}</span>
+                            </span>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexShrink: 0 }}>
+                              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#4a4844' }}>{fmtT(row.last.created_at)}</span>
+                              {row.unread > 0 && <span style={{ minWidth: 19, height: 19, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 0.28rem', borderRadius: '999px', background: '#c8923a', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', fontWeight: 700 }}>{row.unread}</span>}
+                            </span>
+                          </button>
+                        )
+                      })}
                     </div>
-                  ))}
+                  )}
                 </div>
               )
             })()}
