@@ -215,6 +215,24 @@ function videoCoachVariationLabel(lift, variation) {
   return variation.replaceAll('_', ' ')
 }
 
+function stableSignalValue(value) {
+  if (Array.isArray(value)) return value.map(stableSignalValue)
+  if (value && typeof value === 'object') {
+    return Object.keys(value).sort().reduce((result, key) => {
+      result[key] = stableSignalValue(value[key])
+      return result
+    }, {})
+  }
+  return value
+}
+
+function trainingSignalFingerprint(signal) {
+  return JSON.stringify(stableSignalValue({
+    severity: signal.o_severity,
+    metrics: signal.o_metrics || {},
+  }))
+}
+
 // Sektioner vist som kort på atlet-hubben (coach-landingsside). Rækkefølgen
 // matcher fane-bar'en; ikonet er en kompakt 24×24 stroke-SVG.
 const ic = (d) => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">{d}</svg>
@@ -517,6 +535,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [videoReviewQueueError, setVideoReviewQueueError] = useState(null)
   const [trainingSignals, setTrainingSignals] = useState([])
   const [trainingSignalsError, setTrainingSignalsError] = useState(null)
+  const [trainingSignalUpdatingKey, setTrainingSignalUpdatingKey] = useState(null)
   const [videoReviewRequest, setVideoReviewRequest] = useState(null)
   const videoReviewOpenedRef = useRef(null)
   const [menuSheetOpen, setMenuSheetOpen] = useState(false)
@@ -1115,17 +1134,61 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   // der har nok datagrundlag og fortjener et kig; "ok" og "insufficient" støjer ikke.
   async function fetchTrainingSignals() {
     setTrainingSignalsError(null)
-    const { data, error } = await supabase.rpc('entropi_training_signals_v1')
-    if (error) {
+    const [signalsResult, actionsResult] = await Promise.all([
+      supabase.rpc('entropi_training_signals_v1'),
+      supabase.from('coach_signal_actions')
+        .select('athlete_id,detector,signal_fingerprint,snoozed_until'),
+    ])
+    if (signalsResult.error) {
       setTrainingSignals([])
-      setTrainingSignalsError(error.message || 'Træningssignaler kunne ikke hentes')
+      setTrainingSignalsError(signalsResult.error.message || 'Træningssignaler kunne ikke hentes')
       return
     }
     const rank = { alert: 0, context: 1 }
-    setTrainingSignals((data || [])
+    const candidates = (signalsResult.data || [])
       .filter(item => item?.o_athlete_id && (item.o_severity === 'alert' || item.o_severity === 'context'))
       .sort((a, b) => (rank[a.o_severity] - rank[b.o_severity]) ||
-        (a.o_athlete_name || '').localeCompare(b.o_athlete_name || '')))
+        (a.o_athlete_name || '').localeCompare(b.o_athlete_name || ''))
+    if (actionsResult.error) {
+      setTrainingSignals(candidates)
+      setTrainingSignalsError(actionsResult.error.message || 'Signalhandlinger kunne ikke hentes')
+      return
+    }
+    const actions = new Map((actionsResult.data || []).map(action =>
+      [`${action.athlete_id}:${action.detector}`, action]))
+    const now = Date.now()
+    setTrainingSignals(candidates.filter(signal => {
+      const action = actions.get(`${signal.o_athlete_id}:${signal.o_detector}`)
+      if (!action) return true
+      if (action.snoozed_until && new Date(action.snoozed_until).getTime() > now) return false
+      return action.signal_fingerprint !== trainingSignalFingerprint(signal)
+    }))
+  }
+
+  async function handleTrainingSignal(signal, mode) {
+    const key = `${signal.o_athlete_id}:${signal.o_detector}`
+    setTrainingSignalUpdatingKey(key)
+    const now = new Date()
+    const snoozedUntil = mode === 'snooze'
+      ? new Date(now.getTime() + 7 * 86400000).toISOString()
+      : null
+    const { error } = await supabase.from('coach_signal_actions').upsert({
+      coach_id: session.user.id,
+      athlete_id: signal.o_athlete_id,
+      detector: signal.o_detector,
+      signal_fingerprint: mode === 'acknowledge' ? trainingSignalFingerprint(signal) : null,
+      acknowledged_at: mode === 'acknowledge' ? now.toISOString() : null,
+      snoozed_until: snoozedUntil,
+      updated_at: now.toISOString(),
+    }, { onConflict: 'coach_id,athlete_id,detector' })
+    setTrainingSignalUpdatingKey(null)
+    if (error) {
+      showFlash(error.message || 'Signalet kunne ikke opdateres', 'error')
+      return
+    }
+    setTrainingSignals(current => current.filter(item =>
+      item.o_athlete_id !== signal.o_athlete_id || item.o_detector !== signal.o_detector))
+    showFlash(mode === 'snooze' ? 'Udsat i 7 dage' : 'Markeret som set', 'success')
   }
 
   async function fetchWeeks(athleteId) {
@@ -3103,18 +3166,30 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                       const detectorLabel = item.o_detector === 'dropout' ? 'Træningsmængde'
                         : item.o_detector === 'stagnation' ? 'Udvikling'
                           : item.o_detector === 'rpe_drift' ? 'RPE' : 'Træning'
+                      const signalKey = `${item.o_athlete_id}:${item.o_detector}`
+                      const updating = trainingSignalUpdatingKey === signalKey
                       return (
-                        <button key={`${item.o_athlete_id}-${item.o_detector}-${index}`} onClick={() => openProfile(athlete, 'log')}
-                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', width: '100%', padding: '0.62rem 0.7rem', border: `1px solid ${alert ? 'rgba(224,85,85,0.22)' : 'rgba(200,146,58,0.16)'}`, background: '#171713', color: '#edeae2', cursor: 'pointer', textAlign: 'left' }}>
-                          <span style={{ minWidth: 0 }}>
-                            <span style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
-                              <span style={{ fontSize: '0.78rem' }}>{item.o_headline}</span>
-                              <span style={{ color: alert ? '#e05555' : '#c8923a', border: `1px solid ${alert ? 'rgba(224,85,85,0.35)' : 'rgba(200,146,58,0.3)'}`, padding: '0.1rem 0.35rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.42rem', letterSpacing: '0.06em', textTransform: 'uppercase' }}>{detectorLabel}</span>
+                        <div key={`${item.o_athlete_id}-${item.o_detector}-${index}`}
+                          style={{ padding: '0.62rem 0.7rem', border: `1px solid ${alert ? 'rgba(224,85,85,0.22)' : 'rgba(200,146,58,0.16)'}`, background: '#171713' }}>
+                          <div role="button" tabIndex={0} onClick={() => openProfile(athlete, 'log')}
+                            onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openProfile(athlete, 'log') } }}
+                            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', color: '#edeae2', cursor: 'pointer', textAlign: 'left' }}>
+                            <span style={{ minWidth: 0 }}>
+                              <span style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
+                                <span style={{ fontSize: '0.78rem' }}>{item.o_headline}</span>
+                                <span style={{ color: alert ? '#e05555' : '#c8923a', border: `1px solid ${alert ? 'rgba(224,85,85,0.35)' : 'rgba(200,146,58,0.3)'}`, padding: '0.1rem 0.35rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.42rem', letterSpacing: '0.06em', textTransform: 'uppercase' }}>{detectorLabel}</span>
+                              </span>
+                              <span style={{ display: 'block', marginTop: '0.2rem', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', lineHeight: 1.45 }}>{item.o_detail}</span>
                             </span>
-                            <span style={{ display: 'block', marginTop: '0.2rem', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', lineHeight: 1.45 }}>{item.o_detail}</span>
-                          </span>
-                          <span style={{ flexShrink: 0, color: alert ? '#e05555' : '#c8923a', fontSize: '0.7rem' }}>→</span>
-                        </button>
+                            <span style={{ flexShrink: 0, color: alert ? '#e05555' : '#c8923a', fontSize: '0.7rem' }}>→</span>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.4rem', marginTop: '0.55rem', paddingTop: '0.5rem', borderTop: '1px solid rgba(237,234,226,0.055)' }}>
+                            <button disabled={updating} onClick={() => handleTrainingSignal(item, 'snooze')}
+                              style={{ ...s.btnGhost, padding: '0.28rem 0.5rem', fontSize: '0.46rem', opacity: updating ? 0.5 : 0.85 }}>Udsæt 7 dage</button>
+                            <button disabled={updating} onClick={() => handleTrainingSignal(item, 'acknowledge')}
+                              style={{ ...s.btnPrimary, padding: '0.28rem 0.55rem', fontSize: '0.46rem', opacity: updating ? 0.5 : 1 }}>{updating ? 'Gemmer…' : 'Set'}</button>
+                          </div>
+                        </div>
                       )
                     })}
                   </div>
