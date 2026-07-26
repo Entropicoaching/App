@@ -116,7 +116,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const item = $input.first();\nconst state = $getWorkflowStaticData('global');\nif (state.lastDeliveredDate === item.json.briefingDate) return [];\nreturn [item];"
+        "jsCode": "const item = $input.first();\n\n// Manual executions are previews. Let them reach the explicit delivery gate so\n// the rendered email can be inspected even if today's fallback already ran.\nif ($execution.mode === 'test') return [item];\n\nconst state = $getWorkflowStaticData('global');\nif (state.lastDeliveredDate === item.json.briefingDate) return [];\nreturn [item];"
       },
       "id": "36b721cf-95b7-4bc8-9c9a-35213f5e56be",
       "name": "Skip if sent today",
@@ -127,7 +127,22 @@
         0
       ],
       "notesInFlow": true,
-      "notes": "Stops later checks after one successful briefing has been delivered on the same Copenhagen calendar day."
+      "notes": "Stops later production checks after one successful briefing on the same Copenhagen date. Manual previews continue to the delivery gate."
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\n\n// n8n exposes manual/editor runs as test and scheduled runs as production.\n// Test executions stop here so the preceding nodes remain inspectable while\n// SMTP can never be reached accidentally.\nif ($execution.mode === 'test') return [];\n\nreturn [item];"
+      },
+      "id": "9797cd0a-aeca-491f-8e34-2b5e1f05ba69",
+      "name": "Block test delivery",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        0
+      ],
+      "notesInFlow": true,
+      "notes": "Manual/editor executions stop here before SMTP. Only production executions can reach Send coach briefing."
     },
     {
       "parameters": {
@@ -145,7 +160,7 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
-        1480,
+        1700,
         0
       ],
       "notesInFlow": true,
@@ -160,7 +175,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1740,
+        1960,
         0
       ],
       "notesInFlow": true,
@@ -230,9 +245,9 @@
     },
     {
       "parameters": {
-        "content": "## 3 · LEVERING\nSender højst én sikkerhedsmail pr. dag og registrerer først leveringen, når SMTP har accepteret mailen.",
+        "content": "## 3 · LEVERING\nManuelle kørsler stopper sikkert før SMTP, så mail-previewet kan kontrolleres uden afsendelse. Produktion sender højst én sikkerhedsmail pr. dag og registrerer først leveringen, når SMTP har accepteret mailen.",
         "height": 440,
-        "width": 660,
+        "width": 920,
         "color": 4
       },
       "id": "c2db4364-a244-4027-932f-ef01a2183e8d",
@@ -248,7 +263,7 @@
       "parameters": {
         "content": "## SIKKERHEDSNET\nProduktionsfejl sendes til **Entropi – Automation Error Monitor v1** via workflow-indstillingen. Fejlmonitoren viser kun workflow, node og execution-ID og begrænser gentagelser til én mail hver 6. time.",
         "height": 260,
-        "width": 660,
+        "width": 920,
         "color": 7
       },
       "id": "9131eaca-81ae-497a-a416-868551b0539d",
@@ -365,6 +380,17 @@
       "main": [
         [
           {
+            "node": "Block test delivery",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Block test delivery": {
+      "main": [
+        [
+          {
             "node": "Send coach briefing",
             "type": "main",
             "index": 0
@@ -382,6 +408,6 @@
     "saveDataSuccessExecution": "all",
     "errorWorkflow": "c2c8a96a-8fd1-4f3a-9b28-36b09c729c4e"
   },
-  "versionId": "a704837f-5cbe-4994-930e-77054e8f894e",
+  "versionId": "09ebd157-9f03-4566-8a29-a72783d344f1",
   "tags": []
 }

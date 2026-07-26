@@ -17,6 +17,8 @@ It includes:
 - pending VideoCoach drafts at least 24 hours old (metadata only, never video files);
 - active `alert` training signals that are neither acknowledged nor snoozed;
 - duplicate suppression based on the last successfully delivered briefing.
+- an explicit test-delivery gate: manual/editor runs can render the fallback
+  email for inspection but can never reach the SMTP node.
 
 Context-level signals and newly received messages/videos stay in the app and do
 not trigger email. Missing or invalid timestamps fail safe into the fallback email
@@ -62,7 +64,8 @@ returned by the database function or passed through n8n.
    `coach@entropicoaching.dk` mailbox. Keep its password in n8n only.
 6. The project URL, verified coach profile id, recipient email and live app URL
    are already filled in.
-7. Run **Manual test** once and inspect every node's output before activating.
+7. Run **Manual test** once and inspect the output through **Frame fallback
+   email**. The workflow stops at **Block test delivery**, before SMTP.
 8. Confirm the email contains counts and metadata only, and that its button opens
    the live Entropi app.
 9. Activate the workflow only after the manual checks pass.
@@ -80,6 +83,8 @@ returned by the database function or passed through n8n.
   report the failed node instead of the workflow silently treating bad data as an
   empty inbox.
 - Already delivered today: `Skip if sent today` returns no items.
+- Manual/editor execution: daily suppression is bypassed for preview, then
+  `Block test delivery` returns no items before SMTP. No email is sent.
 - Mail delivery failure: delivery state is not updated, so the briefing can retry later.
 - Supabase failure: the workflow fails before email and appears in n8n's
   execution log.
