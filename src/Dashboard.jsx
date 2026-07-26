@@ -215,17 +215,6 @@ function videoCoachVariationLabel(lift, variation) {
   return variation.replaceAll('_', ' ')
 }
 
-// Ikoner til forsidens hændelses-feed (bruges på både mobil og desktop)
-const FEED_ICONS = {
-  alert: <><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></>,
-  msg: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />,
-  pr: <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />,
-  lift: <><line x1="6" y1="12" x2="18" y2="12" /><rect x="2.5" y="9" width="3.5" height="6" rx="1" /><rect x="18" y="9" width="3.5" height="6" rx="1" /></>,
-  cal: <><rect x="3" y="5" width="18" height="16" rx="2" /><line x1="3" y1="10" x2="21" y2="10" /></>,
-  info: <><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></>,
-  video: <><rect x="2" y="6" width="13" height="12" rx="2" /><path d="M15 10.5 22 7v10l-7-3.5" /></>,
-}
-
 // Sektioner vist som kort på atlet-hubben (coach-landingsside). Rækkefølgen
 // matcher fane-bar'en; ikonet er en kompakt 24×24 stroke-SVG.
 const ic = (d) => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">{d}</svg>
@@ -490,9 +479,6 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [messages, setMessages] = useState([])
   const [messageInput, setMessageInput] = useState('')
   const [coachMsgTrack, setCoachMsgTrack] = useState('besked')  // 'teknik' | 'besked'
-  const [unreadByTrack, setUnreadByTrack] = useState({})   // {aid: {teknik, besked}} — feed-opdeling
-  const [latestByTrack, setLatestByTrack] = useState({})   // {aid: {teknik: msg, besked: msg}} — preview pr. spor
-  const [latestMessages, setLatestMessages] = useState({})
   const [unreadCounts, setUnreadCounts] = useState({})
   const [profilesLastSeen, setProfilesLastSeen] = useState({})
 
@@ -529,7 +515,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [inboxThreads, setInboxThreads] = useState({})
   const [videoReviewQueue, setVideoReviewQueue] = useState([])
   const [videoReviewQueueError, setVideoReviewQueueError] = useState(null)
-  const [videoUnseenFeedback, setVideoUnseenFeedback] = useState([])  // delt >2 dage, ikke set af atlet
+  const [trainingSignals, setTrainingSignals] = useState([])
+  const [trainingSignalsError, setTrainingSignalsError] = useState(null)
   const [videoReviewRequest, setVideoReviewRequest] = useState(null)
   const videoReviewOpenedRef = useRef(null)
   const [menuSheetOpen, setMenuSheetOpen] = useState(false)
@@ -858,7 +845,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     if (view === 'list' || view === 'inbox') {
       fetchTodayAndInbox()
       fetchVideoReviewQueue()
-      fetchVideoUnseenFeedback()
+      fetchTrainingSignals()
     }
   }, [view])
 
@@ -1132,19 +1119,21 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     setVideoReviewQueue((data || []).filter(item => item?.id && item?.athlete_id && item.status === 'draft'))
   }
 
-  // Delt feedback som atleten IKKE har åbnet efter >2 dage. Tærskel = 2 dage:
-  // giver atleten et rimeligt vindue (træner/åbner ikke appen dagligt); under
-  // det ville støje, 2+ dage betyder at coachingen ikke er landet. Lavt rangeret.
-  async function fetchVideoUnseenFeedback() {
-    const cutoff = new Date(Date.now() - 2 * 86400000).toISOString()
-    const { data } = await supabase.from('video_analyses')
-      .select('id,athlete_id,lift,shared_at')
-      .eq('status', 'shared')
-      .is('athlete_seen_at', null)
-      .lt('shared_at', cutoff)
-      .order('shared_at', { ascending: true })
-      .limit(50)
-    setVideoUnseenFeedback(data || [])
+  // Forklarlige signaler fra den fælles SQL-motor. Indbakken viser kun forhold,
+  // der har nok datagrundlag og fortjener et kig; "ok" og "insufficient" støjer ikke.
+  async function fetchTrainingSignals() {
+    setTrainingSignalsError(null)
+    const { data, error } = await supabase.rpc('entropi_training_signals_v1')
+    if (error) {
+      setTrainingSignals([])
+      setTrainingSignalsError(error.message || 'Træningssignaler kunne ikke hentes')
+      return
+    }
+    const rank = { alert: 0, context: 1 }
+    setTrainingSignals((data || [])
+      .filter(item => item?.o_athlete_id && (item.o_severity === 'alert' || item.o_severity === 'context'))
+      .sort((a, b) => (rank[a.o_severity] - rank[b.o_severity]) ||
+        (a.o_athlete_name || '').localeCompare(b.o_athlete_name || '')))
   }
 
   async function fetchWeeks(athleteId) {
@@ -1285,160 +1274,6 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       : new Date().toISOString().slice(0, 10)
     setPlanStartDate(seed)
     setCalBlockAthlete({ id: a.id, name: a.name })
-  }
-
-  // Beregner programmerings-status pr. atlet (samme logik som kalender-boardet):
-  // none = intet program, empty = uger men ingen øvelser, low = sidste fyldte uge nu, ready = ok.
-  function computeBoard(list) {
-    const today0 = new Date(); today0.setHours(0, 0, 0, 0)
-    return list.map(a => {
-      const weeks = calendarWeeks[a.id] || []
-      const planned = weeks.filter(w => w.exercise_count > 0)
-      const minPlannedWeekNo = planned.length ? Math.min(...planned.map(w => w.week_number)) : null
-      const loggedWeek = athleteCurrentWeek[a.id] ?? null
-      // Dato-bevidst "nu" (samme som tidslinjen): ugen hvis datospænd dækker i dag,
-      // ellers seneste loggede uge, ellers første planlagte uge.
-      const ref = currentWeekNo(weeks, loggedWeek) ?? minPlannedWeekNo
-      const runway = ref != null ? planned.filter(w => w.week_number >= ref).length : planned.length
-      const holiday = holidayInfo(a)
-      const returned = holiday && !holiday.onHoliday // ferie slut → skal genaktiveres/planlægges
-      let status
-      if (holiday?.onHoliday) status = 'ferie'      // på ferie → uden for Prioritet
-      else if (weeks.length === 0) status = 'none'
-      else if (planned.length === 0) status = 'empty'
-      else if (runway <= 0) status = 'out'         // forbi sidste planlagte uge = løbet tør
-      else if (runway === 1) status = 'lastweek'   // i sidste planlagte uge, dækket ugen ud
-      else status = 'ready'
-      const snoozedUntil = snoozedAthletes[a.id] || null
-      const isSnoozed = snoozedUntil && new Date(snoozedUntil) > today0
-      return { a, status, runway, isSnoozed, returned }
-    })
-  }
-
-  // Fælles hændelses-feed til forsiden (mobil + desktop): programmangler øverst,
-  // så beskeder m. preview, lav readiness, PR'er, dagens sessioner og planlægnings-noter.
-  // Åbn et feed-item. Video-items (review) fører direkte til den konkrete måling
-  // (samme sti som indbakken/"Del med atlet"); besked-items lander i det rette spor.
-  const openFeedItem = it => {
-    const ath = athletes.find(a => a.id === it.aid)
-    if (!ath) return
-    if (it.review) {
-      setVideoReviewRequest({ item: it.review, token: `${it.review.id}:${Date.now()}` })
-      openProfile(ath, 'analyse')
-    } else {
-      if (it.track) setCoachMsgTrack(it.track)
-      openProfile(ath, it.tab)
-    }
-  }
-
-  const FEED_LIFT_LABEL = { squat: 'Squat', bench: 'Bænk', deadlift: 'Dødløft' }
-  const feedWaitLabel = ts => {
-    const h = Math.floor((Date.now() - new Date(ts).getTime()) / 3600000)
-    if (!Number.isFinite(h) || h < 1) return 'lige nu'
-    if (h < 24) return `${h} t`
-    return `${Math.floor(h / 24)} d`
-  }
-
-  function buildTodayFeed(visible) {
-    const byId = Object.fromEntries(visible.map(a2 => [a2.id, a2]))
-    const first = n => (n || '').split(' ')[0]
-    const todayStr = new Date().toISOString().slice(0, 10)
-    const items = []
-    // Atlet-indsendte løft der venter på gennemgang — en direkte henvendelse fra
-    // atleten. Rangeres højt (kun program-kritiske rank-0 ligger over).
-    for (const v of videoReviewQueue) {
-      if (v.source_mode !== 'athlete_submission' || v.status !== 'draft' || !byId[v.athlete_id]) continue
-      const note = (v.session_context?.athlete_note || '').trim()
-      items.push({ rank: 1, aid: v.athlete_id, icon: 'video', color: '#c8923a',
-        text: `${first(byId[v.athlete_id].name)} sendte ${FEED_LIFT_LABEL[v.lift] || v.lift || 'et løft'} til gennemgang`,
-        sub: `ventet ${feedWaitLabel(v.created_at)}${note ? ` · "${note.slice(0, 42)}${note.length > 42 ? '…' : ''}"` : ''}`,
-        review: { id: v.id, athlete_id: v.athlete_id } })
-    }
-    for (const b of computeBoard(visible)) {
-      if (b.isSnoozed) continue
-      if (b.status === 'ferie') {
-        // Ferie uden slutdato bliver aldrig automatisk aktiv igen — flag den,
-        // så atleten ikke forsvinder fra radaren for evigt.
-        if (!b.a.vacation_until) items.push({ rank: 6, aid: b.a.id, icon: 'info', color: '#5b9bb5', text: `${first(b.a.name)} står på ferie uden slutdato`, sub: 'stadig rigtigt? ret status under Oversigt', tab: 'oversigt' })
-        continue
-      }
-      if (b.returned) items.push({ rank: 0, aid: b.a.id, icon: 'alert', color: '#c8923a', text: `${first(b.a.name)} er tilbage fra ferie`, sub: 'planlæg og genaktivér', tab: 'oversigt' })
-      if (b.status === 'none') items.push({ rank: 0, aid: b.a.id, icon: 'alert', color: '#e05555', text: `${first(b.a.name)}: intet program`, sub: 'planlæg nu', tab: 'program' })
-      else if (b.status === 'empty') items.push({ rank: 0, aid: b.a.id, icon: 'alert', color: '#e05555', text: `${first(b.a.name)}: ugen mangler øvelser`, sub: 'planlæg nu', tab: 'program' })
-      else if (b.status === 'out') items.push({ rank: 0, aid: b.a.id, icon: 'alert', color: '#e05555', text: `${first(b.a.name)}: løbet tør for uger`, sub: 'planlæg nu', tab: 'program' })
-      else if (b.status === 'lastweek') items.push({ rank: 5, aid: b.a.id, icon: 'cal', color: '#c8923a', text: `${first(b.a.name)}: sidste uge i blokken`, sub: 'planlæg i weekenden', tab: 'program' })
-    }
-    for (const a2 of visible) {
-      if (a2.status === 'peaking' && a2.competition_date && a2.competition_date < todayStr)
-        items.push({ rank: 1, aid: a2.id, icon: 'pr', color: '#c8923a', text: `${first(a2.name)}: stævne passeret`, sub: 'registrér resultatet', tab: 'stævne' })
-    }
-    // Ulæste beskeder opdelt i de to spor, så teknik-snak fremstår som teknik og
-    // ikke drukner i almindelig besked. Teknik pushes først = højere i feeden.
-    for (const aid of Object.keys(byId)) {
-      const tr = unreadByTrack[aid]
-      if (!tr) continue
-      if (tr.teknik > 0) {
-        const m = latestByTrack[aid]?.teknik
-        const prev = m?.sender_role === 'athlete' ? (m.content || '') : ''
-        items.push({ rank: 1, aid, icon: 'lift', color: '#67dff5', text: `${tr.teknik} teknik-besked${tr.teknik > 1 ? 'er' : ''} fra ${first(byId[aid].name)}`, sub: prev ? `"${prev.slice(0, 44)}${prev.length > 44 ? '…' : ''}"` : 'teknik & løft', tab: 'beskeder', track: 'teknik' })
-      }
-      if (tr.besked > 0) {
-        const m = latestByTrack[aid]?.besked
-        const prev = m?.sender_role === 'athlete' ? (m.content || '') : ''
-        items.push({ rank: 1, aid, icon: 'msg', color: '#c8923a', text: `${tr.besked} ny besked${tr.besked > 1 ? 'er' : ''} fra ${first(byId[aid].name)}`, sub: prev ? `"${prev.slice(0, 46)}${prev.length > 46 ? '…' : ''}"` : null, tab: 'beskeder', track: 'besked' })
-      }
-    }
-    for (const r of todayData.readiness) {
-      if (byId[r.athlete_id] && r.readiness_score != null && r.readiness_score < 50) {
-        // Sub-tekst: søvn + hvor de er ømme (skades-signal coachen bør se).
-        const parts = []
-        if (r.sleep_hours != null) parts.push(`søvn ${r.sleep_hours}t`)
-        if (Array.isArray(r.sore_zones) && r.sore_zones.length) parts.push(`ømt: ${r.sore_zones.join(', ')}`)
-        items.push({ rank: 2, aid: r.athlete_id, icon: 'alert', color: '#e05555', text: `${first(byId[r.athlete_id].name)}: readiness ${r.readiness_score} — lav`, sub: parts.join(' · ') || null, tab: 'oversigt' })
-      }
-    }
-    for (const p of todayData.prs) {
-      if (byId[p.athlete_id]) items.push({ rank: 3, aid: p.athlete_id, icon: 'pr', color: '#c8923a', text: `${first(byId[p.athlete_id].name)} satte PR: ${p.exercise_name} ${p.weight} kg${p.reps ? ` × ${p.reps}` : ''}`, sub: null, tab: 'log' })
-    }
-    // Session-feedback fra dagens træning: en kommentar fra atleten eller en lav
-    // rating (≤2) er coach-signal. Dedup pr. session-id (mange logs deler session).
-    const seenSess = new Set()
-    for (const l of todayData.logs) {
-      const s = l.exercises?.sessions
-      if (!s || !s.id || seenSess.has(s.id) || !byId[l.athlete_id]) continue
-      seenSess.add(s.id)
-      const name = first(byId[l.athlete_id].name)
-      const title = s.title || 'session'
-      const comment = (s.athlete_comment || '').trim()
-      if (comment) {
-        items.push({ rank: 2, aid: l.athlete_id, icon: 'msg', color: '#c8923a', text: `${name} kommenterede ${title}`, sub: `"${comment.slice(0, 48)}${comment.length > 48 ? '…' : ''}"`, tab: 'log' })
-      } else if (s.athlete_rating != null && s.athlete_rating <= 2) {
-        items.push({ rank: 2, aid: l.athlete_id, icon: 'alert', color: '#e05555', text: `${name} ratede ${title} ${s.athlete_rating}/5`, sub: 'lav score — tjek hvorfor', tab: 'log' })
-      }
-    }
-    const sessAgg = {}
-    for (const l of todayData.logs) {
-      const o = (sessAgg[l.athlete_id] ??= { titles: new Set(), sets: 0, rpes: [] })
-      o.titles.add(l.exercises?.sessions?.title || 'session')
-      if (!l.skipped) { o.sets++; if (l.rpe_actual != null) o.rpes.push(Number(l.rpe_actual)) }
-    }
-    for (const [aid, o] of Object.entries(sessAgg)) {
-      if (!byId[aid]) continue
-      const avg = o.rpes.length ? (o.rpes.reduce((x, y2) => x + y2, 0) / o.rpes.length).toFixed(1) : null
-      items.push({ rank: 4, aid, icon: 'lift', color: '#6cba6c', text: `${first(byId[aid].name)} loggede ${[...o.titles].join(' + ')}`, sub: `${o.sets} sæt${avg ? ` · snit-RPE ${avg}` : ''}`, tab: 'log' })
-    }
-    // Lavt-rangeret: delt feedback atleten ikke har åbnet efter >2 dage — værd
-    // at vide (coachingen er ikke landet), men ingen alarm (dæmpet grå).
-    for (const v of videoUnseenFeedback) {
-      if (!byId[v.athlete_id]) continue
-      const days = Math.max(0, Math.floor((Date.now() - new Date(v.shared_at).getTime()) / 86400000))
-      items.push({ rank: 5, aid: v.athlete_id, icon: 'info', color: '#7a7770',
-        text: `${first(byId[v.athlete_id].name)} har ikke set din feedback endnu`,
-        sub: `${FEED_LIFT_LABEL[v.lift] || v.lift || 'løft'} · delt ${days} dag${days === 1 ? '' : 'e'} siden`,
-        review: { id: v.id, athlete_id: v.athlete_id } })
-    }
-    items.sort((x, y) => x.rank - y.rank)
-    return items
   }
 
   // Hop direkte ind i coachens egen atlet-profil (preview) for hurtig logging.
@@ -1735,25 +1570,13 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
   async function fetchLatestMessages(athleteIds) {
     const { data } = await supabase.from('messages').select('*').in('athlete_id', athleteIds).order('created_at', { ascending: false })
-    const latest = {}
     const unread = {}
-    const unreadTrack = {}
-    const latestTrack = {}
     for (const msg of (data || [])) {
-      if (!latest[msg.athlete_id]) latest[msg.athlete_id] = msg
-      const cat = (msg.category || 'besked') === 'teknik' ? 'teknik' : 'besked'
-      const lt = (latestTrack[msg.athlete_id] ??= {})
-      if (!lt[cat]) lt[cat] = msg
       if (msg.sender_role === 'athlete' && !msg.read_by_coach) {
         unread[msg.athlete_id] = (unread[msg.athlete_id] || 0) + 1
-        const u = (unreadTrack[msg.athlete_id] ??= { teknik: 0, besked: 0 })
-        u[cat]++
       }
     }
-    setLatestMessages(latest)
     setUnreadCounts(unread)
-    setUnreadByTrack(unreadTrack)
-    setLatestByTrack(latestTrack)
   }
 
   async function markMessagesRead(athleteId, track) {
@@ -3264,6 +3087,43 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', margin: '0 0 1.25rem' }}>
               Indbakke<span style={{ color: '#c8923a' }}>.</span>
             </h1>
+            {(trainingSignals.length > 0 || trainingSignalsError) && (
+              <div style={{ ...s.card, marginBottom: '1rem', borderColor: 'rgba(200,146,58,0.28)', background: 'rgba(200,146,58,0.035)', padding: '0.85rem' }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem', marginBottom: trainingSignals.length ? '0.65rem' : 0 }}>
+                  <div>
+                    <div style={{ ...s.cardLabel, color: '#c8923a' }}>Kræver et kig</div>
+                    <div style={{ color: '#7a7770', fontSize: '0.66rem', marginTop: '0.2rem' }}>Signaler fra atleternes træningslogs — ikke færdige konklusioner.</div>
+                  </div>
+                  {trainingSignals.length > 0 && <span style={{ background: '#c8923a', color: '#141410', borderRadius: '999px', minWidth: '1.35rem', height: '1.35rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 0.35rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', fontWeight: 700 }}>{trainingSignals.length}</span>}
+                </div>
+                {trainingSignalsError && <div style={{ color: '#d79a83', fontSize: '0.64rem', lineHeight: 1.45 }}>{trainingSignalsError}</div>}
+                {trainingSignals.length > 0 && (
+                  <div style={{ display: 'grid', gap: '0.4rem' }}>
+                    {trainingSignals.map((item, index) => {
+                      const athlete = athletes.find(a2 => a2.id === item.o_athlete_id)
+                      if (!athlete) return null
+                      const alert = item.o_severity === 'alert'
+                      const detectorLabel = item.o_detector === 'dropout' ? 'Træningsmængde'
+                        : item.o_detector === 'stagnation' ? 'Udvikling'
+                          : item.o_detector === 'rpe_drift' ? 'RPE' : 'Træning'
+                      return (
+                        <button key={`${item.o_athlete_id}-${item.o_detector}-${index}`} onClick={() => openProfile(athlete, 'log')}
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', width: '100%', padding: '0.62rem 0.7rem', border: `1px solid ${alert ? 'rgba(224,85,85,0.22)' : 'rgba(200,146,58,0.16)'}`, background: '#171713', color: '#edeae2', cursor: 'pointer', textAlign: 'left' }}>
+                          <span style={{ minWidth: 0 }}>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
+                              <span style={{ fontSize: '0.78rem' }}>{item.o_headline}</span>
+                              <span style={{ color: alert ? '#e05555' : '#c8923a', border: `1px solid ${alert ? 'rgba(224,85,85,0.35)' : 'rgba(200,146,58,0.3)'}`, padding: '0.1rem 0.35rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.42rem', letterSpacing: '0.06em', textTransform: 'uppercase' }}>{detectorLabel}</span>
+                            </span>
+                            <span style={{ display: 'block', marginTop: '0.2rem', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', lineHeight: 1.45 }}>{item.o_detail}</span>
+                          </span>
+                          <span style={{ flexShrink: 0, color: alert ? '#e05555' : '#c8923a', fontSize: '0.7rem' }}>→</span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
             {(videoReviewQueue.length > 0 || videoReviewQueueError) && (
               <div style={{ ...s.card, marginBottom: '1rem', borderColor: 'rgba(103,223,245,0.25)', background: 'rgba(103,223,245,0.035)', padding: '0.85rem' }}>
                 <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem', marginBottom: videoReviewQueue.length ? '0.65rem' : 0 }}>
@@ -3850,321 +3710,153 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           )
         })()}
 
-        {view === 'list' && (
-          <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
-            <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: isMobile ? '1.1rem' : '1.75rem', flexWrap: 'wrap', gap: '1rem' }}>
-              <div>
-                <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', margin: 0 }}>
-                  {isMobile ? <>I dag<span style={{ color: '#c8923a' }}>.</span></> : 'Overblik'}
+        {view === 'list' && (() => {
+          const visibleAthletes = athletes
+            .filter(ath => !hiddenAthleteIds.has(ath.id))
+            .sort((x, y) => x.name.localeCompare(y.name, 'da'))
+          const hiddenAthletes = athletes.filter(ath => hiddenAthleteIds.has(ath.id))
+          const shownAthletes = showHiddenAthletes
+            ? [...visibleAthletes, ...hiddenAthletes.sort((x, y) => x.name.localeCompare(y.name, 'da'))]
+            : visibleAthletes
+          const unreadTotal = Object.values(unreadCounts).reduce((sum, count) => sum + count, 0)
+          const inboxTotal = unreadTotal + videoReviewQueue.length + trainingSignals.length
+          const homeActions = [
+            {
+              key: 'training',
+              label: 'Min træning',
+              sub: 'Åbn dit eget program',
+              color: '#c8923a',
+              onClick: goToMyProfile,
+              icon: <><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></>,
+            },
+            {
+              key: 'video',
+              label: 'Videoanalyse',
+              sub: 'Analysér et løft',
+              color: '#67dff5',
+              onClick: openVideoCoachV3,
+              icon: <><rect x="2" y="6" width="13" height="12" rx="2" /><path d="M15 10.5 22 7v10l-7-3.5" /></>,
+            },
+            {
+              key: 'inbox',
+              label: 'Coach-indbakke',
+              sub: inboxTotal > 0 ? `${inboxTotal} ting kræver et kig` : 'Alt er set',
+              color: inboxTotal > 0 ? '#c8923a' : '#6cba6c',
+              onClick: () => { setView('inbox'); setSelectedAthlete(null) },
+              icon: <><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></>,
+              badge: inboxTotal,
+            },
+          ]
+
+          const unshelveAthlete = async (event, athleteId) => {
+            event.stopPropagation()
+            setHiddenAthleteIds(prev => {
+              const next = new Set(prev); next.delete(athleteId); return next
+            })
+            await supabase.from('athletes').update({ hidden: false }).eq('id', athleteId)
+          }
+
+          return (
+            <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
+              <div style={{ marginBottom: isMobile ? '1.1rem' : '1.5rem' }}>
+                <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: isMobile ? '1.75rem' : '2rem', fontWeight: 400, color: '#edeae2', margin: 0 }}>
+                  Coach<span style={{ color: '#c8923a' }}>.</span>
                 </h1>
-                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844', marginTop: '0.25rem' }}>
-                  {isMobile
-                    ? new Date().toLocaleDateString('da-DK', { weekday: 'long', day: 'numeric', month: 'long' })
-                    : `${athletes.filter(a => !hiddenAthleteIds.has(a.id)).length} aktive atleter`}
+                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844', marginTop: '0.3rem' }}>
+                  {new Date().toLocaleDateString('da-DK', { weekday: 'long', day: 'numeric', month: 'long' })}
                 </div>
               </div>
-              {!isMobile && <button style={s.btnPrimary} onClick={() => setShowAddModal(true)}>+ Tilføj atlet</button>}
+
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, minmax(0, 1fr))' : 'repeat(3, minmax(0, 1fr))', gap: isMobile ? '0.55rem' : '0.75rem', marginBottom: isMobile ? '1.25rem' : '1.75rem' }}>
+                {homeActions.map(action => (
+                  <button key={action.key} onClick={action.onClick}
+                    style={{ position: 'relative', display: 'flex', flexDirection: isMobile && action.key !== 'inbox' ? 'column' : 'row', alignItems: isMobile && action.key !== 'inbox' ? 'flex-start' : 'center', gap: '0.75rem', minHeight: isMobile ? (action.key === 'inbox' ? 76 : 108) : 96, gridColumn: isMobile && action.key === 'inbox' ? '1 / -1' : 'auto', padding: isMobile ? '0.85rem' : '1rem 1.1rem', background: '#1c1c18', border: `1px solid ${action.key === 'inbox' && inboxTotal > 0 ? 'rgba(200,146,58,0.3)' : 'rgba(237,234,226,0.08)'}`, borderRadius: 5, cursor: 'pointer', color: '#edeae2', textAlign: 'left' }}>
+                    <span style={{ width: 36, height: 36, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: `1px solid ${action.color}55`, background: `${action.color}0f`, color: action.color, borderRadius: 4 }}>
+                      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">{action.icon}</svg>
+                    </span>
+                    <span style={{ minWidth: 0, flex: 1 }}>
+                      <span style={{ display: 'block', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: isMobile ? '0.84rem' : '0.92rem', color: '#edeae2', lineHeight: 1.25 }}>{action.label}</span>
+                      <span style={{ display: 'block', marginTop: '0.2rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: action.color, letterSpacing: '0.035em', lineHeight: 1.35 }}>{action.sub}</span>
+                    </span>
+                    {action.badge > 0 && <span style={{ position: 'absolute', top: '0.65rem', right: '0.65rem', minWidth: 20, height: 20, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 0.3rem', borderRadius: '999px', background: '#c8923a', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', fontWeight: 700 }}>{action.badge}</span>}
+                  </button>
+                ))}
+              </div>
+
+              <div style={{ ...s.card, marginBottom: 0, padding: isMobile ? '0.8rem 0.9rem' : '1rem 1.2rem' }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.45rem' }}>
+                  <div style={s.cardLabel}>Atleter</div>
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#4a4844', letterSpacing: '0.06em' }}>{visibleAthletes.length} aktive</span>
+                </div>
+
+                {loading ? (
+                  <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', padding: '1rem 0' }}>Indlæser…</div>
+                ) : loadError ? (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', padding: '0.75rem 0' }}>
+                    <span style={{ color: '#7a7770', fontSize: '0.72rem' }}>Kunne ikke indlæse atleter.</span>
+                    <button style={s.btnGhost} onClick={() => { setLoading(true); fetchAthletes() }}>Prøv igen</button>
+                  </div>
+                ) : shownAthletes.length === 0 ? (
+                  <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', padding: '1rem 0' }}>Ingen aktive atleter</div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    {shownAthletes.map((athlete, index) => {
+                      const isHidden = hiddenAthleteIds.has(athlete.id)
+                      const athleteWeeks = calendarWeeks[athlete.id] || []
+                      const currentNo = currentWeekNo(athleteWeeks, athleteCurrentWeek[athlete.id] ?? null)
+                      const current = athleteWeeks.find(week => week.week_number === currentNo)
+                      const fallback = athleteWeekSummary[athlete.id]
+                      const weekNo = current?.week_number ?? fallback?.week_number
+                      const blockName = current?.block_name || fallback?.block_name
+                      const sessionCount = current?.session_count ?? fallback?.session_count
+                      const programLine = weekNo != null
+                        ? `Uge ${weekNo}${blockName ? ` · ${blockName}` : ''}${sessionCount != null ? ` · ${sessionCount} pas` : ''}`
+                        : 'Intet aktivt program'
+                      const holiday = holidayInfo(athlete)
+                      const unread = unreadCounts[athlete.id] || 0
+                      return (
+                        <div key={athlete.id} role={isHidden ? undefined : 'button'} tabIndex={isHidden ? undefined : 0}
+                          onClick={() => !isHidden && openProfile(athlete, 'program')}
+                          onKeyDown={event => { if (!isHidden && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); openProfile(athlete, 'program') } }}
+                          style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '0.65rem' : '0.85rem', width: '100%', minHeight: isMobile ? 62 : 66, padding: '0.55rem 0', borderBottom: index < shownAthletes.length - 1 ? '1px solid rgba(237,234,226,0.055)' : 'none', background: 'transparent', cursor: isHidden ? 'default' : 'pointer', textAlign: 'left', opacity: isHidden ? 0.48 : 1 }}>
+                          <span style={{ ...s.avatar, width: isMobile ? 36 : 40, height: isMobile ? 36 : 40, fontSize: isMobile ? '0.72rem' : '0.82rem', flexShrink: 0, position: 'relative' }}>
+                            {initials(athlete.name)}
+                            {unread > 0 && <span style={{ position: 'absolute', top: -3, right: -3, width: 9, height: 9, borderRadius: '50%', background: '#c8923a', border: '2px solid #1c1c18' }} />}
+                          </span>
+                          <span style={{ flex: 1, minWidth: 0 }}>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', minWidth: 0 }}>
+                              <span style={{ fontSize: isMobile ? '0.82rem' : '0.9rem', color: '#edeae2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{athlete.name}</span>
+                              {holiday?.onHoliday && <span style={{ ...s.badge('ferie'), flexShrink: 0 }}>{ferieBadgeLabel(holiday)}</span>}
+                              {isHidden && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.42rem', color: '#7a7770', textTransform: 'uppercase' }}>Skjult</span>}
+                            </span>
+                            <span style={{ display: 'block', marginTop: '0.18rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: weekNo != null ? '#7a7770' : '#b07b68', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{programLine}</span>
+                          </span>
+                          {isHidden ? (
+                            <button onClick={event => unshelveAthlete(event, athlete.id)} style={{ flexShrink: 0, color: '#c8923a', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', textTransform: 'uppercase', padding: '0.35rem', border: 'none', background: 'transparent', cursor: 'pointer' }}>Vis igen</button>
+                          ) : (
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexShrink: 0 }}>
+                              {unread > 0 && <span style={{ color: '#c8923a', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem' }}>{unread}</span>}
+                              <span style={{ color: '#4a4844', fontSize: '0.75rem' }}>→</span>
+                            </span>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+
+                {hiddenAthletes.length > 0 && (
+                  <button onClick={() => setShowHiddenAthletes(value => !value)}
+                    style={{ marginTop: '0.65rem', padding: '0.45rem 0 0', border: 'none', borderTop: '1px solid rgba(237,234,226,0.05)', background: 'transparent', color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.07em', textTransform: 'uppercase', cursor: 'pointer', width: '100%', textAlign: 'left' }}>
+                    {showHiddenAthletes ? 'Skjul inaktive' : `Vis ${hiddenAthletes.length} skjult${hiddenAthletes.length === 1 ? '' : 'e'}`}
+                  </button>
+                )}
+              </div>
             </div>
-            {loading ? (
-              <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Indlæser...</div>
-            ) : loadError ? (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '0.75rem', padding: '3rem 0' }}>
-                <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Kunne ikke indlæse atleter.</div>
-                <button style={s.btnGhost} onClick={() => { setLoading(true); fetchAthletes() }}>Prøv igen</button>
-              </div>
-            ) : athletes.length === 0 ? (
-              <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '3rem 0' }}>Ingen atleter endnu — tilføj din første</div>
-            ) : (
-              <>
-                {/* MOBIL: atlet-chips + dagens hændelses-feed (desktop har listerne nedenfor) */}
-                {isMobile && (() => {
-                  const visible = athletes.filter(a2 => !hiddenAthleteIds.has(a2.id))
-                  const trained = new Set(todayData.logs.map(l => l.athlete_id))
-                  const first = n => (n || '').split(' ')[0]
-                  const chips = [...visible].sort((x, y) => {
-                    const ux = (unreadCounts[x.id] || 0) > 0 ? 0 : 1, uy = (unreadCounts[y.id] || 0) > 0 ? 0 : 1
-                    if (ux !== uy) return ux - uy
-                    const tx = trained.has(x.id) ? 0 : 1, ty = trained.has(y.id) ? 0 : 1
-                    if (tx !== ty) return tx - ty
-                    return x.name.localeCompare(y.name)
-                  })
-                  const items = buildTodayFeed(visible)
-                  return (
-                    <>
-                      <div style={{ display: 'flex', gap: '0.7rem', overflowX: 'auto', paddingBottom: '0.5rem', marginBottom: '1rem', WebkitOverflowScrolling: 'touch' }}>
-                        {chips.map(a2 => {
-                          const hol = holidayInfo(a2)
-                          const ring = hol?.onHoliday ? '#5b9bb5' : (unreadCounts[a2.id] || 0) > 0 ? '#c8923a' : trained.has(a2.id) ? '#6cba6c' : 'rgba(237,234,226,0.16)'
-                          return (
-                            <div key={a2.id} onClick={() => openProfile(a2)} style={{ textAlign: 'center', cursor: 'pointer', flexShrink: 0, width: 56 }}>
-                              <div style={{ width: 48, height: 48, borderRadius: '50%', border: `2px solid ${ring}`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#edeae2', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', margin: '0 auto', background: '#1c1c18', position: 'relative' }}>
-                                {initials(a2.name)}
-                                {(unreadCounts[a2.id] || 0) > 0 && <span style={{ position: 'absolute', top: -3, right: -3, minWidth: 15, height: 15, borderRadius: '50%', background: '#c8923a', color: '#141410', fontSize: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontFamily: "'IBM Plex Mono', monospace" }}>{unreadCounts[a2.id]}</span>}
-                              </div>
-                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#7a7770', marginTop: '0.3rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{first(a2.name)}</div>
-                            </div>
-                          )
-                        })}
-                      </div>
-                      {items.length === 0 ? (
-                        <div style={{ ...s.card, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                          <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#6cba6c', flexShrink: 0 }} />
-                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.06em', color: '#7a7770' }}>Roligt — ingen hændelser endnu i dag</span>
-                        </div>
-                      ) : (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                          {items.slice(0, 14).map((it, i) => (
-                            <div key={i} onClick={() => openFeedItem(it)}
-                              style={{ ...s.card, marginBottom: 0, padding: '0.7rem 0.85rem', cursor: 'pointer', ...(it.rank === 0 ? { borderColor: 'rgba(224,85,85,0.3)' } : {}) }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={it.color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>{FEED_ICONS[it.icon]}</svg>
-                                <span style={{ fontSize: '0.85rem', color: '#edeae2', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>{it.text}</span>
-                                <span style={{ color: '#4a4844', fontSize: '0.7rem', flexShrink: 0 }}>→</span>
-                              </div>
-                              {it.sub && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770', marginTop: '0.25rem', paddingLeft: '1.65rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{it.sub}</div>}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </>
-                  )
-                })()}
+          )
+        })()}
 
-                {/* Hurtig-handlinger — kun desktop; på mobil dækker bundnavigationen behovet */}
-                {!isMobile && <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.6rem', marginBottom: '1.5rem' }}>
-                  {[
-                    { icon: '⚡', label: 'Min træning', onClick: goToMyProfile },
-                    { icon: '📅', label: 'Kalender', onClick: () => { setSelectedAthlete(null); setView('calendar') } },
-                    { icon: '＋', label: 'Tilføj atlet', onClick: () => setShowAddModal(true) },
-                    { icon: '📚', label: 'Bibliotek', onClick: () => setView('library') },
-                  ].map(qa => (
-                    <button key={qa.label} onClick={qa.onClick}
-                      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.35rem', minHeight: '64px', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.08)', borderRadius: 4, cursor: 'pointer', padding: '0.75rem 0.5rem' }}>
-                      <span style={{ fontSize: '1.2rem', lineHeight: 1 }}>{qa.icon}</span>
-                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#b8b4a8' }}>{qa.label}</span>
-                    </button>
-                  ))}
-                </div>}
-
-                {/* Prioritet & i dag — samme hændelses-feed som mobilen (buildTodayFeed):
-                    programmangler, beskeder m. preview, lav readiness, PR'er, dagens sessioner */}
-                {!isMobile && (() => {
-                  const visible = athletes.filter(a3 => !hiddenAthleteIds.has(a3.id))
-                  const items = buildTodayFeed(visible)
-                  if (!items.length) {
-                    return (
-                      <div style={{ ...s.card, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#6cba6c', flexShrink: 0 }} />
-                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.06em', color: '#7a7770' }}>Alt kører — ingen hændelser i dag</span>
-                      </div>
-                    )
-                  }
-                  return (
-                    <div style={{ ...s.card, marginBottom: '1.5rem', borderColor: 'rgba(200,146,58,0.25)' }}>
-                      <div style={s.cardLabel}>Prioritet & i dag</div>
-                      {items.slice(0, 16).map((it, i, arr) => (
-                        <div key={i} onClick={() => openFeedItem(it)}
-                          style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.55rem 0', borderBottom: i < arr.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none', cursor: 'pointer', minHeight: '40px' }}>
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={it.color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>{FEED_ICONS[it.icon]}</svg>
-                          <span style={{ fontSize: '0.85rem', color: '#edeae2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flexShrink: 0, maxWidth: '55%' }}>{it.text}</span>
-                          {it.sub && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#7a7770', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0, flex: 1 }}>{it.sub}</span>}
-                          <span style={{ marginLeft: 'auto', color: '#4a4844', fontSize: '0.7rem', flexShrink: 0 }}>→</span>
-                        </div>
-                      ))}
-                    </div>
-                  )
-                })()}
-
-                {/* Denne uge — tvær-atlet aktivitet */}
-                {!isMobile && (() => {
-                  const visible = athletes.filter(a => !hiddenAthleteIds.has(a.id))
-                  if (!visible.length) return null
-                  const rows = visible
-                    .map(a => ({ a, act: weeklyActivity[a.id] || { sessions: 0, sets: 0 } }))
-                    .sort((x, y) => y.act.sessions - x.act.sessions || y.act.sets - x.act.sets)
-                  const activeCount = rows.filter(r => r.act.sessions > 0).length
-                  return (
-                    <div style={{ ...s.card, marginBottom: '1.5rem' }}>
-                      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem' }}>
-                        <div style={s.cardLabel}>Denne uge</div>
-                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770', letterSpacing: '0.06em' }}>{activeCount}/{rows.length} har trænet</div>
-                      </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 0, marginTop: '0.5rem' }}>
-                        {rows.map((r, i) => {
-                          const has = r.act.sessions > 0
-                          const hol = holidayInfo(r.a)
-                          const onHol = hol?.onHoliday
-                          return (
-                            <div key={r.a.id} onClick={() => openProfile(r.a, 'log')}
-                              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', padding: '0.5rem 0', borderBottom: i < rows.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none', cursor: 'pointer', minHeight: '40px', opacity: has || onHol ? 1 : 0.5 }}>
-                              <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', minWidth: 0 }}>
-                                <span style={{ fontSize: '0.82rem', color: '#edeae2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>{r.a.name}</span>
-                                {onHol && <span style={{ ...s.badge('ferie'), flexShrink: 0 }}>{ferieBadgeLabel(hol)}</span>}
-                              </span>
-                              <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
-                                {has ? (
-                                  <>
-                                    <span style={{ display: 'flex', gap: '0.2rem' }}>
-                                      {Array.from({ length: Math.min(r.act.sessions, 6) }).map((_, k) => (
-                                        <span key={k} style={{ width: 7, height: 7, borderRadius: '50%', background: '#6cba6c' }} />
-                                      ))}
-                                    </span>
-                                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#7a7770' }}>{r.act.sessions} træning{r.act.sessions === 1 ? '' : 'er'} · {r.act.sets} sæt</span>
-                                  </>
-                                ) : (
-                                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: onHol ? '#5b9bb5' : '#4a4844' }}>{onHol ? 'På ferie' : 'Intet endnu'}</span>
-                                )}
-                              </span>
-                            </div>
-                          )
-                        })}
-                      </div>
-                    </div>
-                  )
-                })()}
-
-                {/* Ugeplan oversigt */}
-                {!isMobile && (() => {
-                  const visibleAthletes = athletes.filter(a => !hiddenAthleteIds.has(a.id))
-                  const hiddenAthletes = athletes.filter(a => hiddenAthleteIds.has(a.id))
-                  const displayAthletes = showHiddenAthletes ? athletes : visibleAthletes
-                  const toggleHide = async (e, athId) => {
-                    e.stopPropagation()
-                    const willHide = !hiddenAthleteIds.has(athId)
-                    setHiddenAthleteIds(prev => {
-                      const next = new Set(prev)
-                      if (willHide) next.add(athId); else next.delete(athId)
-                      return next
-                    })
-                    await supabase.from('athletes').update({ hidden: willHide }).eq('id', athId)
-                  }
-                  return (
-                    <div style={{ ...s.card, marginBottom: '1.75rem' }}>
-                      <div style={s.cardLabel}>Dine atleter</div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-                        {displayAthletes.map((ath, i, arr) => {
-                          const ws = athleteWeekSummary[ath.id]
-                          const isHidden = hiddenAthleteIds.has(ath.id)
-                          return (
-                            <div
-                              key={ath.id}
-                              style={{ display: 'flex', alignItems: 'center', padding: '0.6rem 0', borderBottom: i < arr.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none', gap: '1rem', opacity: isHidden ? 0.4 : 1 }}
-                            >
-                              <div onClick={() => !isHidden && openProfile(ath, 'program')} style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', flex: 1, gap: isMobile ? '0.2rem' : '1rem', cursor: isHidden ? 'default' : 'pointer', minWidth: 0 }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', minWidth: isMobile ? 0 : '140px', flexShrink: 0, maxWidth: '100%' }}>
-                                  <div style={{ fontSize: '0.88rem', color: '#edeae2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>{ath.name}</div>
-                                  {(() => { const h = holidayInfo(ath); return h?.onHoliday ? <span style={{ ...s.badge('ferie'), flexShrink: 0 }}>{ferieBadgeLabel(h)}</span> : null })()}
-                                </div>
-                                {ws ? (() => {
-                                  const today = new Date(); today.setHours(12, 0, 0, 0)
-                                  const lastLogDate = athleteLastLogs[ath.id]
-                                  const daysSinceLog = lastLogDate
-                                    ? Math.floor((today - new Date(lastLogDate + 'T12:00:00')) / (24 * 3600 * 1000))
-                                    : null
-                                  const dotColor = daysSinceLog == null ? '#4a4844'
-                                    : daysSinceLog <= 4 ? '#6cba6c'
-                                    : daysSinceLog <= 8 ? '#c8923a'
-                                    : '#e05555'
-                                  const logText = daysSinceLog == null ? 'Ingen logs'
-                                    : daysSinceLog === 0 ? 'I dag'
-                                    : daysSinceLog === 1 ? 'I går'
-                                    : `${daysSinceLog}d siden`
-                                  return (
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1, minWidth: 0, maxWidth: '100%' }}>
-                                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#7a7770', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0 }}>
-                                        Uge {ws.week_number}{ws.block_name ? ` — ${ws.block_name}` : ''} · {ws.session_count} sess
-                                      </div>
-                                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexShrink: 0 }}>
-                                        <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: dotColor }} />
-                                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: dotColor }}>{logText}</span>
-                                      </div>
-                                    </div>
-                                  )
-                                })() : (
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flex: 1 }}>
-                                    <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#4a4844', flexShrink: 0 }} />
-                                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844' }}>Ingen program</span>
-                                  </div>
-                                )}
-                              </div>
-                              <button
-                                onClick={e => toggleHide(e, ath.id)}
-                                title={isHidden ? 'Vis igen' : 'Skjul'}
-                                style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', padding: '0.1rem 0.3rem', flexShrink: 0, lineHeight: 1 }}
-                              >{isHidden ? '↩' : '✕'}</button>
-                            </div>
-                          )
-                        })}
-                      </div>
-                      {hiddenAthletes.length > 0 && (
-                        <button
-                          onClick={() => setShowHiddenAthletes(p => !p)}
-                          style={{ background: 'none', border: 'none', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#4a4844', cursor: 'pointer', marginTop: '0.75rem', padding: 0 }}
-                        >{showHiddenAthletes ? 'Skjul skjulte' : `Vis ${hiddenAthletes.length} skjult${hiddenAthletes.length !== 1 ? 'e' : ''}`}</button>
-                      )}
-                    </div>
-                  )
-                })()}
-
-                {(() => {
-                  const athletesWithMsgs = athletes
-                    .filter(a => latestMessages[a.id] && latestMessages[a.id].sender_role === 'athlete')
-                    .sort((a, b) => latestMessages[b.id].created_at.localeCompare(latestMessages[a.id].created_at))
-                  if (!athletesWithMsgs.length) return null
-                  return (
-                    <div style={{ ...s.card, marginBottom: '1.75rem' }}>
-                      <div style={s.cardLabel}>Seneste beskeder</div>
-                      {athletesWithMsgs.map((athlete, i, arr) => {
-                        const msg = latestMessages[athlete.id]
-                        const isUnread = (unreadCounts[athlete.id] || 0) > 0
-                        return (
-                          <div key={athlete.id} onClick={() => openProfile(athlete, 'beskeder')}
-                            style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.65rem 0', borderBottom: i < arr.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none', cursor: 'pointer' }}>
-                            <div style={{ position: 'relative', flexShrink: 0 }}>
-                              <div style={{ ...s.avatar, width: '32px', height: '32px', fontSize: '0.72rem' }}>{initials(athlete.name)}</div>
-                              {isUnread && <div style={{ position: 'absolute', top: -2, right: -2, width: 8, height: 8, borderRadius: '50%', background: '#c8923a', border: '2px solid #1c1c18' }} />}
-                            </div>
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                              <div style={{ fontSize: '0.82rem', color: isUnread ? '#edeae2' : '#b8b4a8' }}>{athlete.name}</div>
-                              <div style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.72rem', color: isUnread ? '#c8923a' : '#4a4844', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                {msg.content.slice(0, 60)}{msg.content.length > 60 ? '…' : ''}
-                              </div>
-                            </div>
-                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', flexShrink: 0 }}>{formatMsgTime(msg.created_at)}</div>
-                          </div>
-                        )
-                      })}
-                    </div>
-                  )
-                })()}
-                {/* VideoCoach — hurtig adgang nederst på forsiden (samme kort som atlet-appen) */}
-                <div
-                  onClick={openVideoCoachV3}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(200,146,58,0.4)'}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(237,234,226,0.07)'}
-                  style={{ ...s.card, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem', marginTop: isMobile ? '1rem' : 0 }}
-                >
-                  <div style={{ width: 46, height: 46, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(200,146,58,0.35)', borderRadius: 4, background: 'rgba(200,146,58,0.08)' }}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c8923a" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="2" y="6" width="13" height="12" rx="2" />
-                      <path d="M15 10.5 22 7v10l-7-3.5" />
-                    </svg>
-                  </div>
-                  <div style={{ minWidth: 0 }}>
-                    <div style={{ ...s.cardLabel, marginBottom: '0.2rem' }}>VideoCoach</div>
-                    <div style={{ fontSize: '0.85rem', color: '#edeae2', lineHeight: 1.4 }}>
-                      Analysér løft og stanghastighed
-                    </div>
-                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', marginTop: '0.3rem' }}>
-                      Åbn kamera-analyse →
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-        )}
-
+        {/* Den tidligere forside bevares midlertidigt som lokal rollback under testen. */}
         {/* PROFILE VIEW */}
         {view === 'profile' && a && (
           <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
