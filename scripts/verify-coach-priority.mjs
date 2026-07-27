@@ -36,17 +36,18 @@ const items = buildCoachPriorityItems({
 
 assert.deepEqual(items.map(item => item.key), [
   'signal-athlete-b-dropout',
+  'video-video-a',
   'message-athlete-b-teknik',
   'message-athlete-a-besked',
   'message-athlete-a-teknik',
-  'video-video-a',
   'signal-athlete-a-stagnation',
 ])
 assert.equal(items[0].rank, 0, 'alerts must be first')
-assert.equal(items[1].detail, 'Ældste ulæste', 'oldest unread message must lead its rank')
-assert.equal(items[2].count, 2, 'unread count must be preserved')
-assert.equal(items[3].createdAt, 'ikke-en-dato', 'invalid timestamps must sort last without crashing')
-assert.equal(items[4].detail, 'Video squat', 'video description must use the supplied formatter')
+assert.equal(items[1].detail, 'Video squat', 'the oldest unanswered video or message must lead the shared task rank')
+assert.equal(items[2].detail, 'Ældste ulæste', 'messages and videos must share chronological ordering')
+assert.equal(items[3].count, 2, 'unread count must be preserved')
+assert.equal(items[4].createdAt, 'ikke-en-dato', 'invalid timestamps must sort last without crashing')
+assert.equal(items[1].rank, items[2].rank, 'messages and videos must share one chronological task rank')
 assert.equal(items.at(-1).rank, 3, 'context signals must be last')
 assert.equal(items.some(item => item.athlete.id === 'hidden-athlete'), false, 'items for athletes outside the visible list must be excluded')
 assert.equal(items.some(item => item.key === 'message-athlete-b-besked'), false, 'read message tracks must not enter the priority queue')

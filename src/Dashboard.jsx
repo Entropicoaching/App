@@ -3276,7 +3276,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem', marginBottom: priorityItems.length || priorityError ? '0.65rem' : 0 }}>
                     <div>
                       <div style={{ ...s.cardLabel, color: '#c8923a' }}>Vigtigst nu</div>
-                      <div style={{ color: '#7a7770', fontSize: '0.66rem', marginTop: '0.2rem' }}>Alerts først · derefter de ældste ubesvarede beskeder og videoer.</div>
+                      <div style={{ color: '#7a7770', fontSize: '0.66rem', marginTop: '0.2rem' }}>Alerts først · derefter ældste ubesvarede besked eller video.</div>
                     </div>
                     {priorityItems.length > 0 && <span style={{ background: '#c8923a', color: '#141410', borderRadius: '999px', minWidth: '1.35rem', height: '1.35rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 0.35rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', fontWeight: 700 }}>{priorityItems.length}</span>}
                   </div>

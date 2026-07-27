@@ -44,7 +44,7 @@ export function buildCoachPriorityItems({ athletes, trainingSignals, unreadByTra
     items.push({
       key: `video-${video.id}`,
       kind: 'video', athlete, video,
-      rank: 2, color: '#67dff5', label: 'Video',
+      rank: 1, color: '#67dff5', label: 'Video',
       title: athlete.name,
       detail: describeVideo(video),
       createdAt: video.created_at || video.analyzed_at,
