@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase, withRetry } from './supabase'
 import { buildCoachPriorityItems, coachPriorityFocus, coachPriorityQueueContext } from './coachPriority'
-import { createSingleFlightRunner, filterDraftVideoReviews, filterOpenTrainingSignals, summarizeCoachMessages, summarizeRefreshResults, trainingSignalFingerprint } from './coachInboxState'
+import { coachInboxCompletionStatus, createSingleFlightRunner, filterDraftVideoReviews, filterOpenTrainingSignals, summarizeCoachMessages, summarizeRefreshResults, trainingSignalFingerprint } from './coachInboxState'
 
 const BLOCK_NAMES = ['Akkumulering', 'Intensificering', 'Peak', 'Deload', 'GPP', 'Hypertrofi', 'Styrke', 'Transition']
 
@@ -3252,7 +3252,12 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               ? date.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' })
               : date.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })
           }
-          const priorityError = trainingSignalsError || videoReviewQueueError
+          const priorityError = trainingSignalsError || videoReviewQueueError || messageInboxError
+          const completionStatus = coachInboxCompletionStatus({
+            priorityCount: priorityItems.length,
+            refreshStatus: inboxRefreshStatus,
+            hasError: Boolean(priorityError),
+          })
           const renderPriorityItem = item => {
             const signalUpdating = item.kind === 'signal' && trainingSignalUpdatingKey === `${item.signal.o_athlete_id}:${item.signal.o_detector}`
             return (
@@ -3327,6 +3332,16 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                       )}
                     </div>
                   )}
+                </div>
+              )}
+
+              {completionStatus === 'complete' && (
+                <div style={{ ...s.card, marginBottom: '1rem', borderColor: 'rgba(108,186,108,0.24)', background: 'rgba(108,186,108,0.035)', padding: '0.85rem 0.9rem', display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
+                  <span aria-hidden="true" style={{ width: 28, height: 28, borderRadius: '50%', border: '1px solid rgba(108,186,108,0.38)', background: 'rgba(108,186,108,0.07)', color: '#6cba6c', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '0.8rem' }}>✓</span>
+                  <span style={{ minWidth: 0 }}>
+                    <span style={{ display: 'block', color: '#c9d7c7', fontSize: '0.78rem' }}>Indbakken er ryddet</span>
+                    <span style={{ display: 'block', marginTop: '0.16rem', color: '#7a7770', fontSize: '0.64rem', lineHeight: 1.4 }}>Ingen beskeder, videoer eller træningssignaler kræver dit blik lige nu.</span>
+                  </span>
                 </div>
               )}
 

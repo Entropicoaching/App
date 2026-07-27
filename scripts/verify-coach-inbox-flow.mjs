@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { buildCoachPriorityItems } from '../src/coachPriority.js'
 import {
+  coachInboxCompletionStatus,
   createSingleFlightRunner,
   filterDraftVideoReviews,
   filterOpenTrainingSignals,
@@ -121,5 +122,11 @@ const partialRefresh = summarizeRefreshResults([
 assert.deepEqual(partialRefresh, {
   kind: 'partial', completed: 1, total: 3, refreshedAt: now,
 }, 'failed and rejected loaders must make the refresh visibly partial')
+
+assert.equal(coachInboxCompletionStatus({ priorityCount: 2, refreshStatus: successfulRefresh }), 'active', 'open work must keep the inbox active')
+assert.equal(coachInboxCompletionStatus({ priorityCount: 0, refreshStatus: successfulRefresh }), 'complete', 'a fully refreshed empty queue must confirm completion')
+assert.equal(coachInboxCompletionStatus({ priorityCount: 0, refreshStatus: partialRefresh }), 'unavailable', 'partial data must never look like a cleared inbox')
+assert.equal(coachInboxCompletionStatus({ priorityCount: 0, refreshStatus: successfulRefresh, hasError: true }), 'unavailable', 'source errors must suppress the cleared state')
+assert.equal(coachInboxCompletionStatus(), 'loading', 'the cleared state must not flash before the first refresh')
 
 console.log('OK: coach inbox message, video and signal lifecycles keep queue items and badges synchronized')

@@ -83,3 +83,9 @@ export function summarizeRefreshResults(results, refreshedAt = Date.now()) {
     refreshedAt,
   }
 }
+
+export function coachInboxCompletionStatus({ priorityCount = 0, refreshStatus = null, hasError = false } = {}) {
+  if (Number(priorityCount) > 0) return 'active'
+  if (hasError || refreshStatus?.kind === 'partial') return 'unavailable'
+  return refreshStatus?.kind === 'success' ? 'complete' : 'loading'
+}
