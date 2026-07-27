@@ -848,6 +848,13 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   }, [videoReviewRequest, selectedAthlete?.id])
 
   useEffect(() => {
+    if (!videoAnalysisReview || !isMobile) return undefined
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = previousOverflow }
+  }, [videoAnalysisReview, isMobile])
+
+  useEffect(() => {
     if (activeTab === 'opvarmning' && selectedAthlete) {
       fetchWarmupTemplates(selectedAthlete.id)
     }
@@ -7210,12 +7217,18 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         ]
         const updating = videoAnalysisUpdatingId === analysis.id
         return (
-          <div role="dialog" aria-modal="true" style={{ ...s.overlay, padding: isMobile ? '0.5rem' : '1.5rem', zIndex: 10020 }} onClick={e => { if (e.target === e.currentTarget) closeVideoAnalysisReview() }}>
-            <div style={{ ...s.modal, width: '100%', maxWidth: '760px', maxHeight: isMobile ? '96vh' : '90vh', overflowY: 'auto', padding: isMobile ? '1rem' : '1.4rem' }} onClick={e => e.stopPropagation()}>
+          <div role="dialog" aria-modal="true" style={{ ...s.overlay, padding: isMobile ? 0 : '1.5rem', alignItems: isMobile ? 'stretch' : 'center', overflow: 'hidden', zIndex: 10020 }} onClick={e => { if (e.target === e.currentTarget) closeVideoAnalysisReview() }}>
+            <div style={{ ...s.modal, width: '100%', maxWidth: isMobile ? 'none' : '760px', height: isMobile ? '100dvh' : undefined, maxHeight: isMobile ? '100dvh' : '90vh', boxSizing: 'border-box', overflowY: 'auto', overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch', border: isMobile ? 'none' : s.modal.border, padding: isMobile ? '1rem' : '1.4rem' }} onClick={e => e.stopPropagation()}>
+              {isMobile && (
+                <div style={{ minHeight: 58, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', margin: '-1rem -1rem 1rem', padding: '0.55rem 1rem', position: 'sticky', top: 0, zIndex: 2, background: '#1c1c18', borderBottom: '1px solid rgba(237,234,226,0.08)', boxSizing: 'border-box' }}>
+                  <div style={s.cardLabel}>Gennemgå måling</div>
+                  <button onClick={closeVideoAnalysisReview} style={{ ...s.btnGhost, minHeight: 42, padding: '0.35rem 0.65rem', flexShrink: 0 }}>Luk</button>
+                </div>
+              )}
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', marginBottom: '1rem' }}>
                 <div>
-                  <div style={s.cardLabel}>Gennemgå måling</div>
-                  <div style={{ fontFamily: "'Playfair Display', serif", fontSize: isMobile ? '1.15rem' : '1.4rem', color: '#edeae2', marginTop: '0.25rem' }}>
+                  {!isMobile && <div style={s.cardLabel}>Gennemgå måling</div>}
+                  <div style={{ fontFamily: "'Playfair Display', serif", fontSize: isMobile ? '1.15rem' : '1.4rem', color: '#edeae2', marginTop: isMobile ? 0 : '0.25rem' }}>
                     {VIDEOCOACH_LIFTS[analysis.lift] || analysis.lift} · {videoCoachVariationLabel(analysis.lift, analysis.variation)}
                   </div>
                   <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', marginTop: '0.3rem' }}>
@@ -7223,7 +7236,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   </div>
                   {analysis.source_mode === 'athlete_submission' && <div style={{ color: '#67dff5', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem', marginTop: '0.35rem', letterSpacing: '0.04em', textTransform: 'uppercase' }}>Sendt af atleten</div>}
                 </div>
-                <button onClick={closeVideoAnalysisReview} style={{ ...s.btnGhost, padding: '0.28rem 0.55rem', flexShrink: 0 }}>Luk</button>
+                {!isMobile && <button onClick={closeVideoAnalysisReview} style={{ ...s.btnGhost, padding: '0.28rem 0.55rem', flexShrink: 0 }}>Luk</button>}
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'minmax(220px,0.8fr) minmax(0,1.2fr)', gap: '0.9rem' }}>
