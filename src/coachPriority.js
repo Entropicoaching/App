@@ -71,6 +71,19 @@ export function coachPriorityFocus(items) {
   }
 }
 
+export function coachPriorityTaskContext(item) {
+  if (!item?.key) return null
+  const isSignal = item.kind === 'signal'
+  return {
+    key: item.key,
+    kind: item.kind,
+    label: item.label || 'Opgave',
+    color: item.color || '#c8923a',
+    summary: (isSignal ? item.title : item.detail) || item.title || 'Åbn opgaven',
+    detail: isSignal && item.detail && item.detail !== item.title ? item.detail : null,
+  }
+}
+
 export function coachPriorityQueueContext(items, currentKey) {
   const queue = (items || []).filter(item => item?.key)
   const currentOpen = !!currentKey && queue.some(item => item.key === currentKey)

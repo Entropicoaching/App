@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase, withRetry } from './supabase'
-import { buildCoachPriorityItems, coachPriorityFocus, coachPriorityQueueContext } from './coachPriority'
+import { buildCoachPriorityItems, coachPriorityFocus, coachPriorityQueueContext, coachPriorityTaskContext } from './coachPriority'
 import { coachInboxCompletionStatus, createSingleFlightRunner, filterDraftVideoReviews, filterOpenTrainingSignals, summarizeCoachMessages, summarizeRefreshResults, trainingSignalFingerprint } from './coachInboxState'
 
 const BLOCK_NAMES = ['Akkumulering', 'Intensificering', 'Peak', 'Deload', 'GPP', 'Hypertrofi', 'Styrke', 'Transition']
@@ -469,6 +469,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   })
   const [profileReturnView, setProfileReturnView] = useState('list')
   const [profilePriorityKey, setProfilePriorityKey] = useState(null)
+  const [profilePriorityContext, setProfilePriorityContext] = useState(null)
   const [selectedAthlete, setSelectedAthlete] = useState(null)
   const [activeTab, setActiveTab] = useState('hub')
   const [navMenuOpen, setNavMenuOpen] = useState(false) // "Mere"-menu i sektions-navigationen
@@ -2672,9 +2673,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
   // En eksplicit returadresse holder indbakkens arbejdsflow samlet. Alle andre
   // profilåbninger bevarer den hidtidige retur til atletoversigten.
-  function openProfile(athlete, initialTab = 'hub', returnView = 'list', priorityKey = null) {
+  function openProfile(athlete, initialTab = 'hub', returnView = 'list', priorityKey = null, priorityContext = null) {
     setProfileReturnView(returnView === 'inbox' ? 'inbox' : 'list')
     setProfilePriorityKey(priorityKey)
+    setProfilePriorityContext(priorityContext)
     setVideoAnalysisReview(null)
     setVideoAnalysisReviewError(null)
     messageThreadAthleteRef.current = athlete.id
@@ -2723,18 +2725,19 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
   function openCoachPriorityItem(item, returnView = 'inbox') {
     if (!item) return
+    const priorityContext = coachPriorityTaskContext(item)
     if (item.kind === 'signal') {
-      openProfile(item.athlete, 'log', returnView, item.key)
+      openProfile(item.athlete, 'log', returnView, item.key, priorityContext)
       return
     }
     if (item.kind === 'message') {
       setCoachMsgTrack(item.track)
-      openProfile(item.athlete, 'beskeder', returnView, item.key)
+      openProfile(item.athlete, 'beskeder', returnView, item.key, priorityContext)
       return
     }
     setVideoReviewRequest({ item: item.video, token: `${item.video.id}:${Date.now()}` })
     setVideoLiftFilter(item.video.lift || 'all')
-    openProfile(item.athlete, 'analyse', returnView, item.key)
+    openProfile(item.athlete, 'analyse', returnView, item.key, priorityContext)
   }
 
   const currentWeight = (() => {
@@ -4114,6 +4117,18 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 </div>
               )}
             </div>
+
+            {profilePriorityContext && (
+              <div style={{ ...s.card, marginBottom: '1rem', padding: '0.75rem 0.85rem', borderColor: `${profilePriorityContext.color}38`, background: `${profilePriorityContext.color}08` }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.35rem' }}>
+                  <span style={{ width: 7, height: 7, borderRadius: '50%', flexShrink: 0, background: profilePriorityContext.color, boxShadow: `0 0 0 3px ${profilePriorityContext.color}16` }} />
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770' }}>Aktuel opgave</span>
+                  <span style={{ color: profilePriorityContext.color, border: `1px solid ${profilePriorityContext.color}44`, padding: '0.08rem 0.3rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.4rem', letterSpacing: '0.05em', textTransform: 'uppercase' }}>{profilePriorityContext.label}</span>
+                </div>
+                <div style={{ color: '#d8d4ca', fontSize: '0.72rem', lineHeight: 1.45 }}>{profilePriorityContext.summary}</div>
+                {profilePriorityContext.detail && <div style={{ color: '#7a7770', fontSize: '0.64rem', lineHeight: 1.45, marginTop: '0.22rem' }}>{profilePriorityContext.detail}</div>}
+              </div>
+            )}
 
             <div style={{ ...s.card, display: isMobile ? 'flex' : 'grid', gridTemplateColumns: isMobile ? undefined : 'auto 1fr auto', alignItems: 'center', gap: isMobile ? '0.85rem' : '1.5rem', marginBottom: '1.5rem', ...(isMobile ? { flexWrap: 'wrap', padding: '0.85rem 1rem' } : {}) }}>
               <div style={{ ...s.avatar, width: isMobile ? '44px' : '56px', height: isMobile ? '44px' : '56px', fontSize: isMobile ? '1rem' : '1.3rem', flexShrink: 0 }}>{initials(a.name)}</div>

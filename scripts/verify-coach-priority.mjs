@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { buildCoachPriorityItems, coachPriorityFocus, coachPriorityQueueContext, nextCoachPriorityItem } from '../src/coachPriority.js'
+import { buildCoachPriorityItems, coachPriorityFocus, coachPriorityQueueContext, coachPriorityTaskContext, nextCoachPriorityItem } from '../src/coachPriority.js'
 
 const athletes = [
   { id: 'athlete-a', name: 'Anna' },
@@ -62,6 +62,20 @@ assert.equal(focus.remainingCount, items.length - 1)
 assert.deepEqual(coachPriorityFocus([]), {
   currentItem: null, remainingItems: [], remainingCount: 0,
 }, 'an empty priority queue must have no guided task')
+
+const capturedAlert = coachPriorityTaskContext(items[0])
+assert.deepEqual(capturedAlert, {
+  key: 'signal-athlete-b-dropout',
+  kind: 'signal',
+  label: 'Træningsmængde',
+  color: '#e05555',
+  summary: 'Alert',
+  detail: 'Kræver handling',
+}, 'signal context must retain both its headline and explanation after navigation')
+const capturedMessage = coachPriorityTaskContext(items.find(item => item.kind === 'message'))
+assert.equal(capturedMessage.summary, 'Ældste ulæste', 'message context must retain the content that caused the task')
+assert.equal(capturedMessage.detail, null, 'message context must not duplicate its content')
+assert.equal(coachPriorityTaskContext(null), null, 'ordinary profile navigation must not create task context')
 
 const activeContext = coachPriorityQueueContext(items, items[0].key)
 assert.equal(activeContext.state, 'active')
