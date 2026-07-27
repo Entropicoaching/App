@@ -89,3 +89,7 @@ export function coachInboxCompletionStatus({ priorityCount = 0, refreshStatus = 
   if (hasError || refreshStatus?.kind === 'partial') return 'unavailable'
   return refreshStatus?.kind === 'success' ? 'complete' : 'loading'
 }
+
+export function shouldCollapseCoachConversations({ isMobile = false, priorityCount = 0, conversationCount = 0, hasMessageError = false } = {}) {
+  return Boolean(isMobile && Number(priorityCount) > 0 && Number(conversationCount) > 0 && !hasMessageError)
+}

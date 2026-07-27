@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase, withRetry } from './supabase'
 import { buildCoachPriorityItems, coachPriorityFocus, coachPriorityQueueContext, coachPriorityTaskContext } from './coachPriority'
-import { coachInboxCompletionStatus, createSingleFlightRunner, filterDraftVideoReviews, filterOpenTrainingSignals, summarizeCoachMessages, summarizeRefreshResults, trainingSignalFingerprint } from './coachInboxState'
+import { coachInboxCompletionStatus, createSingleFlightRunner, filterDraftVideoReviews, filterOpenTrainingSignals, shouldCollapseCoachConversations, summarizeCoachMessages, summarizeRefreshResults, trainingSignalFingerprint } from './coachInboxState'
 
 const BLOCK_NAMES = ['Akkumulering', 'Intensificering', 'Peak', 'Deload', 'GPP', 'Hypertrofi', 'Styrke', 'Transition']
 
@@ -3290,6 +3290,54 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               </div>
             )
           }
+          const unreadConversationCount = rows.filter(row => row.unread > 0).length
+          const collapseConversations = shouldCollapseCoachConversations({
+            isMobile,
+            priorityCount: priorityItems.length,
+            conversationCount: rows.length,
+            hasMessageError: Boolean(messageInboxError),
+          })
+          const conversationsPanel = (
+            <div style={{ ...s.card, marginBottom: 0, padding: '0.85rem 0.9rem' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem', marginBottom: rows.length || messageInboxError ? '0.45rem' : 0 }}>
+                <div style={s.cardLabel}>Alle samtaler</div>
+                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#4a4844' }}>{unreadConversationCount} ulæste spor</span>
+              </div>
+              {messageInboxError && (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.65rem', marginBottom: rows.length ? '0.45rem' : 0, padding: '0.55rem 0.6rem', border: '1px solid rgba(224,85,85,0.18)', background: 'rgba(224,85,85,0.035)' }}>
+                  <span style={{ color: '#d79a83', fontSize: '0.64rem', lineHeight: 1.45 }}>{messageInboxError}</span>
+                  <button disabled={inboxRefreshing} onClick={refreshCoachInbox} style={{ ...s.btnGhost, minHeight: 34, padding: '0.3rem 0.55rem', fontSize: '0.45rem', opacity: inboxRefreshing ? 0.55 : 1, flexShrink: 0 }}>{inboxRefreshing ? 'Opdaterer…' : 'Prøv igen'}</button>
+                </div>
+              )}
+              {!messageInboxError && rows.length === 0 ? (
+                <div style={{ color: '#4a4844', fontSize: '0.7rem', padding: '0.45rem 0' }}>Ingen samtaler endnu. Start en besked fra atletens profil.</div>
+              ) : rows.length > 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  {rows.map((row, index) => {
+                    const technique = row.track === 'teknik'
+                    const trackColor = technique ? '#67dff5' : '#7a7770'
+                    return (
+                      <button key={`${row.athlete.id}-${row.track}`} onClick={() => { setCoachMsgTrack(row.track); openProfile(row.athlete, 'beskeder', 'inbox') }}
+                        style={{ display: 'flex', alignItems: 'center', gap: '0.7rem', width: '100%', minHeight: 58, padding: '0.55rem 0', border: 'none', borderBottom: index < rows.length - 1 ? '1px solid rgba(237,234,226,0.055)' : 'none', background: 'transparent', cursor: 'pointer', textAlign: 'left' }}>
+                        <span style={{ ...s.avatar, width: 36, height: 36, fontSize: '0.75rem', flexShrink: 0, borderColor: row.unread > 0 ? 'rgba(200,146,58,0.5)' : 'rgba(237,234,226,0.13)' }}>{initials(row.athlete.name)}</span>
+                        <span style={{ flex: 1, minWidth: 0 }}>
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', minWidth: 0 }}>
+                            <span style={{ fontSize: '0.84rem', color: '#edeae2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.athlete.name}</span>
+                            <span style={{ color: trackColor, border: `1px solid ${trackColor}44`, padding: '0.08rem 0.3rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.4rem', letterSpacing: '0.05em', textTransform: 'uppercase', flexShrink: 0 }}>{technique ? 'Teknik & løft' : 'Besked'}</span>
+                          </span>
+                          <span style={{ display: 'block', marginTop: '0.16rem', color: row.unread > 0 ? '#b8b4a8' : '#7a7770', fontSize: '0.7rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.last.sender_role === 'coach' ? 'Dig: ' : ''}{row.last.content}</span>
+                        </span>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexShrink: 0 }}>
+                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#4a4844' }}>{fmtT(row.last.created_at)}</span>
+                          {row.unread > 0 && <span style={{ minWidth: 19, height: 19, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 0.28rem', borderRadius: '999px', background: '#c8923a', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', fontWeight: 700 }}>{row.unread}</span>}
+                        </span>
+                      </button>
+                    )
+                  })}
+                </div>
+              ) : null}
+            </div>
+          )
           return (
             <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '1.25rem' }}>
@@ -3348,45 +3396,15 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 </div>
               )}
 
-              <div style={{ ...s.card, marginBottom: 0, padding: '0.85rem 0.9rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem', marginBottom: rows.length || messageInboxError ? '0.45rem' : 0 }}>
-                    <div style={s.cardLabel}>Alle samtaler</div>
-                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#4a4844' }}>{rows.filter(row => row.unread > 0).length} ulæste spor</span>
-                  </div>
-                  {messageInboxError && (
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.65rem', marginBottom: rows.length ? '0.45rem' : 0, padding: '0.55rem 0.6rem', border: '1px solid rgba(224,85,85,0.18)', background: 'rgba(224,85,85,0.035)' }}>
-                      <span style={{ color: '#d79a83', fontSize: '0.64rem', lineHeight: 1.45 }}>{messageInboxError}</span>
-                      <button disabled={inboxRefreshing} onClick={refreshCoachInbox} style={{ ...s.btnGhost, minHeight: 34, padding: '0.3rem 0.55rem', fontSize: '0.45rem', opacity: inboxRefreshing ? 0.55 : 1, flexShrink: 0 }}>{inboxRefreshing ? 'Opdaterer…' : 'Prøv igen'}</button>
-                    </div>
-                  )}
-                  {!messageInboxError && rows.length === 0 ? (
-                    <div style={{ color: '#4a4844', fontSize: '0.7rem', padding: '0.45rem 0' }}>Ingen samtaler endnu. Start en besked fra atletens profil.</div>
-                  ) : rows.length > 0 ? (
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      {rows.map((row, index) => {
-                        const technique = row.track === 'teknik'
-                        const trackColor = technique ? '#67dff5' : '#7a7770'
-                        return (
-                          <button key={`${row.athlete.id}-${row.track}`} onClick={() => { setCoachMsgTrack(row.track); openProfile(row.athlete, 'beskeder', 'inbox') }}
-                            style={{ display: 'flex', alignItems: 'center', gap: '0.7rem', width: '100%', minHeight: 58, padding: '0.55rem 0', border: 'none', borderBottom: index < rows.length - 1 ? '1px solid rgba(237,234,226,0.055)' : 'none', background: 'transparent', cursor: 'pointer', textAlign: 'left' }}>
-                            <span style={{ ...s.avatar, width: 36, height: 36, fontSize: '0.75rem', flexShrink: 0, borderColor: row.unread > 0 ? 'rgba(200,146,58,0.5)' : 'rgba(237,234,226,0.13)' }}>{initials(row.athlete.name)}</span>
-                            <span style={{ flex: 1, minWidth: 0 }}>
-                              <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', minWidth: 0 }}>
-                                <span style={{ fontSize: '0.84rem', color: '#edeae2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.athlete.name}</span>
-                                <span style={{ color: trackColor, border: `1px solid ${trackColor}44`, padding: '0.08rem 0.3rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.4rem', letterSpacing: '0.05em', textTransform: 'uppercase', flexShrink: 0 }}>{technique ? 'Teknik & løft' : 'Besked'}</span>
-                              </span>
-                              <span style={{ display: 'block', marginTop: '0.16rem', color: row.unread > 0 ? '#b8b4a8' : '#7a7770', fontSize: '0.7rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.last.sender_role === 'coach' ? 'Dig: ' : ''}{row.last.content}</span>
-                            </span>
-                            <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexShrink: 0 }}>
-                              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#4a4844' }}>{fmtT(row.last.created_at)}</span>
-                              {row.unread > 0 && <span style={{ minWidth: 19, height: 19, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 0.28rem', borderRadius: '999px', background: '#c8923a', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', fontWeight: 700 }}>{row.unread}</span>}
-                            </span>
-                          </button>
-                        )
-                      })}
-                    </div>
-                  ) : null}
-              </div>
+              {collapseConversations ? (
+                <details style={{ border: '1px solid rgba(237,234,226,0.1)', background: '#171713' }}>
+                  <summary style={{ minHeight: 48, padding: '0.7rem 0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', cursor: 'pointer', color: '#b8b4a8', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                    <span>Vis alle samtaler</span>
+                    <span style={{ color: unreadConversationCount > 0 ? '#c8923a' : '#5a5751', fontSize: '0.46rem', letterSpacing: '0.03em', textTransform: 'none' }}>{rows.length} samtaler · {unreadConversationCount} ulæste</span>
+                  </summary>
+                  <div style={{ borderTop: '1px solid rgba(237,234,226,0.07)' }}>{conversationsPanel}</div>
+                </details>
+              ) : conversationsPanel}
             </div>
           )
         })()}

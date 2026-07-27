@@ -5,6 +5,7 @@ import {
   createSingleFlightRunner,
   filterDraftVideoReviews,
   filterOpenTrainingSignals,
+  shouldCollapseCoachConversations,
   summarizeCoachMessages,
   summarizeRefreshResults,
   trainingSignalFingerprint,
@@ -128,5 +129,11 @@ assert.equal(coachInboxCompletionStatus({ priorityCount: 0, refreshStatus: succe
 assert.equal(coachInboxCompletionStatus({ priorityCount: 0, refreshStatus: partialRefresh }), 'unavailable', 'partial data must never look like a cleared inbox')
 assert.equal(coachInboxCompletionStatus({ priorityCount: 0, refreshStatus: successfulRefresh, hasError: true }), 'unavailable', 'source errors must suppress the cleared state')
 assert.equal(coachInboxCompletionStatus(), 'loading', 'the cleared state must not flash before the first refresh')
+
+assert.equal(shouldCollapseCoachConversations({ isMobile: true, priorityCount: 2, conversationCount: 4 }), true, 'mobile must keep secondary conversations behind the guided priority task')
+assert.equal(shouldCollapseCoachConversations({ isMobile: false, priorityCount: 2, conversationCount: 4 }), false, 'desktop must keep the full conversation list visible')
+assert.equal(shouldCollapseCoachConversations({ isMobile: true, priorityCount: 0, conversationCount: 4 }), false, 'mobile must show conversations when no priority task leads the flow')
+assert.equal(shouldCollapseCoachConversations({ isMobile: true, priorityCount: 2, conversationCount: 0 }), false, 'an empty conversation list must keep its empty state visible')
+assert.equal(shouldCollapseCoachConversations({ isMobile: true, priorityCount: 2, conversationCount: 4, hasMessageError: true }), false, 'message errors must never be hidden behind the mobile disclosure')
 
 console.log('OK: coach inbox message, video and signal lifecycles keep queue items and badges synchronized')
