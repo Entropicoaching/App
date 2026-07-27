@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase, withRetry } from './supabase'
+import { buildCoachPriorityItems } from './coachPriority'
 
 const BLOCK_NAMES = ['Akkumulering', 'Intensificering', 'Peak', 'Deload', 'GPP', 'Hypertrofi', 'Styrke', 'Transition']
 
@@ -213,6 +214,10 @@ function videoCoachVariationLabel(lift, variation) {
   if (labels[variation]) return labels[variation]
   if (!variation || variation === 'standard') return VIDEOCOACH_LIFTS[lift] || 'Standard'
   return variation.replaceAll('_', ' ')
+}
+
+function coachVideoPriorityDetail(video) {
+  return `${VIDEOCOACH_LIFTS[video.lift] || video.lift} · ${videoCoachVariationLabel(video.lift, video.variation)}${video.load_kg != null ? ` · ${video.load_kg} kg` : ''}`
 }
 
 function stableSignalValue(value) {
@@ -3222,98 +3227,17 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         )}
 
         {/* INDBAKKE — samlet beskedoverblik på tværs af atleter */}
-        {view === 'inbox' && (
-          <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
-            <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', margin: '0 0 1.25rem' }}>
-              Indbakke<span style={{ color: '#c8923a' }}>.</span>
-            </h1>
-            {(trainingSignals.length > 0 || trainingSignalsError) && (
-              <div style={{ ...s.card, marginBottom: '1rem', borderColor: 'rgba(200,146,58,0.28)', background: 'rgba(200,146,58,0.035)', padding: '0.85rem' }}>
-                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem', marginBottom: trainingSignals.length ? '0.65rem' : 0 }}>
-                  <div>
-                    <div style={{ ...s.cardLabel, color: '#c8923a' }}>Kræver et kig</div>
-                    <div style={{ color: '#7a7770', fontSize: '0.66rem', marginTop: '0.2rem' }}>Signaler fra atleternes træningslogs — ikke færdige konklusioner.</div>
-                  </div>
-                  {trainingSignals.length > 0 && <span style={{ background: '#c8923a', color: '#141410', borderRadius: '999px', minWidth: '1.35rem', height: '1.35rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 0.35rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', fontWeight: 700 }}>{trainingSignals.length}</span>}
-                </div>
-                {trainingSignalsError && <div style={{ color: '#d79a83', fontSize: '0.64rem', lineHeight: 1.45 }}>{trainingSignalsError}</div>}
-                {trainingSignals.length > 0 && (
-                  <div style={{ display: 'grid', gap: '0.4rem' }}>
-                    {trainingSignals.map((item, index) => {
-                      const athlete = athletes.find(a2 => a2.id === item.o_athlete_id)
-                      if (!athlete) return null
-                      const alert = item.o_severity === 'alert'
-                      const detectorLabel = item.o_detector === 'dropout' ? 'Træningsmængde'
-                        : item.o_detector === 'stagnation' ? 'Udvikling'
-                          : item.o_detector === 'rpe_drift' ? 'RPE' : 'Træning'
-                      const signalKey = `${item.o_athlete_id}:${item.o_detector}`
-                      const updating = trainingSignalUpdatingKey === signalKey
-                      return (
-                        <div key={`${item.o_athlete_id}-${item.o_detector}-${index}`}
-                          style={{ padding: '0.62rem 0.7rem', border: `1px solid ${alert ? 'rgba(224,85,85,0.22)' : 'rgba(200,146,58,0.16)'}`, background: '#171713' }}>
-                          <div role="button" tabIndex={0} onClick={() => openProfile(athlete, 'log')}
-                            onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openProfile(athlete, 'log') } }}
-                            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', color: '#edeae2', cursor: 'pointer', textAlign: 'left' }}>
-                            <span style={{ minWidth: 0 }}>
-                              <span style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
-                                <span style={{ fontSize: '0.78rem' }}>{item.o_headline}</span>
-                                <span style={{ color: alert ? '#e05555' : '#c8923a', border: `1px solid ${alert ? 'rgba(224,85,85,0.35)' : 'rgba(200,146,58,0.3)'}`, padding: '0.1rem 0.35rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.42rem', letterSpacing: '0.06em', textTransform: 'uppercase' }}>{detectorLabel}</span>
-                              </span>
-                              <span style={{ display: 'block', marginTop: '0.2rem', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', lineHeight: 1.45 }}>{item.o_detail}</span>
-                            </span>
-                            <span style={{ flexShrink: 0, color: alert ? '#e05555' : '#c8923a', fontSize: '0.7rem' }}>→</span>
-                          </div>
-                          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.4rem', marginTop: '0.55rem', paddingTop: '0.5rem', borderTop: '1px solid rgba(237,234,226,0.055)' }}>
-                            <button disabled={updating} onClick={() => handleTrainingSignal(item, 'snooze')}
-                              style={{ ...s.btnGhost, padding: '0.28rem 0.5rem', fontSize: '0.46rem', opacity: updating ? 0.5 : 0.85 }}>Udsæt 7 dage</button>
-                            <button disabled={updating} onClick={() => handleTrainingSignal(item, 'acknowledge')}
-                              style={{ ...s.btnPrimary, padding: '0.28rem 0.55rem', fontSize: '0.46rem', opacity: updating ? 0.5 : 1 }}>{updating ? 'Gemmer…' : 'Set'}</button>
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                )}
-              </div>
-            )}
-            {(videoReviewQueue.length > 0 || videoReviewQueueError) && (
-              <div style={{ ...s.card, marginBottom: '1rem', borderColor: 'rgba(103,223,245,0.25)', background: 'rgba(103,223,245,0.035)', padding: '0.85rem' }}>
-                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem', marginBottom: videoReviewQueue.length ? '0.65rem' : 0 }}>
-                  <div>
-                    <div style={{ ...s.cardLabel, color: '#67dff5' }}>VideoCoach · til review</div>
-                    <div style={{ color: '#7a7770', fontSize: '0.66rem', marginTop: '0.2rem' }}>Nye målinger sendt af atleterne.</div>
-                  </div>
-                  {videoReviewQueue.length > 0 && <span style={{ background: '#67dff5', color: '#141410', borderRadius: '999px', minWidth: '1.35rem', height: '1.35rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 0.35rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', fontWeight: 700 }}>{videoReviewQueue.length}</span>}
-                </div>
-                {videoReviewQueueError && <div style={{ color: '#d79a83', fontSize: '0.64rem', lineHeight: 1.45 }}>{videoReviewQueueError}</div>}
-                {videoReviewQueue.length > 0 && (
-                  <div style={{ display: 'grid', gap: '0.4rem' }}>
-                    {videoReviewQueue.map(item => {
-                      const athlete = athletes.find(a2 => a2.id === item.athlete_id)
-                      if (!athlete) return null
-                      const receivedAt = item.created_at || item.analyzed_at
-                      return (
-                        <button key={item.id} onClick={() => { setVideoReviewRequest({ item, token: `${item.id}:${Date.now()}` }); setVideoLiftFilter(item.lift || 'all'); openProfile(athlete, 'analyse') }}
-                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', width: '100%', padding: '0.62rem 0.7rem', border: '1px solid rgba(237,234,226,0.075)', background: '#171713', color: '#edeae2', cursor: 'pointer', textAlign: 'left' }}>
-                          <span style={{ minWidth: 0 }}>
-                            <span style={{ display: 'block', fontSize: '0.78rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{athlete.name}</span>
-                            <span style={{ display: 'block', marginTop: '0.18rem', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem' }}>
-                              {VIDEOCOACH_LIFTS[item.lift] || item.lift} · {videoCoachVariationLabel(item.lift, item.variation)}{item.load_kg != null ? ` · ${item.load_kg} kg` : ''}{item.reps_count ? ` · ${item.reps_count} reps` : ''}
-                            </span>
-                          </span>
-                          <span style={{ flexShrink: 0, color: '#67dff5', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem' }}>
-                            {receivedAt ? new Date(receivedAt).toLocaleDateString('da-DK', { day: 'numeric', month: 'short' }) : 'Gennemgå'} →
-                          </span>
-                        </button>
-                      )
-                    })}
-                  </div>
-                )}
-              </div>
-            )}
-            {(() => {
-              const visible = athletes.filter(athlete => !hiddenAthleteIds.has(athlete.id))
-              const rows = visible.flatMap(athlete => ['teknik', 'besked'].map(track => ({
+        {view === 'inbox' && (() => {
+          const visible = athletes.filter(athlete => !hiddenAthleteIds.has(athlete.id))
+          const priorityItems = buildCoachPriorityItems({
+            athletes: visible,
+            trainingSignals,
+            unreadByTrack,
+            latestByTrack,
+            videoReviewQueue,
+            describeVideo: coachVideoPriorityDetail,
+          })
+          const rows = visible.flatMap(athlete => ['teknik', 'besked'].map(track => ({
                 athlete,
                 track,
                 last: latestByTrack[athlete.id]?.[track] || null,
@@ -3323,16 +3247,82 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   if ((x.unread > 0) !== (y.unread > 0)) return x.unread > 0 ? -1 : 1
                   return (y.last?.created_at || '').localeCompare(x.last?.created_at || '')
                 })
-              const fmtT = ts => {
-                const date = new Date(ts); const now = new Date()
-                return date.toDateString() === now.toDateString()
-                  ? date.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' })
-                  : date.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })
-              }
-              return (
-                <div style={{ ...s.card, marginBottom: 0, padding: '0.85rem 0.9rem' }}>
+          const fmtT = ts => {
+            const date = new Date(ts); const now = new Date()
+            return date.toDateString() === now.toDateString()
+              ? date.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' })
+              : date.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })
+          }
+          const openPriorityItem = item => {
+            if (item.kind === 'signal') {
+              openProfile(item.athlete, 'log')
+              return
+            }
+            if (item.kind === 'message') {
+              setCoachMsgTrack(item.track)
+              openProfile(item.athlete, 'beskeder')
+              return
+            }
+            setVideoReviewRequest({ item: item.video, token: `${item.video.id}:${Date.now()}` })
+            setVideoLiftFilter(item.video.lift || 'all')
+            openProfile(item.athlete, 'analyse')
+          }
+          const priorityError = trainingSignalsError || videoReviewQueueError
+          return (
+            <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
+              <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', margin: '0 0 1.25rem' }}>
+                Indbakke<span style={{ color: '#c8923a' }}>.</span>
+              </h1>
+
+              {(priorityItems.length > 0 || priorityError) && (
+                <div style={{ ...s.card, marginBottom: '1rem', borderColor: 'rgba(200,146,58,0.28)', background: 'rgba(200,146,58,0.035)', padding: '0.85rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem', marginBottom: priorityItems.length || priorityError ? '0.65rem' : 0 }}>
+                    <div>
+                      <div style={{ ...s.cardLabel, color: '#c8923a' }}>Vigtigst nu</div>
+                      <div style={{ color: '#7a7770', fontSize: '0.66rem', marginTop: '0.2rem' }}>Alerts først · derefter de ældste ubesvarede beskeder og videoer.</div>
+                    </div>
+                    {priorityItems.length > 0 && <span style={{ background: '#c8923a', color: '#141410', borderRadius: '999px', minWidth: '1.35rem', height: '1.35rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 0.35rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', fontWeight: 700 }}>{priorityItems.length}</span>}
+                  </div>
+                  {priorityError && <div style={{ color: '#d79a83', fontSize: '0.64rem', lineHeight: 1.45, marginBottom: priorityItems.length ? '0.6rem' : 0 }}>Noget af prioriteringskøen kunne ikke opdateres.</div>}
+                  {priorityItems.length > 0 && (
+                    <div style={{ display: 'grid', gap: '0.4rem' }}>
+                      {priorityItems.map(item => {
+                        const signalUpdating = item.kind === 'signal' && trainingSignalUpdatingKey === `${item.signal.o_athlete_id}:${item.signal.o_detector}`
+                        return (
+                          <div key={item.key} style={{ padding: '0.62rem 0.7rem', border: `1px solid ${item.color}30`, background: '#171713' }}>
+                            <button onClick={() => openPriorityItem(item)}
+                              style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', width: '100%', minHeight: 42, padding: 0, border: 'none', background: 'transparent', color: '#edeae2', cursor: 'pointer', textAlign: 'left' }}>
+                              <span style={{ width: 8, height: 8, flexShrink: 0, borderRadius: '50%', background: item.color, boxShadow: `0 0 0 3px ${item.color}18` }} />
+                              <span style={{ minWidth: 0, flex: 1 }}>
+                                <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                                  <span style={{ fontSize: '0.78rem' }}>{item.title}</span>
+                                  <span style={{ color: item.color, border: `1px solid ${item.color}44`, padding: '0.08rem 0.3rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.4rem', letterSpacing: '0.05em', textTransform: 'uppercase' }}>{item.label}</span>
+                                </span>
+                                <span style={{ display: 'block', marginTop: '0.18rem', color: '#7a7770', fontSize: '0.66rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.detail}</span>
+                              </span>
+                              {item.createdAt && <span style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', flexShrink: 0 }}>{fmtT(item.createdAt)}</span>}
+                              {item.count > 0 && <span style={{ minWidth: 19, height: 19, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 0.25rem', borderRadius: '999px', background: '#c8923a', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem', fontWeight: 700 }}>{item.count}</span>}
+                              <span style={{ color: item.color, flexShrink: 0, fontSize: '0.7rem' }}>→</span>
+                            </button>
+                            {item.kind === 'signal' && (
+                              <div style={{ display: 'flex', justifyContent: 'flex-end', flexWrap: 'wrap', gap: '0.4rem', marginTop: '0.5rem', paddingTop: '0.45rem', borderTop: '1px solid rgba(237,234,226,0.055)' }}>
+                                <button disabled={signalUpdating} onClick={() => handleTrainingSignal(item.signal, 'snooze')}
+                                  style={{ ...s.btnGhost, padding: '0.28rem 0.5rem', fontSize: '0.46rem', opacity: signalUpdating ? 0.5 : 0.85 }}>Udsæt 7 dage</button>
+                                <button disabled={signalUpdating} onClick={() => handleTrainingSignal(item.signal, 'acknowledge')}
+                                  style={{ ...s.btnPrimary, padding: '0.28rem 0.55rem', fontSize: '0.46rem', opacity: signalUpdating ? 0.5 : 1 }}>{signalUpdating ? 'Gemmer…' : 'Set'}</button>
+                              </div>
+                            )}
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <div style={{ ...s.card, marginBottom: 0, padding: '0.85rem 0.9rem' }}>
                   <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem', marginBottom: rows.length || messageInboxError ? '0.45rem' : 0 }}>
-                    <div style={s.cardLabel}>Beskeder</div>
+                    <div style={s.cardLabel}>Alle samtaler</div>
                     <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#4a4844' }}>{rows.filter(row => row.unread > 0).length} ulæste spor</span>
                   </div>
                   {messageInboxError && (
@@ -3368,11 +3358,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                       })}
                     </div>
                   ) : null}
-                </div>
-              )
-            })()}
-          </div>
-        )}
+              </div>
+            </div>
+          )
+        })()}
 
         {/* LIBRARY VIEW */}
         {view === 'library' && (() => {
@@ -3892,54 +3881,14 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             : visibleAthletes
           const unreadTotal = Object.values(unreadCounts).reduce((sum, count) => sum + count, 0)
           const inboxTotal = unreadTotal + videoReviewQueue.length + trainingSignals.length
-          const unreadMessageTracks = visibleAthletes.flatMap(athlete => ['teknik', 'besked'].map(track => ({
-            athlete,
-            track,
-            last: latestByTrack[athlete.id]?.[track] || null,
-            unread: unreadByTrack[athlete.id]?.[track] || 0,
-          }))).filter(row => row.last && row.unread > 0)
-            .sort((x, y) => (y.last?.created_at || '').localeCompare(x.last?.created_at || ''))
-          const signalPriorityItems = trainingSignals.map((signal, index) => {
-            const athlete = visibleAthletes.find(item => item.id === signal.o_athlete_id)
-            if (!athlete) return null
-            const alert = signal.o_severity === 'alert'
-            const detectorLabel = signal.o_detector === 'dropout' ? 'Træningsmængde'
-              : signal.o_detector === 'stagnation' ? 'Udvikling'
-                : signal.o_detector === 'rpe_drift' ? 'RPE' : 'Træning'
-            return {
-              key: `signal-${signal.o_athlete_id}-${signal.o_detector}-${index}`,
-              kind: 'signal', athlete, signal,
-              rank: alert ? 0 : 3,
-              color: alert ? '#e05555' : '#c8923a',
-              label: detectorLabel,
-              title: signal.o_headline,
-              detail: signal.o_detail,
-            }
-          }).filter(Boolean)
-          const messagePriorityItems = unreadMessageTracks.map(row => ({
-            key: `message-${row.athlete.id}-${row.track}`,
-            kind: 'message', athlete: row.athlete, track: row.track,
-            rank: 1, color: row.track === 'teknik' ? '#67dff5' : '#c8923a',
-            label: row.track === 'teknik' ? 'Teknik & løft' : 'Besked',
-            title: row.athlete.name,
-            detail: row.last.content,
-            createdAt: row.last.created_at,
-            count: row.unread,
-          }))
-          const videoPriorityItems = videoReviewQueue.map(item => {
-            const athlete = visibleAthletes.find(candidate => candidate.id === item.athlete_id)
-            if (!athlete) return null
-            return {
-              key: `video-${item.id}`,
-              kind: 'video', athlete, video: item,
-              rank: 2, color: '#67dff5', label: 'Video',
-              title: athlete.name,
-              detail: `${VIDEOCOACH_LIFTS[item.lift] || item.lift} · ${videoCoachVariationLabel(item.lift, item.variation)}${item.load_kg != null ? ` · ${item.load_kg} kg` : ''}`,
-              createdAt: item.created_at || item.analyzed_at,
-            }
-          }).filter(Boolean)
-          const priorityItems = [...signalPriorityItems, ...messagePriorityItems, ...videoPriorityItems]
-            .sort((x, y) => x.rank - y.rank || (y.createdAt || '').localeCompare(x.createdAt || ''))
+          const priorityItems = buildCoachPriorityItems({
+            athletes: visibleAthletes,
+            trainingSignals,
+            unreadByTrack,
+            latestByTrack,
+            videoReviewQueue,
+            describeVideo: coachVideoPriorityDetail,
+          })
           const priorityPreview = priorityItems.slice(0, isMobile ? 3 : 4)
           const openPriorityItem = item => {
             if (item.kind === 'signal') {
