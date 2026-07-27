@@ -11,7 +11,8 @@ The file has been import-tested against n8n Community Edition 2.31.6.
 It includes:
 
 - a fail-closed contract check for the RPC schema version, timestamp, coach
-  identity and required arrays before any prioritization or email logic runs;
+  identity, required arrays and item-level metadata before any prioritization or
+  email logic runs;
 - unread athlete-message counts that are at least 6 hours old, grouped by athlete
   and conversation track;
 - pending VideoCoach drafts at least 24 hours old (metadata only, never video files);
@@ -101,3 +102,21 @@ returned by the database function or passed through n8n.
 The email button uses `https://app.entropicoaching.dk/?coach=inbox`. An
 authenticated coach lands directly in the coach inbox; an unauthenticated coach
 signs in first and then lands there because the query parameter is preserved.
+
+## Local safety verification
+
+Run `npm run verify:n8n` after editing either workflow. The verifier
+checks node and connection integrity, inactive source files, absence of committed
+credential bindings, the linked error monitor, schedule, RPC contract behavior,
+synthetic preview isolation, same-day suppression and the test-only SMTP gate.
+
+On the configured Entropi Windows machine, run
+`powershell -ExecutionPolicy Bypass -File n8n/verify-local-deployment.ps1` to
+health-check local n8n, export both live workflows to a temporary folder and
+compare them with the repository files. The check reports only pass/fail status;
+it never prints credential bindings or workflow payloads, and its exports are
+deleted immediately afterwards.
+
+The live comparison is expected to fail while a reviewed source change is still
+waiting for deployment. It must turn green after the approved import and publish
+steps; otherwise the live workflow and repository source are not in sync.
