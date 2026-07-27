@@ -484,6 +484,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     if (typeof window === 'undefined') return 'list'
     return new URLSearchParams(window.location.search).get('coach') === 'inbox' ? 'inbox' : 'list'
   })
+  const [profileReturnView, setProfileReturnView] = useState('list')
   const [selectedAthlete, setSelectedAthlete] = useState(null)
   const [activeTab, setActiveTab] = useState('hub')
   const [navMenuOpen, setNavMenuOpen] = useState(false) // "Mere"-menu i sektions-navigationen
@@ -2696,9 +2697,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     setExportingBackup(false)
   }
 
-  // Man lander altid på Home/hub når en atlet åbnes — uanset hvor man klikker
-  // fra (sidebar, prioritets-liste, beskeder osv.). Hubben er den faste indgang.
-  function openProfile(athlete, initialTab = 'hub') {
+  // En eksplicit returadresse holder indbakkens arbejdsflow samlet. Alle andre
+  // profilåbninger bevarer den hidtidige retur til atletoversigten.
+  function openProfile(athlete, initialTab = 'hub', returnView = 'list') {
+    setProfileReturnView(returnView === 'inbox' ? 'inbox' : 'list')
     setVideoAnalysisReview(null)
     setVideoAnalysisReviewError(null)
     messageThreadAthleteRef.current = athlete.id
@@ -3255,17 +3257,17 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           }
           const openPriorityItem = item => {
             if (item.kind === 'signal') {
-              openProfile(item.athlete, 'log')
+              openProfile(item.athlete, 'log', 'inbox')
               return
             }
             if (item.kind === 'message') {
               setCoachMsgTrack(item.track)
-              openProfile(item.athlete, 'beskeder')
+              openProfile(item.athlete, 'beskeder', 'inbox')
               return
             }
             setVideoReviewRequest({ item: item.video, token: `${item.video.id}:${Date.now()}` })
             setVideoLiftFilter(item.video.lift || 'all')
-            openProfile(item.athlete, 'analyse')
+            openProfile(item.athlete, 'analyse', 'inbox')
           }
           const priorityError = trainingSignalsError || videoReviewQueueError
           return (
@@ -3339,7 +3341,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                         const technique = row.track === 'teknik'
                         const trackColor = technique ? '#67dff5' : '#7a7770'
                         return (
-                          <button key={`${row.athlete.id}-${row.track}`} onClick={() => { setCoachMsgTrack(row.track); openProfile(row.athlete, 'beskeder') }}
+                          <button key={`${row.athlete.id}-${row.track}`} onClick={() => { setCoachMsgTrack(row.track); openProfile(row.athlete, 'beskeder', 'inbox') }}
                             style={{ display: 'flex', alignItems: 'center', gap: '0.7rem', width: '100%', minHeight: 58, padding: '0.55rem 0', border: 'none', borderBottom: index < rows.length - 1 ? '1px solid rgba(237,234,226,0.055)' : 'none', background: 'transparent', cursor: 'pointer', textAlign: 'left' }}>
                             <span style={{ ...s.avatar, width: 36, height: 36, fontSize: '0.75rem', flexShrink: 0, borderColor: row.unread > 0 ? 'rgba(200,146,58,0.5)' : 'rgba(237,234,226,0.13)' }}>{initials(row.athlete.name)}</span>
                             <span style={{ flex: 1, minWidth: 0 }}>
@@ -4089,8 +4091,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         {/* PROFILE VIEW */}
         {view === 'profile' && a && (
           <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
-            <button onClick={() => setView('list')} style={{ background: 'none', border: 'none', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', cursor: 'pointer', marginBottom: '1.75rem', padding: 0 }}>
-              ← Tilbage til atleter
+            <button onClick={() => setView(profileReturnView)} style={{ background: 'none', border: 'none', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', cursor: 'pointer', marginBottom: '1.75rem', padding: 0 }}>
+              ← Tilbage til {profileReturnView === 'inbox' ? 'indbakken' : 'atleter'}
             </button>
 
             <div style={{ ...s.card, display: isMobile ? 'flex' : 'grid', gridTemplateColumns: isMobile ? undefined : 'auto 1fr auto', alignItems: 'center', gap: isMobile ? '0.85rem' : '1.5rem', marginBottom: '1.5rem', ...(isMobile ? { flexWrap: 'wrap', padding: '0.85rem 1rem' } : {}) }}>
