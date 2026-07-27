@@ -57,3 +57,7 @@ export function buildCoachPriorityItems({ athletes, trainingSignals, unreadByTra
   }
   return items.sort((left, right) => left.rank - right.rank || itemTime(left) - itemTime(right) || left.title.localeCompare(right.title, 'da'))
 }
+
+export function nextCoachPriorityItem(items, currentKey) {
+  return (items || []).find(item => item?.key && item.key !== currentKey) || null
+}

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase, withRetry } from './supabase'
-import { buildCoachPriorityItems } from './coachPriority'
+import { buildCoachPriorityItems, nextCoachPriorityItem } from './coachPriority'
 import { filterDraftVideoReviews, filterOpenTrainingSignals, summarizeCoachMessages, trainingSignalFingerprint } from './coachInboxState'
 
 const BLOCK_NAMES = ['Akkumulering', 'Intensificering', 'Peak', 'Deload', 'GPP', 'Hypertrofi', 'Styrke', 'Transition']
@@ -468,6 +468,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     return new URLSearchParams(window.location.search).get('coach') === 'inbox' ? 'inbox' : 'list'
   })
   const [profileReturnView, setProfileReturnView] = useState('list')
+  const [profilePriorityKey, setProfilePriorityKey] = useState(null)
   const [selectedAthlete, setSelectedAthlete] = useState(null)
   const [activeTab, setActiveTab] = useState('hub')
   const [navMenuOpen, setNavMenuOpen] = useState(false) // "Mere"-menu i sektions-navigationen
@@ -2657,8 +2658,9 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
   // En eksplicit returadresse holder indbakkens arbejdsflow samlet. Alle andre
   // profilåbninger bevarer den hidtidige retur til atletoversigten.
-  function openProfile(athlete, initialTab = 'hub', returnView = 'list') {
+  function openProfile(athlete, initialTab = 'hub', returnView = 'list', priorityKey = null) {
     setProfileReturnView(returnView === 'inbox' ? 'inbox' : 'list')
+    setProfilePriorityKey(priorityKey)
     setVideoAnalysisReview(null)
     setVideoAnalysisReviewError(null)
     messageThreadAthleteRef.current = athlete.id
@@ -2700,6 +2702,25 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     describeVideo: coachVideoPriorityDetail,
   })
   const coachPriorityCount = coachPriorityItems.length
+  const nextPriorityItem = profileReturnView === 'inbox'
+    ? nextCoachPriorityItem(coachPriorityItems, profilePriorityKey)
+    : null
+
+  function openCoachPriorityItem(item, returnView = 'inbox') {
+    if (!item) return
+    if (item.kind === 'signal') {
+      openProfile(item.athlete, 'log', returnView, item.key)
+      return
+    }
+    if (item.kind === 'message') {
+      setCoachMsgTrack(item.track)
+      openProfile(item.athlete, 'beskeder', returnView, item.key)
+      return
+    }
+    setVideoReviewRequest({ item: item.video, token: `${item.video.id}:${Date.now()}` })
+    setVideoLiftFilter(item.video.lift || 'all')
+    openProfile(item.athlete, 'analyse', returnView, item.key)
+  }
 
   const currentWeight = (() => {
     if (!athleteWeightLogs.length) return null
@@ -3215,20 +3236,6 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               ? date.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' })
               : date.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })
           }
-          const openPriorityItem = item => {
-            if (item.kind === 'signal') {
-              openProfile(item.athlete, 'log', 'inbox')
-              return
-            }
-            if (item.kind === 'message') {
-              setCoachMsgTrack(item.track)
-              openProfile(item.athlete, 'beskeder', 'inbox')
-              return
-            }
-            setVideoReviewRequest({ item: item.video, token: `${item.video.id}:${Date.now()}` })
-            setVideoLiftFilter(item.video.lift || 'all')
-            openProfile(item.athlete, 'analyse', 'inbox')
-          }
           const priorityError = trainingSignalsError || videoReviewQueueError
           return (
             <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
@@ -3252,7 +3259,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                         const signalUpdating = item.kind === 'signal' && trainingSignalUpdatingKey === `${item.signal.o_athlete_id}:${item.signal.o_detector}`
                         return (
                           <div key={item.key} style={{ padding: '0.62rem 0.7rem', border: `1px solid ${item.color}30`, background: '#171713' }}>
-                            <button onClick={() => openPriorityItem(item)}
+                            <button onClick={() => openCoachPriorityItem(item, 'inbox')}
                               style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', width: '100%', minHeight: 42, padding: 0, border: 'none', background: 'transparent', color: '#edeae2', cursor: 'pointer', textAlign: 'left' }}>
                               <span style={{ width: 8, height: 8, flexShrink: 0, borderRadius: '50%', background: item.color, boxShadow: `0 0 0 3px ${item.color}18` }} />
                               <span style={{ minWidth: 0, flex: 1 }}>
@@ -3844,20 +3851,6 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           const priorityItems = coachPriorityItems
           const inboxTotal = coachPriorityCount
           const priorityPreview = priorityItems.slice(0, isMobile ? 3 : 4)
-          const openPriorityItem = item => {
-            if (item.kind === 'signal') {
-              openProfile(item.athlete, 'log')
-              return
-            }
-            if (item.kind === 'message') {
-              setCoachMsgTrack(item.track)
-              openProfile(item.athlete, 'beskeder')
-              return
-            }
-            setVideoReviewRequest({ item: item.video, token: `${item.video.id}:${Date.now()}` })
-            setVideoLiftFilter(item.video.lift || 'all')
-            openProfile(item.athlete, 'analyse')
-          }
           const homeActions = [
             {
               key: 'training',
@@ -3931,7 +3924,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                       const signalUpdating = item.kind === 'signal' && trainingSignalUpdatingKey === `${item.signal.o_athlete_id}:${item.signal.o_detector}`
                       return (
                         <div key={item.key} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minHeight: 58, borderBottom: index < priorityPreview.length - 1 ? '1px solid rgba(237,234,226,0.055)' : 'none' }}>
-                          <button onClick={() => openPriorityItem(item)}
+                          <button onClick={() => openCoachPriorityItem(item, 'list')}
                             style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', minWidth: 0, flex: 1, minHeight: 52, padding: '0.35rem 0', border: 'none', background: 'transparent', cursor: 'pointer', textAlign: 'left' }}>
                             <span style={{ width: 8, height: 8, flexShrink: 0, borderRadius: '50%', background: item.color, boxShadow: `0 0 0 3px ${item.color}18` }} />
                             <span style={{ minWidth: 0, flex: 1 }}>
@@ -4043,9 +4036,17 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         {/* PROFILE VIEW */}
         {view === 'profile' && a && (
           <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
-            <button onClick={() => setView(profileReturnView)} style={{ background: 'none', border: 'none', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', cursor: 'pointer', marginBottom: '1.75rem', padding: 0 }}>
-              ← Tilbage til {profileReturnView === 'inbox' ? 'indbakken' : 'atleter'}
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '1.75rem' }}>
+              <button onClick={() => setView(profileReturnView)} style={{ background: 'none', border: 'none', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', cursor: 'pointer', padding: 0 }}>
+                ← Tilbage til {profileReturnView === 'inbox' ? 'indbakken' : 'atleter'}
+              </button>
+              {nextPriorityItem && (
+                <button onClick={() => openCoachPriorityItem(nextPriorityItem, 'inbox')}
+                  style={{ ...s.btnGhost, minHeight: 36, padding: '0.35rem 0.6rem', fontSize: '0.46rem', flexShrink: 0 }}>
+                  Næste opgave →
+                </button>
+              )}
+            </div>
 
             <div style={{ ...s.card, display: isMobile ? 'flex' : 'grid', gridTemplateColumns: isMobile ? undefined : 'auto 1fr auto', alignItems: 'center', gap: isMobile ? '0.85rem' : '1.5rem', marginBottom: '1.5rem', ...(isMobile ? { flexWrap: 'wrap', padding: '0.85rem 1rem' } : {}) }}>
               <div style={{ ...s.avatar, width: isMobile ? '44px' : '56px', height: isMobile ? '44px' : '56px', fontSize: isMobile ? '1rem' : '1.3rem', flexShrink: 0 }}>{initials(a.name)}</div>

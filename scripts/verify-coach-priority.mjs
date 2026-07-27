@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { buildCoachPriorityItems } from '../src/coachPriority.js'
+import { buildCoachPriorityItems, nextCoachPriorityItem } from '../src/coachPriority.js'
 
 const athletes = [
   { id: 'athlete-a', name: 'Anna' },
@@ -50,5 +50,8 @@ assert.equal(items[4].detail, 'Video squat', 'video description must use the sup
 assert.equal(items.at(-1).rank, 3, 'context signals must be last')
 assert.equal(items.some(item => item.athlete.id === 'hidden-athlete'), false, 'items for athletes outside the visible list must be excluded')
 assert.equal(items.some(item => item.key === 'message-athlete-b-besked'), false, 'read message tracks must not enter the priority queue')
+assert.equal(nextCoachPriorityItem(items, items[0].key)?.key, items[1].key, 'next item must skip the currently open priority item')
+assert.equal(nextCoachPriorityItem(items, null)?.key, items[0].key, 'without a current item the queue must start at its first priority')
+assert.equal(nextCoachPriorityItem([items[0]], items[0].key), null, 'next item must be absent when only the current item remains')
 
 console.log('OK: coach priority order, age handling and visibility filters are valid')
