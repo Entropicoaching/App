@@ -7,8 +7,10 @@ $ErrorActionPreference = 'Stop'
 
 $coachWorkflowId = '8d6b7a5f-54a5-4b78-9713-cc9cf7890ae6'
 $monitorWorkflowId = 'c2c8a96a-8fd1-4f3a-9b28-36b09c729c4e'
+$scheduledTaskName = 'Entropi n8n'
 $n8nCommand = Join-Path $RuntimeRoot 'node_modules\.bin\n8n.cmd'
 $n8nUserFolder = Join-Path $RuntimeRoot 'data'
+$n8nLauncher = Join-Path $RuntimeRoot 'start-n8n.ps1'
 $verifier = Join-Path $PSScriptRoot 'verify-workflows.mjs'
 
 if (-not (Test-Path -LiteralPath $n8nCommand -PathType Leaf)) {
@@ -16,6 +18,27 @@ if (-not (Test-Path -LiteralPath $n8nCommand -PathType Leaf)) {
 }
 if (-not (Test-Path -LiteralPath $n8nUserFolder -PathType Container)) {
   throw "n8n data folder not found below the supplied runtime root"
+}
+if (-not (Test-Path -LiteralPath $n8nLauncher -PathType Leaf)) {
+  throw "n8n launcher not found below the supplied runtime root"
+}
+
+$scheduledTask = Get-ScheduledTask -TaskName $scheduledTaskName -ErrorAction Stop
+$taskActions = @($scheduledTask.Actions)
+if ($taskActions.Count -ne 1 -or $taskActions[0].Arguments -notlike "*$n8nLauncher*") {
+  throw "Local n8n scheduled task does not use the expected launcher"
+}
+if ([int]$scheduledTask.Settings.RestartCount -lt 1) {
+  throw "Local n8n scheduled task has no process-failure restart policy"
+}
+if ([string]$scheduledTask.Settings.RestartInterval -ne 'PT1M') {
+  throw "Local n8n scheduled task restart interval differs from one minute"
+}
+if ([string]$scheduledTask.Settings.MultipleInstances -ne 'IgnoreNew') {
+  throw "Local n8n scheduled task does not block duplicate instances"
+}
+if (-not $scheduledTask.Settings.StartWhenAvailable) {
+  throw "Local n8n scheduled task will not catch up after a missed start"
 }
 
 $health = Invoke-WebRequest -UseBasicParsing 'http://127.0.0.1:5678/healthz'
@@ -47,6 +70,8 @@ try {
 
   & $NodeCommand $verifier --live-coach $coachExport --live-monitor $monitorExport
   if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+  Write-Host 'OK: local n8n startup and process-recovery policy are valid'
 }
 finally {
   $env:N8N_USER_FOLDER = $previousUserFolder

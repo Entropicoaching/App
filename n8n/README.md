@@ -118,7 +118,10 @@ On the configured Entropi Windows machine, run
 health-check local n8n, export both live workflows to a temporary folder and
 compare them with the repository files. The check reports only pass/fail status;
 it never prints credential bindings or workflow payloads, and its exports are
-deleted immediately afterwards.
+deleted immediately afterwards. Run it from a PowerShell session that can read
+Task Scheduler. It also verifies that `Entropi n8n` starts the expected local
+launcher, prevents duplicate instances, catches up after a missed start and
+retries a crashed process after one minute.
 
 The live comparison is expected to fail while a reviewed source change is still
 waiting for deployment. It must turn green after the approved import and publish
