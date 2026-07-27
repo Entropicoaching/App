@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { supabase, withRetry } from './supabase'
 import { buildCoachPriorityItems, coachPriorityFocus, coachPriorityQueueContext, coachPriorityTaskContext } from './coachPriority'
 import { coachInboxCompletionStatus, createSingleFlightRunner, filterDraftVideoReviews, filterOpenTrainingSignals, shouldCollapseCoachConversations, summarizeCoachMessages, summarizeRefreshResults, trainingSignalFingerprint } from './coachInboxState'
+import { buildVideoCoachBaselineProfiles, countReadyVideoCoachBaselineProfiles } from './videoCoachBaselineProgress'
 import { VIDEOCOACH_LIFT_LABELS as VIDEOCOACH_LIFTS, videoCoachVariationIdentity, videoCoachVariationLabel } from './videoCoachLabels'
 
 const BLOCK_NAMES = ['Akkumulering', 'Intensificering', 'Peak', 'Deload', 'GPP', 'Hypertrofi', 'Styrke', 'Transition']
@@ -4365,7 +4366,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               const draftVideoCount = videoAnalyses.filter(item => item.status === 'draft').length
               const approvedVideoCount = videoAnalyses.filter(item =>
                 item.status === 'coach_approved' || item.status === 'shared').length
-              const baselineReadyCount = videoBaselines.filter(item => item.n_analyses >= 5).length
+              const baselineProfiles = buildVideoCoachBaselineProfiles(videoBaselines, videoAnalyses)
+              const visibleBaselineProfiles = videoLiftFilter === 'all'
+                ? baselineProfiles : baselineProfiles.filter(profile => profile.lift === videoLiftFilter)
+              const baselineReadyCount = countReadyVideoCoachBaselineProfiles(baselineProfiles)
               const latestVideo = videoAnalyses[0] || null
 
               return (
@@ -4432,7 +4436,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                         ['Analyser', videoAnalyses.length],
                         ['Afventer coach', draftVideoCount],
                         ['Godkendte', approvedVideoCount],
-                        ['Baseline klar', baselineReadyCount],
+                        ['Profiler klare', baselineReadyCount],
                       ].map(([label, value]) => (
                         <div key={label} style={{ background: '#191915', padding: '0.85rem' }}>
                           <div style={s.fieldLabel}>{label}</div>
@@ -4453,6 +4457,37 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                         </span>
                       )}
                     </div>
+
+                    {visibleBaselineProfiles.length > 0 && (
+                      <div style={{ border: '1px solid rgba(103,223,245,0.14)', background: 'rgba(103,223,245,0.025)', padding: isMobile ? '0.75rem' : '0.85rem 0.95rem', marginBottom: '0.9rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.65rem' }}>
+                          <div style={s.cardLabel}>Personlig baseline</div>
+                          <span style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem' }}>5 brugbare, godkendte = klar</span>
+                        </div>
+                        <div style={{ display: 'grid', gap: '0.6rem' }}>
+                          {visibleBaselineProfiles.map(profile => {
+                            const ready = profile.stage === 'ready'
+                            const preliminary = profile.stage === 'preliminary'
+                            const statusText = ready
+                              ? `${profile.nAnalyses} målinger · klar`
+                              : preliminary
+                                ? `${profile.nAnalyses}/5 · foreløbig · mangler ${profile.remaining}`
+                                : `${profile.nAnalyses}/5 · mangler ${profile.remaining}`
+                            return (
+                              <div key={profile.key}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.65rem', marginBottom: '0.28rem' }}>
+                                  <span style={{ color: '#b8b4a8', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.66rem', minWidth: 0 }}>{profile.label}</span>
+                                  <span style={{ color: ready ? '#7fa188' : preliminary ? '#c8923a' : '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', flexShrink: 0 }}>{statusText}</span>
+                                </div>
+                                <div style={{ height: 3, background: 'rgba(237,234,226,0.08)', overflow: 'hidden' }}>
+                                  <div style={{ width: `${profile.progressPct}%`, height: '100%', background: ready ? '#6cba6c' : preliminary ? '#c8923a' : '#527d84', transition: 'width 180ms ease-out' }} />
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )}
 
                     {videoAnalysisLoading && (
                       <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', padding: '1rem 0' }}>Henter bevægelsesanalyser…</div>
