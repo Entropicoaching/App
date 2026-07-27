@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, Fragment } from 'react'
 import { supabase, withRetry, queueWrite } from './supabase'
+import { VIDEOCOACH_LIFT_LABELS as ATHLETE_VIDEO_LIFTS, videoCoachVariationLabel as athleteVideoVariationLabel } from './videoCoachLabels'
 
 const ATHLETE_VIDEOCOACH_PREFIX = 'entropi:videocoach:v3'
 const ATHLETE_VIDEOCOACH_URL = 'videocoach.html?mode=athlete&bridge=athlete-v1&v=20260724-fit'
@@ -33,22 +34,6 @@ function validateAthleteVideoCoachRow(row, athleteId) {
   if (athleteNote != null && (typeof athleteNote !== 'string' || athleteNote.length > 1000))
     return 'Notatet til coachen er ugyldigt eller for langt'
   return null
-}
-
-const ATHLETE_VIDEO_LIFTS = { squat: 'Squat', bench: 'Bænkpres', deadlift: 'Dødløft' }
-
-function athleteVideoVariationLabel(lift, variation) {
-  const labels = {
-    competition_squat: 'Konkurrence squat',
-    konkurrence_squat: 'Konkurrence squat',
-    competition_bench: 'Konkurrence bænkpres',
-    konkurrence_baenk: 'Konkurrence bænkpres',
-    competition_conventional: 'Konventionelt dødløft',
-    competition_sumo: 'Sumo dødløft',
-  }
-  if (labels[variation]) return labels[variation]
-  if (!variation || variation === 'standard') return ATHLETE_VIDEO_LIFTS[lift] || 'Standard'
-  return variation.replaceAll('_', ' ')
 }
 
 function athleteVideoPathPreview(barPath) {

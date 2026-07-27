@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { supabase, withRetry } from './supabase'
 import { buildCoachPriorityItems, coachPriorityFocus, coachPriorityQueueContext, coachPriorityTaskContext } from './coachPriority'
 import { coachInboxCompletionStatus, createSingleFlightRunner, filterDraftVideoReviews, filterOpenTrainingSignals, shouldCollapseCoachConversations, summarizeCoachMessages, summarizeRefreshResults, trainingSignalFingerprint } from './coachInboxState'
+import { VIDEOCOACH_LIFT_LABELS as VIDEOCOACH_LIFTS, videoCoachVariationLabel } from './videoCoachLabels'
 
 const BLOCK_NAMES = ['Akkumulering', 'Intensificering', 'Peak', 'Deload', 'GPP', 'Hypertrofi', 'Styrke', 'Transition']
 
@@ -117,7 +118,6 @@ const VIDEOCOACH_STATUS = {
   shared: { label: 'Delt med atlet', color: '#67dff5' },
   invalid: { label: 'Ugyldig', color: '#cf6b4e' },
 }
-const VIDEOCOACH_LIFTS = { squat: 'Squat', bench: 'Bænkpres', deadlift: 'Dødløft' }
 const VIDEOCOACH_METRICS = [
   { key: 'rom_cm', label: 'ROM' },
   { key: 'bar_drift_cm', label: 'Vandret drift' },
@@ -201,20 +201,6 @@ function videoCoachFeedbackPayload(existing, draft) {
         ? source[key][index].evidence_refs : ['coach_review'],
     }))
   return { ...source, works: section('works'), focus: section('focus'), next_set: section('next_set') }
-}
-
-function videoCoachVariationLabel(lift, variation) {
-  const labels = {
-    competition_squat: 'Konkurrence squat',
-    konkurrence_squat: 'Konkurrence squat',
-    competition_bench: 'Konkurrence bænkpres',
-    konkurrence_baenk: 'Konkurrence bænkpres',
-    competition_conventional: 'Konventionelt dødløft',
-    competition_sumo: 'Sumo dødløft',
-  }
-  if (labels[variation]) return labels[variation]
-  if (!variation || variation === 'standard') return VIDEOCOACH_LIFTS[lift] || 'Standard'
-  return variation.replaceAll('_', ' ')
 }
 
 function coachVideoPriorityDetail(video) {
