@@ -11,6 +11,7 @@
     "verify:coach-inbox-flow": "node scripts/verify-coach-inbox-flow.mjs",
     "verify:coach-priority": "node scripts/verify-coach-priority.mjs",
     "verify:videocoach-labels": "node scripts/verify-videocoach-labels.mjs",
+    "verify:videocoach-variation-migration": "node scripts/verify-videocoach-variation-migration.mjs",
     "verify:n8n": "node n8n/verify-workflows.mjs"
   },
   "dependencies": {

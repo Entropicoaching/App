@@ -57,9 +57,63 @@ const VIDEOCOACH_VARIATION_LABELS = {
   sumo_block_pull: 'Sumo block pull',
 }
 
+const VIDEOCOACH_VARIATION_IDENTITIES = {
+  competition_squat: 'konkurrence_squat',
+  konkurrence_squat: 'konkurrence_squat',
+  low_bar_squat: 'low_bar_squat',
+  high_bar_squat: 'high_bar_squat',
+  pause_squat: 'pause_squat',
+  tempo_squat: 'tempo_squat',
+  front_squat: 'front_squat',
+  safety_bar_squat: 'safety_bar_squat',
+  box_squat: 'box_squat',
+
+  competition_bench: 'konkurrence_b_nk_pause',
+  competition_bench_pause: 'konkurrence_b_nk_pause',
+  konkurrence_baenk: 'konkurrence_b_nk_pause',
+  konkurrence_baenk_pause: 'konkurrence_b_nk_pause',
+  konkurrence_b_nk_pause: 'konkurrence_b_nk_pause',
+  touch_and_go_baenk: 'touch_and_go_b_nk',
+  touch_and_go_b_nk: 'touch_and_go_b_nk',
+  close_grip_baenk: 'close_grip_b_nk',
+  close_grip_b_nk: 'close_grip_b_nk',
+  wide_grip_baenk: 'wide_grip_b_nk',
+  wide_grip_b_nk: 'wide_grip_b_nk',
+  spoto_press: 'spoto_press',
+  incline_baenk: 'incline_b_nk',
+  incline_b_nk: 'incline_b_nk',
+
+  competition_conventional: 'konkurrence_konventionel',
+  konkurrence_konventionel: 'konkurrence_konventionel',
+  pause_deadlift: 'pause_deadlift',
+  deficit_deadlift: 'deficit_deadlift',
+  block_pull: 'block_pull',
+  rumaensk_doedloeft: 'rum_nsk_d_dl_ft',
+  rum_nsk_d_dl_ft: 'rum_nsk_d_dl_ft',
+  competition_sumo: 'konkurrence_sumo',
+  konkurrence_sumo: 'konkurrence_sumo',
+  pause_sumo: 'pause_sumo',
+  deficit_sumo: 'deficit_sumo',
+  sumo_block_pull: 'sumo_block_pull',
+}
+
+export function videoCoachVariationIdentity(lift, variation) {
+  const key = variationLookupKey(variation)
+  if (!key || key === 'standard') {
+    return ({
+      squat: 'konkurrence_squat',
+      bench: 'konkurrence_b_nk_pause',
+      deadlift: 'konkurrence_konventionel',
+    })[lift] || 'standard'
+  }
+  return VIDEOCOACH_VARIATION_IDENTITIES[key] || key
+}
+
 export function videoCoachVariationLabel(lift, variation) {
   const key = variationLookupKey(variation)
-  if (VIDEOCOACH_VARIATION_LABELS[key]) return VIDEOCOACH_VARIATION_LABELS[key]
   if (!key || key === 'standard') return VIDEOCOACH_LIFT_LABELS[lift] || 'Standard'
+  const identity = videoCoachVariationIdentity(lift, variation)
+  if (VIDEOCOACH_VARIATION_LABELS[key]) return VIDEOCOACH_VARIATION_LABELS[key]
+  if (VIDEOCOACH_VARIATION_LABELS[identity]) return VIDEOCOACH_VARIATION_LABELS[identity]
   return String(variation).trim().replaceAll('_', ' ')
 }

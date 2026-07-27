@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { supabase, withRetry } from './supabase'
 import { buildCoachPriorityItems, coachPriorityFocus, coachPriorityQueueContext, coachPriorityTaskContext } from './coachPriority'
 import { coachInboxCompletionStatus, createSingleFlightRunner, filterDraftVideoReviews, filterOpenTrainingSignals, shouldCollapseCoachConversations, summarizeCoachMessages, summarizeRefreshResults, trainingSignalFingerprint } from './coachInboxState'
-import { VIDEOCOACH_LIFT_LABELS as VIDEOCOACH_LIFTS, videoCoachVariationLabel } from './videoCoachLabels'
+import { VIDEOCOACH_LIFT_LABELS as VIDEOCOACH_LIFTS, videoCoachVariationIdentity, videoCoachVariationLabel } from './videoCoachLabels'
 
 const BLOCK_NAMES = ['Akkumulering', 'Intensificering', 'Peak', 'Deload', 'GPP', 'Hypertrofi', 'Styrke', 'Transition']
 
@@ -135,7 +135,8 @@ function videoCoachBaseline(baselines, analysis, key) {
   const metric = videoCoachMetric(analysis, key)
   if (!metric) return null
   return (baselines || []).find(item => item.lift === analysis.lift &&
-    item.variation === analysis.variation && item.metric_key === key &&
+    videoCoachVariationIdentity(item.lift, item.variation) ===
+      videoCoachVariationIdentity(analysis.lift, analysis.variation) && item.metric_key === key &&
     item.metric_method === metric.method) || null
 }
 

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { VIDEOCOACH_LIFT_LABELS, videoCoachVariationLabel } from '../src/videoCoachLabels.js'
+import { VIDEOCOACH_LIFT_LABELS, videoCoachVariationIdentity, videoCoachVariationLabel } from '../src/videoCoachLabels.js'
 
 assert.equal(VIDEOCOACH_LIFT_LABELS.bench, 'Bænkpres')
 assert.equal(videoCoachVariationLabel('bench', 'Konkurrence bænk (pause)'), 'Konkurrence bænk (pause)')
@@ -12,5 +12,14 @@ assert.equal(videoCoachVariationLabel('deadlift', 'competition_conventional'), '
 assert.equal(videoCoachVariationLabel('squat', 'standard'), 'Squat')
 assert.equal(videoCoachVariationLabel('bench', ''), 'Bænkpres')
 assert.equal(videoCoachVariationLabel('bench', 'custom_pause_bench'), 'custom pause bench')
+
+assert.equal(videoCoachVariationIdentity('bench', 'Konkurrence bænk (pause)'), 'konkurrence_b_nk_pause')
+assert.equal(videoCoachVariationIdentity('bench', 'konkurrence_baenk_pause'), 'konkurrence_b_nk_pause')
+assert.equal(videoCoachVariationIdentity('bench', 'competition_bench'), 'konkurrence_b_nk_pause')
+assert.equal(videoCoachVariationIdentity('deadlift', 'Rumænsk dødløft'), 'rum_nsk_d_dl_ft')
+assert.equal(videoCoachVariationIdentity('deadlift', 'rumaensk_doedloeft'), 'rum_nsk_d_dl_ft')
+assert.equal(videoCoachVariationIdentity('squat', 'standard'), 'konkurrence_squat')
+assert.equal(videoCoachVariationIdentity('bench', ''), 'konkurrence_b_nk_pause')
+assert.equal(videoCoachVariationIdentity('deadlift', 'custom_deadlift'), 'custom_deadlift')
 
 console.log('VideoCoach lift- og variationsnavne er konsistente.')
