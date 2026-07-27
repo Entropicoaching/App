@@ -499,6 +499,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   // Messages state
   const [messages, setMessages] = useState([])
   const [messageInput, setMessageInput] = useState('')
+  const [messageThreadError, setMessageThreadError] = useState(null)
+  const [messageSendError, setMessageSendError] = useState(null)
+  const [sendingMessage, setSendingMessage] = useState(false)
+  const messageThreadAthleteRef = useRef(null)
   const [coachMsgTrack, setCoachMsgTrack] = useState('besked')  // 'teknik' | 'besked'
   const [unreadByTrack, setUnreadByTrack] = useState({})
   const [latestByTrack, setLatestByTrack] = useState({})
@@ -1676,24 +1680,66 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
   async function markMessagesRead(athleteId, track) {
     // Markér kun det aktive spor som læst, så det andet spors ulæst-tæller består.
-    await supabase.from('messages').update({ read_by_coach: true })
-      .eq('athlete_id', athleteId).eq('sender_role', 'athlete').eq('category', track).eq('read_by_coach', false)
-    setMessages(prev => prev.map(message => message.sender_role === 'athlete' &&
-      (message.category || 'besked') === track ? { ...message, read_by_coach: true } : message))
+    let query = supabase.from('messages').update({ read_by_coach: true })
+      .eq('athlete_id', athleteId).eq('sender_role', 'athlete').eq('read_by_coach', false)
+    query = track === 'teknik'
+      ? query.eq('category', 'teknik')
+      : query.or('category.eq.besked,category.is.null')
+    const { error } = await query
+    if (error) {
+      await fetchLatestMessages(athletes.map(athlete => athlete.id))
+      return
+    }
+    if (messageThreadAthleteRef.current === athleteId) {
+      setMessages(prev => prev.map(message => message.athlete_id === athleteId && message.sender_role === 'athlete' &&
+        (message.category || 'besked') === track ? { ...message, read_by_coach: true } : message))
+    }
     await fetchLatestMessages(athletes.map(athlete => athlete.id))
   }
 
   async function fetchMessages(athleteId) {
-    const { data } = await supabase.from('messages').select('*').eq('athlete_id', athleteId).order('created_at')
-    setMessages(data || [])
+    if (messageThreadAthleteRef.current !== athleteId) {
+      messageThreadAthleteRef.current = athleteId
+      setMessages([])
+      setMessageInput('')
+      setMessageThreadError(null)
+      setMessageSendError(null)
+    }
+
+    try {
+      const { data, error } = await supabase.from('messages').select('*').eq('athlete_id', athleteId).order('created_at')
+      if (messageThreadAthleteRef.current !== athleteId) return
+      if (error) throw error
+      setMessages(data || [])
+      setMessageThreadError(null)
+    } catch {
+      if (messageThreadAthleteRef.current !== athleteId) return
+      setMessageThreadError('Samtalen kunne ikke opdateres. Prøv igen.')
+    }
   }
 
   async function sendCoachMessage() {
-    if (!messageInput.trim() || !selectedAthlete) return
-    await supabase.from('messages').insert({ athlete_id: selectedAthlete.id, sender_role: 'coach', content: messageInput.trim(), category: coachMsgTrack })
-    setMessageInput('')
-    fetchMessages(selectedAthlete.id)
-    fetchLatestMessages(athletes.map(a => a.id))
+    const content = messageInput.trim()
+    if (!content || !selectedAthlete || sendingMessage) return
+    const athleteId = selectedAthlete.id
+
+    setSendingMessage(true)
+    setMessageSendError(null)
+    try {
+      const { error } = await supabase.from('messages').insert({ athlete_id: athleteId, sender_role: 'coach', content, category: coachMsgTrack })
+      if (error) throw error
+      if (messageThreadAthleteRef.current === athleteId) setMessageInput('')
+      await Promise.all([
+        fetchMessages(athleteId),
+        fetchLatestMessages(athletes.map(a => a.id)),
+      ])
+    } catch {
+      if (messageThreadAthleteRef.current === athleteId) {
+        setMessageSendError('Beskeden blev ikke sendt. Din tekst er bevaret — prøv igen.')
+      }
+    } finally {
+      setSendingMessage(false)
+    }
   }
 
   async function togglePin(messageId, currentPinned) {
@@ -2650,12 +2696,15 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   function openProfile(athlete, initialTab = 'hub') {
     setVideoAnalysisReview(null)
     setVideoAnalysisReviewError(null)
+    messageThreadAthleteRef.current = athlete.id
     setSelectedAthlete(athlete)
     setActiveTab(initialTab)
     setEditing(null)
     setView('profile')
     setMessages([])
     setMessageInput('')
+    setMessageThreadError(null)
+    setMessageSendError(null)
     setWeeks([])
     setAthleteWeightLogs([])
     setOpenWeekId(null)
@@ -7015,7 +7064,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               const trackTab = (id, label, count) => {
                 const on = coachMsgTrack === id
                 return (
-                  <button onClick={() => setCoachMsgTrack(id)} style={{ flex: 1, padding: '0.5rem', background: on ? 'rgba(200,146,58,0.12)' : 'transparent', border: `1px solid ${on ? 'rgba(200,146,58,0.4)' : 'rgba(237,234,226,0.1)'}`, color: on ? '#c8923a' : '#7a7770', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.07em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
+                  <button disabled={sendingMessage} onClick={() => { setCoachMsgTrack(id); setMessageSendError(null) }} style={{ flex: 1, padding: '0.5rem', background: on ? 'rgba(200,146,58,0.12)' : 'transparent', border: `1px solid ${on ? 'rgba(200,146,58,0.4)' : 'rgba(237,234,226,0.1)'}`, color: on ? '#c8923a' : '#7a7770', cursor: sendingMessage ? 'default' : 'pointer', opacity: sendingMessage ? 0.6 : 1, fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.07em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
                     {label}
                     {count > 0 && <span style={{ background: '#c8923a', color: '#141410', borderRadius: 999, minWidth: 15, height: 15, fontSize: '0.5rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>{count}</span>}
                   </button>
@@ -7032,6 +7081,13 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 {coachMsgTrack === 'teknik' && (
                   <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#7a7770', letterSpacing: '0.05em', marginBottom: '0.9rem', lineHeight: 1.5 }}>
                     Tekniske cues og formsnak. Videoanalyser gennemgås og deles via review-køen.
+                  </div>
+                )}
+
+                {messageThreadError && (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.65rem', marginBottom: '0.9rem', padding: '0.55rem 0.6rem', border: '1px solid rgba(224,85,85,0.18)', background: 'rgba(224,85,85,0.035)' }}>
+                    <span style={{ color: '#d79a83', fontSize: '0.64rem', lineHeight: 1.45 }}>{messageThreadError}</span>
+                    <button onClick={() => fetchMessages(a.id)} style={{ ...s.btnGhost, minHeight: 34, padding: '0.3rem 0.55rem', fontSize: '0.45rem', flexShrink: 0 }}>Prøv igen</button>
                   </div>
                 )}
 
@@ -7064,7 +7120,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
                 {/* Message thread */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.25rem', maxHeight: '420px', overflowY: 'auto', paddingRight: '0.25rem' }}>
-                  {shownMsgs.length === 0 ? (
+                  {!messageThreadError && shownMsgs.length === 0 ? (
                     <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>{coachMsgTrack === 'teknik' ? 'Ingen teknik-beskeder endnu.' : 'Ingen beskeder endnu.'}</div>
                   ) : shownMsgs.map(msg => {
                     const isCoach = msg.sender_role === 'coach'
@@ -7104,15 +7160,17 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 {/* Send input */}
                 <div style={{ display: 'flex', gap: '0.5rem', borderTop: '1px solid rgba(237,234,226,0.07)', paddingTop: '1rem' }}>
                   <input
-                    style={{ ...s.fieldInput, flex: 1 }}
+                    style={{ ...s.fieldInput, flex: 1, minWidth: 0 }}
                     type="text"
                     placeholder={coachMsgTrack === 'teknik' ? 'Teknik-cue eller formsnak…' : 'Skriv en besked...'}
                     value={messageInput}
-                    onChange={e => setMessageInput(e.target.value)}
+                    disabled={sendingMessage}
+                    onChange={e => { setMessageInput(e.target.value); if (messageSendError) setMessageSendError(null) }}
                     onKeyDown={e => e.key === 'Enter' && sendCoachMessage()}
                   />
-                  <button style={s.btnPrimary} onClick={sendCoachMessage}>Send</button>
+                  <button style={{ ...s.btnPrimary, opacity: sendingMessage ? 0.6 : 1 }} disabled={sendingMessage} onClick={sendCoachMessage}>{sendingMessage ? 'Sender…' : 'Send'}</button>
                 </div>
+                {messageSendError && <div style={{ color: '#d79a83', fontSize: '0.64rem', lineHeight: 1.45, marginTop: '0.55rem' }}>{messageSendError}</div>}
               </div>
               )
             })()}
