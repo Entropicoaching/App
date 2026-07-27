@@ -2,7 +2,7 @@ export function buildCoachPriorityItems({ athletes, trainingSignals, unreadByTra
   const athleteById = new Map(athletes.map(athlete => [athlete.id, athlete]))
   const items = []
 
-  trainingSignals.forEach((signal, index) => {
+  trainingSignals.forEach(signal => {
     const athlete = athleteById.get(signal.o_athlete_id)
     if (!athlete) return
     const alert = signal.o_severity === 'alert'
@@ -10,7 +10,7 @@ export function buildCoachPriorityItems({ athletes, trainingSignals, unreadByTra
       : signal.o_detector === 'stagnation' ? 'Udvikling'
         : signal.o_detector === 'rpe_drift' ? 'RPE' : 'Træning'
     items.push({
-      key: `signal-${signal.o_athlete_id}-${signal.o_detector}-${index}`,
+      key: `signal-${signal.o_athlete_id}-${signal.o_detector}`,
       kind: 'signal', athlete, signal,
       rank: alert ? 0 : 3,
       color: alert ? '#e05555' : '#c8923a',
@@ -59,5 +59,20 @@ export function buildCoachPriorityItems({ athletes, trainingSignals, unreadByTra
 }
 
 export function nextCoachPriorityItem(items, currentKey) {
-  return (items || []).find(item => item?.key && item.key !== currentKey) || null
+  return coachPriorityQueueContext(items, currentKey).nextItem
+}
+
+export function coachPriorityQueueContext(items, currentKey) {
+  const queue = (items || []).filter(item => item?.key)
+  const currentOpen = !!currentKey && queue.some(item => item.key === currentKey)
+  const remainingItems = currentKey
+    ? queue.filter(item => item.key !== currentKey)
+    : queue
+
+  return {
+    state: remainingItems.length > 0 ? 'active' : currentOpen ? 'last' : 'complete',
+    currentOpen,
+    remainingCount: remainingItems.length,
+    nextItem: remainingItems[0] || null,
+  }
 }

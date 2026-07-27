@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase, withRetry } from './supabase'
-import { buildCoachPriorityItems, nextCoachPriorityItem } from './coachPriority'
+import { buildCoachPriorityItems, coachPriorityQueueContext } from './coachPriority'
 import { createSingleFlightRunner, filterDraftVideoReviews, filterOpenTrainingSignals, summarizeCoachMessages, summarizeRefreshResults, trainingSignalFingerprint } from './coachInboxState'
 
 const BLOCK_NAMES = ['Akkumulering', 'Intensificering', 'Peak', 'Deload', 'GPP', 'Hypertrofi', 'Styrke', 'Transition']
@@ -2716,9 +2716,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     describeVideo: coachVideoPriorityDetail,
   })
   const coachPriorityCount = coachPriorityItems.length
-  const nextPriorityItem = profileReturnView === 'inbox'
-    ? nextCoachPriorityItem(coachPriorityItems, profilePriorityKey)
+  const priorityQueueContext = profileReturnView === 'inbox'
+    ? coachPriorityQueueContext(coachPriorityItems, profilePriorityKey)
     : null
+  const nextPriorityItem = priorityQueueContext?.nextItem || null
 
   function openCoachPriorityItem(item, returnView = 'inbox') {
     if (!item) return
@@ -4067,11 +4068,22 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               <button onClick={() => setView(profileReturnView)} style={{ background: 'none', border: 'none', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', cursor: 'pointer', padding: 0 }}>
                 ← Tilbage til {profileReturnView === 'inbox' ? 'indbakken' : 'atleter'}
               </button>
-              {nextPriorityItem && (
-                <button onClick={() => openCoachPriorityItem(nextPriorityItem, 'inbox')}
-                  style={{ ...s.btnGhost, minHeight: 36, padding: '0.35rem 0.6rem', fontSize: '0.46rem', flexShrink: 0 }}>
-                  Næste opgave →
-                </button>
+              {priorityQueueContext && (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  <span style={{ color: priorityQueueContext.state === 'complete' ? '#6cba6c' : '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.04em', whiteSpace: 'nowrap' }}>
+                    {priorityQueueContext.state === 'complete'
+                      ? 'Køen er ryddet ✓'
+                      : priorityQueueContext.state === 'last'
+                        ? 'Sidste opgave'
+                        : `${priorityQueueContext.remainingCount} tilbage${priorityQueueContext.currentOpen ? ' efter denne' : ''}`}
+                  </span>
+                  {nextPriorityItem && (
+                    <button onClick={() => openCoachPriorityItem(nextPriorityItem, 'inbox')}
+                      style={{ ...s.btnGhost, minHeight: 36, padding: '0.35rem 0.6rem', fontSize: '0.46rem', flexShrink: 0 }}>
+                      Næste opgave →
+                    </button>
+                  )}
+                </div>
               )}
             </div>
 
