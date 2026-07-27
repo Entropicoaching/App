@@ -11,6 +11,7 @@ $scheduledTaskName = 'Entropi n8n'
 $n8nCommand = Join-Path $RuntimeRoot 'node_modules\.bin\n8n.cmd'
 $n8nUserFolder = Join-Path $RuntimeRoot 'data'
 $n8nLauncher = Join-Path $RuntimeRoot 'start-n8n.ps1'
+$expectedPowerShell = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
 $runtimeBlueprintRoot = Join-Path $PSScriptRoot 'local-runtime'
 $runtimeRecoveryVerifier = Join-Path $PSScriptRoot 'verify-runtime-recovery.ps1'
 $verifier = Join-Path $PSScriptRoot 'verify-workflows.mjs'
@@ -47,8 +48,41 @@ if ($LASTEXITCODE -ne 0) {
 
 $scheduledTask = Get-ScheduledTask -TaskName $scheduledTaskName -ErrorAction Stop
 $taskActions = @($scheduledTask.Actions)
-if ($taskActions.Count -ne 1 -or $taskActions[0].Arguments -notlike "*$n8nLauncher*") {
-  throw "Local n8n scheduled task does not use the expected launcher"
+if ($taskActions.Count -ne 1) {
+  throw "Local n8n scheduled task must have exactly one action"
+}
+$taskAction = $taskActions[0]
+$expectedArguments = "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$n8nLauncher`""
+if ([IO.Path]::GetFullPath([string]$taskAction.Execute) -ine [IO.Path]::GetFullPath($expectedPowerShell)) {
+  throw "Local n8n scheduled task does not use the expected Windows PowerShell executable"
+}
+if ([string]$taskAction.Arguments -cne $expectedArguments) {
+  throw "Local n8n scheduled task arguments differ from the reviewed launcher command"
+}
+if ([IO.Path]::GetFullPath([string]$taskAction.WorkingDirectory) -ine [IO.Path]::GetFullPath($RuntimeRoot)) {
+  throw "Local n8n scheduled task uses an unexpected working directory"
+}
+
+$taskTriggers = @($scheduledTask.Triggers)
+if ($taskTriggers.Count -ne 1 -or $taskTriggers[0].CimClass.CimClassName -ne 'MSFT_TaskLogonTrigger') {
+  throw "Local n8n scheduled task must have exactly one logon trigger"
+}
+$taskTrigger = $taskTriggers[0]
+if (-not $taskTrigger.Enabled) {
+  throw "Local n8n scheduled task logon trigger is disabled"
+}
+$triggerAccount = ([string]$taskTrigger.UserId -split '\\')[-1]
+if ($triggerAccount -ine $env:USERNAME) {
+  throw "Local n8n scheduled task logon trigger belongs to an unexpected user"
+}
+$principalAccount = ([string]$scheduledTask.Principal.UserId -split '\\')[-1]
+if ($principalAccount -ine $env:USERNAME -or
+    [string]$scheduledTask.Principal.LogonType -ne 'Interactive' -or
+    [string]$scheduledTask.Principal.RunLevel -ne 'Limited') {
+  throw "Local n8n scheduled task principal differs from the reviewed interactive user"
+}
+if ([string]$scheduledTask.State -eq 'Disabled') {
+  throw "Local n8n scheduled task is disabled"
 }
 if ([int]$scheduledTask.Settings.RestartCount -lt 1) {
   throw "Local n8n scheduled task has no process-failure restart policy"
@@ -61,6 +95,12 @@ if ([string]$scheduledTask.Settings.MultipleInstances -ne 'IgnoreNew') {
 }
 if (-not $scheduledTask.Settings.StartWhenAvailable) {
   throw "Local n8n scheduled task will not catch up after a missed start"
+}
+if ([string]$scheduledTask.Settings.ExecutionTimeLimit -ne 'PT0S') {
+  throw "Local n8n scheduled task has an execution time limit"
+}
+if ($scheduledTask.Settings.DisallowStartIfOnBatteries -or $scheduledTask.Settings.StopIfGoingOnBatteries) {
+  throw "Local n8n scheduled task is not configured for uninterrupted laptop operation"
 }
 
 $health = Invoke-WebRequest -UseBasicParsing 'http://127.0.0.1:5678/healthz'

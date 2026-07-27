@@ -126,8 +126,10 @@ compare them with the repository files. The check reports only pass/fail status;
 it never prints credential bindings or workflow payloads, and its exports are
 deleted immediately afterwards. Run it from a PowerShell session that can read
 Task Scheduler. It also verifies that `Entropi n8n` starts the expected local
-launcher, prevents duplicate instances, catches up after a missed start and
-keeps its secondary Task Scheduler restart policy. An isolated fake-n8n test
+launcher through the reviewed hidden PowerShell command and working directory,
+has one enabled logon trigger for the current interactive user, runs without a
+time or battery cutoff, prevents duplicate instances, catches up after a missed
+start and keeps its secondary Task Scheduler restart policy. An isolated fake-n8n test
 also proves that the launcher itself retries a failed child process after one
 minute without stopping or modifying the live n8n process.
 
