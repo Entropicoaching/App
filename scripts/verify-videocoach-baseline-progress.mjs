@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import {
   buildVideoCoachBaselineProfiles,
   countReadyVideoCoachBaselineProfiles,
+  videoCoachBaselineReviewImpact,
 } from '../src/videoCoachBaselineProgress.js'
 
 const profiles = buildVideoCoachBaselineProfiles([
@@ -61,6 +62,67 @@ const cacheWins = buildVideoCoachBaselineProfiles([
   { lift: 'bench', variation: 'konkurrence_b_nk_pause', n_analyses: 7 },
 ], analysisOnly)
 assert.equal(cacheWins[0].nAnalyses, 7)
+
+const eligibleMetric = {
+  rom_cm: { value: 34, method: 'tracked_path_calibrated_v1', eligible_for_baseline: true, confidence: 0.9 },
+}
+const startsProfile = videoCoachBaselineReviewImpact([], [], {
+  id: 'draft-a', status: 'draft', lift: 'bench', variation: 'konkurrence_baenk_pause',
+  low_conf_pct: 2, metrics: eligibleMetric,
+})
+assert.equal(startsProfile.kind, 'building')
+assert.equal(startsProfile.current, 0)
+assert.equal(startsProfile.after, 1)
+assert.equal(startsProfile.title, 'Starter personlig baseline')
+
+const makesPreliminary = videoCoachBaselineReviewImpact([
+  { lift: 'squat', variation: 'konkurrence_squat', n_analyses: 2 },
+], [], {
+  id: 'draft-b', status: 'draft', lift: 'squat', variation: 'competition_squat',
+  low_conf_pct: 5, metrics: eligibleMetric,
+})
+assert.equal(makesPreliminary.kind, 'preliminary')
+assert.equal(makesPreliminary.after, 3)
+assert.equal(makesPreliminary.title, 'Giver en foreløbig retning')
+
+const makesReady = videoCoachBaselineReviewImpact([
+  { lift: 'deadlift', variation: 'konkurrence_konventionel', n_analyses: 4 },
+], [], {
+  id: 'draft-c', status: 'draft', lift: 'deadlift', variation: 'competition_conventional',
+  low_conf_pct: 5, metrics: eligibleMetric,
+})
+assert.equal(makesReady.kind, 'ready')
+assert.equal(makesReady.after, 5)
+assert.equal(makesReady.title, 'Gør baseline klar')
+
+const blocked = videoCoachBaselineReviewImpact([], [], {
+  id: 'draft-d', status: 'draft', lift: 'bench', variation: 'competition_bench',
+  low_conf_pct: 16.4, metrics: eligibleMetric,
+})
+assert.equal(blocked.kind, 'blocked')
+assert.match(blocked.detail, /16,4%/)
+
+const noMetric = videoCoachBaselineReviewImpact([], [], {
+  id: 'draft-e', status: 'draft', lift: 'bench', variation: 'competition_bench',
+  low_conf_pct: 2, metrics: {},
+})
+assert.equal(noMetric.kind, 'blocked')
+
+const alreadyIncluded = videoCoachBaselineReviewImpact([], [{
+  id: 'approved-a', status: 'coach_approved', lift: 'bench', variation: 'competition_bench',
+  low_conf_pct: 2, metrics: eligibleMetric,
+}], {
+  id: 'approved-a', status: 'coach_approved', lift: 'bench', variation: 'competition_bench',
+  low_conf_pct: 2, metrics: eligibleMetric,
+})
+assert.equal(alreadyIncluded.kind, 'included')
+assert.equal(alreadyIncluded.current, 1)
+
+const excluded = videoCoachBaselineReviewImpact([], [], {
+  id: 'invalid-a', status: 'invalid', lift: 'bench', variation: 'competition_bench',
+  low_conf_pct: 2, metrics: eligibleMetric,
+})
+assert.equal(excluded.kind, 'excluded')
 
 assert.deepEqual(buildVideoCoachBaselineProfiles(null), [])
 assert.equal(countReadyVideoCoachBaselineProfiles(null), 0)

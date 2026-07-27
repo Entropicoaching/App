@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { supabase, withRetry } from './supabase'
 import { buildCoachPriorityItems, coachPriorityFocus, coachPriorityQueueContext, coachPriorityTaskContext } from './coachPriority'
 import { coachInboxCompletionStatus, createSingleFlightRunner, filterDraftVideoReviews, filterOpenTrainingSignals, shouldCollapseCoachConversations, summarizeCoachMessages, summarizeRefreshResults, trainingSignalFingerprint } from './coachInboxState'
-import { buildVideoCoachBaselineProfiles, countReadyVideoCoachBaselineProfiles } from './videoCoachBaselineProgress'
+import { buildVideoCoachBaselineProfiles, countReadyVideoCoachBaselineProfiles, videoCoachBaselineReviewImpact } from './videoCoachBaselineProgress'
 import { VIDEOCOACH_LIFT_LABELS as VIDEOCOACH_LIFTS, videoCoachVariationIdentity, videoCoachVariationLabel } from './videoCoachLabels'
 
 const BLOCK_NAMES = ['Akkumulering', 'Intensificering', 'Peak', 'Deload', 'GPP', 'Hypertrofi', 'Styrke', 'Transition']
@@ -7237,6 +7237,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           ['focus', 'Atletens fokus'],
           ['next_set', 'Næste gang'],
         ]
+        const baselineImpact = videoCoachBaselineReviewImpact(videoBaselines, videoAnalyses, analysis)
         const updating = videoAnalysisUpdatingId === analysis.id
         return (
           <div role="dialog" aria-modal="true" style={{ ...s.overlay, padding: isMobile ? 0 : '1.5rem', alignItems: isMobile ? 'stretch' : 'center', overflow: 'hidden', zIndex: 10020 }} onClick={e => { if (e.target === e.currentTarget) closeVideoAnalysisReview() }}>
@@ -7281,6 +7282,24 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     <span style={{ color: Number(analysis.low_conf_pct) > 15 ? '#cf6b4e' : '#7a9f78', border: '1px solid rgba(237,234,226,0.1)', padding: '0.22rem 0.45rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem' }}>Lav tracking-confidence {Number(analysis.low_conf_pct || 0).toLocaleString('da-DK', { maximumFractionDigits: 1 })}%</span>
                     {analysis.position_quality_pct != null && <span style={{ color: Number(analysis.position_quality_pct) > 25 ? '#cf6b4e' : '#7a9f78', border: '1px solid rgba(237,234,226,0.1)', padding: '0.22rem 0.45rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem' }}>Positionsafvigelse {Number(analysis.position_quality_pct).toLocaleString('da-DK', { maximumFractionDigits: 1 })}%</span>}
                   </div>
+
+                  {baselineImpact && (() => {
+                    const impactColor = ({
+                      ready: '#6cba6c',
+                      preliminary: '#c8923a',
+                      building: '#67dff5',
+                      included: '#7fa188',
+                      blocked: '#cf6b4e',
+                      excluded: '#7a7770',
+                    })[baselineImpact.kind] || '#7a7770'
+                    return (
+                      <div style={{ borderLeft: `2px solid ${impactColor}`, background: `${impactColor}0a`, padding: '0.6rem 0.7rem', marginBottom: '0.85rem' }}>
+                        <div style={{ ...s.fieldLabel, color: impactColor }}>Baseline-effekt</div>
+                        <div style={{ color: '#edeae2', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.7rem', marginTop: '0.2rem' }}>{baselineImpact.title}</div>
+                        <div style={{ color: '#8f8b82', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', lineHeight: 1.45, marginTop: '0.22rem' }}>{baselineImpact.detail}</div>
+                      </div>
+                    )
+                  })()}
 
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: '0.6rem', marginBottom: '0.9rem' }}>
                     {VIDEOCOACH_METRICS.map(def => {

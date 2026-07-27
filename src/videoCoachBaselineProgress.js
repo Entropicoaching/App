@@ -20,8 +20,6 @@ function profileDetails(lift, variation, nAnalyses) {
 }
 
 function hasEligibleBaselineMetric(analysis) {
-  if (!['coach_approved', 'shared'].includes(analysis?.status)) return false
-  if (Number(analysis.low_conf_pct || 0) > 15) return false
   return Object.values(analysis.metrics || {}).some(metric => {
     if (!metric || typeof metric !== 'object' || metric.eligible_for_baseline !== true) return false
     if (!Number.isFinite(Number(metric.value)) || !String(metric.method || '').trim()) return false
@@ -47,7 +45,9 @@ export function buildVideoCoachBaselineProfiles(baselines, analyses = []) {
   const eligibleAnalysisIds = new Map()
   analyses.forEach((analysis, index) => {
     if (!analysis || !VIDEOCOACH_LIFT_LABELS[analysis.lift] ||
-        typeof analysis.variation !== 'string' || !hasEligibleBaselineMetric(analysis)) return
+        typeof analysis.variation !== 'string' ||
+        !['coach_approved', 'shared'].includes(analysis.status) ||
+        Number(analysis.low_conf_pct || 0) > 15 || !hasEligibleBaselineMetric(analysis)) return
     const variation = videoCoachVariationIdentity(analysis.lift, analysis.variation)
     const key = `${analysis.lift}:${variation}`
     if (!eligibleAnalysisIds.has(key)) eligibleAnalysisIds.set(key, new Set())
@@ -67,4 +67,63 @@ export function buildVideoCoachBaselineProfiles(baselines, analyses = []) {
 
 export function countReadyVideoCoachBaselineProfiles(profiles) {
   return (profiles || []).filter(profile => profile?.stage === 'ready').length
+}
+
+export function videoCoachBaselineReviewImpact(baselines, analyses, analysis) {
+  if (!analysis || !VIDEOCOACH_LIFT_LABELS[analysis.lift] ||
+      typeof analysis.variation !== 'string') return null
+
+  const variation = videoCoachVariationIdentity(analysis.lift, analysis.variation)
+  const key = `${analysis.lift}:${variation}`
+  const label = `${VIDEOCOACH_LIFT_LABELS[analysis.lift]} · ${videoCoachVariationLabel(analysis.lift, variation)}`
+  const current = buildVideoCoachBaselineProfiles(baselines, analyses)
+    .find(profile => profile.key === key)?.nAnalyses || 0
+
+  if (analysis.status === 'invalid') return {
+    kind: 'excluded', label, current, after: current,
+    title: 'Udeladt fra personlig baseline',
+    detail: 'Målingen påvirker ikke atletens historiske sammenligning.',
+  }
+
+  const lowConfidence = Number(analysis.low_conf_pct || 0)
+  if (lowConfidence > 15) return {
+    kind: 'blocked', label, current, after: current,
+    title: 'Tæller ikke i baseline',
+    detail: `Lav tracking-confidence er ${lowConfidence.toLocaleString('da-DK', { maximumFractionDigits: 1 })}% · grænsen er 15%.`,
+  }
+
+  if (!hasEligibleBaselineMetric(analysis)) return {
+    kind: 'blocked', label, current, after: current,
+    title: 'Tæller ikke i baseline',
+    detail: 'Målingen mangler en sammenlignelig metric med tilstrækkelig sikkerhed.',
+  }
+
+  if (analysis.status === 'coach_approved' || analysis.status === 'shared') return {
+    kind: current >= READY_ANALYSES ? 'ready' : 'included', label, current, after: current,
+    title: 'Indgår i personlig baseline',
+    detail: current >= READY_ANALYSES
+      ? `${label} bygger nu på ${current} brugbare målinger.`
+      : `${label} er på ${current}/5 brugbare målinger.`,
+  }
+
+  if (analysis.status !== 'draft') return null
+
+  const after = current + 1
+  const title = current === 0
+    ? 'Starter personlig baseline'
+    : current < PRELIMINARY_ANALYSES && after >= PRELIMINARY_ANALYSES
+      ? 'Giver en foreløbig retning'
+      : current < READY_ANALYSES && after >= READY_ANALYSES
+        ? 'Gør baseline klar'
+        : current >= READY_ANALYSES ? 'Udvider en klar baseline' : 'Bygger personlig baseline'
+  const detail = current === 0
+    ? `Godkendelse starter ${label} på 1/5 brugbare målinger.`
+    : current >= READY_ANALYSES
+      ? `Godkendelse udvider profilen fra ${current} til ${after} brugbare målinger.`
+      : `Godkendelse flytter ${label} fra ${current}/5 til ${after}/5.`
+
+  return {
+    kind: after >= READY_ANALYSES ? 'ready' : after >= PRELIMINARY_ANALYSES ? 'preliminary' : 'building',
+    label, current, after, title, detail,
+  }
 }
