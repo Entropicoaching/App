@@ -2733,6 +2733,15 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const a = selectedAthlete
   const total = a ? (a.squat || 0) + (a.bench || 0) + (a.deadlift || 0) : 0
   const trainingTotal = a ? (a.training_squat || 0) + (a.training_bench || 0) + (a.training_deadlift || 0) : 0
+  const coachPriorityItems = buildCoachPriorityItems({
+    athletes: athletes.filter(athlete => !hiddenAthleteIds.has(athlete.id)),
+    trainingSignals,
+    unreadByTrack,
+    latestByTrack,
+    videoReviewQueue,
+    describeVideo: coachVideoPriorityDetail,
+  })
+  const coachPriorityCount = coachPriorityItems.length
 
   const currentWeight = (() => {
     if (!athleteWeightLogs.length) return null
@@ -2991,7 +3000,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             { icon: <><path d="M3 10.5 12 3l9 7.5" /><path d="M5 9.5V21h14V9.5" /></>, label: 'Forside', active: view === 'list', onClick: () => { setView('list'); setSelectedAthlete(null); setSidebarOpen(false) } },
             { icon: <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />, label: 'Min træning', active: false, onClick: () => { setSidebarOpen(false); goToMyProfile() } },
             { icon: <><rect x="3" y="5" width="18" height="16" rx="2" /><line x1="3" y1="10" x2="21" y2="10" /><line x1="8" y1="3" x2="8" y2="7" /><line x1="16" y1="3" x2="16" y2="7" /></>, label: 'Kalender', active: view === 'calendar', onClick: () => { setView('calendar'); setSelectedAthlete(null); setSidebarOpen(false) } },
-            { icon: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />, label: 'Indbakke', active: view === 'inbox', badge: Object.values(unreadCounts).reduce((x, y) => x + y, 0) + videoReviewQueue.length + trainingSignals.length, onClick: () => { setView('inbox'); setSelectedAthlete(null); setSidebarOpen(false) } },
+            { icon: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />, label: 'Indbakke', active: view === 'inbox', badge: coachPriorityCount, onClick: () => { setView('inbox'); setSelectedAthlete(null); setSidebarOpen(false) } },
             { icon: <><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></>, label: 'Bibliotek', active: view === 'library', onClick: () => { setView('library'); setSelectedAthlete(null); setSidebarOpen(false) } },
           ].map(item => (
             <div
@@ -3153,7 +3162,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 icon: <><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" /></>,
               },
             ].map(item => {
-              const totalUnread = item.key === 'inbox' ? Object.values(unreadCounts).reduce((a2, b) => a2 + b, 0) + videoReviewQueue.length + trainingSignals.length : 0
+              const priorityCount = item.key === 'inbox' ? coachPriorityCount : 0
               return (
                 <button
                   key={item.key}
@@ -3167,8 +3176,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 >
                   <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">{item.icon}</svg>
                   <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>{item.label}</span>
-                  {totalUnread > 0 && (
-                    <span style={{ position: 'absolute', top: '0.3rem', right: 'calc(50% - 1.15rem)', background: '#c8923a', color: '#141410', borderRadius: '999px', fontSize: '0.44rem', minWidth: '0.85rem', height: '0.85rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, padding: '0 0.15rem', fontFamily: "'IBM Plex Mono', monospace" }}>{totalUnread}</span>
+                  {priorityCount > 0 && (
+                    <span style={{ position: 'absolute', top: '0.3rem', right: 'calc(50% - 1.15rem)', background: '#c8923a', color: '#141410', borderRadius: '999px', fontSize: '0.44rem', minWidth: '0.85rem', height: '0.85rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, padding: '0 0.15rem', fontFamily: "'IBM Plex Mono', monospace" }}>{priorityCount}</span>
                   )}
                 </button>
               )
@@ -3231,14 +3240,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         {/* INDBAKKE — samlet beskedoverblik på tværs af atleter */}
         {view === 'inbox' && (() => {
           const visible = athletes.filter(athlete => !hiddenAthleteIds.has(athlete.id))
-          const priorityItems = buildCoachPriorityItems({
-            athletes: visible,
-            trainingSignals,
-            unreadByTrack,
-            latestByTrack,
-            videoReviewQueue,
-            describeVideo: coachVideoPriorityDetail,
-          })
+          const priorityItems = coachPriorityItems
           const rows = visible.flatMap(athlete => ['teknik', 'besked'].map(track => ({
                 athlete,
                 track,
@@ -3881,16 +3883,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           const shownAthletes = showHiddenAthletes
             ? [...visibleAthletes, ...hiddenAthletes.sort((x, y) => x.name.localeCompare(y.name, 'da'))]
             : visibleAthletes
-          const unreadTotal = Object.values(unreadCounts).reduce((sum, count) => sum + count, 0)
-          const inboxTotal = unreadTotal + videoReviewQueue.length + trainingSignals.length
-          const priorityItems = buildCoachPriorityItems({
-            athletes: visibleAthletes,
-            trainingSignals,
-            unreadByTrack,
-            latestByTrack,
-            videoReviewQueue,
-            describeVideo: coachVideoPriorityDetail,
-          })
+          const priorityItems = coachPriorityItems
+          const inboxTotal = coachPriorityCount
           const priorityPreview = priorityItems.slice(0, isMobile ? 3 : 4)
           const openPriorityItem = item => {
             if (item.kind === 'signal') {
