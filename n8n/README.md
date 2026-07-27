@@ -15,6 +15,9 @@ It includes:
   email logic runs;
 - unread athlete-message counts that are at least 6 hours old, grouped by athlete
   and conversation track;
+- a briefing total aligned with the app badge: each grouped conversation track
+  counts as one coach task, while each conversation row still shows its actual
+  number of unread messages;
 - pending VideoCoach drafts at least 24 hours old (metadata only, never video files);
 - active `alert` training signals that are neither acknowledged nor snoozed;
 - duplicate suppression based on the last successfully delivered briefing.

@@ -271,11 +271,24 @@ assert.deepEqual(
   'Only alert training signals may enter the fallback email',
 );
 
-const filteredEmail = runCode(node(coach, 'Build briefing').parameters.jsCode, {
+const filteredBriefing = runCode(node(coach, 'Build briefing').parameters.jsCode, {
   input: filteredProduction[0],
   mode: 'production',
   config,
-})[0].json.html;
+})[0].json;
+const filteredEmail = filteredBriefing.html;
+assert.equal(
+  filteredBriefing.total,
+  4,
+  'Briefing total must count two message tracks, one video and one signal as four app tasks',
+);
+assert.match(filteredBriefing.subject, /4 ting kræver et kig/);
+assert.match(
+  filteredEmail,
+  /Beskeder <span[^>]*>2<\/span>/,
+  'Message section must count the two grouped conversation tasks',
+);
+assert.match(filteredEmail, /2 ulæste/, 'Conversation rows must retain their actual unread-message count');
 assert.match(filteredEmail, /&lt;script&gt;Atlet&lt;\/script&gt;/, 'Athlete metadata must be HTML-escaped');
 assert.doesNotMatch(filteredEmail, /<script>Atlet<\/script>/, 'Unescaped athlete metadata must never reach HTML');
 assert.doesNotMatch(filteredEmail, /PRIVATE_MESSAGE_BODY/, 'Message content must never reach the fallback email');
