@@ -80,6 +80,12 @@ returned by the database function or passed through n8n.
     ordinary manual tests, so this particular check cannot be proven by clicking
     **Manual test** twice.
 
+The secret-free Windows runtime blueprint lives in `n8n/local-runtime/`. It pins
+the tested n8n version and tracks startup, crash-recovery and removal scripts.
+Never copy it over an existing runtime folder: preserve the installed `data/`
+folder and its encrypted credentials. The local deployment verifier compares the
+installed operational files with this reviewed blueprint and fails on drift.
+
 ## Failure and privacy behavior
 
 - No fallback-worthy items: `Keep unresolved backup items` returns no items, so

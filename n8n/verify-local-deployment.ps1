@@ -11,6 +11,7 @@ $scheduledTaskName = 'Entropi n8n'
 $n8nCommand = Join-Path $RuntimeRoot 'node_modules\.bin\n8n.cmd'
 $n8nUserFolder = Join-Path $RuntimeRoot 'data'
 $n8nLauncher = Join-Path $RuntimeRoot 'start-n8n.ps1'
+$runtimeBlueprintRoot = Join-Path $PSScriptRoot 'local-runtime'
 $verifier = Join-Path $PSScriptRoot 'verify-workflows.mjs'
 
 if (-not (Test-Path -LiteralPath $n8nCommand -PathType Leaf)) {
@@ -21,6 +22,21 @@ if (-not (Test-Path -LiteralPath $n8nUserFolder -PathType Container)) {
 }
 if (-not (Test-Path -LiteralPath $n8nLauncher -PathType Leaf)) {
   throw "n8n launcher not found below the supplied runtime root"
+}
+
+function Get-NormalizedFileText([string]$Path) {
+  if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) {
+    throw "Required local runtime file is missing: $([IO.Path]::GetFileName($Path))"
+  }
+  return [IO.File]::ReadAllText($Path).Replace("`r`n", "`n").TrimEnd()
+}
+
+foreach ($runtimeFile in @('package.json', 'package-lock.json', 'start-n8n.ps1', 'install-autostart.ps1', 'remove-autostart.ps1')) {
+  $blueprintPath = Join-Path $runtimeBlueprintRoot $runtimeFile
+  $deployedPath = Join-Path $RuntimeRoot $runtimeFile
+  if ((Get-NormalizedFileText $blueprintPath) -cne (Get-NormalizedFileText $deployedPath)) {
+    throw "Installed local n8n runtime differs from the reviewed blueprint: $runtimeFile"
+  }
 }
 
 $scheduledTask = Get-ScheduledTask -TaskName $scheduledTaskName -ErrorAction Stop
@@ -71,7 +87,7 @@ try {
   & $NodeCommand $verifier --live-coach $coachExport --live-monitor $monitorExport
   if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-  Write-Host 'OK: local n8n startup and process-recovery policy are valid'
+  Write-Host 'OK: local n8n blueprint, startup and process-recovery policy are valid'
 }
 finally {
   $env:N8N_USER_FOLDER = $previousUserFolder

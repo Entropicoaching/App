@@ -1,0 +1,13 @@
+{
+  "name": "entropi-n8n-local",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Isolated local n8n Community Edition runtime for Entropi workflows",
+  "scripts": {
+    "start": "n8n start",
+    "version": "n8n --version"
+  },
+  "dependencies": {
+    "n8n": "2.31.6"
+  }
+}
