@@ -538,6 +538,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [videoReviewQueueError, setVideoReviewQueueError] = useState(null)
   const [trainingSignals, setTrainingSignals] = useState([])
   const [trainingSignalsError, setTrainingSignalsError] = useState(null)
+  const [messageInboxError, setMessageInboxError] = useState(null)
   const [trainingSignalUpdatingKey, setTrainingSignalUpdatingKey] = useState(null)
   const [videoReviewRequest, setVideoReviewRequest] = useState(null)
   const videoReviewOpenedRef = useRef(null)
@@ -1646,23 +1647,31 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   }
 
   async function fetchLatestMessages(athleteIds) {
-    const { data } = await supabase.from('messages').select('*').in('athlete_id', athleteIds).order('created_at', { ascending: false })
-    const unread = {}
-    const unreadTrack = {}
-    const latestTrack = {}
-    for (const msg of (data || [])) {
-      const track = (msg.category || 'besked') === 'teknik' ? 'teknik' : 'besked'
-      const latest = (latestTrack[msg.athlete_id] ??= {})
-      if (!latest[track]) latest[track] = msg
-      if (msg.sender_role === 'athlete' && !msg.read_by_coach) {
-        unread[msg.athlete_id] = (unread[msg.athlete_id] || 0) + 1
-        const byTrack = (unreadTrack[msg.athlete_id] ??= { teknik: 0, besked: 0 })
-        byTrack[track]++
+    try {
+      const { data, error } = await supabase.from('messages').select('*').in('athlete_id', athleteIds).order('created_at', { ascending: false })
+      if (error) throw error
+
+      const unread = {}
+      const unreadTrack = {}
+      const latestTrack = {}
+      for (const msg of (data || [])) {
+        const track = (msg.category || 'besked') === 'teknik' ? 'teknik' : 'besked'
+        const latest = (latestTrack[msg.athlete_id] ??= {})
+        if (!latest[track]) latest[track] = msg
+        if (msg.sender_role === 'athlete' && !msg.read_by_coach) {
+          unread[msg.athlete_id] = (unread[msg.athlete_id] || 0) + 1
+          const byTrack = (unreadTrack[msg.athlete_id] ??= { teknik: 0, besked: 0 })
+          byTrack[track]++
+        }
       }
+      setUnreadCounts(unread)
+      setUnreadByTrack(unreadTrack)
+      setLatestByTrack(latestTrack)
+      setMessageInboxError(null)
+    } catch {
+      // Behold sidste kendte indbakke, så en kort forbindelsesfejl ikke ligner nul beskeder.
+      setMessageInboxError('Beskeder kunne ikke opdateres. Prøv igen.')
     }
-    setUnreadCounts(unread)
-    setUnreadByTrack(unreadTrack)
-    setLatestByTrack(latestTrack)
   }
 
   async function markMessagesRead(athleteId, track) {
@@ -3273,13 +3282,19 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               }
               return (
                 <div style={{ ...s.card, marginBottom: 0, padding: '0.85rem 0.9rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem', marginBottom: rows.length ? '0.45rem' : 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem', marginBottom: rows.length || messageInboxError ? '0.45rem' : 0 }}>
                     <div style={s.cardLabel}>Beskeder</div>
                     <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#4a4844' }}>{rows.filter(row => row.unread > 0).length} ulæste spor</span>
                   </div>
-                  {rows.length === 0 ? (
+                  {messageInboxError && (
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.65rem', marginBottom: rows.length ? '0.45rem' : 0, padding: '0.55rem 0.6rem', border: '1px solid rgba(224,85,85,0.18)', background: 'rgba(224,85,85,0.035)' }}>
+                      <span style={{ color: '#d79a83', fontSize: '0.64rem', lineHeight: 1.45 }}>{messageInboxError}</span>
+                      <button onClick={() => fetchLatestMessages(athletes.map(athlete => athlete.id))} style={{ ...s.btnGhost, minHeight: 34, padding: '0.3rem 0.55rem', fontSize: '0.45rem', flexShrink: 0 }}>Prøv igen</button>
+                    </div>
+                  )}
+                  {!messageInboxError && rows.length === 0 ? (
                     <div style={{ color: '#4a4844', fontSize: '0.7rem', padding: '0.45rem 0' }}>Ingen samtaler endnu. Start en besked fra atletens profil.</div>
-                  ) : (
+                  ) : rows.length > 0 ? (
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                       {rows.map((row, index) => {
                         const technique = row.track === 'teknik'
@@ -3303,7 +3318,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                         )
                       })}
                     </div>
-                  )}
+                  ) : null}
                 </div>
               )
             })()}
@@ -3992,7 +4007,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   </div>
                 )}
 
-                {!priorityPreview.length && (trainingSignalsError || videoReviewQueueError) && (
+                {(trainingSignalsError || videoReviewQueueError || messageInboxError) && (
                   <button onClick={() => { setView('inbox'); setSelectedAthlete(null) }} style={{ width: '100%', minHeight: 44, padding: '0.55rem 0.85rem', border: 'none', borderTop: '1px solid rgba(224,85,85,0.14)', background: 'rgba(224,85,85,0.025)', color: '#d79a83', fontSize: '0.64rem', cursor: 'pointer', textAlign: 'left' }}>
                     Noget kunne ikke indlæses · åbn indbakken for detaljer
                   </button>
