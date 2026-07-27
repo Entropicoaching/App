@@ -8,6 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "verify:coach-inbox-flow": "node scripts/verify-coach-inbox-flow.mjs",
     "verify:coach-priority": "node scripts/verify-coach-priority.mjs",
     "verify:n8n": "node n8n/verify-workflows.mjs"
   },

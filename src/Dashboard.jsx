@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase, withRetry } from './supabase'
 import { buildCoachPriorityItems } from './coachPriority'
+import { filterDraftVideoReviews, filterOpenTrainingSignals, summarizeCoachMessages, trainingSignalFingerprint } from './coachInboxState'
 
 const BLOCK_NAMES = ['Akkumulering', 'Intensificering', 'Peak', 'Deload', 'GPP', 'Hypertrofi', 'Styrke', 'Transition']
 
@@ -218,24 +219,6 @@ function videoCoachVariationLabel(lift, variation) {
 
 function coachVideoPriorityDetail(video) {
   return `${VIDEOCOACH_LIFTS[video.lift] || video.lift} · ${videoCoachVariationLabel(video.lift, video.variation)}${video.load_kg != null ? ` · ${video.load_kg} kg` : ''}`
-}
-
-function stableSignalValue(value) {
-  if (Array.isArray(value)) return value.map(stableSignalValue)
-  if (value && typeof value === 'object') {
-    return Object.keys(value).sort().reduce((result, key) => {
-      result[key] = stableSignalValue(value[key])
-      return result
-    }, {})
-  }
-  return value
-}
-
-function trainingSignalFingerprint(signal) {
-  return JSON.stringify(stableSignalValue({
-    severity: signal.o_severity,
-    metrics: signal.o_metrics || {},
-  }))
 }
 
 // Sektioner vist som kort på atlet-hubben (coach-landingsside). Rækkefølgen
@@ -1160,7 +1143,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       setVideoReviewQueueError(error.message || 'VideoCoach-køen kunne ikke hentes')
       return
     }
-    setVideoReviewQueue((data || []).filter(item => item?.id && item?.athlete_id && item.status === 'draft'))
+    setVideoReviewQueue(filterDraftVideoReviews(data))
   }
 
   // Forklarlige signaler fra den fælles SQL-motor. Indbakken viser kun forhold,
@@ -1177,25 +1160,12 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       setTrainingSignalsError(signalsResult.error.message || 'Træningssignaler kunne ikke hentes')
       return
     }
-    const rank = { alert: 0, context: 1 }
-    const candidates = (signalsResult.data || [])
-      .filter(item => item?.o_athlete_id && (item.o_severity === 'alert' || item.o_severity === 'context'))
-      .sort((a, b) => (rank[a.o_severity] - rank[b.o_severity]) ||
-        (a.o_athlete_name || '').localeCompare(b.o_athlete_name || ''))
     if (actionsResult.error) {
-      setTrainingSignals(candidates)
+      setTrainingSignals(filterOpenTrainingSignals(signalsResult.data, []))
       setTrainingSignalsError(actionsResult.error.message || 'Signalhandlinger kunne ikke hentes')
       return
     }
-    const actions = new Map((actionsResult.data || []).map(action =>
-      [`${action.athlete_id}:${action.detector}`, action]))
-    const now = Date.now()
-    setTrainingSignals(candidates.filter(signal => {
-      const action = actions.get(`${signal.o_athlete_id}:${signal.o_detector}`)
-      if (!action) return true
-      if (action.snoozed_until && new Date(action.snoozed_until).getTime() > now) return false
-      return action.signal_fingerprint !== trainingSignalFingerprint(signal)
-    }))
+    setTrainingSignals(filterOpenTrainingSignals(signalsResult.data, actionsResult.data))
   }
 
   async function handleTrainingSignal(signal, mode) {
@@ -1661,22 +1631,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       const { data, error } = await supabase.from('messages').select('*').in('athlete_id', athleteIds).order('created_at', { ascending: false })
       if (error) throw error
 
-      const unread = {}
-      const unreadTrack = {}
-      const latestTrack = {}
-      for (const msg of (data || [])) {
-        const track = (msg.category || 'besked') === 'teknik' ? 'teknik' : 'besked'
-        const latest = (latestTrack[msg.athlete_id] ??= {})
-        if (!latest[track]) latest[track] = msg
-        if (msg.sender_role === 'athlete' && !msg.read_by_coach) {
-          unread[msg.athlete_id] = (unread[msg.athlete_id] || 0) + 1
-          const byTrack = (unreadTrack[msg.athlete_id] ??= { teknik: 0, besked: 0 })
-          byTrack[track]++
-        }
-      }
-      setUnreadCounts(unread)
-      setUnreadByTrack(unreadTrack)
-      setLatestByTrack(latestTrack)
+      const summary = summarizeCoachMessages(data)
+      setUnreadCounts(summary.unreadCounts)
+      setUnreadByTrack(summary.unreadByTrack)
+      setLatestByTrack(summary.latestByTrack)
       setMessageInboxError(null)
     } catch {
       // Behold sidste kendte indbakke, så en kort forbindelsesfejl ikke ligner nul beskeder.
