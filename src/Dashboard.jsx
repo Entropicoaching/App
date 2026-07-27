@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase, withRetry } from './supabase'
 import { buildCoachPriorityItems, nextCoachPriorityItem } from './coachPriority'
-import { filterDraftVideoReviews, filterOpenTrainingSignals, summarizeCoachMessages, trainingSignalFingerprint } from './coachInboxState'
+import { createSingleFlightRunner, filterDraftVideoReviews, filterOpenTrainingSignals, summarizeCoachMessages, trainingSignalFingerprint } from './coachInboxState'
 
 const BLOCK_NAMES = ['Akkumulering', 'Intensificering', 'Peak', 'Deload', 'GPP', 'Hypertrofi', 'Styrke', 'Transition']
 
@@ -533,6 +533,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [trainingSignals, setTrainingSignals] = useState([])
   const [trainingSignalsError, setTrainingSignalsError] = useState(null)
   const [messageInboxError, setMessageInboxError] = useState(null)
+  const [inboxRefreshing, setInboxRefreshing] = useState(false)
+  const inboxRefreshRunnerRef = useRef(createSingleFlightRunner())
   const [trainingSignalUpdatingKey, setTrainingSignalUpdatingKey] = useState(null)
   const [videoReviewRequest, setVideoReviewRequest] = useState(null)
   const videoReviewOpenedRef = useRef(null)
@@ -857,26 +859,30 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     }
   }, [activeTab, selectedAthlete?.id])
 
+  async function refreshCoachInbox() {
+    return inboxRefreshRunnerRef.current(async () => {
+      setInboxRefreshing(true)
+      try {
+        const athleteIds = videoCoachAthletesRef.current.map(athlete => athlete.id)
+        const requests = [fetchTodayActivity(), fetchVideoReviewQueue(), fetchTrainingSignals()]
+        if (athleteIds.length) requests.push(fetchLatestMessages(athleteIds))
+        await Promise.allSettled(requests)
+      } finally {
+        setInboxRefreshing(false)
+      }
+    })
+  }
+
   // Coachens forside og indbakke holdes friske ved navigation, tilbagevenden
-  // til appen og et roligt interval, mens fanen er synlig.
+  // til appen og et roligt interval, mens fanen er synlig. Single-flight-runneren
+  // sikrer, at fokus, interval og manuelt tryk ikke starter parallelle kald.
   useEffect(() => {
     if (view !== 'list' && view !== 'inbox') return undefined
-    let refreshing = false
-    const refreshInbox = async () => {
-      if (refreshing) return
-      refreshing = true
-      const athleteIds = videoCoachAthletesRef.current.map(athlete => athlete.id)
-      const requests = [fetchTodayActivity(), fetchVideoReviewQueue(), fetchTrainingSignals()]
-      if (athleteIds.length) requests.push(fetchLatestMessages(athleteIds))
-      await Promise.allSettled(requests)
-      refreshing = false
-    }
-
     const refreshWhenVisible = () => {
-      if (document.visibilityState === 'visible') refreshInbox()
+      if (document.visibilityState === 'visible') refreshCoachInbox()
     }
 
-    refreshInbox()
+    refreshCoachInbox()
     window.addEventListener('focus', refreshWhenVisible)
     document.addEventListener('visibilitychange', refreshWhenVisible)
     const intervalId = window.setInterval(refreshWhenVisible, 5 * 60 * 1000)
@@ -886,6 +892,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       document.removeEventListener('visibilitychange', refreshWhenVisible)
       window.clearInterval(intervalId)
     }
+    // Funktionskaldet læser seneste atletliste fra ref; view styrer abonnementets levetid.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [view])
 
   async function fetchLastBackup() {
@@ -3239,9 +3247,15 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           const priorityError = trainingSignalsError || videoReviewQueueError
           return (
             <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
-              <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', margin: '0 0 1.25rem' }}>
-                Indbakke<span style={{ color: '#c8923a' }}>.</span>
-              </h1>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '1.25rem' }}>
+                <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', margin: 0 }}>
+                  Indbakke<span style={{ color: '#c8923a' }}>.</span>
+                </h1>
+                <button disabled={inboxRefreshing} onClick={refreshCoachInbox}
+                  style={{ ...s.btnGhost, minHeight: 36, padding: '0.35rem 0.6rem', fontSize: '0.46rem', opacity: inboxRefreshing ? 0.55 : 0.9, flexShrink: 0 }}>
+                  {inboxRefreshing ? 'Opdaterer…' : '↻ Opdater'}
+                </button>
+              </div>
 
               {(priorityItems.length > 0 || priorityError) && (
                 <div style={{ ...s.card, marginBottom: '1rem', borderColor: 'rgba(200,146,58,0.28)', background: 'rgba(200,146,58,0.035)', padding: '0.85rem' }}>
@@ -3252,7 +3266,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     </div>
                     {priorityItems.length > 0 && <span style={{ background: '#c8923a', color: '#141410', borderRadius: '999px', minWidth: '1.35rem', height: '1.35rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 0.35rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', fontWeight: 700 }}>{priorityItems.length}</span>}
                   </div>
-                  {priorityError && <div style={{ color: '#d79a83', fontSize: '0.64rem', lineHeight: 1.45, marginBottom: priorityItems.length ? '0.6rem' : 0 }}>Noget af prioriteringskøen kunne ikke opdateres.</div>}
+                  {priorityError && <div style={{ color: '#d79a83', fontSize: '0.64rem', lineHeight: 1.45, marginBottom: priorityItems.length ? '0.6rem' : 0 }}>Noget af prioriteringskøen kunne ikke opdateres. Brug Opdater for at prøve igen.</div>}
                   {priorityItems.length > 0 && (
                     <div style={{ display: 'grid', gap: '0.4rem' }}>
                       {priorityItems.map(item => {
@@ -3297,7 +3311,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   {messageInboxError && (
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.65rem', marginBottom: rows.length ? '0.45rem' : 0, padding: '0.55rem 0.6rem', border: '1px solid rgba(224,85,85,0.18)', background: 'rgba(224,85,85,0.035)' }}>
                       <span style={{ color: '#d79a83', fontSize: '0.64rem', lineHeight: 1.45 }}>{messageInboxError}</span>
-                      <button onClick={() => fetchLatestMessages(athletes.map(athlete => athlete.id))} style={{ ...s.btnGhost, minHeight: 34, padding: '0.3rem 0.55rem', fontSize: '0.45rem', flexShrink: 0 }}>Prøv igen</button>
+                      <button disabled={inboxRefreshing} onClick={refreshCoachInbox} style={{ ...s.btnGhost, minHeight: 34, padding: '0.3rem 0.55rem', fontSize: '0.45rem', opacity: inboxRefreshing ? 0.55 : 1, flexShrink: 0 }}>{inboxRefreshing ? 'Opdaterer…' : 'Prøv igen'}</button>
                     </div>
                   )}
                   {!messageInboxError && rows.length === 0 ? (

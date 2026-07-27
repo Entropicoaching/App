@@ -60,3 +60,13 @@ export function filterOpenTrainingSignals(signals, actions, now = Date.now()) {
     return action.signal_fingerprint !== trainingSignalFingerprint(signal)
   })
 }
+
+export function createSingleFlightRunner() {
+  let inFlight = null
+  return run => {
+    if (inFlight) return inFlight
+    const request = (async () => run())()
+    inFlight = request.finally(() => { inFlight = null })
+    return inFlight
+  }
+}

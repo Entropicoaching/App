@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { buildCoachPriorityItems } from '../src/coachPriority.js'
 import {
+  createSingleFlightRunner,
   filterDraftVideoReviews,
   filterOpenTrainingSignals,
   summarizeCoachMessages,
@@ -89,5 +90,18 @@ signals = signals.map(signal => signal === alert
   : signal)
 snapshot = inboxSnapshot()
 assert.equal(snapshot.count, 2, 'materially changed signal data must reopen an acknowledged detector')
+
+let releaseRefresh
+const refreshGate = new Promise(resolve => { releaseRefresh = resolve })
+const runSingleFlight = createSingleFlightRunner()
+let refreshRuns = 0
+const firstRefresh = runSingleFlight(async () => { refreshRuns++; await refreshGate })
+const overlappingRefresh = runSingleFlight(async () => { refreshRuns++ })
+assert.equal(overlappingRefresh, firstRefresh, 'overlapping refreshes must share the same request')
+assert.equal(refreshRuns, 1, 'overlapping refreshes must execute the loader once')
+releaseRefresh()
+await Promise.all([firstRefresh, overlappingRefresh])
+await runSingleFlight(async () => { refreshRuns++ })
+assert.equal(refreshRuns, 2, 'a new refresh must run after the previous request has settled')
 
 console.log('OK: coach inbox message, video and signal lifecycles keep queue items and badges synchronized')
