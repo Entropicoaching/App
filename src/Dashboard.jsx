@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase, withRetry } from './supabase'
 import { buildCoachPriorityItems, nextCoachPriorityItem } from './coachPriority'
-import { createSingleFlightRunner, filterDraftVideoReviews, filterOpenTrainingSignals, summarizeCoachMessages, trainingSignalFingerprint } from './coachInboxState'
+import { createSingleFlightRunner, filterDraftVideoReviews, filterOpenTrainingSignals, summarizeCoachMessages, summarizeRefreshResults, trainingSignalFingerprint } from './coachInboxState'
 
 const BLOCK_NAMES = ['Akkumulering', 'Intensificering', 'Peak', 'Deload', 'GPP', 'Hypertrofi', 'Styrke', 'Transition']
 
@@ -534,6 +534,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [trainingSignalsError, setTrainingSignalsError] = useState(null)
   const [messageInboxError, setMessageInboxError] = useState(null)
   const [inboxRefreshing, setInboxRefreshing] = useState(false)
+  const [inboxRefreshStatus, setInboxRefreshStatus] = useState(null)
   const inboxRefreshRunnerRef = useRef(createSingleFlightRunner())
   const [trainingSignalUpdatingKey, setTrainingSignalUpdatingKey] = useState(null)
   const [videoReviewRequest, setVideoReviewRequest] = useState(null)
@@ -866,7 +867,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         const athleteIds = videoCoachAthletesRef.current.map(athlete => athlete.id)
         const requests = [fetchTodayActivity(), fetchVideoReviewQueue(), fetchTrainingSignals()]
         if (athleteIds.length) requests.push(fetchLatestMessages(athleteIds))
-        await Promise.allSettled(requests)
+        const results = await Promise.allSettled(requests)
+        setInboxRefreshStatus(summarizeRefreshResults(results))
       } finally {
         setInboxRefreshing(false)
       }
@@ -877,7 +879,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   // til appen og et roligt interval, mens fanen er synlig. Single-flight-runneren
   // sikrer, at fokus, interval og manuelt tryk ikke starter parallelle kald.
   useEffect(() => {
-    if (view !== 'list' && view !== 'inbox') return undefined
+    if (loading || loadError || (view !== 'list' && view !== 'inbox')) return undefined
     const refreshWhenVisible = () => {
       if (document.visibilityState === 'visible') refreshCoachInbox()
     }
@@ -894,7 +896,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     }
     // Funktionskaldet læser seneste atletliste fra ref; view styrer abonnementets levetid.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [view])
+  }, [view, loading, loadError])
 
   async function fetchLastBackup() {
     const { data } = await supabase.from('profiles').select('last_backup_at').eq('id', session.user.id).maybeSingle()
@@ -1132,11 +1134,13 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   // så vi ikke henter de samme beskeder gennem to parallelle dataveje.
   async function fetchTodayActivity() {
     const todayStr = new Date().toISOString().slice(0, 10)
-    const { data } = await supabase.from('exercise_logs')
+    const { data, error } = await supabase.from('exercise_logs')
       .select('athlete_id, logged_at')
       .gte('logged_at', todayStr)
       .limit(2000)
+    if (error) return false
     setTodayData({ logs: data || [] })
+    return true
   }
 
   // Coachens samlede VideoCoach-indbakke. Kun kladder hentes, og listen
@@ -1150,9 +1154,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       .limit(50)
     if (error) {
       setVideoReviewQueueError(error.message || 'VideoCoach-køen kunne ikke hentes')
-      return
+      return false
     }
     setVideoReviewQueue(filterDraftVideoReviews(data))
+    return true
   }
 
   // Forklarlige signaler fra den fælles SQL-motor. Indbakken viser kun forhold,
@@ -1165,16 +1170,15 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         .select('athlete_id,detector,signal_fingerprint,snoozed_until'),
     ])
     if (signalsResult.error) {
-      setTrainingSignals([])
       setTrainingSignalsError(signalsResult.error.message || 'Træningssignaler kunne ikke hentes')
-      return
+      return false
     }
     if (actionsResult.error) {
-      setTrainingSignals(filterOpenTrainingSignals(signalsResult.data, []))
       setTrainingSignalsError(actionsResult.error.message || 'Signalhandlinger kunne ikke hentes')
-      return
+      return false
     }
     setTrainingSignals(filterOpenTrainingSignals(signalsResult.data, actionsResult.data))
+    return true
   }
 
   async function handleTrainingSignal(signal, mode) {
@@ -1645,9 +1649,11 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       setUnreadByTrack(summary.unreadByTrack)
       setLatestByTrack(summary.latestByTrack)
       setMessageInboxError(null)
+      return true
     } catch {
       // Behold sidste kendte indbakke, så en kort forbindelsesfejl ikke ligner nul beskeder.
       setMessageInboxError('Beskeder kunne ikke opdateres. Prøv igen.')
+      return false
     }
   }
 
@@ -3248,9 +3254,16 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           return (
             <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '1.25rem' }}>
-                <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', margin: 0 }}>
-                  Indbakke<span style={{ color: '#c8923a' }}>.</span>
-                </h1>
+                <div>
+                  <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', margin: 0 }}>
+                    Indbakke<span style={{ color: '#c8923a' }}>.</span>
+                  </h1>
+                  {inboxRefreshStatus && (
+                    <div style={{ marginTop: '0.22rem', color: inboxRefreshStatus.kind === 'success' ? '#7fa188' : '#d79a83', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.04em' }}>
+                      {inboxRefreshStatus.kind === 'success' ? 'Opdateret' : `Delvist opdateret (${inboxRefreshStatus.completed}/${inboxRefreshStatus.total})`} kl. {new Date(inboxRefreshStatus.refreshedAt).toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                  )}
+                </div>
                 <button disabled={inboxRefreshing} onClick={refreshCoachInbox}
                   style={{ ...s.btnGhost, minHeight: 36, padding: '0.35rem 0.6rem', fontSize: '0.46rem', opacity: inboxRefreshing ? 0.55 : 0.9, flexShrink: 0 }}>
                   {inboxRefreshing ? 'Opdaterer…' : '↻ Opdater'}

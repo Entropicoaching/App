@@ -70,3 +70,16 @@ export function createSingleFlightRunner() {
     return inFlight
   }
 }
+
+export function summarizeRefreshResults(results, refreshedAt = Date.now()) {
+  const settled = Array.isArray(results) ? results : []
+  const completed = settled.filter(result =>
+    result?.status === 'fulfilled' && result.value === true).length
+
+  return {
+    kind: settled.length > 0 && completed === settled.length ? 'success' : 'partial',
+    completed,
+    total: settled.length,
+    refreshedAt,
+  }
+}

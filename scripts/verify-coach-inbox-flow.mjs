@@ -5,6 +5,7 @@ import {
   filterDraftVideoReviews,
   filterOpenTrainingSignals,
   summarizeCoachMessages,
+  summarizeRefreshResults,
   trainingSignalFingerprint,
 } from '../src/coachInboxState.js'
 
@@ -103,5 +104,22 @@ releaseRefresh()
 await Promise.all([firstRefresh, overlappingRefresh])
 await runSingleFlight(async () => { refreshRuns++ })
 assert.equal(refreshRuns, 2, 'a new refresh must run after the previous request has settled')
+
+const successfulRefresh = summarizeRefreshResults([
+  { status: 'fulfilled', value: true },
+  { status: 'fulfilled', value: true },
+], now)
+assert.deepEqual(successfulRefresh, {
+  kind: 'success', completed: 2, total: 2, refreshedAt: now,
+}, 'a refresh is successful only when every loader confirms fresh data')
+
+const partialRefresh = summarizeRefreshResults([
+  { status: 'fulfilled', value: true },
+  { status: 'fulfilled', value: false },
+  { status: 'rejected', reason: new Error('offline') },
+], now)
+assert.deepEqual(partialRefresh, {
+  kind: 'partial', completed: 1, total: 3, refreshedAt: now,
+}, 'failed and rejected loaders must make the refresh visibly partial')
 
 console.log('OK: coach inbox message, video and signal lifecycles keep queue items and badges synchronized')
