@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase, withRetry } from './supabase'
-import { buildCoachPriorityItems, coachPriorityQueueContext } from './coachPriority'
+import { buildCoachPriorityItems, coachPriorityFocus, coachPriorityQueueContext } from './coachPriority'
 import { createSingleFlightRunner, filterDraftVideoReviews, filterOpenTrainingSignals, summarizeCoachMessages, summarizeRefreshResults, trainingSignalFingerprint } from './coachInboxState'
 
 const BLOCK_NAMES = ['Akkumulering', 'Intensificering', 'Peak', 'Deload', 'GPP', 'Hypertrofi', 'Styrke', 'Transition']
@@ -3235,6 +3235,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         {view === 'inbox' && (() => {
           const visible = athletes.filter(athlete => !hiddenAthleteIds.has(athlete.id))
           const priorityItems = coachPriorityItems
+          const priorityFocus = coachPriorityFocus(priorityItems)
           const rows = visible.flatMap(athlete => ['teknik', 'besked'].map(track => ({
                 athlete,
                 track,
@@ -3252,6 +3253,35 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               : date.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })
           }
           const priorityError = trainingSignalsError || videoReviewQueueError
+          const renderPriorityItem = item => {
+            const signalUpdating = item.kind === 'signal' && trainingSignalUpdatingKey === `${item.signal.o_athlete_id}:${item.signal.o_detector}`
+            return (
+              <div key={item.key} style={{ padding: '0.62rem 0.7rem', border: `1px solid ${item.color}30`, background: '#171713' }}>
+                <button onClick={() => openCoachPriorityItem(item, 'inbox')}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', width: '100%', minHeight: 42, padding: 0, border: 'none', background: 'transparent', color: '#edeae2', cursor: 'pointer', textAlign: 'left' }}>
+                  <span style={{ width: 8, height: 8, flexShrink: 0, borderRadius: '50%', background: item.color, boxShadow: `0 0 0 3px ${item.color}18` }} />
+                  <span style={{ minWidth: 0, flex: 1 }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: '0.78rem' }}>{item.title}</span>
+                      <span style={{ color: item.color, border: `1px solid ${item.color}44`, padding: '0.08rem 0.3rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.4rem', letterSpacing: '0.05em', textTransform: 'uppercase' }}>{item.label}</span>
+                    </span>
+                    <span style={{ display: 'block', marginTop: '0.18rem', color: '#7a7770', fontSize: '0.66rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.detail}</span>
+                  </span>
+                  {item.createdAt && <span style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', flexShrink: 0 }}>{fmtT(item.createdAt)}</span>}
+                  {item.count > 0 && <span style={{ minWidth: 19, height: 19, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 0.25rem', borderRadius: '999px', background: '#c8923a', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem', fontWeight: 700 }}>{item.count}</span>}
+                  <span style={{ color: item.color, flexShrink: 0, fontSize: '0.7rem' }}>→</span>
+                </button>
+                {item.kind === 'signal' && (
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', flexWrap: 'wrap', gap: '0.4rem', marginTop: '0.5rem', paddingTop: '0.45rem', borderTop: '1px solid rgba(237,234,226,0.055)' }}>
+                    <button disabled={signalUpdating} onClick={() => handleTrainingSignal(item.signal, 'snooze')}
+                      style={{ ...s.btnGhost, padding: '0.28rem 0.5rem', fontSize: '0.46rem', opacity: signalUpdating ? 0.5 : 0.85 }}>Udsæt 7 dage</button>
+                    <button disabled={signalUpdating} onClick={() => handleTrainingSignal(item.signal, 'acknowledge')}
+                      style={{ ...s.btnPrimary, padding: '0.28rem 0.55rem', fontSize: '0.46rem', opacity: signalUpdating ? 0.5 : 1 }}>{signalUpdating ? 'Gemmer…' : 'Set'}</button>
+                  </div>
+                )}
+              </div>
+            )
+          }
           return (
             <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '1.25rem' }}>
@@ -3281,37 +3311,20 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     {priorityItems.length > 0 && <span style={{ background: '#c8923a', color: '#141410', borderRadius: '999px', minWidth: '1.35rem', height: '1.35rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 0.35rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', fontWeight: 700 }}>{priorityItems.length}</span>}
                   </div>
                   {priorityError && <div style={{ color: '#d79a83', fontSize: '0.64rem', lineHeight: 1.45, marginBottom: priorityItems.length ? '0.6rem' : 0 }}>Noget af prioriteringskøen kunne ikke opdateres. Brug Opdater for at prøve igen.</div>}
-                  {priorityItems.length > 0 && (
+                  {priorityFocus.currentItem && (
                     <div style={{ display: 'grid', gap: '0.4rem' }}>
-                      {priorityItems.map(item => {
-                        const signalUpdating = item.kind === 'signal' && trainingSignalUpdatingKey === `${item.signal.o_athlete_id}:${item.signal.o_detector}`
-                        return (
-                          <div key={item.key} style={{ padding: '0.62rem 0.7rem', border: `1px solid ${item.color}30`, background: '#171713' }}>
-                            <button onClick={() => openCoachPriorityItem(item, 'inbox')}
-                              style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', width: '100%', minHeight: 42, padding: 0, border: 'none', background: 'transparent', color: '#edeae2', cursor: 'pointer', textAlign: 'left' }}>
-                              <span style={{ width: 8, height: 8, flexShrink: 0, borderRadius: '50%', background: item.color, boxShadow: `0 0 0 3px ${item.color}18` }} />
-                              <span style={{ minWidth: 0, flex: 1 }}>
-                                <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
-                                  <span style={{ fontSize: '0.78rem' }}>{item.title}</span>
-                                  <span style={{ color: item.color, border: `1px solid ${item.color}44`, padding: '0.08rem 0.3rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.4rem', letterSpacing: '0.05em', textTransform: 'uppercase' }}>{item.label}</span>
-                                </span>
-                                <span style={{ display: 'block', marginTop: '0.18rem', color: '#7a7770', fontSize: '0.66rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.detail}</span>
-                              </span>
-                              {item.createdAt && <span style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', flexShrink: 0 }}>{fmtT(item.createdAt)}</span>}
-                              {item.count > 0 && <span style={{ minWidth: 19, height: 19, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 0.25rem', borderRadius: '999px', background: '#c8923a', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem', fontWeight: 700 }}>{item.count}</span>}
-                              <span style={{ color: item.color, flexShrink: 0, fontSize: '0.7rem' }}>→</span>
-                            </button>
-                            {item.kind === 'signal' && (
-                              <div style={{ display: 'flex', justifyContent: 'flex-end', flexWrap: 'wrap', gap: '0.4rem', marginTop: '0.5rem', paddingTop: '0.45rem', borderTop: '1px solid rgba(237,234,226,0.055)' }}>
-                                <button disabled={signalUpdating} onClick={() => handleTrainingSignal(item.signal, 'snooze')}
-                                  style={{ ...s.btnGhost, padding: '0.28rem 0.5rem', fontSize: '0.46rem', opacity: signalUpdating ? 0.5 : 0.85 }}>Udsæt 7 dage</button>
-                                <button disabled={signalUpdating} onClick={() => handleTrainingSignal(item.signal, 'acknowledge')}
-                                  style={{ ...s.btnPrimary, padding: '0.28rem 0.55rem', fontSize: '0.46rem', opacity: signalUpdating ? 0.5 : 1 }}>{signalUpdating ? 'Gemmer…' : 'Set'}</button>
-                              </div>
-                            )}
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770' }}>Næste opgave</div>
+                      {renderPriorityItem(priorityFocus.currentItem)}
+                      {priorityFocus.remainingCount > 0 && (
+                        <details style={{ marginTop: '0.15rem' }}>
+                          <summary style={{ minHeight: 38, display: 'flex', alignItems: 'center', cursor: 'pointer', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.04em', listStylePosition: 'inside' }}>
+                            Vis {priorityFocus.remainingCount} øvrige {priorityFocus.remainingCount === 1 ? 'opgave' : 'opgaver'}
+                          </summary>
+                          <div style={{ display: 'grid', gap: '0.4rem', marginTop: '0.3rem' }}>
+                            {priorityFocus.remainingItems.map(renderPriorityItem)}
                           </div>
-                        )
-                      })}
+                        </details>
+                      )}
                     </div>
                   )}
                 </div>

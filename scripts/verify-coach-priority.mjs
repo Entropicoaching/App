@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { buildCoachPriorityItems, coachPriorityQueueContext, nextCoachPriorityItem } from '../src/coachPriority.js'
+import { buildCoachPriorityItems, coachPriorityFocus, coachPriorityQueueContext, nextCoachPriorityItem } from '../src/coachPriority.js'
 
 const athletes = [
   { id: 'athlete-a', name: 'Anna' },
@@ -54,6 +54,14 @@ assert.equal(items.some(item => item.key === 'message-athlete-b-besked'), false,
 assert.equal(nextCoachPriorityItem(items, items[0].key)?.key, items[1].key, 'next item must skip the currently open priority item')
 assert.equal(nextCoachPriorityItem(items, null)?.key, items[0].key, 'without a current item the queue must start at its first priority')
 assert.equal(nextCoachPriorityItem([items[0]], items[0].key), null, 'next item must be absent when only the current item remains')
+
+const focus = coachPriorityFocus(items)
+assert.equal(focus.currentItem?.key, items[0].key, 'the guided inbox must focus the first priority item')
+assert.deepEqual(focus.remainingItems.map(item => item.key), items.slice(1).map(item => item.key), 'the rest of the queue must remain available in order')
+assert.equal(focus.remainingCount, items.length - 1)
+assert.deepEqual(coachPriorityFocus([]), {
+  currentItem: null, remainingItems: [], remainingCount: 0,
+}, 'an empty priority queue must have no guided task')
 
 const activeContext = coachPriorityQueueContext(items, items[0].key)
 assert.equal(activeContext.state, 'active')

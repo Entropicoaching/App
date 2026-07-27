@@ -62,6 +62,15 @@ export function nextCoachPriorityItem(items, currentKey) {
   return coachPriorityQueueContext(items, currentKey).nextItem
 }
 
+export function coachPriorityFocus(items) {
+  const queue = (items || []).filter(item => item?.key)
+  return {
+    currentItem: queue[0] || null,
+    remainingItems: queue.slice(1),
+    remainingCount: Math.max(queue.length - 1, 0),
+  }
+}
+
 export function coachPriorityQueueContext(items, currentKey) {
   const queue = (items || []).filter(item => item?.key)
   const currentOpen = !!currentKey && queue.some(item => item.key === currentKey)
