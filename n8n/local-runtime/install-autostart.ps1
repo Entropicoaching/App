@@ -28,9 +28,9 @@ Register-ScheduledTask `
     -Trigger $trigger `
     -Settings $settings `
     -Principal $principal `
-    -Description 'Starts the local Entropi n8n Community Edition runtime at sign-in and restarts it after process failures.' `
+    -Description 'Starts local Entropi n8n at sign-in; the launcher retries failed n8n child processes.' `
     -Force | Out-Null
 
 Write-Host "Installed scheduled task: $taskName"
 Write-Host 'It will start automatically at the next sign-in.'
-Write-Host 'If n8n exits unexpectedly, Task Scheduler retries after one minute.'
+Write-Host 'The launcher retries a failed n8n child process after one minute.'

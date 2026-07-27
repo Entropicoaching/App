@@ -2,7 +2,9 @@
 
 This folder is the secret-free source blueprint for the local Entropi n8n
 runtime. It pins n8n Community Edition and contains the Windows launch and
-recovery scripts. It never contains workflow credentials or runtime state.
+recovery scripts. The launcher retries a failed n8n child process after one
+minute; Task Scheduler remains the outer startup boundary. The folder never
+contains workflow credentials or runtime state.
 
 For a fresh installation only:
 

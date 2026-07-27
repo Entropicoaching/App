@@ -12,6 +12,7 @@ $n8nCommand = Join-Path $RuntimeRoot 'node_modules\.bin\n8n.cmd'
 $n8nUserFolder = Join-Path $RuntimeRoot 'data'
 $n8nLauncher = Join-Path $RuntimeRoot 'start-n8n.ps1'
 $runtimeBlueprintRoot = Join-Path $PSScriptRoot 'local-runtime'
+$runtimeRecoveryVerifier = Join-Path $PSScriptRoot 'verify-runtime-recovery.ps1'
 $verifier = Join-Path $PSScriptRoot 'verify-workflows.mjs'
 
 if (-not (Test-Path -LiteralPath $n8nCommand -PathType Leaf)) {
@@ -37,6 +38,11 @@ foreach ($runtimeFile in @('package.json', 'package-lock.json', 'start-n8n.ps1',
   if ((Get-NormalizedFileText $blueprintPath) -cne (Get-NormalizedFileText $deployedPath)) {
     throw "Installed local n8n runtime differs from the reviewed blueprint: $runtimeFile"
   }
+}
+
+& $runtimeRecoveryVerifier -BlueprintRoot $runtimeBlueprintRoot
+if ($LASTEXITCODE -ne 0) {
+  throw 'Local n8n child-process recovery test failed'
 }
 
 $scheduledTask = Get-ScheduledTask -TaskName $scheduledTaskName -ErrorAction Stop
@@ -87,7 +93,7 @@ try {
   & $NodeCommand $verifier --live-coach $coachExport --live-monitor $monitorExport
   if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-  Write-Host 'OK: local n8n blueprint, startup and process-recovery policy are valid'
+  Write-Host 'OK: local n8n blueprint, startup and recovery safeguards are valid'
 }
 finally {
   $env:N8N_USER_FOLDER = $previousUserFolder
