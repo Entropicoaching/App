@@ -85,6 +85,10 @@ the tested n8n version and tracks startup, crash-recovery and removal scripts.
 Never copy it over an existing runtime folder: preserve the installed `data/`
 folder and its encrypted credentials. The local deployment verifier compares the
 installed operational files with this reviewed blueprint and fails on drift.
+The backup task runs daily at 19:30, catches up when the computer becomes
+available and retains 14 consistent local database/config snapshots outside the
+repository. The config is required to decrypt credentials, so the backup folder
+must never be uploaded or shared. Restore remains a deliberate manual operation.
 
 ## Failure and privacy behavior
 
@@ -131,7 +135,11 @@ has one enabled logon trigger for the current interactive user, runs without a
 time or battery cutoff, prevents duplicate instances, catches up after a missed
 start and keeps its secondary Task Scheduler restart policy. An isolated fake-n8n test
 also proves that the launcher itself retries a failed child process after one
-minute without stopping or modifying the live n8n process.
+minute without stopping or modifying the live n8n process. The same verifier
+checks the dedicated daily backup task plus the age, required files, size and
+SHA-256 manifest of the latest completed snapshot without printing secrets. It
+also restores the snapshot into a temporary n8n user folder and proves that both
+reviewed workflows can be exported from it before deleting the temporary copy.
 
 The live comparison is expected to fail while a reviewed source change is still
 waiting for deployment. It must turn green after the approved import and publish
