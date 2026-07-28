@@ -2897,7 +2897,7 @@ async function startMultipointTracking(p0) {
     path.pts.push({x:p0.x,y:p0.y});path.times.push(startT);path.valid.push(true);
   }else{
     path={type:'path',color:colorInput.value,pts:[{x:p0.x,y:p0.y}],times:[startT],
-      valid:[true],startFrame,barTracker:'multipoint-fb-v3-rep-window',plateRadius:radius};
+      valid:[true],startFrame,barTracker:'multipoint-fb-v3-bench-rotation',plateRadius:radius};
     strokes.push(path);
   }
   octx.drawImage(video,0,0,ocan.width,ocan.height);
@@ -2928,8 +2928,10 @@ async function startMultipointTracking(p0) {
   const localBias=localCalibration?{x:localCalibration.x-p0.x,y:localCalibration.y-p0.y}:{x:0,y:0};
   const homeBias=homeCalibration?{x:homeCalibration.x-p0.x,y:homeCalibration.y-p0.y}:{x:0,y:0};
   const quickBias=quickCalibration?{x:quickCalibration.x-p0.x,y:quickCalibration.y-p0.y}:{x:0,y:0};
-  const deadliftMode=vcV3Lift(document.getElementById('liftSel').value)==='deadlift';
+  const liftMode=vcV3Lift(document.getElementById('liftSel').value);
+  const deadliftMode=liftMode==='deadlift',benchMode=liftMode==='bench';
   let homePending=null,correctionPending=null,fullAuditFrames=0;
+  const correctionHistory=[];
   // Dødløft: en kort, fuld skivekontrol ved starten og ved hver tilbagekomst
   // til gulvzonen. Det bevarer genankringen efter kamerarystelser uden den
   // tidligere, dyre fuldsøgning på samtlige frames tæt ved gulvet.
@@ -3014,14 +3016,30 @@ async function startMultipointTracking(p0) {
           correction.cover>=.5&&correction.pairCover>=.4&&correction.app<2.6&&distance<=radius*.22;
         if(correctionOK){
           const delta={x:correctionX-nx,y:correctionY-ny};
-          const confirmed=correctionPending&&correctionPending.kind===kind&&
-            Math.hypot(delta.x-correctionPending.x,delta.y-correctionPending.y)<=radius*.08;
-          if(confirmed){
-            nx+=delta.x*.5;ny+=delta.y*.5;
-            path.centerCorrections=(path.centerCorrections||0)+1;
+          if(benchMode){
+            // En bænkplade kan rotere omkring sit centrum, når stangen ruller i
+            // hånden eller rammer brystet. Filtrér derfor kun den vandrette
+            // centerfejl over tre målinger; lodret bane kommer fortsat direkte
+            // fra multipoint-trackeren og forsinkes ikke af filteret.
+            correctionHistory.push({...delta,kind});
+            while(correctionHistory.length>5)correctionHistory.shift();
+            const same=correctionHistory.slice(-3);
+            if(same.length===3&&same.every(q=>q.kind===kind)){
+              const mdx=mpMedian(same.map(q=>q.x)),mdy=mpMedian(same.map(q=>q.y));
+              const mag=Math.hypot(mdx,mdy),limit=radius*.08,scale=mag>limit?limit/mag:1;
+              nx+=mdx*scale*.55;
+              path.centerCorrections=(path.centerCorrections||0)+1;
+            }
+          }else{
+            const confirmed=correctionPending&&correctionPending.kind===kind&&
+              Math.hypot(delta.x-correctionPending.x,delta.y-correctionPending.y)<=radius*.08;
+            if(confirmed){
+              nx+=delta.x*.5;ny+=delta.y*.5;
+              path.centerCorrections=(path.centerCorrections||0)+1;
+            }
           }
           correctionPending={...delta,kind};
-        }else correctionPending=null;
+        }else {correctionPending=null;correctionHistory.length=0;}
       }
       const nearHome=Math.hypot(nx-p0.x,ny-p0.y)<=radius*1.35;
       if(plateIdentityUsable&&deadliftMode&&nearHome&&!wasNearHome)homeEntryFrames=10;
@@ -3158,7 +3176,8 @@ async function startMultipointTracking(p0) {
       homeRecoveries:path.homeRecoveries||0,playbackSlowdowns:path.playbackSlowdowns||0,
       playbackSpeedups:path.playbackSpeedups||0,
       centerCorrections:path.centerCorrections||0,repAnchors:path.repAnchors||0,
-      trackerMode:deadliftMode?'deadlift-home-anchor':'rigid-plate-drift-audit',
+      trackerMode:deadliftMode?'deadlift-home-anchor':benchMode?
+        'bench-rotation-filtered-drift-audit':'rigid-plate-drift-audit',
       searchBias:{local:localBias,home:homeBias,quick:quickBias},
       workMs:{p50:percentile(.5),p80:percentile(.8),p95:percentile(.95),max:sorted.at(-1)??null},
       pts:path.pts.map(q=>({...q})),times:[...path.times],valid:[...(path.valid||[])]};
@@ -5202,7 +5221,7 @@ function buildV3AnalysisPayload({ athleteId, athleteName, lift, variation,
       width_px: video.videoWidth || canvas.width || null,
       height_px: video.videoHeight || canvas.height || null,
       cropped: null, fingerprint: null },
-    versions: { engine: 'videocoach-3.0.0', tracker: 'whole-plate-multipoint-2026-07-19',
+    versions: { engine: 'videocoach-3.0.0', tracker: 'whole-plate-multipoint-bench-rotation-2026-07-28',
       skeleton: 'three-position-time-driven-2026-07-19',
       feedback: 'coach-feedback-priority-v2-2026-07-27' },
     quality: { low_conf_pct: lowConfPct,
