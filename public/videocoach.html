@@ -697,6 +697,9 @@ const MODE_PARAMS = new URLSearchParams(location.search);
 const FORCE_ATHLETE = MODE_PARAMS.get('mode') === 'athlete';
 const DESKTOP = location.protocol === 'file:' && !FORCE_ATHLETE;
 const COACHWEB = !DESKTOP && MODE_PARAMS.has('coach');
+// Lokal, eksplicit testtilstand. Eksponerer kun rå trackerdata, når URL'en
+// indeholder ?benchmark=1; normal coach- og atletadfærd bruger aldrig kanalen.
+const TRACKER_BENCHMARK = MODE_PARAMS.get('benchmark') === '1';
 const SLIM = !DESKTOP;              // moderne layout (atlet OG coach online)
 const ATHLETE = SLIM && !COACHWEB;
 let setAthleteState = null;         // Athlete v2: ét roligt, guidet flow
@@ -705,6 +708,43 @@ let coachFlowTo = null;             // Coach: ryk 4-trins-flowet (sat i COACHWEB
 // ︎ tvinger TEKST-gengivelse (monokrom glyf) i stedet for farvet emoji
 const playLabel = playing => SLIM ? (playing ? '❚❚' : '▶︎')
   : (playing ? '⏸ Pause (mellemrum)' : '▶ Afspil (mellemrum)');
+
+function publishTrackerBenchmarkRun(run) {
+  if (!TRACKER_BENCHMARK) return;
+  window.__vcTrackerBenchmarkLast = run;
+  (window.__vcTrackerBenchmarkRuns || (window.__vcTrackerBenchmarkRuns = [])).push(run);
+  let output = document.getElementById('vcTrackerBenchmarkData');
+  if (!output) {
+    output = document.createElement('script');
+    output.id = 'vcTrackerBenchmarkData';
+    output.type = 'application/json';
+    output.hidden = true;
+    document.body.appendChild(output);
+  }
+  output.textContent = JSON.stringify(run);
+  let download = document.getElementById('vcTrackerBenchmarkDownload');
+  if (!download) {
+    download = document.createElement('button');
+    download.id = 'vcTrackerBenchmarkDownload';
+    download.type = 'button';
+    download.textContent = 'Hent tracker JSON';
+    Object.assign(download.style, {
+      position:'fixed', right:'12px', bottom:'12px', zIndex:'99999',
+      padding:'9px 12px', border:'1px solid #e6bd58', borderRadius:'8px',
+      background:'#151719', color:'#f4f1e9', font:'12px system-ui', cursor:'pointer'
+    });
+    document.body.appendChild(download);
+  }
+  download.onclick = () => {
+    const url = URL.createObjectURL(new Blob([JSON.stringify(run, null, 2)],
+      { type:'application/json' }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `videocoach-tracker-${Date.now()}.json`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+}
 
 // ---------- Video ind ----------
 document.getElementById('openBtn').onclick = () =>
@@ -2794,7 +2834,7 @@ function mpMatchPoint(from,to,p,pred,search,pr=4){
   return best;
 }
 
-const MP_TRACK_RATES=[.1,.15,.2,.25];
+const MP_TRACK_RATES=[.1,.15,.2,.25,.30];
 function mpP80(values){
   const q=[...values].sort((a,b)=>a-b);
   return q.length?q[Math.min(q.length-1,Math.floor(q.length*.8))]:Infinity;
@@ -2817,11 +2857,37 @@ function mpRateStep(current,direction,safe=MP_TRACK_RATES[MP_TRACK_RATES.length-
   return current;
 }
 
+// Billig 5x5-refinement omkring multipoint-resultatet. Den kan kun flytte
+// centeret faa pixels og fungerer derfor som driftalarm, ikke som en ny global
+// tracker. Ved alarm faar den fulde lokale skivesoeger et kort, sticky vindue.
+function mpQuickPlateSearch(frame,pred,r,model){
+  const step=Math.max(3,r*.12),candidates=[];
+  for(let gy=-3;gy<=3;gy++)for(let gx=-3;gx<=3;gx++){
+    const x=pred.x+gx*step,y=pred.y+gy*step,e=plEvidence(frame,{x,y},r,model);
+    const q={x,y,...e,total:e.score-Math.hypot(gx,gy)*1.25};
+    candidates.push(q);
+  }
+  const choose=list=>{
+    const paired=list.filter(q=>q.pairCover>=.4&&q.cover>=.5);
+    const pool=paired.length?paired:list,maxCircle=Math.max(...pool.map(q=>q.circle));
+    const eligible=pool.filter(q=>q.circle>=Math.max(8,maxCircle*.70));
+    return (eligible.length?eligible:pool).sort((a,b)=>b.total-a.total)[0];
+  };
+  const coarse=choose(candidates),fineStep=step/3,fine=[];
+  for(let gy=-1;gy<=1;gy++)for(let gx=-1;gx<=1;gx++){
+    const x=coarse.x+gx*fineStep,y=coarse.y+gy*fineStep,e=plEvidence(frame,{x,y},r,model);
+    fine.push({x,y,...e,total:e.score-Math.hypot(x-pred.x,y-pred.y)/r*2.5});
+  }
+  return choose(fine);
+}
+
 async function startMultipointTracking(p0) {
   awaitBarClick=false;tracking=true;barBtn.textContent='⏹ Stop sporing';
   ocan.width=canvas.width;ocan.height=canvas.height;
   const radius=Math.max(14,p0.r||(cmPerPx?22.5/cmPerPx:canvas.width/16));
   const startT=video.currentTime,startFrame=Math.round(startT*30);
+  const benchmarkStartedAt=TRACKER_BENCHMARK?performance.now():0;
+  const benchmarkWorkMs=[];
   let path=strokes.findLast?strokes.findLast(s=>s.type==='path'&&s.times&&
     startT>=s.times[0]&&startT<s.times[s.times.length-1]):null;
   if(path){
@@ -2831,7 +2897,7 @@ async function startMultipointTracking(p0) {
     path.pts.push({x:p0.x,y:p0.y});path.times.push(startT);path.valid.push(true);
   }else{
     path={type:'path',color:colorInput.value,pts:[{x:p0.x,y:p0.y}],times:[startT],
-      valid:[true],startFrame,barTracker:'multipoint-fb-v1',plateRadius:radius};
+      valid:[true],startFrame,barTracker:'multipoint-fb-v3-rep-window',plateRadius:radius};
     strokes.push(path);
   }
   octx.drawImage(video,0,0,ocan.width,ocan.height);
@@ -2851,9 +2917,32 @@ async function startMultipointTracking(p0) {
     polar:plPolarDesc(plateInit,p0,radius)};
   const plateBase=plEvidence(plateInit,p0,radius,plateModel);
   const plateIdentityUsable=plateBase.circle>8&&plateBase.cover>=.35;
-  let homePending=null;
+  const auditStep=Math.max(3,radius*.10),calPad=radius*2.8;
+  const calibrationFrame=plCapture(p0.x-calPad,p0.y-calPad,calPad*2,calPad*2);
+  const localCalibration=plateIdentityUsable?
+    plSearch(calibrationFrame,p0,radius,plateModel,radius*.45,auditStep):null;
+  const homeCalibration=plateIdentityUsable?
+    plSearch(calibrationFrame,p0,radius,plateModel,radius*1.15,auditStep):null;
+  const quickCalibration=plateIdentityUsable?
+    mpQuickPlateSearch(calibrationFrame,p0,radius,plateModel):null;
+  const localBias=localCalibration?{x:localCalibration.x-p0.x,y:localCalibration.y-p0.y}:{x:0,y:0};
+  const homeBias=homeCalibration?{x:homeCalibration.x-p0.x,y:homeCalibration.y-p0.y}:{x:0,y:0};
+  const quickBias=quickCalibration?{x:quickCalibration.x-p0.x,y:quickCalibration.y-p0.y}:{x:0,y:0};
+  const deadliftMode=vcV3Lift(document.getElementById('liftSel').value)==='deadlift';
+  let homePending=null,correctionPending=null,fullAuditFrames=0;
+  // Dødløft: en kort, fuld skivekontrol ved starten og ved hver tilbagekomst
+  // til gulvzonen. Det bevarer genankringen efter kamerarystelser uden den
+  // tidligere, dyre fuldsøgning på samtlige frames tæt ved gulvet.
+  let wasNearHome=false,homeEntryFrames=0;
   if(features.length<5){
     tracking=false;path.lowConf=(path.lowConf||0)+1;
+    if(TRACKER_BENCHMARK){
+      const run={schema:1,outcome:'rejected_initial_features',startedAt:startT,
+        elapsedMs:performance.now()-benchmarkStartedAt,canvas:{w:ocan.width,h:ocan.height},
+        plateRadius:radius,initialFeatures:features.length,pts:path.pts.map(q=>({...q})),
+        times:[...path.times],valid:[...path.valid]};
+      publishTrackerBenchmarkRun(run);
+    }
     say('⚠ For få tydelige detaljer ved punktet · vælg et tydeligt område omkring skivens nav');
     if(ATHLETE&&setAthleteState)
       setAthleteState('error','Punktet har for få tydelige detaljer. Vælg tættere på skivens nav.');
@@ -2866,8 +2955,10 @@ async function startMultipointTracking(p0) {
     if(mediaDt<=FRAME*1.6){sourceSteps.push(mediaDt);if(sourceSteps.length>30)sourceSteps.shift();}
     const dt=Math.max(1e-3,tNow-anchorTime);
     if(HAS_RVFC&&COACHWEB){
-      if(mediaDt>FRAME*2.5)gapStrikes++;else gapStrikes=Math.max(0,gapStrikes-1);
-      if(gapStrikes>=2&&tNow-lastSlowT>.5&&video.playbackRate>.1){
+      // Ét oversprunget kildeframe er nok til at sænke farten. Stangbanen må
+      // ikke købe kortere analysetid ved at miste datapunkter mellem frames.
+      if(mediaDt>FRAME*1.6)gapStrikes++;else gapStrikes=Math.max(0,gapStrikes-1);
+      if(gapStrikes>=1&&tNow-lastSlowT>.5&&video.playbackRate>.1){
         video.playbackRate=mpRateStep(video.playbackRate,-1);
         path.playbackSlowdowns=(path.playbackSlowdowns||0)+1;
         lastSlowT=tNow;lastRateChangeT=tNow;stableFrames=0;gapStrikes=0;
@@ -2900,7 +2991,53 @@ async function startMultipointTracking(p0) {
       const mdx=mpMedian(moves.map(q=>q.dx)),mdy=mpMedian(moves.map(q=>q.dy));
       const residuals=moves.map(q=>Math.hypot(q.dx-mdx,q.dy-mdy)),mad=mpMedian(residuals);
       kept=moves.filter((q,i)=>residuals[i]<=Math.max(3,3*mad));
-      const nx=cur.x+mpMedian(kept.map(q=>q.dx)),ny=cur.y+mpMedian(kept.map(q=>q.dy));
+      let nx=cur.x+mpMedian(kept.map(q=>q.dx)),ny=cur.y+mpMedian(kept.map(q=>q.dy));
+      if(plateIdentityUsable&&!deadliftMode){
+        const quickPad=radius*1.55;
+        const quickFrame=plCapture(nx-quickPad,ny-quickPad,quickPad*2,quickPad*2);
+        let correction=mpQuickPlateSearch(quickFrame,{x:nx,y:ny},radius,plateModel);
+        let bias=quickBias,kind='quick';
+        let correctionX=correction.x-bias.x,correctionY=correction.y-bias.y;
+        let distance=Math.hypot(correctionX-nx,correctionY-ny);
+        const quickStrong=correction.circle>Math.max(9,plateBase.circle*.32)&&
+          correction.cover>=.5&&correction.pairCover>=.4&&correction.app<2.6;
+        if(!quickStrong||distance>radius*.04)fullAuditFrames=6;
+        if(fullAuditFrames>0){
+          const localR=radius*.45,pad=localR+radius*1.4+auditStep*2;
+          const auditFrame=plCapture(nx-pad,ny-pad,pad*2,pad*2);
+          correction=plSearch(auditFrame,{x:nx,y:ny},radius,plateModel,localR,auditStep);
+          bias=localBias;kind='full';correctionX=correction.x-bias.x;
+          correctionY=correction.y-bias.y;distance=Math.hypot(correctionX-nx,correctionY-ny);
+          fullAuditFrames--;
+        }
+        const correctionOK=correction&&correction.circle>Math.max(9,plateBase.circle*.32)&&
+          correction.cover>=.5&&correction.pairCover>=.4&&correction.app<2.6&&distance<=radius*.22;
+        if(correctionOK){
+          const delta={x:correctionX-nx,y:correctionY-ny};
+          const confirmed=correctionPending&&correctionPending.kind===kind&&
+            Math.hypot(delta.x-correctionPending.x,delta.y-correctionPending.y)<=radius*.08;
+          if(confirmed){
+            nx+=delta.x*.5;ny+=delta.y*.5;
+            path.centerCorrections=(path.centerCorrections||0)+1;
+          }
+          correctionPending={...delta,kind};
+        }else correctionPending=null;
+      }
+      const nearHome=Math.hypot(nx-p0.x,ny-p0.y)<=radius*1.35;
+      if(plateIdentityUsable&&deadliftMode&&nearHome&&!wasNearHome)homeEntryFrames=10;
+      if(plateIdentityUsable&&deadliftMode&&nearHome&&homeEntryFrames>0){
+        const homeR=radius*1.15,pad=homeR+radius*1.4+auditStep*2;
+        const homeFrame=plCapture(p0.x-pad,p0.y-pad,pad*2,pad*2);
+        const homeHit=plSearch(homeFrame,p0,radius,plateModel,homeR,auditStep);
+        const homeStrong=homeHit&&homeHit.circle>Math.max(9,plateBase.circle*.34)&&
+          homeHit.cover>=.45&&homeHit.pairCover>=.35&&homeHit.app<2.6;
+        if(homeStrong){
+          nx=homeHit.x-homeBias.x;ny=homeHit.y-homeBias.y;
+          path.repAnchors=(path.repAnchors||0)+1;
+        }
+      }
+      if(deadliftMode&&homeEntryFrames>0)homeEntryFrames--;
+      if(deadliftMode)wasNearHome=nearHome;
       const jump=Math.hypot(nx-cur.x,ny-cur.y);
       const maxJump=radius*.75+Math.hypot(vel.x,vel.y)*dt*.45;
       let identityOK=true;
@@ -2959,8 +3096,10 @@ async function startMultipointTracking(p0) {
       if(!SLIM)allBtn.textContent=`Stop analyse (${pct}%)`;
       if(SLIM)say(accepted?`Analyserer stangbanen · ${pct}%`:`Holder sidste sikre punkt · ${pct}%`);
     }
+    const workMs=performance.now()-workStarted;
+    if(TRACKER_BENCHMARK)benchmarkWorkMs.push(workMs);
     if(COACHWEB){
-      workSamples.push(performance.now()-workStarted);if(workSamples.length>24)workSamples.shift();
+      workSamples.push(workMs);if(workSamples.length>24)workSamples.shift();
       stableFrames=accepted&&mediaDt<=FRAME*2.5?stableFrames+1:0;
       if(stableFrames>=18&&sourceSteps.length>=10&&workSamples.length>=10&&tNow-lastRateChangeT>.5){
         const sourceDt=mpMedian(sourceSteps),safe=mpSafeTrackingRate(sourceDt,workSamples);
@@ -3005,6 +3144,26 @@ async function startMultipointTracking(p0) {
   }
   tracking=false;playBtn.textContent=playLabel(false);barBtn.textContent='🎯 Stangbane';
   barBtn.classList.remove('active');if(SLIM&&!analyzing)say('');
+  if(TRACKER_BENCHMARK){
+    const sorted=[...benchmarkWorkMs].sort((a,b)=>a-b);
+    const percentile=p=>sorted.length?sorted[Math.min(sorted.length-1,Math.floor(sorted.length*p))]:null;
+    const invalid=(path.valid||[]).filter(v=>!v).length;
+    const run={schema:1,outcome:'completed',startedAt:startT,
+      endedAt:path.times[path.times.length-1]??startT,
+      mediaSeconds:Math.max(0,(path.times[path.times.length-1]??startT)-startT),
+      elapsedMs:performance.now()-benchmarkStartedAt,canvas:{w:ocan.width,h:ocan.height},
+      plateRadius:radius,initialFeatures:features.length,plateIdentityUsable,
+      plateBase:{circle:plateBase.circle,cover:plateBase.cover,pairCover:plateBase.pairCover},
+      frames:path.pts.length,invalidFrames:invalid,lowConf:path.lowConf||0,
+      homeRecoveries:path.homeRecoveries||0,playbackSlowdowns:path.playbackSlowdowns||0,
+      playbackSpeedups:path.playbackSpeedups||0,
+      centerCorrections:path.centerCorrections||0,repAnchors:path.repAnchors||0,
+      trackerMode:deadliftMode?'deadlift-home-anchor':'rigid-plate-drift-audit',
+      searchBias:{local:localBias,home:homeBias,quick:quickBias},
+      workMs:{p50:percentile(.5),p80:percentile(.8),p95:percentile(.95),max:sorted.at(-1)??null},
+      pts:path.pts.map(q=>({...q})),times:[...path.times],valid:[...(path.valid||[])]};
+    publishTrackerBenchmarkRun(run);
+  }
   analyzePath(path);
   const badPct=path.lowConf&&path.pts.length?Math.round(path.lowConf/path.pts.length*100):0;
   if(badPct>5){
