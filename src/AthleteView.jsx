@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, Fragment } from 'react'
 import { supabase, withRetry, queueWrite } from './supabase'
+import { mergeAthleteSetInputs, nextAthleteSetInput } from './athleteTrainingInputs'
 import { sanitizeVideoCoachFeedbackEvidence } from './videoCoachFeedbackEvidence'
 import { VIDEOCOACH_LIFT_LABELS as ATHLETE_VIDEO_LIFTS, videoCoachVariationLabel as athleteVideoVariationLabel } from './videoCoachLabels'
 
@@ -2280,32 +2281,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         !rows.some(r => r.exercise_id === l.exercise_id && r.set_number === l.set_number))
       return [...rows, ...pending]
     })
-    const inputs = {}
-    for (const log of rows) {
-      inputs[`${log.exercise_id}_${log.set_number}`] = {
-        weight: log.weight?.toString() || '',
-        note: log.note || '',
-        rpe: log.rpe_actual?.toString() || '',
-      }
-    }
-    // Forudfyld vægt-feltet med den anbefalede vægt for endnu-ikke-loggede sæt,
-    // så atleten bare trykker Log hvis vægten passer (sparer at taste samme kg
-    // for hvert sæt). 0 kg (bodyweight/vælg-selv) forudfyldes ikke.
-    const prefills = {}
-    for (const sess of (week?.sessions || [])) {
-      for (const ex of (sess.exercises || [])) {
-        const rw = ex.recommended_weight
-        if (!(rw > 0)) continue
-        for (let setNum = 1; setNum <= (ex.sets || 0); setNum++) {
-          const k = `${ex.id}_${setNum}`
-          if (inputs[k]) continue // allerede logget
-          prefills[k] = { weight: rw.toString(), note: '', rpe: '' }
-        }
-      }
-    }
-    // Rækkefølge: prefills = default, prev bevarer hvad atleten selv har tastet/
-    // ryddet, inputs (loggede værdier) vinder altid.
-    setLogInputs(prev => ({ ...prefills, ...prev, ...inputs }))
+    setLogInputs(prev => mergeAthleteSetInputs(prev, rows))
   }
 
   async function fetchLastLogs(athleteId, week) {
@@ -2425,7 +2401,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       const nextKey = `${exerciseId}_${setNumber + 1}`
       setLogInputs(p => ({
         ...p,
-        [nextKey]: { weight: p[nextKey]?.weight || input.weight, note: p[nextKey]?.note || '' },
+        [nextKey]: nextAthleteSetInput(input, p[nextKey]),
       }))
     }
 
