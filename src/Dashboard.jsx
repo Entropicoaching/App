@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase, withRetry } from './supabase'
 import { buildCoachPriorityItems, coachPriorityFocus, coachPriorityQueueContext, coachPriorityTaskContext } from './coachPriority'
-import { coachInboxCompletionStatus, createSingleFlightRunner, filterDraftVideoReviews, filterOpenTrainingSignals, shouldCollapseCoachConversations, summarizeCoachMessages, summarizeRefreshResults, trainingSignalFingerprint } from './coachInboxState'
+import { coachInboxCompletionStatus, coachInboxEntryIntent, coachInboxFocusDecision, createSingleFlightRunner, filterDraftVideoReviews, filterOpenTrainingSignals, shouldCollapseCoachConversations, summarizeCoachMessages, summarizeRefreshResults, trainingSignalFingerprint } from './coachInboxState'
 import { buildVideoCoachBaselineProfiles, countReadyVideoCoachBaselineProfiles, videoCoachBaselineReviewImpact } from './videoCoachBaselineProgress'
 import { VIDEOCOACH_LIFT_LABELS as VIDEOCOACH_LIFTS, videoCoachVariationIdentity, videoCoachVariationLabel } from './videoCoachLabels'
 
@@ -448,13 +448,14 @@ function buildLiftSeries(logs, keyword, nameToCat, category) {
 }
 
 export default function Dashboard({ session, onPreviewAthlete }) {
+  const initialCoachEntryRef = useRef(coachInboxEntryIntent(
+    typeof window === 'undefined' ? '' : window.location.search,
+  ))
   const [athletes, setAthletes] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
-  const [view, setView] = useState(() => {
-    if (typeof window === 'undefined') return 'list'
-    return new URLSearchParams(window.location.search).get('coach') === 'inbox' ? 'inbox' : 'list'
-  })
+  const [view, setView] = useState(initialCoachEntryRef.current.view)
+  const focusNextFromLinkRef = useRef(initialCoachEntryRef.current.focusNext)
   const [profileReturnView, setProfileReturnView] = useState('list')
   const [profilePriorityKey, setProfilePriorityKey] = useState(null)
   const [profilePriorityContext, setProfilePriorityContext] = useState(null)
@@ -2734,6 +2735,43 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     setVideoLiftFilter(item.video.lift || 'all')
     openProfile(item.athlete, 'analyse', returnView, item.key, priorityContext)
   }
+
+  // Mailens sikre deep-link indeholder ingen atletidentifikator. Efter den første
+  // komplette opdatering åbner appen selv den aktuelle topprioritet præcis én gang.
+  useEffect(() => {
+    const focusDecision = coachInboxFocusDecision({
+      requested: focusNextFromLinkRef.current,
+      view,
+      refreshing: inboxRefreshing,
+      refreshStatus: inboxRefreshStatus,
+      priorityItems: coachPriorityItems,
+    })
+    if (!focusDecision.ready) return
+
+    const consumeFocusIntent = () => {
+      focusNextFromLinkRef.current = false
+      if (typeof window === 'undefined') return
+      const url = new URL(window.location.href)
+      url.searchParams.delete('focus')
+      window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`)
+    }
+
+    const nextItem = focusDecision.nextItem
+    if (!nextItem) {
+      consumeFocusIntent()
+      return undefined
+    }
+
+    const openTimer = window.setTimeout(() => {
+      if (!focusNextFromLinkRef.current) return
+      consumeFocusIntent()
+      openCoachPriorityItem(nextItem, 'inbox')
+    }, 0)
+
+    return () => window.clearTimeout(openTimer)
+    // openCoachPriorityItem reads the current item only; the ref makes this one-shot.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [coachPriorityItems, inboxRefreshStatus, inboxRefreshing, view])
 
   const currentWeight = (() => {
     if (!athleteWeightLogs.length) return null

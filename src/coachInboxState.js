@@ -2,6 +2,31 @@ export function coachMessageTrack(message) {
   return (message?.category || 'besked') === 'teknik' ? 'teknik' : 'besked'
 }
 
+export function coachInboxEntryIntent(search = '') {
+  const params = new URLSearchParams(search)
+  const opensInbox = params.get('coach') === 'inbox'
+  return {
+    view: opensInbox ? 'inbox' : 'list',
+    focusNext: opensInbox && params.get('focus') === 'next',
+  }
+}
+
+export function coachInboxFocusDecision({
+  requested = false,
+  view = 'list',
+  refreshing = false,
+  refreshStatus = null,
+  priorityItems = [],
+} = {}) {
+  if (!requested || view !== 'inbox' || refreshing || !refreshStatus) {
+    return { ready: false, nextItem: null }
+  }
+  return {
+    ready: true,
+    nextItem: refreshStatus.kind === 'success' ? (priorityItems[0] || null) : null,
+  }
+}
+
 export function summarizeCoachMessages(messages) {
   const unreadCounts = {}
   const unreadByTrack = {}

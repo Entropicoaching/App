@@ -2,6 +2,8 @@ import assert from 'node:assert/strict'
 import { buildCoachPriorityItems } from '../src/coachPriority.js'
 import {
   coachInboxCompletionStatus,
+  coachInboxEntryIntent,
+  coachInboxFocusDecision,
   createSingleFlightRunner,
   filterDraftVideoReviews,
   filterOpenTrainingSignals,
@@ -10,6 +12,44 @@ import {
   summarizeRefreshResults,
   trainingSignalFingerprint,
 } from '../src/coachInboxState.js'
+
+assert.deepEqual(
+  coachInboxEntryIntent('?coach=inbox&focus=next'),
+  { view: 'inbox', focusNext: true },
+  'the safe briefing link must request the current next task without carrying athlete data',
+)
+assert.deepEqual(
+  coachInboxEntryIntent('?coach=inbox&focus=athlete-id'),
+  { view: 'inbox', focusNext: false },
+  'unknown focus values must never trigger automatic profile navigation',
+)
+assert.deepEqual(
+  coachInboxEntryIntent('?focus=next'),
+  { view: 'list', focusNext: false },
+  'focus=next is valid only on the explicit coach inbox route',
+)
+
+const linkedTask = { key: 'signal-athlete-readiness' }
+assert.deepEqual(
+  coachInboxFocusDecision({ requested: true, view: 'inbox', refreshing: true }),
+  { ready: false, nextItem: null },
+  'the link must wait while the inbox is refreshing',
+)
+assert.deepEqual(
+  coachInboxFocusDecision({ requested: true, view: 'inbox', refreshStatus: { kind: 'partial' }, priorityItems: [linkedTask] }),
+  { ready: true, nextItem: null },
+  'partial data must consume the intent without opening possibly stale work',
+)
+assert.deepEqual(
+  coachInboxFocusDecision({ requested: true, view: 'inbox', refreshStatus: { kind: 'success' }, priorityItems: [] }),
+  { ready: true, nextItem: null },
+  'a fully refreshed empty queue must leave the coach in the inbox',
+)
+assert.deepEqual(
+  coachInboxFocusDecision({ requested: true, view: 'inbox', refreshStatus: { kind: 'success' }, priorityItems: [linkedTask] }),
+  { ready: true, nextItem: linkedTask },
+  'a complete refresh must open exactly the current top-priority item',
+)
 
 const now = Date.parse('2026-07-27T12:00:00Z')
 const athletes = [{ id: 'athlete-a', name: 'Anna' }]

@@ -7,6 +7,9 @@ primary coach inbox. Every hour from 12:00 through 21:00 Europe/Copenhagen the
 workflow asks Supabase for open inbox metadata and sends at most one compact
 fallback email per calendar day only when an important item remains unresolved.
 The file has been import-tested against n8n Community Edition 2.31.6.
+The fallback now mirrors the app's work order: active alerts first, then the
+oldest unresolved message or video. It names one next task before showing the
+rest of the queue, so email and app cannot give the coach competing priorities.
 
 It includes:
 
@@ -20,6 +23,7 @@ It includes:
   number of unread messages;
 - pending VideoCoach drafts at least 24 hours old (metadata only, never video files);
 - active `alert` training signals that are neither acknowledged nor snoozed;
+- one deduplicated, ordered task list with the same priority contract as the app;
 - duplicate suppression based on the last successfully delivered briefing.
 - an explicit test-delivery gate: manual/editor runs can render the fallback
   email for inspection but can never reach the SMTP node.
@@ -47,10 +51,15 @@ hours. The cooldown is recorded only after SMTP succeeds.
 
 Deployment order matters:
 
+0. For a release that changes the coach deep link, deploy and verify the app
+   first. Existing briefing links still open the ordinary inbox during this step.
 1. Import the error monitor and bind the existing coach SMTP credential.
 2. Publish the error monitor.
 3. Import and publish the coach briefing with its `errorWorkflow` setting.
 4. Restart n8n and verify both published versions plus the briefing link.
+
+For an update where the error monitor is unchanged, keep its reviewed published
+version and update only the coach briefing after the app deployment is verified.
 
 Error workflows run for production failures only. Manual/test executions do not
 trigger the monitor, which prevents an accidental test email during validation.
@@ -72,8 +81,8 @@ returned by the database function or passed through n8n.
    are already filled in.
 7. Run **Manual test** once and inspect the output through **Frame fallback
    email**. The workflow stops at **Block test delivery**, before SMTP.
-8. Confirm the email contains counts and metadata only, and that its button opens
-   the live Entropi app.
+8. Confirm the email names one **Næste opgave**, shows the ordered queue, contains
+   counts and metadata only, and that its button opens the live Entropi app.
 9. Activate the workflow only after the manual checks pass.
 10. Verify daily suppression using two real scheduled executions on the same
     Copenhagen calendar day. n8n does not persist workflow static data during
@@ -112,16 +121,26 @@ must never be uploaded or shared. Restore remains a deliberate manual operation.
 
 ## Coach inbox deep link
 
-The email button uses `https://app.entropicoaching.dk/?coach=inbox`. An
-authenticated coach lands directly in the coach inbox; an unauthenticated coach
-signs in first and then lands there because the query parameter is preserved.
+The email button uses `https://app.entropicoaching.dk/?coach=inbox&focus=next`.
+The `focus=next` intent carries no athlete identifier. After a complete inbox
+refresh, the app opens the current top-priority task once and removes `focus`
+from the URL. A partial refresh stays in the inbox instead of opening stale work.
+An unauthenticated coach signs in first and then lands there because the query
+parameters are preserved.
 
 ## Local safety verification
 
 Run `npm run verify:n8n` after editing either workflow. The verifier
 checks node and connection integrity, inactive source files, absence of committed
 credential bindings, the linked error monitor, schedule, RPC contract behavior,
-synthetic preview isolation, same-day suppression and the test-only SMTP gate.
+synthetic preview isolation, app-aligned priority order, duplicate handling,
+same-day suppression and the test-only SMTP gate. The verifier also requires the
+embedded n8n Code node to match `n8n/build-coach-briefing.code` exactly.
+
+For a safe local visual check of the final fallback email, run
+`npm run preview:n8n-briefing` and open `http://127.0.0.1:4179`. The preview uses
+synthetic athletes, does not call Supabase and cannot send email. Its `/meta`
+endpoint exposes only the generated subject, count, digest and priority version.
 
 On the configured Entropi Windows machine, run
 `powershell -ExecutionPolicy Bypass -File n8n/verify-local-deployment.ps1` to

@@ -12,6 +12,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const load = (name) => JSON.parse(readFileSync(join(here, name), 'utf8'));
 const coach = load('coach-briefing-v1.json');
 const monitor = load('automation-error-monitor-v1.json');
+const briefingBuilderSource = readFileSync(join(here, 'build-coach-briefing.code'), 'utf8').trimEnd();
 
 const option = (name) => {
   const index = process.argv.indexOf(name);
@@ -93,12 +94,23 @@ const runCode = (code, { input, mode = 'test', config = {}, state = {} }) => {
 
 assertWorkflowShape(coach);
 assertWorkflowShape(monitor);
+assert.equal(
+  node(coach, 'Build briefing').parameters.jsCode.trimEnd(),
+  briefingBuilderSource,
+  'Coach briefing JSON must stay synchronized with build-coach-briefing.code',
+);
 
 assert.equal(coach.settings.errorWorkflow, monitor.id, 'Coach briefing must stay linked to the error monitor');
 assert.equal(
   node(coach, 'Daily catch-up 12:00–21:00').parameters.rule.interval[0].expression,
   '0 0 12-21 * * *',
   'Coach briefing schedule must remain hourly from 12:00 through 21:00',
+);
+
+assert.match(
+  node(coach, 'Configuration').parameters.jsCode,
+  /app\.entropicoaching\.dk\/\?coach=inbox&focus=next/,
+  'Coach briefing configuration must retain the safe next-task deep link',
 );
 
 assertDirectChain(coach, [
@@ -142,7 +154,7 @@ const validBriefing = {
 const config = {
   coachId: 'coach-test',
   coachEmail: 'coach@example.invalid',
-  appUrl: 'https://example.invalid/?coach=inbox',
+  appUrl: 'https://example.invalid/?coach=inbox&focus=next',
 };
 
 const contractCode = node(coach, 'Validate briefing contract').parameters.jsCode;
@@ -285,14 +297,44 @@ assert.equal(
 assert.match(filteredBriefing.subject, /4 ting kræver et kig/);
 assert.match(
   filteredEmail,
-  /Beskeder <span[^>]*>2<\/span>/,
-  'Message section must count the two grouped conversation tasks',
+  /1 signal · 2 beskedspor · 1 video · samme prioritering som i appen/,
+  'The ordered queue must retain transparent task counts by kind',
 );
 assert.match(filteredEmail, /2 ulæste/, 'Conversation rows must retain their actual unread-message count');
+assert.match(filteredEmail, /Næste opgave/, 'The fallback email must name one next task');
+assert.match(filteredEmail, /coach=inbox&amp;focus=next/, 'The fallback CTA must request the current safe next task');
+assert.equal(filteredBriefing.priorityVersion, 'app-order-v1');
+const orderedQueue = filteredEmail.slice(filteredEmail.indexOf('Din rækkefølge'));
+const queuePositions = [
+  orderedQueue.indexOf('Alert'),
+  orderedQueue.indexOf('Videoatlet'),
+  orderedQueue.indexOf('&lt;script&gt;Atlet&lt;/script&gt;'),
+  orderedQueue.indexOf('Ukendt tid'),
+];
+assert.ok(queuePositions.every(position => position >= 0), 'Every fallback task must appear in the ordered queue');
+assert.deepEqual(
+  [...queuePositions].sort((left, right) => left - right),
+  queuePositions,
+  'Alerts must come first, followed by the oldest valid message/video; unknown timestamps stay visible last',
+);
 assert.match(filteredEmail, /&lt;script&gt;Atlet&lt;\/script&gt;/, 'Athlete metadata must be HTML-escaped');
 assert.doesNotMatch(filteredEmail, /<script>Atlet<\/script>/, 'Unescaped athlete metadata must never reach HTML');
 assert.doesNotMatch(filteredEmail, /PRIVATE_MESSAGE_BODY/, 'Message content must never reach the fallback email');
 assert.doesNotMatch(filteredEmail, /PRIVATE_VIDEO_URL/, 'Video storage URLs must never reach the fallback email');
+
+const duplicatedInput = {
+  ...filteredProduction[0].json,
+  unread_messages: [...filteredProduction[0].json.unread_messages, ...filteredProduction[0].json.unread_messages],
+  video_drafts: [...filteredProduction[0].json.video_drafts, ...filteredProduction[0].json.video_drafts],
+  training_signals: [...filteredProduction[0].json.training_signals, ...filteredProduction[0].json.training_signals],
+};
+const deduplicatedBriefing = runCode(node(coach, 'Build briefing').parameters.jsCode, {
+  input: { json: duplicatedInput },
+  mode: 'production',
+  config,
+})[0].json;
+assert.equal(deduplicatedBriefing.total, filteredBriefing.total, 'Upstream duplicates must not inflate the coach queue');
+assert.equal(deduplicatedBriefing.digestHash, filteredBriefing.digestHash, 'Duplicate rows must not change the delivery digest');
 
 const framedPreview = runCode(node(coach, 'Frame fallback email').parameters.jsCode, {
   input: builtPreview[0],
