@@ -3,6 +3,7 @@ import { supabase, withRetry } from './supabase'
 import { buildCoachPriorityItems, coachPriorityFocus, coachPriorityQueueContext, coachPriorityTaskContext } from './coachPriority'
 import { coachInboxCompletionStatus, coachInboxEntryIntent, coachInboxFocusDecision, createSingleFlightRunner, filterDraftVideoReviews, filterOpenTrainingSignals, shouldCollapseCoachConversations, summarizeCoachMessages, summarizeRefreshResults, trainingSignalFingerprint } from './coachInboxState'
 import { buildVideoCoachBaselineProfiles, countReadyVideoCoachBaselineProfiles, videoCoachBaselineReviewImpact } from './videoCoachBaselineProgress'
+import { sanitizeVideoCoachFeedbackEvidence } from './videoCoachFeedbackEvidence'
 import { videoCoachFeedbackQuality } from './videoCoachFeedbackQuality'
 import { VIDEOCOACH_LIFT_LABELS as VIDEOCOACH_LIFTS, videoCoachVariationIdentity, videoCoachVariationLabel } from './videoCoachLabels'
 
@@ -736,7 +737,16 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         videoCoachAthletesRef.current)
       if (validationError) { reply({ ok: false, error: validationError }); return }
 
-      let result = await supabase.from('video_analyses').insert(message.row)
+      const safeRow = {
+        ...message.row,
+        session_context: {
+          ...(message.row.session_context && typeof message.row.session_context === 'object'
+            && !Array.isArray(message.row.session_context) ? message.row.session_context : {}),
+          feedback_evidence: sanitizeVideoCoachFeedbackEvidence(
+            message.row.session_context?.feedback_evidence),
+        },
+      }
+      let result = await supabase.from('video_analyses').insert(safeRow)
         .select('id,client_analysis_id,athlete_id,status,created_at').single()
       // Samme analyseresultat kan gensendes efter et timeout. Den unikke
       // client_analysis_id gør gentagelsen idempotent uden en ny række.
@@ -749,7 +759,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         reply({ ok: false, error: result.error.message || 'Databasen afviste analysen' })
         return
       }
-      if (!videoCoachSavedIdentityMatches(result.data, message.row)) {
+      if (!videoCoachSavedIdentityMatches(result.data, safeRow)) {
         reply({ ok: false, error: 'Databasen returnerede analysen på en forkert atlet' })
         return
       }
@@ -7270,6 +7280,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           ? analysis.session_context.baseline_snapshot : []
         const athleteNote = typeof analysis.session_context?.athlete_note === 'string'
           ? analysis.session_context.athlete_note.trim() : ''
+        const feedbackEvidence = sanitizeVideoCoachFeedbackEvidence(
+          analysis.session_context?.feedback_evidence)
         const athleteFeedback = analysis.athlete_feedback || {}
         const athleteFeedbackSections = [
           ['Det fungerer', athleteFeedback.works, '#8caf88'],
@@ -7371,6 +7383,25 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 <div style={{ marginTop: '0.9rem', borderLeft: '2px solid #67dff5', background: 'rgba(103,223,245,0.04)', padding: '0.7rem 0.8rem' }}>
                   <div style={s.fieldLabel}>Atletens notat</div>
                   <div style={{ color: '#c7c3b9', fontSize: '0.7rem', lineHeight: 1.5, whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', marginTop: '0.3rem' }}>{athleteNote}</div>
+                </div>
+              )}
+
+              {feedbackEvidence && (
+                <div style={{ marginTop: '0.9rem', borderLeft: '2px solid #c8923a', background: 'rgba(200,146,58,0.045)', padding: '0.7rem 0.8rem' }}>
+                  <div style={{ ...s.fieldLabel, color: '#c8923a' }}>Målegrundlag for feedbackudkastet</div>
+                  {feedbackEvidence.priority && (
+                    <div style={{ marginTop: '0.4rem' }}>
+                      <div style={{ color: '#edeae2', fontSize: '0.7rem', lineHeight: 1.45 }}>{feedbackEvidence.priority.title}</div>
+                      {feedbackEvidence.priority.why && <div style={{ color: '#b8b4a8', fontSize: '0.64rem', lineHeight: 1.5, marginTop: '0.2rem' }}>{feedbackEvidence.priority.why}</div>}
+                      <div style={{ color: '#c9b47f', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', lineHeight: 1.45, marginTop: '0.3rem' }}>{feedbackEvidence.priority.evidence}</div>
+                    </div>
+                  )}
+                  {feedbackEvidence.strength && (
+                    <div style={{ marginTop: feedbackEvidence.priority ? '0.55rem' : '0.4rem', paddingTop: feedbackEvidence.priority ? '0.5rem' : 0, borderTop: feedbackEvidence.priority ? '1px solid rgba(237,234,226,0.07)' : 'none' }}>
+                      <div style={{ color: '#8caf88', fontSize: '0.64rem', lineHeight: 1.45 }}>{feedbackEvidence.strength.title} · {feedbackEvidence.strength.evidence}</div>
+                    </div>
+                  )}
+                  <div style={{ color: '#77746d', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', lineHeight: 1.45, marginTop: '0.45rem' }}>Coach-only · automatisk udgangspunkt, som kan redigeres før deling</div>
                 </div>
               )}
 

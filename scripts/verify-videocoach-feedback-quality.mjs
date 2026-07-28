@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import vm from 'node:vm'
+import { sanitizeVideoCoachFeedbackEvidence } from '../src/videoCoachFeedbackEvidence.js'
 import { videoCoachFeedbackQuality } from '../src/videoCoachFeedbackQuality.js'
 
 const strong = videoCoachFeedbackQuality({
@@ -43,6 +44,10 @@ assert.ok(modelMatch, 'Det prioriterede feedbacklag skal kunne udtrækkes')
 const context = {}
 vm.runInNewContext(`${modelMatch[1]}; this.buildCoachFeedback = buildCoachFeedback`, context)
 
+const evidenceMatch = html.match(/\/\/ COACH_FEEDBACK_EVIDENCE_START([\s\S]*?)\/\/ COACH_FEEDBACK_EVIDENCE_END/)
+assert.ok(evidenceMatch, 'Feedbackens coach-only målegrundlag skal kunne udtrækkes')
+vm.runInNewContext(`${evidenceMatch[1]}; this.vcV3FeedbackEvidence = vcV3FeedbackEvidence`, context)
+
 const deadlift = context.buildCoachFeedback('Dødløft', {
   driftCm: 6.2,
   dipPct: 70,
@@ -70,6 +75,21 @@ assert.equal(videoCoachFeedbackQuality({
   next_set: squat.athlete.next,
 }).level, 'strong')
 
+const squatEvidence = sanitizeVideoCoachFeedbackEvidence(context.vcV3FeedbackEvidence(squat))
+assert.equal(squatEvidence.priority.title, 'Stangen forlader den lodrette linje')
+assert.match(squatEvidence.priority.evidence, /7.4 cm/)
+
+const hostileEvidence = sanitizeVideoCoachFeedbackEvidence({
+  version: 'not-reviewed',
+  priority: { title: ' Tydeligt fokus ', why: 'x'.repeat(900), evidence: ' 7 cm  drift ' },
+  strength: [],
+})
+assert.equal(hostileEvidence.version, 'coach-feedback-unknown')
+assert.equal(hostileEvidence.priority.why.length, 500)
+assert.equal(hostileEvidence.priority.evidence, '7 cm drift')
+assert.equal(hostileEvidence.strength, null)
+assert.equal(sanitizeVideoCoachFeedbackEvidence({ priority: { title: 'Mangler evidens' } }), null)
+
 const bench = context.buildCoachFeedback('Bænkpres', {
   benchTowardShoulderCm: -3.6,
   dipPct: 70,
@@ -87,5 +107,15 @@ assert.equal(videoCoachFeedbackQuality({
 assert.match(html, /const prioritizedFeedback = buildCoachFeedback/)
 assert.doesNotMatch(html, /const cues = suggestCues\(lift, vals\)\.slice\(0, 2\)/)
 assert.match(html, /feedback: 'coach-feedback-priority-v2-2026-07-27'/)
+assert.match(html, /feedback_evidence: vcV3FeedbackEvidence\(prioritizedFeedback\)/)
+
+const athleteView = fs.readFileSync(new URL('../src/AthleteView.jsx', import.meta.url), 'utf8')
+assert.match(athleteView, /feedback_evidence:\s*sanitizeVideoCoachFeedbackEvidence\(/)
+assert.match(athleteView, /v=20260728-feedback-evidence/)
+
+const dashboard = fs.readFileSync(new URL('../src/Dashboard.jsx', import.meta.url), 'utf8')
+assert.match(dashboard, /Målegrundlag for feedbackudkastet/)
+assert.match(dashboard, /Coach-only · automatisk udgangspunkt/)
+assert.match(dashboard, /feedback_evidence:\s*sanitizeVideoCoachFeedbackEvidence\(\s*message\.row\.session_context\?\.feedback_evidence\)/)
 
 console.log('VideoCoach gemmer ét prioriteret, handlingsrettet cue og reviewet fanger svag feedback.')

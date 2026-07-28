@@ -4315,6 +4315,26 @@ function buildCoachFeedback(lift, v = {}) {
 }
 // COACH_FEEDBACK_MODEL_END
 
+// COACH_FEEDBACK_EVIDENCE_START
+function vcV3FeedbackEvidence(feedback) {
+  const text = (value, max) => String(value || '').replace(/\s+/g, ' ').trim().slice(0, max);
+  const primary = feedback && feedback.primary;
+  const strength = feedback && feedback.strength;
+  return {
+    version: 'coach-feedback-priority-v2-2026-07-27',
+    priority: primary ? {
+      title: text(primary.title, 160),
+      why: text(primary.why, 500),
+      evidence: text(primary.evidence, 300),
+    } : null,
+    strength: strength ? {
+      title: text(strength.title, 160),
+      evidence: text(strength.evidence, 300),
+    } : null,
+  };
+}
+// COACH_FEEDBACK_EVIDENCE_END
+
 // Samlet rapport-tekst (målinger + regelbaserede fund). Bruges af
 // analyse-arket - genberegnes live når atlet/øvelse/kg/tendens ændres.
 function buildReport() {
@@ -5017,7 +5037,8 @@ function buildV3AnalysisPayload({ athleteId, athleteName, lift, variation,
     session_context: { training_session_id: null, program_item_id: null,
       coach_note_snapshot: legacy.bias_note,
       athlete_note: sourceMode === 'athlete_submission' ? (legacy.athlete_note || null) : null,
-      baseline_snapshot: personal.used },
+      baseline_snapshot: personal.used,
+      feedback_evidence: vcV3FeedbackEvidence(prioritizedFeedback) },
     capture_context: { camera_side: 'unknown', camera_angle_deg: null, fps: null,
       width_px: video.videoWidth || canvas.width || null,
       height_px: video.videoHeight || canvas.height || null,

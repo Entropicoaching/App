@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef, Fragment } from 'react'
 import { supabase, withRetry, queueWrite } from './supabase'
+import { sanitizeVideoCoachFeedbackEvidence } from './videoCoachFeedbackEvidence'
 import { VIDEOCOACH_LIFT_LABELS as ATHLETE_VIDEO_LIFTS, videoCoachVariationLabel as athleteVideoVariationLabel } from './videoCoachLabels'
 
 const ATHLETE_VIDEOCOACH_PREFIX = 'entropi:videocoach:v3'
-const ATHLETE_VIDEOCOACH_URL = 'videocoach.html?mode=athlete&bridge=athlete-v1&v=20260724-fit'
+const ATHLETE_VIDEOCOACH_URL = 'videocoach.html?mode=athlete&bridge=athlete-v1&v=20260728-feedback-evidence'
 const ATHLETE_VIDEOCOACH_COLUMNS = new Set([
   'client_analysis_id', 'athlete_id', 'athlete_name', 'source_mode', 'status',
   'lift', 'variation', 'load_kg', 'rpe', 'reps_count', 'rep_details',
@@ -1828,6 +1829,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           athlete_note: typeof message.row.session_context?.athlete_note === 'string'
             ? (message.row.session_context.athlete_note.trim().slice(0, 1000) || null)
             : null,
+          feedback_evidence: sanitizeVideoCoachFeedbackEvidence(
+            message.row.session_context?.feedback_evidence),
         },
       }
       const result = await supabase.from('video_analyses').insert(safeRow)
