@@ -2897,7 +2897,7 @@ async function startMultipointTracking(p0) {
     path.pts.push({x:p0.x,y:p0.y});path.times.push(startT);path.valid.push(true);
   }else{
     path={type:'path',color:colorInput.value,pts:[{x:p0.x,y:p0.y}],times:[startT],
-      valid:[true],startFrame,barTracker:'multipoint-fb-v3-bench-rotation',plateRadius:radius};
+      valid:[true],startFrame,barTracker:'multipoint-fb-v3-bench-slow-output',plateRadius:radius};
     strokes.push(path);
   }
   octx.drawImage(video,0,0,ocan.width,ocan.height);
@@ -2932,6 +2932,7 @@ async function startMultipointTracking(p0) {
   const deadliftMode=liftMode==='deadlift',benchMode=liftMode==='bench';
   let homePending=null,correctionPending=null,fullAuditFrames=0;
   const correctionHistory=[];
+  let benchOutputX=p0.x,benchPreviousRaw={x:p0.x,y:p0.y};
   // Dødløft: en kort, fuld skivekontrol ved starten og ved hver tilbagekomst
   // til gulvzonen. Det bevarer genankringen efter kamerarystelser uden den
   // tidligere, dyre fuldsøgning på samtlige frames tæt ved gulvet.
@@ -3107,7 +3108,18 @@ async function startMultipointTracking(p0) {
         }else homePending=null;
       }
     }
-    path.pts.push({...cur});path.times.push(tNow);path.valid.push(accepted);
+    let outputPoint={...cur};
+    if(benchMode){
+      // Trackeren beholder sit uredigerede center internt. Ved langsom bænk
+      // dæmpes kun det gemte vandrette output, så centerkontrollens små hop
+      // ikke bliver til falsk stangbane eller vandret drift. Hurtig bevægelse
+      // følger straks med, og en stor genankring må aldrig hænge efter.
+      const rawStep=Math.hypot(cur.x-benchPreviousRaw.x,cur.y-benchPreviousRaw.y);
+      const alpha=rawStep>radius*.45?1:rawStep<=radius*.12?.12:.72;
+      benchOutputX+=(cur.x-benchOutputX)*alpha;
+      outputPoint.x=benchOutputX;benchPreviousRaw={...cur};
+    }
+    path.pts.push(outputPoint);path.times.push(tNow);path.valid.push(accepted);
     const pct=Math.round(tNow/video.duration*100);
     barBtn.textContent=`⏹ Stop sporing (${pct}%)`;
     if(analyzing){
@@ -5221,7 +5233,7 @@ function buildV3AnalysisPayload({ athleteId, athleteName, lift, variation,
       width_px: video.videoWidth || canvas.width || null,
       height_px: video.videoHeight || canvas.height || null,
       cropped: null, fingerprint: null },
-    versions: { engine: 'videocoach-3.0.0', tracker: 'whole-plate-multipoint-bench-rotation-2026-07-28',
+    versions: { engine: 'videocoach-3.0.0', tracker: 'whole-plate-multipoint-bench-slow-output-2026-07-28',
       skeleton: 'three-position-time-driven-2026-07-19',
       feedback: 'coach-feedback-priority-v2-2026-07-27' },
     quality: { low_conf_pct: lowConfPct,
