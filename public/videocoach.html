@@ -5002,7 +5002,12 @@ function buildV3AnalysisPayload({ athleteId, athleteName, lift, variation,
   const personal = vcV3BaselineInsights(baselines, normalizedLift,
     normalizedVariation, v3Metrics, lowConfPct || 0);
   const findings = [...personal.findings, ...ruleFindings];
-  const cues = suggestCues(lift, vals).slice(0, 2);
+  // Gem det samme prioriterede feedbacklag, som coachen ser i analysearket.
+  // Den gamle cue-liste fulgte kode-rækkefølgen og kunne derfor gemme to
+  // konkurrerende cues, selv når et andet fund var vigtigere.
+  const prioritizedFeedback = buildCoachFeedback(lift, {
+    ...(vals || {}), lowConfPct: lowConfPct || 0, variation,
+  });
   return {
     schema_version: 3, client_analysis_id: clientId,
     athlete_id: athleteId || null, athlete_display_name: athleteName || null,
@@ -5019,19 +5024,19 @@ function buildV3AnalysisPayload({ athleteId, athleteName, lift, variation,
       cropped: null, fingerprint: null },
     versions: { engine: 'videocoach-3.0.0', tracker: 'whole-plate-multipoint-2026-07-19',
       skeleton: 'three-position-time-driven-2026-07-19',
-      feedback: 'coach-feedback-baseline-v1-2026-07-20' },
+      feedback: 'coach-feedback-priority-v2-2026-07-27' },
     quality: { low_conf_pct: lowConfPct,
       position_quality_pct: vals.positionModelQualityPct ?? null,
       flags, note: null },
     metrics: v3Metrics, reps, bar_path: vcV3BarPath(path), skeleton: null,
     findings, coach_note: null,
     athlete_feedback: {
-      works: findings.filter(f => f.kind === 'works').slice(0, 2)
-        .map(f => ({ text: f.summary.replace(/^(OK|OBS|NOTE):\s*/i, ''), evidence_refs: [f.id] })),
-      focus: findings.filter(f => f.kind === 'focus').slice(0, 2)
-        .map(f => ({ text: f.summary.replace(/^(FLAG|OBS|NOTE):\s*/i, ''), evidence_refs: [f.id] })),
-      next_set: cues.map(c => ({ text: String(c[0]).replace(/^"|"$/g, ''),
-        evidence_refs: ['metrics'] })),
+      works: [{ text: prioritizedFeedback.athlete.works,
+        evidence_refs: prioritizedFeedback.strength ? ['metrics'] : ['coach_feedback_model'] }],
+      focus: [{ text: prioritizedFeedback.athlete.focus,
+        evidence_refs: prioritizedFeedback.primary ? ['metrics'] : ['coach_feedback_model'] }],
+      next_set: [{ text: prioritizedFeedback.athlete.next,
+        evidence_refs: prioritizedFeedback.primary ? ['metrics'] : ['coach_feedback_model'] }],
     },
     ai_draft: null,
   };

@@ -3,6 +3,7 @@ import { supabase, withRetry } from './supabase'
 import { buildCoachPriorityItems, coachPriorityFocus, coachPriorityQueueContext, coachPriorityTaskContext } from './coachPriority'
 import { coachInboxCompletionStatus, coachInboxEntryIntent, coachInboxFocusDecision, createSingleFlightRunner, filterDraftVideoReviews, filterOpenTrainingSignals, shouldCollapseCoachConversations, summarizeCoachMessages, summarizeRefreshResults, trainingSignalFingerprint } from './coachInboxState'
 import { buildVideoCoachBaselineProfiles, countReadyVideoCoachBaselineProfiles, videoCoachBaselineReviewImpact } from './videoCoachBaselineProgress'
+import { videoCoachFeedbackQuality } from './videoCoachFeedbackQuality'
 import { VIDEOCOACH_LIFT_LABELS as VIDEOCOACH_LIFTS, videoCoachVariationIdentity, videoCoachVariationLabel } from './videoCoachLabels'
 
 const BLOCK_NAMES = ['Akkumulering', 'Intensificering', 'Peak', 'Deload', 'GPP', 'Hypertrofi', 'Styrke', 'Transition']
@@ -68,7 +69,7 @@ const statusLabels = { active: 'Aktiv', peaking: 'Peaking', offseason: 'Off-seas
 const statusColors = { active: '#6cba6c', peaking: '#c8923a', offseason: '#7a7770', ferie: '#5b9bb5' }
 
 const VIDEOCOACH_V3_PREFIX = 'entropi:videocoach:v3'
-const VIDEOCOACH_V3_URL = 'videocoach.html?coach=1&bridge=v3&v=20260724-coach-send'
+const VIDEOCOACH_V3_URL = 'videocoach.html?coach=1&bridge=v3&v=20260728-feedback-quality'
 const VIDEOCOACH_V3_COLUMNS = new Set([
   'client_analysis_id', 'athlete_id', 'athlete_name', 'source_mode', 'status',
   'lift', 'variation', 'load_kg', 'rpe', 'reps_count', 'rep_details',
@@ -1780,6 +1781,15 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       showFlash('Gem feedbacken før du deler den', 'error')
       return
     }
+    if (nextStatus === 'shared') {
+      const feedbackQuality = videoCoachFeedbackQuality(analysis.athlete_feedback)
+      if (!feedbackQuality.canShare) {
+        await openVideoAnalysisReview(analysis)
+        setVideoAnalysisReviewError(feedbackQuality.detail)
+        showFlash('Feedbacken skal have et fokus og et brugbart cue', 'error')
+        return
+      }
+    }
     setVideoAnalysisUpdatingId(analysis.id)
     setVideoAnalysisError(null)
     try {
@@ -1830,7 +1840,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     try {
       let query = supabase.from('video_analyses')
         .update({ athlete_feedback: athleteFeedback,
-          feedback_version: 'coach-edited-v1-2026-07-22' })
+          feedback_version: 'coach-edited-v2-2026-07-27' })
         .eq('id', analysis.id)
         .eq('athlete_id', selectedAthlete.id)
       if (analysis.client_analysis_id)
@@ -4558,6 +4568,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                           const feedback = analysis.athlete_feedback || {}
                           const focus = feedback.focus?.[0]?.text
                           const nextSet = feedback.next_set?.[0]?.text
+                          const feedbackQuality = videoCoachFeedbackQuality(feedback)
                           const updating = videoAnalysisUpdatingId === analysis.id
                           return (
                             <div key={analysis.id || analysis.client_analysis_id} style={{ border: '1px solid rgba(237,234,226,0.075)', background: 'rgba(20,20,16,0.58)', padding: isMobile ? '0.8rem' : '0.95rem' }}>
@@ -4628,8 +4639,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                                 <div style={{ marginTop: '0.75rem', paddingTop: '0.65rem', borderTop: '1px solid rgba(237,234,226,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.65rem', flexWrap: 'wrap' }}>
                                   <span style={{ color: '#7a9f78', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem' }}>Indgår i personlig baseline</span>
                                   <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-                                    <button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'shared')} style={{ ...s.btnPrimary, padding: '0.34rem 0.62rem', fontSize: '0.48rem', background: '#3f7c87', opacity: updating ? 0.55 : 1 }}>
-                                      {updating ? 'Deler…' : 'Del med atlet'}
+                                    <button disabled={updating} onClick={() => feedbackQuality.level === 'strong' ? reviewVideoAnalysis(analysis, 'shared') : openVideoAnalysisReview(analysis)} style={{ ...s.btnPrimary, padding: '0.34rem 0.62rem', fontSize: '0.48rem', background: feedbackQuality.level === 'strong' ? '#3f7c87' : '#8a6b36', opacity: updating ? 0.55 : 1 }}>
+                                      {updating ? 'Deler…' : feedbackQuality.level === 'strong' ? 'Del med atlet' : 'Gennemgå feedback'}
                                     </button>
                                     <button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'invalid')} style={{ ...s.btnGhost, padding: '0.28rem 0.55rem', fontSize: '0.46rem', opacity: updating ? 0.55 : 0.78 }}>
                                       Fjern fra baseline
@@ -7275,6 +7286,9 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           ['focus', 'Atletens fokus'],
           ['next_set', 'Næste gang'],
         ]
+        const feedbackQuality = videoCoachFeedbackQuality(feedbackEditable
+          ? videoAnalysisFeedbackDraft : athleteFeedback)
+        const feedbackQualityColor = ({ strong: '#6cba6c', review: '#c8923a', blocked: '#cf6b4e' })[feedbackQuality.level]
         const baselineImpact = videoCoachBaselineReviewImpact(videoBaselines, videoAnalyses, analysis)
         const updating = videoAnalysisUpdatingId === analysis.id
         return (
@@ -7373,9 +7387,14 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                           style={{ width: '100%', boxSizing: 'border-box', resize: 'vertical', minHeight: '58px', border: '1px solid rgba(237,234,226,0.12)', background: '#141410', color: '#edeae2', padding: '0.55rem 0.6rem', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.68rem', lineHeight: 1.45 }} />
                       </label>
                     ))}
+                    <div style={{ borderLeft: `2px solid ${feedbackQualityColor}`, background: `${feedbackQualityColor}0b`, padding: '0.6rem 0.7rem' }}>
+                      <div style={{ ...s.fieldLabel, color: feedbackQualityColor }}>{feedbackQuality.title}</div>
+                      <div style={{ color: '#b8b4a8', fontSize: '0.62rem', lineHeight: 1.45, marginTop: '0.22rem' }}>{feedbackQuality.detail}</div>
+                      {feedbackQuality.blockers.length > 1 && <div style={{ color: '#8f8b82', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', lineHeight: 1.45, marginTop: '0.25rem' }}>{feedbackQuality.blockers.slice(1).join(' · ')}</div>}
+                    </div>
                     {videoAnalysisCloseWarning && <div style={{ border: '1px solid rgba(200,146,58,0.28)', background: 'rgba(200,146,58,0.065)', color: '#c9b58f', padding: '0.55rem 0.65rem', fontSize: '0.62rem', lineHeight: 1.45 }}>Du har ugemte ændringer. Gem dem, eller vælg Fortryd ændringer før du lukker.</div>}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.6rem', flexWrap: 'wrap' }}>
-                      <span style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem' }}>Én linje pr. punkt · højst 2 punkter pr. felt</span>
+                      <span style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem' }}>Højst 2 observationer · præcis ét cue til næste sæt</span>
                       <span style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap' }}>
                         {videoAnalysisFeedbackDirty && <button disabled={updating} onClick={() => discardVideoAnalysisFeedback(analysis)} style={{ ...s.btnGhost, padding: '0.36rem 0.65rem', fontSize: '0.5rem', opacity: updating ? 0.5 : 1 }}>Fortryd ændringer</button>}
                         <button disabled={!videoAnalysisFeedbackDirty || updating} onClick={() => saveVideoAnalysisFeedback(analysis)} style={{ ...s.btnPrimary, padding: '0.36rem 0.65rem', fontSize: '0.5rem', opacity: !videoAnalysisFeedbackDirty || updating ? 0.5 : 1 }}>
@@ -7402,7 +7421,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', lineHeight: 1.45, marginBottom: '0.7rem' }}>Reviewet viser den gemte måling. Originalvideoen lagres ikke i appen endnu.</div>
                 <div style={{ display: 'flex', gap: '0.55rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                   {analysis.status === 'draft' && <><button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'invalid')} style={{ ...s.btnGhost, opacity: updating ? 0.55 : 1 }}>{updating ? 'Gemmer…' : 'Udelad måling'}</button><button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'coach_approved')} style={{ ...s.btnPrimary, background: '#4f7d50', opacity: updating ? 0.55 : 1 }}>{updating ? 'Gemmer…' : 'Godkend til baseline'}</button></>}
-                  {analysis.status === 'coach_approved' && <><button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'invalid')} style={{ ...s.btnGhost, opacity: updating ? 0.55 : 1 }}>{updating ? 'Gemmer…' : 'Fjern fra baseline'}</button><button disabled={updating || videoAnalysisFeedbackDirty} onClick={() => reviewVideoAnalysis(analysis, 'shared')} style={{ ...s.btnPrimary, background: '#3f7c87', opacity: updating || videoAnalysisFeedbackDirty ? 0.5 : 1 }}>{updating ? 'Deler…' : videoAnalysisFeedbackDirty ? 'Gem feedback først' : 'Del feedback med atlet'}</button></>}
+                  {analysis.status === 'coach_approved' && <><button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'invalid')} style={{ ...s.btnGhost, opacity: updating ? 0.55 : 1 }}>{updating ? 'Gemmer…' : 'Fjern fra baseline'}</button><button disabled={updating || videoAnalysisFeedbackDirty || !feedbackQuality.canShare} onClick={() => reviewVideoAnalysis(analysis, 'shared')} style={{ ...s.btnPrimary, background: '#3f7c87', opacity: updating || videoAnalysisFeedbackDirty || !feedbackQuality.canShare ? 0.5 : 1 }}>{updating ? 'Deler…' : videoAnalysisFeedbackDirty ? 'Gem feedback først' : !feedbackQuality.canShare ? 'Ret feedback først' : 'Del feedback med atlet'}</button></>}
                   {analysis.status === 'shared' && <button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'invalid')} style={{ ...s.btnGhost, opacity: updating ? 0.55 : 1 }}>{updating ? 'Gemmer…' : 'Skjul og udelad måling'}</button>}
                   {analysis.status === 'invalid' && <button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'draft')} style={{ ...s.btnGhost, opacity: updating ? 0.55 : 1 }}>{updating ? 'Gemmer…' : 'Tilbage til kladde'}</button>}
                 </div>
