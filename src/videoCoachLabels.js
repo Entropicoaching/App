@@ -42,6 +42,8 @@ const VIDEOCOACH_VARIATION_LABELS = {
   spoto_press: 'Spoto press',
   incline_baenk: 'Incline bænk',
   incline_b_nk: 'Incline bænk',
+  slingshot_baenk: 'Slingshot bænk',
+  slingshot_b_nk: 'Slingshot bænk',
 
   competition_conventional: 'Konkurrence konventionel',
   konkurrence_konventionel: 'Konkurrence konventionel',
@@ -82,6 +84,8 @@ const VIDEOCOACH_VARIATION_IDENTITIES = {
   spoto_press: 'spoto_press',
   incline_baenk: 'incline_b_nk',
   incline_b_nk: 'incline_b_nk',
+  slingshot_baenk: 'slingshot_b_nk',
+  slingshot_b_nk: 'slingshot_b_nk',
 
   competition_conventional: 'konkurrence_konventionel',
   konkurrence_konventionel: 'konkurrence_konventionel',
