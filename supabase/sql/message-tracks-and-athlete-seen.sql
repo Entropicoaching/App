@@ -62,4 +62,6 @@ language sql stable security definer set search_path to pg_catalog, public as $$
   limit least(greatest(coalesce(p_limit, 50), 1), 100)
   offset greatest(coalesce(p_offset, 0), 0)
 $$;
+revoke execute on function public.get_my_shared_video_analyses_v3(integer, integer) from public;
+revoke execute on function public.get_my_shared_video_analyses_v3(integer, integer) from anon;
 grant execute on function public.get_my_shared_video_analyses_v3(integer, integer) to authenticated;

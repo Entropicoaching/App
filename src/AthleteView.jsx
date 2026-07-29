@@ -6,6 +6,7 @@ import { VIDEOCOACH_LIFT_LABELS as ATHLETE_VIDEO_LIFTS, videoCoachVariationLabel
 
 const ATHLETE_VIDEOCOACH_PREFIX = 'entropi:videocoach:v3'
 const ATHLETE_VIDEOCOACH_URL = 'videocoach.html?mode=athlete&bridge=athlete-v1&v=20260728-feedback-evidence'
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const ATHLETE_VIDEOCOACH_COLUMNS = new Set([
   'client_analysis_id', 'athlete_id', 'athlete_name', 'source_mode', 'status',
   'lift', 'variation', 'load_kg', 'rpe', 'reps_count', 'rep_details',
@@ -16,6 +17,10 @@ const ATHLETE_VIDEOCOACH_COLUMNS = new Set([
   'analyzed_at', 'reps', 'load_note', 'bias_note', 'rom_cm', 'loss_pct',
   'stick_pct', 'dip_pct', 'drift_cm', 'extra', 'ai_text',
 ])
+
+function isUuid(value) {
+  return typeof value === 'string' && UUID_PATTERN.test(value)
+}
 
 function validateAthleteVideoCoachRow(row, athleteId) {
   if (!row || typeof row !== 'object' || Array.isArray(row)) return 'Ugyldig analysepayload'
@@ -1892,19 +1897,38 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   async function fetchAthlete() {
     if (!coachAthleteId && role !== 'athlete') { setLoading(false); return }
-    const { data, error } = await withRetry(() =>
-      (coachAthleteId
-        ? supabase.from('athletes').select('*').eq('id', coachAthleteId)
-        : supabase.from('athletes').select('*').eq('email', session.user.email)
-      ).maybeSingle()
-    )
+    let data
+    let error
+    if (coachAthleteId) {
+      ({ data, error } = await withRetry(() =>
+        supabase.from('athletes').select('*').eq('id', coachAthleteId).maybeSingle()
+      ))
+    } else {
+      ({ data, error } = await withRetry(() =>
+        supabase.from('athletes').select('*').eq('user_id', session.user.id).maybeSingle()
+      ))
+      if (!error && !data) {
+        const claim = await withRetry(() => supabase.rpc('claim_athlete_profile_v3'))
+        if (claim.error || !isUuid(claim.data)) {
+          setLoadError(true)
+          return
+        }
+        ({ data, error } = await withRetry(() =>
+          supabase.from('athletes').select('*')
+            .eq('user_id', session.user.id)
+            .eq('id', claim.data)
+            .maybeSingle()
+        ))
+        if (!error && !data) {
+          setLoadError(true)
+          return
+        }
+      }
+    }
     // Reel fejl: vis fejl/retry-skærmen i stedet for misvisende "ikke tilknyttet".
     // (Bliver i loading-tilstanden, som renderer loadError-grenen med "Prøv igen".)
     if (error) { setLoadError(true); return }
     if (data) {
-      if (!coachAthleteId && !data.user_id) {
-        await supabase.rpc('claim_athlete_profile')
-      }
       if (!coachAthleteId) {
         supabase.from('profiles').update({ last_seen: new Date().toISOString() }).eq('id', session.user.id)
       }
