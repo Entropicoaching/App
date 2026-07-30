@@ -3050,10 +3050,7 @@ async function startMultipointTracking(p0) {
         const homeHit=plSearch(homeFrame,p0,radius,plateModel,homeR,auditStep);
         const homeStrong=homeHit&&homeHit.circle>Math.max(9,plateBase.circle*.34)&&
           homeHit.cover>=.45&&homeHit.pairCover>=.35&&homeHit.app<2.6;
-        if(homeStrong){
-          nx=homeHit.x-homeBias.x;ny=homeHit.y-homeBias.y;
-          path.repAnchors=(path.repAnchors||0)+1;
-        }
+        if(homeStrong)path.repAnchors=(path.repAnchors||0)+1;
       }
       if(deadliftMode&&homeEntryFrames>0)homeEntryFrames--;
       if(deadliftMode)wasNearHome=nearHome;
