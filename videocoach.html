@@ -4251,6 +4251,7 @@ function evaluateFindings(lift, v) {
 // som UDKAST i Marcs stil - han vælger og former sin egen ordlyd. Hver cue
 // hænger på et konkret fund, så det aldrig bliver løs gætteri.
 function suggestCues(lift, v) {
+  if (Number(v.lowConfPct) > 15) return [];
   const c = [];
   const sq = lift === 'Squat', bp = lift === 'Bænkpres';
   const dl = lift === 'Dødløft', sumo = lift === 'Sumo dødløft';
@@ -4363,7 +4364,7 @@ function buildCoachFeedback(lift, v = {}) {
     }
   }
 
-  if (bp && n(v.foreDev) != null) {
+  if (bp && poseReliable && n(v.foreDev) != null) {
     const fore = n(v.foreDev);
     if (fore <= 10) addStrength('Underarmen står stabilt',
       'Underarmen er tæt på lodret i bundpositionen.', `${fore}° fra lodret`);
