@@ -38,11 +38,13 @@ assert.equal(review.canShare, true)
 assert.equal(review.needsReview, true)
 assert.equal(review.warnings.length, 3)
 
-const html = fs.readFileSync(new URL('../public/videocoach.html', import.meta.url), 'utf8')
+const html = fs.readFileSync(process.argv[2] || new URL('../public/videocoach.html', import.meta.url), 'utf8')
 const modelMatch = html.match(/\/\/ COACH_FEEDBACK_MODEL_START([\s\S]*?)\/\/ COACH_FEEDBACK_MODEL_END/)
 assert.ok(modelMatch, 'Det prioriterede feedbacklag skal kunne udtrækkes')
+const cueMatch = html.match(/(function suggestCues\([\s\S]*?)\r?\n\r?\n\/\/ COACH_FEEDBACK_MODEL_START/)
+assert.ok(cueMatch, 'Coachens cue-udkast skal kunne udtrækkes')
 const context = {}
-vm.runInNewContext(`${modelMatch[1]}; this.buildCoachFeedback = buildCoachFeedback`, context)
+vm.runInNewContext(`${modelMatch[1]}; ${cueMatch[1]}; this.buildCoachFeedback = buildCoachFeedback; this.suggestCues = suggestCues`, context)
 
 const evidenceMatch = html.match(/\/\/ COACH_FEEDBACK_EVIDENCE_START([\s\S]*?)\/\/ COACH_FEEDBACK_EVIDENCE_END/)
 assert.ok(evidenceMatch, 'Feedbackens coach-only målegrundlag skal kunne udtrækkes')
@@ -60,6 +62,11 @@ assert.match(deadlift.athlete.next, /stoppe sættet|reducere reps|længere pause
 const uncertain = context.buildCoachFeedback('Squat', { lowConfPct: 22, driftCm: 7 })
 assert.equal(uncertain.primary.title, 'Kontrollér banen først')
 assert.match(uncertain.athlete.next, /Kør analysen igen/)
+
+assert.equal(context.suggestCues('Squat', { lowConfPct: 22, driftCm: 7.1 }).length, 0)
+
+const normalConfidenceCues = context.suggestCues('Squat', { lowConfPct: 2, driftCm: 7.1 })
+assert.ok(normalConfidenceCues.some(([, evidence]) => /drift/.test(evidence)))
 
 const squat = context.buildCoachFeedback('Squat', {
   driftCm: 7.4,
@@ -103,6 +110,21 @@ assert.equal(videoCoachFeedbackQuality({
   focus: bench.athlete.focus,
   next_set: bench.athlete.next,
 }).level, 'strong')
+
+const reliableForearm = context.buildCoachFeedback('Bænkpres', {
+  positionModelQualityPct: 8,
+  foreDev: 16,
+  lowConfPct: 1,
+})
+assert.equal(reliableForearm.primary.title, 'Underarmen er ikke under stangen')
+
+const unreliableForearm = context.buildCoachFeedback('Bænkpres', {
+  positionModelQualityPct: 26,
+  foreDev: 16,
+  lowConfPct: 1,
+})
+assert.notEqual(unreliableForearm.primary?.title, 'Underarmen er ikke under stangen')
+assert.notEqual(unreliableForearm.strength?.title, 'Underarmen står stabilt')
 
 assert.match(html, /const prioritizedFeedback = buildCoachFeedback/)
 assert.doesNotMatch(html, /const cues = suggestCues\(lift, vals\)\.slice\(0, 2\)/)
