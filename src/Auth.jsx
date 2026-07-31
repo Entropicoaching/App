@@ -1,27 +1,42 @@
 import { useState } from 'react'
 import { supabase } from './supabase'
+import { athleteAuthErrorMessage, normalizeAthleteLoginEmail } from './athleteOnboarding'
 
 export default function Auth() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [notice, setNotice] = useState(null)
   const [mode, setMode] = useState('login') // 'login' eller 'signup'
 
   async function handleSubmit(e) {
     e.preventDefault()
     setLoading(true)
     setError(null)
+    setNotice(null)
+
+    const normalizedEmail = normalizeAthleteLoginEmail(email)
+    if (!normalizedEmail) {
+      setError('Skriv en gyldig emailadresse')
+      setLoading(false)
+      return
+    }
+    setEmail(normalizedEmail)
 
     let result
     if (mode === 'login') {
-      result = await supabase.auth.signInWithPassword({ email, password })
+      result = await supabase.auth.signInWithPassword({ email: normalizedEmail, password })
     } else {
-      result = await supabase.auth.signUp({ email, password })
+      result = await supabase.auth.signUp({ email: normalizedEmail, password })
     }
 
     if (result.error) {
-      setError(result.error.message)
+      setError(athleteAuthErrorMessage(result.error, mode))
+    } else if (mode === 'signup' && !result.data?.session) {
+      setPassword('')
+      setMode('login')
+      setNotice(`Tjek din email. Vi har sendt et bekræftelseslink til ${normalizedEmail}. Når du har bekræftet, kan du logge ind her.`)
     }
     setLoading(false)
   }
@@ -56,8 +71,22 @@ export default function Auth() {
           color: '#4a4844',
           marginBottom: '2.5rem',
         }}>
-          Coach Portal
+          Træning &amp; coaching
         </div>
+
+        {mode === 'signup' && (
+          <div style={{
+            color: '#9b978f',
+            fontSize: '0.8rem',
+            lineHeight: 1.55,
+            marginBottom: '1.25rem',
+            padding: '0.75rem 0.85rem',
+            background: 'rgba(200,146,58,0.055)',
+            borderLeft: '2px solid rgba(200,146,58,0.65)',
+          }}>
+            Brug den samme emailadresse, som din coach har registreret. Så bliver din profil koblet sikkert ved første login.
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '1rem' }}>
@@ -74,8 +103,10 @@ export default function Auth() {
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
+              autoComplete="email"
               style={{
                 width: '100%',
+                boxSizing: 'border-box',
                 background: '#1c1c18',
                 border: '1px solid rgba(237,234,226,0.13)',
                 color: '#edeae2',
@@ -102,8 +133,10 @@ export default function Auth() {
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
+              autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
               style={{
                 width: '100%',
+                boxSizing: 'border-box',
                 background: '#1c1c18',
                 border: '1px solid rgba(237,234,226,0.13)',
                 color: '#edeae2',
@@ -126,6 +159,20 @@ export default function Auth() {
               border: '1px solid rgba(224,85,85,0.2)',
             }}>
               {error}
+            </div>
+          )}
+
+          {notice && (
+            <div role="status" style={{
+              fontSize: '0.82rem',
+              color: '#9fbd9a',
+              marginBottom: '1rem',
+              padding: '0.7rem 0.85rem',
+              lineHeight: 1.5,
+              background: 'rgba(108,186,108,0.08)',
+              border: '1px solid rgba(108,186,108,0.22)',
+            }}>
+              {notice}
             </div>
           )}
 
@@ -159,12 +206,12 @@ export default function Auth() {
         }}>
           {mode === 'login' ? (
             <>Ingen konto? <span
-              onClick={() => setMode('signup')}
+              onClick={() => { setMode('signup'); setError(null); setNotice(null) }}
               style={{ color: '#7a7770', cursor: 'pointer' }}
             >Opret her</span></>
           ) : (
             <>Har du en konto? <span
-              onClick={() => setMode('login')}
+              onClick={() => { setMode('login'); setError(null); setNotice(null) }}
               style={{ color: '#7a7770', cursor: 'pointer' }}
             >Log ind</span></>
           )}

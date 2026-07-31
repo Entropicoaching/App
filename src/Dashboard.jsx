@@ -5,7 +5,9 @@ import { coachInboxCompletionStatus, coachInboxEntryIntent, coachInboxFocusDecis
 import { buildVideoCoachBaselineProfiles, countReadyVideoCoachBaselineProfiles, videoCoachBaselineReviewImpact } from './videoCoachBaselineProgress'
 import { sanitizeVideoCoachFeedbackEvidence } from './videoCoachFeedbackEvidence'
 import { videoCoachFeedbackQuality } from './videoCoachFeedbackQuality'
+import { videoCoachPersonalBaselineForAnalysis, videoCoachPersonalBaselineOptions, videoCoachPersonalBaselineSelection, withVideoCoachPersonalBaseline } from './videoCoachPersonalFeedback'
 import { VIDEOCOACH_LIFT_LABELS as VIDEOCOACH_LIFTS, videoCoachVariationIdentity, videoCoachVariationLabel } from './videoCoachLabels'
+import { normalizeAthleteLoginEmail } from './athleteOnboarding'
 
 const BLOCK_NAMES = ['Akkumulering', 'Intensificering', 'Peak', 'Deload', 'GPP', 'Hypertrofi', 'Styrke', 'Transition']
 
@@ -194,7 +196,7 @@ function videoCoachFeedbackDraft(feedback) {
   return { works: text('works'), focus: text('focus'), next_set: text('next_set') }
 }
 
-function videoCoachFeedbackPayload(existing, draft) {
+function videoCoachFeedbackPayload(existing, draft, personalBaseline) {
   const source = existing && typeof existing === 'object' ? existing : {}
   const section = key => String(draft?.[key] || '').split(/\r?\n/)
     .map(text => text.trim()).filter(Boolean).slice(0, 2)
@@ -204,7 +206,9 @@ function videoCoachFeedbackPayload(existing, draft) {
       evidence_refs: Array.isArray(source[key]?.[index]?.evidence_refs)
         ? source[key][index].evidence_refs : ['coach_review'],
     }))
-  return { ...source, works: section('works'), focus: section('focus'), next_set: section('next_set') }
+  return withVideoCoachPersonalBaseline({
+    ...source, works: section('works'), focus: section('focus'), next_set: section('next_set'),
+  }, personalBaseline)
 }
 
 function coachVideoPriorityDetail(video) {
@@ -568,6 +572,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [videoAnalysisReviewLoadingId, setVideoAnalysisReviewLoadingId] = useState(null)
   const [videoAnalysisReviewError, setVideoAnalysisReviewError] = useState(null)
   const [videoAnalysisFeedbackDraft, setVideoAnalysisFeedbackDraft] = useState({ works: '', focus: '', next_set: '' })
+  const [videoAnalysisBaselineFindingId, setVideoAnalysisBaselineFindingId] = useState('')
   const [videoAnalysisFeedbackDirty, setVideoAnalysisFeedbackDirty] = useState(false)
   const [videoAnalysisCloseWarning, setVideoAnalysisCloseWarning] = useState(false)
   const [warmupTemplates, setWarmupTemplates] = useState([])
@@ -1799,6 +1804,16 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         showFlash('Feedbacken skal have et fokus og et brugbart cue', 'error')
         return
       }
+      if (analysis.athlete_feedback?.personal_baseline) {
+        const baselineOptions = videoCoachPersonalBaselineOptions(videoBaselines, analysis,
+          selectedAthlete.id)
+        if (!videoCoachPersonalBaselineSelection(analysis.athlete_feedback, baselineOptions)) {
+          await openVideoAnalysisReview(analysis)
+          setVideoAnalysisReviewError('Den personlige sammenligning matcher ikke længere den aktuelle baseline. Gem feedbacken igen før deling.')
+          showFlash('Den personlige sammenligning skal gennemgås igen', 'error')
+          return
+        }
+      }
     }
     setVideoAnalysisUpdatingId(analysis.id)
     setVideoAnalysisError(null)
@@ -1843,14 +1858,18 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       showFlash('Hvert feedbackfelt må højst være 600 tegn', 'error')
       return
     }
+    const baselineOptions = videoCoachPersonalBaselineOptions(videoBaselines, analysis,
+      selectedAthlete.id)
+    const selectedBaseline = baselineOptions.find(option =>
+      option.id === videoAnalysisBaselineFindingId) || null
     const athleteFeedback = videoCoachFeedbackPayload(analysis.athlete_feedback,
-      videoAnalysisFeedbackDraft)
+      videoAnalysisFeedbackDraft, selectedBaseline)
     setVideoAnalysisUpdatingId(analysis.id)
     setVideoAnalysisReviewError(null)
     try {
       let query = supabase.from('video_analyses')
         .update({ athlete_feedback: athleteFeedback,
-          feedback_version: 'coach-edited-v2-2026-07-27' })
+          feedback_version: 'coach-edited-personal-baseline-v1-2026-07-30' })
         .eq('id', analysis.id)
         .eq('athlete_id', selectedAthlete.id)
       if (analysis.client_analysis_id)
@@ -1867,6 +1886,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         ? { ...current, athlete_feedback: data.athlete_feedback,
           feedback_version: data.feedback_version } : current)
       setVideoAnalysisFeedbackDraft(videoCoachFeedbackDraft(data.athlete_feedback))
+      setVideoAnalysisBaselineFindingId(videoCoachPersonalBaselineSelection(
+        data.athlete_feedback, baselineOptions))
       setVideoAnalysisFeedbackDirty(false)
       setVideoAnalysisCloseWarning(false)
       showFlash('Feedback gemt', 'success')
@@ -1890,6 +1911,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
   function discardVideoAnalysisFeedback(analysis) {
     setVideoAnalysisFeedbackDraft(videoCoachFeedbackDraft(analysis?.athlete_feedback))
+    const baselineOptions = videoCoachPersonalBaselineOptions(videoBaselines, analysis,
+      selectedAthlete?.id)
+    setVideoAnalysisBaselineFindingId(videoCoachPersonalBaselineSelection(
+      analysis?.athlete_feedback, baselineOptions))
     setVideoAnalysisFeedbackDirty(false)
     setVideoAnalysisCloseWarning(false)
   }
@@ -1909,6 +1934,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         throw new Error('Databasen returnerede reviewdata for en forkert analyse')
       setVideoAnalysisReview(data)
       setVideoAnalysisFeedbackDraft(videoCoachFeedbackDraft(data.athlete_feedback))
+      const baselineOptions = videoCoachPersonalBaselineOptions(videoBaselines, data,
+        selectedAthlete.id)
+      setVideoAnalysisBaselineFindingId(videoCoachPersonalBaselineSelection(
+        data.athlete_feedback, baselineOptions))
       setVideoAnalysisFeedbackDirty(false)
       setVideoAnalysisCloseWarning(false)
     } catch (error) {
@@ -2032,7 +2061,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     const { data, error } = await supabase.from('athletes').insert({
       coach_id: session.user.id,
       name: na.name.trim(),
-      email: na.email.trim() || null,
+      email: normalizeAthleteLoginEmail(na.email) || null,
       age: int(na.age),
       sex: na.sex || null,
       bodyweight: num(na.bodyweight),
@@ -2062,6 +2091,11 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       setShowAddModal(false)
       setAddStep(0)
       setNewAthlete(emptyNewAthlete)
+      openProfile(data, 'program')
+      setAddingWeek(true)
+      setWeekForm({ week_number: '', block_name: '', coach_note: '', block_description: '',
+        start_date: new Date().toISOString().slice(0, 10) })
+      showFlash(`${data.name} er oprettet. Opret den første programuge.`, 'success')
     } else {
       showFlash('Kunne ikke oprette atlet: ' + error.message, 'error')
     }
@@ -7283,6 +7317,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         const feedbackEvidence = sanitizeVideoCoachFeedbackEvidence(
           analysis.session_context?.feedback_evidence)
         const athleteFeedback = analysis.athlete_feedback || {}
+        const personalBaselineOptions = videoCoachPersonalBaselineOptions(videoBaselines,
+          analysis, selectedAthlete?.id)
+        const sharedPersonalBaseline = videoCoachPersonalBaselineForAnalysis(
+          athleteFeedback, analysis, selectedAthlete?.id)
         const athleteFeedbackSections = [
           ['Det fungerer', athleteFeedback.works, '#8caf88'],
           ['Atletens fokus', athleteFeedback.focus, '#d79a83'],
@@ -7418,6 +7456,34 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                           style={{ width: '100%', boxSizing: 'border-box', resize: 'vertical', minHeight: '58px', border: '1px solid rgba(237,234,226,0.12)', background: '#141410', color: '#edeae2', padding: '0.55rem 0.6rem', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.68rem', lineHeight: 1.45 }} />
                       </label>
                     ))}
+                    <fieldset disabled={updating} style={{ margin: 0, border: '1px solid rgba(200,146,58,0.2)', background: 'rgba(200,146,58,0.035)', padding: '0.7rem' }}>
+                      <legend style={{ ...s.fieldLabel, color: '#c8923a', padding: '0 0.25rem' }}>Personlig baseline · valgfri</legend>
+                      <div style={{ color: '#9f9b91', fontSize: '0.6rem', lineHeight: 1.45, marginBottom: '0.5rem' }}>
+                        Vælg højst ét kvalitetssikret fund. Intet deles automatisk.
+                      </div>
+                      <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.45rem', color: '#b8b4a8', fontSize: '0.64rem', lineHeight: 1.4, cursor: 'pointer' }}>
+                        <input type="radio" name={`personal-baseline-${analysis.id}`} checked={!videoAnalysisBaselineFindingId}
+                          onChange={() => { setVideoAnalysisBaselineFindingId(''); setVideoAnalysisFeedbackDirty(true); setVideoAnalysisCloseWarning(false) }} />
+                        Ingen personlig sammenligning
+                      </label>
+                      {personalBaselineOptions.map(option => (
+                        <label key={option.id} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.45rem', color: '#edeae2', fontSize: '0.64rem', lineHeight: 1.45, cursor: 'pointer', marginTop: '0.5rem' }}>
+                          <input type="radio" name={`personal-baseline-${analysis.id}`} checked={videoAnalysisBaselineFindingId === option.id}
+                            onChange={() => { setVideoAnalysisBaselineFindingId(option.id); setVideoAnalysisFeedbackDirty(true); setVideoAnalysisCloseWarning(false) }} />
+                          <span>
+                            <span style={{ display: 'block' }}>{option.text}</span>
+                            <span style={{ display: 'block', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', marginTop: '0.18rem' }}>
+                              {VIDEOCOACH_METRICS.find(metric => metric.key === option.evidence_ref.metric_key)?.label || 'Målepunkt'} · samme målemetode · n={option.evidence_ref.n_analyses}
+                            </span>
+                          </span>
+                        </label>
+                      ))}
+                      {personalBaselineOptions.length === 0 && (
+                        <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', lineHeight: 1.45, marginTop: '0.45rem' }}>
+                          Intet fund opfylder endnu identitets-, metode- og confidencekravene (mindst 3 analyser).
+                        </div>
+                      )}
+                    </fieldset>
                     <div style={{ borderLeft: `2px solid ${feedbackQualityColor}`, background: `${feedbackQualityColor}0b`, padding: '0.6rem 0.7rem' }}>
                       <div style={{ ...s.fieldLabel, color: feedbackQualityColor }}>{feedbackQuality.title}</div>
                       <div style={{ color: '#b8b4a8', fontSize: '0.62rem', lineHeight: 1.45, marginTop: '0.22rem' }}>{feedbackQuality.detail}</div>
@@ -7436,6 +7502,13 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   </div>
                 ) : athleteFeedbackSections.length > 0 ? (
                   <div style={{ display: 'grid', gap: '0.65rem', marginTop: '0.55rem' }}>
+                    {sharedPersonalBaseline && (
+                      <div style={{ borderLeft: '2px solid #c8923a', paddingLeft: '0.6rem' }}>
+                        <div style={{ ...s.fieldLabel, color: '#c8923a', marginBottom: '0.22rem' }}>Personlig udvikling</div>
+                        <div style={{ color: '#c9b47f', fontSize: '0.68rem', lineHeight: 1.45 }}>{sharedPersonalBaseline.text}</div>
+                        <div style={{ color: '#77746d', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', marginTop: '0.2rem' }}>Samme løft og variation · n={sharedPersonalBaseline.evidence_ref.n_analyses}</div>
+                      </div>
+                    )}
                     {athleteFeedbackSections.map(section => (
                       <div key={section.label}>
                         <div style={{ ...s.fieldLabel, marginBottom: '0.22rem' }}>{section.label}</div>
@@ -7565,7 +7638,9 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   {field('Fulde navn *', 'name', 'text', 'For- og efternavn')}
                   {field('Email (til login)', 'email', 'email', 'email@eksempel.dk')}
                   <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#7a7770', marginTop: '-0.4rem', marginBottom: '0.75rem', lineHeight: 1.5 }}>
-                    Atleten logger ind med præcis denne email. Kontoen kobles automatisk første gang de logger ind.
+                    {newAthlete.email.trim()
+                      ? 'Atleten logger ind med denne email. Mellemrum ryddes, og adressen gemmes med små bogstaver, så koblingen bliver entydig.'
+                      : 'Email kan tilføjes senere, men atletens login kan først kobles, når den er udfyldt.'}
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem' }}>
                     {field('Alder', 'age', 'number', 'år')}

@@ -2,7 +2,9 @@ import { useState, useEffect, useRef, Fragment } from 'react'
 import { supabase, withRetry, queueWrite } from './supabase'
 import { mergeAthleteSetInputs, nextAthleteSetInput } from './athleteTrainingInputs'
 import { sanitizeVideoCoachFeedbackEvidence } from './videoCoachFeedbackEvidence'
+import { videoCoachPersonalBaselineAthleteText, videoCoachPersonalBaselineForAnalysis } from './videoCoachPersonalFeedback'
 import { VIDEOCOACH_LIFT_LABELS as ATHLETE_VIDEO_LIFTS, videoCoachVariationLabel as athleteVideoVariationLabel } from './videoCoachLabels'
+import { completeAthleteOnboarding, hasCompletedAthleteOnboarding } from './athleteOnboarding'
 
 const ATHLETE_VIDEOCOACH_PREFIX = 'entropi:videocoach:v3'
 const ATHLETE_VIDEOCOACH_URL = 'videocoach.html?mode=athlete&bridge=athlete-v1&v=20260728-feedback-evidence'
@@ -1704,6 +1706,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [undoToast, setUndoToast] = useState(null)
   const undoTimerRef = useRef(null)
   const messagesEndRef = useRef(null)
+  const readinessCardRef = useRef(null)
   // Session-kort refs, så vi kan scrolle en nyåbnet session op i toppen
   // (accordion: når en session over kollapser, hopper layoutet ellers så man
   // lander midt/nederst i den nye session i stedet for ved første øvelse).
@@ -1765,7 +1768,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   })
 
   // Onboarding
-  const [onboarded, setOnboarded] = useState(() => !!localStorage.getItem('entropi_onboarded'))
+  const [onboarded, setOnboarded] = useState(false)
 
   // Readiness state
   const [readinessLog, setReadinessLog] = useState(null)
@@ -1931,6 +1934,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     if (data) {
       if (!coachAthleteId) {
         supabase.from('profiles').update({ last_seen: new Date().toISOString() }).eq('id', session.user.id)
+        setOnboarded(hasCompletedAthleteOnboarding(localStorage, data.id))
       }
       setAthlete(data)
       fetchLogs(data.id)
@@ -2275,6 +2279,16 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         sessionRefs.current[sessionId]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }))
     }
+  }
+
+  function openReadiness() {
+    setTab('hjem')
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const card = readinessCardRef.current
+      if (!card) return
+      const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+      card.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' })
+    }))
   }
 
 
@@ -2627,6 +2641,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         const works = Array.isArray(feedback.works) ? feedback.works.filter(item => item?.text).slice(0, 2) : []
         const focus = Array.isArray(feedback.focus) ? feedback.focus.filter(item => item?.text).slice(0, 2) : []
         const nextSet = Array.isArray(feedback.next_set) ? feedback.next_set.filter(item => item?.text).slice(0, 2) : []
+        const personalBaseline = videoCoachPersonalBaselineForAnalysis(feedback, analysis,
+          athlete?.id)
         return (
           <div key={analysis.id} style={{ border: '1px solid rgba(237,234,226,0.08)', background: 'rgba(20,20,16,0.55)' }}>
             <button onClick={() => { const opening = !open; setOpenSharedVideoId(opening ? analysis.id : null); if (opening) markVideoSeen(analysis.id) }} style={{ width: '100%', border: 0, background: 'transparent', color: '#edeae2', cursor: 'pointer', padding: '0.75rem', textAlign: 'left', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.7rem' }}>
@@ -2656,6 +2672,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                   </div>
                 )}
                 <div style={{ display: 'grid', gap: '0.7rem' }}>
+                  {personalBaseline && <div style={{ borderLeft: '2px solid #c8923a', background: 'rgba(200,146,58,0.04)', padding: '0.55rem 0.65rem' }}><div style={{ ...s.fieldLabel, color: '#c8923a' }}>Din udvikling</div><div style={{ color: '#c9b47f', fontSize: '0.68rem', lineHeight: 1.45, marginTop: '0.25rem' }}>{videoCoachPersonalBaselineAthleteText(personalBaseline)}</div><div style={{ color: '#77746d', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', lineHeight: 1.4, marginTop: '0.25rem' }}>Sammenlignet med {personalBaseline.evidence_ref.n_analyses} kvalitetssikrede analyser af samme løft og variation.</div></div>}
                   {works.length > 0 && <div><div style={s.fieldLabel}>Det fungerer</div>{works.map((item, index) => <div key={index} style={{ color: '#9fbd9a', fontSize: '0.68rem', lineHeight: 1.45, marginTop: '0.25rem' }}>{item.text}</div>)}</div>}
                   {focus.length > 0 && <div><div style={s.fieldLabel}>Dit fokus</div>{focus.map((item, index) => <div key={index} style={{ color: '#d79a83', fontSize: '0.68rem', lineHeight: 1.45, marginTop: '0.25rem' }}>{item.text}</div>)}</div>}
                   {nextSet.length > 0 && <div><div style={s.fieldLabel}>Næste gang</div>{nextSet.map((item, index) => <div key={index} style={{ color: '#c9b47f', fontSize: '0.68rem', lineHeight: 1.45, marginTop: '0.25rem' }}>{item.text}</div>)}</div>}
@@ -3224,10 +3241,14 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
             ))}
           </div>
           <button
-            onClick={() => { localStorage.setItem('entropi_onboarded', 'true'); setOnboarded(true) }}
+            onClick={() => {
+              if (!completeAthleteOnboarding(localStorage, athlete.id)) return
+              setOnboarded(true)
+              setTab(currentWeek ? 'program' : 'hjem')
+            }}
             style={{ ...s.btnPrimary, fontSize: '0.7rem', padding: '0.85rem 2.75rem', letterSpacing: '0.14em' }}
           >
-            Kom i gang →
+            {currentWeek ? 'Se dit program →' : 'Gå til forsiden →'}
           </button>
         </div>
       </div>
@@ -3384,14 +3405,14 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
             )}
 
             {!readinessLog && logs.length === 0 && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.85rem 1rem', background: 'rgba(200,146,58,0.05)', border: '1px solid rgba(200,146,58,0.13)', marginBottom: '1.25rem' }}>
+              <button type="button" aria-label="Gå til dagens parathed" onClick={openReadiness} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', width: '100%', textAlign: 'left', padding: '0.85rem 1rem', background: 'rgba(200,146,58,0.05)', border: '1px solid rgba(200,146,58,0.13)', marginBottom: '1.25rem', cursor: 'pointer' }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c8923a" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                 </svg>
                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#c8923a', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                   Start din dag — log din readiness
                 </div>
-              </div>
+              </button>
             )}
 
             <div style={s.card}>
@@ -3464,7 +3485,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
             {/* Readiness check */}
             {!readinessLog ? (
-              <div style={s.card}>
+              <div ref={readinessCardRef} style={{ ...s.card, scrollMarginTop: '5rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.75rem' }}>
                   <div style={{ ...s.cardLabel, marginBottom: 0 }}>Dagens parathed</div>
                   {lastReadiness && (
@@ -3887,7 +3908,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                     )
                   })()}
                   {isCurrentWeek && !readinessLog && (
-                    <button onClick={() => setTab('hjem')} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: '100%', textAlign: 'left', padding: '0.7rem 1rem', marginBottom: '1.25rem', background: 'rgba(200,146,58,0.05)', border: '1px solid rgba(200,146,58,0.13)', cursor: 'pointer' }}>
+                    <button type="button" onClick={openReadiness} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: '100%', textAlign: 'left', padding: '0.7rem 1rem', marginBottom: '1.25rem', background: 'rgba(200,146,58,0.05)', border: '1px solid rgba(200,146,58,0.13)', cursor: 'pointer' }}>
                       <span style={{ color: '#c8923a', fontSize: '0.9rem', flexShrink: 0 }}>◐</span>
                       <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#c8923a', letterSpacing: '0.06em', lineHeight: 1.5 }}>Log dagens parathed for en tilpasset anbefaling →</span>
                     </button>
