@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Velkommen · Entropi Coaching</title>
+<link rel="icon" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#141410; --panel:#1c1c18; --line:rgba(237,234,226,.13);
+  --ink:#edeae2; --dim:#7a7770; --faint:#4a4844; --gold:#c8923a; --green:#6faa5a;
+  --sans:'IBM Plex Sans',sans-serif; --mono:'IBM Plex Mono',monospace; --serif:'Playfair Display',serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-weight:300;
+  line-height:1.65;-webkit-font-smoothing:antialiased}
+.wrap{max-width:620px;margin:0 auto;padding:3rem 1.4rem 5rem}
+
+.brand{font-family:var(--serif);font-size:1.4rem}
+.brand span{color:var(--gold)}
+.tag{font-family:var(--mono);font-size:.55rem;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--faint);margin-top:.15rem}
+h1{font-family:var(--serif);font-size:2rem;font-weight:400;line-height:1.25;margin:2.8rem 0 .6rem}
+.lede{color:var(--dim);font-size:1rem;margin:0}
+.time{display:inline-block;font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--gold);border:1px solid rgba(200,146,58,.3);
+  padding:.35rem .7rem;margin-top:1.4rem}
+
+/* step */
+.step{margin:3.5rem 0}
+.head{display:flex;align-items:baseline;gap:.8rem;margin-bottom:.5rem}
+.n{font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;color:var(--gold)}
+h2{font-family:var(--sans);font-size:1.2rem;font-weight:400;margin:0;line-height:1.3}
+.say{color:var(--dim);font-size:.95rem;margin:.4rem 0 0}
+
+/* phone */
+.phone{width:238px;margin:1.6rem auto 0;border:1px solid var(--line);border-radius:26px;
+  background:var(--bg);padding:.5rem;box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.screen{border-radius:20px;background:var(--bg);padding:1.6rem 1.15rem 1.4rem;position:relative;
+  overflow:hidden}
+.notch{width:52px;height:4px;border-radius:3px;background:rgba(237,234,226,.14);margin:0 auto .9rem}
+.mini-brand{font-family:var(--serif);font-size:.78rem;color:var(--ink)}
+.mini-brand span{color:var(--gold)}
+.mini-tag{font-family:var(--mono);font-size:.42rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--faint);margin:.1rem 0 1.4rem}
+.lbl{font-family:var(--mono);font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--dim);margin-bottom:.28rem}
+.field{background:var(--panel);border:1px solid var(--line);padding:.45rem .55rem;margin-bottom:.75rem;
+  font-size:.6rem;color:var(--ink);min-height:1.75rem;display:flex;align-items:center;
+  word-break:break-all;line-height:1.35}
+.field.empty{color:var(--faint)}
+.field.lit{border-color:var(--gold);background:rgba(200,146,58,.08)}
+.field .caret{display:inline-block;width:1px;height:.7rem;background:var(--gold);margin-left:1px;
+  animation:blink 1.1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.btn{background:var(--gold);color:var(--bg);font-family:var(--mono);font-size:.48rem;font-weight:500;
+  letter-spacing:.1em;text-transform:uppercase;text-align:center;padding:.55rem;margin-top:.35rem}
+.foot{text-align:center;font-size:.55rem;color:var(--faint);margin-top:.9rem}
+.foot b{color:var(--dim);font-weight:400;border-bottom:1px solid var(--gold);padding-bottom:1px}
+.foot.lit b{color:var(--gold)}
+
+/* pointer ring */
+.ring{position:absolute;border:1.5px solid var(--gold);border-radius:50%;pointer-events:none;
+  animation:pulse 2s ease-out infinite}
+@keyframes pulse{0%{transform:scale(.85);opacity:1}70%{transform:scale(1.35);opacity:0}100%{opacity:0}}
+
+/* session/logging mock — spejler AthleteView */
+.exname{font-size:.72rem;color:var(--ink);margin-bottom:.12rem}
+.exmeta{font-family:var(--mono);font-size:.47rem;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:.55rem}
+.warm{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);
+  font-size:.4rem;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);
+  border:1px solid rgba(237,234,226,.07);border-left:2px solid rgba(200,146,58,.3);
+  padding:.32rem .45rem;margin-bottom:.6rem}
+.setblk{margin-bottom:.55rem}
+.setline{display:flex;align-items:center;gap:.26rem}
+.sn{font-family:var(--mono);font-size:.44rem;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--dim);min-width:26px}
+.kg{background:var(--panel);border:1px solid var(--line);width:38px;text-align:center;
+  font-family:var(--mono);font-size:.66rem;color:var(--ink);padding:.3rem .1rem;flex-shrink:0}
+.kg.empty{color:var(--faint);font-size:.5rem}
+.kg.lit{border-color:var(--gold);background:rgba(200,146,58,.08)}
+.kg i.caret{display:inline-block;width:1px;height:.5rem;background:var(--gold);margin-left:1px;
+  vertical-align:-1px;animation:blink 1.1s steps(1) infinite}
+.mult{font-family:var(--mono);font-size:.55rem;color:var(--gold);white-space:nowrap}
+.log{background:var(--gold);color:var(--bg);font-family:var(--mono);font-size:.42rem;
+  letter-spacing:.08em;text-transform:uppercase;padding:.32rem .42rem;white-space:nowrap}
+.log.ok{background:#6cba6c}
+.skip{border:1px solid rgba(237,234,226,.08);color:var(--faint);font-family:var(--mono);
+  font-size:.36rem;letter-spacing:.06em;padding:.3rem .3rem;white-space:nowrap}
+.subline{display:flex;align-items:center;gap:.24rem;padding-left:calc(26px + .26rem);margin-top:.28rem}
+.rpe{border:1px solid var(--line);color:var(--dim);font-family:var(--mono);font-size:.42rem;
+  letter-spacing:.07em;padding:.2rem .35rem;background:rgba(237,234,226,.04);white-space:nowrap}
+.rpe.on{border-color:rgba(200,146,58,.4);background:rgba(200,146,58,.15);color:var(--gold)}
+.info{color:var(--faint);font-size:.5rem}
+.note{flex:1;background:var(--panel);border:1px solid var(--line);color:var(--faint);
+  font-size:.44rem;font-style:italic;padding:.2rem .35rem;min-width:0;overflow:hidden;
+  white-space:nowrap}
+.saved{font-family:var(--mono);font-size:.38rem;letter-spacing:.08em;color:#6cba6c;
+  padding-left:calc(26px + .26rem);margin-top:.16rem}
+
+/* callout */
+.note{background:rgba(200,146,58,.07);border:1px solid rgba(200,146,58,.25);border-left:2px solid var(--gold);
+  padding:1rem 1.15rem;margin-top:1.4rem;font-size:.9rem}
+.note b{color:var(--gold);font-weight:500}
+.mail{display:block;font-family:var(--mono);font-size:1rem;color:var(--gold);word-break:break-all;
+  text-align:center;background:var(--panel);border:1px solid rgba(200,146,58,.3);padding:.9rem;
+  margin:1.2rem 0 0}
+.done{background:rgba(111,170,90,.06);border:1px solid rgba(111,170,90,.25);padding:1rem 1.15rem;
+  margin-top:1.4rem;font-size:.9rem}
+.done b{color:var(--green);font-weight:500}
+
+/* two-up */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin-top:1.4rem}
+.two div{background:var(--panel);border:1px solid var(--line);padding:.9rem 1rem;font-size:.85rem;
+  color:var(--dim)}
+.two b{display:block;font-family:var(--mono);font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--faint);margin-bottom:.35rem;font-weight:400}
+
+hr{border:none;border-top:1px solid var(--line);margin:4rem 0 0}
+.end{text-align:center;margin-top:2.5rem}
+.end p{color:var(--dim);font-size:.92rem;margin:.3rem 0}
+.end .sig{font-family:var(--serif);font-size:1.05rem;color:var(--ink);margin-top:1rem}
+@media(max-width:520px){
+  .wrap{padding:2.2rem 1.1rem 3.5rem} h1{font-size:1.65rem} .two{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="brand">Entropi<span>.</span></div>
+  <div class="tag">Coaching</div>
+
+  <h1 id="greet">Velkommen ombord</h1>
+  <p class="lede">Din træning ligger klar i appen. Her er de fire trin til at komme ind — det tager under et minut.</p>
+  <div class="time">Ca. 1 minut</div>
+
+  <!-- 1 -->
+  <div class="step">
+    <div class="head"><span class="n">01</span><h2>Åbn appen og tryk «Opret her»</h2></div>
+    <p class="say">Gå til <b style="color:var(--gold);font-weight:400">app.entropicoaching.dk</b> i din browser.
+    Nederst under den gyldne knap står der «Ingen konto? Opret her» — tryk på det.</p>
+    <div class="phone"><div class="screen">
+      <div class="notch"></div>
+      <div class="mini-brand">Entropi<span>.</span></div>
+      <div class="mini-tag">Coach Portal</div>
+      <div class="lbl">Email</div><div class="field empty"></div>
+      <div class="lbl">Adgangskode</div><div class="field empty"></div>
+      <div class="btn">Log ind</div>
+      <div class="foot lit">Ingen konto? <b>Opret her</b></div>
+      <div class="ring" style="width:22px;height:22px;right:38px;bottom:14px"></div>
+    </div></div>
+  </div>
+
+  <!-- 2 -->
+  <div class="step">
+    <div class="head"><span class="n">02</span><h2>Skriv din email — præcis denne</h2></div>
+    <p class="say">Dit program er allerede koblet til adressen herunder. Bruger du en anden, åbner appen tom.</p>
+    <div class="mail" id="mail">din@email.dk</div>
+    <div class="phone"><div class="screen">
+      <div class="notch"></div>
+      <div class="mini-brand">Entropi<span>.</span></div>
+      <div class="mini-tag">Coach Portal</div>
+      <div class="lbl">Email</div>
+      <div class="field lit"><span id="mail2">din@email.dk</span><span class="caret"></span></div>
+      <div class="lbl">Adgangskode</div><div class="field empty"></div>
+      <div class="btn">Opret konto</div>
+      <div class="foot">Har du en konto? <b>Log ind</b></div>
+    </div></div>
+  </div>
+
+  <!-- 3 -->
+  <div class="step">
+    <div class="head"><span class="n">03</span><h2>Vælg en adgangskode og tryk «Opret konto»</h2></div>
+    <p class="say">Mindst 6 tegn. Du bliver logget ind med det samme — ingen bekræftelsesmail, intet link at klikke.</p>
+    <div class="phone"><div class="screen">
+      <div class="notch"></div>
+      <div class="mini-brand">Entropi<span>.</span></div>
+      <div class="mini-tag">Coach Portal</div>
+      <div class="lbl">Email</div>
+      <div class="field"><span id="mail3">din@email.dk</span></div>
+      <div class="lbl">Adgangskode</div>
+      <div class="field lit">••••••••<span class="caret"></span></div>
+      <div class="btn">Opret konto</div>
+      <div class="ring" style="width:150px;height:34px;border-radius:4px;left:50%;transform:translateX(-50%);bottom:34px"></div>
+    </div></div>
+    <div class="done"><b>Sådan ser det rigtige ud:</b> din træningsuge dukker op med det samme.
+    Gør den ikke det, så luk appen helt og åbn den igen — og skriv til mig hvis den stadig er tom.</div>
+  </div>
+
+  <!-- 4 -->
+  <div class="step">
+    <div class="head"><span class="n">04</span><h2>Læg den på hjemmeskærmen</h2></div>
+    <p class="say">Så åbner den som en almindelig app i stedet for en fane i browseren.</p>
+    <div class="two">
+      <div><b>iPhone</b>Tryk del-ikonet <span style="color:var(--ink)">↑</span> nederst → rul ned →
+      «Føj til hjemmeskærm»</div>
+      <div><b>Android</b>Tryk menuen <span style="color:var(--ink)">⋮</span> øverst til højre →
+      «Installer app»</div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- logging -->
+  <div class="step">
+    <div class="head"><span class="n">Sådan bruger du den</span></div>
+    <h2 style="margin-top:.4rem">Åbn dagens træning og udfyld undervejs</h2>
+    <p class="say">Tryk på dagens session. For hvert sæt skriver du vægten, vælger din RPE og trykker
+    <b style="color:var(--gold);font-weight:400">Log</b>. Sættet bliver grønt med et flueben, så du
+    kan se hvor langt du er. Måtte du droppe et sæt, trykker du «Spring over» — det er bedre end
+    at lade det stå tomt.</p>
+    <div class="phone"><div class="screen">
+      <div class="notch"></div>
+      <div class="mini-brand">Entropi<span>.</span></div>
+      <div class="mini-tag">Lør · Readiness-session</div>
+
+      <div class="exname">Squat</div>
+      <div class="exmeta">3 sæt · × 5 · RPE 5</div>
+
+      <div class="warm"><span>Opvarmningssæt — 60 kg</span><span>▾</span></div>
+
+      <!-- sæt 1: gemt -->
+      <div class="setblk">
+        <div class="setline">
+          <span class="sn">Sæt 1</span>
+          <span class="kg">60</span>
+          <span class="mult">× 5</span>
+          <span class="log ok">✓</span>
+          <span class="skip">Spring over</span>
+        </div>
+        <div class="subline">
+          <span class="rpe on">RPE 5</span><span class="info">ℹ</span>
+          <span class="note">Tilføj note...</span>
+        </div>
+        <div class="saved">Gemt ✓</div>
+      </div>
+
+      <!-- sæt 2: i gang -->
+      <div class="setblk">
+        <div class="setline">
+          <span class="sn">Sæt 2</span>
+          <span class="kg lit">62,5<i class="caret"></i></span>
+          <span class="mult">× 5</span>
+          <span class="log">Log</span>
+          <span class="skip">Spring over</span>
+        </div>
+        <div class="subline">
+          <span class="rpe">RPE 5</span><span class="info">ℹ</span>
+          <span class="note">Tilføj note...</span>
+        </div>
+      </div>
+
+      <!-- sæt 3: tom -->
+      <div class="setblk">
+        <div class="setline">
+          <span class="sn">Sæt 3</span>
+          <span class="kg empty">kg</span>
+          <span class="mult">× 5</span>
+          <span class="log">Log</span>
+          <span class="skip">Spring over</span>
+        </div>
+        <div class="subline">
+          <span class="rpe">RPE 5</span><span class="info">ℹ</span>
+          <span class="note">Tilføj note...</span>
+        </div>
+      </div>
+    </div></div>
+    <div class="note"><b>Det vigtigste felt er noten.</b> Gjorde noget ondt, føltes en vægt tungere
+    end den burde, eller måtte du stoppe et sæt? Skriv det. Jeg læser noterne først når jeg bygger
+    din næste uge — de betyder mere end tallene.</div>
+  </div>
+
+  <div class="end">
+    <p>Er der noget der driller, så skriv til mig.</p>
+    <p>Vi ses i træningen.</p>
+    <div class="sig">Marc</div>
+  </div>
+
+</div>
+
+<script>
+  // Personalisering via link: ?navn=Henrik&mail=henerceninks@gmail.com
+  var q = new URLSearchParams(location.search);
+  var navn = (q.get('navn') || '').trim();
+  var mail = (q.get('mail') || '').trim();
+  if (navn) {
+    document.getElementById('greet').textContent = 'Velkommen ombord, ' + navn;
+    document.title = 'Velkommen, ' + navn + ' · Entropi Coaching';
+  }
+  if (mail) {
+    ['mail','mail2','mail3'].forEach(function(id){
+      document.getElementById(id).textContent = mail;
+    });
+  }
+</script>
+</body>
+</html>
