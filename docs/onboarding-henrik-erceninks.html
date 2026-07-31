@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Onboarding · Henrik Erceninks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#141410; --panel:#1c1c18; --line:rgba(237,234,226,.13);
+  --ink:#edeae2; --dim:#7a7770; --faint:#4a4844; --gold:#c8923a; --red:#e05555; --green:#6faa5a;
+  --sans:'IBM Plex Sans',sans-serif; --mono:'IBM Plex Mono',monospace; --serif:'Playfair Display',serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-weight:300;
+  line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:760px;margin:0 auto;padding:3rem 1.5rem 5rem}
+.eyebrow{font-family:var(--mono);font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--faint)}
+.brand{font-family:var(--serif);font-size:1.5rem;margin:.15rem 0 0}
+.brand span{color:var(--gold)}
+h1{font-family:var(--serif);font-size:2.1rem;font-weight:400;line-height:1.2;margin:2.5rem 0 .5rem}
+.lede{color:var(--dim);font-size:.95rem;margin:0 0 .4rem}
+.stamp{font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;color:var(--faint);
+  text-transform:uppercase;margin-top:1.2rem}
+h2{font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gold);font-weight:500;margin:3.5rem 0 1.2rem;padding-bottom:.6rem;
+  border-bottom:1px solid var(--line)}
+.url{display:block;background:var(--panel);border:1px solid var(--line);border-left:2px solid var(--gold);
+  padding:1rem 1.2rem;margin:1.5rem 0;text-align:center}
+.url b{font-family:var(--mono);font-size:1.05rem;color:var(--gold);letter-spacing:.02em;font-weight:500}
+.url i{display:block;font-style:normal;font-family:var(--mono);font-size:.55rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--faint);margin-bottom:.45rem}
+
+/* status */
+.status{border:1px solid var(--line);background:var(--panel)}
+.row{display:flex;align-items:center;gap:.9rem;padding:.7rem 1.1rem;border-bottom:1px solid var(--line);
+  font-size:.87rem}
+.row:last-child{border-bottom:none}
+.row .mark{flex:0 0 1.1rem;font-family:var(--mono);font-size:.85rem;line-height:1}
+.ok .mark{color:var(--green)} .wait .mark{color:var(--gold)} .no .mark{color:var(--faint)}
+.row .what{flex:1}
+.row .val{font-family:var(--mono);font-size:.7rem;color:var(--dim);text-align:right}
+
+/* steps */
+.step{display:flex;gap:1.3rem;padding:1.5rem 0;border-bottom:1px solid var(--line)}
+.step:last-of-type{border-bottom:none}
+.n{flex:0 0 2.1rem;height:2.1rem;border:1px solid var(--gold);color:var(--gold);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.8rem;
+  margin-top:.1rem}
+.step.key .n{background:var(--gold);color:var(--bg);border-color:var(--gold)}
+.body{flex:1;min-width:0}
+.body h3{font-family:var(--sans);font-size:1rem;font-weight:400;margin:.25rem 0 .35rem;color:var(--ink)}
+.body p{margin:.35rem 0;font-size:.88rem;color:var(--dim)}
+.body p.say{color:var(--ink)}
+kbd{font-family:var(--mono);font-size:.8rem;background:var(--panel);border:1px solid var(--line);
+  padding:.12rem .45rem;color:var(--ink)}
+.mail{font-family:var(--mono);font-size:.92rem;color:var(--gold);word-break:break-all}
+.warn{margin-top:.8rem;padding:.85rem 1rem;background:rgba(200,146,58,.07);
+  border:1px solid rgba(200,146,58,.25);border-left:2px solid var(--gold);font-size:.85rem;color:var(--ink)}
+.warn b{font-weight:500;color:var(--gold)}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-top:.7rem}
+.split div{background:var(--panel);border:1px solid var(--line);padding:.7rem .9rem;font-size:.82rem;
+  color:var(--dim)}
+.split b{display:block;font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--faint);margin-bottom:.25rem;font-weight:400}
+
+/* check */
+.check{background:rgba(111,170,90,.06);border:1px solid rgba(111,170,90,.25);padding:1.1rem 1.3rem;
+  margin-top:1.5rem;font-size:.9rem}
+.check b{color:var(--green);font-weight:500}
+
+/* errors */
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th{font-family:var(--mono);font-size:.56rem;letter-spacing:.11em;text-transform:uppercase;color:var(--faint);
+  text-align:left;font-weight:400;padding:0 .9rem .6rem 0;border-bottom:1px solid var(--line)}
+td{padding:.85rem .9rem .85rem 0;border-bottom:1px solid var(--line);vertical-align:top;color:var(--dim)}
+td:first-child{width:38%}
+td code{font-family:var(--mono);font-size:.76rem;color:var(--red);background:rgba(224,85,85,.08);
+  padding:.15rem .4rem;display:inline-block;line-height:1.5}
+td.fix{color:var(--ink)}
+pre{background:var(--panel);border:1px solid var(--line);border-left:2px solid var(--faint);
+  padding:1rem 1.1rem;overflow-x:auto;font-family:var(--mono);font-size:.76rem;color:var(--dim);
+  line-height:1.75;margin:1rem 0}
+pre .c{color:var(--faint)} pre .k{color:var(--gold)}
+.how{color:var(--dim);font-size:.87rem}
+.how b{color:var(--ink);font-weight:400}
+@media(max-width:560px){
+  .wrap{padding:2rem 1.1rem 3rem} h1{font-size:1.6rem} .split{grid-template-columns:1fr}
+  td:first-child{width:auto} table,tbody,tr,td{display:block;width:100%}
+  th{display:none} td{border:none;padding:.2rem 0} tr{display:block;padding:.9rem 0;border-bottom:1px solid var(--line)}
+  .step{gap:.9rem}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">Entropi Coaching</div>
+  <div class="brand">Entropi<span>.</span></div>
+
+  <h1>Kom i gang i appen</h1>
+  <p class="lede">Onboarding-guide til Henrik Erceninks — første login og kobling til hans program.</p>
+  <div class="stamp">Verificeret mod koden · 31. juli 2026</div>
+
+  <h2>Status før samtalen</h2>
+  <div class="status">
+    <div class="row ok"><span class="mark">✓</span><span class="what">Atletprofil oprettet</span><span class="val">796c5573…9db1</span></div>
+    <div class="row ok"><span class="mark">✓</span><span class="what">Email registreret på profilen</span><span class="val">henerceninks@gmail.com</span></div>
+    <div class="row wait"><span class="mark">○</span><span class="what">Koblet til en bruger</span><span class="val">venter på hans login</span></div>
+    <div class="row ok"><span class="mark">✓</span><span class="what">Program klar</span><span class="val">uge 0 + uge 1</span></div>
+    <div class="row no"><span class="mark">–</span><span class="what">Email-bekræftelse påkrævet</span><span class="val">nej, logges ind straks</span></div>
+    <div class="row ok"><span class="mark">✓</span><span class="what">Byg + identitetstest</span><span class="val">kører rent</span></div>
+  </div>
+
+  <span class="url"><i>Appens adresse</i><b>app.entropicoaching.dk</b></span>
+
+  <h2>Otte trin — sig dette til Henrik</h2>
+
+  <div class="step">
+    <div class="n">1</div>
+    <div class="body">
+      <h3>Åbn adressen i browseren</h3>
+      <p class="say">Safari på iPhone, Chrome på Android. Skriv adressen direkte — den skal ikke hentes i App Store.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="n">2</div>
+    <div class="body">
+      <h3>Tryk <kbd>Opret her</kbd></h3>
+      <p>Står nederst under den gyldne knap. Knapteksten skifter til «Opret konto».</p>
+    </div>
+  </div>
+
+  <div class="step key">
+    <div class="n">3</div>
+    <div class="body">
+      <h3>Skriv emailen</h3>
+      <p class="mail">henerceninks@gmail.com</p>
+      <div class="warn">
+        <b>Det eneste kritiske trin.</b> Profilen kobles på email. Bruger han en anden adresse,
+        lander han i en tom app uden program — og uden en fejl han forstår.
+        Få ham til at stave den højt inden han trykker. Store og små bogstaver er ligegyldigt.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="n">4</div>
+    <div class="body">
+      <h3>Vælg en adgangskode</h3>
+      <p>Mindst 6 tegn.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="n">5</div>
+    <div class="body">
+      <h3>Tryk <kbd>Opret konto</kbd></h3>
+      <p>Han er logget ind med det samme. Ingen bekræftelsesmail, intet link at klikke.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="n">6</div>
+    <div class="body">
+      <h3>Tjek at programmet er der</h3>
+      <p class="say">Han skal se lørdag 1/8 — readiness-session med squat og bænk let @RPE 5, lat pulldown og core.</p>
+      <div class="check"><b>Ser han den, er koblingen lykkedes.</b> Resten er rutine.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="n">7</div>
+    <div class="body">
+      <h3>Læg appen på hjemmeskærmen</h3>
+      <p>Den opfører sig som en rigtig app når den er installeret.</p>
+      <div class="split">
+        <div><b>iPhone</b>Del-ikonet → «Føj til hjemmeskærm»</div>
+        <div><b>Android</b>Menuen ⋮ → «Installer app»</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="n">8</div>
+    <div class="body">
+      <h3>Vis ham hvordan han logger</h3>
+      <p class="say">Åbn dagens session, indtast vægt, reps og RPE pr. sæt. Brug notefeltet hvis noget
+      gør ondt eller føles skævt.</p>
+      <p>Sig eksplicit at noterne er dem du læser først — det er dem der styrer næste uges program.</p>
+    </div>
+  </div>
+
+  <h2>Bekræft koblingen bagefter</h2>
+  <pre><span class="k">SELECT</span> name, email, user_id <span class="k">FROM</span> athletes
+<span class="k">WHERE</span> id = '796c5573-55f2-4318-b13f-6791703a9db1';</pre>
+  <p class="how"><b>user_id</b> skal nu have en værdi. Er den stadig tom, gik koblingen galt — se nedenfor.</p>
+
+  <h2>Hvis noget går galt</h2>
+  <table>
+    <thead><tr><th>Besked på skærmen</th><th>Løsning</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>User already registered</code></td>
+        <td class="fix">Han har oprettet sig før — tryk «Log ind» i stedet.</td>
+      </tr>
+      <tr>
+        <td><code>Invalid login credentials</code></td>
+        <td class="fix">Forkert kode eller mail. Tjek stavningen af mailen først — hyppigste årsag.</td>
+      </tr>
+      <tr>
+        <td><code>Password should be at least 6 characters</code></td>
+        <td class="fix">Længere adgangskode.</td>
+      </tr>
+      <tr>
+        <td><code>No unclaimed athlete profile matches this login</code></td>
+        <td class="fix">Han skrev en anden mail. Opret igen med den rigtige — eller ret <b>athletes.email</b> til den han brugte.</td>
+      </tr>
+      <tr>
+        <td><code>Matching athlete profile is already linked to another user</code></td>
+        <td class="fix">Profilen tilhører en anden bruger. Nulstil <b>user_id</b> på hans række.</td>
+      </tr>
+      <tr>
+        <td><code>Athlete profile match is ambiguous</code></td>
+        <td class="fix">To atletrækker deler samme mail. Slet eller ret dubletten.</td>
+      </tr>
+      <tr>
+        <td>Logger ind, men appen er tom</td>
+        <td class="fix">Bed ham lukke appen helt og åbne igen — koblingen forsøges ved hver indlæsning.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Nødløsning — kobl manuelt</h2>
+  <pre><span class="c">-- 1) find hans bruger-id</span>
+<span class="k">SELECT</span> id, email <span class="k">FROM</span> auth.users <span class="k">WHERE</span> email <span class="k">ILIKE</span> '%erceninks%';
+
+<span class="c">-- 2) kobl profilen (indsæt id'et)</span>
+<span class="k">UPDATE</span> athletes <span class="k">SET</span> user_id = '&lt;bruger-id&gt;'
+<span class="k">WHERE</span> id = '796c5573-55f2-4318-b13f-6791703a9db1';</pre>
+
+  <h2>Sådan virker koblingen</h2>
+  <p class="how">Ved oprettelse laver en database-trigger automatisk en profil med rollen
+  <b>athlete</b>. Første gang appen indlæses, slår den op på <b>user_id</b>; findes intet, kalder den
+  <b>claim_athlete_profile_v3</b>, som matcher på email i småt, sætter <b>user_id</b> og henter
+  profilen igen.</p>
+  <p class="how">Det direkte email-opslag i appen blev fjernet i Codex' ændring 29/7. Koblingen sker nu
+  kun gennem den kontrollerede databasefunktion, og den nægter at koble hvis mailen rammer flere
+  profiler eller en profil der allerede tilhører en anden bruger. Derfor er den præcise mail
+  i trin 3 det eneste kritiske punkt.</p>
+
+</div>
+</body>
+</html>
