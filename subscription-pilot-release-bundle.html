@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="da">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Entropi Coaching · Lokal pilot v1</title>
+    <style>
+      :root { --bg:#0d0e0b; --panel:#171914; --panel-2:#202219; --line:#3a3d32; --text:#f3efe7; --muted:#b1afa4; --gold:#c8a363; --ok:#b4d094; --hold:#dfbe7a; }
+      * { box-sizing:border-box; }
+      body { margin:0; background:var(--bg); color:var(--text); font:16px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,sans-serif; }
+      main { width:min(100%, 840px); margin:auto; padding:30px 18px 64px; }
+      .eyebrow { color:var(--gold); font:600 11px/1.2 ui-monospace,SFMono-Regular,Consolas,monospace; letter-spacing:.12em; text-transform:uppercase; }
+      h1,h2,h3 { font-family:Georgia,'Times New Roman',serif; font-weight:400; letter-spacing:-.025em; }
+      h1 { font-size:clamp(2.4rem,10vw,5rem); line-height:.94; margin:12px 0 18px; max-width:11ch; }
+      h2 { font-size:1.55rem; line-height:1.1; margin:0 0 10px; }
+      h3 { font-size:1.2rem; margin:0 0 8px; }
+      p { color:var(--muted); margin:0 0 14px; }
+      .lead { font-size:1.08rem; max-width:49rem; }
+      .rule { height:1px; background:var(--line); margin:30px 0; }
+      .status { display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:start; padding:16px; background:#182016; border:1px solid #4b623d; }
+      .status-dot { width:10px; height:10px; background:var(--ok); border-radius:50%; margin-top:.42rem; }
+      .status strong { display:block; }
+      .status span { color:var(--muted); font-size:.92rem; }
+      .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+      .card { display:flex; flex-direction:column; min-height:218px; padding:18px; background:var(--panel); border:1px solid var(--line); }
+      .card p { font-size:.92rem; }
+      .button { display:block; margin-top:auto; padding:12px; color:#17140f; background:var(--gold); font-weight:700; text-align:center; text-decoration:none; }
+      .link { color:var(--gold); text-underline-offset:3px; }
+      ol { padding-left:1.25rem; color:var(--muted); }
+      li { padding-left:.25rem; margin:8px 0; }
+      .checks { display:grid; gap:9px; list-style:none; padding:0; margin:0; }
+      .checks li { display:grid; grid-template-columns:23px 1fr; gap:8px; margin:0; padding:12px; background:var(--panel); border:1px solid var(--line); }
+      .check { color:var(--ok); font-weight:700; }
+      .checks strong { color:var(--text); }
+      .checks small { display:block; color:var(--muted); margin-top:2px; }
+      .boundary { border-left:2px solid var(--hold); padding:4px 0 4px 14px; }
+      .boundary strong { color:var(--text); }
+      .next { padding:18px; background:var(--panel-2); border:1px solid var(--line); }
+      code { color:#e9d6ae; }
+      @media (max-width:680px) { main { padding:24px 14px 50px; } .grid { grid-template-columns:1fr; } .card { min-height:0; } .button { margin-top:10px; } }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="eyebrow">Entropi Coaching · local-only · pilot v1</div>
+      <h1>Klar til lokal tester-review.</h1>
+      <p class="lead">Én samlet, afgrænset indgang til den første abonnementspilot. Testpersonen kan gennemføre den lokale træningsrejse, se programgrundlaget og aflevere frivillig feedback. Intet her opretter en konto eller sender data ud af browseren.</p>
+
+      <section class="status" aria-label="Pilotstatus">
+        <div class="status-dot" aria-hidden="true"></div>
+        <div><strong>V1 lokal pilotgrundlag: klar til review</strong><span>Entry points, lokal persistens og kontrolpakke er samlet. Status gælder kun en browserdemo — ikke shadow, produktion eller salg.</span></div>
+      </section>
+
+      <div class="rule"></div>
+      <div class="eyebrow">Tre flader · samme test</div>
+      <h2>Start her</h2>
+      <div class="grid">
+        <section class="card">
+          <div class="eyebrow">01 · Træningsrejse</div>
+          <h3>Onboarding til uge 2</h3>
+          <p>Vælg retning og varianter, angiv arbejdsbelastninger, log uge 1 og tag et eksplicit valg om uge 2.</p>
+          <a class="button" href="customer-journey.html">Åbn kunderejsen</a>
+        </section>
+        <section class="card">
+          <div class="eyebrow">02 · Fagligt review</div>
+          <h3>Se programgrundlaget</h3>
+          <p>Gennemgå det lokale 2-dages pilotprogram og de begrænsninger, der gør det til et reviewartefakt frem for en reel tildeling.</p>
+          <a class="button" href="pilot-program-review.html">Åbn programreview</a>
+        </section>
+        <section class="card">
+          <div class="eyebrow">03 · Friktion</div>
+          <h3>Giv lokal feedback</h3>
+          <p>Notér kun produktfriktion. En frivillig eksport er en lokal JSON-fil og sendes eller importeres aldrig automatisk.</p>
+          <a class="button" href="pilot-feedback.html">Åbn feedback</a>
+        </section>
+      </div>
+
+      <section class="next" style="margin-top:12px">
+        <div class="eyebrow">Mobiltest · valgfri hjælper</div>
+        <h2>Test kunderejsen uden at miste overblikket</h2>
+        <p>Fem korte kontrolpunkter gør det lettere at fange konkret UI-friktion undervejs. Listen gemmer og sender intet og blander sig ikke med programmets lokale data.</p>
+        <p><a class="link" href="pilot-mobile-checklist.html">Åbn mobiltestlisten</a></p>
+      </section>
+
+      <section class="next" style="margin-top:12px">
+        <div class="eyebrow">10-personers QA · testleder</div>
+        <h2>Fordel alle v1-spor uden gæt</h2>
+        <p>Et konkret script fordeler de 10 full-gym kombinationer på testere og gør P0-fejl, mobiltest og de lokale grænser tydelige.</p>
+        <p><a class="link" href="pilot-qa.html">Åbn 10-tester QA-scriptet</a></p>
+        <p><a class="link" href="pilot-feedback-review.html">Åbn lokal feedbacktriage efter en test</a></p>
+      </section>
+
+      <div class="rule"></div>
+      <div class="eyebrow">Testforløb</div>
+      <h2>Hvad testpersonen faktisk skal gøre</h2>
+      <ol>
+        <li>Gennemfør kunderejsen med en test-e-mail. Den bruges kun til lokalt demo-id; rå e-mail bliver ikke gemt i snapshotet.</li>
+        <li>Vælg kun kendte squat- og dødløftvarianter. Ved usikkerhed stopper programmet til manuel afklaring i stedet for at gætte.</li>
+        <li>Indtast aktuelle arbejdsbelastninger for squat, bænk og dødløft. Det er ikke en 1RM-beregning.</li>
+        <li>Log mindst ét pas. Planlagt og faktisk udførelse er holdt adskilt; et sprunget sæt kræver bekræftelse.</li>
+        <li>Se uge-2-forslaget og vælg aktivt mellem forslag eller uændret plan. Intet ændres skjult.</li>
+        <li>Giv kun feedback på produktets klarhed og friktion — ikke smerte, skade, sygdom eller individuel rådgivning.</li>
+      </ol>
+
+      <div class="rule"></div>
+      <div class="eyebrow">V1-kontroller</div>
+      <h2>Det lokale grundlag er verificeret</h2>
+      <ul class="checks">
+        <li><span class="check">✓</span><span><strong>Kunderejse</strong><small>Programmatch, startbelastninger, sættilstande, lokal genoptagelse og synligt uge-2-valg dækkes af smoke-kontrol.</small></span></li>
+        <li><span class="check">✓</span><span><strong>Dataafgrænsning</strong><small>Lokale snapshots bruger et afledt demo-id, ikke rå e-mail. Feedback er <code>localOnly</code>.</small></span></li>
+        <li><span class="check">✓</span><span><strong>Produktseparation</strong><small>Subscription-sporet må ikke bruge 1:1-portaldata, <code>profiles.role</code>, PWA/CNAME eller eksisterende sessionsdata.</small></span></li>
+        <li><span class="check">✓</span><span><strong>Færdiglokal kontrol</strong><small><code>verify:subscription-pilot-completion</code> bekræfter nødvendige flader og kører test, smoke-, separation- og buildkontroller uden netværk.</small></span></li>
+      </ul>
+
+      <div class="rule"></div>
+      <div class="eyebrow">Tydelig grænse</div>
+      <h2>Det er bevidst ikke med</h2>
+      <p class="boundary"><strong>Ingen Supabase, shadow, login, invitation, e-mail, betaling, medlemskab, programtildeling eller ekstern analytics.</strong> V1 kan ikke åbne en salgspilot af sig selv. Den kommende shadow-pilot kræver en separat, konkret autorisation, korrekt projektbinding og de dokumenterede sikkerhedsgates.</p>
+
+      <div class="rule"></div>
+      <section class="next">
+        <div class="eyebrow">Efter lokal review</div>
+        <h2>Én næste port — ikke en genvej</h2>
+        <p>Hvis den lokale testerrejse og det faglige programreview er godkendt, er næste beslutning alene at autorisere den isolerede shadow-kørsel. Den skal fortsat bruge én inviteret testkonto, tidsbegrænset adgang og serververificeret programversion.</p>
+        <p><a class="link" href="program-scenarios.html">Se lokale programscenarier</a> · <a class="link" href="subscription.html">Åbn medlemsfladen</a></p>
+      </section>
+    </main>
+  </body>
+</html>

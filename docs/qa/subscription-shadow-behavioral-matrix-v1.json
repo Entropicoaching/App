@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "title": "Subscription shadow-pilot behavioural QA matrix",
+  "scope": "Post-migration behavioural verification in the isolated shadow project only. This file is a test plan, not evidence that a database test has run.",
+  "executionState": "PENDING_AUTHORIZED_SHADOW_RUN",
+  "allowedProjectRef": "maxhsefxbrvsgolscqwh",
+  "requiredCaseIds": ["BQA-01", "BQA-02", "BQA-03", "BQA-04", "BQA-05", "BQA-06", "BQA-07"],
+  "actors": {
+    "free": "Confirmed signed-in user with no member entitlement.",
+    "memberA": "Confirmed signed-in invited member with one active assigned program.",
+    "memberB": "A second confirmed signed-in invited member with a different active assigned program.",
+    "roleEscalator": "Confirmed signed-in free user who changes only their own legacy profiles.role to coach; this is a negative control, never an operator identity.",
+    "operator": "Authorised shadow service operator using only the controlled activation/assignment path."
+  },
+  "cases": [
+    {
+      "id": "BQA-01",
+      "title": "Free user is denied member-only data and write paths",
+      "risk": "Entitlement bypass",
+      "preconditions": ["All sub-01 through sub-11 migrations committed in the isolated shadow project.", "free is authenticated and has no active member entitlement."],
+      "actions": ["Sign in as free.", "Read own access state and attempt the normal assigned-program read.", "Attempt the client-exposed completed-workout RPC with a valid-looking payload and unique clientId."],
+      "expected": ["Access state is free/no member access.", "No member program or assignment is returned.", "Workout write is rejected and creates no workout or set rows."],
+      "evidence": ["Timestamped client response or screenshot.", "Operator read-only count/check proving no new free-owned workout exists."],
+      "stopOnFailure": true
+    },
+    {
+      "id": "BQA-02",
+      "title": "Cross-user isolation holds for program, workout and week-two objects",
+      "risk": "Privacy breach",
+      "preconditions": ["memberA and memberB each have different active assignments.", "memberA has one completed workout and, if available, one week-two proposal."],
+      "actions": ["Sign in as memberB.", "Use normal reads and any exposed IDs/routes to request memberA assignment, program, workout, proposal and decision state.", "Attempt the owner decision RPC using memberA proposal ID."],
+      "expected": ["No memberA record is returned to memberB.", "Decision attempt is rejected.", "No memberA proposal decision/event is created."],
+      "evidence": ["Timestamped responses for each object class.", "Operator read-only check of memberA proposal decision history."],
+      "stopOnFailure": true
+    },
+    {
+      "id": "BQA-03",
+      "title": "Invalid assignment/program binding fails closed",
+      "risk": "Wrong programme exposure or corrupted history",
+      "preconditions": ["memberA has one active assignment to exact published program version A.", "A different published program version B exists."],
+      "actions": ["As memberA, attempt a completed-workout payload with programVersionId B or assignmentId belonging to memberB.", "As operator, reuse a controlled assignment requestId with altered program or match input."],
+      "expected": ["Client persistence rejects the mismatched program/assignment and creates no partial workout.", "Controlled assignment rejects altered arguments for a reused requestId.", "memberA still has exactly one active assignment to version A."],
+      "evidence": ["Rejected responses.", "Operator read-only count of active assignments and workout/set rows before versus after."],
+      "stopOnFailure": true
+    },
+    {
+      "id": "BQA-04",
+      "title": "Completed workout is idempotent and altered replay fails closed",
+      "risk": "Duplicate or mutable training history",
+      "preconditions": ["memberA has an active assignment.", "A valid complete workout payload with a new clientId is prepared."],
+      "actions": ["Submit the exact payload twice with the same clientId.", "Submit the same clientId again with one set, rep, weight, exercise, day or payload field changed."],
+      "expected": ["The exact replay returns the original persisted workout identity without duplicate workout or set rows.", "The altered replay is rejected.", "Original persisted payload remains unchanged."],
+      "evidence": ["Responses from all three submissions.", "Operator read-only row counts plus stored payload/hash comparison."],
+      "stopOnFailure": true
+    },
+    {
+      "id": "BQA-05",
+      "title": "Legacy role escalation grants no subscription access",
+      "risk": "Privilege escalation through profiles.role",
+      "preconditions": ["roleEscalator is authenticated, free and has no assignment or entitlement.", "The legacy profile mutation is permitted only in the isolated test account; do not modify a real user."],
+      "actions": ["Change only roleEscalator legacy profiles.role to coach through its existing self-service path.", "Refresh session and repeat BQA-01 member-program and workout-write checks."],
+      "expected": ["Subscription access remains free/no member access.", "No assignment/program becomes readable.", "No protected write becomes available."],
+      "evidence": ["Before/after access responses.", "Operator read-only check that no protected rows were created."],
+      "stopOnFailure": true
+    },
+    {
+      "id": "BQA-06",
+      "title": "Expired access fails closed without deleting history",
+      "risk": "Access retained after pilot expiry",
+      "preconditions": ["memberA has a short-lived entitlement with a known valid_until and one completed workout.", "Expiry is reached naturally or by a controlled shadow-only test entitlement; no system clock manipulation."],
+      "actions": ["After valid_until, refresh memberA session and read access, assignment/program and history.", "Attempt one new completed-workout write."],
+      "expected": ["Access reports expired/no active member entitlement.", "No active assigned program is usable and a new workout is rejected.", "Existing historical workout remains intact and no new protected row is created."],
+      "evidence": ["Timestamp and access response after expiry.", "Operator read-only before/after history and workout count."],
+      "stopOnFailure": true
+    },
+    {
+      "id": "BQA-07",
+      "title": "Rollback decision preserves evidence and closes the pilot safely",
+      "risk": "Unsafe rollback or loss of test evidence",
+      "preconditions": ["At least BQA-01 through BQA-06 have recorded evidence, or a stop failure has been recorded.", "No production project or production credential is in scope."],
+      "actions": ["Freeze new invitations, activations and assignments in shadow.", "Export the completed matrix and record the migration/version identifiers and observed row counts.", "Choose one outcome: retain isolated shadow for remediation, or execute the pre-approved shadow rollback procedure under an authorised operator."],
+      "expected": ["No new pilot user can be activated while the decision is open.", "Evidence is retained before any rollback action.", "Rollback is never inferred from this matrix and is not executed against production."],
+      "evidence": ["Decision record naming operator, time, target project and chosen outcome.", "Saved matrix/evidence bundle and authorised rollback log if rollback is explicitly approved."],
+      "stopOnFailure": true
+    }
+  ]
+}

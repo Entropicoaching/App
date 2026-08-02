@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="da">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Entropi · pilotreview</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      // Keep file:// review links usable: the source JSX only runs through Vite,
+      // while the built local copy carries its JavaScript next to this HTML file.
+      if (location.protocol === 'file:' && !location.pathname.replace(/\\/g, '/').includes('/dist-subscription-pilot/')) {
+        location.replace('./dist-subscription-pilot/pilot-feedback-review.html')
+      }
+    </script>
+    <script type="module" src="/src/subscription/pilotFeedbackReviewMain.jsx"></script>
+  </body>
+</html>

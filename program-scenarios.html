@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="da">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Entropi · Programmotor scenarier</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      if (location.protocol === 'file:' && !location.pathname.replace(/\\/g, '/').includes('/dist-subscription-pilot/')) {
+        location.replace('./dist-subscription-pilot/program-scenarios.html')
+      }
+    </script>
+    <script type="module" src="/src/subscription/programScenarioMatrixMain.jsx"></script>
+  </body>
+</html>

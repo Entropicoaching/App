@@ -1,0 +1,428 @@
+import test from 'node:test'
+import assert from 'node:assert/strict'
+import { readFile } from 'node:fs/promises'
+
+import { normalizeAccess } from '../access.js'
+import { isProgramMatchPreviewEnabled, SHADOW_PROJECT_REF, SUBSCRIPTION_AUTH_STORAGE_KEY, validatePilotConfig } from '../pilotConfig.js'
+import { clearPilotCache, clearProgramMatchDraft, enqueuePilotSession, loadPilotDraft, loadPilotOutbox, loadPilotSessions, loadProgramMatchDraft, pilotCachePrefix, savePilotDraft, savePilotSessions, saveProgramMatchDraft } from '../pilotCache.js'
+import { completeMyProgramSetup, loadPilotState, loadRemoteHistory, mapProgramRow, mapRemoteHistory, memberJourneySessionToPilotSession, memberSetupRpcArgs, mergeSessions, PILOT_REMOTE_HISTORY_LIMIT, syncOneSession, workoutRpcArgs } from '../pilotRepository.js'
+
+const url = `https://${SHADOW_PROJECT_REF}.supabase.co/`
+const publishable = 'sb_publishable_test-only-placeholder'
+
+test('pilotkonfiguration fejler lukket ved manglende eller forkert shadow-ref', () => {
+  assert.equal(validatePilotConfig({}).ok, false)
+  assert.equal(validatePilotConfig({ VITE_SUB_SUPABASE_URL: url, VITE_SUB_SUPABASE_PROJECT_REF: 'dsqgaxwgtcbqgphsofav', VITE_SUB_SUPABASE_ANON_KEY: publishable }).ok, false)
+  assert.equal(validatePilotConfig({ VITE_SUB_SUPABASE_URL: 'https://dsqgaxwgtcbqgphsofav.supabase.co/', VITE_SUB_SUPABASE_PROJECT_REF: SHADOW_PROJECT_REF, VITE_SUB_SUPABASE_ANON_KEY: publishable }).ok, false)
+  assert.equal(validatePilotConfig({ VITE_SUB_SUPABASE_URL: url, VITE_SUB_SUPABASE_PROJECT_REF: SHADOW_PROJECT_REF, VITE_SUB_SUPABASE_ANON_KEY: 'sb_secret_forbidden' }).ok, false)
+  const valid = validatePilotConfig({ VITE_SUB_SUPABASE_URL: url, VITE_SUB_SUPABASE_PROJECT_REF: SHADOW_PROJECT_REF, VITE_SUB_SUPABASE_ANON_KEY: publishable })
+  assert.equal(valid.ok, true)
+  assert.equal(valid.storageKey, 'entropi-sub-auth')
+})
+
+test('tier-svar accepterer kun free/member og fejler ellers lukket', () => {
+  assert.deepEqual(normalizeAccess([{ tier: 'member' }]), { tier: 'member', valid: true })
+  assert.equal(normalizeAccess([{ tier: 'coaching', has_coaching: true }]).valid, false)
+  assert.equal(normalizeAccess(null).tier, 'free')
+})
+
+test('free åbner kun det faste startprogram og aldrig memberdata', async () => {
+  const tableReads = []
+  const client = {
+    async rpc(name) {
+      assert.equal(name, 'sub_my_access_v2')
+      return { data: [{ tier: 'free' }], error: null }
+    },
+    from(table) {
+      tableReads.push(table)
+      assert.equal(table, 'sub_programs')
+      const query = {
+        select() { return query },
+        eq() { return query },
+        async maybeSingle() {
+          return {
+            data: { id: 'free-program', slug: 'start-2', version: 1, name: 'Start 2', progression_rule: 'Fast plan.', days: 2, min_equipment: 2, levels: ['begynder', 'oevet'], min_tier: 'free', content: { sessions: [] } },
+            error: null,
+          }
+        },
+      }
+      return query
+    },
+  }
+  const result = await loadPilotState(client, { id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa' })
+  assert.equal(result.accessGranted, false)
+  assert.equal(result.assignment, null)
+  assert.equal(result.program.slug, 'start-2')
+  assert.deepEqual(tableReads, ['sub_programs'])
+})
+
+test('eksisterende member uden assignment beholder onboardingdata og får setup-state', async () => {
+  const userId = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'
+  const calls = []
+  const client = {
+    async rpc(name) {
+      assert.equal(name, 'sub_my_access_v2')
+      return { data: [{ tier: 'member' }], error: null }
+    },
+    from(table) {
+      calls.push(table)
+      const query = {
+        select() { return query },
+        eq() { return query },
+        is() { return query },
+        async maybeSingle() {
+          if (table === 'sub_assignments') return { data: null, error: null }
+          if (table === 'sub_members') return { data: { display_name: 'Marc', level: 'oevet', days_per_week: 3, equipment: 'gym', onboarded_at: null }, error: null }
+          throw new Error(`unexpected table ${table}`)
+        },
+      }
+      return query
+    },
+  }
+  const result = await loadPilotState(client, { id: userId })
+  assert.equal(result.accessGranted, true)
+  assert.equal(result.assignment, null)
+  assert.equal(result.member.display_name, 'Marc')
+  assert.deepEqual(calls.sort(), ['sub_assignments', 'sub_members'])
+})
+
+test('setup-RPC kan kun sende request, valg og rå baseline — aldrig sikkerhedsfelter', async () => {
+  const input = {
+    requestId: '11111111-1111-4111-8111-111111111111',
+    matchInput: { schemaVersion: 4, goal: 'general-strength', level: 'begynder', daysPerWeek: 2, equipment: 'home', squatStyle: 'high-bar', deadliftStyle: 'sumo' },
+    baselineLoads: { squat: { weightKg: 30, reps: 5, rpe: 8 }, bench: { weightKg: 20, reps: 6, rpe: 8 }, deadlift: { weightKg: 40, reps: 5, rpe: 8 } },
+  }
+  const args = memberSetupRpcArgs(input)
+  assert.deepEqual(Object.keys(args).sort(), ['p_baselines', 'p_match_input', 'p_request_id'])
+  assert.deepEqual(args.p_match_input, input.matchInput)
+  assert.deepEqual(args.p_baselines, input.baselineLoads)
+  assert.throws(() => memberSetupRpcArgs({ ...input, matchInput: { ...input.matchInput, schemaVersion: 3 } }), /forældede/)
+  const calls = []
+  const client = { async rpc(name, args) { calls.push({ name, args }); return { data: [{ assignment_id: 'a1', program_id: 'p1', created: true }], error: null } } }
+  assert.equal((await completeMyProgramSetup(client, input)).assignment_id, 'a1')
+  assert.equal(calls[0].name, 'sub_complete_my_program_setup_v1')
+  assert.equal('user_id' in calls[0].args, false)
+  assert.equal('program_id' in calls[0].args, false)
+  assert.equal('tier' in calls[0].args, false)
+  assert.equal('assignment_source' in calls[0].args, false)
+})
+
+test('member-sæt bindes til assignment og skipped bliver aldrig til falske 0 kg-sæt', () => {
+  const assignment = { id: 'assignment-1', program_id: 'program-1' }
+  const base = {
+    assignmentId: assignment.id,
+    clientId: '11111111-1111-4111-8111-111111111111',
+    weekNumber: 1,
+    sessionId: 'a',
+    startedAt: '2026-08-02T10:00:00.000Z',
+    completedAt: '2026-08-02T11:00:00.000Z',
+  }
+  const completed = {
+    weekNumber: 1,
+    sessionId: 'a',
+    exerciseId: 'high-bar-squat',
+    setNumber: 1,
+    planned: { weightKg: 70, reps: 5, rpe: 7 },
+    actual: { weightKg: 70, repsCompleted: 5, rpeActual: 7, note: '', skipped: false },
+  }
+  const skipped = {
+    ...completed,
+    setNumber: 2,
+    actual: { weightKg: null, repsCompleted: null, rpeActual: null, note: 'Knæet drillede.', skipped: true },
+  }
+  const session = memberJourneySessionToPilotSession(assignment, { ...base, setLogs: [completed, skipped] })
+  assert.equal(session.programId, assignment.program_id)
+  assert.equal(session.entries[0].sets.length, 1)
+  assert.equal(session.entries[0].sets[0].weightKg, 70)
+  assert.equal(session.skippedSetCount, 1)
+  const localOnly = memberJourneySessionToPilotSession(assignment, { ...base, setLogs: [skipped] })
+  assert.equal(localOnly.localOnly, true)
+  assert.equal(localOnly.skippedSetCount, 1)
+  assert.deepEqual(localOnly.entries, [])
+  assert.throws(
+    () => memberJourneySessionToPilotSession({ ...assignment, id: 'other' }, { ...base, setLogs: [completed] }),
+    /aktive programtildeling/,
+  )
+})
+
+test('programforslag er feature-gated og slukket som standard', () => {
+  assert.equal(isProgramMatchPreviewEnabled({}), false)
+  assert.equal(isProgramMatchPreviewEnabled({ VITE_SUB_ENABLE_MATCH_PREVIEW: 'false' }), false)
+  assert.equal(isProgramMatchPreviewEnabled({ VITE_SUB_ENABLE_MATCH_PREVIEW: 'true' }), true)
+})
+
+class MemoryStorage {
+  constructor() { this.map = new Map() }
+  getItem(key) { return this.map.has(key) ? this.map.get(key) : null }
+  setItem(key, value) { this.map.set(key, String(value)) }
+  removeItem(key) { this.map.delete(key) }
+}
+
+test('et helt sprunget pas beholder en brugerbundet local-only markør efter reload', () => {
+  const localStorage = new MemoryStorage()
+  globalThis.window = { localStorage }
+  const userId = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'
+  const marker = {
+    assignmentId: 'assignment-1',
+    programId: 'program-1',
+    clientId: '11111111-1111-4111-8111-111111111111',
+    dayId: 'a',
+    startedAt: '2026-08-01T10:00:00Z',
+    completedAt: '2026-08-01T11:00:00Z',
+    entries: [],
+    skippedSetCount: 8,
+    localOnly: true,
+    syncStatus: 'local-only',
+  }
+  assert.equal(savePilotSessions(userId, [marker]), true)
+  assert.deepEqual(loadPilotSessions(userId), [marker])
+  delete globalThis.window
+})
+
+test('draft/outbox genoptages efter reload og holdes isoleret pr. bruger', () => {
+  const localStorage = new MemoryStorage()
+  globalThis.window = { localStorage }
+  const a = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'
+  const b = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'
+  const draft = { clientId: 'client-a', entries: [{ exerciseId: 'squat', sets: [] }] }
+  savePilotDraft(a, draft)
+  assert.deepEqual(loadPilotDraft(a), draft)
+  assert.equal(loadPilotDraft(b), null)
+
+  const done = { ...draft, dayId: 'a', programId: 'p1', startedAt: '2026-08-01T10:00:00Z', completedAt: '2026-08-01T11:00:00Z' }
+  enqueuePilotSession(a, done)
+  assert.equal(loadPilotOutbox(a).length, 1)
+  assert.equal(loadPilotSessions(a)[0].syncStatus, 'pending')
+
+  localStorage.setItem(SUBSCRIPTION_AUTH_STORAGE_KEY, 'auth-must-survive')
+  savePilotDraft(b, { clientId: 'client-b' })
+  saveProgramMatchDraft(a, { schemaVersion: 1, goal: 'general-strength' })
+  clearPilotCache(a)
+  assert.equal(loadPilotDraft(a), null)
+  assert.deepEqual(loadPilotDraft(b), { clientId: 'client-b' })
+  assert.equal(localStorage.getItem(SUBSCRIPTION_AUTH_STORAGE_KEY), 'auth-must-survive')
+  assert.equal(loadProgramMatchDraft(a), null)
+  assert.notEqual(pilotCachePrefix(a), pilotCachePrefix(b))
+  delete globalThis.window
+})
+
+test('et afsluttet pas behandles ikke som gemt, hvis synkkøen ikke kan persisteres', () => {
+  const localStorage = new MemoryStorage()
+  const originalSetItem = localStorage.setItem.bind(localStorage)
+  localStorage.setItem = (storageKey, value) => {
+    if (storageKey.endsWith(':outbox')) throw new Error('quota')
+    originalSetItem(storageKey, value)
+  }
+  globalThis.window = { localStorage }
+  const userId = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'
+  const session = { clientId: 'c1', dayId: 'a' }
+
+  assert.throws(() => enqueuePilotSession(userId, session), /kunne ikke gemmes sikkert/)
+  assert.deepEqual(loadPilotSessions(userId), [])
+  assert.deepEqual(loadPilotOutbox(userId), [])
+  delete globalThis.window
+})
+
+test('lokal historik holder kun de seneste 64 pas i kronologisk rækkefølge', () => {
+  const localStorage = new MemoryStorage()
+  globalThis.window = { localStorage }
+  const userId = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'
+  const sessions = Array.from({ length: 70 }, (_, index) => ({
+    clientId: `session-${index}`,
+    startedAt: new Date(Date.UTC(2026, 0, index + 1)).toISOString(),
+  })).reverse()
+  assert.equal(savePilotSessions(userId, sessions), true)
+  const loaded = loadPilotSessions(userId)
+  assert.equal(loaded.length, 64)
+  assert.equal(loaded[0].clientId, 'session-6')
+  assert.equal(loaded.at(-1).clientId, 'session-69')
+  delete globalThis.window
+})
+
+test('local-only skip-markører bevares uden for den rekonstruerbare 64-pas cache', () => {
+  const localStorage = new MemoryStorage()
+  globalThis.window = { localStorage }
+  const userId = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'
+  const marker = {
+    clientId: 'local-only-old',
+    startedAt: '2025-01-01T10:00:00.000Z',
+    localOnly: true,
+    syncStatus: 'local-only',
+    skippedSetCount: 8,
+  }
+  const remoteReconstructible = Array.from({ length: 70 }, (_, index) => ({
+    clientId: `remote-${index}`,
+    startedAt: new Date(Date.UTC(2026, 0, index + 1)).toISOString(),
+    syncStatus: 'synced',
+  }))
+  assert.equal(savePilotSessions(userId, [marker, ...remoteReconstructible]), true)
+  const loaded = loadPilotSessions(userId)
+  assert.equal(loaded.length, 65)
+  assert.equal(loaded[0].clientId, marker.clientId)
+  assert.equal(loaded[1].clientId, 'remote-6')
+  delete globalThis.window
+})
+
+test('programforslagets lokale valg kan nulstilles uden at røre login eller pas', () => {
+  const localStorage = new MemoryStorage()
+  globalThis.window = { localStorage }
+  const userId = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'
+  localStorage.setItem(SUBSCRIPTION_AUTH_STORAGE_KEY, 'auth-must-survive')
+  saveProgramMatchDraft(userId, { schemaVersion: 1, goal: 'general-strength' })
+  clearProgramMatchDraft(userId)
+  assert.equal(loadProgramMatchDraft(userId), null)
+  assert.equal(localStorage.getItem(SUBSCRIPTION_AUTH_STORAGE_KEY), 'auth-must-survive')
+  delete globalThis.window
+})
+
+test('program og remote historik mappes til det eksisterende UI-format', () => {
+  const program = mapProgramRow({ id: 'p1', slug: 'start-2', version: 1, name: 'Start', progression_rule: 'Gentag.', days: 1, min_equipment: 0, levels: ['begynder'], min_tier: 'free', content: { sessions: [{ id: 'a', name: 'Pas A', exercises: [{ id: 'high-bar-squat', name: 'High-bar squat', role: 'squat-pattern', sets: 2, reps: '5–7', targetRpe: '7' }] }] } })
+  assert.equal(program.sessions[0].id, 'a')
+  assert.equal(program.sessions[0].movements[0].exerciseId, 'high-bar-squat')
+  assert.equal(program.sessions[0].movements[0].roleClass, 'main')
+  const sessions = mapRemoteHistory([{ id: 'w1', client_id: 'c1', program_id: 'p1', day_id: 'a', started_at: 'a', completed_at: 'b' }], [{ workout_id: 'w1', exercise_id: 'squat', set_index: 1, reps: 5, weight_kg: '100', rpe: '8', logged_at: 'x' }])
+  assert.equal(sessions[0].entries[0].sets[0].weightKg, 100)
+  assert.equal(mergeSessions(sessions, [{ ...sessions[0], syncStatus: 'pending' }])[0].syncStatus, 'pending')
+})
+
+test('remote historik henter hele den aktive, understøttede historik i sider og afleverer den kronologisk', async () => {
+  const calls = { orders: [], ranges: [], workoutIds: null }
+  const workouts = [
+    { id: 'w3', client_id: 'c3', started_at: '2026-08-03T10:00:00Z', completed_at: '2026-08-03T11:00:00Z' },
+    { id: 'w2', client_id: 'c2', started_at: '2026-08-02T10:00:00Z', completed_at: '2026-08-02T11:00:00Z' },
+    { id: 'w1', client_id: 'c1', started_at: '2026-08-01T10:00:00Z', completed_at: '2026-08-01T11:00:00Z' },
+  ]
+  const client = {
+    from(table) {
+      if (table === 'sub_workouts') {
+        const query = {
+          select() { return query },
+          eq() { return query },
+          order(column, options) { calls.orders.push({ column, options }); return query },
+          async range(from, to) { calls.ranges.push([from, to]); return { data: workouts, error: null } },
+        }
+        return query
+      }
+      assert.equal(table, 'sub_workout_sets')
+      const query = {
+        select() { return query },
+        eq() { return query },
+        async in(column, ids) {
+          assert.equal(column, 'workout_id')
+          calls.workoutIds = ids
+          return { data: [], error: null }
+        },
+      }
+      return query
+    },
+  }
+
+  const result = await loadRemoteHistory(client, 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa')
+  assert.deepEqual(calls.orders, [
+    { column: 'started_at', options: { ascending: true } },
+    { column: 'id', options: { ascending: true } },
+  ])
+  assert.deepEqual(calls.ranges, [[0, 99]])
+  assert.equal(PILOT_REMOTE_HISTORY_LIMIT, 2080)
+  assert.deepEqual(calls.workoutIds, ['w1', 'w2', 'w3'])
+  assert.deepEqual(result.map(session => session.clientId), ['c1', 'c2', 'c3'])
+})
+
+test('remote recovery-grundlag fortsætter efter første side og henter sæt i afgrænsede batches', async () => {
+  const workouts = Array.from({ length: 105 }, (_, index) => ({
+    id: `w-${String(index).padStart(3, '0')}`,
+    client_id: `c-${String(index).padStart(3, '0')}`,
+    assignment_id: 'assignment-1',
+    program_id: 'program-1',
+    day_id: index % 2 === 0 ? 'a' : 'b',
+    started_at: new Date(Date.UTC(2026, 0, 1, index)).toISOString(),
+    completed_at: new Date(Date.UTC(2026, 0, 1, index, 30)).toISOString(),
+  }))
+  const ranges = []
+  const setBatchSizes = []
+  const client = {
+    from(table) {
+      if (table === 'sub_workouts') {
+        const query = {
+          select() { return query },
+          eq() { return query },
+          order() { return query },
+          async range(from, to) {
+            ranges.push([from, to])
+            return { data: workouts.slice(from, to + 1), error: null }
+          },
+        }
+        return query
+      }
+      const query = {
+        select() { return query },
+        eq() { return query },
+        async in(_column, ids) {
+          setBatchSizes.push(ids.length)
+          return { data: [], error: null }
+        },
+      }
+      return query
+    },
+  }
+
+  const result = await loadRemoteHistory(client, 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', {
+    assignmentId: 'assignment-1',
+    programId: 'program-1',
+  })
+  assert.equal(result.length, 105)
+  assert.deepEqual(ranges, [[0, 99], [100, 199]])
+  assert.deepEqual(setBatchSizes, [100, 5])
+})
+
+test('synk bruger kun den atomiske, ejerbundne workout-RPC', async () => {
+  const localStorage = new MemoryStorage()
+  globalThis.window = { localStorage }
+  const calls = []
+  const client = {
+    async rpc(name, args) {
+      calls.push({ name, args })
+      return { data: 'w1', error: null }
+    },
+  }
+  const userId = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'
+  const assignment = { id: 'a1', program_id: 'p1' }
+  const session = { clientId: 'stable-client-id', programId: 'p1', dayId: 'a', startedAt: '2026-08-01T10:00:00Z', completedAt: '2026-08-01T11:00:00Z', entries: [{ exerciseId: 'squat', sets: [{ reps: 5, weightKg: 100, rpe: 8, loggedAt: 'x' }] }] }
+  session.entries[0].sets[0].loggedAt = '2026-08-01T10:30:00Z'
+  enqueuePilotSession(userId, session)
+  assert.equal((await syncOneSession(client, userId, assignment, session)).ok, true)
+  assert.equal(calls.length, 1)
+  assert.equal(calls[0].name, 'sub_persist_completed_workout_v1')
+  assert.equal(calls[0].args.p_client_id, 'stable-client-id')
+  assert.equal(calls[0].args.p_sets[0].set_index, 1)
+  assert.equal('user_id' in calls[0].args, false)
+  assert.equal('program_id' in calls[0].args, false)
+  assert.equal(loadPilotOutbox(userId).length, 0)
+  delete globalThis.window
+})
+
+test('workout-RPC payload fejler lukket ved assignment-mismatch eller ugyldigt sæt', () => {
+  const assignment = { id: 'a1', program_id: 'p1' }
+  const valid = { assignmentId: 'a1', clientId: 'c1', programId: 'p1', dayId: 'a', startedAt: '2026-08-01T10:00:00Z', completedAt: '2026-08-01T11:00:00Z', entries: [{ exerciseId: 'squat', sets: [{ reps: 5, weightKg: 100, rpe: 8, loggedAt: '2026-08-01T10:30:00Z' }] }] }
+  assert.equal(workoutRpcArgs(assignment, valid).p_sets.length, 1)
+  assert.throws(() => workoutRpcArgs(assignment, { ...valid, assignmentId: 'other' }), /aktive programtildeling/)
+  assert.throws(() => workoutRpcArgs(assignment, { ...valid, programId: 'other' }), /programversion/)
+  assert.throws(() => workoutRpcArgs(assignment, { ...valid, entries: [] }), /mindst ét sæt/)
+  assert.throws(() => workoutRpcArgs(assignment, { ...valid, entries: [{ exerciseId: 'squat', sets: [{ reps: 5.5, weightKg: 100, rpe: 8 }] }] }), /Reps/)
+})
+
+test('subscription-klienten importerer ikke 1:1-klienten og entry har noindex uden service worker', async () => {
+  const clientSource = await readFile(new URL('../supabaseClient.js', import.meta.url), 'utf8')
+  const authSource = await readFile(new URL('../auth.jsx', import.meta.url), 'utf8')
+  const mainSource = await readFile(new URL('../main.jsx', import.meta.url), 'utf8')
+  const html = await readFile(new URL('../../../subscription.html', import.meta.url), 'utf8')
+  assert.doesNotMatch(clientSource, /\.\.\/supabase\.js/)
+  assert.match(clientSource, /storageKey: config\.storageKey/)
+  assert.match(clientSource, /detectSessionInUrl: true/)
+  assert.match(authSource, /signInWithPassword/)
+  assert.match(authSource, /signOut/)
+  assert.doesNotMatch(authSource, /signUp|resetPasswordForEmail/)
+  assert.doesNotMatch(mainSource, /from ['"]\.\.\/appUpdate|navigator\.serviceWorker/)
+  assert.match(html, /noindex/)
+  assert.doesNotMatch(html, /manifest\.webmanifest|navigator\.serviceWorker/)
+})

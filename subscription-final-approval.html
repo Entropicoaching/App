@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="da">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Entropi Coaching · Subscription pilot · sidste review</title>
+    <style>
+      :root{--bg:#0d0e0b;--surface:#171914;--surface2:#202219;--line:#3a3d32;--text:#f3efe7;--muted:#b1afa4;--gold:#c8a363;--ok:#b4d094;--wait:#dfbe7a;--danger:#db938d}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,sans-serif}main{width:min(100%,960px);margin:auto;padding:32px 18px 72px}.eyebrow{color:var(--gold);font:600 11px/1.2 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.12em;text-transform:uppercase}h1,h2,h3{font-family:Georgia,'Times New Roman',serif;font-weight:400;letter-spacing:-.025em}h1{font-size:clamp(2.5rem,9vw,5.3rem);line-height:.93;max-width:12ch;margin:12px 0 18px}h2{font-size:1.65rem;line-height:1.1;margin:0 0 10px}h3{font-size:1.2rem;margin:0 0 7px}p{color:var(--muted);margin:0 0 14px}.lead{font-size:1.1rem;max-width:52rem}.rule{height:1px;background:var(--line);margin:32px 0}.notice{display:grid;grid-template-columns:auto 1fr;gap:12px;padding:17px;border:1px solid #4b623d;background:#182016}.dot{width:10px;height:10px;border-radius:50%;margin-top:.45rem;background:var(--ok)}.notice strong{display:block}.notice span{color:var(--muted);font-size:.93rem}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.card{padding:18px;background:var(--surface);border:1px solid var(--line)}.card p{font-size:.93rem}.tag{display:inline-block;margin:0 0 10px;padding:3px 7px;font-size:.72rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase}.tag.ok{color:#d5ebbd;background:#263323}.tag.wait{color:#ffe7ae;background:#3c311d}.tag.no{color:#ffd1cb;background:#41221e}.button{display:block;margin-top:16px;padding:12px;background:var(--gold);color:#17140f;text-align:center;text-decoration:none;font-weight:750}.link{color:#e9d6ae;text-underline-offset:3px}.steps{display:grid;gap:10px;list-style:none;padding:0;margin:0}.steps li{display:grid;grid-template-columns:30px 1fr;gap:10px;padding:14px;background:var(--surface);border:1px solid var(--line)}.n{color:var(--gold);font:600 13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace}.steps strong{display:block}.steps small{display:block;color:var(--muted);margin-top:2px}.boundary{padding:16px;border-left:3px solid var(--wait);background:var(--surface2)}code{color:#e9d6ae;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}.split{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:700px){main{padding:24px 14px 54px}.grid,.split{grid-template-columns:1fr}}
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="eyebrow">Entropi Coaching · subscription pilot · lokal review</div>
+      <h1>Klar til sidste godkendelse.</h1>
+      <p class="lead">Dette er den samlede beslutningsflade før den første isolerede shadow-pilot. Produktrejse, programlogik og sikkerhedskontrakter er lokalt bygget og verificeret. Ingen rigtig konto, betaling eller dataforbindelse er startet fra denne pakke.</p>
+
+      <section class="notice" aria-label="Aktuel status">
+        <div class="dot" aria-hidden="true"></div>
+        <div><strong>Lokal kandidat: reviewklar</strong><span>Lokale tests, statiske kontrakter og pilotbuild kan godkendes nu. Shadow-binding og databaseadfærd er bevidst stadig en separat port.</span></div>
+      </section>
+      <p><a class="link" href="subscription-launch-candidate.html">Åbn launch-kandidatens samlede gates</a></p>
+
+      <div class="rule"></div>
+      <div class="eyebrow">Review i tre dele</div>
+      <h2>Det, du kan vurdere nu</h2>
+      <div class="grid">
+        <section class="card"><span class="tag ok">01 · Produkt</span><h3>Kundens faktiske rejse</h3><p>Onboarding, arbejdsbelastning, uge 1, logning og et tydeligt uge-2-valg. Gennemgå den som en atlet på mobil eller desktop.</p><a class="button" href="customer-journey.html">Åbn kunderejsen</a></section>
+        <section class="card"><span class="tag ok">02 · Faglighed</span><h3>Programmer og kombinationer</h3><p>Se alle ti tilladte full-gym spor: styrke eller styrkeløft, nybegynder eller øvet, og 2/3/4 træningsdage.</p><a class="button" href="program-scenarios.html">Åbn scenarierne</a></section>
+        <section class="card"><span class="tag ok">03 · Pilotkvalitet</span><h3>Test og friktion</h3><p>Brug 10-tester-scriptet til at dække hver kombination, notér kun produktfriktion lokalt og triagér den før næste lille testgruppe.</p><a class="button" href="pilot-qa.html">Åbn pilot-QA</a><p><a class="link" href="pilot-feedback-review.html">Åbn feedbacktriage</a></p></section>
+      </div>
+
+      <div class="rule"></div>
+      <div class="eyebrow">Kontrolstatus</div>
+      <h2>Hvad der er afsluttet — og hvad der med vilje ikke er</h2>
+      <div class="split">
+        <section class="card"><span class="tag ok">Lokalt verificerbart</span><h3>Kan godkendes i denne session</h3><p>89 programtests, lokal pilot completion-gate, statisk shadow-backendkontrakt, klientkontrakt, behavioural QA-pakke og subscription-build. Det er reproducerbare lokale kontroller; de foretager ingen netværks- eller databasehandling.</p><p><a class="link" href="subscription-pilot-release-bundle.html">Se lokal pilotpakke</a> · <a class="link" href="subscription-shadow-behavioral-qa.html">Se shadow-QA</a></p></section>
+        <section class="card"><span class="tag wait">Bevidst ikke kørt</span><h3>Kræver senere, særskilt handling</h3><p>Den lokale fil mangler stadig de tre <code>VITE_SUB_SUPABASE_*</code>-værdier. Derfor kan den ikke — og må ikke — forbinde til shadow. Ingen migration, invitation, login, databasewrite, betaling, deploy eller produktion er rørt.</p><p><a class="link" href="docs/subscription-shadow-integration-readiness.md">Læs sikkerhedsstatus</a></p></section>
+      </div>
+
+      <div class="rule"></div>
+      <div class="eyebrow">Sidste godkendelse</div>
+      <h2>Tre konkrete beslutninger, i rigtig rækkefølge</h2>
+      <ol class="steps">
+        <li><span class="n">01</span><span><strong>Godkend den lokale pilotflade.</strong><small>Bekræft at de 10 programspor, UI’et og uge-2-adfærden er et acceptabelt udgangspunkt for testpersonen.</small></span></li>
+        <li><span class="n">02</span><span><strong>Bekræft det isolerede shadow-projekt.</strong><small>En ejer verificerer manuelt, at <code>maxhsefxbrvsgolscqwh</code> er subscription-shadow — aldrig produktion — og tilføjer kun URL/ref/publishable key i lokal miljøfil.</small></span></li>
+        <li><span class="n">03</span><span><strong>Giv en eksplicit shadow-only migrationsautorisation.</strong><small>Først efter en grøn binding-gate kan de 11 reviewede DRAFT-migrationer og den efterfølgende RLS-QA overhovedet blive aktuelle.</small></span></li>
+      </ol>
+
+      <div class="rule"></div>
+      <section class="boundary"><div class="eyebrow">Ingen genvej</div><h2>En grøn lokal pakke er ikke en lancering.</h2><p>Den beskytter 1:1-produktet og gør det muligt at tage næste skridt kontrolleret. Hvis bindingen er forkert, eller én RLS-case fejler, stopper pilotsporet dér. Der findes ingen fallback til en produktionsreference eller direkte klientwrites.</p><p><a class="link" href="docs/subscription-shadow-local-binding.md">Binding-runbook</a> · <a class="link" href="docs/subscription-shadow-behavioral-qa-runbook.md">RLS-QA-runbook</a></p></section>
+    </main>
+  </body>
+</html>

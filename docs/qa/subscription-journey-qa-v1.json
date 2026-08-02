@@ -1,0 +1,28 @@
+{
+  "artifact": "subscription-journey-qa",
+  "version": 1,
+  "date": "2026-08-01",
+  "scope": "Lokal demo: fake e-mail → onboarding → uge 1 → uge 2. Ingen backend, betaling eller ekstern konto.",
+  "evidence": {
+    "unitTests": "83 passed, 0 failed",
+    "pilotSmoke": "20 checks passed",
+    "pilotCompletion": "12 entrypoints and 4 green checks passed",
+    "scenarioMatrix": { "total": 576, "reviewReady": 160, "manualReview": 416, "homeManualReview": 288 }
+  },
+  "checks": [
+    { "id": "J01", "area": "Start", "status": "PASS", "check": "En lokal demo-identitet er stabil pr. normaliseret e-mail, og selve e-mailen gemmes ikke i snapshot.", "evidence": "localCustomerJourney tests" },
+    { "id": "J02", "area": "Onboarding", "status": "PASS", "check": "Manglende og ugyldige baseline-input stopper forløbet; motoren gætter ikke et program eller en vægt.", "evidence": "baselineLoads and resolver tests" },
+    { "id": "J03", "area": "Startbelastning", "status": "PASS", "check": "1RM og repræsentative flerrepssæt med RPE bliver til et e1RM og en konservativ, afrundet uge-1-belastning – aldrig til samme vægt som et arbejdssæt.", "evidence": "baselineLoads tests" },
+    { "id": "J04", "area": "Valg", "status": "PASS", "check": "Styrkeløft kræver eksplicit squat- og dødløftvariant. High-bar/low-bar og conventional/sumo bevares i beslutningssporet; ukendt variant stopper synligt.", "evidence": "resolver, matrix and smoke tests" },
+    { "id": "J05", "area": "Programflade", "status": "PASS", "check": "Alle 2-, 3- og 4-dages gym-scenarier evalueres deterministisk. Kun reviewede templates kan blive review-ready.", "evidence": "576-scenarie matrix" },
+    { "id": "J06", "area": "Sætlog", "status": "PASS", "check": "Præcis ét sæt er aktivt ad gangen. Et pas kan først afsluttes når alle sæt er gyldige; skip gemmer kun atletens begrundelse.", "evidence": "customerSetLogging and customerJourneyState tests" },
+    { "id": "J07", "area": "Uge 2", "status": "PASS", "check": "Forslag kræver to komplette, sammenlignelige eksponeringer med faktiske reps, passende RPE og ingen skip. Ellers beholdes planen eller der kræves mere data.", "evidence": "progressionEvidence and programReviewPackage tests" },
+    { "id": "J08", "area": "Reload og reset", "status": "PASS", "check": "Komplet lokal tilstand kan genoptages isoleret. Korrupt eller ufuldstændig data fejler lukket til ren lokal start; reset rydder demoens gemte forløb.", "evidence": "localCustomerJourney tests" },
+    { "id": "J09", "area": "Home", "status": "BLOCKED", "check": "Hjemmetræning er bevidst ikke automatisk klar: 288/288 home-scenarier går til manual review, indtil udstyr og sikre substitutioner er konkret defineret.", "severity": "scope", "next": "Definér home-udstyrsprofil og review øvelsesfamilier før automatisk programvalg." },
+    { "id": "J10", "area": "Dækning", "status": "BLOCKED", "check": "416/576 scenarier er manual review. Det er korrekt fail-closed adfærd, men betyder at produktet endnu ikke må beskrives som automatisk for alle profiler.", "severity": "scope", "next": "Udvid kun efter faglig review af hver ny template/policy-lane." },
+    { "id": "J11", "area": "Produktion", "status": "BLOCKED", "check": "Flowet bruger fake e-mail og lokal browserdata. Ægte auth, betaling, entitlement, database og dataretention er uden for denne QA og ikke klar til pilotbrug.", "severity": "release", "next": "Færdiggør og test shadow-backend før rigtige testpersoner får dataadgang." },
+    { "id": "J12", "area": "Mobil", "status": "BLOCKED", "check": "Kerne-logik er testet, men denne QA er ikke en manuel touch-/mobilbrowser-gennemgang på fysisk telefon.", "severity": "release", "next": "Kør pilot-mobile-checklist på iOS og Android før ekstern beta." }
+  ],
+  "p0Findings": [],
+  "verdict": "Ingen åbne P0-fejl fundet i den lokale, afgrænsede rejse. Produktgrænserne ovenfor er BLOCKED scope/release-gates – ikke skjulte PASS'er."
+}

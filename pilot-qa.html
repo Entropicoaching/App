@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="da">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Entropi · Lokal 10-tester QA</title>
+    <style>
+      :root{--bg:#0d0e0b;--panel:#171914;--line:#3a3d32;--text:#f3efe7;--muted:#b1afa4;--gold:#c8a363;--ok:#b4d094;--hold:#dfbe7a}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 Inter,ui-sans-serif,system-ui,sans-serif}main{width:min(100%,920px);margin:auto;padding:30px 18px 64px}.eyebrow{color:var(--gold);font:600 11px/1.2 ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase}h1,h2{font-family:Georgia,serif;font-weight:400;letter-spacing:-.025em}h1{font-size:clamp(2.3rem,8vw,4.5rem);line-height:.95;margin:12px 0 18px}h2{font-size:1.5rem;margin:28px 0 10px}p,li{color:var(--muted)}.lead{font-size:1.06rem;max-width:55rem}.card{padding:18px;margin:12px 0;background:var(--panel);border:1px solid var(--line)}.status{border-left:3px solid var(--ok)}.hold{border-left:3px solid var(--hold)}table{width:100%;border-collapse:collapse;font-size:.9rem}th,td{padding:10px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}th{color:var(--gold);font-weight:600}code{color:#e9d6ae}a{color:var(--gold);text-underline-offset:3px}.check{color:var(--ok);font-weight:700}ol{padding-left:1.25rem}li{margin:8px 0}@media(max-width:640px){main{padding:24px 14px 48px}table{font-size:.78rem}th,td{padding:8px 5px}}
+    </style>
+  </head>
+  <body><main>
+    <div class="eyebrow">Entropi Coaching · local-only · testscript</div>
+    <h1>10 testere.<br>Én konkret vej.</h1>
+    <p class="lead">Denne side er QA-ledsager til browserdemoen. Den gør ikke appen til et salgs- eller produktionssystem: ingen konto, invitation, betaling eller dataoverførsel findes i den lokale version. Hver tester gennemfører ét af de 10 v1-spor og noterer friktion med kontekst.</p>
+    <section class="card status"><strong>Lokal release candidate: klar til struktureret test</strong><p>Testfladen dækker full gym, Styrke eller Styrkeløft, Nybegynder eller Øvet og 2/3/4 ugentlige pas. 4 pas tilbydes kun til Øvet. Alle spor ender i baseline → uge 1-logning → synligt uge 2-valg.</p></section>
+    <h2>Fordel testerne sådan</h2>
+    <table><thead><tr><th>Tester</th><th>Mål</th><th>Niveau</th><th>Dage</th><th>Variantkrav</th></tr></thead><tbody>
+      <tr><td>01</td><td>Styrke</td><td>Nybegynder</td><td>2</td><td>Valgfri</td></tr><tr><td>02</td><td>Styrke</td><td>Nybegynder</td><td>3</td><td>Valgfri</td></tr><tr><td>03</td><td>Styrke</td><td>Øvet</td><td>2</td><td>Valgfri</td></tr><tr><td>04</td><td>Styrke</td><td>Øvet</td><td>3</td><td>Valgfri</td></tr><tr><td>05</td><td>Styrke</td><td>Øvet</td><td>4</td><td>Valgfri</td></tr>
+      <tr><td>06</td><td>Styrkeløft</td><td>Nybegynder</td><td>2</td><td>Vælg squat + dødløft</td></tr><tr><td>07</td><td>Styrkeløft</td><td>Nybegynder</td><td>3</td><td>Vælg squat + dødløft</td></tr><tr><td>08</td><td>Styrkeløft</td><td>Øvet</td><td>2</td><td>Vælg squat + dødløft</td></tr><tr><td>09</td><td>Styrkeløft</td><td>Øvet</td><td>3</td><td>Vælg squat + dødløft</td></tr><tr><td>10</td><td>Styrkeløft</td><td>Øvet</td><td>4</td><td>Vælg squat + dødløft</td></tr>
+    </tbody></table>
+    <h2>Testscript pr. person</h2><ol>
+      <li>Åbn <a href="customer-journey.html">kunderejsen</a> i en almindelig browserfane. Brug en unik test-mail; den bliver kun omsat til et lokalt demo-id.</li>
+      <li>Vælg det tildelte spor ovenfor. Bekræft, at Full gym er tydeligt låst til v1, og at 4 dage ikke vises for Nybegynder.</li>
+      <li>Angiv et repræsentativt tungt sæt for squat, bænk og dødløft. Kontrollér, at e1RM og konservativ uge-1-startvægt forklares — assistance får ingen opfundet vægt.</li>
+      <li>Log hele uge 1. Ret mindst ét sæt før du fortsætter, og brug “spring over” på ét sæt, hvis du vil teste den bekræftede undtagelsesvej.</li>
+      <li>Læs uge-2-forslaget. Vælg aktivt enten forslag eller uændret plan. Kontrollér, at kun synlige belastningsforslag kan ændres.</li>
+      <li>Log første pas i uge 2 og skriv én konkret observation i <a href="pilot-feedback.html">feedbackskemaet</a>. Eksportér kun JSON, hvis testlederen beder om det.</li>
+    </ol>
+    <section class="card"><strong>Fang disse fejl som P0</strong><p>En vej der ikke kan afsluttes; et valg der giver et andet program end det viste; ændret belastning uden synligt accept; blanding af to testere i browserens lokale data; eller ethvert tegn på at data sendes ud af browseren.</p></section>
+    <h2>Kontrol før og efter test</h2><table><tbody>
+      <tr><th>Før</th><td>Kør <code>npm run verify:subscription-pilot-completion</code>. Åbn <a href="program-scenarios.html">scenariematrixen</a>; den viser alle 192 full-gym inputscenarier og bevidste stop.</td></tr>
+      <tr><th>Under</th><td>Brug <a href="pilot-mobile-checklist.html">mobilchecklisten</a> på mindst to telefoner. Skriv tester-ID, browser/telefon og trin i feedbackteksten.</td></tr>
+      <tr><th>Efter</th><td>Testleder samler eksporterede feedbackfiler manuelt. Ingen automatiseret upload eller sammenkædning er en del af v1.</td></tr>
+    </tbody></table>
+    <section class="card hold"><strong>Ikke testbar som “færdig salgslancering” endnu</strong><p>Dette er en lokal release candidate. Rigtig pilotadgang for 10 personer kræver fortsat separat, godkendt arbejde med invitation/login, sikker datalagring, supportansvar og eventuel betaling. Ingen af dem er implementeret eller påstået her.</p></section>
+    <p><a href="subscription-pilot-release-bundle.html">Tilbage til pilotoverblikket</a></p>
+  </main></body>
+</html>

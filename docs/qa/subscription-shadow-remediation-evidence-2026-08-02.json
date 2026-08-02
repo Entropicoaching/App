@@ -1,0 +1,57 @@
+{
+  "target": {
+    "name": "entropi-subscription-shadow",
+    "projectRef": "maxhsefxbrvsgolscqwh"
+  },
+  "migration": "sub-12-tier-contract-remediation.DRAFT.sql",
+  "migrationResult": "COMMITTED",
+  "behavioralResult": "PASS",
+  "cases": {
+    "BQA-01": "PASS",
+    "BQA-02": "PASS",
+    "BQA-03": "PASS",
+    "BQA-04": "PASS",
+    "BQA-05": "PASS",
+    "BQA-06": "PASS",
+    "BQA-07": "PASS",
+    "FREE": "PASS",
+    "MEMBER": "PASS",
+    "TRIAL_ACTIVE": "PASS",
+    "TRIAL_EXPIRY": "PASS"
+  },
+  "keyEvidence": {
+    "freeVisibleProgramSlugs": ["start-2"],
+    "freeMemberProgramCount": 0,
+    "memberVisibleMemberProgramCount": 1,
+    "memberPersistence": true,
+    "exactReplaySameId": true,
+    "alteredReplayRejected": true,
+    "crossAssignmentRejected": true,
+    "expiredTier": "free",
+    "expiredHistoryReadable": true,
+    "expiredNewWriteRejected": true,
+    "roleCoachGrant": false
+  },
+  "cleanup": {
+    "qaRowsRemoved": true,
+    "retainedWorkoutCount": 3,
+    "retainedSetCount": 3,
+    "passwordsMutated": false
+  },
+  "advisor": {
+    "securityBefore": { "errors": 0, "warnings": 6, "info": 0 },
+    "securityAfter": { "errors": 0, "warnings": 3, "info": 0 },
+    "performanceBefore": { "errors": 0, "warnings": 0, "info": 7 },
+    "performanceAfter": { "errors": 0, "warnings": 0, "info": 7 },
+    "performanceReview": "Three new unindexed week-two foreign keys were fixed. The four attributable post-state info items are unused-index notices for the three new covering indexes and the required proposal-decision lookup index while the week-two tables are empty; none was removed or hidden."
+  },
+  "localReadiness": {
+    "binding": "PASS",
+    "backendStatic": "PASS (12 files)",
+    "clientStatic": "PASS (50 files)",
+    "tests": "PASS 93/93",
+    "build": "PASS"
+  },
+  "realPasswordClientFlow": "NOT_RUN_RETAINED_PASSWORDS_UNCHANGED",
+  "decision": "READY FOR SHADOW PILOT"
+}

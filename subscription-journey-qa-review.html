@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="da">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Entropi · Kunderejse QA</title>
+    <style>
+      :root { color-scheme: dark; --ink:#f4f1e9; --muted:#b9b5aa; --bg:#10110f; --card:#191b17; --line:#30342c; --gold:#d3a552; --pass:#81c995; --block:#e4b76a; }
+      * { box-sizing:border-box } body { margin:0; font-family:Inter,ui-sans-serif,system-ui,sans-serif; color:var(--ink); background:radial-gradient(circle at 80% 0,#352714 0,transparent 28rem),var(--bg); }
+      main { max-width:920px; margin:auto; padding:32px 18px 56px } h1 { font-family:Georgia,serif; margin:0 0 8px; font-size:clamp(2rem,7vw,3.6rem); font-weight:500 } h2 { font-size:1rem; letter-spacing:.11em; text-transform:uppercase; color:var(--gold); margin:32px 0 12px } p { line-height:1.55; color:var(--muted) } .lede { max-width:660px; font-size:1.05rem }.grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px }.metric,.card { border:1px solid var(--line); background:rgba(25,27,23,.9); border-radius:14px }.metric { padding:16px }.metric strong { font-size:1.6rem; display:block; color:var(--ink) }.metric span { color:var(--muted); font-size:.82rem }.summary { border-left:3px solid var(--pass); padding:14px 16px; background:#152218; color:#d9f4df; border-radius:0 10px 10px 0 }.list { display:grid; gap:10px }.card { padding:15px 16px; display:grid; grid-template-columns:92px 1fr; gap:12px }.badge { align-self:start; border-radius:99px; padding:5px 9px; font-size:.75rem; font-weight:700; width:max-content }.pass { color:var(--pass); background:#173724 }.blocked { color:#ffd78f; background:#3d3019 }.card h3 { margin:0 0 5px; font-size:1rem }.card p { margin:0 }.evidence { margin-top:8px!important; font-size:.82rem; color:#9aa393!important }.foot { font-size:.83rem; margin-top:30px } code { color:#f2ce8f } @media (max-width:640px) { .grid { grid-template-columns:repeat(2,1fr) }.card { grid-template-columns:1fr; gap:8px } }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p style="color:var(--gold);letter-spacing:.14em;text-transform:uppercase;font-size:.75rem">Entropi · lokal kvalitetsgennemgang · 1. august 2026</p>
+      <h1>Kan en ny atlet faktisk komme i gang?</h1>
+      <p class="lede">Gennemgang af den afgrænsede demo: fake e-mail → valg → konservativ startbelastning → uge 1 → datakontrolleret uge 2. Dette er ikke en release-erklæring.</p>
+      <div class="summary">Ingen P0-fejl fundet i den lokale rejse. Hjemmetræning, de fleste kombinationer og rigtig konto/data er bevidst stoppet af release-gates.</div>
+      <h2>Beviser fra motoren</h2>
+      <div class="grid"><div class="metric"><strong>83</strong><span>unit tests bestået</span></div><div class="metric"><strong>20</strong><span>pilot-smoke checks</span></div><div class="metric"><strong>160</strong><span>review-ready scenarier</span></div><div class="metric"><strong>416</strong><span>stoppes til review</span></div></div>
+      <h2>Rejse og afvigelser</h2>
+      <div class="list">
+        <article class="card"><span class="badge pass">PASS · J01–J02</span><div><h3>Start og onboarding</h3><p>Fake e-mail giver en isoleret lokal demo-identitet uden at e-mailen ligger i snapshot. Manglende eller ugyldige inputs stopper – systemet opfinder hverken program eller belastning.</p><p class="evidence">Evidens: localCustomerJourney-, baselineLoads- og resolver-tests.</p></div></article>
+        <article class="card"><span class="badge pass">PASS · J03–J05</span><div><h3>Startvægt, mål og varianter</h3><p>1RM eller tungt flerrepssæt + RPE bliver til e1RM og afrundet uge-1-vægt. Styrkeløft kræver eksplicit squat- og dødløftvariant. 2/3/4-dages gym-input bliver evalueret deterministisk.</p><p class="evidence">Evidens: baseline-, resolver-, matrix- og smoke-tests.</p></div></article>
+        <article class="card"><span class="badge pass">PASS · J06–J08</span><div><h3>Uge 1, uge 2, reload</h3><p>Ét aktivt sæt ad gangen. Uge 2 kan kun foreslå ændring efter to komplette sammenlignelige eksponeringer med faktiske reps og passende RPE. Korrupt lokaldata falder tilbage til ren start.</p><p class="evidence">Evidens: set logging-, progression- og local journey-tests.</p></div></article>
+        <article class="card"><span class="badge blocked">BLOCKED · J09</span><div><h3>Hjemmetræning</h3><p>0 af 288 home-scenarier bliver auto-godkendt. Det er korrekt lige nu: uden en konkret udstyrsprofil ville en automatisk øvelse være et gæt.</p><p class="evidence">Næste gate: definer udstyr og review substitutioner.</p></div></article>
+        <article class="card"><span class="badge blocked">BLOCKED · J10</span><div><h3>Komplet automatisk dækning</h3><p>416 af 576 kombinationer ender i manual review. Appen er ærlig om kanten – men må endnu ikke sælges som automatisk for alle profiler.</p><p class="evidence">Næste gate: udvid én fagligt gennemgået template/policy-lane ad gangen.</p></div></article>
+        <article class="card"><span class="badge blocked">BLOCKED · J11–J12</span><div><h3>Rigtig pilot og mobil</h3><p>Ægte login, betaling, entitlement, database, sletning/eksport og fysisk mobiltest ligger uden for den lokale demo. Ingen rigtig testperson bør komme på endnu.</p><p class="evidence">Næste gate: shadow-backend + iOS/Android tjekliste.</p></div></article>
+      </div>
+      <p class="foot">Maskinlæsbar checklist: <code>docs/qa/subscription-journey-qa-v1.json</code>. P0-fund: 0. BLOCKED betyder afgrænset eller manglende release-grundlag – aldrig skjult godkendelse.</p>
+    </main>
+  </body>
+</html>

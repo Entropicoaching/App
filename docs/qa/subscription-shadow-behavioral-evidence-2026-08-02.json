@@ -1,0 +1,76 @@
+{
+  "target": {
+    "name": "entropi-subscription-shadow",
+    "projectRef": "maxhsefxbrvsgolscqwh"
+  },
+  "recordedDate": "2026-08-02",
+  "decision": "BLOCKED_RETAIN_SHADOW_FOR_REMEDIATION",
+  "cases": [
+    {
+      "id": "BQA-01",
+      "name": "free boundary",
+      "result": "PASS",
+      "evidence": "Free access and no member data; workout persistence rejected."
+    },
+    {
+      "id": "BQA-02",
+      "name": "cross-user isolation",
+      "result": "PASS",
+      "evidence": "Member B saw zero member A assignment, workout, set, proposal and decision rows; non-owned decision rejected."
+    },
+    {
+      "id": "BQA-03",
+      "name": "invalid binding and altered replay",
+      "result": "PASS",
+      "evidence": "Cross-member persistence and altered controlled-assignment replay rejected without count changes."
+    },
+    {
+      "id": "BQA-04",
+      "name": "workout idempotency",
+      "result": "PASS",
+      "evidence": "Exact replay returned the original UUID; altered same-client replay rejected without stored-payload change."
+    },
+    {
+      "id": "BQA-05",
+      "name": "profiles.role negative control",
+      "result": "PASS",
+      "evidence": "Existing coach-labelled profile remained free/no-coaching and could not persist a workout; profiles were not mutated."
+    },
+    {
+      "id": "BQA-06",
+      "name": "natural entitlement expiry",
+      "result": "FAIL",
+      "severity": "critical",
+      "evidence": "Access became free after natural expiry, but assignment/program/history remained readable and sub_persist_completed_workout_v1 accepted a new workout.",
+      "unexpectedWorkoutId": "ecba1bfa-0e63-40b6-ae63-a7877ed7d018"
+    },
+    {
+      "id": "BQA-07",
+      "name": "rollback and freeze decision",
+      "result": "PASS",
+      "evidence": "No new activations or assignments; retained shadow and evidence for remediation; rollback not executed."
+    }
+  ],
+  "finalRowCounts": {
+    "programs": 6,
+    "entitlements": 2,
+    "assignments": 2,
+    "activations": 2,
+    "workouts": 3,
+    "workoutSets": 3,
+    "weekTwoProposals": 0,
+    "weekTwoDecisions": 0
+  },
+  "advisor": {
+    "securityBefore": { "errors": 0, "warnings": 3, "info": 0 },
+    "securityAfter": { "errors": 0, "warnings": 6, "info": 0 },
+    "performanceBefore": { "errors": 0, "warnings": 0, "info": 3 },
+    "performanceAfter": { "errors": 0, "warnings": 0, "info": 7 }
+  },
+  "authenticatedPasswordClientFlow": {
+    "result": "NOT_RUN_APPROVAL_REQUIRED",
+    "remoteAuthMutations": 0,
+    "remoteDatabaseWrites": 0
+  },
+  "rollbackExecuted": false
+}
