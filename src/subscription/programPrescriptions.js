@@ -2,7 +2,8 @@
 // brugeraktiverede programmer. Et udkast kan først tildeles når Marc har låst
 // det som en ny programversion i den sikre write-path.
 
-export const PRESCRIPTION_LIBRARY_VERSION = 2
+export const PRESCRIPTION_LIBRARY_VERSION = 3
+export const STANDARD_LOAD_INCREMENT_KG = 2.5
 
 const GENERAL = {
   'squat-pattern': { sets: 3, reps: '5–7', targetReps: 6, targetRpe: '6–7', weekOnePercentOfEstimated1RM: 0.725, progressionPercent: 0.025 },
@@ -55,9 +56,9 @@ export function prescriptionFor(goal, role, level = 'oevet', equipment = 'gym') 
   const prescription = level === 'begynder' ? beginnerPrescription(base, role) : { ...base }
   return {
     ...prescription,
-    // Load increments describe the smallest reviewed UI step. The progression
-    // engine may still keep the load when even this step exceeds its safety cap.
-    loadIncrementKg: equipment === 'home' ? 1 : 2.5,
+    // Begge udstyrsbaner bruger samme synlige standardtrin. Evidensmotoren
+    // fastholder stadig belastningen, når ugens logning ikke kan godkendes.
+    loadIncrementKg: STANDARD_LOAD_INCREMENT_KG,
     maximumRealizedProgressionPercent: 0.03,
     experienceLane: level,
     equipmentLane: equipment,

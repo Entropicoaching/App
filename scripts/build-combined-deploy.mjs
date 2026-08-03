@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises'
+import { readFile, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { build, loadEnv } from 'vite'
 
@@ -11,6 +11,10 @@ const deployEnv = { ...loadEnv('production', root, ''), ...process.env }
 
 try {
   await build({ configFile: resolve(root, 'vite.config.js'), root })
+  // peaceiris/actions-gh-pages normally creates this file during publish.
+  // Generate it as part of the artifact as well, so manual and automated
+  // Pages deploys are identical and never rely on an implicit action default.
+  await writeFile(resolve(outputRoot, '.nojekyll'), '')
   const baseline = await snapshotDirectory(outputRoot)
 
   await build({ configFile: resolve(root, 'vite.subscription.deploy.config.js'), root })

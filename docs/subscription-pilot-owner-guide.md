@@ -9,6 +9,18 @@ Piloten må kun bruge Supabase shadow-projektet
 organisationen. Det ville give administrativ adgang og er ikke en løsning på
 mailbegrænsningen.
 
+## Det Marc skal have klar til den nye tester
+
+Før testeren kan oprettes, mangler der præcis to oplysninger:
+
+1. testerens præcise e-mailadresse;
+2. pilotens slutdato og klokkeslæt i UTC, fx `2026-08-17T21:59:59Z`.
+
+Brug ikke en foreløbig adresse, og gæt ikke på udløbet. Den offentlige URL er
+fast: `https://app.entropicoaching.dk/subscription.html`. Når de to oplysninger
+er valgt, skal hele rækkefølgen nedenfor følges: preflight → invitation → første
+login → status → aktivering → genindlæsning.
+
 ## 1. Gør den offentlige adgang klar
 
 `localhost` virker kun på din egen computer. En ekstern tester skal have en
@@ -20,9 +32,13 @@ Kontrollér først:
 1. Appen åbner på en telefon via
    `https://app.entropicoaching.dk/subscription.html`.
 2. Supabase-dashboardets project ref er `maxhsefxbrvsgolscqwh`.
-3. `.env.local` i app-worktreet indeholder shadow-URL, shadow project ref og en
+3. Auth-konfigurationens **Site URL** er
+   `https://app.entropicoaching.dk/subscription.html`, og den samme adresse står
+   som en tilladt redirect-URL. Behold også de godkendte localhost/LAN-adresser
+   til lokal test; brug aldrig wildcard-redirects.
+4. `.env.local` i app-worktreet indeholder shadow-URL, shadow project ref og en
    lokal `SUPABASE_SECRET_KEY` til owner-værktøjet.
-4. Secret key ligger aldrig i dokumentation, terminalkommandoer, screenshots
+5. Secret key ligger aldrig i dokumentation, terminalkommandoer, screenshots
    eller git.
 
 Kør derefter:
@@ -130,6 +146,13 @@ Fortsæt kun, når alle fire felter er rigtige:
 Hvis ét felt er `false`, skal årsagen løses. Opret ikke en ny bruger eller et
 entitlement ved siden af.
 
+Det forventede callback-flow er: Supabase-linket åbnes → browseren lander på
+`https://app.entropicoaching.dk/subscription.html` → appen registrerer Auth-
+sessionen automatisk. Hvis testeren lander på en anden adresse, ser en blank
+side eller stadig kun ser login efter en genindlæsning, skal du stoppe før
+aktivering og gemme URL samt screenshot. Opret ikke endnu et entitlement som
+fejlsøgning.
+
 ## 5. Aktivér den tidsbegrænsede member-adgang
 
 Kontrollér aktiveringsplanen uden netværk:
@@ -148,9 +171,12 @@ Forvent `state: MEMBER_ACTIVATED`, `tier: member` og den aftalte udløbsdato. Be
 testeren genindlæse appen. En ny tester skal nu få én vej videre:
 **Sæt dit program op**.
 
-Skriv aldrig direkte i `sub_entitlements` eller `sub_assignments`. Værktøjet
-bruger et deterministisk request-id, så samme aktivering kan kontrolleres uden
-at oprette en ny adgang.
+Aktiveringen må kun ske gennem
+`public.sub_controlled_activate_invited_member(...)`, som owner-værktøjet
+kalder server-side. Skriv aldrig direkte i `sub_entitlements` eller
+`sub_assignments`, og forsøg ikke at kalde RPC'en fra browserklienten.
+Værktøjet bruger et deterministisk request-id, så samme aktivering kan
+kontrolleres uden at oprette en ny adgang.
 
 ## Mail og Entropi-tekst
 

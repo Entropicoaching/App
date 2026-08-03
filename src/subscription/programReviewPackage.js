@@ -6,6 +6,7 @@ import { resolveProgramDraft } from './programResolver.js'
 import { applyBaselineLoadsToProgram } from './baselineLoads.js'
 import { progressionEvidenceForMovement } from './progressionEvidence.js'
 import { validateCustomerSetLog } from './customerSetLogging.js'
+import { STANDARD_LOAD_INCREMENT_KG } from './programPrescriptions.js'
 
 export const PROGRAM_REVIEW_PACKAGE_SCHEMA_VERSION = 1
 export const NEXT_WEEK_PROPOSAL_SCHEMA_VERSION = 3
@@ -79,10 +80,9 @@ export function createCustomerProgram(reviewPackage, baselineLoads = null) {
   return applyBaselineLoadsToProgram(baseProgram, baselineLoads).program
 }
 
-function safeProgressedLoad(loadKg, prescription) {
-  const incrementKg = prescription?.loadIncrementKg ?? 2.5
-  if (!Number.isFinite(loadKg) || loadKg <= 0 || !Number.isFinite(incrementKg) || incrementKg <= 0) return null
-  return Math.round((loadKg + incrementKg) * 100) / 100
+function safeProgressedLoad(loadKg) {
+  if (!Number.isFinite(loadKg) || loadKg <= 0) return null
+  return Math.round((loadKg + STANDARD_LOAD_INCREMENT_KG) * 100) / 100
 }
 
 function uniqueProgramMovements(program) {
@@ -207,9 +207,9 @@ export function buildNextWeekProposal(program, completedSessions, nextWeekNumber
       const hasSufficientEvidence = evidence.exposures.length >= 1
         && evidence.rejectedExposures.length === 0
         && missingExpectedSessionIds.length === 0
-      const progressedLoad = hasSufficientEvidence ? safeProgressedLoad(baseLoad, movement.prescription) : null
+      const progressedLoad = hasSufficientEvidence ? safeProgressedLoad(baseLoad) : null
       const canProgress = progressedLoad !== null
-      const progressionKg = canProgress ? movement.prescription?.loadIncrementKg ?? 2.5 : null
+      const progressionKg = canProgress ? STANDARD_LOAD_INCREMENT_KG : null
       proposals.push({
         exerciseId: movement.exerciseId,
         exerciseName: movement.exerciseName,
@@ -271,8 +271,8 @@ export function validateNextWeekProposal(program, proposal, expectedWeekNumber =
     if ((finiteFrom && item.fromLoadKg < 0) || (finiteTo && item.toLoadKg < 0)) errors.push('negative-load')
 
     if (item.action === 'increase-load') {
-      const safe = safeProgressedLoad(item.fromLoadKg, movement.prescription)
-      if (movement.roleClass !== 'main' || !finiteFrom || !finiteTo || item.toLoadKg !== safe || item.progressionKg !== (movement.prescription?.loadIncrementKg ?? 2.5)) {
+      const safe = safeProgressedLoad(item.fromLoadKg)
+      if (movement.roleClass !== 'main' || !finiteFrom || !finiteTo || item.toLoadKg !== safe || item.progressionKg !== STANDARD_LOAD_INCREMENT_KG) {
         errors.push('unsafe-load-increase')
       }
     } else {

@@ -69,6 +69,59 @@ test('uge to foreslår ét fast vægttrin efter én komplet planlagt hovedløfts
   assert.equal(proposal.status, 'proposal-requires-athlete-choice')
 })
 
+test('hjemmetræning foreslår præcis 2,5 kg efter en god uge, også for et ældre program med 1 kg i recepten', () => {
+  const homeInput = { ...input, goal: 'general-strength', equipment: 'home', squatStyle: 'high-bar' }
+  const program = createCustomerProgram(createProgramReviewPackage(homeInput))
+  const benchMovements = program.sessions
+    .flatMap(session => session.movements)
+    .filter(movement => movement.role === 'bench-pattern')
+  const bench = benchMovements[0]
+
+  assert.ok(benchMovements.length > 0)
+  assert.ok(benchMovements.every(movement => movement.prescription.loadIncrementKg === 2.5))
+
+  // Allerede oprettede hjemmeprogrammer kan stadig bære den gamle værdi.
+  // Reviewmotorens fælles standard skal også rette deres næste forslag.
+  for (const movement of benchMovements) movement.prescription.loadIncrementKg = 1
+  const proposal = buildWeekTwoProposal(program, completedMovementWeek(program, bench, 1, 40))
+  const item = proposal.proposals.find(candidate => candidate.exerciseId === bench.exerciseId)
+
+  assert.equal(item.action, 'increase-load')
+  assert.equal(item.fromLoadKg, 40)
+  assert.equal(item.toLoadKg, 42.5)
+  assert.equal(item.progressionKg, 2.5)
+  assert.equal(validateWeekTwoProposal(program, proposal).ok, true)
+})
+
+test('hjemmetræning fastholder belastningen ved hård, ufuldstændig, sprunget over eller ugyldig evidens', () => {
+  const homeInput = { ...input, goal: 'general-strength', equipment: 'home', squatStyle: 'high-bar' }
+  const program = createCustomerProgram(createProgramReviewPackage(homeInput))
+  const bench = program.sessions.flatMap(session => session.movements).find(movement => movement.role === 'bench-pattern')
+  const scenarios = [
+    ['for hård', sessions => {
+      for (const session of sessions) {
+        for (const setLog of session.setLogs) setLog.actual.rpeActual = 8
+      }
+    }],
+    ['ufuldstændig', sessions => { sessions[0].setLogs.pop() }],
+    ['sprunget over', sessions => {
+      sessions[0].setLogs[0].actual = { weightKg: null, repsCompleted: null, rpeActual: null, note: '', skipped: true }
+    }],
+    ['ugyldig', sessions => { sessions[0].setLogs[0].actual.rpeActual = 11 }],
+  ]
+
+  for (const [label, alter] of scenarios) {
+    const sessions = completedMovementWeek(program, bench, 1, 40)
+    alter(sessions)
+    const item = buildWeekTwoProposal(program, sessions).proposals
+      .find(candidate => candidate.exerciseId === bench.exerciseId)
+    assert.equal(item.action, 'keep', label)
+    assert.equal(item.fromLoadKg, 40, label)
+    assert.equal(item.toLoadKg, 40, label)
+    assert.equal(item.progressionKg, null, label)
+  }
+})
+
 test('uge-to-evidens bruger de konkrete reps fra member-loggens sætplansstandard', () => {
   const match = {
     goal: 'powerlifting-foundation',

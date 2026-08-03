@@ -15,8 +15,13 @@ en øvelse giver smerte, eller du er usikker på, om du bør udføre den, så st
 1. Marc sender enten en e-mailinvitation eller et personligt link direkte til
    dig. Åbn det på den telefon og i den browser, du vil bruge til træning. Del
    ikke linket med andre. Det kan kun bruges i kort tid.
-2. Gennemfør login med præcis den inviterede e-mail. Hvis appen beder om din
-   e-mail igen, så åbn det nyeste login-link i samme browser.
+2. Linket skal lande på
+   `https://app.entropicoaching.dk/subscription.html`, og appen skal registrere
+   dit login automatisk. Gennemfør login med præcis den inviterede e-mail. Hvis
+   du lander på en anden adresse, ser en blank side eller stadig ser login efter
+   en genindlæsning, så stop og send URL plus screenshot til Marc. Opret ikke en
+   ny konto. Hvis appen beder om din e-mail igen, så åbn det nyeste login-link i
+   samme browser.
 3. Skriv til Marc: “Jeg er logget ind.” Første login bruges til at aktivere din
    tidsbegrænsede pilotadgang.
 4. Når Marc har bekræftet aktiveringen, genindlæs appen. Du skal kunne vælge

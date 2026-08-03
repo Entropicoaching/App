@@ -39,6 +39,8 @@ export async function snapshotDirectory(directory) {
 
 export function verifyCombinedDeploy({ baseline, combined, subscriptionHtml }) {
   assert.ok(baseline instanceof Map && baseline.has('index.html'), 'portalens baseline mangler index.html')
+  assert.ok(baseline.has('CNAME'), 'portalens baseline mangler CNAME')
+  assert.ok(baseline.has('.nojekyll'), 'portalens baseline mangler .nojekyll')
   assert.ok(combined instanceof Map && combined.has('index.html'), 'det kombinerede build mangler index.html')
 
   for (const [path, digest] of baseline) {

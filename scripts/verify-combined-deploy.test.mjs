@@ -4,6 +4,8 @@ import test from 'node:test'
 import { verifyCombinedDeploy, verifySubscriptionAssetIsolation } from './verify-combined-deploy.mjs'
 
 const portal = new Map([
+  ['.nojekyll', 'pages-marker'],
+  ['CNAME', 'app.entropicoaching.dk'],
   ['index.html', 'portal-index'],
   ['assets/index.js', 'portal-js'],
 ])
