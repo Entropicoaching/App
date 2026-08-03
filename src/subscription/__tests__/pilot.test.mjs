@@ -420,6 +420,8 @@ test('subscription-klienten importerer ikke 1:1-klienten og entry har noindex ud
   assert.match(clientSource, /storageKey: config\.storageKey/)
   assert.match(clientSource, /detectSessionInUrl: true/)
   assert.match(authSource, /signInWithPassword/)
+  assert.match(authSource, /<Button type="submit" disabled=\{busy\}>/)
+  assert.match(authSource, /finally\s*\{\s*setBusy\(false\)/)
   assert.match(authSource, /signOut/)
   assert.doesNotMatch(authSource, /signUp|resetPasswordForEmail/)
   assert.doesNotMatch(mainSource, /from ['"]\.\.\/appUpdate|navigator\.serviceWorker/)

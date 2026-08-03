@@ -29,24 +29,31 @@ function Login({ client }) {
     setError('')
     setSent(false)
     const normalizedEmail = email.trim()
-    const result = mode === 'magic-link'
-      ? await client.auth.signInWithOtp({
-          email: normalizedEmail,
-          options: {
-            shouldCreateUser: false,
-            emailRedirectTo: `${window.location.origin}${window.location.pathname}`,
-          },
-        })
-      : await client.auth.signInWithPassword({ email: normalizedEmail, password })
+    try {
+      const result = mode === 'magic-link'
+        ? await client.auth.signInWithOtp({
+            email: normalizedEmail,
+            options: {
+              shouldCreateUser: false,
+              emailRedirectTo: `${window.location.origin}${window.location.pathname}`,
+            },
+          })
+        : await client.auth.signInWithPassword({ email: normalizedEmail, password })
 
-    if (result.error) {
+      if (result.error) {
+        setError(mode === 'magic-link'
+          ? 'Login-linket kunne ikke sendes. Kontrollér mailen og prøv igen.'
+          : 'Login mislykkedes. Kontrollér mail og adgangskode.')
+      } else if (mode === 'magic-link') {
+        setSent(true)
+      }
+    } catch {
       setError(mode === 'magic-link'
-        ? 'Login-linket kunne ikke sendes. Kontrollér mailen og prøv igen.'
-        : 'Login mislykkedes. Kontrollér mail og adgangskode.')
-    } else if (mode === 'magic-link') {
-      setSent(true)
+        ? 'Der er ikke forbindelse til mail-login lige nu. Prøv igen, eller brug dit personlige link fra Marc.'
+        : 'Login mislykkedes. Kontrollér forbindelsen og prøv igen.')
+    } finally {
+      setBusy(false)
     }
-    setBusy(false)
   }
 
   const inputStyle = { width: '100%', boxSizing: 'border-box', minHeight: '52px', background: color.panel, border: `1px solid ${color.lineStrong}`, color: color.text, fontFamily: font.sans, fontSize: '1rem', padding: '0.7rem 0.9rem', outline: 'none', marginBottom: '0.8rem' }
@@ -59,7 +66,7 @@ function Login({ client }) {
         {mode === 'password' && <input data-entropi-focus aria-label="Adgangskode" type="password" autoComplete="current-password" placeholder="Adgangskode" value={password} onChange={event => setPassword(event.target.value)} style={inputStyle} required />}
         {error && <p role="alert" style={{ ...s.body, color: '#d78b7d' }}>{error}</p>}
         {sent && <p role="status" style={{ ...s.body, color: color.accent }}>Linket er sendt. Åbn mailen på denne enhed; linket fører dig direkte tilbage til din træning.</p>}
-        <Button disabled={busy}>{busy ? (mode === 'magic-link' ? 'Sender link…' : 'Logger ind…') : (mode === 'magic-link' ? 'Send login-link' : 'Log ind')}</Button>
+        <Button type="submit" disabled={busy}>{busy ? (mode === 'magic-link' ? 'Sender link…' : 'Logger ind…') : (mode === 'magic-link' ? 'Send login-link' : 'Log ind')}</Button>
       </form>
       <button
         type="button"
