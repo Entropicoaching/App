@@ -15,11 +15,20 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm install
-      - run: npm run build
+      - run: npm ci
+      - run: npm run lint:subscription
+      - run: npm run test:subscription
+      - run: npm run test:subscription-deploy
+      - run: npm run verify:subscription-separation
+      - run: npm run verify:subscription-pilot-smoke
+      - run: npm run verify:subscription-pilot-completion
+      - run: npm run build:pages
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_KEY }}
+          VITE_SUB_SUPABASE_URL: https://maxhsefxbrvsgolscqwh.supabase.co/
+          VITE_SUB_SUPABASE_PROJECT_REF: maxhsefxbrvsgolscqwh
+          VITE_SUB_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUB_SUPABASE_ANON_KEY }}
       - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

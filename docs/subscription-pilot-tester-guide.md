@@ -4,7 +4,7 @@ Brug appen som din egen træningsapp. Vælg det, du reelt kan følge, og log det
 der faktisk sker. Et miss eller en tung dag er brugbar information. Du skal
 ikke få testen til at se pæn ud.
 
-Appadresse: `https://<OFFENTLIG-PILOT-URL>/subscription.html`
+Appadresse: `https://app.entropicoaching.dk/subscription.html`
 
 Piloten indeholder ingen betaling og erstatter ikke individuel coaching. Hvis
 en øvelse giver smerte, eller du er usikker på, om du bør udføre den, så stop

@@ -18,7 +18,7 @@ redirect-URL i shadow-projektet.
 Kontrollér først:
 
 1. Appen åbner på en telefon via
-   `https://<OFFENTLIG-PILOT-URL>/subscription.html`.
+   `https://app.entropicoaching.dk/subscription.html`.
 2. Supabase-dashboardets project ref er `maxhsefxbrvsgolscqwh`.
 3. `.env.local` i app-worktreet indeholder shadow-URL, shadow project ref og en
    lokal `SUPABASE_SECRET_KEY` til owner-værktøjet.
@@ -43,7 +43,7 @@ Public-buildet ligger lokalt i `dist-subscription-public` og indeholder kun
 ```powershell
 $pilotEmail = 'tester@example.dk'
 $pilotValidUntil = '2026-08-17T21:59:59Z'
-$pilotUrl = 'https://<OFFENTLIG-PILOT-URL>/subscription.html'
+$pilotUrl = 'https://app.entropicoaching.dk/subscription.html'
 $pilotProject = 'maxhsefxbrvsgolscqwh'
 ```
 
