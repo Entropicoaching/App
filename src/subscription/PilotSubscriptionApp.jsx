@@ -11,6 +11,7 @@ import {
   syncPilotOutbox,
 } from './pilotRepository.js'
 import { PROGRAM_MATCH_INPUT_SCHEMA_VERSION } from './templateMatcher.js'
+import { isTransientAccessClockError, retryTransientAccessClock } from './access.js'
 
 function PageMessage({ label, title, children, retry, logout }) {
   return <div style={s.wrap}>
@@ -43,6 +44,9 @@ function friendlyLoadError(error) {
   const value = String(error?.message || '').toLowerCase()
   if (value.includes('fetch') || value.includes('network') || value.includes('offline')) {
     return 'Der er ikke forbindelse til dit medlemskab. Kontrollér nettet og prøv igen.'
+  }
+  if (isTransientAccessClockError(error)) {
+    return 'Login-serveren er et \u00f8jeblik bagud. Vent et \u00f8jeblik og pr\u00f8v igen \u2014 du beh\u00f8ver ikke et nyt link.'
   }
   if (value.includes('session') || value.includes('jwt') || value.includes('auth')) {
     return 'Login-sessionen kunne ikke bruges. Log ud, og åbn et nyt login-link.'
@@ -101,12 +105,12 @@ export default function PilotSubscriptionApp({ client, session, logout }) {
     const requestId = ++requestSequence.current
     if (!quiet) setState(current => ({ ...current, status: 'loading', error: null }))
     try {
-      let remote = await loadPilotState(client, user)
+      let remote = await retryTransientAccessClock(() => loadPilotState(client, user))
       if (remote.access.tier === 'member' && remote.assignment) {
         const queuedSessions = loadPilotOutbox(user.id)
         if (queuedSessions.length) {
           await syncPilotOutbox(client, user.id, remote.assignment)
-          remote = await loadPilotState(client, user)
+          remote = await retryTransientAccessClock(() => loadPilotState(client, user))
         }
       }
       if (requestId !== requestSequence.current) return null

@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 
-import { normalizeAccess } from '../access.js'
+import { isTransientAccessClockError, normalizeAccess, retryTransientAccessClock } from '../access.js'
 import { isProgramMatchPreviewEnabled, SHADOW_PROJECT_REF, SUBSCRIPTION_AUTH_STORAGE_KEY, validatePilotConfig } from '../pilotConfig.js'
 import { clearPilotCache, clearProgramMatchDraft, enqueuePilotSession, loadPilotDraft, loadPilotOutbox, loadPilotSessions, loadProgramMatchDraft, pilotCachePrefix, savePilotDraft, savePilotSessions, saveProgramMatchDraft } from '../pilotCache.js'
 import { completeMyProgramSetup, loadPilotState, loadRemoteHistory, mapProgramRow, mapRemoteHistory, memberJourneySessionToPilotSession, memberSetupRpcArgs, mergeSessions, PILOT_REMOTE_HISTORY_LIMIT, syncOneSession, workoutRpcArgs } from '../pilotRepository.js'
@@ -24,6 +24,33 @@ test('tier-svar accepterer kun free/member og fejler ellers lukket', () => {
   assert.deepEqual(normalizeAccess([{ tier: 'member' }]), { tier: 'member', valid: true })
   assert.equal(normalizeAccess([{ tier: 'coaching', has_coaching: true }]).valid, false)
   assert.equal(normalizeAccess(null).tier, 'free')
+})
+
+test('transient JWT clock skew retries without requiring a new login link', async () => {
+  const waits = []
+  let attempts = 0
+  const result = await retryTransientAccessClock(async () => {
+    attempts += 1
+    if (attempts < 3) throw new Error('Adgang kunne ikke laeses: JWT issued at future')
+    return { tier: 'member' }
+  }, {
+    delays: [10, 20, 30],
+    wait: async milliseconds => { waits.push(milliseconds) },
+  })
+  assert.deepEqual(result, { tier: 'member' })
+  assert.equal(attempts, 3)
+  assert.deepEqual(waits, [10, 20])
+  assert.equal(isTransientAccessClockError(new Error('JWT not yet valid')), true)
+
+  let permanentAttempts = 0
+  await assert.rejects(
+    retryTransientAccessClock(async () => {
+      permanentAttempts += 1
+      throw new Error('invalid JWT')
+    }, { wait: async () => {} }),
+    /invalid JWT/,
+  )
+  assert.equal(permanentAttempts, 1)
 })
 
 test('free åbner kun det faste startprogram og aldrig memberdata', async () => {
