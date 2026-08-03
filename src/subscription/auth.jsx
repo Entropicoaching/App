@@ -15,7 +15,7 @@ export function PilotUnavailable({ reason }) {
   return <Shell><Label>Medlemsadgang</Label><h1 style={s.h1}>Appen kan ikke åbnes her.</h1><p style={s.body}>{reason}</p><Meta style={{ marginTop: '1rem', color: color.dim }}>Ingen træningsdata er sendt.</Meta></Shell>
 }
 
-function Login({ client }) {
+function Login({ client, handoffError = false }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [mode, setMode] = useState('magic-link')
@@ -61,6 +61,7 @@ function Login({ client }) {
     <Shell>
       <Label>Medlemslogin</Label><h1 style={s.h1}>Åbn din træning.</h1>
       <p style={{ ...s.body, marginBottom: '1.5rem' }}>Indtast din e-mail. Vi sender et login-link, som åbner din træning på denne enhed.</p>
+      {handoffError && <p role="alert" style={{ ...s.body, color: '#d78b7d' }}>Det personlige link kunne ikke åbnes sikkert. Bed Marc om et nyt link.</p>}
       <form onSubmit={signIn}>
         <input data-entropi-focus aria-label="E-mail" type="email" autoComplete="email" placeholder="E-mail" value={email} onChange={event => setEmail(event.target.value)} style={inputStyle} required />
         {mode === 'password' && <input data-entropi-focus aria-label="Adgangskode" type="password" autoComplete="current-password" placeholder="Adgangskode" value={password} onChange={event => setPassword(event.target.value)} style={inputStyle} required />}
@@ -83,7 +84,22 @@ function Login({ client }) {
   )
 }
 
-export default function PilotAuth({ client, children }) {
+function MagicLinkHandoff({ actionLink }) {
+  const [opening, setOpening] = useState(false)
+  const openTraining = () => {
+    if (opening) return
+    setOpening(true)
+    window.location.assign(actionLink)
+  }
+  return <Shell>
+    <Label>Personligt medlemslink</Label>
+    <h1 style={s.h1}>Åbn din træning.</h1>
+    <p style={{ ...s.body, marginBottom: '1.5rem' }}>Tryk én gang på knappen. Først derefter bruges dit personlige login-link på denne enhed.</p>
+    <Button type="button" disabled={opening} onClick={openTraining}>{opening ? 'Åbner…' : 'Åbn min træning'}</Button>
+  </Shell>
+}
+
+export default function PilotAuth({ client, children, magicLinkHandoff = null }) {
   const [session, setSession] = useState(undefined)
   const [sessionError, setSessionError] = useState('')
   const [retryKey, setRetryKey] = useState(0)
@@ -112,6 +128,7 @@ export default function PilotAuth({ client, children }) {
 
   if (sessionError) return <Shell><Label>Medlemslogin</Label><h1 style={s.h1}>Vi kan ikke åbne din træning endnu.</h1><p style={{ ...s.body, marginBottom: '1.5rem' }}>{sessionError} Prøv igen, når du er online.</p><Button onClick={() => { setSession(undefined); setSessionError(''); setRetryKey(value => value + 1) }}>Prøv igen</Button></Shell>
   if (session === undefined) return <Shell><Label>Medlemskonto</Label><p style={s.body}>Åbner din træning…</p></Shell>
-  if (!session) return <Login client={client} />
+  if (!session && magicLinkHandoff?.actionLink) return <MagicLinkHandoff actionLink={magicLinkHandoff.actionLink} />
+  if (!session) return <Login client={client} handoffError={Boolean(magicLinkHandoff?.error)} />
   return children({ session, logout: () => client.auth.signOut({ scope: 'local' }) })
 }
