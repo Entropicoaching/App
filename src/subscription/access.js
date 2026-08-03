@@ -14,21 +14,35 @@ export function isTransientAccessClockError(error) {
   return message.includes('jwt issued at future') || message.includes('jwt not yet valid')
 }
 
-export async function retryTransientAccessClock(
+export function isTransientNetworkError(error) {
+  const message = String(error?.message || '').toLowerCase()
+  return ['fetch', 'network', 'offline', 'load failed', 'failed to load', 'connection was lost', 'aborted', 'cancelled']
+    .some(fragment => message.includes(fragment))
+}
+
+export async function retryTransientOperation(
   operation,
   {
     delays = [500, 1500, 3000],
     wait = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds)),
+    shouldRetry = isTransientAccessClockError,
   } = {},
 ) {
   for (let attempt = 0; ; attempt += 1) {
     try {
       return await operation()
     } catch (error) {
-      if (!isTransientAccessClockError(error) || attempt >= delays.length) throw error
+      if (!shouldRetry(error) || attempt >= delays.length) throw error
       await wait(delays[attempt])
     }
   }
+}
+
+export function retryTransientAccessClock(operation, options = {}) {
+  return retryTransientOperation(operation, {
+    ...options,
+    shouldRetry: isTransientAccessClockError,
+  })
 }
 
 export async function loadMyAccess(client) {

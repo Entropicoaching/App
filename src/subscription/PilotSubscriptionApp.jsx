@@ -11,7 +11,7 @@ import {
   syncPilotOutbox,
 } from './pilotRepository.js'
 import { PROGRAM_MATCH_INPUT_SCHEMA_VERSION } from './templateMatcher.js'
-import { isTransientAccessClockError, retryTransientAccessClock } from './access.js'
+import { isTransientAccessClockError, isTransientNetworkError, retryTransientAccessClock } from './access.js'
 
 function PageMessage({ label, title, children, retry, logout }) {
   return <div style={s.wrap}>
@@ -56,6 +56,12 @@ function friendlyLoadError(error) {
 
 function friendlySetupError(error) {
   const value = String(error?.message || '').toLowerCase()
+  if (isTransientAccessClockError(error)) {
+    return new Error('Login-serveren er et \u00f8jeblik bagud. Dine valg er gemt; vent et \u00f8jeblik og pr\u00f8v igen.')
+  }
+  if (isTransientNetworkError(error)) {
+    return new Error('Browseren afbr\u00f8d forbindelsen. Dine valg er gemt her; pr\u00f8v igen. Hvis det forts\u00e6tter i Instagram, skal login \u00e5bnes i Safari.')
+  }
   if (value.includes('allerede et aktivt program')) {
     return new Error('Der findes allerede et aktivt program. Hent medlemsforsiden igen.')
   }

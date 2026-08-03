@@ -461,3 +461,27 @@ test('subscription-klienten importerer ikke 1:1-klienten og entry har noindex ud
   assert.match(html, /noindex/)
   assert.doesNotMatch(html, /manifest\.webmanifest|navigator\.serviceWorker/)
 })
+
+test('setup RPC retries interrupted Instagram transport with the same idempotent request', async () => {
+  const input = {
+    requestId: '22222222-2222-4222-8222-222222222222',
+    matchInput: { schemaVersion: 4, goal: 'general-strength', level: 'begynder', daysPerWeek: 3, equipment: 'gym', squatStyle: 'high-bar', deadliftStyle: 'conventional' },
+    baselineLoads: { squat: { weightKg: 60, reps: 5, rpe: 8 }, bench: { weightKg: 40, reps: 5, rpe: 8 }, deadlift: { weightKg: 80, reps: 5, rpe: 8 } },
+  }
+  const calls = []
+  const client = {
+    async rpc(name, args) {
+      calls.push({ name, args })
+      if (calls.length === 1) return { data: null, error: { message: 'Load failed' } }
+      return { data: [{ assignment_id: 'a2', program_id: 'p2', created: true }], error: null }
+    },
+  }
+  const result = await completeMyProgramSetup(client, input, {
+    delays: [10],
+    wait: async () => {},
+  })
+  assert.equal(result.assignment_id, 'a2')
+  assert.equal(calls.length, 2)
+  assert.equal(calls[0].name, 'sub_complete_my_program_setup_v1')
+  assert.deepEqual(calls[0].args, calls[1].args)
+})

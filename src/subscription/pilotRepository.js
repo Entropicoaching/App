@@ -1,4 +1,4 @@
-import { loadMyAccess } from './access.js'
+import { isTransientAccessClockError, isTransientNetworkError, loadMyAccess, retryTransientOperation } from './access.js'
 import { validateBaselineLoads } from './baselineLoads.js'
 import { validateCustomerSetLog } from './customerSetLogging.js'
 import { PROGRAM_MATCH_INPUT_SCHEMA_VERSION, validateTemplateInput } from './templateMatcher.js'
@@ -342,17 +342,23 @@ export function memberSetupRpcArgs({ requestId, matchInput, baselineLoads }) {
 // The browser can request one exact initial programme for auth.uid(). It never
 // sends a target user, programme id, tier or assignment source; those remain
 // server-owned in the shadow RPC.
-export async function completeMyProgramSetup(client, input) {
-  const { data, error } = await client.rpc(
-    'sub_complete_my_program_setup_v1',
-    memberSetupRpcArgs(input),
-  )
-  if (error) throw new Error(`Programmet kunne ikke oprettes: ${error.message}`)
-  const row = Array.isArray(data) ? data[0] : data
-  if (!row?.assignment_id || !row?.program_id) {
-    throw new Error('Programops\u00e6tningen returnerede ikke en aktiv tildeling.')
-  }
-  return row
+export async function completeMyProgramSetup(client, input, retryOptions) {
+  const args = memberSetupRpcArgs(input)
+  return retryTransientOperation(async () => {
+    const { data, error } = await client.rpc(
+      'sub_complete_my_program_setup_v1',
+      args,
+    )
+    if (error) throw new Error(`Programmet kunne ikke oprettes: ${error.message}`)
+    const row = Array.isArray(data) ? data[0] : data
+    if (!row?.assignment_id || !row?.program_id) {
+      throw new Error('Programops\u00e6tningen returnerede ikke en aktiv tildeling.')
+    }
+    return row
+  }, {
+    ...retryOptions,
+    shouldRetry: error => isTransientAccessClockError(error) || isTransientNetworkError(error),
+  })
 }
 
 // The member journey keeps the complete planned-vs-actual record, including
