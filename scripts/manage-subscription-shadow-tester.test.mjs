@@ -3,15 +3,18 @@ import test from 'node:test'
 import {
   DEFAULT_REDIRECT_TO,
   EXPECTED_SHADOW_REF,
+  PUBLIC_SUBSCRIPTION_URL,
   activationRequestId,
   authReadiness,
   buildPlan,
   executePlan,
+  magicLinkHandoffUrl,
   normalizeRedirectTo,
   normalizeValidUntil,
   parseArgs,
   parseEnv,
   validateGeneratedInviteLink,
+  validateGeneratedMagicLink,
   verifyShadowContext,
 } from './manage-subscription-shadow-tester.mjs'
 
@@ -79,6 +82,32 @@ test('plans canonicalise email, expiry and local callback without network', () =
     redirectTo: DEFAULT_REDIRECT_TO,
     validUntil: '2026-09-01T21:59:59.000Z',
   })
+})
+
+test('login-link plan binds exact email and UUID to the one supported public handoff', () => {
+  const parsed = parseArgs([
+    'login-link',
+    '--email', ' Tester@Example.dk ',
+    '--user-id', USER_ID,
+  ])
+  assert.deepEqual(buildPlan({ ...parsed, now: NOW }), {
+    action: 'login-link',
+    execute: false,
+    email: 'tester@example.dk',
+    envFile: '.env.local',
+    projectRef: EXPECTED_SHADOW_REF,
+    redirectTo: PUBLIC_SUBSCRIPTION_URL,
+    userId: USER_ID,
+  })
+  assert.throws(() => buildPlan({
+    action: 'login-link',
+    options: {
+      email: 'tester@example.dk',
+      'user-id': USER_ID,
+      'redirect-to': DEFAULT_REDIRECT_TO,
+    },
+    now: NOW,
+  }), /offentlige callback/)
 })
 
 test('expiry is UTC, future and time-bounded', () => {
@@ -179,6 +208,29 @@ function generatedInviteData(plan, overrides = {}) {
   }
 }
 
+function generatedMagicLinkData(plan, overrides = {}) {
+  const token = 'hashed-magic-token-456'
+  const actionLink = new URL(`https://${EXPECTED_SHADOW_REF}.supabase.co/auth/v1/verify`)
+  actionLink.searchParams.set('token', token)
+  actionLink.searchParams.set('type', 'magiclink')
+  actionLink.searchParams.set('redirect_to', plan.redirectTo)
+  return {
+    properties: {
+      action_link: actionLink.toString(),
+      email_otp: '654321',
+      hashed_token: token,
+      redirect_to: plan.redirectTo,
+      verification_type: 'magiclink',
+      ...overrides.properties,
+    },
+    user: {
+      id: plan.userId,
+      email: plan.email,
+      ...overrides.user,
+    },
+  }
+}
+
 test('invite-link dry-run stays entirely local', async () => {
   const plan = buildPlan({ action: 'invite-link', options: baseOptions(), now: NOW })
   let called = false
@@ -260,6 +312,178 @@ test('generated invitation rejects unexpected and duplicate action-link paramete
   const duplicate = generatedInviteData(plan)
   duplicate.properties.action_link += '&type=invite'
   assert.throws(() => validateGeneratedInviteLink({ ...duplicate, plan }), /uventede eller duplikerede/)
+})
+
+test('login-link dry-run never reaches Supabase or the clipboard', async () => {
+  const plan = buildPlan({
+    action: 'login-link',
+    options: { email: 'tester@example.dk', 'user-id': USER_ID },
+    now: NOW,
+  })
+  let clientCalled = false
+  let clipboardCalled = false
+  const result = await executePlan(plan, context(), () => {
+    clientCalled = true
+  }, () => {
+    clipboardCalled = true
+  })
+  assert.equal(clientCalled, false)
+  assert.equal(clipboardCalled, false)
+  assert.equal(result.state, 'DRY_RUN')
+  assert.equal(result.networkAttempted, false)
+})
+
+test('existing tester login copies one validated handoff without printing a token or changing entitlement', async () => {
+  const plan = buildPlan({
+    action: 'login-link',
+    options: {
+      email: 'tester@example.dk',
+      'user-id': USER_ID,
+      execute: true,
+      'confirm-project': EXPECTED_SHADOW_REF,
+    },
+    now: NOW,
+  })
+  const response = generatedMagicLinkData(plan)
+  const calls = []
+  const copied = []
+  const fakeClient = {
+    auth: { admin: {
+      getUserById: async id => {
+        calls.push(['getUserById', id])
+        return {
+          data: { user: {
+            id: USER_ID,
+            email: plan.email,
+            invited_at: '2026-08-03T08:00:00Z',
+            email_confirmed_at: '2026-08-03T08:03:00Z',
+            last_sign_in_at: '2026-08-03T08:04:00Z',
+          } },
+          error: null,
+        }
+      },
+      generateLink: async payload => {
+        calls.push(['generateLink', payload])
+        return { data: response, error: null }
+      },
+    } },
+    rpc: async () => assert.fail('login-link must never call an entitlement RPC'),
+  }
+  const result = await executePlan(plan, context(), () => fakeClient, value => copied.push(value))
+
+  assert.deepEqual(calls, [
+    ['getUserById', USER_ID],
+    ['generateLink', {
+      type: 'magiclink',
+      email: plan.email,
+      options: { redirectTo: PUBLIC_SUBSCRIPTION_URL },
+    }],
+  ])
+  assert.equal(copied.length, 1)
+  assert.equal(copied[0], magicLinkHandoffUrl(response.properties.action_link))
+  const handoff = new URL(copied[0])
+  assert.equal(handoff.origin + handoff.pathname, PUBLIC_SUBSCRIPTION_URL)
+  assert.equal(new URLSearchParams(handoff.hash.slice(1)).get('entropi_magic_link'), response.properties.action_link)
+
+  assert.equal(result.state, 'SENSITIVE_LOGIN_HANDOFF_COPIED')
+  assert.equal(result.copiedToClipboard, true)
+  assert.equal(result.memberGranted, false)
+  assert.equal(result.entitlementChanged, false)
+  assert.equal(Object.keys(result).some(key => /action.?link|token|otp/i.test(key)), false)
+  assert.equal(JSON.stringify(result).includes(response.properties.hashed_token), false)
+  assert.equal(JSON.stringify(result).includes(response.properties.action_link), false)
+})
+
+test('generated magic login fails closed before clipboard use on wrong identity or link contract', async () => {
+  const plan = buildPlan({
+    action: 'login-link',
+    options: { email: 'tester@example.dk', 'user-id': USER_ID },
+    now: NOW,
+  })
+  const valid = generatedMagicLinkData(plan)
+  assert.equal(validateGeneratedMagicLink({ ...valid, plan }), valid.properties.action_link)
+
+  const wrongUuid = generatedMagicLinkData(plan, { user: { id: ACTIVATION_ID } })
+  assert.throws(() => validateGeneratedMagicLink({ ...wrongUuid, plan }), /præcise eksisterende Auth-bruger/)
+
+  const wrongEmail = generatedMagicLinkData(plan, { user: { email: 'wrong@example.dk' } })
+  assert.throws(() => validateGeneratedMagicLink({ ...wrongEmail, plan }), /præcise eksisterende Auth-bruger/)
+
+  const wrongType = generatedMagicLinkData(plan, { properties: { verification_type: 'invite' } })
+  assert.throws(() => validateGeneratedMagicLink({ ...wrongType, plan }), /magic-link-typen/)
+
+  const wrongRedirect = generatedMagicLinkData(plan, {
+    properties: { redirect_to: 'https://evil.example/subscription.html' },
+  })
+  assert.throws(() => validateGeneratedMagicLink({ ...wrongRedirect, plan }), /callback/)
+
+  const wrongHost = generatedMagicLinkData(plan)
+  wrongHost.properties.action_link = wrongHost.properties.action_link.replace(
+    `${EXPECTED_SHADOW_REF}.supabase.co`,
+    'wrong-project.supabase.co',
+  )
+  assert.throws(() => validateGeneratedMagicLink({ ...wrongHost, plan }), /subscription-shadow/)
+
+  const wrongToken = generatedMagicLinkData(plan)
+  wrongToken.properties.hashed_token = 'different-token'
+  assert.throws(() => validateGeneratedMagicLink({ ...wrongToken, plan }), /type, token eller callback/)
+})
+
+test('login-link requires project confirmation and refuses an unconfirmed or mismatched existing user', async () => {
+  assert.throws(() => buildPlan({
+    action: 'login-link',
+    options: { email: 'tester@example.dk', 'user-id': USER_ID, execute: true },
+    now: NOW,
+  }), /--confirm-project/)
+
+  const plan = buildPlan({
+    action: 'login-link',
+    options: {
+      email: 'tester@example.dk',
+      'user-id': USER_ID,
+      execute: true,
+      'confirm-project': EXPECTED_SHADOW_REF,
+    },
+    now: NOW,
+  })
+  let generated = false
+  let copied = false
+  const fakeClient = {
+    auth: { admin: {
+      getUserById: async () => ({
+        data: { user: { id: USER_ID, email: plan.email, email_confirmed_at: null } },
+        error: null,
+      }),
+      generateLink: async () => {
+        generated = true
+        return { data: generatedMagicLinkData(plan), error: null }
+      },
+    } },
+  }
+  await assert.rejects(
+    executePlan(plan, context(), () => fakeClient, () => { copied = true }),
+    /ikke bekræftet/,
+  )
+  assert.equal(generated, false)
+  assert.equal(copied, false)
+
+  const mismatchedClient = {
+    auth: { admin: {
+      getUserById: async () => ({
+        data: { user: {
+          id: USER_ID,
+          email: 'wrong@example.dk',
+          email_confirmed_at: '2026-08-03T08:03:00Z',
+        } },
+        error: null,
+      }),
+      generateLink: async () => assert.fail('mismatched user must fail before generating a link'),
+    } },
+  }
+  await assert.rejects(
+    executePlan(plan, context(), () => mismatchedClient, () => assert.fail('mismatched user must not reach clipboard')),
+    /e-mail matcher ikke/,
+  )
 })
 
 test('status reads only the exact Auth user and reports readiness', async () => {

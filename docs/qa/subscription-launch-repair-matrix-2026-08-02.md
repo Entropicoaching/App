@@ -56,13 +56,30 @@ Den automatiske fuldmatrix supplerer tabellen med alle 96 kombinationer af mål 
 - Øvelser og sæt var visuelt adskilt, alle kommende sæt kunne åbnes, og `Spring over dette sæt` var sekundært.
 - Hvert skærmskift nulstillede scroll til toppen efter den fundne og rettede mobilregression.
 
+### Gennemført offentlig shadow-rejse · 3. august 2026
+
+- En ny, syntetisk og tidsbegrænset shadow-bruger blev inviteret, bekræftet og
+  aktiveret gennem den kontrollerede servervej. Ingen direkte entitlement-write.
+- Offentlig login → onboarding → tungt-sæt-baselines → programoprettelse blev
+  gennemført med styrkeløftfundament, øvet, 3 dage, Full Gym, low-bar og sumo.
+- Preview og aktiv uge 1 var enige om 105 kg squat, 65 kg bænkpres og 125 kg
+  sumo-dødløft. Præcis én aktiv assignment blev oprettet med den valgte 3-dages
+  programvariant.
+- Alle 3 pas og 28/28 sæt blev gennemført. En valgt assistancevægt blev kopieret
+  automatisk fra første til andet og tredje sæt; refresh bevarede den aktive
+  member-rejse.
+- Vurderingen `Passende` foreslog præcis +2,5 kg på low-bar squat, bænkpres og
+  sumo-dødløft. Assistance beholdt senest brugte vægt uden et opdigtet løft.
+- Forslaget blev accepteret. Uge 2 viste 107,5 / 67,5 / 127,5 kg og overlevede
+  en fuld browser-refresh uden onboarding-loop eller ny assignment.
+
 ## Adgang, refresh og fejltilstande
 
 | ID | Starttilstand | Handling | Forventning | Resultat |
 |---|---|---|---|---|
 | A01 | Ingen session | Send magic-link, åbn callback, refresh | Samme lokale auth-key; callback udveksles; ingen hvid skærm | Statisk kontrakt PASS · rigtig mail-click afventer Marc |
 | A02 | Pilot-UUID med member-entitlement, ingen member/assignment | Login/refresh | Præcis én `Sæt dit program op`-vej; ingen terminal tom state | Shadow-data + 390 px onboarding PASS |
-| A03 | Eksisterende member med aktiv assignment + canonical baselines | Refresh midt i uge 1 | Samme assignment/program og user-scoped kladde genoptages | Regressionstest PASS · mobilrunde ☐ |
+| A03 | Eksisterende member med aktiv assignment + canonical baselines | Refresh midt i uge 1 | Samme assignment/program og user-scoped kladde genoptages | Regressionstest PASS · offentlig shadow-rejse PASS |
 | A04 | Free-tier | Login/refresh | Kun fast `start-2`; ingen memberprofil, assignment, log eller progression åbnes | Repository-test PASS · mobilrunde ☐ |
 | A05 | Korrupt/stale localStorage | Refresh | Korrupt snapshot slettes; menneskelig sikker start, ingen white screen | Regressionstest PASS |
 | A06 | Netværk afbrydes efter pas | Afslut pas, gå online igen | Sæt bliver lokalt; outbox synkroniserer idempotent mod aktiv assignment | RPC/outbox-test PASS · browserrunde ☐ |

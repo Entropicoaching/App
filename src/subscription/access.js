@@ -20,6 +20,10 @@ export function isTransientNetworkError(error) {
     .some(fragment => message.includes(fragment))
 }
 
+export function isEmbeddedSocialBrowser(userAgent) {
+  return /(?:Instagram|FBAN|FBAV|FB_IAB|FB4A|FBIOS)/i.test(String(userAgent || ''))
+}
+
 export async function retryTransientOperation(
   operation,
   {

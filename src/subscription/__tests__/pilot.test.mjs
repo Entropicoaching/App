@@ -2,10 +2,10 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 
-import { isTransientAccessClockError, normalizeAccess, retryTransientAccessClock } from '../access.js'
+import { isEmbeddedSocialBrowser, isTransientAccessClockError, normalizeAccess, retryTransientAccessClock } from '../access.js'
 import { isProgramMatchPreviewEnabled, SHADOW_PROJECT_REF, SUBSCRIPTION_AUTH_STORAGE_KEY, validatePilotConfig } from '../pilotConfig.js'
 import { clearPilotCache, clearProgramMatchDraft, enqueuePilotSession, loadPilotDraft, loadPilotOutbox, loadPilotSessions, loadProgramMatchDraft, pilotCachePrefix, savePilotDraft, savePilotSessions, saveProgramMatchDraft } from '../pilotCache.js'
-import { completeMyProgramSetup, loadPilotState, loadRemoteHistory, mapProgramRow, mapRemoteHistory, memberJourneySessionToPilotSession, memberSetupRpcArgs, mergeSessions, PILOT_REMOTE_HISTORY_LIMIT, syncOneSession, workoutRpcArgs } from '../pilotRepository.js'
+import { completeMyProgramSetup, loadPilotState, loadRemoteHistory, mapProgramRow, mapRemoteHistory, memberJourneySessionToPilotSession, memberSetupRpcArgs, mergeSessions, PILOT_REMOTE_HISTORY_LIMIT, setupFailureDiagnostic, syncOneSession, workoutRpcArgs } from '../pilotRepository.js'
 
 const url = `https://${SHADOW_PROJECT_REF}.supabase.co/`
 const publishable = 'sb_publishable_test-only-placeholder'
@@ -51,6 +51,13 @@ test('transient JWT clock skew retries without requiring a new login link', asyn
     /invalid JWT/,
   )
   assert.equal(permanentAttempts, 1)
+})
+
+test('sociale in-app browsere genkendes før member-setup', () => {
+  assert.equal(isEmbeddedSocialBrowser('Mozilla/5.0 [FBAN/Instagram;FBAV/400.0]'), true)
+  assert.equal(isEmbeddedSocialBrowser('Mozilla/5.0 FB_IAB/FB4A'), true)
+  assert.equal(isEmbeddedSocialBrowser('Mozilla/5.0 Version/17.6 Mobile/15E148 Safari/604.1'), false)
+  assert.equal(isEmbeddedSocialBrowser('Mozilla/5.0 Chrome/127.0.0.0 Mobile Safari/537.36'), false)
 })
 
 test('free åbner kun det faste startprogram og aldrig memberdata', async () => {
@@ -132,6 +139,64 @@ test('setup-RPC kan kun sende request, valg og rå baseline — aldrig sikkerhed
   assert.equal('program_id' in calls[0].args, false)
   assert.equal('tier' in calls[0].args, false)
   assert.equal('assignment_source' in calls[0].args, false)
+})
+
+test('setup-fejlreference er kort, stabil og uden private data', () => {
+  const requestId = '22222222-2222-4222-8222-222222222222'
+  const failure = new Error('tester@example.dk token=super-secret baselines=200')
+  failure.setupFailureKind = 'RPC'
+  const now = Date.parse('2026-08-03T08:11:40.000Z')
+  const diagnostic = setupFailureDiagnostic(requestId, failure, now)
+
+  assert.deepEqual(diagnostic, {
+    kind: 'RPC',
+    shortReference: 'SET-22222222',
+    timeUtc: '2026-08-03T08:11:40Z',
+    label: 'SET-22222222 \u00b7 RPC \u00b7 2026-08-03T08:11:40Z',
+  })
+  assert.doesNotMatch(JSON.stringify(diagnostic), /tester@example\.dk|super-secret|baselines|22222222-2222/)
+  assert.equal(setupFailureDiagnostic(requestId, new Error('Load failed'), now).kind, 'NET')
+  assert.equal(setupFailureDiagnostic(requestId, new Error('assignment-not-readable'), now).kind, 'RESPONSE')
+  assert.equal(setupFailureDiagnostic(requestId, new Error('lokal validering'), now).kind, 'LOCAL')
+  assert.equal(setupFailureDiagnostic('ugyldigt-id', failure, now).shortReference, 'SET-UKENDT')
+})
+
+test('setup-RPC fjerner r\u00e5 fejltekst f\u00f8r den kan n\u00e5 brugerfladen', async () => {
+  const input = {
+    requestId: '33333333-3333-4333-8333-333333333333',
+    matchInput: { schemaVersion: 4, goal: 'general-strength', level: 'begynder', daysPerWeek: 2, equipment: 'home', squatStyle: 'high-bar', deadliftStyle: 'sumo' },
+    baselineLoads: { squat: { weightKg: 30, reps: 5, rpe: 8 }, bench: { weightKg: 20, reps: 6, rpe: 8 }, deadlift: { weightKg: 40, reps: 5, rpe: 8 } },
+  }
+  const privateError = 'tester@example.dk token=super-secret baselines=200'
+  const client = { async rpc() { return { data: null, error: { message: privateError } } } }
+
+  await assert.rejects(
+    completeMyProgramSetup(client, input),
+    error => {
+      assert.equal(error.message, 'Programops\u00e6tningen kunne ikke gennemf\u00f8res.')
+      assert.equal(error.setupFailureKind, 'RPC')
+      assert.equal(error.setupFailureReason, 'UNKNOWN')
+      assert.doesNotMatch(`${error.message} ${Object.values(error).join(' ')}`, /tester@example\.dk|super-secret|baselines/)
+      return true
+    },
+  )
+
+  const throwingClient = { async rpc() { throw new Error(`Load failed ${privateError}`) } }
+  await assert.rejects(
+    completeMyProgramSetup(throwingClient, input, { delays: [] }),
+    error => {
+      assert.equal(error.setupFailureKind, 'NET')
+      assert.equal(error.setupFailureReason, 'NETWORK')
+      assert.doesNotMatch(`${error.message} ${Object.values(error).join(' ')}`, /tester@example\.dk|super-secret|baselines/)
+      return true
+    },
+  )
+
+  const malformedClient = { async rpc() { return { data: [{}], error: null } } }
+  await assert.rejects(
+    completeMyProgramSetup(malformedClient, input),
+    error => error.setupFailureKind === 'RESPONSE' && error.setupFailureReason === 'MISSING_ASSIGNMENT',
+  )
 })
 
 test('member-sæt bindes til assignment og skipped bliver aldrig til falske 0 kg-sæt', () => {
@@ -442,6 +507,7 @@ test('subscription-klienten importerer ikke 1:1-klienten og entry har noindex ud
   const clientSource = await readFile(new URL('../supabaseClient.js', import.meta.url), 'utf8')
   const authSource = await readFile(new URL('../auth.jsx', import.meta.url), 'utf8')
   const mainSource = await readFile(new URL('../main.jsx', import.meta.url), 'utf8')
+  const appSource = await readFile(new URL('../PilotSubscriptionApp.jsx', import.meta.url), 'utf8')
   const html = await readFile(new URL('../../../subscription.html', import.meta.url), 'utf8')
   assert.doesNotMatch(clientSource, /\.\.\/supabase\.js/)
   assert.match(clientSource, /storageKey: config\.storageKey/)
@@ -458,6 +524,9 @@ test('subscription-klienten importerer ikke 1:1-klienten og entry har noindex ud
   assert.match(authSource, /signOut/)
   assert.doesNotMatch(authSource, /signUp|resetPasswordForEmail/)
   assert.doesNotMatch(mainSource, /from ['"]\.\.\/appUpdate|navigator\.serviceWorker/)
+  assert.match(appSource, /setupFailureDiagnostic\(input\.requestId, error\)/)
+  assert.match(appSource, /\$\{friendly\.message\} Ref\. \$\{diagnostic\.label\}/)
+  assert.doesNotMatch(appSource, /\{ cause: error \}/)
   assert.match(html, /noindex/)
   assert.doesNotMatch(html, /manifest\.webmanifest|navigator\.serviceWorker/)
 })

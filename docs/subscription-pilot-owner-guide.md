@@ -106,7 +106,9 @@ et screenshot eller et delt notat.
 En kort besked kan være:
 
 > Her er dit personlige link til Entropi-piloten. Åbn det nu på den telefon og i
-> den browser, du vil bruge til træning. Linket er personligt og udløber hurtigt.
+> Safari eller Chrome — ikke inde i Instagram eller Facebook. Hvis beskedappen
+> åbner linket internt, så kopiér det og indsæt det i Safari/Chrome. Linket er
+> personligt og udløber hurtigt.
 > Skriv til mig, når du er logget ind.
 
 ### B. Mailvej: invitation via custom SMTP
@@ -177,6 +179,34 @@ kalder server-side. Skriv aldrig direkte i `sub_entitlements` eller
 `sub_assignments`, og forsøg ikke at kalde RPC'en fra browserklienten.
 Værktøjet bruger et deterministisk request-id, så samme aktivering kan
 kontrolleres uden at oprette en ny adgang.
+
+## Genadgang til en eksisterende tester
+
+Brug kun denne vej, hvis den allerede aktiverede shadow-tester er blevet logget
+ud eller har mistet sin lokale session. Kommandoen kræver både den præcise
+e-mail og testerens eksisterende Auth UUID. Den opretter ikke en bruger, ændrer
+ikke entitlement eller assignment og bruger ikke `profiles.role`.
+
+Kontrollér først planen uden netværk:
+
+```powershell
+npm run owner:subscription-shadow-tester -- login-link --email $pilotEmail --user-id $pilotUserId --redirect-to $pilotUrl
+```
+
+Når den rigtige tester er klar til at modtage login igen:
+
+```powershell
+npm run owner:subscription-shadow-tester -- login-link --email $pilotEmail --user-id $pilotUserId --redirect-to $pilotUrl --execute --confirm-project $pilotProject
+```
+
+Forvent `state: SENSITIVE_LOGIN_HANDOFF_COPIED`, `memberGranted: false` og
+`entitlementChanged: false`. Det personlige engangslogin kopieres direkte til
+Windows-udklipsholderen; token og link bliver aldrig vist i terminalens output.
+Indsæt det direkte i en privat besked til den præcise tester, og erstat derefter
+udklipsholderens indhold. Gem det aldrig i docs, screenshots, tasks eller git.
+Linket er kortlivet og skal kun bruges én gang. Hvis e-mail, UUID, shadow-ref,
+callback eller den genererede linkkontrakt afviger, stopper værktøjet uden at
+kopiere noget.
 
 ## Mail og Entropi-tekst
 

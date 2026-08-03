@@ -1,3 +1,4 @@
+import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import { resolve, sep } from 'node:path'
@@ -6,6 +7,7 @@ import { createClient } from '@supabase/supabase-js'
 
 export const EXPECTED_SHADOW_REF = 'maxhsefxbrvsgolscqwh'
 export const DEFAULT_REDIRECT_TO = 'http://localhost:5199/subscription.html'
+export const PUBLIC_SUBSCRIPTION_URL = 'https://app.entropicoaching.dk/subscription.html'
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 const UTC_TIMESTAMP_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?Z$/
@@ -137,13 +139,14 @@ const ACTION_FLAGS = {
   preflight: new Set(['email', 'valid-until', 'redirect-to', 'env-file']),
   invite: new Set(['email', 'valid-until', 'redirect-to', 'env-file', 'execute', 'confirm-project']),
   'invite-link': new Set(['email', 'valid-until', 'redirect-to', 'env-file', 'execute', 'confirm-project']),
+  'login-link': new Set(['email', 'user-id', 'redirect-to', 'env-file', 'execute', 'confirm-project']),
   status: new Set(['email', 'user-id', 'env-file', 'execute', 'confirm-project']),
   activate: new Set(['email', 'user-id', 'valid-until', 'env-file', 'execute', 'confirm-project']),
 }
 
 export function parseArgs(argv) {
   const action = argv[0]
-  if (!ACTION_FLAGS[action]) fail('Vælg handling: preflight, invite, invite-link, status eller activate.')
+  if (!ACTION_FLAGS[action]) fail('Vælg handling: preflight, invite, invite-link, login-link, status eller activate.')
   const options = {}
   for (let index = 1; index < argv.length; index += 1) {
     const token = argv[index]
@@ -180,13 +183,17 @@ export function buildPlan({ action, options, now = new Date() }) {
     envFile: options['env-file'] || '.env.local',
     projectRef: EXPECTED_SHADOW_REF,
   }
-  if (['preflight', 'invite', 'invite-link'].includes(action)) {
-    plan.redirectTo = normalizeRedirectTo(options['redirect-to'])
+  if (['preflight', 'invite', 'invite-link', 'login-link'].includes(action)) {
+    const redirectDefault = action === 'login-link' ? PUBLIC_SUBSCRIPTION_URL : DEFAULT_REDIRECT_TO
+    plan.redirectTo = normalizeRedirectTo(options['redirect-to'] || redirectDefault)
+    if (action === 'login-link' && plan.redirectTo !== PUBLIC_SUBSCRIPTION_URL) {
+      fail(`login-link skal bruge den offentlige callback ${PUBLIC_SUBSCRIPTION_URL}.`)
+    }
   }
   if (['preflight', 'invite', 'invite-link', 'activate'].includes(action)) {
     plan.validUntil = normalizeValidUntil(options['valid-until'], now)
   }
-  if (['status', 'activate'].includes(action)) {
+  if (['login-link', 'status', 'activate'].includes(action)) {
     plan.userId = normalizeUserId(options['user-id'])
   }
   if (action === 'activate') {
@@ -275,6 +282,70 @@ export function validateGeneratedInviteLink({ properties, user, plan }) {
   }
 }
 
+export function validateGeneratedMagicLink({ properties, user, plan }) {
+  if (user?.id !== plan.userId || !exactEmail(user, plan.email)) {
+    fail('Supabase returnerede ikke den præcise eksisterende Auth-bruger. Loginlinket blev ikke udleveret.')
+  }
+  if (properties?.verification_type !== 'magiclink') {
+    fail('Det genererede link har ikke magic-link-typen. Loginlinket blev ikke udleveret.')
+  }
+  if (properties.redirect_to !== plan.redirectTo) {
+    fail('Det genererede links callback matcher ikke den godkendte subscription-URL. Loginlinket blev ikke udleveret.')
+  }
+  if (!properties.hashed_token || typeof properties.hashed_token !== 'string') {
+    fail('Det genererede link mangler et login-token. Loginlinket blev ikke udleveret.')
+  }
+
+  let actionLink
+  try {
+    actionLink = new URL(properties.action_link)
+  } catch {
+    fail('Det genererede action-link er ugyldigt. Loginlinket blev ikke udleveret.')
+  }
+  if (
+    actionLink.protocol !== 'https:'
+    || actionLink.hostname !== `${EXPECTED_SHADOW_REF}.supabase.co`
+    || actionLink.port
+    || actionLink.pathname !== '/auth/v1/verify'
+    || actionLink.username
+    || actionLink.password
+    || actionLink.hash
+  ) {
+    fail('Det genererede action-link peger ikke præcist på den godkendte subscription-shadow. Loginlinket blev ikke udleveret.')
+  }
+
+  const keys = [...actionLink.searchParams.keys()].sort()
+  if (keys.join(',') !== 'redirect_to,token,type') {
+    fail('Det genererede action-link har uventede eller duplikerede parametre. Loginlinket blev ikke udleveret.')
+  }
+  if (
+    actionLink.searchParams.get('type') !== 'magiclink'
+    || actionLink.searchParams.get('redirect_to') !== plan.redirectTo
+    || actionLink.searchParams.get('token') !== properties.hashed_token
+  ) {
+    fail('Action-linkets type, token eller callback matcher ikke Supabase-svaret. Loginlinket blev ikke udleveret.')
+  }
+
+  return actionLink.toString()
+}
+
+export function magicLinkHandoffUrl(actionLink, redirectTo = PUBLIC_SUBSCRIPTION_URL) {
+  const handoff = new URL(redirectTo)
+  handoff.hash = `entropi_magic_link=${encodeURIComponent(actionLink)}`
+  return handoff.toString()
+}
+
+function copySensitiveTextToClipboard(value) {
+  const result = spawnSync('clip.exe', [], {
+    input: value,
+    encoding: 'utf8',
+    windowsHide: true,
+  })
+  if (result.error || result.status !== 0) {
+    fail('Det personlige login kunne ikke kopieres sikkert til udklipsholderen. Intet link blev skrevet i terminalen.')
+  }
+}
+
 export function authReadiness(user, email, expectedUserId) {
   if (expectedUserId && user?.id !== expectedUserId) fail('Auth-brugerens UUID matcher ikke den planlagte tester.')
   if (!user?.id || !exactEmail(user, email)) fail('Auth-brugerens e-mail matcher ikke den planlagte tester.')
@@ -289,7 +360,7 @@ export function authReadiness(user, email, expectedUserId) {
   }
 }
 
-export async function executePlan(plan, context, clientFactory = makeOperator) {
+export async function executePlan(plan, context, clientFactory = makeOperator, clipboardWriter = copySensitiveTextToClipboard) {
   if (!plan.execute) {
     return {
       state: 'DRY_RUN',
@@ -354,6 +425,36 @@ export async function executePlan(plan, context, clientFactory = makeOperator) {
   if (userError) fail(`Auth-status kunne ikke læses: ${userError.message}`)
   const readiness = authReadiness(userData?.user, plan.email, plan.userId)
 
+  if (plan.action === 'login-link') {
+    if (!readiness.confirmed) {
+      fail('Den præcise eksisterende tester har ikke bekræftet sin Auth-konto. Loginlinket blev ikke oprettet.')
+    }
+    const { data, error } = await operator.auth.admin.generateLink({
+      type: 'magiclink',
+      email: plan.email,
+      options: { redirectTo: plan.redirectTo },
+    })
+    if (error) fail('Loginlinket blev ikke oprettet. Intet link blev skrevet i terminalen.')
+    const actionLink = validateGeneratedMagicLink({
+      properties: data?.properties,
+      user: data?.user,
+      plan,
+    })
+    await clipboardWriter(magicLinkHandoffUrl(actionLink, plan.redirectTo))
+    return {
+      state: 'SENSITIVE_LOGIN_HANDOFF_COPIED',
+      sensitivity: 'SECRET_SINGLE_USE_AUTH_LINK',
+      projectRef: plan.projectRef,
+      email: plan.email,
+      userId: plan.userId,
+      redirectTo: plan.redirectTo,
+      copiedToClipboard: true,
+      memberGranted: false,
+      entitlementChanged: false,
+      handling: 'Indsæt direkte til den rigtige tester. Udklipsholderens indhold må ikke gemmes i docs, screenshots, tasks eller git.',
+    }
+  }
+
   if (plan.action === 'status') {
     return {
       state: 'AUTH_STATUS',
@@ -405,6 +506,9 @@ Invitation (dry-run uden --execute):
 Omkostningsfri fallback uden udsendt Supabase-mail (følsomt link):
   npm run owner:subscription-shadow-tester -- invite-link --email TESTER --valid-until UTC
 
+Ny loginadgang til en eksisterende, bekræftet shadow-tester (kopieres kun til udklipsholder):
+  npm run owner:subscription-shadow-tester -- login-link --email TESTER --user-id UUID --redirect-to ${PUBLIC_SUBSCRIPTION_URL}
+
 Status efter testerens første login (netværkslæsning, ingen skrivehandling):
   npm run owner:subscription-shadow-tester -- status --email TESTER --user-id UUID --execute --confirm-project ${EXPECTED_SHADOW_REF}
 
@@ -428,6 +532,9 @@ async function cli() {
     console.log(JSON.stringify(result, null, 2))
     if (result.state === 'SENSITIVE_INVITE_LINK_CREATED') {
       console.warn('FØLSOMT: Linket giver adgang til testerens Auth-konto, indtil det bruges eller udløber. Del det kun direkte og sikkert.')
+    }
+    if (result.state === 'SENSITIVE_LOGIN_HANDOFF_COPIED') {
+      console.warn('FØLSOMT: Et personligt engangslogin er kopieret til udklipsholderen. Terminalen viser ikke linket.')
     }
     if (result.state === 'DRY_RUN') {
       const next = plan.action === 'preflight'

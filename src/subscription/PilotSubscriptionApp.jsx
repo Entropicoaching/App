@@ -7,11 +7,12 @@ import {
   completeMyProgramSetup,
   loadPilotState,
   memberJourneySessionToPilotSession,
+  setupFailureDiagnostic,
   syncOneSession,
   syncPilotOutbox,
 } from './pilotRepository.js'
 import { PROGRAM_MATCH_INPUT_SCHEMA_VERSION } from './templateMatcher.js'
-import { isTransientAccessClockError, isTransientNetworkError, retryTransientAccessClock } from './access.js'
+import { isEmbeddedSocialBrowser, isTransientAccessClockError, isTransientNetworkError, retryTransientAccessClock } from './access.js'
 
 function PageMessage({ label, title, children, retry, logout }) {
   return <div style={s.wrap}>
@@ -56,16 +57,16 @@ function friendlyLoadError(error) {
 
 function friendlySetupError(error) {
   const value = String(error?.message || '').toLowerCase()
-  if (isTransientAccessClockError(error)) {
+  if (error?.setupFailureReason === 'CLOCK' || isTransientAccessClockError(error)) {
     return new Error('Login-serveren er et \u00f8jeblik bagud. Dine valg er gemt; vent et \u00f8jeblik og pr\u00f8v igen.')
   }
-  if (isTransientNetworkError(error)) {
+  if (error?.setupFailureReason === 'NETWORK' || isTransientNetworkError(error)) {
     return new Error('Browseren afbr\u00f8d forbindelsen. Dine valg er gemt her; pr\u00f8v igen. Hvis det forts\u00e6tter i Instagram, skal login \u00e5bnes i Safari.')
   }
-  if (value.includes('allerede et aktivt program')) {
+  if (error?.setupFailureReason === 'ACTIVE_PROGRAM' || value.includes('allerede et aktivt program')) {
     return new Error('Der findes allerede et aktivt program. Hent medlemsforsiden igen.')
   }
-  if (value.includes('medlemskab') || value.includes('member')) {
+  if (error?.setupFailureReason === 'MEMBERSHIP' || value.includes('medlemskab') || value.includes('member')) {
     return new Error('Din medlemsadgang kunne ikke bekræftes. Programmet blev ikke oprettet.')
   }
   if (value.includes('fetch') || value.includes('network') || value.includes('offline')) {
@@ -153,7 +154,11 @@ export default function PilotSubscriptionApp({ client, session, logout }) {
       if (!refreshed?.assignment) throw new Error('assignment-not-readable')
       return refreshed.assignment
     } catch (error) {
-      throw friendlySetupError(error)
+      const friendly = friendlySetupError(error)
+      const diagnostic = setupFailureDiagnostic(input.requestId, error)
+      // A transport error can contain private request data, so it must not be retained as `cause`.
+      // eslint-disable-next-line preserve-caught-error
+      throw new Error(`${friendly.message} Ref. ${diagnostic.label}.`)
     }
   }
   const persistSession = async entry => {
@@ -217,8 +222,18 @@ export default function PilotSubscriptionApp({ client, session, logout }) {
     >{syncText}</button>
     : <Meta aria-live="polite" style={{ color: queuedSessions.length || hasLocalOnlySession ? color.muted : color.good }}>{syncText}</Meta>
 
+  const embeddedSetupWarning = !state.assignment && isEmbeddedSocialBrowser(globalThis.navigator?.userAgent)
+    ? <div style={{ ...s.page, paddingBottom: 0 }}>
+      <Card style={{ borderColor: color.accentBorder }}>
+        <Label>Åbn i Safari eller Chrome</Label>
+        <p style={{ ...s.body, color: color.text, margin: '0.55rem 0 0' }}>Instagram og Facebook kan afbryde det sidste trin i programoprettelsen. Bed Marc om et nyt personligt login-link, og åbn det i din normale browser, før du sætter programmet op.</p>
+      </Card>
+    </div>
+    : null
+
   return <div style={s.wrap}>
     <TopBar title="Entropi" right={syncStatus} />
+    {embeddedSetupWarning}
     <MemberJourney
       userId={user.id}
       assignment={state.assignment}

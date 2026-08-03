@@ -11,6 +11,44 @@ import {
 
 export const PILOT_REMOTE_HISTORY_LIMIT = 2080
 const PILOT_REMOTE_HISTORY_PAGE_SIZE = 100
+const SETUP_REQUEST_ID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+const SETUP_FAILURE_KINDS = new Set(['LOCAL', 'NET', 'RPC', 'RESPONSE'])
+
+function sanitizedSetupFailure(kind, reason) {
+  const error = new Error('Programops\u00e6tningen kunne ikke gennemf\u00f8res.')
+  error.setupFailureKind = kind
+  error.setupFailureReason = reason
+  return error
+}
+
+function rpcSetupFailure(error) {
+  const value = String(error?.message || '').toLowerCase()
+  if (isTransientAccessClockError(error)) return sanitizedSetupFailure('RPC', 'CLOCK')
+  if (isTransientNetworkError(error)) return sanitizedSetupFailure('NET', 'NETWORK')
+  if (value.includes('allerede et aktivt program')) return sanitizedSetupFailure('RPC', 'ACTIVE_PROGRAM')
+  if (value.includes('medlemskab') || value.includes('member')) return sanitizedSetupFailure('RPC', 'MEMBERSHIP')
+  return sanitizedSetupFailure('RPC', 'UNKNOWN')
+}
+
+export function setupFailureDiagnostic(requestId, error, now = Date.now()) {
+  const source = String(requestId || '')
+  const compact = SETUP_REQUEST_ID_PATTERN.test(source) ? source.replaceAll('-', '').toUpperCase() : ''
+  const fallbackMessage = String(error?.message || '').toLowerCase()
+  const kind = SETUP_FAILURE_KINDS.has(error?.setupFailureKind)
+    ? error.setupFailureKind
+    : isTransientNetworkError(error) ? 'NET'
+      : fallbackMessage === 'assignment-not-readable' ? 'RESPONSE'
+        : isTransientAccessClockError(error) ? 'RPC' : 'LOCAL'
+  const timestamp = new Date(now)
+  const timeUtc = Number.isNaN(timestamp.getTime()) ? 'tid-ukendt' : timestamp.toISOString().replace(/\.\d{3}Z$/, 'Z')
+  const shortReference = compact ? `SET-${compact.slice(0, 8)}` : 'SET-UKENDT'
+  return {
+    kind,
+    shortReference,
+    timeUtc,
+    label: `${shortReference} \u00b7 ${kind} \u00b7 ${timeUtc}`,
+  }
+}
 
 function normalizeProgramSession(session) {
   const sourceMovements = Array.isArray(session?.movements)
@@ -304,7 +342,7 @@ export async function loadPilotState(client, user) {
 }
 
 export function memberSetupRpcArgs({ requestId, matchInput, baselineLoads }) {
-  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(requestId || ''))) {
+  if (!SETUP_REQUEST_ID_PATTERN.test(String(requestId || ''))) {
     throw new Error('Ops\u00e6tningen mangler et gyldigt request-id.')
   }
   if (!matchInput || typeof matchInput !== 'object' || Array.isArray(matchInput)) {
@@ -345,19 +383,25 @@ export function memberSetupRpcArgs({ requestId, matchInput, baselineLoads }) {
 export async function completeMyProgramSetup(client, input, retryOptions) {
   const args = memberSetupRpcArgs(input)
   return retryTransientOperation(async () => {
-    const { data, error } = await client.rpc(
-      'sub_complete_my_program_setup_v1',
-      args,
-    )
-    if (error) throw new Error(`Programmet kunne ikke oprettes: ${error.message}`)
+    let response
+    try {
+      response = await client.rpc(
+        'sub_complete_my_program_setup_v1',
+        args,
+      )
+    } catch (error) {
+      throw rpcSetupFailure(error)
+    }
+    const { data, error } = response || {}
+    if (error) throw rpcSetupFailure(error)
     const row = Array.isArray(data) ? data[0] : data
     if (!row?.assignment_id || !row?.program_id) {
-      throw new Error('Programops\u00e6tningen returnerede ikke en aktiv tildeling.')
+      throw sanitizedSetupFailure('RESPONSE', 'MISSING_ASSIGNMENT')
     }
     return row
   }, {
     ...retryOptions,
-    shouldRetry: error => isTransientAccessClockError(error) || isTransientNetworkError(error),
+    shouldRetry: error => ['CLOCK', 'NETWORK'].includes(error?.setupFailureReason),
   })
 }
 
