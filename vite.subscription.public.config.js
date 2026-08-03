@@ -6,6 +6,7 @@ import react from '@vitejs/plugin-react'
 // separate local pilot build.
 export default defineConfig({
   plugins: [react()],
+  envPrefix: 'VITE_SUB_',
   base: './',
   publicDir: false,
   build: {

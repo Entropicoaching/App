@@ -17,6 +17,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
+    envPrefix: 'VITE_SUB_',
     base: '/',
     publicDir: false,
     build: {

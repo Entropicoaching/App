@@ -62,3 +62,23 @@ export function verifyCombinedDeploy({ baseline, combined, subscriptionHtml }) {
 
   return { additions }
 }
+
+export function verifySubscriptionAssetIsolation({ assetContents, forbiddenValues = [], expectedProjectRef }) {
+  assert.ok(Array.isArray(assetContents) && assetContents.length > 0, 'subscription-buildet mangler assets')
+  const combinedAssets = assetContents.map(content => String(content)).join('\n')
+
+  for (const entry of forbiddenValues) {
+    const value = String(entry?.value || '').trim()
+    if (!value) continue
+    assert.equal(
+      combinedAssets.includes(value),
+      false,
+      `${entry.label || 'En forbudt værdi'} lækkede til subscription-bundlen`,
+    )
+  }
+
+  assert.ok(
+    combinedAssets.includes(expectedProjectRef),
+    'subscription-bundlen mangler den låste shadow-projektreference',
+  )
+}

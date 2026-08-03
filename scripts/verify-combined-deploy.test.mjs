@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
-import { verifyCombinedDeploy } from './verify-combined-deploy.mjs'
+import { verifyCombinedDeploy, verifySubscriptionAssetIsolation } from './verify-combined-deploy.mjs'
 
 const portal = new Map([
   ['index.html', 'portal-index'],
@@ -52,5 +52,27 @@ test('combined deploy rejects source entrypoints in generated HTML', () => {
       subscriptionHtml: '<script type="module" src="/src/subscription/main.jsx"></script>',
     }),
     /isolerede asset-namespace/,
+  )
+})
+
+test('subscription assets contain the locked shadow ref without portal credentials', () => {
+  assert.doesNotThrow(() => verifySubscriptionAssetIsolation({
+    assetContents: ['bundle maxhsefxbrvsgolscqwh shadow-anon'],
+    expectedProjectRef: 'maxhsefxbrvsgolscqwh',
+    forbiddenValues: [
+      { label: 'Portalens Supabase-URL', value: 'https://production.supabase.co/' },
+      { label: 'Operatorens secret key', value: 'sb_secret_operator' },
+    ],
+  }))
+})
+
+test('subscription assets reject a production credential leak', () => {
+  assert.throws(
+    () => verifySubscriptionAssetIsolation({
+      assetContents: ['bundle maxhsefxbrvsgolscqwh https://production.supabase.co/'],
+      expectedProjectRef: 'maxhsefxbrvsgolscqwh',
+      forbiddenValues: [{ label: 'Portalens Supabase-URL', value: 'https://production.supabase.co/' }],
+    }),
+    /Portalens Supabase-URL lækkede/,
   )
 })

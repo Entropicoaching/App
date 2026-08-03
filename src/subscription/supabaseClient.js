@@ -1,7 +1,17 @@
 import { createClient } from '@supabase/supabase-js'
 import { validatePilotConfig } from './pilotConfig.js'
 
-export function createSubscriptionClient(env = import.meta.env) {
+function runtimePilotEnv() {
+  // Keep the client bundle allowlisted. Referencing import.meta.env as one
+  // object would make Vite serialize unrelated VITE_* values from the portal.
+  return {
+    VITE_SUB_SUPABASE_URL: import.meta.env.VITE_SUB_SUPABASE_URL,
+    VITE_SUB_SUPABASE_ANON_KEY: import.meta.env.VITE_SUB_SUPABASE_ANON_KEY,
+    VITE_SUB_SUPABASE_PROJECT_REF: import.meta.env.VITE_SUB_SUPABASE_PROJECT_REF,
+  }
+}
+
+export function createSubscriptionClient(env = runtimePilotEnv()) {
   const config = validatePilotConfig(env)
   if (!config.ok) return { client: null, config, error: config.reason }
 
