@@ -5,10 +5,13 @@
 
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 
 import { PROGRAMS, LEVELS, EQUIPMENT, DAY_OPTIONS, getProgram, findExercise } from '../programs.js'
 import { selectProgram, candidatePrograms, explainSelection } from '../selectProgram.js'
-import { can, isTier, TIERS } from '../entitlements.js'
+import { can, featureSummary, isTier, TIERS } from '../entitlements.js'
+import { PILOT_PRICING } from '../featureFlags.js'
+import { PRICE } from '../pricing.js'
 import {
   bestSet,
   completeSession,
@@ -263,4 +266,54 @@ test('storage fejler blødt uden localStorage (SSR/privat browsing)', () => {
   assert.equal(loadProfile(), null)
   assert.deepEqual(loadSessions(), [])
   assert.equal(saveProfile({ name: 'x' }), false)
+})
+
+// --- CT-033: forsiden, guiden og prisen bag slukkede flag -------------------
+// Flyttet hertil fra entropi-adaptiv sammen med koden. Uden dem er metoden kun
+// en hensigt: verify:pilot-flags kraever at flagene er slukkede, men den siger
+// intet om hvad der sker hvis prisen eller et skriv sniger sig ind ad en anden
+// vej end flaget. Braek-verifikationen fandt praecis det hul.
+
+test('pilotens tier-vaerdier findes i entitlement-modellen', () => {
+  // Forsiden kalder featureSummary() med pilotens access.tier. Bruger de to
+  // forskellige ord for det samme — fx 'paid' mod 'member' — ville forsiden
+  // vise ALT som ikke-inkluderet, og fejlen foerst vise sig den dag flaget
+  // taendes. access.js kender netop disse to.
+  for (const tier of ['free', 'member']) {
+    assert.ok(TIERS.includes(tier), `piloten bruger tier '${tier}' som modellen ikke kender`)
+    assert.ok(featureSummary(tier).some(f => f.included))
+  }
+  assert.notDeepEqual(
+    featureSummary('free').map(f => f.included),
+    featureSummary('member').map(f => f.included),
+  )
+})
+
+test('Mitch ser ingen pris i pilot-skallen', () => {
+  // Marc, 5. august: skjul prisen for piloten. Mitch er en rigtig person i et
+  // GRATIS forloeb, og der findes ingen betaling — et beloeb ville stille noget
+  // i udsigt der ikke kan koebes.
+  assert.equal(PILOT_PRICING, false)
+
+  const kilde = readFileSync(new URL('../PilotSubscriptionApp.jsx', import.meta.url), 'utf8')
+  assert.ok(kilde.includes('visPris={PILOT_PRICING}'), 'pilot-skallen skal binde prisen til flaget')
+  assert.ok(!kilde.includes('priceLabel'), 'pilot-skallen maa ikke kalde priceLabel direkte')
+  assert.ok(!kilde.includes(String(PRICE.amount)), 'beloebet maa ikke staa haardkodet i pilot-skallen')
+})
+
+test('guiden i pilot-skallen skriver ingenting', () => {
+  // Brugerens profil ligger i sub_members, og et skriv derfra ville roere den
+  // tabel Mitchs koerende pilot laeser af. Det er en produktionsaendring, ikke
+  // en UI-aendring — og et slukket flag beskytter mod at VISE noget, ikke mod
+  // et forkert skriv. Derfor er forbuddet en test, ikke en hensigt.
+  const kilde = readFileSync(new URL('../PilotSubscriptionApp.jsx', import.meta.url), 'utf8')
+
+  assert.ok(kilde.includes('PILOT_GUIDE && visGuide'), 'guiden skal vaere bag flaget')
+  assert.ok(
+    kilde.includes('onCreate={() => setVisGuide(false)}'),
+    'guidens udgang i piloten maa kun lukke visningen',
+  )
+  for (const forbudt of ['saveProfile', 'newProfile(', 'localStorage.setItem', '.insert(', '.upsert(']) {
+    assert.ok(!kilde.includes(forbudt), `pilot-skallen maa ikke kalde ${forbudt}`)
+  }
 })
