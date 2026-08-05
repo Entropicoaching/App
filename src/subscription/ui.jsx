@@ -3,7 +3,11 @@
 
 import { color, font } from './theme'
 
+// Forsiden står først, som i Marcs tegning. Den skal være et synligt punkt i
+// navigationen — et klikbart logo ser ikke klikbart ud, og en vej man ikke kan
+// se er ikke en vej.
 const DEFAULT_TABS = [
+  { id: 'forside', label: 'Forside' },
   { id: 'today', label: 'I dag' },
   { id: 'history', label: 'Historik' },
   { id: 'profile', label: 'Profil' },
@@ -100,6 +104,40 @@ export function Button({ children, onClick, variant = 'primary', disabled, style
     <button {...props} type={type} data-entropi-focus disabled={disabled} onClick={onClick} style={{ ...base, ...variants[variant], ...style }}>
       {children}
     </button>
+  )
+}
+
+// Samme udseende som Button, men et rigtigt <a>. Bruges til veje UD af appen
+// (1:1-coaching, hjemmesiden): en <button> med window.open ville hverken kunne
+// åbnes i ny fane med midterklik eller læses som et link af en skærmlæser.
+export function LinkButton({ children, href, variant = 'ghost', external = true, style, ...props }) {
+  const base = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    minHeight: '48px',
+    fontFamily: font.mono,
+    fontSize: '0.62rem',
+    fontWeight: 500,
+    letterSpacing: '0.1em',
+    textTransform: 'uppercase',
+    padding: '0.75rem 1rem',
+    textDecoration: 'none',
+    cursor: 'pointer',
+    boxSizing: 'border-box',
+  }
+  const variants = {
+    primary: { background: color.accent, color: color.bg, border: 'none' },
+    ghost: { background: 'transparent', color: color.muted, border: `1px solid ${color.lineStrong}` },
+    soft: { background: color.accentSoft, color: color.accent, border: `1px solid ${color.accentBorder}` },
+  }
+  // rel er ikke valgfri her: uden noopener får målsiden adgang til window.opener.
+  const externalProps = external ? { target: '_blank', rel: 'noopener noreferrer' } : {}
+  return (
+    <a {...props} {...externalProps} data-entropi-focus href={href} style={{ ...base, ...variants[variant], ...style }}>
+      {children}
+    </a>
   )
 }
 
@@ -295,7 +333,32 @@ export function TabBar({ tab, onChange, tabs = DEFAULT_TABS, label = 'Primær na
   )
 }
 
-export function TopBar({ title, right }) {
+export function TopBar({ title, right, onTitleClick }) {
+  // Logoet er vejen tilbage til forsiden, som på et hvilket som helst website.
+  // Er der intet at gå tilbage til, forbliver det ren tekst — en knap der
+  // ikke gør noget er værre end ingen knap.
+  const titel = onTitleClick ? (
+    <button
+      type="button"
+      data-entropi-focus
+      onClick={onTitleClick}
+      aria-label={`${title} — til forsiden`}
+      style={{
+        background: 'transparent',
+        border: 'none',
+        padding: 0,
+        cursor: 'pointer',
+        fontFamily: font.display,
+        fontSize: '1rem',
+        color: color.text,
+      }}
+    >
+      {title}
+    </button>
+  ) : (
+    <span style={{ fontFamily: font.display, fontSize: '1rem', color: color.text }}>{title}</span>
+  )
+
   return (
     <>
       <style>{focusStyles}</style>
@@ -313,7 +376,7 @@ export function TopBar({ title, right }) {
         zIndex: 50,
       }}
       >
-        <span style={{ fontFamily: font.display, fontSize: '1rem', color: color.text }}>{title}</span>
+        {titel}
         {right}
       </header>
     </>

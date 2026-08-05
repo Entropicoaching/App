@@ -84,7 +84,7 @@ export function clearAll() {
   for (const key of Object.values(KEY)) ls.removeItem(key)
 }
 
-export function newProfile({ name, level, daysPerWeek, equipment, programId }) {
+export function newProfile({ name, level, daysPerWeek, equipment, programId, entitlement }) {
   return {
     id: `p_${Date.now()}`,
     name: (name || '').trim() || 'Demo',
@@ -92,9 +92,11 @@ export function newProfile({ name, level, daysPerWeek, equipment, programId }) {
     daysPerWeek,
     equipment,
     programId,
-    // Demoprofilen får 'member', så hele prototypen kan gennemgås. Værdien er
-    // intern og kan skiftes i Profil-fanen — der er intet betalingsflow bag.
-    entitlement: 'member',
+    // Sporet kommer fra guiden, hvor brugeren selv vælger. Før 5. august var
+    // det hardkodet til 'member', så alle der gik gennem guiden endte som
+    // medlem — uanset hvad forsiden lige havde bedt dem tage stilling til.
+    // 'member' er stadig fallback for kald uden feltet.
+    entitlement: entitlement || 'member',
     createdAt: new Date().toISOString(),
     schemaVersion: SCHEMA_VERSION,
   }

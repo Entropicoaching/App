@@ -36,6 +36,32 @@ export function selectProgram({ level, daysPerWeek, equipment }) {
 
 // Menneskelæselig begrundelse. Brugeren skal kunne se hvorfor netop dette
 // program blev valgt — ellers er "fast og gennemskueligt" kun en påstand.
+// Samme valg, men holdt inden for hvad niveauet giver adgang til.
+//
+// Guiden spurgte foer 5. august aldrig om gratis eller medlem — alle blev
+// 'member'. Forsiden stillede to soejler op, og saa ignorerede flowet valget.
+// Naar guiden nu spoerger, skal programvalget respektere svaret, ellers ville
+// en gratis-bruger blive sendt direkte ind i et betalt program.
+export function selectProgramForTier({ level, daysPerWeek, equipment }, tilladteIds) {
+  const tilladt = new Set(tilladteIds)
+  const kandidater = candidatePrograms({ level, daysPerWeek, equipment })
+    .filter(p => tilladt.has(p.id))
+
+  if (!kandidater.length) {
+    // Intet af det brugeren har adgang til passer paa svarene. Tag det foerste
+    // tilladte frem for at falde tilbage paa noget niveauet ikke daekker.
+    const [foerste] = tilladteIds
+    return { programId: foerste || STARTER_PROGRAM_ID, fallback: true }
+  }
+
+  const best = kandidater.reduce((a, b) => {
+    if (b.days !== a.days) return b.days > a.days ? b : a
+    if (b.minEquipment !== a.minEquipment) return b.minEquipment > a.minEquipment ? b : a
+    return a
+  })
+  return { programId: best.id, fallback: false }
+}
+
 export function explainSelection({ level, daysPerWeek, equipment }) {
   const { programId, fallback } = selectProgram({ level, daysPerWeek, equipment })
   const program = getProgram(programId)

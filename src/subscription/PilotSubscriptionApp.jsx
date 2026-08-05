@@ -2,6 +2,9 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { color, font, s } from './theme.js'
 import { Button, Card, Label, Meta, TopBar } from './ui.jsx'
 import MemberJourney from './screens/MemberJourney.jsx'
+import Landing from './screens/Landing.jsx'
+import Onboarding from './screens/Onboarding.jsx'
+import { PILOT_GUIDE, PILOT_LANDING, PILOT_PRICING } from './featureFlags.js'
 import { enqueuePilotSession, loadPilotOutbox, loadPilotSessions, savePilotSessions } from './pilotCache.js'
 import {
   completeMyProgramSetup,
@@ -107,6 +110,11 @@ export default function PilotSubscriptionApp({ client, session, logout }) {
   const user = session.user
   const requestSequence = useRef(0)
   const [state, setState] = useState({ status: 'loading' })
+  // CT-033: forsiden vises én gang pr. session, ikke som en væg man skal
+  // forbi hver gang. Uden PILOT_LANDING bruges den aldrig.
+  const [forbiForside, setForbiForside] = useState(false)
+  // Guiden aabnes fra forsiden. Uden PILOT_GUIDE bruges den aldrig.
+  const [visGuide, setVisGuide] = useState(false)
 
   const reload = useCallback(async ({ quiet = false } = {}) => {
     const requestId = ++requestSequence.current
@@ -145,6 +153,42 @@ export default function PilotSubscriptionApp({ client, session, logout }) {
 
   if (state.status === 'loading') return <PageMessage label="Medlemskonto" title="Henter dit program…">Vi finder dit program og den seneste træningslog.</PageMessage>
   if (state.status === 'error') return <PageMessage label="Medlemskonto" title="Vi kan ikke åbne din træning endnu." retry={reload} logout={logout}>{state.error}</PageMessage>
+  // CT-033: forsiden bygges ind hos Mitch bag et SLUKKET flag. Med
+  // PILOT_LANDING === false er linjen herunder uden virkning, og gratis-
+  // brugeren ser præcis det samme som før. Flaget tændes kun af Marc, og kun
+  // efter at han selv har set adfærden.
+  if (state.access.tier === 'free' && PILOT_LANDING && !forbiForside) {
+    return <div style={s.wrap}>
+      <TopBar title="Entropi" right={<Meta>Gratis</Meta>} />
+      <Landing
+        indlejret
+        harProfil
+        entitlement="free"
+        visPris={PILOT_PRICING}
+        onStart={() => {
+          setForbiForside(true)
+          if (PILOT_GUIDE) setVisGuide(true)
+        }}
+      />
+    </div>
+  }
+
+  // Guiden i pilot-skallen. SKRIVER INTET — hverken til Supabase eller lokalt.
+  // Den viser hvilket program svarene peger på, og fører derefter tilbage til
+  // det startprogram serveren allerede har tildelt.
+  //
+  // Grunden til at den ikke skriver: brugerens profil ligger i `sub_members`,
+  // og et INSERT derfra ville røre den tabel Mitchs kørende pilot læser af.
+  // Det er en produktionsændring, ikke en UI-ændring, og et slukket flag
+  // beskytter mod at VISE noget — ikke mod et forkert skriv.
+  if (state.access.tier === 'free' && PILOT_GUIDE && visGuide) {
+    return <Onboarding
+      springNavn
+      slutKnap="Tilbage til mit program"
+      slutNote="Det her er kun et overblik. Dit nuværende program er uændret, og intet er gemt."
+      onCreate={() => setVisGuide(false)}
+    />
+  }
   if (state.access.tier === 'free') return <FreeProgramme program={state.program} onRetry={reload} onLogout={logout} />
 
   const completeSetup = async input => {

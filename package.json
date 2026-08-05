@@ -40,7 +40,8 @@
     "verify:videocoach-labels": "node scripts/verify-videocoach-labels.mjs",
     "verify:videocoach-variation-migration": "node scripts/verify-videocoach-variation-migration.mjs",
     "verify:n8n": "node n8n/verify-workflows.mjs",
-    "preview:n8n-briefing": "node n8n/preview-coach-briefing.mjs"
+    "preview:n8n-briefing": "node n8n/preview-coach-briefing.mjs",
+    "verify:pilot-flags": "node scripts/verify-pilot-flags.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.106.1",
