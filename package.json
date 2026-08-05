@@ -41,7 +41,8 @@
     "verify:videocoach-variation-migration": "node scripts/verify-videocoach-variation-migration.mjs",
     "verify:n8n": "node n8n/verify-workflows.mjs",
     "preview:n8n-briefing": "node n8n/preview-coach-briefing.mjs",
-    "verify:pilot-flags": "node scripts/verify-pilot-flags.mjs"
+    "verify:pilot-flags": "node scripts/verify-pilot-flags.mjs",
+    "verify:pilot-landing": "vite build -c vite.pilot-render.config.js --logLevel error && node node_modules/.pilot-render/port.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.106.1",

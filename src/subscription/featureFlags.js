@@ -18,11 +18,11 @@
 // Forsiden i pilot-skallen. Slukket: pilotens nuværende flow er uændret.
 // Tændt: en bruger uden aktivt medlemskab møder forsiden med de to søjler,
 // før login-flowet fører videre.
-export const PILOT_LANDING = false
+export const PILOT_LANDING = true
 
 // Guiden med spor-valget (gratis/medlem) i pilot-skallen. Afhænger af
 // PILOT_LANDING — forsiden er indgangen til den.
-export const PILOT_GUIDE = false
+export const PILOT_GUIDE = true
 
 // Prisen i pilot-skallen. Slukket med vilje: Mitch er en rigtig person i en
 // GRATIS pilot, og der findes ingen betaling. At vise ham et beløb — også med

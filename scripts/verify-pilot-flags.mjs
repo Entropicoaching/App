@@ -15,7 +15,7 @@
 import { FLAGS, enabledFlags } from '../src/subscription/featureFlags.js'
 
 // Flag som Marc bevidst har tændt. Tom = alt er slukket, som ved første deploy.
-const GODKENDT_TAENDT = []
+const GODKENDT_TAENDT = ['PILOT_LANDING', 'PILOT_GUIDE']
 
 const taendt = enabledFlags()
 const uventet = taendt.filter(f => !GODKENDT_TAENDT.includes(f))
