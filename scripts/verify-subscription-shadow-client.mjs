@@ -55,7 +55,20 @@ assert.match(auth, /signInWithOtp/, 'magic-link login is missing')
 assert.match(auth, /shouldCreateUser:\s*false/, 'magic-link must never create accounts')
 assert.match(auth, /window\.location\.assign\(actionLink\)/, 'manual magic-link handoff must require an explicit click')
 assert.doesNotMatch(auth, /<a[^>]+href=\{?actionLink/, 'sensitive handoff must never be rendered as a prefetchable anchor')
-assert.doesNotMatch(auth, /signUp|resetPasswordForEmail/, 'signup/reset must remain closed')
+// Kontooprettelse fra klienten forbliver lukket: piloten er inviteret-kun, og
+// et selvbetjent kontoopslag ville gøre shouldCreateUser: false meningsløst.
+assert.doesNotMatch(auth, /signUp/, 'account creation must remain closed')
+// Nulstilling er derimod paakraevet. Den kan kun ramme en konto der allerede
+// findes, og er den eneste selvbetjente vej til en adgangskode - som igen er
+// den eneste vej ind i en app paa hjemmeskaermen, hvor mail-links altid aabner
+// i browserens storage-jar og derfor aldrig kan logge appen ind.
+assert.match(auth, /resetPasswordForEmail/, 'password reset must stay available')
+assert.match(auth, /updateUser\(\{ password \}\)/, 'recovery must be able to set the new password')
+assert.match(auth, /isRecoveryEvent/, 'recovery must interrupt the way into the app')
+// At kende eventet er ikke nok - skaermen skal ogsaa vises. Uden denne linje
+// falder medlemmet direkte ind i appen med en gyldig session, saetter aldrig
+// den adgangskode han bad om, og staar i samme blindgyde naeste gang.
+assert.match(auth, /if \(session && recovery\) return <SetPassword/, 'recovery session must render the set-password screen before the app')
 assert.match(handoff, /maxhsefxbrvsgolscqwh\.supabase\.co/, 'handoff must be locked to the authorised shadow host')
 assert.match(handoff, /entropi_magic_link/, 'handoff marker is missing')
 assert.match(handoff, /historyLike\.replaceState/, 'handoff fragment must be scrubbed before client creation')

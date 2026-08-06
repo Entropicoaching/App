@@ -522,7 +522,15 @@ test('subscription-klienten importerer ikke 1:1-klienten og entry har noindex ud
   const clientCreationIndex = mainSource.indexOf('createSubscriptionClient()')
   assert.ok(handoffCaptureIndex >= 0 && clientCreationIndex > handoffCaptureIndex)
   assert.match(authSource, /signOut/)
-  assert.doesNotMatch(authSource, /signUp|resetPasswordForEmail/)
+  // Piloten er lukket: kontooprettelse fra klienten ville lade hvem som helst
+  // ind, og shouldCreateUser: false ville ikke længere betyde noget.
+  assert.doesNotMatch(authSource, /signUp/)
+  assert.match(authSource, /shouldCreateUser: false/)
+  // Nulstilling er derimod påkrævet. Den kan kun ramme en konto der allerede
+  // findes, og er den eneste selvbetjente vej til en adgangskode — som igen er
+  // den eneste vej ind i en app på hjemmeskærmen, hvor mail-links ikke virker.
+  assert.match(authSource, /resetPasswordForEmail/)
+  assert.match(authSource, /updateUser\(\{ password \}\)/)
   assert.doesNotMatch(mainSource, /from ['"]\.\.\/appUpdate|navigator\.serviceWorker/)
   assert.match(appSource, /setupFailureDiagnostic\(input\.requestId, error\)/)
   assert.match(appSource, /\$\{friendly\.message\} Ref\. \$\{diagnostic\.label\}/)
