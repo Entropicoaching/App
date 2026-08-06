@@ -522,9 +522,11 @@ test('subscription-klienten importerer ikke 1:1-klienten og entry har noindex ud
   const clientCreationIndex = mainSource.indexOf('createSubscriptionClient()')
   assert.ok(handoffCaptureIndex >= 0 && clientCreationIndex > handoffCaptureIndex)
   assert.match(authSource, /signOut/)
-  // Piloten er lukket: kontooprettelse fra klienten ville lade hvem som helst
-  // ind, og shouldCreateUser: false ville ikke længere betyde noget.
-  assert.doesNotMatch(authSource, /signUp/)
+  // Kontooprettelse er åbnet 6. august — appen skal være selvkørende. Men
+  // magic-link må stadig aldrig oprette en konto som sidegevinst, og
+  // oprettelsen må ikke røbe hvilke mails der findes.
+  assert.match(authSource, /signUp/)
+  assert.match(authSource, /signUpRevealsExistingAccount/)
   assert.match(authSource, /shouldCreateUser: false/)
   // Nulstilling er derimod påkrævet. Den kan kun ramme en konto der allerede
   // findes, og er den eneste selvbetjente vej til en adgangskode — som igen er

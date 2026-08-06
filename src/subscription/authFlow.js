@@ -50,3 +50,23 @@ export function validateNewPassword(password, confirmation) {
 // ens i begge tilfælde; beskeden her skal gøre det samme, ellers bliver
 // login-skærmen en måde at afprøve mailadresser på.
 export const RESET_SENT_MESSAGE = 'Findes der en konto på den mail, er der nu sendt et link til at vælge en ny adgangskode. Åbn det i browseren — kom derefter tilbage hertil og log ind med adgangskoden.'
+
+// Supabase svarer på to måder på en oprettelse, afhængigt af om projektet
+// kræver mailbekræftelse. Forskellen skal aflæses, ikke antages: sender vi
+// brugeren til "tjek din mail" når han allerede er logget ind, står han og
+// venter på en mail der aldrig kommer.
+export function signUpOutcome(data) {
+  if (data?.session) return 'logged-in'
+  if (data?.user) return 'confirm-email'
+  return 'unknown'
+}
+
+// En allerede oprettet mail må ikke kunne aflæses af svaret. Supabase returnerer
+// i den situation en bruger uden identiteter frem for en fejl - og hvis vi
+// oversatte det til "mailen findes", ville oprettelsen blive en måde at
+// afprøve mailadresser på, præcis som nulstillingen ikke må være.
+export function signUpRevealsExistingAccount(data) {
+  return Array.isArray(data?.user?.identities) && data.user.identities.length === 0
+}
+
+export const SIGN_UP_SENT_MESSAGE = 'Tjek din mail. Vi har sendt et link der bekræfter din konto — åbn det, og vælg derefter din adgangskode her.'

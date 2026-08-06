@@ -405,6 +405,49 @@ export async function completeMyProgramSetup(client, input, retryOptions) {
   })
 }
 
+// Gratis-sporet har sin EGEN server-funktion, ikke en blødere udgave af
+// medlemmets. De to fejler begge lukket på tier, så et kald med den forkerte
+// bliver afvist af serveren frem for at ramme den forkerte brugers data.
+// Klienten kan derfor ikke omgå noget ved at gætte forkert.
+export const SETUP_RPC_BY_TIER = Object.freeze({
+  member: 'sub_complete_my_program_setup_v1',
+  free: 'sub_complete_my_free_setup_v1',
+})
+
+export function setupRpcForTier(tier) {
+  const name = SETUP_RPC_BY_TIER[tier]
+  // Et ukendt niveau må aldrig falde tilbage på medlemmets funktion. Fejler vi
+  // lukket her, er det værste udfald en fejlbesked; faldt vi tilbage, kunne en
+  // gratis-bruger ende i member-stien.
+  if (!name) throw new Error(`Ukendt niveau for programopsætning: ${tier ?? 'ingen'}`)
+  return name
+}
+
+// Samme validering som medlemmets sti - gratis må ikke være en blødere dør ind
+// til de samme tabeller. Kun funktionsnavnet er forskelligt.
+export async function completeMySetupForTier(client, input, tier, retryOptions) {
+  const rpcName = setupRpcForTier(tier)
+  const args = memberSetupRpcArgs(input)
+  return retryTransientOperation(async () => {
+    let response
+    try {
+      response = await client.rpc(rpcName, args)
+    } catch (error) {
+      throw rpcSetupFailure(error)
+    }
+    const { data, error } = response || {}
+    if (error) throw rpcSetupFailure(error)
+    const row = Array.isArray(data) ? data[0] : data
+    if (!row?.assignment_id || !row?.program_id) {
+      throw sanitizedSetupFailure('RESPONSE', 'MISSING_ASSIGNMENT')
+    }
+    return row
+  }, {
+    ...retryOptions,
+    shouldRetry: error => ['CLOCK', 'NETWORK'].includes(error?.setupFailureReason),
+  })
+}
+
 // The member journey keeps the complete planned-vs-actual record, including
 // deliberately skipped sets. The current immutable workout RPC represents
 // completed sets only, so skipped rows stay in the user-scoped journey record

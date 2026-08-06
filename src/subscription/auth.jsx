@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { color, font, s } from './theme.js'
 import { Button, Label, Meta } from './ui.jsx'
-import { MIN_PASSWORD_LENGTH, RESET_SENT_MESSAGE, initialLoginMode, isRecoveryEvent, isStandaloneApp, validateNewPassword } from './authFlow.js'
+import { MIN_PASSWORD_LENGTH, RESET_SENT_MESSAGE, SIGN_UP_SENT_MESSAGE, initialLoginMode, isRecoveryEvent, isStandaloneApp, signUpOutcome, signUpRevealsExistingAccount, validateNewPassword } from './authFlow.js'
 
 function Shell({ children }) {
   return (
@@ -114,6 +114,54 @@ function Login({ client, handoffError = false, standalone = false }) {
     }
   }
 
+  // Oprettelse er egen skærm, ikke en fane ved siden af login. En bruger der
+  // ikke har en konto skal ikke først gætte hvilken login-metode han mangler.
+  const createAccount = async event => {
+    event.preventDefault()
+    const check = validateNewPassword(password, password)
+    if (!check.ok) { setError(check.reason); return }
+    setBusy(true)
+    setError('')
+    setSent(false)
+    try {
+      const { data, error: signUpError } = await client.auth.signUp({
+        email: email.trim(),
+        password,
+        options: { emailRedirectTo: redirectTarget() },
+      })
+      if (signUpError) { setError('Kontoen kunne ikke oprettes. Prøv igen om lidt.'); return }
+      // Findes mailen allerede, svarer Supabase med en bruger uden identiteter.
+      // Vi viser samme kvittering som ved en ny konto - ellers bliver skærmen
+      // en måde at afprøve mailadresser på.
+      if (signUpRevealsExistingAccount(data) || signUpOutcome(data) === 'confirm-email') setSent(true)
+      else if (signUpOutcome(data) === 'logged-in') return
+      else setSent(true)
+    } catch {
+      setError('Der er ikke forbindelse lige nu. Prøv igen, når du er online.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  if (mode === 'opret') {
+    return (
+      <Shell>
+        <Label>Ny konto</Label><h1 style={s.h1}>Kom i gang gratis.</h1>
+        <p style={{ ...s.body, marginBottom: '1.5rem' }}>Du får et startprogram og din egen træningslog. Ingen betaling, intet kort.</p>
+        <form onSubmit={createAccount}>
+          <input data-entropi-focus aria-label="E-mail" type="email" autoComplete="email" placeholder="E-mail" value={email} onChange={event => setEmail(event.target.value)} style={inputStyle} required />
+          <input aria-label="Adgangskode" type="password" autoComplete="new-password" placeholder={`Adgangskode (mindst ${MIN_PASSWORD_LENGTH} tegn)`} value={password} onChange={event => setPassword(event.target.value)} style={inputStyle} required />
+          {error && <p role="alert" style={{ ...s.body, color: '#d78b7d' }}>{error}</p>}
+          {sent && <p role="status" style={{ ...s.body, color: color.accent }}>{SIGN_UP_SENT_MESSAGE}</p>}
+          <Button type="submit" disabled={busy}>{busy ? 'Opretter…' : 'Opret konto'}</Button>
+        </form>
+        <button type="button" onClick={() => switchMode(initialLoginMode())} style={{ display: 'block', margin: '0.8rem auto 0', border: 0, background: 'none', color: color.muted, fontFamily: font.mono, fontSize: '0.68rem', cursor: 'pointer', padding: '0.45rem', minHeight: '44px' }}>
+          Har du allerede en konto? Log ind
+        </button>
+      </Shell>
+    )
+  }
+
   return (
     <Shell>
       <Label>Medlemslogin</Label><h1 style={s.h1}>Åbn din træning.</h1>
@@ -140,6 +188,14 @@ function Login({ client, handoffError = false, standalone = false }) {
         style={{ display: 'block', margin: '0.8rem auto 0', border: 0, background: 'none', color: color.muted, fontFamily: font.mono, fontSize: '0.68rem', cursor: 'pointer', padding: '0.45rem', minHeight: '44px' }}
       >
         Vælg eller nulstil din adgangskode
+      </button>
+      <button
+        type="button"
+        disabled={busy}
+        onClick={() => switchMode('opret')}
+        style={{ display: 'block', margin: '0.2rem auto 0', border: 0, background: 'none', color: color.accent, fontFamily: font.mono, fontSize: '0.68rem', cursor: 'pointer', padding: '0.45rem', minHeight: '44px' }}
+      >
+        Ny her? Opret en gratis konto
       </button>
     </Shell>
   )

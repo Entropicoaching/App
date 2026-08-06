@@ -55,9 +55,20 @@ assert.match(auth, /signInWithOtp/, 'magic-link login is missing')
 assert.match(auth, /shouldCreateUser:\s*false/, 'magic-link must never create accounts')
 assert.match(auth, /window\.location\.assign\(actionLink\)/, 'manual magic-link handoff must require an explicit click')
 assert.doesNotMatch(auth, /<a[^>]+href=\{?actionLink/, 'sensitive handoff must never be rendered as a prefetchable anchor')
-// Kontooprettelse fra klienten forbliver lukket: piloten er inviteret-kun, og
-// et selvbetjent kontoopslag ville gøre shouldCreateUser: false meningsløst.
-assert.doesNotMatch(auth, /signUp/, 'account creation must remain closed')
+// Kontooprettelse blev aabnet 6. august 2026: Marc besluttede at appen skal
+// vaere selvkoerende, og uden den kan ingen komme i gang uden at han opretter
+// dem i haanden. Vaernet er derfor ikke laengere at den ikke findes, men at den
+// ikke kan bruges til at afsloere hvilke mails der allerede er oprettet.
+// Magic-link skal fortsat ALDRIG oprette en konto som sidegevinst - det er
+// shouldCreateUser: false ovenfor, og den staar ved magt.
+assert.match(auth, /signUp/, 'self-service account creation must exist')
+// Bind til BRUGEN, ikke til at navnet staar i filen. En import der ikke kaldes
+// er praecis lige saa laekkende som ingen import - og porten saa groen ud.
+assert.match(
+  auth,
+  /if \(signUpRevealsExistingAccount\(data\) \|\|/,
+  'sign-up must show the same receipt for an existing email as for a new one',
+)
 // Nulstilling er derimod paakraevet. Den kan kun ramme en konto der allerede
 // findes, og er den eneste selvbetjente vej til en adgangskode - som igen er
 // den eneste vej ind i en app paa hjemmeskaermen, hvor mail-links altid aabner
