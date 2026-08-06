@@ -70,3 +70,20 @@ export function signUpRevealsExistingAccount(data) {
 }
 
 export const SIGN_UP_SENT_MESSAGE = 'Tjek din mail. Vi har sendt et link der bekræfter din konto — åbn det, og vælg derefter din adgangskode her.'
+
+// Mailserveren har en timegrænse. Rammes den, sendes INGEN mail — og det må
+// ikke se ud som om mailadressen er forkert. 6. august 2026 kostede netop den
+// forveksling en halv time: beskeden sagde "kontrollér mailen", mens serveren
+// svarede 429, og fejlen blev ledt efter i mailadressen i stedet for i kvoten.
+//
+// Grænsen lækker ikke om en konto findes — den er global — så den kan vises
+// ærligt uden at bryde reglen om ikke at røbe hvilke mails der er oprettet.
+export function isEmailRateLimited(error) {
+  if (!error) return false
+  if (Number(error.status) === 429) return true
+  const kode = String(error.code ?? error.error_code ?? '')
+  if (kode.includes('over_email_send_rate_limit') || kode === 'over_request_rate_limit') return true
+  return /rate limit/i.test(String(error.message ?? ''))
+}
+
+export const EMAIL_RATE_LIMITED_MESSAGE = 'Der er sendt for mange mails fra appen den seneste time, så serveren afviser flere lige nu. Det er ikke din mailadresse. Vent en times tid, eller bed Marc sætte din adgangskode direkte.'

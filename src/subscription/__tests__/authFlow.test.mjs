@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { MIN_PASSWORD_LENGTH, initialLoginMode, isRecoveryEvent, isStandaloneApp, signUpOutcome, signUpRevealsExistingAccount, validateNewPassword } from '../authFlow.js'
+import { MIN_PASSWORD_LENGTH, initialLoginMode, isEmailRateLimited, isRecoveryEvent, isStandaloneApp, signUpOutcome, signUpRevealsExistingAccount, validateNewPassword } from '../authFlow.js'
 import { SETUP_RPC_BY_TIER, setupRpcForTier } from '../pilotRepository.js'
 
 const win = ({ standalone, displayMode, throws = false } = {}) => ({
@@ -44,6 +44,20 @@ test('ny adgangskode kræver længde, indhold og at de to felter er ens', () => 
   assert.equal(validateNewPassword('korrekthest', 'korrekthset').ok, false)
   assert.equal(validateNewPassword(null, null).ok, false)
   assert.equal(validateNewPassword(undefined, undefined).ok, false)
+})
+
+test('mailkvoten genkendes i alle de former Supabase melder den', () => {
+  // 6. august 2026 svarede serveren 429 over_email_send_rate_limit, mens
+  // skaermen sagde "kontroller mailen". Fejlen blev ledt efter i mailadressen
+  // i en halv time. Beskeden skal skelne.
+  assert.equal(isEmailRateLimited({ status: 429 }), true)
+  assert.equal(isEmailRateLimited({ code: 'over_email_send_rate_limit' }), true)
+  assert.equal(isEmailRateLimited({ error_code: 'over_email_send_rate_limit' }), true)
+  assert.equal(isEmailRateLimited({ message: '429: email rate limit exceeded' }), true)
+  assert.equal(isEmailRateLimited({ status: 400, message: 'Invalid login credentials' }), false)
+  assert.equal(isEmailRateLimited({ code: 'invalid_credentials' }), false)
+  assert.equal(isEmailRateLimited(null), false)
+  assert.equal(isEmailRateLimited(undefined), false)
 })
 
 test('de to niveauer har hver sin server-funktion', () => {

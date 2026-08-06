@@ -318,19 +318,28 @@ export async function loadRemoteHistory(client, userId, { assignmentId = null, p
 
 export async function loadPilotState(client, user) {
   const access = await loadMyAccess(client)
-  if (access.tier !== 'member') {
-    const program = await loadFreeProgram(client)
-    return { access, accessGranted: false, assignment: null, program, member: null, sessions: [] }
-  }
+  const accessGranted = access.tier === 'member'
 
-  // Member-preferences are useful even when a controlled assignment has not
-  // been created yet. Loading both in parallel prevents an invited member from
-  // falling into a terminal "unassigned" state with their setup data hidden.
+  // Tildeling og profil hentes for ALLE niveauer. Indtil 6. august 2026 blev de
+  // kastet væk for alt der ikke var 'member' — en rigtig antagelse dengang
+  // gratis-brugere hverken kunne have et program eller en profil.
+  //
+  // Da gratis-sporet fik sin egen opsætning, blev antagelsen forkert og
+  // usynlig: rækkerne stod i basen, men laget nægtede at hente dem. Guiden
+  // viste setup igen for en bruger der lige havde gennemført den, og
+  // profilsiden havde intet at vise. RLS beskytter allerede rækkerne — der er
+  // ingen grund til at laget gætter oveni.
   const [assignment, member] = await Promise.all([
     loadActiveAssignment(client, user.id),
     loadMember(client, user.id),
   ])
-  if (!assignment) return { access, accessGranted: true, assignment: null, program: null, member, sessions: [] }
+
+  if (!assignment) {
+    // Uden tildeling ser en gratis-bruger stadig det gratis program, så
+    // skærmen ikke er tom mens han beslutter sig. Members har intet at vise.
+    const program = accessGranted ? null : await loadFreeProgram(client)
+    return { access, accessGranted, assignment: null, program, member, sessions: [] }
+  }
 
   const [program, remoteSessions] = await Promise.all([
     loadProgram(client, assignment.program_id),
@@ -338,7 +347,7 @@ export async function loadPilotState(client, user) {
   ])
   const sessions = mergeSessions(remoteSessions, loadPilotSessions(user.id))
   savePilotSessions(user.id, sessions)
-  return { access, accessGranted: true, assignment, program, member, sessions }
+  return { access, accessGranted, assignment, program, member, sessions }
 }
 
 export function memberSetupRpcArgs({ requestId, matchInput, baselineLoads }) {

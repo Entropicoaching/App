@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { color, font, s } from './theme.js'
 import { Button, Label, Meta } from './ui.jsx'
-import { MIN_PASSWORD_LENGTH, RESET_SENT_MESSAGE, SIGN_UP_SENT_MESSAGE, initialLoginMode, isRecoveryEvent, isStandaloneApp, signUpOutcome, signUpRevealsExistingAccount, validateNewPassword } from './authFlow.js'
+import { EMAIL_RATE_LIMITED_MESSAGE, MIN_PASSWORD_LENGTH, RESET_SENT_MESSAGE, SIGN_UP_SENT_MESSAGE, initialLoginMode, isEmailRateLimited, isRecoveryEvent, isStandaloneApp, signUpOutcome, signUpRevealsExistingAccount, validateNewPassword } from './authFlow.js'
 
 function Shell({ children }) {
   return (
@@ -77,9 +77,11 @@ function Login({ client, handoffError = false, standalone = false }) {
         : await client.auth.signInWithPassword({ email: normalizedEmail, password })
 
       if (result.error) {
-        setError(mode === 'magic-link'
-          ? 'Login-linket kunne ikke sendes. Kontrollér mailen og prøv igen.'
-          : 'Login mislykkedes. Kontrollér mail og adgangskode.')
+        setError(isEmailRateLimited(result.error)
+          ? EMAIL_RATE_LIMITED_MESSAGE
+          : mode === 'magic-link'
+            ? 'Login-linket kunne ikke sendes. Prøv igen om lidt.'
+            : 'Login mislykkedes. Kontrollér mail og adgangskode.')
       } else if (mode === 'magic-link') {
         setSent(true)
       }
@@ -105,7 +107,13 @@ function Login({ client, handoffError = false, standalone = false }) {
     setSent(false)
     setResetSent(false)
     try {
-      await client.auth.resetPasswordForEmail(normalizedEmail, { redirectTo: redirectTarget() })
+      // Fejlen SKAL aflæses. Uden dette svarede skærmen "linket er sendt", også
+      // når serveren afviste med 429 og intet blev sendt — brugeren stod og
+      // ventede på en mail der aldrig kom.
+      const { error: resetError } = await client.auth.resetPasswordForEmail(normalizedEmail, { redirectTo: redirectTarget() })
+      if (isEmailRateLimited(resetError)) { setError(EMAIL_RATE_LIMITED_MESSAGE); return }
+      // Alle andre udfald giver samme kvittering. Om mailen findes eller ej må
+      // ikke kunne aflæses af svaret.
       setResetSent(true)
     } catch {
       setError('Linket kunne ikke sendes lige nu. Prøv igen, når du er online.')
@@ -129,7 +137,10 @@ function Login({ client, handoffError = false, standalone = false }) {
         password,
         options: { emailRedirectTo: redirectTarget() },
       })
-      if (signUpError) { setError('Kontoen kunne ikke oprettes. Prøv igen om lidt.'); return }
+      if (signUpError) {
+        setError(isEmailRateLimited(signUpError) ? EMAIL_RATE_LIMITED_MESSAGE : 'Kontoen kunne ikke oprettes. Prøv igen om lidt.')
+        return
+      }
       // Findes mailen allerede, svarer Supabase med en bruger uden identiteter.
       // Vi viser samme kvittering som ved en ny konto - ellers bliver skærmen
       // en måde at afprøve mailadresser på.

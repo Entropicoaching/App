@@ -60,7 +60,17 @@ test('sociale in-app browsere genkendes før member-setup', () => {
   assert.equal(isEmbeddedSocialBrowser('Mozilla/5.0 Chrome/127.0.0.0 Mobile Safari/537.36'), false)
 })
 
-test('free åbner kun det faste startprogram og aldrig memberdata', async () => {
+// ÆNDRET 6. august 2026. Testen krævede før at en gratis-bruger UDELUKKENDE
+// læste sub_programs — rigtigt dengang free hverken kunne have en tildeling
+// eller en profil. Da gratis-sporet fik sin egen opsætning
+// (sub_complete_my_free_setup_v1), blev kravet forkert og fejlen usynlig:
+// rækkerne stod i basen, men laget hentede dem ikke, så guiden viste setup
+// igen for en bruger der lige havde gennemført den, og profilsiden var tom.
+//
+// Testen låser nu det der faktisk skal gælde: uden tildeling ser en
+// gratis-bruger stadig startprogrammet, og accessGranted er fortsat false.
+// Adgangskontrollen ligger i RLS, ikke i at klienten undlader at spørge.
+test('free uden tildeling ser startprogrammet og er ikke accessGranted', async () => {
   const tableReads = []
   const client = {
     async rpc(name) {
@@ -69,15 +79,20 @@ test('free åbner kun det faste startprogram og aldrig memberdata', async () => 
     },
     from(table) {
       tableReads.push(table)
-      assert.equal(table, 'sub_programs')
       const query = {
         select() { return query },
         eq() { return query },
+        is() { return query },
         async maybeSingle() {
-          return {
-            data: { id: 'free-program', slug: 'start-2', version: 1, name: 'Start 2', progression_rule: 'Fast plan.', days: 2, min_equipment: 2, levels: ['begynder', 'oevet'], min_tier: 'free', content: { sessions: [] } },
-            error: null,
+          if (table === 'sub_assignments') return { data: null, error: null }
+          if (table === 'sub_members') return { data: null, error: null }
+          if (table === 'sub_programs') {
+            return {
+              data: { id: 'free-program', slug: 'start-2', version: 1, name: 'Start 2', progression_rule: 'Fast plan.', days: 2, min_equipment: 2, levels: ['begynder', 'oevet'], min_tier: 'free', content: { sessions: [] } },
+              error: null,
+            }
           }
+          throw new Error(`unexpected table ${table}`)
         },
       }
       return query
@@ -87,7 +102,48 @@ test('free åbner kun det faste startprogram og aldrig memberdata', async () => 
   assert.equal(result.accessGranted, false)
   assert.equal(result.assignment, null)
   assert.equal(result.program.slug, 'start-2')
-  assert.deepEqual(tableReads, ['sub_programs'])
+  assert.ok(tableReads.includes('sub_programs'))
+})
+
+test('free MED tildeling får sit eget program, sin profil og forbliver ikke-member', async () => {
+  // Regressionen fra 6. august: begge disse felter blev kastet væk for alt der
+  // ikke var 'member', så et gennemført gratis-setup så ud som om det aldrig
+  // var sket. Programmet skal komme fra tildelingen, ikke fra free-opslaget.
+  const tableReads = []
+  const client = {
+    async rpc(name) {
+      assert.equal(name, 'sub_my_access_v2')
+      return { data: [{ tier: 'free' }], error: null }
+    },
+    from(table) {
+      tableReads.push(table)
+      const query = {
+        select() { return query },
+        eq() { return query },
+        is() { return query },
+        order() { return query },
+        limit() { return query },
+        range() { return query },
+        async single() { return query.maybeSingle() },
+        async maybeSingle() {
+          if (table === 'sub_assignments') return { data: { id: 'a1', program_id: 'start-2-id', user_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', ended_at: null }, error: null }
+          if (table === 'sub_members') return { data: { display_name: null, level: 'oevet', days_per_week: 2, equipment: 'gym', onboarded_at: '2026-08-06T19:54:26Z' }, error: null }
+          if (table === 'sub_programs') return { data: { id: 'start-2-id', slug: 'start-2', version: 1, name: 'Start 2', progression_rule: 'Fast plan.', days: 2, min_equipment: 2, levels: ['begynder', 'oevet'], min_tier: 'free', content: { sessions: [] } }, error: null }
+          throw new Error(`unexpected table ${table}`)
+        },
+        then(resolve) { return Promise.resolve({ data: [], error: null }).then(resolve) },
+      }
+      return query
+    },
+  }
+  const result = await loadPilotState(client, { id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa' })
+  assert.equal(result.assignment.id, 'a1')
+  assert.equal(result.member.level, 'oevet')
+  assert.equal(result.program.slug, 'start-2')
+  // Et gratis program gør ingen til medlem. Grænsen holder.
+  assert.equal(result.accessGranted, false)
+  assert.ok(tableReads.includes('sub_assignments'))
+  assert.ok(tableReads.includes('sub_members'))
 })
 
 test('eksisterende member uden assignment beholder onboardingdata og får setup-state', async () => {
