@@ -15,7 +15,8 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { createElement } from 'react'
 import Landing from '../src/subscription/screens/Landing.jsx'
 import Onboarding from '../src/subscription/screens/Onboarding.jsx'
-import { PILOT_GUIDE, PILOT_LANDING, PILOT_PRICING } from '../src/subscription/featureFlags.js'
+import PilotProfile from '../src/subscription/screens/PilotProfile.jsx'
+import { PILOT_GUIDE, PILOT_LANDING, PILOT_PRICING, PILOT_PROFIL } from '../src/subscription/featureFlags.js'
 import { PRICE } from '../src/subscription/pricing.js'
 
 const fejl = []
@@ -74,11 +75,60 @@ proev('guiden renderer med pilot-skallens props', () => {
   assert.ok(guide.length > 200, 'guiden gav naesten ingen markup')
 })
 
+// Profilsiden med Mitchs FAKTISKE data fra shadow-databasen 6. august. Bruges
+// fordi et tomt objekt ville rendere fint og alligevel skjule at siden ikke kan
+// laese den form data rent faktisk har.
+const mitch = {
+  level: 'oevet',
+  days_per_week: 3,
+  equipment: 'gym',
+  goal: 'powerlifting-foundation',
+  squat_style: 'low-bar',
+  deadlift_style: 'conventional',
+  baselines: {
+    squat: { weightKg: 130, reps: 1, rpe: 10, inputType: 'one_rm' },
+    bench: { weightKg: 100, reps: 1, rpe: 10, inputType: 'one_rm' },
+    deadlift: { weightKg: 165, reps: 1, rpe: 10, inputType: 'one_rm' },
+  },
+}
+
+let profil = ''
+proev('profilsiden renderer med en rigtig medlemsprofil', () => {
+  profil = renderToStaticMarkup(createElement(PilotProfile, {
+    member: mitch,
+    program: { name: 'Styrkeløft 3 · Øvet · Full Gym · low-bar · conventional' },
+    sessions: [],
+    onLogout: () => {},
+  }))
+  assert.ok(profil.length > 200, 'profilsiden gav naesten ingen markup')
+})
+
+proev('profilsiden viser de tal vaegtene regnes ud fra', () => {
+  const tekst = synligTekst(profil)
+  for (const forventet of ['130 kg', '100 kg', '165 kg', 'Low-bar squat', 'Konventionel dødløft', 'Øvet', 'Full Gym']) {
+    assert.ok(tekst.includes(forventet), `profilsiden mangler "${forventet}"`)
+  }
+})
+
+proev('profilsiden taaler en profil uden baselines', () => {
+  // En inviteret bruger der endnu ikke har gennemfoert setup. Uden dette ville
+  // siden kaste og give hvid skaerm praecis for den nye bruger.
+  const tom = renderToStaticMarkup(createElement(PilotProfile, {
+    member: { level: null, baselines: null }, program: null, sessions: [], onLogout: () => {},
+  }))
+  assert.match(synligTekst(tom), /ikke angivet dine løft/i)
+})
+
+proev('profilsiden lover ikke at man kan rette tallene', () => {
+  // Man kan ikke, og siden skal sige det aerligt frem for at lade som om.
+  assert.match(synligTekst(profil), /kan ikke ændres her/i)
+})
+
 console.log('')
 if (fejl.length) {
   console.log('FAIL pilot landing render:')
   for (const f of fejl) console.log('  ' + f)
   process.exit(1)
 }
-const taendte = [PILOT_LANDING && 'PILOT_LANDING', PILOT_GUIDE && 'PILOT_GUIDE'].filter(Boolean)
+const taendte = [PILOT_LANDING && 'PILOT_LANDING', PILOT_GUIDE && 'PILOT_GUIDE', PILOT_PROFIL && 'PILOT_PROFIL'].filter(Boolean)
 console.log(`PASS pilot landing render (${taendte.length ? taendte.join(' + ') + ' taendt' : 'flag slukkede — stien testet alligevel'})\n`)

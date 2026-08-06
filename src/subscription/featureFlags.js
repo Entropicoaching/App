@@ -30,11 +30,20 @@ export const PILOT_GUIDE = true
 // Marc besluttede det 5. august. Tændes når betaling faktisk findes.
 export const PILOT_PRICING = false
 
+// Profilsiden i pilot-skallen. Slukket: Mitchs flow er uændret.
+// Tændt: en fjerde fane "Profil" der VISER hans egne tal — niveau, dage, udstyr,
+// løftestile og de 1RM'er hele programmet regnes ud fra. Den skriver intet.
+//
+// Marc savnede den selv 6. august, mens han stod i appen. Uden den kan en bruger
+// hverken se eller efterprøve de tal alle hans vægte kommer af.
+export const PILOT_PROFIL = false
+
 // Alle flag samlet, så en port kan tjekke at intet er tændt ved et uheld.
 export const FLAGS = {
   PILOT_LANDING,
   PILOT_GUIDE,
   PILOT_PRICING,
+  PILOT_PROFIL,
 }
 
 // Hvilke flag er tændt lige nu. Bruges af verify-pilot-flags-porten.

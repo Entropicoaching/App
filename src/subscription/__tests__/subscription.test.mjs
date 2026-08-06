@@ -317,3 +317,35 @@ test('guiden i pilot-skallen skriver ingenting', () => {
     assert.ok(!kilde.includes(forbudt), `pilot-skallen maa ikke kalde ${forbudt}`)
   }
 })
+
+// --- profilsiden i pilot-skallen -------------------------------------------
+
+test('profilsiden skriver ingenting', () => {
+  // Profilen laeser af sub_members — den tabel Mitchs koerende pilot henter sit
+  // program fra. Et skriv herfra ville vaere en produktionsaendring, ikke en
+  // UI-aendring, og et slukket flag beskytter mod at VISE noget, ikke mod et
+  // forkert skriv. Derfor er forbuddet en test, ikke en hensigt.
+  const kilde = readFileSync(new URL('../screens/PilotProfile.jsx', import.meta.url), 'utf8')
+  for (const forbudt of ['saveProfile', 'newProfile(', 'localStorage.setItem', '.insert(', '.upsert(', '.update(', 'onChange', '<input']) {
+    assert.ok(!kilde.includes(forbudt), `profilsiden maa ikke indeholde ${forbudt}`)
+  }
+})
+
+test('profilfanen er bundet til flaget begge steder', () => {
+  // Baade fanen og selve skaermen skal spoerge PILOT_PROFIL. Kun det foerste, og
+  // en gemt 'profile'-tab fra en tidligere session ville kunne aabne skaermen
+  // efter at flaget var slukket igen.
+  const kilde = readFileSync(new URL('../screens/MemberJourney.jsx', import.meta.url), 'utf8')
+  assert.ok(kilde.includes("...(PILOT_PROFIL ? [{ id: 'profile', label: 'Profil' }] : [])"), 'fanen skal vaere bag flaget')
+  assert.ok(kilde.includes("if (tab === 'profile' && PILOT_PROFIL)"), 'skaermen skal ogsaa vaere bag flaget')
+})
+
+test('setup-valgene har én kilde, ikke to', () => {
+  // Profilsiden viser de samme valg som setup-skaermen taeller op. To
+  // haandskrevne lister ville drive fra hinanden uden at nogen opdagede det.
+  const journey = readFileSync(new URL('../screens/MemberJourney.jsx', import.meta.url), 'utf8')
+  const profil = readFileSync(new URL('../screens/PilotProfile.jsx', import.meta.url), 'utf8')
+  assert.ok(journey.includes("from '../setupOptions.js'"), 'setup-skaermen skal hente valgene fra den delte fil')
+  assert.ok(profil.includes("from '../setupOptions.js'"), 'profilsiden skal hente valgene fra den delte fil')
+  assert.ok(!journey.includes('const SQUAT_STYLES = ['), 'listen maa ikke ogsaa staa lokalt i MemberJourney')
+})

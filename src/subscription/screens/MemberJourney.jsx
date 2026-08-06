@@ -1,4 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { PILOT_PROFIL } from '../featureFlags.js'
+import PilotProfile from './PilotProfile.jsx'
+import { DAYS, EQUIPMENT, SQUAT_STYLES, DEADLIFT_STYLES } from '../setupOptions.js'
 import {
   BASELINE_LIFTS,
   applyBaselineLoadsToProgram,
@@ -57,19 +60,6 @@ const LEVELS = [
   { value: 'oevet', label: 'Øvet', note: 'Cirka seks måneder eller mere med struktureret styrketræning.' },
 ]
 
-const DAYS = [2, 3, 4].map(value => ({ value, label: `${value} træningsdage om ugen` }))
-const EQUIPMENT = [
-  { value: 'gym', label: 'Full Gym', note: 'Stang, skiver, rack, bænk og almindelige maskiner.' },
-  { value: 'home', label: 'Hjemmetræning', note: 'Kræver håndvægte, en stabil bænk eller kasse og en elastik.' },
-]
-const SQUAT_STYLES = [
-  { value: 'high-bar', label: 'High-bar squat' },
-  { value: 'low-bar', label: 'Low-bar squat' },
-]
-const DEADLIFT_STYLES = [
-  { value: 'conventional', label: 'Konventionel dødløft' },
-  { value: 'sumo', label: 'Sumo dødløft' },
-]
 const REVIEW_OPTIONS = [
   { value: 'appropriate', label: 'Passende', note: 'Ugen føltes udfordrende, men håndterbar.' },
   { value: 'too-hard', label: 'For hård', note: 'Belastning, RPE eller samlet træthed var for høj.' },
@@ -801,6 +791,9 @@ function MemberTabs({ tab, onChange }) {
     { id: 'today', label: 'I dag' },
     { id: 'history', label: 'Historik' },
     { id: 'program', label: 'Program' },
+    // CT-033: fjerde fane bag et SLUKKET flag. Med PILOT_PROFIL === false er
+    // listen bit for bit den samme som foer, og Mitchs navigation er uaendret.
+    ...(PILOT_PROFIL ? [{ id: 'profile', label: 'Profil' }] : []),
   ]} />
 }
 
@@ -810,6 +803,7 @@ export default function MemberJourney({
   program = null,
   historySessions = [],
   initialMatchInput = null,
+  member = null,
   onCompleteSetup,
   onPersistSession,
   onLogout,
@@ -828,6 +822,7 @@ export default function MemberJourney({
     resolved={resolved}
     historySessions={historySessions}
     initialMatchInput={initialMatchInput}
+    member={member}
     onCompleteSetup={onCompleteSetup}
     onPersistSession={onPersistSession}
     onLogout={onLogout}
@@ -840,6 +835,7 @@ function MemberJourneyState({
   resolved,
   historySessions,
   initialMatchInput,
+  member,
   onCompleteSetup,
   onPersistSession,
   onLogout,
@@ -931,6 +927,7 @@ function MemberJourneyState({
       ? weekTwoProgram(resolved.program, snapshot) || resolved.program
       : resolved.program
   if (tab === 'history') return withNotice(<HistoryScreen progress={progress} reviews={snapshotReviewHistory(snapshot)} onToday={() => setTab('today')} />, { navigation: true })
+  if (tab === 'profile' && PILOT_PROFIL) return withNotice(<PilotProfile member={member} program={visibleProgram} sessions={progress?.sessions || historySessions} onLogout={onLogout} />, { navigation: true })
   if (tab === 'program') return withNotice(<ProgramScreen program={visibleProgram} weekNumber={visibleWeekNumber} matchInput={resolved.matchInput} onToday={() => setTab('today')} onLogout={onLogout} />, { navigation: true })
 
   if (typeof onPersistSession !== 'function') return withNotice(<StateMessage label="Træningslog" title="Gemning er ikke klar." actionLabel={onRetry ? 'Prøv igen' : 'Log ud'} onAction={onRetry || onLogout}>Programmet er sikkert åbnet, men passet kan ikke gemmes endnu.</StateMessage>)

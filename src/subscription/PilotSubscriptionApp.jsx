@@ -284,6 +284,7 @@ export default function PilotSubscriptionApp({ client, session, logout }) {
       program={state.program}
       historySessions={state.sessions}
       initialMatchInput={memberSeed(state.member)}
+      member={state.member}
       onCompleteSetup={completeSetup}
       onPersistSession={persistSession}
       onLogout={logout}
