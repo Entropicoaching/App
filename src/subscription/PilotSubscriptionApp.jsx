@@ -4,10 +4,10 @@ import { Button, Card, Label, Meta, TopBar } from './ui.jsx'
 import MemberJourney from './screens/MemberJourney.jsx'
 import Landing from './screens/Landing.jsx'
 import Onboarding from './screens/Onboarding.jsx'
-import { PILOT_GUIDE, PILOT_LANDING, PILOT_PRICING } from './featureFlags.js'
+import { PILOT_FREE_SETUP, PILOT_GUIDE, PILOT_LANDING, PILOT_PRICING } from './featureFlags.js'
 import { enqueuePilotSession, loadPilotOutbox, loadPilotSessions, savePilotSessions } from './pilotCache.js'
 import {
-  completeMyProgramSetup,
+  completeMySetupForTier,
   loadPilotState,
   memberJourneySessionToPilotSession,
   setupFailureDiagnostic,
@@ -121,7 +121,10 @@ export default function PilotSubscriptionApp({ client, session, logout }) {
     if (!quiet) setState(current => ({ ...current, status: 'loading', error: null }))
     try {
       let remote = await retryTransientAccessClock(() => loadPilotState(client, user))
-      if (remote.access.tier === 'member' && remote.assignment) {
+      // Outboxen gælder alle med et aktivt program, ikke kun members. Da
+      // gratis-brugere fik deres egen opsætning, fik de også pas at
+      // synkronisere — og en tier-låst outbox ville tabe dem tavst.
+      if (remote.assignment) {
         const queuedSessions = loadPilotOutbox(user.id)
         if (queuedSessions.length) {
           await syncPilotOutbox(client, user.id, remote.assignment)
@@ -167,33 +170,41 @@ export default function PilotSubscriptionApp({ client, session, logout }) {
         visPris={PILOT_PRICING}
         onStart={() => {
           setForbiForside(true)
-          if (PILOT_GUIDE) setVisGuide(true)
+          if (PILOT_GUIDE && !PILOT_FREE_SETUP) setVisGuide(true)
         }}
       />
     </div>
   }
 
-  // Guiden i pilot-skallen. SKRIVER INTET — hverken til Supabase eller lokalt.
-  // Den viser hvilket program svarene peger på, og fører derefter tilbage til
-  // det startprogram serveren allerede har tildelt.
+  // ── Gratis-sporet: to veje, og den nye er slukket ───────────────────────
   //
-  // Grunden til at den ikke skriver: brugerens profil ligger i `sub_members`,
-  // og et INSERT derfra ville røre den tabel Mitchs kørende pilot læser af.
-  // Det er en produktionsændring, ikke en UI-ændring, og et slukket flag
-  // beskytter mod at VISE noget — ikke mod et forkert skriv.
-  if (state.access.tier === 'free' && PILOT_GUIDE && visGuide) {
-    return <Onboarding
-      springNavn
-      slutKnap="Tilbage til mit program"
-      slutNote="Det her er kun et overblik. Dit nuværende program er uændret, og intet er gemt."
-      onCreate={() => setVisGuide(false)}
-    />
+  // Med PILOT_FREE_SETUP TÆNDT går gratis-brugere gennem MemberJourney som
+  // alle andre: rigtig opsætning, rigtigt program, rigtig træningslog.
+  // Serverfunktionen `sub_complete_my_free_setup_v1` afviser alt der ikke er
+  // free, så adskillelsen ligger i serveren frem for i to skærme.
+  //
+  // Med flaget SLUKKET er adfærden præcis som før: en kosmetisk guide der
+  // skriver intet, og en FreeProgramme-skærm der kun kan vise programmet.
+  //
+  // Flaget er slukket med vilje. CT-033: Marc ser adfærden før nogen anden.
+  if (!PILOT_FREE_SETUP) {
+    // Guiden SKRIVER INTET — hverken til Supabase eller lokalt. Den viser
+    // hvilket program svarene peger på, og fører tilbage til det startprogram
+    // serveren allerede har tildelt.
+    if (state.access.tier === 'free' && PILOT_GUIDE && visGuide) {
+      return <Onboarding
+        springNavn
+        slutKnap="Tilbage til mit program"
+        slutNote="Det her er kun et overblik. Dit nuværende program er uændret, og intet er gemt."
+        onCreate={() => setVisGuide(false)}
+      />
+    }
+    if (state.access.tier === 'free') return <FreeProgramme program={state.program} onRetry={reload} onLogout={logout} />
   }
-  if (state.access.tier === 'free') return <FreeProgramme program={state.program} onRetry={reload} onLogout={logout} />
 
   const completeSetup = async input => {
     try {
-      await completeMyProgramSetup(client, input)
+      await completeMySetupForTier(client, input, state.access.tier)
       const refreshed = await reload({ quiet: true })
       if (!refreshed?.assignment) throw new Error('assignment-not-readable')
       return refreshed.assignment

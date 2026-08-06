@@ -80,6 +80,25 @@ assert.match(auth, /isRecoveryEvent/, 'recovery must interrupt the way into the 
 // falder medlemmet direkte ind i appen med en gyldig session, saetter aldrig
 // den adgangskode han bad om, og staar i samme blindgyde naeste gang.
 assert.match(auth, /if \(session && recovery\) return <SetPassword/, 'recovery session must render the set-password screen before the app')
+// Opsaetningen skal foelge brugerens FAKTISKE niveau. Hardkodedes 'member'
+// her, ville en gratis-bruger blive sendt gennem medlemmets funktion - som
+// vaelger frit blandt alle 102 betalte programmer.
+assert.match(
+  readFileSync(resolve(runtimeRoot, 'PilotSubscriptionApp.jsx'), 'utf8'),
+  /completeMySetupForTier\(client, input, state\.access\.tier\)/,
+  'setup must route on the real tier, never a hard-coded one',
+)
+// Flag-porten laeser FLAGS-objektet. Et flag der eksporteres men ikke staar
+// deri er usynligt for den og kunne taendes uden godkendelse - registret er
+// selve grundlaget for at "alle taendte flag er godkendte" betyder noget.
+{
+  const flagsSource = readFileSync(resolve(runtimeRoot, 'featureFlags.js'), 'utf8')
+  const eksporteret = [...flagsSource.matchAll(/export const (PILOT_[A-Z_]+)\s*=/g)].map(m => m[1])
+  const registret = flagsSource.slice(flagsSource.indexOf('export const FLAGS'))
+  const mangler = eksporteret.filter(navn => !new RegExp(`\\n\\s*${navn},`).test(registret))
+  assert.deepEqual(mangler, [], `flags missing from the FLAGS registry: ${mangler.join(', ')}`)
+  assert.ok(eksporteret.length >= 5, 'expected at least five pilot flags to be exported')
+}
 assert.match(handoff, /maxhsefxbrvsgolscqwh\.supabase\.co/, 'handoff must be locked to the authorised shadow host')
 assert.match(handoff, /entropi_magic_link/, 'handoff marker is missing')
 assert.match(handoff, /historyLike\.replaceState/, 'handoff fragment must be scrubbed before client creation')

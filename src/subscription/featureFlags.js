@@ -38,12 +38,26 @@ export const PILOT_PRICING = false
 // hverken se eller efterprøve de tal alle hans vægte kommer af.
 export const PILOT_PROFIL = false
 
+// Rigtig opsætning for gratis-brugere. Slukket: en gratis-bruger møder den
+// kosmetiske guide der skriver intet, og en skærm der kun kan VISE programmet.
+// Tændt: han går gennem MemberJourney som alle andre — sætter selv op, får sit
+// eget program og kan logge pas.
+//
+// Serversiden er på plads (`sub_complete_my_free_setup_v1`, kørt 6. august) og
+// afviser alt der ikke er free, så en gratis-bruger kan ikke ramme medlemmets
+// opsætning. Mitch er member og påvirkes ikke af flaget i nogen af stillingerne.
+//
+// Det er dette flag der gør appen selvkørende: sammen med kontooprettelsen er
+// det forskellen på at en fremmed kan komme i gang uden at Marc rører noget.
+export const PILOT_FREE_SETUP = false
+
 // Alle flag samlet, så en port kan tjekke at intet er tændt ved et uheld.
 export const FLAGS = {
   PILOT_LANDING,
   PILOT_GUIDE,
   PILOT_PRICING,
   PILOT_PROFIL,
+  PILOT_FREE_SETUP,
 }
 
 // Hvilke flag er tændt lige nu. Bruges af verify-pilot-flags-porten.
