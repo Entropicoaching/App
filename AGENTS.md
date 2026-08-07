@@ -56,6 +56,26 @@ node C:\Users\Entropi\Documents\Entropicoaching\control-tower\work-system\status
     filkopier. Historik hører til i git.
 11. Erklær dig færdig kun når porten er grøn. Er den rød tre gange, meld `BLOCKED`
     med hvad du prøvede.
+12. **Intet træningsindhold sendes til en atlet uden Marcs eksplicitte godkendelse.**
+    Programlægning har `HUMAN-GATE`: ingen maskine kan afgøre om en uge er forsvarlig
+    for det menneske der skal løfte den. Carina har blodtrykshensyn — gæt aldrig på
+    atletpræferencer. Dette er en helbredsregel, ikke en kvalitetsregel.
+
+### Hvad regel 12 IKKE dækker — gør det uden at spørge
+
+Regel 12 gælder **det en atlet får i hænderne**: et program, en uge, en
+belastningsanbefaling, en video-feedback der lander hos hende. Den gælder **ikke**
+maskinen der producerer det.
+
+Kode, tests, refaktorering, fejlrettelser, verifikatorer, dokumentation, skemaændringer
+i shadow, og alt arbejde bag et slukket flag er almindeligt arbejde. Skriv det, kør
+porten, aflevér. Spørg ikke om lov først.
+
+> **Spørg kun når svaret ændrer *hvad* der skal bygges — aldrig når det kun ændrer
+> *hvornår*.** En tur der ikke gjorde noget er den dyreste fejl i dette system.
+> Målt 7. august 2026: 13 afviste tilladelser på 4.296 agent-turer. Værnene var
+> aldrig flaskehalsen — dokumentationen var, fordi den fik agenten til at spørge
+> om ting den allerede måtte.
 
 ## VideoCoach
 
