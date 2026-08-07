@@ -24,3 +24,17 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
+          # keep_files er IKKE valgfri her. gh-pages baerer BAADE 1:1-portalen
+          # (alle atleter) OG Entropi Adaptivs shadow-pilot paa samme site.
+          # Denne workflow bygger kun 1:1-appen -- "npm run build" er "vite build",
+          # og der findes nul subscription-filer paa main; piloten lever paa
+          # feature/subscription-app-slice-1 og udgives manuelt via
+          # control-tower/worktrees/gh-pages-deploy.
+          #
+          # Uden keep_files erstatter denne action HELE gh-pages med ./dist og
+          # sletter subscription.html + subscription-assets/. Mitch ville miste
+          # appen ved det foerste uskyldige push til main.
+          #
+          # Verificeret 7. august 2026. Fjern den foerst naar Adaptiv har sit
+          # eget deploy-target -- se control-tower/status/OVERDRAGELSE.md.
+          keep_files: true
