@@ -1,0 +1,76 @@
+name: Deploy Entropi Adaptiv
+
+# Adaptiv har sit EGET udgivelsestarget. Det er hele pointen med SUB-DEPLOY:
+# saa laenge de to produkter delte gh-pages, kunne et uskyldigt push til main
+# slette Mitchs app, og "Adaptiv er ikke en udvidelse af Coach" var kun sandt
+# i kildekoden, ikke i udgivelsen.
+#
+# Kilden bliver her i App paa feature/subscription-app-slice-1. Kun det byggede
+# resultat sendes til Entropicoaching/adaptiv-app, som har sit eget Pages-site.
+# Et GitHub-repo kan kun have EET Pages-site, og App bruger sit paa
+# app.entropicoaching.dk — derfor et separat udgivelsesrepo.
+
+on:
+  # BEVIDST KUN MANUEL indtil DNS og Supabase er paa plads. Koeres den foer
+  # redirect-URL'erne findes i shadow-projektet, er Mitch laast ude af det nye
+  # domaene — praecis den fejlklasse der kostede 6. august.
+  #
+  # Naar adaptiv.entropicoaching.dk svarer OG redirect-URL'erne er tilfoejet,
+  # kan denne blok udvides med:
+  #   push:
+  #     branches: [feature/subscription-app-slice-1]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm install
+
+      # Standalone-build af piloten alene. IKKE build:pages — den bygger
+      # portalen og Adaptiv sammen, og det er netop koblingen vi fjerner her.
+      - name: Byg Adaptiv
+        run: npm run build:subscription-public
+        env:
+          VITE_SUB_SUPABASE_URL: ${{ secrets.VITE_SUB_SUPABASE_URL }}
+          VITE_SUB_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUB_SUPABASE_ANON_KEY }}
+          VITE_SUB_SUPABASE_PROJECT_REF: ${{ secrets.VITE_SUB_SUPABASE_PROJECT_REF }}
+
+      # Porten. Den kraever at bundlen peger paa shadow, IKKE paa produktion,
+      # og at der er en Supabase-noegle i den. Uden det sidste tjek ville et
+      # build helt uden secrets blive udgivet som en app ingen kan logge ind i
+      # — og ingen ville opdage det, fordi ingen ser et workflow-build.
+      - name: Verificér buildet
+        run: node scripts/verify-subscription-public-build.mjs
+
+      # Paa eget subdomaene skal roden svare. Vite bygger subscription.html;
+      # uden dette skulle brugeren skrive /subscription.html i adressefeltet.
+      - name: Gør subscription.html til forside
+        run: cp dist-subscription-public/subscription.html dist-subscription-public/index.html
+
+      - name: Skriv CNAME
+        run: echo 'adaptiv.entropicoaching.dk' > dist-subscription-public/CNAME
+
+      - name: Udgiv til adaptiv-app
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          # GITHUB_TOKEN kan kun skrive i DETTE repo. Push til et andet repo
+          # kraever en PAT med repo-scope, lagt i App som ADAPTIV_DEPLOY_TOKEN.
+          personal_token: ${{ secrets.ADAPTIV_DEPLOY_TOKEN }}
+          external_repository: Entropicoaching/adaptiv-app
+          publish_branch: gh-pages
+          publish_dir: ./dist-subscription-public
+          # Ingen keep_files her. adaptiv-app baerer KUN Adaptiv, saa der er
+          # intet fremmed indhold at bevare — og en fuld erstatning er den
+          # rigtige adfaerd naar et produkt har sit target for sig selv.
+          # Det er praecis den frihed App-repoet ikke har.
+          commit_message: "deploy adaptiv fra ${{ github.sha }}"

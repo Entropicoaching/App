@@ -55,6 +55,35 @@ export async function verifySubscriptionPublicBuild() {
   const subscriptionHtml = await readFile(resolve(outputRoot, 'subscription.html'), 'utf8')
   assert.match(subscriptionHtml, /<script[^>]+type="module"/i, 'subscription.html mangler det byggede modul-entrypoint')
 
+  // Indtil 7. august 2026 stoppede porten her. Den maalte HVILKE filer der laa i
+  // buildet, ikke om buildet kunne bruges: et build helt uden
+  // VITE_SUB_SUPABASE_ANON_KEY gav PASS, selvom ingen kunne logge ind i det.
+  // Samme fejltype som SubscriptionApp-fundet 5. august — porten maalte at koden
+  // var der, ikke at nogen kunne naa den. Det betyder noget nu, hvor et
+  // deploy-workflow bygger uden at et menneske ser resultatet.
+  const bundles = relativeFiles.filter(path => path.endsWith('.js'))
+  assert.ok(bundles.length > 0, 'public build indeholder ingen JS-bundle')
+  const bundleText = (await Promise.all(
+    bundles.map(path => readFile(resolve(outputRoot, path), 'utf8')),
+  )).join('\n')
+
+  const SHADOW_REF = 'maxhsefxbrvsgolscqwh'
+  const PRODUKTION_REF = 'dsqgaxwgtcbqgphsofav'
+
+  assert.ok(
+    bundleText.includes(SHADOW_REF),
+    `bundlen peger ikke paa shadow-projektet (${SHADOW_REF}) — appen ville ikke vide hvor den skal hen`,
+  )
+  assert.ok(
+    !bundleText.includes(PRODUKTION_REF),
+    `bundlen indeholder produktions-ref (${PRODUKTION_REF}) — piloten maa ALDRIG naa rigtige atleters data`,
+  )
+  assert.match(
+    bundleText,
+    /eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}|sb_publishable_[A-Za-z0-9_-]{10,}/,
+    'bundlen har ingen Supabase-noegle — saet VITE_SUB_SUPABASE_ANON_KEY foer build, ellers kan ingen logge ind',
+  )
+
   return { fileCount: relativeFiles.length, htmlFiles }
 }
 
