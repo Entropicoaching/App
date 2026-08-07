@@ -11,15 +11,23 @@ name: Deploy Entropi Adaptiv
 # app.entropicoaching.dk — derfor et separat udgivelsesrepo.
 
 on:
-  # BEVIDST KUN MANUEL indtil DNS og Supabase er paa plads. Koeres den foer
-  # redirect-URL'erne findes i shadow-projektet, er Mitch laast ude af det nye
-  # domaene — praecis den fejlklasse der kostede 6. august.
-  #
-  # Naar adaptiv.entropicoaching.dk svarer OG redirect-URL'erne er tilfoejet,
-  # kan denne blok udvides med:
-  #   push:
-  #     branches: [feature/subscription-app-slice-1]
+  push:
+    branches: [feature/subscription-app-slice-1]
   workflow_dispatch:
+
+# Triggeren stod foerst som workflow_dispatch alene, for ikke at udgive til et
+# domaene hvis redirect-URL'er endnu ikke var whitelistet i shadow — det ville
+# laase Mitch ude, samme fejlklasse som 6. august.
+#
+# To ting aendrede det. For det foerste kan workflow_dispatch kun udloeses hvis
+# filen ligger paa default branch, og den ligger her paa pilot-grenen; en manuel
+# koersel var altsaa slet ikke mulig uden foerst at pushe til main.
+# For det andet gaelder faren ikke endnu: adaptiv-app er tomt, og
+# adaptiv.entropicoaching.dk peger ingen steder. Der er intet at laase nogen ude af.
+#
+# Naar domaenet ER live, er automatisk udgivelse ved push netop det oenskede —
+# men saa skal redirect-URL'erne vaere paa plads FOERST. Se
+# control-tower/status/SUB-DEPLOY-OPSAETNING.md, trin 3 foer trin 4.
 
 permissions:
   contents: read
