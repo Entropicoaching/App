@@ -63,9 +63,16 @@ jobs:
       - name: Udgiv til adaptiv-app
         uses: peaceiris/actions-gh-pages@v4
         with:
-          # GITHUB_TOKEN kan kun skrive i DETTE repo. Push til et andet repo
-          # kraever en PAT med repo-scope, lagt i App som ADAPTIV_DEPLOY_TOKEN.
-          personal_token: ${{ secrets.ADAPTIV_DEPLOY_TOKEN }}
+          # GITHUB_TOKEN kan kun skrive i DETTE repo, saa push til adaptiv-app
+          # kraever en egen legitimation. Valgt: en SSH deploy key frem for en PAT.
+          #
+          # En PAT hoerer til en PERSON og kan naa alt hvad personen kan — selv en
+          # fine-grained PAT skal fornys og kan udvides ved et uheld. En deploy key
+          # hoerer til ET repo, kan ikke bruges andre steder, og har ingen udloebsdato
+          # der pludselig braekker deployet med en 403 der ligner noget andet.
+          # Den offentlige halvdel ligger som read-write deploy key paa adaptiv-app;
+          # den private som ACTIONS_DEPLOY_KEY her i App.
+          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
           external_repository: Entropicoaching/adaptiv-app
           publish_branch: gh-pages
           publish_dir: ./dist-subscription-public
