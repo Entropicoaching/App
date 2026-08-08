@@ -16,19 +16,29 @@
  */
 export const BAR = 20
 
+/**
+ * Fold navnet til ASCII før sammenligning.
+ *
+ * Øvelsesdata bruger begge stavemåder: både `Bænkpres` og `Baenkpres`, både
+ * `Dødløft` og `Doedloeft`. Formlen kendte kun de danske tegn, så `Baenkpres`,
+ * `Doedloeft` og `Slingshot baenkpres - topsaet` blev dømt accessories og fik
+ * ÉT opvarmningssæt på 60 %. Målt 8. august 2026: 17 af 127 øvelsesnavne var
+ * fejlklassificerede — heriblandt almindelig bænkpres og almindeligt dødløft.
+ */
+const fold = (s) => String(s ?? '').toLowerCase()
+  .replace(/æ/g, 'ae').replace(/ø/g, 'oe').replace(/å/g, 'aa')
+
 export function isMainLift(name) {
-  // String() og ikke (name || '') — et navn der ikke er tekst fik .toLowerCase()
-  // til at kaste, og hele opvarmningen forsvandt med en fejl i konsollen.
-  const n = String(name ?? '').toLowerCase()
+  const n = fold(name)
   // Variationer der trænes som accessory (lettere ramp). Bemærk: 'sumo' er IKKE
   // her — sumo dødløft er et primært konkurrenceløft og skal have fuld
   // opvarmnings-ramp (ellers ender et tungt topsæt med kun ét spring op).
-  if (n.includes('romanian') || n.includes('rumæn') || n.includes('rdl') || n.includes('stiff') || n.includes('front squat') || n.includes('hack') || n.includes('goblet')) return false
-  if (n.includes('squat') || n.includes('bænk') || n.includes('bench') || n.includes('dødl') || n.includes('deadlift')) return true
-  // Barbell overhead press (fx Henriks OHP) er et hovedløft og skal have fuld
-  // opvarmnings-ramp. Udeluk accessories der tilfældigvis rammer "overhead"
-  // (fx "Overhead triceps extension") og håndvægts-varianter.
-  if (n.includes('triceps') || n.includes('extension') || n.includes('raise') || n.includes('fly') || n.includes('db ') || n.includes('dumbbell') || n.includes('håndvægt')) return false
+  // Redskabet afgør FØRST. "Prone Y raise /liggende på bænk)" indeholder "bænk"
+  // og blev derfor et hovedløft med fuld stang-ramp. Et navn der beskriver hvor
+  // man ligger, er ikke et navn på løftet.
+  if (n.includes('triceps') || n.includes('extension') || n.includes('raise') || n.includes('fly') || n.includes('db ') || n.includes('dumbbell') || n.includes('haandvaegt')) return false
+  if (n.includes('romanian') || n.includes('rumaen') || n.includes('rdl') || n.includes('stiff') || n.includes('front squat') || n.includes('hack') || n.includes('goblet')) return false
+  if (n.includes('squat') || n.includes('baenk') || n.includes('bench') || n.includes('doedl') || n.includes('deadlift')) return true
   return n.includes('ohp') || n.includes('overhead') || n.includes('militar') || n.includes('push press') || n.includes('strict pres') || n.includes('split jerk')
 }
 

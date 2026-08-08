@@ -101,6 +101,41 @@ test('sumo doedloeft er et hovedloeft, RDL er ikke', () => {
   assert.equal(isMainLift('OHP'), true)
 })
 
+// Oevelsesdata bruger BEGGE stavemaader. Formlen kendte kun de danske tegn, saa
+// "Baenkpres" og "Doedloeft" — almindelig baenkpres og almindeligt doedloeft —
+// blev accessories og fik ÉT opvarmningssaet paa 60 %. 17 af 127 oevelsesnavne
+// var ramt. Marc opdagede det paa sin slingshot-baenkpres 8. august 2026.
+test('ASCII-stavemaader genkendes som de danske', () => {
+  for (const [dansk, ascii] of [
+    ['Bænkpres', 'Baenkpres'],
+    ['Dødløft', 'Doedloeft'],
+    ['Slingshot Bænkpres', 'Slingshot baenkpres - topsaet'],
+    ['Pause bænkpres', 'Pause baenkpres'],
+    ['Rumænsk dødløft', 'Rumaensk doedloeft']
+  ]) {
+    assert.equal(isMainLift(ascii), isMainLift(dansk), `"${ascii}" doemmes anderledes end "${dansk}"`)
+  }
+  assert.equal(isMainLift('Baenkpres'), true)
+  assert.equal(isMainLift('Doedloeft'), true)
+  assert.equal(isMainLift('Rumaensk doedloeft'), false, 'RDL er stadig accessory')
+})
+
+test('redskabet vejer tungere end hvor man ligger', () => {
+  // "Prone Y raise /liggende på bænk)" indeholder "bænk" og blev hovedloeft
+  // med fuld stang-ramp, da ASCII-foldningen kom til.
+  assert.equal(isMainLift('Prone Y raise /liggende på bænk)'), false)
+  assert.equal(isMainLift('Incline DB press'), false)
+  assert.equal(isMainLift('Close-grip bænkpres'), true)
+  assert.equal(isMainLift('Pause bænk 3 sek'), true)
+})
+
+test('et tungt hovedloeft faar aldrig kun ét opvarmningssaet', () => {
+  // Symptomet Marc saa: 95x4 som eneste opvarmning foer en tung slingshot-baenk.
+  for (const navn of ['Slingshot baenkpres - topsaet', 'Baenkpres', 'Doedloeft'])
+    for (const W of [120, 150, 160, 190])
+      assert.ok(calcWarmupSets(W, 4, navn).length >= 4, `${navn} ${W}kg gav for faa saet`)
+})
+
 test('accessory faar kort ramp uden stang-saet', () => {
   const s = calcWarmupSets(100, 10, 'Lat pulldown')
   assert.ok(s.length <= 2)
