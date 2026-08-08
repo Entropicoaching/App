@@ -5,6 +5,7 @@ import { sanitizeVideoCoachFeedbackEvidence } from './videoCoachFeedbackEvidence
 import { videoCoachPersonalBaselineAthleteText, videoCoachPersonalBaselineForAnalysis } from './videoCoachPersonalFeedback'
 import { VIDEOCOACH_LIFT_LABELS as ATHLETE_VIDEO_LIFTS, videoCoachVariationLabel as athleteVideoVariationLabel } from './videoCoachLabels'
 import { completeAthleteOnboarding, hasCompletedAthleteOnboarding } from './athleteOnboarding'
+import { calcWarmupSets, isMainLift } from './warmup'
 
 const ATHLETE_VIDEOCOACH_PREFIX = 'entropi:videocoach:v3'
 const ATHLETE_VIDEOCOACH_URL = 'videocoach.html?mode=athlete&bridge=athlete-v1&v=20260728-feedback-evidence'
@@ -2010,69 +2011,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       .select('*')
       .eq('athlete_id', athleteId)
     setWarmupTemplates(data || [])
-  }
-
-  function isMainLift(name) {
-    const n = (name || '').toLowerCase()
-    // Variationer der trænes som accessory (lettere ramp). Bemærk: 'sumo' er IKKE
-    // her — sumo dødløft er et primært konkurrenceløft og skal have fuld
-    // opvarmnings-ramp (ellers ender et tungt topsæt med kun ét spring op).
-    if (n.includes('romanian') || n.includes('rumæn') || n.includes('rdl') || n.includes('stiff') || n.includes('front squat') || n.includes('hack') || n.includes('goblet')) return false
-    if (n.includes('squat') || n.includes('bænk') || n.includes('bench') || n.includes('dødl') || n.includes('deadlift')) return true
-    // Barbell overhead press (fx Henriks OHP) er et hovedløft og skal have fuld
-    // opvarmnings-ramp. Udeluk accessories der tilfældigvis rammer "overhead"
-    // (fx "Overhead triceps extension") og håndvægts-varianter.
-    if (n.includes('triceps') || n.includes('extension') || n.includes('raise') || n.includes('fly') || n.includes('db ') || n.includes('dumbbell') || n.includes('håndvægt')) return false
-    return n.includes('ohp') || n.includes('overhead') || n.includes('militar') || n.includes('push press') || n.includes('strict pres') || n.includes('split jerk')
-  }
-
-  function calcWarmupSets(workingWeight, plannedReps = 1, exName = '') {
-    const W = workingWeight
-    if (!W || W <= 20) return []
-    const n = parseInt(plannedReps) || 1
-
-    // Rund til fornuftige spring: 5 kg lavt/midt, 2,5 kg tæt på arbejdsvægt.
-    // (Tidligere rundede vi til nærmeste 10 i bunden — det gav de mærkelige spring.)
-    const smartRound = w => (w / W >= 0.85 ? Math.round(w / 2.5) * 2.5 : Math.round(w / 5) * 5)
-
-    // Warmup-reps afhænger KUN af hvor tæt vi er på arbejdsvægten (ikke af
-    // arbejdssættets reps) — man varmer op med flere reps let og tapper opad.
-    const repsFor = p => p >= 0.88 ? 1 : p >= 0.78 ? 2 : p >= 0.60 ? 3 : 5
-
-    // Accessory: kort ramp (1 sæt, 2 for tunge maskiner). Aldrig under stangen.
-    if (!isMainLift(exName)) {
-      const nm = (exName || '').toLowerCase()
-      const isHighLoad = nm.includes('benpress') || nm.includes('leg press') || nm.includes('benpres')
-      const stops = isHighLoad ? [0.50, 0.75] : [0.60]
-      const out = []
-      for (const p of stops) {
-        const w = smartRound(W * p)
-        if (w <= 20 || w >= W || W - w < 10) continue
-        if (out.length && w - out[out.length - 1].weight < 10) continue
-        out.push({ weight: w, reps: p < 0.6 ? 5 : p < 0.75 ? 4 : 3, pct: `${Math.round(p * 100)}%` })
-      }
-      return out
-    }
-
-    // Hovedløft: jævn ramp fra stang op til tæt på arbejdsvægt.
-    // - topPct: sidste opvarmning tættere på arbejdsvægt ved singler end ved høje reps.
-    // - antal sæt skalerer med hvor tungt der løftes (længere ramp = flere sæt).
-    // - ease-out fordeling: største spring i MIDTEN, mindste lige før arbejdssættet.
-    const topPct = n <= 2 ? 0.92 : n <= 4 ? 0.88 : 0.85
-    const startPct = 0.40
-    const nSets = W < 50 ? 2 : W < 80 ? 3 : W < 120 ? 4 : W < 180 ? 5 : 6
-
-    const out = [{ weight: 20, reps: 5, pct: 'Stang' }]
-    for (let i = 0; i < nSets; i++) {
-      const t = nSets === 1 ? 1 : i / (nSets - 1)          // 0..1
-      const p = startPct + (topPct - startPct) * (1 - Math.pow(1 - t, 1.6))
-      const w = smartRound(W * p)
-      if (w <= 20 || w >= W) continue
-      const prev = out[out.length - 1].weight
-      if (w - prev < 5) continue                            // for tæt på forrige → drop
-      out.push({ weight: w, reps: repsFor(p), pct: `${Math.round(p * 100)}%` })
-    }
-    return out
   }
 
   async function fetchReadiness(athleteId) {
