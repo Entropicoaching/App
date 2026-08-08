@@ -700,6 +700,8 @@ const COACHWEB = !DESKTOP && MODE_PARAMS.has('coach');
 // Lokal, eksplicit testtilstand. Eksponerer kun rå trackerdata, når URL'en
 // indeholder ?benchmark=1; normal coach- og atletadfærd bruger aldrig kanalen.
 const TRACKER_BENCHMARK = MODE_PARAMS.get('benchmark') === '1';
+// Lokal diagnosekanal: kræver også trackerProbe, så almindelig benchmark er uændret.
+const TRACKER_PROBE = TRACKER_BENCHMARK && MODE_PARAMS.get('trackerProbe') === '1';
 const SLIM = !DESKTOP;              // moderne layout (atlet OG coach online)
 const ATHLETE = SLIM && !COACHWEB;
 let setAthleteState = null;         // Athlete v2: ét roligt, guidet flow
@@ -2343,11 +2345,39 @@ function analyzePath(path, retrimmed) {
       if (path.vel[k] < -0.05) hadDescent = true;
       k--;
     }
-    const tStart = hadDescent ? t[Math.max(0, k)] - 0.2       // top af nedtur + lille buffer
-                              : t[r0] - 0.6;                  // ingen nedtur (dødløft)
-    const tB = t[Math.min(n - 1, path.reps[path.reps.length - 1].end)];
-    let lo = 0; while (lo < n - 1 && t[lo] < tStart) lo++;
-    let hi = n - 1; while (hi > 0 && t[hi] > tB + 0.6) hi--;
+    const naturalStart = hadDescent ? t[Math.max(0, k)] - 0.2 // top af nedtur + lille buffer
+                                    : t[r0] - 0.6;             // ingen nedtur (dødløft)
+    const lastRepEnd = Math.min(n - 1, path.reps[path.reps.length - 1].end);
+    const tB = t[lastRepEnd];
+    // Dødløftets koncentriske rep slutter korrekt ved lockout, men sættet gør
+    // ikke: stangen skal stadig roligt ned til gulvet. Det gamle auto-klip
+    // brugte altid rep-slut + 0.6 s og fik derfor review-loopet til at hoppe
+    // fra toppen, selv når trackeren faktisk havde set nedturen. Bevar kun en
+    // tydelig, sammenhængende returfase (ikke vilkårlig efter-video) som en
+    // del af review-vinduet.
+    let reviewEnd = lastRepEnd;
+    const activeLift = vcV3Lift(document.getElementById('liftSel').value);
+    if (activeLift === 'deadlift') {
+      const topY = ys[lastRepEnd];
+      const returnY = topY + range * 0.80;
+      let downRunAfterTop = 0;
+      for (let j = lastRepEnd + 1; j < n; j++) {
+        if (path.vel[j] < -0.05) downRunAfterTop++;
+        else if (Math.abs(path.vel[j]) <= 0.05) { /* pause i kontrolleret nedtur */ }
+        else downRunAfterTop = 0;
+        if (downRunAfterTop >= 3 && ys[j] >= returnY) { reviewEnd = j; break; }
+      }
+    }
+    path.reviewEndTime = t[reviewEnd];
+    // Dødløft skal være muligt at se som et helt løft: mindst ét sekund før
+    // trækket og ét efter den observerede afslutning. Findes de frames ikke,
+    // rammer løkken blot videoens reelle start/slut — den opfinder aldrig tid.
+    const reviewStartTime = activeLift === 'deadlift'
+      ? Math.min(naturalStart, t[r0] - 1)
+      : naturalStart;
+    const reviewTail = activeLift === 'deadlift' ? 1 : 0.6;
+    let lo = 0; while (lo < n - 1 && t[lo] < reviewStartTime) lo++;
+    let hi = n - 1; while (hi > 0 && t[hi] > path.reviewEndTime + reviewTail) hi--;
     if (lo > 3 || hi < n - 4) {
       // gem den U-TRIMMEDE bane til skelet-forankring: nedturen paa rep 1
       // ligger FOER trim-vinduet, og uden stangdata dér mistes skulderen
@@ -2932,6 +2962,7 @@ async function startMultipointTracking(p0) {
   const deadliftMode=liftMode==='deadlift',benchMode=liftMode==='bench';
   let homePending=null,correctionPending=null,fullAuditFrames=0;
   const correctionHistory=[];
+  const trackerProbe=TRACKER_PROBE?[]:null;
   let benchOutputX=p0.x,benchPreviousRaw={x:p0.x,y:p0.y};
   // Dødløft: en kort, fuld skivekontrol ved starten og ved hver tilbagekomst
   // til gulvzonen. Det bevarer genankringen efter kamerarystelser uden den
@@ -2943,7 +2974,8 @@ async function startMultipointTracking(p0) {
       const run={schema:1,outcome:'rejected_initial_features',startedAt:startT,
         elapsedMs:performance.now()-benchmarkStartedAt,canvas:{w:ocan.width,h:ocan.height},
         plateRadius:radius,initialFeatures:features.length,pts:path.pts.map(q=>({...q})),
-        times:[...path.times],valid:[...path.valid]};
+        times:[...path.times],valid:[...path.valid],
+        ...(TRACKER_PROBE?{frameProbe:trackerProbe}: {})};
       publishTrackerBenchmarkRun(run);
     }
     say('⚠ For få tydelige detaljer ved punktet · vælg et tydeligt område omkring skivens nav');
@@ -2989,11 +3021,15 @@ async function startMultipointTracking(p0) {
       if(fb>2.5)continue;
       moves.push({p,q:{x:fwd.x,y:fwd.y},dx:fwd.x-p.x,dy:fwd.y-p.y,fb});
     }
+    const probe=TRACKER_PROBE?{t:tNow,moves:0,kept:0,identityChecked:false,
+      identityOK:null,jump:null,maxJump:null,nextFeatures:null,accepted:false,rejectGate:null}:null;
+    if(probe)probe.moves=moves.length;
     let accepted=false,kept=[];
     if(moves.length>=5){
       const mdx=mpMedian(moves.map(q=>q.dx)),mdy=mpMedian(moves.map(q=>q.dy));
       const residuals=moves.map(q=>Math.hypot(q.dx-mdx,q.dy-mdy)),mad=mpMedian(residuals);
       kept=moves.filter((q,i)=>residuals[i]<=Math.max(3,3*mad));
+      if(probe)probe.kept=kept.length;
       let nx=cur.x+mpMedian(kept.map(q=>q.dx)),ny=cur.y+mpMedian(kept.map(q=>q.dy));
       if(plateIdentityUsable&&!deadliftMode){
         const quickPad=radius*1.55;
@@ -3050,23 +3086,40 @@ async function startMultipointTracking(p0) {
         const homeHit=plSearch(homeFrame,p0,radius,plateModel,homeR,auditStep);
         const homeStrong=homeHit&&homeHit.circle>Math.max(9,plateBase.circle*.34)&&
           homeHit.cover>=.45&&homeHit.pairCover>=.35&&homeHit.app<2.6;
-        if(homeStrong)path.repAnchors=(path.repAnchors||0)+1;
+        if(homeStrong){
+          // Dødløft har kun et troværdigt pladeanker ved gulvet. Bekræft derfor
+          // samme fejl på to hjemframes og dæmp korrektionen, så et enkelt hit
+          // hverken snapper stangen eller selv udløser jump-afvisning.
+          const delta={x:homeHit.x-homeBias.x-nx,y:homeHit.y-homeBias.y-ny};
+          const confirmed=homePending&&
+            Math.hypot(delta.x-homePending.x,delta.y-homePending.y)<=radius*.08;
+          if(confirmed){
+            nx+=delta.x*.5;ny+=delta.y*.5;
+            path.centerCorrections=(path.centerCorrections||0)+1;
+          }
+          homePending=delta;
+          path.repAnchors=(path.repAnchors||0)+1;
+        }else homePending=null;
       }
       if(deadliftMode&&homeEntryFrames>0)homeEntryFrames--;
       if(deadliftMode)wasNearHome=nearHome;
       const jump=Math.hypot(nx-cur.x,ny-cur.y);
       const maxJump=radius*.75+Math.hypot(vel.x,vel.y)*dt*.45;
+      if(probe){probe.jump=jump;probe.maxJump=maxJump;}
       let identityOK=true;
       if(plateIdentityUsable&&(kept.length<8||lost>0)){
+        if(probe)probe.identityChecked=true;
         const pad=radius*1.45;
         const idFrame=plCapture(nx-pad,ny-pad,pad*2,pad*2);
         const e=plEvidence(idFrame,{x:nx,y:ny},radius,plateModel);
         identityOK=e.circle>Math.max(8,plateBase.circle*.30)&&e.cover>=.42&&
           e.pairCover>=.30&&e.app<2.8;
       }
+      if(probe&&probe.identityChecked)probe.identityOK=identityOK;
       if(kept.length>=5&&jump<=maxJump&&identityOK){
         let nextFeatures=mpGoodFeatures(currentFrame,{x:nx,y:ny},radius);
         if(nextFeatures.length<5)nextFeatures=kept.map(q=>({x:q.q.x,y:q.q.y})).slice(0,36);
+        if(probe)probe.nextFeatures=nextFeatures.length;
         if(nextFeatures.length>=5){
           const iv={x:(nx-cur.x)/dt,y:(ny-cur.y)/dt};
           vel={x:vel.x*.35+iv.x*.65,y:vel.y*.35+iv.y*.65};cur={x:nx,y:ny};
@@ -3104,6 +3157,16 @@ async function startMultipointTracking(p0) {
           }else homePending={x:found.x,y:found.y};
         }else homePending=null;
       }
+    }
+    if(probe){
+      probe.accepted=accepted;
+      if(!accepted){
+        if(probe.moves<5||probe.kept<5)probe.rejectGate='feature-match';
+        else if(probe.jump>probe.maxJump)probe.rejectGate='jump';
+        else if(probe.identityChecked&&!probe.identityOK)probe.rejectGate='identity';
+        else probe.rejectGate='next-features';
+      }
+      trackerProbe.push(probe);
     }
     let outputPoint={...cur};
     if(benchMode){
@@ -3189,7 +3252,8 @@ async function startMultipointTracking(p0) {
         'bench-rotation-filtered-drift-audit':'rigid-plate-drift-audit',
       searchBias:{local:localBias,home:homeBias,quick:quickBias},
       workMs:{p50:percentile(.5),p80:percentile(.8),p95:percentile(.95),max:sorted.at(-1)??null},
-      pts:path.pts.map(q=>({...q})),times:[...path.times],valid:[...(path.valid||[])]};
+      pts:path.pts.map(q=>({...q})),times:[...path.times],valid:[...(path.valid||[])],
+      ...(TRACKER_PROBE?{frameProbe:trackerProbe}: {})};
     publishTrackerBenchmarkRun(run);
   }
   analyzePath(path);
@@ -3815,9 +3879,14 @@ function applySessionView() {
     && s.reps && s.reps.length).pop();
   if (!path) return;
   const t = path.times;
-  trimStart = Math.max(0, t[Math.min(path.reps[0].start, t.length - 1)] - 0.8);
+  const activeLift = vcV3Lift(document.getElementById('liftSel').value);
+  const reviewLead = activeLift === 'deadlift' ? 1 : 0.8;
+  const reviewTail = activeLift === 'deadlift' ? 1 : 0.5;
+  trimStart = Math.max(0, t[Math.min(path.reps[0].start, t.length - 1)] - reviewLead);
   trimEnd = Math.min(video.duration || Infinity,
-    t[Math.min(path.reps[path.reps.length - 1].end, t.length - 1)] + 0.5);
+    (Number.isFinite(path.reviewEndTime)
+      ? path.reviewEndTime
+      : t[Math.min(path.reps[path.reps.length - 1].end, t.length - 1)]) + reviewTail);
   document.getElementById('trimInBtn').classList.add('active');
   document.getElementById('trimOutBtn').classList.add('active');
   paintTrim();
