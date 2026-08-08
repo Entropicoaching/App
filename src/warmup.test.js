@@ -4,7 +4,7 @@
 
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { calcWarmupSets, isMainLift, DEFAULT_BAR } from './warmup.js'
+import { calcWarmupSets, isMainLift, BAR } from './warmup.js'
 
 const vægte = (s, W) => [...s.map((x) => x.weight), W]
 const spring = (s, W) => {
@@ -46,33 +46,25 @@ test('vaegtene stiger, ligger over stangen og naar aldrig arbejdsvaegten', () =>
     const s = calcWarmupSets(W, n, 'Squat')
     for (let i = 0; i < s.length; i++) {
       assert.ok(s[i].weight < W, `${W}kg: opvarmning ${s[i].weight} >= arbejdsvaegt`)
-      assert.ok(s[i].weight >= DEFAULT_BAR, `${W}kg: opvarmning ${s[i].weight} under stangen`)
+      assert.ok(s[i].weight >= BAR, `${W}kg: opvarmning ${s[i].weight} under stangen`)
       if (i) assert.ok(s[i].weight > s[i - 1].weight, `${W}kg: ikke stigende`)
     }
   }
 })
 
-// ---------- stangen er et argument, ikke en konstant ----------
+// ---------- stangen ----------
 
-test('kvindestangen paa 15 kg giver en rigtig ramp', () => {
-  const s = calcWarmupSets(60, 5, 'Bænkpres', { barWeight: 15 })
-  assert.equal(s[0].weight, 15)
+test('rampen starter paa stangen', () => {
+  const s = calcWarmupSets(60, 5, 'Bænkpres')
+  assert.equal(s[0].weight, BAR)
   assert.equal(s[0].pct, 'Stang')
-  const g = spring(s, 60)
-  for (let i = 1; i < g.length; i++) assert.ok(g[i] <= g[i - 1] + 1e-9)
-})
-
-test('en arbejdsvaegt lige over stangen giver stangen, ikke ingenting', () => {
-  // Gammel adfaerd: W <= 20 gav [] uanset stang. Med 15 kg stang er 18 kg et
-  // rigtigt arbejdssaet, og en atlet skal ikke moede en tom opvarmning.
-  const s = calcWarmupSets(18, 5, 'Bænkpres', { barWeight: 15 })
-  assert.ok(s.length >= 1)
-  assert.equal(s[0].weight, 15)
 })
 
 test('arbejdsvaegt paa eller under stangen giver ingen opvarmning', () => {
-  assert.deepEqual(calcWarmupSets(20, 5, 'Bænkpres', { barWeight: 20 }), [])
-  assert.deepEqual(calcWarmupSets(12, 5, 'Bænkpres', { barWeight: 15 }), [])
+  // Stangen er altid 20 kg (Marc, 8. august 2026), saa et arbejdssaet paa 20 kg
+  // ER stangen. Der er intet at varme op med, og det er korrekt at svare tomt.
+  assert.deepEqual(calcWarmupSets(20, 5, 'Bænkpres'), [])
+  assert.deepEqual(calcWarmupSets(15, 5, 'Bænkpres'), [])
 })
 
 // ---------- etiketten skal passe til vaegten ----------
@@ -117,7 +109,7 @@ test('accessory faar kort ramp uden stang-saet', () => {
 test('en tung loefter faar en RIGTIG ramp, ikke en tom liste', () => {
   const s = calcWarmupSets(200, 1, 'Dødløft')
   assert.ok(s.length >= 4, `kun ${s.length} opvarmningssaet til 200 kg`)
-  assert.equal(s[0].weight, DEFAULT_BAR)
+  assert.equal(s[0].weight, BAR)
   assert.ok(s[s.length - 1].weight >= 200 * 0.8, 'sidste opvarmning ligger for langt fra arbejdsvaegten')
 })
 

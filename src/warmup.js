@@ -7,8 +7,14 @@
 // Rampen tappede altså ned og bad så om det næststørste spring ind i dagens
 // tungeste sæt. Se warmup.test.js, som gør netop det til en målbar egenskab.
 
-/** Standardstangen. Kvindestangen vejer 15 — derfor er den et argument, ikke en konstant. */
-export const DEFAULT_BAR = 20
+/**
+ * Stangen vejer altid 20 kg. Bekræftet af Marc 8. august 2026.
+ *
+ * Den stod som en parameter et øjeblik, fordi kvindestangen normalt vejer 15 —
+ * men der trænes ikke med den her. En indstilling uden en eneste bruger er værre
+ * end en konstant: den ser ud som om nogen skal tage stilling.
+ */
+export const BAR = 20
 
 export function isMainLift(name) {
   const n = (name || '').toLowerCase()
@@ -49,12 +55,11 @@ const repsFor = (p) => (p >= 0.88 ? 1 : p >= 0.78 ? 2 : p >= 0.6 ? 3 : 5)
  * @param {number} workingWeight  dagens arbejdsvægt
  * @param {number|string} plannedReps  reps i arbejdssættet (kun brugt til hvor tæt sidste opvarmning må lægge sig)
  * @param {string} exName  øvelsens navn — afgør hovedløft mod accessory
- * @param {{barWeight?: number, step?: number}} [options]
  */
-export function calcWarmupSets(workingWeight, plannedReps = 1, exName = '', options = {}) {
+export function calcWarmupSets(workingWeight, plannedReps = 1, exName = '') {
   const W = Number(workingWeight)
-  const bar = Number(options.barWeight ?? DEFAULT_BAR)
-  const step = Number(options.step ?? 2.5)
+  const bar = BAR
+  const step = 2.5
   if (!Number.isFinite(W) || W <= 0) return []
 
   const parsed = parseInt(plannedReps, 10)
