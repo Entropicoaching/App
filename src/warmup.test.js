@@ -12,9 +12,13 @@ const spring = (s, W) => {
   return v.slice(1).map((w, i) => +(w - v[i]).toFixed(3))
 }
 
+// Vaegtene med .5 er ikke pynt. De foerste udgaver af testen brugte naesten kun
+// multipla af 5 og var groenne, mens en fuzz paa 26.140 kombinationer fandt 5.208
+// brud. Hver vaegt herunder braekkede formlen én gang.
 const HOVEDLØFT = [
-  [250, 1], [200, 1], [180, 3], [150, 1], [140, 3], [120, 5],
-  [100, 5], [80, 3], [60, 5], [45, 5], [32.5, 5]
+  [250, 1], [200, 1], [187.5, 1], [182.5, 1], [180, 3], [150, 1], [140, 3],
+  [122.5, 1], [120, 5], [100, 5], [82.5, 1], [80, 3], [60, 5], [52.5, 1],
+  [47.5, 1], [45, 5], [32.5, 5], [27.5, 5], [22.5, 5]
 ]
 
 // ---------- den regel hele formlen findes for ----------
@@ -101,6 +105,27 @@ test('accessory faar kort ramp uden stang-saet', () => {
   const s = calcWarmupSets(100, 10, 'Lat pulldown')
   assert.ok(s.length <= 2)
   assert.ok(s.every((x) => x.pct !== 'Stang'))
+})
+
+test('accessory foelger samme regel om aftagende spring', () => {
+  // 47,5 kg benpres gav 25 → 35 → [47,5]: spring 10 og derefter 12,5.
+  for (const W of [47.5, 60, 82.5, 100, 137.5, 200]) {
+    const g = spring(calcWarmupSets(W, 10, 'Benpress'), W)
+    for (let i = 1; i < g.length; i++) assert.ok(g[i] <= g[i - 1] + 1e-9, `benpres ${W}: ${g.join(', ')}`)
+  }
+})
+
+test('alle vaegte kan saettes paa en stang — multipla af 2,5', () => {
+  for (const [W, n] of HOVEDLØFT)
+    for (const s of calcWarmupSets(W, n, 'Squat'))
+      assert.ok(Math.abs(s.weight / 2.5 - Math.round(s.weight / 2.5)) < 1e-9, `${W}kg gav ${s.weight}`)
+})
+
+test('et oevelsesnavn der ikke er tekst maa ikke kaste', () => {
+  // (name || '').toLowerCase() kastede paa objekter og tal, og hele
+  // opvarmningen forsvandt med en fejl i konsollen.
+  for (const navn of [null, undefined, 0, 42, {}, [], true])
+    assert.doesNotThrow(() => calcWarmupSets(100, 5, navn), `navn: ${String(navn)}`)
 })
 
 // ---------- BRAEK-ANKRE ----------

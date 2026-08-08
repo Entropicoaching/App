@@ -17,7 +17,9 @@
 export const BAR = 20
 
 export function isMainLift(name) {
-  const n = (name || '').toLowerCase()
+  // String() og ikke (name || '') — et navn der ikke er tekst fik .toLowerCase()
+  // til at kaste, og hele opvarmningen forsvandt med en fejl i konsollen.
+  const n = String(name ?? '').toLowerCase()
   // Variationer der trænes som accessory (lettere ramp). Bemærk: 'sumo' er IKKE
   // her — sumo dødløft er et primært konkurrenceløft og skal have fuld
   // opvarmnings-ramp (ellers ender et tungt topsæt med kun ét spring op).
@@ -71,7 +73,7 @@ export function calcWarmupSets(workingWeight, plannedReps = 1, exName = '') {
   // ---- accessories: kort ramp, aldrig under stangen ----
   if (!isMainLift(exName)) {
     if (W <= bar) return []
-    const nm = (exName || '').toLowerCase()
+    const nm = String(exName ?? '').toLowerCase()
     const isHighLoad = nm.includes('benpress') || nm.includes('leg press') || nm.includes('benpres')
     const ud = []
     for (const p of isHighLoad ? [0.5, 0.75] : [0.6]) {
@@ -79,6 +81,18 @@ export function calcWarmupSets(workingWeight, plannedReps = 1, exName = '') {
       if (w <= bar || w >= W || W - w < 10) continue
       if (ud.length && w - ud[ud.length - 1].weight < 10) continue
       ud.push({ weight: w, reps: p < 0.6 ? 5 : p < 0.75 ? 4 : 3, pct: pctTekst(w, W) })
+    }
+    // Samme regel som hovedløft: springet ind i arbejdssættet må ikke være det
+    // største. To faste procenter kan lande skævt — 47,5 kg benpres gav
+    // 25 → 35 → [47,5], altså 10 og derefter 12,5. Løft sidste sæt op på
+    // gitteret så det passer; kan det ikke, er sættet ikke værd at have.
+    while (ud.length >= 2) {
+      const sidste = ud[ud.length - 1]
+      const forrige = ud[ud.length - 2].weight
+      if (W - sidste.weight <= sidste.weight - forrige) break
+      const mål = Math.ceil((W + forrige) / 2 / step) * step
+      if (mål < W && mål > forrige) { sidste.weight = mål; sidste.pct = pctTekst(mål, W); break }
+      ud.pop()
     }
     return ud
   }
@@ -94,35 +108,43 @@ export function calcWarmupSets(workingWeight, plannedReps = 1, exName = '') {
   const loft = Math.min(W * topPct, W - step)
   if (loft <= bar) return ud
 
-  // Det sidste spring — fra sidste opvarmning ind i arbejdssættet — er
-  // udgangspunktet, ikke en rest. Det er givet af loftet: F = W - loft.
-  // Derefter fordeles resten af afstanden på spring der aftager LINEÆRT ned
-  // til F, så F bliver det mindste spring i hele rampen.
-  //
-  // Første forsøg gik den anden vej: fordel op til arbejdsvægten og klam så
-  // ved loftet. Det gav 250 kg et spring på 2,5 kg efterfulgt af 20 kg ind i
-  // arbejdssættet — præcis den fejl formlen skulle af med.
-  const F = W - loft                       // sidste spring, det mindste
-  const S = loft - bar                     // afstand der skal fordeles på opvarmningerne
-  let k = antalSpring(W - bar)             // antal opvarmningssæt over stangen
-
-  // Der skal være plads: k spring der alle er mindst F. Ellers færre spring.
-  while (k > 1 && S < k * F) k--
+  // ALT regnes i hele enheder af `step` (2,5 kg). Det er ikke en detalje:
+  // fordelingen garanterer aftagende spring, men afrunding BAGEFTER kan bryde
+  // garantien igen. Målt på 26.140 kombinationer gjorde den det i 4.400 af dem
+  // — fx 182,5 kg: spring 25 → 12,5 → 15, hvor det sidste spring voksede.
+  // Regnes der i hele enheder, lander vægtene på gitteret af sig selv, og der
+  // er intet at runde bagefter.
+  const bu = Math.round(bar / step)
+  const lu = Math.floor(loft / step)              // sidste opvarmning, i enheder
+  const S = lu - bu                                // afstand der skal fordeles
   if (S <= 0) return ud
 
-  // g_i = a - i*d, aftagende, g_(k-1) = F, sum = S.
-  // Ved k = 1 er der ingen frihed: det ene spring ER hele afstanden op til
-  // loftet. Sætter man det til F, stopper rampen halvvejs og efterlader et
-  // stort sidste spring — det var fejlen ved 45 kg x5.
+  // Mindste tilladte spring: det sidste, fra sidste opvarmning ind i arbejdssættet.
+  const F = Math.max(1, Math.ceil(W / step - lu))
+  let k = antalSpring(W - bar)                     // antal opvarmningssæt over stangen
+  while (k > 1 && S < k * F) k--                   // der skal være plads til k spring på mindst F
+  if (S < F) return ud
+
+  // Reelle spring: g_i = a - i*d, aftagende, g_(k-1) = F, sum = S.
+  // Ved k = 1 er der ingen frihed: det ene spring ER hele afstanden.
   const d = k > 1 ? (2 * (S - k * F)) / (k * (k - 1)) : 0
   const a = k > 1 ? F + (k - 1) * d : S
 
-  let løbende = bar
+  // Heltalsgør uden at miste hverken sum eller rækkefølge: rund ned, og fordel
+  // resten fra de STØRSTE spring og nedad. Så forbliver rækken aftagende.
+  // + 1e-9: uden den giver Math.floor(6.0000000000000004 - 0) = 6, men
+  // Math.floor(5.999999999999999) = 5 for det sidste spring, der skulle være
+  // præcis F. Ét enkelt tabt trin dér vendte spring-rækkefølgen om — det var
+  // 348 af de 1.244 resterende brud.
+  const g = Array.from({ length: k }, (_, i) => Math.floor(a - i * d + 1e-9))
+  let rest = S - g.reduce((x, y) => x + y, 0)
+  for (let i = 0; rest > 0; i = (i + 1) % k, rest--) g[i] += 1
+
+  let u = bu
   for (let i = 0; i < k; i++) {
-    løbende += a - i * d
-    const w = rund(Math.min(løbende, loft))
-    if (w <= ud[ud.length - 1].weight) continue   // afrunding gav samme eller lavere vægt
-    if (w >= W || W - w < step) continue          // for tæt på arbejdsvægten til at være et sæt
+    u += g[i]
+    const w = u * step
+    if (w <= ud[ud.length - 1].weight || w >= W) continue
     ud.push({ weight: w, reps: repsFor(w / W), pct: pctTekst(w, W) })
   }
   return ud
