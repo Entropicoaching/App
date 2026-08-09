@@ -677,7 +677,7 @@
 <!-- playsinline er KRITISK for mobil: uden den nægter iPhone/Android at afspille
      en video der tegnes til canvas. Og "hidden" blokerer afkodning på iOS -
      derfor parkeres afspilleren usynligt i hjørnet i stedet. -->
-<video id="video" playsinline webkit-playsinline preload="metadata"
+<video id="video" playsinline webkit-playsinline muted preload="metadata"
        style="position:fixed; left:0; top:0; width:2px; height:2px; opacity:0;
               pointer-events:none;"></video>
 <script>
@@ -813,12 +813,16 @@ function loadFile(file) {
     dropHint.hidden = true;
     // ANDROID-FIX: tving første frame frem med kort LYDLØS afspilning -
     // seek til 0.01 kan hænge før 'canplay' og efterlod sort skærm.
+    // Lyden bliver slået fra og BLIVER det: lyden bruges aldrig i analysen,
+    // og en video der pludselig larmer er kun i vejen. Mute-knappen slår den
+    // til igen for den enkelte video.
     video.muted = true;
     const pp = video.play();
     if (pp && pp.then)
-      pp.then(() => { video.pause(); video.muted = false; })
-        .catch(() => { video.muted = false; video.currentTime = 0.01; });
-    else { video.pause(); video.muted = false; video.currentTime = 0.01; }
+      pp.then(() => { video.pause(); })
+        .catch(() => { video.currentTime = 0.01; });
+    else { video.pause(); video.currentTime = 0.01; }
+    paintMute();
     playBtn.textContent = playLabel(false);
     keepAwake();
     if (typeof ATHLETE !== 'undefined' && ATHLETE) {
