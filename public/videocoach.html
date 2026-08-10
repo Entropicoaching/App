@@ -56,6 +56,67 @@
                text-align:right; }
   #timeLabel.paused { color:var(--accent); font-weight:bold; }
   #scrubRow { position:relative; }
+  /* Clean bar-path review: videoen er hovedfladen; data ligger i en kompakt,
+     rolig HUD uden at ændre eller skjule den fulde raw acquisition. */
+  #barPathHUD { position:fixed; z-index:13; right:24px; top:92px; width:286px;
+    display:grid; gap:9px; padding:12px; border:1px solid rgba(237,234,226,.1);
+    border-radius:16px; background:rgba(18,17,14,.86); backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px); box-shadow:0 18px 48px rgba(0,0,0,.38); }
+  #barPathHUD[hidden] { display:none; }
+  .vcHudHead { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .vcHudTitle { color:var(--text); font:600 12px system-ui,sans-serif; letter-spacing:-.01em; }
+  .vcHudQuality { color:#78d89a; font-size:8px; letter-spacing:.1em; text-transform:uppercase; }
+  .vcLiftSetup { display:flex; align-items:center; gap:8px; }
+  .vcLiftSetup label { color:var(--dim); font-size:8px; letter-spacing:.12em; text-transform:uppercase; }
+  .vcLiftSetup select { flex:1; min-width:0; padding:8px 9px; border-radius:9px;
+    background:rgba(237,234,226,.04); text-transform:none; }
+  body:not(.athlete) #vcLiftSetup { display:none; }
+  .vcPhaseLegend { display:flex; flex-wrap:wrap; gap:6px 9px; }
+  .vcPhaseLegend span { display:inline-flex; align-items:center; gap:5px;
+    color:rgba(237,234,226,.66); font-size:8px; }
+  .vcPhaseLegend i { width:14px; height:3px; border-radius:4px; background:var(--phase); }
+  .vcRepSelector { display:flex; gap:5px; overflow:auto; scrollbar-width:none; }
+  .vcRepSelector::-webkit-scrollbar { display:none; }
+  .vcRepSelector button { min-width:34px; padding:6px 8px; border-radius:999px;
+    font-size:8px; letter-spacing:.08em; }
+  .vcRepSelector button[aria-pressed="true"] { color:#141410; background:var(--accent);
+    border-color:var(--accent); }
+  .vcMetricCards { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; }
+  .vcMetric { min-width:0; padding:8px; border:1px solid rgba(237,234,226,.075);
+    border-radius:10px; background:rgba(237,234,226,.025); }
+  .vcMetric small { display:block; color:var(--dim); font-size:7px; letter-spacing:.08em;
+    text-transform:uppercase; white-space:nowrap; }
+  .vcMetric b { display:block; margin-top:3px; color:var(--text); font:600 13px system-ui,sans-serif; }
+  .vcOverlayControls { display:flex; gap:5px; }
+  .vcOverlayControls button { flex:1; min-width:0; padding:6px 4px; border-radius:8px;
+    font-size:7px; letter-spacing:.05em; }
+  #exportPreview { position:fixed; inset:0; z-index:50; display:grid; place-items:center;
+    padding:18px; background:rgba(0,0,0,.66); backdrop-filter:blur(8px); }
+  #exportPreview[hidden] { display:none; }
+  .vcExportCard { width:min(92vw,620px); padding:14px; border:1px solid rgba(200,146,58,.36);
+    border-radius:18px; background:#1c1a16; box-shadow:0 24px 80px rgba(0,0,0,.58); }
+  #exportPreviewCanvas { display:block; width:100%; max-height:58vh; object-fit:contain;
+    border-radius:12px; background:#0f0e0b; }
+  .vcExportMeta { display:flex; align-items:center; justify-content:space-between;
+    gap:12px; padding:11px 2px 2px; }
+  .vcExportMeta div { min-width:0; }
+  .vcExportMeta b { display:block; font:600 14px system-ui,sans-serif; }
+  .vcExportMeta span { display:block; margin-top:2px; color:var(--dim); font-size:9px; }
+  .vcExportActions { display:flex; gap:7px; flex:none; }
+  .vcExportActions button { padding:9px 11px; border-radius:9px; font-size:9px; }
+  #confirmExportBtn { color:#141410; background:var(--accent); border-color:var(--accent); }
+  @media(max-width:700px) {
+    #barPathHUD { left:12px; right:12px; top:52px; bottom:auto; width:auto;
+      padding:9px; gap:7px; border-radius:15px; }
+    .vcHudHead { display:none; }
+    .vcMetric { padding:6px 7px; }
+    .vcMetric b { font-size:12px; }
+    .vcOverlayControls { display:none; }
+    .vcLiftSetup select { padding:7px 8px; font-size:11px; }
+    .vcExportMeta { align-items:flex-start; flex-direction:column; }
+    .vcExportActions { width:100%; }
+    .vcExportActions button { flex:1; }
+  }
   .trimHandle { position:absolute; top:2px; width:26px; height:26px; line-height:26px;
     text-align:center; background:var(--accent); color:#141410; border-radius:2px;
     font-weight:bold; cursor:ew-resize; touch-action:none; z-index:3; }
@@ -583,6 +644,27 @@
   <div id="hIn" class="trimHandle" hidden>⟦</div>
   <div id="hOut" class="trimHandle" hidden>⟧</div>
 </div>
+<section id="barPathHUD" hidden aria-label="Stangbaneanalyse">
+  <div class="vcHudHead"><span class="vcHudTitle">Stangbane</span><span id="vcHudQuality" class="vcHudQuality">Gyldigt signal</span></div>
+  <div id="vcLiftSetup" class="vcLiftSetup"><label for="liftSel">Løft</label></div>
+  <div id="vcPhaseLegend" class="vcPhaseLegend" aria-label="Faselegend"></div>
+  <div id="vcRepSelector" class="vcRepSelector" aria-label="Rep selector"></div>
+  <div id="vcMetricCards" class="vcMetricCards"></div>
+  <div class="vcOverlayControls" aria-label="Overlay toggles">
+    <button id="vcTogglePhases" class="active" type="button">Faser</button>
+    <button id="vcToggleHistory" class="active" type="button">Ældre reps</button>
+    <button id="vcToggleMetrics" class="active" type="button">Metrics</button>
+  </div>
+</section>
+<section id="exportPreview" hidden aria-modal="true" role="dialog" aria-label="Exportpreview">
+  <div class="vcExportCard">
+    <canvas id="exportPreviewCanvas" width="1280" height="720"></canvas>
+    <div class="vcExportMeta">
+      <div><b>Hele løftet med overlays</b><span id="exportPreviewText">Fuld raw bane · fasefarver · ingen lyd</span></div>
+      <div class="vcExportActions"><button id="cancelExportBtn" type="button">Tilbage</button><button id="confirmExportBtn" type="button">Gem video</button></div>
+    </div>
+  </div>
+</section>
 <div id="banner" hidden></div>
 <div id="guidePanel" hidden>
   <div id="guideCard">
@@ -704,12 +786,215 @@ const TRACKER_BENCHMARK = MODE_PARAMS.get('benchmark') === '1';
 const TRACKER_PROBE = TRACKER_BENCHMARK && MODE_PARAMS.get('trackerProbe') === '1';
 const SLIM = !DESKTOP;              // moderne layout (atlet OG coach online)
 const ATHLETE = SLIM && !COACHWEB;
+const VC_PHASES = Object.freeze({
+  setup:{label:'Setup',color:'#8b877f'},
+  eccentric:{label:'Excentrisk',color:'#61b7d2'},
+  transition:{label:'Vending',color:'#b5ada1'},
+  pause:{label:'Pause',color:'#b5ada1'},
+  concentric:{label:'Ascent · koncentrisk',color:'#d7a34a'},
+  lockout:{label:'Lockout',color:'#edeae2'},
+  return:{label:'Retur',color:'#61b7d2'}
+});
+let analysisSession = null;
+let manualTrackingBounds = { start:null, end:null };
+const cleanOverlayState = { phases:true, history:true, metrics:true };
 let setAthleteState = null;         // Athlete v2: ét roligt, guidet flow
 let setAthleteSubmitOpen = null;    // Athlete v3: sendearket må kun åbne i sidste trin
 let coachFlowTo = null;             // Coach: ryk 4-trins-flowet (sat i COACHWEB-blokken)
 // ︎ tvinger TEKST-gengivelse (monokrom glyf) i stedet for farvet emoji
 const playLabel = playing => SLIM ? (playing ? '❚❚' : '▶︎')
   : (playing ? '⏸ Pause (mellemrum)' : '▶ Afspil (mellemrum)');
+
+function freezeRawAcquisition(path, session) {
+  const pts = Object.freeze(path.pts.map(point => Object.freeze({x:point.x,y:point.y})));
+  const times = Object.freeze([...path.times]);
+  const valid = Object.freeze((path.valid || pts.map(() => true)).map(value => value === true));
+  const confidence = Object.freeze((path.confidence || valid.map(value => value ? 1 : 0))
+    .map((value, index) => valid[index] ? Math.max(0, Math.min(1, Number(value) || 0)) : 0));
+  const validity = Object.freeze(valid.map((value, index) => value
+    ? 'valid' : confidence[index] > 0 ? 'unknown' : 'invalid'));
+  const raw = Object.freeze({
+    pts, times, valid, confidence, validity,
+    start:times[0] ?? session.trackingStart,
+    end:times.at(-1) ?? session.trackingEnd
+  });
+  path.raw = raw;
+  path.pts = raw.pts;
+  path.times = raw.times;
+  path.valid = raw.valid;
+  path.confidence = raw.confidence;
+  path.fullPts = raw.pts;
+  path.fullTimes = raw.times;
+  path.analysisSession = session;
+  return raw;
+}
+
+function createAnalysisSession() {
+  const lift = vcV3Lift(document.getElementById('liftSel').value);
+  // MediaRecorder-WebM kan lovligt rapportere Infinity indtil ended. Det er en
+  // åben manuel slutgrænse, ikke en nul-sekunders session.
+  const duration = video.duration > 0 ? video.duration : Infinity;
+  let trackingStart = manualTrackingBounds.start != null && Number.isFinite(manualTrackingBounds.start)
+    ? manualTrackingBounds.start : video.currentTime;
+  let trackingEnd = manualTrackingBounds.end != null && Number.isFinite(manualTrackingBounds.end)
+    ? manualTrackingBounds.end : duration;
+  trackingStart = Math.max(0, Number.isFinite(duration)
+    ? Math.min(trackingStart, Math.max(0, duration - FRAME)) : trackingStart);
+  trackingEnd = Number.isFinite(trackingEnd)
+    ? Math.max(trackingStart + FRAME, Math.min(duration, trackingEnd)) : Infinity;
+  const session = Object.freeze({schema:1,lift,trackingStart,trackingEnd,
+    bounds:'manual',rawImmutable:true});
+  analysisSession = session;
+  // Et gammelt review-cut er visning, aldrig acquisition-sandhed.
+  trimStart = trackingStart;
+  trimEnd = trackingEnd;
+  paintTrim();
+  return session;
+}
+
+function latestCleanPath() {
+  return strokes.filter(stroke => stroke.type === 'path' && stroke.raw && !stroke.superseded).at(-1) || null;
+}
+
+function repAtTime(path, time = video.currentTime) {
+  const reps = path?.analysis?.reps || path?.reps || [];
+  const index = reps.findIndex(rep => time >= path.times[rep.viewStart ?? rep.start] &&
+    time <= path.times[rep.viewEnd ?? rep.end]);
+  return index >= 0 ? index : Math.max(0, Math.min(reps.length - 1, path?.selectedRep || 0));
+}
+
+function setCleanRep(path, index, seek = true) {
+  if (!path?.analysis?.reps?.[index]) return;
+  path.selectedRep = index;
+  const rep = path.analysis.reps[index];
+  if (seek) {
+    video.pause();
+    video.currentTime = path.times[rep.viewStart ?? rep.start];
+    playBtn.textContent = playLabel(false);
+  }
+  updateCleanReviewUI(path, true);
+}
+
+function updateCleanReviewUI(path = latestCleanPath(), force = false) {
+  const hud = document.getElementById('barPathHUD');
+  if (!hud) return;
+  if (!path?.analysis) {
+    const state = document.body.dataset.athleteState || '';
+    const visible = ATHLETE && !!video.src && (state === 'ready' || state === 'done');
+    hud.hidden = !visible;
+    if (!force && updateCleanReviewUI.lastPath === null &&
+        updateCleanReviewUI.lastEmptyState === state) return;
+    updateCleanReviewUI.lastPath = null;
+    updateCleanReviewUI.lastEmptyState = state;
+    document.getElementById('vcPhaseLegend').textContent = '';
+    document.getElementById('vcRepSelector').textContent = '';
+    document.getElementById('vcMetricCards').textContent = '';
+    return;
+  }
+  hud.hidden = false;
+  const repIndex = repAtTime(path);
+  if (!force && updateCleanReviewUI.lastPath === path && updateCleanReviewUI.lastRep === repIndex) return;
+  updateCleanReviewUI.lastPath = path; updateCleanReviewUI.lastRep = repIndex;
+  path.selectedRep = repIndex;
+  const analysis = path.analysis, rep = analysis.reps[repIndex];
+  const validCount = path.raw.valid.filter(Boolean).length;
+  const validPct = path.raw.valid.length ? validCount / path.raw.valid.length : 0;
+  const quality = document.getElementById('vcHudQuality');
+  quality.textContent = validPct >= .85 ? 'Gyldigt signal' : 'Kontrollér signal';
+  quality.style.color = validPct >= .85 ? '#78d89a' : '#e6bd72';
+  const legend = document.getElementById('vcPhaseLegend');
+  const phaseKinds = [...new Set((rep?.phases || []).map(phase => phase.kind))];
+  legend.innerHTML = phaseKinds.map(kind => {
+    const phase = VC_PHASES[kind];
+    return `<span><i style="--phase:${phase.color}"></i>${phase.label}</span>`;
+  }).join('');
+  const selector = document.getElementById('vcRepSelector');
+  selector.innerHTML = analysis.reps.map((_, index) =>
+    `<button type="button" data-rep="${index}" aria-pressed="${index === repIndex}">Rep ${index + 1}</button>`).join('');
+  selector.querySelectorAll('button').forEach(button => {
+    button.onclick = () => setCleanRep(path, Number(button.dataset.rep));
+  });
+  const metrics = document.getElementById('vcMetricCards');
+  metrics.hidden = !cleanOverlayState.metrics;
+  const enoughSignal = rep && rep.validRatio >= .8 && Number.isFinite(rep.mcv) && Number.isFinite(rep.romCm);
+  const values = enoughSignal ? [
+    ['Velocity',`${rep.mcv.toFixed(2)} m/s`],
+    ['ROM',`${rep.romCm.toFixed(0)} cm`],
+    ['Tempo',`${rep.eccS.toFixed(1)} · ${rep.pauseS.toFixed(1)} · ${rep.conS.toFixed(1)}`]
+  ] : [['Velocity','—'],['ROM','—'],['Tempo','—']];
+  metrics.innerHTML = values.map(([label,value]) =>
+    `<div class="vcMetric"><small>${label}</small><b>${value}</b></div>`).join('');
+  if (TRACKER_BENCHMARK) window.__vcCleanRebuildAudit = {
+    session:path.analysisSession, raw:{count:path.raw.pts.length,times:path.raw.times.length,
+      confidence:path.raw.confidence.length,valid:path.raw.valid.length,
+      frozen:Object.isFrozen(path.raw)&&Object.isFrozen(path.raw.pts),
+      start:path.raw.start,end:path.raw.end,first:{...path.raw.pts[0]},last:{...path.raw.pts.at(-1)},
+      invalid:path.raw.valid.filter(value=>!value).length},
+    lift:analysis.lift, phases:analysis.phases.map(phase => ({...phase})),
+    reps:analysis.reps.map(item => ({...item,phases:item.phases.map(phase => ({...phase}))})),
+    review:{start:trimStart,end:trimEndEff()}, currentRep:repIndex
+  };
+}
+
+function drawDirectionArrow(a, b, color) {
+  const angle = Math.atan2(b.y - a.y, b.x - a.x), size = Math.max(5, canvas.width / 170);
+  const x = (a.x + b.x) / 2, y = (a.y + b.y) / 2;
+  ctx.fillStyle = color; ctx.beginPath();
+  ctx.moveTo(x + Math.cos(angle) * size, y + Math.sin(angle) * size);
+  ctx.lineTo(x + Math.cos(angle + 2.5) * size * .65, y + Math.sin(angle + 2.5) * size * .65);
+  ctx.lineTo(x + Math.cos(angle - 2.5) * size * .65, y + Math.sin(angle - 2.5) * size * .65);
+  ctx.closePath(); ctx.fill();
+}
+
+function drawCleanBarPath(path) {
+  const pts = path.raw.pts, valid = path.raw.valid, analysis = path.analysis;
+  const drawRange = (start, end, color, alpha, width, arrows = false) => {
+    ctx.save(); ctx.strokeStyle = color; ctx.globalAlpha = alpha; ctx.lineWidth = width;
+    ctx.lineCap = 'round'; ctx.beginPath(); let penUp = true;
+    for (let index = Math.max(0, start); index <= Math.min(end, pts.length - 1); index++) {
+      if (!valid[index]) { penUp = true; continue; }
+      penUp ? ctx.moveTo(pts[index].x, pts[index].y) : ctx.lineTo(pts[index].x, pts[index].y);
+      penUp = false;
+    }
+    ctx.stroke();
+    if (arrows) {
+      const step = Math.max(8, Math.floor((end - start + 1) / 5));
+      for (let index = start + step; index <= end; index += step)
+        if (valid[index] && valid[index - 1]) drawDirectionArrow(pts[index - 1], pts[index], color);
+    }
+    ctx.restore();
+  };
+  drawRange(0, pts.length - 1, '#edeae2', .20, Math.max(3, canvas.width / 440));
+  const active = repAtTime(path);
+  if (cleanOverlayState.history) analysis.reps.forEach((rep, index) => {
+    if (index !== active) drawRange(rep.viewStart, rep.viewEnd, '#b5b1aa', .34,
+      Math.max(4, canvas.width / 360));
+  });
+  const rep = analysis.reps[active];
+  if (rep) {
+    if (cleanOverlayState.phases) rep.phases.forEach(phase =>
+      drawRange(phase.start, phase.end, VC_PHASES[phase.kind].color, .96,
+        Math.max(5, canvas.width / 300), true));
+    else drawRange(rep.viewStart, rep.viewEnd, '#d7a34a', .96,
+      Math.max(5, canvas.width / 300), true);
+  }
+  const currentIndex = Math.max(0, Math.min(pts.length - 1, idxAtTime(path, video.currentTime)));
+  if (valid[currentIndex]) {
+    const point = pts[currentIndex];
+    ctx.fillStyle = '#edeae2'; ctx.beginPath();
+    ctx.arc(point.x, point.y, Math.max(6, canvas.width / 120), 0, Math.PI * 2); ctx.fill();
+  }
+}
+
+[['vcTogglePhases','phases'],['vcToggleHistory','history'],['vcToggleMetrics','metrics']]
+  .forEach(([id,key]) => {
+    const button = document.getElementById(id);
+    button.onclick = () => {
+      cleanOverlayState[key] = !cleanOverlayState[key];
+      button.classList.toggle('active', cleanOverlayState[key]);
+      updateCleanReviewUI(latestCleanPath(), true);
+    };
+  });
 
 function publishTrackerBenchmarkRun(run) {
   if (!TRACKER_BENCHMARK) return;
@@ -730,6 +1015,7 @@ function publishTrackerBenchmarkRun(run) {
     download.id = 'vcTrackerBenchmarkDownload';
     download.type = 'button';
     download.textContent = 'Hent tracker JSON';
+    download.hidden = true;
     Object.assign(download.style, {
       position:'fixed', right:'12px', bottom:'12px', zIndex:'99999',
       padding:'9px 12px', border:'1px solid #e6bd58', borderRadius:'8px',
@@ -788,6 +1074,8 @@ function loadFile(file) {
   if (setCoachLayer) setCoachLayer(1);                // ny video → ren Lag 1
   // nulstil alt der hører til den GAMLE video
   cmPerPx = null; calibPts = [];
+  analysisSession = null;
+  manualTrackingBounds = { start:null, end:null };
   shOffset = null; awaitShClick = null;   // skulder-kalibrering pr. video
   calibBtn.textContent = '📏 Kalibrér';
   trimStart = 0; trimEnd = Infinity;
@@ -795,6 +1083,8 @@ function loadFile(file) {
   document.getElementById('trimOutBtn').classList.remove('active');
   scrub.style.background = '';
   aiPanel.hidden = true;
+  document.getElementById('exportPreview').hidden = true;
+  updateCleanReviewUI(null, true);
   say('Åbner videoen ...');
   // ANDROID-FIX: videoWidth er på mange Android-enheder først klar ved
   // 'loadeddata' - venter man kun på 'loadedmetadata' bliver canvas aldrig
@@ -811,6 +1101,7 @@ function loadFile(file) {
     canvas.height = Math.round(video.videoHeight * vidScale);
     canvas.hidden = false;
     dropHint.hidden = true;
+    if (ATHLETE) document.getElementById('barPathHUD').hidden = false;
     // ANDROID-FIX: tving første frame frem med kort LYDLØS afspilning -
     // seek til 0.01 kan hænge før 'canplay' og efterlod sort skærm.
     // Lyden bliver slået fra og BLIVER det: lyden bruges aldrig i analysen,
@@ -1059,7 +1350,7 @@ canvas.addEventListener('pointerdown', e => {
     return;
   }
   if (awaitBarClick) {
-    ((DESKTOP || COACHWEB) ? startMultipointTracking(p) : startBarTracking(p));
+    startMultipointTracking(p, analysisSession || createAnalysisSession(), {correction:true});
     return;
   }
   if (tool === 'scrub') {
@@ -1277,6 +1568,10 @@ function drawStroke(s) {
     ctx.beginPath(); ctx.moveTo(s.a.x, s.a.y); ctx.lineTo(s.b.x, s.b.y); ctx.stroke();
   }
   if (s.type === 'path') {
+    if (s.raw && s.analysis) {
+      drawCleanBarPath(s);
+      return;
+    }
     ctx.save();
     ctx.lineWidth = Math.max(4, canvas.width / 300);
     if (s.vel && s.ghostRep != null && s.reps && s.reps[s.ghostRep]) {
@@ -1603,17 +1898,20 @@ const trimEndEff = () => Math.min(video.duration || Infinity, trimEnd);
 document.getElementById('trimInBtn').onclick = e => {
   trimStart = video.currentTime;
   if (trimStart >= trimEnd) trimEnd = Infinity;
+  manualTrackingBounds.start = trimStart;
   e.target.classList.add('active');
   paintTrim();
 };
 document.getElementById('trimOutBtn').onclick = e => {
   trimEnd = video.currentTime;
   if (trimEnd <= trimStart) trimStart = 0;
+  manualTrackingBounds.end = trimEnd;
   e.target.classList.add('active');
   paintTrim();
 };
 document.getElementById('trimResetBtn').onclick = () => {
   trimStart = 0; trimEnd = Infinity;
+  manualTrackingBounds = { start:null, end:null };
   document.getElementById('trimInBtn').classList.remove('active');
   document.getElementById('trimOutBtn').classList.remove('active');
   paintTrim();
@@ -1676,6 +1974,8 @@ function handleDrag(handle, isStart) {
       paintTrim();
     };
     const up = () => {
+      if (isStart) manualTrackingBounds.start = trimStart;
+      else manualTrackingBounds.end = trimEnd;
       handle.removeEventListener('pointermove', move);
       handle.removeEventListener('pointerup', up);
     };
@@ -1715,6 +2015,7 @@ function updateTimeline() {
     timeLabel.textContent = `${side}${status} · ${tv.currentTime.toFixed(2)}s · frame ${f}${klip}`;
   }
   timeLabel.classList.toggle('paused', tv.paused);
+  updateCleanReviewUI();
   // hold ALLE play-labels i sync med virkeligheden (pause fra trim-slut,
   // loop, driveCompare osv. må aldrig efterlade knapperne i forkert tilstand)
   const wantHdr = playLabel(!tv.paused);
@@ -2096,6 +2397,7 @@ function render() {
   if (showGrid) drawGrid();
   // bane/skelet hører til fuldskærms-video 1 - skjules i ⇄-tilstand
   strokes.forEach(s => {
+    if (s.superseded) return;
     if (cmp && (s.type === 'path' || s.type === 'pose' || s.type === 'mskel'))
       return;
     if (fingerprint && s.type === 'path') { drawFingerprint(s); return; }
@@ -2236,7 +2538,164 @@ function seekTo(t) {
   });
 }
 
-function analyzePath(path, retrimmed) {
+function analyzeCleanPath(path) {
+  if (!cmPerPx || !path?.pts || path.pts.length < 8) return path;
+  if (!path.raw) {
+    const times = path.times?.length === path.pts.length
+      ? path.times : path.pts.map((_, index) => (path.startFrame + index) / 30);
+    const fallbackSession = path.analysisSession || Object.freeze({schema:1,
+      lift:vcV3Lift(document.getElementById('liftSel').value),
+      trackingStart:times[0] || 0,trackingEnd:times.at(-1) || 0,
+      bounds:'manual',rawImmutable:true});
+    path.times = times;
+    freezeRawAcquisition(path, fallbackSession);
+  }
+  const raw = path.raw, n = raw.pts.length, lift = path.analysisSession.lift;
+  const squatMode = lift === 'squat', benchMode = lift === 'bench';
+  const median = values => {
+    const sorted = [...values].sort((a, b) => a - b);
+    return sorted[sorted.length >> 1];
+  };
+  // Støjreparation er en afledt analysevisning. Raw pts/times/confidence røres aldrig.
+  const threshold = Math.max(8, canvas.width * .02);
+  const analysisPts = raw.pts.map((point, index) => {
+    if (!raw.valid[index]) return {x:point.x,y:point.y};
+    const window = raw.pts.slice(Math.max(0, index - 2), Math.min(n, index + 3));
+    const x = median(window.map(item => item.x)), y = median(window.map(item => item.y));
+    return Math.hypot(point.x - x, point.y - y) > threshold ? {x,y} : {x:point.x,y:point.y};
+  });
+  const smoothedY = analysisPts.map((_, index) => {
+    let sum = 0, count = 0;
+    for (let cursor = Math.max(0, index - 2); cursor <= Math.min(n - 1, index + 2); cursor++) {
+      if (!raw.valid[cursor]) continue;
+      sum += analysisPts[cursor].y; count++;
+    }
+    return count ? sum / count : analysisPts[index].y;
+  });
+  const velocity = smoothedY.map((_, index) => {
+    if (!index || !raw.valid[index] || !raw.valid[index - 1]) return NaN;
+    const dt = Math.max(1 / 240, raw.times[index] - raw.times[index - 1]);
+    return (smoothedY[index - 1] - smoothedY[index]) * cmPerPx / 100 / dt;
+  });
+  const validY = smoothedY.filter((_, index) => raw.valid[index]);
+  const range = validY.length ? Math.max(...validY) - Math.min(...validY) : 0;
+  const detected = [];
+  let start = null, lastUp = null, downRun = 0, previousEnd = 0;
+  const bottomAnchor = from => {
+    let best = from, maxY = smoothedY[from];
+    for (let index = from - 1; index > previousEnd; index--) {
+      if (!raw.valid[index] || velocity[index] < -.05) break;
+      if (smoothedY[index] > maxY) { maxY = smoothedY[index]; best = index; }
+    }
+    return best;
+  };
+  for (let index = 1; index <= n; index++) {
+    const up = index < n && raw.valid[index] && velocity[index] > .05;
+    const down = index < n && raw.valid[index] && velocity[index] < -.05;
+    if (start === null) {
+      if (up) { start = index; lastUp = index; downRun = 0; }
+      continue;
+    }
+    if (up) { lastUp = index; downRun = 0; }
+    else if (down) downRun++;
+    else downRun = 0;
+    if (index === n || downRun >= 3) {
+      const repStart = bottomAnchor(start);
+      const repEnd = Math.min(n - 1, lastUp == null ? index - 1 : lastUp + 1);
+      if (range > 0 && smoothedY[repStart] - smoothedY[repEnd] > range * .4) {
+        detected.push({start:repStart,end:repEnd});
+        previousEnd = repEnd;
+      }
+      start = null; lastUp = null; downRun = 0;
+    }
+  }
+  const phase = (kind, startIndex, endIndex) => ({kind,
+    start:Math.max(0, Math.min(n - 1, startIndex)),
+    end:Math.max(0, Math.min(n - 1, Math.max(startIndex, endIndex)))});
+  const phases = [];
+  const reps = detected.map((detectedRep, repIndex) => {
+    const viewStart = repIndex ? detected[repIndex - 1].end + 1 : 0;
+    const viewEnd = repIndex + 1 < detected.length ? detected[repIndex + 1].start - 1 : n - 1;
+    let descentStart = detectedRep.start;
+    for (let index = viewStart + 1; index < detectedRep.start; index++) {
+      if (raw.valid[index] && velocity[index] < -.05) { descentStart = index; break; }
+    }
+    let descentEnd = detectedRep.start;
+    for (let index = detectedRep.start - 1; index >= descentStart; index--) {
+      if (raw.valid[index] && velocity[index] < -.05) { descentEnd = index; break; }
+    }
+    let returnStart = detectedRep.end + 1;
+    for (let index = detectedRep.end + 1; index <= viewEnd; index++) {
+      if (raw.valid[index] && velocity[index] < -.05) { returnStart = index; break; }
+    }
+    const repPhases = [];
+    if (lift === 'deadlift') {
+      repPhases.push(phase('setup', viewStart, Math.max(viewStart, detectedRep.start - 1)));
+      repPhases.push(phase('concentric', detectedRep.start, detectedRep.end));
+      if (detectedRep.end < returnStart) repPhases.push(phase('lockout', detectedRep.end, returnStart - 1));
+      if (returnStart <= viewEnd) repPhases.push(phase('return', returnStart, viewEnd));
+    } else {
+      if (viewStart < descentStart) repPhases.push(phase('setup', viewStart, descentStart - 1));
+      if (descentStart < detectedRep.start) repPhases.push(phase('eccentric', descentStart, descentEnd));
+      if (descentEnd < detectedRep.start) {
+        repPhases.push(phase(squatMode ? 'transition' : benchMode ? 'pause' : 'transition', descentEnd + 1,
+          detectedRep.start - 1));
+      }
+      repPhases.push(phase('concentric', detectedRep.start, detectedRep.end));
+      if (detectedRep.end < viewEnd) repPhases.push(phase('lockout', detectedRep.end, viewEnd));
+    }
+    phases.push(...repPhases.map(item => ({...item,rep:repIndex})));
+    const positive = velocity.slice(detectedRep.start, detectedRep.end + 1)
+      .filter(value => Number.isFinite(value) && value > .05);
+    const validSamples = raw.valid.slice(viewStart, viewEnd + 1).filter(Boolean).length;
+    const eccentricSeconds = repPhases.filter(item => item.kind === 'eccentric' || item.kind === 'return')
+      .reduce((sum, item) => sum + Math.max(0, raw.times[item.end] - raw.times[item.start]), 0);
+    const pauseSeconds = repPhases.filter(item => item.kind === 'pause' || item.kind === 'transition' || item.kind === 'lockout')
+      .reduce((sum, item) => sum + Math.max(0, raw.times[item.end] - raw.times[item.start]), 0);
+    return {start:detectedRep.start,end:detectedRep.end,viewStart,viewEnd,
+      phases:repPhases,mcv:positive.length ? positive.reduce((sum, value) => sum + value, 0) / positive.length : NaN,
+      peak:positive.length ? Math.max(...positive) : NaN,
+      romCm:(smoothedY[detectedRep.start] - smoothedY[detectedRep.end]) * cmPerPx,
+      conS:+Math.max(0, raw.times[detectedRep.end] - raw.times[detectedRep.start]).toFixed(2),
+      eccS:+eccentricSeconds.toFixed(2),pauseS:+pauseSeconds.toFixed(2),
+      validRatio:validSamples / Math.max(1, viewEnd - viewStart + 1)};
+  });
+  let pathLength = 0;
+  for (let index = 1; index < n; index++) if (raw.valid[index] && raw.valid[index - 1])
+    pathLength += Math.hypot(analysisPts[index].x - analysisPts[index - 1].x,
+      analysisPts[index].y - analysisPts[index - 1].y);
+  const downX = [], upX = [];
+  velocity.forEach((value, index) => {
+    if (!raw.valid[index]) return;
+    if (value < -.05) downX.push(analysisPts[index].x);
+    if (value > .05) upX.push(analysisPts[index].x);
+  });
+  const mean = values => values.reduce((sum, value) => sum + value, 0) / values.length;
+  const analysis = {schema:1,lift,pts:analysisPts,vel:velocity,reps,phases,
+    rawCount:n,reviewStartTime:raw.start,reviewEndTime:raw.end,
+    effPct:pathLength > 0 ? Math.round(range / pathLength * 100) : null,
+    hystCm:downX.length > 3 && upX.length > 3
+      ? +(Math.abs(mean(upX) - mean(downX)) * cmPerPx).toFixed(1) : null};
+  path.analysis = analysis;
+  path.vel = analysis.vel;
+  path.reps = analysis.reps;
+  path.phases = analysis.phases;
+  path.reviewStartTime = raw.start;
+  path.reviewEndTime = raw.end;
+  path.effPct = analysis.effPct;
+  path.hystCm = analysis.hystCm;
+  path.selectedRep = Math.min(path.selectedRep || 0, Math.max(0, reps.length - 1));
+  updateCleanReviewUI(path, true);
+  return path;
+}
+
+function analyzePath(path) {
+  return analyzeCleanPath(path);
+}
+
+// Den muterende 8b80f75-analyse er karantæneret som historisk reference. Den
+// kaldes aldrig af clean rebuild-pathen; navn og rekursionskald er isoleret.
+function analyzePathLegacy8b80f75(path, retrimmed) {
   if (!cmPerPx || path.pts.length < 8) return;
   const n = path.pts.length;
   // SPIKE-REPARATION (kun 1. kald): enkelte frames hvor matcheren hoppede til
@@ -2915,23 +3374,32 @@ function mpQuickPlateSearch(frame,pred,r,model){
   return choose(fine);
 }
 
-async function startMultipointTracking(p0) {
+async function startMultipointTracking(p0, session = analysisSession || createAnalysisSession(), options = {}) {
   awaitBarClick=false;tracking=true;barBtn.textContent='⏹ Stop sporing';
   ocan.width=canvas.width;ocan.height=canvas.height;
   const radius=Math.max(14,p0.r||(cmPerPx?22.5/cmPerPx:canvas.width/16));
   const startT=video.currentTime,startFrame=Math.round(startT*30);
   const benchmarkStartedAt=TRACKER_BENCHMARK?performance.now():0;
   const benchmarkWorkMs=[];
-  let path=strokes.findLast?strokes.findLast(s=>s.type==='path'&&s.times&&
+  let previousPath=options.correction&&strokes.findLast?strokes.findLast(s=>s.type==='path'&&s.times&&
     startT>=s.times[0]&&startT<s.times[s.times.length-1]):null;
-  if(path){
-    const cut=Math.max(0,idxAtTime(path,startT));
-    path.pts=path.pts.slice(0,cut);path.times=path.times.slice(0,cut);
-    path.valid=(path.valid||path.pts.map(()=>true)).slice(0,cut);
-    path.pts.push({x:p0.x,y:p0.y});path.times.push(startT);path.valid.push(true);
+  let path;
+  if(previousPath){
+    const source=previousPath.raw||previousPath;
+    const cut=Math.max(0,idxAtTime(source,startT));
+    previousPath.superseded=true;
+    path={type:'path',color:colorInput.value,pts:source.pts.slice(0,cut).map(point=>({...point})),
+      times:[...source.times.slice(0,cut)],valid:[...(source.valid||source.pts.map(()=>true)).slice(0,cut)],
+      confidence:[...(source.confidence||source.pts.map(()=>1)).slice(0,cut)],
+      startFrame:previousPath.startFrame,barTracker:'multipoint-fb-v3-clean-rebuild',plateRadius:radius,
+      manualCorrections:[...(previousPath.manualCorrections||[]),
+        {time:startT,point:{x:p0.x,y:p0.y},sourceSamples:cut}]};
+    path.pts.push({x:p0.x,y:p0.y});path.times.push(startT);path.valid.push(true);path.confidence.push(1);
+    strokes.push(path);
   }else{
     path={type:'path',color:colorInput.value,pts:[{x:p0.x,y:p0.y}],times:[startT],
-      valid:[true],startFrame,barTracker:'multipoint-fb-v3-bench-slow-output',plateRadius:radius};
+      valid:[true],confidence:[1],startFrame,barTracker:'multipoint-fb-v3-clean-rebuild',
+      plateRadius:radius,manualCorrections:[]};
     strokes.push(path);
   }
   octx.drawImage(video,0,0,ocan.width,ocan.height);
@@ -2962,7 +3430,7 @@ async function startMultipointTracking(p0) {
   const localBias=localCalibration?{x:localCalibration.x-p0.x,y:localCalibration.y-p0.y}:{x:0,y:0};
   const homeBias=homeCalibration?{x:homeCalibration.x-p0.x,y:homeCalibration.y-p0.y}:{x:0,y:0};
   const quickBias=quickCalibration?{x:quickCalibration.x-p0.x,y:quickCalibration.y-p0.y}:{x:0,y:0};
-  const liftMode=vcV3Lift(document.getElementById('liftSel').value);
+  const liftMode=session.lift;
   const deadliftMode=liftMode==='deadlift',benchMode=liftMode==='bench';
   let homePending=null,correctionPending=null,fullAuditFrames=0;
   const correctionHistory=[];
@@ -2971,14 +3439,16 @@ async function startMultipointTracking(p0) {
   // Dødløft: en kort, fuld skivekontrol ved starten og ved hver tilbagekomst
   // til gulvzonen. Det bevarer genankringen efter kamerarystelser uden den
   // tidligere, dyre fuldsøgning på samtlige frames tæt ved gulvet.
-  let wasNearHome=false,homeEntryFrames=0;
+  // Startpositionen er allerede "home". Arm først home-auditet ved en reel
+  // tilbagekomst; ellers trækker det bekræftede gulvanker imod første ascent.
+  let wasNearHome=deadliftMode,homeEntryFrames=0;
   if(features.length<5){
-    tracking=false;path.lowConf=(path.lowConf||0)+1;
+    tracking=false;path.lowConf=(path.lowConf||0)+1;path.superseded=true;
     if(TRACKER_BENCHMARK){
-      const run={schema:1,outcome:'rejected_initial_features',startedAt:startT,
+      const run={schema:1,outcome:'rejected_initial_features',startedAt:startT,session:{...session},
         elapsedMs:performance.now()-benchmarkStartedAt,canvas:{w:ocan.width,h:ocan.height},
         plateRadius:radius,initialFeatures:features.length,pts:path.pts.map(q=>({...q})),
-        times:[...path.times],valid:[...path.valid],
+        times:[...path.times],valid:[...path.valid],confidence:[...path.confidence],
         ...(TRACKER_PROBE?{frameProbe:trackerProbe}: {})};
       publishTrackerBenchmarkRun(run);
     }
@@ -3028,7 +3498,8 @@ async function startMultipointTracking(p0) {
     const probe=TRACKER_PROBE?{t:tNow,moves:0,kept:0,identityChecked:false,
       identityOK:null,jump:null,maxJump:null,nextFeatures:null,accepted:false,rejectGate:null}:null;
     if(probe)probe.moves=moves.length;
-    let accepted=false,kept=[];
+    let accepted=false,kept=[],frameConfidence=0;
+    const maxJump=radius*.75+Math.hypot(vel.x,vel.y)*dt*.45;
     if(moves.length>=5){
       const mdx=mpMedian(moves.map(q=>q.dx)),mdy=mpMedian(moves.map(q=>q.dy));
       const residuals=moves.map(q=>Math.hypot(q.dx-mdx,q.dy-mdy)),mad=mpMedian(residuals);
@@ -3100,6 +3571,7 @@ async function startMultipointTracking(p0) {
           if(confirmed){
             nx+=delta.x*.5;ny+=delta.y*.5;
             path.centerCorrections=(path.centerCorrections||0)+1;
+            path.homeConfirmations=(path.homeConfirmations||0)+1;
           }
           homePending=delta;
           path.repAnchors=(path.repAnchors||0)+1;
@@ -3108,7 +3580,6 @@ async function startMultipointTracking(p0) {
       if(deadliftMode&&homeEntryFrames>0)homeEntryFrames--;
       if(deadliftMode)wasNearHome=nearHome;
       const jump=Math.hypot(nx-cur.x,ny-cur.y);
-      const maxJump=radius*.75+Math.hypot(vel.x,vel.y)*dt*.45;
       if(probe){probe.jump=jump;probe.maxJump=maxJump;}
       let identityOK=true;
       if(plateIdentityUsable&&(kept.length<8||lost>0)){
@@ -3128,6 +3599,7 @@ async function startMultipointTracking(p0) {
           const iv={x:(nx-cur.x)/dt,y:(ny-cur.y)/dt};
           vel={x:vel.x*.35+iv.x*.65,y:vel.y*.35+iv.y*.65};cur={x:nx,y:ny};
           anchorFrame=currentFrame;anchorTime=tNow;features=nextFeatures;accepted=true;lost=0;
+          frameConfidence=Math.min(1,kept.length/Math.max(5,moves.length));
           homePending=null;
         }
       }
@@ -3153,9 +3625,11 @@ async function startMultipointTracking(p0) {
               recoveryFrame=COACHWEB?await mpFrameCooperative(found,anchorExtent):mpFrame(found,anchorExtent);
               recovered=mpGoodFeatures(recoveryFrame,found,radius);
             }
-            if(recovered.length>=5){
+            const recoveryJump=Math.hypot(found.x-cur.x,found.y-cur.y);
+            if(recovered.length>=5&&recoveryJump<=maxJump){
               cur={x:found.x,y:found.y};vel={x:0,y:0};anchorFrame=recoveryFrame;
               anchorTime=tNow;features=recovered;accepted=true;lost=0;homePending=null;
+              frameConfidence=Math.min(1,recovered.length/12);
               path.homeRecoveries=(path.homeRecoveries||0)+1;
             }
           }else homePending={x:found.x,y:found.y};
@@ -3184,6 +3658,7 @@ async function startMultipointTracking(p0) {
       outputPoint.x=benchOutputX;benchPreviousRaw={...cur};
     }
     path.pts.push(outputPoint);path.times.push(tNow);path.valid.push(accepted);
+    path.confidence.push(accepted?frameConfidence:0);
     const pct=Math.round(tNow/video.duration*100);
     barBtn.textContent=`⏹ Stop sporing (${pct}%)`;
     if(analyzing){
@@ -3218,7 +3693,7 @@ async function startMultipointTracking(p0) {
       const done=()=>{video.removeEventListener('pause',done);video.removeEventListener('ended',done);res();};
       video.addEventListener('pause',done);video.addEventListener('ended',done);
       const stepFn=async(now,meta)=>{
-        if(!tracking||meta.mediaTime+FRAME>=trimEndEff()){done();return;}
+        if(!tracking||meta.mediaTime+FRAME>=session.trackingEnd){done();return;}
         const processed=await processFrame(meta.mediaTime);
         if(processed===false||!tracking){done();return;}
         if(!video.ended)video.requestVideoFrameCallback(stepFn);
@@ -3227,12 +3702,12 @@ async function startMultipointTracking(p0) {
     });
     video.pause();video.playbackRate=oldRate;video.muted=oldMuted;
     if(tracking&&path.pts.length<5){
-      while(tracking&&video.currentTime+FRAME<trimEndEff()){
+      while(tracking&&video.currentTime+FRAME<session.trackingEnd){
         await seekTo(video.currentTime+FRAME);await processFrame(video.currentTime);
       }
     }
   }else{
-    while(tracking&&video.currentTime+FRAME<trimEndEff()){
+    while(tracking&&video.currentTime+FRAME<session.trackingEnd){
       await seekTo(video.currentTime+FRAME);await processFrame(video.currentTime);
     }
   }
@@ -3242,24 +3717,27 @@ async function startMultipointTracking(p0) {
     const sorted=[...benchmarkWorkMs].sort((a,b)=>a-b);
     const percentile=p=>sorted.length?sorted[Math.min(sorted.length-1,Math.floor(sorted.length*p))]:null;
     const invalid=(path.valid||[]).filter(v=>!v).length;
-    const run={schema:1,outcome:'completed',startedAt:startT,
+    const run={schema:1,outcome:'completed',startedAt:startT,session:{...session},
       endedAt:path.times[path.times.length-1]??startT,
       mediaSeconds:Math.max(0,(path.times[path.times.length-1]??startT)-startT),
       elapsedMs:performance.now()-benchmarkStartedAt,canvas:{w:ocan.width,h:ocan.height},
       plateRadius:radius,initialFeatures:features.length,plateIdentityUsable,
       plateBase:{circle:plateBase.circle,cover:plateBase.cover,pairCover:plateBase.pairCover},
       frames:path.pts.length,invalidFrames:invalid,lowConf:path.lowConf||0,
-      homeRecoveries:path.homeRecoveries||0,playbackSlowdowns:path.playbackSlowdowns||0,
+      homeRecoveries:path.homeRecoveries||0,homeConfirmations:path.homeConfirmations||0,
+      playbackSlowdowns:path.playbackSlowdowns||0,
       playbackSpeedups:path.playbackSpeedups||0,
       centerCorrections:path.centerCorrections||0,repAnchors:path.repAnchors||0,
-      trackerMode:deadliftMode?'deadlift-home-anchor':benchMode?
-        'bench-rotation-filtered-drift-audit':'rigid-plate-drift-audit',
+      trackerMode:plateIdentityUsable?(deadliftMode?'deadlift-fail-closed-home-recovery':benchMode?
+        'bench-rotation-filtered-drift-audit':'rigid-plate-drift-audit'):'multipoint-flow-only',
       searchBias:{local:localBias,home:homeBias,quick:quickBias},
       workMs:{p50:percentile(.5),p80:percentile(.8),p95:percentile(.95),max:sorted.at(-1)??null},
       pts:path.pts.map(q=>({...q})),times:[...path.times],valid:[...(path.valid||[])],
+      confidence:[...(path.confidence||[])],
       ...(TRACKER_PROBE?{frameProbe:trackerProbe}: {})};
     publishTrackerBenchmarkRun(run);
   }
+  freezeRawAcquisition(path,session);
   analyzePath(path);
   const badPct=path.lowConf&&path.pts.length?Math.round(path.lowConf/path.pts.length*100):0;
   if(badPct>5){
@@ -3878,19 +4356,10 @@ function disarmSession() {
     say('');
   }
 }
-function applySessionView() {
-  const path = strokes.filter(s => s.type === 'path' && s.times
-    && s.reps && s.reps.length).pop();
+function applySessionView(path = latestCleanPath()) {
   if (!path) return;
-  const t = path.times;
-  const activeLift = vcV3Lift(document.getElementById('liftSel').value);
-  const reviewLead = activeLift === 'deadlift' ? 1 : 0.8;
-  const reviewTail = activeLift === 'deadlift' ? 1 : 0.5;
-  trimStart = Math.max(0, t[Math.min(path.reps[0].start, t.length - 1)] - reviewLead);
-  trimEnd = Math.min(video.duration || Infinity,
-    (Number.isFinite(path.reviewEndTime)
-      ? path.reviewEndTime
-      : t[Math.min(path.reps[path.reps.length - 1].end, t.length - 1)]) + reviewTail);
+  trimStart = path.raw.start;
+  trimEnd = path.raw.end;
   document.getElementById('trimInBtn').classList.add('active');
   document.getElementById('trimOutBtn').classList.add('active');
   paintTrim();
@@ -3899,7 +4368,8 @@ function applySessionView() {
   const reviewRate = 1;
   document.getElementById('speed').value = String(reviewRate);
   video.playbackRate = reviewRate;
-  video.currentTime = trimStart;
+  video.currentTime = path.raw.start;
+  updateCleanReviewUI(path, true);
   video.play().catch(() => {});
   say(ATHLETE
     ? 'Din stangbane er klar · grøn = hurtig, rød = langsommere · brug frame-knapperne til detaljer'
@@ -3951,14 +4421,24 @@ function wizardClick(p) {
 }
 
 async function runFullAnalysis(barPt) {
+  const session = createAnalysisSession();
+  if (!session.lift) {
+    if (ATHLETE && setAthleteState)
+      setAthleteState('ready','Vælg squat, bænkpres eller dødløft før analysen.');
+    say('Vælg løft før analysen');
+    return false;
+  }
   analyzing = true;
   if (ATHLETE && setAthleteState) setAthleteState('analyzing');
   if (!SLIM) allBtn.textContent = 'Forbereder…';
   else say('Forbereder analysen ...');
   // RUNDE 20: MediaPipe-skelettet er fjernet (keyframe-skelet erstattede det).
   // ⚡ sporer nu KUN stangbanen.
-  strokes = strokes.filter(s => s.type !== 'path');  // ⚡ erstatter gammel bane
-  const tracked = await startMultipointTracking(barPt);
+  strokes.filter(stroke => stroke.type === 'path' && !stroke.superseded)
+    .forEach(stroke => { stroke.superseded = true; });
+  if (Math.abs(video.currentTime - session.trackingStart) > FRAME)
+    await seekTo(session.trackingStart);
+  const tracked = await startMultipointTracking(barPt, session);
   analyzing = false;
   allBtn.textContent = ATHLETE ? '◎' : SLIM ? '⚡' : 'Analysér løft';
   allBtn.classList.remove('active');
@@ -3978,7 +4458,7 @@ async function runFullAnalysis(barPt) {
     // ruller sættet automatisk med farttal i normal fart.
     sessionRun = false;
     if (ATHLETE && setAthleteState) setAthleteState('done');
-    applySessionView();
+    applySessionView(latestCleanPath());
   } else if (COACHWEB && openSheetFn &&
              strokes.some(s => s.type === 'path' && s.vel)) {
     // coach online: vis analyse-arket med tal og fund med det samme
@@ -3997,8 +4477,9 @@ let setCoachLayer = null; // sættes af coach-layout: 1=ren · 2=efter analyse �
 let lastVals = null;   // strukturerede tal til den regelbaserede vurdering
 
 function collectMetrics() {
-  const path = strokes.filter(s => s.type === 'path' && s.vel).pop();
-  if (!path) return null;
+  const sourcePath = latestCleanPath() || strokes.filter(s => s.type === 'path' && s.vel).pop();
+  if (!sourcePath) return null;
+  let path = sourcePath;
   const m = [];
   lastVals = {};
   lastVals.variation = document.getElementById('variationSel').value || null;
@@ -4008,6 +4489,17 @@ function collectMetrics() {
     m.push(`OBS: sporingen var usikker i ` +
       `${lastVals.lowConfPct}% af tiden ` +
       `(skive skjult/utydelig) - tag tallene med forbehold`);
+  if (sourcePath.analysis) {
+    const eligibleReps = sourcePath.reps.filter(rep => rep.validRatio >= .8 &&
+      Number.isFinite(rep.mcv) && Number.isFinite(rep.romCm));
+    if (!eligibleReps.length) {
+      lastVals.signalEligible = false;
+      m.push('Velocity, ROM og tempo er skjult: signalet er ikke gyldigt nok.');
+      return m.join('\n');
+    }
+    path = {...sourcePath,reps:eligibleReps};
+    lastVals.signalEligible = true;
+  }
   const ys = path.pts.map(p => p.y);
   const rangePx = Math.max(...ys) - Math.min(...ys);
   if (cmPerPx) {
@@ -5704,12 +6196,15 @@ async function exportVideo() {
   recorder.onstop = () => { recPrefix = 'overlay'; saveRec(mime, null); exporting = false; };
   exporting = true;
   video.playbackRate = 1;
-  video.currentTime = trimStart || 0;
+  const cleanPath = latestCleanPath();
+  const exportStart = cleanPath?.raw?.start ?? trimStart ?? 0;
+  const exportEnd = cleanPath?.raw?.end ?? trimEndEff();
+  video.currentTime = exportStart;
   downloadLink.hidden = true;
   say('Eksporterer video med overlay … afspiller klippet igennem');
   await video.play().catch(() => {});
   recorder.start(1000);
-  const endT = trimEndEff();
+  const endT = exportEnd;
   const tick = () => {
     if (!exporting) return;
     if (video.ended || video.currentTime >= endT - 0.03) {
@@ -5725,7 +6220,32 @@ async function exportVideo() {
   requestAnimationFrame(tick);
 }
 const exportBtn = document.getElementById('exportBtn');
-if (exportBtn) exportBtn.onclick = exportVideo;
+function openExportPreview() {
+  if (!video.src) { alert('Åbn en video først'); return; }
+  const preview = document.getElementById('exportPreview');
+  const previewCanvas = document.getElementById('exportPreviewCanvas');
+  const previewContext = previewCanvas.getContext('2d');
+  previewCanvas.width = canvas.width; previewCanvas.height = canvas.height;
+  previewContext.drawImage(canvas, 0, 0, previewCanvas.width, previewCanvas.height);
+  const path = latestCleanPath();
+  const lift = path?.analysis?.lift || 'løft';
+  const seconds = path?.raw ? Math.max(0,path.raw.end-path.raw.start).toFixed(1) : '—';
+  document.getElementById('exportPreviewText').textContent =
+    `${lift} · fuld raw bane · ${seconds} s · faseoverlay · ingen lyd`;
+  preview.hidden = false;
+  if (TRACKER_BENCHMARK) {
+    window.__vcCleanRebuildAudit = window.__vcCleanRebuildAudit || {};
+    window.__vcCleanRebuildAudit.exportPreview = {visible:true,start:path?.raw?.start,end:path?.raw?.end};
+  }
+}
+document.getElementById('cancelExportBtn').onclick = () => {
+  document.getElementById('exportPreview').hidden = true;
+};
+document.getElementById('confirmExportBtn').onclick = () => {
+  document.getElementById('exportPreview').hidden = true;
+  exportVideo();
+};
+if (exportBtn) exportBtn.onclick = openExportPreview;
 
 // ---------- To versioner, én fil ----------
 // Desktop (file://) eller ?coach=1 = FULD version (AI, skelet, gem, optag).
@@ -6480,6 +7000,17 @@ if (ATHLETE) {
     '<span class="athCopy">Vælg en video af dit sæt. Du markerer skiven én gang — resten klarer vi.</span>' +
     '<span class="athCta">Vælg video</span>';
 
+  const athleteLift = document.getElementById('liftSel').cloneNode(true);
+  athleteLift.id = 'vcAthleteLift';
+  athleteLift.style.display = '';
+  athleteLift.value = document.getElementById('liftSel').value;
+  athleteLift.setAttribute('aria-label','Vælg løft til faseanalyse');
+  athleteLift.addEventListener('change', () => {
+    document.getElementById('liftSel').value = athleteLift.value;
+    analysisSession = null;
+  });
+  document.getElementById('vcLiftSetup').appendChild(athleteLift);
+
   const athleteFooter = document.querySelector('footer');
   const penB = document.getElementById('penBtn');
   const undoB = document.getElementById('undoBtn');
@@ -6592,6 +7123,7 @@ if (ATHLETE) {
       ? Math.max(0, trimEndEff() - 0.2)
       : Math.max(0, video.duration || video.currentTime);
     trimStart = Math.max(0, Math.min(video.currentTime, latestStart));
+    manualTrackingBounds.start = trimStart;
     document.getElementById('trimInBtn').classList.add('active');
     paintTrim();
     video.currentTime = trimStart;
@@ -6639,12 +7171,15 @@ if (ATHLETE) {
     document.getElementById('scrubRow').style.display = empty ? 'none' : '';
     requestAnimationFrame(layoutBars);
     athleteStatus.hidden = empty || !info;
+    document.getElementById('barPathHUD').hidden = empty ||
+      !(state === 'ready' || state === 'done');
     athleteStartGuide.hidden = state !== 'ready';
     if (state === 'ready') {
       resetAthleteStartGuide();
       // Start-guiden ved tidslinjen erstatter det store statuskort i dette trin.
       athleteStatus.hidden = true;
     }
+    if (state === 'done') athleteStatus.hidden = true;
     athleteSendBtn.hidden = !(state === 'done' && VC_V3_ATHLETE_BRIDGE);
     const currentStep = state === 'empty' ? 1
       : (state === 'ready' || state === 'target' || state === 'confirm' || state === 'error') ? 2
