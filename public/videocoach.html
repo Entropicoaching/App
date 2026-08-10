@@ -604,9 +604,151 @@
     border:1px solid var(--line); }
   body.athlete #fitBtn { right:auto !important; left:62px !important; }
   body.placing #fitBtn { display:none !important; }
+  /* VIDEOCOACH-ENTROPI-TRACK-UX-001 — ét fælles arbejdssystem.
+     De eksisterende værktøjer bevarer deres ids og funktioner, men shell,
+     video, review og eksport deler nu ét roligt Entropi-hierarki. */
+  :root { --vc-surface:#181814; --vc-surface-2:#211f1a; --vc-edge:rgba(237,234,226,.11);
+    --vc-muted:rgba(237,234,226,.56); --vc-good:#78d89a; --vc-warn:#e6bd72;
+    --vc-radius:12px; --vc-control:44px; }
+  body { overflow:hidden; background:#0f0f0c; }
+  header { display:none !important; }
+  #vcSystemBar { position:fixed; inset:0 0 auto; z-index:40; min-height:64px;
+    display:grid; grid-template-columns:auto minmax(220px,1fr) auto auto;
+    align-items:center; gap:16px; padding:9px 16px; border-bottom:1px solid var(--vc-edge);
+    background:rgba(20,20,16,.96); box-shadow:0 12px 36px rgba(0,0,0,.22); }
+  .vcSystemBrand { display:flex; align-items:center; gap:9px; min-width:0; }
+  .vcSystemBrand b { color:var(--accent); font-size:12px; letter-spacing:.22em; }
+  .vcSystemBrand i { width:1px; height:17px; background:var(--vc-edge); }
+  .vcSystemBrand span { color:var(--vc-muted); font-size:8px; letter-spacing:.2em; }
+  #vcWorkspaceTabs { justify-self:center; display:flex; align-items:center; gap:3px;
+    padding:3px; border:1px solid var(--vc-edge); border-radius:10px; background:#11110e; }
+  #vcWorkspaceTabs button { min-height:36px; min-width:78px; padding:7px 12px;
+    border:0; border-radius:7px; color:var(--vc-muted); font-size:9px; }
+  #vcWorkspaceTabs button[aria-selected="true"] { color:var(--text);
+    background:var(--vc-surface-2); box-shadow:inset 0 0 0 1px rgba(200,146,58,.28); }
+  #vcWorkspaceTabs button:disabled { opacity:.36; cursor:not-allowed; }
+  #vcSystemState { display:flex; align-items:center; gap:7px; min-width:118px;
+    color:var(--vc-muted); font-size:9px; white-space:nowrap; }
+  #vcSystemState i { width:7px; height:7px; border-radius:50%; background:var(--accent);
+    box-shadow:0 0 0 4px rgba(200,146,58,.10); }
+  #vcSystemState[data-tone="good"] i { background:var(--vc-good);
+    box-shadow:0 0 0 4px rgba(120,216,154,.10); }
+  #vcSystemActions { display:flex; align-items:center; gap:6px; }
+  #vcSystemActions button { min-height:var(--vc-control); padding:8px 12px;
+    border-radius:9px; font-size:9px; }
+  #vcContinueStep { color:#141410; border-color:var(--accent); background:var(--accent); }
+  #vcLiftSlot { display:flex; align-items:center; min-width:0; }
+  #vcLiftSlot:empty { display:none; }
+  #vcLiftSetup { display:none !important; }
+  #vcLiftSlot select { width:124px; min-height:36px; padding:6px 9px; border-radius:8px;
+    text-transform:none; font-size:10px; background:var(--vc-surface-2); }
+  #athleteBrand, #athleteFlow, #coachFlow, #openSmall, #guideSmall, #zenBtn {
+    display:none !important; }
+  #stage { margin-top:64px; margin-bottom:118px;
+    background:radial-gradient(circle at 50% 42%,#1d1c17 0,#11110e 58%,#0b0b09 100%); }
+  #stage::before { content:''; position:absolute; inset:0; pointer-events:none;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),
+      linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:40px 40px; mask-image:radial-gradient(circle,black,transparent 80%); opacity:.24; }
+  #dropHint { width:min(440px,calc(100vw - 32px)); padding:28px; border:1px solid var(--vc-edge) !important;
+    border-radius:var(--vc-radius) !important; background:rgba(24,24,20,.88) !important;
+    box-shadow:0 24px 70px rgba(0,0,0,.34) !important; }
+  #scrubRow { position:fixed; z-index:22; left:12px; right:12px; bottom:74px;
+    min-height:44px; gap:7px; padding:5px 9px; border:1px solid var(--vc-edge);
+    border-radius:var(--vc-radius); background:rgba(24,24,20,.94); }
+  #scrubRow button { min-width:36px; min-height:36px; padding:6px; border:0; border-radius:8px; }
+  footer { position:fixed; z-index:21; left:12px; right:12px; bottom:8px; min-height:58px;
+    flex-wrap:nowrap; overflow-x:auto; padding:7px; gap:5px; border:1px solid var(--vc-edge);
+    border-radius:var(--vc-radius); background:rgba(24,24,20,.96); scrollbar-width:none; }
+  footer::-webkit-scrollbar { display:none; }
+  footer button, footer select, footer input { min-height:var(--vc-control); flex:0 0 auto;
+    border-radius:9px; border-color:transparent; background:rgba(237,234,226,.035); }
+  footer button.active, footer #allBtn { background:rgba(200,146,58,.14) !important;
+    border-color:rgba(200,146,58,.38) !important; color:var(--accent) !important; }
+  #barPathHUD { inset:auto 12px 128px 12px; width:auto; min-height:104px;
+    grid-template-columns:minmax(120px,.75fr) minmax(180px,1.1fr) minmax(280px,1.5fr) auto;
+    align-items:center; gap:10px 14px; padding:11px 13px; border-radius:var(--vc-radius);
+    border:1px solid var(--vc-edge); background:rgba(24,24,20,.96); box-shadow:0 16px 44px rgba(0,0,0,.32);
+    backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); }
+  body:not([data-vc-workspace="review"]) #barPathHUD { display:none !important; }
+  .vcHudHead { align-self:stretch; flex-direction:column; align-items:flex-start;
+    justify-content:center; padding-right:12px; border-right:1px solid var(--vc-edge); }
+  .vcHudTitle { font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.12em;
+    text-transform:uppercase; }
+  .vcHudQuality { font-size:8px; }
+  .vcPhaseLegend { align-content:center; }
+  .vcPhaseLegend span { font-size:8px; }
+  .vcMetricCards { grid-template-columns:repeat(3,minmax(86px,1fr)); }
+  .vcMetric { border-radius:9px; background:rgba(237,234,226,.03); }
+  .vcMetric b { font-family:'IBM Plex Mono',monospace; font-size:12px; }
+  .vcOverlayControls { min-width:126px; flex-direction:column; }
+  .vcOverlayControls button { min-height:30px; padding:5px 8px; text-align:left; border-radius:7px; }
+  #exportPreview { background:rgba(8,8,7,.82); }
+  .vcExportCard { width:min(94vw,860px); padding:12px; border-color:var(--vc-edge);
+    border-radius:var(--vc-radius); background:var(--vc-surface); }
+  .vcExportMeta { padding:13px 4px 2px; }
+  .vcExportMeta b { font-family:'IBM Plex Mono',monospace; font-size:12px; }
+  .vcExportActions button { min-height:var(--vc-control); border-radius:9px; }
+  body.slim #stage { inset:64px 0 130px; margin:0; }
+  body.slim footer { left:12px; right:12px; bottom:8px; min-height:58px; padding:7px;
+    justify-content:center; border-radius:var(--vc-radius); }
+  body.slim footer button { min-width:54px; min-height:var(--vc-control); padding:5px 9px;
+    border-radius:9px; font-size:21px; }
+  body.slim #scrubRow { left:12px; right:12px; bottom:74px; }
+  #vcUtilityActions { display:flex; gap:5px; }
+  #vcUtilityActions #closeBtn, #vcUtilityActions #fitBtn { position:static !important;
+    display:grid !important; place-items:center; width:var(--vc-control); height:var(--vc-control);
+    padding:0; border-radius:9px; background:transparent; backdrop-filter:none; }
+  @media(max-width:700px) {
+    #vcSystemBar { min-height:60px; grid-template-columns:auto minmax(132px,1fr) auto;
+      gap:7px; padding:7px 8px; }
+    .vcSystemBrand i, .vcSystemBrand span, #vcSystemState, #vcBackStep { display:none; }
+    .vcSystemBrand b { width:18px; overflow:hidden; font-size:0; }
+    .vcSystemBrand b::after { content:'E'; font-size:12px; letter-spacing:0; }
+    #vcWorkspaceTabs { justify-self:stretch; min-width:0; }
+    #vcWorkspaceTabs button { min-width:0; flex:1; min-height:40px; padding:6px 7px; font-size:8px; }
+    #vcSystemActions { gap:4px; }
+    #vcSystemActions button { min-width:44px; padding:6px 8px; }
+    #vcContinueStep { font-size:0 !important; }
+    #vcContinueStep::after { content:'→'; font-size:17px; }
+    #vcLiftSlot { position:fixed; z-index:31; top:68px; left:8px; }
+    #vcLiftSlot select { width:104px; min-height:40px; background:rgba(24,24,20,.94); }
+    body.athlete[data-athlete-state="empty"] #vcLiftSlot { display:none; }
+    #stage, body.slim #stage { inset:60px 0 126px; }
+    body.athlete[data-athlete-state="empty"] #stage { inset:60px 0 0; }
+    #barPathHUD { inset:auto 8px 126px 8px; max-height:40vh; overflow:auto;
+      grid-template-columns:1fr; gap:8px; padding:10px; }
+    .vcHudHead { min-height:0; padding:0 0 7px; border-right:0; border-bottom:1px solid var(--vc-edge);
+      flex-direction:row; align-items:center; justify-content:space-between; }
+    .vcPhaseLegend { gap:5px 8px; }
+    .vcRepSelector button { min-height:36px; min-width:54px; }
+    .vcOverlayControls { display:flex; min-width:0; flex-direction:row; }
+    .vcOverlayControls button { min-height:36px; text-align:center; }
+    .vcMetricCards { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    .vcMetric { padding:7px; }
+    .vcMetric small { font-size:6px; }
+    .vcMetric b { font-size:10px; }
+    #vcUtilityActions #fitBtn { display:none !important; }
+    #vcUtilityActions #closeBtn { width:40px; height:40px; }
+    #scrubRow, body.slim #scrubRow { left:8px; right:8px; bottom:70px; padding:4px 6px; }
+    footer, body.slim footer { left:8px; right:8px; bottom:6px; min-height:56px; }
+    .vcExportMeta { align-items:stretch; flex-direction:column; }
+    .vcExportActions { width:100%; }
+    .vcExportActions button { flex:1; }
+  }
 </style>
 </head>
 <body>
+<nav id="vcSystemBar" aria-label="VideoCoach arbejdsflow">
+  <div class="vcSystemBrand"><b>ENTROPI</b><i></i><span>VIDEOCOACH</span></div>
+  <div id="vcWorkspaceTabs" role="tablist" aria-label="Arbejdstrin">
+    <button id="vcTabVideo" type="button" role="tab" data-view="video" aria-selected="true">Video</button>
+    <button id="vcTabReview" type="button" role="tab" data-view="review" aria-selected="false" disabled>Bane</button>
+    <button id="vcTabExport" type="button" role="tab" data-view="export" aria-selected="false" disabled>Eksport</button>
+  </div>
+  <div id="vcSystemState"><i></i><span>Klar til video</span></div>
+  <div id="vcSystemActions"><div id="vcLiftSlot"></div><button id="vcBackStep" type="button" disabled>Tilbage</button><button id="vcContinueStep" type="button">Næste</button><div id="vcUtilityActions"></div></div>
+</nav>
 <header>
   <h1 class="brandmark"><span class="b1">ENTROPI</span><span class="brule"></span><span class="b2">VIDEOCOACH</span></h1>
   <button id="openBtn">📂 Åbn video</button>
@@ -805,6 +947,60 @@ let coachFlowTo = null;             // Coach: ryk 4-trins-flowet (sat i COACHWEB
 const playLabel = playing => SLIM ? (playing ? '❚❚' : '▶︎')
   : (playing ? '⏸ Pause (mellemrum)' : '▶ Afspil (mellemrum)');
 
+function vcSetWorkspace(view, options = {}) {
+  const path = latestCleanPath();
+  if ((view === 'review' || view === 'export') && !path) view = 'video';
+  const preservedTime = video.currentTime;
+  document.body.dataset.vcWorkspace = view;
+  document.querySelectorAll('#vcWorkspaceTabs [data-view]').forEach(button => {
+    button.setAttribute('aria-selected', String(button.dataset.view === view));
+  });
+  document.getElementById('vcBackStep').disabled = view === 'video';
+  if (view === 'export' && path) openExportPreview();
+  if (options.preserveTime !== false && Number.isFinite(preservedTime)) video.currentTime = preservedTime;
+  vcSyncSystem();
+}
+
+function vcSyncSystem() {
+  const path = latestCleanPath();
+  const state = document.body.dataset.athleteState || '';
+  const view = document.body.dataset.vcWorkspace || 'video';
+  document.getElementById('vcTabReview').disabled = !path;
+  document.getElementById('vcTabExport').disabled = !path;
+  const status = document.getElementById('vcSystemState');
+  const stateCopy = tracking || state === 'analyzing' ? ['Følger stangen','']
+    : path ? ['Analyse klar','good']
+    : video.src ? ['Video klar',''] : ['Klar til video',''];
+  status.querySelector('span').textContent = stateCopy[0];
+  status.dataset.tone = stateCopy[1];
+  const next = document.getElementById('vcContinueStep');
+  next.disabled = tracking || state === 'target';
+  next.textContent = !video.src ? 'Vælg video'
+    : path && view === 'video' ? 'Se bane'
+    : path && view === 'review' ? 'Eksport'
+    : path && view === 'export' ? 'Til bane'
+    : state === 'confirm' ? 'Start analyse' : 'Fortsæt';
+}
+
+document.body.dataset.vcWorkspace = 'video';
+document.querySelectorAll('#vcWorkspaceTabs [data-view]').forEach(button => {
+  button.onclick = () => vcSetWorkspace(button.dataset.view);
+});
+document.getElementById('vcBackStep').onclick = () => {
+  const preview = document.getElementById('exportPreview');
+  if (!preview.hidden) preview.hidden = true;
+  vcSetWorkspace('video');
+};
+document.getElementById('vcContinueStep').onclick = () => {
+  const path = latestCleanPath(), view = document.body.dataset.vcWorkspace || 'video';
+  if (!video.src) { document.getElementById('fileInput').click(); return; }
+  if (path) {
+    vcSetWorkspace(view === 'video' ? 'review' : view === 'review' ? 'export' : 'review');
+    return;
+  }
+  if (!tracking && !analyzing) document.getElementById('allBtn').click();
+};
+
 function freezeRawAcquisition(path, session) {
   const pts = Object.freeze(path.pts.map(point => Object.freeze({x:point.x,y:point.y})));
   const times = Object.freeze([...path.times]);
@@ -880,8 +1076,8 @@ function updateCleanReviewUI(path = latestCleanPath(), force = false) {
   if (!hud) return;
   if (!path?.analysis) {
     const state = document.body.dataset.athleteState || '';
-    const visible = ATHLETE && !!video.src && (state === 'ready' || state === 'done');
-    hud.hidden = !visible;
+    hud.hidden = true;
+    vcSyncSystem();
     if (!force && updateCleanReviewUI.lastPath === null &&
         updateCleanReviewUI.lastEmptyState === state) return;
     updateCleanReviewUI.lastPath = null;
@@ -892,6 +1088,8 @@ function updateCleanReviewUI(path = latestCleanPath(), force = false) {
     return;
   }
   hud.hidden = false;
+  if (updateCleanReviewUI.lastPath !== path && document.body.dataset.vcWorkspace === 'video')
+    vcSetWorkspace('review');
   const repIndex = repAtTime(path);
   if (!force && updateCleanReviewUI.lastPath === path && updateCleanReviewUI.lastRep === repIndex) return;
   updateCleanReviewUI.lastPath = path; updateCleanReviewUI.lastRep = repIndex;
@@ -934,6 +1132,7 @@ function updateCleanReviewUI(path = latestCleanPath(), force = false) {
     reps:analysis.reps.map(item => ({...item,phases:item.phases.map(phase => ({...phase}))})),
     review:{start:trimStart,end:trimEndEff()}, currentRep:repIndex
   };
+  vcSyncSystem();
 }
 
 function drawDirectionArrow(a, b, color) {
@@ -1084,6 +1283,7 @@ function loadFile(file) {
   scrub.style.background = '';
   aiPanel.hidden = true;
   document.getElementById('exportPreview').hidden = true;
+  vcSetWorkspace('video', {preserveTime:false});
   updateCleanReviewUI(null, true);
   say('Åbner videoen ...');
   // ANDROID-FIX: videoWidth er på mange Android-enheder først klar ved
@@ -3432,7 +3632,9 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
   const quickBias=quickCalibration?{x:quickCalibration.x-p0.x,y:quickCalibration.y-p0.y}:{x:0,y:0};
   const liftMode=session.lift;
   const deadliftMode=liftMode==='deadlift',benchMode=liftMode==='bench';
-  let homePending=null,correctionPending=null,fullAuditFrames=0;
+  // Home-auditet arbejder med en centerfejl (delta), mens en lost-recovery
+  // sammenligner absolutte centre. De to koordinatdomæner må ikke dele state.
+  let homeCorrectionPending=null,recoveryPending=null,correctionPending=null,fullAuditFrames=0;
   const correctionHistory=[];
   const trackerProbe=TRACKER_PROBE?[]:null;
   let benchOutputX=p0.x,benchPreviousRaw={x:p0.x,y:p0.y};
@@ -3566,16 +3768,16 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
           // samme fejl på to hjemframes og dæmp korrektionen, så et enkelt hit
           // hverken snapper stangen eller selv udløser jump-afvisning.
           const delta={x:homeHit.x-homeBias.x-nx,y:homeHit.y-homeBias.y-ny};
-          const confirmed=homePending&&
-            Math.hypot(delta.x-homePending.x,delta.y-homePending.y)<=radius*.08;
+          const confirmed=homeCorrectionPending&&
+            Math.hypot(delta.x-homeCorrectionPending.x,delta.y-homeCorrectionPending.y)<=radius*.08;
           if(confirmed){
             nx+=delta.x*.5;ny+=delta.y*.5;
             path.centerCorrections=(path.centerCorrections||0)+1;
             path.homeConfirmations=(path.homeConfirmations||0)+1;
           }
-          homePending=delta;
+          homeCorrectionPending=delta;
           path.repAnchors=(path.repAnchors||0)+1;
-        }else homePending=null;
+        }else homeCorrectionPending=null;
       }
       if(deadliftMode&&homeEntryFrames>0)homeEntryFrames--;
       if(deadliftMode)wasNearHome=nearHome;
@@ -3600,7 +3802,7 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
           vel={x:vel.x*.35+iv.x*.65,y:vel.y*.35+iv.y*.65};cur={x:nx,y:ny};
           anchorFrame=currentFrame;anchorTime=tNow;features=nextFeatures;accepted=true;lost=0;
           frameConfidence=Math.min(1,kept.length/Math.max(5,moves.length));
-          homePending=null;
+          homeCorrectionPending=null;recoveryPending=null;
         }
       }
     }
@@ -3618,22 +3820,41 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
         const strong=found&&found.circle>Math.max(9,plateBase.circle*.34)&&
           found.cover>=.45&&found.pairCover>=.35&&found.app<2.6;
         if(strong){
-          if(homePending&&Math.hypot(found.x-homePending.x,found.y-homePending.y)<radius*.45){
+          // plSearch returnerer det rå fund. Brug samme kalibrerede home-domæne
+          // som acquisition-starten, så et stabilt fund ikke bliver et synligt
+          // bunddrop alene på grund af detectorens faste center-bias.
+          const rawRecoveryCenter={x:found.x,y:found.y};
+          const calibratedRecoveryCenter={x:found.x-homeBias.x,y:found.y-homeBias.y};
+          const rawRecoveryJump=Math.hypot(rawRecoveryCenter.x-cur.x,rawRecoveryCenter.y-cur.y);
+          const calibratedRecoveryJump=Math.hypot(calibratedRecoveryCenter.x-cur.x,
+            calibratedRecoveryCenter.y-cur.y);
+          // Vælg mellem de to allerede observerede koordinatdomæner med den
+          // eksisterende kontinuitet: recovery må aldrig skabe et større hop
+          // alene for at gennemtvinge kalibreringen.
+          const recoveryCenter=calibratedRecoveryJump<rawRecoveryJump?
+            calibratedRecoveryCenter:rawRecoveryCenter;
+          if(probe){probe.recoveryCandidate={...recoveryCenter};probe.recoveryRawBias={...homeBias};
+            probe.recoverySource=recoveryCenter===calibratedRecoveryCenter?'calibrated':'raw';}
+          if(recoveryPending&&Math.hypot(recoveryCenter.x-recoveryPending.x,
+              recoveryCenter.y-recoveryPending.y)<radius*.45){
             let recoveryFrame=currentFrame;
-            let recovered=mpGoodFeatures(recoveryFrame,found,radius);
+            let recovered=mpGoodFeatures(recoveryFrame,recoveryCenter,radius);
             if(recovered.length<5){
-              recoveryFrame=COACHWEB?await mpFrameCooperative(found,anchorExtent):mpFrame(found,anchorExtent);
-              recovered=mpGoodFeatures(recoveryFrame,found,radius);
+              recoveryFrame=COACHWEB?await mpFrameCooperative(recoveryCenter,anchorExtent):
+                mpFrame(recoveryCenter,anchorExtent);
+              recovered=mpGoodFeatures(recoveryFrame,recoveryCenter,radius);
             }
-            const recoveryJump=Math.hypot(found.x-cur.x,found.y-cur.y);
+            const recoveryJump=Math.hypot(recoveryCenter.x-cur.x,recoveryCenter.y-cur.y);
+            if(probe){probe.recoveryFeatures=recovered.length;probe.recoveryJump=recoveryJump;}
             if(recovered.length>=5&&recoveryJump<=maxJump){
-              cur={x:found.x,y:found.y};vel={x:0,y:0};anchorFrame=recoveryFrame;
-              anchorTime=tNow;features=recovered;accepted=true;lost=0;homePending=null;
+              cur={x:recoveryCenter.x,y:recoveryCenter.y};vel={x:0,y:0};anchorFrame=recoveryFrame;
+              anchorTime=tNow;features=recovered;accepted=true;lost=0;
+              homeCorrectionPending=null;recoveryPending=null;
               frameConfidence=Math.min(1,recovered.length/12);
               path.homeRecoveries=(path.homeRecoveries||0)+1;
             }
-          }else homePending={x:found.x,y:found.y};
-        }else homePending=null;
+          }else recoveryPending={...recoveryCenter};
+        }else recoveryPending=null;
       }
     }
     if(probe){
@@ -6222,6 +6443,13 @@ async function exportVideo() {
 const exportBtn = document.getElementById('exportBtn');
 function openExportPreview() {
   if (!video.src) { alert('Åbn en video først'); return; }
+  document.body.dataset.vcWorkspace = 'export';
+  document.querySelectorAll('#vcWorkspaceTabs [data-view]').forEach(button => {
+    button.setAttribute('aria-selected', String(button.dataset.view === 'export'));
+  });
+  document.getElementById('guidePanel').hidden = true;
+  aiPanel.hidden = true;
+  if (setAthleteSubmitOpen) setAthleteSubmitOpen(false);
   const preview = document.getElementById('exportPreview');
   const previewCanvas = document.getElementById('exportPreviewCanvas');
   const previewContext = previewCanvas.getContext('2d');
@@ -6240,12 +6468,19 @@ function openExportPreview() {
 }
 document.getElementById('cancelExportBtn').onclick = () => {
   document.getElementById('exportPreview').hidden = true;
+  vcSetWorkspace('review');
 };
 document.getElementById('confirmExportBtn').onclick = () => {
   document.getElementById('exportPreview').hidden = true;
   exportVideo();
 };
 if (exportBtn) exportBtn.onclick = openExportPreview;
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && !document.getElementById('exportPreview').hidden) {
+    document.getElementById('exportPreview').hidden = true;
+    vcSetWorkspace('review');
+  }
+});
 
 // ---------- To versioner, én fil ----------
 // Desktop (file://) eller ?coach=1 = FULD version (AI, skelet, gem, optag).
@@ -6675,7 +6910,7 @@ if (SLIM) {
         history.length > 1 ? history.back() : (location.href = '/');
     }, 150);
   };
-  document.body.appendChild(closeBtn);
+  document.getElementById('vcUtilityActions').appendChild(closeBtn);
   const zenBtn = document.createElement('button');
   zenBtn.id = 'zenBtn';
   zenBtn.textContent = '⌄';
@@ -6692,7 +6927,7 @@ if (SLIM) {
   fitBtn.title = 'Tilpas til skærm';
   fitBtn.setAttribute('aria-label', 'Tilpas videoen til skærmen');
   fitBtn.onclick = fitToScreen;
-  document.body.appendChild(fitBtn);
+  document.getElementById('vcUtilityActions').prepend(fitBtn);
   // Genfit hvis #stage skifter stoerrelse (iframe faldet paa plads, rotation).
   const stageEl = document.getElementById('stage');
   if (stageEl && typeof ResizeObserver === 'function')
@@ -7009,7 +7244,7 @@ if (ATHLETE) {
     document.getElementById('liftSel').value = athleteLift.value;
     analysisSession = null;
   });
-  document.getElementById('vcLiftSetup').appendChild(athleteLift);
+  document.getElementById('vcLiftSlot').appendChild(athleteLift);
 
   const athleteFooter = document.querySelector('footer');
   const penB = document.getElementById('penBtn');
@@ -7160,7 +7395,7 @@ if (ATHLETE) {
       target: ['Markér skiven', 'Tryk én gang midt på den skive, du vil følge.', 'Vælg skive', 'ready'],
       confirm: ['Tjek ringen', 'Rammes skiven rigtigt? Justér om nødvendigt — tryk så Start.', 'Start', 'ready'],
       analyzing: ['Vi følger stangen', 'Hold siden åben, mens hele sættet gennemgås.', 'Stop', 'ready'],
-      done: ['Stangbanen er klar', 'Grøn er hurtig. Rød viser, hvor stangen bevæger sig langsommere.', 'Ny bane', 'done'],
+      done: ['Stangbanen er klar', 'Se hele banen, faserne og de valide målinger i Bane.', 'Ny bane', 'done'],
       sent: ['Sendt til din coach', 'Din måling ligger klar til coachens gennemgang.', 'Ny bane', 'done'],
       error: ['Prøv igen', 'Vi mistede skiven. Vælg et tydeligt punkt tæt på navet.', 'Prøv igen', 'ready']
     };
@@ -7196,6 +7431,7 @@ if (ATHLETE) {
       allBtn.dataset.label = info[2];
     }
     allBtn.disabled = state === 'target';
+    vcSyncSystem();
   };
   setAthleteState('empty');
 

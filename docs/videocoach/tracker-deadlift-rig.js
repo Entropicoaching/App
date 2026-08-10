@@ -9,8 +9,8 @@ const here = dirname(fileURLToPath(import.meta.url));
 const html = readFileSync(join(here, '..', '..', 'public', 'videocoach.html'), 'utf8');
 const assert = (condition, message) => { if (!condition) throw new Error(message); };
 
-assert(/const recoveryJump=Math\.hypot\(found\.x-cur\.x,found\.y-cur\.y\);/.test(html),
-  'recovery skal måle outputJump mod sidste sikre koordinat');
+assert(/const recoveryJump=Math\.hypot\(recoveryCenter\.x-cur\.x,recoveryCenter\.y-cur\.y\);/.test(html),
+  'recovery skal måle normaliseret outputJump mod sidste sikre koordinat');
 assert(/recovered\.length>=5&&recoveryJump<=maxJump/.test(html),
   'recovery skal fail-close gennem eksisterende maxJump');
 assert(/path\.homeConfirmations=\(path\.homeConfirmations\|\|0\)\+1/.test(html),
@@ -30,6 +30,13 @@ assert(/if \(valid\[currentIndex\]\)/.test(html) && /if \(!valid\[index\]\)/.tes
   'invalid current-point og invalid segment skal være pen-up i rendering');
 assert(/let wasNearHome=deadliftMode,homeEntryFrames=0/.test(html),
   'home-audit må først armeres ved reel tilbagekomst, ikke ved første ascent');
+assert(/let homeCorrectionPending=null,recoveryPending=null/.test(html),
+  'home-delta og absolut recovery-center skal have adskilt state');
+assert(/const rawRecoveryCenter=\{x:found\.x,y:found\.y\}/.test(html) &&
+  /const calibratedRecoveryCenter=\{x:found\.x-homeBias\.x,y:found\.y-homeBias\.y\}/.test(html),
+  'recovery skal bevare rå og kalibreret observation');
+assert(/calibratedRecoveryJump<rawRecoveryJump/.test(html),
+  'recovery må kun vælge kalibreringen, når den reducerer output-jump');
 
 const radius = 30, dt = 1 / 30;
 const maxJump = velocity => radius * .75 + velocity * dt * .45;

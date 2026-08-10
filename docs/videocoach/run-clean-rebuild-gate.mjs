@@ -9,7 +9,10 @@ import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const BASE = '8b80f75b1f572ca7040baff0e76a0d19c7f5e035';
+const LIVE_BASE = '8b80f75b1f572ca7040baff0e76a0d19c7f5e035';
+const BASE = process.env.VC_AB_BASE || LIVE_BASE;
+const BOTTOM_SEAM_FIXTURE = process.env.VC_BOTTOM_SEAM_FIXTURE === '1';
+const ENTROPI_UX_ACCEPT = process.env.VC_ENTROPI_UX_ACCEPT === '1';
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, '..', '..');
 const candidateHtml = readFileSync(join(root, 'public', 'videocoach.html'), 'utf8');
@@ -61,7 +64,7 @@ function startServer(html) {
 
 async function makeDeadliftVideo(browser) {
   const page = await browser.newPage({viewport:{width:640,height:360}});
-  const bytes = await page.evaluate(async () => {
+  const bytes = await page.evaluate(async bottomFixture => {
     const canvas = document.createElement('canvas');
     canvas.width = 640; canvas.height = 360;
     const ctx = canvas.getContext('2d');
@@ -98,11 +101,19 @@ async function makeDeadliftVideo(browser) {
         for(let a=0;a<8;a++){const q=a*Math.PI/4;ctx.beginPath();ctx.moveTo(x+Math.cos(q)*20,y+Math.sin(q)*20);ctx.lineTo(x+Math.cos(q)*53,y+Math.sin(q)*53);ctx.stroke();}
         // Fast, asymmetrisk hjørnetekstur på selve skiven: optisk flow får
         // unik konsensus gennem ascent, lockout-pause og retur.
-        ctx.fillStyle='#b7a98d';ctx.fillRect(x-18,y-17,36,34);
-        ctx.fillStyle='#625448';ctx.fillRect(x-14,y-13,9,21);
-        ctx.fillRect(x-14,y+7,20,7);ctx.fillRect(x+5,y-11,8,8);
-        ctx.fillStyle='#8e3b2b';ctx.fillRect(x+3,y,11,13);
-        ctx.fillStyle='#d6a956';ctx.fillRect(x-2,y-13,4,8);
+        // Den udvidede bund-fixture fjerner kort den indre flow-tekstur på den
+        // sene retur, men bevarer den stærke skiveidentitet. Det tvinger den
+        // faktiske lost/recovery-seam uden at indføre et gættet home-punkt.
+        const bottomSeam = bottomFixture && t>4.08 && t<4.46;
+        if(!bottomSeam){
+          ctx.fillStyle='#b7a98d';ctx.fillRect(x-18,y-17,36,34);
+          ctx.fillStyle='#625448';ctx.fillRect(x-14,y-13,9,21);
+          ctx.fillRect(x-14,y+7,20,7);ctx.fillRect(x+5,y-11,8,8);
+          ctx.fillStyle='#8e3b2b';ctx.fillRect(x+3,y,11,13);
+          ctx.fillStyle='#d6a956';ctx.fillRect(x-2,y-13,4,8);
+        }else{
+          ctx.fillStyle='#ad4937';ctx.beginPath();ctx.arc(x,y,38,0,Math.PI*2);ctx.fill();
+        }
         ctx.fillStyle='#d6a956';ctx.font='16px sans-serif';ctx.fillText('ENTROPI TEST',470,330);
         if (t >= duration) { resolve(); return; }
         requestAnimationFrame(draw);
@@ -111,7 +122,7 @@ async function makeDeadliftVideo(browser) {
     });
     recorder.stop(); await stopped;
     return Array.from(new Uint8Array(await new Blob(chunks,{type}).arrayBuffer()));
-  });
+  }, BOTTOM_SEAM_FIXTURE);
   await page.close();
   return Buffer.from(bytes);
 }
@@ -122,7 +133,11 @@ async function overflowState(page) {
     bodyWidth:document.body.scrollWidth,
     hud:document.getElementById('barPathHUD')?.getBoundingClientRect().toJSON(),
     consoleDebugVisible:[...document.querySelectorAll('[id*="Debug"],[class*="debug"]')]
-      .some(element => element.offsetParent !== null)
+      .some(element => element.offsetParent !== null),
+    systemBar:document.getElementById('vcSystemBar')?.getBoundingClientRect().toJSON() || null,
+    workspace:document.body.dataset.vcWorkspace || null,
+    minTabHeight:Math.min(...[...document.querySelectorAll('#vcWorkspaceTabs button')]
+      .filter(element=>element.offsetParent!==null).map(element=>element.getBoundingClientRect().height),Infinity)
   }));
 }
 
@@ -154,8 +169,12 @@ async function runAthleteCase(browser, testCase, videoBuffer) {
   await page.locator('#allBtn').click();
   const canvasBox = await page.locator('#canvas').boundingBox();
   fail(canvasBox, `${testCase.name}: canvas mangler`);
+  // Seam-fixturen bruger samme realistiske manuelle markering seks syntetiske
+  // pixels over detectorcentret i begge A/B-kørsler. Det gør den eksisterende
+  // home-bias målbar og tvinger recovery til at forene koordinatdomænerne.
+  const targetY = BOTTOM_SEAM_FIXTURE ? 260 : 266;
   await page.mouse.click(canvasBox.x + canvasBox.width * 246 / 640,
-    canvasBox.y + canvasBox.height * 266 / 360);
+    canvasBox.y + canvasBox.height * targetY / 360);
   await page.waitForFunction(() => document.body.dataset.athleteState === 'confirm',null,{timeout:8_000});
   await page.locator('#allBtn').click();
   await page.waitForFunction(() => window.__vcTrackerBenchmarkLast?.outcome === 'completed',null,{timeout:60_000});
@@ -196,7 +215,15 @@ async function runAthleteCase(browser, testCase, videoBuffer) {
       video.pause(); video.currentTime = Math.max(audit.raw.start,audit.raw.end-.05);
     });
     await page.waitForTimeout(200);
-    await page.locator('#exportBtn').click();
+    let preservedTime = null;
+    if (testCase.entropiUx) {
+      preservedTime = await page.evaluate(() => document.getElementById('video').currentTime);
+      await page.locator('#vcTabVideo').click();
+      await page.locator('#vcTabReview').click();
+      const afterTabs = await page.evaluate(() => document.getElementById('video').currentTime);
+      fail(Math.abs(afterTabs-preservedTime)<.05, 'Video/Bane-tab må ikke miste playback-position');
+      await page.locator('#vcTabExport').click();
+    } else await page.locator('#exportBtn').click();
     await page.waitForFunction(() => !document.getElementById('exportPreview').hidden);
     preview = await page.evaluate(() => ({
       visible:!document.getElementById('exportPreview').hidden,
@@ -205,6 +232,10 @@ async function runAthleteCase(browser, testCase, videoBuffer) {
       text:document.getElementById('exportPreviewText').textContent
     }));
     await page.locator('#cancelExportBtn').click();
+    if (testCase.entropiUx) {
+      fail(await page.locator('#vcTabReview').getAttribute('aria-selected') === 'true',
+        'Tilbage fra eksport skal lande i Bane uden blindgyde');
+    }
   }
   await page.setViewportSize({width:1440,height:900});
   await page.waitForTimeout(150);
@@ -225,11 +256,29 @@ const browser = await chromium.launch({headless:true,executablePath:browserExecu
 try {
   const video = await makeDeadliftVideo(browser);
   fail(video.length > 20_000, 'den genererede uploadfixture er tom eller for lille');
-  const candidate = await runAthleteCase(browser,{name:'clean rebuild',
-    url:`${candidateServer.url}&trackerProbe=1`,candidate:true},video);
-  const baseline = await runAthleteCase(browser,{name:'live 8b80f75',url:baselineServer.url},video);
+  const candidate = await runAthleteCase(browser,{name:'candidate',
+    url:`${candidateServer.url}&trackerProbe=1`,candidate:true,entropiUx:ENTROPI_UX_ACCEPT},video);
+  const baselineIsClean = BASE !== LIVE_BASE;
+  const baseline = await runAthleteCase(browser,{name:`baseline ${BASE.slice(0,7)}`,
+    url:`${baselineServer.url}${baselineIsClean?'&trackerProbe=1':''}`,
+    candidate:baselineIsClean},video);
   const baseInvalid = baseline.tracker.invalidFrames / Math.max(1,baseline.tracker.frames);
   const candidateInvalid = candidate.tracker.invalidFrames / Math.max(1,candidate.tracker.frames);
+  const movement = result => {
+    const pts=result.tracker.pts, times=result.tracker.times, valid=result.tracker.valid;
+    const end=times.at(-1), floor=pts[0].y;
+    const accepted=pts.map((point,index)=>({point,index,time:times[index]}))
+      .filter(item=>valid[item.index]);
+    const settled=accepted.filter(item=>item.time>=end-.42);
+    const late=accepted.filter(item=>item.time>=end-1.25);
+    const steps=late.slice(1).map((item,index)=>Math.hypot(item.point.x-late[index].point.x,
+      item.point.y-late[index].point.y));
+    return {floor,top:Math.min(...accepted.map(item=>item.point.y)),
+      bottomDeviation:Math.max(...settled.map(item=>Math.abs(item.point.y-floor))),
+      lastError:Math.abs(accepted.at(-1).point.y-floor),lateMaxStep:Math.max(0,...steps),
+      recoveries:result.tracker.homeRecoveries};
+  };
+  const candidateMotion=movement(candidate),baselineMotion=movement(baseline);
   // rVFC-sampling varierer lidt mellem to realtidsafspilninger. Stabilitet
   // afgøres af invalid-andelen; 85% frame-cadence er kun en drop-vagt.
   fail(candidate.tracker.frames >= baseline.tracker.frames * .85,
@@ -242,6 +291,20 @@ try {
     `radius ${candidate.tracker.plateRadius}/${baseline.tracker.plateRadius}; `+
     `modes ${candidate.tracker.trackerMode}/${baseline.tracker.trackerMode}; `+
     `${JSON.stringify(rejectReasons)}; ${JSON.stringify(rejectSample)})`);
+  // Realtime rVFC sampling kan lande én frame forskudt ved lockout; sammenlign
+  // inden for 8 % af den målte skiveradius, ikke en produkt-trackingtærskel.
+  fail(candidateMotion.top <= baselineMotion.top + candidate.tracker.plateRadius*.08,
+    `A/B: toppen blev dårligere (${candidateMotion.top} mod ${baselineMotion.top})`);
+  if (BOTTOM_SEAM_FIXTURE) {
+    fail(candidateMotion.recoveries >= 1 && baselineMotion.recoveries >= 1,
+      `bund-fixturen ramte ikke recovery-seamen (${candidateMotion.recoveries}/${baselineMotion.recoveries})`);
+    fail(candidateMotion.bottomDeviation + .75 < baselineMotion.bottomDeviation,
+      `bunddrop blev ikke reduceret (${candidateMotion.bottomDeviation.toFixed(2)} mod ${baselineMotion.bottomDeviation.toFixed(2)}; `+
+      `bias ${JSON.stringify(candidate.tracker.searchBias)}; recovery `+
+      `${JSON.stringify((candidate.tracker.frameProbe||[]).filter(frame=>frame.recoveryCandidate).slice(-3))})`);
+    fail(candidateMotion.lastError <= 3,
+      `candidate lander ikke stabilt ved startbunden (${candidateMotion.lastError.toFixed(2)} px)`);
+  }
   fail(candidate.audit.raw.count === candidate.audit.raw.times &&
     candidate.audit.raw.count === candidate.audit.raw.confidence &&
     candidate.audit.raw.count === candidate.audit.raw.valid,
@@ -275,10 +338,19 @@ try {
     fail(state.scrollWidth <= state.width + 1 && state.bodyWidth <= state.width + 1,
       `${label}px har horisontalt overflow`);
     fail(!state.consoleDebugVisible, `${label}px viser debug-krom`);
+    if (ENTROPI_UX_ACCEPT) {
+      fail(state.systemBar && state.systemBar.left >= -1 && state.systemBar.right <= state.width + 1,
+        `${label}px Entropi-shell ligger uden for viewport`);
+      fail(state.minTabHeight >= 36, `${label}px navigationens touch-target er for lille`);
+      fail(state.workspace === 'review', `${label}px mistede review-positionen (${state.workspace})`);
+    }
   }
   fail(candidate.errors.length === 0, `kandidaten har konsolfejl: ${candidate.errors.join(' | ')}`);
-  console.log(`GRØN: A/B samme video — live ${baseline.tracker.frames} frames/${baseline.tracker.invalidFrames} invalid; `+
+  console.log(`GRØN: A/B samme video — baseline ${BASE.slice(0,7)} ${baseline.tracker.frames} frames/${baseline.tracker.invalidFrames} invalid; `+
     `candidate ${candidate.tracker.frames}/${candidate.tracker.invalidFrames}.`);
+  if (BOTTOM_SEAM_FIXTURE) console.log(`GRØN: browser-recovery reducerede sent bundudsving `+
+    `${baselineMotion.bottomDeviation.toFixed(1)} → ${candidateMotion.bottomDeviation.toFixed(1)} px; `+
+    `top ${baselineMotion.top.toFixed(1)} → ${candidateMotion.top.toFixed(1)} px.`);
   console.log(`GRØN: immutable raw ${candidate.audit.raw.count} pts/times/confidence; `+
     `fuld ${Math.round((candidate.audit.raw.end-candidate.audit.raw.start)*10)/10}s retur til y=${candidate.audit.raw.last.y.toFixed(1)}.`);
   console.log(`GRØN: deadlift faser ${[...phaseKinds].join(', ')}; valide velocity/ROM/tempo; exportpreview.`);
