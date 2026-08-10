@@ -90,6 +90,8 @@
   .vcOverlayControls { display:flex; gap:5px; }
   .vcOverlayControls button { flex:1; min-width:0; padding:6px 4px; border-radius:8px;
     font-size:7px; letter-spacing:.05em; }
+  .vcOverlayControls button:disabled { opacity:.42; cursor:not-allowed; }
+  .vcOlderRepsHint { margin:0; color:var(--dim); font-size:8px; line-height:1.35; }
   #exportPreview { position:fixed; inset:0; z-index:50; display:grid; place-items:center;
     padding:18px; background:rgba(0,0,0,.66); backdrop-filter:blur(8px); }
   #exportPreview[hidden] { display:none; }
@@ -794,9 +796,11 @@
   <div id="vcMetricCards" class="vcMetricCards"></div>
   <div class="vcOverlayControls" aria-label="Overlay toggles">
     <button id="vcTogglePhases" class="active" type="button">Faser</button>
-    <button id="vcToggleHistory" class="active" type="button">Ældre reps</button>
+    <button id="vcToggleHistory" class="active" type="button"
+      aria-describedby="vcOlderRepsHint">Ældre reps</button>
     <button id="vcToggleMetrics" class="active" type="button">Metrics</button>
   </div>
+  <p id="vcOlderRepsHint" class="vcOlderRepsHint" role="status" hidden>Kræver mindst 2 analyserede reps</p>
 </section>
 <section id="exportPreview" hidden aria-modal="true" role="dialog" aria-label="Exportpreview">
   <div class="vcExportCard">
@@ -1074,6 +1078,7 @@ function setCleanRep(path, index, seek = true) {
 function updateCleanReviewUI(path = latestCleanPath(), force = false) {
   const hud = document.getElementById('barPathHUD');
   if (!hud) return;
+  syncOlderRepsAffordance(path);
   if (!path?.analysis) {
     const state = document.body.dataset.athleteState || '';
     hud.hidden = true;
@@ -1135,6 +1140,31 @@ function updateCleanReviewUI(path = latestCleanPath(), force = false) {
   vcSyncSystem();
 }
 
+function olderRepsAvailable(path) {
+  return (path?.analysis?.reps?.length || 0) >= 2;
+}
+
+function syncOlderRepsAffordance(path = latestCleanPath()) {
+  const button = document.getElementById('vcToggleHistory');
+  const hint = document.getElementById('vcOlderRepsHint');
+  if (!button || !hint) return false;
+  const available = olderRepsAvailable(path);
+  button.disabled = !available;
+  button.setAttribute('aria-disabled', String(!available));
+  button.setAttribute('aria-pressed', String(available && cleanOverlayState.history));
+  button.classList.toggle('active', available && cleanOverlayState.history);
+  button.title = available ? '' : 'Kræver mindst 2 analyserede reps';
+  hint.hidden = available;
+  return available;
+}
+
+function toggleOlderReps(path = latestCleanPath()) {
+  if (!syncOlderRepsAffordance(path)) return false;
+  cleanOverlayState.history = !cleanOverlayState.history;
+  syncOlderRepsAffordance(path);
+  return true;
+}
+
 function drawDirectionArrow(a, b, color) {
   const angle = Math.atan2(b.y - a.y, b.x - a.x), size = Math.max(5, canvas.width / 170);
   const x = (a.x + b.x) / 2, y = (a.y + b.y) / 2;
@@ -1189,11 +1219,17 @@ function drawCleanBarPath(path) {
   .forEach(([id,key]) => {
     const button = document.getElementById(id);
     button.onclick = () => {
+      if (key === 'history') {
+        const path = latestCleanPath();
+        if (toggleOlderReps(path)) updateCleanReviewUI(path, true);
+        return;
+      }
       cleanOverlayState[key] = !cleanOverlayState[key];
       button.classList.toggle('active', cleanOverlayState[key]);
       updateCleanReviewUI(latestCleanPath(), true);
     };
   });
+syncOlderRepsAffordance(null);
 
 function publishTrackerBenchmarkRun(run) {
   if (!TRACKER_BENCHMARK) return;
