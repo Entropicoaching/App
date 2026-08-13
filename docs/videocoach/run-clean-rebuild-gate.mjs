@@ -146,7 +146,10 @@ async function runAthleteCase(browser, testCase, videoBuffer) {
   // Baseline har ingen synlig athlete-liftvælger. Brug dens eksisterende,
   // brugerbestemte localStorage-præference på begge friske origins; kandidaten
   // bekræfter derefter samme værdi gennem sin faktiske synlige ATHLETE-kontrol.
-  await context.addInitScript(() => localStorage.setItem('vc_lift','Dødløft'));
+  await context.addInitScript(candidate => {
+    localStorage.setItem('vc_lift', candidate ? 'Sumo dødløft' : 'Dødløft');
+    if (candidate) localStorage.setItem('vc_variation', 'Pause sumo');
+  }, testCase.candidate);
   await context.route(/^https:\/\/fonts\./, route => route.fulfill({status:200,
     contentType:'text/css',body:''}));
   const page = await context.newPage();
@@ -154,12 +157,25 @@ async function runAthleteCase(browser, testCase, videoBuffer) {
   page.on('pageerror', error => errors.push(`pageerror: ${error.message}`));
   page.on('console', message => { if (message.type() === 'error') errors.push(`console: ${message.text()}`); });
   await page.goto(testCase.url,{waitUntil:'domcontentloaded'});
+  let liftSelection = null;
   await page.locator('#fileInput').setInputFiles({name:'same-deadlift-fixture.webm',
     mimeType:'video/webm',buffer:videoBuffer});
   await page.waitForFunction(() => !document.getElementById('canvas').hidden &&
     document.querySelector('video')?.duration > 5,{timeout:15_000});
   if (testCase.candidate) {
+    await page.locator('#vcAthleteLift').selectOption({label:'Squat'});
+    liftSelection = await page.evaluate(() => ({
+      lift:document.getElementById('liftSel').value,
+      athleteLift:document.getElementById('vcAthleteLift').value,
+      variation:document.getElementById('variationSel').value,
+      options:[...document.getElementById('variationSel').options].map(option => option.value)
+    }));
     await page.locator('#vcAthleteLift').selectOption({label:'Dødløft'});
+    Object.assign(liftSelection, await page.evaluate(() => ({
+      deadliftVariation:document.getElementById('variationSel').value,
+      deadliftOptions:[...document.getElementById('variationSel').options]
+        .map(option => option.value)
+    })));
   }
   // Samme synlige frame-scrub væk fra WebM-containerens første decode-seam.
   // Det svarer til brugerens normale "spol til lige før løftet"-handling.
@@ -187,10 +203,25 @@ async function runAthleteCase(browser, testCase, videoBuffer) {
     throw new Error(`${testCase.name}: tracking afsluttede uden done-state: ${JSON.stringify(state)}; ${errors.join(' | ')}`);
   }
   const mobile = await overflowState(page);
-  let audit = null, preview = null, liftControls = null;
+  let audit = null, preview = null, liftControls = null, reviewUi = null;
   if (testCase.candidate) {
     await page.waitForFunction(() => window.__vcCleanRebuildAudit?.raw?.frozen === true,null,{timeout:8_000});
     audit = await page.evaluate(() => structuredClone(window.__vcCleanRebuildAudit));
+    reviewUi = await page.evaluate(() => {
+      const hud = document.getElementById('barPathHUD');
+      const rect = hud.getBoundingClientRect(), display = getComputedStyle(hud).display;
+      return {
+      hudVisible:!hud.hidden && display !== 'none' && rect.width > 0 && rect.height > 0,
+      hudHidden:hud.hidden,
+      hudDisplay:display,
+      workspace:document.body.dataset.vcWorkspace,
+      athleteState:document.body.dataset.athleteState,
+      phases:document.getElementById('vcPhaseLegend').textContent.trim(),
+      metrics:document.getElementById('vcMetricCards').textContent.trim(),
+      metricValues:[...document.querySelectorAll('#vcMetricCards b')].map(element => element.textContent.trim()),
+      lift:document.getElementById('liftSel').value,
+      variation:document.getElementById('variationSel').value
+    }; });
     liftControls = await page.evaluate(() => ['squat','bench'].map(lift => {
       const count = 61, times = Array.from({length:count},(_,index)=>index/30);
       const y = times.map((_,index) => index < 6 ? 100
@@ -242,7 +273,71 @@ async function runAthleteCase(browser, testCase, videoBuffer) {
   const desktop = await overflowState(page);
   const tracker = await page.evaluate(() => structuredClone(window.__vcTrackerBenchmarkLast));
   await context.close();
-  return {tracker,audit,preview,liftControls,mobile,desktop,errors};
+  return {tracker,audit,preview,liftControls,liftSelection,reviewUi,mobile,desktop,errors};
+}
+
+async function runDesktopCalibrationCase(browser, url, videoBuffer) {
+  const context = await browser.newContext({viewport:{width:1440,height:900}});
+  await context.route(/^https:\/\/fonts\./, route => route.fulfill({status:200,
+    contentType:'text/css',body:''}));
+  const page = await context.newPage(), errors = [];
+  page.on('pageerror', error => errors.push(`pageerror: ${error.message}`));
+  page.on('console', message => { if (message.type() === 'error') errors.push(`console: ${message.text()}`); });
+  await page.goto(`${url}&desktop=1`,{waitUntil:'domcontentloaded'});
+  await page.locator('#fileInput').setInputFiles({name:'desktop-calibration.webm',
+    mimeType:'video/webm',buffer:videoBuffer});
+  await page.waitForFunction(() => !document.getElementById('canvas').hidden &&
+    document.querySelector('video')?.duration > 5,{timeout:15_000});
+  await page.evaluate(() => {
+    const lift = document.getElementById('liftSel');
+    lift.value = 'Dødløft';
+    lift.dispatchEvent(new Event('change',{bubbles:true}));
+    document.querySelector('video').currentTime = .3;
+  });
+  await page.waitForFunction(() => document.querySelector('video').currentTime > .2);
+  await page.locator('#trimInBtn').click();
+  await page.locator('#allBtn').click();
+  const canvasBox = await page.locator('#canvas').boundingBox();
+  fail(canvasBox, 'desktop: canvas mangler');
+  await page.mouse.click(canvasBox.x + canvasBox.width * 246 / 640,
+    canvasBox.y + canvasBox.height * (BOTTOM_SEAM_FIXTURE ? 260 : 266) / 360);
+  await page.waitForFunction(() => window.__vcCalibrationRingDrawn?.radius > 0 &&
+    document.getElementById('allBtn').textContent === 'Start analyse');
+  const setupRing = await page.evaluate(() => ({...window.__vcCalibrationRingDrawn}));
+  const scaleX = canvasBox.width / 640, scaleY = canvasBox.height / 360;
+  const startX = canvasBox.x + (setupRing.x + setupRing.radius) * scaleX;
+  const startY = canvasBox.y + setupRing.y * scaleY;
+  await page.mouse.move(startX,startY);
+  await page.mouse.down();
+  await page.mouse.move(startX + 12 * scaleX,startY,{steps:4});
+  await page.mouse.up();
+  await page.locator('#allBtn').click();
+  await page.waitForFunction(() => window.__vcTrackerBenchmarkLast?.outcome === 'completed',null,
+    {timeout:60_000});
+  await page.evaluate(() => {
+    const path = window.__vcTrackerBenchmarkLast;
+    document.querySelector('video').pause();
+    document.querySelector('video').currentTime = path?.times?.[0] || 0;
+  });
+  await page.waitForFunction(() => Number.isFinite(window.__vcVelocityBarAudit?.value));
+  const metricsVisibleBefore = await page.locator('#vcMetricCards').isVisible();
+  await page.locator('#vcToggleMetrics').click();
+  const metricsHiddenAfterClick = !(await page.locator('#vcMetricCards').isVisible());
+  await page.locator('#vcToggleMetrics').click();
+  const result = await page.evaluate(() => ({
+    outcome:window.__vcTrackerBenchmarkLast?.outcome,
+    frames:window.__vcTrackerBenchmarkLast?.frames || 0,
+    button:document.getElementById('allBtn').textContent,
+    workspace:document.body.dataset.vcWorkspace,
+    calibration:window.__vcConfirmedCalibration,
+    velocityBar:window.__vcVelocityBarAudit,
+    meanVelocity:window.__vcCleanRebuildAudit?.reps?.[0]?.mcv,
+    metricValues:[...document.querySelectorAll('#vcMetricCards .vcMetric b')]
+      .map(node => node.textContent.trim())
+  }));
+  await context.close();
+  return {...result,setupRing,
+    metricsToggle:{before:metricsVisibleBefore,hiddenAfterClick:metricsHiddenAfterClick},errors};
 }
 
 const baselineServer = await startServer(baselineHtml);
@@ -256,6 +351,25 @@ const browser = await chromium.launch({headless:true,executablePath:browserExecu
 try {
   const video = await makeDeadliftVideo(browser);
   fail(video.length > 20_000, 'den genererede uploadfixture er tom eller for lille');
+  const desktopCalibration = await runDesktopCalibrationCase(browser,candidateServer.url,video);
+  fail(desktopCalibration.outcome === 'completed' && desktopCalibration.frames >= 5,
+    `desktop startede ikke analysen efter bekræftet kalibrering: ${JSON.stringify(desktopCalibration)}`);
+  fail(desktopCalibration.calibration?.radius > desktopCalibration.setupRing?.radius &&
+       Math.abs(desktopCalibration.calibration.cmPerPx -
+         45 / (2 * desktopCalibration.calibration.radius)) < 1e-9,
+    `desktop gemte ikke den justerede skivering som måleskala: ${JSON.stringify(desktopCalibration)}`);
+  fail(desktopCalibration.workspace === 'review',
+    `desktop åbnede ikke resultatet efter analysen: ${JSON.stringify(desktopCalibration)}`);
+  fail(desktopCalibration.meanVelocity > 0 &&
+       desktopCalibration.metricValues.some(value => /m\/s$/.test(value) && !value.startsWith('—')),
+    `desktop viste ikke en reel fartmåling: ${JSON.stringify(desktopCalibration)}`);
+  fail(Number.isFinite(desktopCalibration.velocityBar?.value) &&
+       desktopCalibration.velocityBar.label !== 'NaN',
+    `desktop velocity-søjlen viste en ugyldig værdi: ${JSON.stringify(desktopCalibration)}`);
+  fail(desktopCalibration.metricsToggle?.before && desktopCalibration.metricsToggle?.hiddenAfterClick,
+    `Metrics-knappen skjulte ikke målekortene: ${JSON.stringify(desktopCalibration)}`);
+  fail(desktopCalibration.errors.length === 0,
+    `desktop-kalibreringsflowet har konsolfejl: ${desktopCalibration.errors.join(' | ')}`);
   const candidate = await runAthleteCase(browser,{name:'candidate',
     url:`${candidateServer.url}&trackerProbe=1`,candidate:true,entropiUx:ENTROPI_UX_ACCEPT},video);
   const baselineIsClean = BASE !== LIVE_BASE;
@@ -323,6 +437,21 @@ try {
   fail(rep && rep.validRatio >= .8 && Number.isFinite(rep.mcv) && Number.isFinite(rep.romCm) &&
     Number.isFinite(rep.conS) && Number.isFinite(rep.eccS) && Number.isFinite(rep.pauseS),
     'velocity/ROM/tempo må kun vises fra et gyldigt rep-signal');
+  fail(candidate.liftSelection?.lift === 'Squat' && candidate.liftSelection.athleteLift === 'Squat',
+    'atletens synlige squatvalg nåede ikke hovedvælgeren');
+  fail(candidate.liftSelection.variation === 'Konkurrence squat' &&
+    candidate.liftSelection.options.every(value => /squat/i.test(value)),
+    `squat arvede variationer fra sumo: ${JSON.stringify(candidate.liftSelection)}`);
+  fail(candidate.liftSelection.deadliftVariation === 'Konkurrence konventionel' &&
+    candidate.liftSelection.deadliftOptions.every(value => !/sumo/i.test(value)),
+    `dødløft arvede sumo-variationer: ${JSON.stringify(candidate.liftSelection)}`);
+  fail(candidate.reviewUi?.hudVisible &&
+    /Start/.test(candidate.reviewUi.phases) && /Op/.test(candidate.reviewUi.phases) &&
+    /Afslutning/.test(candidate.reviewUi.phases) && /Ned igen/.test(candidate.reviewUi.phases),
+    `atletens fasevisning er ufuldstændig: ${JSON.stringify(candidate.reviewUi)}`);
+  fail(/Gns\. fart/.test(candidate.reviewUi.metrics) && /Løftevej/.test(candidate.reviewUi.metrics) &&
+    /Tempo/.test(candidate.reviewUi.metrics) && candidate.reviewUi.metricValues.every(value => value !== '—'),
+    `atletens metrics er ikke brugbare: ${JSON.stringify(candidate.reviewUi)}`);
   const squat = candidate.liftControls.find(item=>item.lift==='squat');
   const bench = candidate.liftControls.find(item=>item.lift==='bench');
   for (const control of [squat,bench])
@@ -354,6 +483,7 @@ try {
   console.log(`GRØN: immutable raw ${candidate.audit.raw.count} pts/times/confidence; `+
     `fuld ${Math.round((candidate.audit.raw.end-candidate.audit.raw.start)*10)/10}s retur til y=${candidate.audit.raw.last.y.toFixed(1)}.`);
   console.log(`GRØN: deadlift faser ${[...phaseKinds].join(', ')}; valide velocity/ROM/tempo; exportpreview.`);
+  console.log(`GRØN: desktop justerede skiveringen, bekræftede kalibreringen og analyserede ${desktopCalibration.frames} frames.`);
   console.log(`GRØN: lift-kontrol — squat ${squat.phases.join(', ')}; bench ${bench.phases.join(', ')}; raw uændret.`);
   console.log('GRØN: ATHLETE uploadflow på friske localhost-origins; 390/1440 uden overflow, konsolfejl eller debug-krom.');
 } finally {
