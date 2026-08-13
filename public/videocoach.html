@@ -82,6 +82,7 @@
   .vcRepSelector button[aria-pressed="true"] { color:#141410; background:var(--accent);
     border-color:var(--accent); }
   .vcMetricCards { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; }
+  .vcMetricCards[hidden] { display:none !important; }
   .vcMetric { min-width:0; padding:8px; border:1px solid rgba(237,234,226,.075);
     border-radius:10px; background:rgba(237,234,226,.025); }
   .vcMetric small { display:block; color:var(--dim); font-size:7px; letter-spacing:.08em;
@@ -247,6 +248,7 @@
   body.athlete #allBtn::after { content:attr(data-label); }
   body.athlete #exportBtn::after { content:'Gem'; }
   body.athlete footer button:disabled { opacity:.52; }
+  body.athlete .vcOverlayControls { display:none !important; }
   body.athlete #scrubRow { left:12px !important; right:12px !important;
     bottom:98px; padding:8px; gap:6px; border-radius:18px;
     background:rgba(18,17,14,.82); border:1px solid rgba(237,234,226,.09);
@@ -772,7 +774,7 @@
   <button id="repCmpBtn">👥 Rep-overlay</button>
 </header>
 <div id="stage">
-  <div id="dropHint">Træk en video herind<br>eller klik "Åbn video"</div>
+  <div id="dropHint">Træk en video herind<br><button id="dropOpenVideoBtn" type="button">Åbn video</button></div>
   <canvas id="canvas" width="1280" height="720" hidden></canvas>
 </div>
 <div id="scrubRow">
@@ -923,11 +925,12 @@ let tool = 'pen';
 // ATHLETE (ellers eller ?mode=athlete) = roligt atlet-flow, også lokalt til test
 const MODE_PARAMS = new URLSearchParams(location.search);
 const FORCE_ATHLETE = MODE_PARAMS.get('mode') === 'athlete';
-const DESKTOP = location.protocol === 'file:' && !FORCE_ATHLETE;
+const TRACKER_BENCHMARK = MODE_PARAMS.get('benchmark') === '1';
+const FORCE_DESKTOP = TRACKER_BENCHMARK && MODE_PARAMS.get('desktop') === '1';
+const DESKTOP = (location.protocol === 'file:' || FORCE_DESKTOP) && !FORCE_ATHLETE;
 const COACHWEB = !DESKTOP && MODE_PARAMS.has('coach');
 // Lokal, eksplicit testtilstand. Eksponerer kun rå trackerdata, når URL'en
 // indeholder ?benchmark=1; normal coach- og atletadfærd bruger aldrig kanalen.
-const TRACKER_BENCHMARK = MODE_PARAMS.get('benchmark') === '1';
 // Lokal diagnosekanal: kræver også trackerProbe, så almindelig benchmark er uændret.
 const TRACKER_PROBE = TRACKER_BENCHMARK && MODE_PARAMS.get('trackerProbe') === '1';
 const SLIM = !DESKTOP;              // moderne layout (atlet OG coach online)
@@ -940,6 +943,10 @@ const VC_PHASES = Object.freeze({
   concentric:{label:'Ascent · koncentrisk',color:'#d7a34a'},
   lockout:{label:'Lockout',color:'#edeae2'},
   return:{label:'Retur',color:'#61b7d2'}
+});
+const VC_ATHLETE_PHASE_LABELS = Object.freeze({
+  setup:'Start', eccentric:'Ned', transition:'Vending', pause:'Pause',
+  concentric:'Op', lockout:'Afslutning', return:'Ned igen'
 });
 let analysisSession = null;
 let manualTrackingBounds = { start:null, end:null };
@@ -1109,7 +1116,8 @@ function updateCleanReviewUI(path = latestCleanPath(), force = false) {
   const phaseKinds = [...new Set((rep?.phases || []).map(phase => phase.kind))];
   legend.innerHTML = phaseKinds.map(kind => {
     const phase = VC_PHASES[kind];
-    return `<span><i style="--phase:${phase.color}"></i>${phase.label}</span>`;
+    const label = ATHLETE ? VC_ATHLETE_PHASE_LABELS[kind] : phase.label;
+    return `<span><i style="--phase:${phase.color}"></i>${label}</span>`;
   }).join('');
   const selector = document.getElementById('vcRepSelector');
   selector.innerHTML = analysis.reps.map((_, index) =>
@@ -1119,12 +1127,13 @@ function updateCleanReviewUI(path = latestCleanPath(), force = false) {
   });
   const metrics = document.getElementById('vcMetricCards');
   metrics.hidden = !cleanOverlayState.metrics;
-  const enoughSignal = rep && rep.validRatio >= .8 && Number.isFinite(rep.mcv) && Number.isFinite(rep.romCm);
-  const values = enoughSignal ? [
-    ['Velocity',`${rep.mcv.toFixed(2)} m/s`],
-    ['ROM',`${rep.romCm.toFixed(0)} cm`],
+  const measurable = rep && Number.isFinite(rep.mcv) && Number.isFinite(rep.romCm) &&
+    Number.isFinite(rep.eccS) && Number.isFinite(rep.pauseS) && Number.isFinite(rep.conS);
+  const values = measurable ? [
+    ['Gns. fart',`${rep.mcv.toFixed(2)} m/s`],
+    ['Løftevej',`${rep.romCm.toFixed(0)} cm`],
     ['Tempo',`${rep.eccS.toFixed(1)} · ${rep.pauseS.toFixed(1)} · ${rep.conS.toFixed(1)}`]
-  ] : [['Velocity','—'],['ROM','—'],['Tempo','—']];
+  ] : [['Gns. fart','—'],['Løftevej','—'],['Tempo','—']];
   metrics.innerHTML = values.map(([label,value]) =>
     `<div class="vcMetric"><small>${label}</small><b>${value}</b></div>`).join('');
   if (TRACKER_BENCHMARK) window.__vcCleanRebuildAudit = {
@@ -1272,6 +1281,10 @@ function publishTrackerBenchmarkRun(run) {
 // ---------- Video ind ----------
 document.getElementById('openBtn').onclick = () =>
   document.getElementById('fileInput').click();
+document.getElementById('dropOpenVideoBtn').onclick = e => {
+  e.stopPropagation();
+  document.getElementById('fileInput').click();
+};
 document.getElementById('fileInput').onchange = e =>
   loadFile(e.target.files[0]);
 document.body.addEventListener('dragover', e => e.preventDefault());
@@ -2324,15 +2337,16 @@ function drawVelGraph() {
   if (t1 - t0 < 0.2) return;
   // KRAFT-lens: acceleration (d fart/dt) = eksplosivitet/drive. 2. afledte
   // forstærker støj, så farten glattes (5-pkt snit) FØR central-differensen.
-  let series = path.vel, unit = 'm/s', tag = 'op = over stregen';
+  const finiteVelocity = path.vel.map(value => Number.isFinite(value) ? value : 0);
+  let series = finiteVelocity, unit = 'm/s', tag = 'op = over stregen';
   if (graphAccel) {
-    const N = path.vel.length;
-    const vsm = path.vel.map((_, i) => {
+    const N = finiteVelocity.length;
+    const vsm = finiteVelocity.map((_, i) => {
       let s = 0, c = 0;
-      for (let k = -2; k <= 2; k++) { const j = i + k; if (j >= 0 && j < N) { s += path.vel[j]; c++; } }
+      for (let k = -2; k <= 2; k++) { const j = i + k; if (j >= 0 && j < N) { s += finiteVelocity[j]; c++; } }
       return s / c;
     });
-    series = path.vel.map((_, i) => {
+    series = finiteVelocity.map((_, i) => {
       const i0 = Math.max(0, i - 1), i1 = Math.min(N - 1, i + 1);
       const dt = Math.max(1 / 240, t[i1] - t[i0]);
       return (vsm[i1] - vsm[i0]) / dt;                 // m/s²
@@ -2460,7 +2474,10 @@ function drawVelBar() {
   const path = strokes.filter(s => s.type === 'path' && s.vel && s.times).pop();
   if (!path || path.vel.length < 8) return;
   const i = Math.max(0, Math.min(path.vel.length - 1, idxAtTime(path, video.currentTime)));
-  const target = Math.abs(path.vel[i]);
+  const currentVelocity = path.vel[i];
+  const target = Number.isFinite(currentVelocity) ? Math.abs(currentVelocity) : 0;
+  if (!Number.isFinite(velBarRaw) || !Number.isFinite(velBarSpeed))
+    velBarRaw = velBarSpeed = target;
   // TO-TRINS udglatning = blød tidevands-bølge (ét trin var lidt trigger-happy).
   // Første trin følger farten, andet trin følger første -> S-formet, rykfri
   // bevægelse der dæmper små udsving. Snapper når videoen står stille.
@@ -2470,7 +2487,8 @@ function drawVelBar() {
     velBarSpeed += (velBarRaw - velBarSpeed) * 0.16;
   }
   const speed = velBarSpeed;
-  const vmax = Math.max(0.3, ...path.vel.map(Math.abs));
+  const finiteSpeeds = path.vel.filter(Number.isFinite).map(Math.abs);
+  const vmax = Math.max(0.3, ...finiteSpeeds);
   const frac = Math.max(0, Math.min(1, speed / vmax));
   const bw = Math.max(32, canvas.width * 0.052);
   const bx = canvas.width - bw - 16;
@@ -2523,6 +2541,7 @@ function drawVelBar() {
   ctx.font = `bold ${Math.max(20, canvas.width / 26)}px 'IBM Plex Mono', monospace`;
   ctx.fillStyle = '#fff'; ctx.strokeStyle = 'rgba(0,0,0,.75)'; ctx.lineWidth = 4;
   const num = speed.toFixed(2);
+  if (TRACKER_BENCHMARK) window.__vcVelocityBarAudit = { value:speed, vmax, label:num };
   ctx.strokeText(num, bx + bw / 2, bTop - 14);
   ctx.fillText(num, bx + bw / 2, bTop - 14);
   ctx.font = `${Math.max(11, canvas.width / 68)}px 'IBM Plex Mono', monospace`;
@@ -2648,6 +2667,8 @@ function render() {
   // Coachen ser om låsningen sidder rigtigt, før analysen køres.
   if (plateConfirm || awaitLockPoint) {
     const { x, y, r } = plateConfirm || awaitLockPoint;
+    if (TRACKER_BENCHMARK && plateConfirm)
+      window.__vcCalibrationRingDrawn = { x, y, radius:r };
     ctx.save();
     ctx.strokeStyle = '#c8923a';
     ctx.shadowColor = 'rgba(200,146,58,.85)'; ctx.shadowBlur = 14;
@@ -4531,6 +4552,11 @@ allBtn.onclick = async () => {
   // trykker ⚡ igen for at køre analysen på den bekræftede skive.
   if (plateConfirm) {
     const c = plateConfirm; wizard = null;
+    cmPerPx = 45 / (2 * c.r);
+    calibBtn.textContent = '📏 Kalibreret ✓';
+    if (TRACKER_BENCHMARK)
+      window.__vcConfirmedCalibration = { x:c.x, y:c.y, radius:c.r, cmPerPx };
+    if (DESKTOP) sessionRun = true;
     plateConfirm = null;
     allBtn.classList.remove('active');
     if (ATHLETE && setAthleteState) setAthleteState('analyzing');
@@ -4539,6 +4565,17 @@ allBtn.onclick = async () => {
   }
   if (cmp) { alert('Afslut ⇄ sammenligning først'); return; }
   if (!video.src) { alert('Åbn en video først'); return; }
+  if (ATHLETE && manualTrackingBounds.start == null) {
+    setAthleteState('ready', 'Spol til lige før løftet og tryk Sæt start her først.');
+    say('Sæt starten først — så vælger du skiven én gang bagefter');
+    return;
+  }
+  if (ATHLETE && !vcV3Lift(document.getElementById('liftSel').value)) {
+    setAthleteState('ready', 'Vælg squat, bænkpres eller dødløft først.');
+    say('Vælg løft først — så ved analysen hvilke faser den skal vise');
+    document.getElementById('vcAthleteLift')?.focus();
+    return;
+  }
   video.pause();
   ocan.width = canvas.width; ocan.height = canvas.height;
   wizard = { step: 0, pts: [], auto: true };
@@ -4594,27 +4631,33 @@ function autoCalib(center) {
 // Loop i normal fart, INTET ark i vejen - coachen skal tale, ikke læse. Max 3 tryk.
 let sessionRun = false;
 function disarmSession() {
+  let disarmed = false;
   if (awaitLockPoint) {
     awaitLockPoint = null; plateConfirm = null; wizard = null;
     allBtn.classList.remove('active');
     allBtn.textContent = ATHLETE ? '◎' : SLIM ? '⚡' : 'Analysér løft';
     say('');
+    disarmed = true;
   }
   if (plateConfirm) {           // coachen gik videre uden at bekræfte ringen
     plateConfirm = null; wizard = null;
     allBtn.classList.remove('active');
     allBtn.textContent = ATHLETE ? '◎' : SLIM ? '⚡' : 'Analysér løft';
     say('');
+    disarmed = true;
   }
-  if (wizard && wizard.session) {
+  if (wizard) {
     wizard = null;
     allBtn.classList.remove('active');
     allBtn.textContent = ATHLETE ? '◎' : SLIM ? '⚡' : 'Analysér løft';
     say('');
+    disarmed = true;
   }
+  if (disarmed && ATHLETE && setAthleteState) setAthleteState('ready');
 }
 function applySessionView(path = latestCleanPath()) {
   if (!path) return;
+  vcSetWorkspace('review');
   trimStart = path.raw.start;
   trimEnd = path.raw.end;
   document.getElementById('trimInBtn').classList.add('active');
@@ -4648,7 +4691,7 @@ function wizardClick(p) {
       if (ATHLETE && setAthleteState) setAthleteState('confirm');
       say(SLIM ? 'Ram skiven med ringen · træk midte=flyt, kant=størrelse · ⚡ = analysér'
                : 'Ram skiven med ringen (træk midten for at flytte, kanten for at ændre størrelse) · ⚡ = analysér · klik langt væk = mål om');
-      if (!SLIM) allBtn.textContent = '⚡ Analysér (ring OK)';
+      if (!SLIM) allBtn.textContent = 'Start analyse';
       allBtn.classList.add('active');
       return;                           // wizard forbliver auto -> nyt klik = ny ring
     }
@@ -4747,15 +4790,17 @@ function collectMetrics() {
       `${lastVals.lowConfPct}% af tiden ` +
       `(skive skjult/utydelig) - tag tallene med forbehold`);
   if (sourcePath.analysis) {
-    const eligibleReps = sourcePath.reps.filter(rep => rep.validRatio >= .8 &&
+    const measurableReps = sourcePath.reps.filter(rep =>
       Number.isFinite(rep.mcv) && Number.isFinite(rep.romCm));
-    if (!eligibleReps.length) {
+    if (!measurableReps.length) {
       lastVals.signalEligible = false;
       m.push('Velocity, ROM og tempo er skjult: signalet er ikke gyldigt nok.');
       return m.join('\n');
     }
-    path = {...sourcePath,reps:eligibleReps};
-    lastVals.signalEligible = true;
+    path = {...sourcePath,reps:measurableReps};
+    lastVals.signalEligible = measurableReps.every(rep => rep.validRatio >= .8);
+    if (!lastVals.signalEligible)
+      m.push('OBS: Målene kan aflæses, men signalet bør kontrolleres visuelt.');
   }
   const ys = path.pts.map(p => p.y);
   const rangePx = Math.max(...ys) - Math.min(...ys);
@@ -6381,6 +6426,21 @@ document.getElementById('athleteSel').addEventListener('change', e => {
 });
 document.getElementById('liftSel').addEventListener('change', e => {
   fillVariationSelect(variationSel, e.target.value);
+  const athleteLift = document.getElementById('vcAthleteLift');
+  if (athleteLift && athleteLift.value !== e.target.value)
+    athleteLift.value = e.target.value;
+  analysisSession = null;
+  const path = latestCleanPath();
+  const changedLiftFamily = path?.analysis?.lift &&
+    path.analysis.lift !== vcV3Lift(e.target.value);
+  if (ATHLETE && changedLiftFamily) {
+    path.superseded = true;
+    updateCleanReviewUI(null, true);
+    vcSetWorkspace('video');
+    if (setAthleteSubmitOpen) setAthleteSubmitOpen(false);
+    if (setAthleteState)
+      setAthleteState('ready', 'Løftet er ændret. Kør stangbanen igen, så faser og målinger passer.');
+  }
   try {
     localStorage.setItem('vc_lift', e.target.value);
     localStorage.setItem('vc_variation', variationSel.value);
@@ -7269,7 +7329,13 @@ if (ATHLETE) {
     '<span class="athKicker">Din VideoCoach</span>' +
     '<strong>Se din stangbane</strong>' +
     '<span class="athCopy">Vælg en video af dit sæt. Du markerer skiven én gang — resten klarer vi.</span>' +
-    '<span class="athCta">Vælg video</span>';
+    '<button id="athleteOpenVideoBtn" class="athCta" type="button">Åbn video</button>';
+  const chooseAthleteVideo = () => document.getElementById('fileInput').click();
+  dropHint.onclick = chooseAthleteVideo;
+  document.getElementById('athleteOpenVideoBtn').onclick = event => {
+    event.stopPropagation();
+    chooseAthleteVideo();
+  };
 
   const athleteLift = document.getElementById('liftSel').cloneNode(true);
   athleteLift.id = 'vcAthleteLift';
@@ -7277,8 +7343,9 @@ if (ATHLETE) {
   athleteLift.value = document.getElementById('liftSel').value;
   athleteLift.setAttribute('aria-label','Vælg løft til faseanalyse');
   athleteLift.addEventListener('change', () => {
-    document.getElementById('liftSel').value = athleteLift.value;
-    analysisSession = null;
+    const sourceLift = document.getElementById('liftSel');
+    sourceLift.value = athleteLift.value;
+    sourceLift.dispatchEvent(new Event('change', { bubbles:true }));
   });
   document.getElementById('vcLiftSlot').appendChild(athleteLift);
 
@@ -7383,9 +7450,13 @@ if (ATHLETE) {
     return `${Math.floor(whole / 60)}:${String(whole % 60).padStart(2, '0')}.${Math.floor((value % 1) * 10)}`;
   };
   const resetAthleteStartGuide = () => {
-    athleteMarkStartBtn.dataset.set = 'false';
-    athleteMarkStartBtn.textContent = 'Sæt start her';
-    athleteStartGuideText.textContent = 'Spol til lige før løftet starter';
+    const hasStart = manualTrackingBounds.start != null &&
+      Number.isFinite(manualTrackingBounds.start);
+    athleteMarkStartBtn.dataset.set = String(hasStart);
+    athleteMarkStartBtn.textContent = hasStart ? 'Start sat ✓' : 'Sæt start her';
+    athleteStartGuideText.textContent = hasStart
+      ? `Start ${athleteTime(manualTrackingBounds.start)} · tryk Stangbane`
+      : 'Spol til lige før løftet starter';
   };
   athleteMarkStartBtn.onclick = () => {
     if (!video.src || tracking || analyzing) return;
