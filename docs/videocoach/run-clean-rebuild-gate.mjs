@@ -23,6 +23,45 @@ const runtimeModules = join(homedir(), '.cache', 'codex-runtimes',
 const require = createRequire(import.meta.url);
 const { chromium } = require(join(runtimeModules, 'playwright'));
 const fail = (condition, message) => { if (!condition) throw new Error(message); };
+const BRIDGE_ATHLETE_ID = '11111111-1111-4111-8111-111111111111';
+
+function bridgeHostHtml(mode) {
+  const coach = mode === 'coach';
+  const frameSrc = coach
+    ? '/videocoach.html?coach=1&bridge=v3&benchmark=1&bridgeTest=1'
+    : '/videocoach.html?mode=athlete&bridge=athlete-v1&benchmark=1&bridgeTest=1';
+  const athleteName = coach ? 'Brotest Coach-atlet' : 'Brotest Profil-atlet';
+  return `<!doctype html><html><body style="margin:0;background:#0f0e0b">
+  <iframe id="vcBridgeFrame" src="${frameSrc}" style="display:block;width:100vw;height:100vh;border:0"></iframe>
+  <script>
+  const prefix='entropi:videocoach:v3';
+  const athlete={id:'${BRIDGE_ATHLETE_ID}',name:${JSON.stringify(athleteName)}};
+  window.bridgeAudit={ready:0,acks:0,baselines:0,saves:0,row:null};
+  addEventListener('message',event=>{
+    if(event.origin!==location.origin||!event.source)return;
+    const message=event.data||{};
+    if(message.type===prefix+':ready'){
+      bridgeAudit.ready++;
+      event.source.postMessage({type:prefix+':config',athletes:[athlete],
+        selectedAthleteId:athlete.id,submissionMode:${JSON.stringify(coach ? 'coach' : 'athlete')}},event.origin);
+      return;
+    }
+    if(message.type===prefix+':config-ack'){bridgeAudit.acks++;return;}
+    if(message.type===prefix+':baseline-request'){
+      bridgeAudit.baselines++;
+      event.source.postMessage({type:prefix+':baseline-result',requestId:message.requestId,
+        athleteId:message.athleteId,ok:true,baselines:[]},event.origin);
+      return;
+    }
+    if(message.type===prefix+':save-draft'){
+      bridgeAudit.saves++;bridgeAudit.row=message.row;
+      event.source.postMessage({type:prefix+':save-result',requestId:message.requestId,ok:true,
+        data:{id:'22222222-2222-4222-8222-222222222222',client_analysis_id:message.row.client_analysis_id,
+          athlete_id:message.row.athlete_id,status:'draft'}},event.origin);
+    }
+  });
+  <\/script></body></html>`;
+}
 
 for (const marker of ['freezeRawAcquisition','rawImmutable:true','path.reviewStartTime = raw.start;',
   'path.reviewEndTime = raw.end;','drawCleanBarPath','recoveryJump<=maxJump',
@@ -43,6 +82,11 @@ if (deadliftGate.status !== 0) {
 
 function startServer(html) {
   const server = createServer((request, response) => {
+    if (request.url?.startsWith('/bridge-host.html')) {
+      const mode = new URL(request.url, 'http://127.0.0.1').searchParams.get('mode');
+      response.writeHead(200, {'content-type':'text/html; charset=utf-8','cache-control':'no-store'});
+      response.end(bridgeHostHtml(mode)); return;
+    }
     if (request.url?.startsWith('/videocoach.html')) {
       response.writeHead(200, {'content-type':'text/html; charset=utf-8','cache-control':'no-store'});
       response.end(html); return;
@@ -57,7 +101,8 @@ function startServer(html) {
     server.once('error', reject);
     server.listen(0, '127.0.0.1', () => {
       const address = server.address();
-      resolve({server,url:`http://127.0.0.1:${address.port}/videocoach.html?benchmark=1`});
+      const origin = `http://127.0.0.1:${address.port}`;
+      resolve({server,origin,url:`${origin}/videocoach.html?benchmark=1`});
     });
   });
 }
@@ -159,7 +204,14 @@ async function runAthleteCase(browser, testCase, videoBuffer) {
   page.on('pageerror', error => errors.push(`pageerror: ${error.message}`));
   page.on('console', message => { if (message.type() === 'error') errors.push(`console: ${message.text()}`); });
   await page.goto(testCase.url,{waitUntil:'domcontentloaded'});
-  let liftSelection = null;
+  let liftSelection = null, startGate = null, publicMode = null;
+  if (testCase.candidate) publicMode = await page.evaluate(() => ({
+    athleteMode:document.body.classList.contains('athlete'),
+    openVisible:document.getElementById('athleteOpenVideoBtn')?.offsetParent !== null,
+    sendHidden:document.getElementById('athleteSendBtn')?.hidden === true,
+    submitHidden:document.getElementById('athleteSubmitSheet')?.hidden === true,
+    footerHidden:getComputedStyle(document.querySelector('footer')).display === 'none'
+  }));
   await page.locator('#fileInput').setInputFiles({name:'same-deadlift-fixture.webm',
     mimeType:'video/webm',buffer:videoBuffer});
   await page.waitForFunction(() => !document.getElementById('canvas').hidden &&
@@ -183,7 +235,15 @@ async function runAthleteCase(browser, testCase, videoBuffer) {
   // Det svarer til brugerens normale "spol til lige før løftet"-handling.
   for (let frame = 0; frame < 9; frame++) await page.locator('#fwdS').click();
   await page.waitForFunction(() => document.getElementById('video').currentTime > .2);
+  if (testCase.candidate) startGate = await page.evaluate(() => ({
+    beforeDisabled:document.getElementById('allBtn').disabled,
+    beforeLabel:document.getElementById('allBtn').dataset.label
+  }));
   await page.locator('#athleteMarkStartBtn').click();
+  if (testCase.candidate) Object.assign(startGate, await page.evaluate(() => ({
+    afterDisabled:document.getElementById('allBtn').disabled,
+    afterLabel:document.getElementById('allBtn').dataset.label
+  })));
   await page.locator('#allBtn').click();
   const canvasBox = await page.locator('#canvas').boundingBox();
   fail(canvasBox, `${testCase.name}: canvas mangler`);
@@ -275,7 +335,8 @@ async function runAthleteCase(browser, testCase, videoBuffer) {
   const desktop = await overflowState(page);
   const tracker = await page.evaluate(() => structuredClone(window.__vcTrackerBenchmarkLast));
   await context.close();
-  return {tracker,audit,preview,liftControls,liftSelection,reviewUi,mobile,desktop,errors};
+  return {tracker,audit,preview,liftControls,liftSelection,startGate,publicMode,
+    reviewUi,mobile,desktop,errors};
 }
 
 async function runDesktopCalibrationCase(browser, url, videoBuffer) {
@@ -328,6 +389,22 @@ async function runDesktopCalibrationCase(browser, url, videoBuffer) {
   await page.locator('#vcToggleMetrics').click();
   const metricsHiddenAfterClick = !(await page.locator('#vcMetricCards').isVisible());
   await page.locator('#vcToggleMetrics').click();
+  const hudExpanded = await page.locator('#barPathHUD').boundingBox();
+  await page.locator('#vcHudCollapse').click();
+  const hudCollapsed = await page.locator('#barPathHUD').boundingBox();
+  const collapsedState = await page.evaluate(() => ({
+    collapsed:document.body.classList.contains('vcHudCollapsed'),
+    expanded:document.getElementById('vcHudCollapse').getAttribute('aria-expanded'),
+    metricsDisplay:getComputedStyle(document.getElementById('vcMetricCards')).display
+  }));
+  await page.locator('#vcHudCollapse').click();
+  await page.locator('#desktopMoreBtn').click();
+  const fordydState = await page.evaluate(() => ({
+    trayVisible:getComputedStyle(document.getElementById('deskTray')).display !== 'none',
+    hudHidden:getComputedStyle(document.getElementById('barPathHUD')).display === 'none',
+    trayOpen:document.body.classList.contains('vcDeskTrayOpen')
+  }));
+  await page.locator('#desktopMoreBtn').click();
   await page.locator('#vcTabExport').click();
   await page.waitForFunction(() => !document.getElementById('exportPreview').hidden);
   // Efter en gennemført eksport er previewet lukket, mens workspace stadig er
@@ -352,6 +429,7 @@ async function runDesktopCalibrationCase(browser, url, videoBuffer) {
   }));
   await context.close();
   return {...result,setupRing,desktopLiftBefore,backFromExport,
+    hudLayout:{expanded:hudExpanded,collapsed:hudCollapsed,collapsedState,fordydState},
     metricsToggle:{before:metricsVisibleBefore,hiddenAfterClick:metricsHiddenAfterClick},errors};
 }
 
@@ -431,6 +509,103 @@ async function runCoachSetupCase(browser, url, videoBuffer) {
   return {before,after,errors};
 }
 
+async function runCoachBridgeCase(browser, origin, videoBuffer) {
+  const context = await browser.newContext({viewport:{width:1280,height:800}});
+  await context.route(/^https:\/\/fonts\./, route => route.fulfill({status:200,
+    contentType:'text/css',body:''}));
+  const page = await context.newPage(), errors = [];
+  page.on('pageerror', error => errors.push(`pageerror: ${error.message}`));
+  page.on('console', message => { if (message.type() === 'error') errors.push(`console: ${message.text()}`); });
+  await page.goto(`${origin}/bridge-host.html?mode=coach`,{waitUntil:'domcontentloaded'});
+  await page.waitForFunction(() => window.bridgeAudit?.acks >= 1,{timeout:10_000});
+  const frame = page.frames().find(item => item.url().includes('/videocoach.html'));
+  fail(frame, 'coach-brotesten mangler VideoCoach-iframe');
+  await frame.waitForFunction(() => [...document.getElementById('coachSetupAthlete').options]
+    .some(option => option.textContent === 'Brotest Coach-atlet'),null,{timeout:10_000});
+  const setup = await frame.evaluate(() => ({
+    setupAthletes:[...document.getElementById('coachSetupAthlete').options]
+      .map(option => ({label:option.textContent,id:option.dataset.athleteId || null})),
+    sourceAthletes:[...document.getElementById('athleteSel').options]
+      .map(option => ({label:option.textContent,id:option.dataset.athleteId || null})),
+    setupValue:document.getElementById('coachSetupAthlete').value,
+    sourceValue:document.getElementById('athleteSel').value
+  }));
+  await frame.locator('#coachSetupAthlete').selectOption({label:'Brotest Coach-atlet'});
+  await frame.locator('#coachSetupLift').selectOption({label:'Dødløft'});
+  const ready = await frame.evaluate(() => ({
+    startDisabled:document.getElementById('coachSetupStart').disabled,
+    variationDisabled:document.getElementById('coachSetupVariation').disabled,
+    sourceAthleteId:document.getElementById('athleteSel').selectedOptions[0]?.dataset.athleteId || null,
+    toolGroups:[...document.querySelectorAll('#moreBar .coachToolGroup')].map(group => group.textContent),
+    coreTools:['mskelBtn','aiBtn','graphBtn','fpBtn','barBtn','calibBtn','ghostBtn','cmpBtn',
+      'repCmpBtn','lineBtn','angleBtn','recordBtn','exportBtn']
+      .every(id => document.getElementById(id)?.closest('#moreBar')) &&
+      Boolean(document.getElementById('saveBtn')?.closest('#sheet'))
+  }));
+  await frame.locator('#fileInput').setInputFiles({name:'coach-bridge.webm',
+    mimeType:'video/webm',buffer:videoBuffer});
+  await frame.waitForFunction(() => document.body.dataset.coachState === 'video' &&
+    !document.getElementById('canvas').hidden,null,{timeout:15_000});
+  const loaded = await frame.evaluate(() => ({
+    coachState:document.body.dataset.coachState,
+    footerVisible:getComputedStyle(document.querySelector('footer')).display !== 'none',
+    scrubVisible:getComputedStyle(document.getElementById('scrubRow')).display !== 'none',
+    overflow:document.documentElement.scrollWidth > innerWidth + 1
+  }));
+  const audit = await page.evaluate(() => structuredClone(window.bridgeAudit));
+  await context.close();
+  return {setup,ready,loaded,audit,errors};
+}
+
+async function runAthleteBridgeCase(browser, origin, videoBuffer) {
+  const context = await browser.newContext({viewport:{width:390,height:844}});
+  await context.addInitScript(() => localStorage.setItem('vc_lift','Dødløft'));
+  await context.route(/^https:\/\/fonts\./, route => route.fulfill({status:200,
+    contentType:'text/css',body:''}));
+  const page = await context.newPage(), errors = [];
+  page.on('pageerror', error => errors.push(`pageerror: ${error.message}`));
+  page.on('console', message => { if (message.type() === 'error') errors.push(`console: ${message.text()}`); });
+  await page.goto(`${origin}/bridge-host.html?mode=athlete`,{waitUntil:'domcontentloaded'});
+  await page.waitForFunction(() => window.bridgeAudit?.acks >= 1,{timeout:10_000});
+  const frame = page.frames().find(item => item.url().includes('/videocoach.html'));
+  fail(frame, 'atlet-brotesten mangler VideoCoach-iframe');
+  await frame.locator('#fileInput').setInputFiles({name:'athlete-profile-bridge.webm',
+    mimeType:'video/webm',buffer:videoBuffer});
+  await frame.waitForFunction(() => !document.getElementById('canvas').hidden &&
+    document.querySelector('video')?.duration > 5,null,{timeout:15_000});
+  await frame.locator('#vcAthleteLift').selectOption({label:'Dødløft'});
+  for (let index = 0; index < 9; index++) await frame.locator('#fwdS').click();
+  await frame.waitForFunction(() => document.getElementById('video').currentTime > .2);
+  await frame.locator('#athleteMarkStartBtn').click();
+  await frame.locator('#allBtn').click();
+  const canvasBox = await frame.locator('#canvas').boundingBox();
+  fail(canvasBox, 'atlet-brotesten mangler canvas');
+  await page.mouse.click(canvasBox.x + canvasBox.width * 246 / 640,
+    canvasBox.y + canvasBox.height * (BOTTOM_SEAM_FIXTURE ? 260 : 266) / 360);
+  await frame.waitForFunction(() => document.body.dataset.athleteState === 'confirm',null,{timeout:8_000});
+  await frame.locator('#allBtn').click();
+  await frame.waitForFunction(() => window.__vcTrackerBenchmarkLast?.outcome === 'completed',null,
+    {timeout:60_000});
+  await frame.waitForFunction(() => document.body.dataset.athleteState === 'done',null,{timeout:10_000});
+  await frame.locator('#athleteSendBtn').click();
+  await frame.waitForFunction(() => !document.getElementById('athleteSubmitSheet').hidden);
+  await frame.locator('#loadInput').fill('180 kg / RPE 8');
+  await frame.locator('#athleteNoteInput').fill('Brotest uden database-write');
+  await frame.locator('#saveBtn').click();
+  await page.waitForFunction(() => window.bridgeAudit?.saves === 1 && window.bridgeAudit?.row,
+    {timeout:15_000});
+  await frame.waitForFunction(() => document.body.dataset.athleteState === 'sent',null,{timeout:8_000});
+  const audit = await page.evaluate(() => structuredClone(window.bridgeAudit));
+  const ui = await frame.evaluate(() => ({
+    athleteState:document.body.dataset.athleteState,
+    submitHidden:document.getElementById('athleteSubmitSheet').hidden,
+    sendLabel:document.getElementById('saveBtn').textContent,
+    overflow:document.documentElement.scrollWidth > innerWidth + 1
+  }));
+  await context.close();
+  return {audit,ui,errors};
+}
+
 const baselineServer = await startServer(baselineHtml);
 const candidateServer = await startServer(candidateHtml);
 const browserExecutable = [
@@ -462,6 +637,38 @@ try {
     `coachens analyseværktøjer blev ikke aktiveret efter video-load: ${JSON.stringify(coachSetup)}`);
   fail(coachSetup.errors.length === 0,
     `coachens klargøringsflow har konsolfejl: ${coachSetup.errors.join(' | ')}`);
+  const coachBridge = await runCoachBridgeCase(browser,candidateServer.origin,video);
+  fail(coachBridge.setup.setupAthletes.length === 2 &&
+       coachBridge.setup.setupAthletes[1]?.id === BRIDGE_ATHLETE_ID &&
+       coachBridge.setup.sourceAthletes[1]?.id === BRIDGE_ATHLETE_ID &&
+       coachBridge.setup.setupValue === 'Brotest Coach-atlet' &&
+       coachBridge.setup.sourceValue === 'Brotest Coach-atlet',
+    `coachens startkort brugte ikke profilens aktuelle atletliste: ${JSON.stringify(coachBridge)}`);
+  fail(!coachBridge.ready.startDisabled && !coachBridge.ready.variationDisabled &&
+       coachBridge.ready.sourceAthleteId === BRIDGE_ATHLETE_ID &&
+       coachBridge.ready.toolGroups.length === 4 && coachBridge.ready.coreTools,
+    `coach-versionen manglede kontekst eller den fulde værktøjspakke: ${JSON.stringify(coachBridge)}`);
+  fail(coachBridge.loaded.coachState === 'video' && coachBridge.loaded.footerVisible &&
+       coachBridge.loaded.scrubVisible && !coachBridge.loaded.overflow &&
+       coachBridge.audit.ready >= 1 && coachBridge.audit.acks >= 1,
+    `coach-versionens profilbro eller videoflow fejlede: ${JSON.stringify(coachBridge)}`);
+  fail(coachBridge.errors.length === 0,
+    `coach-broen har konsolfejl: ${coachBridge.errors.join(' | ')}`);
+  const athleteBridge = await runAthleteBridgeCase(browser,candidateServer.origin,video);
+  const submitted = athleteBridge.audit.row;
+  fail(athleteBridge.audit.saves === 1 && submitted?.schema_version === 3 &&
+       submitted.athlete_id === BRIDGE_ATHLETE_ID && submitted.source_mode === 'athlete_submission' &&
+       submitted.status === 'draft' && submitted.reps_count >= 1 &&
+       Array.isArray(submitted.rep_details) && submitted.rep_details.length === submitted.reps_count &&
+       Array.isArray(submitted.bar_path?.dx) && submitted.bar_path.dx.length > 10 &&
+       Number.isFinite(Number(submitted.metrics?.rom_cm?.value)) &&
+       submitted.session_context?.athlete_note === 'Brotest uden database-write',
+    `atletversionen sendte ikke en komplet, profilkoblet analysekladde: ${JSON.stringify(athleteBridge)}`);
+  fail(athleteBridge.ui.athleteState === 'sent' && athleteBridge.ui.submitHidden &&
+       !athleteBridge.ui.overflow && /Sendt til coach/.test(athleteBridge.ui.sendLabel),
+    `atleten fik ikke en enkel, afsluttet sendetilstand: ${JSON.stringify(athleteBridge)}`);
+  fail(athleteBridge.errors.length === 0,
+    `atlet-broen har konsolfejl: ${athleteBridge.errors.join(' | ')}`);
   const desktopCalibration = await runDesktopCalibrationCase(browser,candidateServer.url,video);
   fail(desktopCalibration.outcome === 'completed' && desktopCalibration.frames >= 5,
     `desktop startede ikke analysen efter bekræftet kalibrering: ${JSON.stringify(desktopCalibration)}`);
@@ -483,6 +690,16 @@ try {
     `desktop velocity-søjlen viste en ugyldig værdi: ${JSON.stringify(desktopCalibration)}`);
   fail(desktopCalibration.metricsToggle?.before && desktopCalibration.metricsToggle?.hiddenAfterClick,
     `Metrics-knappen skjulte ikke målekortene: ${JSON.stringify(desktopCalibration)}`);
+  fail(desktopCalibration.hudLayout?.expanded?.height <= 120 &&
+       desktopCalibration.hudLayout?.collapsed?.height < desktopCalibration.hudLayout.expanded.height - 15 &&
+       desktopCalibration.hudLayout.collapsedState?.collapsed &&
+       desktopCalibration.hudLayout.collapsedState.expanded === 'false' &&
+       desktopCalibration.hudLayout.collapsedState.metricsDisplay === 'none',
+    `desktop-resultatet kunne ikke minimeres kompakt: ${JSON.stringify(desktopCalibration.hudLayout)}`);
+  fail(desktopCalibration.hudLayout?.fordydState?.trayVisible &&
+       desktopCalibration.hudLayout.fordydState.hudHidden &&
+       desktopCalibration.hudLayout.fordydState.trayOpen,
+    `Fordyb blev stadig dækket af resultatmetrics: ${JSON.stringify(desktopCalibration.hudLayout)}`);
   fail(desktopCalibration.backFromExport?.workspace === 'review' &&
        desktopCalibration.backFromExport.previewHidden,
     `Tilbage fra Eksport gik ikke til Bane: ${JSON.stringify(desktopCalibration)}`);
@@ -490,6 +707,10 @@ try {
     `desktop-kalibreringsflowet har konsolfejl: ${desktopCalibration.errors.join(' | ')}`);
   const candidate = await runAthleteCase(browser,{name:'candidate',
     url:`${candidateServer.url}&trackerProbe=1`,candidate:true,entropiUx:ENTROPI_UX_ACCEPT},video);
+  fail(candidate.publicMode?.athleteMode && candidate.publicMode.openVisible &&
+       candidate.publicMode.sendHidden && candidate.publicMode.submitHidden &&
+       candidate.publicMode.footerHidden,
+    `den offentlige smagsprøve var ikke et rent, selvstændigt atletflow: ${JSON.stringify(candidate.publicMode)}`);
   const baselineIsClean = BASE !== LIVE_BASE;
   const baseline = await runAthleteCase(browser,{name:`baseline ${BASE.slice(0,7)}`,
     url:`${baselineServer.url}${baselineIsClean?'&trackerProbe=1':''}`,
@@ -563,6 +784,9 @@ try {
   fail(candidate.liftSelection.deadliftVariation === 'Konkurrence konventionel' &&
     candidate.liftSelection.deadliftOptions.every(value => !/sumo/i.test(value)),
     `dødløft arvede sumo-variationer: ${JSON.stringify(candidate.liftSelection)}`);
+  fail(candidate.startGate?.beforeDisabled && candidate.startGate.beforeLabel === 'Sæt start først' &&
+       !candidate.startGate.afterDisabled && candidate.startGate.afterLabel === 'Stangbane',
+    `startguiden forklarede ikke analyselåsen tydeligt: ${JSON.stringify(candidate.startGate)}`);
   fail(candidate.reviewUi?.hudVisible &&
     /Start/.test(candidate.reviewUi.phases) && /Op/.test(candidate.reviewUi.phases) &&
     /Afslutning/.test(candidate.reviewUi.phases) && /Ned igen/.test(candidate.reviewUi.phases),
@@ -602,7 +826,9 @@ try {
     `fuld ${Math.round((candidate.audit.raw.end-candidate.audit.raw.start)*10)/10}s retur til y=${candidate.audit.raw.last.y.toFixed(1)}.`);
   console.log(`GRØN: deadlift faser ${[...phaseKinds].join(', ')}; valide velocity/ROM/tempo; exportpreview.`);
   console.log(`GRØN: desktop justerede skiveringen, bekræftede kalibreringen og analyserede ${desktopCalibration.frames} frames.`);
-  console.log('GRØN: coach-klargøring viser først analyseværktøjer, når videoen er åbnet.');
+  console.log('GRØN: coach-versionen bruger profilens atletliste og har hele værktøjspakken.');
+  console.log('GRØN: atletversionen sendte en komplet, profilkoblet analysekladde gennem den mockede appbro.');
+  console.log('GRØN: den offentlige version er en selvstændig smagsprøve uden profil- eller sendeknapper.');
   console.log(`GRØN: lift-kontrol — squat ${squat.phases.join(', ')}; bench ${bench.phases.join(', ')}; raw uændret.`);
   console.log('GRØN: ATHLETE uploadflow på friske localhost-origins; 390/1440 uden overflow, konsolfejl eller debug-krom.');
 } finally {

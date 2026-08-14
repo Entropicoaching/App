@@ -67,6 +67,7 @@
   .vcHudHead { display:flex; align-items:center; justify-content:space-between; gap:8px; }
   .vcHudTitle { color:var(--text); font:600 12px system-ui,sans-serif; letter-spacing:-.01em; }
   .vcHudQuality { color:#78d89a; font-size:8px; letter-spacing:.1em; text-transform:uppercase; }
+  #vcHudCollapse { display:none; }
   .vcLiftSetup { display:flex; align-items:center; gap:8px; }
   .vcLiftSetup label { color:var(--dim); font-size:8px; letter-spacing:.12em; text-transform:uppercase; }
   .vcLiftSetup select { flex:1; min-width:0; padding:8px 9px; border-radius:9px;
@@ -693,6 +694,22 @@
   .vcMetric b { font-family:'IBM Plex Mono',monospace; font-size:12px; }
   .vcOverlayControls { min-width:126px; flex-direction:column; }
   .vcOverlayControls button { min-height:30px; padding:5px 8px; text-align:left; border-radius:7px; }
+  body.desktop #barPathHUD { min-height:0;
+    grid-template-columns:minmax(110px,.55fr) minmax(150px,.9fr) minmax(64px,.35fr)
+      minmax(260px,1.35fr) minmax(210px,1fr); }
+  body.desktop .vcHudHead { flex-direction:row; align-items:center; align-self:center;
+    padding-right:10px; }
+  body.desktop .vcOverlayControls { min-width:0; flex-direction:row; }
+  body.desktop .vcOverlayControls button { text-align:center; }
+  body.desktop #vcOlderRepsHint { display:none; }
+  body.desktop #vcHudCollapse { display:grid; place-items:center; flex:none; margin-left:auto;
+    width:28px; min-width:28px; height:28px; min-height:28px; padding:0;
+    border-radius:7px; font-size:16px; line-height:1; }
+  body.desktop.vcHudCollapsed #barPathHUD { grid-template-columns:1fr; min-height:0;
+    padding:7px 11px; }
+  body.desktop.vcHudCollapsed #barPathHUD > :not(.vcHudHead) { display:none !important; }
+  body.desktop.vcHudCollapsed .vcHudHead { min-height:28px; padding:0; border:0; }
+  body.desktop.vcDeskTrayOpen #barPathHUD { display:none !important; }
   #exportPreview { background:rgba(8,8,7,.82); }
   .vcExportCard { width:min(94vw,860px); padding:12px; border-color:var(--vc-edge);
     border-radius:var(--vc-radius); background:var(--vc-surface); }
@@ -797,7 +814,7 @@
   <div id="hOut" class="trimHandle" hidden>⟧</div>
 </div>
 <section id="barPathHUD" hidden aria-label="Stangbaneanalyse">
-  <div class="vcHudHead"><span class="vcHudTitle">Stangbane</span><span id="vcHudQuality" class="vcHudQuality">Gyldigt signal</span></div>
+  <div class="vcHudHead"><span class="vcHudTitle">Stangbane</span><span id="vcHudQuality" class="vcHudQuality">Gyldigt signal</span><button id="vcHudCollapse" type="button" aria-expanded="true" aria-label="Minimér analyseresultat" title="Minimér analyseresultat">−</button></div>
   <div id="vcLiftSetup" class="vcLiftSetup"><label for="liftSel">Løft</label></div>
   <div id="vcPhaseLegend" class="vcPhaseLegend" aria-label="Faselegend"></div>
   <div id="vcRepSelector" class="vcRepSelector" aria-label="Rep selector"></div>
@@ -960,6 +977,7 @@ const cleanOverlayState = { phases:true, history:true, metrics:true };
 let setAthleteState = null;         // Athlete v2: ét roligt, guidet flow
 let setAthleteSubmitOpen = null;    // Athlete v3: sendearket må kun åbne i sidste trin
 let coachFlowTo = null;             // Coach: ryk 4-trins-flowet (sat i COACHWEB-blokken)
+let syncCoachSetupBridge = null;    // Coach: synkronisér startkortet med appens atletliste
 // ︎ tvinger TEKST-gengivelse (monokrom glyf) i stedet for farvet emoji
 const playLabel = playing => SLIM ? (playing ? '❚❚' : '▶︎')
   : (playing ? '⏸ Pause (mellemrum)' : '▶ Afspil (mellemrum)');
@@ -1245,6 +1263,14 @@ function drawCleanBarPath(path) {
       updateCleanReviewUI(latestCleanPath(), true);
     };
   });
+const vcHudCollapse = document.getElementById('vcHudCollapse');
+vcHudCollapse.onclick = () => {
+  const collapsed = document.body.classList.toggle('vcHudCollapsed');
+  vcHudCollapse.textContent = collapsed ? '+' : '−';
+  vcHudCollapse.setAttribute('aria-expanded', String(!collapsed));
+  vcHudCollapse.setAttribute('aria-label', collapsed ? 'Vis analyseresultat' : 'Minimér analyseresultat');
+  vcHudCollapse.title = collapsed ? 'Vis analyseresultat' : 'Minimér analyseresultat';
+};
 syncOlderRepsAffordance(null);
 
 function publishTrackerBenchmarkRun(run) {
@@ -6227,6 +6253,7 @@ if (VC_V3_BRIDGE_ENABLED) {
       if (preferredOption) athleteSelect.value = preferredOption.value;
       else if ([...athleteSelect.options].some(o => o.value === remembered))
         athleteSelect.value = remembered;
+      if (syncCoachSetupBridge) syncCoachSetupBridge();
       vcV3BridgeReady = true;
       vcV3ConfigSeen = true;
       const selectedId = athleteSelect.selectedOptions[0] &&
@@ -7183,6 +7210,16 @@ if (COACHWEB) {
       ? 'Vælg atlet og øvelse for at fortsætte.'
       : 'Klar · kg/RPE og notat er valgfrit.';
   };
+  syncCoachSetupBridge = () => {
+    const selectedId = sourceAthlete.selectedOptions[0]?.dataset.athleteId || null;
+    const selectedValue = sourceAthlete.value;
+    setupAthlete.replaceChildren(...[...sourceAthlete.options].map(option => option.cloneNode(true)));
+    const selectedOption = [...setupAthlete.options].find(option =>
+      (selectedId && option.dataset.athleteId === selectedId) ||
+      (!selectedId && option.value === selectedValue));
+    setupAthlete.value = selectedOption?.value || '';
+    syncSetup();
+  };
   [setupAthlete, setupLift, setupVariation, setupLoad, setupNote].forEach(el =>
     el.addEventListener('input', syncSetup));
   setupStart.onclick = e => {
@@ -7192,7 +7229,7 @@ if (COACHWEB) {
   setupGuide.onclick = e => {
     e.stopPropagation(); syncSetup(); updateGuideLift(); guidePanel.hidden = false;
   };
-  syncSetup();
+  syncCoachSetupBridge();
 
   // Lag 2 = bane + den enkle fart-søjle. Kurve/kraft åbnes bevidst i Lag 3.
   graphMode = 0; applyGraphMode(); showVelBar = true;
@@ -7477,6 +7514,12 @@ if (ATHLETE) {
       ? `Start ${athleteTime(manualTrackingBounds.start)} · tryk Stangbane`
       : 'Spol til lige før løftet starter';
   };
+  const syncAthleteStartGate = () => {
+    const state = document.body.dataset.athleteState || '';
+    const needsStart = state === 'ready' && !Number.isFinite(manualTrackingBounds.start);
+    if (state === 'ready') allBtn.dataset.label = needsStart ? 'Sæt start først' : 'Stangbane';
+    allBtn.disabled = state === 'target' || needsStart;
+  };
   athleteMarkStartBtn.onclick = () => {
     if (!video.src || tracking || analyzing) return;
     video.pause();
@@ -7492,6 +7535,7 @@ if (ATHLETE) {
     athleteMarkStartBtn.dataset.set = 'true';
     athleteMarkStartBtn.textContent = 'Start sat ✓';
     athleteStartGuideText.textContent = `Start ${athleteTime(trimStart)} · tryk Stangbane`;
+    syncAthleteStartGate();
   };
 
   const athleteStartBtn = document.createElement('button');
@@ -7556,7 +7600,7 @@ if (ATHLETE) {
       athleteStatus.dataset.tone = info[3];
       allBtn.dataset.label = info[2];
     }
-    allBtn.disabled = state === 'target';
+    syncAthleteStartGate();
     vcSyncSystem();
   };
   setAthleteState('empty');
@@ -7631,15 +7675,18 @@ if (DESKTOP) {
   moreB.id = 'desktopMoreBtn';
   moreB.textContent = '⌄ Fordyb';
   moreB.hidden = true;
-  moreB.onclick = () => {
-    tray.hidden = !tray.hidden;
-    moreB.classList.toggle('active', !tray.hidden);
-    if (!tray.hidden) updateCoachToolGuidance(tray);
-    tray.style.bottom =
-      (document.querySelector('footer').offsetHeight + 10) + 'px';
-    updateDesktopFlow(tray.hidden ? 2 : 3);
-  };
   const foot = document.querySelector('footer');
+  const setDesktopTrayOpen = open => {
+    tray.hidden = !open;
+    document.body.classList.toggle('vcDeskTrayOpen', open);
+    moreB.classList.toggle('active', open);
+    if (open) {
+      updateCoachToolGuidance(tray);
+      tray.style.bottom = (foot.offsetHeight + 10) + 'px';
+    }
+    updateDesktopFlow(open ? 3 : 2);
+  };
+  moreB.onclick = () => setDesktopTrayOpen(tray.hidden);
   const sp = foot.querySelector('span[style*="flex"]'); if (sp) sp.remove();
   // Lag 1 er bevidst lille. Fordyb bliver først synlig, når banen er klar.
   ['allBtn', 'penBtn', 'undoBtn'].forEach(id => {
@@ -7648,9 +7695,8 @@ if (DESKTOP) {
   foot.appendChild(moreB);
   setCoachLayer = n => {
     if (n <= 1) {
-      tray.hidden = true;
+      setDesktopTrayOpen(false);
       moreB.hidden = true;
-      moreB.classList.remove('active');
       updateDesktopFlow(1);
     } else {
       moreB.hidden = false;
@@ -7664,9 +7710,7 @@ if (DESKTOP) {
     const el = document.getElementById(id); if (!el) return;
     const orig = el.onclick;
     el.onclick = e => {
-      tray.hidden = true;
-      moreB.classList.remove('active');
-      if (!moreB.hidden) updateDesktopFlow(2);
+      setDesktopTrayOpen(false);
       if (orig) orig.call(el, e);
     };
   });
