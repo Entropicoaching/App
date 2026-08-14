@@ -81,7 +81,6 @@ const octx = { getImageData: (x0,y0,w,h) => {
   }
   return { data: out };
 }};
-const ocan = { width: W, height: H };
 function grabGray(x,y,size){ const half=size>>1;
   const dd=octx.getImageData((x-half)|0,(y-half)|0,size,size).data;
   const g=new Float32Array(size*size);
@@ -239,7 +238,6 @@ const r2 = run('2) 3 REPS, featureless + okklusion + drift + ankel + klik-stoej 
 // UNIT-TEST: hofte-gren-valg naar forrige hofte er drevet over paa FORKERT side
 // (sker efter en daarlig frame). "Naermest forrige" laaser sig fast paa den
 // forkerte loesning og flyver; "anatomisk side" vaelger altid korrekt.
-const ang=(a,b,c)=>{let d=Math.abs((Math.atan2(a.y-b.y,a.x-b.x)-Math.atan2(c.y-b.y,c.x-b.x))*180/Math.PI);return d>180?360-d:d;};
 const Ku={x:300,y:460}, Su={x:315,y:255}, Lfu=115, Ltu=110;
 const cb=circleBoth(Ku,Lfu,Su,Ltu);
 const correct=cb.s2;                                    // athletens bag-side (anatomisk korrekt)

@@ -52,6 +52,22 @@ fail(!/\.vcMetricCards\[hidden\] \{ display:none !important; \}/.test(html),
 fail(!/const currentVelocity = path\.vel\[i\];[\s\S]{0,180}Number\.isFinite\(currentVelocity\)/.test(html) ||
      !/const finiteSpeeds = path\.vel\.filter\(Number\.isFinite\)/.test(html),
   'Velocity-søjlen må aldrig forgiftes af NaN i ugyldige frames.');
+fail(!/body\.athlete #vcBackStep, body\.athlete #vcContinueStep \{ display:none !important; \}/.test(html),
+  'Atletflowet må ikke vise en ekstra top-handling ved siden af den guidede hovedknap.');
+fail(!/\.iconbtn\[hidden\] \{ display:none !important; \}/.test(html),
+  'Fordyb må ikke være synlig før en analyse blot fordi knappen har ikonlayout.');
+fail(!/body\.coachweb\[data-coach-state="setup"\] footer,[\s\S]{0,220}#vcContinueStep \{ display:none !important; \}/.test(html),
+  'Coachens klargøring skal være ren uden analyseværktøjer før en video er åbnet.');
+fail(!/if \(COACHWEB\) document\.body\.dataset\.coachState = 'video';/.test(html) ||
+  !/if \(COACHWEB\) document\.body\.dataset\.coachState = 'setup';/.test(html),
+  'Coachens analyseværktøjer skal følge videoens faktiske load/error-tilstand.');
+fail(!/const desktopLift = document\.getElementById\('liftSel'\);[\s\S]{0,180}vcLiftSlot/.test(html),
+  'Desktop skal kunne vælge løftetype før analysen og før Fordyb åbnes.');
+fail(!/const usableRep = resultPath\?\.analysis\?\.reps\?\.some/.test(html) ||
+     !/Ingen tydelig rep blev fundet/.test(html),
+  'Tracking uden en målelig rep må ikke blive meldt som en færdig analyse.');
+fail(!/vcSetWorkspace\(view === 'export' \? 'review' : 'video'\)/.test(html),
+  'Tilbage fra Eksport skal gå til Bane i stedet for helt tilbage til Video.');
 fail(!/const FORCE_DESKTOP = TRACKER_BENCHMARK && MODE_PARAMS\.get\('desktop'\) === '1'/.test(html),
   'Desktop-ét-kliksflowet skal kunne browsertestes uden at ændre normal drift.');
 
