@@ -6,7 +6,14 @@ import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const html = readFileSync(join(here, '..', '..', 'public', 'videocoach.html'), 'utf8');
+const dashboard = readFileSync(join(here, '..', '..', 'src', 'Dashboard.jsx'), 'utf8');
+const athleteView = readFileSync(join(here, '..', '..', 'src', 'AthleteView.jsx'), 'utf8');
 const fail = (condition, message) => { if (condition) throw new Error(message); };
+
+fail(!/videocoach\.html\?coach=1&bridge=v3&v=20260814-product-modes/.test(dashboard),
+  'Coachens profilvisning skal bruge den fulde coach-bro og den aktuelle cacheversion.');
+fail(!/videocoach\.html\?mode=athlete&bridge=athlete-v1&v=20260814-product-modes/.test(athleteView),
+  'Atletens profilvisning skal bruge den begrænsede atletbro og den aktuelle cacheversion.');
 
 fail(!/id="dropOpenVideoBtn" type="button">Åbn video<\/button>/.test(html),
   'Den almindelige lokale desktopvisning skal have en synlig Åbn video-knap.');
@@ -18,6 +25,9 @@ fail(!/if \(ATHLETE && !vcV3Lift\(document\.getElementById\('liftSel'\)\.value\)
   'Stangbane må ikke åbne skiveguiden, før atleten har valgt løft.');
 fail(!/const hasStart = manualTrackingBounds\.start != null[\s\S]{0,260}Start sat ✓/.test(html),
   'En sat start skal overleve, når ready-flowet vises igen.');
+fail(!/const syncAthleteStartGate = \(\) => \{[\s\S]{0,360}Sæt start først[\s\S]{0,180}state === 'target' \|\| needsStart/.test(html) ||
+     !/athleteStartGuideText\.textContent = `Start \$\{athleteTime\(trimStart\)\} · tryk Stangbane`;[\s\S]{0,100}syncAthleteStartGate\(\)/.test(html),
+  'Stangbane skal tydeligt være låst, indtil Sæt start her er gennemført.');
 fail(!/if \(disarmed && ATHLETE && setAthleteState\) setAthleteState\('ready'\);/.test(html),
   'Spoling skal returnere en afvæbnet skiveguide til atletens ready-trin.');
 fail(!/if \(wizard\) \{[\s\S]{0,220}disarmed = true;/.test(html),
@@ -56,8 +66,18 @@ fail(!/body\.athlete #vcBackStep, body\.athlete #vcContinueStep \{ display:none 
   'Atletflowet må ikke vise en ekstra top-handling ved siden af den guidede hovedknap.');
 fail(!/\.iconbtn\[hidden\] \{ display:none !important; \}/.test(html),
   'Fordyb må ikke være synlig før en analyse blot fordi knappen har ikonlayout.');
+fail(!/id="vcHudCollapse"[\s\S]{0,180}Minimér analyseresultat/.test(html) ||
+     !/vcHudCollapse\.onclick = \(\) => \{[\s\S]{0,280}vcHudCollapsed/.test(html),
+  'Desktop-resultatet skal kunne minimeres uden at ændre analysen.');
+fail(!/body\.desktop\.vcDeskTrayOpen #barPathHUD \{ display:none !important; \}/.test(html) ||
+     !/const setDesktopTrayOpen = open => \{[\s\S]{0,180}vcDeskTrayOpen/.test(html),
+  'Fordyb skal åbne frit uden at blive dækket af resultatmetrics.');
 fail(!/body\.coachweb\[data-coach-state="setup"\] footer,[\s\S]{0,220}#vcContinueStep \{ display:none !important; \}/.test(html),
   'Coachens klargøring skal være ren uden analyseværktøjer før en video er åbnet.');
+fail(!/let syncCoachSetupBridge = null/.test(html) ||
+     !/if \(syncCoachSetupBridge\) syncCoachSetupBridge\(\)/.test(html) ||
+     !/setupAthlete\.replaceChildren\([\s\S]{0,280}option\.dataset\.athleteId/.test(html),
+  'Coachens startkort skal bruge den aktuelle, profilkoblede atletliste fra appbroen.');
 fail(!/if \(COACHWEB\) document\.body\.dataset\.coachState = 'video';/.test(html) ||
   !/if \(COACHWEB\) document\.body\.dataset\.coachState = 'setup';/.test(html),
   'Coachens analyseværktøjer skal følge videoens faktiske load/error-tilstand.');

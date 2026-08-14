@@ -8,7 +8,7 @@ import { completeAthleteOnboarding, hasCompletedAthleteOnboarding } from './athl
 import { calcWarmupSets, isMainLift } from './warmup'
 
 const ATHLETE_VIDEOCOACH_PREFIX = 'entropi:videocoach:v3'
-const ATHLETE_VIDEOCOACH_URL = 'videocoach.html?mode=athlete&bridge=athlete-v1&v=20260728-feedback-evidence'
+const ATHLETE_VIDEOCOACH_URL = 'videocoach.html?mode=athlete&bridge=athlete-v1&v=20260814-product-modes'
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const ATHLETE_VIDEOCOACH_COLUMNS = new Set([
   'client_analysis_id', 'athlete_id', 'athlete_name', 'source_mode', 'status',
