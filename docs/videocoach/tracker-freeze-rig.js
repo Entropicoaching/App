@@ -113,7 +113,6 @@ function track(frames, p0, fix) {
   };
   let patchVar = calcPatchVar();
   let cur = { ...p0 }, vel = { x: 0, y: 0 }, emaBest = null, lost = 0;
-  let pendReloc = null;   // v2: kandidat der venter paa tidslig bekraeftelse
   const pts = [{ ...cur }];
   for (let f = 1; f < frames.length; f++) {
     frameData = frames[f];
@@ -137,7 +136,7 @@ function track(frames, p0, fix) {
     let best = 1e18, bo = { x: 0, y: 0 };
     for (let oy = 0; oy + P <= Wd; oy += 2) for (let ox = 0; ox + P <= Wd; ox += 2) { const s = cost(ox, oy, best); if (s < best) { best = s; bo = { x: ox, y: oy }; } }
     for (let oy = Math.max(0, bo.y-2); oy <= Math.min(Wd-P, bo.y+2); oy++) for (let ox = Math.max(0, bo.x-2); ox <= Math.min(Wd-P, bo.x+2); ox++) { const s = cost(ox, oy, best); if (s < best) { best = s; bo = { x: ox, y: oy }; } }
-    let nx = wx + bo.x + P/2, ny = wy + bo.y + P/2, uncertain = false;
+    let nx = wx + bo.x + P/2, ny = wy + bo.y + P/2;
     // KONTINUITET
     if (Math.hypot(nx - pred.x, ny - pred.y) > R * 0.6) {
       let b2 = 1e18, bo2 = null;
@@ -145,9 +144,7 @@ function track(frames, p0, fix) {
         if (Math.hypot(wx+ox+P/2 - pred.x, wy+oy+P/2 - pred.y) > R * 0.45) continue;
         const s2 = cost(ox, oy, b2); if (s2 < b2) { b2 = s2; bo2 = { x: ox, y: oy }; } }
       if (bo2) { nx = wx + bo2.x + P/2; ny = wy + bo2.y + P/2; best = b2; }
-      uncertain = true;
     }
-    if (emaBest !== null && best > Math.max(emaBest * 6, patchVar * 0.35)) uncertain = true;
 
     // ---- FIX (Runde 22): plade-tabt-vagt via recenterOnPlate ----
     // recenterOnPlate finder KUN skiven hvis den faktisk er ved punktet.
@@ -230,13 +227,13 @@ const s3 = build(f => renderFrame(stillY(f), f * 0.1), 90);
 
 console.log('\n=== BAR-TRACKER FRYS-RIG (v3 + fix) ===');
 console.log('1) rolig rep (regressionsvagt)');
-const r1a = evalRun(track(s1, { x: CX + 6, y: 150 }, false), slowY, 'NUVAER.');
+evalRun(track(s1, { x: CX + 6, y: 150 }, false), slowY, 'NUVAER.');
 const r1b = evalRun(track(s1, { x: CX + 6, y: 150 }, true), slowY, 'FIX');
 console.log('2) hurtig rep + statisk distraktor (frys-forsoeg)');
 const r2a = evalRun(track(s2, { x: CX + 6, y: 150 }, false), fastY, 'NUVAER.');
 const r2b = evalRun(track(s2, { x: CX + 6, y: 150 }, true), fastY, 'FIX');
 console.log('3) stille start');
-const r3a = evalRun(track(s3, { x: CX + 6, y: 150 }, false), stillY, 'NUVAER.');
+evalRun(track(s3, { x: CX + 6, y: 150 }, false), stillY, 'NUVAER.');
 const r3b = evalRun(track(s3, { x: CX + 6, y: 150 }, true), stillY, 'FIX');
 
 // 4) LANGT SAET: 7 reps, udtraetning (langsommere reps), AKKUMULERET

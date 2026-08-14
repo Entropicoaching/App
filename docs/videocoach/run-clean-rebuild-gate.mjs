@@ -62,9 +62,10 @@ function startServer(html) {
   });
 }
 
-async function makeDeadliftVideo(browser) {
+async function makeDeadliftVideo(browser, {staticPlate = false} = {}) {
   const page = await browser.newPage({viewport:{width:640,height:360}});
-  const bytes = await page.evaluate(async bottomFixture => {
+  const bytes = await page.evaluate(async fixture => {
+    const {bottomFixture, staticPlate} = fixture;
     const canvas = document.createElement('canvas');
     canvas.width = 640; canvas.height = 360;
     const ctx = canvas.getContext('2d');
@@ -76,10 +77,11 @@ async function makeDeadliftVideo(browser) {
     recorder.ondataavailable = event => event.data.size && chunks.push(event.data);
     const stopped = new Promise(resolve => recorder.onstop = resolve);
     const duration = 5.2, started = performance.now();
-    const yAt = t => t < .55 ? 266
+    const movingY = t => t < .55 ? 266
       : t < 2.35 ? 266 - (t - .55) / 1.80 * 112
       : t < 2.85 ? 154
       : t < 4.65 ? 154 + (t - 2.85) / 1.80 * 112 : 266;
+    const yAt = t => staticPlate ? 266 : movingY(t);
     recorder.start(250);
     await new Promise(resolve => {
       const draw = now => {
@@ -122,7 +124,7 @@ async function makeDeadliftVideo(browser) {
     });
     recorder.stop(); await stopped;
     return Array.from(new Uint8Array(await new Blob(chunks,{type}).arrayBuffer()));
-  }, BOTTOM_SEAM_FIXTURE);
+  }, {bottomFixture:BOTTOM_SEAM_FIXTURE, staticPlate});
   await page.close();
   return Buffer.from(bytes);
 }
@@ -284,16 +286,18 @@ async function runDesktopCalibrationCase(browser, url, videoBuffer) {
   page.on('pageerror', error => errors.push(`pageerror: ${error.message}`));
   page.on('console', message => { if (message.type() === 'error') errors.push(`console: ${message.text()}`); });
   await page.goto(`${url}&desktop=1`,{waitUntil:'domcontentloaded'});
+  const desktopLiftBefore = await page.evaluate(() => {
+    const lift = document.getElementById('liftSel');
+    const more = document.getElementById('desktopMoreBtn');
+    return {parent:lift.parentElement?.id || '',visible:lift.offsetParent !== null,
+      moreHidden:more.hidden && getComputedStyle(more).display === 'none'};
+  });
   await page.locator('#fileInput').setInputFiles({name:'desktop-calibration.webm',
     mimeType:'video/webm',buffer:videoBuffer});
   await page.waitForFunction(() => !document.getElementById('canvas').hidden &&
     document.querySelector('video')?.duration > 5,{timeout:15_000});
-  await page.evaluate(() => {
-    const lift = document.getElementById('liftSel');
-    lift.value = 'Dødløft';
-    lift.dispatchEvent(new Event('change',{bubbles:true}));
-    document.querySelector('video').currentTime = .3;
-  });
+  await page.locator('#vcLiftSlot #liftSel').selectOption({label:'Dødløft'});
+  await page.evaluate(() => { document.querySelector('video').currentTime = .3; });
   await page.waitForFunction(() => document.querySelector('video').currentTime > .2);
   await page.locator('#trimInBtn').click();
   await page.locator('#allBtn').click();
@@ -324,20 +328,107 @@ async function runDesktopCalibrationCase(browser, url, videoBuffer) {
   await page.locator('#vcToggleMetrics').click();
   const metricsHiddenAfterClick = !(await page.locator('#vcMetricCards').isVisible());
   await page.locator('#vcToggleMetrics').click();
+  await page.locator('#vcTabExport').click();
+  await page.waitForFunction(() => !document.getElementById('exportPreview').hidden);
+  // Efter en gennemført eksport er previewet lukket, mens workspace stadig er
+  // Eksport. Her skal topbarens Tilbage føre ét trin tilbage til Bane.
+  await page.evaluate(() => { document.getElementById('exportPreview').hidden = true; });
+  await page.locator('#vcBackStep').click();
+  const backFromExport = await page.evaluate(() => ({
+    workspace:document.body.dataset.vcWorkspace,
+    previewHidden:document.getElementById('exportPreview').hidden
+  }));
   const result = await page.evaluate(() => ({
     outcome:window.__vcTrackerBenchmarkLast?.outcome,
     frames:window.__vcTrackerBenchmarkLast?.frames || 0,
     button:document.getElementById('allBtn').textContent,
     workspace:document.body.dataset.vcWorkspace,
     calibration:window.__vcConfirmedCalibration,
+    moreVisibleAfter:document.getElementById('desktopMoreBtn').offsetParent !== null,
     velocityBar:window.__vcVelocityBarAudit,
     meanVelocity:window.__vcCleanRebuildAudit?.reps?.[0]?.mcv,
     metricValues:[...document.querySelectorAll('#vcMetricCards .vcMetric b')]
       .map(node => node.textContent.trim())
   }));
   await context.close();
-  return {...result,setupRing,
+  return {...result,setupRing,desktopLiftBefore,backFromExport,
     metricsToggle:{before:metricsVisibleBefore,hiddenAfterClick:metricsHiddenAfterClick},errors};
+}
+
+async function runNoRepCase(browser, url, videoBuffer) {
+  const context = await browser.newContext({viewport:{width:390,height:844}});
+  await context.addInitScript(() => localStorage.setItem('vc_lift','Dødløft'));
+  await context.route(/^https:\/\/fonts\./, route => route.fulfill({status:200,
+    contentType:'text/css',body:''}));
+  const page = await context.newPage(), errors = [];
+  page.on('pageerror', error => errors.push(`pageerror: ${error.message}`));
+  page.on('console', message => { if (message.type() === 'error') errors.push(`console: ${message.text()}`); });
+  await page.goto(`${url}&noRep=1`,{waitUntil:'domcontentloaded'});
+  await page.locator('#fileInput').setInputFiles({name:'static-plate.webm',
+    mimeType:'video/webm',buffer:videoBuffer});
+  await page.waitForFunction(() => !document.getElementById('canvas').hidden &&
+    document.querySelector('video')?.duration > 5,{timeout:15_000});
+  for (let frame = 0; frame < 9; frame++) await page.locator('#fwdS').click();
+  await page.waitForFunction(() => document.getElementById('video').currentTime > .2);
+  await page.locator('#athleteMarkStartBtn').click();
+  await page.locator('#allBtn').click();
+  const canvasBox = await page.locator('#canvas').boundingBox();
+  fail(canvasBox, 'no-rep: canvas mangler');
+  await page.mouse.click(canvasBox.x + canvasBox.width * 246 / 640,
+    canvasBox.y + canvasBox.height * 266 / 360);
+  await page.waitForFunction(() => document.body.dataset.athleteState === 'confirm',null,{timeout:8_000});
+  await page.locator('#allBtn').click();
+  await page.waitForFunction(() => window.__vcTrackerBenchmarkLast?.outcome === 'completed',null,
+    {timeout:60_000});
+  await page.waitForFunction(() => document.body.dataset.athleteState === 'error',null,
+    {timeout:10_000});
+  const result = await page.evaluate(() => ({
+    state:document.body.dataset.athleteState,
+    workspace:document.body.dataset.vcWorkspace,
+    detail:document.querySelector('#athleteStatus span')?.textContent || '',
+    reviewDisabled:document.getElementById('vcTabReview').disabled,
+    exportDisabled:document.getElementById('vcTabExport').disabled,
+    topActionVisible:document.getElementById('vcContinueStep').offsetParent !== null
+  }));
+  await context.close();
+  return {...result,errors};
+}
+
+async function runCoachSetupCase(browser, url, videoBuffer) {
+  const context = await browser.newContext({viewport:{width:390,height:844}});
+  await context.route(/^https:\/\/fonts\./, route => route.fulfill({status:200,
+    contentType:'text/css',body:''}));
+  const page = await context.newPage(), errors = [];
+  page.on('pageerror', error => errors.push(`pageerror: ${error.message}`));
+  page.on('console', message => { if (message.type() === 'error') errors.push(`console: ${message.text()}`); });
+  await page.goto(`${url}&coach=1`,{waitUntil:'domcontentloaded'});
+  const before = await page.evaluate(() => {
+    const visible = element => getComputedStyle(element).display !== 'none' &&
+      element.getBoundingClientRect().width > 0 && element.getBoundingClientRect().height > 0;
+    return {
+      state:document.body.dataset.coachState,
+      setupVisible:visible(document.getElementById('coachSetup')),
+      footerVisible:visible(document.querySelector('footer')),
+      scrubVisible:visible(document.getElementById('scrubRow')),
+      nextVisible:visible(document.getElementById('vcContinueStep'))
+    };
+  });
+  await page.locator('#fileInput').setInputFiles({name:'coach-setup.webm',
+    mimeType:'video/webm',buffer:videoBuffer});
+  await page.waitForFunction(() => document.body.dataset.coachState === 'video' &&
+    !document.getElementById('canvas').hidden,{timeout:15_000});
+  const after = await page.evaluate(() => {
+    const visible = element => getComputedStyle(element).display !== 'none' &&
+      element.getBoundingClientRect().width > 0 && element.getBoundingClientRect().height > 0;
+    return {
+      state:document.body.dataset.coachState,
+      setupVisible:visible(document.getElementById('coachSetup')),
+      footerVisible:visible(document.querySelector('footer')),
+      scrubVisible:visible(document.getElementById('scrubRow'))
+    };
+  });
+  await context.close();
+  return {before,after,errors};
 }
 
 const baselineServer = await startServer(baselineHtml);
@@ -350,7 +441,27 @@ fail(browserExecutable, 'lokal Chrome/Edge mangler til browser-gaten');
 const browser = await chromium.launch({headless:true,executablePath:browserExecutable});
 try {
   const video = await makeDeadliftVideo(browser);
+  const staticVideo = await makeDeadliftVideo(browser,{staticPlate:true});
   fail(video.length > 20_000, 'den genererede uploadfixture er tom eller for lille');
+  fail(staticVideo.length > 20_000, 'no-rep-fixturen er tom eller for lille');
+  const noRep = await runNoRepCase(browser,candidateServer.url,staticVideo);
+  fail(noRep.state === 'error' && noRep.workspace === 'video' &&
+       noRep.reviewDisabled && noRep.exportDisabled && /Ingen tydelig rep/.test(noRep.detail),
+    `et statisk track blev fejlagtigt meldt som færdigt: ${JSON.stringify(noRep)}`);
+  fail(!noRep.topActionVisible,
+    `atletflowet viste stadig en konkurrerende top-handling: ${JSON.stringify(noRep)}`);
+  fail(noRep.errors.length === 0,
+    `no-rep-flowet har konsolfejl: ${noRep.errors.join(' | ')}`);
+  const coachSetup = await runCoachSetupCase(browser,candidateServer.url,video);
+  fail(coachSetup.before.state === 'setup' && coachSetup.before.setupVisible &&
+       !coachSetup.before.footerVisible && !coachSetup.before.scrubVisible &&
+       !coachSetup.before.nextVisible,
+    `coachens klargøring viste analyseværktøjer før video: ${JSON.stringify(coachSetup)}`);
+  fail(coachSetup.after.state === 'video' && !coachSetup.after.setupVisible &&
+       coachSetup.after.footerVisible && coachSetup.after.scrubVisible,
+    `coachens analyseværktøjer blev ikke aktiveret efter video-load: ${JSON.stringify(coachSetup)}`);
+  fail(coachSetup.errors.length === 0,
+    `coachens klargøringsflow har konsolfejl: ${coachSetup.errors.join(' | ')}`);
   const desktopCalibration = await runDesktopCalibrationCase(browser,candidateServer.url,video);
   fail(desktopCalibration.outcome === 'completed' && desktopCalibration.frames >= 5,
     `desktop startede ikke analysen efter bekræftet kalibrering: ${JSON.stringify(desktopCalibration)}`);
@@ -358,6 +469,10 @@ try {
        Math.abs(desktopCalibration.calibration.cmPerPx -
          45 / (2 * desktopCalibration.calibration.radius)) < 1e-9,
     `desktop gemte ikke den justerede skivering som måleskala: ${JSON.stringify(desktopCalibration)}`);
+  fail(desktopCalibration.desktopLiftBefore?.visible &&
+       desktopCalibration.desktopLiftBefore.parent === 'vcLiftSlot' &&
+       desktopCalibration.desktopLiftBefore.moreHidden && desktopCalibration.moreVisibleAfter,
+    `desktop manglede et synligt løftvalg før analysen: ${JSON.stringify(desktopCalibration)}`);
   fail(desktopCalibration.workspace === 'review',
     `desktop åbnede ikke resultatet efter analysen: ${JSON.stringify(desktopCalibration)}`);
   fail(desktopCalibration.meanVelocity > 0 &&
@@ -368,6 +483,9 @@ try {
     `desktop velocity-søjlen viste en ugyldig værdi: ${JSON.stringify(desktopCalibration)}`);
   fail(desktopCalibration.metricsToggle?.before && desktopCalibration.metricsToggle?.hiddenAfterClick,
     `Metrics-knappen skjulte ikke målekortene: ${JSON.stringify(desktopCalibration)}`);
+  fail(desktopCalibration.backFromExport?.workspace === 'review' &&
+       desktopCalibration.backFromExport.previewHidden,
+    `Tilbage fra Eksport gik ikke til Bane: ${JSON.stringify(desktopCalibration)}`);
   fail(desktopCalibration.errors.length === 0,
     `desktop-kalibreringsflowet har konsolfejl: ${desktopCalibration.errors.join(' | ')}`);
   const candidate = await runAthleteCase(browser,{name:'candidate',
@@ -484,6 +602,7 @@ try {
     `fuld ${Math.round((candidate.audit.raw.end-candidate.audit.raw.start)*10)/10}s retur til y=${candidate.audit.raw.last.y.toFixed(1)}.`);
   console.log(`GRØN: deadlift faser ${[...phaseKinds].join(', ')}; valide velocity/ROM/tempo; exportpreview.`);
   console.log(`GRØN: desktop justerede skiveringen, bekræftede kalibreringen og analyserede ${desktopCalibration.frames} frames.`);
+  console.log('GRØN: coach-klargøring viser først analyseværktøjer, når videoen er åbnet.');
   console.log(`GRØN: lift-kontrol — squat ${squat.phases.join(', ')}; bench ${bench.phases.join(', ')}; raw uændret.`);
   console.log('GRØN: ATHLETE uploadflow på friske localhost-origins; 390/1440 uden overflow, konsolfejl eller debug-krom.');
 } finally {
