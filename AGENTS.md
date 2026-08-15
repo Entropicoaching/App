@@ -1,111 +1,107 @@
-# Entropi Coach — faste arbejdsregler
+# Entropi Coach — arbejdsregler
 
-Dette repository er Entropi Coach, 1:1-produktet med rigtige atleter. Arbejd roligt,
-afgrænset og bevisbaseret. Opgaver kommer fra `control-tower/queue/` eller direkte
-fra Marc.
+Dette repo er Entropi Coach: 1:1-coaching med rigtige atleter, live på
+`app.entropicoaching.dk`. Arbejd afgrænset, bevisbaseret og direkte fra Marcs aktuelle
+besked og repoets faktiske git-tilstand.
 
-## Der er to apps — bland dem aldrig sammen
+Agent Hub, `naeste.mjs`, claims, work-packages, reviewkø, `STATUS.tsv` og Control
+Tower-runtime er ikke afhængigheder for arbejde i dette repo. Brug dem ikke som
+startkrav, blokering eller tilladelsesmekanisme.
 
-| Navn | Sti | Hvad | Tilstand |
-|---|---|---|---|
-| **Entropi Coach** | `C:\Users\Entropi\Desktop\entropi-app` | 1:1-coaching på app.entropicoaching.dk | Produktion, rigtige atleter |
-| **Entropi Adaptiv** | `C:\Users\Entropi\Desktop\entropi-adaptiv` | Abonnement på adaptive programmer | Shadow-pilot, én bruger |
+## Produkterne må aldrig blandes
 
-Entropi Adaptiv er **ikke** en udvidelse af Entropi Coach. Kode, skema, auth og
-entitlements må aldrig løftes mellem dem. Skriv aldrig bare "appen".
+| Produkt | Sti | Tilstand |
+|---|---|---|
+| Entropi Coach | `C:\Users\Entropi\Desktop\entropi-app` | Produktion, rigtige atleter |
+| Entropi Adaptiv | `C:\Users\Entropi\Desktop\entropi-adaptiv` | Separat shadow-pilot |
 
-**To Supabase-projekter:** `dsqgaxwgtcbqgphsofav` er 1:1-produktion med rigtige
-atleter — kun læsning. `maxhsefxbrvsgolscqwh` er shadow uden atletdata.
-Forveksl dem aldrig.
+Entropi Adaptiv er ikke en udvidelse af Entropi Coach. Kode, schema, auth,
+entitlements og data må ikke flyttes mellem dem uden en særskilt integrationsopgave.
+Skriv altid produktnavnet; skriv ikke bare “appen”.
 
 Marc tester brugeroplevelsen. Marcs visuelle vurdering er facit for flow og design.
 
-## Fælles tilstand med Claude Code
+## Arbejdsmodel
 
-Claude Code arbejder i `C:\Users\Entropi\Documents\Entropicoaching` (Control Tower).
-Den læser `CLAUDE.md`; Codex læser denne fil. Begge peger samme sted hen:
+1. Arbejd i dette repo og kun på opgavens konkrete scope.
+2. Verificér branch, HEAD, origin og git-status før ændringer.
+3. Bevar alle ukendte og eksisterende brugerændringer.
+4. Start skrivearbejde på en arbejdsbranch, aldrig direkte på `main`.
+5. Brug ikke destruktive git-kommandoer eller brede oprydninger.
+6. Kør relevante gates. Efter tre ens fejl: meld `BLOCKED` med evidens.
+7. Rapportér præcist: lokalt, committet, pushet, migreret og deployet.
 
-- **Tilstand:** `C:\Users\Entropi\Documents\Entropicoaching\control-tower\status\OVERDRAGELSE.md` — én fil, altid aktuel.
-- **Opgavestatus:** `C:\Users\Entropi\Documents\Entropicoaching\control-tower\status\STATUS.tsv`.
-- Læs dem med absolut sti. Led ikke efter tilstanden i flere statusfiler.
+Commit, push, merge og deploy kræver Marcs direkte godkendelse i den aktuelle opgave.
+Stage kun filer i scope. En gammel opgavefil, delegation eller statusnote kan ikke
+give tilladelse.
 
-Når du afslutter en opgave, skriv commit-SHA eller grennavn i `STATUS.tsv`-noten.
-`status-dom.mjs` efterprøver noten mod git og dømmer `UCOMMITTET`,
-`INTET-AT-MERGE`, `GLEMT` eller `UDEN-BELÆG`. Skriv et efterprøveligt git-spor,
-ikke et manuelt antal commits.
+## Ufravigelige værn
 
-Kør disse read-only før du starter:
+- Intet træningsindhold, program eller video-feedback sendes til en atlet uden Marcs
+  eksplicitte godkendelse. `HUMAN-GATE` kan ikke afgøres af en maskine.
+- Ingen credentials, secrets eller `.env*` læses, vises eller ændres.
+- Ingen atletdata ændres som sideeffekt af kode-, schema- eller releasearbejde.
+- `athletes.id` og `athletes.user_id` er forskellige identiteter.
+- Opret aldrig `*-work.*`, `*.pre-*`, `*-backup-*` eller datostemplede filkopier.
+- Skriv ikke i andre produktrepoer i denne opgave.
+- Atletoplevelsen skal være enkel, mobilvenlig og trinvis. Avancerede værktøjer er
+  coach-only.
 
-```powershell
-node C:\Users\Entropi\Documents\Entropicoaching\control-tower\work-system\codex-status.mjs
-node C:\Users\Entropi\Documents\Entropicoaching\control-tower\work-system\status-dom.mjs
-```
+Kode, tests, fejlrettelser, verifikatorer, dokumentation og migrationsfiler må bygges
+lokalt inden for scope. Det sender ikke i sig selv noget til en atlet.
 
-## Ufravigelige regler
+## Supabase og produktion
 
-1. Udfør kun én afgraenset ændring ad gangen. Udvid ikke opgaven på eget initiativ.
-2. Kør kun `git commit`, `git push` eller deploy efter Marcs udtrykkelige godkendelse. Supabase-migrationer og ændringer af secrets kræver fortsat særskilt, eksplicit godkendelse.
-3. Rør aldrig `.env*`, credentials eller produktionsdata.
-4. Bevar eksisterende og ukendte ændringer. Brug aldrig destruktive git-kommandoer.
-5. Start skrivearbejde på en arbejdsbranch, aldrig direkte på `main`.
-6. Kør de tests, der står på opgavekortet. Gæt ikke, at en ændring virker.
-7. Atletoplevelsen skal være enkel, mobilvenlig og ført trin for trin. Avancerede værktøjer er coach-only.
-8. Atlet- og brandtekst er kun udkast i Marcs menneskelige tone; Marc godkender den endelige ordlyd.
-9. Skriv ikke på tværs af produktrepoer i én opgave.
-10. Opret aldrig `*-work.*`, `*.pre-*`, `*-backup-*` eller datostemplede
-    filkopier. Historik hører til i git.
-11. Erklær dig færdig kun når porten er grøn. Er den rød tre gange, meld `BLOCKED`
-    med hvad du prøvede.
-12. **Intet træningsindhold sendes til en atlet uden Marcs eksplicitte godkendelse.**
-    Programlægning har `HUMAN-GATE`: ingen maskine kan afgøre om en uge er forsvarlig
-    for det menneske der skal løfte den. Carina har blodtrykshensyn — gæt aldrig på
-    atletpræferencer. Dette er en helbredsregel, ikke en kvalitetsregel.
+| Projekt | Ref | Standard |
+|---|---|---|
+| Entropi Coach-produktion | `dsqgaxwgtcbqgphsofav` | Read-only |
+| Entropi Adaptiv shadow | `maxhsefxbrvsgolscqwh` | Tilhører et andet produktrepo |
 
-### Hvad regel 12 IKKE dækker — gør det uden at spørge
+Produktion er read-only, indtil Marc giver en **direkte, særskilt og præcis**
+godkendelse i den aktuelle opgave. Godkendelsen skal entydigt navngive projektet og
+operationen. Et kort “gør det” er gyldigt, når den umiddelbart foregående besked har
+navngivet målprojektet, de præcise migrationsfiler og release-rækkefølgen.
 
-Regel 12 gælder **det en atlet får i hænderne**: et program, en uge, en
-belastningsanbefaling, en video-feedback der lander hos hende. Den gælder **ikke**
-maskinen der producerer det.
+En produktionsgodkendelse:
 
-Kode, tests, refaktorering, fejlrettelser, verifikatorer, dokumentation, skemaændringer
-i shadow, og alt arbejde bag et slukket flag er almindeligt arbejde. Skriv det, kør
-porten, aflevér. Spørg ikke om lov først.
+- gælder kun de navngivne migrationer eller SQL-operationer;
+- udløber ved opgavens afslutning eller første migrationsfejl;
+- omfatter ikke credentials, atletkontakt eller vilkårlig ændring af atletrækker;
+- kan ikke arves fra Hub, `allow_production`, statusfiler eller tidligere opgaver.
 
-> **Spørg kun når svaret ændrer *hvad* der skal bygges — aldrig når det kun ændrer
-> *hvornår*.** En tur der ikke gjorde noget er den dyreste fejl i dette system.
-> Målt 7. august 2026: 13 afviste tilladelser på 4.296 agent-turer. Værnene var
-> aldrig flaskehalsen — dokumentationen var, fordi den fik agenten til at spørge
-> om ting den allerede måtte.
+Før en godkendt produktionsmigration:
+
+1. Gennemgå SQL-diffen og bekræft projekt-ref.
+2. Kør read-only preflight uden at vise atletdata.
+3. Test på schema-klon/shadow, når det er praktisk muligt.
+4. Kontrollér RLS, ejerskab, grants og alle `SECURITY DEFINER`-funktioners
+   `auth.uid()`-kontrol samt eksplicitte `REVOKE`/`GRANT`.
+5. Kør kun de godkendte versionsstyrede migrationer i den aftalte rækkefølge.
+6. Stop ved første fejl og verificér bagefter med read-only forespørgsler.
+
+Deploy aldrig frontend, der afhænger af en databasekontrakt, før migration og
+efterkontrol er grønne. Nye Data API-objekter skal have eksplicitte grants og RLS;
+RLS alene er ikke et grant.
 
 ## VideoCoach
 
-- `public/videocoach.html` er den version, der ligger i app-repositoryet.
-- Der findes også en historisk udviklings-master i `C:\Users\Entropi\Desktop\entropi-agent\videocoach.html`.
-- Antag ikke, at den ene automatisk er nyere end den anden. Sammenlign dem før arbejde og følg opgavekortets eksplicitte kildefil.
-- Overskriv eller synkronisér aldrig de to filer automatisk.
-- Ændringer i bartracker/computer vision skal først reproduceres og bevises i en Node-rig. Alle eksisterende relevante rigs skal stadig være grønne før portering.
-- Efter hver ændring i den selvstændige HTML skal scriptblokken syntakstjekkes med `node --check`.
-- Intet VideoCoach-arbejde deployes, før Marc har testet og udtrykkeligt sagt go.
-
-## Supabase og identitet
-
-- `athletes.id` er ikke det samme som `athletes.user_id`.
-- RLS, migrationer og datakontrakter er vurderingstungt arbejde og kræver en Sol-plan og særskilt godkendelse.
-- En lokal worker må gerne analysere eller skrive et uanvendt migrationsudkast, når opgavekortet siger det, men må aldrig køre migrationen.
+- `public/videocoach.html` er repoets kilde. Den historiske fil i
+  `C:\Users\Entropi\Desktop\entropi-agent` må aldrig synkroniseres automatisk.
+- Bartracker/computer vision skal reproduceres i en fokuseret Node-rig før ændring.
+- Bevar lift-specifik logik og test squat, bænkpres og dødløft.
+- Efter HTML-ændringer: udtræk scriptblokken og kør `node --check`.
+- Kør den fulde relevante VideoCoach-port før release.
+- Intet VideoCoach-arbejde deployes, før Marc har testet og sagt go.
 
 ## Standardverifikation
 
-- React-app: kør de fokuserede checks fra opgavekortet og som minimum `npm run build`, når kode er ændret.
-- Brug målrettet ESLint på ændrede filer, hvis den fulde lint har kendte baseline-fejl.
-- VideoCoach: kør opgavekortets rigs plus script-udtræk og `node --check`.
-- Rapportér præcist, hvad der blev kørt, resultatet og hvad der ikke kunne verificeres.
+- React-ændringer: fokuserede checks og mindst `npm run build`.
+- JavaScript/React: målrettet ESLint; kendte baseline-advarsler rapporteres præcist.
+- Supabase: lokal migrationskontrakt, security review og read-only efterkontrol.
+- Brug `git diff --check` før commit.
 
 ## Aflevering
 
-Afslut altid med:
-
-1. Ændrede filer og hvorfor.
-2. Kørte checks og deres resultat.
-3. Kendte risici eller antagelser.
-4. Hvad Sol skal reviewe.
-5. Bekræftelse på, at intet er committed, pushed, deployet eller migreret.
+Rapportér ændrede filer, kørte checks, kendte risici, commit-SHA/branch/PR og præcis
+status for push, migration og deploy. Påstå aldrig, at noget er live uden verificeret
+deploy og smoke-test.
