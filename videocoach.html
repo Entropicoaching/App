@@ -695,10 +695,12 @@
   .vcOverlayControls { min-width:126px; flex-direction:column; }
   .vcOverlayControls button { min-height:30px; padding:5px 8px; text-align:left; border-radius:7px; }
   body.desktop #barPathHUD { min-height:0;
-    grid-template-columns:minmax(110px,.55fr) minmax(150px,.9fr) minmax(64px,.35fr)
+    grid-template-columns:minmax(110px,.55fr) minmax(150px,.9fr) minmax(128px,.8fr)
       minmax(260px,1.35fr) minmax(210px,1fr); }
   body.desktop .vcHudHead { flex-direction:row; align-items:center; align-self:center;
     padding-right:10px; }
+  body.desktop .vcRepSelector { min-width:0; flex-wrap:wrap; overflow:visible;
+    align-content:center; }
   body.desktop .vcOverlayControls { min-width:0; flex-direction:row; }
   body.desktop .vcOverlayControls button { text-align:center; }
   body.desktop #vcOlderRepsHint { display:none; }
@@ -1167,6 +1169,16 @@ function updateCleanReviewUI(path = latestCleanPath(), force = false) {
       frozen:Object.isFrozen(path.raw)&&Object.isFrozen(path.raw.pts),
       start:path.raw.start,end:path.raw.end,first:{...path.raw.pts[0]},last:{...path.raw.pts.at(-1)},
       invalid:path.raw.valid.filter(value=>!value).length},
+    visual:{count:analysis.visualPts?.length || 0,
+      frozen:Object.isFrozen(analysis.visualPts) && analysis.visualPts.every(Object.isFrozen),
+      maxOffset:Math.max(0,...(analysis.visualPts || []).map((point, index) =>
+        Math.hypot(point.x - analysis.pts[index].x, point.y - analysis.pts[index].y))),
+      rawRoughness:barPathRoughness(path.raw.pts, path.raw.valid),
+      displayRoughness:barPathRoughness(analysis.visualPts || analysis.pts, path.raw.valid),
+      rawX:barPathAxisRoughness(path.raw.pts, path.raw.valid, 'x'),
+      displayX:barPathAxisRoughness(analysis.visualPts || analysis.pts, path.raw.valid, 'x'),
+      rawY:barPathAxisRoughness(path.raw.pts, path.raw.valid, 'y'),
+      displayY:barPathAxisRoughness(analysis.visualPts || analysis.pts, path.raw.valid, 'y')},
     lift:analysis.lift, phases:analysis.phases.map(phase => ({...phase})),
     reps:analysis.reps.map(item => ({...item,phases:item.phases.map(phase => ({...phase}))})),
     review:{start:trimStart,end:trimEndEff()}, currentRep:repIndex
@@ -1210,7 +1222,8 @@ function drawDirectionArrow(a, b, color) {
 }
 
 function drawCleanBarPath(path) {
-  const pts = path.raw.pts, valid = path.raw.valid, analysis = path.analysis;
+  const analysis = path.analysis;
+  const pts = analysis.visualPts || analysis.pts || path.raw.pts, valid = path.raw.valid;
   const drawRange = (start, end, color, alpha, width, arrows = false) => {
     ctx.save(); ctx.strokeStyle = color; ctx.globalAlpha = alpha; ctx.lineWidth = width;
     ctx.lineCap = 'round'; ctx.beginPath(); let penUp = true;
@@ -2830,6 +2843,59 @@ function seekTo(t) {
   });
 }
 
+function buildVisualBarPath(points, valid, times, maxOffset = Math.max(1.25,
+  Math.min(4, canvas.width / 512))) {
+  // Kun renderlaget glattes. Sideværts bruges et kort 1-2-1-filter; lodret
+  // bruges 1-4-6-4-1 for mere ro gennem løftet. Begge er symmetriske uden
+  // tidsforsinkelse, og maxOffset holder prikken tæt på den faktisk målte
+  // skive. Raw, metrics, faser og payload forbliver urørte.
+  return Object.freeze(points.map((point, index) => {
+    const previous = points[index - 1], next = points[index + 1];
+    const previousTime = times[index - 1], nextTime = times[index + 1];
+    if (!previous || !next || !valid[index - 1] || !valid[index] || !valid[index + 1] ||
+        !Number.isFinite(previousTime) || !Number.isFinite(nextTime) ||
+        times[index] - previousTime > 1 / 12 || nextTime - times[index] > 1 / 12) {
+      return Object.freeze({x:point.x,y:point.y});
+    }
+    const verticalWindow = points.slice(index - 2, index + 3);
+    const verticalReady = verticalWindow.length === 5 &&
+      valid.slice(index - 2, index + 3).every(Boolean) &&
+      times.slice(index - 2, index + 3).every((time, offset, window) =>
+        !offset || time - window[offset - 1] <= 1 / 12);
+    const target = {x:(previous.x + point.x * 2 + next.x) / 4,
+      y:verticalReady
+        ? (verticalWindow[0].y + 4 * verticalWindow[1].y + 6 * verticalWindow[2].y +
+          4 * verticalWindow[3].y + verticalWindow[4].y) / 16
+        : (previous.y + point.y * 2 + next.y) / 4};
+    const dx = target.x - point.x, dy = target.y - point.y;
+    const distance = Math.hypot(dx, dy);
+    const scale = distance > maxOffset ? maxOffset / distance : 1;
+    return Object.freeze({x:point.x + dx * scale,y:point.y + dy * scale});
+  }));
+}
+
+function barPathRoughness(points, valid) {
+  let sum = 0, count = 0;
+  for (let index = 1; index < points.length - 1; index++) {
+    if (!valid[index - 1] || !valid[index] || !valid[index + 1]) continue;
+    sum += Math.hypot(points[index - 1].x - 2 * points[index].x + points[index + 1].x,
+      points[index - 1].y - 2 * points[index].y + points[index + 1].y);
+    count++;
+  }
+  return count ? sum / count : 0;
+}
+
+function barPathAxisRoughness(points, valid, axis) {
+  let sum = 0, count = 0;
+  for (let index = 1; index < points.length - 1; index++) {
+    if (!valid[index - 1] || !valid[index] || !valid[index + 1]) continue;
+    sum += Math.abs(points[index - 1][axis] - 2 * points[index][axis] +
+      points[index + 1][axis]);
+    count++;
+  }
+  return count ? sum / count : 0;
+}
+
 function analyzeCleanPath(path) {
   if (!cmPerPx || !path?.pts || path.pts.length < 8) return path;
   if (!path.raw) {
@@ -2963,7 +3029,8 @@ function analyzeCleanPath(path) {
     if (value > .05) upX.push(analysisPts[index].x);
   });
   const mean = values => values.reduce((sum, value) => sum + value, 0) / values.length;
-  const analysis = {schema:1,lift,pts:analysisPts,vel:velocity,reps,phases,
+  const analysis = {schema:1,lift,pts:analysisPts,
+    visualPts:buildVisualBarPath(analysisPts, raw.valid, raw.times),vel:velocity,reps,phases,
     rawCount:n,reviewStartTime:raw.start,reviewEndTime:raw.end,
     effPct:pathLength > 0 ? Math.round(range / pathLength * 100) : null,
     hystCm:downX.length > 3 && upX.length > 3
@@ -5685,7 +5752,8 @@ function drawCardPath(g, path, x, y, w, h) {
   g.font = "600 18px 'IBM Plex Mono', monospace"; g.fillStyle = '#c8923a';
   g.textAlign = 'left';
   g.fillText(moments.length ? 'STROBOSKOP' : 'STANGBANE', x + 14, y + 28);
-  const pts = path.pts, xs = pts.map(p => p.x), ys = pts.map(p => p.y);
+  const pts = path.analysis?.visualPts || path.pts;
+  const xs = pts.map(p => p.x), ys = pts.map(p => p.y);
   let minX = Math.min(...xs), maxX = Math.max(...xs),
       minY = Math.min(...ys), maxY = Math.max(...ys);
   // udvid rammen saa hele skelettet er med
