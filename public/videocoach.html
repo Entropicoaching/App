@@ -199,7 +199,7 @@
   body.athlete #dropHint .athCopy { display:block; color:rgba(237,234,226,.58);
     font-size:12px; line-height:1.55; margin-bottom:22px; }
   body.athlete #dropHint .athCta { display:inline-flex; align-items:center;
-    justify-content:center; min-width:170px; padding:12px 18px; border-radius:12px;
+    justify-content:center; min-width:170px; min-height:44px; padding:12px 18px; border-radius:12px;
     background:var(--accent); color:#141410; font-size:11px; font-weight:600;
     letter-spacing:.12em; text-transform:uppercase; }
   body.athlete #athleteStatus { position:fixed; top:68px; left:50%;
@@ -2657,6 +2657,41 @@ function drawVelBar() {
 }
 
 let velPanelHits = [];   // klik-områder for rep-linjerne (ghost-valg)
+function vcVisibleCanvasBounds(canvasRect, clipRect, intrinsicWidth, intrinsicHeight) {
+  if (!canvasRect || !clipRect || !canvasRect.width || !canvasRect.height ||
+      !intrinsicWidth || !intrinsicHeight) {
+    return { left:0, top:0, right:intrinsicWidth || 0, bottom:intrinsicHeight || 0,
+      padX:10, padY:10 };
+  }
+  const scaleX = intrinsicWidth / canvasRect.width;
+  const scaleY = intrinsicHeight / canvasRect.height;
+  const visibleLeft = Math.max(canvasRect.left, clipRect.left);
+  const visibleTop = Math.max(canvasRect.top, clipRect.top);
+  const visibleRight = Math.min(canvasRect.right, clipRect.right);
+  const visibleBottom = Math.min(canvasRect.bottom, clipRect.bottom);
+  return {
+    left:Math.max(0, (visibleLeft - canvasRect.left) * scaleX),
+    top:Math.max(0, (visibleTop - canvasRect.top) * scaleY),
+    right:Math.min(intrinsicWidth, (visibleRight - canvasRect.left) * scaleX),
+    bottom:Math.min(intrinsicHeight, (visibleBottom - canvasRect.top) * scaleY),
+    padX:10 * scaleX,
+    padY:10 * scaleY,
+  };
+}
+
+function vcVelocityPanelSafeBounds() {
+  const canvasRect = canvas.getBoundingClientRect();
+  const stageRect = document.getElementById('stage').getBoundingClientRect();
+  const systemRect = document.getElementById('vcSystemBar').getBoundingClientRect();
+  const clipRect = {
+    left:Math.max(0, stageRect.left),
+    top:Math.max(0, stageRect.top, systemRect.bottom),
+    right:Math.min(window.innerWidth, stageRect.right),
+    bottom:Math.min(window.innerHeight, stageRect.bottom),
+  };
+  return vcVisibleCanvasBounds(canvasRect, clipRect, canvas.width, canvas.height);
+}
+
 function drawVelPanel() {
   velPanelHits = [];
   const path = strokes.filter(s => s.type === 'path' && s.reps && s.reps.length).pop();
@@ -2675,17 +2710,26 @@ function drawVelPanel() {
   w = Math.max(w, ctx.measureText(legend).width + fs * 1.4);   // boksen skal også rumme forklaringen
   ctx.font = `bold ${fs}px sans-serif`;
   ctx.fillStyle = 'rgba(0,0,0,0.6)';
-  ctx.fillRect(10, 10, w, (lines.length + 1.9) * fs * 1.3);
+  const safe = vcVelocityPanelSafeBounds();
+  const panelHeight = (lines.length + 1.9) * fs * 1.3;
+  let panelX = safe.left + safe.padX;
+  let panelY = safe.top + safe.padY;
+  if (safe.right - safe.left > w + safe.padX * 2)
+    panelX = Math.min(panelX, safe.right - w - safe.padX);
+  if (safe.bottom - safe.top > panelHeight + safe.padY * 2)
+    panelY = Math.min(panelY, safe.bottom - panelHeight - safe.padY);
+  ctx.fillRect(panelX, panelY, w, panelHeight);
   lines.forEach((l, i) => {
     const loss = i ? 1 - path.reps[i].mcv / path.reps[0].mcv : 0;
     ctx.fillStyle = loss > 0.2 ? '#ff453a' : loss > 0.1 ? '#ffd60a' : '#4cd964';
-    const ly = 10 + (i + 1.1) * fs * 1.3;
-    ctx.fillText((path.ghostRep === i ? '👻 ' : '') + l, 10 + fs * 0.7, ly);
-    velPanelHits.push({ x: 10, y: ly - fs, w, h: fs * 1.3, idx: i, path });
+    const ly = panelY + (i + 1.1) * fs * 1.3;
+    ctx.fillText((path.ghostRep === i ? '👻 ' : '') + l, panelX + fs * 0.7, ly);
+    velPanelHits.push({ x: panelX, y: ly - fs, w, h: fs * 1.3, idx: i, path });
   });
   ctx.fillStyle = 'rgba(237,234,226,0.55)';
   ctx.font = `${fs * 0.62}px 'IBM Plex Mono', monospace`;
-  ctx.fillText(legend, 10 + fs * 0.7, 10 + (lines.length + 1.1) * fs * 1.3);
+  ctx.fillText(legend, panelX + fs * 0.7,
+    panelY + (lines.length + 1.1) * fs * 1.3);
   ctx.restore();
 }
 
@@ -2744,10 +2788,10 @@ function render() {
     return;
   }
   // TERMISK RO: når intet bevæger sig (pause, ingen tegning/analyse),
-  // tegnes kun hver 3. frame. Telefonen holder sig kold under en session
+  // tegnes kun hver 6. frame. Telefonen holder sig kold under en session
   // -> mindre thermal throttling -> mindre lag når det GÆLDER.
   if (video.paused && !current && !tracking && !analyzing && !scrubbing &&
-      !cmp && !mskelClicks && !plateConfirm && (render._idle = (render._idle || 0) + 1) % 3) {
+      !cmp && !mskelClicks && !plateConfirm && (render._idle = (render._idle || 0) + 1) % 6) {
     requestAnimationFrame(render);
     return;
   }
@@ -6079,11 +6123,26 @@ function vcV3Variation(lift, variation) {
 
 function vcV3Metric(value, unit, method, eligible = false, confidence = null) {
   if (value == null || (typeof value === 'number' && !Number.isFinite(value))) return null;
-  return { value, unit, method, eligible_for_baseline: eligible,
-    confidence, source_refs: [] };
+  const normalizedConfidence = Number.isFinite(Number(confidence))
+    ? Math.max(0, Math.min(1, Number(confidence))) : null;
+  return { value, unit, method,
+    eligible_for_baseline: eligible && normalizedConfidence >= 0.75,
+    confidence: normalizedConfidence, source_refs: [] };
 }
 
-function vcV3Metrics(v) {
+function vcV3PathLowConfidencePct(path) {
+  const source = path && (path.raw || path);
+  if (!source || !Array.isArray(source.pts) || !source.pts.length) return null;
+  if (Array.isArray(source.valid) && source.valid.length === source.pts.length) {
+    return source.valid.filter(value => value === false).length / source.valid.length * 100;
+  }
+  if (source.lowConf != null && Number.isFinite(Number(source.lowConf))) {
+    return Math.max(0, Math.min(100, Number(source.lowConf) / source.pts.length * 100));
+  }
+  return null;
+}
+
+function vcV3Metrics(v, lowConfPct = null) {
   const out = {};
   const add = (key, value, unit, method, eligible = false, confidence = null) => {
     const metric = vcV3Metric(value, unit, method, eligible, confidence);
@@ -6091,13 +6150,16 @@ function vcV3Metrics(v) {
   };
   const poseConfidence = v.positionModelQualityPct == null ? null
     : Math.max(0, Math.min(1, 1 - v.positionModelQualityPct / 100));
-  add('rom_cm', v.romCm, 'cm', 'tracked_path_calibrated_v1', true, null);
-  add('velocity_loss_pct', v.lossPct, 'pct', 'rep_mcv_change_v1', true, null);
-  add('sticking_height_pct', v.stickPct, 'pct', 'mid_rep_min_velocity_v1', true, null);
-  add('sticking_velocity_dip_pct', v.dipPct, 'pct', 'mid_rep_min_velocity_v1', true, null);
-  add('bar_drift_cm', v.driftCm, 'cm', 'tracked_path_calibrated_v1', true, null);
-  add('path_efficiency_pct', v.effPct, 'pct', 'vertical_over_total_path_v1', true, null);
-  add('path_hysteresis_cm', v.hystCm, 'cm', 'eccentric_concentric_delta_v1', true, null);
+  const trackerConfidence = lowConfPct == null ? null
+    : Math.max(0, Math.min(1, 1 - Number(lowConfPct) / 100));
+  const calibratedConfidence = cmPerPx > 0 ? trackerConfidence : null;
+  add('rom_cm', v.romCm, 'cm', 'tracked_path_calibrated_v1', true, calibratedConfidence);
+  add('velocity_loss_pct', v.lossPct, 'pct', 'rep_mcv_change_v1', true, trackerConfidence);
+  add('sticking_height_pct', v.stickPct, 'pct', 'mid_rep_min_velocity_v1', true, trackerConfidence);
+  add('sticking_velocity_dip_pct', v.dipPct, 'pct', 'mid_rep_min_velocity_v1', true, trackerConfidence);
+  add('bar_drift_cm', v.driftCm, 'cm', 'tracked_path_calibrated_v1', true, calibratedConfidence);
+  add('path_efficiency_pct', v.effPct, 'pct', 'vertical_over_total_path_v1', true, trackerConfidence);
+  add('path_hysteresis_cm', v.hystCm, 'cm', 'eccentric_concentric_delta_v1', true, calibratedConfidence);
   add('position_quality_delta_pct', v.positionModelQualityPct, 'pct',
     'three_position_segment_consistency_v1', false, poseConfidence);
   add('knee_angle_bottom_deg', v.kneeAngle, 'deg', 'three_position_skeleton_v3', true, poseConfidence);
@@ -6120,7 +6182,8 @@ function vcV3Metrics(v) {
 
 function vcV3BaselineInsights(baselines, lift, variation, metrics, lowConfPct) {
   const result = { findings: [], used: [], comparedCount: 0,
-    blockedByQuality: Number(lowConfPct) > 15 };
+    blockedByQuality: lowConfPct == null || !Number.isFinite(Number(lowConfPct)) ||
+      Number(lowConfPct) > 15 };
   if (result.blockedByQuality || !Array.isArray(baselines)) return result;
   const definitions = [
     { key:'bar_drift_cm', label:'Den vandrette drift', better:'lower', min:1.5 },
@@ -6130,7 +6193,9 @@ function vcV3BaselineInsights(baselines, lift, variation, metrics, lowConfPct) {
   const candidates = [];
   definitions.forEach(def => {
     const metric = metrics && metrics[def.key];
-    if (!metric || !Number.isFinite(Number(metric.value))) return;
+    if (!metric || metric.eligible_for_baseline !== true ||
+        !Number.isFinite(Number(metric.confidence)) || Number(metric.confidence) < 0.75 ||
+        !Number.isFinite(Number(metric.value))) return;
     const baseline = baselines.find(item => item && item.lift === lift &&
       item.variation === variation && item.metric_key === def.key &&
       item.metric_method === metric.method);
@@ -6176,10 +6241,9 @@ function vcV3CurrentBaselineInsights(lift, variation, vals) {
   const selected = athleteSelect && athleteSelect.selectedOptions[0];
   const athleteId = selected && selected.dataset.athleteId;
   const path = strokes.filter(s => s.type === 'path' && s.vel).pop();
-  const lowConfPct = path && path.lowConf && path.pts.length
-    ? (path.lowConf / path.pts.length) * 100 : 0;
+  const lowConfPct = vcV3PathLowConfidencePct(path);
   return vcV3BaselineInsights(vcV3BaselineCache.get(athleteId) || [],
-    vcV3Lift(lift), vcV3Variation(lift, variation), vcV3Metrics(vals || {}), lowConfPct);
+    vcV3Lift(lift), vcV3Variation(lift, variation), vcV3Metrics(vals || {}, lowConfPct), lowConfPct);
 }
 
 function vcV3Reps(path) {
@@ -6189,9 +6253,23 @@ function vcV3Reps(path) {
     const lead = Math.max(0, Number(rep.eccS || 0) + Number(rep.pauseS || 0));
     const start = Number.isFinite(conStart) ? Math.max(0, conStart - lead) : 0;
     const finish = Number.isFinite(end) ? Math.max(start, end) : start;
+    const from = Math.max(0, Number(rep.start) || 0);
+    const to = Math.max(from, Number(rep.end) || from);
+    const validity = Array.isArray(path.valid) ? path.valid.slice(from, to + 1) : [];
+    const confidences = Array.isArray(path.confidence)
+      ? path.confidence.slice(from, to + 1).filter(Number.isFinite) : [];
+    const validRatio = validity.length
+      ? validity.filter(Boolean).length / validity.length : 1;
+    const repConfidence = confidences.length
+      ? confidences.reduce((sum, value) => sum + value, 0) / confidences.length : null;
+    const valid = finish > start && validRatio >= 0.85 && repConfidence != null &&
+      repConfidence >= 0.75;
+    const qualityFlags = [];
+    if (validRatio < 0.85) qualityFlags.push('tracking_coverage_low');
+    if (repConfidence == null || repConfidence < 0.75) qualityFlags.push('tracking_confidence_low');
     const metrics = {};
     const add = (key, value, unit, method, eligible = true) => {
-      const metric = vcV3Metric(value, unit, method, eligible, null);
+      const metric = vcV3Metric(value, unit, method, eligible && valid, repConfidence);
       if (metric) metrics[key] = metric;
     };
     add('mean_concentric_velocity_m_s', rep.mcv == null ? null : +rep.mcv.toFixed(3),
@@ -6202,7 +6280,8 @@ function vcV3Reps(path) {
     add('pause_s', rep.pauseS, 's', 'bar_velocity_phase_v1');
     add('concentric_s', rep.conS, 's', 'bar_velocity_phase_v1');
     return { index: index + 1, start_s: +start.toFixed(3), end_s: +finish.toFixed(3),
-      valid: finish > start, quality_flags: [], metrics };
+      valid, valid_ratio: +validRatio.toFixed(3), confidence: repConfidence == null
+        ? null : +repConfidence.toFixed(3), quality_flags: qualityFlags, metrics };
   });
 }
 
@@ -6217,7 +6296,7 @@ function vcV3BarPath(path) {
 }
 
 function vcV3Findings(items, lowConfPct) {
-  const confidence = lowConfPct > 15 ? 0.55 : 0.85;
+  const confidence = lowConfPct == null || lowConfPct > 15 ? 0.55 : 0.85;
   return (items || []).map((summary, index) => {
     const kind = /^OK:/i.test(summary) ? 'works'
       : /^(FLAG|OBS):/i.test(summary) ? 'focus'
@@ -6242,16 +6321,19 @@ function buildV3AnalysisPayload({ athleteId, athleteName, lift, variation,
   if (vals.positionModelQualityPct > 25) flags.push('position_measurement_uncertain');
   const normalizedLift = vcV3Lift(lift);
   const normalizedVariation = vcV3Variation(lift, variation);
-  const v3Metrics = vcV3Metrics(vals);
-  const ruleFindings = vcV3Findings(legacy.findings, lowConfPct || 0);
+  const v3Metrics = vcV3Metrics(vals, lowConfPct);
+  const ruleFindings = vcV3Findings(legacy.findings, lowConfPct);
   const personal = vcV3BaselineInsights(baselines, normalizedLift,
-    normalizedVariation, v3Metrics, lowConfPct || 0);
+    normalizedVariation, v3Metrics, lowConfPct);
   const findings = [...personal.findings, ...ruleFindings];
+  const captureFps = path && path.times && path.times.length > 1
+    ? (path.times.length - 1) /
+      Math.max(0.001, path.times[path.times.length - 1] - path.times[0]) : null;
   // Gem det samme prioriterede feedbacklag, som coachen ser i analysearket.
   // Den gamle cue-liste fulgte kode-rækkefølgen og kunne derfor gemme to
   // konkurrerende cues, selv når et andet fund var vigtigere.
   const prioritizedFeedback = buildCoachFeedback(lift, {
-    ...(vals || {}), lowConfPct: lowConfPct || 0, variation,
+    ...(vals || {}), lowConfPct, variation,
   });
   return {
     schema_version: 3, client_analysis_id: clientId,
@@ -6264,11 +6346,12 @@ function buildV3AnalysisPayload({ athleteId, athleteName, lift, variation,
       athlete_note: sourceMode === 'athlete_submission' ? (legacy.athlete_note || null) : null,
       baseline_snapshot: personal.used,
       feedback_evidence: vcV3FeedbackEvidence(prioritizedFeedback) },
-    capture_context: { camera_side: 'unknown', camera_angle_deg: null, fps: null,
+    capture_context: { camera_side: 'unknown', camera_angle_deg: null,
+      fps: Number.isFinite(captureFps) ? +captureFps.toFixed(2) : null,
       width_px: video.videoWidth || canvas.width || null,
       height_px: video.videoHeight || canvas.height || null,
-      cropped: null, fingerprint: null },
-    versions: { engine: 'videocoach-3.0.0', tracker: 'whole-plate-multipoint-bench-slow-output-2026-07-28',
+      cropped: false, fingerprint: null },
+    versions: { engine: 'videocoach-3.1.0', tracker: 'multipoint-clean-rebuild-v3-2026-08-15',
       skeleton: 'three-position-time-driven-2026-07-19',
       feedback: 'coach-feedback-priority-v2-2026-07-27' },
     quality: { low_conf_pct: lowConfPct,
@@ -6407,6 +6490,18 @@ if (VC_V3_BRIDGE_ENABLED) {
       pending.resolve(rows);
       return;
     }
+    if (msg.type === `${VC_V3_MESSAGE_PREFIX}:queue-status`) {
+      if (Number(msg.sent) > 0) {
+        if (setAthleteState) setAthleteState('sent');
+        say('Din gemte analyse er nu sendt til coachen ✓');
+      } else if (Number(msg.expired) > 0 || Number(msg.invalid) > 0) {
+        if (setAthleteState) setAthleteState('done');
+        say('Den lokale analyse kunne ikke sendes · tryk Send til coach igen');
+      } else if (Number(msg.remaining) > 0) {
+        say('Gemt lokalt · vi prøver automatisk igen');
+      }
+      return;
+    }
     if (msg.type === `${VC_V3_MESSAGE_PREFIX}:save-result`) {
       const pending = vcV3Pending.get(msg.requestId);
       if (!pending) return;
@@ -6438,8 +6533,10 @@ saveBtn.onclick = async () => {
     variation: document.getElementById('variationSel').value || null,
     load_kg: parsed.kg,
     rpe: parsed.rpe,
-    low_conf_pct: path && path.lowConf && path.pts.length
-      ? +((path.lowConf / path.pts.length) * 100).toFixed(1) : 0,
+    low_conf_pct: (() => {
+      const value = vcV3PathLowConfidencePct(path);
+      return value == null ? null : +value.toFixed(1);
+    })(),
     bar_path: path ? compressBarPath(path) : null,
     load_note: document.getElementById('loadInput').value.trim() || null,
     bias_note: document.getElementById('biasInput').value.trim() || null,
@@ -6490,9 +6587,12 @@ saveBtn.onclick = async () => {
     analyzed_at: new Date().toISOString(),
   };
   if (VC_V3_BRIDGE_ENABLED) {
-    if (!athleteId) { alert(VC_V3_ATHLETE_BRIDGE
-      ? 'Din atletprofil kunne ikke forbindes. Åbn VideoCoach fra appen igen.'
-      : 'Vælg en atlet fra coach-appen først'); return; }
+    if (!athleteId) {
+      say(VC_V3_ATHLETE_BRIDGE
+        ? 'Din atletprofil kunne ikke forbindes · luk og åbn VideoCoach fra din profil igen'
+        : 'Vælg en atlet fra coach-appen først');
+      return;
+    }
     try {
       let baselines = [];
       if (VC_V3_COACH_BRIDGE) {
@@ -6508,6 +6608,16 @@ saveBtn.onclick = async () => {
         sourceMode: VC_V3_ATHLETE_BRIDGE ? 'athlete_submission' : 'coach_web' });
       if (!payload.lift) throw new Error('Løftet kan ikke normaliseres til v3');
       const saved = await vcV3RequestSave(vcV3DatabaseRow(payload, data));
+      const queued = !!(saved && saved.queued);
+      if (queued) {
+        saveBtn.textContent = 'Gemt lokalt · sender automatisk';
+        setTimeout(() => saveBtn.textContent = 'Send til coach', 3200);
+        if (setAthleteState) setAthleteState('ready');
+        if (setAthleteSubmitOpen) setAthleteSubmitOpen(false);
+        say('Gemt lokalt · sendes automatisk, når forbindelsen er tilbage');
+        setTimeout(() => say(''), 5000);
+        return;
+      }
       saveBtn.textContent = VC_V3_ATHLETE_BRIDGE ? 'Sendt til coach ✓'
         : COACHWEB ? 'Sendt ✓' : '💾 Gemt i appen ✓';
       setTimeout(() => saveBtn.textContent = VC_V3_ATHLETE_BRIDGE ? 'Send til coach'
@@ -6524,7 +6634,8 @@ saveBtn.onclick = async () => {
       setTimeout(() => say(''), 3500);
       return;
     } catch (error) {
-      alert(`Analysen blev ikke gemt i appen: ${error.message}`);
+      say(`Analysen blev ikke sendt · ${error.message}`);
+      saveBtn.textContent = VC_V3_ATHLETE_BRIDGE ? 'Prøv at sende igen' : 'Prøv igen';
       return;
     }
   }

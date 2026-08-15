@@ -52,10 +52,14 @@ const analysisOnly = buildVideoCoachBaselineProfiles([], [
     metrics: { rom_cm: { value: 35, method: 'tracked_path_calibrated_v1', eligible_for_baseline: true } } },
   { id: 'e', status: 'coach_approved', lift: 'bench', variation: 'konkurrence_b_nk_pause', low_conf_pct: 1,
     metrics: { rom_cm: { value: 35, method: '', eligible_for_baseline: true } } },
+  { id: 'f', status: 'coach_approved', lift: 'bench', variation: 'konkurrence_b_nk_pause', low_conf_pct: 1,
+    metrics: [{ value: 35, method: 'tracked_path_calibrated_v1', eligible_for_baseline: true, confidence: 0.9 }] },
+  { id: 'g', status: 'coach_approved', lift: 'bench', variation: 'konkurrence_b_nk_pause', low_conf_pct: 1,
+    metrics: { rom_cm: { value: 'abc', method: 'tracked_path_calibrated_v1', eligible_for_baseline: true, confidence: 0.9 } } },
 ])
 assert.equal(analysisOnly.length, 1)
-assert.equal(analysisOnly[0].nAnalyses, 2)
-assert.equal(analysisOnly[0].remaining, 3)
+assert.equal(analysisOnly[0].nAnalyses, 1)
+assert.equal(analysisOnly[0].remaining, 4)
 assert.equal(analysisOnly[0].stage, 'building')
 
 const cacheWins = buildVideoCoachBaselineProfiles([

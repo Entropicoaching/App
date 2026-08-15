@@ -82,7 +82,7 @@ export function videoCoachPersonalBaselineAthleteText(value) {
 }
 
 export function videoCoachPersonalBaselineOptions(baselines, analysis, athleteId) {
-  const lowConfidencePct = finiteNumber(analysis?.low_conf_pct ?? 0)
+  const lowConfidencePct = finiteNumber(analysis?.low_conf_pct)
   if (!analysis || !athleteId || analysis.athlete_id !== athleteId ||
       !['squat', 'bench', 'deadlift'].includes(analysis.lift) ||
       typeof analysis.variation !== 'string' ||
@@ -106,7 +106,8 @@ export function videoCoachPersonalBaselineOptions(baselines, analysis, athleteId
     if (!metricKey || !metricMethod || nAnalyses == null || nAnalyses < MIN_BASELINE_ANALYSES ||
         !metric || metric.eligible_for_baseline !== true ||
         cleanText(metric.method, 160) !== metricMethod || finiteNumber(metric.value) == null ||
-        (metric.confidence != null && finiteNumber(metric.confidence) < MIN_METRIC_CONFIDENCE)) continue
+        finiteNumber(metric.confidence) == null ||
+        finiteNumber(metric.confidence) < MIN_METRIC_CONFIDENCE) continue
 
     const baseline = (baselines || []).find(item => item && item.lift === analysis.lift &&
       videoCoachVariationIdentity(item.lift, item.variation) === variation &&

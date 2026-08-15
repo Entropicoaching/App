@@ -10,9 +10,20 @@ const dashboard = readFileSync(join(here, '..', '..', 'src', 'Dashboard.jsx'), '
 const athleteView = readFileSync(join(here, '..', '..', 'src', 'AthleteView.jsx'), 'utf8');
 const fail = (condition, message) => { if (condition) throw new Error(message); };
 
-fail(!/videocoach\.html\?coach=1&bridge=v3&v=20260815-athlete-ui/.test(dashboard),
+const visibleBoundsSource = html.match(/function vcVisibleCanvasBounds\([\s\S]*?\n\}/)?.[0];
+fail(!visibleBoundsSource, 'Rep-/fartboksen skal have en beregnet synlig canvas-safe-area.');
+const visibleBounds = Function(`${visibleBoundsSource}; return vcVisibleCanvasBounds;`)();
+const croppedPortraitBounds = visibleBounds(
+  {left:315,top:-64,right:951,bottom:1066,width:636,height:1130},
+  {left:315,top:58,right:951,bottom:550}, 1080, 1920);
+fail(croppedPortraitBounds.top < 200,
+  'Rep-/fartboksen skal flyttes under topbjælken, når et portrætcanvas er beskåret.');
+fail(croppedPortraitBounds.left < 0 || croppedPortraitBounds.right > 1080,
+  'Rep-/fartboksens safe-area skal blive inden for canvasbredden.');
+
+fail(!/videocoach\.html\?coach=1&bridge=v3&v=\$\{VIDEOCOACH_BUILD_ID\}/.test(dashboard),
   'Coachens profilvisning skal bruge den fulde coach-bro og den aktuelle cacheversion.');
-fail(!/videocoach\.html\?mode=athlete&bridge=athlete-v1&v=20260815-athlete-ui/.test(athleteView),
+fail(!/videocoach\.html\?mode=athlete&bridge=athlete-v1&v=\$\{VIDEOCOACH_BUILD_ID\}/.test(athleteView),
   'Atletens profilvisning skal bruge den begrænsede atletbro og den aktuelle cacheversion.');
 
 fail(!/id="dropOpenVideoBtn" type="button">Åbn video<\/button>/.test(html),

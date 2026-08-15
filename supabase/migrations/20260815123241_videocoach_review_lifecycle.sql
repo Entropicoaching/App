@@ -1,7 +1,4 @@
--- Entropi VideoCoach: align the database lifecycle with coach review controls.
--- Prepared locally; do not run before the matching app deploy.
-
-begin;
+-- VideoCoach: enforce immutable identity and explicit review transitions.
 
 create or replace function public.entropi_video_analysis_lifecycle_v3()
 returns trigger
@@ -21,9 +18,8 @@ begin
     if new.source_mode is distinct from old.source_mode then
       raise exception 'source_mode is immutable';
     end if;
-    if old.status in ('coach_approved', 'shared', 'invalid')
-       and new.athlete_id is distinct from old.athlete_id then
-      raise exception 'athlete_id cannot change after draft';
+    if new.athlete_id is distinct from old.athlete_id then
+      raise exception 'athlete_id is immutable';
     end if;
     if not (
       new.status = old.status
@@ -34,9 +30,16 @@ begin
     ) then
       raise exception 'invalid VideoCoach status transition: % -> %', old.status, new.status;
     end if;
+
+    -- En ny delingscyklus skal altid være ulæst for atleten. Ellers kan en
+    -- tidligere athlete_seen_at overleve shared -> invalid -> draft -> shared.
+    if new.status is distinct from old.status then
+      new.athlete_seen_at = null;
+    end if;
+  elsif new.status = 'shared' then
+    new.athlete_seen_at = null;
   end if;
 
-  -- Returning an excluded measurement to draft starts a fresh review cycle.
   if new.status = 'draft' then
     new.approved_at = null;
     new.shared_at = null;
@@ -58,4 +61,9 @@ begin
 end
 $function$;
 
-commit;
+drop trigger if exists video_analyses_lifecycle_v3
+  on public.video_analyses;
+
+create trigger video_analyses_lifecycle_v3
+before insert or update on public.video_analyses
+for each row execute function public.entropi_video_analysis_lifecycle_v3();

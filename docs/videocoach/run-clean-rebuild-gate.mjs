@@ -701,6 +701,8 @@ try {
     `coach-broen har konsolfejl: ${coachBridge.errors.join(' | ')}`);
   const athleteBridge = await runAthleteBridgeCase(browser,candidateServer.origin,video);
   const submitted = athleteBridge.audit.row;
+  const submittedMetrics = Object.values(submitted?.metrics || {}).filter(Boolean);
+  const submittedReps = Array.isArray(submitted?.rep_details) ? submitted.rep_details : [];
   fail(athleteBridge.audit.saves === 1 && submitted?.schema_version === 3 &&
        submitted.athlete_id === BRIDGE_ATHLETE_ID && submitted.source_mode === 'athlete_submission' &&
        submitted.status === 'draft' && submitted.reps_count >= 1 &&
@@ -709,6 +711,12 @@ try {
        Number.isFinite(Number(submitted.metrics?.rom_cm?.value)) &&
        submitted.session_context?.athlete_note === 'Brotest uden database-write',
     `atletversionen sendte ikke en komplet, profilkoblet analysekladde: ${JSON.stringify(athleteBridge)}`);
+  fail(submittedMetrics.every(metric => metric.eligible_for_baseline !== true ||
+       Number(metric.confidence) >= .75),
+    `baseline-egnet metric manglede dokumenteret confidence: ${JSON.stringify(submitted.metrics)}`);
+  fail(submittedReps.every(rep => Number.isFinite(Number(rep.valid_ratio)) &&
+       (rep.valid === false || Number(rep.confidence) >= .75)),
+    `rep-kvalitet manglede coverage/confidence: ${JSON.stringify(submittedReps)}`);
   fail(athleteBridge.ui.athleteState === 'sent' && athleteBridge.ui.submitHidden &&
        !athleteBridge.ui.overflow && /Sendt til coach/.test(athleteBridge.ui.sendLabel),
     `atleten fik ikke en enkel, afsluttet sendetilstand: ${JSON.stringify(athleteBridge)}`);

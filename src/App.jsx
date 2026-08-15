@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, lazy, Suspense } from 'react'
 import { supabase, withRetry } from './supabase'
 import Auth from './Auth'
 import ErrorBoundary from './ErrorBoundary'
+import { purgeVideoCoachDraftQueues } from './videoCoachSubmission'
 
 // Lazy-load de to store views, så atleter ikke downloader coach-dashboardet (og
 // omvendt). Halverer det første bundt der skal hentes på mobil.
@@ -120,6 +121,10 @@ function App() {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (cancelled) return
+      const previousUserId = resolvedFor.current
+      if (!session || (previousUserId && previousUserId !== session.user.id)) {
+        purgeVideoCoachDraftQueues()
+      }
       setSession(session)
       if (!session) { resolvedFor.current = null; setRole(null); setLoading(false); return }
       // Spring opslag over hvis vi allerede kender rollen for denne bruger

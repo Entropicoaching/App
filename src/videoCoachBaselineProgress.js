@@ -20,10 +20,12 @@ function profileDetails(lift, variation, nAnalyses) {
 }
 
 function hasEligibleBaselineMetric(analysis) {
-  return Object.values(analysis.metrics || {}).some(metric => {
+  if (!analysis.metrics || typeof analysis.metrics !== 'object' ||
+      Array.isArray(analysis.metrics)) return false
+  return Object.values(analysis.metrics).some(metric => {
     if (!metric || typeof metric !== 'object' || metric.eligible_for_baseline !== true) return false
     if (!Number.isFinite(Number(metric.value)) || !String(metric.method || '').trim()) return false
-    return metric.confidence == null || Number(metric.confidence) >= 0.75
+    return Number.isFinite(Number(metric.confidence)) && Number(metric.confidence) >= 0.75
   })
 }
 
@@ -47,7 +49,8 @@ export function buildVideoCoachBaselineProfiles(baselines, analyses = []) {
     if (!analysis || !VIDEOCOACH_LIFT_LABELS[analysis.lift] ||
         typeof analysis.variation !== 'string' ||
         !['coach_approved', 'shared'].includes(analysis.status) ||
-        Number(analysis.low_conf_pct || 0) > 15 || !hasEligibleBaselineMetric(analysis)) return
+        analysis.low_conf_pct == null || Number(analysis.low_conf_pct) > 15 ||
+        !hasEligibleBaselineMetric(analysis)) return
     const variation = videoCoachVariationIdentity(analysis.lift, analysis.variation)
     const key = `${analysis.lift}:${variation}`
     if (!eligibleAnalysisIds.has(key)) eligibleAnalysisIds.set(key, new Set())
@@ -85,11 +88,13 @@ export function videoCoachBaselineReviewImpact(baselines, analyses, analysis) {
     detail: 'Målingen påvirker ikke atletens historiske sammenligning.',
   }
 
-  const lowConfidence = Number(analysis.low_conf_pct || 0)
-  if (lowConfidence > 15) return {
+  const lowConfidence = analysis.low_conf_pct == null ? null : Number(analysis.low_conf_pct)
+  if (!Number.isFinite(lowConfidence) || lowConfidence > 15) return {
     kind: 'blocked', label, current, after: current,
     title: 'Tæller ikke i baseline',
-    detail: `Lav tracking-confidence er ${lowConfidence.toLocaleString('da-DK', { maximumFractionDigits: 1 })}% · grænsen er 15%.`,
+    detail: Number.isFinite(lowConfidence)
+      ? `Lav tracking-confidence er ${lowConfidence.toLocaleString('da-DK', { maximumFractionDigits: 1 })}% · grænsen er 15%.`
+      : 'Tracking-confidence mangler, så målingen kan ikke indgå sikkert.',
   }
 
   if (!hasEligibleBaselineMetric(analysis)) return {

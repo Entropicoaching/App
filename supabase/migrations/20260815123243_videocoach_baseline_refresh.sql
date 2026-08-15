@@ -1,15 +1,13 @@
 -- Entropi VideoCoach: keep each athlete's personal v3 baseline in sync with
--- coach-approved analyses. Prepared locally; do not run before app deploy.
+-- coach-approved analyses.
 --
 -- Baseline contract:
 --   * exact athlete + lift + variation + metric method
 --   * only coach-approved/shared analyses
 --   * tracker low-confidence <= 15%
 --   * only metrics explicitly marked eligible_for_baseline
---   * metric confidence must be null or >= 0.75
+--   * metric confidence must be present and >= 0.75
 --   * robust centre = median; robust spread = MAD
-
-begin;
 
 create or replace function public.entropi_recompute_athlete_baseline_v3(
   p_athlete_id uuid,
@@ -22,11 +20,21 @@ security definer
 set search_path = pg_catalog, public
 as $function$
 declare
-  v_baseline_version constant text := 'approved_median_mad_v1';
+  -- v2 bevarer den gamle v1-cache ved rollout/rollback. Klienten vælger kun
+  -- denne version, hvor metric-confidence er en del af kontrakten.
+  v_baseline_version constant text := 'approved_median_mad_v2_confident';
 begin
   if p_athlete_id is null or p_lift is null or p_variation is null then
     return;
   end if;
+
+  -- To samtidige coach-godkendelser for samme slice må ikke køre den
+  -- efterfølgende DELETE + INSERT oven i hinanden.
+  perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(
+    p_athlete_id::text || chr(31) || p_lift || chr(31) || p_variation ||
+      chr(31) || v_baseline_version,
+    0
+  ));
 
   -- The cache is fully recomputable. Removing the old slice first also clears
   -- stale metrics when an approved analysis is later marked invalid.
@@ -53,7 +61,7 @@ begin
     source_fingerprint,
     updated_at
   )
-  with eligible as (
+  with metric_candidates as (
     select
       va.id as analysis_id,
       va.analyzed_at,
@@ -61,26 +69,37 @@ begin
       va.reps_count,
       metric.key as metric_key,
       metric.value ->> 'method' as metric_method,
-      (metric.value ->> 'value')::numeric as metric_value
+      case when jsonb_typeof(metric.value -> 'value') = 'number'
+        then (metric.value ->> 'value')::numeric
+        else null
+      end as metric_value,
+      case when jsonb_typeof(metric.value -> 'confidence') = 'number'
+        then (metric.value ->> 'confidence')::numeric
+        else null
+      end as metric_confidence
     from public.video_analyses va
-    cross join lateral jsonb_each(va.metrics) as metric(key, value)
+    cross join lateral jsonb_each(
+      case when jsonb_typeof(va.metrics) = 'object'
+        then va.metrics
+        else '{}'::jsonb
+      end
+    ) as metric(key, value)
     where va.athlete_id = p_athlete_id
       and va.lift = p_lift
       and va.variation = p_variation
       and va.status in ('coach_approved', 'shared')
-      and coalesce(va.low_conf_pct, 0) <= 15
+      and va.low_conf_pct is not null
+      and va.low_conf_pct <= 15
       and jsonb_typeof(metric.value) = 'object'
       and metric.value ->> 'eligible_for_baseline' = 'true'
-      and jsonb_typeof(metric.value -> 'value') = 'number'
       and nullif(metric.value ->> 'method', '') is not null
-      and (
-        metric.value -> 'confidence' is null
-        or jsonb_typeof(metric.value -> 'confidence') = 'null'
-        or (
-          jsonb_typeof(metric.value -> 'confidence') = 'number'
-          and (metric.value ->> 'confidence')::numeric >= 0.75
-        )
-      )
+  ),
+  eligible as (
+    select analysis_id, analyzed_at, updated_at, reps_count, metric_key,
+      metric_method, metric_value
+    from metric_candidates
+    where metric_value is not null
+      and metric_confidence >= 0.75
   ),
   centres as (
     select
@@ -188,7 +207,8 @@ drop trigger if exists video_analyses_refresh_baseline_v3
   on public.video_analyses;
 
 create trigger video_analyses_refresh_baseline_v3
-after insert or update or delete on public.video_analyses
+after insert or delete or update of status, athlete_id, lift, variation,
+  metrics, low_conf_pct, reps_count, analyzed_at on public.video_analyses
 for each row execute function public.entropi_refresh_video_analysis_baseline_v3();
 
 -- Backfill any rows already approved before this migration is installed.
@@ -209,5 +229,3 @@ begin
   end loop;
 end
 $backfill$;
-
-commit;
