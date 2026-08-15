@@ -40,6 +40,7 @@ const run = (file, env = {}) => {
 
 run('tracker-bottom-seam-rig.mjs');
 run('athlete-start-flow-rig.mjs');
+run('bar-path-visual-smoothing-rig.mjs');
 run('run-clean-rebuild-gate.mjs', {
   VC_AB_BASE:BASE,
   VC_BOTTOM_SEAM_FIXTURE:'1',

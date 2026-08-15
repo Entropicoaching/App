@@ -69,6 +69,9 @@ fail(!/\.iconbtn\[hidden\] \{ display:none !important; \}/.test(html),
 fail(!/id="vcHudCollapse"[\s\S]{0,180}Minimér analyseresultat/.test(html) ||
      !/vcHudCollapse\.onclick = \(\) => \{[\s\S]{0,280}vcHudCollapsed/.test(html),
   'Desktop-resultatet skal kunne minimeres uden at ændre analysen.');
+fail(!/body\.desktop #barPathHUD \{[\s\S]{0,180}minmax\(128px,\.8fr\)/.test(html) ||
+     !/body\.desktop \.vcRepSelector \{[\s\S]{0,140}flex-wrap:wrap;[\s\S]{0,80}overflow:visible/.test(html),
+  'Desktop skal vise mindst fire reps uden overlap og wrappe længere sæt.');
 fail(!/body\.desktop\.vcDeskTrayOpen #barPathHUD \{ display:none !important; \}/.test(html) ||
      !/const setDesktopTrayOpen = open => \{[\s\S]{0,180}vcDeskTrayOpen/.test(html),
   'Fordyb skal åbne frit uden at blive dækket af resultatmetrics.');
