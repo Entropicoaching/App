@@ -7,6 +7,8 @@ import { sanitizeVideoCoachFeedbackEvidence } from './videoCoachFeedbackEvidence
 import { videoCoachFeedbackQuality } from './videoCoachFeedbackQuality'
 import { videoCoachPersonalBaselineForAnalysis, videoCoachPersonalBaselineOptions, videoCoachPersonalBaselineSelection, withVideoCoachPersonalBaseline } from './videoCoachPersonalFeedback'
 import { VIDEOCOACH_LIFT_LABELS as VIDEOCOACH_LIFTS, videoCoachVariationIdentity, videoCoachVariationLabel } from './videoCoachLabels'
+import { saveVideoCoachDraft, validateVideoCoachPayloadBounds } from './videoCoachSubmission'
+import { VIDEOCOACH_BASELINE_VERSION, VIDEOCOACH_BUILD_ID } from './videoCoachVersion'
 import { normalizeAthleteLoginEmail } from './athleteOnboarding'
 
 const BLOCK_NAMES = ['Akkumulering', 'Intensificering', 'Peak', 'Deload', 'GPP', 'Hypertrofi', 'Styrke', 'Transition']
@@ -72,7 +74,7 @@ const statusLabels = { active: 'Aktiv', peaking: 'Peaking', offseason: 'Off-seas
 const statusColors = { active: '#6cba6c', peaking: '#c8923a', offseason: '#7a7770', ferie: '#5b9bb5' }
 
 const VIDEOCOACH_V3_PREFIX = 'entropi:videocoach:v3'
-const VIDEOCOACH_V3_URL = 'videocoach.html?coach=1&bridge=v3&v=20260815-athlete-ui'
+const VIDEOCOACH_V3_URL = `videocoach.html?coach=1&bridge=v3&v=${VIDEOCOACH_BUILD_ID}`
 const VIDEOCOACH_V3_COLUMNS = new Set([
   'client_analysis_id', 'athlete_id', 'athlete_name', 'source_mode', 'status',
   'lift', 'variation', 'load_kg', 'rpe', 'reps_count', 'rep_details',
@@ -109,12 +111,9 @@ function validateVideoCoachV3Row(row, athletes) {
     return 'Legacy reps skal være numeriske'
   if (!Array.isArray(row.rep_details) || row.reps_count !== row.rep_details.length)
     return 'Repantal og repdetaljer stemmer ikke'
+  const boundsError = validateVideoCoachPayloadBounds(row)
+  if (boundsError) return boundsError
   return null
-}
-
-function videoCoachSavedIdentityMatches(saved, requested) {
-  return !!saved && saved.client_analysis_id === requested?.client_analysis_id &&
-    saved.athlete_id === requested?.athlete_id
 }
 
 const VIDEOCOACH_STATUS = {
@@ -720,6 +719,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         const { data, error } = await supabase.from('athlete_baselines_v3')
           .select('lift,variation,metric_key,metric_method,baseline_version,median,mad,n_analyses,n_reps,last_analyzed_at')
           .eq('athlete_id', message.athleteId)
+          .eq('baseline_version', VIDEOCOACH_BASELINE_VERSION)
           .order('last_analyzed_at', { ascending: false })
         if (error) {
           reply({ ok: false, error: error.message || 'Baseline kunne ikke hentes' })
@@ -751,21 +751,11 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             message.row.session_context?.feedback_evidence),
         },
       }
-      let result = await supabase.from('video_analyses').insert(safeRow)
-        .select('id,client_analysis_id,athlete_id,status,created_at').single()
-      // Samme analyseresultat kan gensendes efter et timeout. Den unikke
-      // client_analysis_id gør gentagelsen idempotent uden en ny række.
-      if (result.error?.code === '23505') {
-        result = await supabase.from('video_analyses')
-          .select('id,client_analysis_id,athlete_id,status,created_at')
-          .eq('client_analysis_id', message.row.client_analysis_id).single()
-      }
+      // Samme analyseresultat kan gensendes efter et timeout. Den fælles gemmer
+      // accepterer kun dubletten, når både klient-id og atlet-id matcher.
+      const result = await saveVideoCoachDraft(supabase, safeRow)
       if (result.error) {
         reply({ ok: false, error: result.error.message || 'Databasen afviste analysen' })
-        return
-      }
-      if (!videoCoachSavedIdentityMatches(result.data, safeRow)) {
-        reply({ ok: false, error: 'Databasen returnerede analysen på en forkert atlet' })
         return
       }
       reply({ ok: true, data: result.data })
@@ -1774,6 +1764,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       supabase.from('athlete_baselines_v3')
         .select('lift,variation,metric_key,metric_method,baseline_version,median,mad,n_analyses,n_reps,last_analyzed_at')
         .eq('athlete_id', athleteId)
+        .eq('baseline_version', VIDEOCOACH_BASELINE_VERSION)
         .order('last_analyzed_at', { ascending: false }),
     ])
     if (historyResult.error || baselineResult.error) {
@@ -4458,6 +4449,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               const draftVideoCount = videoAnalyses.filter(item => item.status === 'draft').length
               const approvedVideoCount = videoAnalyses.filter(item =>
                 item.status === 'coach_approved' || item.status === 'shared').length
+              const visibleApprovedVideoCount = filteredVideoAnalyses.filter(item =>
+                item.status === 'coach_approved' || item.status === 'shared').length
               const baselineProfiles = buildVideoCoachBaselineProfiles(videoBaselines, videoAnalyses)
               const visibleBaselineProfiles = videoLiftFilter === 'all'
                 ? baselineProfiles : baselineProfiles.filter(profile => profile.lift === videoLiftFilter)
@@ -4578,6 +4571,12 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                             )
                           })}
                         </div>
+                      </div>
+                    )}
+
+                    {visibleBaselineProfiles.length === 0 && visibleApprovedVideoCount > 0 && (
+                      <div style={{ border: '1px solid rgba(103,223,245,0.14)', background: 'rgba(103,223,245,0.025)', padding: '0.75rem 0.9rem', marginBottom: '0.9rem', color: '#8f918b', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.68rem', lineHeight: 1.5 }}>
+                        Den nye kvalitetssikrede baseline bygges fra målinger med dokumenteret tracking-confidence. Den tidligere historik er bevaret, men bruges ikke til automatiske sammenligninger.
                       </div>
                     )}
 

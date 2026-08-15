@@ -17,6 +17,8 @@
     "verify:videocoach-feedback-quality": "node scripts/verify-videocoach-feedback-quality.mjs",
     "verify:videocoach-labels": "node scripts/verify-videocoach-labels.mjs",
     "verify:videocoach-variation-migration": "node scripts/verify-videocoach-variation-migration.mjs",
+    "verify:videocoach-submission": "node scripts/verify-videocoach-submission.mjs",
+    "verify:videocoach-migrations": "node scripts/verify-videocoach-migrations.mjs",
     "verify:n8n": "node n8n/verify-workflows.mjs",
     "preview:n8n-briefing": "node n8n/preview-coach-briefing.mjs"
   },

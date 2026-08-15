@@ -6,9 +6,14 @@ import { videoCoachPersonalBaselineAthleteText, videoCoachPersonalBaselineForAna
 import { VIDEOCOACH_LIFT_LABELS as ATHLETE_VIDEO_LIFTS, videoCoachVariationLabel as athleteVideoVariationLabel } from './videoCoachLabels'
 import { completeAthleteOnboarding, hasCompletedAthleteOnboarding } from './athleteOnboarding'
 import { calcWarmupSets, isMainLift } from './warmup'
+import { flushVideoCoachDraftQueue, isRetryableVideoCoachError,
+  queueVideoCoachDraft, saveVideoCoachDraft,
+  validateVideoCoachPayloadBounds } from './videoCoachSubmission'
+import { VIDEOCOACH_BUILD_ID } from './videoCoachVersion'
 
 const ATHLETE_VIDEOCOACH_PREFIX = 'entropi:videocoach:v3'
-const ATHLETE_VIDEOCOACH_URL = 'videocoach.html?mode=athlete&bridge=athlete-v1&v=20260815-athlete-ui'
+const ATHLETE_VIDEOCOACH_QUEUE_CHANGED = 'entropi:videocoach:queue-changed'
+const ATHLETE_VIDEOCOACH_URL = `videocoach.html?mode=athlete&bridge=athlete-v1&v=${VIDEOCOACH_BUILD_ID}`
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const ATHLETE_VIDEOCOACH_COLUMNS = new Set([
   'client_analysis_id', 'athlete_id', 'athlete_name', 'source_mode', 'status',
@@ -33,6 +38,7 @@ function validateAthleteVideoCoachRow(row, athleteId) {
     return 'Kun schema-v3 kladder kan sendes til coachen'
   if (row.source_mode !== 'athlete_submission' || row.athlete_id !== athleteId)
     return 'Analysen er ikke knyttet til den indloggede atlet'
+  if (!isUuid(row.client_analysis_id)) return 'Analysen mangler et gyldigt klient-id'
   if (!['squat', 'bench', 'deadlift'].includes(row.lift)) return 'Ugyldigt løft'
   if (!/^[a-z0-9]+([._-][a-z0-9]+)*$/.test(row.variation || ''))
     return 'Ugyldig variation'
@@ -40,6 +46,8 @@ function validateAthleteVideoCoachRow(row, athleteId) {
     return 'Repdata skal være numeriske'
   if (!Array.isArray(row.rep_details) || row.reps_count !== row.rep_details.length)
     return 'Repantal og repdetaljer stemmer ikke'
+  const boundsError = validateVideoCoachPayloadBounds(row)
+  if (boundsError) return boundsError
   const athleteNote = row.session_context?.athlete_note
   if (athleteNote != null && (typeof athleteNote !== 'string' || athleteNote.length > 1000))
     return 'Notatet til coachen er ugyldigt eller for langt'
@@ -1809,6 +1817,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         event.source.postMessage({ type: `${ATHLETE_VIDEOCOACH_PREFIX}:config`,
           athletes: [{ id: currentAthlete.id, name: currentAthlete.name }],
           selectedAthleteId: currentAthlete.id, submissionMode: 'athlete' }, event.origin)
+        window.dispatchEvent(new Event(ATHLETE_VIDEOCOACH_QUEUE_CHANGED))
         return
       }
       if (message.type !== `${ATHLETE_VIDEOCOACH_PREFIX}:save-draft`) return
@@ -1843,22 +1852,90 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
             message.row.session_context?.feedback_evidence),
         },
       }
-      const result = await supabase.from('video_analyses').insert(safeRow)
-      if (result.error?.code === '23505') {
-        reply({ ok: true, data: { client_analysis_id: safeRow.client_analysis_id,
-          athlete_id: currentAthlete.id, status: 'draft', duplicate: true } })
-        return
-      }
+      const result = await saveVideoCoachDraft(supabase, safeRow, { athleteSubmission: true })
       if (result.error) {
+        if (isRetryableVideoCoachError(result.error) &&
+            queueVideoCoachDraft(safeRow, globalThis.localStorage, session.user.id)) {
+          window.dispatchEvent(new Event(ATHLETE_VIDEOCOACH_QUEUE_CHANGED))
+          reply({ ok: true, data: { client_analysis_id: safeRow.client_analysis_id,
+            athlete_id: currentAthlete.id, status: 'draft', queued: true } })
+          return
+        }
         reply({ ok: false, error: result.error.message || 'Analysen kunne ikke sendes' })
         return
       }
-      reply({ ok: true, data: { client_analysis_id: safeRow.client_analysis_id,
-        athlete_id: currentAthlete.id, status: 'draft' } })
+      reply({ ok: true, data: { ...result.data, duplicate: result.duplicate } })
     }
     window.addEventListener('message', onAthleteVideoCoachMessage)
     return () => window.removeEventListener('message', onAthleteVideoCoachMessage)
-  }, [])
+  }, [session.user.id])
+
+  useEffect(() => {
+    if (!athlete?.id) return undefined
+    let cancelled = false
+    let retryTimer = null
+    let retryAttempt = 0
+    let inFlight = false
+    const maxRetries = 5
+
+    const notifyVideoCoachQueue = result => {
+      const message = { type: `${ATHLETE_VIDEOCOACH_PREFIX}:queue-status`, ...result }
+      for (const client of athleteVideoCoachClientsRef.current) {
+        if (!client || client.closed) { athleteVideoCoachClientsRef.current.delete(client); continue }
+        try { client.postMessage(message, window.location.origin) }
+        catch { athleteVideoCoachClientsRef.current.delete(client) }
+      }
+      if (result.sent > 0) {
+        if (flashTimerRef.current) clearTimeout(flashTimerRef.current)
+        setFlash({ message: 'Din gemte videoanalyse er nu sendt til coachen.', kind: 'info' })
+        flashTimerRef.current = setTimeout(() => setFlash(null), 4500)
+      } else if (result.expired > 0 || result.invalid > 0) {
+        if (flashTimerRef.current) clearTimeout(flashTimerRef.current)
+        setFlash({ message: 'En lokalt gemt videoanalyse kunne ikke sendes. Åbn VideoCoach og send den igen.', kind: 'error' })
+        flashTimerRef.current = setTimeout(() => setFlash(null), 6500)
+      }
+    }
+
+    const flushPendingVideoCoach = async () => {
+      if (cancelled || inFlight) return
+      inFlight = true
+      const result = await flushVideoCoachDraftQueue(
+        supabase, athlete.id, globalThis.localStorage, session.user.id)
+      inFlight = false
+      if (cancelled) return
+      notifyVideoCoachQueue(result)
+      if (result.remaining > 0 && retryAttempt < maxRetries) {
+        const delay = Math.min(80_000, 5000 * (2 ** retryAttempt))
+        retryAttempt++
+        retryTimer = setTimeout(flushPendingVideoCoach, delay)
+      } else if (result.remaining > 0) {
+        if (flashTimerRef.current) clearTimeout(flashTimerRef.current)
+        setFlash({ message: 'Videoanalysen er stadig gemt lokalt. Vi prøver igen næste gang VideoCoach åbnes.', kind: 'error' })
+        flashTimerRef.current = setTimeout(() => setFlash(null), 6500)
+      } else {
+        retryAttempt = 0
+      }
+    }
+    flushPendingVideoCoach()
+    const retryWhenOnline = () => {
+      retryAttempt = 0
+      if (retryTimer) clearTimeout(retryTimer)
+      flushPendingVideoCoach()
+    }
+    const retryWhenQueueChanges = () => {
+      retryAttempt = 0
+      if (retryTimer) clearTimeout(retryTimer)
+      retryTimer = setTimeout(flushPendingVideoCoach, 5000)
+    }
+    window.addEventListener('online', retryWhenOnline)
+    window.addEventListener(ATHLETE_VIDEOCOACH_QUEUE_CHANGED, retryWhenQueueChanges)
+    return () => {
+      cancelled = true
+      if (retryTimer) clearTimeout(retryTimer)
+      window.removeEventListener('online', retryWhenOnline)
+      window.removeEventListener(ATHLETE_VIDEOCOACH_QUEUE_CHANGED, retryWhenQueueChanges)
+    }
+  }, [athlete?.id, session.user.id])
 
   useEffect(() => { fetchAthlete() }, [])
   useEffect(() => { if (athlete) fetchLogs(athlete.id, kostDate) }, [kostDate, athlete?.id])
