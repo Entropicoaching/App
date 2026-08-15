@@ -10,9 +10,9 @@ const dashboard = readFileSync(join(here, '..', '..', 'src', 'Dashboard.jsx'), '
 const athleteView = readFileSync(join(here, '..', '..', 'src', 'AthleteView.jsx'), 'utf8');
 const fail = (condition, message) => { if (condition) throw new Error(message); };
 
-fail(!/videocoach\.html\?coach=1&bridge=v3&v=20260814-product-modes/.test(dashboard),
+fail(!/videocoach\.html\?coach=1&bridge=v3&v=20260815-athlete-ui/.test(dashboard),
   'Coachens profilvisning skal bruge den fulde coach-bro og den aktuelle cacheversion.');
-fail(!/videocoach\.html\?mode=athlete&bridge=athlete-v1&v=20260814-product-modes/.test(athleteView),
+fail(!/videocoach\.html\?mode=athlete&bridge=athlete-v1&v=20260815-athlete-ui/.test(athleteView),
   'Atletens profilvisning skal bruge den begrænsede atletbro og den aktuelle cacheversion.');
 
 fail(!/id="dropOpenVideoBtn" type="button">Åbn video<\/button>/.test(html),
@@ -64,6 +64,16 @@ fail(!/const currentVelocity = path\.vel\[i\];[\s\S]{0,180}Number\.isFinite\(cur
   'Velocity-søjlen må aldrig forgiftes af NaN i ugyldige frames.');
 fail(!/body\.athlete #vcBackStep, body\.athlete #vcContinueStep \{ display:none !important; \}/.test(html),
   'Atletflowet må ikke vise en ekstra top-handling ved siden af den guidede hovedknap.');
+fail(!/body\.athlete:not\(\[data-athlete-state="done"\]\):not\(\[data-athlete-state="sent"\]\) footer[\s\S]{0,100}repeat\(2/.test(html) ||
+     !/body\.athlete\.athlete-profile\[data-athlete-state="done"\] #penBtn[\s\S]{0,150}display:none !important/.test(html),
+  'Atletens handlingsbar skal være to valg under klargøring og højst fire efter analysen.');
+fail(!/body\.athlete #athleteSubmitCard[\s\S]{0,260}border-radius:24px/.test(html) ||
+     !/athleteSubmitHead\.className = 'athleteSubmitHead'/.test(html) ||
+     !/athleteSubmitFields\.className = 'athleteSubmitFields'/.test(html),
+  'Atletens sendeark skal bruge den rolige, responsive produktskal frem for inline-styling.');
+fail(!/body\.athlete #vcSystemBar \{ grid-template-columns:minmax\(0,1fr\) auto/.test(html) ||
+     !/body\.athlete \.vcSystemBrand, body\.athlete #vcSystemState \{ display:none !important; \}/.test(html),
+  'Atletens mobiltop skal prioritere arbejdstrinnene frem for dubleret brand og status.');
 fail(!/\.iconbtn\[hidden\] \{ display:none !important; \}/.test(html),
   'Fordyb må ikke være synlig før en analyse blot fordi knappen har ikonlayout.');
 fail(!/id="vcHudCollapse"[\s\S]{0,180}Minimér analyseresultat/.test(html) ||

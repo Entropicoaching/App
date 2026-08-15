@@ -210,7 +210,11 @@ async function runAthleteCase(browser, testCase, videoBuffer) {
     openVisible:document.getElementById('athleteOpenVideoBtn')?.offsetParent !== null,
     sendHidden:document.getElementById('athleteSendBtn')?.hidden === true,
     submitHidden:document.getElementById('athleteSubmitSheet')?.hidden === true,
-    footerHidden:getComputedStyle(document.querySelector('footer')).display === 'none'
+    footerHidden:getComputedStyle(document.querySelector('footer')).display === 'none',
+    mobileBrandHidden:!document.querySelector('.vcSystemBrand') ||
+      getComputedStyle(document.querySelector('.vcSystemBrand')).display === 'none',
+    minTabHeight:Math.min(...[...document.querySelectorAll('#vcWorkspaceTabs button')]
+      .map(element => element.getBoundingClientRect().height))
   }));
   await page.locator('#fileInput').setInputFiles({name:'same-deadlift-fixture.webm',
     mimeType:'video/webm',buffer:videoBuffer});
@@ -237,7 +241,10 @@ async function runAthleteCase(browser, testCase, videoBuffer) {
   await page.waitForFunction(() => document.getElementById('video').currentTime > .2);
   if (testCase.candidate) startGate = await page.evaluate(() => ({
     beforeDisabled:document.getElementById('allBtn').disabled,
-    beforeLabel:document.getElementById('allBtn').dataset.label
+    beforeLabel:document.getElementById('allBtn').dataset.label,
+    visibleActions:[...document.querySelectorAll('footer button')]
+      .filter(element => element.offsetParent !== null).map(element => element.id),
+    footerColumns:getComputedStyle(document.querySelector('footer')).gridTemplateColumns.split(' ').length
   }));
   await page.locator('#athleteMarkStartBtn').click();
   if (testCase.candidate) Object.assign(startGate, await page.evaluate(() => ({
@@ -281,6 +288,9 @@ async function runAthleteCase(browser, testCase, videoBuffer) {
       phases:document.getElementById('vcPhaseLegend').textContent.trim(),
       metrics:document.getElementById('vcMetricCards').textContent.trim(),
       metricValues:[...document.querySelectorAll('#vcMetricCards b')].map(element => element.textContent.trim()),
+      visibleActions:[...document.querySelectorAll('footer button')]
+        .filter(element => element.offsetParent !== null).map(element => element.id),
+      footerColumns:getComputedStyle(document.querySelector('footer')).gridTemplateColumns.split(' ').length,
       lift:document.getElementById('liftSel').value,
       variation:document.getElementById('variationSel').value
     }; });
@@ -608,8 +618,22 @@ async function runAthleteBridgeCase(browser, origin, videoBuffer) {
   await frame.waitForFunction(() => window.__vcTrackerBenchmarkLast?.outcome === 'completed',null,
     {timeout:60_000});
   await frame.waitForFunction(() => document.body.dataset.athleteState === 'done',null,{timeout:10_000});
+  const doneUi = await frame.evaluate(() => ({
+    profileMode:document.body.classList.contains('athlete-profile'),
+    visibleActions:[...document.querySelectorAll('footer button')]
+      .filter(element => element.offsetParent !== null).map(element => element.id),
+    footerColumns:getComputedStyle(document.querySelector('footer')).gridTemplateColumns.split(' ').length
+  }));
   await frame.locator('#athleteSendBtn').click();
   await frame.waitForFunction(() => !document.getElementById('athleteSubmitSheet').hidden);
+  Object.assign(doneUi, await frame.evaluate(() => ({
+    sheetVisible:!document.getElementById('athleteSubmitSheet').hidden &&
+      getComputedStyle(document.getElementById('athleteSubmitSheet')).display === 'flex' &&
+      document.getElementById('athleteSubmitSheet').getBoundingClientRect().height > 0,
+    cardRadius:parseFloat(getComputedStyle(document.getElementById('athleteSubmitCard')).borderTopLeftRadius),
+    sendWidth:document.getElementById('saveBtn').getBoundingClientRect().width,
+    cardWidth:document.getElementById('athleteSubmitCard').getBoundingClientRect().width
+  })));
   await frame.locator('#loadInput').fill('180 kg / RPE 8');
   await frame.locator('#athleteNoteInput').fill('Brotest uden database-write');
   await frame.locator('#saveBtn').click();
@@ -624,7 +648,7 @@ async function runAthleteBridgeCase(browser, origin, videoBuffer) {
     overflow:document.documentElement.scrollWidth > innerWidth + 1
   }));
   await context.close();
-  return {audit,ui,errors};
+  return {audit,ui,doneUi,errors};
 }
 
 const baselineServer = await startServer(baselineHtml);
@@ -688,6 +712,11 @@ try {
   fail(athleteBridge.ui.athleteState === 'sent' && athleteBridge.ui.submitHidden &&
        !athleteBridge.ui.overflow && /Sendt til coach/.test(athleteBridge.ui.sendLabel),
     `atleten fik ikke en enkel, afsluttet sendetilstand: ${JSON.stringify(athleteBridge)}`);
+  fail(athleteBridge.doneUi.profileMode && athleteBridge.doneUi.sheetVisible &&
+       athleteBridge.doneUi.visibleActions.join(',') === 'playBtn,allBtn,exportBtn,athleteSendBtn' &&
+       athleteBridge.doneUi.footerColumns === 4 && athleteBridge.doneUi.cardRadius >= 20 &&
+       athleteBridge.doneUi.sendWidth >= athleteBridge.doneUi.cardWidth - 40,
+    `atletens resultat- og sendeflow er overfyldt eller visuelt brudt: ${JSON.stringify(athleteBridge.doneUi)}`);
   fail(athleteBridge.errors.length === 0,
     `atlet-broen har konsolfejl: ${athleteBridge.errors.join(' | ')}`);
   const desktopCalibration = await runDesktopCalibrationCase(browser,candidateServer.url,video);
@@ -734,7 +763,8 @@ try {
     url:`${candidateServer.url}&trackerProbe=1`,candidate:true,entropiUx:ENTROPI_UX_ACCEPT},video);
   fail(candidate.publicMode?.athleteMode && candidate.publicMode.openVisible &&
        candidate.publicMode.sendHidden && candidate.publicMode.submitHidden &&
-       candidate.publicMode.footerHidden,
+       candidate.publicMode.footerHidden && candidate.publicMode.mobileBrandHidden &&
+       candidate.publicMode.minTabHeight >= 43,
     `den offentlige smagsprøve var ikke et rent, selvstændigt atletflow: ${JSON.stringify(candidate.publicMode)}`);
   const baselineIsClean = BASE !== LIVE_BASE;
   const baseline = await runAthleteCase(browser,{name:`baseline ${BASE.slice(0,7)}`,
@@ -816,7 +846,9 @@ try {
     candidate.liftSelection.deadliftOptions.every(value => !/sumo/i.test(value)),
     `dødløft arvede sumo-variationer: ${JSON.stringify(candidate.liftSelection)}`);
   fail(candidate.startGate?.beforeDisabled && candidate.startGate.beforeLabel === 'Sæt start først' &&
-       !candidate.startGate.afterDisabled && candidate.startGate.afterLabel === 'Stangbane',
+       candidate.startGate.visibleActions.join(',') === 'playBtn,allBtn' &&
+       candidate.startGate.footerColumns === 2 && !candidate.startGate.afterDisabled &&
+       candidate.startGate.afterLabel === 'Stangbane',
     `startguiden forklarede ikke analyselåsen tydeligt: ${JSON.stringify(candidate.startGate)}`);
   fail(candidate.reviewUi?.hudVisible &&
     /Start/.test(candidate.reviewUi.phases) && /Op/.test(candidate.reviewUi.phases) &&
@@ -825,6 +857,9 @@ try {
   fail(/Gns\. fart/.test(candidate.reviewUi.metrics) && /Løftevej/.test(candidate.reviewUi.metrics) &&
     /Tempo/.test(candidate.reviewUi.metrics) && candidate.reviewUi.metricValues.every(value => value !== '—'),
     `atletens metrics er ikke brugbare: ${JSON.stringify(candidate.reviewUi)}`);
+  fail(candidate.reviewUi.visibleActions.join(',') === 'playBtn,allBtn,penBtn,exportBtn' &&
+       candidate.reviewUi.footerColumns === 4,
+    `den offentlige resultatbar viste ikke præcis fire kernhandlinger: ${JSON.stringify(candidate.reviewUi)}`);
   const squat = candidate.liftControls.find(item=>item.lift==='squat');
   const bench = candidate.liftControls.find(item=>item.lift==='bench');
   for (const control of [squat,bench])
