@@ -389,6 +389,27 @@ async function runDesktopCalibrationCase(browser, url, videoBuffer) {
   await page.locator('#vcToggleMetrics').click();
   const metricsHiddenAfterClick = !(await page.locator('#vcMetricCards').isVisible());
   await page.locator('#vcToggleMetrics').click();
+  await page.setViewportSize({width:1194,height:844});
+  await page.waitForTimeout(100);
+  const repLayout = await page.evaluate(() => {
+    const path = latestCleanPath(), original = path.analysis.reps;
+    path.analysis.reps = Array.from({length:6}, (_, index) => ({...original[0],
+      phases:original[0].phases.map(phase => ({...phase})),testRep:index}));
+    updateCleanReviewUI(path, true);
+    const selector = document.getElementById('vcRepSelector');
+    const selectorRect = selector.getBoundingClientRect();
+    const buttons = [...selector.querySelectorAll('button')];
+    const buttonRects = buttons.map(button => button.getBoundingClientRect());
+    const result = {count:buttons.length,labels:buttons.map(button => button.textContent.trim()),
+      selectorWidth:selectorRect.width,selectorHeight:selectorRect.height,
+      allVisible:buttons.every(button => button.offsetParent !== null),
+      allInside:buttonRects.every(rect => rect.left >= selectorRect.left - .5 &&
+        rect.right <= selectorRect.right + .5 && rect.top >= selectorRect.top - .5 &&
+        rect.bottom <= selectorRect.bottom + .5)};
+    path.analysis.reps = original;
+    updateCleanReviewUI(path, true);
+    return result;
+  });
   const hudExpanded = await page.locator('#barPathHUD').boundingBox();
   await page.locator('#vcHudCollapse').click();
   const hudCollapsed = await page.locator('#barPathHUD').boundingBox();
@@ -430,7 +451,7 @@ async function runDesktopCalibrationCase(browser, url, videoBuffer) {
   await context.close();
   return {...result,setupRing,desktopLiftBefore,backFromExport,
     hudLayout:{expanded:hudExpanded,collapsed:hudCollapsed,collapsedState,fordydState},
-    metricsToggle:{before:metricsVisibleBefore,hiddenAfterClick:metricsHiddenAfterClick},errors};
+    metricsToggle:{before:metricsVisibleBefore,hiddenAfterClick:metricsHiddenAfterClick},repLayout,errors};
 }
 
 async function runNoRepCase(browser, url, videoBuffer) {
@@ -680,6 +701,10 @@ try {
        desktopCalibration.desktopLiftBefore.parent === 'vcLiftSlot' &&
        desktopCalibration.desktopLiftBefore.moreHidden && desktopCalibration.moreVisibleAfter,
     `desktop manglede et synligt løftvalg før analysen: ${JSON.stringify(desktopCalibration)}`);
+  fail(desktopCalibration.repLayout?.count === 6 && desktopCalibration.repLayout.allVisible &&
+       desktopCalibration.repLayout.allInside &&
+       desktopCalibration.repLayout.labels.join(',') === 'Rep 1,Rep 2,Rep 3,Rep 4,Rep 5,Rep 6',
+    `rep-vælgeren skjulte eller overlappede reps: ${JSON.stringify(desktopCalibration.repLayout)}`);
   fail(desktopCalibration.workspace === 'review',
     `desktop åbnede ikke resultatet efter analysen: ${JSON.stringify(desktopCalibration)}`);
   fail(desktopCalibration.meanVelocity > 0 &&
@@ -764,6 +789,12 @@ try {
     'raw pts/times/confidence/valid skal være alignet');
   fail(candidate.audit.raw.count === candidate.tracker.frames && candidate.audit.raw.frozen,
     'raw acquisition skal være fuld og immutable');
+  fail(candidate.audit.visual?.count === candidate.audit.raw.count && candidate.audit.visual.frozen &&
+       candidate.audit.visual.maxOffset <= 4.01 &&
+       candidate.audit.visual.displayRoughness <= candidate.audit.visual.rawRoughness + .01 &&
+       candidate.audit.visual.displayX <= candidate.audit.visual.rawX + .01 &&
+       candidate.audit.visual.displayY <= candidate.audit.visual.rawY + .01,
+    `renderbanen dæmpede ikke fixture-jitter uden at flytte målingen: ${JSON.stringify(candidate.audit.visual)}`);
   fail(candidate.audit.raw.end - candidate.audit.raw.start > 4.7,
     'auto-cut: raw review mangler slutningen af den manuelt afgrænsede video');
   fail(Math.abs(candidate.audit.raw.last.y - candidate.audit.raw.first.y) < 35,
@@ -824,6 +855,11 @@ try {
     `top ${baselineMotion.top.toFixed(1)} → ${candidateMotion.top.toFixed(1)} px.`);
   console.log(`GRØN: immutable raw ${candidate.audit.raw.count} pts/times/confidence; `+
     `fuld ${Math.round((candidate.audit.raw.end-candidate.audit.raw.start)*10)/10}s retur til y=${candidate.audit.raw.last.y.toFixed(1)}.`);
+  console.log(`GRØN: visuel baneroughness ${candidate.audit.visual.rawRoughness.toFixed(2)} → `+
+    `${candidate.audit.visual.displayRoughness.toFixed(2)} px; `+
+    `x ${candidate.audit.visual.rawX.toFixed(2)} → ${candidate.audit.visual.displayX.toFixed(2)}; `+
+    `y ${candidate.audit.visual.rawY.toFixed(2)} → ${candidate.audit.visual.displayY.toFixed(2)}; `+
+    `max render-offset ${candidate.audit.visual.maxOffset.toFixed(2)} px.`);
   console.log(`GRØN: deadlift faser ${[...phaseKinds].join(', ')}; valide velocity/ROM/tempo; exportpreview.`);
   console.log(`GRØN: desktop justerede skiveringen, bekræftede kalibreringen og analyserede ${desktopCalibration.frames} frames.`);
   console.log('GRØN: coach-versionen bruger profilens atletliste og har hele værktøjspakken.');
