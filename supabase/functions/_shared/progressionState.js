@@ -248,11 +248,14 @@ export function buildProgressionStateV1({ sourceWeek, targetWeek, actuals = {}, 
         id: sourceWeek.id,
         number: Number(sourceWeek.week_number),
         block_name: sourceWeek.block_name || null,
+        block_description: sourceWeek.block_description || null,
         start_date: sourceWeek.start_date || null,
       },
       target_week: {
+        id: isText(targetWeek.id) ? targetWeek.id : null,
         number: Number(targetWeek.week_number),
         block_name: targetWeek.block_name || null,
+        block_description: targetWeek.block_description || null,
         start_date: targetWeek.start_date || null,
       },
     },
@@ -310,7 +313,12 @@ export function validateProgressionStateV1(state) {
       if (!isPositiveInteger(program.source_week.number)) errors.push('program.source_week.number mangler')
     }
     if (!isObject(program.target_week)) errors.push('program.target_week mangler')
-    else if (!isPositiveInteger(program.target_week.number)) errors.push('program.target_week.number mangler')
+    else {
+      if (!isPositiveInteger(program.target_week.number)) errors.push('program.target_week.number mangler')
+      if (program.target_week.id !== undefined && program.target_week.id !== null && !isText(program.target_week.id)) {
+        errors.push('program.target_week.id er ugyldig')
+      }
+    }
   }
 
   const expected = state.expected_progression
@@ -462,7 +470,7 @@ export function progressionModelContextV1(state) {
  * En uge kan kun sendes, når netop dens forventning er eksplicit godkendt.
  * Ellers returnerer vi en konkret grund i stedet for at gætte på manglende kontekst.
  */
-export function assessProgressionGate({ latestState, sourceWeek, targetWeekNumber }) {
+export function assessProgressionGate({ latestState, sourceWeek, targetWeekNumber, targetWeekId = null }) {
   if (!latestState) {
     return {
       status: 'approval_required',
@@ -483,6 +491,16 @@ export function assessProgressionGate({ latestState, sourceWeek, targetWeekNumbe
       status: 'context_missing',
       can_commit: false,
       reasons: validation.errors,
+    }
+  }
+  const approvedTargetWeekId = isText(latestState.state?.program?.target_week?.id)
+    ? latestState.state.program.target_week.id : null
+  const requestedTargetWeekId = isText(targetWeekId) ? targetWeekId : null
+  if (approvedTargetWeekId !== requestedTargetWeekId) {
+    return {
+      status: 'approval_required',
+      can_commit: false,
+      reasons: ['Den planlagte måluge har ændret sig og skal godkendes igen.'],
     }
   }
   if (latestState.source_week_id === sourceWeek.id

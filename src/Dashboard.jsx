@@ -1256,6 +1256,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           state: proposal,
           source_week_id: draft.source_week_id,
           target_week_number: draft.target_week_number,
+          target_week_id: draft.target_week_id,
           draft_payload: draft.p_payload,
         },
       },
@@ -6063,6 +6064,12 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                           Kopieret fra uge {weekDraft.data.source_week.week_number} ({weekDraft.data.source_week.block_name || 'uden blok'})
                           {' · '}{weekDraft.data.draft.p_payload.sessions.length} sessioner
                         </div>
+                        {weekDraft.data.planned_target && (
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#6cba6c', lineHeight: 1.5, marginTop: '-0.45rem', marginBottom: '0.85rem' }}>
+                            Planlagt måluge · {weekDraft.data.planned_target.block_name || 'uden blok'}
+                            {weekDraft.data.planned_target.block_description ? ` — ${weekDraft.data.planned_target.block_description}` : ''}
+                          </div>
+                        )}
                         {weekDraft.data.progression && (() => {
                           const progression = weekDraft.data.progression
                           const proposal = progression.proposal
@@ -6177,10 +6184,12 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                               return
                             }
                             if (data?.progression_warning) showFlash(data.progression_warning, 'warning')
+                            else if (data?.planned_week) showFlash(`Planlagt uge ${data.week_number} er udfyldt`, 'success')
+                            else showFlash(`Uge ${data?.week_number || ''} er oprettet`, 'success')
                             setWeekDraft(null)
                             fetchWeeks(selectedAthlete.id)
                           }}>
-                            {sendingDraft ? 'Sender…' : 'Send til atleten'}
+                            {sendingDraft ? 'Sender…' : weekDraft.data.draft.target_week_id ? 'Udfyld planlagt uge' : 'Send til atleten'}
                           </button>
                           <button style={s.btnGhost} disabled={sendingDraft} onClick={() => setWeekDraft(null)}>Annuller</button>
                         </div>

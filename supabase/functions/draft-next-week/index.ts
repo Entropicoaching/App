@@ -19,6 +19,13 @@ import {
   progressionStateMatchesDraftPayload,
   validateProgressionStateV1,
 } from "../_shared/progressionState.js";
+import {
+  forecastTargetForWeek,
+  plannedWeekIsEmpty,
+  sameTargetBlock,
+  sameTargetWeekId,
+  targetWeekIdFromState,
+} from "../_shared/forecastPlanTarget.js";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -86,6 +93,8 @@ Deno.serve(async (req: Request) => {
       const sourceWeekId = payload?.source_week_id;
       const targetWeekNumber = Number(payload?.target_week_number);
       const draftPayload = payload?.draft_payload;
+      const targetWeekId = typeof payload?.target_week_id === "string" && payload.target_week_id.trim()
+        ? payload.target_week_id.trim() : null;
       const validation = validateProgressionStateV1(state);
       if (!validation.ok) {
         return json({ error: "Progressionstilstand mangler påkrævet kontekst", missing: validation.errors }, 400);
@@ -93,6 +102,9 @@ Deno.serve(async (req: Request) => {
       const draftMatch = progressionStateMatchesDraftPayload(state, draftPayload);
       if (!draftMatch.ok) {
         return json({ error: "Kladde og progressionstilstand matcher ikke", missing: draftMatch.errors }, 409);
+      }
+      if (!sameTargetWeekId(state, targetWeekId) || !sameTargetBlock(state, draftPayload)) {
+        return json({ error: "Kladde og planlagt måluge matcher ikke", missing: ["Generér forecastet igen før godkendelse."] }, 409);
       }
       if (!sourceWeekId || !Number.isInteger(targetWeekNumber) || targetWeekNumber < 1) {
         return json({ error: "Kildeuge eller måluge mangler i progressionstilstanden" }, 400);
@@ -106,6 +118,15 @@ Deno.serve(async (req: Request) => {
       if (sourceWeekError) return json({ error: `Kildeugen kunne ikke valideres: ${sourceWeekError.message}` }, 500);
       if (!sourceWeek || Number(sourceWeek.week_number) !== Number(state.program.source_week.number)) {
         return json({ error: "Kildeugen er ikke længere den, som forventningen blev bygget på" }, 409);
+      }
+      const plannedTargetId = targetWeekIdFromState(state);
+      if (plannedTargetId) {
+        const { data: plannedTarget, error: plannedTargetError } = await svc.from("weeks")
+          .select("id, week_number, sessions(id)").eq("id", plannedTargetId).eq("athlete_id", athlete_id).maybeSingle();
+        if (plannedTargetError) return json({ error: `Den planlagte måluge kunne ikke valideres: ${plannedTargetError.message}` }, 500);
+        if (!plannedTarget || Number(plannedTarget.week_number) !== targetWeekNumber || !plannedWeekIsEmpty(plannedTarget)) {
+          return json({ error: "Den planlagte måluge er ændret eller har allerede indhold. Generér forecastet igen." }, 409);
+        }
       }
       const { data: approved, error: approveError } = await svc.rpc("approve_training_progression_state", {
         p_athlete_id: athlete_id,
@@ -133,6 +154,8 @@ Deno.serve(async (req: Request) => {
         ? payload.progression_state_id : null;
       const sourceWeekId = typeof payload?.source_week_id === "string" ? payload.source_week_id : null;
       const targetWeekNumber = Number(payload?.target_week_number);
+      const targetWeekId = typeof payload?.target_week_id === "string" && payload.target_week_id.trim()
+        ? payload.target_week_id.trim() : null;
       if (!progressionStateId || !sourceWeekId || !Number.isInteger(targetWeekNumber)) {
         return json({ error: "En godkendt progressionstilstand mangler. Generér og godkend forventningen først." }, 409);
       }
@@ -154,12 +177,23 @@ Deno.serve(async (req: Request) => {
         || Number(progressionState.state.program.target_week.number) !== targetWeekNumber) {
         return json({ error: "Udkastet matcher ikke den godkendte progressionstilstand. Generér det igen." }, 409);
       }
+      if (!sameTargetWeekId(progressionState.state, targetWeekId) || !sameTargetBlock(progressionState.state, payload.p_payload)) {
+        return json({ error: "Udkastet matcher ikke den godkendte planlagte uge. Generér og godkend det igen." }, 409);
+      }
       const draftMatch = progressionStateMatchesDraftPayload(progressionState.state, payload.p_payload);
       if (!draftMatch.ok) {
         return json({ error: "Kladde og godkendt progression matcher ikke. Godkend ændringerne igen.", missing: draftMatch.errors }, 409);
       }
       const sd = payload.start_date ?? null;
-      if (sd) {
+      let res;
+      if (targetWeekId) {
+        const { data: plannedRes, error: plannedRpcErr } = await svc.rpc("fill_planned_program_week", {
+          p_week_id: targetWeekId,
+          p_payload: payload.p_payload,
+        });
+        if (plannedRpcErr) return json({ error: `Den planlagte uge kunne ikke udfyldes: ${plannedRpcErr.message}` }, 409);
+        res = plannedRes;
+      } else if (sd) {
         const { data: clash } = await svc.from("weeks")
           .select("week_number, block_name").eq("athlete_id", athlete_id).eq("start_date", sd);
         if (clash?.length) {
@@ -170,12 +204,17 @@ Deno.serve(async (req: Request) => {
             collision: clash[0],
           }, 409);
         }
-      }
-      const { data: res, error: rpcErr } = await svc.rpc("create_program_week", { p_payload: payload.p_payload });
-      if (rpcErr) return json({ error: `create_program_week fejlede: ${rpcErr.message}` }, 500);
-      if (sd && res?.week_id) {
-        const { error: sdErr } = await svc.from("weeks").update({ start_date: sd }).eq("id", res.week_id);
-        if (sdErr) return json({ ...res, warning: `Ugen er oprettet, men start_date kunne ikke sættes: ${sdErr.message}` });
+        const { data: newRes, error: rpcErr } = await svc.rpc("create_program_week", { p_payload: payload.p_payload });
+        if (rpcErr) return json({ error: `create_program_week fejlede: ${rpcErr.message}` }, 500);
+        res = newRes;
+        if (res?.week_id) {
+          const { error: sdErr } = await svc.from("weeks").update({ start_date: sd }).eq("id", res.week_id);
+          if (sdErr) return json({ ...res, warning: `Ugen er oprettet, men start_date kunne ikke sættes: ${sdErr.message}` });
+        }
+      } else {
+        const { data: newRes, error: rpcErr } = await svc.rpc("create_program_week", { p_payload: payload.p_payload });
+        if (rpcErr) return json({ error: `create_program_week fejlede: ${rpcErr.message}` }, 500);
+        res = newRes;
       }
       // weekday på sessioner: RPC'en sorterer sessioner efter dag — sortér payload ens og match på session_order
       const dayIdx = (d: string) => { const i = DAY_NAMES.indexOf((d || "").toLowerCase()); return i < 0 ? 99 : i; };
@@ -199,7 +238,7 @@ Deno.serve(async (req: Request) => {
       const progressionWarning = stateLinkError || !linkedState
         ? "Ugen er oprettet, men progressionstilstanden kunne ikke kobles til den. Gennemgå før næste forecast."
         : null;
-      return json({ ...res, start_date: sd, weekdays_set: weekdaysSet, progression_warning: progressionWarning });
+      return json({ ...res, start_date: sd, weekdays_set: weekdaysSet, planned_week: Boolean(targetWeekId), progression_warning: progressionWarning });
     }
 
     // ---------- PREVIEW ----------
@@ -215,6 +254,15 @@ Deno.serve(async (req: Request) => {
     }
     const week = weeks?.[0];
     if (!week) return json({ error: "Ingen uger fundet for atleten" }, 404);
+    const nextNum = (week.week_number || 0) + 1;
+    const { data: plannedWeek, error: plannedWeekError } = await svc.from("weeks")
+      .select("id, week_number, block_name, block_description, start_date, sessions(id)")
+      .eq("athlete_id", athlete_id).eq("week_number", nextNum).maybeSingle();
+    if (plannedWeekError) return json({ error: `Den næste planlagte uge kunne ikke læses: ${plannedWeekError.message}` }, 500);
+    if (plannedWeek && !plannedWeekIsEmpty(plannedWeek)) {
+      return json({ error: `Uge ${nextNum} findes allerede med indhold. Forecastet vil ikke overskrive den.` }, 409);
+    }
+    const targetWeek = forecastTargetForWeek({ sourceWeek: week, plannedWeek });
 
     const { data: progressionStates, error: progressionStateReadError } = await svc
       .from("training_progression_states")
@@ -274,18 +322,14 @@ Deno.serve(async (req: Request) => {
         }),
     }));
 
-    // Næste mandag som start_date
-    const now = new Date();
-    const nextMonday = new Date(now.getTime() + (((7 - ((now.getDay() + 6) % 7)) % 7 || 7)) * 86400000);
-    const startDate = nextMonday.toISOString().slice(0, 10);
-    const nextNum = (week.week_number || 0) + 1;
-
     const candidateState = buildProgressionStateV1({
       sourceWeek: week,
       targetWeek: {
-        week_number: nextNum,
-        block_name: week.block_name || null,
-        start_date: startDate,
+        id: targetWeek.id,
+        week_number: targetWeek.week_number,
+        block_name: targetWeek.block_name,
+        block_description: targetWeek.block_description,
+        start_date: targetWeek.start_date,
         sessions: sessionsOut,
       },
       actuals,
@@ -294,7 +338,12 @@ Deno.serve(async (req: Request) => {
     });
     const candidateValidation = validateProgressionStateV1(candidateState);
     const gate = candidateValidation.ok
-      ? assessProgressionGate({ latestState: latestProgressionState, sourceWeek: week, targetWeekNumber: nextNum })
+      ? assessProgressionGate({
+        latestState: latestProgressionState,
+        sourceWeek: week,
+        targetWeekNumber: targetWeek.week_number,
+        targetWeekId: targetWeek.id,
+      })
       : {
         status: "context_missing",
         can_commit: false,
@@ -334,25 +383,35 @@ Deno.serve(async (req: Request) => {
     const noWd = sessionsSrc.filter((s) =>
       !(typeof s.weekday === "number" && s.weekday >= 0 && s.weekday <= 6)).map((s) => s.title || "?");
     if (noWd.length) warnings.push(`weekday mangler på: ${noWd.join(", ")} (dag udledes af titlen).`);
-    const { data: clash } = await svc.from("weeks")
-      .select("week_number, block_name").eq("athlete_id", athlete_id).eq("start_date", startDate);
-    if (clash?.length) {
-      warnings.push(`start_date ${startDate} kolliderer med eksisterende uge ${clash[0].week_number} ` +
-        `(${clash[0].block_name || "uden blok"}) — afsendelse vil blive stoppet.`);
+    if (!targetWeek.is_planned) {
+      const { data: clash } = await svc.from("weeks")
+        .select("week_number, block_name").eq("athlete_id", athlete_id).eq("start_date", targetWeek.start_date);
+      if (clash?.length) {
+        warnings.push(`start_date ${targetWeek.start_date} kolliderer med eksisterende uge ${clash[0].week_number} ` +
+          `(${clash[0].block_name || "uden blok"}) — afsendelse vil blive stoppet.`);
+      }
     }
 
     return json({
       source_week: { week_number: week.week_number, block_name: week.block_name, start_date: week.start_date },
+      planned_target: targetWeek.is_planned ? {
+        id: targetWeek.id,
+        week_number: targetWeek.week_number,
+        block_name: targetWeek.block_name,
+        block_description: targetWeek.block_description,
+        start_date: targetWeek.start_date,
+      } : null,
       draft: {
-        start_date: startDate,
+        start_date: targetWeek.start_date,
         source_week_id: week.id,
-        target_week_number: nextNum,
+        target_week_number: targetWeek.week_number,
+        target_week_id: targetWeek.id,
         progression_state_id: progression.state_id,
         p_payload: {
           athleteId: athlete_id,
-          week: nextNum,
-          blockName: week.block_name,
-          coachNote: `UDKAST uge ${nextNum} - genereret ${today}, SKAL reviewes af Marc`,
+          week: targetWeek.week_number,
+          blockName: targetWeek.block_name,
+          coachNote: `UDKAST uge ${targetWeek.week_number} - genereret ${today}, SKAL reviewes af Marc`,
           sessions: sessionsOut,
         },
       },

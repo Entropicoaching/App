@@ -42,6 +42,7 @@ assert.deepEqual(state.expected_progression.exercises[0].expected.load_kg, { min
 assert.equal(state.evidence.summary.total_sets, 3, 'kun strukturerede input summeres')
 assert.equal(progressionModelContextV1(state).available, true, 'modellen må kun få et valideret snapshot')
 assert.deepEqual(state.decision_history, [], 'første snapshot må ikke opfinde historik')
+assert.equal(state.program.target_week.id, null, 'et ikke-planlagt forecast må ikke opfinde en måluge')
 
 const draftPayload = { sessions: targetWeek.sessions }
 assert.equal(progressionStateMatchesDraftPayload(state, draftPayload).ok, true,
@@ -143,6 +144,37 @@ const approvedForDraft = assessProgressionGate({
   targetWeekNumber: 5,
 })
 assert.equal(approvedForDraft.can_commit, true, 'kun det godkendte snapshot må sende den tilhørende uge')
+
+const plannedState = buildProgressionStateV1({
+  sourceWeek,
+  targetWeek: { ...targetWeek, id: 'planned-week', block_name: 'Intensificering', block_description: 'Mere specifik styrke.' },
+  actuals: { 'Primærløft': { total: 3, skipped: 0, rpes: [6, 6.5, 6] } },
+  logWindow: { from: '2026-08-17', to: '2026-08-24' },
+  createdAt: '2026-08-22T09:00:00.000Z',
+})
+assert.equal(plannedState.program.target_week.id, 'planned-week', 'en planlagt måluge skal følge godkendelsen')
+assert.equal(plannedState.program.target_week.block_description, 'Mere specifik styrke.')
+const plannedGate = assessProgressionGate({
+  latestState: {
+    status: 'approved',
+    source_week_id: 'source-week',
+    target_week_id: null,
+    target_week_number: 5,
+    state: plannedState,
+  },
+  sourceWeek,
+  targetWeekNumber: 5,
+  targetWeekId: 'planned-week',
+})
+assert.equal(plannedGate.can_commit, true, 'den godkendte plan-skal må fyldes')
+assert.equal(assessProgressionGate({
+  latestState: {
+    status: 'approved', source_week_id: 'source-week', target_week_id: null, target_week_number: 5, state: plannedState,
+  },
+  sourceWeek,
+  targetWeekNumber: 5,
+  targetWeekId: 'another-week',
+}).status, 'approval_required', 'en anden plan-skal kræver en ny godkendelse')
 
 const successorRequired = assessProgressionGate({
   latestState: {
