@@ -2,6 +2,8 @@
 -- En versionsstyret, coach-godkendt tilstand for forventet træningsprogression.
 -- Kør ikke manuelt i produktion: den skal gennem normal migrationsreview først.
 
+begin;
+
 create table if not exists public.training_progression_states (
   id uuid primary key default gen_random_uuid(),
   athlete_id uuid not null references public.athletes(id) on delete cascade,
@@ -108,3 +110,5 @@ revoke all on function public.approve_training_progression_state(uuid, jsonb, uu
   from public, anon, authenticated;
 grant execute on function public.approve_training_progression_state(uuid, jsonb, uuid, integer, uuid)
   to service_role;
+
+commit;
