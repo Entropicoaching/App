@@ -13,6 +13,7 @@
     "verify:athlete-first-day-flow": "node scripts/verify-athlete-first-day-flow.mjs",
     "verify:coach-inbox-flow": "node scripts/verify-coach-inbox-flow.mjs",
     "verify:coach-priority": "node scripts/verify-coach-priority.mjs",
+    "verify:progression-state": "node scripts/verify-progression-state.mjs",
     "verify:videocoach-baseline-progress": "node scripts/verify-videocoach-baseline-progress.mjs",
     "verify:videocoach-feedback-quality": "node scripts/verify-videocoach-feedback-quality.mjs",
     "verify:videocoach-labels": "node scripts/verify-videocoach-labels.mjs",

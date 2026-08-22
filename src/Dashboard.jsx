@@ -521,6 +521,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   // null = skjult, {loading} = henter, {data} = preview klar, {error} = fejl.
   const [weekDraft, setWeekDraft] = useState(null)
   const [sendingDraft, setSendingDraft] = useState(false)
+  const [approvingProgression, setApprovingProgression] = useState(false)
   // Dagens træningslogs bruges til de små aktivitetsmarkeringer i navigationen.
   const [todayData, setTodayData] = useState({ logs: [] })
   const [videoReviewQueue, setVideoReviewQueue] = useState([])
@@ -1225,6 +1226,49 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         .sort((a, b) => (a.session_order - b.session_order) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
         .map(s => ({ ...s, exercises: (s.exercises || []).sort((a, b) => (a.exercise_order - b.exercise_order) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0)) }))
     })))
+  }
+
+  async function approveDraftProgressionState() {
+    const draftData = weekDraft?.data
+    const proposal = draftData?.progression?.proposal
+    const draft = draftData?.draft
+    if (!proposal || !draft || !selectedAthlete?.id) return
+    setApprovingProgression(true)
+    const { data, error } = await supabase.functions.invoke('draft-next-week', {
+      body: {
+        mode: 'approve_progression_state',
+        athlete_id: selectedAthlete.id,
+        payload: {
+          state: proposal,
+          source_week_id: draft.source_week_id,
+          target_week_number: draft.target_week_number,
+        },
+      },
+    })
+    setApprovingProgression(false)
+    if (error || data?.error || !data?.progression?.state_id) {
+      let msg = data?.error || error?.message || 'Progressionstilstanden kunne ikke godkendes'
+      try { const body = await error?.context?.json(); if (body?.error) msg = body.error } catch { /* behold msg */ }
+      setWeekDraft(current => current?.data ? {
+        ...current,
+        data: {
+          ...current.data,
+          progression: { ...current.data.progression, approval_error: msg },
+        },
+      } : current)
+      return
+    }
+    setWeekDraft(current => {
+      if (!current?.data?.draft || current.data.draft.source_week_id !== draft.source_week_id) return current
+      return {
+        data: {
+          ...current.data,
+          draft: { ...current.data.draft, progression_state_id: data.progression.state_id },
+          progression: { ...current.data.progression, ...data.progression, display_state: proposal, approval_error: null },
+        },
+      }
+    })
+    showFlash('Progressionstilstanden er godkendt for dette ugeudkast', 'success')
   }
 
   async function addWeek() {
@@ -5945,6 +5989,55 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                           Kopieret fra uge {weekDraft.data.source_week.week_number} ({weekDraft.data.source_week.block_name || 'uden blok'})
                           {' · '}{weekDraft.data.draft.p_payload.sessions.length} sessioner
                         </div>
+                        {weekDraft.data.progression && (() => {
+                          const progression = weekDraft.data.progression
+                          const proposal = progression.proposal
+                          const forecastState = progression.display_state || proposal
+                          const forecast = forecastState?.expected_progression?.exercises || []
+                          const statusLabel = progression.status === 'approved_for_draft'
+                            ? 'Godkendt for dette udkast'
+                            : progression.status === 'approval_required'
+                              ? 'Kræver godkendelse'
+                              : 'Mangler kontekst'
+                          const decisionLabel = {
+                            increase: 'stigning', decrease: 'reduktion', repeat: 'gentag', hold: 'hold', manual_load: 'manuel vægt',
+                          }
+                          const describeLoad = item => {
+                            const range = item.expected?.load_kg
+                            if (!range) return 'vægt vælges manuelt'
+                            return range.min === range.max ? `${range.target} kg` : `${range.min}–${range.max} kg`
+                          }
+                          return (
+                            <div style={{ marginBottom: '0.85rem', padding: '0.75rem', border: '1px solid rgba(200,146,58,0.28)', background: 'rgba(200,146,58,0.06)' }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.42rem' }}>
+                                <div style={{ ...s.fieldLabel, color: '#c8923a' }}>Forventet progression</div>
+                                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: progression.can_commit ? '#6cba6c' : '#c8923a' }}>{statusLabel}</div>
+                              </div>
+                              {progression.reasons?.map((reason, index) => (
+                                <div key={index} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#c8923a', lineHeight: 1.55, marginBottom: '0.28rem' }}>⚠ {reason}</div>
+                              ))}
+                              {progression.approval_error && (
+                                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#e05555', lineHeight: 1.55, marginBottom: '0.28rem' }}>{progression.approval_error}</div>
+                              )}
+                              {forecast.slice(0, 5).map(item => (
+                                <div key={item.key} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#d8d4ca', lineHeight: 1.6 }}>
+                                  • {item.session_label}: {item.exercise_name} · {decisionLabel[item.expected?.decision] || 'review'} · {describeLoad(item)}
+                                </div>
+                              ))}
+                              {forecast.length > 5 && (
+                                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#7a7770', marginTop: '0.2rem' }}>+{forecast.length - 5} øvrige øvelser</div>
+                              )}
+                              {progression.status === 'approval_required' && proposal && (
+                                <button style={{ ...s.btnGhost, marginTop: '0.6rem' }} disabled={approvingProgression} onClick={approveDraftProgressionState}>
+                                  {approvingProgression ? 'Godkender…' : 'Godkend progressionstilstand'}
+                                </button>
+                              )}
+                              {!progression.can_commit && (
+                                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#7a7770', marginTop: '0.5rem', lineHeight: 1.45 }}>Ugen kan ikke sendes, før forventningen er komplet og godkendt.</div>
+                              )}
+                            </div>
+                          )
+                        })()}
                         {weekDraft.data.changes.length > 0 ? (
                           <div style={{ marginBottom: '0.85rem' }}>
                             <div style={{ ...s.fieldLabel, marginBottom: '0.4rem' }}>Automatiske justeringer</div>
@@ -5963,7 +6056,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                           </div>
                         )}
                         <div style={{ display: 'flex', gap: '0.5rem' }}>
-                          <button style={s.btnPrimary} disabled={sendingDraft} onClick={async () => {
+                          <button style={s.btnPrimary} disabled={sendingDraft || weekDraft.data.progression?.can_commit !== true} onClick={async () => {
+                            if (weekDraft.data.progression?.can_commit !== true) return
                             setSendingDraft(true)
                             const { data, error } = await supabase.functions.invoke('draft-next-week', {
                               body: { mode: 'commit', athlete_id: selectedAthlete.id, payload: weekDraft.data.draft },
@@ -5975,6 +6069,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                               setWeekDraft({ error: msg })
                               return
                             }
+                            if (data?.progression_warning) showFlash(data.progression_warning, 'warning')
                             setWeekDraft(null)
                             fetchWeeks(selectedAthlete.id)
                           }}>

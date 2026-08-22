@@ -12,6 +12,12 @@
 //   POST /functions/v1/draft-next-week  { "mode": "preview", "athlete_id": "<uuid>" }
 //   POST /functions/v1/draft-next-week  { "mode": "commit",  "athlete_id": "<uuid>", "payload": <fra preview> }
 import { createClient } from "npm:@supabase/supabase-js@2";
+import {
+  assessProgressionGate,
+  buildProgressionStateV1,
+  progressionModelContextV1,
+  validateProgressionStateV1,
+} from "../_shared/progressionState.js";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -67,12 +73,81 @@ Deno.serve(async (req: Request) => {
     const { data: prof } = await svc.from("profiles").select("role").eq("id", user.id).maybeSingle();
     if (prof?.role !== "coach") return json({ error: "Kun coaches kan generere udkast" }, 403);
 
-    const { mode, athlete_id, payload } = await req.json();
+    const requestBody = await req.json();
+    const { mode, athlete_id, payload } = requestBody || {};
     if (!athlete_id) return json({ error: "athlete_id mangler" }, 400);
+
+    // ---------- GODKEND PROGRESSIONSTILSTAND ----------
+    // En coach skal eksplicit godkende den strukturerede forventning, før den
+    // kan følge med til en ny uge. Det er adskilt fra både preview og commit.
+    if (mode === "approve_progression_state") {
+      const state = payload?.state;
+      const sourceWeekId = payload?.source_week_id;
+      const targetWeekNumber = Number(payload?.target_week_number);
+      const validation = validateProgressionStateV1(state);
+      if (!validation.ok) {
+        return json({ error: "Progressionstilstand mangler påkrævet kontekst", missing: validation.errors }, 400);
+      }
+      if (!sourceWeekId || !Number.isInteger(targetWeekNumber) || targetWeekNumber < 1) {
+        return json({ error: "Kildeuge eller måluge mangler i progressionstilstanden" }, 400);
+      }
+      if (state.program.source_week.id !== sourceWeekId
+        || Number(state.program.target_week.number) !== targetWeekNumber) {
+        return json({ error: "Progressionstilstanden passer ikke til det viste ugeudkast" }, 409);
+      }
+      const { data: sourceWeek, error: sourceWeekError } = await svc.from("weeks")
+        .select("id, week_number").eq("id", sourceWeekId).eq("athlete_id", athlete_id).maybeSingle();
+      if (sourceWeekError) return json({ error: `Kildeugen kunne ikke valideres: ${sourceWeekError.message}` }, 500);
+      if (!sourceWeek || Number(sourceWeek.week_number) !== Number(state.program.source_week.number)) {
+        return json({ error: "Kildeugen er ikke længere den, som forventningen blev bygget på" }, 409);
+      }
+      const { data: approved, error: approveError } = await svc.rpc("approve_training_progression_state", {
+        p_athlete_id: athlete_id,
+        p_state: state,
+        p_source_week_id: sourceWeekId,
+        p_target_week_number: targetWeekNumber,
+        p_approved_by: user.id,
+      });
+      if (approveError) return json({ error: `Progressionstilstanden kunne ikke godkendes: ${approveError.message}` }, 500);
+      return json({
+        progression: {
+          status: "approved_for_draft",
+          can_commit: true,
+          state_id: approved?.id,
+          version: approved?.version,
+          reasons: [],
+        },
+      });
+    }
 
     // ---------- COMMIT ----------
     if (mode === "commit") {
       if (!payload?.p_payload) return json({ error: "payload mangler" }, 400);
+      const progressionStateId = typeof payload?.progression_state_id === "string"
+        ? payload.progression_state_id : null;
+      const sourceWeekId = typeof payload?.source_week_id === "string" ? payload.source_week_id : null;
+      const targetWeekNumber = Number(payload?.target_week_number);
+      if (!progressionStateId || !sourceWeekId || !Number.isInteger(targetWeekNumber)) {
+        return json({ error: "En godkendt progressionstilstand mangler. Generér og godkend forventningen først." }, 409);
+      }
+      const { data: progressionState, error: progressionStateError } = await svc
+        .from("training_progression_states")
+        .select("id, status, state, source_week_id, target_week_id, target_week_number")
+        .eq("id", progressionStateId).eq("athlete_id", athlete_id).maybeSingle();
+      if (progressionStateError) return json({ error: `Progressionstilstanden kunne ikke læses: ${progressionStateError.message}` }, 500);
+      if (!progressionState || progressionState.status !== "approved" || progressionState.target_week_id) {
+        return json({ error: "Den godkendte progressionstilstand er ikke længere klar til dette udkast." }, 409);
+      }
+      const validation = validateProgressionStateV1(progressionState.state);
+      if (!validation.ok) {
+        return json({ error: "Den godkendte progressionstilstand er ufuldstændig", missing: validation.errors }, 409);
+      }
+      if (progressionState.source_week_id !== sourceWeekId
+        || Number(progressionState.target_week_number) !== targetWeekNumber
+        || progressionState.state.program.source_week.id !== sourceWeekId
+        || Number(progressionState.state.program.target_week.number) !== targetWeekNumber) {
+        return json({ error: "Udkastet matcher ikke den godkendte progressionstilstand. Generér det igen." }, 409);
+      }
       const sd = payload.start_date ?? null;
       if (sd) {
         const { data: clash } = await svc.from("weeks")
@@ -106,7 +181,15 @@ Deno.serve(async (req: Request) => {
           if (!error) weekdaysSet++;
         }
       }
-      return json({ ...res, start_date: sd, weekdays_set: weekdaysSet });
+      const { data: linkedState, error: stateLinkError } = await svc
+        .from("training_progression_states")
+        .update({ target_week_id: res.week_id, updated_at: new Date().toISOString() })
+        .eq("id", progressionStateId).is("target_week_id", null)
+        .select("id").maybeSingle();
+      const progressionWarning = stateLinkError || !linkedState
+        ? "Ugen er oprettet, men progressionstilstanden kunne ikke kobles til den. Gennemgå før næste forecast."
+        : null;
+      return json({ ...res, start_date: sd, weekdays_set: weekdaysSet, progression_warning: progressionWarning });
     }
 
     // ---------- PREVIEW ----------
@@ -122,6 +205,16 @@ Deno.serve(async (req: Request) => {
     }
     const week = weeks?.[0];
     if (!week) return json({ error: "Ingen uger fundet for atleten" }, 404);
+
+    const { data: progressionStates, error: progressionStateReadError } = await svc
+      .from("training_progression_states")
+      .select("id, version, status, state, source_week_id, target_week_id, target_week_number")
+      .eq("athlete_id", athlete_id).eq("status", "approved")
+      .order("version", { ascending: false }).limit(1);
+    if (progressionStateReadError) {
+      return json({ error: `Progressionstilstanden kunne ikke læses: ${progressionStateReadError.message}` }, 500);
+    }
+    const latestProgressionState = progressionStates?.[0] || null;
 
     // Faktiske logs seneste 7 dage pr. øvelsesnavn (snit-RPE + skip-andel)
     const since7 = new Date(Date.now() - 7 * 86400000).toISOString();
@@ -177,6 +270,37 @@ Deno.serve(async (req: Request) => {
     const startDate = nextMonday.toISOString().slice(0, 10);
     const nextNum = (week.week_number || 0) + 1;
 
+    const candidateState = buildProgressionStateV1({
+      sourceWeek: week,
+      targetWeek: {
+        week_number: nextNum,
+        block_name: week.block_name || null,
+        start_date: startDate,
+        sessions: sessionsOut,
+      },
+      actuals,
+      logWindow: { from: since7, to: new Date().toISOString() },
+      previousState: latestProgressionState?.state || null,
+    });
+    const candidateValidation = validateProgressionStateV1(candidateState);
+    const gate = candidateValidation.ok
+      ? assessProgressionGate({ latestState: latestProgressionState, sourceWeek: week, targetWeekNumber: nextNum })
+      : {
+        status: "context_missing",
+        can_commit: false,
+        reasons: candidateValidation.errors,
+      };
+    const activeModelContext = latestProgressionState?.state
+      ? progressionModelContextV1(latestProgressionState.state) : { available: false, missing: gate.reasons };
+    const progression = {
+      ...gate,
+      state_id: gate.can_commit ? latestProgressionState?.id || null : null,
+      version: gate.can_commit ? latestProgressionState?.version || null : null,
+      proposal: gate.can_commit ? null : candidateState,
+      display_state: gate.can_commit ? latestProgressionState?.state || null : candidateState,
+      model_context_available: activeModelContext.available,
+    };
+
     // Advarsler
     const warnings: string[] = [];
     const since21 = new Date(Date.now() - 21 * 86400000).toISOString();
@@ -210,6 +334,9 @@ Deno.serve(async (req: Request) => {
       source_week: { week_number: week.week_number, block_name: week.block_name, start_date: week.start_date },
       draft: {
         start_date: startDate,
+        source_week_id: week.id,
+        target_week_number: nextNum,
+        progression_state_id: progression.state_id,
         p_payload: {
           athleteId: athlete_id,
           week: nextNum,
@@ -220,6 +347,7 @@ Deno.serve(async (req: Request) => {
       },
       changes,
       warnings,
+      progression,
     });
   } catch (e) {
     return json({ error: `Uventet fejl: ${(e as Error).message}` }, 500);
