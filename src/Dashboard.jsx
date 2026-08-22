@@ -12,6 +12,7 @@ import { VIDEOCOACH_BASELINE_VERSION, VIDEOCOACH_BUILD_ID } from './videoCoachVe
 import { normalizeAthleteLoginEmail } from './athleteOnboarding'
 import { FORECAST_FIELD_LABELS, draftExerciseForForecast, progressionOverrideErrors, updateDraftForecast, updateForecastOverrideReason } from './progressionDraft'
 import { blockPurpose, buildPeriodizationSuggestion, withBlockPurposes } from './periodizationAssistant'
+import { buildPlanOverview, planOverviewCounts } from './planOverview'
 import { targetPrescriptionForExercise } from '../supabase/functions/_shared/progressionState.js'
 
 const BLOCK_NAMES = ['Akkumulering', 'Intensificering', 'Peak', 'Deload', 'GPP', 'Hypertrofi', 'Styrke', 'Transition']
@@ -2883,6 +2884,25 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     setEditingExercise(null)
   }
 
+  // Åbner kun den lokale planflade for den valgte atlet. Ingen blokke eller
+  // uger oprettes, før coachen senere vælger "Opret" i planlæggeren.
+  function openPlanReview(planEntry) {
+    const dated = (calendarWeeks[planEntry.athlete.id] || [])
+      .filter(week => week.start_date)
+      .sort((left, right) => new Date(right.start_date + 'T12:00:00') - new Date(left.start_date + 'T12:00:00'))
+    const latest = dated[0]
+    const nextStart = latest
+      ? new Date(new Date(latest.start_date + 'T12:00:00').getTime() + 7 * 24 * 3600 * 1000).toISOString().slice(0, 10)
+      : new Date().toISOString().slice(0, 10)
+    setPlanStartDate(nextStart)
+    setPlanAssistantFocus(planEntry.suggested_focus)
+    setBlockPlan([])
+    setWeekDraft(null)
+    setCalBlockAthlete(null)
+    setShowBlockPlanner(true)
+    openProfile(planEntry.athlete, 'program')
+  }
+
   function startEdit(section, data) {
     setEditing(section)
     setEditData(data)
@@ -3728,6 +3748,17 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           const today0 = new Date(); today0.setHours(0, 0, 0, 0)
           const dayMs = 86400000
           const visibleAthletes = athletes.filter(a => !hiddenAthleteIds.has(a.id))
+          const planEntries = buildPlanOverview({ athletes: visibleAthletes, calendarWeeks, today: today0 })
+          const planCounts = planOverviewCounts(planEntries)
+          const planningNeeds = planEntries.filter(entry => entry.status !== 'covered')
+          const featuredPlanEntries = planningNeeds.slice(0, 3)
+          const featuredPlanIds = new Set(featuredPlanEntries.map(entry => entry.athlete.id))
+          const remainingPlanEntries = planEntries.filter(entry => !featuredPlanIds.has(entry.athlete.id))
+          const planTone = {
+            danger: { color: '#e99b86', border: 'rgba(224,85,85,0.3)', background: 'rgba(224,85,85,0.055)' },
+            warning: { color: '#d7b16e', border: 'rgba(200,146,58,0.3)', background: 'rgba(200,146,58,0.05)' },
+            ready: { color: '#8ebd8e', border: 'rgba(108,186,108,0.25)', background: 'rgba(108,186,108,0.045)' },
+          }
 
           // Udled status pr. atlet ud fra HVOR DE ER NU (seneste loggede uge) og
           // hvor mange FYLDTE uger (med øvelser) der er tilbage fra og med den uge.
@@ -3780,6 +3811,57 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844', marginTop: '0.25rem' }}>
                   {board.length - needs.length} af {board.length} klar · har du husket at planlægge deres træning?
                 </div>
+              </div>
+
+              {/* Planoverblik: forklarbare spørgsmål før den konkrete planlægningsflade. */}
+              <div style={{ ...s.card, marginBottom: '1.5rem', borderColor: 'rgba(200,146,58,0.28)', background: 'linear-gradient(135deg, rgba(200,146,58,0.065), rgba(28,28,24,0.5))' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '0.35rem' }}>
+                  <div style={{ ...s.cardLabel, color: '#c8923a', marginBottom: 0 }}>Planoverblik</div>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: planningNeeds.length ? '#c8923a' : '#6cba6c', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                    {planningNeeds.length ? `${planningNeeds.length} næste beslutning${planningNeeds.length === 1 ? '' : 'er'}` : 'Alle planer har luft'}
+                  </div>
+                </div>
+                <div style={{ color: '#98948a', fontSize: '0.68rem', lineHeight: 1.45, marginBottom: featuredPlanEntries.length ? '0.75rem' : 0 }}>
+                  Et sparringslag: det viser næste beslutningspunkt og begrundelsen — ikke en automatisk træningsforskrift.
+                </div>
+
+                {featuredPlanEntries.map(entry => {
+                  const tone = planTone[entry.tone]
+                  return (
+                    <div key={entry.athlete.id} style={{ borderTop: '1px solid rgba(237,234,226,0.07)', padding: '0.7rem 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                      <div style={{ minWidth: 0, flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
+                          <button onClick={() => openProfile(entry.athlete, 'program')} style={{ background: 'none', border: 0, padding: 0, color: '#edeae2', cursor: 'pointer', fontSize: '0.86rem', textAlign: 'left' }}>{entry.athlete.name}</button>
+                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.04em', color: tone.color, border: `1px solid ${tone.border}`, background: tone.background, padding: '0.16rem 0.32rem' }}>{entry.headline}</span>
+                        </div>
+                        <div style={{ marginTop: '0.25rem', fontSize: '0.65rem', color: '#7a7770', lineHeight: 1.4 }}>{entry.sparring}</div>
+                      </div>
+                      <button style={{ ...s.btnGhost, color: '#c8923a', borderColor: 'rgba(200,146,58,0.4)', fontSize: '0.55rem', padding: '0.35rem 0.6rem' }} onClick={() => openPlanReview(entry)}>Åbn plan</button>
+                    </div>
+                  )
+                })}
+
+                {remainingPlanEntries.length > 0 && (
+                  <details style={{ borderTop: '1px solid rgba(237,234,226,0.07)', marginTop: featuredPlanEntries.length ? 0 : '0.65rem', paddingTop: '0.45rem' }}>
+                    <summary style={{ minHeight: 36, display: 'flex', alignItems: 'center', cursor: 'pointer', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.05em' }}>
+                      Vis resterende {remainingPlanEntries.length} · {planCounts.covered || 0} dækket
+                    </summary>
+                    <div style={{ marginTop: '0.3rem' }}>
+                      {remainingPlanEntries.map(entry => {
+                        const tone = planTone[entry.tone]
+                        return (
+                          <div key={entry.athlete.id} style={{ padding: '0.55rem 0', borderTop: '1px solid rgba(237,234,226,0.05)', display: 'flex', justifyContent: 'space-between', gap: '0.6rem', alignItems: 'center' }}>
+                            <div style={{ minWidth: 0 }}>
+                              <div style={{ color: '#b8b4a8', fontSize: '0.75rem' }}>{entry.athlete.name}</div>
+                              <div style={{ marginTop: '0.12rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem', color: tone.color }}>{entry.headline}</div>
+                            </div>
+                            <button style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.3rem 0.5rem' }} onClick={() => openPlanReview(entry)}>Åbn</button>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </details>
+                )}
               </div>
 
               {/* Tidslinje — alle atleters blokke på tværs af tid */}
