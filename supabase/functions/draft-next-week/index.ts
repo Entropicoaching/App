@@ -16,6 +16,7 @@ import {
   assessProgressionGate,
   buildProgressionStateV1,
   progressionModelContextV1,
+  progressionStateMatchesDraftPayload,
   validateProgressionStateV1,
 } from "../_shared/progressionState.js";
 
@@ -84,9 +85,14 @@ Deno.serve(async (req: Request) => {
       const state = payload?.state;
       const sourceWeekId = payload?.source_week_id;
       const targetWeekNumber = Number(payload?.target_week_number);
+      const draftPayload = payload?.draft_payload;
       const validation = validateProgressionStateV1(state);
       if (!validation.ok) {
         return json({ error: "Progressionstilstand mangler påkrævet kontekst", missing: validation.errors }, 400);
+      }
+      const draftMatch = progressionStateMatchesDraftPayload(state, draftPayload);
+      if (!draftMatch.ok) {
+        return json({ error: "Kladde og progressionstilstand matcher ikke", missing: draftMatch.errors }, 409);
       }
       if (!sourceWeekId || !Number.isInteger(targetWeekNumber) || targetWeekNumber < 1) {
         return json({ error: "Kildeuge eller måluge mangler i progressionstilstanden" }, 400);
@@ -147,6 +153,10 @@ Deno.serve(async (req: Request) => {
         || progressionState.state.program.source_week.id !== sourceWeekId
         || Number(progressionState.state.program.target_week.number) !== targetWeekNumber) {
         return json({ error: "Udkastet matcher ikke den godkendte progressionstilstand. Generér det igen." }, 409);
+      }
+      const draftMatch = progressionStateMatchesDraftPayload(progressionState.state, payload.p_payload);
+      if (!draftMatch.ok) {
+        return json({ error: "Kladde og godkendt progression matcher ikke. Godkend ændringerne igen.", missing: draftMatch.errors }, 409);
       }
       const sd = payload.start_date ?? null;
       if (sd) {
@@ -298,6 +308,7 @@ Deno.serve(async (req: Request) => {
       version: gate.can_commit ? latestProgressionState?.version || null : null,
       proposal: gate.can_commit ? null : candidateState,
       display_state: gate.can_commit ? latestProgressionState?.state || null : candidateState,
+      baseline_state: candidateState,
       model_context_available: activeModelContext.available,
     };
 

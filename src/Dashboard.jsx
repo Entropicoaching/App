@@ -10,6 +10,8 @@ import { VIDEOCOACH_LIFT_LABELS as VIDEOCOACH_LIFTS, videoCoachVariationIdentity
 import { saveVideoCoachDraft, validateVideoCoachPayloadBounds } from './videoCoachSubmission'
 import { VIDEOCOACH_BASELINE_VERSION, VIDEOCOACH_BUILD_ID } from './videoCoachVersion'
 import { normalizeAthleteLoginEmail } from './athleteOnboarding'
+import { FORECAST_FIELD_LABELS, draftExerciseForForecast, progressionOverrideErrors, updateDraftForecast, updateForecastOverrideReason } from './progressionDraft'
+import { targetPrescriptionForExercise } from '../supabase/functions/_shared/progressionState.js'
 
 const BLOCK_NAMES = ['Akkumulering', 'Intensificering', 'Peak', 'Deload', 'GPP', 'Hypertrofi', 'Styrke', 'Transition']
 
@@ -48,6 +50,7 @@ function computePhases(weeks) {
   phases.push(cur)
   return phases
 }
+
 // Det nuværende ugenummer for en atlet: foretræk den uge hvis udledte datospænd
 // (anker + 7 dage pr. uge) dækker i dag — ellers fald tilbage til seneste loggede
 // uge. Holder coach-kalender, phase bar og atlet-view enige om "nu".
@@ -1233,6 +1236,17 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     const proposal = draftData?.progression?.proposal
     const draft = draftData?.draft
     if (!proposal || !draft || !selectedAthlete?.id) return
+    const overrideErrors = progressionOverrideErrors(proposal)
+    if (overrideErrors.length) {
+      setWeekDraft(current => current?.data ? {
+        ...current,
+        data: {
+          ...current.data,
+          progression: { ...current.data.progression, approval_error: overrideErrors.join(' · ') },
+        },
+      } : current)
+      return
+    }
     setApprovingProgression(true)
     const { data, error } = await supabase.functions.invoke('draft-next-week', {
       body: {
@@ -1242,6 +1256,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           state: proposal,
           source_week_id: draft.source_week_id,
           target_week_number: draft.target_week_number,
+          draft_payload: draft.p_payload,
         },
       },
     })
@@ -1269,6 +1284,65 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       }
     })
     showFlash('Progressionstilstanden er godkendt for dette ugeudkast', 'success')
+  }
+
+  function editDraftForecast(key, field, value) {
+    setWeekDraft(current => {
+      const draftData = current?.data
+      const draftPayload = draftData?.draft?.p_payload
+      const progression = draftData?.progression
+      const forecastState = progression?.proposal || progression?.display_state
+      if (!draftPayload || !forecastState) return current
+      const changed = updateDraftForecast({
+        draftPayload,
+        forecastState,
+        baselineState: progression.baseline_state || forecastState,
+        key,
+        field,
+        value,
+      })
+      if (!changed) return current
+      return {
+        ...current,
+        data: {
+          ...draftData,
+          draft: { ...draftData.draft, p_payload: changed.draftPayload, progression_state_id: null },
+          progression: {
+            ...progression,
+            status: 'approval_required',
+            can_commit: false,
+            state_id: null,
+            version: null,
+            proposal: changed.forecastState,
+            display_state: changed.forecastState,
+            reasons: ['Kladden er ændret og skal godkendes igen.'],
+            approval_error: null,
+          },
+        },
+      }
+    })
+  }
+
+  function setDraftForecastOverrideReason(key, reason) {
+    setWeekDraft(current => {
+      const draftData = current?.data
+      const progression = draftData?.progression
+      const forecastState = progression?.proposal || progression?.display_state
+      if (!forecastState) return current
+      const nextState = updateForecastOverrideReason(forecastState, key, reason)
+      return {
+        ...current,
+        data: {
+          ...draftData,
+          progression: {
+            ...progression,
+            proposal: nextState,
+            display_state: nextState,
+            approval_error: null,
+          },
+        },
+      }
+    })
   }
 
   async function addWeek() {
@@ -5999,34 +6073,67 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                             : progression.status === 'approval_required'
                               ? 'Kræver godkendelse'
                               : 'Mangler kontekst'
-                          const decisionLabel = {
-                            increase: 'stigning', decrease: 'reduktion', repeat: 'gentag', hold: 'hold', manual_load: 'manuel vægt',
-                          }
-                          const describeLoad = item => {
-                            const range = item.expected?.load_kg
-                            if (!range) return 'vægt vælges manuelt'
-                            return range.min === range.max ? `${range.target} kg` : `${range.min}–${range.max} kg`
-                          }
-                          return (
-                            <div style={{ marginBottom: '0.85rem', padding: '0.75rem', border: '1px solid rgba(200,146,58,0.28)', background: 'rgba(200,146,58,0.06)' }}>
-                              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.42rem' }}>
-                                <div style={{ ...s.fieldLabel, color: '#c8923a' }}>Forventet progression</div>
-                                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: progression.can_commit ? '#6cba6c' : '#c8923a' }}>{statusLabel}</div>
-                              </div>
-                              {progression.reasons?.map((reason, index) => (
-                                <div key={index} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#c8923a', lineHeight: 1.55, marginBottom: '0.28rem' }}>⚠ {reason}</div>
-                              ))}
-                              {progression.approval_error && (
-                                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#e05555', lineHeight: 1.55, marginBottom: '0.28rem' }}>{progression.approval_error}</div>
-                              )}
-                              {forecast.slice(0, 5).map(item => (
-                                <div key={item.key} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#d8d4ca', lineHeight: 1.6 }}>
-                                  • {item.session_label}: {item.exercise_name} · {decisionLabel[item.expected?.decision] || 'review'} · {describeLoad(item)}
-                                </div>
-                              ))}
-                              {forecast.length > 5 && (
-                                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#7a7770', marginTop: '0.2rem' }}>+{forecast.length - 5} øvrige øvelser</div>
-                              )}
+                           const decisionLabel = {
+                             increase: 'stigning', decrease: 'reduktion', repeat: 'gentag', hold: 'hold', manual_load: 'manuel vægt',
+                           }
+                           return (
+                             <div style={{ marginBottom: '0.85rem', padding: '0.75rem', border: '1px solid rgba(200,146,58,0.28)', background: 'rgba(200,146,58,0.06)' }}>
+                               <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.42rem' }}>
+                                 <div style={{ ...s.fieldLabel, color: '#c8923a' }}>Forventet progression</div>
+                                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: progression.can_commit ? '#6cba6c' : '#c8923a' }}>{statusLabel}</div>
+                               </div>
+                               <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#7a7770', lineHeight: 1.45, marginBottom: '0.6rem' }}>
+                                 Ret kladden her. En manuel ændring kræver begrundelse og ny godkendelse, før den kan sendes.
+                               </div>
+                               {progression.reasons?.map((reason, index) => (
+                                 <div key={index} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#c8923a', lineHeight: 1.55, marginBottom: '0.28rem' }}>⚠ {reason}</div>
+                               ))}
+                               {progression.approval_error && (
+                                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#e05555', lineHeight: 1.55, marginBottom: '0.28rem' }}>{progression.approval_error}</div>
+                               )}
+                               {forecast.map(item => {
+                                 const draftExercise = draftExerciseForForecast(weekDraft.data.draft.p_payload, item.key)
+                                 if (!draftExercise) return null
+                                 const prescription = item.expected?.prescription || targetPrescriptionForExercise(draftExercise)
+                                 const override = item.override
+                                 const missingReason = override && !String(override.reason || '').trim()
+                                 return (
+                                   <div key={item.key} style={{ padding: '0.65rem 0', borderTop: '1px solid rgba(237,234,226,0.08)' }}>
+                                     <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#d8d4ca', lineHeight: 1.55, marginBottom: '0.45rem' }}>
+                                       {item.session_label}: {item.exercise_name} · {decisionLabel[item.expected?.decision] || 'review'}
+                                     </div>
+                                     <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, minmax(0, 1fr))' : 'repeat(4, minmax(88px, 1fr))', gap: '0.45rem' }}>
+                                       <label style={{ ...s.fieldLabel, color: '#7a7770' }}>Sæt
+                                         <input style={{ ...s.fieldInput, marginTop: '0.2rem', padding: '0.35rem 0.45rem' }} type="number" min="1" step="1" value={prescription.set_count} disabled={approvingProgression} onChange={e => editDraftForecast(item.key, 'sets', e.target.value)} />
+                                       </label>
+                                       <label style={{ ...s.fieldLabel, color: '#7a7770' }}>Reps
+                                         <input style={{ ...s.fieldInput, marginTop: '0.2rem', padding: '0.35rem 0.45rem' }} value={prescription.reps || ''} disabled={approvingProgression} onChange={e => editDraftForecast(item.key, 'reps', e.target.value)} />
+                                       </label>
+                                       <label style={{ ...s.fieldLabel, color: '#7a7770' }}>Vægt (kg)
+                                         <input style={{ ...s.fieldInput, marginTop: '0.2rem', padding: '0.35rem 0.45rem' }} type="number" min="0" step="0.5" value={prescription.load_kg ?? ''} disabled={approvingProgression} onChange={e => editDraftForecast(item.key, 'load_kg', e.target.value)} />
+                                       </label>
+                                       <label style={{ ...s.fieldLabel, color: '#7a7770' }}>RPE
+                                         <input style={{ ...s.fieldInput, marginTop: '0.2rem', padding: '0.35rem 0.45rem' }} type="number" min="0" max="10" step="0.5" value={prescription.rpe_target ?? ''} disabled={approvingProgression} onChange={e => editDraftForecast(item.key, 'rpe_target', e.target.value)} />
+                                       </label>
+                                     </div>
+                                     {override && (
+                                       <div style={{ marginTop: '0.5rem' }}>
+                                         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#c8923a', marginBottom: '0.2rem' }}>
+                                           Manuel ændring: {override.fields.map(field => FORECAST_FIELD_LABELS[field]).join(', ')}
+                                         </div>
+                                         <input
+                                           style={{ ...s.fieldInput, borderColor: missingReason ? 'rgba(224,85,85,0.72)' : undefined, padding: '0.4rem 0.5rem' }}
+                                           placeholder="Begrundelse for ændringen"
+                                           value={override.reason || ''}
+                                           disabled={approvingProgression}
+                                           onChange={e => setDraftForecastOverrideReason(item.key, e.target.value)}
+                                         />
+                                         {missingReason && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#e05555', marginTop: '0.2rem' }}>Begrundelse kræves før godkendelse.</div>}
+                                       </div>
+                                     )}
+                                   </div>
+                                 )
+                               })}
                               {progression.status === 'approval_required' && proposal && (
                                 <button style={{ ...s.btnGhost, marginTop: '0.6rem' }} disabled={approvingProgression} onClick={approveDraftProgressionState}>
                                   {approvingProgression ? 'Godkender…' : 'Godkend progressionstilstand'}

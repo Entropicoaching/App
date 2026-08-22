@@ -4,6 +4,7 @@
 // tilstand som input, men må aldrig være den eneste hukommelse om et forløb.
 
 export const PROGRESSION_STATE_SCHEMA_VERSION = 1
+export const PROGRESSION_EDITABLE_FIELDS = ['sets', 'reps', 'load_kg', 'rpe_target']
 
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value)
 const isText = value => typeof value === 'string' && value.trim().length > 0
@@ -26,6 +27,29 @@ function targetWeight(exercise) {
     .map(set => toNumber(set?.weight))
     .filter(weight => weight !== null)
   return weights.length ? Math.max(...weights) : null
+}
+
+function repTarget(exercise) {
+  if (Array.isArray(exercise?.sets) && exercise.sets.length) {
+    const first = exercise.sets[0]?.reps
+    if (first !== null && first !== undefined && String(first).trim()) return String(first).trim()
+  }
+  if (exercise?.reps !== null && exercise?.reps !== undefined && String(exercise.reps).trim()) {
+    return String(exercise.reps).trim()
+  }
+  return null
+}
+
+/** De konkrete, redigerbare mål for et forecast. */
+export function targetPrescriptionForExercise(exercise) {
+  const explicitSets = Array.isArray(exercise?.sets) ? exercise.sets : []
+  const setCount = explicitSets.length || (isPositiveInteger(exercise?.sets) ? Number(exercise.sets) : 0)
+  return {
+    set_count: setCount,
+    reps: repTarget(exercise),
+    load_kg: targetWeight(exercise),
+    rpe_target: toNumber(exercise?.rpeTarget ?? exercise?.intensity),
+  }
 }
 
 function sourceWeight(exercise) {
@@ -78,7 +102,7 @@ function actualEvidence(actual = {}) {
 function projectionFor({ source, target, actual }) {
   const evidence = actualEvidence(actual)
   const sourceLoad = sourceWeight(source)
-  const targetLoad = targetWeight(target)
+  const targetLoad = targetPrescriptionForExercise(target).load_kg
 
   if (targetLoad === null || targetLoad === 0 || sourceLoad === null || sourceLoad === 0) {
     return {
@@ -142,6 +166,23 @@ function validLoadRange(range) {
     && Number(range.target) <= Number(range.max)
 }
 
+function validPrescription(prescription) {
+  return isObject(prescription)
+    && isPositiveInteger(prescription.set_count)
+    && (prescription.reps === null || isText(prescription.reps))
+    && (prescription.load_kg === null || (isFiniteNumber(prescription.load_kg) && Number(prescription.load_kg) >= 0))
+    && (prescription.rpe_target === null || (isFiniteNumber(prescription.rpe_target)
+      && Number(prescription.rpe_target) >= 0 && Number(prescription.rpe_target) <= 10))
+}
+
+function validOverride(override) {
+  return isObject(override)
+    && Array.isArray(override.fields)
+    && override.fields.length > 0
+    && override.fields.every(field => PROGRESSION_EDITABLE_FIELDS.includes(field))
+    && isText(override.reason)
+}
+
 /**
  * Bygger en versioneret, modeluafhængig forventning for den næste uge.
  * Der er ingen fri tekst som implicit hukommelse: alle beslutningsfelter
@@ -175,12 +216,14 @@ export function buildProgressionStateV1({ sourceWeek, targetWeek, actuals = {}, 
         exercise_name: exerciseName,
         source: {
           load_kg: sourceWeight(source),
+          sets: source?.sets ?? null,
           reps: source?.reps ?? null,
           rpe_target: toNumber(source?.intensity),
         },
         expected: {
           decision: projection.decision,
           load_kg: projection.load_kg,
+          prescription: targetPrescriptionForExercise(target),
         },
         evidence: projection.evidence,
         confidence: projection.confidence,
@@ -286,6 +329,12 @@ export function validateProgressionStateV1(state) {
       if (exercise.expected?.load_kg !== null && !validLoadRange(exercise.expected?.load_kg)) {
         errors.push(`${prefix}.expected.load_kg er ugyldig`)
       }
+      if (!validPrescription(exercise.expected?.prescription)) {
+        errors.push(`${prefix}.expected.prescription er ugyldig`)
+      }
+      if (exercise.override !== undefined && !validOverride(exercise.override)) {
+        errors.push(`${prefix}.override kræver felter og begrundelse`)
+      }
       requiredText(errors, exercise.rationale, `${prefix}.rationale`)
       requiredText(errors, exercise.confidence, `${prefix}.confidence`)
     })
@@ -332,6 +381,61 @@ export function validateProgressionStateV1(state) {
   if (!Array.isArray(state.assumptions) || state.assumptions.length === 0 || !state.assumptions.every(isText)) {
     errors.push('assumptions mangler')
   }
+  return { ok: errors.length === 0, errors }
+}
+
+function sameNullableNumber(left, right) {
+  if (left === null || left === undefined || left === '') return right === null || right === undefined || right === ''
+  if (right === null || right === undefined || right === '') return false
+  return Number(left) === Number(right)
+}
+
+function sameNullableText(left, right) {
+  const normalizedLeft = left === null || left === undefined ? null : String(left).trim()
+  const normalizedRight = right === null || right === undefined ? null : String(right).trim()
+  return normalizedLeft === normalizedRight
+}
+
+/**
+ * Sikrer, at den uge der sendes, præcis matcher den forskrift Marc godkendte.
+ * Kladden er ikke godkendt, hvis et af de redigerbare felter er ændret bagefter.
+ */
+export function progressionStateMatchesDraftPayload(state, payload) {
+  const validation = validateProgressionStateV1(state)
+  if (!validation.ok) return { ok: false, errors: validation.errors }
+  const sessions = Array.isArray(payload?.sessions) ? payload.sessions : null
+  if (!sessions) return { ok: false, errors: ['Udkastets sessioner mangler'] }
+
+  const payloadExercises = []
+  sessions.forEach((session, sessionIndex) => {
+    const exercises = Array.isArray(session?.exercises) ? session.exercises : []
+    exercises.forEach((exercise, exerciseIndex) => {
+      payloadExercises.push({ key: `${sessionIndex}:${exerciseIndex}`, exercise })
+    })
+  })
+
+  const expectedExercises = state.expected_progression.exercises
+  const errors = []
+  if (payloadExercises.length !== expectedExercises.length) {
+    errors.push('Udkastets øvelser matcher ikke den godkendte progressionstilstand')
+  }
+
+  expectedExercises.forEach(expected => {
+    const payloadExercise = payloadExercises.find(item => item.key === expected.key)?.exercise
+    if (!payloadExercise) {
+      errors.push(`${expected.exercise_name}: mangler i udkastet`)
+      return
+    }
+    if (!sameNullableText(payloadExercise.name, expected.exercise_name)) {
+      errors.push(`${expected.exercise_name}: øvelsesnavnet matcher ikke godkendelsen`)
+    }
+    const actual = targetPrescriptionForExercise(payloadExercise)
+    const approved = expected.expected.prescription
+    if (Number(actual.set_count) !== Number(approved.set_count)) errors.push(`${expected.exercise_name}: sæt matcher ikke godkendelsen`)
+    if (!sameNullableText(actual.reps, approved.reps)) errors.push(`${expected.exercise_name}: reps matcher ikke godkendelsen`)
+    if (!sameNullableNumber(actual.load_kg, approved.load_kg)) errors.push(`${expected.exercise_name}: vægt matcher ikke godkendelsen`)
+    if (!sameNullableNumber(actual.rpe_target, approved.rpe_target)) errors.push(`${expected.exercise_name}: RPE matcher ikke godkendelsen`)
+  })
   return { ok: errors.length === 0, errors }
 }
 
