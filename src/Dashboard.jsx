@@ -11,6 +11,7 @@ import { saveVideoCoachDraft, validateVideoCoachPayloadBounds } from './videoCoa
 import { VIDEOCOACH_BASELINE_VERSION, VIDEOCOACH_BUILD_ID } from './videoCoachVersion'
 import { normalizeAthleteLoginEmail } from './athleteOnboarding'
 import { FORECAST_FIELD_LABELS, draftExerciseForForecast, progressionOverrideErrors, updateDraftForecast, updateForecastOverrideReason } from './progressionDraft'
+import { blockPurpose, buildPeriodizationSuggestion, withBlockPurposes } from './periodizationAssistant'
 import { targetPrescriptionForExercise } from '../supabase/functions/_shared/progressionState.js'
 
 const BLOCK_NAMES = ['Akkumulering', 'Intensificering', 'Peak', 'Deload', 'GPP', 'Hypertrofi', 'Styrke', 'Transition']
@@ -552,8 +553,14 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [showBlockPlanner, setShowBlockPlanner] = useState(false)
   const [calBlockAthlete, setCalBlockAthlete] = useState(null) // {id, name} når kalender-blok-byggeren er åben
   const [hoverCell, setHoverCell] = useState(null) // {aid, col} = tom kalender-celle der hoveres (klik = opret uge)
-  const [blockPlan, setBlockPlan] = useState([{ id: 1, name: 'Akkumulering', weeks: 4 }, { id: 2, name: 'Intensificering', weeks: 3 }, { id: 3, name: 'Peak', weeks: 2 }, { id: 4, name: 'Deload', weeks: 1 }])
+  const [blockPlan, setBlockPlan] = useState(() => withBlockPurposes([
+    { id: 1, name: 'Akkumulering', weeks: 4 },
+    { id: 2, name: 'Intensificering', weeks: 3 },
+    { id: 3, name: 'Peak', weeks: 2 },
+    { id: 4, name: 'Deload', weeks: 1 },
+  ]))
   const [planStartDate, setPlanStartDate] = useState(() => new Date().toISOString().slice(0, 10))
+  const [planAssistantFocus, setPlanAssistantFocus] = useState('competition')
   const [assignEdits, setAssignEdits] = useState({})
   const [sessionForm, setSessionForm] = useState({ title: '', weekday: null })
   const [exerciseForm, setExerciseForm] = useState({ name: '', sets: '', reps: '', intensity: '', intensityPrefix: 'RPE', note: '' })
@@ -1391,7 +1398,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           block_name: block.name || null,
           start_date: currentDate.toISOString().slice(0, 10),
           coach_note: null,
-          block_description: null,
+          block_description: block.description || blockPurpose(block.name),
         })
         currentDate = new Date(currentDate.getTime() + 7 * 24 * 3600 * 1000)
       }
@@ -1402,6 +1409,21 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     if (athleteId === selectedAthlete?.id) fetchWeeks(athleteId)
     await fetchCalendarWeeks(athletes.map(a => a.id))
     fetchAthleteWeekSummaries(athletes.map(a => a.id))
+  }
+
+  // Planassistenten har ingen skriveadgang: den erstatter kun det lokale, redigerbare udkast.
+  function applyPeriodizationSuggestion() {
+    const suggestion = buildPeriodizationSuggestion({
+      focus: planAssistantFocus,
+      startDate: planStartDate,
+      competitionDate: selectedAthlete?.competition_date,
+    })
+    if (!suggestion.ok) {
+      showFlash(suggestion.reason, 'error')
+      return
+    }
+    setBlockPlan(suggestion.blocks.map((block, index) => ({ id: Date.now() + index, ...block })))
+    showFlash(suggestion.reason, 'success')
   }
 
   // Opretter ÉN tom uge (ingen sessioner/øvelser) for en atlet med en eksplicit
@@ -1433,7 +1455,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             <div style={{ width: '10px', height: '10px', borderRadius: '2px', background: blockColor(block.name), flexShrink: 0 }} />
             <select
               value={block.name}
-              onChange={e => setBlockPlan(p => p.map((b, j) => j === i ? { ...b, name: e.target.value } : b))}
+              onChange={e => setBlockPlan(p => p.map((b, j) => j === i ? { ...b, name: e.target.value, description: blockPurpose(e.target.value) } : b))}
               style={{ ...s.fieldSelect, width: '160px', padding: '0.35rem 0.6rem', fontSize: '0.72rem' }}
             >
               {BLOCK_NAMES.map(n => <option key={n} value={n}>{n}</option>)}
@@ -1451,7 +1473,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           </div>
         ))}
         <button
-          onClick={() => setBlockPlan(p => [...p, { id: Date.now(), name: BLOCK_NAMES[0], weeks: 2 }])}
+          onClick={() => setBlockPlan(p => [...p, { id: Date.now(), name: BLOCK_NAMES[0], weeks: 2, description: blockPurpose(BLOCK_NAMES[0]) }])}
           style={{ ...s.btnGhost, fontSize: '0.52rem', padding: '0.3rem 0.7rem', alignSelf: 'flex-start', marginTop: '0.25rem' }}
         >+ Tilføj blok</button>
       </div>
@@ -6213,6 +6235,21 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     <div style={{ background: '#1c1c18', border: '1px solid rgba(200,146,58,0.3)', padding: '1.25rem', marginBottom: '1.5rem' }}>
                       <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '1rem' }}>Periodiseringsplan</div>
 
+                      {/* Planassistent: udfylder kun det lokale blokudkast. Oprettelse sker altid separat nederst. */}
+                      <div style={{ marginBottom: '1.25rem', padding: '0.85rem', border: '1px solid rgba(200,146,58,0.24)', background: 'rgba(200,146,58,0.055)' }}>
+                        <div style={{ ...s.fieldLabel, marginBottom: '0.3rem', color: '#c8923a' }}>Planassistent — udkast</div>
+                        <div style={{ fontSize: '0.68rem', color: '#98948a', lineHeight: 1.45, marginBottom: '0.65rem' }}>Laver kun et redigerbart blokudkast. Uger oprettes først nederst, når du vælger det.</div>
+                        <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
+                          <select value={planAssistantFocus} onChange={e => setPlanAssistantFocus(e.target.value)} style={{ ...s.fieldSelect, minWidth: '142px', padding: '0.4rem 0.55rem', fontSize: '0.65rem' }}>
+                            <option value="competition">Mod stævne</option>
+                            <option value="strength">Grundstyrke</option>
+                            <option value="offseason">Off-season</option>
+                          </select>
+                          <button style={{ ...s.btnGhost, fontSize: '0.56rem', padding: '0.4rem 0.7rem' }} onClick={applyPeriodizationSuggestion}>Lav forslag</button>
+                          {planAssistantFocus === 'competition' && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: compDate ? '#7a7770' : '#b36a58' }}>{compDate ? `Stævne: ${new Date(compDate + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short', year: 'numeric' })}` : 'Mangler stævnedato'}</span>}
+                        </div>
+                      </div>
+
                       {/* Skabeloner — hurtig-start, form videre efter behov */}
                       <div style={{ marginBottom: '1.25rem', paddingBottom: '1.25rem', borderBottom: '1px solid rgba(237,234,226,0.07)' }}>
                         <div style={{ ...s.fieldLabel, marginBottom: '0.5rem' }}>Skabelon — hurtig-start</div>
@@ -6220,7 +6257,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                           {BLOCK_PRESETS.map(preset => (
                             <button
                               key={preset.label}
-                              onClick={() => setBlockPlan(preset.blocks.map((b, i) => ({ id: Date.now() + i, ...b })))}
+                              onClick={() => setBlockPlan(withBlockPurposes(preset.blocks).map((b, i) => ({ id: Date.now() + i, ...b })))}
                               style={{ ...s.btnGhost, fontSize: '0.56rem', padding: '0.4rem 0.7rem', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '0.1rem', lineHeight: 1.2 }}
                             >
                               <span style={{ color: '#b8b4a8' }}>{preset.label}</span>
@@ -6288,7 +6325,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                             <div style={{ width: '10px', height: '10px', borderRadius: '2px', background: blockColor(block.name), flexShrink: 0 }} />
                             <select
                               value={block.name}
-                              onChange={e => setBlockPlan(p => p.map((b, j) => j === i ? { ...b, name: e.target.value } : b))}
+                              onChange={e => setBlockPlan(p => p.map((b, j) => j === i ? { ...b, name: e.target.value, description: blockPurpose(e.target.value) } : b))}
                               style={{ ...s.fieldSelect, width: '160px', padding: '0.35rem 0.6rem', fontSize: '0.72rem' }}
                             >
                               {BLOCK_NAMES.map(n => <option key={n} value={n}>{n}</option>)}
@@ -6306,7 +6343,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                           </div>
                         ))}
                         <button
-                          onClick={() => setBlockPlan(p => [...p, { id: Date.now(), name: BLOCK_NAMES[0], weeks: 2 }])}
+                          onClick={() => setBlockPlan(p => [...p, { id: Date.now(), name: BLOCK_NAMES[0], weeks: 2, description: blockPurpose(BLOCK_NAMES[0]) }])}
                           style={{ ...s.btnGhost, fontSize: '0.52rem', padding: '0.3rem 0.7rem', alignSelf: 'flex-start', marginTop: '0.25rem' }}
                         >+ Tilføj blok</button>
                       </div>
