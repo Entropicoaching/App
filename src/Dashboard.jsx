@@ -14,6 +14,7 @@ import { FORECAST_FIELD_LABELS, draftExerciseForForecast, progressionOverrideErr
 import { blockPurpose, buildPeriodizationSuggestion, withBlockPurposes } from './periodizationAssistant'
 import { buildPlanOverview, planOverviewCounts } from './planOverview'
 import { targetPrescriptionForExercise } from '../supabase/functions/_shared/progressionState.js'
+import { byggKategoriOpslag, kategoriFor } from './exerciseNames'
 
 const BLOCK_NAMES = ['Akkumulering', 'Intensificering', 'Peak', 'Deload', 'GPP', 'Hypertrofi', 'Styrke', 'Transition']
 
@@ -436,7 +437,7 @@ function buildLiftSeries(logs, keyword, nameToCat, category) {
   const useCategory = nameToCat && category && Object.keys(nameToCat).length > 0
   const matched = logs.filter(l => {
     const name = l.exercises?.name || ''
-    if (useCategory) return nameToCat[name.toLowerCase()] === category && l.weight > 0
+    if (useCategory) return kategoriFor(name, nameToCat) === category && l.weight > 0
     return name.toLowerCase().includes(keyword) && l.weight > 0
   })
   if (!matched.length) return { hasData: false, actualData: [], plannedData: [] }
@@ -2566,8 +2567,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     }
 
     // Est. 1RM-udvikling + ugentligt tonnage pr. hovedløft (digest før den rå log)
-    const nameToCat = {}
-    for (const ex of exerciseLibrary) { if (ex.name && ex.category) nameToCat[ex.name.toLowerCase()] = ex.category }
+    const nameToCat = byggKategoriOpslag(exerciseLibrary)
     // OHP har ingen bibliotekskategori — genkend barbell overhead press på navn
     // (samme regler som atlet-siden) og behandl det som en "OHP"-kategori. Sådan
     // kommer OHP-fokuserede atleter (fx Henrik) med i digest-tabellerne.
@@ -2576,7 +2576,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     const catFor = name => {
       const n = (name || '').toLowerCase()
       if (ohpRe.test(n) && !ohpExclude.test(n)) return 'OHP'
-      return nameToCat[n] || null
+      return kategoriFor(name, nameToCat)
     }
     const mainCats = [['Squat', 'Squat'], ['Bænk', 'Bænkpres'], ['Dødløft', 'Dødløft'], ['OHP', 'OHP']]
     const epley = (w, r) => w * (1 + r / 30)
@@ -4632,8 +4632,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               const lastActivityDate = athleteLogs.length ? athleteLogs[0]?.logged_at.slice(0, 10) : null
               const totalSets4w = recentLogs.length
 
-              const nameToCat = {}
-              for (const ex of exerciseLibrary) { if (ex.name && ex.category) nameToCat[ex.name.toLowerCase()] = ex.category }
+              const nameToCat = byggKategoriOpslag(exerciseLibrary)
               const squatS = buildLiftSeries(athleteLogs, 'squat', nameToCat, 'Squat')
               const benchS = buildLiftSeries(athleteLogs, 'bænk', nameToCat, 'Bænkpres')
               const deadS = buildLiftSeries(athleteLogs, 'dødl', nameToCat, 'Dødløft')
@@ -5068,7 +5067,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                       const weekMap = {}
                       for (const log of athleteLogs) {
                         if (log.skipped || !log.weight || !log.reps_completed) continue
-                        const cat = nameToCat[(log.exercises?.name || '').toLowerCase()]
+                        const cat = kategoriFor(log.exercises?.name, nameToCat)
                         if (cat !== category) continue
                         const d = new Date(log.logged_at.slice(0, 10) + 'T12:00:00')
                         const day = d.getDay() || 7
@@ -5198,7 +5197,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     const lbl = date => { const d = new Date(date + 'T12:00:00'); return `${d.getDate()}/${d.getMonth() + 1}` }
 
                     function buildRpeSeries(category) {
-                      const filtered = logsWithRpe.filter(l => nameToCat[(l.exercises?.name || '').toLowerCase()] === category)
+                      const filtered = logsWithRpe.filter(l => kategoriFor(l.exercises?.name, nameToCat) === category)
                       if (!filtered.length) return { actualData: [], plannedData: [] }
                       const dateMap = {}
                       for (const log of filtered) {

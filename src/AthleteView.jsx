@@ -6,6 +6,7 @@ import { videoCoachPersonalBaselineAthleteText, videoCoachPersonalBaselineForAna
 import { VIDEOCOACH_LIFT_LABELS as ATHLETE_VIDEO_LIFTS, videoCoachVariationLabel as athleteVideoVariationLabel } from './videoCoachLabels'
 import { completeAthleteOnboarding, hasCompletedAthleteOnboarding } from './athleteOnboarding'
 import { calcWarmupSets, isMainLift } from './warmup'
+import { foldNavn } from './exerciseNames'
 import { flushVideoCoachDraftQueue, isRetryableVideoCoachError,
   queueVideoCoachDraft, saveVideoCoachDraft,
   validateVideoCoachPayloadBounds } from './videoCoachSubmission'
@@ -1372,10 +1373,12 @@ function liftsFromWeek(week) {
   const found = new Set()
   for (const sess of week?.sessions || []) {
     for (const ex of sess.exercises || []) {
-      const n = (ex.name || '').toLowerCase()
+      // foldNavn() gør detektionen uafhængig af om øvelsen hedder "Bænkpres"
+      // eller "Baenkpres" — begge stavemåder findes i basen (se exerciseNames.js).
+      const n = foldNavn(ex.name)
       if (n.includes('squat')) found.add('squat')
-      if (n.includes('bænk') || n.includes('bench')) found.add('bench')
-      if (n.includes('dødl') || n.includes('deadlift') || n.includes('sumo')) found.add('deadlift')
+      if (n.includes('baenk') || n.includes('bench')) found.add('bench')
+      if (n.includes('doedl') || n.includes('deadlift') || n.includes('sumo')) found.add('deadlift')
     }
   }
   return [...found]
