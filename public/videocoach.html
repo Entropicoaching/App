@@ -265,19 +265,24 @@
   body.athlete #athleteStartGuide[hidden] { display:none; }
   body.athlete #athleteStartGuide span { min-width:0; color:rgba(237,234,226,.68);
     font-size:10px; line-height:1.35; }
-  body.athlete #athleteMarkStartBtn { flex:0 0 auto; min-width:112px; padding:9px 11px;
+  /* MOBIL-GENNEMGANG-2026-09-03: 36px høj - den FØRSTE obligatoriske
+     handling i hele flowet (uden den forbliver "Stangbane" låst). */
+  body.athlete #athleteMarkStartBtn { display:flex; align-items:center; justify-content:center;
+    flex:0 0 auto; min-width:112px; min-height:44px; padding:9px 11px;
     border-radius:10px; color:#141410; background:var(--accent); border-color:var(--accent);
     font-size:10px; font-weight:650; letter-spacing:.04em; }
   body.athlete #athleteMarkStartBtn[data-set="true"] { color:#d9f2df;
     background:rgba(64,139,87,.28); border-color:rgba(120,216,154,.48); }
   body.athlete #playBtn2 { display:none !important; }
+  /* MOBIL-GENNEMGANG-2026-09-03: ↤/mute var 34-38px, under 44px-tryk-målet,
+     tæt pakket i samme række - løftet til 44px, rækken har rigeligt med
+     plads (målt ~366px bred, fire knapper + skyder fylder ~324px). */
   body.athlete #athleteStartBtn { display:flex; align-items:center; justify-content:center;
-    width:38px; height:38px; flex:0 0 38px; padding:0; border-radius:50%;
+    width:44px; height:44px; flex:0 0 44px; padding:0; border-radius:50%;
     color:var(--accent); background:rgba(200,146,58,.12); border:1px solid rgba(200,146,58,.3); }
-  body.athlete #backS, body.athlete #fwdS { width:38px; height:38px; flex-basis:38px; }
   body.athlete #scrub { min-width:54px; height:5px; }
   body.athlete #scrub::-webkit-slider-thumb { width:20px; height:20px; }
-  body.athlete #muteBtn { width:34px; flex:0 0 34px; padding:0; }
+  body.athlete #muteBtn { width:44px; height:44px; flex:0 0 44px; padding:0; }
   body.athlete #timeLabel { display:block !important; min-width:42px;
     color:rgba(237,234,226,.55); font-size:9px; text-align:right; }
   body.athlete #downloadLink { position:fixed; left:50%; bottom:178px;
@@ -450,6 +455,9 @@
     backdrop-filter:blur(12px); border:1px solid var(--line); flex-shrink:0; }
   body.slim #backS:active, body.slim #fwdS:active { transform:scale(.88);
     color:var(--accent); }
+  /* MOBIL-GENNEMGANG-2026-09-03: 42px var under 44px-tryk-målet i athlete;
+     kun body.athlete, så coachweb (samme body.slim-basisregel) er uændret. */
+  body.athlete #backS, body.athlete #fwdS { width:44px; height:44px; }
   body.slim #scrub { -webkit-appearance:none; appearance:none; height:4px;
     background:#3a362c; border-radius:2px; }
   body.slim #scrub::-webkit-slider-thumb { -webkit-appearance:none; width:16px;
@@ -801,6 +809,11 @@
     #vcLiftSlot { position:fixed; z-index:31; top:68px; left:8px; }
     #vcLiftSlot select { width:104px; min-height:40px; background:rgba(24,24,20,.94); }
     body.athlete[data-athlete-state="empty"] #vcLiftSlot { display:none; }
+    /* MOBIL-GENNEMGANG-2026-09-03: #banner (top:10px) lå bag systembjælken
+       (67px høj, z-index 40) OG oven i øvelsesvælgeren (top:68-108px) - status-
+       tekster som "Tryk på skivens TOP" blev delvist skjult. Kun body.athlete,
+       hvor begge de andre elementer er fast placeret i denne bredde. */
+    body.athlete #banner { top:116px; }
     #stage, body.slim #stage { inset:60px 0 126px; }
     body.athlete[data-athlete-state="empty"] #stage { inset:60px 0 0; }
     #barPathHUD { inset:auto 8px 126px 8px; max-height:40vh; overflow:auto;
