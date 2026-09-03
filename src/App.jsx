@@ -163,7 +163,15 @@ function App() {
       ? <AthleteView session={session} role={role} coachAthleteId={coachAthleteId} onExitPreview={() => { setPreviewMode(false); setCoachAthleteId(null) }} />
       : <Dashboard session={session} onPreviewAthlete={(athleteId) => { setCoachAthleteId(athleteId || null); setPreviewMode(true) }} />
   } else {
-    viewEl = <AthleteView session={session} role={role} />
+    // Coach-rolle hentes fra profiles.role og caches pr. bruger-id (se
+    // resolveRole/resolvedFor ovenfor) — ændres rollen server-side til 'coach'
+    // mens en fane stadig har den gamle sesion åben, opdager appen det først
+    // ved en fuld genindlæsning. onRecheckRole giver et sted i UI'en (uden
+    // login/logout) hvor det kan tjekkes igen med det samme: den kalder den
+    // samme resolveRole, som ved et 'coach'-svar automatisk skifter denne
+    // gren over til Dashboard via almindelig React-genrendering.
+    viewEl = <AthleteView session={session} role={role}
+      onRecheckRole={() => resolveRef.current?.(session.user.id, session.user.email)} />
   }
   return <ErrorBoundary><Suspense fallback={loaderScreen}>{viewEl}</Suspense></ErrorBoundary>
 }

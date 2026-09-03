@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { supabase, withRetry } from './supabase'
+import { supabase, withRetry, signOutHard } from './supabase'
 import { buildCoachPriorityItems, coachPriorityFocus, coachPriorityQueueContext, coachPriorityTaskContext } from './coachPriority'
 import { coachInboxCompletionStatus, coachInboxEntryIntent, coachInboxFocusDecision, createSingleFlightRunner, filterDraftVideoReviews, filterOpenTrainingSignals, shouldCollapseCoachConversations, summarizeCoachMessages, summarizeRefreshResults, trainingSignalFingerprint } from './coachInboxState'
 import { buildVideoCoachBaselineProfiles, countReadyVideoCoachBaselineProfiles, videoCoachBaselineReviewImpact } from './videoCoachBaselineProgress'
@@ -3342,7 +3342,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                       <span>{exportingBackup ? 'Henter…' : 'Sikkerhedskopi'}</span>
                       <span style={{ color: stale ? '#c8923a' : '#4a4844' }}>{backupNote}</span>
                     </button>
-                    <button onClick={() => supabase.auth.signOut()} style={row}
+                    <button onClick={() => signOutHard()} style={row}
                       onMouseEnter={e => e.currentTarget.style.color = '#e05555'} onMouseLeave={e => e.currentTarget.style.color = '#7a7770'}>
                       <span>Log ud</span><span>→</span>
                     </button>
@@ -3465,7 +3465,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     <button onClick={() => { setMenuSheetOpen(false); setShowAddModal(true) }} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#b8b4a8', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>+ Tilføj atlet</button>
                     <button onClick={exportTraeningsdata} disabled={exportingTraening} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>{exportingTraening ? '...' : '↓ Træningsdata'}</button>
                     <button onClick={exportBackup} disabled={exportingBackup} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>{exportingBackup ? '...' : '↓ Sikkerhedskopi'}</button>
-                    <button onClick={() => supabase.auth.signOut()} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>Log ud</button>
+                    <button onClick={() => signOutHard()} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>Log ud</button>
                   </div>
                 </>
               )}

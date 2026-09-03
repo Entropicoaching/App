@@ -993,6 +993,11 @@
 <video id="video" playsinline webkit-playsinline muted preload="metadata"
        style="position:fixed; left:0; top:0; width:2px; height:2px; opacity:0;
               pointer-events:none;"></video>
+<!-- Ren zoom-matematik i egen fil (videocoach-zoom.js) så den kan enhedstestes
+     uafhængigt af denne side (se videocoach-zoom.test.js). Modul-scriptet
+     lægger funktionerne på window, FØR hovedscriptet nedenfor kører sine
+     event-handlere (som først kalder dem ved brugerinput, altså efter load). -->
+<script type="module" src="videocoach-zoom.js"></script>
 <script>
 const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
@@ -1805,21 +1810,39 @@ window.addEventListener('pointerup', () => {
   current = null;
 });
 
-// Musehjul over videoen = spol frame for frame (som WL Analysis)
+// Musehjul over videoen = spol frame for frame (som WL Analysis). Ctrl/Cmd +
+// hjul (det Chrome/Firefox/Edge sender for en trackpad-klemme) zoomer i
+// stedet, centreret om musemarkøren - se zoomAtCursor(), defineret sammen
+// med resten af zoom-koden nedenfor.
 canvas.addEventListener('wheel', e => {
   e.preventDefault();
+  if (e.ctrlKey || e.metaKey) { zoomAtCursor(e); return; }
   step(e.deltaY > 0 ? FRAME : -FRAME);
 }, { passive: false });
 
-// ---------- Pinch-to-zoom (mobil) ----------
-// TO fingre zoomer + panorerer videoen; ÉN finger er uroert (tegn/placer/
-// klik). Zoom laegges som CSS-transform paa canvas - pos() bruger
-// getBoundingClientRect, som afspejler transformen, saa alle klik mapper
-// stadig korrekt (zoom = ekstra praecision ved skelet-punkter paa lille skaerm).
+// ---------- Pinch-to-zoom (mobil) + Ctrl/Cmd-hjul-zoom (desktop) ----------
+// TO fingre (mobil) eller Ctrl/Cmd+hjul (desktop/trackpad) zoomer + panorerer
+// videoen; ÉN finger er uroert (tegn/placer/klik). Zoom laegges som CSS-
+// transform paa canvas - pos() bruger getBoundingClientRect, som afspejler
+// transformen, saa alle klik mapper stadig korrekt (zoom = ekstra praecision
+// ved skelet-punkter paa lille skaerm).
+//
+// BUG (ORDRE 20): zoom kunne kun naas via to-finger-pinch. På desktop var der
+// slet ingen zoom, saa et forsoeg paa Ctrl+hjul/trackpad-klemme blev enten
+// tolket som frame-step (musehjul-handleren ovenfor) eller udloeste browserens
+// EGEN side-zoom - som paa iOS/Safari IKKE kan spaerres med viewport-meta'ens
+// maximum-scale (Safari ignorerer den med vilje for tilgaengelighed siden
+// iOS 10), og som IKKE ved noget om #stage's layout. Resultatet: siden zoomede
+// om et browser-vilkaarligt punkt i stedet for om pegepunktet, og brugeren
+// endte kigge paa fx kun det hoejre hjoerne af billedet med skiven udenfor.
+// Fix: egen Ctrl/Cmd+hjul-zoom centreret om musemarkoeren (samme matematik som
+// pinch, delt via zoomKeepingPoint), plus blokering af Safaris native
+// pinch-zoom-gestus saa den ikke laegger sig oveni vores egen.
 let zoom = { s: 1, x: 0, y: 0 };
 let pinch = null;
 const MIN_ZOOM = 0.3;   // tillad zoom UNDER 1x, så et canvas der overflower det
                         // synlige omraade (fx iOS-iframe-layout) kan skaleres ind
+const MAX_ZOOM = 4;
 function applyZoom() {
   canvas.style.transformOrigin = '0 0';
   canvas.style.transform = zoom.s === 1 ? ''
@@ -1870,13 +1893,33 @@ canvas.addEventListener('touchmove', e => {
   if (!pinch || e.touches.length < 2) return;
   e.preventDefault();
   const m = pinchMid(e.touches);
-  const s = Math.max(MIN_ZOOM, Math.min(4, pinch.s0 * m.d / pinch.m0.d));
+  const s = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, pinch.s0 * m.d / pinch.m0.d));
   // hold punktet under fingrenes midte fast -> zoom OG pan i samme gest
-  const Lx = (pinch.m0.x - pinch.base.x - pinch.x0) / pinch.s0;
-  const Ly = (pinch.m0.y - pinch.base.y - pinch.y0) / pinch.s0;
-  zoom = { s, x: m.x - pinch.base.x - s * Lx, y: m.y - pinch.base.y - s * Ly };
+  zoom = VideoCoachZoom.zoomKeepingPoint(
+    pinch.base, pinch.m0, { s: pinch.s0, x: pinch.x0, y: pinch.y0 }, m, s);
   applyZoom();
 }, { passive: false });
+// Ctrl/Cmd+hjul (desktop) eller trackpad-klemme = zoom centreret om
+// musemarkoeren, samme matematik som pinch ovenfor (VideoCoachZoom.zoomKeepingPoint,
+// se videocoach-zoom.js) - fixer at zoom foer ikke fandtes paa desktop og at
+// browserens EGEN side-zoom (som ikke kender #stage) kunne overtage i stedet.
+function zoomAtCursor(e) {
+  const r = canvas.getBoundingClientRect();
+  const base = { x: r.left - zoom.x, y: r.top - zoom.y };
+  const focal = { x: e.clientX, y: e.clientY };
+  // Retningsrigtig, jaevn skalering: negativ deltaY (hjul frem/klem ud) = zoom ind.
+  const factor = Math.exp(-e.deltaY * 0.01);
+  const s = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom.s * factor));
+  zoom = VideoCoachZoom.zoomKeepingPoint(base, focal, zoom, focal, s);
+  applyZoom();
+}
+// Safari (iOS/macOS) sender 'gesturestart'/'gesturechange' for en to-finger-
+// klemme OG zoomer siden selv, uanset viewport-meta'ens maximum-scale (bevidst
+// ignoreret af Safari siden iOS 10 af tilgaengelighedshensyn). Uden denne
+// blokering laa browserens EGEN, #stage-uvidende zoom oveni vores canvas-zoom,
+// og brugeren endte med kun fx det hoejre hjoerne af billedet i syne.
+window.addEventListener('gesturestart', e => e.preventDefault());
+window.addEventListener('gesturechange', e => e.preventDefault());
 function endPinch(e) {
   if (!pinch || e.touches.length >= 2) return;  // stadig 2 fingre? behold gesten
   pinch = null;

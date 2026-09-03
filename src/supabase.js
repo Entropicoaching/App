@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { signOutHardCore, isSupabaseAuthTokenKey } from './authSignOut'
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_KEY
@@ -82,6 +83,38 @@ if (typeof window !== 'undefined') {
   })
   window.addEventListener('focus', () => warmupAuth())
   window.addEventListener('pageshow', () => warmupAuth())
+}
+
+// --- Robust log-ud ------------------------------------------------------
+// BUG (ORDRE 20): "Log ud" kunne stå og gøre ingenting. @supabase/auth-js'
+// signOut() awaiter et netværkskald til /logout, og GoTrueAdminApi.signOut()
+// KASTER videre enhver fejl der ikke er en AuthError (fx en abortet fetch fra
+// vores egen fetchWithTimeout, eller et rent netværksdrop) — uden nogensinde
+// at nå frem til at rydde den lokale session. Ved en flaky/langsom
+// forbindelse (mobil vågnet fra dvale, akkurat den slags cold-start denne fil
+// allerede kæmper med andetsteds) endte brugeren derfor logget ind for
+// evigt, uden fejlbesked, fordi ingen af de eksisterende onClick-handlere
+// fangede den afviste promise.
+//
+// signOutHard() garanterer i stedet at sessionen ALTID forsvinder lokalt:
+// den forsøger et rigtigt signOut (så refresh-token også ugyldiggøres på
+// serveren), men rydder under alle omstændigheder selv den persisterede
+// sb-*-auth-token-nøgle bagefter og genindlæser siden — uanset om
+// netværkskaldet lykkedes, fejlede eller timede ud.
+const SIGNOUT_TIMEOUT_MS = 5000
+export async function signOutHard() {
+  await signOutHardCore(
+    () => supabase.auth.signOut(),
+    () => {
+      try {
+        for (const key of Object.keys(localStorage)) {
+          if (isSupabaseAuthTokenKey(key)) localStorage.removeItem(key)
+        }
+      } catch { /* localStorage utilgængelig (fx privat browsing) */ }
+    },
+    SIGNOUT_TIMEOUT_MS,
+  )
+  window.location.reload()
 }
 
 // Kør et Supabase-kald robust ved appstart/transiente fejl.
