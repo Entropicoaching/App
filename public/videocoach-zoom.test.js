@@ -82,3 +82,78 @@ test('panorering: to-finger-pinch der holder afstanden konstant men flytter midt
   assert.ok(Math.abs((z.x - startZoom.x) - (m1.x - m0.x)) < 1e-9)
   assert.ok(Math.abs((z.y - startZoom.y) - (m1.y - m0.y)) < 1e-9)
 })
+
+// ---------- ORDRE 23: regression ved 390px viewport-bredde (mobil) ----------
+// Placér skærmen på et point/telefon-agtigt viewport (iPhone 12/13 mini-
+// bredde) fremfor desktop-tal, og bevis begge invarianter der: (1) punktet
+// under fingeren/markøren driver ikke ved zoom, og (2) alle fire hjørner af
+// billedet kan panoreres ind i syne — ingen usynlig klemme på x/y forhindrer
+// det, som var netop symptomet Marc så ("kun det højre hjørne i syne").
+function screenPos(base, zoom, local) {
+  return { x: base.x + zoom.x + zoom.s * local.x, y: base.y + zoom.y + zoom.s * local.y }
+}
+
+test('390px viewport: zoom om pegepunktet driver ikke, heller ikke tæt på kanten af en smal skærm', () => {
+  // #stage har en header (64px) og bundnav i videocoach.html - canvas' u-
+  // transformerede top-venstre ligger derfor typisk et stykke nede, ikke i
+  // (0,0). Kun 390px bred viewport at panorere/zoome indenfor.
+  const base390 = { x: 0, y: 64 }
+  const focalPointsNearEdges = [
+    { x: 15, y: 90 },    // helt ude i venstre kant
+    { x: 375, y: 90 },   // helt ude i højre kant (390px bred skærm)
+    { x: 195, y: 700 },  // nederst, hvor skiven ofte lander på en gulv-optagelse
+  ]
+  for (const focal of focalPointsNearEdges) {
+    for (const targetScale of [1.5, 2, 3, 4]) {
+      const z = zoomKeepingPoint(base390, focal, IDENTITY, focal, targetScale)
+      const after = screenPos(base390, z, {
+        x: (focal.x - base390.x - IDENTITY.x) / IDENTITY.s,
+        y: (focal.y - base390.y - IDENTITY.y) / IDENTITY.s,
+      })
+      assert.ok(Math.abs(after.x - focal.x) < 1e-9, `x drev ved 390px, skala ${targetScale}: ${after.x} != ${focal.x}`)
+      assert.ok(Math.abs(after.y - focal.y) < 1e-9, `y drev ved 390px, skala ${targetScale}: ${after.y} != ${focal.y}`)
+    }
+  }
+})
+
+test('390px viewport: panorering kan nå alle fire hjørner af billedet ind i syne', () => {
+  const VIEWPORT = { width: 390, height: 750 }
+  const base390 = { x: 0, y: 64 }
+  // Et 16:9-klip skaleret til fuld skærmbredde (typisk landskabsoptagelse på
+  // en portræt-telefon).
+  const canvas = { w: 390, h: Math.round(390 * 9 / 16) } // 219
+  const corners = {
+    'øverst-venstre': { x: 0, y: 0 },
+    'øverst-højre': { x: canvas.w, y: 0 },
+    'nederst-venstre': { x: 0, y: canvas.h },
+    'nederst-højre': { x: canvas.w, y: canvas.h },
+  }
+  // En typisk "langt inde"-zoom centreret et vilkårligt sted - efterlader
+  // hjørnerne langt uden for de 390px, akkurat den situation hvor en bruger
+  // har brug for at panorere for at nå fx skiven i et hjørne.
+  const zoomedIn = { s: 3.5, x: -520, y: -140 }
+  const targets = {
+    'øverst-venstre': { x: 15, y: 90 },
+    'øverst-højre': { x: 375, y: 90 },
+    'nederst-venstre': { x: 15, y: 700 },
+    'nederst-højre': { x: 375, y: 700 },
+  }
+  for (const [name, corner] of Object.entries(corners)) {
+    const before = screenPos(base390, zoomedIn, corner)
+    const target = targets[name]
+    // Sanitycheck: testen er kun meningsfuld hvis hjørnet FAKTISK er udenfor
+    // syne før panoreringen (ellers beviser den ingenting).
+    const wasOffscreenOrFar = before.x < 0 || before.x > VIEWPORT.width ||
+      before.y < 0 || before.y > VIEWPORT.height ||
+      Math.hypot(before.x - target.x, before.y - target.y) > 50
+    assert.ok(wasOffscreenOrFar, `${name}: var allerede ved målet (${before.x},${before.y}) - testen beviser intet`)
+    // To-finger-panorering (samme skala) fra hjørnets nuværende skærmposition
+    // til målpunktet - reproducerer den rigtige touch-pinch-håndtering.
+    const panned = zoomKeepingPoint(base390, before, zoomedIn, target, zoomedIn.s)
+    const after = screenPos(base390, panned, corner)
+    assert.ok(Math.abs(after.x - target.x) < 1e-9, `${name}: x ramte ikke målet (${after.x} != ${target.x})`)
+    assert.ok(Math.abs(after.y - target.y) < 1e-9, `${name}: y ramte ikke målet (${after.y} != ${target.y})`)
+    assert.ok(after.x >= 0 && after.x <= VIEWPORT.width, `${name}: endte uden for de 390px i bredden`)
+    assert.ok(after.y >= 0 && after.y <= VIEWPORT.height, `${name}: endte uden for viewportens højde`)
+  }
+})

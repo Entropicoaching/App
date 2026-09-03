@@ -8,6 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "verify:auth-logout-role-switch": "node scripts/verify-auth-logout-and-role-switch.mjs",
     "verify:athlete-training-inputs": "node scripts/verify-athlete-training-inputs.mjs",
     "verify:athlete-onboarding": "node scripts/verify-athlete-onboarding.mjs",
     "verify:athlete-first-day-flow": "node scripts/verify-athlete-first-day-flow.mjs",
@@ -20,6 +21,7 @@
     "verify:videocoach-variation-migration": "node scripts/verify-videocoach-variation-migration.mjs",
     "verify:videocoach-submission": "node scripts/verify-videocoach-submission.mjs",
     "verify:videocoach-migrations": "node scripts/verify-videocoach-migrations.mjs",
+    "verify:videocoach-zoom": "node scripts/verify-videocoach-zoom.mjs",
     "verify:n8n": "node n8n/verify-workflows.mjs",
     "preview:n8n-briefing": "node n8n/preview-coach-briefing.mjs"
   },
