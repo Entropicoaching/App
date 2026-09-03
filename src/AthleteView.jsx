@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, Fragment } from 'react'
-import { supabase, withRetry, queueWrite } from './supabase'
+import { supabase, withRetry, queueWrite, signOutHard } from './supabase'
 import { mergeAthleteSetInputs, nextAthleteSetInput } from './athleteTrainingInputs'
 import { sanitizeVideoCoachFeedbackEvidence } from './videoCoachFeedbackEvidence'
 import { videoCoachPersonalBaselineAthleteText, videoCoachPersonalBaselineForAnalysis } from './videoCoachPersonalFeedback'
@@ -1645,8 +1645,23 @@ function parsePlannedRpe(intensity) {
   return m ? parseFloat(m[1].replace(',', '.')) : null
 }
 
-export default function AthleteView({ session, onExitPreview, role, coachAthleteId }) {
+export default function AthleteView({ session, onExitPreview, role, coachAthleteId, onRecheckRole }) {
   const [tab, setTab] = useState('hjem')
+  const [recheckingRole, setRecheckingRole] = useState(false)
+  const [recheckMsg, setRecheckMsg] = useState('')
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false)
+  // Undgår setState efter unmount: lykkes genopslaget og rollen bliver
+  // 'coach', skifter App.jsx denne gren ud med Dashboard FØR onRecheckRole's
+  // promise resolver — komponentet er da allerede væk.
+  const mountedRef = useRef(true)
+  useEffect(() => () => { mountedRef.current = false }, [])
+  async function handleRecheckRole() {
+    setRecheckingRole(true); setRecheckMsg('')
+    await onRecheckRole?.()
+    if (!mountedRef.current) return
+    setRecheckingRole(false)
+    setRecheckMsg('Din konto er registreret som atlet — ingen coach-adgang fundet.')
+  }
   const [athlete, setAthlete] = useState(null)
   const athleteVideoCoachRef = useRef(null)
   const athleteVideoCoachFrameRef = useRef(null)
@@ -3145,7 +3160,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
             <a href={coachMail} style={{ ...s.btnPrimary, textDecoration: 'none', display: 'block', padding: '0.85rem 1rem' }}>Skriv til din coach</a>
-            {backBtn || <button style={s.btnGhost} onClick={() => supabase.auth.signOut()}>Log ud og skift mail</button>}
+            {backBtn || <button style={s.btnGhost} onClick={() => signOutHard()}>Log ud og skift mail</button>}
           </div>
         </div>
       </div>
@@ -3373,11 +3388,44 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       {/* Topbar */}
       <div style={s.topbar}>
         <div style={s.logo}>Entropi<span style={{ color: '#c8923a' }}>.</span></div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', position: 'relative' }}>
           {backBtn}
           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844' }}>{today()}</div>
+          {/* BUG (ORDRE 20): denne konto-menu fandtes slet ikke før — en atlet
+              (eller en coach der ved en fejl var havnet her) havde ingen vej ud
+              af appen uden at rydde browser-data manuelt. Log ud skal ALTID
+              kunne nås; "Skift til coach-visning" dækker det Marc oplevede: en
+              coach-konto der (fx pga. et cachet rolle-opslag, se App.jsx)
+              stod fast i atlet-visningen uden at skulle logge helt ud og ind. */}
+          {!onExitPreview && (
+            <div style={{ position: 'relative' }}>
+              <button
+                onClick={() => setAccountMenuOpen(o => !o)}
+                aria-label="Konto"
+                style={{ background: 'transparent', border: 'none', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.1em', cursor: 'pointer', padding: '0.2rem 0.3rem' }}
+              >⋯</button>
+              {accountMenuOpen && (
+                <div style={{ position: 'absolute', top: '100%', right: 0, marginTop: '0.4rem', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.1)', borderRadius: 6, padding: '0.35rem', minWidth: '190px', zIndex: 100, boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
+                  {onRecheckRole && (
+                    <button
+                      onClick={() => { setAccountMenuOpen(false); handleRecheckRole() }}
+                      disabled={recheckingRole}
+                      style={{ display: 'block', width: '100%', textAlign: 'left', background: 'transparent', border: 'none', color: '#b8b4a8', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.06em', textTransform: 'uppercase', padding: '0.5rem 0.5rem', cursor: recheckingRole ? 'default' : 'pointer' }}
+                    >{recheckingRole ? 'Tjekker…' : 'Skift til coach-visning'}</button>
+                  )}
+                  <button
+                    onClick={() => { setAccountMenuOpen(false); signOutHard() }}
+                    style={{ display: 'block', width: '100%', textAlign: 'left', background: 'transparent', border: 'none', color: '#e05555', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.06em', textTransform: 'uppercase', padding: '0.5rem 0.5rem', cursor: 'pointer' }}
+                  >Log ud</button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
+      {recheckMsg && !onExitPreview && (
+        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.04em', color: '#7a7770', textAlign: 'right', padding: '0.4rem 1.5rem 0' }}>{recheckMsg}</div>
+      )}
 
       {/* Page content */}
       <div style={s.page}>
