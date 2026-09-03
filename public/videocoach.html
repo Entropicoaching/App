@@ -801,6 +801,11 @@
     #vcLiftSlot { position:fixed; z-index:31; top:68px; left:8px; }
     #vcLiftSlot select { width:104px; min-height:40px; background:rgba(24,24,20,.94); }
     body.athlete[data-athlete-state="empty"] #vcLiftSlot { display:none; }
+    /* MOBIL-GENNEMGANG-2026-09-03: #banner (top:10px) lå bag systembjælken
+       (67px høj, z-index 40) OG oven i øvelsesvælgeren (top:68-108px) - status-
+       tekster som "Tryk på skivens TOP" blev delvist skjult. Kun body.athlete,
+       hvor begge de andre elementer er fast placeret i denne bredde. */
+    body.athlete #banner { top:116px; }
     #stage, body.slim #stage { inset:60px 0 126px; }
     body.athlete[data-athlete-state="empty"] #stage { inset:60px 0 0; }
     #barPathHUD { inset:auto 8px 126px 8px; max-height:40vh; overflow:auto;
