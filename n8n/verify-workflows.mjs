@@ -13,6 +13,7 @@ const load = (name) => JSON.parse(readFileSync(join(here, name), 'utf8'));
 const coach = load('coach-briefing-v1.json');
 const monitor = load('automation-error-monitor-v1.json');
 const briefingBuilderSource = readFileSync(join(here, 'build-coach-briefing.code'), 'utf8').trimEnd();
+const coachPrioritySource = readFileSync(join(here, '..', 'src', 'coachPriority.js'), 'utf8');
 
 const option = (name) => {
   const index = process.argv.indexOf(name);
@@ -98,6 +99,30 @@ assert.equal(
   node(coach, 'Build briefing').parameters.jsCode.trimEnd(),
   briefingBuilderSource,
   'Coach briefing JSON must stay synchronized with build-coach-briefing.code',
+);
+
+// The mail's signal labels must never silently drift from the app's own
+// detector -> label mapping in src/coachPriority.js. Both files spell out the
+// same ternary chain (only the source variable name differs: signal.o_detector
+// in the app, item.detector in the mail), so a textual comparison of the
+// detector keys, their labels and the fallback label catches drift in either
+// direction without needing a shared runtime module across the two environments.
+const extractDetectorLabelChain = (source, label) => {
+  const match = source.match(/detectorLabel = ([\s\S]*?: '[^']+')/);
+  assert.ok(match, `${label}: detectorLabel ternary chain not found`);
+  return match[1];
+};
+const detectorLabelMapping = (chain) => {
+  const pairs = [...chain.matchAll(/=== '(\w+)' \? '([^']+)'/g)]
+    .map(([, detector, mappedLabel]) => `${detector}=${mappedLabel}`);
+  const fallback = chain.match(/: '([^']+)'$/);
+  assert.ok(fallback, 'detectorLabel fallback branch not found');
+  return [...pairs, `fallback=${fallback[1]}`].join('|');
+};
+assert.equal(
+  detectorLabelMapping(extractDetectorLabelChain(briefingBuilderSource, 'build-coach-briefing.code')),
+  detectorLabelMapping(extractDetectorLabelChain(coachPrioritySource, 'src/coachPriority.js')),
+  'Mail signal labels (build-coach-briefing.code) must match the app detector labels (src/coachPriority.js)',
 );
 
 assert.equal(coach.settings.errorWorkflow, monitor.id, 'Coach briefing must stay linked to the error monitor');

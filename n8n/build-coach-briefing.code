@@ -22,12 +22,15 @@ const timeValue = value => {
 
 const rawTasks = [
   ...signals.map(item => {
+    const detectorLabel = item.detector === 'dropout' ? 'Træningsmængde'
+      : item.detector === 'stagnation' ? 'Udvikling'
+        : item.detector === 'rpe_drift' ? 'RPE' : 'Træning';
     const summaryParts = [item.headline, item.detail || item.detector]
       .filter((value, index, all) => value && all.indexOf(value) === index);
     return {
       key: `signal-${item.athlete_id}-${item.detector}`,
       kind: 'signal', rank: 0, athleteId: item.athlete_id,
-      athleteName: item.athlete_name, label: 'Træningssignal',
+      athleteName: item.athlete_name, label: detectorLabel,
       summary: summaryParts.join(' · ') || 'Kræver et kig', timestamp: null,
       fingerprint: [item.athlete_id, item.detector, item.severity, item.headline, item.detail, item.metrics]
     };

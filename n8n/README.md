@@ -135,7 +135,9 @@ checks node and connection integrity, inactive source files, absence of committe
 credential bindings, the linked error monitor, schedule, RPC contract behavior,
 synthetic preview isolation, app-aligned priority order, duplicate handling,
 same-day suppression and the test-only SMTP gate. The verifier also requires the
-embedded n8n Code node to match `n8n/build-coach-briefing.code` exactly.
+embedded n8n Code node to match `n8n/build-coach-briefing.code` exactly, and that
+the mail's signal labels stay identical to the app's detector labels in
+`src/coachPriority.js`.
 
 For a safe local visual check of the final fallback email, run
 `npm run preview:n8n-briefing` and open `http://127.0.0.1:4179`. The preview uses
