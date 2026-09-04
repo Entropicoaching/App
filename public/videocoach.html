@@ -488,6 +488,24 @@
     top:10px; right:10px; z-index:31; background:rgba(20,20,16,.85);
     border:1px solid var(--accent); color:var(--accent);
     border-radius:10px; padding:10px 16px; }
+  /* ORDRE 43 · rep-vælger til keyframe-forslaget - kun synlig lige efter
+     "🦴 Skelet" trykkes, før første klik. Fast position uafhængigt af
+     forælder, så den ikke rammer body.placing footer-skjulet. */
+  #mskelRepNav { display:none; position:fixed; top:10px; left:10px;
+    z-index:41; gap:6px; align-items:center; }
+  #mskelRepNav.show { display:flex; }
+  #mskelRepNav button { background:rgba(20,20,16,.85);
+    border:1px solid var(--accent); color:var(--accent);
+    border-radius:10px; padding:10px 14px; font-size:16px; }
+  #mskelRepNav span { padding:0 4px; color:var(--dim);
+    font:11px 'IBM Plex Mono',monospace; white-space:nowrap; }
+  /* ORDRE 43 · bekræft et proportions-forslag (ankel klikket, resten lagt
+     ud automatisk) - vises til Marc har trukket det på plads og trykker ✓. */
+  #mskelConfirmNav { display:none; position:fixed; left:50%; bottom:96px;
+    transform:translateX(-50%); z-index:41; }
+  #mskelConfirmNav.show { display:flex; }
+  #mskelConfirmNav button { background:rgba(20,20,16,.92); border:1px solid #5b9bb5;
+    color:#5b9bb5; border-radius:12px; padding:12px 22px; font-size:15px; font-weight:600; }
   /* 📷 filmguide: hjælp kameraet, så hjælper du analysen */
   #guidePanel { position:fixed; inset:0; z-index:40; display:flex;
     align-items:center; justify-content:center; background:rgba(0,0,0,.55); }
@@ -885,6 +903,16 @@
   <span id="timeLabel">—</span>
   <div id="hIn" class="trimHandle" hidden>⟦</div>
   <div id="hOut" class="trimHandle" hidden>⟧</div>
+</div>
+<!-- ORDRE 43 · rep-vælger for keyframe-forslaget, se #mskelRepNav i CSS'en -->
+<div id="mskelRepNav">
+  <button id="mskelPrevRepBtn" type="button" title="Forrige rep">◀</button>
+  <span id="mskelRepLabel"></span>
+  <button id="mskelNextRepBtn" type="button" title="Næste rep">▶</button>
+</div>
+<!-- ORDRE 43 · bekræft skelet-proportions-forslaget, se #mskelConfirmNav -->
+<div id="mskelConfirmNav">
+  <button id="mskelConfirmBtn" type="button">✓ Videre</button>
 </div>
 <section id="barPathHUD" hidden aria-label="Stangbaneanalyse">
   <div class="vcHudHead"><span class="vcHudTitle">Stangbane</span><span id="vcHudQuality" class="vcHudQuality">Gyldigt signal</span><button id="vcHudCollapse" type="button" aria-expanded="true" aria-label="Minimér analyseresultat" title="Minimér analyseresultat">−</button></div>
@@ -4587,6 +4615,8 @@ let awaitBox = false, boxDrag = null, poseBox = null, boxResolve = null;
 // hofte+knæ TRACKES med samme metode som skiven, anklen står fast.
 // Alle punkter er enten coachens eller vores egen gennemtestede trackers.
 let mskelClicks = null;
+// ORDRE 43 · Commit 3: hvilket auto-foreslået punkt der lige nu trækkes.
+let mskelDrag = null;
 // MSKEL_KEYTIME_MODEL_START
 function mskelRepStick(path, rep) {
   const pts = path.pts || [];
@@ -4614,7 +4644,14 @@ function mskelRepStick(path, rep) {
 function mskelStickTimeRatio(path, stickTime) {
   const times = path.times || [], reps = path.reps || [];
   if (!times.length || !reps.length || !Number.isFinite(stickTime)) return NaN;
-  const rep = reps[0];
+  // ORDRE 43 · klik-skelettet kan nu placeres på ET VILKÅRLIGT rep (rep-
+  // vælgeren), ikke kun rep 1 - normalisér derfor mod det rep, tiden rent
+  // faktisk falder i, ellers klemmes ratioen mod .15/.85 og forvrider torsoen.
+  const rep = reps.find(r => {
+    const a = times[Math.max(0, Math.min(times.length - 1, r.start))];
+    const b = times[Math.max(0, Math.min(times.length - 1, r.end))];
+    return Number.isFinite(a) && Number.isFinite(b) && stickTime >= a && stickTime <= b;
+  }) || reps[0];
   const start = Math.max(0, Math.min(times.length - 1, rep.start));
   const end = Math.max(start, Math.min(times.length - 1, rep.end));
   const tBot = times[start], tTop = times[end];
@@ -4658,36 +4695,124 @@ function mskelTorsoDepthForRep(path, rep, tSec, stickDepth = .5, templateRatio =
   return sd * (1 - (tSec - tStick) / (tTop - tStick));
 }
 
-function mskelKeyTimes(path, lift) {
+// ORDRE 43 · median-dybde-rep: bunden foreslås fra den rep der ligger
+// tættest på medianen af settets dybde (romCm), så en enkelt afvigende rep
+// (fx en let opvarmning eller en fejltracket rep) ikke sætter dagsordenen.
+function mskelPickMedianRep(reps) {
+  const depths = reps.map(r => r.romCm).filter(Number.isFinite);
+  if (depths.length < reps.length) return 0;   // ufuldstændige data -> som før
+  const sorted = [...depths].sort((a, b) => a - b);
+  const medianDepth = sorted[sorted.length >> 1];
+  let best = 0, bestDelta = Infinity;
+  reps.forEach((r, i) => {
+    const delta = Math.abs(r.romCm - medianDepth);
+    if (delta < bestDelta) { bestDelta = delta; best = i; }
+  });
+  return best;
+}
+// ORDRE 43 · bundens forslag skal være banens faktiske laveste stangposition
+// i rep'et, ikke fasegrænsen der detekterede rep'et. Søger derfor lokalt
+// omkring den grænse (den excentriske fase, hvis den findes) efter den
+// virkelige pixel-maksimum-y (dybest), i stedet for at stole blindt på den.
+function mskelDeepestIndex(pts, rep) {
+  const eccPhase = (rep.phases || []).find(ph => ph.kind === 'eccentric');
+  const from = Math.max(0, eccPhase ? eccPhase.start : rep.start - 10);
+  const to = Math.min(pts.length - 1, rep.start + 6);
+  let best = Math.max(0, Math.min(pts.length - 1, rep.start));
+  for (let i = from; i <= to; i++) if (pts[i].y > pts[best].y) best = i;
+  return best;
+}
+function mskelKeyTimes(path, lift, repIndexOverride) {
   const pts = path.pts, times = path.times;
   const reps = path.reps || [];
+  const noSuggestion = { topTime: video.currentTime, botTime: video.currentTime,
+    stickTime: video.currentTime, stickIndex: -1, stickDepth: .5,
+    repIndex: -1, repCount: reps.length, suggested: false };
   if (!pts.length || !times || times.length !== pts.length || !reps.length)
-    return { topTime: video.currentTime, botTime: video.currentTime,
-             stickTime: video.currentTime, stickIndex: -1, stickDepth: .5 };
-  const first = reps[0], last = reps[reps.length - 1];
+    return noSuggestion;
+  const repIndex = Math.max(0, Math.min(reps.length - 1,
+    repIndexOverride ?? mskelPickMedianRep(reps)));
+  const rep = reps[repIndex];
+  // ORDRE 43 · kan banen ikke bære et forslag (trackeren mistede stangen i
+  // netop dette rep), falder vi tilbage til den manuelle vej - intet
+  // auto-seek, intet gættet forslag. Et forkert forslag er dyrere end intet.
+  if (!(rep.validRatio >= .5)) return { ...noSuggestion, repIndex };
+  const last = reps[reps.length - 1];
   const isPull = lift === 'Dødløft' || lift === 'Sumo dødløft';
-  const botIndex = Math.max(0, Math.min(pts.length - 1, first.start));
+  const botIndex = mskelDeepestIndex(pts, rep);
   let topIndex;
   if (isPull) topIndex = Math.max(0, Math.min(pts.length - 1, last.end));
   else {
-    topIndex = 0;
-    for (let i = 1; i <= botIndex; i++) if (pts[i].y < pts[topIndex].y) topIndex = i;
+    // Søg kun fra forrige reps slutning - ellers finder et senere rep i
+    // settet "toppen" helt tilbage ved videoens allerførste frame.
+    const searchFrom = repIndex > 0 ? reps[repIndex - 1].end + 1 : 0;
+    topIndex = searchFrom;
+    for (let i = searchFrom + 1; i <= botIndex; i++) if (pts[i].y < pts[topIndex].y) topIndex = i;
   }
   // Tredje keyframe er et faktisk tidspunkt i den koncentriske fase: den
-  // langsomste valide frame mellem 10 og 90% af rep 1. Hvis fartdata mangler,
+  // langsomste valide frame mellem 10 og 90% af rep'et. Hvis fartdata mangler,
   // bruges framen nærmest 50% af stangens vandring (gammel-fil fallback).
-  const stick = mskelRepStick(path, first);
+  const stick = mskelRepStick(path, rep);
   const stickIndex = Math.max(botIndex, Math.min(pts.length - 1, stick.index));
   // Geometrien bruger top=0/bund=1; ascent-progress er derfor inverteret.
   const stickDepth = Math.max(.05, Math.min(.95, 1 - stick.progress));
   return { topTime: times[topIndex], botTime: times[botIndex],
-           stickTime: times[stickIndex], stickIndex, stickDepth };
+           stickTime: times[stickIndex], stickIndex, stickDepth,
+           repIndex, repCount: reps.length, suggested: true };
 }
+// ORDRE 43 · viser/skjuler rep-vælgeren - kun meningsfuld før første klik
+// i TOP-fasen, ellers ville et skift midt i placeringen forvirre mere end
+// det hjælper (og risikere at blande positioner fra to forskellige reps).
+function mskelUpdateRepUI(m) {
+  const nav = document.getElementById('mskelRepNav');
+  const show = !!(m && m.suggested && m.phase === 'top' && m.step === 0 &&
+    !m.seeking && !m.awaitingConfirm && m.repCount > 1);
+  nav.classList.toggle('show', show);
+  if (show) document.getElementById('mskelRepLabel').textContent = `Rep ${m.repIndex + 1}/${m.repCount}`;
+}
+async function mskelSwitchRep(delta) {
+  const m = mskelClicks;
+  if (!m || !m.suggested || m.phase !== 'top' || m.step !== 0 || m.seeking ||
+      m.awaitingConfirm || m.repCount < 2) return;
+  const nextIndex = Math.max(0, Math.min(m.repCount - 1, m.repIndex + delta));
+  if (nextIndex === m.repIndex) return;
+  const keyTimes = mskelKeyTimes(m.path, m.lift, nextIndex);
+  if (!keyTimes.suggested) { say('Den rep kunne banen ikke bære et forslag for · prøv en anden'); return; }
+  m.seeking = true;
+  await seekTo(keyTimes.topTime);
+  if (mskelClicks !== m) return;
+  m.topTime = keyTimes.topTime; m.botTime = keyTimes.botTime;
+  m.stickTime = keyTimes.stickTime; m.stickDepth = keyTimes.stickDepth;
+  m.repIndex = keyTimes.repIndex; m.seeking = false;
+  mskelUpdateRepUI(m);
+  say(`POSITION 1/3 · ${m.topName} · Rep ${m.repIndex + 1}/${m.repCount} · ${MSKEL_LBL[m.order[0]]}`);
+}
+document.getElementById('mskelPrevRepBtn').onclick = () => mskelSwitchRep(-1);
+document.getElementById('mskelNextRepBtn').onclick = () => mskelSwitchRep(1);
+// ORDRE 43 · Commit 3: vis/skjul "✓ Videre"-knappen, mens Marc gennemser/
+// retter et proportions-forslag (ankel klikket, resten lagt ud automatisk).
+function mskelUpdateConfirmUI(m) {
+  document.getElementById('mskelConfirmNav').classList.toggle('show', !!(m && m.awaitingConfirm));
+}
+async function mskelConfirmPhase() {
+  const m = mskelClicks;
+  if (!m || !m.awaitingConfirm) return;
+  m.awaitingConfirm = false;
+  mskelDrag = null;
+  if (m[m.phase]._suggested) m[m.phase]._suggested = null;   // nu er de hans egne
+  mskelUpdateConfirmUI(null);
+  m.step = m.order.length;   // ankel-klikket alene fuldfører fasen
+  await mskelAdvancePhase(m);
+}
+document.getElementById('mskelConfirmBtn').onclick = () => mskelConfirmPhase();
 // MSKEL_KEYTIME_MODEL_END
 document.getElementById('mskelBtn').onclick = async () => {
   if (tracking || analyzing) return;
   if (mskelClicks) {                       // tryk igen = annullér placering
     mskelClicks = null;
+    mskelDrag = null;
+    mskelUpdateRepUI(null);
+    mskelUpdateConfirmUI(null);
     document.body.classList.remove('placing');
     const b = document.getElementById('mskelBtn');
     if (b.dataset.prev) { b.textContent = b.dataset.prev; delete b.dataset.prev; }
@@ -4957,6 +5082,21 @@ function applySessionView(path = latestCleanPath()) {
 function wizardClick(p) {
   if (wizard && wizard.session) sessionRun = true;
   if (wizard.auto) {                    // ét klik: auto-find skivens kant
+    // ORDRE 43 · skivekalibreringen foreslås fra sidste analyse af samme
+    // atlet+løft+variation - kameraet står sjældent et helt andet sted, og
+    // historikken er mere stabil end en frisk kontrast-kant-gæt. Klart
+    // markeret som forslag (stiplet/blå ring), ét træk/tryk gør den hans egen.
+    if (vcPriorSetup && vcPriorSetup.cmPerPx > 0) {
+      cmPerPx = vcPriorSetup.cmPerPx;
+      calibBtn.textContent = '📏 Foreslået fra sidst ✓';
+      plateConfirm = { x: p.x, y: p.y, r: 22.5 / cmPerPx, suggested: true };
+      if (ATHLETE && setAthleteState) setAthleteState('confirm');
+      say(SLIM ? 'Forslag fra sidste gang · sidder den forkert, så træk kanten · ⚡ = analysér'
+               : 'Forslag fra sidste gang (træk kanten hvis den sidder forkert) · ⚡ = analysér · klik langt væk = mål om');
+      if (!SLIM) allBtn.textContent = 'Start analyse';
+      allBtn.classList.add('active');
+      return;
+    }
     const scale = autoCalib(p);
     if (scale) {
       cmPerPx = scale;
