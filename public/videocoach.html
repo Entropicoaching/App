@@ -1051,6 +1051,12 @@ const VC_ATHLETE_PHASE_LABELS = Object.freeze({
 });
 let analysisSession = null;
 let manualTrackingBounds = { start:null, end:null };
+// ORDRE 43 · baseline-måling: tid + klik i opsætningen, gemmes i extra ved gem.
+// Ingen tredjeparts-analytics - tallene forlader aldrig denne analyserække.
+let vcTiming = { videoLoadedAt:null, setupClicks:0, trackingStartedAt:null };
+// ORDRE 43 · sidste godkendte opsætning for valgt atlet+løft+variation
+// ({cmPerPx, skeletonProportions} eller null). Sat af vcSyncPriorSetup().
+let vcPriorSetup = null;
 const cleanOverlayState = { phases:true, history:true, metrics:true };
 let setAthleteState = null;         // Athlete v2: ét roligt, guidet flow
 let setAthleteSubmitOpen = null;    // Athlete v3: sendearket må kun åbne i sidste trin
@@ -1444,6 +1450,8 @@ function loadFile(file) {
   if (setCoachLayer) setCoachLayer(1);                // ny video → ren Lag 1
   // nulstil alt der hører til den GAMLE video
   cmPerPx = null; calibPts = [];
+  vcTiming = { videoLoadedAt:null, setupClicks:0, trackingStartedAt:null };
+  vcPriorSetup = null;
   analysisSession = null;
   manualTrackingBounds = { start:null, end:null };
   shOffset = null; awaitShClick = null;   // skulder-kalibrering pr. video
@@ -1464,6 +1472,8 @@ function loadFile(file) {
   const begin = () => {
     if (started || !video.videoWidth) return;
     started = true;
+    vcTiming.videoLoadedAt = performance.now();   // ORDRE 43 · baseline: video indlæst
+    vcSyncPriorSetup();   // ORDRE 43 · hent evt. tidligere opsætning for atlet+løft
     // MOBIL-FIX: canvas i fuld 4K gør ALT trægt (tegning, touch, sporing).
     // Nedskaleret canvas mister intet analytisk ved ~1280 px på mobil.
     const maxSide = SLIM ? 1280 : 1920;
@@ -1644,6 +1654,10 @@ canvas.addEventListener('pointerdown', e => {
   canvas.setPointerCapture(e.pointerId);
   if (tracking) return;   // tap/spol må ikke afbryde en kørende sporing
   const p = pos(e);
+  // ORDRE 43 · baseline: tæl kun klik der rent faktisk bygger opsætningen
+  // (kalibrering, skivens midte, klik-skelet) - ikke spoling/afspilning.
+  if (awaitLockPoint || plateConfirm || wizard || mskelClicks || awaitCalib || awaitBarClick)
+    vcTiming.setupClicks++;
   if (showGrid && e.shiftKey) {                 // Shift+træk = flyt grid
     gridDrag = { px: p.x - gridOffset.x, py: p.y - gridOffset.y };
     return;
@@ -3893,6 +3907,9 @@ function mpQuickPlateSearch(frame,pred,r,model){
 
 async function startMultipointTracking(p0, session = analysisSession || createAnalysisSession(), options = {}) {
   awaitBarClick=false;tracking=true;barBtn.textContent='⏹ Stop sporing';
+  // ORDRE 43 · baseline: kun FØRSTE gang trackeren kører for denne analyse -
+  // en korrektionsklik midt i banen må ikke nulstille opsætningstiden.
+  if (!vcTiming.trackingStartedAt) vcTiming.trackingStartedAt = performance.now();
   ocan.width=canvas.width;ocan.height=canvas.height;
   const radius=Math.max(14,p0.r||(cmPerPx?22.5/cmPerPx:canvas.width/16));
   const startT=video.currentTime,startFrame=Math.round(startT*30);
@@ -6637,11 +6654,28 @@ saveBtn.onclick = async () => {
       tempo: path && path.reps ? path.reps.map(r =>
         ({ ecc: r.eccS, pause: r.pauseS, con: r.conS, peak: +r.peak.toFixed(2) }))
         : null,
+      // ORDRE 43 · baseline før optimering - ingen tredjeparts-analytics,
+      // tallene ender kun i denne analyserækkes egen extra-kolonne.
+      setup_ms: (vcTiming.trackingStartedAt != null && vcTiming.videoLoadedAt != null)
+        ? Math.round(vcTiming.trackingStartedAt - vcTiming.videoLoadedAt) : null,
+      total_ms: vcTiming.videoLoadedAt != null
+        ? Math.round(performance.now() - vcTiming.videoLoadedAt) : null,
+      setup_clicks: vcTiming.setupClicks,
+      // ORDRE 43 · Commit 3: proportioner til NÆSTE analyse af samme
+      // atlet+løft+variation (se vcSyncPriorSetup/prior-setup-request).
+      skeleton_proportions: lastVals.skeletonProportions ?? null,
     },
     findings: evaluateFindings(lift, lastVals),
     ai_text: aiPanel.hidden ? null : aiText.textContent,
     analyzed_at: new Date().toISOString(),
   };
+  // ORDRE 43 · lille, dæmpet tal - kun synligt i knappens tooltip, ingen ny UI.
+  if (data.extra.total_ms != null) {
+    const s = ms => Math.round(ms / 1000);
+    saveBtn.title = data.extra.setup_ms != null
+      ? `Opsætning: ${data.extra.setup_clicks} klik · ${s(data.extra.setup_ms)}s til trackeren kørte · ${s(data.extra.total_ms)}s i alt`
+      : `Opsætning: ${data.extra.setup_clicks} klik · ${s(data.extra.total_ms)}s i alt`;
+  }
   if (VC_V3_BRIDGE_ENABLED) {
     if (!athleteId) {
       say(VC_V3_ATHLETE_BRIDGE
