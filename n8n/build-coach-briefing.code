@@ -86,7 +86,17 @@ const countSummary = [
   counts.message ? `${counts.message} beskedspor` : '',
   counts.video ? `${counts.video} video${counts.video === 1 ? '' : 'er'}` : ''
 ].filter(Boolean).join(' · ');
-const taskRow = (task, index) => `<div style="display:flex;gap:10px;padding:12px 0;border-top:1px solid #34342e"><div style="width:22px;height:22px;flex:0 0 22px;border:1px solid #57544c;color:#c8923a;text-align:center;line-height:22px;font-size:12px">${index + 1}</div><div><div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#7f7b72">${esc(task.label)}</div><div style="font-weight:650;color:#edeae2;margin-top:2px">${esc(task.athleteName)}</div><div style="font-size:13px;line-height:1.5;color:#aaa79f;margin-top:2px">${esc(task.summary)}</div></div></div>`;
+// Static per-kind action phrase, neutral in tone. Signals already carry a
+// handling-oriented `detail` from the SQL detector and are left alone.
+const actionByKind = {
+  message: 'Svar de ulæste beskeder',
+  video: 'Gennemgå og giv feedback på løftet'
+};
+const taskRow = (task, index) => {
+  const action = actionByKind[task.kind];
+  const actionRow = action ? `<div style="font-size:13px;color:#c8923a;margin-top:4px">${esc(action)}</div>` : '';
+  return `<div style="display:flex;gap:10px;padding:12px 0;border-top:1px solid #34342e"><div style="width:22px;height:22px;flex:0 0 22px;border:1px solid #57544c;color:#c8923a;text-align:center;line-height:22px;font-size:12px">${index + 1}</div><div><div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#7f7b72">${esc(task.label)}</div><div style="font-weight:650;color:#edeae2;margin-top:2px">${esc(task.athleteName)}</div><div style="font-size:13px;line-height:1.5;color:#aaa79f;margin-top:2px">${esc(task.summary)}</div>${actionRow}</div></div>`;
+};
 const first = tasks[0];
 // Subject, countSummary and digestHash all read from the full `tasks` list above;
 // only the HTML row list itself is capped here.

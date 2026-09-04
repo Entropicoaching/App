@@ -347,6 +347,15 @@ assert.doesNotMatch(filteredEmail, /<script>Atlet<\/script>/, 'Unescaped athlete
 assert.doesNotMatch(filteredEmail, /PRIVATE_MESSAGE_BODY/, 'Message content must never reach the fallback email');
 assert.doesNotMatch(filteredEmail, /PRIVATE_VIDEO_URL/, 'Video storage URLs must never reach the fallback email');
 
+// D: message and video rows carry a static action phrase; signal rows do not
+// (they already have a handling-oriented `detail` from the SQL detector).
+const messageActionCount = filteredEmail.split('Svar de ulæste beskeder').length - 1;
+const videoActionCount = filteredEmail.split('Gennemgå og giv feedback på løftet').length - 1;
+assert.equal(messageActionCount, 2, 'Both fallback message rows must show the message action phrase');
+assert.equal(videoActionCount, 1, 'The fallback video row must show the video action phrase');
+const signalRowHtml = orderedQueue.slice(orderedQueue.indexOf('Alert'), orderedQueue.indexOf('Videoatlet'));
+assert.doesNotMatch(signalRowHtml, /Svar de ulæste beskeder|Gennemgå og giv feedback på løftet/, 'Signal rows must not gain a static action phrase');
+
 const duplicatedInput = {
   ...filteredProduction[0].json,
   unread_messages: [...filteredProduction[0].json.unread_messages, ...filteredProduction[0].json.unread_messages],
