@@ -4141,6 +4141,13 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
   // sættet aldrig kan fejltolkes som "færdig" (se RAPPORT.md, commit 2).
   const IDLE_STOP_S=5;
   let hasMovedAway=false,idleRestStart=null,earlyStopped=false;
+  // ORDRE 45 · commit 4: spring ANDENHVER frame over under en BEKRÆFTET pause
+  // (QUIET_NEEDED accepterede frames i træk med lav fart) - stangen ligger
+  // allerede stille, så et gentaget punkt er ikke et gæt. Kun hver anden:
+  // den næste frame prøves altid for rigtigt, så farten fanges med det
+  // samme, hvis pausen slutter. Nulstilles ved enhver usikker/hurtig frame.
+  const QUIET_NEEDED=6,QUIET_SPEED=radius*.04;
+  let quietStreak=0,skippedLast=false,skippedFrames=0;
   if(features.length<5){
     tracking=false;path.lowConf=(path.lowConf||0)+1;path.superseded=true;
     if(TRACKER_BENCHMARK){
@@ -4161,6 +4168,21 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
     const workStarted=performance.now();
     const mediaDt=Math.max(1e-4,tNow-lastMediaT);lastMediaT=tNow;
     if(mediaDt<=FRAME*1.6){sourceSteps.push(mediaDt);if(sourceSteps.length>30)sourceSteps.shift();}
+    // ORDRE 45 · commit 4 (bag VC_TRACKER_FAST): kun ÉN ud af hver to frames
+    // springes over, og kun når de seneste QUIET_NEEDED frames alle var
+    // bekræftede OG langsomme - se opsætningen ovenfor. Den fulde matching
+    // (og dermed en chance for at opdage fornyet fart) køres derfor mindst
+    // hveranden frame, aldrig længere ude af sync end det.
+    if(VC_TRACKER_FAST&&quietStreak>=QUIET_NEEDED&&!skippedLast){
+      skippedLast=true;skippedFrames++;
+      path.pts.push({...cur});path.times.push(tNow);path.valid.push(true);path.confidence.push(1);
+      const pctQ=Math.round(tNow/video.duration*100);
+      barBtn.textContent=`⏹ Stop sporing (${pctQ}%)`;
+      const workMsQ=performance.now()-workStarted;
+      if(TRACKER_BENCHMARK)benchmarkWorkMs.push(workMsQ);
+      return true;
+    }
+    skippedLast=false;
     const dt=Math.max(1e-3,tNow-anchorTime);
     if(HAS_RVFC&&COACHWEB){
       // Ét oversprunget kildeframe er nok til at sænke farten. Stangbanen må
@@ -4414,6 +4436,11 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
       if(idleRestStart!=null&&tNow-idleRestStart>=IDLE_STOP_S){
         tracking=false;earlyStopped=true;path.earlyStoppedAt=tNow;
       }
+      // ORDRE 45 · commit 4: opdatér "stille i træk" ud fra DENNE fuldt
+      // analyserede frame - kun bekræftede, langsomme frames tæller, så en
+      // mistet stang eller en fart-stigning nulstiller med det samme.
+      const speed=Math.hypot(vel.x,vel.y);
+      quietStreak=(accepted&&speed<QUIET_SPEED)?quietStreak+1:0;
     }
     return true;
   };
