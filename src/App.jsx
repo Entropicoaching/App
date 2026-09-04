@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react'
-import { supabase, withRetry } from './supabase'
+import { supabase, withRetry, isPasswordRecoveryUrl } from './supabase'
 import Auth from './Auth'
+import SetNewPassword from './SetNewPassword'
 import ErrorBoundary from './ErrorBoundary'
 import { purgeVideoCoachDraftQueues } from './videoCoachSubmission'
 
@@ -66,6 +67,10 @@ function App() {
   const [loadError, setLoadError] = useState(false)
   const [previewMode, setPreviewMode] = useState(false)
   const [coachAthleteId, setCoachAthleteId] = useState(null)
+  // Sand fra åbning til atleten har sat en ny adgangskode via "glemt adgangskode"-
+  // linket. Initieres synkront fra URL'en (se isPasswordRecoveryUrl), så vi aldrig
+  // først når at vise den almindelige rolle-baserede visning et splitsekund.
+  const [passwordRecovery, setPasswordRecovery] = useState(isPasswordRecoveryUrl)
   // Hvilken bruger-id vi allerede har slået rollen op for. Bruges til at undgå
   // gentagne opslag ved token-refresh (og dermed unødig flimmer/race).
   const resolvedFor = useRef(null)
@@ -144,6 +149,17 @@ function App() {
 
     return () => { cancelled = true; subscription.unsubscribe(); clearTimeout(safety) }
   }, [])
+
+  // Vises FØR loading/session-grenene nedenfor: recovery-sessionen etableres i
+  // baggrunden af useEffect'en ovenfor (samme getSession/onAuthStateChange som
+  // altid), "ready" er blot om den er landet endnu. Rolleopslag kører også i
+  // baggrunden imens — når atleten er færdig, er appen typisk allerede klar.
+  if (passwordRecovery) {
+    return <SetNewPassword ready={!!session} onDone={() => {
+      window.history.replaceState(null, '', window.location.pathname)
+      setPasswordRecovery(false)
+    }} />
+  }
 
   if (loading) return loaderScreen
 

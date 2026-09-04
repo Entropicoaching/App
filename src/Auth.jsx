@@ -8,7 +8,7 @@ export default function Auth() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [notice, setNotice] = useState(null)
-  const [mode, setMode] = useState('login') // 'login' eller 'signup'
+  const [mode, setMode] = useState('login') // 'login', 'signup' eller 'reset'
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -23,6 +23,18 @@ export default function Auth() {
       return
     }
     setEmail(normalizedEmail)
+
+    if (mode === 'reset') {
+      // Supabase svarer altid uden fejl her, uanset om email findes, for ikke at
+      // afsløre hvilke emails der har en konto — så beskeden er neutral med vilje.
+      const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
+        redirectTo: window.location.origin,
+      })
+      if (error) setError(athleteAuthErrorMessage(error, 'reset'))
+      else setNotice(`Hvis ${normalizedEmail} har en konto, er der sendt en mail med et link til at vælge en ny adgangskode.`)
+      setLoading(false)
+      return
+    }
 
     let result
     if (mode === 'login') {
@@ -119,35 +131,47 @@ export default function Auth() {
             />
           </div>
 
-          <div style={{ marginBottom: '1.5rem' }}>
-            <div style={{
-              fontFamily: "'IBM Plex Mono', monospace",
-              fontSize: '0.56rem',
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              color: '#7a7770',
-              marginBottom: '0.4rem',
-            }}>Adgangskode</div>
-            <input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-              style={{
-                width: '100%',
-                boxSizing: 'border-box',
-                background: '#1c1c18',
-                border: '1px solid rgba(237,234,226,0.13)',
-                color: '#edeae2',
-                fontFamily: "'IBM Plex Sans', sans-serif",
-                fontSize: '0.9rem',
-                fontWeight: 300,
-                padding: '0.65rem 0.85rem',
-                outline: 'none',
-              }}
-            />
-          </div>
+          {mode !== 'reset' && (
+            <div style={{ marginBottom: '0.6rem' }}>
+              <div style={{
+                fontFamily: "'IBM Plex Mono', monospace",
+                fontSize: '0.56rem',
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                color: '#7a7770',
+                marginBottom: '0.4rem',
+              }}>Adgangskode</div>
+              <input
+                type="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+                autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+                style={{
+                  width: '100%',
+                  boxSizing: 'border-box',
+                  background: '#1c1c18',
+                  border: '1px solid rgba(237,234,226,0.13)',
+                  color: '#edeae2',
+                  fontFamily: "'IBM Plex Sans', sans-serif",
+                  fontSize: '0.9rem',
+                  fontWeight: 300,
+                  padding: '0.65rem 0.85rem',
+                  outline: 'none',
+                }}
+              />
+            </div>
+          )}
+
+          {mode === 'login' && (
+            <div style={{ textAlign: 'right', marginBottom: '1.5rem' }}>
+              <span
+                onClick={() => { setMode('reset'); setError(null); setNotice(null) }}
+                style={{ fontSize: '0.76rem', color: '#7a7770', cursor: 'pointer', padding: '0.4rem 0', display: 'inline-block' }}
+              >Glemt adgangskode?</span>
+            </div>
+          )}
+          {mode === 'reset' && <div style={{ marginBottom: '1.5rem' }} />}
 
           {error && (
             <div style={{
@@ -194,7 +218,7 @@ export default function Auth() {
               opacity: loading ? 0.7 : 1,
             }}
           >
-            {loading ? 'Vent...' : mode === 'login' ? 'Log ind' : 'Opret konto'}
+            {loading ? 'Vent...' : mode === 'login' ? 'Log ind' : mode === 'reset' ? 'Send nulstillingslink' : 'Opret konto'}
           </button>
         </form>
 
