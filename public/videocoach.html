@@ -1719,7 +1719,19 @@ canvas.addEventListener('pointerdown', e => {
   }
   // skelet-punkter har FORTRINSRET over alle andre klik-zoner (fartpanel,
   // graf, play-cirkel) - et punkt-tryk maa aldrig blive til noget andet
-  if (mskelClicks) { mskelStep(p); return; }
+  if (mskelClicks) {
+    // ORDRE 43 · under gennemsyn af et proportions-forslag optager et klik
+    // nær et auto-placeret punkt det til at TRÆKKE, ikke til at sætte et nyt.
+    if (mskelClicks.awaitingConfirm) {
+      const bag = mskelClicks[mskelClicks.phase];
+      const hitR = Math.max(16, canvas.width / 55);
+      const key = ['sh', 'hip', 'knee', 'ank'].find(k =>
+        bag[k] && Math.hypot(p.x - bag[k].x, p.y - bag[k].y) <= hitR);
+      if (key) mskelDrag = key;
+      return;
+    }
+    mskelStep(p); return;
+  }
   // tryk på en rep-linje i fartpanelet = vælg/fravælg som ghost
   const hit = !wizard && !awaitBox && !awaitCalib && !awaitBarClick &&
     velPanelHits.find(h =>
@@ -1789,6 +1801,11 @@ canvas.addEventListener('pointerdown', e => {
 });
 canvas.addEventListener('pointermove', e => {
   if (pinch) return;      // to-finger zoom kører
+  // ORDRE 43 · træk et auto-placeret forslagspunkt på plads
+  if (mskelDrag && mskelClicks && mskelClicks.awaitingConfirm) {
+    mskelClicks[mskelClicks.phase][mskelDrag] = pos(e);
+    return;
+  }
   if (plateDrag && plateConfirm) {       // juster skive-ringen i hånden
     const p = pos(e);
     if (plateDrag.mode === 'resize')
@@ -1821,6 +1838,7 @@ canvas.addEventListener('pointermove', e => {
 });
 window.addEventListener('pointerup', () => {
   if (pinch) return;      // zoom-gest afsluttes af touchend, ikke her
+  if (mskelDrag) { mskelDrag = null; return; }   // ORDRE 43 · slip et trukket forslagspunkt
   if (plateDrag) {        // slip skive-ringen -> ny radius bliver ny skala
     plateDrag = null;
     if (plateConfirm) cmPerPx = 45 / (2 * plateConfirm.r);
@@ -2130,6 +2148,46 @@ function drawStroke(s) {
     ctx.font = `bold ${Math.max(22, canvas.width/40)}px sans-serif`;
     ctx.fillText(deg.toFixed(0) + '°', b.x + 14, b.y - 14);
   }
+}
+
+// ORDRE 43 · Commit 3: atletens proportioner, udtrykt som hofte/knæ/skulders
+// position RELATIVT til ankel→stang-vektoren (et komplekst forhold: realdel+
+// imaginærdel = skala+rotation i én talstørrelse). Kameraets afstand/vinkel
+// skifter uge til uge, men kroppens proportioner gør ikke - så det er denne
+// vektor, ikke rå pixelafstande, der er stabil nok til at genbruges.
+function mskelAnkleBarRatio(pose, barXY) {
+  const A = pose && pose.ank;
+  if (!A || !barXY) return null;
+  const bx = barXY.x - A.x, by = barXY.y - A.y;
+  const bLenSq = bx * bx + by * by;
+  if (bLenSq < 16) return null;   // ankel og stang for tæt til en brugbar retning
+  const ratio = {};
+  ['hip', 'knee', 'sh'].forEach(key => {
+    const J = pose[key];
+    if (!J) return;
+    const jx = J.x - A.x, jy = J.y - A.y;
+    // kompleks division (jx+i·jy) / (bx+i·by)
+    ratio[key] = { x: (jx * bx + jy * by) / bLenSq, y: (jy * bx - jx * by) / bLenSq };
+  });
+  return ratio;
+}
+// Genopbygger hip/knee/sh fra en ny ankel + den (allerede trackede) stangs
+// position i den nye video - kompleks multiplikation, den omvendte af ovenfor.
+function mskelApplyAnkleBarRatio(ratio, ankle, barXY) {
+  if (!ratio || !ankle || !barXY) return null;
+  const bx = barXY.x - ankle.x, by = barXY.y - ankle.y;
+  const out = {};
+  Object.entries(ratio).forEach(([key, r]) => {
+    if (!r) return;
+    out[key] = { x: ankle.x + r.x * bx - r.y * by, y: ankle.y + r.x * by + r.y * bx };
+  });
+  return out;
+}
+// stangens (x,y) til et givet tidspunkt - som barYAt, men fuld position.
+function barXYAt(path, t) {
+  const TMS = path.fullTimes || path.times, PTS = path.fullPts || path.pts;
+  const j = Math.max(0, Math.min(PTS.length - 1, idxAtTime({ times: TMS }, t)));
+  return { x: PTS[j].x, y: PTS[j].y };
 }
 
 // MSKEL_GEOMETRY_MODEL_START
@@ -2917,11 +2975,19 @@ function render() {
     const { x, y, r } = plateConfirm || awaitLockPoint;
     if (TRACKER_BENCHMARK && plateConfirm)
       window.__vcCalibrationRingDrawn = { x, y, radius:r };
+    // ORDRE 43 · en historik-foreslået ring skal kunne skelnes fra en
+    // maskine-detekteret/selv-sat ring - andet farve + stiplet + label,
+    // indtil coachen selv trækker eller bekræfter den.
+    const isSuggestion = !!(plateConfirm && plateConfirm.suggested);
+    const ringColor = isSuggestion ? '#5b9bb5' : '#c8923a';
     ctx.save();
-    ctx.strokeStyle = '#c8923a';
-    ctx.shadowColor = 'rgba(200,146,58,.85)'; ctx.shadowBlur = 14;
+    ctx.strokeStyle = ringColor;
+    ctx.shadowColor = isSuggestion ? 'rgba(91,155,181,.85)' : 'rgba(200,146,58,.85)';
+    ctx.shadowBlur = 14;
     ctx.lineWidth = Math.max(2.5, canvas.width / 380);
+    if (isSuggestion) ctx.setLineDash([9, 6]);
     ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.stroke();
+    ctx.setLineDash([]);
     if (awaitLockPoint) {
       ctx.setLineDash([7, 7]);
       ctx.strokeStyle = '#edeae2';
@@ -2932,13 +2998,18 @@ function render() {
     ctx.strokeStyle = 'rgba(255,255,255,.6)';
     ctx.lineWidth = Math.max(1, canvas.width / 950);
     ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.stroke();
-    ctx.fillStyle = '#c8923a';
+    ctx.fillStyle = ringColor;
     ctx.beginPath(); ctx.arc(x, y, Math.max(3, canvas.width / 240), 0, 7); ctx.fill();
     // størrelses-håndtag på kanten (signalerer at ringen kan trækkes/resizes)
     const hs = Math.max(4, canvas.width / 200);
     [[r, 0], [-r, 0], [0, r], [0, -r]].forEach(([dx, dy]) => {
       ctx.beginPath(); ctx.arc(x + dx, y + dy, hs, 0, 7); ctx.fill();
     });
+    if (isSuggestion) {
+      ctx.font = `${Math.max(11, canvas.width / 90)}px 'IBM Plex Mono',monospace`;
+      ctx.fillStyle = ringColor; ctx.textAlign = 'center';
+      ctx.fillText('FORSLAG · sidste gang', x, y - r - 10);
+    }
     ctx.restore();
   }
   if (boxDrag) {                     // preview af atlet-firkanten
@@ -2966,9 +3037,22 @@ function render() {
       ctx.stroke();
       keys.forEach((k, i) => {
         const p = bag[k];
+        // ORDRE 43 · et auto-lagt punkt (fra proportions-forslaget) skal
+        // kunne skelnes fra et coach-klikket, indtil han trækker/bekræfter det.
+        const suggested = !!(bag._suggested && bag._suggested[k]);
+        ctx.save();
+        if (suggested) {
+          ctx.fillStyle = '#5b9bb5'; ctx.strokeStyle = '#5b9bb5';
+          ctx.setLineDash([4, 3]);
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, Math.max(10, canvas.width / 130), 0, 7);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
         ctx.beginPath(); ctx.arc(p.x, p.y, Math.max(6, canvas.width / 180), 0, 7); ctx.fill();
         ctx.font = `bold ${Math.max(14, canvas.width / 75)}px sans-serif`;
         ctx.fillText(String(i + 1), p.x + 10, p.y - 8);
+        ctx.restore();
       });
     }
     ctx.restore();
@@ -4840,28 +4924,60 @@ document.getElementById('mskelBtn').onclick = async () => {
   // bænkpres = ARM-kæde (albue/underarm er dét, der betyder noget dér)
   const arm = liftK === 'Bænkpres';
   const keyTimes = mskelKeyTimes(path, liftK);
-  await seekTo(keyTimes.topTime);
+  if (keyTimes.suggested) await seekTo(keyTimes.topTime);   // usikker bane -> bliv hvor vi er
+  // ORDRE 43 · Commit 3: kendte proportioner (kun ben-kæden - ordren nævner
+  // udtrykkeligt ankelen) betyder Marc klikker ankelen først, resten lægges
+  // ud automatisk. Ingen historik -> nøjagtig samme flow som hidtil.
+  const propSuggestion = (!arm && vcPriorSetup && vcPriorSetup.skeletonProportions &&
+    vcPriorSetup.skeletonProportions.chain === 'leg') ? vcPriorSetup.skeletonProportions : null;
+  const order = arm ? ['sh', 'el', 'wr'] : propSuggestion ? ['ank', 'knee', 'hip', 'sh']
+    : ['sh', 'hip', 'knee', 'ank'];
   mskelClicks = { phase: 'top', chain: arm ? 'arm' : 'leg', lift: liftK,
-    order: arm ? ['sh', 'el', 'wr'] : ['sh', 'hip', 'knee', 'ank'],
+    order, proportions: propSuggestion, awaitingConfirm: false,
     step: 0, top: {}, bot: {}, stick: {}, path,
     topTime: keyTimes.topTime, botTime: keyTimes.botTime,
     stickTime: keyTimes.stickTime, stickDepth: keyTimes.stickDepth, seeking: false,
+    repIndex: keyTimes.repIndex, repCount: keyTimes.repCount, suggested: keyTimes.suggested,
     topName: arm ? 'LOCKOUT (strakte arme)' : 'TOPPEN (stående)',
     botName: arm ? 'BRYSTET (stangen nede)' : 'BUNDEN (dybest)',
     stickName: 'STICKING POINT (langsommest på vej op)' };
   document.getElementById('mskelBtn').classList.add('active');   // lys op mens punkter placeres
-  say(`POSITION 1/3 · ${mskelClicks.topName} · punkt 1/${mskelClicks.order.length}: SKULDER`);
+  mskelUpdateRepUI(mskelClicks);
+  say(keyTimes.suggested
+    ? `POSITION 1/3 · ${mskelClicks.topName} · Rep ${keyTimes.repIndex + 1}/${keyTimes.repCount} · ${MSKEL_LBL[order[0]]}`
+    : `Banen var for usikker til at foreslå positioner · find TOP manuelt (‹ › ved siden af tidslinjen) · ${MSKEL_LBL[order[0]]}`);
 };
 const MSKEL_LBL = { sh: 'klik SKULDERLEDDET', hip: 'klik HOFTEN (hoftekammen)',
   knee: 'klik KNÆET', ank: 'klik ANKLEN',
   el: 'klik ALBUEN', wr: 'klik HÅNDLEDDET (grebet på stangen)' };
 async function mskelStep(p) {
   const m = mskelClicks;
-  if (!m || m.seeking) return;
+  if (!m || m.seeking || m.awaitingConfirm) return;
+  const key = m.order[m.step];
   const bag = m[m.phase];
-  bag[m.order[m.step]] = { ...p };
+  bag[key] = { ...p };
   bag._barY = barYAt(m.path, video.currentTime);   // stangens y = dybde-reference
+  // ORDRE 43 · ankelen alene: læg resten af kæden ud fra gemte proportioner,
+  // skaleret og roteret via ankel→stang-vektoren (mskelAnkleBarRatio). Marc
+  // trækker det, der ikke sidder rigtigt, og trykker ✓ - ét klik/træk gør
+  // forslaget til hans eget, i stedet for at han klikker alle fire punkter.
+  if (key === 'ank' && m.proportions) {
+    const barXY = barXYAt(m.path, video.currentTime);
+    const derived = mskelApplyAnkleBarRatio(m.proportions[m.phase], p, barXY);
+    if (derived) {
+      bag.hip = derived.hip; bag.knee = derived.knee; bag.sh = derived.sh;
+      bag._suggested = { hip: true, knee: true, sh: true };
+      m.awaitingConfirm = true;
+      mskelUpdateRepUI(m);
+      mskelUpdateConfirmUI(m);
+      const phaseLbl = m.phase === 'top' ? m.topName : m.phase === 'bot' ? m.botName : m.stickName;
+      say(`Forslag fra sidste gang · ${phaseLbl} · træk et punkt for at rette · ✓ Videre for at fortsætte`);
+      return;
+    }
+    m.proportions = null;   // kunne ikke bæres - fortsæt manuelt fra næste punkt i kæden
+  }
   m.step++;
+  mskelUpdateRepUI(m);   // ORDRE 43 · rep-vælgeren gælder kun før første klik
   const N = m.order.length;
   if (m.step < N) {
     const n = m.phase === 'top' ? 'POSITION 1/3' :
@@ -4869,12 +4985,17 @@ async function mskelStep(p) {
     say(`${n} · punkt ${m.step + 1}/${N}: ${MSKEL_LBL[m.order[m.step]].replace('klik ', '')}`);
     return;
   }
+  await mskelAdvancePhase(m);
+}
+// ORDRE 43 · fælles "fasen er færdig"-logik, kaldt både efter sidste
+// manuelle klik og efter ✓ Videre på et proportions-forslag.
+async function mskelAdvancePhase(m) {
   if (m.phase === 'top') {                          // skift til bund-fasen
     m.seeking = true;
     await seekTo(m.botTime);
     if (mskelClicks !== m) return;
     m.phase = 'bot'; m.step = 0; m.seeking = false;
-    say(`POSITION 2/3 · ${m.botName} · punkt 1/${N}: SKULDER`);
+    say(`POSITION 2/3 · ${m.botName} · ${MSKEL_LBL[m.order[0]]}`);
     return;
   }
   if (m.phase === 'bot') {                          // mål den reelle opstigning
@@ -4882,10 +5003,12 @@ async function mskelStep(p) {
     await seekTo(m.stickTime);
     if (mskelClicks !== m) return;
     m.phase = 'stick'; m.step = 0; m.seeking = false;
-    say(`POSITION 3/3 · ${m.stickName} · punkt 1/${N}: SKULDER`);
+    say(`POSITION 3/3 · ${m.stickName} · ${MSKEL_LBL[m.order[0]]}`);
     return;
   }
   mskelClicks = null;
+  mskelUpdateRepUI(null);
+  mskelUpdateConfirmUI(null);
   buildMskel(m);
 }
 // stangens y til et givet tidspunkt (dybde-driver for keyframe-skelettet)
@@ -5405,6 +5528,18 @@ function collectMetrics() {
         m.push(`Bundposition: vandret stang↔hofte ${lastVals.hipMomentArmCm} cm · ` +
                `stang ift. ankelreference ${lastVals.barAnkleOffsetCm > 0 ? '+' : ''}` +
                `${lastVals.barAnkleOffsetCm} cm`);
+      }
+      // ORDRE 43 · Commit 3: gem atletens proportioner (hofte/knæ/skulder
+      // relativt til ankel→stang) pr. fase, så NÆSTE analyse af samme
+      // atlet+løft+variation kan foreslå kæden ud fra ét ankel-klik.
+      if (mskel.topTime != null && mskel.botTime != null) {
+        const topR = mskelAnkleBarRatio(mskel.top, barPointAt(mskel.topTime));
+        const botR = mskelAnkleBarRatio(b, barPointAt(mskel.botTime));
+        const stickR = mskel.stick && mskel.stickTime != null
+          ? mskelAnkleBarRatio(mskel.stick, barPointAt(mskel.stickTime)) : null;
+        if (topR && botR && stickR)
+          lastVals.skeletonProportions = { chain: 'leg', order: mskel.order,
+            top: topR, bot: botR, stick: stickR };
       }
     }
   }
@@ -6299,6 +6434,9 @@ const vcV3Pending = new Map();
 const vcV3AnalysisIds = new WeakMap();
 const vcV3BaselinePending = new Map();
 const vcV3BaselineCache = new Map();
+// ORDRE 43 · Commit 3: opsætning huskes pr. atlet+løft+variation.
+const vcV3PriorSetupPending = new Map();
+const vcV3PriorSetupCache = new Map();
 let vcV3BridgeReady = false;
 let vcV3ConfigSeen = false;
 
@@ -6652,6 +6790,53 @@ function vcV3RequestBaselines(athleteId, force = false) {
   return promise;
 }
 
+// ORDRE 43 · Commit 3: sidste godkendte opsætning (kalibrering + skelet-
+// proportioner) for samme atlet+løft+variation. Fejler/tomt ryger stille til
+// null - et manglende forslag skal ALDRIG blokere eller fejle opsætningen.
+function vcV3PriorSetupKey(athleteId, lift, variation) {
+  return `${athleteId}|${lift}|${variation}`;
+}
+function vcV3RequestPriorSetup(athleteId, lift, variation) {
+  if (!VC_V3_COACH_BRIDGE || !vcV3BridgeReady || !VC_V3_HOST || !athleteId || !lift)
+    return Promise.resolve(null);
+  const key = vcV3PriorSetupKey(athleteId, lift, variation);
+  if (vcV3PriorSetupCache.has(key)) return Promise.resolve(vcV3PriorSetupCache.get(key));
+  for (const pending of vcV3PriorSetupPending.values())
+    if (pending.key === key) return pending.promise;
+  const requestId = vcV3Uuid();
+  let resolvePending;
+  const promise = new Promise(resolve => { resolvePending = resolve; });
+  const timer = setTimeout(() => {
+    vcV3PriorSetupPending.delete(requestId);
+    resolvePending(null);
+  }, 8000);
+  vcV3PriorSetupPending.set(requestId, { key, resolve: resolvePending, timer });
+  VC_V3_HOST.postMessage({ type: `${VC_V3_MESSAGE_PREFIX}:prior-setup-request`,
+    requestId, athleteId, lift, variation }, location.origin);
+  return promise;
+}
+// Kaldes ved video-åben og ved skift af atlet/løft/variation. Ingen af
+// delene findes endnu -> ingen forespørgsel, ingen fejl, bare intet forslag.
+function vcSyncPriorSetup() {
+  if (!VC_V3_COACH_BRIDGE || !video.src) return;
+  const athleteSelect = document.getElementById('athleteSel');
+  const selected = athleteSelect.selectedOptions[0];
+  const athleteId = selected && selected.dataset.athleteId;
+  const liftDisplay = document.getElementById('liftSel').value;
+  const lift = vcV3Lift(liftDisplay);
+  if (!athleteId || !lift) { vcPriorSetup = null; return; }
+  const variation = vcV3Variation(liftDisplay, document.getElementById('variationSel').value);
+  vcV3RequestPriorSetup(athleteId, lift, variation).then(result => {
+    // videoen/valget kan være skiftet mens svaret var undervejs
+    const stillCurrent = document.getElementById('athleteSel').selectedOptions[0] &&
+      document.getElementById('athleteSel').selectedOptions[0].dataset.athleteId === athleteId &&
+      vcV3Lift(document.getElementById('liftSel').value) === lift &&
+      vcV3Variation(document.getElementById('liftSel').value,
+        document.getElementById('variationSel').value) === variation;
+    if (stillCurrent) vcPriorSetup = result;
+  });
+}
+
 if (VC_V3_BRIDGE_ENABLED) {
   window.addEventListener('message', event => {
     if (event.origin !== location.origin || event.source !== VC_V3_HOST) return;
@@ -6701,6 +6886,19 @@ if (VC_V3_BRIDGE_ENABLED) {
       const rows = Array.isArray(msg.baselines) ? msg.baselines : [];
       vcV3BaselineCache.set(pending.athleteId, rows);
       pending.resolve(rows);
+      return;
+    }
+    if (msg.type === `${VC_V3_MESSAGE_PREFIX}:prior-setup-result`) {
+      const pending = vcV3PriorSetupPending.get(msg.requestId);
+      if (!pending) return;
+      clearTimeout(pending.timer); vcV3PriorSetupPending.delete(msg.requestId);
+      const value = (msg.ok && msg.found) ? {
+        cmPerPx: Number.isFinite(msg.cmPerPx) && msg.cmPerPx > 0 ? msg.cmPerPx : null,
+        skeletonProportions: msg.skeletonProportions && typeof msg.skeletonProportions === 'object'
+          ? msg.skeletonProportions : null,
+      } : null;
+      vcV3PriorSetupCache.set(pending.key, value);
+      pending.resolve(value);
       return;
     }
     if (msg.type === `${VC_V3_MESSAGE_PREFIX}:queue-status`) {
@@ -6935,6 +7133,7 @@ document.getElementById('athleteSel').addEventListener('change', e => {
   const selected = e.target.selectedOptions[0];
   const athleteId = selected && selected.dataset.athleteId;
   if (athleteId) vcV3RequestBaselines(athleteId).catch(() => {});
+  vcSyncPriorSetup();   // ORDRE 43 · anden atlet = anden opsætnings-historik
 });
 document.getElementById('liftSel').addEventListener('change', e => {
   fillVariationSelect(variationSel, e.target.value);
@@ -6957,9 +7156,12 @@ document.getElementById('liftSel').addEventListener('change', e => {
     localStorage.setItem('vc_lift', e.target.value);
     localStorage.setItem('vc_variation', variationSel.value);
   } catch {}
+  vcSyncPriorSetup();   // ORDRE 43 · andet løft = anden opsætnings-historik
 });
 variationSel.addEventListener('change', e => {
-  try { localStorage.setItem('vc_variation', e.target.value); } catch {} });
+  try { localStorage.setItem('vc_variation', e.target.value); } catch {}
+  vcSyncPriorSetup();   // ORDRE 43 · anden variation = anden opsætnings-historik
+});
 
 // ---------- Optagelse (canvas + mikrofon) ----------
 const recordBtn = document.getElementById('recordBtn');

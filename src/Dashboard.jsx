@@ -745,6 +745,52 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           Number(item.n_analyses) >= 1) })
         return
       }
+      // ORDRE 43 · Commit 3: sidste godkendte opsætning (kalibrering +
+      // skelet-proportioner) for samme atlet+løft+variation, så VideoCoach
+      // kan foreslå i stedet for at spørge. Samme mønster som baseline-broen.
+      if (message.type === `${VIDEOCOACH_V3_PREFIX}:prior-setup-request`) {
+        const reply = result => {
+          try { event.source.postMessage({ type: `${VIDEOCOACH_V3_PREFIX}:prior-setup-result`,
+            requestId: message.requestId, ...result }, event.origin); return true }
+          catch { return false }
+        }
+        if (!videoCoachClientsRef.current.has(event.source)) {
+          reply({ ok: false, error: 'VideoCoach-forbindelsen er ikke registreret' })
+          return
+        }
+        if (typeof message.requestId !== 'string' || message.requestId.length > 100 ||
+            !videoCoachAthletesRef.current.some(athlete => athlete.id === message.athleteId) ||
+            !['squat', 'bench', 'deadlift'].includes(message.lift) ||
+            !/^[a-z0-9]+([._-][a-z0-9]+)*$/.test(message.variation || '')) {
+          reply({ ok: false, error: 'Ugyldig forespørgsel om tidligere opsætning' })
+          return
+        }
+        const { data, error } = await supabase.from('video_analyses')
+          .select('bar_path, extra, analyzed_at')
+          .eq('athlete_id', message.athleteId)
+          .eq('lift', message.lift)
+          .eq('variation', message.variation)
+          .in('status', ['coach_approved', 'shared'])
+          .order('analyzed_at', { ascending: false })
+          .limit(1)
+        if (error) {
+          reply({ ok: false, error: error.message || 'Tidligere opsætning kunne ikke hentes' })
+          return
+        }
+        const row = (data || [])[0]
+        if (!row) { reply({ ok: true, found: false }); return }
+        const cmPerPx = Number(row.bar_path?.cm_per_px)
+        const skeletonProportions = row.extra?.skeleton_proportions &&
+          typeof row.extra.skeleton_proportions === 'object' ? row.extra.skeleton_proportions : null
+        if (!Number.isFinite(cmPerPx) && !skeletonProportions) {
+          reply({ ok: true, found: false })
+          return
+        }
+        reply({ ok: true, found: true,
+          cmPerPx: Number.isFinite(cmPerPx) && cmPerPx > 0 ? cmPerPx : null,
+          skeletonProportions })
+        return
+      }
       if (message.type !== `${VIDEOCOACH_V3_PREFIX}:save-draft`) return
       const reply = result => {
         try { event.source.postMessage({ type: `${VIDEOCOACH_V3_PREFIX}:save-result`,
