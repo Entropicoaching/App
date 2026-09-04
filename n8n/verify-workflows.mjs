@@ -361,6 +361,48 @@ const deduplicatedBriefing = runCode(node(coach, 'Build briefing').parameters.js
 assert.equal(deduplicatedBriefing.total, filteredBriefing.total, 'Upstream duplicates must not inflate the coach queue');
 assert.equal(deduplicatedBriefing.digestHash, filteredBriefing.digestHash, 'Duplicate rows must not change the delivery digest');
 
+// C: the HTML row list is capped at five items, but the subject total and the
+// digest hash must still reflect the full, uncapped task list.
+const manyTasksInput = {
+  ...validBriefing,
+  unread_messages: Array.from({ length: 7 }, (_, index) => ({
+    athlete_id: `many-athlete-${index}`,
+    athlete_name: `Atlet ${index}`,
+    track: 'besked',
+    unread_count: 1,
+    latest_at: new Date(now - (7 - index) * 60 * 60 * 1000).toISOString(),
+  })),
+};
+const manyTasksBriefing = runCode(node(coach, 'Build briefing').parameters.jsCode, {
+  input: { json: manyTasksInput },
+  mode: 'production',
+  config,
+})[0].json;
+assert.equal(manyTasksBriefing.total, 7, 'Subject total must count all seven tasks, not just the rendered five');
+assert.match(manyTasksBriefing.subject, /7 ting kræver et kig/, 'Subject must reflect the uncapped total');
+for (let index = 0; index < 5; index += 1) {
+  assert.match(manyTasksBriefing.html, new RegExp(`Atlet ${index}\\b`), `Visible row for Atlet ${index} must render`);
+}
+assert.doesNotMatch(manyTasksBriefing.html, /Atlet 5\b/, 'Sixth task must stay off the rendered row list');
+assert.doesNotMatch(manyTasksBriefing.html, /Atlet 6\b/, 'Seventh task must stay off the rendered row list');
+assert.match(manyTasksBriefing.html, /\+2 andre opgaver i appen/, 'Overflow line must state the correct hidden count');
+
+const manyTasksVariantInput = {
+  ...manyTasksInput,
+  unread_messages: manyTasksInput.unread_messages.map((message, index) =>
+    index === 6 ? { ...message, unread_count: 2 } : message),
+};
+const manyTasksVariantBriefing = runCode(node(coach, 'Build briefing').parameters.jsCode, {
+  input: { json: manyTasksVariantInput },
+  mode: 'production',
+  config,
+})[0].json;
+assert.notEqual(
+  manyTasksVariantBriefing.digestHash,
+  manyTasksBriefing.digestHash,
+  'digestHash must change when a hidden, beyond-the-cap task changes, proving it is computed from the full list',
+);
+
 const framedPreview = runCode(node(coach, 'Frame fallback email').parameters.jsCode, {
   input: builtPreview[0],
   mode: 'test',
