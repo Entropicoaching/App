@@ -3997,6 +3997,12 @@ function mpMatchPoint(from,to,p,pred,search,pr=4){
     if(!best||cost<best.cost){if(best)second=best.cost;best={x,y,cost};}
     else if(cost<second)second=cost;
   };
+  // ORDRE 45 · commit 3: et grovere-skridt/bredere-finpudsning forsøg blev
+  // rullet tilbage herfra - se RAPPORT.md. Et coarseStep på 3-4 med bredere
+  // finpudsning (dækker samme kandidater som den tætte søgning burde ramme)
+  // gav op til ~300px banedrift i multi_rep-scenariet: den rotende
+  // tekstur/logo-baserede skive har et smalt, skarpt minimum i ZNSSD-
+  // kostfladen, som et groft gitter kan springe helt over. Uændret 1:1.
   for(let y=cy-search;y<=cy+search;y+=2)
     for(let x=cx-search;x<=cx+search;x+=2)consider(x,y);
   if(!best)return null;
