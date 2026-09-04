@@ -5,6 +5,7 @@ import { sanitizeVideoCoachFeedbackEvidence } from './videoCoachFeedbackEvidence
 import { videoCoachPersonalBaselineAthleteText, videoCoachPersonalBaselineForAnalysis } from './videoCoachPersonalFeedback'
 import { VIDEOCOACH_LIFT_LABELS as ATHLETE_VIDEO_LIFTS, videoCoachVariationLabel as athleteVideoVariationLabel } from './videoCoachLabels'
 import { ATHLETE_ONBOARDING_GUIDE_STEPS, hasCompletedOnboardingGuide, isLastOnboardingGuideStep } from './athleteOnboardingGuide'
+import { runGuardedWrite } from './athleteWriteGuard'
 import { calcWarmupSets, isMainLift } from './warmup'
 import { foldNavn } from './exerciseNames'
 import { flushVideoCoachDraftQueue, isRetryableVideoCoachError,
@@ -2674,7 +2675,14 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   async function sendAthleteMessage() {
     if (!messageInput.trim() || !athlete) return
-    await supabase.from('messages').insert({ athlete_id: athlete.id, sender_role: 'athlete', content: messageInput.trim(), category: msgTrack })
+    const content = messageInput.trim()
+    // Ryd IKKE feltet før skrivningen er bekræftet — ellers ser en fejlet
+    // afsendelse ud som en succes, og beskeden er væk uden mulighed for at prøve igen.
+    const ok = await runGuardedWrite(
+      () => supabase.from('messages').insert({ athlete_id: athlete.id, sender_role: 'athlete', content, category: msgTrack }),
+      () => showFlash('Beskeden blev ikke sendt. Tjek din forbindelse og prøv igen.', 'error'),
+    )
+    if (!ok) return
     setMessageInput('')
     fetchAthleteMessages(athlete.id)
   }
@@ -2791,11 +2799,14 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   async function quickLogFood(f) {
     if (!athlete) return
-    await supabase.from('meal_logs').insert({
-      athlete_id: athlete.id, date: kostDate,
-      meal: f.meal, kcal: f.kcal, protein: f.protein, carb: f.carb, fat: f.fat,
-    })
-    fetchLogs(athlete.id)
+    const ok = await runGuardedWrite(
+      () => supabase.from('meal_logs').insert({
+        athlete_id: athlete.id, date: kostDate,
+        meal: f.meal, kcal: f.kcal, protein: f.protein, carb: f.carb, fat: f.fat,
+      }),
+      () => showFlash('Måltidet blev ikke logget. Tjek din forbindelse og prøv igen.', 'error'),
+    )
+    if (ok) fetchLogs(athlete.id)
   }
 
   async function fetchMealTemplates(athleteId) {
@@ -2815,16 +2826,23 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       .eq('athlete_id', athlete.id)
       .eq('date', yStr)
     if (!data || data.length === 0) return
-    await supabase.from('meal_logs').insert(
-      data.map(item => ({ ...item, athlete_id: athlete.id, date: kostDate }))
+    const ok = await runGuardedWrite(
+      () => supabase.from('meal_logs').insert(
+        data.map(item => ({ ...item, athlete_id: athlete.id, date: kostDate }))
+      ),
+      () => showFlash('Måltiderne kunne ikke kopieres. Tjek din forbindelse og prøv igen.', 'error'),
     )
-    fetchLogs(athlete.id)
+    if (ok) fetchLogs(athlete.id)
   }
 
   async function saveTemplate() {
     if (!templateNameInput.trim() || !logs.length || !athlete) return
     const items = logs.map(({ meal, kcal, protein, carb, fat }) => ({ meal, kcal, protein, carb, fat }))
-    await supabase.from('meal_templates').insert({ athlete_id: athlete.id, name: templateNameInput.trim(), items })
+    const ok = await runGuardedWrite(
+      () => supabase.from('meal_templates').insert({ athlete_id: athlete.id, name: templateNameInput.trim(), items }),
+      () => showFlash('Skabelonen blev ikke gemt. Tjek din forbindelse og prøv igen.', 'error'),
+    )
+    if (!ok) return
     fetchMealTemplates(athlete.id)
     setShowSaveTemplate(false)
     setTemplateNameInput('')
@@ -2832,9 +2850,13 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   async function logTemplate(template) {
     if (!athlete) return
-    await supabase.from('meal_logs').insert(
-      template.items.map(item => ({ ...item, athlete_id: athlete.id, date: kostDate }))
+    const ok = await runGuardedWrite(
+      () => supabase.from('meal_logs').insert(
+        template.items.map(item => ({ ...item, athlete_id: athlete.id, date: kostDate }))
+      ),
+      () => showFlash('Skabelonen kunne ikke logges. Tjek din forbindelse og prøv igen.', 'error'),
     )
+    if (!ok) return
     fetchLogs(athlete.id)
     setShowTemplates(false)
   }
@@ -2887,15 +2909,19 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     const label = unit.label === 'g'
       ? `${selectedFood.name} · ${Math.round(grams)} g`
       : `${selectedFood.name} · ${amt} ${unit.label} (${Math.round(grams)} g)`
-    await supabase.from('meal_logs').insert({
-      athlete_id: athlete.id,
-      date: kostDate,
-      meal: label,
-      kcal: Math.round(selectedFood.kcal100 * ratio),
-      protein: Math.round(selectedFood.protein100 * ratio),
-      carb: Math.round(selectedFood.carb100 * ratio),
-      fat: Math.round(selectedFood.fat100 * ratio),
-    })
+    const ok = await runGuardedWrite(
+      () => supabase.from('meal_logs').insert({
+        athlete_id: athlete.id,
+        date: kostDate,
+        meal: label,
+        kcal: Math.round(selectedFood.kcal100 * ratio),
+        protein: Math.round(selectedFood.protein100 * ratio),
+        carb: Math.round(selectedFood.carb100 * ratio),
+        fat: Math.round(selectedFood.fat100 * ratio),
+      }),
+      () => showFlash('Fødevaren blev ikke logget. Tjek din forbindelse og prøv igen.', 'error'),
+    )
+    if (!ok) return
     setSelectedFood(null)
     setSearchQuery('')
     fetchLogs(athlete.id)
@@ -2913,15 +2939,19 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     const label = unit.label === 'g'
       ? `${f.name} · ${Math.round(grams)} g`
       : `${f.name} · ${amt} ${unit.label} (${Math.round(grams)} g)`
-    await supabase.from('meal_logs').insert({
-      athlete_id: athlete.id,
-      date: kostDate,
-      meal: label,
-      kcal: Math.round(f.kcal100 * ratio),
-      protein: Math.round(f.protein100 * ratio),
-      carb: Math.round(f.carb100 * ratio),
-      fat: Math.round(f.fat100 * ratio),
-    })
+    const ok = await runGuardedWrite(
+      () => supabase.from('meal_logs').insert({
+        athlete_id: athlete.id,
+        date: kostDate,
+        meal: label,
+        kcal: Math.round(f.kcal100 * ratio),
+        protein: Math.round(f.protein100 * ratio),
+        carb: Math.round(f.carb100 * ratio),
+        fat: Math.round(f.fat100 * ratio),
+      }),
+      () => showFlash(`${f.name} blev ikke logget. Tjek din forbindelse og prøv igen.`, 'error'),
+    )
+    if (!ok) return
     fetchLogs(athlete.id)
     showFlash(`${f.name} tilføjet`)
   }
@@ -3024,7 +3054,11 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   }
 
   async function deleteLog(l) {
-    await supabase.from('meal_logs').delete().eq('id', l.id)
+    const ok = await runGuardedWrite(
+      () => supabase.from('meal_logs').delete().eq('id', l.id),
+      () => showFlash('Måltidet blev ikke slettet. Tjek din forbindelse og prøv igen.', 'error'),
+    )
+    if (!ok) return
     fetchLogs(athlete.id)
     if (undoTimerRef.current) clearTimeout(undoTimerRef.current)
     setUndoToast({
@@ -3095,7 +3129,11 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         fat: parseInt(editMacros.fat) || 0,
       }
     }
-    await supabase.from('meal_logs').update(update).eq('id', l.id)
+    const ok = await runGuardedWrite(
+      () => supabase.from('meal_logs').update(update).eq('id', l.id),
+      () => showFlash('Ændringen blev ikke gemt. Tjek din forbindelse og prøv igen.', 'error'),
+    )
+    if (!ok) return
     setEditingLogId(null)
     fetchLogs(athlete.id)
   }
