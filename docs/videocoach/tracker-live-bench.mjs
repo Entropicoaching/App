@@ -167,10 +167,34 @@ function buildOcclusionScene() {
 }
 const sceneOcclusion = buildOcclusionScene();
 
-const SCENARIOS = [sceneClean, sceneLowContrast, sceneMultiRep, sceneOcclusion];
+// ORDRE 45 · commit 2: sikkerhedsscenarier for "spor kun det der skal ses".
+// Et rent sæt efterfulgt af 9 sekunders dødtid (skiven ligger stille, som
+// når Marc taler videre efter sidste rep) - den hurtige vej skal stoppe
+// tidligt HER og kun her.
+function poseIdleTail(t) {
+  if (t <= 1.6) return poseCleanSingle(t);
+  return { cy: 190 };   // ligger helt stille resten af klippet
+}
+const sceneIdleTail = buildScene({ name: 'idle_tail_after_rep', duration: 1.6 + 9, poseAt: poseIdleTail });
+
+// To reps med et 3,5 sekunders HOLD ved toppen imellem (fx en coach-instrueret
+// pause, eller bare en langsom atlet) - kortere end IDLE_STOP_S (5s) i
+// startMultipointTracking, så den hurtige vej ALDRIG må stoppe her. Dette er
+// den konkrete regressionslås mod at "spor kun det der skal ses" fejltolker
+// en pause midt i sættet som et afsluttet sæt.
+function posePausedHold(t) {
+  const repDur = 1.5, holdDur = 3.5;
+  if (t <= repDur) return poseCleanSingle((t / repDur) * 1.6);
+  if (t <= repDur + holdDur) return { cy: 190 };
+  const t2 = t - repDur - holdDur;
+  return poseCleanSingle((t2 / repDur) * 1.6);
+}
+const scenePausedHold = buildScene({ name: 'paused_hold_between_reps', duration: 1.5 * 2 + 3.5, poseAt: posePausedHold });
+
+const SCENARIOS = [sceneClean, sceneLowContrast, sceneMultiRep, sceneOcclusion, sceneIdleTail, scenePausedHold];
 
 // ---------- 4) Kør trackeren mod ét scenarie ----------
-async function runScenario(scene) {
+async function runScenario(scene, { fast = true } = {}) {
   const source = extractLiveTrackerSource();
   const { video, ocan, canvas, octx } = makeEnv(scene);
   const strokes = [];
@@ -184,11 +208,13 @@ async function runScenario(scene) {
     playLabel: () => '',
     say: stubSay,
     setAthleteState: null,
+    awaitShClick: null,
     analyzing: false,
     SLIM: false, ATHLETE: false, COACHWEB: false, DESKTOP: true,
     HAS_RVFC: false,
     FRAME: 1 / FPS,
     TRACKER_BENCHMARK: false, TRACKER_PROBE: false,
+    VC_TRACKER_FAST: fast,   // ORDRE 45 · én kontakt - se videocoach.html
     vcTiming: { trackingStartedAt: null },
     idxAtTime(s, t) {
       const times = s.times || [];
@@ -266,14 +292,23 @@ function pathDeviation(a, b) {
 // derfor sat til at fange reel banedrift, ikke pixel-for-pixel identisk output.
 const TOLERANCE_MAX_PX = 1.5;
 const TOLERANCE_MEAN_PX = 0.5;
+// ORDRE 45 · commit 2: kun ÉT scenarie må lovligt blive kortere end baseline
+// - det er selve pointen med "spor kun det der skal ses". Ethvert andet
+// scenarie (inkl. paused_hold_between_reps, den bevidste sikkerhedslås mod at
+// en pause midt i sættet fejltolkes som "færdig") skal have UÆNDRET længde.
+const EARLY_STOP_EXPECTED = new Set(['idle_tail_after_rep']);
 
 async function main() {
   const args = process.argv.slice(2);
   const writeBaseline = args.includes('--write-baseline');
   const jsonOnly = args.includes('--json');
+  // Baseline = den ORIGINALE, langsomme vej (VC_TRACKER_FAST=false er
+  // adfærdsmæssigt identisk med koden før denne ordre - se videocoach.html).
+  // Den almindelige sammenligning kører med fast=true: det Marc rent
+  // faktisk får som standard, sammenlignet mod den samme baseline.
   const results = [];
   for (const scene of SCENARIOS) {
-    const r = await runScenario(scene);
+    const r = await runScenario(scene, { fast: !writeBaseline });
     results.push(r);
   }
 
@@ -300,7 +335,9 @@ async function main() {
     const dev = pathDeviation(base.path, summarizePath(r.path));
     const beforeMs = base.wallMs, afterMs = r.wallMs;
     const factor = beforeMs > 0 ? beforeMs / Math.max(0.001, afterMs) : null;
-    const okPath = dev.maxPx <= TOLERANCE_MAX_PX && dev.meanPx <= TOLERANCE_MEAN_PX && dev.frameCountDiff === 0;
+    const expectsEarlyStop = EARLY_STOP_EXPECTED.has(r.name);
+    const okFrameCount = expectsEarlyStop ? dev.frameCountDiff > 0 : dev.frameCountDiff === 0;
+    const okPath = dev.maxPx <= TOLERANCE_MAX_PX && dev.meanPx <= TOLERANCE_MEAN_PX && okFrameCount;
     const okOutcome = r.ok === base.ok;
     const pass = okPath && okOutcome;
     if (!pass) failed = true;

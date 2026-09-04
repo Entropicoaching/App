@@ -506,6 +506,12 @@
   #mskelConfirmNav.show { display:flex; }
   #mskelConfirmNav button { background:rgba(20,20,16,.92); border:1px solid #5b9bb5;
     color:#5b9bb5; border-radius:12px; padding:12px 22px; font-size:15px; font-weight:600; }
+  /* ORDRE 45 · én kontakt, altid synlig, nederst til venstre (uden for
+     nav-bjælken/mskel-knapperne foroven, så den aldrig ligger bag noget). */
+  #trackerFastBtn { position:fixed; left:10px; bottom:10px; z-index:20;
+    background:rgba(20,20,16,.85); border:1px solid var(--accent); color:var(--accent);
+    border-radius:10px; padding:8px 12px; font-size:12px; }
+  #trackerFastBtn.off { border-color:#cf6b4e; color:#cf6b4e; }
   /* 📷 filmguide: hjælp kameraet, så hjælper du analysen */
   #guidePanel { position:fixed; inset:0; z-index:40; display:flex;
     align-items:center; justify-content:center; background:rgba(0,0,0,.55); }
@@ -914,6 +920,8 @@
 <div id="mskelConfirmNav">
   <button id="mskelConfirmBtn" type="button">✓ Videre</button>
 </div>
+<!-- ORDRE 45 · én kontakt for tracker-hastighedsgrebene, se JS: vcReadTrackerFast -->
+<button id="trackerFastBtn" type="button">⚡ Hurtig sporing</button>
 <section id="barPathHUD" hidden aria-label="Stangbaneanalyse">
   <div class="vcHudHead"><span class="vcHudTitle">Stangbane</span><span id="vcHudQuality" class="vcHudQuality">Gyldigt signal</span><button id="vcHudCollapse" type="button" aria-expanded="true" aria-label="Minimér analyseresultat" title="Minimér analyseresultat">−</button></div>
   <div id="vcLiftSetup" class="vcLiftSetup"><label for="liftSel">Løft</label></div>
@@ -1064,6 +1072,35 @@ const COACHWEB = !DESKTOP && MODE_PARAMS.has('coach');
 const TRACKER_PROBE = TRACKER_BENCHMARK && MODE_PARAMS.get('trackerProbe') === '1';
 const SLIM = !DESKTOP;              // moderne layout (atlet OG coach online)
 const ATHLETE = SLIM && !COACHWEB;
+// ORDRE 45 · én kontakt for ALLE tracker-hastighedsgreb (commit 2-4). Slået
+// TIL som standard. Kommer der en fejl på en rigtig video, kan Marc slå den
+// fra med ét tryk på ⚡/🐢-knappen - ingen kodeændring, intet redeploy, virker
+// med det samme. ?trackerFast=0/1 i URL'en sætter og husker samme kontakt.
+function vcReadTrackerFast() {
+  const urlVal = MODE_PARAMS.get('trackerFast');
+  if (urlVal === '0' || urlVal === '1') {
+    try { localStorage.setItem('vc_tracker_fast', urlVal); } catch {}
+    return urlVal === '1';
+  }
+  try { return localStorage.getItem('vc_tracker_fast') !== '0'; } catch { return true; }
+}
+let VC_TRACKER_FAST = vcReadTrackerFast();
+function vcPaintTrackerFastBtn() {
+  const btn = document.getElementById('trackerFastBtn');
+  if (!btn) return;
+  btn.textContent = VC_TRACKER_FAST ? '⚡ Hurtig sporing' : '🐢 Langsom sporing (original)';
+  btn.classList.toggle('off', !VC_TRACKER_FAST);
+  btn.title = VC_TRACKER_FAST
+    ? 'Sporingen bruger de nye hastighedsgreb fra ORDRE 45 · tryk for at gå tilbage til den oprindelige, langsommere vej'
+    : 'Sporingen bruger den oprindelige, langsommere vej · tryk for at slå hastighedsgrebene til igen';
+}
+document.addEventListener('DOMContentLoaded', vcPaintTrackerFastBtn);
+if (document.readyState !== 'loading') vcPaintTrackerFastBtn();
+document.getElementById('trackerFastBtn')?.addEventListener('click', () => {
+  VC_TRACKER_FAST = !VC_TRACKER_FAST;
+  try { localStorage.setItem('vc_tracker_fast', VC_TRACKER_FAST ? '1' : '0'); } catch {}
+  vcPaintTrackerFastBtn();
+});
 const VC_PHASES = Object.freeze({
   setup:{label:'Setup',color:'#8b877f'},
   eccentric:{label:'Excentrisk',color:'#61b7d2'},
@@ -4090,6 +4127,14 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
   // Startpositionen er allerede "home". Arm først home-auditet ved en reel
   // tilbagekomst; ellers trækker det bekræftede gulvanker imod første ascent.
   let wasNearHome=deadliftMode,homeEntryFrames=0;
+  // ORDRE 45 · commit 2: spor kun det der skal ses. Når stangen tydeligvis
+  // har lavet mindst ét fuldt rep OG er vendt tilbage tæt på startpunktet OG
+  // holder sig i ro der i IDLE_STOP_S sekunder i træk, er sættet forbi -
+  // resten af klippet er dødtid (Marc der taler, kameraet der kører videre).
+  // Kun bekræftede (accepted) frames tæller med, så en MISTET stang midt i
+  // sættet aldrig kan fejltolkes som "færdig" (se RAPPORT.md, commit 2).
+  const IDLE_STOP_S=5;
+  let hasMovedAway=false,idleRestStart=null,earlyStopped=false;
   if(features.length<5){
     tracking=false;path.lowConf=(path.lowConf||0)+1;path.superseded=true;
     if(TRACKER_BENCHMARK){
@@ -4347,6 +4392,23 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
         stableFrames=0;
       }
     }
+    // ORDRE 45 · commit 2 (bag VC_TRACKER_FAST, se knappen "⚡ Hurtig sporing")
+    if(VC_TRACKER_FAST){
+      const distFromStart=Math.hypot(cur.x-p0.x,cur.y-p0.y);
+      if(accepted&&!hasMovedAway&&distFromStart>radius*1.2)hasMovedAway=true;
+      if(accepted&&hasMovedAway){
+        // Position alene, ikke fart: match-støjens frame-til-frame jitter
+        // (et par px) gør en hastighedstærskel upålidelig ved reel stilstand.
+        // Kravet om SAMMENHÆNGENDE nærhed i IDLE_STOP_S sekunder er i sig selv
+        // nok til at udelukke en langsom bevægelse forbi startpunktet.
+        const atRest=distFromStart<radius*.6;
+        if(atRest){if(idleRestStart==null)idleRestStart=tNow;}
+        else idleRestStart=null;
+      }else idleRestStart=null;   // usikker frame -> vent til vi igen er sikre
+      if(idleRestStart!=null&&tNow-idleRestStart>=IDLE_STOP_S){
+        tracking=false;earlyStopped=true;path.earlyStoppedAt=tNow;
+      }
+    }
     return true;
   };
 
@@ -4410,6 +4472,11 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
   if(badPct>5){
     say(`⚠ Trackeren holdt sidste sikre punkt i ${badPct}% af sættet · kontrollér banen`);
     setTimeout(()=>{if(!awaitShClick)say('');},8000);
+  }else if(earlyStopped){
+    // ORDRE 45 · commit 2: forklar hvorfor sporingen stoppede før klippets
+    // slutning - ellers ligner det en fejl, ikke en optimering.
+    say(`✓ Sættet ser færdigt ud · sporingen stoppede tidligt (hurtig sporing)`);
+    setTimeout(()=>{if(!awaitShClick)say('');},5000);
   }
   await seekTo(startT);
   return path.pts.length>=5;
