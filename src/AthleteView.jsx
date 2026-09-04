@@ -4550,7 +4550,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                             Sæt {setNum}
                                           </div>
                                           <input
-                                            style={{ ...s.fieldInput, width: '80px', minWidth: '80px', flexShrink: 0, padding: '0.65rem 0.5rem', fontSize: '1.1rem', textAlign: 'center' }}
+                                            style={{ ...s.fieldInput, width: '80px', minWidth: '80px', minHeight: '44px', boxSizing: 'border-box', flexShrink: 0, padding: '0.65rem 0.5rem', fontSize: '1.1rem', textAlign: 'center' }}
                                             type="text" inputMode="decimal" placeholder="kg" value={input.weight}
                                             onChange={e => {
                                               // type=text + inputMode=decimal: numerisk tastatur, men fuld
@@ -4563,12 +4563,15 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                             }}
                                           />
                                           <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.88rem', color: '#c8923a', whiteSpace: 'nowrap' }}>× {ex.reps || '—'}</span>
+                                          {/* Log/Spring over rammes efter hvert eneste sæt, hele træningen igennem —
+                                              den mest gentagne tryk-handling i appen. min-height 44px holder dem
+                                              inden for anbefalet tommelfinger-trykflade, også med svedige hænder. */}
                                           <button
-                                            style={{ ...s.btnPrimary, padding: '0.65rem 1rem', fontSize: '0.65rem', background: logged ? '#6cba6c' : '#c8923a' }}
+                                            style={{ ...s.btnPrimary, minHeight: '44px', boxSizing: 'border-box', padding: '0.65rem 1rem', fontSize: '0.65rem', background: logged ? '#6cba6c' : '#c8923a' }}
                                             onClick={() => logSet(ex.id, setNum, ex.sets, ex.reps, plannedRpe)}
                                           >{logged ? '✓' : 'Log'}</button>
                                           <button
-                                            style={{ ...s.btnGhost, padding: '0.65rem 0.75rem', fontSize: '0.55rem', color: '#4a4844', borderColor: 'rgba(237,234,226,0.08)' }}
+                                            style={{ ...s.btnGhost, minHeight: '44px', boxSizing: 'border-box', padding: '0.65rem 0.75rem', fontSize: '0.55rem', color: '#4a4844', borderColor: 'rgba(237,234,226,0.08)' }}
                                             onClick={() => skipSet(ex.id, setNum, plannedRpe)}
                                           >Spring over</button>
                                         </div>
@@ -4584,6 +4587,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                                 fontSize: '0.6rem',
                                                 letterSpacing: '0.08em',
                                                 padding: '0.3rem 0.6rem',
+                                                minHeight: '44px',
+                                                boxSizing: 'border-box',
                                                 cursor: 'pointer',
                                                 whiteSpace: 'nowrap',
                                               }}
