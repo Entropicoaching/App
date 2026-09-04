@@ -34,10 +34,22 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
-    detectSessionInUrl: false, // ren email/password-login, ingen OAuth-redirect at parse
+    // Skal være true for at "glemt adgangskode"-linket kan logge atleten ind
+    // med en midlertidig recovery-session (App.jsx lytter efter PASSWORD_RECOVERY-
+    // eventet). Der er intet andet redirect-baseret flow i appen, så det er sikkert
+    // at slå til.
+    detectSessionInUrl: true,
   },
   global: { fetch: fetchWithTimeout },
 })
+
+// Sand hvis siden netop blev åbnet fra et "glemt adgangskode"-link (Supabase
+// lægger `type=recovery` i URL-fragmentet). Læses SYNKRONT ved modul-load, så
+// App.jsx ikke er afhængig af hvornår PASSWORD_RECOVERY-eventet når frem —
+// det interne URL-parse-kald kan i princippet fyre før React har nået at
+// registrere sin lytter.
+export const isPasswordRecoveryUrl =
+  typeof window !== 'undefined' && /type=recovery/.test(window.location.hash)
 
 // --- Proaktiv token-fornyelse -----------------------------------------------
 // Fornyer et udløbet/næsten-udløbet access-token FØR det første kald, så selve
