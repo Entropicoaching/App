@@ -14,33 +14,3 @@ export function athleteAuthErrorMessage(error, mode = 'login') {
     ? 'Kontoen kunne ikke oprettes. Tjek oplysningerne eller kontakt din coach.'
     : 'Du kunne ikke logge ind. Tjek oplysningerne og prøv igen.'
 }
-
-const LEGACY_ONBOARDING_KEY = 'entropi_onboarded'
-const ATHLETE_ONBOARDING_KEY_PREFIX = 'entropi_onboarded:athlete:'
-
-export function athleteOnboardingStorageKey(athleteId) {
-  const normalizedId = typeof athleteId === 'string' ? athleteId.trim() : ''
-  return normalizedId ? `${ATHLETE_ONBOARDING_KEY_PREFIX}${normalizedId}` : ''
-}
-
-export function hasCompletedAthleteOnboarding(storage, athleteId) {
-  const key = athleteOnboardingStorageKey(athleteId)
-  if (!storage || !key) return false
-  if (storage.getItem(key) === 'true') return true
-
-  // Migrer det gamle globale flag til den atlet, der faktisk er logget ind.
-  // Det globale flag fjernes, så en anden bruger på samme enhed stadig får sin velkomst.
-  if (storage.getItem(LEGACY_ONBOARDING_KEY) === 'true') {
-    storage.setItem(key, 'true')
-    storage.removeItem(LEGACY_ONBOARDING_KEY)
-    return true
-  }
-  return false
-}
-
-export function completeAthleteOnboarding(storage, athleteId) {
-  const key = athleteOnboardingStorageKey(athleteId)
-  if (!storage || !key) return false
-  storage.setItem(key, 'true')
-  return true
-}
