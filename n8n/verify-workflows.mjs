@@ -13,6 +13,7 @@ const load = (name) => JSON.parse(readFileSync(join(here, name), 'utf8'));
 const coach = load('coach-briefing-v1.json');
 const monitor = load('automation-error-monitor-v1.json');
 const briefingBuilderSource = readFileSync(join(here, 'build-coach-briefing.code'), 'utf8').trimEnd();
+const coachPrioritySource = readFileSync(join(here, '..', 'src', 'coachPriority.js'), 'utf8');
 
 const option = (name) => {
   const index = process.argv.indexOf(name);
@@ -98,6 +99,30 @@ assert.equal(
   node(coach, 'Build briefing').parameters.jsCode.trimEnd(),
   briefingBuilderSource,
   'Coach briefing JSON must stay synchronized with build-coach-briefing.code',
+);
+
+// The mail's signal labels must never silently drift from the app's own
+// detector -> label mapping in src/coachPriority.js. Both files spell out the
+// same ternary chain (only the source variable name differs: signal.o_detector
+// in the app, item.detector in the mail), so a textual comparison of the
+// detector keys, their labels and the fallback label catches drift in either
+// direction without needing a shared runtime module across the two environments.
+const extractDetectorLabelChain = (source, label) => {
+  const match = source.match(/detectorLabel = ([\s\S]*?: '[^']+')/);
+  assert.ok(match, `${label}: detectorLabel ternary chain not found`);
+  return match[1];
+};
+const detectorLabelMapping = (chain) => {
+  const pairs = [...chain.matchAll(/=== '(\w+)' \? '([^']+)'/g)]
+    .map(([, detector, mappedLabel]) => `${detector}=${mappedLabel}`);
+  const fallback = chain.match(/: '([^']+)'$/);
+  assert.ok(fallback, 'detectorLabel fallback branch not found');
+  return [...pairs, `fallback=${fallback[1]}`].join('|');
+};
+assert.equal(
+  detectorLabelMapping(extractDetectorLabelChain(briefingBuilderSource, 'build-coach-briefing.code')),
+  detectorLabelMapping(extractDetectorLabelChain(coachPrioritySource, 'src/coachPriority.js')),
+  'Mail signal labels (build-coach-briefing.code) must match the app detector labels (src/coachPriority.js)',
 );
 
 assert.equal(coach.settings.errorWorkflow, monitor.id, 'Coach briefing must stay linked to the error monitor');
@@ -322,6 +347,15 @@ assert.doesNotMatch(filteredEmail, /<script>Atlet<\/script>/, 'Unescaped athlete
 assert.doesNotMatch(filteredEmail, /PRIVATE_MESSAGE_BODY/, 'Message content must never reach the fallback email');
 assert.doesNotMatch(filteredEmail, /PRIVATE_VIDEO_URL/, 'Video storage URLs must never reach the fallback email');
 
+// D: message and video rows carry a static action phrase; signal rows do not
+// (they already have a handling-oriented `detail` from the SQL detector).
+const messageActionCount = filteredEmail.split('Svar de ulæste beskeder').length - 1;
+const videoActionCount = filteredEmail.split('Gennemgå og giv feedback på løftet').length - 1;
+assert.equal(messageActionCount, 2, 'Both fallback message rows must show the message action phrase');
+assert.equal(videoActionCount, 1, 'The fallback video row must show the video action phrase');
+const signalRowHtml = orderedQueue.slice(orderedQueue.indexOf('Alert'), orderedQueue.indexOf('Videoatlet'));
+assert.doesNotMatch(signalRowHtml, /Svar de ulæste beskeder|Gennemgå og giv feedback på løftet/, 'Signal rows must not gain a static action phrase');
+
 const duplicatedInput = {
   ...filteredProduction[0].json,
   unread_messages: [...filteredProduction[0].json.unread_messages, ...filteredProduction[0].json.unread_messages],
@@ -335,6 +369,48 @@ const deduplicatedBriefing = runCode(node(coach, 'Build briefing').parameters.js
 })[0].json;
 assert.equal(deduplicatedBriefing.total, filteredBriefing.total, 'Upstream duplicates must not inflate the coach queue');
 assert.equal(deduplicatedBriefing.digestHash, filteredBriefing.digestHash, 'Duplicate rows must not change the delivery digest');
+
+// C: the HTML row list is capped at five items, but the subject total and the
+// digest hash must still reflect the full, uncapped task list.
+const manyTasksInput = {
+  ...validBriefing,
+  unread_messages: Array.from({ length: 7 }, (_, index) => ({
+    athlete_id: `many-athlete-${index}`,
+    athlete_name: `Atlet ${index}`,
+    track: 'besked',
+    unread_count: 1,
+    latest_at: new Date(now - (7 - index) * 60 * 60 * 1000).toISOString(),
+  })),
+};
+const manyTasksBriefing = runCode(node(coach, 'Build briefing').parameters.jsCode, {
+  input: { json: manyTasksInput },
+  mode: 'production',
+  config,
+})[0].json;
+assert.equal(manyTasksBriefing.total, 7, 'Subject total must count all seven tasks, not just the rendered five');
+assert.match(manyTasksBriefing.subject, /7 ting kræver et kig/, 'Subject must reflect the uncapped total');
+for (let index = 0; index < 5; index += 1) {
+  assert.match(manyTasksBriefing.html, new RegExp(`Atlet ${index}\\b`), `Visible row for Atlet ${index} must render`);
+}
+assert.doesNotMatch(manyTasksBriefing.html, /Atlet 5\b/, 'Sixth task must stay off the rendered row list');
+assert.doesNotMatch(manyTasksBriefing.html, /Atlet 6\b/, 'Seventh task must stay off the rendered row list');
+assert.match(manyTasksBriefing.html, /\+2 andre opgaver i appen/, 'Overflow line must state the correct hidden count');
+
+const manyTasksVariantInput = {
+  ...manyTasksInput,
+  unread_messages: manyTasksInput.unread_messages.map((message, index) =>
+    index === 6 ? { ...message, unread_count: 2 } : message),
+};
+const manyTasksVariantBriefing = runCode(node(coach, 'Build briefing').parameters.jsCode, {
+  input: { json: manyTasksVariantInput },
+  mode: 'production',
+  config,
+})[0].json;
+assert.notEqual(
+  manyTasksVariantBriefing.digestHash,
+  manyTasksBriefing.digestHash,
+  'digestHash must change when a hidden, beyond-the-cap task changes, proving it is computed from the full list',
+);
 
 const framedPreview = runCode(node(coach, 'Frame fallback email').parameters.jsCode, {
   input: builtPreview[0],

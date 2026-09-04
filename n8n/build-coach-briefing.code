@@ -22,12 +22,15 @@ const timeValue = value => {
 
 const rawTasks = [
   ...signals.map(item => {
+    const detectorLabel = item.detector === 'dropout' ? 'Træningsmængde'
+      : item.detector === 'stagnation' ? 'Udvikling'
+        : item.detector === 'rpe_drift' ? 'RPE' : 'Træning';
     const summaryParts = [item.headline, item.detail || item.detector]
       .filter((value, index, all) => value && all.indexOf(value) === index);
     return {
       key: `signal-${item.athlete_id}-${item.detector}`,
       kind: 'signal', rank: 0, athleteId: item.athlete_id,
-      athleteName: item.athlete_name, label: 'Træningssignal',
+      athleteName: item.athlete_name, label: detectorLabel,
       summary: summaryParts.join(' · ') || 'Kræver et kig', timestamp: null,
       fingerprint: [item.athlete_id, item.detector, item.severity, item.headline, item.detail, item.metrics]
     };
@@ -83,9 +86,27 @@ const countSummary = [
   counts.message ? `${counts.message} beskedspor` : '',
   counts.video ? `${counts.video} video${counts.video === 1 ? '' : 'er'}` : ''
 ].filter(Boolean).join(' · ');
-const taskRow = (task, index) => `<div style="display:flex;gap:10px;padding:12px 0;border-top:1px solid #34342e"><div style="width:22px;height:22px;flex:0 0 22px;border:1px solid #57544c;color:#c8923a;text-align:center;line-height:22px;font-size:12px">${index + 1}</div><div><div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#7f7b72">${esc(task.label)}</div><div style="font-weight:650;color:#edeae2;margin-top:2px">${esc(task.athleteName)}</div><div style="font-size:13px;line-height:1.5;color:#aaa79f;margin-top:2px">${esc(task.summary)}</div></div></div>`;
+// Static per-kind action phrase, neutral in tone. Signals already carry a
+// handling-oriented `detail` from the SQL detector and are left alone.
+const actionByKind = {
+  message: 'Svar de ulæste beskeder',
+  video: 'Gennemgå og giv feedback på løftet'
+};
+const taskRow = (task, index) => {
+  const action = actionByKind[task.kind];
+  const actionRow = action ? `<div style="font-size:13px;color:#c8923a;margin-top:4px">${esc(action)}</div>` : '';
+  return `<div style="display:flex;gap:10px;padding:12px 0;border-top:1px solid #34342e"><div style="width:22px;height:22px;flex:0 0 22px;border:1px solid #57544c;color:#c8923a;text-align:center;line-height:22px;font-size:12px">${index + 1}</div><div><div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#7f7b72">${esc(task.label)}</div><div style="font-weight:650;color:#edeae2;margin-top:2px">${esc(task.athleteName)}</div><div style="font-size:13px;line-height:1.5;color:#aaa79f;margin-top:2px">${esc(task.summary)}</div>${actionRow}</div></div>`;
+};
 const first = tasks[0];
-const orderedRows = tasks.map(taskRow).join('');
+// Subject, countSummary and digestHash all read from the full `tasks` list above;
+// only the HTML row list itself is capped here.
+const VISIBLE_TASK_LIMIT = 5;
+const visibleTasks = tasks.slice(0, VISIBLE_TASK_LIMIT);
+const hiddenTaskCount = total - visibleTasks.length;
+const moreRow = hiddenTaskCount > 0
+  ? `<div style="padding:12px 0;border-top:1px solid #34342e;font-size:13px;color:#aaa79f">+${hiddenTaskCount} andre opgaver i appen</div>`
+  : '';
+const orderedRows = visibleTasks.map(taskRow).join('') + moreRow;
 
 const appUrl = config.appUrl.replace(/\/$/, '');
 const subject = `Entropi Coach · ${total} ting kræver et kig`;
