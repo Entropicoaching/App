@@ -902,6 +902,8 @@
   <button id="trimInBtn" title="Klip: start her">⟦</button>
   <button id="trimOutBtn" title="Klip: slut her">⟧</button>
   <button id="trimResetBtn" title="Fjern klip">✕</button>
+  <!-- ORDRE 50 · billig forudsøgning foreslår sættets start/slut, se vcRunSetBoundsPresearch -->
+  <button id="setStartSuggestBtn" type="button" hidden title="Foreslået sæt-start/slut · tryk for at fravælge eller genvælge">🎯 Forslag</button>
   <button id="backS">‹</button>
   <input type="range" id="scrub" min="0" max="10000" value="0">
   <button id="fwdS">›</button>
@@ -1127,6 +1129,11 @@ let vcPriorSetup = null;
 const cleanOverlayState = { phases:true, history:true, metrics:true };
 let setAthleteState = null;         // Athlete v2: ét roligt, guidet flow
 let setAthleteSubmitOpen = null;    // Athlete v3: sendearket må kun åbne i sidste trin
+// ORDRE 50 · seneste forudsøgnings-resultat for sæt-start/slut (coach-siden
+// alene, se vcRunSetBoundsPresearch) + om det viste klip stadig ER forslaget
+// eller allerede er gjort til Marcs eget (trimIn/trimOut/håndtag/nulstil).
+let setBoundsSuggestion = null;
+let trimIsSuggestion = false;
 let coachFlowTo = null;             // Coach: ryk 4-trins-flowet (sat i COACHWEB-blokken)
 let syncCoachSetupBridge = null;    // Coach: synkronisér startkortet med appens atletliste
 // ︎ tvinger TEKST-gengivelse (monokrom glyf) i stedet for farvet emoji
@@ -1527,6 +1534,11 @@ function loadFile(file) {
   document.getElementById('trimInBtn').classList.remove('active');
   document.getElementById('trimOutBtn').classList.remove('active');
   scrub.style.background = '';
+  // ORDRE 50 · ny video = forrige forudsøgning ugyldig, ny køres i begin()
+  setBoundsSuggestion = null; trimIsSuggestion = false;
+  const setStartSuggestBtn = document.getElementById('setStartSuggestBtn');
+  setStartSuggestBtn.hidden = true;
+  setStartSuggestBtn.classList.remove('active');
   aiPanel.hidden = true;
   document.getElementById('exportPreview').hidden = true;
   vcSetWorkspace('video', {preserveTime:false});
@@ -1577,6 +1589,9 @@ function loadFile(file) {
       allBtn.classList.add('active');
       if (!SLIM) allBtn.textContent = 'Tryk på skiven = analysér';
       say('⚡ Tryk på skiven = analysér hele sættet · eller brug knapperne som normalt');
+      // ORDRE 50 · kun coach-siden - atlet-flowets "spol til lige før løftet"
+      // røres ikke, se docs/videocoach/RAPPORT.md (saettets-start)
+      vcApplySetBoundsSuggestion(curUrl, video.duration);
     }
     if (!rendering) { rendering = true; requestAnimationFrame(render); }
     // Tilpas til skaermen naar canvas er sat op. To forsoeg fanger sen
@@ -2504,11 +2519,13 @@ document.getElementById('trimInBtn').onclick = e => {
   trimStart = video.currentTime;
   if (trimStart >= trimEnd) trimEnd = Infinity;
   manualTrackingBounds.start = trimStart;
+  trimIsSuggestion = false;   // ORDRE 50 · Marc rørte klippet selv - hans eget nu
   e.target.classList.add('active');
   paintTrim();
 };
 document.getElementById('trimOutBtn').onclick = e => {
   trimEnd = video.currentTime;
+  trimIsSuggestion = false;   // ORDRE 50 · Marc rørte klippet selv - hans eget nu
   if (trimEnd <= trimStart) trimStart = 0;
   manualTrackingBounds.end = trimEnd;
   e.target.classList.add('active');
@@ -2517,6 +2534,7 @@ document.getElementById('trimOutBtn').onclick = e => {
 document.getElementById('trimResetBtn').onclick = () => {
   trimStart = 0; trimEnd = Infinity;
   manualTrackingBounds = { start:null, end:null };
+  trimIsSuggestion = false;   // ORDRE 50 · Marc rørte klippet selv - hans eget nu
   document.getElementById('trimInBtn').classList.remove('active');
   document.getElementById('trimOutBtn').classList.remove('active');
   paintTrim();
@@ -2525,11 +2543,184 @@ function paintTrim() {
   if (!video.duration) return;
   const a = trimStart / video.duration * 100;
   const b = trimEndEff() / video.duration * 100;
+  // ORDRE 50 · u-bekræftet forslag tegnes lysere/blåligt (samme sprog som
+  // plateConfirm.suggested) - så snart Marc rører klippet selv bliver det
+  // den vante ravgule farve igen (trimIsSuggestion slås fra af selve røret).
+  const fill = trimIsSuggestion ? 'rgba(0,212,255,.4)' : 'rgba(200,146,58,.55)';
   scrub.style.background = (trimStart > 0 || trimEnd !== Infinity)
-    ? `linear-gradient(to right, #3a362c ${a}%, rgba(200,146,58,.55) ${a}%,
-       rgba(200,146,58,.55) ${b}%, #3a362c ${b}%)`
+    ? `linear-gradient(to right, #3a362c ${a}%, ${fill} ${a}%,
+       ${fill} ${b}%, #3a362c ${b}%)`
     : '';
+  const suggestBtn = document.getElementById('setStartSuggestBtn');
+  if (setBoundsSuggestion && setBoundsSuggestion.ok &&
+      (setBoundsSuggestion.foundStart || setBoundsSuggestion.foundEnd)) {
+    suggestBtn.hidden = false;
+    suggestBtn.classList.toggle('active', trimIsSuggestion);
+    suggestBtn.textContent = trimIsSuggestion ? '🎯 Forslag' : '🎯 Genbrug forslag';
+  } else {
+    suggestBtn.hidden = true;
+    suggestBtn.classList.remove('active');
+  }
 }
+
+// ORDRE 50 · start: billig forudsøgning for sættets start/slut ------------
+// Ren funktion, ingen DOM - udtrækkes 1:1 i docs/videocoach/set-bounds-
+// presearch-rig.mjs og køres mod syntetiske lav-opløsnings-frames. Se
+// docs/videocoach/RAPPORT.md (saettets-start) for målt tid og træfsikkerhed.
+// Formålet er kun at finde ET TIDSPUNKT (ikke en bane) - se vcFindSetBounds.
+function vcMotionSeries(frames) {
+  const n = frames.length;
+  const motion = new Array(n).fill(0);
+  for (let i = 1; i < n; i++) {
+    const a = frames[i - 1], b = frames[i];
+    let sum = 0;
+    for (let k = 0; k < a.length; k++) sum += Math.abs(a[k] - b[k]);
+    motion[i] = sum / a.length;
+  }
+  if (n > 1) motion[0] = motion[1];   // ingen forgænger for prøve 0 - undgå falsk overgang
+  return motion;
+}
+function vcFindSetBounds(times, motion, duration, opts = {}) {
+  const n = motion.length;
+  if (n < 4 || !Number.isFinite(duration) || duration <= 0)
+    return { ok:false, reason:'for-kort-eller-ugyldigt-klip' };
+  const stepS = (times[n - 1] - times[0]) / Math.max(1, n - 1) || duration / n;
+  const need = Math.max(2, Math.round((opts.sustainS ?? 1.0) / Math.max(0.05, stepS)));
+  const marginBefore = opts.marginBeforeS ?? 0.6;
+  const marginAfter = opts.marginAfterS ?? 0.3;
+
+  // Adaptiv støjgrænse: hver optagelse har sin egen ro (korn/kompression),
+  // så en fast tærskel ville enten overse langsomme løft eller fyre på støj.
+  const sorted = [...motion].sort((a, b) => a - b);
+  const noiseFloor = sorted[Math.floor(sorted.length * 0.25)] || 0;
+  const threshold = Math.max(opts.minThreshold ?? 2, noiseFloor * 3 + 1.5);
+  const moving = motion.map(m => m > threshold);
+
+  // START: første ro->bevægelse-overgang der IKKE er et støj-glimt (holder ved,
+  // enkelte glimt-udfald i vinduet tolereres - se leadin_idle_before_rep i
+  // riggen, hvor en velocity-symmetrisk stikprøve gav ét eksakt nul-diff
+  // midt i en ellers ægte bevægelse) OG hvor intet har rørt sig FØR den -
+  // ellers er det ikke sættets start, men en genoptagelse efter en pause
+  // midt i sættet (paused_hold_between_reps fangede denne fejl uden
+  // "everMoved"-vagten: den valgte genoptagelsen efter pausen som "start").
+  let startIdx = 0, foundStart = false, everMoved = moving[0];
+  for (let i = 1; i < n; i++) {
+    if (!everMoved && moving[i] && !moving[i - 1]) {
+      const windowEnd = Math.min(n, i + need), windowLen = windowEnd - i;
+      let misses = 0;
+      for (let j = i; j < windowEnd; j++) if (!moving[j]) misses++;
+      if (misses <= Math.floor(windowLen / 3)) { startIdx = i; foundStart = true; break; }
+    }
+    if (moving[i]) everMoved = true;
+  }
+  // SLUT: sidste bevægelse->ro-overgang, hvor ingen VEDVARENDE bevægelse
+  // (mindst 'need' prøver i træk) findes resten af klippet - en pause MIDT i
+  // sættet, der genoptages bagefter, er IKKE en slutning (se
+  // paused_hold_between_reps), men et enkelt støj-glimt i halen diskvalificerer
+  // den ikke (samme tolerance som START, symmetrisk logik).
+  let endIdx = n - 1, foundEnd = false;
+  for (let i = n - 2; i >= 0; i--) {
+    if (moving[i] && !moving[i + 1]) {
+      let staysStill = true;
+      for (let j = i + 1; j + need <= n; j++) {
+        let sustainedRun = true;
+        for (let k = j; k < j + need; k++) if (!moving[k]) { sustainedRun = false; break; }
+        if (sustainedRun) { staysStill = false; break; }
+      }
+      if (staysStill) { endIdx = i + 1; foundEnd = true; break; }
+    }
+  }
+
+  const start = Math.max(0, (times[startIdx] ?? 0) - marginBefore);
+  const end = Math.min(duration, (times[endIdx] ?? duration) + marginAfter);
+  if (!foundStart && !foundEnd)
+    return { ok:true, start:0, end:duration, foundStart:false, foundEnd:false,
+      reason:'ingen-tydelig-ro-fundet' };
+  return { ok:true, start, end, foundStart, foundEnd };
+}
+// ORDRE 50 · slut: billig forudsøgning for sættets start/slut --------------
+
+// DOM-delen: henter lav-opløsnings gråtone-prøver fra den RIGTIGE video via
+// store spring (op til 30 prøver, uanset klippets længde) - markant billigere
+// end den fulde sporing, som læser hver frame i fuld opløsning. Afbrydes
+// stille hvis Marc selv går i gang (klik/kalibrering/sporing) mens den kører.
+const VC_PRESEARCH_W = 48, VC_PRESEARCH_MAX_SAMPLES = 30;
+async function vcRunSetBoundsPresearch(duration) {
+  const startedAt = performance.now();
+  try {
+    if (!Number.isFinite(duration) || duration < 1) return { ok:false, ms:0 };
+    const psH = Math.max(9, Math.round(VC_PRESEARCH_W * (video.videoHeight / Math.max(1, video.videoWidth))));
+    const psCan = document.createElement('canvas');
+    psCan.width = VC_PRESEARCH_W; psCan.height = psH;
+    const psCtx = psCan.getContext('2d', { willReadFrequently: true });
+    const stepS = Math.max(0.2, duration / VC_PRESEARCH_MAX_SAMPLES);
+    const times = [];
+    for (let t = 0; t < duration; t += stepS) times.push(t);
+    const lastSafe = Math.max(0, duration - FRAME);
+    if (times.length < 2 || times.at(-1) < lastSafe - 0.001) times.push(lastSafe);
+
+    const savedTime = video.currentTime;
+    const frames = [];
+    for (const t of times) {
+      if (wizard || tracking || awaitCalib || plateConfirm) return { ok:false, ms: performance.now() - startedAt };
+      await seekTo(Math.min(t, lastSafe));
+      psCtx.drawImage(video, 0, 0, psCan.width, psCan.height);
+      const d = psCtx.getImageData(0, 0, psCan.width, psCan.height).data;
+      const g = new Float32Array(psCan.width * psCan.height);
+      for (let i = 0; i < g.length; i++) g[i] = d[i * 4] * .3 + d[i * 4 + 1] * .59 + d[i * 4 + 2] * .11;
+      frames.push(g);
+    }
+    await seekTo(savedTime);
+
+    const motion = vcMotionSeries(frames);
+    return { ...vcFindSetBounds(times, motion, duration), ms: performance.now() - startedAt };
+  } catch {
+    return { ok:false, ms: performance.now() - startedAt };
+  }
+}
+// Kaldes fra begin() ved video-åbning (kun coach-siden, se kaldestedet).
+// videoToken = curUrl på kaldetidspunktet - hvis Marc åbner en NY video mens
+// denne kører, opdages det her, og forslaget kasseres uden at forstyrre ham.
+async function vcApplySetBoundsSuggestion(videoToken, duration) {
+  const r = await vcRunSetBoundsPresearch(duration);
+  if (curUrl !== videoToken || wizard || tracking) return;   // video skiftet, eller Marc er i gang
+  setBoundsSuggestion = r;
+  if (!r.ok || (!r.foundStart && !r.foundEnd)) { paintTrim(); return; }   // intet brugbart -> skyderen som i dag
+  trimStart = r.start;
+  trimEnd = r.end >= duration - 0.02 ? Infinity : r.end;
+  manualTrackingBounds.start = trimStart;
+  manualTrackingBounds.end = trimEnd === Infinity ? null : trimEnd;
+  trimIsSuggestion = true;
+  document.getElementById('trimInBtn').classList.add('active');
+  document.getElementById('trimOutBtn').classList.add('active');
+  video.currentTime = trimStart;
+  paintTrim();
+  say(`🎯 Forslag: sæt fundet ${trimStart.toFixed(1)}–${trimEnd === Infinity ? duration.toFixed(1) : trimEnd.toFixed(1)}s · tryk 🎯 for at fravælge`);
+  setTimeout(() => say(''), 4200);
+}
+document.getElementById('setStartSuggestBtn').onclick = () => {
+  if (!setBoundsSuggestion || !setBoundsSuggestion.ok) return;
+  if (trimIsSuggestion) {
+    // fravælg forslaget - tilbage til hele klippet, som skyderen er i dag
+    trimStart = 0; trimEnd = Infinity;
+    manualTrackingBounds = { start:null, end:null };
+    trimIsSuggestion = false;
+    document.getElementById('trimInBtn').classList.remove('active');
+    document.getElementById('trimOutBtn').classList.remove('active');
+    video.currentTime = 0;
+  } else {
+    // genvælg forslaget - napper det frem igen med samme tryk
+    trimStart = setBoundsSuggestion.start;
+    trimEnd = setBoundsSuggestion.end >= (video.duration || Infinity) - 0.02 ? Infinity : setBoundsSuggestion.end;
+    manualTrackingBounds.start = trimStart;
+    manualTrackingBounds.end = trimEnd === Infinity ? null : trimEnd;
+    trimIsSuggestion = true;
+    document.getElementById('trimInBtn').classList.add('active');
+    document.getElementById('trimOutBtn').classList.add('active');
+    video.currentTime = trimStart;
+  }
+  paintTrim();
+};
 
 // ---------- Tidslinje ----------
 const scrub = document.getElementById('scrub');
@@ -2608,7 +2799,7 @@ function updateTimeline() {
   const f = Math.round(tv.currentTime * 30);
   const status = tv.paused ? '⏸ PAUSE' : '▶';
   const klip = (trimStart > 0 || trimEnd !== Infinity)
-    ? ` · klip ${trimStart.toFixed(1)}-${trimEndEff().toFixed(1)}s` : '';
+    ? ` · klip ${trimStart.toFixed(1)}-${trimEndEff().toFixed(1)}s${trimIsSuggestion ? ' (forslag)' : ''}` : '';
   const side = cmp ? (cmp.step === 2 ? 'B · ' : cmp.step === 1 ? 'A · ' : '⇄ ') : '';
   if (ATHLETE) {
     const fmt = sec => {
