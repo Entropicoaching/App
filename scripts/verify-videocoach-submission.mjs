@@ -238,3 +238,28 @@ console.log('VideoCoach gemmer accepterer kun en identisk, profilkoblet dublet.'
   assert.match(html, /vcV3RequestSave\(vcV3DatabaseRow\(payload, data, !!completingPending\)\)/,
     'Kaldestedet skal fortælle vcV3DatabaseRow, om dette er en fuldførelse af en afventende video')
 }
+
+// ORDRE 61 · commit 3: "Vis mig nu" og Start sendte ikke belastning/RPE/notat,
+// fordi sendearket (hvor de tre felter boede) kun åbnes på den valgfrie
+// sende-fra-arket-vej. Flyttet til athleteConfirmFields ved ring-bekræftelsen
+// (samme trin som løft/variation), som er fælles for ALLE atlet-veje.
+{
+  const html = readFileSync(new URL('../public/videocoach.html', import.meta.url), 'utf8')
+  assert.match(html, /const athleteConfirmFields = document\.createElement\('div'\);/,
+    'Belastning/RPE og notat skal have et fælles panel, ikke bo inde i sendearket')
+  assert.match(html, /addAthleteConfirmField\('Belastning \/ RPE \(valgfri\)', document\.getElementById\('loadInput'\)\);/)
+  assert.match(html, /addAthleteConfirmField\('Notat til coach \(valgfrit\)', athleteNoteInput\);/)
+  assert.doesNotMatch(html,
+    /addAthleteSubmitField\('Belastning \/ RPE \(valgfri\)'|addAthleteSubmitField\('Notat til coach \(valgfrit\)'/,
+    'Belastning/RPE og notat må ikke længere tilføjes til selve sendearket')
+  // Løft/variation skal fortsat stå i sendearket - kun de tre valgfrie felter flyttede.
+  assert.match(html, /addAthleteSubmitField\('Løft', document\.getElementById\('liftSel'\)\);/)
+  assert.match(html, /addAthleteSubmitField\('Variation', document\.getElementById\('variationSel'\)\);/)
+  // Synlig i PRÆCIS samme trin som ring-bekræftelsen (athletePreviewBtn), FØR
+  // Start/Vis mig nu kan trykkes.
+  assert.match(html,
+    /athletePreviewBtn\.hidden = state !== 'confirm';\s*\n[\s\S]{0,200}?athleteConfirmFields\.hidden = state !== 'confirm';/,
+    'Panelet skal være synligt i nøjagtig samme trin som Vis mig nu-knappen')
+}
+
+console.log('Belastning, RPE og notat udfyldes samme sted for begge sende-veje.')

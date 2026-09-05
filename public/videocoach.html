@@ -354,6 +354,17 @@
   body.athlete #athleteSubmitCard #athleteUploadCancelBtn { width:100%; min-height:44px;
     margin-top:8px; border-radius:13px; border:1px solid rgba(237,234,226,.18);
     background:transparent; color:rgba(237,234,226,.72); font-weight:650; }
+  /* ORDRE 61 · commit 3: belastning/RPE + notat, udfyldes FØR Start/Vis mig nu
+     trykkes (samme "trin" som ring-bekræftelsen) - kun synlig i 'confirm'.
+     Samme lodrette plads som #scrubRow (bottom:74px) - de to states
+     ('ready' for scrubRow, 'confirm' herfor) udelukker hinanden. Genbruger
+     .athleteSubmitField's felt-styling, tilføjer kun selve panelet. */
+  body.athlete #athleteConfirmFields { position:fixed; z-index:20; left:12px; right:12px;
+    bottom:74px; max-height:38vh; overflow-y:auto; display:grid; gap:10px;
+    box-sizing:border-box; padding:11px 12px; border:1px solid rgba(237,234,226,.12);
+    border-radius:14px; background:rgba(24,24,20,.94); backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px); box-shadow:0 12px 34px rgba(0,0,0,.28); }
+  body.athlete #athleteConfirmFields[hidden] { display:none; }
   /* coach online: samme rolige arbejdsskal som desktop, komprimeret til mobil. */
   body.coachweb { --coach-glass:rgba(18,17,14,.84); }
   body.coachweb header { display:flex; position:fixed; top:10px; left:12px; right:12px;
@@ -8888,6 +8899,24 @@ if (ATHLETE) {
   athleteStatus.innerHTML = '<b></b><span></span>';
   document.body.appendChild(athleteStatus);
 
+  // ORDRE 61 · commit 3: belastning/RPE og notat udfyldes her - samme trin som
+  // løft og variation (ring-bekræftelsen lige før Start/Vis mig nu) - ikke
+  // inde i sendearket, som kun åbnes på standardvejen. Begge veje ender i
+  // vcAthleteUploadAndGo, som læser #loadInput/#athleteNoteInput uanset hvor
+  // i DOM'et de sidder, så denne ombytning kræver ingen ændring dér.
+  const athleteConfirmFields = document.createElement('div');
+  athleteConfirmFields.id = 'athleteConfirmFields';
+  athleteConfirmFields.hidden = true;
+  document.body.appendChild(athleteConfirmFields);
+  const addAthleteConfirmField = (label, element) => {
+    const wrap = document.createElement('label');
+    wrap.className = 'athleteSubmitField';
+    wrap.appendChild(document.createTextNode(label));
+    element.style.display = '';
+    wrap.appendChild(element);
+    athleteConfirmFields.appendChild(wrap);
+  };
+
   const athleteFlow = document.createElement('div');
   athleteFlow.id = 'athleteFlow';
   athleteFlow.setAttribute('aria-label', 'Forløb');
@@ -8984,17 +9013,18 @@ if (ATHLETE) {
   };
   addAthleteSubmitField('Løft', document.getElementById('liftSel'));
   addAthleteSubmitField('Variation', document.getElementById('variationSel'));
-  // ORDRE 57 · commit 3: tre valgfrie felter i samme trin - ingen af dem
-  // påkrævet, ingen ekstra skærm. vcAthleteUploadAndGo læser dem ved Send.
-  addAthleteSubmitField('Belastning / RPE (valgfri)', document.getElementById('loadInput'));
+  athleteSubmitCard.appendChild(athleteSubmitFields);
+  // ORDRE 57 · commit 3 / ORDRE 61 · commit 3: tre valgfrie felter - ingen af
+  // dem påkrævet, ingen ekstra skærm. Flyttet til athleteConfirmFields (ved
+  // ring-bekræftelsen), så "Vis mig nu" og Start også sender dem - se dér.
+  addAthleteConfirmField('Belastning / RPE (valgfri)', document.getElementById('loadInput'));
   const athleteNoteInput = document.createElement('textarea');
   athleteNoteInput.id = 'athleteNoteInput';
   athleteNoteInput.rows = 3;
   athleteNoteInput.maxLength = 1000;
   athleteNoteInput.placeholder = 'Hvad vil du gerne have coachens blik på?';
   athleteNoteInput.style.resize = 'vertical';
-  addAthleteSubmitField('Notat til coach (valgfrit)', athleteNoteInput);
-  athleteSubmitCard.appendChild(athleteSubmitFields);
+  addAthleteConfirmField('Notat til coach (valgfrit)', athleteNoteInput);
   saveBtn.style.display = '';
   saveBtn.textContent = 'Send til coach';
   athleteSubmitCard.appendChild(saveBtn);
@@ -9125,6 +9155,9 @@ if (ATHLETE) {
     // ORDRE 54 · commit 2: kun synlig lige inden Start, ved siden af den -
     // det er her valget mellem de to veje reelt skal tages.
     athletePreviewBtn.hidden = state !== 'confirm';
+    // ORDRE 61 · commit 3: belastning/RPE og notat skal kunne udfyldes FØR
+    // Start/Vis mig nu trykkes - samme trin som ringbekræftelsen.
+    athleteConfirmFields.hidden = state !== 'confirm';
     const currentStep = state === 'empty' ? 1
       : (state === 'ready' || state === 'target' || state === 'confirm' || state === 'error') ? 2
       : state === 'analyzing' ? 3 : 4;
