@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
+import { readFileSync } from 'node:fs'
 import { flushVideoCoachDraftQueue, isRetryableVideoCoachError, purgeVideoCoachDraftQueues,
   queueVideoCoachDraft,
   saveVideoCoachDraft, validateVideoCoachPayloadBounds,
@@ -222,3 +223,43 @@ assert.equal(queueVideoCoachDraft(row, storageMock()), false,
 }
 
 console.log('VideoCoach gemmer accepterer kun en identisk, profilkoblet dublet.')
+
+// ORDRE 61 · commit 1: bias_note (coachens eget notatfelt) skal KUN tvinges til
+// null for atletens egen friske INSERT (entropi_vc3_athlete_insert_own_draft-
+// policyen kræver det) - ikke når coachen fuldfører en afventende atlet-video
+// og selv skriver i sit notatfelt (entropi_vc3_coach_update tillader det).
+{
+  const html = readFileSync(new URL('../public/videocoach.html', import.meta.url), 'utf8')
+  assert.match(html, /function vcV3DatabaseRow\(payload, legacy, isCompletion\) \{/,
+    'vcV3DatabaseRow skal vide, om gemmet er en fuldførelse')
+  assert.match(html,
+    /bias_note: \(payload\.source_mode === 'athlete_submission' && !isCompletion\)\s*\n\s*\? null : legacy\.bias_note,/,
+    'bias_note må kun tvinges til null for en frisk atlet-insert, ikke en coach-fuldførelse')
+  assert.match(html, /vcV3RequestSave\(vcV3DatabaseRow\(payload, data, !!completingPending\)\)/,
+    'Kaldestedet skal fortælle vcV3DatabaseRow, om dette er en fuldførelse af en afventende video')
+}
+
+// ORDRE 61 · commit 3: "Vis mig nu" og Start sendte ikke belastning/RPE/notat,
+// fordi sendearket (hvor de tre felter boede) kun åbnes på den valgfrie
+// sende-fra-arket-vej. Flyttet til athleteConfirmFields ved ring-bekræftelsen
+// (samme trin som løft/variation), som er fælles for ALLE atlet-veje.
+{
+  const html = readFileSync(new URL('../public/videocoach.html', import.meta.url), 'utf8')
+  assert.match(html, /const athleteConfirmFields = document\.createElement\('div'\);/,
+    'Belastning/RPE og notat skal have et fælles panel, ikke bo inde i sendearket')
+  assert.match(html, /addAthleteConfirmField\('Belastning \/ RPE \(valgfri\)', document\.getElementById\('loadInput'\)\);/)
+  assert.match(html, /addAthleteConfirmField\('Notat til coach \(valgfrit\)', athleteNoteInput\);/)
+  assert.doesNotMatch(html,
+    /addAthleteSubmitField\('Belastning \/ RPE \(valgfri\)'|addAthleteSubmitField\('Notat til coach \(valgfrit\)'/,
+    'Belastning/RPE og notat må ikke længere tilføjes til selve sendearket')
+  // Løft/variation skal fortsat stå i sendearket - kun de tre valgfrie felter flyttede.
+  assert.match(html, /addAthleteSubmitField\('Løft', document\.getElementById\('liftSel'\)\);/)
+  assert.match(html, /addAthleteSubmitField\('Variation', document\.getElementById\('variationSel'\)\);/)
+  // Synlig i PRÆCIS samme trin som ring-bekræftelsen (athletePreviewBtn), FØR
+  // Start/Vis mig nu kan trykkes.
+  assert.match(html,
+    /athletePreviewBtn\.hidden = state !== 'confirm';\s*\n[\s\S]{0,200}?athleteConfirmFields\.hidden = state !== 'confirm';/,
+    'Panelet skal være synligt i nøjagtig samme trin som Vis mig nu-knappen')
+}
+
+console.log('Belastning, RPE og notat udfyldes samme sted for begge sende-veje.')
