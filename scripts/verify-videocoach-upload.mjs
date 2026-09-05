@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
+import { readFileSync } from 'node:fs'
 import { buildAwaitingAnalysisRow, buildVideoUploadPath, VIDEOCOACH_UPLOAD_BUCKET,
   VIDEOCOACH_UPLOAD_MAX_BYTES, validateVideoUploadRequest, videoUploadAlreadyExistsError,
   videoUploadExtForMime, videoUploadMimeAllowed } from '../src/videoCoachUpload.js'
@@ -120,3 +121,42 @@ assert.doesNotMatch(migration, /drop table|truncate|service_role|secret|password
   'Migrationsfilen indeholder en forbudt konstruktion')
 
 console.log('Migrationsfilen er versionsstyret, markeret som allerede kørt, og matcher det aftalte skema.')
+
+// ---------- ORDRE 61 · commit 2: Annullér skal reelt afbryde overførslen, ----------
+// ikke bare ventetiden, og må ALDRIG efterlade en afventende række.
+{
+  const supabaseSource = await readFile(new URL('../src/supabase.js', import.meta.url), 'utf8')
+  assert.match(supabaseSource, /export function createAbortableUploadClient\(signal\)/,
+    'En engangsklient med AbortSignal skal eksporteres (storage.upload() understøtter ikke signal direkte)')
+  assert.match(supabaseSource, /global: \{ fetch: \(input, init = \{\}\) => fetch\(input, \{ \.\.\.init, signal \}\) \}/,
+    'Klienten skal bruge supabase-js\'s fetch-option til at afbryde via signal')
+
+  const athleteView = await readFile(new URL('../src/AthleteView.jsx', import.meta.url), 'utf8')
+  assert.match(athleteView, /createAbortableUploadClient/,
+    'AthleteView skal bruge engangsklienten, ikke den delte supabase-klient, til uploaden')
+  assert.match(athleteView, /athleteVideoUploadAbortsRef/,
+    'Aktive uploads skal spores pr. requestId, så abort-upload rammer den rigtige')
+  assert.match(athleteView,
+    /if \(message\.type === `\$\{ATHLETE_VIDEOCOACH_PREFIX\}:abort-upload`\) \{\s*\n\s*const controller = athleteVideoUploadAbortsRef\.current\.get\(message\.requestId\)\s*\n\s*if \(controller\) controller\.abort\(\)/,
+    'abort-upload skal kalde AbortController.abort() på den ventende upload')
+  assert.match(athleteView, /if \(controller\.signal\.aborted\) \{\s*\n\s*reply\(\{ ok: false, aborted: true,/,
+    'En annulleret upload skal svare med aborted:true, ikke en almindelig fejl')
+  // Rækkefølgen i filen er selve garantien: den annullerede gren returnerer
+  // FØR buildAwaitingAnalysisRow overhovedet kaldes - ingen række uden upload.
+  const abortReplyIndex = athleteView.indexOf('reply({ ok: false, aborted: true')
+  const buildRowIndex = athleteView.indexOf('buildAwaitingAnalysisRow({')
+  assert.ok(abortReplyIndex > -1 && buildRowIndex > -1 && abortReplyIndex < buildRowIndex,
+    'Den annullerede gren skal returnere før rækken bygges/indsættes')
+
+  const html = readFileSync(new URL('../public/videocoach.html', import.meta.url), 'utf8')
+  assert.match(html, /athleteUploadCancelBtn\.onclick = \(\) => vcAthleteCancelUpload\(\);/,
+    'Annullér-knappen skal kalde vcAthleteCancelUpload')
+  assert.match(html, /function vcAthleteCancelUpload\(\) \{/)
+  assert.match(html, /function vcV3RequestAbortUpload\(requestId\) \{/)
+  assert.match(html, /say\(error\.vcAborted \? 'Annulleret · intet blev sendt' : `Videoen blev ikke sendt · \$\{error\.message\}`\);/,
+    'Grænsefladen skal sige tydeligt, at intet blev sendt ved en annullering')
+  // Filen skal forblive valgt efter en annulleret upload, så hun kan sende igen.
+  assert.match(html, /Filen forbliver valgt \(vcAthletePendingFile rører vi ikke\)/)
+}
+
+console.log('Annullér under upload afbryder selve overførslen og efterlader aldrig en afventende række.')

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, Fragment } from 'react'
-import { supabase, withRetry, queueWrite, signOutHard } from './supabase'
+import { supabase, withRetry, queueWrite, signOutHard, createAbortableUploadClient } from './supabase'
 import { mergeAthleteSetInputs, nextAthleteSetInput } from './athleteTrainingInputs'
 import { sanitizeVideoCoachFeedbackEvidence } from './videoCoachFeedbackEvidence'
 import { videoCoachPersonalBaselineAthleteText, videoCoachPersonalBaselineForAnalysis } from './videoCoachPersonalFeedback'
@@ -1669,6 +1669,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const athleteVideoCoachRef = useRef(null)
   const athleteVideoCoachFrameRef = useRef(null)
   const athleteVideoCoachClientsRef = useRef(new Set())
+  // ORDRE 61 · commit 2: aktive upload-and-go-forsøg, keyet på requestId, så
+  // en abort-upload-besked fra VideoCoach kan afbryde netop DEN overførsel.
+  const athleteVideoUploadAbortsRef = useRef(new Map())
   const [athleteVideoCoachOpen, setAthleteVideoCoachOpen] = useState(false)
   const [sharedVideoAnalyses, setSharedVideoAnalyses] = useState([])
   const [sharedVideoLoading, setSharedVideoLoading] = useState(false)
@@ -1845,6 +1848,14 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         window.dispatchEvent(new Event(ATHLETE_VIDEOCOACH_QUEUE_CHANGED))
         return
       }
+      // ORDRE 61 · commit 2: atleten kan fortryde, mens filen stadig overføres.
+      // Selve fetch-kaldet afbrydes (se upload-and-go nedenfor) - ikke bare
+      // ventetiden - så en abort her giver ALDRIG en afventende række.
+      if (message.type === `${ATHLETE_VIDEOCOACH_PREFIX}:abort-upload`) {
+        const controller = athleteVideoUploadAbortsRef.current.get(message.requestId)
+        if (controller) controller.abort()
+        return
+      }
       // ORDRE 57 · commit 1: "upload og gå" - atleten sender selve videoen,
       // ikke sporede tal. Kun appen har en autentificeret Supabase-klient
       // (VideoCoach har ingen), så både storage-uploaden og rækkens indsættelse
@@ -1872,11 +1883,30 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         }
         const path = buildVideoUploadPath(currentAthlete.id, message.clientAnalysisId, message.mimeType)
         if (!path) { reply({ ok: false, error: 'Videoformatet kunne ikke gemmes' }); return }
-        const upload = await supabase.storage.from(VIDEOCOACH_UPLOAD_BUCKET)
-          .upload(path, file, { contentType: message.mimeType, upsert: false })
-        if (upload.error && !videoUploadAlreadyExistsError(upload.error)) {
-          reply({ ok: false, error: `Video kunne ikke uploades: ${upload.error.message || 'ukendt fejl'}` })
-          return
+        // ORDRE 61 · commit 2: supabase-js's storage.upload() tager ikke en
+        // AbortSignal (ingen af FileOptions dækker det), så selve fetch-kaldet
+        // skal afbrydes via klientens fetch-option i stedet - se
+        // createAbortableUploadClient. En engangsklient her, ikke den delte
+        // `supabase`, så en afbrudt upload aldrig kan afbryde andre samtidige kald.
+        const controller = new AbortController()
+        athleteVideoUploadAbortsRef.current.set(message.requestId, controller)
+        let upload
+        try {
+          upload = await createAbortableUploadClient(controller.signal).storage
+            .from(VIDEOCOACH_UPLOAD_BUCKET)
+            .upload(path, file, { contentType: message.mimeType, upsert: false })
+        } finally {
+          athleteVideoUploadAbortsRef.current.delete(message.requestId)
+        }
+        if (upload.error) {
+          if (controller.signal.aborted) {
+            reply({ ok: false, aborted: true, error: 'Annulleret · intet blev sendt' })
+            return
+          }
+          if (!videoUploadAlreadyExistsError(upload.error)) {
+            reply({ ok: false, error: `Video kunne ikke uploades: ${upload.error.message || 'ukendt fejl'}` })
+            return
+          }
         }
         const row = buildAwaitingAnalysisRow({
           athleteId: currentAthlete.id, athleteName: currentAthlete.name,

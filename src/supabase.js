@@ -43,6 +43,22 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
   global: { fetch: fetchWithTimeout },
 })
 
+// ORDRE 61 · commit 2: standardklientens fetch har et fast 12s-loft
+// (fetchWithTimeout ovenfor) - uegnet til en videoupload på svagt mobilnet,
+// som bevidst ingen tidsgrænse har. En videoupload skal til gengæld kunne
+// afbrydes af atleten selv, hvilket supabase-js's storage.upload() ikke
+// understøtter direkte (ingen AbortSignal-mulighed i dens FileOptions). Denne
+// engangsklient genbruger den allerede persisterede session (samme
+// localStorage-nøgle => ingen ny login), men uden sin egen refresh-timer
+// (undgår to konkurrerende GoTrue-instanser), og med en fetch der reelt
+// afbryder kaldet, når den medsendte AbortController fyrer.
+export function createAbortableUploadClient(signal) {
+  return createClient(SUPABASE_URL, SUPABASE_KEY, {
+    auth: { persistSession: true, autoRefreshToken: false, detectSessionInUrl: false },
+    global: { fetch: (input, init = {}) => fetch(input, { ...init, signal }) },
+  })
+}
+
 // Sand hvis siden netop blev åbnet fra et "glemt adgangskode"-link (Supabase
 // lægger `type=recovery` i URL-fragmentet). Læses SYNKRONT ved modul-load, så
 // App.jsx ikke er afhængig af hvornår PASSWORD_RECOVERY-eventet når frem —

@@ -350,6 +350,10 @@
   body.athlete #athleteSubmitCard #saveBtn { width:100%; min-height:50px;
     border-color:var(--accent); border-radius:13px; background:var(--accent);
     color:#141410; font-weight:750; }
+  /* ORDRE 61 · commit 2: kun synlig mens Send er deaktiveret under upload. */
+  body.athlete #athleteSubmitCard #athleteUploadCancelBtn { width:100%; min-height:44px;
+    margin-top:8px; border-radius:13px; border:1px solid rgba(237,234,226,.18);
+    background:transparent; color:rgba(237,234,226,.72); font-weight:650; }
   /* coach online: samme rolige arbejdsskal som desktop, komprimeret til mobil. */
   body.coachweb { --coach-glass:rgba(18,17,14,.84); }
   body.coachweb header { display:flex; position:fixed; top:10px; left:12px; right:12px;
@@ -1139,10 +1143,16 @@ let vcPriorSetup = null;
 const cleanOverlayState = { phases:true, history:true, metrics:true };
 let setAthleteState = null;         // Athlete v2: ét roligt, guidet flow
 let setAthleteSubmitOpen = null;    // Athlete v3: sendearket må kun åbne i sidste trin
+// ORDRE 61 · commit 2: sat i ATHLETE-opsætningen, læst af vcAthleteUploadAndGo
+// (defineret før den opsætning kører) - samme tværscope-mønster som ovenstående.
+let athleteUploadCancelBtn = null;
 // ORDRE 57 · "upload og gå": standardvejen sporer intet på telefonen, den
 // uploader den valgte fil. Sat i loadFile(), nulstillet pr. ny video.
 let vcAthletePendingFile = null;
 let vcAthleteClientAnalysisId = null;
+// ORDRE 61 · commit 2: requestId for den upload, der er i gang lige nu (hvis
+// nogen) - så Annullér-knappen ved, hvilket forsøg den skal afbryde.
+let vcAthleteUploadRequestId = null;
 // ORDRE 50 · seneste forudsøgnings-resultat for sæt-start/slut (coach-siden
 // alene, se vcRunSetBoundsPresearch) + om det viste klip stadig ER forslaget
 // eller allerede er gjort til Marcs eget (trimIn/trimOut/håndtag/nulstil).
@@ -5975,25 +5985,43 @@ async function vcAthleteUploadAndGo() {
   const parsed = parseLoad(document.getElementById('loadInput')?.value.trim() || '');
   const athleteNote = document.getElementById('athleteNoteInput')?.value.trim().slice(0, 1000) || null;
   const mb = (file.size / (1024 * 1024)).toFixed(1);
+  const requestId = vcV3Uuid();
+  vcAthleteUploadRequestId = requestId;
   if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = `Sender video (${mb} MB) ...`; }
+  if (athleteUploadCancelBtn) athleteUploadCancelBtn.hidden = false;
   say(`Sender video (${mb} MB) ...`);
   try {
     await vcV3RequestUploadAndGo({
-      clientAnalysisId: vcAthleteClientAnalysisId, file, mimeType: file.type, lift, variation,
+      requestId, clientAnalysisId: vcAthleteClientAnalysisId, file, mimeType: file.type, lift, variation,
       loadKg: parsed.kg, rpe: parsed.rpe, athleteNote,
     });
+    vcAthleteUploadRequestId = null;
+    if (athleteUploadCancelBtn) athleteUploadCancelBtn.hidden = true;
     if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Send til coach'; }
     if (setAthleteState) setAthleteState('sent');
     if (setAthleteSubmitOpen) setAthleteSubmitOpen(false);
     say('Video modtaget ✓ · din coach ser den, når han åbner den');
     setTimeout(() => say(''), 5000);
   } catch (error) {
-    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Prøv at sende igen'; }
+    vcAthleteUploadRequestId = null;
+    if (athleteUploadCancelBtn) athleteUploadCancelBtn.hidden = true;
+    // ORDRE 61 · commit 2: en selv-annulleret upload er ikke en fejl - "Send
+    // til coach" (ikke "prøv igen"), og sig tydeligt at intet blev sendt.
+    if (saveBtn) { saveBtn.disabled = false;
+      saveBtn.textContent = error.vcAborted ? 'Send til coach' : 'Prøv at sende igen'; }
     // Filen forbliver valgt (vcAthletePendingFile rører vi ikke) - hun kan
     // trykke Send igen uden at åbne videoen på ny, se RAPPORT.md.
     if (setAthleteSubmitOpen) setAthleteSubmitOpen(true);
-    say(`Videoen blev ikke sendt · ${error.message}`);
+    say(error.vcAborted ? 'Annulleret · intet blev sendt' : `Videoen blev ikke sendt · ${error.message}`);
   }
+}
+
+// ORDRE 61 · commit 2: Annullér-knappen ved siden af Send, mens en upload er
+// i gang (se athleteUploadCancelBtn). Selve netværkskaldet afbrydes i appen
+// (AthleteView.jsx); her beder vi den blot om det og venter på upload-result.
+function vcAthleteCancelUpload() {
+  if (!vcAthleteUploadRequestId) return;
+  vcV3RequestAbortUpload(vcAthleteUploadRequestId);
 }
 
 // ---------- 🤖 AI-analyse (lokal Ollama) ----------
@@ -7506,11 +7534,10 @@ function vcV3RequestSave(row) {
 // klonbare, så filen sendes direkte i postMessage - ingen mellemlagring i
 // VideoCoach selv. Ingen fast timeout: en upload på svagt mobilnet af en
 // stor fil kan tage flere minutter, og kun selve forsøget skal afgøre det.
-function vcV3RequestUploadAndGo({ clientAnalysisId, file, mimeType, lift, variation,
-  loadKg = null, rpe = null, athleteNote = null }) {
+function vcV3RequestUploadAndGo({ requestId = vcV3Uuid(), clientAnalysisId, file, mimeType,
+  lift, variation, loadKg = null, rpe = null, athleteNote = null }) {
   if (!VC_V3_ATHLETE_BRIDGE || !VC_V3_HOST)
     return Promise.reject(new Error('VideoCoach er ikke forbundet til appen'));
-  const requestId = vcV3Uuid();
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => {
       vcV3UploadPending.delete(requestId);
@@ -7521,6 +7548,14 @@ function vcV3RequestUploadAndGo({ clientAnalysisId, file, mimeType, lift, variat
       requestId, clientAnalysisId, file, mimeType, lift, variation,
       loadKg, rpe, athleteNote }, location.origin);
   });
+}
+
+// ORDRE 61 · commit 2: beder appen afbryde en igangværende upload. Selve
+// fetch-kaldet afbrydes i appen (AthleteView.jsx) - vi rydder kun vores egen
+// ventende promise op her, når upload-result-svaret (aborted:true) kommer.
+function vcV3RequestAbortUpload(requestId) {
+  if (!VC_V3_ATHLETE_BRIDGE || !VC_V3_HOST || !requestId) return;
+  VC_V3_HOST.postMessage({ type: `${VC_V3_MESSAGE_PREFIX}:abort-upload`, requestId }, location.origin);
 }
 
 function vcV3RequestBaselines(athleteId, force = false) {
@@ -7684,7 +7719,14 @@ if (VC_V3_BRIDGE_ENABLED) {
       if (!pending) return;
       clearTimeout(pending.timer); vcV3UploadPending.delete(msg.requestId);
       if (msg.ok) pending.resolve(msg.data);
-      else pending.reject(new Error(msg.error || 'Video kunne ikke sendes'));
+      else {
+        const uploadError = new Error(msg.error || 'Video kunne ikke sendes');
+        // ORDRE 61 · commit 2: skelner en atlet-annulleret upload fra en reel
+        // fejl, så vcAthleteUploadAndGo kan vise "intet blev sendt" i stedet
+        // for "prøv igen".
+        if (msg.aborted) uploadError.vcAborted = true;
+        pending.reject(uploadError);
+      }
       return;
     }
     // ORDRE 57 · commit 2: coachen åbner en afventende atlet-video (signeret
@@ -8956,6 +8998,15 @@ if (ATHLETE) {
   saveBtn.style.display = '';
   saveBtn.textContent = 'Send til coach';
   athleteSubmitCard.appendChild(saveBtn);
+  // ORDRE 61 · commit 2: kun synlig mens Send er deaktiveret under selve
+  // overførslen (se vcAthleteUploadAndGo) - ellers skjult.
+  athleteUploadCancelBtn = document.createElement('button');
+  athleteUploadCancelBtn.id = 'athleteUploadCancelBtn';
+  athleteUploadCancelBtn.type = 'button';
+  athleteUploadCancelBtn.textContent = 'Annullér';
+  athleteUploadCancelBtn.hidden = true;
+  athleteUploadCancelBtn.onclick = () => vcAthleteCancelUpload();
+  athleteSubmitCard.appendChild(athleteUploadCancelBtn);
   athleteSubmitSheet.appendChild(athleteSubmitCard);
   athleteSubmitSheet.onclick = e => {
     if (e.target === athleteSubmitSheet) setAthleteSubmitOpen(false);
