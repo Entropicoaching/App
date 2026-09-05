@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
+import { readFileSync } from 'node:fs'
 import { flushVideoCoachDraftQueue, isRetryableVideoCoachError, purgeVideoCoachDraftQueues,
   queueVideoCoachDraft,
   saveVideoCoachDraft, validateVideoCoachPayloadBounds,
@@ -222,3 +223,18 @@ assert.equal(queueVideoCoachDraft(row, storageMock()), false,
 }
 
 console.log('VideoCoach gemmer accepterer kun en identisk, profilkoblet dublet.')
+
+// ORDRE 61 · commit 1: bias_note (coachens eget notatfelt) skal KUN tvinges til
+// null for atletens egen friske INSERT (entropi_vc3_athlete_insert_own_draft-
+// policyen kræver det) - ikke når coachen fuldfører en afventende atlet-video
+// og selv skriver i sit notatfelt (entropi_vc3_coach_update tillader det).
+{
+  const html = readFileSync(new URL('../public/videocoach.html', import.meta.url), 'utf8')
+  assert.match(html, /function vcV3DatabaseRow\(payload, legacy, isCompletion\) \{/,
+    'vcV3DatabaseRow skal vide, om gemmet er en fuldførelse')
+  assert.match(html,
+    /bias_note: \(payload\.source_mode === 'athlete_submission' && !isCompletion\)\s*\n\s*\? null : legacy\.bias_note,/,
+    'bias_note må kun tvinges til null for en frisk atlet-insert, ikke en coach-fuldførelse')
+  assert.match(html, /vcV3RequestSave\(vcV3DatabaseRow\(payload, data, !!completingPending\)\)/,
+    'Kaldestedet skal fortælle vcV3DatabaseRow, om dette er en fuldførelse af en afventende video')
+}

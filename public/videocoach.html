@@ -7447,7 +7447,7 @@ function buildV3AnalysisPayload({ athleteId, athleteName, lift, variation,
   };
 }
 
-function vcV3DatabaseRow(payload, legacy) {
+function vcV3DatabaseRow(payload, legacy, isCompletion) {
   return {
     client_analysis_id: payload.client_analysis_id,
     athlete_id: payload.athlete_id,
@@ -7468,11 +7468,13 @@ function vcV3DatabaseRow(payload, legacy) {
     ai_draft: payload.ai_draft, bar_path: payload.bar_path,
     analyzed_at: payload.analyzed_at,
     reps: legacy.reps || [], load_note: legacy.load_note,
-    // ORDRE 57 · commit 2: en athlete_submission-række (både en frisk og en
-    // fuldført afventende) kræver bias_note=null (database-tjek i
-    // video_analyses_v3_payload_bounds). Coachens eget notatfelt gælder kun
-    // hans egne coach_web-analyser.
-    bias_note: payload.source_mode === 'athlete_submission' ? null : legacy.bias_note,
+    // ORDRE 61 · commit 1: null-kravet (video_analyses_v3_payload_bounds) ligger
+    // kun i atletens EGEN INSERT-policy (entropi_vc3_athlete_insert_own_draft).
+    // Coachens UPDATE-policy (entropi_vc3_coach_update) tillader bias_note på
+    // athlete_submission, så en fuldført afventende video må beholde coachens
+    // eget notat - kun den friske atlet-indsættelse skal have null her.
+    bias_note: (payload.source_mode === 'athlete_submission' && !isCompletion)
+      ? null : legacy.bias_note,
     rom_cm: legacy.rom_cm,
     loss_pct: legacy.loss_pct, stick_pct: legacy.stick_pct,
     dip_pct: legacy.dip_pct, drift_cm: legacy.drift_cm,
@@ -7830,7 +7832,7 @@ saveBtn.onclick = async () => {
         forcedClientId: completingPending ? completingPending.clientAnalysisId : null,
         sourceMode: (VC_V3_ATHLETE_BRIDGE || completingPending) ? 'athlete_submission' : 'coach_web' });
       if (!payload.lift) throw new Error('Løftet kan ikke normaliseres til v3');
-      const saved = await vcV3RequestSave(vcV3DatabaseRow(payload, data));
+      const saved = await vcV3RequestSave(vcV3DatabaseRow(payload, data, !!completingPending));
       if (completingPending) vcV3PendingCompletion = null;
       const queued = !!(saved && saved.queued);
       if (queued) {
