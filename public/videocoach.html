@@ -5733,11 +5733,31 @@ async function runFullAnalysis(barPt) {
     sessionRun = false;
     if (ATHLETE && setAthleteState) setAthleteState('done');
     applySessionView(latestCleanPath());
+    // ORDRE 54 · commit 1: atleten behøver ikke selv trykke Send - hele
+    // sættet er sporet og sendes automatisk til coachen (se vcAthleteAutoSubmit,
+    // som genbruger saveBtn.onclick 1:1, inkl. det eksisterende kø-fald-tilbage
+    // i AthleteView.jsx ved netværksfejl).
+    if (ATHLETE) vcAthleteAutoSubmit();
   } else if (COACHWEB && openSheetFn &&
              strokes.some(s => s.type === 'path' && s.vel)) {
     // coach online: vis analyse-arket med tal og fund med det samme
     openSheetFn();
   }
+}
+
+// ORDRE 54 · commit 1: "film og send" - atleten skal ikke selv trykke Send
+// efter en færdig analyse; hun har allerede sagt ja til at sende ved at
+// bekræfte ringen og trykke Start. Genbruger saveBtn.onclick 1:1 (samme
+// felter, samme netværks-/kø-fald-tilbage) - ingen ny sende-vej, se
+// RAPPORT.md om hvorfor.
+function vcAthleteAutoSubmit(attempt = 0) {
+  if (!VC_V3_ATHLETE_BRIDGE) return;
+  if (!vcV3BridgeReady) {
+    if (attempt >= 15) { say('Forbindelsen til appen kom ikke klar · tryk Send til coach.'); return; }
+    setTimeout(() => vcAthleteAutoSubmit(attempt + 1), 400);
+    return;
+  }
+  saveBtn.click();
 }
 
 // ---------- 🤖 AI-analyse (lokal Ollama) ----------
@@ -8664,7 +8684,7 @@ if (ATHLETE) {
       ready: ['Find starten', 'Spol til lige før løftet, og tryk Sæt start her.', 'Stangbane', 'ready'],
       target: ['Markér skiven', 'Tryk én gang midt på den skive, du vil følge.', 'Vælg skive', 'ready'],
       confirm: ['Tjek ringen', 'Rammes skiven rigtigt? Justér om nødvendigt — tryk så Start.', 'Start', 'ready'],
-      analyzing: ['Vi følger stangen', 'Hold siden åben, mens hele sættet gennemgås.', 'Stop', 'ready'],
+      analyzing: ['Video modtaget ✓', 'Vi finder stangbanen og sender den automatisk til din coach. Bliv på denne skærm, til der står Sendt.', 'Annullér', 'ready'],
       done: ['Stangbanen er klar', 'Se hele banen, faserne og de valide målinger i Bane.', 'Ny bane', 'done'],
       sent: ['Sendt til din coach', 'Din måling ligger klar til coachens gennemgang.', 'Ny bane', 'done'],
       error: ['Prøv igen', 'Vi mistede skiven. Vælg et tydeligt punkt tæt på navet.', 'Prøv igen', 'ready']
