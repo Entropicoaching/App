@@ -231,7 +231,11 @@
   body.athlete #athleteFlow .athFlowStep[data-complete="true"] { color:#78d89a; }
   body.athlete #athleteFlow .athFlowStep[data-current="true"] {
     color:var(--accent); background:rgba(200,146,58,.12); }
-  body.athlete #athleteStatus { top:52px; width:min(82vw,360px); padding:9px 12px; }
+  /* ORDRE 54 · commit 3: top:52px lagde statuskortet oven i BÅDE systembjælken
+     (#vcSystemBar, 0-67px) OG øvelsesvælgeren (#vcLiftSlot, 68-108px) - samme
+     slags overlap som #banner fik rettet i MOBIL-GENNEMGANG-2026-09-03,
+     samme løsning: ned under begge. */
+  body.athlete #athleteStatus { top:116px; width:min(82vw,360px); padding:9px 12px; }
   /* Når videoen er valgt, skal guiden ikke dække motivet. Vis kun det
      aktuelle trin som en lille chip; start-guiden bor ved tidslinjen. */
   body.athlete:not([data-athlete-state="empty"]) #athleteBrand { display:none; }
@@ -290,7 +294,7 @@
     background:#78d89a; color:#10130f; box-shadow:0 12px 32px rgba(0,0,0,.35); }
   /* Athlete v4: hold hovedflowet lille under træning. Før resultatet er der kun
      transport + næste handling; efter resultatet er der højst fire valg. */
-  body.athlete:not([data-athlete-state="done"]):not([data-athlete-state="sent"]) footer {
+  body.athlete:not([data-athlete-state="done"]):not([data-athlete-state="sent"]):not([data-athlete-state="confirm"]) footer {
     grid-template-columns:repeat(2,minmax(0,1fr)); }
   body.athlete:not([data-athlete-state="done"]):not([data-athlete-state="sent"]) #penBtn,
   body.athlete:not([data-athlete-state="done"]):not([data-athlete-state="sent"]) #undoBtn,
@@ -8651,12 +8655,16 @@ if (ATHLETE) {
   document.body.classList.toggle('athlete-profile', VC_V3_ATHLETE_BRIDGE);
   // Athlete er et selvstændigt produktlag: video, stangbane, tegn og gem.
   // Coach-fund og tekniske målinger må ikke skabe støj i atletens oplevelse.
+  // ORDRE 54 · commit 3: trackerFastBtn (⚡/🐢, ORDRE 45) er Marcs eget
+  // hastigheds-kill-switch til coach-siden - "altid synlig" betød aldrig at
+  // den skulle ligge oven i atlet-footeren på en smal skærm. Hun har ingen
+  // brug for den; samme begrundelse som resten af listen herunder.
   ['aiBtn', 'saveBtn', 'cardBtn', 'recordBtn', 'athleteSel', 'liftSel',
     'variationSel', 'loadInput', 'biasInput', 'speed', 'backBtn', 'fwdBtn',
     'gridBtn', 'openBtn', 'scrubToolBtn', 'lineBtn', 'angleBtn', 'eraseBtn',
     'graphBtn', 'fpBtn', 'mskelBtn', 'ghostBtn', 'loopBtn',
     'clearBtn', 'color', 'brushSel', 'barBtn', 'calibBtn', 'trimInBtn', 'trimOutBtn',
-    'trimResetBtn', 'recTime'].forEach(id => {
+    'trimResetBtn', 'recTime', 'trackerFastBtn'].forEach(id => {
     const el = document.getElementById(id);
     if (el) (el.closest('label') || el).style.display = 'none';
   });
