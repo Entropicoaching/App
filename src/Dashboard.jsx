@@ -8,6 +8,7 @@ import { videoCoachFeedbackQuality } from './videoCoachFeedbackQuality'
 import { videoCoachPersonalBaselineForAnalysis, videoCoachPersonalBaselineOptions, videoCoachPersonalBaselineSelection, withVideoCoachPersonalBaseline } from './videoCoachPersonalFeedback'
 import { VIDEOCOACH_LIFT_LABELS as VIDEOCOACH_LIFTS, videoCoachVariationIdentity, videoCoachVariationLabel } from './videoCoachLabels'
 import { saveVideoCoachDraft, validateVideoCoachPayloadBounds } from './videoCoachSubmission'
+import { VIDEOCOACH_UPLOAD_BUCKET } from './videoCoachUpload'
 import { VIDEOCOACH_BASELINE_VERSION, VIDEOCOACH_BUILD_ID } from './videoCoachVersion'
 import { normalizeAthleteLoginEmail } from './athleteOnboarding'
 import { FORECAST_FIELD_LABELS, draftExerciseForForecast, progressionOverrideErrors, updateDraftForecast, updateForecastOverrideReason } from './progressionDraft'
@@ -90,6 +91,8 @@ const VIDEOCOACH_V3_COLUMNS = new Set([
   'findings', 'coach_note', 'athlete_feedback', 'ai_draft', 'bar_path',
   'analyzed_at', 'reps', 'load_note', 'bias_note', 'rom_cm', 'loss_pct',
   'stick_pct', 'dip_pct', 'drift_cm', 'extra', 'ai_text',
+  // ORDRE 57 · commit 2: enhver række gemt via trackeren er nu 'complete'.
+  'analysis_state',
 ])
 
 function videoCoachBridgeConfig(athletes, selectedAthleteId) {
@@ -100,14 +103,21 @@ function videoCoachBridgeConfig(athletes, selectedAthleteId) {
   }
 }
 
-function validateVideoCoachV3Row(row, athletes) {
+// ORDRE 57 · commit 2: allowedCompletionClientId er sat, når coachen lige har
+// åbnet EN BESTEMT afventende atlet-video (video_analyses.analysis_state=
+// 'awaiting_analysis') for at spore den færdig. Kun dén ene rækkes egen
+// source_mode='athlete_submission' er tilladt gennem broen - alt andet skal
+// stadig være coachens egne coach_web-analyser.
+function validateVideoCoachV3Row(row, athletes, allowedCompletionClientId = null) {
   if (!row || typeof row !== 'object' || Array.isArray(row))
     return 'Ugyldig analysepayload'
   if (Object.keys(row).some(key => !VIDEOCOACH_V3_COLUMNS.has(key)))
     return 'Analysen indeholder et felt, som coach-broen ikke tillader'
   if (row.schema_version !== 3 || row.schema_v !== 3 || row.status !== 'draft')
     return 'Kun schema-v3 drafts kan gemmes gennem coach-broen'
-  if (row.source_mode !== 'coach_web') return 'Ugyldig analysekilde'
+  const isAllowedCompletion = !!allowedCompletionClientId &&
+    row.source_mode === 'athlete_submission' && row.client_analysis_id === allowedCompletionClientId
+  if (row.source_mode !== 'coach_web' && !isAllowedCompletion) return 'Ugyldig analysekilde'
   if (!['squat', 'bench', 'deadlift'].includes(row.lift)) return 'Ugyldigt løft'
   if (!/^[a-z0-9]+([._-][a-z0-9]+)*$/.test(row.variation || ''))
     return 'Ugyldig variation'
@@ -217,7 +227,8 @@ function videoCoachFeedbackPayload(existing, draft, personalBaseline) {
 }
 
 function coachVideoPriorityDetail(video) {
-  return `${VIDEOCOACH_LIFTS[video.lift] || video.lift} · ${videoCoachVariationLabel(video.lift, video.variation)}${video.load_kg != null ? ` · ${video.load_kg} kg` : ''}`
+  const prefix = video.analysis_state === 'awaiting_analysis' ? 'Afventer sporing · ' : ''
+  return `${prefix}${VIDEOCOACH_LIFTS[video.lift] || video.lift} · ${videoCoachVariationLabel(video.lift, video.variation)}${video.load_kg != null ? ` · ${video.load_kg} kg` : ''}`
 }
 
 // Sektioner vist som kort på atlet-hubben (coach-landingsside). Rækkefølgen
@@ -638,6 +649,11 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   // Efter en coach-send til en ANDEN atlet: husk målingen, så vi kan tilbyde
   // "Del med atlet" når iframen lukkes (dialogen kan ikke ses bag iframen).
   const videoCoachPendingShareRef = useRef(null)
+  // ORDRE 57 · commit 2: sat når coachen åbner en afventende atlet-video for
+  // at spore den. Fortæller ready-handleren hvilken video der skal indlæses,
+  // og save-draft-handleren at gemmet skal opdatere SAMME række i stedet for
+  // at oprette en ny (client_analysis_id er nøglen).
+  const videoCoachPendingCompletionRef = useRef(null)
   // VideoCoach åbnes som iframe i coach-portalen (ikke popup), så Marc kan
   // optage/gemme sin egen og atleternes træning uden at skifte konto/fane.
   const [videoCoachOpen, setVideoCoachOpen] = useState(false)
@@ -681,12 +697,23 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         videoCoachClientsRef.current.add(event.source)
         event.source.postMessage(videoCoachBridgeConfig(videoCoachAthletesRef.current,
           videoCoachSelectedAthleteRef.current), event.origin)
+        // ORDRE 57 · commit 2: en afventende atlet-video venter på at blive
+        // indlæst - send den, nu hvor VideoCoach har bekræftet den er klar.
+        const pendingLoad = videoCoachPendingCompletionRef.current
+        if (pendingLoad && pendingLoad.url) {
+          try {
+            event.source.postMessage({ type: `${VIDEOCOACH_V3_PREFIX}:load-remote-video`,
+              url: pendingLoad.url, lift: pendingLoad.lift, variation: pendingLoad.variation,
+              clientAnalysisId: pendingLoad.clientAnalysisId }, event.origin)
+          } catch { /* iframen kan være lukket allerede - næste åbning prøver igen */ }
+        }
         return
       }
       if (message.type === `${VIDEOCOACH_V3_PREFIX}:close`) {
         const frameWindow = videoCoachFrameRef.current?.contentWindow
         if (event.source !== frameWindow && !videoCoachClientsRef.current.has(event.source)) return
         videoCoachClientsRef.current.delete(event.source)
+        videoCoachPendingCompletionRef.current = null
         setVideoCoachOpen(false)
         // Efter lukning: tilbyd at gennemgå + dele den netop sendte måling med
         // atleten (kun for en anden atlet). Dialogen kan først ses nu, hvor
@@ -797,8 +824,20 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           requestId: message.requestId, ...result }, event.origin); return true }
         catch { return false }
       }
+      // ORDRE 57 · commit 2: fuldfører dette gem en afventende atlet-video?
+      // Kun når client_analysis_id matcher DEN video, vi selv bad VideoCoach
+      // åbne - en coach der undervejs skifter atlet i dropdown'en må ikke
+      // kunne flytte en andens video ved et uheld (se WITH CHECK i den fælles
+      // update-policy, som kun tjekker den NYE athlete_id, ikke om den er ÆNDRET).
+      const pendingCompletion = videoCoachPendingCompletionRef.current
+      const isCompletion = !!pendingCompletion &&
+        pendingCompletion.clientAnalysisId === message.row?.client_analysis_id
+      if (isCompletion && message.row.athlete_id !== pendingCompletion.athleteId) {
+        reply({ ok: false, error: 'Atleten er ændret siden videoen blev åbnet · luk og prøv igen' })
+        return
+      }
       const validationError = validateVideoCoachV3Row(message.row,
-        videoCoachAthletesRef.current)
+        videoCoachAthletesRef.current, isCompletion ? pendingCompletion.clientAnalysisId : null)
       if (validationError) { reply({ ok: false, error: validationError }); return }
 
       const safeRow = {
@@ -812,12 +851,25 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       }
       // Samme analyseresultat kan gensendes efter et timeout. Den fælles gemmer
       // accepterer kun dubletten, når både klient-id og atlet-id matcher.
-      const result = await saveVideoCoachDraft(supabase, safeRow)
+      // En fuldførelse er derimod en ren UPDATE af den afventende række selv
+      // (client_analysis_id er nøglen) - aldrig en ny række ved siden af.
+      const result = isCompletion
+        ? await saveVideoCoachDraft(supabase, safeRow,
+          { updateClientAnalysisId: pendingCompletion.clientAnalysisId })
+        : await saveVideoCoachDraft(supabase, safeRow)
       if (result.error) {
         reply({ ok: false, error: result.error.message || 'Databasen afviste analysen' })
         return
       }
       reply({ ok: true, data: result.data })
+      if (isCompletion) {
+        videoCoachPendingCompletionRef.current = null
+        showFlash('Analysen er sporet og klar ✓', 'success')
+        fetchVideoReviewQueue()
+        if (videoCoachSelectedAthleteRef.current === result.data.athlete_id)
+          fetchVideoCoachHistory(result.data.athlete_id)
+        return
+      }
       // Læs fra localStorage (kilden bag myAthleteId) for at undgå stale closure
       // i denne [] -deps-effekt.
       const selfAthleteId = localStorage.getItem('entropi_my_athlete_id')
@@ -897,7 +949,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     if (!target || selectedAthlete?.id !== target.athlete_id ||
         videoReviewOpenedRef.current === videoReviewRequest.token) return
     videoReviewOpenedRef.current = videoReviewRequest.token
-    openVideoAnalysisReview(target)
+    // ORDRE 57 · commit 2: en afventende video har intet at gennemgå endnu -
+    // åbn den til sporing i stedet for den almindelige reviewmodal.
+    if (target.analysis_state === 'awaiting_analysis') openAwaitingAnalysisVideo(target)
+    else openVideoAnalysisReview(target)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [videoReviewRequest, selectedAthlete?.id])
 
@@ -1210,7 +1265,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   async function fetchVideoReviewQueue() {
     setVideoReviewQueueError(null)
     const { data, error } = await supabase.from('video_analyses')
-      .select('id,client_analysis_id,athlete_id,lift,variation,load_kg,reps_count,analyzed_at,created_at,source_mode,status,session_context')
+      .select('id,client_analysis_id,athlete_id,lift,variation,load_kg,reps_count,analyzed_at,created_at,source_mode,status,session_context,analysis_state,video_path')
       .eq('status', 'draft')
       .order('created_at', { ascending: false })
       .limit(50)
@@ -1946,7 +2001,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     setVideoAnalysisError(null)
     const [historyResult, baselineResult] = await Promise.all([
       supabase.from('video_analyses')
-        .select('id,client_analysis_id,source_mode,lift,variation,load_kg,rpe,reps_count,status,analyzed_at,created_at,low_conf_pct,position_quality_pct,quality_flags,metrics,athlete_feedback,findings,engine_version,tracker_version')
+        .select('id,client_analysis_id,source_mode,lift,variation,load_kg,rpe,reps_count,status,analyzed_at,created_at,low_conf_pct,position_quality_pct,quality_flags,metrics,athlete_feedback,findings,engine_version,tracker_version,analysis_state,video_path')
         .eq('athlete_id', athleteId)
         .order('analyzed_at', { ascending: false })
         .limit(30),
@@ -2097,6 +2152,33 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       analysis?.athlete_feedback, baselineOptions))
     setVideoAnalysisFeedbackDirty(false)
     setVideoAnalysisCloseWarning(false)
+  }
+
+  // ORDRE 57 · commit 2: ét klik henter videoen via en kortlivet signeret URL
+  // og åbner den i coach-VideoCoach med løft/variation forudfyldt - coachen
+  // sporer den fulde sporing selv, uændret. Gemmet dernede opdaterer SAMME
+  // række (client_analysis_id er nøglen), se save-draft-handleren ovenfor.
+  async function openAwaitingAnalysisVideo(analysis) {
+    // athlete_id følger kun med i den globale reviewkø (fetchVideoReviewQueue) -
+    // fra atletens egen analyse-fane er den underforstået af selectedAthlete.
+    const athleteId = analysis?.athlete_id || selectedAthlete?.id
+    if (!analysis?.id || !analysis.video_path || !athleteId || videoAnalysisReviewLoadingId) return
+    setVideoAnalysisReviewLoadingId(analysis.id)
+    setVideoAnalysisReviewError(null)
+    try {
+      const { data, error } = await supabase.storage.from(VIDEOCOACH_UPLOAD_BUCKET)
+        .createSignedUrl(analysis.video_path, 600)
+      if (error || !data?.signedUrl) throw error || new Error('Videoen kunne ikke åbnes')
+      videoCoachPendingCompletionRef.current = {
+        clientAnalysisId: analysis.client_analysis_id, athleteId,
+        url: data.signedUrl, lift: analysis.lift, variation: analysis.variation,
+      }
+      openVideoCoachV3()
+    } catch (error) {
+      showFlash(error.message || 'Videoen kunne ikke åbnes', 'error')
+    } finally {
+      setVideoAnalysisReviewLoadingId(null)
+    }
   }
 
   async function openVideoAnalysisReview(analysis) {
@@ -4875,6 +4957,33 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                     {!videoAnalysisLoading && filteredVideoAnalyses.length > 0 && (
                       <div style={{ display: 'grid', gap: '0.65rem' }}>
                         {filteredVideoAnalyses.slice(0, isMobile ? 4 : 8).map(analysis => {
+                          // ORDRE 57 · commit 2: en afventende video har ingen tal at vise endnu -
+                          // eget, enklere kort med ét klik til at spore den.
+                          if (analysis.analysis_state === 'awaiting_analysis') {
+                            const opening = videoAnalysisReviewLoadingId === analysis.id
+                            return (
+                              <div key={analysis.id || analysis.client_analysis_id} style={{ border: '1px solid rgba(103,223,245,0.28)', background: 'rgba(103,223,245,0.05)', padding: isMobile ? '0.8rem' : '0.95rem' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.8rem', flexWrap: 'wrap' }}>
+                                  <div>
+                                    <div style={{ color: '#edeae2', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.8rem' }}>
+                                      {VIDEOCOACH_LIFTS[analysis.lift] || analysis.lift} · {videoCoachVariationLabel(analysis.lift, analysis.variation)}
+                                    </div>
+                                    <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', marginTop: '0.25rem' }}>
+                                      Modtaget {new Date(analysis.created_at).toLocaleDateString('da-DK')}{analysis.load_kg != null ? ` · ${analysis.load_kg} kg` : ''}{analysis.rpe != null ? ` · RPE ${analysis.rpe}` : ''}
+                                    </div>
+                                  </div>
+                                  <span style={{ color: '#67dff5', border: '1px solid rgba(103,223,245,0.4)', background: 'rgba(103,223,245,0.1)', padding: '0.2rem 0.45rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                                    Afventer sporing
+                                  </span>
+                                </div>
+                                <div style={{ marginTop: '0.75rem', paddingTop: '0.65rem', borderTop: '1px solid rgba(237,234,226,0.07)' }}>
+                                  <button disabled={opening} onClick={() => openAwaitingAnalysisVideo(analysis)} style={{ ...s.btnPrimary, padding: '0.38rem 0.7rem', fontSize: '0.52rem', opacity: opening ? 0.55 : 1 }}>
+                                    {opening ? 'Åbner…' : 'Spor nu →'}
+                                  </button>
+                                </div>
+                              </div>
+                            )
+                          }
                           const status = VIDEOCOACH_STATUS[analysis.status] || VIDEOCOACH_STATUS.draft
                           const feedback = analysis.athlete_feedback || {}
                           const focus = feedback.focus?.[0]?.text
