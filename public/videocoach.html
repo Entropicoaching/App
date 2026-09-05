@@ -5969,12 +5969,18 @@ async function vcAthleteUploadAndGo() {
   const file = vcAthletePendingFile;
   if (!file) { say('Åbn en video først'); return; }
   if (!vcAthleteClientAnalysisId) vcAthleteClientAnalysisId = vcV3Uuid();
+  // ORDRE 57 · commit 3: tre valgfrie felter i samme trin som løft/variation -
+  // ingen af dem påkrævet. Bruges kun af standardvejen (sheetet er tomt, hvis
+  // "Vis mig nu"/Start endte her uden at have åbnet det, se RAPPORT.md).
+  const parsed = parseLoad(document.getElementById('loadInput')?.value.trim() || '');
+  const athleteNote = document.getElementById('athleteNoteInput')?.value.trim().slice(0, 1000) || null;
   const mb = (file.size / (1024 * 1024)).toFixed(1);
   if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = `Sender video (${mb} MB) ...`; }
   say(`Sender video (${mb} MB) ...`);
   try {
     await vcV3RequestUploadAndGo({
       clientAnalysisId: vcAthleteClientAnalysisId, file, mimeType: file.type, lift, variation,
+      loadKg: parsed.kg, rpe: parsed.rpe, athleteNote,
     });
     if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Send til coach'; }
     if (setAthleteState) setAthleteState('sent');
@@ -8934,6 +8940,16 @@ if (ATHLETE) {
   };
   addAthleteSubmitField('Løft', document.getElementById('liftSel'));
   addAthleteSubmitField('Variation', document.getElementById('variationSel'));
+  // ORDRE 57 · commit 3: tre valgfrie felter i samme trin - ingen af dem
+  // påkrævet, ingen ekstra skærm. vcAthleteUploadAndGo læser dem ved Send.
+  addAthleteSubmitField('Belastning / RPE (valgfri)', document.getElementById('loadInput'));
+  const athleteNoteInput = document.createElement('textarea');
+  athleteNoteInput.id = 'athleteNoteInput';
+  athleteNoteInput.rows = 3;
+  athleteNoteInput.maxLength = 1000;
+  athleteNoteInput.placeholder = 'Hvad vil du gerne have coachens blik på?';
+  athleteNoteInput.style.resize = 'vertical';
+  addAthleteSubmitField('Notat til coach (valgfrit)', athleteNoteInput);
   athleteSubmitCard.appendChild(athleteSubmitFields);
   saveBtn.style.display = '';
   saveBtn.textContent = 'Send til coach';
