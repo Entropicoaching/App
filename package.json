@@ -24,6 +24,7 @@
     "verify:videocoach-labels": "node scripts/verify-videocoach-labels.mjs",
     "verify:videocoach-variation-migration": "node scripts/verify-videocoach-variation-migration.mjs",
     "verify:videocoach-submission": "node scripts/verify-videocoach-submission.mjs",
+    "verify:videocoach-upload": "node scripts/verify-videocoach-upload.mjs",
     "verify:videocoach-migrations": "node scripts/verify-videocoach-migrations.mjs",
     "verify:videocoach-zoom": "node scripts/verify-videocoach-zoom.mjs",
     "gate:tracker": "node scripts/gate-tracker.mjs",

@@ -60,14 +60,22 @@ export function videoCoachSavedIdentityMatches(saved, requested) {
     saved.athlete_id === requested?.athlete_id
 }
 
-export async function saveVideoCoachDraft(supabase, row, { athleteSubmission = false } = {}) {
-  let result = athleteSubmission
-    ? await supabase.from('video_analyses').insert(row)
-    : await supabase.from('video_analyses').insert(row)
+// ORDRE 57 · commit 2: fuldførelse af en afventende atlet-video må ALDRIG
+// indsætte en ny række ved siden af — client_analysis_id er nøglen, og
+// updateClientAnalysisId gør gemmet til en ren UPDATE i stedet for en INSERT.
+export async function saveVideoCoachDraft(supabase, row,
+  { athleteSubmission = false, updateClientAnalysisId = null } = {}) {
+  let result = updateClientAnalysisId
+    ? await supabase.from('video_analyses').update(row)
+      .eq('client_analysis_id', updateClientAnalysisId)
       .select(VIDEOCOACH_SAVED_COLUMNS).single()
+    : athleteSubmission
+      ? await supabase.from('video_analyses').insert(row)
+      : await supabase.from('video_analyses').insert(row)
+        .select(VIDEOCOACH_SAVED_COLUMNS).single()
   let duplicate = false
 
-  if (result.error?.code === '23505') {
+  if (!updateClientAnalysisId && result.error?.code === '23505') {
     duplicate = true
     result = athleteSubmission
       ? await supabase.rpc('get_my_video_analysis_submission_identity_v3', {
@@ -79,7 +87,7 @@ export async function saveVideoCoachDraft(supabase, row, { athleteSubmission = f
   }
 
   if (result.error) return { ...result, duplicate }
-  if (athleteSubmission && !duplicate) {
+  if (athleteSubmission && !duplicate && !updateClientAnalysisId) {
     result = { ...result, data: { client_analysis_id: row.client_analysis_id,
       athlete_id: row.athlete_id, status: row.status } }
   }

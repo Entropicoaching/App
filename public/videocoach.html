@@ -1139,6 +1139,10 @@ let vcPriorSetup = null;
 const cleanOverlayState = { phases:true, history:true, metrics:true };
 let setAthleteState = null;         // Athlete v2: ét roligt, guidet flow
 let setAthleteSubmitOpen = null;    // Athlete v3: sendearket må kun åbne i sidste trin
+// ORDRE 57 · "upload og gå": standardvejen sporer intet på telefonen, den
+// uploader den valgte fil. Sat i loadFile(), nulstillet pr. ny video.
+let vcAthletePendingFile = null;
+let vcAthleteClientAnalysisId = null;
 // ORDRE 50 · seneste forudsøgnings-resultat for sæt-start/slut (coach-siden
 // alene, se vcRunSetBoundsPresearch) + om det viste klip stadig ER forslaget
 // eller allerede er gjort til Marcs eget (trimIn/trimOut/håndtag/nulstil).
@@ -1524,9 +1528,17 @@ document.addEventListener('visibilitychange', () => {
 
 let rendering = false;
 let curUrl = null;
-function loadFile(file) {
-  if (!file) return;
+// ORDRE 57 · commit 2: coachen åbner en afventende atlet-video via signeret
+// URL i stedet for en lokalt valgt fil. remoteUrl deler resten af opsætningen
+// (canvas, wake lock, TRÆNINGSMODE-armering) 1:1 med den lokale sti.
+function loadFile(file, remoteUrl = null) {
+  if (!file && !remoteUrl) return;
   if (curUrl) URL.revokeObjectURL(curUrl);   // frigiv forrige video (mobil-RAM)
+  if (file) {
+    vcAthletePendingFile = file;
+    vcAthleteClientAnalysisId = null;   // ny video = nyt klient-id ved upload
+    if (typeof vcV3PendingCompletion !== 'undefined') vcV3PendingCompletion = null;
+  }
   endCompare();                              // ny video 1 = ud af ⇄-tilstand
   strokes = []; anglePts = [];
   if (typeof resetZoom === 'function') resetZoom();   // ny video = 1x zoom
@@ -1589,8 +1601,12 @@ function loadFile(file) {
     keepAwake();
     if (typeof ATHLETE !== 'undefined' && ATHLETE) {
       if (setAthleteState) setAthleteState('ready');
-      say('Videoen er klar · spol til lige før løftet');
+      // ORDRE 57 · standardvejen er upload, ikke sporing: sendearket (løft +
+      // variation) åbner med det samme. Vil hun se banen selv først, lukker
+      // hun arket og bruger Sæt start/Stangbane-vejen under det, uændret.
+      say('Videoen er klar · vælg løft, og send til din coach');
       setTimeout(() => say(''), 3200);
+      if (setAthleteSubmitOpen) setAthleteSubmitOpen(true);
     } else {
       // TRÆNINGSMODE-armering: første tryk på skiven = analyse.
       // Spoler/afspiller/tegner man i stedet, afvæbnes den lydløst.
@@ -1625,9 +1641,21 @@ function loadFile(file) {
   setTimeout(() => { if (!started && !video.error)
     say('Videoen ser ud til at hænge - prøv en mindre fil eller H.264-format'); },
     15000);
-  curUrl = URL.createObjectURL(file);
-  video.src = curUrl;
+  if (remoteUrl) {
+    video.crossOrigin = 'anonymous';   // signeret URL: canvas må ikke blive tainted
+    video.src = remoteUrl;
+  } else {
+    video.crossOrigin = null;
+    curUrl = URL.createObjectURL(file);
+    video.src = curUrl;
+  }
   video.load();
+}
+
+// ORDRE 57 · commit 2: coachens indgang for en afventende atlet-video, se
+// load-remote-video-håndteringen i beskedbroen nedenfor.
+function loadRemoteVideo(url) {
+  loadFile(null, url);
 }
 
 // ---------- Afspilning ----------
@@ -5615,11 +5643,14 @@ function vcConfirmPlateRing() {
   return { x: c.x, y: c.y, r: c.r };
 }
 
-// ORDRE 54 · commit 2: "Vis mig nu" - atleten der hellere vil se noget med
-// det samme end vente på hele sættet. Sporer kun tre gentagelser (første,
-// en fra midten, sidste - se RAPPORT.md for hvorfor netop de tre), viser dem,
-// og fortsætter derefter stille med commit 1's fulde baggrunds-analyse, så
-// coachen stadig får hele sættet, når den er klar.
+// ORDRE 54 · commit 2 / ORDRE 57 · commit 1: "Vis mig nu" - atleten der
+// hellere vil se noget med det samme. Sporer kun tre gentagelser (første,
+// en fra midten, sidste - se RAPPORT.md for hvorfor netop de tre), viser dem
+// til hende, og uploader derefter selve videoen (ikke de sporede tal) på
+// samme måde som standardvejen - coachen sporer selv det fulde sæt i
+// coach-tilstanden (ORDRE 57 · commit 2). Ingen grund til også at spore de
+// resterende 5 reps lokalt bagefter; det var kun nødvendigt, da telefonen
+// selv skulle sende de FÆRDIGE tal.
 async function vcAthletePreviewThree(barPt) {
   const setStart = manualTrackingBounds.start;
   const setEnd = trimEndEff();
@@ -5631,9 +5662,9 @@ async function vcAthletePreviewThree(barPt) {
   if (!presearch.ok || presearch.windows.length < 3) {
     trimEnd = savedTrimEnd;
     analyzing = false;
-    say('Kunne ikke skille gentagelserne tydeligt ad · kører fuld analyse i stedet');
+    say('Kunne ikke skille gentagelserne tydeligt ad · sender videoen til din coach i stedet');
     setTimeout(() => say(''), 4200);
-    runFullAnalysis(barPt);
+    vcAthleteUploadAndGo();
     return;
   }
   const idxs = [0, Math.floor((presearch.windows.length - 1) / 2), presearch.windows.length - 1];
@@ -5654,9 +5685,9 @@ async function vcAthletePreviewThree(barPt) {
   trimEnd = savedTrimEnd;
   analyzing = false;
   if (!previewPaths.length) {
-    say('Ingen af de tre prøve-gentagelser gav et brugbart spor · kører fuld analyse i stedet');
+    say('Ingen af de tre prøve-gentagelser gav et brugbart spor · sender videoen til din coach i stedet');
     setTimeout(() => say(''), 4200);
-    runFullAnalysis(barPt);
+    vcAthleteUploadAndGo();
     return;
   }
   const last = previewPaths.at(-1);
@@ -5664,12 +5695,11 @@ async function vcAthletePreviewThree(barPt) {
   video.currentTime = last.times?.at(-1) ?? video.currentTime;
   if (setAthleteState) setAthleteState('done');
   say(`👁 Viser ${previewPaths.length} af 8 gentagelser (${previewPaths.map(p => p.vcPreviewLabel).join(', ')}) ·
-    hele sættet spores færdigt i baggrunden og sendes automatisk til din coach`.replace(/\s+/g, ' '));
+    videoen sendes nu til din coach, som sporer resten`.replace(/\s+/g, ' '));
   setTimeout(() => say(''), 6500);
-  // commit 1: fuld baggrunds-analyse fortsætter stille og auto-sender, se
-  // runFullAnalysis's vcAthleteAutoSubmit-kald. Kort pause så beskeden ovenfor
-  // faktisk kan nås at læses, før tilstanden skifter videre.
-  setTimeout(() => runFullAnalysis(barPt), 4000);
+  // Kort pause så beskeden ovenfor faktisk kan nås at læses, før tilstanden
+  // skifter videre til upload.
+  setTimeout(() => vcAthleteUploadAndGo(), 4000);
 }
 
 allBtn.onclick = async () => {
@@ -5906,11 +5936,11 @@ async function runFullAnalysis(barPt) {
     sessionRun = false;
     if (ATHLETE && setAthleteState) setAthleteState('done');
     applySessionView(latestCleanPath());
-    // ORDRE 54 · commit 1: atleten behøver ikke selv trykke Send - hele
-    // sættet er sporet og sendes automatisk til coachen (se vcAthleteAutoSubmit,
-    // som genbruger saveBtn.onclick 1:1, inkl. det eksisterende kø-fald-tilbage
-    // i AthleteView.jsx ved netværksfejl).
-    if (ATHLETE) vcAthleteAutoSubmit();
+    // ORDRE 57 · commit 1: den lokale sporing her er kun til atletens eget
+    // "vis mig hele banen"-øjeblik. Det der faktisk sendes til coachen er
+    // videoen selv (vcAthleteUploadAndGo), ikke de sporede tal - coachen
+    // sporer selv det fulde sæt i coach-tilstanden (ORDRE 57 · commit 2).
+    if (ATHLETE) vcAthleteUploadAndGo();
   } else if (COACHWEB && openSheetFn &&
              strokes.some(s => s.type === 'path' && s.vel)) {
     // coach online: vis analyse-arket med tal og fund med det samme
@@ -5918,19 +5948,52 @@ async function runFullAnalysis(barPt) {
   }
 }
 
-// ORDRE 54 · commit 1: "film og send" - atleten skal ikke selv trykke Send
-// efter en færdig analyse; hun har allerede sagt ja til at sende ved at
-// bekræfte ringen og trykke Start. Genbruger saveBtn.onclick 1:1 (samme
-// felter, samme netværks-/kø-fald-tilbage) - ingen ny sende-vej, se
-// RAPPORT.md om hvorfor.
-function vcAthleteAutoSubmit(attempt = 0) {
+// ORDRE 57 · commit 1: standardvejens ENESTE sende-handling. Uploader den
+// valgte videofil til bucket'en og lader appen (AthleteView.jsx) indsætte
+// én række med analysis_state='awaiting_analysis'. Kaldes både direkte fra
+// sendearket (ingen sporing overhovedet) og som fælles afslutning på de to
+// valgfrie forhåndsvisninger ("Vis mig nu" / Start), se runFullAnalysis og
+// vcAthletePreviewThree. Ingen fast timeout her - store videoer på svagt
+// mobilnet kan tage minutter, og det er den igangværende upload, ikke en
+// vilkårlig grænse, der skal afgøre, hvornår vi giver op.
+async function vcAthleteUploadAndGo() {
   if (!VC_V3_ATHLETE_BRIDGE) return;
-  if (!vcV3BridgeReady) {
-    if (attempt >= 15) { say('Forbindelsen til appen kom ikke klar · tryk Send til coach.'); return; }
-    setTimeout(() => vcAthleteAutoSubmit(attempt + 1), 400);
+  const liftDisplay = document.getElementById('liftSel').value;
+  const lift = vcV3Lift(liftDisplay);
+  if (!lift) {
+    say('Vælg squat, bænkpres eller dødløft først');
+    if (setAthleteSubmitOpen) setAthleteSubmitOpen(true);
     return;
   }
-  saveBtn.click();
+  const variation = vcV3Variation(liftDisplay, document.getElementById('variationSel').value);
+  const file = vcAthletePendingFile;
+  if (!file) { say('Åbn en video først'); return; }
+  if (!vcAthleteClientAnalysisId) vcAthleteClientAnalysisId = vcV3Uuid();
+  // ORDRE 57 · commit 3: tre valgfrie felter i samme trin som løft/variation -
+  // ingen af dem påkrævet. Bruges kun af standardvejen (sheetet er tomt, hvis
+  // "Vis mig nu"/Start endte her uden at have åbnet det, se RAPPORT.md).
+  const parsed = parseLoad(document.getElementById('loadInput')?.value.trim() || '');
+  const athleteNote = document.getElementById('athleteNoteInput')?.value.trim().slice(0, 1000) || null;
+  const mb = (file.size / (1024 * 1024)).toFixed(1);
+  if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = `Sender video (${mb} MB) ...`; }
+  say(`Sender video (${mb} MB) ...`);
+  try {
+    await vcV3RequestUploadAndGo({
+      clientAnalysisId: vcAthleteClientAnalysisId, file, mimeType: file.type, lift, variation,
+      loadKg: parsed.kg, rpe: parsed.rpe, athleteNote,
+    });
+    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Send til coach'; }
+    if (setAthleteState) setAthleteState('sent');
+    if (setAthleteSubmitOpen) setAthleteSubmitOpen(false);
+    say('Video modtaget ✓ · din coach ser den, når han åbner den');
+    setTimeout(() => say(''), 5000);
+  } catch (error) {
+    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Prøv at sende igen'; }
+    // Filen forbliver valgt (vcAthletePendingFile rører vi ikke) - hun kan
+    // trykke Send igen uden at åbne videoen på ny, se RAPPORT.md.
+    if (setAthleteSubmitOpen) setAthleteSubmitOpen(true);
+    say(`Videoen blev ikke sendt · ${error.message}`);
+  }
 }
 
 // ---------- 🤖 AI-analyse (lokal Ollama) ----------
@@ -7063,12 +7126,19 @@ const VC_V3_MESSAGE_PREFIX = 'entropi:videocoach:v3';
 const VC_V3_EMBEDDED = window.parent !== window;
 const VC_V3_HOST = VC_V3_EMBEDDED ? window.parent : window.opener;
 const vcV3Pending = new Map();
+// ORDRE 57 · commit 1: video-upload, ikke en analyserække - egen kø, egen
+// (meget lang) ventetid, se vcV3RequestUploadAndGo.
+const vcV3UploadPending = new Map();
 const vcV3AnalysisIds = new WeakMap();
 const vcV3BaselinePending = new Map();
 const vcV3BaselineCache = new Map();
 // ORDRE 43 · Commit 3: opsætning huskes pr. atlet+løft+variation.
 const vcV3PriorSetupPending = new Map();
 const vcV3PriorSetupCache = new Map();
+// ORDRE 57 · commit 2: sat af load-remote-video, når coachen åbner en
+// afventende atlet-video. Fortæller saveBtn.onclick at genbruge SAMME
+// client_analysis_id og source_mode i stedet for at oprette en ny analyse.
+let vcV3PendingCompletion = null;
 let vcV3BridgeReady = false;
 let vcV3ConfigSeen = false;
 
@@ -7102,6 +7172,27 @@ function vcV3Variation(lift, variation) {
     'Sumo dødløft': 'competition_sumo',
   }[lift]);
   return vcV3Slug(base, 'standard');
+}
+
+// ORDRE 57 · commit 2: de omvendte af vcV3Lift/vcV3Variation, til at forududfylde
+// coachens danske <select>-værdier fra en gemt (normaliseret) række. 'deadlift'
+// er tvetydig (Dødløft/Sumo dødløft) - afgøres ud fra hvilken liste variations-
+// sluggen matcher. LIFT_VARIATIONS defineres længere nede, men kaldes kun herfra
+// efter hele scriptet er indlæst.
+function vcV3DisplayLift(normalizedLift, variationSlug) {
+  if (normalizedLift === 'squat') return 'Squat';
+  if (normalizedLift === 'bench') return 'Bænkpres';
+  if (normalizedLift === 'deadlift') {
+    const isSumo = (LIFT_VARIATIONS['Sumo dødløft'] || [])
+      .some(label => vcV3Variation('Sumo dødløft', label) === variationSlug);
+    return isSumo ? 'Sumo dødløft' : 'Dødløft';
+  }
+  return null;
+}
+function vcV3DisplayVariation(liftDisplay, variationSlug) {
+  const match = (LIFT_VARIATIONS[liftDisplay] || [])
+    .find(label => vcV3Variation(liftDisplay, label) === variationSlug);
+  return match || '';
 }
 
 function vcV3Metric(value, unit, method, eligible = false, confidence = null) {
@@ -7290,8 +7381,10 @@ function vcV3Findings(items, lowConfPct) {
 }
 
 function buildV3AnalysisPayload({ athleteId, athleteName, lift, variation,
-  parsed, path, vals, legacy, baselines = [], sourceMode = 'coach_web' }) {
-  let clientId = path && vcV3AnalysisIds.get(path);
+  parsed, path, vals, legacy, baselines = [], sourceMode = 'coach_web', forcedClientId = null }) {
+  // ORDRE 57 · commit 2: fuldførelse af en afventende atlet-video skal ramme
+  // dens EGET client_analysis_id, ikke et nyt et - se saveBtn.onclick.
+  let clientId = forcedClientId || (path && vcV3AnalysisIds.get(path));
   if (!clientId) {
     clientId = vcV3Uuid();
     if (path) vcV3AnalysisIds.set(path, clientId);
@@ -7375,10 +7468,19 @@ function vcV3DatabaseRow(payload, legacy) {
     ai_draft: payload.ai_draft, bar_path: payload.bar_path,
     analyzed_at: payload.analyzed_at,
     reps: legacy.reps || [], load_note: legacy.load_note,
-    bias_note: legacy.bias_note, rom_cm: legacy.rom_cm,
+    // ORDRE 57 · commit 2: en athlete_submission-række (både en frisk og en
+    // fuldført afventende) kræver bias_note=null (database-tjek i
+    // video_analyses_v3_payload_bounds). Coachens eget notatfelt gælder kun
+    // hans egne coach_web-analyser.
+    bias_note: payload.source_mode === 'athlete_submission' ? null : legacy.bias_note,
+    rom_cm: legacy.rom_cm,
     loss_pct: legacy.loss_pct, stick_pct: legacy.stick_pct,
     dip_pct: legacy.dip_pct, drift_cm: legacy.drift_cm,
     extra: legacy.extra, ai_text: legacy.ai_text,
+    // ORDRE 57 · commit 2: enhver række gemt gennem selve trackeren har pr.
+    // definition en fuld analyse - relevant både for normale gem og for at
+    // lukke en afventende atlet-video (analysis_state='awaiting_analysis').
+    analysis_state: 'complete',
   };
 }
 
@@ -7394,6 +7496,28 @@ function vcV3RequestSave(row) {
     vcV3Pending.set(requestId, { resolve, reject, timer });
     VC_V3_HOST.postMessage({ type: `${VC_V3_MESSAGE_PREFIX}:save-draft`,
       requestId, row }, location.origin);
+  });
+}
+
+// ORDRE 57 · commit 1: uploader den rå videofil via appens beskedbro (kun
+// appen har en autentificeret Supabase-klient). File/Blob er struktur-
+// klonbare, så filen sendes direkte i postMessage - ingen mellemlagring i
+// VideoCoach selv. Ingen fast timeout: en upload på svagt mobilnet af en
+// stor fil kan tage flere minutter, og kun selve forsøget skal afgøre det.
+function vcV3RequestUploadAndGo({ clientAnalysisId, file, mimeType, lift, variation,
+  loadKg = null, rpe = null, athleteNote = null }) {
+  if (!VC_V3_ATHLETE_BRIDGE || !VC_V3_HOST)
+    return Promise.reject(new Error('VideoCoach er ikke forbundet til appen'));
+  const requestId = vcV3Uuid();
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      vcV3UploadPending.delete(requestId);
+      reject(new Error('Appen svarede ikke inden for 10 minutter'));
+    }, 10 * 60 * 1000);
+    vcV3UploadPending.set(requestId, { resolve, reject, timer });
+    VC_V3_HOST.postMessage({ type: `${VC_V3_MESSAGE_PREFIX}:upload-and-go`,
+      requestId, clientAnalysisId, file, mimeType, lift, variation,
+      loadKg, rpe, athleteNote }, location.origin);
   });
 }
 
@@ -7551,6 +7675,34 @@ if (VC_V3_BRIDGE_ENABLED) {
       clearTimeout(pending.timer); vcV3Pending.delete(msg.requestId);
       if (msg.ok) pending.resolve(msg.data);
       else pending.reject(new Error(msg.error || 'Analysen kunne ikke gemmes'));
+      return;
+    }
+    if (msg.type === `${VC_V3_MESSAGE_PREFIX}:upload-result`) {
+      const pending = vcV3UploadPending.get(msg.requestId);
+      if (!pending) return;
+      clearTimeout(pending.timer); vcV3UploadPending.delete(msg.requestId);
+      if (msg.ok) pending.resolve(msg.data);
+      else pending.reject(new Error(msg.error || 'Video kunne ikke sendes'));
+      return;
+    }
+    // ORDRE 57 · commit 2: coachen åbner en afventende atlet-video (signeret
+    // URL i stedet for en lokalt valgt fil). Løft/variation kommer normaliseret
+    // (samme form som i databasen) - oversæt til de danske <select>-værdier.
+    if (msg.type === `${VC_V3_MESSAGE_PREFIX}:load-remote-video`) {
+      const liftDisplay = vcV3DisplayLift(msg.lift, msg.variation);
+      if (liftDisplay) {
+        const liftSelect = document.getElementById('liftSel');
+        liftSelect.value = liftDisplay;
+        liftSelect.dispatchEvent(new Event('change', { bubbles:true }));
+        const variationDisplay = vcV3DisplayVariation(liftDisplay, msg.variation);
+        if (variationDisplay) {
+          variationSel.value = variationDisplay;
+          variationSel.dispatchEvent(new Event('change', { bubbles:true }));
+        }
+      }
+      vcV3PendingCompletion = { clientAnalysisId: msg.clientAnalysisId };
+      loadRemoteVideo(msg.url);
+      return;
     }
   });
   const announce = () => VC_V3_HOST && VC_V3_HOST.postMessage({
@@ -7559,6 +7711,11 @@ if (VC_V3_BRIDGE_ENABLED) {
 }
 
 saveBtn.onclick = async () => {
+  // ORDRE 57 · commit 1: standardvejen har ingen sporede tal at samle op -
+  // den uploader videoen. "Vis mig nu"/Start ender også her (se
+  // runFullAnalysis/vcAthletePreviewThree), så ATHLETE-broen bruger ALDRIG
+  // resten af denne funktion længere.
+  if (VC_V3_ATHLETE_BRIDGE) { await vcAthleteUploadAndGo(); return; }
   const metrics = collectMetrics();
   if (!metrics || !lastVals) { alert('Kør ⚡ Analysér løft først'); return; }
   const athleteSelect = document.getElementById('athleteSel');
@@ -7662,12 +7819,19 @@ saveBtn.onclick = async () => {
           if (!baselines.length) say('Personlig baseline kunne ikke hentes · analysen gemmes uden');
         }
       }
+      // ORDRE 57 · commit 2: fuldfører coachen en afventende atlet-video,
+      // SKAL den gemte række beholde sit oprindelige client_analysis_id og
+      // source_mode='athlete_submission' - ellers opretter appen en ny række
+      // ved siden af i stedet for at opdatere den afventende (se Dashboard.jsx).
+      const completingPending = vcV3PendingCompletion;
       const payload = buildV3AnalysisPayload({ athleteId, athleteName: ath, lift,
         variation: document.getElementById('variationSel').value, parsed,
         path, vals: lastVals, legacy: data, baselines,
-        sourceMode: VC_V3_ATHLETE_BRIDGE ? 'athlete_submission' : 'coach_web' });
+        forcedClientId: completingPending ? completingPending.clientAnalysisId : null,
+        sourceMode: (VC_V3_ATHLETE_BRIDGE || completingPending) ? 'athlete_submission' : 'coach_web' });
       if (!payload.lift) throw new Error('Løftet kan ikke normaliseres til v3');
       const saved = await vcV3RequestSave(vcV3DatabaseRow(payload, data));
+      if (completingPending) vcV3PendingCompletion = null;
       const queued = !!(saved && saved.queued);
       if (queued) {
         saveBtn.textContent = 'Gemt lokalt · sender automatisk';
@@ -8754,9 +8918,11 @@ if (ATHLETE) {
   athleteSubmitCard.id = 'athleteSubmitCard';
   const athleteSubmitHead = document.createElement('div');
   athleteSubmitHead.className = 'athleteSubmitHead';
+  // ORDRE 57 · commit 1: hun sender selve videoen - coachen sporer og
+  // gennemgår den bagefter, ikke omvendt.
   athleteSubmitHead.innerHTML = '<div><small class="athleteSubmitKicker">Til din coach</small>' +
-    '<h2>Send stangbanen</h2>' +
-    '<p>Tilføj løftet og eventuelt en kort note. Din coach gennemgår målingen, før den gemmes på din profil.</p></div>';
+    '<h2>Send videoen</h2>' +
+    '<p>Vælg løft og variation. Din coach sporer og gennemgår videoen, når han åbner den.</p></div>';
   const athleteSubmitClose = document.createElement('button');
   athleteSubmitClose.textContent = 'Luk';
   athleteSubmitClose.className = 'athleteSubmitClose';
@@ -8774,6 +8940,8 @@ if (ATHLETE) {
   };
   addAthleteSubmitField('Løft', document.getElementById('liftSel'));
   addAthleteSubmitField('Variation', document.getElementById('variationSel'));
+  // ORDRE 57 · commit 3: tre valgfrie felter i samme trin - ingen af dem
+  // påkrævet, ingen ekstra skærm. vcAthleteUploadAndGo læser dem ved Send.
   addAthleteSubmitField('Belastning / RPE (valgfri)', document.getElementById('loadInput'));
   const athleteNoteInput = document.createElement('textarea');
   athleteNoteInput.id = 'athleteNoteInput';

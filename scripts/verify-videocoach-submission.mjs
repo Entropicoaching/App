@@ -14,6 +14,7 @@ function supabaseMock(results) {
   const calls = []
   const chain = {
     insert(value) { calls.push(['insert', value]); return chain },
+    update(value) { calls.push(['update', value]); return chain },
     select(value) { calls.push(['select', value]); return chain },
     eq(column, value) { calls.push(['eq', column, value]); return chain },
     single() { calls.push(['single']); return Promise.resolve(results.shift()) },
@@ -62,6 +63,44 @@ assert.equal(videoCoachSavedIdentityMatches({ ...row, athlete_id: 'other' }, row
   assert.deepEqual(calls.find(call => call[0] === 'rpc'), ['rpc',
     'get_my_video_analysis_submission_identity_v3',
     { p_client_analysis_id: row.client_analysis_id }])
+}
+
+// ORDRE 57 · commit 2: fuldførelse af en afventende atlet-video er en ren
+// UPDATE på client_analysis_id - aldrig en ny INSERT ved siden af.
+{
+  const saved = { ...row, id: 'analysis-1', status: 'draft' }
+  const { client, calls } = supabaseMock([{ data: saved, error: null }])
+  const result = await saveVideoCoachDraft(client, row,
+    { updateClientAnalysisId: row.client_analysis_id })
+  assert.equal(result.error, null)
+  assert.equal(result.duplicate, false)
+  assert.equal(result.data, saved)
+  assert.equal(calls.some(call => call[0] === 'insert'), false,
+    'En fuldførelse må aldrig indsætte en ny række')
+  assert.deepEqual(calls.find(call => call[0] === 'update'), ['update', row])
+  assert.deepEqual(calls.find(call => call[0] === 'eq'),
+    ['eq', 'client_analysis_id', row.client_analysis_id])
+}
+
+// En UPDATE der rammer 0 rækker (forkert client_analysis_id, eller RLS
+// blokerer en anden coachs atlet) skal fejle synligt, ikke stille lykkes.
+{
+  const { client } = supabaseMock([{ data: null, error: { message: 'no rows' } }])
+  const result = await saveVideoCoachDraft(client, row,
+    { updateClientAnalysisId: 'et-andet-id' })
+  assert.ok(result.error, 'En update uden match skal give en fejl')
+}
+
+// 23505-dublet-genforsøget gælder kun rene inserts, aldrig en UPDATE.
+{
+  const { client, calls } = supabaseMock([
+    { data: null, error: { code: '23505', message: 'duplicate' } },
+  ])
+  const result = await saveVideoCoachDraft(client, row,
+    { updateClientAnalysisId: row.client_analysis_id })
+  assert.equal(result.duplicate, false)
+  assert.equal(calls.filter(call => call[0] === 'update').length, 1,
+    'En UPDATE må ikke udløse et ekstra dublet-genforsøg')
 }
 
 assert.equal(isRetryableVideoCoachError({ message: 'Failed to fetch' }), true)

@@ -12,6 +12,8 @@ import { flushVideoCoachDraftQueue, isRetryableVideoCoachError,
   queueVideoCoachDraft, saveVideoCoachDraft,
   validateVideoCoachPayloadBounds } from './videoCoachSubmission'
 import { VIDEOCOACH_BUILD_ID } from './videoCoachVersion'
+import { buildAwaitingAnalysisRow, buildVideoUploadPath, validateVideoUploadRequest,
+  videoUploadAlreadyExistsError, VIDEOCOACH_UPLOAD_BUCKET } from './videoCoachUpload'
 
 const ATHLETE_VIDEOCOACH_PREFIX = 'entropi:videocoach:v3'
 const ATHLETE_VIDEOCOACH_QUEUE_CHANGED = 'entropi:videocoach:queue-changed'
@@ -1840,6 +1842,55 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         event.source.postMessage({ type: `${ATHLETE_VIDEOCOACH_PREFIX}:config`,
           athletes: [{ id: currentAthlete.id, name: currentAthlete.name }],
           selectedAthleteId: currentAthlete.id, submissionMode: 'athlete' }, event.origin)
+        window.dispatchEvent(new Event(ATHLETE_VIDEOCOACH_QUEUE_CHANGED))
+        return
+      }
+      // ORDRE 57 · commit 1: "upload og gå" - atleten sender selve videoen,
+      // ikke sporede tal. Kun appen har en autentificeret Supabase-klient
+      // (VideoCoach har ingen), så både storage-uploaden og rækkens indsættelse
+      // sker her. Filen rejser i selve beskeden (File/Blob er struktur-klonbar).
+      if (message.type === `${ATHLETE_VIDEOCOACH_PREFIX}:upload-and-go`) {
+        const reply = result => {
+          try { event.source.postMessage({ type: `${ATHLETE_VIDEOCOACH_PREFIX}:upload-result`,
+            requestId: message.requestId, ...result }, event.origin); return true }
+          catch { return false }
+        }
+        if (!athleteVideoCoachClientsRef.current.has(event.source) || !currentAthlete?.id) {
+          reply({ ok: false, error: 'VideoCoach-forbindelsen er ikke registreret' })
+          return
+        }
+        const file = message.file
+        const requestError = validateVideoUploadRequest({
+          athleteId: currentAthlete.id, clientAnalysisId: message.clientAnalysisId,
+          lift: message.lift, variation: message.variation, mimeType: message.mimeType,
+          fileSize: file?.size, loadKg: message.loadKg, rpe: message.rpe,
+          athleteNote: message.athleteNote,
+        })
+        if (requestError || !(file instanceof Blob)) {
+          reply({ ok: false, error: requestError || 'Ugyldig video' })
+          return
+        }
+        const path = buildVideoUploadPath(currentAthlete.id, message.clientAnalysisId, message.mimeType)
+        if (!path) { reply({ ok: false, error: 'Videoformatet kunne ikke gemmes' }); return }
+        const upload = await supabase.storage.from(VIDEOCOACH_UPLOAD_BUCKET)
+          .upload(path, file, { contentType: message.mimeType, upsert: false })
+        if (upload.error && !videoUploadAlreadyExistsError(upload.error)) {
+          reply({ ok: false, error: `Video kunne ikke uploades: ${upload.error.message || 'ukendt fejl'}` })
+          return
+        }
+        const row = buildAwaitingAnalysisRow({
+          athleteId: currentAthlete.id, athleteName: currentAthlete.name,
+          clientAnalysisId: message.clientAnalysisId, lift: message.lift, variation: message.variation,
+          loadKg: message.loadKg, rpe: message.rpe, athleteNote: message.athleteNote, videoPath: path,
+        })
+        const saved = await saveVideoCoachDraft(supabase, row, { athleteSubmission: true })
+        if (saved.error) {
+          // Videoen er allerede lagt i bucket'en (idempotent sti pr. client_analysis_id) -
+          // kun selve rækken mangler. Et nyt tryk på "Prøv at sende igen" er nok.
+          reply({ ok: false, error: saved.error.message || 'Videoen blev uploadet, men analysen kunne ikke oprettes · prøv igen' })
+          return
+        }
+        reply({ ok: true, data: { ...saved.data, duplicate: saved.duplicate } })
         window.dispatchEvent(new Event(ATHLETE_VIDEOCOACH_QUEUE_CHANGED))
         return
       }
