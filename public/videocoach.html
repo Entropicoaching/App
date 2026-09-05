@@ -918,6 +918,8 @@
 </div>
 <!-- ORDRE 43 · bekræft skelet-proportions-forslaget, se #mskelConfirmNav -->
 <div id="mskelConfirmNav">
+  <!-- ORDRE 47 · albuens tvetydighed (to geometrisk gyldige sider) - ét tryk vender den -->
+  <button id="mskelFlipElbowBtn" type="button" hidden title="Albuen kan ligge på to sider - vend hvis den ser spejlvendt ud">⇄ vend albuen</button>
   <button id="mskelConfirmBtn" type="button">✓ Videre</button>
 </div>
 <!-- ORDRE 45 · én kontakt for tracker-hastighedsgrebene, se JS: vcReadTrackerFast -->
@@ -1762,7 +1764,7 @@ canvas.addEventListener('pointerdown', e => {
     if (mskelClicks.awaitingConfirm) {
       const bag = mskelClicks[mskelClicks.phase];
       const hitR = Math.max(16, canvas.width / 55);
-      const key = ['sh', 'hip', 'knee', 'ank'].find(k =>
+      const key = ['sh', 'hip', 'knee', 'ank', 'el', 'wr'].find(k =>
         bag[k] && Math.hypot(p.x - bag[k].x, p.y - bag[k].y) <= hitR);
       if (key) mskelDrag = key;
       return;
@@ -2226,6 +2228,61 @@ function barXYAt(path, t) {
   const j = Math.max(0, Math.min(PTS.length - 1, idxAtTime({ times: TMS }, t)));
   return { x: PTS[j].x, y: PTS[j].y };
 }
+
+// MSKEL_ARM_IK_START — ORDRE 47: skulderen står stille gennem hele
+// bænkpresset (torsoen ligger fast på bænken), i modsætning til ankelen i
+// benkæden. Derfor er det stærkere anker: ét klik for HELE sættet, ikke ét
+// pr. fase. Håndleddet er stangens sporede position - "grebet er på
+// stangen", intet klik. Albuen er geometrisk låst mellem skulder og stang
+// via de gemte arm-længder (klassisk to-cirkel-skæring) - to mulige
+// positioner, spejlvendt om skulder-stang-linjen. Uden historik vælges
+// standard-siden (albuen "nedad" i billedet, sådan flader den ud i et
+// bænkpres uanset hvilken vej atleten vender på skærmen); en tidligere
+// analyses faktiske valg vinder hvis der er en, og ⇄-knappen vender det med
+// ét tryk (samme valg gælder resten af sættet, jf. ordren).
+function mskelElbowSign(sh, el, wr) {
+  const s = (wr.x - sh.x) * (el.y - sh.y) - (wr.y - sh.y) * (el.x - sh.x);
+  return s >= 0 ? 1 : -1;
+}
+function mskelReflectAcrossLine(sh, wr, p) {
+  const dx = wr.x - sh.x, dy = wr.y - sh.y, len2 = dx * dx + dy * dy;
+  if (len2 < 1) return { ...p };
+  const t = ((p.x - sh.x) * dx + (p.y - sh.y) * dy) / len2;
+  const fx = sh.x + t * dx, fy = sh.y + t * dy;
+  return { x: 2 * fx - p.x, y: 2 * fy - p.y };
+}
+function mskelSolveElbow(sh, wr, upperLen, foreLen, preferSign) {
+  const dx = wr.x - sh.x, dy = wr.y - sh.y;
+  const d = Math.hypot(dx, dy);
+  if (d < 1 || !(upperLen > 0) || !(foreLen > 0)) return null;
+  // klem afstanden ind i det gyldige interval, saa klik-stoej ikke gør
+  // cirklerne ikke-skærende (trekantsuligheden brudt af meget lidt)
+  const maxD = upperLen + foreLen, minD = Math.abs(upperLen - foreLen);
+  const dc = Math.max(minD + 0.01, Math.min(maxD - 0.01, d));
+  const ux = dx / dc, uy = dy / dc;
+  const a = (upperLen * upperLen - foreLen * foreLen + dc * dc) / (2 * dc);
+  const h = Math.sqrt(Math.max(0, upperLen * upperLen - a * a));
+  const px = sh.x + a * ux, py = sh.y + a * uy;
+  const c1 = { x: px - h * uy, y: py + h * ux };
+  const c2 = { x: px + h * uy, y: py - h * ux };
+  if (preferSign) return mskelElbowSign(sh, c1, wr) === preferSign ? c1 : c2;
+  return c1.y >= c2.y ? c1 : c2;
+}
+// Håndled = stangens position (intet klik). Albue = to-cirkel-skæring ud fra
+// gemte længder, med sideval fra denne sessions ⇄-valg > sidste analyses
+// valg for denne fase > standard.
+function mskelDeriveArmFromShoulder(m, sh, barXY) {
+  const props = m.proportions;
+  if (!props || !sh || !barXY || !(cmPerPx > 0)) return null;
+  const upperPx = props.upperArmCm / cmPerPx, forePx = props.forearmCm / cmPerPx;
+  const wr = { ...barXY };
+  const preferSign = m.elbowSignOverride ||
+    (props.elbowSign && props.elbowSign[m.phase]) || null;
+  const el = mskelSolveElbow(sh, wr, upperPx, forePx, preferSign);
+  if (!el) return null;
+  return { wr, el };
+}
+// MSKEL_ARM_IK_END
 
 // MSKEL_GEOMETRY_MODEL_START
 // Et menneskes overarm, torso og laar bliver ikke laengere under et loeft.
@@ -3089,6 +3146,12 @@ function render() {
         ctx.beginPath(); ctx.arc(p.x, p.y, Math.max(6, canvas.width / 180), 0, 7); ctx.fill();
         ctx.font = `bold ${Math.max(14, canvas.width / 75)}px sans-serif`;
         ctx.fillText(String(i + 1), p.x + 10, p.y - 8);
+        // ORDRE 47 · albuen kan geometrisk ligge på to sider - marker
+        // valget synligt, så et forkert (spejlvendt) gæt ikke ser rigtigt ud.
+        if (suggested && mskelClicks.chain === 'arm' && k === 'el') {
+          ctx.font = `${Math.max(11, canvas.width / 100)}px 'IBM Plex Mono',monospace`;
+          ctx.fillText('albue: forslag · ⇄ kan vendes', p.x + 10, p.y + 20);
+        }
         ctx.restore();
       });
     }
@@ -4977,7 +5040,24 @@ document.getElementById('mskelNextRepBtn').onclick = () => mskelSwitchRep(1);
 // retter et proportions-forslag (ankel klikket, resten lagt ud automatisk).
 function mskelUpdateConfirmUI(m) {
   document.getElementById('mskelConfirmNav').classList.toggle('show', !!(m && m.awaitingConfirm));
+  // ORDRE 47 · ⇄-knappen findes kun mens et FORESLÅET albuepunkt (bænk) er
+  // til gennemsyn - albuens to-sider-tvetydighed findes ikke i benkæden.
+  document.getElementById('mskelFlipElbowBtn').hidden = !(m && m.awaitingConfirm &&
+    m.chain === 'arm' && m[m.phase]._suggested && m[m.phase]._suggested.el);
 }
+// ORDRE 47 · vend albuen til den anden geometrisk gyldige side (spejling om
+// skulder-stang-linjen). Valget huskes for resten af sættet.
+function mskelFlipElbow() {
+  const m = mskelClicks;
+  if (!m || m.chain !== 'arm' || !m.awaitingConfirm) return;
+  const bag = m[m.phase];
+  if (!bag.sh || !bag.el || !bag.wr) return;
+  bag.el = mskelReflectAcrossLine(bag.sh, bag.wr, bag.el);
+  m.elbowSignOverride = mskelElbowSign(bag.sh, bag.el, bag.wr);
+  say('Albuen vendt · samme valg bruges resten af sættet');
+  setTimeout(() => say(''), 1600);
+}
+document.getElementById('mskelFlipElbowBtn').onclick = () => mskelFlipElbow();
 async function mskelConfirmPhase() {
   const m = mskelClicks;
   if (!m || !m.awaitingConfirm) return;
@@ -5025,15 +5105,20 @@ document.getElementById('mskelBtn').onclick = async () => {
   const arm = liftK === 'Bænkpres';
   const keyTimes = mskelKeyTimes(path, liftK);
   if (keyTimes.suggested) await seekTo(keyTimes.topTime);   // usikker bane -> bliv hvor vi er
-  // ORDRE 43 · Commit 3: kendte proportioner (kun ben-kæden - ordren nævner
-  // udtrykkeligt ankelen) betyder Marc klikker ankelen først, resten lægges
-  // ud automatisk. Ingen historik -> nøjagtig samme flow som hidtil.
-  const propSuggestion = (!arm && vcPriorSetup && vcPriorSetup.skeletonProportions &&
-    vcPriorSetup.skeletonProportions.chain === 'leg') ? vcPriorSetup.skeletonProportions : null;
+  // ORDRE 43 · Commit 3 (benkæden): kendte proportioner betyder Marc klikker
+  // ankelen først, resten lægges ud automatisk. ORDRE 47 (armkæden/bænk):
+  // samme idé, men skulderen alene - den står stille hele sættet, se
+  // MSKEL_ARM_IK_START. Ingen historik -> nøjagtig samme flow som hidtil.
+  const propSuggestion = vcPriorSetup && vcPriorSetup.skeletonProportions &&
+    vcPriorSetup.skeletonProportions.chain === (arm ? 'arm' : 'leg')
+    ? vcPriorSetup.skeletonProportions : null;
+  const armPropUsable = arm && propSuggestion && cmPerPx > 0 &&
+    Number.isFinite(propSuggestion.upperArmCm) && Number.isFinite(propSuggestion.forearmCm);
+  const usableProps = arm ? (armPropUsable ? propSuggestion : null) : propSuggestion;
   const order = arm ? ['sh', 'el', 'wr'] : propSuggestion ? ['ank', 'knee', 'hip', 'sh']
     : ['sh', 'hip', 'knee', 'ank'];
   mskelClicks = { phase: 'top', chain: arm ? 'arm' : 'leg', lift: liftK,
-    order, proportions: propSuggestion, awaitingConfirm: false,
+    order, proportions: usableProps, awaitingConfirm: false, elbowSignOverride: null,
     step: 0, top: {}, bot: {}, stick: {}, path,
     topTime: keyTimes.topTime, botTime: keyTimes.botTime,
     stickTime: keyTimes.stickTime, stickDepth: keyTimes.stickDepth, seeking: false,
@@ -5076,6 +5161,26 @@ async function mskelStep(p) {
     }
     m.proportions = null;   // kunne ikke bæres - fortsæt manuelt fra næste punkt i kæden
   }
+  // ORDRE 47 · skulderen alene (bænk): håndled = stangens position, albue =
+  // geometrisk låst ud fra gemte arm-længder (se MSKEL_ARM_IK_START). Denne
+  // klik gælder KUN top-fasen - bund/sticking genbruger skulderen uden nyt
+  // klik, se mskelBeginArmPhase.
+  if (key === 'sh' && m.chain === 'arm' && m.phase === 'top' && m.proportions) {
+    const barXY = barXYAt(m.path, video.currentTime);
+    const derived = mskelDeriveArmFromShoulder(m, p, barXY);
+    if (derived) {
+      bag.wr = derived.wr; bag.el = derived.el;
+      bag._suggested = { wr: true, el: true };
+      m.shoulder = { ...p };
+      m.awaitingConfirm = true;
+      mskelUpdateRepUI(m);
+      mskelUpdateConfirmUI(m);
+      say(`Forslag fra sidste gang · ${m.topName} · albuen kan vendes ⇄ · træk et punkt for at rette · ✓ Videre for at fortsætte`);
+      return;
+    }
+    m.proportions = null;   // kunne ikke bæres - fortsæt manuelt fra næste punkt i kæden
+  }
+  if (key === 'sh' && m.chain === 'arm') m.shoulder = { ...p };   // huskes til bund/sticking uanset forslag
   m.step++;
   mskelUpdateRepUI(m);   // ORDRE 43 · rep-vælgeren gælder kun før første klik
   const N = m.order.length;
@@ -5095,6 +5200,7 @@ async function mskelAdvancePhase(m) {
     await seekTo(m.botTime);
     if (mskelClicks !== m) return;
     m.phase = 'bot'; m.step = 0; m.seeking = false;
+    if (m.chain === 'arm' && m.shoulder) return mskelBeginArmPhase(m, 2);
     say(`POSITION 2/3 · ${m.botName} · ${MSKEL_LBL[m.order[0]]}`);
     return;
   }
@@ -5103,6 +5209,7 @@ async function mskelAdvancePhase(m) {
     await seekTo(m.stickTime);
     if (mskelClicks !== m) return;
     m.phase = 'stick'; m.step = 0; m.seeking = false;
+    if (m.chain === 'arm' && m.shoulder) return mskelBeginArmPhase(m, 3);
     say(`POSITION 3/3 · ${m.stickName} · ${MSKEL_LBL[m.order[0]]}`);
     return;
   }
@@ -5110,6 +5217,33 @@ async function mskelAdvancePhase(m) {
   mskelUpdateRepUI(null);
   mskelUpdateConfirmUI(null);
   buildMskel(m);
+}
+// ORDRE 47 · bænk: skulderen genbruges i BUND/STICKING uden nyt klik - den
+// står stille gennem hele sættet (se MSKEL_ARM_IK_START). Er der gemte
+// arm-længder, lægges håndled (stangen) og albue helt automatisk ud og
+// afventer kun ✓; ellers springes kun skulder-klikket over, og Marc klikker
+// albue+håndled manuelt som hidtil.
+function mskelBeginArmPhase(m, posNum) {
+  const bag = m[m.phase];
+  bag.sh = { ...m.shoulder };
+  bag._barY = barYAt(m.path, video.currentTime);
+  const phaseLbl = m.phase === 'bot' ? m.botName : m.stickName;
+  if (m.proportions) {
+    const barXY = barXYAt(m.path, video.currentTime);
+    const derived = mskelDeriveArmFromShoulder(m, bag.sh, barXY);
+    if (derived) {
+      bag.wr = derived.wr; bag.el = derived.el;
+      bag._suggested = { wr: true, el: true };
+      m.step = m.order.length;
+      m.awaitingConfirm = true;
+      mskelUpdateConfirmUI(m);
+      say(`Forslag fra sidste gang · ${phaseLbl} · albuen kan vendes ⇄ · træk et punkt for at rette · ✓ Videre for at fortsætte`);
+      return;
+    }
+    m.proportions = null;   // kunne ikke bæres - fortsæt manuelt fra næste punkt i kæden
+  }
+  m.step = 1;   // skulderen er allerede sat - næste punkt i kæden er albuen
+  say(`POSITION ${posNum}/3 · ${phaseLbl} · ${MSKEL_LBL[m.order[1]]}`);
 }
 // stangens y til et givet tidspunkt (dybde-driver for keyframe-skelettet)
 function barYAt(path, t) {
@@ -5583,6 +5717,20 @@ function collectMetrics() {
         m.push(`Bænkebanens retning: stangen kommer ` +
           `${lastVals.benchTowardShoulderCm >= 0 ? lastVals.benchTowardShoulderCm + ' cm tættere på' : Math.abs(lastVals.benchTowardShoulderCm) + ' cm længere fra'} ` +
           `den målte skulderlinje fra bryst til lockout`);
+      }
+      // ORDRE 47 · gem albue/underarm-længder (cm, kalibrerings-uafhængige -
+      // se MSKEL_ARM_IK_START) og hvilken side albuen faktisk lå på pr. fase,
+      // så NÆSTE analyse af samme atlet+løft+variation kan foreslå
+      // armkæden ud fra ét skulder-klik (samme mønster som benkædens
+      // ankel-forslag, ordre 43).
+      if (cmPerPx && mskel.segmentLengths && mskel.segmentLengths['el:sh'] &&
+          mskel.segmentLengths['wr:el'] && mskel.top && mskel.bot) {
+        const sign = ph => ph && ph.sh && ph.el && ph.wr
+          ? mskelElbowSign(ph.sh, ph.el, ph.wr) : null;
+        lastVals.skeletonProportions = { chain: 'arm',
+          upperArmCm: +(mskel.segmentLengths['el:sh'] * cmPerPx).toFixed(2),
+          forearmCm: +(mskel.segmentLengths['wr:el'] * cmPerPx).toFixed(2),
+          elbowSign: { top: sign(mskel.top), bot: sign(mskel.bot), stick: sign(mskel.stick) } };
       }
     } else {
       lastVals.kneeAngle = angM(b.hip, b.knee, b.ank);
