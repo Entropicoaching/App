@@ -43,6 +43,7 @@ const GATE_RIGS = [
   { name: 'tracker-deadlift-descent-rig', cmd: ['node', vc('tracker-deadlift-descent-rig.mjs')] },
   { name: 'tracker-deadlift-top-exit-rig', cmd: ['node', vc('tracker-deadlift-top-exit-rig.mjs')] },
   { name: 'bar-path-visual-smoothing-rig', cmd: ['node', vc('bar-path-visual-smoothing-rig.mjs')] },
+  { name: 'rep-preview-rig (ORDRE 54 · "Vis mig nu")', cmd: ['node', vc('rep-preview-rig.mjs')] },
 ];
 
 const INFO_RIGS = [
