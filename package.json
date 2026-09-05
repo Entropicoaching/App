@@ -26,6 +26,7 @@
     "verify:videocoach-submission": "node scripts/verify-videocoach-submission.mjs",
     "verify:videocoach-migrations": "node scripts/verify-videocoach-migrations.mjs",
     "verify:videocoach-zoom": "node scripts/verify-videocoach-zoom.mjs",
+    "gate:tracker": "node scripts/gate-tracker.mjs",
     "verify:n8n": "node n8n/verify-workflows.mjs",
     "preview:n8n-briefing": "node n8n/preview-coach-briefing.mjs"
   },
