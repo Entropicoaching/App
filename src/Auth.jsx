@@ -9,12 +9,14 @@ export default function Auth() {
   const [error, setError] = useState(null)
   const [notice, setNotice] = useState(null)
   const [mode, setMode] = useState('login') // 'login', 'signup' eller 'reset'
+  const [unconfirmedEmail, setUnconfirmedEmail] = useState(null)
 
   async function handleSubmit(e) {
     e.preventDefault()
     setLoading(true)
     setError(null)
     setNotice(null)
+    setUnconfirmedEmail(null)
 
     const normalizedEmail = normalizeAthleteLoginEmail(email)
     if (!normalizedEmail) {
@@ -45,11 +47,23 @@ export default function Auth() {
 
     if (result.error) {
       setError(athleteAuthErrorMessage(result.error, mode))
+      const rawMessage = typeof result.error?.message === 'string' ? result.error.message.toLowerCase() : ''
+      if (mode === 'login' && rawMessage.includes('email not confirmed')) setUnconfirmedEmail(normalizedEmail)
     } else if (mode === 'signup' && !result.data?.session) {
       setPassword('')
       setMode('login')
       setNotice(`Tjek din email. Vi har sendt et bekræftelseslink til ${normalizedEmail}. Når du har bekræftet, kan du logge ind her.`)
     }
+    setLoading(false)
+  }
+
+  async function resendConfirmation() {
+    if (!unconfirmedEmail || loading) return
+    setLoading(true)
+    setError(null)
+    const { error } = await supabase.auth.resend({ type: 'signup', email: unconfirmedEmail })
+    if (error) setError(athleteAuthErrorMessage(error, 'reset'))
+    else setNotice(`Der er sendt et nyt bekræftelseslink til ${unconfirmedEmail}.`)
     setLoading(false)
   }
 
@@ -166,7 +180,7 @@ export default function Auth() {
           {mode === 'login' && (
             <div style={{ textAlign: 'right', marginBottom: '1.5rem' }}>
               <span
-                onClick={() => { setMode('reset'); setError(null); setNotice(null) }}
+                onClick={() => { setMode('reset'); setError(null); setNotice(null); setUnconfirmedEmail(null) }}
                 style={{ fontSize: '0.76rem', color: '#7a7770', cursor: 'pointer', padding: '0.4rem 0', minHeight: '44px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center' }}
               >Glemt adgangskode?</span>
             </div>
@@ -183,6 +197,15 @@ export default function Auth() {
               border: '1px solid rgba(224,85,85,0.2)',
             }}>
               {error}
+            </div>
+          )}
+
+          {unconfirmedEmail && (
+            <div style={{ textAlign: 'right', marginBottom: '1rem' }}>
+              <span
+                onClick={resendConfirmation}
+                style={{ fontSize: '0.76rem', color: '#7a7770', cursor: loading ? 'default' : 'pointer', padding: '0.4rem 0', minHeight: '44px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center', opacity: loading ? 0.6 : 1 }}
+              >Send bekræftelseslink igen</span>
             </div>
           )}
 
@@ -230,13 +253,13 @@ export default function Auth() {
         }}>
           {mode === 'login' ? (
             <>Ingen konto? <span
-              onClick={() => { setMode('signup'); setError(null); setNotice(null) }}
-              style={{ color: '#7a7770', cursor: 'pointer' }}
+              onClick={() => { setMode('signup'); setError(null); setNotice(null); setUnconfirmedEmail(null) }}
+              style={{ color: '#7a7770', cursor: 'pointer', padding: '0.4rem 0.2rem', minHeight: '44px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center' }}
             >Opret her</span></>
           ) : (
             <>Har du en konto? <span
-              onClick={() => { setMode('login'); setError(null); setNotice(null) }}
-              style={{ color: '#7a7770', cursor: 'pointer' }}
+              onClick={() => { setMode('login'); setError(null); setNotice(null); setUnconfirmedEmail(null) }}
+              style={{ color: '#7a7770', cursor: 'pointer', padding: '0.4rem 0.2rem', minHeight: '44px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center' }}
             >Log ind</span></>
           )}
         </div>

@@ -16,6 +16,8 @@
     "verify:athlete-write-failures": "node scripts/verify-athlete-write-failures.mjs",
     "verify:athlete-tap-targets": "node scripts/verify-athlete-tap-targets.mjs",
     "verify:athlete-password-reset": "node scripts/verify-athlete-password-reset.mjs",
+    "verify:athlete-jargon-explained": "node scripts/verify-athlete-jargon-explained.mjs",
+    "verify:athlete-self-service": "node scripts/verify-athlete-self-service.mjs",
     "verify:coach-inbox-flow": "node scripts/verify-coach-inbox-flow.mjs",
     "verify:coach-priority": "node scripts/verify-coach-priority.mjs",
     "verify:progression-state": "node scripts/verify-progression-state.mjs",
