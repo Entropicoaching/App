@@ -2654,11 +2654,13 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   async function skipSet(exerciseId, setNumber, plannedRpe) {
     const existing = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber)
     const payload = { skipped: true, weight: 0, reps_completed: 0, note: null, rpe_actual: null, rpe_planned: plannedRpe ?? null }
-    if (existing) {
-      await supabase.from('exercise_logs').update(payload).eq('id', existing.id)
-    } else {
-      await supabase.from('exercise_logs').insert({ exercise_id: exerciseId, athlete_id: athlete.id, set_number: setNumber, ...payload })
-    }
+    const ok = await runGuardedWrite(
+      () => existing
+        ? supabase.from('exercise_logs').update(payload).eq('id', existing.id)
+        : supabase.from('exercise_logs').insert({ exercise_id: exerciseId, athlete_id: athlete.id, set_number: setNumber, ...payload }),
+      () => showFlash('Sættet kunne ikke springes over. Tjek din forbindelse og prøv igen.', 'error'),
+    )
+    if (!ok) return
     fetchExerciseLogs(athlete.id, currentWeek)
   }
 
@@ -2668,18 +2670,25 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       !exerciseLogs.find(l => l.exercise_id === ex.id && l.set_number === setNum)
     )
     if (toSkip.length === 0) return
-    await supabase.from('exercise_logs').insert(
-      toSkip.map(setNum => ({ exercise_id: ex.id, athlete_id: athlete.id, set_number: setNum, skipped: true, weight: 0, reps_completed: 0, rpe_planned: plannedRpe ?? null }))
+    const ok = await runGuardedWrite(
+      () => supabase.from('exercise_logs').insert(
+        toSkip.map(setNum => ({ exercise_id: ex.id, athlete_id: athlete.id, set_number: setNum, skipped: true, weight: 0, reps_completed: 0, rpe_planned: plannedRpe ?? null }))
+      ),
+      () => showFlash('Øvelsen kunne ikke springes over. Tjek din forbindelse og prøv igen.', 'error'),
     )
+    if (!ok) return
     fetchExerciseLogs(athlete.id, currentWeek)
   }
 
   async function unskipSet(exerciseId, setNumber) {
     const existing = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber)
-    if (existing) {
-      await supabase.from('exercise_logs').delete().eq('id', existing.id)
-      fetchExerciseLogs(athlete.id, currentWeek)
-    }
+    if (!existing) return
+    const ok = await runGuardedWrite(
+      () => supabase.from('exercise_logs').delete().eq('id', existing.id),
+      () => showFlash('Kunne ikke fortryde spring over. Tjek din forbindelse og prøv igen.', 'error'),
+    )
+    if (!ok) return
+    fetchExerciseLogs(athlete.id, currentWeek)
   }
 
   async function saveFeedback(sessionId) {

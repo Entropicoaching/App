@@ -39,4 +39,14 @@ for (const name of ['quickLogFood', 'copyYesterday', 'saveTemplate', 'logTemplat
     `${name} må ikke skrive direkte uden om garden`)
 }
 
+// ORDRE 64 — "de stille fejl, runde 2": F4 fra ordre 41's fundliste havde
+// samme mønster som F1/F2 herover. Samme tjek, nye steder.
+for (const name of ['skipSet', 'skipExercise', 'unskipSet']) {
+  const fn = extractFn(name)
+  assert.match(fn, /runGuardedWrite\(/, `${name} skal gå igennem write-garden`)
+  assert.match(fn, /if \(!ok\) return[\s\S]*fetchExerciseLogs\(/,
+    `${name} må først genindlæse sæt-loggen EFTER en bekræftet skrivning`)
+}
+
 console.log('Besked- og kostlog-skrivninger viser en fejl og lader IKKE som succes, når skrivningen fejler.')
+console.log('Spring-over (skipSet/skipExercise/unskipSet) følger nu samme mønster (ordre 64, F4).')

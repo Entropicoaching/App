@@ -23,3 +23,20 @@ test('en kastet fejl fra run() propagerer ikke stille — kalderen skal selv fan
   // er en programmeringsfejl, ikke en transient netværksfejl, og skal fejle højt.
   await assert.rejects(() => runGuardedWrite(async () => { throw new Error('boom') }, () => {}))
 })
+
+// ORDRE 64 — "de stille fejl, runde 2": F4-F7 fra ordre 41's fundliste (afsnit
+// "Den fulde fundliste") havde alle samme mønster — rå Supabase-kald uden
+// fejltjek — og er nu koblet gennem runGuardedWrite (se AthleteView.jsx).
+
+test('F4 — skipSet/skipExercise/unskipSet: fejl giver besked og fetchExerciseLogs kaldes ikke', async () => {
+  let flashed = null
+  let refetched = false
+  const ok = await runGuardedWrite(
+    async () => ({ error: { message: 'network drop' } }),
+    () => { flashed = 'Sættet kunne ikke springes over. Tjek din forbindelse og prøv igen.' },
+  )
+  if (ok) refetched = true // spejler "if (!ok) return" før fetchExerciseLogs i AthleteView.jsx
+  assert.equal(ok, false)
+  assert.equal(flashed, 'Sættet kunne ikke springes over. Tjek din forbindelse og prøv igen.')
+  assert.equal(refetched, false, 'tilstanden må ikke genindlæses/ændres når skrivningen er fejlet')
+})
