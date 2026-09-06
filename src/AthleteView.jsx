@@ -5816,8 +5816,13 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               const colMap = { squat: 'squat', bench: 'bench', deadlift: 'deadlift' }
               const col = colMap[key]
               if (col) {
-                await supabase.rpc('update_competition_max', { p_lift: col, p_weight: best })
-                setAthlete(prev => ({ ...prev, [col]: best }))
+                // Skærmen skal aldrig vise et stævnemaks RPC'en ikke har bekræftet —
+                // ellers står coachen med et forkert tal, når den ægte databaseværdi afviger.
+                const ok = await runGuardedWrite(
+                  () => supabase.rpc('update_competition_max', { p_lift: col, p_weight: best }),
+                  () => showFlash('Stævnemakset blev ikke gemt. Tjek din forbindelse og prøv igen.', 'error'),
+                )
+                if (ok) setAthlete(prev => ({ ...prev, [col]: best }))
               }
             }
           }

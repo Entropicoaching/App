@@ -20,6 +20,24 @@ const extractFn = (name) => {
   return match[0]
 }
 
+// Som extractFn, men uafhængig af indrykningsniveau — finder funktionens
+// åbnings-brace og tæller sig frem til den matchende lukke-brace. Nødvendig
+// for funktioner defineret dybt inde i JSX (fx markGoodAndSave), hvor den
+// simple "\n  }"-formodning ovenfor ikke holder.
+const extractFnBalanced = (name) => {
+  const startMatch = athleteView.match(new RegExp(`async function ${name}\\([^)]*\\) \\{`))
+  assert.ok(startMatch, `${name} skal kunne findes som en samlet funktion`)
+  const bodyStart = startMatch.index + startMatch[0].length
+  let depth = 1
+  let i = bodyStart
+  while (depth > 0 && i < athleteView.length) {
+    if (athleteView[i] === '{') depth++
+    else if (athleteView[i] === '}') depth--
+    i++
+  }
+  return athleteView.slice(startMatch.index, i)
+}
+
 // sendAthleteMessage: det konkrete symptom var at inputtet blev ryddet
 // UANSET om skrivningen lykkedes. Tjek at rydningen kommer EFTER garden,
 // altså kun når den lykkedes.
@@ -48,5 +66,12 @@ for (const name of ['skipSet', 'skipExercise', 'unskipSet']) {
     `${name} må først genindlæse sæt-loggen EFTER en bekræftet skrivning`)
 }
 
+// F5: markGoodAndSave må kun opdatere athlete.squat/bench/deadlift i UI'en når
+// RPC'en har svaret uden fejl.
+const markGoodAndSave = extractFnBalanced('markGoodAndSave')
+assert.match(markGoodAndSave, /runGuardedWrite\(/, 'markGoodAndSave skal gå igennem write-garden')
+assert.match(markGoodAndSave, /if \(ok\) setAthlete\(/,
+  'setAthlete må kun kaldes når update_competition_max har bekræftet skrivningen')
+
 console.log('Besked- og kostlog-skrivninger viser en fejl og lader IKKE som succes, når skrivningen fejler.')
-console.log('Spring-over (skipSet/skipExercise/unskipSet) følger nu samme mønster (ordre 64, F4).')
+console.log('Spring-over (skipSet/skipExercise/unskipSet) og stævnemaks følger nu samme mønster (ordre 64, F4-F5).')

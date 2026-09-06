@@ -40,3 +40,17 @@ test('F4 — skipSet/skipExercise/unskipSet: fejl giver besked og fetchExerciseL
   assert.equal(flashed, 'Sættet kunne ikke springes over. Tjek din forbindelse og prøv igen.')
   assert.equal(refetched, false, 'tilstanden må ikke genindlæses/ændres når skrivningen er fejlet')
 })
+
+test('F5 — markGoodAndSave: fejl fra update_competition_max giver besked og rører ikke athlete.squat/bench/deadlift', async () => {
+  let athlete = { id: 'a1', squat: 100 }
+  const before = athlete
+  let flashed = null
+  const ok = await runGuardedWrite(
+    async () => ({ error: { message: 'rpc timeout' } }),
+    () => { flashed = 'Stævnemakset blev ikke gemt. Tjek din forbindelse og prøv igen.' },
+  )
+  if (ok) athlete = { ...athlete, squat: 120 } // spejler "if (ok) setAthlete(...)" i AthleteView.jsx
+  assert.equal(ok, false)
+  assert.equal(flashed, 'Stævnemakset blev ikke gemt. Tjek din forbindelse og prøv igen.')
+  assert.equal(athlete, before, 'skærmens stævnemaks må ikke ændres før RPC-kaldet har bekræftet')
+})
