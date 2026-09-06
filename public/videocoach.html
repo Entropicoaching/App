@@ -531,12 +531,35 @@
   #mskelConfirmNav.show { display:flex; }
   #mskelConfirmNav button { background:rgba(20,20,16,.92); border:1px solid #5b9bb5;
     color:#5b9bb5; border-radius:12px; padding:12px 22px; font-size:15px; font-weight:600; }
-  /* ORDRE 45 · én kontakt, altid synlig, nederst til venstre (uden for
-     nav-bjælken/mskel-knapperne foroven, så den aldrig ligger bag noget). */
-  #trackerFastBtn { position:fixed; left:10px; bottom:10px; z-index:20;
-    background:rgba(20,20,16,.85); border:1px solid var(--accent); color:var(--accent);
-    border-radius:10px; padding:8px 12px; font-size:12px; }
-  #trackerFastBtn.off { border-color:#cf6b4e; color:#cf6b4e; }
+  /* ORDRE 45 · nederst til venstre som DESKTOP-udgangspunkt (uden for
+     nav-bjælken/mskel-knapperne foroven, så den aldrig ligger bag noget).
+     ORDRE 80 · to små ikon-chips (30px) i stedet for én stor tekst-knap -
+     Marcs egen klage var at den fyldte for meget oven i analyse-UI'et. Målt
+     (se RAPPORT.md): i coachweb, med et klip åbnet på en 390px-viewport, lå
+     denne bund-venstre-placering midt oven i BÅDE footeren og scrubRow
+     (tidslinje/fartpanel) - den egentlige analyse-UI. */
+  #trackerFastSeg { position:fixed; left:10px; bottom:10px; z-index:20;
+    display:flex; gap:1px; background:rgba(20,20,16,.85);
+    border:1px solid rgba(237,234,226,.14); border-radius:9px; padding:2px;
+    box-shadow:0 4px 14px rgba(0,0,0,.22); }
+  #trackerFastSeg button { width:30px; height:30px; padding:0; border:none;
+    border-radius:7px; background:transparent; color:rgba(237,234,226,.4);
+    font-size:14px; line-height:1; }
+  #trackerFastSeg button.active { background:rgba(200,146,58,.16); color:var(--accent); }
+  #trackerFastOffBtn.active { background:rgba(207,107,78,.16); color:#cf6b4e; }
+  /* ORDRE 80 · SLIM (coachweb - athlete skjuler den helt, se JS'en der
+     flytter den): flyttet ind i #vcUtilityActions, den eksisterende slot i
+     topbjælken hvor luk/tilpas-knapperne allerede bor. Toppen SÅ ledig ud
+     (header/zenBtn/openSmall er skjulte der), men #vcSystemBar (z-index 40,
+     fuld bredde) dækkede den visuelt - denne slot er den ægte ledige plads.
+     position:static ophæver den faste bund-venstre-placering ovenfor. */
+  #vcUtilityActions #trackerFastSeg { position:static !important; padding:1px;
+    box-shadow:none; background:rgba(255,255,255,.04); }
+  #vcUtilityActions #trackerFastSeg button { width:24px; height:24px; font-size:12px; }
+  /* ORDRE 80 · forsvinder mens en sporing rent faktisk kører - se
+     setInterval-observatøren ved vcPaintTrackerFastSeg (ren observatør af
+     tracking/analyzing, rører ikke selve sporings-koden). */
+  #trackerFastSeg.vcTrackingBusy { display:none; }
   /* 📷 filmguide: hjælp kameraet, så hjælper du analysen */
   #guidePanel { position:fixed; inset:0; z-index:40; display:flex;
     align-items:center; justify-content:center; background:rgba(0,0,0,.55); }
@@ -949,8 +972,14 @@
   <button id="mskelFlipElbowBtn" type="button" hidden title="Albuen kan ligge på to sider - vend hvis den ser spejlvendt ud">⇄ vend albuen</button>
   <button id="mskelConfirmBtn" type="button">✓ Videre</button>
 </div>
-<!-- ORDRE 45 · én kontakt for tracker-hastighedsgrebene, se JS: vcReadTrackerFast -->
-<button id="trackerFastBtn" type="button">⚡ Hurtig sporing</button>
+<!-- ORDRE 45 · tracker-hastighedsgrebene, se JS: vcReadTrackerFast.
+     ORDRE 80 · to små chips i stedet for én stor, tekst-mærket knap, og
+     skjult mens analyse-panelet (athleteConfirmFields) er synligt eller
+     mens sporing kører - se CSS'en for #trackerFastSeg. -->
+<div id="trackerFastSeg" role="group" aria-label="Sporingshastighed">
+  <button id="trackerFastOnBtn" type="button" title="Hurtig sporing (standard)">⚡</button>
+  <button id="trackerFastOffBtn" type="button" title="Langsom sporing (den oprindelige, uden ordre 45's hastighedsgreb)">🐢</button>
+</div>
 <section id="barPathHUD" hidden aria-label="Stangbaneanalyse">
   <div class="vcHudHead"><span class="vcHudTitle">Stangbane</span><span id="vcHudQuality" class="vcHudQuality">Gyldigt signal</span><button id="vcHudCollapse" type="button" aria-expanded="true" aria-label="Minimér analyseresultat" title="Minimér analyseresultat">−</button></div>
   <div id="vcLiftSetup" class="vcLiftSetup"><label for="liftSel">Løft</label></div>
@@ -1114,22 +1143,35 @@ function vcReadTrackerFast() {
   try { return localStorage.getItem('vc_tracker_fast') !== '0'; } catch { return true; }
 }
 let VC_TRACKER_FAST = vcReadTrackerFast();
-function vcPaintTrackerFastBtn() {
-  const btn = document.getElementById('trackerFastBtn');
-  if (!btn) return;
-  btn.textContent = VC_TRACKER_FAST ? '⚡ Hurtig sporing' : '🐢 Langsom sporing (original)';
-  btn.classList.toggle('off', !VC_TRACKER_FAST);
-  btn.title = VC_TRACKER_FAST
-    ? 'Sporingen bruger de nye hastighedsgreb fra ORDRE 45 · tryk for at gå tilbage til den oprindelige, langsommere vej'
-    : 'Sporingen bruger den oprindelige, langsommere vej · tryk for at slå hastighedsgrebene til igen';
+// ORDRE 80 · to chips i stedet for én skiftende knap - klik på den ene
+// VÆLGER den tilstand direkte, i stedet for at skifte frem og tilbage.
+function vcPaintTrackerFastSeg() {
+  const onBtn = document.getElementById('trackerFastOnBtn');
+  const offBtn = document.getElementById('trackerFastOffBtn');
+  if (!onBtn || !offBtn) return;
+  onBtn.classList.toggle('active', VC_TRACKER_FAST);
+  offBtn.classList.toggle('active', !VC_TRACKER_FAST);
 }
-document.addEventListener('DOMContentLoaded', vcPaintTrackerFastBtn);
-if (document.readyState !== 'loading') vcPaintTrackerFastBtn();
-document.getElementById('trackerFastBtn')?.addEventListener('click', () => {
-  VC_TRACKER_FAST = !VC_TRACKER_FAST;
-  try { localStorage.setItem('vc_tracker_fast', VC_TRACKER_FAST ? '1' : '0'); } catch {}
-  vcPaintTrackerFastBtn();
-});
+function vcSetTrackerFast(value) {
+  VC_TRACKER_FAST = value;
+  try { localStorage.setItem('vc_tracker_fast', value ? '1' : '0'); } catch {}
+  vcPaintTrackerFastSeg();
+}
+document.addEventListener('DOMContentLoaded', vcPaintTrackerFastSeg);
+if (document.readyState !== 'loading') vcPaintTrackerFastSeg();
+document.getElementById('trackerFastOnBtn')?.addEventListener('click', () => vcSetTrackerFast(true));
+document.getElementById('trackerFastOffBtn')?.addEventListener('click', () => vcSetTrackerFast(false));
+// ORDRE 80 · chippen skal forsvinde mens en sporing rent faktisk kører. En
+// let, uafhængig observatør af de eksisterende tracking/analyzing-globaler
+// er billigere og mindre risikabelt end at sætte en ny dataset-tilstand ind
+// i selve sporings-koden (startMultipointTracking/runFullAnalysis, som
+// ordren beder om ikke at røre) - rører intet, læser kun.
+setInterval(() => {
+  const seg = document.getElementById('trackerFastSeg');
+  if (!seg) return;
+  const busy = (typeof tracking !== 'undefined' && tracking) || (typeof analyzing !== 'undefined' && analyzing);
+  seg.classList.toggle('vcTrackingBusy', !!busy);
+}, 250);
 const VC_PHASES = Object.freeze({
   setup:{label:'Setup',color:'#8b877f'},
   eccentric:{label:'Excentrisk',color:'#61b7d2'},
@@ -8751,6 +8793,12 @@ if (SLIM) {
   fitBtn.setAttribute('aria-label', 'Tilpas videoen til skærmen');
   fitBtn.onclick = fitToScreen;
   document.getElementById('vcUtilityActions').prepend(fitBtn);
+  // ORDRE 80 · flyt hurtig/langsom-chippen ind i den samme slot - se CSS'en
+  // for #vcUtilityActions #trackerFastSeg. Athlete-mode skjuler den stadig
+  // helt (samme display:none-liste som før), uanset hvilken forælder den nu
+  // sidder i - kun COACHWEB ser den her.
+  const trackerFastSeg = document.getElementById('trackerFastSeg');
+  if (trackerFastSeg) document.getElementById('vcUtilityActions').appendChild(trackerFastSeg);
   // Genfit hvis #stage skifter stoerrelse (iframe faldet paa plads, rotation).
   const stageEl = document.getElementById('stage');
   if (stageEl && typeof ResizeObserver === 'function')
@@ -9036,16 +9084,16 @@ if (ATHLETE) {
   document.body.classList.toggle('athlete-profile', VC_V3_ATHLETE_BRIDGE);
   // Athlete er et selvstændigt produktlag: video, stangbane, tegn og gem.
   // Coach-fund og tekniske målinger må ikke skabe støj i atletens oplevelse.
-  // ORDRE 54 · commit 3: trackerFastBtn (⚡/🐢, ORDRE 45) er Marcs eget
-  // hastigheds-kill-switch til coach-siden - "altid synlig" betød aldrig at
-  // den skulle ligge oven i atlet-footeren på en smal skærm. Hun har ingen
-  // brug for den; samme begrundelse som resten af listen herunder.
+  // ORDRE 54 · commit 3: trackerFastSeg (⚡/🐢, ORDRE 45, ordre 80's to chips)
+  // er Marcs eget hastigheds-kill-switch til coach-siden - "altid synlig"
+  // betød aldrig at den skulle ligge oven i atlet-footeren på en smal skærm.
+  // Hun har ingen brug for den; samme begrundelse som resten af listen herunder.
   ['aiBtn', 'saveBtn', 'cardBtn', 'recordBtn', 'athleteSel', 'liftSel',
     'variationSel', 'loadInput', 'biasInput', 'speed', 'backBtn', 'fwdBtn',
     'gridBtn', 'openBtn', 'scrubToolBtn', 'lineBtn', 'angleBtn', 'eraseBtn',
     'graphBtn', 'fpBtn', 'mskelBtn', 'ghostBtn', 'loopBtn',
     'clearBtn', 'color', 'brushSel', 'barBtn', 'calibBtn', 'trimInBtn', 'trimOutBtn',
-    'trimResetBtn', 'recTime', 'trackerFastBtn'].forEach(id => {
+    'trimResetBtn', 'recTime', 'trackerFastSeg'].forEach(id => {
     const el = document.getElementById(id);
     if (el) (el.closest('label') || el).style.display = 'none';
   });
