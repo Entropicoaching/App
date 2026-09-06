@@ -118,7 +118,7 @@ function createAnalysisSession() { return { schema: 1, lift: 'squat', trackingSt
 let tracking = true, awaitBarClick = false, analysisSession = null, cmPerPx = 45 / (2 * ${PLATE_R});
 // Ægte seek: venter på det RIGTIGE 'seeked'-event fra en ægte afkodning, ikke
 // en synkron stub som i tracker-live-bench.mjs (der har ingen video at vente på).
-function seekTo(t) {
+async function __seekToReal(t) {
   return new Promise(resolve => {
     if (Math.abs(video.currentTime - t) < 1e-4) { resolve(); return; }
     const onSeeked = () => { video.removeEventListener('seeked', onSeeked); resolve(); };
@@ -126,6 +126,29 @@ function seekTo(t) {
     video.currentTime = t;
   });
 }
+// ORDRE 80 · commit 1: profil pr. frame af den (endnu) seek-baserede vej —
+// hvor går tiden, før noget ændres? seekTo pakkes ind (afkodning+seek), og
+// mellemrummet fra én seks slutning til næste seks START er ALT arbejde
+// processFrame lavede på den foregående frame (tegning + selve
+// sporingsregnestykket) — drawImage pakkes separat ind for at skille de to ad.
+window.__profile = { seekMs: [], processMs: [], drawMs: [] };
+let __lastSeekEnd = null;
+function seekTo(t) {
+  if (__lastSeekEnd != null) window.__profile.processMs.push(performance.now() - __lastSeekEnd);
+  const t0 = performance.now();
+  return __seekToReal(t).then(() => {
+    window.__profile.seekMs.push(performance.now() - t0);
+    __lastSeekEnd = performance.now();
+  });
+}
+const __origDrawImage = octx.drawImage.bind(octx);
+octx.drawImage = (...args) => {
+  const t0 = performance.now();
+  const r = __origDrawImage(...args);
+  window.__profile.drawMs.push(performance.now() - t0);
+  return r;
+};
+function __resetProfile() { window.__profile = { seekMs: [], processMs: [], drawMs: [] }; __lastSeekEnd = null; }
 <\/script>
 <script>
 ${trackerSource}
@@ -134,6 +157,7 @@ ${trackerSource}
 window.runAnalysis = async function(startT, endT, p0) {
   strokes.length = 0;
   tracking = true;
+  __resetProfile();
   await seekTo(startT);
   const t0 = performance.now();
   const ok = await startMultipointTracking({ x: p0.x, y: p0.y, r: ${PLATE_R} },
@@ -145,6 +169,7 @@ window.runAnalysis = async function(startT, endT, p0) {
     pts: path ? path.pts.map(p => ({ x: p.x, y: p.y })) : [],
     times: path ? [...path.times] : [],
     valid: path ? [...path.valid] : [],
+    profile: window.__profile,
   };
 };
 <\/script>
@@ -232,6 +257,24 @@ async function main() {
     console.log(`  vindue ${i + 1} [${windows[i].start.toFixed(2)}s-${windows[i].end.toFixed(2)}s] ok=${r.ok} frames=${r.pts.length} tid=${r.ms.toFixed(1)}ms meanPx=${threeDev[i].meanPx.toFixed(2)} maxPx=${threeDev[i].maxPx.toFixed(2)}`)
   })
   console.log(`  samlet tid (3 vinduer): ${threeMs.toFixed(1)}ms`)
+
+  // ---------- ORDRE 80 · commit 1: profil pr. frame af "Vis mig nu"-vejen ----------
+  // Slået sammen på tværs af de tre vinduer — samme opdeling som seekTo/
+  // drawImage-indpakningen i harnesset: afkodning+seek, tegning
+  // (octx.drawImage), og "resten" (selve sporingsregnestykket: mpFrame +
+  // feature-matching), udledt som processMs minus drawMs pr. frame.
+  const allSeek = threeResults.flatMap(r => r.profile.seekMs)
+  const allDraw = threeResults.flatMap(r => r.profile.drawMs)
+  const allProcess = threeResults.flatMap(r => r.profile.processMs)
+  const allCompute = allProcess.map((p, i) => p - (allDraw[i] ?? 0))
+  const sum = a => a.reduce((s, v) => s + v, 0)
+  const avg = a => a.length ? sum(a) / a.length : 0
+  console.log('\n== Profil pr. frame — "Vis mig nu", slået sammen over de 3 vinduer ==')
+  console.log(`  afkodning+seek : n=${allSeek.length}  sum=${sum(allSeek).toFixed(0)}ms  gns=${avg(allSeek).toFixed(2)}ms/frame`)
+  console.log(`  tegning (drawImage): n=${allDraw.length}  sum=${sum(allDraw).toFixed(0)}ms  gns=${avg(allDraw).toFixed(2)}ms/frame`)
+  console.log(`  sporingsregnestykke : n=${allCompute.length}  sum=${sum(allCompute).toFixed(0)}ms  gns=${avg(allCompute).toFixed(2)}ms/frame`)
+  const profiledTotal = sum(allSeek) + sum(allProcess)
+  console.log(`  (profileret total ${profiledTotal.toFixed(0)}ms af ${threeMs.toFixed(0)}ms målt — resten er Playwright/evaluate-overhead mellem vinduerne)`)
   console.log(`\nForhold (fuld / tre-vinduer, ÆGTE video-afkodning): ${factor ? factor.toFixed(2) + 'x' : '-'}`)
   console.log(`\nTolerance: mean ≤ ${TOLERANCE_MEAN_PX}px, max ≤ ${TOLERANCE_MAX_PX}px (se kildekoden for begrundelsen).`)
   console.log(pass
