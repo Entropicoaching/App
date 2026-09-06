@@ -3657,7 +3657,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                     style={{ display: 'block', width: '100%', textAlign: 'left', background: 'transparent', border: 'none', color: '#b8b4a8', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.06em', textTransform: 'uppercase', padding: '0.5rem 0.5rem', cursor: 'pointer' }}
                   >Se guiden igen</button>
                   <button
-                    onClick={() => { setAccountMenuOpen(false); signOutHard() }}
+                    onClick={() => { setAccountMenuOpen(false); askConfirm('Log ud af Entropi? Du skal logge ind igen for at fortsætte.', () => signOutHard()) }}
                     style={{ display: 'block', width: '100%', textAlign: 'left', background: 'transparent', border: 'none', color: '#e05555', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.06em', textTransform: 'uppercase', padding: '0.5rem 0.5rem', cursor: 'pointer' }}
                   >Log ud</button>
                 </div>
