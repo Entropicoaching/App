@@ -3586,7 +3586,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           boxShadow: '0 4px 24px rgba(0,0,0,0.55)',
           opacity: prToastFading ? 0 : 1, transition: 'opacity 0.6s ease',
         }}>
-          {prToast.type === 'vægt' ? '🏆 Ny vægt-PR' : prToast.type === 'rep' ? '🔥 Ny rep-PR' : '⚡ Stærkeste sæt'} på {prToast.name}!
+          {prToast.type === 'vægt' ? '🏆 Ny personlig rekord (vægt)' : prToast.type === 'rep' ? '🔥 Ny personlig rekord (reps)' : '⚡ Stærkeste sæt'} på {prToast.name}
         </div>
       )}
       {/* Fortryd-toast */}
@@ -4100,6 +4100,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.35rem', flexWrap: 'wrap' }}>
                   <div style={{ ...s.cardLabel, marginBottom: 0 }}>Styrkeudvikling</div>
                   <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', letterSpacing: '0.06em', textTransform: 'uppercase' }}>bedste e1RM pr. uge, kg</span>
+                </div>
+                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770', lineHeight: 1.5, marginBottom: '0.5rem' }}>
+                  e1RM er et regnestykke ud fra din vægt og dine reps, der viser hvor stærk du cirka er lige nu — ikke et forsøg du faktisk har taget.
                 </div>
                 <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.5rem' }}>
                   {liftProgress.filter(sr => sr.points.length >= 2).map(sr => (
@@ -4916,6 +4919,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                       <span style={{ color: '#4a4844', fontSize: '0.7rem' }}>{showTdee ? '⌃' : '⌄'}</span>
                     </span>
                   </div>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770', lineHeight: 1.5, marginTop: '0.35rem' }}>
+                    Det din krop cirka bruger på en dag, regnet af dine egne vejninger og din kost.
+                  </div>
                   {showTdee && (
                     <div style={{ marginTop: '0.75rem' }}>
                       {athlete.kcal_target && (() => {
@@ -5319,9 +5325,14 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Din coach.</h1>
               </div>
 
-              <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '0.8rem' }}>
+              <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '0.4rem' }}>
                 {trackTab('teknik', 'Teknik & løft', teknikUnread)}
                 {trackTab('besked', 'Beskeder', beskedUnread)}
+              </div>
+              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770', lineHeight: 1.5, marginBottom: '0.8rem' }}>
+                {msgTrack === 'teknik'
+                  ? 'Til spørgsmål om teknik og løft, og til coachens videofeedback.'
+                  : 'Til alt andet — status, spørgsmål og det der ellers fylder.'}
               </div>
 
               <div style={s.card}>
