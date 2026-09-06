@@ -39,5 +39,9 @@ ugentlig-review-*.md
 # Separat website-arbejde, hører ikke til app-repoet
 Hjemmeside/
 
+# ORDRE 73 — genereret testklip til videocoach-trackeren (npm run test:clip).
+# Bygges lokalt af scripts/make-test-clip.mjs, committes ikke som binær.
+docs/videocoach/clip-cache/
+
 # Lokale Claude Code-indstillinger (per maskine)
 .claude/settings.local.json
