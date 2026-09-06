@@ -17,7 +17,7 @@ Ingen atletdata i kode, tekst eller test.
 
 ## Hvad ændret
 
-### Commit 1 — G2+G3: resten af den stille familie
+**Commit 1 — G2+G3: resten af den stille familie**
 
 Ordre 64's egen rangering pegede på fire steder tilbage med det samme
 mønster som F1/F2/F4-F7 (rå Supabase-kald uden fejltjek eller uden at vente
@@ -46,7 +46,7 @@ knapperne deaktiveres og viser "..."/"Gemmer..." mens skrivningen er i
 gang, så et hurtigt dobbelttryk ikke sender samme skrivning to gange, og
 atleten kan se at noget sker.
 
-### Commit 2 — F13-F16+F26: trykfladerne under 44px
+**Commit 2 — F13-F16+F26: trykfladerne under 44px**
 
 Fem steder fra ordre 64's fundliste (afsnit 3, tommelfinger-trykflader),
 alle uden designændring — kun `minHeight`/`minWidth: '44px'` +
@@ -165,6 +165,3 @@ atleten nu får besked i stedet for en tavs, misvisende skærm (samme klasse
 som F1/F2/F4-F7), og fem trykflader løftet til den anbefalte
 tommelfinger-standard — begge dele reducerer små, gentagne friktioner som
 delmålet handler om at fjerne "uden skub".
-
-## Høst til Harā
-
