@@ -1,19 +1,24 @@
-// ORDRE 73 · commit 2 — trackeren mod et RIGTIGT videoklip, i en rigtig browser.
+// ORDRE 73 · commit 2 / ORDRE 80 · commit 1+2 — trackeren mod et RIGTIGT
+// videoklip, i en rigtig browser.
 // -----------------------------------------------------------------------------
 // Kører den FAKTISKE, levende tracker-kode fra public/videocoach.html (samme
 // udtræksteknik som docs/videocoach/tracker-live-bench.mjs og rep-preview-
 // rig.mjs) mod det syntetiske, men RIGTIGT kodede klip fra
 // scripts/make-test-clip.mjs, inde i headless Chromium: ægte video-afkodning,
-// ægte canvas.drawImage/getImageData, ægte seek (venter på 'seeked'), ikke en
+// ægte canvas.drawImage/getImageData, ægte seek (venter på 'seeded'), ikke en
 // analytisk pixel-funktion. Det er netop den grænse, alle videocoach-rapporter
 // siden ordre 41 har måttet skrive som "ikke afprøvet" — se RAPPORT.md.
 //
 // To ting måles:
-//   A) Findes alle fem reps, og hvor meget afviger den sporede bane fra facit
-//      (den kendte, tegnede bane inkl. kameravaklen, gemt af make-test-clip.mjs)?
-//   B) Hvor meget hurtigere er "Vis mig nu" (tre hårdkodede vinduer: rep 1,
-//      midterste [3.], sidste [5.]) end en fuld, kontinuerlig analyse af alle
-//      fem reps — begge på ÆGTE video-afkodning, ikke en syntetisk scene.
+//   A) Den fulde analyse (fem reps, coachens vej, startMultipointTracking
+//      UÆNDRET siden ordre 73) — findes alle fem reps, og hvor meget afviger
+//      den sporede bane fra facit (den kendte, tegnede bane inkl.
+//      kameravaklen, gemt af make-test-clip.mjs)?
+//   B) "Vis mig nu" (ordre 80: tre hårdkodede vinduer — rep 1, midterste [3.],
+//      sidste [5.] — sporet med den NYE realtids-vej, vcRealtimeTrackWindow,
+//      der afspiller i 1x i stedet for at seeke frame for frame) — er den
+//      færdig senest 1,1x vinduernes egen afspillede varighed, og er banen
+//      stadig inden for ordre 73's tolerance?
 //
 // Kørsel: npm run verify:videocoach-clip
 // Genererer klippet automatisk (npm run test:clip), hvis det mangler.
@@ -54,6 +59,22 @@ function extractLiveTrackerSource() {
   return html.slice(startIdx, endIdx)
 }
 const trackerSource = extractLiveTrackerSource()
+
+// ORDRE 80 · commit 2: den nye realtids-sporing til "Vis mig nu" ligger
+// UDEN FOR PL_ANG→startBarTracking (den blok bruges også af de Node-baserede
+// rigge tracker-live-bench.mjs/rep-preview-rig.mjs, som ingen `document` har -
+// et document.createElement('canvas') dér ville vælte dem). Egne markører,
+// samme udtræksteknik som ORDRE 54's vcFindRepAnchors i rep-preview-rig.mjs.
+const RT_START_MARKER = '// ORDRE 80 · start: realtids-sporing til "Vis mig nu"'
+const RT_END_MARKER = '// ORDRE 80 · slut: realtids-sporing til "Vis mig nu"'
+function extractRealtimePreviewSource() {
+  const startIdx = html.indexOf(RT_START_MARKER)
+  if (startIdx < 0) throw new Error('verify-videocoach-clip: ORDRE 80-startmarkør ikke fundet - er videocoach.html omstruktureret?')
+  const endIdx = html.indexOf(RT_END_MARKER, startIdx)
+  if (endIdx < 0) throw new Error('verify-videocoach-clip: ORDRE 80-slutmarkør ikke fundet - er videocoach.html omstruktureret?')
+  return html.slice(startIdx, endIdx + RT_END_MARKER.length)
+}
+const realtimePreviewSource = extractRealtimePreviewSource()
 
 // ---------- 2) Facit: interpolér den kendte, tegnede position ved et vilkårligt tidspunkt ----------
 function truePosAt(t) {
@@ -154,6 +175,9 @@ function __resetProfile() { window.__profile = { seekMs: [], processMs: [], draw
 ${trackerSource}
 <\/script>
 <script>
+${realtimePreviewSource}
+<\/script>
+<script>
 window.runAnalysis = async function(startT, endT, p0) {
   strokes.length = 0;
   tracking = true;
@@ -170,6 +194,19 @@ window.runAnalysis = async function(startT, endT, p0) {
     times: path ? [...path.times] : [],
     valid: path ? [...path.valid] : [],
     profile: window.__profile,
+  };
+};
+// ORDRE 80 · commit 2: "Vis mig nu"s nye realtids-vej (ikke startMultipointTracking).
+window.runRealtimePreview = async function(barPt, windowStart, windowEnd) {
+  strokes.length = 0;
+  tracking = true;
+  const t0 = performance.now();
+  const { path, ok } = await vcRealtimeTrackWindow({ x: barPt.x, y: barPt.y, r: ${PLATE_R} }, windowStart, windowEnd);
+  const ms = performance.now() - t0;
+  return {
+    ok, ms,
+    pts: path.pts.map(p => ({ x: p.x, y: p.y })),
+    times: [...path.times],
   };
 };
 <\/script>
@@ -211,15 +248,19 @@ async function main() {
   const full = await page.evaluate(([s, e, p]) => window.runAnalysis(s, e, p), [startT, DURATION, { x: p0Full.x, y: p0Full.y }])
 
   // ---------- B) "Vis mig nu": tre hårdkodede vinduer, sekventielt (samme som en atlet der beder om tre reps) ----------
+  // ORDRE 80: den NYE realtids-vej (vcRealtimeTrackWindow) — afspiller hvert
+  // vindue i 1x og sporer på de frames der rent faktisk kommer, ikke
+  // startMultipointTrackings seek-løkke (den bruges fortsat af A ovenfor).
   const windows = pickThreeWindows(repWindows)
   const threeResults = []
   let threeMs = 0
   for (const w of windows) {
     const p0 = truePosAt(w.start)
-    const r = await page.evaluate(([s, e, p]) => window.runAnalysis(s, e, p), [w.start, w.end, { x: p0.x, y: p0.y }])
+    const r = await page.evaluate(([barPt, s, e]) => window.runRealtimePreview(barPt, s, e), [{ x: p0.x, y: p0.y }, w.start, w.end])
     threeResults.push(r)
     threeMs += r.ms
   }
+  const threePlayedS = windows.reduce((s, w) => s + (w.end - w.start), 0)
 
   await browser.close()
 
@@ -245,41 +286,26 @@ async function main() {
   const fullFoundAllReps = full.pts.length >= repWindows.length * MIN_FRAMES_PER_REP * 0.7
   const fullOk = full.ok && fullDev.meanPx <= TOLERANCE_MEAN_PX && fullDev.maxPx <= TOLERANCE_MAX_PX && fullFoundAllReps
   const threeOk = threeResults.every(r => r.ok) && worstThreeDev.meanPx <= TOLERANCE_MEAN_PX && worstThreeDev.maxPx <= TOLERANCE_MAX_PX
-  const factor = full.ms > 0 ? full.ms / Math.max(0.001, threeMs) : null
-  const fasterOk = factor != null && factor > 1.15 // tre vinduer skal være mærkbart hurtigere, ikke bare målestoks-støj
+  // ORDRE 80's eget kriterium: "Vis mig nu" skal være færdig senest 1,1x
+  // vinduernes EGEN afspillede varighed (ikke længere sammenlignet med den
+  // fulde analyses tid — de to sporer nu forskellige veje, se commit 2).
+  const REALTIME_MAX_FACTOR = 1.1
+  const realtimeFactor = threePlayedS > 0 ? threeMs / 1000 / threePlayedS : Infinity
+  const realtimeFastEnough = realtimeFactor <= REALTIME_MAX_FACTOR
 
-  const pass = fullOk && threeOk && fasterOk
+  const pass = fullOk && threeOk && realtimeFastEnough
 
-  console.log('== A) Fuld analyse (alle 5 reps, ægte afkodning) ==')
+  console.log('== A) Fuld analyse (alle 5 reps, ægte afkodning, uændret siden ordre 73) ==')
   console.log(`ok=${full.ok} frames=${full.pts.length} tid=${full.ms.toFixed(1)}ms meanPx=${fullDev.meanPx.toFixed(2)} maxPx=${fullDev.maxPx.toFixed(2)}`)
-  console.log('\n== B) "Vis mig nu" (rep 1, 3, 5 — ægte afkodning) ==')
+  console.log('\n== B) "Vis mig nu" (rep 1, 3, 5 — NY realtids-vej, ægte afkodning) ==')
   threeResults.forEach((r, i) => {
-    console.log(`  vindue ${i + 1} [${windows[i].start.toFixed(2)}s-${windows[i].end.toFixed(2)}s] ok=${r.ok} frames=${r.pts.length} tid=${r.ms.toFixed(1)}ms meanPx=${threeDev[i].meanPx.toFixed(2)} maxPx=${threeDev[i].maxPx.toFixed(2)}`)
+    console.log(`  vindue ${i + 1} [${windows[i].start.toFixed(2)}s-${windows[i].end.toFixed(2)}s, ${(windows[i].end - windows[i].start).toFixed(2)}s afspillet] ok=${r.ok} frames=${r.pts.length} tid=${r.ms.toFixed(1)}ms meanPx=${threeDev[i].meanPx.toFixed(2)} maxPx=${threeDev[i].maxPx.toFixed(2)}`)
   })
-  console.log(`  samlet tid (3 vinduer): ${threeMs.toFixed(1)}ms`)
-
-  // ---------- ORDRE 80 · commit 1: profil pr. frame af "Vis mig nu"-vejen ----------
-  // Slået sammen på tværs af de tre vinduer — samme opdeling som seekTo/
-  // drawImage-indpakningen i harnesset: afkodning+seek, tegning
-  // (octx.drawImage), og "resten" (selve sporingsregnestykket: mpFrame +
-  // feature-matching), udledt som processMs minus drawMs pr. frame.
-  const allSeek = threeResults.flatMap(r => r.profile.seekMs)
-  const allDraw = threeResults.flatMap(r => r.profile.drawMs)
-  const allProcess = threeResults.flatMap(r => r.profile.processMs)
-  const allCompute = allProcess.map((p, i) => p - (allDraw[i] ?? 0))
-  const sum = a => a.reduce((s, v) => s + v, 0)
-  const avg = a => a.length ? sum(a) / a.length : 0
-  console.log('\n== Profil pr. frame — "Vis mig nu", slået sammen over de 3 vinduer ==')
-  console.log(`  afkodning+seek : n=${allSeek.length}  sum=${sum(allSeek).toFixed(0)}ms  gns=${avg(allSeek).toFixed(2)}ms/frame`)
-  console.log(`  tegning (drawImage): n=${allDraw.length}  sum=${sum(allDraw).toFixed(0)}ms  gns=${avg(allDraw).toFixed(2)}ms/frame`)
-  console.log(`  sporingsregnestykke : n=${allCompute.length}  sum=${sum(allCompute).toFixed(0)}ms  gns=${avg(allCompute).toFixed(2)}ms/frame`)
-  const profiledTotal = sum(allSeek) + sum(allProcess)
-  console.log(`  (profileret total ${profiledTotal.toFixed(0)}ms af ${threeMs.toFixed(0)}ms målt — resten er Playwright/evaluate-overhead mellem vinduerne)`)
-  console.log(`\nForhold (fuld / tre-vinduer, ÆGTE video-afkodning): ${factor ? factor.toFixed(2) + 'x' : '-'}`)
+  console.log(`  samlet tid (3 vinduer): ${threeMs.toFixed(1)}ms · samlet afspillet varighed: ${(threePlayedS * 1000).toFixed(1)}ms · forhold: ${realtimeFactor.toFixed(2)}x (grænse ${REALTIME_MAX_FACTOR}x)`)
   console.log(`\nTolerance: mean ≤ ${TOLERANCE_MEAN_PX}px, max ≤ ${TOLERANCE_MAX_PX}px (se kildekoden for begrundelsen).`)
   console.log(pass
-    ? '\nGRØN: alle 5 reps fundet, banen inden for tolerance, og "Vis mig nu" er mærkbart hurtigere — på et RIGTIGT, kodet videoklip.'
-    : `\nFEJL: ${!fullOk ? 'fuld analyse fejlede tolerancen eller fandt ikke alle reps. ' : ''}${!threeOk ? '"Vis mig nu" fejlede tolerancen. ' : ''}${!fasterOk ? '"Vis mig nu" var ikke mærkbart hurtigere end fuld analyse.' : ''}`)
+    ? '\nGRØN: alle 5 reps fundet i den fulde analyse, alle tre "Vis mig nu"-reps fundet inden for tolerance, og "Vis mig nu" var færdig senest 1,1x sin egen afspillede varighed — på et RIGTIGT, kodet videoklip.'
+    : `\nFEJL: ${!fullOk ? 'fuld analyse fejlede tolerancen eller fandt ikke alle reps. ' : ''}${!threeOk ? '"Vis mig nu" fejlede tolerancen. ' : ''}${!realtimeFastEnough ? `"Vis mig nu" tog ${realtimeFactor.toFixed(2)}x sin afspillede varighed, over grænsen ${REALTIME_MAX_FACTOR}x.` : ''}`)
   process.exitCode = pass ? 0 : 1
 }
 

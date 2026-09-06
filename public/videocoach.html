@@ -5664,6 +5664,161 @@ function vcConfirmPlateRing() {
   return { x: c.x, y: c.y, r: c.r };
 }
 
+// ORDRE 80 · start: realtids-sporing til "Vis mig nu"
+// -----------------------------------------------------------------------------
+// "Vis mig nu" sporede tidligere hvert af de tre vinduer via den delte,
+// grundige startMultipointTracking - samme sti som den fulde analyse, der
+// altid seeker frame for frame. Ordre 80's egen profil (se
+// scripts/verify-videocoach-clip.mjs, kørt FØR denne ændring) fandt at
+// selve seeket kostede ~90ms/frame, mod ~20ms for selve sporings-
+// regnestykket og ~3ms for tegningen - flaskehalsen var aldrig matematikken.
+// Denne vej spor derfor i stedet MENS videoen rent faktisk afspilles i 1x,
+// og bruger requestVideoFrameCallback (findes på stort set alle moderne
+// browsere/telefoner) til kun at arbejde på frames der faktisk blev vist -
+// ingen seek-løkke.
+//
+// Nedskaleret til højst RT_MAX_W px, så selv det billige sporingsregnestykke
+// er hurtigt nok til at følge med en langsommere telefons eget tempo, ikke
+// kun en stationærs. Rammer én frame et tidsbudget (afledt af videoens eget
+// frame-interval, med margin), springes NÆSTE frame over uden forsøg, og
+// dens position interpoleres bagefter - billigere end at forsøge hver eneste
+// frame og risikere at sakke bagud resten af vinduet.
+//
+// Rører IKKE startMultipointTracking, plade-identitetsvagten eller
+// hjem-genfindingen - det er en bevidst lettere, hurtigere vej til korte
+// (få sekunders) forhåndsvisningsvinduer, ikke en erstatning for den
+// grundige, fulde analyse (runFullAnalysis er uændret). Genbruger kun de
+// allerede afprøvede match-primitiver (mpBuildFrame/mpGoodFeatures/
+// mpMatchPoint/mpClamp/mpMedian) - defineret tidligere i denne fil og
+// uafhængige af ocan/octx, så de er lige så gyldige på et lille,
+// nedskaleret canvas som på det fulde.
+const RT_MAX_W = 480;
+const RT_HAS_RVFC = typeof HTMLVideoElement !== 'undefined' && 'requestVideoFrameCallback' in HTMLVideoElement.prototype;
+
+function rtSeekTo(t) {
+  return new Promise(resolve => {
+    if (Math.abs(video.currentTime - t) < 1e-4) { resolve(); return; }
+    const onSeeked = () => { video.removeEventListener('seeked', onSeeked); resolve(); };
+    video.addEventListener('seeked', onSeeked);
+    video.currentTime = t;
+  });
+}
+
+// Udfylder huller (punkter sat til null, fordi en frame blev sprunget over
+// eller matchet for dårligt) ved lineær interpolation mellem de nærmeste
+// gyldige naboer. Kanter (før det første/efter det sidste gyldige punkt)
+// holder den nærmeste gyldige værdi i stedet for at gætte udad.
+function rtInterpolateGaps(pts, times) {
+  const n = pts.length;
+  const validIdx = [];
+  for (let i = 0; i < n; i++) if (pts[i]) validIdx.push(i);
+  if (!validIdx.length) return pts.map(() => ({ x: 0, y: 0 }));
+  const out = pts.slice();
+  for (let i = 0; i < n; i++) {
+    if (out[i]) continue;
+    let lo = -1, hi = -1;
+    for (const v of validIdx) { if (v <= i) lo = v; if (v >= i && hi === -1) hi = v; }
+    if (lo === -1) out[i] = { ...pts[hi] };
+    else if (hi === -1) out[i] = { ...pts[lo] };
+    else {
+      const f = (times[i] - times[lo]) / (times[hi] - times[lo] || 1);
+      out[i] = { x: pts[lo].x + (pts[hi].x - pts[lo].x) * f, y: pts[lo].y + (pts[hi].y - pts[lo].y) * f };
+    }
+  }
+  return out;
+}
+
+async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd) {
+  const fullW = canvas.width, fullH = canvas.height;
+  const scale = Math.min(1, RT_MAX_W / fullW);
+  const rw = Math.max(1, Math.round(fullW * scale)), rh = Math.max(1, Math.round(fullH * scale));
+  const rtCan = document.createElement('canvas'); rtCan.width = rw; rtCan.height = rh;
+  const rtCtx = rtCan.getContext('2d', { willReadFrequently: true });
+  const radius = Math.max(6, (barPt.r || fullW / 16) * scale);
+
+  await rtSeekTo(windowStart);
+  rtCtx.drawImage(video, 0, 0, rw, rh);
+  let anchorFrame = mpBuildFrame(rtCtx.getImageData(0, 0, rw, rh).data, rw, rh, 0, 0, rw, rh);
+  let cur = { x: barPt.x * scale, y: barPt.y * scale };
+  let features = mpGoodFeatures(anchorFrame, cur, radius);
+  const startFrame = Math.round(windowStart * 30);
+  const path = { type: 'path', color: (typeof colorInput !== 'undefined' && colorInput.value) || '#e63946',
+    pts: [{ x: barPt.x, y: barPt.y }], times: [windowStart], valid: [true], confidence: [1],
+    startFrame, barTracker: 'realtime-preview-v1', plateRadius: barPt.r || fullW / 16, manualCorrections: [] };
+  if (features.length < 5) return { path, ok: false };
+
+  let lastMediaT = windowStart, stopped = false, skipNext = false, vel = { x: 0, y: 0 };
+
+  await new Promise(resolve => {
+    let finish = () => { stopped = true; video.pause(); resolve(); };
+    // requestVideoFrameCallback's FØRSTE argument er et render-tidsstempel
+    // (samme skala som performance.now()), IKKE videoens medietid - den findes
+    // kun i metadata.mediaTime (samme mønster som startMultipointTrackings
+    // egen HAS_RVFC-gren, se stepFn ovenfor i denne fil).
+    const onFrame = (now, meta) => {
+      const tNow = meta ? meta.mediaTime : now;
+      if (stopped) return;
+      if (tNow + 1e-3 >= windowEnd || video.ended || !tracking) { finish(); return; }
+      const mediaDt = Math.max(1e-3, tNow - lastMediaT);
+      lastMediaT = tNow;
+      // Budgettet følger videoens EGET tempo (med 50% margin) i stedet for en
+      // hårdkodet fps-antagelse - samme klip kan være optaget i 24, 30 eller 60fps.
+      const budgetMs = Math.max(20, mediaDt * 1000 * 1.5);
+      const workStart = performance.now();
+      if (skipNext) {
+        skipNext = false;
+        path.pts.push(null); path.times.push(tNow); path.valid.push(false); path.confidence.push(0);
+      } else {
+        rtCtx.drawImage(video, 0, 0, rw, rh);
+        const frame = mpBuildFrame(rtCtx.getImageData(0, 0, rw, rh).data, rw, rh, 0, 0, rw, rh);
+        // Hastigheds-ekstrapoleret CENTER-forudsigelse, men matchet SKAL søge
+        // om hvert enkelt features EGEN forventede position (centeret forskudt
+        // med samme fælles bevægelse) - IKKE om selve centeret. Et feature
+        // langt ude på skiven (op til radius*.78 fra centeret) ville ellers
+        // blive matchet i et helt forkert område - samme mønster som
+        // startMultipointTrackings pp=p+(pred-cur), se ovenfor i denne fil.
+        const predCenter = { x: cur.x + vel.x * mediaDt, y: cur.y + vel.y * mediaDt };
+        const search = Math.round(mpClamp(radius * .35 + Math.hypot(vel.x, vel.y) * mediaDt * .5, 10, radius * .8));
+        const moves = [];
+        for (const p of features) {
+          const pp = { x: p.x + (predCenter.x - cur.x), y: p.y + (predCenter.y - cur.y) };
+          const fwd = mpMatchPoint(anchorFrame, frame, p, pp, search);
+          if (fwd && fwd.cost <= .42) moves.push({ dx: fwd.x - p.x, dy: fwd.y - p.y });
+        }
+        if (moves.length >= 4) {
+          const nextCur = { x: cur.x + mpMedian(moves.map(m => m.dx)), y: cur.y + mpMedian(moves.map(m => m.dy)) };
+          vel = { x: (nextCur.x - cur.x) / mediaDt, y: (nextCur.y - cur.y) / mediaDt };
+          cur = nextCur;
+          anchorFrame = frame;
+          features = mpGoodFeatures(frame, cur, radius);
+          path.pts.push({ x: cur.x / scale, y: cur.y / scale });
+          path.times.push(tNow); path.valid.push(true); path.confidence.push(Math.min(1, moves.length / 12));
+          if (features.length < 5) { finish(); return; }
+        } else {
+          path.pts.push(null); path.times.push(tNow); path.valid.push(false); path.confidence.push(0);
+        }
+      }
+      if (performance.now() - workStart > budgetMs) skipNext = true;
+      if (RT_HAS_RVFC) video.requestVideoFrameCallback(onFrame);
+    };
+    if (RT_HAS_RVFC) {
+      video.requestVideoFrameCallback(onFrame);
+    } else {
+      const onTimeupdate = () => onFrame(video.currentTime);
+      video.addEventListener('timeupdate', onTimeupdate);
+      const baseFinish = finish;
+      finish = () => { video.removeEventListener('timeupdate', onTimeupdate); baseFinish(); };
+    }
+    video.playbackRate = 1;
+    video.muted = true;
+    video.play().catch(finish);
+  });
+
+  path.pts = rtInterpolateGaps(path.pts, path.times);
+  return { path, ok: path.pts.length >= 5 };
+}
+// ORDRE 80 · slut: realtids-sporing til "Vis mig nu"
+
 // ORDRE 54 · commit 2 / ORDRE 57 · commit 1: "Vis mig nu" - atleten der
 // hellere vil se noget med det samme. Sporer kun tre gentagelser (første,
 // en fra midten, sidste - se RAPPORT.md for hvorfor netop de tre), viser dem
@@ -5694,13 +5849,20 @@ async function vcAthletePreviewThree(barPt) {
   for (let k = 0; k < idxs.length; k++) {
     if (!analyzing) break;   // atleten trak stikket undervejs (allBtn = Stop)
     const w = presearch.windows[idxs[k]];
-    trimEnd = w.end;
-    await seekTo(w.start);
+    trimStart = w.start; trimEnd = w.end; paintTrim();
     if (setAthleteState) setAthleteState('analyzing', `Sporer ${k + 1}/3 (${labels[k]}) ...`);
-    const ok = await startMultipointTracking(barPt, analysisSession || createAnalysisSession());
+    // ORDRE 80: realtids-sporing (afspiller i 1x, ingen seek-løkke) i stedet
+    // for den delte, seek-baserede startMultipointTracking - se
+    // vcRealtimeTrackWindow ovenfor.
+    const { path, ok } = await vcRealtimeTrackWindow(barPt, w.start, w.end);
     if (ok) {
-      const p = strokes.filter(s => s.type === 'path' && !s.superseded).at(-1);
-      if (p) { p.vcPreviewLabel = labels[k]; previewPaths.push(p); }
+      path.vcPreviewLabel = labels[k];
+      const rtSession = { schema: 1, lift: vcV3Lift(document.getElementById('liftSel').value),
+        trackingStart: w.start, trackingEnd: w.end };
+      freezeRawAcquisition(path, rtSession);
+      analyzePath(path);
+      strokes.push(path);
+      previewPaths.push(path);
     }
   }
   trimEnd = savedTrimEnd;
