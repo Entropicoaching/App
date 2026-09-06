@@ -32,6 +32,7 @@
     "gate:tracker": "node scripts/gate-tracker.mjs",
     "test:clip": "node scripts/make-test-clip.mjs",
     "verify:videocoach-clip": "node scripts/verify-videocoach-clip.mjs",
+    "verify:videocoach-upload-flow": "node scripts/verify-videocoach-upload-flow.mjs",
     "verify:n8n": "node n8n/verify-workflows.mjs",
     "preview:n8n-briefing": "node n8n/preview-coach-briefing.mjs"
   },
