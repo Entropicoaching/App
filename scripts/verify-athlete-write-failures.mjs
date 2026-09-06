@@ -73,5 +73,19 @@ assert.match(markGoodAndSave, /runGuardedWrite\(/, 'markGoodAndSave skal gå ige
 assert.match(markGoodAndSave, /if \(ok\) setAthlete\(/,
   'setAthlete må kun kaldes når update_competition_max har bekræftet skrivningen')
 
+// F6: logSet skal skelne en fejlet SELECT på personal_records fra en tom (men
+// fejlfri) SELECT, og logge den fejlede variant til frontend_errors i stedet
+// for at gemme en ny baseline.
+const logSet = extractFn('logSet')
+assert.match(logSet, /error:\s*prFetchError/, 'logSet skal kigge på fejlen fra SELECT på personal_records')
+assert.match(logSet, /if \(prFetchError\)[\s\S]*logFrontendError\(/,
+  'en fejlet SELECT skal logges til frontend_errors, ikke tolkes som "ingen tidligere data"')
+
+// F7: saveReadiness må ikke vise den rå Supabase-fejlbesked til atleten.
+const saveReadiness = extractFn('saveReadiness')
+assert.match(saveReadiness, /logFrontendError\(/, 'saveReadiness skal logge fejldetaljen til frontend_errors')
+assert.doesNotMatch(saveReadiness, /setReadinessError\(error\.message\)/,
+  'atleten må ikke se den rå Supabase-fejlbesked — den skal oversættes til én sætning')
+
 console.log('Besked- og kostlog-skrivninger viser en fejl og lader IKKE som succes, når skrivningen fejler.')
-console.log('Spring-over (skipSet/skipExercise/unskipSet) og stævnemaks følger nu samme mønster (ordre 64, F4-F5).')
+console.log('Spring-over, stævnemaks, PR-detektion og parathed følger nu samme mønster (ordre 64).')

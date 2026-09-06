@@ -1648,6 +1648,21 @@ function parsePlannedRpe(intensity) {
   return m ? parseFloat(m[1].replace(',', '.')) : null
 }
 
+// Best-effort log til frontend_errors (samme tabel som ErrorBoundary.jsx bruger)
+// for fejl der oversættes til en venlig besked i UI'en — detaljen skal ikke gå
+// tabt selvom atleten kun ser én sætning.
+function logFrontendError(message, error, athleteId) {
+  try {
+    supabase.from('frontend_errors').insert({
+      message: String(message).slice(0, 1000),
+      stack: String(error?.message || error || '').slice(0, 4000),
+      url: window.location.href,
+      user_agent: navigator.userAgent,
+      user_id: athleteId ?? null,
+    }).then(() => {}).catch(() => {})
+  } catch { /* logging må aldrig selv vælte visningen */ }
+}
+
 export default function AthleteView({ session, onExitPreview, role, coachAthleteId, onRecheckRole }) {
   const [tab, setTab] = useState('hjem')
   const [recheckingRole, setRecheckingRole] = useState(false)
@@ -2281,7 +2296,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     const { error } = await supabase.from('readiness_logs').insert(payload)
     setSavingReadiness(false)
     if (error) {
-      setReadinessError(error.message)
+      // Atleten skal ikke se en rå Supabase-fejlbesked — detaljen går til
+      // frontend_errors, hvor den kan slås op, hvis mønsteret gentager sig.
+      logFrontendError('saveReadiness fejlede', error, athlete.id)
+      setReadinessError('Kunne ikke gemme parathed. Tjek din forbindelse og prøv igen.')
     } else {
       setReadinessLog({ ...payload })
     }
@@ -2614,22 +2632,27 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       if (exerciseName) {
         const e1rm = r => (r.weight || 0) * (1 + (r.reps || 1) / 30)
         const newSet = { weight: payload.weight, reps: newReps }
-        const { data: prData } = await supabase
+        const { data: prData, error: prFetchError } = await supabase
           .from('personal_records')
           .select('weight, reps')
           .eq('athlete_id', athlete.id)
           .eq('exercise_name', exerciseName)
-        const rows = prData || []
         const savePR = () => supabase.from('personal_records').insert({
           athlete_id: athlete.id,
           exercise_name: exerciseName,
           weight: newSet.weight,
           reps: newSet.reps,
         })
-        if (rows.length === 0) {
+        if (prFetchError) {
+          // En fejlet SELECT er IKKE det samme som "ingen tidligere data" — tolkes
+          // den sådan, overskrives en ægte baseline af det aktuelle sæt. Springes
+          // over her; selve sætloggen er allerede gemt ovenfor.
+          logFrontendError('PR-detektion sprunget over: SELECT på personal_records fejlede', prFetchError, athlete.id)
+        } else if ((prData || []).length === 0) {
           // Allerførste registrering på øvelsen → gem baseline uden notifikation
           await savePR()
         } else {
+          const rows = prData
           const bestWeight = Math.max(...rows.map(r => r.weight || 0))
           const bestE1rm = Math.max(...rows.map(e1rm))
           // Flest reps tidligere på en vægt mindst lige så tung som det nye sæt

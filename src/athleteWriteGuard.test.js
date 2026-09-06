@@ -54,3 +54,41 @@ test('F5 — markGoodAndSave: fejl fra update_competition_max giver besked og r�
   assert.equal(flashed, 'Stævnemakset blev ikke gemt. Tjek din forbindelse og prøv igen.')
   assert.equal(athlete, before, 'skærmens stævnemaks må ikke ændres før RPC-kaldet har bekræftet')
 })
+
+test('F6 — logSet PR-blok: en fejlet SELECT på personal_records springer PR-detektion over i stedet for at tolkes som "ingen tidligere data"', async () => {
+  let prSaved = false
+  let loggedError = null
+  const savePR = () => { prSaved = true }
+  const logFrontendError = (message, error) => { loggedError = { message, error } }
+  // Reproducerer beslutningen fra logSet's PR-blok: skeln mellem en ægte fejl
+  // og en tom (men fejlfri) SELECT — kun sidstnævnte betyder "gem baseline".
+  const runPrBlock = (prData, prFetchError) => {
+    if (prFetchError) {
+      logFrontendError('PR-detektion sprunget over: SELECT på personal_records fejlede', prFetchError)
+    } else if ((prData || []).length === 0) {
+      savePR()
+    }
+  }
+  runPrBlock(null, { message: 'connection reset' })
+  assert.equal(prSaved, false, 'en fejlet SELECT må ikke gemmes som ny baseline — det ville overskrive en ægte tidligere rekord')
+  assert.deepEqual(loggedError, { message: 'PR-detektion sprunget over: SELECT på personal_records fejlede', error: { message: 'connection reset' } })
+})
+
+test('F7 — saveReadiness: en Supabase-fejl oversættes til én sætning, og readinessLog opdateres ikke', async () => {
+  let readinessLog = null
+  const before = readinessLog
+  let readinessError = null
+  let loggedError = null
+  const logFrontendError = (message, error) => { loggedError = { message, error } }
+  const error = { message: 'duplicate key value violates unique constraint "readiness_logs_pkey"' }
+  if (error) {
+    logFrontendError('saveReadiness fejlede', error)
+    readinessError = 'Kunne ikke gemme parathed. Tjek din forbindelse og prøv igen.'
+  } else {
+    readinessLog = { logged_date: '2026-09-06' }
+  }
+  assert.equal(readinessError, 'Kunne ikke gemme parathed. Tjek din forbindelse og prøv igen.')
+  assert.notEqual(readinessError, error.message, 'atleten må ikke se den rå Supabase-fejlbesked')
+  assert.equal(readinessLog, before, 'readinessLog må ikke sættes når skrivningen fejlede')
+  assert.deepEqual(loggedError, { message: 'saveReadiness fejlede', error })
+})
