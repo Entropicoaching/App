@@ -92,3 +92,48 @@ test('F7 — saveReadiness: en Supabase-fejl oversættes til én sætning, og re
   assert.equal(readinessLog, before, 'readinessLog må ikke sættes når skrivningen fejlede')
   assert.deepEqual(loggedError, { message: 'saveReadiness fejlede', error })
 })
+
+// ORDRE 68 — "resten af den stille familie": G2 (undoDelete) og G3
+// (session-niveauets Spring resten over/Auto-udfyld/Gem feedback), rangeret
+// øverst i ordre 64's fundliste, er nu koblet gennem runGuardedWrite.
+
+test('G2 — undoDelete: fejl fra meal_logs-insert giver besked, og undoToast forbliver (så atleten kan prøve igen)', async () => {
+  let undoToast = { label: 'Måltid slettet', restore: { athlete_id: 'a1' } }
+  const before = undoToast
+  let flashed = null
+  const ok = await runGuardedWrite(
+    async () => ({ error: { message: 'network drop' } }),
+    () => { flashed = 'Måltidet kunne ikke gendannes. Tjek din forbindelse og prøv igen.' },
+  )
+  if (ok) undoToast = null // spejler "if (!ok) return" før setUndoToast(null) i AthleteView.jsx
+  assert.equal(ok, false)
+  assert.equal(flashed, 'Måltidet kunne ikke gendannes. Tjek din forbindelse og prøv igen.')
+  assert.equal(undoToast, before, 'toasten må ikke forsvinde før genindsættelsen er bekræftet')
+})
+
+test('G3 — skipRemainingSets/autoCompleteSession: fejl fra exercise_logs-insert giver besked og fetchExerciseLogs kaldes ikke', async () => {
+  let flashed = null
+  let refetched = false
+  const ok = await runGuardedWrite(
+    async () => ({ error: { message: 'network drop' } }),
+    () => { flashed = 'Sættene kunne ikke springes over. Tjek din forbindelse og prøv igen.' },
+  )
+  if (ok) refetched = true
+  assert.equal(ok, false)
+  assert.equal(flashed, 'Sættene kunne ikke springes over. Tjek din forbindelse og prøv igen.')
+  assert.equal(refetched, false, 'tilstanden må ikke genindlæses/ændres når skrivningen er fejlet')
+})
+
+test('G3 — saveFeedback: fejl fra sessions-update giver besked, og athlete_rating/athlete_comment opdateres ikke lokalt', async () => {
+  let sessions = [{ id: 's1', athlete_rating: null, athlete_comment: null }]
+  const before = sessions
+  let flashed = null
+  const ok = await runGuardedWrite(
+    async () => ({ error: { message: 'rpc timeout' } }),
+    () => { flashed = 'Feedbacken blev ikke gemt. Tjek din forbindelse og prøv igen.' },
+  )
+  if (ok) sessions = sessions.map(s => s.id === 's1' ? { ...s, athlete_rating: 4 } : s) // spejler "if (ok) setAllWeeks(...)"
+  assert.equal(ok, false)
+  assert.equal(flashed, 'Feedbacken blev ikke gemt. Tjek din forbindelse og prøv igen.')
+  assert.equal(sessions, before, 'sessionens feedback må ikke vises som gemt før update har bekræftet')
+})

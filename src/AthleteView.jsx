@@ -1509,7 +1509,7 @@ function MobilityGuideStep({ heading, step, total, onExit, areaLabel, ex, opts, 
       <div style={{ marginBottom: '1.75rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', letterSpacing: '0.08em' }}>{heading} · Øvelse {step + 1} af {total}</div>
-          <button style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem' }} onClick={onExit}>✕ Afslut</button>
+          <button style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', minHeight: '44px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center' }} onClick={onExit}>✕ Afslut</button>
         </div>
         <div style={{ height: '2px', background: 'rgba(237,234,226,0.07)', borderRadius: '1px' }}>
           <div style={{ height: '100%', background: '#c8923a', width: `${pct}%`, transition: 'width 0.3s ease' }} />
@@ -1752,7 +1752,11 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const setWriteRef = useRef({}) // key -> { realId, chain }
   // Fortryd-toast (sletning) + beskeder auto-scroll
   const [undoToast, setUndoToast] = useState(null)
+  const [undoPending, setUndoPending] = useState(false)
   const undoTimerRef = useRef(null)
+  // Session-niveau skriv-tilstand ("<sessionId>:skip"|"autofill"|"feedback") — knapperne
+  // deaktiveres og viser "..."/"Gemmer..." mens skrivningen afventer svar fra Supabase.
+  const [pendingSessionAction, setPendingSessionAction] = useState(null)
   const messagesEndRef = useRef(null)
   const readinessCardRef = useRef(null)
   // Session-kort refs, så vi kan scrolle en nyåbnet session op i toppen
@@ -2717,10 +2721,16 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   async function saveFeedback(sessionId) {
     const input = feedbackInputs[sessionId] || {}
     if (!input.rating) return
-    await supabase.from('sessions').update({
-      athlete_rating: input.rating,
-      athlete_comment: input.comment || null,
-    }).eq('id', sessionId)
+    setPendingSessionAction(`${sessionId}:feedback`)
+    const ok = await runGuardedWrite(
+      () => supabase.from('sessions').update({
+        athlete_rating: input.rating,
+        athlete_comment: input.comment || null,
+      }).eq('id', sessionId),
+      () => showFlash('Feedbacken blev ikke gemt. Tjek din forbindelse og prøv igen.', 'error'),
+    )
+    setPendingSessionAction(null)
+    if (!ok) return
     setAllWeeks(prev => prev.map(w => ({
       ...w,
       sessions: (w.sessions || []).map(s => s.id === sessionId ? { ...s, athlete_rating: input.rating, athlete_comment: input.comment || null } : s),
@@ -3096,12 +3106,13 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     const exerciseIds = (session.exercises || []).map(e => e.id)
     if (exerciseIds.length === 0) { showFlash('Ingen øvelser fundet i sessionen.', 'error'); return }
 
+    setPendingSessionAction(`${session.id}:autofill`)
     const { data: existing, error: fetchErr } = await supabase
       .from('exercise_logs')
       .select('exercise_id, set_number')
       .eq('athlete_id', athlete.id)
       .in('exercise_id', exerciseIds)
-    if (fetchErr) { showFlash('Fejl ved hentning: ' + fetchErr.message, 'error'); return }
+    if (fetchErr) { setPendingSessionAction(null); showFlash('Sættene kunne ikke tjekkes. Tjek din forbindelse og prøv igen.', 'error'); return }
 
     const logged = new Set((existing || []).map(l => `${l.exercise_id}_${l.set_number}`))
     const rows = []
@@ -3118,12 +3129,17 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     }
 
     if (rows.length === 0) {
+      setPendingSessionAction(null)
       showFlash('Alle sæt er allerede logget.')
       return
     }
 
-    const { error: insertErr } = await supabase.from('exercise_logs').insert(rows)
-    if (insertErr) { showFlash('Fejl ved indsætning: ' + insertErr.message, 'error'); return }
+    const ok = await runGuardedWrite(
+      () => supabase.from('exercise_logs').insert(rows),
+      () => showFlash('Sættene kunne ikke udfyldes. Tjek din forbindelse og prøv igen.', 'error'),
+    )
+    setPendingSessionAction(null)
+    if (!ok) return
 
     showFlash(`${rows.length} sæt udfyldt.`)
     await fetchExerciseLogs(athlete.id, currentWeek)
@@ -3137,12 +3153,13 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     const exerciseIds = (session.exercises || []).map(e => e.id)
     if (exerciseIds.length === 0) { showFlash('Ingen øvelser fundet i sessionen.', 'error'); return }
 
+    setPendingSessionAction(`${session.id}:skip`)
     const { data: existing, error: fetchErr } = await supabase
       .from('exercise_logs')
       .select('exercise_id, set_number')
       .eq('athlete_id', athlete.id)
       .in('exercise_id', exerciseIds)
-    if (fetchErr) { showFlash('Fejl ved hentning: ' + fetchErr.message, 'error'); return }
+    if (fetchErr) { setPendingSessionAction(null); showFlash('Sættene kunne ikke tjekkes. Tjek din forbindelse og prøv igen.', 'error'); return }
 
     const logged = new Set((existing || []).map(l => `${l.exercise_id}_${l.set_number}`))
     const rows = []
@@ -3154,12 +3171,17 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     }
 
     if (rows.length === 0) {
+      setPendingSessionAction(null)
       showFlash('Alle sæt er allerede logget.')
       return
     }
 
-    const { error: insertErr } = await supabase.from('exercise_logs').insert(rows)
-    if (insertErr) { showFlash('Fejl ved indsætning: ' + insertErr.message, 'error'); return }
+    const ok = await runGuardedWrite(
+      () => supabase.from('exercise_logs').insert(rows),
+      () => showFlash('Sættene kunne ikke springes over. Tjek din forbindelse og prøv igen.', 'error'),
+    )
+    setPendingSessionAction(null)
+    if (!ok) return
 
     showFlash(`${rows.length} sæt sprunget over.`)
     await fetchExerciseLogs(athlete.id, currentWeek)
@@ -3193,10 +3215,16 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   async function undoDelete() {
     const t = undoToast
-    if (!t) return
+    if (!t || undoPending) return
     if (undoTimerRef.current) clearTimeout(undoTimerRef.current)
+    setUndoPending(true)
+    const ok = await runGuardedWrite(
+      () => supabase.from('meal_logs').insert(t.restore),
+      () => showFlash('Måltidet kunne ikke gendannes. Tjek din forbindelse og prøv igen.', 'error'),
+    )
+    setUndoPending(false)
+    if (!ok) return
     setUndoToast(null)
-    await supabase.from('meal_logs').insert(t.restore)
     fetchLogs(athlete.id)
   }
 
@@ -3571,7 +3599,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           boxShadow: '0 4px 24px rgba(0,0,0,0.55)',
         }}>
           <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#b8b4a8', letterSpacing: '0.06em' }}>{undoToast.label}</span>
-          <button onClick={undoDelete} style={{ ...s.btnGhost, fontSize: '0.58rem', padding: '0.3rem 0.7rem', color: '#c8923a', borderColor: 'rgba(200,146,58,0.45)' }}>Fortryd</button>
+          <button onClick={undoDelete} disabled={undoPending} style={{ ...s.btnGhost, fontSize: '0.58rem', padding: '0.3rem 0.7rem', color: '#c8923a', borderColor: 'rgba(200,146,58,0.45)', opacity: undoPending ? 0.6 : 1 }}>{undoPending ? '...' : 'Fortryd'}</button>
         </div>
       )}
       {/* Toast */}
@@ -3613,7 +3641,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               <button
                 onClick={() => setAccountMenuOpen(o => !o)}
                 aria-label="Konto"
-                style={{ background: 'transparent', border: 'none', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.1em', cursor: 'pointer', padding: '0.2rem 0.3rem' }}
+                style={{ background: 'transparent', border: 'none', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.1em', cursor: 'pointer', minWidth: '44px', minHeight: '44px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
               >⋯</button>
               {accountMenuOpen && (
                 <div style={{ position: 'absolute', top: '100%', right: 0, marginTop: '0.4rem', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.1)', borderRadius: 6, padding: '0.35rem', minWidth: '190px', zIndex: 100, boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
@@ -4441,13 +4469,15 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                               {!isDone && totalSets > 0 && (
                                 <>
                                   <button
-                                    style={{ ...s.btnGhost, fontSize: '0.62rem', padding: '0.35rem 0.7rem', color: '#7a7770', borderColor: 'rgba(237,234,226,0.18)' }}
+                                    style={{ ...s.btnGhost, fontSize: '0.62rem', padding: '0.35rem 0.7rem', color: '#7a7770', borderColor: 'rgba(237,234,226,0.18)', opacity: pendingSessionAction?.startsWith(`${session.id}:`) ? 0.6 : 1 }}
+                                    disabled={pendingSessionAction?.startsWith(`${session.id}:`)}
                                     onClick={e => { e.stopPropagation(); askConfirm('Spring de resterende sæt over? De markeres som ikke gennemført, så træningen lukkes.', () => skipRemainingSets(session)) }}
-                                  >Spring resten over</button>
+                                  >{pendingSessionAction === `${session.id}:skip` ? '...' : 'Spring resten over'}</button>
                                   <button
-                                    style={{ ...s.btnGhost, fontSize: '0.62rem', padding: '0.35rem 0.7rem', color: '#c8923a', borderColor: 'rgba(200,146,58,0.35)' }}
+                                    style={{ ...s.btnGhost, fontSize: '0.62rem', padding: '0.35rem 0.7rem', color: '#c8923a', borderColor: 'rgba(200,146,58,0.35)', opacity: pendingSessionAction?.startsWith(`${session.id}:`) ? 0.6 : 1 }}
+                                    disabled={pendingSessionAction?.startsWith(`${session.id}:`)}
                                     onClick={e => { e.stopPropagation(); askConfirm('Udfyld manglende sæt med sidst loggede vægt og reps? Brug kun hvis du faktisk lavede sættene.', () => autoCompleteSession(session)) }}
-                                  >Auto-udfyld</button>
+                                  >{pendingSessionAction === `${session.id}:autofill` ? '...' : 'Auto-udfyld'}</button>
                                 </>
                               )}
                               <span style={{ color: '#4a4844', fontSize: '0.65rem' }}>{isOpen ? '▲' : '▼'}</span>
@@ -4814,10 +4844,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                 <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem' }}>
                                   <button style={s.btnGhost} onClick={() => setDismissedFeedback(p => new Set([...p, session.id]))}>Spring over</button>
                                   <button
-                                    style={{ ...s.btnPrimary, opacity: !(feedbackInputs[session.id]?.rating) ? 0.4 : 1 }}
+                                    style={{ ...s.btnPrimary, opacity: !(feedbackInputs[session.id]?.rating) || pendingSessionAction === `${session.id}:feedback` ? 0.4 : 1 }}
                                     onClick={() => saveFeedback(session.id)}
-                                    disabled={!feedbackInputs[session.id]?.rating}
-                                  >Gem feedback</button>
+                                    disabled={!feedbackInputs[session.id]?.rating || pendingSessionAction === `${session.id}:feedback`}
+                                  >{pendingSessionAction === `${session.id}:feedback` ? 'Gemmer...' : 'Gem feedback'}</button>
                                 </div>
                               </div>
                             )}
@@ -5020,7 +5050,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                         <button
                           onClick={e => { e.stopPropagation(); quickAddSearchFood(f) }}
                           title="Hurtig-tilføj 1 portion — tryk navnet for at vælge mængde"
-                          style={{ flexShrink: 0, width: '30px', height: '30px', borderRadius: '50%', border: '1px solid rgba(200,146,58,0.5)', background: 'rgba(200,146,58,0.1)', color: '#c8923a', cursor: 'pointer', fontSize: '1.1rem', lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                          style={{ flexShrink: 0, width: '44px', height: '44px', minWidth: '44px', minHeight: '44px', boxSizing: 'border-box', borderRadius: '50%', border: '1px solid rgba(200,146,58,0.5)', background: 'rgba(200,146,58,0.1)', color: '#c8923a', cursor: 'pointer', fontSize: '1.1rem', lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                         >+</button>
                       </div>
                     </div>
@@ -5162,8 +5192,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                           <td style={{ textAlign: 'right', padding: '0.45rem 0', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem' }}>{l.carb}g</td>
                           <td style={{ textAlign: 'right', padding: '0.45rem 0', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem' }}>{l.fat}g</td>
                           <td style={{ textAlign: 'right', padding: '0.45rem 0', whiteSpace: 'nowrap' }}>
-                            <button onClick={() => editing ? setEditingLogId(null) : startEditLog(l)} title="Rediger" style={{ background: 'none', border: 'none', color: editing ? '#c8923a' : '#4a4844', cursor: 'pointer', fontSize: '0.7rem', padding: '0 0.3rem' }}>✎</button>
-                            <button onClick={() => deleteLog(l)} title="Slet" style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.7rem', padding: 0 }}>✕</button>
+                            <button onClick={() => editing ? setEditingLogId(null) : startEditLog(l)} title="Rediger" style={{ background: 'none', border: 'none', color: editing ? '#c8923a' : '#4a4844', cursor: 'pointer', fontSize: '0.7rem', minWidth: '44px', minHeight: '44px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>✎</button>
+                            <button onClick={() => deleteLog(l)} title="Slet" style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.7rem', minWidth: '44px', minHeight: '44px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
                           </td>
                         </tr>
                         {editing && (
@@ -5726,7 +5756,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                       <div key={idx} style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)', padding: '0.9rem' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
                           <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#c8923a' }}>{areaLabel(sl.area)}</span>
-                          <button onClick={() => removeSlot(idx)} style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem' }}>✕ fjern</button>
+                          <button onClick={() => removeSlot(idx)} style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', minHeight: '44px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center' }}>✕ fjern</button>
                         </div>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.5rem' }}>
                           {opts.map((opt, ci) => {

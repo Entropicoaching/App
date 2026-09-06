@@ -167,7 +167,7 @@ export default function Auth() {
             <div style={{ textAlign: 'right', marginBottom: '1.5rem' }}>
               <span
                 onClick={() => { setMode('reset'); setError(null); setNotice(null) }}
-                style={{ fontSize: '0.76rem', color: '#7a7770', cursor: 'pointer', padding: '0.4rem 0', display: 'inline-block' }}
+                style={{ fontSize: '0.76rem', color: '#7a7770', cursor: 'pointer', padding: '0.4rem 0', minHeight: '44px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center' }}
               >Glemt adgangskode?</span>
             </div>
           )}

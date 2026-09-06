@@ -87,5 +87,32 @@ assert.match(saveReadiness, /logFrontendError\(/, 'saveReadiness skal logge fejl
 assert.doesNotMatch(saveReadiness, /setReadinessError\(error\.message\)/,
   'atleten må ikke se den rå Supabase-fejlbesked — den skal oversættes til én sætning')
 
+// ORDRE 68 — "resten af den stille familie": G2 (undoDelete) og G3
+// (session-niveauets Spring resten over/Auto-udfyld/Gem feedback), rangeret
+// øverst i ordre 64's fundliste, er nu koblet gennem samme garde.
+
+// G2: undoDelete må kun rydde undoToast EFTER at meal_logs-genindsættelsen er bekræftet.
+const undoDelete = extractFn('undoDelete')
+assert.match(undoDelete, /runGuardedWrite\(/, 'undoDelete skal gå igennem write-garden')
+assert.match(undoDelete, /if \(!ok\) return[\s\S]*setUndoToast\(null\)/,
+  'undoToast må først ryddes EFTER en bekræftet genindsættelse')
+
+// G3: skipRemainingSets og autoCompleteSession må først genindlæse sæt-loggen
+// EFTER en bekræftet insert i exercise_logs.
+for (const name of ['skipRemainingSets', 'autoCompleteSession']) {
+  const fn = extractFn(name)
+  assert.match(fn, /runGuardedWrite\(/, `${name} skal gå igennem write-garden`)
+  assert.match(fn, /if \(!ok\) return[\s\S]*fetchExerciseLogs\(/,
+    `${name} må først genindlæse sæt-loggen EFTER en bekræftet skrivning`)
+}
+
+// G3: saveFeedback må kun opdatere athlete_rating/athlete_comment lokalt EFTER
+// at sessions-updaten er bekræftet.
+const saveFeedback = extractFn('saveFeedback')
+assert.match(saveFeedback, /runGuardedWrite\(/, 'saveFeedback skal gå igennem write-garden')
+assert.match(saveFeedback, /if \(!ok\) return[\s\S]*setAllWeeks\(/,
+  'setAllWeeks må kun kaldes når sessions-updaten har bekræftet skrivningen')
+
 console.log('Besked- og kostlog-skrivninger viser en fejl og lader IKKE som succes, når skrivningen fejler.')
 console.log('Spring-over, stævnemaks, PR-detektion og parathed følger nu samme mønster (ordre 64).')
+console.log('Fortryd-slet og session-niveauets spring-over/auto-udfyld/feedback følger nu samme mønster (ordre 68).')
