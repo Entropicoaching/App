@@ -20,6 +20,24 @@ const extractFn = (name) => {
   return match[0]
 }
 
+// Som extractFn, men uafhængig af indrykningsniveau — finder funktionens
+// åbnings-brace og tæller sig frem til den matchende lukke-brace. Nødvendig
+// for funktioner defineret dybt inde i JSX (fx markGoodAndSave), hvor den
+// simple "\n  }"-formodning ovenfor ikke holder.
+const extractFnBalanced = (name) => {
+  const startMatch = athleteView.match(new RegExp(`async function ${name}\\([^)]*\\) \\{`))
+  assert.ok(startMatch, `${name} skal kunne findes som en samlet funktion`)
+  const bodyStart = startMatch.index + startMatch[0].length
+  let depth = 1
+  let i = bodyStart
+  while (depth > 0 && i < athleteView.length) {
+    if (athleteView[i] === '{') depth++
+    else if (athleteView[i] === '}') depth--
+    i++
+  }
+  return athleteView.slice(startMatch.index, i)
+}
+
 // sendAthleteMessage: det konkrete symptom var at inputtet blev ryddet
 // UANSET om skrivningen lykkedes. Tjek at rydningen kommer EFTER garden,
 // altså kun når den lykkedes.
@@ -39,4 +57,35 @@ for (const name of ['quickLogFood', 'copyYesterday', 'saveTemplate', 'logTemplat
     `${name} må ikke skrive direkte uden om garden`)
 }
 
+// ORDRE 64 — "de stille fejl, runde 2": F4 fra ordre 41's fundliste havde
+// samme mønster som F1/F2 herover. Samme tjek, nye steder.
+for (const name of ['skipSet', 'skipExercise', 'unskipSet']) {
+  const fn = extractFn(name)
+  assert.match(fn, /runGuardedWrite\(/, `${name} skal gå igennem write-garden`)
+  assert.match(fn, /if \(!ok\) return[\s\S]*fetchExerciseLogs\(/,
+    `${name} må først genindlæse sæt-loggen EFTER en bekræftet skrivning`)
+}
+
+// F5: markGoodAndSave må kun opdatere athlete.squat/bench/deadlift i UI'en når
+// RPC'en har svaret uden fejl.
+const markGoodAndSave = extractFnBalanced('markGoodAndSave')
+assert.match(markGoodAndSave, /runGuardedWrite\(/, 'markGoodAndSave skal gå igennem write-garden')
+assert.match(markGoodAndSave, /if \(ok\) setAthlete\(/,
+  'setAthlete må kun kaldes når update_competition_max har bekræftet skrivningen')
+
+// F6: logSet skal skelne en fejlet SELECT på personal_records fra en tom (men
+// fejlfri) SELECT, og logge den fejlede variant til frontend_errors i stedet
+// for at gemme en ny baseline.
+const logSet = extractFn('logSet')
+assert.match(logSet, /error:\s*prFetchError/, 'logSet skal kigge på fejlen fra SELECT på personal_records')
+assert.match(logSet, /if \(prFetchError\)[\s\S]*logFrontendError\(/,
+  'en fejlet SELECT skal logges til frontend_errors, ikke tolkes som "ingen tidligere data"')
+
+// F7: saveReadiness må ikke vise den rå Supabase-fejlbesked til atleten.
+const saveReadiness = extractFn('saveReadiness')
+assert.match(saveReadiness, /logFrontendError\(/, 'saveReadiness skal logge fejldetaljen til frontend_errors')
+assert.doesNotMatch(saveReadiness, /setReadinessError\(error\.message\)/,
+  'atleten må ikke se den rå Supabase-fejlbesked — den skal oversættes til én sætning')
+
 console.log('Besked- og kostlog-skrivninger viser en fejl og lader IKKE som succes, når skrivningen fejler.')
+console.log('Spring-over, stævnemaks, PR-detektion og parathed følger nu samme mønster (ordre 64).')
