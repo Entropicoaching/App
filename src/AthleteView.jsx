@@ -8,6 +8,7 @@ import { ATHLETE_ONBOARDING_GUIDE_STEPS, hasCompletedOnboardingGuide, isLastOnbo
 import { runGuardedWrite } from './athleteWriteGuard'
 import { runGuardedRead } from './athleteReadGuard'
 import { loadReadinessDraft, saveReadinessDraft, clearReadinessDraft, isEmptyReadinessDraft } from './readinessDraft'
+import { remainingSeconds } from './restTimer'
 import { calcWarmupSets, isMainLift } from './warmup'
 import { foldNavn } from './exerciseNames'
 import { flushVideoCoachDraftQueue, isRetryableVideoCoachError,
@@ -1473,17 +1474,37 @@ function parseDuration(...parts) {
 // med sin EGEN state så flere kan stå på siden uden at kollidere med hinanden
 // eller med den delte mobilitets-timer.
 function ExerciseTimer({ duration, label }) {
-  const [seconds, setSeconds] = useState(0)
+  // G5: 'remaining' er sekunder tilbage NÅR ikke aktiv (frosset ved
+  // pause/klar/gentag). Mens aktiv driver 'liveSeconds' visningen, opdateret
+  // af effekten nedenfor ud fra tidsstempler i startRef — aldrig ved at
+  // tælle ticks ned. Se restTimer.js. startRef læses kun inde i effekten
+  // (aldrig under selve renderet), så et evt. baggrunds-throttlet interval
+  // ikke giver en forkert værdi: næste tick (eller visibilitychange) regner
+  // altid den rigtige, aktuelle rest ud fra uret, ikke fra sidste tick.
+  const [remaining, setRemaining] = useState(duration)
   const [active, setActive] = useState(false)
   const [done, setDone] = useState(false)
-  const ref = useRef(null)
+  const [liveSeconds, setLiveSeconds] = useState(duration)
+  const startRef = useRef(null) // { remainingAtStart, startedAt } for det igangværende aktive segment
+
+  const seconds = active ? liveSeconds : remaining
+
   useEffect(() => {
     if (!active) return
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (seconds <= 0) { setActive(false); setDone(true); return }
-    ref.current = setTimeout(() => setSeconds(s => s - 1), 1000)
-    return () => clearTimeout(ref.current)
-  }, [active, seconds])
+    startRef.current = { remainingAtStart: remaining, startedAt: Date.now() }
+    const recompute = () => {
+      const live = remainingSeconds(startRef.current.remainingAtStart, startRef.current.startedAt)
+      setLiveSeconds(live)
+      if (live <= 0) { setRemaining(0); setActive(false); setDone(true) }
+    }
+    recompute()
+    const id = setInterval(recompute, 250)
+    const onVisible = () => { if (document.visibilityState === 'visible') recompute() }
+    document.addEventListener('visibilitychange', onVisible)
+    return () => { clearInterval(id); document.removeEventListener('visibilitychange', onVisible) }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- kun ved start/stop af det aktive segment; 'remaining' er kun brugt som startpunkt for DET segment
+  }, [active])
+
   return (
     <div style={{ marginBottom: '0.75rem', textAlign: 'center' }}>
       <div style={{ marginBottom: '0.6rem' }}>
@@ -1491,11 +1512,13 @@ function ExerciseTimer({ duration, label }) {
       </div>
       {label && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#7a7770', letterSpacing: '0.08em', marginBottom: '0.6rem' }}>{label}</div>}
       {!done ? (
-        <button style={{ ...s.btnGhost, padding: '0.5rem 1.25rem' }} onClick={() => { if (!active && seconds === 0) setSeconds(duration); setActive(a => !a) }}>
+        <button style={{ ...s.btnGhost, padding: '0.5rem 1.25rem' }} onClick={() => {
+          if (active) { setRemaining(seconds); setActive(false) } else setActive(true)
+        }}>
           {active ? '⏸ Pause' : (seconds > 0 && seconds < duration) ? '▶ Fortsæt' : '▶ Start timer'}
         </button>
       ) : (
-        <button style={{ ...s.btnGhost, padding: '0.5rem 1.25rem' }} onClick={() => { setSeconds(duration); setDone(false); setActive(false) }}>↺ Gentag</button>
+        <button style={{ ...s.btnGhost, padding: '0.5rem 1.25rem' }} onClick={() => { setRemaining(duration); setDone(false); setActive(false) }}>↺ Gentag</button>
       )}
     </div>
   )
@@ -1799,7 +1822,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [timerSeconds, setTimerSeconds] = useState(0)
   const [timerActive, setTimerActive] = useState(false)
   const [timerDone, setTimerDone] = useState(false)
-  const timerRef = useRef(null)
+  // G5: { remainingAtStart, startedAt } for det aktive segment — læses kun
+  // inde i effekten nedenfor, aldrig under selve renderet.
+  const timerStartRef = useRef(null)
 
   // Mobilitet-hub state — fanen er en intent-landing (null) med tre døre
   const [mobilityMode, setMobilityMode] = useState(null) // null=landing | 'opvarmning' | 'mobilitet'
@@ -2110,11 +2135,25 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   }, [tab, currentWeek, mobilityMode])
 
   useEffect(() => {
+    // G5: regn ud fra tidsstempler (hvornår segmentet startede, og hvornår
+    // "nu" faktisk er), ikke ud fra hvor mange ticks der nåede at køre — en
+    // låst skærm/baggrundsfane throttler eller pauser setTimeout-kæder, men
+    // uret går videre. genregner desuden med det samme ved visibilitychange,
+    // så en genoptaget fane ikke venter på næste 250ms-tick for at rette sig.
     if (!timerActive) return
-    if (timerSeconds <= 0) { setTimerActive(false); setTimerDone(true); return }
-    timerRef.current = setTimeout(() => setTimerSeconds(s => s - 1), 1000)
-    return () => clearTimeout(timerRef.current)
-  }, [timerActive, timerSeconds])
+    timerStartRef.current = { remainingAtStart: timerSeconds, startedAt: Date.now() }
+    const recompute = () => {
+      const live = remainingSeconds(timerStartRef.current.remainingAtStart, timerStartRef.current.startedAt)
+      setTimerSeconds(live)
+      if (live <= 0) { setTimerActive(false); setTimerDone(true) }
+    }
+    recompute()
+    const id = setInterval(recompute, 250)
+    const onVisible = () => { if (document.visibilityState === 'visible') recompute() }
+    document.addEventListener('visibilitychange', onVisible)
+    return () => { clearInterval(id); document.removeEventListener('visibilitychange', onVisible) }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- kun ved start/stop af segmentet; 'timerSeconds' bruges kun som startpunkt for DET segment
+  }, [timerActive])
 
   /* eslint-enable react-hooks/set-state-in-effect */
 
