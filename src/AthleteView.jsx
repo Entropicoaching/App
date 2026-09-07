@@ -6,6 +6,7 @@ import { videoCoachPersonalBaselineAthleteText, videoCoachPersonalBaselineForAna
 import { VIDEOCOACH_LIFT_LABELS as ATHLETE_VIDEO_LIFTS, videoCoachVariationLabel as athleteVideoVariationLabel } from './videoCoachLabels'
 import { ATHLETE_ONBOARDING_GUIDE_STEPS, hasCompletedOnboardingGuide, isLastOnboardingGuideStep } from './athleteOnboardingGuide'
 import { runGuardedWrite } from './athleteWriteGuard'
+import { runGuardedRead } from './athleteReadGuard'
 import { calcWarmupSets, isMainLift } from './warmup'
 import { foldNavn } from './exerciseNames'
 import { flushVideoCoachDraftQueue, isRetryableVideoCoachError,
@@ -1695,6 +1696,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [logs, setLogs] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
+  // G1: skelner "programmet er tomt" fra "programmet kunne ikke hentes", så
+  // en fejlet fetchProgram ikke viser samme skærm som en atlet uden program.
+  const [programError, setProgramError] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
   const [selectedFood, setSelectedFood] = useState(null)
@@ -2099,6 +2103,18 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     return () => clearTimeout(timer)
   }, [loading])
 
+  // G1: fælles fejlvisning for baggrundslæsninger (fetchPRs, fetchWeightLogs,
+  // ...). Logger detaljen til frontend_errors og viser en oversat, ærlig
+  // linje — samme sprog som skrivefejlene (showFlash, se athleteWriteGuard-
+  // kaldene). Kalderen skal IKKE opdatere sin state når denne kaldes, så det
+  // sidst kendte indhold forbliver på skærmen.
+  function onReadError(label, athleteId) {
+    return (error) => {
+      logFrontendError(`${label} kunne ikke hentes`, error, athleteId)
+      showFlash(`${label} kunne ikke hentes. Tjek din forbindelse og prøv igen.`, 'error')
+    }
+  }
+
   async function fetchAthlete() {
     if (!coachAthleteId && role !== 'athlete') { setLoading(false); return }
     let data
@@ -2174,16 +2190,24 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   }
 
   async function fetchPRs(athleteId) {
-    const { data } = await supabase
-      .from('personal_records')
-      .select('exercise_name, weight, reps, created_at')
-      .eq('athlete_id', athleteId)
-      .order('created_at', { ascending: false })
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('personal_records')
+        .select('exercise_name, weight, reps, created_at')
+        .eq('athlete_id', athleteId)
+        .order('created_at', { ascending: false }),
+      onReadError('Personlige rekorder', athleteId),
+    )
+    if (!ok) return
     setPrs(data || [])
   }
 
   async function fetchMeetPlan(athleteId) {
-    const { data } = await supabase.from('meet_plans').select('*').eq('athlete_id', athleteId).maybeSingle()
+    const { data, ok } = await runGuardedRead(
+      () => supabase.from('meet_plans').select('*').eq('athlete_id', athleteId).maybeSingle(),
+      onReadError('Stævneplanen', athleteId),
+    )
+    if (!ok) return
     setHasMeetPlan(!!data)
     if (data) {
       setMeetType(data.meet_type || 'sbd')
@@ -2197,38 +2221,54 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   }
 
   async function fetchMeetResults(athleteId) {
-    const { data } = await supabase
-      .from('meet_results')
-      .select('*')
-      .eq('athlete_id', athleteId)
-      .order('meet_date', { ascending: false })
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('meet_results')
+        .select('*')
+        .eq('athlete_id', athleteId)
+        .order('meet_date', { ascending: false }),
+      onReadError('Stævneresultater', athleteId),
+    )
+    if (!ok) return
     setMeetResults(data || [])
   }
 
   async function fetchWarmupTemplates(athleteId) {
-    const { data } = await supabase
-      .from('warmup_templates')
-      .select('*')
-      .eq('athlete_id', athleteId)
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('warmup_templates')
+        .select('*')
+        .eq('athlete_id', athleteId),
+      onReadError('Opvarmningsskabeloner', athleteId),
+    )
+    if (!ok) return
     setWarmupTemplates(data || [])
   }
 
   async function fetchReadiness(athleteId) {
-    const { data } = await supabase
-      .from('readiness_logs')
-      .select('*')
-      .eq('athlete_id', athleteId)
-      .eq('logged_date', today())
-      .maybeSingle()
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('readiness_logs')
+        .select('*')
+        .eq('athlete_id', athleteId)
+        .eq('logged_date', today())
+        .maybeSingle(),
+      onReadError('Dagens parathed', athleteId),
+    )
+    if (!ok) return
     setReadinessLog(data || null)
-    const { data: prev } = await supabase
-      .from('readiness_logs')
-      .select('*')
-      .eq('athlete_id', athleteId)
-      .lt('logged_date', today())
-      .order('logged_date', { ascending: false })
-      .limit(1)
-      .maybeSingle()
+    const { data: prev, ok: prevOk } = await runGuardedRead(
+      () => supabase
+        .from('readiness_logs')
+        .select('*')
+        .eq('athlete_id', athleteId)
+        .lt('logged_date', today())
+        .order('logged_date', { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      onReadError('Sidste parathed', athleteId),
+    )
+    if (!prevOk) return
     setLastReadiness(prev || null)
   }
 
@@ -2310,11 +2350,18 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   }
 
   async function fetchProgram(athleteId) {
-    const { data } = await supabase
-      .from('weeks')
-      .select('*, sessions(*, exercises(*))')
-      .eq('athlete_id', athleteId)
-      .order('week_number', { ascending: true })
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('weeks')
+        .select('*, sessions(*, exercises(*))')
+        .eq('athlete_id', athleteId)
+        .order('week_number', { ascending: true }),
+      onReadError('Dit program', athleteId),
+    )
+    if (!ok) { setProgramError(true); return }
+    // Bekræftet svar (om end evt. tomt) — en tidligere fejlvisning er ikke
+    // længere retvisende.
+    setProgramError(false)
     if (!data || data.length === 0) return
     const weeks = data.map(w => ({
       ...w,
@@ -2348,16 +2395,19 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   // til forsidens grafer. Grupperes på ugens mandag ud fra logged_at; ~12 ugers logs.
   async function fetchWeeklyTonnage(athleteId) {
     const since = new Date(Date.now() - 84 * 86400000).toISOString()
-    const { data } = await supabase
-      .from('exercise_logs')
-      .select('weight, reps_completed, logged_at, exercises(name)')
-      .eq('athlete_id', athleteId)
-      .eq('skipped', false)
-      .gt('weight', 0)
-      .gte('logged_at', since)
-      .order('logged_at', { ascending: true })
-      .limit(4000)
-    if (!data) return
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('exercise_logs')
+        .select('weight, reps_completed, logged_at, exercises(name)')
+        .eq('athlete_id', athleteId)
+        .eq('skipped', false)
+        .gt('weight', 0)
+        .gte('logged_at', since)
+        .order('logged_at', { ascending: true })
+        .limit(4000),
+      onReadError('Tonnage-grafen', athleteId),
+    )
+    if (!ok || !data) return
     // Kun stang-varianter tæller med i hovedløfts-e1RM — maskiner/håndvægte
     // (belt squat, hack squat, DB-pres ...) giver misvisende høje tal.
     const NON_BARBELL = /belt|hack|split|bulgar|goblet|smith|pendul|maskine|machine|leg press|sissy|db |dumbbell|håndvægt/
@@ -2402,11 +2452,15 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   async function fetchWeekLogs(athleteId, week) {
     const exerciseIds = (week?.sessions || []).flatMap(s => (s.exercises || []).map(e => e.id))
     if (exerciseIds.length === 0) return []
-    const { data } = await supabase
-      .from('exercise_logs')
-      .select('exercise_id')
-      .eq('athlete_id', athleteId)
-      .in('exercise_id', exerciseIds)
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('exercise_logs')
+        .select('exercise_id')
+        .eq('athlete_id', athleteId)
+        .in('exercise_id', exerciseIds),
+      onReadError('Ugens log-status', athleteId),
+    )
+    if (!ok) return []
     return data || []
   }
 
@@ -2461,22 +2515,30 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   async function fetchPastLogs(week, athleteId) {
     const exerciseIds = (week?.sessions || []).flatMap(s => (s.exercises || []).map(e => e.id))
     if (exerciseIds.length === 0) { setPastLogs([]); return }
-    const { data } = await supabase
-      .from('exercise_logs')
-      .select('*')
-      .eq('athlete_id', athleteId)
-      .in('exercise_id', exerciseIds)
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('exercise_logs')
+        .select('*')
+        .eq('athlete_id', athleteId)
+        .in('exercise_id', exerciseIds),
+      onReadError('Tidligere logs', athleteId),
+    )
+    if (!ok) return
     setPastLogs(data || [])
   }
 
   async function fetchExerciseLogs(athleteId, week) {
     const exerciseIds = (week?.sessions || []).flatMap(s => (s.exercises || []).map(e => e.id))
     if (exerciseIds.length === 0) { setExerciseLogs([]); return }
-    const { data } = await supabase
-      .from('exercise_logs')
-      .select('*')
-      .eq('athlete_id', athleteId)
-      .in('exercise_id', exerciseIds)
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('exercise_logs')
+        .select('*')
+        .eq('athlete_id', athleteId)
+        .in('exercise_id', exerciseIds),
+      onReadError('Sæt-loggen', athleteId),
+    )
+    if (!ok) return
     const rows = data || []
     setExerciseLogs(prev => {
       // Behold endnu-ikke-bekræftede optimistiske rækker (baggrundsskrivning stadig
@@ -2491,13 +2553,16 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   async function fetchLastLogs(athleteId, week) {
     const exerciseNames = [...new Set((week?.sessions || []).flatMap(s => (s.exercises || []).map(e => e.name)))]
     if (exerciseNames.length === 0) return
-    const { data } = await supabase
-      .from('exercise_logs')
-      .select('weight, reps_completed, logged_at, exercises(name)')
-      .eq('athlete_id', athleteId)
-      .order('logged_at', { ascending: false })
-      .limit(500)
-    if (!data) return
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('exercise_logs')
+        .select('weight, reps_completed, logged_at, exercises(name)')
+        .eq('athlete_id', athleteId)
+        .order('logged_at', { ascending: false })
+        .limit(500),
+      onReadError('Seneste vægte', athleteId),
+    )
+    if (!ok || !data) return
     const map = {}
     for (const log of data) {
       const name = log.exercises?.name
@@ -2509,15 +2574,18 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   }
 
   async function fetchExerciseHistory(athleteId) {
-    const { data } = await supabase
-      .from('exercise_logs')
-      .select('weight, reps_completed, rpe_actual, logged_at, set_number, exercises(name)')
-      .eq('athlete_id', athleteId)
-      .eq('skipped', false)
-      .gt('weight', 0)
-      .order('logged_at', { ascending: false })
-      .limit(1500)
-    if (!data) return
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('exercise_logs')
+        .select('weight, reps_completed, rpe_actual, logged_at, set_number, exercises(name)')
+        .eq('athlete_id', athleteId)
+        .eq('skipped', false)
+        .gt('weight', 0)
+        .order('logged_at', { ascending: false })
+        .limit(1500),
+      onReadError('Øvelseshistorik', athleteId),
+    )
+    if (!ok || !data) return
     const byName = {}
     for (const log of data) {
       const name = log.exercises?.name?.toLowerCase()
@@ -2738,12 +2806,16 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   }
 
   async function fetchWeightLogs(athleteId) {
-    const { data } = await supabase
-      .from('weight_logs')
-      .select('*')
-      .eq('athlete_id', athleteId)
-      .order('logged_at', { ascending: false })
-      .limit(30)
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('weight_logs')
+        .select('*')
+        .eq('athlete_id', athleteId)
+        .order('logged_at', { ascending: false })
+        .limit(30),
+      onReadError('Vægtloggen', athleteId),
+    )
+    if (!ok) return
     setWeightLogs(data || [])
   }
 
@@ -2765,7 +2837,11 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   async function fetchAthleteMessages(id) {
     const athleteId = id || athlete?.id
     if (!athleteId) return
-    const { data } = await supabase.from('messages').select('*').eq('athlete_id', athleteId).order('created_at')
+    const { data, ok } = await runGuardedRead(
+      () => supabase.from('messages').select('*').eq('athlete_id', athleteId).order('created_at'),
+      onReadError('Beskederne', athleteId),
+    )
+    if (!ok) return
     const msgs = data || []
     setMessages(msgs)
     const unread = msgs.filter(m => m.sender_role === 'coach' && !m.read_at).length
@@ -2880,24 +2956,32 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   )
 
   async function fetchLogs(athleteId, date = kostDate) {
-    const { data } = await supabase
-      .from('meal_logs')
-      .select('*')
-      .eq('athlete_id', athleteId)
-      .eq('date', date)
-      .order('created_at')
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('meal_logs')
+        .select('*')
+        .eq('athlete_id', athleteId)
+        .eq('date', date)
+        .order('created_at'),
+      onReadError('Dagens kostlog', athleteId),
+    )
+    if (!ok) return
     setLogs(data || [])
   }
 
   async function fetchHistoricalMealLogs(athleteId) {
     const from = new Date()
     from.setDate(from.getDate() - 28)
-    const { data } = await supabase
-      .from('meal_logs')
-      .select('date, kcal')
-      .eq('athlete_id', athleteId)
-      .gte('date', from.toISOString().slice(0, 10))
-      .order('date')
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('meal_logs')
+        .select('date, kcal')
+        .eq('athlete_id', athleteId)
+        .gte('date', from.toISOString().slice(0, 10))
+        .order('date'),
+      onReadError('Kosthistorikken', athleteId),
+    )
+    if (!ok) return
     setHistoricalMealLogs(data || [])
   }
 
@@ -2905,12 +2989,16 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   async function fetchFrequentFoods(athleteId) {
     const from = new Date()
     from.setDate(from.getDate() - 30)
-    const { data } = await supabase
-      .from('meal_logs')
-      .select('meal, kcal, protein, carb, fat, date')
-      .eq('athlete_id', athleteId)
-      .gte('date', from.toISOString().slice(0, 10))
-      .order('date', { ascending: false })
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('meal_logs')
+        .select('meal, kcal, protein, carb, fat, date')
+        .eq('athlete_id', athleteId)
+        .gte('date', from.toISOString().slice(0, 10))
+        .order('date', { ascending: false }),
+      onReadError('Hyppige fødevarer', athleteId),
+    )
+    if (!ok) return
     const map = new Map()
     for (const l of data || []) {
       if (!map.has(l.meal)) map.set(l.meal, { meal: l.meal, kcal: l.kcal, protein: l.protein, carb: l.carb, fat: l.fat, count: 0 })
@@ -2933,11 +3021,15 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   }
 
   async function fetchMealTemplates(athleteId) {
-    const { data } = await supabase
-      .from('meal_templates')
-      .select('*')
-      .eq('athlete_id', athleteId)
-      .order('created_at', { ascending: false })
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('meal_templates')
+        .select('*')
+        .eq('athlete_id', athleteId)
+        .order('created_at', { ascending: false }),
+      onReadError('Skabelonerne', athleteId),
+    )
+    if (!ok) return
     setMealTemplates(data || [])
   }
 
@@ -2991,10 +3083,14 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   async function fetchCustomFoods(athleteId) {
     // RLS returnerer delte fødevarer (is_shared) + egne. Tag 'mine' til badges/sletning.
-    const { data } = await supabase
-      .from('custom_foods')
-      .select('*')
-      .order('name', { ascending: true })
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('custom_foods')
+        .select('*')
+        .order('name', { ascending: true }),
+      onReadError('Fødevarelisten', athleteId),
+    )
+    if (!ok) return
     setCustomFoods((data || []).map(f => ({ ...f, mine: f.athlete_id === athleteId })))
   }
 
@@ -4190,13 +4286,25 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                     <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Program</div>
                     <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Dit program.</h1>
                   </div>
-                  <div style={{ ...s.card, textAlign: 'center', padding: '3rem 1.5rem' }}>
-                    <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.1rem', color: '#c8923a', marginBottom: '1rem', letterSpacing: '0.02em' }}>Entropi.</div>
-                    <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', fontWeight: 400, color: '#edeae2', marginBottom: '0.75rem' }}>Dit program er på vej.</div>
-                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#4a4844', letterSpacing: '0.08em', lineHeight: 1.7 }}>
-                      Din coach sætter det op inden din næste træning.
+                  {programError ? (
+                    // G1: en fejlet hentning må aldrig ligne "du har intet program" —
+                    // ærlig fejllinje + en vej til at prøve igen, ikke stilhed.
+                    <div style={{ ...s.card, textAlign: 'center', padding: '3rem 1.5rem' }}>
+                      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', fontWeight: 400, color: '#edeae2', marginBottom: '0.75rem' }}>Dit program kunne ikke hentes.</div>
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#4a4844', letterSpacing: '0.08em', lineHeight: 1.7, marginBottom: '1.25rem' }}>
+                        Tjek din forbindelse og prøv igen.
+                      </div>
+                      <button style={s.btnGhost} onClick={() => fetchProgram(athlete.id)}>Prøv igen</button>
                     </div>
-                  </div>
+                  ) : (
+                    <div style={{ ...s.card, textAlign: 'center', padding: '3rem 1.5rem' }}>
+                      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.1rem', color: '#c8923a', marginBottom: '1rem', letterSpacing: '0.02em' }}>Entropi.</div>
+                      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', fontWeight: 400, color: '#edeae2', marginBottom: '0.75rem' }}>Dit program er på vej.</div>
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#4a4844', letterSpacing: '0.08em', lineHeight: 1.7 }}>
+                        Din coach sætter det op inden din næste træning.
+                      </div>
+                    </div>
+                  )}
                 </>
               ) : (
                 <>
