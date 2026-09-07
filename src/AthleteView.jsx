@@ -4038,7 +4038,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                   )
                 })()}
                 <button
-                  style={{ ...s.btnPrimary, width: '100%', opacity: (!readinessInput.energy || !readinessInput.motivation || !readinessInput.stress || !readinessInput.soreness) ? 0.45 : 1 }}
+                  // G10: ~27px høj — samme metode som F13-F16/F26 (ordre 68): minHeight + boxSizing på selve knappen, ikke i den delte s.btnPrimary (rører 20 andre knapper).
+                  style={{ ...s.btnPrimary, width: '100%', minHeight: '44px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', opacity: (!readinessInput.energy || !readinessInput.motivation || !readinessInput.stress || !readinessInput.soreness) ? 0.45 : 1 }}
                   onClick={saveReadiness}
                   disabled={savingReadiness}
                 >{savingReadiness ? 'Gemmer...' : 'Log parathed'}</button>
@@ -4183,7 +4184,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                   ) : (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>
                       <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#4a4844', letterSpacing: '0.06em' }}>Logget i dag · {todayLog.weight} kg</span>
-                      <button style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.2rem 0.5rem' }} onClick={() => setWeightInput(todayLog.weight.toString())}>Ret</button>
+                      {/* G10: ~17px høj — samme metode som F13-F16/F26 (ordre 68): minHeight + boxSizing, bredden bevares. */}
+                      <button style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.2rem 0.5rem', minHeight: '44px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center' }} onClick={() => setWeightInput(todayLog.weight.toString())}>Ret</button>
                     </div>
                   )}
                 </div>
@@ -4440,6 +4442,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                       background: 'none', border: 'none', cursor: 'pointer', padding: '0.2rem 0',
                       fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.06em',
                       color: '#7a7770', whiteSpace: 'nowrap', maxWidth: '45%', overflow: 'hidden', textOverflow: 'ellipsis',
+                      // G9: kun 17px høj med nul vandret padding — samme mønster/metode som F13-F16
+                      // (ordre 68): minHeight + boxSizing, bredden på tekstknappen bevares.
+                      minHeight: '44px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center',
                     }
 
                     return (
@@ -4462,7 +4467,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                               ? <button style={chipStyle} onClick={() => goToWeek(phaseStart[viewedPhaseIdx - 1])}>‹ {prevPhase.name || 'Tidligere'}</button>
                               : <span />}
                             {nextPhase
-                              ? <button style={{ ...chipStyle, textAlign: 'right' }} onClick={() => goToWeek(phaseStart[viewedPhaseIdx + 1])}>{nextPhase.name || 'Næste blok'} ›</button>
+                              ? <button style={{ ...chipStyle, textAlign: 'right', justifyContent: 'flex-end' }} onClick={() => goToWeek(phaseStart[viewedPhaseIdx + 1])}>{nextPhase.name || 'Næste blok'} ›</button>
                               : <span />}
                           </div>
                         )}
@@ -5002,7 +5007,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                       return (
                                         <button key={n}
                                           onClick={() => setFeedbackInputs(p => ({ ...p, [session.id]: { ...(p[session.id] || {}), rating: n } }))}
-                                          style={{ width: '40px', height: '40px', border: fi.rating === n ? '2px solid #c8923a' : '1px solid rgba(237,234,226,0.13)', background: fi.rating === n ? 'rgba(200,146,58,0.15)' : 'transparent', color: fi.rating === n ? '#c8923a' : '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.95rem', cursor: 'pointer' }}
+                                          // G13: 40×40px, lige under 44px — samme metode som F13-F16 (ordre 68).
+                                          style={{ width: '44px', height: '44px', boxSizing: 'border-box', border: fi.rating === n ? '2px solid #c8923a' : '1px solid rgba(237,234,226,0.13)', background: fi.rating === n ? 'rgba(200,146,58,0.15)' : 'transparent', color: fi.rating === n ? '#c8923a' : '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.95rem', cursor: 'pointer' }}
                                         >{n}</button>
                                       )
                                     })}
