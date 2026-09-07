@@ -7,6 +7,7 @@ import { VIDEOCOACH_LIFT_LABELS as ATHLETE_VIDEO_LIFTS, videoCoachVariationLabel
 import { ATHLETE_ONBOARDING_GUIDE_STEPS, hasCompletedOnboardingGuide, isLastOnboardingGuideStep } from './athleteOnboardingGuide'
 import { runGuardedWrite } from './athleteWriteGuard'
 import { runGuardedRead } from './athleteReadGuard'
+import { loadReadinessDraft, saveReadinessDraft, clearReadinessDraft, isEmptyReadinessDraft } from './readinessDraft'
 import { calcWarmupSets, isMainLift } from './warmup'
 import { foldNavn } from './exerciseNames'
 import { flushVideoCoachDraftQueue, isRetryableVideoCoachError,
@@ -1836,6 +1837,26 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [readinessInput, setReadinessInput] = useState({ sleep: '', energy: null, motivation: null, stress: null, soreness: null, soreZones: [] })
   const [savingReadiness, setSavingReadiness] = useState(false)
   const [readinessError, setReadinessError] = useState(null)
+  // G12: parathedsudkastet skal overleve en lukket fane. restoredForAthleteRef
+  // holder styr på hvilken atlet vi allerede har forsøgt at genindsætte et
+  // udkast for, så gem-effekten nedenfor ikke rydder det udkast den lige har
+  // hentet, før genindsættelsen har nået at slå igennem i state.
+  const readinessDraftRestoredForRef = useRef(null)
+
+  useEffect(() => {
+    if (!athlete) return
+    if (readinessDraftRestoredForRef.current !== athlete.id) {
+      readinessDraftRestoredForRef.current = athlete.id
+      const draft = loadReadinessDraft(athlete.id, today())
+      if (draft && !isEmptyReadinessDraft(draft)) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- bevidst: genindsætter et lokalt udkast én gang pr. atlet ved åbning
+        setReadinessInput(draft)
+        return
+      }
+    }
+    if (isEmptyReadinessDraft(readinessInput)) clearReadinessDraft(athlete.id, today())
+    else saveReadinessDraft(athlete.id, today(), readinessInput)
+  }, [readinessInput, athlete?.id])
 
   useEffect(() => {
     athleteVideoCoachRef.current = athlete
@@ -2346,6 +2367,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       setReadinessError('Kunne ikke gemme parathed. Tjek din forbindelse og prøv igen.')
     } else {
       setReadinessLog({ ...payload })
+      // G12: en gemt log gør udkastet forældet — ryd det, så en genåbning
+      // ikke genindsætter data der allerede er logget.
+      clearReadinessDraft(athlete.id, today())
     }
   }
 
