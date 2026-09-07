@@ -3621,6 +3621,9 @@ function seekTo(t) {
   });
 }
 
+// ORDRE 85 · start: rep-detektion (uændret - se scripts/verify-videocoach-clip.mjs,
+// der genbruger denne PRÆCISE kode til at finde gentagelses-vinduer på et
+// rigtigt klip fra den fulde analyses egen bane, i stedet for en sidecar-fil).
 function buildVisualBarPath(points, valid, times, maxOffset = Math.max(1.25,
   Math.min(4, canvas.width / 512))) {
   // Kun renderlaget glattes. Sideværts bruges et kort 1-2-1-filter; lodret
@@ -3829,6 +3832,7 @@ function analyzeCleanPath(path) {
 function analyzePath(path) {
   return analyzeCleanPath(path);
 }
+// ORDRE 85 · slut: rep-detektion
 
 // Den muterende 8b80f75-analyse er karantæneret som historisk reference. Den
 // kaldes aldrig af clean rebuild-pathen; navn og rekursionskald er isoleret.
@@ -6039,6 +6043,9 @@ allBtn.onclick = async () => {
   allBtn.classList.add('active');
 };
 
+// ORDRE 85 · start: auto-kalibrering (uændret - se scripts/verify-videocoach-clip.mjs,
+// der genbruger denne PRÆCISE funktion i et gitter for at finde stangens
+// startpunkt uden en sidecar-fil, i stedet for at gætte selv).
 // AUTO-KALIBRERING: find skivens kant ud fra ét klik i centrum.
 // Scanner udad langs 16 retninger efter kontrast-spring; median-radius = skiven.
 function autoCalib(center) {
@@ -6077,6 +6084,7 @@ function autoCalib(center) {
   if (rad < 12) return null;    // "skive" på få px kan ikke bære en måling
   return 45 / (2 * rad);                      // cm pr. px
 }
+// ORDRE 85 · slut: auto-kalibrering
 
 // ---------- 🏋️ TRÆNINGSMODE (Marcs mål: "svinge op og tale ud fra") ----------
 // Efter videovalg i coach-tilstande armeres ⚡ automatisk: FØRSTE tryk på
