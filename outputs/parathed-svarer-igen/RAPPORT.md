@@ -1,6 +1,6 @@
 # ORDRE 100 — Parathed der svarer igen
 
-## 1. Gren + commits
+## Gren
 
 Gren: `parathed-svarer-igen` (fra `main` — startet på `9416aed`, én commit
 foran den `7b9e9f4` ordren navngav; kun en dokumentations-commit fra ordre
@@ -11,7 +11,7 @@ foran den `7b9e9f4` ordren navngav; kun en dokumentations-commit fra ordre
 - `6dfd214` — commit 2: 14-dages kurve under linjen
 - `b4b5548` — commit 3: enhedstest af sammenligningen og teksterne
 
-## 2. Hvad blev ændret
+## Hvad ændret
 
 **Ny fil `src/readinessInsight.js`** — ren sammenligningslogik, adskilt fra
 `AthleteView.jsx` så den kan enhedstestes uden en mountet komponent (samme
@@ -49,7 +49,7 @@ mønster som `readinessDraft.js`):
 - Ingen nye trykflader tilføjet (kurven er ren visning, ingen `onClick`) →
   44px-kravet er automatisk opfyldt (der er ingen at måle).
 
-## 3. Testresultat
+## Testresultat
 
 - `node --test src/*.test.js` — **95/95 grønne**, heraf **10 nye** i
   `src/readinessInsight.test.js`: færre end fem logs, ingen logs, præcis
@@ -76,7 +76,7 @@ gættet. Harnesset er slettet efter brug):
 
 ![Parathed-svar + 14-dages-kurve](./skaermbillede-390px.png)
 
-## 4. Hvad er næste
+## Hvad er næste
 
 - Kun set i preview-harness, ikke i en rigtig, indlogget atlet-session (se
   "Ærlige grænser"). Første rigtige bekræftelse kommer den dag en atlet
@@ -87,7 +87,7 @@ gættet. Harnesset er slettet efter brug):
   omskrivning.
 - Ingen af de øvrige F/G-fund fra ordre 41 er rørt af denne ordre.
 
-## 5. Ærlige grænser
+## Ærlige grænser
 
 - Ingen levende Supabase-test af `fetchReadiness`s nye historik-hentning
   (se afsnit 3) — kun enhedstestet ren logik + syntetisk preview.
