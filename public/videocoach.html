@@ -3621,6 +3621,9 @@ function seekTo(t) {
   });
 }
 
+// ORDRE 85 · start: rep-detektion (uændret - se scripts/verify-videocoach-clip.mjs,
+// der genbruger denne PRÆCISE kode til at finde gentagelses-vinduer på et
+// rigtigt klip fra den fulde analyses egen bane, i stedet for en sidecar-fil).
 function buildVisualBarPath(points, valid, times, maxOffset = Math.max(1.25,
   Math.min(4, canvas.width / 512))) {
   // Kun renderlaget glattes. Sideværts bruges et kort 1-2-1-filter; lodret
@@ -3829,6 +3832,7 @@ function analyzeCleanPath(path) {
 function analyzePath(path) {
   return analyzeCleanPath(path);
 }
+// ORDRE 85 · slut: rep-detektion
 
 // Den muterende 8b80f75-analyse er karantæneret som historisk reference. Den
 // kaldes aldrig af clean rebuild-pathen; navn og rekursionskald er isoleret.
@@ -5751,6 +5755,11 @@ function vcConfirmPlateRing() {
 // mpMatchPoint/mpClamp/mpMedian) - defineret tidligere i denne fil og
 // uafhængige af ocan/octx, så de er lige så gyldige på et lille,
 // nedskaleret canvas som på det fulde.
+// ORDRE 85 · commit 2: 720px afprøvet mod Marcs rigtige klip (npm run
+// verify:videocoach-clip) - meanPx faldt fra 5,10 til 1,74px og maxPx fra
+// 11,10 til 6,46px (mere præcist), MEN tid/afspillet steg fra 1,18x til
+// 1,24x, over 1,1x-grænsen. Forkastet - se outputs/hop-paa-rigtig-video/
+// RAPPORT.md for tallene.
 const RT_MAX_W = 480;
 const RT_HAS_RVFC = typeof HTMLVideoElement !== 'undefined' && 'requestVideoFrameCallback' in HTMLVideoElement.prototype;
 
@@ -5911,6 +5920,11 @@ async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd) {
       const baseFinish = finish;
       finish = () => { video.removeEventListener('timeupdate', onTimeupdate); baseFinish(); };
     }
+    // ORDRE 85 · commit 2: 0,75x afprøvet mod Marcs rigtige klip - tid/
+    // afspillet blev 1,65x (langsommere afspilning forlænger selve nævneren
+    // i budgettet: samme forhold kan matematisk ikke komme under 1/0,75 ≈
+    // 1,33x), og hverken hop eller max-afvigelse blev bedre. Forkastet - se
+    // outputs/hop-paa-rigtig-video/RAPPORT.md for tallene.
     video.playbackRate = 1;
     video.muted = true;
     video.play().catch(finish);
@@ -6039,6 +6053,9 @@ allBtn.onclick = async () => {
   allBtn.classList.add('active');
 };
 
+// ORDRE 85 · start: auto-kalibrering (uændret - se scripts/verify-videocoach-clip.mjs,
+// der genbruger denne PRÆCISE funktion i et gitter for at finde stangens
+// startpunkt uden en sidecar-fil, i stedet for at gætte selv).
 // AUTO-KALIBRERING: find skivens kant ud fra ét klik i centrum.
 // Scanner udad langs 16 retninger efter kontrast-spring; median-radius = skiven.
 function autoCalib(center) {
@@ -6077,6 +6094,7 @@ function autoCalib(center) {
   if (rad < 12) return null;    // "skive" på få px kan ikke bære en måling
   return 45 / (2 * rad);                      // cm pr. px
 }
+// ORDRE 85 · slut: auto-kalibrering
 
 // ---------- 🏋️ TRÆNINGSMODE (Marcs mål: "svinge op og tale ud fra") ----------
 // Efter videovalg i coach-tilstande armeres ⚡ automatisk: FØRSTE tryk på
