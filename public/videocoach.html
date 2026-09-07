@@ -1128,6 +1128,10 @@ const COACHWEB = !DESKTOP && MODE_PARAMS.has('coach');
 // indeholder ?benchmark=1; normal coach- og atletadfærd bruger aldrig kanalen.
 // Lokal diagnosekanal: kræver også trackerProbe, så almindelig benchmark er uændret.
 const TRACKER_PROBE = TRACKER_BENCHMARK && MODE_PARAMS.get('trackerProbe') === '1';
+// ORDRE 82 · commit 3: én diskret linje for Marc efter en "Vis mig nu"-
+// kørsel (frames sporet/sprunget, ms/frame, tid mod videoens varighed) - kun
+// synlig med ?diag=1, så almindelig atlet-brug er uændret.
+const VC_DIAG = MODE_PARAMS.get('diag') === '1';
 const SLIM = !DESKTOP;              // moderne layout (atlet OG coach online)
 const ATHLETE = SLIM && !COACHWEB;
 // ORDRE 45 · én kontakt for ALLE tracker-hastighedsgreb (commit 2-4). Slået
@@ -5930,6 +5934,7 @@ async function vcAthletePreviewThree(barPt) {
   const setEnd = trimEndEff();
   video.pause();
   analyzing = true;
+  vcShowDiag('');
   if (setAthleteState) setAthleteState('analyzing', 'Finder tre repræsentative gentagelser ...');
   const savedTrimEnd = trimEnd;
   const presearch = await vcRunRepWindowsPresearch(setStart, setEnd);
@@ -5944,6 +5949,10 @@ async function vcAthletePreviewThree(barPt) {
   const idxs = [0, Math.floor((presearch.windows.length - 1) / 2), presearch.windows.length - 1];
   const labels = ['1.', 'midt', 'sidste'];
   const previewPaths = [];
+  // ORDRE 82 · commit 3: samme tal som verify:videocoach-clip måler, men her
+  // fra den RIGTIGE kørsel på Marcs egen telefon - se vcShowDiag nedenfor.
+  const diagStartMs = performance.now();
+  let diagFramesTracked = 0, diagFramesSkipped = 0;
   for (let k = 0; k < idxs.length; k++) {
     if (!analyzing) break;   // atleten trak stikket undervejs (allBtn = Stop)
     const w = presearch.windows[idxs[k]];
@@ -5961,7 +5970,18 @@ async function vcAthletePreviewThree(barPt) {
       analyzePath(path);
       strokes.push(path);
       previewPaths.push(path);
+      const perFrame = path.valid.slice(1);
+      diagFramesTracked += perFrame.filter(Boolean).length;
+      diagFramesSkipped += perFrame.length - perFrame.filter(Boolean).length;
     }
+  }
+  if (VC_DIAG) {
+    const elapsedS = (performance.now() - diagStartMs) / 1000;
+    const totalFrames = diagFramesTracked + diagFramesSkipped;
+    const msPerFrame = totalFrames ? (elapsedS * 1000 / totalFrames) : 0;
+    const videoDur = video.duration || 0;
+    const ratio = videoDur ? elapsedS / videoDur : 0;
+    vcShowDiag(`diag: ${diagFramesTracked} sporet / ${diagFramesSkipped} sprunget over · ${msPerFrame.toFixed(0)}ms/frame · ${elapsedS.toFixed(1)}s af ${videoDur.toFixed(1)}s video (${ratio.toFixed(2)}x)`);
   }
   trimEnd = savedTrimEnd;
   analyzing = false;
@@ -9164,6 +9184,17 @@ if (ATHLETE) {
   athleteStatus.hidden = true;
   athleteStatus.innerHTML = '<b></b><span></span>';
   document.body.appendChild(athleteStatus);
+
+  // ORDRE 82 · commit 3: Marcs egen aflæsning af "Vis mig nu" på telefonen,
+  // uden at gætte på tal han ikke selv kan se - kun til stede med ?diag=1.
+  let vcDiagLine = null;
+  if (VC_DIAG) {
+    vcDiagLine = document.createElement('div');
+    vcDiagLine.id = 'vcDiagLine';
+    vcDiagLine.style.cssText = 'font:11px/1.4 monospace;color:#888;text-align:center;padding:4px 12px;white-space:pre-wrap;';
+    athleteStatus.after(vcDiagLine);
+  }
+  function vcShowDiag(text) { if (vcDiagLine) vcDiagLine.textContent = text; }
 
   // ORDRE 61 · commit 3: belastning/RPE og notat udfyldes her - samme trin som
   // løft og variation (ring-bekræftelsen lige før Start/Vis mig nu) - ikke
