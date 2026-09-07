@@ -5722,9 +5722,22 @@ function vcConfirmPlateRing() {
 // Nedskaleret til højst RT_MAX_W px, så selv det billige sporingsregnestykke
 // er hurtigt nok til at følge med en langsommere telefons eget tempo, ikke
 // kun en stationærs. Rammer én frame et tidsbudget (afledt af videoens eget
-// frame-interval, med margin), springes NÆSTE frame over uden forsøg, og
-// dens position interpoleres bagefter - billigere end at forsøge hver eneste
-// frame og risikere at sakke bagud resten af vinduet.
+// frame-interval, med margin), tæller det som gæld, og springer først en
+// frame over når gælden reelt overstiger et helt budget-slot - billigere end
+// at forsøge hver eneste frame og risikere at sakke bagud resten af vinduet
+// (se ORDRE 82 · commit 2(a) nedenfor for hvorfor gæld i stedet for et
+// ubetinget "spring næste over").
+//
+// ORDRE 82 · commit 2: Marcs egen måling på RIGTIG telefonvideo (se
+// scripts/verify-videocoach-clip.mjs) fandt banen langt mere "hoppende" her
+// end på det tegnede testklip. To ændringer, begge afprøvet mod bænken uden
+// at det samlede tidsbudget (1,1x afspillet varighed) blev overskredet: (a)
+// gæld-baseret i stedet for ubetinget frame-skip (se onFrame nedenfor), og
+// (b) et one-euro-filter efter hul-udfyldningen (rtSmoothPath) i stedet for
+// kun rå lineær interpolation. 720px-sporing og en langsommere afspilning ved
+// vedvarende overskredet budget (ordrens (c)/(d)) er BEVIDST UDELADT her:
+// ingen rigtigt klip fandtes endnu til at afgøre om budgettet reelt holder på
+// Marcs telefon, og et gæt ville risikere at gøre det værre - se RAPPORT.md.
 //
 // Rører IKKE startMultipointTracking, plade-identitetsvagten eller
 // hjem-genfindingen - det er en bevidst lettere, hurtigere vej til korte
@@ -5770,6 +5783,41 @@ function rtInterpolateGaps(pts, times) {
   return out;
 }
 
+// ORDRE 82 · commit 2(b): Marcs egen måling viste banen langt mere "hoppende"
+// på rigtig video end på det tegnede testklip - mistanken var den rå,
+// lineære udfyldning af huller (ovenfor), der giver en konstant-hastigheds
+// linje mellem to punkter og dermed et hastigheds-SPRING lige i hver
+// hul-kant, selv når selve positionen ikke er langt fra sandheden. Et
+// one-euro-filter (Casiez/Roussel/Vogel 2012 - samme filter som bruges til
+// touch-/cursor-jitter i UI'er) glatter EFTER hul-udfyldningen: cutoff'en
+// stiger med den estimerede hastighed, så en ægte hurtig fase (fx bunden af
+// et squat) ikke bliver slæbt efter, mens langsomme/støjede stræk glattes
+// mere. Køres én gang efter selve sporingen er slut - påvirker IKKE
+// tidsbudgettet under selve afspilningen.
+function rtOneEuroFilter(times, values, minCutoff = 1.2, beta = 0.03, dCutoff = 1.0) {
+  const alpha = (cutoff, dt) => { const tau = 1 / (2 * Math.PI * cutoff); return 1 / (1 + tau / dt); };
+  const out = new Array(values.length);
+  if (!values.length) return out;
+  out[0] = values[0];
+  let prev = values[0], dPrev = 0;
+  for (let i = 1; i < values.length; i++) {
+    const dt = Math.max(1e-3, times[i] - times[i - 1]);
+    const d = (values[i] - prev) / dt;
+    const aD = alpha(dCutoff, dt);
+    const dHat = aD * d + (1 - aD) * dPrev;
+    const a = alpha(minCutoff + beta * Math.abs(dHat), dt);
+    const xHat = a * values[i] + (1 - a) * prev;
+    out[i] = xHat;
+    prev = xHat; dPrev = dHat;
+  }
+  return out;
+}
+function rtSmoothPath(pts, times) {
+  const xs = rtOneEuroFilter(times, pts.map(p => p.x));
+  const ys = rtOneEuroFilter(times, pts.map(p => p.y));
+  return pts.map((p, i) => ({ x: xs[i], y: ys[i] }));
+}
+
 async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd) {
   const fullW = canvas.width, fullH = canvas.height;
   const scale = Math.min(1, RT_MAX_W / fullW);
@@ -5789,7 +5837,15 @@ async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd) {
     startFrame, barTracker: 'realtime-preview-v1', plateRadius: barPt.r || fullW / 16, manualCorrections: [] };
   if (features.length < 5) return { path, ok: false };
 
-  let lastMediaT = windowStart, stopped = false, skipNext = false, vel = { x: 0, y: 0 };
+  // ORDRE 82 · commit 2(a): en enkelt langsom frame (fx en GC-pause) satte
+  // tidligere ubetinget NÆSTE frame til at blive sprunget over - et rent GÆT
+  // om at netop den ene ville have været langsom, som ikke altid holdt, og
+  // som selv skabte et hul (og dermed en potentiel hop-kant) hvor budgettet
+  // reelt var overholdt. Et gæld-regnskab i stedet: kun når den AKKUMULEREDE
+  // forsinkelse reelt overstiger et helt budget-slot, betales den af ved at
+  // springe én frame over - en enkelt, isoleret langsom frame indhentes i
+  // stedet på de følgende, hurtigere frames uden at springe noget over.
+  let lastMediaT = windowStart, stopped = false, workDebtMs = 0, vel = { x: 0, y: 0 };
 
   await new Promise(resolve => {
     let finish = () => { stopped = true; video.pause(); resolve(); };
@@ -5807,8 +5863,8 @@ async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd) {
       // hårdkodet fps-antagelse - samme klip kan være optaget i 24, 30 eller 60fps.
       const budgetMs = Math.max(20, mediaDt * 1000 * 1.5);
       const workStart = performance.now();
-      if (skipNext) {
-        skipNext = false;
+      if (workDebtMs > budgetMs) {
+        workDebtMs -= budgetMs; // dette slot bruges til at indhente gælden, ikke til nyt arbejde
         path.pts.push(null); path.times.push(tNow); path.valid.push(false); path.confidence.push(0);
       } else {
         rtCtx.drawImage(video, 0, 0, rw, rh);
@@ -5840,7 +5896,7 @@ async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd) {
           path.pts.push(null); path.times.push(tNow); path.valid.push(false); path.confidence.push(0);
         }
       }
-      if (performance.now() - workStart > budgetMs) skipNext = true;
+      workDebtMs = Math.max(0, workDebtMs + (performance.now() - workStart) - budgetMs);
       if (RT_HAS_RVFC) video.requestVideoFrameCallback(onFrame);
     };
     if (RT_HAS_RVFC) {
@@ -5856,7 +5912,7 @@ async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd) {
     video.play().catch(finish);
   });
 
-  path.pts = rtInterpolateGaps(path.pts, path.times);
+  path.pts = rtSmoothPath(rtInterpolateGaps(path.pts, path.times), path.times);
   return { path, ok: path.pts.length >= 5 };
 }
 // ORDRE 80 · slut: realtids-sporing til "Vis mig nu"
