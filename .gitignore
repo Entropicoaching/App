@@ -43,5 +43,9 @@ Hjemmeside/
 # Bygges lokalt af scripts/make-test-clip.mjs, committes ikke som binær.
 docs/videocoach/clip-cache/
 
+# ORDRE 82 — Marcs egne telefonoptagelser til verify:videocoach-clip.
+# Atletdata/personoptagelse — aldrig i (offentligt) repo.
+test-clips/
+
 # Lokale Claude Code-indstillinger (per maskine)
 .claude/settings.local.json
