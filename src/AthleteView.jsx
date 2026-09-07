@@ -8,6 +8,7 @@ import { ATHLETE_ONBOARDING_GUIDE_STEPS, hasCompletedOnboardingGuide, isLastOnbo
 import { runGuardedWrite } from './athleteWriteGuard'
 import { runGuardedRead } from './athleteReadGuard'
 import { loadReadinessDraft, saveReadinessDraft, clearReadinessDraft, isEmptyReadinessDraft } from './readinessDraft'
+import { compareReadiness, readinessComparisonText, readinessTrainingNote } from './readinessInsight'
 import { remainingSeconds } from './restTimer'
 import { calcWarmupSets, isMainLift } from './warmup'
 import { foldNavn } from './exerciseNames'
@@ -307,6 +308,31 @@ function E1RMChart({ series }) {
         <text key={k} x={x(k)} y={H - 4} textAnchor={i === 0 ? 'start' : 'end'} fontSize="7" fill="#4a4844" fontFamily={mono}>
           {k.slice(5).replace('-', '/')}
         </text>
+      ))}
+    </svg>
+  )
+}
+
+// ORDRE 100 commit 2: lille, stille 14-dages parathedskurve — samme
+// visuelle sprog som E1RMChart ovenfor (én linje, ingen akser med tal ud
+// over min og max). Bruges udelukkende på dagens gemte log.
+function ReadinessSparkline({ points }) {
+  if (points.length < 2) return null
+  const W = 400, H = 70, PL = 22, PR = 4, PT = 8, PB = 4
+  const vals = points.map(p => p.score)
+  const minV = Math.min(...vals), maxV = Math.max(...vals)
+  const range = (maxV - minV) || 1
+  const mono = 'IBM Plex Mono,monospace'
+  const x = i => PL + (i / (points.length - 1)) * (W - PL - PR)
+  const y = v => PT + (1 - (v - minV) / range) * (H - PT - PB)
+  const pts = points.map((p, i) => `${x(i).toFixed(1)},${y(p.score).toFixed(1)}`).join(' ')
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block', margin: '0.25rem 0' }}>
+      <text x={PL - 3} y={PT + 5} textAnchor="end" fontSize="7" fill="#4a4844" fontFamily={mono}>{Math.round(maxV)}</text>
+      <text x={PL - 3} y={H - PB} textAnchor="end" fontSize="7" fill="#4a4844" fontFamily={mono}>{Math.round(minV)}</text>
+      <polyline points={pts} fill="none" stroke="#c8923a" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" />
+      {points.map((p, i) => (
+        <circle key={p.date} cx={x(i)} cy={y(p.score)} r={i === points.length - 1 ? 3.5 : 2} fill={i === points.length - 1 ? '#edeae2' : '#c8923a'} />
       ))}
     </svg>
   )
@@ -1859,6 +1885,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   // Readiness state
   const [readinessLog, setReadinessLog] = useState(null)
   const [lastReadiness, setLastReadiness] = useState(null) // seneste tidligere log → "samme som i går"
+  const [readinessHistory, setReadinessHistory] = useState([]) // op til 14 forudgående dage → dagens svar + kurve (ORDRE 100)
   const [readinessInput, setReadinessInput] = useState({ sleep: '', energy: null, motivation: null, stress: null, soreness: null, soreZones: [] })
   const [savingReadiness, setSavingReadiness] = useState(false)
   const [readinessError, setReadinessError] = useState(null)
@@ -2330,6 +2357,21 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     )
     if (!prevOk) return
     setLastReadiness(prev || null)
+    // ORDRE 100: op til 14 forudgående dage — grundlaget for "sat op mod dit
+    // eget snit" og for den lille 14-dages-kurve. Ekskluderer i dag med vilje,
+    // så dagens egen score ikke er med i det den sammenlignes mod.
+    const { data: hist, ok: histOk } = await runGuardedRead(
+      () => supabase
+        .from('readiness_logs')
+        .select('logged_date, readiness_score')
+        .eq('athlete_id', athleteId)
+        .lt('logged_date', today())
+        .order('logged_date', { ascending: false })
+        .limit(14),
+      onReadError('Parathedshistorik', athleteId),
+    )
+    if (!histOk) return
+    setReadinessHistory(hist || [])
   }
 
   function suggestNextWeight(exName, intensity) {
@@ -4049,6 +4091,20 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               const sig = sc >= 75 ? { color: '#6cba6c', text: 'Kroppen er klar 💪', bg: 'rgba(108,186,108,0.07)' }
                 : sc >= 50 ? { color: '#c8923a', text: 'Tag det lidt roligt i dag', bg: 'rgba(200,146,58,0.07)' }
                 : { color: '#e05555', text: 'Overvej en let session i dag', bg: 'rgba(224,85,85,0.07)' }
+              // ORDRE 100: dagens score sat op mod atletens eget snit for de
+              // sidste 14 dage — den eneste daglige rutine der hidtil ikke
+              // spejlede noget tilbage. Ren logik i readinessInsight.js
+              // (enhedstestet), kun teksten valgt her.
+              const cmp = compareReadiness(sc, readinessHistory.map(r => r.readiness_score))
+              const comparisonText = readinessComparisonText(cmp.status)
+              const trainingNote = readinessTrainingNote(cmp.status)
+              // Kurvens punkter: historikken (allerede sorteret nyest-først
+              // fra fetchReadiness) vendt til kronologisk rækkefølge, plus
+              // dagens egen score til sidst — op til 14 dage i alt.
+              const chartPoints = [...readinessHistory].filter(r => r.readiness_score != null).reverse()
+                .map(r => ({ date: r.logged_date, score: r.readiness_score }))
+              if (sc != null) chartPoints.push({ date: readinessLog.logged_date, score: sc })
+              const sparklinePoints = chartPoints.slice(-14)
               return (
                 <div style={{ ...s.card, background: sig.bg }}>
                   <div style={s.cardLabel}>Dagens parathed</div>
@@ -4065,6 +4121,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                     {readinessLog.soreness_level != null && <div><div style={s.fieldLabel}>Ømhed</div><div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.85rem', color: '#edeae2' }}>{readinessLog.soreness_level}/5</div></div>}
                     {readinessLog.sore_zones?.length > 0 && <div><div style={s.fieldLabel}>Lokalt</div><div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770' }}>{readinessLog.sore_zones.join(', ')}</div></div>}
                   </div>
+                  <div style={{ marginTop: '0.85rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(237,234,226,0.07)', fontSize: '0.82rem', color: '#a9a69e', lineHeight: 1.55 }}>
+                    {comparisonText}{trainingNote ? ` ${trainingNote}` : ''}
+                  </div>
+                  <ReadinessSparkline points={sparklinePoints} />
                 </div>
               )
             })()}
