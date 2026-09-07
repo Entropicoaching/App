@@ -6,6 +6,9 @@ import { videoCoachPersonalBaselineAthleteText, videoCoachPersonalBaselineForAna
 import { VIDEOCOACH_LIFT_LABELS as ATHLETE_VIDEO_LIFTS, videoCoachVariationLabel as athleteVideoVariationLabel } from './videoCoachLabels'
 import { ATHLETE_ONBOARDING_GUIDE_STEPS, hasCompletedOnboardingGuide, isLastOnboardingGuideStep } from './athleteOnboardingGuide'
 import { runGuardedWrite } from './athleteWriteGuard'
+import { runGuardedRead } from './athleteReadGuard'
+import { loadReadinessDraft, saveReadinessDraft, clearReadinessDraft, isEmptyReadinessDraft } from './readinessDraft'
+import { remainingSeconds } from './restTimer'
 import { calcWarmupSets, isMainLift } from './warmup'
 import { foldNavn } from './exerciseNames'
 import { flushVideoCoachDraftQueue, isRetryableVideoCoachError,
@@ -1471,17 +1474,37 @@ function parseDuration(...parts) {
 // med sin EGEN state så flere kan stå på siden uden at kollidere med hinanden
 // eller med den delte mobilitets-timer.
 function ExerciseTimer({ duration, label }) {
-  const [seconds, setSeconds] = useState(0)
+  // G5: 'remaining' er sekunder tilbage NÅR ikke aktiv (frosset ved
+  // pause/klar/gentag). Mens aktiv driver 'liveSeconds' visningen, opdateret
+  // af effekten nedenfor ud fra tidsstempler i startRef — aldrig ved at
+  // tælle ticks ned. Se restTimer.js. startRef læses kun inde i effekten
+  // (aldrig under selve renderet), så et evt. baggrunds-throttlet interval
+  // ikke giver en forkert værdi: næste tick (eller visibilitychange) regner
+  // altid den rigtige, aktuelle rest ud fra uret, ikke fra sidste tick.
+  const [remaining, setRemaining] = useState(duration)
   const [active, setActive] = useState(false)
   const [done, setDone] = useState(false)
-  const ref = useRef(null)
+  const [liveSeconds, setLiveSeconds] = useState(duration)
+  const startRef = useRef(null) // { remainingAtStart, startedAt } for det igangværende aktive segment
+
+  const seconds = active ? liveSeconds : remaining
+
   useEffect(() => {
     if (!active) return
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (seconds <= 0) { setActive(false); setDone(true); return }
-    ref.current = setTimeout(() => setSeconds(s => s - 1), 1000)
-    return () => clearTimeout(ref.current)
-  }, [active, seconds])
+    startRef.current = { remainingAtStart: remaining, startedAt: Date.now() }
+    const recompute = () => {
+      const live = remainingSeconds(startRef.current.remainingAtStart, startRef.current.startedAt)
+      setLiveSeconds(live)
+      if (live <= 0) { setRemaining(0); setActive(false); setDone(true) }
+    }
+    recompute()
+    const id = setInterval(recompute, 250)
+    const onVisible = () => { if (document.visibilityState === 'visible') recompute() }
+    document.addEventListener('visibilitychange', onVisible)
+    return () => { clearInterval(id); document.removeEventListener('visibilitychange', onVisible) }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- kun ved start/stop af det aktive segment; 'remaining' er kun brugt som startpunkt for DET segment
+  }, [active])
+
   return (
     <div style={{ marginBottom: '0.75rem', textAlign: 'center' }}>
       <div style={{ marginBottom: '0.6rem' }}>
@@ -1489,11 +1512,13 @@ function ExerciseTimer({ duration, label }) {
       </div>
       {label && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#7a7770', letterSpacing: '0.08em', marginBottom: '0.6rem' }}>{label}</div>}
       {!done ? (
-        <button style={{ ...s.btnGhost, padding: '0.5rem 1.25rem' }} onClick={() => { if (!active && seconds === 0) setSeconds(duration); setActive(a => !a) }}>
+        <button style={{ ...s.btnGhost, padding: '0.5rem 1.25rem' }} onClick={() => {
+          if (active) { setRemaining(seconds); setActive(false) } else setActive(true)
+        }}>
           {active ? '⏸ Pause' : (seconds > 0 && seconds < duration) ? '▶ Fortsæt' : '▶ Start timer'}
         </button>
       ) : (
-        <button style={{ ...s.btnGhost, padding: '0.5rem 1.25rem' }} onClick={() => { setSeconds(duration); setDone(false); setActive(false) }}>↺ Gentag</button>
+        <button style={{ ...s.btnGhost, padding: '0.5rem 1.25rem' }} onClick={() => { setRemaining(duration); setDone(false); setActive(false) }}>↺ Gentag</button>
       )}
     </div>
   )
@@ -1695,6 +1720,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [logs, setLogs] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
+  // G1: skelner "programmet er tomt" fra "programmet kunne ikke hentes", så
+  // en fejlet fetchProgram ikke viser samme skærm som en atlet uden program.
+  const [programError, setProgramError] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
   const [selectedFood, setSelectedFood] = useState(null)
@@ -1794,7 +1822,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [timerSeconds, setTimerSeconds] = useState(0)
   const [timerActive, setTimerActive] = useState(false)
   const [timerDone, setTimerDone] = useState(false)
-  const timerRef = useRef(null)
+  // G5: { remainingAtStart, startedAt } for det aktive segment — læses kun
+  // inde i effekten nedenfor, aldrig under selve renderet.
+  const timerStartRef = useRef(null)
 
   // Mobilitet-hub state — fanen er en intent-landing (null) med tre døre
   const [mobilityMode, setMobilityMode] = useState(null) // null=landing | 'opvarmning' | 'mobilitet'
@@ -1832,6 +1862,26 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [readinessInput, setReadinessInput] = useState({ sleep: '', energy: null, motivation: null, stress: null, soreness: null, soreZones: [] })
   const [savingReadiness, setSavingReadiness] = useState(false)
   const [readinessError, setReadinessError] = useState(null)
+  // G12: parathedsudkastet skal overleve en lukket fane. restoredForAthleteRef
+  // holder styr på hvilken atlet vi allerede har forsøgt at genindsætte et
+  // udkast for, så gem-effekten nedenfor ikke rydder det udkast den lige har
+  // hentet, før genindsættelsen har nået at slå igennem i state.
+  const readinessDraftRestoredForRef = useRef(null)
+
+  useEffect(() => {
+    if (!athlete) return
+    if (readinessDraftRestoredForRef.current !== athlete.id) {
+      readinessDraftRestoredForRef.current = athlete.id
+      const draft = loadReadinessDraft(athlete.id, today())
+      if (draft && !isEmptyReadinessDraft(draft)) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- bevidst: genindsætter et lokalt udkast én gang pr. atlet ved åbning
+        setReadinessInput(draft)
+        return
+      }
+    }
+    if (isEmptyReadinessDraft(readinessInput)) clearReadinessDraft(athlete.id, today())
+    else saveReadinessDraft(athlete.id, today(), readinessInput)
+  }, [readinessInput, athlete?.id])
 
   useEffect(() => {
     athleteVideoCoachRef.current = athlete
@@ -2085,11 +2135,25 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   }, [tab, currentWeek, mobilityMode])
 
   useEffect(() => {
+    // G5: regn ud fra tidsstempler (hvornår segmentet startede, og hvornår
+    // "nu" faktisk er), ikke ud fra hvor mange ticks der nåede at køre — en
+    // låst skærm/baggrundsfane throttler eller pauser setTimeout-kæder, men
+    // uret går videre. genregner desuden med det samme ved visibilitychange,
+    // så en genoptaget fane ikke venter på næste 250ms-tick for at rette sig.
     if (!timerActive) return
-    if (timerSeconds <= 0) { setTimerActive(false); setTimerDone(true); return }
-    timerRef.current = setTimeout(() => setTimerSeconds(s => s - 1), 1000)
-    return () => clearTimeout(timerRef.current)
-  }, [timerActive, timerSeconds])
+    timerStartRef.current = { remainingAtStart: timerSeconds, startedAt: Date.now() }
+    const recompute = () => {
+      const live = remainingSeconds(timerStartRef.current.remainingAtStart, timerStartRef.current.startedAt)
+      setTimerSeconds(live)
+      if (live <= 0) { setTimerActive(false); setTimerDone(true) }
+    }
+    recompute()
+    const id = setInterval(recompute, 250)
+    const onVisible = () => { if (document.visibilityState === 'visible') recompute() }
+    document.addEventListener('visibilitychange', onVisible)
+    return () => { clearInterval(id); document.removeEventListener('visibilitychange', onVisible) }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- kun ved start/stop af segmentet; 'timerSeconds' bruges kun som startpunkt for DET segment
+  }, [timerActive])
 
   /* eslint-enable react-hooks/set-state-in-effect */
 
@@ -2098,6 +2162,18 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     const timer = setTimeout(() => setLoadError(true), 10000)
     return () => clearTimeout(timer)
   }, [loading])
+
+  // G1: fælles fejlvisning for baggrundslæsninger (fetchPRs, fetchWeightLogs,
+  // ...). Logger detaljen til frontend_errors og viser en oversat, ærlig
+  // linje — samme sprog som skrivefejlene (showFlash, se athleteWriteGuard-
+  // kaldene). Kalderen skal IKKE opdatere sin state når denne kaldes, så det
+  // sidst kendte indhold forbliver på skærmen.
+  function onReadError(label, athleteId) {
+    return (error) => {
+      logFrontendError(`${label} kunne ikke hentes`, error, athleteId)
+      showFlash(`${label} kunne ikke hentes. Tjek din forbindelse og prøv igen.`, 'error')
+    }
+  }
 
   async function fetchAthlete() {
     if (!coachAthleteId && role !== 'athlete') { setLoading(false); return }
@@ -2174,16 +2250,24 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   }
 
   async function fetchPRs(athleteId) {
-    const { data } = await supabase
-      .from('personal_records')
-      .select('exercise_name, weight, reps, created_at')
-      .eq('athlete_id', athleteId)
-      .order('created_at', { ascending: false })
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('personal_records')
+        .select('exercise_name, weight, reps, created_at')
+        .eq('athlete_id', athleteId)
+        .order('created_at', { ascending: false }),
+      onReadError('Personlige rekorder', athleteId),
+    )
+    if (!ok) return
     setPrs(data || [])
   }
 
   async function fetchMeetPlan(athleteId) {
-    const { data } = await supabase.from('meet_plans').select('*').eq('athlete_id', athleteId).maybeSingle()
+    const { data, ok } = await runGuardedRead(
+      () => supabase.from('meet_plans').select('*').eq('athlete_id', athleteId).maybeSingle(),
+      onReadError('Stævneplanen', athleteId),
+    )
+    if (!ok) return
     setHasMeetPlan(!!data)
     if (data) {
       setMeetType(data.meet_type || 'sbd')
@@ -2197,38 +2281,54 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   }
 
   async function fetchMeetResults(athleteId) {
-    const { data } = await supabase
-      .from('meet_results')
-      .select('*')
-      .eq('athlete_id', athleteId)
-      .order('meet_date', { ascending: false })
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('meet_results')
+        .select('*')
+        .eq('athlete_id', athleteId)
+        .order('meet_date', { ascending: false }),
+      onReadError('Stævneresultater', athleteId),
+    )
+    if (!ok) return
     setMeetResults(data || [])
   }
 
   async function fetchWarmupTemplates(athleteId) {
-    const { data } = await supabase
-      .from('warmup_templates')
-      .select('*')
-      .eq('athlete_id', athleteId)
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('warmup_templates')
+        .select('*')
+        .eq('athlete_id', athleteId),
+      onReadError('Opvarmningsskabeloner', athleteId),
+    )
+    if (!ok) return
     setWarmupTemplates(data || [])
   }
 
   async function fetchReadiness(athleteId) {
-    const { data } = await supabase
-      .from('readiness_logs')
-      .select('*')
-      .eq('athlete_id', athleteId)
-      .eq('logged_date', today())
-      .maybeSingle()
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('readiness_logs')
+        .select('*')
+        .eq('athlete_id', athleteId)
+        .eq('logged_date', today())
+        .maybeSingle(),
+      onReadError('Dagens parathed', athleteId),
+    )
+    if (!ok) return
     setReadinessLog(data || null)
-    const { data: prev } = await supabase
-      .from('readiness_logs')
-      .select('*')
-      .eq('athlete_id', athleteId)
-      .lt('logged_date', today())
-      .order('logged_date', { ascending: false })
-      .limit(1)
-      .maybeSingle()
+    const { data: prev, ok: prevOk } = await runGuardedRead(
+      () => supabase
+        .from('readiness_logs')
+        .select('*')
+        .eq('athlete_id', athleteId)
+        .lt('logged_date', today())
+        .order('logged_date', { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      onReadError('Sidste parathed', athleteId),
+    )
+    if (!prevOk) return
     setLastReadiness(prev || null)
   }
 
@@ -2306,15 +2406,25 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       setReadinessError('Kunne ikke gemme parathed. Tjek din forbindelse og prøv igen.')
     } else {
       setReadinessLog({ ...payload })
+      // G12: en gemt log gør udkastet forældet — ryd det, så en genåbning
+      // ikke genindsætter data der allerede er logget.
+      clearReadinessDraft(athlete.id, today())
     }
   }
 
   async function fetchProgram(athleteId) {
-    const { data } = await supabase
-      .from('weeks')
-      .select('*, sessions(*, exercises(*))')
-      .eq('athlete_id', athleteId)
-      .order('week_number', { ascending: true })
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('weeks')
+        .select('*, sessions(*, exercises(*))')
+        .eq('athlete_id', athleteId)
+        .order('week_number', { ascending: true }),
+      onReadError('Dit program', athleteId),
+    )
+    if (!ok) { setProgramError(true); return }
+    // Bekræftet svar (om end evt. tomt) — en tidligere fejlvisning er ikke
+    // længere retvisende.
+    setProgramError(false)
     if (!data || data.length === 0) return
     const weeks = data.map(w => ({
       ...w,
@@ -2348,16 +2458,19 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   // til forsidens grafer. Grupperes på ugens mandag ud fra logged_at; ~12 ugers logs.
   async function fetchWeeklyTonnage(athleteId) {
     const since = new Date(Date.now() - 84 * 86400000).toISOString()
-    const { data } = await supabase
-      .from('exercise_logs')
-      .select('weight, reps_completed, logged_at, exercises(name)')
-      .eq('athlete_id', athleteId)
-      .eq('skipped', false)
-      .gt('weight', 0)
-      .gte('logged_at', since)
-      .order('logged_at', { ascending: true })
-      .limit(4000)
-    if (!data) return
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('exercise_logs')
+        .select('weight, reps_completed, logged_at, exercises(name)')
+        .eq('athlete_id', athleteId)
+        .eq('skipped', false)
+        .gt('weight', 0)
+        .gte('logged_at', since)
+        .order('logged_at', { ascending: true })
+        .limit(4000),
+      onReadError('Tonnage-grafen', athleteId),
+    )
+    if (!ok || !data) return
     // Kun stang-varianter tæller med i hovedløfts-e1RM — maskiner/håndvægte
     // (belt squat, hack squat, DB-pres ...) giver misvisende høje tal.
     const NON_BARBELL = /belt|hack|split|bulgar|goblet|smith|pendul|maskine|machine|leg press|sissy|db |dumbbell|håndvægt/
@@ -2402,11 +2515,15 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   async function fetchWeekLogs(athleteId, week) {
     const exerciseIds = (week?.sessions || []).flatMap(s => (s.exercises || []).map(e => e.id))
     if (exerciseIds.length === 0) return []
-    const { data } = await supabase
-      .from('exercise_logs')
-      .select('exercise_id')
-      .eq('athlete_id', athleteId)
-      .in('exercise_id', exerciseIds)
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('exercise_logs')
+        .select('exercise_id')
+        .eq('athlete_id', athleteId)
+        .in('exercise_id', exerciseIds),
+      onReadError('Ugens log-status', athleteId),
+    )
+    if (!ok) return []
     return data || []
   }
 
@@ -2461,22 +2578,30 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   async function fetchPastLogs(week, athleteId) {
     const exerciseIds = (week?.sessions || []).flatMap(s => (s.exercises || []).map(e => e.id))
     if (exerciseIds.length === 0) { setPastLogs([]); return }
-    const { data } = await supabase
-      .from('exercise_logs')
-      .select('*')
-      .eq('athlete_id', athleteId)
-      .in('exercise_id', exerciseIds)
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('exercise_logs')
+        .select('*')
+        .eq('athlete_id', athleteId)
+        .in('exercise_id', exerciseIds),
+      onReadError('Tidligere logs', athleteId),
+    )
+    if (!ok) return
     setPastLogs(data || [])
   }
 
   async function fetchExerciseLogs(athleteId, week) {
     const exerciseIds = (week?.sessions || []).flatMap(s => (s.exercises || []).map(e => e.id))
     if (exerciseIds.length === 0) { setExerciseLogs([]); return }
-    const { data } = await supabase
-      .from('exercise_logs')
-      .select('*')
-      .eq('athlete_id', athleteId)
-      .in('exercise_id', exerciseIds)
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('exercise_logs')
+        .select('*')
+        .eq('athlete_id', athleteId)
+        .in('exercise_id', exerciseIds),
+      onReadError('Sæt-loggen', athleteId),
+    )
+    if (!ok) return
     const rows = data || []
     setExerciseLogs(prev => {
       // Behold endnu-ikke-bekræftede optimistiske rækker (baggrundsskrivning stadig
@@ -2491,13 +2616,16 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   async function fetchLastLogs(athleteId, week) {
     const exerciseNames = [...new Set((week?.sessions || []).flatMap(s => (s.exercises || []).map(e => e.name)))]
     if (exerciseNames.length === 0) return
-    const { data } = await supabase
-      .from('exercise_logs')
-      .select('weight, reps_completed, logged_at, exercises(name)')
-      .eq('athlete_id', athleteId)
-      .order('logged_at', { ascending: false })
-      .limit(500)
-    if (!data) return
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('exercise_logs')
+        .select('weight, reps_completed, logged_at, exercises(name)')
+        .eq('athlete_id', athleteId)
+        .order('logged_at', { ascending: false })
+        .limit(500),
+      onReadError('Seneste vægte', athleteId),
+    )
+    if (!ok || !data) return
     const map = {}
     for (const log of data) {
       const name = log.exercises?.name
@@ -2509,15 +2637,18 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   }
 
   async function fetchExerciseHistory(athleteId) {
-    const { data } = await supabase
-      .from('exercise_logs')
-      .select('weight, reps_completed, rpe_actual, logged_at, set_number, exercises(name)')
-      .eq('athlete_id', athleteId)
-      .eq('skipped', false)
-      .gt('weight', 0)
-      .order('logged_at', { ascending: false })
-      .limit(1500)
-    if (!data) return
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('exercise_logs')
+        .select('weight, reps_completed, rpe_actual, logged_at, set_number, exercises(name)')
+        .eq('athlete_id', athleteId)
+        .eq('skipped', false)
+        .gt('weight', 0)
+        .order('logged_at', { ascending: false })
+        .limit(1500),
+      onReadError('Øvelseshistorik', athleteId),
+    )
+    if (!ok || !data) return
     const byName = {}
     for (const log of data) {
       const name = log.exercises?.name?.toLowerCase()
@@ -2738,12 +2869,16 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   }
 
   async function fetchWeightLogs(athleteId) {
-    const { data } = await supabase
-      .from('weight_logs')
-      .select('*')
-      .eq('athlete_id', athleteId)
-      .order('logged_at', { ascending: false })
-      .limit(30)
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('weight_logs')
+        .select('*')
+        .eq('athlete_id', athleteId)
+        .order('logged_at', { ascending: false })
+        .limit(30),
+      onReadError('Vægtloggen', athleteId),
+    )
+    if (!ok) return
     setWeightLogs(data || [])
   }
 
@@ -2765,7 +2900,11 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   async function fetchAthleteMessages(id) {
     const athleteId = id || athlete?.id
     if (!athleteId) return
-    const { data } = await supabase.from('messages').select('*').eq('athlete_id', athleteId).order('created_at')
+    const { data, ok } = await runGuardedRead(
+      () => supabase.from('messages').select('*').eq('athlete_id', athleteId).order('created_at'),
+      onReadError('Beskederne', athleteId),
+    )
+    if (!ok) return
     const msgs = data || []
     setMessages(msgs)
     const unread = msgs.filter(m => m.sender_role === 'coach' && !m.read_at).length
@@ -2880,24 +3019,32 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   )
 
   async function fetchLogs(athleteId, date = kostDate) {
-    const { data } = await supabase
-      .from('meal_logs')
-      .select('*')
-      .eq('athlete_id', athleteId)
-      .eq('date', date)
-      .order('created_at')
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('meal_logs')
+        .select('*')
+        .eq('athlete_id', athleteId)
+        .eq('date', date)
+        .order('created_at'),
+      onReadError('Dagens kostlog', athleteId),
+    )
+    if (!ok) return
     setLogs(data || [])
   }
 
   async function fetchHistoricalMealLogs(athleteId) {
     const from = new Date()
     from.setDate(from.getDate() - 28)
-    const { data } = await supabase
-      .from('meal_logs')
-      .select('date, kcal')
-      .eq('athlete_id', athleteId)
-      .gte('date', from.toISOString().slice(0, 10))
-      .order('date')
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('meal_logs')
+        .select('date, kcal')
+        .eq('athlete_id', athleteId)
+        .gte('date', from.toISOString().slice(0, 10))
+        .order('date'),
+      onReadError('Kosthistorikken', athleteId),
+    )
+    if (!ok) return
     setHistoricalMealLogs(data || [])
   }
 
@@ -2905,12 +3052,16 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   async function fetchFrequentFoods(athleteId) {
     const from = new Date()
     from.setDate(from.getDate() - 30)
-    const { data } = await supabase
-      .from('meal_logs')
-      .select('meal, kcal, protein, carb, fat, date')
-      .eq('athlete_id', athleteId)
-      .gte('date', from.toISOString().slice(0, 10))
-      .order('date', { ascending: false })
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('meal_logs')
+        .select('meal, kcal, protein, carb, fat, date')
+        .eq('athlete_id', athleteId)
+        .gte('date', from.toISOString().slice(0, 10))
+        .order('date', { ascending: false }),
+      onReadError('Hyppige fødevarer', athleteId),
+    )
+    if (!ok) return
     const map = new Map()
     for (const l of data || []) {
       if (!map.has(l.meal)) map.set(l.meal, { meal: l.meal, kcal: l.kcal, protein: l.protein, carb: l.carb, fat: l.fat, count: 0 })
@@ -2933,11 +3084,15 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   }
 
   async function fetchMealTemplates(athleteId) {
-    const { data } = await supabase
-      .from('meal_templates')
-      .select('*')
-      .eq('athlete_id', athleteId)
-      .order('created_at', { ascending: false })
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('meal_templates')
+        .select('*')
+        .eq('athlete_id', athleteId)
+        .order('created_at', { ascending: false }),
+      onReadError('Skabelonerne', athleteId),
+    )
+    if (!ok) return
     setMealTemplates(data || [])
   }
 
@@ -2991,10 +3146,14 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   async function fetchCustomFoods(athleteId) {
     // RLS returnerer delte fødevarer (is_shared) + egne. Tag 'mine' til badges/sletning.
-    const { data } = await supabase
-      .from('custom_foods')
-      .select('*')
-      .order('name', { ascending: true })
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('custom_foods')
+        .select('*')
+        .order('name', { ascending: true }),
+      onReadError('Fødevarelisten', athleteId),
+    )
+    if (!ok) return
     setCustomFoods((data || []).map(f => ({ ...f, mine: f.athlete_id === athleteId })))
   }
 
@@ -3879,7 +4038,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                   )
                 })()}
                 <button
-                  style={{ ...s.btnPrimary, width: '100%', opacity: (!readinessInput.energy || !readinessInput.motivation || !readinessInput.stress || !readinessInput.soreness) ? 0.45 : 1 }}
+                  // G10: ~27px høj — samme metode som F13-F16/F26 (ordre 68): minHeight + boxSizing på selve knappen, ikke i den delte s.btnPrimary (rører 20 andre knapper).
+                  style={{ ...s.btnPrimary, width: '100%', minHeight: '44px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', opacity: (!readinessInput.energy || !readinessInput.motivation || !readinessInput.stress || !readinessInput.soreness) ? 0.45 : 1 }}
                   onClick={saveReadiness}
                   disabled={savingReadiness}
                 >{savingReadiness ? 'Gemmer...' : 'Log parathed'}</button>
@@ -4024,7 +4184,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                   ) : (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>
                       <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#4a4844', letterSpacing: '0.06em' }}>Logget i dag · {todayLog.weight} kg</span>
-                      <button style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.2rem 0.5rem' }} onClick={() => setWeightInput(todayLog.weight.toString())}>Ret</button>
+                      {/* G10: ~17px høj — samme metode som F13-F16/F26 (ordre 68): minHeight + boxSizing, bredden bevares. */}
+                      <button style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.2rem 0.5rem', minHeight: '44px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center' }} onClick={() => setWeightInput(todayLog.weight.toString())}>Ret</button>
                     </div>
                   )}
                 </div>
@@ -4190,13 +4351,25 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                     <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Program</div>
                     <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Dit program.</h1>
                   </div>
-                  <div style={{ ...s.card, textAlign: 'center', padding: '3rem 1.5rem' }}>
-                    <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.1rem', color: '#c8923a', marginBottom: '1rem', letterSpacing: '0.02em' }}>Entropi.</div>
-                    <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', fontWeight: 400, color: '#edeae2', marginBottom: '0.75rem' }}>Dit program er på vej.</div>
-                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#4a4844', letterSpacing: '0.08em', lineHeight: 1.7 }}>
-                      Din coach sætter det op inden din næste træning.
+                  {programError ? (
+                    // G1: en fejlet hentning må aldrig ligne "du har intet program" —
+                    // ærlig fejllinje + en vej til at prøve igen, ikke stilhed.
+                    <div style={{ ...s.card, textAlign: 'center', padding: '3rem 1.5rem' }}>
+                      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', fontWeight: 400, color: '#edeae2', marginBottom: '0.75rem' }}>Dit program kunne ikke hentes.</div>
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#4a4844', letterSpacing: '0.08em', lineHeight: 1.7, marginBottom: '1.25rem' }}>
+                        Tjek din forbindelse og prøv igen.
+                      </div>
+                      <button style={s.btnGhost} onClick={() => fetchProgram(athlete.id)}>Prøv igen</button>
                     </div>
-                  </div>
+                  ) : (
+                    <div style={{ ...s.card, textAlign: 'center', padding: '3rem 1.5rem' }}>
+                      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.1rem', color: '#c8923a', marginBottom: '1rem', letterSpacing: '0.02em' }}>Entropi.</div>
+                      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', fontWeight: 400, color: '#edeae2', marginBottom: '0.75rem' }}>Dit program er på vej.</div>
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#4a4844', letterSpacing: '0.08em', lineHeight: 1.7 }}>
+                        Din coach sætter det op inden din næste træning.
+                      </div>
+                    </div>
+                  )}
                 </>
               ) : (
                 <>
@@ -4269,6 +4442,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                       background: 'none', border: 'none', cursor: 'pointer', padding: '0.2rem 0',
                       fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.06em',
                       color: '#7a7770', whiteSpace: 'nowrap', maxWidth: '45%', overflow: 'hidden', textOverflow: 'ellipsis',
+                      // G9: kun 17px høj med nul vandret padding — samme mønster/metode som F13-F16
+                      // (ordre 68): minHeight + boxSizing, bredden på tekstknappen bevares.
+                      minHeight: '44px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center',
                     }
 
                     return (
@@ -4291,7 +4467,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                               ? <button style={chipStyle} onClick={() => goToWeek(phaseStart[viewedPhaseIdx - 1])}>‹ {prevPhase.name || 'Tidligere'}</button>
                               : <span />}
                             {nextPhase
-                              ? <button style={{ ...chipStyle, textAlign: 'right' }} onClick={() => goToWeek(phaseStart[viewedPhaseIdx + 1])}>{nextPhase.name || 'Næste blok'} ›</button>
+                              ? <button style={{ ...chipStyle, textAlign: 'right', justifyContent: 'flex-end' }} onClick={() => goToWeek(phaseStart[viewedPhaseIdx + 1])}>{nextPhase.name || 'Næste blok'} ›</button>
                               : <span />}
                           </div>
                         )}
@@ -4831,7 +5007,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                       return (
                                         <button key={n}
                                           onClick={() => setFeedbackInputs(p => ({ ...p, [session.id]: { ...(p[session.id] || {}), rating: n } }))}
-                                          style={{ width: '40px', height: '40px', border: fi.rating === n ? '2px solid #c8923a' : '1px solid rgba(237,234,226,0.13)', background: fi.rating === n ? 'rgba(200,146,58,0.15)' : 'transparent', color: fi.rating === n ? '#c8923a' : '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.95rem', cursor: 'pointer' }}
+                                          // G13: 40×40px, lige under 44px — samme metode som F13-F16 (ordre 68).
+                                          style={{ width: '44px', height: '44px', boxSizing: 'border-box', border: fi.rating === n ? '2px solid #c8923a' : '1px solid rgba(237,234,226,0.13)', background: fi.rating === n ? 'rgba(200,146,58,0.15)' : 'transparent', color: fi.rating === n ? '#c8923a' : '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.95rem', cursor: 'pointer' }}
                                         >{n}</button>
                                       )
                                     })}

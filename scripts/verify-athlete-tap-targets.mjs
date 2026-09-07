@@ -36,3 +36,32 @@ assert.ok(rpeButtonMatch, 'RPE-vælgerknappen skal findes')
 assertMinHeightAtLeast(rpeButtonMatch[0], 'RPE-vælgerknappen')
 
 console.log('"Log", "Spring over" og RPE-vælgeren i sæt-loggeren har alle mindst 44px trykflade.')
+
+// ORDRE 76 — "stille fejl, runde 4", G9/G10/G13: de sidste trykflader under
+// 44px fra ordre 41's fundliste (afsnit 3). Samme metode: minHeight (+
+// boxSizing/display:inline-flex hvor der er tekst der skal centreres
+// lodret) uden at ændre bredden på tekstknapperne. Målt headless mod en
+// isoleret gengivelse af de eksakte inline-styles, se ordre 76's rapport.
+
+// G9 — blok-skift-chippen ("næste blok ›"), ~17px høj.
+const nextBlockChipMatch = athleteView.match(/style=\{\{ \.\.\.chipStyle, textAlign: 'right', justifyContent: 'flex-end' \}\}\s*\n?\s*onClick=\{\(\) => goToWeek\(phaseStart\[viewedPhaseIdx \+ 1\]\)\}/)
+assert.ok(nextBlockChipMatch, '"næste blok"-chippen skal findes')
+const chipStyleMatch = athleteView.match(/const chipStyle = \{[\s\S]*?\n\s*\}/)
+assert.ok(chipStyleMatch, 'chipStyle-definitionen skal findes')
+assertMinHeightAtLeast(chipStyleMatch[0], 'Blok-skift-chippen (chipStyle)')
+
+// G10 — "Log parathed" (~27px høj) og vægtlogningens "Ret" (~17px høj).
+const logReadinessMatch = athleteView.match(/style=\{\{ \.\.\.s\.btnPrimary, width: '100%', minHeight: '44px'[\s\S]{0,300}?\}\}\s*\n\s*onClick=\{saveReadiness\}/)
+assert.ok(logReadinessMatch, '"Log parathed"-knappen skal findes med en eksplicit minHeight')
+assertMinHeightAtLeast(logReadinessMatch[0], '"Log parathed"-knappen')
+
+const retWeightMatch = athleteView.match(/style=\{\{ \.\.\.s\.btnGhost, fontSize: '0\.5rem', padding: '0\.2rem 0\.5rem', minHeight: '44px'[\s\S]{0,150}?\}\}\s*\n?\s*onClick=\{\(\) => setWeightInput\(todayLog\.weight\.toString\(\)\)\}/)
+assert.ok(retWeightMatch, 'vægtlogningens "Ret"-knap skal findes med en eksplicit minHeight')
+assertMinHeightAtLeast(retWeightMatch[0], 'Vægtlogningens "Ret"-knap')
+
+// G13 — session-vurderingens 1-5-knapper, 40×40px.
+const ratingButtonMatch = athleteView.match(/onClick=\{\(\) => setFeedbackInputs\(p => \(\{ \.\.\.p, \[session\.id\]: \{ \.\.\.\(p\[session\.id\] \|\| \{\}\), rating: n \} \}\)\)\}[\s\S]{0,250}?style=\{\{[\s\S]*?\}\}/)
+assert.ok(ratingButtonMatch, 'session-vurderingens 1-5-knapper skal findes')
+assert.match(ratingButtonMatch[0], /width: '44px', height: '44px'/, 'session-vurderingens knapper skal være 44×44px (kvadratisk, som F13)')
+
+console.log('Blok-skift-chippen, "Log parathed", vægtlogningens "Ret" og session-vurderingens 1-5-knapper har alle mindst 44px trykflade (ordre 76, G9/G10/G13).')
