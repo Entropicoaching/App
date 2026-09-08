@@ -33,6 +33,7 @@
     "verify:videocoach-migrations": "node scripts/verify-videocoach-migrations.mjs",
     "verify:videocoach-zoom": "node scripts/verify-videocoach-zoom.mjs",
     "gate:tracker": "node scripts/gate-tracker.mjs",
+    "opvarmning:tabel": "node scripts/opvarmningstabel.mjs",
     "test:clip": "node scripts/make-test-clip.mjs",
     "verify:videocoach-clip": "node scripts/verify-videocoach-clip.mjs",
     "verify:videocoach-upload-flow": "node scripts/verify-videocoach-upload-flow.mjs",
