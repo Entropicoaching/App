@@ -11,6 +11,7 @@ import { loadReadinessDraft, saveReadinessDraft, clearReadinessDraft, isEmptyRea
 import { compareReadiness, readinessComparisonText, readinessTrainingNote } from './readinessInsight'
 import { remainingSeconds } from './restTimer'
 import { calcWarmupSets, isMainLift } from './warmup'
+import { applyWarmupCorrection, saveWarmupOverride, suggestWarmupOverride } from './warmupOverride'
 import { foldNavn } from './exerciseNames'
 import { flushVideoCoachDraftQueue, isRetryableVideoCoachError,
   queueVideoCoachDraft, saveVideoCoachDraft,
@@ -1836,6 +1837,12 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [exWarmupExpanded, setExWarmupExpanded] = useState(new Set())
   const [exWarmupWeightOverride, setExWarmupWeightOverride] = useState({})
   const [exWarmupWeightEditing, setExWarmupWeightEditing] = useState(null)
+  // Atletens rettelse af ét opvarmningssæts vægt (ordre 105, commit 2) —
+  // `${exKey}_${index}` mens feltet redigeres. Selve rettelsen gemmes
+  // straks i warmupOverride.js's storage; tick'et her tvinger et re-render,
+  // så suggestWarmupOverride læses igen efter en gemt rettelse.
+  const [warmupSetEditing, setWarmupSetEditing] = useState(null)
+  const [warmupOverrideTick, setWarmupOverrideTick] = useState(0)
   const [warmupPhase, setWarmupPhase] = useState('focus')
   const [warmupFocus, setWarmupFocus] = useState(null)
   const [warmupSubtype, setWarmupSubtype] = useState(null)
@@ -4803,11 +4810,21 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                     const exKey = ex.id
                                     const w = exWarmupWeightOverride[exKey] ?? baseW
                                     if (!w || w < 20) return null
-                                    const sets = calcWarmupSets(w, ex.reps, ex.name)
+                                    // eslint-disable-next-line no-unused-vars -- warmupOverrideTick tvinger genlæsning af storage efter en gemt rettelse
+                                    const _tick = warmupOverrideTick
+                                    const egneVægte = suggestWarmupOverride(athlete.id, ex.name, w)
+                                    const usingOwn = !!egneVægte
+                                    const sets = egneVægte || calcWarmupSets(w, ex.reps, ex.name)
                                     const isOpen = exWarmupExpanded.has(exKey)
                                     const exChecked = warmupChecked[exKey] || {}
                                     const doneCnt = Object.values(exChecked).filter(Boolean).length
                                     const isEditingWeight = exWarmupWeightEditing === exKey
+                                    const korrigerSæt = (index, correction) => {
+                                      const næste = applyWarmupCorrection(sets, index, correction)
+                                      saveWarmupOverride(athlete.id, ex.name, w, næste)
+                                      setWarmupSetEditing(null)
+                                      setWarmupOverrideTick(t => t + 1)
+                                    }
                                     return (
                                       <div style={{ marginBottom: '0.75rem', border: '1px solid rgba(237,234,226,0.07)', borderLeft: '2px solid rgba(200,146,58,0.3)' }}>
                                         <div
@@ -4848,6 +4865,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                               >{w}kg</span>
                                             )}
                                             {doneCnt > 0 && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', color: '#6cba6c' }}>{doneCnt}/{sets.length}</span>}
+                                            {usingOwn && <span title="Genbruger dine egne vægte fra sidste gang (samme øvelse, arbejdsvægt inden for 5%)" style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.42rem', letterSpacing: '0.06em', color: '#c8923a', border: '1px solid rgba(200,146,58,0.4)', padding: '0.05rem 0.3rem' }}>dine sidste</span>}
                                           </div>
                                           <span style={{ color: '#4a4844', fontSize: '0.55rem' }}>{isOpen ? '▲' : '▼'}</span>
                                         </div>
@@ -4856,6 +4874,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                             {sets.map((ws, i) => {
                                               const k = `ws_${i}`
                                               const done = exChecked[k]
+                                              const editKey = `${exKey}_${i}`
+                                              const isEditingSet = warmupSetEditing === editKey
                                               return (
                                                 <div
                                                   key={i}
@@ -4869,8 +4889,31 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                                     {done && <span style={{ color: '#6cba6c', fontSize: '0.55rem', lineHeight: 1 }}>✓</span>}
                                                   </div>
                                                   <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: done ? '#4a4844' : '#c8923a', minWidth: '28px' }}>{ws.pct}</span>
-                                                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.82rem', color: done ? '#4a4844' : '#edeae2', textDecoration: done ? 'line-through' : 'none' }}>{ws.weight}kg</span>
+                                                  {isEditingSet ? (
+                                                    <input
+                                                      autoFocus
+                                                      type="number"
+                                                      defaultValue={ws.weight}
+                                                      style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', width: '56px', background: 'rgba(200,146,58,0.1)', border: '1px solid rgba(200,146,58,0.5)', color: '#c8923a', padding: '0.1rem 0.2rem', textAlign: 'center' }}
+                                                      onClick={e => e.stopPropagation()}
+                                                      onKeyDown={e => {
+                                                        if (e.key === 'Enter') korrigerSæt(i, { weight: e.target.value })
+                                                        if (e.key === 'Escape') setWarmupSetEditing(null)
+                                                      }}
+                                                      onBlur={e => korrigerSæt(i, { weight: e.target.value })}
+                                                    />
+                                                  ) : (
+                                                    <span
+                                                      style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.82rem', color: done ? '#4a4844' : '#edeae2', textDecoration: done ? 'line-through' : 'underline dotted', cursor: 'text' }}
+                                                      onClick={e => { e.stopPropagation(); setWarmupSetEditing(editKey) }}
+                                                    >{ws.weight}kg</span>
+                                                  )}
                                                   <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#7a7770' }}>× {ws.reps}</span>
+                                                  <button
+                                                    title="Spring dette opvarmningssæt over"
+                                                    onClick={e => { e.stopPropagation(); korrigerSæt(i, { skipped: true }) }}
+                                                    style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.6rem', minWidth: '32px', minHeight: '32px' }}
+                                                  >✕</button>
                                                 </div>
                                               )
                                             })}
