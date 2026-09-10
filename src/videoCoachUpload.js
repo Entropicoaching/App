@@ -57,8 +57,16 @@ export function videoUploadAlreadyExistsError(error) {
 // (schema_version/schema_v/source_mode/status/coach_note/bias_note håndteres af
 // buildAwaitingAnalysisRow og rører aldrig klientinput), plus upload-specifikke
 // grænser (mime, størrelse) som ikke er databasens ansvar.
+// ORDRE 109 · commit 3: kort, forudbestemt årsagskode fra videocoach.html
+// (plate:fail:auto / plate:fail:small-video / plate:manual:ok) - aldrig fri
+// tekst, så et forkert klientbygget felt ikke kan smugle andet ind her.
+const PLATE_CALIBRATION_REASONS = new Set([
+  'plate:fail:auto', 'plate:fail:small-video', 'plate:manual:ok',
+])
+
 export function validateVideoUploadRequest({
   athleteId, clientAnalysisId, lift, variation, mimeType, fileSize, loadKg, rpe, athleteNote,
+  plateCalibration,
 } = {}) {
   if (!isUuid(athleteId)) return 'Atleten kunne ikke identificeres'
   if (!isUuid(clientAnalysisId)) return 'Analysen mangler et gyldigt klient-id'
@@ -71,6 +79,8 @@ export function validateVideoUploadRequest({
   if (!finiteInRange(rpe, 0, 10)) return 'RPE er uden for det tilladte interval'
   if (athleteNote != null && (typeof athleteNote !== 'string' || athleteNote.length > 1000))
     return 'Notatet til coachen er ugyldigt eller for langt'
+  if (plateCalibration != null && !PLATE_CALIBRATION_REASONS.has(plateCalibration))
+    return 'Kalibreringsårsagen er ugyldig'
   return null
 }
 
@@ -80,7 +90,7 @@ export function validateVideoUploadRequest({
 // uden analyse lovlig efter video_analyses_v3_payload_bounds.
 export function buildAwaitingAnalysisRow({
   athleteId, athleteName = null, clientAnalysisId, lift, variation,
-  loadKg = null, rpe = null, athleteNote = null, videoPath,
+  loadKg = null, rpe = null, athleteNote = null, videoPath, plateCalibration = null,
 }) {
   return {
     client_analysis_id: clientAnalysisId,
@@ -105,6 +115,10 @@ export function buildAwaitingAnalysisRow({
       baseline_snapshot: [],
       athlete_note: athleteNote || null,
       feedback_evidence: null,
+      // ORDRE 109 · commit 3: findes kun feltet i eksisterende JSON-payload -
+      // ingen migration. Se PLATE_CALIBRATION_REASONS ovenfor for de gyldige
+      // værdier; null betyder auto-kalibrering lykkedes uden problemer.
+      plate_calibration: plateCalibration || null,
     },
   }
 }

@@ -7797,6 +7797,14 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           ? analysis.session_context.baseline_snapshot : []
         const athleteNote = typeof analysis.session_context?.athlete_note === 'string'
           ? analysis.session_context.athlete_note.trim() : ''
+        // ORDRE 109 · commit 3: "atleten kalibrerede manuelt" uden at Marc skal
+        // spørge - kort årsag sat af videocoach.html (docs/videocoach/
+        // SKIVEN-FINDES-IKKE.md), auto-kalibrering uden problemer giver ingen tekst.
+        const plateCalibrationText = {
+          'plate:manual:ok': 'Atleten kalibrerede skiven manuelt (auto-genkendelsen fandt den ikke).',
+          'plate:fail:auto': 'Auto-genkendelsen af skiven fejlede først, men blev rettet manuelt.',
+          'plate:fail:small-video': 'Auto-genkendelsen fejlede først (lav videoopløsning), men blev rettet manuelt.',
+        }[analysis.session_context?.plate_calibration] || null
         const feedbackEvidence = sanitizeVideoCoachFeedbackEvidence(
           analysis.session_context?.feedback_evidence)
         const athleteFeedback = analysis.athlete_feedback || {}
@@ -7897,6 +7905,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
                   {findings.length > 0 && <div style={{ borderTop: '1px solid rgba(237,234,226,0.07)', paddingTop: '0.75rem' }}><div style={s.fieldLabel}>Fund</div><div style={{ display: 'grid', gap: '0.4rem', marginTop: '0.4rem' }}>{findings.map((finding, index) => <div key={finding.id || index} style={{ color: finding.kind === 'focus' ? '#d79a83' : finding.kind === 'works' ? '#8caf88' : '#b8b4a8', fontSize: '0.66rem', lineHeight: 1.45 }}>{finding.summary}</div>)}</div></div>}
                   {baselineSnapshot.length > 0 && <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', lineHeight: 1.45, marginTop: '0.75rem' }}>Personlig baseline blev brugt på {baselineSnapshot.length} tydelig{baselineSnapshot.length === 1 ? 't' : 'e'} signal{baselineSnapshot.length === 1 ? '' : 'er'}.</div>}
+                  {plateCalibrationText && <div style={{ color: '#c8923a', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', lineHeight: 1.45, marginTop: '0.35rem' }}>{plateCalibrationText}</div>}
                 </div>
               </div>
 
