@@ -1978,7 +1978,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           athleteId: currentAthlete.id, clientAnalysisId: message.clientAnalysisId,
           lift: message.lift, variation: message.variation, mimeType: message.mimeType,
           fileSize: file?.size, loadKg: message.loadKg, rpe: message.rpe,
-          athleteNote: message.athleteNote,
+          athleteNote: message.athleteNote, plateCalibration: message.plateCalibration,
         })
         if (requestError || !(file instanceof Blob)) {
           reply({ ok: false, error: requestError || 'Ugyldig video' })
@@ -2015,6 +2015,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           athleteId: currentAthlete.id, athleteName: currentAthlete.name,
           clientAnalysisId: message.clientAnalysisId, lift: message.lift, variation: message.variation,
           loadKg: message.loadKg, rpe: message.rpe, athleteNote: message.athleteNote, videoPath: path,
+          plateCalibration: message.plateCalibration,
         })
         const saved = await saveVideoCoachDraft(supabase, row, { athleteSubmission: true })
         if (saved.error) {
