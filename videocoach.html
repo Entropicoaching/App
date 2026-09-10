@@ -5696,6 +5696,11 @@ let awaitShClick = null;      // {pose, path} mens vi venter på klikket
 const allBtn = document.getElementById('allBtn');
 let wizard = null, analyzing = false;
 let plateConfirm = null;   // {x,y,r} detekteret skive-ring der venter på bekræftelse
+// ORDRE 109 · commit 3: kort årsag til seneste kalibrerings-forsøg - kun sat
+// når noget var værd at bemærke (autoCalib fejlede, eller atleten
+// kalibrerede manuelt bagefter). Sendes med i "upload og gå"-payloaden, se
+// vcAthleteUploadAndGo, så coachen kan se det uden at gætte.
+let vcPlateCalibReason = null;
 let awaitLockPoint = null; // coach: vælg karakteristisk feature nær navet
 let plateDrag = null;      // {mode:'move'|'resize', ox, oy} mens ringen justeres i hånden
 
@@ -6175,6 +6180,9 @@ function wizardClick(p) {
       // Rammer ringen skiven = god låsning; ellers klik forfra. Fanger dårlige
       // låsninger FØR analysen -> færre spildte forsøg (Marcs "kræver 4 forsøg").
       plateConfirm = { x: p.x, y: p.y, r: 22.5 / scale };
+      // ORDRE 109 · commit 3: et nyt, vellykket auto-fund overskriver en
+      // ældre "fejlede/manuel"-årsag fra et tidligere forsøg på samme skive.
+      vcPlateCalibReason = null;
       if (ATHLETE && setAthleteState) setAthleteState('confirm');
       say(SLIM ? 'Ram skiven med ringen · træk midte=flyt, kant=størrelse · ⚡ = analysér'
                : 'Ram skiven med ringen (træk midten for at flytte, kanten for at ændre størrelse) · ⚡ = analysér · klik langt væk = mål om');
@@ -6182,28 +6190,57 @@ function wizardClick(p) {
       allBtn.classList.add('active');
       return;                           // wizard forbliver auto -> nyt klik = ny ring
     }
-    // kant ikke fundet -> fald tilbage til manuel 3-kliks-guide
-    wizard.auto = false; wizard.step = 0; wizard.pts = [];
-    if (ATHLETE && setAthleteState)
-      setAthleteState('target', 'Kanten var svær at finde. Markér top, bund og midte på skiven.');
-    say('Kunne ikke finde skivens kant · 1/3 · Tryk på skivens TOP');
-    if (!SLIM) allBtn.textContent = '1/3: klik skivens TOP';
+    // ORDRE 109 · commit 2: kanten blev ikke fundet - atleten må ALDRIG stå
+    // fast her (se docs/videocoach/SKIVEN-FINDES-IKKE.md for hvorfor
+    // autoCalib opgiver, og hvorfor en udvidet auto-detektion ikke var en
+    // billig gevinst). Ét genkendeligt, roligt skridt: manuel TOP+BUND (den
+    // samme 2-kliks-kalibrering calibBtn allerede tilbyder), og det ALLEREDE
+    // klikkede centrum genbruges som skivens midte - ingen tredje klik.
+    // ORDRE 109 · commit 3: kort årsag - "lille video" er billig at skelne
+    // (allerede kendte mål), resten samles i ét generisk "auto" (autoCalib
+    // selv skelner ikke internt mellem kontrast/radius/rack, se
+    // docs/videocoach/SKIVEN-FINDES-IKKE.md - at gætte det udefra ville
+    // kræve at gen-scanne pixels, ikke en billig tilføjelse).
+    vcPlateCalibReason = (canvas.width * canvas.height) < 400 * 300
+      ? 'plate:fail:small-video' : 'plate:fail:auto';
+    if (typeof vcShowDiag === 'function') vcShowDiag(vcPlateCalibReason);
+    wizard.auto = false; wizard.manual2 = true; wizard.step = 0; wizard.pts = [];
+    wizard.autoCenter = p;
+    const failMsg = 'Jeg kan ikke se skiven her. Tryk på skivens TOP og BUND, så klarer vi det manuelt';
+    if (ATHLETE && setAthleteState) { setAthleteState('target', failMsg); say(''); }
+    else say(failMsg);
+    if (!SLIM) allBtn.textContent = '1/2: klik skivens TOP';
     return;
   }
-  wizard.pts.push(p);
-  wizard.step++;
-  if (wizard.step === 1) { if (!SLIM) allBtn.textContent = '2/3: klik skivens BUND';
-                           say('2/3 · Tryk på skivens BUND'); }
-  if (wizard.step === 2) { if (!SLIM) allBtn.textContent = '3/3: klik skivens MIDTE';
-                           say('3/3 · Tryk på skivens MIDTE'); }
-  if (wizard.step === 3) {
-    say('');
-    const [top, bund, midte] = wizard.pts;
-    cmPerPx = 45 / Math.hypot(top.x - bund.x, top.y - bund.y);
+  if (wizard.manual2) {
+    wizard.pts.push(p);
+    wizard.step++;
+    if (wizard.step === 1) {
+      if (!SLIM) allBtn.textContent = '2/2: klik skivens BUND';
+      if (ATHLETE && setAthleteState) setAthleteState('target', 'Tryk på skivens BUND');
+      else say('2/2 · Tryk på skivens BUND');
+      return;
+    }
+    // 2/2: TOP+BUND kendt, MIDTE er det oprindelige klik der startede
+    // forsøget - samme ring-bekræftelse som efter et vellykket auto-fund, så
+    // "Start"/"Vis mig nu" fortsætter ad præcis samme vej derfra.
+    const [top, bund] = wizard.pts;
+    const scale = 45 / Math.hypot(top.x - bund.x, top.y - bund.y);
+    cmPerPx = scale;
     calibBtn.textContent = '📏 Kalibreret ✓';
-    wizard = null;
-    if (ATHLETE && setAthleteState) setAthleteState('analyzing');
-    runFullAnalysis({ ...midte, r: 22.5 / cmPerPx });
+    const center = wizard.autoCenter;
+    plateConfirm = { x: center.x, y: center.y, r: 22.5 / scale, manual: true };
+    // wizard forbliver auto (som efter et auto-fund) - "klik langt væk" på
+    // ringen kalder wizardClick igen og forventer et gyldigt wizard-objekt.
+    wizard.manual2 = false; wizard.auto = true; wizard.step = 0; wizard.pts = [];
+    vcPlateCalibReason = 'plate:manual:ok';
+    if (typeof vcShowDiag === 'function') vcShowDiag(vcPlateCalibReason);
+    if (ATHLETE && setAthleteState) setAthleteState('confirm');
+    say(SLIM ? 'Ram skiven med ringen · træk midte=flyt, kant=størrelse · ⚡ = analysér'
+             : 'Ram skiven med ringen (træk midten for at flytte, kanten for at ændre størrelse) · ⚡ = analysér · klik langt væk = mål om');
+    if (!SLIM) allBtn.textContent = 'Start analyse';
+    allBtn.classList.add('active');
+    return;
   }
 }
 
@@ -6303,6 +6340,9 @@ async function vcAthleteUploadAndGo() {
     await vcV3RequestUploadAndGo({
       requestId, clientAnalysisId: vcAthleteClientAnalysisId, file, mimeType: file.type, lift, variation,
       loadKg: parsed.kg, rpe: parsed.rpe, athleteNote,
+      // ORDRE 109 · commit 3: sendt med, så coachen kan se om atleten måtte
+      // kalibrere skiven manuelt, uden at skulle spørge.
+      plateCalibration: vcPlateCalibReason,
     });
     vcAthleteUploadRequestId = null;
     if (athleteUploadCancelBtn) athleteUploadCancelBtn.hidden = true;
@@ -7844,7 +7884,7 @@ function vcV3RequestSave(row) {
 // VideoCoach selv. Ingen fast timeout: en upload på svagt mobilnet af en
 // stor fil kan tage flere minutter, og kun selve forsøget skal afgøre det.
 function vcV3RequestUploadAndGo({ requestId = vcV3Uuid(), clientAnalysisId, file, mimeType,
-  lift, variation, loadKg = null, rpe = null, athleteNote = null }) {
+  lift, variation, loadKg = null, rpe = null, athleteNote = null, plateCalibration = null }) {
   if (!VC_V3_ATHLETE_BRIDGE || !VC_V3_HOST)
     return Promise.reject(new Error('VideoCoach er ikke forbundet til appen'));
   return new Promise((resolve, reject) => {
@@ -7855,7 +7895,7 @@ function vcV3RequestUploadAndGo({ requestId = vcV3Uuid(), clientAnalysisId, file
     vcV3UploadPending.set(requestId, { resolve, reject, timer });
     VC_V3_HOST.postMessage({ type: `${VC_V3_MESSAGE_PREFIX}:upload-and-go`,
       requestId, clientAnalysisId, file, mimeType, lift, variation,
-      loadKg, rpe, athleteNote }, location.origin);
+      loadKg, rpe, athleteNote, plateCalibration }, location.origin);
   });
 }
 
