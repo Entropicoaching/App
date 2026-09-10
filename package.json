@@ -38,6 +38,7 @@
     "verify:videocoach-clip": "node scripts/verify-videocoach-clip.mjs",
     "verify:videocoach-upload-flow": "node scripts/verify-videocoach-upload-flow.mjs",
     "verify:videocoach-buttons-layout": "node scripts/verify-videocoach-buttons-layout.mjs",
+    "verify:videocoach-plate-detect": "node scripts/verify-videocoach-plate-detect.mjs",
     "verify:n8n": "node n8n/verify-workflows.mjs",
     "preview:n8n-briefing": "node n8n/preview-coach-briefing.mjs"
   },
