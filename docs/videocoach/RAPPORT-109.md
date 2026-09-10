@@ -8,7 +8,7 @@
 - `8ba8d9e` — commit 2: atleten kommer altid videre
 - `af7a7e6` — commit 3: kort kalibrerings-årsag til coachen
 
-## Hvad blev ændret
+## Hvad ændret
 
 **Commit 1** — `docs/videocoach/SKIVEN-FINDES-IKKE.md` (60 linjer) kortlægger
 præcis hvilke betingelser får `autoCalib` (public/videocoach.html, ~linje
