@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "verify:auth-logout-role-switch": "node scripts/verify-auth-logout-and-role-switch.mjs",
     "verify:athlete-training-inputs": "node scripts/verify-athlete-training-inputs.mjs",
+    "verify:athlete-reps-per-set-mobile": "node scripts/verify-athlete-reps-per-set-mobile.mjs",
     "verify:athlete-onboarding": "node scripts/verify-athlete-onboarding.mjs",
     "verify:athlete-onboarding-guide": "node scripts/verify-athlete-onboarding-guide.mjs",
     "verify:athlete-first-day-flow": "node scripts/verify-athlete-first-day-flow.mjs",

@@ -13,6 +13,7 @@ import { remainingSeconds } from './restTimer'
 import { calcWarmupSets, isMainLift } from './warmup'
 import { applyWarmupCorrection, saveWarmupOverride, suggestWarmupOverride } from './warmupOverride'
 import { foldNavn } from './exerciseNames'
+import { parseRepsPrescription } from './repsPrescription'
 import { flushVideoCoachDraftQueue, isRetryableVideoCoachError,
   queueVideoCoachDraft, saveVideoCoachDraft,
   validateVideoCoachPayloadBounds } from './videoCoachSubmission'
@@ -4954,8 +4955,15 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                       )
                                     }
 
-                                    const input = logInputs[key] || { weight: '', note: '', rpe: '' }
+                                    const input = logInputs[key] || { weight: '', note: '', rpe: '', reps: '' }
                                     const plannedRpe = parsePlannedRpe(ex.intensity)
+                                    // Interval ("4-6") eller "frit" ordination → atleten logger de reps der
+                                    // faktisk blev lavet, sæt for sæt. Fast ordination opfører sig som før.
+                                    const repsPrescription = parseRepsPrescription(ex.reps)
+                                    const repsIsEditable = repsPrescription.type !== 'fixed'
+                                    const repsDefault = repsPrescription.type === 'range' ? String(repsPrescription.min) : ''
+                                    const repsValue = input.reps || repsDefault
+                                    const repsToLog = repsIsEditable ? repsValue : ex.reps
 
                                     if (logged?.skipped) return (
                                       <div key={setNum} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
@@ -4988,13 +4996,29 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                               }
                                             }}
                                           />
-                                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.88rem', color: '#c8923a', whiteSpace: 'nowrap' }}>× {ex.reps || '—'}</span>
+                                          {repsIsEditable ? (
+                                            <>
+                                              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.88rem', color: '#c8923a' }}>×</span>
+                                              <input
+                                                style={{ ...s.fieldInput, width: '52px', minWidth: '52px', minHeight: '44px', boxSizing: 'border-box', flexShrink: 0, padding: '0.65rem 0.3rem', fontSize: '1.1rem', textAlign: 'center' }}
+                                                type="text" inputMode="numeric" placeholder="reps" value={repsValue}
+                                                onChange={e => {
+                                                  const v = e.target.value
+                                                  if (v === '' || /^\d*$/.test(v)) {
+                                                    setLogInputs(p => ({ ...p, [key]: { ...p[key], reps: v } }))
+                                                  }
+                                                }}
+                                              />
+                                            </>
+                                          ) : (
+                                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.88rem', color: '#c8923a', whiteSpace: 'nowrap' }}>× {ex.reps || '—'}</span>
+                                          )}
                                           {/* Log/Spring over rammes efter hvert eneste sæt, hele træningen igennem —
                                               den mest gentagne tryk-handling i appen. min-height 44px holder dem
                                               inden for anbefalet tommelfinger-trykflade, også med svedige hænder. */}
                                           <button
                                             style={{ ...s.btnPrimary, minHeight: '44px', boxSizing: 'border-box', padding: '0.65rem 1rem', fontSize: '0.65rem', background: logged ? '#6cba6c' : '#c8923a' }}
-                                            onClick={() => logSet(ex.id, setNum, ex.sets, ex.reps, plannedRpe)}
+                                            onClick={() => logSet(ex.id, setNum, ex.sets, repsToLog, plannedRpe)}
                                           >{logged ? '✓' : 'Log'}</button>
                                           <button
                                             style={{ ...s.btnGhost, minHeight: '44px', boxSizing: 'border-box', padding: '0.65rem 0.75rem', fontSize: '0.55rem', color: '#4a4844', borderColor: 'rgba(237,234,226,0.08)' }}
