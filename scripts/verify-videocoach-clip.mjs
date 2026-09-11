@@ -396,14 +396,16 @@ window.runRepWindowsPresearch = async function(setStart, setEnd) {
   return { ok: r.ok, windows: r.windows, ms: performance.now() - t0 };
 };
 // ORDRE 80 · commit 2 / ORDRE 82 · commit 2: "Vis mig nu"s realtids-vej.
-window.runRealtimePreview = async function(barPt, windowStart, windowEnd, lift) {
-  strokes.length = 0;
+// ORDRE 121 · commit 3: fælles kerne for ét vindue, brugt af BÅDE den
+// enkeltstående window.runRealtimePreview (KOLD - se main()) og
+// window.runVisMigNu (VARM, flere vinduer i træk - se den nedenfor).
+async function trackOneWindow(barPt, windowStart, windowEnd, lift, preSeek) {
   tracking = true;
   // ORDRE 116 · commit 1: nulstil pr.-frame-profilen for netop dette vindue
   // (samme reset som vcAthletePreviewThree gør i den rigtige app).
   vcRtDiag = { hentMs: 0, nedskaleringMs: 0, soegningMs: 0, tegningMs: 0, filterMs: 0, framesTracked: 0, framesSkipped: 0 };
   const t0 = performance.now();
-  const { path, ok } = await vcRealtimeTrackWindow({ x: barPt.x, y: barPt.y, r: barPt.r }, windowStart, windowEnd);
+  const { path, ok } = await vcRealtimeTrackWindow({ x: barPt.x, y: barPt.y, r: barPt.r }, windowStart, windowEnd, preSeek);
   const ms = performance.now() - t0;
   // ORDRE 116 · commit 3: SAMME efterbehandling som vcAthletePreviewThree gør
   // i den rigtige app (public/videocoach.html) - freezeRawAcquisition +
@@ -428,6 +430,34 @@ window.runRealtimePreview = async function(barPt, windowStart, windowEnd, lift) 
     rtDiag: vcRtDiag,
     visualPtsInfo,
   };
+}
+window.runRealtimePreview = async function(barPt, windowStart, windowEnd, lift) {
+  strokes.length = 0;
+  return trackOneWindow(barPt, windowStart, windowEnd, lift, null);
+};
+// ORDRE 121 · commit 1/3: samme sekventielle skygge-seek-mønster som
+// vcAthletePreviewThree selv bruger (næste vindues seek startet MENS forrige
+// vindues efterbehandling kører) - IKKE et 1:1-udtræk (vcAthletePreviewThree
+// er tæt vævet ind i DOM/UI-tilstand: say(), setAthleteState, trimStart/
+// paintTrim, strokes, vcAthleteUploadAndGo), men bruger kun de udtrukne,
+// ægte funktioner (vcRealtimeTrackWindow/rtSeekTo) til selve arbejdet, i
+// SAMME rækkefølge/pendingSeek-mønster som public/videocoach.html. Nødvendig
+// for overhovedet at kunne måle "mellem vinduer"-skyggen: et løfte startet i
+// ét page.evaluate()-kald kan ikke overleve til det NÆSTE evaluate-kald fra
+// Node, så vinduerne skal spores i én sammenhængende kørsel her i browseren,
+// ikke som separate kald fra main() (se RAPPORT-121.md).
+window.runVisMigNu = async function(barPt, windowsList, lift) {
+  strokes.length = 0;
+  const results = [];
+  let pendingSeek = null;
+  for (let k = 0; k < windowsList.length; k++) {
+    const w = windowsList[k];
+    const r = await trackOneWindow(barPt, w.start, w.end, lift, pendingSeek);
+    const nextW = windowsList[k + 1];
+    pendingSeek = nextW ? rtSeekTo(nextW.start) : null;
+    results.push(r);
+  }
+  return results;
 };
 <\/script>
 </body></html>`
@@ -611,6 +641,20 @@ async function main() {
   // lige efter A) som før - viser hvad "uden ordre 121 · commit 1" ville
   // koste. Det tegnede/syntetiske klip er ikke en rigtig atlet-oplevelse på
   // samme måde og beholder den enkle, uændrede vej (se "Ærlige grænser").
+  //
+  // VARM sporer alle vinduer i ÉT page.evaluate()-kald (window.runVisMigNu),
+  // ikke separate kald pr. vindue: et løfte startet i ét evaluate()-kald
+  // (skygge-seeket til NÆSTE vindue) kan ikke overleve til det næste kald fra
+  // Node - "mellem vinduer"-skyggen fra ordre 121 · commit 1 kan derfor kun
+  // måles ved at lade browseren selv løbe hele sekvensen. Samme ÉT
+  // klik-punkt bruges til ALLE vinduer, som den rigtige
+  // vcAthletePreviewThree(barPt) rent faktisk gør - IKKE et punkt fundet pr.
+  // vindue. Punktet er stangens position ved VINDUE 1's EGEN start (ikke
+  // klippets tid 0) - det er dét den rigtige atlet reelt klikker på (lige før
+  // løftet), og hviler på samme antagelse som appen selv: stangen vender
+  // tilbage til nogenlunde samme position for hver gentagelse (afprøvet:
+  // klippets tid-0-position ramte helt ved siden af på vindue 2/3, meanPx
+  // 124-307px - se "Ærlige grænser" i RAPPORT-121.md).
   let warmResults = [], warmMs = 0, coldResults = [], coldMs = 0
   if (mode === 'synthetic') {
     for (let i = 0; i < threeWindows.length; i++) {
@@ -633,13 +677,15 @@ async function main() {
     await pageWarm.evaluate(r => window.__setPlateRadius(r), plateR)
     // Samme presearch-kald som fandt vinduerne ovenfor, men nu på en FRISK
     // video - det er netop dette kald der udløser ordre 121 · commit 1's
-    // skygge-seek (vindue 1 primes inde i selve presearchen).
+    // skygge-seek (vindue 1 primes inde i selve presearchen). Dens EGNE
+    // fundne vinduer bruges ikke her (kun til at udløse den rigtige kode-vej
+    // realistisk) - threeWindows (ovenfor) styrer stadig hvilke vinduer der
+    // rent faktisk spores og scores.
     await pageWarm.evaluate(([s, e]) => window.runRepWindowsPresearch(s, e), [presearchSetStart, presearchSetEnd])
-    for (let i = 0; i < threeWindows.length; i++) {
-      const w = threeWindows[i], p0 = p0s[i]
-      const r = await pageWarm.evaluate(([barPt, s, e, l]) => window.runRealtimePreview(barPt, s, e, l), [{ x: p0.x, y: p0.y, r: plateR }, w.start, w.end, lift])
-      warmResults.push(r); warmMs += r.ms
-    }
+    const barPtForWarm = p0s[0]
+    warmResults = await pageWarm.evaluate(([bp, wins, l]) => window.runVisMigNu(bp, wins, l),
+      [{ x: barPtForWarm.x, y: barPtForWarm.y, r: plateR }, threeWindows, lift])
+    warmMs = warmResults.reduce((s, r) => s + r.ms, 0)
     await pageWarm.close()
   }
   const threePlayedS = threeWindows.reduce((s, w) => s + (w.end - w.start), 0)
