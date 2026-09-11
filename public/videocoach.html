@@ -2881,8 +2881,6 @@ function vcFindRepAnchors(times, motion, opts = {}) {
   anchors.push(times[n - 1]);
   return anchors;
 }
-// ORDRE 54 · slut: billig forudsøgning for GENTAGELSES-grænser ------------
-
 // DOM-delen: samme lav-opløsnings-teknik som vcRunSetBoundsPresearch (ORDRE
 // 50), men afgrænset til det allerede bekræftede sæt-interval [setStart,
 // setEnd] - vi leder efter pauser INDENI, ikke sættets egne yderpunkter.
@@ -2944,6 +2942,14 @@ async function vcRunRepWindowsPresearch(setStart, setEnd) {
     return { ok:false, windows:[] };
   }
 }
+// ORDRE 54 · slut: billig forudsøgning for GENTAGELSES-grænser ------------
+// ORDRE 121 · commit 2: markøren flyttet hertil (fra lige før "DOM-delen"-
+// kommentaren ovenfor) så scripts/verify-videocoach-clip.mjs kan udtrække
+// vcFindRepAnchors OG vcRunRepWindowsPresearch i ét stykke, 1:1 - den stod
+// tidligere midt i den samme logiske blok, før selve DOM-delen
+// (vcRunRepWindowsPresearch), som den nu dækker. vcMotionSeries deles med
+// den urelaterede ORDRE 50-blok og udtrækkes separat (se testens egne
+// kommentarer).
 
 // ---------- Tidslinje ----------
 const scrub = document.getElementById('scrub');
