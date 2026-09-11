@@ -6390,9 +6390,16 @@ function wizardClick(p) {
       // Rammer ringen skiven = god låsning; ellers klik forfra. Fanger dårlige
       // låsninger FØR analysen -> færre spildte forsøg (Marcs "kræver 4 forsøg").
       plateConfirm = { x: p.x, y: p.y, r: 22.5 / scale };
-      // ORDRE 109 · commit 3: et nyt, vellykket auto-fund overskriver en
-      // ældre "fejlede/manuel"-årsag fra et tidligere forsøg på samme skive.
-      vcPlateCalibReason = null;
+      // ORDRE 120 · commit 3: hvilken vej fandt skiven ("lum"/"farve"/"ring",
+      // sat af autoCalib selv, se ORDRE 120 · commit 2) - samme JSON-felt som
+      // ORDRE 109's øvrige årsager, INGEN migration. "ring" betyder flere
+      // kandidat-radier konkurrerede og ring-scoren afgjorde det - typisk
+      // tegn på svært lys (Marcs "fundet i mørkt lys").
+      vcPlateCalibReason = autoCalib.lastRoute ? `plate:auto:${autoCalib.lastRoute}` : null;
+      if (typeof vcShowDiag === 'function' && autoCalib.lastRoute) {
+        const sc = autoCalib.lastScore;
+        vcShowDiag(`${vcPlateCalibReason}${sc ? ` (score ${sc.best} mod ${sc.second})` : ''}`);
+      }
       if (ATHLETE && setAthleteState) setAthleteState('confirm');
       say(SLIM ? 'Ram skiven med ringen · træk midte=flyt, kant=størrelse · ⚡ = analysér'
                : 'Ram skiven med ringen (træk midten for at flytte, kanten for at ændre størrelse) · ⚡ = analysér · klik langt væk = mål om');
