@@ -2916,7 +2916,6 @@ async function vcRunRepWindowsPresearch(setStart, setEnd) {
       for (let k = 0; k < g.length; k++) g[k] = d[k * 4] * .3 + d[k * 4 + 1] * .59 + d[k * 4 + 2] * .11;
       frames.push(g);
     }
-    await seekTo(savedTime);
 
     const motion = vcMotionSeries(frames);
     const anchors = vcFindRepAnchors(times, motion);
@@ -2926,6 +2925,20 @@ async function vcRunRepWindowsPresearch(setStart, setEnd) {
       const end = Math.min(setEnd, anchors[i + 1] + 0.15);
       if (end - start >= 0.4) windows.push({ start, end });
     }
+    // ORDRE 121 · commit 1: presearchens sidste interne seek er til `lastSafe`
+    // (nær setEnd). FØR denne ordre blev videoen altid restaureret til
+    // `savedTime` her, hvorefter vcAthletePreviewThree straks bagefter seekede
+    // VIDERE til vindue 1's start - to seeks betalt i træk for én visning. Den
+    // eneste kalder (vcAthletePreviewThree) bruger aldrig `savedTime` bagefter
+    // (den sætter selv video.currentTime eksplicit til sidste sporede punkt,
+    // når den er færdig) - findes vinduer, springes restaureringen derfor over,
+    // og seeket til vindue 1's start startes HER (bevidst IKKE ventet på), så
+    // det løber i skyggen af resten af opsætningen i vcAthletePreviewThree i
+    // stedet for at blive betalt to gange. rtSeekTo (kaldt derfra) opdager selv
+    // om målet allerede er nået. Findes INGEN vinduer (fejlvejen), restaureres
+    // savedTime som før - uændret for den vej.
+    if (windows.length) seekTo(windows[0].start);
+    else await seekTo(savedTime);
     return { ok:true, windows };
   } catch {
     return { ok:false, windows:[] };
@@ -5877,7 +5890,7 @@ function rtSmoothPath(pts, times) {
   return pts.map((p, i) => ({ x: xs[i], y: ys[i] }));
 }
 
-async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd) {
+async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd, preSeek) {
   const fullW = canvas.width, fullH = canvas.height;
   const scale = Math.min(1, RT_MAX_W / fullW);
   const rw = Math.max(1, Math.round(fullW * scale)), rh = Math.max(1, Math.round(fullH * scale));
@@ -5890,7 +5903,14 @@ async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd) {
   const rtCtx = rtCan.getContext('2d', { willReadFrequently: true, alpha: false });
   const radius = Math.max(6, (barPt.r || fullW / 16) * scale);
 
-  await rtSeekTo(windowStart);
+  // ORDRE 121 · commit 1: vcAthletePreviewThree (eller presearch selv, for
+  // vindue 1) kan allerede have startet dette seek, mens FORRIGE vindues
+  // efterbehandling kørte - "i skyggen" af den, i stedet for at vente til her.
+  // rtSeekTo opdager selv (currentTime allerede ved windowStart) hvis seeket
+  // allerede er færdigt; er det stadig undervejs, ventes der blot videre på
+  // det SAMME underliggende native seek (samme event, to lyttere). Ingen ny
+  // afhængighed, ingen ændring af selve sporings-algoritmen.
+  await (preSeek || rtSeekTo(windowStart));
   let __t0 = performance.now();
   await rtDrawScaled(video, rtCtx, rw, rh);
   vcRtDiag.nedskaleringMs += performance.now() - __t0;
@@ -6052,6 +6072,10 @@ async function vcAthletePreviewThree(barPt) {
   let diagFramesTracked = 0, diagFramesSkipped = 0, diagPlayedS = 0;
   // ORDRE 116 · commit 1: nulstil pr.-frame-profilen for netop dette forsøg.
   vcRtDiag = { hentMs: 0, nedskaleringMs: 0, soegningMs: 0, tegningMs: 0, filterMs: 0, framesTracked: 0, framesSkipped: 0 };
+  // ORDRE 121 · commit 1: vindue 1's seek er allerede undervejs (startet inde
+  // i vcRunRepWindowsPresearch, se dér) - her ventes der bare videre på det,
+  // ikke startet forfra.
+  let pendingSeek = null;
   for (let k = 0; k < idxs.length; k++) {
     if (!analyzing) break;   // atleten trak stikket undervejs (allBtn = Stop)
     const w = presearch.windows[idxs[k]];
@@ -6061,7 +6085,13 @@ async function vcAthletePreviewThree(barPt) {
     // ORDRE 80: realtids-sporing (afspiller i 1x, ingen seek-løkke) i stedet
     // for den delte, seek-baserede startMultipointTracking - se
     // vcRealtimeTrackWindow ovenfor.
-    const { path, ok } = await vcRealtimeTrackWindow(barPt, w.start, w.end);
+    const { path, ok } = await vcRealtimeTrackWindow(barPt, w.start, w.end, pendingSeek);
+    // ORDRE 121 · commit 1: start NÆSTE vindues seek MED DET SAMME dette
+    // vindues afspilning er færdig, mens efterbehandlingen nedenfor
+    // (freezeRawAcquisition/analyzePath) stadig kører - "i skyggen" af den, i
+    // stedet for at vente til næste iteration beder om det.
+    const nextW = presearch.windows[idxs[k + 1]];
+    pendingSeek = nextW ? rtSeekTo(nextW.start) : null;
     if (ok) {
       path.vcPreviewLabel = labels[k];
       const rtSession = { schema: 1, lift: vcV3Lift(document.getElementById('liftSel').value),
