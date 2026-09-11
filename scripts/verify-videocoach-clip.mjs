@@ -229,6 +229,11 @@ let FRAME = 1 / 30;
 let TRACKER_BENCHMARK = false, TRACKER_PROBE = false;
 let VC_TRACKER_FAST = true;
 let vcTiming = { trackingStartedAt: null };
+// ORDRE 116 · commit 1: stub for pr.-frame-profilen vcRealtimeTrackWindow
+// skriver til (public/videocoach.html, deklareret ved siden af VC_DIAG -
+// uden for det udtrukne ORDRE 80-blok, derfor stub'et her ligesom de andre
+// app-globals ovenfor).
+let vcRtDiag = { hentMs: 0, nedskaleringMs: 0, soegningMs: 0, tegningMs: 0, filterMs: 0, framesTracked: 0, framesSkipped: 0 };
 function idxAtTime(s, t) {
   const times = s.times || [];
   let lo = 0, hi = times.length - 1;
@@ -362,17 +367,37 @@ window.runAnalysis = async function(startT, endT, p0, lift) {
   };
 };
 // ORDRE 80 · commit 2 / ORDRE 82 · commit 2: "Vis mig nu"s realtids-vej.
-window.runRealtimePreview = async function(barPt, windowStart, windowEnd) {
+window.runRealtimePreview = async function(barPt, windowStart, windowEnd, lift) {
   strokes.length = 0;
   tracking = true;
+  // ORDRE 116 · commit 1: nulstil pr.-frame-profilen for netop dette vindue
+  // (samme reset som vcAthletePreviewThree gør i den rigtige app).
+  vcRtDiag = { hentMs: 0, nedskaleringMs: 0, soegningMs: 0, tegningMs: 0, filterMs: 0, framesTracked: 0, framesSkipped: 0 };
   const t0 = performance.now();
   const { path, ok } = await vcRealtimeTrackWindow({ x: barPt.x, y: barPt.y, r: barPt.r }, windowStart, windowEnd);
   const ms = performance.now() - t0;
+  // ORDRE 116 · commit 3: SAMME efterbehandling som vcAthletePreviewThree gør
+  // i den rigtige app (public/videocoach.html) - freezeRawAcquisition +
+  // analyzePath, så path.raw/path.analysis.visualPts bliver sat 1:1 som ved
+  // en ægte "Vis mig nu"-kørsel. Bekræfter at drawStroke rent faktisk tager
+  // drawCleanBarPath-grenen (kræver s.raw && s.analysis) og altså tegner med
+  // den udglattede visningsbane, ikke den rå - se RAPPORT-116.md.
+  let visualPtsInfo = null;
+  if (ok) {
+    freezeRawAcquisition(path, { schema: 1, lift: lift || 'squat', trackingStart: windowStart, trackingEnd: windowEnd });
+    analyzePath(path);
+    const vp = path.analysis && path.analysis.visualPts;
+    const rawPts = path.raw.pts;
+    const maxShift = vp ? Math.max(0, ...vp.map((p, i) => Math.hypot(p.x - rawPts[i].x, p.y - rawPts[i].y))) : null;
+    visualPtsInfo = { hasRaw: !!path.raw, hasAnalysis: !!path.analysis, visualPtsLength: vp ? vp.length : 0, maxShiftFromRawPx: maxShift };
+  }
   return {
     ok, ms,
     pts: path.pts.map(p => ({ x: p.x, y: p.y })),
     times: [...path.times],
     valid: [...path.valid],
+    rtDiag: vcRtDiag,
+    visualPtsInfo,
   };
 };
 <\/script>
@@ -497,7 +522,7 @@ async function main() {
   let threeMs = 0
   for (const w of threeWindows) {
     const p0 = truthFn(w.start)
-    const r = await page.evaluate(([barPt, s, e]) => window.runRealtimePreview(barPt, s, e), [{ x: p0.x, y: p0.y, r: plateR }, w.start, w.end])
+    const r = await page.evaluate(([barPt, s, e, l]) => window.runRealtimePreview(barPt, s, e, l), [{ x: p0.x, y: p0.y, r: plateR }, w.start, w.end, lift])
     threeResults.push(r)
     threeMs += r.ms
   }
@@ -543,6 +568,18 @@ async function main() {
     console.log(`  vindue ${i + 1} [${w.start.toFixed(2)}s-${w.end.toFixed(2)}s, ${(w.end - w.start).toFixed(2)}s afspillet]`)
     console.log(`    ok=${r.ok} frames sporet=${f.framesTracked} sprunget over=${f.framesSkipped} ms/frame=${f.msPerFrame.toFixed(1)} tid/afspillet=${f.timeRatio.toFixed(2)}x`)
     console.log(`    afvigelse meanPx=${threeDev[i].meanPx.toFixed(2)} maxPx=${threeDev[i].maxPx.toFixed(2)} hop=${h.hops} (grænse ${h.hopSpeedPxS.toFixed(0)}px/s)`)
+    // ORDRE 116 · commit 1: pr.-frame-nedbrydningen fra videocoach.html's
+    // egen instrumentering (vcRtDiag) - "tegning" er altid 0 her, headless
+    // Chromium kører aldrig app'ens synlige render()-løkke (kun tracker-
+    // koden er udtrukket, se docs/videocoach/TID-PR-FRAME.md).
+    const d = r.rtDiag, fc = Math.max(1, d.framesTracked + d.framesSkipped)
+    console.log(`    pr. frame: hent=${(d.hentMs / fc).toFixed(2)}ms nedskaler=${(d.nedskaleringMs / fc).toFixed(2)}ms søg=${(d.soegningMs / fc).toFixed(2)}ms tegn=${(d.tegningMs / fc).toFixed(2)}ms(*) filter(total)=${d.filterMs.toFixed(2)}ms  [(*) altid 0 headless, se note]`)
+    // ORDRE 116 · commit 3: bekræfter at drawStroke tegner med den udglattede
+    // visningsbane (path.analysis.visualPts), ikke den rå one-euro-bane -
+    // samme efterbehandling som den rigtige app kører (freezeRawAcquisition +
+    // analyzePath), kørt her i harnesset, ikke antaget.
+    const vpi = r.visualPtsInfo
+    console.log(`    visningsbane: raw+analysis sat=${vpi ? (vpi.hasRaw && vpi.hasAnalysis) : false} visualPts=${vpi?.visualPtsLength ?? 0} punkter, maks. forskydning fra rå bane=${vpi?.maxShiftFromRawPx?.toFixed(2) ?? 'n/a'}px`)
   })
   console.log(`  samlet tid (${threeWindows.length} vindue(r)): ${threeMs.toFixed(1)}ms · samlet afspillet varighed: ${(threePlayedS * 1000).toFixed(1)}ms · forhold: ${realtimeFactor.toFixed(2)}x (grænse ${REALTIME_MAX_FACTOR}x)`)
   console.log(`\nTolerance: mean ≤ ${TOLERANCE_MEAN_PX}px, max ≤ ${TOLERANCE_MAX_PX}px (se kildekoden for begrundelsen).`)
