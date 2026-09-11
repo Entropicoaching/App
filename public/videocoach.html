@@ -1132,6 +1132,13 @@ const TRACKER_PROBE = TRACKER_BENCHMARK && MODE_PARAMS.get('trackerProbe') === '
 // kørsel (frames sporet/sprunget, ms/frame, tid mod videoens varighed) - kun
 // synlig med ?diag=1, så almindelig atlet-brug er uændret.
 const VC_DIAG = MODE_PARAMS.get('diag') === '1';
+// ORDRE 116 · commit 1: pr.-frame-nedbrydning af "Vis mig nu"s tid, kun
+// akkumuleret mens en Vis-mig-nu-kørsel er i gang (vcAthletePreviewThree
+// nulstiller før hvert forsøg). "tegning" er den synlige main-thread-
+// rendering (render() nedenfor), IKKE en del af selve sporings-algoritmen -
+// den tælles separat, fordi den konkurrerer om samme tråd som rVFC-sporingen
+// (se docs/videocoach/TID-PR-FRAME.md).
+let vcRtDiag = { hentMs: 0, nedskaleringMs: 0, soegningMs: 0, tegningMs: 0, filterMs: 0, framesTracked: 0, framesSkipped: 0 };
 const SLIM = !DESKTOP;              // moderne layout (atlet OG coach online)
 const ATHLETE = SLIM && !COACHWEB;
 // ORDRE 45 · én kontakt for ALLE tracker-hastighedsgreb (commit 2-4). Slået
@@ -3441,7 +3448,14 @@ function render() {
   }
   if (video.videoWidth) {
     if (cmp) { driveCompare(); drawVideoCompare(); }
-    else ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    else if (analyzing) {
+      // ORDRE 116 · commit 1: "tegning" i diag-linjen - denne tegning kører på
+      // samme tråd som Vis-mig-nu's rVFC-sporing, kun tidsmålt mens en
+      // Vis-mig-nu-kørsel faktisk står på (vcAthletePreviewThree).
+      const __t = performance.now();
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      vcRtDiag.tegningMs += performance.now() - __t;
+    } else ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
   }
   if (showGrid) drawGrid();
   // bane/skelet hører til fuldskærms-video 1 - skjules i ⇄-tilstand
@@ -5845,8 +5859,12 @@ async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd) {
   const radius = Math.max(6, (barPt.r || fullW / 16) * scale);
 
   await rtSeekTo(windowStart);
+  let __t0 = performance.now();
   rtCtx.drawImage(video, 0, 0, rw, rh);
+  vcRtDiag.nedskaleringMs += performance.now() - __t0;
+  __t0 = performance.now();
   let anchorFrame = mpBuildFrame(rtCtx.getImageData(0, 0, rw, rh).data, rw, rh, 0, 0, rw, rh);
+  vcRtDiag.hentMs += performance.now() - __t0;
   let cur = { x: barPt.x * scale, y: barPt.y * scale };
   let features = mpGoodFeatures(anchorFrame, cur, radius);
   const startFrame = Math.round(windowStart * 30);
@@ -5884,9 +5902,20 @@ async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd) {
       if (workDebtMs > budgetMs) {
         workDebtMs -= budgetMs; // dette slot bruges til at indhente gælden, ikke til nyt arbejde
         path.pts.push(null); path.times.push(tNow); path.valid.push(false); path.confidence.push(0);
+        vcRtDiag.framesSkipped++;
       } else {
+        // ORDRE 116 · commit 1: pr.-frame-nedbrydning til diag-linjen.
+        // "nedskalering" = drawImage (henter OG nedskalerer videoens frame
+        // til det lille canvas i samme kald - de to kan ikke tidsmåles hver
+        // for sig uden at ændre selve tegne-kaldet); "hent frame" = at trække
+        // pixelbufferen ud af det nedskalerede canvas (getImageData/
+        // mpBuildFrame) - selve rammen algoritmen arbejder videre på.
+        let __t = performance.now();
         rtCtx.drawImage(video, 0, 0, rw, rh);
+        vcRtDiag.nedskaleringMs += performance.now() - __t;
+        __t = performance.now();
         const frame = mpBuildFrame(rtCtx.getImageData(0, 0, rw, rh).data, rw, rh, 0, 0, rw, rh);
+        vcRtDiag.hentMs += performance.now() - __t;
         // Hastigheds-ekstrapoleret CENTER-forudsigelse, men matchet SKAL søge
         // om hvert enkelt features EGEN forventede position (centeret forskudt
         // med samme fælles bevægelse) - IKKE om selve centeret. Et feature
@@ -5895,23 +5924,29 @@ async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd) {
         // startMultipointTrackings pp=p+(pred-cur), se ovenfor i denne fil.
         const predCenter = { x: cur.x + vel.x * mediaDt, y: cur.y + vel.y * mediaDt };
         const search = Math.round(mpClamp(radius * .35 + Math.hypot(vel.x, vel.y) * mediaDt * .5, 10, radius * .8));
+        __t = performance.now();
         const moves = [];
         for (const p of features) {
           const pp = { x: p.x + (predCenter.x - cur.x), y: p.y + (predCenter.y - cur.y) };
           const fwd = mpMatchPoint(anchorFrame, frame, p, pp, search);
           if (fwd && fwd.cost <= .42) moves.push({ dx: fwd.x - p.x, dy: fwd.y - p.y });
         }
+        vcRtDiag.soegningMs += performance.now() - __t;
         if (moves.length >= 4) {
           const nextCur = { x: cur.x + mpMedian(moves.map(m => m.dx)), y: cur.y + mpMedian(moves.map(m => m.dy)) };
           vel = { x: (nextCur.x - cur.x) / mediaDt, y: (nextCur.y - cur.y) / mediaDt };
           cur = nextCur;
           anchorFrame = frame;
-          features = mpGoodFeatures(frame, cur, radius);
+          __t = performance.now();
+          features = mpGoodFeatures(frame, cur, radius); // gen-find features til NÆSTE frames søgning - talt med i "søgning"
+          vcRtDiag.soegningMs += performance.now() - __t;
           path.pts.push({ x: cur.x / scale, y: cur.y / scale });
           path.times.push(tNow); path.valid.push(true); path.confidence.push(Math.min(1, moves.length / 12));
+          vcRtDiag.framesTracked++;
           if (features.length < 5) { finish(); return; }
         } else {
           path.pts.push(null); path.times.push(tNow); path.valid.push(false); path.confidence.push(0);
+          vcRtDiag.framesSkipped++;
         }
       }
       workDebtMs = Math.max(0, workDebtMs + (performance.now() - workStart) - budgetMs);
@@ -5935,7 +5970,9 @@ async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd) {
     video.play().catch(finish);
   });
 
+  const __tf = performance.now();
   path.pts = rtSmoothPath(rtInterpolateGaps(path.pts, path.times), path.times);
+  vcRtDiag.filterMs += performance.now() - __tf;
   return { path, ok: path.pts.length >= 5 };
 }
 // ORDRE 80 · slut: realtids-sporing til "Vis mig nu"
@@ -5972,6 +6009,8 @@ async function vcAthletePreviewThree(barPt) {
   // fra den RIGTIGE kørsel på Marcs egen telefon - se vcShowDiag nedenfor.
   const diagStartMs = performance.now();
   let diagFramesTracked = 0, diagFramesSkipped = 0;
+  // ORDRE 116 · commit 1: nulstil pr.-frame-profilen for netop dette forsøg.
+  vcRtDiag = { hentMs: 0, nedskaleringMs: 0, soegningMs: 0, tegningMs: 0, filterMs: 0, framesTracked: 0, framesSkipped: 0 };
   for (let k = 0; k < idxs.length; k++) {
     if (!analyzing) break;   // atleten trak stikket undervejs (allBtn = Stop)
     const w = presearch.windows[idxs[k]];
@@ -6000,7 +6039,13 @@ async function vcAthletePreviewThree(barPt) {
     const msPerFrame = totalFrames ? (elapsedS * 1000 / totalFrames) : 0;
     const videoDur = video.duration || 0;
     const ratio = videoDur ? elapsedS / videoDur : 0;
-    vcShowDiag(`diag: ${diagFramesTracked} sporet / ${diagFramesSkipped} sprunget over · ${msPerFrame.toFixed(0)}ms/frame · ${elapsedS.toFixed(1)}s af ${videoDur.toFixed(1)}s video (${ratio.toFixed(2)}x)`);
+    // ORDRE 116 · commit 1: pr.-frame-nedbrydning tilføjet efter det
+    // eksisterende tal (uændret), ikke i stedet for det. "tegning" er 0 når
+    // ingen frame nåede at blive vist under selve sporingen (fx et meget
+    // kort vindue) - se docs/videocoach/TID-PR-FRAME.md.
+    const d = vcRtDiag, frameCount = Math.max(1, d.framesTracked + d.framesSkipped);
+    vcShowDiag(`diag: ${diagFramesTracked} sporet / ${diagFramesSkipped} sprunget over · ${msPerFrame.toFixed(0)}ms/frame · ${elapsedS.toFixed(1)}s af ${videoDur.toFixed(1)}s video (${ratio.toFixed(2)}x) · ` +
+      `hent ${(d.hentMs / frameCount).toFixed(1)} · nedskaler ${(d.nedskaleringMs / frameCount).toFixed(1)} · søg ${(d.soegningMs / frameCount).toFixed(1)} · tegn ${(d.tegningMs / frameCount).toFixed(1)} · filter ${(d.filterMs / frameCount).toFixed(1)} ms/frame`);
   }
   trimEnd = savedTrimEnd;
   analyzing = false;
