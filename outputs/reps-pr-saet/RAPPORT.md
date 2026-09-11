@@ -73,3 +73,138 @@ stedet for den statiske label, forudfyldt med intervallets nederste tal, og
 (c) sende den faktiske, indtastede værdi til `logSet` i stedet for
 `ex.reps`. Alt nedstrøms (e1RM, check-in, Coach Briefing) opdateres
 automatisk, fordi det allerede læser `reps_completed` pr. sæt.
+
+## Commit 2 — hvad blev bygget
+
+- Ny `src/repsPrescription.js` — `parseRepsPrescription(reps)` tolker
+  `exercises.reps` som `'range'` (fx `"4-6"` eller `"4–6"`, med eller uden
+  mellemrum), `'free'` (den nye konvention: coachen skriver bogstaveligt
+  `"frit"`, uanset store/små bogstaver), eller `'fixed'` (alt andet, inkl.
+  tomt felt og fritekst som `"AMRAP"` — samme opførsel som i dag).
+- `src/AthleteView.jsx` (linje ~4958-5021): sæt-loggeren viser nu et lille
+  reps-felt (52px bredt, 44px trykflade, samme mønster som vægtfeltet) i
+  stedet for den statiske `× {ex.reps}`-label, når prescriptionen er
+  `'range'` eller `'free'`. Ved `'range'` forudfyldes feltet med
+  intervallets nederste tal (`min`); ved `'free'` starter det tomt (der er
+  intet nederste tal at forudfylde med — se "Ærlige grænser"). Fast
+  ordination (`'fixed'`) er visuelt og funktionelt uændret.
+  `logSet`-kaldet sender nu den faktiske indtastede værdi
+  (`repsToLog`) i stedet for altid `ex.reps`.
+- `src/athleteTrainingInputs.js`: `mergeAthleteSetInputs` genindlæser nu
+  også `reps` fra en allerede logget række (samme mønster som `weight`), så
+  et genbesøgt sæt viser hvad der faktisk blev logget. `nextAthleteSetInput`
+  nulstiller bevidst `reps` til `''` for det næste sæt — reps skal IKKE
+  videreføres fra forrige sæt (i modsætning til vægt), så hvert nyt sæt
+  starter ved ordinationens nederste tal.
+
+## Commit 3 — tests og mobil
+
+- `src/repsPrescription.test.js` (7 tests): interval med bindestreg/en-dash/
+  mellemrum genkendes; `"frit"` (og varianter med store bogstaver/mellemrum)
+  genkendes; fast tal og tom ordination forbliver `'fixed'`; anden fritekst
+  (`"AMRAP"`, `"8 pr. side"`) forbliver `'fixed'` og bliver IKKE fejlagtigt
+  redigerbar.
+- `src/athleteTrainingInputs.test.js` (4 tests): reps gemmes og genindlæses
+  pr. sæt (to sæt på samme øvelse kan have forskellige reps); reps carries
+  ikke over til næste sæt; en bekræftet log vinder over lokal indtastning;
+  og et test der beviser at e1RM regnes af de FAKTISKE reps pr. sæt (Epley
+  på 100kg×4 vs. 100kg×6 giver forskellige e1RM-tal — havde begge sæt
+  fejlagtigt logget ordinationens nederste tal, ville de være ens).
+- `scripts/verify-athlete-training-inputs.mjs` opdateret til det nye
+  `reps`-felt (var ved at fejle efter commit 2's ændring af
+  `mergeAthleteSetInputs`/`nextAthleteSetInput` — rettet så den nu låser den
+  nye adfærd fast).
+- Nyt `scripts/verify-athlete-reps-per-set-mobile.mjs`
+  (`npm run verify:athlete-reps-per-set-mobile`): kører headless Chromium
+  (Playwright) på en 390px-viewport og tager et skærmbillede af de tre
+  ordinationstyper side om side (fast/interval/frit) med syntetiske
+  øvelsesnavne (Squat/Bænkpres/Roning — ingen atletdata). Bruger den ÆGTE
+  `src/repsPrescription.js` til at afgøre hvilke sæt der får et felt.
+  Skærmbillede: `outputs/reps-pr-saet/mobil-390px-reps-pr-saet.png`.
+  Se "Ærlige grænser" for hvorfor det ikke er den levende app, der er
+  screenshottet.
+
+## Gren og commits
+
+- Gren: `reps-pr-saet` fra `main` (`6d0c01e`, ordre 105+109 merget/pushet).
+- `3e481d4` — docs(reps-pr-saet): kortlæg modellen (commit 1, ingen kode).
+- `646bbe9` — feat(reps-pr-saet): reps pr. sæt ved interval/frit (commit 2).
+- Commit 3 (tests, mobil-screenshot, rapport) committes umiddelbart efter
+  denne fil gemmes — se `git log reps-pr-saet` for det endelige hash.
+
+## Hvad blev ændret
+
+Se "Commit 2" og "Commit 3" ovenfor for den fulde liste. Kort: ny fil
+`src/repsPrescription.js`, ændringer i `src/AthleteView.jsx` (kun
+sæt-loggerens render + `logSet`-kald) og `src/athleteTrainingInputs.js`
+(kun `reps`-feltet), plus tests og ét opdateret/ét nyt verify-script.
+Ingen skemaændring, ingen ændring af programskabelonerne coachen skriver
+i `Dashboard.jsx` — kun loggerens læsning og gemning, som ordret.
+
+## Testresultat
+
+- `npm run lint` — grøn (0 fejl, 13 præeksisterende advarsler om
+  `react-hooks/exhaustive-deps`, urørt af denne ordre).
+- `node --test src/*.test.js` — 116/116 grønne (11 nye: 7 i
+  `repsPrescription.test.js`, 4 i `athleteTrainingInputs.test.js`).
+- `npm run gate:tracker` — GRØN (urørt område, kørt fordi ordren kræver det).
+- `npm run verify:athlete-training-inputs` — grøn (opdateret til `reps`).
+- `npm run verify:athlete-tap-targets` — grøn (uændret; bekræfter at
+  Log/Spring over/RPE-vælgeren stadig har ≥44px efter ændringen).
+- `npm run verify:athlete-write-failures` — grøn (rørt område: sæt-logning).
+- `npm run verify:athlete-reps-per-set-mobile` (ny) — grøn, 390px-skærmbillede
+  gemt i `outputs/reps-pr-saet/mobil-390px-reps-pr-saet.png`.
+
+## Hvad er næste
+
+- Marc bør se skærmbilledet og bekræfte at et tomt "frit"-felt (uden
+  forudfyldning) er den rigtige default — se grænse nedenfor.
+- Når grenen er godkendt: Marc merger og pusher (Vaidya gør ikke selv).
+- Ingen opfølgende opgaver identificeret i selve implementationen.
+
+## Ærlige grænser
+
+- **"Frit" er en ny konvention, ikke en eksisterende.** Der var intet
+  "frit"-flag i skemaet eller UI'et før denne ordre — jeg har defineret det
+  som at coachen skriver det bogstavelige ord `"frit"` i det eksisterende
+  fritekst-reps-felt (samme felt som allerede rummer `"4-6"`). Virker
+  robust nok (case-insensitive, trimmet), men er et valg, ikke noget der lå
+  fast i koden i forvejen — værd at Marc bekræfter er den model coachene
+  reelt vil bruge.
+- **"Frit" forudfyldes tomt, ikke med et tal.** Ordren beder specifikt om at
+  intervaller forudfyldes "med intervallets nederste tal" — "frit" har
+  ingen nederste tal, så jeg lod feltet starte tomt i stedet for at gætte på
+  en vilkårlig default (fx 1). Atleten skal selv skrive et tal for at kunne
+  logge sættet (samme som vægtfeltet i dag).
+- **`autoCompleteSession` (knappen "Udfyld manglende sæt med sidst loggede
+  vægt og reps") er IKKE ændret.** Den fylder alle manglende sæt i en
+  session med ÉN reps-værdi (`src/AthleteView.jsx:3315-3339`, uændret
+  logik) — den skelnede ikke reps pr. sæt før denne ordre og gør det
+  stadig ikke. Den ligger uden for ordrens beskrevne scope (den primære
+  sæt-logger), men er en kendt begrænsning: bruges den på et interval-sæt,
+  logges stadig ét tal på alle manglende sæt (nu enten sidst loggede reps
+  for øvelsen, eller — hvis intet er logget før — ordinationens nederste
+  tal/parseInt af `"frit"`-strengen, som før). Flag til Marc, ikke rettet
+  uden ordre.
+- **Mobil-skærmbilledet er en isoleret gengivelse, ikke den levende app.**
+  `AthleteView.jsx` kræver en ægte, indlogget Supabase-session for at boote
+  — det kan hverken gøres headless uden atletdata, eller uden i praksis at
+  logge ind som en rigtig atlet (forbudt: ingen atletdata i filer/rapport,
+  ingen skrivning mod produktion). Skærmbilledet bruger derfor den ÆGTE
+  `repsPrescription.js`-logik i en minimal HTML-harness der efterligner
+  sæt-loggerens præcise mål (44px trykflader, 52px repsfelt) med
+  syntetiske øvelsesnavne. Det beviser UI-tilstandene (fast/interval/frit)
+  korrekt, men er ikke et billede af selve produktionskoden i browseren.
+- **Ingen ny e1RM-/tonnage-kode.** Som fundet i commit 1 læser e1RM-grafen,
+  ugentlig volumen og Coach Briefing allerede `reps_completed` pr. sæt —
+  de er urørt, og testen for "e1RM regnes af faktiske reps" beviser derfor
+  datastrømmen (reps gemmes og genindlæses korrekt pr. sæt), ikke selve
+  Epley-formlen (triviel, uændret, ikke eksporteret som selvstændig
+  funktion nogen steder i koden).
+
+## Betydning for Hara
+
+Rører "Appen mærkbart bedre for atleterne" — atleter der får ordineret
+intervaller (fx "3×4-6") kan nu logge hvad de faktisk lavede pr. sæt i
+stedet for at appen tavst gemmer et forkert tal, og deres e1RM/tonnage
+bliver dermed retvisende uden yderligere arbejde.
