@@ -506,8 +506,15 @@ async function main() {
   if (mode === 'real') {
     windows = (realMeta.windows && realMeta.windows.length) ? realMeta.windows : full.repWindows
     if (!windows.length) {
-      console.log('Ingen gentagelser fundet automatisk i den fulde analyse - bruger hele det analyserede spænd som ét vindue.')
-      windows = [{ start: full.times[0] ?? startT, end: full.times.at(-1) ?? endT }]
+      // ORDRE 120 · commit 2: uden en fundet rep bruges HELE klippets spænd
+      // som ét "Vis mig nu"-vindue - det er ikke hvad "Vis mig nu" simulerer
+      // (en kort rep-forhåndsvisning, ikke fuld-klip-sporing), og et langt
+      // nok spænd fik headless Chromium til at crashe ("Target crashed") på
+      // Marcs eget klip da gitter-søgningens startpunkt var dårligt. Loft på
+      // 2s - nok til én rep, aldrig hele klippet.
+      const capped = Math.min(full.times.at(-1) ?? endT, (full.times[0] ?? startT) + 2)
+      console.log('Ingen gentagelser fundet automatisk i den fulde analyse - bruger de første 2s af det analyserede spænd som ét vindue.')
+      windows = [{ start: full.times[0] ?? startT, end: capped }]
     } else {
       console.log(`${windows.length} gentagelse(r) fundet ${realMeta.windows?.length ? '(fra sidecar-filen)' : 'automatisk (den fulde analyses egen rep-detektion)'}: ` +
         windows.map(w => `${w.start.toFixed(2)}-${w.end.toFixed(2)}s`).join(', '))

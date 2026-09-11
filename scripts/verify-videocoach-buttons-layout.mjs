@@ -123,8 +123,15 @@ async function main() {
         video.addEventListener('seeked', onSeeked)
         video.currentTime = 0.1
       })
-      const scale = autoCalib({ x, y })
-      if (!scale) throw new Error('autoCalib fandt ikke skiven - er testklippet ændret?')
+      // ORDRE 120 · commit 2: skivens tekstur her har TRE koncentriske ringe
+      // (midterprik, mønster-ring, yderkant - se make-test-clip.mjs
+      // plateValue) - god til mpGoodFeatures, men reelt tvetydig for
+      // ring-scoring (mønster-ringen har HØJERE kontrast end skivens egen
+      // yderkant, se docs/videocoach/RAPPORT-120.md), så autoCalib afviser
+      // den nu sikkert (null) i stedet for at gætte. Denne test måler
+      // knap-layout, ikke autoCalib's træfsikkerhed - PLATE_R=110 er
+      // klippets EGEN facit (make-test-clip.mjs), ikke et gæt.
+      const scale = autoCalib({ x, y }) ?? (45 / (2 * 110))
       cmPerPx = scale
       plateConfirm = { x, y, r: 22.5 / scale }
       const barPt = vcConfirmPlateRing()

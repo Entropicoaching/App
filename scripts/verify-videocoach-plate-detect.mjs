@@ -271,7 +271,7 @@ const conditions = []
   const buf = makeBuffer(W, H, 24); fillCircle(buf, W, H, cx, cy, r, 15)
   fillCircle(buf, W, H, cx, cy, 15, 190)   // lys nav, radius 15 - langt under skivens 125
   conditions.push({ name: 'sort skive på sort gulv med lys nav (diff 9, nav-radius 15)', W, H, cx, cy, r, buf,
-    expect: 'ikke fundet (før) - risiko: nav vinder over skivens egen kant', why: 'skivens egen kant (spring 9) er næsten usynlig; navets spring (166) er så stærkt at en enkelt-bedste-kant-strategi risikerer at låse på nav-radius (15px) i stedet.' })
+    expect: 'fundet, men FORKERT (før OG efter) - kendt grænse, se "Ærlige grænser"', why: 'navets kant er en ÆGTE, fuldt konsistent cirkel (ring-scoren for nav-radius 15 er reelt højere end skivens egen svage rand ved r=125) - ring-scoring kan ikke skelne "den stærkeste cirkel" fra "den plade coachen mente". Uændret af ORDRE 120s fix; ring-bekræftelsen i UI\'en er sikkerhedsnettet.' })
 }
 
 // 11) Mørkegrøn/mørkeblå kalibreret skive (20/25 kg) på mørk baggrund -
@@ -307,7 +307,7 @@ const conditions = []
   const buf = makeBuffer(W, H, 48); fillCircle(buf, W, H, cx, cy, r, 28)   // skivens kant: spring 20
   fillCircle(buf, W, H, cx - 15, cy - 75, 30, 225)   // refleks-plet, centrum ~r=77 fra midte, radius 30
   conditions.push({ name: 'mørk skive under top-lys (blankt refleks midt i skiven, ikke ved kanten)', W, H, cx, cy, r, buf,
-    expect: 'ikke fundet (før), fundet ved YDERKANTEN (efter)', why: 'refleksets kant (spring ~197) er langt stærkere end skivens egen (20), men rammer kun 2-3 af 16 stråler ved r≈50-105 - ikke en hel ring.' })
+    expect: 'ikke fundet (før), fundet ved YDERKANTEN (efter)', why: 'refleksets kant er stærkere end skivens egen, men rammer kun 2-3 af 32 ring-punkter - dækningskravet (≥14/32 punkter skal vise en kant) forkaster refleksen som kandidat, så kun skivens egen (svage, men SAMMENHÆNGENDE) rand er tilbage.' })
 }
 
 // 14) Rigtig frame fra Marcs eget testklip (test-clips\) - se realFrameCondition.
@@ -334,32 +334,47 @@ for (const r of rows)
 console.log()
 for (const r of rows) console.log(`- ${r.navn}: ${r.why}`)
 
-// ---------- selv-tjek: de tilfælde vi VED skal fejle sikkert, skal stadig fejle sikkert ----------
-// De to "grænsetilfælde"/"kan være forkert" rækker (rack, letterbox) er
-// bevidst IKKE en hård påstand her - det er netop pointen i rapporten: de
-// fejler ikke rent, det er derfor ring-bekræftelsen i UI'en (plateConfirm)
+// ---------- selv-tjek: ORDRE 120s facit for de éntydige tilfælde ----------
+// To grupper der stadig IKKE er en hård påstand: nav-tilfældet (kendt,
+// uændret grænse - se dens "why") og det ægte klip (ingen uafhængig facit).
+// De fejler ikke rent, det er derfor ring-bekræftelsen i UI'en (plateConfirm)
 // er sikkerhedsnettet, ikke autoCalib selv.
-const mustFailSafely = ['kontrast (lys skive på lys baggrund, diff 22)',
+const mustFailSafely = [
   'radius uden for forventet interval (skive > maxR)',
-  'mørk skive på mørk baggrund (diff 19)',
   'lille video (160×120, skive-radius 8px)',
-  'sort skive på mørkegrå baggrund (diff 23)',
-  'mørkeblå kalibreret skive (25 kg) på mørk baggrund (lum-diff ~3, farve-afstand ~96)',
-  'mørk skive med lys ring-tekst (skivekant spring 20, to bogstav-klatter ved r≈90)',
-  'mørk skive under top-lys (blankt refleks midt i skiven, ikke ved kanten)']
-const mustFind = ['baseline (god kontrast, fri bane)']
+]
+// ORDRE 120s egen grænse: baseline og delvist-ude-af-billede skal stadig
+// være ≤2px. De øvrige er NYE fund efter fixet - løsere grænse (de var slet
+// ikke fundet før, så enhver fornuftig radius er en forbedring), men stadig
+// hårdt tjekket for ikke at drifte umærket.
+const mustFind = [
+  { navn: 'baseline (god kontrast, fri bane)', maxErrPx: 2 },
+  { navn: 'skive delvist ude af billedet (klippet af højrekant)', maxErrPx: 2 },
+  { navn: 'kontrast (lys skive på lys baggrund, diff 22)', maxErrPx: 5 },
+  { navn: 'mørk skive på mørk baggrund (diff 19)', maxErrPx: 5 },
+  { navn: 'sort skive på mørkegrå baggrund (diff 23)', maxErrPx: 5 },
+  { navn: 'mørkeblå kalibreret skive (25 kg) på mørk baggrund (lum-diff ~3, farve-afstand ~96)', maxErrPx: 5 },
+  { navn: 'mørk skive med lys ring-tekst (skivekant spring 20, to bogstav-klatter ved r≈90)', maxErrPx: 5 },
+  { navn: 'kant mod rack (stolper + bjælke på 3 af 4 sider)', maxErrPx: 5 },
+  { navn: 'telefon i portrait med sort bjælke (over+under)', maxErrPx: 5 },
+  { navn: 'mørk skive under top-lys (blankt refleks midt i skiven, ikke ved kanten)', maxErrPx: 5 },
+]
 let ok = true
 for (const r of rows) {
   if (mustFailSafely.includes(r.navn) && r.fundet !== 'nej') {
     console.error(`FEJL: "${r.navn}" burde fejle sikkert (returnere null), men fandt en radius.`)
     ok = false
   }
-  if (mustFind.includes(r.navn) && r.fundet !== 'ja') {
-    console.error(`FEJL: "${r.navn}" burde finde skiven, men gjorde ikke.`)
-    ok = false
+  const mf = mustFind.find(m => m.navn === r.navn)
+  if (mf) {
+    if (r.fundet !== 'ja') { console.error(`FEJL: "${r.navn}" burde finde skiven, men gjorde ikke.`); ok = false }
+    else if (Number(r.radiusFejlPx) > mf.maxErrPx) {
+      console.error(`FEJL: "${r.navn}" fandt en radius, men fejlen (${r.radiusFejlPx}px) overstiger grænsen (${mf.maxErrPx}px).`)
+      ok = false
+    }
   }
 }
 console.log(ok
-  ? '\nGRØN: de éntydige tilfælde opfører sig som dokumenteret i docs/videocoach/SKIVEN-FINDES-IKKE.md.'
+  ? '\nGRØN: autoCalib opfører sig som dokumenteret i docs/videocoach/SKIVEN-FINDES-IKKE.md og RAPPORT-120.md.'
   : '\nRØD: autoCalib har ændret opførsel på et éntydigt tilfælde - se fejl ovenfor.')
 process.exitCode = ok ? 0 : 1
