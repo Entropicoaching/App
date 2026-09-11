@@ -18,16 +18,31 @@
 // lille video, skive delvist ude af billedet, telefon i portrait med sort
 // bjælke - plus én baseline (god kontrast, fri bane) som kontrol.
 //
+// ORDRE 120 · commit 1: en atlet kunne ikke få en MØRK skive genkendt -
+// samme mekanisme som "mørk skive på mørk baggrund" ovenfor, men prøvebænken
+// havde kun ét mørkt tilfælde. Seks flere, valgt fra Marcs egen liste i
+// ORDRE 120: mørkegrå baggrund, sort gulv med lys nav (Marcs eget klip har
+// præcis dette - sølv-muffe midt i en sort skive), farvet skive (grøn/blå
+// kalibreret vægt) hvor luminans er blind men farvetone ikke er, lys
+// ring-tekst som distraherer en enkelt-bedste-kant-strategi, blankt
+// top-refleks, og til sidst ét RIGTIGT frame fra Marcs eget testklip (se
+// `realFrameCondition` nedenfor) - ingen af de seks er opfundet til at
+// "vinde": tallene i RAPPORT-120.md er hvad de faktisk gav, før og efter.
+//
 // Kørsel: npm run verify:videocoach-plate-detect
 
-import { readFileSync } from 'node:fs'
+import { readFileSync, existsSync, readdirSync, mkdirSync } from 'node:fs'
+import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
+import ffmpegPath from 'ffmpeg-static'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const root = join(here, '..')
 const htmlPath = join(root, 'public', 'videocoach.html')
 const html = readFileSync(htmlPath, 'utf8')
+const testClipsDir = join(root, 'test-clips')
+const cacheDir = join(root, 'docs', 'videocoach', 'clip-cache')
 
 function extractBlock(text, startMarker, endMarker, includeEndMarker = false) {
   const startIdx = text.indexOf(startMarker)
@@ -69,6 +84,18 @@ function fillRect(buf, W, H, x0, y0, w, h, val) {
       buf[i] = buf[i + 1] = buf[i + 2] = val
     }
 }
+// ORDRE 120 · commit 1: samme som fillCircle, men med tre uafhængige
+// kanaler - nødvendig for "farve, ikke luminans"-tilfældet (skive-11).
+function fillCircleRGB(buf, W, H, cx, cy, r, rv, gv, bv) {
+  const x0 = Math.max(0, Math.floor(cx - r)), x1 = Math.min(W - 1, Math.ceil(cx + r))
+  const y0 = Math.max(0, Math.floor(cy - r)), y1 = Math.min(H - 1, Math.ceil(cy + r))
+  for (let y = y0; y <= y1; y++)
+    for (let x = x0; x <= x1; x++)
+      if ((x - cx) ** 2 + (y - cy) ** 2 <= r * r) {
+        const i = (y * W + x) * 4
+        buf[i] = rv; buf[i + 1] = gv; buf[i + 2] = bv
+      }
+}
 function makeCtx(buf, W, H) {
   return {
     drawImage() {},                      // videoen er allerede "tegnet" ind i buf
@@ -92,6 +119,55 @@ function runAutoCalib(W, H, center, buf) {
   const autoCalib = buildAutoCalib(octx, {}, dims, dims)
   const scale = autoCalib(center)         // cm/px eller null
   return scale ? 22.5 / scale : null       // -> fundet radius i px, eller null
+}
+
+// ---------- ægte frame fra Marcs eget testklip ----------
+// ORDRE 120: "brug et klip med en mørk skive hvis der findes et i test-clips
+// (ellers skriv at der mangler et og bed Marc om ét)". test-clips\ er
+// git-ignoreret (Marcs egne optagelser, se .gitignore) - denne funktion
+// finder klippet ved kørsel, ligesom scripts/verify-videocoach-clip.mjs.
+// Skivens centrum/radius/udsnit er MÅLT I HÅNDEN (beskåret skærmbillede +
+// gitter, se docs/videocoach/RAPPORT-120.md) for netop dette klip - IKKE en
+// uafhængig facit, ligesom det virkelige klip i verify-videocoach-clip.mjs
+// heller ikke har én. W/H er den DEKODEDE (roterede) opløsning ffmpeg
+// leverer for denne optagelse (iPhone gemmer den liggende med et
+// rotations-flag; ffmpeg retter det ved dekodning) - IKKE containerens rå
+// stream-opløsning, som derfor ikke kan probes automatisk her.
+const KNOWN_CLIPS = {
+  'marc-doedloeft-270.mov': { frame: 30, W: 1440, H: 1920, cx: 700, cy: 1230, r: 198,
+    note: 'sort/rød skive mod mørkegråt gulv-gummi, sølv-muffe synlig gennem midterhullet - dødløft, ca. 1s inde i klippet' },
+}
+
+function realFrameCondition() {
+  if (!existsSync(testClipsDir) || !readdirSync(testClipsDir).some(f => /\.(mp4|mov)$/i.test(f))) {
+    console.log('BEMÆRK: intet klip i test-clips\\ - mangler et med en mørk skive. Bed Marc om ét (se "Hvad er næste" i RAPPORT-120.md).\n')
+    return null
+  }
+  const clipName = readdirSync(testClipsDir).filter(f => /\.(mp4|mov)$/i.test(f)).sort()[0]
+  const known = KNOWN_CLIPS[clipName]
+  if (!known) {
+    console.log(`BEMÆRK: klip fundet (${clipName}), men skivens position er ikke målt for dette klip endnu - springer det ægte-frame-tilfælde over. Tilføj det til KNOWN_CLIPS i denne fil, eller læg marc-doedloeft-270.mov tilbage i test-clips\\.\n`)
+    return null
+  }
+  mkdirSync(cacheDir, { recursive: true })
+  const rawPath = join(cacheDir, `plate-detect-${clipName.replace(/\.(mp4|mov)$/i, '')}.rgba`)
+  const res = spawnSync(ffmpegPath, ['-y', '-i', join(testClipsDir, clipName),
+    '-vf', `select=eq(n\\,${known.frame})`, '-vframes', '1', '-pix_fmt', 'rgba', '-f', 'rawvideo', rawPath],
+    { stdio: 'ignore' })
+  if (res.status !== 0 || !existsSync(rawPath)) {
+    console.log(`BEMÆRK: ffmpeg kunne ikke hente frame ${known.frame} af ${clipName} - springer det ægte-frame-tilfælde over.\n`)
+    return null
+  }
+  const raw = readFileSync(rawPath)
+  if (raw.length !== known.W * known.H * 4) {
+    console.log(`BEMÆRK: ${clipName} gav en uventet bufferstørrelse (${raw.length} ≠ ${known.W * known.H * 4} - er klippet ombyttet eller ffmpeg-versionen anderledes?) - springer det ægte-frame-tilfælde over.\n`)
+    return null
+  }
+  const buf = new Uint8ClampedArray(raw.buffer, raw.byteOffset, raw.byteLength)
+  return { name: `ægte frame (${clipName}, frame ${known.frame}) - ${known.note}`,
+    W: known.W, H: known.H, cx: known.cx, cy: known.cy, r: known.r, buf,
+    expect: 'ikke fundet ELLER fundet men forkert (før) - skivens position er MÅLT i hånden, ikke en uafhængig facit',
+    why: 'ægte gym-lys, video-kompressionsstøj og en skæv kameravinkel - det virkelige tilfælde alle de syntetiske tilfælde ovenfor prøver at efterligne.' }
 }
 
 // ---------- otte betingelser (+ baseline) ----------
@@ -175,6 +251,72 @@ const conditions = []
     expect: 'fundet, men FORKERT', why: 'bjælkernes spring (170) > skivens (60) på flertallet af stråler op/ned - samme svaghed som rack-sagen: sikker, men forkert radius.' })
 }
 
+// 9) Sort skive på mørkegrå baggrund (mørkere/gråere variant end skive-5 -
+// "sort/mørkegrå" er Marcs eget ordvalg i ORDRE 120, ikke identisk med den
+// eksisterende gulv-45/skive-26).
+{
+  const W = 720, H = 1280, cx = 360, cy = 640, r = 130
+  const buf = makeBuffer(W, H, 65); fillCircle(buf, W, H, cx, cy, r, 42)
+  conditions.push({ name: 'sort skive på mørkegrå baggrund (diff 23)', W, H, cx, cy, r, buf,
+    expect: 'ikke fundet (før), fundet (efter)', why: 'spring 23 < grænsen (28) på gråtone alene - samme mekanisme som skive-5, anden gråtone-kombination.' })
+}
+
+// 10) Sort skive på sort gulv MED en lys nav/muffe midt i skiven - Marcs
+// eget klip (betingelse 15 nedenfor) har præcis denne kombination (sølvfarvet
+// stangmuffe gennem midterhullet). Faren: en lyskraftig lille cirkel nær
+// centrum kan "vinde" som den stærkeste kant på alle 16 stråler, længe før
+// skivens egen (svage) yderkant nås.
+{
+  const W = 720, H = 1280, cx = 360, cy = 640, r = 125
+  const buf = makeBuffer(W, H, 24); fillCircle(buf, W, H, cx, cy, r, 15)
+  fillCircle(buf, W, H, cx, cy, 15, 190)   // lys nav, radius 15 - langt under skivens 125
+  conditions.push({ name: 'sort skive på sort gulv med lys nav (diff 9, nav-radius 15)', W, H, cx, cy, r, buf,
+    expect: 'ikke fundet (før) - risiko: nav vinder over skivens egen kant', why: 'skivens egen kant (spring 9) er næsten usynlig; navets spring (166) er så stærkt at en enkelt-bedste-kant-strategi risikerer at låse på nav-radius (15px) i stedet.' })
+}
+
+// 11) Mørkegrøn/mørkeblå kalibreret skive (20/25 kg) på mørk baggrund -
+// FARVE adskiller skive fra baggrund, LUMINANS gør stort set ikke (diff ~3).
+// Ren gråtone-kant-søgning er blind for denne; farve-afstand er ikke.
+{
+  const W = 720, H = 1280, cx = 360, cy = 640, r = 130
+  const buf = makeBuffer(W, H, 55)   // neutral gråbaggrund, R=G=B=55 (lum 55)
+  fillCircleRGB(buf, W, H, cx, cy, r, 40, 40, 149)   // mørkeblå (kalibreret 25 kg-farve), lum ≈ 52
+  conditions.push({ name: 'mørkeblå kalibreret skive (25 kg) på mørk baggrund (lum-diff ~3, farve-afstand ~96)', W, H, cx, cy, r, buf,
+    expect: 'ikke fundet (før) - luminans alene ser næsten intet', why: 'lum(baggrund)=55, lum(skive)≈52 - under enhver rimelig gråtone-grænse. Farve-afstanden (blåt kanal-spring) er derimod stor.' })
+}
+
+// 12) Mørk skive med lys ring-tekst (indpræget/malet skrift, som "ZTTEX"/
+// "20 KG" på en rigtig skive) - lyse bogstav-klatter et stykke INDE i
+// skiven (ikke ved selve yderkanten), som kan narre en enkelt-bedste-kant-
+// strategi til at låse på en for LILLE radius på de par stråler der rammer
+// et bogstav, mens skivens egen (svage) yderkant er den eneste ægte cirkel.
+{
+  const W = 720, H = 1280, cx = 360, cy = 640, r = 130
+  const buf = makeBuffer(W, H, 50); fillCircle(buf, W, H, cx, cy, r, 30)   // skivens kant: spring 20
+  fillRect(buf, W, H, cx - 10, cy - 95, 20, 14, 210)   // "bogstav" kl. 12, radius ~90
+  fillRect(buf, W, H, cx + 60, cy - 70, 16, 14, 210)   // "bogstav" kl. 1-2, radius ~90
+  conditions.push({ name: 'mørk skive med lys ring-tekst (skivekant spring 20, to bogstav-klatter ved r≈90)', W, H, cx, cy, r, buf,
+    expect: 'ikke fundet (før), fundet ved YDERKANTEN (efter) - ikke ved bogstaverne', why: 'to stråler ser en stærk, men FORKERT, kant ved bogstaverne (r≈90); resten ser kun skivens svage yderkant (r=130, spring 20). Ring-scoring skal foretrække den kant der er konsistent hele vejen rundt.' })
+}
+
+// 13) Mørk skive under stærkt top-lys - et blankt refleks-parti et stykke
+// inde i skiven (ikke ved kanten), bredere end enkelt-bogstaverne i
+// betingelse 12 (rammer 2-3 af de 16 stråler, som et rigtigt refleks ville).
+{
+  const W = 720, H = 1280, cx = 360, cy = 640, r = 130
+  const buf = makeBuffer(W, H, 48); fillCircle(buf, W, H, cx, cy, r, 28)   // skivens kant: spring 20
+  fillCircle(buf, W, H, cx - 15, cy - 75, 30, 225)   // refleks-plet, centrum ~r=77 fra midte, radius 30
+  conditions.push({ name: 'mørk skive under top-lys (blankt refleks midt i skiven, ikke ved kanten)', W, H, cx, cy, r, buf,
+    expect: 'ikke fundet (før), fundet ved YDERKANTEN (efter)', why: 'refleksets kant (spring ~197) er langt stærkere end skivens egen (20), men rammer kun 2-3 af 16 stråler ved r≈50-105 - ikke en hel ring.' })
+}
+
+// 14) Rigtig frame fra Marcs eget testklip (test-clips\) - se realFrameCondition.
+// Findes intet klip, eller intet klip med kendt skive-position, skrives en
+// tydelig besked i stedet for at fejle bænken (ORDRE 120: "ellers skriv at
+// der mangler et og bed Marc om ét").
+const realCondition = realFrameCondition()
+if (realCondition) conditions.push(realCondition)
+
 // ---------- kør og rapportér ----------
 const rows = conditions.map(c => {
   const foundR = runAutoCalib(c.W, c.H, { x: c.cx, y: c.cy }, c.buf)
@@ -184,7 +326,7 @@ const rows = conditions.map(c => {
     radiusFejlPx: errPx == null ? '-' : errPx.toFixed(1), why: c.why }
 })
 
-console.log('== ORDRE 109 · commit 1: autoCalib mod otte syntetiske betingelser ==\n')
+console.log(`== ORDRE 109/120: autoCalib mod ${rows.length} betingelser (${rows.length - (realCondition ? 1 : 0)} syntetiske${realCondition ? ' + 1 ægte frame' : ''}) ==\n`)
 const nameW = Math.max(...rows.map(r => r.navn.length)) + 2
 console.log(`${'Betingelse'.padEnd(nameW)}${'Fundet'.padEnd(8)}${'Radius-fejl (px)'.padEnd(18)}Forventning`)
 for (const r of rows)
@@ -200,7 +342,11 @@ for (const r of rows) console.log(`- ${r.navn}: ${r.why}`)
 const mustFailSafely = ['kontrast (lys skive på lys baggrund, diff 22)',
   'radius uden for forventet interval (skive > maxR)',
   'mørk skive på mørk baggrund (diff 19)',
-  'lille video (160×120, skive-radius 8px)']
+  'lille video (160×120, skive-radius 8px)',
+  'sort skive på mørkegrå baggrund (diff 23)',
+  'mørkeblå kalibreret skive (25 kg) på mørk baggrund (lum-diff ~3, farve-afstand ~96)',
+  'mørk skive med lys ring-tekst (skivekant spring 20, to bogstav-klatter ved r≈90)',
+  'mørk skive under top-lys (blankt refleks midt i skiven, ikke ved kanten)']
 const mustFind = ['baseline (god kontrast, fri bane)']
 let ok = true
 for (const r of rows) {
