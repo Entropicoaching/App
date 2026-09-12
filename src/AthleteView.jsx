@@ -1906,7 +1906,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const readinessDraftRestoredForRef = useRef(null)
 
   useEffect(() => {
-    if (!athlete) return
+    if (!athlete?.id) return
     if (readinessDraftRestoredForRef.current !== athlete.id) {
       readinessDraftRestoredForRef.current = athlete.id
       const draft = loadReadinessDraft(athlete.id, today())
@@ -2170,6 +2170,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     }
   }, [athlete?.id, session.user.id])
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- kører bevidst kun ved mount; coachAthleteId/role/session er faste for denne AthleteView-instans (nyt preview = nyt mount, se App.jsx)
   useEffect(() => { fetchAthlete() }, [])
   // G16 (ordre 131): opdager en videoupload der blev afbrudt af at fanen/appen
   // lukkede eller genindlæste midt i overførslen (ingen kode når at køre
@@ -2184,13 +2185,16 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     setFlash({ message: 'Din seneste video blev muligvis afbrudt, mens den blev sendt. Åbn VideoCoach og send den igen for at være sikker.', kind: 'error' })
     flashTimerRef.current = setTimeout(() => setFlash(null), 6500)
   }, [athlete?.id])
-  useEffect(() => { if (athlete) fetchLogs(athlete.id, kostDate) }, [kostDate, athlete?.id])
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchLogs er ren ift. sine parametre (athleteId, dato), begge allerede i deps
+  useEffect(() => { if (athlete?.id) fetchLogs(athlete.id, kostDate) }, [kostDate, athlete?.id])
   useEffect(() => {
     if (role === 'athlete' && athlete?.id) fetchSharedVideoAnalyses()
   }, [role, athlete?.id])
-  useEffect(() => { if (tab === 'beskeder' && athlete) { fetchAthleteMessages(); markTrackRead(msgTrack); if (msgTrack === 'teknik') fetchSharedVideoAnalyses() } }, [tab, athlete?.id, msgTrack])
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- begge kaldes synkront i denne kørsel og læser kun athlete/msgTrack, som allerede er i deps
+  useEffect(() => { if (tab === 'beskeder' && athlete?.id) { fetchAthleteMessages(); markTrackRead(msgTrack); if (msgTrack === 'teknik') fetchSharedVideoAnalyses() } }, [tab, athlete?.id, msgTrack])
   useEffect(() => { if (tab === 'beskeder') messagesEndRef.current?.scrollIntoView({ block: 'end' }) }, [messages, tab])
-  useEffect(() => { if (tab === 'stævnedag' && athlete) { fetchMeetPlan(athlete.id); fetchMeetResults(athlete.id) } }, [tab, athlete?.id])
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- begge er rene ift. athlete.id, som allerede er i deps
+  useEffect(() => { if (tab === 'stævnedag' && athlete?.id) { fetchMeetPlan(athlete.id); fetchMeetResults(athlete.id) } }, [tab, athlete?.id])
 
   /* eslint-disable react-hooks/set-state-in-effect -- bevidst: seeder initial opvarmnings-fokus fra programmet + driver nedtællings-timeren */
   useEffect(() => {
@@ -2205,6 +2209,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- skal kun forsøge auto-detektion når fanen/uge/tilstand ændres, ikke når seedingen selv sætter warmupFocus
   }, [tab, currentWeek, mobilityMode])
 
   useEffect(() => {
