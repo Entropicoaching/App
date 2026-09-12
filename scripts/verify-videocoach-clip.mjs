@@ -21,7 +21,14 @@
 //   test-clips\<navn>.meta.json       - VALGFRI, felt for felt: findes et
 //     (valgfri)                        felt, vinder det over automatikken.
 //       { "barPoint": {"x":..,"y":..}, "plateRadius": .., "lift": "deadlift",
-//         "windows": [{"start":..,"end":..}, ...] }
+//         "windows": [{"start":..,"end":..}, ...],
+//         "repeatedIdenticalWindows": true }
+//     "repeatedIdenticalWindows" (ORDRE 124 · commit 3): sæt kun for et klip
+//     limet sammen af IDENTISKE kopier af samme rep (fx via ffmpeg concat,
+//     se docs/videocoach/TEST-CLIPS.md) - facit for vindue 2+ bliver da
+//     vindue 1's EGET spor, tidsforskudt, i stedet for ét globalt spor hen
+//     over klip-samlingerne (som drifter efter det første snit - se
+//     "repeatedIdenticalWindows" i main()).
 //
 // Uden sidecar-felter findes de automatisk:
 //   - Stangens startpunkt (ved klippets første frame): et gitter af
@@ -114,7 +121,7 @@ function loadRealMeta(clipName) {
   if (!existsSync(metaPath)) return {}
   try {
     const meta = JSON.parse(readFileSync(metaPath, 'utf8'))
-    const fields = Object.keys(meta).filter(k => ['barPoint', 'plateRadius', 'windows', 'lift'].includes(k))
+    const fields = Object.keys(meta).filter(k => ['barPoint', 'plateRadius', 'windows', 'lift', 'repeatedIdenticalWindows'].includes(k))
     console.log(`Fandt ${base}.meta.json — felterne [${fields.join(', ') || 'ingen genkendte'}] vinder over automatikken, resten findes automatisk.`)
     return meta
   } catch (e) {
@@ -761,6 +768,30 @@ async function main() {
   const truthFn = mode === 'synthetic' ? truePosAt : makePathInterpolator(full.times, full.pts)
   const threeWindows = pickThreeWindows(windows)
   const p0s = threeWindows.map(w => truthFn(w.start))
+  // ORDRE 124 · commit 3: facit PR. VINDUE for et klippet klip bygget af
+  // IDENTISKE gentagne kopier (test-clips\vis-mig-nu-4-reps-syntetisk.mp4,
+  // sidecar-feltet "repeatedIdenticalWindows": true - se dens .meta.json).
+  // Uden dette var facit ÉT globalt: den fulde analyses egen sammenhængende,
+  // seek-baserede spor hen over HELE det sammensatte klip. Det spor er kun
+  // troværdigt frem til FØRSTE klip-samling (concat-demuxerens hårde snit
+  // mellem to identiske kopier) - en kontinuerlig tracker der forventer
+  // glidende bevægelse, men i stedet møder et spring tilbage til klippets
+  // eget starttidspunkt (den næste kopi begynder forfra), kan miste eller
+  // fejlgenfinde punktet dér, hvorefter HELE resten af det globale spor
+  // drifter væk fra virkeligheden - ikke en fejl i selve realtids-sporingen
+  // (vindue 1, FØR ethvert snit, ramte fint), men i FACIT for vindue 2+.
+  // Da alle vinduer er pixel-identiske gentagelser af vindue 1's egen
+  // bevægelse (kun forskudt i tid), er facit for vindue i > 0 i stedet
+  // vindue 0's EGEN (ubeskadigede, før noget snit) del af det globale spor,
+  // forskudt tilbage til vindue 0's tidsramme - ikke en ny, uafhængig
+  // analyse (unødvendig, indholdet er jo identisk).
+  const repeatedIdenticalWindows = mode === 'real' && realMeta.repeatedIdenticalWindows === true && threeWindows.length > 1
+  function truthFnForWindow(i) {
+    if (!repeatedIdenticalWindows) return truthFn
+    const offset = threeWindows[i].start - threeWindows[0].start
+    return t => truthFn(t - offset)
+  }
+  if (repeatedIdenticalWindows) console.log(`repeatedIdenticalWindows: facit for vindue 2+ er vindue 1's eget spor, tidsforskudt (ikke ét globalt facit hen over klip-samlingerne).`)
 
   // ---------- B) "Vis mig nu": op til tre vinduer ----------
   // ORDRE 124 · commit 1: én kørsel måler nu ÉN navngiven kombination
@@ -835,8 +866,8 @@ async function main() {
 
   // ---------- Evaluering ----------
   const fullDev = deviation(full.pts, full.times, truthFn)
-  const comboDev = comboResults.map(r => deviation(r.pts, r.times, truthFn))
-  const comboHops = comboResults.map(r => countHops(r.pts, r.times, truthFn))
+  const comboDev = comboResults.map((r, i) => deviation(r.pts, r.times, truthFnForWindow(i)))
+  const comboHops = comboResults.map((r, i) => countHops(r.pts, r.times, truthFnForWindow(i)))
   const comboFrames = comboResults.map((r, i) => frameStats(r, threeWindows[i]))
   const worstComboDev = comboDev.length
     ? { maxPx: Math.max(...comboDev.map(d => d.maxPx)), meanPx: Math.max(...comboDev.map(d => d.meanPx)) }
