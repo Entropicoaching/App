@@ -544,6 +544,13 @@ async function main() {
   mkdirSync(outDir, { recursive: true })
   for (const p of PROFILES) mkdirSync(path.join(outDir, p.slug), { recursive: true })
 
+  // Beregnes FØR profil-løkken (ikke kun ved skrivning til sidst), så
+  // skærmbilledernes filnavne får samme foer-/efter-præfiks som FOER.md/
+  // EFTER.md — ellers overskriver en "efter"-kørsel "før"-billederne, og
+  // ordrens "side om side før/efter" bliver umulig at levere.
+  const isEfterRun = existsSync(path.join(outDir, 'FOER.md'))
+  const shotPrefix = isEfterRun ? 'efter' : 'foer'
+
   console.log('Bygger appen (npm run build, fiktive Supabase-nøgler i proces-scope)...')
   // Ét sammensat kommando-argument (ikke et args-array) sammen med shell:true,
   // for at undgå Node's advarsel om uescapede array-argumenter — hele strengen
@@ -584,7 +591,7 @@ async function main() {
         const overflow = await scanOverflow(page)
         const textOverflow = await scanTextOverflow(page)
 
-        const shotPath = path.join(outDir, profile.slug, `${screen.id}.png`)
+        const shotPath = path.join(outDir, profile.slug, `${shotPrefix}-${screen.id}.png`)
         await page.screenshot({ path: shotPath, fullPage: true })
 
         let lh = null

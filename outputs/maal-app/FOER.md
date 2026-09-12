@@ -1,8 +1,8 @@
 # Måling før (Ordre 123)
 
-Målt 2026-09-12 07:13 UTC, 3 profiler × 6 skærme, med attrap-data (ingen atletdata).
+Målt 2026-09-12 07:24 UTC, 3 profiler × 6 skærme, med attrap-data (ingen atletdata).
 
-**Den autentificerede skal** (main + AthleteView-chunk — det SPA'en henter uanset hvilken atlet-fane der vises, "dagens pas"/"sæt-logger"/"opvarmning"/"check-in" deler denne): 658 KB (index-dL2w5QS2.js, AthleteView-D4p14IkW.js, index-nqMpL4T3.css). Login og videocoach-forsiden er selvstændige og har deres egen sidevægt i tabellen nedenfor.
+**Den autentificerede skal** (main + AthleteView-chunk — det SPA'en henter uanset hvilken atlet-fane der vises, "dagens pas"/"sæt-logger"/"opvarmning"/"check-in" deler denne): 658 KB (index-GATSVHPu.js, AthleteView-q-nQTlHI.js, index-nqMpL4T3.css). Login og videocoach-forsiden er selvstændige og har deres egen sidevægt i tabellen nedenfor.
 
 _Ærlig grænse: "Dagens pas", "Sæt-logger", "Opvarmning" og "Check-in" er isolerede harnesses (ægte src/repsPrescription.js + src/warmup.js + ægte inline-stilarter kopieret fra AthleteView.jsx, syntetiske øvelser) — AthleteView.jsx kræver en levende Supabase-session for slet at boote (se scripts/verify-athlete-reps-per-set-mobile.mjs). Deres "sidevægt"/Perf-tal i tabellen er harness-isolerede, ikke den ægte AthleteView-bundtvægt (se skal-tallet ovenfor). Login og videocoach-forsiden er den ægte, uændrede app._
 
@@ -12,13 +12,13 @@ _Ærlig grænse: "Dagens pas", "Sæt-logger", "Opvarmning" og "Check-in" er isol
 | iPhone 13 | Dagens pas | 100 | 91 | 8 | 1 | 3 | nej | 0 |
 | iPhone 13 | Sæt-logger (interval-reps) | 100 | 75 | 8 | 2 | 0 | nej | 0 |
 | iPhone 13 | Opvarmning | 100 | 86 | 14 | 1 | 10 | nej | 0 |
-| iPhone 13 | Videocoach-forside (uden video) | 77 | 93 | 537 | 0 | 0 | nej | 0 |
+| iPhone 13 | Videocoach-forside (uden video) | 71 | 93 | 537 | 0 | 0 | nej | 0 |
 | iPhone 13 | Check-in (parathed) | 100 | 87 | 13 | 1 | 5 | nej | 0 |
 | Android 360×740 | Login | 74 | 75 | 415 | 2 | 3 | nej | 0 |
 | Android 360×740 | Dagens pas | 100 | 91 | 8 | 1 | 3 | nej | 0 |
 | Android 360×740 | Sæt-logger (interval-reps) | 100 | 75 | 8 | 2 | 0 | nej | 0 |
 | Android 360×740 | Opvarmning | 100 | 86 | 14 | 1 | 10 | nej | 0 |
-| Android 360×740 | Videocoach-forside (uden video) | 71 | 93 | 537 | 0 | 0 | nej | 0 |
+| Android 360×740 | Videocoach-forside (uden video) | 78 | 93 | 537 | 0 | 0 | nej | 0 |
 | Android 360×740 | Check-in (parathed) | 100 | 87 | 13 | 1 | 5 | nej | 0 |
 | Desktop 1280×800 | Login | — | — | 415 | 2 | 0 | nej | 0 |
 | Desktop 1280×800 | Dagens pas | — | — | 8 | 1 | 3 | nej | 0 |

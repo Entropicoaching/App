@@ -15,12 +15,6 @@
         "impact": "serious",
         "help": "Elements must meet minimum color contrast ratio thresholds",
         "nodes": 6
-      },
-      {
-        "id": "label",
-        "impact": "critical",
-        "help": "Form elements must have labels",
-        "nodes": 2
       }
     ],
     "tapTargets": [
@@ -33,21 +27,16 @@
         "text": "",
         "height": 39,
         "width": 340
-      },
-      {
-        "text": "Log ind",
-        "height": 40,
-        "width": 340
       }
     ],
     "overflow": false,
     "textOverflow": [],
     "lh": {
-      "performance": 66,
-      "accessibility": 75
+      "performance": 65,
+      "accessibility": 87
     },
     "consoleErrors": [],
-    "screenshot": "outputs\\maal-app\\iphone13\\foer-login.png"
+    "screenshot": "outputs\\maal-app\\iphone13\\efter-login.png"
   },
   {
     "profile": "iPhone 13",
@@ -67,23 +56,7 @@
         "nodes": 9
       }
     ],
-    "tapTargets": [
-      {
-        "text": "✓ Squat — uge 6 4 øvelser →",
-        "height": 38,
-        "width": 316
-      },
-      {
-        "text": "▶ Bænkpres — topsæt Næste 5 øvelser →",
-        "height": 37,
-        "width": 316
-      },
-      {
-        "text": "Dødløft — volumen Torsdag 4 øvelser →",
-        "height": 37,
-        "width": 316
-      }
-    ],
+    "tapTargets": [],
     "overflow": false,
     "textOverflow": [],
     "lh": {
@@ -91,7 +64,7 @@
       "accessibility": 91
     },
     "consoleErrors": [],
-    "screenshot": "outputs\\maal-app\\iphone13\\foer-dagens-pas.png"
+    "screenshot": "outputs\\maal-app\\iphone13\\efter-dagens-pas.png"
   },
   {
     "profile": "iPhone 13",
@@ -109,12 +82,6 @@
         "impact": "serious",
         "help": "Elements must meet minimum color contrast ratio thresholds",
         "nodes": 10
-      },
-      {
-        "id": "label",
-        "impact": "critical",
-        "help": "Form elements must have labels",
-        "nodes": 2
       }
     ],
     "tapTargets": [],
@@ -122,10 +89,10 @@
     "textOverflow": [],
     "lh": {
       "performance": 100,
-      "accessibility": 75
+      "accessibility": 92
     },
     "consoleErrors": [],
-    "screenshot": "outputs\\maal-app\\iphone13\\foer-saet-logger.png"
+    "screenshot": "outputs\\maal-app\\iphone13\\efter-saet-logger.png"
   },
   {
     "profile": "iPhone 13",
@@ -145,58 +112,7 @@
         "nodes": 11
       }
     ],
-    "tapTargets": [
-      {
-        "text": "Opvarmningssæt 1: 20kg × 5",
-        "height": 32,
-        "width": 331
-      },
-      {
-        "text": "✕",
-        "height": 32,
-        "width": 32
-      },
-      {
-        "text": "Opvarmningssæt 2: 47.5kg × 5",
-        "height": 32,
-        "width": 331
-      },
-      {
-        "text": "✕",
-        "height": 32,
-        "width": 32
-      },
-      {
-        "text": "Opvarmningssæt 3: 72.5kg × 5",
-        "height": 32,
-        "width": 331
-      },
-      {
-        "text": "✕",
-        "height": 32,
-        "width": 32
-      },
-      {
-        "text": "Opvarmningssæt 4: 95kg × 3",
-        "height": 32,
-        "width": 331
-      },
-      {
-        "text": "✕",
-        "height": 32,
-        "width": 32
-      },
-      {
-        "text": "Opvarmningssæt 5: 117.5kg × 2",
-        "height": 32,
-        "width": 331
-      },
-      {
-        "text": "✕",
-        "height": 32,
-        "width": 32
-      }
-    ],
+    "tapTargets": [],
     "overflow": false,
     "textOverflow": [],
     "lh": {
@@ -204,7 +120,7 @@
       "accessibility": 86
     },
     "consoleErrors": [],
-    "screenshot": "outputs\\maal-app\\iphone13\\foer-opvarmning.png"
+    "screenshot": "outputs\\maal-app\\iphone13\\efter-opvarmning.png"
   },
   {
     "profile": "iPhone 13",
@@ -225,13 +141,13 @@
       "accessibility": 93
     },
     "consoleErrors": [],
-    "screenshot": "outputs\\maal-app\\iphone13\\foer-videocoach-forside.png"
+    "screenshot": "outputs\\maal-app\\iphone13\\efter-videocoach-forside.png"
   },
   {
     "profile": "iPhone 13",
     "screen": "Check-in (parathed)",
     "weight": {
-      "totalKb": 13,
+      "totalKb": 14,
       "jsKb": 0,
       "cssKb": 0,
       "imgKb": 0,
@@ -250,26 +166,6 @@
         "text": "timer",
         "height": 39,
         "width": 90
-      },
-      {
-        "text": "Ben",
-        "height": 29,
-        "width": 49
-      },
-      {
-        "text": "Ryg",
-        "height": 29,
-        "width": 49
-      },
-      {
-        "text": "Skuldre/Arme",
-        "height": 29,
-        "width": 103
-      },
-      {
-        "text": "Core",
-        "height": 29,
-        "width": 55
       }
     ],
     "overflow": false,
@@ -279,7 +175,7 @@
       "accessibility": 87
     },
     "consoleErrors": [],
-    "screenshot": "outputs\\maal-app\\iphone13\\foer-check-in.png"
+    "screenshot": "outputs\\maal-app\\iphone13\\efter-check-in.png"
   },
   {
     "profile": "Android 360×740",
@@ -297,12 +193,6 @@
         "impact": "serious",
         "help": "Elements must meet minimum color contrast ratio thresholds",
         "nodes": 6
-      },
-      {
-        "id": "label",
-        "impact": "critical",
-        "help": "Form elements must have labels",
-        "nodes": 2
       }
     ],
     "tapTargets": [
@@ -315,21 +205,16 @@
         "text": "",
         "height": 39,
         "width": 310
-      },
-      {
-        "text": "Log ind",
-        "height": 40,
-        "width": 310
       }
     ],
     "overflow": false,
     "textOverflow": [],
     "lh": {
-      "performance": 74,
-      "accessibility": 75
+      "performance": 73,
+      "accessibility": 87
     },
     "consoleErrors": [],
-    "screenshot": "outputs\\maal-app\\android360\\foer-login.png"
+    "screenshot": "outputs\\maal-app\\android360\\efter-login.png"
   },
   {
     "profile": "Android 360×740",
@@ -349,23 +234,7 @@
         "nodes": 9
       }
     ],
-    "tapTargets": [
-      {
-        "text": "✓ Squat — uge 6 4 øvelser →",
-        "height": 38,
-        "width": 286
-      },
-      {
-        "text": "▶ Bænkpres — topsæt Næste 5 øvelser →",
-        "height": 37,
-        "width": 286
-      },
-      {
-        "text": "Dødløft — volumen Torsdag 4 øvelser →",
-        "height": 37,
-        "width": 286
-      }
-    ],
+    "tapTargets": [],
     "overflow": false,
     "textOverflow": [],
     "lh": {
@@ -373,7 +242,7 @@
       "accessibility": 91
     },
     "consoleErrors": [],
-    "screenshot": "outputs\\maal-app\\android360\\foer-dagens-pas.png"
+    "screenshot": "outputs\\maal-app\\android360\\efter-dagens-pas.png"
   },
   {
     "profile": "Android 360×740",
@@ -391,12 +260,6 @@
         "impact": "serious",
         "help": "Elements must meet minimum color contrast ratio thresholds",
         "nodes": 10
-      },
-      {
-        "id": "label",
-        "impact": "critical",
-        "help": "Form elements must have labels",
-        "nodes": 2
       }
     ],
     "tapTargets": [],
@@ -404,10 +267,10 @@
     "textOverflow": [],
     "lh": {
       "performance": 100,
-      "accessibility": 75
+      "accessibility": 92
     },
     "consoleErrors": [],
-    "screenshot": "outputs\\maal-app\\android360\\foer-saet-logger.png"
+    "screenshot": "outputs\\maal-app\\android360\\efter-saet-logger.png"
   },
   {
     "profile": "Android 360×740",
@@ -427,58 +290,7 @@
         "nodes": 11
       }
     ],
-    "tapTargets": [
-      {
-        "text": "Opvarmningssæt 1: 20kg × 5",
-        "height": 32,
-        "width": 301
-      },
-      {
-        "text": "✕",
-        "height": 32,
-        "width": 32
-      },
-      {
-        "text": "Opvarmningssæt 2: 47.5kg × 5",
-        "height": 32,
-        "width": 301
-      },
-      {
-        "text": "✕",
-        "height": 32,
-        "width": 32
-      },
-      {
-        "text": "Opvarmningssæt 3: 72.5kg × 5",
-        "height": 32,
-        "width": 301
-      },
-      {
-        "text": "✕",
-        "height": 32,
-        "width": 32
-      },
-      {
-        "text": "Opvarmningssæt 4: 95kg × 3",
-        "height": 32,
-        "width": 301
-      },
-      {
-        "text": "✕",
-        "height": 32,
-        "width": 32
-      },
-      {
-        "text": "Opvarmningssæt 5: 117.5kg × 2",
-        "height": 32,
-        "width": 301
-      },
-      {
-        "text": "✕",
-        "height": 32,
-        "width": 32
-      }
-    ],
+    "tapTargets": [],
     "overflow": false,
     "textOverflow": [],
     "lh": {
@@ -486,7 +298,7 @@
       "accessibility": 86
     },
     "consoleErrors": [],
-    "screenshot": "outputs\\maal-app\\android360\\foer-opvarmning.png"
+    "screenshot": "outputs\\maal-app\\android360\\efter-opvarmning.png"
   },
   {
     "profile": "Android 360×740",
@@ -503,17 +315,17 @@
     "overflow": false,
     "textOverflow": [],
     "lh": {
-      "performance": 78,
+      "performance": 71,
       "accessibility": 93
     },
     "consoleErrors": [],
-    "screenshot": "outputs\\maal-app\\android360\\foer-videocoach-forside.png"
+    "screenshot": "outputs\\maal-app\\android360\\efter-videocoach-forside.png"
   },
   {
     "profile": "Android 360×740",
     "screen": "Check-in (parathed)",
     "weight": {
-      "totalKb": 13,
+      "totalKb": 14,
       "jsKb": 0,
       "cssKb": 0,
       "imgKb": 0,
@@ -532,26 +344,6 @@
         "text": "timer",
         "height": 39,
         "width": 90
-      },
-      {
-        "text": "Ben",
-        "height": 29,
-        "width": 49
-      },
-      {
-        "text": "Ryg",
-        "height": 29,
-        "width": 49
-      },
-      {
-        "text": "Skuldre/Arme",
-        "height": 29,
-        "width": 103
-      },
-      {
-        "text": "Core",
-        "height": 29,
-        "width": 55
       }
     ],
     "overflow": false,
@@ -561,7 +353,7 @@
       "accessibility": 87
     },
     "consoleErrors": [],
-    "screenshot": "outputs\\maal-app\\android360\\foer-check-in.png"
+    "screenshot": "outputs\\maal-app\\android360\\efter-check-in.png"
   },
   {
     "profile": "Desktop 1280×800",
@@ -579,12 +371,6 @@
         "impact": "serious",
         "help": "Elements must meet minimum color contrast ratio thresholds",
         "nodes": 6
-      },
-      {
-        "id": "label",
-        "impact": "critical",
-        "help": "Form elements must have labels",
-        "nodes": 2
       }
     ],
     "tapTargets": [],
@@ -592,7 +378,7 @@
     "textOverflow": [],
     "lh": null,
     "consoleErrors": [],
-    "screenshot": "outputs\\maal-app\\desktop\\foer-login.png"
+    "screenshot": "outputs\\maal-app\\desktop\\efter-login.png"
   },
   {
     "profile": "Desktop 1280×800",
@@ -612,28 +398,12 @@
         "nodes": 9
       }
     ],
-    "tapTargets": [
-      {
-        "text": "✓ Squat — uge 6 4 øvelser →",
-        "height": 38,
-        "width": 606
-      },
-      {
-        "text": "▶ Bænkpres — topsæt Næste 5 øvelser →",
-        "height": 37,
-        "width": 606
-      },
-      {
-        "text": "Dødløft — volumen Torsdag 4 øvelser →",
-        "height": 37,
-        "width": 606
-      }
-    ],
+    "tapTargets": [],
     "overflow": false,
     "textOverflow": [],
     "lh": null,
     "consoleErrors": [],
-    "screenshot": "outputs\\maal-app\\desktop\\foer-dagens-pas.png"
+    "screenshot": "outputs\\maal-app\\desktop\\efter-dagens-pas.png"
   },
   {
     "profile": "Desktop 1280×800",
@@ -651,12 +421,6 @@
         "impact": "serious",
         "help": "Elements must meet minimum color contrast ratio thresholds",
         "nodes": 10
-      },
-      {
-        "id": "label",
-        "impact": "critical",
-        "help": "Form elements must have labels",
-        "nodes": 2
       }
     ],
     "tapTargets": [],
@@ -664,7 +428,7 @@
     "textOverflow": [],
     "lh": null,
     "consoleErrors": [],
-    "screenshot": "outputs\\maal-app\\desktop\\foer-saet-logger.png"
+    "screenshot": "outputs\\maal-app\\desktop\\efter-saet-logger.png"
   },
   {
     "profile": "Desktop 1280×800",
@@ -684,63 +448,12 @@
         "nodes": 11
       }
     ],
-    "tapTargets": [
-      {
-        "text": "Opvarmningssæt 1: 20kg × 5",
-        "height": 32,
-        "width": 621
-      },
-      {
-        "text": "✕",
-        "height": 32,
-        "width": 32
-      },
-      {
-        "text": "Opvarmningssæt 2: 47.5kg × 5",
-        "height": 32,
-        "width": 621
-      },
-      {
-        "text": "✕",
-        "height": 32,
-        "width": 32
-      },
-      {
-        "text": "Opvarmningssæt 3: 72.5kg × 5",
-        "height": 32,
-        "width": 621
-      },
-      {
-        "text": "✕",
-        "height": 32,
-        "width": 32
-      },
-      {
-        "text": "Opvarmningssæt 4: 95kg × 3",
-        "height": 32,
-        "width": 621
-      },
-      {
-        "text": "✕",
-        "height": 32,
-        "width": 32
-      },
-      {
-        "text": "Opvarmningssæt 5: 117.5kg × 2",
-        "height": 32,
-        "width": 621
-      },
-      {
-        "text": "✕",
-        "height": 32,
-        "width": 32
-      }
-    ],
+    "tapTargets": [],
     "overflow": false,
     "textOverflow": [],
     "lh": null,
     "consoleErrors": [],
-    "screenshot": "outputs\\maal-app\\desktop\\foer-opvarmning.png"
+    "screenshot": "outputs\\maal-app\\desktop\\efter-opvarmning.png"
   },
   {
     "profile": "Desktop 1280×800",
@@ -774,13 +487,13 @@
     "textOverflow": [],
     "lh": null,
     "consoleErrors": [],
-    "screenshot": "outputs\\maal-app\\desktop\\foer-videocoach-forside.png"
+    "screenshot": "outputs\\maal-app\\desktop\\efter-videocoach-forside.png"
   },
   {
     "profile": "Desktop 1280×800",
     "screen": "Check-in (parathed)",
     "weight": {
-      "totalKb": 13,
+      "totalKb": 14,
       "jsKb": 0,
       "cssKb": 0,
       "imgKb": 0,
@@ -799,32 +512,12 @@
         "text": "timer",
         "height": 39,
         "width": 90
-      },
-      {
-        "text": "Ben",
-        "height": 29,
-        "width": 49
-      },
-      {
-        "text": "Ryg",
-        "height": 29,
-        "width": 49
-      },
-      {
-        "text": "Skuldre/Arme",
-        "height": 29,
-        "width": 103
-      },
-      {
-        "text": "Core",
-        "height": 29,
-        "width": 55
       }
     ],
     "overflow": false,
     "textOverflow": [],
     "lh": null,
     "consoleErrors": [],
-    "screenshot": "outputs\\maal-app\\desktop\\foer-check-in.png"
+    "screenshot": "outputs\\maal-app\\desktop\\efter-check-in.png"
   }
 ]
