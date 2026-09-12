@@ -151,7 +151,7 @@ function harnessHjem() {
   const sessionButtons = sessions.map(sess => {
     const isNext = !!sess.isNext
     const done = !!sess.done
-    return `<button style="display:flex;align-items:center;justify-content:space-between;background:${isNext ? 'rgba(200,146,58,0.1)' : 'rgba(237,234,226,0.03)'};border:1px solid ${isNext ? 'rgba(200,146,58,0.45)' : 'rgba(237,234,226,0.07)'};color:#edeae2;padding:0.6rem 0.75rem;cursor:pointer;width:100%;text-align:left;font-family:'IBM Plex Sans',sans-serif;font-weight:300;opacity:${done ? 0.55 : 1};margin-bottom:0.35rem;">
+    return `<button style="display:flex;align-items:center;justify-content:space-between;background:${isNext ? 'rgba(200,146,58,0.1)' : 'rgba(237,234,226,0.03)'};border:1px solid ${isNext ? 'rgba(200,146,58,0.45)' : 'rgba(237,234,226,0.07)'};color:#edeae2;padding:0.6rem 0.75rem;min-height:44px;box-sizing:border-box;cursor:pointer;width:100%;text-align:left;font-family:'IBM Plex Sans',sans-serif;font-weight:300;opacity:${done ? 0.55 : 1};margin-bottom:0.35rem;">
       <span style="display:flex;align-items:center;gap:0.5rem;min-width:0;">
         ${isNext ? '<span style="color:#c8923a;font-size:0.7rem;flex-shrink:0;">&#9654;</span>' : ''}
         ${done ? '<span style="color:#6cba6c;font-size:0.8rem;flex-shrink:0;">&#10003;</span>' : ''}
@@ -222,10 +222,10 @@ function harnessSaetLogger() {
           div.innerHTML = \`
             <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;">
               <div style="font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:#7a7770;text-transform:uppercase;letter-spacing:0.06em;min-width:52px;">Sæt \${row.setNum}</div>
-              <input data-role="weight" style="width:80px;min-width:80px;min-height:44px;box-sizing:border-box;flex-shrink:0;padding:0.65rem 0.5rem;font-size:1.1rem;text-align:center;background:#141410;border:1px solid rgba(237,234,226,0.13);color:#edeae2;font-family:'IBM Plex Sans',sans-serif;" type="text" inputmode="decimal" placeholder="kg">
+              <input aria-label="Vægt, sæt \${row.setNum}" data-role="weight" style="width:80px;min-width:80px;min-height:44px;box-sizing:border-box;flex-shrink:0;padding:0.65rem 0.5rem;font-size:1.1rem;text-align:center;background:#141410;border:1px solid rgba(237,234,226,0.13);color:#edeae2;font-family:'IBM Plex Sans',sans-serif;" type="text" inputmode="decimal" placeholder="kg">
               \${editable
                 ? \`<span style="font-family:'IBM Plex Mono',monospace;font-size:0.88rem;color:#c8923a;">×</span>
-                   <input data-role="reps-input" style="width:52px;min-width:52px;min-height:44px;box-sizing:border-box;flex-shrink:0;padding:0.65rem 0.3rem;font-size:1.1rem;text-align:center;background:#141410;border:1px solid rgba(237,234,226,0.13);color:#edeae2;font-family:'IBM Plex Sans',sans-serif;" type="text" inputmode="numeric" value="\${defaultReps}">\`
+                   <input aria-label="Reps, sæt \${row.setNum}" data-role="reps-input" style="width:52px;min-width:52px;min-height:44px;box-sizing:border-box;flex-shrink:0;padding:0.65rem 0.3rem;font-size:1.1rem;text-align:center;background:#141410;border:1px solid rgba(237,234,226,0.13);color:#edeae2;font-family:'IBM Plex Sans',sans-serif;" type="text" inputmode="numeric" value="\${defaultReps}">\`
                 : \`<span data-role="reps-static" style="font-family:'IBM Plex Mono',monospace;font-size:0.88rem;color:#c8923a;white-space:nowrap;">× 6-8</span>\`
               }
               <button style="background:#c8923a;color:#141410;font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;border:none;padding:0.65rem 1rem;min-height:44px;box-sizing:border-box;cursor:pointer;">Log</button>
@@ -271,7 +271,7 @@ function harnessOpvarmning() {
                 <span style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;color:#c8923a;min-width:28px;">\${ws.pct}</span>
                 <span style="font-family:'IBM Plex Mono',monospace;font-size:0.82rem;color:#edeae2;text-decoration:underline dotted;">\${ws.weight}kg</span>
                 <span style="font-family:'IBM Plex Mono',monospace;font-size:0.55rem;color:#7a7770;">× \${ws.reps}</span>
-                <button title="Spring dette opvarmningssæt over" style="margin-left:auto;background:none;border:none;color:#4a4844;cursor:pointer;font-size:0.6rem;min-width:32px;min-height:32px;">✕</button>
+                <button title="Spring dette opvarmningssæt over" style="margin-left:auto;background:none;border:none;color:#4a4844;cursor:pointer;font-size:0.6rem;min-width:44px;min-height:44px;box-sizing:border-box;">✕</button>
               </div>\`).join('')}
           </div>
         </div>\`
@@ -289,7 +289,7 @@ function harnessCheckIn() {
       <div style="${S.fieldLabel}">${label}</div>
       <div style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;color:#4a4844;letter-spacing:0.06em;margin-bottom:0.4rem;">${hint}</div>
       <div style="display:flex;gap:0.4rem;">
-        ${[1, 2, 3, 4, 5].map(v => `<button data-role="scale-${key}" style="flex:1;padding:0.9rem 0;font-family:'IBM Plex Mono',monospace;font-size:1rem;font-weight:500;border:1px solid rgba(237,234,226,0.13);background:#141410;color:#7a7770;cursor:pointer;">${v}</button>`).join('')}
+        ${[1, 2, 3, 4, 5].map(v => `<button data-role="scale-${key}" style="flex:1;padding:0.9rem 0;min-height:44px;box-sizing:border-box;font-family:'IBM Plex Mono',monospace;font-size:1rem;font-weight:500;border:1px solid rgba(237,234,226,0.13);background:#141410;color:#7a7770;cursor:pointer;">${v}</button>`).join('')}
       </div>
     </div>`
   const body = page(`
@@ -311,7 +311,7 @@ function harnessCheckIn() {
       <div style="margin-bottom:1.25rem;">
         <div style="${S.fieldLabel}">Lokal ømhed <span style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;color:#4a4844;letter-spacing:0.04em;text-transform:none;font-weight:400;">(valgfrit)</span></div>
         <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
-          ${['Ben', 'Ryg', 'Skuldre/Arme', 'Core'].map(zone => `<button data-role="zone" style="padding:0.5rem 0.9rem;font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.08em;text-transform:uppercase;border:1px solid rgba(237,234,226,0.13);background:#141410;color:#7a7770;cursor:pointer;">${zone}</button>`).join('')}
+          ${['Ben', 'Ryg', 'Skuldre/Arme', 'Core'].map(zone => `<button data-role="zone" style="padding:0.5rem 0.9rem;min-height:44px;box-sizing:border-box;display:inline-flex;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.08em;text-transform:uppercase;border:1px solid rgba(237,234,226,0.13);background:#141410;color:#7a7770;cursor:pointer;">${zone}</button>`).join('')}
         </div>
       </div>
       <div style="font-family:'IBM Plex Mono',monospace;font-size:0.56rem;color:#c8923a;margin-bottom:0.6rem;letter-spacing:0.05em;">Udfyld energi, motivation, stress, ømhed for at logge</div>

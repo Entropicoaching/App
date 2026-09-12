@@ -116,15 +116,17 @@ export default function Auth() {
 
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '1rem' }}>
-            <div style={{
+            <label htmlFor="athlete-auth-email" style={{
+              display: 'block',
               fontFamily: "'IBM Plex Mono', monospace",
               fontSize: '0.56rem',
               letterSpacing: '0.1em',
               textTransform: 'uppercase',
               color: '#7a7770',
               marginBottom: '0.4rem',
-            }}>Email</div>
+            }}>Email</label>
             <input
+              id="athlete-auth-email"
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
@@ -147,15 +149,17 @@ export default function Auth() {
 
           {mode !== 'reset' && (
             <div style={{ marginBottom: '0.6rem' }}>
-              <div style={{
+              <label htmlFor="athlete-auth-password" style={{
+                display: 'block',
                 fontFamily: "'IBM Plex Mono', monospace",
                 fontSize: '0.56rem',
                 letterSpacing: '0.1em',
                 textTransform: 'uppercase',
                 color: '#7a7770',
                 marginBottom: '0.4rem',
-              }}>Adgangskode</div>
+              }}>Adgangskode</label>
               <input
+                id="athlete-auth-password"
                 type="password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
@@ -237,6 +241,8 @@ export default function Auth() {
               textTransform: 'uppercase',
               border: 'none',
               padding: '0.85rem',
+              minHeight: '44px',
+              boxSizing: 'border-box',
               cursor: loading ? 'not-allowed' : 'pointer',
               opacity: loading ? 0.7 : 1,
             }}
