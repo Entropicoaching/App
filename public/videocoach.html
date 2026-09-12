@@ -1142,7 +1142,12 @@ const VC_DIAG = MODE_PARAMS.get('diag') === '1';
 // rendering (render() nedenfor), IKKE en del af selve sporings-algoritmen -
 // den tælles separat, fordi den konkurrerer om samme tråd som rVFC-sporingen
 // (se docs/videocoach/TID-PR-FRAME.md).
-let vcRtDiag = { hentMs: 0, nedskaleringMs: 0, soegningMs: 0, tegningMs: 0, filterMs: 0, framesTracked: 0, framesSkipped: 0 };
+// ORDRE 134 · commit 1: seekMs (ventetid på vinduets seek - eget eller
+// arvet skygge-løfte), foersteFrameMs (ankerframe + første features FØR
+// selve rVFC-løkken starter) og sporingMs (hele rVFC-løkkens vægtid) lagt
+// til - samme buckets som TID-PR-FRAME.md pegede på manglede for at kunne
+// se hvor tiden pr. VINDUE (ikke kun pr. frame) går. Se vcRealtimeTrackWindow.
+let vcRtDiag = { seekMs: 0, foersteFrameMs: 0, sporingMs: 0, hentMs: 0, nedskaleringMs: 0, soegningMs: 0, tegningMs: 0, filterMs: 0, framesTracked: 0, framesSkipped: 0 };
 const SLIM = !DESKTOP;              // moderne layout (atlet OG coach online)
 const ATHLETE = SLIM && !COACHWEB;
 // ORDRE 45 · én kontakt for ALLE tracker-hastighedsgreb (commit 2-4). Slået
@@ -5848,13 +5853,84 @@ async function rtDrawScaled(source, ctx, w, h) {
   }
 }
 
-function rtSeekTo(t) {
+// ORDRE 134 · commit 2: samme seek som før, men på et VALGFRIT videoelement
+// (`v`) i stedet for altid det globale `video` - nødvendig for (c) nedenfor
+// (en skjult klon har sit eget currentTime/seeked, uafhængigt af `video`).
+// rtSeekTo (uændret signatur, alle eksisterende kald urørt) er nu blot denne
+// på `video`.
+function rtSeekToOn(v, t) {
   return new Promise(resolve => {
-    if (Math.abs(video.currentTime - t) < 1e-4) { resolve(); return; }
-    const onSeeked = () => { video.removeEventListener('seeked', onSeeked); resolve(); };
-    video.addEventListener('seeked', onSeeked);
-    video.currentTime = t;
+    if (Math.abs(v.currentTime - t) < 1e-4) { resolve(); return; }
+    const onSeeked = () => { v.removeEventListener('seeked', onSeeked); resolve(); };
+    v.addEventListener('seeked', onSeeked);
+    v.currentTime = t;
   });
+}
+function rtSeekTo(t) { return rtSeekToOn(video, t); }
+
+// ORDRE 134 · commit 2(b): samme som rtSeekToOn, men via `fastSeek()` når
+// browseren understøtter den (seek til nærmeste keyframe i stedet for en
+// præcis frame - se "stå på skuldre" i ordren). Falder tilbage til en
+// almindelig seek hvis fastSeek ikke findes ELLER selve kaldet kaster (nogle
+// browsere har metoden, men ikke en fungerende implementering).
+function rtFastSeekToOn(v, t) {
+  return new Promise(resolve => {
+    if (Math.abs(v.currentTime - t) < 1e-4) { resolve(); return; }
+    const onSeeked = () => { v.removeEventListener('seeked', onSeeked); resolve(); };
+    v.addEventListener('seeked', onSeeked);
+    if (typeof v.fastSeek === 'function') {
+      try { v.fastSeek(t); return; } catch (e) { /* falder igennem til almindelig seek nedenfor */ }
+    }
+    v.currentTime = t;
+  });
+}
+
+// ORDRE 134 · commit 2(a): INGEN seek - venter blot på at videoen (som
+// allerede spiller, uændret playbackRate/muted) selv når frem til `targetT`
+// via rVFC (samme "seneste frame vinder"-mønster som selve sporings-løkken
+// nedenfor), og starter afspilning hvis den skulle være standset. Bruges
+// MELLEM vinduer i stedet for et seek - se vcRealtimeTrackWindow's opts.pauseAtEnd.
+function rtAdvanceTo(v, targetT) {
+  return new Promise(resolve => {
+    if (v.currentTime + 1e-3 >= targetT) { resolve(); return; }
+    const onFrame = (now, meta) => {
+      const t = meta ? meta.mediaTime : v.currentTime;
+      if (t + 1e-3 >= targetT || v.ended) { resolve(); return; }
+      if (RT_HAS_RVFC) v.requestVideoFrameCallback(onFrame);
+    };
+    if (RT_HAS_RVFC) {
+      v.requestVideoFrameCallback(onFrame);
+    } else {
+      const onTimeupdate = () => {
+        if (v.currentTime + 1e-3 >= targetT || v.ended) { v.removeEventListener('timeupdate', onTimeupdate); resolve(); }
+      };
+      v.addEventListener('timeupdate', onTimeupdate);
+    }
+    if (v.paused) { v.playbackRate = 1; v.muted = true; v.play().catch(resolve); }
+  });
+}
+
+// ORDRE 134 · commit 2(c): skjult video-klon med SAMME kilde som `video` -
+// bruges KUN til at forudsøge det vindue der kommer EFTER det næste, mens
+// det aktive element (video ELLER klonen - de bytter rolle pr. vindue, se
+// vcAthletePreviewThree) stadig spiller/spores. Giver et helt vindues
+// varighed som skygge (i stedet for et par ms efterbehandling, se ORDRE
+// 121/124) til at skjule seekets latens i. Aldrig tilføjet til DOM'en synligt
+// (display:none), aldrig brugt til andet end pixel-læsning via drawImage.
+let rtCloneVideo = null;
+function rtEnsureClone() {
+  const src = video.currentSrc || video.src;
+  if (rtCloneVideo && rtCloneVideo.dataset.rtSrc === src) return rtCloneVideo;
+  if (rtCloneVideo && rtCloneVideo.parentNode) rtCloneVideo.parentNode.removeChild(rtCloneVideo);
+  rtCloneVideo = document.createElement('video');
+  rtCloneVideo.muted = true;
+  rtCloneVideo.playsInline = true;
+  rtCloneVideo.preload = 'auto';
+  rtCloneVideo.style.display = 'none';
+  rtCloneVideo.dataset.rtSrc = src;
+  rtCloneVideo.src = src;
+  document.body.appendChild(rtCloneVideo);
+  return rtCloneVideo;
 }
 
 // Udfylder huller (punkter sat til null, fordi en frame blev sprunget over
@@ -5916,7 +5992,18 @@ function rtSmoothPath(pts, times) {
   return pts.map((p, i) => ({ x: xs[i], y: ys[i] }));
 }
 
-async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd, preSeek) {
+// ORDRE 134 · commit 2: `opts.sourceVideo` (default `video`) og
+// `opts.pauseAtEnd` (default true) tilføjet - INGEN ændring for eksisterende
+// kald (vcAthletePreviewThree kalder stadig med 4 argumenter, opts={} giver
+// PRÆCIS samme adfærd som før). Gør det muligt at spore på et andet
+// videoelement (den skjulte klon, (c)) og at lade videoen blive ved med at
+// spille efter vinduet er færdigt i stedet for at pausere (playthrough, (a)) -
+// de tre forsøgte strategier ((a)/(b)/(c), se RAPPORT-134.md) er kun
+// afprøvet i scripts/verify-videocoach-clip.mjs's window.runVisMigNu*-
+// varianter (måling, ikke produktionskode) - se dér for hvilken der vandt.
+async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd, preSeek, opts = {}) {
+  const v = opts.sourceVideo || video;
+  const pauseAtEnd = opts.pauseAtEnd !== false;
   const fullW = canvas.width, fullH = canvas.height;
   const scale = Math.min(1, RT_MAX_W / fullW);
   const rw = Math.max(1, Math.round(fullW * scale)), rh = Math.max(1, Math.round(fullH * scale));
@@ -5936,15 +6023,23 @@ async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd, preSeek) {
   // allerede er færdigt; er det stadig undervejs, ventes der blot videre på
   // det SAMME underliggende native seek (samme event, to lyttere). Ingen ny
   // afhængighed, ingen ændring af selve sporings-algoritmen.
-  await (preSeek || rtSeekTo(windowStart));
+  // ORDRE 134 · commit 1: seek-tid tidsmålt separat fra "første-frame"
+  // (ankerframe+features nedenfor) - se TID-PR-FRAME.md/RAPPORT-134.md for
+  // hvorfor netop DENNE grænse (seek vs. resten) er den der afgør om et
+  // vindue kan nå 1,1x.
+  const __tSeek0 = performance.now();
+  await (preSeek || rtSeekToOn(v, windowStart));
+  vcRtDiag.seekMs += performance.now() - __tSeek0;
+  const __tFirst0 = performance.now();
   let __t0 = performance.now();
-  await rtDrawScaled(video, rtCtx, rw, rh);
+  await rtDrawScaled(v, rtCtx, rw, rh);
   vcRtDiag.nedskaleringMs += performance.now() - __t0;
   __t0 = performance.now();
   let anchorFrame = mpBuildFrame(rtCtx.getImageData(0, 0, rw, rh).data, rw, rh, 0, 0, rw, rh);
   vcRtDiag.hentMs += performance.now() - __t0;
   let cur = { x: barPt.x * scale, y: barPt.y * scale };
   let features = mpGoodFeatures(anchorFrame, cur, radius);
+  vcRtDiag.foersteFrameMs += performance.now() - __tFirst0;
   const startFrame = Math.round(windowStart * 30);
   const path = { type: 'path', color: (typeof colorInput !== 'undefined' && colorInput.value) || '#e63946',
     pts: [{ x: barPt.x, y: barPt.y }], times: [windowStart], valid: [true], confidence: [1],
@@ -5970,8 +6065,18 @@ async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd, preSeek) {
   // "søgning i et vindue omkring sidste fund" er også allerede opfyldt: se
   // `search`-variablen nedenfor (radius fra ordre 85, brugt i hvert
   // mpMatchPoint-kald) - ingen af de to krævede ændringer her.
+  // ORDRE 134 · commit 1: "sporing" i tabellen pr. vindue = hele denne
+  // løkkes vægtid (fra abonnement til finish()), IKKE kun summen af
+  // søge-/hente-buckets - den rummer også den tid løkken reelt venter på at
+  // videoen afspiller frem til næste frame (1x afspilning), som ingen
+  // enkelt bucket fanger, men som tæller fuldt med i "x realtid".
+  const __tLoop0 = performance.now();
   await new Promise(resolve => {
-    let finish = () => { stopped = true; video.pause(); resolve(); };
+    // ORDRE 134 · commit 2(a): pauseAtEnd=false (kun "playthrough"-strategien)
+    // lader videoen blive ved med at spille forbi vinduets slutning - den
+    // NÆSTE fase (rtAdvanceTo, se ovenfor) genbruger den samme, allerede
+    // kørende afspilning i stedet for at pausere og seeke.
+    let finish = () => { stopped = true; if (pauseAtEnd) v.pause(); resolve(); };
     // requestVideoFrameCallback's FØRSTE argument er et render-tidsstempel
     // (samme skala som performance.now()), IKKE videoens medietid - den findes
     // kun i metadata.mediaTime (samme mønster som startMultipointTrackings
@@ -5979,7 +6084,7 @@ async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd, preSeek) {
     const onFrame = async (now, meta) => {
       const tNow = meta ? meta.mediaTime : now;
       if (stopped) return;
-      if (tNow + 1e-3 >= windowEnd || video.ended || !tracking) { finish(); return; }
+      if (tNow + 1e-3 >= windowEnd || v.ended || !tracking) { finish(); return; }
       const mediaDt = Math.max(1e-3, tNow - lastMediaT);
       lastMediaT = tNow;
       // Budgettet følger videoens EGET tempo (med 50% margin) i stedet for en
@@ -5998,7 +6103,7 @@ async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd, preSeek) {
         // pixelbufferen ud af det nedskalerede canvas (getImageData/
         // mpBuildFrame) - selve rammen algoritmen arbejder videre på.
         let __t = performance.now();
-        await rtDrawScaled(video, rtCtx, rw, rh);
+        await rtDrawScaled(v, rtCtx, rw, rh);
         vcRtDiag.nedskaleringMs += performance.now() - __t;
         __t = performance.now();
         const frame = mpBuildFrame(rtCtx.getImageData(0, 0, rw, rh).data, rw, rh, 0, 0, rw, rh);
@@ -6037,25 +6142,29 @@ async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd, preSeek) {
         }
       }
       workDebtMs = Math.max(0, workDebtMs + (performance.now() - workStart) - budgetMs);
-      if (RT_HAS_RVFC) video.requestVideoFrameCallback(onFrame);
+      if (RT_HAS_RVFC) v.requestVideoFrameCallback(onFrame);
     };
     if (RT_HAS_RVFC) {
-      video.requestVideoFrameCallback(onFrame);
+      v.requestVideoFrameCallback(onFrame);
     } else {
-      const onTimeupdate = () => onFrame(video.currentTime);
-      video.addEventListener('timeupdate', onTimeupdate);
+      const onTimeupdate = () => onFrame(v.currentTime);
+      v.addEventListener('timeupdate', onTimeupdate);
       const baseFinish = finish;
-      finish = () => { video.removeEventListener('timeupdate', onTimeupdate); baseFinish(); };
+      finish = () => { v.removeEventListener('timeupdate', onTimeupdate); baseFinish(); };
     }
     // ORDRE 85 · commit 2: 0,75x afprøvet mod Marcs rigtige klip - tid/
     // afspillet blev 1,65x (langsommere afspilning forlænger selve nævneren
     // i budgettet: samme forhold kan matematisk ikke komme under 1/0,75 ≈
     // 1,33x), og hverken hop eller max-afvigelse blev bedre. Forkastet - se
     // outputs/hop-paa-rigtig-video/RAPPORT.md for tallene.
-    video.playbackRate = 1;
-    video.muted = true;
-    video.play().catch(finish);
+    // ORDRE 134 · commit 2(a): allerede afspillende (playthrough-strategien
+    // lod den køre videre fra forrige vindue) - v.play() er da et no-op,
+    // ingen dobbelt-afspilning.
+    v.playbackRate = 1;
+    v.muted = true;
+    v.play().catch(finish);
   });
+  vcRtDiag.sporingMs += performance.now() - __tLoop0;
 
   const __tf = performance.now();
   path.pts = rtSmoothPath(rtInterpolateGaps(path.pts, path.times), path.times);
@@ -6097,7 +6206,13 @@ async function vcAthletePreviewThree(barPt) {
   const diagStartMs = performance.now();
   let diagFramesTracked = 0, diagFramesSkipped = 0, diagPlayedS = 0;
   // ORDRE 116 · commit 1: nulstil pr.-frame-profilen for netop dette forsøg.
-  vcRtDiag = { hentMs: 0, nedskaleringMs: 0, soegningMs: 0, tegningMs: 0, filterMs: 0, framesTracked: 0, framesSkipped: 0 };
+  vcRtDiag = { seekMs: 0, foersteFrameMs: 0, sporingMs: 0, hentMs: 0, nedskaleringMs: 0, soegningMs: 0, tegningMs: 0, filterMs: 0, framesTracked: 0, framesSkipped: 0 };
+  // ORDRE 134 · commit 1: tabel PR. VINDUE (ikke kun det samlede tal
+  // nedenfor) - én snapshot af vcRtDiag før/efter hvert vindue, differencen
+  // er netop dét vindues bidrag. Ingen ekstra reset af vcRtDiag pr. vindue
+  // (ville race med render()'s tegningMs-skrivning, se render() ovenfor) -
+  // kun læst, aldrig nulstillet mellem vinduerne.
+  const perWindowDiag = [];
   // ORDRE 121 · commit 1 / ORDRE 124 · commit 2: vindue 1's seek er allerede
   // undervejs (startet inde i vcRunRepWindowsPresearch, se dér) - her ventes
   // der bare videre på DET (presearch.firstWindowSeek), IKKE startet forfra.
@@ -6115,7 +6230,19 @@ async function vcAthletePreviewThree(barPt) {
     // ORDRE 80: realtids-sporing (afspiller i 1x, ingen seek-løkke) i stedet
     // for den delte, seek-baserede startMultipointTracking - se
     // vcRealtimeTrackWindow ovenfor.
+    const __winDiagBefore = { ...vcRtDiag };
+    const __winT0 = performance.now();
     const { path, ok } = await vcRealtimeTrackWindow(barPt, w.start, w.end, pendingSeek);
+    const __winMs = performance.now() - __winT0;
+    const __playedS = w.end - w.start;
+    perWindowDiag.push({
+      label: labels[k], playedS: __playedS, ms: __winMs,
+      ratio: __playedS > 0 ? (__winMs / 1000) / __playedS : Infinity,
+      seekMs: vcRtDiag.seekMs - __winDiagBefore.seekMs,
+      foersteFrameMs: vcRtDiag.foersteFrameMs - __winDiagBefore.foersteFrameMs,
+      sporingMs: vcRtDiag.sporingMs - __winDiagBefore.sporingMs,
+      tegningMs: vcRtDiag.tegningMs - __winDiagBefore.tegningMs,
+    });
     // ORDRE 121 · commit 1: start NÆSTE vindues seek MED DET SAMME dette
     // vindues afspilning er færdig, mens efterbehandlingen nedenfor
     // (freezeRawAcquisition/analyzePath) stadig kører - "i skyggen" af den, i
@@ -6151,9 +6278,16 @@ async function vcAthletePreviewThree(barPt) {
     // følger på egne linjer, samme diag-element (pre-wrap, ingen ny knap,
     // intet nyt DOM-element, uændret layout).
     const d = vcRtDiag, frameCount = Math.max(1, d.framesTracked + d.framesSkipped);
+    // ORDRE 134 · commit 1: tabel PR. VINDUE (seek/1.frame/sporing/tegn/x
+    // realtid) tilføjet under den eksisterende, aggregerede diag-linje - se
+    // TID-PR-FRAME.md/RAPPORT-134.md for hvorfor netop disse buckets.
+    const table = perWindowDiag.map((w, i) =>
+      `  v${i + 1} (${w.label}, ${w.playedS.toFixed(2)}s): seek=${w.seekMs.toFixed(0)}ms 1.frame=${w.foersteFrameMs.toFixed(0)}ms sporing=${w.sporingMs.toFixed(0)}ms tegn=${w.tegningMs.toFixed(0)}ms ${w.ratio.toFixed(2)}×`
+    ).join('\n');
     vcShowDiag(`${ratio.toFixed(2)}× realtid, ${diagFramesSkipped} frames sprunget over\n` +
       `diag: ${diagFramesTracked} sporet / ${diagFramesSkipped} sprunget over · ${msPerFrame.toFixed(0)}ms/frame · ${elapsedS.toFixed(1)}s af ${diagPlayedS.toFixed(1)}s sporet (${videoDur.toFixed(1)}s video) · ` +
-      `hent ${(d.hentMs / frameCount).toFixed(1)} · nedskaler ${(d.nedskaleringMs / frameCount).toFixed(1)} · søg ${(d.soegningMs / frameCount).toFixed(1)} · tegn ${(d.tegningMs / frameCount).toFixed(1)} · filter ${(d.filterMs / frameCount).toFixed(1)} ms/frame`);
+      `hent ${(d.hentMs / frameCount).toFixed(1)} · nedskaler ${(d.nedskaleringMs / frameCount).toFixed(1)} · søg ${(d.soegningMs / frameCount).toFixed(1)} · tegn ${(d.tegningMs / frameCount).toFixed(1)} · filter ${(d.filterMs / frameCount).toFixed(1)} ms/frame\n` +
+      table);
   }
   trimEnd = savedTrimEnd;
   analyzing = false;
