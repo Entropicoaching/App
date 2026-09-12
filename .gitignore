@@ -36,6 +36,10 @@ supabase/send-emma-*
 supabase/send-henrik-*
 ugentlig-review-*.md
 
+# ORDRE 138 — Marcs egne kladdemapper (atlet-json/-sql pr. dato), samme
+# begrundelse som supabase/marc-* ovenfor: persondata, må ikke i repoet.
+drafts-*/
+
 # Separat website-arbejde, hører ikke til app-repoet
 Hjemmeside/
 
