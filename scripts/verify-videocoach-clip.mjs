@@ -540,6 +540,30 @@ window.runVisMigNu = async function(barPt, windowsList, lift) {
   }
   return results;
 };
+// ORDRE 124 · commit 2: samme som runVisMigNu ovenfor, men kalder SELV
+// vcRunRepWindowsPresearch først (i SAMME evaluate()-kald, ligesom den
+// rigtige vcAthletePreviewThree gør) og bruger dens firstWindowSeek som
+// pendingSeek for VINDUE 1 - den rettelse denne ordre lavede i
+// videocoach.html. runVisMigNu ovenfor kan IKKE modtage det løfte fra en
+// tidligere, separat page.evaluate()-kaldt presearch (et løfte overlever
+// ikke evaluate()-grænsen fra Node, se kommentaren ved runVisMigNu), så
+// --windows=new --seek=new bruger denne i stedet for at teste den RIGTIGE,
+// rettede kode-vej 1:1 - windowsList styrer stadig hvilke vinduer der
+// rent faktisk spores/scores, presearchs EGNE fundne vinduer bruges ikke.
+window.runVisMigNuFromPresearch = async function(barPt, setStart, setEnd, windowsList, lift) {
+  strokes.length = 0;
+  const presearch = await vcRunRepWindowsPresearch(setStart, setEnd);
+  const results = [];
+  let pendingSeek = presearch.firstWindowSeek || null;
+  for (let k = 0; k < windowsList.length; k++) {
+    const w = windowsList[k];
+    const r = await trackOneWindow(barPt, w.start, w.end, lift, pendingSeek);
+    const nextW = windowsList[k + 1];
+    pendingSeek = nextW ? rtSeekTo(nextW.start) : null;
+    results.push(r);
+  }
+  return results;
+};
 <\/script>
 </body></html>`
 
@@ -777,12 +801,18 @@ async function main() {
     await pageFresh.evaluate(() => window.__loaded)
     await pageFresh.evaluate(([w, h]) => window.__initCanvasDims(w, h), [dims.w, dims.h])
     await pageFresh.evaluate(r => window.__setPlateRadius(r), plateR)
-    if (WINDOWS_MODE === 'new') {
-      await pageFresh.evaluate(([s, e]) => window.runRepWindowsPresearch(s, e), [presearchSetStart, presearchSetEnd])
-    }
     const barPtForCombo = p0s[0]
-    comboResults = await pageFresh.evaluate(([bp, wins, l]) => window.runVisMigNu(bp, wins, l),
-      [{ x: barPtForCombo.x, y: barPtForCombo.y, r: plateR }, threeWindows, lift])
+    if (WINDOWS_MODE === 'new') {
+      // ORDRE 124 · commit 2: runVisMigNuFromPresearch kalder presearch OG
+      // sporer alle vinduer i ÉT evaluate()-kald, så dens firstWindowSeek kan
+      // gives videre som pendingSeek for vindue 1 - den rettede kode-vej (se
+      // videocoach.html og kommentaren ved denne funktions definition).
+      comboResults = await pageFresh.evaluate(([bp, s, e, wins, l]) => window.runVisMigNuFromPresearch(bp, s, e, wins, l),
+        [{ x: barPtForCombo.x, y: barPtForCombo.y, r: plateR }, presearchSetStart, presearchSetEnd, threeWindows, lift])
+    } else {
+      comboResults = await pageFresh.evaluate(([bp, wins, l]) => window.runVisMigNu(bp, wins, l),
+        [{ x: barPtForCombo.x, y: barPtForCombo.y, r: plateR }, threeWindows, lift])
+    }
     comboMs = comboResults.reduce((s, r) => s + r.ms, 0)
     await pageFresh.close()
   } else {
