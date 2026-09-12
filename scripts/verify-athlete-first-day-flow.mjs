@@ -17,9 +17,14 @@ assert.doesNotMatch(athleteView, /Log dagens parathed[^\n]*\n?[\s\S]{0,500}onCli
 const readinessStart = athleteView.indexOf('  function calcReadinessScore(')
 const readinessEnd = athleteView.indexOf('  async function fetchProgram(', readinessStart)
 assert.ok(readinessStart >= 0 && readinessEnd > readinessStart, 'Readinesslogikken skal kunne afgrænses')
-const readinessCore = athleteView.slice(readinessStart, readinessEnd)
+const readinessCore = athleteView.slice(readinessStart, readinessEnd).replace(/\r\n/g, '\n')
 const readinessCoreHash = createHash('sha256').update(readinessCore).digest('hex').toUpperCase()
-assert.equal(readinessCoreHash, 'CC214A5B865CFB9CABB2339A334E931406B35970F2F10DBC3BC8C716A4CA483B',
+// Hash'en er opdateret ved ordre 76 (G12, commit 34064aa: rydder parathedsudkastet
+// efter et bekræftet gem) og ordre 64 (F6+F7, commit 8fa3058: viser en oversat
+// fejlbesked og logger detaljen til frontend_errors i stedet for Supabases rå fejl).
+// Formålet er uændret: lås readiness-kernen mod utilsigtede ændringer i FREMTIDIGE
+// navigationsopgaver, ikke mod allerede besluttede ordrer.
+assert.equal(readinessCoreHash, '2649BFDF9AEBAB75A996F3EBE566B91447FE13437A5BBD8BDA75E05E47C2F803',
   'Readinessberegning og persistence må ikke ændres i navigationsopgaven')
 
 console.log('Førstedagsflowet fører begge prompts til det uændrede parathedskort og respekterer reduced motion.')

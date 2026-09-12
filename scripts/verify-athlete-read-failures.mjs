@@ -67,14 +67,17 @@ for (const [name, setter] of SIMPLE_READS) {
   }
 }
 
-// fetchReadiness: to uafhængige læsninger (i dag, sidste), begge garderede.
+// fetchReadiness: tre uafhængige læsninger (i dag, sidste, 14-dages-historik
+// tilføjet i ordre 100), alle garderede.
 const fetchReadiness = extractFn('fetchReadiness')
-assert.equal((fetchReadiness.match(/runGuardedRead\(/g) || []).length, 2,
-  'fetchReadiness skal have to garderede læsninger (dagens og sidste parathed)')
+assert.equal((fetchReadiness.match(/runGuardedRead\(/g) || []).length, 3,
+  'fetchReadiness skal have tre garderede læsninger (dagens, sidste og 14-dages-historik for parathed)')
 assert.match(fetchReadiness, /if \(!ok\) return[\s\S]*setReadinessLog\(/,
   'setReadinessLog skal kun kaldes når dagens parathed er bekræftet hentet')
 assert.match(fetchReadiness, /if \(!prevOk\) return[\s\S]*setLastReadiness\(/,
   'setLastReadiness skal kun kaldes når sidste parathed er bekræftet hentet')
+assert.match(fetchReadiness, /if \(!histOk\) return[\s\S]*setReadinessHistory\(/,
+  'setReadinessHistory skal kun kaldes når 14-dages-historikken er bekræftet hentet (ordre 100)')
 
 // fetchProgram: den flagskibs-fejl fra ordre 70/76's fund — programError
 // skal skelne "programmet er tomt" fra "programmet kunne ikke hentes", og
