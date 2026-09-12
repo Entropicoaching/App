@@ -29,6 +29,26 @@ nu, manuel skive) → logout.
 Alle tre er nu rettet — se `docs/RAPPORT-131.md` for detaljerne og verify-scriptet
 (`npm run verify:athlete-silent-fails-5`).
 
+## Sammenfatning — rettet / ikke rettet og hvorfor
+
+| # | Status | Hvorfor |
+|---|---|---|
+| G14 (PR-detektion) | **Rettet** (commit 2) | INSERT går nu gennem `queueWrite`; PR-fejring vises kun ved bekræftet gemning. Marc-synlighed via `silent:pr-insert-failed` i næste videoanalyses `session_context` (commit 3). |
+| G15 (vægtlogning) | **Rettet** (commit 2) | Går nu gennem `runGuardedWrite`; feltet bevares og en fejl vises ved mislykket skrivning. Marc-synlighed via `silent:weight-log-failed` (commit 3). |
+| G16 (afbrudt upload) | **Rettet** (commit 2) | Inflight-markør afslører en afbrudt overførsel ved næste app-åbning; atleten får besked. Marc-synlighed via `silent:video-upload-interrupted` (commit 3) — **men kun hvis atleten når en ny videoanalyse siden**; se grænsen nedenfor. |
+| F3 (`markTrackRead`) | **Ikke rettet** | Lav alvor (kun en ulæst-badge), allerede vurderet og bevidst nedprioriteret i ordre 76 — uændret vurdering denne runde. |
+| Madlogning (`deleteTemplate`, `saveCustomFood`) | **Ikke rettet** | Uden for ordrens gå-igennem-liste for runde 5 (login → dagens pas → opvarmning → sæt-logger → check-in → videocoach → logout dækker ikke kost/beskeder). Lav alvor — ingen træningsdata tabt. Kandidat til en fremtidig, navngiven "stille fejl, runde 6" hvis Marc ønsker kost/beskeder gennemgået samme metode. |
+
+**Grænse værd at kende for G16's Marc-synlighed**: koden lægges i
+`session_context` på atletens NÆSTE videoanalyse-række (der findes ingen
+migration, og `session_context` findes kun på `video_analyses` — se
+"Ærlige grænser" i `docs/RAPPORT-131.md`). Bruger atleten ikke videocoach
+igen efter en afbrudt upload, ser Marc det aldrig i étlinje-resuméet — kun
+selve `frontend_errors`-loggen (ikke coach-UI) bærer sporet i så fald.
+Dette kræver enten datamodel (et nyt, athlete-scoped felt uden om
+`video_analyses`) eller Marcs dom om det er værd at rette — begge dele
+uden for denne ordres grænser ("ingen ændring af datamodel, migrations").
+
 ## Gennemgået, intet nyt fund
 
 Resten af dagens vej blev gennemgået med samme otte fejlscenarier, uden nye
