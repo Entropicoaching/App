@@ -3,9 +3,11 @@
 Vil du se hvordan trackeren rent faktisk klarer sig på en RIGTIG video (ikke det
 tegnede testklip)?
 
-1. Læg en videofil i `test-clips\` (mp4 eller mov — telefonens eget format er
-   fint, den konverteres automatisk om nødvendigt).
-2. Kør `npm run verify:videocoach-clip`.
+1. Læg én eller flere videofiler i `test-clips\` (mp4 eller mov — telefonens
+   eget format er fint, den konverteres automatisk om nødvendigt).
+2. Kør `npm run verify:videocoach-clip` — kører ALLE klip i `test-clips\`
+   (ikke kun det alfabetisk første), én fuld rapport pr. klip plus én
+   sammenfatningslinje pr. klip til sidst.
 3. Læs tabellen: frames sporet/sprunget over, ms pr. frame, tid mod afspillet
    varighed, afvigelse (mean/max px) og antal hop — pr. gentagelse.
 
@@ -19,6 +21,20 @@ Et sæt på 3-5 gentagelser giver et mere sigende svar end ét enkelt løft: med
 kun én gentagelse er der intet "første/midt/sidste" at sammenligne — bænken
 tester så det samme vindue igen. `test-clips\` er git-ignoreret — klippet
 bliver aldrig committet.
+
+## To klip der lukker resten (ordre 127)
+
+To optagelser, lagt i `test-clips\`, kører automatisk med ovenstående:
+
+1. **Lyst sæt**: 3-5 reps, almindelig (lys) skive - facit for den normale bane.
+2. **Mørkt sæt**: sort skive på sort gulv - navet/nav-vagten (ordre 127 ·
+   commit 1) og mørk-skive-detektionen (ordre 120) skal bekræftes på ægte
+   optagelse, ikke kun det syntetiske testtilfælde.
+3. Telefon i hoftehøjde, 3-4 m fra skiven, liggende (landskab).
+4. Skiven fri af rack/stativ i begge klip - ingen kant der kan forveksles med
+   skivens egen (se `docs/videocoach/SKIVEN-FINDES-IKKE.md`).
+5. Hele løftet i billedet, skiven synlig fra start til slut.
+6. Ingen atletdata i filnavn eller metadata - kun løfteart, fx `dodloft-mork.mp4`.
 
 ## Et syntetisk multi-reps-klip (identiske kopier limet sammen)
 
