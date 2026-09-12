@@ -43,6 +43,7 @@
     "verify:videocoach-buttons-layout": "node scripts/verify-videocoach-buttons-layout.mjs",
     "verify:videocoach-plate-detect": "node scripts/verify-videocoach-plate-detect.mjs",
     "maal:app": "node scripts/maal-app.mjs",
+    "maal:coach": "node scripts/maal-coach.mjs",
     "verify:n8n": "node n8n/verify-workflows.mjs",
     "preview:n8n-briefing": "node n8n/preview-coach-briefing.mjs"
   },
