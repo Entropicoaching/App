@@ -3,7 +3,7 @@
     "profile": "iPhone 13",
     "screen": "Login",
     "weight": {
-      "totalKb": 415,
+      "totalKb": 416,
       "jsKb": 412,
       "cssKb": 2,
       "imgKb": 0,
@@ -126,7 +126,7 @@
     "profile": "iPhone 13",
     "screen": "Videocoach-forside (uden video)",
     "weight": {
-      "totalKb": 537,
+      "totalKb": 544,
       "jsKb": 1,
       "cssKb": 6,
       "imgKb": 0,
@@ -137,7 +137,7 @@
     "overflow": false,
     "textOverflow": [],
     "lh": {
-      "performance": 71,
+      "performance": 78,
       "accessibility": 93
     },
     "consoleErrors": [],
@@ -181,7 +181,7 @@
     "profile": "Android 360×740",
     "screen": "Login",
     "weight": {
-      "totalKb": 415,
+      "totalKb": 416,
       "jsKb": 412,
       "cssKb": 2,
       "imgKb": 0,
@@ -210,7 +210,7 @@
     "overflow": false,
     "textOverflow": [],
     "lh": {
-      "performance": 73,
+      "performance": 65,
       "accessibility": 87
     },
     "consoleErrors": [],
@@ -304,7 +304,7 @@
     "profile": "Android 360×740",
     "screen": "Videocoach-forside (uden video)",
     "weight": {
-      "totalKb": 537,
+      "totalKb": 544,
       "jsKb": 1,
       "cssKb": 6,
       "imgKb": 0,
@@ -349,7 +349,7 @@
     "overflow": false,
     "textOverflow": [],
     "lh": {
-      "performance": 100,
+      "performance": 99,
       "accessibility": 87
     },
     "consoleErrors": [],
@@ -359,7 +359,7 @@
     "profile": "Desktop 1280×800",
     "screen": "Login",
     "weight": {
-      "totalKb": 415,
+      "totalKb": 416,
       "jsKb": 412,
       "cssKb": 2,
       "imgKb": 0,
@@ -459,30 +459,14 @@
     "profile": "Desktop 1280×800",
     "screen": "Videocoach-forside (uden video)",
     "weight": {
-      "totalKb": 547,
+      "totalKb": 554,
       "jsKb": 1,
       "cssKb": 6,
       "imgKb": 0,
       "requestCount": 5
     },
     "axe": [],
-    "tapTargets": [
-      {
-        "text": "Video",
-        "height": 36,
-        "width": 78
-      },
-      {
-        "text": "Bane",
-        "height": 36,
-        "width": 78
-      },
-      {
-        "text": "Eksport",
-        "height": 36,
-        "width": 78
-      }
-    ],
+    "tapTargets": [],
     "overflow": false,
     "textOverflow": [],
     "lh": null,
