@@ -236,6 +236,23 @@
      slags overlap som #banner fik rettet i MOBIL-GENNEMGANG-2026-09-03,
      samme løsning: ned under begge. */
   body.athlete #athleteStatus { top:116px; width:min(82vw,360px); padding:9px 12px; }
+  /* ORDRE 134 · commit 3: #vcDiagLine er sat op med almindelig, ikke-
+     positioneret CSS (position:static, se dens inline style i JS) - i
+     DESKTOP-tilstand (Marcs egen file://-visning) ligger den derfor pænt i
+     normal dokument-flow under videoen. I ATHLETE/SLIM-tilstanden (den
+     rigtige telefon-oplevelse) er ALT andet på skærmen position:fixed -
+     vcDiagLine endte derfor usynlig, malet UNDER alt det faste UI (en
+     ikke-positioneret boks males altid bagved positionerede søskende,
+     uanset DOM-rækkefølge), fundet ved et 390px-screenshot under denne
+     ordre. Samme rettelse som #athleteStatus fik ovenfor: fast position,
+     ned under status-kortet, pointer-events:none (rører aldrig video/
+     scrub-berøring nedenunder).
+     Ingen betydning for almindelige atleter - kun synlig med ?diag=1. */
+  body.athlete #vcDiagLine { position:fixed; top:180px; left:50%;
+    transform:translateX(-50%); z-index:12; width:min(90vw,380px);
+    max-height:36vh; overflow-y:auto; padding:8px 10px; border-radius:10px;
+    background:rgba(18,17,14,.72); backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px); pointer-events:none; }
   /* Når videoen er valgt, skal guiden ikke dække motivet. Vis kun det
      aktuelle trin som en lille chip; start-guiden bor ved tidslinjen. */
   body.athlete:not([data-athlete-state="empty"]) #athleteBrand { display:none; }
