@@ -56,6 +56,13 @@
 // afspillet varighed, afvigelse (mean/max px) og antal "hop" (se countHops
 // nedenfor for definition og begrundelse af grænsen).
 //
+// ORDRE 139 · commit 2: kravet PR. KLIP (maxRealtime, evt. diagnostic:true)
+// kommer fra `test-clips\manifest.json` (git-ignoreret ligesom klippene selv -
+// se `test-clips.manifest.example.json` for skemaet/eksempler). Mangler et
+// klip en post, gælder standardkravet (1,10x, ikke diagnostisk) - se
+// requirementFor/DEFAULT_REQUIREMENT nedenfor. Et diagnostisk klip måles og
+// printes som alle andre, men fælder ikke den samlede test (main()).
+//
 // Kørsel: npm run verify:videocoach-clip
 // Genererer det tegnede klip automatisk (npm run test:clip), hvis det mangler
 // OG intet rigtigt klip er lagt i test-clips\.
@@ -141,6 +148,36 @@ function loadRealMeta(clipName) {
     console.log(`${base}.meta.json er ikke gyldig JSON (${e.message}) — ignoreres, alt findes automatisk.`)
     return {}
   }
+}
+
+// ORDRE 139 · commit 2: kravet pr. klip kommer nu fra test-clips\manifest.json
+// (git-ignoreret ligesom klippene selv, se test-clips.manifest.example.json
+// for skemaet) i stedet for én fast konstant for alle klip. Uden en post for
+// et givet klip gælder standardkravet - 1,10x, IKKE diagnostisk - så et nyt
+// klip Marc lægger i test-clips\ uden at røre manifestet stadig holdes til
+// den fulde standard, ikke en utilsigtet lempelse.
+const DEFAULT_REQUIREMENT = { maxRealtime: 1.10, diagnostic: false, description: null, reason: null }
+function loadManifest() {
+  const manifestPath = join(testClipsDir, 'manifest.json')
+  if (!existsSync(manifestPath)) return {}
+  try {
+    return JSON.parse(readFileSync(manifestPath, 'utf8'))
+  } catch (e) {
+    console.log(`test-clips\\manifest.json er ikke gyldig JSON (${e.message}) — ignoreres, alle klip måles mod standardkravet (${DEFAULT_REQUIREMENT.maxRealtime}x, ikke diagnostisk).`)
+    return {}
+  }
+}
+function requirementFor(manifest, clipName) {
+  const entry = manifest[clipName]
+  if (!entry) return { ...DEFAULT_REQUIREMENT }
+  const diagnostic = entry.diagnostic === true
+  const maxRealtime = typeof entry.maxRealtime === 'number' ? entry.maxRealtime : DEFAULT_REQUIREMENT.maxRealtime
+  // "Ingen grænse sænkes for ægte klip" (ordre 139) - kun et klip eksplicit
+  // markeret diagnostic må have et krav løsere end standarden.
+  if (!diagnostic && maxRealtime > DEFAULT_REQUIREMENT.maxRealtime) {
+    throw new Error(`verify-videocoach-clip: manifest-posten for "${clipName}" sætter maxRealtime=${maxRealtime} uden diagnostic:true - en grænse må kun sænkes for et diagnostisk klip (se test-clips.manifest.example.json).`)
+  }
+  return { maxRealtime, diagnostic, description: entry.description || null, reason: entry.reason || null }
 }
 
 // ORDRE 85 · commit 1: ingen sidecar-fil krævet mere - er klippet ikke H.264 i
@@ -740,7 +777,7 @@ function pickThreeWindows(windows) {
 // fælles (genbrugt på tværs af klip), men hvert klip får sin egen side/
 // harness (buildHarnessHtml). Returnerer et sammenfatnings-objekt i stedet
 // for selv at kalde process.exit - main() samler facit og afgør exit-koden.
-async function runOneClip(browser, mode, clipPathForClip, realMeta, realClipName) {
+async function runOneClip(browser, mode, clipPathForClip, realMeta, realClipName, requirement) {
   const HARNESS_HTML = buildHarnessHtml(clipPathForClip)
   const page = await browser.newPage({ viewport: { width: 360, height: 640 } })
   page.on('pageerror', err => console.error('[browser pageerror]', err))
@@ -999,7 +1036,9 @@ async function runOneClip(browser, mode, clipPathForClip, realMeta, realClipName
   const fullOk = full.ok && fullDev.meanPx <= TOLERANCE_MEAN_PX && fullDev.maxPx <= TOLERANCE_MAX_PX && fullFoundAllReps
   const comboOk = comboResults.length > 0 && comboResults.every(r => r.ok) &&
     worstComboDev.meanPx <= TOLERANCE_MEAN_PX && worstComboDev.maxPx <= TOLERANCE_MAX_PX
-  const REALTIME_MAX_FACTOR = 1.1
+  // ORDRE 139 · commit 2: kravet kommer fra manifestet (requirementFor),
+  // ikke længere en fast konstant - se test-clips.manifest.example.json.
+  const REALTIME_MAX_FACTOR = requirement.maxRealtime
   const realtimeFactor = threePlayedS > 0 ? comboMs / 1000 / threePlayedS : Infinity
   const realtimeFastEnough = realtimeFactor <= REALTIME_MAX_FACTOR
 
@@ -1036,17 +1075,23 @@ async function runOneClip(browser, mode, clipPathForClip, realMeta, realClipName
   console.log(`  samlet tid (${threeWindows.length} vindue(r)): ${comboMs.toFixed(1)}ms · samlet afspillet varighed: ${(threePlayedS * 1000).toFixed(1)}ms · forhold: ${realtimeFactor.toFixed(2)}x (grænse ${REALTIME_MAX_FACTOR}x)`)
   console.log(`\nTolerance: mean ≤ ${TOLERANCE_MEAN_PX}px, max ≤ ${TOLERANCE_MAX_PX}px (se kildekoden for begrundelsen).`)
   console.log(pass
-    ? '\nGRØN: alle reps fundet i den fulde analyse, alle "Vis mig nu"-vinduer fundet inden for tolerance, og "Vis mig nu" var færdig senest 1,1x sin egen afspillede varighed.'
+    ? `\nGRØN: alle reps fundet i den fulde analyse, alle "Vis mig nu"-vinduer fundet inden for tolerance, og "Vis mig nu" var færdig senest ${REALTIME_MAX_FACTOR}x sin egen afspillede varighed.`
     : `\nFEJL: ${!fullOk ? 'fuld analyse fejlede tolerancen eller fandt ikke alle reps. ' : ''}${!comboOk ? '"Vis mig nu" fejlede tolerancen. ' : ''}${!realtimeFastEnough ? `"Vis mig nu" tog ${realtimeFactor.toFixed(2)}x sin afspillede varighed, over grænsen ${REALTIME_MAX_FACTOR}x.` : ''}`)
+  // ORDRE 139 · commit 2: et diagnostisk klip (manifest-flag) måles og
+  // printes fuldt ud som ethvert andet klip, men fælder ALDRIG hele testen -
+  // se requirementFor/main().
+  if (requirement.diagnostic) console.log(`(diagnostisk klip${requirement.reason ? ` - ${requirement.reason}` : ''} - denne linje fælder ikke testen, se test-clips\\manifest.json.)`)
   if (mode === 'real' && threeWindows.length < 3) console.log(`\n(Kun ${threeWindows.length} gentagelse(r) i dette klip — et sæt på 3-5 reps giver et mere sigende billede, se docs/videocoach/TEST-CLIPS.md.)`)
   if (mode === 'synthetic') console.log('\n(Kører stadig mod det TEGNEDE klip — læg en rigtig telefonoptagelse i test-clips\\ for at måle mod virkeligheden.)')
 
   // ORDRE 127 · commit 3: én linje pr. klip, til main()s sammenfatning -
   // browseren lukkes samlet dér (ikke pr. klip), da den nu deles på tværs
-  // af alle klip i test-clips\.
+  // af alle klip i test-clips\. ORDRE 139 · commit 2: linjen viser nu også
+  // klippets EGET krav (kan variere pr. klip, se manifestet) og om det er
+  // diagnostisk (måles, men fælder ikke den samlede test).
   const clipLabel = mode === 'real' ? `test-clips\\${realClipName}` : 'det tegnede klip'
-  const line = `${clipLabel}: ${threeWindows.length} vindue(r), forhold ${realtimeFactor.toFixed(2)}x, meanPx=${worstComboDev.meanPx.toFixed(2)}, maxPx=${worstComboDev.maxPx.toFixed(2)}`
-  return { pass, line }
+  const line = `${clipLabel}: ${threeWindows.length} vindue(r), forhold ${realtimeFactor.toFixed(2)}x (krav ≤${REALTIME_MAX_FACTOR}x${requirement.diagnostic ? ', diagnostisk' : ''}), meanPx=${worstComboDev.meanPx.toFixed(2)}, maxPx=${worstComboDev.maxPx.toFixed(2)}`
+  return { pass, line, diagnostic: requirement.diagnostic }
 }
 
 // ORDRE 127 · commit 3: kør ALLE klip i test-clips\ (findRealClips ovenfor),
@@ -1055,16 +1100,20 @@ async function runOneClip(browser, mode, clipPathForClip, realMeta, realClipName
 // side/harness, se runOneClip). Slutter med én linje pr. klip, og fejler
 // (exit 1) hvis blot ét klip fejler sin egen tolerance.
 async function main() {
+  // ORDRE 139 · commit 2: manifestet indlæses én gang for alle klip - se
+  // requirementFor ovenfor for standardkravet når et klip mangler en post.
+  const manifest = loadManifest()
   const browser = await chromium.launch({ headless: true })
   const summaries = []
   try {
     if (usingSynthetic) {
-      summaries.push(await runOneClip(browser, 'synthetic', syntheticClipPath, {}, null))
+      summaries.push(await runOneClip(browser, 'synthetic', syntheticClipPath, {}, null, { ...DEFAULT_REQUIREMENT }))
     } else {
       for (const clipName of realClips) {
         const realMeta = loadRealMeta(clipName)
         const clipPathForClip = ensureMp4H264(join(testClipsDir, clipName))
-        summaries.push(await runOneClip(browser, 'real', clipPathForClip, realMeta, clipName))
+        const requirement = requirementFor(manifest, clipName)
+        summaries.push(await runOneClip(browser, 'real', clipPathForClip, realMeta, clipName, requirement))
       }
     }
   } finally {
@@ -1077,7 +1126,17 @@ async function main() {
     console.log('\n== Sammenfatning (ét klip pr. linje) ==')
     for (const s of summaries) console.log(`  ${s.pass ? 'GRØN' : 'FEJL'}  ${s.line}`)
   }
-  process.exit(summaries.every(s => s.pass) ? 0 : 1)
+  // ORDRE 139 · commit 2: kun IKKE-diagnostiske klip fælder den samlede test
+  // (exit-koden) - et diagnostisk klip måles og printes ovenfor som alle
+  // andre, men dets egen FEJL/GRØN tæller ikke med her.
+  const gating = summaries.filter(s => !s.diagnostic)
+  const allPass = gating.every(s => s.pass)
+  if (summaries.some(s => s.diagnostic)) {
+    console.log(allPass
+      ? '\nGRØN (samlet): alle ikke-diagnostiske klip holder deres krav.'
+      : '\nFEJL (samlet): mindst ét ikke-diagnostisk klip holder ikke sit krav.')
+  }
+  process.exit(allPass ? 0 : 1)
 }
 
 main().catch(err => { console.error(err); process.exit(1) })

@@ -38,6 +38,7 @@
     "gate:tracker": "node scripts/gate-tracker.mjs",
     "opvarmning:tabel": "node scripts/opvarmningstabel.mjs",
     "test:clip": "node scripts/make-test-clip.mjs",
+    "test:clip-realistisk": "node scripts/make-realistic-test-clip.mjs",
     "verify:videocoach-clip": "node scripts/verify-videocoach-clip.mjs",
     "verify:videocoach-upload-flow": "node scripts/verify-videocoach-upload-flow.mjs",
     "verify:videocoach-buttons-layout": "node scripts/verify-videocoach-buttons-layout.mjs",
