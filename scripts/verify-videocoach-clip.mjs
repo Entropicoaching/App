@@ -21,7 +21,14 @@
 //   test-clips\<navn>.meta.json       - VALGFRI, felt for felt: findes et
 //     (valgfri)                        felt, vinder det over automatikken.
 //       { "barPoint": {"x":..,"y":..}, "plateRadius": .., "lift": "deadlift",
-//         "windows": [{"start":..,"end":..}, ...] }
+//         "windows": [{"start":..,"end":..}, ...],
+//         "repeatedIdenticalWindows": true }
+//     "repeatedIdenticalWindows" (ORDRE 124 · commit 3): sæt kun for et klip
+//     limet sammen af IDENTISKE kopier af samme rep (fx via ffmpeg concat,
+//     se docs/videocoach/TEST-CLIPS.md) - facit for vindue 2+ bliver da
+//     vindue 1's EGET spor, tidsforskudt, i stedet for ét globalt spor hen
+//     over klip-samlingerne (som drifter efter det første snit - se
+//     "repeatedIdenticalWindows" i main()).
 //
 // Uden sidecar-felter findes de automatisk:
 //   - Stangens startpunkt (ved klippets første frame): et gitter af
@@ -52,6 +59,28 @@
 // Kørsel: npm run verify:videocoach-clip
 // Genererer det tegnede klip automatisk (npm run test:clip), hvis det mangler
 // OG intet rigtigt klip er lagt i test-clips\.
+//
+// ORDRE 124 · commit 1: to uafhængige flag, kun til at adskille "hvad er
+// seek-ændringen (ordre 121 · commit 1)" fra "hvad er testens nye målemetode
+// (ordre 121 · commit 2)" på et RIGTIGT klip (mode==='real' - flagene er
+// no-op på det tegnede klip). Se docs/videocoach/RAPPORT-124.md.
+//   --windows=old|new (default new) - HVILKE vinduer "Vis mig nu" måles på:
+//     old = den fulde analyses EGEN rep-detektion (full.repWindows), ALDRIG
+//           presearch - ordre 116/120's logik, FØR ordre 121 · commit 2.
+//     new = presearch først (vcRunRepWindowsPresearch), samme kilde som den
+//           rigtige app selv bruger - ordre 121 · commit 2's logik, uændret.
+//   --seek=old|new (default new) - HVILKEN revision af public/videocoach.html
+//     sporings-/presearch-koden udtrækkes fra:
+//     old = revisionen lige FØR "ordre 121 · commit 1" (git-historikken) -
+//           ingen skygge-seek: presearch restaurerer savedTime bagefter, og
+//           vcRealtimeTrackWindow venter altid på sit EGET seek.
+//     new = arbejdstræets nuværende public/videocoach.html (skygge-seek).
+// Begge default til "new" - uden flag er kørslen UÆNDRET (samme gate-
+// kriterier som før: fullOk && comboOk && realtimeFastEnough).
+//   node scripts/verify-videocoach-clip.mjs --windows=old --seek=old
+//   node scripts/verify-videocoach-clip.mjs --windows=old --seek=new
+//   node scripts/verify-videocoach-clip.mjs --windows=new --seek=old
+//   node scripts/verify-videocoach-clip.mjs --windows=new --seek=new   (= standard)
 
 import { readFileSync, existsSync, readdirSync, mkdirSync } from 'node:fs'
 import { spawnSync } from 'node:child_process'
@@ -60,6 +89,17 @@ import { dirname, join, extname, basename } from 'node:path'
 import { homedir } from 'node:os'
 import { createRequire } from 'node:module'
 import ffmpegPath from 'ffmpeg-static'
+
+function flagValue(name, def) {
+  const pre = `--${name}=`
+  const hit = process.argv.slice(2).find(a => a.startsWith(pre))
+  return hit ? hit.slice(pre.length) : def
+}
+const WINDOWS_MODE = flagValue('windows', 'new')
+const SEEK_MODE = flagValue('seek', 'new')
+for (const [name, v] of [['windows', WINDOWS_MODE], ['seek', SEEK_MODE]]) {
+  if (v !== 'old' && v !== 'new') throw new Error(`verify-videocoach-clip: --${name} skal være "old" eller "new" (fik "${v}").`)
+}
 
 const here = dirname(fileURLToPath(import.meta.url))
 const root = join(here, '..')
@@ -81,7 +121,7 @@ function loadRealMeta(clipName) {
   if (!existsSync(metaPath)) return {}
   try {
     const meta = JSON.parse(readFileSync(metaPath, 'utf8'))
-    const fields = Object.keys(meta).filter(k => ['barPoint', 'plateRadius', 'windows', 'lift'].includes(k))
+    const fields = Object.keys(meta).filter(k => ['barPoint', 'plateRadius', 'windows', 'lift', 'repeatedIdenticalWindows'].includes(k))
     console.log(`Fandt ${base}.meta.json — felterne [${fields.join(', ') || 'ingen genkendte'}] vinder over automatikken, resten findes automatisk.`)
     return meta
   } catch (e) {
@@ -137,7 +177,30 @@ const groundTruth = mode === 'synthetic' ? JSON.parse(readFileSync(syntheticGtPa
 
 // ---------- 1) Udtræk den levende tracker-kode 1:1 fra videocoach.html ----------
 const htmlPath = join(root, 'public', 'videocoach.html')
-const html = readFileSync(htmlPath, 'utf8')
+// ORDRE 124 · commit 1: --seek=old finder commit'en "... (ordre 121 · commit
+// 1)" i git-historikken og udtrækker fra dens FORÆLDER i stedet for
+// arbejdstræets fil - dvs. videocoach.html PRÆCIS som den så ud lige før
+// skygge-seeket blev indført. Alle blokke herunder (tracker/autoCalib/
+// repDetect/realtimePreview/presearch) udtrækkes fra samme tekst, så en
+// eventuel utilsigtet afhængighed af andre ORDRE 121-ændringer i de
+// (uændrede) blokke også bliver ægte "før"-adfærd, ikke kun de to blokke
+// commit 1 selv rørte.
+function findOldSeekRevision() {
+  const res = spawnSync('git', ['log', '--format=%H %s'], { cwd: root, encoding: 'utf8' })
+  if (res.status !== 0) throw new Error('verify-videocoach-clip: "git log" fejlede - kan ikke slå --seek=old op.')
+  const line = (res.stdout || '').split('\n').find(l => l.includes('ordre 121 · commit 1)'))
+  if (!line) throw new Error('verify-videocoach-clip: fandt ikke commit "... (ordre 121 · commit 1)" i git-historikken - --seek=old kræver den for at hente videocoach.html FØR skygge-seeket.')
+  return line.split(' ')[0] + '^'
+}
+function loadHtmlSource(seekMode) {
+  if (seekMode !== 'old') return readFileSync(htmlPath, 'utf8')
+  const rev = findOldSeekRevision()
+  const res = spawnSync('git', ['show', `${rev}:public/videocoach.html`], { cwd: root, encoding: 'utf8', maxBuffer: 1024 * 1024 * 64 })
+  if (res.status !== 0) throw new Error(`verify-videocoach-clip: "git show ${rev}:public/videocoach.html" fejlede - ${res.stderr || ''}`)
+  console.log(`--seek=old: videocoach.html udtrukket fra ${rev} (revisionen lige før "ordre 121 · commit 1" - ingen skygge-seek).`)
+  return res.stdout
+}
+const html = loadHtmlSource(SEEK_MODE)
 function extractBlock(text, startMarker, endMarker, includeEndMarker = false) {
   const startIdx = text.indexOf(startMarker)
   if (startIdx < 0) throw new Error(`verify-videocoach-clip: startmarkør ikke fundet ("${startMarker.slice(0, 40)}...") - er videocoach.html omstruktureret?`)
@@ -154,6 +217,46 @@ const autoCalibSource = extractBlock(html,
   '// ORDRE 85 · start: auto-kalibrering', '// ORDRE 85 · slut: auto-kalibrering', true)
 const repDetectSource = extractBlock(html,
   '// ORDRE 85 · start: rep-detektion', '// ORDRE 85 · slut: rep-detektion', true)
+// ORDRE 121 · commit 2: udtræk gentagelses-VINDUE-forudsøgningen (samme
+// funktion den rigtige "Vis mig nu" selv kalder, vcAthletePreviewThree ->
+// vcRunRepWindowsPresearch) - 1:1, uændret. vcMotionSeries og VC_PRESEARCH_W
+// deles med den (urelaterede) SÆT-grænse-forudsøgning fra ORDRE 50, som
+// selv trækker awaitCalib/curUrl ind (ikke stubbet her, uden interesse) -
+// derfor to smalle udtræk (kun vcMotionSeries + konstanten) i stedet for
+// hele ORDRE 50-blokken.
+const motionSeriesSource = extractBlock(html,
+  'function vcMotionSeries(frames) {', 'function vcFindSetBounds(times, motion, duration, opts = {}) {')
+const presearchWidthSource = extractBlock(html,
+  'const VC_PRESEARCH_W = 48, VC_PRESEARCH_MAX_SAMPLES = 30;', 'async function vcRunSetBoundsPresearch(duration) {')
+// ORDRE 124 · commit 1: udtrækkes nu ved SIGNATUR + balancerede krøllede
+// parenteser, ikke ved "ORDRE 54 · slut"-kommentarmarkøren - den markør
+// flyttede sig (ordre 121 · commit 2, se videocoach.html) fra lige efter
+// vcFindRepAnchors til lige efter vcRunRepWindowsPresearch. --seek=old
+// udtrækker fra revisionen FØR den flytning, hvor markøren derfor IKKE
+// dækker vcRunRepWindowsPresearch - en ren tekstmarkør ville stille og
+// roligt udtrække en tom/forkert funktion og først fejle som en kryptisk
+// "vcRunRepWindowsPresearch is not defined" inde i den headless side.
+function extractFunctionAt(text, signature) {
+  // signature skal ende med funktionens EGEN krop-åbnende "{" - ellers
+  // finder et naivt indexOf('{', ...) i stedet en parameter-default's
+  // brace (fx "opts = {}") og stopper efter blot ét tegn.
+  if (!signature.endsWith('{')) throw new Error(`verify-videocoach-clip: extractFunctionAt kræver en signatur der ender på "{" (fik "${signature}").`)
+  const startIdx = text.indexOf(signature)
+  if (startIdx < 0) throw new Error(`verify-videocoach-clip: funktions-signatur ikke fundet ("${signature.slice(0, 60)}...") - er videocoach.html omstruktureret?`)
+  let depth = 1, i = startIdx + signature.length
+  for (; i < text.length; i++) {
+    if (text[i] === '{') depth++
+    else if (text[i] === '}') { depth--; if (depth === 0) { i++; break } }
+  }
+  if (depth !== 0) throw new Error(`verify-videocoach-clip: ubalancerede "{}" fra signaturen ("${signature.slice(0, 60)}...") - er videocoach.html omstruktureret?`)
+  return text.slice(startIdx, i)
+}
+const repAnchorsSource = extractFunctionAt(html, 'function vcFindRepAnchors(times, motion, opts = {}) {')
+const repPresearchConstMatch = html.match(/const VC_REP_PRESEARCH_MAX_SAMPLES = \d+;/)
+if (!repPresearchConstMatch) throw new Error('verify-videocoach-clip: "VC_REP_PRESEARCH_MAX_SAMPLES" ikke fundet - er videocoach.html omstruktureret?')
+const repWindowsPresearchFnSource = extractFunctionAt(html, 'async function vcRunRepWindowsPresearch(setStart, setEnd) {')
+const repWindowsPresearchSource = repAnchorsSource + '\n' + repPresearchConstMatch[0] + '\n' + repWindowsPresearchFnSource
+const presearchSource = motionSeriesSource + '\n' + presearchWidthSource + '\n' + repWindowsPresearchSource
 
 // ---------- 2) Facit: interpolér en kendt bane (samples-liste ELLER en sporet bane) ved et vilkårligt tidspunkt ----------
 function truePosAt(t) {
@@ -234,6 +337,9 @@ let vcTiming = { trackingStartedAt: null };
 // uden for det udtrukne ORDRE 80-blok, derfor stub'et her ligesom de andre
 // app-globals ovenfor).
 let vcRtDiag = { hentMs: 0, nedskaleringMs: 0, soegningMs: 0, tegningMs: 0, filterMs: 0, framesTracked: 0, framesSkipped: 0 };
+// ORDRE 121 · commit 2: stubs for vcRunRepWindowsPresearch's egne vagter -
+// aldrig sande her (ingen wizard/plade-bekræftelse kører i denne bænk).
+let wizard = null, plateConfirm = null;
 function idxAtTime(s, t) {
   const times = s.times || [];
   let lo = 0, hi = times.length - 1;
@@ -294,6 +400,9 @@ ${repDetectSource}
 <\/script>
 <script>
 ${realtimePreviewSource}
+<\/script>
+<script>
+${presearchSource}
 <\/script>
 <script>
 // ORDRE 85 · commit 1: stangens startpunkt uden en sidecar-fil. Tier 1
@@ -366,15 +475,25 @@ window.runAnalysis = async function(startT, endT, p0, lift) {
     profile: window.__profile,
   };
 };
+// ORDRE 121 · commit 2: den RIGTIGE "Vis mig nu"-vej finder sine vinduer via
+// presearch (vcRunRepWindowsPresearch) - ALDRIG via den fulde, seek-baserede
+// analyse (runAnalysis ovenfor er kun til facit/sammenligning i denne bænk).
+window.runRepWindowsPresearch = async function(setStart, setEnd) {
+  const t0 = performance.now();
+  const r = await vcRunRepWindowsPresearch(setStart, setEnd);
+  return { ok: r.ok, windows: r.windows, ms: performance.now() - t0 };
+};
 // ORDRE 80 · commit 2 / ORDRE 82 · commit 2: "Vis mig nu"s realtids-vej.
-window.runRealtimePreview = async function(barPt, windowStart, windowEnd, lift) {
-  strokes.length = 0;
+// ORDRE 121 · commit 3: fælles kerne for ét vindue, brugt af BÅDE den
+// enkeltstående window.runRealtimePreview (KOLD - se main()) og
+// window.runVisMigNu (VARM, flere vinduer i træk - se den nedenfor).
+async function trackOneWindow(barPt, windowStart, windowEnd, lift, preSeek) {
   tracking = true;
   // ORDRE 116 · commit 1: nulstil pr.-frame-profilen for netop dette vindue
   // (samme reset som vcAthletePreviewThree gør i den rigtige app).
   vcRtDiag = { hentMs: 0, nedskaleringMs: 0, soegningMs: 0, tegningMs: 0, filterMs: 0, framesTracked: 0, framesSkipped: 0 };
   const t0 = performance.now();
-  const { path, ok } = await vcRealtimeTrackWindow({ x: barPt.x, y: barPt.y, r: barPt.r }, windowStart, windowEnd);
+  const { path, ok } = await vcRealtimeTrackWindow({ x: barPt.x, y: barPt.y, r: barPt.r }, windowStart, windowEnd, preSeek);
   const ms = performance.now() - t0;
   // ORDRE 116 · commit 3: SAMME efterbehandling som vcAthletePreviewThree gør
   // i den rigtige app (public/videocoach.html) - freezeRawAcquisition +
@@ -399,6 +518,58 @@ window.runRealtimePreview = async function(barPt, windowStart, windowEnd, lift) 
     rtDiag: vcRtDiag,
     visualPtsInfo,
   };
+}
+window.runRealtimePreview = async function(barPt, windowStart, windowEnd, lift) {
+  strokes.length = 0;
+  return trackOneWindow(barPt, windowStart, windowEnd, lift, null);
+};
+// ORDRE 121 · commit 1/3: samme sekventielle skygge-seek-mønster som
+// vcAthletePreviewThree selv bruger (næste vindues seek startet MENS forrige
+// vindues efterbehandling kører) - IKKE et 1:1-udtræk (vcAthletePreviewThree
+// er tæt vævet ind i DOM/UI-tilstand: say(), setAthleteState, trimStart/
+// paintTrim, strokes, vcAthleteUploadAndGo), men bruger kun de udtrukne,
+// ægte funktioner (vcRealtimeTrackWindow/rtSeekTo) til selve arbejdet, i
+// SAMME rækkefølge/pendingSeek-mønster som public/videocoach.html. Nødvendig
+// for overhovedet at kunne måle "mellem vinduer"-skyggen: et løfte startet i
+// ét page.evaluate()-kald kan ikke overleve til det NÆSTE evaluate-kald fra
+// Node, så vinduerne skal spores i én sammenhængende kørsel her i browseren,
+// ikke som separate kald fra main() (se RAPPORT-121.md).
+window.runVisMigNu = async function(barPt, windowsList, lift) {
+  strokes.length = 0;
+  const results = [];
+  let pendingSeek = null;
+  for (let k = 0; k < windowsList.length; k++) {
+    const w = windowsList[k];
+    const r = await trackOneWindow(barPt, w.start, w.end, lift, pendingSeek);
+    const nextW = windowsList[k + 1];
+    pendingSeek = nextW ? rtSeekTo(nextW.start) : null;
+    results.push(r);
+  }
+  return results;
+};
+// ORDRE 124 · commit 2: samme som runVisMigNu ovenfor, men kalder SELV
+// vcRunRepWindowsPresearch først (i SAMME evaluate()-kald, ligesom den
+// rigtige vcAthletePreviewThree gør) og bruger dens firstWindowSeek som
+// pendingSeek for VINDUE 1 - den rettelse denne ordre lavede i
+// videocoach.html. runVisMigNu ovenfor kan IKKE modtage det løfte fra en
+// tidligere, separat page.evaluate()-kaldt presearch (et løfte overlever
+// ikke evaluate()-grænsen fra Node, se kommentaren ved runVisMigNu), så
+// --windows=new --seek=new bruger denne i stedet for at teste den RIGTIGE,
+// rettede kode-vej 1:1 - windowsList styrer stadig hvilke vinduer der
+// rent faktisk spores/scores, presearchs EGNE fundne vinduer bruges ikke.
+window.runVisMigNuFromPresearch = async function(barPt, setStart, setEnd, windowsList, lift) {
+  strokes.length = 0;
+  const presearch = await vcRunRepWindowsPresearch(setStart, setEnd);
+  const results = [];
+  let pendingSeek = presearch.firstWindowSeek || null;
+  for (let k = 0; k < windowsList.length; k++) {
+    const w = windowsList[k];
+    const r = await trackOneWindow(barPt, w.start, w.end, lift, pendingSeek);
+    const nextW = windowsList[k + 1];
+    pendingSeek = nextW ? rtSeekTo(nextW.start) : null;
+    results.push(r);
+  }
+  return results;
 };
 <\/script>
 </body></html>`
@@ -503,35 +674,191 @@ async function main() {
   const endT = mode === 'synthetic' ? groundTruth.duration : dims.duration
   const full = await page.evaluate(([s, e, p, l]) => window.runAnalysis(s, e, p, l), [startT, endT, { x: p0Full.x, y: p0Full.y, r: plateR }, lift])
 
+  // ORDRE 121 · commit 2: vinduerne til "Vis mig nu" kommer nu fra PRESEARCH
+  // (vcRunRepWindowsPresearch, samme funktion den rigtige app selv kalder) -
+  // ALDRIG fra den fulde analyses egen rep-detektion, som den rigtige "Vis
+  // mig nu" aldrig kører. Den fulde analyse (full.repWindows) er kun en
+  // fallback hvis presearch ikke finder noget (og selve KILDEN til facit-
+  // banen/truthFn nedenfor - det ændres ikke).
+  //
+  // Presearch skal (som i den rigtige app) have det BEKRÆFTEDE SÆT-interval,
+  // ikke hele rå-filen: et rigtigt klip har typisk dødtid før/efter selve
+  // løftet (opsætning, gå væk), og presearch tog fejl af den støj som ægte
+  // reps, da denne bænk (uden en atlet der selv trimmer) i første forsøg gav
+  // den HELE klippets varighed. Det bekræftede sæt findes her ved at bruge
+  // den fulde analyses egen (mere præcise) rep-detektion som et sted at
+  // centrere et lille margin omkring - en rimelig stand-in for atletens eget
+  // "spol til lige før/efter", ikke en ændring af selve presearch-funktionen.
+  // 0,05s margin - en balance mellem to modsatrettede grænser, begge afprøvet
+  // og dokumenteret i RAPPORT-121.md: 0s margin gør spændet (0,56s på Marcs
+  // klip) kortere end presearchs EGEN minimumsgrænse (span > 0,6s), som
+  // fejler helt (ok:false); et rundhåndet margin (afprøvet: 1,0s og 0,2s)
+  // trækker til gengæld irrelevant dødtid ind i vinduet (vcFindRepAnchors
+  // finder kun PAUSER INDENI settet - for ét enkelt rep er der ingen at
+  // finde, så vinduet bliver ALTID hele sæt-intervallet, margin inklusive) og
+  // ødelagde sporingen (maxPx 64-89px, over grænsen 35px). 0,05s er den
+  // mindste værdi der får presearch over sin egen minimumsgrænse på netop
+  // dette klip - stadig en ægte grænse for hvor tæt en ENKELT-reps bænk
+  // (uden en atlet der selv trimmer) kan efterligne det virkelige flow. Den
+  // rigtige app ville i øvrigt ALDRIG vise "Vis mig nu" for et sæt med kun 1
+  // fundet vindue (vcAthletePreviewThree kræver mindst 3, se dens egen
+  // guard) - denne bænk tester vinduet alligevel, udelukkende til diagnostik
+  // (se pickThreeWindows). Netop derfor bygger commit 3 et rigtigt
+  // multi-reps-klip.
+  const PRESEARCH_SET_MARGIN_S = 0.05
+  // ORDRE 124 · commit 1: fandt at "confirmed set"-standinen herunder (uden
+  // fundne full.repWindows) faldt tilbage til PRÆCIS dims.duration som
+  // sæt-slut - vcRunRepWindowsPresearch's eget anchor+0.15-loft
+  // (`Math.min(setEnd, ...)`) endte derfor med at bygge et vindue der sluttede
+  // PRÆCIS ved video.duration. Real-tids-sporing (vcRealtimeTrackWindow) af
+  // netop det vindue crasher headless Chromium HELT UAFHÆNGIGT af
+  // --seek=old|new (reproduceret begge veje, se RAPPORT-124.md) - en seek
+  // helt ud til den sidste, ofte ikke-eksisterende decodede frame er en kendt
+  // skrøbelig kant i browseres videodekodere, ikke en ordre 121/124-
+  // regression. SEEK_SAFETY_MARGIN_S holder sæt-slutningen (kun denne
+  // bænks EGEN stand-in for atletens trim, se kommentaren ovenfor - ikke
+  // vcRunRepWindowsPresearch selv) én frame inden for klippets rapporterede
+  // varighed, så et vindue aldrig sigter efter den sidste, upålidelige frame.
+  const SEEK_SAFETY_MARGIN_S = 1 / 30
+  const presearchSetStart = (mode === 'real' && full.repWindows.length)
+    ? Math.max(0, full.repWindows[0].start - PRESEARCH_SET_MARGIN_S) : 0
+  const presearchSetEnd = Math.max(presearchSetStart, Math.min(dims.duration - SEEK_SAFETY_MARGIN_S,
+    (mode === 'real' && full.repWindows.length) ? full.repWindows.at(-1).end + PRESEARCH_SET_MARGIN_S : dims.duration))
   if (mode === 'real') {
-    windows = (realMeta.windows && realMeta.windows.length) ? realMeta.windows : full.repWindows
-    if (!windows.length) {
-      // ORDRE 120 · commit 2: uden en fundet rep bruges HELE klippets spænd
-      // som ét "Vis mig nu"-vindue - det er ikke hvad "Vis mig nu" simulerer
-      // (en kort rep-forhåndsvisning, ikke fuld-klip-sporing), og et langt
-      // nok spænd fik headless Chromium til at crashe ("Target crashed") på
-      // Marcs eget klip da gitter-søgningens startpunkt var dårligt. Loft på
-      // 2s - nok til én rep, aldrig hele klippet.
-      const capped = Math.min(full.times.at(-1) ?? endT, (full.times[0] ?? startT) + 2)
-      console.log('Ingen gentagelser fundet automatisk i den fulde analyse - bruger de første 2s af det analyserede spænd som ét vindue.')
-      windows = [{ start: full.times[0] ?? startT, end: capped }]
+    if (realMeta.windows && realMeta.windows.length) {
+      windows = realMeta.windows
+      console.log(`${windows.length} gentagelse(r) fra sidecar-filen: ` + windows.map(w => `${w.start.toFixed(2)}-${w.end.toFixed(2)}s`).join(', '))
+    } else if (WINDOWS_MODE === 'old') {
+      // ORDRE 124 · commit 1: --windows=old genskaber ordre 116/120's logik
+      // FØR ordre 121 · commit 2 - vinduerne kommer KUN fra den fulde
+      // analyses egen rep-detektion, presearch kaldes slet ikke.
+      if (full.repWindows.length) {
+        windows = full.repWindows
+        console.log(`${windows.length} gentagelse(r) fundet automatisk (den fulde analyses egen rep-detektion - --windows=old, presearch ikke brugt): ` +
+          windows.map(w => `${w.start.toFixed(2)}-${w.end.toFixed(2)}s`).join(', '))
+      } else {
+        const capped = Math.min(full.times.at(-1) ?? endT, (full.times[0] ?? startT) + 2)
+        console.log('Ingen gentagelser fundet automatisk i den fulde analyse - bruger de første 2s af det analyserede spænd som ét vindue.')
+        windows = [{ start: full.times[0] ?? startT, end: capped }]
+      }
     } else {
-      console.log(`${windows.length} gentagelse(r) fundet ${realMeta.windows?.length ? '(fra sidecar-filen)' : 'automatisk (den fulde analyses egen rep-detektion)'}: ` +
-        windows.map(w => `${w.start.toFixed(2)}-${w.end.toFixed(2)}s`).join(', '))
+      const presearch = await page.evaluate(([s, e]) => window.runRepWindowsPresearch(s, e), [presearchSetStart, presearchSetEnd])
+      if (presearch.ok && presearch.windows.length) {
+        windows = presearch.windows
+        console.log(`${windows.length} gentagelse(r) fundet automatisk (presearch, ${presearch.ms.toFixed(0)}ms - samme vindues-kilde som den rigtige "Vis mig nu"): ` +
+          windows.map(w => `${w.start.toFixed(2)}-${w.end.toFixed(2)}s`).join(', '))
+      } else if (full.repWindows.length) {
+        windows = full.repWindows
+        console.log('Presearch fandt ingen tydelige gentagelser - falder tilbage til den fulde analyses egen rep-detektion for vindues-GRÆNSERNE (kun til denne bænk; den rigtige "Vis mig nu" har ingen fuld analyse at falde tilbage på).')
+      } else {
+        // ORDRE 120 · commit 2: uden en fundet rep bruges HELE klippets spænd
+        // som ét "Vis mig nu"-vindue - det er ikke hvad "Vis mig nu" simulerer
+        // (en kort rep-forhåndsvisning, ikke fuld-klip-sporing), og et langt
+        // nok spænd fik headless Chromium til at crashe ("Target crashed") på
+        // Marcs eget klip da gitter-søgningens startpunkt var dårligt. Loft på
+        // 2s - nok til én rep, aldrig hele klippet. (Genindsat under ORDRE 124's
+        // rebase - ordre 121 · commit 2's egen sidste-udvej droppede loftet.)
+        const capped = Math.min(full.times.at(-1) ?? endT, (full.times[0] ?? startT) + 2)
+        console.log('Ingen gentagelser fundet automatisk - bruger de første 2s af det analyserede spænd som ét vindue.')
+        windows = [{ start: full.times[0] ?? startT, end: capped }]
+      }
     }
   }
 
   const truthFn = mode === 'synthetic' ? truePosAt : makePathInterpolator(full.times, full.pts)
-
-  // ---------- B) "Vis mig nu": op til tre vinduer, sekventielt (samme som en atlet der beder om tre reps) ----------
   const threeWindows = pickThreeWindows(windows)
-  const threeResults = []
-  let threeMs = 0
-  for (const w of threeWindows) {
-    const p0 = truthFn(w.start)
-    const r = await page.evaluate(([barPt, s, e, l]) => window.runRealtimePreview(barPt, s, e, l), [{ x: p0.x, y: p0.y, r: plateR }, w.start, w.end, lift])
-    threeResults.push(r)
-    threeMs += r.ms
+  const p0s = threeWindows.map(w => truthFn(w.start))
+  // ORDRE 124 · commit 3: facit PR. VINDUE for et klippet klip bygget af
+  // IDENTISKE gentagne kopier (test-clips\vis-mig-nu-4-reps-syntetisk.mp4,
+  // sidecar-feltet "repeatedIdenticalWindows": true - se dens .meta.json).
+  // Uden dette var facit ÉT globalt: den fulde analyses egen sammenhængende,
+  // seek-baserede spor hen over HELE det sammensatte klip. Det spor er kun
+  // troværdigt frem til FØRSTE klip-samling (concat-demuxerens hårde snit
+  // mellem to identiske kopier) - en kontinuerlig tracker der forventer
+  // glidende bevægelse, men i stedet møder et spring tilbage til klippets
+  // eget starttidspunkt (den næste kopi begynder forfra), kan miste eller
+  // fejlgenfinde punktet dér, hvorefter HELE resten af det globale spor
+  // drifter væk fra virkeligheden - ikke en fejl i selve realtids-sporingen
+  // (vindue 1, FØR ethvert snit, ramte fint), men i FACIT for vindue 2+.
+  // Da alle vinduer er pixel-identiske gentagelser af vindue 1's egen
+  // bevægelse (kun forskudt i tid), er facit for vindue i > 0 i stedet
+  // vindue 0's EGEN (ubeskadigede, før noget snit) del af det globale spor,
+  // forskudt tilbage til vindue 0's tidsramme - ikke en ny, uafhængig
+  // analyse (unødvendig, indholdet er jo identisk).
+  const repeatedIdenticalWindows = mode === 'real' && realMeta.repeatedIdenticalWindows === true && threeWindows.length > 1
+  function truthFnForWindow(i) {
+    if (!repeatedIdenticalWindows) return truthFn
+    const offset = threeWindows[i].start - threeWindows[0].start
+    return t => truthFn(t - offset)
+  }
+  if (repeatedIdenticalWindows) console.log(`repeatedIdenticalWindows: facit for vindue 2+ er vindue 1's eget spor, tidsforskudt (ikke ét globalt facit hen over klip-samlingerne).`)
+
+  // ---------- B) "Vis mig nu": op til tre vinduer ----------
+  // ORDRE 124 · commit 1: én kørsel måler nu ÉN navngiven kombination
+  // (--windows=old|new × --seek=old|new - se filens toptekst), ikke længere
+  // en fast VARM+KOLD-parring. KOLD viste sig kontamineret så snart
+  // --windows=new: presearch-kaldet der FANDT vinduerne (ovenfor) skygge-
+  // seeker allerede til vindue 1 som bivirkning (ordre 121 · commit 1's
+  // egen ændring i vcRunRepWindowsPresearch), så en efterfølgende "kold"
+  // sekventiel måling på SAMME side aldrig betalte den fulde seek igen - det
+  // var ikke en ærlig "uden ordre 121 · commit 1"-baseline. De fire
+  // kombinationer måles derfor alle på en FRISK side (ingen fuld analyse har
+  // rørt videoen), så den eneste forskel mellem dem rent faktisk er den
+  // navngivne variabel - se RAPPORT-124.md for tallene og hvorfor.
+  //   --seek=new: window.runVisMigNu (harnessets egen, HÅNDSKREVNE gengivelse
+  //     af vcAthletePreviewThree's pendingSeek-mønster - se kommentaren ved
+  //     dens definition ovenfor) - skygge-seeker MELLEM vinduer. Findes
+  //     vinduerne via --windows=new, primes vindue 1 desuden af presearchs
+  //     EGEN skygge-seek (samme kald som fandt vinduerne ovenfor, gentaget
+  //     her på den friske side for at udløse den bivirkning realistisk -
+  //     dens egne fundne vinduer bruges ikke, threeWindows styrer stadig).
+  //   --seek=old: sekventielle, enkeltstående kald (window.runRealtimePreview
+  //     pr. vindue) - ingen skygge er mulig her (hvert kald er sin egen
+  //     page.evaluate(), et løfte kan ikke overleve til det næste - se
+  //     kommentaren ved runVisMigNu's definition), og HARNESS_HTML er desuden
+  //     bygget fra --seek=old's ÆLDRE videocoach.html-revision (findOldSeekRevision
+  //     ovenfor), som slet ikke har skygge-koden.
+  let comboResults = [], comboMs = 0
+  if (mode === 'synthetic') {
+    for (let i = 0; i < threeWindows.length; i++) {
+      const w = threeWindows[i], p0 = p0s[i]
+      const r = await page.evaluate(([barPt, s, e, l]) => window.runRealtimePreview(barPt, s, e, l), [{ x: p0.x, y: p0.y, r: plateR }, w.start, w.end, lift])
+      comboResults.push(r); comboMs += r.ms
+    }
+  } else if (SEEK_MODE === 'new') {
+    const pageFresh = await browser.newPage({ viewport: { width: 360, height: 640 } })
+    pageFresh.on('pageerror', err => console.error('[browser pageerror, frisk side]', err))
+    await pageFresh.setContent(HARNESS_HTML, { waitUntil: 'load' })
+    await pageFresh.evaluate(() => window.__loaded)
+    await pageFresh.evaluate(([w, h]) => window.__initCanvasDims(w, h), [dims.w, dims.h])
+    await pageFresh.evaluate(r => window.__setPlateRadius(r), plateR)
+    const barPtForCombo = p0s[0]
+    if (WINDOWS_MODE === 'new') {
+      // ORDRE 124 · commit 2: runVisMigNuFromPresearch kalder presearch OG
+      // sporer alle vinduer i ÉT evaluate()-kald, så dens firstWindowSeek kan
+      // gives videre som pendingSeek for vindue 1 - den rettede kode-vej (se
+      // videocoach.html og kommentaren ved denne funktions definition).
+      comboResults = await pageFresh.evaluate(([bp, s, e, wins, l]) => window.runVisMigNuFromPresearch(bp, s, e, wins, l),
+        [{ x: barPtForCombo.x, y: barPtForCombo.y, r: plateR }, presearchSetStart, presearchSetEnd, threeWindows, lift])
+    } else {
+      comboResults = await pageFresh.evaluate(([bp, wins, l]) => window.runVisMigNu(bp, wins, l),
+        [{ x: barPtForCombo.x, y: barPtForCombo.y, r: plateR }, threeWindows, lift])
+    }
+    comboMs = comboResults.reduce((s, r) => s + r.ms, 0)
+    await pageFresh.close()
+  } else {
+    const pageFresh = await browser.newPage({ viewport: { width: 360, height: 640 } })
+    pageFresh.on('pageerror', err => console.error('[browser pageerror, frisk side]', err))
+    await pageFresh.setContent(HARNESS_HTML, { waitUntil: 'load' })
+    await pageFresh.evaluate(() => window.__loaded)
+    await pageFresh.evaluate(([w, h]) => window.__initCanvasDims(w, h), [dims.w, dims.h])
+    await pageFresh.evaluate(r => window.__setPlateRadius(r), plateR)
+    for (let i = 0; i < threeWindows.length; i++) {
+      const w = threeWindows[i], p0 = p0s[i]
+      const r = await pageFresh.evaluate(([barPt, s, e, l]) => window.runRealtimePreview(barPt, s, e, l), [{ x: p0.x, y: p0.y, r: plateR }, w.start, w.end, lift])
+      comboResults.push(r); comboMs += r.ms
+    }
+    await pageFresh.close()
   }
   const threePlayedS = threeWindows.reduce((s, w) => s + (w.end - w.start), 0)
 
@@ -539,11 +866,11 @@ async function main() {
 
   // ---------- Evaluering ----------
   const fullDev = deviation(full.pts, full.times, truthFn)
-  const threeDev = threeResults.map(r => deviation(r.pts, r.times, truthFn))
-  const threeHops = threeResults.map(r => countHops(r.pts, r.times, truthFn))
-  const threeFrames = threeResults.map((r, i) => frameStats(r, threeWindows[i]))
-  const worstThreeDev = threeDev.length
-    ? { maxPx: Math.max(...threeDev.map(d => d.maxPx)), meanPx: Math.max(...threeDev.map(d => d.meanPx)) }
+  const comboDev = comboResults.map((r, i) => deviation(r.pts, r.times, truthFnForWindow(i)))
+  const comboHops = comboResults.map((r, i) => countHops(r.pts, r.times, truthFnForWindow(i)))
+  const comboFrames = comboResults.map((r, i) => frameStats(r, threeWindows[i]))
+  const worstComboDev = comboDev.length
+    ? { maxPx: Math.max(...comboDev.map(d => d.maxPx)), meanPx: Math.max(...comboDev.map(d => d.meanPx)) }
     : { maxPx: 0, meanPx: 0 }
 
   // Tolerance: kameravaklen alene flytter skiven op til ~4.4px på det tegnede
@@ -558,23 +885,24 @@ async function main() {
 
   const fullFoundAllReps = full.pts.length >= windows.length * MIN_FRAMES_PER_REP * 0.7
   const fullOk = full.ok && fullDev.meanPx <= TOLERANCE_MEAN_PX && fullDev.maxPx <= TOLERANCE_MAX_PX && fullFoundAllReps
-  const threeOk = threeResults.length > 0 && threeResults.every(r => r.ok) &&
-    worstThreeDev.meanPx <= TOLERANCE_MEAN_PX && worstThreeDev.maxPx <= TOLERANCE_MAX_PX
+  const comboOk = comboResults.length > 0 && comboResults.every(r => r.ok) &&
+    worstComboDev.meanPx <= TOLERANCE_MEAN_PX && worstComboDev.maxPx <= TOLERANCE_MAX_PX
   const REALTIME_MAX_FACTOR = 1.1
-  const realtimeFactor = threePlayedS > 0 ? threeMs / 1000 / threePlayedS : Infinity
+  const realtimeFactor = threePlayedS > 0 ? comboMs / 1000 / threePlayedS : Infinity
   const realtimeFastEnough = realtimeFactor <= REALTIME_MAX_FACTOR
 
-  const pass = fullOk && threeOk && realtimeFastEnough
+  const pass = fullOk && comboOk && realtimeFastEnough
 
   console.log(`\n== Klip: ${mode === 'real' ? `test-clips\\${realClipName} (RIGTIGT klip, ${lift}, facit = den fulde analyses egen bane)` : 'det tegnede klip (docs/videocoach/clip-cache/synthetic-set.mp4, facit = den kendte tegnede bane)'} ==`)
+  if (mode === 'real') console.log(`== Kombination: --windows=${WINDOWS_MODE} --seek=${SEEK_MODE} ==`)
   console.log('== A) Fuld analyse (uændret siden ordre 73) ==')
   console.log(`ok=${full.ok} frames=${full.pts.length} tid=${full.ms.toFixed(1)}ms meanPx=${fullDev.meanPx.toFixed(2)} maxPx=${fullDev.maxPx.toFixed(2)}`)
-  console.log(`\n== B) "Vis mig nu" (${threeWindows.length} vindue(r): ${threeWindows.length < 3 ? 'færre end 3 fundet i klippet' : 'første, midt, sidste'} — realtids-vejen) — tal PR. VINDUE ==`)
-  threeResults.forEach((r, i) => {
-    const w = threeWindows[i], f = threeFrames[i], h = threeHops[i]
+  console.log(`\n== B) "Vis mig nu" (${threeWindows.length} vindue(r): ${threeWindows.length < 3 ? 'færre end 3 fundet i klippet' : 'første, midt, sidste'}) - denne GATER testen - tal PR. VINDUE ==`)
+  comboResults.forEach((r, i) => {
+    const w = threeWindows[i], f = comboFrames[i], h = comboHops[i]
     console.log(`  vindue ${i + 1} [${w.start.toFixed(2)}s-${w.end.toFixed(2)}s, ${(w.end - w.start).toFixed(2)}s afspillet]`)
     console.log(`    ok=${r.ok} frames sporet=${f.framesTracked} sprunget over=${f.framesSkipped} ms/frame=${f.msPerFrame.toFixed(1)} tid/afspillet=${f.timeRatio.toFixed(2)}x`)
-    console.log(`    afvigelse meanPx=${threeDev[i].meanPx.toFixed(2)} maxPx=${threeDev[i].maxPx.toFixed(2)} hop=${h.hops} (grænse ${h.hopSpeedPxS.toFixed(0)}px/s)`)
+    console.log(`    afvigelse meanPx=${comboDev[i].meanPx.toFixed(2)} maxPx=${comboDev[i].maxPx.toFixed(2)} hop=${h.hops} (grænse ${h.hopSpeedPxS.toFixed(0)}px/s)`)
     // ORDRE 116 · commit 1: pr.-frame-nedbrydningen fra videocoach.html's
     // egen instrumentering (vcRtDiag) - "tegning" er altid 0 her, headless
     // Chromium kører aldrig app'ens synlige render()-løkke (kun tracker-
@@ -588,14 +916,17 @@ async function main() {
     const vpi = r.visualPtsInfo
     console.log(`    visningsbane: raw+analysis sat=${vpi ? (vpi.hasRaw && vpi.hasAnalysis) : false} visualPts=${vpi?.visualPtsLength ?? 0} punkter, maks. forskydning fra rå bane=${vpi?.maxShiftFromRawPx?.toFixed(2) ?? 'n/a'}px`)
   })
-  console.log(`  samlet tid (${threeWindows.length} vindue(r)): ${threeMs.toFixed(1)}ms · samlet afspillet varighed: ${(threePlayedS * 1000).toFixed(1)}ms · forhold: ${realtimeFactor.toFixed(2)}x (grænse ${REALTIME_MAX_FACTOR}x)`)
+  console.log(`  samlet tid (${threeWindows.length} vindue(r)): ${comboMs.toFixed(1)}ms · samlet afspillet varighed: ${(threePlayedS * 1000).toFixed(1)}ms · forhold: ${realtimeFactor.toFixed(2)}x (grænse ${REALTIME_MAX_FACTOR}x)`)
   console.log(`\nTolerance: mean ≤ ${TOLERANCE_MEAN_PX}px, max ≤ ${TOLERANCE_MAX_PX}px (se kildekoden for begrundelsen).`)
   console.log(pass
     ? '\nGRØN: alle reps fundet i den fulde analyse, alle "Vis mig nu"-vinduer fundet inden for tolerance, og "Vis mig nu" var færdig senest 1,1x sin egen afspillede varighed.'
-    : `\nFEJL: ${!fullOk ? 'fuld analyse fejlede tolerancen eller fandt ikke alle reps. ' : ''}${!threeOk ? '"Vis mig nu" fejlede tolerancen. ' : ''}${!realtimeFastEnough ? `"Vis mig nu" tog ${realtimeFactor.toFixed(2)}x sin afspillede varighed, over grænsen ${REALTIME_MAX_FACTOR}x.` : ''}`)
+    : `\nFEJL: ${!fullOk ? 'fuld analyse fejlede tolerancen eller fandt ikke alle reps. ' : ''}${!comboOk ? '"Vis mig nu" fejlede tolerancen. ' : ''}${!realtimeFastEnough ? `"Vis mig nu" tog ${realtimeFactor.toFixed(2)}x sin afspillede varighed, over grænsen ${REALTIME_MAX_FACTOR}x.` : ''}`)
   if (mode === 'real' && threeWindows.length < 3) console.log(`\n(Kun ${threeWindows.length} gentagelse(r) i dette klip — et sæt på 3-5 reps giver et mere sigende billede, se docs/videocoach/TEST-CLIPS.md.)`)
   if (mode === 'synthetic') console.log('\n(Kører stadig mod det TEGNEDE klip — læg en rigtig telefonoptagelse i test-clips\\ for at måle mod virkeligheden.)')
-  process.exitCode = pass ? 0 : 1
+  // ORDRE 121 · commit 2: eksplicit process.exit (ikke kun exitCode) - to
+  // browser-sider kan efterlade en håndtag åben der ellers holder Node's
+  // event loop kørende i det uendelige, uden mere output.
+  process.exit(pass ? 0 : 1)
 }
 
-main().catch(err => { console.error(err); process.exitCode = 1 })
+main().catch(err => { console.error(err); process.exit(1) })
