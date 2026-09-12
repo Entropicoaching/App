@@ -100,6 +100,17 @@ const SEEK_MODE = flagValue('seek', 'new')
 for (const [name, v] of [['windows', WINDOWS_MODE], ['seek', SEEK_MODE]]) {
   if (v !== 'old' && v !== 'new') throw new Error(`verify-videocoach-clip: --${name} skal være "old" eller "new" (fik "${v}").`)
 }
+// ORDRE 134 · commit 2: --strategy vælger HVORDAN vindue 2/3's seek udføres,
+// kun no-op når --windows=old eller --seek=old (uændret gate for dem, se
+// runOneClip). 'current' = den rettede skygge-seek fra ordre 121/124
+// (standard, uændret). 'playthrough'/'fastseek'/'clone' er de tre forsøgte
+// veje fra ordrens "stå på skuldre" (rtAdvanceTo/rtFastSeekToOn/rtEnsureClone
+// i public/videocoach.html) - se RAPPORT-134.md for tallene og hvorfor kun
+// én (om nogen) blev beholdt i produktionskoden.
+const STRATEGY = flagValue('strategy', 'current')
+if (!['current', 'playthrough', 'fastseek', 'clone'].includes(STRATEGY)) {
+  throw new Error(`verify-videocoach-clip: --strategy skal være "current", "playthrough", "fastseek" eller "clone" (fik "${STRATEGY}").`)
+}
 
 const here = dirname(fileURLToPath(import.meta.url))
 const root = join(here, '..')
@@ -341,7 +352,10 @@ let vcTiming = { trackingStartedAt: null };
 // skriver til (public/videocoach.html, deklareret ved siden af VC_DIAG -
 // uden for det udtrukne ORDRE 80-blok, derfor stub'et her ligesom de andre
 // app-globals ovenfor).
-let vcRtDiag = { hentMs: 0, nedskaleringMs: 0, soegningMs: 0, tegningMs: 0, filterMs: 0, framesTracked: 0, framesSkipped: 0 };
+// ORDRE 134 · commit 1: seekMs/foersteFrameMs/sporingMs tilføjet (samme
+// felter som public/videocoach.html - se vcRealtimeTrackWindow), til
+// tabellen pr. vindue nedenfor.
+let vcRtDiag = { seekMs: 0, foersteFrameMs: 0, sporingMs: 0, hentMs: 0, nedskaleringMs: 0, soegningMs: 0, tegningMs: 0, filterMs: 0, framesTracked: 0, framesSkipped: 0 };
 // ORDRE 121 · commit 2: stubs for vcRunRepWindowsPresearch's egne vagter -
 // aldrig sande her (ingen wizard/plade-bekræftelse kører i denne bænk).
 let wizard = null, plateConfirm = null;
@@ -492,13 +506,15 @@ window.runRepWindowsPresearch = async function(setStart, setEnd) {
 // ORDRE 121 · commit 3: fælles kerne for ét vindue, brugt af BÅDE den
 // enkeltstående window.runRealtimePreview (KOLD - se main()) og
 // window.runVisMigNu (VARM, flere vinduer i træk - se den nedenfor).
-async function trackOneWindow(barPt, windowStart, windowEnd, lift, preSeek) {
+async function trackOneWindow(barPt, windowStart, windowEnd, lift, preSeek, opts = {}) {
   tracking = true;
   // ORDRE 116 · commit 1: nulstil pr.-frame-profilen for netop dette vindue
   // (samme reset som vcAthletePreviewThree gør i den rigtige app).
-  vcRtDiag = { hentMs: 0, nedskaleringMs: 0, soegningMs: 0, tegningMs: 0, filterMs: 0, framesTracked: 0, framesSkipped: 0 };
+  vcRtDiag = { seekMs: 0, foersteFrameMs: 0, sporingMs: 0, hentMs: 0, nedskaleringMs: 0, soegningMs: 0, tegningMs: 0, filterMs: 0, framesTracked: 0, framesSkipped: 0 };
   const t0 = performance.now();
-  const { path, ok } = await vcRealtimeTrackWindow({ x: barPt.x, y: barPt.y, r: barPt.r }, windowStart, windowEnd, preSeek);
+  // ORDRE 134 · commit 2: opts (sourceVideo/pauseAtEnd) videresendt 1:1 til
+  // vcRealtimeTrackWindow - default {} giver PRÆCIS samme kald som før.
+  const { path, ok } = await vcRealtimeTrackWindow({ x: barPt.x, y: barPt.y, r: barPt.r }, windowStart, windowEnd, preSeek, opts);
   const ms = performance.now() - t0;
   // ORDRE 116 · commit 3: SAMME efterbehandling som vcAthletePreviewThree gør
   // i den rigtige app (public/videocoach.html) - freezeRawAcquisition +
@@ -573,6 +589,80 @@ window.runVisMigNuFromPresearch = async function(barPt, setStart, setEnd, window
     const nextW = windowsList[k + 1];
     pendingSeek = nextW ? rtSeekTo(nextW.start) : null;
     results.push(r);
+  }
+  return results;
+};
+
+// ORDRE 134 · commit 2(a): "playthrough" - INGEN seek mellem vinduerne.
+// Vindue 1 seekes én gang (presearchs egen skygge-seek, uændret), men
+// derefter lades videoen blive ved med at spille (opts.pauseAtEnd=false på
+// alle vinduer undtagen det sidste) - rtAdvanceTo (public/videocoach.html)
+// venter blot på at den ALLEREDE afspillende video selv når frem til næste
+// vindues start, sporing slået fra i mellemrummet (ingen drawImage/match).
+window.runVisMigNuFromPresearchPlaythrough = async function(barPt, setStart, setEnd, windowsList, lift) {
+  strokes.length = 0;
+  const presearch = await vcRunRepWindowsPresearch(setStart, setEnd);
+  const results = [];
+  let pendingSeek = presearch.firstWindowSeek || null;
+  for (let k = 0; k < windowsList.length; k++) {
+    const w = windowsList[k];
+    const isLast = k === windowsList.length - 1;
+    const r = await trackOneWindow(barPt, w.start, w.end, lift, pendingSeek, { pauseAtEnd: isLast });
+    const nextW = windowsList[k + 1];
+    pendingSeek = nextW ? rtAdvanceTo(video, nextW.start) : null;
+    results.push(r);
+  }
+  return results;
+};
+
+// ORDRE 134 · commit 2(b): "fastseek" - samme skygge-mønster som den
+// nuværende, rettede kode (runVisMigNuFromPresearch ovenfor), men de
+// MELLEMLIGGENDE seeks (vindue 2, 3, ...) bruger video.fastSeek() i stedet
+// for at sætte currentTime direkte (rtFastSeekToOn, public/videocoach.html) -
+// vindue 1's seek (presearchs egen) er uændret, ude for denne ordres
+// grænser at ændre (delt med den almindelige sæt-grænse-forudsøgning).
+window.runVisMigNuFromPresearchFastSeek = async function(barPt, setStart, setEnd, windowsList, lift) {
+  strokes.length = 0;
+  const presearch = await vcRunRepWindowsPresearch(setStart, setEnd);
+  const results = [];
+  let pendingSeek = presearch.firstWindowSeek || null;
+  for (let k = 0; k < windowsList.length; k++) {
+    const w = windowsList[k];
+    const r = await trackOneWindow(barPt, w.start, w.end, lift, pendingSeek);
+    const nextW = windowsList[k + 1];
+    pendingSeek = nextW ? rtFastSeekToOn(video, nextW.start) : null;
+    results.push(r);
+  }
+  return results;
+};
+
+// ORDRE 134 · commit 2(c): "clone" - en skjult video-klon (rtEnsureClone,
+// public/videocoach.html) forudsøges til vindue k+1 MENS vindue k's EGEN
+// sporing (på det andet, aktive element) stadig kører - et helt vindues
+// varighed som skygge i stedet for blot efterbehandlingens få ms. De to
+// elementer bytter rolle for hvert vindue (dobbelt-bufring): "active" er det
+// element der lige nu spores/vises, "idle" det der forudsøger NÆSTE+1
+// vindue. Med netop 3 vinduer (altid ulige antal her) ender "active" tilbage
+// på selve video - ingen afsluttende re-sync nødvendig.
+window.runVisMigNuFromPresearchClone = async function(barPt, setStart, setEnd, windowsList, lift) {
+  strokes.length = 0;
+  const presearch = await vcRunRepWindowsPresearch(setStart, setEnd);
+  const results = [];
+  let active = video, idle = rtEnsureClone();
+  let pendingSeek = presearch.firstWindowSeek || null;
+  for (let k = 0; k < windowsList.length; k++) {
+    const w = windowsList[k];
+    // Start NÆSTE vindues seek på DET LEDIGE element FØR dette vindues egen
+    // sporing overhovedet starter - hele dette vindues spilletid (typisk
+    // 0,5-2,5s) bliver dermed skygge, ikke kun efterbehandlingens få ms
+    // (sammenlign med den nuværende, rettede kode's blotte
+    // freezeRawAcquisition/analyzePath-vindue, ordre 121/124).
+    const nextW = windowsList[k + 1];
+    const idleSeekForNext = nextW ? rtSeekToOn(idle, nextW.start) : null;
+    const r = await trackOneWindow(barPt, w.start, w.end, lift, pendingSeek, { sourceVideo: active });
+    results.push(r);
+    [active, idle] = [idle, active];
+    pendingSeek = idleSeekForNext;
   }
   return results;
 };
@@ -850,8 +940,18 @@ async function runOneClip(browser, mode, clipPathForClip, realMeta, realClipName
       // sporer alle vinduer i ÉT evaluate()-kald, så dens firstWindowSeek kan
       // gives videre som pendingSeek for vindue 1 - den rettede kode-vej (se
       // videocoach.html og kommentaren ved denne funktions definition).
-      comboResults = await pageFresh.evaluate(([bp, s, e, wins, l]) => window.runVisMigNuFromPresearch(bp, s, e, wins, l),
-        [{ x: barPtForCombo.x, y: barPtForCombo.y, r: plateR }, presearchSetStart, presearchSetEnd, threeWindows, lift])
+      // ORDRE 134 · commit 2: --strategy vælger hvilken af de fire
+      // window.runVisMigNuFromPresearch*-varianter der kaldes - alle fire
+      // deler PRÆCIS samme presearch/vindues-opsætning ovenfor, kun HVORDAN
+      // vindue 2/3's seek udføres varierer (se funktionernes definition).
+      const STRATEGY_FN = {
+        current: 'runVisMigNuFromPresearch',
+        playthrough: 'runVisMigNuFromPresearchPlaythrough',
+        fastseek: 'runVisMigNuFromPresearchFastSeek',
+        clone: 'runVisMigNuFromPresearchClone',
+      }[STRATEGY]
+      comboResults = await pageFresh.evaluate(([bp, s, e, wins, l, fnName]) => window[fnName](bp, s, e, wins, l),
+        [{ x: barPtForCombo.x, y: barPtForCombo.y, r: plateR }, presearchSetStart, presearchSetEnd, threeWindows, lift, STRATEGY_FN])
     } else {
       comboResults = await pageFresh.evaluate(([bp, wins, l]) => window.runVisMigNu(bp, wins, l),
         [{ x: barPtForCombo.x, y: barPtForCombo.y, r: plateR }, threeWindows, lift])
@@ -906,7 +1006,7 @@ async function runOneClip(browser, mode, clipPathForClip, realMeta, realClipName
   const pass = fullOk && comboOk && realtimeFastEnough
 
   console.log(`\n== Klip: ${mode === 'real' ? `test-clips\\${realClipName} (RIGTIGT klip, ${lift}, facit = den fulde analyses egen bane)` : 'det tegnede klip (docs/videocoach/clip-cache/synthetic-set.mp4, facit = den kendte tegnede bane)'} ==`)
-  if (mode === 'real') console.log(`== Kombination: --windows=${WINDOWS_MODE} --seek=${SEEK_MODE} ==`)
+  if (mode === 'real') console.log(`== Kombination: --windows=${WINDOWS_MODE} --seek=${SEEK_MODE} --strategy=${STRATEGY} ==`)
   console.log('== A) Fuld analyse (uændret siden ordre 73) ==')
   console.log(`ok=${full.ok} frames=${full.pts.length} tid=${full.ms.toFixed(1)}ms meanPx=${fullDev.meanPx.toFixed(2)} maxPx=${fullDev.maxPx.toFixed(2)}`)
   console.log(`\n== B) "Vis mig nu" (${threeWindows.length} vindue(r): ${threeWindows.length < 3 ? 'færre end 3 fundet i klippet' : 'første, midt, sidste'}) - denne GATER testen - tal PR. VINDUE ==`)
@@ -921,6 +1021,11 @@ async function runOneClip(browser, mode, clipPathForClip, realMeta, realClipName
     // koden er udtrukket, se docs/videocoach/TID-PR-FRAME.md).
     const d = r.rtDiag, fc = Math.max(1, d.framesTracked + d.framesSkipped)
     console.log(`    pr. frame: hent=${(d.hentMs / fc).toFixed(2)}ms nedskaler=${(d.nedskaleringMs / fc).toFixed(2)}ms søg=${(d.soegningMs / fc).toFixed(2)}ms tegn=${(d.tegningMs / fc).toFixed(2)}ms(*) filter(total)=${d.filterMs.toFixed(2)}ms  [(*) altid 0 headless, se note]`)
+    // ORDRE 134 · commit 1: tabel PR. VINDUE - seek-tid, første-frame-tid,
+    // sporing (hele rVFC-løkkens vægtid), tegning (altid 0 headless, se
+    // note ovenfor) og x realtid for NETOP dette vindue - se
+    // vcRealtimeTrackWindow i public/videocoach.html for hvor buckets sættes.
+    console.log(`    pr. vindue: seek=${d.seekMs.toFixed(1)}ms 1.frame=${d.foersteFrameMs.toFixed(1)}ms sporing=${d.sporingMs.toFixed(1)}ms tegn=${d.tegningMs.toFixed(1)}ms(*) samlet=${r.ms.toFixed(1)}ms (${(w.end - w.start) > 0 ? ((r.ms / 1000) / (w.end - w.start)).toFixed(2) : 'n/a'}x)`)
     // ORDRE 116 · commit 3: bekræfter at drawStroke tegner med den udglattede
     // visningsbane (path.analysis.visualPts), ikke den rå one-euro-bane -
     // samme efterbehandling som den rigtige app kører (freezeRawAcquisition +
