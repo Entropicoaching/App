@@ -36,6 +36,33 @@ To optagelser, lagt i `test-clips\`, kører automatisk med ovenstående:
 5. Hele løftet i billedet, skiven synlig fra start til slut.
 6. Ingen atletdata i filnavn eller metadata - kun løfteart, fx `dodloft-mork.mp4`.
 
+## Det realistiske syntetiske 4-reps-klip (ordre 139)
+
+`vis-mig-nu-4-reps-realistisk.mp4` retter en unøjagtighed fra det NÆSTE
+afsnits klip (bygget under ordre 121): dengang blev blot det FØRSTE sekund
+af Marcs klip skåret ud som "rep", uden hensyn til hvor den rigtige bevægelse
+faktisk lå - det gav 0,56s rep-vinduer, hverken realistiske eller hentet fra
+appens egen rep-detektion (se RAPPORT-134/139). Bygget af
+`scripts/make-realistic-test-clip.mjs` (`node scripts/make-realistic-test-
+clip.mjs`, kræver `marc-doedloeft-270.mov` i `test-clips\`) sådan:
+
+1. Det REELLE rep-vindue (0,00-2,55s) - fundet af app'ens egen presearch
+   (samme kilde "Vis mig nu" selv bruger), ikke en gættet slice.
+2. Strukket til 3,00s (inden for ordrens 2,5-3,5s-krav) VED AT GENTAGE
+   FRAMES (ffmpeg `setpts=1,176*PTS,fps=30`) - IKKE ved at afspille
+   langsommere: banen forbliver den samme, men klippet får et REALISTISK
+   antal fysiske frames pr. vindue (90 i stedet for det oprindelige 76),
+   ikke det samme antal spredt tyndere ud over mere tid.
+3. 4,00s stille-stang-pause mellem hver af de 4 reps (sidste frame frosset
+   via `tpad=stop_mode=clone`, samme teknik som næste afsnits klip - blot en
+   realistisk pause i stedet for 0,8s).
+4. 4 identiske kopier limet sammen (concat-demuxer) - `repeatedIdenticalWindows:
+   true` i sidecar-filen, samme grund som beskrevet i næste afsnit.
+
+Måler `npm run verify:videocoach-clip`s 1,10x-krav GRØNT (se RAPPORT-139.md
+for tabellen pr. vindue) - i modsætning til det ældre, kortere klip
+nedenfor, som nu kun er diagnostisk (se `test-clips.manifest.example.json`).
+
 ## Et syntetisk multi-reps-klip (identiske kopier limet sammen)
 
 Har du (endnu) kun et 1-reps-klip, kan `ffmpeg` klippe rep-vinduet ud og lime
