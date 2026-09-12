@@ -108,12 +108,14 @@ const syntheticClipPath = join(cacheDir, 'synthetic-set.mp4')
 const syntheticGtPath = join(cacheDir, 'synthetic-set.ground-truth.json')
 const testClipsDir = join(root, 'test-clips')
 
-// ---------- 0) Rigtigt klip eller det tegnede? ----------
-function findRealClip() {
-  if (!existsSync(testClipsDir)) return null
-  const files = readdirSync(testClipsDir).filter(f => /\.(mp4|mov)$/i.test(f)).sort()
-  if (files.length > 1) console.log(`Bemærk: ${files.length} klip fundet i test-clips\\ — bruger det alfabetisk første ("${files[0]}").`)
-  return files[0] || null
+// ---------- 0) Rigtige klip eller det tegnede? ----------
+// ORDRE 127 · commit 3: ALLE klip i test-clips\ (ikke kun det alfabetisk
+// første) - Marc lægger typisk mere end ét (lys skive-sæt + sort/sort-sæt,
+// se docs/videocoach/TEST-CLIPS.md), og de skal alle måles, ikke kun den
+// første scriptet snubler over.
+function findRealClips() {
+  if (!existsSync(testClipsDir)) return []
+  return readdirSync(testClipsDir).filter(f => /\.(mp4|mov)$/i.test(f)).sort()
 }
 function loadRealMeta(clipName) {
   const base = clipName.replace(/\.(mp4|mov)$/i, '')
@@ -156,24 +158,24 @@ function ensureMp4H264(srcPath) {
   return outPath
 }
 
-let mode = 'synthetic', clipPath = syntheticClipPath, realMeta = {}, realClipName = null
-const foundReal = findRealClip()
-if (foundReal) {
-  mode = 'real'
-  realClipName = foundReal
-  realMeta = loadRealMeta(foundReal)
-  clipPath = ensureMp4H264(join(testClipsDir, foundReal))
-} else {
+// ORDRE 127 · commit 3: ALLE klip i test-clips\, ikke kun det alfabetisk
+// første - se runOneClip/main() nedenfor. "synthetic" bruges kun hvis
+// test-clips\ er helt tomt.
+const realClips = findRealClips()
+const usingSynthetic = realClips.length === 0
+if (usingSynthetic) {
   console.log('Intet klip i test-clips\\ endnu — venter på Marcs rigtige telefonoptagelse. Kører mod det tegnede klip (docs/videocoach/clip-cache/synthetic-set.mp4).')
+} else if (realClips.length > 1) {
+  console.log(`${realClips.length} klip fundet i test-clips\\ — kører alle: ${realClips.join(', ')}.`)
 }
 
-if (mode === 'synthetic' && (!existsSync(syntheticClipPath) || !existsSync(syntheticGtPath))) {
+if (usingSynthetic && (!existsSync(syntheticClipPath) || !existsSync(syntheticGtPath))) {
   console.log('Intet tegnet testklip fundet — genererer det først (npm run test:clip) ...')
   const gen = spawnSync(process.execPath, [join(here, 'make-test-clip.mjs')], { stdio: 'inherit' })
   if (gen.status !== 0) { console.error('Kunne ikke generere testklippet.'); process.exit(1) }
 }
 
-const groundTruth = mode === 'synthetic' ? JSON.parse(readFileSync(syntheticGtPath, 'utf8')) : null
+const groundTruth = usingSynthetic ? JSON.parse(readFileSync(syntheticGtPath, 'utf8')) : null
 
 // ---------- 1) Udtræk den levende tracker-kode 1:1 fra videocoach.html ----------
 const htmlPath = join(root, 'public', 'videocoach.html')
@@ -286,9 +288,12 @@ function makePathInterpolator(times, pts) {
 }
 
 // ---------- 3) Byg harness-siden (ægte <video>/<canvas>, ingen syntetisk pixel-funktion) ----------
-const clipBase64 = readFileSync(clipPath).toString('base64')
-
-const HARNESS_HTML = `<!doctype html>
+// ORDRE 127 · commit 3: funktion af klippets sti, ikke en modul-konstant -
+// hvert klip i test-clips\ får sin egen harness-side (samme udtrukne
+// tracker-/autoCalib-/rep-/presearch-kilde ovenfor, kun selve videoen skifter).
+function buildHarnessHtml(clipPathForClip) {
+  const clipBase64 = readFileSync(clipPathForClip).toString('base64')
+  return `<!doctype html>
 <html><head><meta charset="utf-8"></head><body>
 <video id="vid" muted playsinline preload="auto" src="data:video/mp4;base64,${clipBase64}"></video>
 <canvas id="visCanvas"></canvas>
@@ -573,6 +578,7 @@ window.runVisMigNuFromPresearch = async function(barPt, setStart, setEnd, window
 };
 <\/script>
 </body></html>`
+}
 
 // ---------- 4) Kør i headless Chromium (playwright fra den delte codex-runtime — samme kilde som docs/videocoach/run-clean-rebuild-gate.mjs, ingen ny projekt-afhængighed) ----------
 const runtimeModules = join(homedir(), '.cache', 'codex-runtimes', 'codex-primary-runtime', 'dependencies', 'node', 'node_modules')
@@ -638,8 +644,14 @@ function pickThreeWindows(windows) {
   return idxs.map(i => windows[i])
 }
 
-async function main() {
-  const browser = await chromium.launch({ headless: true })
+// ORDRE 127 · commit 3: kørslen for ÉT klip (tegnet eller ét af flere rigtige
+// klip i test-clips\) - udtrukket fra den tidligere main(), som kun kørte
+// præcis ét klip. Kaldes én gang pr. klip fra main() nedenfor; browseren er
+// fælles (genbrugt på tværs af klip), men hvert klip får sin egen side/
+// harness (buildHarnessHtml). Returnerer et sammenfatnings-objekt i stedet
+// for selv at kalde process.exit - main() samler facit og afgør exit-koden.
+async function runOneClip(browser, mode, clipPathForClip, realMeta, realClipName) {
+  const HARNESS_HTML = buildHarnessHtml(clipPathForClip)
   const page = await browser.newPage({ viewport: { width: 360, height: 640 } })
   page.on('pageerror', err => console.error('[browser pageerror]', err))
   await page.setContent(HARNESS_HTML, { waitUntil: 'load' })
@@ -862,7 +874,7 @@ async function main() {
   }
   const threePlayedS = threeWindows.reduce((s, w) => s + (w.end - w.start), 0)
 
-  await browser.close()
+  await page.close()
 
   // ---------- Evaluering ----------
   const fullDev = deviation(full.pts, full.times, truthFn)
@@ -923,10 +935,44 @@ async function main() {
     : `\nFEJL: ${!fullOk ? 'fuld analyse fejlede tolerancen eller fandt ikke alle reps. ' : ''}${!comboOk ? '"Vis mig nu" fejlede tolerancen. ' : ''}${!realtimeFastEnough ? `"Vis mig nu" tog ${realtimeFactor.toFixed(2)}x sin afspillede varighed, over grænsen ${REALTIME_MAX_FACTOR}x.` : ''}`)
   if (mode === 'real' && threeWindows.length < 3) console.log(`\n(Kun ${threeWindows.length} gentagelse(r) i dette klip — et sæt på 3-5 reps giver et mere sigende billede, se docs/videocoach/TEST-CLIPS.md.)`)
   if (mode === 'synthetic') console.log('\n(Kører stadig mod det TEGNEDE klip — læg en rigtig telefonoptagelse i test-clips\\ for at måle mod virkeligheden.)')
-  // ORDRE 121 · commit 2: eksplicit process.exit (ikke kun exitCode) - to
-  // browser-sider kan efterlade en håndtag åben der ellers holder Node's
-  // event loop kørende i det uendelige, uden mere output.
-  process.exit(pass ? 0 : 1)
+
+  // ORDRE 127 · commit 3: én linje pr. klip, til main()s sammenfatning -
+  // browseren lukkes samlet dér (ikke pr. klip), da den nu deles på tværs
+  // af alle klip i test-clips\.
+  const clipLabel = mode === 'real' ? `test-clips\\${realClipName}` : 'det tegnede klip'
+  const line = `${clipLabel}: ${threeWindows.length} vindue(r), forhold ${realtimeFactor.toFixed(2)}x, meanPx=${worstComboDev.meanPx.toFixed(2)}, maxPx=${worstComboDev.maxPx.toFixed(2)}`
+  return { pass, line }
+}
+
+// ORDRE 127 · commit 3: kør ALLE klip i test-clips\ (findRealClips ovenfor),
+// ikke kun det alfabetisk første - eller det tegnede klip, hvis mappen er
+// tom. Én browser genbruges på tværs af klip (hvert klip får sin egen
+// side/harness, se runOneClip). Slutter med én linje pr. klip, og fejler
+// (exit 1) hvis blot ét klip fejler sin egen tolerance.
+async function main() {
+  const browser = await chromium.launch({ headless: true })
+  const summaries = []
+  try {
+    if (usingSynthetic) {
+      summaries.push(await runOneClip(browser, 'synthetic', syntheticClipPath, {}, null))
+    } else {
+      for (const clipName of realClips) {
+        const realMeta = loadRealMeta(clipName)
+        const clipPathForClip = ensureMp4H264(join(testClipsDir, clipName))
+        summaries.push(await runOneClip(browser, 'real', clipPathForClip, realMeta, clipName))
+      }
+    }
+  } finally {
+    // ORDRE 121 · commit 2: eksplicit process.exit (ikke kun exitCode) - to
+    // browser-sider kan efterlade en håndtag åben der ellers holder Node's
+    // event loop kørende i det uendelige, uden mere output.
+    await browser.close()
+  }
+  if (summaries.length > 1) {
+    console.log('\n== Sammenfatning (ét klip pr. linje) ==')
+    for (const s of summaries) console.log(`  ${s.pass ? 'GRØN' : 'FEJL'}  ${s.line}`)
+  }
+  process.exit(summaries.every(s => s.pass) ? 0 : 1)
 }
 
 main().catch(err => { console.error(err); process.exit(1) })

@@ -765,7 +765,11 @@
   .vcSystemBrand span { color:var(--vc-muted); font-size:8px; letter-spacing:.2em; }
   #vcWorkspaceTabs { justify-self:center; display:flex; align-items:center; gap:3px;
     padding:3px; border:1px solid var(--vc-edge); border-radius:10px; background:#11110e; }
-  #vcWorkspaceTabs button { min-height:36px; min-width:78px; padding:7px 12px;
+  /* ORDRE 127 · commit 2: 36px -> var(--vc-control) (44px) - under 44px på
+     desktop-bredder (npm run maal:app, ordre 123). Kun basis-reglen (>700px);
+     @media(max-width:700px) herunder sætter sin EGEN min-height (40px, eller
+     44px for body.athlete) og er uændret - ordren beder kun om desktop. */
+  #vcWorkspaceTabs button { min-height:var(--vc-control); min-width:78px; padding:7px 12px;
     border:0; border-radius:7px; color:var(--vc-muted); font-size:9px; }
   #vcWorkspaceTabs button[aria-selected="true"] { color:var(--text);
     background:var(--vc-surface-2); box-shadow:inset 0 0 0 1px rgba(200,146,58,.28); }
@@ -6234,6 +6238,17 @@ allBtn.onclick = async () => {
 //     ved nogle få stråler. Vinderen er højeste ring-score; er nummer to for
 //     tæt på (<18% under vinderen), er fundet for usikkert -> null (fanger
 //     "FORKERT men selvsikker" fra ordre 109 - rack, letterbox).
+//
+// ORDRE 127 · commit 1: "navet er ikke skiven" (ordre 120s dokumenterede
+// grænse, se docs/videocoach/RAPPORT-120.md). En lille, stærkt oplyst
+// nav/muffe nær centrum kan have en reelt HØJERE ring-score end skivens
+// egen svage yderkant - ovenstående vinder-regel valgte navet. Ny
+// nav-vagt FØR ambiguitets-tjekket: er højeste-scorende kandidat under 50%
+// af radius af en anden gyldig kandidat, og den store har mindst 4% af den
+// lilles score (så vi ikke hopper til ren støj) - vælg den store. Se
+// autoCalib's krop for tal og docs/videocoach/RAPPORT-127.md for hvorfor
+// "Stå på skuldre"s foreslåede 20-45%-bånd blev udvidet (nav-tilfældets
+// radius-forhold er ~13%, uden for det bånd).
 function autoCalib(center) {
   autoCalib.lastRoute = null;
   autoCalib.lastScore = null;
@@ -6342,16 +6357,49 @@ function autoCalib(center) {
     }
     return { sum, hits };
   };
-  let bestR = null, bestScore = -1, secondScore = -1;
+  // ORDRE 127 · commit 1: navet er ikke skiven (docs/videocoach/RAPPORT-120.md,
+  // "Ærlige grænser" - nav-tilfældet). Saml FØRST alle gyldige kandidater
+  // (dækningskravet uændret), sortér efter score. Højeste score vinder som
+  // før - MEDMINDRE den er en meget lille radius sammenlignet med en anden
+  // gyldig, rimeligt stærk kandidat: en lille, stærkt oplyst nav/muffe nær
+  // centrum kan reelt score højere end skivens egen svage kant, men skiven
+  // coachen mente er altid den STØRRE af de to konsistente cirkler.
+  const valid = [];
   for (const r of candidateRs) {
     const { sum, hits } = ringScore(r);
     if (hits < 14) continue;   // < 14/32 - ikke en sammenhængende cirkel, tæller ikke som kandidat (en skive delvist ude af billedet viser stadig ca. halvdelen af ringen)
-    if (sum > bestScore) { secondScore = bestScore; bestScore = sum; bestR = r; }
-    else if (sum > secondScore) secondScore = sum;
+    valid.push({ r, sum });
   }
-  if (bestR == null || bestR < 12) return null;   // "skive" på få px kan ikke bære en måling
-  // "FORKERT men selvsikker" (ordre 109: rack, letterbox) - to lige gode
-  // kandidater er for usikkert til at vise atleten en tro og sikker ring.
+  if (valid.length === 0) return null;
+  valid.sort((a, b) => b.sum - a.sum);
+  const topScorer = valid[0];
+  let winner = topScorer;
+  // Nav-vagt: radius under 50% af en større, gyldig kandidats, OG den større
+  // har mindst 4% af den lilles score (ren støj scorer typisk langt under
+  // det) - båndet fra "Stå på skuldre" (20-45%) ramte ikke det syntetiske
+  // nav-tilfælde (radius-forhold 16/126 ≈ 13%, se RAPPORT-127.md), så
+  // nedre grænse er droppet: enhver markant mindre gyldig kandidat er
+  // mistænkelig, ikke kun dem i 20-45%-vinduet.
+  const NAV_MAX_RADIUS_RATIO = 0.5;
+  const NAV_MIN_SCORE_FRACTION = 0.04;
+  for (const cand of valid) {
+    if (cand.r <= winner.r) continue;
+    if (winner.r / cand.r < NAV_MAX_RADIUS_RATIO && cand.sum > winner.sum * NAV_MIN_SCORE_FRACTION) {
+      winner = cand;
+      break;
+    }
+  }
+  const bestR = winner.r, bestScore = winner.sum;
+  // "FORKERT men selvsikker" (ordre 109: rack, letterbox) - en TREDJE
+  // kandidat der er lige så stærk som vinderen (og ikke allerede forklaret
+  // af nav-vagten ovenfor) er for usikkert til at vise atleten en tro og
+  // sikker ring.
+  let secondScore = -1;
+  for (const c of valid) {
+    if (c === winner || c === topScorer) continue;
+    if (c.sum > secondScore) secondScore = c.sum;
+  }
+  if (bestR < 12) return null;   // "skive" på få px kan ikke bære en måling
   if (secondScore >= 0 && secondScore > bestScore * 0.82) return null;
 
   // ORDRE 120 · commit 3: hvilken vej der vandt, til ?diag=1 - se wizardClick.
