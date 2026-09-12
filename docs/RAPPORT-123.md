@@ -14,7 +14,7 @@ Ikke pushet, ikke merget. Ingen atletdata nogen steder. Ingen ændring af
 `public/videocoach.html`s afspilnings-/seek-vej (Bhishaks spor i
 `entropi-app-wt2`).
 
-## Hvad blev ændret
+## Hvad ændret
 
 **Måleværktøj** (`scripts/maal-app.mjs`, ny): tre profiler (iPhone 13,
 Android 360×740, desktop) gennem seks atlet-skærme — login og
