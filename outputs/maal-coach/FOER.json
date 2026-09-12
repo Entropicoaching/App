@@ -1,0 +1,662 @@
+[
+  {
+    "profile": "iPad landscape 1180×820",
+    "screen": "Atletliste (12 attrap-atleter)",
+    "weight": {
+      "totalKb": 16,
+      "requestCount": 1
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 15
+      }
+    ],
+    "tapTargets": [],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 99,
+      "accessibility": 80,
+      "ttiMs": 799
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-coach\\ipad-landscape\\foer-atletliste.png"
+  },
+  {
+    "profile": "iPad landscape 1180×820",
+    "screen": "Atletliste (tom tilstand)",
+    "weight": {
+      "totalKb": 3,
+      "requestCount": 1
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 3
+      }
+    ],
+    "tapTargets": [],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 100,
+      "accessibility": 80,
+      "ttiMs": 659
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-coach\\ipad-landscape\\foer-atletliste-tom.png"
+  },
+  {
+    "profile": "iPad landscape 1180×820",
+    "screen": "Én atlets uge (hub)",
+    "weight": {
+      "totalKb": 7,
+      "requestCount": 1
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 16
+      }
+    ],
+    "tapTargets": [],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 100,
+      "accessibility": 85,
+      "ttiMs": 785
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-coach\\ipad-landscape\\foer-atletens-uge.png"
+  },
+  {
+    "profile": "iPad landscape 1180×820",
+    "screen": "Check-in-gennemgang",
+    "weight": {
+      "totalKb": 7,
+      "requestCount": 1
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 15
+      }
+    ],
+    "tapTargets": [
+      {
+        "text": "Rediger",
+        "height": 18,
+        "width": 56
+      }
+    ],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 99,
+      "accessibility": 85,
+      "ttiMs": 794
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-coach\\ipad-landscape\\foer-checkin-gennemgang.png"
+  },
+  {
+    "profile": "iPad landscape 1180×820",
+    "screen": "Check-in-gennemgang (tom tilstand)",
+    "weight": {
+      "totalKb": 4,
+      "requestCount": 1
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 7
+      }
+    ],
+    "tapTargets": [
+      {
+        "text": "Rediger",
+        "height": 18,
+        "width": 56
+      }
+    ],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 100,
+      "accessibility": 85,
+      "ttiMs": 650
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-coach\\ipad-landscape\\foer-checkin-gennemgang-tom.png"
+  },
+  {
+    "profile": "iPad landscape 1180×820",
+    "screen": "Program-redigering (øvelsesformular, reps-interval)",
+    "weight": {
+      "totalKb": 7,
+      "requestCount": 1
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 11
+      },
+      {
+        "id": "select-name",
+        "impact": "critical",
+        "help": "Select element must have an accessible name",
+        "nodes": 1
+      }
+    ],
+    "tapTargets": [
+      {
+        "text": "Søg øvelse...",
+        "height": 30,
+        "width": 243
+      },
+      {
+        "text": "Sæt",
+        "height": 30,
+        "width": 61
+      },
+      {
+        "text": "Reps (fx 6-8)",
+        "height": 30,
+        "width": 85
+      },
+      {
+        "text": "RPE",
+        "height": 30,
+        "width": 56
+      },
+      {
+        "text": "f.eks. 8",
+        "height": 30,
+        "width": 183
+      },
+      {
+        "text": "Note",
+        "height": 30,
+        "width": 182
+      }
+    ],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 100,
+      "accessibility": 74,
+      "ttiMs": 643
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-coach\\ipad-landscape\\foer-program-redigering.png"
+  },
+  {
+    "profile": "iPad landscape 1180×820",
+    "screen": "Coach Briefing (indbakke)",
+    "weight": {
+      "totalKb": 6,
+      "requestCount": 1
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 8
+      }
+    ],
+    "tapTargets": [],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 100,
+      "accessibility": 80,
+      "ttiMs": 670
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-coach\\ipad-landscape\\foer-coach-briefing.png"
+  },
+  {
+    "profile": "iPad landscape 1180×820",
+    "screen": "Coach Briefing (tom tilstand)",
+    "weight": {
+      "totalKb": 2,
+      "requestCount": 1
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 3
+      }
+    ],
+    "tapTargets": [],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 100,
+      "accessibility": 80,
+      "ttiMs": 660
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-coach\\ipad-landscape\\foer-coach-briefing-tom.png"
+  },
+  {
+    "profile": "iPad landscape 1180×820",
+    "screen": "Videoer (VideoCoach-analyser)",
+    "weight": {
+      "totalKb": 5,
+      "requestCount": 1
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 8
+      }
+    ],
+    "tapTargets": [
+      {
+        "text": "+ Ny optagelse",
+        "height": 25,
+        "width": 110
+      },
+      {
+        "text": "Åbn",
+        "height": 29,
+        "width": 53
+      },
+      {
+        "text": "Åbn",
+        "height": 29,
+        "width": 53
+      },
+      {
+        "text": "Åbn",
+        "height": 29,
+        "width": 53
+      }
+    ],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 100,
+      "accessibility": 85,
+      "ttiMs": 685
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-coach\\ipad-landscape\\foer-videoer.png"
+  },
+  {
+    "profile": "iPad landscape 1180×820",
+    "screen": "Videoer (tom tilstand)",
+    "weight": {
+      "totalKb": 3,
+      "requestCount": 1
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 3
+      }
+    ],
+    "tapTargets": [],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 100,
+      "accessibility": 80,
+      "ttiMs": 661
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-coach\\ipad-landscape\\foer-videoer-tom.png"
+  },
+  {
+    "profile": "Desktop 1440×900",
+    "screen": "Atletliste (12 attrap-atleter)",
+    "weight": {
+      "totalKb": 16,
+      "requestCount": 1
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 15
+      }
+    ],
+    "tapTargets": [],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 99,
+      "accessibility": 80,
+      "ttiMs": 894
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-coach\\desktop\\foer-atletliste.png"
+  },
+  {
+    "profile": "Desktop 1440×900",
+    "screen": "Atletliste (tom tilstand)",
+    "weight": {
+      "totalKb": 3,
+      "requestCount": 1
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 3
+      }
+    ],
+    "tapTargets": [],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 100,
+      "accessibility": 80,
+      "ttiMs": 743
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-coach\\desktop\\foer-atletliste-tom.png"
+  },
+  {
+    "profile": "Desktop 1440×900",
+    "screen": "Én atlets uge (hub)",
+    "weight": {
+      "totalKb": 7,
+      "requestCount": 1
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 16
+      }
+    ],
+    "tapTargets": [],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 100,
+      "accessibility": 85,
+      "ttiMs": 714
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-coach\\desktop\\foer-atletens-uge.png"
+  },
+  {
+    "profile": "Desktop 1440×900",
+    "screen": "Check-in-gennemgang",
+    "weight": {
+      "totalKb": 7,
+      "requestCount": 1
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 15
+      }
+    ],
+    "tapTargets": [
+      {
+        "text": "Rediger",
+        "height": 18,
+        "width": 56
+      }
+    ],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 100,
+      "accessibility": 85,
+      "ttiMs": 750
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-coach\\desktop\\foer-checkin-gennemgang.png"
+  },
+  {
+    "profile": "Desktop 1440×900",
+    "screen": "Check-in-gennemgang (tom tilstand)",
+    "weight": {
+      "totalKb": 4,
+      "requestCount": 1
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 7
+      }
+    ],
+    "tapTargets": [
+      {
+        "text": "Rediger",
+        "height": 18,
+        "width": 56
+      }
+    ],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 100,
+      "accessibility": 85,
+      "ttiMs": 749
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-coach\\desktop\\foer-checkin-gennemgang-tom.png"
+  },
+  {
+    "profile": "Desktop 1440×900",
+    "screen": "Program-redigering (øvelsesformular, reps-interval)",
+    "weight": {
+      "totalKb": 7,
+      "requestCount": 1
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 11
+      },
+      {
+        "id": "select-name",
+        "impact": "critical",
+        "help": "Select element must have an accessible name",
+        "nodes": 1
+      }
+    ],
+    "tapTargets": [
+      {
+        "text": "Søg øvelse...",
+        "height": 30,
+        "width": 321
+      },
+      {
+        "text": "Sæt",
+        "height": 30,
+        "width": 80
+      },
+      {
+        "text": "Reps (fx 6-8)",
+        "height": 30,
+        "width": 112
+      },
+      {
+        "text": "RPE",
+        "height": 30,
+        "width": 56
+      },
+      {
+        "text": "f.eks. 8",
+        "height": 30,
+        "width": 261
+      },
+      {
+        "text": "Note",
+        "height": 30,
+        "width": 240
+      }
+    ],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 100,
+      "accessibility": 74,
+      "ttiMs": 687
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-coach\\desktop\\foer-program-redigering.png"
+  },
+  {
+    "profile": "Desktop 1440×900",
+    "screen": "Coach Briefing (indbakke)",
+    "weight": {
+      "totalKb": 6,
+      "requestCount": 1
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 8
+      }
+    ],
+    "tapTargets": [],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 100,
+      "accessibility": 80,
+      "ttiMs": 670
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-coach\\desktop\\foer-coach-briefing.png"
+  },
+  {
+    "profile": "Desktop 1440×900",
+    "screen": "Coach Briefing (tom tilstand)",
+    "weight": {
+      "totalKb": 2,
+      "requestCount": 1
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 3
+      }
+    ],
+    "tapTargets": [],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 100,
+      "accessibility": 80,
+      "ttiMs": 658
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-coach\\desktop\\foer-coach-briefing-tom.png"
+  },
+  {
+    "profile": "Desktop 1440×900",
+    "screen": "Videoer (VideoCoach-analyser)",
+    "weight": {
+      "totalKb": 5,
+      "requestCount": 1
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 8
+      }
+    ],
+    "tapTargets": [
+      {
+        "text": "+ Ny optagelse",
+        "height": 25,
+        "width": 110
+      },
+      {
+        "text": "Åbn",
+        "height": 29,
+        "width": 53
+      },
+      {
+        "text": "Åbn",
+        "height": 29,
+        "width": 53
+      },
+      {
+        "text": "Åbn",
+        "height": 29,
+        "width": 53
+      }
+    ],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 100,
+      "accessibility": 85,
+      "ttiMs": 773
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-coach\\desktop\\foer-videoer.png"
+  },
+  {
+    "profile": "Desktop 1440×900",
+    "screen": "Videoer (tom tilstand)",
+    "weight": {
+      "totalKb": 3,
+      "requestCount": 1
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 3
+      }
+    ],
+    "tapTargets": [],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 100,
+      "accessibility": 80,
+      "ttiMs": 662
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-coach\\desktop\\foer-videoer-tom.png"
+  }
+]
