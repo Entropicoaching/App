@@ -271,7 +271,7 @@ const conditions = []
   const buf = makeBuffer(W, H, 24); fillCircle(buf, W, H, cx, cy, r, 15)
   fillCircle(buf, W, H, cx, cy, 15, 190)   // lys nav, radius 15 - langt under skivens 125
   conditions.push({ name: 'sort skive på sort gulv med lys nav (diff 9, nav-radius 15)', W, H, cx, cy, r, buf,
-    expect: 'fundet, men FORKERT (før OG efter) - kendt grænse, se "Ærlige grænser"', why: 'navets kant er en ÆGTE, fuldt konsistent cirkel (ring-scoren for nav-radius 15 er reelt højere end skivens egen svage rand ved r=125) - ring-scoring kan ikke skelne "den stærkeste cirkel" fra "den plade coachen mente". Uændret af ORDRE 120s fix; ring-bekræftelsen i UI\'en er sikkerhedsnettet.' })
+    expect: 'fundet, men FORKERT (før ORDRE 127) - fundet, korrekt (efter)', why: 'navets kant er en ÆGTE, fuldt konsistent cirkel og scorer højere end skivens egen svage rand ved r=125 - men navets radius (16px fundet) er under 50% af den anden gyldige kandidats (126px), så ORDRE 127s nav-vagt vælger den STORE i stedet. Se docs/videocoach/RAPPORT-127.md.' })
 }
 
 // 11) Mørkegrøn/mørkeblå kalibreret skive (20/25 kg) på mørk baggrund -
@@ -334,11 +334,11 @@ for (const r of rows)
 console.log()
 for (const r of rows) console.log(`- ${r.navn}: ${r.why}`)
 
-// ---------- selv-tjek: ORDRE 120s facit for de éntydige tilfælde ----------
-// To grupper der stadig IKKE er en hård påstand: nav-tilfældet (kendt,
-// uændret grænse - se dens "why") og det ægte klip (ingen uafhængig facit).
-// De fejler ikke rent, det er derfor ring-bekræftelsen i UI'en (plateConfirm)
-// er sikkerhedsnettet, ikke autoCalib selv.
+// ---------- selv-tjek: ORDRE 120/127s facit for de éntydige tilfælde ----------
+// Én gruppe er stadig IKKE en hård påstand: det ægte klip (ingen uafhængig
+// facit - positionen er målt i hånden, se realFrameCondition). Nav-tilfældet
+// var det indtil ORDRE 127 (se docs/videocoach/RAPPORT-127.md) - nu i
+// mustFind som de øvrige.
 const mustFailSafely = [
   'radius uden for forventet interval (skive > maxR)',
   'lille video (160×120, skive-radius 8px)',
@@ -358,6 +358,7 @@ const mustFind = [
   { navn: 'kant mod rack (stolper + bjælke på 3 af 4 sider)', maxErrPx: 5 },
   { navn: 'telefon i portrait med sort bjælke (over+under)', maxErrPx: 5 },
   { navn: 'mørk skive under top-lys (blankt refleks midt i skiven, ikke ved kanten)', maxErrPx: 5 },
+  { navn: 'sort skive på sort gulv med lys nav (diff 9, nav-radius 15)', maxErrPx: 5 },
 ]
 let ok = true
 for (const r of rows) {
