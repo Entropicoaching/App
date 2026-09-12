@@ -1,0 +1,830 @@
+[
+  {
+    "profile": "iPhone 13",
+    "screen": "Login",
+    "weight": {
+      "totalKb": 415,
+      "jsKb": 412,
+      "cssKb": 2,
+      "imgKb": 0,
+      "requestCount": 5
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 6
+      },
+      {
+        "id": "label",
+        "impact": "critical",
+        "help": "Form elements must have labels",
+        "nodes": 2
+      }
+    ],
+    "tapTargets": [
+      {
+        "text": "",
+        "height": 39,
+        "width": 340
+      },
+      {
+        "text": "",
+        "height": 39,
+        "width": 340
+      },
+      {
+        "text": "Log ind",
+        "height": 40,
+        "width": 340
+      }
+    ],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 66,
+      "accessibility": 75
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-app\\iphone13\\foer-login.png"
+  },
+  {
+    "profile": "iPhone 13",
+    "screen": "Dagens pas",
+    "weight": {
+      "totalKb": 8,
+      "jsKb": 0,
+      "cssKb": 0,
+      "imgKb": 0,
+      "requestCount": 1
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 9
+      }
+    ],
+    "tapTargets": [
+      {
+        "text": "✓ Squat — uge 6 4 øvelser →",
+        "height": 38,
+        "width": 316
+      },
+      {
+        "text": "▶ Bænkpres — topsæt Næste 5 øvelser →",
+        "height": 37,
+        "width": 316
+      },
+      {
+        "text": "Dødløft — volumen Torsdag 4 øvelser →",
+        "height": 37,
+        "width": 316
+      }
+    ],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 100,
+      "accessibility": 91
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-app\\iphone13\\foer-dagens-pas.png"
+  },
+  {
+    "profile": "iPhone 13",
+    "screen": "Sæt-logger (interval-reps)",
+    "weight": {
+      "totalKb": 8,
+      "jsKb": 1,
+      "cssKb": 0,
+      "imgKb": 0,
+      "requestCount": 2
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 10
+      },
+      {
+        "id": "label",
+        "impact": "critical",
+        "help": "Form elements must have labels",
+        "nodes": 2
+      }
+    ],
+    "tapTargets": [],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 100,
+      "accessibility": 75
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-app\\iphone13\\foer-saet-logger.png"
+  },
+  {
+    "profile": "iPhone 13",
+    "screen": "Opvarmning",
+    "weight": {
+      "totalKb": 14,
+      "jsKb": 8,
+      "cssKb": 0,
+      "imgKb": 0,
+      "requestCount": 2
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 11
+      }
+    ],
+    "tapTargets": [
+      {
+        "text": "Opvarmningssæt 1: 20kg × 5",
+        "height": 32,
+        "width": 331
+      },
+      {
+        "text": "✕",
+        "height": 32,
+        "width": 32
+      },
+      {
+        "text": "Opvarmningssæt 2: 47.5kg × 5",
+        "height": 32,
+        "width": 331
+      },
+      {
+        "text": "✕",
+        "height": 32,
+        "width": 32
+      },
+      {
+        "text": "Opvarmningssæt 3: 72.5kg × 5",
+        "height": 32,
+        "width": 331
+      },
+      {
+        "text": "✕",
+        "height": 32,
+        "width": 32
+      },
+      {
+        "text": "Opvarmningssæt 4: 95kg × 3",
+        "height": 32,
+        "width": 331
+      },
+      {
+        "text": "✕",
+        "height": 32,
+        "width": 32
+      },
+      {
+        "text": "Opvarmningssæt 5: 117.5kg × 2",
+        "height": 32,
+        "width": 331
+      },
+      {
+        "text": "✕",
+        "height": 32,
+        "width": 32
+      }
+    ],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 100,
+      "accessibility": 86
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-app\\iphone13\\foer-opvarmning.png"
+  },
+  {
+    "profile": "iPhone 13",
+    "screen": "Videocoach-forside (uden video)",
+    "weight": {
+      "totalKb": 537,
+      "jsKb": 1,
+      "cssKb": 6,
+      "imgKb": 0,
+      "requestCount": 5
+    },
+    "axe": [],
+    "tapTargets": [],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 71,
+      "accessibility": 93
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-app\\iphone13\\foer-videocoach-forside.png"
+  },
+  {
+    "profile": "iPhone 13",
+    "screen": "Check-in (parathed)",
+    "weight": {
+      "totalKb": 13,
+      "jsKb": 0,
+      "cssKb": 0,
+      "imgKb": 0,
+      "requestCount": 1
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 21
+      }
+    ],
+    "tapTargets": [
+      {
+        "text": "timer",
+        "height": 39,
+        "width": 90
+      },
+      {
+        "text": "Ben",
+        "height": 29,
+        "width": 49
+      },
+      {
+        "text": "Ryg",
+        "height": 29,
+        "width": 49
+      },
+      {
+        "text": "Skuldre/Arme",
+        "height": 29,
+        "width": 103
+      },
+      {
+        "text": "Core",
+        "height": 29,
+        "width": 55
+      }
+    ],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 100,
+      "accessibility": 87
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-app\\iphone13\\foer-check-in.png"
+  },
+  {
+    "profile": "Android 360×740",
+    "screen": "Login",
+    "weight": {
+      "totalKb": 415,
+      "jsKb": 412,
+      "cssKb": 2,
+      "imgKb": 0,
+      "requestCount": 5
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 6
+      },
+      {
+        "id": "label",
+        "impact": "critical",
+        "help": "Form elements must have labels",
+        "nodes": 2
+      }
+    ],
+    "tapTargets": [
+      {
+        "text": "",
+        "height": 39,
+        "width": 310
+      },
+      {
+        "text": "",
+        "height": 39,
+        "width": 310
+      },
+      {
+        "text": "Log ind",
+        "height": 40,
+        "width": 310
+      }
+    ],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 74,
+      "accessibility": 75
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-app\\android360\\foer-login.png"
+  },
+  {
+    "profile": "Android 360×740",
+    "screen": "Dagens pas",
+    "weight": {
+      "totalKb": 8,
+      "jsKb": 0,
+      "cssKb": 0,
+      "imgKb": 0,
+      "requestCount": 1
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 9
+      }
+    ],
+    "tapTargets": [
+      {
+        "text": "✓ Squat — uge 6 4 øvelser →",
+        "height": 38,
+        "width": 286
+      },
+      {
+        "text": "▶ Bænkpres — topsæt Næste 5 øvelser →",
+        "height": 37,
+        "width": 286
+      },
+      {
+        "text": "Dødløft — volumen Torsdag 4 øvelser →",
+        "height": 37,
+        "width": 286
+      }
+    ],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 100,
+      "accessibility": 91
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-app\\android360\\foer-dagens-pas.png"
+  },
+  {
+    "profile": "Android 360×740",
+    "screen": "Sæt-logger (interval-reps)",
+    "weight": {
+      "totalKb": 8,
+      "jsKb": 1,
+      "cssKb": 0,
+      "imgKb": 0,
+      "requestCount": 2
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 10
+      },
+      {
+        "id": "label",
+        "impact": "critical",
+        "help": "Form elements must have labels",
+        "nodes": 2
+      }
+    ],
+    "tapTargets": [],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 100,
+      "accessibility": 75
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-app\\android360\\foer-saet-logger.png"
+  },
+  {
+    "profile": "Android 360×740",
+    "screen": "Opvarmning",
+    "weight": {
+      "totalKb": 14,
+      "jsKb": 8,
+      "cssKb": 0,
+      "imgKb": 0,
+      "requestCount": 2
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 11
+      }
+    ],
+    "tapTargets": [
+      {
+        "text": "Opvarmningssæt 1: 20kg × 5",
+        "height": 32,
+        "width": 301
+      },
+      {
+        "text": "✕",
+        "height": 32,
+        "width": 32
+      },
+      {
+        "text": "Opvarmningssæt 2: 47.5kg × 5",
+        "height": 32,
+        "width": 301
+      },
+      {
+        "text": "✕",
+        "height": 32,
+        "width": 32
+      },
+      {
+        "text": "Opvarmningssæt 3: 72.5kg × 5",
+        "height": 32,
+        "width": 301
+      },
+      {
+        "text": "✕",
+        "height": 32,
+        "width": 32
+      },
+      {
+        "text": "Opvarmningssæt 4: 95kg × 3",
+        "height": 32,
+        "width": 301
+      },
+      {
+        "text": "✕",
+        "height": 32,
+        "width": 32
+      },
+      {
+        "text": "Opvarmningssæt 5: 117.5kg × 2",
+        "height": 32,
+        "width": 301
+      },
+      {
+        "text": "✕",
+        "height": 32,
+        "width": 32
+      }
+    ],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 100,
+      "accessibility": 86
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-app\\android360\\foer-opvarmning.png"
+  },
+  {
+    "profile": "Android 360×740",
+    "screen": "Videocoach-forside (uden video)",
+    "weight": {
+      "totalKb": 537,
+      "jsKb": 1,
+      "cssKb": 6,
+      "imgKb": 0,
+      "requestCount": 5
+    },
+    "axe": [],
+    "tapTargets": [],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 78,
+      "accessibility": 93
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-app\\android360\\foer-videocoach-forside.png"
+  },
+  {
+    "profile": "Android 360×740",
+    "screen": "Check-in (parathed)",
+    "weight": {
+      "totalKb": 13,
+      "jsKb": 0,
+      "cssKb": 0,
+      "imgKb": 0,
+      "requestCount": 1
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 21
+      }
+    ],
+    "tapTargets": [
+      {
+        "text": "timer",
+        "height": 39,
+        "width": 90
+      },
+      {
+        "text": "Ben",
+        "height": 29,
+        "width": 49
+      },
+      {
+        "text": "Ryg",
+        "height": 29,
+        "width": 49
+      },
+      {
+        "text": "Skuldre/Arme",
+        "height": 29,
+        "width": 103
+      },
+      {
+        "text": "Core",
+        "height": 29,
+        "width": 55
+      }
+    ],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": {
+      "performance": 100,
+      "accessibility": 87
+    },
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-app\\android360\\foer-check-in.png"
+  },
+  {
+    "profile": "Desktop 1280×800",
+    "screen": "Login",
+    "weight": {
+      "totalKb": 415,
+      "jsKb": 412,
+      "cssKb": 2,
+      "imgKb": 0,
+      "requestCount": 5
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 6
+      },
+      {
+        "id": "label",
+        "impact": "critical",
+        "help": "Form elements must have labels",
+        "nodes": 2
+      }
+    ],
+    "tapTargets": [],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": null,
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-app\\desktop\\foer-login.png"
+  },
+  {
+    "profile": "Desktop 1280×800",
+    "screen": "Dagens pas",
+    "weight": {
+      "totalKb": 8,
+      "jsKb": 0,
+      "cssKb": 0,
+      "imgKb": 0,
+      "requestCount": 1
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 9
+      }
+    ],
+    "tapTargets": [
+      {
+        "text": "✓ Squat — uge 6 4 øvelser →",
+        "height": 38,
+        "width": 606
+      },
+      {
+        "text": "▶ Bænkpres — topsæt Næste 5 øvelser →",
+        "height": 37,
+        "width": 606
+      },
+      {
+        "text": "Dødløft — volumen Torsdag 4 øvelser →",
+        "height": 37,
+        "width": 606
+      }
+    ],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": null,
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-app\\desktop\\foer-dagens-pas.png"
+  },
+  {
+    "profile": "Desktop 1280×800",
+    "screen": "Sæt-logger (interval-reps)",
+    "weight": {
+      "totalKb": 8,
+      "jsKb": 1,
+      "cssKb": 0,
+      "imgKb": 0,
+      "requestCount": 2
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 10
+      },
+      {
+        "id": "label",
+        "impact": "critical",
+        "help": "Form elements must have labels",
+        "nodes": 2
+      }
+    ],
+    "tapTargets": [],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": null,
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-app\\desktop\\foer-saet-logger.png"
+  },
+  {
+    "profile": "Desktop 1280×800",
+    "screen": "Opvarmning",
+    "weight": {
+      "totalKb": 14,
+      "jsKb": 8,
+      "cssKb": 0,
+      "imgKb": 0,
+      "requestCount": 2
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 11
+      }
+    ],
+    "tapTargets": [
+      {
+        "text": "Opvarmningssæt 1: 20kg × 5",
+        "height": 32,
+        "width": 621
+      },
+      {
+        "text": "✕",
+        "height": 32,
+        "width": 32
+      },
+      {
+        "text": "Opvarmningssæt 2: 47.5kg × 5",
+        "height": 32,
+        "width": 621
+      },
+      {
+        "text": "✕",
+        "height": 32,
+        "width": 32
+      },
+      {
+        "text": "Opvarmningssæt 3: 72.5kg × 5",
+        "height": 32,
+        "width": 621
+      },
+      {
+        "text": "✕",
+        "height": 32,
+        "width": 32
+      },
+      {
+        "text": "Opvarmningssæt 4: 95kg × 3",
+        "height": 32,
+        "width": 621
+      },
+      {
+        "text": "✕",
+        "height": 32,
+        "width": 32
+      },
+      {
+        "text": "Opvarmningssæt 5: 117.5kg × 2",
+        "height": 32,
+        "width": 621
+      },
+      {
+        "text": "✕",
+        "height": 32,
+        "width": 32
+      }
+    ],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": null,
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-app\\desktop\\foer-opvarmning.png"
+  },
+  {
+    "profile": "Desktop 1280×800",
+    "screen": "Videocoach-forside (uden video)",
+    "weight": {
+      "totalKb": 547,
+      "jsKb": 1,
+      "cssKb": 6,
+      "imgKb": 0,
+      "requestCount": 5
+    },
+    "axe": [],
+    "tapTargets": [
+      {
+        "text": "Video",
+        "height": 36,
+        "width": 78
+      },
+      {
+        "text": "Bane",
+        "height": 36,
+        "width": 78
+      },
+      {
+        "text": "Eksport",
+        "height": 36,
+        "width": 78
+      }
+    ],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": null,
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-app\\desktop\\foer-videocoach-forside.png"
+  },
+  {
+    "profile": "Desktop 1280×800",
+    "screen": "Check-in (parathed)",
+    "weight": {
+      "totalKb": 13,
+      "jsKb": 0,
+      "cssKb": 0,
+      "imgKb": 0,
+      "requestCount": 1
+    },
+    "axe": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 21
+      }
+    ],
+    "tapTargets": [
+      {
+        "text": "timer",
+        "height": 39,
+        "width": 90
+      },
+      {
+        "text": "Ben",
+        "height": 29,
+        "width": 49
+      },
+      {
+        "text": "Ryg",
+        "height": 29,
+        "width": 49
+      },
+      {
+        "text": "Skuldre/Arme",
+        "height": 29,
+        "width": 103
+      },
+      {
+        "text": "Core",
+        "height": 29,
+        "width": 55
+      }
+    ],
+    "overflow": false,
+    "textOverflow": [],
+    "lh": null,
+    "consoleErrors": [],
+    "screenshot": "outputs\\maal-app\\desktop\\foer-check-in.png"
+  }
+]

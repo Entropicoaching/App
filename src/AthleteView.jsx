@@ -3974,6 +3974,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                             border: `1px solid ${isNext ? 'rgba(200,146,58,0.45)' : 'rgba(237,234,226,0.07)'}`,
                             color: '#edeae2',
                             padding: '0.6rem 0.75rem',
+                            minHeight: '44px',
+                            boxSizing: 'border-box',
                             cursor: 'pointer',
                             width: '100%',
                             textAlign: 'left',
@@ -4048,7 +4050,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                       {[1, 2, 3, 4, 5].map(v => (
                         <button key={v}
                           onClick={() => setReadinessInput(p => ({ ...p, [key]: v }))}
-                          style={{ flex: 1, padding: '0.9rem 0', fontFamily: "'IBM Plex Mono', monospace", fontSize: '1rem', fontWeight: 500, border: `1px solid ${readinessInput[key] === v ? '#c8923a' : 'rgba(237,234,226,0.13)'}`, background: readinessInput[key] === v ? 'rgba(200,146,58,0.15)' : '#141410', color: readinessInput[key] === v ? '#c8923a' : '#7a7770', cursor: 'pointer' }}
+                          style={{ flex: 1, padding: '0.9rem 0', minHeight: '44px', boxSizing: 'border-box', fontFamily: "'IBM Plex Mono', monospace", fontSize: '1rem', fontWeight: 500, border: `1px solid ${readinessInput[key] === v ? '#c8923a' : 'rgba(237,234,226,0.13)'}`, background: readinessInput[key] === v ? 'rgba(200,146,58,0.15)' : '#141410', color: readinessInput[key] === v ? '#c8923a' : '#7a7770', cursor: 'pointer' }}
                         >{v}</button>
                       ))}
                     </div>
@@ -4063,7 +4065,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                       return (
                         <button key={zone}
                           onClick={() => setReadinessInput(p => ({ ...p, soreZones: sel ? p.soreZones.filter(z => z !== zone) : [...p.soreZones, zone] }))}
-                          style={{ padding: '0.5rem 0.9rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', border: `1px solid ${sel ? '#c8923a' : 'rgba(237,234,226,0.13)'}`, background: sel ? 'rgba(200,146,58,0.15)' : '#141410', color: sel ? '#c8923a' : '#7a7770', cursor: 'pointer' }}
+                          style={{ padding: '0.5rem 0.9rem', minHeight: '44px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', border: `1px solid ${sel ? '#c8923a' : 'rgba(237,234,226,0.13)'}`, background: sel ? 'rgba(200,146,58,0.15)' : '#141410', color: sel ? '#c8923a' : '#7a7770', cursor: 'pointer' }}
                         >{zone}</button>
                       )
                     })}
@@ -4914,7 +4916,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                                   <button
                                                     title="Spring dette opvarmningssæt over"
                                                     onClick={e => { e.stopPropagation(); korrigerSæt(i, { skipped: true }) }}
-                                                    style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.6rem', minWidth: '32px', minHeight: '32px' }}
+                                                    style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.6rem', minWidth: '44px', minHeight: '44px', boxSizing: 'border-box' }}
                                                   >✕</button>
                                                 </div>
                                               )
@@ -4984,6 +4986,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                             Sæt {setNum}
                                           </div>
                                           <input
+                                            aria-label={`Vægt, sæt ${setNum}`}
                                             style={{ ...s.fieldInput, width: '80px', minWidth: '80px', minHeight: '44px', boxSizing: 'border-box', flexShrink: 0, padding: '0.65rem 0.5rem', fontSize: '1.1rem', textAlign: 'center' }}
                                             type="text" inputMode="decimal" placeholder="kg" value={input.weight}
                                             onChange={e => {
@@ -5000,6 +5003,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                                             <>
                                               <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.88rem', color: '#c8923a' }}>×</span>
                                               <input
+                                                aria-label={`Reps, sæt ${setNum}`}
                                                 style={{ ...s.fieldInput, width: '52px', minWidth: '52px', minHeight: '44px', boxSizing: 'border-box', flexShrink: 0, padding: '0.65rem 0.3rem', fontSize: '1.1rem', textAlign: 'center' }}
                                                 type="text" inputMode="numeric" placeholder="reps" value={repsValue}
                                                 onChange={e => {
