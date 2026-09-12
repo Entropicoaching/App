@@ -6155,8 +6155,32 @@ allBtn.onclick = async () => {
 // der genbruger denne PRÆCISE funktion i et gitter for at finde stangens
 // startpunkt uden en sidecar-fil, i stedet for at gætte selv).
 // AUTO-KALIBRERING: find skivens kant ud fra ét klik i centrum.
-// Scanner udad langs 16 retninger efter kontrast-spring; median-radius = skiven.
+// Scanner udad langs 16 retninger efter kontrast-spring; ring-scoring blandt
+// kandidat-radier afgør vinderen (se ORDRE 120 · commit 2 herunder).
+//
+// ORDRE 120 · commit 2: "mørk skive kunne ikke genkendes" (se
+// docs/videocoach/SKIVEN-FINDES-IKKE.md, ordre 109). Tre tilføjelser, samme
+// funktion, ingen ny sti:
+//  1) lokal kontrast-normalisering: søgevinduets EGET lys/mørk-spænd (2.-98.
+//     percentil, robust mod en lille lys nav/refleks/bogstav) - en mørk
+//     skive på mørk baggrund har lille ABSOLUT spring, men fylder ofte hele
+//     vinduets (smalle) dynamikområde. Forstærkning er kun slået til (og
+//     højst 4×) når vinduet FAKTISK er fladt, så velbelyste billeder er
+//     uændrede.
+//  2) kant i FARVE-afstand, ikke kun luminans - en farvet kalibreret skive
+//     (grøn/blå) kan have næsten samme lys/mørk-niveau som gulvet, men en
+//     tydeligt anden farvetone.
+//  3) ring-scoring: hver stråle kan nu stemme med FLERE lokale toppe (ikke
+//     kun sin egen bedste), stemmerne klynges i 10px-bøtter, og for hver
+//     bøtte med ≥2 stemmer beregnes en ring-score (kant-styrke summeret hele
+//     vejen rundt om cirklen ved den radius) - en RIGTIG skivekant er stærk
+//     hele vejen rundt, en forstyrrelse (rack, bogstav, refleks) er det kun
+//     ved nogle få stråler. Vinderen er højeste ring-score; er nummer to for
+//     tæt på (<18% under vinderen), er fundet for usikkert -> null (fanger
+//     "FORKERT men selvsikker" fra ordre 109 - rack, letterbox).
 function autoCalib(center) {
+  autoCalib.lastRoute = null;
+  autoCalib.lastScore = null;
   octx.drawImage(video, 0, 0, ocan.width, ocan.height);
   const maxR = Math.min(canvas.width, canvas.height) * 0.45;
   // MOBIL-FIX: læs kun udsnittet omkring klikket - getImageData på hele
@@ -6168,30 +6192,123 @@ function autoCalib(center) {
   const rw = Math.max(1, Math.min(ocan.width - x0, Math.round(2 * maxR + 4)));
   const rh = Math.max(1, Math.min(ocan.height - y0, Math.round(2 * maxR + 4)));
   const img = octx.getImageData(x0, y0, rw, rh).data;
-  const g = (x, y) => {
-    const xi = Math.max(x0, Math.min(x0 + rw - 1, x | 0));
-    const yi = Math.max(y0, Math.min(y0 + rh - 1, y | 0));
-    const i = ((yi - y0) * rw + (xi - x0)) * 4;
-    return img[i] * .3 + img[i+1] * .59 + img[i+2] * .11;
-  };
-  const radii = [];
-  for (let a = 0; a < 16; a++) {
-    const dx = Math.cos(a * Math.PI / 8), dy = Math.sin(a * Math.PI / 8);
-    let prev = g(center.x, center.y), best = 0, bestJump = 0;
-    for (let r = 8; r < maxR; r += 2) {
-      const v = g(center.x + dx * r, center.y + dy * r);
-      const jump = Math.abs(v - prev);
-      if (jump > bestJump) { bestJump = jump; best = r; }
-      prev = v;
-    }
-    if (bestJump > 28) radii.push(best);
+
+  // 1) lokal kontrast-normalisering: 2./98. percentil af vinduets luminans
+  // (histogram, én omgang - samme størrelsesorden som getImageData selv).
+  const hist = new Uint32Array(256);
+  for (let i = 0; i < img.length; i += 4) {
+    const lum = (img[i] * .3 + img[i+1] * .59 + img[i+2] * .11) | 0;
+    hist[lum]++;
   }
-  if (radii.length < 6) return null;          // for usikkert -> manuel fallback
-  radii.sort((x, y) => x - y);
-  const rad = radii[radii.length >> 1];
-  if (rad < 12) return null;    // "skive" på få px kan ikke bære en måling
-  return 45 / (2 * rad);                      // cm pr. px
+  const total = rw * rh, loCut = total * 0.02, hiCut = total * 0.02;
+  let acc = 0, winMin = 0, winMax = 255;
+  for (let v = 0; v < 256; v++) { acc += hist[v]; if (acc > loCut) { winMin = v; break; } }
+  acc = 0;
+  for (let v = 255; v >= 0; v--) { acc += hist[v]; if (acc > hiCut) { winMax = v; break; } }
+  const winSpread = Math.max(winMax - winMin, 0);
+  const normScale = winSpread < 60 ? Math.min(255 / Math.max(winSpread, 20), 4) : 1;
+
+  // 3×3-boks-gennemsnit pr. samplet punkt - dæmper billedstøj FØR normScale
+  // forstærker den.
+  const sample = (x, y) => {
+    const cxp = Math.round(x), cyp = Math.round(y);
+    let r = 0, g = 0, b = 0;
+    for (let oy = -1; oy <= 1; oy++) for (let ox = -1; ox <= 1; ox++) {
+      const xi = Math.max(x0, Math.min(x0 + rw - 1, cxp + ox));
+      const yi = Math.max(y0, Math.min(y0 + rh - 1, cyp + oy));
+      const i = ((yi - y0) * rw + (xi - x0)) * 4;
+      r += img[i]; g += img[i+1]; b += img[i+2];
+    }
+    return { r: r / 9, g: g / 9, b: b / 9, lum: (r / 9) * .3 + (g / 9) * .59 + (b / 9) * .11 };
+  };
+  // 2) kant i farve-afstand, ikke kun luminans.
+  let edgeVia = 'lum';
+  const edgeStrength = (a, b) => {
+    const lumJump = Math.abs(a.lum - b.lum) * normScale;
+    const colorJump = Math.hypot(a.r - b.r, a.g - b.g, a.b - b.b) * 0.6 * normScale;
+    edgeVia = colorJump > lumJump ? 'farve' : 'lum';
+    return Math.max(lumJump, colorJump);
+  };
+
+  const N = 16;
+  const votes = [];            // { r, via } - EN stråle kan afgive FLERE stemmer (lokale toppe)
+  for (let a = 0; a < N; a++) {
+    const dx = Math.cos(a * Math.PI / 8), dy = Math.sin(a * Math.PI / 8);
+    let prev = sample(center.x, center.y);
+    let best = 0, bestJump = 0, bestVia = 'lum';
+    let lastJump = 0, rising = false, lastPeakR = -100;
+    for (let r = 8; r < maxR; r += 2) {
+      const cur = sample(center.x + dx * r, center.y + dy * r);
+      const jump = edgeStrength(cur, prev);
+      if (jump > bestJump) { bestJump = jump; best = r; bestVia = edgeVia; }
+      if (rising && jump < lastJump && lastJump > 20 && r - 2 - lastPeakR > 14) {
+        votes.push({ r: r - 2, via: null });   // sekundær top - kun til kandidatgenerering
+        lastPeakR = r - 2;
+      }
+      rising = jump > lastJump;
+      lastJump = jump;
+      prev = cur;
+    }
+    if (bestJump > 28) votes.push({ r: best, via: bestVia });   // strålens EGEN bedste - styrer 6/16-portvagten
+  }
+  if (votes.filter(v => v.via).length < 6) return null;         // for usikkert -> manuel fallback (uændret grænse)
+
+  // 3) ring-scoring blandt klyngede kandidater.
+  const buckets = new Map();
+  for (const v of votes) {
+    const k = Math.round(v.r / 10);
+    if (!buckets.has(k)) buckets.set(k, []);
+    buckets.get(k).push(v);
+  }
+  let candidateRs = [...buckets.values()]
+    .filter(vs => vs.length >= 2)
+    .map(vs => { const rs = vs.map(v => v.r).sort((x, y) => x - y); return rs[rs.length >> 1]; });
+  if (candidateRs.length === 0) {
+    const rs = votes.filter(v => v.via).map(v => v.r).sort((x, y) => x - y);
+    candidateRs = [rs[rs.length >> 1]];       // ingen klynge ≥2 - fald tilbage til simpel median (som før ordre 120)
+  }
+  // DÆKNING, ikke kun sum: en RIGTIG skivekant er synlig fra næsten alle 32
+  // punkter på ringen; rodet baggrund (rack-rør, loft-rammer, en dørkarm) kan
+  // give nogle FÅ meget stærke punkter, men ikke en sammenhængende cirkel.
+  // Uden dette krav fandt gitter-søgningen i scripts/verify-videocoach-
+  // clip.mjs en "skive" i loftet (radius 360px, kun stærk ved et par
+  // rørsamlinger) på Marcs eget klip - se RAPPORT-120.md.
+  const ringScore = (r) => {
+    let sum = 0, hits = 0;
+    for (let k = 0; k < 32; k++) {
+      const ang = k * Math.PI / 16;
+      const dx = Math.cos(ang), dy = Math.sin(ang);
+      const inner = sample(center.x + dx * (r - 3), center.y + dy * (r - 3));
+      const outer = sample(center.x + dx * (r + 3), center.y + dy * (r + 3));
+      const s = edgeStrength(inner, outer);
+      sum += s;
+      if (s > 15) hits++;
+    }
+    return { sum, hits };
+  };
+  let bestR = null, bestScore = -1, secondScore = -1;
+  for (const r of candidateRs) {
+    const { sum, hits } = ringScore(r);
+    if (hits < 14) continue;   // < 14/32 - ikke en sammenhængende cirkel, tæller ikke som kandidat (en skive delvist ude af billedet viser stadig ca. halvdelen af ringen)
+    if (sum > bestScore) { secondScore = bestScore; bestScore = sum; bestR = r; }
+    else if (sum > secondScore) secondScore = sum;
+  }
+  if (bestR == null || bestR < 12) return null;   // "skive" på få px kan ikke bære en måling
+  // "FORKERT men selvsikker" (ordre 109: rack, letterbox) - to lige gode
+  // kandidater er for usikkert til at vise atleten en tro og sikker ring.
+  if (secondScore >= 0 && secondScore > bestScore * 0.82) return null;
+
+  // ORDRE 120 · commit 3: hvilken vej der vandt, til ?diag=1 - se wizardClick.
+  const winningVotes = votes.filter(v => v.via && Math.abs(v.r - bestR) <= 10);
+  const farveVotes = winningVotes.filter(v => v.via === 'farve').length;
+  const lumVotes = winningVotes.filter(v => v.via === 'lum').length;
+  autoCalib.lastRoute = candidateRs.length > 1 ? 'ring' : (farveVotes > lumVotes ? 'farve' : 'lum');
+  autoCalib.lastScore = { best: Math.round(bestScore), second: Math.round(Math.max(secondScore, 0)) };
+
+  return 45 / (2 * bestR);                      // cm pr. px
 }
+autoCalib.lastRoute = null;
+autoCalib.lastScore = null;
 // ORDRE 85 · slut: auto-kalibrering
 
 // ---------- 🏋️ TRÆNINGSMODE (Marcs mål: "svinge op og tale ud fra") ----------
@@ -6273,9 +6390,16 @@ function wizardClick(p) {
       // Rammer ringen skiven = god låsning; ellers klik forfra. Fanger dårlige
       // låsninger FØR analysen -> færre spildte forsøg (Marcs "kræver 4 forsøg").
       plateConfirm = { x: p.x, y: p.y, r: 22.5 / scale };
-      // ORDRE 109 · commit 3: et nyt, vellykket auto-fund overskriver en
-      // ældre "fejlede/manuel"-årsag fra et tidligere forsøg på samme skive.
-      vcPlateCalibReason = null;
+      // ORDRE 120 · commit 3: hvilken vej fandt skiven ("lum"/"farve"/"ring",
+      // sat af autoCalib selv, se ORDRE 120 · commit 2) - samme JSON-felt som
+      // ORDRE 109's øvrige årsager, INGEN migration. "ring" betyder flere
+      // kandidat-radier konkurrerede og ring-scoren afgjorde det - typisk
+      // tegn på svært lys (Marcs "fundet i mørkt lys").
+      vcPlateCalibReason = autoCalib.lastRoute ? `plate:auto:${autoCalib.lastRoute}` : null;
+      if (typeof vcShowDiag === 'function' && autoCalib.lastRoute) {
+        const sc = autoCalib.lastScore;
+        vcShowDiag(`${vcPlateCalibReason}${sc ? ` (score ${sc.best} mod ${sc.second})` : ''}`);
+      }
       if (ATHLETE && setAthleteState) setAthleteState('confirm');
       say(SLIM ? 'Ram skiven med ringen · træk midte=flyt, kant=størrelse · ⚡ = analysér'
                : 'Ram skiven med ringen (træk midten for at flytte, kanten for at ændre størrelse) · ⚡ = analysér · klik langt væk = mål om');
