@@ -133,7 +133,7 @@ export default function AnalyseTab({
                           Samme atlet, løft og variation sammenlignes over tid. Kun coach-godkendte analyser må forme den personlige baseline.
                         </div>
                       </div>
-                      <button style={{ ...s.btnPrimary, fontSize: '0.58rem', padding: '0.45rem 0.8rem' }} onClick={openVideoCoachV3}>
+                      <button style={{ ...s.btnPrimary, fontSize: '0.58rem', padding: '0.45rem 0.8rem', minHeight: '44px', boxSizing: 'border-box' }} onClick={openVideoCoachV3}>
                         Ny videoanalyse →
                       </button>
                     </div>

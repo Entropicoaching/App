@@ -103,7 +103,7 @@ const s = {
   page: { padding: '2rem' },
   btnPrimary: { background: '#c8923a', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', border: 'none', padding: '0.5rem 1rem', cursor: 'pointer' },
   btnGhost: { background: 'transparent', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', border: '1px solid rgba(237,234,226,0.13)', padding: '0.5rem 1rem', cursor: 'pointer' },
-  btnEdit: { background: 'transparent', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase', border: '1px solid rgba(237,234,226,0.1)', padding: '0.2rem 0.55rem', cursor: 'pointer' },
+  btnEdit: { background: 'transparent', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase', border: '1px solid rgba(237,234,226,0.1)', padding: '0.2rem 0.55rem', minHeight: '44px', display: 'inline-flex', alignItems: 'center', cursor: 'pointer' },
   card: { background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)', padding: '1.5rem', marginBottom: '1.5rem' },
   cardLabel: { fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
   fieldLabel: { fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.35rem' },
@@ -308,16 +308,16 @@ function harnessProgramRedigering() {
   const form = `
     <div style="${css(s.fieldLabel)}margin-bottom:0.5rem;">Tilføj øvelse</div>
     <div style="display:grid;grid-template-columns:2fr 0.5fr 0.7fr minmax(200px, 2fr) 1.5fr;gap:0.5rem;align-items:end;">
-      <div><div style="${css(s.fieldLabel)}">Navn</div><input style="${css(s.fieldInput)}font-size:0.8rem;padding:0.4rem 0.6rem;" type="text" placeholder="Søg øvelse..."></div>
-      <div><div style="${css(s.fieldLabel)}">Sæt</div><input style="${css(s.fieldInput)}font-size:0.8rem;padding:0.4rem 0.6rem;" type="number" placeholder="Sæt"></div>
-      <div><div style="${css(s.fieldLabel)}">Reps</div><input style="${css(s.fieldInput)}font-size:0.8rem;padding:0.4rem 0.6rem;" type="text" placeholder="Reps (fx 6-8)" value="6-8"></div>
+      <div><div style="${css(s.fieldLabel)}">Navn</div><input style="${css(s.fieldInput)}font-size:0.8rem;padding:0.4rem 0.6rem;min-height:44px;box-sizing:border-box;" type="text" placeholder="Søg øvelse..."></div>
+      <div><div style="${css(s.fieldLabel)}">Sæt</div><input style="${css(s.fieldInput)}font-size:0.8rem;padding:0.4rem 0.6rem;min-height:44px;box-sizing:border-box;" type="number" placeholder="Sæt"></div>
+      <div><div style="${css(s.fieldLabel)}">Reps</div><input style="${css(s.fieldInput)}font-size:0.8rem;padding:0.4rem 0.6rem;min-height:44px;box-sizing:border-box;" type="text" placeholder="Reps (fx 6-8)" value="6-8"></div>
       <div><div style="${css(s.fieldLabel)}">Intensitet</div>
         <div style="display:flex;gap:0.25rem;">
-          <select style="${css(s.fieldInput)}font-size:0.72rem;padding:0.4rem 0.3rem;width:auto;flex-shrink:0;"><option>RPE</option></select>
-          <input style="${css(s.fieldInput)}font-size:0.8rem;padding:0.4rem 0.6rem;flex:1;" type="number" placeholder="f.eks. 8">
+          <select aria-label="Intensitetsenhed" style="${css(s.fieldInput)}font-size:0.72rem;padding:0.4rem 0.3rem;width:auto;flex-shrink:0;min-height:44px;box-sizing:border-box;"><option>RPE</option></select>
+          <input style="${css(s.fieldInput)}font-size:0.8rem;padding:0.4rem 0.6rem;flex:1;min-height:44px;box-sizing:border-box;" type="number" placeholder="f.eks. 8">
         </div>
       </div>
-      <div><div style="${css(s.fieldLabel)}">Note</div><input style="${css(s.fieldInput)}font-size:0.8rem;padding:0.4rem 0.6rem;" type="text" placeholder="Note"></div>
+      <div><div style="${css(s.fieldLabel)}">Note</div><input style="${css(s.fieldInput)}font-size:0.8rem;padding:0.4rem 0.6rem;min-height:44px;box-sizing:border-box;" type="text" placeholder="Note"></div>
     </div>`
   const body = `<div style="${css(s.cardLabel)}">Uge 6 · Session 2 — Bænkpres-dag</div>
     <div style="${css(s.card)}">
@@ -376,7 +376,7 @@ function harnessVideoer(hasVideos) {
       <button style="${css(s.btnGhost)}">Åbn</button>
     </div>`
   }).join('')
-  const body = `<div style="${css(s.cardLabel)}">VideoCoach · individuelle bevægelsesanalyser <button style="${css(s.btnPrimary)}font-size:0.58rem;padding:0.45rem 0.8rem;">+ Ny optagelse</button></div><div style="${css(s.card)}">${rowsHtml}</div>`
+  const body = `<div style="${css(s.cardLabel)}">VideoCoach · individuelle bevægelsesanalyser <button style="${css(s.btnPrimary)}font-size:0.58rem;padding:0.45rem 0.8rem;min-height:44px;box-sizing:border-box;">+ Ny optagelse</button></div><div style="${css(s.card)}">${rowsHtml}</div>`
   return shell('Anna Berg — analyse', 'list', body)
 }
 

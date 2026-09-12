@@ -2912,7 +2912,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         <div style={{ position: 'relative' }}>
           <div style={s.fieldLabel}>Navn</div>
           <input
-            style={{ ...s.fieldInput, fontSize: '0.8rem', padding: '0.4rem 0.6rem' }}
+            style={{ ...s.fieldInput, fontSize: '0.8rem', padding: '0.4rem 0.6rem', minHeight: '44px', boxSizing: 'border-box' }}
             type="text"
             placeholder="Søg øvelse..."
             value={exerciseForm.name}
@@ -2957,7 +2957,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           <div key={key}>
             <div style={s.fieldLabel}>{label}</div>
             <input
-              style={{ ...s.fieldInput, fontSize: '0.8rem', padding: '0.4rem 0.6rem' }}
+              style={{ ...s.fieldInput, fontSize: '0.8rem', padding: '0.4rem 0.6rem', minHeight: '44px', boxSizing: 'border-box' }}
               type={type}
               placeholder={label}
               value={exerciseForm[key]}
@@ -2969,7 +2969,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           <div style={s.fieldLabel}>Intensitet</div>
           <div style={{ display: 'flex', gap: '0.25rem' }}>
             <select
-              style={{ ...s.fieldInput, fontSize: '0.72rem', padding: '0.4rem 0.3rem', width: 'auto', flexShrink: 0, cursor: 'pointer' }}
+              aria-label="Intensitetsenhed"
+              style={{ ...s.fieldInput, fontSize: '0.72rem', padding: '0.4rem 0.3rem', width: 'auto', flexShrink: 0, cursor: 'pointer', minHeight: '44px', boxSizing: 'border-box' }}
               value={exerciseForm.intensityPrefix}
               onChange={e => setExerciseForm(p => ({ ...p, intensityPrefix: e.target.value }))}
             >
@@ -2979,7 +2980,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               <option value="Fri tekst">Fri</option>
             </select>
             <input
-              style={{ ...s.fieldInput, fontSize: '0.8rem', padding: '0.4rem 0.6rem', flex: 1, minWidth: 0 }}
+              style={{ ...s.fieldInput, fontSize: '0.8rem', padding: '0.4rem 0.6rem', flex: 1, minWidth: 0, minHeight: '44px', boxSizing: 'border-box' }}
               type={exerciseForm.intensityPrefix === 'Fri tekst' ? 'text' : 'number'}
               placeholder={exerciseForm.intensityPrefix === 'RPE' ? 'f.eks. 8' : exerciseForm.intensityPrefix === '%' ? 'f.eks. 80' : exerciseForm.intensityPrefix === 'Tid' ? 'sek, f.eks. 20' : 'tekst...'}
               value={exerciseForm.intensity}
@@ -2990,7 +2991,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         <div>
           <div style={s.fieldLabel}>Note</div>
           <input
-            style={{ ...s.fieldInput, fontSize: '0.8rem', padding: '0.4rem 0.6rem' }}
+            style={{ ...s.fieldInput, fontSize: '0.8rem', padding: '0.4rem 0.6rem', minHeight: '44px', boxSizing: 'border-box' }}
             type="text"
             placeholder="Note"
             value={exerciseForm.note}
@@ -4512,7 +4513,11 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               {(() => {
                 const todayStr = new Date().toISOString().slice(0, 10)
                 const todayR = athleteReadiness.find(r => r.logged_date === todayStr)
-                if (!todayR) return null
+                if (!todayR) return (
+                  <div style={{ ...s.card, marginBottom: '1.5rem', color: '#7a7770', fontSize: '0.78rem' }}>
+                    Ingen check-in logget i dag endnu.
+                  </div>
+                )
                 const sig = readinessSignal(todayR.readiness_score)
                 const prevR = athleteReadiness.find(r => r.logged_date < todayStr)
                 let trend = null

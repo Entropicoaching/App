@@ -822,8 +822,8 @@ export default function ProgramTab({
                                   </div>
                                 </div>
                                 <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexShrink: 0, flexWrap: 'wrap' }}>
-                                  <button style={{ ...s.btnEdit, opacity: sessionIdx === 0 ? 0.25 : 1 }} onClick={e => { e.stopPropagation(); reorderSession(week.id, session.id, 'up') }} disabled={sessionIdx === 0}>↑</button>
-                                  <button style={{ ...s.btnEdit, opacity: sessionIdx === sessionsArr.length - 1 ? 0.25 : 1 }} onClick={e => { e.stopPropagation(); reorderSession(week.id, session.id, 'down') }} disabled={sessionIdx === sessionsArr.length - 1}>↓</button>
+                                  <button aria-label={`Flyt ${session.title} op`} style={{ ...s.btnEdit, opacity: sessionIdx === 0 ? 0.25 : 1 }} onClick={e => { e.stopPropagation(); reorderSession(week.id, session.id, 'up') }} disabled={sessionIdx === 0}>↑</button>
+                                  <button aria-label={`Flyt ${session.title} ned`} style={{ ...s.btnEdit, opacity: sessionIdx === sessionsArr.length - 1 ? 0.25 : 1 }} onClick={e => { e.stopPropagation(); reorderSession(week.id, session.id, 'down') }} disabled={sessionIdx === sessionsArr.length - 1}>↓</button>
                                   {copyingSession === session.id ? (
                                     <>
                                       <select
@@ -933,10 +933,10 @@ export default function ProgramTab({
                                           ) : (
                                             <button style={s.btnEdit} onClick={() => setCopyingExercise(ex.id)}>Kopiér</button>
                                           )}
-                                          <button style={{ ...s.btnEdit, opacity: exIdx === 0 ? 0.25 : 1 }} disabled={exIdx === 0} onClick={() => reorderExercise(session.id, ex.id, 'up')}>↑</button>
-                                          <button style={{ ...s.btnEdit, opacity: exIdx === exArr.length - 1 ? 0.25 : 1 }} disabled={exIdx === exArr.length - 1} onClick={() => reorderExercise(session.id, ex.id, 'down')}>↓</button>
-                                          <button style={s.btnEdit} onClick={() => { setEditingExercise(ex.id); const { intensityPrefix, intensity } = parseIntensity(ex.intensity); setExerciseForm({ name: ex.name, sets: ex.sets || '', reps: ex.reps || '', intensity, intensityPrefix, note: ex.note || '' }) }}>✎</button>
-                                          <button style={s.btnDanger} onClick={() => deleteExercise(ex.id)}>✕</button>
+                                          <button aria-label={`Flyt ${ex.name} op`} style={{ ...s.btnEdit, opacity: exIdx === 0 ? 0.25 : 1 }} disabled={exIdx === 0} onClick={() => reorderExercise(session.id, ex.id, 'up')}>↑</button>
+                                          <button aria-label={`Flyt ${ex.name} ned`} style={{ ...s.btnEdit, opacity: exIdx === exArr.length - 1 ? 0.25 : 1 }} disabled={exIdx === exArr.length - 1} onClick={() => reorderExercise(session.id, ex.id, 'down')}>↓</button>
+                                          <button aria-label={`Rediger ${ex.name}`} style={s.btnEdit} onClick={() => { setEditingExercise(ex.id); const { intensityPrefix, intensity } = parseIntensity(ex.intensity); setExerciseForm({ name: ex.name, sets: ex.sets || '', reps: ex.reps || '', intensity, intensityPrefix, note: ex.note || '' }) }}>✎</button>
+                                          <button aria-label={`Slet ${ex.name}`} style={s.btnDanger} onClick={() => deleteExercise(ex.id)}>✕</button>
                                         </div>
                                       </div>
                                     )}
