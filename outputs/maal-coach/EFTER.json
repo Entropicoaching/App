@@ -3,7 +3,7 @@
     "profile": "iPad landscape 1180×820",
     "screen": "Atletliste (12 attrap-atleter)",
     "weight": {
-      "totalKb": 16,
+      "totalKb": 17,
       "requestCount": 1
     },
     "axe": [
@@ -20,7 +20,7 @@
     "lh": {
       "performance": 99,
       "accessibility": 80,
-      "ttiMs": 909
+      "ttiMs": 791
     },
     "consoleErrors": [],
     "screenshot": "outputs\\maal-coach\\ipad-landscape\\efter-atletliste.png"
@@ -46,7 +46,7 @@
     "lh": {
       "performance": 100,
       "accessibility": 80,
-      "ttiMs": 751
+      "ttiMs": 646
     },
     "consoleErrors": [],
     "screenshot": "outputs\\maal-coach\\ipad-landscape\\efter-atletliste-tom.png"
@@ -70,9 +70,9 @@
     "overflow": false,
     "textOverflow": [],
     "lh": {
-      "performance": 99,
+      "performance": 100,
       "accessibility": 85,
-      "ttiMs": 838
+      "ttiMs": 818
     },
     "consoleErrors": [],
     "screenshot": "outputs\\maal-coach\\ipad-landscape\\efter-atletens-uge.png"
@@ -98,7 +98,7 @@
     "lh": {
       "performance": 100,
       "accessibility": 85,
-      "ttiMs": 644
+      "ttiMs": 673
     },
     "consoleErrors": [],
     "screenshot": "outputs\\maal-coach\\ipad-landscape\\efter-checkin-gennemgang.png"
@@ -124,7 +124,7 @@
     "lh": {
       "performance": 100,
       "accessibility": 85,
-      "ttiMs": 664
+      "ttiMs": 669
     },
     "consoleErrors": [],
     "screenshot": "outputs\\maal-coach\\ipad-landscape\\efter-checkin-gennemgang-tom.png"
@@ -150,7 +150,7 @@
     "lh": {
       "performance": 100,
       "accessibility": 92,
-      "ttiMs": 675
+      "ttiMs": 679
     },
     "consoleErrors": [],
     "screenshot": "outputs\\maal-coach\\ipad-landscape\\efter-program-redigering.png"
@@ -176,7 +176,7 @@
     "lh": {
       "performance": 100,
       "accessibility": 80,
-      "ttiMs": 669
+      "ttiMs": 674
     },
     "consoleErrors": [],
     "screenshot": "outputs\\maal-coach\\ipad-landscape\\efter-coach-briefing.png"
@@ -200,9 +200,9 @@
     "overflow": false,
     "textOverflow": [],
     "lh": {
-      "performance": 99,
+      "performance": 100,
       "accessibility": 80,
-      "ttiMs": 819
+      "ttiMs": 660
     },
     "consoleErrors": [],
     "screenshot": "outputs\\maal-coach\\ipad-landscape\\efter-coach-briefing-tom.png"
@@ -211,7 +211,7 @@
     "profile": "iPad landscape 1180×820",
     "screen": "Videoer (VideoCoach-analyser)",
     "weight": {
-      "totalKb": 5,
+      "totalKb": 6,
       "requestCount": 1
     },
     "axe": [
@@ -222,29 +222,13 @@
         "nodes": 8
       }
     ],
-    "tapTargets": [
-      {
-        "text": "Åbn",
-        "height": 29,
-        "width": 53
-      },
-      {
-        "text": "Åbn",
-        "height": 29,
-        "width": 53
-      },
-      {
-        "text": "Åbn",
-        "height": 29,
-        "width": 53
-      }
-    ],
+    "tapTargets": [],
     "overflow": false,
     "textOverflow": [],
     "lh": {
-      "performance": 100,
+      "performance": 98,
       "accessibility": 85,
-      "ttiMs": 666
+      "ttiMs": 838
     },
     "consoleErrors": [],
     "screenshot": "outputs\\maal-coach\\ipad-landscape\\efter-videoer.png"
@@ -270,7 +254,7 @@
     "lh": {
       "performance": 99,
       "accessibility": 80,
-      "ttiMs": 817
+      "ttiMs": 814
     },
     "consoleErrors": [],
     "screenshot": "outputs\\maal-coach\\ipad-landscape\\efter-videoer-tom.png"
@@ -279,7 +263,7 @@
     "profile": "Desktop 1440×900",
     "screen": "Atletliste (12 attrap-atleter)",
     "weight": {
-      "totalKb": 16,
+      "totalKb": 17,
       "requestCount": 1
     },
     "axe": [
@@ -296,7 +280,7 @@
     "lh": {
       "performance": 99,
       "accessibility": 80,
-      "ttiMs": 806
+      "ttiMs": 888
     },
     "consoleErrors": [],
     "screenshot": "outputs\\maal-coach\\desktop\\efter-atletliste.png"
@@ -320,9 +304,9 @@
     "overflow": false,
     "textOverflow": [],
     "lh": {
-      "performance": 99,
+      "performance": 100,
       "accessibility": 80,
-      "ttiMs": 788
+      "ttiMs": 712
     },
     "consoleErrors": [],
     "screenshot": "outputs\\maal-coach\\desktop\\efter-atletliste-tom.png"
@@ -346,9 +330,9 @@
     "overflow": false,
     "textOverflow": [],
     "lh": {
-      "performance": 100,
+      "performance": 99,
       "accessibility": 85,
-      "ttiMs": 690
+      "ttiMs": 738
     },
     "consoleErrors": [],
     "screenshot": "outputs\\maal-coach\\desktop\\efter-atletens-uge.png"
@@ -374,7 +358,7 @@
     "lh": {
       "performance": 100,
       "accessibility": 85,
-      "ttiMs": 673
+      "ttiMs": 747
     },
     "consoleErrors": [],
     "screenshot": "outputs\\maal-coach\\desktop\\efter-checkin-gennemgang.png"
@@ -400,7 +384,7 @@
     "lh": {
       "performance": 100,
       "accessibility": 85,
-      "ttiMs": 665
+      "ttiMs": 737
     },
     "consoleErrors": [],
     "screenshot": "outputs\\maal-coach\\desktop\\efter-checkin-gennemgang-tom.png"
@@ -426,7 +410,7 @@
     "lh": {
       "performance": 100,
       "accessibility": 92,
-      "ttiMs": 673
+      "ttiMs": 690
     },
     "consoleErrors": [],
     "screenshot": "outputs\\maal-coach\\desktop\\efter-program-redigering.png"
@@ -452,7 +436,7 @@
     "lh": {
       "performance": 100,
       "accessibility": 80,
-      "ttiMs": 639
+      "ttiMs": 688
     },
     "consoleErrors": [],
     "screenshot": "outputs\\maal-coach\\desktop\\efter-coach-briefing.png"
@@ -478,7 +462,7 @@
     "lh": {
       "performance": 100,
       "accessibility": 80,
-      "ttiMs": 765
+      "ttiMs": 665
     },
     "consoleErrors": [],
     "screenshot": "outputs\\maal-coach\\desktop\\efter-coach-briefing-tom.png"
@@ -487,7 +471,7 @@
     "profile": "Desktop 1440×900",
     "screen": "Videoer (VideoCoach-analyser)",
     "weight": {
-      "totalKb": 5,
+      "totalKb": 6,
       "requestCount": 1
     },
     "axe": [
@@ -498,29 +482,13 @@
         "nodes": 8
       }
     ],
-    "tapTargets": [
-      {
-        "text": "Åbn",
-        "height": 29,
-        "width": 53
-      },
-      {
-        "text": "Åbn",
-        "height": 29,
-        "width": 53
-      },
-      {
-        "text": "Åbn",
-        "height": 29,
-        "width": 53
-      }
-    ],
+    "tapTargets": [],
     "overflow": false,
     "textOverflow": [],
     "lh": {
       "performance": 100,
       "accessibility": 85,
-      "ttiMs": 685
+      "ttiMs": 674
     },
     "consoleErrors": [],
     "screenshot": "outputs\\maal-coach\\desktop\\efter-videoer.png"
@@ -546,7 +514,7 @@
     "lh": {
       "performance": 100,
       "accessibility": 80,
-      "ttiMs": 743
+      "ttiMs": 666
     },
     "consoleErrors": [],
     "screenshot": "outputs\\maal-coach\\desktop\\efter-videoer-tom.png"

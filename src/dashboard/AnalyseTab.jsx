@@ -81,6 +81,19 @@ export default function AnalyseTab({
 
               return (
                 <div>
+                  {/* ORDRE 137 · commit 2: video-review-rækkens hoved (titel + "Gennemgå
+                      måling"-knap/status) går fra titel+knapper på samme linje til titel
+                      øverst og knapperne i en fuld-bredde 44px-række under, når der ikke
+                      er plads nok til begge dele komfortabelt ved siden af hinanden (iPad
+                      landscape, 1180px) — og forbliver én linje på bredere skærme (desktop,
+                      1440px). Ingen ny farve, kun layout. */}
+                  <style>{`
+                    @media (max-width: 1300px) {
+                      .videoQueueRowHead { flex-direction: column; align-items: stretch !important; }
+                      .videoQueueRowActions { width: 100%; justify-content: flex-start !important; }
+                    }
+                  `}</style>
+
                   {/* AI Rapport */}
                   <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
                     <button style={{ ...s.btnGhost, fontSize: '0.6rem', padding: '0.4rem 0.9rem', color: '#c8923a', borderColor: 'rgba(200,146,58,0.35)' }} onClick={() => { setAiExportText(''); setShowAiExport(true) }}>AI Rapport</button>
@@ -264,7 +277,7 @@ export default function AnalyseTab({
                           const updating = videoAnalysisUpdatingId === analysis.id
                           return (
                             <div key={analysis.id || analysis.client_analysis_id} style={{ border: '1px solid rgba(237,234,226,0.075)', background: 'rgba(20,20,16,0.58)', padding: isMobile ? '0.8rem' : '0.95rem' }}>
-                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.8rem', flexWrap: 'wrap' }}>
+                              <div className="videoQueueRowHead" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.8rem', flexWrap: 'wrap' }}>
                                 <div>
                                   <div style={{ color: '#edeae2', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.8rem' }}>
                                     {VIDEOCOACH_LIFTS[analysis.lift] || analysis.lift} · {videoCoachVariationLabel(analysis.lift, analysis.variation)}
@@ -278,8 +291,8 @@ export default function AnalyseTab({
                                     </div>
                                   )}
                                 </div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                                  <button disabled={videoAnalysisReviewLoadingId === analysis.id} onClick={() => openVideoAnalysisReview(analysis)} style={{ ...s.btnGhost, padding: '0.24rem 0.5rem', fontSize: '0.46rem', opacity: videoAnalysisReviewLoadingId === analysis.id ? 0.55 : 0.9 }}>
+                                <div className="videoQueueRowActions" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                                  <button disabled={videoAnalysisReviewLoadingId === analysis.id} onClick={() => openVideoAnalysisReview(analysis)} style={{ ...s.btnGhost, padding: '0.24rem 0.7rem', fontSize: '0.46rem', minHeight: '44px', display: 'inline-flex', alignItems: 'center', opacity: videoAnalysisReviewLoadingId === analysis.id ? 0.55 : 0.9 }}>
                                     {videoAnalysisReviewLoadingId === analysis.id ? 'Åbner…' : 'Gennemgå måling'}
                                   </button>
                                   <span style={{ color: status.color, border: `1px solid ${status.color}55`, background: `${status.color}10`, padding: '0.2rem 0.45rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>

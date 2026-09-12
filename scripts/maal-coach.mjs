@@ -183,7 +183,12 @@ function shell(title, activeKey, bodyHtml) {
   return `<!doctype html><html lang="da"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${title}</title>
-<style>*{box-sizing:border-box} body{margin:0;}</style>
+<style>*{box-sizing:border-box} body{margin:0;}
+@media (max-width: 1300px) {
+  .videoQueueRowHead { flex-direction: column; align-items: stretch !important; }
+  .videoQueueRowActions { width: 100%; justify-content: flex-start !important; }
+}
+</style>
 </head><body>
 <div style="${css(s.wrap)}">
 ${sidebar(activeKey)}
@@ -367,13 +372,19 @@ function harnessVideoer(hasVideos) {
   ]
   const rowsHtml = rows.map(r => {
     const st = VIDEOCOACH_STATUS[r.status]
-    return `<div style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem 0;border-bottom:1px solid rgba(237,234,226,0.05);">
+    // ORDRE 137 · commit 2: titel og knap/status-gruppe i egne div'er (som
+    // src/dashboard/AnalyseTab.jsx) så de kan stables på iPad og forblive på
+    // én linje på desktop, og knappen løftet til 44px min-height (samme
+    // s.btnEdit-mønster som ordre 130 · commit 3 brugte andre steder).
+    return `<div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.75rem;padding:0.75rem 0;border-bottom:1px solid rgba(237,234,226,0.05);" class="videoQueueRowHead">
       <div style="flex:1;">
         <div style="font-size:0.85rem;color:#edeae2;">${r.lift} · ${r.variation}</div>
         <div style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;color:#7a7770;">${r.kg} kg · ${r.when}</div>
       </div>
-      <span style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;padding:0.2rem 0.5rem;background:${st.color}22;color:${st.color};">${st.label}</span>
-      <button style="${css(s.btnGhost)}">Åbn</button>
+      <div style="display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;justify-content:flex-end;" class="videoQueueRowActions">
+        <button style="${css(s.btnGhost)}min-height:44px;display:inline-flex;align-items:center;">Åbn</button>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;padding:0.2rem 0.5rem;background:${st.color}22;color:${st.color};">${st.label}</span>
+      </div>
     </div>`
   }).join('')
   const body = `<div style="${css(s.cardLabel)}">VideoCoach · individuelle bevægelsesanalyser <button style="${css(s.btnPrimary)}font-size:0.58rem;padding:0.45rem 0.8rem;min-height:44px;box-sizing:border-box;">+ Ny optagelse</button></div><div style="${css(s.card)}">${rowsHtml}</div>`
