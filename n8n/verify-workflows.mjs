@@ -12,8 +12,11 @@ const here = dirname(fileURLToPath(import.meta.url));
 const load = (name) => JSON.parse(readFileSync(join(here, name), 'utf8'));
 const coach = load('coach-briefing-v1.json');
 const monitor = load('automation-error-monitor-v1.json');
-const briefingBuilderSource = readFileSync(join(here, 'build-coach-briefing.code'), 'utf8').trimEnd();
-const coachPrioritySource = readFileSync(join(here, '..', 'src', 'coachPriority.js'), 'utf8');
+// .code og .js kan ligge som CRLF på disken (fx `core.autocrlf=true` på en
+// Windows-checkout); JSON-strengene de sammenlignes mod er altid LF-escaped.
+// Normalisér før sammenligning, så scriptet tester indhold, ikke linjeskift-stil.
+const briefingBuilderSource = readFileSync(join(here, 'build-coach-briefing.code'), 'utf8').replace(/\r\n/g, '\n').trimEnd();
+const coachPrioritySource = readFileSync(join(here, '..', 'src', 'coachPriority.js'), 'utf8').replace(/\r\n/g, '\n');
 
 const option = (name) => {
   const index = process.argv.indexOf(name);

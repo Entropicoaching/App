@@ -17,18 +17,7 @@
         "nodes": 6
       }
     ],
-    "tapTargets": [
-      {
-        "text": "",
-        "height": 39,
-        "width": 340
-      },
-      {
-        "text": "",
-        "height": 39,
-        "width": 340
-      }
-    ],
+    "tapTargets": [],
     "overflow": false,
     "textOverflow": [],
     "lh": {
@@ -126,7 +115,7 @@
     "profile": "iPhone 13",
     "screen": "Videocoach-forside (uden video)",
     "weight": {
-      "totalKb": 537,
+      "totalKb": 541,
       "jsKb": 1,
       "cssKb": 6,
       "imgKb": 0,
@@ -161,17 +150,11 @@
         "nodes": 21
       }
     ],
-    "tapTargets": [
-      {
-        "text": "timer",
-        "height": 39,
-        "width": 90
-      }
-    ],
+    "tapTargets": [],
     "overflow": false,
     "textOverflow": [],
     "lh": {
-      "performance": 100,
+      "performance": 99,
       "accessibility": 87
     },
     "consoleErrors": [],
@@ -195,22 +178,11 @@
         "nodes": 6
       }
     ],
-    "tapTargets": [
-      {
-        "text": "",
-        "height": 39,
-        "width": 310
-      },
-      {
-        "text": "",
-        "height": 39,
-        "width": 310
-      }
-    ],
+    "tapTargets": [],
     "overflow": false,
     "textOverflow": [],
     "lh": {
-      "performance": 73,
+      "performance": 74,
       "accessibility": 87
     },
     "consoleErrors": [],
@@ -304,7 +276,7 @@
     "profile": "Android 360×740",
     "screen": "Videocoach-forside (uden video)",
     "weight": {
-      "totalKb": 537,
+      "totalKb": 541,
       "jsKb": 1,
       "cssKb": 6,
       "imgKb": 0,
@@ -339,13 +311,7 @@
         "nodes": 21
       }
     ],
-    "tapTargets": [
-      {
-        "text": "timer",
-        "height": 39,
-        "width": 90
-      }
-    ],
+    "tapTargets": [],
     "overflow": false,
     "textOverflow": [],
     "lh": {
@@ -459,7 +425,7 @@
     "profile": "Desktop 1280×800",
     "screen": "Videocoach-forside (uden video)",
     "weight": {
-      "totalKb": 547,
+      "totalKb": 551,
       "jsKb": 1,
       "cssKb": 6,
       "imgKb": 0,
@@ -507,13 +473,7 @@
         "nodes": 21
       }
     ],
-    "tapTargets": [
-      {
-        "text": "timer",
-        "height": 39,
-        "width": 90
-      }
-    ],
+    "tapTargets": [],
     "overflow": false,
     "textOverflow": [],
     "lh": null,

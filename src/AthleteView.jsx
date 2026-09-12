@@ -4031,7 +4031,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                       type="number" min="0" max="24" step="0.5" placeholder="timer"
                       value={readinessInput.sleep}
                       onChange={e => setReadinessInput(p => ({ ...p, sleep: e.target.value }))}
-                      style={{ ...s.fieldInput, maxWidth: '90px', fontSize: '1.1rem', padding: '0.5rem 0.6rem', textAlign: 'center' }}
+                      style={{ ...s.fieldInput, maxWidth: '90px', fontSize: '1.1rem', padding: '0.7rem 0.6rem', textAlign: 'center' }}
                     />
                     <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#7a7770', letterSpacing: '0.06em' }}>timer</span>
                   </div>

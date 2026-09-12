@@ -4,7 +4,13 @@
 // specifikke rettelser stadig er der, og at ingen af de rå
 // `supabase.auth.signOut()`-kald (selve bugen) er sneget sig ind igen.
 import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
+import { readFileSync as readFileRaw } from 'node:fs'
+
+// Kildefilerne kan ligge som CRLF på disken (fx `core.autocrlf=true` på en
+// Windows-checkout) uden at det betyder noget for koden. Normalisér til LF før
+// de bogstavelige `\n`-baserede match nedenfor, så scriptet tester adfærd, ikke
+// linjeskift-stil.
+const readFileSync = (url, enc) => readFileRaw(url, enc).replace(/\r\n/g, '\n')
 
 const supabaseJs = readFileSync(new URL('../src/supabase.js', import.meta.url), 'utf8')
 const dashboard = readFileSync(new URL('../src/Dashboard.jsx', import.meta.url), 'utf8')
