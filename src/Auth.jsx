@@ -141,7 +141,7 @@ export default function Auth() {
                 fontFamily: "'IBM Plex Sans', sans-serif",
                 fontSize: '0.9rem',
                 fontWeight: 300,
-                padding: '0.65rem 0.85rem',
+                padding: '0.85rem 0.85rem',
                 outline: 'none',
               }}
             />
@@ -174,7 +174,7 @@ export default function Auth() {
                   fontFamily: "'IBM Plex Sans', sans-serif",
                   fontSize: '0.9rem',
                   fontWeight: 300,
-                  padding: '0.65rem 0.85rem',
+                  padding: '0.85rem 0.85rem',
                   outline: 'none',
                 }}
               />

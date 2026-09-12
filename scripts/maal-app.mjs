@@ -300,7 +300,7 @@ function harnessCheckIn() {
       <div style="margin-bottom:1rem;">
         <div style="${S.fieldLabel}">Søvn</div>
         <div style="display:flex;align-items:center;gap:0.5rem;">
-          <input type="number" min="0" max="24" step="0.5" placeholder="timer" style="${S.fieldInput}max-width:90px;font-size:1.1rem;padding:0.5rem 0.6rem;text-align:center;">
+          <input type="number" min="0" max="24" step="0.5" placeholder="timer" style="${S.fieldInput}max-width:90px;font-size:1.1rem;padding:0.7rem 0.6rem;text-align:center;">
           <span style="font-family:'IBM Plex Mono',monospace;font-size:0.62rem;color:#7a7770;letter-spacing:0.06em;">timer</span>
         </div>
       </div>
