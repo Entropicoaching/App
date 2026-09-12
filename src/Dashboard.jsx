@@ -16,6 +16,7 @@ import { blockPurpose, buildPeriodizationSuggestion, withBlockPurposes } from '.
 import { buildPlanOverview, planOverviewCounts } from './planOverview'
 import { targetPrescriptionForExercise } from '../supabase/functions/_shared/progressionState.js'
 import { byggKategoriOpslag, kategoriFor } from './exerciseNames'
+import AthleteSilentFailNote from './AthleteSilentFailNote' // ORDRE 131 · commit 3 — eneste import, se RAPPORT-131.md
 
 const BLOCK_NAMES = ['Akkumulering', 'Intensificering', 'Peak', 'Deload', 'GPP', 'Hypertrofi', 'Styrke', 'Transition']
 
@@ -5312,6 +5313,9 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                       </div>
                     )
                   })()}
+
+                  {/* ORDRE 131 · commit 3 — eneste rendering, se RAPPORT-131.md */}
+                  <AthleteSilentFailNote key={selectedAthlete?.id} athleteId={selectedAthlete?.id} />
 
                   {/* 6. Kropsvægt */}
                   {weightChartData.length > 1 && (

@@ -8,6 +8,8 @@ import { ATHLETE_ONBOARDING_GUIDE_STEPS, hasCompletedOnboardingGuide, isLastOnbo
 import { runGuardedWrite } from './athleteWriteGuard'
 import { runGuardedRead } from './athleteReadGuard'
 import { loadReadinessDraft, saveReadinessDraft, clearReadinessDraft, isEmptyReadinessDraft } from './readinessDraft'
+import { recordSilentFail, attachPendingSilentFails, clearPendingSilentFails, markUploadInflight,
+  clearUploadInflight, takeStaleUploadInflight } from './athleteSilentFailLog'
 import { compareReadiness, readinessComparisonText, readinessTrainingNote } from './readinessInsight'
 import { remainingSeconds } from './restTimer'
 import { calcWarmupSets, isMainLift } from './warmup'
@@ -1965,7 +1967,11 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       // (VideoCoach har ingen), så både storage-uploaden og rækkens indsættelse
       // sker her. Filen rejser i selve beskeden (File/Blob er struktur-klonbar).
       if (message.type === `${ATHLETE_VIDEOCOACH_PREFIX}:upload-and-go`) {
+        // G16 (ordre 131): reply() er det ENESTE sted der er sikret at køre for
+        // ethvert bekræftet udfald (succes, fejl, annullering) - marker-oprydning
+        // sker derfor her, ét sted, i stedet for ved hvert enkelt return nedenfor.
         const reply = result => {
+          if (currentAthlete?.id) clearUploadInflight(currentAthlete.id)
           try { event.source.postMessage({ type: `${ATHLETE_VIDEOCOACH_PREFIX}:upload-result`,
             requestId: message.requestId, ...result }, event.origin); return true }
           catch { return false }
@@ -1994,6 +2000,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         // `supabase`, så en afbrudt upload aldrig kan afbryde andre samtidige kald.
         const controller = new AbortController()
         athleteVideoUploadAbortsRef.current.set(message.requestId, controller)
+        // G16 (ordre 131): sat FØR selve overførslen, ryddet af reply() ovenfor
+        // ved ethvert bekræftet udfald - se athleteSilentFailLog.js.
+        markUploadInflight(currentAthlete.id, message.requestId)
         let upload
         try {
           upload = await createAbortableUploadClient(controller.signal).storage
@@ -2018,6 +2027,11 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           loadKg: message.loadKg, rpe: message.rpe, athleteNote: message.athleteNote, videoPath: path,
           plateCalibration: message.plateCalibration,
         })
+        // ORDRE 131 · commit 3: rid coachen med en videorække der reelt bliver
+        // gemt - ventende stille-fejl-koder (G14/G15/G16) lægges kun ind her,
+        // rydningen sker nedenfor FØRST når gemningen er bekræftet, så en
+        // fejlet gemning ikke selv taber koderne.
+        row.session_context = attachPendingSilentFails(row.session_context, currentAthlete.id)
         const saved = await saveVideoCoachDraft(supabase, row, { athleteSubmission: true })
         if (saved.error) {
           // Videoen er allerede lagt i bucket'en (idempotent sti pr. client_analysis_id) -
@@ -2025,6 +2039,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           reply({ ok: false, error: saved.error.message || 'Videoen blev uploadet, men analysen kunne ikke oprettes · prøv igen' })
           return
         }
+        clearPendingSilentFails(currentAthlete.id)
         reply({ ok: true, data: { ...saved.data, duplicate: saved.duplicate } })
         window.dispatchEvent(new Event(ATHLETE_VIDEOCOACH_QUEUE_CHANGED))
         return
@@ -2061,10 +2076,18 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
             message.row.session_context?.feedback_evidence),
         },
       }
+      // ORDRE 131 · commit 3: samme mønster som upload-and-go ovenfor - ventende
+      // koder følger med i selve rækken (også hvis den ender i den lokale
+      // retry-kø nedenfor), og ryddes kun ved en BEKRÆFTET gemning.
+      safeRow.session_context = attachPendingSilentFails(safeRow.session_context, currentAthlete.id)
       const result = await saveVideoCoachDraft(supabase, safeRow, { athleteSubmission: true })
       if (result.error) {
         if (isRetryableVideoCoachError(result.error) &&
             queueVideoCoachDraft(safeRow, globalThis.localStorage, session.user.id)) {
+          // Koderne er nu bagt ind i safeRow, som selve kø-funktionen persisterer
+          // lokalt til senere automatisk afsendelse (flushVideoCoachDraftQueue) -
+          // trygt at rydde den ADSKILTE ventekø her, de er ikke tabt.
+          clearPendingSilentFails(currentAthlete.id)
           window.dispatchEvent(new Event(ATHLETE_VIDEOCOACH_QUEUE_CHANGED))
           reply({ ok: true, data: { client_analysis_id: safeRow.client_analysis_id,
             athlete_id: currentAthlete.id, status: 'draft', queued: true } })
@@ -2073,6 +2096,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         reply({ ok: false, error: result.error.message || 'Analysen kunne ikke sendes' })
         return
       }
+      clearPendingSilentFails(currentAthlete.id)
       reply({ ok: true, data: { ...result.data, duplicate: result.duplicate } })
     }
     window.addEventListener('message', onAthleteVideoCoachMessage)
@@ -2147,6 +2171,19 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   }, [athlete?.id, session.user.id])
 
   useEffect(() => { fetchAthlete() }, [])
+  // G16 (ordre 131): opdager en videoupload der blev afbrudt af at fanen/appen
+  // lukkede eller genindlæste midt i overførslen (ingen kode når at køre
+  // færdig i det tilfælde, så intet andet sted kan vise fejlen). Kører kun
+  // ved en reel app-åbning (athlete.id sat første gang), ikke ved genrender.
+  useEffect(() => {
+    if (!athlete?.id) return
+    if (!takeStaleUploadInflight(athlete.id)) return
+    recordSilentFail(athlete.id, 'silent:video-upload-interrupted')
+    if (flashTimerRef.current) clearTimeout(flashTimerRef.current)
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- bevidst: viser étgangs-varsel for en afbrudt upload fra FORRIGE session, opdaget ved denne app-åbning
+    setFlash({ message: 'Din seneste video blev muligvis afbrudt, mens den blev sendt. Åbn VideoCoach og send den igen for at være sikker.', kind: 'error' })
+    flashTimerRef.current = setTimeout(() => setFlash(null), 6500)
+  }, [athlete?.id])
   useEffect(() => { if (athlete) fetchLogs(athlete.id, kostDate) }, [kostDate, athlete?.id])
   useEffect(() => {
     if (role === 'athlete' && athlete?.id) fetchSharedVideoAnalyses()
@@ -2823,12 +2860,18 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           .select('weight, reps')
           .eq('athlete_id', athlete.id)
           .eq('exercise_name', exerciseName)
-        const savePR = () => supabase.from('personal_records').insert({
+        // G14 (ordre 131): en fejlet INSERT her blev tidligere aldrig tjekket —
+        // atleten kunne se PR-fejringen ("PR!") selvom rækken aldrig nåede
+        // databasen. queueWrite giver samme genforsøg-med-backoff som resten af
+        // appens skrivninger; lykkes den stadig ikke, vises INGEN fejring (en
+        // udeblevet fejring er rigtigere end en løgnagtig), og coachen kan se
+        // det via session_context næste gang atleten uploader en video.
+        const savePR = () => queueWrite(() => supabase.from('personal_records').insert({
           athlete_id: athlete.id,
           exercise_name: exerciseName,
           weight: newSet.weight,
           reps: newSet.reps,
-        })
+        }))
         if (prFetchError) {
           // En fejlet SELECT er IKKE det samme som "ingen tidligere data" — tolkes
           // den sådan, overskrives en ægte baseline af det aktuelle sæt. Springes
@@ -2836,7 +2879,11 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           logFrontendError('PR-detektion sprunget over: SELECT på personal_records fejlede', prFetchError, athlete.id)
         } else if ((prData || []).length === 0) {
           // Allerførste registrering på øvelsen → gem baseline uden notifikation
-          await savePR()
+          const { error: baselineError } = await savePR()
+          if (baselineError) {
+            logFrontendError('PR-detektion: baseline-INSERT på personal_records fejlede', baselineError, athlete.id)
+            recordSilentFail(athlete.id, 'silent:pr-insert-failed')
+          }
         } else {
           const rows = prData
           const bestWeight = Math.max(...rows.map(r => r.weight || 0))
@@ -2849,11 +2896,16 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           else if (bestRepsAtWeight > 0 && newSet.reps > bestRepsAtWeight) prType = 'rep'
           else if (e1rm(newSet) > bestE1rm * 1.001) prType = 'styrke'
           if (prType) {
-            await savePR()
-            setPrToast({ name: exerciseName, type: prType })
-            setPrToastFading(false)
-            setTimeout(() => setPrToastFading(true), 2400)
-            setTimeout(() => setPrToast(null), 3000)
+            const { error: prSaveError } = await savePR()
+            if (prSaveError) {
+              logFrontendError('PR-detektion: INSERT på personal_records fejlede', prSaveError, athlete.id)
+              recordSilentFail(athlete.id, 'silent:pr-insert-failed')
+            } else {
+              setPrToast({ name: exerciseName, type: prType })
+              setPrToastFading(false)
+              setTimeout(() => setPrToastFading(true), 2400)
+              setTimeout(() => setPrToast(null), 3000)
+            }
           }
         }
       }
@@ -2933,17 +2985,27 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     setWeightLogs(data || [])
   }
 
+  // G15 (ordre 131): var før et rent "fyr og glem" — feltet blev ryddet og
+  // ingen fejl vist uanset om skrivningen lykkedes. En fejlet vægtlogning så
+  // derfor ud som en gemt vægt; kun et efterfølgende (uændret) tal i grafen
+  // afslørede det, og kun hvis atleten selv lagde mærke til det.
   async function logWeight() {
     if (!weightInput || !athlete) return
     setSavingWeight(true)
     const todayStr = today()
     const existing = weightLogs.find(l => l.logged_at === todayStr)
-    if (existing) {
-      await supabase.from('weight_logs').update({ weight: parseFloat(weightInput) }).eq('id', existing.id)
-    } else {
-      await supabase.from('weight_logs').insert({ athlete_id: athlete.id, weight: parseFloat(weightInput), logged_at: todayStr })
-    }
+    const ok = await runGuardedWrite(
+      () => existing
+        ? supabase.from('weight_logs').update({ weight: parseFloat(weightInput) }).eq('id', existing.id)
+        : supabase.from('weight_logs').insert({ athlete_id: athlete.id, weight: parseFloat(weightInput), logged_at: todayStr }),
+      error => {
+        logFrontendError('logWeight fejlede', error, athlete.id)
+        recordSilentFail(athlete.id, 'silent:weight-log-failed')
+        showFlash('Vægten blev ikke gemt. Tjek din forbindelse og prøv igen.', 'error')
+      },
+    )
     setSavingWeight(false)
+    if (!ok) return // input bevares bevidst, så atleten ikke skal taste tallet igen
     setWeightInput('')
     fetchWeightLogs(athlete.id)
   }
