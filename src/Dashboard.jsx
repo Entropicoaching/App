@@ -594,6 +594,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     return () => window.removeEventListener('message', onVideoCoachMessage)
   }, [])
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- kører bevidst kun ved mount af Dashboard; session.user.id er fast for instansens levetid
   useEffect(() => { fetchAthletes(); fetchExerciseLibrary(); fetchLastBackup() }, [])
   // Engangs-migrering: flyt evt. gamle localStorage-snoozes ind i DB, så de ikke tabes
   // når snooze nu synces via athletes.snooze_until. Kører én gang når atleter er hentet.
@@ -619,32 +620,33 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     }
   }, [view, athletes])
   useEffect(() => {
-    if ((activeTab === 'program' || activeTab === 'analyse' || activeTab === 'log') && selectedAthlete) {
+    if ((activeTab === 'program' || activeTab === 'analyse' || activeTab === 'log') && selectedAthlete?.id) {
       fetchWeeks(selectedAthlete.id)
       fetchAthleteLogs(selectedAthlete.id)
     }
   }, [activeTab, selectedAthlete?.id])
 
   useEffect(() => {
-    if (activeTab === 'beskeder' && selectedAthlete) {
+    if (activeTab === 'beskeder' && selectedAthlete?.id) {
       fetchMessages(selectedAthlete.id)
       markMessagesRead(selectedAthlete.id, coachMsgTrack)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- markMessagesRead læser athletes synkront ved kørsel, ikke en ældre snapshot
   }, [activeTab, selectedAthlete?.id, coachMsgTrack])
 
   useEffect(() => {
-    if ((activeTab === 'oversigt' || activeTab === 'analyse') && selectedAthlete) {
+    if ((activeTab === 'oversigt' || activeTab === 'analyse') && selectedAthlete?.id) {
       fetchAthleteWeightLogs(selectedAthlete.id)
       fetchAthleteReadiness(selectedAthlete.id)
       fetchAthletePRs(selectedAthlete.id)
       fetchMeetResults(selectedAthlete.id)
     }
     // Hubben viser dagens parathed i statuslinjen.
-    if (activeTab === 'hub' && selectedAthlete) fetchAthleteReadiness(selectedAthlete.id)
+    if (activeTab === 'hub' && selectedAthlete?.id) fetchAthleteReadiness(selectedAthlete.id)
   }, [activeTab, selectedAthlete?.id])
 
   useEffect(() => {
-    if ((activeTab === 'hub' || activeTab === 'analyse') && selectedAthlete) {
+    if ((activeTab === 'hub' || activeTab === 'analyse') && selectedAthlete?.id) {
       fetchVideoCoachHistory(selectedAthlete.id)
     }
   }, [activeTab, selectedAthlete?.id])
@@ -672,13 +674,13 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   }, [videoAnalysisReview, isMobile])
 
   useEffect(() => {
-    if (activeTab === 'opvarmning' && selectedAthlete) {
+    if (activeTab === 'opvarmning' && selectedAthlete?.id) {
       fetchWarmupTemplates(selectedAthlete.id)
     }
   }, [activeTab, selectedAthlete?.id])
 
   useEffect(() => {
-    if (activeTab === 'stævne' && selectedAthlete) {
+    if (activeTab === 'stævne' && selectedAthlete?.id) {
       fetchMeetPlan(selectedAthlete.id)
       fetchMeetResults(selectedAthlete.id)
       fetchAthletePRs(selectedAthlete.id)
