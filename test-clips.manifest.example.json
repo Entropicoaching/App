@@ -1,0 +1,37 @@
+{
+  "_hvordan": "Kopiér denne fil til test-clips/manifest.json (git-ignoreret, ligesom klippene selv) og ret nøglerne til dine egne filnavne i test-clips\\. Mangler et klip i test-clips\\ en post her, gælder standardkravet: maxRealtime 1.10, diagnostic false - ingen utilsigtet lempelse. En grænse over 1.10 kræver diagnostic:true (verify:videocoach-clip nægter ellers at starte).",
+
+  "dodloft-lys.mp4": {
+    "description": "Eksempel: 3-5 reps, almindelig (lys) skive, ægte optagelse.",
+    "reps": 4,
+    "synthetic": false,
+    "expectedWindowSeconds": 2.5,
+    "maxRealtime": 1.10
+  },
+
+  "marc-doedloeft-270.mov": {
+    "description": "Marcs egen dødløft, 1 rep, iPhone 15 Pro, håndholdt.",
+    "reps": 1,
+    "synthetic": false,
+    "expectedWindowSeconds": 2.55,
+    "maxRealtime": 1.10
+  },
+
+  "vis-mig-nu-4-reps-realistisk.mp4": {
+    "description": "4 reps bygget af Marcs rigtige rep-vindue (0.00-2.55s), strukket til 3.00s ved frame-gentagelse (ikke slowmo, se scripts/make-realistic-test-clip.mjs), 4.00s stille-stang-pause mellem hver rep - erstatter det gamle urealistiske syntetiske klip som normal-krav-klip (ordre 139).",
+    "reps": 4,
+    "synthetic": true,
+    "expectedWindowSeconds": 3.0,
+    "maxRealtime": 1.10
+  },
+
+  "vis-mig-nu-4-reps-syntetisk.mp4": {
+    "description": "Det gamle syntetiske 4-reps-klip (ordre 121): 0.56s-vinduer bygget af blot det FØRSTE sekund af Marcs klip, ikke det rigtige rep-vindue - urealistisk kort, se RAPPORT-134/139. Beholdt kun til diagnostik.",
+    "reps": 4,
+    "synthetic": true,
+    "expectedWindowSeconds": 0.56,
+    "maxRealtime": 1.45,
+    "diagnostic": true,
+    "reason": "0,56 s-vinduer betaler proportionalt mere opstarts-overhead (vindue 1's faste ~165ms kolde JIT/dekoder-opvarmning, se RAPPORT-134) end et realistisk 2,5-3,5s vindue - målt historisk 1,35-1,42x. 1,45x er et ærligt loft, ikke en lempelse af det rigtige krav (1,10x, se vis-mig-nu-4-reps-realistisk.mp4)."
+  }
+}
