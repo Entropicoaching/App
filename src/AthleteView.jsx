@@ -4001,13 +4001,23 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               </div>
             </div>
 
-            {currentWeek && (
+            {currentWeek ? (
               <WeekCalendar
                 week={currentWeek}
                 weekStart={weekStartDate(allWeeks, currentWeek.week_number)}
                 exerciseLogs={exerciseLogs}
                 onOpenSession={(id) => { setTab('program'); openSession(id) }}
               />
+            ) : (
+              // Reserverer WeekCalendars typiske højde: FØR ugedata (allWeeks)
+              // er hentet, findes dette element slet ikke (WeekCalendar
+              // returnerer null / hele blokken er ugengivet), og når det
+              // dukker op skubber det alt nedenfor — bl.a. "Dagens parathed"-
+              // kortet — ned. Målt som appens største reelle layoutskift
+              // (CLS 0,106) i ordre 173's rigtige, autentificerede måling; den
+              // isolerede harness i ordre 167 kunne aldrig se dette, den havde
+              // altid statisk data fra første billede.
+              <div style={{ height: '76px', marginBottom: '1.25rem' }} />
             )}
 
             {!readinessLog && logs.length === 0 && (
