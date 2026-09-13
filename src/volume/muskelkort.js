@@ -113,9 +113,9 @@ const RAA_KORT = {
   // --- Dødløft-familien ------------------------------------------------------
   'Dødløft': {
     grupper: [
-      { gruppe: 'hipExtensors', andel: PRIMÆR, kilde: `${KILDE_LOEFTMODEL}, afsnit (e)-(g)` },
-      { gruppe: 'backExtensors', andel: PRIMÆR, kilde: `${KILDE_LOEFTMODEL}, afsnit (e)-(g)` },
-      { gruppe: 'kneeExtensors', andel: MEDVIRKENDE, kilde: `${KILDE_LOEFTMODEL}, afsnit (e)-(g) — mindre knæmoment end squat` },
+      { gruppe: 'hipExtensors', andel: PRIMÆR, kilde: `${KILDE_LOEFTMODEL}, afsnit (e)-(i)` },
+      { gruppe: 'backExtensors', andel: PRIMÆR, kilde: `${KILDE_LOEFTMODEL}, afsnit (e)-(i)` },
+      { gruppe: 'kneeExtensors', andel: MEDVIRKENDE, kilde: `${KILDE_LOEFTMODEL}, afsnit (e)-(i) — mindre knæmoment end squat` },
     ],
   },
   'Rumænsk dødløft': {
@@ -126,8 +126,8 @@ const RAA_KORT = {
   },
   'Sumo dødløft': {
     grupper: [
-      { gruppe: 'hipExtensors', andel: PRIMÆR, kilde: `${KILDE_LOEFTMODEL}, afsnit (e)-(g)` },
-      { gruppe: 'backExtensors', andel: PRIMÆR, kilde: `${KILDE_LOEFTMODEL}, afsnit (e)-(g)` },
+      { gruppe: 'hipExtensors', andel: PRIMÆR, kilde: `${KILDE_LOEFTMODEL}, afsnit (e)-(i)` },
+      { gruppe: 'backExtensors', andel: PRIMÆR, kilde: `${KILDE_LOEFTMODEL}, afsnit (e)-(i)` },
       { gruppe: 'kneeExtensors', andel: MEDVIRKENDE, kilde: 'skoen: bredere stance og mere oprejst torso end konventionel dødløft flytter mere mod knæet' },
     ],
   },
