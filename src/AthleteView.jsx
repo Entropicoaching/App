@@ -1790,6 +1790,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [progOpenSession, setProgOpenSession] = useState(null)
   const [exerciseLogs, setExerciseLogs] = useState([])
   const [prs, setPrs] = useState([]) // atletens egne rekorder (personal_records)
+  const [prsError, setPrsError] = useState(false) // se fetchPRs — ordre 163 · del 3
   const [logInputs, setLogInputs] = useState({})
   const [lastLogByExerciseName, setLastLogByExerciseName] = useState({})
   const [exerciseHistory, setExerciseHistory] = useState({})
@@ -1911,7 +1912,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       readinessDraftRestoredForRef.current = athlete.id
       const draft = loadReadinessDraft(athlete.id, today())
       if (draft && !isEmptyReadinessDraft(draft)) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect -- bevidst: genindsætter et lokalt udkast én gang pr. atlet ved åbning
         setReadinessInput(draft)
         return
       }
@@ -2181,7 +2181,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     if (!takeStaleUploadInflight(athlete.id)) return
     recordSilentFail(athlete.id, 'silent:video-upload-interrupted')
     if (flashTimerRef.current) clearTimeout(flashTimerRef.current)
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- bevidst: viser étgangs-varsel for en afbrudt upload fra FORRIGE session, opdaget ved denne app-åbning
     setFlash({ message: 'Din seneste video blev muligvis afbrudt, mens den blev sendt. Åbn VideoCoach og send den igen for at være sikker.', kind: 'error' })
     flashTimerRef.current = setTimeout(() => setFlash(null), 6500)
   }, [athlete?.id])
@@ -2196,7 +2195,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   // eslint-disable-next-line react-hooks/exhaustive-deps -- begge er rene ift. athlete.id, som allerede er i deps
   useEffect(() => { if (tab === 'stævnedag' && athlete?.id) { fetchMeetPlan(athlete.id); fetchMeetResults(athlete.id) } }, [tab, athlete?.id])
 
-  /* eslint-disable react-hooks/set-state-in-effect -- bevidst: seeder initial opvarmnings-fokus fra programmet + driver nedtællings-timeren */
   useEffect(() => {
     if (tab === 'mobilisering' && mobilityMode === 'opvarmning' && currentWeek && warmupPhase === 'focus' && !warmupFocus) {
       for (const session of currentWeek.sessions || []) {
@@ -2232,8 +2230,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     return () => { clearInterval(id); document.removeEventListener('visibilitychange', onVisible) }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- kun ved start/stop af segmentet; 'timerSeconds' bruges kun som startpunkt for DET segment
   }, [timerActive])
-
-  /* eslint-enable react-hooks/set-state-in-effect */
 
   useEffect(() => {
     if (!loading) return
@@ -2292,19 +2288,27 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         setOnboardingDone(hasCompletedOnboardingGuide(data))
       }
       setAthlete(data)
-      fetchLogs(data.id)
-      fetchCustomFoods(data.id)
-      fetchMealTemplates(data.id)
-      fetchHistoricalMealLogs(data.id)
-      fetchFrequentFoods(data.id)
+      // Ordre 163 · del 4 (billig gevinst, ingen ny state-model): det der
+      // faktisk vises først — "hjem" er standardfanen — hentes med det
+      // samme. Resten (kost/beskeder/opvarmning/stævne, alt på faner
+      // brugeren endnu ikke har åbnet) udskydes ét tick med setTimeout(0),
+      // så disse kald ikke konkurrerer om de første forbindelser/båndbredde
+      // med det der rent faktisk skal males på skærmen på en langsom profil.
       fetchProgram(data.id)
-      fetchAthleteMessages(data.id)
-      fetchWeightLogs(data.id)
+      fetchLogs(data.id)
       fetchReadiness(data.id)
-      fetchPRs(data.id)
-      fetchWarmupTemplates(data.id)
-      fetchMeetPlan(data.id)
-      fetchMeetResults(data.id)
+      setTimeout(() => {
+        fetchCustomFoods(data.id)
+        fetchMealTemplates(data.id)
+        fetchHistoricalMealLogs(data.id)
+        fetchFrequentFoods(data.id)
+        fetchAthleteMessages(data.id)
+        fetchWeightLogs(data.id)
+        fetchPRs(data.id)
+        fetchWarmupTemplates(data.id)
+        fetchMeetPlan(data.id)
+        fetchMeetResults(data.id)
+      }, 0)
     }
     setLoading(false)
   }
@@ -2327,16 +2331,32 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     setSharedVideoLoading(false)
   }
 
-  async function fetchPRs(athleteId) {
+  // G3 (ordre 163 · del 3): "Personlige rekorder" var kaldet der fejlede ved
+  // åbning. Det stoppede allerede ikke resten af siden (runGuardedRead), men
+  // meldte fejlen med onReadError's app-brede røde toast for noget der kun
+  // rører ét kort. Nu: fejlen markeres kun i selve "Dine rekorder"-kortet
+  // (prsError, se render nedenfor), og der forsøges roligt igen i baggrunden
+  // med stigende ventetid — uden at brugeren skal røre noget.
+  async function fetchPRs(athleteId, attempt = 0) {
     const { data, ok } = await runGuardedRead(
       () => supabase
         .from('personal_records')
         .select('exercise_name, weight, reps, created_at')
         .eq('athlete_id', athleteId)
         .order('created_at', { ascending: false }),
-      onReadError('Personlige rekorder', athleteId),
+      (error) => {
+        logFrontendError('Personlige rekorder kunne ikke hentes', error, athleteId)
+        if (mountedRef.current) setPrsError(true)
+      },
     )
-    if (!ok) return
+    if (!ok) {
+      if (attempt < 3) {
+        setTimeout(() => { if (mountedRef.current) fetchPRs(athleteId, attempt + 1) }, 1500 * (attempt + 1))
+      }
+      return
+    }
+    if (!mountedRef.current) return
+    setPrsError(false)
     setPrs(data || [])
   }
 
@@ -4345,10 +4365,15 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 .map(([name, v]) => ({ name, ...v, main: isMainLift(name) }))
                 .sort((a, b) => (b.main - a.main) || (b.weight - a.weight))
                 .slice(0, 6)
-              if (!hasMax && !bestList.length) return null
+              if (!hasMax && !bestList.length && !prsError) return null
               return (
                 <div style={s.card}>
                   <div style={s.cardLabel}>Dine rekorder</div>
+                  {prsError && (
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.04em', color: '#7a7770', marginBottom: bestList.length || hasMax ? '0.75rem' : 0 }}>
+                      Rekorder kunne ikke hentes lige nu. Prøver igen i baggrunden…
+                    </div>
+                  )}
                   {hasMax && (
                     <>
                       <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', marginBottom: bestList.length ? '1.1rem' : 0 }}>

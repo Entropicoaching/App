@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef, Suspense } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase, withRetry, signOutHard } from './supabase'
-import { lazyWithReload } from './lazyWithReload'
+import LazyBoundary from './LazyBoundary'
 import { buildCoachPriorityItems, coachPriorityQueueContext, coachPriorityTaskContext } from './coachPriority'
 import { coachInboxEntryIntent, coachInboxFocusDecision, createSingleFlightRunner, filterDraftVideoReviews, filterOpenTrainingSignals, summarizeCoachMessages, summarizeRefreshResults, trainingSignalFingerprint } from './coachInboxState'
 import { videoCoachBaselineReviewImpact } from './videoCoachBaselineProgress'
@@ -173,9 +173,11 @@ const ATHLETE_LOGS_LIMIT = 2000
 // Lazy-loadede underfaner (ordre 130 · commit 2): coachens tungeste skærme
 // (videoer, program-redigering, indbakke) hentes kun når coachen rent faktisk
 // åbner dem, så atletlisten og check-in-gennemgangen ikke skal downloade dem.
-const IndbakkeView = lazyWithReload(() => import('./dashboard/IndbakkeView'), 'indbakke')
-const AnalyseTab = lazyWithReload(() => import('./dashboard/AnalyseTab'), 'analysetab')
-const ProgramTab = lazyWithReload(() => import('./dashboard/ProgramTab'), 'programtab')
+// Indlæses via LazyBoundary (ordre 163 · del 2): egen fejlgrænse pr. fane, så
+// en fejl i ÉN fane ikke river resten af dashboardet med sig.
+const indbakkeFactory = () => import('./dashboard/IndbakkeView')
+const analyseTabFactory = () => import('./dashboard/AnalyseTab')
+const programTabFactory = () => import('./dashboard/ProgramTab')
 
 export default function Dashboard({ session, onPreviewAthlete }) {
   const initialCoachEntryRef = useRef(coachInboxEntryIntent(
@@ -3314,16 +3316,17 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
         {/* INDBAKKE — samlet beskedoverblik på tværs af atleter */}
         {view === 'inbox' && (
-          <Suspense fallback={<div style={{ ...s.page }}>Indlæser…</div>}>
-            <IndbakkeView
-              athletes={athletes} coachPriorityItems={coachPriorityItems} handleTrainingSignal={handleTrainingSignal}
-              hiddenAthleteIds={hiddenAthleteIds} inboxRefreshing={inboxRefreshing} inboxRefreshStatus={inboxRefreshStatus}
-              isMobile={isMobile} latestByTrack={latestByTrack} messageInboxError={messageInboxError}
-              openCoachPriorityItem={openCoachPriorityItem} openProfile={openProfile} refreshCoachInbox={refreshCoachInbox}
-              setCoachMsgTrack={setCoachMsgTrack} trainingSignalsError={trainingSignalsError}
-              trainingSignalUpdatingKey={trainingSignalUpdatingKey} unreadByTrack={unreadByTrack} videoReviewQueueError={videoReviewQueueError}
-            />
-          </Suspense>
+          <LazyBoundary
+            factory={indbakkeFactory} label="Indbakke" loading={<div style={{ ...s.page }}>Indlæser…</div>}
+            componentProps={{
+              athletes, coachPriorityItems, handleTrainingSignal,
+              hiddenAthleteIds, inboxRefreshing, inboxRefreshStatus,
+              isMobile, latestByTrack, messageInboxError,
+              openCoachPriorityItem, openProfile, refreshCoachInbox,
+              setCoachMsgTrack, trainingSignalsError,
+              trainingSignalUpdatingKey, unreadByTrack, videoReviewQueueError,
+            }}
+          />
         )}
 
         {/* LIBRARY VIEW */}
@@ -4301,21 +4304,22 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
             {/* TAB: ANALYSE */}
             {activeTab === 'analyse' && (
-              <Suspense fallback={<div style={s.page}>Indlæser…</div>}>
-                <AnalyseTab
-                  a={a} aiExportCopied={aiExportCopied} aiExportText={aiExportText} aiExportWeeks={aiExportWeeks}
-                  athleteLogs={athleteLogs} athletePRHistory={athletePRHistory} athleteReadiness={athleteReadiness}
-                  athleteWeightLogs={athleteWeightLogs} exerciseLibrary={exerciseLibrary} fetchVideoCoachHistory={fetchVideoCoachHistory}
-                  generateAIReport={generateAIReport} isMobile={isMobile} openAwaitingAnalysisVideo={openAwaitingAnalysisVideo}
-                  openVideoAnalysisReview={openVideoAnalysisReview} openVideoCoachV3={openVideoCoachV3} reviewVideoAnalysis={reviewVideoAnalysis}
-                  selectedAthlete={selectedAthlete} setAiExportCopied={setAiExportCopied} setAiExportText={setAiExportText}
-                  setAiExportWeeks={setAiExportWeeks} setShowAiExport={setShowAiExport} setVideoLiftFilter={setVideoLiftFilter}
-                  showAiExport={showAiExport} videoAnalyses={videoAnalyses} videoAnalysisError={videoAnalysisError}
-                  videoAnalysisLoading={videoAnalysisLoading} videoAnalysisReviewError={videoAnalysisReviewError}
-                  videoAnalysisReviewLoadingId={videoAnalysisReviewLoadingId} videoAnalysisUpdatingId={videoAnalysisUpdatingId}
-                  videoBaselines={videoBaselines} videoLiftFilter={videoLiftFilter} weeks={weeks}
-                />
-              </Suspense>
+              <LazyBoundary
+                factory={analyseTabFactory} label="Analyse" loading={<div style={s.page}>Indlæser…</div>}
+                componentProps={{
+                  a, aiExportCopied, aiExportText, aiExportWeeks,
+                  athleteLogs, athletePRHistory, athleteReadiness,
+                  athleteWeightLogs, exerciseLibrary, fetchVideoCoachHistory,
+                  generateAIReport, isMobile, openAwaitingAnalysisVideo,
+                  openVideoAnalysisReview, openVideoCoachV3, reviewVideoAnalysis,
+                  selectedAthlete, setAiExportCopied, setAiExportText,
+                  setAiExportWeeks, setShowAiExport, setVideoLiftFilter,
+                  showAiExport, videoAnalyses, videoAnalysisError,
+                  videoAnalysisLoading, videoAnalysisReviewError,
+                  videoAnalysisReviewLoadingId, videoAnalysisUpdatingId,
+                  videoBaselines, videoLiftFilter, weeks,
+                }}
+              />
             )}
 
             {/* TAB: OPVARMNING */}
@@ -4809,36 +4813,37 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
             {/* TAB: PROGRAM */}
             {activeTab === 'program' && (
-              <Suspense fallback={<div style={s.page}>Indlæser…</div>}>
-                <ProgramTab
-                  addExercise={addExercise} addingExercise={addingExercise} addingSession={addingSession}
-                  addingWeek={addingWeek} addSession={addSession} addWeek={addWeek}
-                  applyPeriodizationSuggestion={applyPeriodizationSuggestion} approveDraftProgressionState={approveDraftProgressionState}
-                  approvingProgression={approvingProgression} assignEdits={assignEdits} athleteLogs={athleteLogs} bestLog={bestLog}
-                  blockPlan={blockPlan} copyExerciseToSession={copyExerciseToSession} copyingExercise={copyingExercise}
-                  copyingSession={copyingSession} copySessionToWeek={copySessionToWeek} copyWeek={copyWeek} deleteExercise={deleteExercise}
-                  deleteSession={deleteSession} deleteWeek={deleteWeek} editDraftForecast={editDraftForecast} editingExercise={editingExercise}
-                  editingRecommended={editingRecommended} editingSession={editingSession} editingWeek={editingWeek} exFormRow={exFormRow}
-                  fetchWeeks={fetchWeeks} generateWeeksFromPlan={generateWeeksFromPlan} gotoWeek={gotoWeek} isMobile={isMobile}
-                  openSessionId={openSessionId} openWeekId={openWeekId} parseIntensity={parseIntensity} planAssistantFocus={planAssistantFocus}
-                  planStartDate={planStartDate} programActiveStart={programActiveStart} programBlockStart={programBlockStart}
-                  programShownWeeks={programShownWeeks}
-                  recommendedInput={recommendedInput} renameValue={renameValue} renamingBlock={renamingBlock} reorderExercise={reorderExercise}
-                  reorderSession={reorderSession} saveRecommendedWeight={saveRecommendedWeight} selectedAthlete={selectedAthlete}
-                  sendingDraft={sendingDraft}
-                  sessionForm={sessionForm} sessionLogStatus={sessionLogStatus} setAddingExercise={setAddingExercise}
-                  setAddingSession={setAddingSession} setAddingWeek={setAddingWeek} setAssignEdits={setAssignEdits} setBlockPlan={setBlockPlan}
-                  setCopyingExercise={setCopyingExercise} setCopyingSession={setCopyingSession} setDraftForecastOverrideReason={setDraftForecastOverrideReason}
-                  setEditingExercise={setEditingExercise} setEditingRecommended={setEditingRecommended} setEditingSession={setEditingSession}
-                  setEditingWeek={setEditingWeek} setExerciseForm={setExerciseForm} setOpenSessionId={setOpenSessionId} setOpenWeekId={setOpenWeekId}
-                  setPlanAssistantFocus={setPlanAssistantFocus} setPlanStartDate={setPlanStartDate} setProgramBlockStart={setProgramBlockStart}
-                  setRecommendedInput={setRecommendedInput} setRenameValue={setRenameValue} setRenamingBlock={setRenamingBlock}
-                  setSendingDraft={setSendingDraft} setSessionForm={setSessionForm} setShowBlockPlanner={setShowBlockPlanner}
-                  setWeekDraft={setWeekDraft} setWeekForm={setWeekForm} showBlockPlanner={showBlockPlanner} showFlash={showFlash}
-                  updateExercise={updateExercise} updateSession={updateSession} updateWeek={updateWeek} weekdayPicker={weekdayPicker}
-                  weekDraft={weekDraft} weekForm={weekForm} weeks={weeks}
-                />
-              </Suspense>
+              <LazyBoundary
+                factory={programTabFactory} label="Program" loading={<div style={s.page}>Indlæser…</div>}
+                componentProps={{
+                  addExercise, addingExercise, addingSession,
+                  addingWeek, addSession, addWeek,
+                  applyPeriodizationSuggestion, approveDraftProgressionState,
+                  approvingProgression, assignEdits, athleteLogs, bestLog,
+                  blockPlan, copyExerciseToSession, copyingExercise,
+                  copyingSession, copySessionToWeek, copyWeek, deleteExercise,
+                  deleteSession, deleteWeek, editDraftForecast, editingExercise,
+                  editingRecommended, editingSession, editingWeek, exFormRow,
+                  fetchWeeks, generateWeeksFromPlan, gotoWeek, isMobile,
+                  openSessionId, openWeekId, parseIntensity, planAssistantFocus,
+                  planStartDate, programActiveStart, programBlockStart,
+                  programShownWeeks,
+                  recommendedInput, renameValue, renamingBlock, reorderExercise,
+                  reorderSession, saveRecommendedWeight, selectedAthlete,
+                  sendingDraft,
+                  sessionForm, sessionLogStatus, setAddingExercise,
+                  setAddingSession, setAddingWeek, setAssignEdits, setBlockPlan,
+                  setCopyingExercise, setCopyingSession, setDraftForecastOverrideReason,
+                  setEditingExercise, setEditingRecommended, setEditingSession,
+                  setEditingWeek, setExerciseForm, setOpenSessionId, setOpenWeekId,
+                  setPlanAssistantFocus, setPlanStartDate, setProgramBlockStart,
+                  setRecommendedInput, setRenameValue, setRenamingBlock,
+                  setSendingDraft, setSessionForm, setShowBlockPlanner,
+                  setWeekDraft, setWeekForm, showBlockPlanner, showFlash,
+                  updateExercise, updateSession, updateWeek, weekdayPicker,
+                  weekDraft, weekForm, weeks,
+                }}
+              />
             )}
 
             {/* TRÆNINGSLOG */}

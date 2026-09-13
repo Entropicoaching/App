@@ -4,8 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>Entropi VideoCoach</title>
+<link rel="icon" type="image/svg+xml" href="/icon.svg">
+<!-- ORDRE 167 · commit 2b: skrifttypen lå som en almindelig, render-blokerende
+     <link rel="stylesheet"> — browseren skulle DNS-opslå, TLS-forbinde og
+     hente den eksterne CSS færdig før den kunne tegne noget som helst, oveni
+     dette dokuments egen størrelse. media="print" + onload gør den
+     ikke-blokerende (standardteknikken): den henter i baggrunden og skifter
+     til "all" når den er klar; <noscript> er samme rene <link> som før, hvis
+     JS er slået fra. Rører kun <head> — ingen sporingskode. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap"></noscript>
 <style>
   /* Entropi-tema: samme mørke bund og guld-accent som appen */
   :root { --bg:#141410; --panel:#1c1a16; --accent:#c8923a; --text:#edeae2;

@@ -1,24 +1,43 @@
-import { useState, useEffect, useRef, Suspense } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase, withRetry, isPasswordRecoveryUrl } from './supabase'
 import Auth from './Auth'
 import SetNewPassword from './SetNewPassword'
 import ErrorBoundary from './ErrorBoundary'
 import { purgeVideoCoachDraftQueues } from './videoCoachSubmission'
-import { lazyWithReload } from './lazyWithReload'
+import LazyBoundary from './LazyBoundary'
 
 // Lazy-load de to store views, så atleter ikke downloader coach-dashboardet (og
-// omvendt). Halverer det første bundt der skal hentes på mobil.
-const Dashboard = lazyWithReload(() => import('./Dashboard'), 'dashboard')
-const AthleteView = lazyWithReload(() => import('./AthleteView'), 'athleteview')
+// omvendt). Halverer det første bundt der skal hentes på mobil. Indlæses via
+// LazyBoundary (ordre 163 · del 2): egen fejlgrænse pr. view, så en fejl i
+// den ene ikke rammer den anden (og en stale chunk-reference efter en deploy
+// prøver igen med back-off før den falder tilbage til ét helside-genload).
+const dashboardFactory = () => import('./Dashboard')
+const athleteViewFactory = () => import('./AthleteView')
+
+// Ordre 163 · del 4 (billig gevinst): et skelet i stedet for ren mørk tekst.
+// Appens tema er næsten sort (#141410) i alle indlæsningstilstande — ren
+// tekst i lav kontrast på en flere sekunder lang koldstart (se Del 1's mål:
+// 5,4s FCP på en langsom profil) læses let som "sort skærm", selvom appen
+// reelt arbejder. Et pulserende skelet giver synlig struktur med det samme.
+const skeletonBar = (width, height = '0.9rem') => (
+  <div style={{ width, height, background: 'rgba(237,234,226,0.06)', animation: 'entropi-skel-pulse 1.4s ease-in-out infinite' }} />
+)
 
 const loaderScreen = (
   <div style={{
-    minHeight: '100vh', background: '#141410', display: 'flex',
-    alignItems: 'center', justifyContent: 'center',
-    fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem',
-    letterSpacing: '0.12em', textTransform: 'uppercase', color: '#4a4844',
+    minHeight: '100vh', background: '#141410', display: 'flex', flexDirection: 'column',
   }}>
-    Indlæser...
+    <style>{'@keyframes entropi-skel-pulse { 0%, 100% { opacity: 0.35 } 50% { opacity: 0.7 } }'}</style>
+    <div style={{ height: 52, borderBottom: '1px solid rgba(237,234,226,0.07)', display: 'flex', alignItems: 'center', padding: '0 1.5rem' }}>
+      {skeletonBar('90px', '1rem')}
+    </div>
+    <div style={{ maxWidth: 680, width: '100%', margin: '0 auto', padding: '1.5rem 1rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+      {skeletonBar('55%', '1.6rem')}
+      <div style={{ height: '0.5rem' }} />
+      {skeletonBar('100%', '4.5rem')}
+      {skeletonBar('100%', '4.5rem')}
+      {skeletonBar('70%', '4.5rem')}
+    </div>
   </div>
 )
 
@@ -154,8 +173,10 @@ function App() {
   let viewEl
   if (role === 'coach') {
     viewEl = previewMode
-      ? <AthleteView session={session} role={role} coachAthleteId={coachAthleteId} onExitPreview={() => { setPreviewMode(false); setCoachAthleteId(null) }} />
-      : <Dashboard session={session} onPreviewAthlete={(athleteId) => { setCoachAthleteId(athleteId || null); setPreviewMode(true) }} />
+      ? <LazyBoundary factory={athleteViewFactory} label="Atletvisning" loading={loaderScreen}
+          componentProps={{ session, role, coachAthleteId, onExitPreview: () => { setPreviewMode(false); setCoachAthleteId(null) } }} />
+      : <LazyBoundary factory={dashboardFactory} label="Dashboard" loading={loaderScreen}
+          componentProps={{ session, onPreviewAthlete: (athleteId) => { setCoachAthleteId(athleteId || null); setPreviewMode(true) } }} />
   } else {
     // Coach-rolle hentes fra profiles.role og caches pr. bruger-id (se
     // resolveRole/resolvedFor ovenfor) — ændres rollen server-side til 'coach'
@@ -164,10 +185,10 @@ function App() {
     // login/logout) hvor det kan tjekkes igen med det samme: den kalder den
     // samme resolveRole, som ved et 'coach'-svar automatisk skifter denne
     // gren over til Dashboard via almindelig React-genrendering.
-    viewEl = <AthleteView session={session} role={role}
-      onRecheckRole={() => resolveRef.current?.(session.user.id, session.user.email)} />
+    viewEl = <LazyBoundary factory={athleteViewFactory} label="Atletvisning" loading={loaderScreen}
+      componentProps={{ session, role, onRecheckRole: () => resolveRef.current?.(session.user.id, session.user.email) }} />
   }
-  return <ErrorBoundary><Suspense fallback={loaderScreen}>{viewEl}</Suspense></ErrorBoundary>
+  return <ErrorBoundary>{viewEl}</ErrorBoundary>
 }
 
 export default App
