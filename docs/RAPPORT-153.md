@@ -2,18 +2,19 @@
 
 Planet: coaching · Spor: spor-appen-m-rkbart-bedre-for-atleterne-5d2c3a
 
-## Gren + commits
+## Gren
 
 `e2e-atlet-til-coach` fra `main` (`be70575`):
 
 1. `82a0efa` — mock-backend (`e2e/mock-supabase.mjs`, `e2e/fixtures.mjs`, `e2e/harness.mjs`, `.env.e2e`, `npm run e2e:mock`)
 2. `105337e` — atletens rejse (`e2e/atlet.spec.mjs`, `npm run e2e:atlet`, skærmbilleder)
 3. `12362d2` — coachen ser det (`e2e/coach.spec.mjs`, `npm run e2e:coach`, skærmbilleder)
-4. (dette commit) — én kommando + dokumentation (`e2e/run-all.mjs`, `npm run e2e`, `docs/E2E.md`, denne rapport)
+4. `35a37b4` — én kommando + dokumentation (`e2e/run-all.mjs`, `npm run e2e`, `docs/E2E.md`, denne rapport)
+5. (dette commit) — rettede rapportens overskrifter til høstformatet (se nedenfor)
 
 Træet er rent ved aflevering.
 
-## Hvad blev ændret
+## Hvad ændret
 
 Ny `e2e/`-mappe med en lokal Supabase-mock (Node `http`, ingen ny
 runtime-afhængighed — genbruger playwright fra den delte codex-runtime,
