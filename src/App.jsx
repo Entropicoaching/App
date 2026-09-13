@@ -14,14 +14,30 @@ import LazyBoundary from './LazyBoundary'
 const dashboardFactory = () => import('./Dashboard')
 const athleteViewFactory = () => import('./AthleteView')
 
+// Ordre 163 · del 4 (billig gevinst): et skelet i stedet for ren mørk tekst.
+// Appens tema er næsten sort (#141410) i alle indlæsningstilstande — ren
+// tekst i lav kontrast på en flere sekunder lang koldstart (se Del 1's mål:
+// 5,4s FCP på en langsom profil) læses let som "sort skærm", selvom appen
+// reelt arbejder. Et pulserende skelet giver synlig struktur med det samme.
+const skeletonBar = (width, height = '0.9rem') => (
+  <div style={{ width, height, background: 'rgba(237,234,226,0.06)', animation: 'entropi-skel-pulse 1.4s ease-in-out infinite' }} />
+)
+
 const loaderScreen = (
   <div style={{
-    minHeight: '100vh', background: '#141410', display: 'flex',
-    alignItems: 'center', justifyContent: 'center',
-    fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem',
-    letterSpacing: '0.12em', textTransform: 'uppercase', color: '#4a4844',
+    minHeight: '100vh', background: '#141410', display: 'flex', flexDirection: 'column',
   }}>
-    Indlæser...
+    <style>{'@keyframes entropi-skel-pulse { 0%, 100% { opacity: 0.35 } 50% { opacity: 0.7 } }'}</style>
+    <div style={{ height: 52, borderBottom: '1px solid rgba(237,234,226,0.07)', display: 'flex', alignItems: 'center', padding: '0 1.5rem' }}>
+      {skeletonBar('90px', '1rem')}
+    </div>
+    <div style={{ maxWidth: 680, width: '100%', margin: '0 auto', padding: '1.5rem 1rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+      {skeletonBar('55%', '1.6rem')}
+      <div style={{ height: '0.5rem' }} />
+      {skeletonBar('100%', '4.5rem')}
+      {skeletonBar('100%', '4.5rem')}
+      {skeletonBar('70%', '4.5rem')}
+    </div>
   </div>
 )
 
