@@ -6,6 +6,17 @@
 const CURRENT_BUILD_ID = typeof __BUILD_ID__ === 'string' ? __BUILD_ID__ : null
 const RELOAD_GUARD_KEY = 'entropi_update_reloaded_for'
 
+// ORDRE 167 · commit 2 — ren, enhedstestet (appUpdate.test.js) afgørelse af
+// om et controllerchange-event skal udløse et genload. self.clients.claim()
+// i public/sw.js's activate-håndtering får controllerchange til at fyre på
+// ENHVER klient der lige har registreret workeren for FØRSTE gang, ikke kun
+// når en ægte opdatering afløser en tidligere aktiv worker. hadController
+// (navigator.serviceWorker.controller FØR dette script kørte) skelner de to:
+// kun sat hvis en worker ALLEREDE kontrollerede siden, dvs. en ægte afløsning.
+export function shouldReloadOnControllerChange(hadController, alreadyRefreshing) {
+  return hadController && !alreadyRefreshing
+}
+
 async function checkForUpdate() {
   if (!CURRENT_BUILD_ID || document.visibilityState !== 'visible') return
   // Skub også service-workeren til at tjekke efter en ny version af sig selv.
@@ -29,12 +40,14 @@ async function checkForUpdate() {
 
 export function setupAppUpdate() {
   if (!CURRENT_BUILD_ID) return
-  // Når en ny service worker tager kontrol (efter en deploy), genindlæs så den
-  // nye app-shell/bundle faktisk bruges. refreshing-værn undgår reload-storm.
+  // Når en ny service worker tager kontrol (efter en ægte deploy-afløsning),
+  // genindlæs så den nye app-shell/bundle faktisk bruges — se
+  // shouldReloadOnControllerChange ovenfor for hvorfor en vagt er nødvendig.
   if ('serviceWorker' in navigator) {
+    const hadController = !!navigator.serviceWorker.controller
     let refreshing = false
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (refreshing) return
+      if (!shouldReloadOnControllerChange(hadController, refreshing)) return
       refreshing = true
       location.reload()
     })
