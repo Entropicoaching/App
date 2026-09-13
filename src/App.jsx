@@ -1,15 +1,18 @@
-import { useState, useEffect, useRef, Suspense } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase, withRetry, isPasswordRecoveryUrl } from './supabase'
 import Auth from './Auth'
 import SetNewPassword from './SetNewPassword'
 import ErrorBoundary from './ErrorBoundary'
 import { purgeVideoCoachDraftQueues } from './videoCoachSubmission'
-import { lazyWithReload } from './lazyWithReload'
+import LazyBoundary from './LazyBoundary'
 
 // Lazy-load de to store views, så atleter ikke downloader coach-dashboardet (og
-// omvendt). Halverer det første bundt der skal hentes på mobil.
-const Dashboard = lazyWithReload(() => import('./Dashboard'), 'dashboard')
-const AthleteView = lazyWithReload(() => import('./AthleteView'), 'athleteview')
+// omvendt). Halverer det første bundt der skal hentes på mobil. Indlæses via
+// LazyBoundary (ordre 163 · del 2): egen fejlgrænse pr. view, så en fejl i
+// den ene ikke rammer den anden (og en stale chunk-reference efter en deploy
+// prøver igen med back-off før den falder tilbage til ét helside-genload).
+const dashboardFactory = () => import('./Dashboard')
+const athleteViewFactory = () => import('./AthleteView')
 
 const loaderScreen = (
   <div style={{
@@ -154,8 +157,10 @@ function App() {
   let viewEl
   if (role === 'coach') {
     viewEl = previewMode
-      ? <AthleteView session={session} role={role} coachAthleteId={coachAthleteId} onExitPreview={() => { setPreviewMode(false); setCoachAthleteId(null) }} />
-      : <Dashboard session={session} onPreviewAthlete={(athleteId) => { setCoachAthleteId(athleteId || null); setPreviewMode(true) }} />
+      ? <LazyBoundary factory={athleteViewFactory} label="Atletvisning" loading={loaderScreen}
+          componentProps={{ session, role, coachAthleteId, onExitPreview: () => { setPreviewMode(false); setCoachAthleteId(null) } }} />
+      : <LazyBoundary factory={dashboardFactory} label="Dashboard" loading={loaderScreen}
+          componentProps={{ session, onPreviewAthlete: (athleteId) => { setCoachAthleteId(athleteId || null); setPreviewMode(true) } }} />
   } else {
     // Coach-rolle hentes fra profiles.role og caches pr. bruger-id (se
     // resolveRole/resolvedFor ovenfor) — ændres rollen server-side til 'coach'
@@ -164,10 +169,10 @@ function App() {
     // login/logout) hvor det kan tjekkes igen med det samme: den kalder den
     // samme resolveRole, som ved et 'coach'-svar automatisk skifter denne
     // gren over til Dashboard via almindelig React-genrendering.
-    viewEl = <AthleteView session={session} role={role}
-      onRecheckRole={() => resolveRef.current?.(session.user.id, session.user.email)} />
+    viewEl = <LazyBoundary factory={athleteViewFactory} label="Atletvisning" loading={loaderScreen}
+      componentProps={{ session, role, onRecheckRole: () => resolveRef.current?.(session.user.id, session.user.email) }} />
   }
-  return <ErrorBoundary><Suspense fallback={loaderScreen}>{viewEl}</Suspense></ErrorBoundary>
+  return <ErrorBoundary>{viewEl}</ErrorBoundary>
 }
 
 export default App
