@@ -120,7 +120,7 @@ export default function IndbakkeView({
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '1.25rem' }}>
         <div>
           <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', margin: 0 }}>
-            Indbakke<span style={{ color: '#c8923a' }}>.</span>
+            Coach Briefing<span style={{ color: '#c8923a' }}>.</span>
           </h1>
           {inboxRefreshStatus && (
             <div style={{ marginTop: '0.22rem', color: inboxRefreshStatus.kind === 'success' ? '#7fa188' : '#d79a83', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.04em' }}>
@@ -167,7 +167,7 @@ export default function IndbakkeView({
         <div style={{ ...s.card, marginBottom: '1rem', borderColor: 'rgba(108,186,108,0.24)', background: 'rgba(108,186,108,0.035)', padding: '0.85rem 0.9rem', display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
           <span aria-hidden="true" style={{ width: 28, height: 28, borderRadius: '50%', border: '1px solid rgba(108,186,108,0.38)', background: 'rgba(108,186,108,0.07)', color: '#6cba6c', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '0.8rem' }}>✓</span>
           <span style={{ minWidth: 0 }}>
-            <span style={{ display: 'block', color: '#c9d7c7', fontSize: '0.78rem' }}>Indbakken er ryddet</span>
+            <span style={{ display: 'block', color: '#c9d7c7', fontSize: '0.78rem' }}>Coach Briefing er ryddet</span>
             <span style={{ display: 'block', marginTop: '0.16rem', color: '#7a7770', fontSize: '0.64rem', lineHeight: 1.4 }}>Ingen beskeder, videoer eller træningssignaler kræver dit blik lige nu.</span>
           </span>
         </div>

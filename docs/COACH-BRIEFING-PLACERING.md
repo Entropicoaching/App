@@ -28,3 +28,7 @@ Fordel: matcher navnet Marc rent faktisk bruger. Ulempe: reel ny
 funktionalitet (to køer at holde i sync), ikke en omdøbning.
 
 **Vaidyas anbefaling:** A — men det er Marcs kald.
+
+## Marcs beslutning (ordre 171)
+
+**A er valgt og gennemført.** Indbakken hedder "Coach Briefing" i sidebar, mobil-bundnavigation og på siden selv (`src/Dashboard.jsx`, `src/dashboard/IndbakkeView.jsx`) — navnet findes nu i UI'en, ikke kun i mailens emnelinje. **B er droppet** — ingen selvstændig visning bygges.
