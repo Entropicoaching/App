@@ -19,8 +19,10 @@ export async function runCoachReview(page, { appUrl, outDir }) {
   await page.locator('#athlete-auth-password').fill(COACH_USER.password)
   await page.getByRole('button', { name: 'Log ind' }).click()
 
-  // Atletlisten viser Testatlet (rækken er selv en role="button").
-  const athleteRow = page.getByRole('button', { name: /Testatlet/ })
+  // Atletlisten viser Testatlet (rækken er selv en role="button"). Matcher på
+  // "Uge" i navnet for ikke at ramme en evt. indbakke-prioritetskort med
+  // samme navn (fx en afventende video, se ordre 155's video-review.spec.mjs).
+  const athleteRow = page.getByRole('button', { name: /Testatlet.*Uge/ })
   await athleteRow.waitFor({ state: 'visible', timeout: 10000 })
   await shot('01-atletliste')
   await athleteRow.click()
@@ -29,7 +31,10 @@ export async function runCoachReview(page, { appUrl, outDir }) {
   // hvert enkelt sæt (Program-fanen viser kun komplians/overblik).
   await page.getByRole('button', { name: /Log$/ }).click()
   await page.locator('div:text-is("Squat")').first().waitFor({ state: 'visible', timeout: 10000 })
-  await page.getByText('3/3 sæt').first().waitFor({ state: 'visible', timeout: 10000 })
+  // Squat har 4 sæt i seeden (ordre 155 tilføjede et 4. sæt til
+  // fejl.spec.mjs's offline-scenarie) — atlet.spec.mjs logger kun de tre
+  // første, så "3/4 sæt", ikke "3/3".
+  await page.getByText('3/4 sæt').first().waitFor({ state: 'visible', timeout: 10000 })
   await shot('02-atletens-uge-tre-saet')
 
   // Check-in-gennemgangen viser dagens readiness (Hjem-fanens statuslinje).

@@ -1,14 +1,15 @@
-// ORDRE 153 · commit 4 — én kommando: mock + vite startes ÉN gang, atletens
-// rejse logger de tre sæt + parathed, og coach-gennemgangen læser dem fra
-// SAMME kørende mock — det beviser at data skrevet i én browser-session
-// (atleten) rent faktisk når frem til en anden (coachen) via den fælles
-// backend-form. Rydder op bagefter uanset udfald.
+// ORDRE 153 · commit 4 / ORDRE 155 — én kommando: mock + vite startes ÉN
+// gang, og hvert spec-skridt kører i sin egen friske browserside (egen
+// login), men mod SAMME kørende mock — det beviser at data skrevet i én
+// browser-session (atleten) rent faktisk når frem til en anden (coachen) via
+// den fælles backend-form. Rydder op bagefter uanset udfald.
 
 import { createMockSupabase } from './mock-supabase.mjs'
 import { buildSeed } from './fixtures.mjs'
 import { startVite, launchBrowser, APP_URL, MOCK_PORT, OUT_DIR } from './harness.mjs'
 import { runAtletJourney } from './atlet.spec.mjs'
 import { runCoachReview } from './coach.spec.mjs'
+import { runVideoUpload } from './video-upload.spec.mjs'
 
 async function main() {
   const t0 = Date.now()
@@ -17,19 +18,38 @@ async function main() {
   const vite = await startVite()
   const browser = await launchBrowser()
   const mockUrl = `http://127.0.0.1:${MOCK_PORT}`
-  try {
-    const athletePage = await browser.newPage({ viewport: { width: 390, height: 844 } })
-    athletePage.on('pageerror', err => console.error('[atlet pageerror]', err))
-    await runAtletJourney(athletePage, { appUrl: APP_URL, mockUrl, outDir: OUT_DIR })
-    await athletePage.close()
+  const opts = { appUrl: APP_URL, mockUrl, outDir: OUT_DIR }
 
-    const coachPage = await browser.newPage({ viewport: { width: 1280, height: 900 } })
-    coachPage.on('pageerror', err => console.error('[coach pageerror]', err))
-    await runCoachReview(coachPage, { appUrl: APP_URL, outDir: OUT_DIR })
-    await coachPage.close()
+  // Hvert skridt får sin egen side (egen login) — se e2e/fejl.spec.mjs og
+  // e2e/beskeder.spec.mjs's kommentarer (ordre 155) for hvorfor: enklere og
+  // mere robust end at dele én browserside/session-tilstand hen over flere
+  // skridt.
+  async function step(name, viewport, fn) {
+    const page = await browser.newPage({ viewport })
+    const errors = []
+    page.on('pageerror', err => errors.push(err))
+    try {
+      const result = await fn(page)
+      if (errors.length) throw new Error(`${name}: ${errors.length} browser-fejl: ${errors.map(e => e.message).join('; ')}`)
+      return result
+    } finally {
+      await page.close()
+    }
+  }
+
+  const MOBILE = { width: 390, height: 844 }
+  const DESKTOP = { width: 1280, height: 900 }
+
+  try {
+    // Den glatte rejse (ordre 153).
+    await step('atlet-rejse', MOBILE, page => runAtletJourney(page, opts))
+    await step('coach-gennemgang', DESKTOP, page => runCoachReview(page, opts))
+
+    // Video op og gå (ordre 155 · commit 1).
+    await step('video-upload', MOBILE, page => runVideoUpload(page, opts))
 
     const seconds = ((Date.now() - t0) / 1000).toFixed(1)
-    console.log(`\nGRØN: atlet → coach, ende-til-ende, ${seconds}s.`)
+    console.log(`\nGRØN: atlet → coach → video op, ende-til-ende, ${seconds}s.`)
     process.exitCode = 0
   } catch (err) {
     console.error('\nFEJL:', err.message)

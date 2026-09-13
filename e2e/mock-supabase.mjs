@@ -10,8 +10,11 @@
 // (select med simpelt indlejret embed, eq/neq/lt/lte/gt/gte/in/is/or-filtre,
 // order, limit), /rest/v1/rpc/<navn>, og GoTrue-formen for
 // /auth/v1/token (password + refresh_token), /auth/v1/logout, /auth/v1/user.
-// Storage er en minimal stub (uploades til en temp-mappe) — ingen af e2e-
-// specsne sender en rigtig video igennem, jf. ordrens grænser.
+//
+// ORDRE 155: storage er nu et ægte in-memory objektlager (upload → signeret
+// URL → hentning med Range-støtte), så "upload og gå" + coachens signerede
+// afspilning kan proves med rigtige bytes, ikke kun en kvittering. Plus
+// fejlinjektion (/__e2e/fault) og en rigtig get_my_shared_video_analyses_v3.
 //
 // ÆRLIG GRÆNSE: dette er IKKE en generel PostgREST-klon. Filtre/operatorer
 // er dem appen rent faktisk bruger (grep'et i src/ før dette blev skrevet).
@@ -20,8 +23,6 @@
 
 import { createServer } from 'node:http'
 import { randomUUID } from 'node:crypto'
-import { mkdtempSync, writeFileSync } from 'node:fs'
-import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
 // Tabel -> { embedNavn: { type: 'children'|'parent', table, fk } }
@@ -170,7 +171,27 @@ export function createMockSupabase({ users, tables }) {
   const usersById = new Map(users.map(u => [u.id, u]))
   const tokensToUser = new Map() // access_token -> userId
 
-  const uploadDir = mkdtempSync(join(tmpdir(), 'entropi-e2e-storage-'))
+  // In-memory objektlager: "<bucket>/<path>" -> { buffer, contentType }. Ægte
+  // bytes (ikke bare en kvittering), så coachens signerede hentning (ordre
+  // 155 · commit 2) rent faktisk kan spille den samme video af.
+  const storageObjects = new Map()
+  const signTokens = new Map() // token -> "<bucket>/<path>"
+
+  // ORDRE 155 · commit 3: fejlinjektion pr. kald. Sat via
+  // POST /__e2e/fault { pathPrefix, method, mode: '500'|'timeout', times }.
+  // 'timeout' er bevidst en øjeblikkelig forbindelsesafbrydelse, ikke et
+  // ægte 12s-hæng op til appens egen fetchWithTimeout-grænse — samme
+  // brugeroplevede udfald (fetch afvises), uden at gøre e2e-suiten langsom.
+  // Se docs/E2E.md.
+  const faultQueue = []
+  function takeFault(method, pathname) {
+    const idx = faultQueue.findIndex(f => f.method === method && pathname.startsWith(f.pathPrefix))
+    if (idx === -1) return null
+    const fault = faultQueue[idx]
+    fault.remaining -= 1
+    if (fault.remaining <= 0) faultQueue.splice(idx, 1)
+    return fault
+  }
 
   function fakeUser(u) {
     const now = new Date().toISOString()
@@ -360,7 +381,16 @@ export function createMockSupabase({ users, tables }) {
   // tomt svar i stedet for en fejl — appens skærme skal ikke vælte på en RPC
   // der ligger uden for denne mocks bevidst afgrænsede omfang (se docs/E2E.md).
   const rpcHandlers = {
-    get_my_shared_video_analyses_v3: () => [],
+    get_my_shared_video_analyses_v3: (args, ctx) => {
+      const athlete = db.athletes?.find(a => a.user_id === ctx.userId)
+      if (!athlete) return []
+      const limit = Number(args?.p_limit ?? 6)
+      const offset = Number(args?.p_offset ?? 0)
+      const shared = (db.video_analyses || [])
+        .filter(v => v.athlete_id === athlete.id && v.status === 'shared')
+        .sort((a, b) => String(b.analyzed_at || '').localeCompare(String(a.analyzed_at || '')))
+      return shared.slice(offset, offset + limit)
+    },
     entropi_training_signals_v1: () => [],
     complete_athlete_onboarding_v1: (args, ctx) => {
       const athlete = db.athletes?.find(a => a.user_id === ctx.userId)
@@ -379,16 +409,89 @@ export function createMockSupabase({ users, tables }) {
     return sendJson(res, 200, data)
   }
 
+  // Minimal multipart/form-data-parser: storage-js sender en Blob-fil som ét
+  // FormData-felt med tomt feltnavn (`body.append('', fileBody)`, se
+  // node_modules/@supabase/storage-js's StorageFileApi.uploadOrUpdate) — kun
+  // det denne mock reelt modtager skal kunne parses, ikke enhver multipart-form.
+  function parseMultipart(buffer, contentType) {
+    const m = /boundary=(?:"([^"]+)"|([^;]+))/i.exec(contentType || '')
+    const boundary = m && (m[1] || m[2])
+    if (!boundary) return []
+    const marker = Buffer.from(`--${boundary}`)
+    const parts = []
+    let start = buffer.indexOf(marker)
+    while (start !== -1) {
+      const next = buffer.indexOf(marker, start + marker.length)
+      if (next === -1) break
+      parts.push(buffer.slice(start + marker.length, next))
+      start = next
+    }
+    return parts.map(part => {
+      if (part.slice(0, 2).toString('latin1') === '\r\n') part = part.slice(2)
+      const headerEnd = part.indexOf('\r\n\r\n')
+      if (headerEnd === -1) return null
+      const headerStr = part.slice(0, headerEnd).toString('utf8')
+      let body = part.slice(headerEnd + 4)
+      if (body.slice(-2).toString('latin1') === '\r\n') body = body.slice(0, -2)
+      const filenameMatch = /filename="([^"]*)"/i.exec(headerStr)
+      const ctMatch = /Content-Type:\s*([^\r\n]+)/i.exec(headerStr)
+      return { filename: filenameMatch?.[1], contentType: ctMatch?.[1] || 'application/octet-stream', body }
+    }).filter(Boolean)
+  }
+
   async function handleStorage(req, res, url) {
-    // Minimal stub: gemmer uploadede bytes i en temp-mappe. Ingen af e2e-
-    // specsne sender en rigtig video igennem (jf. ordrens grænser), så dette
-    // rammes ikke af de nuværende specs, men skal ikke crashe hvis det gør.
-    if (req.method === 'POST' || req.method === 'PUT') {
+    // /storage/v1/object/sign/<bucket>/<path> — createSignedUrl(): udsteder
+    // et token og lader klienten selv bygge den fulde URL (this.url + data.signedURL).
+    const signMatch = url.pathname.match(/^\/storage\/v1\/object\/sign\/(.+)$/)
+    if (req.method === 'POST' && signMatch) {
+      await readJson(req)
+      const key = decodeURIComponent(signMatch[1])
+      if (!storageObjects.has(key)) return sendJson(res, 400, { error: 'not_found', message: `Objekt findes ikke: ${key}` })
+      const token = randomUUID()
+      signTokens.set(token, key)
+      return sendJson(res, 200, { signedURL: `/object/sign/${key}?token=${token}` })
+    }
+    // GET af selve videoen via den signerede URL (samme sti som ovenfor, uden
+    // POST-prefixet /storage/v1 — signedURL er relativ til storage-roden).
+    const getSignedMatch = url.pathname.match(/^\/storage\/v1\/object\/sign\/(.+)$/)
+    if (req.method === 'GET' && getSignedMatch && url.searchParams.get('token')) {
+      const token = url.searchParams.get('token')
+      const key = signTokens.get(token)
+      const obj = key && storageObjects.get(key)
+      if (!obj) return sendJson(res, 404, { error: 'not_found' })
+      const range = req.headers.range
+      if (range) {
+        const m = /bytes=(\d*)-(\d*)/.exec(range)
+        const start = m[1] ? Number(m[1]) : 0
+        const end = m[2] ? Number(m[2]) : obj.buffer.length - 1
+        res.writeHead(206, {
+          'Content-Type': obj.contentType, 'Content-Length': end - start + 1,
+          'Content-Range': `bytes ${start}-${end}/${obj.buffer.length}`, 'Accept-Ranges': 'bytes',
+        })
+        res.end(obj.buffer.slice(start, end + 1))
+        return
+      }
+      res.writeHead(200, { 'Content-Type': obj.contentType, 'Content-Length': obj.buffer.length, 'Accept-Ranges': 'bytes' })
+      res.end(obj.buffer)
+      return
+    }
+    // POST/PUT /storage/v1/object/<bucket>/<path> — selve uploaden.
+    const objectMatch = url.pathname.match(/^\/storage\/v1\/object\/(.+)$/)
+    if ((req.method === 'POST' || req.method === 'PUT') && objectMatch) {
+      const key = decodeURIComponent(objectMatch[1])
       const chunks = []
       for await (const chunk of req) chunks.push(chunk)
-      const path = join(uploadDir, randomUUID())
-      writeFileSync(path, Buffer.concat(chunks))
-      return sendJson(res, 200, { Key: url.pathname.replace('/storage/v1/object/', '') })
+      const raw = Buffer.concat(chunks)
+      const upsert = req.headers['x-upsert'] === 'true'
+      if (storageObjects.has(key) && !upsert) {
+        return sendJson(res, 400, { statusCode: '409', error: 'Duplicate', message: 'The resource already exists' })
+      }
+      const parts = parseMultipart(raw, req.headers['content-type'])
+      const filePart = parts.find(p => p.filename) || parts[parts.length - 1]
+      const buffer = filePart ? filePart.body : raw
+      const contentType = filePart?.contentType || req.headers['content-type'] || 'application/octet-stream'
+      storageObjects.set(key, { buffer, contentType })
+      return sendJson(res, 200, { id: randomUUID(), path: key, fullPath: `${key}` })
     }
     sendJson(res, 404, { error: 'not-found' })
   }
@@ -401,6 +504,28 @@ export function createMockSupabase({ users, tables }) {
       if (url.pathname === '/__e2e/table') {
         const t = url.searchParams.get('name')
         return sendJson(res, 200, ensure(t))
+      }
+      if (url.pathname === '/__e2e/storage-keys') {
+        return sendJson(res, 200, [...storageObjects.keys()])
+      }
+      if (url.pathname === '/__e2e/fault' && req.method === 'POST') {
+        const body = await readJson(req) || {}
+        faultQueue.push({
+          pathPrefix: body.pathPrefix, method: body.method || 'POST',
+          mode: body.mode || '500', remaining: Number(body.times ?? 1),
+        })
+        return sendJson(res, 200, { ok: true })
+      }
+      if (url.pathname === '/__e2e/fault' && req.method === 'DELETE') {
+        faultQueue.length = 0
+        return sendJson(res, 200, { ok: true })
+      }
+      // Anvendes på ALT (auth/rest/rpc/storage) — en fejlinjektion skal kunne
+      // ramme ethvert kald, ikke kun REST-tabeller (ordre 155 · commit 3).
+      const fault = takeFault(req.method, url.pathname)
+      if (fault) {
+        if (fault.mode === 'timeout') { req.socket.destroy(); return }
+        return sendJson(res, 500, { message: 'Synthetic e2e-fejl (injiceret)', code: 'E2E_FAULT' })
       }
       if (url.pathname.startsWith('/auth/v1/')) return await handleAuth(req, res, url)
       if (url.pathname.startsWith('/rest/v1/rpc/')) return await handleRpc(req, res, url)

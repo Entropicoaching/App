@@ -4,11 +4,12 @@
 // tilføje puppeteer #2 i dette repo, jf. ordrens "ingen ny runtime-afhængighed"),
 // og en rigtig `vite`-dev-server der peger på .env.e2e.
 
-import { spawn } from 'node:child_process'
+import { spawn, spawnSync } from 'node:child_process'
 import { createRequire } from 'node:module'
-import { homedir } from 'node:os'
+import { homedir, tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { mkdirSync } from 'node:fs'
+import { existsSync, mkdirSync } from 'node:fs'
+import ffmpegPath from 'ffmpeg-static'
 
 const require = createRequire(import.meta.url)
 const runtimeModules = join(homedir(), '.cache', 'codex-runtimes', 'codex-primary-runtime', 'dependencies', 'node', 'node_modules')
@@ -66,4 +67,24 @@ export async function startVite() {
 
 export async function launchBrowser() {
   return chromium.launch({ headless: true })
+}
+
+// ORDRE 155 · commit 1 — testklippet ordren peger på
+// (test-clips/vis-mig-nu-4-reps-realistisk.mp4) findes ikke i dette repo
+// (test-clips/ er git-ignoreret, personoptagelse — kun marc-doedloeft-270.mov
+// ligger lokalt). Faldet tilbage til ordrens eget alternativ: "et 2 s
+// syntetisk klip lavet i testen". Standardvejen (se videocoach.html's
+// vcAthleteUploadAndGo) kræver INGEN sporbar stangbane — kun en video Chromium
+// kan afspille metadata for (video.videoWidth > 0) — så et rent ffmpeg-
+// testsrc-mønster er nok; ingen tegnet skive nødvendig (til forskel fra
+// scripts/make-test-clip.mjs, som findes til selve TRACKER-testen).
+const CLIP_PATH = join(tmpdir(), 'entropi-e2e-synthetic-clip.mp4')
+export function ensureSyntheticClip() {
+  if (existsSync(CLIP_PATH)) return CLIP_PATH
+  const result = spawnSync(ffmpegPath, [
+    '-y', '-f', 'lavfi', '-i', 'testsrc=duration=2:size=480x854:rate=10',
+    '-pix_fmt', 'yuv420p', CLIP_PATH,
+  ])
+  if (result.status !== 0) throw new Error(`ffmpeg kunne ikke lave testklippet: ${result.stderr}`)
+  return CLIP_PATH
 }
