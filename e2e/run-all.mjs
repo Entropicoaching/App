@@ -12,6 +12,7 @@ import { runCoachReview } from './coach.spec.mjs'
 import { runVideoUpload } from './video-upload.spec.mjs'
 import { runVideoReview, runAthleteSeesFeedback } from './video-review.spec.mjs'
 import { runOfflineSetLog, runRejectedUploadRetry } from './fejl.spec.mjs'
+import { sendAthleteMessage, coachRepliesToMessage, athleteSeesReply } from './beskeder.spec.mjs'
 
 async function main() {
   const t0 = Date.now()
@@ -56,8 +57,15 @@ async function main() {
     await step('offline-saet-log', MOBILE, page => runOfflineSetLog(page, opts))
     await step('afvist-upload-igen', MOBILE, page => runRejectedUploadRetry(page, opts))
 
+    // Beskeder (ordre 155 · commit 4).
+    const athleteText = 'Hofterne føles stramme i dag — er det okay at squatte lidt højere?'
+    const replyText = 'Ja, kør høj-bar og hold dybden du er tryg med. Vi kigger på det i næste uge.'
+    await step('atlet-sender-besked', MOBILE, page => sendAthleteMessage(page, { ...opts, text: athleteText }))
+    await step('coach-svarer', DESKTOP, page => coachRepliesToMessage(page, { ...opts, athleteText, replyText }))
+    await step('atlet-ser-svar', MOBILE, page => athleteSeesReply(page, { ...opts, replyText }))
+
     const seconds = ((Date.now() - t0) / 1000).toFixed(1)
-    console.log(`\nGRØN: atlet → coach → video op → coach gennemgår → det der går galt, ende-til-ende, ${seconds}s.`)
+    console.log(`\nGRØN: atlet → coach, ende-til-ende (glat rejse + video + fejl + beskeder), ${seconds}s.`)
     process.exitCode = 0
   } catch (err) {
     console.error('\nFEJL:', err.message)
