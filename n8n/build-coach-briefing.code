@@ -66,9 +66,24 @@ const tasks = [...new Map(rawTasks.map(task => [task.key, task])).values()]
     || timeValue(left.timestamp) - timeValue(right.timestamp)
     || String(left.athleteName).localeCompare(String(right.athleteName), 'da')
     || left.key.localeCompare(right.key));
-const total = tasks.length;
 
-// Returning no items ends the workflow: no empty fallback email.
+// Sikkerhedsnet, ikke en nyhedsmail: en opgave nævnes højst én gang hver
+// tredje dag. Manuelle/editor-previews springer denne undertrykkelse over,
+// så det fulde, aktuelle billede altid kan inspiceres.
+const REPEAT_SUPPRESSION_MS = 3 * 24 * 60 * 60 * 1000;
+const state = $getWorkflowStaticData('global');
+const mentionedAt = state.mentionedAt || {};
+const now = Date.now();
+const activeTasks = $execution.mode === 'test'
+  ? tasks
+  : tasks.filter(task => {
+      const last = mentionedAt[task.key];
+      return !last || now - new Date(last).getTime() >= REPEAT_SUPPRESSION_MS;
+    });
+const total = activeTasks.length;
+
+// Returning no items ends the workflow: no empty fallback email, and no
+// repeat of something already mailed about within the last three days.
 if (total === 0) return [];
 
 const esc = value => String(value ?? '')
@@ -77,7 +92,7 @@ const esc = value => String(value ?? '')
   .replaceAll('>', '&gt;')
   .replaceAll('"', '&quot;')
   .replaceAll("'", '&#039;');
-const counts = tasks.reduce((result, task) => {
+const counts = activeTasks.reduce((result, task) => {
   result[task.kind] = (result[task.kind] || 0) + 1;
   return result;
 }, { signal: 0, message: 0, video: 0 });
@@ -97,11 +112,11 @@ const taskRow = (task, index) => {
   const actionRow = action ? `<div style="font-size:13px;color:#c8923a;margin-top:4px">${esc(action)}</div>` : '';
   return `<div style="display:flex;gap:10px;padding:12px 0;border-top:1px solid #34342e"><div style="width:22px;height:22px;flex:0 0 22px;border:1px solid #57544c;color:#c8923a;text-align:center;line-height:22px;font-size:12px">${index + 1}</div><div><div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#7f7b72">${esc(task.label)}</div><div style="font-weight:650;color:#edeae2;margin-top:2px">${esc(task.athleteName)}</div><div style="font-size:13px;line-height:1.5;color:#aaa79f;margin-top:2px">${esc(task.summary)}</div>${actionRow}</div></div>`;
 };
-const first = tasks[0];
-// Subject, countSummary and digestHash all read from the full `tasks` list above;
-// only the HTML row list itself is capped here.
+const first = activeTasks[0];
+// Subject, countSummary and digestHash all read from the full `activeTasks` list
+// above; only the HTML row list itself is capped here.
 const VISIBLE_TASK_LIMIT = 5;
-const visibleTasks = tasks.slice(0, VISIBLE_TASK_LIMIT);
+const visibleTasks = activeTasks.slice(0, VISIBLE_TASK_LIMIT);
 const hiddenTaskCount = total - visibleTasks.length;
 const moreRow = hiddenTaskCount > 0
   ? `<div style="padding:12px 0;border-top:1px solid #34342e;font-size:13px;color:#aaa79f">+${hiddenTaskCount} andre opgaver i appen</div>`
@@ -109,12 +124,12 @@ const moreRow = hiddenTaskCount > 0
 const orderedRows = visibleTasks.map(taskRow).join('') + moreRow;
 
 const appUrl = config.appUrl.replace(/\/$/, '');
-const subject = `Entropi Coach · ${total} ting kræver et kig`;
+const subject = `Coach Briefing: ${total} ting har ventet et døgn`;
 const html = `<div style="background:#141410;padding:28px 18px;font-family:Arial,sans-serif"><div style="max-width:620px;margin:auto;background:#1c1c18;border:1px solid #34342e;padding:24px"><div style="font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:#c8923a;margin-bottom:8px">Entropi Coach</div><h1 style="font-size:24px;line-height:1.2;color:#edeae2;margin:0 0 8px">Din coach-indbakke</h1><p style="color:#aaa79f;margin:0 0 20px;line-height:1.5">Kun åbne handlinger. Ingen videofiler eller beskedindhold er sendt gennem n8n.</p><div style="border-left:3px solid #c8923a;background:#24231d;padding:14px 16px;margin:0 0 22px"><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#c8923a">Næste opgave</div><div style="font-size:18px;font-weight:700;color:#edeae2;margin-top:5px">${esc(first.athleteName)}</div><div style="font-size:13px;line-height:1.5;color:#b9b5ab;margin-top:3px">${esc(first.label)} · ${esc(first.summary)}</div></div><section style="margin:0 0 22px"><h2 style="font-size:17px;margin:0;color:#edeae2">Din rækkefølge <span style="color:#c8923a">${total}</span></h2><p style="font-size:12px;color:#77746d;margin:4px 0 8px">${esc(countSummary)} · samme prioritering som i appen</p>${orderedRows}</section><a href="${esc(appUrl)}" style="display:inline-block;background:#c8923a;color:#141410;text-decoration:none;font-weight:700;padding:11px 16px;border-radius:3px">Åbn næste opgave i appen</a><p style="font-size:11px;color:#68665f;margin:22px 0 0">Automatisk morgenbriefing · Europe/Copenhagen</p></div></div>`;
 
 const source = JSON.stringify({
   recipient: config.coachEmail,
-  tasks: tasks.map(task => [task.key, task.fingerprint])
+  tasks: activeTasks.map(task => [task.key, task.fingerprint])
 });
 let hash = 2166136261;
 for (let i = 0; i < source.length; i++) {
@@ -124,5 +139,6 @@ for (let i = 0; i < source.length; i++) {
 
 return [{ json: {
   recipient: config.coachEmail, subject, html, total, briefingDate,
-  priorityVersion: 'app-order-v1', digestHash: `v2-${(hash >>> 0).toString(16)}`
+  priorityVersion: 'app-order-v1', digestHash: `v2-${(hash >>> 0).toString(16)}`,
+  taskKeys: activeTasks.map(task => task.key)
 } }];

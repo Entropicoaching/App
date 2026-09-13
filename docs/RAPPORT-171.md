@@ -1,51 +1,122 @@
-# RAPPORT-171 — Coach Briefing er Indbakken, og mailen skal holde kæft
+# Rapport — Ordre 171: Coach Briefing er Indbakken, og mailen skal holde kæft
 
-Gren: `coach-briefing-a` (base: `main`).
+Planet: coaching · Spor: spor-appen-m-rkbart-bedre-for-atleterne-5d2c3a
 
-## Commit 2 — måling: hvor meget sender mailen faktisk
+## Gren
 
-Kilde: `n8n/coach-briefing-v1.json`, `n8n/README.md`. Intet ændret i denne commit.
+`coach-briefing-a`, forgrenet fra `main` (`838dece`). Tre commits:
 
-**Hvornår udløses den.** Node `Daily catch-up 12:00–21:00` er en cron-trigger
-(`0 0 12-21 * * *`, tidszone Europe/Copenhagen) — kører hver hele time fra
-12:00 til og med 21:00, altså 10 gange i døgnet. Der er også en `Manual test`-
-trigger, men manuelle/editor-kørsler stoppes eksplicit af node
-`Block test delivery`, før SMTP-noden — de kan aldrig sende en rigtig mail.
+| Commit | Hash | Indhold |
+|---|---|---|
+| 1 | `ea9bccf` | Navnet "Coach Briefing" ét sted i UI'en (sidebar, mobil-nav, topbar, sidens h1) + placeringsdokumentet opdateret |
+| 2 | `566060e` | Måling af mailens nuværende udløsning/betingelser, uden at gætte — 7 mails/uge FØR ændring |
+| 3 | (denne commit — se `git log -1 coach-briefing-a`) | De tre regler rettet i workflowet, tests opdateret, måling gentaget — 3 mails/uge EFTER |
 
-**Hvilken betingelse afgør om der sendes.** Alle fire skal være opfyldt:
+Arbejdstræet er rent efter hver commit. Ingen push, ingen produktions-Supabase,
+ingen kørsel mod Marcs rigtige n8n-instans.
 
-1. Mindst ét "fallback-værdigt" element findes (node `Keep unresolved backup
-   items`): en ulæst besked der er ≥ 6 timer gammel, et videoudkast der er
-   ≥ 24 timer gammelt, eller et aktivt `alert`-træningssignal (ubekræftet og
-   ikke udsat — ingen aldersgrænse på alerts i dag).
-2. Den dedupede, prioriterede kø er ikke tom efter det (node `Build briefing`
-   returnerer intet ved en tom kø — ingen tom mail).
-3. Der er ikke allerede sendt en briefing samme kalenderdag, Europe/
-   Copenhagen (node `Skip if sent today`: sammenligner `state.lastDeliveredDate`
-   med dagens dato — kun i produktionskørsler, manuelle preview-kørsler
-   springer denne kontrol over).
-4. Kørslen er en produktionskørsel, ikke en manuel/editor-test (node
-   `Block test delivery`).
+## Hvad blev ændret
 
-**Hvad sker der hvis samme ting stadig er uløst i morgen.** Workflowet
-husker i dag KUN kalenderdagen for sidste levering (`lastDeliveredDate`) og
-gemmer en digest-hash (`lastDigestHash`) — men denne hash bliver aldrig læst
-eller sammenlignet noget sted i workflowet, kun skrevet. Der findes altså
-ingen kontrol af typen "denne konkrete ting er allerede nævnt". Er den samme
-besked/det samme videoudkast/signal stadig uløst i morgen, nævnes den igen i
-morgen, og igen i overmorgen — hver dag, uændret, indtil den bliver løst i
-appen.
+**Commit 1.** Marc valgte A fra `docs/COACH-BRIEFING-PLACERING.md`: Indbakken
+ER Coach Briefing, ingen ny visning. Navnet stod hidtil kun i mailens
+emnelinje — nu står det også i selve appen: desktop-sidebar, mobil-bundnav,
+topbar-titel og siden-h1 (`src/Dashboard.jsx`, `src/dashboard/IndbakkeView.jsx`).
+Ingen ny rute, ingen ny kø, badge-tallet uændret. Placeringsdokumentet
+opdateret med beslutningen: A gennemført, B droppet.
 
-**Målingsmetode.** Kørte de faktiske node-kodestrenge fra
-`n8n/coach-briefing-v1.json` (samme genbrugsteknik som
-`n8n/preview-coach-briefing.mjs` selv bruger til at bygge sit forhåndsvisning
-— node-koden hentes og eksekveres direkte fra JSON-filen, intet gættet) i et
-lokalt, ikke-committet engangsscript. Simulerede 7 dage × 10 timelige
-kørsler (12-21, Europe/Copenhagen) med persisterende workflow-static-data på
-tværs af kørslerne (som n8n selv gør), og attrapdata for "et par uløste
-ting" der aldrig bliver besvaret hele ugen: én ulæst besked (2 døgn gammel
-ved ugens start) og ét videoudkast (3 døgn gammelt ved ugens start).
+**Commit 2 (måling, intet rettet).** Læste `n8n/coach-briefing-v1.json` og
+`n8n/README.md`: cronen kører hver time 12–21 Europe/Copenhagen; der sendes
+kun når (1) mindst ét fallback-værdigt element findes, (2) den dedupede kø
+ikke er tom, (3) der ikke allerede er sendt en briefing samme kalenderdag, og
+(4) kørslen er produktion, ikke manuel test. Der var **ingen** kontrol af
+typen "denne konkrete ting er allerede nævnt" — kun kalenderdagen huskes; en
+gemt digest-hash blev aldrig læst nogen steder. Kørte den faktiske node-kode
+fra workflowet (samme genbrugsteknik som `n8n/preview-coach-briefing.mjs`
+selv bruger) i et lokalt, ikke-committet script: 7 simulerede dage × 10
+timelige kørsler med to uløste ting (en 2 døgn gammel ulæst besked, et 3 døgn
+gammelt videoudkast) der aldrig blev løst, gav **7 mails den uge** — samme to
+ting nævnt igen hver dag.
 
-**Resultat (FØR ændring i commit 3): 7 mails på den simulerede uge** — én
-kl. 12:00 hver dag, med nøjagtig de samme to uløste ting nævnt igen og igen,
-fordi intet i dag forhindrer en daglig gentagelse af samme sag.
+**Commit 3 (rettelsen).** Ændrede workflowet (`n8n/coach-briefing-v1.json` +
+`n8n/build-coach-briefing.code`, som skal være byte-identiske og er det) så
+det holder de tre regler fra ordren:
+
+1. **Højst én mail i døgnet** — allerede eksisterende (`Skip if sent today`,
+   kalenderdag Europe/Copenhagen). Ingen ændring nødvendig.
+2. **Kun hvis mindst én ting har stået uløst i et helt døgn** — hævede
+   beskeders alderskrav fra 6 til 24 timer i `Keep unresolved backup items`
+   (matcher nu videoudkasts eksisterende 24-timers-krav). **Bevidst valg,
+   noteret her:** aktive `alert`-træningssignaler har fortsat ingen
+   aldersgrænse og kan stadig udløse mailen straks — RPC'en
+   (`entropi_coach_briefing_v1`) leverer ikke noget "opstået"-tidsstempel for
+   signaler, og at tilføje ét ville kræve en Supabase-migration, som ordren
+   forbyder. Alerts er desuden allerede designet til at være akutte
+   (rank 0 i køen både i appen og mailen) — at tvinge dem til også at vente
+   et døgn ville modarbejde den akutte hensigt, så jeg har ladet dem være.
+3. **Aldrig en gentagelse inden for tre dage** — `Build briefing` husker nu,
+   via workflow-static-data, hvornår hver enkelt opgave (stabil nøgle: samme
+   som dedup-nøglen, fx `message-<athlete>-<track>`) sidst blev nævnt, og
+   holder den tilbage i tre døgn. Er ALT det der stadig er uløst allerede
+   nævnt inden for tre dage, bygges der slet ingen mail. `Record successful
+   delivery` skriver stemplet, kun efter en faktisk afsendelse. Manuelle/
+   editor-preview-kørsler springer denne undertrykkelse over (ligesom de
+   allerede sprang dagsspærren over), så forhåndsvisningen altid viser hele
+   den aktuelle kø. Emnelinjen er ændret til det format Marc bad om:
+   `Coach Briefing: N ting har ventet et døgn`.
+
+`n8n/verify-workflows.mjs` er opdateret til de nye regler: strammere
+alderskrav i testdata (inkl. et nyt negativt eksempel, en besked der er for
+"kun" 10 timer gammel og derfor korrekt holdes ude), ny emnelinje-tekst, og
+fem nye assertions for tre-dages-reglen (delvis undertrykkelse, fuld
+undertrykkelse → ingen mail, gentaget mere end tre dage senere → medtaget
+igen, preview springer reglen over, `Record successful delivery` stempler
+korrekt). `n8n/README.md` beskriver de tre regler og det opdaterede
+alderskrav.
+
+## Testresultat
+
+**Målingen gentaget på samme uge (samme to uløste ting, samme 7×10
+kørselsmønster):**
+
+| | Før (commit 2) | Efter (commit 3) |
+|---|---|---|
+| Mails den simulerede uge | **7** (hver dag kl. 12) | **3** (dag 1, dag 4, dag 7) |
+
+Efter-mønsteret viser reglen virker præcis som tiltænkt: samme sag nævnes
+igen først når tre hele døgn er gået (dag 1 → dag 4 → dag 7), ikke hver dag.
+
+**npm run lint:** rent.
+**npm run verify:n8n:** grøn (inkl. de nye tre-dages-tests).
+**npm run verify:coach-inbox-flow:** grøn (uberørt af denne ordre, kørt for
+sikkerheds skyld da IndbakkeView.jsx blev rørt i commit 1).
+**npm run verify:coach-priority:** grøn (uberørt — ingen ændring af
+`buildCoachPriorityItems`' rangering, som ordren forbød).
+**npm run e2e:** GRØN efter at rette `e2e/coach.spec.mjs`'s `getByText('Indbakke', ...)`
+til `'Coach Briefing'` (commit 1's navneskift ramte selektoren) — "atlet →
+coach, ende-til-ende (glat rejse + video + fejl + beskeder)", 25.1s.
+
+## Hvad er næste
+
+- **Alerts' manglende alderstempel** er den ene ærlige mangel i regel 2 (se
+  Grænser). Skal RPC'en (`entropi_coach_briefing_v1`) udvides med et
+  "opstået"-tidsstempel for signaler, er det en Supabase-migration — egen
+  ordre, egen godkendelse.
+- Har betydning for Hara (Coaching-planeten, delmål "Appen mærkbart bedre"):
+  Marc oplevede selv mailen som spam ("det spammer min mail relativt meget")
+  — det er nu rettet strukturelt (7→3 mails/uge i denne måling, og aldrig
+  samme sag to gange på tre dage), samtidig med at navnet "Coach Briefing"
+  nu er synligt i appen i stedet for kun i en emnelinje.
+
+## Ærlige grænser
+
+- Regel 2's undtagelse for `alert`-signaler (ingen 24-timers-ventetid) er et
+  bevidst, begrundet valg, ikke noget der er dobbelttjekket med Marc — se
+  ræsonnementet under "Hvad blev ændret", commit 3, punkt 2.
+- Målingen af "mails/uge" er en lokal simulering af selve node-koden fra
+  workflowet (ikke en rigtig n8n-kørsel eller en rigtig SMTP-afsendelse) med
+  ét fast scenarie (to uløste ting, ingen nye ting, intet løst undervejs).
+  Den beviser mekanikken (dagsspærre + 24-timers-krav + tre-dages-
+  undertrykkelse) virker som beskrevet — den er ikke en produktionsmåling.
+- Jeg har ikke kørt den fulde `verify:*`-suite (30+ scripts) — kun `verify:n8n`
+  (rørt direkte), `verify:coach-inbox-flow` og `verify:coach-priority` (deler
+  fil/kontrakt med det jeg ændrede i commit 1).

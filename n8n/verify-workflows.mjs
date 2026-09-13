@@ -86,12 +86,17 @@ const assertLiveWorkflow = (source, live, credentialNodeNames) => {
   }
 };
 
-const runCode = (code, { input, mode = 'test', config = {}, state = {} }) => {
+const runCode = (code, { input, mode = 'test', config = {}, state = {}, namedOutputs = {} }) => {
   const execute = new Function('$input', '$execution', '$', '$getWorkflowStaticData', code);
+  const byName = (name) => {
+    if (name === 'Configuration') return { first: () => ({ json: config }) };
+    if (name in namedOutputs) return { first: () => ({ json: namedOutputs[name] }) };
+    throw new Error(`Test stub: no named-node output registered for "${name}"`);
+  };
   return execute(
     { first: () => input },
     { mode },
-    () => ({ first: () => ({ json: config }) }),
+    byName,
     () => state,
   );
 };
@@ -220,8 +225,15 @@ const fallbackCandidates = {
       athlete_name: '<script>Atlet</script>',
       track: 'besked',
       unread_count: 2,
-      latest_at: new Date(now - 7 * 60 * 60 * 1000).toISOString(),
+      latest_at: new Date(now - 24.5 * 60 * 60 * 1000).toISOString(),
       message_content: 'PRIVATE_MESSAGE_BODY',
+    },
+    {
+      athlete_id: 'medium-message',
+      athlete_name: 'Halvgammel besked',
+      track: 'besked',
+      unread_count: 1,
+      latest_at: new Date(now - 10 * 60 * 60 * 1000).toISOString(),
     },
     {
       athlete_id: 'recent-message',
@@ -298,7 +310,7 @@ const filteredProduction = runCode(keepCode, {
 assert.deepEqual(
   filteredProduction[0].json.unread_messages.map(({ athlete_id }) => athlete_id),
   ['old-message', 'invalid-time'],
-  'Only old or invalid-timestamp messages may enter the fallback email',
+  'Only messages at least 24 hours old (or with an invalid timestamp) may enter the fallback email',
 );
 assert.deepEqual(
   filteredProduction[0].json.video_drafts.map(({ id }) => id),
@@ -322,7 +334,7 @@ assert.equal(
   4,
   'Briefing total must count two message tracks, one video and one signal as four app tasks',
 );
-assert.match(filteredBriefing.subject, /4 ting kræver et kig/);
+assert.match(filteredBriefing.subject, /Coach Briefing: 4 ting har ventet et døgn/);
 assert.match(
   filteredEmail,
   /1 signal · 2 beskedspor · 1 video · samme prioritering som i appen/,
@@ -391,7 +403,7 @@ const manyTasksBriefing = runCode(node(coach, 'Build briefing').parameters.jsCod
   config,
 })[0].json;
 assert.equal(manyTasksBriefing.total, 7, 'Subject total must count all seven tasks, not just the rendered five');
-assert.match(manyTasksBriefing.subject, /7 ting kræver et kig/, 'Subject must reflect the uncapped total');
+assert.match(manyTasksBriefing.subject, /Coach Briefing: 7 ting har ventet et døgn/, 'Subject must reflect the uncapped total');
 for (let index = 0; index < 5; index += 1) {
   assert.match(manyTasksBriefing.html, new RegExp(`Atlet ${index}\\b`), `Visible row for Atlet ${index} must render`);
 }
@@ -414,6 +426,84 @@ assert.notEqual(
   manyTasksBriefing.digestHash,
   'digestHash must change when a hidden, beyond-the-cap task changes, proving it is computed from the full list',
 );
+
+// E: rule 3 — a task already mailed about must not be mentioned again for
+// three days. filteredBriefing (4 tasks: 1 signal, 2 message tracks, 1 video)
+// is reused as the baseline "currently unresolved" queue.
+assert.equal(filteredBriefing.taskKeys.length, 4, 'Build briefing must report the task keys it mailed about');
+const [firstTaskKey] = filteredBriefing.taskKeys;
+const oneDayAgo = new Date(now - 1 * 24 * 60 * 60 * 1000).toISOString();
+const partiallyMentioned = runCode(node(coach, 'Build briefing').parameters.jsCode, {
+  input: filteredProduction[0],
+  mode: 'production',
+  config,
+  state: { mentionedAt: { [firstTaskKey]: oneDayAgo } },
+})[0].json;
+assert.equal(
+  partiallyMentioned.total,
+  filteredBriefing.total - 1,
+  'A task mailed about one day ago must stay held back for the rest of the three-day window',
+);
+assert.ok(
+  !partiallyMentioned.taskKeys.includes(firstTaskKey),
+  'The recently-mentioned task must be excluded from the reduced queue',
+);
+
+const justOverThreeDaysAgo = new Date(now - (3 * 24 * 60 * 60 * 1000 + 60 * 1000)).toISOString();
+const eligibleAgain = runCode(node(coach, 'Build briefing').parameters.jsCode, {
+  input: filteredProduction[0],
+  mode: 'production',
+  config,
+  state: { mentionedAt: { [firstTaskKey]: justOverThreeDaysAgo } },
+})[0].json;
+assert.equal(
+  eligibleAgain.total,
+  filteredBriefing.total,
+  'A task last mentioned more than three days ago may be mentioned again',
+);
+
+const allMentionedRecently = Object.fromEntries(
+  filteredBriefing.taskKeys.map((key) => [key, oneDayAgo]),
+);
+assert.deepEqual(
+  runCode(node(coach, 'Build briefing').parameters.jsCode, {
+    input: filteredProduction[0],
+    mode: 'production',
+    config,
+    state: { mentionedAt: allMentionedRecently },
+  }),
+  [],
+  'When every currently-unresolved task was already mailed within three days, no email is built at all',
+);
+
+const previewIgnoresSuppression = runCode(node(coach, 'Build briefing').parameters.jsCode, {
+  input: filteredProduction[0],
+  mode: 'test',
+  config,
+  state: { mentionedAt: allMentionedRecently },
+})[0].json;
+assert.equal(
+  previewIgnoresSuppression.total,
+  filteredBriefing.total,
+  'Manual/editor previews must always show the full, unsuppressed queue',
+);
+
+// Record successful delivery must remember every mailed task's key so the
+// next production run can hold it back for three days.
+const recordCode = node(coach, 'Record successful delivery').parameters.jsCode;
+const deliveryState = {};
+runCode(recordCode, {
+  input: { json: {} },
+  mode: 'production',
+  state: deliveryState,
+  namedOutputs: { 'Build briefing': filteredBriefing },
+});
+assert.deepEqual(
+  Object.keys(deliveryState.mentionedAt).sort(),
+  [...filteredBriefing.taskKeys].sort(),
+  'Record successful delivery must stamp mentionedAt for every task key from the delivered briefing',
+);
+assert.equal(deliveryState.lastDeliveredDate, filteredBriefing.briefingDate);
 
 const framedPreview = runCode(node(coach, 'Frame fallback email').parameters.jsCode, {
   input: builtPreview[0],
