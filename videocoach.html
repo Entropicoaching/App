@@ -236,6 +236,23 @@
      slags overlap som #banner fik rettet i MOBIL-GENNEMGANG-2026-09-03,
      samme løsning: ned under begge. */
   body.athlete #athleteStatus { top:116px; width:min(82vw,360px); padding:9px 12px; }
+  /* ORDRE 134 · commit 3: #vcDiagLine er sat op med almindelig, ikke-
+     positioneret CSS (position:static, se dens inline style i JS) - i
+     DESKTOP-tilstand (Marcs egen file://-visning) ligger den derfor pænt i
+     normal dokument-flow under videoen. I ATHLETE/SLIM-tilstanden (den
+     rigtige telefon-oplevelse) er ALT andet på skærmen position:fixed -
+     vcDiagLine endte derfor usynlig, malet UNDER alt det faste UI (en
+     ikke-positioneret boks males altid bagved positionerede søskende,
+     uanset DOM-rækkefølge), fundet ved et 390px-screenshot under denne
+     ordre. Samme rettelse som #athleteStatus fik ovenfor: fast position,
+     ned under status-kortet, pointer-events:none (rører aldrig video/
+     scrub-berøring nedenunder).
+     Ingen betydning for almindelige atleter - kun synlig med ?diag=1. */
+  body.athlete #vcDiagLine { position:fixed; top:180px; left:50%;
+    transform:translateX(-50%); z-index:12; width:min(90vw,380px);
+    max-height:36vh; overflow-y:auto; padding:8px 10px; border-radius:10px;
+    background:rgba(18,17,14,.72); backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px); pointer-events:none; }
   /* Når videoen er valgt, skal guiden ikke dække motivet. Vis kun det
      aktuelle trin som en lille chip; start-guiden bor ved tidslinjen. */
   body.athlete:not([data-athlete-state="empty"]) #athleteBrand { display:none; }
@@ -765,7 +782,11 @@
   .vcSystemBrand span { color:var(--vc-muted); font-size:8px; letter-spacing:.2em; }
   #vcWorkspaceTabs { justify-self:center; display:flex; align-items:center; gap:3px;
     padding:3px; border:1px solid var(--vc-edge); border-radius:10px; background:#11110e; }
-  #vcWorkspaceTabs button { min-height:36px; min-width:78px; padding:7px 12px;
+  /* ORDRE 127 · commit 2: 36px -> var(--vc-control) (44px) - under 44px på
+     desktop-bredder (npm run maal:app, ordre 123). Kun basis-reglen (>700px);
+     @media(max-width:700px) herunder sætter sin EGEN min-height (40px, eller
+     44px for body.athlete) og er uændret - ordren beder kun om desktop. */
+  #vcWorkspaceTabs button { min-height:var(--vc-control); min-width:78px; padding:7px 12px;
     border:0; border-radius:7px; color:var(--vc-muted); font-size:9px; }
   #vcWorkspaceTabs button[aria-selected="true"] { color:var(--text);
     background:var(--vc-surface-2); box-shadow:inset 0 0 0 1px rgba(200,146,58,.28); }
@@ -1132,6 +1153,18 @@ const TRACKER_PROBE = TRACKER_BENCHMARK && MODE_PARAMS.get('trackerProbe') === '
 // kørsel (frames sporet/sprunget, ms/frame, tid mod videoens varighed) - kun
 // synlig med ?diag=1, så almindelig atlet-brug er uændret.
 const VC_DIAG = MODE_PARAMS.get('diag') === '1';
+// ORDRE 116 · commit 1: pr.-frame-nedbrydning af "Vis mig nu"s tid, kun
+// akkumuleret mens en Vis-mig-nu-kørsel er i gang (vcAthletePreviewThree
+// nulstiller før hvert forsøg). "tegning" er den synlige main-thread-
+// rendering (render() nedenfor), IKKE en del af selve sporings-algoritmen -
+// den tælles separat, fordi den konkurrerer om samme tråd som rVFC-sporingen
+// (se docs/videocoach/TID-PR-FRAME.md).
+// ORDRE 134 · commit 1: seekMs (ventetid på vinduets seek - eget eller
+// arvet skygge-løfte), foersteFrameMs (ankerframe + første features FØR
+// selve rVFC-løkken starter) og sporingMs (hele rVFC-løkkens vægtid) lagt
+// til - samme buckets som TID-PR-FRAME.md pegede på manglede for at kunne
+// se hvor tiden pr. VINDUE (ikke kun pr. frame) går. Se vcRealtimeTrackWindow.
+let vcRtDiag = { seekMs: 0, foersteFrameMs: 0, sporingMs: 0, hentMs: 0, nedskaleringMs: 0, soegningMs: 0, tegningMs: 0, filterMs: 0, framesTracked: 0, framesSkipped: 0 };
 const SLIM = !DESKTOP;              // moderne layout (atlet OG coach online)
 const ATHLETE = SLIM && !COACHWEB;
 // ORDRE 45 · én kontakt for ALLE tracker-hastighedsgreb (commit 2-4). Slået
@@ -2874,8 +2907,6 @@ function vcFindRepAnchors(times, motion, opts = {}) {
   anchors.push(times[n - 1]);
   return anchors;
 }
-// ORDRE 54 · slut: billig forudsøgning for GENTAGELSES-grænser ------------
-
 // DOM-delen: samme lav-opløsnings-teknik som vcRunSetBoundsPresearch (ORDRE
 // 50), men afgrænset til det allerede bekræftede sæt-interval [setStart,
 // setEnd] - vi leder efter pauser INDENI, ikke sættets egne yderpunkter.
@@ -2909,7 +2940,6 @@ async function vcRunRepWindowsPresearch(setStart, setEnd) {
       for (let k = 0; k < g.length; k++) g[k] = d[k * 4] * .3 + d[k * 4 + 1] * .59 + d[k * 4 + 2] * .11;
       frames.push(g);
     }
-    await seekTo(savedTime);
 
     const motion = vcMotionSeries(frames);
     const anchors = vcFindRepAnchors(times, motion);
@@ -2919,11 +2949,49 @@ async function vcRunRepWindowsPresearch(setStart, setEnd) {
       const end = Math.min(setEnd, anchors[i + 1] + 0.15);
       if (end - start >= 0.4) windows.push({ start, end });
     }
-    return { ok:true, windows };
+    // ORDRE 121 · commit 1: presearchens sidste interne seek er til `lastSafe`
+    // (nær setEnd). FØR denne ordre blev videoen altid restaureret til
+    // `savedTime` her, hvorefter vcAthletePreviewThree straks bagefter seekede
+    // VIDERE til vindue 1's start - to seeks betalt i træk for én visning. Den
+    // eneste kalder (vcAthletePreviewThree) bruger aldrig `savedTime` bagefter
+    // (den sætter selv video.currentTime eksplicit til sidste sporede punkt,
+    // når den er færdig) - findes vinduer, springes restaureringen derfor over,
+    // og seeket til vindue 1's start startes HER (bevidst IKKE ventet på), så
+    // det løber i skyggen af resten af opsætningen i vcAthletePreviewThree i
+    // stedet for at blive betalt to gange.
+    //
+    // ORDRE 124 · commit 2: RETTET - dette seek-løfte returneres nu som
+    // `firstWindowSeek` og SKAL bruges af den eneste kalder som dens
+    // pendingSeek for vindue 1 (se vcAthletePreviewThree). Kommentaren her
+    // PÅSTOD at "rtSeekTo (kaldt derfra) opdager selv om målet allerede er
+    // nået", men det gjaldt aldrig ret nok: rtSeekTo tjekker kun om
+    // video.currentTime ALLEREDE ER NÅET til target - er seeket ovenfor
+    // stadig UNDERVEJS (endnu ikke landet), er den betingelse falsk, og
+    // rtSeekTo satte derfor video.currentTime = t IGEN, mens det første seek
+    // stadig kørte. To overlappende seeks til samme mål viste sig i praksis
+    // IKKE at være harmløst: scripts/verify-videocoach-clip.mjs (ordre 124 ·
+    // commit 1's fire-kombinationers test) fangede vindue 1 spore en helt
+    // forkert bane (meanPx ~1066, maxPx ~1128 på Marcs klip) netop når dette
+    // shadow-seek fik lov at løbe uden at blive givet videre - en frame blev
+    // tydeligvis læst mens den ANDEN, overflødige seek endnu ikke var
+    // færdig. At give løftet videre (i stedet for at lade den næste
+    // rtSeekTo() starte et nyt) fjerner den overflødige, racende seek helt.
+    let firstWindowSeek = null;
+    if (windows.length) firstWindowSeek = seekTo(windows[0].start);
+    else await seekTo(savedTime);
+    return { ok:true, windows, firstWindowSeek };
   } catch {
     return { ok:false, windows:[] };
   }
 }
+// ORDRE 54 · slut: billig forudsøgning for GENTAGELSES-grænser ------------
+// ORDRE 121 · commit 2: markøren flyttet hertil (fra lige før "DOM-delen"-
+// kommentaren ovenfor) så scripts/verify-videocoach-clip.mjs kan udtrække
+// vcFindRepAnchors OG vcRunRepWindowsPresearch i ét stykke, 1:1 - den stod
+// tidligere midt i den samme logiske blok, før selve DOM-delen
+// (vcRunRepWindowsPresearch), som den nu dækker. vcMotionSeries deles med
+// den urelaterede ORDRE 50-blok og udtrækkes separat (se testens egne
+// kommentarer).
 
 // ---------- Tidslinje ----------
 const scrub = document.getElementById('scrub');
@@ -3441,7 +3509,14 @@ function render() {
   }
   if (video.videoWidth) {
     if (cmp) { driveCompare(); drawVideoCompare(); }
-    else ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    else if (analyzing) {
+      // ORDRE 116 · commit 1: "tegning" i diag-linjen - denne tegning kører på
+      // samme tråd som Vis-mig-nu's rVFC-sporing, kun tidsmålt mens en
+      // Vis-mig-nu-kørsel faktisk står på (vcAthletePreviewThree).
+      const __t = performance.now();
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      vcRtDiag.tegningMs += performance.now() - __t;
+    } else ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
   }
   if (showGrid) drawGrid();
   // bane/skelet hører til fuldskærms-video 1 - skjules i ⇄-tilstand
@@ -5767,14 +5842,112 @@ function vcConfirmPlateRing() {
 // RAPPORT.md for tallene.
 const RT_MAX_W = 480;
 const RT_HAS_RVFC = typeof HTMLVideoElement !== 'undefined' && 'requestVideoFrameCallback' in HTMLVideoElement.prototype;
+// ORDRE 116 · commit 2: "nedskalering" var den næststørste post i
+// TID-PR-FRAME.md (13-17ms/frame). Afprøvet mod Marcs klip
+// (verify:videocoach-clip) som erstatning for canvas 2D's drawImage-
+// skalering - samme mønster som MediaPipe/TF.js's kamera-input-hjælpere
+// bruger (se "stå på skuldre" i ordren): createImageBitmap({resizeWidth,
+// resizeHeight}, resizeQuality 'low') var ganske vist ~2-3ms/frame hurtigere
+// på nedskaleringen, MEN ændrede banen (maxPx 40,9 mod grænsen 35px -
+// billigere resample rammer forkerte pixel-værdier for finde-punkterne).
+// resizeQuality 'high' holdt banen (maxPx ~11, som baseline), men var SÅ
+// meget langsommere (18-21ms mod 13-20ms) at der intet var vundet - og
+// getImageData-udtrækket ("hent") blev samtidig dyrere begge veje (~3,6ms
+// mod ~1,5-2ms), formentlig fordi kilden nu er et separat ImageBitmap-objekt
+// i stedet for videoen direkte. Forkastet i begge varianter - se
+// RAPPORT-116.md for tallene. RT_USE_IMAGE_BITMAP er derfor FALSE; koden
+// beholdes bag flaget frem for slettes, i tilfælde af en browser/situation
+// hvor den regner anderledes.
+const RT_HAS_IMAGE_BITMAP = typeof createImageBitmap === 'function';
+const RT_USE_IMAGE_BITMAP = false;
+async function rtDrawScaled(source, ctx, w, h) {
+  if (RT_USE_IMAGE_BITMAP && RT_HAS_IMAGE_BITMAP) {
+    const bmp = await createImageBitmap(source, { resizeWidth: w, resizeHeight: h, resizeQuality: 'high' });
+    ctx.drawImage(bmp, 0, 0);
+    bmp.close();
+  } else {
+    ctx.drawImage(source, 0, 0, w, h);
+  }
+}
 
-function rtSeekTo(t) {
+// ORDRE 134 · commit 2: samme seek som før, men på et VALGFRIT videoelement
+// (`v`) i stedet for altid det globale `video` - nødvendig for (c) nedenfor
+// (en skjult klon har sit eget currentTime/seeked, uafhængigt af `video`).
+// rtSeekTo (uændret signatur, alle eksisterende kald urørt) er nu blot denne
+// på `video`.
+function rtSeekToOn(v, t) {
   return new Promise(resolve => {
-    if (Math.abs(video.currentTime - t) < 1e-4) { resolve(); return; }
-    const onSeeked = () => { video.removeEventListener('seeked', onSeeked); resolve(); };
-    video.addEventListener('seeked', onSeeked);
-    video.currentTime = t;
+    if (Math.abs(v.currentTime - t) < 1e-4) { resolve(); return; }
+    const onSeeked = () => { v.removeEventListener('seeked', onSeeked); resolve(); };
+    v.addEventListener('seeked', onSeeked);
+    v.currentTime = t;
   });
+}
+function rtSeekTo(t) { return rtSeekToOn(video, t); }
+
+// ORDRE 134 · commit 2(b): samme som rtSeekToOn, men via `fastSeek()` når
+// browseren understøtter den (seek til nærmeste keyframe i stedet for en
+// præcis frame - se "stå på skuldre" i ordren). Falder tilbage til en
+// almindelig seek hvis fastSeek ikke findes ELLER selve kaldet kaster (nogle
+// browsere har metoden, men ikke en fungerende implementering).
+function rtFastSeekToOn(v, t) {
+  return new Promise(resolve => {
+    if (Math.abs(v.currentTime - t) < 1e-4) { resolve(); return; }
+    const onSeeked = () => { v.removeEventListener('seeked', onSeeked); resolve(); };
+    v.addEventListener('seeked', onSeeked);
+    if (typeof v.fastSeek === 'function') {
+      try { v.fastSeek(t); return; } catch (e) { /* falder igennem til almindelig seek nedenfor */ }
+    }
+    v.currentTime = t;
+  });
+}
+
+// ORDRE 134 · commit 2(a): INGEN seek - venter blot på at videoen (som
+// allerede spiller, uændret playbackRate/muted) selv når frem til `targetT`
+// via rVFC (samme "seneste frame vinder"-mønster som selve sporings-løkken
+// nedenfor), og starter afspilning hvis den skulle være standset. Bruges
+// MELLEM vinduer i stedet for et seek - se vcRealtimeTrackWindow's opts.pauseAtEnd.
+function rtAdvanceTo(v, targetT) {
+  return new Promise(resolve => {
+    if (v.currentTime + 1e-3 >= targetT) { resolve(); return; }
+    const onFrame = (now, meta) => {
+      const t = meta ? meta.mediaTime : v.currentTime;
+      if (t + 1e-3 >= targetT || v.ended) { resolve(); return; }
+      if (RT_HAS_RVFC) v.requestVideoFrameCallback(onFrame);
+    };
+    if (RT_HAS_RVFC) {
+      v.requestVideoFrameCallback(onFrame);
+    } else {
+      const onTimeupdate = () => {
+        if (v.currentTime + 1e-3 >= targetT || v.ended) { v.removeEventListener('timeupdate', onTimeupdate); resolve(); }
+      };
+      v.addEventListener('timeupdate', onTimeupdate);
+    }
+    if (v.paused) { v.playbackRate = 1; v.muted = true; v.play().catch(resolve); }
+  });
+}
+
+// ORDRE 134 · commit 2(c): skjult video-klon med SAMME kilde som `video` -
+// bruges KUN til at forudsøge det vindue der kommer EFTER det næste, mens
+// det aktive element (video ELLER klonen - de bytter rolle pr. vindue, se
+// vcAthletePreviewThree) stadig spiller/spores. Giver et helt vindues
+// varighed som skygge (i stedet for et par ms efterbehandling, se ORDRE
+// 121/124) til at skjule seekets latens i. Aldrig tilføjet til DOM'en synligt
+// (display:none), aldrig brugt til andet end pixel-læsning via drawImage.
+let rtCloneVideo = null;
+function rtEnsureClone() {
+  const src = video.currentSrc || video.src;
+  if (rtCloneVideo && rtCloneVideo.dataset.rtSrc === src) return rtCloneVideo;
+  if (rtCloneVideo && rtCloneVideo.parentNode) rtCloneVideo.parentNode.removeChild(rtCloneVideo);
+  rtCloneVideo = document.createElement('video');
+  rtCloneVideo.muted = true;
+  rtCloneVideo.playsInline = true;
+  rtCloneVideo.preload = 'auto';
+  rtCloneVideo.style.display = 'none';
+  rtCloneVideo.dataset.rtSrc = src;
+  rtCloneVideo.src = src;
+  document.body.appendChild(rtCloneVideo);
+  return rtCloneVideo;
 }
 
 // Udfylder huller (punkter sat til null, fordi en frame blev sprunget over
@@ -5836,19 +6009,54 @@ function rtSmoothPath(pts, times) {
   return pts.map((p, i) => ({ x: xs[i], y: ys[i] }));
 }
 
-async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd) {
+// ORDRE 134 · commit 2: `opts.sourceVideo` (default `video`) og
+// `opts.pauseAtEnd` (default true) tilføjet - INGEN ændring for eksisterende
+// kald (vcAthletePreviewThree kalder stadig med 4 argumenter, opts={} giver
+// PRÆCIS samme adfærd som før). Gør det muligt at spore på et andet
+// videoelement (den skjulte klon, (c)) og at lade videoen blive ved med at
+// spille efter vinduet er færdigt i stedet for at pausere (playthrough, (a)) -
+// de tre forsøgte strategier ((a)/(b)/(c), se RAPPORT-134.md) er kun
+// afprøvet i scripts/verify-videocoach-clip.mjs's window.runVisMigNu*-
+// varianter (måling, ikke produktionskode) - se dér for hvilken der vandt.
+async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd, preSeek, opts = {}) {
+  const v = opts.sourceVideo || video;
+  const pauseAtEnd = opts.pauseAtEnd !== false;
   const fullW = canvas.width, fullH = canvas.height;
   const scale = Math.min(1, RT_MAX_W / fullW);
   const rw = Math.max(1, Math.round(fullW * scale)), rh = Math.max(1, Math.round(fullH * scale));
   const rtCan = document.createElement('canvas'); rtCan.width = rw; rtCan.height = rh;
-  const rtCtx = rtCan.getContext('2d', { willReadFrequently: true });
+  // ORDRE 116 · commit 2: alpha:false - videoframes er altid uigennemsigtige
+  // (drawImage overskriver HELE canvas hver gang, ingen alpha-blanding
+  // nogensinde), så browseren kan springe alpha-kanalen over ved
+  // sammensætning. Ændrer IKKE de udlæste RGB-værdier (afprøvet mod Marcs
+  // klip: identisk afvigelse).
+  const rtCtx = rtCan.getContext('2d', { willReadFrequently: true, alpha: false });
   const radius = Math.max(6, (barPt.r || fullW / 16) * scale);
 
-  await rtSeekTo(windowStart);
-  rtCtx.drawImage(video, 0, 0, rw, rh);
+  // ORDRE 121 · commit 1: vcAthletePreviewThree (eller presearch selv, for
+  // vindue 1) kan allerede have startet dette seek, mens FORRIGE vindues
+  // efterbehandling kørte - "i skyggen" af den, i stedet for at vente til her.
+  // rtSeekTo opdager selv (currentTime allerede ved windowStart) hvis seeket
+  // allerede er færdigt; er det stadig undervejs, ventes der blot videre på
+  // det SAMME underliggende native seek (samme event, to lyttere). Ingen ny
+  // afhængighed, ingen ændring af selve sporings-algoritmen.
+  // ORDRE 134 · commit 1: seek-tid tidsmålt separat fra "første-frame"
+  // (ankerframe+features nedenfor) - se TID-PR-FRAME.md/RAPPORT-134.md for
+  // hvorfor netop DENNE grænse (seek vs. resten) er den der afgør om et
+  // vindue kan nå 1,1x.
+  const __tSeek0 = performance.now();
+  await (preSeek || rtSeekToOn(v, windowStart));
+  vcRtDiag.seekMs += performance.now() - __tSeek0;
+  const __tFirst0 = performance.now();
+  let __t0 = performance.now();
+  await rtDrawScaled(v, rtCtx, rw, rh);
+  vcRtDiag.nedskaleringMs += performance.now() - __t0;
+  __t0 = performance.now();
   let anchorFrame = mpBuildFrame(rtCtx.getImageData(0, 0, rw, rh).data, rw, rh, 0, 0, rw, rh);
+  vcRtDiag.hentMs += performance.now() - __t0;
   let cur = { x: barPt.x * scale, y: barPt.y * scale };
   let features = mpGoodFeatures(anchorFrame, cur, radius);
+  vcRtDiag.foersteFrameMs += performance.now() - __tFirst0;
   const startFrame = Math.round(windowStart * 30);
   const path = { type: 'path', color: (typeof colorInput !== 'undefined' && colorInput.value) || '#e63946',
     pts: [{ x: barPt.x, y: barPt.y }], times: [windowStart], valid: [true], confidence: [1],
@@ -5865,16 +6073,35 @@ async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd) {
   // stedet på de følgende, hurtigere frames uden at springe noget over.
   let lastMediaT = windowStart, stopped = false, workDebtMs = 0, vel = { x: 0, y: 0 };
 
+  // ORDRE 116 · commit 2: "seneste frame vinder" (stå på skuldre-anbefalingen)
+  // er allerede opfyldt her - næste video.requestVideoFrameCallback(onFrame)
+  // (i bunden af onFrame nedenfor) registreres FØRST når indeværende frames
+  // synkrone/afventede arbejde er helt færdigt, aldrig i forvejen - der er
+  // derfor ingen kø af ventende frames der kan hobe sig op, kun ét aktivt
+  // rVFC-abonnement ad gangen, som altid får den NYESTE viste frame.
+  // "søgning i et vindue omkring sidste fund" er også allerede opfyldt: se
+  // `search`-variablen nedenfor (radius fra ordre 85, brugt i hvert
+  // mpMatchPoint-kald) - ingen af de to krævede ændringer her.
+  // ORDRE 134 · commit 1: "sporing" i tabellen pr. vindue = hele denne
+  // løkkes vægtid (fra abonnement til finish()), IKKE kun summen af
+  // søge-/hente-buckets - den rummer også den tid løkken reelt venter på at
+  // videoen afspiller frem til næste frame (1x afspilning), som ingen
+  // enkelt bucket fanger, men som tæller fuldt med i "x realtid".
+  const __tLoop0 = performance.now();
   await new Promise(resolve => {
-    let finish = () => { stopped = true; video.pause(); resolve(); };
+    // ORDRE 134 · commit 2(a): pauseAtEnd=false (kun "playthrough"-strategien)
+    // lader videoen blive ved med at spille forbi vinduets slutning - den
+    // NÆSTE fase (rtAdvanceTo, se ovenfor) genbruger den samme, allerede
+    // kørende afspilning i stedet for at pausere og seeke.
+    let finish = () => { stopped = true; if (pauseAtEnd) v.pause(); resolve(); };
     // requestVideoFrameCallback's FØRSTE argument er et render-tidsstempel
     // (samme skala som performance.now()), IKKE videoens medietid - den findes
     // kun i metadata.mediaTime (samme mønster som startMultipointTrackings
     // egen HAS_RVFC-gren, se stepFn ovenfor i denne fil).
-    const onFrame = (now, meta) => {
+    const onFrame = async (now, meta) => {
       const tNow = meta ? meta.mediaTime : now;
       if (stopped) return;
-      if (tNow + 1e-3 >= windowEnd || video.ended || !tracking) { finish(); return; }
+      if (tNow + 1e-3 >= windowEnd || v.ended || !tracking) { finish(); return; }
       const mediaDt = Math.max(1e-3, tNow - lastMediaT);
       lastMediaT = tNow;
       // Budgettet følger videoens EGET tempo (med 50% margin) i stedet for en
@@ -5884,9 +6111,20 @@ async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd) {
       if (workDebtMs > budgetMs) {
         workDebtMs -= budgetMs; // dette slot bruges til at indhente gælden, ikke til nyt arbejde
         path.pts.push(null); path.times.push(tNow); path.valid.push(false); path.confidence.push(0);
+        vcRtDiag.framesSkipped++;
       } else {
-        rtCtx.drawImage(video, 0, 0, rw, rh);
+        // ORDRE 116 · commit 1: pr.-frame-nedbrydning til diag-linjen.
+        // "nedskalering" = drawImage (henter OG nedskalerer videoens frame
+        // til det lille canvas i samme kald - de to kan ikke tidsmåles hver
+        // for sig uden at ændre selve tegne-kaldet); "hent frame" = at trække
+        // pixelbufferen ud af det nedskalerede canvas (getImageData/
+        // mpBuildFrame) - selve rammen algoritmen arbejder videre på.
+        let __t = performance.now();
+        await rtDrawScaled(v, rtCtx, rw, rh);
+        vcRtDiag.nedskaleringMs += performance.now() - __t;
+        __t = performance.now();
         const frame = mpBuildFrame(rtCtx.getImageData(0, 0, rw, rh).data, rw, rh, 0, 0, rw, rh);
+        vcRtDiag.hentMs += performance.now() - __t;
         // Hastigheds-ekstrapoleret CENTER-forudsigelse, men matchet SKAL søge
         // om hvert enkelt features EGEN forventede position (centeret forskudt
         // med samme fælles bevægelse) - IKKE om selve centeret. Et feature
@@ -5895,47 +6133,59 @@ async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd) {
         // startMultipointTrackings pp=p+(pred-cur), se ovenfor i denne fil.
         const predCenter = { x: cur.x + vel.x * mediaDt, y: cur.y + vel.y * mediaDt };
         const search = Math.round(mpClamp(radius * .35 + Math.hypot(vel.x, vel.y) * mediaDt * .5, 10, radius * .8));
+        __t = performance.now();
         const moves = [];
         for (const p of features) {
           const pp = { x: p.x + (predCenter.x - cur.x), y: p.y + (predCenter.y - cur.y) };
           const fwd = mpMatchPoint(anchorFrame, frame, p, pp, search);
           if (fwd && fwd.cost <= .42) moves.push({ dx: fwd.x - p.x, dy: fwd.y - p.y });
         }
+        vcRtDiag.soegningMs += performance.now() - __t;
         if (moves.length >= 4) {
           const nextCur = { x: cur.x + mpMedian(moves.map(m => m.dx)), y: cur.y + mpMedian(moves.map(m => m.dy)) };
           vel = { x: (nextCur.x - cur.x) / mediaDt, y: (nextCur.y - cur.y) / mediaDt };
           cur = nextCur;
           anchorFrame = frame;
-          features = mpGoodFeatures(frame, cur, radius);
+          __t = performance.now();
+          features = mpGoodFeatures(frame, cur, radius); // gen-find features til NÆSTE frames søgning - talt med i "søgning"
+          vcRtDiag.soegningMs += performance.now() - __t;
           path.pts.push({ x: cur.x / scale, y: cur.y / scale });
           path.times.push(tNow); path.valid.push(true); path.confidence.push(Math.min(1, moves.length / 12));
+          vcRtDiag.framesTracked++;
           if (features.length < 5) { finish(); return; }
         } else {
           path.pts.push(null); path.times.push(tNow); path.valid.push(false); path.confidence.push(0);
+          vcRtDiag.framesSkipped++;
         }
       }
       workDebtMs = Math.max(0, workDebtMs + (performance.now() - workStart) - budgetMs);
-      if (RT_HAS_RVFC) video.requestVideoFrameCallback(onFrame);
+      if (RT_HAS_RVFC) v.requestVideoFrameCallback(onFrame);
     };
     if (RT_HAS_RVFC) {
-      video.requestVideoFrameCallback(onFrame);
+      v.requestVideoFrameCallback(onFrame);
     } else {
-      const onTimeupdate = () => onFrame(video.currentTime);
-      video.addEventListener('timeupdate', onTimeupdate);
+      const onTimeupdate = () => onFrame(v.currentTime);
+      v.addEventListener('timeupdate', onTimeupdate);
       const baseFinish = finish;
-      finish = () => { video.removeEventListener('timeupdate', onTimeupdate); baseFinish(); };
+      finish = () => { v.removeEventListener('timeupdate', onTimeupdate); baseFinish(); };
     }
     // ORDRE 85 · commit 2: 0,75x afprøvet mod Marcs rigtige klip - tid/
     // afspillet blev 1,65x (langsommere afspilning forlænger selve nævneren
     // i budgettet: samme forhold kan matematisk ikke komme under 1/0,75 ≈
     // 1,33x), og hverken hop eller max-afvigelse blev bedre. Forkastet - se
     // outputs/hop-paa-rigtig-video/RAPPORT.md for tallene.
-    video.playbackRate = 1;
-    video.muted = true;
-    video.play().catch(finish);
+    // ORDRE 134 · commit 2(a): allerede afspillende (playthrough-strategien
+    // lod den køre videre fra forrige vindue) - v.play() er da et no-op,
+    // ingen dobbelt-afspilning.
+    v.playbackRate = 1;
+    v.muted = true;
+    v.play().catch(finish);
   });
+  vcRtDiag.sporingMs += performance.now() - __tLoop0;
 
+  const __tf = performance.now();
   path.pts = rtSmoothPath(rtInterpolateGaps(path.pts, path.times), path.times);
+  vcRtDiag.filterMs += performance.now() - __tf;
   return { path, ok: path.pts.length >= 5 };
 }
 // ORDRE 80 · slut: realtids-sporing til "Vis mig nu"
@@ -5971,16 +6221,51 @@ async function vcAthletePreviewThree(barPt) {
   // ORDRE 82 · commit 3: samme tal som verify:videocoach-clip måler, men her
   // fra den RIGTIGE kørsel på Marcs egen telefon - se vcShowDiag nedenfor.
   const diagStartMs = performance.now();
-  let diagFramesTracked = 0, diagFramesSkipped = 0;
+  let diagFramesTracked = 0, diagFramesSkipped = 0, diagPlayedS = 0;
+  // ORDRE 116 · commit 1: nulstil pr.-frame-profilen for netop dette forsøg.
+  vcRtDiag = { seekMs: 0, foersteFrameMs: 0, sporingMs: 0, hentMs: 0, nedskaleringMs: 0, soegningMs: 0, tegningMs: 0, filterMs: 0, framesTracked: 0, framesSkipped: 0 };
+  // ORDRE 134 · commit 1: tabel PR. VINDUE (ikke kun det samlede tal
+  // nedenfor) - én snapshot af vcRtDiag før/efter hvert vindue, differencen
+  // er netop dét vindues bidrag. Ingen ekstra reset af vcRtDiag pr. vindue
+  // (ville race med render()'s tegningMs-skrivning, se render() ovenfor) -
+  // kun læst, aldrig nulstillet mellem vinduerne.
+  const perWindowDiag = [];
+  // ORDRE 121 · commit 1 / ORDRE 124 · commit 2: vindue 1's seek er allerede
+  // undervejs (startet inde i vcRunRepWindowsPresearch, se dér) - her ventes
+  // der bare videre på DET (presearch.firstWindowSeek), IKKE startet forfra.
+  // (Ordre 121 satte fejlagtigt `null` her på trods af denne kommentars egen
+  // påstand - vcRealtimeTrackWindow startede derfor sit EGET, overflødige
+  // seek til samme mål for vindue 1, som kunne race mod presearchs shadow-
+  // seek og levere en frame fra midt i den forkerte seek. Se RAPPORT-124.md.)
+  let pendingSeek = presearch.firstWindowSeek;
   for (let k = 0; k < idxs.length; k++) {
     if (!analyzing) break;   // atleten trak stikket undervejs (allBtn = Stop)
     const w = presearch.windows[idxs[k]];
+    diagPlayedS += w.end - w.start;
     trimStart = w.start; trimEnd = w.end; paintTrim();
     if (setAthleteState) setAthleteState('analyzing', `Sporer ${k + 1}/3 (${labels[k]}) ...`);
     // ORDRE 80: realtids-sporing (afspiller i 1x, ingen seek-løkke) i stedet
     // for den delte, seek-baserede startMultipointTracking - se
     // vcRealtimeTrackWindow ovenfor.
-    const { path, ok } = await vcRealtimeTrackWindow(barPt, w.start, w.end);
+    const __winDiagBefore = { ...vcRtDiag };
+    const __winT0 = performance.now();
+    const { path, ok } = await vcRealtimeTrackWindow(barPt, w.start, w.end, pendingSeek);
+    const __winMs = performance.now() - __winT0;
+    const __playedS = w.end - w.start;
+    perWindowDiag.push({
+      label: labels[k], playedS: __playedS, ms: __winMs,
+      ratio: __playedS > 0 ? (__winMs / 1000) / __playedS : Infinity,
+      seekMs: vcRtDiag.seekMs - __winDiagBefore.seekMs,
+      foersteFrameMs: vcRtDiag.foersteFrameMs - __winDiagBefore.foersteFrameMs,
+      sporingMs: vcRtDiag.sporingMs - __winDiagBefore.sporingMs,
+      tegningMs: vcRtDiag.tegningMs - __winDiagBefore.tegningMs,
+    });
+    // ORDRE 121 · commit 1: start NÆSTE vindues seek MED DET SAMME dette
+    // vindues afspilning er færdig, mens efterbehandlingen nedenfor
+    // (freezeRawAcquisition/analyzePath) stadig kører - "i skyggen" af den, i
+    // stedet for at vente til næste iteration beder om det.
+    const nextW = presearch.windows[idxs[k + 1]];
+    pendingSeek = nextW ? rtSeekTo(nextW.start) : null;
     if (ok) {
       path.vcPreviewLabel = labels[k];
       const rtSession = { schema: 1, lift: vcV3Lift(document.getElementById('liftSel').value),
@@ -5999,8 +6284,27 @@ async function vcAthletePreviewThree(barPt) {
     const totalFrames = diagFramesTracked + diagFramesSkipped;
     const msPerFrame = totalFrames ? (elapsedS * 1000 / totalFrames) : 0;
     const videoDur = video.duration || 0;
-    const ratio = videoDur ? elapsedS / videoDur : 0;
-    vcShowDiag(`diag: ${diagFramesTracked} sporet / ${diagFramesSkipped} sprunget over · ${msPerFrame.toFixed(0)}ms/frame · ${elapsedS.toFixed(1)}s af ${videoDur.toFixed(1)}s video (${ratio.toFixed(2)}x)`);
+    // ORDRE 116 · commit 3: RETTELSE - forholdet blev hidtil regnet mod hele
+    // videoens varighed (kan være mange sekunder), ikke mod de faktisk
+    // sporede vinduer (typisk under 2s for tre reps) - samme tal som
+    // verify:videocoach-clip's egen "tid/afspillet" (grænsen 1,1x), ikke et
+    // kunstigt lavere. Se RAPPORT-116.md.
+    const ratio = diagPlayedS > 0 ? elapsedS / diagPlayedS : 0;
+    // ORDRE 116 · commit 3: kort, læsbar førstelinje ("x,xx× realtid, n
+    // frames sprunget over") - resten (uændret siden ordre 82/116 · commit 1)
+    // følger på egne linjer, samme diag-element (pre-wrap, ingen ny knap,
+    // intet nyt DOM-element, uændret layout).
+    const d = vcRtDiag, frameCount = Math.max(1, d.framesTracked + d.framesSkipped);
+    // ORDRE 134 · commit 1: tabel PR. VINDUE (seek/1.frame/sporing/tegn/x
+    // realtid) tilføjet under den eksisterende, aggregerede diag-linje - se
+    // TID-PR-FRAME.md/RAPPORT-134.md for hvorfor netop disse buckets.
+    const table = perWindowDiag.map((w, i) =>
+      `  v${i + 1} (${w.label}, ${w.playedS.toFixed(2)}s): seek=${w.seekMs.toFixed(0)}ms 1.frame=${w.foersteFrameMs.toFixed(0)}ms sporing=${w.sporingMs.toFixed(0)}ms tegn=${w.tegningMs.toFixed(0)}ms ${w.ratio.toFixed(2)}×`
+    ).join('\n');
+    vcShowDiag(`${ratio.toFixed(2)}× realtid, ${diagFramesSkipped} frames sprunget over\n` +
+      `diag: ${diagFramesTracked} sporet / ${diagFramesSkipped} sprunget over · ${msPerFrame.toFixed(0)}ms/frame · ${elapsedS.toFixed(1)}s af ${diagPlayedS.toFixed(1)}s sporet (${videoDur.toFixed(1)}s video) · ` +
+      `hent ${(d.hentMs / frameCount).toFixed(1)} · nedskaler ${(d.nedskaleringMs / frameCount).toFixed(1)} · søg ${(d.soegningMs / frameCount).toFixed(1)} · tegn ${(d.tegningMs / frameCount).toFixed(1)} · filter ${(d.filterMs / frameCount).toFixed(1)} ms/frame\n` +
+      table);
   }
   trimEnd = savedTrimEnd;
   analyzing = false;
@@ -6062,8 +6366,43 @@ allBtn.onclick = async () => {
 // der genbruger denne PRÆCISE funktion i et gitter for at finde stangens
 // startpunkt uden en sidecar-fil, i stedet for at gætte selv).
 // AUTO-KALIBRERING: find skivens kant ud fra ét klik i centrum.
-// Scanner udad langs 16 retninger efter kontrast-spring; median-radius = skiven.
+// Scanner udad langs 16 retninger efter kontrast-spring; ring-scoring blandt
+// kandidat-radier afgør vinderen (se ORDRE 120 · commit 2 herunder).
+//
+// ORDRE 120 · commit 2: "mørk skive kunne ikke genkendes" (se
+// docs/videocoach/SKIVEN-FINDES-IKKE.md, ordre 109). Tre tilføjelser, samme
+// funktion, ingen ny sti:
+//  1) lokal kontrast-normalisering: søgevinduets EGET lys/mørk-spænd (2.-98.
+//     percentil, robust mod en lille lys nav/refleks/bogstav) - en mørk
+//     skive på mørk baggrund har lille ABSOLUT spring, men fylder ofte hele
+//     vinduets (smalle) dynamikområde. Forstærkning er kun slået til (og
+//     højst 4×) når vinduet FAKTISK er fladt, så velbelyste billeder er
+//     uændrede.
+//  2) kant i FARVE-afstand, ikke kun luminans - en farvet kalibreret skive
+//     (grøn/blå) kan have næsten samme lys/mørk-niveau som gulvet, men en
+//     tydeligt anden farvetone.
+//  3) ring-scoring: hver stråle kan nu stemme med FLERE lokale toppe (ikke
+//     kun sin egen bedste), stemmerne klynges i 10px-bøtter, og for hver
+//     bøtte med ≥2 stemmer beregnes en ring-score (kant-styrke summeret hele
+//     vejen rundt om cirklen ved den radius) - en RIGTIG skivekant er stærk
+//     hele vejen rundt, en forstyrrelse (rack, bogstav, refleks) er det kun
+//     ved nogle få stråler. Vinderen er højeste ring-score; er nummer to for
+//     tæt på (<18% under vinderen), er fundet for usikkert -> null (fanger
+//     "FORKERT men selvsikker" fra ordre 109 - rack, letterbox).
+//
+// ORDRE 127 · commit 1: "navet er ikke skiven" (ordre 120s dokumenterede
+// grænse, se docs/videocoach/RAPPORT-120.md). En lille, stærkt oplyst
+// nav/muffe nær centrum kan have en reelt HØJERE ring-score end skivens
+// egen svage yderkant - ovenstående vinder-regel valgte navet. Ny
+// nav-vagt FØR ambiguitets-tjekket: er højeste-scorende kandidat under 50%
+// af radius af en anden gyldig kandidat, og den store har mindst 4% af den
+// lilles score (så vi ikke hopper til ren støj) - vælg den store. Se
+// autoCalib's krop for tal og docs/videocoach/RAPPORT-127.md for hvorfor
+// "Stå på skuldre"s foreslåede 20-45%-bånd blev udvidet (nav-tilfældets
+// radius-forhold er ~13%, uden for det bånd).
 function autoCalib(center) {
+  autoCalib.lastRoute = null;
+  autoCalib.lastScore = null;
   octx.drawImage(video, 0, 0, ocan.width, ocan.height);
   const maxR = Math.min(canvas.width, canvas.height) * 0.45;
   // MOBIL-FIX: læs kun udsnittet omkring klikket - getImageData på hele
@@ -6075,30 +6414,156 @@ function autoCalib(center) {
   const rw = Math.max(1, Math.min(ocan.width - x0, Math.round(2 * maxR + 4)));
   const rh = Math.max(1, Math.min(ocan.height - y0, Math.round(2 * maxR + 4)));
   const img = octx.getImageData(x0, y0, rw, rh).data;
-  const g = (x, y) => {
-    const xi = Math.max(x0, Math.min(x0 + rw - 1, x | 0));
-    const yi = Math.max(y0, Math.min(y0 + rh - 1, y | 0));
-    const i = ((yi - y0) * rw + (xi - x0)) * 4;
-    return img[i] * .3 + img[i+1] * .59 + img[i+2] * .11;
-  };
-  const radii = [];
-  for (let a = 0; a < 16; a++) {
-    const dx = Math.cos(a * Math.PI / 8), dy = Math.sin(a * Math.PI / 8);
-    let prev = g(center.x, center.y), best = 0, bestJump = 0;
-    for (let r = 8; r < maxR; r += 2) {
-      const v = g(center.x + dx * r, center.y + dy * r);
-      const jump = Math.abs(v - prev);
-      if (jump > bestJump) { bestJump = jump; best = r; }
-      prev = v;
-    }
-    if (bestJump > 28) radii.push(best);
+
+  // 1) lokal kontrast-normalisering: 2./98. percentil af vinduets luminans
+  // (histogram, én omgang - samme størrelsesorden som getImageData selv).
+  const hist = new Uint32Array(256);
+  for (let i = 0; i < img.length; i += 4) {
+    const lum = (img[i] * .3 + img[i+1] * .59 + img[i+2] * .11) | 0;
+    hist[lum]++;
   }
-  if (radii.length < 6) return null;          // for usikkert -> manuel fallback
-  radii.sort((x, y) => x - y);
-  const rad = radii[radii.length >> 1];
-  if (rad < 12) return null;    // "skive" på få px kan ikke bære en måling
-  return 45 / (2 * rad);                      // cm pr. px
+  const total = rw * rh, loCut = total * 0.02, hiCut = total * 0.02;
+  let acc = 0, winMin = 0, winMax = 255;
+  for (let v = 0; v < 256; v++) { acc += hist[v]; if (acc > loCut) { winMin = v; break; } }
+  acc = 0;
+  for (let v = 255; v >= 0; v--) { acc += hist[v]; if (acc > hiCut) { winMax = v; break; } }
+  const winSpread = Math.max(winMax - winMin, 0);
+  const normScale = winSpread < 60 ? Math.min(255 / Math.max(winSpread, 20), 4) : 1;
+
+  // 3×3-boks-gennemsnit pr. samplet punkt - dæmper billedstøj FØR normScale
+  // forstærker den.
+  const sample = (x, y) => {
+    const cxp = Math.round(x), cyp = Math.round(y);
+    let r = 0, g = 0, b = 0;
+    for (let oy = -1; oy <= 1; oy++) for (let ox = -1; ox <= 1; ox++) {
+      const xi = Math.max(x0, Math.min(x0 + rw - 1, cxp + ox));
+      const yi = Math.max(y0, Math.min(y0 + rh - 1, cyp + oy));
+      const i = ((yi - y0) * rw + (xi - x0)) * 4;
+      r += img[i]; g += img[i+1]; b += img[i+2];
+    }
+    return { r: r / 9, g: g / 9, b: b / 9, lum: (r / 9) * .3 + (g / 9) * .59 + (b / 9) * .11 };
+  };
+  // 2) kant i farve-afstand, ikke kun luminans.
+  let edgeVia = 'lum';
+  const edgeStrength = (a, b) => {
+    const lumJump = Math.abs(a.lum - b.lum) * normScale;
+    const colorJump = Math.hypot(a.r - b.r, a.g - b.g, a.b - b.b) * 0.6 * normScale;
+    edgeVia = colorJump > lumJump ? 'farve' : 'lum';
+    return Math.max(lumJump, colorJump);
+  };
+
+  const N = 16;
+  const votes = [];            // { r, via } - EN stråle kan afgive FLERE stemmer (lokale toppe)
+  for (let a = 0; a < N; a++) {
+    const dx = Math.cos(a * Math.PI / 8), dy = Math.sin(a * Math.PI / 8);
+    let prev = sample(center.x, center.y);
+    let best = 0, bestJump = 0, bestVia = 'lum';
+    let lastJump = 0, rising = false, lastPeakR = -100;
+    for (let r = 8; r < maxR; r += 2) {
+      const cur = sample(center.x + dx * r, center.y + dy * r);
+      const jump = edgeStrength(cur, prev);
+      if (jump > bestJump) { bestJump = jump; best = r; bestVia = edgeVia; }
+      if (rising && jump < lastJump && lastJump > 20 && r - 2 - lastPeakR > 14) {
+        votes.push({ r: r - 2, via: null });   // sekundær top - kun til kandidatgenerering
+        lastPeakR = r - 2;
+      }
+      rising = jump > lastJump;
+      lastJump = jump;
+      prev = cur;
+    }
+    if (bestJump > 28) votes.push({ r: best, via: bestVia });   // strålens EGEN bedste - styrer 6/16-portvagten
+  }
+  if (votes.filter(v => v.via).length < 6) return null;         // for usikkert -> manuel fallback (uændret grænse)
+
+  // 3) ring-scoring blandt klyngede kandidater.
+  const buckets = new Map();
+  for (const v of votes) {
+    const k = Math.round(v.r / 10);
+    if (!buckets.has(k)) buckets.set(k, []);
+    buckets.get(k).push(v);
+  }
+  let candidateRs = [...buckets.values()]
+    .filter(vs => vs.length >= 2)
+    .map(vs => { const rs = vs.map(v => v.r).sort((x, y) => x - y); return rs[rs.length >> 1]; });
+  if (candidateRs.length === 0) {
+    const rs = votes.filter(v => v.via).map(v => v.r).sort((x, y) => x - y);
+    candidateRs = [rs[rs.length >> 1]];       // ingen klynge ≥2 - fald tilbage til simpel median (som før ordre 120)
+  }
+  // DÆKNING, ikke kun sum: en RIGTIG skivekant er synlig fra næsten alle 32
+  // punkter på ringen; rodet baggrund (rack-rør, loft-rammer, en dørkarm) kan
+  // give nogle FÅ meget stærke punkter, men ikke en sammenhængende cirkel.
+  // Uden dette krav fandt gitter-søgningen i scripts/verify-videocoach-
+  // clip.mjs en "skive" i loftet (radius 360px, kun stærk ved et par
+  // rørsamlinger) på Marcs eget klip - se RAPPORT-120.md.
+  const ringScore = (r) => {
+    let sum = 0, hits = 0;
+    for (let k = 0; k < 32; k++) {
+      const ang = k * Math.PI / 16;
+      const dx = Math.cos(ang), dy = Math.sin(ang);
+      const inner = sample(center.x + dx * (r - 3), center.y + dy * (r - 3));
+      const outer = sample(center.x + dx * (r + 3), center.y + dy * (r + 3));
+      const s = edgeStrength(inner, outer);
+      sum += s;
+      if (s > 15) hits++;
+    }
+    return { sum, hits };
+  };
+  // ORDRE 127 · commit 1: navet er ikke skiven (docs/videocoach/RAPPORT-120.md,
+  // "Ærlige grænser" - nav-tilfældet). Saml FØRST alle gyldige kandidater
+  // (dækningskravet uændret), sortér efter score. Højeste score vinder som
+  // før - MEDMINDRE den er en meget lille radius sammenlignet med en anden
+  // gyldig, rimeligt stærk kandidat: en lille, stærkt oplyst nav/muffe nær
+  // centrum kan reelt score højere end skivens egen svage kant, men skiven
+  // coachen mente er altid den STØRRE af de to konsistente cirkler.
+  const valid = [];
+  for (const r of candidateRs) {
+    const { sum, hits } = ringScore(r);
+    if (hits < 14) continue;   // < 14/32 - ikke en sammenhængende cirkel, tæller ikke som kandidat (en skive delvist ude af billedet viser stadig ca. halvdelen af ringen)
+    valid.push({ r, sum });
+  }
+  if (valid.length === 0) return null;
+  valid.sort((a, b) => b.sum - a.sum);
+  const topScorer = valid[0];
+  let winner = topScorer;
+  // Nav-vagt: radius under 50% af en større, gyldig kandidats, OG den større
+  // har mindst 4% af den lilles score (ren støj scorer typisk langt under
+  // det) - båndet fra "Stå på skuldre" (20-45%) ramte ikke det syntetiske
+  // nav-tilfælde (radius-forhold 16/126 ≈ 13%, se RAPPORT-127.md), så
+  // nedre grænse er droppet: enhver markant mindre gyldig kandidat er
+  // mistænkelig, ikke kun dem i 20-45%-vinduet.
+  const NAV_MAX_RADIUS_RATIO = 0.5;
+  const NAV_MIN_SCORE_FRACTION = 0.04;
+  for (const cand of valid) {
+    if (cand.r <= winner.r) continue;
+    if (winner.r / cand.r < NAV_MAX_RADIUS_RATIO && cand.sum > winner.sum * NAV_MIN_SCORE_FRACTION) {
+      winner = cand;
+      break;
+    }
+  }
+  const bestR = winner.r, bestScore = winner.sum;
+  // "FORKERT men selvsikker" (ordre 109: rack, letterbox) - en TREDJE
+  // kandidat der er lige så stærk som vinderen (og ikke allerede forklaret
+  // af nav-vagten ovenfor) er for usikkert til at vise atleten en tro og
+  // sikker ring.
+  let secondScore = -1;
+  for (const c of valid) {
+    if (c === winner || c === topScorer) continue;
+    if (c.sum > secondScore) secondScore = c.sum;
+  }
+  if (bestR < 12) return null;   // "skive" på få px kan ikke bære en måling
+  if (secondScore >= 0 && secondScore > bestScore * 0.82) return null;
+
+  // ORDRE 120 · commit 3: hvilken vej der vandt, til ?diag=1 - se wizardClick.
+  const winningVotes = votes.filter(v => v.via && Math.abs(v.r - bestR) <= 10);
+  const farveVotes = winningVotes.filter(v => v.via === 'farve').length;
+  const lumVotes = winningVotes.filter(v => v.via === 'lum').length;
+  autoCalib.lastRoute = candidateRs.length > 1 ? 'ring' : (farveVotes > lumVotes ? 'farve' : 'lum');
+  autoCalib.lastScore = { best: Math.round(bestScore), second: Math.round(Math.max(secondScore, 0)) };
+
+  return 45 / (2 * bestR);                      // cm pr. px
 }
+autoCalib.lastRoute = null;
+autoCalib.lastScore = null;
 // ORDRE 85 · slut: auto-kalibrering
 
 // ---------- 🏋️ TRÆNINGSMODE (Marcs mål: "svinge op og tale ud fra") ----------
@@ -6180,9 +6645,16 @@ function wizardClick(p) {
       // Rammer ringen skiven = god låsning; ellers klik forfra. Fanger dårlige
       // låsninger FØR analysen -> færre spildte forsøg (Marcs "kræver 4 forsøg").
       plateConfirm = { x: p.x, y: p.y, r: 22.5 / scale };
-      // ORDRE 109 · commit 3: et nyt, vellykket auto-fund overskriver en
-      // ældre "fejlede/manuel"-årsag fra et tidligere forsøg på samme skive.
-      vcPlateCalibReason = null;
+      // ORDRE 120 · commit 3: hvilken vej fandt skiven ("lum"/"farve"/"ring",
+      // sat af autoCalib selv, se ORDRE 120 · commit 2) - samme JSON-felt som
+      // ORDRE 109's øvrige årsager, INGEN migration. "ring" betyder flere
+      // kandidat-radier konkurrerede og ring-scoren afgjorde det - typisk
+      // tegn på svært lys (Marcs "fundet i mørkt lys").
+      vcPlateCalibReason = autoCalib.lastRoute ? `plate:auto:${autoCalib.lastRoute}` : null;
+      if (typeof vcShowDiag === 'function' && autoCalib.lastRoute) {
+        const sc = autoCalib.lastScore;
+        vcShowDiag(`${vcPlateCalibReason}${sc ? ` (score ${sc.best} mod ${sc.second})` : ''}`);
+      }
       if (ATHLETE && setAthleteState) setAthleteState('confirm');
       say(SLIM ? 'Ram skiven med ringen · træk midte=flyt, kant=størrelse · ⚡ = analysér'
                : 'Ram skiven med ringen (træk midten for at flytte, kanten for at ændre størrelse) · ⚡ = analysér · klik langt væk = mål om');
