@@ -59,7 +59,7 @@ assert.match(athleteView, />Log ud</, 'Konto-menuen skal indeholde en "Log ud"-k
 // --- Coach-visning kan vælges UDEN at logge ud ------------------------------
 // (a) App.jsx: den ikke-preview AthleteView-gren skal have en genopslags-vej
 //     der IKKE går via signOut/login.
-assert.match(appJsx, /onRecheckRole=\{\(\) => resolveRef\.current\?\.\(session\.user\.id, session\.user\.email\)\}/,
+assert.match(appJsx, /onRecheckRole: \(\) => resolveRef\.current\?\.\(session\.user\.id, session\.user\.email\)/,
   'App.jsx skal give AthleteView en vej til at genopslå rollen uden login/logout')
 // (b) AthleteView: "Skift til coach-visning" skal kalde handleRecheckRole (som
 //     kalder onRecheckRole), IKKE signOut — ellers er "uden at logge ud" brudt.
