@@ -71,6 +71,15 @@ function App() {
   // Hvilken bruger-id vi allerede har slået rollen op for. Bruges til at undgå
   // gentagne opslag ved token-refresh (og dermed unødig flimmer/race).
   const resolvedFor = useRef(null)
+  // Hvilken bruger-id der har et resolveRole-kald I GANG lige nu (til forskel
+  // fra resolvedFor, som først sættes når kaldet er FÆRDIGT). Uden denne vagt
+  // kalder både supabase.auth.getSession().then(...) nedenfor OG
+  // onAuthStateChange's egen første (INITIAL_SESSION-)fyring resolveRole for
+  // SAMME bruger-id samtidig ved hver koldstart — resolvedFor er på det
+  // tidspunkt stadig null for begge, så ingen af de to eksisterende tjek
+  // fanger racet. Resultatet, målt i ordre 173: profiles?select=role sendes
+  // (med sin egen CORS-preflight) to gange for hver eneste app-åbning.
+  const resolvingFor = useRef(null)
   // Holder den seneste resolveRole, så "Prøv igen"-knappen kan kalde den.
   const resolveRef = useRef(null)
 
@@ -80,37 +89,43 @@ function App() {
     // Slår brugerens rolle op robust. Degraderer ALDRIG en coach til athlete på
     // en transient fejl, og efterlader aldrig appen hængende i "Indlæser...".
     async function resolveRole(userId, email) {
-      setLoadError(false)
-      // withRetry venter på at token er hæftet på klienten før kaldet → undgår
-      // cold-start hvor RLS svarer som anonym (0 rækker uden fejl).
-      const { data, error } = await withRetry(() =>
-        supabase.from('profiles').select('role').eq('id', userId).maybeSingle()
-      )
-      if (cancelled) return
-      if (error) {
-        // Reel fejl efter retries: vis retry frem for at gætte rollen forkert.
-        setLoadError(true)
-        setLoading(false)
-        return
-      }
-      if (data) {
+      if (resolvingFor.current === userId) return
+      resolvingFor.current = userId
+      try {
+        setLoadError(false)
+        // withRetry venter på at token er hæftet på klienten før kaldet → undgår
+        // cold-start hvor RLS svarer som anonym (0 rækker uden fejl).
+        const { data, error } = await withRetry(() =>
+          supabase.from('profiles').select('role').eq('id', userId).maybeSingle()
+        )
+        if (cancelled) return
+        if (error) {
+          // Reel fejl efter retries: vis retry frem for at gætte rollen forkert.
+          setLoadError(true)
+          setLoading(false)
+          return
+        }
+        if (data) {
+          resolvedFor.current = userId
+          setRole(data.role || 'athlete')
+          setLoading(false)
+          return
+        }
+        // Ingen række OG ingen fejl → genuint ny bruger (DB-triggeren burde have
+        // lavet profilen; vær defensiv). Opret som athlete uden at fejle på en
+        // eksisterende række, og læs rollen igen frem for at antage 'athlete'.
+        await supabase.from('profiles')
+          .upsert({ id: userId, role: 'athlete', email }, { onConflict: 'id', ignoreDuplicates: true })
+        const { data: after } = await withRetry(() =>
+          supabase.from('profiles').select('role').eq('id', userId).maybeSingle()
+        )
+        if (cancelled) return
         resolvedFor.current = userId
-        setRole(data.role || 'athlete')
+        setRole(after?.role || 'athlete')
         setLoading(false)
-        return
+      } finally {
+        if (resolvingFor.current === userId) resolvingFor.current = null
       }
-      // Ingen række OG ingen fejl → genuint ny bruger (DB-triggeren burde have
-      // lavet profilen; vær defensiv). Opret som athlete uden at fejle på en
-      // eksisterende række, og læs rollen igen frem for at antage 'athlete'.
-      await supabase.from('profiles')
-        .upsert({ id: userId, role: 'athlete', email }, { onConflict: 'id', ignoreDuplicates: true })
-      const { data: after } = await withRetry(() =>
-        supabase.from('profiles').select('role').eq('id', userId).maybeSingle()
-      )
-      if (cancelled) return
-      resolvedFor.current = userId
-      setRole(after?.role || 'athlete')
-      setLoading(false)
     }
     resolveRef.current = resolveRole
 
