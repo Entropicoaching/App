@@ -10,10 +10,11 @@ import { startVite, launchBrowser, APP_URL, MOCK_PORT, OUT_DIR } from './harness
 import { runAtletJourney } from './atlet.spec.mjs'
 import { runCoachReview } from './coach.spec.mjs'
 import { runVideoUpload } from './video-upload.spec.mjs'
+import { runVideoReview, runAthleteSeesFeedback } from './video-review.spec.mjs'
 
 async function main() {
   const t0 = Date.now()
-  const mock = createMockSupabase(buildSeed())
+  const mock = createMockSupabase(buildSeed({ withAnalyzedVideo: true }))
   await mock.listen(MOCK_PORT)
   const vite = await startVite()
   const browser = await launchBrowser()
@@ -45,11 +46,13 @@ async function main() {
     await step('atlet-rejse', MOBILE, page => runAtletJourney(page, opts))
     await step('coach-gennemgang', DESKTOP, page => runCoachReview(page, opts))
 
-    // Video op og gå (ordre 155 · commit 1).
-    await step('video-upload', MOBILE, page => runVideoUpload(page, opts))
+    // Video op og gå + coachens gennemgang (ordre 155 · commit 1-2).
+    const awaitingRow = await step('video-upload', MOBILE, page => runVideoUpload(page, opts))
+    const feedback = await step('video-review', DESKTOP, page => runVideoReview(page, { ...opts, awaitingRow }))
+    await step('atlet-ser-feedback', MOBILE, page => runAthleteSeesFeedback(page, { ...opts, feedback }))
 
     const seconds = ((Date.now() - t0) / 1000).toFixed(1)
-    console.log(`\nGRØN: atlet → coach → video op, ende-til-ende, ${seconds}s.`)
+    console.log(`\nGRØN: atlet → coach → video op → coach gennemgår, ende-til-ende, ${seconds}s.`)
     process.exitCode = 0
   } catch (err) {
     console.error('\nFEJL:', err.message)
