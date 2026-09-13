@@ -32,7 +32,6 @@ const extractFn = (name) => {
 // Læsninger der sætter én tilstand direkte efter et enkelt runGuardedRead-kald.
 // setter = null betyder "returnerer data til kalderen" (fetchWeekLogs), ikke en setter.
 const SIMPLE_READS = [
-  ['fetchPRs', 'setPrs'],
   ['fetchMeetPlan', 'setHasMeetPlan'],
   ['fetchMeetResults', 'setMeetResults'],
   ['fetchWarmupTemplates', 'setWarmupTemplates'],
@@ -100,5 +99,23 @@ assert.ok(ternaryIdx > emptyProgramBlockStart, 'programError skal afgøre visnin
 assert.ok(errorTextIdx > ternaryIdx && errorTextIdx < onVejTextIdx,
   '"Dit program kunne ikke hentes." skal stå i programError-grenen, FØR "på vej"-teksten')
 
-console.log('fetchProgram og 18 andre rå læsninger i AthleteView.jsx går nu gennem runGuardedRead (ordre 76, G1).')
+// fetchPRs (ordre 163 · del 3): "det kald der fejler ved åbning" — en fejlet
+// PR-hentning må ikke vise en app-bred rød banner for noget der kun rører ét
+// kort (den generiske onReadError-vej andre læsninger i denne fil bruger).
+// Egen kontrol: prsError markeres ved fejl (kortet viser selv en rolig
+// linje), setPrs kaldes kun ved et bekræftet svar, og der forsøges roligt
+// igen i baggrunden uden brugerhandling.
+const fetchPRs = extractFn('fetchPRs')
+assert.match(fetchPRs, /runGuardedRead\(/, 'fetchPRs skal gå igennem læse-garden')
+assert.match(fetchPRs, /setPrsError\(true\)/, 'en fejlet PR-hentning skal markere prsError, ikke bare tie stille')
+assert.match(fetchPRs, /if \(!ok\) \{[\s\S]*?return\s*\}/, 'fetchPRs skal returnere tidligt når læsningen er fejlet')
+{
+  const okIdx = fetchPRs.indexOf('if (!ok)')
+  const setPrsIdx = fetchPRs.indexOf('setPrs(')
+  assert.ok(setPrsIdx > okIdx, 'setPrs skal kun kaldes EFTER det tidlige return ved fejl, aldrig med gættet tom data')
+}
+assert.match(fetchPRs, /setTimeout\(/, 'en fejlet PR-hentning skal forsøges igen i baggrunden (back-off), ikke kun logges én gang')
+
+console.log('fetchProgram og 17 andre rå læsninger i AthleteView.jsx går nu gennem runGuardedRead (ordre 76, G1).')
 console.log('En fejlet programhentning viser en ærlig fejllinje, ikke "Dit program er på vej".')
+console.log('fetchPRs (ordre 163 · del 3) fejler nu roligt i kortet med baggrunds-genforsøg, ikke en app-bred rød banner.')
