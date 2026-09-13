@@ -3077,7 +3077,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             { icon: <><path d="M3 10.5 12 3l9 7.5" /><path d="M5 9.5V21h14V9.5" /></>, label: 'Forside', active: view === 'list', onClick: () => { setView('list'); setSelectedAthlete(null); setSidebarOpen(false) } },
             { icon: <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />, label: 'Min træning', active: false, onClick: () => { setSidebarOpen(false); goToMyProfile() } },
             { icon: <><rect x="3" y="5" width="18" height="16" rx="2" /><line x1="3" y1="10" x2="21" y2="10" /><line x1="8" y1="3" x2="8" y2="7" /><line x1="16" y1="3" x2="16" y2="7" /></>, label: 'Kalender', active: view === 'calendar', onClick: () => { setView('calendar'); setSelectedAthlete(null); setSidebarOpen(false) } },
-            { icon: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />, label: 'Indbakke', active: view === 'inbox', badge: coachPriorityCount, onClick: () => { setView('inbox'); setSelectedAthlete(null); setSidebarOpen(false) } },
+            { icon: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />, label: 'Coach Briefing', active: view === 'inbox', badge: coachPriorityCount, onClick: () => { setView('inbox'); setSelectedAthlete(null); setSidebarOpen(false) } },
             { icon: <><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></>, label: 'Bibliotek', active: view === 'library', onClick: () => { setView('library'); setSelectedAthlete(null); setSidebarOpen(false) } },
           ].map(item => (
             <div
@@ -3197,7 +3197,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
       <main style={{ ...s.main, ...(isMobile ? { marginLeft: 0, overflowX: 'hidden', paddingBottom: '76px' } : {}) }}>
         <div style={s.topbar}>
-          <div style={{ ...s.topbarTitle, flex: 1 }}>{view === 'library' ? 'Øvelsesbibliotek' : view === 'calendar' ? 'Kalender' : view === 'inbox' ? 'Indbakke' : view === 'list' ? (isMobile ? 'Entropi Coach' : 'Atleter') : a?.name}</div>
+          <div style={{ ...s.topbarTitle, flex: 1 }}>{view === 'library' ? 'Øvelsesbibliotek' : view === 'calendar' ? 'Kalender' : view === 'inbox' ? 'Coach Briefing' : view === 'list' ? (isMobile ? 'Entropi Coach' : 'Atleter') : a?.name}</div>
           {onPreviewAthlete && !isMobile && (
             <button
               onClick={goToMyProfile}
@@ -3224,7 +3224,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 icon: <><path d="M3 10.5 12 3l9 7.5" /><path d="M5 9.5V21h14V9.5" /></>,
               },
               {
-                key: 'inbox', label: 'Indbakke', active: view === 'inbox',
+                key: 'inbox', label: 'Coach Briefing', active: view === 'inbox',
                 onClick: () => { setView('inbox'); setSelectedAthlete(null); setSidebarOpen(false); setMenuSheetOpen(false) },
                 icon: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />,
               },

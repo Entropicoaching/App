@@ -55,11 +55,11 @@ export async function runCoachReview(page, { appUrl, outDir }) {
   assert.equal(crashed, 0, 'Analyse-fanen ramte ErrorBoundary-fallbacken')
   await shot('04-videoer-analyse-fane')
 
-  // Indbakken åbner (sidebar-punktet er en <div onClick>, ikke en <button>).
-  await page.getByText('Indbakke', { exact: true }).first().click()
-  await page.getByText('Indbakke', { exact: true }).first().waitFor({ state: 'visible', timeout: 10000 })
+  // Coach Briefing (Indbakken) åbner (sidebar-punktet er en <div onClick>, ikke en <button>).
+  await page.getByText('Coach Briefing', { exact: true }).first().click()
+  await page.getByText('Coach Briefing', { exact: true }).first().waitFor({ state: 'visible', timeout: 10000 })
   const crashedInbox = await page.getByText('Ups — noget gik galt.').count()
-  assert.equal(crashedInbox, 0, 'Indbakken ramte ErrorBoundary-fallbacken')
+  assert.equal(crashedInbox, 0, 'Coach Briefing ramte ErrorBoundary-fallbacken')
   await shot('05-indbakke')
 }
 

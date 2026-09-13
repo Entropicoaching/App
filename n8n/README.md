@@ -3,28 +3,53 @@
 ## Coach Briefing v1
 
 `coach-briefing-v1.json` is an inactive, importable n8n workflow. The app is the
-primary coach inbox. Every hour from 12:00 through 21:00 Europe/Copenhagen the
-workflow asks Supabase for open inbox metadata and sends at most one compact
-fallback email per calendar day only when an important item remains unresolved.
-The file has been import-tested against n8n Community Edition 2.31.6.
-The fallback now mirrors the app's work order: active alerts first, then the
-oldest unresolved message or video. It names one next task before showing the
-rest of the queue, so email and app cannot give the coach competing priorities.
+primary coach inbox — it is named **Coach Briefing** in the app's own sidebar,
+mobile navigation and page heading (`src/Dashboard.jsx`,
+`src/dashboard/IndbakkeView.jsx`), and this mail is its fallback safety net, not
+a second, separate view. Every hour from 12:00 through 21:00 Europe/Copenhagen
+the workflow asks Supabase for open inbox metadata and sends at most one
+compact fallback email per calendar day, and only when it has something new or
+still-unmentioned to say (see the three rules below). The file has been
+import-tested against n8n Community Edition 2.31.6. The fallback mirrors the
+app's work order: active alerts first, then the oldest unresolved message or
+video. It names one next task before showing the rest of the queue, so email
+and app cannot give the coach competing priorities.
+
+**Three rules keep this a safety net, not a newsletter (ordre 171 · commit 3):**
+
+1. **At most one mail per calendar day** (`Skip if sent today`, keyed on
+   Europe/Copenhagen date).
+2. **Only when at least one thing has been unresolved a full day**: unread
+   messages and video drafts must be at least 24 hours old to count
+   (`Keep unresolved backup items`). Active `alert` training signals are the
+   one exception — they are urgent by design and carry no age field from the
+   RPC, so they can still trigger the fallback immediately, as before.
+3. **The same task is never mentioned twice within three days.** `Build
+   briefing` holds back any task whose key was mailed within the last three
+   days (tracked in workflow static data by `Record successful delivery`) and
+   builds no email at all if every currently-unresolved task is still being
+   held back. The subject states the count actually being mentioned, e.g.
+   `Coach Briefing: 3 ting har ventet et døgn`.
+
+Manual/editor preview runs bypass both the daily gate and the three-day
+suppression, so the rendered email always reflects the full, current queue —
+never a partially-suppressed one.
 
 It includes:
 
 - a fail-closed contract check for the RPC schema version, timestamp, coach
   identity, required arrays and item-level metadata before any prioritization or
   email logic runs;
-- unread athlete-message counts that are at least 6 hours old, grouped by athlete
-  and conversation track;
+- unread athlete-message counts that are at least 24 hours old, grouped by
+  athlete and conversation track;
 - a briefing total aligned with the app badge: each grouped conversation track
   counts as one coach task, while each conversation row still shows its actual
   number of unread messages;
 - pending VideoCoach drafts at least 24 hours old (metadata only, never video files);
 - active `alert` training signals that are neither acknowledged nor snoozed;
 - one deduplicated, ordered task list with the same priority contract as the app;
-- duplicate suppression based on the last successfully delivered briefing.
+- per-task three-day repeat suppression, and duplicate suppression based on the
+  last successfully delivered briefing;
 - an explicit test-delivery gate: manual/editor runs can render the fallback
   email for inspection but can never reach the SMTP node.
 - a clearly synthetic `Eksempelatlet` item when a manual/editor preview has no
@@ -108,15 +133,20 @@ must never be uploaded or shared. Restore remains a deliberate manual operation.
   report the failed node instead of the workflow silently treating bad data as an
   empty inbox.
 - Already delivered today: `Skip if sent today` returns no items.
-- Manual/editor execution: daily suppression is bypassed for preview, then
-  `Block test delivery` returns no items before SMTP. No email is sent.
+- Every remaining task was already mailed within the last three days: `Build
+  briefing` holds all of them back and returns no items, so no email is built
+  in the first place.
+- Manual/editor execution: both the daily gate and the three-day repeat
+  suppression are bypassed for preview, then `Block test delivery` returns no
+  items before SMTP. No email is sent.
 - Empty manual/editor preview: `Keep unresolved backup items` inserts one
   synthetic `Eksempelatlet` message so the email layout can be inspected. The
   synthetic item exists only inside that test execution.
 - Mail delivery failure: delivery state is not updated, so the briefing can retry later.
 - Supabase failure: the workflow fails before email and appears in n8n's
   execution log.
-- Successful delivery: only the digest hash and delivery timestamp are stored in
+- Successful delivery: the digest hash, delivery timestamp and a per-task
+  "last mentioned" stamp for every task in that delivery are stored in
   workflow static data.
 
 ## Coach inbox deep link
@@ -134,7 +164,8 @@ Run `npm run verify:n8n` after editing either workflow. The verifier
 checks node and connection integrity, inactive source files, absence of committed
 credential bindings, the linked error monitor, schedule, RPC contract behavior,
 synthetic preview isolation, app-aligned priority order, duplicate handling,
-same-day suppression and the test-only SMTP gate. The verifier also requires the
+same-day suppression, per-task three-day repeat suppression and the test-only
+SMTP gate. The verifier also requires the
 embedded n8n Code node to match `n8n/build-coach-briefing.code` exactly, and that
 the mail's signal labels stay identical to the app's detector labels in
 `src/coachPriority.js`.
