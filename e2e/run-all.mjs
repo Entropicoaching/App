@@ -11,6 +11,7 @@ import { runAtletJourney } from './atlet.spec.mjs'
 import { runCoachReview } from './coach.spec.mjs'
 import { runVideoUpload } from './video-upload.spec.mjs'
 import { runVideoReview, runAthleteSeesFeedback } from './video-review.spec.mjs'
+import { runOfflineSetLog, runRejectedUploadRetry } from './fejl.spec.mjs'
 
 async function main() {
   const t0 = Date.now()
@@ -51,8 +52,12 @@ async function main() {
     const feedback = await step('video-review', DESKTOP, page => runVideoReview(page, { ...opts, awaitingRow }))
     await step('atlet-ser-feedback', MOBILE, page => runAthleteSeesFeedback(page, { ...opts, feedback }))
 
+    // Det der går galt (ordre 155 · commit 3).
+    await step('offline-saet-log', MOBILE, page => runOfflineSetLog(page, opts))
+    await step('afvist-upload-igen', MOBILE, page => runRejectedUploadRetry(page, opts))
+
     const seconds = ((Date.now() - t0) / 1000).toFixed(1)
-    console.log(`\nGRØN: atlet → coach → video op → coach gennemgår, ende-til-ende, ${seconds}s.`)
+    console.log(`\nGRØN: atlet → coach → video op → coach gennemgår → det der går galt, ende-til-ende, ${seconds}s.`)
     process.exitCode = 0
   } catch (err) {
     console.error('\nFEJL:', err.message)
