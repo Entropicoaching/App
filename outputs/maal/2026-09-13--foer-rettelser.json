@@ -1,0 +1,167 @@
+[
+  {
+    "id": "login",
+    "label": "Login",
+    "kind": "ægte (ingen session)",
+    "fcpMs": 3020.9305,
+    "ttiMs": 3322.3957500000006,
+    "cls": 0,
+    "requestsBeforeUsable": 7,
+    "perfScore": 87,
+    "dom": "Midt imellem — noget er hurtigt, noget hænger",
+    "runs": [
+      {
+        "fcpMs": 3017.774,
+        "ttiMs": 3318.661,
+        "cls": 0,
+        "requestsBeforeUsable": 7,
+        "perfScore": 87
+      },
+      {
+        "fcpMs": 3024.1769999999997,
+        "ttiMs": 3325.7654999999995,
+        "cls": 0,
+        "requestsBeforeUsable": 7,
+        "perfScore": 87
+      },
+      {
+        "fcpMs": 3020.9305,
+        "ttiMs": 3322.3957500000006,
+        "cls": 0,
+        "requestsBeforeUsable": 7,
+        "perfScore": 87
+      }
+    ]
+  },
+  {
+    "id": "videocoach-forside",
+    "label": "Videocoach-forside",
+    "kind": "ægte (ingen session)",
+    "fcpMs": 3567.00545,
+    "ttiMs": 4076.0236000000004,
+    "cls": 0.0005505126794097167,
+    "requestsBeforeUsable": 6,
+    "perfScore": 79,
+    "dom": "Føles som en hjemmeside der loader",
+    "runs": [
+      {
+        "fcpMs": 3583.5719500000005,
+        "ttiMs": 4103.769950000001,
+        "cls": 0.0005505126794097167,
+        "requestsBeforeUsable": 6,
+        "perfScore": 79
+      },
+      {
+        "fcpMs": 3567.00545,
+        "ttiMs": 4076.0236000000004,
+        "cls": 0.0005505126794097167,
+        "requestsBeforeUsable": 6,
+        "perfScore": 79
+      },
+      {
+        "fcpMs": 3566.5231999999996,
+        "ttiMs": 4074.9601999999995,
+        "cls": 0.0005505126794097167,
+        "requestsBeforeUsable": 6,
+        "perfScore": 75
+      }
+    ]
+  },
+  {
+    "id": "dagens-pas",
+    "label": "Dagens pas",
+    "kind": "ægte (autentificeret)",
+    "fcpMs": 3854.0224999999996,
+    "ttiMs": 5999.827000000001,
+    "cls": 0,
+    "requestsBeforeUsable": 57,
+    "perfScore": 69,
+    "dom": "Føles som en hjemmeside der loader",
+    "runs": [
+      {
+        "fcpMs": 3854.0224999999996,
+        "ttiMs": 5999.827000000001,
+        "cls": 0,
+        "requestsBeforeUsable": 57,
+        "perfScore": 69
+      },
+      {
+        "fcpMs": 3856.2000000000003,
+        "ttiMs": 6012.640000000001,
+        "cls": 0,
+        "requestsBeforeUsable": 57,
+        "perfScore": 69
+      },
+      {
+        "fcpMs": 3853.67,
+        "ttiMs": 5997.804,
+        "cls": 0,
+        "requestsBeforeUsable": 57,
+        "perfScore": 69
+      }
+    ]
+  },
+  {
+    "id": "check-in",
+    "label": "Check-in (parathed)",
+    "kind": "ægte (autentificeret)",
+    "fcpMs": 3853.8050000000003,
+    "ttiMs": 6001.214,
+    "cls": 0.1063399613276708,
+    "requestsBeforeUsable": 57,
+    "perfScore": 66,
+    "dom": "Føles som en hjemmeside der loader",
+    "runs": [
+      {
+        "fcpMs": 3853.3825,
+        "ttiMs": 6311.709000000001,
+        "cls": 0,
+        "requestsBeforeUsable": 57,
+        "perfScore": 68
+      },
+      {
+        "fcpMs": 3856.3450000000003,
+        "ttiMs": 6001.214,
+        "cls": 0.1063399613276708,
+        "requestsBeforeUsable": 57,
+        "perfScore": 66
+      },
+      {
+        "fcpMs": 3853.8050000000003,
+        "ttiMs": 5995.966,
+        "cls": 0.1063399613276708,
+        "requestsBeforeUsable": 57,
+        "perfScore": 66
+      }
+    ]
+  },
+  {
+    "id": "saet-logger",
+    "label": "Sæt-logger",
+    "kind": "ægte (autentificeret, klik→synlig-overgang)",
+    "renderMs": 244,
+    "cls": 0,
+    "requestsBeforeUsable": 0,
+    "fcpMs": null,
+    "ttiMs": null,
+    "perfScore": null,
+    "dom": "Føles som en app",
+    "runs": [
+      {
+        "renderMs": 244,
+        "cls": 0,
+        "requests": 0
+      },
+      {
+        "renderMs": 240,
+        "cls": 0,
+        "requests": 0
+      },
+      {
+        "renderMs": 261,
+        "cls": 0,
+        "requests": 0
+      }
+    ]
+  }
+]
