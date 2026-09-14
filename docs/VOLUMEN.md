@@ -114,6 +114,57 @@ set_by text, set_at timestamptz)` med en RLS-regel der kun lader
 coach-rollen skrive — og en migration, som ikke er lavet her. Indtil da:
 brug samme browser konsekvent, eller vent på den rigtige tabel.
 
+## "Stå på skuldre" — free-exercise-db (ordre 192)
+
+Fra ordre 192 kender kortet et tredje lag ud over "din egen rettelse" og
+"den indbyggede kortlægning" (se ovenfor): en genereret liste bygget af
+`scripts/byg-muskelkort.mjs` fra [free-exercise-db](https://github.com/yuhonas/free-exercise-db)
+(Andrew Jarombek m.fl.), licens **The Unlicense** (public domain). Scriptet
+henter kilden ÉN GANG (mod et fast commit-SHA, ikke `main`) og skriver
+`src/volume/muskelkort.generet.json` — appen henter aldrig noget udefra,
+kun en udvikler der kører scriptet gør. Opslagsrækkefølgen i `slaaOevelseOp`
+er uændret i princippet, nu tre lag: **din rettelse** → **den indbyggede
+kortlægning** (kurateret, kilde pr. linje) → **den genererede** (kildens
+egen kategorisering, se grænse nedenfor). Det indbyggede vinder altid over
+det genererede, hvis samme øvelse findes begge steder.
+
+**Hvad der kom med.** Af kildens 876 øvelser er 431 med: kun `category`
+"strength" (292 udelukket — stretching, cardio, plyometrics, strongman,
+powerlifting, olympic weightlifting er ikke med i denne version), og kun
+udstyr Marcs atleter bruger — barbell, dumbbell, cable, machine, kropsvægt,
+kettlebell, elastik (74 udelukket for andet udstyr). 126 danske
+alias/navne (fx "Håndvægt bænkpres", "Hacksquat med stang") peger på samme
+post som kildens engelske navn, så Marc ikke behøver skrive engelsk.
+
+**Kildens grænse, ikke Marcs faglige dom.** free-exercise-db grupperer
+muskler grovere end vi gerne ville: dens "shoulders" dækker forreste,
+midterste og bageste skulder under ét, men vores model har kun
+`anteriorDeltoid` (forreste skulder) at putte det i. En genereret post der
+rammer `anteriorDeltoid` betyder derfor "kilden mener denne øvelse rammer
+skulderen", ikke nødvendigvis "specifikt den forreste del" — til forskel
+fra de indbyggede bænkpres/skulderpres-poster, hvor det ER efterprøvet.
+Fem af kildens muskler har slet ingen sikker oversættelse og er udeladt
+frem for gættet på: **hamstrings, mavemuskler (abdominals), underarme
+(forearms), traps og midt-ryg (middle back)**, plus adductors/abductors/
+neck i mindre omfang — se `_meta.udeladteMuskler` i den genererede fil for
+præcise tal. En øvelse hvor ALLE dens muskler falder i denne udeladte
+gruppe (79 af kildens 876) er slet ikke med, frem for at stå der med en tom
+gruppeliste.
+
+**Marcs rettelse vinder stadig altid** — er en genereret post forkert eller
+for grov, retter du den samme vej som før (se "Sådan retter du en
+kortlægning" ovenfor), og rettelsen slår igennem uanset hvilket af de tre
+lag øvelsen ellers ville være kommet fra.
+
+**Målt effekt.** Før ordre 192 kendte kortet 26 øvelser (den indbyggede
+liste). Efter kender det 570 distinkte opslagsnavne (26 indbygget + 431
+genereret + 126 dansk alias, minus enkelte overlap) — en udvidelse på 544.
+E2E-mockens eget seed-data (`e2e/mock-supabase.mjs` via `e2e/fixtures.mjs`)
+logger kun én øvelse ("Squat"), som allerede var kendt før ordren — mockens
+tynde øvelsesdata kan derfor ikke selv vise bredden, kun kortets egen
+optælling kan. Bundle-vækst: Dashboard-chunken voksede fra 266,50 KB til
+320,43 KB (+53,93 KB, under ordrens 60 KB-grænse), gzip +6,61 KB.
+
 ## Grænsen for denne version
 
 Ugen er kalenderugen (mandag-søndag), ikke appens programuge — kortet
