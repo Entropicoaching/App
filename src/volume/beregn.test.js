@@ -78,6 +78,15 @@ test('uger uden logs er med som nul, ikke udeladt', () => {
   }
 })
 
+// ORDRE 185, commit 3: `rettelser`-param gives uændret videre til slaaOevelseOp.
+test('rettelser: en ukendt øvelse kortlagt af Marc tælles nu med, ikke som ukendt', () => {
+  const raekker = [{ oevelseNavn: 'Zercher squat', loggetDato: new Date().toISOString(), skipped: false }]
+  const rettelser = new Map([['zercher squat', { grupper: [{ gruppe: 'kneeExtensors', andel: 1 }] }]])
+  const [ugeNu] = beregnVolumenPrUge(raekker, { antalUger: 1, rettelser })
+  assert.equal(ugeNu.ukendteSaet, 0)
+  assert.deepEqual(ugeNu.grupper.kneeExtensors, { direkte: 1, ialt: 1 })
+})
+
 test('nyeste uge er foerst', () => {
   const uger = beregnVolumenPrUge([], { antalUger: 3, referenceDato: '2026-09-13' })
   assert.equal(uger[0].uge, ugenoegle('2026-09-13'))

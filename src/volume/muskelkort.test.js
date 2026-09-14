@@ -80,3 +80,38 @@ test('tom eller manglende navn er ukendt, kaster aldrig', () => {
   assert.equal(slaaOevelseOp(undefined).kendt, false)
   assert.equal(slaaOevelseOp(null).kendt, false)
 })
+
+// ORDRE 185, commit 3: rettelser — Marcs egne rettelser (src/volume/rettelser.js's
+// hentRettelser()-facon: Map<normaliseretNavn, { grupper }>).
+test('ingen rettelser givet: opfører sig som før, satAfMarc er false', () => {
+  const { satAfMarc, grupper } = slaaOevelseOp('Squat')
+  assert.equal(satAfMarc, false)
+  assert.ok(grupper.length > 0)
+})
+
+test('en rettelse for en KENDT øvelse overskriver det oprindelige skøn', () => {
+  const rettelser = new Map([['squat', { grupper: [{ gruppe: 'kneeExtensors', andel: MEDVIRKENDE }] }]])
+  const { kendt, grupper, satAfMarc } = slaaOevelseOp('Squat', rettelser)
+  assert.equal(kendt, true)
+  assert.equal(satAfMarc, true)
+  assert.deepEqual(grupper, [{ gruppe: 'kneeExtensors', andel: MEDVIRKENDE }])
+})
+
+test('en rettelse kan gøre en UKENDT øvelse kendt', () => {
+  const rettelser = new Map([['zercher squat', { grupper: [{ gruppe: 'kneeExtensors', andel: PRIMÆR }] }]])
+  const { kendt, satAfMarc } = slaaOevelseOp('Zercher squat', rettelser)
+  assert.equal(kendt, true)
+  assert.equal(satAfMarc, true)
+})
+
+test('rettelse slås op efter samme normalisering som grundkortet (stavevariant/suffiks)', () => {
+  const rettelser = new Map([['baenkpres', { grupper: [{ gruppe: 'triceps', andel: PRIMÆR }] }]])
+  const { satAfMarc } = slaaOevelseOp('Bænkpres - topsæt', rettelser)
+  assert.equal(satAfMarc, true)
+})
+
+test('en tom rettelser-Map ændrer intet', () => {
+  const { satAfMarc, kendt } = slaaOevelseOp('Squat', new Map())
+  assert.equal(satAfMarc, false)
+  assert.equal(kendt, true)
+})

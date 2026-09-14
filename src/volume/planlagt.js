@@ -27,7 +27,9 @@ import { ugenoegle } from './beregn.js'
  * i — kun for programuger der har en `start_date` i den uge.
  *
  * @param {Array<{ start_date?: string|null, sessions?: Array<{ exercises?: Array<{ name: string, sets: number|string }> }> }>} weeks
- * @param {{ referenceDato?: string|Date }} [options]
+ * @param {{ referenceDato?: string|Date, rettelser?: Map }} [options]
+ *   `rettelser`: se beregn.js's beregnVolumenPrUge — samme param, givet
+ *   uændret videre til slaaOevelseOp (ordre 185 commit 3).
  * @returns {{
  *   uge: string,
  *   grupper: Record<string, { direkte: number, ialt: number }>,
@@ -37,7 +39,7 @@ import { ugenoegle } from './beregn.js'
  *   rammer denne kalenderuge — "0 planlagt" er da IKKE det samme som "et
  *   tomt program", se docs/VOLUMEN.md.
  */
-export function beregnPlanlagtDenneUge(weeks, { referenceDato = new Date() } = {}) {
+export function beregnPlanlagtDenneUge(weeks, { referenceDato = new Date(), rettelser } = {}) {
   const uge = ugenoegle(referenceDato)
   const grupper = {}
   let ukendteSaet = 0
@@ -50,7 +52,7 @@ export function beregnPlanlagtDenneUge(weeks, { referenceDato = new Date() } = {
       for (const ex of sess.exercises || []) {
         const antalSaet = Number(ex.sets) || 0
         if (antalSaet <= 0) continue
-        const { kendt, grupper: exGrupper } = slaaOevelseOp(ex.name)
+        const { kendt, grupper: exGrupper } = slaaOevelseOp(ex.name, rettelser)
         if (!kendt) {
           ukendteSaet += antalSaet
           continue

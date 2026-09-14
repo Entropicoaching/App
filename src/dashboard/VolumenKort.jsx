@@ -10,16 +10,22 @@
 // `weeks` (Dashboard.jsx's fetchWeeks-form) ud over athleteLogs.
 // ORDRE 185, commit 2: tilføjer VolumenGraf — søjler for udviklingen over
 // otte uger, se src/dashboard/VolumenGraf.jsx for selve tegningen.
+// ORDRE 185, commit 3: "Ret kortlægning"-knappen (se KortlaegningRedigering.jsx)
+// — Marcs egne rettelser hentes her og gives videre til beregn.js/planlagt.js,
+// så tallene på kortet afspejler dem med det samme.
 //
 // Ren visning: al regning sker i src/volume/beregn.js + src/volume/planlagt.js,
 // alt kortlægningsarbejde i src/volume/muskelkort.js. Denne fil oversætter kun
 // Dashboard.jsx's egen athleteLogs-form (fetchAthleteLogs' indlejrede
 // exercises-relation) til de flade rækker beregn.js forventer.
+import { useState } from 'react'
 import { beregnVolumenPrUge } from '../volume/beregn.js'
 import { beregnPlanlagtDenneUge } from '../volume/planlagt.js'
-import { MUSKELGRUPPER } from '../volume/muskelkort.js'
+import { MUSKELGRUPPER, slaaOevelseOp } from '../volume/muskelkort.js'
+import { hentRettelser } from '../volume/rettelser.js'
 import { s } from '../dashboardShared'
 import VolumenGraf from './VolumenGraf'
+import KortlaegningRedigering from './KortlaegningRedigering'
 
 // Ordrens egen ramme: "fire til seks uger bagud" — seks valgt som den mest
 // oplysende ende af det spænd, notér-og-fortsæt (ordren beder om at vælge
@@ -52,6 +58,20 @@ const headCellStyle = { ...cellStyle, color: '#7a7770', fontSize: '0.5rem', lett
 /** "2026-W37" -> "U37", til en smal kolonneoverskrift. */
 function ugeLabel(ugenoegle) {
   return ugenoegle.replace(/^\d{4}-W/, 'U')
+}
+
+// Distinkte øvelsesnavne fra både loggen og programmet, der (med de aktuelle
+// rettelser) stadig falder til "ukendt" — fødes ind i KortlaegningRedigering
+// som den klikbare "kortlæg denne"-liste.
+function ukendteNavneFra(raekker, weeks, rettelser) {
+  const navne = new Set()
+  for (const r of raekker) if (r.oevelseNavn) navne.add(r.oevelseNavn)
+  for (const uge of weeks || []) {
+    for (const sess of uge.sessions || []) {
+      for (const ex of sess.exercises || []) if (ex.name) navne.add(ex.name)
+    }
+  }
+  return [...navne].filter(navn => !slaaOevelseOp(navn, rettelser).kendt)
 }
 
 // Ét tal pr. gruppe fra beregn.js/planlagt.js ("i alt", vægtet) side om side.
@@ -96,10 +116,12 @@ function DenneUgePlanlagtModGennemfoert({ gennemfoertUge, planlagtUge }) {
 }
 
 export default function VolumenKort({ athleteLogs, weeks }) {
+  const [rettelser, setRettelser] = useState(() => hentRettelser())
   const raekker = raekkerFraAthleteLogs(athleteLogs)
-  const uger = beregnVolumenPrUge(raekker, { antalUger: ANTAL_UGER })
-  const ugerGraf = beregnVolumenPrUge(raekker, { antalUger: GRAF_UGER })
-  const planlagtDenneUge = beregnPlanlagtDenneUge(weeks || [])
+  const uger = beregnVolumenPrUge(raekker, { antalUger: ANTAL_UGER, rettelser })
+  const ugerGraf = beregnVolumenPrUge(raekker, { antalUger: GRAF_UGER, rettelser })
+  const planlagtDenneUge = beregnPlanlagtDenneUge(weeks || [], { rettelser })
+  const ukendteOevelseNavne = ukendteNavneFra(raekker, weeks, rettelser)
 
   // Kun grupper der reelt har haft sæt i vinduet — resten ville kun være
   // rækker af nuller. En gruppe der aldrig optræder her er ikke "0 sæt",
@@ -110,7 +132,11 @@ export default function VolumenKort({ athleteLogs, weeks }) {
 
   return (
     <div style={{ ...s.card, marginTop: '1.5rem' }}>
-      <div style={s.cardLabel}>Volumen pr. muskelgruppe</div>
+      <div style={s.cardLabel}>
+        Volumen pr. muskelgruppe
+        <KortlaegningRedigering rettelser={rettelser} ukendteOevelseNavne={ukendteOevelseNavne}
+          onRettelserAendret={() => setRettelser(hentRettelser())} />
+      </div>
       <div style={{ fontSize: '0.72rem', color: '#7a7770', lineHeight: 1.5, marginBottom: '1rem' }}>
         Sæt er ikke belastning. Tallene tæller gennemførte sæt, vægtet efter hvad øvelsen belaster.
       </div>

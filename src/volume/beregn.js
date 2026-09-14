@@ -76,7 +76,10 @@ function seneste_ugenoegler(referenceDato, antalUger) {
  * @param {Array<{ oevelseNavn: string, loggetDato: string|Date, skipped?: boolean }>} saet
  *   Kun gennemførte sæt gives med — skipped:true-rækker filtreres væk her,
  *   så kaldstedet ikke selv skal huske det.
- * @param {{ antalUger?: number, referenceDato?: string|Date }} [options]
+ * @param {{ antalUger?: number, referenceDato?: string|Date, rettelser?: Map }} [options]
+ *   `rettelser`: Marcs egne kortlægningsrettelser (src/volume/rettelser.js's
+ *   hentRettelser()), givet videre uændret til slaaOevelseOp — se ordre 185
+ *   commit 3. Udeladt/tom betyder "kun det indbyggede skøn", som før.
  * @returns {Array<{
  *   uge: string,
  *   grupper: Record<string, { direkte: number, ialt: number }>,
@@ -84,7 +87,7 @@ function seneste_ugenoegler(referenceDato, antalUger) {
  * }>} NYESTE UGE FØRST. Uger uden nogen logs er med, alle tal 0 — en coach
  *   skal kunne se "ingen sæt denne uge", ikke en manglende linje.
  */
-export function beregnVolumenPrUge(saet, { antalUger = 6, referenceDato = new Date() } = {}) {
+export function beregnVolumenPrUge(saet, { antalUger = 6, referenceDato = new Date(), rettelser } = {}) {
   const ugenoegler = seneste_ugenoegler(referenceDato, antalUger)
   const vinduet = new Set(ugenoegler)
   const buckets = new Map(ugenoegler.map(u => [u, { grupper: {}, ukendteSaet: 0 }]))
@@ -94,7 +97,7 @@ export function beregnVolumenPrUge(saet, { antalUger = 6, referenceDato = new Da
     const uge = ugenoegle(raekke.loggetDato)
     if (!vinduet.has(uge)) continue // uden for det viste vindue
     const bucket = buckets.get(uge)
-    const { kendt, grupper } = slaaOevelseOp(raekke.oevelseNavn)
+    const { kendt, grupper } = slaaOevelseOp(raekke.oevelseNavn, rettelser)
     if (!kendt) {
       bucket.ukendteSaet += 1
       continue

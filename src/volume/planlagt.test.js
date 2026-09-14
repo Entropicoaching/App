@@ -78,6 +78,14 @@ test('flere programuger med start_date i samme kalenderuge summeres begge (fx ug
   assert.deepEqual(resultat.grupper.kneeExtensors, { direkte: 4, ialt: 4 })
 })
 
+test('rettelser gives videre til slaaOevelseOp — en Marc-kortlagt ukendt øvelse tælles nu med', () => {
+  const uger = [{ start_date: I_DAG, sessions: [{ exercises: [{ name: 'Zercher squat', sets: 3 }] }] }]
+  const rettelser = new Map([['zercher squat', { grupper: [{ gruppe: 'kneeExtensors', andel: 1 }] }]])
+  const resultat = beregnPlanlagtDenneUge(uger, { referenceDato: I_DAG, rettelser })
+  assert.equal(resultat.ukendteSaet, 0)
+  assert.deepEqual(resultat.grupper.kneeExtensors, { direkte: 3, ialt: 3 })
+})
+
 test('tomt weeks-array: ugePlaceret false, ingen fejl', () => {
   const resultat = beregnPlanlagtDenneUge([], { referenceDato: I_DAG })
   assert.equal(resultat.ugePlaceret, false)
