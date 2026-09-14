@@ -193,6 +193,9 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [profilePriorityKey, setProfilePriorityKey] = useState(null)
   const [profilePriorityContext, setProfilePriorityContext] = useState(null)
   const [selectedAthlete, setSelectedAthlete] = useState(null)
+  // ORDRE 175: hvilken atlet-id weeks+athleteLogs sidst er hentet for — se
+  // effekten der bruger den, nedenfor.
+  const weeksLogsLoadedForRef = useRef(null)
   const [activeTab, setActiveTab] = useState('hub')
   const [navMenuOpen, setNavMenuOpen] = useState(false) // "Mere"-menu i sektions-navigationen
   const [editing, setEditing] = useState(null)
@@ -349,6 +352,11 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   // ikke localStorage. Sættet fyldes fra fetchAthletes.
   const [hiddenAthleteIds, setHiddenAthleteIds] = useState(new Set())
   const [showHiddenAthletes, setShowHiddenAthletes] = useState(false)
+  // ORDRE 175: atletlisten tegnede ALLE rækker uanset hvor mange der reelt er
+  // synlige på skærmen (se view === 'list' nedenfor). Samme "vis kun de
+  // første N, vis flere ved ønske"-mønster som showHiddenAthletes ovenfor,
+  // bare for den SYNLIGE liste når den er lang.
+  const [showAllAthletes, setShowAllAthletes] = useState(false)
   const [showAiExport, setShowAiExport] = useState(false)
   const [aiExportWeeks, setAiExportWeeks] = useState(8)
   const [aiExportText, setAiExportText] = useState('')
@@ -622,12 +630,26 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       fetchCalendarProgress(ids)
     }
   }, [view, athletes])
+  // ORDRE 175: program/log/analyse-fanerne deler samme weeks+athleteLogs-data.
+  // Uden vagten nedenfor genhentede et klik MELLEM disse tre faner (samme
+  // atlet, ingen skrivning imellem) begge kald hver gang — målt til 2 unødige
+  // kald pr. faneskift (se docs/RAPPORT-175.md). Enhver ægte skrivning (tilføj
+  // øvelse, omarrangér osv.) kalder allerede fetchWeeks/fetchAthleteLogs
+  // eksplicit selv bagefter (grep'et før denne rettelse), så et rent
+  // faneskift er trygt at springe over. weeksLogsLoadedForRef ryddes når
+  // profilen lukkes (se effekten nedenfor), så et senere genbesøg altid
+  // henter friskt.
   useEffect(() => {
     if ((activeTab === 'program' || activeTab === 'analyse' || activeTab === 'log') && selectedAthlete?.id) {
+      if (weeksLogsLoadedForRef.current === selectedAthlete.id) return
+      weeksLogsLoadedForRef.current = selectedAthlete.id
       fetchWeeks(selectedAthlete.id)
       fetchAthleteLogs(selectedAthlete.id)
     }
   }, [activeTab, selectedAthlete?.id])
+  useEffect(() => {
+    if (!selectedAthlete) weeksLogsLoadedForRef.current = null
+  }, [selectedAthlete])
 
   useEffect(() => {
     if (activeTab === 'beskeder' && selectedAthlete?.id) {
@@ -2701,6 +2723,12 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   // En eksplicit returadresse holder indbakkens arbejdsflow samlet. Alle andre
   // profilåbninger bevarer den hidtidige retur til atletoversigten.
   function openProfile(athlete, initialTab = 'hub', returnView = 'list', priorityKey = null, priorityContext = null) {
+    // ORDRE 175: forudhent Analyse-fanens lazy chunk med det samme — coachen
+    // åbner ofte "Videoer" et par klik senere (via "Mere" → "Analyse"), og
+    // chunken (48 KB) hentede sig selv først PÅ det klik. En fejlet/afbrudt
+    // forudhentning er harmløs: LazyBoundary/lazy() prøver selv igen ved det
+    // rigtige klik, uændret.
+    analyseTabFactory().catch(() => {})
     setProfileReturnView(returnView === 'inbox' ? 'inbox' : 'list')
     setProfilePriorityKey(priorityKey)
     setProfilePriorityContext(priorityContext)
@@ -3911,6 +3939,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           const shownAthletes = showHiddenAthletes
             ? [...visibleAthletes, ...hiddenAthletes.sort((x, y) => x.name.localeCompare(y.name, 'da'))]
             : visibleAthletes
+          const ATHLETE_LIST_LIMIT = 25
+          const cappedAthletes = showAllAthletes ? shownAthletes : shownAthletes.slice(0, ATHLETE_LIST_LIMIT)
           const priorityItems = coachPriorityItems
           const inboxTotal = coachPriorityCount
           const priorityPreview = priorityItems.slice(0, isMobile ? 3 : 4)
@@ -4039,7 +4069,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', padding: '1rem 0' }}>Ingen aktive atleter</div>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    {shownAthletes.map((athlete, index) => {
+                    {cappedAthletes.map((athlete, index) => {
                       const isHidden = hiddenAthleteIds.has(athlete.id)
                       const athleteWeeks = calendarWeeks[athlete.id] || []
                       const currentNo = currentWeekNo(athleteWeeks, athleteCurrentWeek[athlete.id] ?? null)
@@ -4057,7 +4087,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                         <div key={athlete.id} role={isHidden ? undefined : 'button'} tabIndex={isHidden ? undefined : 0}
                           onClick={() => !isHidden && openProfile(athlete, 'program')}
                           onKeyDown={event => { if (!isHidden && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); openProfile(athlete, 'program') } }}
-                          style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '0.65rem' : '0.85rem', width: '100%', minHeight: isMobile ? 62 : 66, padding: '0.55rem 0', borderBottom: index < shownAthletes.length - 1 ? '1px solid rgba(237,234,226,0.055)' : 'none', background: 'transparent', cursor: isHidden ? 'default' : 'pointer', textAlign: 'left', opacity: isHidden ? 0.48 : 1 }}>
+                          style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '0.65rem' : '0.85rem', width: '100%', minHeight: isMobile ? 62 : 66, padding: '0.55rem 0', borderBottom: index < cappedAthletes.length - 1 ? '1px solid rgba(237,234,226,0.055)' : 'none', background: 'transparent', cursor: isHidden ? 'default' : 'pointer', textAlign: 'left', opacity: isHidden ? 0.48 : 1 }}>
                           <span style={{ ...s.avatar, width: isMobile ? 36 : 40, height: isMobile ? 36 : 40, fontSize: isMobile ? '0.72rem' : '0.82rem', flexShrink: 0, position: 'relative' }}>
                             {initials(athlete.name)}
                             {unread > 0 && <span style={{ position: 'absolute', top: -3, right: -3, width: 9, height: 9, borderRadius: '50%', background: '#c8923a', border: '2px solid #1c1c18' }} />}
@@ -4082,6 +4112,13 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                       )
                     })}
                   </div>
+                )}
+
+                {!showAllAthletes && shownAthletes.length > ATHLETE_LIST_LIMIT && (
+                  <button onClick={() => setShowAllAthletes(true)}
+                    style={{ marginTop: '0.65rem', padding: '0.45rem 0 0', border: 'none', borderTop: '1px solid rgba(237,234,226,0.05)', background: 'transparent', color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.07em', textTransform: 'uppercase', cursor: 'pointer', width: '100%', textAlign: 'left' }}>
+                    Vis alle {shownAthletes.length} (viser {ATHLETE_LIST_LIMIT})
+                  </button>
                 )}
 
                 {hiddenAthletes.length > 0 && (
