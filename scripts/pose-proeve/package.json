@@ -1,0 +1,14 @@
+{
+  "name": "pose-proeve",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "ORDRE 188: kan appen (browser, PoseLandmarker) måle det Drishti måler (Python, MediaPipe)? Egen package.json/node_modules med vilje — appens egen package.json får INGEN ny afhængighed, se ORDRE-Vaidya.md.",
+  "scripts": {
+    "extract": "node extract.mjs",
+    "sammenlign": "node sammenlign.mjs"
+  },
+  "dependencies": {
+    "@mediapipe/tasks-vision": "^0.10.22"
+  }
+}
