@@ -1,0 +1,422 @@
+[
+  {
+    "øvelse": "doedloeft",
+    "billedeIndex": 21,
+    "tidspunktMs": 0,
+    "vinkler": {
+      "ankelGrader": 34.13,
+      "knaeGrader": 95.52,
+      "hofteGrader": 77.8,
+      "torsoGrader": 51.86
+    },
+    "stang": {
+      "xFodlaengder": 0.3217,
+      "yFodlaengder": 2.7345
+    }
+  },
+  {
+    "øvelse": "doedloeft",
+    "billedeIndex": 22,
+    "tidspunktMs": 33.3,
+    "vinkler": {
+      "ankelGrader": 47.26,
+      "knaeGrader": 78.86,
+      "hofteGrader": 76.33,
+      "torsoGrader": 49.79
+    },
+    "stang": {
+      "xFodlaengder": 0.2242,
+      "yFodlaengder": 2.7688
+    }
+  },
+  {
+    "øvelse": "doedloeft",
+    "billedeIndex": 23,
+    "tidspunktMs": 66.7,
+    "vinkler": {
+      "ankelGrader": 42.66,
+      "knaeGrader": 86.57,
+      "hofteGrader": 79.27,
+      "torsoGrader": 49.95
+    },
+    "stang": {
+      "xFodlaengder": 0.2214,
+      "yFodlaengder": 2.7208
+    }
+  },
+  {
+    "øvelse": "doedloeft",
+    "billedeIndex": 24,
+    "tidspunktMs": 100,
+    "vinkler": {
+      "ankelGrader": 41.09,
+      "knaeGrader": 88.43,
+      "hofteGrader": 79.96,
+      "torsoGrader": 49.57
+    },
+    "stang": {
+      "xFodlaengder": 0.2493,
+      "yFodlaengder": 2.7896
+    }
+  },
+  {
+    "øvelse": "doedloeft",
+    "billedeIndex": 25,
+    "tidspunktMs": 133.3,
+    "vinkler": {
+      "ankelGrader": 62.08,
+      "knaeGrader": 69.42,
+      "hofteGrader": 82.66,
+      "torsoGrader": 48.84
+    },
+    "stang": {
+      "xFodlaengder": 0.2688,
+      "yFodlaengder": 2.7462
+    }
+  },
+  {
+    "øvelse": "doedloeft",
+    "billedeIndex": 26,
+    "tidspunktMs": 166.7,
+    "vinkler": {
+      "ankelGrader": 36.45,
+      "knaeGrader": 95.16,
+      "hofteGrader": 81.53,
+      "torsoGrader": 50.07
+    },
+    "stang": {
+      "xFodlaengder": 0.2128,
+      "yFodlaengder": 2.844
+    }
+  },
+  {
+    "øvelse": "doedloeft",
+    "billedeIndex": 27,
+    "tidspunktMs": 200,
+    "vinkler": {
+      "ankelGrader": 10.55,
+      "knaeGrader": 124.14,
+      "hofteGrader": 86.71,
+      "torsoGrader": 47.98
+    },
+    "stang": {
+      "xFodlaengder": 0.3296,
+      "yFodlaengder": 2.9356
+    }
+  },
+  {
+    "øvelse": "doedloeft",
+    "billedeIndex": 28,
+    "tidspunktMs": 233.3,
+    "vinkler": {
+      "ankelGrader": 44.76,
+      "knaeGrader": 92.79,
+      "hofteGrader": 88.72,
+      "torsoGrader": 48.82
+    },
+    "stang": {
+      "xFodlaengder": 0.2363,
+      "yFodlaengder": 2.9227
+    }
+  },
+  {
+    "øvelse": "doedloeft",
+    "billedeIndex": 29,
+    "tidspunktMs": 266.7,
+    "vinkler": {
+      "ankelGrader": 31.69,
+      "knaeGrader": 99,
+      "hofteGrader": 82.23,
+      "torsoGrader": 48.46
+    },
+    "stang": {
+      "xFodlaengder": 0.2398,
+      "yFodlaengder": 3.0233
+    }
+  },
+  {
+    "øvelse": "doedloeft",
+    "billedeIndex": 30,
+    "tidspunktMs": 300,
+    "vinkler": {
+      "ankelGrader": 50.9,
+      "knaeGrader": 76.44,
+      "hofteGrader": 82.64,
+      "torsoGrader": 44.7
+    },
+    "stang": {
+      "xFodlaengder": 0.1955,
+      "yFodlaengder": 3.0388
+    }
+  },
+  {
+    "øvelse": "doedloeft",
+    "billedeIndex": 31,
+    "tidspunktMs": 333.3,
+    "vinkler": {
+      "ankelGrader": 49.62,
+      "knaeGrader": 85.17,
+      "hofteGrader": 92.62,
+      "torsoGrader": 42.17
+    },
+    "stang": {
+      "xFodlaengder": 0.2455,
+      "yFodlaengder": 3.0573
+    }
+  },
+  {
+    "øvelse": "doedloeft",
+    "billedeIndex": 32,
+    "tidspunktMs": 366.7,
+    "vinkler": {
+      "ankelGrader": 24.97,
+      "knaeGrader": 123.67,
+      "hofteGrader": 116.6,
+      "torsoGrader": 32.04
+    },
+    "stang": {
+      "xFodlaengder": 0.1836,
+      "yFodlaengder": 3.1174
+    }
+  },
+  {
+    "øvelse": "doedloeft",
+    "billedeIndex": 33,
+    "tidspunktMs": 400,
+    "vinkler": {
+      "ankelGrader": 18.88,
+      "knaeGrader": 121.26,
+      "hofteGrader": 109.99,
+      "torsoGrader": 30.15
+    },
+    "stang": {
+      "xFodlaengder": 0.2075,
+      "yFodlaengder": 3.1703
+    }
+  },
+  {
+    "øvelse": "doedloeft",
+    "billedeIndex": 34,
+    "tidspunktMs": 433.3,
+    "vinkler": {
+      "ankelGrader": 15.74,
+      "knaeGrader": 126.65,
+      "hofteGrader": 109.39,
+      "torsoGrader": 33
+    },
+    "stang": {
+      "xFodlaengder": 0.2798,
+      "yFodlaengder": 3.1765
+    }
+  },
+  {
+    "øvelse": "doedloeft",
+    "billedeIndex": 35,
+    "tidspunktMs": 466.7,
+    "vinkler": {
+      "ankelGrader": 13.02,
+      "knaeGrader": 132.82,
+      "hofteGrader": 118.55,
+      "torsoGrader": 27.29
+    },
+    "stang": {
+      "xFodlaengder": 0.3673,
+      "yFodlaengder": 3.1148
+    }
+  },
+  {
+    "øvelse": "doedloeft",
+    "billedeIndex": 36,
+    "tidspunktMs": 500,
+    "vinkler": {
+      "ankelGrader": 5.19,
+      "knaeGrader": 152.72,
+      "hofteGrader": 132.36,
+      "torsoGrader": 25.55
+    },
+    "stang": {
+      "xFodlaengder": 0.2132,
+      "yFodlaengder": 3.3259
+    }
+  },
+  {
+    "øvelse": "doedloeft",
+    "billedeIndex": 37,
+    "tidspunktMs": 533.3,
+    "vinkler": {
+      "ankelGrader": 3,
+      "knaeGrader": 160.93,
+      "hofteGrader": 141.33,
+      "torsoGrader": 22.6
+    },
+    "stang": {
+      "xFodlaengder": 0.2972,
+      "yFodlaengder": 3.295
+    }
+  },
+  {
+    "øvelse": "doedloeft",
+    "billedeIndex": 38,
+    "tidspunktMs": 566.7,
+    "vinkler": {
+      "ankelGrader": 4.84,
+      "knaeGrader": 160.63,
+      "hofteGrader": 146.98,
+      "torsoGrader": 18.49
+    },
+    "stang": {
+      "xFodlaengder": 0.2518,
+      "yFodlaengder": 3.3557
+    }
+  },
+  {
+    "øvelse": "doedloeft",
+    "billedeIndex": 39,
+    "tidspunktMs": 600,
+    "vinkler": {
+      "ankelGrader": 1.68,
+      "knaeGrader": 167.86,
+      "hofteGrader": 152.65,
+      "torsoGrader": 16.89
+    },
+    "stang": {
+      "xFodlaengder": 0.2409,
+      "yFodlaengder": 3.358
+    }
+  },
+  {
+    "øvelse": "doedloeft",
+    "billedeIndex": 40,
+    "tidspunktMs": 633.3,
+    "vinkler": {
+      "ankelGrader": 1.2,
+      "knaeGrader": 172.02,
+      "hofteGrader": 158.27,
+      "torsoGrader": 14.96
+    },
+    "stang": {
+      "xFodlaengder": 0.2217,
+      "yFodlaengder": 3.6215
+    }
+  },
+  {
+    "øvelse": "doedloeft",
+    "billedeIndex": 41,
+    "tidspunktMs": 666.7,
+    "vinkler": {
+      "ankelGrader": 5.05,
+      "knaeGrader": 165.02,
+      "hofteGrader": 156.62,
+      "torsoGrader": 13.44
+    },
+    "stang": {
+      "xFodlaengder": 0.1942,
+      "yFodlaengder": 3.4036
+    }
+  },
+  {
+    "øvelse": "doedloeft",
+    "billedeIndex": 42,
+    "tidspunktMs": 700,
+    "vinkler": {
+      "ankelGrader": 1.35,
+      "knaeGrader": 174.41,
+      "hofteGrader": 164.54,
+      "torsoGrader": 11.22
+    },
+    "stang": {
+      "xFodlaengder": 0.2255,
+      "yFodlaengder": 3.6332
+    }
+  },
+  {
+    "øvelse": "doedloeft",
+    "billedeIndex": 43,
+    "tidspunktMs": 733.3,
+    "vinkler": {
+      "ankelGrader": 1.68,
+      "knaeGrader": 174.18,
+      "hofteGrader": 166.4,
+      "torsoGrader": 9.45
+    },
+    "stang": {
+      "xFodlaengder": 0.1611,
+      "yFodlaengder": 4.0913
+    }
+  },
+  {
+    "øvelse": "doedloeft",
+    "billedeIndex": 44,
+    "tidspunktMs": 766.7,
+    "vinkler": {
+      "ankelGrader": 1.87,
+      "knaeGrader": 173.54,
+      "hofteGrader": 167.05,
+      "torsoGrader": 8.36
+    },
+    "stang": {
+      "xFodlaengder": 0.0986,
+      "yFodlaengder": 4.0069
+    }
+  },
+  {
+    "øvelse": "doedloeft",
+    "billedeIndex": 45,
+    "tidspunktMs": 800,
+    "vinkler": {
+      "ankelGrader": 1.74,
+      "knaeGrader": 173.83,
+      "hofteGrader": 168.24,
+      "torsoGrader": 7.33
+    },
+    "stang": {
+      "xFodlaengder": 0.1879,
+      "yFodlaengder": 3.8051
+    }
+  },
+  {
+    "øvelse": "doedloeft",
+    "billedeIndex": 46,
+    "tidspunktMs": 833.3,
+    "vinkler": {
+      "ankelGrader": 0.67,
+      "knaeGrader": 174.69,
+      "hofteGrader": 168.59,
+      "torsoGrader": 6.77
+    },
+    "stang": {
+      "xFodlaengder": 0.1123,
+      "yFodlaengder": 3.8488
+    }
+  },
+  {
+    "øvelse": "doedloeft",
+    "billedeIndex": 47,
+    "tidspunktMs": 866.7,
+    "vinkler": {
+      "ankelGrader": -0.07,
+      "knaeGrader": 175.83,
+      "hofteGrader": 170.84,
+      "torsoGrader": 4.92
+    },
+    "stang": {
+      "xFodlaengder": 0.1694,
+      "yFodlaengder": 3.7423
+    }
+  },
+  {
+    "øvelse": "doedloeft",
+    "billedeIndex": 48,
+    "tidspunktMs": 900,
+    "vinkler": {
+      "ankelGrader": -0.01,
+      "knaeGrader": 174.26,
+      "hofteGrader": 167.66,
+      "torsoGrader": 6.59
+    },
+    "stang": {
+      "xFodlaengder": 0.059,
+      "yFodlaengder": 3.8799
+    }
+  }
+]

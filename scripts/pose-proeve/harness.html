@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>pose-proeve harness</title></head>
+<body>
+<video id="v" muted playsinline style="display:none"></video>
+<script type="module">
+import { FilesetResolver, PoseLandmarker } from '/node_modules/@mediapipe/tasks-vision/vision_bundle.mjs'
+
+// ORDRE 188, commit 1: kører PoseLandmarker (IMAGE-mode, ét billede ad
+// gangen, num_poses=1 — SAMME kørselsform som tools/videomaal/maal.py, ikke
+// VIDEO-mode, som ville tilføje temporal glatning Python-værktøjet ikke har)
+// på hvert billede af klippet.
+//
+// FØRSTE FORSØG brugte requestVideoFrameCallback under normal afspilning
+// (samme "ÆGTE frametider, ikke seek-pr-frame"-mønster videocoach.html's
+// egen tracker bruger, se docs/videocoach/HANDOVER-VIDEOCOACH.md) — men
+// PoseLandmarkers synkrone WASM-kald er for langsomt til at følge med
+// videoens EGEN realtidsafspilning (~30 fps), så Chromium sprang billeder
+// over for at holde afspilningen i trit: kun 41 af 117 billeder blev
+// fanget. videocoach.html møder ALDRIG det problem, fordi dens tracker er
+// let nok til at følge med en rigtig bruger der SER videoen afspille — den
+// forudsætning holder ikke her, hvor målet er hvert eneste billede, ikke en
+// oplevelse i realtid. LØSNING: `extract.mjs` gennumererer klippet til ren
+// 0..N-1-billedeindeksering ved fast fps (se dens egen kommentar), og denne
+// fil seeker EKSPLICIT til hvert billedes tidspunkt (video sat på pause) —
+// langsommere end afspilning, men garanteret at ramme alle N billeder,
+// nøjagtigt i rækkefølge. Præcis den "seek-pr-frame er 10-30x langsommere
+// men mere robust"-afvejning HANDOVER-VIDEOCOACH.md selv beskriver — kun at
+// ordre 188 vælger den robuste vej, fordi denne prøve IKKE er
+// realtidsproduktet.
+window.runPoseExtraction = async function runPoseExtraction({ videoUrl, modelUrl, frameCount, fps }) {
+  const vision = await FilesetResolver.forVisionTasks('/node_modules/@mediapipe/tasks-vision/wasm')
+  const landmarker = await PoseLandmarker.createFromOptions(vision, {
+    baseOptions: { modelAssetPath: modelUrl, delegate: 'CPU' },
+    runningMode: 'IMAGE',
+    numPoses: 1,
+  })
+
+  const video = document.getElementById('v')
+  video.src = videoUrl
+  await new Promise((resolve, reject) => {
+    video.addEventListener('loadedmetadata', resolve, { once: true })
+    video.addEventListener('error', () => reject(new Error('video load error: ' + video.error?.message)), { once: true })
+  })
+  video.pause()
+
+  const width = video.videoWidth
+  const height = video.videoHeight
+
+  // 'seeked' alene viste sig UTILSTRÆKKELIGT: hver 3. billede i et
+  // testkørsel var en BYTE-FOR-BYTE gentagelse af det foregående (samme
+  // vinkler til 2 decimaler), selvom hvert seek bad om et NYT tidspunkt —
+  // 'seeked' kan fyres FØR compositoren rent faktisk har det nye billede
+  // klar til aflæsning. `requestVideoFrameCallback` (fyrer når et billede
+  // er PRÆSENTERET, ikke bare "seek accepteret") løste det — samme
+  // grundmekanisme HANDOVER-VIDEOCOACH.md peger på for "ægte frametider".
+  function seekTo(t) {
+    return new Promise((resolve, reject) => {
+      const onError = () => reject(new Error('seek error: ' + video.error?.message))
+      video.addEventListener('error', onError, { once: true })
+      video.requestVideoFrameCallback(() => {
+        video.removeEventListener('error', onError)
+        resolve()
+      })
+      video.currentTime = t
+    })
+  }
+
+  const t0 = performance.now()
+  const frames = []
+  for (let i = 0; i < frameCount; i++) {
+    // +0,5 billede: sigter mod MIDTEN af billedets tidsrum i stedet for dets
+    // præcise startkant — undgår at en flydende-komma-afrunding lander
+    // 1 ULP FØR kanten og dermed henter det FORRIGE billede i stedet
+    // (standard-praksis for billede-nøjagtig seeking, se filens egen
+    // toptekst for hvordan dette blev fundet).
+    await seekTo((i + 0.5) / fps)
+    const result = landmarker.detect(video)
+    const lm = (result.landmarks && result.landmarks[0]) ? result.landmarks[0].map(p => ({
+      x: p.x, y: p.y, z: p.z, visibility: p.visibility,
+    })) : null
+    frames.push({ index: i, landmarks: lm })
+    result.close?.()
+  }
+  const t1 = performance.now()
+
+  landmarker.close()
+  return { width, height, duration: video.duration, frames, extractionMs: t1 - t0 }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+{
+  "video_kilde": "C:\\Users\\Entropi\\Desktop\\entropi-app\\test-clips\\marc-doedloeft-270.mov",
+  "video_transkodering": "ffmpeg libx264, setpts=N/(30*TB) (alle 117 billeder bevaret i original rækkefølge, kun gennumereret til en ren 30 fps-tidslinje — se extract.mjs's egen kommentar for hvorfor -fps_mode passthrough blev forkastet), lånt ffmpeg-static fra entropi-app node_modules (allerede en devDependency)",
+  "billede_bredde_px": 1440,
+  "billede_hoejde_px": 1920,
+  "billeder_i_alt": 117,
+  "billeder_med_fundet_krop": 117,
+  "video_varighed_s": 3.9,
+  "empirisk_fps": 29.744,
+  "billede_start": 21,
+  "billede_lockout": 48,
+  "side_valgt": "right",
+  "side_valgt_gennemsnit_visibility": {
+    "left": 0.4446929491344516,
+    "right": 0.7036063971136661
+  },
+  "gulv_og_skala_reference": {
+    "floor_y_px": 1469.0016174316406,
+    "midfoot_x_px": 685.756516456604,
+    "foot_length_px": 143.95452187659822,
+    "forward_sign": 1,
+    "n_billeder_brugt": 11,
+    "heel_px_median": [
+      614.8140621185303,
+      1456.8404388427734
+    ],
+    "foot_index_px_median": [
+      756.6989707946777,
+      1481.1627960205078
+    ]
+  },
+  "model": "pose_landmarker_full (float16), @mediapipe/tasks-vision, delegate=CPU, runningMode=IMAGE, numPoses=1",
+  "tidsmaaling": {
+    "ekstraktion_ms": 26809.299999999814,
+    "total_ms_inkl_transkodering_og_browseropstart": 28607
+  },
+  "note": "Denne fil er IKKE en del af docs/MAALING-KONTRAKT.md's format — den er regnskabet bag skala/gulv/fortegn/timing i marc-doedloeft-270-bane.json, til efterprøvning. Se scripts/pose-proeve/matematik.mjs og bane.py."
+}
