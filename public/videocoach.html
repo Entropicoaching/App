@@ -212,6 +212,26 @@
     justify-content:center; min-width:170px; min-height:44px; padding:12px 18px; border-radius:12px;
     background:var(--accent); color:#141410; font-size:11px; font-weight:600;
     letter-spacing:.12em; text-transform:uppercase; }
+  /* ORDRE 196 · commit 2: filmevejledning FØR atleten vælger fil, se
+     docs/videocoach/FILMEVEJLEDNING.md. Kompakt med vilje - #dropHint sidder
+     inde i #stage, som på mobil (@media max-width:900px) arver body sit
+     overflow:hidden, så en for høj dropHint bliver klippet, ikke scrollbar. */
+  body.athlete #dropHint #athFilmGuide { display:block; margin:0 0 18px;
+    text-align:left; }
+  body.athlete #dropHint .athFilmGuideTitle { display:block; margin-bottom:8px;
+    color:var(--accent); font-size:10px; letter-spacing:.16em; text-transform:uppercase; }
+  body.athlete #dropHint #athFilmGuide ul { margin:0 0 8px; padding:0;
+    list-style:none; max-height:38vh; overflow-y:auto; }
+  body.athlete #dropHint #athFilmGuide li { position:relative; margin-bottom:5px;
+    padding-left:13px; color:rgba(237,234,226,.68); font-size:11px; line-height:1.36; }
+  body.athlete #dropHint #athFilmGuide li::before { content:'–'; position:absolute;
+    left:0; color:var(--accent); }
+  body.athlete #dropHint .athFilmGuideFooter { display:block;
+    color:rgba(237,234,226,.4); font-size:10px; line-height:1.4; font-style:italic; }
+  body.athlete #dropHint .athFilmGuideToggle { display:inline-flex; align-items:center;
+    justify-content:center; min-height:44px; padding:8px 14px; border-radius:10px;
+    border:1px solid rgba(237,234,226,.16); background:transparent;
+    color:rgba(237,234,226,.6); font-size:11px; letter-spacing:.02em; }
   body.athlete #athleteStatus { position:fixed; top:68px; left:50%;
     transform:translateX(-50%); z-index:13; width:min(88vw,430px);
     padding:11px 14px; border:1px solid rgba(237,234,226,.09);
@@ -9695,6 +9715,47 @@ if (COACHWEB) {
   layoutBars();
   setTimeout(layoutBars, 400);
 }
+// ORDRE 196 · commit 2: filmevejledning FØR atleten vælger fil - teksten er
+// docs/videocoach/FILMEVEJLEDNING.md, kogt ned fra FILM-ET-LOEFT.md (Drishti,
+// ordre 181) og appens egen TEST-CLIPS.md. Husket i localStorage med samme
+// injicerbare mønster som src/readinessDraft.js: storage sendes eksplicit
+// (default globalThis.localStorage), enhver fejl (privat vindue, fuld
+// storage) sluger sig selv i stedet for at vælte "upload og gå"-flowet.
+const FILM_GUIDE_SEEN_KEY = 'entropi_film_guide_seen';
+function hasSeenFilmGuide(storage = globalThis.localStorage) {
+  try { return !!storage && storage.getItem(FILM_GUIDE_SEEN_KEY) === '1'; } catch { return false; }
+}
+function markFilmGuideSeen(storage = globalThis.localStorage) {
+  try { if (storage) storage.setItem(FILM_GUIDE_SEEN_KEY, '1'); } catch { /* privat vindue/fuld storage - ingen huskeevne, ikke fatalt */ }
+}
+const FILM_GUIDE_POINTS = [
+  'Kamera fra siden, i hoftehøjde — ikke skråt.',
+  'Hele kroppen i billedet hele vejen, også i bunden.',
+  'Hænder og fødder fri af skiver og rack.',
+  'Ét løft, eller et kort sæt — ikke hele træningen.',
+  'Stramt tøj, ikke løse shorts eller T-shirt.',
+  'Godt, jævnt lys — undgå modlys.',
+];
+const FILM_GUIDE_FOOTER = 'Det coachen ikke kan se, kan han ikke vurdere.';
+function filmGuideFullHtml() {
+  return '<span class="athFilmGuideTitle">📷 Før du filmer</span>' +
+    '<ul>' + FILM_GUIDE_POINTS.map(p => `<li>${p}</li>`).join('') + '</ul>' +
+    `<span class="athFilmGuideFooter">${FILM_GUIDE_FOOTER}</span>`;
+}
+function renderFilmGuide() {
+  const el = document.getElementById('athFilmGuide');
+  if (!el) return;
+  if (!hasSeenFilmGuide()) {
+    el.innerHTML = filmGuideFullHtml();
+    markFilmGuideSeen();
+    return;
+  }
+  el.innerHTML = '<button type="button" id="athFilmGuideToggle" class="athFilmGuideToggle">📷 Filmtips — vis igen</button>';
+  document.getElementById('athFilmGuideToggle').onclick = e => {
+    e.stopPropagation();
+    el.innerHTML = filmGuideFullHtml();
+  };
+}
 if (ATHLETE) {
   document.body.classList.add('athlete');
   document.body.classList.toggle('athlete-profile', VC_V3_ATHLETE_BRIDGE);
@@ -9765,7 +9826,9 @@ if (ATHLETE) {
     '<span class="athKicker">Din VideoCoach</span>' +
     '<strong>Se din stangbane</strong>' +
     '<span class="athCopy">Vælg en video af dit sæt. Du markerer skiven én gang — resten klarer vi.</span>' +
+    '<div id="athFilmGuide"></div>' +
     '<button id="athleteOpenVideoBtn" class="athCta" type="button">Åbn video</button>';
+  renderFilmGuide();
   const chooseAthleteVideo = () => document.getElementById('fileInput').click();
   dropHint.onclick = chooseAthleteVideo;
   document.getElementById('athleteOpenVideoBtn').onclick = event => {
