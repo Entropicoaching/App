@@ -8,6 +8,8 @@
 // ORDRE 185 (14. sep), commit 1: tilføjer "denne uge: gennemført/planlagt"
 // øverst i kortet — se DenneUgePlanlagtModGennemfoert nedenfor. Kræver nu
 // `weeks` (Dashboard.jsx's fetchWeeks-form) ud over athleteLogs.
+// ORDRE 185, commit 2: tilføjer VolumenGraf — søjler for udviklingen over
+// otte uger, se src/dashboard/VolumenGraf.jsx for selve tegningen.
 //
 // Ren visning: al regning sker i src/volume/beregn.js + src/volume/planlagt.js,
 // alt kortlægningsarbejde i src/volume/muskelkort.js. Denne fil oversætter kun
@@ -17,11 +19,17 @@ import { beregnVolumenPrUge } from '../volume/beregn.js'
 import { beregnPlanlagtDenneUge } from '../volume/planlagt.js'
 import { MUSKELGRUPPER } from '../volume/muskelkort.js'
 import { s } from '../dashboardShared'
+import VolumenGraf from './VolumenGraf'
 
 // Ordrens egen ramme: "fire til seks uger bagud" — seks valgt som den mest
 // oplysende ende af det spænd, notér-og-fortsæt (ordren beder om at vælge
 // selv, ikke spørge).
 const ANTAL_UGER = 6
+
+// Ordrens egen ramme for udviklingsgrafen: "seks til otte uger bagud" —
+// otte valgt af samme grund som seks blev valgt ovenfor: den mest
+// oplysende ende af spændet.
+const GRAF_UGER = 8
 
 function raekkerFraAthleteLogs(athleteLogs) {
   return (athleteLogs || []).map(log => ({
@@ -88,13 +96,16 @@ function DenneUgePlanlagtModGennemfoert({ gennemfoertUge, planlagtUge }) {
 }
 
 export default function VolumenKort({ athleteLogs, weeks }) {
-  const uger = beregnVolumenPrUge(raekkerFraAthleteLogs(athleteLogs), { antalUger: ANTAL_UGER })
+  const raekker = raekkerFraAthleteLogs(athleteLogs)
+  const uger = beregnVolumenPrUge(raekker, { antalUger: ANTAL_UGER })
+  const ugerGraf = beregnVolumenPrUge(raekker, { antalUger: GRAF_UGER })
   const planlagtDenneUge = beregnPlanlagtDenneUge(weeks || [])
 
   // Kun grupper der reelt har haft sæt i vinduet — resten ville kun være
   // rækker af nuller. En gruppe der aldrig optræder her er ikke "0 sæt",
   // den er ikke ramt af noget appen genkender endnu (se docs/VOLUMEN.md).
   const grupperMedData = Object.keys(MUSKELGRUPPER).filter(g => uger.some(u => (u.grupper[g]?.ialt || 0) > 0))
+  const grupperMedDataGraf = Object.keys(MUSKELGRUPPER).filter(g => ugerGraf.some(u => (u.grupper[g]?.ialt || 0) > 0))
   const harUkendte = uger.some(u => u.ukendteSaet > 0)
 
   return (
@@ -140,6 +151,19 @@ export default function VolumenKort({ athleteLogs, weeks }) {
           <div style={{ fontSize: '0.56rem', color: '#4a4844', marginTop: '0.85rem', lineHeight: 1.5 }}>
             Hver celle: direkte sæt / i alt (vægtet efter hvad øvelsen belaster). Nyeste uge til venstre.
           </div>
+          {grupperMedDataGraf.length > 0 && (
+            <div style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(237,234,226,0.07)' }}>
+              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.9rem' }}>
+                Udvikling, seneste {GRAF_UGER} uger
+              </div>
+              <VolumenGraf uger={ugerGraf} grupper={grupperMedDataGraf} />
+              <div style={{ fontSize: '0.56rem', color: '#4a4844', marginTop: '0.9rem', lineHeight: 1.5 }}>
+                Hver række skalerer efter sin egen gruppe — søjlernes højde kan ikke
+                sammenlignes på tværs af grupper, kun uge for uge inden for samme række.
+                Tallet til højre er seneste uges "i alt".
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>
