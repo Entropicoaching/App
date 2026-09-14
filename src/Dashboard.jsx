@@ -818,7 +818,14 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     // Snooze synces nu via athletes.snooze_until i DB (cross-device), ikke localStorage.
     setSnoozedAthletes(Object.fromEntries((data || []).filter(a => a.snooze_until).map(a => [a.id, a.snooze_until])))
     if (data?.length) {
-      fetchLatestMessages(data.map(a => a.id))
+      // ORDRE 184: fetchLatestMessages hentes IKKE her længere. Appens
+      // startvisning er altid enten 'list' eller 'inbox' (coachInboxEntryIntent
+      // har ingen tredje mulighed), og refreshCoachInbox() henter beskeder for
+      // ALLE atleter ved præcis samme mount (linje ~736 nedenfor) — kaldet her
+      // var derfor et rent duplikat af samme forespørgsel ved HVER sideindlæsning,
+      // ikke kun ved faneskift (se docs/VALG-184.md). markMessagesRead() og
+      // andre skrive-stier kalder allerede fetchLatestMessages eksplicit selv
+      // bagefter, så ingen anden sti mister sin opdatering.
       fetchProfilesLastSeen(data)
       fetchAthleteWeekSummaries(data.map(a => a.id))
       fetchAthleteLastLogs(data.map(a => a.id))

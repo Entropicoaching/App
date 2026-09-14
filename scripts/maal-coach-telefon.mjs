@@ -278,16 +278,25 @@ const SCREENS = [
     ],
   },
   {
-    // .last(): på telefon-profilen ligger "Indbakke" to gange i DOM'en — først
-    // den altid-tilstedeværende (men transform:translateX(-100%)-skjulte)
-    // desktop-sidebar, dernæst den synlige bund-navigation (isMobile, se
-    // src/Dashboard.jsx linje ~3213-3230). .first() ramte den skjulte og
-    // timede ud ("element is outside of the viewport"). På desktop findes
-    // kun sidebarens instans, så .last() rammer den samme, korrekte, ene
-    // forekomst der.
-    id: 'indbakke', label: 'Indbakke', klik: 1,
+    // .last(): på telefon-profilen ligger "Coach Briefing" to gange i DOM'en
+    // — først den altid-tilstedeværende (men transform:translateX(-100%)-
+    // skjulte) desktop-sidebar, dernæst den synlige bund-navigation
+    // (isMobile, se src/Dashboard.jsx linje ~3213-3230). .first() ramte den
+    // skjulte og timede ud ("element is outside of the viewport"). På
+    // desktop findes kun sidebarens instans, så .last() rammer den samme,
+    // korrekte, ene forekomst der.
+    // ORDRE 184: navet og sidehovedet hed "Indbakke"/"Vigtigst nu" da denne
+    // måling blev skrevet (ordre 175); ordre 171 omdøbte dem begge til
+    // "Coach Briefing" inden 175's gren blev merget til main — scriptet
+    // ramte derfor tomt (30s timeout) her. Selektorerne er rettet til den
+    // nuværende tekst; waitFor er sidens EGEN h1-overskrift (samme princip
+    // som de andre skærmes waitFor — sidens strukturelle indhold, ikke
+    // netværks-opdateringsstatus, som afhænger af inboxRefreshStatus og kan
+    // vise "Delvist opdateret" i stedet for "Opdateret" uden at det betyder
+    // siden ikke er synlig).
+    id: 'indbakke', label: 'Indbakke (Coach Briefing)', klik: 1,
     steps: [
-      { click: (p) => p.getByText('Indbakke', { exact: true }).last().click(), waitFor: (p) => p.getByText('Vigtigst nu', { exact: true }).waitFor({ state: 'visible', timeout: 20000 }) },
+      { click: (p) => p.getByText('Coach Briefing', { exact: true }).last().click(), waitFor: (p) => p.getByRole('heading', { name: /Coach Briefing/ }).waitFor({ state: 'visible', timeout: 20000 }) },
     ],
   },
 ]
