@@ -5,11 +5,16 @@
 // "IBM Plex Mono, mørk baggrund"-stil som resten af Dashboard.jsx (se
 // dashboardShared.js's `s`).
 //
-// Ren visning: al regning sker i src/volume/beregn.js, alt kortlægnings-
-// arbejde i src/volume/muskelkort.js. Denne fil oversætter kun
+// ORDRE 185 (14. sep), commit 1: tilføjer "denne uge: gennemført/planlagt"
+// øverst i kortet — se DenneUgePlanlagtModGennemfoert nedenfor. Kræver nu
+// `weeks` (Dashboard.jsx's fetchWeeks-form) ud over athleteLogs.
+//
+// Ren visning: al regning sker i src/volume/beregn.js + src/volume/planlagt.js,
+// alt kortlægningsarbejde i src/volume/muskelkort.js. Denne fil oversætter kun
 // Dashboard.jsx's egen athleteLogs-form (fetchAthleteLogs' indlejrede
 // exercises-relation) til de flade rækker beregn.js forventer.
 import { beregnVolumenPrUge } from '../volume/beregn.js'
+import { beregnPlanlagtDenneUge } from '../volume/planlagt.js'
 import { MUSKELGRUPPER } from '../volume/muskelkort.js'
 import { s } from '../dashboardShared'
 
@@ -41,8 +46,50 @@ function ugeLabel(ugenoegle) {
   return ugenoegle.replace(/^\d{4}-W/, 'U')
 }
 
-export default function VolumenKort({ athleteLogs }) {
+// Ét tal pr. gruppe fra beregn.js/planlagt.js ("i alt", vægtet) side om side.
+// planlagtUge.ugePlaceret===false betyder programugen for "nu" ikke har en
+// kalenderdato sat (weeks.start_date) — da er "planlagt" ukendt, ikke 0, så
+// den vises som "–", aldrig som et tal der ligner et rigtigt 0.
+function DenneUgePlanlagtModGennemfoert({ gennemfoertUge, planlagtUge }) {
+  const grupperMedData = Object.keys(MUSKELGRUPPER).filter(g =>
+    (gennemfoertUge?.grupper[g]?.ialt || 0) > 0 || (planlagtUge.grupper[g]?.ialt || 0) > 0)
+  if (grupperMedData.length === 0 && !planlagtUge.ugePlaceret) return null
+
+  return (
+    <div style={{ marginBottom: '1.25rem', paddingBottom: '1.25rem', borderBottom: '1px solid rgba(237,234,226,0.07)' }}>
+      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.5rem' }}>
+        Denne uge: gennemført / planlagt
+      </div>
+      {grupperMedData.length === 0 ? (
+        <div style={{ fontSize: '0.78rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen sæt gennemført eller planlagt denne uge endnu.</div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+          {grupperMedData.map(g => {
+            const gennemfoert = gennemfoertUge?.grupper[g]?.ialt || 0
+            const planlagtTal = planlagtUge.ugePlaceret ? (planlagtUge.grupper[g]?.ialt || 0) : null
+            return (
+              <div key={g} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem' }}>
+                <span style={{ color: '#c8b98a' }}>{MUSKELGRUPPER[g]}</span>
+                <span style={{ fontFamily: "'IBM Plex Mono', monospace", color: '#edeae2' }}>
+                  {gennemfoert} / {planlagtTal === null ? '–' : planlagtTal}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+      )}
+      <div style={{ fontSize: '0.56rem', color: '#4a4844', marginTop: '0.6rem', lineHeight: 1.5 }}>
+        {planlagtUge.ugePlaceret
+          ? 'Forskellen kan skyldes at sæt endnu ikke er gennemført, at ugen er ændret undervejs, eller at sæt er sprunget over.'
+          : 'Denne programuge har ikke en kalenderdato endnu (sat via kalender-tidslinjen) — "planlagt" kan derfor ikke vises.'}
+      </div>
+    </div>
+  )
+}
+
+export default function VolumenKort({ athleteLogs, weeks }) {
   const uger = beregnVolumenPrUge(raekkerFraAthleteLogs(athleteLogs), { antalUger: ANTAL_UGER })
+  const planlagtDenneUge = beregnPlanlagtDenneUge(weeks || [])
 
   // Kun grupper der reelt har haft sæt i vinduet — resten ville kun være
   // rækker af nuller. En gruppe der aldrig optræder her er ikke "0 sæt",
@@ -56,6 +103,7 @@ export default function VolumenKort({ athleteLogs }) {
       <div style={{ fontSize: '0.72rem', color: '#7a7770', lineHeight: 1.5, marginBottom: '1rem' }}>
         Sæt er ikke belastning. Tallene tæller gennemførte sæt, vægtet efter hvad øvelsen belaster.
       </div>
+      <DenneUgePlanlagtModGennemfoert gennemfoertUge={uger[0]} planlagtUge={planlagtDenneUge} />
       {grupperMedData.length === 0 && !harUkendte ? (
         <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>
           Ingen loggede sæt de seneste {ANTAL_UGER} uger endnu.
