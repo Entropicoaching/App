@@ -1,0 +1,1412 @@
+[
+  {
+    "felt": "ankelGrader",
+    "enhed": "°",
+    "n": 28,
+    "medianAbsForskel": 3.07,
+    "maksAbsForskel": 32.78,
+    "maksVedBilledeIndex": 27,
+    "indenForUsikkerhedsbaand": "23/28",
+    "punkter": [
+      {
+        "billedeIndex": 21,
+        "egen": 34.13,
+        "drishti": 44.67,
+        "diff": 10.54,
+        "usikkerhedsbaand": 14.43,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 22,
+        "egen": 47.26,
+        "drishti": 57.85,
+        "diff": 10.590000000000003,
+        "usikkerhedsbaand": 13.18,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 23,
+        "egen": 42.66,
+        "drishti": 57.61,
+        "diff": 14.950000000000003,
+        "usikkerhedsbaand": 12.98,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 24,
+        "egen": 41.09,
+        "drishti": 58.72,
+        "diff": 17.629999999999995,
+        "usikkerhedsbaand": 7.96,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 25,
+        "egen": 62.08,
+        "drishti": 51.62,
+        "diff": 10.46,
+        "usikkerhedsbaand": 21.37,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 26,
+        "egen": 36.45,
+        "drishti": 66.25,
+        "diff": 29.799999999999997,
+        "usikkerhedsbaand": 22.93,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 27,
+        "egen": 10.55,
+        "drishti": 43.33,
+        "diff": 32.78,
+        "usikkerhedsbaand": 29.05,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 28,
+        "egen": 44.76,
+        "drishti": 37.2,
+        "diff": 7.559999999999995,
+        "usikkerhedsbaand": 19.11,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 29,
+        "egen": 31.69,
+        "drishti": 24.22,
+        "diff": 7.470000000000002,
+        "usikkerhedsbaand": 30.62,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 30,
+        "egen": 50.9,
+        "drishti": 48.83,
+        "diff": 2.0700000000000003,
+        "usikkerhedsbaand": 24.61,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 31,
+        "egen": 49.62,
+        "drishti": 38.06,
+        "diff": 11.559999999999995,
+        "usikkerhedsbaand": 33.69,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 32,
+        "egen": 24.97,
+        "drishti": 15.14,
+        "diff": 9.829999999999998,
+        "usikkerhedsbaand": 23.46,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 33,
+        "egen": 18.88,
+        "drishti": 14.6,
+        "diff": 4.279999999999999,
+        "usikkerhedsbaand": 9.31,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 34,
+        "egen": 15.74,
+        "drishti": 16.09,
+        "diff": 0.34999999999999964,
+        "usikkerhedsbaand": 17.44,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 35,
+        "egen": 13.02,
+        "drishti": 12.08,
+        "diff": 0.9399999999999995,
+        "usikkerhedsbaand": 17.6,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 36,
+        "egen": 5.19,
+        "drishti": 5.79,
+        "diff": 0.5999999999999996,
+        "usikkerhedsbaand": 6.99,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 37,
+        "egen": 3,
+        "drishti": 5.09,
+        "diff": 2.09,
+        "usikkerhedsbaand": 4.15,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 38,
+        "egen": 4.84,
+        "drishti": 1.64,
+        "diff": 3.2,
+        "usikkerhedsbaand": 6.37,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 39,
+        "egen": 1.68,
+        "drishti": 2.89,
+        "diff": 1.2100000000000002,
+        "usikkerhedsbaand": 3.08,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 40,
+        "egen": 1.2,
+        "drishti": 3.37,
+        "diff": 2.17,
+        "usikkerhedsbaand": 1.45,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 41,
+        "egen": 5.05,
+        "drishti": 2.11,
+        "diff": 2.94,
+        "usikkerhedsbaand": 5.06,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 42,
+        "egen": 1.35,
+        "drishti": 2.43,
+        "diff": 1.08,
+        "usikkerhedsbaand": 7.46,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 43,
+        "egen": 1.68,
+        "drishti": 1.78,
+        "diff": 0.10000000000000009,
+        "usikkerhedsbaand": 7.89,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 44,
+        "egen": 1.87,
+        "drishti": 2.82,
+        "diff": 0.9499999999999997,
+        "usikkerhedsbaand": 1.04,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 45,
+        "egen": 1.74,
+        "drishti": 2.71,
+        "diff": 0.97,
+        "usikkerhedsbaand": 4.93,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 46,
+        "egen": 0.67,
+        "drishti": 0.13,
+        "diff": 0.54,
+        "usikkerhedsbaand": 6.63,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 47,
+        "egen": -0.07,
+        "drishti": 0.72,
+        "diff": 0.79,
+        "usikkerhedsbaand": 5.5,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 48,
+        "egen": -0.01,
+        "drishti": 3.6,
+        "diff": 3.61,
+        "usikkerhedsbaand": 8.74,
+        "indenForBaand": true
+      }
+    ]
+  },
+  {
+    "felt": "knaeGrader",
+    "enhed": "°",
+    "n": 28,
+    "medianAbsForskel": 4.96,
+    "maksAbsForskel": 32.58,
+    "maksVedBilledeIndex": 27,
+    "indenForUsikkerhedsbaand": "23/28",
+    "punkter": [
+      {
+        "billedeIndex": 21,
+        "egen": 95.52,
+        "drishti": 85.37,
+        "diff": 10.149999999999991,
+        "usikkerhedsbaand": 16.08,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 22,
+        "egen": 78.86,
+        "drishti": 73.11,
+        "diff": 5.75,
+        "usikkerhedsbaand": 12.77,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 23,
+        "egen": 86.57,
+        "drishti": 73.31,
+        "diff": 13.259999999999991,
+        "usikkerhedsbaand": 12.4,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 24,
+        "egen": 88.43,
+        "drishti": 69.2,
+        "diff": 19.230000000000004,
+        "usikkerhedsbaand": 9.91,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 25,
+        "egen": 69.42,
+        "drishti": 79.12,
+        "diff": 9.700000000000003,
+        "usikkerhedsbaand": 11.49,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 26,
+        "egen": 95.16,
+        "drishti": 67.63,
+        "diff": 27.53,
+        "usikkerhedsbaand": 23.93,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 27,
+        "egen": 124.14,
+        "drishti": 91.56,
+        "diff": 32.58,
+        "usikkerhedsbaand": 33.26,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 28,
+        "egen": 92.79,
+        "drishti": 100.89,
+        "diff": 8.099999999999994,
+        "usikkerhedsbaand": 18.47,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 29,
+        "egen": 99,
+        "drishti": 110.03,
+        "diff": 11.030000000000001,
+        "usikkerhedsbaand": 41.61,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 30,
+        "egen": 76.44,
+        "drishti": 76.48,
+        "diff": 0.04000000000000625,
+        "usikkerhedsbaand": 33.55,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 31,
+        "egen": 85.17,
+        "drishti": 94.83,
+        "diff": 9.659999999999997,
+        "usikkerhedsbaand": 53.78,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 32,
+        "egen": 123.67,
+        "drishti": 130.25,
+        "diff": 6.579999999999998,
+        "usikkerhedsbaand": 35.42,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 33,
+        "egen": 121.26,
+        "drishti": 125.99,
+        "diff": 4.72999999999999,
+        "usikkerhedsbaand": 19.9,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 34,
+        "egen": 126.65,
+        "drishti": 125.64,
+        "diff": 1.0100000000000051,
+        "usikkerhedsbaand": 34.64,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 35,
+        "egen": 132.82,
+        "drishti": 136.1,
+        "diff": 3.280000000000001,
+        "usikkerhedsbaand": 26.88,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 36,
+        "egen": 152.72,
+        "drishti": 152.52,
+        "diff": 0.19999999999998863,
+        "usikkerhedsbaand": 21.27,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 37,
+        "egen": 160.93,
+        "drishti": 157.37,
+        "diff": 3.5600000000000023,
+        "usikkerhedsbaand": 13.3,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 38,
+        "egen": 160.63,
+        "drishti": 165.82,
+        "diff": 5.189999999999998,
+        "usikkerhedsbaand": 16.79,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 39,
+        "egen": 167.86,
+        "drishti": 166.28,
+        "diff": 1.5800000000000125,
+        "usikkerhedsbaand": 6.32,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 40,
+        "egen": 172.02,
+        "drishti": 166.41,
+        "diff": 5.610000000000014,
+        "usikkerhedsbaand": 5.24,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 41,
+        "egen": 165.02,
+        "drishti": 171.52,
+        "diff": 6.5,
+        "usikkerhedsbaand": 11.21,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 42,
+        "egen": 174.41,
+        "drishti": 173.74,
+        "diff": 0.6699999999999875,
+        "usikkerhedsbaand": 3.85,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 43,
+        "egen": 174.18,
+        "drishti": 172.1,
+        "diff": 2.0800000000000125,
+        "usikkerhedsbaand": 1.65,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 44,
+        "egen": 173.54,
+        "drishti": 173.05,
+        "diff": 0.4899999999999807,
+        "usikkerhedsbaand": 1.29,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 45,
+        "egen": 173.83,
+        "drishti": 172.77,
+        "diff": 1.0600000000000023,
+        "usikkerhedsbaand": 5.04,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 46,
+        "egen": 174.69,
+        "drishti": 175.6,
+        "diff": 0.9099999999999966,
+        "usikkerhedsbaand": 6.91,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 47,
+        "egen": 175.83,
+        "drishti": 174.11,
+        "diff": 1.7199999999999989,
+        "usikkerhedsbaand": 5.16,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 48,
+        "egen": 174.26,
+        "drishti": 171.75,
+        "diff": 2.509999999999991,
+        "usikkerhedsbaand": 4.75,
+        "indenForBaand": true
+      }
+    ]
+  },
+  {
+    "felt": "hofteGrader",
+    "enhed": "°",
+    "n": 28,
+    "medianAbsForskel": 1.36,
+    "maksAbsForskel": 4.48,
+    "maksVedBilledeIndex": 22,
+    "indenForUsikkerhedsbaand": "27/28",
+    "punkter": [
+      {
+        "billedeIndex": 21,
+        "egen": 77.8,
+        "drishti": 79.74,
+        "diff": 1.9399999999999977,
+        "usikkerhedsbaand": 6.91,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 22,
+        "egen": 76.33,
+        "drishti": 80.81,
+        "diff": 4.480000000000004,
+        "usikkerhedsbaand": 1.19,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 23,
+        "egen": 79.27,
+        "drishti": 80.38,
+        "diff": 1.1099999999999994,
+        "usikkerhedsbaand": 2.97,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 24,
+        "egen": 79.96,
+        "drishti": 79.03,
+        "diff": 0.9299999999999926,
+        "usikkerhedsbaand": 2.96,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 25,
+        "egen": 82.66,
+        "drishti": 81.43,
+        "diff": 1.2299999999999898,
+        "usikkerhedsbaand": 6.91,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 26,
+        "egen": 81.53,
+        "drishti": 84.93,
+        "diff": 3.4000000000000057,
+        "usikkerhedsbaand": 7.38,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 27,
+        "egen": 86.71,
+        "drishti": 87.08,
+        "diff": 0.37000000000000455,
+        "usikkerhedsbaand": 7.75,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 28,
+        "egen": 88.72,
+        "drishti": 88.54,
+        "diff": 0.1799999999999926,
+        "usikkerhedsbaand": 1.96,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 29,
+        "egen": 82.23,
+        "drishti": 86.58,
+        "diff": 4.349999999999994,
+        "usikkerhedsbaand": 12.13,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 30,
+        "egen": 82.64,
+        "drishti": 80.12,
+        "diff": 2.519999999999996,
+        "usikkerhedsbaand": 12.31,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 31,
+        "egen": 92.62,
+        "drishti": 92.43,
+        "diff": 0.18999999999999773,
+        "usikkerhedsbaand": 34.97,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 32,
+        "egen": 116.6,
+        "drishti": 115.09,
+        "diff": 1.509999999999991,
+        "usikkerhedsbaand": 22.66,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 33,
+        "egen": 109.99,
+        "drishti": 107.65,
+        "diff": 2.339999999999989,
+        "usikkerhedsbaand": 11.83,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 34,
+        "egen": 109.39,
+        "drishti": 111.88,
+        "diff": 2.489999999999995,
+        "usikkerhedsbaand": 18.07,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 35,
+        "egen": 118.55,
+        "drishti": 121.56,
+        "diff": 3.010000000000005,
+        "usikkerhedsbaand": 20.95,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 36,
+        "egen": 132.36,
+        "drishti": 132.82,
+        "diff": 0.45999999999997954,
+        "usikkerhedsbaand": 19.65,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 37,
+        "egen": 141.33,
+        "drishti": 141.21,
+        "diff": 0.12000000000000455,
+        "usikkerhedsbaand": 18.27,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 38,
+        "egen": 146.98,
+        "drishti": 148.24,
+        "diff": 1.2600000000000193,
+        "usikkerhedsbaand": 16.16,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 39,
+        "egen": 152.65,
+        "drishti": 153.46,
+        "diff": 0.8100000000000023,
+        "usikkerhedsbaand": 13.82,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 40,
+        "egen": 158.27,
+        "drishti": 154.25,
+        "diff": 4.02000000000001,
+        "usikkerhedsbaand": 8.01,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 41,
+        "egen": 156.62,
+        "drishti": 160.14,
+        "diff": 3.519999999999982,
+        "usikkerhedsbaand": 14.41,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 42,
+        "egen": 164.54,
+        "drishti": 165.41,
+        "diff": 0.8700000000000045,
+        "usikkerhedsbaand": 13.81,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 43,
+        "egen": 166.4,
+        "drishti": 163.62,
+        "diff": 2.780000000000001,
+        "usikkerhedsbaand": 13.76,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 44,
+        "egen": 167.05,
+        "drishti": 167.54,
+        "diff": 0.4899999999999807,
+        "usikkerhedsbaand": 9.83,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 45,
+        "egen": 168.24,
+        "drishti": 168.38,
+        "diff": 0.13999999999998636,
+        "usikkerhedsbaand": 6.33,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 46,
+        "egen": 168.59,
+        "drishti": 169.75,
+        "diff": 1.1599999999999966,
+        "usikkerhedsbaand": 5.42,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 47,
+        "egen": 170.84,
+        "drishti": 169.38,
+        "diff": 1.460000000000008,
+        "usikkerhedsbaand": 5.46,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 48,
+        "egen": 167.66,
+        "drishti": 171.84,
+        "diff": 4.180000000000007,
+        "usikkerhedsbaand": 12.73,
+        "indenForBaand": true
+      }
+    ]
+  },
+  {
+    "felt": "torsoGrader",
+    "enhed": "°",
+    "n": 28,
+    "medianAbsForskel": 0.7,
+    "maksAbsForskel": 3.14,
+    "maksVedBilledeIndex": 34,
+    "indenForUsikkerhedsbaand": "28/28",
+    "punkter": [
+      {
+        "billedeIndex": 21,
+        "egen": 51.86,
+        "drishti": 50.31,
+        "diff": 1.5499999999999972,
+        "usikkerhedsbaand": 6.76,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 22,
+        "egen": 49.79,
+        "drishti": 50.15,
+        "diff": 0.35999999999999943,
+        "usikkerhedsbaand": 7.52,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 23,
+        "egen": 49.95,
+        "drishti": 50.54,
+        "diff": 0.5899999999999963,
+        "usikkerhedsbaand": 5.2,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 24,
+        "egen": 49.57,
+        "drishti": 48.9,
+        "diff": 0.6700000000000017,
+        "usikkerhedsbaand": 5.13,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 25,
+        "egen": 48.84,
+        "drishti": 49.31,
+        "diff": 0.46999999999999886,
+        "usikkerhedsbaand": 5.08,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 26,
+        "egen": 50.07,
+        "drishti": 48.96,
+        "diff": 1.1099999999999994,
+        "usikkerhedsbaand": 4.49,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 27,
+        "egen": 47.98,
+        "drishti": 47.8,
+        "diff": 0.17999999999999972,
+        "usikkerhedsbaand": 4.43,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 28,
+        "egen": 48.82,
+        "drishti": 49.55,
+        "diff": 0.7299999999999969,
+        "usikkerhedsbaand": 3.23,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 29,
+        "egen": 48.46,
+        "drishti": 47.67,
+        "diff": 0.7899999999999991,
+        "usikkerhedsbaand": 5.51,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 30,
+        "egen": 44.7,
+        "drishti": 45.19,
+        "diff": 0.4899999999999949,
+        "usikkerhedsbaand": 7.21,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 31,
+        "egen": 42.17,
+        "drishti": 40.46,
+        "diff": 1.7100000000000009,
+        "usikkerhedsbaand": 14.89,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 32,
+        "egen": 32.04,
+        "drishti": 30.3,
+        "diff": 1.7399999999999984,
+        "usikkerhedsbaand": 11.74,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 33,
+        "egen": 30.15,
+        "drishti": 32.95,
+        "diff": 2.8000000000000043,
+        "usikkerhedsbaand": 3.09,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 34,
+        "egen": 33,
+        "drishti": 29.86,
+        "diff": 3.1400000000000006,
+        "usikkerhedsbaand": 6.33,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 35,
+        "egen": 27.29,
+        "drishti": 26.62,
+        "diff": 0.6699999999999982,
+        "usikkerhedsbaand": 6.66,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 36,
+        "egen": 25.55,
+        "drishti": 25.49,
+        "diff": 0.060000000000002274,
+        "usikkerhedsbaand": 5.37,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 37,
+        "egen": 22.6,
+        "drishti": 21.25,
+        "diff": 1.3500000000000014,
+        "usikkerhedsbaand": 7.21,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 38,
+        "egen": 18.49,
+        "drishti": 19.22,
+        "diff": 0.7300000000000004,
+        "usikkerhedsbaand": 5.74,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 39,
+        "egen": 16.89,
+        "drishti": 15.71,
+        "diff": 1.1799999999999997,
+        "usikkerhedsbaand": 8.86,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 40,
+        "egen": 14.96,
+        "drishti": 15.54,
+        "diff": 0.5799999999999983,
+        "usikkerhedsbaand": 6.52,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 41,
+        "egen": 13.44,
+        "drishti": 13.5,
+        "diff": 0.0600000000000005,
+        "usikkerhedsbaand": 8.26,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 42,
+        "egen": 11.22,
+        "drishti": 10.77,
+        "diff": 0.45000000000000107,
+        "usikkerhedsbaand": 7.84,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 43,
+        "egen": 9.45,
+        "drishti": 10.26,
+        "diff": 0.8100000000000005,
+        "usikkerhedsbaand": 6.76,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 44,
+        "egen": 8.36,
+        "drishti": 8.32,
+        "diff": 0.03999999999999915,
+        "usikkerhedsbaand": 8.23,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 45,
+        "egen": 7.33,
+        "drishti": 7.1,
+        "diff": 0.23000000000000043,
+        "usikkerhedsbaand": 6.5,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 46,
+        "egen": 6.77,
+        "drishti": 5.97,
+        "diff": 0.7999999999999998,
+        "usikkerhedsbaand": 4.5,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 47,
+        "egen": 4.92,
+        "drishti": 5.45,
+        "diff": 0.5300000000000002,
+        "usikkerhedsbaand": 5.8,
+        "indenForBaand": true
+      },
+      {
+        "billedeIndex": 48,
+        "egen": 6.59,
+        "drishti": 3.51,
+        "diff": 3.08,
+        "usikkerhedsbaand": 5.78,
+        "indenForBaand": true
+      }
+    ]
+  },
+  {
+    "felt": "xFodlaengder",
+    "enhed": "fl",
+    "n": 28,
+    "medianAbsForskel": 0.2216,
+    "maksAbsForskel": 0.3883,
+    "maksVedBilledeIndex": 35,
+    "indenForUsikkerhedsbaand": "0/28",
+    "punkter": [
+      {
+        "billedeIndex": 21,
+        "egen": 0.3217,
+        "drishti": 0.1377,
+        "diff": 0.184,
+        "usikkerhedsbaand": 0.0635,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 22,
+        "egen": 0.2242,
+        "drishti": 0.0954,
+        "diff": 0.12880000000000003,
+        "usikkerhedsbaand": 0.0423,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 23,
+        "egen": 0.2214,
+        "drishti": 0.1272,
+        "diff": 0.0942,
+        "usikkerhedsbaand": 0.0317,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 24,
+        "egen": 0.2493,
+        "drishti": 0.1166,
+        "diff": 0.13269999999999998,
+        "usikkerhedsbaand": 0.0106,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 25,
+        "egen": 0.2688,
+        "drishti": 0.1166,
+        "diff": 0.1522,
+        "usikkerhedsbaand": 0.0106,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 26,
+        "egen": 0.2128,
+        "drishti": 0.1272,
+        "diff": 0.08559999999999998,
+        "usikkerhedsbaand": 0.0317,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 27,
+        "egen": 0.3296,
+        "drishti": 0.0954,
+        "diff": 0.23420000000000002,
+        "usikkerhedsbaand": 0.0317,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 28,
+        "egen": 0.2363,
+        "drishti": 0.0954,
+        "diff": 0.14090000000000003,
+        "usikkerhedsbaand": 0.0106,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 29,
+        "egen": 0.2398,
+        "drishti": 0.0848,
+        "diff": 0.15500000000000003,
+        "usikkerhedsbaand": 0.0106,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 30,
+        "egen": 0.1955,
+        "drishti": 0.0954,
+        "diff": 0.10010000000000001,
+        "usikkerhedsbaand": 0.0529,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 31,
+        "egen": 0.2455,
+        "drishti": 0.0425,
+        "diff": 0.20299999999999999,
+        "usikkerhedsbaand": 0.0635,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 32,
+        "egen": 0.1836,
+        "drishti": 0.0319,
+        "diff": 0.1517,
+        "usikkerhedsbaand": 0.0317,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 33,
+        "egen": 0.2075,
+        "drishti": 0.0108,
+        "diff": 0.19669999999999999,
+        "usikkerhedsbaand": 0.0317,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 34,
+        "egen": 0.2798,
+        "drishti": 0.0002,
+        "diff": 0.2796,
+        "usikkerhedsbaand": 0.0317,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 35,
+        "egen": 0.3673,
+        "drishti": -0.021,
+        "diff": 0.38830000000000003,
+        "usikkerhedsbaand": 0.0317,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 36,
+        "egen": 0.2132,
+        "drishti": -0.0315,
+        "diff": 0.2447,
+        "usikkerhedsbaand": 0.0106,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 37,
+        "egen": 0.2972,
+        "drishti": -0.0315,
+        "diff": 0.3287,
+        "usikkerhedsbaand": 0.0423,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 38,
+        "egen": 0.2518,
+        "drishti": -0.0738,
+        "diff": 0.3256,
+        "usikkerhedsbaand": 0.0635,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 39,
+        "egen": 0.2409,
+        "drishti": -0.095,
+        "diff": 0.3359,
+        "usikkerhedsbaand": 0.0317,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 40,
+        "egen": 0.2217,
+        "drishti": -0.1056,
+        "diff": 0.32730000000000004,
+        "usikkerhedsbaand": 0.0212,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 41,
+        "egen": 0.1942,
+        "drishti": -0.1162,
+        "diff": 0.3104,
+        "usikkerhedsbaand": 0.0212,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 42,
+        "egen": 0.2255,
+        "drishti": -0.1267,
+        "diff": 0.3522,
+        "usikkerhedsbaand": 0.0106,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 43,
+        "egen": 0.1611,
+        "drishti": -0.1267,
+        "diff": 0.2878,
+        "usikkerhedsbaand": 0,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 44,
+        "egen": 0.0986,
+        "drishti": -0.1267,
+        "diff": 0.2253,
+        "usikkerhedsbaand": 0.0106,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 45,
+        "egen": 0.1879,
+        "drishti": -0.1162,
+        "diff": 0.30410000000000004,
+        "usikkerhedsbaand": 0.0212,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 46,
+        "egen": 0.1123,
+        "drishti": -0.1056,
+        "diff": 0.21789999999999998,
+        "usikkerhedsbaand": 0.0317,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 47,
+        "egen": 0.1694,
+        "drishti": -0.0844,
+        "diff": 0.2538,
+        "usikkerhedsbaand": 0.0212,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 48,
+        "egen": 0.059,
+        "drishti": -0.095,
+        "diff": 0.154,
+        "usikkerhedsbaand": 0.0106,
+        "indenForBaand": false
+      }
+    ]
+  },
+  {
+    "felt": "yFodlaengder",
+    "enhed": "fl",
+    "n": 28,
+    "medianAbsForskel": 1.3007,
+    "maksAbsForskel": 1.846,
+    "maksVedBilledeIndex": 22,
+    "indenForUsikkerhedsbaand": "0/28",
+    "punkter": [
+      {
+        "billedeIndex": 21,
+        "egen": 2.7345,
+        "drishti": 0.891,
+        "diff": 1.8435000000000001,
+        "usikkerhedsbaand": 0.0741,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 22,
+        "egen": 2.7688,
+        "drishti": 0.9228,
+        "diff": 1.846,
+        "usikkerhedsbaand": 0.1058,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 23,
+        "egen": 2.7208,
+        "drishti": 0.9968,
+        "diff": 1.7240000000000002,
+        "usikkerhedsbaand": 0.1375,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 24,
+        "egen": 2.7896,
+        "drishti": 1.0603,
+        "diff": 1.7293,
+        "usikkerhedsbaand": 0.1164,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 25,
+        "egen": 2.7462,
+        "drishti": 1.1132,
+        "diff": 1.633,
+        "usikkerhedsbaand": 0.1587,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 26,
+        "egen": 2.844,
+        "drishti": 1.219,
+        "diff": 1.6249999999999998,
+        "usikkerhedsbaand": 0.1904,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 27,
+        "egen": 2.9356,
+        "drishti": 1.3036,
+        "diff": 1.632,
+        "usikkerhedsbaand": 0.1375,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 28,
+        "egen": 2.9227,
+        "drishti": 1.3565,
+        "diff": 1.5661999999999998,
+        "usikkerhedsbaand": 0.1798,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 29,
+        "egen": 3.0233,
+        "drishti": 1.4835,
+        "diff": 1.5397999999999998,
+        "usikkerhedsbaand": 0.2539,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 30,
+        "egen": 3.0388,
+        "drishti": 1.6104,
+        "diff": 1.4284000000000001,
+        "usikkerhedsbaand": 0.2222,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 31,
+        "egen": 3.0573,
+        "drishti": 1.7056,
+        "diff": 1.3517000000000001,
+        "usikkerhedsbaand": 0.1798,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 32,
+        "egen": 3.1174,
+        "drishti": 1.7903,
+        "diff": 1.3271,
+        "usikkerhedsbaand": 0.1904,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 33,
+        "egen": 3.1703,
+        "drishti": 1.8961,
+        "diff": 1.2742000000000002,
+        "usikkerhedsbaand": 0.2433,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 34,
+        "egen": 3.1765,
+        "drishti": 2.0336,
+        "diff": 1.1429,
+        "usikkerhedsbaand": 0.2327,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 35,
+        "egen": 3.1148,
+        "drishti": 2.1288,
+        "diff": 0.9859999999999998,
+        "usikkerhedsbaand": 0.1904,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 36,
+        "egen": 3.3259,
+        "drishti": 2.224,
+        "diff": 1.1018999999999997,
+        "usikkerhedsbaand": 0.2222,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 37,
+        "egen": 3.295,
+        "drishti": 2.351,
+        "diff": 0.944,
+        "usikkerhedsbaand": 0.1798,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 38,
+        "egen": 3.3557,
+        "drishti": 2.4039,
+        "diff": 0.9518,
+        "usikkerhedsbaand": 0.1375,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 39,
+        "egen": 3.358,
+        "drishti": 2.4885,
+        "diff": 0.8694999999999999,
+        "usikkerhedsbaand": 0.1375,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 40,
+        "egen": 3.6215,
+        "drishti": 2.5414,
+        "diff": 1.0801000000000003,
+        "usikkerhedsbaand": 0.1375,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 41,
+        "egen": 3.4036,
+        "drishti": 2.626,
+        "diff": 0.7776000000000001,
+        "usikkerhedsbaand": 0.0952,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 42,
+        "egen": 3.6332,
+        "drishti": 2.6366,
+        "diff": 0.9965999999999999,
+        "usikkerhedsbaand": 0.0317,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 43,
+        "egen": 4.0913,
+        "drishti": 2.6578,
+        "diff": 1.4335000000000004,
+        "usikkerhedsbaand": 0.0212,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 44,
+        "egen": 4.0069,
+        "drishti": 2.6578,
+        "diff": 1.3491,
+        "usikkerhedsbaand": 0.0106,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 45,
+        "egen": 3.8051,
+        "drishti": 2.6472,
+        "diff": 1.1578999999999997,
+        "usikkerhedsbaand": 0.0106,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 46,
+        "egen": 3.8488,
+        "drishti": 2.6472,
+        "diff": 1.2016,
+        "usikkerhedsbaand": 0.0212,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 47,
+        "egen": 3.7423,
+        "drishti": 2.626,
+        "diff": 1.1163000000000003,
+        "usikkerhedsbaand": 0.0212,
+        "indenForBaand": false
+      },
+      {
+        "billedeIndex": 48,
+        "egen": 3.8799,
+        "drishti": 2.626,
+        "diff": 1.2539000000000002,
+        "usikkerhedsbaand": 0,
+        "indenForBaand": false
+      }
+    ]
+  }
+]
