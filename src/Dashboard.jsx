@@ -16,6 +16,7 @@ import { progressionOverrideErrors, updateDraftForecast, updateForecastOverrideR
 import { blockPurpose, buildPeriodizationSuggestion, withBlockPurposes } from './periodizationAssistant'
 import { buildPlanOverview, planOverviewCounts } from './planOverview'
 import { byggKategoriOpslag, kategoriFor } from './exerciseNames'
+import VolumenKort from './dashboard/VolumenKort'
 import {
   BLOCK_NAMES, blockColor, computePhases, currentWeekNo,
   VIDEOCOACH_STATUS, VIDEOCOACH_METRICS, videoCoachMetric, videoCoachBaseline,
@@ -643,6 +644,9 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       fetchAthletePRs(selectedAthlete.id)
       fetchMeetResults(selectedAthlete.id)
     }
+    // Volumenkortet (ordre 177) bor i 'oversigt' og har brug for de samme
+    // athleteLogs som 'program'/'analyse'/'log' allerede henter separat.
+    if (activeTab === 'oversigt' && selectedAthlete?.id) fetchAthleteLogs(selectedAthlete.id)
     // Hubben viser dagens parathed i statuslinjen.
     if (activeTab === 'hub' && selectedAthlete?.id) fetchAthleteReadiness(selectedAthlete.id)
   }, [activeTab, selectedAthlete?.id])
@@ -4720,6 +4724,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen stævnedato sat endnu.</div>
                 )}
               </div>
+
+              <VolumenKort athleteLogs={athleteLogs} />
               </div>
             )}
 
