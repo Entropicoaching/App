@@ -828,8 +828,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       // bagefter, så ingen anden sti mister sin opdatering.
       fetchProfilesLastSeen(data)
       fetchAthleteWeekSummaries(data.map(a => a.id))
-      fetchAthleteLastLogs(data.map(a => a.id))
-      fetchWeeklyActivity(data.map(a => a.id))
+      fetchAthleteActivityLogs(data.map(a => a.id))
     }
     setLoading(false)
   }
@@ -843,29 +842,15 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     return x
   }
 
-  // Pr. atlet: antal loggede træninger (unikke datoer) + antal sæt i indeværende uge.
-  async function fetchWeeklyActivity(athleteIds) {
-    if (!athleteIds.length) return
-    const { data } = await supabase
-      .from('exercise_logs')
-      .select('athlete_id, logged_at')
-      .in('athlete_id', athleteIds)
-      .eq('skipped', false)
-      .gte('logged_at', isoMonday().toISOString())
-    if (!data) return
-    const map = {}
-    for (const log of data) {
-      const aid = log.athlete_id
-      if (!map[aid]) map[aid] = { dates: new Set(), sets: 0 }
-      map[aid].dates.add(log.logged_at.slice(0, 10))
-      map[aid].sets++
-    }
-    const summary = {}
-    for (const aid in map) summary[aid] = { sessions: map[aid].dates.size, sets: map[aid].sets }
-    setWeeklyActivity(summary)
-  }
-
-  async function fetchAthleteLastLogs(athleteIds) {
+  // ORDRE 193: fetchWeeklyActivity og fetchAthleteLastLogs hentede hver sin
+  // variant af PRÆCIS samme tabel/kolonner (exercise_logs, athlete_id +
+  // logged_at, samme athlete_id/skipped-filter) — kun tidsvinduet var
+  // forskelligt, og den ubegrænsede (fetchAthleteLastLogs, "alle logs,
+  // nyeste først") er allerede en overmængde af den anden ("kun denne uges
+  // logs"). Slået sammen til ét kald; begge tal udledes client-side af
+  // samme rækker. Fjerner én hel rundtur (forespørgsel + dens CORS-preflight)
+  // fra forsidens kritiske kæde uden at ændre hvad der vises.
+  async function fetchAthleteActivityLogs(athleteIds) {
     if (!athleteIds.length) return
     const { data } = await supabase
       .from('exercise_logs')
@@ -874,11 +859,24 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       .eq('skipped', false)
       .order('logged_at', { ascending: false })
     if (!data) return
-    const map = {}
+    const lastLogMap = {}
     for (const log of data) {
-      if (!map[log.athlete_id]) map[log.athlete_id] = log.logged_at.slice(0, 10)
+      if (!lastLogMap[log.athlete_id]) lastLogMap[log.athlete_id] = log.logged_at.slice(0, 10)
     }
-    setAthleteLastLogs(map)
+    setAthleteLastLogs(lastLogMap)
+
+    const mondayIso = isoMonday().toISOString()
+    const weekMap = {}
+    for (const log of data) {
+      if (log.logged_at < mondayIso) continue
+      const aid = log.athlete_id
+      if (!weekMap[aid]) weekMap[aid] = { dates: new Set(), sets: 0 }
+      weekMap[aid].dates.add(log.logged_at.slice(0, 10))
+      weekMap[aid].sets++
+    }
+    const weekSummary = {}
+    for (const aid in weekMap) weekSummary[aid] = { sessions: weekMap[aid].dates.size, sets: weekMap[aid].sets }
+    setWeeklyActivity(weekSummary)
   }
 
   async function fetchAthleteWeekSummaries(athleteIds) {
