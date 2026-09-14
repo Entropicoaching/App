@@ -16,7 +16,7 @@ Planet: coaching · Spor: spor-appen-m-rkbart-bedre-for-atleterne-5d2c3a
 Arbejdstræet er rent efter hver commit. Ingen push, ingen produktions-Supabase,
 ingen migration, ingen atletdata (kun mockens attrapatlet "Testatlet").
 
-## Hvad blev ændret
+## Hvad ændret
 
 **Commit 1.** `beregnPlanlagtDenneUge(weeks, opts)`: planlagte sæt pr.
 muskelgruppe for kalenderugen "nu" ligger i, talt fra programmet
