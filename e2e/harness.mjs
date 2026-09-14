@@ -8,7 +8,7 @@ import { spawn, spawnSync } from 'node:child_process'
 import { createRequire } from 'node:module'
 import { homedir, tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { existsSync, mkdirSync } from 'node:fs'
+import { existsSync, mkdirSync, copyFileSync } from 'node:fs'
 import ffmpegPath from 'ffmpeg-static'
 
 const require = createRequire(import.meta.url)
@@ -87,4 +87,27 @@ export function ensureSyntheticClip() {
   ])
   if (result.status !== 0) throw new Error(`ffmpeg kunne ikke lave testklippet: ${result.stderr}`)
   return CLIP_PATH
+}
+
+// ORDRE 200 — coach-sporing.spec.mjs's eget, sporbare klip (en tegnet skive
+// med ægte kontrast, ikke bare testsrc-mønsteret ovenfor). ORDRE 190 så det
+// FULDE, urørte klip fra scripts/make-test-clip.mjs (alle 5 reps, ~20s)
+// lykkes to gange, mens et beskåret udsnit under 300 KB konsekvent fejlede
+// — men ORDRE 200's egen, langt mere systematiske 10x-afprøvning af det
+// FULDE klip viste 0/10 (se docs/RAPPORT-200.md) — "det fulde klip virker
+// pålideligt" er IKKE bekræftet, snarere modbevist. Klippet genereres
+// alligevel her (ikke committet — for stort, og "ingen commit af
+// videofiler" er en hård grænse denne gang), da selve genererings-
+// infrastrukturen er uafhængig af sporings-pålideligheden og nyttig for et
+// fremtidigt forsøg — genbruges på tværs af kørsler i samme arbejdstræ.
+const COACH_SPORING_CLIP_PATH = join(ROOT, 'test-clips', '_e2e', 'coach-sporing-full.mp4')
+export function ensureCoachSporingClip() {
+  if (existsSync(COACH_SPORING_CLIP_PATH)) return { path: COACH_SPORING_CLIP_PATH, generatedMs: null }
+  mkdirSync(join(ROOT, 'test-clips', '_e2e'), { recursive: true })
+  const t0 = Date.now()
+  const result = spawnSync(process.execPath, ['scripts/make-test-clip.mjs'], { cwd: ROOT, stdio: 'inherit' })
+  if (result.status !== 0) throw new Error('scripts/make-test-clip.mjs fejlede ved generering af coach-sporing-klippet')
+  const generatedMs = Date.now() - t0
+  copyFileSync(join(ROOT, 'docs', 'videocoach', 'clip-cache', 'synthetic-set.mp4'), COACH_SPORING_CLIP_PATH)
+  return { path: COACH_SPORING_CLIP_PATH, generatedMs }
 }
