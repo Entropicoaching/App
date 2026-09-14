@@ -1,6 +1,6 @@
 # Rapport — ordre 192: kortlægningen står på skuldre
 
-## Gren + commit-hashes
+## Gren
 
 Gren `kortlaegningen-bredere`, forgrenet fra `main` (`e04a771`, som allerede
 havde ordre 188 mergét ind, jf. `git log --oneline -3 main` ved start).
@@ -10,7 +10,7 @@ havde ordre 188 mergét ind, jf. `git log --oneline -3 main` ved start).
 - `06328a5` — commit 3: kobl den genererede kortlægning ind i `slaaOevelseOp`
 - (denne rapport er commit 4, se hash i `git log` efter commit)
 
-## Hvad blev ændret
+## Hvad ændret
 
 **Commit 1.** `scripts/byg-muskelkort.mjs` henter
 [free-exercise-db](https://github.com/yuhonas/free-exercise-db) (The
