@@ -1,0 +1,384 @@
+[
+  {
+    "id": "atletliste",
+    "label": "Atletliste",
+    "profile": "Telefon 390×844",
+    "klik": 0,
+    "fcpMs": 3023.4177,
+    "ttiMs": 3325.1605,
+    "cls": 0,
+    "requestsBeforeUsable": 7,
+    "perfScore": 87,
+    "dom": "Midt imellem — noget er hurtigt, noget hænger",
+    "runs": [
+      {
+        "fcpMs": 3023.107,
+        "ttiMs": 3325.1605,
+        "cls": 0,
+        "requestsBeforeUsable": 7,
+        "perfScore": 87
+      },
+      {
+        "fcpMs": 3024.1256000000003,
+        "ttiMs": 3325.688400000001,
+        "cls": 0,
+        "requestsBeforeUsable": 7,
+        "perfScore": 87
+      },
+      {
+        "fcpMs": 3023.4177,
+        "ttiMs": 3325.12655,
+        "cls": 0,
+        "requestsBeforeUsable": 7,
+        "perfScore": 87
+      }
+    ],
+    "note": "før login — kontrol"
+  },
+  {
+    "id": "atletliste",
+    "label": "Atletliste",
+    "profile": "Desktop 1280×800",
+    "klik": 0,
+    "fcpMs": 3003.7444,
+    "ttiMs": 3304.8732000000005,
+    "cls": 0,
+    "requestsBeforeUsable": 7,
+    "perfScore": 65,
+    "dom": "Midt imellem — noget er hurtigt, noget hænger",
+    "runs": [
+      {
+        "fcpMs": 3003.7444,
+        "ttiMs": 3305.6166000000003,
+        "cls": 0,
+        "requestsBeforeUsable": 7,
+        "perfScore": 65
+      },
+      {
+        "fcpMs": 3024.2488000000003,
+        "ttiMs": 3304.8732000000005,
+        "cls": 0,
+        "requestsBeforeUsable": 7,
+        "perfScore": 65
+      },
+      {
+        "fcpMs": 3002.8205,
+        "ttiMs": 3304.2307499999997,
+        "cls": 0,
+        "requestsBeforeUsable": 7,
+        "perfScore": 65
+      }
+    ],
+    "note": "før login — kontrol"
+  },
+  {
+    "id": "atletliste",
+    "label": "Atletliste",
+    "profile": "Telefon 390×844",
+    "klik": 0,
+    "fcpMs": 3782.0799999999995,
+    "ttiMs": 6019.681500000001,
+    "cls": 0.08206223778939815,
+    "requestsBeforeUsable": 40,
+    "perfScore": 68,
+    "dom": "Føles som en hjemmeside der loader",
+    "runs": [
+      {
+        "fcpMs": 3782.0799999999995,
+        "ttiMs": 6026.696,
+        "cls": 0.00001822281792689016,
+        "requestsBeforeUsable": 40,
+        "perfScore": 69
+      },
+      {
+        "fcpMs": 3780.4224999999997,
+        "ttiMs": 5777.4000000000015,
+        "cls": 0.08206223778939815,
+        "requestsBeforeUsable": 40,
+        "perfScore": 68
+      },
+      {
+        "fcpMs": 3782.4012500000003,
+        "ttiMs": 6019.681500000001,
+        "cls": 0.08206223778939815,
+        "requestsBeforeUsable": 40,
+        "perfScore": 68
+      }
+    ]
+  },
+  {
+    "id": "checkin-gennemgang",
+    "label": "Check-in-gennemgang (hub)",
+    "profile": "Telefon 390×844",
+    "klik": 2,
+    "renderMs": 417,
+    "cls": 0,
+    "requestsBeforeUsable": 6,
+    "fcpMs": null,
+    "ttiMs": null,
+    "perfScore": null,
+    "dom": "Føles som et værktøj",
+    "runs": [
+      {
+        "renderMs": 381,
+        "cls": 0,
+        "requests": 6
+      },
+      {
+        "renderMs": 417,
+        "cls": 0,
+        "requests": 6
+      },
+      {
+        "renderMs": 417,
+        "cls": 0,
+        "requests": 6
+      }
+    ]
+  },
+  {
+    "id": "atletens-uge",
+    "label": "Atletens uge (log-fanen)",
+    "profile": "Telefon 390×844",
+    "klik": 2,
+    "renderMs": 225,
+    "cls": 0,
+    "requestsBeforeUsable": 0,
+    "fcpMs": null,
+    "ttiMs": null,
+    "perfScore": null,
+    "dom": "Føles som et værktøj",
+    "runs": [
+      {
+        "renderMs": 225,
+        "cls": 0,
+        "requests": 0
+      },
+      {
+        "renderMs": 228,
+        "cls": 0,
+        "requests": 0
+      },
+      {
+        "renderMs": 188,
+        "cls": 0,
+        "requests": 0
+      }
+    ]
+  },
+  {
+    "id": "videoer",
+    "label": "Videoer (analyse-fanen, lazy chunk)",
+    "profile": "Telefon 390×844",
+    "klik": 3,
+    "renderMs": 938,
+    "cls": 0,
+    "requestsBeforeUsable": 14,
+    "fcpMs": null,
+    "ttiMs": null,
+    "perfScore": null,
+    "dom": "Føles som et værktøj",
+    "runs": [
+      {
+        "renderMs": 938,
+        "cls": 0,
+        "requests": 14
+      },
+      {
+        "renderMs": 974,
+        "cls": 0,
+        "requests": 14
+      },
+      {
+        "renderMs": 599,
+        "cls": 0,
+        "requests": 14
+      }
+    ]
+  },
+  {
+    "id": "indbakke",
+    "label": "Indbakke (Coach Briefing)",
+    "profile": "Telefon 390×844",
+    "klik": 1,
+    "renderMs": 503,
+    "cls": 0,
+    "requestsBeforeUsable": 11,
+    "fcpMs": null,
+    "ttiMs": null,
+    "perfScore": null,
+    "dom": "Føles som et værktøj",
+    "runs": [
+      {
+        "renderMs": 503,
+        "cls": 0,
+        "requests": 11
+      },
+      {
+        "renderMs": 516,
+        "cls": 0,
+        "requests": 11
+      },
+      {
+        "renderMs": 478,
+        "cls": 0,
+        "requests": 11
+      }
+    ]
+  },
+  {
+    "id": "atletliste",
+    "label": "Atletliste",
+    "profile": "Desktop 1280×800",
+    "klik": 0,
+    "fcpMs": 3761.56,
+    "ttiMs": 5970.272000000001,
+    "cls": 0.0824883883028168,
+    "requestsBeforeUsable": 40,
+    "perfScore": 56,
+    "dom": "Føles som en hjemmeside der loader",
+    "runs": [
+      {
+        "fcpMs": 3800.13625,
+        "ttiMs": 6006.9635,
+        "cls": 0.0824883883028168,
+        "requestsBeforeUsable": 40,
+        "perfScore": 56
+      },
+      {
+        "fcpMs": 3760.8575000000005,
+        "ttiMs": 5965.629000000001,
+        "cls": 0.0824883883028168,
+        "requestsBeforeUsable": 40,
+        "perfScore": 56
+      },
+      {
+        "fcpMs": 3761.56,
+        "ttiMs": 5970.272000000001,
+        "cls": 0.0824883883028168,
+        "requestsBeforeUsable": 40,
+        "perfScore": 56
+      }
+    ]
+  },
+  {
+    "id": "checkin-gennemgang",
+    "label": "Check-in-gennemgang (hub)",
+    "profile": "Desktop 1280×800",
+    "klik": 2,
+    "renderMs": 71,
+    "cls": 0,
+    "requestsBeforeUsable": 6,
+    "fcpMs": null,
+    "ttiMs": null,
+    "perfScore": null,
+    "dom": "Føles som et værktøj",
+    "runs": [
+      {
+        "renderMs": 59,
+        "cls": 0,
+        "requests": 6
+      },
+      {
+        "renderMs": 74,
+        "cls": 0,
+        "requests": 6
+      },
+      {
+        "renderMs": 71,
+        "cls": 0,
+        "requests": 6
+      }
+    ]
+  },
+  {
+    "id": "atletens-uge",
+    "label": "Atletens uge (log-fanen)",
+    "profile": "Desktop 1280×800",
+    "klik": 2,
+    "renderMs": 51,
+    "cls": 0,
+    "requestsBeforeUsable": 0,
+    "fcpMs": null,
+    "ttiMs": null,
+    "perfScore": null,
+    "dom": "Føles som et værktøj",
+    "runs": [
+      {
+        "renderMs": 45,
+        "cls": 0,
+        "requests": 0
+      },
+      {
+        "renderMs": 51,
+        "cls": 0,
+        "requests": 0
+      },
+      {
+        "renderMs": 56,
+        "cls": 0,
+        "requests": 0
+      }
+    ]
+  },
+  {
+    "id": "videoer",
+    "label": "Videoer (analyse-fanen, lazy chunk)",
+    "profile": "Desktop 1280×800",
+    "klik": 3,
+    "renderMs": 96,
+    "cls": 0,
+    "requestsBeforeUsable": 14,
+    "fcpMs": null,
+    "ttiMs": null,
+    "perfScore": null,
+    "dom": "Føles som et værktøj",
+    "runs": [
+      {
+        "renderMs": 96,
+        "cls": 0,
+        "requests": 14
+      },
+      {
+        "renderMs": 102,
+        "cls": 0,
+        "requests": 14
+      },
+      {
+        "renderMs": 95,
+        "cls": 0,
+        "requests": 14
+      }
+    ]
+  },
+  {
+    "id": "indbakke",
+    "label": "Indbakke (Coach Briefing)",
+    "profile": "Desktop 1280×800",
+    "klik": 1,
+    "renderMs": 66,
+    "cls": 0,
+    "requestsBeforeUsable": 11,
+    "fcpMs": null,
+    "ttiMs": null,
+    "perfScore": null,
+    "dom": "Føles som et værktøj",
+    "runs": [
+      {
+        "renderMs": 55,
+        "cls": 0,
+        "requests": 11
+      },
+      {
+        "renderMs": 88,
+        "cls": 0,
+        "requests": 11
+      },
+      {
+        "renderMs": 66,
+        "cls": 0,
+        "requests": 11
+      }
+    ]
+  }
+]
