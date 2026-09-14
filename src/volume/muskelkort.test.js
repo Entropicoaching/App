@@ -115,3 +115,33 @@ test('en tom rettelser-Map ændrer intet', () => {
   assert.equal(satAfMarc, false)
   assert.equal(kendt, true)
 })
+
+// ORDRE 192, commit 3: den genererede kortlægning (free-exercise-db, se
+// scripts/byg-muskelkort.mjs) som tredje og sidste lag under den indbyggede.
+test('en engelsk øvelse fra den genererede liste slår korrekt op', () => {
+  const { kendt, grupper, satAfMarc } = slaaOevelseOp('Dumbbell Bicep Curl')
+  assert.equal(kendt, true)
+  assert.equal(satAfMarc, false)
+  assert.deepEqual(grupper, [{ gruppe: 'biceps', andel: PRIMÆR }])
+})
+
+test('en dansk øvelse fra den genererede liste slår op via aliastabellen', () => {
+  const engelsk = slaaOevelseOp('Dumbbell Bicep Curl')
+  const dansk = slaaOevelseOp('Håndvægt bicepscurl')
+  assert.equal(dansk.kendt, true)
+  assert.deepEqual(dansk.grupper, engelsk.grupper)
+})
+
+test('en øvelse hverken indbygget eller i den genererede liste er stadig ukendt', () => {
+  const { kendt, grupper } = slaaOevelseOp('Helt opdigtet øvelse ingen kilde kender')
+  assert.equal(kendt, false)
+  assert.deepEqual(grupper, [])
+})
+
+test('en rettelse vinder over den genererede kortlægning', () => {
+  const rettelser = new Map([['dumbbell bicep curl', { grupper: [{ gruppe: 'triceps', andel: MEDVIRKENDE }] }]])
+  const { kendt, grupper, satAfMarc } = slaaOevelseOp('Dumbbell Bicep Curl', rettelser)
+  assert.equal(kendt, true)
+  assert.equal(satAfMarc, true)
+  assert.deepEqual(grupper, [{ gruppe: 'triceps', andel: MEDVIRKENDE }])
+})

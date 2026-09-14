@@ -39,6 +39,7 @@
 // se docs/VOLUMEN.md.
 
 import { foldNavn, grundnavn } from '../exerciseNames.js'
+import genereretKort from './muskelkort.generet.json' with { type: 'json' }
 
 export const PRIMÆR = 1
 export const MEDVIRKENDE = 0.5
@@ -244,6 +245,23 @@ for (const [navn, data] of Object.entries(RAA_KORT)) {
   KORTLÆGNING.set(normaliserOevelsesnavn(navn), data.grupper)
 }
 
+// ORDRE 192 (14. sep), commit 3: "stå på skuldre" — free-exercise-db, hentet
+// og oversat af scripts/byg-muskelkort.mjs (commit 1+2), som et TREDJE og
+// SIDSTE lag under den indbyggede kortlægning ovenfor. Se filens JSON for
+// kilde, licens (Unlicense) og hvad der blev udeladt. `danskAlias` slås op
+// først og peger videre til samme post som kildens engelske navn — se
+// scriptets egen DANSK_ALIAS-tabel for hvilke ~120 øvelser det dækker.
+const GENERERET_OEVELSER = genereretKort.oevelser ?? {}
+const GENERERET_ALIAS = genereretKort.danskAlias ?? {}
+
+function slaaGenereretOp(navn) {
+  const direkte = GENERERET_OEVELSER[navn]
+  if (direkte) return direkte
+  const maal = GENERERET_ALIAS[navn]
+  if (maal) return GENERERET_OEVELSER[maal]
+  return undefined
+}
+
 /**
  * Slå en øvelse op. Returnerer { kendt: false, grupper: [] } for alt
  * modellen ikke kender — ALDRIG et gæt. Kaldsteder (beregn.js) skal
@@ -251,9 +269,14 @@ for (const [navn, data] of Object.entries(RAA_KORT)) {
  *
  * ORDRE 185, commit 3: `rettelser` (valgfri) er en Map<normaliseretNavn, ...>
  * fra src/volume/rettelser.js's hentRettelser() — Marcs egne rettelser slås
- * op FØR den indbyggede kortlægning, så en rettelse altid vinder over det
- * oprindelige skøn, uanset om øvelsen i forvejen var kendt. `satAfMarc` i
- * svaret fortæller kaldstedet hvilken af de to kilder tallet kom fra.
+ * op FØR resten, så en rettelse altid vinder, uanset om øvelsen i forvejen
+ * var kendt. `satAfMarc` i svaret fortæller kaldstedet hvilken kilde tallet
+ * kom fra.
+ *
+ * ORDRE 192, commit 3: rækkefølgen efter en evt. rettelse er den indbyggede
+ * kortlægning (RAA_KORT ovenfor, kurateret med kilde/begrundelse pr. linje),
+ * så den genererede (free-exercise-db, se GENERERET_OEVELSER ovenfor) — den
+ * indbyggede vinder altid hvis samme øvelse findes begge steder.
  *
  * @param {string} exerciseNavn
  * @param {Map<string, { grupper: Array<{ gruppe: string, andel: number }> }>} [rettelser]
@@ -264,9 +287,13 @@ export function slaaOevelseOp(exerciseNavn, rettelser) {
   const rettelse = rettelser?.get(navn)
   if (rettelse) return { kendt: true, grupper: rettelse.grupper, satAfMarc: true }
 
-  const grupper = KORTLÆGNING.get(navn)
-  if (!grupper) return { kendt: false, grupper: [], satAfMarc: false }
-  return { kendt: true, grupper, satAfMarc: false }
+  const indbygget = KORTLÆGNING.get(navn)
+  if (indbygget) return { kendt: true, grupper: indbygget, satAfMarc: false }
+
+  const genereret = slaaGenereretOp(navn)
+  if (genereret) return { kendt: true, grupper: genereret, satAfMarc: false }
+
+  return { kendt: false, grupper: [], satAfMarc: false }
 }
 
 /** Alle øvelsesnavne modellen kender, til tests og evt. en admin-liste. */
