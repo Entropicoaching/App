@@ -1,6 +1,8 @@
 # Volumen pr. muskelgruppe — hvad tallene betyder
 
-Ordre 177, første version. Kortet ligger på atletsidens "Oversigt"-fane.
+Ordre 177, første version. Ordre 185 tilføjede "denne uge: gennemført/
+planlagt", en udviklingsgraf, og en redigeringsvej for kortlægningen (se
+nedenfor). Kortet ligger på atletsidens "Oversigt"-fane.
 
 ## Hvad tallene er
 
@@ -35,29 +37,82 @@ Kortet svarer på ét spørgsmål: *hvor mange gennemførte sæt landede på den
 gruppe*. Det er en oversættelse fra program til krop, ikke en dom om
 kvaliteten af træningen.
 
+## Planlagt mod gennemført — hvad det kan og ikke kan sige
+
+Øverst i kortet står to tal side om side pr. muskelgruppe: **gennemført**
+(samme tal som resten af kortet, denne uge) og **planlagt** — hvor mange sæt
+programmet siger der skulle være, for de øvelser du har lagt ind i den uge.
+
+**Hvad det kan sige.** Om ugen ser ud til at blive gennemført som skrevet,
+eller om der er et gab mellem plan og virkelighed — og hvor stort.
+
+**Hvad det ikke kan sige: HVORFOR der er et gab.** Kortet regner ikke det
+ud, og lader være med at gætte. Et gab kan skyldes mindst tre ting:
+
+- Sættene er ikke gennemført endnu (ugen er ikke slut).
+- Programmet er ændret undervejs (en øvelse byttet ud, et sæt fjernet på
+  atletens skærm) — "planlagt" viser stadig det oprindelige program.
+- Atleten har sprunget sæt over.
+
+Kortet viser kun tallene og en påmindelse om de tre muligheder — ikke hvilken
+af dem der er den rigtige. Det kræver et coachøje på loggen.
+
+**"–" er ikke det samme som "0".** Planlagt-tallet kan kun vises hvis den
+aktuelle programuge har en kalenderdato (sat via kalender-tidslinjen,
+`weeks.start_date`). Har ugen ikke det endnu, viser kortet "–" — "planlagt
+er ukendt", ikke "der er ikke planlagt noget". Sæt datoen på ugen for at få
+tallet frem.
+
+**Kun denne uge, ikke et helt forløb.** Til forskel fra resten af kortet
+(seks-otte ugers historik) dækker planlagt/gennemført kun ÉN uge — den ugen
+"nu" ligger i. Programuger følger ikke altid kalenderen (deload-uger,
+huller), så et helt "planlagt"-vindue ville have flere huller end tal.
+
 ## "Ukendt øvelse" — hvorfor den ikke bare forsvinder
 
-Kortet kender kun de øvelser der står i `src/volume/muskelkort.js`. En
-øvelse appen ikke genkender (stavefejl, en ny øvelse, noget meget
-specifikt) vises som sin egen linje — "Ukendt øvelse" — i stedet for at
-blive gættet på eller skjult. Ser du den linje vokse, er det et tegn på at
-kortlægningen mangler noget, ikke at atleten ikke har trænet.
+Kortet kender kun de øvelser der står i `src/volume/muskelkort.js`, plus
+dem du selv har kortlagt via "Ret kortlægning" (se næste afsnit). En øvelse
+ingen af de to kender (stavefejl, en ny øvelse, noget meget specifikt)
+vises som sin egen linje — "Ukendt øvelse" — i stedet for at blive gættet
+på eller skjult. Ser du den linje vokse, er det et tegn på at
+kortlægningen mangler noget, ikke at atleten ikke har trænet — og nu kan du
+rette det selv, med det samme.
 
-## Sådan retter du en forkert kortlægning
+## Sådan retter du en kortlægning
 
-Åbn `src/volume/muskelkort.js`. Hver øvelse er en post med en liste af
-grupper og en andel:
+Fra ordre 185 behøver du ikke længere åbne kildekoden. Klik **"Ret
+kortlægning"** øverst til højre i kortet:
 
-- `1` (PRIMÆR) — gruppen driver øvelsens hovedbevægelse.
-- `0,5` (MEDVIRKENDE) — gruppen bærer en væsentlig del af arbejdet, men er
-  ikke hvad øvelsen er "for".
-- Ikke nævnt — gruppen tælles slet ikke med.
+1. **Vælg en øvelse.** Enten fra listen af ukendte øvelser (klik direkte —
+   det er de øvelser der i dag lander som "Ukendt øvelse" i tabellen eller
+   i planlagt-tallet), fra listen af kendte øvelser, eller skriv et helt
+   nyt øvelsesnavn.
+2. **Sæt grupper og andele.** Samme to-trins-skala som modellen altid har
+   brugt: **Primær (1,0)** — gruppen driver øvelsens hovedbevægelse — eller
+   **Medvirkende (0,5)** — gruppen bærer en væsentlig del af arbejdet, men
+   er ikke hvad øvelsen er "for". Ingen andre tal findes, med vilje — et
+   tredje tal ville lade som om modellen ved mere end den gør. Tilføj eller
+   fjern grupper med knapperne ved siden af hver linje.
+3. **Gem.** Rettelsen gælder med det samme, for alle atleter, og er tydeligt
+   mærket **"Sat af Marc"** i redigeringsvinduet — til forskel fra
+   **"Oprindeligt skøn"**, som er det modellen selv kom med (i
+   `src/volume/muskelkort.js`, stadig kildekoden bag standardskønnet).
+   Fortryder du, åbner du samme øvelse igen og trykker **"Fjern rettelse"**
+   — den falder tilbage til det oprindelige skøn (eller til "ukendt", hvis
+   øvelsen aldrig var kortlagt i koden).
 
-Ingen andre tal bruges — det ville lade som om modellen ved mere end den
-gør. Hver linje skal have enten en litteraturkilde (typisk et opslag i
-`entropi-loeftmodel/docs/muskler-litteratur.md`) eller ordet "skoen" plus en
-kort begrundelse. Mangler en øvelse helt, tilføj den samme sted — den
-falder til "ukendt" indtil da, aldrig til et gæt.
+**Hvor det gemmes, og den ærlige grænse ved det.** Ordre 185 måtte ikke røre
+Supabase-skemaet, så rettelserne gemmes i browserens `localStorage` — den
+letteste holdbare måde appen allerede havde, samme mønster som fx din egen
+"min atlet"-genvej. Det betyder: **rettelserne er pr. browser, ikke
+synkroniseret mellem dine enheder** (skriver du en rettelse på telefonen,
+ser du den ikke på computeren, og omvendt), og de påvirker ikke atletens
+egen visning af "planlagt". En rigtig løsning kræver en ny Supabase-tabel —
+noget i stil med
+`muscle_mapping_overrides(exercise_name text primary key, groups jsonb,
+set_by text, set_at timestamptz)` med en RLS-regel der kun lader
+coach-rollen skrive — og en migration, som ikke er lavet her. Indtil da:
+brug samme browser konsekvent, eller vent på den rigtige tabel.
 
 ## Grænsen for denne version
 

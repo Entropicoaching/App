@@ -631,7 +631,9 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     }
   }, [view, athletes])
   // ORDRE 175: program/log/analyse-fanerne deler samme weeks+athleteLogs-data.
-  // Uden vagten nedenfor genhentede et klik MELLEM disse tre faner (samme
+  // ORDRE 185 commit 1: 'oversigt' tilføjet til listen — VolumenKort.jsx har nu
+  // brug for `weeks` (planlagt mod gennemført), ikke kun `athleteLogs`.
+  // Uden vagten nedenfor genhentede et klik MELLEM disse fire faner (samme
   // atlet, ingen skrivning imellem) begge kald hver gang — målt til 2 unødige
   // kald pr. faneskift (se docs/RAPPORT-175.md). Enhver ægte skrivning (tilføj
   // øvelse, omarrangér osv.) kalder allerede fetchWeeks/fetchAthleteLogs
@@ -640,7 +642,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   // profilen lukkes (se effekten nedenfor), så et senere genbesøg altid
   // henter friskt.
   useEffect(() => {
-    if ((activeTab === 'program' || activeTab === 'analyse' || activeTab === 'log') && selectedAthlete?.id) {
+    if ((activeTab === 'program' || activeTab === 'analyse' || activeTab === 'log' || activeTab === 'oversigt') && selectedAthlete?.id) {
       if (weeksLogsLoadedForRef.current === selectedAthlete.id) return
       weeksLogsLoadedForRef.current = selectedAthlete.id
       fetchWeeks(selectedAthlete.id)
@@ -666,9 +668,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       fetchAthletePRs(selectedAthlete.id)
       fetchMeetResults(selectedAthlete.id)
     }
-    // Volumenkortet (ordre 177) bor i 'oversigt' og har brug for de samme
-    // athleteLogs som 'program'/'analyse'/'log' allerede henter separat.
-    if (activeTab === 'oversigt' && selectedAthlete?.id) fetchAthleteLogs(selectedAthlete.id)
+    // Volumenkortet (ordre 177/185) bor i 'oversigt' og deler weeks+athleteLogs
+    // med 'program'/'analyse'/'log' — hentes nu af den guardede effekt ovenfor.
     // Hubben viser dagens parathed i statuslinjen.
     if (activeTab === 'hub' && selectedAthlete?.id) fetchAthleteReadiness(selectedAthlete.id)
   }, [activeTab, selectedAthlete?.id])
@@ -4762,7 +4763,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 )}
               </div>
 
-              <VolumenKort athleteLogs={athleteLogs} />
+              <VolumenKort athleteLogs={athleteLogs} weeks={weeks} />
               </div>
             )}
 

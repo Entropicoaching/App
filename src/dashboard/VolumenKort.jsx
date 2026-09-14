@@ -5,18 +5,37 @@
 // "IBM Plex Mono, mørk baggrund"-stil som resten af Dashboard.jsx (se
 // dashboardShared.js's `s`).
 //
-// Ren visning: al regning sker i src/volume/beregn.js, alt kortlægnings-
-// arbejde i src/volume/muskelkort.js. Denne fil oversætter kun
+// ORDRE 185 (14. sep), commit 1: tilføjer "denne uge: gennemført/planlagt"
+// øverst i kortet — se DenneUgePlanlagtModGennemfoert nedenfor. Kræver nu
+// `weeks` (Dashboard.jsx's fetchWeeks-form) ud over athleteLogs.
+// ORDRE 185, commit 2: tilføjer VolumenGraf — søjler for udviklingen over
+// otte uger, se src/dashboard/VolumenGraf.jsx for selve tegningen.
+// ORDRE 185, commit 3: "Ret kortlægning"-knappen (se KortlaegningRedigering.jsx)
+// — Marcs egne rettelser hentes her og gives videre til beregn.js/planlagt.js,
+// så tallene på kortet afspejler dem med det samme.
+//
+// Ren visning: al regning sker i src/volume/beregn.js + src/volume/planlagt.js,
+// alt kortlægningsarbejde i src/volume/muskelkort.js. Denne fil oversætter kun
 // Dashboard.jsx's egen athleteLogs-form (fetchAthleteLogs' indlejrede
 // exercises-relation) til de flade rækker beregn.js forventer.
+import { useState } from 'react'
 import { beregnVolumenPrUge } from '../volume/beregn.js'
-import { MUSKELGRUPPER } from '../volume/muskelkort.js'
+import { beregnPlanlagtDenneUge } from '../volume/planlagt.js'
+import { MUSKELGRUPPER, slaaOevelseOp } from '../volume/muskelkort.js'
+import { hentRettelser } from '../volume/rettelser.js'
 import { s } from '../dashboardShared'
+import VolumenGraf from './VolumenGraf'
+import KortlaegningRedigering from './KortlaegningRedigering'
 
 // Ordrens egen ramme: "fire til seks uger bagud" — seks valgt som den mest
 // oplysende ende af det spænd, notér-og-fortsæt (ordren beder om at vælge
 // selv, ikke spørge).
 const ANTAL_UGER = 6
+
+// Ordrens egen ramme for udviklingsgrafen: "seks til otte uger bagud" —
+// otte valgt af samme grund som seks blev valgt ovenfor: den mest
+// oplysende ende af spændet.
+const GRAF_UGER = 8
 
 function raekkerFraAthleteLogs(athleteLogs) {
   return (athleteLogs || []).map(log => ({
@@ -41,21 +60,87 @@ function ugeLabel(ugenoegle) {
   return ugenoegle.replace(/^\d{4}-W/, 'U')
 }
 
-export default function VolumenKort({ athleteLogs }) {
-  const uger = beregnVolumenPrUge(raekkerFraAthleteLogs(athleteLogs), { antalUger: ANTAL_UGER })
+// Distinkte øvelsesnavne fra både loggen og programmet, der (med de aktuelle
+// rettelser) stadig falder til "ukendt" — fødes ind i KortlaegningRedigering
+// som den klikbare "kortlæg denne"-liste.
+function ukendteNavneFra(raekker, weeks, rettelser) {
+  const navne = new Set()
+  for (const r of raekker) if (r.oevelseNavn) navne.add(r.oevelseNavn)
+  for (const uge of weeks || []) {
+    for (const sess of uge.sessions || []) {
+      for (const ex of sess.exercises || []) if (ex.name) navne.add(ex.name)
+    }
+  }
+  return [...navne].filter(navn => !slaaOevelseOp(navn, rettelser).kendt)
+}
+
+// Ét tal pr. gruppe fra beregn.js/planlagt.js ("i alt", vægtet) side om side.
+// planlagtUge.ugePlaceret===false betyder programugen for "nu" ikke har en
+// kalenderdato sat (weeks.start_date) — da er "planlagt" ukendt, ikke 0, så
+// den vises som "–", aldrig som et tal der ligner et rigtigt 0.
+function DenneUgePlanlagtModGennemfoert({ gennemfoertUge, planlagtUge }) {
+  const grupperMedData = Object.keys(MUSKELGRUPPER).filter(g =>
+    (gennemfoertUge?.grupper[g]?.ialt || 0) > 0 || (planlagtUge.grupper[g]?.ialt || 0) > 0)
+  if (grupperMedData.length === 0 && !planlagtUge.ugePlaceret) return null
+
+  return (
+    <div style={{ marginBottom: '1.25rem', paddingBottom: '1.25rem', borderBottom: '1px solid rgba(237,234,226,0.07)' }}>
+      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.5rem' }}>
+        Denne uge: gennemført / planlagt
+      </div>
+      {grupperMedData.length === 0 ? (
+        <div style={{ fontSize: '0.78rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen sæt gennemført eller planlagt denne uge endnu.</div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+          {grupperMedData.map(g => {
+            const gennemfoert = gennemfoertUge?.grupper[g]?.ialt || 0
+            const planlagtTal = planlagtUge.ugePlaceret ? (planlagtUge.grupper[g]?.ialt || 0) : null
+            return (
+              <div key={g} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem' }}>
+                <span style={{ color: '#c8b98a' }}>{MUSKELGRUPPER[g]}</span>
+                <span style={{ fontFamily: "'IBM Plex Mono', monospace", color: '#edeae2' }}>
+                  {gennemfoert} / {planlagtTal === null ? '–' : planlagtTal}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+      )}
+      <div style={{ fontSize: '0.56rem', color: '#4a4844', marginTop: '0.6rem', lineHeight: 1.5 }}>
+        {planlagtUge.ugePlaceret
+          ? 'Forskellen kan skyldes at sæt endnu ikke er gennemført, at ugen er ændret undervejs, eller at sæt er sprunget over.'
+          : 'Denne programuge har ikke en kalenderdato endnu (sat via kalender-tidslinjen) — "planlagt" kan derfor ikke vises.'}
+      </div>
+    </div>
+  )
+}
+
+export default function VolumenKort({ athleteLogs, weeks }) {
+  const [rettelser, setRettelser] = useState(() => hentRettelser())
+  const raekker = raekkerFraAthleteLogs(athleteLogs)
+  const uger = beregnVolumenPrUge(raekker, { antalUger: ANTAL_UGER, rettelser })
+  const ugerGraf = beregnVolumenPrUge(raekker, { antalUger: GRAF_UGER, rettelser })
+  const planlagtDenneUge = beregnPlanlagtDenneUge(weeks || [], { rettelser })
+  const ukendteOevelseNavne = ukendteNavneFra(raekker, weeks, rettelser)
 
   // Kun grupper der reelt har haft sæt i vinduet — resten ville kun være
   // rækker af nuller. En gruppe der aldrig optræder her er ikke "0 sæt",
   // den er ikke ramt af noget appen genkender endnu (se docs/VOLUMEN.md).
   const grupperMedData = Object.keys(MUSKELGRUPPER).filter(g => uger.some(u => (u.grupper[g]?.ialt || 0) > 0))
+  const grupperMedDataGraf = Object.keys(MUSKELGRUPPER).filter(g => ugerGraf.some(u => (u.grupper[g]?.ialt || 0) > 0))
   const harUkendte = uger.some(u => u.ukendteSaet > 0)
 
   return (
     <div style={{ ...s.card, marginTop: '1.5rem' }}>
-      <div style={s.cardLabel}>Volumen pr. muskelgruppe</div>
+      <div style={s.cardLabel}>
+        Volumen pr. muskelgruppe
+        <KortlaegningRedigering rettelser={rettelser} ukendteOevelseNavne={ukendteOevelseNavne}
+          onRettelserAendret={() => setRettelser(hentRettelser())} />
+      </div>
       <div style={{ fontSize: '0.72rem', color: '#7a7770', lineHeight: 1.5, marginBottom: '1rem' }}>
         Sæt er ikke belastning. Tallene tæller gennemførte sæt, vægtet efter hvad øvelsen belaster.
       </div>
+      <DenneUgePlanlagtModGennemfoert gennemfoertUge={uger[0]} planlagtUge={planlagtDenneUge} />
       {grupperMedData.length === 0 && !harUkendte ? (
         <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>
           Ingen loggede sæt de seneste {ANTAL_UGER} uger endnu.
@@ -92,6 +177,19 @@ export default function VolumenKort({ athleteLogs }) {
           <div style={{ fontSize: '0.56rem', color: '#4a4844', marginTop: '0.85rem', lineHeight: 1.5 }}>
             Hver celle: direkte sæt / i alt (vægtet efter hvad øvelsen belaster). Nyeste uge til venstre.
           </div>
+          {grupperMedDataGraf.length > 0 && (
+            <div style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(237,234,226,0.07)' }}>
+              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.9rem' }}>
+                Udvikling, seneste {GRAF_UGER} uger
+              </div>
+              <VolumenGraf uger={ugerGraf} grupper={grupperMedDataGraf} />
+              <div style={{ fontSize: '0.56rem', color: '#4a4844', marginTop: '0.9rem', lineHeight: 1.5 }}>
+                Hver række skalerer efter sin egen gruppe — søjlernes højde kan ikke
+                sammenlignes på tværs af grupper, kun uge for uge inden for samme række.
+                Tallet til højre er seneste uges "i alt".
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>

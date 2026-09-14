@@ -232,14 +232,16 @@ const RAA_KORT = {
 }
 
 /** Fold+afkort samme vej som exerciseNames.js, så "Bænkpres - topsæt" og
- * "Baenkpres" rammer samme post som "Bænkpres". */
-function normaliser(navn) {
+ * "Baenkpres" rammer samme post som "Bænkpres". Eksporteret (ordre 185,
+ * commit 3) så src/volume/rettelser.js kan nøgle sine gemte rettelser på
+ * PRÆCIS samme facon — én normaliseringsregel ét sted, ikke to. */
+export function normaliserOevelsesnavn(navn) {
   return foldNavn(grundnavn(navn))
 }
 
 const KORTLÆGNING = new Map()
 for (const [navn, data] of Object.entries(RAA_KORT)) {
-  KORTLÆGNING.set(normaliser(navn), data.grupper)
+  KORTLÆGNING.set(normaliserOevelsesnavn(navn), data.grupper)
 }
 
 /**
@@ -247,13 +249,24 @@ for (const [navn, data] of Object.entries(RAA_KORT)) {
  * modellen ikke kender — ALDRIG et gæt. Kaldsteder (beregn.js) skal
  * behandle kendt:false som "ukendt", aldrig som "ingen belastning".
  *
+ * ORDRE 185, commit 3: `rettelser` (valgfri) er en Map<normaliseretNavn, ...>
+ * fra src/volume/rettelser.js's hentRettelser() — Marcs egne rettelser slås
+ * op FØR den indbyggede kortlægning, så en rettelse altid vinder over det
+ * oprindelige skøn, uanset om øvelsen i forvejen var kendt. `satAfMarc` i
+ * svaret fortæller kaldstedet hvilken af de to kilder tallet kom fra.
+ *
  * @param {string} exerciseNavn
- * @returns {{ kendt: boolean, grupper: Array<{ gruppe: string, andel: number, kilde: string }> }}
+ * @param {Map<string, { grupper: Array<{ gruppe: string, andel: number }> }>} [rettelser]
+ * @returns {{ kendt: boolean, grupper: Array<{ gruppe: string, andel: number, kilde?: string }>, satAfMarc: boolean }}
  */
-export function slaaOevelseOp(exerciseNavn) {
-  const grupper = KORTLÆGNING.get(normaliser(exerciseNavn))
-  if (!grupper) return { kendt: false, grupper: [] }
-  return { kendt: true, grupper }
+export function slaaOevelseOp(exerciseNavn, rettelser) {
+  const navn = normaliserOevelsesnavn(exerciseNavn)
+  const rettelse = rettelser?.get(navn)
+  if (rettelse) return { kendt: true, grupper: rettelse.grupper, satAfMarc: true }
+
+  const grupper = KORTLÆGNING.get(navn)
+  if (!grupper) return { kendt: false, grupper: [], satAfMarc: false }
+  return { kendt: true, grupper, satAfMarc: false }
 }
 
 /** Alle øvelsesnavne modellen kender, til tests og evt. en admin-liste. */
