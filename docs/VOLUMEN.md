@@ -118,6 +118,24 @@ set_by text, set_at timestamptz)` med en RLS-regel der kun lader
 coach-rollen skrive — og en migration, som ikke er lavet her. Indtil da:
 brug samme browser konsekvent, eller vent på den rigtige tabel.
 
+## Atletens egen visning — findes ikke (ordre 209, commit 4)
+
+Ordre 209's commit 4 skulle lade atletens egen visning af volumen læse
+coachens rettelser, kun læsning — "Marcs rettelse skal gælde begge sider,
+ellers taler coach og atlet om to forskellige tal" (ordrens egen ordlyd).
+Den visning **findes ikke i appen i dag**: `src/volume/muskelkort.js`,
+`beregn.js`, `planlagt.js` og `rettelser.js` bruges udelukkende fra
+`src/dashboard/` (coachens side) — ingen import fra `AthleteView.jsx` eller
+noget andet atlet-facing view. Der er derfor intet at koble op på i denne
+ordre; noteret her i stedet for at bygge en visning ingen har bedt om endnu.
+
+**Klar til når den bygges.** `exercise_muscle_overrides` (commit 1) er scopet
+til coach-only RLS — kun `coach_id = auth.uid()` kan læse/skrive sine egne
+rækker. En fremtidig atlet-visning kræver enten en ny, snævert scopet
+SELECT-policy (atleten ser kun rækker fra sin egen coach, via
+`athletes.coach_id`) eller en SECURITY DEFINER-funktion — ingen af delene
+tilføjet her, for ikke at åbne en læsevej ingen kode bruger.
+
 ## "Stå på skuldre" — free-exercise-db (ordre 192)
 
 Fra ordre 192 kender kortet et tredje lag ud over "din egen rettelse" og
