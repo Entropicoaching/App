@@ -3,8 +3,10 @@
 <head><meta charset="utf-8"><title>pose-proeve harness</title></head>
 <body>
 <video id="v" muted playsinline style="display:none"></video>
+<canvas id="c" style="display:none"></canvas>
 <script type="module">
 import { FilesetResolver, PoseLandmarker } from '/node_modules/@mediapipe/tasks-vision/vision_bundle.mjs'
+import { findPlate } from './skive.mjs'
 
 // ORDRE 188, commit 1: kører PoseLandmarker (IMAGE-mode, ét billede ad
 // gangen, num_poses=1 — SAMME kørselsform som tools/videomaal/maal.py, ikke
@@ -28,7 +30,15 @@ import { FilesetResolver, PoseLandmarker } from '/node_modules/@mediapipe/tasks-
 // men mere robust"-afvejning HANDOVER-VIDEOCOACH.md selv beskriver — kun at
 // ordre 188 vælger den robuste vej, fordi denne prøve IKKE er
 // realtidsproduktet.
-window.runPoseExtraction = async function runPoseExtraction({ videoUrl, modelUrl, frameCount, fps }) {
+// ORDRE 218, commit 1: skivedetektion (skive.mjs's findPlate) kører i
+// SAMME seek-loop som PoseLandmarker, på den video-frame der allerede er
+// præsenteret — undgår at sende rå pixelbilleder tilbage til Node (117
+// billeder × 1440×1920 ville være ustyrligt). Kun en beskeden beskæring om
+// håndledspunktet (samme "stå på skuldre"-proxy som findPlate()s eget
+// startgæt) hentes ud af canvas'en pr. billede.
+const CROP_MARGIN_PX = 600
+
+window.runPoseExtraction = async function runPoseExtraction({ videoUrl, modelUrl, frameCount, fps, skiveRadii, skipSkive }) {
   const vision = await FilesetResolver.forVisionTasks('/node_modules/@mediapipe/tasks-vision/wasm')
   const landmarker = await PoseLandmarker.createFromOptions(vision, {
     baseOptions: { modelAssetPath: modelUrl, delegate: 'CPU' },
@@ -66,8 +76,71 @@ window.runPoseExtraction = async function runPoseExtraction({ videoUrl, modelUrl
     })
   }
 
+  const canvas = document.getElementById('c')
+  canvas.width = width
+  canvas.height = height
+  const ctx = canvas.getContext('2d', { willReadFrequently: true })
+
+  // BlazePose/MediaPipe Pose-indeks for håndled (samme LM.wrist som
+  // matematik.mjs) — dupliceret her frem for importeret, fordi denne fil
+  // ikke ellers har brug for matematik.mjs, og to tal ikke er værd en
+  // ekstra modul-afhængighed i selve harnesset.
+  const WRIST_IDX = [15, 16]
+
+  function wristSeedPx(lm) {
+    if (!lm) return null
+    const cands = WRIST_IDX.map(i => lm[i]).filter(Boolean)
+    if (!cands.length) return null
+    const best = cands.reduce((a, b) => (b.visibility > a.visibility ? b : a))
+    return { x: best.x * width, y: best.y * height }
+  }
+
+  function cropReader(seed) {
+    const x0 = Math.max(0, Math.round(seed.x - CROP_MARGIN_PX))
+    const y0 = Math.max(0, Math.round(seed.y - CROP_MARGIN_PX))
+    const x1 = Math.min(width, Math.round(seed.x + CROP_MARGIN_PX))
+    const y1 = Math.min(height, Math.round(seed.y + CROP_MARGIN_PX))
+    const w = x1 - x0, h = y1 - y0
+    if (w < 20 || h < 20) return null
+    const data = ctx.getImageData(x0, y0, w, h).data
+    return (x, y) => {
+      const xi = Math.max(x0, Math.min(x1 - 1, Math.round(x))) - x0
+      const yi = Math.max(y0, Math.min(y1 - 1, Math.round(y))) - y0
+      const i = (yi * w + xi) * 4
+      return data[i] * .3 + data[i + 1] * .59 + data[i + 2] * .11
+    }
+  }
+
+  // ORDRE 218: "Kontinuitetsregel" (skive.mjs's searchNear(), videocoach.html
+  // tracker-invariant #2, "spring > R*0.6 -> gensoeg naert - ingen coast")
+  // BLEV FORSØGT som et lastGood-gate her — AFVIST: en forkert tidlig
+  // forankring (et stillestående cirkulært objekt i baggrunden, ikke
+  // skiven) opfyldte sin EGEN kontinuitet hele vejen igennem og forhindrede
+  // korrektion tilbage til skiven, som ellers findes korrekt af den brede,
+  // uafhængige søgning i de senere billeder (verificeret: median
+  // yFodlaengder-afvigelse mod Drishtis facit gik fra 2,36 til 2,64 fl,
+  // og indenForUsikkerhedsbaand fra 5/28 til 0/28 med gaten slået til — se
+  // docs/RAPPORT-218.md). findPlate() alene (uafhængig pr. billede, samme
+  // "stå på skuldre"-uafhængighed som Drishtis egen stoej.py) præsterede
+  // bedre og er derfor det der bruges. searchNear() efterlades i skive.mjs,
+  // ubrugt her, til evt. et RIGTIGT lost-genkend-mønster (kræver at vide
+  // HVORNÅR forankringen er forkert, ikke kun at den er kontinuert med
+  // sig selv) — ikke bygget her, uden for denne prøves scope.
+  function detectPlate(seed) {
+    // ORDRE 218, commit 4: frontsquatten har intet skive/stang-felt
+    // (squat_bane.py's egen begrundelse, matematik.mjs's
+    // beregnKontraktPunktSquat()) — skiveRadii=null OG skipSkive=true
+    // slår hele denne (irrelevante og dyre) søgning fra for det klip.
+    if (skipSkive) return null
+    if (!seed) return null
+    const getGray = cropReader(seed)
+    if (!getGray) return null
+    return findPlate(getGray, seed, skiveRadii ? { radii: skiveRadii } : undefined)
+  }
+
   const t0 = performance.now()
   const frames = []
+  let skiveMs = 0
   for (let i = 0; i < frameCount; i++) {
     // +0,5 billede: sigter mod MIDTEN af billedets tidsrum i stedet for dets
     // præcise startkant — undgår at en flydende-komma-afrunding lander
@@ -79,13 +152,19 @@ window.runPoseExtraction = async function runPoseExtraction({ videoUrl, modelUrl
     const lm = (result.landmarks && result.landmarks[0]) ? result.landmarks[0].map(p => ({
       x: p.x, y: p.y, z: p.z, visibility: p.visibility,
     })) : null
-    frames.push({ index: i, landmarks: lm })
     result.close?.()
+
+    const tSkive0 = performance.now()
+    ctx.drawImage(video, 0, 0, width, height)
+    const skiveRaw = detectPlate(wristSeedPx(lm))
+    skiveMs += performance.now() - tSkive0
+
+    frames.push({ index: i, landmarks: lm, skive: skiveRaw ? { x: skiveRaw.x, y: skiveRaw.y, r: skiveRaw.r, npair: skiveRaw.npair, spread: skiveRaw.spread } : null })
   }
   const t1 = performance.now()
 
   landmarker.close()
-  return { width, height, duration: video.duration, frames, extractionMs: t1 - t0 }
+  return { width, height, duration: video.duration, frames, extractionMs: t1 - t0, skiveMs }
 }
 </script>
 </body>

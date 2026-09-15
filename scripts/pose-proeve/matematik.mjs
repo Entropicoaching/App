@@ -142,15 +142,21 @@ export function robustFloorReference(measuredFrames) {
 
 /** Ét kontrakt-punkt (bane.py's hovedløkke, ét billede) — vinkler + stang,
  * i formatet docs/MAALING-KONTRAKT.md beskriver (uden `usikkerhed`, se filens
- * egen toptekst for hvorfor). */
-export function beregnKontraktPunkt(idx, tidspunktMs, measured, ref) {
+ * egen toptekst for hvorfor).
+ *
+ * ORDRE 218, commit 1: `plate` (skive.mjs's findPlate()-resultat for dette
+ * billede, {x,y,r,npair,spread} i samme pixel-koordinater som `pts`) bruges
+ * for stangens position når den findes — håndleddet (`pts.wrist`) er nu
+ * kun FALLBACK for de billeder hvor ingen skive kunne valideres, ikke
+ * standardmetoden. `stang_kilde` siger hvilken der blev brugt, pr. punkt. */
+export function beregnKontraktPunkt(idx, tidspunktMs, measured, ref, plate = null) {
   const { floor_y_px: floorY, midfoot_x_px: midfootXRef, foot_length_px: footLen, forward_sign: forwardSign } = ref
   const pts = measured.points_px
   const ankelGrader = signedLeanFromVertical(pts.ankle, pts.knee, forwardSign)
   const torsoGrader = signedLeanFromVertical(pts.hip, pts.shoulder, forwardSign)
   const knaeGrader = angleAt(pts.knee, pts.ankle, pts.hip)
   const hofteGrader = angleAt(pts.hip, pts.knee, pts.shoulder)
-  const [barX, barY] = pts.wrist
+  const [barX, barY] = plate ? [plate.x, plate.y] : pts.wrist
   const xFodlaengder = (forwardSign * (barX - midfootXRef)) / footLen
   const yFodlaengder = (floorY - barY) / footLen
   const round = (v, d) => (v === null || v === undefined ? null : Math.round(v * 10 ** d) / 10 ** d)
@@ -167,6 +173,41 @@ export function beregnKontraktPunkt(idx, tidspunktMs, measured, ref) {
     stang: {
       xFodlaengder: round(xFodlaengder, 4),
       yFodlaengder: round(yFodlaengder, 4),
+    },
+    stang_kilde: plate
+      ? `skive (findPlate/edgeScan, npair=${plate.npair}, radius=${Math.round(plate.r)}px) — se scripts/pose-proeve/skive.mjs`
+      : 'haandled (fallback — ingen skive valideret for dette billede)',
+  }
+}
+
+/** ORDRE 218, commit 4: frontsquattens kontrakt-punkt — samme fire vinkler
+ * som beregnKontraktPunkt(), men `hofte.hoejdeFodlaengder` i stedet for et
+ * `stang`-felt (INTET stang-felt her — samme begrundelse som
+ * squat_bane.py's egen toptekst: frontsquattens stangposition kan ikke
+ * udtrykkes af modellen, det er ikke en forglemmelse). Ingen skive
+ * involveret. */
+export function beregnKontraktPunktSquat(idx, tidspunktMs, measured, ref) {
+  const { floor_y_px: floorY, foot_length_px: footLen, forward_sign: forwardSign } = ref
+  const pts = measured.points_px
+  const ankelGrader = signedLeanFromVertical(pts.ankle, pts.knee, forwardSign)
+  const torsoGrader = signedLeanFromVertical(pts.hip, pts.shoulder, forwardSign)
+  const knaeGrader = angleAt(pts.knee, pts.ankle, pts.hip)
+  const hofteGrader = angleAt(pts.hip, pts.knee, pts.shoulder)
+  const hipY = pts.hip[1]
+  const hoejdeFodlaengder = (floorY - hipY) / footLen
+  const round = (v, d) => (v === null || v === undefined ? null : Math.round(v * 10 ** d) / 10 ** d)
+  return {
+    øvelse: 'frontsquat',
+    billedeIndex: idx,
+    tidspunktMs: round(tidspunktMs, 1),
+    vinkler: {
+      ankelGrader: round(ankelGrader, 2),
+      knaeGrader: round(knaeGrader, 2),
+      hofteGrader: round(hofteGrader, 2),
+      torsoGrader: round(torsoGrader, 2),
+    },
+    hofte: {
+      hoejdeFodlaengder: round(hoejdeFodlaengder, 4),
     },
   }
 }

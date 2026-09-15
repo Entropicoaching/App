@@ -1,0 +1,2023 @@
+{
+  "kilde": "app",
+  "pKilde": "maalt",
+  "antagelser": {
+    "hoejde_cm": 183,
+    "bodyMass_kg": 120,
+    "barMass_kg": 270,
+    "tibiaAngleDeg_oensket_ved_start": 18,
+    "segmentlaengder_cm": {
+      "femur": 44.835,
+      "tibia": 45.018,
+      "torso": 52.70399999999999,
+      "upperArm": 34.038,
+      "underArm": 26.718,
+      "footLength": 27.816,
+      "shoulderWidth": 47.397
+    }
+  },
+  "model_start": {
+    "barHeight": 22.5,
+    "tibiaAngleDeg": 18,
+    "feasible": false,
+    "reason": "Torsohældningen 75.1° er uden for menneskeligt område [0, 75]°."
+  },
+  "model_lockout": {
+    "barHeight": 85.80448451806382,
+    "tibiaAngleDeg": 7.400577142195404,
+    "feasible": true
+  },
+  "fremdriftskurve": "tofaset (modellens standard i dag) — se shinReleaseProgress, SHIN_HOLD_FRACTION=0.55, SHIN_RELEASE_SHARPNESS=0.2",
+  "felter_tilpasset": [
+    "ankelGrader"
+  ],
+  "felter_forudsagt": [
+    "knaeGrader",
+    "hofteGrader",
+    "torsoGrader",
+    "xFodlaengder",
+    "yFodlaengder"
+  ],
+  "rows": [
+    {
+      "billedeIndex": 21,
+      "tidspunktMs": 0,
+      "p": 0,
+      "paalidelig": null,
+      "modelFeasible": false,
+      "modelReason": "Torsohældningen 75.1° er uden for menneskeligt område [0, 75]°."
+    },
+    {
+      "billedeIndex": 22,
+      "tidspunktMs": 33.3,
+      "p": 0.018328530259365962,
+      "paalidelig": null,
+      "modelFeasible": true,
+      "felter": {
+        "ankelGrader": {
+          "tilpasset": true,
+          "enhed": "grader",
+          "maalt": 47.26,
+          "model": 1.9004029553266406,
+          "forskel": 45.35959704467336,
+          "usikkerhed": 13.13,
+          "indenFor": false
+        },
+        "knaeGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 78.86,
+          "model": 115.69656516764017,
+          "forskel": -36.836565167640174,
+          "usikkerhed": 20.19,
+          "indenFor": false
+        },
+        "hofteGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 76.33,
+          "model": 43.311702272679604,
+          "forskel": 33.018297727320395,
+          "usikkerhed": 4.33,
+          "indenFor": false
+        },
+        "torsoGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 49.79,
+          "model": 74.28526585028725,
+          "forskel": -24.495265850287247,
+          "usikkerhed": 5.37,
+          "indenFor": false
+        },
+        "xFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 0.2242,
+          "model": 0.18937360704478465,
+          "forskel": 0.03482639295521536,
+          "usikkerhed": 0.1744,
+          "indenFor": true
+        },
+        "yFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 2.7688,
+          "model": 0.850599588727533,
+          "forskel": 1.918200411272467,
+          "usikkerhed": 0.179,
+          "indenFor": false
+        }
+      }
+    },
+    {
+      "billedeIndex": 23,
+      "tidspunktMs": 66.7,
+      "p": 0.060979827089337184,
+      "paalidelig": null,
+      "modelFeasible": true,
+      "felter": {
+        "ankelGrader": {
+          "tilpasset": true,
+          "enhed": "grader",
+          "maalt": 42.66,
+          "model": 1.8204862356735845,
+          "forskel": 40.83951376432641,
+          "usikkerhed": 6.16,
+          "indenFor": false
+        },
+        "knaeGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 86.57,
+          "model": 117.17761960436353,
+          "forskel": -30.607619604363535,
+          "usikkerhed": 9.57,
+          "indenFor": false
+        },
+        "hofteGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 79.27,
+          "model": 46.679422565554255,
+          "forskel": 32.59057743444574,
+          "usikkerhed": 5.68,
+          "indenFor": false
+        },
+        "torsoGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 49.95,
+          "model": 72.31868327448286,
+          "forskel": -22.368683274482862,
+          "usikkerhed": 3.91,
+          "indenFor": false
+        },
+        "xFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 0.2214,
+          "model": 0.18711740748903435,
+          "forskel": 0.03428259251096566,
+          "usikkerhed": 0.163,
+          "indenFor": true
+        },
+        "yFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 2.7208,
+          "model": 0.9476666853570238,
+          "forskel": 1.7731333146429762,
+          "usikkerhed": 0.2221,
+          "indenFor": false
+        }
+      }
+    },
+    {
+      "billedeIndex": 24,
+      "tidspunktMs": 100,
+      "p": 0.0975792507204611,
+      "paalidelig": null,
+      "modelFeasible": true,
+      "felter": {
+        "ankelGrader": {
+          "tilpasset": true,
+          "enhed": "grader",
+          "maalt": 41.09,
+          "model": 1.7454547431446912,
+          "forskel": 39.34454525685531,
+          "usikkerhed": 21.27,
+          "indenFor": false
+        },
+        "knaeGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 88.43,
+          "model": 118.51409405228382,
+          "forskel": -30.084094052283817,
+          "usikkerhed": 19,
+          "indenFor": false
+        },
+        "hofteGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 79.96,
+          "model": 49.61140251004952,
+          "forskel": 30.34859748995047,
+          "usikkerhed": 3.39,
+          "indenFor": false
+        },
+        "torsoGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 49.57,
+          "model": 70.64814628537898,
+          "forskel": -21.078146285378985,
+          "usikkerhed": 5.09,
+          "indenFor": false
+        },
+        "xFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 0.2493,
+          "model": 0.18499903597595643,
+          "forskel": 0.06430096402404356,
+          "usikkerhed": 0.0473,
+          "indenFor": false
+        },
+        "yFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 2.7896,
+          "model": 1.0309607480053498,
+          "forskel": 1.7586392519946503,
+          "usikkerhed": 0.2686,
+          "indenFor": false
+        }
+      }
+    },
+    {
+      "billedeIndex": 25,
+      "tidspunktMs": 133.3,
+      "p": 0.12806916426512965,
+      "paalidelig": null,
+      "modelFeasible": true,
+      "felter": {
+        "ankelGrader": {
+          "tilpasset": true,
+          "enhed": "grader",
+          "maalt": 62.08,
+          "model": 1.6783412325760452,
+          "forskel": 60.40165876742395,
+          "usikkerhed": 25.63,
+          "indenFor": false
+        },
+        "knaeGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 69.42,
+          "model": 119.67051063959015,
+          "forskel": -50.250510639590146,
+          "usikkerhed": 25.73,
+          "indenFor": false
+        },
+        "hofteGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 82.66,
+          "model": 52.08527979279484,
+          "forskel": 30.574720207205154,
+          "usikkerhed": 4.88,
+          "indenFor": false
+        },
+        "torsoGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 48.84,
+          "model": 69.26357207937133,
+          "forskel": -20.423572079371326,
+          "usikkerhed": 5.39,
+          "indenFor": false
+        },
+        "xFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 0.2688,
+          "model": 0.18310414189160207,
+          "forskel": 0.08569585810839792,
+          "usikkerhed": 0.0925,
+          "indenFor": true
+        },
+        "yFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 2.7462,
+          "model": 1.1003506049203244,
+          "forskel": 1.6458493950796755,
+          "usikkerhed": 0.2155,
+          "indenFor": false
+        }
+      }
+    },
+    {
+      "billedeIndex": 26,
+      "tidspunktMs": 166.7,
+      "p": 0.1890489913544669,
+      "paalidelig": null,
+      "modelFeasible": true,
+      "felter": {
+        "ankelGrader": {
+          "tilpasset": true,
+          "enhed": "grader",
+          "maalt": 36.45,
+          "model": 1.531232260518081,
+          "forskel": 34.91876773948192,
+          "usikkerhed": 51.53,
+          "indenFor": true
+        },
+        "knaeGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 95.16,
+          "model": 122.09438610819572,
+          "forskel": -26.934386108195724,
+          "usikkerhed": 54.71,
+          "indenFor": true
+        },
+        "hofteGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 81.53,
+          "model": 57.12509441551809,
+          "forskel": 24.40490558448191,
+          "usikkerhed": 7.08,
+          "indenFor": false
+        },
+        "torsoGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 50.07,
+          "model": 66.5005239531957,
+          "forskel": -16.430523953195696,
+          "usikkerhed": 4.88,
+          "indenFor": false
+        },
+        "xFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 0.2128,
+          "model": 0.17895041866135566,
+          "forskel": 0.033849581338644325,
+          "usikkerhed": 0.1169,
+          "indenFor": true
+        },
+        "yFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 2.844,
+          "model": 1.2391303187502234,
+          "forskel": 1.6048696812497765,
+          "usikkerhed": 0.3078,
+          "indenFor": false
+        }
+      }
+    },
+    {
+      "billedeIndex": 27,
+      "tidspunktMs": 200,
+      "p": 0.23780979827089344,
+      "paalidelig": null,
+      "modelFeasible": true,
+      "felter": {
+        "ankelGrader": {
+          "tilpasset": true,
+          "enhed": "grader",
+          "maalt": 10.55,
+          "model": 1.4007633057814388,
+          "forskel": 9.149236694218562,
+          "usikkerhed": 34.2,
+          "indenFor": true
+        },
+        "knaeGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 124.14,
+          "model": 124.1358074068939,
+          "forskel": 0.00419259310609732,
+          "usikkerhed": 31.35,
+          "indenFor": true
+        },
+        "hofteGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 86.71,
+          "model": 61.25190750848995,
+          "forskel": 25.458092491510044,
+          "usikkerhed": 7.19,
+          "indenFor": false
+        },
+        "torsoGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 47.98,
+          "model": 64.28466320418539,
+          "forskel": -16.304663204185395,
+          "usikkerhed": 4.61,
+          "indenFor": false
+        },
+        "xFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 0.3296,
+          "model": 0.17526629837895627,
+          "forskel": 0.15433370162104373,
+          "usikkerhed": 0.1647,
+          "indenFor": true
+        },
+        "yFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 2.9356,
+          "model": 1.350101621113127,
+          "forskel": 1.585498378886873,
+          "usikkerhed": 0.2366,
+          "indenFor": false
+        }
+      }
+    },
+    {
+      "billedeIndex": 28,
+      "tidspunktMs": 233.3,
+      "p": 0.268299711815562,
+      "paalidelig": null,
+      "modelFeasible": true,
+      "felter": {
+        "ankelGrader": {
+          "tilpasset": true,
+          "enhed": "grader",
+          "maalt": 44.76,
+          "model": 1.3131063080790426,
+          "forskel": 43.446893691920955,
+          "usikkerhed": 34.2,
+          "indenFor": false
+        },
+        "knaeGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 92.79,
+          "model": 125.45866203087968,
+          "forskel": -32.66866203087967,
+          "usikkerhed": 38.54,
+          "indenFor": true
+        },
+        "hofteGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 88.72,
+          "model": 63.880729168343215,
+          "forskel": 24.839270831656783,
+          "usikkerhed": 6.5,
+          "indenFor": false
+        },
+        "torsoGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 48.82,
+          "model": 62.89103917061553,
+          "forskel": -14.071039170615528,
+          "usikkerhed": 2.7,
+          "indenFor": false
+        },
+        "xFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 0.2363,
+          "model": 0.1727909653859647,
+          "forskel": 0.06350903461403531,
+          "usikkerhed": 0.0933,
+          "indenFor": true
+        },
+        "yFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 2.9227,
+          "model": 1.4194914780280457,
+          "forskel": 1.5032085219719542,
+          "usikkerhed": 0.1649,
+          "indenFor": false
+        }
+      }
+    },
+    {
+      "billedeIndex": 29,
+      "tidspunktMs": 266.7,
+      "p": 0.34149855907780985,
+      "paalidelig": null,
+      "modelFeasible": true,
+      "felter": {
+        "ankelGrader": {
+          "tilpasset": true,
+          "enhed": "grader",
+          "maalt": 31.69,
+          "model": 1.0823437658545316,
+          "forskel": 30.60765623414547,
+          "usikkerhed": 24.18,
+          "indenFor": false
+        },
+        "knaeGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 99,
+          "model": 128.78391720866432,
+          "forskel": -29.78391720866432,
+          "usikkerhed": 29.17,
+          "indenFor": false
+        },
+        "hofteGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 82.23,
+          "model": 70.36310033397825,
+          "forskel": 11.866899666021752,
+          "usikkerhed": 6.5,
+          "indenFor": false
+        },
+        "torsoGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 48.46,
+          "model": 59.503160640540585,
+          "forskel": -11.043160640540584,
+          "usikkerhed": 4.9,
+          "indenFor": false
+        },
+        "xFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 0.2398,
+          "model": 0.16627409609463933,
+          "forskel": 0.07352590390536068,
+          "usikkerhed": 0.0884,
+          "indenFor": true
+        },
+        "yFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 3.0233,
+          "model": 1.586079603324834,
+          "forskel": 1.4372203966751658,
+          "usikkerhed": 0.2618,
+          "indenFor": false
+        }
+      }
+    },
+    {
+      "billedeIndex": 30,
+      "tidspunktMs": 300,
+      "p": 0.4146397694524496,
+      "paalidelig": null,
+      "modelFeasible": true,
+      "felter": {
+        "ankelGrader": {
+          "tilpasset": true,
+          "enhed": "grader",
+          "maalt": 50.9,
+          "model": 18,
+          "forskel": 32.9,
+          "usikkerhed": 19.21,
+          "indenFor": false
+        },
+        "knaeGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 76.44,
+          "model": 102.20273582556925,
+          "forskel": -25.76273582556925,
+          "usikkerhed": 22.79,
+          "indenFor": false
+        },
+        "hofteGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 82.64,
+          "model": 79.17033577109567,
+          "forskel": 3.4696642289043353,
+          "usikkerhed": 10.43,
+          "indenFor": true
+        },
+        "torsoGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 44.7,
+          "model": 41.03240005447359,
+          "forskel": 3.667599945526412,
+          "usikkerhed": 7.06,
+          "indenFor": true
+        },
+        "xFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 0.1955,
+          "model": 0.09119879653701644,
+          "forskel": 0.10430120346298356,
+          "usikkerhed": 0.0501,
+          "indenFor": false
+        },
+        "yFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 3.0388,
+          "model": 1.7525365568692968,
+          "forskel": 1.2862634431307034,
+          "usikkerhed": 0.1236,
+          "indenFor": false
+        }
+      }
+    },
+    {
+      "billedeIndex": 31,
+      "tidspunktMs": 333.3,
+      "p": 0.46951008645533143,
+      "paalidelig": null,
+      "modelFeasible": true,
+      "felter": {
+        "ankelGrader": {
+          "tilpasset": true,
+          "enhed": "grader",
+          "maalt": 49.62,
+          "model": 18,
+          "forskel": 31.619999999999997,
+          "usikkerhed": 25.93,
+          "indenFor": false
+        },
+        "knaeGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 85.17,
+          "model": 105.4776936795079,
+          "forskel": -20.307693679507892,
+          "usikkerhed": 47.23,
+          "indenFor": true
+        },
+        "hofteGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 92.62,
+          "model": 84.64157898581608,
+          "forskel": 7.9784210141839225,
+          "usikkerhed": 33.96,
+          "indenFor": true
+        },
+        "torsoGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 42.17,
+          "model": 38.83611469369181,
+          "forskel": 3.33388530630819,
+          "usikkerhed": 12.66,
+          "indenFor": true
+        },
+        "xFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 0.2455,
+          "model": 0.08410826747385117,
+          "forskel": 0.16139173252614883,
+          "usikkerhed": 0.1305,
+          "indenFor": false
+        },
+        "yFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 3.0573,
+          "model": 1.8774120649656816,
+          "forskel": 1.1798879350343185,
+          "usikkerhed": 0.2142,
+          "indenFor": false
+        }
+      }
+    },
+    {
+      "billedeIndex": 32,
+      "tidspunktMs": 366.7,
+      "p": 0.518328530259366,
+      "paalidelig": null,
+      "modelFeasible": true,
+      "felter": {
+        "ankelGrader": {
+          "tilpasset": true,
+          "enhed": "grader",
+          "maalt": 24.97,
+          "model": 18,
+          "forskel": 6.969999999999999,
+          "usikkerhed": 30.74,
+          "indenFor": true
+        },
+        "knaeGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 123.67,
+          "model": 108.45054763635974,
+          "forskel": 15.219452363640258,
+          "usikkerhed": 40.47,
+          "indenFor": true
+        },
+        "hofteGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 116.6,
+          "model": 89.71567481172862,
+          "forskel": 26.884325188271376,
+          "usikkerhed": 23.97,
+          "indenFor": false
+        },
+        "torsoGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 32.04,
+          "model": 36.73487282463112,
+          "forskel": -4.694872824631119,
+          "usikkerhed": 12.02,
+          "indenFor": true
+        },
+        "xFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 0.1836,
+          "model": 0.07711638500768266,
+          "forskel": 0.10648361499231736,
+          "usikkerhed": 0.1451,
+          "indenFor": true
+        },
+        "yFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 3.1174,
+          "model": 1.9885145390808687,
+          "forskel": 1.1288854609191312,
+          "usikkerhed": 0.282,
+          "indenFor": false
+        }
+      }
+    },
+    {
+      "billedeIndex": 33,
+      "tidspunktMs": 400,
+      "p": 0.5793083573487031,
+      "paalidelig": null,
+      "modelFeasible": true,
+      "felter": {
+        "ankelGrader": {
+          "tilpasset": true,
+          "enhed": "grader",
+          "maalt": 18.88,
+          "model": 11.453112596580624,
+          "forskel": 7.426887403419375,
+          "usikkerhed": 9.24,
+          "indenFor": true
+        },
+        "knaeGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 121.26,
+          "model": 121.91347607605944,
+          "forskel": -0.6534760760594338,
+          "usikkerhed": 5.39,
+          "indenFor": true
+        },
+        "hofteGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 109.99,
+          "model": 93.82298737958588,
+          "forskel": 16.167012620414113,
+          "usikkerhed": 7.21,
+          "indenFor": false
+        },
+        "torsoGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 30.15,
+          "model": 39.54360129305418,
+          "forskel": -9.393601293054182,
+          "usikkerhed": 4.28,
+          "indenFor": false
+        },
+        "xFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 0.2075,
+          "model": 0.09615447518324066,
+          "forskel": 0.11134552481675933,
+          "usikkerhed": 0.0995,
+          "indenFor": false
+        },
+        "yFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 3.1703,
+          "model": 2.127294252910783,
+          "forskel": 1.0430057470892171,
+          "usikkerhed": 0.2461,
+          "indenFor": false
+        }
+      }
+    },
+    {
+      "billedeIndex": 34,
+      "tidspunktMs": 433.3,
+      "p": 0.6585590778097983,
+      "paalidelig": null,
+      "modelFeasible": true,
+      "felter": {
+        "ankelGrader": {
+          "tilpasset": true,
+          "enhed": "grader",
+          "maalt": 15.74,
+          "model": 9.027349601919553,
+          "forskel": 6.712650398080447,
+          "usikkerhed": 6.77,
+          "indenFor": true
+        },
+        "knaeGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 126.65,
+          "model": 130.48566110094004,
+          "forskel": -3.8356611009400297,
+          "usikkerhed": 11.65,
+          "indenFor": true
+        },
+        "hofteGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 109.39,
+          "model": 102.36183806493001,
+          "forskel": 7.028161935069988,
+          "usikkerhed": 9.17,
+          "indenFor": true
+        },
+        "torsoGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 33,
+          "model": 37.151172637929584,
+          "forskel": -4.151172637929584,
+          "usikkerhed": 5.71,
+          "indenFor": true
+        },
+        "xFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 0.2798,
+          "model": 0.09192745964649542,
+          "forskel": 0.1878725403535046,
+          "usikkerhed": 0.1878,
+          "indenFor": false
+        },
+        "yFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 3.1765,
+          "model": 2.307655412188689,
+          "forskel": 0.8688445878113109,
+          "usikkerhed": 0.2896,
+          "indenFor": false
+        }
+      }
+    },
+    {
+      "billedeIndex": 35,
+      "tidspunktMs": 466.7,
+      "p": 0.7134293948126802,
+      "paalidelig": null,
+      "modelFeasible": true,
+      "felter": {
+        "ankelGrader": {
+          "tilpasset": true,
+          "enhed": "grader",
+          "maalt": 13.02,
+          "model": 8.339105574983543,
+          "forskel": 4.680894425016456,
+          "usikkerhed": 15.55,
+          "indenFor": true
+        },
+        "knaeGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 132.82,
+          "model": 135.06029610392815,
+          "forskel": -2.2402961039281593,
+          "usikkerhed": 26.07,
+          "indenFor": true
+        },
+        "hofteGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 118.55,
+          "model": 109.03393601312361,
+          "forskel": 9.51606398687639,
+          "usikkerhed": 22.98,
+          "indenFor": true
+        },
+        "torsoGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 27.29,
+          "model": 34.36546566578807,
+          "forskel": -7.075465665788073,
+          "usikkerhed": 8.57,
+          "indenFor": true
+        },
+        "xFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 0.3673,
+          "model": 0.08345686342508554,
+          "forskel": 0.28384313657491445,
+          "usikkerhed": 0.2758,
+          "indenFor": false
+        },
+        "yFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 3.1148,
+          "model": 2.4325309202850782,
+          "forskel": 0.6822690797149216,
+          "usikkerhed": 0.3853,
+          "indenFor": false
+        }
+      }
+    },
+    {
+      "billedeIndex": 36,
+      "tidspunktMs": 500,
+      "p": 0.7682997118155621,
+      "paalidelig": null,
+      "modelFeasible": true,
+      "felter": {
+        "ankelGrader": {
+          "tilpasset": true,
+          "enhed": "grader",
+          "maalt": 5.19,
+          "model": 7.925696560456037,
+          "forskel": -2.735696560456037,
+          "usikkerhed": 11.09,
+          "indenFor": true
+        },
+        "knaeGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 152.72,
+          "model": 139.47869139340497,
+          "forskel": 13.241308606595027,
+          "usikkerhed": 28.11,
+          "indenFor": true
+        },
+        "hofteGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 132.36,
+          "model": 116.35588021331127,
+          "forskel": 16.004119786688747,
+          "usikkerhed": 22.78,
+          "indenFor": true
+        },
+        "torsoGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 25.55,
+          "model": 31.048507740549745,
+          "forskel": -5.498507740549744,
+          "usikkerhed": 6.01,
+          "indenFor": true
+        },
+        "xFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 0.2132,
+          "model": 0.07233624680851841,
+          "forskel": 0.1408637531914816,
+          "usikkerhed": 0.555,
+          "indenFor": true
+        },
+        "yFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 3.3259,
+          "model": 2.5574064283815923,
+          "forskel": 0.7684935716184076,
+          "usikkerhed": 0.5287,
+          "indenFor": false
+        }
+      }
+    },
+    {
+      "billedeIndex": 37,
+      "tidspunktMs": 533.3,
+      "p": 0.8414985590778098,
+      "paalidelig": null,
+      "modelFeasible": true,
+      "felter": {
+        "ankelGrader": {
+          "tilpasset": true,
+          "enhed": "grader",
+          "maalt": 3,
+          "model": 7.608379142757089,
+          "forskel": -4.608379142757089,
+          "usikkerhed": 2.19,
+          "indenFor": false
+        },
+        "knaeGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 160.93,
+          "model": 145.68870894263821,
+          "forskel": 15.241291057361792,
+          "usikkerhed": 11.06,
+          "indenFor": false
+        },
+        "hofteGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 141.33,
+          "model": 127.55406960290135,
+          "forskel": 13.775930397098662,
+          "usikkerhed": 16.82,
+          "indenFor": true
+        },
+        "torsoGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 22.6,
+          "model": 25.743018482493948,
+          "forskel": -3.1430184824939467,
+          "usikkerhed": 7.06,
+          "indenFor": true
+        },
+        "xFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 0.2972,
+          "model": 0.053175486207351595,
+          "forskel": 0.24402451379264842,
+          "usikkerhed": 0.4756,
+          "indenFor": true
+        },
+        "yFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 3.295,
+          "model": 2.723994553678279,
+          "forskel": 0.5710054463217209,
+          "usikkerhed": 0.2922,
+          "indenFor": false
+        }
+      }
+    },
+    {
+      "billedeIndex": 38,
+      "tidspunktMs": 566.7,
+      "p": 0.8719884726224785,
+      "paalidelig": null,
+      "modelFeasible": true,
+      "felter": {
+        "ankelGrader": {
+          "tilpasset": true,
+          "enhed": "grader",
+          "maalt": 4.84,
+          "model": 7.528156425293993,
+          "forskel": -2.688156425293993,
+          "usikkerhed": 6.72,
+          "indenFor": true
+        },
+        "knaeGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 160.63,
+          "model": 148.55192734412256,
+          "forskel": 12.078072655877435,
+          "usikkerhed": 16.71,
+          "indenFor": true
+        },
+        "hofteGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 146.98,
+          "model": 132.94073196648037,
+          "forskel": 14.039268033519619,
+          "usikkerhed": 21.62,
+          "indenFor": true
+        },
+        "torsoGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 18.49,
+          "model": 23.139351802936194,
+          "forskel": -4.649351802936195,
+          "usikkerhed": 10.09,
+          "indenFor": true
+        },
+        "xFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 0.2518,
+          "model": 0.04331812126267826,
+          "forskel": 0.20848187873732177,
+          "usikkerhed": 0.6405,
+          "indenFor": true
+        },
+        "yFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 3.3557,
+          "model": 2.793384410593116,
+          "forskel": 0.5623155894068841,
+          "usikkerhed": 0.3558,
+          "indenFor": false
+        }
+      }
+    },
+    {
+      "billedeIndex": 39,
+      "tidspunktMs": 600,
+      "p": 0.9207492795389051,
+      "paalidelig": null,
+      "modelFeasible": true,
+      "felter": {
+        "ankelGrader": {
+          "tilpasset": true,
+          "enhed": "grader",
+          "maalt": 1.68,
+          "model": 7.445338403788233,
+          "forskel": -5.765338403788233,
+          "usikkerhed": 6.62,
+          "indenFor": true
+        },
+        "knaeGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 167.86,
+          "model": 153.81842607714552,
+          "forskel": 14.041573922854496,
+          "usikkerhed": 15.47,
+          "indenFor": true
+        },
+        "hofteGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 152.65,
+          "model": 143.06452082251258,
+          "forskel": 9.585479177487429,
+          "usikkerhed": 15.73,
+          "indenFor": true
+        },
+        "torsoGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 16.89,
+          "model": 18.19924365842115,
+          "forskel": -1.309243658421149,
+          "usikkerhed": 6.89,
+          "indenFor": true
+        },
+        "xFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 0.2409,
+          "model": 0.023988515596020533,
+          "forskel": 0.21691148440397948,
+          "usikkerhed": 0.5753,
+          "indenFor": true
+        },
+        "yFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 3.358,
+          "model": 2.9043557129562405,
+          "forskel": 0.4536442870437596,
+          "usikkerhed": 0.278,
+          "indenFor": false
+        }
+      }
+    },
+    {
+      "billedeIndex": 40,
+      "tidspunktMs": 633.3,
+      "p": 0.9512391930835735,
+      "paalidelig": null,
+      "modelFeasible": true,
+      "felter": {
+        "ankelGrader": {
+          "tilpasset": true,
+          "enhed": "grader",
+          "maalt": 1.2,
+          "model": 7.416681922784587,
+          "forskel": -6.216681922784587,
+          "usikkerhed": 8.68,
+          "indenFor": true
+        },
+        "knaeGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 172.02,
+          "model": 157.92262203303827,
+          "forskel": 14.097377966961744,
+          "usikkerhed": 13.84,
+          "indenFor": false
+        },
+        "hofteGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 158.27,
+          "model": 151.07281315000725,
+          "forskel": 7.197186849992761,
+          "usikkerhed": 14.91,
+          "indenFor": true
+        },
+        "torsoGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 14.96,
+          "model": 14.2664908058156,
+          "forskel": 0.6935091941844007,
+          "usikkerhed": 6.94,
+          "indenFor": true
+        },
+        "xFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": -0.124,
+          "model": 0.008136238404609692,
+          "forskel": -0.1321362384046097,
+          "usikkerhed": 0.0105,
+          "indenFor": false
+        },
+        "yFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 2.6188,
+          "model": 2.9737455698711197,
+          "forskel": -0.3549455698711199,
+          "usikkerhed": 0.0094,
+          "indenFor": false
+        }
+      }
+    },
+    {
+      "billedeIndex": 41,
+      "tidspunktMs": 666.7,
+      "p": 1,
+      "paalidelig": null,
+      "modelFeasible": true,
+      "felter": {
+        "ankelGrader": {
+          "tilpasset": true,
+          "enhed": "grader",
+          "maalt": 5.05,
+          "model": 7.400577142195404,
+          "forskel": -2.3505771421954043,
+          "usikkerhed": 3.88,
+          "indenFor": true
+        },
+        "knaeGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 165.02,
+          "model": 172.59941172130303,
+          "forskel": -7.579411721303018,
+          "usikkerhed": 9.39,
+          "indenFor": true
+        },
+        "hofteGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 156.62,
+          "model": 179.9999779997921,
+          "forskel": -23.37997799979209,
+          "usikkerhed": 10.91,
+          "indenFor": false
+        },
+        "torsoGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 13.44,
+          "model": 0.000010856018090084185,
+          "forskel": 13.43998914398191,
+          "usikkerhed": 7.74,
+          "indenFor": false
+        },
+        "xFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": -0.1135,
+          "model": -0.05129094302588846,
+          "forskel": -0.06220905697411155,
+          "usikkerhed": 0.0396,
+          "indenFor": false
+        },
+        "yFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 2.6093,
+          "model": 3.084716872234039,
+          "forskel": -0.47541687223403883,
+          "usikkerhed": 0.0404,
+          "indenFor": false
+        }
+      }
+    },
+    {
+      "billedeIndex": 42,
+      "tidspunktMs": 700,
+      "p": 1.0061095100864554,
+      "paalidelig": null,
+      "modelFeasible": true,
+      "felter": {
+        "ankelGrader": {
+          "tilpasset": true,
+          "enhed": "grader",
+          "maalt": 1.35,
+          "model": 7.400577142195404,
+          "forskel": -6.050577142195404,
+          "usikkerhed": 9.02,
+          "indenFor": true
+        },
+        "knaeGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 174.41,
+          "model": 172.59941172130303,
+          "forskel": 1.8105882786969687,
+          "usikkerhed": 9.43,
+          "indenFor": true
+        },
+        "hofteGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 164.54,
+          "model": 179.9999779997921,
+          "forskel": -15.459977999792102,
+          "usikkerhed": 19.31,
+          "indenFor": true
+        },
+        "torsoGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 11.22,
+          "model": 0.000010856018090084185,
+          "forskel": 11.21998914398191,
+          "usikkerhed": 7.79,
+          "indenFor": false
+        },
+        "xFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": -0.1531,
+          "model": -0.05129094302588846,
+          "forskel": -0.10180905697411155,
+          "usikkerhed": 0.0396,
+          "indenFor": false
+        },
+        "yFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 2.6497,
+          "model": 3.084716872234039,
+          "forskel": -0.43501687223403884,
+          "usikkerhed": 0.1186,
+          "indenFor": false
+        }
+      }
+    },
+    {
+      "billedeIndex": 43,
+      "tidspunktMs": 733.3,
+      "p": 1.018328530259366,
+      "paalidelig": null,
+      "modelFeasible": true,
+      "felter": {
+        "ankelGrader": {
+          "tilpasset": true,
+          "enhed": "grader",
+          "maalt": 1.68,
+          "model": 7.400577142195404,
+          "forskel": -5.720577142195404,
+          "usikkerhed": 0.72,
+          "indenFor": false
+        },
+        "knaeGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 174.18,
+          "model": 172.59941172130303,
+          "forskel": 1.580588278696979,
+          "usikkerhed": 1.66,
+          "indenFor": true
+        },
+        "hofteGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 166.4,
+          "model": 179.9999779997921,
+          "forskel": -13.599977999792088,
+          "usikkerhed": 6.5,
+          "indenFor": false
+        },
+        "torsoGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 9.45,
+          "model": 0.000010856018090084185,
+          "forskel": 9.44998914398191,
+          "usikkerhed": 7.44,
+          "indenFor": false
+        },
+        "xFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": -0.1505,
+          "model": -0.05129094302588846,
+          "forskel": -0.09920905697411153,
+          "usikkerhed": 0.0183,
+          "indenFor": false
+        },
+        "yFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 2.5311,
+          "model": 3.084716872234039,
+          "forskel": -0.5536168722340391,
+          "usikkerhed": 0.12,
+          "indenFor": false
+        }
+      }
+    },
+    {
+      "billedeIndex": 44,
+      "tidspunktMs": 766.7,
+      "p": 1.018328530259366,
+      "paalidelig": null,
+      "modelFeasible": true,
+      "felter": {
+        "ankelGrader": {
+          "tilpasset": true,
+          "enhed": "grader",
+          "maalt": 1.87,
+          "model": 7.400577142195404,
+          "forskel": -5.530577142195404,
+          "usikkerhed": 0.87,
+          "indenFor": false
+        },
+        "knaeGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 173.54,
+          "model": 172.59941172130303,
+          "forskel": 0.9405882786969642,
+          "usikkerhed": 2.27,
+          "indenFor": true
+        },
+        "hofteGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 167.05,
+          "model": 179.9999779997921,
+          "forskel": -12.949977999792083,
+          "usikkerhed": 5.42,
+          "indenFor": false
+        },
+        "torsoGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 8.36,
+          "model": 0.000010856018090084185,
+          "forskel": 8.35998914398191,
+          "usikkerhed": 6.81,
+          "indenFor": false
+        },
+        "xFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": -0.1348,
+          "model": -0.05129094302588846,
+          "forskel": -0.08350905697411154,
+          "usikkerhed": 0.0342,
+          "indenFor": false
+        },
+        "yFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 2.6511,
+          "model": 3.084716872234039,
+          "forskel": -0.433616872234039,
+          "usikkerhed": 0.12,
+          "indenFor": false
+        }
+      }
+    },
+    {
+      "billedeIndex": 45,
+      "tidspunktMs": 800,
+      "p": 1.0122190201729109,
+      "paalidelig": null,
+      "modelFeasible": true,
+      "felter": {
+        "ankelGrader": {
+          "tilpasset": true,
+          "enhed": "grader",
+          "maalt": 1.74,
+          "model": 7.400577142195404,
+          "forskel": -5.660577142195404,
+          "usikkerhed": 6.43,
+          "indenFor": true
+        },
+        "knaeGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 173.83,
+          "model": 172.59941172130303,
+          "forskel": 1.2305882786969846,
+          "usikkerhed": 4.41,
+          "indenFor": true
+        },
+        "hofteGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 168.24,
+          "model": 179.9999779997921,
+          "forskel": -11.759977999792085,
+          "usikkerhed": 8.16,
+          "indenFor": false
+        },
+        "torsoGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 7.33,
+          "model": 0.000010856018090084185,
+          "forskel": 7.32998914398191,
+          "usikkerhed": 6.08,
+          "indenFor": false
+        },
+        "xFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": -0.1163,
+          "model": -0.05129094302588846,
+          "forskel": -0.06500905697411155,
+          "usikkerhed": 0.0333,
+          "indenFor": false
+        },
+        "yFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 2.6305,
+          "model": 3.084716872234039,
+          "forskel": -0.45421687223403895,
+          "usikkerhed": 0.0206,
+          "indenFor": false
+        }
+      }
+    },
+    {
+      "billedeIndex": 46,
+      "tidspunktMs": 833.3,
+      "p": 1.0122190201729109,
+      "paalidelig": null,
+      "modelFeasible": true,
+      "felter": {
+        "ankelGrader": {
+          "tilpasset": true,
+          "enhed": "grader",
+          "maalt": 0.67,
+          "model": 7.400577142195404,
+          "forskel": -6.730577142195404,
+          "usikkerhed": 5.32,
+          "indenFor": false
+        },
+        "knaeGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 174.69,
+          "model": 172.59941172130303,
+          "forskel": 2.09058827869697,
+          "usikkerhed": 3.73,
+          "indenFor": true
+        },
+        "hofteGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 168.59,
+          "model": 179.9999779997921,
+          "forskel": -11.40997799979209,
+          "usikkerhed": 7.39,
+          "indenFor": false
+        },
+        "torsoGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 6.77,
+          "model": 0.000010856018090084185,
+          "forskel": 6.76998914398191,
+          "usikkerhed": 4.12,
+          "indenFor": false
+        },
+        "xFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": -0.1015,
+          "model": -0.05129094302588846,
+          "forskel": -0.05020905697411155,
+          "usikkerhed": 0.0305,
+          "indenFor": false
+        },
+        "yFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 2.6321,
+          "model": 3.084716872234039,
+          "forskel": -0.4526168722340391,
+          "usikkerhed": 0.0182,
+          "indenFor": false
+        }
+      }
+    },
+    {
+      "billedeIndex": 47,
+      "tidspunktMs": 866.7,
+      "p": 1,
+      "paalidelig": null,
+      "modelFeasible": true,
+      "felter": {
+        "ankelGrader": {
+          "tilpasset": true,
+          "enhed": "grader",
+          "maalt": -0.07,
+          "model": 7.400577142195404,
+          "forskel": -7.470577142195404,
+          "usikkerhed": 3.27,
+          "indenFor": false
+        },
+        "knaeGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 175.83,
+          "model": 172.59941172130303,
+          "forskel": 3.2305882786969846,
+          "usikkerhed": 4.51,
+          "indenFor": true
+        },
+        "hofteGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 170.84,
+          "model": 179.9999779997921,
+          "forskel": -9.15997799979209,
+          "usikkerhed": 9.06,
+          "indenFor": false
+        },
+        "torsoGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 4.92,
+          "model": 0.000010856018090084185,
+          "forskel": 4.91998914398191,
+          "usikkerhed": 4.86,
+          "indenFor": false
+        },
+        "xFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": -0.1321,
+          "model": -0.05129094302588846,
+          "forskel": -0.08080905697411153,
+          "usikkerhed": 0.0305,
+          "indenFor": false
+        },
+        "yFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 2.6486,
+          "model": 3.084716872234039,
+          "forskel": -0.43611687223403894,
+          "usikkerhed": 0.0165,
+          "indenFor": false
+        }
+      }
+    },
+    {
+      "billedeIndex": 48,
+      "tidspunktMs": 900,
+      "p": 1,
+      "paalidelig": null,
+      "modelFeasible": true,
+      "felter": {
+        "ankelGrader": {
+          "tilpasset": true,
+          "enhed": "grader",
+          "maalt": -0.01,
+          "model": 7.400577142195404,
+          "forskel": -7.410577142195404,
+          "usikkerhed": 7.02,
+          "indenFor": false
+        },
+        "knaeGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 174.26,
+          "model": 172.59941172130303,
+          "forskel": 1.660588278696963,
+          "usikkerhed": 6.21,
+          "indenFor": true
+        },
+        "hofteGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 167.66,
+          "model": 179.9999779997921,
+          "forskel": -12.339977999792097,
+          "usikkerhed": 10.77,
+          "indenFor": false
+        },
+        "torsoGrader": {
+          "tilpasset": false,
+          "enhed": "grader",
+          "maalt": 6.59,
+          "model": 0.000010856018090084185,
+          "forskel": 6.58998914398191,
+          "usikkerhed": 2.34,
+          "indenFor": false
+        },
+        "xFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": -0.112,
+          "model": -0.05129094302588846,
+          "forskel": -0.060709056974111546,
+          "usikkerhed": 0.02,
+          "indenFor": false
+        },
+        "yFodlaengder": {
+          "tilpasset": false,
+          "enhed": "fodlaengder",
+          "maalt": 2.6392,
+          "model": 3.084716872234039,
+          "forskel": -0.4455168722340388,
+          "usikkerhed": 0.0289,
+          "indenFor": false
+        }
+      }
+    }
+  ],
+  "tabel_side_om_side": {
+    "ankelGrader": {
+      "tilpasset": true,
+      "app_indenFor_af_28": 13,
+      "egen_indenFor_af_28": 13
+    },
+    "knaeGrader": {
+      "tilpasset": false,
+      "app_indenFor_af_28": 19,
+      "egen_indenFor_af_28": 18
+    },
+    "hofteGrader": {
+      "tilpasset": false,
+      "app_indenFor_af_28": 10,
+      "egen_indenFor_af_28": 10
+    },
+    "torsoGrader": {
+      "tilpasset": false,
+      "app_indenFor_af_28": 10,
+      "egen_indenFor_af_28": 9
+    },
+    "xFodlaengder": {
+      "tilpasset": false,
+      "app_indenFor_af_28": 12,
+      "egen_indenFor_af_28": 2
+    },
+    "yFodlaengder": {
+      "tilpasset": false,
+      "app_indenFor_af_28": 0,
+      "egen_indenFor_af_28": 11
+    }
+  },
+  "appVsEgen": {
+    "note": "Appens EGNE målte vinkler mod Drishtis EGNE målte vinkler (ikke mod modellen) — uenig = |app - egen| > Drishtis usikkerhedsbånd for samme billede/felt.",
+    "punkter_total": 28,
+    "punkter_med_mindst_en_uenighed": 7,
+    "uenige_punkter": [
+      {
+        "billedeIndex": 22,
+        "felter": {
+          "ankelGrader": {
+            "app": 47.26,
+            "egen": 57.85,
+            "diff": -10.59,
+            "egetBaand": 13.18,
+            "uenig": false
+          },
+          "knaeGrader": {
+            "app": 78.86,
+            "egen": 73.11,
+            "diff": 5.75,
+            "egetBaand": 12.77,
+            "uenig": false
+          },
+          "hofteGrader": {
+            "app": 76.33,
+            "egen": 80.81,
+            "diff": -4.48,
+            "egetBaand": 1.19,
+            "uenig": true
+          },
+          "torsoGrader": {
+            "app": 49.79,
+            "egen": 50.15,
+            "diff": -0.36,
+            "egetBaand": 7.52,
+            "uenig": false
+          }
+        }
+      },
+      {
+        "billedeIndex": 23,
+        "felter": {
+          "ankelGrader": {
+            "app": 42.66,
+            "egen": 57.61,
+            "diff": -14.95,
+            "egetBaand": 12.98,
+            "uenig": true
+          },
+          "knaeGrader": {
+            "app": 86.57,
+            "egen": 73.31,
+            "diff": 13.26,
+            "egetBaand": 12.4,
+            "uenig": true
+          },
+          "hofteGrader": {
+            "app": 79.27,
+            "egen": 80.38,
+            "diff": -1.11,
+            "egetBaand": 2.97,
+            "uenig": false
+          },
+          "torsoGrader": {
+            "app": 49.95,
+            "egen": 50.54,
+            "diff": -0.59,
+            "egetBaand": 5.2,
+            "uenig": false
+          }
+        }
+      },
+      {
+        "billedeIndex": 24,
+        "felter": {
+          "ankelGrader": {
+            "app": 41.09,
+            "egen": 58.72,
+            "diff": -17.63,
+            "egetBaand": 7.96,
+            "uenig": true
+          },
+          "knaeGrader": {
+            "app": 88.43,
+            "egen": 69.2,
+            "diff": 19.23,
+            "egetBaand": 9.91,
+            "uenig": true
+          },
+          "hofteGrader": {
+            "app": 79.96,
+            "egen": 79.03,
+            "diff": 0.93,
+            "egetBaand": 2.96,
+            "uenig": false
+          },
+          "torsoGrader": {
+            "app": 49.57,
+            "egen": 48.9,
+            "diff": 0.67,
+            "egetBaand": 5.13,
+            "uenig": false
+          }
+        }
+      },
+      {
+        "billedeIndex": 26,
+        "felter": {
+          "ankelGrader": {
+            "app": 36.45,
+            "egen": 66.25,
+            "diff": -29.8,
+            "egetBaand": 22.93,
+            "uenig": true
+          },
+          "knaeGrader": {
+            "app": 95.16,
+            "egen": 67.63,
+            "diff": 27.53,
+            "egetBaand": 23.93,
+            "uenig": true
+          },
+          "hofteGrader": {
+            "app": 81.53,
+            "egen": 84.93,
+            "diff": -3.4,
+            "egetBaand": 7.38,
+            "uenig": false
+          },
+          "torsoGrader": {
+            "app": 50.07,
+            "egen": 48.96,
+            "diff": 1.11,
+            "egetBaand": 4.49,
+            "uenig": false
+          }
+        }
+      },
+      {
+        "billedeIndex": 27,
+        "felter": {
+          "ankelGrader": {
+            "app": 10.55,
+            "egen": 43.33,
+            "diff": -32.78,
+            "egetBaand": 29.05,
+            "uenig": true
+          },
+          "knaeGrader": {
+            "app": 124.14,
+            "egen": 91.56,
+            "diff": 32.58,
+            "egetBaand": 33.26,
+            "uenig": false
+          },
+          "hofteGrader": {
+            "app": 86.71,
+            "egen": 87.08,
+            "diff": -0.37,
+            "egetBaand": 7.75,
+            "uenig": false
+          },
+          "torsoGrader": {
+            "app": 47.98,
+            "egen": 47.8,
+            "diff": 0.18,
+            "egetBaand": 4.43,
+            "uenig": false
+          }
+        }
+      },
+      {
+        "billedeIndex": 40,
+        "felter": {
+          "ankelGrader": {
+            "app": 1.2,
+            "egen": 3.37,
+            "diff": -2.17,
+            "egetBaand": 1.45,
+            "uenig": true
+          },
+          "knaeGrader": {
+            "app": 172.02,
+            "egen": 166.41,
+            "diff": 5.61,
+            "egetBaand": 5.24,
+            "uenig": true
+          },
+          "hofteGrader": {
+            "app": 158.27,
+            "egen": 154.25,
+            "diff": 4.02,
+            "egetBaand": 8.01,
+            "uenig": false
+          },
+          "torsoGrader": {
+            "app": 14.96,
+            "egen": 15.54,
+            "diff": -0.58,
+            "egetBaand": 6.52,
+            "uenig": false
+          }
+        }
+      },
+      {
+        "billedeIndex": 43,
+        "felter": {
+          "ankelGrader": {
+            "app": 1.68,
+            "egen": 1.78,
+            "diff": -0.1,
+            "egetBaand": 7.89,
+            "uenig": false
+          },
+          "knaeGrader": {
+            "app": 174.18,
+            "egen": 172.1,
+            "diff": 2.08,
+            "egetBaand": 1.65,
+            "uenig": true
+          },
+          "hofteGrader": {
+            "app": 166.4,
+            "egen": 163.62,
+            "diff": 2.78,
+            "egetBaand": 13.76,
+            "uenig": false
+          },
+          "torsoGrader": {
+            "app": 9.45,
+            "egen": 10.26,
+            "diff": -0.81,
+            "egetBaand": 6.76,
+            "uenig": false
+          }
+        }
+      }
+    ]
+  },
+  "konklusion_appens_vinkler_alene": "Appens FIRE vinkelfelter ligner Drishtis egne godt nok til selve sammenligningen mod modellen (se tabel_side_om_side — samme størrelsesorden indenFor-tal som Drishtis egne) og kan bære den DEL af kontrakten ALENE. Appen kan IKKE bære HELE kontrakten alene: den leverer i dag hverken en brugbar stangposition (erstattet her med Drishtis pladeaflæsning) eller et ægte usikkerhedsbånd (proxy fra Drishtis eget ensemble her) — se docs/APP-MAALING.md for præcis hvad der mangler."
+}

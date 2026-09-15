@@ -943,10 +943,10 @@
     "felt": "xFodlaengder",
     "enhed": "fl",
     "n": 28,
-    "medianAbsForskel": 0.2216,
+    "medianAbsForskel": 0.1368,
     "maksAbsForskel": 0.3883,
     "maksVedBilledeIndex": 35,
-    "indenForUsikkerhedsbaand": "0/28",
+    "indenForUsikkerhedsbaand": "5/28",
     "punkter": [
       {
         "billedeIndex": 21,
@@ -1102,73 +1102,73 @@
       },
       {
         "billedeIndex": 40,
-        "egen": 0.2217,
+        "egen": -0.124,
         "drishti": -0.1056,
-        "diff": 0.32730000000000004,
+        "diff": 0.0184,
         "usikkerhedsbaand": 0.0212,
-        "indenForBaand": false
+        "indenForBaand": true
       },
       {
         "billedeIndex": 41,
-        "egen": 0.1942,
+        "egen": -0.1135,
         "drishti": -0.1162,
-        "diff": 0.3104,
+        "diff": 0.002699999999999994,
         "usikkerhedsbaand": 0.0212,
-        "indenForBaand": false
+        "indenForBaand": true
       },
       {
         "billedeIndex": 42,
-        "egen": 0.2255,
+        "egen": -0.1531,
         "drishti": -0.1267,
-        "diff": 0.3522,
+        "diff": 0.026400000000000007,
         "usikkerhedsbaand": 0.0106,
         "indenForBaand": false
       },
       {
         "billedeIndex": 43,
-        "egen": 0.1611,
+        "egen": -0.1505,
         "drishti": -0.1267,
-        "diff": 0.2878,
+        "diff": 0.023799999999999988,
         "usikkerhedsbaand": 0,
         "indenForBaand": false
       },
       {
         "billedeIndex": 44,
-        "egen": 0.0986,
+        "egen": -0.1348,
         "drishti": -0.1267,
-        "diff": 0.2253,
+        "diff": 0.008099999999999996,
         "usikkerhedsbaand": 0.0106,
-        "indenForBaand": false
+        "indenForBaand": true
       },
       {
         "billedeIndex": 45,
-        "egen": 0.1879,
+        "egen": -0.1163,
         "drishti": -0.1162,
-        "diff": 0.30410000000000004,
+        "diff": 0.00010000000000000286,
         "usikkerhedsbaand": 0.0212,
-        "indenForBaand": false
+        "indenForBaand": true
       },
       {
         "billedeIndex": 46,
-        "egen": 0.1123,
+        "egen": -0.1015,
         "drishti": -0.1056,
-        "diff": 0.21789999999999998,
+        "diff": 0.0040999999999999925,
         "usikkerhedsbaand": 0.0317,
-        "indenForBaand": false
+        "indenForBaand": true
       },
       {
         "billedeIndex": 47,
-        "egen": 0.1694,
+        "egen": -0.1321,
         "drishti": -0.0844,
-        "diff": 0.2538,
+        "diff": 0.04769999999999999,
         "usikkerhedsbaand": 0.0212,
         "indenForBaand": false
       },
       {
         "billedeIndex": 48,
-        "egen": 0.059,
+        "egen": -0.112,
         "drishti": -0.095,
-        "diff": 0.154,
+        "diff": 0.017,
         "usikkerhedsbaand": 0.0106,
         "indenForBaand": false
       }
@@ -1178,10 +1178,10 @@
     "felt": "yFodlaengder",
     "enhed": "fl",
     "n": 28,
-    "medianAbsForskel": 1.3007,
+    "medianAbsForskel": 1.1224,
     "maksAbsForskel": 1.846,
     "maksVedBilledeIndex": 22,
-    "indenForUsikkerhedsbaand": "0/28",
+    "indenForUsikkerhedsbaand": "5/28",
     "punkter": [
       {
         "billedeIndex": 21,
@@ -1337,73 +1337,73 @@
       },
       {
         "billedeIndex": 40,
-        "egen": 3.6215,
+        "egen": 2.6188,
         "drishti": 2.5414,
-        "diff": 1.0801000000000003,
+        "diff": 0.07739999999999991,
         "usikkerhedsbaand": 0.1375,
-        "indenForBaand": false
+        "indenForBaand": true
       },
       {
         "billedeIndex": 41,
-        "egen": 3.4036,
+        "egen": 2.6093,
         "drishti": 2.626,
-        "diff": 0.7776000000000001,
+        "diff": 0.016699999999999715,
         "usikkerhedsbaand": 0.0952,
-        "indenForBaand": false
+        "indenForBaand": true
       },
       {
         "billedeIndex": 42,
-        "egen": 3.6332,
+        "egen": 2.6497,
         "drishti": 2.6366,
-        "diff": 0.9965999999999999,
+        "diff": 0.013100000000000112,
         "usikkerhedsbaand": 0.0317,
-        "indenForBaand": false
+        "indenForBaand": true
       },
       {
         "billedeIndex": 43,
-        "egen": 4.0913,
+        "egen": 2.5311,
         "drishti": 2.6578,
-        "diff": 1.4335000000000004,
+        "diff": 0.12670000000000003,
         "usikkerhedsbaand": 0.0212,
         "indenForBaand": false
       },
       {
         "billedeIndex": 44,
-        "egen": 4.0069,
+        "egen": 2.6511,
         "drishti": 2.6578,
-        "diff": 1.3491,
+        "diff": 0.006699999999999928,
         "usikkerhedsbaand": 0.0106,
-        "indenForBaand": false
+        "indenForBaand": true
       },
       {
         "billedeIndex": 45,
-        "egen": 3.8051,
+        "egen": 2.6305,
         "drishti": 2.6472,
-        "diff": 1.1578999999999997,
+        "diff": 0.01670000000000016,
         "usikkerhedsbaand": 0.0106,
         "indenForBaand": false
       },
       {
         "billedeIndex": 46,
-        "egen": 3.8488,
+        "egen": 2.6321,
         "drishti": 2.6472,
-        "diff": 1.2016,
+        "diff": 0.015100000000000335,
         "usikkerhedsbaand": 0.0212,
-        "indenForBaand": false
+        "indenForBaand": true
       },
       {
         "billedeIndex": 47,
-        "egen": 3.7423,
+        "egen": 2.6486,
         "drishti": 2.626,
-        "diff": 1.1163000000000003,
+        "diff": 0.022600000000000176,
         "usikkerhedsbaand": 0.0212,
         "indenForBaand": false
       },
       {
         "billedeIndex": 48,
-        "egen": 3.8799,
+        "egen": 2.6392,
         "drishti": 2.626,
-        "diff": 1.2539000000000002,
+        "diff": 0.013200000000000323,
         "usikkerhedsbaand": 0,
         "indenForBaand": false
       }

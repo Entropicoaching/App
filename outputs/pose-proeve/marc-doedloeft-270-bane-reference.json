@@ -31,8 +31,14 @@
   },
   "model": "pose_landmarker_full (float16), @mediapipe/tasks-vision, delegate=CPU, runningMode=IMAGE, numPoses=1",
   "tidsmaaling": {
-    "ekstraktion_ms": 26809.299999999814,
-    "total_ms_inkl_transkodering_og_browseropstart": 28607
+    "ekstraktion_ms": 22387.39999999851,
+    "skivedetektion_ms": 1401.7000000476837,
+    "total_ms_inkl_transkodering_og_browseropstart": 23967
+  },
+  "skive": {
+    "billeder_med_valideret_skive": 9,
+    "billeder_i_alt_i_banen": 28,
+    "note": "Se scripts/pose-proeve/skive.mjs — genbrug af videocoach.html's recenterOnPlate()-kantscan, ny grov gittersøgning fordi den fulde live-tracker kræver klik+kontinuitet."
   },
   "note": "Denne fil er IKKE en del af docs/MAALING-KONTRAKT.md's format — den er regnskabet bag skala/gulv/fortegn/timing i marc-doedloeft-270-bane.json, til efterprøvning. Se scripts/pose-proeve/matematik.mjs og bane.py."
 }

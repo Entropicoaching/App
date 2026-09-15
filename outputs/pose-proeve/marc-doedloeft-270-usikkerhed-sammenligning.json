@@ -1,0 +1,56 @@
+[
+  {
+    "felt": "ankelGrader",
+    "n_mine": 28,
+    "n_drishti": 28,
+    "median_mine": 9.13,
+    "median_drishti": 9.03,
+    "ratio": 1.01,
+    "over_faktor_2": false
+  },
+  {
+    "felt": "knaeGrader",
+    "n_mine": 28,
+    "n_drishti": 28,
+    "median_mine": 16.07,
+    "median_drishti": 13.04,
+    "ratio": 1.23,
+    "over_faktor_2": false
+  },
+  {
+    "felt": "hofteGrader",
+    "n_mine": 28,
+    "n_drishti": 28,
+    "median_mine": 8.61,
+    "median_drishti": 11.98,
+    "ratio": 0.72,
+    "over_faktor_2": false
+  },
+  {
+    "felt": "torsoGrader",
+    "n_mine": 28,
+    "n_drishti": 28,
+    "median_mine": 5.86,
+    "median_drishti": 6.42,
+    "ratio": 0.91,
+    "over_faktor_2": false
+  },
+  {
+    "felt": "xFodlaengder",
+    "n_mine": 28,
+    "n_drishti": 28,
+    "median_mine": 0.0953,
+    "median_drishti": 0.0317,
+    "ratio": 3.01,
+    "over_faktor_2": true
+  },
+  {
+    "felt": "yFodlaengder",
+    "n_mine": 28,
+    "n_drishti": 28,
+    "median_mine": 0.2172,
+    "median_drishti": 0.1375,
+    "ratio": 1.58,
+    "over_faktor_2": false
+  }
+]
