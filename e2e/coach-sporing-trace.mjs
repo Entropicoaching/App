@@ -8,6 +8,17 @@
 // eksisterende run-objekt i public/videocoach.html.
 //
 // Kørsel: node e2e/coach-sporing-trace.mjs
+//   --glat            brug scripts/make-test-clip.mjs's --glat-variant
+//                      (smoothstep-vending + pause i bunden, ORDRE 221 ·
+//                      commit 1) i stedet for standardklippet. Sætter
+//                      VC_CLIP_GLAT=1 i PROCES-env (ikke .env-filer, ikke
+//                      bruger-miljøet — se CLAUDE.local.mds hårde regel om
+//                      det) FØR truePos/worldY kaldes, så facit matcher det
+//                      klip der rent faktisk blev sporet.
+//   --max-minutes=N    ingen 120s-standardgrænse — sporingen får op til N
+//                      minutter (default 40) til at blive færdig ÉN gang.
+//                      progressLog (banner/procent pr. 2s) gemmes uanset
+//                      udfald, så et fund overlever selv et reelt timeout.
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { createMockSupabase } from './mock-supabase.mjs'
@@ -15,14 +26,22 @@ import { buildSeed } from './fixtures.mjs'
 import { startVite, launchBrowser, APP_URL, MOCK_PORT, OUT_DIR, ensureCoachSporingClip } from './harness.mjs'
 import { runVideoUpload } from './video-upload.spec.mjs'
 import { runCoachSporing } from './coach-sporing.spec.mjs'
-import { truePos, repWindows, DURATION } from '../scripts/make-test-clip.mjs'
+
+const GLAT = process.argv.includes('--glat')
+if (GLAT) process.env.VC_CLIP_GLAT = '1' // FØR make-test-clip.mjs importeres nedenfor — se toptekst
+const maxMinutesArg = process.argv.find(a => a.startsWith('--max-minutes='))
+const MAX_MINUTES = maxMinutesArg ? Number(maxMinutesArg.split('=')[1]) : (GLAT ? 40 : null)
+const MAX_ITERATIONS = MAX_MINUTES ? Math.ceil(MAX_MINUTES * 60 / 2) : undefined
+
+const { truePos, repWindows, DURATION } = await import('../scripts/make-test-clip.mjs')
 
 const TRACE_DIR = join(OUT_DIR, '..', 'sporing-trace')
 mkdirSync(TRACE_DIR, { recursive: true })
 
 async function main() {
-  const { path: clipPath, generatedMs } = ensureCoachSporingClip()
-  console.log(`Klip klar: ${clipPath} (${generatedMs == null ? 'genbrugt' : generatedMs + 'ms'})`)
+  const { path: clipPath, generatedMs } = ensureCoachSporingClip(GLAT ? 'glat' : undefined)
+  console.log(`Klip klar (variant: ${GLAT ? 'glat' : 'standard'}): ${clipPath} (${generatedMs == null ? 'genbrugt' : generatedMs + 'ms'})`)
+  if (MAX_MINUTES) console.log(`Ingen 120s-grænse denne kørsel: op til ${MAX_MINUTES} minutter.`)
 
   const mock = createMockSupabase(buildSeed({}))
   await mock.listen(MOCK_PORT)
@@ -46,7 +65,7 @@ async function main() {
 
     const page2 = await browser.newPage({ viewport: { width: 1280, height: 900 } })
     try {
-      await runCoachSporing(page2, { ...opts, awaitingRow, clipPath, traceOut })
+      await runCoachSporing(page2, { ...opts, awaitingRow, clipPath, traceOut, maxIterations: MAX_ITERATIONS })
     } catch (err) {
       caughtError = err.message // FORVENTET (se docs/RAPPORT-200.md) — traceOut er alligevel udfyldt
     }
@@ -59,6 +78,31 @@ async function main() {
 
   const run = traceOut.benchmarkRun
   if (!run) {
+    // ORDRE 221 · commit 1 — et reelt timeout (traceOut.timedOut, kun muligt
+    // med --max-minutes) publicerer aldrig window.__vcTrackerBenchmarkLast
+    // (den skrives kun ved selve sporings-loopets afslutning i
+    // videocoach.html). progressLog (banner/procent pr. 2s-poll fra Node-
+    // siden) er stadig et ærligt fund om "hvor langt/hvor hurtigt" — skriv
+    // det som sit eget, mindre facit i stedet for kun at fejle.
+    if (traceOut.timedOut && traceOut.progressLog?.length) {
+      const log = traceOut.progressLog
+      const out = {
+        variant: GLAT ? 'glat' : 'standard', timedOut: true,
+        maxMinutes: MAX_MINUTES, clipDurationS: DURATION,
+        sidsteBanner: traceOut.lastBanner, sidstePercent: traceOut.lastPercent,
+        progressLog: log,
+      }
+      const outPath = join(TRACE_DIR, `run-timeout-${new Date().toISOString().replace(/[:.]/g, '-')}.json`)
+      writeFileSync(outPath, JSON.stringify(out, null, 2))
+      writeFileSync(join(TRACE_DIR, 'seneste.json'), JSON.stringify(out, null, 2))
+      const totalS = log.at(-1).tMs / 1000
+      console.log(`\nALDRIG FÆRDIG inden for ${MAX_MINUTES} min (${totalS.toFixed(1)}s ægte ventetid).`)
+      console.log(`Sidste banner: "${traceOut.lastBanner}" (${traceOut.lastPercent}%)`)
+      console.log(`Klippets varighed: ${DURATION}s — så ~${totalS.toFixed(1)}s ægte tid pr. ${(traceOut.lastPercent ?? 0) / 100 * DURATION | 0}s video processeret indtil videre.`)
+      console.log(`\nSkrevet: ${outPath}`)
+      process.exitCode = 1
+      return
+    }
     console.error('Intet benchmark-run fanget — instrumenteringen (?benchmark=1) nåede aldrig frem. Se traceOut:', traceOut)
     writeFileSync(join(TRACE_DIR, 'RAW-traceOut-fejlet.json'), JSON.stringify(traceOut, null, 2))
     process.exitCode = 1
@@ -104,11 +148,24 @@ async function main() {
     }
   })
 
+  // ORDRE 221 · commit 1 — aktiv-mod-springer fordeling: en frame uden
+  // probe-indgang (frameProbe dækker kun det RIGTIGE match-forsøg) er enten
+  // ankerframen (i===0) eller sprunget over af VC_TRACKER_FASTs
+  // QUIET_NEEDED-genvej (se public/videocoach.html linje ~4742) — begge
+  // allerede mærket af rejectGate-feltet ovenfor, udledt af eksisterende,
+  // allerede-publicerede felter, INGEN ny instrumentering i videocoach.html.
+  const skippedCount = frames.filter(f => f.rejectGate === 'skipped-quiet-fast-path').length
+  const activeCount = frames.length - skippedCount
+  const msPerVideoSecond = run.mediaSeconds > 0 ? run.elapsedMs / run.mediaSeconds : null
+
   const out = {
+    variant: GLAT ? 'glat' : 'standard',
     clip: { durationS: DURATION, sandeRepVinduer: truth },
     resultat: { tracked: traceOut.tracked, lastBanner: traceOut.lastBanner, lastPercent: traceOut.lastPercent, caughtError },
     raw: { outcome: run.outcome, frames: run.pts.length, invalidFrames: run.valid.filter(v => !v).length,
       lowConf: run.lowConf, homeRecoveries: run.homeRecoveries, mediaSeconds: run.mediaSeconds,
+      elapsedMs: run.elapsedMs, msPerVideoSecond: msPerVideoSecond == null ? null : +msPerVideoSecond.toFixed(0),
+      activeFrames: activeCount, skippedFrames: skippedCount,
       endedAtT: run.endedAt, sluttedFoerKlippetSluttedS: +(DURATION - (run.endedAt ?? DURATION)).toFixed(3) },
     repsDetekteret: run.analysis ? run.analysis.repsDetectedCount : null,
     repRows,
@@ -118,8 +175,11 @@ async function main() {
   writeFileSync(outPath, JSON.stringify(out, null, 2))
   writeFileSync(join(TRACE_DIR, 'seneste.json'), JSON.stringify(out, null, 2))
 
-  console.log(`\nResultat: tracked=${traceOut.tracked} slutprocent=${traceOut.lastPercent}% banner="${traceOut.lastBanner}"`)
+  console.log(`\nResultat (variant: ${out.variant}): tracked=${traceOut.tracked} slutprocent=${traceOut.lastPercent}% banner="${traceOut.lastBanner}"`)
   console.log(`Frames: ${run.pts.length}, ugyldige: ${run.valid.filter(v => !v).length}, sluttede ved t=${run.endedAt?.toFixed(2)}s (klip: ${DURATION}s)`)
+  console.log(`Aktiv sporing: ${activeCount} frames · Sprunget over (QUIET_NEEDED): ${skippedCount} frames`)
+  console.log(`Reel tid pr. sekund video: ${msPerVideoSecond == null ? 'n/a' : (msPerVideoSecond / 1000).toFixed(2) + 's/s'} (elapsedMs=${run.elapsedMs?.toFixed(0)} / mediaSeconds=${run.mediaSeconds?.toFixed(2)})`)
+  console.log(`homeRecoveries: ${run.homeRecoveries}`)
   console.log(`Reps detekteret: ${out.repsDetekteret ?? 'n/a'} / 5 sande`)
   for (const r of repRows) {
     console.log(`  detekteret rep ${r.detectedIndex + 1} (≈sand rep ${r.naermesteSandeRep}): mcv=${r.mcv} romCm=${r.romCm} measurable=${r.measurable} validRatio=${r.validRatio}`)

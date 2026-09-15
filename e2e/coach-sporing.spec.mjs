@@ -73,11 +73,20 @@ async function calibrate(frame, page, canvas, box) {
 // lastPercent er den sidst sete "Analyserer stangbanen · X%"/"Holder sidste
 // sikre punkt · X%", til den gentagne 10x-kørsels egen tabel (se
 // docs/RAPPORT-200.md).
-async function confirmAndWaitForTracking(frame, page) {
+// ORDRE 221 · commit 1 — maxIterations er valgfri (default 60 × 2000ms =
+// 120s, uændret for alle eksisterende kald). En stor værdi giver reelt en
+// UDEN-tidsgrænse-kørsel (se e2e/coach-sporing-trace.mjs's --untimed) uden at
+// binde denne funktion til et helt uendeligt loop. progressLog (t i ms siden
+// start, banner, procent) følger med retur-objektet til traceOut, så en
+// utimet kørsel kan rapportere "hvor langt nåede den, hvor hurtigt" selv når
+// den aldrig bliver færdig.
+async function confirmAndWaitForTracking(frame, page, { maxIterations = 60 } = {}) {
   await frame.locator('#allBtn').click()
   let lastBanner = ''
   let lastPercent = null
-  for (let i = 0; i < 60; i++) {
+  const t0 = Date.now()
+  const progressLog = []
+  for (let i = 0; i < maxIterations; i++) {
     await page.waitForTimeout(2000)
     const banner = await frame.locator('#banner').textContent().catch(() => '')
     if (banner) {
@@ -85,10 +94,13 @@ async function confirmAndWaitForTracking(frame, page) {
       const m = banner.match(/(\d+)%/)
       if (m) lastPercent = Number(m[1])
     }
-    if (banner && banner.includes('Klip + loop')) return { done: true, lastBanner, lastPercent }
-    if (banner && banner.includes('Ingen tydelig')) return { done: false, lastBanner, lastPercent }
+    progressLog.push({ tMs: Date.now() - t0, banner, percent: lastPercent })
+    if (banner && banner.includes('Klip + loop')) return { done: true, lastBanner, lastPercent, progressLog }
+    if (banner && banner.includes('Ingen tydelig')) return { done: false, lastBanner, lastPercent, progressLog }
   }
-  throw new Error(`Sporingen blev aldrig færdig inden for 120 sekunder (sidste banner: "${lastBanner}")`)
+  const err = new Error(`Sporingen blev aldrig færdig inden for ${maxIterations * 2}s (sidste banner: "${lastBanner}")`)
+  err.progressLog = progressLog
+  throw err
 }
 
 // ORDRE 211 · commit 1 — traceOut (valgfri) er et objekt kaldstedet ejer;
@@ -99,7 +111,7 @@ async function confirmAndWaitForTracking(frame, page) {
 // gennemført sporing, så et fund overlever selv en forventet fejl (klippet
 // er kendt fra ordre 200 til at fejle sporing). Rører intet ved selve
 // klik-flowet eller trackerens adfærd for eksisterende kald uden traceOut.
-export async function runCoachSporing(page, { appUrl, mockUrl, outDir, awaitingRow, clipPath, traceOut }) {
+export async function runCoachSporing(page, { appUrl, mockUrl, outDir, awaitingRow, clipPath, traceOut, maxIterations }) {
   const shot = (name) => page.screenshot({ path: join(outDir, `coach-sporing-${name}.png`), fullPage: true })
 
   if (traceOut) {
@@ -167,10 +179,29 @@ export async function runCoachSporing(page, { appUrl, mockUrl, outDir, awaitingR
   assert.ok(calibrated, 'auto-kalibreringen fandt ikke skiven efter gentagne forsøg')
   await shot('02-skive-fundet')
 
-  // Klik 3: ⚡ igen — bekræfter ringen, starter selve sporingen.
-  const { done: tracked, lastBanner, lastPercent } = await confirmAndWaitForTracking(frame, page)
+  // Klik 3: ⚡ igen — bekræfter ringen, starter selve sporingen. Med
+  // traceOut sat og et stort maxIterations (den utimede ordre 221-kørsel)
+  // kan denne fortsat kaste (browserens egen sporing bliver aldrig færdig) —
+  // progressLog (banner/procent pr. 2s-poll) reddes ind i traceOut FØR
+  // genkastet, så et fund om "hvor langt/hvor hurtigt" overlever selv et
+  // reelt timeout, samme princip som den eksisterende "Ingen tydelig"-fangst
+  // nedenfor.
+  let tracked, lastBanner, lastPercent, progressLog
+  try {
+    ({ done: tracked, lastBanner, lastPercent, progressLog } =
+      await confirmAndWaitForTracking(frame, page, maxIterations ? { maxIterations } : {}))
+  } catch (err) {
+    if (traceOut) {
+      traceOut.timedOut = true
+      traceOut.progressLog = err.progressLog || []
+      traceOut.lastBanner = err.progressLog?.at(-1)?.banner ?? ''
+      traceOut.lastPercent = err.progressLog?.at(-1)?.percent ?? null
+    }
+    throw err
+  }
 
   if (traceOut) {
+    traceOut.progressLog = progressLog
     const vcFrame = page.frames().find(f => f.url().includes('videocoach.html'))
     traceOut.lastBanner = lastBanner
     traceOut.lastPercent = lastPercent

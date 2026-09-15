@@ -104,14 +104,20 @@ export function ensureSyntheticClip() {
 // videofiler" er en hård grænse denne gang), da selve genererings-
 // infrastrukturen er uafhængig af sporings-pålideligheden og nyttig for et
 // fremtidigt forsøg — genbruges på tværs af kørsler i samme arbejdstræ.
-const COACH_SPORING_CLIP_PATH = join(ROOT, 'test-clips', '_e2e', 'coach-sporing-full.mp4')
-export function ensureCoachSporingClip() {
-  if (existsSync(COACH_SPORING_CLIP_PATH)) return { path: COACH_SPORING_CLIP_PATH, generatedMs: null }
+// ORDRE 221 · commit 1 — valgfrit `variant` ('glat') genererer og cacher den
+// glattede vending (scripts/make-test-clip.mjs's --glat) under EGET filnavn,
+// ved siden af (aldrig i stedet for) standardklippet. Uden variant er
+// funktionen 100% uændret (samme sti, samme kald).
+export function ensureCoachSporingClip(variant) {
+  const suffix = variant ? `-${variant}` : ''
+  const clipPath = join(ROOT, 'test-clips', '_e2e', `coach-sporing-full${suffix}.mp4`)
+  if (existsSync(clipPath)) return { path: clipPath, generatedMs: null }
   mkdirSync(join(ROOT, 'test-clips', '_e2e'), { recursive: true })
   const t0 = Date.now()
-  const result = spawnSync(process.execPath, ['scripts/make-test-clip.mjs'], { cwd: ROOT, stdio: 'inherit' })
-  if (result.status !== 0) throw new Error('scripts/make-test-clip.mjs fejlede ved generering af coach-sporing-klippet')
+  const args = ['scripts/make-test-clip.mjs', ...(variant === 'glat' ? ['--glat'] : [])]
+  const result = spawnSync(process.execPath, args, { cwd: ROOT, stdio: 'inherit' })
+  if (result.status !== 0) throw new Error(`scripts/make-test-clip.mjs fejlede ved generering af coach-sporing-klippet${variant ? ` (variant: ${variant})` : ''}`)
   const generatedMs = Date.now() - t0
-  copyFileSync(join(ROOT, 'docs', 'videocoach', 'clip-cache', 'synthetic-set.mp4'), COACH_SPORING_CLIP_PATH)
-  return { path: COACH_SPORING_CLIP_PATH, generatedMs }
+  copyFileSync(join(ROOT, 'docs', 'videocoach', 'clip-cache', `synthetic-set${suffix}.mp4`), clipPath)
+  return { path: clipPath, generatedMs }
 }
