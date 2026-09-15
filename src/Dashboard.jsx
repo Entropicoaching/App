@@ -23,6 +23,7 @@ import {
   videoCoachMetricText, videoCoachBaselineText, s,
   readinessSignal, formatLastSeen, parsePlannedRpe, initials,
 } from './dashboardShared'
+import { nextWeekStartDate, fillMissingWeekDates } from './weekDates'
 
 // Valgfri fast ugedag pr. session (0=mandag .. 6=søndag). null = fleksibel (Træning 1/2/3).
 const WEEKDAYS_SHORT = ['Man', 'Tir', 'Ons', 'Tor', 'Fre', 'Lør', 'Søn']
@@ -274,6 +275,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [editingSession, setEditingSession] = useState(null)
   const [editingExercise, setEditingExercise] = useState(null)
   const [weekForm, setWeekForm] = useState({ week_number: '', block_name: '', coach_note: '', block_description: '', start_date: '' })
+  // "Sæt datoer" (ordre 204, commit 2): udfylder manglende start_date på
+  // eksisterende uger med ét tryk. null = skjult, ellers { rows, saving }
+  // hvor rows er previewet fra fillMissingWeekDates, vist før det gemmes.
+  const [weekDateFill, setWeekDateFill] = useState(null)
   // Inline omdøbning af en blok i periodiserings-tidslinjen (id på blokkens første uge)
   const [renamingBlock, setRenamingBlock] = useState(null)
   const [renameValue, setRenameValue] = useState('')
@@ -1330,11 +1335,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   // Åbn kalender-blok-byggeren for en atlet; seed startdato efter deres sidste daterede uge (ellers i dag).
   function openCalBlockBuilder(a) {
     const wks = calendarWeeks[a.id] || []
-    const dated = wks.filter(w => w.start_date).sort((x, y) => y.week_number - x.week_number)
-    const seed = dated.length
-      ? new Date(new Date(dated[0].start_date + 'T12:00:00').getTime() + 7 * 24 * 3600 * 1000).toISOString().slice(0, 10)
-      : new Date().toISOString().slice(0, 10)
-    setPlanStartDate(seed)
+    setPlanStartDate(nextWeekStartDate(wks))
     setCalBlockAthlete({ id: a.id, name: a.name })
   }
 
@@ -1604,6 +1605,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       block_name: week.block_name,
       coach_note: week.coach_note,
       block_description: week.block_description,
+      start_date: nextWeekStartDate(weeks),
     }).select().single()
     if (!newWeek) return
     for (const session of (week.sessions || [])) {
@@ -1628,6 +1630,24 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     }
     fetchWeeks(selectedAthlete.id)
     setOpenWeekId(newWeek.id)
+  }
+
+  // "Sæt datoer" (ordre 204, commit 2): forbereder previewet, rører ingen data endnu.
+  function previewWeekDateFill() {
+    setWeekDateFill({ rows: fillMissingWeekDates(weeks), saving: false })
+  }
+
+  // Gemmer previewet med samme skrive-kald som resten af uge-redigeringen
+  // (supabase.from('weeks').update(...).eq('id', ...), jf. "Gem tilknytninger").
+  async function applyWeekDateFill() {
+    if (!weekDateFill?.rows?.length) { setWeekDateFill(null); return }
+    setWeekDateFill(current => ({ ...current, saving: true }))
+    await Promise.all(weekDateFill.rows.map(row =>
+      supabase.from('weeks').update({ start_date: row.start_date }).eq('id', row.id)
+    ))
+    setWeekDateFill(null)
+    fetchWeeks(selectedAthlete.id)
+    showFlash(`${weekDateFill.rows.length} uge${weekDateFill.rows.length !== 1 ? 'r' : ''} fik en dato`, 'success')
   }
 
   async function fetchLatestMessages(athleteIds) {
@@ -2100,7 +2120,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       openProfile(data, 'program')
       setAddingWeek(true)
       setWeekForm({ week_number: '', block_name: '', coach_note: '', block_description: '',
-        start_date: new Date().toISOString().slice(0, 10) })
+        start_date: nextWeekStartDate([]) })
       showFlash(`${data.name} er oprettet. Opret den første programuge.`, 'success')
     } else {
       showFlash('Kunne ikke oprette atlet: ' + error.message, 'error')
@@ -2765,14 +2785,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   // Åbner kun den lokale planflade for den valgte atlet. Ingen blokke eller
   // uger oprettes, før coachen senere vælger "Opret" i planlæggeren.
   function openPlanReview(planEntry) {
-    const dated = (calendarWeeks[planEntry.athlete.id] || [])
-      .filter(week => week.start_date)
-      .sort((left, right) => new Date(right.start_date + 'T12:00:00') - new Date(left.start_date + 'T12:00:00'))
-    const latest = dated[0]
-    const nextStart = latest
-      ? new Date(new Date(latest.start_date + 'T12:00:00').getTime() + 7 * 24 * 3600 * 1000).toISOString().slice(0, 10)
-      : new Date().toISOString().slice(0, 10)
-    setPlanStartDate(nextStart)
+    setPlanStartDate(nextWeekStartDate(calendarWeeks[planEntry.athlete.id] || []))
     setPlanAssistantFocus(planEntry.suggested_focus)
     setBlockPlan([])
     setWeekDraft(null)
@@ -4867,7 +4880,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 componentProps={{
                   addExercise, addingExercise, addingSession,
                   addingWeek, addSession, addWeek,
-                  applyPeriodizationSuggestion, approveDraftProgressionState,
+                  applyPeriodizationSuggestion, applyWeekDateFill, approveDraftProgressionState,
                   approvingProgression, assignEdits, athleteLogs, bestLog,
                   blockPlan, copyExerciseToSession, copyingExercise,
                   copyingSession, copySessionToWeek, copyWeek, deleteExercise,
@@ -4875,7 +4888,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   editingRecommended, editingSession, editingWeek, exFormRow,
                   fetchWeeks, generateWeeksFromPlan, gotoWeek, isMobile,
                   openSessionId, openWeekId, parseIntensity, planAssistantFocus,
-                  planStartDate, programActiveStart, programBlockStart,
+                  planStartDate, previewWeekDateFill, programActiveStart, programBlockStart,
                   programShownWeeks,
                   recommendedInput, renameValue, renamingBlock, reorderExercise,
                   reorderSession, saveRecommendedWeight, selectedAthlete,
@@ -4888,9 +4901,9 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   setPlanAssistantFocus, setPlanStartDate, setProgramBlockStart,
                   setRecommendedInput, setRenameValue, setRenamingBlock,
                   setSendingDraft, setSessionForm, setShowBlockPlanner,
-                  setWeekDraft, setWeekForm, showBlockPlanner, showFlash,
+                  setWeekDateFill, setWeekDraft, setWeekForm, showBlockPlanner, showFlash,
                   updateExercise, updateSession, updateWeek, weekdayPicker,
-                  weekDraft, weekForm, weeks,
+                  weekDateFill, weekDraft, weekForm, weeks,
                 }}
               />
             )}
