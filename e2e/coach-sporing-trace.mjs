@@ -148,6 +148,27 @@ async function main() {
     }
   })
 
+  // ---- ORDRE 221 · commit 2 — pr.-forsøg genfindings-tabel ----
+  // recoveryGate er kun sat på probes hvor plateIdentityUsable&&lost>=2 (se
+  // public/videocoach.html) — dvs. ét indslag pr. HJEMME-genfindings-forsøg,
+  // ikke pr. frame. trueX/trueY er facit på DET tidspunkt forsøget skete.
+  const recoveryAttempts = (run.frameProbe || [])
+    .filter(p => p.recoveryGate)
+    .map(p => {
+      const truth = truePos(p.t)
+      return {
+        t: +p.t.toFixed(4), trueX: +truth.x.toFixed(2), trueY: +truth.y.toFixed(2),
+        recoveryGate: p.recoveryGate,
+        homeSearch: p.homeSearch || null,
+        recoveryCandidate: p.recoveryCandidate ?
+          { x: +p.recoveryCandidate.x.toFixed(2), y: +p.recoveryCandidate.y.toFixed(2) } : null,
+        recoverySource: p.recoverySource || null,
+        recoveryFeatures: p.recoveryFeatures ?? null,
+        recoveryJump: p.recoveryJump != null ? +p.recoveryJump.toFixed(2) : null,
+        recoveryMaxJump: p.recoveryMaxJump != null ? +p.recoveryMaxJump.toFixed(2) : null,
+      }
+    })
+
   // ORDRE 221 · commit 1 — aktiv-mod-springer fordeling: en frame uden
   // probe-indgang (frameProbe dækker kun det RIGTIGE match-forsøg) er enten
   // ankerframen (i===0) eller sprunget over af VC_TRACKER_FASTs
@@ -166,9 +187,11 @@ async function main() {
       lowConf: run.lowConf, homeRecoveries: run.homeRecoveries, mediaSeconds: run.mediaSeconds,
       elapsedMs: run.elapsedMs, msPerVideoSecond: msPerVideoSecond == null ? null : +msPerVideoSecond.toFixed(0),
       activeFrames: activeCount, skippedFrames: skippedCount,
+      plateIdentityUsable: run.plateIdentityUsable, plateBase: run.plateBase, trackerMode: run.trackerMode,
       endedAtT: run.endedAt, sluttedFoerKlippetSluttedS: +(DURATION - (run.endedAt ?? DURATION)).toFixed(3) },
     repsDetekteret: run.analysis ? run.analysis.repsDetectedCount : null,
     repRows,
+    recoveryAttempts,
     frames,
   }
   const outPath = join(TRACE_DIR, `run-${new Date().toISOString().replace(/[:.]/g, '-')}.json`)
@@ -179,7 +202,8 @@ async function main() {
   console.log(`Frames: ${run.pts.length}, ugyldige: ${run.valid.filter(v => !v).length}, sluttede ved t=${run.endedAt?.toFixed(2)}s (klip: ${DURATION}s)`)
   console.log(`Aktiv sporing: ${activeCount} frames · Sprunget over (QUIET_NEEDED): ${skippedCount} frames`)
   console.log(`Reel tid pr. sekund video: ${msPerVideoSecond == null ? 'n/a' : (msPerVideoSecond / 1000).toFixed(2) + 's/s'} (elapsedMs=${run.elapsedMs?.toFixed(0)} / mediaSeconds=${run.mediaSeconds?.toFixed(2)})`)
-  console.log(`homeRecoveries: ${run.homeRecoveries}`)
+  console.log(`homeRecoveries: ${run.homeRecoveries} · genfindings-forsøg (recoveryGate sat): ${recoveryAttempts.length}`)
+  console.log(`plateIdentityUsable: ${run.plateIdentityUsable} · trackerMode: ${run.trackerMode}`)
   console.log(`Reps detekteret: ${out.repsDetekteret ?? 'n/a'} / 5 sande`)
   for (const r of repRows) {
     console.log(`  detekteret rep ${r.detectedIndex + 1} (≈sand rep ${r.naermesteSandeRep}): mcv=${r.mcv} romCm=${r.romCm} measurable=${r.measurable} validRatio=${r.validRatio}`)
