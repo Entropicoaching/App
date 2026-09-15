@@ -3,11 +3,19 @@
 ## Gren
 
 Gren `planlagt-hele-forloebet`, forgrenet fra `rettelser-i-supabase` (ordre 209).
+Ordren blev genudstedt undervejs (main havde fået 209+205 merget, og 215 —
+hastefejlen "Min træning" — landede på sin egen gren `min-traening-hotfix`
+imens) — grenen er derfor opdateret med `git merge main` +
+`git merge min-traening-hotfix`, begge konfliktfri (ingen af de tre berører
+samme filer som volumen-arbejdet her, bortset fra `e2e/run-all.mjs`, som
+git selv løste).
 
 - `e6f73a1` — commit 1: beregningen
 - `05acd0c` — commit 2: grafen
 - `2f7020f` — commit 3: "hvad grafen siger" i coach-sprog + docs
-- (denne rapport er commit 4, se hash i `git log` efter commit)
+- `b48cfb7` — commit 4: rapport (første udkast, før merges)
+- to merge-commits (`main`, `min-traening-hotfix`)
+- (denne opdaterede rapport er den sidste commit, se hash i `git log` efter commit)
 
 ## Hvad ændret
 
@@ -53,11 +61,15 @@ vokser over vinduet: 3 sæt/uge i starten, 11 sæt/uge nu.").
 
 ## Testresultat
 
+Kørt EFTER begge merges (`main` + `min-traening-hotfix`), på den endelige gren:
+
 - `npm run lint`: grøn, hele repoet.
-- Alle 34 `verify:*`-scripts: grønne.
-- `node --test src/volume/*.test.js`: 75/75 grønne (30 i `planlagt.test.js`,
+- `node --test`: 231/231 grønne (hele `src/`, inkl. 30 i `planlagt.test.js`,
   op fra 9 før denne ordre).
-- `npm run e2e`: grøn ("atlet → coach, ende-til-ende", ~26s).
+- Alle 34 `verify:*`-scripts: grønne, kørt enkeltvis.
+- `npm run e2e`: grøn ("atlet → coach, ende-til-ende", ~27s) — krævede flere
+  forsøg pga. vedvarende portkonflikt (127.0.0.1:8991) med en samtidig
+  Bhishak-session på samme maskine, ikke en fejl i koden.
 - `npm run build`: grøn. `Dashboard`-chunken: 328,34 KB (op fra 323,74 KB
   efter ordre 209, +4,6 KB) — ordren satte ingen bundle-grænse.
 
