@@ -16,7 +16,6 @@ import { progressionOverrideErrors, updateDraftForecast, updateForecastOverrideR
 import { blockPurpose, buildPeriodizationSuggestion, withBlockPurposes } from './periodizationAssistant'
 import { buildPlanOverview, planOverviewCounts } from './planOverview'
 import { byggKategoriOpslag, kategoriFor } from './exerciseNames'
-import VolumenKort from './dashboard/VolumenKort'
 import {
   BLOCK_NAMES, blockColor, computePhases, currentWeekNo,
   VIDEOCOACH_STATUS, VIDEOCOACH_METRICS, videoCoachMetric, videoCoachBaseline,
@@ -180,6 +179,12 @@ const ATHLETE_LOGS_LIMIT = 2000
 const indbakkeFactory = () => import('./dashboard/IndbakkeView')
 const analyseTabFactory = () => import('./dashboard/AnalyseTab')
 const programTabFactory = () => import('./dashboard/ProgramTab')
+// ORDRE 228 · commit 2: Volumenkortet (177/185/209/210) trækker hele
+// src/volume/-træet med sig, inkl. den 53 kB genererede kortlægnings-JSON
+// (muskelkort.generet.json) — kun brugt på 'oversigt'-fanen i en atlets
+// profil, aldrig ved coachens første tegning af atletlisten. Samme
+// LazyBoundary-mønster som de tre fane-factories ovenfor.
+const volumenKortFactory = () => import('./dashboard/VolumenKort')
 
 export default function Dashboard({ session, onPreviewAthlete }) {
   const initialCoachEntryRef = useRef(coachInboxEntryIntent(
@@ -4781,7 +4786,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 )}
               </div>
 
-              <VolumenKort athleteLogs={athleteLogs} weeks={weeks} coachId={session.user.id} />
+              <LazyBoundary
+                factory={volumenKortFactory} label="Volumenkort" loading={<div style={s.page}>Indlæser…</div>}
+                componentProps={{ athleteLogs, weeks, coachId: session.user.id }}
+              />
               </div>
             )}
 
