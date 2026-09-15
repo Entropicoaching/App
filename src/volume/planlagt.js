@@ -160,3 +160,82 @@ export function beregnPlanlagtPrUge(weeks, logs, { rettelser } = {}) {
 
   return { uger, ugerUdenDato }
 }
+
+function formatTal(v) {
+  return Number.isInteger(v) ? String(v) : v.toFixed(1).replace('.', ',')
+}
+
+/** "2026-W37" -> "U37" — samme forkortelse som VolumenKort.jsx/VolumenGraf.jsx. */
+function ugeKort(ugenoegle_) {
+  return ugenoegle_.replace(/^\d{4}-W/, 'U')
+}
+
+/** Planlagt minus gennemført, summeret over `grupper`, aldrig under 0 pr. gruppe. */
+function samletGabIUge(uge, grupper) {
+  let gab = 0
+  for (const g of grupper) {
+    const planlagtIalt = uge.planlagt.grupper[g]?.ialt || 0
+    const gennemfoertIalt = uge.gennemfoert.grupper[g]?.ialt || 0
+    gab += Math.max(0, planlagtIalt - gennemfoertIalt)
+  }
+  return gab
+}
+
+/**
+ * ORDRE 210 (15. sep), commit 3: op til tre sætninger "i coach-sprog",
+ * regnet direkte af beregnPlanlagtPrUge's `uger` — ordrens egen grænse:
+ * "ingen anbefaling, kun tal". Returnerer FÆRRE end tre sætninger hvis en
+ * af dem ikke ville sige noget (fx under to uger at sammenligne en tendens
+ * over, eller ingen gruppe der nogensinde lå under planen).
+ *
+ * @param {Array<{ uge: string, planlagt: { grupper: Record<string, { ialt: number }> }, gennemfoert: { grupper: Record<string, { ialt: number }> } }>} uger
+ *   Kronologisk (ældste først) — samme facon som beregnPlanlagtPrUge's `uger`.
+ * @param {string[]} grupper Muskelgruppe-nøgler at se på (samme datasæt som grafens rækker).
+ * @param {Record<string, string>} muskelgrupper MUSKELGRUPPER-kortet (nøgle → dansk label).
+ * @returns {string[]}
+ */
+export function opsummerGab(uger, grupper, muskelgrupper) {
+  if (!uger.length || !grupper.length) return []
+  const saetninger = []
+
+  // 1) Gruppen der i flest uger lå under planen. Uafgjort brydes af
+  // grupper-listens egen rækkefølge (første fundne vinder) — deterministisk,
+  // ikke en faglig prioritering.
+  let bedsteGruppe = null
+  let bedsteAntal = 0
+  for (const g of grupper) {
+    const antal = uger.filter(u => (u.gennemfoert.grupper[g]?.ialt || 0) < (u.planlagt.grupper[g]?.ialt || 0)).length
+    if (antal > bedsteAntal) { bedsteAntal = antal; bedsteGruppe = g }
+  }
+  if (bedsteGruppe) {
+    saetninger.push(`${muskelgrupper[bedsteGruppe]} lå under planen ${bedsteAntal} af ${uger.length} uger.`)
+  }
+
+  // 2) Ugen med det største samlede gab (summeret over de viste grupper).
+  let stoersteUge = null
+  let stoersteGab = 0
+  for (const u of uger) {
+    const gab = samletGabIUge(u, grupper)
+    if (gab > stoersteGab) { stoersteGab = gab; stoersteUge = u.uge }
+  }
+  if (stoersteUge) {
+    saetninger.push(`Størst gab i uge ${ugeKort(stoersteUge)}: ${formatTal(stoersteGab)} sæt under planen.`)
+  }
+
+  // 3) Vokser eller falder gabet hen over vinduet? Første halvdel mod anden
+  // halvdel af de viste uger (midterste uge udelades ved ulige antal, for
+  // ikke at lade den tælle i begge — "start" og "nu" skal være entydige).
+  if (uger.length >= 2) {
+    const midte = Math.floor(uger.length / 2)
+    const foerste = uger.slice(0, midte)
+    const anden = uger.slice(uger.length - midte)
+    const gnsFoerste = foerste.reduce((sum, u) => sum + samletGabIUge(u, grupper), 0) / foerste.length
+    const gnsAnden = anden.reduce((sum, u) => sum + samletGabIUge(u, grupper), 0) / anden.length
+    const retning = gnsAnden > gnsFoerste ? 'vokser' : gnsAnden < gnsFoerste ? 'falder' : null
+    if (retning) {
+      saetninger.push(`Gabet ${retning} over vinduet: ${formatTal(gnsFoerste)} sæt/uge i starten, ${formatTal(gnsAnden)} sæt/uge nu.`)
+    }
+  }
+
+  return saetninger.slice(0, 3)
+}

@@ -5,8 +5,9 @@
 
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { beregnPlanlagtDenneUge, beregnPlanlagtPrUge } from './planlagt.js'
+import { beregnPlanlagtDenneUge, beregnPlanlagtPrUge, opsummerGab } from './planlagt.js'
 import { ugenoegle } from './beregn.js'
+import { MUSKELGRUPPER } from './muskelkort.js'
 
 const I_DAG = '2026-09-14' // mandag i "denne uge" til testene
 
@@ -185,4 +186,107 @@ test('tomt weeks og tomt logs: tom uger-liste, ingen fejl', () => {
   const resultat = beregnPlanlagtPrUge([], [])
   assert.deepEqual(resultat.uger, [])
   assert.equal(resultat.ugerUdenDato, 0)
+})
+
+// ---- ORDRE 210, commit 3: opsummerGab ----
+
+/** @param {Record<string, { planlagt: number, gennemfoert: number }>} vaerdier */
+function ugeMedTal(ugeKey, vaerdier) {
+  const planlagt = { grupper: {}, ukendteSaet: 0 }
+  const gennemfoert = { grupper: {}, ukendteSaet: 0 }
+  for (const [g, { planlagt: p, gennemfoert: f }] of Object.entries(vaerdier)) {
+    planlagt.grupper[g] = { direkte: p, ialt: p }
+    gennemfoert.grupper[g] = { direkte: f, ialt: f }
+  }
+  return { uge: ugeKey, planlagt, gennemfoert }
+}
+
+test('opsummerGab: tom uger-liste giver ingen sætninger', () => {
+  assert.deepEqual(opsummerGab([], ['kneeExtensors'], MUSKELGRUPPER), [])
+})
+
+test('opsummerGab: tom grupper-liste giver ingen sætninger', () => {
+  const uger = [ugeMedTal('2026-W10', { kneeExtensors: { planlagt: 10, gennemfoert: 5 } })]
+  assert.deepEqual(opsummerGab(uger, [], MUSKELGRUPPER), [])
+})
+
+test('opsummerGab: gruppen der oftest lå under planen', () => {
+  const uger = [
+    ugeMedTal('2026-W10', { kneeExtensors: { planlagt: 10, gennemfoert: 5 }, lats: { planlagt: 8, gennemfoert: 8 } }),
+    ugeMedTal('2026-W11', { kneeExtensors: { planlagt: 10, gennemfoert: 4 }, lats: { planlagt: 8, gennemfoert: 8 } }),
+  ]
+  const [foerste] = opsummerGab(uger, ['kneeExtensors', 'lats'], MUSKELGRUPPER)
+  assert.equal(foerste, 'Knæ-strækkere lå under planen 2 af 2 uger.')
+})
+
+test('opsummerGab: ingen gruppe lå nogensinde under planen — ingen "lå under planen"-sætning', () => {
+  const uger = [ugeMedTal('2026-W10', { kneeExtensors: { planlagt: 10, gennemfoert: 10 } })]
+  const saetninger = opsummerGab(uger, ['kneeExtensors'], MUSKELGRUPPER)
+  assert.ok(!saetninger.some(s => s.includes('lå under planen')))
+})
+
+test('opsummerGab: uafgjort mellem grupper — første i grupper-rækkefølgen vinder', () => {
+  const uger = [
+    ugeMedTal('2026-W10', { kneeExtensors: { planlagt: 10, gennemfoert: 5 }, lats: { planlagt: 10, gennemfoert: 5 } }),
+  ]
+  const [foerste] = opsummerGab(uger, ['lats', 'kneeExtensors'], MUSKELGRUPPER)
+  assert.ok(foerste.startsWith('Ryggens brede muskler'))
+})
+
+test('opsummerGab: ugen med størst samlet gab', () => {
+  const uger = [
+    ugeMedTal('2026-W10', { kneeExtensors: { planlagt: 10, gennemfoert: 8 } }), // gab 2
+    ugeMedTal('2026-W11', { kneeExtensors: { planlagt: 10, gennemfoert: 2 } }), // gab 8
+  ]
+  const saetninger = opsummerGab(uger, ['kneeExtensors'], MUSKELGRUPPER)
+  assert.ok(saetninger.some(s => s.includes('U11') && s.includes('8 sæt')))
+})
+
+test('opsummerGab: kun én uge — ingen tendens-sætning', () => {
+  const uger = [ugeMedTal('2026-W10', { kneeExtensors: { planlagt: 10, gennemfoert: 5 } })]
+  const saetninger = opsummerGab(uger, ['kneeExtensors'], MUSKELGRUPPER)
+  assert.ok(!saetninger.some(s => s.includes('vokser') || s.includes('falder')))
+})
+
+test('opsummerGab: gabet vokser over vinduet', () => {
+  const uger = [
+    ugeMedTal('2026-W10', { kneeExtensors: { planlagt: 10, gennemfoert: 9 } }), // gab 1
+    ugeMedTal('2026-W11', { kneeExtensors: { planlagt: 10, gennemfoert: 9 } }), // gab 1
+    ugeMedTal('2026-W12', { kneeExtensors: { planlagt: 10, gennemfoert: 5 } }), // gab 5
+    ugeMedTal('2026-W13', { kneeExtensors: { planlagt: 10, gennemfoert: 5 } }), // gab 5
+  ]
+  const saetninger = opsummerGab(uger, ['kneeExtensors'], MUSKELGRUPPER)
+  const trend = saetninger.find(s => s.includes('vokser'))
+  assert.ok(trend)
+  assert.ok(trend.includes('1 sæt/uge i starten'))
+  assert.ok(trend.includes('5 sæt/uge nu'))
+})
+
+test('opsummerGab: gabet falder over vinduet', () => {
+  const uger = [
+    ugeMedTal('2026-W10', { kneeExtensors: { planlagt: 10, gennemfoert: 5 } }), // gab 5
+    ugeMedTal('2026-W11', { kneeExtensors: { planlagt: 10, gennemfoert: 5 } }), // gab 5
+    ugeMedTal('2026-W12', { kneeExtensors: { planlagt: 10, gennemfoert: 9 } }), // gab 1
+    ugeMedTal('2026-W13', { kneeExtensors: { planlagt: 10, gennemfoert: 9 } }), // gab 1
+  ]
+  const saetninger = opsummerGab(uger, ['kneeExtensors'], MUSKELGRUPPER)
+  assert.ok(saetninger.some(s => s.includes('falder')))
+})
+
+test('opsummerGab: gabet uændret over vinduet — ingen tendens-sætning', () => {
+  const uger = [
+    ugeMedTal('2026-W10', { kneeExtensors: { planlagt: 10, gennemfoert: 8 } }),
+    ugeMedTal('2026-W11', { kneeExtensors: { planlagt: 10, gennemfoert: 8 } }),
+  ]
+  const saetninger = opsummerGab(uger, ['kneeExtensors'], MUSKELGRUPPER)
+  assert.ok(!saetninger.some(s => s.includes('vokser') || s.includes('falder')))
+})
+
+test('opsummerGab: aldrig mere end tre sætninger', () => {
+  const uger = [
+    ugeMedTal('2026-W10', { kneeExtensors: { planlagt: 10, gennemfoert: 5 }, lats: { planlagt: 8, gennemfoert: 8 } }),
+    ugeMedTal('2026-W11', { kneeExtensors: { planlagt: 10, gennemfoert: 2 }, lats: { planlagt: 8, gennemfoert: 4 } }),
+  ]
+  const saetninger = opsummerGab(uger, ['kneeExtensors', 'lats'], MUSKELGRUPPER)
+  assert.ok(saetninger.length <= 3)
 })

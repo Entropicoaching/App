@@ -29,7 +29,7 @@
 // har datoer efter ordre 204) + VolumenGrafForloeb til at tegne det.
 import { useEffect, useState } from 'react'
 import { beregnVolumenPrUge } from '../volume/beregn.js'
-import { beregnPlanlagtDenneUge, beregnPlanlagtPrUge } from '../volume/planlagt.js'
+import { beregnPlanlagtDenneUge, beregnPlanlagtPrUge, opsummerGab } from '../volume/planlagt.js'
 import { MUSKELGRUPPER, slaaOevelseOp } from '../volume/muskelkort.js'
 import { hentRettelser, hentLagerType } from '../volume/rettelser.js'
 import { supabase } from '../supabase'
@@ -167,6 +167,7 @@ export default function VolumenKort({ athleteLogs, weeks, coachId }) {
   const grupperMedDataGraf = Object.keys(MUSKELGRUPPER).filter(g => ugerGraf.some(u => (u.grupper[g]?.ialt || 0) > 0))
   const grupperMedDataForloeb = Object.keys(MUSKELGRUPPER).filter(g =>
     planlagtForloeb.uger.some(u => (u.planlagt.grupper[g]?.ialt || 0) > 0 || (u.gennemfoert.grupper[g]?.ialt || 0) > 0))
+  const gabSaetninger = opsummerGab(planlagtForloeb.uger, grupperMedDataForloeb, MUSKELGRUPPER)
   const harUkendte = uger.some(u => u.ukendteSaet > 0)
 
   return (
@@ -242,6 +243,13 @@ export default function VolumenKort({ athleteLogs, weeks, coachId }) {
               {planlagtForloeb.ugerUdenDato > 0 && (
                 <div style={{ fontSize: '0.6rem', color: '#e0a555', marginTop: '0.6rem' }}>
                   Uger uden dato: {planlagtForloeb.ugerUdenDato} (Sæt datoer)
+                </div>
+              )}
+              {gabSaetninger.length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', marginTop: '0.9rem' }}>
+                  {gabSaetninger.map((saetning, i) => (
+                    <div key={i} style={{ fontSize: '0.68rem', color: '#c8b98a' }}>{saetning}</div>
+                  ))}
                 </div>
               )}
             </div>
