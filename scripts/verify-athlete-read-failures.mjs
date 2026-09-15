@@ -67,15 +67,21 @@ for (const [name, setter] of SIMPLE_READS) {
 }
 
 // fetchReadiness: tre uafhængige læsninger (i dag, sidste, 14-dages-historik
-// tilføjet i ordre 100), alle garderede.
+// tilføjet i ordre 100), alle garderede. ORDRE 231 · commit 1 fandt dem
+// serialiseret uden nogen datamæssig grund (0-1ms gab, ren await-kæde) —
+// commit 2 kører dem nu samtidig via Promise.all, hver med sin egen
+// ok-vagt, så invarianten ("setter kaldes kun ved bekræftet succes") står
+// uændret, blot i parallel form.
 const fetchReadiness = extractFn('fetchReadiness')
 assert.equal((fetchReadiness.match(/runGuardedRead\(/g) || []).length, 3,
   'fetchReadiness skal have tre garderede læsninger (dagens, sidste og 14-dages-historik for parathed)')
-assert.match(fetchReadiness, /if \(!ok\) return[\s\S]*setReadinessLog\(/,
+assert.match(fetchReadiness, /Promise\.all\(/,
+  'fetchReadiness skal køre de tre uafhængige læsninger samtidig, ikke i serie (ordre 231)')
+assert.match(fetchReadiness, /if \(today_\.ok\) setReadinessLog\(/,
   'setReadinessLog skal kun kaldes når dagens parathed er bekræftet hentet')
-assert.match(fetchReadiness, /if \(!prevOk\) return[\s\S]*setLastReadiness\(/,
+assert.match(fetchReadiness, /if \(prev_\.ok\) setLastReadiness\(/,
   'setLastReadiness skal kun kaldes når sidste parathed er bekræftet hentet')
-assert.match(fetchReadiness, /if \(!histOk\) return[\s\S]*setReadinessHistory\(/,
+assert.match(fetchReadiness, /if \(hist_\.ok\) setReadinessHistory\(/,
   'setReadinessHistory skal kun kaldes når 14-dages-historikken er bekræftet hentet (ordre 100)')
 
 // fetchProgram: den flagskibs-fejl fra ordre 70/76's fund — programError

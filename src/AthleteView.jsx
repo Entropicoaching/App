@@ -2403,46 +2403,51 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     setWarmupTemplates(data || [])
   }
 
+  // ORDRE 231 · commit 2: de tre opslag herunder er uafhængige af hinandens
+  // DATA (samme tabel, tre forskellige datofiltre) men blev kørt i serie —
+  // kaeden-tegn.mjs (commit 1) fandt 0-1ms gab mellem dem, en ren await-kæde,
+  // ikke netværksstøj. Kørt samtidig via Promise.all i stedet; hver gren
+  // beholder sin egen fejlmelding (onReadError) og opdaterer kun sin egen
+  // state ved success, præcis som før.
   async function fetchReadiness(athleteId) {
-    const { data, ok } = await runGuardedRead(
-      () => supabase
-        .from('readiness_logs')
-        .select('*')
-        .eq('athlete_id', athleteId)
-        .eq('logged_date', today())
-        .maybeSingle(),
-      onReadError('Dagens parathed', athleteId),
-    )
-    if (!ok) return
-    setReadinessLog(data || null)
-    const { data: prev, ok: prevOk } = await runGuardedRead(
-      () => supabase
-        .from('readiness_logs')
-        .select('*')
-        .eq('athlete_id', athleteId)
-        .lt('logged_date', today())
-        .order('logged_date', { ascending: false })
-        .limit(1)
-        .maybeSingle(),
-      onReadError('Sidste parathed', athleteId),
-    )
-    if (!prevOk) return
-    setLastReadiness(prev || null)
-    // ORDRE 100: op til 14 forudgående dage — grundlaget for "sat op mod dit
-    // eget snit" og for den lille 14-dages-kurve. Ekskluderer i dag med vilje,
-    // så dagens egen score ikke er med i det den sammenlignes mod.
-    const { data: hist, ok: histOk } = await runGuardedRead(
-      () => supabase
-        .from('readiness_logs')
-        .select('logged_date, readiness_score')
-        .eq('athlete_id', athleteId)
-        .lt('logged_date', today())
-        .order('logged_date', { ascending: false })
-        .limit(14),
-      onReadError('Parathedshistorik', athleteId),
-    )
-    if (!histOk) return
-    setReadinessHistory(hist || [])
+    const [today_, prev_, hist_] = await Promise.all([
+      runGuardedRead(
+        () => supabase
+          .from('readiness_logs')
+          .select('*')
+          .eq('athlete_id', athleteId)
+          .eq('logged_date', today())
+          .maybeSingle(),
+        onReadError('Dagens parathed', athleteId),
+      ),
+      runGuardedRead(
+        () => supabase
+          .from('readiness_logs')
+          .select('*')
+          .eq('athlete_id', athleteId)
+          .lt('logged_date', today())
+          .order('logged_date', { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+        onReadError('Sidste parathed', athleteId),
+      ),
+      // ORDRE 100: op til 14 forudgående dage — grundlaget for "sat op mod
+      // dit eget snit" og for den lille 14-dages-kurve. Ekskluderer i dag med
+      // vilje, så dagens egen score ikke er med i det den sammenlignes mod.
+      runGuardedRead(
+        () => supabase
+          .from('readiness_logs')
+          .select('logged_date, readiness_score')
+          .eq('athlete_id', athleteId)
+          .lt('logged_date', today())
+          .order('logged_date', { ascending: false })
+          .limit(14),
+        onReadError('Parathedshistorik', athleteId),
+      ),
+    ])
+    if (today_.ok) setReadinessLog(today_.data || null)
+    if (prev_.ok) setLastReadiness(prev_.data || null)
+    if (hist_.ok) setReadinessHistory(hist_.data || [])
   }
 
   function suggestNextWeight(exName, intensity) {

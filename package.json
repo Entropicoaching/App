@@ -55,6 +55,7 @@
     "maal:telefon": "node scripts/maal-telefon.mjs",
     "maal:coach-telefon": "node scripts/maal-coach-telefon.mjs",
     "maal:kaeden": "node scripts/maal-kaeden.mjs",
+    "kaeden:tegn": "node scripts/kaeden-tegn.mjs",
     "maal:produktion": "node scripts/maal-produktion.mjs",
     "verify:n8n": "node n8n/verify-workflows.mjs",
     "preview:n8n-briefing": "node n8n/preview-coach-briefing.mjs"
