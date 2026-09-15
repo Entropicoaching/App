@@ -5067,6 +5067,21 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
   }
   freezeRawAcquisition(path,session);
   analyzePath(path);
+  // ORDRE 211 · commit 1 — instrumentering, ingen ændring i sporings- eller
+  // rep-detektionslogikken ovenfor. Kun aktiv under ?benchmark=1 (samme guard
+  // som TRACKER_BENCHMARK/publishTrackerBenchmarkRun i forvejen), aldrig i
+  // produktion. Lægger rep-analysen (hvor de eksisterende benchmark-felter
+  // pts/times/valid/frameProbe kun dækker RÅ sporing, før analyzePath) ind i
+  // samme allerede-publicerede run-objekt.
+  if(TRACKER_BENCHMARK&&window.__vcTrackerBenchmarkLast){
+    window.__vcTrackerBenchmarkLast.analysis=path.analysis?{
+      repsDetectedCount:path.analysis.reps.length,
+      reps:path.analysis.reps.map(r=>({start:r.start,end:r.end,
+        mcv:Number.isFinite(r.mcv)?+r.mcv.toFixed(4):null,
+        romCm:Number.isFinite(r.romCm)?+r.romCm.toFixed(2):null,
+        validRatio:+r.validRatio.toFixed(3)})),
+    }:null;
+  }
   const badPct=path.lowConf&&path.pts.length?Math.round(path.lowConf/path.pts.length*100):0;
   if(badPct>5){
     say(`⚠ Trackeren holdt sidste sikre punkt i ${badPct}% af sættet · kontrollér banen`);
