@@ -62,7 +62,7 @@ brugt til at måle/diagnosticere, ikke til at gate en merge.
 |---|---|---|---|
 | `verify-athlete-reps-per-set-mobile.mjs` | `window.__harnessReady` (isoleret HTML-harness), DOM-attributter | Timeout 5s → rødt | ingen |
 | `verify-videocoach-film-guide.mjs` | `#athFilmGuide`-selector, localStorage-flag, DOM-tekst | Timeout → rødt. To `waitForTimeout(200/150)` efter selector-fund, uden begrundet tal (render-settle) | **(c)** — små, lavrisiko magic numbers |
-| `verify-videocoach-buttons-layout.mjs` | Element-bokse (`getBoundingClientRect`), `hidden`-flag før/under en ægte `runFullAnalysis()`-kørsel | Et `waitForTimeout(400)` antager sporingen STADIG kører 400ms efter start — intet begrundet tal for hvorfor 400ms er nok/rigtigt. Værste udfald er en falsk RØD (flaky fail), ikke et stille pass | **(c)** |
+| `verify-videocoach-buttons-layout.mjs` | Element-bokse (`getBoundingClientRect`), `hidden`-flag før/under en ægte `runFullAnalysis()`-kørsel | **Rettet i commit 2**: ventede før på et ubegrundet fast `waitForTimeout(400)` (gæt på at chippens egen 250ms-poller nåede at reagere). Venter nu på selve `#trackerFastSeg.vcTrackingBusy`-klassen — det ægte udfald observatøren i videocoach.html rent faktisk sætter | **(c) → rettet** |
 | `verify-videocoach-clip.mjs` | `page.evaluate()`s returværdi af de ÆGTE `runAnalysis`/`runRepWindowsPresearch`/`runRealtimePreview`-funktioner (afventer selve promise'n, ikke en banner-proxy), sammenlignet mod numerisk facit (pixel-afvigelse, realtidsfaktor) | Intet udebliver stille — assertions er numeriske tolerancer mod kendt facit | ingen |
 | `verify-videocoach-upload-flow.mjs` | (A) banner-tekst "Video modtaget" — men denne sættes i SAMME synkrone success-callback som selve upload-bekræftelsen, ingen alternativ stille vej fundet. (B) `runFullAnalysis()`s returværdi direkte via `evaluate()` (ikke banner-polling — faktisk mere ærlig end `coach-sporing.spec.mjs`s metode), med `withTimeout()`-wrapper som begrundet sikkerhedsnet (120s) | Timeout → kaster med label ("runFullAnalysis" osv.) | ingen |
 | `verify-ugen-faar-dato.mjs` | Ægte DOM-tekst, mockens `weeks`-tabel | Timeout → rødt | ingen |
@@ -136,8 +136,8 @@ de dækkes af `npm run proever`/CI, uden at de gør. Ikke rørt i denne ordre
 |---|---|
 | (a) — kan melde hæng uden hæng | 0 aktive (1 historisk, rettet i ordre 225) |
 | (b) — kan bestå stille | 0 aktive (samme historiske tilfælde) |
-| (c) — timeout uden begrundelse | 2 (`verify-videocoach-film-guide.mjs`, `verify-videocoach-buttons-layout.mjs`) |
-| ingen (venter på faktisk udfald) | 41 af 43 gennemgåede prøver/scripts (7 e2e-specs + run-all + 3 diagnose + 32 af 34 verify-scripts) |
+| (c) — timeout uden begrundelse | 1 tilbage (`verify-videocoach-film-guide.mjs`, lavrisiko render-settle-pauser). `verify-videocoach-buttons-layout.mjs` rettet i commit 2, se nedenfor |
+| ingen (venter på faktisk udfald) | 42 af 43 gennemgåede prøver/scripts efter commit 2 |
 
 ## Metode
 

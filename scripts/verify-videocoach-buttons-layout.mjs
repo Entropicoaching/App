@@ -137,7 +137,15 @@ async function main() {
       const barPt = vcConfirmPlateRing()
       runFullAnalysis(barPt)
     }, p0)
-    await page.waitForTimeout(400)
+    // ORDRE 234 · commit 2: ventede tidligere på en fast, ubegrundet 400ms —
+    // et gæt på at chippens egen 250ms-poller (se videocoach.html's
+    // trackerFastSeg-observatør) nåede at reagere på `analyzing`/`tracking`.
+    // Vent i stedet på selve DEN klasse observatøren rent faktisk sætter —
+    // det ægte udfald, ikke et tidspunkt der plejer at følge med det.
+    await page.waitForFunction(
+      () => document.getElementById('trackerFastSeg')?.classList.contains('vcTrackingBusy'),
+      null, { timeout: 5000 },
+    )
     const busyRects = await rectsOf(page, ['trackerFastSeg'])
     console.log('Boks mens sporing kører:', JSON.stringify(busyRects))
     assert.equal(busyRects.trackerFastSeg?.hidden, true, 'Chippen skal forsvinde mens en sporing rent faktisk kører')
