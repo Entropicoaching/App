@@ -202,6 +202,17 @@ export async function runCoachSporing(page, { appUrl, mockUrl, outDir, awaitingR
       traceOut.progressLog = err.progressLog || []
       traceOut.lastBanner = err.progressLog?.at(-1)?.banner ?? ''
       traceOut.lastPercent = err.progressLog?.at(-1)?.percent ?? null
+      // ORDRE 225 · commit 1 — et reelt timeout (maxIterations udløbet)
+      // publicerer aldrig window.__vcTrackerBenchmarkLast (den skrives først
+      // når selve sporings-loopet slutter), men browserens sporing kører
+      // fortsat i baggrunden indtil siden lukkes lige efter dette. Læs derfor
+      // den LIVE plSearch-probe (window.__vcPlSearchProbeLog, samme array-
+      // reference hele kørslen, se public/videocoach.html) FØR siden lukkes,
+      // så et hæng stadig giver tal, ikke kun et progressLog-banner.
+      const vcFrame = page.frames().find(f => f.url().includes('videocoach.html'))
+      traceOut.plSearchProbe = vcFrame
+        ? await vcFrame.evaluate(() => window.__vcPlSearchProbeLog || null).catch(() => null)
+        : null
     }
     throw err
   }

@@ -1179,6 +1179,13 @@ const COACHWEB = !DESKTOP && MODE_PARAMS.has('coach');
 // indeholder ?benchmark=1; normal coach- og atletadfærd bruger aldrig kanalen.
 // Lokal diagnosekanal: kræver også trackerProbe, så almindelig benchmark er uændret.
 const TRACKER_PROBE = TRACKER_BENCHMARK && MODE_PARAMS.get('trackerProbe') === '1';
+// ORDRE 225 · commit 1 — instrumentering, ingen adfærdsændring. plSearch
+// kaldes fra flere steder (kalibrering, quick-audit, home-confirm,
+// home-genfinding); alle skriver ind i denne ene log, nulstillet pr. kørsel
+// af startMultipointTracking, så en pr.-sekund-opsummering (antal kald, tid
+// pr. kald, gitterstørrelse, tomme fund) kan bygges bagefter uden at ændre
+// selve søge- eller accept/afvisningslogikken.
+let plSearchProbeLog = null;
 // ORDRE 82 · commit 3: én diskret linje for Marc efter en "Vis mig nu"-
 // kørsel (frames sporet/sprunget, ms/frame, tid mod videoens varighed) - kun
 // synlig med ?diag=1, så almindelig atlet-brug er uændret.
@@ -4312,7 +4319,9 @@ function plEvidence(f,c,r,model) {
   const circle=edge*(.45+.35*cover+.20*pairCover)-radial*40-pairDev*85-pairSpread*35;
   return {score:circle-app*18-color*80-(1-hist)*75-polar*150,circle,cover,app,color,hist,polar,pairCover};
 }
-function plSearch(f,pred,r,model,radius,step) {
+function plSearch(f,pred,r,model,radius,step,tag,tNow) {
+  const probeT0=TRACKER_PROBE?performance.now():0;
+  let probeGrid=0;
   const candidates=[];
   const x0=plClamp(pred.x-radius,r*.45,f.cw-r*.45),x1=plClamp(pred.x+radius,r*.45,f.cw-r*.45);
   const y0=plClamp(pred.y-radius,r*.45,f.ch-r*.45),y1=plClamp(pred.y+radius,r*.45,f.ch-r*.45);
@@ -4320,7 +4329,12 @@ function plSearch(f,pred,r,model,radius,step) {
     const e=plEvidence(f,{x,y},r,model),dist=Math.hypot(x-pred.x,y-pred.y)/r;
     candidates.push({x,y,...e,total:e.score-dist*2.5});
   }
-  if(!candidates.length)return null;
+  probeGrid=candidates.length;
+  if(!candidates.length){
+    if(TRACKER_PROBE&&plSearchProbeLog)plSearchProbeLog.push({tag:tag||null,t:tNow??null,
+      ms:+(performance.now()-probeT0).toFixed(3),grid:0,empty:true});
+    return null;
+  }
   const paired=candidates.filter(q=>q.pairCover>=.4&&q.cover>=.5),pool=paired.length?paired:candidates;
   const maxCircle=Math.max(...pool.map(q=>q.circle));
   const eligible=pool.filter(q=>q.circle>=Math.max(8,maxCircle*.70)).sort((a,b)=>b.total-a.total);
@@ -4329,9 +4343,13 @@ function plSearch(f,pred,r,model,radius,step) {
   for(let y=b0.y-step;y<=b0.y+step;y+=fine)for(let x=b0.x-step;x<=b0.x+step;x+=fine){
     const e=plEvidence(f,{x,y},r,model),dist=Math.hypot(x-pred.x,y-pred.y)/r;
     const q={x,y,...e,total:e.score-dist*2.5};
+    probeGrid++;
     if(q.pairCover>=.4&&q.cover>=.5&&q.circle>=Math.max(8,maxCircle*.70)&&q.total>best.total)best=q;
   }
-  best.margin=second?best.total-second.total:99;return best;
+  best.margin=second?best.total-second.total:99;
+  if(TRACKER_PROBE&&plSearchProbeLog)plSearchProbeLog.push({tag:tag||null,t:tNow??null,
+    ms:+(performance.now()-probeT0).toFixed(3),grid:probeGrid,empty:false});
+  return best;
 }
 function plGlobalSearch(f,pred,r,model) {
   const step=Math.max(4,r*.12),candidates=[];
@@ -4636,6 +4654,12 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
   const startT=video.currentTime,startFrame=Math.round(startT*30);
   const benchmarkStartedAt=TRACKER_BENCHMARK?performance.now():0;
   const benchmarkWorkMs=[];
+  plSearchProbeLog=TRACKER_PROBE?[]:null;
+  // Eksponeret LIVE (samme array-reference, muteres på plads) så et Node-
+  // side loft (fx 5 minutters ægte tid, se e2e/coach-sporing-trace-real.mjs)
+  // kan læse tallene selvom selve sporings-loopet aldrig når at publicere
+  // window.__vcTrackerBenchmarkLast (den skrives først når loopet slutter).
+  if(TRACKER_PROBE)window.__vcPlSearchProbeLog=plSearchProbeLog;
   let previousPath=options.correction&&strokes.findLast?strokes.findLast(s=>s.type==='path'&&s.times&&
     startT>=s.times[0]&&startT<s.times[s.times.length-1]):null;
   let path;
@@ -4677,9 +4701,9 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
   const auditStep=Math.max(3,radius*.10),calPad=radius*2.8;
   const calibrationFrame=plCapture(p0.x-calPad,p0.y-calPad,calPad*2,calPad*2);
   const localCalibration=plateIdentityUsable?
-    plSearch(calibrationFrame,p0,radius,plateModel,radius*.45,auditStep):null;
+    plSearch(calibrationFrame,p0,radius,plateModel,radius*.45,auditStep,'calibration-local',startT):null;
   const homeCalibration=plateIdentityUsable?
-    plSearch(calibrationFrame,p0,radius,plateModel,radius*1.15,auditStep):null;
+    plSearch(calibrationFrame,p0,radius,plateModel,radius*1.15,auditStep,'calibration-home',startT):null;
   const quickCalibration=plateIdentityUsable?
     mpQuickPlateSearch(calibrationFrame,p0,radius,plateModel):null;
   const localBias=localCalibration?{x:localCalibration.x-p0.x,y:localCalibration.y-p0.y}:{x:0,y:0};
@@ -4721,7 +4745,7 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
         elapsedMs:performance.now()-benchmarkStartedAt,canvas:{w:ocan.width,h:ocan.height},
         plateRadius:radius,initialFeatures:features.length,pts:path.pts.map(q=>({...q})),
         times:[...path.times],valid:[...path.valid],confidence:[...path.confidence],
-        ...(TRACKER_PROBE?{frameProbe:trackerProbe}: {})};
+        ...(TRACKER_PROBE?{frameProbe:trackerProbe,plSearchProbe:plSearchProbeLog}: {})};
       publishTrackerBenchmarkRun(run);
     }
     say('⚠ For få tydelige detaljer ved punktet · vælg et tydeligt område omkring skivens nav');
@@ -4806,7 +4830,7 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
         if(fullAuditFrames>0){
           const localR=radius*.45,pad=localR+radius*1.4+auditStep*2;
           const auditFrame=plCapture(nx-pad,ny-pad,pad*2,pad*2);
-          correction=plSearch(auditFrame,{x:nx,y:ny},radius,plateModel,localR,auditStep);
+          correction=plSearch(auditFrame,{x:nx,y:ny},radius,plateModel,localR,auditStep,'quick-audit',tNow);
           bias=localBias;kind='full';correctionX=correction.x-bias.x;
           correctionY=correction.y-bias.y;distance=Math.hypot(correctionX-nx,correctionY-ny);
           fullAuditFrames--;
@@ -4845,7 +4869,7 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
       if(plateIdentityUsable&&deadliftMode&&nearHome&&homeEntryFrames>0){
         const homeR=radius*1.15,pad=homeR+radius*1.4+auditStep*2;
         const homeFrame=plCapture(p0.x-pad,p0.y-pad,pad*2,pad*2);
-        const homeHit=plSearch(homeFrame,p0,radius,plateModel,homeR,auditStep);
+        const homeHit=plSearch(homeFrame,p0,radius,plateModel,homeR,auditStep,'home-confirm',tNow);
         const homeStrong=homeHit&&homeHit.circle>Math.max(9,plateBase.circle*.34)&&
           homeHit.cover>=.45&&homeHit.pairCover>=.35&&homeHit.app<2.6;
         if(homeStrong){
@@ -4901,7 +4925,7 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
         const homeR=radius*1.15,step=Math.max(3,radius*.10);
         const pad=homeR+radius*1.4+step*2;
         const homeFrame=plCapture(p0.x-pad,p0.y-pad,pad*2,pad*2);
-        const found=plSearch(homeFrame,p0,radius,plateModel,homeR,step);
+        const found=plSearch(homeFrame,p0,radius,plateModel,homeR,step,'home-recovery',tNow);
         const strong=found&&found.circle>Math.max(9,plateBase.circle*.34)&&
           found.cover>=.45&&found.pairCover>=.35&&found.app<2.6;
         // ORDRE 221 · commit 2 — kun instrumentering (probe er null uden
@@ -5082,7 +5106,7 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
       workMs:{p50:percentile(.5),p80:percentile(.8),p95:percentile(.95),max:sorted.at(-1)??null},
       pts:path.pts.map(q=>({...q})),times:[...path.times],valid:[...(path.valid||[])],
       confidence:[...(path.confidence||[])],
-      ...(TRACKER_PROBE?{frameProbe:trackerProbe}: {})};
+      ...(TRACKER_PROBE?{frameProbe:trackerProbe,plSearchProbe:plSearchProbeLog}: {})};
     publishTrackerBenchmarkRun(run);
   }
   freezeRawAcquisition(path,session);
