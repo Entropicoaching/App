@@ -24,14 +24,18 @@
 // henter rettelser + lagertype i én useEffect (afhænger af coachId, som
 // Dashboard.jsx sender ned fra sin session) i stedet for useState's
 // synkrone initializer, og geninlæser begge ved onRettelserAendret.
+// ORDRE 210 (15. sep), commit 2: "planlagt mod gennemført, hele forløbet" —
+// beregnPlanlagtPrUge (generaliseret fra beregnPlanlagtDenneUge, nu ugerne
+// har datoer efter ordre 204) + VolumenGrafForloeb til at tegne det.
 import { useEffect, useState } from 'react'
 import { beregnVolumenPrUge } from '../volume/beregn.js'
-import { beregnPlanlagtDenneUge } from '../volume/planlagt.js'
+import { beregnPlanlagtDenneUge, beregnPlanlagtPrUge, opsummerGab } from '../volume/planlagt.js'
 import { MUSKELGRUPPER, slaaOevelseOp } from '../volume/muskelkort.js'
 import { hentRettelser, hentLagerType } from '../volume/rettelser.js'
 import { supabase } from '../supabase'
 import { s } from '../dashboardShared'
 import VolumenGraf from './VolumenGraf'
+import VolumenGrafForloeb from './VolumenGrafForloeb'
 import KortlaegningRedigering from './KortlaegningRedigering'
 
 // Ordrens egen ramme: "fire til seks uger bagud" — seks valgt som den mest
@@ -153,6 +157,7 @@ export default function VolumenKort({ athleteLogs, weeks, coachId }) {
   const uger = beregnVolumenPrUge(raekker, { antalUger: ANTAL_UGER, rettelser })
   const ugerGraf = beregnVolumenPrUge(raekker, { antalUger: GRAF_UGER, rettelser })
   const planlagtDenneUge = beregnPlanlagtDenneUge(weeks || [], { rettelser })
+  const planlagtForloeb = beregnPlanlagtPrUge(weeks || [], raekker, { rettelser })
   const ukendteOevelseNavne = ukendteNavneFra(raekker, weeks, rettelser)
 
   // Kun grupper der reelt har haft sæt i vinduet — resten ville kun være
@@ -160,6 +165,9 @@ export default function VolumenKort({ athleteLogs, weeks, coachId }) {
   // den er ikke ramt af noget appen genkender endnu (se docs/VOLUMEN.md).
   const grupperMedData = Object.keys(MUSKELGRUPPER).filter(g => uger.some(u => (u.grupper[g]?.ialt || 0) > 0))
   const grupperMedDataGraf = Object.keys(MUSKELGRUPPER).filter(g => ugerGraf.some(u => (u.grupper[g]?.ialt || 0) > 0))
+  const grupperMedDataForloeb = Object.keys(MUSKELGRUPPER).filter(g =>
+    planlagtForloeb.uger.some(u => (u.planlagt.grupper[g]?.ialt || 0) > 0 || (u.gennemfoert.grupper[g]?.ialt || 0) > 0))
+  const gabSaetninger = opsummerGab(planlagtForloeb.uger, grupperMedDataForloeb, MUSKELGRUPPER)
   const harUkendte = uger.some(u => u.ukendteSaet > 0)
 
   return (
@@ -220,6 +228,30 @@ export default function VolumenKort({ athleteLogs, weeks, coachId }) {
                 sammenlignes på tværs af grupper, kun uge for uge inden for samme række.
                 Tallet til højre er seneste uges "i alt".
               </div>
+            </div>
+          )}
+          {grupperMedDataForloeb.length > 0 && (
+            <div style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(237,234,226,0.07)' }}>
+              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.9rem' }}>
+                Planlagt mod gennemført, hele forløbet
+              </div>
+              <VolumenGrafForloeb uger={planlagtForloeb.uger} grupper={grupperMedDataForloeb} />
+              <div style={{ fontSize: '0.56rem', color: '#4a4844', marginTop: '0.9rem', lineHeight: 1.5 }}>
+                Tynd kontur = planlagt, solid søjle = gennemført, pr. uge. Skalering er
+                pr. gruppe, som ovenfor. Tallet til højre er seneste uges gennemført/planlagt.
+              </div>
+              {planlagtForloeb.ugerUdenDato > 0 && (
+                <div style={{ fontSize: '0.6rem', color: '#e0a555', marginTop: '0.6rem' }}>
+                  Uger uden dato: {planlagtForloeb.ugerUdenDato} (Sæt datoer)
+                </div>
+              )}
+              {gabSaetninger.length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', marginTop: '0.9rem' }}>
+                  {gabSaetninger.map((saetning, i) => (
+                    <div key={i} style={{ fontSize: '0.68rem', color: '#c8b98a' }}>{saetning}</div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </>

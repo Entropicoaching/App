@@ -67,10 +67,10 @@ kan få sin dato med ét tryk på **"Sæt datoer"** i Program-fanen (kun
 synlig når programmet har mindst én daterede og én udaterede uge) — ikke
 længere noget der kræver at coachen husker det fra gang til gang.
 
-**Kun denne uge, ikke et helt forløb.** Til forskel fra resten af kortet
-(seks-otte ugers historik) dækker planlagt/gennemført kun ÉN uge — den ugen
-"nu" ligger i. Programuger følger ikke altid kalenderen (deload-uger,
-huller), så et helt "planlagt"-vindue ville have flere huller end tal.
+**Denne uges tal, plus hele forløbet længere nede.** Tallene øverst i kortet
+er stadig kun ÉN uge — den ugen "nu" ligger i. Fra ordre 210 findes samme
+sammenligning for HELE forløbet længere nede i kortet, under grafen "Planlagt
+mod gennemført, hele forløbet" — se eget afsnit nedenfor.
 
 ## "Ukendt øvelse" — hvorfor den ikke bare forsvinder
 
@@ -123,6 +123,40 @@ første gang tabellen findes.
 coachen der satte dem — der er endnu ingen visning der lader atleten selv
 se sin coachs rettelser (se "Atletens egen visning" ovenfor, ordre 209's
 commit 4 fandt ingen sådan visning i appen i dag).
+
+## Planlagt mod gennemført, hele forløbet (ordre 210)
+
+Ordre 185's "denne uge"-sammenligning (se ovenfor) var begrænset til én
+uge, fordi programuger dengang sjældent havde en kalenderdato. Fra ordre 204
+får uger normalt en dato automatisk, og ordre 210 udnytter det: samme
+sammenligning — planlagt fra programmet, gennemført fra loggen — men for
+HVER dateret uge i forløbet, ikke kun den aktuelle.
+
+**Vinduet er "kalenderuger med mindst én dateret programuge", ikke et fast
+antal uger tilbage** (til forskel fra tabellen/grafen ovenfor, som viser
+faste 6/8-ugers vinduer). Uger uden dato er ikke med i grafen — kortet siger
+i stedet hvor mange de er ("Uger uden dato: N"), med en henvisning til **"Sæt
+datoer"** i Program-fanen (samme knap som ordre 204 tilføjede), så tallet
+ikke bare ser ud som et hul, men peger på hvordan man lukker det.
+
+**Grafen:** for hver uge, pr. muskelgruppe, en tynd kontur (planlagt) bagved
+en solid søjle (gennemført) — gabet mellem konturens top og søjlens top ER
+pointen. Skalering er pr. gruppe, som udviklingsgrafen ovenfor.
+
+**"Hvad grafen siger", i coach-sprog.** Under grafen står op til tre
+sætninger, regnet direkte af tallene, ALDRIG en anbefaling:
+
+1. Hvilken gruppe der i flest uger lå under planen.
+2. Hvilken uge der havde det største samlede gab (planlagt minus
+   gennemført, summeret over de viste grupper).
+3. Om gabet vokser eller falder hen over vinduet (første halvdel af de
+   viste uger sammenlignet med anden halvdel — den midterste uge udelades
+   ved et ulige antal, for at "start" og "nu" er entydige).
+
+En sætning udelades helt hvis den ikke ville sige noget (fx ingen tendens at
+melde med under to uger, eller ingen gruppe der nogensinde lå under planen)
+— aldrig gættet eller tvunget frem. Samme "HVORFOR" gælder her som for
+denne uges tal ovenfor: grafen viser AT der er et gab, ikke hvorfor.
 
 ## Atletens egen visning — findes ikke (ordre 209, commit 4)
 

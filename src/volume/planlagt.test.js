@@ -5,8 +5,9 @@
 
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { beregnPlanlagtDenneUge } from './planlagt.js'
+import { beregnPlanlagtDenneUge, beregnPlanlagtPrUge, opsummerGab } from './planlagt.js'
 import { ugenoegle } from './beregn.js'
+import { MUSKELGRUPPER } from './muskelkort.js'
 
 const I_DAG = '2026-09-14' // mandag i "denne uge" til testene
 
@@ -91,4 +92,201 @@ test('tomt weeks-array: ugePlaceret false, ingen fejl', () => {
   assert.equal(resultat.ugePlaceret, false)
   assert.deepEqual(resultat.grupper, {})
   assert.equal(resultat.ukendteSaet, 0)
+})
+
+// ---- ORDRE 210, commit 1: beregnPlanlagtPrUge (hele forløbet) ----
+
+function log(oevelseNavn, loggetDato, skipped = false) {
+  return { oevelseNavn, loggetDato, skipped }
+}
+
+test('planlagt og gennemført side om side, pr. kalenderuge, ældste først', () => {
+  const ugeA = '2026-09-14' // mandag
+  const ugeB = '2026-09-21' // mandag, ugen efter
+  const weeks = [ugeMedSquat(ugeA, 4), ugeMedSquat(ugeB, 4)]
+  const logs = [log('Squat', ugeA), log('Squat', ugeA), log('Squat', ugeB)]
+  const resultat = beregnPlanlagtPrUge(weeks, logs)
+  assert.equal(resultat.uger.length, 2)
+  assert.equal(resultat.uger[0].uge, ugenoegle(ugeA))
+  assert.equal(resultat.uger[1].uge, ugenoegle(ugeB))
+  assert.deepEqual(resultat.uger[0].planlagt.grupper.kneeExtensors, { direkte: 4, ialt: 4 })
+  assert.deepEqual(resultat.uger[0].gennemfoert.grupper.kneeExtensors, { direkte: 2, ialt: 2 })
+  assert.deepEqual(resultat.uger[1].gennemfoert.grupper.kneeExtensors, { direkte: 1, ialt: 1 })
+  assert.equal(resultat.ugerUdenDato, 0)
+})
+
+test('uger uden start_date udelades fra uger[], men tælles i ugerUdenDato', () => {
+  const weeks = [ugeMedSquat(I_DAG, 4), { start_date: null, sessions: [] }, { start_date: undefined, sessions: [] }]
+  const resultat = beregnPlanlagtPrUge(weeks, [])
+  assert.equal(resultat.uger.length, 1)
+  assert.equal(resultat.ugerUdenDato, 2)
+})
+
+test('overlappende programuger (samme kalenderuge) summeres i én bucket, ikke to rækker', () => {
+  const weeks = [ugeMedSquat(I_DAG, 2), ugeMedSquat(I_DAG, 2)]
+  const resultat = beregnPlanlagtPrUge(weeks, [])
+  assert.equal(resultat.uger.length, 1)
+  assert.deepEqual(resultat.uger[0].planlagt.grupper.kneeExtensors, { direkte: 4, ialt: 4 })
+})
+
+test('tom programuge (ingen sessioner) er stadig med, alle tal 0', () => {
+  const weeks = [{ start_date: I_DAG, sessions: [] }]
+  const resultat = beregnPlanlagtPrUge(weeks, [])
+  assert.equal(resultat.uger.length, 1)
+  assert.deepEqual(resultat.uger[0].planlagt.grupper, {})
+  assert.deepEqual(resultat.uger[0].gennemfoert.grupper, {})
+})
+
+test('program med huller: kun de daterede uger giver rækker, ingen opdigtede nul-uger imellem', () => {
+  const ugeA = '2026-08-31' // mandag
+  const ugeC = '2026-09-21' // tre uger senere, ingen dateret uge for ugen imellem
+  const weeks = [ugeMedSquat(ugeA, 3), ugeMedSquat(ugeC, 3)]
+  const resultat = beregnPlanlagtPrUge(weeks, [])
+  assert.equal(resultat.uger.length, 2)
+  assert.equal(resultat.uger[0].uge, ugenoegle(ugeA))
+  assert.equal(resultat.uger[1].uge, ugenoegle(ugeC))
+})
+
+test('gennemførte sæt i en kalenderuge uden dateret programuge tælles ikke med', () => {
+  const weeks = [ugeMedSquat(I_DAG, 4)]
+  const enUgeFoer = '2026-09-07'
+  const logs = [log('Squat', enUgeFoer)]
+  const resultat = beregnPlanlagtPrUge(weeks, logs)
+  assert.equal(resultat.uger.length, 1)
+  assert.deepEqual(resultat.uger[0].gennemfoert.grupper, {})
+})
+
+test('skipped-sæt tælles ikke med i gennemført, samme regel som beregn.js', () => {
+  const weeks = [ugeMedSquat(I_DAG, 4)]
+  const logs = [log('Squat', I_DAG, true)]
+  const resultat = beregnPlanlagtPrUge(weeks, logs)
+  assert.deepEqual(resultat.uger[0].gennemfoert.grupper, {})
+})
+
+test('ukendt øvelse tælles i ukendteSaet for planlagt og gennemført hver for sig', () => {
+  const weeks = [{ start_date: I_DAG, sessions: [{ exercises: [{ name: 'Fuglehund med kætte', sets: 3 }] }] }]
+  const logs = [log('Fuglehund med kætte', I_DAG)]
+  const resultat = beregnPlanlagtPrUge(weeks, logs)
+  assert.equal(resultat.uger[0].planlagt.ukendteSaet, 3)
+  assert.equal(resultat.uger[0].gennemfoert.ukendteSaet, 1)
+})
+
+test('rettelser gives videre til både planlagt og gennemført', () => {
+  const weeks = [{ start_date: I_DAG, sessions: [{ exercises: [{ name: 'Zercher squat', sets: 3 }] }] }]
+  const logs = [log('Zercher squat', I_DAG)]
+  const rettelser = new Map([['zercher squat', { grupper: [{ gruppe: 'kneeExtensors', andel: 1 }] }]])
+  const resultat = beregnPlanlagtPrUge(weeks, logs, { rettelser })
+  assert.equal(resultat.uger[0].planlagt.ukendteSaet, 0)
+  assert.deepEqual(resultat.uger[0].planlagt.grupper.kneeExtensors, { direkte: 3, ialt: 3 })
+  assert.equal(resultat.uger[0].gennemfoert.ukendteSaet, 0)
+  assert.deepEqual(resultat.uger[0].gennemfoert.grupper.kneeExtensors, { direkte: 1, ialt: 1 })
+})
+
+test('tomt weeks og tomt logs: tom uger-liste, ingen fejl', () => {
+  const resultat = beregnPlanlagtPrUge([], [])
+  assert.deepEqual(resultat.uger, [])
+  assert.equal(resultat.ugerUdenDato, 0)
+})
+
+// ---- ORDRE 210, commit 3: opsummerGab ----
+
+/** @param {Record<string, { planlagt: number, gennemfoert: number }>} vaerdier */
+function ugeMedTal(ugeKey, vaerdier) {
+  const planlagt = { grupper: {}, ukendteSaet: 0 }
+  const gennemfoert = { grupper: {}, ukendteSaet: 0 }
+  for (const [g, { planlagt: p, gennemfoert: f }] of Object.entries(vaerdier)) {
+    planlagt.grupper[g] = { direkte: p, ialt: p }
+    gennemfoert.grupper[g] = { direkte: f, ialt: f }
+  }
+  return { uge: ugeKey, planlagt, gennemfoert }
+}
+
+test('opsummerGab: tom uger-liste giver ingen sætninger', () => {
+  assert.deepEqual(opsummerGab([], ['kneeExtensors'], MUSKELGRUPPER), [])
+})
+
+test('opsummerGab: tom grupper-liste giver ingen sætninger', () => {
+  const uger = [ugeMedTal('2026-W10', { kneeExtensors: { planlagt: 10, gennemfoert: 5 } })]
+  assert.deepEqual(opsummerGab(uger, [], MUSKELGRUPPER), [])
+})
+
+test('opsummerGab: gruppen der oftest lå under planen', () => {
+  const uger = [
+    ugeMedTal('2026-W10', { kneeExtensors: { planlagt: 10, gennemfoert: 5 }, lats: { planlagt: 8, gennemfoert: 8 } }),
+    ugeMedTal('2026-W11', { kneeExtensors: { planlagt: 10, gennemfoert: 4 }, lats: { planlagt: 8, gennemfoert: 8 } }),
+  ]
+  const [foerste] = opsummerGab(uger, ['kneeExtensors', 'lats'], MUSKELGRUPPER)
+  assert.equal(foerste, 'Knæ-strækkere lå under planen 2 af 2 uger.')
+})
+
+test('opsummerGab: ingen gruppe lå nogensinde under planen — ingen "lå under planen"-sætning', () => {
+  const uger = [ugeMedTal('2026-W10', { kneeExtensors: { planlagt: 10, gennemfoert: 10 } })]
+  const saetninger = opsummerGab(uger, ['kneeExtensors'], MUSKELGRUPPER)
+  assert.ok(!saetninger.some(s => s.includes('lå under planen')))
+})
+
+test('opsummerGab: uafgjort mellem grupper — første i grupper-rækkefølgen vinder', () => {
+  const uger = [
+    ugeMedTal('2026-W10', { kneeExtensors: { planlagt: 10, gennemfoert: 5 }, lats: { planlagt: 10, gennemfoert: 5 } }),
+  ]
+  const [foerste] = opsummerGab(uger, ['lats', 'kneeExtensors'], MUSKELGRUPPER)
+  assert.ok(foerste.startsWith('Ryggens brede muskler'))
+})
+
+test('opsummerGab: ugen med størst samlet gab', () => {
+  const uger = [
+    ugeMedTal('2026-W10', { kneeExtensors: { planlagt: 10, gennemfoert: 8 } }), // gab 2
+    ugeMedTal('2026-W11', { kneeExtensors: { planlagt: 10, gennemfoert: 2 } }), // gab 8
+  ]
+  const saetninger = opsummerGab(uger, ['kneeExtensors'], MUSKELGRUPPER)
+  assert.ok(saetninger.some(s => s.includes('U11') && s.includes('8 sæt')))
+})
+
+test('opsummerGab: kun én uge — ingen tendens-sætning', () => {
+  const uger = [ugeMedTal('2026-W10', { kneeExtensors: { planlagt: 10, gennemfoert: 5 } })]
+  const saetninger = opsummerGab(uger, ['kneeExtensors'], MUSKELGRUPPER)
+  assert.ok(!saetninger.some(s => s.includes('vokser') || s.includes('falder')))
+})
+
+test('opsummerGab: gabet vokser over vinduet', () => {
+  const uger = [
+    ugeMedTal('2026-W10', { kneeExtensors: { planlagt: 10, gennemfoert: 9 } }), // gab 1
+    ugeMedTal('2026-W11', { kneeExtensors: { planlagt: 10, gennemfoert: 9 } }), // gab 1
+    ugeMedTal('2026-W12', { kneeExtensors: { planlagt: 10, gennemfoert: 5 } }), // gab 5
+    ugeMedTal('2026-W13', { kneeExtensors: { planlagt: 10, gennemfoert: 5 } }), // gab 5
+  ]
+  const saetninger = opsummerGab(uger, ['kneeExtensors'], MUSKELGRUPPER)
+  const trend = saetninger.find(s => s.includes('vokser'))
+  assert.ok(trend)
+  assert.ok(trend.includes('1 sæt/uge i starten'))
+  assert.ok(trend.includes('5 sæt/uge nu'))
+})
+
+test('opsummerGab: gabet falder over vinduet', () => {
+  const uger = [
+    ugeMedTal('2026-W10', { kneeExtensors: { planlagt: 10, gennemfoert: 5 } }), // gab 5
+    ugeMedTal('2026-W11', { kneeExtensors: { planlagt: 10, gennemfoert: 5 } }), // gab 5
+    ugeMedTal('2026-W12', { kneeExtensors: { planlagt: 10, gennemfoert: 9 } }), // gab 1
+    ugeMedTal('2026-W13', { kneeExtensors: { planlagt: 10, gennemfoert: 9 } }), // gab 1
+  ]
+  const saetninger = opsummerGab(uger, ['kneeExtensors'], MUSKELGRUPPER)
+  assert.ok(saetninger.some(s => s.includes('falder')))
+})
+
+test('opsummerGab: gabet uændret over vinduet — ingen tendens-sætning', () => {
+  const uger = [
+    ugeMedTal('2026-W10', { kneeExtensors: { planlagt: 10, gennemfoert: 8 } }),
+    ugeMedTal('2026-W11', { kneeExtensors: { planlagt: 10, gennemfoert: 8 } }),
+  ]
+  const saetninger = opsummerGab(uger, ['kneeExtensors'], MUSKELGRUPPER)
+  assert.ok(!saetninger.some(s => s.includes('vokser') || s.includes('falder')))
+})
+
+test('opsummerGab: aldrig mere end tre sætninger', () => {
+  const uger = [
+    ugeMedTal('2026-W10', { kneeExtensors: { planlagt: 10, gennemfoert: 5 }, lats: { planlagt: 8, gennemfoert: 8 } }),
+    ugeMedTal('2026-W11', { kneeExtensors: { planlagt: 10, gennemfoert: 2 }, lats: { planlagt: 8, gennemfoert: 4 } }),
+  ]
+  const saetninger = opsummerGab(uger, ['kneeExtensors', 'lats'], MUSKELGRUPPER)
+  assert.ok(saetninger.length <= 3)
 })
