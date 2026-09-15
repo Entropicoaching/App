@@ -105,18 +105,24 @@ kortlægning"** øverst til højre i kortet:
    — den falder tilbage til det oprindelige skøn (eller til "ukendt", hvis
    øvelsen aldrig var kortlagt i koden).
 
-**Hvor det gemmes, og den ærlige grænse ved det.** Ordre 185 måtte ikke røre
-Supabase-skemaet, så rettelserne gemmes i browserens `localStorage` — den
-letteste holdbare måde appen allerede havde, samme mønster som fx din egen
-"min atlet"-genvej. Det betyder: **rettelserne er pr. browser, ikke
-synkroniseret mellem dine enheder** (skriver du en rettelse på telefonen,
-ser du den ikke på computeren, og omvendt), og de påvirker ikke atletens
-egen visning af "planlagt". En rigtig løsning kræver en ny Supabase-tabel —
-noget i stil med
-`muscle_mapping_overrides(exercise_name text primary key, groups jsonb,
-set_by text, set_at timestamptz)` med en RLS-regel der kun lader
-coach-rollen skrive — og en migration, som ikke er lavet her. Indtil da:
-brug samme browser konsekvent, eller vent på den rigtige tabel.
+**Hvor det gemmes.** Ordre 185 måtte ikke røre Supabase-skemaet, så
+rettelserne blev gemt i browserens `localStorage` alene — **pr. browser,
+ikke synkroniseret mellem dine enheder** (en rettelse lavet på telefonen sås
+ikke på computeren, og omvendt). Fra ordre 209 er den grænse løftet:
+rettelser gemmes i Supabase-tabellen `exercise_muscle_overrides`
+(`docs/supabase/20260915-exercise_muscle_overrides.sql`), når migrationen er
+kørt — en rettelse gælder da med det samme på alle dine enheder.
+Redigeringsvinduet viser hvilken af de to der er i spil lige nu, øverst:
+**"Gemmes på denne enhed"** (localStorage, endnu ikke migreret, eller ingen
+forbindelse) eller **"Gemmes på din konto"** (Supabase). `src/volume/
+rettelser.js` afgør det selv ved kørsel — intet du skal stille om. Findes
+der lokale rettelser fra før migrationen, flyttes de op automatisk, én gang,
+første gang tabellen findes.
+
+**Den ærlige grænse der er tilbage.** Rettelser gælder stadig kun for
+coachen der satte dem — der er endnu ingen visning der lader atleten selv
+se sin coachs rettelser (se "Atletens egen visning" ovenfor, ordre 209's
+commit 4 fandt ingen sådan visning i appen i dag).
 
 ## Atletens egen visning — findes ikke (ordre 209, commit 4)
 
