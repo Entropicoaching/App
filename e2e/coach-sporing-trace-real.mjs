@@ -12,6 +12,12 @@
 // kun tal (tidspunkter, pixel-afstande).
 //
 // Kørsel: node e2e/coach-sporing-trace-real.mjs
+//   --max-minutes=N   loft pr. klip, i stedet for standardens 450×2s=900s
+//                      (15 min). ORDRE 225 · commit 1 brugte 5 (300s) til at
+//                      måle plSearch-tallene på det klip der hænger ved 96%
+//                      uden at vente et helt 15-minutters forsøg ud.
+//   --only=<fil>       kør kun ét klip (filnavn, se CLIPS nedenfor) i stedet
+//                      for begge — samme flag-navn som ordrens egen sprog.
 import { mkdirSync, writeFileSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { createMockSupabase } from './mock-supabase.mjs'
@@ -22,6 +28,53 @@ import { runCoachSporing } from './coach-sporing.spec.mjs'
 
 const TRACE_DIR = join(OUT_DIR, '..', 'sporing-trace-real')
 mkdirSync(TRACE_DIR, { recursive: true })
+
+const maxMinutesArg = process.argv.find(a => a.startsWith('--max-minutes='))
+const MAX_MINUTES = maxMinutesArg ? Number(maxMinutesArg.split('=')[1]) : 15
+const MAX_ITERATIONS = Math.ceil(MAX_MINUTES * 60 / 2)
+const onlyArg = process.argv.find(a => a.startsWith('--only='))
+const ONLY = onlyArg ? onlyArg.split('=')[1] : null
+
+// ORDRE 225 · commit 1 — pr.-sekund opsummering af plSearchProbe (se
+// plSearch-instrumenteringen i public/videocoach.html): antal kald, tid
+// pr. kald, gitterstørrelse (antal plEvidence-evalueringer), og hvor mange
+// kald der ikke fandt NOGEN kandidat, bucket'et pr. hele sekund video (t).
+// Bruges til at afgøre ORDRE 221's FRAVALGT-hypotese: æder genfindingen
+// (tag='home-recovery') tiden, eller er det noget andet (kalibrering,
+// quick-audit, home-confirm)?
+function summarizePlSearchProbe(entries) {
+  if (!entries || !entries.length) return { perSecond: [], perTag: {}, totalCalls: 0, totalMs: 0 }
+  const perTag = {}
+  const bySecond = new Map()
+  for (const e of entries) {
+    const tag = e.tag || 'untagged'
+    if (!perTag[tag]) perTag[tag] = { calls: 0, ms: 0, emptyCalls: 0, gridSum: 0 }
+    perTag[tag].calls++
+    perTag[tag].ms += e.ms
+    perTag[tag].gridSum += e.grid
+    if (e.empty) perTag[tag].emptyCalls++
+
+    const sec = e.t == null ? -1 : Math.floor(e.t)
+    if (!bySecond.has(sec)) bySecond.set(sec, { sec, calls: 0, ms: 0, gridSum: 0, emptyCalls: 0, byTag: {} })
+    const bucket = bySecond.get(sec)
+    bucket.calls++
+    bucket.ms += e.ms
+    bucket.gridSum += e.grid
+    if (e.empty) bucket.emptyCalls++
+    bucket.byTag[tag] = (bucket.byTag[tag] || 0) + 1
+  }
+  const perSecond = [...bySecond.values()].sort((a, b) => a.sec - b.sec).map(b => ({
+    sec: b.sec, calls: b.calls, totalMs: +b.ms.toFixed(1), avgMsPerCall: +(b.ms / b.calls).toFixed(2),
+    avgGrid: +(b.gridSum / b.calls).toFixed(1), emptyCalls: b.emptyCalls, byTag: b.byTag,
+  }))
+  const totalCalls = entries.length, totalMs = entries.reduce((s, e) => s + e.ms, 0)
+  for (const tag of Object.keys(perTag)) {
+    const p = perTag[tag]
+    perTag[tag] = { calls: p.calls, totalMs: +p.ms.toFixed(1), avgMsPerCall: +(p.ms / p.calls).toFixed(2),
+      avgGrid: +(p.gridSum / p.calls).toFixed(1), emptyCalls: p.emptyCalls }
+  }
+  return { perSecond, perTag, totalCalls, totalMs: +totalMs.toFixed(1) }
+}
 
 // Klik-punktet er det SAMME hånd-målte punkt for begge klip (den realistiske
 // fil er bogstaveligt Marcs egen rep, frame-gentaget/strukket — se
@@ -105,7 +158,10 @@ async function runOne(clip) {
         // et første forsøg her med 90 (180s) viste ÆGTE fremgang (96-99%,
         // ikke fastlåst) men nåede ikke i mål. 450×2s=900s (15 min) giver
         // reel plads, samme "ro til at afprøve"-princip som commit 1.
-        maxIterations: 450,
+        // ORDRE 225 · commit 1 — valgfrit --max-minutes gør loftet MINDRE
+        // (default 15 min uændret), til måling uden at vente et fuldt
+        // 15-minutters forsøg ud.
+        maxIterations: MAX_ITERATIONS,
         clickAtS: clip.clickAtS, clickTarget: KNOWN_TARGET, videoW: VIDEO_DIMS.w, videoH: VIDEO_DIMS.h,
       })
     } catch (err) {
@@ -130,7 +186,20 @@ async function runOne(clip) {
     const kalibreretOK = !!lastRealProgress // banneret nåede "Analyserer"/"Holder" -> ringen blev fundet
     console.log(`${clip.name}: intet benchmark-run fanget (kalibrering ${kalibreretOK ? 'LYKKEDES' : 'MISLYKKEDES eller ukendt'}, ` +
       `seneste ægte fremgang: "${lastRealProgress?.banner ?? 'ingen'}") — fejl: "${caughtError}"`)
-    return { ...result, kalibreretOK, run: null, lossEpisodes: [] }
+    if (traceOut.trackerProbe?.length) {
+      const tail = traceOut.trackerProbe.slice(-5)
+      console.log(`  trackerProbe: ${traceOut.trackerProbe.length} frame-indslag i alt, sidste ${tail.length}:`)
+      for (const p of tail) console.log(`    t=${p.t?.toFixed(3)} moves=${p.moves} kept=${p.kept} jump=${p.jump?.toFixed(2)} accepted=${p.accepted} rejectGate=${p.rejectGate} recoveryGate=${p.recoveryGate ?? '-'}`)
+    } else {
+      console.log(`  trackerProbe: TOMT — ingen frame-indslag registreret overhovedet.`)
+    }
+    // ORDRE 225 · commit 1 — selv uden et fuldt benchmarkRun (klippet nåede
+    // ikke i mål inden for MAX_MINUTES) er den LIVE plSearch-probe reddet af
+    // coach-sporing.spec.mjs's timeout-gren (traceOut.plSearchProbe) — det er
+    // netop denne gren ordren beder om at måle.
+    return { ...result, kalibreretOK, run: null, lossEpisodes: [],
+      plSearchProbe: summarizePlSearchProbe(traceOut.plSearchProbe),
+      trackerProbeTail: (traceOut.trackerProbe || []).slice(-20) }
   }
   const lossEpisodes = findLossEpisodes(run)
   result.kalibreretOK = true
@@ -139,12 +208,16 @@ async function runOne(clip) {
     mediaSeconds: run.mediaSeconds, elapsedMs: run.elapsedMs }
   result.repsDetekteret = run.analysis ? run.analysis.repsDetectedCount : null
   result.lossEpisodes = lossEpisodes
+  result.plSearchProbe = summarizePlSearchProbe(run.plSearchProbe || traceOut.plSearchProbe)
   return result
 }
 
 async function main() {
+  const clips = ONLY ? CLIPS.filter(c => c.file === ONLY || c.name === ONLY) : CLIPS
+  if (ONLY && !clips.length) { console.error(`--only=${ONLY} matcher intet klip i CLIPS`); process.exitCode = 1; return }
+  if (MAX_MINUTES !== 15) console.log(`Loft denne kørsel: ${MAX_MINUTES} min pr. klip (${MAX_ITERATIONS} iterationer).`)
   const results = []
-  for (const clip of CLIPS) results.push(await runOne(clip))
+  for (const clip of clips) results.push(await runOne(clip))
 
   writeFileSync(join(TRACE_DIR, 'seneste.json'), JSON.stringify(results, null, 2))
 
@@ -165,6 +238,26 @@ async function main() {
       console.log(`  t=${e.startT}s-${e.endT}s (${e.durationS}s, ${e.framesTabt} frames): ` +
         `${e.aldrigGenfundetFoerKlipSlut ? 'ALDRIG genfundet' : `genfundet ved t=${e.genfundetVedT}s (hop ${e.hopVedGenfindingPx}px)`}` +
         ` — home-genfinding forsøgt: ${e.homeRecoveryForsoegt} (${e.recoveryGates.join(', ') || 'ingen'})`)
+    }
+  }
+  // ORDRE 225 · commit 1 — plSearch-tallene: antal kald, tid, gitterstørrelse,
+  // tomme fund, pr. TAG (afgør FRAVALGT-221s hypotese: æder home-recovery
+  // tiden, eller er det noget andet?) og de sidste 15s pr. sekund (der hvor
+  // et klip typisk hænger nær slutningen).
+  console.log('\n=== ORDRE 225 · commit 1 — plSearch-probe ===\n')
+  for (const r of results) {
+    if (r.skipped) continue
+    const p = r.plSearchProbe
+    if (!p || !p.totalCalls) { console.log(`${r.clip}: ingen plSearch-kald registreret.`); continue }
+    console.log(`--- ${r.clip} (${r.raw ? 'færdig' : `IKKE færdig inden for ${MAX_MINUTES} min`}) ---`)
+    console.log(`  I alt: ${p.totalCalls} kald, ${p.totalMs.toFixed(0)}ms samlet (${(p.totalMs / p.totalCalls).toFixed(2)}ms/kald i snit)`)
+    console.log('  Pr. tag:')
+    for (const [tag, s] of Object.entries(p.perTag).sort((a, b) => b[1].totalMs - a[1].totalMs)) {
+      console.log(`    ${tag}: ${s.calls} kald, ${s.totalMs.toFixed(0)}ms samlet (${s.avgMsPerCall}ms/kald), gitter ~${s.avgGrid} punkter/kald, ${s.emptyCalls} tomme fund`)
+    }
+    console.log(`  Sidste 15s (pr. sekund video):`)
+    for (const b of p.perSecond.slice(-15)) {
+      console.log(`    t=${b.sec}s: ${b.calls} kald, ${b.totalMs}ms, ${b.avgMsPerCall}ms/kald, gitter ~${b.avgGrid}, ${b.emptyCalls} tomme (${Object.entries(b.byTag).map(([t, n]) => `${t}:${n}`).join(', ')})`)
     }
   }
   writeFileSync(join(TRACE_DIR, `run-${new Date().toISOString().replace(/[:.]/g, '-')}.json`), JSON.stringify(results, null, 2))
