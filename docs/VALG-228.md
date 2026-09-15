@@ -107,3 +107,47 @@ chunks), men holdes til det tydeligt sikre og velbegrundede (jf. ordrens
 lille; commit 2 er derfor mindre AGGRESSIV end en fuld omskrivning af
 Dashboard.jsx/AthleteView.jsx's video-coach-håndtering ville have været,
 ikke sprunget over).
+
+## Commit 3 — vandfald efter commit 2: hvad fylder nu mest?
+
+Ad hoc Lighthouse-vandfald (devtools-throttling, ét løb pr. skærm, samme
+mock/build som `maal:kaeden`, IKKE committet som kode — kun tallet, jf.
+226-mønsteret og ordrens egen grænse for dette commit) for begge sider
+efter VolumenKort-splittet:
+
+**Atletliste (coach):** FCP/LCP 5053ms, TTI 5682ms, TBT 14ms.
+- `index` (hovedbundt): 90→2613ms, 359 218B
+- `Dashboard`: 2784→4737ms, 247 976B (starter først når hovedbundtet har
+  kørt nok til at kalde `dashboardFactory()` — ~170ms afstand fra forrige
+  scripts slutning)
+- `videoCoachUpload` (delt chunk): 2784→3473ms, 10 467B
+- **Alle scripts færdige: 4737ms — 83 % af de 5682ms TTI.**
+- Mainthread-arbejde (uændret lille, som i 226): scriptEvaluation 406ms,
+  styleLayout 267ms, TBT kun 14ms — eksekvering er stadig ikke problemet.
+- Supabase-kaldene (athletes/weeks/exercise_logs/training_signals/messages
+  m.fl.) starter ikke for alvor før 4874ms (efter scripts) og fortsætter,
+  overvejende SERIALISEREDE (ikke i parallel), til 6794ms — SENERE end det
+  rapporterede TTI-tal. En rigtig coach der venter på en fyldt atletliste
+  (ikke bare "siden reagerer") oplever formentlig tættere på 6,8s end 5,7s.
+
+**Dagens pas (atlet):** FCP 4888ms, LCP/TTI 6236ms.
+- `index`: 86→2612ms, 359 224B
+- `AthleteView`: 2780→4768ms, 251 294B (uspaltet — hele filen, 6598 linjer,
+  én chunk)
+- `videoCoachUpload` + `athleteSilentFailLog` (delte chunks): færdige 3485ms
+- **Alle scripts færdige: 4768ms — 76 % af de 6236ms TTI.**
+
+### Den ene, med tal
+
+**Script-overførslen er stadig den største post: ~4,7 af de 5,7-6,2
+sekunders TTI (76-83 %) går til at hente og evaluere hovedbundt +
+skærmspecifik chunk, PRÆCIS som i 226 (dengang 5174 af 6163ms, 84 %) — bare
+et lidt mindre absolut tal efter commit 2's Volumenkort-udspaltning.**
+Størstedelen af den post er stadig `index` (359 kB, uændret af denne ordre —
+det er selve login/app-skallen, ikke en skærmspecifik chunk) plus ÉN
+uspaltet skærmchunk (`Dashboard` 248 kB eller `AthleteView` 251 kB, næsten
+identisk størrelse). `AthleteView.jsx` (6598 linjer) har INGEN intern
+fane-opsplitning i dag (i modsætning til `Dashboard.jsx`s tre
+`LazyBoundary`-faner) — det er den næste konkrete, unavngivne kandidat af
+samme klasse som Volumenkortet var, men uden for denne ordres omfang.
+Intet greb forsøgt her, jf. commit 3's egen grænse.
