@@ -12,6 +12,10 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 
 const athleteView = readFileSync(new URL('../src/AthleteView.jsx', import.meta.url), 'utf8')
+// Programmets JSX (herunder den tomme-program-gren) flyttede til sin egen
+// lazy-loadede fane i ordre 232 · commit 3 (ren udflytning, se
+// docs/RAPPORT-232.md) — samme tjek, ny fil.
+const programTab = readFileSync(new URL('../src/athlete/ProgramTab.jsx', import.meta.url), 'utf8')
 
 assert.match(athleteView, /import \{ runGuardedRead \} from '\.\/athleteReadGuard'/)
 
@@ -96,10 +100,10 @@ assert.match(fetchProgram, /setProgramError\(false\)/,
 // Rækkefølgen i JSX'en afgør hvilken tekst der vises: programError skal
 // afgøre valget FØR nogen af de to tekster, og fejlteksten skal stå i
 // programError-grenen (ikke i "på vej"-grenen, som ellers ville vise begge).
-const emptyProgramBlockStart = athleteView.indexOf('allWeeks.length === 0 ?')
-const ternaryIdx = athleteView.indexOf('programError ? (', emptyProgramBlockStart)
-const errorTextIdx = athleteView.indexOf('Dit program kunne ikke hentes.', ternaryIdx)
-const onVejTextIdx = athleteView.indexOf('Dit program er på vej.', ternaryIdx)
+const emptyProgramBlockStart = programTab.indexOf('allWeeks.length === 0 ?')
+const ternaryIdx = programTab.indexOf('programError ? (', emptyProgramBlockStart)
+const errorTextIdx = programTab.indexOf('Dit program kunne ikke hentes.', ternaryIdx)
+const onVejTextIdx = programTab.indexOf('Dit program er på vej.', ternaryIdx)
 assert.ok(emptyProgramBlockStart > 0, 'skal kunne finde allWeeks.length === 0-grenen')
 assert.ok(ternaryIdx > emptyProgramBlockStart, 'programError skal afgøre visningen inde i den tomme-program-gren')
 assert.ok(errorTextIdx > ternaryIdx && errorTextIdx < onVejTextIdx,

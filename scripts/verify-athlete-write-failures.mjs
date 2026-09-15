@@ -11,11 +11,14 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 
 const athleteView = readFileSync(new URL('../src/AthleteView.jsx', import.meta.url), 'utf8')
+// F5 (markGoodAndSave) flyttede til sin egen lazy-loadede fane i ordre 232 ·
+// commit 2 (ren udflytning, se docs/RAPPORT-232.md) — samme tjek, ny fil.
+const staevnedagTab = readFileSync(new URL('../src/athlete/StaevnedagTab.jsx', import.meta.url), 'utf8')
 
 assert.match(athleteView, /import \{ runGuardedWrite \} from '\.\/athleteWriteGuard'/)
 
-const extractFn = (name) => {
-  const match = athleteView.match(new RegExp(`async function ${name}\\([^)]*\\) \\{[\\s\\S]*?\\n  \\}`))
+const extractFn = (name, source = athleteView) => {
+  const match = source.match(new RegExp(`async function ${name}\\([^)]*\\) \\{[\\s\\S]*?\\n  \\}`))
   assert.ok(match, `${name} skal kunne findes som en samlet funktion`)
   return match[0]
 }
@@ -24,18 +27,18 @@ const extractFn = (name) => {
 // åbnings-brace og tæller sig frem til den matchende lukke-brace. Nødvendig
 // for funktioner defineret dybt inde i JSX (fx markGoodAndSave), hvor den
 // simple "\n  }"-formodning ovenfor ikke holder.
-const extractFnBalanced = (name) => {
-  const startMatch = athleteView.match(new RegExp(`async function ${name}\\([^)]*\\) \\{`))
+const extractFnBalanced = (name, source = athleteView) => {
+  const startMatch = source.match(new RegExp(`async function ${name}\\([^)]*\\) \\{`))
   assert.ok(startMatch, `${name} skal kunne findes som en samlet funktion`)
   const bodyStart = startMatch.index + startMatch[0].length
   let depth = 1
   let i = bodyStart
-  while (depth > 0 && i < athleteView.length) {
-    if (athleteView[i] === '{') depth++
-    else if (athleteView[i] === '}') depth--
+  while (depth > 0 && i < source.length) {
+    if (source[i] === '{') depth++
+    else if (source[i] === '}') depth--
     i++
   }
-  return athleteView.slice(startMatch.index, i)
+  return source.slice(startMatch.index, i)
 }
 
 // sendAthleteMessage: det konkrete symptom var at inputtet blev ryddet
@@ -68,7 +71,7 @@ for (const name of ['skipSet', 'skipExercise', 'unskipSet']) {
 
 // F5: markGoodAndSave må kun opdatere athlete.squat/bench/deadlift i UI'en når
 // RPC'en har svaret uden fejl.
-const markGoodAndSave = extractFnBalanced('markGoodAndSave')
+const markGoodAndSave = extractFnBalanced('markGoodAndSave', staevnedagTab)
 assert.match(markGoodAndSave, /runGuardedWrite\(/, 'markGoodAndSave skal gå igennem write-garden')
 assert.match(markGoodAndSave, /if \(ok\) setAthlete\(/,
   'setAthlete må kun kaldes når update_competition_max har bekræftet skrivningen')
