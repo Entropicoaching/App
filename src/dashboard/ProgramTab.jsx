@@ -12,12 +12,12 @@ import { nextWeekStartDate } from '../weekDates'
 
 export default function ProgramTab({
   addExercise, addingExercise, addingSession, addingWeek, addSession, addWeek,
-  applyPeriodizationSuggestion,
+  applyPeriodizationSuggestion, applyWeekDateFill,
   approveDraftProgressionState, approvingProgression, assignEdits, athleteLogs, bestLog,
   blockPlan, copyExerciseToSession, copyingExercise, copyingSession, copySessionToWeek, copyWeek,
   deleteExercise, deleteSession, deleteWeek, editDraftForecast, editingExercise, editingRecommended,
   editingSession, editingWeek, exFormRow, fetchWeeks, generateWeeksFromPlan, gotoWeek, isMobile,
-  openSessionId, openWeekId, parseIntensity, planAssistantFocus, planStartDate, programActiveStart,
+  openSessionId, openWeekId, parseIntensity, planAssistantFocus, planStartDate, previewWeekDateFill, programActiveStart,
   programBlockStart, programShownWeeks, recommendedInput, renameValue, renamingBlock, reorderExercise, reorderSession,
   saveRecommendedWeight, selectedAthlete, sendingDraft, sessionForm, sessionLogStatus, setAddingExercise,
   setAddingSession, setAddingWeek, setAssignEdits, setBlockPlan, setCopyingExercise,
@@ -25,8 +25,8 @@ export default function ProgramTab({
   setEditingSession, setEditingWeek, setExerciseForm, setOpenSessionId, setOpenWeekId,
   setPlanAssistantFocus, setPlanStartDate, setProgramBlockStart, setRecommendedInput,
   setRenameValue, setRenamingBlock, setSendingDraft, setSessionForm, setShowBlockPlanner,
-  setWeekDraft, setWeekForm, showBlockPlanner, showFlash, updateExercise, updateSession,
-  updateWeek, weekdayPicker, weekDraft, weekForm, weeks,
+  setWeekDateFill, setWeekDraft, setWeekForm, showBlockPlanner, showFlash, updateExercise, updateSession,
+  updateWeek, weekdayPicker, weekDateFill, weekDraft, weekForm, weeks,
 }) {
   return (
               <div>
@@ -34,7 +34,7 @@ export default function ProgramTab({
                   <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#7a7770' }}>
                     {weeks.length} uge{weeks.length !== 1 ? 'r' : ''}
                   </div>
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                     <button style={{ ...s.btnGhost, color: showBlockPlanner ? '#c8923a' : '#7a7770', borderColor: showBlockPlanner ? 'rgba(200,146,58,0.4)' : undefined }} onClick={() => {
                       if (!showBlockPlanner) {
                         setPlanStartDate(nextWeekStartDate(weeks))
@@ -47,6 +47,11 @@ export default function ProgramTab({
                     {weeks.length > 0 && (
                       <button style={s.btnGhost} onClick={() => copyWeek(weeks[weeks.length - 1].id)}>
                         Kopiér seneste uge →
+                      </button>
+                    )}
+                    {weeks.some(w => w.start_date) && weeks.some(w => !w.start_date) && (
+                      <button style={s.btnGhost} onClick={previewWeekDateFill}>
+                        Sæt datoer
                       </button>
                     )}
                     {weeks.length > 0 && (
@@ -77,6 +82,35 @@ export default function ProgramTab({
                     </button>
                   </div>
                 </div>
+
+                {/* Sæt datoer-panel: preview af udfyldte start_date'er før gem, rører ingen daterede uger */}
+                {weekDateFill && (
+                  <div style={{ background: '#1c1c18', border: '1px solid rgba(200,146,58,0.3)', padding: '1.25rem', marginBottom: '1.5rem' }}>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.75rem' }}>
+                      Sæt datoer · {weekDateFill.rows.length} uge{weekDateFill.rows.length !== 1 ? 'r' : ''} mangler en dato
+                    </div>
+                    {weekDateFill.rows.length === 0 ? (
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#7a7770', marginBottom: '0.85rem' }}>
+                        Ingen uger mangler en dato.
+                      </div>
+                    ) : (
+                      <div style={{ marginBottom: '0.85rem' }}>
+                        {weekDateFill.rows.map(row => (
+                          <div key={row.id} style={{ display: 'flex', justifyContent: 'space-between', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#edeae2', lineHeight: 1.9, borderBottom: '1px solid rgba(237,234,226,0.06)', padding: '0.15rem 0' }}>
+                            <span>Uge {row.week_number}</span>
+                            <span style={{ color: '#c8923a' }}>{new Date(row.start_date + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <button style={s.btnGhost} disabled={weekDateFill.saving} onClick={() => setWeekDateFill(null)}>Annuller</button>
+                      <button style={s.btnPrimary} disabled={weekDateFill.saving || weekDateFill.rows.length === 0} onClick={applyWeekDateFill}>
+                        {weekDateFill.saving ? 'Gemmer…' : `Gem ${weekDateFill.rows.length} dato${weekDateFill.rows.length !== 1 ? 'er' : ''}`}
+                      </button>
+                    </div>
+                  </div>
+                )}
 
                 {/* Auto-udkast panel (draft-next-week edge function) */}
                 {weekDraft && !weekDraft.loading && (

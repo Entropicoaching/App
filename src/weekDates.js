@@ -18,3 +18,20 @@ export function nextWeekStartDate(existingWeeks, today = new Date()) {
   if (dow !== 0) d.setDate(d.getDate() + (7 - dow))
   return d.toISOString().slice(0, 10)
 }
+
+// Udfylder start_date for uger der mangler den, ud fra den første daterede
+// uge i samme program (weeks forventes sorteret efter week_number, som
+// fetchWeeks allerede gør), frem og tilbage i 7-dages-spring. Rører aldrig
+// en uge der allerede har en dato — returnerer kun dem der manglede en.
+export function fillMissingWeekDates(weeks) {
+  const anchor = (weeks || []).find(w => w.start_date)
+  if (!anchor) return []
+  const anchorMs = new Date(anchor.start_date + 'T12:00:00').getTime()
+  return weeks
+    .filter(w => !w.start_date)
+    .map(w => ({
+      id: w.id,
+      week_number: w.week_number,
+      start_date: new Date(anchorMs + (w.week_number - anchor.week_number) * 7 * 24 * 3600 * 1000).toISOString().slice(0, 10),
+    }))
+}

@@ -2,7 +2,7 @@
 
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { nextWeekStartDate } from './weekDates.js'
+import { nextWeekStartDate, fillMissingWeekDates } from './weekDates.js'
 
 test('ingen uger overhovedet → førstkommende mandag fra referencedatoen', () => {
   const dato = nextWeekStartDate([], new Date('2026-09-16T10:00:00')) // onsdag
@@ -43,4 +43,47 @@ test('årsskift', () => {
 test('årsskift ved mandag-reglen (ingen daterede uger, i dag er sidst på året)', () => {
   const dato = nextWeekStartDate([], new Date('2026-12-30T10:00:00')) // onsdag
   assert.equal(dato, '2027-01-04')
+})
+
+test('fillMissingWeekDates: udfylder frem og tilbage fra ankeret, rører ikke daterede uger', () => {
+  const uger = [
+    { id: 'w1', week_number: 1, start_date: null },
+    { id: 'w2', week_number: 2, start_date: '2026-09-14' },
+    { id: 'w3', week_number: 3, start_date: null },
+    { id: 'w4', week_number: 4, start_date: null },
+  ]
+  const resultat = fillMissingWeekDates(uger)
+  assert.deepEqual(resultat, [
+    { id: 'w1', week_number: 1, start_date: '2026-09-07' },
+    { id: 'w3', week_number: 3, start_date: '2026-09-21' },
+    { id: 'w4', week_number: 4, start_date: '2026-09-28' },
+  ])
+})
+
+test('fillMissingWeekDates: bruger den første daterede uge i rækkefølgen som anker', () => {
+  const uger = [
+    { id: 'w1', week_number: 1, start_date: null },
+    { id: 'w2', week_number: 2, start_date: '2026-09-14' },
+    { id: 'w3', week_number: 3, start_date: '2026-09-28' }, // afvigende — ignoreres som anker
+  ]
+  const resultat = fillMissingWeekDates(uger)
+  assert.deepEqual(resultat, [{ id: 'w1', week_number: 1, start_date: '2026-09-07' }])
+})
+
+test('fillMissingWeekDates: ingen daterede uger overhovedet → tom liste (ingen anker at regne fra)', () => {
+  const uger = [{ id: 'w1', week_number: 1, start_date: null }, { id: 'w2', week_number: 2, start_date: null }]
+  assert.deepEqual(fillMissingWeekDates(uger), [])
+})
+
+test('fillMissingWeekDates: alle uger allerede daterede → tom liste, ingen ændres', () => {
+  const uger = [{ id: 'w1', week_number: 1, start_date: '2026-09-07' }, { id: 'w2', week_number: 2, start_date: '2026-09-14' }]
+  assert.deepEqual(fillMissingWeekDates(uger), [])
+})
+
+test('fillMissingWeekDates: månedsskift ved tilbageregning', () => {
+  const uger = [
+    { id: 'w1', week_number: 1, start_date: null },
+    { id: 'w2', week_number: 2, start_date: '2026-10-05' },
+  ]
+  assert.deepEqual(fillMissingWeekDates(uger), [{ id: 'w1', week_number: 1, start_date: '2026-09-28' }])
 })
