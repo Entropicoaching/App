@@ -16,7 +16,11 @@ const runtimeModules = join(homedir(), '.cache', 'codex-runtimes', 'codex-primar
 export const { chromium } = require(join(runtimeModules, 'playwright'))
 
 export const ROOT = join(new URL('.', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'), '..')
-export const OUT_DIR = join(ROOT, 'outputs', 'e2e')
+// ORDRE 205 — skrives til en git-ignoreret arbejdssti, ikke over leverance-
+// facit i outputs/e2e/. Se scripts/leverance-sti.mjs og e2e/run-all.mjs's
+// --opdater-leverance for hvordan facit opdateres, når en ordre beder om det.
+export const OUT_DIR = join(ROOT, 'outputs', '_seneste', 'e2e')
+export const LEVERANCE_DIR = join(ROOT, 'outputs', 'e2e')
 mkdirSync(OUT_DIR, { recursive: true })
 
 export const VITE_PORT = Number(process.env.E2E_VITE_PORT || 5185)

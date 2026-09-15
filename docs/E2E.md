@@ -13,7 +13,8 @@ harness) og en lokal mock-backend — ikke mod produktions-Supabase.
   kører i hvert sit friske login mod SAMME kørende backend (glat rejse →
   video op → coach gennemgår → det der går galt → beskeder). ~20-25s.
 
-Skærmbilleder pr. skridt lander i `outputs/e2e/`.
+Skærmbilleder pr. skridt lander i `outputs/_seneste/e2e/` (git-ignoreret —
+se "Facit vs. prøvekørsel" nedenfor).
 
 ## Hvad den dækker
 
@@ -57,6 +58,20 @@ noteret. "Timeout" (`?fejl=timeout` i ordre 155's eget sprog) er i mocken en
 øjeblikkelig forbindelsesafbrydelse, ikke et ægte 12s-hæng op til appens
 `fetchWithTimeout`-grænse — samme brugeroplevede udfald, uden at gøre
 suiten langsom.
+
+## Facit vs. prøvekørsel (ORDRE 205)
+
+`npm run e2e`, `npm run maal:telefon` og `npm run maal:coach-telefon`
+skriver alle til den git-ignorerede `outputs/_seneste/` (`e2e/`, `maal/`,
+`maal-coach/`) — en almindelig kørsel efterlader derfor et rent træ. De
+committede leverancebilleder (`outputs/e2e/`, `outputs/maal/`,
+`outputs/maal-coach/`) er facit fra tidligere ordrer og røres ikke af det.
+
+Skal facit opdateres, fordi en ordre udtrykkeligt beder om nye
+leverancebilleder: tilføj `--opdater-leverance`, fx
+`npm run e2e -- --opdater-leverance` eller
+`npm run maal:telefon -- --opdater-leverance` (label kan stadig gives, i
+vilkårlig rækkefølge med flaget). Se `scripts/leverance-sti.mjs`.
 
 ## Sådan tilføjes et nyt skridt
 
