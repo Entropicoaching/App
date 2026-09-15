@@ -130,14 +130,17 @@ de dækkes af `npm run proever`/CI, uden at de gør. Ikke rørt i denne ordre
 | `scripts/verify-plan-aware-forecast.mjs` | 15 |
 | `scripts/verify-plan-overview.mjs` | 5 |
 
-## Optælling før commit 2
+## Optælling
 
-| Kategori | Antal prøver/scripts |
-|---|---|
-| (a) — kan melde hæng uden hæng | 0 aktive (1 historisk, rettet i ordre 225) |
-| (b) — kan bestå stille | 0 aktive (samme historiske tilfælde) |
-| (c) — timeout uden begrundelse | 1 tilbage (`verify-videocoach-film-guide.mjs`, lavrisiko render-settle-pauser). `verify-videocoach-buttons-layout.mjs` rettet i commit 2, se nedenfor |
-| ingen (venter på faktisk udfald) | 42 af 43 gennemgåede prøver/scripts efter commit 2 |
+45 prøver/scripts gennemgået i alt: 7 e2e-specs + `run-all.mjs` + 3 manuelle
+sporings-diagnose-scripts + 34 `verify:*`-scripts.
+
+| Kategori | Før commit 2 | Efter commit 2 |
+|---|---|---|
+| (a) — kan melde hæng uden hæng | 0 aktive (1 historisk, rettet i ordre 225) | 0 |
+| (b) — kan bestå stille | 0 aktive (samme historiske tilfælde) | 0 |
+| (c) — timeout uden begrundelse | 2 (`verify-videocoach-film-guide.mjs`, `verify-videocoach-buttons-layout.mjs`) | 1 (`verify-videocoach-film-guide.mjs`, lavrisiko render-settle-pauser tilbage) |
+| ingen (venter på faktisk udfald) | 43 af 45 | 44 af 45 |
 
 ## Metode
 
