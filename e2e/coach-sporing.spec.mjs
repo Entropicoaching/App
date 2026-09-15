@@ -91,8 +91,33 @@ async function confirmAndWaitForTracking(frame, page) {
   throw new Error(`Sporingen blev aldrig færdig inden for 120 sekunder (sidste banner: "${lastBanner}")`)
 }
 
-export async function runCoachSporing(page, { appUrl, mockUrl, outDir, awaitingRow, clipPath }) {
+// ORDRE 211 · commit 1 — traceOut (valgfri) er et objekt kaldstedet ejer;
+// er den givet, tilføjes ?benchmark=1&trackerProbe=1 til VideoCoach-iframets
+// URL (aktiverer eksisterende, allerede guardede instrumentering i
+// public/videocoach.html — ALDRIG i produktion, kun her), og
+// window.__vcTrackerBenchmarkLast læses ind i traceOut FØR asserten om
+// gennemført sporing, så et fund overlever selv en forventet fejl (klippet
+// er kendt fra ordre 200 til at fejle sporing). Rører intet ved selve
+// klik-flowet eller trackerens adfærd for eksisterende kald uden traceOut.
+export async function runCoachSporing(page, { appUrl, mockUrl, outDir, awaitingRow, clipPath, traceOut }) {
   const shot = (name) => page.screenshot({ path: join(outDir, `coach-sporing-${name}.png`), fullPage: true })
+
+  if (traceOut) {
+    // ORDRE 211 · commit 1 — route.continue({url}) kan ikke ændre selve
+    // NAVIGATIONS-URL'en for et iframe-dokument (Playwright ignorerer
+    // url-overriden for navigations-requests, kun fundet ved at logge
+    // requests og se den uændrede URL nå frem) — derfor et rigtigt
+    // 302-redirect i stedet, kun første gang (næste request har allerede
+    // ?benchmark=1, og fulfilles normalt).
+    await page.context().route('**/videocoach.html*', async route => {
+      const reqUrl = route.request().url()
+      const url = new URL(reqUrl)
+      if (url.searchParams.has('benchmark')) { await route.continue(); return }
+      url.searchParams.set('benchmark', '1')
+      url.searchParams.set('trackerProbe', '1')
+      await route.fulfill({ status: 302, headers: { location: url.toString() } })
+    })
+  }
 
   await page.goto(appUrl)
   await page.locator('#athlete-auth-email').fill(COACH_USER.email)
@@ -144,6 +169,17 @@ export async function runCoachSporing(page, { appUrl, mockUrl, outDir, awaitingR
 
   // Klik 3: ⚡ igen — bekræfter ringen, starter selve sporingen.
   const { done: tracked, lastBanner, lastPercent } = await confirmAndWaitForTracking(frame, page)
+
+  if (traceOut) {
+    const vcFrame = page.frames().find(f => f.url().includes('videocoach.html'))
+    traceOut.lastBanner = lastBanner
+    traceOut.lastPercent = lastPercent
+    traceOut.tracked = tracked
+    traceOut.benchmarkRun = vcFrame
+      ? await vcFrame.evaluate(() => window.__vcTrackerBenchmarkLast || null).catch(() => null)
+      : null
+  }
+
   assert.ok(tracked, `sporingen fandt ingen brugbar rep (slutprocent: ${lastPercent}% · sidste banner: ` +
     `"${lastBanner}") — klip: ${clipPath}`)
   await shot('03-sporing-faerdig')
