@@ -11,8 +11,9 @@ forventede base, `git log --oneline -1 main` ved start bekræftede det).
 - `8a3c71b` — commit 4: ingen atlet-facing visning findes (dokumenteret, intet at koble op på)
 - (denne rapport er commit 5, se hash i `git log` efter commit)
 
-## Commit 1 — migrationen, til godkendelse, ikke kørt
+## Hvad ændret
 
+**Commit 1 — migrationen, til godkendelse, ikke kørt.**
 `docs/supabase/20260915-exercise_muscle_overrides.sql`: ny tabel
 `exercise_muscle_overrides` — `coach_id` (FK til `profiles`), normaliseret
 øvelsesnøgle + det oprindelige øvelsesnavn (se "Valg" nedenfor for hvorfor
@@ -33,8 +34,7 @@ uden det ville UI'et miste "Zercher squat"-casingen og kun vise
 "zercher squat", en regression ift. hvad `KortlaegningRedigering.jsx`
 allerede viser i dag. Noteret, ikke spurgt, per ordrens egen instruks.
 
-## Commit 2 — lageret bag én grænseflade
-
+**Commit 2 — lageret bag én grænseflade.**
 `src/volume/rettelser.js` omskrevet: samme fem funktioner (de tre
 offentlige — `hentRettelser`/`gemRettelse`/`fjernRettelse` — plus de to
 interne `laesAlle`/`skrivAlle`), nu bag to bagender. Valget sker ved
@@ -61,9 +61,8 @@ coach-scoping (to coaches deler ikke hinandens rettelser), mod en minimal
 fake Supabase-klient bygget til testen (ikke en generel PostgREST-klon,
 samme ånd som `e2e/mock-supabase.mjs`, men på unit-niveau uden HTTP).
 
-## Commit 3 — mocken og UI'et
-
-**`e2e/mock-supabase.mjs`** (mocken ændret, specernes indhold urørt):
+**Commit 3 — mocken og UI'et.**
+`e2e/mock-supabase.mjs` (mocken ændret, specernes indhold urørt):
 
 - Understøtter nu `HEAD`-metoden generelt (brugt af `head:true`-opslaget i
   commit 2) — sætter `Content-Range` for `count`, ingen body. Ingen anden
@@ -96,8 +95,7 @@ m.fl. allerede bruger). `KortlaegningRedigering.jsx` afventer nu de async
 **"Gemmes på din konto"** i én linje øverst i redigeringsvinduet, og
 deaktiverer sine knapper mens et kald er i gang.
 
-## Commit 4 — atleten ser det samme (findes ikke)
-
+**Commit 4 — atleten ser det samme (findes ikke).**
 Ordrens egen betingelse: "hvis den findes; ellers skriv at den ikke
 findes." Den findes ikke. `src/volume/muskelkort.js`, `beregn.js`,
 `planlagt.js` og `rettelser.js` bruges udelukkende fra `src/dashboard/`
@@ -110,34 +108,30 @@ kræve: enten en ny, snævert scopet SELECT-policy på
 `athletes.coach_id`) eller en SECURITY DEFINER-funktion — ingen af delene
 tilføjet nu, for ikke at åbne en læsevej ingen kode bruger endnu.
 
-## Commit 5 — dokumentation og hvad Dhruva skal køre
-
+**Commit 5 — dokumentation og hvad Dhruva skal køre.**
 `docs/VOLUMEN.md`s "Hvor det gemmes"-afsnit omskrevet: den gamle grænse
 ("browser-lokal, ikke synkroniseret") er erstattet med hvordan
 bagende-valget virker, hvad de to statuslinjer i UI'et betyder, og
 flyt-op-mekanikken. Ny "Atletens egen visning — findes ikke"-sektion for
 commit 4's fund.
 
-### Hvad Dhruva kører (efter Marcs eksplicitte ja)
-
+**Hvad Dhruva kører (efter Marcs eksplicitte ja):**
 Kør `docs/supabase/20260915-exercise_muscle_overrides.sql` mod
 produktions-Supabase (samme vej som tidligere godkendte migrationer i
 dette repo). Selv-indeholdt (`begin`/`commit`), ingen andre filer skal køres
 samtidig. Fuld kontekst i `docs/supabase/20260915-exercise_muscle_overrides.md`.
 
-### Hvad der sker i appen, før og efter
+**Hvad der sker i appen, før og efter.**
+Før migrationen (i dag, og under hele denne ordre): uændret adfærd,
+"Gemmes på denne enhed" vises, `localStorage` bruges. Efter migrationen:
+næste gang en coach åbner "Volumen pr. muskelgruppe", finder appens ene,
+billige opslag tabellen. Findes der allerede lokale rettelser i den
+browser, flyttes de op automatisk, én gang. Fremover læses/skrives mod
+tabellen, linjen skifter til "Gemmes på din konto", og en rettelse lavet på
+én enhed ses med det samme på Marcs andre enheder. Ingen synlig ændring for
+atleten (se commit 4).
 
-**Før migrationen** (i dag, og under hele denne ordre): uændret adfærd,
-"Gemmes på denne enhed" vises, `localStorage` bruges.
-
-**Efter migrationen:** næste gang en coach åbner "Volumen pr.
-muskelgruppe", finder appens ene, billige opslag tabellen. Findes der
-allerede lokale rettelser i den browser, flyttes de op automatisk, én gang.
-Fremover læses/skrives mod tabellen, linjen skifter til "Gemmes på din
-konto", og en rettelse lavet på én enhed ses med det samme på Marcs andre
-enheder. Ingen synlig ændring for atleten (se commit 4).
-
-## Betydning for Hara
+**Betydning for Hara.**
 
 Retter direkte den "ærlige grænse" min egen ordre 185-rapport pegede på som
 den næste, reelle begrænsning (rettelser var pr. browser) — hører derfor
