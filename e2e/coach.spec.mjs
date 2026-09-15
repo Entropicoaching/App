@@ -8,7 +8,7 @@
 
 import assert from 'node:assert/strict'
 import { join } from 'node:path'
-import { COACH_USER } from './fixtures.mjs'
+import { COACH_USER, ATHLETE_ID } from './fixtures.mjs'
 
 /** Kører coachens gennemgang. `page` er en frisk Playwright-side. */
 export async function runCoachReview(page, { appUrl, outDir }) {
@@ -63,6 +63,38 @@ export async function runCoachReview(page, { appUrl, outDir }) {
   await shot('05-indbakke')
 }
 
+// ORDRE 215 · hastefejl: "Min træning" (coachen som er atlet, se her
+// Testatlet) gjorde ingenting — goToMyProfile (Dashboard.jsx) kaldte
+// onPreviewAthlete korrekt, App.jsx satte previewMode/coachAthleteId
+// korrekt, men skærmen forblev uændret (se docs/ordre-215-repro.md).
+// Reproducerer PRÆCIS scenariet fra reprosen: entropi_my_athlete_id sat til
+// en atlet der findes i den allerede indlæste athletes-liste, så
+// goToMyProfile tager sin direkte vej (ingen picker involveret).
+export async function runMinTraeningPreview(page, { appUrl, outDir }) {
+  const shot = (name) => page.screenshot({ path: join(outDir, `coach-${name}.png`), fullPage: true })
+
+  await page.goto(appUrl)
+  await page.locator('#athlete-auth-email').fill(COACH_USER.email)
+  await page.locator('#athlete-auth-password').fill(COACH_USER.password)
+  await page.getByRole('button', { name: 'Log ind' }).click()
+  await page.getByRole('button', { name: /Testatlet.*Uge/ }).waitFor({ state: 'visible', timeout: 10000 })
+
+  // entropi_my_athlete_id læses kun ved mount (useState-initializer i
+  // Dashboard.jsx) — sat efter login, derfor et reload for at få den med.
+  await page.evaluate((id) => { localStorage.setItem('entropi_my_athlete_id', id) }, ATHLETE_ID)
+  await page.reload()
+  await page.getByRole('button', { name: /Testatlet.*Uge/ }).waitFor({ state: 'visible', timeout: 10000 })
+
+  await page.getByText('Min træning', { exact: true }).first().click()
+  // "← Coach view" er den entydige markør for at Atletvisningen (ikke
+  // Dashboard) rent faktisk er monteret — se AthleteView.jsx's backBtn.
+  await page.getByText('← Coach view', { exact: true }).waitFor({ state: 'visible', timeout: 10000 })
+  await shot('06-min-traening-preview')
+
+  const crashed = await page.getByText('Ups — noget gik galt.').count()
+  assert.equal(crashed, 0, '"Min træning" ramte ErrorBoundary-fallbacken')
+}
+
 async function main() {
   const { createMockSupabase } = await import('./mock-supabase.mjs')
   const { buildSeed } = await import('./fixtures.mjs')
@@ -76,7 +108,8 @@ async function main() {
     const page = await browser.newPage({ viewport: { width: 1280, height: 900 } })
     page.on('console', msg => { if (msg.type() === 'error') console.error('[console.error]', msg.text()) })
     await runCoachReview(page, { appUrl: APP_URL, outDir: OUT_DIR })
-    console.log('\nGRØN: coachen ser atletlisten, ugens tre sæt, dagens readiness, Analyse-fanen og indbakken uden fejl.')
+    await runMinTraeningPreview(page, { appUrl: APP_URL, outDir: OUT_DIR })
+    console.log('\nGRØN: coachen ser atletlisten, ugens tre sæt, dagens readiness, Analyse-fanen, indbakken og "Min træning" uden fejl.')
     process.exitCode = 0
   } catch (err) {
     console.error('\nFEJL:', err.message)

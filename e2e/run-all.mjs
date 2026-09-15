@@ -9,7 +9,7 @@ import { buildSeed } from './fixtures.mjs'
 import { startVite, launchBrowser, APP_URL, MOCK_PORT, OUT_DIR, LEVERANCE_DIR } from './harness.mjs'
 import { harLeveranceFlag, opdaterLeverance } from '../scripts/leverance-sti.mjs'
 import { runAtletJourney } from './atlet.spec.mjs'
-import { runCoachReview } from './coach.spec.mjs'
+import { runCoachReview, runMinTraeningPreview } from './coach.spec.mjs'
 import { runVideoUpload } from './video-upload.spec.mjs'
 import { runVideoReview, runAthleteSeesFeedback } from './video-review.spec.mjs'
 import { runOfflineSetLog, runRejectedUploadRetry } from './fejl.spec.mjs'
@@ -48,6 +48,8 @@ async function main() {
     // Den glatte rejse (ordre 153).
     await step('atlet-rejse', MOBILE, page => runAtletJourney(page, opts))
     await step('coach-gennemgang', DESKTOP, page => runCoachReview(page, opts))
+    // ORDRE 215 · hastefejl: "Min træning" for en coach-der-er-atlet.
+    await step('min-traening-preview', DESKTOP, page => runMinTraeningPreview(page, opts))
 
     // Video op og gå + coachens gennemgang (ordre 155 · commit 1-2).
     const awaitingRow = await step('video-upload', MOBILE, page => runVideoUpload(page, opts))
