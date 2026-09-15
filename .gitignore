@@ -53,3 +53,8 @@ test-clips/
 
 # Lokale Claude Code-indstillinger (per maskine)
 .claude/settings.local.json
+
+# ORDRE 205 — prøvekørslernes egne billeder (npm run e2e, maal:telefon,
+# maal:coach-telefon). Leverancebilleder ligger i outputs/e2e|maal|maal-coach/
+# og opdateres kun via --opdater-leverance, se scripts/leverance-sti.mjs.
+outputs/_seneste/
