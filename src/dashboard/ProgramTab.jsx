@@ -8,6 +8,7 @@ import { draftExerciseForForecast, FORECAST_FIELD_LABELS } from '../progressionD
 import { blockPurpose, withBlockPurposes } from '../periodizationAssistant'
 import { targetPrescriptionForExercise } from '../../supabase/functions/_shared/progressionState.js'
 import { BLOCK_NAMES, BLOCK_PRESETS, blockColor, computePhases, currentWeekNo, WEEKDAYS_LONG, s } from '../dashboardShared'
+import { nextWeekStartDate } from '../weekDates'
 
 export default function ProgramTab({
   addExercise, addingExercise, addingSession, addingWeek, addSession, addWeek,
@@ -36,11 +37,7 @@ export default function ProgramTab({
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
                     <button style={{ ...s.btnGhost, color: showBlockPlanner ? '#c8923a' : '#7a7770', borderColor: showBlockPlanner ? 'rgba(200,146,58,0.4)' : undefined }} onClick={() => {
                       if (!showBlockPlanner) {
-                        const weeksWithDate = weeks.filter(w => w.start_date).sort((a, b) => b.week_number - a.week_number)
-                        const suggestDate = weeksWithDate.length
-                          ? new Date(new Date(weeksWithDate[0].start_date + 'T12:00:00').getTime() + 7 * 24 * 3600 * 1000).toISOString().slice(0, 10)
-                          : new Date().toISOString().slice(0, 10)
-                        setPlanStartDate(suggestDate)
+                        setPlanStartDate(nextWeekStartDate(weeks))
                         setAssignEdits(Object.fromEntries(weeks.map(w => [w.id, w.block_name || ''])))
                       }
                       setShowBlockPlanner(p => !p)
@@ -73,12 +70,8 @@ export default function ProgramTab({
                       </button>
                     )}
                     <button style={s.btnPrimary} onClick={() => {
-                      const weeksWithDate = weeks.filter(w => w.start_date).sort((a, b) => b.week_number - a.week_number)
-                      const suggestDate = weeksWithDate.length
-                        ? new Date(new Date(weeksWithDate[0].start_date + 'T12:00:00').getTime() + 7 * 24 * 3600 * 1000).toISOString().slice(0, 10)
-                        : new Date().toISOString().slice(0, 10)
                       setAddingWeek(true)
-                      setWeekForm({ week_number: '', block_name: '', coach_note: '', block_description: '', start_date: suggestDate })
+                      setWeekForm({ week_number: '', block_name: '', coach_note: '', block_description: '', start_date: nextWeekStartDate(weeks) })
                     }}>
                       + Ny uge
                     </button>

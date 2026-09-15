@@ -23,6 +23,7 @@ import {
   videoCoachMetricText, videoCoachBaselineText, s,
   readinessSignal, formatLastSeen, parsePlannedRpe, initials,
 } from './dashboardShared'
+import { nextWeekStartDate } from './weekDates'
 
 // Valgfri fast ugedag pr. session (0=mandag .. 6=søndag). null = fleksibel (Træning 1/2/3).
 const WEEKDAYS_SHORT = ['Man', 'Tir', 'Ons', 'Tor', 'Fre', 'Lør', 'Søn']
@@ -1330,11 +1331,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   // Åbn kalender-blok-byggeren for en atlet; seed startdato efter deres sidste daterede uge (ellers i dag).
   function openCalBlockBuilder(a) {
     const wks = calendarWeeks[a.id] || []
-    const dated = wks.filter(w => w.start_date).sort((x, y) => y.week_number - x.week_number)
-    const seed = dated.length
-      ? new Date(new Date(dated[0].start_date + 'T12:00:00').getTime() + 7 * 24 * 3600 * 1000).toISOString().slice(0, 10)
-      : new Date().toISOString().slice(0, 10)
-    setPlanStartDate(seed)
+    setPlanStartDate(nextWeekStartDate(wks))
     setCalBlockAthlete({ id: a.id, name: a.name })
   }
 
@@ -1604,6 +1601,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       block_name: week.block_name,
       coach_note: week.coach_note,
       block_description: week.block_description,
+      start_date: nextWeekStartDate(weeks),
     }).select().single()
     if (!newWeek) return
     for (const session of (week.sessions || [])) {
@@ -2100,7 +2098,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       openProfile(data, 'program')
       setAddingWeek(true)
       setWeekForm({ week_number: '', block_name: '', coach_note: '', block_description: '',
-        start_date: new Date().toISOString().slice(0, 10) })
+        start_date: nextWeekStartDate([]) })
       showFlash(`${data.name} er oprettet. Opret den første programuge.`, 'success')
     } else {
       showFlash('Kunne ikke oprette atlet: ' + error.message, 'error')
@@ -2765,14 +2763,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   // Åbner kun den lokale planflade for den valgte atlet. Ingen blokke eller
   // uger oprettes, før coachen senere vælger "Opret" i planlæggeren.
   function openPlanReview(planEntry) {
-    const dated = (calendarWeeks[planEntry.athlete.id] || [])
-      .filter(week => week.start_date)
-      .sort((left, right) => new Date(right.start_date + 'T12:00:00') - new Date(left.start_date + 'T12:00:00'))
-    const latest = dated[0]
-    const nextStart = latest
-      ? new Date(new Date(latest.start_date + 'T12:00:00').getTime() + 7 * 24 * 3600 * 1000).toISOString().slice(0, 10)
-      : new Date().toISOString().slice(0, 10)
-    setPlanStartDate(nextStart)
+    setPlanStartDate(nextWeekStartDate(calendarWeeks[planEntry.athlete.id] || []))
     setPlanAssistantFocus(planEntry.suggested_focus)
     setBlockPlan([])
     setWeekDraft(null)
