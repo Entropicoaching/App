@@ -19,6 +19,26 @@ Specen der styrer denne ordre: `entropi-loeftmodel/docs/APP-MAALING.md`
 appens bundle, `src/` er ikke rørt, ingen ny afhængighed i appens egen
 `package.json`.
 
+## Hvad ændret
+
+Lukkede de tre punkter `docs/APP-MAALING.md` navngav, i prøven
+(`scripts/pose-proeve/`), stadig uden for appens bundle: (1) stangens
+position kommer nu fra en skivedetektion (`skive.mjs`, genbrug af
+videocoach.html's `recenterOnPlate()`-kantscan + en ny gittersøgning +
+en fysisk sandsynlighedsport) i stedet for håndledstilnærmelsen — 0/28
+til 5/28 inden for Drishtis usikkerhedsbånd, samme størrelsesorden som
+hendes egen pladeaflæsning; (2) et ægte usikkerhedsbånd i JS
+(`usikkerhed.mjs`, port af `usikkerhed.py`s ensemble, billigere end
+Python-udgaven fordi appen allerede beholder begge siders landmarks) —
+5 af 6 felter inden for faktor 2 af Drishtis egne båndbredder; (3)
+hele kæden kørt uden `fra_app.py` (`hele-banen-mod-model.mjs --kilde
+app` direkte på appens egen bane) og gentaget på Marcs frontsquat-klip
+(65-85/93 inden for bånd på fire vinkler + hoftehøjde, det stærkeste
+resultat i ordren). `docs/videocoach/POSE-PROEVE.md` opdateret med den
+nye pris (tid, størrelse, hvad "upload og gå" konkret ville kræve).
+Se afsnittene "Commit 1"-"Commit 5" nedenfor for detaljerne, tabellerne
+og hvad der blev afprøvet og afvist undervejs.
+
 ## Stå på skuldre — hvad der blev taget fra hvem
 
 - **`public/videocoach.html`s `recenterOnPlate()`** (skive-recentrering
