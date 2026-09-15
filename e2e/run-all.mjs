@@ -6,7 +6,8 @@
 
 import { createMockSupabase } from './mock-supabase.mjs'
 import { buildSeed } from './fixtures.mjs'
-import { startVite, launchBrowser, APP_URL, MOCK_PORT, OUT_DIR } from './harness.mjs'
+import { startVite, launchBrowser, APP_URL, MOCK_PORT, OUT_DIR, LEVERANCE_DIR } from './harness.mjs'
+import { harLeveranceFlag, opdaterLeverance } from '../scripts/leverance-sti.mjs'
 import { runAtletJourney } from './atlet.spec.mjs'
 import { runCoachReview } from './coach.spec.mjs'
 import { runVideoUpload } from './video-upload.spec.mjs'
@@ -63,6 +64,11 @@ async function main() {
     await step('atlet-sender-besked', MOBILE, page => sendAthleteMessage(page, { ...opts, text: athleteText }))
     await step('coach-svarer', DESKTOP, page => coachRepliesToMessage(page, { ...opts, athleteText, replyText }))
     await step('atlet-ser-svar', MOBILE, page => athleteSeesReply(page, { ...opts, replyText }))
+
+    if (harLeveranceFlag()) {
+      opdaterLeverance(OUT_DIR, LEVERANCE_DIR)
+      console.log(`\nLeverancebilleder opdateret: ${LEVERANCE_DIR}`)
+    }
 
     const seconds = ((Date.now() - t0) / 1000).toFixed(1)
     console.log(`\nGRØN: atlet → coach, ende-til-ende (glat rejse + video + fejl + beskeder), ${seconds}s.`)

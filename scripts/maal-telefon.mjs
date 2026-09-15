@@ -61,6 +61,7 @@ import { createRequire } from 'node:module'
 import { homedir } from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { harLeveranceFlag, argvUdenLeveranceFlag, opdaterLeverance } from './leverance-sti.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const repoRoot = path.join(__dirname, '..')
@@ -254,10 +255,12 @@ async function measureSaetLoggerTransition(browser, origin, outDir) {
 }
 
 async function main() {
-  const label = process.argv[2] || null
+  // ORDRE 205 — skrives til en git-ignoreret arbejdssti; --opdater-leverance
+  // kopierer resultatet ind over leverance-facit i outputs/maal/ bagefter.
+  const label = argvUdenLeveranceFlag(process.argv)[2] || null
   const dato = new Date().toISOString().slice(0, 10)
   const outName = label ? `${dato}--${label}` : dato
-  const outDir = path.join(repoRoot, 'outputs', 'maal', outName)
+  const outDir = path.join(repoRoot, 'outputs', '_seneste', 'maal', outName)
   mkdirSync(outDir, { recursive: true })
 
   console.log(`Starter mocken på 127.0.0.1:${MOCK_PORT}...`)
@@ -307,7 +310,13 @@ async function main() {
     const perf = r.perfScore != null ? String(r.perfScore) : 'n/a'
     console.log(`| ${r.label} | ${fcp} | ${tti} | ${r.cls.toFixed(3)} | ${r.requestsBeforeUsable} | ${perf} | ${r.dom} |`)
   }
-  console.log(`\nSkrevet: outputs/maal/${outName}.json + skærmbilleder i outputs/maal/${outName}/`)
+  console.log(`\nSkrevet: outputs/_seneste/maal/${outName}.json + skærmbilleder i outputs/_seneste/maal/${outName}/`)
+
+  if (harLeveranceFlag()) {
+    opdaterLeverance(outDir, path.join(repoRoot, 'outputs', 'maal', outName))
+    opdaterLeverance(path.join(outDir, '..', `${outName}.json`), path.join(repoRoot, 'outputs', 'maal', `${outName}.json`))
+    console.log(`Leverancebilleder opdateret: outputs/maal/${outName}/ + outputs/maal/${outName}.json`)
+  }
 }
 
 main().catch((err) => { console.error(err); process.exit(1) })
