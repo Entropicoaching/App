@@ -3,12 +3,18 @@ import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 
 const athleteView = readFileSync(new URL('../src/AthleteView.jsx', import.meta.url), 'utf8')
+// Programmets readiness-prompt flyttede til sin egen lazy-loadede fane i
+// ordre 232 · commit 3 (ren udflytning, se docs/RAPPORT-232.md) — tælles nu
+// på tværs af begge filer.
+const programTab = readFileSync(new URL('../src/athlete/ProgramTab.jsx', import.meta.url), 'utf8')
 
 assert.match(athleteView, /const readinessCardRef = useRef\(null\)/)
 assert.match(athleteView, /function openReadiness\(\) \{[\s\S]*?setTab\('hjem'\)[\s\S]*?requestAnimationFrame\(\(\) => requestAnimationFrame/)
 assert.match(athleteView, /matchMedia\?\.\('\(prefers-reduced-motion: reduce\)'\)\.matches/)
 assert.match(athleteView, /scrollIntoView\(\{ behavior: reduceMotion \? 'auto' : 'smooth', block: 'start' \}\)/)
-assert.equal((athleteView.match(/onClick=\{openReadiness\}/g) || []).length, 2,
+const openReadinessCount = (athleteView.match(/onClick=\{openReadiness\}/g) || []).length
+  + (programTab.match(/onClick=\{openReadiness\}/g) || []).length
+assert.equal(openReadinessCount, 2,
   'Begge eksisterende readiness-prompts skal bruge samme navigation')
 assert.match(athleteView, /<button type="button" aria-label="Gå til dagens parathed" onClick=\{openReadiness\}/)
 assert.match(athleteView, /ref=\{readinessCardRef\} style=\{\{ \.\.\.s\.card, scrollMarginTop: '5rem' \}\}/)

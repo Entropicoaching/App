@@ -13,17 +13,25 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 
 const athleteView = readFileSync(new URL('../src/AthleteView.jsx', import.meta.url), 'utf8')
+// TDEE (KOST), e1RM (PROGRAM) og beskedsporene (BESKEDER) flyttede til deres
+// egne lazy-loadede faner i ordre 232 · commit 3 (ren udflytning, se
+// docs/RAPPORT-232.md) — teksttjekkene kører derfor mod ALLE fire filer
+// samlet, uafhængigt af hvilken fane hver tekst bor i.
+const kostTab = readFileSync(new URL('../src/athlete/KostTab.jsx', import.meta.url), 'utf8')
+const programTab = readFileSync(new URL('../src/athlete/ProgramTab.jsx', import.meta.url), 'utf8')
+const beskederTab = readFileSync(new URL('../src/athlete/BeskederTab.jsx', import.meta.url), 'utf8')
+const allAthleteCode = [athleteView, kostTab, programTab, beskederTab].join('\n')
 
 // --- F17: TDEE har en linje i atletens eget sprog, ved siden af tallet -----
 assert.match(
-  athleteView,
+  allAthleteCode,
   /Det din krop cirka bruger på en dag, regnet af dine egne vejninger og din kost\./,
   'TDEE skal have en kort forklaring på dansk, uden en separat hjælpeside',
 )
 
 // --- e1RM (fundet under gennemgangen, samme kategori som F17) --------------
 assert.match(
-  athleteView,
+  allAthleteCode,
   /e1RM er et regnestykke ud fra din vægt og dine reps/,
   'e1RM i styrkeudviklings-grafen skal have en kort forklaring',
 )
@@ -34,18 +42,18 @@ assert.match(athleteView, /Ny personlig rekord \(reps\)/, 'PR-toasten skal skriv
 
 // --- Ingen udråbstegn i de tekster denne ordre rører ------------------------
 assert.ok(
-  !/personlig rekord \([^)]+\)\}? på \{prToast\.name\}!/.test(athleteView),
+  !/personlig rekord \([^)]+\)\}? på \{prToast\.name\}!/.test(allAthleteCode),
   'PR-toasten må ikke ende på udråbstegn (ordrens tekstregel)',
 )
 
 // --- F18: de to beskedspor har hver en linje der siger hvad de er til ------
 assert.match(
-  athleteView,
+  allAthleteCode,
   /Til spørgsmål om teknik og løft, og til coachens videofeedback\./,
   '"Teknik & løft"-sporet skal forklare hvad det er til',
 )
 assert.match(
-  athleteView,
+  allAthleteCode,
   /Til alt andet — status, spørgsmål og det der ellers fylder\./,
   '"Beskeder"-sporet skal forklare hvad det er til',
 )
@@ -54,7 +62,7 @@ assert.match(
 // og teknik-sporet fletter coachens delte videofeedback ind) — så løsningen
 // er forklaring, ikke sammenlægning. Se RAPPORT.md for begrundelsen.
 assert.match(
-  athleteView,
+  allAthleteCode,
   /category:\s*msgTrack/,
   'Beskeder skal stadig gemmes med det spor de blev sendt fra (bekræfter at sporene er reelt forskellige, ikke kun en UI-opdeling)',
 )

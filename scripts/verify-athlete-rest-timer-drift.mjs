@@ -10,30 +10,37 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 
 const athleteView = readFileSync(new URL('../src/AthleteView.jsx', import.meta.url), 'utf8')
+// ExerciseTimer flyttede til sin egen lazy-loadede fane i ordre 232 · commit 3
+// (ren udflytning, se docs/RAPPORT-232.md) — samme tjek, ny fil.
+const programTab = readFileSync(new URL('../src/athlete/ProgramTab.jsx', import.meta.url), 'utf8')
 
 assert.match(athleteView, /import \{ remainingSeconds \} from '\.\/restTimer'/,
   'AthleteView.jsx skal importere den tidsstempel-baserede udregning')
+assert.match(programTab, /import \{ remainingSeconds \} from '\.\.\/restTimer'/,
+  'ProgramTab.jsx skal importere den tidsstempel-baserede udregning')
 
 // Det gamle, tick-baserede mønster må ikke længere findes noget sted.
 assert.doesNotMatch(athleteView, /setTimeout\(\(\) => set\w*Seconds\(s => s - 1\), 1000\)/,
   'ingen timer må stadig tælle ned via "s => s - 1" pr. tick')
+assert.doesNotMatch(programTab, /setTimeout\(\(\) => set\w*Seconds\(s => s - 1\), 1000\)/,
+  'ingen timer må stadig tælle ned via "s => s - 1" pr. tick')
 
-const extractFn = (name) => {
-  const startMatch = athleteView.match(new RegExp(`function ${name}\\([^)]*\\) \\{`))
+const extractFn = (name, source = athleteView) => {
+  const startMatch = source.match(new RegExp(`function ${name}\\([^)]*\\) \\{`))
   assert.ok(startMatch, `${name} skal kunne findes som en samlet funktion`)
   const bodyStart = startMatch.index + startMatch[0].length
   let depth = 1
   let i = bodyStart
-  while (depth > 0 && i < athleteView.length) {
-    if (athleteView[i] === '{') depth++
-    else if (athleteView[i] === '}') depth--
+  while (depth > 0 && i < source.length) {
+    if (source[i] === '{') depth++
+    else if (source[i] === '}') depth--
     i++
   }
-  return athleteView.slice(startMatch.index, i)
+  return source.slice(startMatch.index, i)
 }
 
 // ExerciseTimer (sæt-loggerens/programmets stopur for tids-øvelser).
-const exerciseTimer = extractFn('ExerciseTimer')
+const exerciseTimer = extractFn('ExerciseTimer', programTab)
 assert.match(exerciseTimer, /remainingSeconds\(/, 'ExerciseTimer skal bruge den tidsstempel-baserede udregning')
 assert.match(exerciseTimer, /visibilitychange/, 'ExerciseTimer skal genregne ved visibilitychange (fx skærmen låses op igen)')
 assert.doesNotMatch(exerciseTimer, /setSeconds\(s => s - 1\)/, 'ExerciseTimer må ikke længere tælle ned pr. tick')
