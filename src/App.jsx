@@ -5,6 +5,7 @@ import SetNewPassword from './SetNewPassword'
 import ErrorBoundary from './ErrorBoundary'
 import { purgeVideoCoachDraftQueues } from './videoCoachSubmission'
 import LazyBoundary from './LazyBoundary'
+import { readCachedRole, writeCachedRole } from './roleCache'
 
 // Lazy-load de to store views, så atleter ikke downloader coach-dashboardet (og
 // omvendt). Halverer det første bundt der skal hentes på mobil. Indlæses via
@@ -27,13 +28,9 @@ const athleteViewFactory = () => import('./AthleteView')
 // ét chunk-kald, ingen konkurrence. Det ægte opslag kører stadig i
 // baggrunden og retter sig selv (setRole) hvis gættet var forkert (fx
 // rollen blev ændret server-side siden sidst) — se resolveRole nedenfor.
-function roleCacheKey(userId) { return `entropi_role_guess_${userId}` }
-function readCachedRole(userId) {
-  try { return localStorage.getItem(roleCacheKey(userId)) } catch { return null }
-}
-function writeCachedRole(userId, role) {
-  try { localStorage.setItem(roleCacheKey(userId), role) } catch { /* privat fane e.l. — gættet dropper blot næste gang */ }
-}
+// readCachedRole/writeCachedRole flyttet til ./roleCache.js i ordre 233
+// (commit 1), uændret format — se dér for hvorfor (genbrugt af index.html's
+// forudindlæsnings-script via vite.config.js).
 
 // Ordre 163 · del 4 (billig gevinst): et skelet i stedet for ren mørk tekst.
 // Appens tema er næsten sort (#141410) i alle indlæsningstilstande — ren
