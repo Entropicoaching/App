@@ -48,6 +48,28 @@ const TIMESTAMP_DEFAULTS = {
   video_analyses: ['created_at'],
 }
 
+// ORDRE 209 · commit 3: src/volume/rettelser.js prøver ved kørsel om
+// exercise_muscle_overrides findes (ét HEAD-opslag, `select(.., {head:true,
+// count:'exact'})`), og falder stille tilbage til localStorage hvis ikke.
+// Uden dette ville mocken (som ellers selvopretter enhver tabel som tom —
+// se `ensure()`) altid lade tabellen "findes", og localStorage-stien ville
+// aldrig blive provet i e2e. Opt-in via env, IKKE en spec-fil, så ingen
+// eksisterende spec ændres: `E2E_HIDE_TABLES=exercise_muscle_overrides npm
+// run e2e` kører migrations-før-tilstanden; uden variablen (standard, alle
+// nuværende specs) opfører tabellen sig som enhver anden — findes, tom.
+const HIDDEN_TABLES = new Set(
+  (process.env.E2E_HIDE_TABLES || '').split(',').map(t => t.trim()).filter(Boolean)
+)
+
+// 400, bevidst ikke 404: Node/undicis fetch fjerner altid response-body på
+// et HEAD-svar (afprøvet direkte før dette blev skrevet), så
+// postgrest-js's "404 + tomt body" tolkes som success (se dens
+// processResponse) — en fejlstatus uden for det carve-out er nødvendig for
+// at HEAD-opslaget rent faktisk rapporterer en fejl.
+function sendTabelFindesIkke(res, table) {
+  sendJson(res, 400, { code: '42P01', message: `relation "public.${table}" does not exist`, details: null, hint: null })
+}
+
 const EMBEDS = {
   weeks: {
     sessions: { type: 'children', table: 'sessions', fk: 'week_id' },
@@ -312,8 +334,19 @@ export function createMockSupabase({ users, tables }) {
 
   async function handleRest(req, res, url) {
     const table = decodeURIComponent(url.pathname.replace('/rest/v1/', ''))
+    if (HIDDEN_TABLES.has(table)) return sendTabelFindesIkke(res, table)
     const rows = ensure(table)
     const selectStr = url.searchParams.get('select')
+
+    // HEAD (ordre 209 · commit 3): kun brugt til "findes tabellen"-opslag i
+    // dag (rettelser.js). Ingen body — kun status + Content-Range, som
+    // postgrest-js læser for `count` (se dens processResponse).
+    if (req.method === 'HEAD') {
+      const result = applyFilters(rows, url.searchParams)
+      res.writeHead(200, { 'Content-Range': `*/${result.length}` })
+      res.end()
+      return
+    }
 
     if (req.method === 'GET') {
       let result = applyFilters(rows, url.searchParams)
@@ -369,8 +402,17 @@ export function createMockSupabase({ users, tables }) {
       const matched = applyFilters(rows, url.searchParams)
       const matchedIds = new Set(matched.map(r => r.id))
       db[table] = rows.filter(r => !matchedIds.has(r.id))
-      if (!wantsRepresentation(req)) { res.writeHead(204); res.end(); return }
+      // Content-Range altid sat (ordre 209 · commit 3): postgrest-js læser
+      // den for `count` ved `.delete({count:'exact'})` (fjernRettelse i
+      // rettelser.js), uafhængigt af return=representation. Harmløst for
+      // alle andre kald, som ikke beder om count.
+      if (!wantsRepresentation(req)) {
+        res.writeHead(204, { 'Content-Range': `*/${matched.length}` })
+        res.end()
+        return
+      }
       const projected = matched.map(r => project(table, r, selectStr))
+      res.setHeader('Content-Range', `*/${matched.length}`)
       return sendJson(res, 200, wantsSingleObject(req) ? (projected[0] ?? null) : projected)
     }
 
