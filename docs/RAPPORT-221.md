@@ -21,8 +21,7 @@ tidspunkter og pixel-tal — ingen navne, ingen billeder).
 
 ## Hvad ændret
 
-### Commit 1 — den glatte bevægelse, målt til ende
-
+**Commit 1 — den glatte bevægelse, målt til ende.**
 `scripts/make-test-clip.mjs` fik en `--glat`-variant (genopbygget efter
 ordre 211s forsøg, som blev rullet helt tilbage): smoothstep-vending i
 begge ender af hver rep + en 0,3s pause i bunden, samme facit-tidslinje som
@@ -45,8 +44,7 @@ Denne konklusion blev dog IKKE bekræftet som universel — se commit 5, hvor
 samme `--glat`-klip en anden gang sad fast i over 300s. "Med maskinen for
 sig selv" er ikke en garanti, kun det denne ordre havde denne gang.
 
-### Commit 2 — hvorfor genfindingen aldrig finder
-
+**Commit 2 — hvorfor genfindingen aldrig finder.**
 `public/videocoach.html`s hjemme-genfindingslogik (`lost>=2`-blokken) fik
 `recoveryGate`-instrumentering bag den eksisterende `TRACKER_PROBE`-guard:
 klassificerer hvert forsøg i én af syv gensidigt udelukkende grunde
@@ -71,8 +69,7 @@ noget forsøges. Rettelse fravalgt (se `docs/FRAVALGT-221.md`), da det er
 uklart om det er en egenskab ved det syntetiske klips tegnede tekstur eller
 en ægte tracker-svaghed. Commit 3 afprøver netop dette på rigtige klip.
 
-### Commit 3 — trekantsbølgen mod virkeligheden
-
+**Commit 3 — trekantsbølgen mod virkeligheden.**
 Ny `e2e/coach-sporing-trace-real.mjs` kører samme instrumentering mod
 `test-clips\marc-doedloeft-270.mov` (Marcs eget 1-reps dødløft) og
 `test-clips\vis-mig-nu-4-reps-realistisk.mp4` (samme rep, strukket til 4).
@@ -120,8 +117,7 @@ en dyr, gentaget `plSearch`-baseret genfindings-sti på et fuldt
 er IKKE bekræftet denne ordre og anbefales som næste ordres højeste
 prioritet.
 
-### Commit 4 — de to facit-skrivere
-
+**Commit 4 — de to facit-skrivere.**
 `scripts/verify-videocoach-film-guide.mjs` og
 `scripts/verify-athlete-reps-per-set-mobile.mjs` skrev direkte til de
 COMMITTEDE `outputs/film-foer-du-sender/` og `outputs/reps-pr-saet/`
@@ -134,8 +130,7 @@ med `--opdater-leverance`.
 Verificeret: begge scripts kørt manuelt, `git status --short` tomt
 bagefter.
 
-### Commit 5 — e2e til sidst, kun hvis den holder
-
+**Commit 5 — e2e til sidst, kun hvis den holder.**
 `e2e/coach-sporing-reliability.mjs` fik `--glat`-støtte for at afprøve
 ordrens egen betingelse (10/10 = kom ind i `npm run e2e`).
 
