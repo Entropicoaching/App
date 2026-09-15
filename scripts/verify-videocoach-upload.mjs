@@ -128,8 +128,8 @@ console.log('Migrationsfilen er versionsstyret, markeret som allerede kørt, og 
   const supabaseSource = await readFile(new URL('../src/supabase.js', import.meta.url), 'utf8')
   assert.match(supabaseSource, /export function createAbortableUploadClient\(signal\)/,
     'En engangsklient med AbortSignal skal eksporteres (storage.upload() understøtter ikke signal direkte)')
-  assert.match(supabaseSource, /global: \{ fetch: \(input, init = \{\}\) => fetch\(input, \{ \.\.\.init, signal \}\) \}/,
-    'Klienten skal bruge supabase-js\'s fetch-option til at afbryde via signal')
+  assert.match(supabaseSource, /return fetch\(input, \{ \.\.\.init, headers, signal \}\)/,
+    'Klienten skal bruge storage-js\'s fetch-parameter til at afbryde via signal (ordre 226 · commit 2: ikke længere via @supabase/supabase-js)')
 
   const athleteView = await readFile(new URL('../src/AthleteView.jsx', import.meta.url), 'utf8')
   assert.match(athleteView, /createAbortableUploadClient/,

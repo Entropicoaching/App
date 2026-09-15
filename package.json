@@ -59,7 +59,10 @@
     "preview:n8n-briefing": "node n8n/preview-coach-briefing.mjs"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.106.1",
+    "@supabase/auth-js": "^2.112.3",
+    "@supabase/postgrest-js": "^2.112.3",
+    "@supabase/storage-js": "^2.112.3",
+    "@supabase/functions-js": "^2.112.3",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"
   },
