@@ -31,9 +31,9 @@
   },
   "model": "pose_landmarker_full (float16), @mediapipe/tasks-vision, delegate=CPU, runningMode=IMAGE, numPoses=1",
   "tidsmaaling": {
-    "ekstraktion_ms": 23211.19999999553,
-    "skivedetektion_ms": 1482.8000000491738,
-    "total_ms_inkl_transkodering_og_browseropstart": 24889
+    "ekstraktion_ms": 22387.39999999851,
+    "skivedetektion_ms": 1401.7000000476837,
+    "total_ms_inkl_transkodering_og_browseropstart": 23967
   },
   "skive": {
     "billeder_med_valideret_skive": 9,

@@ -27,6 +27,9 @@
 // bruger skiven når den valideres, håndleddet er nu kun fallback. Se
 // docs/RAPPORT-218.md og skive.mjs's egen toptekst for "stå på skuldre"-
 // vurderingen.
+//
+// ORDRE 218, commit 2: et ægte usikkerhedsbånd (usikkerhed.mjs) pr. punkt,
+// ikke Drishtis som proxy — se usikkerhed.mjs's egen toptekst.
 
 import { existsSync, mkdirSync, copyFileSync, writeFileSync } from 'node:fs'
 import { spawnSync } from 'node:child_process'
@@ -36,6 +39,7 @@ import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { startStaticServer } from './server.mjs'
 import { pickSide, measureFrame, robustFloorReference, beregnKontraktPunkt, FRAME_START, FRAME_LOCKOUT } from './matematik.mjs'
+import { angleUsikkerhed, stangUsikkerhed } from './usikkerhed.mjs'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 const APP_ROOT = join(HERE, '..', '..')
@@ -140,7 +144,12 @@ async function main() {
   }
   const rawLandmarks = raw.frames.map(f => f.landmarks)
   const { chosen: side, avg: sideAvg } = pickSide(rawLandmarks)
+  const otherSide = side === 'right' ? 'left' : 'right'
   const measured = rawLandmarks.map(lm => measureFrame(lm, side, raw.width, raw.height))
+  // ORDRE 218, commit 2: "den anden side" til usikkerhedsensemblet — INGEN
+  // ny MediaPipe-detektion (se usikkerhed.mjs's egen toptekst), kun samme
+  // rå landmarks, andet side-indeks.
+  const measuredOther = rawLandmarks.map(lm => measureFrame(lm, otherSide, raw.width, raw.height))
   const ref = robustFloorReference(measured)
 
   if (raw.frames.length <= FRAME_LOCKOUT) {
@@ -174,7 +183,13 @@ async function main() {
     const m = measured[idx]
     if (!m) throw new Error(`Billede ${idx} har ingen fundet krop — kan ikke udfylde banen uden hul.`)
     const tidspunktMs = (idx - FRAME_START) / NOMINAL_FPS * 1000
-    maalinger.push(beregnKontraktPunkt(idx, tidspunktMs, m, ref, skiveByIndex.get(idx) || null))
+    const punkt = beregnKontraktPunkt(idx, tidspunktMs, m, ref, skiveByIndex.get(idx) || null)
+    const stangKilde = punkt.stang_kilde.startsWith('skive') ? 'skive' : 'haandled'
+    punkt.usikkerhed = {
+      ...angleUsikkerhed(idx, measured, measuredOther, ref),
+      ...stangUsikkerhed(idx, stangKilde, { skiveByIndex, measuredChosen: measured, measuredOther, ref }),
+    }
+    maalinger.push(punkt)
   }
   const nSkiveFundet = maalinger.filter(m => m.stang_kilde.startsWith('skive')).length
 
