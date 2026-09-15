@@ -25,9 +25,12 @@ async function readStorageKeys(mockUrl) {
   return res.json()
 }
 
-export async function runVideoUpload(page, { appUrl, mockUrl, outDir, loginNeeded = true }) {
+export async function runVideoUpload(page, { appUrl, mockUrl, outDir, loginNeeded = true, clipPath: clipOverride = null }) {
   const shot = (name) => page.screenshot({ path: join(outDir, `video-upload-${name}.png`), fullPage: true })
-  const clipPath = ensureSyntheticClip()
+  // ORDRE 200: coach-sporing.spec.mjs genbruger dette upload-skridt med sit
+  // eget, sporbare klip (en skive med faktisk kontrast) i stedet for det
+  // rene testsrc-mønster her, som ingen tracker kan finde noget i.
+  const clipPath = clipOverride || ensureSyntheticClip()
 
   if (loginNeeded) {
     await page.goto(appUrl)
