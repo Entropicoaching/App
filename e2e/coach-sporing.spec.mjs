@@ -100,6 +100,17 @@ async function confirmAndWaitForTracking(frame, page, { maxIterations = 60 } = {
     progressLog.push({ tMs: Date.now() - t0, banner, percent: lastPercent })
     if (banner && banner.includes('Klip + loop')) return { done: true, lastBanner, lastPercent, progressLog }
     if (banner && banner.includes('Ingen tydelig')) return { done: false, lastBanner, lastPercent, progressLog }
+    // ORDRE 225 · commit 1 (rettet) — ægte fund: en COACHWEB-session hvor
+    // sessionRun er false (denne prøves eget klik-flow går IKKE gennem
+    // wizardClick, som ellers sætter sessionRun=true) fuldfører runFullAnalysis
+    // via DEN STILLE 'else if(COACHWEB&&openSheetFn...)'-gren i
+    // public/videocoach.html — den sætter ALDRIG "Klip + loop om sættet" i
+    // banneret, kun #sheet's 'open'-klasse. Uden dette tjek rapporterede
+    // denne funktion et falsk "aldrig færdig" for et rigtigt klip der reelt
+    // blev færdigt på ~24s med ét brugbart rep — se docs/RAPPORT-225.md
+    // commit 1 for hele diagnosen.
+    const sheetOpen = await frame.locator('#sheet.open').count().catch(() => 0)
+    if (sheetOpen > 0) return { done: true, lastBanner, lastPercent, progressLog, viaSheet: true }
   }
   const err = new Error(`Sporingen blev aldrig færdig inden for ${maxIterations * 2}s (sidste banner: "${lastBanner}")`)
   err.progressLog = progressLog
@@ -206,12 +217,15 @@ export async function runCoachSporing(page, { appUrl, mockUrl, outDir, awaitingR
       // publicerer aldrig window.__vcTrackerBenchmarkLast (den skrives først
       // når selve sporings-loopet slutter), men browserens sporing kører
       // fortsat i baggrunden indtil siden lukkes lige efter dette. Læs derfor
-      // den LIVE plSearch-probe (window.__vcPlSearchProbeLog, samme array-
-      // reference hele kørslen, se public/videocoach.html) FØR siden lukkes,
-      // så et hæng stadig giver tal, ikke kun et progressLog-banner.
+      // den LIVE plSearch-/frame-probe (samme array-reference hele kørslen,
+      // se public/videocoach.html) FØR siden lukkes, så et reelt hæng stadig
+      // giver tal, ikke kun et progressLog-banner.
       const vcFrame = page.frames().find(f => f.url().includes('videocoach.html'))
       traceOut.plSearchProbe = vcFrame
         ? await vcFrame.evaluate(() => window.__vcPlSearchProbeLog || null).catch(() => null)
+        : null
+      traceOut.trackerProbe = vcFrame
+        ? await vcFrame.evaluate(() => window.__vcTrackerProbeLog || null).catch(() => null)
         : null
     }
     throw err

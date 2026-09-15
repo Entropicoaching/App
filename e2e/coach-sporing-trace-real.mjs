@@ -186,12 +186,20 @@ async function runOne(clip) {
     const kalibreretOK = !!lastRealProgress // banneret nåede "Analyserer"/"Holder" -> ringen blev fundet
     console.log(`${clip.name}: intet benchmark-run fanget (kalibrering ${kalibreretOK ? 'LYKKEDES' : 'MISLYKKEDES eller ukendt'}, ` +
       `seneste ægte fremgang: "${lastRealProgress?.banner ?? 'ingen'}") — fejl: "${caughtError}"`)
+    if (traceOut.trackerProbe?.length) {
+      const tail = traceOut.trackerProbe.slice(-5)
+      console.log(`  trackerProbe: ${traceOut.trackerProbe.length} frame-indslag i alt, sidste ${tail.length}:`)
+      for (const p of tail) console.log(`    t=${p.t?.toFixed(3)} moves=${p.moves} kept=${p.kept} jump=${p.jump?.toFixed(2)} accepted=${p.accepted} rejectGate=${p.rejectGate} recoveryGate=${p.recoveryGate ?? '-'}`)
+    } else {
+      console.log(`  trackerProbe: TOMT — ingen frame-indslag registreret overhovedet.`)
+    }
     // ORDRE 225 · commit 1 — selv uden et fuldt benchmarkRun (klippet nåede
     // ikke i mål inden for MAX_MINUTES) er den LIVE plSearch-probe reddet af
     // coach-sporing.spec.mjs's timeout-gren (traceOut.plSearchProbe) — det er
     // netop denne gren ordren beder om at måle.
     return { ...result, kalibreretOK, run: null, lossEpisodes: [],
-      plSearchProbe: summarizePlSearchProbe(traceOut.plSearchProbe) }
+      plSearchProbe: summarizePlSearchProbe(traceOut.plSearchProbe),
+      trackerProbeTail: (traceOut.trackerProbe || []).slice(-20) }
   }
   const lossEpisodes = findLossEpisodes(run)
   result.kalibreretOK = true
@@ -241,7 +249,7 @@ async function main() {
     if (r.skipped) continue
     const p = r.plSearchProbe
     if (!p || !p.totalCalls) { console.log(`${r.clip}: ingen plSearch-kald registreret.`); continue }
-    console.log(`--- ${r.clip} (${r.run ? 'færdig' : `IKKE færdig inden for ${MAX_MINUTES} min`}) ---`)
+    console.log(`--- ${r.clip} (${r.raw ? 'færdig' : `IKKE færdig inden for ${MAX_MINUTES} min`}) ---`)
     console.log(`  I alt: ${p.totalCalls} kald, ${p.totalMs.toFixed(0)}ms samlet (${(p.totalMs / p.totalCalls).toFixed(2)}ms/kald i snit)`)
     console.log('  Pr. tag:')
     for (const [tag, s] of Object.entries(p.perTag).sort((a, b) => b[1].totalMs - a[1].totalMs)) {
