@@ -4904,6 +4904,14 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
         const found=plSearch(homeFrame,p0,radius,plateModel,homeR,step);
         const strong=found&&found.circle>Math.max(9,plateBase.circle*.34)&&
           found.cover>=.45&&found.pairCover>=.35&&found.app<2.6;
+        // ORDRE 221 · commit 2 — kun instrumentering (probe er null uden
+        // ?trackerProbe=1): probe.recoveryGate klassificerer HVERT
+        // genfindings-forsøg i én af seks gensidigt udelukkende grunde, uden
+        // at ændre selve accept/afvisnings-logikken en tøddel (samme
+        // betingelser, samme rækkefølge, kun mærket).
+        if(probe)probe.homeSearch=found?
+          {circle:+found.circle.toFixed(2),cover:+found.cover.toFixed(3),
+            pairCover:+found.pairCover.toFixed(3),app:+found.app.toFixed(3)}:null;
         if(strong){
           // plSearch returnerer det rå fund. Brug samme kalibrerede home-domæne
           // som acquisition-starten, så et stabilt fund ikke bliver et synligt
@@ -4920,8 +4928,10 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
             calibratedRecoveryCenter:rawRecoveryCenter;
           if(probe){probe.recoveryCandidate={...recoveryCenter};probe.recoveryRawBias={...homeBias};
             probe.recoverySource=recoveryCenter===calibratedRecoveryCenter?'calibrated':'raw';}
-          if(recoveryPending&&Math.hypot(recoveryCenter.x-recoveryPending.x,
-              recoveryCenter.y-recoveryPending.y)<radius*.45){
+          const hadPending=!!recoveryPending;
+          const pendingMatches=hadPending&&Math.hypot(recoveryCenter.x-recoveryPending.x,
+            recoveryCenter.y-recoveryPending.y)<radius*.45;
+          if(pendingMatches){
             let recoveryFrame=currentFrame;
             let recovered=mpGoodFeatures(recoveryFrame,recoveryCenter,radius);
             if(recovered.length<5){
@@ -4930,16 +4940,26 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
               recovered=mpGoodFeatures(recoveryFrame,recoveryCenter,radius);
             }
             const recoveryJump=Math.hypot(recoveryCenter.x-cur.x,recoveryCenter.y-cur.y);
-            if(probe){probe.recoveryFeatures=recovered.length;probe.recoveryJump=recoveryJump;}
+            if(probe){probe.recoveryFeatures=recovered.length;probe.recoveryJump=recoveryJump;
+              probe.recoveryMaxJump=maxJump;}
             if(recovered.length>=5&&recoveryJump<=maxJump){
               cur={x:recoveryCenter.x,y:recoveryCenter.y};vel={x:0,y:0};anchorFrame=recoveryFrame;
               anchorTime=tNow;features=recovered;accepted=true;lost=0;
               homeCorrectionPending=null;recoveryPending=null;
               frameConfidence=Math.min(1,recovered.length/12);
               path.homeRecoveries=(path.homeRecoveries||0)+1;
+              if(probe)probe.recoveryGate='recovered';
+            }else if(probe){
+              probe.recoveryGate=recovered.length<5?'recovered-features-too-few':'recovery-jump-too-large';
             }
-          }else recoveryPending={...recoveryCenter};
-        }else recoveryPending=null;
+          }else{
+            recoveryPending={...recoveryCenter};
+            if(probe)probe.recoveryGate=hadPending?'pending-mismatch':'pending-first-look';
+          }
+        }else{
+          recoveryPending=null;
+          if(probe)probe.recoveryGate=found?'weak-plate-match':'no-plate-search-hit';
+        }
       }
     }
     if(probe){

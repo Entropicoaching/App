@@ -30,7 +30,18 @@
 //   dermed selv rystelsen i sandheden, som gemmes i sidecar-JSON'en.
 //
 // Kørsel: npm run test:clip  (skriver til docs/videocoach/clip-cache/, git-ignoreret)
-
+//
+// ORDRE 221 · commit 1 — `--glat`-varianten (genopbygget efter ordre 211s
+// afprøvning, som blev rullet helt tilbage, se docs/FRAVALGT-211.md): samme
+// facit-tidslinje (DURATION/repWindows uændret), men worldY() erstatter den
+// gamle rene trekantsbølge (konstant fart, ØJEBLIKKELIGT fortegnsskifte i
+// bunden) med en smoothstep-vending i begge ender af hver rep OG en 0,3s
+// pause i bunden (parallelt med den eksisterende HOLD_DUR-pause i toppen).
+// Skrives til EGNE filnavne (synthetic-set-glat.mp4 osv.) — den almindelige
+// `npm run test:clip` (uden flaget) er 100% uændret. Flaget læses dovent
+// (isGlat(), ikke en modul-top-niveau konstant), så et script der importerer
+// truePos/worldY herfra kan sætte VC_CLIP_GLAT=1 i egen proces-env FØR den
+// rent faktisk kalder funktionerne, uafhængigt af import-rækkefølgen.
 import { spawn } from 'node:child_process'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
@@ -40,8 +51,18 @@ import ffmpegPath from 'ffmpeg-static'
 const here = dirname(fileURLToPath(import.meta.url))
 const outDir = join(here, '..', 'docs', 'videocoach', 'clip-cache')
 mkdirSync(outDir, { recursive: true })
-const outPath = join(outDir, 'synthetic-set.mp4')
-const groundTruthPath = join(outDir, 'synthetic-set.ground-truth.json')
+// --glat læses dovent (isGlat(), ikke en modul-top-niveau konstant), så et
+// script der importerer truePos/worldY herfra kan sætte VC_CLIP_GLAT=1 i
+// egen proces-env FØR den rent faktisk kalder funktionerne, uafhængigt af
+// import-rækkefølgen (se toptekstens note).
+function isGlat() { return process.argv.includes('--glat') || process.env.VC_CLIP_GLAT === '1' }
+function clipPaths() {
+  const suffix = isGlat() ? '-glat' : ''
+  return {
+    outPath: join(outDir, `synthetic-set${suffix}.mp4`),
+    groundTruthPath: join(outDir, `synthetic-set${suffix}.ground-truth.json`),
+  }
+}
 
 // ---------- Geometri (samme sigt som tracker-live-bench.mjs's 480×640-scene) ----------
 export const W = 720, H = 1280, FPS = 30
@@ -57,15 +78,25 @@ const REP_PHASE_DUR = N_REPS * REP_DUR + (N_REPS - 1) * HOLD_DUR
 export const DURATION = LEAD_IN + REP_PHASE_DUR + LEAD_OUT
 
 // ---------- Sandheden: skivens centrum i "verdens"-koordinater (uden vaklen) ----------
+const GLAT_BOTTOM_PAUSE = 0.3
+function smoothstep01(x) { const c = Math.max(0, Math.min(1, x)); return c * c * (3 - 2 * c) }
 export function worldY(t) {
   const tp = t - LEAD_IN
   if (tp < 0 || tp > REP_PHASE_DUR) return TOP_Y
   const repIndex = Math.min(N_REPS - 1, Math.floor(tp / CYCLE))
   const localT = tp - repIndex * CYCLE
-  if (localT > REP_DUR) return TOP_Y // pause mellem reps
-  const half = REP_DUR / 2
-  const d = localT < half ? localT / half : (REP_DUR - localT) / half
-  return TOP_Y + (BOTTOM_Y - TOP_Y) * Math.max(0, d)
+  if (localT > REP_DUR) return TOP_Y // pause mellem reps (top)
+  if (!isGlat()) {
+    const half = REP_DUR / 2
+    const d = localT < half ? localT / half : (REP_DUR - localT) / half
+    return TOP_Y + (BOTTOM_Y - TOP_Y) * Math.max(0, d)
+  }
+  // --glat: smoothstep-vending i begge ender + pause i bunden, samme REP_DUR.
+  const rampDur = (REP_DUR - GLAT_BOTTOM_PAUSE) / 2
+  if (localT < rampDur) return TOP_Y + (BOTTOM_Y - TOP_Y) * smoothstep01(localT / rampDur)
+  if (localT < rampDur + GLAT_BOTTOM_PAUSE) return BOTTOM_Y
+  const upT = localT - rampDur - GLAT_BOTTOM_PAUSE
+  return TOP_Y + (BOTTOM_Y - TOP_Y) * (1 - smoothstep01(upT / rampDur))
 }
 
 // Deterministisk kameravaklen — sum af et par usammenhængende sinusser, ingen
@@ -149,6 +180,7 @@ function renderFrame(bg, t, outBuf) {
 }
 
 async function encode() {
+  const { outPath } = clipPaths()
   const totalFrames = Math.round(DURATION * FPS)
   const args = [
     '-y',
@@ -178,6 +210,7 @@ async function encode() {
 }
 
 function writeGroundTruth() {
+  const { groundTruthPath } = clipPaths()
   const totalFrames = Math.round(DURATION * FPS)
   const samples = []
   for (let i = 0; i < totalFrames; i++) {
