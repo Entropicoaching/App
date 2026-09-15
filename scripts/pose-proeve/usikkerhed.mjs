@@ -28,7 +28,8 @@ import { angleAt, signedLeanFromVertical } from './matematik.mjs'
 
 const ANGLE_KEYS = ['ankelGrader', 'knaeGrader', 'hofteGrader', 'torsoGrader']
 const STANG_KEYS = ['xFodlaengder', 'yFodlaengder']
-const ROUND_DECIMALS = { ankelGrader: 2, knaeGrader: 2, hofteGrader: 2, torsoGrader: 2, xFodlaengder: 4, yFodlaengder: 4 }
+const HOFTE_KEYS = ['hoejdeFodlaengder']
+const ROUND_DECIMALS = { ankelGrader: 2, knaeGrader: 2, hofteGrader: 2, torsoGrader: 2, xFodlaengder: 4, yFodlaengder: 4, hoejdeFodlaengder: 4 }
 
 function angleFieldValues(pts, forwardSign) {
   return {
@@ -45,6 +46,10 @@ function wristFieldValues(pts, ref) {
     xFodlaengder: (ref.forward_sign * (x - ref.midfoot_x_px)) / ref.foot_length_px,
     yFodlaengder: (ref.floor_y_px - y) / ref.foot_length_px,
   }
+}
+
+function hipHeightFieldValues(pts, ref) {
+  return { hoejdeFodlaengder: (ref.floor_y_px - pts.hip[1]) / ref.foot_length_px }
 }
 
 function plateFieldValues(skive, ref) {
@@ -105,6 +110,27 @@ export function angleUsikkerhed(idx, measuredChosen, measuredOther, ref) {
   if (otherVariant) ensemble.push(otherVariant)
   if (udglattet) ensemble.push(udglattet)
   return roundFields(spread(ensemble, ANGLE_KEYS), ANGLE_KEYS)
+}
+
+/** ORDRE 218, commit 4: hoftehøjdens usikkerhedsbånd (frontsquat) — samme
+ * fem-variant-ensemble som vinklerne (hoften HAR en side, i modsætning
+ * til skiven), se usikkerhed.py's field_keys_for('frontsquat'). */
+export function hoftehoejdeUsikkerhed(idx, measuredChosen, measuredOther, ref) {
+  const basisM = measuredChosen[idx]
+  if (!basisM) return roundFields({}, HOFTE_KEYS)
+  const basis = hipHeightFieldValues(basisM.points_px, ref)
+  const otherM = measuredOther[idx]
+  const otherVariant = otherM ? hipHeightFieldValues(otherM.points_px, ref) : null
+  const minusM = measuredChosen[idx - 1]
+  const plusM = measuredChosen[idx + 1]
+  const minus = minusM ? hipHeightFieldValues(minusM.points_px, ref) : null
+  const plus = plusM ? hipHeightFieldValues(plusM.points_px, ref) : null
+  const naboer = [minus, plus].filter(Boolean)
+  const udglattet = naboer.length ? average([basis, ...naboer], HOFTE_KEYS) : null
+  const ensemble = [basis, ...naboer]
+  if (otherVariant) ensemble.push(otherVariant)
+  if (udglattet) ensemble.push(udglattet)
+  return roundFields(spread(ensemble, HOFTE_KEYS), HOFTE_KEYS)
 }
 
 /** Stangens usikkerhedsbånd for billede `idx`. `source`: 'skive' eller

@@ -179,3 +179,35 @@ export function beregnKontraktPunkt(idx, tidspunktMs, measured, ref, plate = nul
       : 'haandled (fallback — ingen skive valideret for dette billede)',
   }
 }
+
+/** ORDRE 218, commit 4: frontsquattens kontrakt-punkt — samme fire vinkler
+ * som beregnKontraktPunkt(), men `hofte.hoejdeFodlaengder` i stedet for et
+ * `stang`-felt (INTET stang-felt her — samme begrundelse som
+ * squat_bane.py's egen toptekst: frontsquattens stangposition kan ikke
+ * udtrykkes af modellen, det er ikke en forglemmelse). Ingen skive
+ * involveret. */
+export function beregnKontraktPunktSquat(idx, tidspunktMs, measured, ref) {
+  const { floor_y_px: floorY, foot_length_px: footLen, forward_sign: forwardSign } = ref
+  const pts = measured.points_px
+  const ankelGrader = signedLeanFromVertical(pts.ankle, pts.knee, forwardSign)
+  const torsoGrader = signedLeanFromVertical(pts.hip, pts.shoulder, forwardSign)
+  const knaeGrader = angleAt(pts.knee, pts.ankle, pts.hip)
+  const hofteGrader = angleAt(pts.hip, pts.knee, pts.shoulder)
+  const hipY = pts.hip[1]
+  const hoejdeFodlaengder = (floorY - hipY) / footLen
+  const round = (v, d) => (v === null || v === undefined ? null : Math.round(v * 10 ** d) / 10 ** d)
+  return {
+    øvelse: 'frontsquat',
+    billedeIndex: idx,
+    tidspunktMs: round(tidspunktMs, 1),
+    vinkler: {
+      ankelGrader: round(ankelGrader, 2),
+      knaeGrader: round(knaeGrader, 2),
+      hofteGrader: round(hofteGrader, 2),
+      torsoGrader: round(torsoGrader, 2),
+    },
+    hofte: {
+      hoejdeFodlaengder: round(hoejdeFodlaengder, 4),
+    },
+  }
+}

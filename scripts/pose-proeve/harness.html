@@ -38,7 +38,7 @@ import { findPlate } from './skive.mjs'
 // startgæt) hentes ud af canvas'en pr. billede.
 const CROP_MARGIN_PX = 600
 
-window.runPoseExtraction = async function runPoseExtraction({ videoUrl, modelUrl, frameCount, fps, skiveRadii }) {
+window.runPoseExtraction = async function runPoseExtraction({ videoUrl, modelUrl, frameCount, fps, skiveRadii, skipSkive }) {
   const vision = await FilesetResolver.forVisionTasks('/node_modules/@mediapipe/tasks-vision/wasm')
   const landmarker = await PoseLandmarker.createFromOptions(vision, {
     baseOptions: { modelAssetPath: modelUrl, delegate: 'CPU' },
@@ -127,6 +127,11 @@ window.runPoseExtraction = async function runPoseExtraction({ videoUrl, modelUrl
   // HVORNÅR forankringen er forkert, ikke kun at den er kontinuert med
   // sig selv) — ikke bygget her, uden for denne prøves scope.
   function detectPlate(seed) {
+    // ORDRE 218, commit 4: frontsquatten har intet skive/stang-felt
+    // (squat_bane.py's egen begrundelse, matematik.mjs's
+    // beregnKontraktPunktSquat()) — skiveRadii=null OG skipSkive=true
+    // slår hele denne (irrelevante og dyre) søgning fra for det klip.
+    if (skipSkive) return null
     if (!seed) return null
     const getGray = cropReader(seed)
     if (!getGray) return null

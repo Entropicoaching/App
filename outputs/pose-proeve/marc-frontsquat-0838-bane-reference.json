@@ -1,0 +1,90 @@
+{
+  "video_kilde": "C:\\Users\\Entropi\\Downloads\\IMG_0838.MOV (Downloads — ALDRIG committet, se extract-squat.mjs)",
+  "video_transkodering": "ffmpeg libx264, kun de første 172 billeder (-frames:v), setpts=N/(30*TB)",
+  "billede_bredde_px": 1440,
+  "billede_hoejde_px": 1920,
+  "billeder_transkoderet": 172,
+  "billeder_med_fundet_krop": 159,
+  "billede_top_foer": 58,
+  "billede_top_efter": 166,
+  "huller": [
+    {
+      "billedeIndex": 97,
+      "aarsag": "ingen krop fundet"
+    },
+    {
+      "billedeIndex": 104,
+      "aarsag": "ingen krop fundet"
+    },
+    {
+      "billedeIndex": 106,
+      "aarsag": "ingen krop fundet"
+    },
+    {
+      "billedeIndex": 107,
+      "aarsag": "ingen krop fundet"
+    },
+    {
+      "billedeIndex": 108,
+      "aarsag": "ingen krop fundet"
+    },
+    {
+      "billedeIndex": 113,
+      "aarsag": "ingen krop fundet"
+    },
+    {
+      "billedeIndex": 122,
+      "aarsag": "ingen krop fundet"
+    },
+    {
+      "billedeIndex": 127,
+      "aarsag": "ingen krop fundet"
+    },
+    {
+      "billedeIndex": 128,
+      "aarsag": "ingen krop fundet"
+    },
+    {
+      "billedeIndex": 129,
+      "aarsag": "ingen krop fundet"
+    },
+    {
+      "billedeIndex": 130,
+      "aarsag": "ingen krop fundet"
+    },
+    {
+      "billedeIndex": 131,
+      "aarsag": "ingen krop fundet"
+    },
+    {
+      "billedeIndex": 136,
+      "aarsag": "ingen krop fundet"
+    }
+  ],
+  "side_valgt": "left",
+  "side_valgt_gennemsnit_visibility": {
+    "left": 0.9367475950017718,
+    "right": 0.7603972499147527
+  },
+  "gulv_og_skala_reference": {
+    "floor_y_px": 1534.5731163024902,
+    "midfoot_x_px": 805.7867002487183,
+    "foot_length_px": 125.67424841446662,
+    "forward_sign": -1,
+    "n_billeder_brugt": 156,
+    "heel_px_median": [
+      865.6604719161987,
+      1515.5038833618164
+    ],
+    "foot_index_px_median": [
+      745.9129285812378,
+      1553.642349243164
+    ]
+  },
+  "model": "pose_landmarker_full (float16), @mediapipe/tasks-vision, delegate=CPU, runningMode=IMAGE, numPoses=1",
+  "tidsmaaling": {
+    "ekstraktion_ms": 39564.29999999702,
+    "total_ms_inkl_transkodering_og_browseropstart": 41470
+  },
+  "note": "IKKE en del af docs/MAALING-KONTRAKT.md's format (som er dødløft-specifikt) — regnskabet bag skala/gulv/fortegn i marc-frontsquat-0838-bane.json. Se matematik.mjs's beregnKontraktPunktSquat() og squat_bane.py."
+}

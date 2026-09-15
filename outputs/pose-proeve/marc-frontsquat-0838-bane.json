@@ -1,0 +1,2018 @@
+[
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 58,
+    "tidspunktMs": 0,
+    "vinkler": {
+      "ankelGrader": 8.04,
+      "knaeGrader": 176.2,
+      "hofteGrader": 176.47,
+      "torsoGrader": 7.77
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 5.268
+    },
+    "usikkerhed": {
+      "ankelGrader": 4.45,
+      "knaeGrader": 14.59,
+      "hofteGrader": 18.95,
+      "torsoGrader": 9.84,
+      "hoejdeFodlaengder": 0.2071
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 59,
+    "tidspunktMs": 33.3,
+    "vinkler": {
+      "ankelGrader": 12.08,
+      "knaeGrader": 173.22,
+      "hofteGrader": 176.49,
+      "torsoGrader": 8.81
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 5.1154
+    },
+    "usikkerhed": {
+      "ankelGrader": 4.04,
+      "knaeGrader": 8.68,
+      "hofteGrader": 11.38,
+      "torsoGrader": 3.6,
+      "hoejdeFodlaengder": 0.2449
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 60,
+    "tidspunktMs": 66.7,
+    "vinkler": {
+      "ankelGrader": 8.85,
+      "knaeGrader": 174.56,
+      "hofteGrader": 175.3,
+      "torsoGrader": 8.11
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 5.2562
+    },
+    "usikkerhed": {
+      "ankelGrader": 3.22,
+      "knaeGrader": 10.27,
+      "hofteGrader": 19.55,
+      "torsoGrader": 10.22,
+      "hoejdeFodlaengder": 0.1805
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 61,
+    "tidspunktMs": 100,
+    "vinkler": {
+      "ankelGrader": 10.51,
+      "knaeGrader": 170.33,
+      "hofteGrader": 171.7,
+      "torsoGrader": 9.14
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 5.2586
+    },
+    "usikkerhed": {
+      "ankelGrader": 4.74,
+      "knaeGrader": 9.91,
+      "hofteGrader": 19.08,
+      "torsoGrader": 13.91,
+      "hoejdeFodlaengder": 0.2458
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 62,
+    "tidspunktMs": 133.3,
+    "vinkler": {
+      "ankelGrader": 10.07,
+      "knaeGrader": 171.8,
+      "hofteGrader": 173.43,
+      "torsoGrader": 8.44
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 5.1884
+    },
+    "usikkerhed": {
+      "ankelGrader": 3.65,
+      "knaeGrader": 9.75,
+      "hofteGrader": 19.06,
+      "torsoGrader": 12.96,
+      "hoejdeFodlaengder": 0.3016
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 63,
+    "tidspunktMs": 166.7,
+    "vinkler": {
+      "ankelGrader": 10.75,
+      "knaeGrader": 169.86,
+      "hofteGrader": 172.04,
+      "torsoGrader": 8.57
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 5.2563
+    },
+    "usikkerhed": {
+      "ankelGrader": 3.65,
+      "knaeGrader": 11.87,
+      "hofteGrader": 22.24,
+      "torsoGrader": 14.01,
+      "hoejdeFodlaengder": 0.2019
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 64,
+    "tidspunktMs": 200,
+    "vinkler": {
+      "ankelGrader": 10.92,
+      "knaeGrader": 168.49,
+      "hofteGrader": 169.66,
+      "torsoGrader": 9.75
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 5.2136
+    },
+    "usikkerhed": {
+      "ankelGrader": 1.37,
+      "knaeGrader": 11.07,
+      "hofteGrader": 21.02,
+      "torsoGrader": 11.33,
+      "hoejdeFodlaengder": 0.2176
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 65,
+    "tidspunktMs": 233.3,
+    "vinkler": {
+      "ankelGrader": 11.77,
+      "knaeGrader": 166.32,
+      "hofteGrader": 168.73,
+      "torsoGrader": 9.36
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 5.1616
+    },
+    "usikkerhed": {
+      "ankelGrader": 2.22,
+      "knaeGrader": 10.79,
+      "hofteGrader": 19.82,
+      "torsoGrader": 10.44,
+      "hoejdeFodlaengder": 0.2335
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 66,
+    "tidspunktMs": 266.7,
+    "vinkler": {
+      "ankelGrader": 9.56,
+      "knaeGrader": 169.91,
+      "hofteGrader": 169.41,
+      "torsoGrader": 10.06
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 5.154
+    },
+    "usikkerhed": {
+      "ankelGrader": 2.75,
+      "knaeGrader": 14.82,
+      "hofteGrader": 18.77,
+      "torsoGrader": 7.39,
+      "hoejdeFodlaengder": 0.1518
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 67,
+    "tidspunktMs": 300,
+    "vinkler": {
+      "ankelGrader": 10.76,
+      "knaeGrader": 166.02,
+      "hofteGrader": 165.26,
+      "torsoGrader": 11.53
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 5.0572
+    },
+    "usikkerhed": {
+      "ankelGrader": 2.91,
+      "knaeGrader": 14.66,
+      "hofteGrader": 21.9,
+      "torsoGrader": 10.15,
+      "hoejdeFodlaengder": 0.2483
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 68,
+    "tidspunktMs": 333.3,
+    "vinkler": {
+      "ankelGrader": 12.05,
+      "knaeGrader": 162.25,
+      "hofteGrader": 160.03,
+      "torsoGrader": 14.28
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 5.1155
+    },
+    "usikkerhed": {
+      "ankelGrader": 1.67,
+      "knaeGrader": 15.93,
+      "hofteGrader": 21.71,
+      "torsoGrader": 7.44,
+      "hoejdeFodlaengder": 0.1426
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 69,
+    "tidspunktMs": 366.7,
+    "vinkler": {
+      "ankelGrader": 12.08,
+      "knaeGrader": 162.32,
+      "hofteGrader": 161.28,
+      "torsoGrader": 13.12
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.999
+    },
+    "usikkerhed": {
+      "ankelGrader": 7.77,
+      "knaeGrader": 20.93,
+      "hofteGrader": 17.84,
+      "torsoGrader": 4.57,
+      "hoejdeFodlaengder": 0.2603
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 70,
+    "tidspunktMs": 400,
+    "vinkler": {
+      "ankelGrader": 11.18,
+      "knaeGrader": 163.1,
+      "hofteGrader": 161.17,
+      "torsoGrader": 13.11
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.9581
+    },
+    "usikkerhed": {
+      "ankelGrader": 8.47,
+      "knaeGrader": 21.13,
+      "hofteGrader": 19.97,
+      "torsoGrader": 7.2,
+      "hoejdeFodlaengder": 0.2416
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 71,
+    "tidspunktMs": 433.3,
+    "vinkler": {
+      "ankelGrader": 12.91,
+      "knaeGrader": 158.24,
+      "hofteGrader": 155.9,
+      "torsoGrader": 15.25
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.9722
+    },
+    "usikkerhed": {
+      "ankelGrader": 8.11,
+      "knaeGrader": 22.6,
+      "hofteGrader": 22.69,
+      "torsoGrader": 8.2,
+      "hoejdeFodlaengder": 0.1706
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 72,
+    "tidspunktMs": 466.7,
+    "vinkler": {
+      "ankelGrader": 12.68,
+      "knaeGrader": 157.97,
+      "hofteGrader": 155.24,
+      "torsoGrader": 15.41
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.9215
+    },
+    "usikkerhed": {
+      "ankelGrader": 8.07,
+      "knaeGrader": 22.19,
+      "hofteGrader": 24.44,
+      "torsoGrader": 10.09,
+      "hoejdeFodlaengder": 0.2353
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 73,
+    "tidspunktMs": 500,
+    "vinkler": {
+      "ankelGrader": 14.82,
+      "knaeGrader": 151.18,
+      "hofteGrader": 148.33,
+      "torsoGrader": 17.67
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.8339
+    },
+    "usikkerhed": {
+      "ankelGrader": 4.45,
+      "knaeGrader": 21.69,
+      "hofteGrader": 26.45,
+      "torsoGrader": 9.21,
+      "hoejdeFodlaengder": 0.1902
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 74,
+    "tidspunktMs": 533.3,
+    "vinkler": {
+      "ankelGrader": 14.23,
+      "knaeGrader": 150.9,
+      "hofteGrader": 145.36,
+      "torsoGrader": 19.77
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.8179
+    },
+    "usikkerhed": {
+      "ankelGrader": 7.55,
+      "knaeGrader": 22.17,
+      "hofteGrader": 24.03,
+      "torsoGrader": 8.82,
+      "hoejdeFodlaengder": 0.1711
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 75,
+    "tidspunktMs": 566.7,
+    "vinkler": {
+      "ankelGrader": 16.92,
+      "knaeGrader": 144.34,
+      "hofteGrader": 142.61,
+      "torsoGrader": 18.64
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.7247
+    },
+    "usikkerhed": {
+      "ankelGrader": 8.57,
+      "knaeGrader": 24.46,
+      "hofteGrader": 20.15,
+      "torsoGrader": 5.38,
+      "hoejdeFodlaengder": 0.1828
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 76,
+    "tidspunktMs": 600,
+    "vinkler": {
+      "ankelGrader": 18.53,
+      "knaeGrader": 142.45,
+      "hofteGrader": 138.68,
+      "torsoGrader": 22.3
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.7054
+    },
+    "usikkerhed": {
+      "ankelGrader": 8.15,
+      "knaeGrader": 18.93,
+      "hofteGrader": 19.15,
+      "torsoGrader": 8.37,
+      "hoejdeFodlaengder": 0.165
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 77,
+    "tidspunktMs": 633.3,
+    "vinkler": {
+      "ankelGrader": 17.44,
+      "knaeGrader": 143.91,
+      "hofteGrader": 139.36,
+      "torsoGrader": 21.99
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.6349
+    },
+    "usikkerhed": {
+      "ankelGrader": 8.42,
+      "knaeGrader": 19.55,
+      "hofteGrader": 16.97,
+      "torsoGrader": 11.25,
+      "hoejdeFodlaengder": 0.2074
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 78,
+    "tidspunktMs": 666.7,
+    "vinkler": {
+      "ankelGrader": 17.6,
+      "knaeGrader": 136.16,
+      "hofteGrader": 137.18,
+      "torsoGrader": 16.57
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.5326
+    },
+    "usikkerhed": {
+      "ankelGrader": 4.43,
+      "knaeGrader": 24.26,
+      "hofteGrader": 20.33,
+      "torsoGrader": 5.92,
+      "hoejdeFodlaengder": 0.1773
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 79,
+    "tidspunktMs": 700,
+    "vinkler": {
+      "ankelGrader": 20.57,
+      "knaeGrader": 131.77,
+      "hofteGrader": 134.06,
+      "torsoGrader": 18.27
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.5265
+    },
+    "usikkerhed": {
+      "ankelGrader": 8.63,
+      "knaeGrader": 23.46,
+      "hofteGrader": 17.84,
+      "torsoGrader": 5.47,
+      "hoejdeFodlaengder": 0.1198
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 80,
+    "tidspunktMs": 733.3,
+    "vinkler": {
+      "ankelGrader": 15.11,
+      "knaeGrader": 143.43,
+      "hofteGrader": 139.49,
+      "torsoGrader": 19.04
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.4128
+    },
+    "usikkerhed": {
+      "ankelGrader": 9.35,
+      "knaeGrader": 25.17,
+      "hofteGrader": 19.93,
+      "torsoGrader": 5.14,
+      "hoejdeFodlaengder": 0.1752
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 81,
+    "tidspunktMs": 766.7,
+    "vinkler": {
+      "ankelGrader": 21.27,
+      "knaeGrader": 123.02,
+      "hofteGrader": 126.27,
+      "torsoGrader": 18.02
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.3538
+    },
+    "usikkerhed": {
+      "ankelGrader": 7.11,
+      "knaeGrader": 23.97,
+      "hofteGrader": 26.65,
+      "torsoGrader": 17.22,
+      "hoejdeFodlaengder": 0.1499
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 82,
+    "tidspunktMs": 800,
+    "vinkler": {
+      "ankelGrader": 18.24,
+      "knaeGrader": 131.9,
+      "hofteGrader": 138.52,
+      "torsoGrader": 11.61
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.2948
+    },
+    "usikkerhed": {
+      "ankelGrader": 7,
+      "knaeGrader": 19.08,
+      "hofteGrader": 23.5,
+      "torsoGrader": 11.08,
+      "hoejdeFodlaengder": 0.2072
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 83,
+    "tidspunktMs": 833.3,
+    "vinkler": {
+      "ankelGrader": 17.9,
+      "knaeGrader": 130.22,
+      "hofteGrader": 134.85,
+      "torsoGrader": 13.27
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.275
+    },
+    "usikkerhed": {
+      "ankelGrader": 3.28,
+      "knaeGrader": 16.41,
+      "hofteGrader": 21.43,
+      "torsoGrader": 13.17,
+      "hoejdeFodlaengder": 0.028
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 84,
+    "tidspunktMs": 866.7,
+    "vinkler": {
+      "ankelGrader": 18.37,
+      "knaeGrader": 127.67,
+      "hofteGrader": 121.26,
+      "torsoGrader": 24.78
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.3031
+    },
+    "usikkerhed": {
+      "ankelGrader": 2.54,
+      "knaeGrader": 10.57,
+      "hofteGrader": 26.55,
+      "torsoGrader": 15.76,
+      "hoejdeFodlaengder": 0.1403
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 85,
+    "tidspunktMs": 900,
+    "vinkler": {
+      "ankelGrader": 20.23,
+      "knaeGrader": 125.26,
+      "hofteGrader": 123.91,
+      "torsoGrader": 21.59
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.1628
+    },
+    "usikkerhed": {
+      "ankelGrader": 7.19,
+      "knaeGrader": 17.75,
+      "hofteGrader": 16.41,
+      "torsoGrader": 7.85,
+      "hoejdeFodlaengder": 0.1791
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 86,
+    "tidspunktMs": 933.3,
+    "vinkler": {
+      "ankelGrader": 20.84,
+      "knaeGrader": 123.21,
+      "hofteGrader": 124.48,
+      "torsoGrader": 19.57
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.1415
+    },
+    "usikkerhed": {
+      "ankelGrader": 4.99,
+      "knaeGrader": 16.94,
+      "hofteGrader": 19.44,
+      "torsoGrader": 9.11,
+      "hoejdeFodlaengder": 0.2049
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 87,
+    "tidspunktMs": 966.7,
+    "vinkler": {
+      "ankelGrader": 22.76,
+      "knaeGrader": 118.98,
+      "hofteGrader": 113.06,
+      "torsoGrader": 28.68
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 3.9933
+    },
+    "usikkerhed": {
+      "ankelGrader": 4.34,
+      "knaeGrader": 17.65,
+      "hofteGrader": 28.75,
+      "torsoGrader": 15.44,
+      "hoejdeFodlaengder": 0.1993
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 88,
+    "tidspunktMs": 1000,
+    "vinkler": {
+      "ankelGrader": 22.65,
+      "knaeGrader": 112.07,
+      "hofteGrader": 106.49,
+      "torsoGrader": 28.24
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 3.9422
+    },
+    "usikkerhed": {
+      "ankelGrader": 2.69,
+      "knaeGrader": 22.74,
+      "hofteGrader": 26.96,
+      "torsoGrader": 6.91,
+      "hoejdeFodlaengder": 0.132
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 89,
+    "tidspunktMs": 1033.3,
+    "vinkler": {
+      "ankelGrader": 21.58,
+      "knaeGrader": 112.04,
+      "hofteGrader": 106.12,
+      "torsoGrader": 27.5
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 3.8613
+    },
+    "usikkerhed": {
+      "ankelGrader": 2.09,
+      "knaeGrader": 13.52,
+      "hofteGrader": 49.42,
+      "torsoGrader": 37.97,
+      "hoejdeFodlaengder": 0.7488
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 90,
+    "tidspunktMs": 1066.7,
+    "vinkler": {
+      "ankelGrader": 21.59,
+      "knaeGrader": 112.67,
+      "hofteGrader": 140.02,
+      "torsoGrader": -5.76
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 3.1934
+    },
+    "usikkerhed": {
+      "ankelGrader": 0.49,
+      "knaeGrader": 31.52,
+      "hofteGrader": 54.09,
+      "torsoGrader": 38.76,
+      "hoejdeFodlaengder": 0.6679
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 91,
+    "tidspunktMs": 1100,
+    "vinkler": {
+      "ankelGrader": 22.07,
+      "knaeGrader": 116.49,
+      "hofteGrader": 149.82,
+      "torsoGrader": -11.26
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 3.2109
+    },
+    "usikkerhed": {
+      "ankelGrader": 1.03,
+      "knaeGrader": 23.94,
+      "hofteGrader": 42.38,
+      "torsoGrader": 18.99,
+      "hoejdeFodlaengder": 0.2629
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 92,
+    "tidspunktMs": 1133.3,
+    "vinkler": {
+      "ankelGrader": 21.96,
+      "knaeGrader": 109.07,
+      "hofteGrader": 139.56,
+      "torsoGrader": -8.53
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 3.4563
+    },
+    "usikkerhed": {
+      "ankelGrader": 1.35,
+      "knaeGrader": 41.19,
+      "hofteGrader": 48.94,
+      "torsoGrader": 8.99,
+      "hoejdeFodlaengder": 0.4524
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 93,
+    "tidspunktMs": 1166.7,
+    "vinkler": {
+      "ankelGrader": 22.69,
+      "knaeGrader": 99.64,
+      "hofteGrader": 127.11,
+      "torsoGrader": -4.78
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 3.0039
+    },
+    "usikkerhed": {
+      "ankelGrader": 1.81,
+      "knaeGrader": 42.46,
+      "hofteGrader": 60.66,
+      "torsoGrader": 21.79,
+      "hoejdeFodlaengder": 0.6496
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 94,
+    "tidspunktMs": 1200,
+    "vinkler": {
+      "ankelGrader": 23.35,
+      "knaeGrader": 86.47,
+      "hofteGrader": 120.13,
+      "torsoGrader": -10.31
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 2.8067
+    },
+    "usikkerhed": {
+      "ankelGrader": 4.96,
+      "knaeGrader": 45.1,
+      "hofteGrader": 57.74,
+      "torsoGrader": 17.74,
+      "hoejdeFodlaengder": 0.3604
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 95,
+    "tidspunktMs": 1233.3,
+    "vinkler": {
+      "ankelGrader": 20.28,
+      "knaeGrader": 111.05,
+      "hofteGrader": 141.5,
+      "torsoGrader": -10.17
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 3.1671
+    },
+    "usikkerhed": {
+      "ankelGrader": 3.06,
+      "knaeGrader": 24.57,
+      "hofteGrader": 35.96,
+      "torsoGrader": 12.64,
+      "hoejdeFodlaengder": 0.4103
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 96,
+    "tidspunktMs": 1266.7,
+    "vinkler": {
+      "ankelGrader": 20.5,
+      "knaeGrader": 87.53,
+      "hofteGrader": 114.86,
+      "torsoGrader": -6.83
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 2.8606
+    },
+    "usikkerhed": {
+      "ankelGrader": 0.21,
+      "knaeGrader": 49.66,
+      "hofteGrader": 72.78,
+      "torsoGrader": 23.2,
+      "hoejdeFodlaengder": 0.3065
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 98,
+    "tidspunktMs": 1333.3,
+    "vinkler": {
+      "ankelGrader": 16.36,
+      "knaeGrader": 121.4,
+      "hofteGrader": 174.12,
+      "torsoGrader": -36.36
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 3.481
+    },
+    "usikkerhed": {
+      "ankelGrader": 9.34,
+      "knaeGrader": 22.08,
+      "hofteGrader": 71.64,
+      "torsoGrader": 60.34,
+      "hoejdeFodlaengder": 0.6165
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 99,
+    "tidspunktMs": 1366.7,
+    "vinkler": {
+      "ankelGrader": 22.66,
+      "knaeGrader": 103.8,
+      "hofteGrader": 102.48,
+      "torsoGrader": 23.99
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 3.0867
+    },
+    "usikkerhed": {
+      "ankelGrader": 13.11,
+      "knaeGrader": 40.37,
+      "hofteGrader": 102.59,
+      "torsoGrader": 77.64,
+      "hoejdeFodlaengder": 0.5858
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 100,
+    "tidspunktMs": 1400,
+    "vinkler": {
+      "ankelGrader": 23.76,
+      "knaeGrader": 81.03,
+      "hofteGrader": 83.64,
+      "torsoGrader": 21.16
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 2.8953
+    },
+    "usikkerhed": {
+      "ankelGrader": 5.51,
+      "knaeGrader": 38.82,
+      "hofteGrader": 40.69,
+      "torsoGrader": 17.33,
+      "hoejdeFodlaengder": 0.376
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 101,
+    "tidspunktMs": 1433.3,
+    "vinkler": {
+      "ankelGrader": 24.67,
+      "knaeGrader": 86.18,
+      "hofteGrader": 96.81,
+      "torsoGrader": 14.03
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 2.8968
+    },
+    "usikkerhed": {
+      "ankelGrader": 8.13,
+      "knaeGrader": 26.89,
+      "hofteGrader": 32.61,
+      "torsoGrader": 10.42,
+      "hoejdeFodlaengder": 0.0789
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 102,
+    "tidspunktMs": 1466.7,
+    "vinkler": {
+      "ankelGrader": 21.21,
+      "knaeGrader": 79.37,
+      "hofteGrader": 76.12,
+      "torsoGrader": 24.46
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 2.8179
+    },
+    "usikkerhed": {
+      "ankelGrader": 3.95,
+      "knaeGrader": 21.16,
+      "hofteGrader": 38.75,
+      "torsoGrader": 18.08,
+      "hoejdeFodlaengder": 0.1944
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 103,
+    "tidspunktMs": 1500,
+    "vinkler": {
+      "ankelGrader": 21.67,
+      "knaeGrader": 83.07,
+      "hofteGrader": 89.92,
+      "torsoGrader": 14.81
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 2.7024
+    },
+    "usikkerhed": {
+      "ankelGrader": 3.58,
+      "knaeGrader": 21.43,
+      "hofteGrader": 29.06,
+      "torsoGrader": 10.74,
+      "hoejdeFodlaengder": 0.1783
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 105,
+    "tidspunktMs": 1566.7,
+    "vinkler": {
+      "ankelGrader": 20.07,
+      "knaeGrader": 127.96,
+      "hofteGrader": 150.63,
+      "torsoGrader": -2.59
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 2.7329
+    },
+    "usikkerhed": {
+      "ankelGrader": 3.78,
+      "knaeGrader": 40.92,
+      "hofteGrader": 56.47,
+      "torsoGrader": 19.33,
+      "hoejdeFodlaengder": 0.1032
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 109,
+    "tidspunktMs": 1700,
+    "vinkler": {
+      "ankelGrader": 21,
+      "knaeGrader": 84.94,
+      "hofteGrader": 80.17,
+      "torsoGrader": 25.76
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 2.627
+    },
+    "usikkerhed": {
+      "ankelGrader": 6.29,
+      "knaeGrader": 23,
+      "hofteGrader": 30.61,
+      "torsoGrader": 13.9,
+      "hoejdeFodlaengder": 0.1909
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 110,
+    "tidspunktMs": 1733.3,
+    "vinkler": {
+      "ankelGrader": 23.99,
+      "knaeGrader": 78.15,
+      "hofteGrader": 73.38,
+      "torsoGrader": 28.76
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 2.6268
+    },
+    "usikkerhed": {
+      "ankelGrader": 4.56,
+      "knaeGrader": 42.15,
+      "hofteGrader": 71.85,
+      "torsoGrader": 26.27,
+      "hoejdeFodlaengder": 0.0436
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 111,
+    "tidspunktMs": 1766.7,
+    "vinkler": {
+      "ankelGrader": 25.56,
+      "knaeGrader": 113.37,
+      "hofteGrader": 124.16,
+      "torsoGrader": 14.77
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 2.6173
+    },
+    "usikkerhed": {
+      "ankelGrader": 10.85,
+      "knaeGrader": 63.08,
+      "hofteGrader": 74.6,
+      "torsoGrader": 18.57,
+      "hoejdeFodlaengder": 0.3058
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 112,
+    "tidspunktMs": 1800,
+    "vinkler": {
+      "ankelGrader": 27.79,
+      "knaeGrader": 132.66,
+      "hofteGrader": 147.75,
+      "torsoGrader": 12.7
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 2.7576
+    },
+    "usikkerhed": {
+      "ankelGrader": 2.23,
+      "knaeGrader": 39.33,
+      "hofteGrader": 52.29,
+      "torsoGrader": 11.94,
+      "hoejdeFodlaengder": 0.1472
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 114,
+    "tidspunktMs": 1866.7,
+    "vinkler": {
+      "ankelGrader": 26.89,
+      "knaeGrader": 95.97,
+      "hofteGrader": 112.69,
+      "torsoGrader": 10.17
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 2.4739
+    },
+    "usikkerhed": {
+      "ankelGrader": 16.76,
+      "knaeGrader": 44.18,
+      "hofteGrader": 50.3,
+      "torsoGrader": 21.95,
+      "hoejdeFodlaengder": 0.1706
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 115,
+    "tidspunktMs": 1900,
+    "vinkler": {
+      "ankelGrader": 21.83,
+      "knaeGrader": 99.99,
+      "hofteGrader": 111.76,
+      "torsoGrader": 10.06
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 2.4689
+    },
+    "usikkerhed": {
+      "ankelGrader": 14.71,
+      "knaeGrader": 39.89,
+      "hofteGrader": 54.31,
+      "torsoGrader": 28.21,
+      "hoejdeFodlaengder": 0.2139
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 116,
+    "tidspunktMs": 1933.3,
+    "vinkler": {
+      "ankelGrader": 24.19,
+      "knaeGrader": 95.21,
+      "hofteGrader": 102.55,
+      "torsoGrader": 16.85
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 2.5567
+    },
+    "usikkerhed": {
+      "ankelGrader": 12.55,
+      "knaeGrader": 35.23,
+      "hofteGrader": 52.28,
+      "torsoGrader": 29.61,
+      "hoejdeFodlaengder": 0.184
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 117,
+    "tidspunktMs": 1966.7,
+    "vinkler": {
+      "ankelGrader": 24.21,
+      "knaeGrader": 70.05,
+      "hofteGrader": 73.16,
+      "torsoGrader": 21.09
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 2.3727
+    },
+    "usikkerhed": {
+      "ankelGrader": 7.29,
+      "knaeGrader": 41.77,
+      "hofteGrader": 60.14,
+      "torsoGrader": 21.31,
+      "hoejdeFodlaengder": 0.2242
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 118,
+    "tidspunktMs": 2000,
+    "vinkler": {
+      "ankelGrader": 28.54,
+      "knaeGrader": 98.41,
+      "hofteGrader": 115.01,
+      "torsoGrader": 11.93
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 2.4753
+    },
+    "usikkerhed": {
+      "ankelGrader": 22.85,
+      "knaeGrader": 123.76,
+      "hofteGrader": 103.64,
+      "torsoGrader": 31.85,
+      "hoejdeFodlaengder": 0.5608
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 119,
+    "tidspunktMs": 2033.3,
+    "vinkler": {
+      "ankelGrader": 15.92,
+      "knaeGrader": 179,
+      "hofteGrader": 165.44,
+      "torsoGrader": 0.36
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 2.8888
+    },
+    "usikkerhed": {
+      "ankelGrader": 12.62,
+      "knaeGrader": 80.59,
+      "hofteGrader": 50.43,
+      "torsoGrader": 23.65,
+      "hoejdeFodlaengder": 0.4136
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 120,
+    "tidspunktMs": 2066.7,
+    "vinkler": {
+      "ankelGrader": 27.94,
+      "knaeGrader": 118.93,
+      "hofteGrader": 132.98,
+      "torsoGrader": 13.89
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 2.77
+    },
+    "usikkerhed": {
+      "ankelGrader": 12.18,
+      "knaeGrader": 88.19,
+      "hofteGrader": 80.4,
+      "torsoGrader": 33.5,
+      "hoejdeFodlaengder": 0.3256
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 121,
+    "tidspunktMs": 2100,
+    "vinkler": {
+      "ankelGrader": 23.71,
+      "knaeGrader": 122.85,
+      "hofteGrader": 136.59,
+      "torsoGrader": 9.98
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 2.648
+    },
+    "usikkerhed": {
+      "ankelGrader": 7.42,
+      "knaeGrader": 32.04,
+      "hofteGrader": 52.72,
+      "torsoGrader": 28.1,
+      "hoejdeFodlaengder": 0.2484
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 123,
+    "tidspunktMs": 2166.7,
+    "vinkler": {
+      "ankelGrader": 25.59,
+      "knaeGrader": 126.29,
+      "hofteGrader": 136.02,
+      "torsoGrader": 15.86
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 2.7018
+    },
+    "usikkerhed": {
+      "ankelGrader": 7.13,
+      "knaeGrader": 12.42,
+      "hofteGrader": 27.8,
+      "torsoGrader": 14.82,
+      "hoejdeFodlaengder": 0.1934
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 124,
+    "tidspunktMs": 2200,
+    "vinkler": {
+      "ankelGrader": 26.57,
+      "knaeGrader": 117.23,
+      "hofteGrader": 133.52,
+      "torsoGrader": 10.28
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 2.7772
+    },
+    "usikkerhed": {
+      "ankelGrader": 3.79,
+      "knaeGrader": 26.85,
+      "hofteGrader": 43.47,
+      "torsoGrader": 22.73,
+      "hoejdeFodlaengder": 0.2189
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 125,
+    "tidspunktMs": 2233.3,
+    "vinkler": {
+      "ankelGrader": 22.78,
+      "knaeGrader": 109.31,
+      "hofteGrader": 118.3,
+      "torsoGrader": 13.79
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 2.6578
+    },
+    "usikkerhed": {
+      "ankelGrader": 6.18,
+      "knaeGrader": 43.76,
+      "hofteGrader": 64.24,
+      "torsoGrader": 22.87,
+      "hoejdeFodlaengder": 0.2566
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 126,
+    "tidspunktMs": 2266.7,
+    "vinkler": {
+      "ankelGrader": 27.99,
+      "knaeGrader": 84.05,
+      "hofteGrader": 83.89,
+      "torsoGrader": 28.15
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 2.7619
+    },
+    "usikkerhed": {
+      "ankelGrader": 5.2,
+      "knaeGrader": 45.58,
+      "hofteGrader": 70.88,
+      "torsoGrader": 26.75,
+      "hoejdeFodlaengder": 0.1734
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 132,
+    "tidspunktMs": 2466.7,
+    "vinkler": {
+      "ankelGrader": 12.46,
+      "knaeGrader": 96.96,
+      "hofteGrader": 87.53,
+      "torsoGrader": 21.89
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 2.9032
+    },
+    "usikkerhed": {
+      "ankelGrader": 13.75,
+      "knaeGrader": 27.24,
+      "hofteGrader": 34.87,
+      "torsoGrader": 18.19,
+      "hoejdeFodlaengder": 0.0829
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 133,
+    "tidspunktMs": 2500,
+    "vinkler": {
+      "ankelGrader": 24.07,
+      "knaeGrader": 88.54,
+      "hofteGrader": 93.56,
+      "torsoGrader": 19.05
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 2.9054
+    },
+    "usikkerhed": {
+      "ankelGrader": 15.5,
+      "knaeGrader": 27.26,
+      "hofteGrader": 45.87,
+      "torsoGrader": 34.07,
+      "hoejdeFodlaengder": 0.0507
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 134,
+    "tidspunktMs": 2533.3,
+    "vinkler": {
+      "ankelGrader": 24.59,
+      "knaeGrader": 84.86,
+      "hofteGrader": 109.56,
+      "torsoGrader": -0.11
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 2.9075
+    },
+    "usikkerhed": {
+      "ankelGrader": 4.12,
+      "knaeGrader": 42.63,
+      "hofteGrader": 57.23,
+      "torsoGrader": 23.73,
+      "hoejdeFodlaengder": 0.2825
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 135,
+    "tidspunktMs": 2566.7,
+    "vinkler": {
+      "ankelGrader": 21.45,
+      "knaeGrader": 109.65,
+      "hofteGrader": 135.78,
+      "torsoGrader": -4.67
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 3.1154
+    },
+    "usikkerhed": {
+      "ankelGrader": 3.14,
+      "knaeGrader": 28.53,
+      "hofteGrader": 35.84,
+      "torsoGrader": 7.46,
+      "hoejdeFodlaengder": 0.2079
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 137,
+    "tidspunktMs": 2633.3,
+    "vinkler": {
+      "ankelGrader": 22.69,
+      "knaeGrader": 101.05,
+      "hofteGrader": 158.42,
+      "torsoGrader": -34.69
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 3.4776
+    },
+    "usikkerhed": {
+      "ankelGrader": 20.07,
+      "knaeGrader": 25.1,
+      "hofteGrader": 34.93,
+      "torsoGrader": 31.7,
+      "hoejdeFodlaengder": 0.8159
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 138,
+    "tidspunktMs": 2666.7,
+    "vinkler": {
+      "ankelGrader": 21.19,
+      "knaeGrader": 99.94,
+      "hofteGrader": 124.12,
+      "torsoGrader": -2.99
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 3.0243
+    },
+    "usikkerhed": {
+      "ankelGrader": 2.93,
+      "knaeGrader": 61.11,
+      "hofteGrader": 82.66,
+      "torsoGrader": 44.6,
+      "hoejdeFodlaengder": 0.5344
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 139,
+    "tidspunktMs": 2700,
+    "vinkler": {
+      "ankelGrader": 24.03,
+      "knaeGrader": 125.69,
+      "hofteGrader": 145.59,
+      "torsoGrader": 4.13
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 3.2548
+    },
+    "usikkerhed": {
+      "ankelGrader": 5.97,
+      "knaeGrader": 33.03,
+      "hofteGrader": 42.1,
+      "torsoGrader": 21.16,
+      "hoejdeFodlaengder": 0.4535
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 140,
+    "tidspunktMs": 2733.3,
+    "vinkler": {
+      "ankelGrader": 20.97,
+      "knaeGrader": 104.16,
+      "hofteGrader": 130.17,
+      "torsoGrader": -5.04
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 3.4778
+    },
+    "usikkerhed": {
+      "ankelGrader": 7.14,
+      "knaeGrader": 44.02,
+      "hofteGrader": 45.05,
+      "torsoGrader": 13.38,
+      "hoejdeFodlaengder": 0.2607
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 141,
+    "tidspunktMs": 2766.7,
+    "vinkler": {
+      "ankelGrader": 28.12,
+      "knaeGrader": 120.1,
+      "hofteGrader": 139.87,
+      "torsoGrader": 8.34
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 3.4347
+    },
+    "usikkerhed": {
+      "ankelGrader": 10.64,
+      "knaeGrader": 15.94,
+      "hofteGrader": 20.04,
+      "torsoGrader": 26.53,
+      "hoejdeFodlaengder": 0.1336
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 142,
+    "tidspunktMs": 2800,
+    "vinkler": {
+      "ankelGrader": 21.8,
+      "knaeGrader": 107.24,
+      "hofteGrader": 119.83,
+      "torsoGrader": 9.21
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 3.4463
+    },
+    "usikkerhed": {
+      "ankelGrader": 6.87,
+      "knaeGrader": 25.69,
+      "hofteGrader": 44.92,
+      "torsoGrader": 27.38,
+      "hoejdeFodlaengder": 0.2488
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 143,
+    "tidspunktMs": 2833.3,
+    "vinkler": {
+      "ankelGrader": 21.25,
+      "knaeGrader": 113.35,
+      "hofteGrader": 141.03,
+      "torsoGrader": -6.44
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 3.6835
+    },
+    "usikkerhed": {
+      "ankelGrader": 3.68,
+      "knaeGrader": 13.62,
+      "hofteGrader": 23.59,
+      "torsoGrader": 17.26,
+      "hoejdeFodlaengder": 0.4132
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 144,
+    "tidspunktMs": 2866.7,
+    "vinkler": {
+      "ankelGrader": 20.68,
+      "knaeGrader": 115.61,
+      "hofteGrader": 125.47,
+      "torsoGrader": 10.82
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 3.8595
+    },
+    "usikkerhed": {
+      "ankelGrader": 7.17,
+      "knaeGrader": 15.21,
+      "hofteGrader": 40.66,
+      "torsoGrader": 41.07,
+      "hoejdeFodlaengder": 0.4689
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 145,
+    "tidspunktMs": 2900,
+    "vinkler": {
+      "ankelGrader": 14.08,
+      "knaeGrader": 120.94,
+      "hofteGrader": 100.37,
+      "torsoGrader": 34.64
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.1468
+    },
+    "usikkerhed": {
+      "ankelGrader": 6.6,
+      "knaeGrader": 13.5,
+      "hofteGrader": 32.12,
+      "torsoGrader": 23.82,
+      "hoejdeFodlaengder": 0.3726
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 146,
+    "tidspunktMs": 2933.3,
+    "vinkler": {
+      "ankelGrader": 19.76,
+      "knaeGrader": 118.13,
+      "hofteGrader": 107.25,
+      "torsoGrader": 30.64
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.2321
+    },
+    "usikkerhed": {
+      "ankelGrader": 7.84,
+      "knaeGrader": 9.12,
+      "hofteGrader": 13.41,
+      "torsoGrader": 7.93,
+      "hoejdeFodlaengder": 0.2116
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 147,
+    "tidspunktMs": 2966.7,
+    "vinkler": {
+      "ankelGrader": 21.91,
+      "knaeGrader": 111.82,
+      "hofteGrader": 100.31,
+      "torsoGrader": 33.42
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.2467
+    },
+    "usikkerhed": {
+      "ankelGrader": 4.92,
+      "knaeGrader": 6.31,
+      "hofteGrader": 8.28,
+      "torsoGrader": 4.69,
+      "hoejdeFodlaengder": 0.1221
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 148,
+    "tidspunktMs": 3000,
+    "vinkler": {
+      "ankelGrader": 21.59,
+      "knaeGrader": 116.76,
+      "hofteGrader": 103.02,
+      "torsoGrader": 35.33
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.3542
+    },
+    "usikkerhed": {
+      "ankelGrader": 3.96,
+      "knaeGrader": 12.22,
+      "hofteGrader": 15.87,
+      "torsoGrader": 5.71,
+      "hoejdeFodlaengder": 0.173
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 149,
+    "tidspunktMs": 3033.3,
+    "vinkler": {
+      "ankelGrader": 21.76,
+      "knaeGrader": 124.04,
+      "hofteGrader": 116.18,
+      "torsoGrader": 29.62
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.4153
+    },
+    "usikkerhed": {
+      "ankelGrader": 2.77,
+      "knaeGrader": 9.71,
+      "hofteGrader": 13.16,
+      "torsoGrader": 5.71,
+      "hoejdeFodlaengder": 0.1237
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 150,
+    "tidspunktMs": 3066.7,
+    "vinkler": {
+      "ankelGrader": 19.42,
+      "knaeGrader": 126.47,
+      "hofteGrader": 115.27,
+      "torsoGrader": 30.62
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.478
+    },
+    "usikkerhed": {
+      "ankelGrader": 3.27,
+      "knaeGrader": 3.01,
+      "hofteGrader": 7.4,
+      "torsoGrader": 4.88,
+      "hoejdeFodlaengder": 0.1705
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 151,
+    "tidspunktMs": 3100,
+    "vinkler": {
+      "ankelGrader": 21.56,
+      "knaeGrader": 126.5,
+      "hofteGrader": 121.02,
+      "torsoGrader": 27.04
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.5858
+    },
+    "usikkerhed": {
+      "ankelGrader": 3.68,
+      "knaeGrader": 11.06,
+      "hofteGrader": 34.16,
+      "torsoGrader": 22.44,
+      "hoejdeFodlaengder": 0.1079
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 152,
+    "tidspunktMs": 3133.3,
+    "vinkler": {
+      "ankelGrader": 19.96,
+      "knaeGrader": 137.53,
+      "hofteGrader": 149.31,
+      "torsoGrader": 8.18
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.5288
+    },
+    "usikkerhed": {
+      "ankelGrader": 5.17,
+      "knaeGrader": 11.03,
+      "hofteGrader": 28.29,
+      "torsoGrader": 18.86,
+      "hoejdeFodlaengder": 0.24
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 153,
+    "tidspunktMs": 3166.7,
+    "vinkler": {
+      "ankelGrader": 20.55,
+      "knaeGrader": 132.5,
+      "hofteGrader": 130.49,
+      "torsoGrader": 22.55
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.7688
+    },
+    "usikkerhed": {
+      "ankelGrader": 3.96,
+      "knaeGrader": 11.8,
+      "hofteGrader": 23.57,
+      "torsoGrader": 16.76,
+      "hoejdeFodlaengder": 0.2456
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 154,
+    "tidspunktMs": 3200,
+    "vinkler": {
+      "ankelGrader": 16.59,
+      "knaeGrader": 144.3,
+      "hofteGrader": 139.66,
+      "torsoGrader": 21.23
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.7744
+    },
+    "usikkerhed": {
+      "ankelGrader": 4.7,
+      "knaeGrader": 13.57,
+      "hofteGrader": 11.47,
+      "torsoGrader": 5,
+      "hoejdeFodlaengder": 0.4676
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 155,
+    "tidspunktMs": 3233.3,
+    "vinkler": {
+      "ankelGrader": 15.85,
+      "knaeGrader": 146.06,
+      "hofteGrader": 139.34,
+      "torsoGrader": 22.58
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.9997
+    },
+    "usikkerhed": {
+      "ankelGrader": 6.75,
+      "knaeGrader": 5.95,
+      "hofteGrader": 10.43,
+      "torsoGrader": 7.69,
+      "hoejdeFodlaengder": 0.2253
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 156,
+    "tidspunktMs": 3266.7,
+    "vinkler": {
+      "ankelGrader": 21.57,
+      "knaeGrader": 140.12,
+      "hofteGrader": 146.8,
+      "torsoGrader": 14.89
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 4.8188
+    },
+    "usikkerhed": {
+      "ankelGrader": 9.83,
+      "knaeGrader": 20.32,
+      "hofteGrader": 19.24,
+      "torsoGrader": 16.77,
+      "hoejdeFodlaengder": 0.2633
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 157,
+    "tidspunktMs": 3300,
+    "vinkler": {
+      "ankelGrader": 11.74,
+      "knaeGrader": 160.44,
+      "hofteGrader": 158.58,
+      "torsoGrader": 13.61
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 5.0821
+    },
+    "usikkerhed": {
+      "ankelGrader": 9.83,
+      "knaeGrader": 23.53,
+      "hofteGrader": 16.99,
+      "torsoGrader": 2.88,
+      "hoejdeFodlaengder": 0.3827
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 158,
+    "tidspunktMs": 3333.3,
+    "vinkler": {
+      "ankelGrader": 12,
+      "knaeGrader": 163.65,
+      "hofteGrader": 163.63,
+      "torsoGrader": 12.01
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 5.2015
+    },
+    "usikkerhed": {
+      "ankelGrader": 3.31,
+      "knaeGrader": 16.59,
+      "hofteGrader": 19.63,
+      "torsoGrader": 6.23,
+      "hoejdeFodlaengder": 0.1664
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 159,
+    "tidspunktMs": 3366.7,
+    "vinkler": {
+      "ankelGrader": 8.68,
+      "knaeGrader": 170.84,
+      "hofteGrader": 166.49,
+      "torsoGrader": 13.04
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 5.2439
+    },
+    "usikkerhed": {
+      "ankelGrader": 4.83,
+      "knaeGrader": 15.18,
+      "hofteGrader": 21.3,
+      "torsoGrader": 5.81,
+      "hoejdeFodlaengder": 0.2228
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 160,
+    "tidspunktMs": 3400,
+    "vinkler": {
+      "ankelGrader": 7.47,
+      "knaeGrader": 174.71,
+      "hofteGrader": 172.63,
+      "torsoGrader": 9.55
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 5.3421
+    },
+    "usikkerhed": {
+      "ankelGrader": 1.41,
+      "knaeGrader": 13.14,
+      "hofteGrader": 18.34,
+      "torsoGrader": 8.82,
+      "hoejdeFodlaengder": 0.1441
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 161,
+    "tidspunktMs": 3433.3,
+    "vinkler": {
+      "ankelGrader": 8.71,
+      "knaeGrader": 176.91,
+      "hofteGrader": 171.75,
+      "torsoGrader": 13.87
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 5.1979
+    },
+    "usikkerhed": {
+      "ankelGrader": 14.29,
+      "knaeGrader": 3.85,
+      "hofteGrader": 9.73,
+      "torsoGrader": 4.32,
+      "hoejdeFodlaengder": 0.1602
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 162,
+    "tidspunktMs": 3466.7,
+    "vinkler": {
+      "ankelGrader": 10.41,
+      "knaeGrader": 177.94,
+      "hofteGrader": 175.25,
+      "torsoGrader": 13.1
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 5.2354
+    },
+    "usikkerhed": {
+      "ankelGrader": 9.01,
+      "knaeGrader": 4.92,
+      "hofteGrader": 12.83,
+      "torsoGrader": 5.79,
+      "hoejdeFodlaengder": 0.0527
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 163,
+    "tidspunktMs": 3500,
+    "vinkler": {
+      "ankelGrader": 6.6,
+      "knaeGrader": 177.14,
+      "hofteGrader": 179.17,
+      "torsoGrader": 10.29
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 5.2506
+    },
+    "usikkerhed": {
+      "ankelGrader": 4.79,
+      "knaeGrader": 10.32,
+      "hofteGrader": 9.43,
+      "torsoGrader": 3.46,
+      "hoejdeFodlaengder": 0.1242
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 164,
+    "tidspunktMs": 3533.3,
+    "vinkler": {
+      "ankelGrader": 8.26,
+      "knaeGrader": 179.65,
+      "hofteGrader": 174.17,
+      "torsoGrader": 13.75
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 5.2377
+    },
+    "usikkerhed": {
+      "ankelGrader": 1.67,
+      "knaeGrader": 12.75,
+      "hofteGrader": 15.83,
+      "torsoGrader": 3.46,
+      "hoejdeFodlaengder": 0.0885
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 165,
+    "tidspunktMs": 3566.7,
+    "vinkler": {
+      "ankelGrader": 8.12,
+      "knaeGrader": 179.84,
+      "hofteGrader": 174.56,
+      "torsoGrader": 13.4
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 5.1621
+    },
+    "usikkerhed": {
+      "ankelGrader": 2.11,
+      "knaeGrader": 16.52,
+      "hofteGrader": 9.75,
+      "torsoGrader": 11.52,
+      "hoejdeFodlaengder": 0.1646
+    }
+  },
+  {
+    "øvelse": "frontsquat",
+    "billedeIndex": 166,
+    "tidspunktMs": 3600,
+    "vinkler": {
+      "ankelGrader": 10.22,
+      "knaeGrader": 179.56,
+      "hofteGrader": 171.01,
+      "torsoGrader": 18.77
+    },
+    "hofte": {
+      "hoejdeFodlaengder": 5.1364
+    },
+    "usikkerhed": {
+      "ankelGrader": 5.93,
+      "knaeGrader": 1.62,
+      "hofteGrader": 8.06,
+      "torsoGrader": 11.77,
+      "hoejdeFodlaengder": 0.1902
+    }
+  }
+]
