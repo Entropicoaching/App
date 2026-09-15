@@ -1179,6 +1179,13 @@ const COACHWEB = !DESKTOP && MODE_PARAMS.has('coach');
 // indeholder ?benchmark=1; normal coach- og atletadfærd bruger aldrig kanalen.
 // Lokal diagnosekanal: kræver også trackerProbe, så almindelig benchmark er uændret.
 const TRACKER_PROBE = TRACKER_BENCHMARK && MODE_PARAMS.get('trackerProbe') === '1';
+// ORDRE 225 · commit 1 — instrumentering, ingen adfærdsændring. plSearch
+// kaldes fra flere steder (kalibrering, quick-audit, home-confirm,
+// home-genfinding); alle skriver ind i denne ene log, nulstillet pr. kørsel
+// af startMultipointTracking, så en pr.-sekund-opsummering (antal kald, tid
+// pr. kald, gitterstørrelse, tomme fund) kan bygges bagefter uden at ændre
+// selve søge- eller accept/afvisningslogikken.
+let plSearchProbeLog = null;
 // ORDRE 82 · commit 3: én diskret linje for Marc efter en "Vis mig nu"-
 // kørsel (frames sporet/sprunget, ms/frame, tid mod videoens varighed) - kun
 // synlig med ?diag=1, så almindelig atlet-brug er uændret.
@@ -4312,7 +4319,9 @@ function plEvidence(f,c,r,model) {
   const circle=edge*(.45+.35*cover+.20*pairCover)-radial*40-pairDev*85-pairSpread*35;
   return {score:circle-app*18-color*80-(1-hist)*75-polar*150,circle,cover,app,color,hist,polar,pairCover};
 }
-function plSearch(f,pred,r,model,radius,step) {
+function plSearch(f,pred,r,model,radius,step,tag,tNow) {
+  const probeT0=TRACKER_PROBE?performance.now():0;
+  let probeGrid=0;
   const candidates=[];
   const x0=plClamp(pred.x-radius,r*.45,f.cw-r*.45),x1=plClamp(pred.x+radius,r*.45,f.cw-r*.45);
   const y0=plClamp(pred.y-radius,r*.45,f.ch-r*.45),y1=plClamp(pred.y+radius,r*.45,f.ch-r*.45);
@@ -4320,7 +4329,12 @@ function plSearch(f,pred,r,model,radius,step) {
     const e=plEvidence(f,{x,y},r,model),dist=Math.hypot(x-pred.x,y-pred.y)/r;
     candidates.push({x,y,...e,total:e.score-dist*2.5});
   }
-  if(!candidates.length)return null;
+  probeGrid=candidates.length;
+  if(!candidates.length){
+    if(TRACKER_PROBE&&plSearchProbeLog)plSearchProbeLog.push({tag:tag||null,t:tNow??null,
+      ms:+(performance.now()-probeT0).toFixed(3),grid:0,empty:true});
+    return null;
+  }
   const paired=candidates.filter(q=>q.pairCover>=.4&&q.cover>=.5),pool=paired.length?paired:candidates;
   const maxCircle=Math.max(...pool.map(q=>q.circle));
   const eligible=pool.filter(q=>q.circle>=Math.max(8,maxCircle*.70)).sort((a,b)=>b.total-a.total);
@@ -4329,9 +4343,13 @@ function plSearch(f,pred,r,model,radius,step) {
   for(let y=b0.y-step;y<=b0.y+step;y+=fine)for(let x=b0.x-step;x<=b0.x+step;x+=fine){
     const e=plEvidence(f,{x,y},r,model),dist=Math.hypot(x-pred.x,y-pred.y)/r;
     const q={x,y,...e,total:e.score-dist*2.5};
+    probeGrid++;
     if(q.pairCover>=.4&&q.cover>=.5&&q.circle>=Math.max(8,maxCircle*.70)&&q.total>best.total)best=q;
   }
-  best.margin=second?best.total-second.total:99;return best;
+  best.margin=second?best.total-second.total:99;
+  if(TRACKER_PROBE&&plSearchProbeLog)plSearchProbeLog.push({tag:tag||null,t:tNow??null,
+    ms:+(performance.now()-probeT0).toFixed(3),grid:probeGrid,empty:false});
+  return best;
 }
 function plGlobalSearch(f,pred,r,model) {
   const step=Math.max(4,r*.12),candidates=[];
@@ -4636,6 +4654,12 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
   const startT=video.currentTime,startFrame=Math.round(startT*30);
   const benchmarkStartedAt=TRACKER_BENCHMARK?performance.now():0;
   const benchmarkWorkMs=[];
+  plSearchProbeLog=TRACKER_PROBE?[]:null;
+  // Eksponeret LIVE (samme array-reference, muteres på plads) så et Node-
+  // side loft (fx 5 minutters ægte tid, se e2e/coach-sporing-trace-real.mjs)
+  // kan læse tallene selvom selve sporings-loopet aldrig når at publicere
+  // window.__vcTrackerBenchmarkLast (den skrives først når loopet slutter).
+  if(TRACKER_PROBE)window.__vcPlSearchProbeLog=plSearchProbeLog;
   let previousPath=options.correction&&strokes.findLast?strokes.findLast(s=>s.type==='path'&&s.times&&
     startT>=s.times[0]&&startT<s.times[s.times.length-1]):null;
   let path;
@@ -4677,9 +4701,9 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
   const auditStep=Math.max(3,radius*.10),calPad=radius*2.8;
   const calibrationFrame=plCapture(p0.x-calPad,p0.y-calPad,calPad*2,calPad*2);
   const localCalibration=plateIdentityUsable?
-    plSearch(calibrationFrame,p0,radius,plateModel,radius*.45,auditStep):null;
+    plSearch(calibrationFrame,p0,radius,plateModel,radius*.45,auditStep,'calibration-local',startT):null;
   const homeCalibration=plateIdentityUsable?
-    plSearch(calibrationFrame,p0,radius,plateModel,radius*1.15,auditStep):null;
+    plSearch(calibrationFrame,p0,radius,plateModel,radius*1.15,auditStep,'calibration-home',startT):null;
   const quickCalibration=plateIdentityUsable?
     mpQuickPlateSearch(calibrationFrame,p0,radius,plateModel):null;
   const localBias=localCalibration?{x:localCalibration.x-p0.x,y:localCalibration.y-p0.y}:{x:0,y:0};
@@ -4692,6 +4716,12 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
   let homeCorrectionPending=null,recoveryPending=null,correctionPending=null,fullAuditFrames=0;
   const correctionHistory=[];
   const trackerProbe=TRACKER_PROBE?[]:null;
+  // ORDRE 225 · commit 1 — samme LIVE-eksponering som plSearchProbeLog: et
+  // hæng der ALDRIG publicerer window.__vcTrackerBenchmarkLast kan stadig
+  // læses undervejs (pr.-frame moves/kept/jump/accepted), så et Node-side
+  // loft kan se om selve frame-loopet fortsætter (bare uden fund) eller
+  // helt går i stå (ingen nye indslag).
+  if(TRACKER_PROBE)window.__vcTrackerProbeLog=trackerProbe;
   let benchOutputX=p0.x,benchPreviousRaw={x:p0.x,y:p0.y};
   // Dødløft: en kort, fuld skivekontrol ved starten og ved hver tilbagekomst
   // til gulvzonen. Det bevarer genankringen efter kamerarystelser uden den
@@ -4699,6 +4729,12 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
   // Startpositionen er allerede "home". Arm først home-auditet ved en reel
   // tilbagekomst; ellers trækker det bekræftede gulvanker imod første ascent.
   let wasNearHome=deadliftMode,homeEntryFrames=0;
+  // ORDRE 225 · commit 2 — kun til det ærlige loft-budskab nedenfor ("Stangen
+  // blev tabt ved rep X"). Tæller hjemme-zone-ankomster (samme betingelse som
+  // homeEntryFrames ovenfor), IKKE en ny rep-detektor — den rigtige rep-
+  // tælling sker stadig efterfølgende i analyzePath. Start ved 1 for dødløft
+  // (stangen starter allerede hjemme, klar til rep 1).
+  let repInProgress=deadliftMode?1:0;
   // ORDRE 45 · commit 2: spor kun det der skal ses. Når stangen tydeligvis
   // har lavet mindst ét fuldt rep OG er vendt tilbage tæt på startpunktet OG
   // holder sig i ro der i IDLE_STOP_S sekunder i træk, er sættet forbi -
@@ -4714,6 +4750,48 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
   // samme, hvis pausen slutter. Nulstilles ved enhver usikker/hurtig frame.
   const QUIET_NEEDED=6,QUIET_SPEED=radius*.04;
   let quietStreak=0,skippedLast=false,skippedFrames=0;
+  // ORDRE 225 · commit 2 — et ærligt loft. RAPPORT-225's commit 1 målte at
+  // selve hjemme-genfindingen (plSearch) er billig (7 forsøg = 351ms samlet
+  // på et rigtigt klip der ALDRIG blev færdig) og at hele kalibrering+aktiv
+  // sporing til 97% kun tog ~20s realtid — problemet er IKKE en dyr, gentaget
+  // søgning, men at browserens frame-levering (requestVideoFrameCallback) kan
+  // gå helt i stå nær klippets slutning, uden at NOGEN kode i selve
+  // frame-loopet nogensinde kaldes igen for at opdage det (se
+  // docs/RAPPORT-225.md commit 1). Derfor er dette en RIGTIG wall-clock-timer
+  // (setTimeout, uafhængig af om der nogensinde kommer flere frames), ikke et
+  // tjek inde i selve processFrame. 10s er >25x den dyreste målte
+  // genfindingsserie og halvdelen af hele klippets aktive sporingstid til
+  // 97% — rigelig margin til en langsom, men reel genfinding, uden at holde
+  // en coach hængende i minutter. Sporingen INDTIL tabet er uændret byte for
+  // byte; dette stopper den kun, det ændrer intet ved selve søge- eller
+  // accept/afvisnings-logikken.
+  const LOST_BUDGET_MS=10000;
+  // ORDRE 225 · commit 2 (rettet) — en setTimeout ARMERET INDEFRA selve
+  // processFrame (dvs. inde i requestVideoFrameCallback-kædens egen
+  // kaldsstak) viste sig IKKE at fyre under det observerede hæng, selvom en
+  // almindelig setInterval sat op FØR sporingen starter (samme mønster som
+  // ORDRE 45's egne intervaller) fyrede pålideligt hvert sekund gennem hele
+  // hænget (verificeret manuelt: 60/60 tik på et rigtigt klip der aldrig kom
+  // videre) — en engangs-timer arme t midt i rVFC-kædens kontekst ser ud til
+  // at blive udsultet på samme måde som selve rVFC, mens en uafhængig, tidligt
+  // oprettet interval ikke gør. Derfor: ÉT setInterval oprettet FØR
+  // requestVideoFrameCallback-loopet starter (ikke inde i processFrame),
+  // der blot LÆSER en almindelig variabel (lastAcceptedRealMs, en synkron
+  // tildeling - ingen ny timer-registrering fra rVFC-konteksten).
+  let lastAcceptedRealMs=performance.now(),lostBudgetExceeded=false;
+  const onLostBudgetExceeded=()=>{
+    if(!tracking||lostBudgetExceeded)return;
+    lostBudgetExceeded=true;path.lostTimeoutAt=anchorTime;path.lostTimeoutRep=repInProgress;
+    tracking=false;
+    const msg=`Stangen blev tabt ved rep ${repInProgress} · klip fra ${anchorTime.toFixed(1)}s eller klik stangen igen`;
+    say(`⚠ ${msg}`);
+    if(ATHLETE&&setAthleteState)setAthleteState('error',msg);
+    if(!video.paused)video.pause();
+  };
+  const lostWatchdogInterval=deadliftMode?setInterval(()=>{
+    if(!tracking||lostBudgetExceeded){clearInterval(lostWatchdogInterval);return;}
+    if(performance.now()-lastAcceptedRealMs>LOST_BUDGET_MS)onLostBudgetExceeded();
+  },1000):null;
   if(features.length<5){
     tracking=false;path.lowConf=(path.lowConf||0)+1;path.superseded=true;
     if(TRACKER_BENCHMARK){
@@ -4721,7 +4799,7 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
         elapsedMs:performance.now()-benchmarkStartedAt,canvas:{w:ocan.width,h:ocan.height},
         plateRadius:radius,initialFeatures:features.length,pts:path.pts.map(q=>({...q})),
         times:[...path.times],valid:[...path.valid],confidence:[...path.confidence],
-        ...(TRACKER_PROBE?{frameProbe:trackerProbe}: {})};
+        ...(TRACKER_PROBE?{frameProbe:trackerProbe,plSearchProbe:plSearchProbeLog}: {})};
       publishTrackerBenchmarkRun(run);
     }
     say('⚠ For få tydelige detaljer ved punktet · vælg et tydeligt område omkring skivens nav');
@@ -4806,7 +4884,7 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
         if(fullAuditFrames>0){
           const localR=radius*.45,pad=localR+radius*1.4+auditStep*2;
           const auditFrame=plCapture(nx-pad,ny-pad,pad*2,pad*2);
-          correction=plSearch(auditFrame,{x:nx,y:ny},radius,plateModel,localR,auditStep);
+          correction=plSearch(auditFrame,{x:nx,y:ny},radius,plateModel,localR,auditStep,'quick-audit',tNow);
           bias=localBias;kind='full';correctionX=correction.x-bias.x;
           correctionY=correction.y-bias.y;distance=Math.hypot(correctionX-nx,correctionY-ny);
           fullAuditFrames--;
@@ -4841,11 +4919,11 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
         }else {correctionPending=null;correctionHistory.length=0;}
       }
       const nearHome=Math.hypot(nx-p0.x,ny-p0.y)<=radius*1.35;
-      if(plateIdentityUsable&&deadliftMode&&nearHome&&!wasNearHome)homeEntryFrames=10;
+      if(plateIdentityUsable&&deadliftMode&&nearHome&&!wasNearHome){homeEntryFrames=10;repInProgress++;}
       if(plateIdentityUsable&&deadliftMode&&nearHome&&homeEntryFrames>0){
         const homeR=radius*1.15,pad=homeR+radius*1.4+auditStep*2;
         const homeFrame=plCapture(p0.x-pad,p0.y-pad,pad*2,pad*2);
-        const homeHit=plSearch(homeFrame,p0,radius,plateModel,homeR,auditStep);
+        const homeHit=plSearch(homeFrame,p0,radius,plateModel,homeR,auditStep,'home-confirm',tNow);
         const homeStrong=homeHit&&homeHit.circle>Math.max(9,plateBase.circle*.34)&&
           homeHit.cover>=.45&&homeHit.pairCover>=.35&&homeHit.app<2.6;
         if(homeStrong){
@@ -4901,9 +4979,17 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
         const homeR=radius*1.15,step=Math.max(3,radius*.10);
         const pad=homeR+radius*1.4+step*2;
         const homeFrame=plCapture(p0.x-pad,p0.y-pad,pad*2,pad*2);
-        const found=plSearch(homeFrame,p0,radius,plateModel,homeR,step);
+        const found=plSearch(homeFrame,p0,radius,plateModel,homeR,step,'home-recovery',tNow);
         const strong=found&&found.circle>Math.max(9,plateBase.circle*.34)&&
           found.cover>=.45&&found.pairCover>=.35&&found.app<2.6;
+        // ORDRE 221 · commit 2 — kun instrumentering (probe er null uden
+        // ?trackerProbe=1): probe.recoveryGate klassificerer HVERT
+        // genfindings-forsøg i én af seks gensidigt udelukkende grunde, uden
+        // at ændre selve accept/afvisnings-logikken en tøddel (samme
+        // betingelser, samme rækkefølge, kun mærket).
+        if(probe)probe.homeSearch=found?
+          {circle:+found.circle.toFixed(2),cover:+found.cover.toFixed(3),
+            pairCover:+found.pairCover.toFixed(3),app:+found.app.toFixed(3)}:null;
         if(strong){
           // plSearch returnerer det rå fund. Brug samme kalibrerede home-domæne
           // som acquisition-starten, så et stabilt fund ikke bliver et synligt
@@ -4920,8 +5006,10 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
             calibratedRecoveryCenter:rawRecoveryCenter;
           if(probe){probe.recoveryCandidate={...recoveryCenter};probe.recoveryRawBias={...homeBias};
             probe.recoverySource=recoveryCenter===calibratedRecoveryCenter?'calibrated':'raw';}
-          if(recoveryPending&&Math.hypot(recoveryCenter.x-recoveryPending.x,
-              recoveryCenter.y-recoveryPending.y)<radius*.45){
+          const hadPending=!!recoveryPending;
+          const pendingMatches=hadPending&&Math.hypot(recoveryCenter.x-recoveryPending.x,
+            recoveryCenter.y-recoveryPending.y)<radius*.45;
+          if(pendingMatches){
             let recoveryFrame=currentFrame;
             let recovered=mpGoodFeatures(recoveryFrame,recoveryCenter,radius);
             if(recovered.length<5){
@@ -4930,16 +5018,26 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
               recovered=mpGoodFeatures(recoveryFrame,recoveryCenter,radius);
             }
             const recoveryJump=Math.hypot(recoveryCenter.x-cur.x,recoveryCenter.y-cur.y);
-            if(probe){probe.recoveryFeatures=recovered.length;probe.recoveryJump=recoveryJump;}
+            if(probe){probe.recoveryFeatures=recovered.length;probe.recoveryJump=recoveryJump;
+              probe.recoveryMaxJump=maxJump;}
             if(recovered.length>=5&&recoveryJump<=maxJump){
               cur={x:recoveryCenter.x,y:recoveryCenter.y};vel={x:0,y:0};anchorFrame=recoveryFrame;
               anchorTime=tNow;features=recovered;accepted=true;lost=0;
               homeCorrectionPending=null;recoveryPending=null;
               frameConfidence=Math.min(1,recovered.length/12);
               path.homeRecoveries=(path.homeRecoveries||0)+1;
+              if(probe)probe.recoveryGate='recovered';
+            }else if(probe){
+              probe.recoveryGate=recovered.length<5?'recovered-features-too-few':'recovery-jump-too-large';
             }
-          }else recoveryPending={...recoveryCenter};
-        }else recoveryPending=null;
+          }else{
+            recoveryPending={...recoveryCenter};
+            if(probe)probe.recoveryGate=hadPending?'pending-mismatch':'pending-first-look';
+          }
+        }else{
+          recoveryPending=null;
+          if(probe)probe.recoveryGate=found?'weak-plate-match':'no-plate-search-hit';
+        }
       }
     }
     if(probe){
@@ -4952,6 +5050,10 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
       }
       trackerProbe.push(probe);
     }
+    // ORDRE 225 · commit 2 — det ærlige loft (lostWatchdogInterval ovenfor)
+    // læser kun denne variabel; ingen ny timer-registrering herfra (se
+    // begrundelsen ved lostWatchdogInterval).
+    if(deadliftMode&&accepted)lastAcceptedRealMs=performance.now();
     let outputPoint={...cur};
     if(benchMode){
       // Trackeren beholder sit uredigerede center internt. Ved langsom bænk
@@ -5039,13 +5141,19 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
       await seekTo(video.currentTime+FRAME);await processFrame(video.currentTime);
     }
   }
+  // ORDRE 225 · commit 2 — ryd op i det ærlige lofts interval: loopet kan
+  // slutte af andre grunde (klippet blev færdigt, earlyStopped, manuelt stop)
+  // mens der stadig er en frame i gang med at være "tabt" — det skal ikke
+  // blive ved med at tikke bagefter og overskrive et allerede afsluttet
+  // resultat.
+  if(lostWatchdogInterval)clearInterval(lostWatchdogInterval);
   tracking=false;playBtn.textContent=playLabel(false);barBtn.textContent='🎯 Stangbane';
   barBtn.classList.remove('active');if(SLIM&&!analyzing)say('');
   if(TRACKER_BENCHMARK){
     const sorted=[...benchmarkWorkMs].sort((a,b)=>a-b);
     const percentile=p=>sorted.length?sorted[Math.min(sorted.length-1,Math.floor(sorted.length*p))]:null;
     const invalid=(path.valid||[]).filter(v=>!v).length;
-    const run={schema:1,outcome:'completed',startedAt:startT,session:{...session},
+    const run={schema:1,outcome:lostBudgetExceeded?'lost_budget_exceeded':'completed',startedAt:startT,session:{...session},
       endedAt:path.times[path.times.length-1]??startT,
       mediaSeconds:Math.max(0,(path.times[path.times.length-1]??startT)-startT),
       elapsedMs:performance.now()-benchmarkStartedAt,canvas:{w:ocan.width,h:ocan.height},
@@ -5062,13 +5170,34 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
       workMs:{p50:percentile(.5),p80:percentile(.8),p95:percentile(.95),max:sorted.at(-1)??null},
       pts:path.pts.map(q=>({...q})),times:[...path.times],valid:[...(path.valid||[])],
       confidence:[...(path.confidence||[])],
-      ...(TRACKER_PROBE?{frameProbe:trackerProbe}: {})};
+      ...(TRACKER_PROBE?{frameProbe:trackerProbe,plSearchProbe:plSearchProbeLog}: {})};
     publishTrackerBenchmarkRun(run);
   }
   freezeRawAcquisition(path,session);
   analyzePath(path);
+  // ORDRE 211 · commit 1 — instrumentering, ingen ændring i sporings- eller
+  // rep-detektionslogikken ovenfor. Kun aktiv under ?benchmark=1 (samme guard
+  // som TRACKER_BENCHMARK/publishTrackerBenchmarkRun i forvejen), aldrig i
+  // produktion. Lægger rep-analysen (hvor de eksisterende benchmark-felter
+  // pts/times/valid/frameProbe kun dækker RÅ sporing, før analyzePath) ind i
+  // samme allerede-publicerede run-objekt.
+  if(TRACKER_BENCHMARK&&window.__vcTrackerBenchmarkLast){
+    window.__vcTrackerBenchmarkLast.analysis=path.analysis?{
+      repsDetectedCount:path.analysis.reps.length,
+      reps:path.analysis.reps.map(r=>({start:r.start,end:r.end,
+        mcv:Number.isFinite(r.mcv)?+r.mcv.toFixed(4):null,
+        romCm:Number.isFinite(r.romCm)?+r.romCm.toFixed(2):null,
+        validRatio:+r.validRatio.toFixed(3)})),
+    }:null;
+  }
   const badPct=path.lowConf&&path.pts.length?Math.round(path.lowConf/path.pts.length*100):0;
-  if(badPct>5){
+  if(lostBudgetExceeded){
+    // ORDRE 225 · commit 2 — allerede sagt af onLostBudgetExceeded, men
+    // gentaget her (samme 8s-mønster som badPct) for den direkte
+    // bjælke-sporingsflow der (modsat runFullAnalysis) ikke selv rydder
+    // beskeden op bagefter.
+    setTimeout(()=>{if(!awaitShClick)say('');},8000);
+  }else if(badPct>5){
     say(`⚠ Trackeren holdt sidste sikre punkt i ${badPct}% af sættet · kontrollér banen`);
     setTimeout(()=>{if(!awaitShClick)say('');},8000);
   }else if(earlyStopped){
@@ -6780,7 +6909,14 @@ async function runFullAnalysis(barPt) {
     if (resultPath && !usableRep) resultPath.superseded = true;
     updateCleanReviewUI(null, true);
     vcSetWorkspace('video');
-    const detail = 'Ingen tydelig rep blev fundet. Kontrollér startpunktet og skiveringen, og prøv igen.';
+    // ORDRE 225 · commit 2 — det ærlige loft (se startMultipointTracking)
+    // sætter lostTimeoutAt/lostTimeoutRep på PATH'en, ikke kun en midlertidig
+    // say()-besked, fordi denne funktions egen say('') to linjer ovenfor
+    // allerede har overskrevet den. Uden dette felt ville en coach kun se den
+    // generiske "ingen rep fundet"-besked, ikke HVOR sporingen gav op.
+    const detail = resultPath?.lostTimeoutAt != null
+      ? `Stangen blev tabt ved rep ${resultPath.lostTimeoutRep} · klip fra ${resultPath.lostTimeoutAt.toFixed(1)}s eller klik stangen igen`
+      : 'Ingen tydelig rep blev fundet. Kontrollér startpunktet og skiveringen, og prøv igen.';
     if (ATHLETE && setAthleteState) setAthleteState('error', detail);
     say(detail);
     if (!ATHLETE) setTimeout(() => say(''), 7000);

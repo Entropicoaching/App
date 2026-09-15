@@ -2,6 +2,60 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script>(function(){
+function roleCacheKey(userId) {
+  return `entropi_role_guess_${userId}`
+}
+
+function readCachedRole(userId) {
+  try { return localStorage.getItem(roleCacheKey(userId)) } catch { return null }
+}
+
+function writeCachedRole(userId, role) {
+  try { localStorage.setItem(roleCacheKey(userId), role) } catch { /* privat fane e.l. — gættet dropper blot næste gang */ }
+}
+
+const AUTH_TOKEN_KEY_PATTERN = /^sb-.*-auth-token$/
+
+function findAuthTokenKey(storage) {
+  for (let i = 0; i < storage.length; i++) {
+    const key = storage.key(i)
+    if (key && AUTH_TOKEN_KEY_PATTERN.test(key)) return key
+  }
+  return null
+}
+
+function guessRoleFromStorage(storage) {
+  try {
+    const tokenKey = findAuthTokenKey(storage)
+    if (!tokenKey) return null
+    const raw = storage.getItem(tokenKey)
+    if (!raw) return null
+    const userId = JSON.parse(raw)?.user?.id
+    if (!userId) return null
+    return storage.getItem(roleCacheKey(userId))
+  } catch {
+    return null
+  }
+}
+
+function preloadHrefForRole(role, chunkHrefs) {
+  if (role === 'coach') return chunkHrefs?.coach || null
+  if (role === 'athlete') return chunkHrefs?.athlete || null
+  return null
+}
+
+try {
+  var __role = guessRoleFromStorage(window.localStorage);
+  var __href = preloadHrefForRole(__role, {"coach":"/assets/Dashboard-_taksrN9.js","athlete":"/assets/AthleteView-D2kTV3xc.js"});
+  if (__href) {
+    var __link = document.createElement('link');
+    __link.rel = 'modulepreload';
+    __link.href = __href;
+    document.head.appendChild(__link);
+  }
+} catch (e) { /* ingen forudindlæsning ved fejl, adfærd som i dag */ }
+})();</script>
     <link rel="icon" type="image/svg+xml" href="/icon.svg?v=8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#141410" />
@@ -17,7 +71,7 @@
     <meta name="apple-mobile-web-app-title" content="Entropi" />
     <meta name="mobile-web-app-capable" content="yes" />
     <title>Entropi Coaching</title>
-    <script type="module" crossorigin src="/assets/index-B7Z3yTJr.js"></script>
+    <script type="module" crossorigin src="/assets/index-CYJ1lvGo.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-nqMpL4T3.css">
   </head>
   <body>
