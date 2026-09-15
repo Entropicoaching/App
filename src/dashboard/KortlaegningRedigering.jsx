@@ -8,10 +8,18 @@
 // "kendte" (alt muskelkort.js allerede kortlægger, plus Marcs egne
 // rettelser). Et frit navnefelt findes også, for øvelser der endnu ikke er
 // dukket op i nogen logget/planlagt uge.
+//
+// ORDRE 209 (15. sep), commit 3: gem/fjern går nu gennem rettelser.js's
+// async, bagende-agnostiske API (Supabase hvis tabellen findes, ellers
+// stadig localStorage) — se rettelser.js's egen kommentar. `lagerType`
+// (fra VolumenKort.jsx, som allerede har slået det op til hentRettelser)
+// viser coachen hvor rettelsen rent faktisk lander, med samme ordlyd som
+// docs/VOLUMEN.md.
 
 import { useState } from 'react'
 import { MUSKELGRUPPER, PRIMÆR, MEDVIRKENDE, kendteOevelser, slaaOevelseOp, normaliserOevelsesnavn } from '../volume/muskelkort.js'
 import { gemRettelse, fjernRettelse } from '../volume/rettelser.js'
+import { supabase } from '../supabase'
 import { s } from '../dashboardShared'
 
 const ANDEL_MULIGHEDER = [
@@ -27,12 +35,13 @@ function raekkerFraOpslag(grupper) {
   return grupper.length ? grupper.map(g => ({ gruppe: g.gruppe, andel: g.andel })) : [tomRaekke()]
 }
 
-export default function KortlaegningRedigering({ rettelser, ukendteOevelseNavne, onRettelserAendret }) {
+export default function KortlaegningRedigering({ rettelser, ukendteOevelseNavne, onRettelserAendret, lagerType, coachId }) {
   const [aaben, setAaben] = useState(false)
   const [valgtNavn, setValgtNavn] = useState('')
   const [nytNavn, setNytNavn] = useState('')
   const [raekker, setRaekker] = useState([])
   const [fejl, setFejl] = useState(null)
+  const [gemmer, setGemmer] = useState(false)
 
   const kendteNavne = kendteOevelser()
   const rettedeNavne = [...rettelser.values()].map(r => r.oevelseNavn)
@@ -62,15 +71,19 @@ export default function KortlaegningRedigering({ rettelser, ukendteOevelseNavne,
     setRaekker(prev => prev.filter((_, j) => j !== i))
   }
 
-  function gem() {
-    const ok = gemRettelse({ oevelseNavn: valgtNavn, grupper: raekker })
+  async function gem() {
+    setGemmer(true)
+    const ok = await gemRettelse({ oevelseNavn: valgtNavn, grupper: raekker }, { client: supabase, coachId })
+    setGemmer(false)
     if (!ok) { setFejl('Kunne ikke gemme — mindst én gruppe skal være valgt.'); return }
     onRettelserAendret?.()
     luk()
   }
 
-  function fjern() {
-    fjernRettelse(valgtNavn)
+  async function fjern() {
+    setGemmer(true)
+    await fjernRettelse(valgtNavn, { client: supabase, coachId })
+    setGemmer(false)
     onRettelserAendret?.()
     luk()
   }
@@ -86,6 +99,11 @@ export default function KortlaegningRedigering({ rettelser, ukendteOevelseNavne,
     <div style={s.overlay} onClick={e => e.target === e.currentTarget && luk()}>
       <div style={{ ...s.modal, maxWidth: '520px', maxHeight: '88vh', overflowY: 'auto' }}>
         <div style={s.modalTitle}>Ret kortlægning</div>
+        <div style={{ fontSize: '0.6rem', color: '#7a7770', marginBottom: '1.1rem', lineHeight: 1.5 }}>
+          {lagerType === 'supabase'
+            ? 'Gemmes på din konto — synkroniseret på alle dine enheder.'
+            : 'Gemmes på denne enhed — ikke synkroniseret til dine andre enheder.'}
+        </div>
 
         {!valgtNavn ? (
           <>
@@ -159,11 +177,11 @@ export default function KortlaegningRedigering({ rettelser, ukendteOevelseNavne,
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem' }}>
               <div>
-                {harRettelseForValgt && <button style={s.btnDanger} onClick={fjern}>Fjern rettelse</button>}
+                {harRettelseForValgt && <button style={s.btnDanger} onClick={fjern} disabled={gemmer}>Fjern rettelse</button>}
               </div>
               <div style={{ display: 'flex', gap: '0.6rem' }}>
-                <button style={s.btnGhost} onClick={() => setValgtNavn('')}>Tilbage</button>
-                <button style={s.btnPrimary} onClick={gem}>Gem</button>
+                <button style={s.btnGhost} onClick={() => setValgtNavn('')} disabled={gemmer}>Tilbage</button>
+                <button style={s.btnPrimary} onClick={gem} disabled={gemmer}>{gemmer ? 'Gemmer…' : 'Gem'}</button>
               </div>
             </div>
           </>

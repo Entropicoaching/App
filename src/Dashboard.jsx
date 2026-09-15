@@ -4781,7 +4781,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 )}
               </div>
 
-              <VolumenKort athleteLogs={athleteLogs} weeks={weeks} />
+              <VolumenKort athleteLogs={athleteLogs} weeks={weeks} coachId={session.user.id} />
               </div>
             )}
 

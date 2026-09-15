@@ -18,11 +18,18 @@
 // alt kortlægningsarbejde i src/volume/muskelkort.js. Denne fil oversætter kun
 // Dashboard.jsx's egen athleteLogs-form (fetchAthleteLogs' indlejrede
 // exercises-relation) til de flade rækker beregn.js forventer.
-import { useState } from 'react'
+//
+// ORDRE 209 (15. sep), commit 3: hentRettelser er nu async (Supabase-bagende
+// hvis tabellen findes, ellers stadig localStorage — se rettelser.js). Kortet
+// henter rettelser + lagertype i én useEffect (afhænger af coachId, som
+// Dashboard.jsx sender ned fra sin session) i stedet for useState's
+// synkrone initializer, og geninlæser begge ved onRettelserAendret.
+import { useEffect, useState } from 'react'
 import { beregnVolumenPrUge } from '../volume/beregn.js'
 import { beregnPlanlagtDenneUge } from '../volume/planlagt.js'
 import { MUSKELGRUPPER, slaaOevelseOp } from '../volume/muskelkort.js'
-import { hentRettelser } from '../volume/rettelser.js'
+import { hentRettelser, hentLagerType } from '../volume/rettelser.js'
+import { supabase } from '../supabase'
 import { s } from '../dashboardShared'
 import VolumenGraf from './VolumenGraf'
 import KortlaegningRedigering from './KortlaegningRedigering'
@@ -115,8 +122,33 @@ function DenneUgePlanlagtModGennemfoert({ gennemfoertUge, planlagtUge }) {
   )
 }
 
-export default function VolumenKort({ athleteLogs, weeks }) {
-  const [rettelser, setRettelser] = useState(() => hentRettelser())
+export default function VolumenKort({ athleteLogs, weeks, coachId }) {
+  const [rettelser, setRettelser] = useState(new Map())
+  const [lagerType, setLagerType] = useState('lokalt')
+
+  async function genindlaesRettelser() {
+    const [nyeRettelser, nyLagerType] = await Promise.all([
+      hentRettelser({ client: supabase, coachId }),
+      hentLagerType({ client: supabase, coachId }),
+    ])
+    setRettelser(nyeRettelser)
+    setLagerType(nyLagerType)
+  }
+
+  // IIFE + aktiv-flag i stedet for at kalde genindlaesRettelser direkte: undgår
+  // at sætte state efter unmount (fx coachen skifter atlet midt i opslaget).
+  useEffect(() => {
+    let aktiv = true
+    ;(async () => {
+      const [nyeRettelser, nyLagerType] = await Promise.all([
+        hentRettelser({ client: supabase, coachId }),
+        hentLagerType({ client: supabase, coachId }),
+      ])
+      if (aktiv) { setRettelser(nyeRettelser); setLagerType(nyLagerType) }
+    })()
+    return () => { aktiv = false }
+  }, [coachId])
+
   const raekker = raekkerFraAthleteLogs(athleteLogs)
   const uger = beregnVolumenPrUge(raekker, { antalUger: ANTAL_UGER, rettelser })
   const ugerGraf = beregnVolumenPrUge(raekker, { antalUger: GRAF_UGER, rettelser })
@@ -135,7 +167,7 @@ export default function VolumenKort({ athleteLogs, weeks }) {
       <div style={s.cardLabel}>
         Volumen pr. muskelgruppe
         <KortlaegningRedigering rettelser={rettelser} ukendteOevelseNavne={ukendteOevelseNavne}
-          onRettelserAendret={() => setRettelser(hentRettelser())} />
+          lagerType={lagerType} coachId={coachId} onRettelserAendret={genindlaesRettelser} />
       </div>
       <div style={{ fontSize: '0.72rem', color: '#7a7770', lineHeight: 1.5, marginBottom: '1rem' }}>
         Sæt er ikke belastning. Tallene tæller gennemførte sæt, vægtet efter hvad øvelsen belaster.
