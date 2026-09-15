@@ -47,6 +47,7 @@
     "verify:videocoach-clip": "node scripts/verify-videocoach-clip.mjs",
     "verify:videocoach-upload-flow": "node scripts/verify-videocoach-upload-flow.mjs",
     "verify:videocoach-buttons-layout": "node scripts/verify-videocoach-buttons-layout.mjs",
+    "verify:videocoach-film-guide": "node scripts/verify-videocoach-film-guide.mjs",
     "verify:videocoach-plate-detect": "node scripts/verify-videocoach-plate-detect.mjs",
     "maal:app": "node scripts/maal-app.mjs",
     "maal:coach": "node scripts/maal-coach.mjs",
