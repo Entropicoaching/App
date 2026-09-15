@@ -50,9 +50,12 @@ async function readTable(mockUrl, name) {
 // forskudte positioner ved gentagne forsøg — "nyt klik = ny ring", se
 // public/videocoach.html's wizardClick). Returnerer true hvis en ring blev
 // fundet (banneret siger "Ram skiven"), false hvis alle forsøg fejlede.
-async function calibrate(frame, page, canvas, box) {
-  const target = truePos(CLICK_AT_S)
-  const basePos = { x: target.x * box.width / GEN_W, y: target.y * box.height / GEN_H }
+// ORDRE 221 · commit 3 — target/videoW/videoH er valgfrie (default: det
+// syntetiske klips egen truePos(CLICK_AT_S)/GEN_W/GEN_H, 100% uændret for
+// alle eksisterende kald), så e2e/coach-sporing-trace-real.mjs kan give et i
+// hånden målt klikpunkt for et RIGTIGT klip uden nogen truePos().
+async function calibrate(frame, page, canvas, box, target = truePos(CLICK_AT_S), videoW = GEN_W, videoH = GEN_H) {
+  const basePos = { x: target.x * box.width / videoW, y: target.y * box.height / videoH }
   for (let attempt = 0; attempt <= MAX_CALIBRATION_ATTEMPTS; attempt++) {
     await frame.locator('#allBtn').click()
     await page.waitForTimeout(attempt === 0 ? 400 : 250)
@@ -111,7 +114,8 @@ async function confirmAndWaitForTracking(frame, page, { maxIterations = 60 } = {
 // gennemført sporing, så et fund overlever selv en forventet fejl (klippet
 // er kendt fra ordre 200 til at fejle sporing). Rører intet ved selve
 // klik-flowet eller trackerens adfærd for eksisterende kald uden traceOut.
-export async function runCoachSporing(page, { appUrl, mockUrl, outDir, awaitingRow, clipPath, traceOut, maxIterations }) {
+export async function runCoachSporing(page, { appUrl, mockUrl, outDir, awaitingRow, clipPath, traceOut, maxIterations,
+  clickAtS = CLICK_AT_S, clickTarget, videoW = GEN_W, videoH = GEN_H }) {
   const shot = (name) => page.screenshot({ path: join(outDir, `coach-sporing-${name}.png`), fullPage: true })
 
   if (traceOut) {
@@ -162,7 +166,7 @@ export async function runCoachSporing(page, { appUrl, mockUrl, outDir, awaitingR
       v.addEventListener('seeked', resolve, { once: true })
       v.currentTime = t
     }),
-    CLICK_AT_S,
+    clickAtS,
   )
 
   const canvas = frame.locator('#canvas')
@@ -175,7 +179,9 @@ export async function runCoachSporing(page, { appUrl, mockUrl, outDir, awaitingR
   await page.waitForTimeout(300)
 
   // Klik 1+2: ⚡ og skivens midte — se calibrate() for genforsøgslogikken.
-  const calibrated = await calibrate(frame, page, canvas, box)
+  const calibrated = clickTarget
+    ? await calibrate(frame, page, canvas, box, clickTarget, videoW, videoH)
+    : await calibrate(frame, page, canvas, box)
   assert.ok(calibrated, 'auto-kalibreringen fandt ikke skiven efter gentagne forsøg')
   await shot('02-skive-fundet')
 

@@ -25,7 +25,7 @@ async function readStorageKeys(mockUrl) {
   return res.json()
 }
 
-export async function runVideoUpload(page, { appUrl, mockUrl, outDir, loginNeeded = true, clipPath: clipOverride = null }) {
+export async function runVideoUpload(page, { appUrl, mockUrl, outDir, loginNeeded = true, clipPath: clipOverride = null, liftLabel = 'Squat' }) {
   const shot = (name) => page.screenshot({ path: join(outDir, `video-upload-${name}.png`), fullPage: true })
   // ORDRE 200: coach-sporing.spec.mjs genbruger dette upload-skridt med sit
   // eget, sporbare klip (en skive med faktisk kontrast) i stedet for det
@@ -54,7 +54,7 @@ export async function runVideoUpload(page, { appUrl, mockUrl, outDir, loginNeede
   // er klar (se videocoach.html's begin()/setAthleteSubmitOpen) — ingen
   // sporing kræves på standardvejen.
   await frame.locator('#athleteSubmitSheet[hidden]').waitFor({ state: 'detached', timeout: 15000 })
-  await frame.locator('#liftSel').selectOption({ label: 'Squat' })
+  await frame.locator('#liftSel').selectOption({ label: liftLabel })
   await shot('01-sendeark')
   await frame.locator('#saveBtn').click()
 
