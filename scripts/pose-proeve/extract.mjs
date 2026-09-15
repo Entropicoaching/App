@@ -21,6 +21,12 @@
 // under normal afspilning IKKE var nok). 4) regn de seks kontrakt-felter for
 // billede 21-48 med PRÆCIS matematik.mjs's formler (= bane.py's egne).
 // 5) skriv outputs/pose-proeve/*.json.
+//
+// ORDRE 218, commit 1: harness.html finder nu OGSÅ skiven pr. billede
+// (skive.mjs, kørt i browseren i samme seek-loop) — stangens position
+// bruger skiven når den valideres, håndleddet er nu kun fallback. Se
+// docs/RAPPORT-218.md og skive.mjs's egen toptekst for "stå på skuldre"-
+// vurderingen.
 
 import { existsSync, mkdirSync, copyFileSync, writeFileSync } from 'node:fs'
 import { spawnSync } from 'node:child_process'
@@ -141,13 +147,36 @@ async function main() {
     throw new Error(`Kun ${raw.frames.length} billeder fanget — færre end FRAME_LOCKOUT (${FRAME_LOCKOUT}). Kan ikke bygge banen.`)
   }
 
+  // ORDRE 218, commit 1: fysisk sandsynlighedsport — en gyldig skive-
+  // detektion kan IKKE ligge over lidt mere end lockout-højden (bar-banen
+  // for et dødløft går monotont fra ~gulvet til lidt over hoftehøjde
+  // stående, ALDRIG højere). PLAUSIBEL_Y_MAX_FL=3.6 er en rundhåndet
+  // margin over Drishtis egen lockout-værdi (~2,6 fl) — ikke hendes tal
+  // genbrugt som facit, kun kroppens egen fysiske grænse. Fanget under
+  // fejlsøgning: findPlate() fandt jævnligt et andet, lige så
+  // veldefineret rundt objekt langt over den sande skive i de tidlige
+  // billeder (spread/npair kunne ikke selv skelne det fra en rigtig
+  // skive, se docs/RAPPORT-218.md) — denne port erstatter IKKE
+  // visuel skelnen, den kasserer kun fysisk umulige svar til fordel for
+  // håndled-fallback, samme ærlige "ingen gæt"-linje som skive.mjs's
+  // egne valideringer.
+  const PLAUSIBEL_Y_MIN_FL = -0.3
+  const PLAUSIBEL_Y_MAX_FL = 3.6
+  function plausibel(skive) {
+    if (!skive) return null
+    const yFl = (ref.floor_y_px - skive.y) / ref.foot_length_px
+    return (yFl >= PLAUSIBEL_Y_MIN_FL && yFl <= PLAUSIBEL_Y_MAX_FL) ? skive : null
+  }
+
+  const skiveByIndex = new Map(raw.frames.map(f => [f.index, plausibel(f.skive)]))
   const maalinger = []
   for (let idx = FRAME_START; idx <= FRAME_LOCKOUT; idx++) {
     const m = measured[idx]
     if (!m) throw new Error(`Billede ${idx} har ingen fundet krop — kan ikke udfylde banen uden hul.`)
     const tidspunktMs = (idx - FRAME_START) / NOMINAL_FPS * 1000
-    maalinger.push(beregnKontraktPunkt(idx, tidspunktMs, m, ref))
+    maalinger.push(beregnKontraktPunkt(idx, tidspunktMs, m, ref, skiveByIndex.get(idx) || null))
   }
+  const nSkiveFundet = maalinger.filter(m => m.stang_kilde.startsWith('skive')).length
 
   mkdirSync(OUT_DIR, { recursive: true })
   const outPath = join(OUT_DIR, 'marc-doedloeft-270-bane.json')
@@ -173,7 +202,13 @@ async function main() {
     model: 'pose_landmarker_full (float16), @mediapipe/tasks-vision, delegate=CPU, runningMode=IMAGE, numPoses=1',
     tidsmaaling: {
       ekstraktion_ms: raw.extractionMs,
+      skivedetektion_ms: raw.skiveMs,
       total_ms_inkl_transkodering_og_browseropstart: t1 - t0,
+    },
+    skive: {
+      billeder_med_valideret_skive: nSkiveFundet,
+      billeder_i_alt_i_banen: maalinger.length,
+      note: 'Se scripts/pose-proeve/skive.mjs — genbrug af videocoach.html\'s recenterOnPlate()-kantscan, ny grov gittersøgning fordi den fulde live-tracker kræver klik+kontinuitet.',
     },
     note: (
       'Denne fil er IKKE en del af docs/MAALING-KONTRAKT.md\'s format — den er ' +
@@ -185,7 +220,8 @@ async function main() {
   console.log(`\nSkrev ${outPath} (${maalinger.length} målinger) og ${refPath}.`)
   console.log(`Side valgt: ${side} (venstre=${sideAvg.left.toFixed(3)}, højre=${sideAvg.right.toFixed(3)})`)
   console.log(`${nFundet}/${raw.frames.length} billeder med fundet krop.`)
-  console.log(`Tid: ekstraktion ${(raw.extractionMs / 1000).toFixed(1)}s, total ${((t1 - t0) / 1000).toFixed(1)}s (inkl. transkodering + browseropstart).`)
+  console.log(`${nSkiveFundet}/${maalinger.length} billeder i banen med valideret skive (resten: håndled-fallback).`)
+  console.log(`Tid: ekstraktion ${(raw.extractionMs / 1000).toFixed(1)}s (heraf skivedetektion ${(raw.skiveMs / 1000).toFixed(1)}s), total ${((t1 - t0) / 1000).toFixed(1)}s (inkl. transkodering + browseropstart).`)
 }
 
 main().catch(err => { console.error('FEJL:', err.message); process.exit(1) })
