@@ -14,6 +14,27 @@ import LazyBoundary from './LazyBoundary'
 const dashboardFactory = () => import('./Dashboard')
 const athleteViewFactory = () => import('./AthleteView')
 
+// ORDRE 201 — kæden foran Dashboard/AthleteView var ren sekventiel:
+// rolleopslaget (profiles?select=role) ventede på hoved-bundtet, og KUN
+// DEREFTER startede den rigtige chunks download — se docs/RAPPORT-193.md's
+// waterfall (fase 2→3, ~2,1s ekstra ventetid). Et forsøg på at hente BEGGE
+// chunks spekulativt (parallelt med rolleopslaget) blev afprøvet og
+// FRAVALGT — se docs/VALG-201.md: under den throttlede mobilprofils
+// begrænsede båndbredde konkurrerer de to chunks om samme rør, og den
+// FAKTISK nødvendige chunk bliver MÅLBART langsommere, ikke hurtigere.
+// I stedet: husk rollen lokalt fra sidste succesfulde opslag for DENNE
+// bruger, og render den gættede visning UDEN at vente på netværket — kun
+// ét chunk-kald, ingen konkurrence. Det ægte opslag kører stadig i
+// baggrunden og retter sig selv (setRole) hvis gættet var forkert (fx
+// rollen blev ændret server-side siden sidst) — se resolveRole nedenfor.
+function roleCacheKey(userId) { return `entropi_role_guess_${userId}` }
+function readCachedRole(userId) {
+  try { return localStorage.getItem(roleCacheKey(userId)) } catch { return null }
+}
+function writeCachedRole(userId, role) {
+  try { localStorage.setItem(roleCacheKey(userId), role) } catch { /* privat fane e.l. — gættet dropper blot næste gang */ }
+}
+
 // Ordre 163 · del 4 (billig gevinst): et skelet i stedet for ren mørk tekst.
 // Appens tema er næsten sort (#141410) i alle indlæsningstilstande — ren
 // tekst i lav kontrast på en flere sekunder lang koldstart (se Del 1's mål:
@@ -88,11 +109,15 @@ function App() {
 
     // Slår brugerens rolle op robust. Degraderer ALDRIG en coach til athlete på
     // en transient fejl, og efterlader aldrig appen hængende i "Indlæser...".
-    async function resolveRole(userId, email) {
+    // hadGuess: true når et cachet gæt (se readCachedRole ovenfor) allerede
+    // viser en visning — en transient fejl her skal IKKE rive den fungerende,
+    // gættede visning ned (kun genvist for en helt frisk bruger uden gæt,
+    // hvor "Prøv igen"-skærmen er den eneste ærlige mulighed).
+    async function resolveRole(userId, email, { hadGuess = false } = {}) {
       if (resolvingFor.current === userId) return
       resolvingFor.current = userId
       try {
-        setLoadError(false)
+        if (!hadGuess) setLoadError(false)
         // withRetry venter på at token er hæftet på klienten før kaldet → undgår
         // cold-start hvor RLS svarer som anonym (0 rækker uden fejl).
         const { data, error } = await withRetry(() =>
@@ -100,13 +125,15 @@ function App() {
         )
         if (cancelled) return
         if (error) {
-          // Reel fejl efter retries: vis retry frem for at gætte rollen forkert.
-          setLoadError(true)
-          setLoading(false)
+          // Reel fejl efter retries: vis retry frem for at gætte rollen forkert —
+          // MEDMINDRE et cachet gæt allerede viser en fungerende visning; den
+          // skal ikke rives ned af en forbigående fejl i bekræftelsen.
+          if (!hadGuess) { setLoadError(true); setLoading(false) }
           return
         }
         if (data) {
           resolvedFor.current = userId
+          writeCachedRole(userId, data.role || 'athlete')
           setRole(data.role || 'athlete')
           setLoading(false)
           return
@@ -121,6 +148,7 @@ function App() {
         )
         if (cancelled) return
         resolvedFor.current = userId
+        writeCachedRole(userId, after?.role || 'athlete')
         setRole(after?.role || 'athlete')
         setLoading(false)
       } finally {
@@ -132,8 +160,14 @@ function App() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (cancelled) return
       setSession(session)
-      if (session) resolveRole(session.user.id, session.user.email)
-      else setLoading(false)
+      if (session) {
+        // Vis det cachede gæt MED DET SAMME (ingen ventetid på netværket) —
+        // ægte opslag kører stadig, se resolveRole's hadGuess-parameter.
+        const cachedRole = readCachedRole(session.user.id)
+        const hadGuess = !!cachedRole
+        if (hadGuess) { setRole(cachedRole); setLoading(false) }
+        resolveRole(session.user.id, session.user.email, { hadGuess })
+      } else setLoading(false)
     })
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
