@@ -5,7 +5,7 @@
 
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { beregnPlanlagtDenneUge } from './planlagt.js'
+import { beregnPlanlagtDenneUge, beregnPlanlagtPrUge } from './planlagt.js'
 import { ugenoegle } from './beregn.js'
 
 const I_DAG = '2026-09-14' // mandag i "denne uge" til testene
@@ -91,4 +91,98 @@ test('tomt weeks-array: ugePlaceret false, ingen fejl', () => {
   assert.equal(resultat.ugePlaceret, false)
   assert.deepEqual(resultat.grupper, {})
   assert.equal(resultat.ukendteSaet, 0)
+})
+
+// ---- ORDRE 210, commit 1: beregnPlanlagtPrUge (hele forløbet) ----
+
+function log(oevelseNavn, loggetDato, skipped = false) {
+  return { oevelseNavn, loggetDato, skipped }
+}
+
+test('planlagt og gennemført side om side, pr. kalenderuge, ældste først', () => {
+  const ugeA = '2026-09-14' // mandag
+  const ugeB = '2026-09-21' // mandag, ugen efter
+  const weeks = [ugeMedSquat(ugeA, 4), ugeMedSquat(ugeB, 4)]
+  const logs = [log('Squat', ugeA), log('Squat', ugeA), log('Squat', ugeB)]
+  const resultat = beregnPlanlagtPrUge(weeks, logs)
+  assert.equal(resultat.uger.length, 2)
+  assert.equal(resultat.uger[0].uge, ugenoegle(ugeA))
+  assert.equal(resultat.uger[1].uge, ugenoegle(ugeB))
+  assert.deepEqual(resultat.uger[0].planlagt.grupper.kneeExtensors, { direkte: 4, ialt: 4 })
+  assert.deepEqual(resultat.uger[0].gennemfoert.grupper.kneeExtensors, { direkte: 2, ialt: 2 })
+  assert.deepEqual(resultat.uger[1].gennemfoert.grupper.kneeExtensors, { direkte: 1, ialt: 1 })
+  assert.equal(resultat.ugerUdenDato, 0)
+})
+
+test('uger uden start_date udelades fra uger[], men tælles i ugerUdenDato', () => {
+  const weeks = [ugeMedSquat(I_DAG, 4), { start_date: null, sessions: [] }, { start_date: undefined, sessions: [] }]
+  const resultat = beregnPlanlagtPrUge(weeks, [])
+  assert.equal(resultat.uger.length, 1)
+  assert.equal(resultat.ugerUdenDato, 2)
+})
+
+test('overlappende programuger (samme kalenderuge) summeres i én bucket, ikke to rækker', () => {
+  const weeks = [ugeMedSquat(I_DAG, 2), ugeMedSquat(I_DAG, 2)]
+  const resultat = beregnPlanlagtPrUge(weeks, [])
+  assert.equal(resultat.uger.length, 1)
+  assert.deepEqual(resultat.uger[0].planlagt.grupper.kneeExtensors, { direkte: 4, ialt: 4 })
+})
+
+test('tom programuge (ingen sessioner) er stadig med, alle tal 0', () => {
+  const weeks = [{ start_date: I_DAG, sessions: [] }]
+  const resultat = beregnPlanlagtPrUge(weeks, [])
+  assert.equal(resultat.uger.length, 1)
+  assert.deepEqual(resultat.uger[0].planlagt.grupper, {})
+  assert.deepEqual(resultat.uger[0].gennemfoert.grupper, {})
+})
+
+test('program med huller: kun de daterede uger giver rækker, ingen opdigtede nul-uger imellem', () => {
+  const ugeA = '2026-08-31' // mandag
+  const ugeC = '2026-09-21' // tre uger senere, ingen dateret uge for ugen imellem
+  const weeks = [ugeMedSquat(ugeA, 3), ugeMedSquat(ugeC, 3)]
+  const resultat = beregnPlanlagtPrUge(weeks, [])
+  assert.equal(resultat.uger.length, 2)
+  assert.equal(resultat.uger[0].uge, ugenoegle(ugeA))
+  assert.equal(resultat.uger[1].uge, ugenoegle(ugeC))
+})
+
+test('gennemførte sæt i en kalenderuge uden dateret programuge tælles ikke med', () => {
+  const weeks = [ugeMedSquat(I_DAG, 4)]
+  const enUgeFoer = '2026-09-07'
+  const logs = [log('Squat', enUgeFoer)]
+  const resultat = beregnPlanlagtPrUge(weeks, logs)
+  assert.equal(resultat.uger.length, 1)
+  assert.deepEqual(resultat.uger[0].gennemfoert.grupper, {})
+})
+
+test('skipped-sæt tælles ikke med i gennemført, samme regel som beregn.js', () => {
+  const weeks = [ugeMedSquat(I_DAG, 4)]
+  const logs = [log('Squat', I_DAG, true)]
+  const resultat = beregnPlanlagtPrUge(weeks, logs)
+  assert.deepEqual(resultat.uger[0].gennemfoert.grupper, {})
+})
+
+test('ukendt øvelse tælles i ukendteSaet for planlagt og gennemført hver for sig', () => {
+  const weeks = [{ start_date: I_DAG, sessions: [{ exercises: [{ name: 'Fuglehund med kætte', sets: 3 }] }] }]
+  const logs = [log('Fuglehund med kætte', I_DAG)]
+  const resultat = beregnPlanlagtPrUge(weeks, logs)
+  assert.equal(resultat.uger[0].planlagt.ukendteSaet, 3)
+  assert.equal(resultat.uger[0].gennemfoert.ukendteSaet, 1)
+})
+
+test('rettelser gives videre til både planlagt og gennemført', () => {
+  const weeks = [{ start_date: I_DAG, sessions: [{ exercises: [{ name: 'Zercher squat', sets: 3 }] }] }]
+  const logs = [log('Zercher squat', I_DAG)]
+  const rettelser = new Map([['zercher squat', { grupper: [{ gruppe: 'kneeExtensors', andel: 1 }] }]])
+  const resultat = beregnPlanlagtPrUge(weeks, logs, { rettelser })
+  assert.equal(resultat.uger[0].planlagt.ukendteSaet, 0)
+  assert.deepEqual(resultat.uger[0].planlagt.grupper.kneeExtensors, { direkte: 3, ialt: 3 })
+  assert.equal(resultat.uger[0].gennemfoert.ukendteSaet, 0)
+  assert.deepEqual(resultat.uger[0].gennemfoert.grupper.kneeExtensors, { direkte: 1, ialt: 1 })
+})
+
+test('tomt weeks og tomt logs: tom uger-liste, ingen fejl', () => {
+  const resultat = beregnPlanlagtPrUge([], [])
+  assert.deepEqual(resultat.uger, [])
+  assert.equal(resultat.ugerUdenDato, 0)
 })
