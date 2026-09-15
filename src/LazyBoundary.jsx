@@ -81,9 +81,20 @@ function calmScreen(label, onRetry) {
 // componentProps: props videregivet til den indlæste komponent
 export default function LazyBoundary({ factory, label, loading, componentProps = {} }) {
   const [retryKey, setRetryKey] = useState(0)
-  // Nyt lazy()-objekt pr. forsøg — se kommentaren ved loadWithRetry ovenfor.
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- factory/label er stabile for det givne kaldested; kun retryKey skal udløse et nyt forsøg
-  const Comp = useMemo(() => lazy(() => loadWithRetry(factory, label)), [retryKey])
+  // Nyt lazy()-objekt pr. forsøg ELLER når selve factory'en/label'en skifter.
+  // `retryKey` læses ikke i selve callbacken — den står bevidst i deps som et
+  // manuelt "tving nyt objekt"-signal til "Prøv igen" (se loadWithRetry
+  // ovenfor), derfor disable'et. `factory`/`label` skal derimod med i deps
+  // for reel korrekthed: to <LazyBoundary>'er kan sidde på SAMME position i
+  // træet på tværs af et betinget udtryk (App.jsx skifter mellem Dashboard
+  // og Atletvisning på samme sted) — React genbruger da denne instans'
+  // interne state i stedet for at montere en ny, og uden `factory` i deps
+  // blev det gamle, memoiserede lazy()-objekt (den forrige visning) siddende
+  // selvom `factory`/`label`-props allerede var skiftet (ordre 215: "Min
+  // træning" satte previewMode/coachAthleteId korrekt, men skærmen viste
+  // stadig Dashboard — aldrig Atletvisningen).
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- retryKey er bevidst med selvom den ikke læses i callbacken, se kommentaren ovenfor
+  const Comp = useMemo(() => lazy(() => loadWithRetry(factory, label)), [retryKey, factory, label])
   return (
     <LocalCatch key={retryKey} label={label} onError={() => calmScreen(label, () => setRetryKey((k) => k + 1))}>
       <Suspense fallback={loading}>
