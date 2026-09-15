@@ -21,10 +21,17 @@ import { homedir } from 'node:os'
 import { createRequire } from 'node:module'
 import { join } from 'node:path'
 import assert from 'node:assert/strict'
+import { harLeveranceFlag, opdaterLeverance } from './leverance-sti.mjs'
 
 const root = join(new URL('.', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'), '..')
 const repsPrescriptionSrc = readFileSync(join(root, 'src', 'repsPrescription.js'), 'utf8')
-const outDir = join(root, 'outputs', 'reps-pr-saet')
+// ORDRE 221 · commit 4 — skrev tidligere direkte over leverance-facit i
+// outputs/reps-pr-saet/ (fundet i docs/RAPPORT-211.md's "Hvad er næste" 3).
+// Samme mønster som ORDRE 205 (se scripts/leverance-sti.mjs): en
+// git-ignoreret arbejdssti som standard, kun kopieret ind over leverancen
+// ved --opdater-leverance.
+const outDir = join(root, 'outputs', '_seneste', 'reps-pr-saet')
+const leveranceDir = join(root, 'outputs', 'reps-pr-saet')
 mkdirSync(outDir, { recursive: true })
 
 // Samme inline-stilarter som AthleteView.jsx's sæt-logger (s.fieldInput,
@@ -170,6 +177,11 @@ async function main() {
     // 44px trykflade på repsfeltet (ordre 106's krav, samme grænse som ordre 41/76).
     const box = await benchInputs.first().boundingBox()
     assert.ok(box && box.height >= 44, `repsfeltet skal være mindst 44px højt, var ${box?.height}`)
+
+    if (harLeveranceFlag()) {
+      opdaterLeverance(outDir, leveranceDir)
+      console.log(`\nLeverancebilleder opdateret: ${leveranceDir}`)
+    }
 
     console.log('\nGRØN: interval og "frit" giver et 44px redigerbart repsfelt pr. sæt, forudfyldt med intervallets nederste tal. Fast ordination er uændret.')
     process.exitCode = 0

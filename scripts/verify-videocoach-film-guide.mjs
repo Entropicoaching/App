@@ -26,6 +26,7 @@ import { dirname, join } from 'node:path'
 import { homedir } from 'node:os'
 import { createRequire } from 'node:module'
 import assert from 'node:assert/strict'
+import { harLeveranceFlag, opdaterLeverance } from './leverance-sti.mjs'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const root = join(here, '..')
@@ -33,7 +34,13 @@ const root = join(here, '..')
 const htmlBuffer = readFileSync(join(root, 'public', 'videocoach.html'))
 const zoomJsBuffer = readFileSync(join(root, 'public', 'videocoach-zoom.js'))
 
-const outDir = join(root, 'outputs', 'film-foer-du-sender')
+// ORDRE 221 · commit 4 — skrev tidligere direkte over leverance-facit i
+// outputs/film-foer-du-sender/ (fundet i docs/RAPPORT-211.md's "Hvad er
+// næste" 3). Samme mønster som ORDRE 205 (se scripts/leverance-sti.mjs): en
+// git-ignoreret arbejdssti som standard, kun kopieret ind over leverancen
+// ved --opdater-leverance.
+const outDir = join(root, 'outputs', '_seneste', 'film-foer-du-sender')
+const leveranceDir = join(root, 'outputs', 'film-foer-du-sender')
 mkdirSync(outDir, { recursive: true })
 
 function startServer() {
@@ -135,6 +142,11 @@ async function main() {
     console.log(`Skærmbillede ("vis igen", udfoldet): ${reexpandedShot}`)
 
     assert.deepEqual(consoleErrors, [], `Ingen browser-fejl forventet, fandt: ${JSON.stringify(consoleErrors)}`)
+
+    if (harLeveranceFlag()) {
+      opdaterLeverance(outDir, leveranceDir)
+      console.log(`\nLeverancebilleder opdateret: ${leveranceDir}`)
+    }
 
     console.log('\nGRØN: filmvejledningen vises fuldt første gang, som én linje derefter, "vis igen" folder ud igen, ≥44px trykflade, ingen vandret scroll, ingen browser-fejl.')
     process.exitCode = 0
