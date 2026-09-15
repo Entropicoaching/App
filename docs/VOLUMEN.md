@@ -58,10 +58,14 @@ Kortet viser kun tallene og en påmindelse om de tre muligheder — ikke hvilken
 af dem der er den rigtige. Det kræver et coachøje på loggen.
 
 **"–" er ikke det samme som "0".** Planlagt-tallet kan kun vises hvis den
-aktuelle programuge har en kalenderdato (sat via kalender-tidslinjen,
-`weeks.start_date`). Har ugen ikke det endnu, viser kortet "–" — "planlagt
-er ukendt", ikke "der er ikke planlagt noget". Sæt datoen på ugen for at få
-tallet frem.
+aktuelle programuge har en kalenderdato (`weeks.start_date`). Har ugen ikke
+det, viser kortet "–" — "planlagt er ukendt", ikke "der er ikke planlagt
+noget". Fra ordre 204 er dette sjældnere: en ny uge får sin dato automatisk
+(forrige uges dato + 7 dage, eller førstkommende mandag hvis programmet
+ikke har en daterede uge endnu), og en programuge oprettet før ordre 204
+kan få sin dato med ét tryk på **"Sæt datoer"** i Program-fanen (kun
+synlig når programmet har mindst én daterede og én udaterede uge) — ikke
+længere noget der kræver at coachen husker det fra gang til gang.
 
 **Kun denne uge, ikke et helt forløb.** Til forskel fra resten af kortet
 (seks-otte ugers historik) dækker planlagt/gennemført kun ÉN uge — den ugen
