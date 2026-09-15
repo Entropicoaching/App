@@ -1,4 +1,22 @@
-import { createClient } from '@supabase/supabase-js'
+// ORDRE 226 · commit 2: klienten bygges af de fire submoduler
+// (@supabase/auth-js, postgrest-js, storage-js, functions-js) i stedet for
+// @supabase/supabase-js — som ALDRIG bruges for sin egen skyld, kun for
+// createClient()'s sammensætning af netop disse fire, PLUS en Realtime-klient
+// (@supabase/realtime-js/phoenix.js, ~18 KB gzip) som appen aldrig kalder
+// (ingen .channel()-brug nogen steder i src/, se docs/RAPPORT-201.md). Alle
+// fire submoduler har hver deres officielle "Standalone import for
+// bundle-sensitive environments"-eksempel i egen kildekode (samme mønster
+// genskabt her) og er allerede installeret (npms hoisting af
+// @supabase/supabase-js's egne dependencies, se package.json). Ingen ny
+// afhængighed — samme pakketræ, bare importeret direkte i stedet for
+// gennem @supabase/supabase-js's wrapper-klasse (node_modules/@supabase/
+// supabase-js/src/SupabaseClient.ts), som denne fil bevidst efterligner
+// (auth-headere, storageKey-format, fetch-indpakning) for at holde
+// eksisterende sessioner og RLS-kald uændrede.
+import { GoTrueClient } from '@supabase/auth-js'
+import { PostgrestClient } from '@supabase/postgrest-js'
+import { StorageClient } from '@supabase/storage-js'
+import { FunctionsClient } from '@supabase/functions-js'
 import { signOutHardCore, isSupabaseAuthTokenKey } from './authSignOut'
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
@@ -30,33 +48,84 @@ function fetchWithTimeout(input, init = {}) {
   return fetch(input, { ...init, signal: ctrl.signal }).finally(() => clearTimeout(timer))
 }
 
-export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    // Skal være true for at "glemt adgangskode"-linket kan logge atleten ind
-    // med en midlertidig recovery-session (App.jsx lytter efter PASSWORD_RECOVERY-
-    // eventet). Der er intet andet redirect-baseret flow i appen, så det er sikkert
-    // at slå til.
-    detectSessionInUrl: true,
-  },
-  global: { fetch: fetchWithTimeout },
+// Samme storageKey-format som @supabase/supabase-js selv beregner
+// (`sb-<projekt-ref>-auth-token`, ref = URL-hostens første label) — skal
+// være UÆNDRET, ellers mister enhver allerede logget ind bruger sin session
+// (localStorage-nøglen ville skifte navn under dem). authSignOut.js's
+// isSupabaseAuthTokenKey() forventer netop dette `sb-*-auth-token`-mønster.
+const AUTH_STORAGE_KEY = `sb-${new URL(SUPABASE_URL).hostname.split('.')[0]}-auth-token`
+
+const authApiHeaders = { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+
+const authClient = new GoTrueClient({
+  url: `${SUPABASE_URL}/auth/v1`,
+  headers: authApiHeaders,
+  storageKey: AUTH_STORAGE_KEY,
+  persistSession: true,
+  autoRefreshToken: true,
+  // Skal være true for at "glemt adgangskode"-linket kan logge atleten ind
+  // med en midlertidig recovery-session (App.jsx lytter efter PASSWORD_RECOVERY-
+  // eventet). Der er intet andet redirect-baseret flow i appen, så det er sikkert
+  // at slå til.
+  detectSessionInUrl: true,
+  fetch: fetchWithTimeout,
 })
+
+// Erstatter @supabase/supabase-js's interne (ikke-eksporterede) fetchWithAuth
+// (node_modules/@supabase/supabase-js/src/lib/fetch.ts): lægger `apikey` og
+// `Authorization: Bearer <session-token, falder tilbage til SUPABASE_KEY>`
+// på ethvert REST/Storage/Functions-kald der ikke selv allerede sætter dem —
+// samme adfærd, minus dens sporings-/nye-nøgleformat-logik som denne app
+// aldrig bruger (ingen OpenTelemetry, kun det gamle JWT-nøgleformat).
+function withAuthHeaders(fetchImpl) {
+  return async (input, init = {}) => {
+    const headers = new Headers(init.headers)
+    if (!headers.has('apikey')) headers.set('apikey', SUPABASE_KEY)
+    if (!headers.has('Authorization')) {
+      const { data: { session } } = await authClient.getSession()
+      headers.set('Authorization', `Bearer ${session?.access_token ?? SUPABASE_KEY}`)
+    }
+    return fetchImpl(input, { ...init, headers })
+  }
+}
+
+const authedFetch = withAuthHeaders(fetchWithTimeout)
+const rest = new PostgrestClient(`${SUPABASE_URL}/rest/v1`, { schema: 'public', fetch: authedFetch })
+const storageClient = new StorageClient(`${SUPABASE_URL}/storage/v1`, {}, authedFetch)
+
+export const supabase = {
+  auth: authClient,
+  from: (relation) => rest.from(relation),
+  rpc: (fn, args, options) => rest.rpc(fn, args, options),
+  storage: storageClient,
+  get functions() {
+    return new FunctionsClient(`${SUPABASE_URL}/functions/v1`, { customFetch: authedFetch })
+  },
+}
 
 // ORDRE 61 · commit 2: standardklientens fetch har et fast 12s-loft
 // (fetchWithTimeout ovenfor) - uegnet til en videoupload på svagt mobilnet,
 // som bevidst ingen tidsgrænse har. En videoupload skal til gengæld kunne
-// afbrydes af atleten selv, hvilket supabase-js's storage.upload() ikke
-// understøtter direkte (ingen AbortSignal-mulighed i dens FileOptions). Denne
-// engangsklient genbruger den allerede persisterede session (samme
-// localStorage-nøgle => ingen ny login), men uden sin egen refresh-timer
-// (undgår to konkurrerende GoTrue-instanser), og med en fetch der reelt
-// afbryder kaldet, når den medsendte AbortController fyrer.
+// afbrydes af atleten selv, hvilket storage-js's .upload() ikke understøtter
+// direkte (ingen AbortSignal-mulighed i dens FileOptions). Denne
+// engangs-storageklient genbruger den DELTE klients session (samme
+// bearer-opslag som authedFetch ovenfor), men binder til ét enkelt
+// AbortSignal, så en afbrudt upload aldrig kan afbryde andre samtidige kald —
+// og uden en ny GoTrueClient-instans (ordre 61's oprindelige version
+// oprettede en hel ny klient med samme storageKey for netop at genbruge
+// sessionen; det er ikke længere nødvendigt, når bearer-opslaget allerede
+// går direkte til den delte authClient ovenfor).
 export function createAbortableUploadClient(signal) {
-  return createClient(SUPABASE_URL, SUPABASE_KEY, {
-    auth: { persistSession: true, autoRefreshToken: false, detectSessionInUrl: false },
-    global: { fetch: (input, init = {}) => fetch(input, { ...init, signal }) },
-  })
+  const uploadFetch = async (input, init = {}) => {
+    const headers = new Headers(init.headers)
+    if (!headers.has('apikey')) headers.set('apikey', SUPABASE_KEY)
+    if (!headers.has('Authorization')) {
+      const { data: { session } } = await authClient.getSession()
+      headers.set('Authorization', `Bearer ${session?.access_token ?? SUPABASE_KEY}`)
+    }
+    return fetch(input, { ...init, headers, signal })
+  }
+  return { storage: new StorageClient(`${SUPABASE_URL}/storage/v1`, {}, uploadFetch) }
 }
 
 // Sand hvis siden netop blev åbnet fra et "glemt adgangskode"-link (Supabase
