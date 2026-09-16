@@ -90,6 +90,26 @@ if (await portFree(8991)) {
     venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
 }
 
+// ---- 4) det rigtige klik-igennem-flow mod et rigtigt klip (ordre 245) ----
+// 5/5 grønne, 29,6-29,9s, se docs/RAPPORT-245.md — går ind som fuld prøve.
+// test-clips/ er git-ignoreret persondata: findes klippet ikke lokalt (fx på
+// en anden maskine end den ordren blev leveret fra), springer selve scriptet
+// ærligt over (samme mønster som port-tjekket ovenfor) — det tælles her som
+// SPRUNGET OVER, ikke som en fejl.
+if (await portFree(8991)) {
+  const { clipAvailable } = await import('../e2e/coach-sporing-rigtigt-klip.mjs')
+  if (clipAvailable()) {
+    rows.push(runNode('e2e (coach-sporing-rigtigt-klip.mjs)', [join('e2e', 'coach-sporing-rigtigt-klip.mjs')],
+      'det faktiske udfald (arket åbner med resultat, eller "Stangen blev tabt") på et rigtigt klip — ikke en banner-gætning, se docs/RAPPORT-245.md', 'e2e'))
+  } else {
+    rows.push({ name: 'e2e (coach-sporing-rigtigt-klip.mjs)', kind: 'e2e', ok: null, ms: 0,
+      venterPaa: 'sprunget over: test-clips/marc-doedloeft-270.mov findes ikke lokalt (git-ignoreret)', tail: '' })
+  }
+} else {
+  rows.push({ name: 'e2e (coach-sporing-rigtigt-klip.mjs)', kind: 'e2e', ok: null, ms: 0,
+    venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
+}
+
 // ---- Skriv tabellen ----
 const lines = []
 lines.push('# Prøver — samlet facit (ordre 234)')

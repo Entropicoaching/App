@@ -111,6 +111,16 @@ async function confirmAndWaitForTracking(frame, page, { maxIterations = 60 } = {
     // commit 1 for hele diagnosen.
     const sheetOpen = await frame.locator('#sheet.open').count().catch(() => 0)
     if (sheetOpen > 0) return { done: true, lastBanner, lastPercent, progressLog, viaSheet: true }
+    // ORDRE 245 — den sidste ukendte tredje udgang: ordre 225 · commit 2 gav
+    // et ærligt 10s-loft ("Stangen blev tabt ved rep X ..."), men denne
+    // funktion genkendte kun to udfald ("Klip + loop"/"Ingen tydelig") + den
+    // stille sheet.open-vej — en fejl der rent faktisk rammer det bannerede
+    // tabt-stang-udfald ville være blevet polled i tavshed til
+    // maxIterations og fejlrapporteret som "aldrig færdig", præcis samme
+    // slags blind vinkel 225 rettede for #sheet.open. Uden bekræftet rep
+    // regnes tabt stang som IKKE sporet (done:false), samme prioritering som
+    // runFullAnalysis selv giver et brugbart delvist rep forrang.
+    if (banner && banner.includes('Stangen blev tabt')) return { done: false, lastBanner, lastPercent, progressLog, viaLossTimeout: true }
   }
   const err = new Error(`Sporingen blev aldrig færdig inden for ${maxIterations * 2}s (sidste banner: "${lastBanner}")`)
   err.progressLog = progressLog
@@ -203,9 +213,9 @@ export async function runCoachSporing(page, { appUrl, mockUrl, outDir, awaitingR
   // genkastet, så et fund om "hvor langt/hvor hurtigt" overlever selv et
   // reelt timeout, samme princip som den eksisterende "Ingen tydelig"-fangst
   // nedenfor.
-  let tracked, lastBanner, lastPercent, progressLog
+  let tracked, lastBanner, lastPercent, progressLog, viaSheet
   try {
-    ({ done: tracked, lastBanner, lastPercent, progressLog } =
+    ({ done: tracked, lastBanner, lastPercent, progressLog, viaSheet } =
       await confirmAndWaitForTracking(frame, page, maxIterations ? { maxIterations } : {}))
   } catch (err) {
     if (traceOut) {
@@ -249,9 +259,19 @@ export async function runCoachSporing(page, { appUrl, mockUrl, outDir, awaitingR
   // COACHWEB's session-visning (se applySessionView) åbner ikke selv arket —
   // "≡ Feedback" (#aiBtn, i "Fordyb"-bakken) gør det samme som en coach der
   // trykker videre til trin 3 (Feedback) for at se/sende sit fund.
-  await frame.locator('#moreBtn').click()
-  await frame.locator('#aiBtn').click()
-  await frame.locator('#sheet.open').waitFor({ state: 'visible', timeout: 10000 })
+  // ORDRE 245 — den stille openSheetFn()-vej (viaSheet, se ordre 225 · commit
+  // 1) har arket ÅBENT ALLEREDE på dette tidspunkt; et blindt klik på
+  // #moreBtn rammer da det åbne #sheet's egen overlay ("subtree intercepts
+  // pointer events") og løber ud i et 30s Playwright-timeout — fundet LIVE på
+  // et rigtigt klip her, aldrig ramt af det syntetiske klip (som altid tager
+  // applySessionView-banner-vejen). Spring klikkene over når arket allerede
+  // er åbent i stedet for at gætte et nyt klik ind i en åben overlay.
+  const sheetAlreadyOpen = viaSheet || await frame.locator('#sheet.open').count().catch(() => 0) > 0
+  if (!sheetAlreadyOpen) {
+    await frame.locator('#moreBtn').click()
+    await frame.locator('#aiBtn').click()
+    await frame.locator('#sheet.open').waitFor({ state: 'visible', timeout: 10000 })
+  }
   await shot('04-arket-aabent')
 
   // ÆRLIG PRØVE: "Ingen analyse endnu · Kør ⚡ Analysér løft først" vises kun
