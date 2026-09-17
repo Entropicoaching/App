@@ -568,6 +568,18 @@ const NAV_ITEMS = [
     ),
   },
   {
+    key: 'volumen',
+    label: 'Volumen',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="4" y1="21" x2="20" y2="21" />
+        <rect x="5.5" y="13" width="3" height="8" />
+        <rect x="10.5" y="8" width="3" height="13" />
+        <rect x="15.5" y="4" width="3" height="17" />
+      </svg>
+    ),
+  },
+  {
     key: 'kost',
     label: 'Kost',
     icon: (
@@ -613,6 +625,8 @@ const NAV_ITEMS = [
 const mobiliseringFactory = () => import('./athlete/MobiliseringTab')
 const staevnedagFactory = () => import('./athlete/StaevnedagTab')
 const programFactory = () => import('./athlete/ProgramTab')
+// ORDRE 259 · commit 1: samme lazy-chunk-mønster, ny fane.
+const volumenFactory = () => import('./athlete/VolumenTab')
 const kostFactory = () => import('./athlete/KostTab')
 const beskederFactory = () => import('./athlete/BeskederTab')
 function parsePlannedRpe(intensity) {
@@ -712,6 +726,11 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [logInputs, setLogInputs] = useState({})
   const [lastLogByExerciseName, setLastLogByExerciseName] = useState({})
   const [exerciseHistory, setExerciseHistory] = useState({})
+  // ORDRE 259 · commit 1: atletens egen volumen pr. muskelgruppe-fane —
+  // rå exercise_logs-rækker (kun feltet VolumenTab.jsx behøver), hentet når
+  // fanen åbnes, se effekten ved fetchMeetPlan/fetchMeetResults nedenfor.
+  const [volumeLogs, setVolumeLogs] = useState([])
+  const [volumeLoading, setVolumeLoading] = useState(false)
   const [weeklyTonnage, setWeeklyTonnage] = useState([])
   const [liftProgress, setLiftProgress] = useState([])
   const [weightLogs, setWeightLogs] = useState([])
@@ -1112,6 +1131,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   useEffect(() => { if (tab === 'beskeder') messagesEndRef.current?.scrollIntoView({ block: 'end' }) }, [messages, tab])
   // eslint-disable-next-line react-hooks/exhaustive-deps -- begge er rene ift. athlete.id, som allerede er i deps
   useEffect(() => { if (tab === 'stævnedag' && athlete?.id) { fetchMeetPlan(athlete.id); fetchMeetResults(athlete.id) } }, [tab, athlete?.id])
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchVolumeLogs er ren ift. athleteId, som allerede er i deps
+  useEffect(() => { if (tab === 'volumen' && athlete?.id) fetchVolumeLogs(athlete.id) }, [tab, athlete?.id])
 
   useEffect(() => {
     if (tab === 'mobilisering' && mobilityMode === 'opvarmning' && currentWeek && warmupPhase === 'focus' && !warmupFocus) {
@@ -1294,6 +1315,29 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         deadlift: [{ w: data.dead1  ?? '', r: null }, { w: data.dead2  ?? '', r: null }, { w: data.dead3  ?? '', r: null }],
       })
     }
+  }
+
+  // ORDRE 259 · commit 1: samme kilde (exercise_logs) som coachens
+  // fetchAthleteLogs (Dashboard.jsx), men KUN de seneste ~8 dage — nok til
+  // VolumenTab.jsx's "denne uge", uden coachens fulde 2000-sæt-historik.
+  // Ingen rettelser (exercise_muscle_overrides) hentes her — atleten har
+  // ikke læseadgang til dem, se docs/RAPPORT-259.md.
+  async function fetchVolumeLogs(athleteId) {
+    setVolumeLoading(true)
+    const since = new Date(Date.now() - 8 * 86400000).toISOString()
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('exercise_logs')
+        .select('logged_at, skipped, exercises(name)')
+        .eq('athlete_id', athleteId)
+        .gte('logged_at', since)
+        .order('logged_at', { ascending: false })
+        .limit(2000),
+      onReadError('Din volumen', athleteId),
+    )
+    setVolumeLoading(false)
+    if (!ok) return
+    setVolumeLogs(data || [])
   }
 
   async function fetchMeetResults(athleteId) {
@@ -3444,6 +3488,14 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               skipSet, suggestNextWeight, suggestWarmupOverride, unskipSet, viewingWeekIdx, warmupChecked,
               warmupOverrideTick, warmupSetEditing, weekStartDate,
             }}
+          />
+        )}
+
+        {/* VOLUMEN */}
+        {tab === 'volumen' && (
+          <LazyBoundary
+            factory={volumenFactory} label="Volumen" loading={<div style={s.page}>Indlæser…</div>}
+            componentProps={{ volumeLogs, volumeLoading }}
           />
         )}
 
