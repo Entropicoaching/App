@@ -132,8 +132,13 @@ function videoCoachFeedbackPayload(existing, draft, personalBaseline) {
 }
 
 function coachVideoPriorityDetail(video) {
+  const lift = `${VIDEOCOACH_LIFTS[video.lift] || video.lift} · ${videoCoachVariationLabel(video.lift, video.variation)}${video.load_kg != null ? ` · ${video.load_kg} kg` : ''}`
+  // ORDRE 266 · commit 2: en atlet-indsendt måling (fra "Film et sæt" eller
+  // standardvejens "Send til coach") fortjener sin egen ordlyd i indbakken -
+  // "afventer sporing" er teknisk sandt, men ikke det coachen skal reagere på.
+  if (video.source_mode === 'athlete_submission') return `Ny måling fra et sæt · ${lift}`
   const prefix = video.analysis_state === 'awaiting_analysis' ? 'Afventer sporing · ' : ''
-  return `${prefix}${VIDEOCOACH_LIFTS[video.lift] || video.lift} · ${videoCoachVariationLabel(video.lift, video.variation)}${video.load_kg != null ? ` · ${video.load_kg} kg` : ''}`
+  return `${prefix}${lift}`
 }
 
 // ORDRE 266 · commit 1: kompakt gengivelse af en allerede GEMT måling (samme
