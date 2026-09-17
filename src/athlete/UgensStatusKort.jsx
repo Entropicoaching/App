@@ -14,6 +14,14 @@
 // MUSKELGRUPPER direkte til sine labels og kan derfor ikke genbruges uændret
 // til to rækker ("Sæt", "Tonnage"); teknikken er kopieret, IKKE coachens fil
 // rørt eller importeret (ordrens egen grænse: "coachens visninger røres ikke").
+//
+// ORDRE 276 · blok 1 — de tilstande der ikke er den pæne: 360px bredde
+// (ingen vandret rulning, ingen afskåret tekst), tom uge (siger hvad man
+// gør, ikke at noget mangler), halv uge, forløb uden dateret plan, og et
+// tal der er vokset til fem cifre. Ingen ny beregning — kun visningen.
+// "Lange forløbs-/øvelsesnavne" gælder ikke DENNE fil: den viser hverken
+// sessionstitler (fjernet i ordre 268 commit 3, se DagRaekke's egen
+// kommentar) eller øvelsesnavne noget sted, kun ugedag/dato/tal.
 import { useState } from 'react'
 import { beregnUgeDage, beregnForloebUger } from './ugeStatus.js'
 import { s } from '../athleteShared'
@@ -53,9 +61,12 @@ function DagRaekke({ dag }) {
       {!harSession ? (
         <div style={{ fontSize: '0.72rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen træning planlagt</div>
       ) : (
-        <div style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <span style={{ fontFamily: mono, fontSize: '0.66rem', color: farve }}>{gennemfoertSaet}/{planlagtSaet} sæt</span>
-          <span style={{ fontFamily: mono, fontSize: '0.66rem', color: farve }}>{formatKg(gennemfoertTonnage)} / {formatKg(planlagtTonnage)}</span>
+        // Stablet lodret (ikke side om side): et femcifret tonnage-tal
+        // ("12345kg / 12345kg") skal have plads til at stå fuldt ud på en
+        // 360px-skærm, uden at klemmes sammen med sæt-tallet eller klippes.
+        <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
+          <span style={{ fontFamily: mono, fontSize: '0.66rem', color: farve, wordBreak: 'break-word' }}>{gennemfoertSaet}/{planlagtSaet} sæt</span>
+          <span style={{ fontFamily: mono, fontSize: '0.66rem', color: farve, wordBreak: 'break-word' }}>{formatKg(gennemfoertTonnage)} / {formatKg(planlagtTonnage)}</span>
         </div>
       )}
       {harSession && fuldtLogget && <span style={{ color: '#6cba6c', fontSize: '0.8rem', flexShrink: 0 }}>✓</span>}
@@ -140,8 +151,15 @@ export default function UgensStatusKort({ week, weekStart, exerciseLogs, allWeek
   if (!week) return null
 
   const { dage, flexSessioner } = beregnUgeDage(week, weekStart, exerciseLogs)
+  // ORDRE 276 · blok 1: en tom uge (intet planlagt endnu) skal sige det med
+  // ord, ikke bare forsvinde — kortet forsvandt tidligere helt her, hvilket
+  // på en tom telefonskærm let kan læses som "noget er gået i stykker" i
+  // stedet for "her er der ikke noget endnu".
   const ingenPlanlagtOverhovedet = dage.every(d => !d.harSession) && flexSessioner === 0
-  if (ingenPlanlagtOverhovedet) return null
+  // Intet logget endnu denne uge (typisk mandag morgen, før første sæt) —
+  // dagene viser stadig 0/X grå, men en kort linje gør det eksplicit at
+  // "0" her betyder "endnu ikke", ikke "mislykkedes".
+  const intetLoggetEndnu = ingenPlanlagtOverhovedet ? false : dage.every(d => d.gennemfoertSaet === 0)
 
   const forloeb = forloebLogs ? beregnForloebUger(allWeeks, forloebLogs) : null
 
@@ -161,16 +179,27 @@ export default function UgensStatusKort({ week, weekStart, exerciseLogs, allWeek
       </div>
 
       {visning === 'uge' ? (
-        <>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {dage.map(dag => <DagRaekke key={dag.weekday} dag={dag} />)}
+        ingenPlanlagtOverhovedet ? (
+          <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>
+            Ingen træning planlagt denne uge endnu.
           </div>
-          {flexSessioner > 0 && (
-            <div style={{ fontFamily: mono, fontSize: '0.5rem', letterSpacing: '0.06em', color: '#4a4844', marginTop: '0.6rem' }}>
-              + {flexSessioner} fleksibel{flexSessioner > 1 ? 'le' : ''} session{flexSessioner > 1 ? 'er' : ''} uden fast dag, ikke vist ovenfor
+        ) : (
+          <>
+            {intetLoggetEndnu && (
+              <div style={{ fontSize: '0.68rem', color: '#7a7770', fontStyle: 'italic', marginBottom: '0.6rem' }}>
+                Ingen sæt logget i ugen endnu — kom i gang i Dagens pas.
+              </div>
+            )}
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {dage.map(dag => <DagRaekke key={dag.weekday} dag={dag} />)}
             </div>
-          )}
-        </>
+            {flexSessioner > 0 && (
+              <div style={{ fontFamily: mono, fontSize: '0.5rem', letterSpacing: '0.06em', color: '#4a4844', marginTop: '0.6rem' }}>
+                + {flexSessioner} fleksibel{flexSessioner > 1 ? 'le' : ''} session{flexSessioner > 1 ? 'er' : ''} uden fast dag, ikke vist ovenfor
+              </div>
+            )}
+          </>
+        )
       ) : forloebLoading || !forloeb ? (
         <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>Henter…</div>
       ) : (
