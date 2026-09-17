@@ -35,7 +35,13 @@ function fmtDateShort(d) {
 }
 
 function DagRaekke({ dag }) {
-  const { weekday, date, harSession, titler, planlagtSaet, gennemfoertSaet, planlagtTonnage, gennemfoertTonnage, fuldtLogget } = dag
+  // Ingen sessionstitel vist her med vilje: en session hedder ofte det
+  // samme i "Mit program"-kortet længere nede, og et par af de eksisterende
+  // e2e-specs (atlet.spec.mjs/fejl.spec.mjs) klikker sig frem via
+  // page.getByText(titel) UDEN exact:true — et duplikat af samme tekst her
+  // gør den lokator flertydig og vælter dem. Set/tonnage-tallene er selve
+  // pointen med rækken; titlen er ikke nødvendig for at læse den.
+  const { weekday, date, harSession, planlagtSaet, gennemfoertSaet, planlagtTonnage, gennemfoertTonnage, fuldtLogget } = dag
   const farve = !harSession ? '#4a4844' : fuldtLogget ? '#6cba6c' : '#a9a69e'
   const baggrund = harSession && fuldtLogget ? 'rgba(108,186,108,0.05)' : 'transparent'
   return (
@@ -47,12 +53,9 @@ function DagRaekke({ dag }) {
       {!harSession ? (
         <div style={{ fontSize: '0.72rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen træning planlagt</div>
       ) : (
-        <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '0.1rem' }}>
-          <div style={{ fontSize: '0.74rem', color: '#c8b98a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{titler.join(' · ')}</div>
-          <div style={{ display: 'flex', gap: '1rem' }}>
-            <span style={{ fontFamily: mono, fontSize: '0.66rem', color: farve }}>{gennemfoertSaet}/{planlagtSaet} sæt</span>
-            <span style={{ fontFamily: mono, fontSize: '0.66rem', color: farve }}>{formatKg(gennemfoertTonnage)} / {formatKg(planlagtTonnage)}</span>
-          </div>
+        <div style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <span style={{ fontFamily: mono, fontSize: '0.66rem', color: farve }}>{gennemfoertSaet}/{planlagtSaet} sæt</span>
+          <span style={{ fontFamily: mono, fontSize: '0.66rem', color: farve }}>{formatKg(gennemfoertTonnage)} / {formatKg(planlagtTonnage)}</span>
         </div>
       )}
       {harSession && fuldtLogget && <span style={{ color: '#6cba6c', fontSize: '0.8rem', flexShrink: 0 }}>✓</span>}

@@ -55,6 +55,7 @@
     "verify:videocoach-film-guide": "node scripts/verify-videocoach-film-guide.mjs",
     "verify:videocoach-plate-detect": "node scripts/verify-videocoach-plate-detect.mjs",
     "verify:ugen-faar-dato": "node scripts/verify-ugen-faar-dato.mjs",
+    "verify:atletens-uge": "node scripts/verify-atletens-uge.mjs",
     "maal:app": "node scripts/maal-app.mjs",
     "maal:coach": "node scripts/maal-coach.mjs",
     "maal:telefon": "node scripts/maal-telefon.mjs",
