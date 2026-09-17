@@ -3,7 +3,7 @@
 
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { beregnUgeDage } from './ugeStatus.js'
+import { beregnUgeDage, beregnForloebUger } from './ugeStatus.js'
 
 function ex(overrides) {
   return { id: 'ex-1', sets: 4, reps: '5', recommended_weight: 100, ...overrides }
@@ -69,4 +69,45 @@ test('fleksibel session (ingen fast ugedag) tælles ikke på nogen dag, men i fl
   const { dage, flexSessioner } = beregnUgeDage(week, null, [])
   assert.equal(flexSessioner, 1)
   assert.ok(dage.every(d => d.planlagtSaet === 0))
+})
+
+// ---- beregnForloebUger (commit 2) ----
+
+test('hele forløbet: planlagt fra daterede programuger, gennemført fra logs samme kalenderuge', () => {
+  const weeks = [
+    { start_date: '2026-09-07', sessions: [{ exercises: [ex({ sets: 4, reps: '5', recommended_weight: 100 })] }] },
+    { start_date: '2026-09-14', sessions: [{ exercises: [ex({ sets: 3, reps: '5', recommended_weight: 100 })] }] },
+  ]
+  const logs = [
+    { weight: 100, reps_completed: 5, skipped: false, logged_at: '2026-09-08' }, // uge 1
+    { weight: 100, reps_completed: 5, skipped: false, logged_at: '2026-09-08' },
+    { weight: 100, reps_completed: 5, skipped: true, logged_at: '2026-09-08' }, // tæller ikke
+    { weight: 100, reps_completed: 5, skipped: false, logged_at: '2026-08-01' }, // ingen dateret uge her — tæller ikke
+  ]
+  const { uger, ugerUdenDato } = beregnForloebUger(weeks, logs)
+  assert.equal(ugerUdenDato, 0)
+  assert.equal(uger.length, 2)
+  assert.equal(uger[0].planlagt.saet, 4)
+  assert.equal(uger[0].planlagt.tonnage, 2000)
+  assert.equal(uger[0].gennemfoert.saet, 2)
+  assert.equal(uger[0].gennemfoert.tonnage, 1000)
+  assert.equal(uger[1].planlagt.saet, 3)
+  assert.equal(uger[1].gennemfoert.saet, 0)
+})
+
+test('uge uden start_date tælles i ugerUdenDato, ikke i uger', () => {
+  const weeks = [{ start_date: null, sessions: [{ exercises: [ex()] }] }]
+  const { uger, ugerUdenDato } = beregnForloebUger(weeks, [])
+  assert.equal(ugerUdenDato, 1)
+  assert.equal(uger.length, 0)
+})
+
+test('planlagt tonnage ukendt for en uge smitter ikke andre ugers tonnage', () => {
+  const weeks = [
+    { start_date: '2026-09-07', sessions: [{ exercises: [ex({ recommended_weight: null })] }] },
+    { start_date: '2026-09-14', sessions: [{ exercises: [ex({ recommended_weight: 100, reps: '5' })] }] },
+  ]
+  const { uger } = beregnForloebUger(weeks, [])
+  assert.equal(uger[0].planlagt.tonnage, null)
+  assert.equal(uger[1].planlagt.tonnage, 2000)
 })

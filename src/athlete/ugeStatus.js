@@ -18,6 +18,7 @@
 // princip som planlagt.js's ugePlaceret.
 
 import { parseRepsPrescription } from '../repsPrescription.js'
+import { ugenoegle } from '../volume/beregn.js'
 
 function planlagtRepsForExercise(reps) {
   const prescription = parseRepsPrescription(reps)
@@ -105,4 +106,57 @@ export function beregnUgeDage(week, weekStart, logs) {
   })
 
   return { dage, flexSessioner }
+}
+
+/**
+ * ORDRE 268 · commit 2 — samme "hele forløbet"-ramme som
+ * beregnPlanlagtPrUge (planlagt.js), sæt og tonnage i stedet for
+ * muskelgrupper: PR. KALENDERUGE, kun uger der har mindst én dateret
+ * programuge, gennemført matches udelukkende på kalenderdato (logged_at),
+ * ikke på exercise_id — nøjagtig samme regel som planlagt.js (se dens egen
+ * kommentar: "der er intet at sammenligne dem MOD" for uger uden dato).
+ *
+ * @param {Array<{ start_date?: string|null, sessions?: Array<{ exercises?: Array }> }>} weeks
+ * @param {Array<{ weight?: number, reps_completed?: number, skipped?: boolean, logged_at: string|Date }>} logs
+ * @returns {{
+ *   uger: Array<{ uge: string,
+ *     planlagt: { saet: number, tonnage: number|null },
+ *     gennemfoert: { saet: number, tonnage: number } }>,
+ *   ugerUdenDato: number,
+ * }} `uger` ældste først, ligesom beregnPlanlagtPrUge.
+ */
+export function beregnForloebUger(weeks, logs) {
+  const buckets = new Map()
+  let ugerUdenDato = 0
+
+  for (const uge_ of weeks || []) {
+    if (!uge_.start_date) { ugerUdenDato += 1; continue }
+    const noegle = ugenoegle(uge_.start_date)
+    if (!buckets.has(noegle)) {
+      buckets.set(noegle, {
+        planlagt: { saet: 0, tonnage: 0, tonnageKendt: true },
+        gennemfoert: { saet: 0, tonnage: 0 },
+      })
+    }
+    const bucket = buckets.get(noegle)
+    for (const sess of uge_.sessions || []) laegSessionOveni(bucket.planlagt, sess)
+  }
+
+  for (const log of logs || []) {
+    if (log.skipped) continue
+    const bucket = buckets.get(ugenoegle(log.logged_at))
+    if (!bucket) continue // ingen dateret programuge denne kalenderuge — intet at sammenligne mod
+    bucket.gennemfoert.saet += 1
+    bucket.gennemfoert.tonnage += (Number(log.weight) || 0) * (Number(log.reps_completed) || 0)
+  }
+
+  const uger = [...buckets.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([uge, bucket]) => ({
+      uge,
+      planlagt: { saet: bucket.planlagt.saet, tonnage: bucket.planlagt.tonnageKendt ? Math.round(bucket.planlagt.tonnage) : null },
+      gennemfoert: { saet: bucket.gennemfoert.saet, tonnage: Math.round(bucket.gennemfoert.tonnage) },
+    }))
+
+  return { uger, ugerUdenDato }
 }

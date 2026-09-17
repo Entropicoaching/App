@@ -948,6 +948,11 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   // fanen åbnes, se effekten ved fetchMeetPlan/fetchMeetResults nedenfor.
   const [volumeLogs, setVolumeLogs] = useState([])
   const [volumeLoading, setVolumeLoading] = useState(false)
+  // ORDRE 268 · commit 2: "hele forløbet" i UgensStatusKort (Hjem) — lazy-
+  // hentet først når atleten faktisk skifter til den visning (se
+  // UgensStatusKort's onAabnForloeb), samme mønster som volumeLogs ovenfor.
+  const [forloebLogs, setForloebLogs] = useState(null)
+  const [forloebLoading, setForloebLoading] = useState(false)
   const [weeklyTonnage, setWeeklyTonnage] = useState([])
   const [liftProgress, setLiftProgress] = useState([])
   const [weightLogs, setWeightLogs] = useState([])
@@ -1584,6 +1589,29 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     setVolumeLoading(false)
     if (!ok) return
     setVolumeLogs(data || [])
+  }
+
+  // ORDRE 268 · commit 2: "hele forløbet" i UgensStatusKort — samme kilde
+  // (exercise_logs) og samme grænse (2000, som coachens fetchAthleteLogs i
+  // Dashboard.jsx) som resten af appen, ingen dato-afgrænsning (til forskel
+  // fra fetchVolumeLogs's 5 uger) fordi "hele forløbet" pr. definition kan
+  // strække sig længere tilbage end det. beregnForloebUger matcher kun på
+  // logged_at, ikke exercise_id — derfor er de øvrige felter (skipped,
+  // weight, reps_completed) nok, ingen relation til exercises nødvendig.
+  async function fetchForloebLogs(athleteId) {
+    setForloebLoading(true)
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('exercise_logs')
+        .select('weight, reps_completed, skipped, logged_at')
+        .eq('athlete_id', athleteId)
+        .order('logged_at', { ascending: true })
+        .limit(2000),
+      onReadError('Ugen som planlagt', athleteId),
+    )
+    setForloebLoading(false)
+    if (!ok) return
+    setForloebLogs(data || [])
   }
 
   async function fetchMeetResults(athleteId) {
@@ -3283,6 +3311,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 week={currentWeek}
                 weekStart={weekStartDate(allWeeks, currentWeek.week_number)}
                 exerciseLogs={exerciseLogs}
+                allWeeks={allWeeks}
+                forloebLogs={forloebLogs}
+                forloebLoading={forloebLoading}
+                onAabnForloeb={() => fetchForloebLogs(athlete.id)}
               />
             )}
 
