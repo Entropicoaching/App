@@ -19,6 +19,10 @@ export const EXERCISE_ID = '66666666-6666-4666-8666-666666666666'
 // rigtige klik uden at genskabe den ægte stangbane-sporing (se docs/E2E.md).
 export const ANALYZED_VIDEO_ID = '77777777-7777-4777-8777-777777777777'
 export const ANALYZED_VIDEO_CLIENT_ID = '88888888-8888-4888-8888-888888888888'
+// Sporet, MÅLT video (ordre 266 · commit 3): samme mønster, egne id'er, så
+// den ikke kolliderer med ANALYZED_VIDEO_ID i en fælles kørsel.
+export const MEASURED_VIDEO_ID = '99999999-9999-4999-8999-999999999999'
+export const MEASURED_VIDEO_CLIENT_ID = 'aaaaaaaa-1111-4111-8111-aaaaaaaaaaaa'
 
 function isoNow() { return new Date().toISOString() }
 function todayStr() { return new Date().toISOString().slice(0, 10) }
@@ -37,7 +41,7 @@ function todayWeekdayIdx() {
  * atlet-spec-kørsel i samme proces. `withAnalyzedVideo: true` (ordre 155)
  * tilføjer en færdig-sporet video, så video-review.spec.mjs kan køres alene.
  */
-export function buildSeed({ withLogs = false, withAnalyzedVideo = false } = {}) {
+export function buildSeed({ withLogs = false, withAnalyzedVideo = false, withMeasuredVideo = false } = {}) {
   const tables = {
     profiles: [
       { id: COACH_USER.id, role: 'coach', email: COACH_USER.email, last_seen: null },
@@ -146,6 +150,56 @@ export function buildSeed({ withLogs = false, withAnalyzedVideo = false } = {}) 
         baseline_snapshot: [], athlete_note: null, feedback_evidence: null, plate_calibration: null,
       },
     }]
+  }
+
+  // ORDRE 266 · commit 3: en atlet-indsendt video der ER blevet sporet (af
+  // coachen, samme vej som ANALYZED_VIDEO_ID ovenfor) - med reps_count,
+  // rep_details, metrics.bar_drift_cm og bar_path faktisk udfyldt, så
+  // videoCoachMeasurementSummary (src/Dashboard.jsx) har noget at vise.
+  // Adskilt fra ANALYZED_VIDEO_ID for ikke at ændre video-review.spec.mjs's
+  // eksisterende, mindre seed (den bruger bevidst metrics:{}/bar_path:null).
+  if (withMeasuredVideo) {
+    tables.video_analyses.push({
+      id: MEASURED_VIDEO_ID,
+      client_analysis_id: MEASURED_VIDEO_CLIENT_ID,
+      athlete_id: ATHLETE_ID,
+      athlete_name: 'Testatlet',
+      source_mode: 'athlete_submission',
+      status: 'draft',
+      schema_version: 3,
+      schema_v: 3,
+      lift: 'squat',
+      variation: 'high-bar',
+      load_kg: 80,
+      rpe: 8,
+      reps_count: 3,
+      rep_details: [1, 2, 3].map(index => ({
+        index, start_s: index, end_s: index + 1.8, valid: true, valid_ratio: 1, confidence: 0.9,
+        quality_flags: [],
+        metrics: {
+          eccentric_s: { value: 1.0, unit: 's', method: 'bar_velocity_phase_v1', eligible_for_baseline: true, confidence: 0.9, source_refs: [] },
+          pause_s: { value: 0.3, unit: 's', method: 'bar_velocity_phase_v1', eligible_for_baseline: true, confidence: 0.9, source_refs: [] },
+          concentric_s: { value: 0.8, unit: 's', method: 'bar_velocity_phase_v1', eligible_for_baseline: true, confidence: 0.9, source_refs: [] },
+        },
+      })),
+      metrics: {
+        bar_drift_cm: { value: 2.4, unit: 'cm', method: 'tracked_path_calibrated_v1', eligible_for_baseline: true, confidence: 0.9, source_refs: [] },
+      },
+      findings: [],
+      bar_path: { encoding: 'delta_int', version: 1, x0: 120, y0: 40,
+        dx: [-2, -3, -1, 0, 1, 2, 1], dy: [6, 9, 11, 9, 6, 3, 2], cm_per_px: 0.18 },
+      video_path: `${ATHLETE_ID}/${MEASURED_VIDEO_CLIENT_ID}.mp4`,
+      analysis_state: 'analyzed',
+      coach_note: null,
+      bias_note: null,
+      athlete_feedback: null,
+      analyzed_at: isoNow(),
+      created_at: isoNow(),
+      session_context: {
+        training_session_id: null, program_item_id: null, coach_note_snapshot: null,
+        baseline_snapshot: [], athlete_note: null, feedback_evidence: null, plate_calibration: null,
+      },
+    })
   }
 
   return { users: [COACH_USER, ATHLETE_USER], tables }

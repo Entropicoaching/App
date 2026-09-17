@@ -102,6 +102,15 @@ if (await portFree(8991)) {
     venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
 }
 
+// ---- 3c) coachen ser en gemt måling uden at åbne VideoCoach (ordre 266)
+if (await portFree(8991)) {
+  rows.push(runNode('e2e (coach-ser-maaling.mjs)', [join('e2e', 'coach-ser-maaling.mjs')],
+    'DOM-tekst (kompakt måling i atletlisten + Coach Briefing) + at reviewvisningen åbner på ét klik', 'e2e'))
+} else {
+  rows.push({ name: 'e2e (coach-ser-maaling.mjs)', kind: 'e2e', ok: null, ms: 0,
+    venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
+}
+
 // ---- 4) det rigtige klik-igennem-flow mod et rigtigt klip (ordre 245) ----
 // 5/5 grønne, 29,6-29,9s, se docs/RAPPORT-245.md — går ind som fuld prøve.
 // test-clips/ er git-ignoreret persondata: findes klippet ikke lokalt (fx på
