@@ -12,6 +12,10 @@ import { recordSilentFail, attachPendingSilentFails, clearPendingSilentFails, ma
   clearUploadInflight, takeStaleUploadInflight } from './athleteSilentFailLog'
 import { compareReadiness, readinessComparisonText, readinessTrainingNote } from './readinessInsight'
 import { remainingSeconds } from './restTimer'
+import { findDagensPas, lastHeaviestSet } from './nextSet'
+import { restSecondsForExercise } from './restBetweenSets'
+import { startRestPause, loadRestPause, clearRestPause } from './restPause'
+import { parseRepsPrescription } from './repsPrescription'
 import { calcWarmupSets, isMainLift } from './warmup'
 import { applyWarmupCorrection, saveWarmupOverride, suggestWarmupOverride } from './warmupOverride'
 import { flushVideoCoachDraftQueue, isRetryableVideoCoachError,
@@ -215,6 +219,191 @@ function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession }) {
       {flex.length > 0 && (
         <div style={{ fontFamily: mono, fontSize: '0.5rem', letterSpacing: '0.06em', color: '#4a4844', marginTop: '0.35rem' }}>
           + {flex.length} fleksibel{flex.length > 1 ? 'le' : ''} session{flex.length > 1 ? 'er' : ''} uden fast dag
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ORDRE 263 · commit 1 — "Dagens pas": øverst på forsiden, præcis det næste
+// sæt (øvelse, vægt, reps, RPE), stort nok til at læses på armslængde, med
+// log/spring over lige ved hånden (samme skrivefunktioner som Program-fanen
+// — logInputs-nøglen er `${exerciseId}_${setNumber}`, delt på tværs af
+// begge faner). Under det: resten af DENNE session i kort form. `pas` kommer
+// fra findDagensPas (src/nextSet.js, ren funktion, se dens tests).
+function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, logSet, skipSet, suggestNextWeight, onOpenSession, pauseTimer, todayStr }) {
+  if (!pas) return null
+
+  if (pas.status !== 'open') {
+    const up = pas.upcoming
+    return (
+      <div style={s.card}>
+        <div style={s.cardLabel}>Dagens pas</div>
+        <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', color: '#edeae2', marginBottom: '0.5rem' }}>
+          {pas.status === 'done' ? 'Passet er færdigt. ✓' : 'Intet pas i dag.'}
+        </div>
+        {up ? (
+          <button
+            type="button"
+            onClick={() => onOpenSession(up.session.id)}
+            style={{ display: 'block', width: '100%', textAlign: 'left', background: 'rgba(200,146,58,0.05)', border: '1px solid rgba(200,146,58,0.13)', padding: '0.75rem', cursor: 'pointer' }}
+          >
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.3rem' }}>
+              Næste: uge {up.week.week_number}
+            </div>
+            <div style={{ fontSize: '0.9rem', color: '#edeae2' }}>{up.session.title}</div>
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#7a7770', marginTop: '0.2rem' }}>
+              {(up.session.exercises || []).map(e => e.name).join(' · ')}
+            </div>
+          </button>
+        ) : (
+          <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Der er ikke planlagt mere endnu.</div>
+        )}
+      </div>
+    )
+  }
+
+  const { session, next } = pas
+  if (!next) return null // alle sæt i "åbne" session logget i samme render — næste render finder den rigtige session
+  const { exercise: ex, setNumber, totalSets } = next
+  const key = `${ex.id}_${setNumber}`
+  const input = logInputs[key] || { weight: '', note: '', rpe: '', reps: '' }
+  const plannedRpe = parsePlannedRpe(ex.intensity)
+  const repsPrescription = parseRepsPrescription(ex.reps)
+  const repsIsEditable = repsPrescription.type !== 'fixed'
+  const repsDefault = repsPrescription.type === 'range' ? String(repsPrescription.min) : ''
+  const repsValue = input.reps || repsDefault
+  const repsToLog = repsIsEditable ? repsValue : ex.reps
+  const last = lastHeaviestSet(exerciseHistory, ex.name, todayStr)
+  const suggestion = ex.recommended_weight == null ? suggestNextWeight(ex.name, ex.intensity) : null
+  const others = (session.exercises || []).filter(e => e.id !== ex.id)
+
+  return (
+    <div style={s.card}>
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.5rem' }}>
+        <div style={s.cardLabel}>Dagens pas</div>
+        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.06em', color: '#7a7770' }}>Sæt {setNumber}/{totalSets}</div>
+      </div>
+
+      {pauseTimer}
+
+      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.15, marginBottom: '0.25rem' }}>
+        {ex.name}
+      </div>
+      {last && (
+        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#7a7770', letterSpacing: '0.04em', marginBottom: '0.3rem' }}>
+          Sidste gang: {last.weight}kg × {last.reps}{last.rpe ? ` @${last.rpe}` : ''}
+        </div>
+      )}
+      {ex.recommended_weight != null ? (
+        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#c8923a', marginBottom: '0.5rem' }}>Anbefalet: {ex.recommended_weight}kg</div>
+      ) : suggestion ? (
+        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#c8923a', marginBottom: '0.5rem' }}>
+          Forslag: {suggestion.weight}kg <span style={{ color: '#7a7770' }}>(RPE {suggestion.fromRpe})</span>
+        </div>
+      ) : null}
+      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.85rem', color: '#c8923a', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.85rem' }}>
+        {[ex.sets && `${ex.sets} sæt`, ex.reps && `× ${ex.reps}`, ex.intensity && ex.intensity].filter(Boolean).join(' · ')}
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+        <input
+          aria-label={`Vægt, sæt ${setNumber}`}
+          style={{ ...s.fieldInput, width: '96px', minWidth: '96px', minHeight: '52px', boxSizing: 'border-box', flexShrink: 0, padding: '0.65rem 0.5rem', fontSize: '1.3rem', textAlign: 'center' }}
+          type="text" inputMode="decimal" placeholder="kg" value={input.weight}
+          onChange={e => {
+            const v = e.target.value.replace(',', '.')
+            if (v === '' || /^\d*\.?\d*$/.test(v)) setLogInputs(p => ({ ...p, [key]: { ...p[key], weight: v } }))
+          }}
+        />
+        {repsIsEditable ? (
+          <>
+            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '1rem', color: '#c8923a' }}>×</span>
+            <input
+              aria-label={`Reps, sæt ${setNumber}`}
+              style={{ ...s.fieldInput, width: '64px', minWidth: '64px', minHeight: '52px', boxSizing: 'border-box', flexShrink: 0, padding: '0.65rem 0.3rem', fontSize: '1.3rem', textAlign: 'center' }}
+              type="text" inputMode="numeric" placeholder="reps" value={repsValue}
+              onChange={e => {
+                const v = e.target.value
+                if (v === '' || /^\d*$/.test(v)) setLogInputs(p => ({ ...p, [key]: { ...p[key], reps: v } }))
+              }}
+            />
+          </>
+        ) : (
+          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '1rem', color: '#c8923a', whiteSpace: 'nowrap' }}>× {ex.reps || '—'}</span>
+        )}
+        {plannedRpe != null && (
+          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#7a7770', letterSpacing: '0.06em', border: '1px solid rgba(237,234,226,0.13)', padding: '0.3rem 0.5rem', minHeight: '52px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center' }}>RPE {input.rpe || plannedRpe}</span>
+        )}
+      </div>
+      <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.6rem' }}>
+        <button
+          style={{ ...s.btnPrimary, flex: 1, minHeight: '52px', boxSizing: 'border-box', fontSize: '0.7rem' }}
+          onClick={() => logSet(ex.id, setNumber, totalSets, repsToLog, plannedRpe)}
+        >Log sæt</button>
+        <button
+          style={{ ...s.btnGhost, minHeight: '52px', boxSizing: 'border-box', fontSize: '0.6rem' }}
+          onClick={() => skipSet(ex.id, setNumber, plannedRpe)}
+        >Spring over</button>
+      </div>
+
+      {others.length > 0 && (
+        <div style={{ marginTop: '1rem', paddingTop: '0.85rem', borderTop: '1px solid rgba(237,234,226,0.07)' }}>
+          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Resten af passet</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+            {others.map(e => (
+              <div key={e.id} style={{ display: 'flex', justifyContent: 'space-between', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.68rem', color: '#7a7770' }}>
+                <span>{e.name}</span>
+                <span>{[e.sets && `${e.sets} sæt`, e.reps && `× ${e.reps}`].filter(Boolean).join(' ')}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ORDRE 263 · commit 2 — pausen der starter af sig selv når et sæt logges
+// (se logSet). Samme tidsstempel-baserede mønster som ProgramTab.jsx's
+// ExerciseTimer (remainingSeconds, genberegning ved visibilitychange, ALDRIG
+// "s => s - 1" pr. tick, se verify:athlete-rest-timer-drift) — kun
+// starttidspunkt + varighed er sandheden, så pausen ikke driver eller
+// springer hvis skærmen slukkes eller fanen lukkes midt i den (restPause.js
+// persisterer dem, uafhængigt af om komponentet selv overlever).
+function RestPauseTimer({ athleteId, pause, onClear }) {
+  const [liveSeconds, setLiveSeconds] = useState(() => remainingSeconds(pause.durationSeconds, pause.startedAt))
+
+  useEffect(() => {
+    const recompute = () => setLiveSeconds(remainingSeconds(pause.durationSeconds, pause.startedAt))
+    recompute()
+    const id = setInterval(recompute, 250)
+    const onVisible = () => { if (document.visibilityState === 'visible') recompute() }
+    document.addEventListener('visibilitychange', onVisible)
+    return () => { clearInterval(id); document.removeEventListener('visibilitychange', onVisible) }
+  }, [pause.startedAt, pause.durationSeconds])
+
+  const done = liveSeconds <= 0
+  const frac = pause.durationSeconds > 0 ? Math.max(0, Math.min(1, liveSeconds / pause.durationSeconds)) : 0
+  return (
+    <div style={{ marginBottom: '0.85rem', padding: '0.6rem 0.75rem', background: done ? 'rgba(108,186,108,0.06)' : 'rgba(200,146,58,0.06)', border: `1px solid ${done ? 'rgba(108,186,108,0.25)' : 'rgba(200,146,58,0.2)'}` }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.5rem' }}>
+        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: done ? '#6cba6c' : '#c8923a' }}>
+          {done ? 'Pause slut' : 'Pause'}{pause.label ? ` · ${pause.label}` : ''}
+        </span>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', color: '#edeae2', lineHeight: 1 }}>{done ? '✓' : `${liveSeconds}s`}</span>
+          <button
+            type="button"
+            aria-label="Skjul pausetimer"
+            onClick={() => { clearRestPause(athleteId); onClear() }}
+            style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.75rem', minWidth: '32px', minHeight: '32px' }}
+          >✕</button>
+        </span>
+      </div>
+      {!done && (
+        <div style={{ height: '3px', background: 'rgba(237,234,226,0.08)', marginTop: '0.5rem' }}>
+          <div style={{ height: '100%', width: `${frac * 100}%`, background: '#c8923a', transition: 'width 1s linear' }} />
         </div>
       )}
     </div>
@@ -668,6 +857,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     setRecheckMsg('Din konto er registreret som atlet — ingen coach-adgang fundet.')
   }
   const [athlete, setAthlete] = useState(null)
+  // ORDRE 263 · commit 2: den automatiske pause mellem sæt (null = ingen
+  // aktiv pause). Se restPause.js.
+  const [restPause, setRestPause] = useState(null)
   const athleteVideoCoachRef = useRef(null)
   const athleteVideoCoachFrameRef = useRef(null)
   const athleteVideoCoachClientsRef = useRef(new Set())
@@ -1227,6 +1419,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         setOnboardingDone(hasCompletedOnboardingGuide(data))
       }
       setAthlete(data)
+      // ORDRE 263 · commit 2: en igangværende pause overlever et lukket/
+      // genåbnet vindue (persisteret i localStorage, se restPause.js) —
+      // genindlæses her, ét kald, samme sted som resten af login-opstarten.
+      setRestPause(loadRestPause(data.id))
       // Ordre 163 · del 4 (billig gevinst, ingen ny state-model): det der
       // faktisk vises først — "hjem" er standardfanen — hentes med det
       // samme. Resten (kost/beskeder/opvarmning/stævne, alt på faner
@@ -1803,6 +1999,16 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         { id: optimisticId, exercise_id: exerciseId, athlete_id: athlete.id, set_number: setNumber, ...payload, _optimistic: true },
       ])
     }
+    // ORDRE 263 · commit 2: pausen starter automatisk, med det samme
+    // (optimistisk, ligesom resten af denne funktion) — ikke først når
+    // skrivningen har svaret. "Den pause der står i programmet" læses fra
+    // øvelsens note (se restBetweenSets.js); ingen note → en fornuftig
+    // standard. Persisteres (restPause.js), så den overlever et lukket/
+    // genåbnet vindue.
+    const loggedExercise = allWeeks.flatMap(w => w.sessions || []).flatMap(sess => sess.exercises || []).find(e => e.id === exerciseId)
+    const restSeconds = restSecondsForExercise(loggedExercise)
+    startRestPause(athlete.id, restSeconds, loggedExercise?.name)
+    setRestPause({ startedAt: Date.now(), durationSeconds: restSeconds, label: loggedExercise?.name || null })
     setSetConfirm(p => ({ ...p, [key]: 'saved' }))
     let fadeTimer
     const scheduleFade = () => {
@@ -2968,6 +3174,21 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 {days[now.getDay()]} d. {now.getDate()}. {months[now.getMonth()]} {now.getFullYear()}
               </div>
             </div>
+
+            <DagensPasCard
+              pas={findDagensPas(allWeeks, currentWeek, exerciseLogs)}
+              exerciseHistory={exerciseHistory}
+              logInputs={logInputs}
+              setLogInputs={setLogInputs}
+              logSet={logSet}
+              skipSet={skipSet}
+              suggestNextWeight={suggestNextWeight}
+              onOpenSession={(id) => { setTab('program'); openSession(id) }}
+              pauseTimer={restPause && (
+                <RestPauseTimer athleteId={athlete?.id} pause={restPause} onClear={() => setRestPause(null)} />
+              )}
+              todayStr={today()}
+            />
 
             {currentWeek ? (
               <WeekCalendar
