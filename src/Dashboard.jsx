@@ -132,8 +132,46 @@ function videoCoachFeedbackPayload(existing, draft, personalBaseline) {
 }
 
 function coachVideoPriorityDetail(video) {
+  const lift = `${VIDEOCOACH_LIFTS[video.lift] || video.lift} · ${videoCoachVariationLabel(video.lift, video.variation)}${video.load_kg != null ? ` · ${video.load_kg} kg` : ''}`
+  // ORDRE 266 · commit 2: en atlet-indsendt måling (fra "Film et sæt" eller
+  // standardvejens "Send til coach") fortjener sin egen ordlyd i indbakken -
+  // "afventer sporing" er teknisk sandt, men ikke det coachen skal reagere på.
+  if (video.source_mode === 'athlete_submission') return `Ny måling fra et sæt · ${lift}`
   const prefix = video.analysis_state === 'awaiting_analysis' ? 'Afventer sporing · ' : ''
-  return `${prefix}${VIDEOCOACH_LIFTS[video.lift] || video.lift} · ${videoCoachVariationLabel(video.lift, video.variation)}${video.load_kg != null ? ` · ${video.load_kg} kg` : ''}`
+  return `${prefix}${lift}`
+}
+
+// ORDRE 266 · commit 1: kompakt gengivelse af en allerede GEMT måling (samme
+// felter en fuld analyse allerede skriver til video_analyses - reps_count,
+// rep_details, metrics.bar_drift_cm, bar_path - se AnalyseTab/"Gennemgå
+// måling"). Rører intet i videocoach.html; viser kun hvad der allerede er i
+// rækken. Returnerer null hvis videoen endnu ikke er sporet (reps_count er
+// database-default null for enhver "Film et sæt"/"Send til coach"-video
+// FØR nogen - atlet eller coach - rent faktisk har kørt sporingen).
+function videoCoachMeasurementSummary(video) {
+  if (!video || video.reps_count == null) return null
+  const repDetails = Array.isArray(video.rep_details) ? video.rep_details : []
+  const repTimesS = repDetails.map(rep => {
+    const m = rep?.metrics || {}
+    const parts = [m.eccentric_s?.value, m.pause_s?.value, m.concentric_s?.value]
+      .filter(v => Number.isFinite(v))
+    return parts.length ? parts.reduce((sum, v) => sum + v, 0) : null
+  }).filter(v => Number.isFinite(v))
+  const avgTimeS = repTimesS.length ? repTimesS.reduce((sum, v) => sum + v, 0) / repTimesS.length : null
+  const driftCm = video.metrics?.bar_drift_cm?.value
+  return {
+    repsCount: video.reps_count,
+    avgTimeS: Number.isFinite(avgTimeS) ? avgTimeS : null,
+    driftCm: Number.isFinite(driftCm) ? driftCm : null,
+    pathPreview: videoCoachPathPreview(video.bar_path),
+  }
+}
+
+function videoCoachMeasurementText(summary) {
+  const parts = [`${summary.repsCount} rep${summary.repsCount === 1 ? '' : 's'}`]
+  if (summary.driftCm != null) parts.push(`Ø ${summary.driftCm.toFixed(1)} cm sidelæns`)
+  if (summary.avgTimeS != null) parts.push(`Ø ${summary.avgTimeS.toFixed(1)}s/rep`)
+  return parts.join(' · ')
 }
 
 // Sektioner vist som kort på atlet-hubben (coach-landingsside). Rækkefølgen
@@ -1016,10 +1054,14 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
   // Coachens samlede VideoCoach-indbakke. Kun kladder hentes, og listen
   // indeholder kun metadata nok til at finde den rigtige atlet og måling.
+  // ORDRE 266 · commit 1: rep_details/metrics/bar_path tilføjet til selectet
+  // (ingen migration - samme kolonner AnalyseTabs "Gennemgå måling" allerede
+  // læser), så videoCoachMeasurementSummary kan vise en allerede-sporet
+  // måling i atletlisten uden en ekstra Supabase-forespørgsel.
   async function fetchVideoReviewQueue() {
     setVideoReviewQueueError(null)
     const { data, error } = await supabase.from('video_analyses')
-      .select('id,client_analysis_id,athlete_id,lift,variation,load_kg,reps_count,analyzed_at,created_at,source_mode,status,session_context,analysis_state,video_path')
+      .select('id,client_analysis_id,athlete_id,lift,variation,load_kg,reps_count,rep_details,metrics,bar_path,analyzed_at,created_at,source_mode,status,session_context,analysis_state,video_path')
       .eq('status', 'draft')
       .order('created_at', { ascending: false })
       .limit(50)
@@ -2821,6 +2863,17 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     : null
   const nextPriorityItem = priorityQueueContext?.nextItem || null
 
+  // ORDRE 266 · commit 1: nyeste GEMTE måling pr. atlet (reps_count sat),
+  // udledt af videoReviewQueue (allerede hentet ved mount, sorteret nyeste
+  // først) - ingen ny forespørgsel. En atlet uden nogen sporet måling
+  // (fx en "Film et sæt"-video der endnu ikke er analyseret) er blot
+  // fraværende her, se videoCoachMeasurementSummary.
+  const videoMeasurementByAthlete = {}
+  for (const video of videoReviewQueue) {
+    if (video.reps_count == null || videoMeasurementByAthlete[video.athlete_id]) continue
+    videoMeasurementByAthlete[video.athlete_id] = video
+  }
+
   function openCoachPriorityItem(item, returnView = 'inbox') {
     if (!item) return
     const priorityContext = coachPriorityTaskContext(item)
@@ -4107,6 +4160,11 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                         : 'Intet aktivt program'
                       const holiday = holidayInfo(athlete)
                       const unread = unreadCounts[athlete.id] || 0
+                      // ORDRE 266 · commit 1: kompakt, allerede-gemt måling - se
+                      // videoCoachMeasurementSummary. Fraværende (null) for en
+                      // "Film et sæt"-video ingen endnu har kørt sporingen på.
+                      const measurementVideo = videoMeasurementByAthlete[athlete.id]
+                      const measurement = videoCoachMeasurementSummary(measurementVideo)
                       return (
                         <div key={athlete.id} role={isHidden ? undefined : 'button'} tabIndex={isHidden ? undefined : 0}
                           onClick={() => !isHidden && openProfile(athlete, 'program')}
@@ -4123,6 +4181,26 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                               {isHidden && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.42rem', color: '#7a7770', textTransform: 'uppercase' }}>Skjult</span>}
                             </span>
                             <span style={{ display: 'block', marginTop: '0.18rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: weekNo != null ? '#7a7770' : '#b07b68', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{programLine}</span>
+                            {measurement && (
+                              <button
+                                onClick={event => {
+                                  event.stopPropagation()
+                                  openCoachPriorityItem({ kind: 'video', athlete, video: measurementVideo,
+                                    key: `video-${measurementVideo.id}`, title: athlete.name,
+                                    detail: coachVideoPriorityDetail(measurementVideo), color: '#67dff5', label: 'Video' }, 'list')
+                                }}
+                                style={{ display: 'flex', alignItems: 'center', gap: '0.32rem', marginTop: '0.22rem', padding: 0, border: 'none', background: 'transparent', cursor: 'pointer' }}
+                                aria-label={`Åbn gemt måling · ${videoCoachMeasurementText(measurement)}`}>
+                                {measurement.pathPreview && (
+                                  <svg width="11" height="18" viewBox={measurement.pathPreview.viewBox} style={{ flexShrink: 0 }} aria-hidden="true">
+                                    <polyline points={measurement.pathPreview.points} fill="none" stroke="#67dff5" strokeWidth={Math.max(2, (measurement.pathPreview.y2 - measurement.pathPreview.y1) * 0.02)} strokeLinecap="round" strokeLinejoin="round" />
+                                  </svg>
+                                )}
+                                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#67dff5', letterSpacing: '0.02em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                  {videoCoachMeasurementText(measurement)}
+                                </span>
+                              </button>
+                            )}
                           </span>
                           {isHidden ? (
                             <button onClick={event => unshelveAthlete(event, athlete.id)} style={{ flexShrink: 0, color: '#c8923a', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', textTransform: 'uppercase', padding: '0.35rem', border: 'none', background: 'transparent', cursor: 'pointer' }}>Vis igen</button>
