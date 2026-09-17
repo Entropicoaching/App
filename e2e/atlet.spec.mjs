@@ -75,6 +75,16 @@ export async function runAtletJourney(page, { appUrl, mockUrl, outDir }) {
     .map(l => l.reps_completed)
   assert.deepEqual(loggedReps, [4, 5, 6], `forventede reps_completed [4,5,6] i mockens exercise_logs, fik ${JSON.stringify(loggedReps)}`)
 
+  // VOLUMEN — atletens egen fane (ordre 259). Squat er kortlagt med
+  // Knæ-strækkere som PRIMÆR gruppe (muskelkort.js), så de tre lige
+  // gennemførte sæt skal give "3/3" (direkte/ialt) for den gruppe.
+  await page.getByRole('button', { name: 'Volumen', exact: true }).click()
+  await page.getByText('Knæ-strækkere').waitFor({ state: 'visible', timeout: 10000 })
+  await shot('04b-volumen-denne-uge')
+  const kneeRow = page.locator('xpath=//span[normalize-space(text())="Knæ-strækkere"]/parent::div')
+  const kneeRowText = await kneeRow.textContent()
+  assert.ok(kneeRowText.includes('3/3'), `forventede "3/3" for Knæ-strækkere i Volumen-fanen, fik "${kneeRowText}"`)
+
   // Check-in (parathed) — tilbage til Hjem.
   await page.getByRole('button', { name: 'Hjem', exact: true }).click()
   await page.locator('input[placeholder="timer"]').fill('8')
@@ -128,7 +138,7 @@ async function main() {
     page.on('pageerror', err => console.error('[browser pageerror]', err))
     page.on('console', msg => { if (msg.type() === 'error') console.error('[console.error]', msg.text()) })
     await runAtletJourney(page, { appUrl: APP_URL, mockUrl: `http://127.0.0.1:${MOCK_PORT}`, outDir: OUT_DIR })
-    console.log('\nGRØN: atletens rejse (login → dagens pas → opvarmning → tre sæt interval-reps → check-in → videocoach → logout) er gennemført mod den ægte app + mock-backend.')
+    console.log('\nGRØN: atletens rejse (login → dagens pas → opvarmning → tre sæt interval-reps → volumen-fanen → check-in → videocoach → logout) er gennemført mod den ægte app + mock-backend.')
     process.exitCode = 0
   } catch (err) {
     console.error('\nFEJL:', err.message)
