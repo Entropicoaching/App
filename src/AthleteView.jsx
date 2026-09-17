@@ -661,6 +661,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   // en abort-upload-besked fra VideoCoach kan afbryde netop DEN overførsel.
   const athleteVideoUploadAbortsRef = useRef(new Map())
   const [athleteVideoCoachOpen, setAthleteVideoCoachOpen] = useState(false)
+  // ORDRE 262 · commit 1: "Film et sæt" åbner det SAMME VideoCoach-værktøj,
+  // men i et instant-flow (?instant=1) der ikke autosender - se videocoach.html.
+  const [athleteVideoCoachInstant, setAthleteVideoCoachInstant] = useState(false)
   const [sharedVideoAnalyses, setSharedVideoAnalyses] = useState([])
   const [sharedVideoLoading, setSharedVideoLoading] = useState(false)
   const [sharedVideoError, setSharedVideoError] = useState(null)
@@ -861,6 +864,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         if (event.source !== frameWindow && !athleteVideoCoachClientsRef.current.has(event.source)) return
         athleteVideoCoachClientsRef.current.delete(event.source)
         setAthleteVideoCoachOpen(false)
+        setAthleteVideoCoachInstant(false)
         return
       }
       if (message.type === `${ATHLETE_VIDEOCOACH_PREFIX}:ready`) {
@@ -2757,7 +2761,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         >
           <iframe
             ref={athleteVideoCoachFrameRef}
-            src={ATHLETE_VIDEOCOACH_URL}
+            src={athleteVideoCoachInstant ? `${ATHLETE_VIDEOCOACH_URL}&instant=1` : ATHLETE_VIDEOCOACH_URL}
             title="VideoCoach"
             allow="fullscreen"
             allowFullScreen
@@ -3378,7 +3382,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
             <div
               onClick={() => {
                 if (!athlete?.id) return
-                if (role === 'athlete') { setAthleteVideoCoachOpen(true); return }
+                if (role === 'athlete') { setAthleteVideoCoachInstant(false); setAthleteVideoCoachOpen(true); return }
                 // Coach-preview kan ikke sende: RLS tillader kun atleten selv at
                 // oprette sin egen draft (created_by = auth.uid()). Åbn derfor ikke
                 // et blindt værktøj uden bridge — forklar det ærligt i stedet.
@@ -3404,6 +3408,38 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 </div>
               </div>
             </div>
+
+            {/* ORDRE 262 · commit 1: "Film et sæt" — instant, lokalt svar (reps,
+                bane, afvigelse, tempo) uden at sende noget. Atleten vælger selv
+                bagefter om målingen skal gemmes til coachen eller kasseres. */}
+            {role === 'athlete' && (
+              <div
+                onClick={() => {
+                  if (!athlete?.id) return
+                  setAthleteVideoCoachInstant(true)
+                  setAthleteVideoCoachOpen(true)
+                }}
+                onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(200,146,58,0.4)'}
+                onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(237,234,226,0.07)'}
+                style={{ ...s.card, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem' }}
+              >
+                <div style={{ width: 46, height: 46, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(200,146,58,0.35)', borderRadius: 4, background: 'rgba(200,146,58,0.08)' }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c8923a" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M9 9l6 6M9 15l6-6" />
+                  </svg>
+                </div>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ ...s.cardLabel, marginBottom: '0.2rem' }}>Film et sæt</div>
+                  <div style={{ fontSize: '0.85rem', color: '#edeae2', lineHeight: 1.4 }}>
+                    Se reps, bane og afvigelse med det samme — du vælger selv om det gemmes
+                  </div>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', marginTop: '0.3rem' }}>
+                    Optag eller vælg video →
+                  </div>
+                </div>
+              </div>
+            )}
 
             {role === 'athlete' && (sharedVideoLoading || sharedVideoError || sharedVideoAnalyses.length > 0) && (
               <div style={s.card}>
