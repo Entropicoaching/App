@@ -27,6 +27,7 @@ import { buildAwaitingAnalysisRow, buildVideoUploadPath, validateVideoUploadRequ
   videoUploadAlreadyExistsError, VIDEOCOACH_UPLOAD_BUCKET } from './videoCoachUpload'
 import LazyBoundary from './LazyBoundary'
 import { s, shiftDate, today, unitsForFood } from './athleteShared'
+import UgensStatusKort from './athlete/UgensStatusKort'
 
 const ATHLETE_VIDEOCOACH_PREFIX = 'entropi:videocoach:v3'
 const ATHLETE_VIDEOCOACH_QUEUE_CHANGED = 'entropi:videocoach:queue-changed'
@@ -3275,6 +3276,14 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               // isolerede harness i ordre 167 kunne aldrig se dette, den havde
               // altid statisk data fra første billede.
               <div style={{ height: '76px', marginBottom: '1.25rem' }} />
+            )}
+
+            {currentWeek && (
+              <UgensStatusKort
+                week={currentWeek}
+                weekStart={weekStartDate(allWeeks, currentWeek.week_number)}
+                exerciseLogs={exerciseLogs}
+              />
             )}
 
             {!readinessLog && logs.length === 0 && (
