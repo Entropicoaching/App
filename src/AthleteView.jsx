@@ -12,7 +12,7 @@ import { recordSilentFail, attachPendingSilentFails, clearPendingSilentFails, ma
   clearUploadInflight, takeStaleUploadInflight } from './athleteSilentFailLog'
 import { compareReadiness, readinessComparisonText, readinessTrainingNote } from './readinessInsight'
 import { remainingSeconds } from './restTimer'
-import { findDagensPas } from './nextSet'
+import { findDagensPas, lastHeaviestSet } from './nextSet'
 import { restSecondsForExercise } from './restBetweenSets'
 import { startRestPause, loadRestPause, clearRestPause } from './restPause'
 import { parseRepsPrescription } from './repsPrescription'
@@ -231,7 +231,7 @@ function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession }) {
 // — logInputs-nøglen er `${exerciseId}_${setNumber}`, delt på tværs af
 // begge faner). Under det: resten af DENNE session i kort form. `pas` kommer
 // fra findDagensPas (src/nextSet.js, ren funktion, se dens tests).
-function DagensPasCard({ pas, logInputs, setLogInputs, logSet, skipSet, suggestNextWeight, onOpenSession, pauseTimer }) {
+function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, logSet, skipSet, suggestNextWeight, onOpenSession, pauseTimer, todayStr }) {
   if (!pas) return null
 
   if (pas.status !== 'open') {
@@ -274,6 +274,7 @@ function DagensPasCard({ pas, logInputs, setLogInputs, logSet, skipSet, suggestN
   const repsDefault = repsPrescription.type === 'range' ? String(repsPrescription.min) : ''
   const repsValue = input.reps || repsDefault
   const repsToLog = repsIsEditable ? repsValue : ex.reps
+  const last = lastHeaviestSet(exerciseHistory, ex.name, todayStr)
   const suggestion = ex.recommended_weight == null ? suggestNextWeight(ex.name, ex.intensity) : null
   const others = (session.exercises || []).filter(e => e.id !== ex.id)
 
@@ -289,6 +290,11 @@ function DagensPasCard({ pas, logInputs, setLogInputs, logSet, skipSet, suggestN
       <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.15, marginBottom: '0.25rem' }}>
         {ex.name}
       </div>
+      {last && (
+        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#7a7770', letterSpacing: '0.04em', marginBottom: '0.3rem' }}>
+          Sidste gang: {last.weight}kg × {last.reps}{last.rpe ? ` @${last.rpe}` : ''}
+        </div>
+      )}
       {ex.recommended_weight != null ? (
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#c8923a', marginBottom: '0.5rem' }}>Anbefalet: {ex.recommended_weight}kg</div>
       ) : suggestion ? (
@@ -3171,6 +3177,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
             <DagensPasCard
               pas={findDagensPas(allWeeks, currentWeek, exerciseLogs)}
+              exerciseHistory={exerciseHistory}
               logInputs={logInputs}
               setLogInputs={setLogInputs}
               logSet={logSet}
@@ -3180,6 +3187,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               pauseTimer={restPause && (
                 <RestPauseTimer athleteId={athlete?.id} pause={restPause} onClear={() => setRestPause(null)} />
               )}
+              todayStr={today()}
             />
 
             {currentWeek ? (
