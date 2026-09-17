@@ -13,6 +13,8 @@ import { recordSilentFail, attachPendingSilentFails, clearPendingSilentFails, ma
 import { compareReadiness, readinessComparisonText, readinessTrainingNote } from './readinessInsight'
 import { remainingSeconds } from './restTimer'
 import { findDagensPas } from './nextSet'
+import { restSecondsForExercise } from './restBetweenSets'
+import { startRestPause, loadRestPause, clearRestPause } from './restPause'
 import { parseRepsPrescription } from './repsPrescription'
 import { calcWarmupSets, isMainLift } from './warmup'
 import { applyWarmupCorrection, saveWarmupOverride, suggestWarmupOverride } from './warmupOverride'
@@ -229,7 +231,7 @@ function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession }) {
 // — logInputs-nøglen er `${exerciseId}_${setNumber}`, delt på tværs af
 // begge faner). Under det: resten af DENNE session i kort form. `pas` kommer
 // fra findDagensPas (src/nextSet.js, ren funktion, se dens tests).
-function DagensPasCard({ pas, logInputs, setLogInputs, logSet, skipSet, suggestNextWeight, onOpenSession }) {
+function DagensPasCard({ pas, logInputs, setLogInputs, logSet, skipSet, suggestNextWeight, onOpenSession, pauseTimer }) {
   if (!pas) return null
 
   if (pas.status !== 'open') {
@@ -281,6 +283,8 @@ function DagensPasCard({ pas, logInputs, setLogInputs, logSet, skipSet, suggestN
         <div style={s.cardLabel}>Dagens pas · {session.title}</div>
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.06em', color: '#7a7770' }}>Sæt {setNumber}/{totalSets}</div>
       </div>
+
+      {pauseTimer}
 
       <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.15, marginBottom: '0.25rem' }}>
         {ex.name}
@@ -348,6 +352,52 @@ function DagensPasCard({ pas, logInputs, setLogInputs, logSet, skipSet, suggestN
               </div>
             ))}
           </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ORDRE 263 · commit 2 — pausen der starter af sig selv når et sæt logges
+// (se logSet). Samme tidsstempel-baserede mønster som ProgramTab.jsx's
+// ExerciseTimer (remainingSeconds, genberegning ved visibilitychange, ALDRIG
+// "s => s - 1" pr. tick, se verify:athlete-rest-timer-drift) — kun
+// starttidspunkt + varighed er sandheden, så pausen ikke driver eller
+// springer hvis skærmen slukkes eller fanen lukkes midt i den (restPause.js
+// persisterer dem, uafhængigt af om komponentet selv overlever).
+function RestPauseTimer({ athleteId, pause, onClear }) {
+  const [liveSeconds, setLiveSeconds] = useState(() => remainingSeconds(pause.durationSeconds, pause.startedAt))
+
+  useEffect(() => {
+    const recompute = () => setLiveSeconds(remainingSeconds(pause.durationSeconds, pause.startedAt))
+    recompute()
+    const id = setInterval(recompute, 250)
+    const onVisible = () => { if (document.visibilityState === 'visible') recompute() }
+    document.addEventListener('visibilitychange', onVisible)
+    return () => { clearInterval(id); document.removeEventListener('visibilitychange', onVisible) }
+  }, [pause.startedAt, pause.durationSeconds])
+
+  const done = liveSeconds <= 0
+  const frac = pause.durationSeconds > 0 ? Math.max(0, Math.min(1, liveSeconds / pause.durationSeconds)) : 0
+  return (
+    <div style={{ marginBottom: '0.85rem', padding: '0.6rem 0.75rem', background: done ? 'rgba(108,186,108,0.06)' : 'rgba(200,146,58,0.06)', border: `1px solid ${done ? 'rgba(108,186,108,0.25)' : 'rgba(200,146,58,0.2)'}` }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.5rem' }}>
+        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: done ? '#6cba6c' : '#c8923a' }}>
+          {done ? 'Pause slut' : 'Pause'}{pause.label ? ` · ${pause.label}` : ''}
+        </span>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', color: '#edeae2', lineHeight: 1 }}>{done ? '✓' : `${liveSeconds}s`}</span>
+          <button
+            type="button"
+            aria-label="Skjul pausetimer"
+            onClick={() => { clearRestPause(athleteId); onClear() }}
+            style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.75rem', minWidth: '32px', minHeight: '32px' }}
+          >✕</button>
+        </span>
+      </div>
+      {!done && (
+        <div style={{ height: '3px', background: 'rgba(237,234,226,0.08)', marginTop: '0.5rem' }}>
+          <div style={{ height: '100%', width: `${frac * 100}%`, background: '#c8923a', transition: 'width 1s linear' }} />
         </div>
       )}
     </div>
@@ -801,6 +851,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     setRecheckMsg('Din konto er registreret som atlet — ingen coach-adgang fundet.')
   }
   const [athlete, setAthlete] = useState(null)
+  // ORDRE 263 · commit 2: den automatiske pause mellem sæt (null = ingen
+  // aktiv pause). Se restPause.js.
+  const [restPause, setRestPause] = useState(null)
   const athleteVideoCoachRef = useRef(null)
   const athleteVideoCoachFrameRef = useRef(null)
   const athleteVideoCoachClientsRef = useRef(new Set())
@@ -1360,6 +1413,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         setOnboardingDone(hasCompletedOnboardingGuide(data))
       }
       setAthlete(data)
+      // ORDRE 263 · commit 2: en igangværende pause overlever et lukket/
+      // genåbnet vindue (persisteret i localStorage, se restPause.js) —
+      // genindlæses her, ét kald, samme sted som resten af login-opstarten.
+      setRestPause(loadRestPause(data.id))
       // Ordre 163 · del 4 (billig gevinst, ingen ny state-model): det der
       // faktisk vises først — "hjem" er standardfanen — hentes med det
       // samme. Resten (kost/beskeder/opvarmning/stævne, alt på faner
@@ -1936,6 +1993,16 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         { id: optimisticId, exercise_id: exerciseId, athlete_id: athlete.id, set_number: setNumber, ...payload, _optimistic: true },
       ])
     }
+    // ORDRE 263 · commit 2: pausen starter automatisk, med det samme
+    // (optimistisk, ligesom resten af denne funktion) — ikke først når
+    // skrivningen har svaret. "Den pause der står i programmet" læses fra
+    // øvelsens note (se restBetweenSets.js); ingen note → en fornuftig
+    // standard. Persisteres (restPause.js), så den overlever et lukket/
+    // genåbnet vindue.
+    const loggedExercise = allWeeks.flatMap(w => w.sessions || []).flatMap(sess => sess.exercises || []).find(e => e.id === exerciseId)
+    const restSeconds = restSecondsForExercise(loggedExercise)
+    startRestPause(athlete.id, restSeconds, loggedExercise?.name)
+    setRestPause({ startedAt: Date.now(), durationSeconds: restSeconds, label: loggedExercise?.name || null })
     setSetConfirm(p => ({ ...p, [key]: 'saved' }))
     let fadeTimer
     const scheduleFade = () => {
@@ -3110,6 +3177,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               skipSet={skipSet}
               suggestNextWeight={suggestNextWeight}
               onOpenSession={(id) => { setTab('program'); openSession(id) }}
+              pauseTimer={restPause && (
+                <RestPauseTimer athleteId={athlete?.id} pause={restPause} onClear={() => setRestPause(null)} />
+              )}
             />
 
             {currentWeek ? (
