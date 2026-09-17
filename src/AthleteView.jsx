@@ -1052,6 +1052,29 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     else saveReadinessDraft(athlete.id, today(), readinessInput)
   }, [readinessInput, athlete?.id])
 
+  // ORDRE 267 · commit 1 — "to minutter": det eneste felt appen reelt kan
+  // udlede er "sandsynligvis som sidst" (atletens egen seneste log). Før
+  // krævede det et eksplicit tryk på "↺ Samme som sidst"; nu forudfyldes
+  // formularen automatisk, første gang lastReadiness er hentet — stadig frit
+  // at rette hvert felt bagefter. Et påbegyndt, ikke-tomt udkast (draft-
+  // effekten ovenfor) har forrang og forhindrer denne forudfyldning.
+  const readinessPrefillDoneForRef = useRef(null)
+  useEffect(() => {
+    if (!athlete?.id || !lastReadiness) return
+    if (readinessPrefillDoneForRef.current === athlete.id) return
+    readinessPrefillDoneForRef.current = athlete.id
+    if (!isEmptyReadinessDraft(readinessInput)) return
+    setReadinessInput({
+      sleep: lastReadiness.sleep_hours != null ? String(lastReadiness.sleep_hours) : '',
+      energy: lastReadiness.energy ?? null,
+      motivation: lastReadiness.motivation ?? null,
+      stress: lastReadiness.stress ?? null,
+      soreness: lastReadiness.soreness_level ?? null,
+      soreZones: lastReadiness.sore_zones || [],
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- readinessInput bevidst ikke i deps, kun læst ved selve kaldet (samme mønster som draft-effekten ovenfor)
+  }, [athlete?.id, lastReadiness])
+
   useEffect(() => {
     athleteVideoCoachRef.current = athlete
     if (!athlete?.id) return
@@ -3318,6 +3341,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                   <div style={s.fieldLabel}>Søvn</div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <input
+                      aria-label="Søvn, timer"
                       type="number" min="0" max="24" step="0.5" placeholder="timer"
                       value={readinessInput.sleep}
                       onChange={e => setReadinessInput(p => ({ ...p, sleep: e.target.value }))}
@@ -3339,6 +3363,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                     <div style={{ display: 'flex', gap: '0.4rem' }}>
                       {[1, 2, 3, 4, 5].map(v => (
                         <button key={v}
+                          type="button"
+                          aria-label={`${label}: ${v}`}
+                          aria-pressed={readinessInput[key] === v}
                           onClick={() => setReadinessInput(p => ({ ...p, [key]: v }))}
                           style={{ flex: 1, padding: '0.9rem 0', minHeight: '44px', boxSizing: 'border-box', fontFamily: "'IBM Plex Mono', monospace", fontSize: '1rem', fontWeight: 500, border: `1px solid ${readinessInput[key] === v ? '#c8923a' : 'rgba(237,234,226,0.13)'}`, background: readinessInput[key] === v ? 'rgba(200,146,58,0.15)' : '#141410', color: readinessInput[key] === v ? '#c8923a' : '#7a7770', cursor: 'pointer' }}
                         >{v}</button>
@@ -3354,6 +3381,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                       const sel = readinessInput.soreZones.includes(zone)
                       return (
                         <button key={zone}
+                          type="button"
+                          aria-pressed={sel}
                           onClick={() => setReadinessInput(p => ({ ...p, soreZones: sel ? p.soreZones.filter(z => z !== zone) : [...p.soreZones, zone] }))}
                           style={{ padding: '0.5rem 0.9rem', minHeight: '44px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', border: `1px solid ${sel ? '#c8923a' : 'rgba(237,234,226,0.13)'}`, background: sel ? 'rgba(200,146,58,0.15)' : '#141410', color: sel ? '#c8923a' : '#7a7770', cursor: 'pointer' }}
                         >{zone}</button>
