@@ -12,6 +12,7 @@
     "e2e:atlet": "node e2e/atlet.spec.mjs",
     "e2e:coach": "node e2e/coach.spec.mjs",
     "e2e:dagens-pas": "node e2e/dagens-pas.spec.mjs",
+    "e2e:check-in": "node e2e/check-in.spec.mjs",
     "e2e": "node e2e/run-all.mjs",
     "e2e:film-et-saet": "node e2e/athlete-film-et-saet.mjs",
     "e2e:coach-ser-maaling": "node e2e/coach-ser-maaling.mjs",

@@ -10,9 +10,10 @@ import { runGuardedRead } from './athleteReadGuard'
 import { loadReadinessDraft, saveReadinessDraft, clearReadinessDraft, isEmptyReadinessDraft } from './readinessDraft'
 import { recordSilentFail, attachPendingSilentFails, clearPendingSilentFails, markUploadInflight,
   clearUploadInflight, takeStaleUploadInflight } from './athleteSilentFailLog'
-import { compareReadiness, readinessComparisonText, readinessTrainingNote } from './readinessInsight'
+import { compareReadiness, readinessComparisonText, readinessTrainingNote, summarizeReadinessForCoach, lastCheckinDrivenChange } from './readinessInsight'
 import { remainingSeconds } from './restTimer'
 import { findDagensPas, lastHeaviestSet } from './nextSet'
+import { shouldNudgeCheckin } from './checkinReminder'
 import { restSecondsForExercise } from './restBetweenSets'
 import { startRestPause, loadRestPause, clearRestPause } from './restPause'
 import { parseRepsPrescription } from './repsPrescription'
@@ -231,13 +232,32 @@ function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession }) {
 // — logInputs-nøglen er `${exerciseId}_${setNumber}`, delt på tværs af
 // begge faner). Under det: resten af DENNE session i kort form. `pas` kommer
 // fra findDagensPas (src/nextSet.js, ren funktion, se dens tests).
-function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, logSet, skipSet, suggestNextWeight, onOpenSession, pauseTimer, todayStr }) {
+function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, logSet, skipSet, suggestNextWeight, onOpenSession, pauseTimer, todayStr, checkinNudge }) {
   if (!pas) return null
+
+  // ORDRE 267 · commit 3 — rolig linje, ikke en mail/notifikation, ingen rød
+  // farve: vises kun de sidste to dage af ugen, hvis ingen check-in er
+  // logget den uge endnu (se shouldNudgeCheckin, src/checkinReminder.js).
+  const nudge = checkinNudge && (
+    <button
+      type="button"
+      onClick={checkinNudge.onClick}
+      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', width: '100%', textAlign: 'left', background: 'transparent', border: 'none', borderBottom: '1px solid rgba(237,234,226,0.08)', padding: '0 0 0.6rem', marginBottom: '0.85rem', cursor: 'pointer' }}
+    >
+      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.04em', color: '#a9a69e' }}>
+        Ugens check-in mangler stadig.
+      </span>
+      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.06em', color: '#c8923a', flexShrink: 0 }}>
+        Log den →
+      </span>
+    </button>
+  )
 
   if (pas.status !== 'open') {
     const up = pas.upcoming
     return (
       <div style={s.card}>
+        {nudge}
         <div style={s.cardLabel}>Dagens pas</div>
         <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', color: '#edeae2', marginBottom: '0.5rem' }}>
           {pas.status === 'done' ? 'Passet er færdigt. ✓' : 'Intet pas i dag.'}
@@ -280,6 +300,7 @@ function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, logSet, 
 
   return (
     <div style={s.card}>
+      {nudge}
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.5rem' }}>
         <div style={s.cardLabel}>Dagens pas</div>
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.06em', color: '#7a7770' }}>Sæt {setNumber}/{totalSets}</div>
@@ -1052,6 +1073,29 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     else saveReadinessDraft(athlete.id, today(), readinessInput)
   }, [readinessInput, athlete?.id])
 
+  // ORDRE 267 · commit 1 — "to minutter": det eneste felt appen reelt kan
+  // udlede er "sandsynligvis som sidst" (atletens egen seneste log). Før
+  // krævede det et eksplicit tryk på "↺ Samme som sidst"; nu forudfyldes
+  // formularen automatisk, første gang lastReadiness er hentet — stadig frit
+  // at rette hvert felt bagefter. Et påbegyndt, ikke-tomt udkast (draft-
+  // effekten ovenfor) har forrang og forhindrer denne forudfyldning.
+  const readinessPrefillDoneForRef = useRef(null)
+  useEffect(() => {
+    if (!athlete?.id || !lastReadiness) return
+    if (readinessPrefillDoneForRef.current === athlete.id) return
+    readinessPrefillDoneForRef.current = athlete.id
+    if (!isEmptyReadinessDraft(readinessInput)) return
+    setReadinessInput({
+      sleep: lastReadiness.sleep_hours != null ? String(lastReadiness.sleep_hours) : '',
+      energy: lastReadiness.energy ?? null,
+      motivation: lastReadiness.motivation ?? null,
+      stress: lastReadiness.stress ?? null,
+      soreness: lastReadiness.soreness_level ?? null,
+      soreZones: lastReadiness.sore_zones || [],
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- readinessInput bevidst ikke i deps, kun læst ved selve kaldet (samme mønster som draft-effekten ovenfor)
+  }, [athlete?.id, lastReadiness])
+
   useEffect(() => {
     athleteVideoCoachRef.current = athlete
     if (!athlete?.id) return
@@ -1600,7 +1644,11 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       runGuardedRead(
         () => supabase
           .from('readiness_logs')
-          .select('logged_date, readiness_score')
+          // ORDRE 267 · commit 2: sleep_hours/sore_zones tilføjet ud over de
+          // to oprindelige kolonner — samme forespørgsel, kun flere felter —
+          // så "hvad coachen ser"-kortet kan regne gns. søvn/hyppigste ømme
+          // zone uden endnu et opslag (se summarizeReadinessForCoach).
+          .select('logged_date, readiness_score, sleep_hours, sore_zones')
           .eq('athlete_id', athleteId)
           .lt('logged_date', today())
           .order('logged_date', { ascending: false })
@@ -3192,6 +3240,22 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 <RestPauseTimer athleteId={athlete?.id} pause={restPause} onClear={() => setRestPause(null)} />
               )}
               todayStr={today()}
+              checkinNudge={(() => {
+                // ORDRE 267 · commit 3: samme uge-udregning som WeekCalendar
+                // ovenfor (weekStartDate + 6 dage), ingen ny hentning — kun
+                // readinessLog/readinessHistory, som allerede er hentet.
+                if (!currentWeek) return null
+                const start = weekStartDate(allWeeks, currentWeek.week_number)
+                if (!start) return null
+                const end = new Date(start.getTime() + 6 * 86400000)
+                const loggedDates = [readinessLog?.logged_date, ...readinessHistory.map(r => r.logged_date)].filter(Boolean)
+                return shouldNudgeCheckin({
+                  weekStartStr: start.toISOString().slice(0, 10),
+                  weekEndStr: end.toISOString().slice(0, 10),
+                  todayStr: today(),
+                  loggedDates,
+                }) ? { onClick: openReadiness } : null
+              })()}
             />
 
             {currentWeek ? (
@@ -3318,6 +3382,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                   <div style={s.fieldLabel}>Søvn</div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <input
+                      aria-label="Søvn, timer"
                       type="number" min="0" max="24" step="0.5" placeholder="timer"
                       value={readinessInput.sleep}
                       onChange={e => setReadinessInput(p => ({ ...p, sleep: e.target.value }))}
@@ -3339,6 +3404,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                     <div style={{ display: 'flex', gap: '0.4rem' }}>
                       {[1, 2, 3, 4, 5].map(v => (
                         <button key={v}
+                          type="button"
+                          aria-label={`${label}: ${v}`}
+                          aria-pressed={readinessInput[key] === v}
                           onClick={() => setReadinessInput(p => ({ ...p, [key]: v }))}
                           style={{ flex: 1, padding: '0.9rem 0', minHeight: '44px', boxSizing: 'border-box', fontFamily: "'IBM Plex Mono', monospace", fontSize: '1rem', fontWeight: 500, border: `1px solid ${readinessInput[key] === v ? '#c8923a' : 'rgba(237,234,226,0.13)'}`, background: readinessInput[key] === v ? 'rgba(200,146,58,0.15)' : '#141410', color: readinessInput[key] === v ? '#c8923a' : '#7a7770', cursor: 'pointer' }}
                         >{v}</button>
@@ -3354,6 +3422,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                       const sel = readinessInput.soreZones.includes(zone)
                       return (
                         <button key={zone}
+                          type="button"
+                          aria-pressed={sel}
                           onClick={() => setReadinessInput(p => ({ ...p, soreZones: sel ? p.soreZones.filter(z => z !== zone) : [...p.soreZones, zone] }))}
                           style={{ padding: '0.5rem 0.9rem', minHeight: '44px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', border: `1px solid ${sel ? '#c8923a' : 'rgba(237,234,226,0.13)'}`, background: sel ? 'rgba(200,146,58,0.15)' : '#141410', color: sel ? '#c8923a' : '#7a7770', cursor: 'pointer' }}
                         >{zone}</button>
@@ -3427,6 +3497,51 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                   </div>
                   <ReadinessSparkline points={sparklinePoints} />
                 </div>
+              )
+            })()}
+
+            {readinessLog && (() => {
+              // ORDRE 267 · commit 2 — "atleten kan se at det blev brugt": to
+              // stille kort efter afsendelse, begge udledt af data der
+              // allerede er hentet (ingen nyt opslag). Fremgangsmåde og
+              // grænser: se readinessInsight.js.
+              const sc = readinessLog.readiness_score
+              const historyWithToday = [
+                ...readinessHistory,
+                { logged_date: readinessLog.logged_date, readiness_score: sc, sleep_hours: readinessLog.sleep_hours, sore_zones: readinessLog.sore_zones },
+              ]
+              const coachSummary = summarizeReadinessForCoach(historyWithToday)
+              const planChange = lastCheckinDrivenChange(historyWithToday, allWeeks)
+              const fmtD = str => { const d = new Date(str + 'T12:00:00'); return `${d.getDate()}/${d.getMonth() + 1}` }
+              return (
+                <>
+                  {coachSummary && (
+                    <div style={s.card}>
+                      <div style={s.cardLabel}>Det din coach ser</div>
+                      <div style={{ fontSize: '0.82rem', color: '#b8b4a8', lineHeight: 1.55 }}>
+                        {coachSummary.logsCount} {coachSummary.logsCount === 1 ? 'parathedslog' : 'parathedslogs'} i din seneste historik
+                        {coachSummary.avgSleep != null ? `, gns. søvn ${String(coachSummary.avgSleep).replace('.', ',')} timer` : ''}
+                        {coachSummary.topZone ? `, oftest øm: ${coachSummary.topZone[0]}` : ''}.
+                      </div>
+                      {coachSummary.lowStreak >= 3 && (
+                        <div style={{ marginTop: '0.6rem', fontSize: '0.78rem', color: '#c8923a' }}>
+                          Din coach ser at parathed har været under 50 i {coachSummary.lowStreak} dage i træk.
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {planChange && (
+                    <div style={s.card}>
+                      <div style={s.cardLabel}>Sidst det gjorde en forskel</div>
+                      <div style={{ fontSize: '0.82rem', color: '#b8b4a8', lineHeight: 1.55 }}>
+                        Efter dit check-in d. {fmtD(planChange.checkinDate)} med lav parathed, skrev din coach denne note til ugen der startede d. {fmtD(planChange.weekStartDate)}:
+                      </div>
+                      <div style={{ marginTop: '0.5rem', fontSize: '0.85rem', color: '#edeae2', fontStyle: 'italic' }}>
+                        "{planChange.note}"
+                      </div>
+                    </div>
+                  )}
+                </>
               )
             })()}
 

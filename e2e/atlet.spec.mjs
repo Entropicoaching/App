@@ -16,9 +16,11 @@ async function readTable(mockUrl, name) {
   return res.json()
 }
 
+// ORDRE 267 · commit 1: rating-knapperne fik et aria-label ("<felt>: <værdi>",
+// se AthleteView.jsx) til at kunne slå en forudfyldt værdi op i e2e uden en
+// mountet komponent — matcher direkte på det i stedet for xpath-scoping.
 function ratingButton(page, fieldLabel, value) {
-  return page.locator(`xpath=//div[normalize-space(text())="${fieldLabel}"]/parent::div`)
-    .getByRole('button', { name: String(value), exact: true })
+  return page.getByRole('button', { name: `${fieldLabel}: ${value}`, exact: true })
 }
 
 /** Kører hele atlet-rejsen. `page` er en frisk Playwright-side, `appUrl` og
