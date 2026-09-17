@@ -13,6 +13,7 @@ import { recordSilentFail, attachPendingSilentFails, clearPendingSilentFails, ma
 import { compareReadiness, readinessComparisonText, readinessTrainingNote, summarizeReadinessForCoach, lastCheckinDrivenChange } from './readinessInsight'
 import { remainingSeconds } from './restTimer'
 import { findDagensPas, lastHeaviestSet } from './nextSet'
+import { shouldNudgeCheckin } from './checkinReminder'
 import { restSecondsForExercise } from './restBetweenSets'
 import { startRestPause, loadRestPause, clearRestPause } from './restPause'
 import { parseRepsPrescription } from './repsPrescription'
@@ -231,13 +232,32 @@ function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession }) {
 // — logInputs-nøglen er `${exerciseId}_${setNumber}`, delt på tværs af
 // begge faner). Under det: resten af DENNE session i kort form. `pas` kommer
 // fra findDagensPas (src/nextSet.js, ren funktion, se dens tests).
-function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, logSet, skipSet, suggestNextWeight, onOpenSession, pauseTimer, todayStr }) {
+function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, logSet, skipSet, suggestNextWeight, onOpenSession, pauseTimer, todayStr, checkinNudge }) {
   if (!pas) return null
+
+  // ORDRE 267 · commit 3 — rolig linje, ikke en mail/notifikation, ingen rød
+  // farve: vises kun de sidste to dage af ugen, hvis ingen check-in er
+  // logget den uge endnu (se shouldNudgeCheckin, src/checkinReminder.js).
+  const nudge = checkinNudge && (
+    <button
+      type="button"
+      onClick={checkinNudge.onClick}
+      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', width: '100%', textAlign: 'left', background: 'transparent', border: 'none', borderBottom: '1px solid rgba(237,234,226,0.08)', padding: '0 0 0.6rem', marginBottom: '0.85rem', cursor: 'pointer' }}
+    >
+      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.04em', color: '#a9a69e' }}>
+        Ugens check-in mangler stadig.
+      </span>
+      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.06em', color: '#c8923a', flexShrink: 0 }}>
+        Log den →
+      </span>
+    </button>
+  )
 
   if (pas.status !== 'open') {
     const up = pas.upcoming
     return (
       <div style={s.card}>
+        {nudge}
         <div style={s.cardLabel}>Dagens pas</div>
         <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', color: '#edeae2', marginBottom: '0.5rem' }}>
           {pas.status === 'done' ? 'Passet er færdigt. ✓' : 'Intet pas i dag.'}
@@ -280,6 +300,7 @@ function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, logSet, 
 
   return (
     <div style={s.card}>
+      {nudge}
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.5rem' }}>
         <div style={s.cardLabel}>Dagens pas</div>
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.06em', color: '#7a7770' }}>Sæt {setNumber}/{totalSets}</div>
@@ -3219,6 +3240,22 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 <RestPauseTimer athleteId={athlete?.id} pause={restPause} onClear={() => setRestPause(null)} />
               )}
               todayStr={today()}
+              checkinNudge={(() => {
+                // ORDRE 267 · commit 3: samme uge-udregning som WeekCalendar
+                // ovenfor (weekStartDate + 6 dage), ingen ny hentning — kun
+                // readinessLog/readinessHistory, som allerede er hentet.
+                if (!currentWeek) return null
+                const start = weekStartDate(allWeeks, currentWeek.week_number)
+                if (!start) return null
+                const end = new Date(start.getTime() + 6 * 86400000)
+                const loggedDates = [readinessLog?.logged_date, ...readinessHistory.map(r => r.logged_date)].filter(Boolean)
+                return shouldNudgeCheckin({
+                  weekStartStr: start.toISOString().slice(0, 10),
+                  weekEndStr: end.toISOString().slice(0, 10),
+                  todayStr: today(),
+                  loggedDates,
+                }) ? { onClick: openReadiness } : null
+              })()}
             />
 
             {currentWeek ? (
