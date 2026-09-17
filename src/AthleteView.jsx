@@ -1318,13 +1318,14 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   }
 
   // ORDRE 259 · commit 1: samme kilde (exercise_logs) som coachens
-  // fetchAthleteLogs (Dashboard.jsx), men KUN de seneste ~8 dage — nok til
-  // VolumenTab.jsx's "denne uge", uden coachens fulde 2000-sæt-historik.
-  // Ingen rettelser (exercise_muscle_overrides) hentes her — atleten har
-  // ikke læseadgang til dem, se docs/RAPPORT-259.md.
+  // fetchAthleteLogs (Dashboard.jsx). ORDRE 259 · commit 2: udvidet fra
+  // ~8 dage til ~5 uger — nok til VolumenTab.jsx's "seneste 4 uger"-trend
+  // med en uges margin til ugegrænser, stadig uden coachens fulde
+  // 2000-sæt-historik. Ingen rettelser (exercise_muscle_overrides) hentes
+  // her — atleten har ikke læseadgang til dem, se docs/RAPPORT-259.md.
   async function fetchVolumeLogs(athleteId) {
     setVolumeLoading(true)
-    const since = new Date(Date.now() - 8 * 86400000).toISOString()
+    const since = new Date(Date.now() - 5 * 7 * 86400000).toISOString()
     const { data, ok } = await runGuardedRead(
       () => supabase
         .from('exercise_logs')
