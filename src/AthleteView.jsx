@@ -1596,14 +1596,16 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   // Dashboard.jsx) som resten af appen, ingen dato-afgrænsning (til forskel
   // fra fetchVolumeLogs's 5 uger) fordi "hele forløbet" pr. definition kan
   // strække sig længere tilbage end det. beregnForloebUger matcher kun på
-  // logged_at, ikke exercise_id — derfor er de øvrige felter (skipped,
-  // weight, reps_completed) nok, ingen relation til exercises nødvendig.
+  // logged_at, ikke exercise_id. ORDRE 276 · blok 2 genbruger SAMME logs til
+  // "sidste uge ved siden af denne" (beregnUgeDage, som matcher på
+  // exercise_id) — derfor er `exercise_id` med i select'en her, selvom
+  // beregnForloebUger ikke selv bruger den.
   async function fetchForloebLogs(athleteId) {
     setForloebLoading(true)
     const { data, ok } = await runGuardedRead(
       () => supabase
         .from('exercise_logs')
-        .select('weight, reps_completed, skipped, logged_at')
+        .select('exercise_id, weight, reps_completed, skipped, logged_at')
         .eq('athlete_id', athleteId)
         .order('logged_at', { ascending: true })
         .limit(2000),
@@ -3306,17 +3308,26 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               <div style={{ height: '76px', marginBottom: '1.25rem' }} />
             )}
 
-            {currentWeek && (
-              <UgensStatusKort
-                week={currentWeek}
-                weekStart={weekStartDate(allWeeks, currentWeek.week_number)}
-                exerciseLogs={exerciseLogs}
-                allWeeks={allWeeks}
-                forloebLogs={forloebLogs}
-                forloebLoading={forloebLoading}
-                onAabnForloeb={() => fetchForloebLogs(athlete.id)}
-              />
-            )}
+            {currentWeek && (() => {
+              // ORDRE 276 · blok 2: "sidste uge" = programugen lige før den
+              // aktive (week_number - 1), samme princip som Dashboard.jsx
+              // allerede bruger week_number til at navigere uger. Findes den
+              // ikke (fx uge 1), får UgensStatusKort null og siger det selv.
+              const forrigeUge = (allWeeks || []).find(w => w.week_number === currentWeek.week_number - 1) || null
+              return (
+                <UgensStatusKort
+                  week={currentWeek}
+                  weekStart={weekStartDate(allWeeks, currentWeek.week_number)}
+                  exerciseLogs={exerciseLogs}
+                  allWeeks={allWeeks}
+                  forloebLogs={forloebLogs}
+                  forloebLoading={forloebLoading}
+                  onAabnForloeb={() => fetchForloebLogs(athlete.id)}
+                  forrigeUge={forrigeUge}
+                  forrigeUgeStart={forrigeUge ? weekStartDate(allWeeks, forrigeUge.week_number) : null}
+                />
+              )
+            })()}
 
             {!readinessLog && logs.length === 0 && (
               <button type="button" aria-label="Gå til dagens parathed" onClick={openReadiness} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', width: '100%', textAlign: 'left', padding: '0.85rem 1rem', background: 'rgba(200,146,58,0.05)', border: '1px solid rgba(200,146,58,0.13)', marginBottom: '1.25rem', cursor: 'pointer' }}>

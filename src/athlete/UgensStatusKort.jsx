@@ -42,14 +42,27 @@ function fmtDateShort(d) {
   return d.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })
 }
 
-function DagRaekke({ dag }) {
+// Én uges tal for én dag, som en lille linje ("2/4 sæt · 1200kg/1280kg").
+// Genbruges for både "denne uge" (farvet efter fuldtLogget) og — dæmpet,
+// ufarvet — for "sidste uge" ved siden af (ordre 276 · blok 2: "ingen
+// vurdering, ingen ros, ingen pil der peger på en retning", derfor samme
+// grå tone uanset om sidste uge blev fuldt logget eller ej).
+function DagLinje({ dag, farve, prefix, storrelse }) {
+  return (
+    <span style={{ fontFamily: mono, fontSize: storrelse || '0.66rem', color: farve, wordBreak: 'break-word' }}>
+      {prefix}{dag.gennemfoertSaet}/{dag.planlagtSaet} sæt · {formatKg(dag.gennemfoertTonnage)} / {formatKg(dag.planlagtTonnage)}
+    </span>
+  )
+}
+
+function DagRaekke({ dag, forrigeDag }) {
   // Ingen sessionstitel vist her med vilje: en session hedder ofte det
   // samme i "Mit program"-kortet længere nede, og et par af de eksisterende
   // e2e-specs (atlet.spec.mjs/fejl.spec.mjs) klikker sig frem via
   // page.getByText(titel) UDEN exact:true — et duplikat af samme tekst her
   // gør den lokator flertydig og vælter dem. Set/tonnage-tallene er selve
   // pointen med rækken; titlen er ikke nødvendig for at læse den.
-  const { weekday, date, harSession, planlagtSaet, gennemfoertSaet, planlagtTonnage, gennemfoertTonnage, fuldtLogget } = dag
+  const { weekday, date, harSession, fuldtLogget } = dag
   const farve = !harSession ? '#4a4844' : fuldtLogget ? '#6cba6c' : '#a9a69e'
   const baggrund = harSession && fuldtLogget ? 'rgba(108,186,108,0.05)' : 'transparent'
   return (
@@ -58,15 +71,17 @@ function DagRaekke({ dag }) {
         <div style={{ fontFamily: mono, fontSize: '0.58rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: '#7a7770' }}>{WEEKDAYS_SHORT[weekday]}</div>
         {date && <div style={{ fontFamily: mono, fontSize: '0.5rem', color: '#4a4844' }}>{fmtDateShort(date)}</div>}
       </div>
-      {!harSession ? (
+      {!harSession && !(forrigeDag && forrigeDag.harSession) ? (
         <div style={{ fontSize: '0.72rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen træning planlagt</div>
       ) : (
-        // Stablet lodret (ikke side om side): et femcifret tonnage-tal
-        // ("12345kg / 12345kg") skal have plads til at stå fuldt ud på en
+        // Stablet lodret (ikke side om side i selve tallene): et femcifret
+        // tonnage-tal skal have plads til at stå fuldt ud på en
         // 360px-skærm, uden at klemmes sammen med sæt-tallet eller klippes.
         <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
-          <span style={{ fontFamily: mono, fontSize: '0.66rem', color: farve, wordBreak: 'break-word' }}>{gennemfoertSaet}/{planlagtSaet} sæt</span>
-          <span style={{ fontFamily: mono, fontSize: '0.66rem', color: farve, wordBreak: 'break-word' }}>{formatKg(gennemfoertTonnage)} / {formatKg(planlagtTonnage)}</span>
+          {harSession && <DagLinje dag={dag} farve={farve} />}
+          {forrigeDag && forrigeDag.harSession && (
+            <DagLinje dag={forrigeDag} farve="#5c5a55" prefix="Sidste uge: " storrelse="0.58rem" />
+          )}
         </div>
       )}
       {harSession && fuldtLogget && <span style={{ color: '#6cba6c', fontSize: '0.8rem', flexShrink: 0 }}>✓</span>}
@@ -141,25 +156,40 @@ function ForloebVisning({ uger, ugerUdenDato }) {
  * @param {Date|null} props.weekStart Mandag i ugen (weekStartDate).
  * @param {Array} props.exerciseLogs Denne uges logs (allerede hentet af AthleteView.jsx).
  * @param {Array} props.allWeeks Hele programmet (til "hele forløbet").
- * @param {Array|null} props.forloebLogs Logs til "hele forløbet" — null før første hentning.
+ * @param {Array|null} props.forloebLogs Logs til "hele forløbet"/"sidste uge" — null før første hentning.
  * @param {boolean} props.forloebLoading
- * @param {() => void} props.onAabnForloeb Kaldes når visningen skifter til "hele forløbet" (lazy-hentning).
+ * @param {() => void} props.onAabnForloeb Kaldes når visningen skifter til "hele forløbet" eller "sidste uge" (lazy-hentning, delt mellem de to — samme kilde).
+ * @param {object|null} props.forrigeUge ORDRE 276 · blok 2: programugen lige før `week` (week_number - 1), eller null hvis den ikke findes.
+ * @param {Date|null} props.forrigeUgeStart Mandag i forrigeUge.
  */
-export default function UgensStatusKort({ week, weekStart, exerciseLogs, allWeeks, forloebLogs, forloebLoading, onAabnForloeb }) {
+export default function UgensStatusKort({ week, weekStart, exerciseLogs, allWeeks, forloebLogs, forloebLoading, onAabnForloeb, forrigeUge, forrigeUgeStart }) {
   const [visning, setVisning] = useState('uge')
 
   if (!week) return null
 
   const { dage, flexSessioner } = beregnUgeDage(week, weekStart, exerciseLogs)
+  // ORDRE 276 · blok 2: samme funktion (beregnUgeDage), samme regler, bare
+  // kørt på forrige programuge i stedet for den aktive — "samme tal og
+  // samme beregning som 268", ingen ny beregning. forloebLogs (allerede
+  // hentet til "Hele forløbet") har exercise_id med, så beregnUgeDage kan
+  // matche på tværs af uger uden en ekstra hentning.
+  const forrigeDage = forrigeUge && forloebLogs ? beregnUgeDage(forrigeUge, forrigeUgeStart, forloebLogs).dage : null
   // ORDRE 276 · blok 1: en tom uge (intet planlagt endnu) skal sige det med
   // ord, ikke bare forsvinde — kortet forsvandt tidligere helt her, hvilket
   // på en tom telefonskærm let kan læses som "noget er gået i stykker" i
-  // stedet for "her er der ikke noget endnu".
-  const ingenPlanlagtOverhovedet = dage.every(d => !d.harSession) && flexSessioner === 0
+  // stedet for "her er der ikke noget endnu". I "sidste uge"-visningen
+  // (blok 2) er ugen kun reelt tom hvis BEGGE uger er det — ellers er der
+  // stadig en sidste-uge-linje at vise, selvom denne uge (endnu) ikke har
+  // en plan.
+  const ingenPlanlagtDenneUge = dage.every(d => !d.harSession) && flexSessioner === 0
+  const ingenPlanlagtSidsteUge = !forrigeDage || forrigeDage.every(d => !d.harSession)
+  const ingenPlanlagtOverhovedet = visning === 'sidste'
+    ? ingenPlanlagtDenneUge && ingenPlanlagtSidsteUge
+    : ingenPlanlagtDenneUge
   // Intet logget endnu denne uge (typisk mandag morgen, før første sæt) —
   // dagene viser stadig 0/X grå, men en kort linje gør det eksplicit at
   // "0" her betyder "endnu ikke", ikke "mislykkedes".
-  const intetLoggetEndnu = ingenPlanlagtOverhovedet ? false : dage.every(d => d.gennemfoertSaet === 0)
+  const intetLoggetEndnu = ingenPlanlagtDenneUge ? false : dage.every(d => d.gennemfoertSaet === 0)
 
   const forloeb = forloebLogs ? beregnForloebUger(allWeeks, forloebLogs) : null
 
@@ -170,19 +200,27 @@ export default function UgensStatusKort({ week, weekStart, exerciseLogs, allWeek
         Gennemført mod planlagt — sæt og tonnage. Manglende dage er ikke en fejl, kun et gab.
       </div>
 
-      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.1rem' }}>
+      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.1rem', flexWrap: 'wrap' }}>
         <button onClick={() => setVisning('uge')} style={visning === 'uge' ? s.btnPrimary : s.btnGhost}>Denne uge</button>
+        <button
+          onClick={() => { setVisning('sidste'); if (!forloebLogs && !forloebLoading) onAabnForloeb() }}
+          style={visning === 'sidste' ? s.btnPrimary : s.btnGhost}
+        >Sidste uge</button>
         <button
           onClick={() => { setVisning('forloeb'); if (!forloebLogs && !forloebLoading) onAabnForloeb() }}
           style={visning === 'forloeb' ? s.btnPrimary : s.btnGhost}
         >Hele forløbet</button>
       </div>
 
-      {visning === 'uge' ? (
+      {visning === 'uge' || visning === 'sidste' ? (
         ingenPlanlagtOverhovedet ? (
           <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>
             Ingen træning planlagt denne uge endnu.
           </div>
+        ) : visning === 'sidste' && !forrigeUge ? (
+          <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen tidligere uge endnu.</div>
+        ) : visning === 'sidste' && (forloebLoading || !forloebLogs) ? (
+          <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>Henter…</div>
         ) : (
           <>
             {intetLoggetEndnu && (
@@ -191,7 +229,9 @@ export default function UgensStatusKort({ week, weekStart, exerciseLogs, allWeek
               </div>
             )}
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              {dage.map(dag => <DagRaekke key={dag.weekday} dag={dag} />)}
+              {dage.map(dag => (
+                <DagRaekke key={dag.weekday} dag={dag} forrigeDag={visning === 'sidste' ? forrigeDage?.[dag.weekday] : null} />
+              ))}
             </div>
             {flexSessioner > 0 && (
               <div style={{ fontFamily: mono, fontSize: '0.5rem', letterSpacing: '0.06em', color: '#4a4844', marginTop: '0.6rem' }}>

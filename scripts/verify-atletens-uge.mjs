@@ -31,9 +31,9 @@ export async function verUgenSomPlanlagt(page, { appUrl, mockUrl, outDir, athlet
   // recommended_weight:80, logget i dag med 3 sæt (4,5,6 reps × 80kg).
   // Planlagt sæt=4 (fra programmet), planlagt tonnage=4×4×80=1280 (laveste
   // ende af "4-6", samme konvention som DagensPasCard). Gennemført sæt=3,
-  // gennemført tonnage=80×(4+5+6)=1200.
-  await page.getByText('3/4 sæt', { exact: true }).waitFor({ state: 'visible' })
-  await page.getByText('1200kg / 1280kg', { exact: true }).waitFor({ state: 'visible' })
+  // gennemført tonnage=80×(4+5+6)=1200. Begge tal står i én linje (ordre
+  // 276 · blok 2, DagLinje) — "3/4 sæt · 1200kg / 1280kg".
+  await page.getByText('3/4 sæt · 1200kg / 1280kg', { exact: true }).waitFor({ state: 'visible' })
 
   // Kun én dag har en session i seeden — resten skal vise "ingen fejl",
   // ikke et 0-tal der ligner en glemt træning.
