@@ -10,7 +10,7 @@ import { runGuardedRead } from './athleteReadGuard'
 import { loadReadinessDraft, saveReadinessDraft, clearReadinessDraft, isEmptyReadinessDraft } from './readinessDraft'
 import { recordSilentFail, attachPendingSilentFails, clearPendingSilentFails, markUploadInflight,
   clearUploadInflight, takeStaleUploadInflight } from './athleteSilentFailLog'
-import { compareReadiness, readinessComparisonText, readinessTrainingNote } from './readinessInsight'
+import { compareReadiness, readinessComparisonText, readinessTrainingNote, summarizeReadinessForCoach, lastCheckinDrivenChange } from './readinessInsight'
 import { remainingSeconds } from './restTimer'
 import { findDagensPas, lastHeaviestSet } from './nextSet'
 import { restSecondsForExercise } from './restBetweenSets'
@@ -1623,7 +1623,11 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       runGuardedRead(
         () => supabase
           .from('readiness_logs')
-          .select('logged_date, readiness_score')
+          // ORDRE 267 · commit 2: sleep_hours/sore_zones tilføjet ud over de
+          // to oprindelige kolonner — samme forespørgsel, kun flere felter —
+          // så "hvad coachen ser"-kortet kan regne gns. søvn/hyppigste ømme
+          // zone uden endnu et opslag (se summarizeReadinessForCoach).
+          .select('logged_date, readiness_score, sleep_hours, sore_zones')
           .eq('athlete_id', athleteId)
           .lt('logged_date', today())
           .order('logged_date', { ascending: false })
@@ -3456,6 +3460,51 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                   </div>
                   <ReadinessSparkline points={sparklinePoints} />
                 </div>
+              )
+            })()}
+
+            {readinessLog && (() => {
+              // ORDRE 267 · commit 2 — "atleten kan se at det blev brugt": to
+              // stille kort efter afsendelse, begge udledt af data der
+              // allerede er hentet (ingen nyt opslag). Fremgangsmåde og
+              // grænser: se readinessInsight.js.
+              const sc = readinessLog.readiness_score
+              const historyWithToday = [
+                ...readinessHistory,
+                { logged_date: readinessLog.logged_date, readiness_score: sc, sleep_hours: readinessLog.sleep_hours, sore_zones: readinessLog.sore_zones },
+              ]
+              const coachSummary = summarizeReadinessForCoach(historyWithToday)
+              const planChange = lastCheckinDrivenChange(historyWithToday, allWeeks)
+              const fmtD = str => { const d = new Date(str + 'T12:00:00'); return `${d.getDate()}/${d.getMonth() + 1}` }
+              return (
+                <>
+                  {coachSummary && (
+                    <div style={s.card}>
+                      <div style={s.cardLabel}>Det din coach ser</div>
+                      <div style={{ fontSize: '0.82rem', color: '#b8b4a8', lineHeight: 1.55 }}>
+                        {coachSummary.logsCount} {coachSummary.logsCount === 1 ? 'parathedslog' : 'parathedslogs'} i din seneste historik
+                        {coachSummary.avgSleep != null ? `, gns. søvn ${String(coachSummary.avgSleep).replace('.', ',')} timer` : ''}
+                        {coachSummary.topZone ? `, oftest øm: ${coachSummary.topZone[0]}` : ''}.
+                      </div>
+                      {coachSummary.lowStreak >= 3 && (
+                        <div style={{ marginTop: '0.6rem', fontSize: '0.78rem', color: '#c8923a' }}>
+                          Din coach ser at parathed har været under 50 i {coachSummary.lowStreak} dage i træk.
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {planChange && (
+                    <div style={s.card}>
+                      <div style={s.cardLabel}>Sidst det gjorde en forskel</div>
+                      <div style={{ fontSize: '0.82rem', color: '#b8b4a8', lineHeight: 1.55 }}>
+                        Efter dit check-in d. {fmtD(planChange.checkinDate)} med lav parathed, skrev din coach denne note til ugen der startede d. {fmtD(planChange.weekStartDate)}:
+                      </div>
+                      <div style={{ marginTop: '0.5rem', fontSize: '0.85rem', color: '#edeae2', fontStyle: 'italic' }}>
+                        "{planChange.note}"
+                      </div>
+                    </div>
+                  )}
+                </>
               )
             })()}
 

@@ -1,6 +1,9 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { compareReadiness, readinessComparisonText, readinessTrainingNote } from './readinessInsight.js'
+import {
+  compareReadiness, readinessComparisonText, readinessTrainingNote,
+  summarizeReadinessForCoach, lastCheckinDrivenChange,
+} from './readinessInsight.js'
 
 test('færre end fem logs → insufficient, uanset dagens score', () => {
   const r = compareReadiness(80, [70, 72, 68, 71])
@@ -82,4 +85,86 @@ test('træningsnoten er ikke-medicinsk og ændrer aldrig programmet — insuffic
     const note = readinessTrainingNote(status).toLowerCase()
     assert.ok(!note.includes('læge') && !note.includes('medicin'), `note for ${status} skal ikke give medicinsk råd`)
   }
+})
+
+// ORDRE 267 · commit 2 — summarizeReadinessForCoach
+
+test('summarizeReadinessForCoach: ingen entries → null', () => {
+  assert.equal(summarizeReadinessForCoach([]), null)
+  assert.equal(summarizeReadinessForCoach(null), null)
+})
+
+test('summarizeReadinessForCoach: tæller logs, gns. søvn og hyppigste ømme zone', () => {
+  const entries = [
+    { logged_date: '2026-09-10', readiness_score: 80, sleep_hours: 8, sore_zones: ['Ben'] },
+    { logged_date: '2026-09-11', readiness_score: 75, sleep_hours: 7, sore_zones: ['Ben', 'Ryg'] },
+    { logged_date: '2026-09-12', readiness_score: 70, sleep_hours: null, sore_zones: null },
+  ]
+  const r = summarizeReadinessForCoach(entries)
+  assert.equal(r.logsCount, 3)
+  assert.equal(r.avgSleep, 7.5)
+  assert.deepEqual(r.topZone, ['Ben', 2])
+  assert.equal(r.lowStreak, 0)
+})
+
+test('summarizeReadinessForCoach: lowStreak tæller kun fra det nyeste, stopper ved første score >= 50', () => {
+  const entries = [
+    { logged_date: '2026-09-10', readiness_score: 80 },
+    { logged_date: '2026-09-11', readiness_score: 40 },
+    { logged_date: '2026-09-12', readiness_score: 35 },
+    { logged_date: '2026-09-13', readiness_score: 45 },
+  ]
+  assert.equal(summarizeReadinessForCoach(entries).lowStreak, 3)
+})
+
+test('summarizeReadinessForCoach: ingen søvn-data → avgSleep null, ingen zoner → topZone null', () => {
+  const entries = [{ logged_date: '2026-09-10', readiness_score: 80, sleep_hours: null, sore_zones: [] }]
+  const r = summarizeReadinessForCoach(entries)
+  assert.equal(r.avgSleep, null)
+  assert.equal(r.topZone, null)
+})
+
+// ORDRE 267 · commit 2 — lastCheckinDrivenChange
+
+test('lastCheckinDrivenChange: lav score efterfulgt af en note-uge inden for vinduet → match', () => {
+  const readiness = [{ logged_date: '2026-09-01', readiness_score: 40 }]
+  const weeks = [{ start_date: '2026-09-06', coach_note: 'Skruet ned for volumen denne uge.' }]
+  const r = lastCheckinDrivenChange(readiness, weeks)
+  assert.ok(r)
+  assert.equal(r.checkinDate, '2026-09-01')
+  assert.equal(r.weekStartDate, '2026-09-06')
+  assert.equal(r.note, 'Skruet ned for volumen denne uge.')
+})
+
+test('lastCheckinDrivenChange: uge uden for vinduet (> 9 dage senere) → ingen match', () => {
+  const readiness = [{ logged_date: '2026-09-01', readiness_score: 40 }]
+  const weeks = [{ start_date: '2026-09-15', coach_note: 'En senere note, ikke relateret.' }]
+  assert.equal(lastCheckinDrivenChange(readiness, weeks), null)
+})
+
+test('lastCheckinDrivenChange: uge uden coach_note tæller ikke som en ændring', () => {
+  const readiness = [{ logged_date: '2026-09-01', readiness_score: 40 }]
+  const weeks = [{ start_date: '2026-09-04', coach_note: null }]
+  assert.equal(lastCheckinDrivenChange(readiness, weeks), null)
+})
+
+test('lastCheckinDrivenChange: score over 50 udløser aldrig en match', () => {
+  const readiness = [{ logged_date: '2026-09-01', readiness_score: 60 }]
+  const weeks = [{ start_date: '2026-09-04', coach_note: 'Note.' }]
+  assert.equal(lastCheckinDrivenChange(readiness, weeks), null)
+})
+
+test('lastCheckinDrivenChange: vælger den NYESTE lave score der har en match, ikke bare den første i arrayet', () => {
+  const readiness = [
+    { logged_date: '2026-09-01', readiness_score: 30 }, // ingen matchende uge
+    { logged_date: '2026-09-10', readiness_score: 45 }, // matcher
+  ]
+  const weeks = [{ start_date: '2026-09-14', coach_note: 'Note efter den seneste lave score.' }]
+  const r = lastCheckinDrivenChange(readiness, weeks)
+  assert.equal(r.checkinDate, '2026-09-10')
+})
+
+test('lastCheckinDrivenChange: ingen lave scores overhovedet → null', () => {
+  const readiness = [{ logged_date: '2026-09-01', readiness_score: 90 }]
+  assert.equal(lastCheckinDrivenChange(readiness, [{ start_date: '2026-09-04', coach_note: 'Note.' }]), null)
 })
