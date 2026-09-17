@@ -16,6 +16,7 @@
     "e2e": "node e2e/run-all.mjs",
     "e2e:film-et-saet": "node e2e/athlete-film-et-saet.mjs",
     "e2e:coach-ser-maaling": "node e2e/coach-ser-maaling.mjs",
+    "e2e:atlet-uge": "node e2e/atlet-uge.spec.mjs",
     "proever": "node scripts/proever.mjs",
     "verify:auth-logout-role-switch": "node scripts/verify-auth-logout-and-role-switch.mjs",
     "verify:athlete-training-inputs": "node scripts/verify-athlete-training-inputs.mjs",

@@ -14,6 +14,13 @@
 // atletdata (syntetisk skive, ingen rigtig krop).
 //
 // Kørsel: node e2e/athlete-film-et-saet.mjs
+//
+// ORDRE 269 · commit 1: calibrateAthlete/filmSaetUpTilDone/CLICK_AT_S er nu
+// eksporteret (var kun lokale før), så e2e/atlet-uge.spec.mjs kan genbruge
+// PRÆCIS samme kalibrerings-/analyseflow i stedet for at duplikere det —
+// ingen ændring af selve logikken, kun synlighed. Guard tilføjet nederst
+// (samme mønster som alle andre .spec.mjs-filer) så import ikke selv
+// starter en konkurrerende mock/vite/browser.
 
 import assert from 'node:assert/strict'
 import { join } from 'node:path'
@@ -23,7 +30,7 @@ import { ATHLETE_USER, ATHLETE_ID } from './fixtures.mjs'
 import { startVite, launchBrowser, APP_URL, MOCK_PORT, OUT_DIR, ensureCoachSporingClip } from './harness.mjs'
 import { truePos, W as VIDEO_W, H as VIDEO_H } from '../scripts/make-test-clip.mjs'
 
-const CLICK_AT_S = 1.8
+export const CLICK_AT_S = 1.8
 const MAX_CALIBRATION_ATTEMPTS = 4
 
 async function readTable(mockUrl, name) {
@@ -34,7 +41,7 @@ async function readTable(mockUrl, name) {
 // Samme retry-mønster som e2e/coach-sporing.spec.mjs's calibrate() (klik
 // #allBtn = fresh auto-forsøg, se public/videocoach.html's allBtn.onclick),
 // kun ombygget til ATHLETE-fladens egne elementer/tilstande.
-async function calibrateAthlete(frame, page, canvas, box) {
+export async function calibrateAthlete(frame, page, canvas, box) {
   const target = truePos(CLICK_AT_S)
   const basePos = { x: target.x * box.width / VIDEO_W, y: target.y * box.height / VIDEO_H }
   for (let attempt = 0; attempt <= MAX_CALIBRATION_ATTEMPTS; attempt++) {
@@ -53,7 +60,7 @@ async function calibrateAthlete(frame, page, canvas, box) {
 // Ét gennemløb af "Film et sæt" op til (og inklusive) analysen — vælger klip,
 // sætter start, kalibrerer, analyserer, venter til 'done' eller 'error'.
 // Kaldes to gange på samme (genindlæste) iframe, se main().
-async function filmSaetUpTilDone(frame, page, clipPath, shot) {
+export async function filmSaetUpTilDone(frame, page, clipPath, shot) {
   await frame.locator('body.athlete').waitFor({ state: 'attached', timeout: 10000 })
   await frame.locator('#fileInput').setInputFiles(clipPath)
   await frame.locator('body[data-athlete-state="ready"]').waitFor({ state: 'attached', timeout: 15000 })
@@ -183,4 +190,4 @@ async function main() {
   }
 }
 
-main()
+if (process.argv[1] && process.argv[1].endsWith('athlete-film-et-saet.mjs')) main()
