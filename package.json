@@ -13,6 +13,7 @@
     "e2e:coach": "node e2e/coach.spec.mjs",
     "e2e:dagens-pas": "node e2e/dagens-pas.spec.mjs",
     "e2e": "node e2e/run-all.mjs",
+    "e2e:film-et-saet": "node e2e/athlete-film-et-saet.mjs",
     "proever": "node scripts/proever.mjs",
     "verify:auth-logout-role-switch": "node scripts/verify-auth-logout-and-role-switch.mjs",
     "verify:athlete-training-inputs": "node scripts/verify-athlete-training-inputs.mjs",

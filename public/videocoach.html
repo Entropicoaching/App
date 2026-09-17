@@ -412,6 +412,38 @@
     border-radius:14px; background:rgba(24,24,20,.94); backdrop-filter:blur(14px);
     -webkit-backdrop-filter:blur(14px); box-shadow:0 12px 34px rgba(0,0,0,.28); }
   body.athlete #athleteConfirmFields[hidden] { display:none; }
+  /* ORDRE 262 · commit 2/3: "Film et sæt"s resultatpanel - reps/afvigelse/
+     tid samt Gem/Kassér. Samme placering/glas-stil som #athleteConfirmFields
+     ovenfor (bunden, over footeren) - de udelukker hinanden (confirm vs. done). */
+  body.athlete #athleteInstantResult { position:fixed; z-index:20; left:12px; right:12px;
+    bottom:74px; max-height:46vh; overflow-y:auto; box-sizing:border-box;
+    padding:13px 14px; border:1px solid rgba(200,146,58,.28); border-radius:16px;
+    background:rgba(24,24,20,.94); backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px); box-shadow:0 12px 34px rgba(0,0,0,.28); }
+  body.athlete #athleteInstantResult[hidden] { display:none; }
+  body.athlete #athleteInstantResult .athInstantHead { color:var(--text);
+    font-family:system-ui,sans-serif; font-size:15px; font-weight:650;
+    letter-spacing:-.01em; margin-bottom:8px; }
+  body.athlete #athleteInstantResult .athInstantRow { display:flex;
+    align-items:baseline; justify-content:space-between; gap:10px;
+    padding:6px 0; border-top:1px solid rgba(237,234,226,.08); }
+  body.athlete #athleteInstantResult .athInstantRow:first-of-type { border-top:none; }
+  body.athlete #athleteInstantResult .athInstantRow b { color:rgba(237,234,226,.72);
+    font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; }
+  body.athlete #athleteInstantResult .athInstantRow span { color:var(--text);
+    font-family:'IBM Plex Mono',monospace; font-size:12px; text-align:right; }
+  body.athlete #athleteInstantResult .athInstantFoot { margin-top:8px;
+    color:rgba(237,234,226,.4); font-size:10px; line-height:1.4; font-style:italic; }
+  body.athlete #athleteInstantResult .athInstantActions { display:flex;
+    gap:8px; margin-top:12px; }
+  body.athlete #athleteInstantResult .athInstantActions button { flex:1 1 0;
+    min-height:46px; border-radius:12px; font-size:12px; font-weight:700;
+    letter-spacing:.04em; text-transform:uppercase; }
+  body.athlete #athleteInstantResult .athInstantActions button:disabled { opacity:.55; }
+  body.athlete #athleteInstantDiscardBtn { border:1px solid rgba(237,234,226,.18);
+    background:transparent; color:rgba(237,234,226,.72); }
+  body.athlete #athleteInstantSaveBtn { border-color:var(--accent);
+    background:var(--accent); color:#141410; }
   /* coach online: samme rolige arbejdsskal som desktop, komprimeret til mobil. */
   body.coachweb { --coach-glass:rgba(18,17,14,.84); }
   body.coachweb header { display:flex; position:fixed; top:10px; left:12px; right:12px;
@@ -1204,6 +1236,12 @@ const VC_DIAG = MODE_PARAMS.get('diag') === '1';
 let vcRtDiag = { seekMs: 0, foersteFrameMs: 0, sporingMs: 0, hentMs: 0, nedskaleringMs: 0, soegningMs: 0, tegningMs: 0, filterMs: 0, framesTracked: 0, framesSkipped: 0 };
 const SLIM = !DESKTOP;              // moderne layout (atlet OG coach online)
 const ATHLETE = SLIM && !COACHWEB;
+// ORDRE 262 · commit 1: "Film et sæt" - atletens instant-feedback-flow.
+// Samme ATHLETE-tilstand og samme sporing, men INGEN automatisk afsendelse
+// efter analysen (se runFullAnalysis) - i stedet et Gem/Kassér-valg
+// (showInstantResult). Aktiveres kun med ?instant=1 fra AthleteView.jsx's
+// nye "Film et sæt"-kort - standardvejen (VideoCoach-kortet) er uændret.
+const VC_ATHLETE_INSTANT = ATHLETE && MODE_PARAMS.get('instant') === '1';
 // ORDRE 45 · én kontakt for ALLE tracker-hastighedsgreb (commit 2-4). Slået
 // TIL som standard. Kommer der en fejl på en rigtig video, kan Marc slå den
 // fra med ét tryk på ⚡/🐢-knappen - ingen kodeændring, intet redeploy, virker
@@ -1270,6 +1308,10 @@ let vcPriorSetup = null;
 const cleanOverlayState = { phases:true, history:true, metrics:true };
 let setAthleteState = null;         // Athlete v2: ét roligt, guidet flow
 let setAthleteSubmitOpen = null;    // Athlete v3: sendearket må kun åbne i sidste trin
+// ORDRE 262 · commit 2: sat i ATHLETE-opsætningen (samme tværscope-mønster
+// som setAthleteState) - viser reps/afvigelse/tempo og Gem/Kassér, kaldt fra
+// runFullAnalysis i stedet for det automatiske vcAthleteUploadAndGo-kald.
+let showInstantResult = null;
 // ORDRE 61 · commit 2: sat i ATHLETE-opsætningen, læst af vcAthleteUploadAndGo
 // (defineret før den opsætning kører) - samme tværscope-mønster som ovenstående.
 let athleteUploadCancelBtn = null;
@@ -1738,12 +1780,20 @@ function loadFile(file, remoteUrl = null) {
     keepAwake();
     if (typeof ATHLETE !== 'undefined' && ATHLETE) {
       if (setAthleteState) setAthleteState('ready');
-      // ORDRE 57 · standardvejen er upload, ikke sporing: sendearket (løft +
-      // variation) åbner med det samme. Vil hun se banen selv først, lukker
-      // hun arket og bruger Sæt start/Stangbane-vejen under det, uændret.
-      say('Videoen er klar · vælg løft, og send til din coach');
-      setTimeout(() => say(''), 3200);
-      if (setAthleteSubmitOpen) setAthleteSubmitOpen(true);
+      // ORDRE 262 · commit 1: "Film et sæt" sporer FØRST, lokalt - sendearket
+      // må ikke åbne automatisk her (det er netop den automatik ordren fjerner
+      // for dette flow). Standardvejen (uændret) åbner den stadig med det samme.
+      if (VC_ATHLETE_INSTANT) {
+        say('Spol til lige før løftet, og tryk Sæt start her');
+        setTimeout(() => say(''), 3200);
+      } else {
+        // ORDRE 57 · standardvejen er upload, ikke sporing: sendearket (løft +
+        // variation) åbner med det samme. Vil hun se banen selv først, lukker
+        // hun arket og bruger Sæt start/Stangbane-vejen under det, uændret.
+        say('Videoen er klar · vælg løft, og send til din coach');
+        setTimeout(() => say(''), 3200);
+        if (setAthleteSubmitOpen) setAthleteSubmitOpen(true);
+      }
     } else {
       // TRÆNINGSMODE-armering: første tryk på skiven = analyse.
       // Spoler/afspiller/tegner man i stedet, afvæbnes den lydløst.
@@ -3945,6 +3995,24 @@ function analyzePath(path) {
   return analyzeCleanPath(path);
 }
 // ORDRE 85 · slut: rep-detektion
+
+// ORDRE 262 · commit 2: vandret afvigelse i cm PR. REP, til "Film et sæt"s
+// instant-resultat. Samme regnestykke som collectMetrics's aggregerede
+// driftCm (maks. afstand fra REPPENS egen startposition), kun afgrænset til
+// rep'ens eget vindue i stedet for hele klippet - læser kun allerede
+// beregnede path.analysis.pts/reps og cmPerPx, rører intet i selve
+// trackeren eller analyzeCleanPath.
+function instantRepDriftCm(path) {
+  if (!cmPerPx || !path?.analysis) return [];
+  const pts = path.analysis.pts;
+  return path.analysis.reps.map(rep => {
+    const from = rep.viewStart ?? rep.start, to = rep.viewEnd ?? rep.end;
+    const xs = pts.slice(from, to + 1).map(p => p.x);
+    if (!xs.length) return null;
+    const x0 = xs[0];
+    return +(Math.max(...xs.map(x => Math.abs(x - x0))) * cmPerPx).toFixed(1);
+  });
+}
 
 // Den muterende 8b80f75-analyse er karantæneret som historisk reference. Den
 // kaldes aldrig af clean rebuild-pathen; navn og rekursionskald er isoleret.
@@ -6930,11 +6998,18 @@ async function runFullAnalysis(barPt) {
     sessionRun = false;
     if (ATHLETE && setAthleteState) setAthleteState('done');
     applySessionView(latestCleanPath());
-    // ORDRE 57 · commit 1: den lokale sporing her er kun til atletens eget
-    // "vis mig hele banen"-øjeblik. Det der faktisk sendes til coachen er
-    // videoen selv (vcAthleteUploadAndGo), ikke de sporede tal - coachen
-    // sporer selv det fulde sæt i coach-tilstanden (ORDRE 57 · commit 2).
-    if (ATHLETE) vcAthleteUploadAndGo();
+    if (ATHLETE && VC_ATHLETE_INSTANT && showInstantResult) {
+      // ORDRE 262 · commit 2/3: "Film et sæt" - intet sendes automatisk her.
+      // Atleten ser tallene med det samme og vælger selv Gem (genbruger
+      // vcAthleteUploadAndGo, samme video-vej som standardvejen) eller Kassér.
+      showInstantResult(latestCleanPath());
+    } else if (ATHLETE) {
+      // ORDRE 57 · commit 1: den lokale sporing her er kun til atletens eget
+      // "vis mig hele banen"-øjeblik. Det der faktisk sendes til coachen er
+      // videoen selv (vcAthleteUploadAndGo), ikke de sporede tal - coachen
+      // sporer selv det fulde sæt i coach-tilstanden (ORDRE 57 · commit 2).
+      vcAthleteUploadAndGo();
+    }
   } else if (COACHWEB && openSheetFn &&
              strokes.some(s => s.type === 'path' && s.vel)) {
     // coach online: vis analyse-arket med tal og fund med det samme
@@ -9878,9 +9953,23 @@ function filmGuideFullHtml() {
     '<ul>' + FILM_GUIDE_POINTS.map(p => `<li>${p}</li>`).join('') + '</ul>' +
     `<span class="athFilmGuideFooter">${FILM_GUIDE_FOOTER}</span>`;
 }
+// ORDRE 262 · commit 1: "Film et sæt" - samme kilde (FILMEVEJLEDNING.md), men
+// kogt yderligere ned til tre linjer (ordren beder om "kort, tre linjer").
+// Vises altid fuldt ud - flowet er i sig selv nyt/sjældnere brugt end
+// standardvejen, så der er ingen "vis igen"-tilstand at spare væk til.
+const FILM_GUIDE_INSTANT_POINTS = [
+  'Kamera fra siden, i hoftehøjde — ikke skråt.',
+  'Hele kroppen og skiven fri af rack og andre skiver.',
+  'Ét sæt ad gangen, i godt og jævnt lys.',
+];
+function filmGuideInstantHtml() {
+  return '<span class="athFilmGuideTitle">📷 Før du filmer</span>' +
+    '<ul>' + FILM_GUIDE_INSTANT_POINTS.map(p => `<li>${p}</li>`).join('') + '</ul>';
+}
 function renderFilmGuide() {
   const el = document.getElementById('athFilmGuide');
   if (!el) return;
+  if (VC_ATHLETE_INSTANT) { el.innerHTML = filmGuideInstantHtml(); return; }
   if (!hasSeenFilmGuide()) {
     el.innerHTML = filmGuideFullHtml();
     markFilmGuideSeen();
@@ -9954,16 +10043,27 @@ if (ATHLETE) {
   const athleteFlow = document.createElement('div');
   athleteFlow.id = 'athleteFlow';
   athleteFlow.setAttribute('aria-label', 'Forløb');
-  athleteFlow.innerHTML = ['Video', 'Klargør', 'Analyse', 'Send'].map((label, index) =>
-    `<span class="athFlowStep"><b>${index + 1}</b>${label}</span>`).join('');
+  // ORDRE 262 · commit 1: sidste trin hedder "Gem" i instant-flowet - der er
+  // intet automatisk "Send" her, se runFullAnalysis.
+  athleteFlow.innerHTML = ['Video', 'Klargør', 'Analyse', VC_ATHLETE_INSTANT ? 'Gem' : 'Send']
+    .map((label, index) => `<span class="athFlowStep"><b>${index + 1}</b>${label}</span>`).join('');
   document.body.appendChild(athleteFlow);
 
-  dropHint.innerHTML =
-    '<span class="athKicker">Din VideoCoach</span>' +
-    '<strong>Se din stangbane</strong>' +
-    '<span class="athCopy">Vælg en video af dit sæt. Du markerer skiven én gang — resten klarer vi.</span>' +
-    '<div id="athFilmGuide"></div>' +
-    '<button id="athleteOpenVideoBtn" class="athCta" type="button">Åbn video</button>';
+  if (VC_ATHLETE_INSTANT) {
+    dropHint.innerHTML =
+      '<span class="athKicker">Film et sæt</span>' +
+      '<strong>Se svaret med det samme</strong>' +
+      '<span class="athCopy">Reps, bane og afvigelse — ingen dom om teknik. Du vælger selv om det gemmes.</span>' +
+      '<div id="athFilmGuide"></div>' +
+      '<button id="athleteOpenVideoBtn" class="athCta" type="button">Optag eller vælg video</button>';
+  } else {
+    dropHint.innerHTML =
+      '<span class="athKicker">Din VideoCoach</span>' +
+      '<strong>Se din stangbane</strong>' +
+      '<span class="athCopy">Vælg en video af dit sæt. Du markerer skiven én gang — resten klarer vi.</span>' +
+      '<div id="athFilmGuide"></div>' +
+      '<button id="athleteOpenVideoBtn" class="athCta" type="button">Åbn video</button>';
+  }
   renderFilmGuide();
   const chooseAthleteVideo = () => document.getElementById('fileInput').click();
   dropHint.onclick = chooseAthleteVideo;
@@ -10014,6 +10114,82 @@ if (ATHLETE) {
     vcAthletePreviewThree(barPt);
   };
   athleteFooter.appendChild(athletePreviewBtn);
+
+  // ORDRE 262 · commit 2/3: "Film et sæt"s eget resultatpanel - reps fundet,
+  // vandret afvigelse og tid PR. REP (instantRepDriftCm/rep.eccS+pauseS+conS),
+  // ingen teknikdom. Kun synlig i VC_ATHLETE_INSTANT ved state 'done' (se
+  // setAthleteState). Gem genbruger den EKSISTERENDE video-vej
+  // (vcAthleteUploadAndGo - samme bucket/tabel som standardvejen); Kassér
+  // genindlæser værktøjet, så intet er sendt eller gemt nogen steder.
+  const athleteInstantResult = document.createElement('div');
+  athleteInstantResult.id = 'athleteInstantResult';
+  athleteInstantResult.hidden = true;
+  const athleteInstantHead = document.createElement('div');
+  athleteInstantHead.className = 'athInstantHead';
+  const athleteInstantRows = document.createElement('div');
+  athleteInstantRows.className = 'athInstantRows';
+  const athleteInstantFoot = document.createElement('div');
+  athleteInstantFoot.className = 'athInstantFoot';
+  athleteInstantFoot.textContent = 'Kun det du selv kan se på klippet — ingen dom om teknik.';
+  const athleteInstantActions = document.createElement('div');
+  athleteInstantActions.className = 'athInstantActions';
+  const athleteInstantDiscardBtn = document.createElement('button');
+  athleteInstantDiscardBtn.type = 'button';
+  athleteInstantDiscardBtn.id = 'athleteInstantDiscardBtn';
+  athleteInstantDiscardBtn.textContent = 'Kassér';
+  const athleteInstantSaveBtn = document.createElement('button');
+  athleteInstantSaveBtn.type = 'button';
+  athleteInstantSaveBtn.id = 'athleteInstantSaveBtn';
+  athleteInstantSaveBtn.textContent = 'Gem til mit pas';
+  athleteInstantActions.append(athleteInstantDiscardBtn, athleteInstantSaveBtn);
+  athleteInstantResult.append(athleteInstantHead, athleteInstantRows, athleteInstantFoot, athleteInstantActions);
+  document.body.appendChild(athleteInstantResult);
+
+  athleteInstantDiscardBtn.onclick = () => {
+    // Intet er sendt (vcAthleteUploadAndGo er IKKE kaldt for instant-flowet før
+    // dette tryk) - en frisk indlæsning er den enkleste garanti for at intet
+    // hænger tilbage lokalt, uden at skulle nulstille hver global variabel
+    // trackeren/opsætningen bruger enkeltvis.
+    location.reload();
+  };
+  athleteInstantSaveBtn.onclick = async () => {
+    if (!VC_V3_ATHLETE_BRIDGE || !vcV3BridgeReady) {
+      alert('Forbindelsen til appen er ikke klar. Luk VideoCoach og åbn den fra appen igen.');
+      return;
+    }
+    athleteInstantSaveBtn.disabled = true;
+    athleteInstantDiscardBtn.disabled = true;
+    await vcAthleteUploadAndGo();
+    // Lykkes sendingen, skifter setAthleteState til 'sent' og skjuler panelet
+    // (se visibility-reglen i setAthleteState). Fejler den (fanget INDE i
+    // vcAthleteUploadAndGo, som selv åbner sendearket som faldback), er
+    // 'done' stadig aktiv, og knapperne her skal kunne bruges igen.
+    if (document.body.dataset.athleteState !== 'sent') {
+      athleteInstantSaveBtn.disabled = false;
+      athleteInstantDiscardBtn.disabled = false;
+    }
+  };
+  showInstantResult = path => {
+    // Sidste billede, ikke loop - stangens bane står stille ovenpå, som ordren
+    // beder om, mens atleten læser tallene (render() tegner banen uanset).
+    video.pause();
+    looping = false;
+    document.getElementById('loopBtn').classList.remove('active');
+    if (path?.raw && Number.isFinite(path.raw.end)) video.currentTime = path.raw.end;
+    playBtn.textContent = playLabel(false);
+    const reps = path?.analysis?.reps || [];
+    const drift = instantRepDriftCm(path);
+    athleteInstantHead.textContent = `${reps.length} rep${reps.length === 1 ? '' : 's'} fundet`;
+    athleteInstantRows.innerHTML = reps.map((rep, i) => {
+      const cm = drift[i] != null ? `${drift[i]} cm sidelæns` : 'afvigelse ukendt';
+      const time = (rep.eccS + rep.pauseS + rep.conS).toFixed(1);
+      return `<div class="athInstantRow"><b>Rep ${i + 1}</b><span>${cm} · ${time}s</span></div>`;
+    }).join('');
+    athleteInstantSaveBtn.disabled = false;
+    athleteInstantDiscardBtn.disabled = false;
+    athleteInstantSaveBtn.textContent = 'Gem til mit pas';
+    athleteInstantResult.hidden = false;
+  };
 
   const athleteSubmitSheet = document.createElement('div');
   athleteSubmitSheet.id = 'athleteSubmitSheet';
@@ -10166,7 +10342,11 @@ if (ATHLETE) {
       ready: ['Find starten', 'Spol til lige før løftet, og tryk Sæt start her.', 'Stangbane', 'ready'],
       target: ['Markér skiven', 'Tryk én gang midt på den skive, du vil følge.', 'Vælg skive', 'ready'],
       confirm: ['Tjek ringen', 'Rammes skiven rigtigt? Justér om nødvendigt — tryk Start for at sende, eller Vis mig nu for et hurtigt kig.', 'Start', 'ready'],
-      analyzing: ['Video modtaget ✓', 'Vi finder stangbanen og sender den automatisk til din coach. Bliv på denne skærm, til der står Sendt.', 'Annullér', 'ready'],
+      analyzing: [VC_ATHLETE_INSTANT ? 'Sporer sættet' : 'Video modtaget ✓',
+        VC_ATHLETE_INSTANT
+          ? 'Vi finder stangbanen. Intet sendes - du ser tallene om et øjeblik og vælger selv.'
+          : 'Vi finder stangbanen og sender den automatisk til din coach. Bliv på denne skærm, til der står Sendt.',
+        'Annullér', 'ready'],
       done: ['Stangbanen er klar', 'Se hele banen, faserne og de valide målinger i Bane.', 'Ny bane', 'done'],
       sent: ['Sendt til din coach', 'Din måling ligger klar til coachens gennemgang.', 'Ny bane', 'done'],
       error: ['Prøv igen', 'Vi mistede skiven. Vælg et tydeligt punkt tæt på navet.', 'Prøv igen', 'ready']
@@ -10187,13 +10367,21 @@ if (ATHLETE) {
       athleteStatus.hidden = true;
     }
     if (state === 'done') athleteStatus.hidden = true;
-    athleteSendBtn.hidden = !(state === 'done' && VC_V3_ATHLETE_BRIDGE);
+    // ORDRE 262 · commit 2/3: instant-flowet har sit EGET Gem/Kassér-panel
+    // (athleteInstantResult) i stedet for standardvejens Send-knap/forhånds-
+    // visning - begge er skjult her, så der kun er ét valg på skærmen.
+    athleteSendBtn.hidden = !(state === 'done' && VC_V3_ATHLETE_BRIDGE) || VC_ATHLETE_INSTANT;
+    athleteInstantResult.hidden = !(VC_ATHLETE_INSTANT && state === 'done');
     // ORDRE 54 · commit 2: kun synlig lige inden Start, ved siden af den -
     // det er her valget mellem de to veje reelt skal tages.
     athletePreviewBtn.hidden = state !== 'confirm';
     // ORDRE 61 · commit 3: belastning/RPE og notat skal kunne udfyldes FØR
     // Start/Vis mig nu trykkes - samme trin som ringbekræftelsen.
     athleteConfirmFields.hidden = state !== 'confirm';
+    // ORDRE 262 · commit 2: instant-flowet bruger ikke "Vis mig nu"
+    // (vcAthletePreviewThree har sin egen, separate auto-send - se dens
+    // kommentar) - skjult uanset trin, i stedet for at ændre 54/61s regel.
+    if (VC_ATHLETE_INSTANT) athletePreviewBtn.hidden = true;
     const currentStep = state === 'empty' ? 1
       : (state === 'ready' || state === 'target' || state === 'confirm' || state === 'error') ? 2
       : state === 'analyzing' ? 3 : 4;
