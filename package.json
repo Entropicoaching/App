@@ -11,6 +11,7 @@
     "e2e:mock": "node -e \"import('./e2e/mock-supabase.mjs').then(async m=>{const {buildSeed}=await import('./e2e/fixtures.mjs');const mock=m.createMockSupabase(buildSeed());await mock.listen(Number(process.env.E2E_MOCK_PORT||8991));console.log('mock-supabase kører på 127.0.0.1:'+(process.env.E2E_MOCK_PORT||8991))})\"",
     "e2e:atlet": "node e2e/atlet.spec.mjs",
     "e2e:coach": "node e2e/coach.spec.mjs",
+    "e2e:dagens-pas": "node e2e/dagens-pas.spec.mjs",
     "e2e": "node e2e/run-all.mjs",
     "proever": "node scripts/proever.mjs",
     "verify:auth-logout-role-switch": "node scripts/verify-auth-logout-and-role-switch.mjs",

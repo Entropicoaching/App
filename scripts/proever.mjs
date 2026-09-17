@@ -110,6 +110,18 @@ if (await portFree(8991)) {
     venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
 }
 
+// ---- 5) Dagens pas: næste sæt logges direkte fra Hjem, pausetimeren starter
+// og tæller ned (ordre 263 · commit 4). Egen mock-instans (ikke i
+// run-all.mjs's delte sekvens, se e2e/dagens-pas.spec.mjs's egen kommentar
+// for hvorfor), så samme port-grænse gælder her for sig.
+if (await portFree(8991)) {
+  rows.push(runNode('e2e (dagens-pas.spec.mjs)', [join('e2e', 'dagens-pas.spec.mjs')],
+    'DOM-tilstand + mockens exercise_logs, og at pausens sekundtal faktisk falder (ikke kun vises)', 'e2e'))
+} else {
+  rows.push({ name: 'e2e (dagens-pas.spec.mjs)', kind: 'e2e', ok: null, ms: 0,
+    venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
+}
+
 // ---- Skriv tabellen ----
 const lines = []
 lines.push('# Prøver — samlet facit (ordre 234)')

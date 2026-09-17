@@ -281,7 +281,7 @@ function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, logSet, 
   return (
     <div style={s.card}>
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.5rem' }}>
-        <div style={s.cardLabel}>Dagens pas · {session.title}</div>
+        <div style={s.cardLabel}>Dagens pas</div>
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.06em', color: '#7a7770' }}>Sæt {setNumber}/{totalSets}</div>
       </div>
 
