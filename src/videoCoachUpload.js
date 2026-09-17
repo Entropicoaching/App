@@ -60,8 +60,17 @@ export function videoUploadAlreadyExistsError(error) {
 // ORDRE 109 · commit 3: kort, forudbestemt årsagskode fra videocoach.html
 // (plate:fail:auto / plate:fail:small-video / plate:manual:ok) - aldrig fri
 // tekst, så et forkert klientbygget felt ikke kan smugle andet ind her.
+// ORDRE 262 · commit 3: manglede de tre VELLYKKEDE auto-kalibrerings-ruter
+// (wizardClick sætter vcPlateCalibReason=`plate:auto:${autoCalib.lastRoute}`,
+// lastRoute er 'ring'/'farve'/'lum', se public/videocoach.html) - enhver
+// atlet der kørte lokal sporing (auto-kalibrering lykkedes) FØR afsendelse
+// ramte derfor ALTID "Kalibreringsårsagen er ugyldig" og landede stille i
+// sendearkets faldback, uanset flow. Fundet ved "Film et sæt"s Gem-knap
+// (samme eksisterende vej), rettet her fordi den blokerede for at genbruge
+// vejen - ingen sammenhæng med selve trackeren.
 const PLATE_CALIBRATION_REASONS = new Set([
   'plate:fail:auto', 'plate:fail:small-video', 'plate:manual:ok',
+  'plate:auto:ring', 'plate:auto:farve', 'plate:auto:lum',
 ])
 
 export function validateVideoUploadRequest({
