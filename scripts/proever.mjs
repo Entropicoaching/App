@@ -90,6 +90,18 @@ if (await portFree(8991)) {
     venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
 }
 
+// ---- 3b) "Film et sæt" — atlet-flowet, klik-igennem + kassér/gem (ordre 262)
+// Genererer sit eget klip (scripts/make-test-clip.mjs's 'glat'-variant) - ingen
+// afhængighed af lokalt test-clips/, derfor ubetinget (samme grænse: port
+// 8991 fri) i modsætning til punkt 4's rigtige-klip-tjek nedenfor.
+if (await portFree(8991)) {
+  rows.push(runNode('e2e (athlete-film-et-saet.mjs)', [join('e2e', 'athlete-film-et-saet.mjs')],
+    'DOM-tilstand (athleteInstantResult) + mockens video_analyses-tabel (kassér=intet gemt, gem=awaiting_analysis-række)', 'e2e'))
+} else {
+  rows.push({ name: 'e2e (athlete-film-et-saet.mjs)', kind: 'e2e', ok: null, ms: 0,
+    venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
+}
+
 // ---- 4) det rigtige klik-igennem-flow mod et rigtigt klip (ordre 245) ----
 // 5/5 grønne, 29,6-29,9s, se docs/RAPPORT-245.md — går ind som fuld prøve.
 // test-clips/ er git-ignoreret persondata: findes klippet ikke lokalt (fx på
