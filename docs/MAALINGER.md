@@ -24,6 +24,7 @@ Sammenlign kun tal inden for samme metode-blok.
 | 2026-09-15 | 226 (commit 1→3) | devtools | DP | 6570ms | 6226ms | −344ms |
 | 2026-09-15 | 226 (commit 1→3) | devtools | CI | 6546ms | 6246ms | −300ms |
 | 2026-09-15 | 228 (commit 1, produktion) | devtools, mod app.entropicoaching.dk | Login/landing | 3426ms (lokalt ukomp.) | 2204ms (produktion) | −1222ms (komprimering) |
+| 2026-09-16 | 256 (commit 1, produktion) | devtools, mod app.entropicoaching.dk (`b1c3815`, live efter Marcs push 16. sep) | Login/landing | 2204ms (228, målt mod `162abc6`) | 2090ms | −114ms |
 | 2026-09-15 | 228 (commit 2) | devtools | AL | 6175ms | 5675ms | −500ms |
 | 2026-09-15 | 228 (commit 2) | devtools | DP/CI | uændret | uændret | ±34ms (støj) |
 | 2026-09-15 | 228 (commit 3, ad hoc) | devtools, 1 løb | AL | — | 5682ms (TTI), scripts 4737ms=83% | — |
@@ -48,6 +49,24 @@ på samme skærm — begge er ægte målinger med samme metode/script, forskelle
 er sessions-/host-støj mellem kørsler, ikke en regression (se ordre 233s
 "Ærlige grænser": "de absolutte TTI-sekundtal i serien er ikke pålidelige
 nok til selv at bruges som fra-til-tal på tværs af ordrer").
+
+Ordre 256s produktions-tal er IKKE en ren før/efter-måling af selve pushet
+(21e1b2f → b1c3815) — der findes ingen gemt TTI-måling af produktionen ved
+`21e1b2f` (ordre 248 tjekkede kun konsolfejl/netværkskald der, ingen
+Lighthouse-kørsel). "Før" ovenfor er derfor det seneste tal der faktisk
+findes (228, målt ved `162abc6`), "efter" er dagens live (`b1c3815`) —
+forskellen (−114ms) dækker altså HELE serien 226-248s ændringer, ikke kun
+Marcs seneste push. Hovedscriptet over ledningen faldt fra 121304B (228) til
+101962B (256), som matcher hovedbundtets egen gzip-krympning i samme periode
+(`docs/RAPPORT-226.md`: 120,99→101,61 kB gzip) — sammenhængende, ikke
+modstridende tal.
+
+Atletliste, Dagens pas og Check-in er FORTSAT ikke målt direkte mod
+produktionen — samme stående grænse som ordre 131, 210, 228 og 248 hver for
+sig har bekræftet: der findes ingen produktions-testkonto, og at oprette én
+er en Supabase-skrivning mod produktion ingen ordre (denne iberegnet) har
+haft mandat til. Se `docs/RAPPORT-256.md` for hvad det betyder for denne
+ordre.
 
 ## Bundtstørrelse, rå/gzip
 
