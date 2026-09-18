@@ -4055,6 +4055,12 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           // gennemført, sæt + tonnage) regnet én gang pr. atlet — brugt til
           // BÅDE sorteringen og linjen i hver række (afvigelseByAthleteId
           // nedenfor), så de to aldrig kan vise forskellige tal.
+          // ORDRE 285 · commit 1: `currentWeekNo` (sortér+date-math) og
+          // `athleteWeeks.find(...)` blev FØR kørt igen pr. række nedenfor
+          // for "Uge N"-linjen — dobbelt arbejde pr. atlet pr. render, målt
+          // som den tungeste del af listen ved 30 atleter (se
+          // docs/MAAL-285.md). `current`/`currentNo` regnes nu kun HER og
+          // genbruges via currentWeekByAthleteId i rækkevisningen.
           const athletesWithAfvigelse = visibleAthletes.map(athlete => {
             const athleteWeeks = calendarWeeks[athlete.id] || []
             const currentNo = currentWeekNo(athleteWeeks, athleteCurrentWeek[athlete.id] ?? null)
@@ -4066,9 +4072,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               completedSets: completion.sets,
               completedTonnage: completion.tonnage,
             })
-            return { athlete, afvigelse }
+            return { athlete, afvigelse, current }
           })
           const afvigelseByAthleteId = new Map(athletesWithAfvigelse.map(r => [r.athlete.id, r.afvigelse]))
+          const currentWeekByAthleteId = new Map(athletesWithAfvigelse.map(r => [r.athlete.id, r.current]))
           const sortedVisibleAthletes = athleteSortMode === 'afvigelse'
             ? sorterEfterAfvigelse(athletesWithAfvigelse).map(r => r.athlete)
             : visibleAthletes
@@ -4228,9 +4235,16 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     {cappedAthletes.map((athlete, index) => {
                       const isHidden = hiddenAthleteIds.has(athlete.id)
-                      const athleteWeeks = calendarWeeks[athlete.id] || []
-                      const currentNo = currentWeekNo(athleteWeeks, athleteCurrentWeek[athlete.id] ?? null)
-                      const current = athleteWeeks.find(week => week.week_number === currentNo)
+                      // ORDRE 285 · commit 1: genbrug currentWeekByAthleteId
+                      // (regnet én gang ovenfor) for de synlige atleter —
+                      // kun skjulte atleter (sjældne, kun vist efter "Vis
+                      // skjulte") falder tilbage til at regne det her.
+                      let current = currentWeekByAthleteId.get(athlete.id)
+                      if (current === undefined) {
+                        const athleteWeeks = calendarWeeks[athlete.id] || []
+                        const currentNo = currentWeekNo(athleteWeeks, athleteCurrentWeek[athlete.id] ?? null)
+                        current = athleteWeeks.find(week => week.week_number === currentNo)
+                      }
                       const fallback = athleteWeekSummary[athlete.id]
                       const weekNo = current?.week_number ?? fallback?.week_number
                       const blockName = current?.block_name || fallback?.block_name
