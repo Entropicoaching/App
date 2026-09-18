@@ -59,7 +59,7 @@ export async function runDagensPasPause(page, { appUrl, mockUrl, outDir }) {
 
   // Pausetimeren starter automatisk — synlig med det samme, ingen navigation.
   // (teksten er "Pause · Squat" — øvelsesnavnet står med i samme span, se
-  // RestPauseTimer i AthleteView.jsx — deraf exact: false.)
+  // RestPauseFooter i AthleteView.jsx — deraf exact: false.)
   await page.getByText('Pause', { exact: false }).waitFor({ state: 'visible', timeout: 5000 })
   const secondsText = () => page.getByText(/^\d+s$/).first().textContent()
   const firstReading = parseInt(await secondsText(), 10)

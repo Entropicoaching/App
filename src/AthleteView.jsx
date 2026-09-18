@@ -234,7 +234,7 @@ function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession }) {
 // — logInputs-nøglen er `${exerciseId}_${setNumber}`, delt på tværs af
 // begge faner). Under det: resten af DENNE session i kort form. `pas` kommer
 // fra findDagensPas (src/nextSet.js, ren funktion, se dens tests).
-function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, onLogSet, skipSet, suggestNextWeight, onOpenSession, pauseTimer, todayStr, checkinNudge, lastLoggedSet, onUndoLastSet, pendingSyncCount }) {
+function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, onLogSet, skipSet, suggestNextWeight, onOpenSession, todayStr, checkinNudge, lastLoggedSet, onUndoLastSet, pendingSyncCount }) {
   const activeNext = pas && pas.status === 'open' ? pas.next : null
 
   // ORDRE 280 · commit 1 — når sættet ÅBNES (bliver "næste"), udfyldes vægt/
@@ -335,8 +335,6 @@ function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, onLogSet
         <div style={s.cardLabel}>Dagens pas</div>
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.06em', color: '#7a7770' }}>Sæt {setNumber}/{totalSets}</div>
       </div>
-
-      {pauseTimer}
 
       <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.15, marginBottom: '0.25rem' }}>
         {ex.name}
@@ -465,7 +463,13 @@ function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, onLogSet
 // starttidspunkt + varighed er sandheden, så pausen ikke driver eller
 // springer hvis skærmen slukkes eller fanen lukkes midt i den (restPause.js
 // persisterer dem, uafhængigt af om komponentet selv overlever).
-function RestPauseTimer({ athleteId, pause, onClear }) {
+//
+// ORDRE 280 · commit 3 — flyttet ud af DagensPasCard og fastgjort nederst på
+// skærmen (over bundnavigationen): en rolig linje, ikke et stort ur, der
+// bliver ved med at være synlig når man ruller væk fra kortet, og siger
+// hvilket sæt der er næste — uden at stjæle plads fra "Godkendt"-knappen i
+// kortet (helt separat element, egen position).
+function RestPauseFooter({ athleteId, pause, onClear, nextLabel }) {
   const [liveSeconds, setLiveSeconds] = useState(() => remainingSeconds(pause.durationSeconds, pause.startedAt))
 
   useEffect(() => {
@@ -480,23 +484,26 @@ function RestPauseTimer({ athleteId, pause, onClear }) {
   const done = liveSeconds <= 0
   const frac = pause.durationSeconds > 0 ? Math.max(0, Math.min(1, liveSeconds / pause.durationSeconds)) : 0
   return (
-    <div style={{ marginBottom: '0.85rem', padding: '0.6rem 0.75rem', background: done ? 'rgba(108,186,108,0.06)' : 'rgba(200,146,58,0.06)', border: `1px solid ${done ? 'rgba(108,186,108,0.25)' : 'rgba(200,146,58,0.2)'}` }}>
-      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.5rem' }}>
-        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: done ? '#6cba6c' : '#c8923a' }}>
+    <div style={{ position: 'fixed', left: 0, right: 0, bottom: '54px', zIndex: 90, background: '#141410', borderTop: `1px solid ${done ? 'rgba(108,186,108,0.25)' : 'rgba(200,146,58,0.2)'}` }}>
+      <div style={{ maxWidth: '680px', margin: '0 auto', padding: '0.4rem 1rem', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: done ? '#6cba6c' : '#c8923a', whiteSpace: 'nowrap' }}>
           {done ? 'Pause slut' : 'Pause'}{pause.label ? ` · ${pause.label}` : ''}
         </span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', color: '#edeae2', lineHeight: 1 }}>{done ? '✓' : `${liveSeconds}s`}</span>
-          <button
-            type="button"
-            aria-label="Skjul pausetimer"
-            onClick={() => { clearRestPause(athleteId); onClear() }}
-            style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.75rem', minWidth: '32px', minHeight: '32px' }}
-          >✕</button>
-        </span>
+        <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#edeae2', lineHeight: 1, whiteSpace: 'nowrap' }}>{done ? '✓' : `${liveSeconds}s`}</span>
+        {nextLabel && (
+          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#7a7770', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
+            {nextLabel}
+          </span>
+        )}
+        <button
+          type="button"
+          aria-label="Skjul pausetimer"
+          onClick={() => { clearRestPause(athleteId); onClear() }}
+          style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.75rem', minWidth: '32px', minHeight: '32px', flexShrink: 0 }}
+        >✕</button>
       </div>
       {!done && (
-        <div style={{ height: '3px', background: 'rgba(237,234,226,0.08)', marginTop: '0.5rem' }}>
+        <div style={{ height: '2px', background: 'rgba(237,234,226,0.08)' }}>
           <div style={{ height: '100%', width: `${frac * 100}%`, background: '#c8923a', transition: 'width 1s linear' }} />
         </div>
       )}
@@ -3370,38 +3377,52 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               </div>
             </div>
 
-            <DagensPasCard
-              pas={findDagensPas(allWeeks, currentWeek, exerciseLogs)}
-              exerciseHistory={exerciseHistory}
-              logInputs={logInputs}
-              setLogInputs={setLogInputs}
-              onLogSet={logDagensPasSet}
-              skipSet={skipSet}
-              suggestNextWeight={suggestNextWeight}
-              onOpenSession={(id) => { setTab('program'); openSession(id) }}
-              lastLoggedSet={lastLoggedSet}
-              onUndoLastSet={undoLoggedSet}
-              pauseTimer={restPause && (
-                <RestPauseTimer athleteId={athlete?.id} pause={restPause} onClear={() => setRestPause(null)} />
-              )}
-              todayStr={today()}
-              checkinNudge={(() => {
-                // ORDRE 267 · commit 3: samme uge-udregning som WeekCalendar
-                // ovenfor (weekStartDate + 6 dage), ingen ny hentning — kun
-                // readinessLog/readinessHistory, som allerede er hentet.
-                if (!currentWeek) return null
-                const start = weekStartDate(allWeeks, currentWeek.week_number)
-                if (!start) return null
-                const end = new Date(start.getTime() + 6 * 86400000)
-                const loggedDates = [readinessLog?.logged_date, ...readinessHistory.map(r => r.logged_date)].filter(Boolean)
-                return shouldNudgeCheckin({
-                  weekStartStr: start.toISOString().slice(0, 10),
-                  weekEndStr: end.toISOString().slice(0, 10),
-                  todayStr: today(),
-                  loggedDates,
-                }) ? { onClick: openReadiness } : null
-              })()}
-            />
+            {(() => {
+              const dagensPas = findDagensPas(allWeeks, currentWeek, exerciseLogs)
+              const next = dagensPas?.status === 'open' ? dagensPas.next : null
+              const nextLabel = next ? `Næste: ${next.exercise?.name || ''} · sæt ${next.setNumber}/${next.totalSets}` : null
+              return (
+                <>
+                  <DagensPasCard
+                    pas={dagensPas}
+                    exerciseHistory={exerciseHistory}
+                    logInputs={logInputs}
+                    setLogInputs={setLogInputs}
+                    onLogSet={logDagensPasSet}
+                    skipSet={skipSet}
+                    suggestNextWeight={suggestNextWeight}
+                    onOpenSession={(id) => { setTab('program'); openSession(id) }}
+                    lastLoggedSet={lastLoggedSet}
+                    onUndoLastSet={undoLoggedSet}
+                    todayStr={today()}
+                    checkinNudge={(() => {
+                      // ORDRE 267 · commit 3: samme uge-udregning som WeekCalendar
+                      // ovenfor (weekStartDate + 6 dage), ingen ny hentning — kun
+                      // readinessLog/readinessHistory, som allerede er hentet.
+                      if (!currentWeek) return null
+                      const start = weekStartDate(allWeeks, currentWeek.week_number)
+                      if (!start) return null
+                      const end = new Date(start.getTime() + 6 * 86400000)
+                      const loggedDates = [readinessLog?.logged_date, ...readinessHistory.map(r => r.logged_date)].filter(Boolean)
+                      return shouldNudgeCheckin({
+                        weekStartStr: start.toISOString().slice(0, 10),
+                        weekEndStr: end.toISOString().slice(0, 10),
+                        todayStr: today(),
+                        loggedDates,
+                      }) ? { onClick: openReadiness } : null
+                    })()}
+                  />
+                  {restPause && (
+                    <RestPauseFooter
+                      athleteId={athlete?.id}
+                      pause={restPause}
+                      onClear={() => setRestPause(null)}
+                      nextLabel={nextLabel}
+                    />
+                  )}
+                </>
+              )
+            })()}
 
             {currentWeek ? (
               <WeekCalendar
