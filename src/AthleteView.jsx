@@ -17,6 +17,7 @@ import { shouldNudgeCheckin } from './checkinReminder'
 import { restSecondsForExercise } from './restBetweenSets'
 import { startRestPause, loadRestPause, clearRestPause } from './restPause'
 import { parseRepsPrescription } from './repsPrescription'
+import { defaultSetWeight, defaultSetReps, stepWeight, stepReps } from './setLogDefaults'
 import { calcWarmupSets, isMainLift } from './warmup'
 import { applyWarmupCorrection, saveWarmupOverride, suggestWarmupOverride } from './warmupOverride'
 import { flushVideoCoachDraftQueue, isRetryableVideoCoachError,
@@ -234,6 +235,32 @@ function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession }) {
 // begge faner). Under det: resten af DENNE session i kort form. `pas` kommer
 // fra findDagensPas (src/nextSet.js, ren funktion, se dens tests).
 function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, logSet, skipSet, suggestNextWeight, onOpenSession, pauseTimer, todayStr, checkinNudge }) {
+  const activeNext = pas && pas.status === 'open' ? pas.next : null
+
+  // ORDRE 280 · commit 1 — når sættet ÅBNES (bliver "næste"), udfyldes vægt/
+  // reps som en ægte værdi i input-state (ikke kun en visuel hint — ellers
+  // ville et upåvirket "Godkendt"-tryk logge 0/tomt). Sidste gang på samme
+  // øvelse vinder, ellers planens tal, ellers tomt (se setLogDefaults.js).
+  // Rører ALDRIG et felt atleten allerede selv har tastet/ændret. Kører kun
+  // når selve sættet skifter — deraf de smalle deps i stedet for hele
+  // exerciseHistory/logInputs (ville køre igen ved hver tastning).
+  useEffect(() => {
+    if (!activeNext) return
+    const { exercise: ex, setNumber } = activeNext
+    const key = `${ex.id}_${setNumber}`
+    const last = lastHeaviestSet(exerciseHistory, ex.name, todayStr)
+    const repsPrescription = parseRepsPrescription(ex.reps)
+    const repsIsEditable = repsPrescription.type !== 'fixed'
+    const suggestion = ex.recommended_weight == null ? suggestNextWeight(ex.name, ex.intensity) : null
+    const weightDefault = defaultSetWeight('', { lastWeight: last?.weight, recommendedWeight: ex.recommended_weight ?? suggestion?.weight })
+    const repsDefaultValue = repsIsEditable
+      ? defaultSetReps('', { lastReps: last?.reps, planReps: repsPrescription.type === 'range' ? repsPrescription.min : null })
+      : ''
+    if (!weightDefault && !repsDefaultValue) return
+    setLogInputs(p => (p[key]?.weight || p[key]?.reps) ? p : { ...p, [key]: { weight: weightDefault, note: '', rpe: '', reps: repsDefaultValue } })
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- kør kun når selve sættet (øvelse+sætnummer) skifter
+  }, [activeNext?.exercise?.id, activeNext?.setNumber])
+
   if (!pas) return null
 
   // ORDRE 267 · commit 3 — rolig linje, ikke en mail/notifikation, ingen rød
@@ -298,6 +325,8 @@ function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, logSet, 
   const last = lastHeaviestSet(exerciseHistory, ex.name, todayStr)
   const suggestion = ex.recommended_weight == null ? suggestNextWeight(ex.name, ex.intensity) : null
   const others = (session.exercises || []).filter(e => e.id !== ex.id)
+  const stepWeightBy = delta => setLogInputs(p => ({ ...p, [key]: { ...(p[key] || input), weight: stepWeight(p[key]?.weight ?? input.weight, delta) } }))
+  const stepRepsBy = delta => setLogInputs(p => ({ ...p, [key]: { ...(p[key] || input), reps: stepReps(p[key]?.reps ?? repsValue, delta) } }))
 
   return (
     <div style={s.card}>
@@ -329,6 +358,15 @@ function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, logSet, 
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+        {/* ORDRE 280 · commit 1 — store plus/minus (2,5 kg / 1 rep) ved siden af
+            felterne: en atlet med kridt på hænderne skal kunne justere uden at
+            skulle ramme et lille tastatur. Feltet kan stadig tastes i (samme
+            onChange som før), men skal ikke. */}
+        <button
+          type="button" aria-label="2,5 kg mindre"
+          onClick={() => stepWeightBy(-2.5)}
+          style={{ ...s.btnGhost, minWidth: '44px', minHeight: '52px', boxSizing: 'border-box', padding: 0, fontSize: '1.1rem', flexShrink: 0 }}
+        >−</button>
         <input
           aria-label={`Vægt, sæt ${setNumber}`}
           style={{ ...s.fieldInput, width: '96px', minWidth: '96px', minHeight: '52px', boxSizing: 'border-box', flexShrink: 0, padding: '0.65rem 0.5rem', fontSize: '1.3rem', textAlign: 'center' }}
@@ -338,9 +376,19 @@ function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, logSet, 
             if (v === '' || /^\d*\.?\d*$/.test(v)) setLogInputs(p => ({ ...p, [key]: { ...p[key], weight: v } }))
           }}
         />
+        <button
+          type="button" aria-label="2,5 kg mere"
+          onClick={() => stepWeightBy(2.5)}
+          style={{ ...s.btnGhost, minWidth: '44px', minHeight: '52px', boxSizing: 'border-box', padding: 0, fontSize: '1.1rem', flexShrink: 0 }}
+        >+</button>
         {repsIsEditable ? (
           <>
             <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '1rem', color: '#c8923a' }}>×</span>
+            <button
+              type="button" aria-label="1 rep mindre"
+              onClick={() => stepRepsBy(-1)}
+              style={{ ...s.btnGhost, minWidth: '44px', minHeight: '52px', boxSizing: 'border-box', padding: 0, fontSize: '1.1rem', flexShrink: 0 }}
+            >−</button>
             <input
               aria-label={`Reps, sæt ${setNumber}`}
               style={{ ...s.fieldInput, width: '64px', minWidth: '64px', minHeight: '52px', boxSizing: 'border-box', flexShrink: 0, padding: '0.65rem 0.3rem', fontSize: '1.3rem', textAlign: 'center' }}
@@ -350,6 +398,11 @@ function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, logSet, 
                 if (v === '' || /^\d*$/.test(v)) setLogInputs(p => ({ ...p, [key]: { ...p[key], reps: v } }))
               }}
             />
+            <button
+              type="button" aria-label="1 rep mere"
+              onClick={() => stepRepsBy(1)}
+              style={{ ...s.btnGhost, minWidth: '44px', minHeight: '52px', boxSizing: 'border-box', padding: 0, fontSize: '1.1rem', flexShrink: 0 }}
+            >+</button>
           </>
         ) : (
           <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '1rem', color: '#c8923a', whiteSpace: 'nowrap' }}>× {ex.reps || '—'}</span>
