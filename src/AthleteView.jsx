@@ -234,7 +234,7 @@ function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession }) {
 // — logInputs-nøglen er `${exerciseId}_${setNumber}`, delt på tværs af
 // begge faner). Under det: resten af DENNE session i kort form. `pas` kommer
 // fra findDagensPas (src/nextSet.js, ren funktion, se dens tests).
-function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, logSet, skipSet, suggestNextWeight, onOpenSession, pauseTimer, todayStr, checkinNudge }) {
+function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, onLogSet, skipSet, suggestNextWeight, onOpenSession, pauseTimer, todayStr, checkinNudge, lastLoggedSet, onUndoLastSet, pendingSyncCount }) {
   const activeNext = pas && pas.status === 'open' ? pas.next : null
 
   // ORDRE 280 · commit 1 — når sættet ÅBNES (bliver "næste"), udfyldes vægt/
@@ -411,16 +411,35 @@ function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, logSet, 
           <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#7a7770', letterSpacing: '0.06em', border: '1px solid rgba(237,234,226,0.13)', padding: '0.3rem 0.5rem', minHeight: '52px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center' }}>RPE {input.rpe || plannedRpe}</span>
         )}
       </div>
+      {/* ORDRE 280 · commit 2 — "Godkendt" er den mest gentagne handling i hele
+          appen (ét tryk pr. sæt, hele træningen), derfor flex:1 og 60px høj —
+          rammes med en tommelfinger nederst i kortet, også med handsker.
+          Ingen dialog, ingen bekræftelse: gemmer sættet som det står med det
+          samme (samme optimistiske onLogSet som før, se logDagensPasSet). */}
       <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.6rem' }}>
         <button
-          style={{ ...s.btnPrimary, flex: 1, minHeight: '52px', boxSizing: 'border-box', fontSize: '0.7rem' }}
-          onClick={() => logSet(ex.id, setNumber, totalSets, repsToLog, plannedRpe)}
-        >Log sæt</button>
+          style={{ ...s.btnPrimary, flex: 1, minHeight: '60px', boxSizing: 'border-box', fontSize: '0.85rem' }}
+          onClick={() => onLogSet(ex, setNumber, totalSets, repsToLog, plannedRpe)}
+        >Godkendt</button>
         <button
-          style={{ ...s.btnGhost, minHeight: '52px', boxSizing: 'border-box', fontSize: '0.6rem' }}
+          style={{ ...s.btnGhost, minHeight: '60px', boxSizing: 'border-box', fontSize: '0.6rem' }}
           onClick={() => skipSet(ex.id, setNumber, plannedRpe)}
         >Spring over</button>
       </div>
+      {/* Fortryd — kun mens man ikke har forladt øvelsen: næste sæt i kortet
+          skal stadig høre til den øvelse man lige loggede et sæt på. */}
+      {lastLoggedSet && lastLoggedSet.exerciseId === ex.id && (
+        <button
+          type="button"
+          onClick={() => onUndoLastSet(lastLoggedSet.exerciseId, lastLoggedSet.setNumber)}
+          style={{ ...s.btnGhost, marginTop: '0.5rem', width: '100%', minHeight: '44px', boxSizing: 'border-box', fontSize: '0.56rem', color: '#7a7770' }}
+        >↺ Fortryd sidste sæt</button>
+      )}
+      {pendingSyncCount > 0 && (
+        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.04em', color: '#7a7770', marginTop: '0.5rem', textAlign: 'center' }}>
+          ☁ {pendingSyncCount} {pendingSyncCount === 1 ? 'sæt' : 'sæt'} gemt lokalt — sendes når forbindelsen er tilbage
+        </div>
+      )}
 
       {others.length > 0 && (
         <div style={{ marginTop: '1rem', paddingTop: '0.85rem', borderTop: '1px solid rgba(237,234,226,0.07)' }}>
@@ -996,6 +1015,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [logInputs, setLogInputs] = useState({})
   const [lastLogByExerciseName, setLastLogByExerciseName] = useState({})
   const [exerciseHistory, setExerciseHistory] = useState({})
+  // ORDRE 280 · commit 2 — Dagens pas' "Fortryd sidste sæt": kun det senest
+  // loggede sæt FRA DEN KORT (ikke Program-fanen), og kun synligt så længe
+  // pas.next stadig peger på samme øvelse (se DagensPasCard).
+  const [lastLoggedSet, setLastLoggedSet] = useState(null) // { exerciseId, setNumber }
   // ORDRE 259 · commit 1: atletens egen volumen pr. muskelgruppe-fane —
   // rå exercise_logs-rækker (kun feltet VolumenTab.jsx behøver), hentet når
   // fanen åbnes, se effekten ved fetchMeetPlan/fetchMeetResults nedenfor.
@@ -2247,6 +2270,42 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     }
   }
 
+  // ORDRE 280 · commit 2 — Dagens pas' "Godkendt"-knap kalder logSet gennem
+  // her (i stedet for direkte), så kortet kan huske hvilket sæt der lige blev
+  // logget (til "Fortryd sidste sæt" nedenfor). Program-fanens egen Log-knap
+  // rører IKKE dette — den kalder stadig logSet direkte, uændret adfærd
+  // (verify:athlete-write-failures/e2e:fejl låser den offline-fejlflowet der).
+  async function logDagensPasSet(ex, setNumber, totalSets, repsToLog, plannedRpe) {
+    setLastLoggedSet({ exerciseId: ex.id, setNumber })
+    await logSet(ex.id, setNumber, totalSets, repsToLog, plannedRpe)
+  }
+
+  // "Fortryd sidste sæt": sletter log-rækken igen (samme mønster som
+  // unskipSet), rydder den pause sættet startede, og genåbner sættet til
+  // redigering — logInputs er ikke rørt, så vægt/reps stadig står der.
+  // Kø'et via setWriteRef (samme kæde som persistSetLog), så en sletning
+  // aldrig løber forbi en INSERT der endnu er undervejs (ville efterlade en
+  // spøgelsesrække, hvis sletningen ramte databasen FØR insertet).
+  async function undoLoggedSet(exerciseId, setNumber) {
+    const key = `${exerciseId}_${setNumber}`
+    setExerciseLogs(prev => prev.filter(l => !(l.exercise_id === exerciseId && l.set_number === setNumber)))
+    clearRestPause(athlete.id)
+    setRestPause(null)
+    setLastLoggedSet(null)
+    const ref = setWriteRef.current[key]
+    const chain = ref ? ref.chain : Promise.resolve()
+    const task = chain.then(async () => {
+      const idToDelete = ref?.realId
+      if (!idToDelete) return
+      const { error } = await queueWrite(() => supabase.from('exercise_logs').delete().eq('id', idToDelete))
+      if (error) { logFrontendError('Fortryd sæt: sletning fejlede', error, athlete.id); return }
+      if (ref.realId === idToDelete) ref.realId = null
+    })
+    if (ref) ref.chain = task.then(() => {}, () => {})
+    await task
+    fetchExerciseLogs(athlete.id, currentWeek)
+  }
+
   async function skipSet(exerciseId, setNumber, plannedRpe) {
     const existing = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber)
     const payload = { skipped: true, weight: 0, reps_completed: 0, note: null, rpe_actual: null, rpe_planned: plannedRpe ?? null }
@@ -3316,10 +3375,12 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               exerciseHistory={exerciseHistory}
               logInputs={logInputs}
               setLogInputs={setLogInputs}
-              logSet={logSet}
+              onLogSet={logDagensPasSet}
               skipSet={skipSet}
               suggestNextWeight={suggestNextWeight}
               onOpenSession={(id) => { setTab('program'); openSession(id) }}
+              lastLoggedSet={lastLoggedSet}
+              onUndoLastSet={undoLoggedSet}
               pauseTimer={restPause && (
                 <RestPauseTimer athleteId={athlete?.id} pause={restPause} onClear={() => setRestPause(null)} />
               )}

@@ -40,7 +40,7 @@ export async function runDagensPasPause(page, { appUrl, mockUrl, outDir }) {
 
   await page.getByLabel('Vægt, sæt 1').fill('80')
   await page.getByLabel('Reps, sæt 1').fill('5')
-  await page.getByRole('button', { name: 'Log sæt', exact: true }).click()
+  await page.getByRole('button', { name: 'Godkendt', exact: true }).click()
 
   await page.waitForFunction(
     async (url) => {
