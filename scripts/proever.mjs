@@ -167,6 +167,17 @@ if (await portFree(8991)) {
     venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
 }
 
+// ---- 8) Coachens atletliste sorteret efter afvigelse denne uge, et klik
+// derhen og tilbage (ordre 277 · commit 3). Egen mock-instans (tre atleter i
+// forskellige tilstande), samme port-grænse som ovenfor.
+if (await portFree(8991)) {
+  rows.push(runNode('e2e (coach-afvigelse.spec.mjs)', [join('e2e', 'coach-afvigelse.spec.mjs')],
+    'DOM-rækkefølge (størst afvigelse øverst, ingen plan nederst) + at sorteringen er uændret efter et klik derhen og tilbage', 'e2e'))
+} else {
+  rows.push({ name: 'e2e (coach-afvigelse.spec.mjs)', kind: 'e2e', ok: null, ms: 0,
+    venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
+}
+
 // ---- Skriv tabellen ----
 const lines = []
 lines.push('# Prøver — samlet facit (ordre 234)')
