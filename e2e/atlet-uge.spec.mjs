@@ -119,7 +119,7 @@ export async function runAtletUge(page, { appUrl, mockUrl, outDir, clipPath }) {
     const setNum = i + 1
     await page.getByLabel(`Vægt, sæt ${setNum}`).fill('80')
     await page.getByLabel(`Reps, sæt ${setNum}`).fill(String(repsPerSet[i]))
-    await page.getByRole('button', { name: 'Log sæt', exact: true }).click()
+    await page.getByRole('button', { name: 'Godkendt', exact: true }).click()
     await page.waitForFunction(
       async ([url, expectedSetNum]) => {
         const res = await fetch(`${url}/__e2e/table?name=exercise_logs`)

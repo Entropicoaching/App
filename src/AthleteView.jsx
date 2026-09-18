@@ -16,6 +16,7 @@ import { findDagensPas, lastHeaviestSet } from './nextSet'
 import { shouldNudgeCheckin } from './checkinReminder'
 import { restSecondsForExercise } from './restBetweenSets'
 import { startRestPause, loadRestPause, clearRestPause } from './restPause'
+import { saveOfflineSet, loadOfflineSets, clearOfflineSet, countOfflineSets } from './offlineSetQueue'
 import { parseRepsPrescription } from './repsPrescription'
 import { defaultSetWeight, defaultSetReps, stepWeight, stepReps } from './setLogDefaults'
 import { calcWarmupSets, isMainLift } from './warmup'
@@ -961,6 +962,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   // ORDRE 263 · commit 2: den automatiske pause mellem sæt (null = ingen
   // aktiv pause). Se restPause.js.
   const [restPause, setRestPause] = useState(null)
+  // ORDRE 280 · commit 4: antal sæt der ligger lokalt og venter på net (se
+  // offlineSetQueue.js). Kun til "Dagens pas"-kortets linje — Program-fanens
+  // Log-knap er urørt.
+  const [pendingSyncCount, setPendingSyncCount] = useState(0)
   const athleteVideoCoachRef = useRef(null)
   const athleteVideoCoachFrameRef = useRef(null)
   const athleteVideoCoachClientsRef = useRef(new Set())
@@ -1452,6 +1457,16 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   }, [athlete?.id])
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchLogs er ren ift. sine parametre (athleteId, dato), begge allerede i deps
   useEffect(() => { if (athlete?.id) fetchLogs(athlete.id, kostDate) }, [kostDate, athlete?.id])
+  // ORDRE 280 · commit 4 — ventende sæt (offlineSetQueue.js) sendes igen ved
+  // app-åbning og hver gang forbindelsen kommer tilbage ('online'-event).
+  useEffect(() => {
+    if (!athlete?.id) return
+    setPendingSyncCount(countOfflineSets(athlete.id))
+    flushOfflineSets()
+    window.addEventListener('online', flushOfflineSets)
+    return () => window.removeEventListener('online', flushOfflineSets)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- flushOfflineSets læser kun athlete/currentWeek/exerciseLogs, alle friske ved kald (samme mønster som fetchAthlete ovenfor)
+  }, [athlete?.id])
   useEffect(() => {
     if (role === 'athlete' && athlete?.id) fetchSharedVideoAnalyses()
   }, [role, athlete?.id])
@@ -2135,7 +2150,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     return task
   }
 
-  async function logSet(exerciseId, setNumber, totalSets, repsCompleted, plannedRpe) {
+  async function logSet(exerciseId, setNumber, totalSets, repsCompleted, plannedRpe, { localFallback = false } = {}) {
     const key = `${exerciseId}_${setNumber}`
     const input = logInputs[key] || {}
     const payload = {
@@ -2195,9 +2210,21 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
     // Baggrundsskrivning: serialiseret pr. sæt-nøgle + retry-kø (se persistSetLog).
     // Ved fejl: vis en diskret fejl og rul den optimistiske ændring tilbage, så
-    // UI matcher virkeligheden.
+    // UI matcher virkeligheden. Program-fanens egen Log-knap bruger denne gren
+    // uændret (verify:athlete-write-failures/e2e:fejl låser den).
     const { error } = await persistSetLog(key, exerciseId, setNumber, payload, realExisting?.id)
     if (error) {
+      // ORDRE 280 · commit 4 — "Godkendt" i Dagens pas beder om localFallback:
+      // sættet er allerede vist som logget (optimistisk, ovenfor); i stedet
+      // for at rulle det tilbage til en fejlbesked, gemmes payloaden lokalt
+      // (offlineSetQueue.js) og sendes igen når forbindelsen er der (se
+      // flushOfflineSets). Ingen ny tabel — samme exercise_logs-række som
+      // ellers, bare forsinket.
+      if (localFallback) {
+        saveOfflineSet(athlete.id, key, { exerciseId, setNumber, payload })
+        setPendingSyncCount(countOfflineSets(athlete.id))
+        return
+      }
       clearTimeout(fadeTimer)
       setSetConfirm(p => ({ ...p, [key]: 'error' }))
       if (realExisting) {
@@ -2207,6 +2234,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         setExerciseLogs(prev => prev.filter(l => !(l._optimistic && l.exercise_id === exerciseId && l.set_number === setNumber)))
       }
       return
+    }
+    if (localFallback) {
+      clearOfflineSet(athlete.id, key)
+      setPendingSyncCount(countOfflineSets(athlete.id))
     }
     fetchExerciseLogs(athlete.id, currentWeek)
 
@@ -2284,7 +2315,25 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   // (verify:athlete-write-failures/e2e:fejl låser den offline-fejlflowet der).
   async function logDagensPasSet(ex, setNumber, totalSets, repsToLog, plannedRpe) {
     setLastLoggedSet({ exerciseId: ex.id, setNumber })
-    await logSet(ex.id, setNumber, totalSets, repsToLog, plannedRpe)
+    await logSet(ex.id, setNumber, totalSets, repsToLog, plannedRpe, { localFallback: true })
+  }
+
+  // ORDRE 280 · commit 4 — sender ventende sæt (offlineSetQueue.js) igen når
+  // forbindelsen er der. Kaldes ved athlete-load og ved 'online'-event; en
+  // fejlet skrivning her bliver liggende i køen til næste forsøg.
+  async function flushOfflineSets() {
+    if (!athlete?.id) return
+    const queue = loadOfflineSets(athlete.id)
+    const keys = Object.keys(queue)
+    if (!keys.length) return
+    for (const key of keys) {
+      const { exerciseId, setNumber, payload } = queue[key]
+      const realExisting = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber && !l._optimistic)
+      const { error } = await persistSetLog(key, exerciseId, setNumber, payload, realExisting?.id)
+      if (!error) clearOfflineSet(athlete.id, key)
+    }
+    setPendingSyncCount(countOfflineSets(athlete.id))
+    fetchExerciseLogs(athlete.id, currentWeek)
   }
 
   // "Fortryd sidste sæt": sletter log-rækken igen (samme mønster som
@@ -2299,6 +2348,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     clearRestPause(athlete.id)
     setRestPause(null)
     setLastLoggedSet(null)
+    // Sættet kan være ventende lokalt (blev "Godkendt" uden net, se
+    // flushOfflineSets) — fortryd skal ikke sende det senere.
+    clearOfflineSet(athlete.id, key)
+    setPendingSyncCount(countOfflineSets(athlete.id))
     const ref = setWriteRef.current[key]
     const chain = ref ? ref.chain : Promise.resolve()
     const task = chain.then(async () => {
@@ -3394,6 +3447,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                     onOpenSession={(id) => { setTab('program'); openSession(id) }}
                     lastLoggedSet={lastLoggedSet}
                     onUndoLastSet={undoLoggedSet}
+                    pendingSyncCount={pendingSyncCount}
                     todayStr={today()}
                     checkinNudge={(() => {
                       // ORDRE 267 · commit 3: samme uge-udregning som WeekCalendar
