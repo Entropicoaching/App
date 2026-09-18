@@ -59,6 +59,7 @@
     "verify:ugen-faar-dato": "node scripts/verify-ugen-faar-dato.mjs",
     "verify:atletens-uge": "node scripts/verify-atletens-uge.mjs",
     "verify:atletens-uge-holder": "node scripts/verify-atletens-uge-holder.mjs",
+    "verify:mandagsrunden-tilstande": "node scripts/verify-mandagsrunden-tilstande.mjs",
     "maal:app": "node scripts/maal-app.mjs",
     "maal:coach": "node scripts/maal-coach.mjs",
     "maal:telefon": "node scripts/maal-telefon.mjs",
