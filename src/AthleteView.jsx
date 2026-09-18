@@ -27,6 +27,7 @@ import { buildAwaitingAnalysisRow, buildVideoUploadPath, validateVideoUploadRequ
   videoUploadAlreadyExistsError, VIDEOCOACH_UPLOAD_BUCKET } from './videoCoachUpload'
 import LazyBoundary from './LazyBoundary'
 import { s, shiftDate, today, unitsForFood } from './athleteShared'
+import UgensStatusKort from './athlete/UgensStatusKort'
 
 const ATHLETE_VIDEOCOACH_PREFIX = 'entropi:videocoach:v3'
 const ATHLETE_VIDEOCOACH_QUEUE_CHANGED = 'entropi:videocoach:queue-changed'
@@ -947,6 +948,11 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   // fanen åbnes, se effekten ved fetchMeetPlan/fetchMeetResults nedenfor.
   const [volumeLogs, setVolumeLogs] = useState([])
   const [volumeLoading, setVolumeLoading] = useState(false)
+  // ORDRE 268 · commit 2: "hele forløbet" i UgensStatusKort (Hjem) — lazy-
+  // hentet først når atleten faktisk skifter til den visning (se
+  // UgensStatusKort's onAabnForloeb), samme mønster som volumeLogs ovenfor.
+  const [forloebLogs, setForloebLogs] = useState(null)
+  const [forloebLoading, setForloebLoading] = useState(false)
   const [weeklyTonnage, setWeeklyTonnage] = useState([])
   const [liftProgress, setLiftProgress] = useState([])
   const [weightLogs, setWeightLogs] = useState([])
@@ -1583,6 +1589,31 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     setVolumeLoading(false)
     if (!ok) return
     setVolumeLogs(data || [])
+  }
+
+  // ORDRE 268 · commit 2: "hele forløbet" i UgensStatusKort — samme kilde
+  // (exercise_logs) og samme grænse (2000, som coachens fetchAthleteLogs i
+  // Dashboard.jsx) som resten af appen, ingen dato-afgrænsning (til forskel
+  // fra fetchVolumeLogs's 5 uger) fordi "hele forløbet" pr. definition kan
+  // strække sig længere tilbage end det. beregnForloebUger matcher kun på
+  // logged_at, ikke exercise_id. ORDRE 276 · blok 2 genbruger SAMME logs til
+  // "sidste uge ved siden af denne" (beregnUgeDage, som matcher på
+  // exercise_id) — derfor er `exercise_id` med i select'en her, selvom
+  // beregnForloebUger ikke selv bruger den.
+  async function fetchForloebLogs(athleteId) {
+    setForloebLoading(true)
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('exercise_logs')
+        .select('exercise_id, weight, reps_completed, skipped, logged_at')
+        .eq('athlete_id', athleteId)
+        .order('logged_at', { ascending: true })
+        .limit(2000),
+      onReadError('Ugen som planlagt', athleteId),
+    )
+    setForloebLoading(false)
+    if (!ok) return
+    setForloebLogs(data || [])
   }
 
   async function fetchMeetResults(athleteId) {
@@ -3276,6 +3307,27 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               // altid statisk data fra første billede.
               <div style={{ height: '76px', marginBottom: '1.25rem' }} />
             )}
+
+            {currentWeek && (() => {
+              // ORDRE 276 · blok 2: "sidste uge" = programugen lige før den
+              // aktive (week_number - 1), samme princip som Dashboard.jsx
+              // allerede bruger week_number til at navigere uger. Findes den
+              // ikke (fx uge 1), får UgensStatusKort null og siger det selv.
+              const forrigeUge = (allWeeks || []).find(w => w.week_number === currentWeek.week_number - 1) || null
+              return (
+                <UgensStatusKort
+                  week={currentWeek}
+                  weekStart={weekStartDate(allWeeks, currentWeek.week_number)}
+                  exerciseLogs={exerciseLogs}
+                  allWeeks={allWeeks}
+                  forloebLogs={forloebLogs}
+                  forloebLoading={forloebLoading}
+                  onAabnForloeb={() => fetchForloebLogs(athlete.id)}
+                  forrigeUge={forrigeUge}
+                  forrigeUgeStart={forrigeUge ? weekStartDate(allWeeks, forrigeUge.week_number) : null}
+                />
+              )
+            })()}
 
             {!readinessLog && logs.length === 0 && (
               <button type="button" aria-label="Gå til dagens parathed" onClick={openReadiness} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', width: '100%', textAlign: 'left', padding: '0.85rem 1rem', background: 'rgba(200,146,58,0.05)', border: '1px solid rgba(200,146,58,0.13)', marginBottom: '1.25rem', cursor: 'pointer' }}>
