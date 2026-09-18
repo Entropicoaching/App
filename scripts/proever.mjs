@@ -155,6 +155,18 @@ if (await portFree(8991)) {
     venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
 }
 
+// ---- 7) En atlets uge, i rækkefølge, som ÉN prøve (ordre 269 · commit 1):
+// Dagens pas → tre sæt (pausetimer) → sidste gang-linjen → Volumen →
+// check-in → Film et sæt → målingen. Egen mock-instans (egen "sidste
+// gang"-seed), samme port-grænse som dagens-pas/check-in ovenfor.
+if (await portFree(8991)) {
+  rows.push(runNode('e2e (atlet-uge.spec.mjs)', [join('e2e', 'atlet-uge.spec.mjs')],
+    'DOM-tilstand + mockens exercise_logs/readiness_logs/video_analyses + iframets egen analyse-returværdi, i rækkefølge over hele flowet', 'e2e'))
+} else {
+  rows.push({ name: 'e2e (atlet-uge.spec.mjs)', kind: 'e2e', ok: null, ms: 0,
+    venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
+}
+
 // ---- Skriv tabellen ----
 const lines = []
 lines.push('# Prøver — samlet facit (ordre 234)')
