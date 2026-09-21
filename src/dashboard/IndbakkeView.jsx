@@ -8,7 +8,8 @@ import { coachInboxCompletionStatus, shouldCollapseCoachConversations } from '..
 import { s, initials } from '../dashboardShared'
 
 export default function IndbakkeView({
-  athletes, coachPriorityItems, handleTrainingSignal, hiddenAthleteIds, inboxRefreshing,
+  athletes, automationAlertActionError, automationAlertUpdatingId, automationAlertsError,
+  coachPriorityItems, handleAutomationAlert, handleTrainingSignal, hiddenAthleteIds, inboxRefreshing,
   inboxRefreshStatus, isMobile, latestByTrack, messageInboxError, openCoachPriorityItem,
   openProfile, refreshCoachInbox, setCoachMsgTrack, trainingSignalsError,
   trainingSignalUpdatingKey, unreadByTrack, videoReviewQueueError,
@@ -32,13 +33,40 @@ export default function IndbakkeView({
       ? date.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' })
       : date.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })
   }
-  const priorityError = trainingSignalsError || videoReviewQueueError || messageInboxError
+  const priorityError = trainingSignalsError || videoReviewQueueError || messageInboxError || automationAlertsError
   const completionStatus = coachInboxCompletionStatus({
     priorityCount: priorityItems.length,
     refreshStatus: inboxRefreshStatus,
     hasError: Boolean(priorityError),
   })
+  // ORDRE 301: en automatiseringsfejl har ingen atlet - ingen profil at åbne,
+  // kun handlingen "Markeret som set". Detaljen må ombrydes (workflow- og
+  // node-navne kan være lange) i stedet for at blive skåret af med "…".
+  const renderAutomationItem = item => {
+    const updating = automationAlertUpdatingId === item.alert.id
+    const actionError = automationAlertActionError?.id === item.alert.id ? automationAlertActionError.message : null
+    return (
+      <div key={item.key} data-automation-alert={item.alert.id} style={{ textAlign: 'left', padding: '0.62rem 0.7rem', border: `1px solid ${item.color}30`, background: '#171713' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.65rem', minHeight: 42 }}>
+          <span style={{ width: 8, height: 8, flexShrink: 0, marginTop: '0.32rem', borderRadius: '50%', background: item.color, boxShadow: `0 0 0 3px ${item.color}18` }} />
+          <span style={{ minWidth: 0, flex: 1 }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '0.78rem', overflowWrap: 'anywhere' }}>{item.title}</span>
+              <span style={{ color: item.color, border: `1px solid ${item.color}44`, padding: '0.08rem 0.3rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.4rem', letterSpacing: '0.05em', textTransform: 'uppercase' }}>{item.label}</span>
+            </span>
+            {item.detail && <span style={{ display: 'block', marginTop: '0.18rem', color: '#7a7770', fontSize: '0.66rem', lineHeight: 1.4, overflowWrap: 'anywhere' }}>{item.detail}</span>}
+          </span>
+        </div>
+        {actionError && <div role="alert" style={{ marginTop: '0.45rem', color: '#d79a83', fontSize: '0.64rem', lineHeight: 1.45 }}>{actionError}</div>}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', flexWrap: 'wrap', gap: '0.4rem', marginTop: '0.5rem', paddingTop: '0.45rem', borderTop: '1px solid rgba(237,234,226,0.055)' }}>
+          <button disabled={updating} onClick={() => handleAutomationAlert(item.alert)}
+            style={{ ...s.btnPrimary, padding: '0.28rem 0.55rem', fontSize: '0.46rem', opacity: updating ? 0.5 : 1 }}>{updating ? 'Gemmer…' : 'Markeret som set'}</button>
+        </div>
+      </div>
+    )
+  }
   const renderPriorityItem = item => {
+    if (item.kind === 'automation') return renderAutomationItem(item)
     const signalUpdating = item.kind === 'signal' && trainingSignalUpdatingKey === `${item.signal.o_athlete_id}:${item.signal.o_detector}`
     return (
       <div key={item.key} style={{ padding: '0.62rem 0.7rem', border: `1px solid ${item.color}30`, background: '#171713' }}>

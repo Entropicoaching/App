@@ -200,7 +200,7 @@ export function createMockSupabase({ users, tables }) {
   const signTokens = new Map() // token -> "<bucket>/<path>"
 
   // ORDRE 155 · commit 3: fejlinjektion pr. kald. Sat via
-  // POST /__e2e/fault { pathPrefix, method, mode: '500'|'timeout', times }.
+  // POST /__e2e/fault { pathPrefix, method, mode: '500'|'timeout'|'missing-function', times }.
   // 'timeout' er bevidst en øjeblikkelig forbindelsesafbrydelse, ikke et
   // ægte 12s-hæng op til appens egen fetchWithTimeout-grænse — samme
   // brugeroplevede udfald (fetch afvises), uden at gøre e2e-suiten langsom.
@@ -434,6 +434,14 @@ export function createMockSupabase({ users, tables }) {
       return shared.slice(offset, offset + limit)
     },
     entropi_training_signals_v1: () => [],
+    // ORDRE 301: spejler supabase/sql/resolve-automation-alert-v1.sql (true
+    // hvis raekken blev markeret nu, false hvis den ikke findes/var loest).
+    resolve_automation_alert_v1: (args) => {
+      const row = (db.automation_alerts || []).find(r => r.id === args?.alert_id && r.resolved_at == null)
+      if (!row) return false
+      row.resolved_at = new Date().toISOString()
+      return true
+    },
     complete_athlete_onboarding_v1: (args, ctx) => {
       const athlete = db.athletes?.find(a => a.user_id === ctx.userId)
       if (athlete) athlete.onboarding_completed_at = new Date().toISOString()
@@ -567,6 +575,11 @@ export function createMockSupabase({ users, tables }) {
       const fault = takeFault(req.method, url.pathname)
       if (fault) {
         if (fault.mode === 'timeout') { req.socket.destroy(); return }
+        // ORDRE 301: PostgREST's svar naar en RPC ikke er koert i databasen
+        // endnu (SQL-filen ligger kun under supabase/sql/).
+        if (fault.mode === 'missing-function') {
+          return sendJson(res, 404, { code: 'PGRST202', message: `Could not find the function public.${url.pathname.split('/').pop()} in the schema cache`, details: null, hint: null })
+        }
         return sendJson(res, 500, { message: 'Synthetic e2e-fejl (injiceret)', code: 'E2E_FAULT' })
       }
       if (url.pathname.startsWith('/auth/v1/')) return await handleAuth(req, res, url)
