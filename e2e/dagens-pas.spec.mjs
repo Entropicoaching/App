@@ -95,6 +95,19 @@ export async function runDagensPasPause(page, { appUrl, mockUrl, outDir }) {
     await page.getByText(`Sæt ${setNum}/4`, { exact: true }).waitFor({ state: 'visible', timeout: 5000 })
     assert.equal(await page.getByLabel(`Vægt, sæt ${setNum}`).inputValue(), '80', `vægten skal føres med til sæt ${setNum} uden at taste`)
     assert.equal(await page.getByLabel(`Reps, sæt ${setNum}`).inputValue(), '4', `reps skal genudfyldes for sæt ${setNum} uden at taste`)
+    if (setNum === 2) {
+      // ORDRE 293 · F1 — knapperne skal starte fra det viste tal (4), ikke 0:
+      // ét tryk på plus giver 5, ét på minus tilbage til 4 (sæt 1 var fint;
+      // det var sæt 2+ hvor state står tomt mens feltet viser ordinationen).
+      await page.getByRole('button', { name: '1 rep mere', exact: true }).click()
+      assert.equal(await page.getByLabel('Reps, sæt 2').inputValue(), '5', 'ét tryk på "1 rep mere" i sæt 2 skal give ordinationens 4 + 1, ikke 1')
+      await page.getByRole('button', { name: '1 rep mindre', exact: true }).click()
+      assert.equal(await page.getByLabel('Reps, sæt 2').inputValue(), '4', 'ét tryk på "1 rep mindre" derefter skal give 4 igen')
+      await page.getByRole('button', { name: '1 rep mindre', exact: true }).click()
+      assert.equal(await page.getByLabel('Reps, sæt 2').inputValue(), '3', '"1 rep mindre" fra 4 skal give 3, ikke 0')
+      await page.getByRole('button', { name: '1 rep mere', exact: true }).click()
+      assert.equal(await page.getByLabel('Reps, sæt 2').inputValue(), '4')
+    }
     await page.getByRole('button', { name: 'Godkendt', exact: true }).click()
     await waitForLoggedRows(setNum)
   }

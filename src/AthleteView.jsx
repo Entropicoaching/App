@@ -19,7 +19,8 @@ import { startRestPause, loadRestPause, clearRestPause } from './restPause'
 import { saveOfflineSet, loadOfflineSets, clearOfflineSet, countOfflineSets } from './offlineSetQueue'
 import { estimatedOneRepMax, HOVEDLOEFT_FAMILIER } from './exerciseProgress'
 import { parseRepsPrescription } from './repsPrescription'
-import { defaultSetWeight, defaultSetReps, stepWeight, stepReps } from './setLogDefaults'
+import { defaultSetWeight, defaultSetReps, stepWeight, stepRepsInInputs } from './setLogDefaults'
+import { fremgangLogsQuery, fremgangLogsKronologisk } from './fremgangLogs'
 import { calcWarmupSets, isMainLift } from './warmup'
 import { applyWarmupCorrection, saveWarmupOverride, suggestWarmupOverride } from './warmupOverride'
 import { flushVideoCoachDraftQueue, isRetryableVideoCoachError,
@@ -328,7 +329,7 @@ function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, onLogSet
   const suggestion = ex.recommended_weight == null ? suggestNextWeight(ex.name, ex.intensity) : null
   const others = (session.exercises || []).filter(e => e.id !== ex.id)
   const stepWeightBy = delta => setLogInputs(p => ({ ...p, [key]: { ...(p[key] || input), weight: stepWeight(p[key]?.weight ?? input.weight, delta) } }))
-  const stepRepsBy = delta => setLogInputs(p => ({ ...p, [key]: { ...(p[key] || input), reps: stepReps(p[key]?.reps ?? repsValue, delta) } }))
+  const stepRepsBy = delta => setLogInputs(p => stepRepsInInputs(p, key, input, repsValue, delta))
 
   return (
     <div style={s.card}>
@@ -1712,23 +1713,18 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   // ORDRE 284 · commit 1: al historik for Fremgang-fanen — ingen datogrænse
   // (til forskel fra fetchVolumeLogs's 5 uger), for fremgang på et løft skal
   // kunne ses over måneder, ikke kun de seneste uger. Kun gennemførte sæt
-  // med en rigtig vægt (samme filtre som fetchExerciseHistory).
+  // med en rigtig vægt (samme filtre som fetchExerciseHistory). ORDRE 293
+  // (F2): hentes faldende og vendes, så en grænse aldrig koster de nyeste sæt
+  // (se src/fremgangLogs.js).
   async function fetchFremgangLogs(athleteId) {
     setFremgangLoading(true)
     const { data, ok } = await runGuardedRead(
-      () => supabase
-        .from('exercise_logs')
-        .select('weight, reps_completed, logged_at, exercises(name)')
-        .eq('athlete_id', athleteId)
-        .eq('skipped', false)
-        .gt('weight', 0)
-        .order('logged_at', { ascending: true })
-        .limit(4000),
+      () => fremgangLogsQuery(supabase, athleteId),
       onReadError('Fremgang', athleteId),
     )
     setFremgangLoading(false)
     if (!ok) return
-    setFremgangLogs(data || [])
+    setFremgangLogs(fremgangLogsKronologisk(data))
   }
 
   // ORDRE 268 · commit 2: "hele forløbet" i UgensStatusKort — samme kilde

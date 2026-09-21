@@ -1,6 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { defaultSetWeight, defaultSetReps, stepWeight, stepReps } from './setLogDefaults.js'
+import { defaultSetWeight, defaultSetReps, stepWeight, stepReps, stepRepsInInputs } from './setLogDefaults.js'
+import { nextAthleteSetInput } from './athleteTrainingInputs.js'
 
 test('defaultSetWeight: en allerede tastet vægt vinder over alt andet', () => {
   assert.equal(defaultSetWeight('82.5', { lastWeight: 100, recommendedWeight: 90 }), '82.5')
@@ -50,4 +51,32 @@ test('stepReps lægger 1 til som standard, og bunder ved 0', () => {
   assert.equal(stepReps('5', -1), '4')
   assert.equal(stepReps('0', -1), '0')
   assert.equal(stepReps('', 1), '1')
+})
+
+// ORDRE 293 · F1 — kaldstedet, ikke kun stepReps. Sæt 2 starter med reps ''
+// i input-state (nextAthleteSetInput), mens feltet VISER ordinationens
+// nederste tal (her 4, fra "4-6"). Ét tryk skal give 4 ± 1, ikke 1 eller 0.
+test('stepRepsInInputs: sæt 2 (reps tom i state) — ét tryk på plus giver det viste tal + 1', () => {
+  const set1 = { weight: '80', note: '', rpe: '', reps: '4' }
+  const inputs = { ex1_2: nextAthleteSetInput(set1, undefined) }
+  assert.equal(inputs.ex1_2.reps, '')
+  const shown = inputs.ex1_2
+  const after = stepRepsInInputs(inputs, 'ex1_2', shown, '4', 1)
+  assert.equal(after.ex1_2.reps, '5')
+  assert.equal(after.ex1_2.weight, '80', 'vægten skal føres uændret med')
+  const down = stepRepsInInputs(inputs, 'ex1_2', shown, '4', -1)
+  assert.equal(down.ex1_2.reps, '3')
+})
+
+test('stepRepsInInputs: en allerede tastet/trinnet værdi vinder over det viste tal', () => {
+  const inputs = { ex1_2: { weight: '80', note: '', rpe: '', reps: '7' } }
+  assert.equal(stepRepsInInputs(inputs, 'ex1_2', inputs.ex1_2, '4', 1).ex1_2.reps, '8')
+})
+
+test('stepRepsInInputs: ingen post i state endnu → starter fra det viste tal og rører ikke andre sæt', () => {
+  const inputs = { ex1_1: { weight: '80', note: '', rpe: '', reps: '4' } }
+  const shown = { weight: '', note: '', rpe: '', reps: '' }
+  const after = stepRepsInInputs(inputs, 'ex1_2', shown, '4', 1)
+  assert.equal(after.ex1_2.reps, '5')
+  assert.equal(after.ex1_1.reps, '4')
 })

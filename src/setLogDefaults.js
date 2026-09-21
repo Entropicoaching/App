@@ -43,3 +43,13 @@ export function stepReps(current, delta = 1) {
   const base = Number.isFinite(n) ? n : 0
   return String(Math.max(0, base + delta))
 }
+
+// ORDRE 293 · blok 1 (F1) — selve trinnet på kaldstedet i Dagens pas. Næste
+// sæts reps står som '' i input-state (nextAthleteSetInput nulstiller dem
+// bevidst), mens feltet VISER ordinationens nederste tal. `??` fangede kun
+// null/undefined, så et tomt felt startede trinnet fra 0 ("1 rep mere" gav 1,
+// ikke 5). Tomt falder derfor tilbage på det TALLET FELTET VISER (`shownReps`).
+export function stepRepsInInputs(inputs, key, shownInput, shownReps, delta = 1) {
+  const current = inputs[key] || shownInput
+  return { ...inputs, [key]: { ...current, reps: stepReps(current.reps || shownReps, delta) } }
+}
