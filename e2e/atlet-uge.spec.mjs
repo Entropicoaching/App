@@ -217,15 +217,18 @@ export async function runAtletUge(page, { appUrl, mockUrl, outDir, clipPath }) {
   // tager uploaden reelt længere end 20s, ikke fordi noget er i stykker.
   // Gem-flowet selv er urørt af ordre 280 (se e2e/athlete-film-et-saet.mjs,
   // som er grøn i alle kørsler).
-  await page.waitForFunction(
-    async ([url, athleteId]) => {
-      const res = await fetch(`${url}/__e2e/table?name=video_analyses`)
-      const rows = await res.json()
-      return rows.some(r => r.athlete_id === athleteId && r.analysis_state === 'awaiting_analysis')
-    },
-    [mockUrl, ATHLETE_ID],
-    { timeout: 60000 },
-  )
+  // Poll fra Node-siden i stedet for page.waitForFunction med en async prædikat:
+  // målt i ordre 288 kom den tilbage ~12 ms efter klikket med en TOM tabel, så
+  // næste assert læste tabellen før uploaden var færdig (rækken kom først
+  // bagefter, appen er i orden). Node-polling venter på selve rækken.
+  const videoDeadline = Date.now() + 60000
+  let videoSaved = false
+  while (Date.now() < videoDeadline) {
+    const rows = await readTable(mockUrl, 'video_analyses')
+    if (rows.some(r => r.athlete_id === ATHLETE_ID && r.analysis_state === 'awaiting_analysis')) { videoSaved = true; break }
+    await new Promise(r => setTimeout(r, 250))
+  }
+  assert.ok(videoSaved, 'Gem oprettede ingen awaiting_analysis-række inden for 60s')
   const rowsAfterVideo = await readTable(mockUrl, 'video_analyses')
   assert.equal(rowsAfterVideo.length, rowsBeforeVideo.length + 1, 'Gem skulle oprette præcis én ny video_analyses-række')
   const savedRow = rowsAfterVideo.find(r => r.athlete_id === ATHLETE_ID && r.analysis_state === 'awaiting_analysis')
