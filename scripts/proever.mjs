@@ -202,6 +202,19 @@ if (await portFree(8991)) {
     venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
 }
 
+// ---- 11) Dagens pas' forudfyldning når historikken ankommer (ordre 293 · F3):
+// planens tal først, så "sidste gang" (95/5); en vægt/reps atleten har trykket
+// eller tastet før historikken kommer bliver stående. Historik-hentningen
+// holdes tilbage i browseren, så rækkefølgen er deterministisk. Egen
+// mock-instans, samme port-grænse som ovenfor.
+if (await portFree(8991)) {
+  rows.push(runNode('e2e (dagens-pas-historik.spec.mjs)', [join('e2e', 'dagens-pas-historik.spec.mjs')],
+    'felternes værdi (inputValue) før og efter at historikken slippes, samt at et trykket/tastet felt ikke overskrives', 'e2e'))
+} else {
+  rows.push({ name: 'e2e (dagens-pas-historik.spec.mjs)', kind: 'e2e', ok: null, ms: 0,
+    venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
+}
+
 // ---- Skriv tabellen ----
 const lines = []
 lines.push('# Prøver — samlet facit (ordre 234)')
