@@ -16,6 +16,7 @@ import { progressionOverrideErrors, updateDraftForecast, updateForecastOverrideR
 import { blockPurpose, buildPeriodizationSuggestion, withBlockPurposes } from './periodizationAssistant'
 import { buildPlanOverview, planOverviewCounts } from './planOverview'
 import { byggKategoriOpslag, kategoriFor } from './exerciseNames'
+import { beregnUgensAfvigelse, sorterEfterAfvigelse } from './dashboard/afvigelse'
 import {
   BLOCK_NAMES, blockColor, computePhases, currentWeekNo,
   VIDEOCOACH_STATUS, VIDEOCOACH_METRICS, videoCoachMetric, videoCoachBaseline,
@@ -388,8 +389,13 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [librarySearch, setLibrarySearch] = useState('')
   const [athleteWeekSummary, setAthleteWeekSummary] = useState({})
   const [athleteLastLogs, setAthleteLastLogs] = useState({})
-  const [calendarWeeks, setCalendarWeeks] = useState({}) // athlete_id -> [{week_number, block_name, start_date, session_count, exercise_count}]
+  const [calendarWeeks, setCalendarWeeks] = useState({}) // athlete_id -> [{week_number, block_name, start_date, session_count, exercise_count, planned_sets, planned_tonnage}]
   const [athleteCurrentWeek, setAthleteCurrentWeek] = useState({}) // athlete_id -> ugenummer for seneste logg. træning
+  // ORDRE 277 · commit 1: athlete_id -> { [week_number]: { sets, tonnage } } —
+  // gennemførte (ikke sprunget over) sæt/tonnage pr. programuge, til
+  // afvigelse-sorteringen (src/dashboard/afvigelse.js).
+  const [athleteWeekCompletion, setAthleteWeekCompletion] = useState({})
+  const [athleteSortMode, setAthleteSortMode] = useState('navn') // 'navn' | 'afvigelse'
   const [timelineEdit, setTimelineEdit] = useState(null) // { athleteId, weeks, name, block, firstStartIso } — åbent dato-panel i kalender-tidslinjen
   // Kilde = athletes.snooze_until (DB). localStorage bruges kun som midlertidig seed for
   // straks-visning + migreres væk ved første load (se snoozeMigratedRef-effekt).
@@ -957,22 +963,39 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
   async function fetchCalendarWeeks(athleteIds) {
     if (!athleteIds.length) return
+    // ORDRE 277 · commit 1: `sets`/`recommended_weight` tilføjet til selectet
+    // (samme forespørgsel, ingen ny rundtur) — giver "planlagt denne uge"
+    // (sæt + tonnage, src/dashboard/afvigelse.js) uden at ændre hvad
+    // kalender-tidslinjen selv viser (session_count/exercise_count uændret).
     const { data } = await supabase
       .from('weeks')
-      .select('id, athlete_id, week_number, block_name, start_date, sessions(id, exercises(id))')
+      .select('id, athlete_id, week_number, block_name, start_date, sessions(id, exercises(id, sets, recommended_weight))')
       .in('athlete_id', athleteIds)
     if (!data) return
     const map = {}
     for (const w of data) {
       if (!map[w.athlete_id]) map[w.athlete_id] = []
       const sessions = w.sessions || []
+      const exercises = sessions.flatMap(sess => sess.exercises || [])
+      let plannedSets = 0
+      let plannedTonnage = 0
+      for (const ex of exercises) {
+        const sets = Number(ex.sets) || 0
+        plannedSets += sets
+        // Tonnage kan kun regnes for øvelser med en anbefalet vægt — uden
+        // den er der intet kg-tal at sammenligne imod (samme grænse som
+        // src/dashboard/afvigelse.js's egen dokumentation).
+        if (ex.recommended_weight != null) plannedTonnage += sets * Number(ex.recommended_weight)
+      }
       map[w.athlete_id].push({
         id: w.id,
         week_number: w.week_number,
         block_name: w.block_name,
         start_date: w.start_date,
         session_count: sessions.length,
-        exercise_count: sessions.reduce((a, sess) => a + (sess.exercises || []).length, 0),
+        exercise_count: exercises.length,
+        planned_sets: plannedSets,
+        planned_tonnage: plannedTonnage,
       })
     }
     // Sortér uger pr. atlet efter ugenummer (stigende)
@@ -1001,20 +1024,35 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   async function fetchCalendarProgress(athleteIds) {
     if (!athleteIds.length) return
     const since = new Date(); since.setDate(since.getDate() - 180)
+    // ORDRE 277 · commit 1: weight/reps_completed/skipped tilføjet til
+    // selectet (samme forespørgsel som allerede fandt "hvilken uge er
+    // atleten i nu" via seneste log) — giver "gennemført denne uge" (sæt +
+    // tonnage, pr. programuge) uden endnu en rundtur.
     const { data } = await supabase
       .from('exercise_logs')
-      .select('athlete_id, logged_at, exercises(sessions(weeks(week_number)))')
+      .select('athlete_id, logged_at, weight, reps_completed, skipped, exercises(sessions(weeks(week_number)))')
       .in('athlete_id', athleteIds)
       .gte('logged_at', since.toISOString())
       .order('logged_at', { ascending: false })
     if (!data) return
     const map = {}
+    const completion = {}
     for (const log of data) {
-      if (map[log.athlete_id] != null) continue // har allerede den seneste for denne atlet
+      if (map[log.athlete_id] == null) { // har allerede den seneste for denne atlet
+        const wn = log.exercises?.sessions?.weeks?.week_number
+        if (wn != null) map[log.athlete_id] = wn
+      }
+      if (log.skipped) continue
       const wn = log.exercises?.sessions?.weeks?.week_number
-      if (wn != null) map[log.athlete_id] = wn
+      if (wn == null) continue
+      const aid = log.athlete_id
+      if (!completion[aid]) completion[aid] = {}
+      if (!completion[aid][wn]) completion[aid][wn] = { sets: 0, tonnage: 0 }
+      completion[aid][wn].sets += 1
+      completion[aid][wn].tonnage += (Number(log.weight) || 0) * (Number(log.reps_completed) || 0)
     }
     setAthleteCurrentWeek(map)
+    setAthleteWeekCompletion(completion)
   }
 
   // Udsæt opmærksomhed på en atlet til en dato (ISO yyyy-mm-dd). null = fjern udsættelse.
@@ -4013,9 +4051,30 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             .filter(ath => !hiddenAthleteIds.has(ath.id))
             .sort((x, y) => x.name.localeCompare(y.name, 'da'))
           const hiddenAthletes = athletes.filter(ath => hiddenAthleteIds.has(ath.id))
-          const shownAthletes = showHiddenAthletes
-            ? [...visibleAthletes, ...hiddenAthletes.sort((x, y) => x.name.localeCompare(y.name, 'da'))]
+          // ORDRE 277 · commit 1: afvigelse denne uge (planlagt mod
+          // gennemført, sæt + tonnage) regnet én gang pr. atlet — brugt til
+          // BÅDE sorteringen og linjen i hver række (afvigelseByAthleteId
+          // nedenfor), så de to aldrig kan vise forskellige tal.
+          const athletesWithAfvigelse = visibleAthletes.map(athlete => {
+            const athleteWeeks = calendarWeeks[athlete.id] || []
+            const currentNo = currentWeekNo(athleteWeeks, athleteCurrentWeek[athlete.id] ?? null)
+            const current = athleteWeeks.find(week => week.week_number === currentNo)
+            const completion = (athleteWeekCompletion[athlete.id] || {})[currentNo] || { sets: 0, tonnage: 0 }
+            const afvigelse = beregnUgensAfvigelse({
+              plannedSets: current?.planned_sets || 0,
+              plannedTonnage: current?.planned_tonnage || 0,
+              completedSets: completion.sets,
+              completedTonnage: completion.tonnage,
+            })
+            return { athlete, afvigelse }
+          })
+          const afvigelseByAthleteId = new Map(athletesWithAfvigelse.map(r => [r.athlete.id, r.afvigelse]))
+          const sortedVisibleAthletes = athleteSortMode === 'afvigelse'
+            ? sorterEfterAfvigelse(athletesWithAfvigelse).map(r => r.athlete)
             : visibleAthletes
+          const shownAthletes = showHiddenAthletes
+            ? [...sortedVisibleAthletes, ...hiddenAthletes.sort((x, y) => x.name.localeCompare(y.name, 'da'))]
+            : sortedVisibleAthletes
           const ATHLETE_LIST_LIMIT = 25
           const cappedAthletes = showAllAthletes ? shownAthletes : shownAthletes.slice(0, ATHLETE_LIST_LIMIT)
           const priorityItems = coachPriorityItems
@@ -4135,6 +4194,27 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#4a4844', letterSpacing: '0.06em' }}>{visibleAthletes.length} aktive</span>
                 </div>
 
+                {/* ORDRE 277 · commit 1: sortér efter afvigelse denne uge —
+                    planlagt mod gennemført, størst afvigelse øverst, "ingen
+                    plan" nederst. Sorteringsvalget er almindelig
+                    komponent-state (athleteSortMode), uændret af at åbne og
+                    lukke en atlets profil (blok 2). */}
+                <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '0.65rem' }}>
+                  {[{ key: 'navn', label: 'Navn' }, { key: 'afvigelse', label: 'Afvigelse denne uge' }].map(opt => (
+                    <button key={opt.key} onClick={() => setAthleteSortMode(opt.key)}
+                      aria-pressed={athleteSortMode === opt.key}
+                      style={{
+                        padding: '0.3rem 0.55rem', borderRadius: 3, cursor: 'pointer',
+                        fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.04em',
+                        border: `1px solid ${athleteSortMode === opt.key ? 'rgba(200,146,58,0.5)' : 'rgba(237,234,226,0.1)'}`,
+                        background: athleteSortMode === opt.key ? 'rgba(200,146,58,0.1)' : 'transparent',
+                        color: athleteSortMode === opt.key ? '#c8923a' : '#7a7770',
+                      }}>
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+
                 {loading ? (
                   <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', padding: '1rem 0' }}>Indlæser…</div>
                 ) : loadError ? (
@@ -4165,6 +4245,22 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                       // "Film et sæt"-video ingen endnu har kørt sporingen på.
                       const measurementVideo = videoMeasurementByAthlete[athlete.id]
                       const measurement = videoCoachMeasurementSummary(measurementVideo)
+                      // ORDRE 277 · commit 1: "Afvigelse denne uge"-sortering
+                      // viser planlagt/gennemført/sidste logning i stedet for
+                      // (ikke ved siden af) den almindelige programlinje —
+                      // to tal pr. atlet ville gøre listen sværere at skimme,
+                      // ikke lettere, hvilket var hele ordrens pointe.
+                      const afvigelse = afvigelseByAthleteId.get(athlete.id)
+                      const lastLogDate = athleteLastLogs[athlete.id]
+                      const daysSinceLog = lastLogDate ? Math.floor((Date.now() - new Date(lastLogDate + 'T12:00:00')) / 86400000) : null
+                      const lastLogText = daysSinceLog == null ? 'Ingen logs' : daysSinceLog === 0 ? 'I dag' : daysSinceLog === 1 ? 'I går' : `${daysSinceLog}d siden`
+                      // Gråt som standard, grønt kun når ugen er i mål eller
+                      // foran — ALDRIG rødt/advarsel, uanset hvor stor
+                      // afvigelsen er (ordrens egen grænse).
+                      const paaSporet = afvigelse?.harPlan && afvigelse.afvigelseSaet <= 0 && afvigelse.afvigelseTonnage <= 0
+                      const afvigelseText = !afvigelse ? '' : !afvigelse.harPlan
+                        ? 'Ingen plan'
+                        : `Planlagt ${afvigelse.plannedSets} sæt${afvigelse.plannedTonnage > 0 ? ` · ${Math.round(afvigelse.plannedTonnage)} kg` : ''} — gennemført ${afvigelse.completedSets} sæt${afvigelse.plannedTonnage > 0 ? ` · ${Math.round(afvigelse.completedTonnage)} kg` : ''} · ${lastLogText}`
                       return (
                         <div key={athlete.id} role={isHidden ? undefined : 'button'} tabIndex={isHidden ? undefined : 0}
                           onClick={() => !isHidden && openProfile(athlete, 'program')}
@@ -4180,7 +4276,11 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                               {holiday?.onHoliday && <span style={{ ...s.badge('ferie'), flexShrink: 0 }}>{ferieBadgeLabel(holiday)}</span>}
                               {isHidden && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.42rem', color: '#7a7770', textTransform: 'uppercase' }}>Skjult</span>}
                             </span>
-                            <span style={{ display: 'block', marginTop: '0.18rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: weekNo != null ? '#7a7770' : '#b07b68', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{programLine}</span>
+                            {athleteSortMode === 'afvigelse' ? (
+                              <span style={{ display: 'block', marginTop: '0.18rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: !afvigelse?.harPlan ? '#7a7770' : paaSporet ? '#6cba6c' : '#7a7770', lineHeight: 1.4 }}>{afvigelseText}</span>
+                            ) : (
+                              <span style={{ display: 'block', marginTop: '0.18rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: weekNo != null ? '#7a7770' : '#b07b68', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{programLine}</span>
+                            )}
                             {measurement && (
                               <button
                                 onClick={event => {
