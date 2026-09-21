@@ -16,7 +16,9 @@ import { findDagensPas, lastHeaviestSet } from './nextSet'
 import { shouldNudgeCheckin } from './checkinReminder'
 import { restSecondsForExercise } from './restBetweenSets'
 import { startRestPause, loadRestPause, clearRestPause } from './restPause'
+import { saveOfflineSet, loadOfflineSets, clearOfflineSet, countOfflineSets } from './offlineSetQueue'
 import { parseRepsPrescription } from './repsPrescription'
+import { defaultSetWeight, defaultSetReps, stepWeight, stepReps } from './setLogDefaults'
 import { calcWarmupSets, isMainLift } from './warmup'
 import { applyWarmupCorrection, saveWarmupOverride, suggestWarmupOverride } from './warmupOverride'
 import { flushVideoCoachDraftQueue, isRetryableVideoCoachError,
@@ -233,7 +235,33 @@ function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession }) {
 // — logInputs-nøglen er `${exerciseId}_${setNumber}`, delt på tværs af
 // begge faner). Under det: resten af DENNE session i kort form. `pas` kommer
 // fra findDagensPas (src/nextSet.js, ren funktion, se dens tests).
-function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, logSet, skipSet, suggestNextWeight, onOpenSession, pauseTimer, todayStr, checkinNudge }) {
+function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, onLogSet, skipSet, suggestNextWeight, onOpenSession, todayStr, checkinNudge, lastLoggedSet, onUndoLastSet, pendingSyncCount }) {
+  const activeNext = pas && pas.status === 'open' ? pas.next : null
+
+  // ORDRE 280 · commit 1 — når sættet ÅBNES (bliver "næste"), udfyldes vægt/
+  // reps som en ægte værdi i input-state (ikke kun en visuel hint — ellers
+  // ville et upåvirket "Godkendt"-tryk logge 0/tomt). Sidste gang på samme
+  // øvelse vinder, ellers planens tal, ellers tomt (se setLogDefaults.js).
+  // Rører ALDRIG et felt atleten allerede selv har tastet/ændret. Kører kun
+  // når selve sættet skifter — deraf de smalle deps i stedet for hele
+  // exerciseHistory/logInputs (ville køre igen ved hver tastning).
+  useEffect(() => {
+    if (!activeNext) return
+    const { exercise: ex, setNumber } = activeNext
+    const key = `${ex.id}_${setNumber}`
+    const last = lastHeaviestSet(exerciseHistory, ex.name, todayStr)
+    const repsPrescription = parseRepsPrescription(ex.reps)
+    const repsIsEditable = repsPrescription.type !== 'fixed'
+    const suggestion = ex.recommended_weight == null ? suggestNextWeight(ex.name, ex.intensity) : null
+    const weightDefault = defaultSetWeight('', { lastWeight: last?.weight, recommendedWeight: ex.recommended_weight ?? suggestion?.weight })
+    const repsDefaultValue = repsIsEditable
+      ? defaultSetReps('', { lastReps: last?.reps, planReps: repsPrescription.type === 'range' ? repsPrescription.min : null })
+      : ''
+    if (!weightDefault && !repsDefaultValue) return
+    setLogInputs(p => (p[key]?.weight || p[key]?.reps) ? p : { ...p, [key]: { weight: weightDefault, note: '', rpe: '', reps: repsDefaultValue } })
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- kør kun når selve sættet (øvelse+sætnummer) skifter
+  }, [activeNext?.exercise?.id, activeNext?.setNumber])
+
   if (!pas) return null
 
   // ORDRE 267 · commit 3 — rolig linje, ikke en mail/notifikation, ingen rød
@@ -298,6 +326,8 @@ function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, logSet, 
   const last = lastHeaviestSet(exerciseHistory, ex.name, todayStr)
   const suggestion = ex.recommended_weight == null ? suggestNextWeight(ex.name, ex.intensity) : null
   const others = (session.exercises || []).filter(e => e.id !== ex.id)
+  const stepWeightBy = delta => setLogInputs(p => ({ ...p, [key]: { ...(p[key] || input), weight: stepWeight(p[key]?.weight ?? input.weight, delta) } }))
+  const stepRepsBy = delta => setLogInputs(p => ({ ...p, [key]: { ...(p[key] || input), reps: stepReps(p[key]?.reps ?? repsValue, delta) } }))
 
   return (
     <div style={s.card}>
@@ -306,8 +336,6 @@ function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, logSet, 
         <div style={s.cardLabel}>Dagens pas</div>
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.06em', color: '#7a7770' }}>Sæt {setNumber}/{totalSets}</div>
       </div>
-
-      {pauseTimer}
 
       <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.15, marginBottom: '0.25rem' }}>
         {ex.name}
@@ -329,6 +357,15 @@ function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, logSet, 
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+        {/* ORDRE 280 · commit 1 — store plus/minus (2,5 kg / 1 rep) ved siden af
+            felterne: en atlet med kridt på hænderne skal kunne justere uden at
+            skulle ramme et lille tastatur. Feltet kan stadig tastes i (samme
+            onChange som før), men skal ikke. */}
+        <button
+          type="button" aria-label="2,5 kg mindre"
+          onClick={() => stepWeightBy(-2.5)}
+          style={{ ...s.btnGhost, minWidth: '44px', minHeight: '52px', boxSizing: 'border-box', padding: 0, fontSize: '1.1rem', flexShrink: 0 }}
+        >−</button>
         <input
           aria-label={`Vægt, sæt ${setNumber}`}
           style={{ ...s.fieldInput, width: '96px', minWidth: '96px', minHeight: '52px', boxSizing: 'border-box', flexShrink: 0, padding: '0.65rem 0.5rem', fontSize: '1.3rem', textAlign: 'center' }}
@@ -338,9 +375,19 @@ function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, logSet, 
             if (v === '' || /^\d*\.?\d*$/.test(v)) setLogInputs(p => ({ ...p, [key]: { ...p[key], weight: v } }))
           }}
         />
+        <button
+          type="button" aria-label="2,5 kg mere"
+          onClick={() => stepWeightBy(2.5)}
+          style={{ ...s.btnGhost, minWidth: '44px', minHeight: '52px', boxSizing: 'border-box', padding: 0, fontSize: '1.1rem', flexShrink: 0 }}
+        >+</button>
         {repsIsEditable ? (
           <>
             <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '1rem', color: '#c8923a' }}>×</span>
+            <button
+              type="button" aria-label="1 rep mindre"
+              onClick={() => stepRepsBy(-1)}
+              style={{ ...s.btnGhost, minWidth: '44px', minHeight: '52px', boxSizing: 'border-box', padding: 0, fontSize: '1.1rem', flexShrink: 0 }}
+            >−</button>
             <input
               aria-label={`Reps, sæt ${setNumber}`}
               style={{ ...s.fieldInput, width: '64px', minWidth: '64px', minHeight: '52px', boxSizing: 'border-box', flexShrink: 0, padding: '0.65rem 0.3rem', fontSize: '1.3rem', textAlign: 'center' }}
@@ -350,6 +397,11 @@ function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, logSet, 
                 if (v === '' || /^\d*$/.test(v)) setLogInputs(p => ({ ...p, [key]: { ...p[key], reps: v } }))
               }}
             />
+            <button
+              type="button" aria-label="1 rep mere"
+              onClick={() => stepRepsBy(1)}
+              style={{ ...s.btnGhost, minWidth: '44px', minHeight: '52px', boxSizing: 'border-box', padding: 0, fontSize: '1.1rem', flexShrink: 0 }}
+            >+</button>
           </>
         ) : (
           <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '1rem', color: '#c8923a', whiteSpace: 'nowrap' }}>× {ex.reps || '—'}</span>
@@ -358,16 +410,35 @@ function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, logSet, 
           <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#7a7770', letterSpacing: '0.06em', border: '1px solid rgba(237,234,226,0.13)', padding: '0.3rem 0.5rem', minHeight: '52px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center' }}>RPE {input.rpe || plannedRpe}</span>
         )}
       </div>
+      {/* ORDRE 280 · commit 2 — "Godkendt" er den mest gentagne handling i hele
+          appen (ét tryk pr. sæt, hele træningen), derfor flex:1 og 60px høj —
+          rammes med en tommelfinger nederst i kortet, også med handsker.
+          Ingen dialog, ingen bekræftelse: gemmer sættet som det står med det
+          samme (samme optimistiske onLogSet som før, se logDagensPasSet). */}
       <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.6rem' }}>
         <button
-          style={{ ...s.btnPrimary, flex: 1, minHeight: '52px', boxSizing: 'border-box', fontSize: '0.7rem' }}
-          onClick={() => logSet(ex.id, setNumber, totalSets, repsToLog, plannedRpe)}
-        >Log sæt</button>
+          style={{ ...s.btnPrimary, flex: 1, minHeight: '60px', boxSizing: 'border-box', fontSize: '0.85rem' }}
+          onClick={() => onLogSet(ex, setNumber, totalSets, repsToLog, plannedRpe)}
+        >Godkendt</button>
         <button
-          style={{ ...s.btnGhost, minHeight: '52px', boxSizing: 'border-box', fontSize: '0.6rem' }}
+          style={{ ...s.btnGhost, minHeight: '60px', boxSizing: 'border-box', fontSize: '0.6rem' }}
           onClick={() => skipSet(ex.id, setNumber, plannedRpe)}
         >Spring over</button>
       </div>
+      {/* Fortryd — kun mens man ikke har forladt øvelsen: næste sæt i kortet
+          skal stadig høre til den øvelse man lige loggede et sæt på. */}
+      {lastLoggedSet && lastLoggedSet.exerciseId === ex.id && (
+        <button
+          type="button"
+          onClick={() => onUndoLastSet(lastLoggedSet.exerciseId, lastLoggedSet.setNumber)}
+          style={{ ...s.btnGhost, marginTop: '0.5rem', width: '100%', minHeight: '44px', boxSizing: 'border-box', fontSize: '0.56rem', color: '#7a7770' }}
+        >↺ Fortryd sidste sæt</button>
+      )}
+      {pendingSyncCount > 0 && (
+        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.04em', color: '#7a7770', marginTop: '0.5rem', textAlign: 'center' }}>
+          ☁ {pendingSyncCount} {pendingSyncCount === 1 ? 'sæt' : 'sæt'} gemt lokalt — sendes når forbindelsen er tilbage
+        </div>
+      )}
 
       {others.length > 0 && (
         <div style={{ marginTop: '1rem', paddingTop: '0.85rem', borderTop: '1px solid rgba(237,234,226,0.07)' }}>
@@ -393,7 +464,13 @@ function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, logSet, 
 // starttidspunkt + varighed er sandheden, så pausen ikke driver eller
 // springer hvis skærmen slukkes eller fanen lukkes midt i den (restPause.js
 // persisterer dem, uafhængigt af om komponentet selv overlever).
-function RestPauseTimer({ athleteId, pause, onClear }) {
+//
+// ORDRE 280 · commit 3 — flyttet ud af DagensPasCard og fastgjort nederst på
+// skærmen (over bundnavigationen): en rolig linje, ikke et stort ur, der
+// bliver ved med at være synlig når man ruller væk fra kortet, og siger
+// hvilket sæt der er næste — uden at stjæle plads fra "Godkendt"-knappen i
+// kortet (helt separat element, egen position).
+function RestPauseFooter({ athleteId, pause, onClear, nextLabel }) {
   const [liveSeconds, setLiveSeconds] = useState(() => remainingSeconds(pause.durationSeconds, pause.startedAt))
 
   useEffect(() => {
@@ -408,23 +485,26 @@ function RestPauseTimer({ athleteId, pause, onClear }) {
   const done = liveSeconds <= 0
   const frac = pause.durationSeconds > 0 ? Math.max(0, Math.min(1, liveSeconds / pause.durationSeconds)) : 0
   return (
-    <div style={{ marginBottom: '0.85rem', padding: '0.6rem 0.75rem', background: done ? 'rgba(108,186,108,0.06)' : 'rgba(200,146,58,0.06)', border: `1px solid ${done ? 'rgba(108,186,108,0.25)' : 'rgba(200,146,58,0.2)'}` }}>
-      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.5rem' }}>
-        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: done ? '#6cba6c' : '#c8923a' }}>
+    <div style={{ position: 'fixed', left: 0, right: 0, bottom: '54px', zIndex: 90, background: '#141410', borderTop: `1px solid ${done ? 'rgba(108,186,108,0.25)' : 'rgba(200,146,58,0.2)'}` }}>
+      <div style={{ maxWidth: '680px', margin: '0 auto', padding: '0.4rem 1rem', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: done ? '#6cba6c' : '#c8923a', whiteSpace: 'nowrap' }}>
           {done ? 'Pause slut' : 'Pause'}{pause.label ? ` · ${pause.label}` : ''}
         </span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', color: '#edeae2', lineHeight: 1 }}>{done ? '✓' : `${liveSeconds}s`}</span>
-          <button
-            type="button"
-            aria-label="Skjul pausetimer"
-            onClick={() => { clearRestPause(athleteId); onClear() }}
-            style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.75rem', minWidth: '32px', minHeight: '32px' }}
-          >✕</button>
-        </span>
+        <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#edeae2', lineHeight: 1, whiteSpace: 'nowrap' }}>{done ? '✓' : `${liveSeconds}s`}</span>
+        {nextLabel && (
+          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#7a7770', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
+            {nextLabel}
+          </span>
+        )}
+        <button
+          type="button"
+          aria-label="Skjul pausetimer"
+          onClick={() => { clearRestPause(athleteId); onClear() }}
+          style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.75rem', minWidth: '32px', minHeight: '32px', flexShrink: 0 }}
+        >✕</button>
       </div>
       {!done && (
-        <div style={{ height: '3px', background: 'rgba(237,234,226,0.08)', marginTop: '0.5rem' }}>
+        <div style={{ height: '2px', background: 'rgba(237,234,226,0.08)' }}>
           <div style={{ height: '100%', width: `${frac * 100}%`, background: '#c8923a', transition: 'width 1s linear' }} />
         </div>
       )}
@@ -882,6 +962,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   // ORDRE 263 · commit 2: den automatiske pause mellem sæt (null = ingen
   // aktiv pause). Se restPause.js.
   const [restPause, setRestPause] = useState(null)
+  // ORDRE 280 · commit 4: antal sæt der ligger lokalt og venter på net (se
+  // offlineSetQueue.js). Kun til "Dagens pas"-kortets linje — Program-fanens
+  // Log-knap er urørt.
+  const [pendingSyncCount, setPendingSyncCount] = useState(0)
   const athleteVideoCoachRef = useRef(null)
   const athleteVideoCoachFrameRef = useRef(null)
   const athleteVideoCoachClientsRef = useRef(new Set())
@@ -943,6 +1027,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [logInputs, setLogInputs] = useState({})
   const [lastLogByExerciseName, setLastLogByExerciseName] = useState({})
   const [exerciseHistory, setExerciseHistory] = useState({})
+  // ORDRE 280 · commit 2 — Dagens pas' "Fortryd sidste sæt": kun det senest
+  // loggede sæt FRA DEN KORT (ikke Program-fanen), og kun synligt så længe
+  // pas.next stadig peger på samme øvelse (se DagensPasCard).
+  const [lastLoggedSet, setLastLoggedSet] = useState(null) // { exerciseId, setNumber }
   // ORDRE 259 · commit 1: atletens egen volumen pr. muskelgruppe-fane —
   // rå exercise_logs-rækker (kun feltet VolumenTab.jsx behøver), hentet når
   // fanen åbnes, se effekten ved fetchMeetPlan/fetchMeetResults nedenfor.
@@ -1369,6 +1457,16 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   }, [athlete?.id])
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchLogs er ren ift. sine parametre (athleteId, dato), begge allerede i deps
   useEffect(() => { if (athlete?.id) fetchLogs(athlete.id, kostDate) }, [kostDate, athlete?.id])
+  // ORDRE 280 · commit 4 — ventende sæt (offlineSetQueue.js) sendes igen ved
+  // app-åbning og hver gang forbindelsen kommer tilbage ('online'-event).
+  useEffect(() => {
+    if (!athlete?.id) return
+    setPendingSyncCount(countOfflineSets(athlete.id))
+    flushOfflineSets()
+    window.addEventListener('online', flushOfflineSets)
+    return () => window.removeEventListener('online', flushOfflineSets)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- flushOfflineSets læser kun athlete/currentWeek/exerciseLogs, alle friske ved kald (samme mønster som fetchAthlete ovenfor)
+  }, [athlete?.id])
   useEffect(() => {
     if (role === 'athlete' && athlete?.id) fetchSharedVideoAnalyses()
   }, [role, athlete?.id])
@@ -2052,7 +2150,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     return task
   }
 
-  async function logSet(exerciseId, setNumber, totalSets, repsCompleted, plannedRpe) {
+  async function logSet(exerciseId, setNumber, totalSets, repsCompleted, plannedRpe, { localFallback = false } = {}) {
     const key = `${exerciseId}_${setNumber}`
     const input = logInputs[key] || {}
     const payload = {
@@ -2112,9 +2210,21 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
     // Baggrundsskrivning: serialiseret pr. sæt-nøgle + retry-kø (se persistSetLog).
     // Ved fejl: vis en diskret fejl og rul den optimistiske ændring tilbage, så
-    // UI matcher virkeligheden.
+    // UI matcher virkeligheden. Program-fanens egen Log-knap bruger denne gren
+    // uændret (verify:athlete-write-failures/e2e:fejl låser den).
     const { error } = await persistSetLog(key, exerciseId, setNumber, payload, realExisting?.id)
     if (error) {
+      // ORDRE 280 · commit 4 — "Godkendt" i Dagens pas beder om localFallback:
+      // sættet er allerede vist som logget (optimistisk, ovenfor); i stedet
+      // for at rulle det tilbage til en fejlbesked, gemmes payloaden lokalt
+      // (offlineSetQueue.js) og sendes igen når forbindelsen er der (se
+      // flushOfflineSets). Ingen ny tabel — samme exercise_logs-række som
+      // ellers, bare forsinket.
+      if (localFallback) {
+        saveOfflineSet(athlete.id, key, { exerciseId, setNumber, payload })
+        setPendingSyncCount(countOfflineSets(athlete.id))
+        return
+      }
       clearTimeout(fadeTimer)
       setSetConfirm(p => ({ ...p, [key]: 'error' }))
       if (realExisting) {
@@ -2124,6 +2234,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         setExerciseLogs(prev => prev.filter(l => !(l._optimistic && l.exercise_id === exerciseId && l.set_number === setNumber)))
       }
       return
+    }
+    if (localFallback) {
+      clearOfflineSet(athlete.id, key)
+      setPendingSyncCount(countOfflineSets(athlete.id))
     }
     fetchExerciseLogs(athlete.id, currentWeek)
 
@@ -2192,6 +2306,64 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         }
       }
     }
+  }
+
+  // ORDRE 280 · commit 2 — Dagens pas' "Godkendt"-knap kalder logSet gennem
+  // her (i stedet for direkte), så kortet kan huske hvilket sæt der lige blev
+  // logget (til "Fortryd sidste sæt" nedenfor). Program-fanens egen Log-knap
+  // rører IKKE dette — den kalder stadig logSet direkte, uændret adfærd
+  // (verify:athlete-write-failures/e2e:fejl låser den offline-fejlflowet der).
+  async function logDagensPasSet(ex, setNumber, totalSets, repsToLog, plannedRpe) {
+    setLastLoggedSet({ exerciseId: ex.id, setNumber })
+    await logSet(ex.id, setNumber, totalSets, repsToLog, plannedRpe, { localFallback: true })
+  }
+
+  // ORDRE 280 · commit 4 — sender ventende sæt (offlineSetQueue.js) igen når
+  // forbindelsen er der. Kaldes ved athlete-load og ved 'online'-event; en
+  // fejlet skrivning her bliver liggende i køen til næste forsøg.
+  async function flushOfflineSets() {
+    if (!athlete?.id) return
+    const queue = loadOfflineSets(athlete.id)
+    const keys = Object.keys(queue)
+    if (!keys.length) return
+    for (const key of keys) {
+      const { exerciseId, setNumber, payload } = queue[key]
+      const realExisting = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber && !l._optimistic)
+      const { error } = await persistSetLog(key, exerciseId, setNumber, payload, realExisting?.id)
+      if (!error) clearOfflineSet(athlete.id, key)
+    }
+    setPendingSyncCount(countOfflineSets(athlete.id))
+    fetchExerciseLogs(athlete.id, currentWeek)
+  }
+
+  // "Fortryd sidste sæt": sletter log-rækken igen (samme mønster som
+  // unskipSet), rydder den pause sættet startede, og genåbner sættet til
+  // redigering — logInputs er ikke rørt, så vægt/reps stadig står der.
+  // Kø'et via setWriteRef (samme kæde som persistSetLog), så en sletning
+  // aldrig løber forbi en INSERT der endnu er undervejs (ville efterlade en
+  // spøgelsesrække, hvis sletningen ramte databasen FØR insertet).
+  async function undoLoggedSet(exerciseId, setNumber) {
+    const key = `${exerciseId}_${setNumber}`
+    setExerciseLogs(prev => prev.filter(l => !(l.exercise_id === exerciseId && l.set_number === setNumber)))
+    clearRestPause(athlete.id)
+    setRestPause(null)
+    setLastLoggedSet(null)
+    // Sættet kan være ventende lokalt (blev "Godkendt" uden net, se
+    // flushOfflineSets) — fortryd skal ikke sende det senere.
+    clearOfflineSet(athlete.id, key)
+    setPendingSyncCount(countOfflineSets(athlete.id))
+    const ref = setWriteRef.current[key]
+    const chain = ref ? ref.chain : Promise.resolve()
+    const task = chain.then(async () => {
+      const idToDelete = ref?.realId
+      if (!idToDelete) return
+      const { error } = await queueWrite(() => supabase.from('exercise_logs').delete().eq('id', idToDelete))
+      if (error) { logFrontendError('Fortryd sæt: sletning fejlede', error, athlete.id); return }
+      if (ref.realId === idToDelete) ref.realId = null
+    })
+    if (ref) ref.chain = task.then(() => {}, () => {})
+    await task
+    fetchExerciseLogs(athlete.id, currentWeek)
   }
 
   async function skipSet(exerciseId, setNumber, plannedRpe) {
@@ -3258,36 +3430,53 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               </div>
             </div>
 
-            <DagensPasCard
-              pas={findDagensPas(allWeeks, currentWeek, exerciseLogs)}
-              exerciseHistory={exerciseHistory}
-              logInputs={logInputs}
-              setLogInputs={setLogInputs}
-              logSet={logSet}
-              skipSet={skipSet}
-              suggestNextWeight={suggestNextWeight}
-              onOpenSession={(id) => { setTab('program'); openSession(id) }}
-              pauseTimer={restPause && (
-                <RestPauseTimer athleteId={athlete?.id} pause={restPause} onClear={() => setRestPause(null)} />
-              )}
-              todayStr={today()}
-              checkinNudge={(() => {
-                // ORDRE 267 · commit 3: samme uge-udregning som WeekCalendar
-                // ovenfor (weekStartDate + 6 dage), ingen ny hentning — kun
-                // readinessLog/readinessHistory, som allerede er hentet.
-                if (!currentWeek) return null
-                const start = weekStartDate(allWeeks, currentWeek.week_number)
-                if (!start) return null
-                const end = new Date(start.getTime() + 6 * 86400000)
-                const loggedDates = [readinessLog?.logged_date, ...readinessHistory.map(r => r.logged_date)].filter(Boolean)
-                return shouldNudgeCheckin({
-                  weekStartStr: start.toISOString().slice(0, 10),
-                  weekEndStr: end.toISOString().slice(0, 10),
-                  todayStr: today(),
-                  loggedDates,
-                }) ? { onClick: openReadiness } : null
-              })()}
-            />
+            {(() => {
+              const dagensPas = findDagensPas(allWeeks, currentWeek, exerciseLogs)
+              const next = dagensPas?.status === 'open' ? dagensPas.next : null
+              const nextLabel = next ? `Næste: ${next.exercise?.name || ''} · sæt ${next.setNumber}/${next.totalSets}` : null
+              return (
+                <>
+                  <DagensPasCard
+                    pas={dagensPas}
+                    exerciseHistory={exerciseHistory}
+                    logInputs={logInputs}
+                    setLogInputs={setLogInputs}
+                    onLogSet={logDagensPasSet}
+                    skipSet={skipSet}
+                    suggestNextWeight={suggestNextWeight}
+                    onOpenSession={(id) => { setTab('program'); openSession(id) }}
+                    lastLoggedSet={lastLoggedSet}
+                    onUndoLastSet={undoLoggedSet}
+                    pendingSyncCount={pendingSyncCount}
+                    todayStr={today()}
+                    checkinNudge={(() => {
+                      // ORDRE 267 · commit 3: samme uge-udregning som WeekCalendar
+                      // ovenfor (weekStartDate + 6 dage), ingen ny hentning — kun
+                      // readinessLog/readinessHistory, som allerede er hentet.
+                      if (!currentWeek) return null
+                      const start = weekStartDate(allWeeks, currentWeek.week_number)
+                      if (!start) return null
+                      const end = new Date(start.getTime() + 6 * 86400000)
+                      const loggedDates = [readinessLog?.logged_date, ...readinessHistory.map(r => r.logged_date)].filter(Boolean)
+                      return shouldNudgeCheckin({
+                        weekStartStr: start.toISOString().slice(0, 10),
+                        weekEndStr: end.toISOString().slice(0, 10),
+                        todayStr: today(),
+                        loggedDates,
+                      }) ? { onClick: openReadiness } : null
+                    })()}
+                  />
+                  {restPause && (
+                    <RestPauseFooter
+                      athleteId={athlete?.id}
+                      pause={restPause}
+                      onClear={() => setRestPause(null)}
+                      nextLabel={nextLabel}
+                    />
+                  )}
+                </>
+              )
+            })()}
 
             {currentWeek ? (
               <WeekCalendar

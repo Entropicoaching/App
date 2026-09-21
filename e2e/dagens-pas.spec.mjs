@@ -1,8 +1,12 @@
-// ORDRE 263 · commit 4 — beviser de to første commits klikket igennem i den
-// ÆGTE, ubuildede app (npm run dev, ikke en harness) mod den lokale
-// mock-backend, samme mønster som atlet.spec.mjs/fejl.spec.mjs: Dagens pas
-// (Hjem-fanen) viser næste sæt direkte — log det derfra, uden at åbne
-// Program-fanen — og pausetimeren starter af sig selv og tæller ned.
+// ORDRE 263 · commit 4, udvidet i ORDRE 280 · commit 5 — beviser hele
+// "log et sæt uden tastatur"-flowet klikket igennem i den ÆGTE, ubuildede
+// app (npm run dev, ikke en harness) mod den lokale mock-backend, samme
+// mønster som atlet.spec.mjs/fejl.spec.mjs: Dagens pas (Hjem-fanen) viser
+// næste sæt direkte med vægt/reps allerede udfyldt (blok 1) — logger tre
+// sæt med kun "Godkendt"-tryk, ingen .fill() på vægt/reps-felterne — ser
+// pausetimeren tælle ned (blok 3), fortryder det sidste sæt (blok 2), og
+// genindlæser siden for at bevise at det fortrudte sæt er væk og resten
+// stadig står rigtigt (blok 2+4).
 //
 // Egen, isoleret mock+vite-instans (ikke wired ind i e2e/run-all.mjs's delte
 // sekvens): den delte sekvens logger bevidst kun 3 af Squats 4 sæt (sæt 4 er
@@ -23,6 +27,15 @@ async function readTable(mockUrl, name) {
  * kørende vite-server hhv. mock-backend. */
 export async function runDagensPasPause(page, { appUrl, mockUrl, outDir }) {
   const shot = (name) => page.screenshot({ path: join(outDir, `dagens-pas-${name}.png`), fullPage: true })
+  const waitForLoggedRows = (count) => page.waitForFunction(
+    async ([url, n]) => {
+      const res = await fetch(`${url}/__e2e/table?name=exercise_logs`)
+      const rows = await res.json()
+      return rows.filter(r => !r.skipped).length >= n
+    },
+    [mockUrl, count],
+    { timeout: 10000 },
+  )
 
   await page.goto(appUrl)
   await page.locator('#athlete-auth-email').fill(ATHLETE_USER.email)
@@ -38,28 +51,23 @@ export async function runDagensPasPause(page, { appUrl, mockUrl, outDir }) {
   assert.equal(await page.getByText('Pause', { exact: false }).count(), 0, 'ingen pausetimer må vises før et sæt er logget')
   await shot('01-naeste-saet')
 
-  await page.getByLabel('Vægt, sæt 1').fill('80')
-  await page.getByLabel('Reps, sæt 1').fill('5')
-  await page.getByRole('button', { name: 'Log sæt', exact: true }).click()
+  // ORDRE 280 · commit 1 — vægt/reps skal stå udfyldt af sig selv (planens
+  // tal, øvelsen har recommended_weight: 80, reps 4-6 → 4). Ingen .fill()
+  // her: hele pointen er at "Godkendt" kan trykkes uden tastatur.
+  assert.equal(await page.getByLabel('Vægt, sæt 1').inputValue(), '80', 'vægten skal stå udfyldt (planens anbefaling) uden at taste')
+  assert.equal(await page.getByLabel('Reps, sæt 1').inputValue(), '4', 'reps skal stå udfyldt (ordinationens nederste tal) uden at taste')
+  await page.getByRole('button', { name: 'Godkendt', exact: true }).click()
+  await waitForLoggedRows(1)
 
-  await page.waitForFunction(
-    async (url) => {
-      const res = await fetch(`${url}/__e2e/table?name=exercise_logs`)
-      const rows = await res.json()
-      return rows.filter(r => !r.skipped).length >= 1
-    },
-    mockUrl,
-    { timeout: 10000 },
-  )
-  const logs = await readTable(mockUrl, 'exercise_logs')
-  const set1 = logs.find(l => l.exercise_id === EXERCISE_ID && l.set_number === 1)
+  const logsAfter1 = await readTable(mockUrl, 'exercise_logs')
+  const set1 = logsAfter1.find(l => l.exercise_id === EXERCISE_ID && l.set_number === 1)
   assert.ok(set1, 'sæt 1 skal være logget i mockens exercise_logs')
   assert.equal(set1.weight, 80)
-  assert.equal(set1.reps_completed, 5)
+  assert.equal(set1.reps_completed, 4)
 
   // Pausetimeren starter automatisk — synlig med det samme, ingen navigation.
   // (teksten er "Pause · Squat" — øvelsesnavnet står med i samme span, se
-  // RestPauseTimer i AthleteView.jsx — deraf exact: false.)
+  // RestPauseFooter i AthleteView.jsx — deraf exact: false.)
   await page.getByText('Pause', { exact: false }).waitFor({ state: 'visible', timeout: 5000 })
   const secondsText = () => page.getByText(/^\d+s$/).first().textContent()
   const firstReading = parseInt(await secondsText(), 10)
@@ -78,8 +86,51 @@ export async function runDagensPasPause(page, { appUrl, mockUrl, outDir }) {
     { timeout: 5000 },
   )
   await shot('03-pause-taeller-ned')
+  console.log(`Pausetimeren tæller ned (${firstReading}s → lavere).`)
 
-  console.log(`GRØN: Dagens pas viser næste sæt (Squat, sæt 1/4), logger det direkte fra Hjem, og pausetimeren starter automatisk og tæller ned (${firstReading}s → lavere).`)
+  // Sæt 2 og 3 — kortet er sprunget videre af sig selv, vægten er ført med
+  // over (samme øvelse), reps genudfyldt fra ordinationen. Stadig ingen
+  // .fill(), kun "Godkendt".
+  for (const setNum of [2, 3]) {
+    await page.getByText(`Sæt ${setNum}/4`, { exact: true }).waitFor({ state: 'visible', timeout: 5000 })
+    assert.equal(await page.getByLabel(`Vægt, sæt ${setNum}`).inputValue(), '80', `vægten skal føres med til sæt ${setNum} uden at taste`)
+    assert.equal(await page.getByLabel(`Reps, sæt ${setNum}`).inputValue(), '4', `reps skal genudfyldes for sæt ${setNum} uden at taste`)
+    await page.getByRole('button', { name: 'Godkendt', exact: true }).click()
+    await waitForLoggedRows(setNum)
+  }
+  await shot('04-tre-saet-logget')
+  const logsAfter3 = await readTable(mockUrl, 'exercise_logs')
+  assert.equal(logsAfter3.filter(l => l.exercise_id === EXERCISE_ID && !l.skipped).length, 3, 'tre sæt skal være logget, ingen dubletter')
+
+  // Fortryd sidste sæt (blok 2) — kun muligt mens man ikke har forladt
+  // øvelsen, hvilket stadig er tilfældet her.
+  await page.getByRole('button', { name: '↺ Fortryd sidste sæt', exact: true }).click()
+  await page.waitForFunction(
+    async (url) => {
+      const res = await fetch(`${url}/__e2e/table?name=exercise_logs`)
+      const rows = await res.json()
+      return rows.filter(r => !r.skipped).length === 2
+    },
+    mockUrl,
+    { timeout: 10000 },
+  )
+  await page.getByText('Sæt 3/4', { exact: true }).waitFor({ state: 'visible', timeout: 5000 })
+  await shot('05-fortrudt')
+
+  // Genindlæs siden — det fortrudte sæt må ikke være der, de to andre skal
+  // stadig stå, og appen skal ikke hænge i en spøgelses-pause fra det
+  // fortrudte sæt.
+  await page.reload()
+  await page.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
+  await page.getByText('Sæt 3/4', { exact: true }).waitFor({ state: 'visible', timeout: 10000 })
+  assert.equal(await page.getByText('Pause', { exact: false }).count(), 0, 'det fortrudte sæts pause må ikke overleve en genindlæsning')
+  const logsAfterReload = await readTable(mockUrl, 'exercise_logs')
+  const loggedAfterReload = logsAfterReload.filter(l => l.exercise_id === EXERCISE_ID && !l.skipped)
+  assert.equal(loggedAfterReload.length, 2, 'præcis to sæt skal overleve genindlæsning (det tredje blev fortrudt)')
+  assert.ok(loggedAfterReload.every(l => l.set_number <= 2), 'kun sæt 1 og 2 må være logget efter fortryd + genindlæsning')
+  await shot('06-genindlaest')
+
+  console.log('GRØN: tre sæt logget fra Dagens pas uden tastatur (vægt/reps udfyldt af sig selv), pausen talte ned, sidste sæt blev fortrudt, og en genindlæsning viste den rigtige tilstand.')
 }
 
 async function main() {

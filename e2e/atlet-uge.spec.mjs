@@ -119,7 +119,7 @@ export async function runAtletUge(page, { appUrl, mockUrl, outDir, clipPath }) {
     const setNum = i + 1
     await page.getByLabel(`Vægt, sæt ${setNum}`).fill('80')
     await page.getByLabel(`Reps, sæt ${setNum}`).fill(String(repsPerSet[i]))
-    await page.getByRole('button', { name: 'Log sæt', exact: true }).click()
+    await page.getByRole('button', { name: 'Godkendt', exact: true }).click()
     await page.waitForFunction(
       async ([url, expectedSetNum]) => {
         const res = await fetch(`${url}/__e2e/table?name=exercise_logs`)
@@ -210,6 +210,13 @@ export async function runAtletUge(page, { appUrl, mockUrl, outDir, clipPath }) {
   await shot('09-maalingen')
 
   await frame.locator('#athleteInstantSaveBtn').click()
+  // ORDRE 280 · commit 5 — fundet ved at rette denne prøves egen
+  // "Log sæt"→"Godkendt"-selector (se blok 2): den nåede aldrig hertil før,
+  // så denne 20s-grænse er aldrig testet under en fuld `npm run proever`
+  // (mange tunge video-prøver kørt lige før, se docs/PROEVER-KORT.md) — der
+  // tager uploaden reelt længere end 20s, ikke fordi noget er i stykker.
+  // Gem-flowet selv er urørt af ordre 280 (se e2e/athlete-film-et-saet.mjs,
+  // som er grøn i alle kørsler).
   await page.waitForFunction(
     async ([url, athleteId]) => {
       const res = await fetch(`${url}/__e2e/table?name=video_analyses`)
@@ -217,7 +224,7 @@ export async function runAtletUge(page, { appUrl, mockUrl, outDir, clipPath }) {
       return rows.some(r => r.athlete_id === athleteId && r.analysis_state === 'awaiting_analysis')
     },
     [mockUrl, ATHLETE_ID],
-    { timeout: 20000 },
+    { timeout: 60000 },
   )
   const rowsAfterVideo = await readTable(mockUrl, 'video_analyses')
   assert.equal(rowsAfterVideo.length, rowsBeforeVideo.length + 1, 'Gem skulle oprette præcis én ny video_analyses-række')
