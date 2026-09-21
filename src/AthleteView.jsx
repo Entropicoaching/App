@@ -4156,7 +4156,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         {tab === 'fremgang' && (
           <LazyBoundary
             factory={fremgangFactory} label="Fremgang" loading={<div style={s.page}>Indlæser…</div>}
-            componentProps={{ fremgangLogs, fremgangLoading }}
+            componentProps={{ fremgangLogs, fremgangLoading, allWeeks }}
           />
         )}
 

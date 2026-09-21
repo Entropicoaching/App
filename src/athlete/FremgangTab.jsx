@@ -5,14 +5,30 @@
 // er kun visning + hvilken øvelse der er valgt, samme arbejdsdeling som
 // VolumenTab.jsx (regning i src/volume/beregn.js).
 //
-// Data ejes af AthleteView.jsx (fremgangLogs/fremgangLoading, al historik,
-// hentet når fanen åbnes — se dens fetchFremgangLogs), samme mønster som de
-// øvrige lazy-loadede faner.
+// Data ejes af AthleteView.jsx: fremgangLogs/fremgangLoading (al log-
+// historik, lazy-hentet når fanen åbnes — se dens fetchFremgangLogs) og
+// allWeeks (hele programmet, allerede hentet ved login til Program-fanen —
+// se dens fetchProgram). Øvelsesvælgeren viser navne fra allWeeks, IKKE kun
+// fra fremgangLogs: en øvelse man endnu ikke har logget skal stadig kunne
+// vælges og vise "Ingen logninger endnu." — listede den kun logs, ville en
+// tom øvelse aldrig kunne stå i listen overhovedet.
 import { useMemo, useState } from 'react'
 import { heaviestSetPerWeek, grupperOevelsesnavne, HOVEDLOEFT_FAMILIER } from '../exerciseProgress.js'
 import { s } from '../athleteShared'
 
 const mono = "'IBM Plex Mono', monospace"
+
+function navneFraProgram(allWeeks) {
+  const set = new Set()
+  for (const week of allWeeks || []) {
+    for (const session of week.sessions || []) {
+      for (const exercise of session.exercises || []) {
+        if (exercise.name) set.add(exercise.name)
+      }
+    }
+  }
+  return [...set]
+}
 
 function navneFraLogs(logs) {
   const set = new Set()
@@ -20,7 +36,7 @@ function navneFraLogs(logs) {
     const navn = log.exercises?.name
     if (navn) set.add(navn)
   }
-  return [...set]
+  return set
 }
 
 // Familiens "eget" navn (fx "Squat") frem for en variant (fx "Frontsquat"),
@@ -68,18 +84,31 @@ function FremgangGraf({ punkter }) {
   )
 }
 
-export default function FremgangTab({ fremgangLogs, fremgangLoading }) {
-  const alleNavne = useMemo(() => navneFraLogs(fremgangLogs), [fremgangLogs])
+export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks }) {
+  const alleNavne = useMemo(() => navneFraProgram(allWeeks), [allWeeks])
+  const navneMedLogs = useMemo(() => navneFraLogs(fremgangLogs), [fremgangLogs])
   const grupper = useMemo(() => grupperOevelsesnavne(alleNavne), [alleNavne])
   const andreSorteret = useMemo(() => [...grupper.andre].sort((a, b) => a.localeCompare(b, 'da')), [grupper.andre])
 
+  // Standardvalget skal helst vise en RIGTIG kurve med det samme — foretræk
+  // derfor en øvelse med logs (start med hovedløftene, samme rækkefølge som
+  // knapperne), og falder kun tilbage til en ulogget øvelse hvis intet er
+  // logget endnu overhovedet.
   const foersteValg = useMemo(() => {
+    for (const familie of HOVEDLOEFT_FAMILIER) {
+      const navneIFamilie = grupper[familie.key]
+      if (navneIFamilie.length === 0) continue
+      const medLogs = navneIFamilie.find(n => navneMedLogs.has(n))
+      if (medLogs) return medLogs
+    }
+    const andenMedLogs = andreSorteret.find(n => navneMedLogs.has(n))
+    if (andenMedLogs) return andenMedLogs
     for (const familie of HOVEDLOEFT_FAMILIER) {
       const navn = hovednavnForFamilie(familie, grupper[familie.key])
       if (navn) return navn
     }
     return andreSorteret[0] || null
-  }, [grupper, andreSorteret])
+  }, [grupper, andreSorteret, navneMedLogs])
 
   const [valgtOevelse, setValgtOevelse] = useState(foersteValg)
   // Første valg afhænger af data der ankommer asynkront (fremgangLogs hentes
