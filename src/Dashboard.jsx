@@ -264,6 +264,17 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [messageSendError, setMessageSendError] = useState(null)
   const [sendingMessage, setSendingMessage] = useState(false)
   const messageThreadAthleteRef = useRef(null)
+  // ORDRE 285 · commit 3: rullepositionen på atletlisten skal holde efter
+  // "← Tilbage til atleter" — uden dette blev window.scrollY nulstillet af
+  // browseren, fordi profilvisningen ofte er kortere end den rullede liste
+  // (bevist af e2e/coach-mandagsrunden.spec.mjs). Gemmes ved openProfile,
+  // gendannes i useEffect'en nedenfor når view bliver 'list' igen. viewRef
+  // (ikke `view` selv) læst i openProfile, så openProfile ikke bliver
+  // "reaktiv" i react-hooks/exhaustive-deps' øjne for de andre steder der
+  // kalder den fra en useEffect med tomt deps-array.
+  const listScrollYRef = useRef(0)
+  const viewRef = useRef(view)
+  useEffect(() => { viewRef.current = view }, [view])
   const [coachMsgTrack, setCoachMsgTrack] = useState('besked')  // 'teknik' | 'besked'
   const [unreadByTrack, setUnreadByTrack] = useState({})
   const [latestByTrack, setLatestByTrack] = useState({})
@@ -437,6 +448,15 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     window.addEventListener('resize', handler)
     return () => window.removeEventListener('resize', handler)
   }, [])
+
+  // ORDRE 285 · commit 3: gendan rullepositionen på atletlisten efter
+  // "← Tilbage til atleter" (listScrollYRef sat i openProfile). Kører efter
+  // listen selv er commited til DOM'en (almindelig useEffect, ikke layout —
+  // ingen synligt flimmer set i e2e-prøven), så dokumentets højde allerede
+  // matcher den rullede liste før vi ruller.
+  useEffect(() => {
+    if (view === 'list') window.scrollTo(0, listScrollYRef.current)
+  }, [view])
 
   // Same-origin beskedbro: VideoCoach får kun en ufarlig atletliste og kan
   // bede den allerede autentificerede app om at indsætte én valideret draft.
@@ -2840,6 +2860,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     // forudhentning er harmløs: LazyBoundary/lazy() prøver selv igen ved det
     // rigtige klik, uændret.
     analyseTabFactory().catch(() => {})
+    if (viewRef.current === 'list') listScrollYRef.current = window.scrollY
     setProfileReturnView(returnView === 'inbox' ? 'inbox' : 'list')
     setProfilePriorityKey(priorityKey)
     setProfilePriorityContext(priorityContext)
@@ -4055,6 +4076,12 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           // gennemført, sæt + tonnage) regnet én gang pr. atlet — brugt til
           // BÅDE sorteringen og linjen i hver række (afvigelseByAthleteId
           // nedenfor), så de to aldrig kan vise forskellige tal.
+          // ORDRE 285 · commit 1: `currentWeekNo` (sortér+date-math) og
+          // `athleteWeeks.find(...)` blev FØR kørt igen pr. række nedenfor
+          // for "Uge N"-linjen — dobbelt arbejde pr. atlet pr. render, målt
+          // som den tungeste del af listen ved 30 atleter (se
+          // docs/MAAL-285.md). `current`/`currentNo` regnes nu kun HER og
+          // genbruges via currentWeekByAthleteId i rækkevisningen.
           const athletesWithAfvigelse = visibleAthletes.map(athlete => {
             const athleteWeeks = calendarWeeks[athlete.id] || []
             const currentNo = currentWeekNo(athleteWeeks, athleteCurrentWeek[athlete.id] ?? null)
@@ -4066,9 +4093,10 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               completedSets: completion.sets,
               completedTonnage: completion.tonnage,
             })
-            return { athlete, afvigelse }
+            return { athlete, afvigelse, current }
           })
           const afvigelseByAthleteId = new Map(athletesWithAfvigelse.map(r => [r.athlete.id, r.afvigelse]))
+          const currentWeekByAthleteId = new Map(athletesWithAfvigelse.map(r => [r.athlete.id, r.current]))
           const sortedVisibleAthletes = athleteSortMode === 'afvigelse'
             ? sorterEfterAfvigelse(athletesWithAfvigelse).map(r => r.athlete)
             : visibleAthletes
@@ -4228,9 +4256,16 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     {cappedAthletes.map((athlete, index) => {
                       const isHidden = hiddenAthleteIds.has(athlete.id)
-                      const athleteWeeks = calendarWeeks[athlete.id] || []
-                      const currentNo = currentWeekNo(athleteWeeks, athleteCurrentWeek[athlete.id] ?? null)
-                      const current = athleteWeeks.find(week => week.week_number === currentNo)
+                      // ORDRE 285 · commit 1: genbrug currentWeekByAthleteId
+                      // (regnet én gang ovenfor) for de synlige atleter —
+                      // kun skjulte atleter (sjældne, kun vist efter "Vis
+                      // skjulte") falder tilbage til at regne det her.
+                      let current = currentWeekByAthleteId.get(athlete.id)
+                      if (current === undefined) {
+                        const athleteWeeks = calendarWeeks[athlete.id] || []
+                        const currentNo = currentWeekNo(athleteWeeks, athleteCurrentWeek[athlete.id] ?? null)
+                        current = athleteWeeks.find(week => week.week_number === currentNo)
+                      }
                       const fallback = athleteWeekSummary[athlete.id]
                       const weekNo = current?.week_number ?? fallback?.week_number
                       const blockName = current?.block_name || fallback?.block_name
