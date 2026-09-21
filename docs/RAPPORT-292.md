@@ -4,12 +4,13 @@
 
 Planet: coaching · Spor: spor-appen-m-rkbart-bedre-for-atleterne-5d2c3a
 
-## Gren og commits
+## Gren
 
-Gren `kritik-288`, forgrenet fra `main` = `e4ecc56` (280, 281, 284, 285 samlet af Vaidya). To commits, som ordren siger:
+Gren `kritik-288`, forgrenet fra `main` = `e4ecc56` (280, 281, 284, 285 samlet af Vaidya). Ordrens to commits, plus en tredje der kun retter rapportens overskrift til høstens format:
 
 - `e3511ee` blok 1: skærmbilleder fra den headless gennemgang (`outputs/kritik-288/`, 55 billeder, fiktive data)
-- blok 2: `docs/KRITIK-288.md` og `docs/RAPPORT-292.md` (hash i afleveringsbeskeden)
+- `6ae90d2` blok 2: `docs/KRITIK-288.md` og `docs/RAPPORT-292.md`
+- denne commit (hoest-format): rapportens overskrift `## Gren`
 
 Arbejdstræet er rent. Ingen push, ingen kode rettet, ingen test committet, ingen migration, ingen Supabase-forbindelse, ingen atletdata. Port 8991 var fri hver gang; jeg lukkede ingen andres processer.
 
@@ -26,7 +27,7 @@ Det jeg fandt (alle detaljer, skærmbilleder og mistænkte filer i `docs/KRITIK-
 
 ## Testresultat
 
-- `npm run lint`: ren (intet er ændret).
+- `npm run lint`: ren (intet er ændret; kørt efter alle commits).
 - Ingen verify-scripts kørt: der er ingen kode at verificere, og ordren siger ingen nye tests. Den ubrudte `proever`-kørsel er Vaidyas (77 af 78, 288-rapporten).
 - Min egen gennemgang: 48 skærmbillede-tjek (26 atlet, 22 coach) med automatisk måling af overflow, afskåret tekst, trykflader, overlap og skriftstørrelse, plus seks målrettede prøver (reps-trin, offline og lukket fane, tre-cifret e1RM, stor tekst, tomme tilstande, coach med 0/1/30 atleter). Fundene er set på skærmbillede eller målt direkte; falske alarmer fra overlap-tjekket (indhold under faste bjælker) er sorteret fra.
 
