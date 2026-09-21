@@ -46,7 +46,7 @@ export default function IndbakkeView({
     const updating = automationAlertUpdatingId === item.alert.id
     const actionError = automationAlertActionError?.id === item.alert.id ? automationAlertActionError.message : null
     return (
-      <div key={item.key} data-automation-alert={item.alert.id} style={{ padding: '0.62rem 0.7rem', border: `1px solid ${item.color}30`, background: '#171713' }}>
+      <div key={item.key} data-automation-alert={item.alert.id} style={{ textAlign: 'left', padding: '0.62rem 0.7rem', border: `1px solid ${item.color}30`, background: '#171713' }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.65rem', minHeight: 42 }}>
           <span style={{ width: 8, height: 8, flexShrink: 0, marginTop: '0.32rem', borderRadius: '50%', background: item.color, boxShadow: `0 0 0 3px ${item.color}18` }} />
           <span style={{ minWidth: 0, flex: 1 }}>

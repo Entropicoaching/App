@@ -215,6 +215,19 @@ if (await portFree(8991)) {
     venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
 }
 
+// ---- 12) Automatiseringsfejl i Indbakken (ordre 301 · commit 2): to uløste
+// og en løst række i mockens automation_alerts vises uden overlap på 390x844
+// og desktop, "Markeret som set" fjerner rækken, en manglende RPC fejler
+// synligt ved rækken, og en Indbakke uden fejl er ordret som før. Egen
+// mock-instans pr. viewport, samme port-grænse som ovenfor.
+if (await portFree(8991)) {
+  rows.push(runNode('e2e (coach-automation-alerts.spec.mjs)', [join('e2e', 'coach-automation-alerts.spec.mjs')],
+    'DOM (rækker, tekst, bokse uden overlap, ingen vandret rulning) + mockens resolved_at + fejlen ved rækken når RPC-funktionen mangler', 'e2e'))
+} else {
+  rows.push({ name: 'e2e (coach-automation-alerts.spec.mjs)', kind: 'e2e', ok: null, ms: 0,
+    venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
+}
+
 // ---- Skriv tabellen ----
 const lines = []
 lines.push('# Prøver — samlet facit (ordre 234)')
