@@ -178,6 +178,17 @@ if (await portFree(8991)) {
     venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
 }
 
+// ---- 9) Mandagsrunden som én prøve: 20 atleter, sortér, gå ind på de tre
+// øverste én ad gangen og tilbage — sorteringen OG rullepositionen skal
+// holde (ordre 285 · commit 3). Egen mock-instans, samme port-grænse.
+if (await portFree(8991)) {
+  rows.push(runNode('e2e (coach-mandagsrunden.spec.mjs)', [join('e2e', 'coach-mandagsrunden.spec.mjs')],
+    'DOM-rækkefølge (uændret efter tilbage) + faktisk scrollY før/efter, ikke antaget', 'e2e'))
+} else {
+  rows.push({ name: 'e2e (coach-mandagsrunden.spec.mjs)', kind: 'e2e', ok: null, ms: 0,
+    venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
+}
+
 // ---- Skriv tabellen ----
 const lines = []
 lines.push('# Prøver — samlet facit (ordre 234)')

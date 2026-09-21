@@ -264,6 +264,17 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [messageSendError, setMessageSendError] = useState(null)
   const [sendingMessage, setSendingMessage] = useState(false)
   const messageThreadAthleteRef = useRef(null)
+  // ORDRE 285 · commit 3: rullepositionen på atletlisten skal holde efter
+  // "← Tilbage til atleter" — uden dette blev window.scrollY nulstillet af
+  // browseren, fordi profilvisningen ofte er kortere end den rullede liste
+  // (bevist af e2e/coach-mandagsrunden.spec.mjs). Gemmes ved openProfile,
+  // gendannes i useEffect'en nedenfor når view bliver 'list' igen. viewRef
+  // (ikke `view` selv) læst i openProfile, så openProfile ikke bliver
+  // "reaktiv" i react-hooks/exhaustive-deps' øjne for de andre steder der
+  // kalder den fra en useEffect med tomt deps-array.
+  const listScrollYRef = useRef(0)
+  const viewRef = useRef(view)
+  useEffect(() => { viewRef.current = view }, [view])
   const [coachMsgTrack, setCoachMsgTrack] = useState('besked')  // 'teknik' | 'besked'
   const [unreadByTrack, setUnreadByTrack] = useState({})
   const [latestByTrack, setLatestByTrack] = useState({})
@@ -437,6 +448,15 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     window.addEventListener('resize', handler)
     return () => window.removeEventListener('resize', handler)
   }, [])
+
+  // ORDRE 285 · commit 3: gendan rullepositionen på atletlisten efter
+  // "← Tilbage til atleter" (listScrollYRef sat i openProfile). Kører efter
+  // listen selv er commited til DOM'en (almindelig useEffect, ikke layout —
+  // ingen synligt flimmer set i e2e-prøven), så dokumentets højde allerede
+  // matcher den rullede liste før vi ruller.
+  useEffect(() => {
+    if (view === 'list') window.scrollTo(0, listScrollYRef.current)
+  }, [view])
 
   // Same-origin beskedbro: VideoCoach får kun en ufarlig atletliste og kan
   // bede den allerede autentificerede app om at indsætte én valideret draft.
@@ -2840,6 +2860,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     // forudhentning er harmløs: LazyBoundary/lazy() prøver selv igen ved det
     // rigtige klik, uændret.
     analyseTabFactory().catch(() => {})
+    if (viewRef.current === 'list') listScrollYRef.current = window.scrollY
     setProfileReturnView(returnView === 'inbox' ? 'inbox' : 'list')
     setProfilePriorityKey(priorityKey)
     setProfilePriorityContext(priorityContext)
