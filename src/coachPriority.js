@@ -1,6 +1,25 @@
-export function buildCoachPriorityItems({ athletes, trainingSignals, unreadByTrack, latestByTrack, videoReviewQueue, describeVideo }) {
+import { AUTOMATION_ALERT_COLOR, AUTOMATION_ALERT_LABEL, automationAlertDetail, filterOpenAutomationAlerts } from './automationAlerts.js'
+
+export function buildCoachPriorityItems({ athletes, trainingSignals, unreadByTrack, latestByTrack, videoReviewQueue, describeVideo, automationAlerts = [], now = Date.now() }) {
   const athleteById = new Map(athletes.map(athlete => [athlete.id, athlete]))
   const items = []
+
+  // ORDRE 301: en automatiseringsfejl har ingen atlet, så den må ikke gå
+  // gennem athleteById-opslaget som de andre typer. Rang 2: under
+  // alert-signaler (0) og ventende beskeder/videoer (1), over de øvrige
+  // træningssignaler (3, fx manglende logs).
+  filterOpenAutomationAlerts(automationAlerts).forEach(alert => {
+    items.push({
+      key: `automation-${alert.id}`,
+      kind: 'automation', alert,
+      rank: 2,
+      color: AUTOMATION_ALERT_COLOR,
+      label: AUTOMATION_ALERT_LABEL,
+      title: alert.workflow_name || 'Ukendt workflow',
+      detail: automationAlertDetail(alert, now),
+      createdAt: alert.occurred_at,
+    })
+  })
 
   trainingSignals.forEach(signal => {
     const athlete = athleteById.get(signal.o_athlete_id)
@@ -85,7 +104,9 @@ export function coachPriorityTaskContext(item) {
 }
 
 export function coachPriorityQueueContext(items, currentKey) {
-  const queue = (items || []).filter(item => item?.key)
+  // "Næste opgave" åbner en atlets profil; en automatiseringsfejl har ingen
+  // atlet og hører ikke til den gennemgang.
+  const queue = (items || []).filter(item => item?.key && item.kind !== 'automation')
   const currentOpen = !!currentKey && queue.some(item => item.key === currentKey)
   const remainingItems = currentKey
     ? queue.filter(item => item.key !== currentKey)

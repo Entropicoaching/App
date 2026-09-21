@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { supabase, withRetry, signOutHard } from './supabase'
 import LazyBoundary from './LazyBoundary'
 import { buildCoachPriorityItems, coachPriorityQueueContext, coachPriorityTaskContext } from './coachPriority'
+import { automationAlertResolveErrorMessage, filterOpenAutomationAlerts, RESOLVE_AUTOMATION_ALERT_RPC } from './automationAlerts'
 import { coachInboxEntryIntent, coachInboxFocusDecision, createSingleFlightRunner, filterDraftVideoReviews, filterOpenTrainingSignals, summarizeCoachMessages, summarizeRefreshResults, trainingSignalFingerprint } from './coachInboxState'
 import { videoCoachBaselineReviewImpact } from './videoCoachBaselineProgress'
 import { sanitizeVideoCoachFeedbackEvidence } from './videoCoachFeedbackEvidence'
@@ -315,6 +316,11 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [videoReviewQueueError, setVideoReviewQueueError] = useState(null)
   const [trainingSignals, setTrainingSignals] = useState([])
   const [trainingSignalsError, setTrainingSignalsError] = useState(null)
+  // ORDRE 301: uløste n8n-fejl (public.automation_alerts, kun metadata).
+  const [automationAlerts, setAutomationAlerts] = useState([])
+  const [automationAlertsError, setAutomationAlertsError] = useState(null)
+  const [automationAlertUpdatingId, setAutomationAlertUpdatingId] = useState(null)
+  const [automationAlertActionError, setAutomationAlertActionError] = useState(null)
   const [messageInboxError, setMessageInboxError] = useState(null)
   const [inboxRefreshing, setInboxRefreshing] = useState(false)
   const [inboxRefreshStatus, setInboxRefreshStatus] = useState(null)
@@ -795,7 +801,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       setInboxRefreshing(true)
       try {
         const athleteIds = videoCoachAthletesRef.current.map(athlete => athlete.id)
-        const requests = [fetchTodayActivity(), fetchVideoReviewQueue(), fetchTrainingSignals()]
+        const requests = [fetchTodayActivity(), fetchVideoReviewQueue(), fetchTrainingSignals(), fetchAutomationAlerts()]
         if (athleteIds.length) requests.push(fetchLatestMessages(athleteIds))
         const results = await Promise.allSettled(requests)
         setInboxRefreshStatus(summarizeRefreshResults(results))
@@ -1150,6 +1156,41 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     }
     setTrainingSignals(filterOpenTrainingSignals(signalsResult.data, actionsResult.data))
     return true
+  }
+
+  // ORDRE 301: uløste automatiseringsfejl. RLS lader authenticated læse
+  // tabellen; ingen atlet i rækkerne, kun workflow/node/tidspunkt.
+  async function fetchAutomationAlerts() {
+    setAutomationAlertsError(null)
+    const { data, error } = await supabase.from('automation_alerts')
+      .select('id,workflow_id,workflow_name,failed_node,execution_id,mode,occurred_at,resolved_at')
+      .is('resolved_at', null)
+      .order('occurred_at', { ascending: false })
+      .limit(50)
+    if (error) {
+      setAutomationAlertsError(error.message || 'Automatiseringsfejl kunne ikke hentes')
+      return false
+    }
+    setAutomationAlerts(filterOpenAutomationAlerts(data))
+    return true
+  }
+
+  // "Markeret som set" går via RPC'en resolve_automation_alert_v1 (SQL-filen
+  // under supabase/sql/ koeres foerst efter Marcs ja). Findes den ikke endnu,
+  // bliver rækken stående og fejlen vises ved rækken - aldrig stille.
+  async function handleAutomationAlert(alert) {
+    setAutomationAlertUpdatingId(alert.id)
+    setAutomationAlertActionError(null)
+    const { error } = await supabase.rpc(RESOLVE_AUTOMATION_ALERT_RPC, { alert_id: alert.id })
+    setAutomationAlertUpdatingId(null)
+    if (error) {
+      const message = automationAlertResolveErrorMessage(error)
+      setAutomationAlertActionError({ id: alert.id, message })
+      showFlash(message, 'error')
+      return
+    }
+    setAutomationAlerts(current => current.filter(item => item.id !== alert.id))
+    showFlash('Markeret som set', 'success')
   }
 
   async function handleTrainingSignal(signal, mode) {
@@ -2915,6 +2956,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     latestByTrack,
     videoReviewQueue,
     describeVideo: coachVideoPriorityDetail,
+    automationAlerts,
   })
   const coachPriorityCount = coachPriorityItems.length
   const priorityQueueContext = profileReturnView === 'inbox'
@@ -2935,6 +2977,13 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
   function openCoachPriorityItem(item, returnView = 'inbox') {
     if (!item) return
+    // ORDRE 301: en automatiseringsfejl har ingen atlet at åbne; fra forsiden
+    // fører rækken til Indbakken, hvor "Markeret som set" ligger.
+    if (item.kind === 'automation') {
+      setView('inbox')
+      setSelectedAthlete(null)
+      return
+    }
     const priorityContext = coachPriorityTaskContext(item)
     if (item.kind === 'signal') {
       openProfile(item.athlete, 'log', returnView, item.key, priorityContext)
@@ -3488,6 +3537,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             factory={indbakkeFactory} label="Indbakke" loading={<div style={{ ...s.page }}>Indlæser…</div>}
             componentProps={{
               athletes, coachPriorityItems, handleTrainingSignal,
+              automationAlertActionError, automationAlertUpdatingId, automationAlertsError, handleAutomationAlert,
               hiddenAthleteIds, inboxRefreshing, inboxRefreshStatus,
               isMobile, latestByTrack, messageInboxError,
               openCoachPriorityItem, openProfile, refreshCoachInbox,
@@ -4209,7 +4259,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   </div>
                 )}
 
-                {(trainingSignalsError || videoReviewQueueError || messageInboxError) && (
+                {(trainingSignalsError || videoReviewQueueError || messageInboxError || automationAlertsError) && (
                   <button onClick={() => { setView('inbox'); setSelectedAthlete(null) }} style={{ width: '100%', minHeight: 44, padding: '0.55rem 0.85rem', border: 'none', borderTop: '1px solid rgba(224,85,85,0.14)', background: 'rgba(224,85,85,0.025)', color: '#d79a83', fontSize: '0.64rem', cursor: 'pointer', textAlign: 'left' }}>
                     Noget kunne ikke indlæses · åbn indbakken for detaljer
                   </button>
