@@ -1,15 +1,15 @@
-// Fremgang-fanen (ordre 284, blok 1) — "er squatten rent faktisk blevet
-// stærkere siden marts", for ÉN øvelse ad gangen: tungeste sæt pr. uge og
-// det beregnede énrepetitionsmaksimum. Al regnelogik bor i
-// ../exerciseProgress.js — denne fil er kun visning + hvilken øvelse der er
-// valgt, samme arbejdsdeling som VolumenTab.jsx (regning i
-// src/volume/beregn.js).
+// Fremgang-fanen (ordre 284) — "er squatten rent faktisk blevet stærkere
+// siden marts", for ÉN øvelse ad gangen: tungeste sæt pr. uge og det
+// beregnede énrepetitionsmaksimum. Al regnelogik (herunder hovedløfts-
+// familierne til øvelsesvælgeren) bor i ../exerciseProgress.js — denne fil
+// er kun visning + hvilken øvelse der er valgt, samme arbejdsdeling som
+// VolumenTab.jsx (regning i src/volume/beregn.js).
 //
 // Data ejes af AthleteView.jsx (fremgangLogs/fremgangLoading, al historik,
 // hentet når fanen åbnes — se dens fetchFremgangLogs), samme mønster som de
 // øvrige lazy-loadede faner.
 import { useMemo, useState } from 'react'
-import { heaviestSetPerWeek } from '../exerciseProgress.js'
+import { heaviestSetPerWeek, grupperOevelsesnavne, HOVEDLOEFT_FAMILIER } from '../exerciseProgress.js'
 import { s } from '../athleteShared'
 
 const mono = "'IBM Plex Mono', monospace"
@@ -20,7 +20,16 @@ function navneFraLogs(logs) {
     const navn = log.exercises?.name
     if (navn) set.add(navn)
   }
-  return [...set].sort((a, b) => a.localeCompare(b, 'da'))
+  return [...set]
+}
+
+// Familiens "eget" navn (fx "Squat") frem for en variant (fx "Frontsquat"),
+// så ét tryk på "Squat" åbner squattens EGEN kurve — ikke bare den første
+// variant der tilfældigvis blev logget. Findes det ikke, falder vi tilbage
+// til den første variant i gruppen.
+function hovednavnForFamilie(familie, navneIFamilie) {
+  const eksakt = navneIFamilie.find(n => n.toLowerCase() === familie.label.toLowerCase())
+  return eksakt || navneIFamilie[0] || null
 }
 
 // Linjegraf over ugentligt bedste e1RM — samme visuelle sprog som
@@ -61,8 +70,22 @@ function FremgangGraf({ punkter }) {
 
 export default function FremgangTab({ fremgangLogs, fremgangLoading }) {
   const alleNavne = useMemo(() => navneFraLogs(fremgangLogs), [fremgangLogs])
-  const [valgtOevelse, setValgtOevelse] = useState(null)
-  const oevelse = valgtOevelse && alleNavne.includes(valgtOevelse) ? valgtOevelse : alleNavne[0] || null
+  const grupper = useMemo(() => grupperOevelsesnavne(alleNavne), [alleNavne])
+  const andreSorteret = useMemo(() => [...grupper.andre].sort((a, b) => a.localeCompare(b, 'da')), [grupper.andre])
+
+  const foersteValg = useMemo(() => {
+    for (const familie of HOVEDLOEFT_FAMILIER) {
+      const navn = hovednavnForFamilie(familie, grupper[familie.key])
+      if (navn) return navn
+    }
+    return andreSorteret[0] || null
+  }, [grupper, andreSorteret])
+
+  const [valgtOevelse, setValgtOevelse] = useState(foersteValg)
+  // Første valg afhænger af data der ankommer asynkront (fremgangLogs hentes
+  // først når fanen åbnes) — sæt det, når det skifter fra "intet" til "noget",
+  // uden at overskrive et bevidst valg atleten allerede har foretaget.
+  const oevelse = valgtOevelse && alleNavne.includes(valgtOevelse) ? valgtOevelse : foersteValg
 
   const punkter = useMemo(() => {
     if (!oevelse) return []
@@ -84,14 +107,50 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading }) {
           <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen logninger endnu.</div>
         ) : (
           <>
-            <div style={{ marginBottom: '1rem' }}>
-              <div style={s.fieldLabel}>Øvelse</div>
-              <select value={oevelse || ''} onChange={e => setValgtOevelse(e.target.value)} style={s.fieldInput}>
-                {alleNavne.map(navn => <option key={navn} value={navn}>{navn}</option>)}
-              </select>
+            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.85rem', flexWrap: 'wrap' }}>
+              {HOVEDLOEFT_FAMILIER.map(familie => {
+                const navnEnFamilie = grupper[familie.key]
+                if (navnEnFamilie.length === 0) return null
+                const hovednavn = hovednavnForFamilie(familie, navnEnFamilie)
+                const aktiv = navnEnFamilie.includes(oevelse)
+                return (
+                  <button key={familie.key} onClick={() => setValgtOevelse(hovednavn)} style={aktiv ? s.btnPrimary : s.btnGhost}>
+                    {familie.label}
+                  </button>
+                )
+              })}
             </div>
 
+            {HOVEDLOEFT_FAMILIER.map(familie => {
+              const navneIFamilie = grupper[familie.key]
+              if (navneIFamilie.length < 2 || !navneIFamilie.includes(oevelse)) return null
+              return (
+                <div key={familie.key} style={{ display: 'flex', gap: '0.4rem', marginBottom: '0.85rem', flexWrap: 'wrap' }}>
+                  {navneIFamilie.map(navn => (
+                    <button key={navn} onClick={() => setValgtOevelse(navn)}
+                      style={{
+                        ...s.btnGhost, padding: '0.3rem 0.6rem', fontSize: '0.54rem',
+                        color: navn === oevelse ? '#c8923a' : '#7a7770',
+                        borderColor: navn === oevelse ? 'rgba(200,146,58,0.45)' : 'rgba(237,234,226,0.13)',
+                      }}
+                    >{navn}</button>
+                  ))}
+                </div>
+              )
+            })}
+
+            {andreSorteret.length > 0 && (
+              <div style={{ marginBottom: '1rem' }}>
+                <div style={s.fieldLabel}>Andre øvelser</div>
+                <select value={andreSorteret.includes(oevelse) ? oevelse : ''} onChange={e => e.target.value && setValgtOevelse(e.target.value)} style={s.fieldInput}>
+                  <option value="" disabled>Vælg øvelse…</option>
+                  {andreSorteret.map(navn => <option key={navn} value={navn}>{navn}</option>)}
+                </select>
+              </div>
+            )}
+
             <div style={{ borderTop: '1px solid rgba(237,234,226,0.07)', paddingTop: '1rem' }}>
+              <div style={{ fontSize: '0.72rem', color: '#c8b98a', marginBottom: '0.6rem' }}>{oevelse}</div>
               {punkter.length === 0 ? (
                 <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen logninger endnu.</div>
               ) : punkter.length === 1 ? (

@@ -17,7 +17,7 @@ import { shouldNudgeCheckin } from './checkinReminder'
 import { restSecondsForExercise } from './restBetweenSets'
 import { startRestPause, loadRestPause, clearRestPause } from './restPause'
 import { saveOfflineSet, loadOfflineSets, clearOfflineSet, countOfflineSets } from './offlineSetQueue'
-import { estimatedOneRepMax } from './exerciseProgress'
+import { estimatedOneRepMax, HOVEDLOEFT_FAMILIER } from './exerciseProgress'
 import { parseRepsPrescription } from './repsPrescription'
 import { defaultSetWeight, defaultSetReps, stepWeight, stepReps } from './setLogDefaults'
 import { calcWarmupSets, isMainLift } from './warmup'
@@ -1972,15 +1972,12 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     )
     if (!ok || !data) return
     // Kun stang-varianter tæller med i hovedløfts-e1RM — maskiner/håndvægte
-    // (belt squat, hack squat, DB-pres ...) giver misvisende høje tal.
-    const NON_BARBELL = /belt|hack|split|bulgar|goblet|smith|pendul|maskine|machine|leg press|sissy|db |dumbbell|håndvægt/
-    const LIFTS = [
-      { label: 'Squat', color: '#4e8fcf', match: n => n.includes('squat') && !NON_BARBELL.test(n) },
-      { label: 'Bænk', color: '#c8923a', match: n => (n.includes('bænk') || n.includes('bench')) && !NON_BARBELL.test(n) },
-      { label: 'Dødløft', color: '#6cba6c', match: n => (n.includes('dødløft') || n.includes('deadlift') || /(^|\s)dl(\s|$)/.test(n)) && !NON_BARBELL.test(n) },
-    ]
+    // (belt squat, hack squat, DB-pres ...) giver misvisende høje tal. Samme
+    // familie-definition som ordre 284's øvelsesvælger (exerciseProgress.js),
+    // så "Squat" her og i Fremgang-fanen aldrig kan komme til at betyde to
+    // forskellige ting.
     const byWeek = {}
-    const liftByWeek = LIFTS.map(() => ({}))
+    const liftByWeek = HOVEDLOEFT_FAMILIER.map(() => ({}))
     for (const l of data) {
       const d = new Date(l.logged_at)
       d.setHours(12, 0, 0, 0)
@@ -1991,7 +1988,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       const reps = l.reps_completed || 0
       if (name && reps >= 1 && reps <= 12) {
         const e1rm = estimatedOneRepMax(l.weight, reps)
-        LIFTS.forEach((lift, i) => {
+        HOVEDLOEFT_FAMILIER.forEach((lift, i) => {
           if (lift.match(name) && e1rm > (liftByWeek[i][key] || 0)) liftByWeek[i][key] = e1rm
         })
       }
@@ -2000,7 +1997,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       .sort((a, b) => (a[0] < b[0] ? -1 : 1))
       .map(([weekStart, total]) => ({ weekStart, total: Math.round(total) }))
     setWeeklyTonnage(rows.slice(-10))
-    setLiftProgress(LIFTS.map((lift, i) => ({
+    setLiftProgress(HOVEDLOEFT_FAMILIER.map((lift, i) => ({
       label: lift.label,
       color: lift.color,
       points: Object.entries(liftByWeek[i])
