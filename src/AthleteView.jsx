@@ -17,6 +17,7 @@ import { shouldNudgeCheckin } from './checkinReminder'
 import { restSecondsForExercise } from './restBetweenSets'
 import { startRestPause, loadRestPause, clearRestPause } from './restPause'
 import { saveOfflineSet, loadOfflineSets, clearOfflineSet, countOfflineSets } from './offlineSetQueue'
+import { estimatedOneRepMax } from './exerciseProgress'
 import { parseRepsPrescription } from './repsPrescription'
 import { defaultSetWeight, defaultSetReps, stepWeight, stepReps } from './setLogDefaults'
 import { calcWarmupSets, isMainLift } from './warmup'
@@ -871,6 +872,16 @@ const NAV_ITEMS = [
     ),
   },
   {
+    key: 'fremgang',
+    label: 'Fremgang',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="3 17 9 11 13 15 21 5" />
+        <polyline points="15 5 21 5 21 11" />
+      </svg>
+    ),
+  },
+  {
     key: 'kost',
     label: 'Kost',
     icon: (
@@ -918,6 +929,8 @@ const staevnedagFactory = () => import('./athlete/StaevnedagTab')
 const programFactory = () => import('./athlete/ProgramTab')
 // ORDRE 259 · commit 1: samme lazy-chunk-mønster, ny fane.
 const volumenFactory = () => import('./athlete/VolumenTab')
+// ORDRE 284 · commit 1: samme lazy-chunk-mønster, ny fane.
+const fremgangFactory = () => import('./athlete/FremgangTab')
 const kostFactory = () => import('./athlete/KostTab')
 const beskederFactory = () => import('./athlete/BeskederTab')
 function parsePlannedRpe(intensity) {
@@ -1041,6 +1054,11 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   // UgensStatusKort's onAabnForloeb), samme mønster som volumeLogs ovenfor.
   const [forloebLogs, setForloebLogs] = useState(null)
   const [forloebLoading, setForloebLoading] = useState(false)
+  // ORDRE 284 · commit 1: al historik (ikke kun et par uger) til Fremgang-
+  // fanens pr.-øvelse-kurver — lazy-hentet først når fanen åbnes, samme
+  // mønster som volumeLogs/forloebLogs ovenfor.
+  const [fremgangLogs, setFremgangLogs] = useState([])
+  const [fremgangLoading, setFremgangLoading] = useState(false)
   const [weeklyTonnage, setWeeklyTonnage] = useState([])
   const [liftProgress, setLiftProgress] = useState([])
   const [weightLogs, setWeightLogs] = useState([])
@@ -1477,6 +1495,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   useEffect(() => { if (tab === 'stævnedag' && athlete?.id) { fetchMeetPlan(athlete.id); fetchMeetResults(athlete.id) } }, [tab, athlete?.id])
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchVolumeLogs er ren ift. athleteId, som allerede er i deps
   useEffect(() => { if (tab === 'volumen' && athlete?.id) fetchVolumeLogs(athlete.id) }, [tab, athlete?.id])
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchFremgangLogs er ren ift. athleteId, som allerede er i deps
+  useEffect(() => { if (tab === 'fremgang' && athlete?.id) fetchFremgangLogs(athlete.id) }, [tab, athlete?.id])
 
   useEffect(() => {
     if (tab === 'mobilisering' && mobilityMode === 'opvarmning' && currentWeek && warmupPhase === 'focus' && !warmupFocus) {
@@ -1687,6 +1707,28 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     setVolumeLoading(false)
     if (!ok) return
     setVolumeLogs(data || [])
+  }
+
+  // ORDRE 284 · commit 1: al historik for Fremgang-fanen — ingen datogrænse
+  // (til forskel fra fetchVolumeLogs's 5 uger), for fremgang på et løft skal
+  // kunne ses over måneder, ikke kun de seneste uger. Kun gennemførte sæt
+  // med en rigtig vægt (samme filtre som fetchExerciseHistory).
+  async function fetchFremgangLogs(athleteId) {
+    setFremgangLoading(true)
+    const { data, ok } = await runGuardedRead(
+      () => supabase
+        .from('exercise_logs')
+        .select('weight, reps_completed, logged_at, exercises(name)')
+        .eq('athlete_id', athleteId)
+        .eq('skipped', false)
+        .gt('weight', 0)
+        .order('logged_at', { ascending: true })
+        .limit(4000),
+      onReadError('Fremgang', athleteId),
+    )
+    setFremgangLoading(false)
+    if (!ok) return
+    setFremgangLogs(data || [])
   }
 
   // ORDRE 268 · commit 2: "hele forløbet" i UgensStatusKort — samme kilde
@@ -1948,7 +1990,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       const name = (l.exercises?.name || '').toLowerCase()
       const reps = l.reps_completed || 0
       if (name && reps >= 1 && reps <= 12) {
-        const e1rm = l.weight * (1 + reps / 30) // Epley
+        const e1rm = estimatedOneRepMax(l.weight, reps)
         LIFTS.forEach((lift, i) => {
           if (lift.match(name) && e1rm > (liftByWeek[i][key] || 0)) liftByWeek[i][key] = e1rm
         })
@@ -2249,7 +2291,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         .flatMap(s => s.exercises || [])
         .find(e => e.id === exerciseId)?.name
       if (exerciseName) {
-        const e1rm = r => (r.weight || 0) * (1 + (r.reps || 1) / 30)
+        const e1rm = r => estimatedOneRepMax(r.weight, r.reps || 1)
         const newSet = { weight: payload.weight, reps: newReps }
         const { data: prData, error: prFetchError } = await supabase
           .from('personal_records')
@@ -4110,6 +4152,14 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           <LazyBoundary
             factory={volumenFactory} label="Volumen" loading={<div style={s.page}>Indlæser…</div>}
             componentProps={{ volumeLogs, volumeLoading }}
+          />
+        )}
+
+        {/* FREMGANG */}
+        {tab === 'fremgang' && (
+          <LazyBoundary
+            factory={fremgangFactory} label="Fremgang" loading={<div style={s.page}>Indlæser…</div>}
+            componentProps={{ fremgangLogs, fremgangLoading }}
           />
         )}
 
