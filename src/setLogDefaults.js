@@ -43,3 +43,36 @@ export function stepReps(current, delta = 1) {
   const base = Number.isFinite(n) ? n : 0
   return String(Math.max(0, base + delta))
 }
+
+// ORDRE 293 · blok 1 (F1) — selve trinnet på kaldstedet i Dagens pas. Næste
+// sæts reps står som '' i input-state (nextAthleteSetInput nulstiller dem
+// bevidst), mens feltet VISER ordinationens nederste tal. `??` fangede kun
+// null/undefined, så et tomt felt startede trinnet fra 0 ("1 rep mere" gav 1,
+// ikke 5). Tomt falder derfor tilbage på det TALLET FELTET VISER (`shownReps`).
+export function stepRepsInInputs(inputs, key, shownInput, shownReps, delta = 1) {
+  const current = inputs[key] || shownInput
+  return { ...inputs, [key]: { ...current, reps: stepReps(current.reps || shownReps, delta) } }
+}
+
+// ORDRE 293 · blok 2 (F3) — forudfyldningen af et sæt, som ren beslutning.
+// Effekten i Dagens pas kører nu igen når historikken (exerciseHistory) er
+// hentet, for første øvelse åbnes FØR historikken ankommer og fik derfor
+// planens tal, som aldrig blev byttet ud med "sidste gang". Returnerer den nye
+// input-post, eller null = rør ikke noget. Regler:
+//  - `touched` (atleten har trykket plus/minus eller tastet i feltet): rør
+//    aldrig, heller ikke hvis atleten har tømt feltet igen.
+//  - tomt felt: udfyld (som før).
+//  - felt der stadig står præcis som VORES egen tidligere forudfyldning
+//    (`lastAuto`): byt ud med de nye standardværdier (planens tal → sidste gang).
+//  - alt andet (fx tastet i Program-fanen): rør ikke.
+export function autoFillSetInput({ current, lastAuto, touched, weightDefault, repsDefault }) {
+  if (touched) return null
+  if (!weightDefault && !repsDefault) return null
+  const weight = current?.weight || ''
+  const reps = current?.reps || ''
+  const empty = !weight && !reps
+  const stillOurs = !!lastAuto && weight === lastAuto.weight && reps === lastAuto.reps
+  if (!empty && !stillOurs) return null
+  if (stillOurs && lastAuto.weight === weightDefault && lastAuto.reps === repsDefault) return null
+  return { ...current, weight: weightDefault, note: current?.note || '', rpe: current?.rpe || '', reps: repsDefault }
+}

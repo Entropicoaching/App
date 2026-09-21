@@ -19,7 +19,8 @@ import { startRestPause, loadRestPause, clearRestPause } from './restPause'
 import { saveOfflineSet, loadOfflineSets, clearOfflineSet, countOfflineSets } from './offlineSetQueue'
 import { estimatedOneRepMax, HOVEDLOEFT_FAMILIER } from './exerciseProgress'
 import { parseRepsPrescription } from './repsPrescription'
-import { defaultSetWeight, defaultSetReps, stepWeight, stepReps } from './setLogDefaults'
+import { defaultSetWeight, defaultSetReps, stepWeight, stepRepsInInputs, autoFillSetInput } from './setLogDefaults'
+import { fremgangLogsQuery, fremgangLogsKronologisk } from './fremgangLogs'
 import { calcWarmupSets, isMainLift } from './warmup'
 import { applyWarmupCorrection, saveWarmupOverride, suggestWarmupOverride } from './warmupOverride'
 import { flushVideoCoachDraftQueue, isRetryableVideoCoachError,
@@ -243,9 +244,14 @@ function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, onLogSet
   // reps som en ægte værdi i input-state (ikke kun en visuel hint — ellers
   // ville et upåvirket "Godkendt"-tryk logge 0/tomt). Sidste gang på samme
   // øvelse vinder, ellers planens tal, ellers tomt (se setLogDefaults.js).
-  // Rører ALDRIG et felt atleten allerede selv har tastet/ændret. Kører kun
-  // når selve sættet skifter — deraf de smalle deps i stedet for hele
-  // exerciseHistory/logInputs (ville køre igen ved hver tastning).
+  // ORDRE 293 · F3: kører også igen når exerciseHistory er hentet (første
+  // øvelse åbnes før historikken ankommer og fik ellers planens tal for
+  // altid). autoFillSetInput rører aldrig et felt atleten selv har tastet/
+  // trinnet (touchedRef) — kun et felt der stadig står som vores egen
+  // forudfyldning byttes ud (autoFilledRef). Ikke logInputs i deps: ville
+  // køre igen ved hver tastning.
+  const autoFilledRef = useRef({})
+  const touchedRef = useRef(new Set())
   useEffect(() => {
     if (!activeNext) return
     const { exercise: ex, setNumber } = activeNext
@@ -258,10 +264,14 @@ function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, onLogSet
     const repsDefaultValue = repsIsEditable
       ? defaultSetReps('', { lastReps: last?.reps, planReps: repsPrescription.type === 'range' ? repsPrescription.min : null })
       : ''
-    if (!weightDefault && !repsDefaultValue) return
-    setLogInputs(p => (p[key]?.weight || p[key]?.reps) ? p : { ...p, [key]: { weight: weightDefault, note: '', rpe: '', reps: repsDefaultValue } })
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- kør kun når selve sættet (øvelse+sætnummer) skifter
-  }, [activeNext?.exercise?.id, activeNext?.setNumber])
+    const lastAuto = autoFilledRef.current[key]
+    const touched = touchedRef.current.has(key)
+    const decide = current => autoFillSetInput({ current, lastAuto, touched, weightDefault, repsDefault: repsDefaultValue })
+    if (!decide(logInputs[key])) return
+    autoFilledRef.current[key] = { weight: weightDefault, reps: repsDefaultValue }
+    setLogInputs(p => { const next = decide(p[key]); return next ? { ...p, [key]: next } : p })
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- kør kun når sættet (øvelse+sætnummer) skifter eller historikken ankommer
+  }, [activeNext?.exercise?.id, activeNext?.setNumber, exerciseHistory])
 
   if (!pas) return null
 
@@ -327,8 +337,8 @@ function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, onLogSet
   const last = lastHeaviestSet(exerciseHistory, ex.name, todayStr)
   const suggestion = ex.recommended_weight == null ? suggestNextWeight(ex.name, ex.intensity) : null
   const others = (session.exercises || []).filter(e => e.id !== ex.id)
-  const stepWeightBy = delta => setLogInputs(p => ({ ...p, [key]: { ...(p[key] || input), weight: stepWeight(p[key]?.weight ?? input.weight, delta) } }))
-  const stepRepsBy = delta => setLogInputs(p => ({ ...p, [key]: { ...(p[key] || input), reps: stepReps(p[key]?.reps ?? repsValue, delta) } }))
+  const stepWeightBy = delta => { touchedRef.current.add(key); setLogInputs(p => ({ ...p, [key]: { ...(p[key] || input), weight: stepWeight(p[key]?.weight ?? input.weight, delta) } })) }
+  const stepRepsBy = delta => { touchedRef.current.add(key); setLogInputs(p => stepRepsInInputs(p, key, input, repsValue, delta)) }
 
   return (
     <div style={s.card}>
@@ -373,7 +383,7 @@ function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, onLogSet
           type="text" inputMode="decimal" placeholder="kg" value={input.weight}
           onChange={e => {
             const v = e.target.value.replace(',', '.')
-            if (v === '' || /^\d*\.?\d*$/.test(v)) setLogInputs(p => ({ ...p, [key]: { ...p[key], weight: v } }))
+            if (v === '' || /^\d*\.?\d*$/.test(v)) { touchedRef.current.add(key); setLogInputs(p => ({ ...p, [key]: { ...p[key], weight: v } })) }
           }}
         />
         <button
@@ -395,7 +405,7 @@ function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, onLogSet
               type="text" inputMode="numeric" placeholder="reps" value={repsValue}
               onChange={e => {
                 const v = e.target.value
-                if (v === '' || /^\d*$/.test(v)) setLogInputs(p => ({ ...p, [key]: { ...p[key], reps: v } }))
+                if (v === '' || /^\d*$/.test(v)) { touchedRef.current.add(key); setLogInputs(p => ({ ...p, [key]: { ...p[key], reps: v } })) }
               }}
             />
             <button
@@ -1712,23 +1722,18 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   // ORDRE 284 · commit 1: al historik for Fremgang-fanen — ingen datogrænse
   // (til forskel fra fetchVolumeLogs's 5 uger), for fremgang på et løft skal
   // kunne ses over måneder, ikke kun de seneste uger. Kun gennemførte sæt
-  // med en rigtig vægt (samme filtre som fetchExerciseHistory).
+  // med en rigtig vægt (samme filtre som fetchExerciseHistory). ORDRE 293
+  // (F2): hentes faldende og vendes, så en grænse aldrig koster de nyeste sæt
+  // (se src/fremgangLogs.js).
   async function fetchFremgangLogs(athleteId) {
     setFremgangLoading(true)
     const { data, ok } = await runGuardedRead(
-      () => supabase
-        .from('exercise_logs')
-        .select('weight, reps_completed, logged_at, exercises(name)')
-        .eq('athlete_id', athleteId)
-        .eq('skipped', false)
-        .gt('weight', 0)
-        .order('logged_at', { ascending: true })
-        .limit(4000),
+      () => fremgangLogsQuery(supabase, athleteId),
       onReadError('Fremgang', athleteId),
     )
     setFremgangLoading(false)
     if (!ok) return
-    setFremgangLogs(data || [])
+    setFremgangLogs(fremgangLogsKronologisk(data))
   }
 
   // ORDRE 268 · commit 2: "hele forløbet" i UgensStatusKort — samme kilde
@@ -2251,6 +2256,13 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     // Ved fejl: vis en diskret fejl og rul den optimistiske ændring tilbage, så
     // UI matcher virkeligheden. Program-fanens egen Log-knap bruger denne gren
     // uændret (verify:athlete-write-failures/e2e:fejl låser den).
+    // ORDRE 293 · F5: "Godkendt" (localFallback) lægger sættet i den lokale kø
+    // FØR skrivningen forsøges, og fjerner det igen ved succes (nedenfor). Før
+    // stod køen først efter queueWrites fire forsøg (~4 s, længere på et dårligt
+    // net) — lukkes/dræbes fanen i det vindue, var et bekræftet sæt væk.
+    // pendingSyncCount røres først ved en fejlet skrivning: "gemt lokalt"-
+    // linjen må ikke blinke ved hver vellykket skrivning.
+    if (localFallback) saveOfflineSet(athlete.id, key, { exerciseId, setNumber, payload })
     const { error } = await persistSetLog(key, exerciseId, setNumber, payload, realExisting?.id)
     if (error) {
       // ORDRE 280 · commit 4 — "Godkendt" i Dagens pas beder om localFallback:
@@ -2258,7 +2270,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       // for at rulle det tilbage til en fejlbesked, gemmes payloaden lokalt
       // (offlineSetQueue.js) og sendes igen når forbindelsen er der (se
       // flushOfflineSets). Ingen ny tabel — samme exercise_logs-række som
-      // ellers, bare forsinket.
+      // ellers, bare forsinket. (Selve kø-posten er lagt FØR skrivningen, se
+      // ovenfor; her skrives den igen, hvis den første gang ikke kunne gemmes.)
       if (localFallback) {
         saveOfflineSet(athlete.id, key, { exerciseId, setNumber, payload })
         setPendingSyncCount(countOfflineSets(athlete.id))
@@ -2367,8 +2380,21 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     if (!keys.length) return
     for (const key of keys) {
       const { exerciseId, setNumber, payload } = queue[key]
-      const realExisting = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber && !l._optimistic)
-      const { error } = await persistSetLog(key, exerciseId, setNumber, payload, realExisting?.id)
+      let realId = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber && !l._optimistic)?.id
+      if (!realId) {
+        // ORDRE 293 · F5: køen står nu FØR skrivningen, så en post kan høre til
+        // et sæt serveren allerede har taget imod (appen døde før svaret kom
+        // tilbage). Slå rækken op først, så genafspilningen bliver en UPDATE
+        // og ikke en dublet. Kan opslaget ikke gennemføres, ligger posten
+        // stadig i køen til næste forsøg.
+        const { data: found, error: lookupError } = await supabase
+          .from('exercise_logs').select('id')
+          .eq('athlete_id', athlete.id).eq('exercise_id', exerciseId).eq('set_number', setNumber)
+          .limit(1)
+        if (lookupError) continue
+        realId = found?.[0]?.id
+      }
+      const { error } = await persistSetLog(key, exerciseId, setNumber, payload, realId)
       if (!error) clearOfflineSet(athlete.id, key)
     }
     setPendingSyncCount(countOfflineSets(athlete.id))
