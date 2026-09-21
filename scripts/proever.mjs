@@ -178,6 +178,19 @@ if (await portFree(8991)) {
     venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
 }
 
+// ---- 9) Fremgang-fanen på 360px, i rækkefølge (ordre 284 · commit 3): åbn
+// fanen (Squat-kurven vises automatisk) → skift til en tom øvelse ("Ingen
+// logninger endnu.") → kom tilbage til Squat, kurven uændret. Egen
+// mock-instans (egen exercise_logs-historik i to kalenderuger), samme
+// port-grænse som de øvrige atlet-specs ovenfor.
+if (await portFree(8991)) {
+  rows.push(runNode('e2e (fremgang.spec.mjs)', [join('e2e', 'fremgang.spec.mjs')],
+    'DOM-tekst (e1RM-kurven/"Ingen logninger endnu.") på en 360px-viewport, gennem skift af øvelse og tilbage', 'e2e'))
+} else {
+  rows.push({ name: 'e2e (fremgang.spec.mjs)', kind: 'e2e', ok: null, ms: 0,
+    venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
+}
+
 // ---- Skriv tabellen ----
 const lines = []
 lines.push('# Prøver — samlet facit (ordre 234)')

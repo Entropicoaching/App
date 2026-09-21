@@ -18,6 +18,7 @@
     "e2e:coach-ser-maaling": "node e2e/coach-ser-maaling.mjs",
     "e2e:atlet-uge": "node e2e/atlet-uge.spec.mjs",
     "e2e:coach-afvigelse": "node e2e/coach-afvigelse.spec.mjs",
+    "e2e:fremgang": "node e2e/fremgang.spec.mjs",
     "proever": "node scripts/proever.mjs",
     "verify:auth-logout-role-switch": "node scripts/verify-auth-logout-and-role-switch.mjs",
     "verify:athlete-training-inputs": "node scripts/verify-athlete-training-inputs.mjs",
