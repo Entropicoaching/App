@@ -253,6 +253,18 @@ if (await portFree(8991)) {
     venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
 }
 
+// ---- 15) "Set" på et punkt under "Kræver dit blik" (ordre 325 · commit 2):
+// et video-punkt dæmpes og synker til bunden af forhåndsvisningen ved klik
+// (fjernes ikke), og "Set" overlever et helsides genindlæs mod mocken. Egen
+// mock-instans pr. viewport, samme port-grænse som ovenfor.
+if (await portFree(8991)) {
+  rows.push(runNode('e2e (coach-briefing-seen.spec.mjs)', [join('e2e', 'coach-briefing-seen.spec.mjs')],
+    'DOM-rækkefølge (data-coach-briefing-point, det sete punkt sidst) + mockens coach_briefing_seen, før og efter reload', 'e2e'))
+} else {
+  rows.push({ name: 'e2e (coach-briefing-seen.spec.mjs)', kind: 'e2e', ok: null, ms: 0,
+    venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
+}
+
 // ---- Skriv tabellen ----
 const lines = []
 lines.push('# Prøver — samlet facit (ordre 234)')
