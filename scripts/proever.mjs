@@ -228,6 +228,18 @@ if (await portFree(8991)) {
     venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
 }
 
+// ---- 13) "Dagens pas" siger tydeligt hvilket sæt man er på (ordre 314):
+// tre sæt i træk på 390×844 og 360×780, "Sæt N af M" stemmer hele vejen,
+// klarede sæt kompakte, ingen vandret overflow (F4 fra docs/KRITIK-288.md).
+// Egen mock-instans pr. viewport, samme port-grænse som ovenfor.
+if (await portFree(8991)) {
+  rows.push(runNode('e2e (saet-nu.spec.mjs)', [join('e2e', 'saet-nu.spec.mjs')],
+    'DOM-tekst ("Sæt N af M", klarede/næste-linjer) + document.documentElement.scrollWidth på to viewports', 'e2e'))
+} else {
+  rows.push({ name: 'e2e (saet-nu.spec.mjs)', kind: 'e2e', ok: null, ms: 0,
+    venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
+}
+
 // ---- Skriv tabellen ----
 const lines = []
 lines.push('# Prøver — samlet facit (ordre 234)')
