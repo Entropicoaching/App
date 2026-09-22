@@ -3,6 +3,7 @@ import { supabase, withRetry, signOutHard } from './supabase'
 import LazyBoundary from './LazyBoundary'
 import { buildCoachPriorityItems, coachPriorityQueueContext, coachPriorityTaskContext } from './coachPriority'
 import { automationAlertResolveErrorMessage, filterOpenAutomationAlerts, RESOLVE_AUTOMATION_ALERT_RPC } from './automationAlerts'
+import { coachBriefingPointKey, coachBriefingSeenErrorMessage } from './coachBriefingSeen'
 import { coachInboxEntryIntent, coachInboxFocusDecision, createSingleFlightRunner, filterDraftVideoReviews, filterOpenTrainingSignals, summarizeCoachMessages, summarizeRefreshResults, trainingSignalFingerprint } from './coachInboxState'
 import { videoCoachBaselineReviewImpact } from './videoCoachBaselineProgress'
 import { sanitizeVideoCoachFeedbackEvidence } from './videoCoachFeedbackEvidence'
@@ -321,6 +322,11 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [automationAlertsError, setAutomationAlertsError] = useState(null)
   const [automationAlertUpdatingId, setAutomationAlertUpdatingId] = useState(null)
   const [automationAlertActionError, setAutomationAlertActionError] = useState(null)
+  // ORDRE 325: coach_briefing_seen (supabase/sql/coach-briefing-seen-v1.sql,
+  // IKKE kørt) — punkt-nøgle -> seen_at, for "Set" på et punkt under
+  // "Kræver dit blik" (se coachBriefingSeen.js).
+  const [coachBriefingSeen, setCoachBriefingSeen] = useState({})
+  const [coachBriefingSeenSavingKey, setCoachBriefingSeenSavingKey] = useState(null)
   const [messageInboxError, setMessageInboxError] = useState(null)
   const [inboxRefreshing, setInboxRefreshing] = useState(false)
   const [inboxRefreshStatus, setInboxRefreshStatus] = useState(null)
@@ -801,7 +807,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       setInboxRefreshing(true)
       try {
         const athleteIds = videoCoachAthletesRef.current.map(athlete => athlete.id)
-        const requests = [fetchTodayActivity(), fetchVideoReviewQueue(), fetchTrainingSignals(), fetchAutomationAlerts()]
+        const requests = [fetchTodayActivity(), fetchVideoReviewQueue(), fetchTrainingSignals(), fetchAutomationAlerts(), fetchCoachBriefingSeen()]
         if (athleteIds.length) requests.push(fetchLatestMessages(athleteIds))
         const results = await Promise.allSettled(requests)
         setInboxRefreshStatus(summarizeRefreshResults(results))
@@ -1173,6 +1179,46 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     }
     setAutomationAlerts(filterOpenAutomationAlerts(data))
     return true
+  }
+
+  // ORDRE 325: coach_briefing_seen findes ikke i produktion endnu (SQL-filen
+  // koeres foerst efter Marcs ja) — en fejlet HENTNING her er derfor det
+  // forventede normaltilstand indtil da, ikke noget der skal larme ved hver
+  // opdatering (Set-KNAPPEN fejler synligt for sig, se handleCoachBriefingSeen).
+  async function fetchCoachBriefingSeen() {
+    const { data, error } = await supabase.from('coach_briefing_seen')
+      .select('point_key,seen_at')
+      .eq('coach_id', session.user.id)
+    if (error) {
+      setCoachBriefingSeen({})
+      return true
+    }
+    setCoachBriefingSeen(Object.fromEntries((data || []).map(row => [row.point_key, row.seen_at])))
+    return true
+  }
+
+  // "Set" på et punkt under "Kræver dit blik" (ORDRE 325): dæmper punktet i
+  // appen OG lader n8n's Coach Briefing-mail se at Marc allerede har set det
+  // (entropi_coach_briefing_v1's nye seen_at, se coach-briefing-seen-v1.sql).
+  // Samme "aldrig stille"-princip som handleAutomationAlert: findes tabellen
+  // ikke endnu, fejler trykket synligt ved punktet, punktet bliver ikke dæmpet.
+  async function handleCoachBriefingSeen(item) {
+    const pointKey = coachBriefingPointKey(item)
+    if (!pointKey) return
+    setCoachBriefingSeenSavingKey(pointKey)
+    const now = new Date().toISOString()
+    const { error } = await supabase.from('coach_briefing_seen').upsert({
+      coach_id: session.user.id,
+      point_key: pointKey,
+      seen_at: now,
+    }, { onConflict: 'coach_id,point_key' })
+    setCoachBriefingSeenSavingKey(null)
+    if (error) {
+      showFlash(coachBriefingSeenErrorMessage(error), 'error')
+      return
+    }
+    setCoachBriefingSeen(current => ({ ...current, [pointKey]: now }))
+    showFlash('Markeret som set', 'success')
   }
 
   // "Markeret som set" går via RPC'en resolve_automation_alert_v1 (SQL-filen
@@ -4157,7 +4203,17 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           const cappedAthletes = showAllAthletes ? shownAthletes : shownAthletes.slice(0, ATHLETE_LIST_LIMIT)
           const priorityItems = coachPriorityItems
           const inboxTotal = coachPriorityCount
-          const priorityPreview = priorityItems.slice(0, isMobile ? 3 : 4)
+          // ORDRE 325: sete punkter (coach_briefing_seen) synker til bunden af
+          // forhåndsvisningen i stedet for at blive fjernet — samme rækkefølge
+          // som buildCoachPriorityItems ellers gav (rank/tid) inden for hver
+          // gruppe, da Array#sort er stabil.
+          const priorityPreview = [...priorityItems]
+            .sort((a, b) => {
+              const aSeen = coachBriefingSeen[coachBriefingPointKey(a)] ? 1 : 0
+              const bSeen = coachBriefingSeen[coachBriefingPointKey(b)] ? 1 : 0
+              return aSeen - bSeen
+            })
+            .slice(0, isMobile ? 3 : 4)
           const homeActions = [
             {
               key: 'training',
@@ -4229,8 +4285,19 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   <div style={{ padding: isMobile ? '0.2rem 0.85rem 0.35rem' : '0.25rem 1rem 0.4rem' }}>
                     {priorityPreview.map((item, index) => {
                       const signalUpdating = item.kind === 'signal' && trainingSignalUpdatingKey === `${item.signal.o_athlete_id}:${item.signal.o_detector}`
+                      // ORDRE 325: "Set" for besked/video — signalets eget "Set"
+                      // ovenfor kvitterer/udsætter allerede via
+                      // coach_signal_actions og lukker dermed samme hul for
+                      // træningssignaler (RAPPORT-317's fund gjaldt kun
+                      // unread_messages/video_drafts). Automatiseringsfejl har
+                      // sin egen "Markeret som set" i selve Indbakken.
+                      const briefingPointKey = coachBriefingPointKey(item)
+                      const briefingSeen = briefingPointKey ? Boolean(coachBriefingSeen[briefingPointKey]) : false
+                      const briefingSeenSaving = briefingPointKey && coachBriefingSeenSavingKey === briefingPointKey
+                      const canMarkBriefingSeen = briefingPointKey && (item.kind === 'message' || item.kind === 'video')
                       return (
-                        <div key={item.key} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minHeight: 58, borderBottom: index < priorityPreview.length - 1 ? '1px solid rgba(237,234,226,0.055)' : 'none' }}>
+                        <div key={item.key} data-coach-briefing-point={briefingPointKey || undefined} data-coach-briefing-seen={briefingSeen ? 'true' : 'false'}
+                          style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minHeight: 58, borderBottom: index < priorityPreview.length - 1 ? '1px solid rgba(237,234,226,0.055)' : 'none', opacity: briefingSeen ? 0.45 : 1 }}>
                           <button onClick={() => openCoachPriorityItem(item, 'list')}
                             style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', minWidth: 0, flex: 1, minHeight: 52, padding: '0.35rem 0', border: 'none', background: 'transparent', cursor: 'pointer', textAlign: 'left' }}>
                             <span style={{ width: 8, height: 8, flexShrink: 0, borderRadius: '50%', background: item.color, boxShadow: `0 0 0 3px ${item.color}18` }} />
@@ -4247,6 +4314,14 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                           {item.kind === 'signal' && (
                             <button disabled={signalUpdating} onClick={() => handleTrainingSignal(item.signal, 'acknowledge')}
                               style={{ ...s.btnGhost, minHeight: 34, padding: '0.25rem 0.45rem', fontSize: '0.43rem', opacity: signalUpdating ? 0.45 : 0.8, flexShrink: 0 }}>{signalUpdating ? '…' : 'Set'}</button>
+                          )}
+                          {canMarkBriefingSeen && (
+                            briefingSeen ? (
+                              <span style={{ minWidth: 44, minHeight: 44, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0.25rem 0.4rem', flexShrink: 0, color: '#6cba6c', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.43rem', letterSpacing: '0.04em' }}>Set ✓</span>
+                            ) : (
+                              <button disabled={briefingSeenSaving} onClick={() => handleCoachBriefingSeen(item)}
+                                style={{ ...s.btnGhost, minWidth: 44, minHeight: 44, padding: '0.25rem 0.55rem', fontSize: '0.43rem', opacity: briefingSeenSaving ? 0.45 : 0.8, flexShrink: 0 }}>{briefingSeenSaving ? '…' : 'Set'}</button>
+                            )
                           )}
                         </div>
                       )
