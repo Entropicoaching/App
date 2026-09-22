@@ -1,0 +1,14 @@
+[
+  {
+    "alvor": "info",
+    "titel": "Forkert træk i åbning (Italiensk, d4 i stedet for e4)",
+    "note": "besked: \"Lovligt, men ikke det vi øver - trækket går tilbage om lidt.\"",
+    "fil": "src/laerforloeb.js"
+  },
+  {
+    "alvor": "alvor-1",
+    "titel": "Forkert træk med finger-TRÆK (drag) i \"Lær skak\" bliver aldrig afvist eller forklaret",
+    "note": "d2-d4 i Åbning: Italiensk, spillet med et enkelt touchStart->touchMove->touchEnd-træk: trækket blev stående permanent (fen \"rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR\"), ingen \"Lovligt, men ikke det vi øver\"-besked, ingen rul-tilbage. Samme finger-træk (drag) på et PRINCIP-trin (a2-a3, \"Princip: centrum\") giver samme resultat: intet sker, ingen forklaring, trinnet fryser. Samme move med TRYK-TRYK (to separate finger-tryk, ingen drag) virker korrekt og viser beskeden. Fejlen rammer altså kun den ene finger-bevægelse (træk/drag) som er den mest naturlige på en touch-tavle - klik-klik virker.",
+    "fil": "src/laerforloeb.js (eller den delte klik/træk-håndtering fra 307)"
+  }
+]
