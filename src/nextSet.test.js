@@ -103,6 +103,27 @@ test('lastHeaviestSet finder det tungeste sæt fra seneste (ikke-ekskluderede) d
   assert.equal(best.reps, 3)
 })
 
+// ORDRE 314 · blok 1 — "Sæt X af Y"-overskriften i Dagens pas kommer direkte
+// fra pas.next (findDagensPas → nextSetInSession), så den skal følge med når
+// et sæt godkendes (en ny log-række tilføjes), ikke stå fast på det gamle sæt.
+test('findDagensPas: overskriften ("Sæt X af Y") følger det aktuelle sæt, når et sæt godkendes', () => {
+  const week = { id: 'w1', week_number: 1, sessions: [session] }
+  const beforeApproval = findDagensPas([week], week, [])
+  assert.equal(beforeApproval.next.setNumber, 1)
+  assert.equal(beforeApproval.next.totalSets, 3)
+
+  const afterApprovingSet1 = findDagensPas([week], week, [{ exercise_id: 'e1', set_number: 1 }])
+  assert.equal(afterApprovingSet1.next.exercise.id, 'e1')
+  assert.equal(afterApprovingSet1.next.setNumber, 2)
+  assert.equal(afterApprovingSet1.next.totalSets, 3)
+
+  const afterApprovingWholeExercise = findDagensPas([week], week,
+    [1, 2, 3].map(n => ({ exercise_id: 'e1', set_number: n })))
+  assert.equal(afterApprovingWholeExercise.next.exercise.id, 'e2')
+  assert.equal(afterApprovingWholeExercise.next.setNumber, 1)
+  assert.equal(afterApprovingWholeExercise.next.totalSets, 2)
+})
+
 test('lastHeaviestSet er null når øvelsen ikke har nogen tidligere historik', () => {
   assert.equal(lastHeaviestSet({}, 'Squat', '2026-09-17'), null)
   assert.equal(lastHeaviestSet({ squat: [{ date: '2026-09-17', sets: [{ weight: 100, reps: 5 }] }] }, 'Squat', '2026-09-17'), null)

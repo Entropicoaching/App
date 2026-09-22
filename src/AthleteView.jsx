@@ -17,6 +17,7 @@ import { shouldNudgeCheckin } from './checkinReminder'
 import { restSecondsForExercise } from './restBetweenSets'
 import { startRestPause, loadRestPause, clearRestPause } from './restPause'
 import { saveOfflineSet, loadOfflineSets, clearOfflineSet, countOfflineSets } from './offlineSetQueue'
+import { loadShowNextSetPreview, saveShowNextSetPreview } from './nextSetPreview'
 import { estimatedOneRepMax, HOVEDLOEFT_FAMILIER } from './exerciseProgress'
 import { parseRepsPrescription } from './repsPrescription'
 import { defaultSetWeight, defaultSetReps, stepWeight, stepRepsInInputs, autoFillSetInput } from './setLogDefaults'
@@ -237,8 +238,14 @@ function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession }) {
 // — logInputs-nøglen er `${exerciseId}_${setNumber}`, delt på tværs af
 // begge faner). Under det: resten af DENNE session i kort form. `pas` kommer
 // fra findDagensPas (src/nextSet.js, ren funktion, se dens tests).
-function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, onLogSet, skipSet, suggestNextWeight, onOpenSession, todayStr, checkinNudge, lastLoggedSet, onUndoLastSet, pendingSyncCount }) {
+function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogInputs, onLogSet, skipSet, suggestNextWeight, onOpenSession, todayStr, checkinNudge, lastLoggedSet, onUndoLastSet, pendingSyncCount }) {
   const activeNext = pas && pas.status === 'open' ? pas.next : null
+
+  // ORDRE 314 · blok 1 — Marcs dom: man kunne se det næste sæt, men ikke
+  // hvilket sæt man var på. Løsning: kun det AKTUELLE sæt har fulde felter,
+  // allerede klarede sæt (samme øvelse) er kompakte linjer, og "næste sæt" er
+  // højst én dæmpet linje uden felter — og kan slås fra (se nextSetPreview.js).
+  const [showNextPreview, setShowNextPreview] = useState(() => loadShowNextSetPreview())
 
   // ORDRE 280 · commit 1 — når sættet ÅBNES (bliver "næste"), udfyldes vægt/
   // reps som en ægte værdi i input-state (ikke kun en visuel hint — ellers
@@ -340,6 +347,14 @@ function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, onLogSet
   const stepWeightBy = delta => { touchedRef.current.add(key); setLogInputs(p => ({ ...p, [key]: { ...(p[key] || input), weight: stepWeight(p[key]?.weight ?? input.weight, delta) } })) }
   const stepRepsBy = delta => { touchedRef.current.add(key); setLogInputs(p => stepRepsInInputs(p, key, input, repsValue, delta)) }
 
+  // ORDRE 314 · blok 1 — sæt 1..setNumber-1 på DENNE øvelse er altid logget
+  // (nextSetInSession finder det første ULOGGEDE sæt i rækkefølge, så der kan
+  // ikke være huller foran "next"). Vises som kompakte linjer, ikke fulde felter.
+  const priorSetNumbers = Array.from({ length: setNumber - 1 }, (_, i) => i + 1)
+  const nextSetNumber = setNumber + 1
+  const nextSetReps = repsIsEditable ? (last?.reps ?? (repsPrescription.type === 'range' ? repsPrescription.min : null)) : ex.reps
+  const nextSetWeight = ex.recommended_weight ?? suggestion?.weight ?? last?.weight ?? null
+
   return (
     <div style={s.card}>
       {nudge}
@@ -367,59 +382,95 @@ function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, onLogSet
         {[ex.sets && `${ex.sets} sæt`, ex.reps && `× ${ex.reps}`, ex.intensity && ex.intensity].filter(Boolean).join(' · ')}
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+      {/* ORDRE 314 · blok 1 — klarede sæt på DENNE øvelse: én kompakt linje pr.
+          sæt (ikke fulde felter, det er forbeholdt det aktuelle sæt), med et
+          lille "ret"-tryk der genbruger onUndoLastSet (den sletter log-rækken
+          og genåbner sættet til redigering, se undoLoggedSet). */}
+      {priorSetNumbers.length > 0 && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', marginBottom: '0.75rem' }}>
+          {priorSetNumbers.map(n => {
+            const log = (exerciseLogs || []).find(l => l.exercise_id === ex.id && l.set_number === n)
+            if (!log) return null
+            return (
+              <div key={n} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.64rem', color: '#7a7770' }}>
+                <span>
+                  Sæt {n}: {log.skipped ? 'Sprunget over' : `${log.weight}kg × ${log.reps_completed}${log.rpe_actual != null ? `, RPE ${log.rpe_actual}` : ''}`}
+                </span>
+                <button
+                  type="button"
+                  aria-label={`Ret sæt ${n}`}
+                  onClick={() => onUndoLastSet(ex.id, n)}
+                  style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.58rem', letterSpacing: '0.04em', padding: '0.3rem', flexShrink: 0 }}
+                >ret</button>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      {/* ORDRE 314 · blok 1 (F4-rettelse) — vægt og reps/RPE står nu i to
+          rækker i stedet for én flexWrap-række, der brækkede midt i
+          reps-kontrollerne ved 360–390 px (se docs/KRITIK-288.md F4): fire
+          44 px-trykflader + to felter kan ikke være på samme linje som RPE-
+          mærkatet i en ~310 px kortflade uden at gå under 44 px, så hver
+          feltgruppe holdes samlet på sin egen linje i stedet. */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
         {/* ORDRE 280 · commit 1 — store plus/minus (2,5 kg / 1 rep) ved siden af
             felterne: en atlet med kridt på hænderne skal kunne justere uden at
             skulle ramme et lille tastatur. Feltet kan stadig tastes i (samme
             onChange som før), men skal ikke. */}
-        <button
-          type="button" aria-label="2,5 kg mindre"
-          onClick={() => stepWeightBy(-2.5)}
-          style={{ ...s.btnGhost, minWidth: '44px', minHeight: '52px', boxSizing: 'border-box', padding: 0, fontSize: '1.1rem', flexShrink: 0 }}
-        >−</button>
-        <input
-          aria-label={`Vægt, sæt ${setNumber}`}
-          style={{ ...s.fieldInput, width: '96px', minWidth: '96px', minHeight: '52px', boxSizing: 'border-box', flexShrink: 0, padding: '0.65rem 0.5rem', fontSize: '1.3rem', textAlign: 'center' }}
-          type="text" inputMode="decimal" placeholder="kg" value={input.weight}
-          onChange={e => {
-            const v = e.target.value.replace(',', '.')
-            if (v === '' || /^\d*\.?\d*$/.test(v)) { touchedRef.current.add(key); setLogInputs(p => ({ ...p, [key]: { ...p[key], weight: v } })) }
-          }}
-        />
-        <button
-          type="button" aria-label="2,5 kg mere"
-          onClick={() => stepWeightBy(2.5)}
-          style={{ ...s.btnGhost, minWidth: '44px', minHeight: '52px', boxSizing: 'border-box', padding: 0, fontSize: '1.1rem', flexShrink: 0 }}
-        >+</button>
-        {repsIsEditable ? (
-          <>
-            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '1rem', color: '#c8923a' }}>×</span>
-            <button
-              type="button" aria-label="1 rep mindre"
-              onClick={() => stepRepsBy(-1)}
-              style={{ ...s.btnGhost, minWidth: '44px', minHeight: '52px', boxSizing: 'border-box', padding: 0, fontSize: '1.1rem', flexShrink: 0 }}
-            >−</button>
-            <input
-              aria-label={`Reps, sæt ${setNumber}`}
-              style={{ ...s.fieldInput, width: '64px', minWidth: '64px', minHeight: '52px', boxSizing: 'border-box', flexShrink: 0, padding: '0.65rem 0.3rem', fontSize: '1.3rem', textAlign: 'center' }}
-              type="text" inputMode="numeric" placeholder="reps" value={repsValue}
-              onChange={e => {
-                const v = e.target.value
-                if (v === '' || /^\d*$/.test(v)) { touchedRef.current.add(key); setLogInputs(p => ({ ...p, [key]: { ...p[key], reps: v } })) }
-              }}
-            />
-            <button
-              type="button" aria-label="1 rep mere"
-              onClick={() => stepRepsBy(1)}
-              style={{ ...s.btnGhost, minWidth: '44px', minHeight: '52px', boxSizing: 'border-box', padding: 0, fontSize: '1.1rem', flexShrink: 0 }}
-            >+</button>
-          </>
-        ) : (
-          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '1rem', color: '#c8923a', whiteSpace: 'nowrap' }}>× {ex.reps || '—'}</span>
-        )}
-        {plannedRpe != null && (
-          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#7a7770', letterSpacing: '0.06em', border: '1px solid rgba(237,234,226,0.13)', padding: '0.3rem 0.5rem', minHeight: '52px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center' }}>RPE {input.rpe || plannedRpe}</span>
-        )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <button
+            type="button" aria-label="2,5 kg mindre"
+            onClick={() => stepWeightBy(-2.5)}
+            style={{ ...s.btnGhost, minWidth: '44px', minHeight: '52px', boxSizing: 'border-box', padding: 0, fontSize: '1.1rem', flexShrink: 0 }}
+          >−</button>
+          <input
+            aria-label={`Vægt, sæt ${setNumber}`}
+            style={{ ...s.fieldInput, width: '96px', minWidth: '96px', minHeight: '52px', boxSizing: 'border-box', flexShrink: 0, padding: '0.65rem 0.5rem', fontSize: '1.3rem', textAlign: 'center' }}
+            type="text" inputMode="decimal" placeholder="kg" value={input.weight}
+            onChange={e => {
+              const v = e.target.value.replace(',', '.')
+              if (v === '' || /^\d*\.?\d*$/.test(v)) { touchedRef.current.add(key); setLogInputs(p => ({ ...p, [key]: { ...p[key], weight: v } })) }
+            }}
+          />
+          <button
+            type="button" aria-label="2,5 kg mere"
+            onClick={() => stepWeightBy(2.5)}
+            style={{ ...s.btnGhost, minWidth: '44px', minHeight: '52px', boxSizing: 'border-box', padding: 0, fontSize: '1.1rem', flexShrink: 0 }}
+          >+</button>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+          {repsIsEditable ? (
+            <>
+              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '1rem', color: '#c8923a' }}>×</span>
+              <button
+                type="button" aria-label="1 rep mindre"
+                onClick={() => stepRepsBy(-1)}
+                style={{ ...s.btnGhost, minWidth: '44px', minHeight: '52px', boxSizing: 'border-box', padding: 0, fontSize: '1.1rem', flexShrink: 0 }}
+              >−</button>
+              <input
+                aria-label={`Reps, sæt ${setNumber}`}
+                style={{ ...s.fieldInput, width: '64px', minWidth: '64px', minHeight: '52px', boxSizing: 'border-box', flexShrink: 0, padding: '0.65rem 0.3rem', fontSize: '1.3rem', textAlign: 'center' }}
+                type="text" inputMode="numeric" placeholder="reps" value={repsValue}
+                onChange={e => {
+                  const v = e.target.value
+                  if (v === '' || /^\d*$/.test(v)) { touchedRef.current.add(key); setLogInputs(p => ({ ...p, [key]: { ...p[key], reps: v } })) }
+                }}
+              />
+              <button
+                type="button" aria-label="1 rep mere"
+                onClick={() => stepRepsBy(1)}
+                style={{ ...s.btnGhost, minWidth: '44px', minHeight: '52px', boxSizing: 'border-box', padding: 0, fontSize: '1.1rem', flexShrink: 0 }}
+              >+</button>
+            </>
+          ) : (
+            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '1rem', color: '#c8923a', whiteSpace: 'nowrap' }}>× {ex.reps || '—'}</span>
+          )}
+          {plannedRpe != null && (
+            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#7a7770', letterSpacing: '0.06em', border: '1px solid rgba(237,234,226,0.13)', padding: '0.3rem 0.5rem', minHeight: '52px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>RPE {input.rpe || plannedRpe}</span>
+          )}
+        </div>
       </div>
       {/* ORDRE 280 · commit 2 — "Godkendt" er den mest gentagne handling i hele
           appen (ét tryk pr. sæt, hele træningen), derfor flex:1 og 60px høj —
@@ -448,6 +499,28 @@ function DagensPasCard({ pas, exerciseHistory, logInputs, setLogInputs, onLogSet
       {pendingSyncCount > 0 && (
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.04em', color: '#7a7770', marginTop: '0.5rem', textAlign: 'center' }}>
           ☁ {pendingSyncCount} {pendingSyncCount === 1 ? 'sæt' : 'sæt'} gemt lokalt — sendes når forbindelsen er tilbage
+        </div>
+      )}
+
+      {/* ORDRE 314 · blok 1 — "næste sæt" er højst ÉN dæmpet linje, aldrig med
+          felter (dem har kun det aktuelle sæt), og kan slås fra her (se
+          nextSetPreview.js). Vises kun når der faktisk ER et næste sæt på
+          DENNE øvelse. */}
+      {nextSetNumber <= totalSets && (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginTop: '0.6rem' }}>
+          {showNextPreview ? (
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#4a4844', letterSpacing: '0.02em' }}>
+              Næste: {nextSetReps || '—'} reps{nextSetWeight != null ? ` @ ${nextSetWeight} kg` : ''}
+            </div>
+          ) : <span />}
+          <label style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', cursor: 'pointer', flexShrink: 0 }}>
+            <input
+              type="checkbox" checked={showNextPreview}
+              onChange={e => { setShowNextPreview(e.target.checked); saveShowNextSetPreview(e.target.checked) }}
+              style={{ accentColor: '#c8923a', width: '13px', height: '13px' }}
+            />
+            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844' }}>Vis næste sæt</span>
+          </label>
         </div>
       )}
 
@@ -3504,6 +3577,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                   <DagensPasCard
                     pas={dagensPas}
                     exerciseHistory={exerciseHistory}
+                    exerciseLogs={exerciseLogs}
                     logInputs={logInputs}
                     setLogInputs={setLogInputs}
                     onLogSet={logDagensPasSet}
