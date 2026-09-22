@@ -23,6 +23,7 @@
     "e2e:coach-mandagsrunden": "node e2e/coach-mandagsrunden.spec.mjs",
     "e2e:coach-automation-alerts": "node e2e/coach-automation-alerts.spec.mjs",
     "e2e:saet-nu": "node e2e/saet-nu.spec.mjs",
+    "e2e:ret-saet": "node e2e/ret-saet.spec.mjs",
     "proever": "node scripts/proever.mjs",
     "verify:auth-logout-role-switch": "node scripts/verify-auth-logout-and-role-switch.mjs",
     "verify:athlete-training-inputs": "node scripts/verify-athlete-training-inputs.mjs",

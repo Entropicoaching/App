@@ -13,6 +13,7 @@ import { recordSilentFail, attachPendingSilentFails, clearPendingSilentFails, ma
 import { compareReadiness, readinessComparisonText, readinessTrainingNote, summarizeReadinessForCoach, lastCheckinDrivenChange } from './readinessInsight'
 import { remainingSeconds } from './restTimer'
 import { findDagensPas, lastHeaviestSet } from './nextSet'
+import { applySetEdit } from './editLoggedSet'
 import { shouldNudgeCheckin } from './checkinReminder'
 import { restSecondsForExercise } from './restBetweenSets'
 import { startRestPause, loadRestPause, clearRestPause } from './restPause'
@@ -20,7 +21,7 @@ import { saveOfflineSet, loadOfflineSets, clearOfflineSet, countOfflineSets } fr
 import { loadShowNextSetPreview, saveShowNextSetPreview } from './nextSetPreview'
 import { estimatedOneRepMax, HOVEDLOEFT_FAMILIER } from './exerciseProgress'
 import { parseRepsPrescription } from './repsPrescription'
-import { defaultSetWeight, defaultSetReps, stepWeight, stepRepsInInputs, autoFillSetInput } from './setLogDefaults'
+import { defaultSetWeight, defaultSetReps, stepWeight, stepReps, stepRepsInInputs, autoFillSetInput } from './setLogDefaults'
 import { fremgangLogsQuery, fremgangLogsKronologisk } from './fremgangLogs'
 import { calcWarmupSets, isMainLift } from './warmup'
 import { applyWarmupCorrection, saveWarmupOverride, suggestWarmupOverride } from './warmupOverride'
@@ -238,7 +239,7 @@ function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession }) {
 // — logInputs-nøglen er `${exerciseId}_${setNumber}`, delt på tværs af
 // begge faner). Under det: resten af DENNE session i kort form. `pas` kommer
 // fra findDagensPas (src/nextSet.js, ren funktion, se dens tests).
-function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogInputs, onLogSet, skipSet, suggestNextWeight, onOpenSession, todayStr, checkinNudge, lastLoggedSet, onUndoLastSet, pendingSyncCount }) {
+function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogInputs, onLogSet, skipSet, suggestNextWeight, onOpenSession, todayStr, checkinNudge, lastLoggedSet, onUndoLastSet, onUpdateLoggedSet, pendingSyncCount }) {
   const activeNext = pas && pas.status === 'open' ? pas.next : null
 
   // ORDRE 314 · blok 1 — Marcs dom: man kunne se det næste sæt, men ikke
@@ -246,6 +247,18 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
   // allerede klarede sæt (samme øvelse) er kompakte linjer, og "næste sæt" er
   // højst én dæmpet linje uden felter — og kan slås fra (se nextSetPreview.js).
   const [showNextPreview, setShowNextPreview] = useState(() => loadShowNextSetPreview())
+
+  // ORDRE 320 · blok 1 — "ret" på et klaret sæt åbner det til redigering IN
+  // PLACE (ingen sletning af log-rækken, se onUpdateLoggedSet). editingSet
+  // holder BÅDE øvelse- og sætnummer (ikke kun sætnummer), så en gemt
+  // redigerings-tilstand aldrig ved et uheld matcher et andet sætnummer på
+  // en anden øvelse, hvis kortet skifter øvelse mens redigeringen står åben.
+  const [editingSet, setEditingSet] = useState(null) // { exerciseId, setNumber } | null
+  const [editInput, setEditInput] = useState({ weight: '', reps: '' })
+  const startEditingSet = (exerciseId, setNumber, log) => {
+    setEditingSet({ exerciseId, setNumber })
+    setEditInput({ weight: log.skipped ? '' : String(log.weight ?? ''), reps: log.skipped ? '' : String(log.reps_completed ?? '') })
+  }
 
   // ORDRE 280 · commit 1 — når sættet ÅBNES (bliver "næste"), udfyldes vægt/
   // reps som en ægte værdi i input-state (ikke kun en visuel hint — ellers
@@ -382,15 +395,87 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
         {[ex.sets && `${ex.sets} sæt`, ex.reps && `× ${ex.reps}`, ex.intensity && ex.intensity].filter(Boolean).join(' · ')}
       </div>
 
-      {/* ORDRE 314 · blok 1 — klarede sæt på DENNE øvelse: én kompakt linje pr.
-          sæt (ikke fulde felter, det er forbeholdt det aktuelle sæt), med et
-          lille "ret"-tryk der genbruger onUndoLastSet (den sletter log-rækken
-          og genåbner sættet til redigering, se undoLoggedSet). */}
+      {/* ORDRE 314 · blok 1, rettet i ORDRE 320 · blok 1 — klarede sæt på DENNE
+          øvelse: én kompakt linje pr. sæt (ikke fulde felter, det er
+          forbeholdt det aktuelle sæt), med et "ret"-tryk der åbner sættet til
+          redigering UDEN at slette log-rækken (se onUpdateLoggedSet/
+          docs/KRITIK-314.md fund 1+3 — den gamle onUndoLastSet-genbrug slettede
+          rækken, hvilket gjorde senere sæt "usynlige" for nextSetInSession). */}
       {priorSetNumbers.length > 0 && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', marginBottom: '0.75rem' }}>
           {priorSetNumbers.map(n => {
             const log = (exerciseLogs || []).find(l => l.exercise_id === ex.id && l.set_number === n)
             if (!log) return null
+            const isEditingThis = editingSet && editingSet.exerciseId === ex.id && editingSet.setNumber === n
+            if (isEditingThis) {
+              return (
+                <div key={n} style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', padding: '0.5rem', marginBottom: '0.2rem', border: '1px solid rgba(200,146,58,0.25)', background: 'rgba(200,146,58,0.04)' }}>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.04em', color: '#c8923a' }}>Retter sæt {n}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                    <button
+                      type="button" aria-label="2,5 kg mindre (ret)"
+                      onClick={() => setEditInput(p => ({ ...p, weight: stepWeight(p.weight, -2.5) }))}
+                      style={{ ...s.btnGhost, minWidth: '44px', minHeight: '44px', boxSizing: 'border-box', padding: 0, fontSize: '1rem', flexShrink: 0 }}
+                    >−</button>
+                    <input
+                      aria-label={`Vægt, ret sæt ${n}`}
+                      style={{ ...s.fieldInput, width: '80px', minWidth: '80px', minHeight: '44px', boxSizing: 'border-box', flexShrink: 0, textAlign: 'center' }}
+                      type="text" inputMode="decimal" value={editInput.weight}
+                      onChange={e => {
+                        const v = e.target.value.replace(',', '.')
+                        if (v === '' || /^\d*\.?\d*$/.test(v)) setEditInput(p => ({ ...p, weight: v }))
+                      }}
+                    />
+                    <button
+                      type="button" aria-label="2,5 kg mere (ret)"
+                      onClick={() => setEditInput(p => ({ ...p, weight: stepWeight(p.weight, 2.5) }))}
+                      style={{ ...s.btnGhost, minWidth: '44px', minHeight: '44px', boxSizing: 'border-box', padding: 0, fontSize: '1rem', flexShrink: 0 }}
+                    >+</button>
+                    {repsIsEditable && (
+                      <>
+                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.9rem', color: '#c8923a' }}>×</span>
+                        <button
+                          type="button" aria-label="1 rep mindre (ret)"
+                          onClick={() => setEditInput(p => ({ ...p, reps: stepReps(p.reps, -1) }))}
+                          style={{ ...s.btnGhost, minWidth: '44px', minHeight: '44px', boxSizing: 'border-box', padding: 0, fontSize: '1rem', flexShrink: 0 }}
+                        >−</button>
+                        <input
+                          aria-label={`Reps, ret sæt ${n}`}
+                          style={{ ...s.fieldInput, width: '56px', minWidth: '56px', minHeight: '44px', boxSizing: 'border-box', flexShrink: 0, textAlign: 'center' }}
+                          type="text" inputMode="numeric" value={editInput.reps}
+                          onChange={e => {
+                            const v = e.target.value
+                            if (v === '' || /^\d*$/.test(v)) setEditInput(p => ({ ...p, reps: v }))
+                          }}
+                        />
+                        <button
+                          type="button" aria-label="1 rep mere (ret)"
+                          onClick={() => setEditInput(p => ({ ...p, reps: stepReps(p.reps, 1) }))}
+                          style={{ ...s.btnGhost, minWidth: '44px', minHeight: '44px', boxSizing: 'border-box', padding: 0, fontSize: '1rem', flexShrink: 0 }}
+                        >+</button>
+                      </>
+                    )}
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button
+                      type="button"
+                      aria-label={`Godkendt, ret sæt ${n}`}
+                      style={{ ...s.btnPrimary, flex: 1, minHeight: '44px', boxSizing: 'border-box' }}
+                      onClick={async () => {
+                        const ok = await onUpdateLoggedSet(ex.id, n, editInput)
+                        if (ok) setEditingSet(null)
+                      }}
+                    >Godkendt</button>
+                    <button
+                      type="button"
+                      aria-label={`Fortryd, ret sæt ${n}`}
+                      style={{ ...s.btnGhost, minHeight: '44px', boxSizing: 'border-box' }}
+                      onClick={() => setEditingSet(null)}
+                    >Fortryd</button>
+                  </div>
+                </div>
+              )
+            }
             return (
               <div key={n} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.64rem', color: '#7a7770' }}>
                 <span>
@@ -399,8 +484,9 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
                 <button
                   type="button"
                   aria-label={`Ret sæt ${n}`}
-                  onClick={() => onUndoLastSet(ex.id, n)}
-                  style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.58rem', letterSpacing: '0.04em', padding: '0.3rem', flexShrink: 0 }}
+                  disabled={editingSet != null}
+                  onClick={() => startEditingSet(ex.id, n, log)}
+                  style={{ background: 'none', border: 'none', color: '#4a4844', cursor: editingSet != null ? 'default' : 'pointer', opacity: editingSet != null ? 0.35 : 1, fontSize: '0.58rem', letterSpacing: '0.04em', padding: 0, minWidth: '44px', minHeight: '44px', boxSizing: 'border-box', flexShrink: 0 }}
                 >ret</button>
               </div>
             )
@@ -513,7 +599,7 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
               Næste: {nextSetReps || '—'} reps{nextSetWeight != null ? ` @ ${nextSetWeight} kg` : ''}
             </div>
           ) : <span />}
-          <label style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', cursor: 'pointer', flexShrink: 0 }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', cursor: 'pointer', flexShrink: 0, minHeight: '44px', boxSizing: 'border-box' }}>
             <input
               type="checkbox" checked={showNextPreview}
               onChange={e => { setShowNextPreview(e.target.checked); saveShowNextSetPreview(e.target.checked) }}
@@ -2504,6 +2590,43 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     fetchExerciseLogs(athlete.id, currentWeek)
   }
 
+  // ORDRE 320 · blok 1 — "ret" på et allerede klaret sæt (Dagens pas) skal
+  // IKKE slette log-rækken (det gjorde undoLoggedSet ovenfor, se
+  // docs/KRITIK-314.md fund 3: sletningen fik nextSetInSession til at anse
+  // sættet for uloggede igen, hvilket skjulte alle senere sæt og fik
+  // gen-godkendelse til at springe stille forbi dem). Genbruger i stedet den
+  // opdateringsvej der allerede findes: persistSetLog opdaterer samme række
+  // (samme id) når ref.realId er sat — ingen ny skrivevej, ingen migration.
+  // Samme offline-mønster som logSet's localFallback (saveOfflineSet/
+  // clearOfflineSet), så "ret" også virker uden forbindelse (se 293).
+  async function updateLoggedSet(exerciseId, setNumber, updates) {
+    const key = `${exerciseId}_${setNumber}`
+    const existing = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber && !l._optimistic)
+    if (!existing) return false
+    const payload = {
+      weight: parseFloat(updates.weight) || 0,
+      reps_completed: parseInt(updates.reps) || 0,
+      note: existing.note ?? null,
+      rpe_actual: existing.rpe_actual ?? null,
+      rpe_planned: existing.rpe_planned ?? null,
+      skipped: false,
+    }
+    setExerciseLogs(prev => applySetEdit(prev, exerciseId, setNumber, payload))
+    saveOfflineSet(athlete.id, key, { exerciseId, setNumber, payload })
+    const { error } = await persistSetLog(key, exerciseId, setNumber, payload, existing.id)
+    if (error) {
+      // Samme optimistiske fallback som logSet: forbliver rettet i UI,
+      // ligger i offline-køen til flushOfflineSets sender den igen.
+      logFrontendError('Ret sæt: opdatering fejlede, lagt i offline-kø', error, athlete.id)
+      setPendingSyncCount(countOfflineSets(athlete.id))
+      return true
+    }
+    clearOfflineSet(athlete.id, key)
+    setPendingSyncCount(countOfflineSets(athlete.id))
+    fetchExerciseLogs(athlete.id, currentWeek)
+    return true
+  }
+
   async function skipSet(exerciseId, setNumber, plannedRpe) {
     const existing = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber)
     const payload = { skipped: true, weight: 0, reps_completed: 0, note: null, rpe_actual: null, rpe_planned: plannedRpe ?? null }
@@ -3586,6 +3709,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                     onOpenSession={(id) => { setTab('program'); openSession(id) }}
                     lastLoggedSet={lastLoggedSet}
                     onUndoLastSet={undoLoggedSet}
+                    onUpdateLoggedSet={updateLoggedSet}
                     pendingSyncCount={pendingSyncCount}
                     todayStr={today()}
                     checkinNudge={(() => {
