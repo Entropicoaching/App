@@ -13,6 +13,7 @@ import { recordSilentFail, attachPendingSilentFails, clearPendingSilentFails, ma
 import { compareReadiness, readinessComparisonText, readinessTrainingNote, summarizeReadinessForCoach, lastCheckinDrivenChange } from './readinessInsight'
 import { remainingSeconds } from './restTimer'
 import { findDagensPas, lastHeaviestSet } from './nextSet'
+import { applySetEdit } from './editLoggedSet'
 import { shouldNudgeCheckin } from './checkinReminder'
 import { restSecondsForExercise } from './restBetweenSets'
 import { startRestPause, loadRestPause, clearRestPause } from './restPause'
@@ -458,6 +459,7 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
                     <button
                       type="button"
+                      aria-label={`Godkendt, ret sæt ${n}`}
                       style={{ ...s.btnPrimary, flex: 1, minHeight: '44px', boxSizing: 'border-box' }}
                       onClick={async () => {
                         const ok = await onUpdateLoggedSet(ex.id, n, editInput)
@@ -466,6 +468,7 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
                     >Godkendt</button>
                     <button
                       type="button"
+                      aria-label={`Fortryd, ret sæt ${n}`}
                       style={{ ...s.btnGhost, minHeight: '44px', boxSizing: 'border-box' }}
                       onClick={() => setEditingSet(null)}
                     >Fortryd</button>
@@ -2608,7 +2611,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       rpe_planned: existing.rpe_planned ?? null,
       skipped: false,
     }
-    setExerciseLogs(prev => prev.map(l => l.id === existing.id ? { ...l, ...payload } : l))
+    setExerciseLogs(prev => applySetEdit(prev, exerciseId, setNumber, payload))
     saveOfflineSet(athlete.id, key, { exerciseId, setNumber, payload })
     const { error } = await persistSetLog(key, exerciseId, setNumber, payload, existing.id)
     if (error) {

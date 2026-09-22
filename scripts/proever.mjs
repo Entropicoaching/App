@@ -240,6 +240,19 @@ if (await portFree(8991)) {
     venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
 }
 
+// ---- 14) "ret" på et klaret sæt redigerer in place, sletter ikke (ordre
+// 320): ret sæt 2 (vægt op 2,5 kg) — sæt 3 forbliver synligt, Sæt 4/4 er
+// uændret, offline-køen fra 293 virker stadig ved "ret" (ret sæt 1 uden net,
+// sendes uden dublet når forbindelsen kommer tilbage). Egen mock-instans pr.
+// viewport, samme port-grænse som ovenfor.
+if (await portFree(8991)) {
+  rows.push(runNode('e2e (ret-saet.spec.mjs)', [join('e2e', 'ret-saet.spec.mjs')],
+    'DOM-tekst (Sæt N/M, klarede-sæt-linjer, "gemt lokalt") + mockens exercise_logs (antal rækker, opdateret vægt) på to viewports', 'e2e'))
+} else {
+  rows.push({ name: 'e2e (ret-saet.spec.mjs)', kind: 'e2e', ok: null, ms: 0,
+    venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
+}
+
 // ---- Skriv tabellen ----
 const lines = []
 lines.push('# Prøver — samlet facit (ordre 234)')
