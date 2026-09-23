@@ -28,5 +28,11 @@
     "alvor": "lav",
     "titel": "360x780: \"Mere\"-folden ligger under foerste skaerm",
     "detalje": "ikke synlig uden rulning med denne mock; afhaenger af pas-kortets hoejde"
+  },
+  {
+    "blok": 2,
+    "alvor": "middel",
+    "titel": "skak: \"Loes gaader\" efter et spil viser spilstillingen, ikke en gaade",
+    "detalje": "FEN staar uaendret paa rnbqkbnr/p1pppppp/1p6/8/4P3/8/PPPP1PPP/RNBQKBNR; Hint peger paa meningsloese felter. Findes ogsaa foer opdelingen (4215ec2), saa IKKE en 326-regression"
   }
 ]

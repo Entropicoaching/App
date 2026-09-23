@@ -11,6 +11,8 @@ import { join } from 'node:path'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { ATHLETE_ID, ATHLETE_USER, buildSeed } from '../e2e/fixtures.mjs'
 
+// Egne porte (8991 er ofte optaget af andres e2e-mock); proces-miljoe kun.
+process.env.E2E_MOCK_PORT ||= '8993'; process.env.E2E_VITE_PORT ||= '5193'; process.env.VITE_SUPABASE_URL ||= `http://127.0.0.1:${process.env.E2E_MOCK_PORT}`
 const ROOT = join(new URL('.', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'), '..')
 const OUT = join(ROOT, 'outputs', '334')
 mkdirSync(OUT, { recursive: true })
@@ -179,8 +181,8 @@ async function blok1() {
           await shot('05-efter-saet-hele', true)
           const bottom = await page.evaluate(() => [...document.querySelectorAll('*')].filter(e => getComputedStyle(e).position === 'fixed' && e.getBoundingClientRect().width > 0).map(e => { const r = e.getBoundingClientRect(); return { tag: e.tagName, top: Math.round(r.top), bottom: Math.round(r.bottom), text: e.textContent.trim().slice(0, 30) } }))
           console.log('  alle faste elementer (bund):', JSON.stringify(bottom))
-          // PR-toast: tungt saet paa naeste saet, mål dæknings af overskrift/strimmel og levetid
-          await page.getByLabel(/^Vægt, sæt/).first().fill('250').catch(() => {})
+          // PR-toast: tungt saet paa naeste saet, mï¿½l dï¿½knings af overskrift/strimmel og levetid
+          await page.getByLabel(/^Vï¿½gt, sï¿½t/).first().fill('250').catch(() => {})
           await page.getByRole('button', { name: 'Godkendt', exact: true }).first().tap().catch(() => {})
           const t0 = Date.now()
           const toast = page.getByText('Ny personlig rekord', { exact: false }).first()
@@ -194,7 +196,122 @@ async function blok1() {
   } finally { await browser.close(); await vite.stop() }
 }
 
+// ---------- Blok 2 ----------
+// Tester main (288c95a) i skak-repoet, ikke arbejdstraeet: skak-repoet har
+// ucommittede aendringer fra en anden (udseende) og dem er ikke 326's. Kun
+// laesning: `git show` til en tempfil, ingen commit, ingen skrivning der.
+async function blok2() {
+  const { execFileSync } = await import('node:child_process')
+  const { tmpdir } = await import('node:os')
+  const { pathToFileURL } = await import('node:url')
+  const { chromium } = await import('../e2e/harness.mjs')
+  const SKAK = 'C:\\Users\\Entropi\\Desktop\\skak'
+  const html = join(tmpdir(), 'kritik-334-skak-main.html')
+  writeFileSync(html, execFileSync('git', ['show', '288c95a:skak.html'], { cwd: SKAK, maxBuffer: 64 * 1024 * 1024 }))
+  const url = pathToFileURL(html).href
+  const felt = f => `#braet .felt[data-square="${f}"]`
+  const pal = (farve, type) => `.palet-brik[data-farve="${farve}"][data-type="${type}"]`
+  const STARTFEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR'
+  const browser = await chromium.launch({ headless: true })
+  const res = []
+  const check = (navn, ok_, detalje) => { res.push({ navn, ok: ok_, detalje }); console.log(`  ${ok_ ? 'ok  ' : 'FEJL'} ${navn}${detalje ? ' â€” ' + detalje : ''}`); if (!ok_) note(2, 'hoej', `skak: ${navn}`, detalje || '') }
+  try {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true })
+    const page = await ctx.newPage()
+    const fejl = []
+    page.on('pageerror', e => fejl.push('pageerror: ' + e.message)); page.on('console', m => { if (m.type() === 'error' || m.type() === 'warning') fejl.push(`console.${m.type()}: ${m.text()}`) })
+    await page.goto(url); await page.waitForSelector('#braet .felt')
+    const cdp = await ctx.newCDPSession(page)
+    const touch = (type, x, y) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x, y }] })
+    const midt = async sel => { await page.locator(sel).scrollIntoViewIfNeeded(); const b = await page.locator(sel).boundingBox(); return { x: b.x + b.width / 2, y: b.y + b.height / 2 } }
+    const tryk = async sel => { const p = await midt(sel); await touch('touchStart', p.x, p.y); await touch('touchEnd'); await page.waitForTimeout(70) }
+    const trak = async (a_, b_) => { const a = await midt(a_), b = await midt(b_); await touch('touchStart', a.x, a.y); for (let i = 1; i <= 10; i++) await touch('touchMove', a.x + (b.x - a.x) * i / 10, a.y + (b.y - a.y) * i / 10); await touch('touchEnd'); await page.waitForTimeout(90); await tryk('#status') }
+    const laes = () => page.evaluate(() => ({ fen: document.querySelector('#fen-tekst').value, titel: document.querySelector('#laer-titel').textContent, besked: document.querySelector('#laer-besked').textContent, status: document.querySelector('#status').textContent }))
+    const shot = n => page.screenshot({ path: join(OUT, `s-${n}.png`) })
+
+    // 0. Gaader (foerste fane ved indlaesning): hint -> hint -> spil hintet
+    await page.waitForSelector('#knap-gaade-hint:not([disabled])', { timeout: 8000 })
+    const fen0 = await page.locator('#fen-tekst').inputValue()
+    await page.click('#knap-gaade-hint'); await page.waitForSelector('#braet .felt.hint-fra', { timeout: 3000 })
+    await page.waitForSelector('#knap-gaade-hint:not([disabled])'); await page.click('#knap-gaade-hint'); await page.waitForSelector('#braet .felt.hint-til', { timeout: 3000 })
+    const fra = await page.locator('#braet .felt.hint-fra').getAttribute('data-square'), til = await page.locator('#braet .felt.hint-til').getAttribute('data-square')
+    await page.click(felt(fra)); await page.click(felt(til)); await page.waitForTimeout(900)
+    const fen1 = await page.locator('#fen-tekst').inputValue()
+    check('Gaader: hint -> spil hintet -> stillingen aendrer sig', fen1 !== fen0, `${fra}->${til}`)
+    await shot('0-gaade')
+    // 1. Laer skak: forkert drag afvist og forklaret, rigtigt drag godkendt
+    await tryk('#fane-laer')
+    await tryk('.segment[data-segment="laer-niveau"] .segment-knap[data-value="spiller"]')
+    let s = await laes()
+    check('Laer skak: niveau "spiller" starter i Italiensk', s.titel.includes('Italiensk'), s.titel)
+    await trak(felt('d2'), felt('d4'))
+    s = await laes()
+    check('Laer skak: forkert drag (d2-d4) forklares', /Lovligt, men ikke det vi/.test(s.besked), s.besked)
+    await shot('1-forkert-drag')
+    await page.waitForTimeout(1400); s = await laes()
+    check('Laer skak: forkert drag ruller tilbage', s.fen.split(' ')[0] === STARTFEN, s.fen)
+    await trak(felt('e2'), felt('e4')); s = await laes()
+    check('Laer skak: rigtigt drag (e2-e4) godkendes', s.fen.split(' ')[0].startsWith('rnbqkbnr/pppp1ppp/8/4p3/4P3') || /^Rigtigt/.test(s.besked), `${s.besked} | ${s.fen}`)
+    await shot('2-rigtigt-drag')
+    // Tryk-tryk i Laer skak (samme dom som drag): forkert tryk-par
+    await tryk('#knap-laer-forfra').catch(() => {})
+    await page.waitForTimeout(300)
+    await tryk(felt('d2')); await tryk(felt('d4')); s = await laes()
+    check('Laer skak: forkert TRYK-tryk (d2,d4) forklares ogsaa', /Lovligt, men ikke det vi/.test(s.besked) || s.besked !== '', s.besked)
+    await page.waitForTimeout(1400)
+
+    // 2. Opstil: drag fra palet
+    await page.setViewportSize({ width: 1280, height: 800 })
+    await tryk('#fane-opstil'); await tryk('#knap-ryd'); await tryk('#knap-ryd-bekraeft')
+    await trak(pal('w', 'q'), felt('d4')); s = await laes()
+    check('Opstil: drag fra palet saetter dronning paa d4', s.fen.split(' ')[0] === '8/8/8/8/3Q4/8/8/8', s.fen)
+    await trak(felt('d4'), felt('h8')); s = await laes()
+    check('Opstil: drag af brik paa braettet flytter den (d4->h8)', s.fen.split(' ')[0] === '7Q/8/8/8/8/8/8/8', s.fen)
+    await shot('3-opstil')
+
+    // 3. Tegnelag (mus): pil, ring, viskelaeder
+    const tegn = () => page.evaluate(() => document.querySelectorAll('#tegne-lag *').length)
+    const t0 = await tegn()
+    await page.click('.vaerktoej[data-vaerktoej="pil"]')
+    const a = await midt(felt('a1')), b = await midt(felt('a5'))
+    await page.mouse.move(a.x, a.y); await page.mouse.down(); await page.mouse.move((a.x + b.x) / 2, (a.y + b.y) / 2, { steps: 4 }); await page.mouse.move(b.x, b.y, { steps: 4 }); await page.mouse.up()
+    const t1 = await tegn(); check('Tegnelag: pil tegnes (a1->a5)', t1 > t0, `${t0} -> ${t1} elementer`)
+    await page.click('.vaerktoej[data-vaerktoej="ring"]'); await page.click(felt('c3'))
+    const t2 = await tegn(); check('Tegnelag: ring saettes (c3)', t2 > t1, `${t1} -> ${t2}`)
+    await shot('4-tegnelag')
+    await page.click('.vaerktoej[data-vaerktoej="viskelaeder"]'); await page.click(felt('c3'))
+    const t3 = await tegn(); check('Tegnelag: viskelaeder fjerner ring', t3 < t2, `${t2} -> ${t3}`)
+    await page.click('#knap-ryd-tegning').catch(() => {})
+    await page.click('.vaerktoej[data-vaerktoej="flyt"]')
+
+    // 4. Spil mod computeren (motor): e2-e4, computeren svarer
+    await page.click('#knap-startopstilling'); await page.click('#fane-spil')
+    await page.click('.segment[data-segment="spil-modus"] .segment-knap[data-value="computer"]')
+    await page.click('#knap-spil-forfra'); await page.click('#knap-spil-forfra-bekraeft')
+    await page.click(felt('e2')); await page.click(felt('e4'))
+    let svar = null
+    for (let i = 0; i < 40; i++) { await page.waitForTimeout(250); const f = await page.locator('#fen-tekst').inputValue(); if (f.split(' ')[1] === 'w' && f.split(' ')[0] !== STARTFEN) { svar = f; break } }
+    check('Motor: computeren svarer paa e2-e4 inden 10 s', !!svar, svar || 'intet svar')
+    await shot('5-spil')
+
+    // Gaader efter et spil: vises der en gaade, eller braettet fra Spil?
+    const spilFen = await page.locator('#fen-tekst').inputValue()
+    await page.click('#fane-gaader'); await page.waitForTimeout(1500)
+    const gFen = await page.locator('#fen-tekst').inputValue()
+    if (gFen === spilFen) note(2, 'middel', 'skak: "Loes gaader" efter et spil viser spilstillingen, ikke en gaade', `FEN staar uaendret paa ${gFen.split(' ')[0]}; Hint peger paa meningsloese felter. Findes ogsaa foer opdelingen (4215ec2), saa IKKE en 326-regression`)
+    else ok('Loes gaader efter et spil viser en gaade')
+    await shot('6-gaade-efter-spil')    // Opgave-fanen (find mat)
+    await page.click('#fane-opgave'); await page.waitForTimeout(500)
+    check('Opgave-fane aabner', await page.locator('#panel-opgave').isVisible().catch(() => false))
+    await shot('7-opgave')
+
+    check('Konsol og sidefejl tomme', fejl.length === 0, fejl.slice(0, 3).join(' | '))
+    await ctx.close()
+  } finally { await browser.close() }
+  writeFileSync(join(OUT, 'skak-resultat.json'), JSON.stringify(res, null, 2) + '\n')
+}
 if (blokArg === '1' || blokArg === 'alle') await blok1()
+if (blokArg === '2' || blokArg === 'alle') await blok2()
 writeFileSync(join(OUT, `fund-blok-${blokArg}.json`), JSON.stringify(fund, null, 2) + '\n')
 console.log(`\nFerdig blok ${blokArg}: ${fund.length} noterede fund`)
 
