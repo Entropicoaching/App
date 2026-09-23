@@ -63,6 +63,10 @@ async function runViewport(page, { tag, width, height, mockUrl, outDir }) {
   await checkOverflow(page, `${tag} efter sæt 1-3, før ret`)
   await shot('00-tre-saet-logget')
 
+  // ORDRE 339 · blok 1 (F3) — klarede sæt er kollapset til én linje som
+  // standard; "ret"-rækkerne skal foldes ud først.
+  assert.equal(await page.getByRole('button', { name: 'Ret sæt 2', exact: true }).count(), 0, `${tag}: "ret"-rækkerne skal være kollapset som standard`)
+  await page.getByRole('button', { name: 'Vis 3 klarede sæt', exact: true }).click()
   const setNumSaetLinje = (n) => page.getByText(`Sæt ${n}:`, { exact: false })
   const foerVaegt = parseSetLineWeight(await setNumSaetLinje(2).innerText())
   assert.ok(foerVaegt != null, `${tag}: kunne ikke læse vægten på "Sæt 2:"-linjen`)

@@ -199,7 +199,11 @@ function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession, shownWd })
   const mono = "'IBM Plex Mono', monospace"
   return (
     <div style={{ marginBottom: '1.25rem' }}>
-      <div data-dagstrimmel="" style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '0.5rem' }}>
+      {/* ORDRE 339 · blok 1 (F2 fra KRITIK-330-326) — med gap 0.5rem blev
+          cellerne 40 px brede på 360 px (328 px indhold). Strimlen låner nu
+          0,5rem af sidens margen i hver side og har 0,35rem mellemrum (330's
+          krav om ≥5 px luft holder): 344 px → ≥44 px pr. celle på 360 px. */}
+      <div data-dagstrimmel="" style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(0, 1fr))', gap: '0.35rem', margin: '0 -0.5rem' }}>
         {days.map(d => {
           const isToday = d.date ? d.date.getTime() === today.getTime() : d.wd === todayWd
           const has = d.sessions.length > 0
@@ -238,7 +242,8 @@ function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession, shownWd })
                 opacity: state === 'hvile' && !isToday ? 0.7 : 1,
               }}
             >
-              <span data-ugedag="" style={{ fontSize: '0.48rem', letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: isShown ? 700 : 400, color: isShown ? '#c8923a' : isToday ? '#edeae2' : '#7a7770' }}>
+              {/* ORDRE 339 · blok 1 (F1) — ugedag 7,7 px → ~10,4 px, "hvile" 6,4 px → 9,6 px. */}
+              <span data-ugedag="" style={{ fontSize: '0.65rem', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: isShown ? 700 : 400, color: isShown ? '#c8923a' : isToday ? '#edeae2' : '#7a7770' }}>
                 {WEEKDAYS_SHORT[d.wd]}
               </span>
               <span style={{
@@ -251,7 +256,7 @@ function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession, shownWd })
               }}>
                 {d.date ? d.date.getDate() : ''}
               </span>
-              <span style={{ fontSize: state === 'hvile' ? '0.4rem' : '0.55rem', letterSpacing: state === 'hvile' ? '0.06em' : 0, lineHeight: 1, height: '0.6rem', textTransform: 'uppercase', color: allDone ? '#6cba6c' : isShown ? '#c8923a' : has ? '#a9a69e' : '#4a4844' }}>
+              <span data-dagstatus="" style={{ fontSize: '0.6rem', letterSpacing: 0, lineHeight: 1, height: '0.7rem', textTransform: 'uppercase', color: allDone ? '#6cba6c' : isShown ? '#c8923a' : has ? '#a9a69e' : '#4a4844' }}>
                 {allDone ? '✓' : has ? '●' : 'hvile'}
               </span>
               {isShown && (
@@ -292,6 +297,8 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
   // en anden øvelse, hvis kortet skifter øvelse mens redigeringen står åben.
   const [editingSet, setEditingSet] = useState(null) // { exerciseId, setNumber } | null
   const [editInput, setEditInput] = useState({ weight: '', reps: '' })
+  // ORDRE 339 · blok 1 (F3) — klarede sæt er kollapset til én linje som standard.
+  const [showPriorSets, setShowPriorSets] = useState(false)
   const startEditingSet = (exerciseId, setNumber, log) => {
     setEditingSet({ exerciseId, setNumber })
     setEditInput({ weight: log.skipped ? '' : String(log.weight ?? ''), reps: log.skipped ? '' : String(log.reps_completed ?? '') })
@@ -405,6 +412,10 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
   // ikke være huller foran "next"). Vises som kompakte linjer, ikke fulde felter.
   const priorSetNumbers = Array.from({ length: setNumber - 1 }, (_, i) => i + 1)
   const nextSetNumber = setNumber + 1
+  // ORDRE 339 · blok 1 (F3) — klarede sæt foldet ud (tryk, eller et sæt står
+  // åbent til redigering); ellers én linje, der også bærer "fortryd".
+  const priorSetsOpen = showPriorSets || editingSet != null
+  const undoInline = priorSetNumbers.length > 0 && !priorSetsOpen && lastLoggedSet && lastLoggedSet.exerciseId === ex.id
   const nextSetReps = repsIsEditable ? (last?.reps ?? (repsPrescription.type === 'range' ? repsPrescription.min : null)) : ex.reps
   const nextSetWeight = ex.recommended_weight ?? suggestion?.weight ?? last?.weight ?? null
 
@@ -441,8 +452,40 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
           redigering UDEN at slette log-rækken (se onUpdateLoggedSet/
           docs/KRITIK-314.md fund 1+3 — den gamle onUndoLastSet-genbrug slettede
           rækken, hvilket gjorde senere sæt "usynlige" for nextSetInSession). */}
-      {priorSetNumbers.length > 0 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', marginBottom: '0.75rem' }}>
+      {/* ORDRE 339 · blok 1 (F3 fra KRITIK-330-326) — med tre loggede sæt
+          skubbede "ret"-rækkerne (~50 px hver) chipsene og "Mere" under
+          folden midt i et pas. Rækkerne er derfor kollapset til ÉN linje som
+          standard ("n sæt klaret" + seneste sæt); et tryk folder dem ud. Står
+          et sæt åbent til redigering, er listen altid foldet ud. */}
+      {priorSetNumbers.length > 0 && !priorSetsOpen && (() => {
+        const lastPrior = (exerciseLogs || []).find(l => l.exercise_id === ex.id && l.set_number === priorSetNumbers.length)
+        return (
+          <div data-klarede-saet="kollapset" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', marginBottom: '0.75rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.64rem', color: '#7a7770' }}>
+            <span style={{ flex: 1, minWidth: 0 }}>
+              ✓ {priorSetNumbers.length} sæt klaret{lastPrior && !lastPrior.skipped ? ` · senest ${lastPrior.weight}kg × ${lastPrior.reps_completed}` : ''}
+            </span>
+            {/* "Fortryd sidste sæt" står i den kollapsede linje i stedet for
+                som egen fuld-bredde-række (sparer ~50 px, F3); samme handling. */}
+            {undoInline && (
+              <button
+                type="button"
+                aria-label="↺ Fortryd sidste sæt"
+                onClick={() => onUndoLastSet(lastLoggedSet.exerciseId, lastLoggedSet.setNumber)}
+                style={{ background: 'none', border: 'none', color: '#7a7770', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.04em', padding: '0 0.25rem', minWidth: '44px', minHeight: '44px', boxSizing: 'border-box', flexShrink: 0 }}
+              >↺ fortryd</button>
+            )}
+            <button
+              type="button"
+              aria-expanded="false"
+              aria-label={`Vis ${priorSetNumbers.length} klarede sæt`}
+              onClick={() => setShowPriorSets(true)}
+              style={{ background: 'none', border: 'none', color: '#7a7770', cursor: 'pointer', fontSize: '0.58rem', letterSpacing: '0.04em', padding: 0, minWidth: '44px', minHeight: '44px', boxSizing: 'border-box', flexShrink: 0 }}
+            >vis / ret ▾</button>
+          </div>
+        )
+      })()}
+      {priorSetNumbers.length > 0 && priorSetsOpen && (
+        <div data-klarede-saet="foldet-ud" style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', marginBottom: '0.75rem' }}>
           {priorSetNumbers.map(n => {
             const log = (exerciseLogs || []).find(l => l.exercise_id === ex.id && l.set_number === n)
             if (!log) return null
@@ -615,7 +658,7 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
       </div>
       {/* Fortryd — kun mens man ikke har forladt øvelsen: næste sæt i kortet
           skal stadig høre til den øvelse man lige loggede et sæt på. */}
-      {lastLoggedSet && lastLoggedSet.exerciseId === ex.id && (
+      {lastLoggedSet && lastLoggedSet.exerciseId === ex.id && !undoInline && (
         <button
           type="button"
           onClick={() => onUndoLastSet(lastLoggedSet.exerciseId, lastLoggedSet.setNumber)}
@@ -3553,6 +3596,39 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     )
   }
 
+  // ORDRE 339 · blok 1 (F5 fra KRITIK-330-326) — PR-toasten og den
+  // almindelige toast lå fast (position: fixed) 10 px under topbaren og
+  // dækkede derfor overskriften ("Tirsdag · Dag 2 …") og strimlen i de ~3 s
+  // lige efter et logget sæt, også når siden var rullet lidt. Nu ligger de i
+  // en plads i sidens flow (sticky under topbaren). På forsiden står pladsen
+  // EFTER overskrift + strimmel: et sticky element kan kun glide ned over
+  // indhold der kommer efter det, så dagen kan aldrig dækkes. På de andre
+  // faner står den lige under topbaren.
+  const toastSlot = (prToast || flash) ? (
+    <div data-toast-plads="" style={{ position: 'sticky', top: '52px', zIndex: 49, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem', padding: '0.6rem 0', pointerEvents: 'none' }}>
+      {prToast && (
+        <div style={{
+          background: '#1c1c18', border: '1px solid rgba(200,146,58,0.55)',
+          padding: '0.65rem 1.1rem', maxWidth: '100%', boxSizing: 'border-box', textAlign: 'center',
+          fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem',
+          color: '#c8923a', letterSpacing: '0.08em',
+          boxShadow: '0 4px 24px rgba(0,0,0,0.55)',
+          opacity: prToastFading ? 0 : 1, transition: 'opacity 0.6s ease',
+        }}>
+          {prToast.type === 'vægt' ? '🏆 Ny personlig rekord (vægt)' : prToast.type === 'rep' ? '🔥 Ny personlig rekord (reps)' : '⚡ Stærkeste sæt'} på {prToast.name}
+        </div>
+      )}
+      {flash && (
+        <div role="status" style={{
+          background: '#1c1c18', border: `1px solid ${flash.kind === 'error' ? 'rgba(224,85,85,0.55)' : 'rgba(200,146,58,0.55)'}`,
+          padding: '0.65rem 1.4rem', maxWidth: '100%', boxSizing: 'border-box', textAlign: 'center',
+          fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', letterSpacing: '0.06em',
+          color: flash.kind === 'error' ? '#e05555' : '#c8923a', boxShadow: '0 4px 24px rgba(0,0,0,0.55)',
+        }}>{flash.message}</div>
+      )}
+    </div>
+  ) : null
+
   return (
     <div style={s.wrap}>
       {role === 'athlete' && athleteVideoCoachOpen && (
@@ -3601,22 +3677,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           </div>
         </div>
       )}
-      {/* PR toast — ORDRE 330 · blok 2 (F12 fra 292): lagt UNDER topbaren
-          (52 px, sticky) i stedet for oven på den, og må bryde linjen i
-          stedet for at løbe ud over en 360 px skærm. */}
-      {prToast && (
-        <div style={{
-          position: 'fixed', top: 'calc(52px + 0.6rem)', left: 0, right: 0, margin: '0 auto', width: 'fit-content',
-          background: '#1c1c18', border: '1px solid rgba(200,146,58,0.55)',
-          padding: '0.65rem 1.1rem', zIndex: 9999, maxWidth: 'calc(100vw - 2rem)', boxSizing: 'border-box', textAlign: 'center',
-          fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem',
-          color: '#c8923a', letterSpacing: '0.08em',
-          boxShadow: '0 4px 24px rgba(0,0,0,0.55)',
-          opacity: prToastFading ? 0 : 1, transition: 'opacity 0.6s ease',
-        }}>
-          {prToast.type === 'vægt' ? '🏆 Ny personlig rekord (vægt)' : prToast.type === 'rep' ? '🔥 Ny personlig rekord (reps)' : '⚡ Stærkeste sæt'} på {prToast.name}
-        </div>
-      )}
       {/* Fortryd-toast */}
       {undoToast && (
         <div style={{
@@ -3629,16 +3689,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#b8b4a8', letterSpacing: '0.06em' }}>{undoToast.label}</span>
           <button onClick={undoDelete} disabled={undoPending} style={{ ...s.btnGhost, fontSize: '0.58rem', padding: '0.3rem 0.7rem', color: '#c8923a', borderColor: 'rgba(200,146,58,0.45)', opacity: undoPending ? 0.6 : 1 }}>{undoPending ? '...' : 'Fortryd'}</button>
         </div>
-      )}
-      {/* Toast — samme placering under topbaren som PR-toasten (ORDRE 330). */}
-      {flash && (
-        <div style={{
-          position: 'fixed', top: 'calc(52px + 0.6rem)', left: 0, right: 0, margin: '0 auto', width: 'fit-content',
-          background: '#1c1c18', border: `1px solid ${flash.kind === 'error' ? 'rgba(224,85,85,0.55)' : 'rgba(200,146,58,0.55)'}`,
-          padding: '0.65rem 1.4rem', zIndex: 10000, maxWidth: '90vw',
-          fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', letterSpacing: '0.06em',
-          color: flash.kind === 'error' ? '#e05555' : '#c8923a', boxShadow: '0 4px 24px rgba(0,0,0,0.55)',
-        }}>{flash.message}</div>
       )}
       {/* Bekræftelses-modal */}
       {confirmDialog && (
@@ -3694,6 +3744,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           )}
         </div>
       </div>
+      {/* Toast-pladsen (ORDRE 339 · F5): under topbaren på alle faner undtagen
+          forsiden, hvor den ligger under overskrift + strimmel (se toastSlot). */}
+      {!(tab === 'hjem' && !onHoliday) && toastSlot}
       {recheckMsg && !onExitPreview && (
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.04em', color: '#7a7770', textAlign: 'right', padding: '0.4rem 1.5rem 0' }}>{recheckMsg}</div>
       )}
@@ -3768,6 +3821,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                     // altid statisk data fra første billede.
                     <div style={{ height: '64px', marginBottom: '1.25rem' }} />
                   )}
+
+                  {toastSlot}
 
                   <DagensPasCard
                     pas={dagensPas}
