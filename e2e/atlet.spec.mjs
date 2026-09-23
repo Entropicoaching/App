@@ -39,7 +39,7 @@ export async function runAtletJourney(page, { appUrl, mockUrl, outDir }) {
   await page.getByText('Næste', { exact: true }).waitFor({ state: 'visible' })
   await shot('02-hjem-dagens-pas')
 
-  await page.getByText('Dag 1 — Squat').click()
+  await page.getByText('Dag 1 — Squat', { exact: true }).click()
 
   // Opvarmning vises for øvelsen (Squat har recommended_weight >= 20, se fixtures.mjs).
   await page.getByText('Opvarmningssæt —').waitFor({ state: 'visible', timeout: 10000 })

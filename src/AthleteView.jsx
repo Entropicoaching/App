@@ -171,15 +171,25 @@ const WEEKDAYS_LONG = ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lør
 const WEEKDAYS_SHORT = ['Man', 'Tir', 'Ons', 'Tor', 'Fre', 'Lør', 'Søn']
 
 // Ugekalender på forsiden: 7 celler (man-søn) med ugens sessioner placeret på
-// deres weekday. Grøn = færdiglogget, gul = næste session, ring = i dag.
-// Klik på en dag med session åbner den i Program-fanen.
-function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession }) {
+// deres weekday. Klik på en dag med session åbner den i Program-fanen.
+//
+// ORDRE 330 · blok 1 — Marcs dom: man så ikke tydeligt hvilken dag man stod
+// på, og dagene flød sammen til én blok. Derfor bæres hver tilstand nu af
+// FORM, ikke kun en farvenuance:
+//   - den viste dag (dagens pas' dag, `shownWd`): 2 px kant, fed ugedag,
+//     lille trekant under cellen,
+//   - i dag: datoen står i en udfyldt lys cirkel (aria-current="date"),
+//   - pas-dage: fast kant + prik, klarede pas: ✓,
+//   - hviledage: stiplet kant, "hvile" i stedet for prik, dæmpet.
+// Og der er luft (0.5rem) mellem dagene. Uden datoer på ugen (ældre
+// programmer) regnes den aktive uge som denne uge, så "i dag" stadig vises.
+function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession, shownWd }) {
   const sessions = week?.sessions || []
   if (!sessions.length) return null
   const sessDone = s => (s.exercises || []).length > 0 &&
     (s.exercises || []).every(ex => exerciseLogs.some(l => l.exercise_id === ex.id))
-  const nextS = sessions.find(s => !sessDone(s))
   const today = new Date(); today.setHours(0, 0, 0, 0)
+  const todayWd = (today.getDay() + 6) % 7
   const days = [...Array(7)].map((_, wd) => {
     let date = null
     if (weekStart) { date = new Date(weekStart.getTime() + wd * 86400000); date.setHours(0, 0, 0, 0) }
@@ -189,43 +199,70 @@ function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession }) {
   const mono = "'IBM Plex Mono', monospace"
   return (
     <div style={{ marginBottom: '1.25rem' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '0.3rem' }}>
+      <div data-dagstrimmel="" style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '0.5rem' }}>
         {days.map(d => {
-          const isToday = d.date && d.date.getTime() === today.getTime()
+          const isToday = d.date ? d.date.getTime() === today.getTime() : d.wd === todayWd
           const has = d.sessions.length > 0
           const allDone = has && d.sessions.every(sessDone)
-          const isNext = nextS && d.sessions.some(s => s.id === nextS.id)
-          const border = isNext ? 'rgba(200,146,58,0.55)' : allDone ? 'rgba(108,186,108,0.4)' : has ? 'rgba(237,234,226,0.14)' : 'rgba(237,234,226,0.06)'
-          const bg = isNext ? 'rgba(200,146,58,0.1)' : allDone ? 'rgba(108,186,108,0.06)' : has ? 'rgba(237,234,226,0.03)' : 'transparent'
+          const isShown = shownWd != null && d.wd === shownWd
+          const state = !has ? 'hvile' : allDone ? 'klaret' : 'pas'
+          const border = isShown ? '2px solid #c8923a'
+            : state === 'klaret' ? '1px solid rgba(108,186,108,0.45)'
+            : state === 'pas' ? '1px solid rgba(237,234,226,0.22)'
+            : '1px dashed rgba(237,234,226,0.1)'
+          const bg = isShown ? 'rgba(200,146,58,0.14)' : state === 'klaret' ? 'rgba(108,186,108,0.07)' : state === 'pas' ? 'rgba(237,234,226,0.04)' : 'transparent'
           const open = has ? (d.sessions.find(s => !sessDone(s)) || d.sessions[0]) : null
+          const label = [
+            WEEKDAYS_LONG[d.wd],
+            isToday && 'i dag',
+            has ? d.sessions.map(s => s.title).join(', ') : 'hviledag',
+            allDone && 'klaret',
+            isShown && 'vises nu',
+          ].filter(Boolean).join(' · ')
           return (
             <button
               key={d.wd}
+              type="button"
+              data-dag={state}
+              data-vist={isShown ? 'ja' : undefined}
+              aria-current={isToday ? 'date' : undefined}
+              aria-label={label}
               onClick={() => open && onOpenSession(open.id)}
-              title={d.sessions.map(s => s.title).join(' · ') || undefined}
               style={{
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.2rem',
-                padding: '0.45rem 0.1rem 0.4rem', background: bg,
-                border: `1px solid ${border}`, borderRadius: 2,
-                outline: isToday ? '1px solid rgba(237,234,226,0.4)' : 'none', outlineOffset: 1,
+                position: 'relative',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem',
+                minWidth: 0, minHeight: '64px', boxSizing: 'border-box',
+                padding: isShown ? '0.4rem 0 0.35rem' : '0.45rem 0 0.4rem', background: bg,
+                border, borderRadius: 4,
                 cursor: has ? 'pointer' : 'default', fontFamily: mono,
+                opacity: state === 'hvile' && !isToday ? 0.7 : 1,
               }}
             >
-              <span style={{ fontSize: '0.46rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: isToday ? '#edeae2' : '#4a4844' }}>
+              <span data-ugedag="" style={{ fontSize: '0.48rem', letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: isShown ? 700 : 400, color: isShown ? '#c8923a' : isToday ? '#edeae2' : '#7a7770' }}>
                 {WEEKDAYS_SHORT[d.wd]}
               </span>
-              <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '0.85rem', lineHeight: 1, color: has ? '#edeae2' : '#4a4844' }}>
-                {d.date ? d.date.getDate() : '·'}
+              <span style={{
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                width: '1.45rem', height: '1.45rem', borderRadius: '50%',
+                fontFamily: "'Playfair Display', serif", fontSize: '0.85rem', lineHeight: 1,
+                fontWeight: isShown || isToday ? 700 : 400,
+                background: isToday ? '#edeae2' : 'transparent',
+                color: isToday ? '#141410' : has ? '#edeae2' : '#4a4844',
+              }}>
+                {d.date ? d.date.getDate() : ''}
               </span>
-              <span style={{ fontSize: '0.55rem', lineHeight: 1, height: '0.6rem', color: allDone ? '#6cba6c' : isNext ? '#c8923a' : has ? '#7a7770' : 'transparent' }}>
-                {allDone ? '✓' : has ? '●' : '·'}
+              <span style={{ fontSize: state === 'hvile' ? '0.4rem' : '0.55rem', letterSpacing: state === 'hvile' ? '0.06em' : 0, lineHeight: 1, height: '0.6rem', textTransform: 'uppercase', color: allDone ? '#6cba6c' : isShown ? '#c8923a' : has ? '#a9a69e' : '#4a4844' }}>
+                {allDone ? '✓' : has ? '●' : 'hvile'}
               </span>
+              {isShown && (
+                <span aria-hidden="true" style={{ position: 'absolute', bottom: '-7px', left: '50%', transform: 'translateX(-50%)', width: 0, height: 0, borderLeft: '5px solid transparent', borderRight: '5px solid transparent', borderTop: '5px solid #c8923a' }} />
+              )}
             </button>
           )
         })}
       </div>
       {flex.length > 0 && (
-        <div style={{ fontFamily: mono, fontSize: '0.5rem', letterSpacing: '0.06em', color: '#4a4844', marginTop: '0.35rem' }}>
+        <div style={{ fontFamily: mono, fontSize: '0.5rem', letterSpacing: '0.06em', color: '#4a4844', marginTop: '0.5rem' }}>
           + {flex.length} fleksibel{flex.length > 1 ? 'le' : ''} session{flex.length > 1 ? 'er' : ''} uden fast dag
         </div>
       )}
@@ -3303,8 +3340,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   })()
 
   const now = new Date()
-  const hour = now.getHours()
-  const greeting = hour < 10 ? 'morgen' : hour < 12 ? 'formiddag' : hour < 17 ? 'eftermiddag' : 'aften'
   const days = ['søndag', 'mandag', 'tirsdag', 'onsdag', 'torsdag', 'fredag', 'lørdag']
   const months = ['januar', 'februar', 'marts', 'april', 'maj', 'juni', 'juli', 'august', 'september', 'oktober', 'november', 'december']
 
@@ -3682,21 +3717,52 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         )}
         {tab === 'hjem' && !onHoliday && (
           <>
-            <div style={{ marginBottom: '1.5rem' }}>
-              <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>
-                God <em style={{ fontStyle: 'italic', color: '#7a7770' }}>{greeting}</em>.
-              </h1>
-              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844', marginTop: '0.25rem' }}>
-                {days[now.getDay()]} d. {now.getDate()}. {months[now.getMonth()]} {now.getFullYear()}
-              </div>
-            </div>
-
             {(() => {
               const dagensPas = findDagensPas(allWeeks, currentWeek, exerciseLogs)
               const next = dagensPas?.status === 'open' ? dagensPas.next : null
               const nextLabel = next ? `Næste: ${next.exercise?.name || ''} · sæt ${next.setNumber}/${next.totalSets}` : null
+              // ORDRE 330 · blok 1 — én tydelig overskrift øverst: hvilken dags
+              // pas er det man ser ("Onsdag · Dag 1 — Squat"). Dagen er passets
+              // faste ugedag; uden fast ugedag (fleksibelt pas) er det i dag.
+              // Samme dag markeres i ugestrimlen lige under (shownWd).
+              const todayWd = (now.getDay() + 6) % 7
+              const pasSession = dagensPas?.status === 'open' ? dagensPas.session : null
+              const shownWd = pasSession ? (pasSession.weekday ?? todayWd) : todayWd
+              const headingRest = pasSession ? pasSession.title
+                : dagensPas?.status === 'done' ? 'Ugens pas er klaret'
+                : 'Intet pas i dag'
+              const isTodayShown = shownWd === todayWd
               return (
                 <>
+                  <div style={{ marginBottom: '1rem' }}>
+                    <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.55rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.15, margin: 0 }}>
+                      {`${WEEKDAYS_LONG[shownWd]} · ${headingRest}`}
+                    </h1>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginTop: '0.35rem' }}>
+                      {isTodayShown ? 'I dag' : `I dag er det ${days[now.getDay()]}`} · {now.getDate()}. {months[now.getMonth()]}
+                    </div>
+                  </div>
+
+                  {currentWeek ? (
+                    <WeekCalendar
+                      week={currentWeek}
+                      weekStart={weekStartDate(allWeeks, currentWeek.week_number)}
+                      exerciseLogs={exerciseLogs}
+                      onOpenSession={(id) => { setTab('program'); openSession(id) }}
+                      shownWd={pasSession ? shownWd : null}
+                    />
+                  ) : (
+                    // Reserverer WeekCalendars typiske højde: FØR ugedata (allWeeks)
+                    // er hentet, findes dette element slet ikke (WeekCalendar
+                    // returnerer null / hele blokken er ugengivet), og når det
+                    // dukker op skubber det alt nedenfor — bl.a. "Dagens parathed"-
+                    // kortet — ned. Målt som appens største reelle layoutskift
+                    // (CLS 0,106) i ordre 173's rigtige, autentificerede måling; den
+                    // isolerede harness i ordre 167 kunne aldrig se dette, den havde
+                    // altid statisk data fra første billede.
+                    <div style={{ height: '64px', marginBottom: '1.25rem' }} />
+                  )}
+
                   <DagensPasCard
                     pas={dagensPas}
                     exerciseHistory={exerciseHistory}
@@ -3740,25 +3806,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 </>
               )
             })()}
-
-            {currentWeek ? (
-              <WeekCalendar
-                week={currentWeek}
-                weekStart={weekStartDate(allWeeks, currentWeek.week_number)}
-                exerciseLogs={exerciseLogs}
-                onOpenSession={(id) => { setTab('program'); openSession(id) }}
-              />
-            ) : (
-              // Reserverer WeekCalendars typiske højde: FØR ugedata (allWeeks)
-              // er hentet, findes dette element slet ikke (WeekCalendar
-              // returnerer null / hele blokken er ugengivet), og når det
-              // dukker op skubber det alt nedenfor — bl.a. "Dagens parathed"-
-              // kortet — ned. Målt som appens største reelle layoutskift
-              // (CLS 0,106) i ordre 173's rigtige, autentificerede måling; den
-              // isolerede harness i ordre 167 kunne aldrig se dette, den havde
-              // altid statisk data fra første billede.
-              <div style={{ height: '76px', marginBottom: '1.25rem' }} />
-            )}
 
             {currentWeek && (() => {
               // ORDRE 276 · blok 2: "sidste uge" = programugen lige før den

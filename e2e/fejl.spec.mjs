@@ -35,7 +35,7 @@ export async function runOfflineSetLog(page, { appUrl, mockUrl, outDir }) {
   const setNum = 4
 
   await loginAsAthlete(page, appUrl)
-  await page.getByText('Dag 1 — Squat').click()
+  await page.getByText('Dag 1 — Squat', { exact: true }).click()
   await page.getByLabel(`Vægt, sæt ${setNum}`).waitFor({ state: 'visible', timeout: 10000 })
 
   await page.context().setOffline(true)
