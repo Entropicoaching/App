@@ -6321,6 +6321,14 @@ async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd, preSeek, opt
     // NÆSTE fase (rtAdvanceTo, se ovenfor) genbruger den samme, allerede
     // kørende afspilning i stedet for at pausere og seeke.
     let finish = () => { stopped = true; if (pauseAtEnd) v.pause(); resolve(); };
+    // ORDRE 333: updateTimeline pauser videoen ved trimEnd (= vinduets slut).
+    // Når den pause kommer før en frame med mediaTime >= windowEnd, fyrer
+    // requestVideoFrameCallback aldrig igen og vinduet hang for altid. En
+    // pause afslutter derfor også vinduet.
+    const onPause = () => { if (!stopped) finish(); };
+    v.addEventListener('pause', onPause);
+    const finishBeforePause = finish;
+    finish = () => { v.removeEventListener('pause', onPause); finishBeforePause(); };
     // requestVideoFrameCallback's FØRSTE argument er et render-tidsstempel
     // (samme skala som performance.now()), IKKE videoens medietid - den findes
     // kun i metadata.mediaTime (samme mønster som startMultipointTrackings
@@ -6465,6 +6473,11 @@ async function vcAthletePreviewThree(barPt) {
   // seek til samme mål for vindue 1, som kunne race mod presearchs shadow-
   // seek og levere en frame fra midt i den forkerte seek. Se RAPPORT-124.md.)
   let pendingSeek = presearch.firstWindowSeek;
+  // ORDRE 333: vcRealtimeTrackWindow stopper ved første frame når `tracking`
+  // er falsk (se dens onFrame). Uden denne linje sporede "Vis mig nu" 0 reps
+  // siden ordre 80 og faldt altid tilbage til ren upload. allBtn (Stop)
+  // nulstiller både analyzing og tracking.
+  tracking = true;
   for (let k = 0; k < idxs.length; k++) {
     if (!analyzing) break;   // atleten trak stikket undervejs (allBtn = Stop)
     const w = presearch.windows[idxs[k]];
@@ -6535,6 +6548,7 @@ async function vcAthletePreviewThree(barPt) {
   }
   trimEnd = savedTrimEnd;
   analyzing = false;
+  tracking = false;
   if (!previewPaths.length) {
     say('Ingen af de tre prøve-gentagelser gav et brugbart spor · sender videoen til din coach i stedet');
     setTimeout(() => say(''), 4200);
