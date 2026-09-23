@@ -114,6 +114,19 @@ async function runViewport(page, { tag, width, height }) {
       assert.equal(rest[0].borderStyle, 'dashed', `${tag}: hviledage har stiplet kant`)
       assert.notEqual(planned.find(c => !c.shown)?.borderStyle ?? 'solid', 'dashed', `${tag}: pas-dage har ikke stiplet kant`)
     }
+    // ORDRE 339 · blok 1 (F2 fra KRITIK-330-326): mindst 44 px brede celler, også på 360 px.
+    for (const [i, c] of cells.entries()) {
+      assert.ok(c.right - c.left >= 44, `${tag}: dag ${i + 1} er ${(c.right - c.left).toFixed(1)} px bred (< 44 px tap-mål)`)
+    }
+    // ORDRE 339 · blok 1 (F1): strimlens tekst kan læses uden at zoome (>= 9 px).
+    const stripFonts = await strip.evaluate(el => ({
+      ugedag: Math.min(...[...el.querySelectorAll('[data-ugedag]')].map(n => parseFloat(getComputedStyle(n).fontSize))),
+      status: Math.min(...[...el.querySelectorAll('[data-dagstatus]')].map(n => parseFloat(getComputedStyle(n).fontSize))),
+    }))
+    assert.ok(stripFonts.ugedag >= 10, `${tag}: ugedagen er ${stripFonts.ugedag} px (< 10 px)`)
+    assert.ok(stripFonts.status >= 9, `${tag}: "hvile"/status-teksten er ${stripFonts.status} px (< 9 px)`)
+    result.stripFonts = stripFonts
+    result.cellWidth = Math.min(...cells.map(c => c.right - c.left))
     for (let i = 1; i < cells.length; i++) {
       assert.ok(cells[i].left - cells[i - 1].right >= 5, `${tag}: luft mellem dag ${i} og ${i + 1} (${(cells[i].left - cells[i - 1].right).toFixed(1)} px)`)
     }
@@ -159,12 +172,35 @@ async function runViewport(page, { tag, width, height }) {
     const bar = [...document.querySelectorAll('div')].find(d => getComputedStyle(d).position === 'sticky' && d.style.height === '52px')
     return bar ? bar.getBoundingClientRect().bottom : null
   })
+  // ORDRE 339 · blok 1 (F5): toasten maa heller ikke daekke overskriften
+  // eller strimlen (maalt i den rulle-position siden har efter "Godkendt" -
+  // paa 360x780 er den rullet, se KRITIK-330-326 F5).
+  const h1Box = await page.locator('h1').first().evaluate(el => { const r = el.getBoundingClientRect(); return { top: r.top, bottom: r.bottom } })
+  const stripBox = await page.locator('[data-dagstrimmel]').evaluate(el => { const r = el.getBoundingClientRect(); return { top: r.top, bottom: r.bottom } })
+  const overlaps = (a, b) => a.top < b.bottom && a.bottom > b.top
   result.prToast = toastBox
   result.topbarBottom = topbarBottom
+  result.h1Top = h1Box.top
   if (FASE === 'efter') {
     assert.ok(toastBox, `${tag}: "Ny personlig rekord"-toasten kom ikke`)
     assert.ok(toastBox.top >= topbarBottom, `${tag}: toasten (top ${toastBox.top}) daekker topbaren (bund ${topbarBottom})`)
     assert.ok(toastBox.left >= 0 && toastBox.right <= width, `${tag}: toasten gaar ud over skaermkanten`)
+    assert.ok(!overlaps(toastBox, h1Box), `${tag}: toasten (${Math.round(toastBox.top)}-${Math.round(toastBox.bottom)}) daekker overskriften (${Math.round(h1Box.top)}-${Math.round(h1Box.bottom)})`)
+    assert.ok(!overlaps(toastBox, stripBox), `${tag}: toasten (${Math.round(toastBox.top)}-${Math.round(toastBox.bottom)}) daekker strimlen (${Math.round(stripBox.top)}-${Math.round(stripBox.bottom)})`)
+
+    // ORDRE 339 · blok 1 (F3): midt i et pas (tre saet logget) ligger de
+    // sekundaere chips stadig over folden, fordi "ret"-raekkerne er kollapset.
+    await page.getByRole('button', { name: 'Godkendt', exact: true }).click()
+    await page.getByText('Sæt 4/4', { exact: true }).waitFor({ state: 'visible', timeout: 5000 })
+    await page.getByText('Ny personlig rekord', { exact: false }).first().waitFor({ state: 'detached', timeout: 6000 }).catch(() => {})
+    await page.evaluate(() => window.scrollTo(0, 0))
+    await page.waitForTimeout(300)
+    assert.equal(await page.getByRole('button', { name: /^Ret sæt \d$/ }).count(), 0, `${tag}: "ret"-raekkerne skal vaere kollapset som standard`)
+    const chips = await page.locator('[data-sekundaer]').evaluate(el => el.getBoundingClientRect().bottom)
+    const fold = await page.evaluate(() => window.innerHeight)
+    result.chipsBottomMidtIPas = chips
+    assert.ok(chips <= fold, `${tag}: chips (bund ${Math.round(chips)}) ligger under folden (${fold}) med tre saet logget`)
+    await shotView('04-tre-saet-logget')
   }
   return result
 }
@@ -192,7 +228,7 @@ async function main() {
       }
     }
     writeFileSync(join(OUT_DIR, `taelling-${FASE}.json`), JSON.stringify(results, null, 2) + '\n')
-    for (const r of results) console.log(`${FASE} ${r.tag}: ${r.blocks} blokke / ${r.things} ting over folden (${r.thingsTotal} paa hele forsiden), siden ${r.fullHeight} px hoej, PR-toast top ${r.prToast ? Math.round(r.prToast.top) : '—'} (topbar-bund ${r.topbarBottom})`)
+    for (const r of results) console.log(`${FASE} ${r.tag}: ${r.blocks} blokke / ${r.things} ting over folden (${r.thingsTotal} paa hele forsiden), siden ${r.fullHeight} px hoej, PR-toast top ${r.prToast ? Math.round(r.prToast.top) : '—'} (topbar-bund ${r.topbarBottom}, h1-top ${r.h1Top != null ? Math.round(r.h1Top) : '—'}), celle ${r.cellWidth != null ? r.cellWidth.toFixed(1) : '—'} px, chips-bund midt i pas ${r.chipsBottomMidtIPas != null ? Math.round(r.chipsBottomMidtIPas) : '—'}`)
     console.log(`\nGRØN: rolig-forside (ordre 330, fase ${FASE}).`)
     process.exitCode = 0
   } catch (err) {

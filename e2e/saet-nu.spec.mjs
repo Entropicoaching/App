@@ -65,20 +65,23 @@ async function runViewport(page, { tag, width, height, outDir }) {
     await checkOverflow(page, `${tag} lige efter "Godkendt" på sæt ${setNum}`)
     await shot(`${String(setNum).padStart(2, '0')}b-efter-godkendt-saet-${setNum}`)
 
-    // Alle sæt 1..setNum skal nu stå som kompakte "klarede sæt"-linjer.
-    for (let n = 1; n <= setNum; n++) {
-      await page.getByText(`Sæt ${n}:`, { exact: false }).waitFor({ state: 'visible', timeout: 5000 })
-    }
-    // Det aktuelle sæt (setNum+1, hvis der er et) må IKKE selv stå som en
-    // klaret linje — kun de sæt der ligger FØR det.
-    if (setNum + 1 <= 4) {
-      assert.equal(await page.getByText(`Sæt ${setNum + 1}:`, { exact: false }).count(), 0,
-        `${tag}: det aktuelle sæt (${setNum + 1}) må ikke selv stå som en klaret linje`)
-      if (setNum + 2 <= 4) {
-        await page.getByText(NEXT_SET_PREVIEW_TEXT, { exact: true }).waitFor({ state: 'visible', timeout: 5000 })
-      }
+    // ORDRE 339 · blok 1 (F3): klarede sæt står som ÉN kollapset linje
+    // ("✓ N sæt klaret"), ikke en række pr. sæt.
+    await page.getByText(`✓ ${setNum} sæt klaret`, { exact: false }).waitFor({ state: 'visible', timeout: 5000 })
+    assert.equal(await page.getByText(`Sæt ${setNum}:`, { exact: false }).count(), 0,
+      `${tag}: klarede sæt skal være kollapset som standard`)
+    if (setNum + 2 <= 4) {
+      await page.getByText(NEXT_SET_PREVIEW_TEXT, { exact: true }).waitFor({ state: 'visible', timeout: 5000 })
     }
   }
+  // Foldet ud: alle sæt 1..3 som kompakte linjer, men det aktuelle sæt (4)
+  // må IKKE selv stå som en klaret linje — kun de sæt der ligger FØR det.
+  await page.getByRole('button', { name: 'Vis 3 klarede sæt', exact: true }).click()
+  for (let n = 1; n <= 3; n++) {
+    await page.getByText(`Sæt ${n}:`, { exact: false }).waitFor({ state: 'visible', timeout: 5000 })
+  }
+  assert.equal(await page.getByText('Sæt 4:', { exact: false }).count(), 0,
+    `${tag}: det aktuelle sæt (4) må ikke selv stå som en klaret linje`)
   await shot('99-tre-saet-logget')
 
   console.log(`${tag}: tre sæt logget, "Sæt N af 4" stemte hele vejen, ingen vandret overflow, ${3} klarede-sæt-linjer stod korrekt.`)

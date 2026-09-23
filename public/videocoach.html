@@ -6433,6 +6433,23 @@ async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd, preSeek, opt
 // coach-tilstanden (ORDRE 57 · commit 2). Ingen grund til også at spore de
 // resterende 5 reps lokalt bagefter; det var kun nødvendigt, da telefonen
 // selv skulle sende de FÆRDIGE tal.
+// ORDRE 339 · blok 2: "Vis mig nu"-banneret sagde "af 8 gentagelser" som
+// fast tekst uanset sættet (RAPPORT-333, næste pkt. 3). Sættets reelle antal
+// kendes ikke her: presearch tæller PAUSER, ikke reps (et klip med pause i
+// bunden giver 2n-1 vinduer, 9 for 5 reps - målt med e2e-klippet), og
+// atlet-flowet får hverken planlagte reps eller et reps-felt. Derfor nævnes
+// kun det kendte: hvor mange og hvilke der vises. `total` bruges kun, hvis
+// en kalder en dag har et pålideligt tal.
+function vcPreviewBannerText(shown, labels, total) {
+  const hvilke = labels && labels.length ? ` (${labels.join(', ')})` : '';
+  const ord = shown === 1 ? 'gentagelse' : 'gentagelser';
+  const antal = Number.isFinite(total) && total > shown ? `${shown} af ${total} gentagelser`
+    : Number.isFinite(total) && total === shown ? `alle ${shown} ${ord}`
+    : `${shown} udvalgte ${ord}`;
+  const rest = Number.isFinite(total) && total === shown ? 'som sporer hele sættet' : 'som sporer resten';
+  return `👁 Viser ${antal}${hvilke} · videoen sendes nu til din coach, ${rest}`;
+}
+
 async function vcAthletePreviewThree(barPt) {
   const setStart = manualTrackingBounds.start;
   const setEnd = trimEndEff();
@@ -6559,8 +6576,8 @@ async function vcAthletePreviewThree(barPt) {
   video.pause();
   video.currentTime = last.times?.at(-1) ?? video.currentTime;
   if (setAthleteState) setAthleteState('done');
-  say(`👁 Viser ${previewPaths.length} af 8 gentagelser (${previewPaths.map(p => p.vcPreviewLabel).join(', ')}) ·
-    videoen sendes nu til din coach, som sporer resten`.replace(/\s+/g, ' '));
+  // ORDRE 339 · blok 2: intet fast "af 8" længere - se vcPreviewBannerText.
+  say(vcPreviewBannerText(previewPaths.length, previewPaths.map(p => p.vcPreviewLabel)));
   setTimeout(() => say(''), 6500);
   // Kort pause så beskeden ovenfor faktisk kan nås at læses, før tilstanden
   // skifter videre til upload.
