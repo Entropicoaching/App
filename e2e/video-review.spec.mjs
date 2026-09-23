@@ -105,6 +105,8 @@ export async function runAthleteSeesFeedback(page, { appUrl, outDir, feedback })
   await page.locator('#athlete-auth-email').fill(ATHLETE_USER.email)
   await page.locator('#athlete-auth-password').fill(ATHLETE_USER.password)
   await page.getByRole('button', { name: 'Log ind' }).click()
+  // "Feedback fra din coach" ligger bag folden "Mere" siden ORDRE 330.
+  await page.getByRole('button', { name: 'Mere', exact: true }).click({ timeout: 15000 })
   await page.getByText('Feedback fra din coach').waitFor({ state: 'visible', timeout: 15000 })
   // Den seneste delte måling er allerede foldet ud (fetchSharedVideoAnalyses
   // åbner analyses[0] automatisk) — intet klik nødvendigt, kun at læse den.

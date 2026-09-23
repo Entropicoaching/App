@@ -14,6 +14,8 @@ async function loginAsAthlete(page, appUrl) {
   await page.locator('#athlete-auth-email').fill(ATHLETE_USER.email)
   await page.locator('#athlete-auth-password').fill(ATHLETE_USER.password)
   await page.getByRole('button', { name: 'Log ind' }).click()
+  // "Mit program" ligger bag folden "Mere" siden ORDRE 330.
+  await page.getByRole('button', { name: 'Mere', exact: true }).click({ timeout: 15000 })
   await page.getByText('Mit program').waitFor({ state: 'visible', timeout: 15000 })
 }
 
@@ -35,7 +37,7 @@ export async function runOfflineSetLog(page, { appUrl, mockUrl, outDir }) {
   const setNum = 4
 
   await loginAsAthlete(page, appUrl)
-  await page.getByText('Dag 1 — Squat').click()
+  await page.getByText('Dag 1 — Squat', { exact: true }).click()
   await page.getByLabel(`Vægt, sæt ${setNum}`).waitFor({ state: 'visible', timeout: 10000 })
 
   await page.context().setOffline(true)

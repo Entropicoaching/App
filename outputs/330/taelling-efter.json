@@ -1,0 +1,42 @@
+[
+  {
+    "tag": "390x844",
+    "width": 390,
+    "height": 844,
+    "blocks": 5,
+    "things": 30,
+    "thingsTotal": 30,
+    "fold": 844,
+    "fullHeight": 892,
+    "scrollWidth": 390,
+    "heading": "Onsdag · Dag 1 — Squat",
+    "secondary": 3,
+    "prToast": {
+      "top": 61.59375,
+      "bottom": 107.578125,
+      "left": 31.15625,
+      "right": 358.84375
+    },
+    "topbarBottom": 53
+  },
+  {
+    "tag": "360x780",
+    "width": 360,
+    "height": 780,
+    "blocks": 5,
+    "things": 30,
+    "thingsTotal": 30,
+    "fold": 780,
+    "fullHeight": 892,
+    "scrollWidth": 360,
+    "heading": "Onsdag · Dag 1 — Squat",
+    "secondary": 3,
+    "prToast": {
+      "top": 61.59375,
+      "bottom": 107.578125,
+      "left": 16.15625,
+      "right": 343.84375
+    },
+    "topbarBottom": 53
+  }
+]

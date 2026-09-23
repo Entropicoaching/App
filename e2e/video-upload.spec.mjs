@@ -37,7 +37,11 @@ export async function runVideoUpload(page, { appUrl, mockUrl, outDir, loginNeede
     await page.locator('#athlete-auth-email').fill(ATHLETE_USER.email)
     await page.locator('#athlete-auth-password').fill(ATHLETE_USER.password)
     await page.getByRole('button', { name: 'Log ind' }).click()
-    await page.getByText('Mit program').waitFor({ state: 'visible', timeout: 15000 })
+    await page.getByRole('button', { name: 'Mere', exact: true }).waitFor({ state: 'visible', timeout: 15000 })
+  }
+  // VideoCoach-kortet ligger bag folden "Mere" siden ORDRE 330.
+  if (await page.getByRole('button', { name: 'Mere', exact: true }).getAttribute('aria-expanded') !== 'true') {
+    await page.getByRole('button', { name: 'Mere', exact: true }).click()
   }
 
   await page.getByText('VideoCoach', { exact: true }).click()
@@ -82,7 +86,7 @@ export async function runVideoUpload(page, { appUrl, mockUrl, outDir, loginNeede
   // Tilbage i dagens pas uden at vente på selve analysen — luk VideoCoach.
   await frame.locator('#closeBtn').click()
   await page.locator('iframe[title="VideoCoach"]').waitFor({ state: 'hidden', timeout: 10000 })
-  await page.getByText('Mit program').waitFor({ state: 'visible', timeout: 10000 })
+  await page.getByRole('button', { name: 'Mere', exact: true }).waitFor({ state: 'visible', timeout: 10000 })
   await shot('03-tilbage-i-dagens-pas')
 
   return row

@@ -1,0 +1,36 @@
+[
+  {
+    "tag": "390x844",
+    "width": 390,
+    "height": 844,
+    "blocks": 4,
+    "things": 31,
+    "fold": 844,
+    "fullHeight": 3104,
+    "scrollWidth": 390,
+    "prToast": {
+      "top": 20,
+      "bottom": 65.984375,
+      "left": 26.359375,
+      "right": 363.640625
+    },
+    "topbarBottom": 53
+  },
+  {
+    "tag": "360x780",
+    "width": 360,
+    "height": 780,
+    "blocks": 4,
+    "things": 28,
+    "fold": 780,
+    "fullHeight": 3150,
+    "scrollWidth": 360,
+    "prToast": {
+      "top": 20,
+      "bottom": 65.984375,
+      "left": 11.359375,
+      "right": 348.640625
+    },
+    "topbarBottom": 53
+  }
+]

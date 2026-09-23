@@ -16,7 +16,7 @@ const openReadinessCount = (athleteView.match(/onClick=\{openReadiness\}/g) || [
   + (programTab.match(/onClick=\{openReadiness\}/g) || []).length
 assert.equal(openReadinessCount, 2,
   'Begge eksisterende readiness-prompts skal bruge samme navigation')
-assert.match(athleteView, /<button type="button" aria-label="Gå til dagens parathed" onClick=\{openReadiness\}/)
+assert.match(athleteView, /<button key="parathed" type="button" onClick=\{openReadiness\}/)
 assert.match(athleteView, /ref=\{readinessCardRef\} style=\{\{ \.\.\.s\.card, scrollMarginTop: '5rem' \}\}/)
 assert.doesNotMatch(athleteView, /Log dagens parathed[^\n]*\n?[\s\S]{0,500}onClick=\{\(\) => setTab\('hjem'\)\}/)
 

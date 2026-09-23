@@ -172,6 +172,8 @@ export async function runAtletUge(page, { appUrl, mockUrl, outDir, clipPath }) {
 
   // ---- 5) Check-in (parathed) ----
   await page.getByRole('button', { name: 'Hjem', exact: true }).click()
+  // "Parathed" i den sekundære række åbner "Mere" og ruller til kortet (ORDRE 330).
+  await page.getByRole('button', { name: /^Parathed/ }).click()
   await page.locator('input[placeholder="timer"]').fill('8')
   await ratingButton(page, 'Energiniveau', 4).click()
   await ratingButton(page, 'Motivation', 4).click()
@@ -194,9 +196,8 @@ export async function runAtletUge(page, { appUrl, mockUrl, outDir, clipPath }) {
 
   // ---- 6) Film et sæt (klip fra repoet) — se målingen med det samme, gem den ----
   const rowsBeforeVideo = await readTable(mockUrl, 'video_analyses')
-  // "Film et sæt" er sit eget kort på Hjem, ved siden af (ikke inde i) det
-  // almindelige "VideoCoach"-kort — ingen tab-navigation nødvendig, se
-  // athlete-film-et-saet.mjs.
+  // "Film et sæt" står i den sekundære række på Hjem (ORDRE 330; før et
+  // eget kort) — ingen tab-navigation nødvendig, se athlete-film-et-saet.mjs.
   await page.getByText('Film et sæt', { exact: true }).click()
   const frame = page.frameLocator('iframe[title="VideoCoach"]')
 
