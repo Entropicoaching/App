@@ -1,0 +1,71 @@
+[
+  {
+    "navn": "Gaader: hint -> spil hintet -> stillingen aendrer sig",
+    "ok": true,
+    "detalje": "d1->h5"
+  },
+  {
+    "navn": "Laer skak: niveau \"spiller\" starter i Italiensk",
+    "ok": true,
+    "detalje": "Åbning: Italiensk"
+  },
+  {
+    "navn": "Laer skak: forkert drag (d2-d4) forklares",
+    "ok": true,
+    "detalje": "Lovligt, men ikke det vi øver - trækket går tilbage om lidt."
+  },
+  {
+    "navn": "Laer skak: forkert drag ruller tilbage",
+    "ok": true,
+    "detalje": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+  },
+  {
+    "navn": "Laer skak: rigtigt drag (e2-e4) godkendes",
+    "ok": true,
+    "detalje": "Rigtigt! | rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1"
+  },
+  {
+    "navn": "Laer skak: forkert TRYK-tryk (d2,d4) forklares ogsaa",
+    "ok": true,
+    "detalje": "Lovligt, men ikke det vi øver - trækket går tilbage om lidt."
+  },
+  {
+    "navn": "Opstil: drag fra palet saetter dronning paa d4",
+    "ok": true,
+    "detalje": "8/8/8/8/3Q4/8/8/8 w - - 0 1"
+  },
+  {
+    "navn": "Opstil: drag af brik paa braettet flytter den (d4->h8)",
+    "ok": true,
+    "detalje": "7Q/8/8/8/8/8/8/8 w - - 0 1"
+  },
+  {
+    "navn": "Tegnelag: pil tegnes (a1->a5)",
+    "ok": true,
+    "detalje": "0 -> 3 elementer"
+  },
+  {
+    "navn": "Tegnelag: ring saettes (c3)",
+    "ok": true,
+    "detalje": "3 -> 4"
+  },
+  {
+    "navn": "Tegnelag: viskelaeder fjerner ring",
+    "ok": true,
+    "detalje": "4 -> 3"
+  },
+  {
+    "navn": "Motor: computeren svarer paa e2-e4 inden 10 s",
+    "ok": true,
+    "detalje": "rnbqkbnr/p1pppppp/1p6/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"
+  },
+  {
+    "navn": "Opgave-fane aabner",
+    "ok": true
+  },
+  {
+    "navn": "Konsol og sidefejl tomme",
+    "ok": true,
+    "detalje": ""
+  }
+]
