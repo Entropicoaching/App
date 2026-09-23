@@ -265,6 +265,19 @@ if (await portFree(8991)) {
     venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
 }
 
+// ---- 16) Rolig forside, dagene skilt ad (ordre 330 · blok 2): overskrift
+// "<Ugedag> · <pas>", ugestrimlens i dag/vist dag/hviledage på form (ikke
+// kun farve) med luft imellem, højst tre sekundære ting, resten bag "Mere",
+// og PR-toasten under topbaren — på 390×844 og 360×780. Egen mock-instans pr.
+// viewport, samme port-grænse som ovenfor.
+if (await portFree(8991)) {
+  rows.push(runNode('e2e (rolig-forside.spec.mjs)', [join('e2e', 'rolig-forside.spec.mjs')],
+    'DOM (overskrift, strimlens aria-current/kant/skriftvægt/afstand, antal sekundære knapper, aria-expanded) + PR-toastens boks mod topbarens, på to viewports', 'e2e'))
+} else {
+  rows.push({ name: 'e2e (rolig-forside.spec.mjs)', kind: 'e2e', ok: null, ms: 0,
+    venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
+}
+
 // ---- Skriv tabellen ----
 const lines = []
 lines.push('# Prøver — samlet facit (ordre 234)')

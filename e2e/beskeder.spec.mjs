@@ -13,7 +13,7 @@ export async function sendAthleteMessage(page, { appUrl, outDir, text }) {
   await page.locator('#athlete-auth-email').fill(ATHLETE_USER.email)
   await page.locator('#athlete-auth-password').fill(ATHLETE_USER.password)
   await page.getByRole('button', { name: 'Log ind' }).click()
-  await page.getByText('Mit program').waitFor({ state: 'visible', timeout: 15000 })
+  await page.getByRole('button', { name: 'Mere', exact: true }).waitFor({ state: 'visible', timeout: 15000 })
 
   await page.getByRole('button', { name: /Beskeder/ }).click()
   await page.locator('input[placeholder="Skriv en besked til din coach..."]').fill(text)

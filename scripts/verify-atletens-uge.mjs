@@ -24,6 +24,8 @@ export async function verUgenSomPlanlagt(page, { appUrl, mockUrl, outDir, athlet
   await page.locator('#athlete-auth-password').fill(athleteUser.password)
   await page.getByRole('button', { name: 'Log ind' }).click()
 
+  // "Ugen som planlagt" ligger bag folden "Mere" siden ORDRE 330.
+  await page.getByRole('button', { name: 'Mere', exact: true }).click({ timeout: 15000 })
   await page.getByText('Ugen som planlagt', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
   await shot('01-denne-uge')
 

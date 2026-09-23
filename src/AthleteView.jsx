@@ -393,7 +393,10 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
   const repsToLog = repsIsEditable ? repsValue : ex.reps
   const last = lastHeaviestSet(exerciseHistory, ex.name, todayStr)
   const suggestion = ex.recommended_weight == null ? suggestNextWeight(ex.name, ex.intensity) : null
-  const others = (session.exercises || []).filter(e => e.id !== ex.id)
+  const sessionExercises = session.exercises || []
+  const exIdx = sessionExercises.findIndex(e => e.id === ex.id)
+  const nextExercise = exIdx >= 0 ? sessionExercises[exIdx + 1] || null : null
+  const laterCount = exIdx >= 0 ? Math.max(0, sessionExercises.length - exIdx - 2) : 0
   const stepWeightBy = delta => { touchedRef.current.add(key); setLogInputs(p => ({ ...p, [key]: { ...(p[key] || input), weight: stepWeight(p[key]?.weight ?? input.weight, delta) } })) }
   const stepRepsBy = delta => { touchedRef.current.add(key); setLogInputs(p => stepRepsInInputs(p, key, input, repsValue, delta)) }
 
@@ -647,17 +650,14 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
         </div>
       )}
 
-      {others.length > 0 && (
-        <div style={{ marginTop: '1rem', paddingTop: '0.85rem', borderTop: '1px solid rgba(237,234,226,0.07)' }}>
-          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Resten af passet</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
-            {others.map(e => (
-              <div key={e.id} style={{ display: 'flex', justifyContent: 'space-between', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.68rem', color: '#7a7770' }}>
-                <span>{e.name}</span>
-                <span>{[e.sets && `${e.sets} sæt`, e.reps && `× ${e.reps}`].filter(Boolean).join(' ')}</span>
-              </div>
-            ))}
-          </div>
+      {/* ORDRE 330 · blok 2 — forsiden skal være rolig: "Resten af passet"
+          (en liste over alle øvrige øvelser) er skåret ned til ÉN linje om
+          den næste øvelse efter denne. Hele passet ligger i Program-fanen. */}
+      {nextExercise && (
+        <div style={{ marginTop: '0.85rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(237,234,226,0.07)', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#7a7770', letterSpacing: '0.02em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          Næste øvelse: <span style={{ color: '#b8b4a8' }}>{nextExercise.name}</span>
+          {[nextExercise.sets && ` · ${nextExercise.sets} sæt`, nextExercise.reps && ` × ${nextExercise.reps}`].filter(Boolean).join('')}
+          {laterCount > 0 ? ` (+${laterCount})` : ''}
         </div>
       )}
     </div>
@@ -1289,6 +1289,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [pendingSessionAction, setPendingSessionAction] = useState(null)
   const messagesEndRef = useRef(null)
   const readinessCardRef = useRef(null)
+  // ORDRE 330 · blok 2 — alt på forsiden der ikke skal bruges NU ligger bag
+  // folden "Mere" (lukket fra start, ikke husket mellem besøg).
+  const [mereOpen, setMereOpen] = useState(false)
   // Session-kort refs, så vi kan scrolle en nyåbnet session op i toppen
   // (accordion: når en session over kollapser, hopper layoutet ellers så man
   // lander midt/nederst i den nye session i stedet for ved første øvelse).
@@ -2239,6 +2242,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   function openReadiness() {
     setTab('hjem')
+    setMereOpen(true)
     requestAnimationFrame(() => requestAnimationFrame(() => {
       const card = readinessCardRef.current
       if (!card) return
@@ -3597,12 +3601,14 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           </div>
         </div>
       )}
-      {/* PR toast */}
+      {/* PR toast — ORDRE 330 · blok 2 (F12 fra 292): lagt UNDER topbaren
+          (52 px, sticky) i stedet for oven på den, og må bryde linjen i
+          stedet for at løbe ud over en 360 px skærm. */}
       {prToast && (
         <div style={{
-          position: 'fixed', top: '1.25rem', left: '50%', transform: 'translateX(-50%)',
+          position: 'fixed', top: 'calc(52px + 0.6rem)', left: 0, right: 0, margin: '0 auto', width: 'fit-content',
           background: '#1c1c18', border: '1px solid rgba(200,146,58,0.55)',
-          padding: '0.65rem 1.4rem', zIndex: 9999, whiteSpace: 'nowrap',
+          padding: '0.65rem 1.1rem', zIndex: 9999, maxWidth: 'calc(100vw - 2rem)', boxSizing: 'border-box', textAlign: 'center',
           fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem',
           color: '#c8923a', letterSpacing: '0.08em',
           boxShadow: '0 4px 24px rgba(0,0,0,0.55)',
@@ -3624,10 +3630,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           <button onClick={undoDelete} disabled={undoPending} style={{ ...s.btnGhost, fontSize: '0.58rem', padding: '0.3rem 0.7rem', color: '#c8923a', borderColor: 'rgba(200,146,58,0.45)', opacity: undoPending ? 0.6 : 1 }}>{undoPending ? '...' : 'Fortryd'}</button>
         </div>
       )}
-      {/* Toast */}
+      {/* Toast — samme placering under topbaren som PR-toasten (ORDRE 330). */}
       {flash && (
         <div style={{
-          position: 'fixed', top: '1.25rem', left: '50%', transform: 'translateX(-50%)',
+          position: 'fixed', top: 'calc(52px + 0.6rem)', left: 0, right: 0, margin: '0 auto', width: 'fit-content',
           background: '#1c1c18', border: `1px solid ${flash.kind === 'error' ? 'rgba(224,85,85,0.55)' : 'rgba(200,146,58,0.55)'}`,
           padding: '0.65rem 1.4rem', zIndex: 10000, maxWidth: '90vw',
           fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', letterSpacing: '0.06em',
@@ -3807,6 +3813,49 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               )
             })()}
 
+            {/* ORDRE 330 · blok 2 — Marcs dom: forsiden var for "meget". Over
+                folden står nu kun dagens pas og ÉN række med højst tre
+                sekundære ting (parathed, besked, film et sæt — pausen har sin
+                egen faste linje nederst, RestPauseFooter). Alt andet
+                (ugestatus, program, parathedskort, kropsvægt, rekorder,
+                tonnage, styrke, kost, VideoCoach, feedback) ligger bag "Mere". */}
+            {(() => {
+              const chipStyle = { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.2rem', minWidth: 0, minHeight: '52px', boxSizing: 'border-box', padding: '0.45rem 0.25rem', background: 'transparent', border: '1px solid rgba(237,234,226,0.13)', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace" }
+              const chipLabel = { fontSize: '0.56rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#edeae2', whiteSpace: 'nowrap' }
+              const chipSub = { fontSize: '0.5rem', letterSpacing: '0.04em', color: '#7a7770', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }
+              const chips = [
+                <button key="parathed" type="button" onClick={openReadiness} style={chipStyle}>
+                  <span style={chipLabel}>Parathed</span>
+                  <span style={{ ...chipSub, color: readinessLog ? '#7a7770' : '#c8923a' }}>{readinessLog ? `${readinessLog.readiness_score ?? '–'} / 100` : 'Ikke logget'}</span>
+                </button>,
+                <button key="besked" type="button" onClick={() => setTab('beskeder')} style={chipStyle}>
+                  <span style={chipLabel}>Besked</span>
+                  {unreadMsgCount > 0 && <span style={{ ...chipSub, color: '#c8923a' }}>{`${unreadMsgCount} ${unreadMsgCount === 1 ? 'ny' : 'nye'}`}</span>}
+                </button>,
+                role === 'athlete' && (
+                  <button key="film" type="button" onClick={() => { if (!athlete?.id) return; setAthleteVideoCoachInstant(true); setAthleteVideoCoachOpen(true) }} style={chipStyle}>
+                    <span style={chipLabel}>Film et sæt</span>
+                  </button>
+                ),
+              ].filter(Boolean)
+              return (
+                <div data-sekundaer="" style={{ display: 'grid', gridTemplateColumns: `repeat(${chips.length}, minmax(0, 1fr))`, gap: '0.5rem', marginBottom: '1rem' }}>
+                  {chips}
+                </div>
+              )
+            })()}
+
+            <button
+              type="button"
+              aria-expanded={mereOpen}
+              onClick={() => setMereOpen(o => !o)}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', width: '100%', minHeight: '44px', boxSizing: 'border-box', background: 'transparent', border: 'none', borderTop: '1px solid rgba(237,234,226,0.07)', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.1em', textTransform: 'uppercase', cursor: 'pointer', marginBottom: mereOpen ? '1.25rem' : 0 }}
+            >
+              <span>Mere</span>
+              <span aria-hidden="true" style={{ display: 'inline-block', transform: mereOpen ? 'rotate(180deg)' : 'none' }}>▾</span>
+            </button>
+
+            {mereOpen && (<>
             {currentWeek && (() => {
               // ORDRE 276 · blok 2: "sidste uge" = programugen lige før den
               // aktive (week_number - 1), samme princip som Dashboard.jsx
@@ -3827,17 +3876,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 />
               )
             })()}
-
-            {!readinessLog && logs.length === 0 && (
-              <button type="button" aria-label="Gå til dagens parathed" onClick={openReadiness} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', width: '100%', textAlign: 'left', padding: '0.85rem 1rem', background: 'rgba(200,146,58,0.05)', border: '1px solid rgba(200,146,58,0.13)', marginBottom: '1.25rem', cursor: 'pointer' }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c8923a" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                </svg>
-                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#c8923a', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                  Start din dag — log din readiness
-                </div>
-              </button>
-            )}
 
             <div style={s.card}>
               <div style={s.cardLabel}>Mit program</div>
@@ -4341,38 +4379,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               </div>
             </div>
 
-            {/* ORDRE 262 · commit 1: "Film et sæt" — instant, lokalt svar (reps,
-                bane, afvigelse, tempo) uden at sende noget. Atleten vælger selv
-                bagefter om målingen skal gemmes til coachen eller kasseres. */}
-            {role === 'athlete' && (
-              <div
-                onClick={() => {
-                  if (!athlete?.id) return
-                  setAthleteVideoCoachInstant(true)
-                  setAthleteVideoCoachOpen(true)
-                }}
-                onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(200,146,58,0.4)'}
-                onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(237,234,226,0.07)'}
-                style={{ ...s.card, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem' }}
-              >
-                <div style={{ width: 46, height: 46, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(200,146,58,0.35)', borderRadius: 4, background: 'rgba(200,146,58,0.08)' }}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c8923a" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="9" />
-                    <path d="M9 9l6 6M9 15l6-6" />
-                  </svg>
-                </div>
-                <div style={{ minWidth: 0 }}>
-                  <div style={{ ...s.cardLabel, marginBottom: '0.2rem' }}>Film et sæt</div>
-                  <div style={{ fontSize: '0.85rem', color: '#edeae2', lineHeight: 1.4 }}>
-                    Se reps, bane og afvigelse med det samme — du vælger selv om det gemmes
-                  </div>
-                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', marginTop: '0.3rem' }}>
-                    Optag eller vælg video →
-                  </div>
-                </div>
-              </div>
-            )}
-
+            {/* ORDRE 262 · commit 1: "Film et sæt" — flyttet op i den sekundære
+                række over folden i ORDRE 330 · blok 2 (samme handling). */}
             {role === 'athlete' && (sharedVideoLoading || sharedVideoError || sharedVideoAnalyses.length > 0) && (
               <div style={s.card}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '0.7rem', marginBottom: '0.8rem' }}>
@@ -4391,6 +4399,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
                 {!sharedVideoLoading && !sharedVideoError && sharedVideoAnalyses.length > 0 && renderSharedFeedbackCards()}
               </div>
             )}
+            </>)}
           </>
         )}
 

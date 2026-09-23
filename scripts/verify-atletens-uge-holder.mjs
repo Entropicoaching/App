@@ -135,6 +135,8 @@ async function loginOgAabnUgensStatus(page, appUrl) {
   await page.locator('#athlete-auth-email').fill(ATHLETE_USER.email)
   await page.locator('#athlete-auth-password').fill(ATHLETE_USER.password)
   await page.getByRole('button', { name: 'Log ind' }).click()
+  // "Ugen som planlagt" ligger bag folden "Mere" siden ORDRE 330.
+  await page.getByRole('button', { name: 'Mere', exact: true }).click({ timeout: 15000 })
   await page.getByText('Ugen som planlagt', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
 }
 

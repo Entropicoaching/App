@@ -34,7 +34,9 @@ export async function runAtletJourney(page, { appUrl, mockUrl, outDir }) {
   await shot('01-login')
   await page.getByRole('button', { name: 'Log ind' }).click()
 
-  // Dagens pas — sessionskortet på "Hjem" (mærket "Næste").
+  // Dagens pas — sessionskortet på "Hjem" (mærket "Næste"). Siden ORDRE 330
+  // ligger "Mit program" bag folden "Mere".
+  await page.getByRole('button', { name: 'Mere', exact: true }).click({ timeout: 15000 })
   await page.getByText('Mit program').waitFor({ state: 'visible', timeout: 15000 })
   await page.getByText('Næste', { exact: true }).waitFor({ state: 'visible' })
   await shot('02-hjem-dagens-pas')
@@ -89,6 +91,8 @@ export async function runAtletJourney(page, { appUrl, mockUrl, outDir }) {
 
   // Check-in (parathed) — tilbage til Hjem.
   await page.getByRole('button', { name: 'Hjem', exact: true }).click()
+  // "Parathed" i den sekundære række åbner "Mere" og ruller til kortet (ORDRE 330).
+  await page.getByRole('button', { name: /^Parathed/ }).click()
   await page.locator('input[placeholder="timer"]').fill('8')
   await ratingButton(page, 'Energiniveau', 4).click()
   await ratingButton(page, 'Motivation', 4).click()
