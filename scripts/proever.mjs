@@ -278,6 +278,20 @@ if (await portFree(8991)) {
     venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
 }
 
+// ---- 17) VideoCoach ende til ende (ordre 333 · blok 2): atleten uploader et
+// syntetisk klip via VideoCoach-kortet, "Vis mig nu" sporer og viser reps
+// (state 'done', ikke fallback), videoen sendes (række + objekt under
+// <athlete_id>/), og coachen åbner den i VideoCoach — på 390×844. Egen
+// mock-instans, samme port-grænse som ovenfor. Storage-policy-fejlen selv
+// fanges af src/storagePolicySql.test.js (punkt 1).
+if (await portFree(8991)) {
+  rows.push(runNode('e2e (videocoach-flow.spec.mjs)', [join('e2e', 'videocoach-flow.spec.mjs')],
+    'DOM-tilstand (data-athlete-state done→sent, "Viser N af"-banneret) + mockens video_analyses/storage + at coachens video får videoWidth > 0', 'e2e'))
+} else {
+  rows.push({ name: 'e2e (videocoach-flow.spec.mjs)', kind: 'e2e', ok: null, ms: 0,
+    venterPaa: 'sprunget over: port 8991 var optaget', tail: '' })
+}
+
 // ---- Skriv tabellen ----
 const lines = []
 lines.push('# Prøver — samlet facit (ordre 234)')
