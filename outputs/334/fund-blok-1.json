@@ -1,0 +1,32 @@
+[
+  {
+    "blok": 1,
+    "alvor": "middel",
+    "titel": "390x844: strimlens tekst er meget lille",
+    "detalje": "ugedag 7.68px, \"hvile\" 6.4px — svaerlaeseligt paa telefon, og \"hvile\"/pas-dagenes forskel bæres af tekst under 8 px"
+  },
+  {
+    "blok": 1,
+    "alvor": "lav",
+    "titel": "390x844: \"Mere\"-folden ligger under foerste skaerm",
+    "detalje": "ikke synlig uden rulning med denne mock; afhaenger af pas-kortets hoejde"
+  },
+  {
+    "blok": 1,
+    "alvor": "middel",
+    "titel": "360x780: dagcellerne er 40 px brede",
+    "detalje": "under 44 px tap-maal (Apple/WCAG 2.5.5); hoejden er 64. Datotal-cirklen er 1.45rem ≈ 23 px"
+  },
+  {
+    "blok": 1,
+    "alvor": "middel",
+    "titel": "360x780: strimlens tekst er meget lille",
+    "detalje": "ugedag 7.68px, \"hvile\" 6.4px — svaerlaeseligt paa telefon, og \"hvile\"/pas-dagenes forskel bæres af tekst under 8 px"
+  },
+  {
+    "blok": 1,
+    "alvor": "lav",
+    "titel": "360x780: \"Mere\"-folden ligger under foerste skaerm",
+    "detalje": "ikke synlig uden rulning med denne mock; afhaenger af pas-kortets hoejde"
+  }
+]
