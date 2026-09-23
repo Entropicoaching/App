@@ -29,6 +29,7 @@ import { createMockSupabase } from './mock-supabase.mjs'
 import { buildSeed, ATHLETE_USER, ATHLETE_ID, COACH_USER } from './fixtures.mjs'
 import { startVite, launchBrowser, APP_URL, MOCK_PORT, OUT_DIR, ROOT, ensureCoachSporingClip } from './harness.mjs'
 import { calibrateAthlete, CLICK_AT_S } from './athlete-film-et-saet.mjs'
+import { N_REPS } from '../scripts/make-test-clip.mjs'
 
 const MOBILE = { width: 390, height: 844 }
 
@@ -105,8 +106,14 @@ export async function runAthleteVisMigNu(page, { appUrl, mockUrl, clipPath, shot
   // Tre vinduer spores (første, midt, sidste). På det syntetiske klip starter
   // presearchs sidste vindue midt i en rep (skiven er ikke ved ringen), så 2
   // af 3 er det forventede her; 0 eller 1 betyder at sporingen er brudt.
-  const shown = Number((status.match(/Viser (\d+) af/) || [])[1] || 0)
+  const shown = Number((status.match(/Viser (?:alle )?(\d+)/) || [])[1] || 0)
   assert.ok(shown >= 2, `Vis mig nu viste ${shown} sporede reps, forventede mindst 2: "${status}"`)
+  // ORDRE 339 · blok 2: banneret maa ikke paastaa et antal det ikke kender.
+  // Klippet har N_REPS reps; det faste "af 8" (og ethvert andet "af n" end
+  // N_REPS) er forkert.
+  const paastaaet = (status.match(/af (\d+) gentagelser/) || [])[1]
+  assert.ok(paastaaet == null || Number(paastaaet) === N_REPS, `banneret paastaar "af ${paastaaet}", klippet har ${N_REPS} reps: "${status}"`)
+  assert.match(status, /Viser \d+ udvalgte gentagelser \(1\., midt/, `banneret skal sige hvor mange og hvilke der vises: "${status}"`)
   await shot('03-atlet-vis-mig-nu-tre-reps')
 
   // Poll fra node, ikke page.waitForFunction: en async-funktion dér giver et
