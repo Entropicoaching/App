@@ -6321,6 +6321,14 @@ async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd, preSeek, opt
     // NÆSTE fase (rtAdvanceTo, se ovenfor) genbruger den samme, allerede
     // kørende afspilning i stedet for at pausere og seeke.
     let finish = () => { stopped = true; if (pauseAtEnd) v.pause(); resolve(); };
+    // ORDRE 333: updateTimeline pauser videoen ved trimEnd (= vinduets slut).
+    // Når den pause kommer før en frame med mediaTime >= windowEnd, fyrer
+    // requestVideoFrameCallback aldrig igen og vinduet hang for altid. En
+    // pause afslutter derfor også vinduet.
+    const onPause = () => { if (!stopped) finish(); };
+    v.addEventListener('pause', onPause);
+    const finishBeforePause = finish;
+    finish = () => { v.removeEventListener('pause', onPause); finishBeforePause(); };
     // requestVideoFrameCallback's FØRSTE argument er et render-tidsstempel
     // (samme skala som performance.now()), IKKE videoens medietid - den findes
     // kun i metadata.mediaTime (samme mønster som startMultipointTrackings
@@ -6425,6 +6433,23 @@ async function vcRealtimeTrackWindow(barPt, windowStart, windowEnd, preSeek, opt
 // coach-tilstanden (ORDRE 57 · commit 2). Ingen grund til også at spore de
 // resterende 5 reps lokalt bagefter; det var kun nødvendigt, da telefonen
 // selv skulle sende de FÆRDIGE tal.
+// ORDRE 339 · blok 2: "Vis mig nu"-banneret sagde "af 8 gentagelser" som
+// fast tekst uanset sættet (RAPPORT-333, næste pkt. 3). Sættets reelle antal
+// kendes ikke her: presearch tæller PAUSER, ikke reps (et klip med pause i
+// bunden giver 2n-1 vinduer, 9 for 5 reps - målt med e2e-klippet), og
+// atlet-flowet får hverken planlagte reps eller et reps-felt. Derfor nævnes
+// kun det kendte: hvor mange og hvilke der vises. `total` bruges kun, hvis
+// en kalder en dag har et pålideligt tal.
+function vcPreviewBannerText(shown, labels, total) {
+  const hvilke = labels && labels.length ? ` (${labels.join(', ')})` : '';
+  const ord = shown === 1 ? 'gentagelse' : 'gentagelser';
+  const antal = Number.isFinite(total) && total > shown ? `${shown} af ${total} gentagelser`
+    : Number.isFinite(total) && total === shown ? `alle ${shown} ${ord}`
+    : `${shown} udvalgte ${ord}`;
+  const rest = Number.isFinite(total) && total === shown ? 'som sporer hele sættet' : 'som sporer resten';
+  return `👁 Viser ${antal}${hvilke} · videoen sendes nu til din coach, ${rest}`;
+}
+
 async function vcAthletePreviewThree(barPt) {
   const setStart = manualTrackingBounds.start;
   const setEnd = trimEndEff();
@@ -6465,6 +6490,11 @@ async function vcAthletePreviewThree(barPt) {
   // seek til samme mål for vindue 1, som kunne race mod presearchs shadow-
   // seek og levere en frame fra midt i den forkerte seek. Se RAPPORT-124.md.)
   let pendingSeek = presearch.firstWindowSeek;
+  // ORDRE 333: vcRealtimeTrackWindow stopper ved første frame når `tracking`
+  // er falsk (se dens onFrame). Uden denne linje sporede "Vis mig nu" 0 reps
+  // siden ordre 80 og faldt altid tilbage til ren upload. allBtn (Stop)
+  // nulstiller både analyzing og tracking.
+  tracking = true;
   for (let k = 0; k < idxs.length; k++) {
     if (!analyzing) break;   // atleten trak stikket undervejs (allBtn = Stop)
     const w = presearch.windows[idxs[k]];
@@ -6535,6 +6565,7 @@ async function vcAthletePreviewThree(barPt) {
   }
   trimEnd = savedTrimEnd;
   analyzing = false;
+  tracking = false;
   if (!previewPaths.length) {
     say('Ingen af de tre prøve-gentagelser gav et brugbart spor · sender videoen til din coach i stedet');
     setTimeout(() => say(''), 4200);
@@ -6545,8 +6576,8 @@ async function vcAthletePreviewThree(barPt) {
   video.pause();
   video.currentTime = last.times?.at(-1) ?? video.currentTime;
   if (setAthleteState) setAthleteState('done');
-  say(`👁 Viser ${previewPaths.length} af 8 gentagelser (${previewPaths.map(p => p.vcPreviewLabel).join(', ')}) ·
-    videoen sendes nu til din coach, som sporer resten`.replace(/\s+/g, ' '));
+  // ORDRE 339 · blok 2: intet fast "af 8" længere - se vcPreviewBannerText.
+  say(vcPreviewBannerText(previewPaths.length, previewPaths.map(p => p.vcPreviewLabel)));
   setTimeout(() => say(''), 6500);
   // Kort pause så beskeden ovenfor faktisk kan nås at læses, før tilstanden
   // skifter videre til upload.
