@@ -1,0 +1,1649 @@
+{
+  "skak-tavle-start": {
+    "aktivFane": "fane-gaader",
+    "titel": "Skak",
+    "braet": 537,
+    "layoutBredde": 1280,
+    "harViewportMeta": false,
+    "mindsteSkriftPx": 10.54
+  },
+  "skak-tavle-kontrast": [
+    {
+      "el": "h1",
+      "tekst": "Skak",
+      "px": 27.2,
+      "vaegt": "700",
+      "kontrast": 11.24
+    },
+    {
+      "el": "button#fane-gaader.fane",
+      "tekst": "Løs gåder",
+      "px": 17.85,
+      "vaegt": "700",
+      "kontrast": 5.78
+    },
+    {
+      "el": "button#fane-laer.fane",
+      "tekst": "Lær skak",
+      "px": 17.85,
+      "vaegt": "700",
+      "kontrast": 5.77
+    },
+    {
+      "el": "button#fane-opstil.fane",
+      "tekst": "Opstil",
+      "px": 15.3,
+      "vaegt": "700",
+      "kontrast": 5.77
+    },
+    {
+      "el": "p#status.statuslinje",
+      "tekst": "Find det bedste træk.",
+      "px": 20.4,
+      "vaegt": "700",
+      "kontrast": 11.24
+    },
+    {
+      "el": "button.vaerktoej",
+      "tekst": "Flyt",
+      "px": 16.15,
+      "vaegt": "600",
+      "kontrast": 5.78
+    },
+    {
+      "el": "button.vaerktoej",
+      "tekst": "Pil",
+      "px": 16.15,
+      "vaegt": "600",
+      "kontrast": 12.59
+    },
+    {
+      "el": "button#knap-ryd-tegning.vaerktoej-ryd",
+      "tekst": "Ryd tegning",
+      "px": 16.15,
+      "vaegt": "600",
+      "kontrast": 5.77
+    },
+    {
+      "el": "span.rang-label",
+      "tekst": "8",
+      "px": 10.54,
+      "vaegt": "600",
+      "kontrast": 2.37
+    },
+    {
+      "el": "span.rang-label",
+      "tekst": "7",
+      "px": 10.54,
+      "vaegt": "600",
+      "kontrast": 2.37
+    },
+    {
+      "el": "span.fil-label",
+      "tekst": "a",
+      "px": 10.54,
+      "vaegt": "600",
+      "kontrast": 2.37
+    },
+    {
+      "el": "span.fil-label",
+      "tekst": "b",
+      "px": 10.54,
+      "vaegt": "600",
+      "kontrast": 2.37
+    },
+    {
+      "el": "p#naeste-klik.naeste-klik",
+      "tekst": "Vil du tegne? Vælg Pil eller R",
+      "px": 17,
+      "vaegt": "600",
+      "kontrast": 11.24
+    },
+    {
+      "el": "button#knap-vend",
+      "tekst": "Vend brættet",
+      "px": 16.15,
+      "vaegt": "600",
+      "kontrast": 12.59
+    },
+    {
+      "el": "label",
+      "tekst": "Brikker",
+      "px": 14.45,
+      "vaegt": "400",
+      "kontrast": 5.77
+    },
+    {
+      "el": "h2",
+      "tekst": "Løs gåder",
+      "px": 19.55,
+      "vaegt": "700",
+      "kontrast": 12.59
+    },
+    {
+      "el": "p.hjaelp",
+      "tekst": "Find det bedste træk. Rigtigt ",
+      "px": 15.3,
+      "vaegt": "400",
+      "kontrast": 6.46
+    },
+    {
+      "el": "p.valg-label",
+      "tekst": "Tema",
+      "px": 13.6,
+      "vaegt": "700",
+      "kontrast": 6.46
+    },
+    {
+      "el": "button.segment-knap",
+      "tekst": "Som de kommer",
+      "px": 14.96,
+      "vaegt": "600",
+      "kontrast": 5.78
+    },
+    {
+      "el": "button.segment-knap",
+      "tekst": "Mat i 1",
+      "px": 14.96,
+      "vaegt": "600",
+      "kontrast": 5.45
+    },
+    {
+      "el": "p#gaade-titel.opgave-titel",
+      "tekst": "Gåde",
+      "px": 17,
+      "vaegt": "600",
+      "kontrast": 6.46
+    },
+    {
+      "el": "span#gaade-rating",
+      "tekst": "1000",
+      "px": 22.1,
+      "vaegt": "700",
+      "kontrast": 6.94
+    },
+    {
+      "el": "small",
+      "tekst": "Din sværhedsgrad",
+      "px": 12.24,
+      "vaegt": "400",
+      "kontrast": 5.45
+    },
+    {
+      "el": "label.lyd-toggle",
+      "tekst": "Lyd ved rigtigt træk",
+      "px": 15.3,
+      "vaegt": "400",
+      "kontrast": 6.46
+    },
+    {
+      "el": "li.hjaelp",
+      "tekst": "Løs et par gåder, så samler st",
+      "px": 15.3,
+      "vaegt": "400",
+      "kontrast": 5.77
+    },
+    {
+      "el": "button#knap-gaade-nulstil-statistik.knap-farlig",
+      "tekst": "Nulstil min statistik",
+      "px": 16.15,
+      "vaegt": "600",
+      "kontrast": 6.03
+    },
+    {
+      "el": "button#knap-del-kopier.knap-primaer",
+      "tekst": "Del (kopiér kode)",
+      "px": 16.15,
+      "vaegt": "600",
+      "kontrast": 5.78
+    },
+    {
+      "el": "label",
+      "tekst": "Indlæs kode",
+      "px": 17,
+      "vaegt": "400",
+      "kontrast": 12.59
+    }
+  ],
+  "skak-tavle-animationer": {
+    "brik": {
+      "anim": "none",
+      "animVarighed": "0s",
+      "overgang": "0s"
+    },
+    "felt": {
+      "anim": "none",
+      "animVarighed": "0s",
+      "overgang": "0s"
+    },
+    "knap": {
+      "anim": "none",
+      "animVarighed": "0s",
+      "overgang": "0.15s, 0.08s, 0.15s, 0.15s"
+    }
+  },
+  "skak-tavle-under44": [
+    {
+      "el": "button.farve-knap",
+      "b": 40,
+      "h": 44,
+      "tekst": ""
+    },
+    {
+      "el": "button.farve-knap",
+      "b": 40,
+      "h": 44,
+      "tekst": ""
+    },
+    {
+      "el": "button.farve-knap",
+      "b": 40,
+      "h": 44,
+      "tekst": ""
+    },
+    {
+      "el": "summary.",
+      "b": 64,
+      "h": 20,
+      "tekst": "Udseende"
+    },
+    {
+      "el": "summary.",
+      "b": 412,
+      "h": 28,
+      "tekst": "Vælg hvad du vil træ"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 144,
+      "h": 40,
+      "tekst": "Som de kommer"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 77,
+      "h": 40,
+      "tekst": "Mat i 1"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 80,
+      "h": 40,
+      "tekst": "Mat i 2"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 73,
+      "h": 40,
+      "tekst": "Gaffel"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 66,
+      "h": 40,
+      "tekst": "Spyd"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 98,
+      "h": 40,
+      "tekst": "Afdækker"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 58,
+      "h": 40,
+      "tekst": "Alle"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 53,
+      "h": 40,
+      "tekst": "Let"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 83,
+      "h": 40,
+      "tekst": "Mellem"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 65,
+      "h": 40,
+      "tekst": "Svær"
+    },
+    {
+      "el": "input#gaade-lyd-til.",
+      "b": 13,
+      "h": 13,
+      "tekst": ""
+    },
+    {
+      "el": "summary.",
+      "b": 412,
+      "h": 28,
+      "tekst": "Din statistik"
+    },
+    {
+      "el": "summary.",
+      "b": 412,
+      "h": 28,
+      "tekst": "Avanceret"
+    },
+    {
+      "el": "summary.",
+      "b": 412,
+      "h": 28,
+      "tekst": "Del"
+    },
+    {
+      "el": "summary.",
+      "b": 1146,
+      "h": 18,
+      "tekst": "Licenser for bundled"
+    }
+  ],
+  "skak-tavle-gaade-fen": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w",
+  "skak-tavle-motor-svar-ms": 561,
+  "skak-tavle-opstil-under44": [
+    {
+      "el": "button.farve-knap",
+      "b": 40,
+      "h": 44,
+      "tekst": ""
+    },
+    {
+      "el": "button.farve-knap",
+      "b": 40,
+      "h": 44,
+      "tekst": ""
+    },
+    {
+      "el": "button.farve-knap",
+      "b": 40,
+      "h": 44,
+      "tekst": ""
+    },
+    {
+      "el": "summary.",
+      "b": 64,
+      "h": 20,
+      "tekst": "Udseende"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 64,
+      "h": 40,
+      "tekst": "Hvid"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 61,
+      "h": 40,
+      "tekst": "Sort"
+    },
+    {
+      "el": "summary.",
+      "b": 412,
+      "h": 28,
+      "tekst": "Mere: vis hvad det g"
+    },
+    {
+      "el": "summary.",
+      "b": 412,
+      "h": 28,
+      "tekst": "Avanceret"
+    },
+    {
+      "el": "summary.",
+      "b": 412,
+      "h": 28,
+      "tekst": "Del"
+    },
+    {
+      "el": "summary.",
+      "b": 1146,
+      "h": 18,
+      "tekst": "Licenser for bundled"
+    }
+  ],
+  "skak-tavle-konsol": [],
+  "skak-mobil-start": {
+    "aktivFane": "fane-gaader",
+    "titel": "Skak",
+    "braet": 552,
+    "layoutBredde": 980,
+    "harViewportMeta": false,
+    "mindsteSkriftPx": 10.54
+  },
+  "skak-mobil-kontrast": [
+    {
+      "el": "h1",
+      "tekst": "Skak",
+      "px": 27.2,
+      "vaegt": "700",
+      "kontrast": 11.24
+    },
+    {
+      "el": "button#fane-gaader.fane",
+      "tekst": "Løs gåder",
+      "px": 17.85,
+      "vaegt": "700",
+      "kontrast": 5.78
+    },
+    {
+      "el": "button#fane-laer.fane",
+      "tekst": "Lær skak",
+      "px": 17.85,
+      "vaegt": "700",
+      "kontrast": 5.77
+    },
+    {
+      "el": "button#fane-opstil.fane",
+      "tekst": "Opstil",
+      "px": 15.3,
+      "vaegt": "700",
+      "kontrast": 5.77
+    },
+    {
+      "el": "p#status.statuslinje",
+      "tekst": "Find det bedste træk.",
+      "px": 20.4,
+      "vaegt": "700",
+      "kontrast": 11.24
+    },
+    {
+      "el": "button.vaerktoej",
+      "tekst": "Flyt",
+      "px": 16.15,
+      "vaegt": "600",
+      "kontrast": 5.78
+    },
+    {
+      "el": "button.vaerktoej",
+      "tekst": "Pil",
+      "px": 16.15,
+      "vaegt": "600",
+      "kontrast": 12.59
+    },
+    {
+      "el": "button#knap-ryd-tegning.vaerktoej-ryd",
+      "tekst": "Ryd tegning",
+      "px": 16.15,
+      "vaegt": "600",
+      "kontrast": 5.77
+    },
+    {
+      "el": "span.rang-label",
+      "tekst": "8",
+      "px": 10.54,
+      "vaegt": "600",
+      "kontrast": 2.37
+    },
+    {
+      "el": "span.rang-label",
+      "tekst": "7",
+      "px": 10.54,
+      "vaegt": "600",
+      "kontrast": 2.37
+    },
+    {
+      "el": "span.fil-label",
+      "tekst": "a",
+      "px": 10.54,
+      "vaegt": "600",
+      "kontrast": 2.37
+    },
+    {
+      "el": "span.fil-label",
+      "tekst": "b",
+      "px": 10.54,
+      "vaegt": "600",
+      "kontrast": 2.37
+    },
+    {
+      "el": "p#naeste-klik.naeste-klik",
+      "tekst": "Vil du tegne? Vælg Pil eller R",
+      "px": 17,
+      "vaegt": "600",
+      "kontrast": 11.24
+    },
+    {
+      "el": "button#knap-vend",
+      "tekst": "Vend brættet",
+      "px": 16.15,
+      "vaegt": "600",
+      "kontrast": 12.59
+    },
+    {
+      "el": "label",
+      "tekst": "Brikker",
+      "px": 14.45,
+      "vaegt": "400",
+      "kontrast": 5.77
+    },
+    {
+      "el": "h2",
+      "tekst": "Løs gåder",
+      "px": 19.55,
+      "vaegt": "700",
+      "kontrast": 12.59
+    },
+    {
+      "el": "p.hjaelp",
+      "tekst": "Find det bedste træk. Rigtigt ",
+      "px": 15.3,
+      "vaegt": "400",
+      "kontrast": 6.46
+    },
+    {
+      "el": "p.valg-label",
+      "tekst": "Tema",
+      "px": 13.6,
+      "vaegt": "700",
+      "kontrast": 6.46
+    },
+    {
+      "el": "button.segment-knap",
+      "tekst": "Som de kommer",
+      "px": 14.96,
+      "vaegt": "600",
+      "kontrast": 5.78
+    },
+    {
+      "el": "button.segment-knap",
+      "tekst": "Mat i 1",
+      "px": 14.96,
+      "vaegt": "600",
+      "kontrast": 5.45
+    },
+    {
+      "el": "p#gaade-titel.opgave-titel",
+      "tekst": "Gåde",
+      "px": 17,
+      "vaegt": "600",
+      "kontrast": 6.46
+    },
+    {
+      "el": "span#gaade-rating",
+      "tekst": "1000",
+      "px": 22.1,
+      "vaegt": "700",
+      "kontrast": 6.94
+    },
+    {
+      "el": "small",
+      "tekst": "Din sværhedsgrad",
+      "px": 12.24,
+      "vaegt": "400",
+      "kontrast": 5.45
+    },
+    {
+      "el": "label.lyd-toggle",
+      "tekst": "Lyd ved rigtigt træk",
+      "px": 15.3,
+      "vaegt": "400",
+      "kontrast": 6.46
+    },
+    {
+      "el": "li.hjaelp",
+      "tekst": "Løs et par gåder, så samler st",
+      "px": 15.3,
+      "vaegt": "400",
+      "kontrast": 5.77
+    },
+    {
+      "el": "button#knap-gaade-nulstil-statistik.knap-farlig",
+      "tekst": "Nulstil min statistik",
+      "px": 16.15,
+      "vaegt": "600",
+      "kontrast": 6.03
+    },
+    {
+      "el": "button#knap-del-kopier.knap-primaer",
+      "tekst": "Del (kopiér kode)",
+      "px": 16.15,
+      "vaegt": "600",
+      "kontrast": 5.78
+    },
+    {
+      "el": "label",
+      "tekst": "Indlæs kode",
+      "px": 17,
+      "vaegt": "400",
+      "kontrast": 12.59
+    }
+  ],
+  "skak-mobil-animationer": {
+    "brik": {
+      "anim": "none",
+      "animVarighed": "0s",
+      "overgang": "0s"
+    },
+    "felt": {
+      "anim": "none",
+      "animVarighed": "0s",
+      "overgang": "0s"
+    },
+    "knap": {
+      "anim": "none",
+      "animVarighed": "0s",
+      "overgang": "0.15s, 0.08s, 0.15s, 0.15s"
+    }
+  },
+  "skak-mobil-under44": [
+    {
+      "el": "button.farve-knap",
+      "b": 40,
+      "h": 44,
+      "tekst": ""
+    },
+    {
+      "el": "button.farve-knap",
+      "b": 40,
+      "h": 44,
+      "tekst": ""
+    },
+    {
+      "el": "button.farve-knap",
+      "b": 40,
+      "h": 44,
+      "tekst": ""
+    },
+    {
+      "el": "summary.",
+      "b": 64,
+      "h": 20,
+      "tekst": "Udseende"
+    },
+    {
+      "el": "summary.",
+      "b": 332,
+      "h": 28,
+      "tekst": "Vælg hvad du vil træ"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 144,
+      "h": 40,
+      "tekst": "Som de kommer"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 77,
+      "h": 40,
+      "tekst": "Mat i 1"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 80,
+      "h": 40,
+      "tekst": "Mat i 2"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 73,
+      "h": 40,
+      "tekst": "Gaffel"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 66,
+      "h": 40,
+      "tekst": "Spyd"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 98,
+      "h": 40,
+      "tekst": "Afdækker"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 58,
+      "h": 40,
+      "tekst": "Alle"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 53,
+      "h": 40,
+      "tekst": "Let"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 83,
+      "h": 40,
+      "tekst": "Mellem"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 65,
+      "h": 40,
+      "tekst": "Svær"
+    },
+    {
+      "el": "input#gaade-lyd-til.",
+      "b": 13,
+      "h": 13,
+      "tekst": ""
+    },
+    {
+      "el": "summary.",
+      "b": 332,
+      "h": 28,
+      "tekst": "Din statistik"
+    },
+    {
+      "el": "summary.",
+      "b": 332,
+      "h": 28,
+      "tekst": "Avanceret"
+    },
+    {
+      "el": "summary.",
+      "b": 332,
+      "h": 28,
+      "tekst": "Del"
+    },
+    {
+      "el": "summary.",
+      "b": 946,
+      "h": 18,
+      "tekst": "Licenser for bundled"
+    }
+  ],
+  "skak-mobil-gaade-fen": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w",
+  "skak-mobil-motor-svar-ms": 534,
+  "skak-mobil-opstil-under44": [
+    {
+      "el": "button.farve-knap",
+      "b": 40,
+      "h": 44,
+      "tekst": ""
+    },
+    {
+      "el": "button.farve-knap",
+      "b": 40,
+      "h": 44,
+      "tekst": ""
+    },
+    {
+      "el": "button.farve-knap",
+      "b": 40,
+      "h": 44,
+      "tekst": ""
+    },
+    {
+      "el": "summary.",
+      "b": 64,
+      "h": 20,
+      "tekst": "Udseende"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 64,
+      "h": 40,
+      "tekst": "Hvid"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 61,
+      "h": 40,
+      "tekst": "Sort"
+    },
+    {
+      "el": "summary.",
+      "b": 332,
+      "h": 28,
+      "tekst": "Mere: vis hvad det g"
+    },
+    {
+      "el": "summary.",
+      "b": 332,
+      "h": 28,
+      "tekst": "Avanceret"
+    },
+    {
+      "el": "summary.",
+      "b": 332,
+      "h": 28,
+      "tekst": "Del"
+    },
+    {
+      "el": "summary.",
+      "b": 946,
+      "h": 18,
+      "tekst": "Licenser for bundled"
+    }
+  ],
+  "skak-mobil-opstil-sidehoejde": 1921,
+  "skak-mobil-konsol": [],
+  "skak-mobil-meta-start": {
+    "aktivFane": "fane-gaader",
+    "titel": "Skak",
+    "braet": 371,
+    "layoutBredde": 390,
+    "harViewportMeta": true,
+    "mindsteSkriftPx": 9.92
+  },
+  "skak-mobil-meta-kontrast": [
+    {
+      "el": "h1",
+      "tekst": "Skak",
+      "px": 25.6,
+      "vaegt": "700",
+      "kontrast": 11.24
+    },
+    {
+      "el": "button#fane-gaader.fane",
+      "tekst": "Løs gåder",
+      "px": 16.8,
+      "vaegt": "700",
+      "kontrast": 5.78
+    },
+    {
+      "el": "button#fane-laer.fane",
+      "tekst": "Lær skak",
+      "px": 16.8,
+      "vaegt": "700",
+      "kontrast": 5.77
+    },
+    {
+      "el": "button#fane-opstil.fane",
+      "tekst": "Opstil",
+      "px": 14.4,
+      "vaegt": "700",
+      "kontrast": 5.77
+    },
+    {
+      "el": "p#status.statuslinje",
+      "tekst": "Find det bedste træk.",
+      "px": 19.2,
+      "vaegt": "700",
+      "kontrast": 11.24
+    },
+    {
+      "el": "button.vaerktoej",
+      "tekst": "Flyt",
+      "px": 15.2,
+      "vaegt": "600",
+      "kontrast": 5.78
+    },
+    {
+      "el": "button.vaerktoej",
+      "tekst": "Pil",
+      "px": 15.2,
+      "vaegt": "600",
+      "kontrast": 12.59
+    },
+    {
+      "el": "button#knap-ryd-tegning.vaerktoej-ryd",
+      "tekst": "Ryd tegning",
+      "px": 15.2,
+      "vaegt": "600",
+      "kontrast": 5.77
+    },
+    {
+      "el": "span.rang-label",
+      "tekst": "8",
+      "px": 9.92,
+      "vaegt": "600",
+      "kontrast": 2.37
+    },
+    {
+      "el": "span.rang-label",
+      "tekst": "7",
+      "px": 9.92,
+      "vaegt": "600",
+      "kontrast": 2.37
+    },
+    {
+      "el": "span.fil-label",
+      "tekst": "a",
+      "px": 9.92,
+      "vaegt": "600",
+      "kontrast": 2.37
+    },
+    {
+      "el": "span.fil-label",
+      "tekst": "b",
+      "px": 9.92,
+      "vaegt": "600",
+      "kontrast": 2.37
+    },
+    {
+      "el": "p#naeste-klik.naeste-klik",
+      "tekst": "Vil du tegne? Vælg Pil eller R",
+      "px": 16,
+      "vaegt": "600",
+      "kontrast": 11.24
+    },
+    {
+      "el": "button#knap-vend",
+      "tekst": "Vend brættet",
+      "px": 15.2,
+      "vaegt": "600",
+      "kontrast": 12.59
+    },
+    {
+      "el": "label",
+      "tekst": "Brikker",
+      "px": 13.6,
+      "vaegt": "400",
+      "kontrast": 5.77
+    },
+    {
+      "el": "h2",
+      "tekst": "Løs gåder",
+      "px": 18.4,
+      "vaegt": "700",
+      "kontrast": 12.59
+    },
+    {
+      "el": "p.hjaelp",
+      "tekst": "Find det bedste træk. Rigtigt ",
+      "px": 14.4,
+      "vaegt": "400",
+      "kontrast": 6.46
+    },
+    {
+      "el": "p.valg-label",
+      "tekst": "Tema",
+      "px": 12.8,
+      "vaegt": "700",
+      "kontrast": 6.46
+    },
+    {
+      "el": "button.segment-knap",
+      "tekst": "Som de kommer",
+      "px": 14.08,
+      "vaegt": "600",
+      "kontrast": 5.78
+    },
+    {
+      "el": "button.segment-knap",
+      "tekst": "Mat i 1",
+      "px": 14.08,
+      "vaegt": "600",
+      "kontrast": 5.45
+    },
+    {
+      "el": "p#gaade-titel.opgave-titel",
+      "tekst": "Gåde",
+      "px": 16,
+      "vaegt": "600",
+      "kontrast": 6.46
+    },
+    {
+      "el": "span#gaade-rating",
+      "tekst": "1000",
+      "px": 20.8,
+      "vaegt": "700",
+      "kontrast": 6.94
+    },
+    {
+      "el": "small",
+      "tekst": "Din sværhedsgrad",
+      "px": 11.52,
+      "vaegt": "400",
+      "kontrast": 5.45
+    },
+    {
+      "el": "label.lyd-toggle",
+      "tekst": "Lyd ved rigtigt træk",
+      "px": 14.4,
+      "vaegt": "400",
+      "kontrast": 6.46
+    },
+    {
+      "el": "li.hjaelp",
+      "tekst": "Løs et par gåder, så samler st",
+      "px": 14.4,
+      "vaegt": "400",
+      "kontrast": 5.77
+    },
+    {
+      "el": "button#knap-gaade-nulstil-statistik.knap-farlig",
+      "tekst": "Nulstil min statistik",
+      "px": 15.2,
+      "vaegt": "600",
+      "kontrast": 6.03
+    },
+    {
+      "el": "button#knap-del-kopier.knap-primaer",
+      "tekst": "Del (kopiér kode)",
+      "px": 15.2,
+      "vaegt": "600",
+      "kontrast": 5.78
+    },
+    {
+      "el": "label",
+      "tekst": "Indlæs kode",
+      "px": 16,
+      "vaegt": "400",
+      "kontrast": 12.59
+    }
+  ],
+  "skak-mobil-meta-animationer": {
+    "brik": {
+      "anim": "none",
+      "animVarighed": "0s",
+      "overgang": "0s"
+    },
+    "felt": {
+      "anim": "none",
+      "animVarighed": "0s",
+      "overgang": "0s"
+    },
+    "knap": {
+      "anim": "none",
+      "animVarighed": "0s",
+      "overgang": "0.15s, 0.08s, 0.15s, 0.15s"
+    }
+  },
+  "skak-mobil-meta-under44": [
+    {
+      "el": "button.farve-knap",
+      "b": 40,
+      "h": 44,
+      "tekst": ""
+    },
+    {
+      "el": "button.farve-knap",
+      "b": 40,
+      "h": 44,
+      "tekst": ""
+    },
+    {
+      "el": "button.farve-knap",
+      "b": 40,
+      "h": 44,
+      "tekst": ""
+    },
+    {
+      "el": "summary.",
+      "b": 60,
+      "h": 18,
+      "tekst": "Udseende"
+    },
+    {
+      "el": "summary.",
+      "b": 337,
+      "h": 27,
+      "tekst": "Vælg hvad du vil træ"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 136,
+      "h": 40,
+      "tekst": "Som de kommer"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 73,
+      "h": 40,
+      "tekst": "Mat i 1"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 75,
+      "h": 40,
+      "tekst": "Mat i 2"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 68,
+      "h": 40,
+      "tekst": "Gaffel"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 62,
+      "h": 40,
+      "tekst": "Spyd"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 92,
+      "h": 40,
+      "tekst": "Afdækker"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 55,
+      "h": 40,
+      "tekst": "Alle"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 50,
+      "h": 40,
+      "tekst": "Let"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 78,
+      "h": 40,
+      "tekst": "Mellem"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 62,
+      "h": 40,
+      "tekst": "Svær"
+    },
+    {
+      "el": "input#gaade-lyd-til.",
+      "b": 13,
+      "h": 13,
+      "tekst": ""
+    },
+    {
+      "el": "summary.",
+      "b": 337,
+      "h": 27,
+      "tekst": "Din statistik"
+    },
+    {
+      "el": "summary.",
+      "b": 337,
+      "h": 27,
+      "tekst": "Avanceret"
+    },
+    {
+      "el": "summary.",
+      "b": 337,
+      "h": 27,
+      "tekst": "Del"
+    },
+    {
+      "el": "summary.",
+      "b": 371,
+      "h": 17,
+      "tekst": "Licenser for bundled"
+    }
+  ],
+  "skak-mobil-meta-gaade-fen": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w",
+  "skak-mobil-meta-motor-svar-ms": 544,
+  "skak-mobil-meta-opstil-under44": [
+    {
+      "el": "button.farve-knap",
+      "b": 40,
+      "h": 44,
+      "tekst": ""
+    },
+    {
+      "el": "button.farve-knap",
+      "b": 40,
+      "h": 44,
+      "tekst": ""
+    },
+    {
+      "el": "button.farve-knap",
+      "b": 40,
+      "h": 44,
+      "tekst": ""
+    },
+    {
+      "el": "summary.",
+      "b": 60,
+      "h": 18,
+      "tekst": "Udseende"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 60,
+      "h": 40,
+      "tekst": "Hvid"
+    },
+    {
+      "el": "button.segment-knap",
+      "b": 57,
+      "h": 40,
+      "tekst": "Sort"
+    },
+    {
+      "el": "summary.",
+      "b": 337,
+      "h": 27,
+      "tekst": "Mere: vis hvad det g"
+    },
+    {
+      "el": "summary.",
+      "b": 337,
+      "h": 27,
+      "tekst": "Avanceret"
+    },
+    {
+      "el": "summary.",
+      "b": 337,
+      "h": 27,
+      "tekst": "Del"
+    },
+    {
+      "el": "summary.",
+      "b": 371,
+      "h": 17,
+      "tekst": "Licenser for bundled"
+    }
+  ],
+  "skak-mobil-meta-konsol": [],
+  "mat-mobil-kort": {
+    "knapper": [
+      {
+        "navn": "Møllen",
+        "b": 68,
+        "h": 49,
+        "laast": false
+      },
+      {
+        "navn": "Kirken og Landsbygaden",
+        "b": 86,
+        "h": 44,
+        "laast": false
+      },
+      {
+        "navn": "Grusgraven",
+        "b": 86,
+        "h": 77,
+        "laast": true
+      },
+      {
+        "navn": "Sporvognen",
+        "b": 86,
+        "h": 77,
+        "laast": true
+      }
+    ],
+    "overlap": [],
+    "kortH": 358,
+    "kortB": 358,
+    "vindueH": 844,
+    "skilt": "Skoven og Søen"
+  },
+  "mat-mobil-kontrast": [
+    {
+      "el": "h1",
+      "tekst": "Ravn",
+      "px": 26,
+      "vaegt": "700",
+      "kontrast": 11.24
+    },
+    {
+      "el": "p.spil-niveau",
+      "tekst": "Niveau 1",
+      "px": 16,
+      "vaegt": "600",
+      "kontrast": 7.34
+    },
+    {
+      "el": "p.spil-erfaring",
+      "tekst": "0 / 30 erfaring til niveau 2",
+      "px": 13,
+      "vaegt": "400",
+      "kontrast": 5.77
+    },
+    {
+      "el": "span.egenskab-navn",
+      "tekst": "Hoved",
+      "px": 13,
+      "vaegt": "400",
+      "kontrast": 6.46
+    },
+    {
+      "el": "span.egenskab-tal",
+      "tekst": "1",
+      "px": 22,
+      "vaegt": "700",
+      "kontrast": 12.59
+    },
+    {
+      "el": "button#journal-knap.knap.knap--journal",
+      "tekst": "Åbn journalen",
+      "px": 16,
+      "vaegt": "600",
+      "kontrast": 6.94
+    },
+    {
+      "el": "h2",
+      "tekst": "Kortet",
+      "px": 19,
+      "vaegt": "700",
+      "kontrast": 11.24
+    },
+    {
+      "el": "p.kort-skilt",
+      "tekst": "Skoven og Søen",
+      "px": 12,
+      "vaegt": "400",
+      "kontrast": 6.46
+    },
+    {
+      "el": "span.sted-navn",
+      "tekst": "Møllen",
+      "px": 12,
+      "vaegt": "700",
+      "kontrast": 5.78
+    },
+    {
+      "el": "span.sted-navn",
+      "tekst": "Kirken og Landsbygaden",
+      "px": 12,
+      "vaegt": "700",
+      "kontrast": 12.59
+    },
+    {
+      "el": "span.sted-navn",
+      "tekst": "Grusgraven",
+      "px": 12,
+      "vaegt": "700",
+      "kontrast": 6.46
+    },
+    {
+      "el": "span.sted-krav",
+      "tekst": "🔒 Kræver målestokken",
+      "px": 10.5,
+      "vaegt": "400",
+      "kontrast": 6.46
+    },
+    {
+      "el": "p.sted-under",
+      "tekst": "Vandmøllen ved åen",
+      "px": 13,
+      "vaegt": "400",
+      "kontrast": 6.46
+    },
+    {
+      "el": "p.quest-person",
+      "tekst": "Mølleren",
+      "px": 13,
+      "vaegt": "400",
+      "kontrast": 6.46
+    },
+    {
+      "el": "p.quest-kaede-tal",
+      "tekst": "Forløb 1 af 6",
+      "px": 13,
+      "vaegt": "400",
+      "kontrast": 6.46
+    },
+    {
+      "el": "h3",
+      "tekst": "Del kornet",
+      "px": 18,
+      "vaegt": "700",
+      "kontrast": 12.59
+    },
+    {
+      "el": "p.quest-replik",
+      "tekst": "Sækkene vokser hurtigere, end ",
+      "px": 16,
+      "vaegt": "400",
+      "kontrast": 12.59
+    },
+    {
+      "el": "p.quest-fremdrift",
+      "tekst": "0 af 3 opgaver løst",
+      "px": 14,
+      "vaegt": "400",
+      "kontrast": 6.46
+    },
+    {
+      "el": "p.quest-opgave-tekst",
+      "tekst": "Mølleren deler 2 sække korn li",
+      "px": 16,
+      "vaegt": "400",
+      "kontrast": 12.59
+    },
+    {
+      "el": "button.knap.knap--svar",
+      "tekst": "1/4",
+      "px": 16,
+      "vaegt": "600",
+      "kontrast": 12.59
+    },
+    {
+      "el": "p.kort-kilde",
+      "tekst": "Kortgrundlag: OpenStreetMap-bi",
+      "px": 11,
+      "vaegt": "400",
+      "kontrast": 5.77
+    }
+  ],
+  "mat-mobil-opgaver": {
+    "opgaver": 42,
+    "broekOpgaver": 17,
+    "uforkortet": 0,
+    "ensVaerdi": 0,
+    "broekSkaerm": true,
+    "uforkortetTekst": ""
+  },
+  "mat-mobil-journal": {
+    "oversigt": "Hvor langt du er nået: 5 af 5 steder åbne.",
+    "udstyr": "Målestokken | Ét ekstra forsøg på Grusgravens opgaver. | I brug",
+    "knapper": [
+      {
+        "t": "I brug",
+        "b": 78,
+        "h": 44
+      },
+      {
+        "t": "Tilbage til kortet",
+        "b": 358,
+        "h": 44
+      }
+    ],
+    "poster": 5
+  },
+  "mat-mobil-konsol": [],
+  "mat-desktop-kort": {
+    "knapper": [
+      {
+        "navn": "Møllen",
+        "b": 78,
+        "h": 57,
+        "laast": false
+      },
+      {
+        "navn": "Kirken og Landsbygaden",
+        "b": 96,
+        "h": 44,
+        "laast": false
+      },
+      {
+        "navn": "Grusgraven",
+        "b": 96,
+        "h": 85,
+        "laast": true
+      },
+      {
+        "navn": "Sporvognen",
+        "b": 96,
+        "h": 85,
+        "laast": true
+      }
+    ],
+    "overlap": [],
+    "kortH": 520,
+    "kortB": 520,
+    "vindueH": 800,
+    "skilt": "Skoven og Søen"
+  },
+  "mat-desktop-kontrast": [
+    {
+      "el": "h1",
+      "tekst": "Ravn",
+      "px": 26,
+      "vaegt": "700",
+      "kontrast": 11.24
+    },
+    {
+      "el": "p.spil-niveau",
+      "tekst": "Niveau 1",
+      "px": 16,
+      "vaegt": "600",
+      "kontrast": 7.34
+    },
+    {
+      "el": "p.spil-erfaring",
+      "tekst": "0 / 30 erfaring til niveau 2",
+      "px": 13,
+      "vaegt": "400",
+      "kontrast": 5.77
+    },
+    {
+      "el": "span.egenskab-navn",
+      "tekst": "Hoved",
+      "px": 13,
+      "vaegt": "400",
+      "kontrast": 6.46
+    },
+    {
+      "el": "span.egenskab-tal",
+      "tekst": "1",
+      "px": 22,
+      "vaegt": "700",
+      "kontrast": 12.59
+    },
+    {
+      "el": "button#journal-knap.knap.knap--journal",
+      "tekst": "Åbn journalen",
+      "px": 16,
+      "vaegt": "600",
+      "kontrast": 6.94
+    },
+    {
+      "el": "h2",
+      "tekst": "Kortet",
+      "px": 19,
+      "vaegt": "700",
+      "kontrast": 11.24
+    },
+    {
+      "el": "p.kort-skilt",
+      "tekst": "Skoven og Søen",
+      "px": 12,
+      "vaegt": "400",
+      "kontrast": 6.46
+    },
+    {
+      "el": "span.sted-navn",
+      "tekst": "Møllen",
+      "px": 13,
+      "vaegt": "700",
+      "kontrast": 5.78
+    },
+    {
+      "el": "span.sted-navn",
+      "tekst": "Kirken og Landsbygaden",
+      "px": 13,
+      "vaegt": "700",
+      "kontrast": 12.59
+    },
+    {
+      "el": "span.sted-navn",
+      "tekst": "Grusgraven",
+      "px": 13,
+      "vaegt": "700",
+      "kontrast": 6.46
+    },
+    {
+      "el": "span.sted-krav",
+      "tekst": "🔒 Kræver målestokken",
+      "px": 11,
+      "vaegt": "400",
+      "kontrast": 6.46
+    },
+    {
+      "el": "p.sted-under",
+      "tekst": "Vandmøllen ved åen",
+      "px": 13,
+      "vaegt": "400",
+      "kontrast": 6.46
+    },
+    {
+      "el": "p.quest-person",
+      "tekst": "Mølleren",
+      "px": 13,
+      "vaegt": "400",
+      "kontrast": 6.46
+    },
+    {
+      "el": "p.quest-kaede-tal",
+      "tekst": "Forløb 1 af 6",
+      "px": 13,
+      "vaegt": "400",
+      "kontrast": 6.46
+    },
+    {
+      "el": "h3",
+      "tekst": "Del kornet",
+      "px": 18,
+      "vaegt": "700",
+      "kontrast": 12.59
+    },
+    {
+      "el": "p.quest-replik",
+      "tekst": "Sækkene vokser hurtigere, end ",
+      "px": 16,
+      "vaegt": "400",
+      "kontrast": 12.59
+    },
+    {
+      "el": "p.quest-fremdrift",
+      "tekst": "0 af 3 opgaver løst",
+      "px": 14,
+      "vaegt": "400",
+      "kontrast": 6.46
+    },
+    {
+      "el": "p.quest-opgave-tekst",
+      "tekst": "Mølleren deler 2 sække korn li",
+      "px": 16,
+      "vaegt": "400",
+      "kontrast": 12.59
+    },
+    {
+      "el": "button.knap.knap--svar",
+      "tekst": "1/4",
+      "px": 16,
+      "vaegt": "600",
+      "kontrast": 12.59
+    },
+    {
+      "el": "p.kort-kilde",
+      "tekst": "Kortgrundlag: OpenStreetMap-bi",
+      "px": 11,
+      "vaegt": "400",
+      "kontrast": 5.77
+    }
+  ],
+  "mat-desktop-opgaver": {
+    "opgaver": 8,
+    "broekOpgaver": 7,
+    "uforkortet": 0,
+    "ensVaerdi": 0,
+    "broekSkaerm": true,
+    "uforkortetTekst": ""
+  },
+  "mat-desktop-journal": {
+    "oversigt": "Hvor langt du er nået: 4 af 5 steder åbne.",
+    "udstyr": "Målestokken | Ét ekstra forsøg på Grusgravens opgaver. | I brug",
+    "knapper": [
+      {
+        "t": "I brug",
+        "b": 78,
+        "h": 44
+      },
+      {
+        "t": "Tilbage til kortet",
+        "b": 520,
+        "h": 44
+      }
+    ],
+    "poster": 5
+  },
+  "mat-desktop-konsol": []
+}

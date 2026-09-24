@@ -1,0 +1,20 @@
+[
+  {
+    "alvor": "alvor-1",
+    "blok": "skak",
+    "titel": "Ingen viewport-meta: en telefon (390 bred) tegner siden som 980 px bred og skrumper den",
+    "note": "layoutbredde 980px; skrift skaleres til ca. 4.2px; @media (max-width: 700px) rammer aldrig"
+  },
+  {
+    "alvor": "alvor-2",
+    "blok": "skak",
+    "titel": "Trykflader under 44px paa 390px (forside)",
+    "note": "[{\"el\":\"button.farve-knap\",\"b\":40,\"h\":44,\"tekst\":\"\"},{\"el\":\"button.farve-knap\",\"b\":40,\"h\":44,\"tekst\":\"\"},{\"el\":\"button.farve-knap\",\"b\":40,\"h\":44,\"tekst\":\"\"},{\"el\":\"summary.\",\"b\":64,\"h\":20,\"tekst\":\"Udseende\"},{\"el\":\"summary.\",\"b\":332,\"h\":28,\"tekst\":\"Vælg hvad du vil træ\"},{\"el\":\"button.segment-knap\",\"b\":144,\"h\":40,\"tekst\":\"Som de kommer\"}]"
+  },
+  {
+    "alvor": "alvor-2",
+    "blok": "skak",
+    "titel": "Trykflader under 44px i Opstil paa 390px",
+    "note": "[{\"el\":\"button.farve-knap\",\"b\":40,\"h\":44,\"tekst\":\"\"},{\"el\":\"button.farve-knap\",\"b\":40,\"h\":44,\"tekst\":\"\"},{\"el\":\"button.farve-knap\",\"b\":40,\"h\":44,\"tekst\":\"\"},{\"el\":\"summary.\",\"b\":64,\"h\":20,\"tekst\":\"Udseende\"},{\"el\":\"button.segment-knap\",\"b\":64,\"h\":40,\"tekst\":\"Hvid\"},{\"el\":\"button.segment-knap\",\"b\":61,\"h\":40,\"tekst\":\"Sort\"}]"
+  }
+]
