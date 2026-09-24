@@ -1,0 +1,2612 @@
+{
+  "skakMain": "270cd4d",
+  "matMain": "4faabe0",
+  "skak-390-forside": {
+    "layoutBredde": 390,
+    "scrollBredde": 390,
+    "hoejde": 1721,
+    "harMeta": true,
+    "smaaTryk": [
+      {
+        "el": "summary",
+        "b": 60,
+        "h": 18,
+        "t": "Udseende"
+      },
+      {
+        "el": "label",
+        "b": 41,
+        "h": 18,
+        "t": "Brikker"
+      },
+      {
+        "el": "label",
+        "b": 28,
+        "h": 18,
+        "t": "Bræt"
+      },
+      {
+        "el": "summary",
+        "b": 340,
+        "h": 27,
+        "t": "Vælg hvad du vil t"
+      },
+      {
+        "el": "input#gaade-lyd-til",
+        "b": 13,
+        "h": 13,
+        "t": ""
+      },
+      {
+        "el": "summary",
+        "b": 340,
+        "h": 27,
+        "t": "Din statistik"
+      },
+      {
+        "el": "summary",
+        "b": 340,
+        "h": 27,
+        "t": "Avanceret"
+      },
+      {
+        "el": "summary",
+        "b": 340,
+        "h": 27,
+        "t": "Del"
+      },
+      {
+        "el": "label",
+        "b": 86,
+        "h": 21,
+        "t": "Indlæs kode"
+      },
+      {
+        "el": "summary",
+        "b": 374,
+        "h": 17,
+        "t": "Licenser for bundl"
+      }
+    ],
+    "antalSmaa": 10,
+    "udenForSkaerm": [],
+    "antalUden": 0,
+    "mindsteSkriftPx": 9.92,
+    "mindsteSkriftEl": "span.rang-label: \"8\""
+  },
+  "skak-390-forside-braet": {
+    "b": 374,
+    "top": 388,
+    "bund": 762,
+    "vindue": 844
+  },
+  "skak-390-laer-valg": {
+    "layoutBredde": 390,
+    "scrollBredde": 390,
+    "hoejde": 1376,
+    "harMeta": true,
+    "smaaTryk": [
+      {
+        "el": "summary",
+        "b": 60,
+        "h": 18,
+        "t": "Udseende"
+      },
+      {
+        "el": "label",
+        "b": 41,
+        "h": 18,
+        "t": "Brikker"
+      },
+      {
+        "el": "label",
+        "b": 28,
+        "h": 18,
+        "t": "Bræt"
+      },
+      {
+        "el": "summary",
+        "b": 340,
+        "h": 27,
+        "t": "Avanceret"
+      },
+      {
+        "el": "summary",
+        "b": 340,
+        "h": 27,
+        "t": "Del"
+      },
+      {
+        "el": "label",
+        "b": 86,
+        "h": 21,
+        "t": "Indlæs kode"
+      },
+      {
+        "el": "summary",
+        "b": 374,
+        "h": 17,
+        "t": "Licenser for bundl"
+      }
+    ],
+    "antalSmaa": 7,
+    "udenForSkaerm": [],
+    "antalUden": 0,
+    "mindsteSkriftPx": 9.92,
+    "mindsteSkriftEl": "span.rang-label: \"8\""
+  },
+  "skak-390-ny-titelplacering": {
+    "top": 1077,
+    "bund": 1097,
+    "vindue": 844
+  },
+  "skak-390-ny-braetbund": {
+    "top": 388,
+    "bund": 762,
+    "vindue": 844
+  },
+  "skak-390-spiller-titelplacering": {
+    "top": 1077,
+    "bund": 1097,
+    "vindue": 844
+  },
+  "skak-390-laer-niveauer": {
+    "ny": {
+      "titel": "Brættet",
+      "taeller": "Trin 1 af 27"
+    },
+    "nyEfterTraek": {
+      "titel": "Kongen",
+      "taeller": "Trin 2 af 27",
+      "gaaetVidere": true
+    },
+    "spiller": {
+      "titel": "Åbning: Italiensk",
+      "taeller": "Trin 20 af 27"
+    },
+    "spillerForkert": {
+      "besked": "Lovligt, men ikke det vi øver - trækket går tilbage om lidt."
+    },
+    "reglerne": {
+      "titel": "Princip: centrum",
+      "taeller": "Trin 15 af 27"
+    },
+    "reglerneForkert": {
+      "besked": "a3 gør intet for midten - en tabt tempo."
+    }
+  },
+  "skak-390-laer-efter": {
+    "layoutBredde": 390,
+    "scrollBredde": 390,
+    "hoejde": 1551,
+    "harMeta": true,
+    "smaaTryk": [
+      {
+        "el": "summary",
+        "b": 60,
+        "h": 18,
+        "t": "Udseende"
+      },
+      {
+        "el": "label",
+        "b": 41,
+        "h": 18,
+        "t": "Brikker"
+      },
+      {
+        "el": "label",
+        "b": 28,
+        "h": 18,
+        "t": "Bræt"
+      },
+      {
+        "el": "summary",
+        "b": 340,
+        "h": 27,
+        "t": "Avanceret"
+      },
+      {
+        "el": "summary",
+        "b": 340,
+        "h": 27,
+        "t": "Del"
+      },
+      {
+        "el": "label",
+        "b": 86,
+        "h": 21,
+        "t": "Indlæs kode"
+      },
+      {
+        "el": "summary",
+        "b": 374,
+        "h": 17,
+        "t": "Licenser for bundl"
+      }
+    ],
+    "antalSmaa": 7,
+    "udenForSkaerm": [],
+    "antalUden": 0,
+    "mindsteSkriftPx": 9.92,
+    "mindsteSkriftEl": "span.rang-label: \"8\""
+  },
+  "skak-390-spil-opsaetning": {
+    "layoutBredde": 390,
+    "scrollBredde": 390,
+    "hoejde": 1712,
+    "harMeta": true,
+    "smaaTryk": [
+      {
+        "el": "summary",
+        "b": 60,
+        "h": 18,
+        "t": "Udseende"
+      },
+      {
+        "el": "label",
+        "b": 41,
+        "h": 18,
+        "t": "Brikker"
+      },
+      {
+        "el": "label",
+        "b": 28,
+        "h": 18,
+        "t": "Bræt"
+      },
+      {
+        "el": "summary",
+        "b": 340,
+        "h": 27,
+        "t": "Trækliste"
+      },
+      {
+        "el": "summary",
+        "b": 340,
+        "h": 27,
+        "t": "Avanceret"
+      },
+      {
+        "el": "summary",
+        "b": 340,
+        "h": 27,
+        "t": "Del"
+      },
+      {
+        "el": "label",
+        "b": 86,
+        "h": 21,
+        "t": "Indlæs kode"
+      },
+      {
+        "el": "summary",
+        "b": 374,
+        "h": 17,
+        "t": "Licenser for bundl"
+      }
+    ],
+    "antalSmaa": 8,
+    "udenForSkaerm": [],
+    "antalUden": 0,
+    "mindsteSkriftPx": 9.92,
+    "mindsteSkriftEl": "span.rang-label: \"8\""
+  },
+  "skak-390-spil-parti": [
+    {
+      "traek": "e2-e4",
+      "motorMs": 669,
+      "hvidTilTraek": true,
+      "status": "Computeren spillede g8-f6. Din tur.",
+      "ok": true
+    },
+    {
+      "traek": "g1-f3",
+      "motorMs": 671,
+      "hvidTilTraek": true,
+      "status": "Computeren spillede f6-e4. Din tur.",
+      "ok": true
+    },
+    {
+      "traek": "f1-c4",
+      "motorMs": 657,
+      "hvidTilTraek": true,
+      "status": "Computeren spillede e4-f2. Din tur.",
+      "ok": true
+    },
+    {
+      "traek": "d2-d3",
+      "motorMs": 671,
+      "hvidTilTraek": true,
+      "status": "Computeren spillede f2-d1. Din tur.",
+      "ok": true
+    },
+    {
+      "traek": "b1-c3",
+      "motorMs": 669,
+      "hvidTilTraek": true,
+      "status": "Computeren spillede d1-c3. Din tur.",
+      "ok": true
+    }
+  ],
+  "skak-390-spil-efter": {
+    "layoutBredde": 390,
+    "scrollBredde": 390,
+    "hoejde": 1732,
+    "harMeta": true,
+    "smaaTryk": [
+      {
+        "el": "summary",
+        "b": 60,
+        "h": 18,
+        "t": "Udseende"
+      },
+      {
+        "el": "label",
+        "b": 41,
+        "h": 18,
+        "t": "Brikker"
+      },
+      {
+        "el": "label",
+        "b": 28,
+        "h": 18,
+        "t": "Bræt"
+      },
+      {
+        "el": "summary",
+        "b": 340,
+        "h": 27,
+        "t": "Trækliste"
+      },
+      {
+        "el": "summary",
+        "b": 340,
+        "h": 27,
+        "t": "Avanceret"
+      },
+      {
+        "el": "summary",
+        "b": 340,
+        "h": 27,
+        "t": "Del"
+      },
+      {
+        "el": "label",
+        "b": 86,
+        "h": 21,
+        "t": "Indlæs kode"
+      },
+      {
+        "el": "summary",
+        "b": 374,
+        "h": 17,
+        "t": "Licenser for bundl"
+      }
+    ],
+    "antalSmaa": 8,
+    "udenForSkaerm": [],
+    "antalUden": 0,
+    "mindsteSkriftPx": 9.92,
+    "mindsteSkriftEl": "span.rang-label: \"8\""
+  },
+  "skak-390-spil-braetbund": {
+    "top": 407,
+    "bund": 781,
+    "vindue": 844
+  },
+  "skak-390-opstil": {
+    "layoutBredde": 390,
+    "scrollBredde": 390,
+    "hoejde": 1949,
+    "harMeta": true,
+    "smaaTryk": [
+      {
+        "el": "summary",
+        "b": 60,
+        "h": 18,
+        "t": "Udseende"
+      },
+      {
+        "el": "label",
+        "b": 41,
+        "h": 18,
+        "t": "Brikker"
+      },
+      {
+        "el": "label",
+        "b": 28,
+        "h": 18,
+        "t": "Bræt"
+      },
+      {
+        "el": "summary",
+        "b": 340,
+        "h": 27,
+        "t": "Mere: vis hvad det"
+      },
+      {
+        "el": "summary",
+        "b": 340,
+        "h": 27,
+        "t": "Avanceret"
+      },
+      {
+        "el": "summary",
+        "b": 340,
+        "h": 27,
+        "t": "Del"
+      },
+      {
+        "el": "label",
+        "b": 86,
+        "h": 21,
+        "t": "Indlæs kode"
+      },
+      {
+        "el": "summary",
+        "b": 374,
+        "h": 17,
+        "t": "Licenser for bundl"
+      }
+    ],
+    "antalSmaa": 8,
+    "udenForSkaerm": [],
+    "antalUden": 0,
+    "mindsteSkriftPx": 9.92,
+    "mindsteSkriftEl": "span.rang-label: \"8\""
+  },
+  "skak-390-opstil-tekst": [],
+  "skak-390-gaade": {
+    "layoutBredde": 390,
+    "scrollBredde": 390,
+    "hoejde": 1741,
+    "harMeta": true,
+    "smaaTryk": [
+      {
+        "el": "summary",
+        "b": 60,
+        "h": 18,
+        "t": "Udseende"
+      },
+      {
+        "el": "label",
+        "b": 41,
+        "h": 18,
+        "t": "Brikker"
+      },
+      {
+        "el": "label",
+        "b": 28,
+        "h": 18,
+        "t": "Bræt"
+      },
+      {
+        "el": "summary",
+        "b": 340,
+        "h": 27,
+        "t": "Vælg hvad du vil t"
+      },
+      {
+        "el": "input#gaade-lyd-til",
+        "b": 13,
+        "h": 13,
+        "t": ""
+      },
+      {
+        "el": "summary",
+        "b": 340,
+        "h": 27,
+        "t": "Din statistik"
+      },
+      {
+        "el": "summary",
+        "b": 340,
+        "h": 27,
+        "t": "Avanceret"
+      },
+      {
+        "el": "summary",
+        "b": 340,
+        "h": 27,
+        "t": "Del"
+      },
+      {
+        "el": "label",
+        "b": 86,
+        "h": 21,
+        "t": "Indlæs kode"
+      },
+      {
+        "el": "summary",
+        "b": 374,
+        "h": 17,
+        "t": "Licenser for bundl"
+      }
+    ],
+    "antalSmaa": 10,
+    "udenForSkaerm": [],
+    "antalUden": 0,
+    "mindsteSkriftPx": 9.92,
+    "mindsteSkriftEl": "span.rang-label: \"8\""
+  },
+  "skak-390-konsol": [],
+  "skak-390-laerer": {
+    "layoutBredde": 390,
+    "scrollBredde": 390,
+    "hoejde": 12042,
+    "harMeta": true,
+    "smaaTryk": [
+      {
+        "el": "button#ark-kopier-knap.ark-kopier__knap",
+        "b": 159,
+        "h": 35,
+        "t": "Kopiér vurderinger"
+      },
+      {
+        "el": "input.kort-vurdering__felt",
+        "b": 316,
+        "h": 30,
+        "t": ""
+      },
+      {
+        "el": "input.kort-vurdering__felt",
+        "b": 316,
+        "h": 30,
+        "t": ""
+      },
+      {
+        "el": "input.kort-vurdering__felt",
+        "b": 316,
+        "h": 30,
+        "t": ""
+      },
+      {
+        "el": "input.kort-vurdering__felt",
+        "b": 316,
+        "h": 30,
+        "t": ""
+      },
+      {
+        "el": "input.kort-vurdering__felt",
+        "b": 316,
+        "h": 30,
+        "t": ""
+      },
+      {
+        "el": "input.kort-vurdering__felt",
+        "b": 316,
+        "h": 30,
+        "t": ""
+      },
+      {
+        "el": "input.kort-vurdering__felt",
+        "b": 316,
+        "h": 30,
+        "t": ""
+      },
+      {
+        "el": "input.kort-vurdering__felt",
+        "b": 316,
+        "h": 30,
+        "t": ""
+      },
+      {
+        "el": "input.kort-vurdering__felt",
+        "b": 316,
+        "h": 30,
+        "t": ""
+      },
+      {
+        "el": "input.kort-vurdering__felt",
+        "b": 316,
+        "h": 30,
+        "t": ""
+      },
+      {
+        "el": "input.kort-vurdering__felt",
+        "b": 316,
+        "h": 30,
+        "t": ""
+      }
+    ],
+    "antalSmaa": 27,
+    "udenForSkaerm": [],
+    "antalUden": 0,
+    "mindsteSkriftPx": 12.8,
+    "mindsteSkriftEl": "p.kort-forklaring: \"Tårnet går hele vejen ne\""
+  },
+  "skak-390-laerer-konsol": [],
+  "skak-360-forside": {
+    "layoutBredde": 360,
+    "scrollBredde": 360,
+    "hoejde": 1691,
+    "harMeta": true,
+    "smaaTryk": [
+      {
+        "el": "summary",
+        "b": 60,
+        "h": 18,
+        "t": "Udseende"
+      },
+      {
+        "el": "label",
+        "b": 41,
+        "h": 18,
+        "t": "Brikker"
+      },
+      {
+        "el": "label",
+        "b": 28,
+        "h": 18,
+        "t": "Bræt"
+      },
+      {
+        "el": "summary",
+        "b": 310,
+        "h": 27,
+        "t": "Vælg hvad du vil t"
+      },
+      {
+        "el": "input#gaade-lyd-til",
+        "b": 13,
+        "h": 13,
+        "t": ""
+      },
+      {
+        "el": "summary",
+        "b": 310,
+        "h": 27,
+        "t": "Din statistik"
+      },
+      {
+        "el": "summary",
+        "b": 310,
+        "h": 27,
+        "t": "Avanceret"
+      },
+      {
+        "el": "summary",
+        "b": 310,
+        "h": 27,
+        "t": "Del"
+      },
+      {
+        "el": "label",
+        "b": 86,
+        "h": 21,
+        "t": "Indlæs kode"
+      },
+      {
+        "el": "summary",
+        "b": 344,
+        "h": 17,
+        "t": "Licenser for bundl"
+      }
+    ],
+    "antalSmaa": 10,
+    "udenForSkaerm": [],
+    "antalUden": 0,
+    "mindsteSkriftPx": 9.92,
+    "mindsteSkriftEl": "span.rang-label: \"8\""
+  },
+  "skak-360-forside-braet": {
+    "b": 344,
+    "top": 388,
+    "bund": 732,
+    "vindue": 800
+  },
+  "skak-360-laer-valg": {
+    "layoutBredde": 360,
+    "scrollBredde": 360,
+    "hoejde": 1346,
+    "harMeta": true,
+    "smaaTryk": [
+      {
+        "el": "summary",
+        "b": 60,
+        "h": 18,
+        "t": "Udseende"
+      },
+      {
+        "el": "label",
+        "b": 41,
+        "h": 18,
+        "t": "Brikker"
+      },
+      {
+        "el": "label",
+        "b": 28,
+        "h": 18,
+        "t": "Bræt"
+      },
+      {
+        "el": "summary",
+        "b": 310,
+        "h": 27,
+        "t": "Avanceret"
+      },
+      {
+        "el": "summary",
+        "b": 310,
+        "h": 27,
+        "t": "Del"
+      },
+      {
+        "el": "label",
+        "b": 86,
+        "h": 21,
+        "t": "Indlæs kode"
+      },
+      {
+        "el": "summary",
+        "b": 344,
+        "h": 17,
+        "t": "Licenser for bundl"
+      }
+    ],
+    "antalSmaa": 7,
+    "udenForSkaerm": [],
+    "antalUden": 0,
+    "mindsteSkriftPx": 9.92,
+    "mindsteSkriftEl": "span.rang-label: \"8\""
+  },
+  "skak-360-ny-titelplacering": {
+    "top": 1047,
+    "bund": 1067,
+    "vindue": 800
+  },
+  "skak-360-ny-braetbund": {
+    "top": 388,
+    "bund": 732,
+    "vindue": 800
+  },
+  "skak-360-spiller-titelplacering": {
+    "top": 1047,
+    "bund": 1067,
+    "vindue": 800
+  },
+  "skak-360-laer-niveauer": {
+    "ny": {
+      "titel": "Brættet",
+      "taeller": "Trin 1 af 27"
+    },
+    "nyEfterTraek": {
+      "titel": "Kongen",
+      "taeller": "Trin 2 af 27",
+      "gaaetVidere": true
+    },
+    "spiller": {
+      "titel": "Åbning: Italiensk",
+      "taeller": "Trin 20 af 27"
+    },
+    "spillerForkert": {
+      "besked": "Lovligt, men ikke det vi øver - trækket går tilbage om lidt."
+    },
+    "reglerne": {
+      "titel": "Princip: centrum",
+      "taeller": "Trin 15 af 27"
+    },
+    "reglerneForkert": {
+      "besked": "a3 gør intet for midten - en tabt tempo."
+    }
+  },
+  "skak-360-laer-efter": {
+    "layoutBredde": 360,
+    "scrollBredde": 360,
+    "hoejde": 1521,
+    "harMeta": true,
+    "smaaTryk": [
+      {
+        "el": "summary",
+        "b": 60,
+        "h": 18,
+        "t": "Udseende"
+      },
+      {
+        "el": "label",
+        "b": 41,
+        "h": 18,
+        "t": "Brikker"
+      },
+      {
+        "el": "label",
+        "b": 28,
+        "h": 18,
+        "t": "Bræt"
+      },
+      {
+        "el": "summary",
+        "b": 310,
+        "h": 27,
+        "t": "Avanceret"
+      },
+      {
+        "el": "summary",
+        "b": 310,
+        "h": 27,
+        "t": "Del"
+      },
+      {
+        "el": "label",
+        "b": 86,
+        "h": 21,
+        "t": "Indlæs kode"
+      },
+      {
+        "el": "summary",
+        "b": 344,
+        "h": 17,
+        "t": "Licenser for bundl"
+      }
+    ],
+    "antalSmaa": 7,
+    "udenForSkaerm": [],
+    "antalUden": 0,
+    "mindsteSkriftPx": 9.92,
+    "mindsteSkriftEl": "span.rang-label: \"8\""
+  },
+  "skak-360-spil-opsaetning": {
+    "layoutBredde": 360,
+    "scrollBredde": 360,
+    "hoejde": 1682,
+    "harMeta": true,
+    "smaaTryk": [
+      {
+        "el": "summary",
+        "b": 60,
+        "h": 18,
+        "t": "Udseende"
+      },
+      {
+        "el": "label",
+        "b": 41,
+        "h": 18,
+        "t": "Brikker"
+      },
+      {
+        "el": "label",
+        "b": 28,
+        "h": 18,
+        "t": "Bræt"
+      },
+      {
+        "el": "summary",
+        "b": 310,
+        "h": 27,
+        "t": "Trækliste"
+      },
+      {
+        "el": "summary",
+        "b": 310,
+        "h": 27,
+        "t": "Avanceret"
+      },
+      {
+        "el": "summary",
+        "b": 310,
+        "h": 27,
+        "t": "Del"
+      },
+      {
+        "el": "label",
+        "b": 86,
+        "h": 21,
+        "t": "Indlæs kode"
+      },
+      {
+        "el": "summary",
+        "b": 344,
+        "h": 17,
+        "t": "Licenser for bundl"
+      }
+    ],
+    "antalSmaa": 8,
+    "udenForSkaerm": [],
+    "antalUden": 0,
+    "mindsteSkriftPx": 9.92,
+    "mindsteSkriftEl": "span.rang-label: \"8\""
+  },
+  "skak-360-spil-parti": [
+    {
+      "traek": "e2-e4",
+      "motorMs": 654,
+      "hvidTilTraek": true,
+      "status": "Computeren spillede b8-a6. Din tur.",
+      "ok": true
+    },
+    {
+      "traek": "g1-f3",
+      "motorMs": 656,
+      "hvidTilTraek": true,
+      "status": "Computeren spillede g7-g5. Din tur.",
+      "ok": true
+    },
+    {
+      "traek": "f1-c4",
+      "motorMs": 658,
+      "hvidTilTraek": true,
+      "status": "Computeren spillede g5-g4. Din tur.",
+      "ok": true
+    },
+    {
+      "traek": "d2-d3",
+      "motorMs": 660,
+      "hvidTilTraek": true,
+      "status": "Computeren spillede g4-f3. Din tur.",
+      "ok": true
+    },
+    {
+      "traek": "b1-c3",
+      "motorMs": 669,
+      "hvidTilTraek": true,
+      "status": "Computeren spillede f3-g2. Din tur.",
+      "ok": true
+    }
+  ],
+  "skak-360-spil-efter": {
+    "layoutBredde": 360,
+    "scrollBredde": 360,
+    "hoejde": 1702,
+    "harMeta": true,
+    "smaaTryk": [
+      {
+        "el": "summary",
+        "b": 60,
+        "h": 18,
+        "t": "Udseende"
+      },
+      {
+        "el": "label",
+        "b": 41,
+        "h": 18,
+        "t": "Brikker"
+      },
+      {
+        "el": "label",
+        "b": 28,
+        "h": 18,
+        "t": "Bræt"
+      },
+      {
+        "el": "summary",
+        "b": 310,
+        "h": 27,
+        "t": "Trækliste"
+      },
+      {
+        "el": "summary",
+        "b": 310,
+        "h": 27,
+        "t": "Avanceret"
+      },
+      {
+        "el": "summary",
+        "b": 310,
+        "h": 27,
+        "t": "Del"
+      },
+      {
+        "el": "label",
+        "b": 86,
+        "h": 21,
+        "t": "Indlæs kode"
+      },
+      {
+        "el": "summary",
+        "b": 344,
+        "h": 17,
+        "t": "Licenser for bundl"
+      }
+    ],
+    "antalSmaa": 8,
+    "udenForSkaerm": [],
+    "antalUden": 0,
+    "mindsteSkriftPx": 9.92,
+    "mindsteSkriftEl": "span.rang-label: \"8\""
+  },
+  "skak-360-spil-braetbund": {
+    "top": 407,
+    "bund": 751,
+    "vindue": 800
+  },
+  "skak-360-opstil": {
+    "layoutBredde": 360,
+    "scrollBredde": 360,
+    "hoejde": 1958,
+    "harMeta": true,
+    "smaaTryk": [
+      {
+        "el": "summary",
+        "b": 60,
+        "h": 18,
+        "t": "Udseende"
+      },
+      {
+        "el": "label",
+        "b": 41,
+        "h": 18,
+        "t": "Brikker"
+      },
+      {
+        "el": "label",
+        "b": 28,
+        "h": 18,
+        "t": "Bræt"
+      },
+      {
+        "el": "summary",
+        "b": 310,
+        "h": 27,
+        "t": "Mere: vis hvad det"
+      },
+      {
+        "el": "summary",
+        "b": 310,
+        "h": 27,
+        "t": "Avanceret"
+      },
+      {
+        "el": "summary",
+        "b": 310,
+        "h": 27,
+        "t": "Del"
+      },
+      {
+        "el": "label",
+        "b": 86,
+        "h": 21,
+        "t": "Indlæs kode"
+      },
+      {
+        "el": "summary",
+        "b": 344,
+        "h": 17,
+        "t": "Licenser for bundl"
+      }
+    ],
+    "antalSmaa": 8,
+    "udenForSkaerm": [],
+    "antalUden": 0,
+    "mindsteSkriftPx": 9.92,
+    "mindsteSkriftEl": "span.rang-label: \"8\""
+  },
+  "skak-360-opstil-tekst": [],
+  "skak-360-gaade": {
+    "layoutBredde": 360,
+    "scrollBredde": 360,
+    "hoejde": 1711,
+    "harMeta": true,
+    "smaaTryk": [
+      {
+        "el": "summary",
+        "b": 60,
+        "h": 18,
+        "t": "Udseende"
+      },
+      {
+        "el": "label",
+        "b": 41,
+        "h": 18,
+        "t": "Brikker"
+      },
+      {
+        "el": "label",
+        "b": 28,
+        "h": 18,
+        "t": "Bræt"
+      },
+      {
+        "el": "summary",
+        "b": 310,
+        "h": 27,
+        "t": "Vælg hvad du vil t"
+      },
+      {
+        "el": "input#gaade-lyd-til",
+        "b": 13,
+        "h": 13,
+        "t": ""
+      },
+      {
+        "el": "summary",
+        "b": 310,
+        "h": 27,
+        "t": "Din statistik"
+      },
+      {
+        "el": "summary",
+        "b": 310,
+        "h": 27,
+        "t": "Avanceret"
+      },
+      {
+        "el": "summary",
+        "b": 310,
+        "h": 27,
+        "t": "Del"
+      },
+      {
+        "el": "label",
+        "b": 86,
+        "h": 21,
+        "t": "Indlæs kode"
+      },
+      {
+        "el": "summary",
+        "b": 344,
+        "h": 17,
+        "t": "Licenser for bundl"
+      }
+    ],
+    "antalSmaa": 10,
+    "udenForSkaerm": [],
+    "antalUden": 0,
+    "mindsteSkriftPx": 9.92,
+    "mindsteSkriftEl": "span.rang-label: \"8\""
+  },
+  "skak-360-konsol": [],
+  "skak-360-laerer": {
+    "layoutBredde": 360,
+    "scrollBredde": 360,
+    "hoejde": 12235,
+    "harMeta": true,
+    "smaaTryk": [
+      {
+        "el": "button#ark-kopier-knap.ark-kopier__knap",
+        "b": 159,
+        "h": 35,
+        "t": "Kopiér vurderinger"
+      },
+      {
+        "el": "input.kort-vurdering__felt",
+        "b": 286,
+        "h": 30,
+        "t": ""
+      },
+      {
+        "el": "input.kort-vurdering__felt",
+        "b": 286,
+        "h": 30,
+        "t": ""
+      },
+      {
+        "el": "input.kort-vurdering__felt",
+        "b": 286,
+        "h": 30,
+        "t": ""
+      },
+      {
+        "el": "input.kort-vurdering__felt",
+        "b": 286,
+        "h": 30,
+        "t": ""
+      },
+      {
+        "el": "input.kort-vurdering__felt",
+        "b": 286,
+        "h": 30,
+        "t": ""
+      },
+      {
+        "el": "input.kort-vurdering__felt",
+        "b": 286,
+        "h": 30,
+        "t": ""
+      },
+      {
+        "el": "input.kort-vurdering__felt",
+        "b": 286,
+        "h": 30,
+        "t": ""
+      },
+      {
+        "el": "input.kort-vurdering__felt",
+        "b": 286,
+        "h": 30,
+        "t": ""
+      },
+      {
+        "el": "input.kort-vurdering__felt",
+        "b": 286,
+        "h": 30,
+        "t": ""
+      },
+      {
+        "el": "input.kort-vurdering__felt",
+        "b": 286,
+        "h": 30,
+        "t": ""
+      },
+      {
+        "el": "input.kort-vurdering__felt",
+        "b": 286,
+        "h": 30,
+        "t": ""
+      }
+    ],
+    "antalSmaa": 27,
+    "udenForSkaerm": [],
+    "antalUden": 0,
+    "mindsteSkriftPx": 12.8,
+    "mindsteSkriftEl": "p.kort-forklaring: \"Tårnet går hele vejen ne\""
+  },
+  "skak-360-laerer-konsol": [],
+  "mat-390-uforkortet-skaerm": true,
+  "mat-390": {
+    "start": {
+      "layoutBredde": 390,
+      "scrollBredde": 390,
+      "hoejde": 1441,
+      "harMeta": true,
+      "smaaTryk": [],
+      "antalSmaa": 0,
+      "udenForSkaerm": [
+        {
+          "el": "g",
+          "venstre": -430,
+          "hoejre": 462
+        },
+        {
+          "el": "path",
+          "venstre": -25,
+          "hoejre": 379
+        },
+        {
+          "el": "path",
+          "venstre": -430,
+          "hoejre": 462
+        },
+        {
+          "el": "path",
+          "venstre": -430,
+          "hoejre": 462
+        }
+      ],
+      "antalUden": 4,
+      "mindsteSkriftPx": 10.5,
+      "mindsteSkriftEl": "span.sted-krav: \"🔒 Kræver målestokken\""
+    },
+    "kort": {
+      "kortB": 358,
+      "kortH": 358,
+      "moellen": {
+        "b": 68,
+        "h": 49,
+        "bundTilKortkant": 62,
+        "hoejreTilKortkant": 93,
+        "venstreTilKortkant": 197
+      },
+      "knapper": [
+        {
+          "navn": "Møllen",
+          "venstre": 197,
+          "hoejre": 93,
+          "top": 246,
+          "bund": 62,
+          "b": 68,
+          "h": 49
+        },
+        {
+          "navn": "Kirken og Landsbygaden",
+          "venstre": 235,
+          "hoejre": 37,
+          "top": 140,
+          "bund": 174,
+          "b": 86,
+          "h": 44
+        },
+        {
+          "navn": "Grusgraven",
+          "venstre": -4,
+          "hoejre": 276,
+          "top": 109,
+          "bund": 172,
+          "b": 86,
+          "h": 77
+        },
+        {
+          "navn": "Sporvognen",
+          "venstre": 55,
+          "hoejre": 217,
+          "top": 5,
+          "bund": 277,
+          "b": 86,
+          "h": 77
+        }
+      ],
+      "prikker": [
+        {
+          "navn": "Møllen",
+          "x": 260,
+          "y": 315
+        },
+        {
+          "navn": "Møllen",
+          "x": -16,
+          "y": -243
+        },
+        {
+          "navn": "Kirken og Landsbygaden",
+          "x": 316,
+          "y": 204
+        },
+        {
+          "navn": "Grusgraven",
+          "x": -16,
+          "y": -243
+        },
+        {
+          "navn": "Sporvognen",
+          "x": -16,
+          "y": -243
+        }
+      ]
+    },
+    "klynge": {
+      "kirken": {
+        "x": 278,
+        "y": 77,
+        "venstre": 235,
+        "hoejre": 37
+      },
+      "landsbygaden": {
+        "x": 278,
+        "y": 146,
+        "venstre": 235,
+        "hoejre": 37
+      },
+      "moellen": {
+        "x": 231,
+        "y": 271,
+        "venstre": 197,
+        "hoejre": 93
+      },
+      "klyngeKnap": {
+        "hoejreTilKortkant": 37,
+        "b": 86
+      }
+    },
+    "opgaver": [
+      {
+        "spoergsmaal": "Mølleren deler 2 sække korn ligeligt mellem 4 gårde. Hvor meget korn får hver gård? 4/2 2/",
+        "valg": [
+          "4/2",
+          "2/5",
+          "1/2"
+        ],
+        "spoergsmaalHarForkortelig": true,
+        "valgHarForkortelig": true,
+        "proevetUforkortetFoerst": true,
+        "forsoeg": [
+          {
+            "svar": "4/2",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 1 af 2. 2 sække delt i 4 lige store dele giver brøken 2/4, som forkortes til 1/2."
+          },
+          {
+            "svar": "2/5",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 2 af 2. 2 sække delt i 4 lige store dele giver brøken 2/4, som forkortes til 1/2."
+          },
+          {
+            "svar": "1/2",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "1/2",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": false
+      },
+      {
+        "spoergsmaal": "Én dag delte mølleren en sæk i 5 lige store dele, en anden dag i 6 lige store dele. Hvilke",
+        "valg": [
+          "1/5 (den dag med færrest dele)",
+          "1/6 (den dag med flest dele)",
+          "Portionerne var lige store"
+        ],
+        "spoergsmaalHarForkortelig": false,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "1/5 (den dag med færrest dele)",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "1/5 (den dag med færrest dele)",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": true
+      },
+      {
+        "spoergsmaal": "Mølleren fylder 2/6 sæk korn om morgenen og 1/6 sæk mere om eftermiddagen. Hvor meget har ",
+        "valg": [
+          "1/3",
+          "6/3",
+          "3/6"
+        ],
+        "spoergsmaalHarForkortelig": true,
+        "valgHarForkortelig": true,
+        "proevetUforkortetFoerst": true,
+        "forsoeg": [
+          {
+            "svar": "3/6",
+            "rigtigt": true,
+            "besked": "Rigtigt! 3/6 kan også skrives 1/2."
+          }
+        ],
+        "rigtigt": "3/6",
+        "rigtigtErUforkortet": true,
+        "ros": "Rigtigt! 3/6 kan også skrives 1/2.",
+        "foersteForsoegRigtigt": true
+      },
+      {
+        "spoergsmaal": "Én dag delte mølleren en sæk i 5 lige store dele, en anden dag i 3 lige store dele. Hvilke",
+        "valg": [
+          "1/5 (den dag med flest dele)",
+          "1/3 (den dag med færrest dele)",
+          "Portionerne var lige store"
+        ],
+        "spoergsmaalHarForkortelig": false,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "1/5 (den dag med flest dele)",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 1 af 2. Jo flere dele en sæk deles i, jo mindre bliver hver del — 1/3 er større end 1/5, fordi den bliver delt i færre stykker."
+          },
+          {
+            "svar": "1/3 (den dag med færrest dele)",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "1/3 (den dag med færrest dele)",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": false
+      },
+      {
+        "spoergsmaal": "Mølleren fylder 1/6 sæk korn om morgenen og 2/6 sæk mere om eftermiddagen. Hvor meget har ",
+        "valg": [
+          "2/3",
+          "1/2",
+          "3/7"
+        ],
+        "spoergsmaalHarForkortelig": true,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "2/3",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 1 af 2. 1/6 og 2/6 har samme nævner, så de lægges direkte sammen til 3/6, som forkortes til 1/2."
+          },
+          {
+            "svar": "1/2",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "1/2",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": false
+      },
+      {
+        "spoergsmaal": "Mølleren deler 2 sække korn ligeligt mellem 3 gårde. Hvor meget korn får hver gård? 1/2 2/",
+        "valg": [
+          "1/2",
+          "2/3",
+          "3/2"
+        ],
+        "spoergsmaalHarForkortelig": false,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "1/2",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 1 af 2. 2 sække delt i 3 lige store dele giver brøken 2/3, og den kan ikke forkortes."
+          },
+          {
+            "svar": "2/3",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "2/3",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": false
+      },
+      {
+        "spoergsmaal": "Mølleren fylder 3/8 sæk korn om morgenen og 3/8 sæk mere om eftermiddagen. Hvor meget har ",
+        "valg": [
+          "3/4",
+          "7/8",
+          "8/6"
+        ],
+        "spoergsmaalHarForkortelig": true,
+        "valgHarForkortelig": true,
+        "proevetUforkortetFoerst": true,
+        "forsoeg": [
+          {
+            "svar": "8/6",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 1 af 2. 3/8 og 3/8 har samme nævner, så de lægges direkte sammen til 6/8, som forkortes til 3/4."
+          },
+          {
+            "svar": "3/4",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "3/4",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": false
+      },
+      {
+        "spoergsmaal": "Mølleren deler 4 sække korn ligeligt mellem 5 gårde. Hvor meget korn får hver gård? 2/3 5/",
+        "valg": [
+          "2/3",
+          "5/4",
+          "4/5"
+        ],
+        "spoergsmaalHarForkortelig": false,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "2/3",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 1 af 2. 4 sække delt i 5 lige store dele giver brøken 4/5, og den kan ikke forkortes."
+          },
+          {
+            "svar": "5/4",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 2 af 2. 4 sække delt i 5 lige store dele giver brøken 4/5, og den kan ikke forkortes."
+          },
+          {
+            "svar": "4/5",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "4/5",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": false
+      },
+      {
+        "spoergsmaal": "Én dag delte mølleren en sæk i 4 lige store dele, en anden dag i 6 lige store dele. Hvilke",
+        "valg": [
+          "1/4 (den dag med færrest dele)",
+          "Portionerne var lige store",
+          "1/6 (den dag med flest dele)"
+        ],
+        "spoergsmaalHarForkortelig": false,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "1/4 (den dag med færrest dele)",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "1/4 (den dag med færrest dele)",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": true
+      },
+      {
+        "spoergsmaal": "Mølleren fylder 3/8 sæk korn om morgenen og 3/8 sæk mere om eftermiddagen. Hvor meget har ",
+        "valg": [
+          "8/6",
+          "6/8",
+          "5/8"
+        ],
+        "spoergsmaalHarForkortelig": true,
+        "valgHarForkortelig": true,
+        "proevetUforkortetFoerst": true,
+        "forsoeg": [
+          {
+            "svar": "6/8",
+            "rigtigt": true,
+            "besked": "Rigtigt! 6/8 kan også skrives 3/4."
+          }
+        ],
+        "rigtigt": "6/8",
+        "rigtigtErUforkortet": true,
+        "ros": "Rigtigt! 6/8 kan også skrives 3/4.",
+        "foersteForsoegRigtigt": true
+      },
+      {
+        "spoergsmaal": "Mølleren deler 3 sække korn ligeligt mellem 5 gårde. Hvor meget korn får hver gård? 2/5 4/",
+        "valg": [
+          "2/5",
+          "4/5",
+          "3/5"
+        ],
+        "spoergsmaalHarForkortelig": false,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "2/5",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 1 af 2. 3 sække delt i 5 lige store dele giver brøken 3/5, og den kan ikke forkortes."
+          },
+          {
+            "svar": "4/5",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 2 af 2. 3 sække delt i 5 lige store dele giver brøken 3/5, og den kan ikke forkortes."
+          },
+          {
+            "svar": "3/5",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "3/5",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": false
+      },
+      {
+        "spoergsmaal": "Én dag delte mølleren en sæk i 5 lige store dele, en anden dag i 4 lige store dele. Hvilke",
+        "valg": [
+          "1/4 (den dag med færrest dele)",
+          "Portionerne var lige store",
+          "1/5 (den dag med flest dele)"
+        ],
+        "spoergsmaalHarForkortelig": false,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "1/4 (den dag med færrest dele)",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "1/4 (den dag med færrest dele)",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": true
+      },
+      {
+        "spoergsmaal": "Mølleren fylder 1/6 sæk korn om morgenen og 1/6 sæk mere om eftermiddagen. Hvor meget har ",
+        "valg": [
+          "1/3",
+          "2/7",
+          "1/6"
+        ],
+        "spoergsmaalHarForkortelig": false,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "1/3",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "1/3",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": true
+      },
+      {
+        "spoergsmaal": "Mølleren deler 3 sække korn ligeligt mellem 5 gårde. Hvor meget korn får hver gård? 5/3 3/",
+        "valg": [
+          "5/3",
+          "3/5",
+          "2/5"
+        ],
+        "spoergsmaalHarForkortelig": false,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "5/3",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 1 af 2. 3 sække delt i 5 lige store dele giver brøken 3/5, og den kan ikke forkortes."
+          },
+          {
+            "svar": "3/5",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "3/5",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": false
+      },
+      {
+        "spoergsmaal": "Én dag delte mølleren en sæk i 6 lige store dele, en anden dag i 7 lige store dele. Hvilke",
+        "valg": [
+          "Portionerne var lige store",
+          "1/7 (den dag med flest dele)",
+          "1/6 (den dag med færrest dele)"
+        ],
+        "spoergsmaalHarForkortelig": false,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "Portionerne var lige store",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 1 af 2. Jo flere dele en sæk deles i, jo mindre bliver hver del — 1/6 er større end 1/7, fordi den bliver delt i færre stykker."
+          },
+          {
+            "svar": "1/7 (den dag med flest dele)",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 2 af 2. Jo flere dele en sæk deles i, jo mindre bliver hver del — 1/6 er større end 1/7, fordi den bliver delt i færre stykker."
+          },
+          {
+            "svar": "1/6 (den dag med færrest dele)",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "1/6 (den dag med færrest dele)",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": false
+      },
+      {
+        "spoergsmaal": "Mølleren fylder 3/9 sæk korn om morgenen og 4/9 sæk mere om eftermiddagen. Hvor meget har ",
+        "valg": [
+          "9/7",
+          "7/9",
+          "7/10"
+        ],
+        "spoergsmaalHarForkortelig": true,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "9/7",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 1 af 2. 3/9 og 4/9 har samme nævner, så de lægges direkte sammen til 7/9, og den kan ikke forkortes."
+          },
+          {
+            "svar": "7/9",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "7/9",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": false
+      },
+      {
+        "spoergsmaal": "Mølleren deler 2 sække korn ligeligt mellem 5 gårde. Hvor meget korn får hver gård? 3/5 2/",
+        "valg": [
+          "3/5",
+          "2/5",
+          "1/3"
+        ],
+        "spoergsmaalHarForkortelig": false,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "3/5",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 1 af 2. 2 sække delt i 5 lige store dele giver brøken 2/5, og den kan ikke forkortes."
+          },
+          {
+            "svar": "2/5",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "2/5",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": false
+      },
+      {
+        "spoergsmaal": "Én dag delte mølleren en sæk i 6 lige store dele, en anden dag i 7 lige store dele. Hvilke",
+        "valg": [
+          "1/6 (den dag med færrest dele)",
+          "1/7 (den dag med flest dele)",
+          "Portionerne var lige store"
+        ],
+        "spoergsmaalHarForkortelig": false,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "1/6 (den dag med færrest dele)",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "1/6 (den dag med færrest dele)",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": true
+      },
+      {
+        "spoergsmaal": "Mølleren fylder 3/8 sæk korn om morgenen og 1/8 sæk mere om eftermiddagen. Hvor meget har ",
+        "valg": [
+          "5/8",
+          "4/8",
+          "4/9"
+        ],
+        "spoergsmaalHarForkortelig": true,
+        "valgHarForkortelig": true,
+        "proevetUforkortetFoerst": true,
+        "forsoeg": [
+          {
+            "svar": "4/8",
+            "rigtigt": true,
+            "besked": "Rigtigt! 4/8 kan også skrives 1/2."
+          }
+        ],
+        "rigtigt": "4/8",
+        "rigtigtErUforkortet": true,
+        "ros": "Rigtigt! 4/8 kan også skrives 1/2.",
+        "foersteForsoegRigtigt": true
+      },
+      {
+        "spoergsmaal": "Mølleren fylder 1/9 sæk korn om morgenen og 1/9 sæk mere om eftermiddagen. Hvor meget har ",
+        "valg": [
+          "9/2",
+          "2/9",
+          "1/3"
+        ],
+        "spoergsmaalHarForkortelig": false,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "9/2",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 1 af 2. 1/9 og 1/9 har samme nævner, så de lægges direkte sammen til 2/9, og den kan ikke forkortes."
+          },
+          {
+            "svar": "2/9",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "2/9",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": false
+      }
+    ],
+    "opsummering": {
+      "antal": 20,
+      "forkortelige": 7,
+      "rigtigtSvarUforkortet": 3,
+      "uforkortetSvarTrykketFoerst": 5,
+      "uforkortetFoerstMedRos": 3,
+      "rosMedHint": 3
+    },
+    "journal": {
+      "oversigt": "Hvor langt du er nået: 0 af 5 steder klaret.",
+      "stedkort": [
+        "Møllen 5 af 6 forløb klaret Næste: Mølleren venter med \"Mesterens regnskab\"",
+        "Kirken 0 af 6 forløb klaret Næste: Degnen venter med \"Det du allerede kan\"",
+        "Grusgraven 0 af 6 forløb klaret Næste: Grusgraveren venter med \"Mål grusen\"",
+        "Landsbygaden 0 af 6 forløb klaret Næste: Købmanden venter med \"Tæl varerne\"",
+        "Sporvognen 0 af 5 forløb klaret Næste: Konduktøren venter med \"Første afgang\""
+      ],
+      "side": {
+        "layoutBredde": 390,
+        "scrollBredde": 390,
+        "hoejde": 995,
+        "harMeta": true,
+        "smaaTryk": [],
+        "antalSmaa": 0,
+        "udenForSkaerm": [],
+        "antalUden": 0,
+        "mindsteSkriftPx": 13,
+        "mindsteSkriftEl": "p.udstyr-effekt: \"Ét ekstra forsøg på Grus\""
+      }
+    },
+    "konsol": []
+  },
+  "mat-360-uforkortet-skaerm": true,
+  "mat-360": {
+    "start": {
+      "layoutBredde": 360,
+      "scrollBredde": 360,
+      "hoejde": 1448,
+      "harMeta": true,
+      "smaaTryk": [],
+      "antalSmaa": 0,
+      "udenForSkaerm": [
+        {
+          "el": "g",
+          "venstre": -392,
+          "hoejre": 425
+        },
+        {
+          "el": "path",
+          "venstre": -21,
+          "hoejre": 348
+        },
+        {
+          "el": "path",
+          "venstre": -392,
+          "hoejre": 425
+        },
+        {
+          "el": "path",
+          "venstre": -392,
+          "hoejre": 425
+        }
+      ],
+      "antalUden": 4,
+      "mindsteSkriftPx": 10.5,
+      "mindsteSkriftEl": "span.sted-krav: \"🔒 Kræver målestokken\""
+    },
+    "kort": {
+      "kortB": 328,
+      "kortH": 328,
+      "moellen": {
+        "b": 68,
+        "h": 49,
+        "bundTilKortkant": 59,
+        "hoejreTilKortkant": 85,
+        "venstreTilKortkant": 175
+      },
+      "knapper": [
+        {
+          "navn": "Møllen",
+          "venstre": 175,
+          "hoejre": 85,
+          "top": 220,
+          "bund": 59,
+          "b": 68,
+          "h": 49
+        },
+        {
+          "navn": "Kirken og Landsbygaden",
+          "venstre": 208,
+          "hoejre": 34,
+          "top": 123,
+          "bund": 161,
+          "b": 86,
+          "h": 44
+        },
+        {
+          "navn": "Grusgraven",
+          "venstre": -7,
+          "hoejre": 249,
+          "top": 97,
+          "bund": 155,
+          "b": 86,
+          "h": 77
+        },
+        {
+          "navn": "Sporvognen",
+          "venstre": 47,
+          "hoejre": 195,
+          "top": 1,
+          "bund": 250,
+          "b": 86,
+          "h": 77
+        }
+      ],
+      "prikker": [
+        {
+          "navn": "Møllen",
+          "x": 238,
+          "y": 289
+        },
+        {
+          "navn": "Møllen",
+          "x": -16,
+          "y": -236
+        },
+        {
+          "navn": "Kirken og Landsbygaden",
+          "x": 290,
+          "y": 187
+        },
+        {
+          "navn": "Grusgraven",
+          "x": -16,
+          "y": -236
+        },
+        {
+          "navn": "Sporvognen",
+          "x": -16,
+          "y": -236
+        }
+      ]
+    },
+    "klynge": {
+      "kirken": {
+        "x": 251,
+        "y": 60,
+        "venstre": 208,
+        "hoejre": 34
+      },
+      "landsbygaden": {
+        "x": 251,
+        "y": 129,
+        "venstre": 208,
+        "hoejre": 34
+      },
+      "moellen": {
+        "x": 209,
+        "y": 244,
+        "venstre": 175,
+        "hoejre": 85
+      },
+      "klyngeKnap": {
+        "hoejreTilKortkant": 34,
+        "b": 86
+      }
+    },
+    "opgaver": [
+      {
+        "spoergsmaal": "Mølleren deler 2 sække korn ligeligt mellem 4 gårde. Hvor meget korn får hver gård? 4/2 2/",
+        "valg": [
+          "4/2",
+          "2/5",
+          "1/2"
+        ],
+        "spoergsmaalHarForkortelig": true,
+        "valgHarForkortelig": true,
+        "proevetUforkortetFoerst": true,
+        "forsoeg": [
+          {
+            "svar": "4/2",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 1 af 2. 2 sække delt i 4 lige store dele giver brøken 2/4, som forkortes til 1/2."
+          },
+          {
+            "svar": "2/5",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 2 af 2. 2 sække delt i 4 lige store dele giver brøken 2/4, som forkortes til 1/2."
+          },
+          {
+            "svar": "1/2",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "1/2",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": false
+      },
+      {
+        "spoergsmaal": "Én dag delte mølleren en sæk i 5 lige store dele, en anden dag i 6 lige store dele. Hvilke",
+        "valg": [
+          "1/5 (den dag med færrest dele)",
+          "1/6 (den dag med flest dele)",
+          "Portionerne var lige store"
+        ],
+        "spoergsmaalHarForkortelig": false,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "1/5 (den dag med færrest dele)",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "1/5 (den dag med færrest dele)",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": true
+      },
+      {
+        "spoergsmaal": "Mølleren fylder 2/6 sæk korn om morgenen og 1/6 sæk mere om eftermiddagen. Hvor meget har ",
+        "valg": [
+          "1/3",
+          "6/3",
+          "3/6"
+        ],
+        "spoergsmaalHarForkortelig": true,
+        "valgHarForkortelig": true,
+        "proevetUforkortetFoerst": true,
+        "forsoeg": [
+          {
+            "svar": "3/6",
+            "rigtigt": true,
+            "besked": "Rigtigt! 3/6 kan også skrives 1/2."
+          }
+        ],
+        "rigtigt": "3/6",
+        "rigtigtErUforkortet": true,
+        "ros": "Rigtigt! 3/6 kan også skrives 1/2.",
+        "foersteForsoegRigtigt": true
+      },
+      {
+        "spoergsmaal": "Én dag delte mølleren en sæk i 5 lige store dele, en anden dag i 3 lige store dele. Hvilke",
+        "valg": [
+          "1/5 (den dag med flest dele)",
+          "1/3 (den dag med færrest dele)",
+          "Portionerne var lige store"
+        ],
+        "spoergsmaalHarForkortelig": false,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "1/5 (den dag med flest dele)",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 1 af 2. Jo flere dele en sæk deles i, jo mindre bliver hver del — 1/3 er større end 1/5, fordi den bliver delt i færre stykker."
+          },
+          {
+            "svar": "1/3 (den dag med færrest dele)",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "1/3 (den dag med færrest dele)",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": false
+      },
+      {
+        "spoergsmaal": "Mølleren fylder 1/6 sæk korn om morgenen og 2/6 sæk mere om eftermiddagen. Hvor meget har ",
+        "valg": [
+          "2/3",
+          "1/2",
+          "3/7"
+        ],
+        "spoergsmaalHarForkortelig": true,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "2/3",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 1 af 2. 1/6 og 2/6 har samme nævner, så de lægges direkte sammen til 3/6, som forkortes til 1/2."
+          },
+          {
+            "svar": "1/2",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "1/2",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": false
+      },
+      {
+        "spoergsmaal": "Mølleren deler 2 sække korn ligeligt mellem 3 gårde. Hvor meget korn får hver gård? 1/2 2/",
+        "valg": [
+          "1/2",
+          "2/3",
+          "3/2"
+        ],
+        "spoergsmaalHarForkortelig": false,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "1/2",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 1 af 2. 2 sække delt i 3 lige store dele giver brøken 2/3, og den kan ikke forkortes."
+          },
+          {
+            "svar": "2/3",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "2/3",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": false
+      },
+      {
+        "spoergsmaal": "Mølleren fylder 3/8 sæk korn om morgenen og 3/8 sæk mere om eftermiddagen. Hvor meget har ",
+        "valg": [
+          "3/4",
+          "7/8",
+          "8/6"
+        ],
+        "spoergsmaalHarForkortelig": true,
+        "valgHarForkortelig": true,
+        "proevetUforkortetFoerst": true,
+        "forsoeg": [
+          {
+            "svar": "8/6",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 1 af 2. 3/8 og 3/8 har samme nævner, så de lægges direkte sammen til 6/8, som forkortes til 3/4."
+          },
+          {
+            "svar": "3/4",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "3/4",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": false
+      },
+      {
+        "spoergsmaal": "Mølleren deler 4 sække korn ligeligt mellem 5 gårde. Hvor meget korn får hver gård? 2/3 5/",
+        "valg": [
+          "2/3",
+          "5/4",
+          "4/5"
+        ],
+        "spoergsmaalHarForkortelig": false,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "2/3",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 1 af 2. 4 sække delt i 5 lige store dele giver brøken 4/5, og den kan ikke forkortes."
+          },
+          {
+            "svar": "5/4",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 2 af 2. 4 sække delt i 5 lige store dele giver brøken 4/5, og den kan ikke forkortes."
+          },
+          {
+            "svar": "4/5",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "4/5",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": false
+      },
+      {
+        "spoergsmaal": "Én dag delte mølleren en sæk i 4 lige store dele, en anden dag i 6 lige store dele. Hvilke",
+        "valg": [
+          "1/4 (den dag med færrest dele)",
+          "Portionerne var lige store",
+          "1/6 (den dag med flest dele)"
+        ],
+        "spoergsmaalHarForkortelig": false,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "1/4 (den dag med færrest dele)",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "1/4 (den dag med færrest dele)",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": true
+      },
+      {
+        "spoergsmaal": "Mølleren fylder 3/8 sæk korn om morgenen og 3/8 sæk mere om eftermiddagen. Hvor meget har ",
+        "valg": [
+          "8/6",
+          "6/8",
+          "5/8"
+        ],
+        "spoergsmaalHarForkortelig": true,
+        "valgHarForkortelig": true,
+        "proevetUforkortetFoerst": true,
+        "forsoeg": [
+          {
+            "svar": "6/8",
+            "rigtigt": true,
+            "besked": "Rigtigt! 6/8 kan også skrives 3/4."
+          }
+        ],
+        "rigtigt": "6/8",
+        "rigtigtErUforkortet": true,
+        "ros": "Rigtigt! 6/8 kan også skrives 3/4.",
+        "foersteForsoegRigtigt": true
+      },
+      {
+        "spoergsmaal": "Mølleren deler 3 sække korn ligeligt mellem 5 gårde. Hvor meget korn får hver gård? 2/5 4/",
+        "valg": [
+          "2/5",
+          "4/5",
+          "3/5"
+        ],
+        "spoergsmaalHarForkortelig": false,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "2/5",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 1 af 2. 3 sække delt i 5 lige store dele giver brøken 3/5, og den kan ikke forkortes."
+          },
+          {
+            "svar": "4/5",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 2 af 2. 3 sække delt i 5 lige store dele giver brøken 3/5, og den kan ikke forkortes."
+          },
+          {
+            "svar": "3/5",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "3/5",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": false
+      },
+      {
+        "spoergsmaal": "Én dag delte mølleren en sæk i 5 lige store dele, en anden dag i 4 lige store dele. Hvilke",
+        "valg": [
+          "1/4 (den dag med færrest dele)",
+          "Portionerne var lige store",
+          "1/5 (den dag med flest dele)"
+        ],
+        "spoergsmaalHarForkortelig": false,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "1/4 (den dag med færrest dele)",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "1/4 (den dag med færrest dele)",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": true
+      },
+      {
+        "spoergsmaal": "Mølleren fylder 1/6 sæk korn om morgenen og 1/6 sæk mere om eftermiddagen. Hvor meget har ",
+        "valg": [
+          "1/3",
+          "2/7",
+          "1/6"
+        ],
+        "spoergsmaalHarForkortelig": false,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "1/3",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "1/3",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": true
+      },
+      {
+        "spoergsmaal": "Mølleren deler 3 sække korn ligeligt mellem 5 gårde. Hvor meget korn får hver gård? 5/3 3/",
+        "valg": [
+          "5/3",
+          "3/5",
+          "2/5"
+        ],
+        "spoergsmaalHarForkortelig": false,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "5/3",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 1 af 2. 3 sække delt i 5 lige store dele giver brøken 3/5, og den kan ikke forkortes."
+          },
+          {
+            "svar": "3/5",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "3/5",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": false
+      },
+      {
+        "spoergsmaal": "Én dag delte mølleren en sæk i 6 lige store dele, en anden dag i 7 lige store dele. Hvilke",
+        "valg": [
+          "Portionerne var lige store",
+          "1/7 (den dag med flest dele)",
+          "1/6 (den dag med færrest dele)"
+        ],
+        "spoergsmaalHarForkortelig": false,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "Portionerne var lige store",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 1 af 2. Jo flere dele en sæk deles i, jo mindre bliver hver del — 1/6 er større end 1/7, fordi den bliver delt i færre stykker."
+          },
+          {
+            "svar": "1/7 (den dag med flest dele)",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 2 af 2. Jo flere dele en sæk deles i, jo mindre bliver hver del — 1/6 er større end 1/7, fordi den bliver delt i færre stykker."
+          },
+          {
+            "svar": "1/6 (den dag med færrest dele)",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "1/6 (den dag med færrest dele)",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": false
+      },
+      {
+        "spoergsmaal": "Mølleren fylder 3/9 sæk korn om morgenen og 4/9 sæk mere om eftermiddagen. Hvor meget har ",
+        "valg": [
+          "9/7",
+          "7/9",
+          "7/10"
+        ],
+        "spoergsmaalHarForkortelig": true,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "9/7",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 1 af 2. 3/9 og 4/9 har samme nævner, så de lægges direkte sammen til 7/9, og den kan ikke forkortes."
+          },
+          {
+            "svar": "7/9",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "7/9",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": false
+      },
+      {
+        "spoergsmaal": "Mølleren deler 2 sække korn ligeligt mellem 5 gårde. Hvor meget korn får hver gård? 3/5 2/",
+        "valg": [
+          "3/5",
+          "2/5",
+          "1/3"
+        ],
+        "spoergsmaalHarForkortelig": false,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "3/5",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 1 af 2. 2 sække delt i 5 lige store dele giver brøken 2/5, og den kan ikke forkortes."
+          },
+          {
+            "svar": "2/5",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "2/5",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": false
+      },
+      {
+        "spoergsmaal": "Én dag delte mølleren en sæk i 6 lige store dele, en anden dag i 7 lige store dele. Hvilke",
+        "valg": [
+          "1/6 (den dag med færrest dele)",
+          "1/7 (den dag med flest dele)",
+          "Portionerne var lige store"
+        ],
+        "spoergsmaalHarForkortelig": false,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "1/6 (den dag med færrest dele)",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "1/6 (den dag med færrest dele)",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": true
+      },
+      {
+        "spoergsmaal": "Mølleren fylder 3/8 sæk korn om morgenen og 1/8 sæk mere om eftermiddagen. Hvor meget har ",
+        "valg": [
+          "5/8",
+          "4/8",
+          "4/9"
+        ],
+        "spoergsmaalHarForkortelig": true,
+        "valgHarForkortelig": true,
+        "proevetUforkortetFoerst": true,
+        "forsoeg": [
+          {
+            "svar": "4/8",
+            "rigtigt": true,
+            "besked": "Rigtigt! 4/8 kan også skrives 1/2."
+          }
+        ],
+        "rigtigt": "4/8",
+        "rigtigtErUforkortet": true,
+        "ros": "Rigtigt! 4/8 kan også skrives 1/2.",
+        "foersteForsoegRigtigt": true
+      },
+      {
+        "spoergsmaal": "Mølleren fylder 1/9 sæk korn om morgenen og 1/9 sæk mere om eftermiddagen. Hvor meget har ",
+        "valg": [
+          "9/2",
+          "2/9",
+          "1/3"
+        ],
+        "spoergsmaalHarForkortelig": false,
+        "valgHarForkortelig": false,
+        "proevetUforkortetFoerst": false,
+        "forsoeg": [
+          {
+            "svar": "9/2",
+            "rigtigt": false,
+            "besked": "Ikke helt — Hint 1 af 2. 1/9 og 1/9 har samme nævner, så de lægges direkte sammen til 2/9, og den kan ikke forkortes."
+          },
+          {
+            "svar": "2/9",
+            "rigtigt": true,
+            "besked": "Rigtigt!"
+          }
+        ],
+        "rigtigt": "2/9",
+        "rigtigtErUforkortet": false,
+        "ros": "Rigtigt!",
+        "foersteForsoegRigtigt": false
+      }
+    ],
+    "opsummering": {
+      "antal": 20,
+      "forkortelige": 7,
+      "rigtigtSvarUforkortet": 3,
+      "uforkortetSvarTrykketFoerst": 5,
+      "uforkortetFoerstMedRos": 3,
+      "rosMedHint": 3
+    },
+    "journal": {
+      "oversigt": "Hvor langt du er nået: 0 af 5 steder klaret.",
+      "stedkort": [
+        "Møllen 5 af 6 forløb klaret Næste: Mølleren venter med \"Mesterens regnskab\"",
+        "Kirken 0 af 6 forløb klaret Næste: Degnen venter med \"Det du allerede kan\"",
+        "Grusgraven 0 af 6 forløb klaret Næste: Grusgraveren venter med \"Mål grusen\"",
+        "Landsbygaden 0 af 6 forløb klaret Næste: Købmanden venter med \"Tæl varerne\"",
+        "Sporvognen 0 af 5 forløb klaret Næste: Konduktøren venter med \"Første afgang\""
+      ],
+      "side": {
+        "layoutBredde": 360,
+        "scrollBredde": 360,
+        "hoejde": 1058,
+        "harMeta": true,
+        "smaaTryk": [],
+        "antalSmaa": 0,
+        "udenForSkaerm": [],
+        "antalUden": 0,
+        "mindsteSkriftPx": 13,
+        "mindsteSkriftEl": "p.udstyr-effekt: \"Ét ekstra forsøg på Grus\""
+      }
+    },
+    "konsol": []
+  }
+}
