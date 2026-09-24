@@ -78,7 +78,8 @@
     "verify:n8n": "node n8n/verify-workflows.mjs",
     "preview:n8n-briefing": "node n8n/preview-coach-briefing.mjs",
     "verify:kritik-skole": "node scripts/kritik-skole-skak.mjs && node scripts/kritik-skole-matematik.mjs",
-    "verify:kritik-skole-2": "node scripts/kritik-skole-2.mjs"
+    "verify:kritik-skole-2": "node scripts/kritik-skole-2.mjs",
+    "verify:kritik-skole-3": "node scripts/kritik-skole-3.mjs"
   },
   "dependencies": {
     "@supabase/auth-js": "^2.112.3",
