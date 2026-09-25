@@ -19,7 +19,7 @@ Gren `dashboard-moduler`, forgrenet fra `main` (`c8aa336`, 373 merget). 18 commi
 
 - Blok 1: `4398aa8` coachPriority som mailen, `f1eaa83` verify:coach-inbox-flow til den nye rækkefølge, `5e17eb0` Coach Briefings forklaringstekst
 - Blok 2: `bd3a736` kortet og sikkerhedslinjen FØR
-- Blok 3: `5394be1` de fire tekst-tjek læser `scripts/dashboardKilde.mjs` · `d3debaf` rene hjælpere og konstanter · `eca1f92` læsninger · `5b49f1d` navigation · `73d4fc1` indbakke-handlere · `7bfe865` video-review-handlere · `63f426c` atlet-handlere og AI-rapport · `310cfc7` program- og kalender-handlere · `bdba3db` VideoCoach-broen som hook · `4657094` bibliotek, kalender, forside, profilfaner og tre modaler · `ca41b30` overlays, sidebar, mobilnav, profilhoved · `aeab72d` ugedagsvælger, øvelsesformular, blok-editor, profiltal · `4fd70ee` effekterne og køen som hooks, lint · plus commit'en med denne rapport, kortet og EFTER-beviset
+- Blok 3: `5394be1` de fire tekst-tjek læser `scripts/dashboardKilde.mjs` · `d3debaf` rene hjælpere og konstanter · `eca1f92` læsninger · `5b49f1d` navigation · `73d4fc1` indbakke-handlere · `7bfe865` video-review-handlere · `63f426c` atlet-handlere og AI-rapport · `310cfc7` program- og kalender-handlere · `bdba3db` VideoCoach-broen som hook · `4657094` bibliotek, kalender, forside, profilfaner og tre modaler · `ca41b30` overlays, sidebar, mobilnav, profilhoved · `aeab72d` ugedagsvælger, øvelsesformular, blok-editor, profiltal · `4fd70ee` effekterne og køen som hooks, lint · `fa794d0` denne rapport, kortet og EFTER-beviset (plus én commit, der kun sætter hashen ind her)
 
 ## Hvad ændret
 
