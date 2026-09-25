@@ -1,129 +1,87 @@
-# Kort over coachens side, FØR opdelingen (ordre 377, blok 2)
+# Kort over coachens side (efter ordre 377)
 
-`src/Dashboard.jsx` er 6.271 linjer: én komponent, `Dashboard({ session,
-onPreviewAthlete })`. Den ejer al coach-tilstand, henter alle data, driver
-VideoCoach-broen og tegner alle coachens skærme. Fire faner er allerede
-lazy-moduler i `src/dashboard/` (Indbakke, Analyse, Program, Volumenkort).
-Resten står inline. Kortet er skrevet efter én hel læsning (ordrens
-undtagelse). Snittet nederst følger metoden fra 373
-(`docs/ATHLETEVIEW-KORT.md`, `docs/RAPPORT-373.md`).
+`src/Dashboard.jsx` er delt fra 6.271 til 762 linjer. Den ejer stadig AL
+tilstand (`useState`/`useRef`) og kalder fabrikkerne og hooks'ene. Resten
+ligger i `src/dashboard/`, ved siden af de fire faner, der i forvejen lå der
+(Indbakke, Analyse, Program, Volumenkort). Intet er omskrevet: funktionskroppe
+og JSX er flyttet tegn for tegn (bevis: `node outputs/377/flytte-tjek.mjs`
+viser 0 linjer, der ikke er genfundet). Til en coach-ordre: skriv "Læs KUN
+src/dashboard/X" ud fra tabellen nedenfor, og læs `Dashboard.jsx` kun, hvis
+ordren kræver ny tilstand eller en ny prop.
 
-## Dele og linjeintervaller
+## Hvor ligger hvad: "Læs KUN …"
 
-| Linjer | Del | Afhænger af |
+| Ordren handler om | Læs | Linjer |
 |---|---|---|
-| 1–28 | imports (supabase, LazyBoundary, coachPriority, automationAlerts, coachBriefingSeen, coachInboxState, videoCoach*, progressionDraft, periodizationAssistant, planOverview, exerciseNames, dashboard/afvigelse, dashboardShared, weekDates) | |
-| 30–48 | konstanter: `WEEKDAYS_SHORT`, `statusLabels`, `VIDEOCOACH_V3_PREFIX/URL/COLUMNS` | `VIDEOCOACH_BUILD_ID` |
-| 50–178 | rene VideoCoach-hjælpere: `videoCoachBridgeConfig`, `validateVideoCoachV3Row`, `videoCoachPathPreview`, `videoCoachFeedbackDraft`, `videoCoachFeedbackPayload`, `coachVideoPriorityDetail`, `videoCoachMeasurementSummary`, `videoCoachMeasurementText` | videoCoach*-modulerne |
-| 180–213 | `ic`, `HUB_SECTIONS` (JSX-ikoner), `holidayInfo`, `ferieBadgeLabel`, `ATHLETE_LOGS_LIMIT` | |
-| 215–228 | de fire lazy-fabrikker (`indbakke`, `analyseTab`, `programTab`, `volumenKort`) | |
-| 230–456 | `Dashboard`: al tilstand (≈150 `useState`, 12 refs) med de oprindelige kommentarer, `openVideoCoachV3` | |
-| 458–471 | effekter: `isMobile` ved resize, rulleposition på listen | |
-| 473–692 | **VideoCoach-broen**: tre effekter (atletliste og valgt atlet til klienterne, `message`-lytteren med ready/close/baseline-request/prior-setup-request/save-draft) | refs, `showFlash`, `fetchVideoReviewQueue`, `fetchVideoCoachHistory`, `openProfile`, settere |
-| 694–803 | opstart (`fetchAthletes`, bibliotek, backup), snooze-migrering, kalender-hentning, fane-hentninger (program/log/analyse/oversigt, beskeder, parathed/PR/stævne, video, opvarmning), review-åbning, body-scroll-lås | læse-funktionerne |
-| 805–841 | `refreshCoachInbox` + effekten der holder indbakken frisk (fokus, synlighed, 5 min) | læse-funktionerne |
-| 843–856 | `fetchLastBackup`, `showFlash`, `askConfirm` | |
-| 858–895 | program-hjælpere: `programActiveStart`, `programShownWeeks`, `gotoWeek`, `sessionLogStatus` | `weeks`, `athleteLogs` |
-| 897–1198 | læsninger: `fetchAthletes`, `isoMonday`, `fetchAthleteActivityLogs`, `fetchAthleteWeekSummaries`, `fetchCalendarWeeks`, `setBlockStartDate`, `fetchCalendarProgress`, `snoozeAthlete`, `fetchProfilesLastSeen`, `fetchTodayActivity`, `fetchVideoReviewQueue`, `fetchTrainingSignals`, `fetchAutomationAlerts`, `fetchCoachBriefingSeen` | supabase, settere |
-| 1200–1266 | indbakke-handlinger: `handleCoachBriefingSeen`, `handleAutomationAlert`, `handleTrainingSignal` | `showFlash` |
-| 1268–1471 | `fetchWeeks`, ugeudkast/progression (`approveDraftProgressionState`, `editDraftForecast`, `setDraftForecastOverrideReason`), `addWeek`, `updateWeek`, `generateWeeksFromPlan`, `applyPeriodizationSuggestion` | |
-| 1473–1564 | `createCalendarWeek`, `blockSequenceRows` (JSX), `openCalBlockBuilder`, `goToMyProfile` + tast-M-effekten | |
-| 1566–1843 | program-skrivning: uge/session/øvelse (tilføj, ret, slet, flyt, kopiér), øvelsesbibliotek, `canonicalName`, `buildIntensity`, `parseIntensity`, `saveRecommendedWeight`, `copyWeek`, "Sæt datoer" | `fetchWeeks`, `askConfirm`, `showFlash` |
-| 1845–1943 | beskeder: `fetchLatestMessages`, `markMessagesRead`, `fetchMessages`, `sendCoachMessage`, `togglePin`, `formatMsgTime` | |
-| 1945–2166 | `fetchAthleteLogs`, `fetchVideoCoachHistory`, video-review: `reviewVideoAnalysis`, `saveVideoAnalysisFeedback`, `closeVideoAnalysisReview`, `discardVideoAnalysisFeedback`, `openAwaitingAnalysisVideo`, `openVideoAnalysisReview` | |
-| 2168–2271 | vægt/parathed/PR/stævne/opvarmning: hent og gem | |
-| 2273–2434 | atlet: `addAthlete`, `saveEdit`, `openMeetResult`, `saveMeetResult`, `deleteMeetResult`, `deleteAthlete` | `openProfile` |
-| 2436–2841 | `downloadJSON`, **`generateAIReport`** (≈400 linjer tekstbygning) | logs, vægt, parathed, PR, stævner, bibliotek |
-| 2843–2939 | `exportTraeningsdata`, `exportBackup` | `downloadJSON` |
-| 2941–2993 | navigation: `openProfile`, `openPlanReview`, `startEdit` | `analyseTabFactory` |
-| 2995–3135 | afledte værdier: `a`, totaler, `coachPriorityItems` (+ kø-kontekst), `videoMeasurementByAthlete`, `openCoachPriorityItem`, mail-deep-link-effekten, `currentWeight`, `weightTrend`, `lastLogPerExercise`, `repZone`, `bestLog` | |
-| 3137–3270 | `weekdayPicker`, `exFormRow` (JSX-værdier til ProgramTab) | `sessionForm`, `exerciseForm`, bibliotek |
-| 3272–3319 | ramme: VideoCoach-iframe, toast, bekræft-modal, mobil-CSS | |
-| 3320–3459 | sidebaren (logo, menupunkter, atletliste, "Se som atlet", Værktøjer) | |
-| 3461–3471 | `<main>` og topbaren | |
-| 3473–3578 | mobil: bundnavigation og menu-ark | |
-| 3580–3594 | Indbakken (lazy) | |
-| 3596–3688 | Øvelsesbiblioteket | |
-| 3690–4164 | **Kalenderen** (planoverblik, tidslinje, dato-panel, blok-bygger, kræver handling, udsatte, fuldt board) | `blockSequenceRows`, kalender-handlinger |
-| 4166–4495 | **Forsiden** (hurtigknapper, "Kræver dit blik", atletlisten med afvigelse og målinger) | `coachPriorityItems`, `openCoachPriorityItem` |
-| 4497–4642 | profilens hoved: tilbage/kø-kontekst, aktuel opgave, profilkort, sektions-navigation ("Mere") | `HUB_SECTIONS` |
-| 4644–4706 | fane Hjem (hub) | |
-| 4708–4726 | fane Analyse (lazy) | |
-| 4728–4906 | fane Opvarmning | |
-| 4908–5132 | fane Oversigt (sidst aktiv, parathed i dag, resultater, kostmål, næste stævne, Volumenkort) | |
-| 5134–5220 | fane Kost | |
-| 5222–5255 | fane Program (lazy, ≈90 props) | |
-| 5257–5546 | fane Log (træningslog pr. uge, øvelsesfilter/progression) | |
-| 5548–5689 | fane Stævne (plan, historik, rekorder) | |
-| 5691–5711 | fane Noter | |
-| 5713–5832 | fane Beskeder | |
-| 5837–6075 | **Gennemgå måling** (video-review-modalen) | video-handlinger |
-| 6077–6149 | Stævneresultat-modalen | |
-| 6151–6255 | Ny atlet-modalen (3 trin) | |
-| 6257–6271 | Fjern atlet-modalen, slut | |
+| Forsiden: hurtigknapper, "Kræver dit blik"-forhåndsvisningen, atletlisten (afvigelse, målinger, skjulte) | `dashboard/ForsideView.jsx` | 349 |
+| Coach Briefing / Indbakken | `dashboard/IndbakkeView.jsx` (uændret af 377) | 215 |
+| Køens rækkefølge (smerte, fravær, afvigelse, beskeder/videoer, fremgang) | `coachPriority.js` (+ `coachBriefingRules.js` for rangtabellen) | 125 |
+| Køen i appen: `coachPriorityItems`, kø-kontekst, mailens deep-link | `dashboard/useCoachPrioritet.js` | 82 |
+| "Set", signaler (set/udsæt), automatiseringsfejl, beskeder (læst/send/fastgør/tid) | `dashboard/indbakkeHandlinger.js` | 149 |
+| Hvad der hentes (atleter, kalender, indbakke, program, logs, video, vægt, parathed, PR, stævne, opvarmning) og `refreshCoachInbox` | `dashboard/laesninger.js` | 490 |
+| Hvornår der hentes: opstart, fane-hentninger, snooze-migrering, review-åbning, den friske indbakke | `dashboard/useDashboardEffekter.js` | 157 |
+| Åbn profil (returadresse, kø-kontekst), planflade, "Min træning", åbn et briefing-punkt | `dashboard/navigation.js` | 117 |
+| Program- og kalenderskrivning: uger/sessioner/øvelser, ugeudkast/progression, blokplan, datoer, udsæt, øvelsesbibliotek | `dashboard/programHandlinger.js` | 595 |
+| Program-fanen (tegning) | `dashboard/ProgramTab.jsx` (uændret af 377) + `WeekdayPicker.jsx`, `ExFormRow.jsx` | 1.015 + 26 + 124 |
+| Kalenderen (planoverblik, tidslinje, blok-bygger, kræver handling, board) | `dashboard/KalenderView.jsx` + `BlockSequenceRows.jsx` | 486 + 40 |
+| Øvelsesbiblioteket | `dashboard/BibliotekView.jsx` | 101 |
+| Profilens hoved: tilbage/kø, aktuel opgave, profilkort, fane-navigation ("Mere") | `dashboard/ProfilHoved.jsx` (+ `hubSektioner.jsx`) | 159 + 19 |
+| Profilfanerne Hjem, Oversigt, Kost, Log, Opvarmning, Stævne, Noter, Beskeder | `dashboard/<Fane>Tab.jsx` (`HubTab`, `OversigtTab`, `KostTab`, `LogTab`, `OpvarmningTab`, `StaevneTab`, `NoterTab`, `BeskederTab`) | 31–296 |
+| Aktuel kropsvægt/trend, `bestLog` | `dashboard/profilTal.js` | 64 |
+| Analyse-fanen / videoer | `dashboard/AnalyseTab.jsx` (uændret af 377) | 1.050 |
+| "Gennemgå måling": tegning / handlinger | `dashboard/VideoReviewModal.jsx` / `dashboard/videoReviewHandlinger.js` | 254 / 206 |
+| VideoCoach-broen (iframe, save-draft, baseline/opsætning) | `dashboard/useVideoCoachBro.js` + `dashboard/coachVideoHjaelp.js` | 242 + 159 |
+| AI-rapporten | `dashboard/aiRapport.js` | 413 |
+| Opret/ret/fjern atlet, stævneplan og -resultat, opvarmning gem, eksport/backup | `dashboard/atletHandlinger.js` | 331 |
+| Modalerne Ny atlet / Stævneresultat | `dashboard/NyAtletModal.jsx` / `dashboard/StaevneResultatModal.jsx` | 113 / 80 |
+| Sidebaren, mobilens bundnav og menu-ark | `dashboard/Sidebar.jsx` / `dashboard/MobilNav.jsx` | 160 / 123 |
+| VideoCoach-iframe, toast, bekræft-modal | `dashboard/Overlays.jsx` | 60 |
+| Konstanter (`statusLabels`, ugedage, ferie-hjælpere, `ATHLETE_LOGS_LIMIT`) | `dashboard/coachKonstanter.js` | 30 |
 
-## Hvem kalder hvem (det der styrer snittet)
+## Hvad der er tilbage i `Dashboard.jsx` (762 linjer)
 
-- **Al tilstand bor i `Dashboard`.** Handlerne læser og sætter den direkte, så
-  de kan ikke flyttes som rene funktioner. Samme løsning som 373:
-  handler-fabrikker `lavX({ ...navne })`, der kaldes i hvert render.
-- **Handlerne kalder hinanden på tværs af grupper.** `fetchWeeks` bruges af
-  al program-skrivning. `showFlash`/`askConfirm` bruges overalt. `openProfile`
-  bruges af broen, `addAthlete`, `openPlanReview` og `openCoachPriorityItem`.
-  `fetchLatestMessages` bruges af beskederne, `refreshCoachInbox` af
-  effekten. Fabrikkerne kaldes derfor i rækkefølgen læsninger → navigation →
-  resten, og `showFlash`/`askConfirm` bliver stående i `Dashboard` som
+| Linjer | Del |
+|---|---|
+| 1–57 | imports, de fire lazy-fabrikker |
+| 58–286 | `Dashboard`: al tilstand og alle refs (med de oprindelige kommentarer), `openVideoCoachV3` |
+| 288–381 | de ni fabrikskald (`lavLaesninger`, `lavNavigation`, `lavIndbakkeHandlinger`, `lavVideoReviewHandlinger`, `lavAtletHandlinger`, `lavAiRapport`, `lavProgramHandlinger`, `lavProfilTal`) |
+| 383–461 | effekter i den oprindelige rækkefølge: resize, rulleposition, `useVideoCoachBro`, `useDashboardEffekter`, `showFlash`, `askConfirm`, `blockSequenceRows`, tast-M |
+| 462–489 | `a`, totaler, `useCoachPrioritet`, `weekdayPicker`, `exFormRow` |
+| 490–762 | rammen: `Overlays`, `Sidebar`, topbar, `MobilNav`, skærmene og fanerne med eksplicitte props, modalerne |
+
+## Mønstrene (til den der flytter videre)
+
+Samme tre mønstre som 373 (`docs/ATHLETEVIEW-KORT.md`):
+
+- **Komponent med samme navne som props.** Listen er fundet af ESLints
+  `no-undef`. For skærme med en betingelse (`{view === 'x' && (() => {`)
+  står betingelseslinjen og slutlinjen uændret i Dashboard, og kun kroppen
+  er flyttet. Blokke uden betingelse (sidebar, mobilnav, overlays,
+  profilhoved) ligger uændret i et fragment (ingen DOM-ændring).
+- **Handler-fabrik** `lavX({ ...navne })`, kaldt i hvert render før
+  effekterne. Rækkefølgen er læsninger, navigation og så resten, fordi
+  handlerne bruger hinanden. `showFlash`/`askConfirm` står i Dashboard som
   hoistede funktioner.
-- **Broen er effekter med `[]`-deps.** De fanger første renders `showFlash`,
-  `fetchVideoReviewQueue`, `fetchVideoCoachHistory` og `openProfile`. Som hook
-  (`useVideoCoachBro(ctx)`) kaldt på effekternes plads fanger de det samme.
-- **JSX-skærmene læser mange navne.** De flyttes uændret som komponenter
-  med samme navne som props (`<X {...{ a, b }} />`). Listen findes af
-  ESLints `no-undef`, så den gættes ikke.
-- **`weekdayPicker`/`exFormRow` er JSX-værdier**, ikke komponenter. De bygges
-  i render og gives til ProgramTab. De flyttes som funktioner, der returnerer
-  samme element, og kaldes samme sted.
-- **`blockSequenceRows`** bruges kun i kalenderen og flytter med den.
+- **Hook på effekternes gamle plads** (`useVideoCoachBro`,
+  `useDashboardEffekter`, `useCoachPrioritet`), så effekternes rækkefølge er
+  uændret.
 
-## Statiske tjek, der læser filen som tekst
+## Statiske tjek
 
-Fire `verify:*` læser `src/Dashboard.jsx` som tekst:
-`athlete-onboarding`, `athlete-silent-fail-visibility`,
-`auth-logout-and-role-switch` og `videocoach-feedback-quality`. De skal læse
-`Dashboard.jsx` + de nye moduler (fast liste, `'../x'` skrevet som `'./x'`),
-ligesom `scripts/athleteViewKilde.mjs` gør for atletsiden. Kun de nye
-moduler kommer på listen, ikke de ældre faner, så negative tjek (fx "Dashboard
-importerer ikke AthleteSilentFailNote") ser præcis den samme kode som før.
+Fire `verify:*` læser coachens side som tekst (`athlete-onboarding`,
+`athlete-silent-fail-visibility`, `auth-logout-role-switch`,
+`videocoach-feedback-quality`). De læser `scripts/dashboardKilde.mjs`:
+`Dashboard.jsx` + modulerne ovenfor (fast liste, ikke de ældre faner), med
+`'../x'` skrevet som `'./x'`. **Flytter du kode til en ny fil under
+`src/dashboard/`, så føj filen til listen dér.** Listen bruges også af
+`outputs/377/flytte-tjek.mjs`.
 
-## Foreslået snit (under `src/dashboard/`, som allerede har fanerne)
+## Lint
 
-Mål: `Dashboard.jsx` under 800 linjer. Det, der bliver tilbage, er
-tilstanden (≈230 linjer, der ikke kan flyttes uden at ændre ejerskab),
-fabrikskaldene, de små effekter og rammen med komponent-kald.
-
-| Nyt modul | Fra linjer | Slags |
-|---|---|---|
-| `coachVideoHjaelp.js` | 35–178 | rene funktioner + konstanter |
-| `coachKonstanter.jsx` | 30–33, 180–213 | konstanter, `HUB_SECTIONS`, ferie-hjælpere |
-| `useVideoCoachBro.js` | 473–692 | hook (broens tre effekter) |
-| `laesninger.js` | 805–818, 843–846, 897–1198, 1268–1283, 1672–1675, 1845–1901, 1945–1980, 2168–2249 | fabrik |
-| `navigation.js` | 1534–1550, 2941–2993, 3024–3046 | fabrik (`openProfile`, `openPlanReview`, `startEdit`, `goToMyProfile`, `openCoachPriorityItem`) |
-| `indbakkeHandlinger.js` | 1200–1266, 1863–1943 | fabrik |
-| `programHandlinger.js` | 858–895, 1042–1054, 1285–1491, 1528–1532, 1566–1843 | fabrik |
-| `videoReviewHandlinger.js` | 1982–2166 | fabrik |
-| `atletHandlinger.js` | 2227–2434, 2436–2444, 2843–2939 | fabrik |
-| `aiRapport.js` | 2446–2841 | fabrik (`generateAIReport`) |
-| `programFormer.jsx` | 3137–3270 | JSX-værdier (`weekdayPicker`, `exFormRow`) |
-| `Overlays.jsx` | 3274–3319 | komponent |
-| `Sidebar.jsx` | 3320–3459 | komponent |
-| `MobilNav.jsx` | 3473–3578 | komponent |
-| `BibliotekView.jsx` | 3596–3688 | komponent |
-| `KalenderView.jsx` | 3690–4164 (+ `blockSequenceRows`) | komponent |
-| `ForsideView.jsx` | 4166–4495 | komponent |
-| `ProfilHoved.jsx` | 4497–4642 | komponent |
-| `HubTab.jsx`, `OpvarmningTab.jsx`, `OversigtTab.jsx`, `KostTab.jsx`, `LogTab.jsx`, `StaevneTab.jsx`, `NoterTab.jsx`, `BeskederTab.jsx` | 4644–5832 (uden de lazy faner) | komponenter |
-| `VideoReviewModal.jsx`, `StaevneResultatModal.jsx`, `NyAtletModal.jsx` | 5837–6255 | komponenter |
-
-Faner, der i dag tegnes inline, forbliver inline i bundtet: de importeres
-statisk, ikke lazy, så chunk-inddelingen og indlæsningen er uændret. Kun
-flytning og import/export, `npm run build` efter hvert modul.
+Efter opdelingen kan React Compiler-reglerne analysere `Dashboard`, ligesom
+det skete for `AthleteView` i 373. De melder mønstre, der fandtes i forvejen:
+ref-objekter givet til fabrikkerne (én `refs`-blok), `initialCoachEntryRef`
+læst i render (2), `showFlash`/`askConfirm` givet som props (1) og
+`Date.now()` i render (2 × `purity`). I de nye hooks kan `exhaustive-deps`
+ikke se, at refs og fabrikkernes funktioner opfører sig som før (10). I alt 16 nye direktiver. Alle er
+undertrykt linje for linje med en begrundelse. Compileren kører ikke i build.
