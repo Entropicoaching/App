@@ -1,10 +1,10 @@
 # RAPPORT 355: VideoCoach holder stangen på vej ned (Vaidya)
 
-## Gren og commits
+## Gren
 
 - Gren: `stangen-holder-nedturen` (fra `main` `e524d5e`), ikke pushet.
 - Blok 1: `695833f`: telemetri (`docs/videocoach/nedtur-telemetri-355.mjs`), ingen produktionsfil ændret.
-- Blok 2: den commit der indeholder denne fil: rettelsen i `public/videocoach.html`, `desc=`-feltet i telemetrien, migrations-kommentaren og denne rapport.
+- Blok 2: `7ef74b3`: rettelsen i `public/videocoach.html`, `desc=`-feltet i telemetrien, migrations-kommentaren og denne rapport.
 - Genstart efter strømsvigtet 19:07: blok 2 var skrevet, men ikke committet. Den blev genoptaget uændret fra de to urene filer og derefter verificeret.
 - GENSTART 3 (25. sep): samme tilstand (fire urene filer). Verificeringen er kørt igen på de urene filer uden ændringer i koden, og derefter er blok 2 committet.
 
