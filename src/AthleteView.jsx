@@ -1,6 +1,4 @@
 import { useState, useEffect, useRef } from 'react'
-import { signOutHard } from './supabase'
-import { loadReadinessDraft, saveReadinessDraft, clearReadinessDraft, isEmptyReadinessDraft } from './readinessDraft'
 import { remainingSeconds } from './restTimer'
 import { countOfflineSets } from './offlineSetQueue'
 import { calcWarmupSets } from './warmup'
@@ -9,15 +7,20 @@ import LazyBoundary from './LazyBoundary'
 import { s, today } from './athleteShared'
 import { computeActiveWeekIdx, weekStartDate, fmtWeekRange,
   WEEKDAYS_LONG, parsePlannedRpe, logFrontendError } from './athlete/ugeHjaelp'
-import { NAV_ITEMS } from './athlete/NavItems'
 import HjemTab from './athlete/HjemTab'
 import OnboardingGuide from './athlete/OnboardingGuide'
 import Ramme from './athlete/Ramme'
+import IkkeKoblet from './athlete/IkkeKoblet'
+import Indlaeser from './athlete/Indlaeser'
+import { KostCompact, ProgressBars } from './athlete/KostKort'
+import ToastPlads from './athlete/ToastPlads'
+import BundNav from './athlete/BundNav'
 import { lavSaetSkrivning } from './athlete/saetSkrivning'
 import { lavLaesninger } from './athlete/laesninger'
 import { lavBeskederOgVaegt } from './athlete/beskederOgVaegt'
 import { lavKostHandlinger } from './athlete/kostHandlinger'
 import { useVideoCoachBro, useAfbrudtUploadVarsel } from './athlete/useVideoCoachBro'
+import { useParathedUdkast } from './athlete/useParathedUdkast'
 
 // Indlæses via LazyBoundary (ordre 232 · commit 2), samme mønster som Dashboard.jsx's fire faner.
 const mobiliseringFactory = () => import('./athlete/MobiliseringTab')
@@ -244,11 +247,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [readinessInput, setReadinessInput] = useState({ sleep: '', energy: null, motivation: null, stress: null, soreness: null, soreZones: [] })
   const [savingReadiness, setSavingReadiness] = useState(false)
   const [readinessError, setReadinessError] = useState(null)
-  // G12: parathedsudkastet skal overleve en lukket fane. restoredForAthleteRef
-  // holder styr på hvilken atlet vi allerede har forsøgt at genindsætte et
-  // udkast for, så gem-effekten nedenfor ikke rydder det udkast den lige har
-  // hentet, før genindsættelsen har nået at slå igennem i state.
-  const readinessDraftRestoredForRef = useRef(null)
 
   // G1: fælles fejlvisning for baggrundslæsninger (fetchPRs, fetchWeightLogs,
   // ...). Logger detaljen til frontend_errors og viser en oversat, ærlig
@@ -320,44 +318,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     setConfirmDialog({ message, onConfirm })
   }
 
-  useEffect(() => {
-    if (!athlete?.id) return
-    if (readinessDraftRestoredForRef.current !== athlete.id) {
-      readinessDraftRestoredForRef.current = athlete.id
-      const draft = loadReadinessDraft(athlete.id, today())
-      if (draft && !isEmptyReadinessDraft(draft)) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect -- uændret fra før ordre 373; lint ser det først nu (se RAPPORT-373)
-        setReadinessInput(draft)
-        return
-      }
-    }
-    if (isEmptyReadinessDraft(readinessInput)) clearReadinessDraft(athlete.id, today())
-    else saveReadinessDraft(athlete.id, today(), readinessInput)
-  }, [readinessInput, athlete?.id])
-
-  // ORDRE 267 · commit 1 — "to minutter": det eneste felt appen reelt kan
-  // udlede er "sandsynligvis som sidst" (atletens egen seneste log). Før
-  // krævede det et eksplicit tryk på "↺ Samme som sidst"; nu forudfyldes
-  // formularen automatisk, første gang lastReadiness er hentet — stadig frit
-  // at rette hvert felt bagefter. Et påbegyndt, ikke-tomt udkast (draft-
-  // effekten ovenfor) har forrang og forhindrer denne forudfyldning.
-  const readinessPrefillDoneForRef = useRef(null)
-  useEffect(() => {
-    if (!athlete?.id || !lastReadiness) return
-    if (readinessPrefillDoneForRef.current === athlete.id) return
-    readinessPrefillDoneForRef.current = athlete.id
-    if (!isEmptyReadinessDraft(readinessInput)) return
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- uændret fra før ordre 373; lint ser det først nu (se RAPPORT-373)
-    setReadinessInput({
-      sleep: lastReadiness.sleep_hours != null ? String(lastReadiness.sleep_hours) : '',
-      energy: lastReadiness.energy ?? null,
-      motivation: lastReadiness.motivation ?? null,
-      stress: lastReadiness.stress ?? null,
-      soreness: lastReadiness.soreness_level ?? null,
-      soreZones: lastReadiness.sore_zones || [],
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- readinessInput bevidst ikke i deps, kun læst ved selve kaldet (samme mønster som draft-effekten ovenfor)
-  }, [athlete?.id, lastReadiness])
+  useParathedUdkast({ athlete, readinessInput, setReadinessInput, lastReadiness })
 
   useVideoCoachBro({
     athlete, athleteVideoCoachClientsRef, athleteVideoCoachFrameRef, athleteVideoCoachRef, athleteVideoUploadAbortsRef, flashTimerRef, session, setAthleteVideoCoachInstant,
@@ -455,104 +416,22 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   )
 
   if (loading) return (
-    <div style={{ minHeight: '100vh', background: '#141410', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '1.5rem', color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-      {loadError ? (
-        <>
-          <div style={{ color: '#7a7770' }}>Kunne ikke indlæse data.</div>
-          {backBtn || <button style={s.btnGhost} onClick={() => window.location.reload()}>Prøv igen</button>}
-        </>
-      ) : 'Indlæser...'}
-      {!loadError && backBtn}
-    </div>
+    <Indlaeser {...{ backBtn, loadError }} />
   )
 
   if (!athlete) {
-    // Første skærm en atlet møder hvis mailen ikke matcher en profil. Rolig,
-    // menneskelig, handlingsanvisende — ingen teknisk fejltekst.
-    const stuckEmail = session?.user?.email || ''
-    const coachMail = `mailto:coach@entropicoaching.dk?subject=${encodeURIComponent('Kobl min konto til min atletprofil')}&body=${encodeURIComponent(`Hej coach\n\nJeg er logget ind i Entropi som ${stuckEmail || '(min mail)'}, men min konto er ikke koblet til min atletprofil endnu. Kan du koble mig til?\n\nTak!`)}`
-    return (
-      <div style={{ minHeight: '100vh', background: '#141410', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
-        <div style={{ maxWidth: 430, width: '100%', textAlign: 'center' }}>
-          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.9rem' }}>Entropi Coaching</div>
-          <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.9rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.15, marginBottom: '1rem' }}>Næsten klar.</h1>
-          <p style={{ color: '#b8b4a8', fontSize: '0.92rem', lineHeight: 1.65, marginBottom: '1.35rem' }}>
-            Din konto er endnu ikke koblet til en atletprofil. Det sker automatisk, når du logger ind med den mail, du fik invitationen på.
-          </p>
-          <div style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.1)', borderRadius: 8, padding: '0.85rem 1rem', marginBottom: '1.35rem' }}>
-            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.35rem' }}>Du er logget ind som</div>
-            <div style={{ color: '#edeae2', fontSize: '0.9rem', wordBreak: 'break-all' }}>{stuckEmail || '—'}</div>
-          </div>
-          <p style={{ color: '#7a7770', fontSize: '0.8rem', lineHeight: 1.65, marginBottom: '1.6rem' }}>
-            Brugte du en anden mail end den fra invitationen? Log ud og prøv igen. Er du i tvivl, så skriv til din coach — så kobler han dig til.
-          </p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-            <a href={coachMail} style={{ ...s.btnPrimary, textDecoration: 'none', display: 'block', padding: '0.85rem 1rem' }}>Skriv til din coach</a>
-            {backBtn || <button style={s.btnGhost} onClick={() => signOutHard()}>Log ud og skift mail</button>}
-          </div>
-        </div>
-      </div>
-    )
+    return <IkkeKoblet {...{ backBtn, session }} />
   }
 
   const progressBars = (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
-      {[
-        { label: 'Kalorier', val: totKcal, target: athlete.kcal_target, unit: 'kcal', pct: kcalPct, color: '#c8923a' },
-        { label: 'Protein', val: totProtein, target: athlete.protein_target, unit: 'g', pct: proteinPct, color: '#6cba6c' },
-      ].map(({ label, val, target, unit, pct, color }) => (
-        <div key={label} style={s.card}>
-          <div style={s.cardLabel}>{label}</div>
-          <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', color: '#edeae2', lineHeight: 1, marginBottom: '0.6rem' }}>
-            {val} <span style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.8rem', color: '#7a7770', fontWeight: 300 }}>/ {target || '?'} {unit}</span>
-          </div>
-          <div style={{ height: '3px', background: '#242420', borderRadius: '2px' }}>
-            <div style={{ height: '3px', width: pct + '%', background: color, borderRadius: '2px', transition: 'width 0.4s ease' }} />
-          </div>
-          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', marginTop: '0.35rem' }}>{pct}%</div>
-        </div>
-      ))}
-    </div>
+    <ProgressBars {...{ athlete, kcalPct, proteinPct, totKcal, totProtein }} />
   )
 
   // Kompakt kost-status til forsiden: ét slankt, klikbart kort i stedet for to
   // store. Fylder minimalt når der ikke er logget noget ("mindre in your face"),
   // og viser tal + tynde bars når dagen er i gang. Kost-fanen har den fulde visning.
   const kostCompact = (
-    <div
-      onClick={() => setTab('kost')}
-      onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(200,146,58,0.3)'}
-      onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(237,234,226,0.07)'}
-      style={{ ...s.card, cursor: 'pointer', padding: '0.7rem 1rem', marginBottom: '1.5rem' }}
-    >
-      {(totKcal > 0 || totProtein > 0) ? (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-          <span style={{ ...s.cardLabel, marginBottom: 0, flexShrink: 0 }}>Kost i dag</span>
-          {[
-            { val: totKcal, target: athlete.kcal_target, unit: 'kcal', pct: kcalPct, color: '#c8923a' },
-            { val: totProtein, target: athlete.protein_target, unit: 'g protein', pct: proteinPct, color: '#6cba6c' },
-          ].map(({ val, target, unit, pct, color }) => (
-            <span key={unit} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0 }}>
-              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#edeae2', whiteSpace: 'nowrap' }}>
-                {val}<span style={{ color: '#7a7770' }}> / {target || '?'} {unit}</span>
-              </span>
-              <span style={{ width: 44, height: 3, background: '#242420', borderRadius: 2, flexShrink: 0 }}>
-                <span style={{ display: 'block', width: `${Math.min(pct, 100)}%`, height: 3, background: color, borderRadius: 2 }} />
-              </span>
-            </span>
-          ))}
-          <span style={{ marginLeft: 'auto', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#4a4844' }}>→</span>
-        </div>
-      ) : (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <span style={{ ...s.cardLabel, marginBottom: 0 }}>Kost</span>
-          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#4a4844', letterSpacing: '0.05em' }}>
-            Ingen måltider logget i dag
-          </span>
-          <span style={{ marginLeft: 'auto', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#4a4844' }}>→</span>
-        </div>
-      )}
-    </div>
+    <KostCompact {...{ athlete, kcalPct, proteinPct, setTab, totKcal, totProtein }} />
   )
 
   if ((!onboardingDone || guideOpen) && !coachAthleteId) {
@@ -574,28 +453,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   // indhold der kommer efter det, så dagen kan aldrig dækkes. På de andre
   // faner står den lige under topbaren.
   const toastSlot = (prToast || flash) ? (
-    <div data-toast-plads="" style={{ position: 'sticky', top: '52px', zIndex: 49, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem', padding: '0.6rem 0', pointerEvents: 'none' }}>
-      {prToast && (
-        <div style={{
-          background: '#1c1c18', border: '1px solid rgba(200,146,58,0.55)',
-          padding: '0.65rem 1.1rem', maxWidth: '100%', boxSizing: 'border-box', textAlign: 'center',
-          fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem',
-          color: '#c8923a', letterSpacing: '0.08em',
-          boxShadow: '0 4px 24px rgba(0,0,0,0.55)',
-          opacity: prToastFading ? 0 : 1, transition: 'opacity 0.6s ease',
-        }}>
-          {prToast.type === 'vægt' ? '🏆 Ny personlig rekord (vægt)' : prToast.type === 'rep' ? '🔥 Ny personlig rekord (reps)' : '⚡ Stærkeste sæt'} på {prToast.name}
-        </div>
-      )}
-      {flash && (
-        <div role="status" style={{
-          background: '#1c1c18', border: `1px solid ${flash.kind === 'error' ? 'rgba(224,85,85,0.55)' : 'rgba(200,146,58,0.55)'}`,
-          padding: '0.65rem 1.4rem', maxWidth: '100%', boxSizing: 'border-box', textAlign: 'center',
-          fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', letterSpacing: '0.06em',
-          color: flash.kind === 'error' ? '#e05555' : '#c8923a', boxShadow: '0 4px 24px rgba(0,0,0,0.55)',
-        }}>{flash.message}</div>
-      )}
-    </div>
+    <ToastPlads {...{ flash, prToast, prToastFading }} />
   ) : null
 
   return (
@@ -729,42 +587,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         )}
       </div>
 
-      {/* Bottom navigation — Stævne vises kun når den er relevant (stævnedato/plan),
-          ellers fylder den en fast plads for de 7/8 atleter uden et stævne på vej. */}
-      <nav style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: '#1c1c18', borderTop: '1px solid rgba(237,234,226,0.07)', display: 'flex', zIndex: 100 }}>
-        {NAV_ITEMS.filter(n => n.key !== 'stævnedag' || athlete?.competition_date || hasMeetPlan).map(({ key, label, icon }) => (
-          <button
-            key={key}
-            onClick={() => setTab(key)}
-            style={{
-              flex: 1,
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.3rem',
-              padding: '0.7rem 0',
-              color: tab === key ? '#c8923a' : '#4a4844',
-              fontFamily: "'IBM Plex Mono', monospace",
-              fontSize: '0.46rem',
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              transition: 'color 0.15s ease',
-            }}
-          >
-            <div style={{ position: 'relative' }}>
-              {icon}
-              {key === 'beskeder' && (unreadMsgCount + sharedVideoAnalyses.filter(a => !a.athlete_seen_at).length) > 0 && (
-                <div style={{ position: 'absolute', top: -3, right: -4, width: '8px', height: '8px', borderRadius: '50%', background: '#c8923a', border: '1.5px solid #1c1c18' }} />
-              )}
-            </div>
-            <span>{label}</span>
-          </button>
-        ))}
-      </nav>
+      <BundNav {...{ athlete, hasMeetPlan, setTab, sharedVideoAnalyses, tab, unreadMsgCount }} />
     </div>
   )
 }

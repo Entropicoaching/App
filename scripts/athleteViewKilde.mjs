@@ -17,6 +17,7 @@ export const ATHLETEVIEW_MODULER = [
   'athlete/lokaleFoedevarer.js',
   'athlete/NavItems.jsx',
   'athlete/useVideoCoachBro.js',
+  'athlete/useParathedUdkast.js',
   'athlete/laesninger.js',
   'athlete/saetSkrivning.js',
   'athlete/beskederOgVaegt.jsx',
@@ -24,6 +25,11 @@ export const ATHLETEVIEW_MODULER = [
   'athlete/OnboardingGuide.jsx',
   'athlete/Ramme.jsx',
   'athlete/HjemTab.jsx',
+  'athlete/IkkeKoblet.jsx',
+  'athlete/Indlaeser.jsx',
+  'athlete/KostKort.jsx',
+  'athlete/ToastPlads.jsx',
+  'athlete/BundNav.jsx',
 ]
 
 export function athleteViewKilde() {

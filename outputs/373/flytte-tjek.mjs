@@ -12,7 +12,8 @@ const ROOT = join(new URL('.', import.meta.url).pathname.replace(/^\/([A-Za-z]:)
 const base = process.argv[2] || 'main'
 const MODULER = ['videoCoachBro.js', 'ugeHjaelp.js', 'WeekCalendar.jsx', 'DagensPasCard.jsx', 'RestPauseFooter.jsx',
   'ForsideGrafer.jsx', 'lokaleFoedevarer.js', 'NavItems.jsx', 'HjemTab.jsx', 'OnboardingGuide.jsx', 'Ramme.jsx',
-  'beskederOgVaegt.jsx', 'kostHandlinger.js', 'laesninger.js', 'saetSkrivning.js', 'useVideoCoachBro.js']
+  'beskederOgVaegt.jsx', 'kostHandlinger.js', 'laesninger.js', 'saetSkrivning.js', 'useVideoCoachBro.js',
+  'IkkeKoblet.jsx', 'KostKort.jsx', 'ToastPlads.jsx', 'BundNav.jsx', 'useParathedUdkast.js', 'Indlaeser.jsx']
 
 // Fjerner hele import-sætninger (også dem over flere linjer).
 const lines = txt => {
