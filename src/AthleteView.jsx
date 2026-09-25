@@ -4,7 +4,7 @@ import { mergeAthleteSetInputs, nextAthleteSetInput } from './athleteTrainingInp
 import { sanitizeVideoCoachFeedbackEvidence } from './videoCoachFeedbackEvidence'
 import { videoCoachPersonalBaselineAthleteText, videoCoachPersonalBaselineForAnalysis } from './videoCoachPersonalFeedback'
 import { VIDEOCOACH_LIFT_LABELS as ATHLETE_VIDEO_LIFTS, videoCoachVariationLabel as athleteVideoVariationLabel } from './videoCoachLabels'
-import { ATHLETE_ONBOARDING_GUIDE_STEPS, hasCompletedOnboardingGuide, isLastOnboardingGuideStep } from './athleteOnboardingGuide'
+import { hasCompletedOnboardingGuide, isLastOnboardingGuideStep } from './athleteOnboardingGuide'
 import { runGuardedWrite } from './athleteWriteGuard'
 import { runGuardedRead } from './athleteReadGuard'
 import { loadReadinessDraft, saveReadinessDraft, clearReadinessDraft, isEmptyReadinessDraft } from './readinessDraft'
@@ -25,13 +25,15 @@ import { buildAwaitingAnalysisRow, buildVideoUploadPath, validateVideoUploadRequ
   videoUploadAlreadyExistsError, VIDEOCOACH_UPLOAD_BUCKET } from './videoCoachUpload'
 import LazyBoundary from './LazyBoundary'
 import { s, shiftDate, today, unitsForFood } from './athleteShared'
-import { ATHLETE_VIDEOCOACH_PREFIX, ATHLETE_VIDEOCOACH_QUEUE_CHANGED, ATHLETE_VIDEOCOACH_URL,
+import { ATHLETE_VIDEOCOACH_PREFIX, ATHLETE_VIDEOCOACH_QUEUE_CHANGED,
   isUuid, validateAthleteVideoCoachRow, athleteVideoPathPreview } from './athlete/videoCoachBro'
 import { computeActiveWeekIdx, weekFullyLogged, weekStartDate, fmtWeekRange,
   WEEKDAYS_LONG, parsePlannedRpe, logFrontendError } from './athlete/ugeHjaelp'
 import { LOCAL_FOODS } from './athlete/lokaleFoedevarer'
 import { NAV_ITEMS } from './athlete/NavItems'
 import HjemTab from './athlete/HjemTab'
+import OnboardingGuide from './athlete/OnboardingGuide'
+import Ramme from './athlete/Ramme'
 
 // Indlæses via LazyBoundary (ordre 232 · commit 2), samme mønster som Dashboard.jsx's fire faner.
 const mobiliseringFactory = () => import('./athlete/MobiliseringTab')
@@ -2346,94 +2348,12 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   )
 
   if ((!onboardingDone || guideOpen) && !coachAthleteId) {
-    const guideStepData = ATHLETE_ONBOARDING_GUIDE_STEPS[guideStep] || ATHLETE_ONBOARDING_GUIDE_STEPS[0]
-    const isIntroStep = guideStepData.variant === 'intro'
-    const isLastGuideStep = isLastOnboardingGuideStep(guideStep)
     return (
-      <div style={{ minHeight: '100vh', background: '#141410', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
-        <div style={{ maxWidth: '460px', width: '100%', textAlign: 'center' }}>
-          <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', color: '#edeae2', marginBottom: '2.75rem', letterSpacing: '0.02em' }}>
-            Entropi<span style={{ color: '#c8923a' }}>.</span>
-          </div>
-
-          {isIntroStep ? (
-            <>
-              <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '2.1rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.15, marginBottom: '1rem' }}>
-                Velkommen, <em style={{ fontStyle: 'italic', color: '#c8923a' }}>{athlete.name.split(' ')[0]}</em>.
-              </h1>
-              <p style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontWeight: 300, fontSize: '0.92rem', color: '#7a7770', lineHeight: 1.75, marginBottom: '2.5rem' }}>
-                {guideStepData.body}
-              </p>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem', marginBottom: '2.5rem' }}>
-                {[
-                  {
-                    label: 'Program',
-                    icon: (
-                      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="6" y1="12" x2="18" y2="12" /><rect x="2" y="9.5" width="4" height="5" rx="1" /><rect x="18" y="9.5" width="4" height="5" rx="1" /><line x1="4" y1="9.5" x2="4" y2="14.5" /><line x1="20" y1="9.5" x2="20" y2="14.5" />
-                      </svg>
-                    ),
-                  },
-                  {
-                    label: 'Kostlog',
-                    icon: (
-                      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" /><line x1="7" y1="2" x2="7" y2="22" /><path d="M21 15V2a5 5 0 0 0-5 5v6h3v7a1 1 0 0 0 2 0V15z" />
-                      </svg>
-                    ),
-                  },
-                  {
-                    label: 'Readiness',
-                    icon: (
-                      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                      </svg>
-                    ),
-                  },
-                ].map(({ label, icon }) => (
-                  <div key={label} style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)', padding: '1.5rem 0.75rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.65rem' }}>
-                    <div style={{ color: '#c8923a' }}>{icon}</div>
-                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#7a7770' }}>{label}</div>
-                  </div>
-                ))}
-              </div>
-            </>
-          ) : (
-            <>
-              <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.85rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.2, marginBottom: '1rem' }}>
-                {guideStepData.heading}
-              </h1>
-              <p style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontWeight: 300, fontSize: '0.92rem', color: '#7a7770', lineHeight: 1.75, marginBottom: '2.75rem' }}>
-                {guideStepData.body}
-              </p>
-            </>
-          )}
-
-          {/* Trin-indikator */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '0.4rem', marginBottom: '2rem' }}>
-            {ATHLETE_ONBOARDING_GUIDE_STEPS.map((step, index) => (
-              <span key={step.key} style={{ width: '6px', height: '6px', borderRadius: '50%', background: index === guideStep ? '#c8923a' : 'rgba(237,234,226,0.15)' }} />
-            ))}
-          </div>
-
-          <button
-            onClick={advanceOnboardingGuide}
-            style={{ ...s.btnPrimary, fontSize: '0.7rem', padding: '0.85rem 2.75rem', letterSpacing: '0.14em' }}
-          >
-            {isLastGuideStep ? (currentWeek ? 'Se dit program →' : 'Gå til forsiden →') : 'Videre →'}
-          </button>
-
-          <div style={{ marginTop: '1.25rem' }}>
-            <button
-              type="button"
-              onClick={completeOnboardingGuide}
-              style={{ background: 'none', border: 'none', color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer', padding: '0.4rem' }}
-            >
-              Spring guiden over
-            </button>
-          </div>
-        </div>
-      </div>
+      <OnboardingGuide
+        {...{
+          advanceOnboardingGuide, athlete, completeOnboardingGuide, currentWeek, guideStep,
+        }}
+      />
     )
   }
 
@@ -2472,119 +2392,13 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   return (
     <div style={s.wrap}>
-      {role === 'athlete' && athleteVideoCoachOpen && (
-        <div
-          role="dialog"
-          aria-label="VideoCoach"
-          style={{ position: 'fixed', inset: 0, zIndex: 12000, background: '#0f0e0b' }}
-        >
-          <iframe
-            ref={athleteVideoCoachFrameRef}
-            src={athleteVideoCoachInstant ? `${ATHLETE_VIDEOCOACH_URL}&instant=1` : ATHLETE_VIDEOCOACH_URL}
-            title="VideoCoach"
-            allow="fullscreen"
-            allowFullScreen
-            style={{ display: 'block', width: '100%', height: '100%', border: 0, background: '#0f0e0b' }}
-          />
-        </div>
-      )}
-      {openRpePicker && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 199 }} onClick={() => setOpenRpePicker(null)} />
-      )}
-      {showRpeGuide && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 9000, background: 'rgba(0,0,0,0.72)', display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setShowRpeGuide(false)}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.13)', borderRadius: '12px 12px 0 0', width: '100%', maxWidth: '480px', padding: '1.5rem 1.25rem 2rem', fontFamily: "'IBM Plex Mono', monospace" }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.1rem' }}>
-              <span style={{ fontSize: '0.62rem', letterSpacing: '0.12em', color: '#c8923a', textTransform: 'uppercase' }}>RPE-skala (RTS)</span>
-              <button onClick={() => setShowRpeGuide(false)} style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '1rem', lineHeight: 1 }}>✕</button>
-            </div>
-            {[
-              { rpe: '10',  label: 'Ingen gentagelser tilbage' },
-              { rpe: '9.5', label: 'Muligvis 1 tilbage' },
-              { rpe: '9',   label: '1 tilbage' },
-              { rpe: '8.5', label: '1–2 tilbage' },
-              { rpe: '8',   label: '2 tilbage' },
-              { rpe: '7.5', label: '2–3 tilbage' },
-              { rpe: '7',   label: '3 tilbage' },
-              { rpe: '6.5', label: '3–4 tilbage' },
-              { rpe: '6',   label: '4 tilbage' },
-              { rpe: '5.5', label: '4–5 tilbage' },
-            ].map(({ rpe, label }) => (
-              <div key={rpe} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.45rem 0', borderBottom: '1px solid rgba(237,234,226,0.06)' }}>
-                <span style={{ fontSize: '0.82rem', color: '#c8923a', minWidth: '36px', textAlign: 'right' }}>{rpe}</span>
-                <span style={{ fontSize: '0.72rem', color: '#edeae2', letterSpacing: '0.02em' }}>{label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-      {/* Fortryd-toast */}
-      {undoToast && (
-        <div style={{
-          position: 'fixed', bottom: '1.5rem', left: '50%', transform: 'translateX(-50%)',
-          background: '#1c1c18', border: '1px solid rgba(237,234,226,0.18)',
-          padding: '0.6rem 0.75rem 0.6rem 1.1rem', zIndex: 9999, whiteSpace: 'nowrap',
-          display: 'flex', alignItems: 'center', gap: '0.9rem',
-          boxShadow: '0 4px 24px rgba(0,0,0,0.55)',
-        }}>
-          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#b8b4a8', letterSpacing: '0.06em' }}>{undoToast.label}</span>
-          <button onClick={undoDelete} disabled={undoPending} style={{ ...s.btnGhost, fontSize: '0.58rem', padding: '0.3rem 0.7rem', color: '#c8923a', borderColor: 'rgba(200,146,58,0.45)', opacity: undoPending ? 0.6 : 1 }}>{undoPending ? '...' : 'Fortryd'}</button>
-        </div>
-      )}
-      {/* Bekræftelses-modal */}
-      {confirmDialog && (
-        <div onClick={() => setConfirmDialog(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(10,10,8,0.6)', zIndex: 10001, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.13)', padding: '1.5rem', maxWidth: '360px', width: '100%', boxShadow: '0 8px 40px rgba(0,0,0,0.6)' }}>
-            <div style={{ fontSize: '0.95rem', color: '#edeae2', lineHeight: 1.5, marginBottom: '1.25rem' }}>{confirmDialog.message}</div>
-            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-              <button style={s.btnGhost} onClick={() => setConfirmDialog(null)}>Annuller</button>
-              <button style={s.btnPrimary} onClick={() => { const fn = confirmDialog.onConfirm; setConfirmDialog(null); fn && fn() }}>Bekræft</button>
-            </div>
-          </div>
-        </div>
-      )}
-      {/* Topbar */}
-      <div style={s.topbar}>
-        <div style={s.logo}>Entropi<span style={{ color: '#c8923a' }}>.</span></div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', position: 'relative' }}>
-          {backBtn}
-          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844' }}>{today()}</div>
-          {/* BUG (ORDRE 20): denne konto-menu fandtes slet ikke før — en atlet
-              (eller en coach der ved en fejl var havnet her) havde ingen vej ud
-              af appen uden at rydde browser-data manuelt. Log ud skal ALTID
-              kunne nås; "Skift til coach-visning" dækker det Marc oplevede: en
-              coach-konto der (fx pga. et cachet rolle-opslag, se App.jsx)
-              stod fast i atlet-visningen uden at skulle logge helt ud og ind. */}
-          {!onExitPreview && (
-            <div style={{ position: 'relative' }}>
-              <button
-                onClick={() => setAccountMenuOpen(o => !o)}
-                aria-label="Konto"
-                style={{ background: 'transparent', border: 'none', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.1em', cursor: 'pointer', minWidth: '44px', minHeight: '44px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
-              >⋯</button>
-              {accountMenuOpen && (
-                <div style={{ position: 'absolute', top: '100%', right: 0, marginTop: '0.4rem', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.1)', borderRadius: 6, padding: '0.35rem', minWidth: '190px', zIndex: 100, boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
-                  {onRecheckRole && (
-                    <button
-                      onClick={() => { setAccountMenuOpen(false); handleRecheckRole() }}
-                      disabled={recheckingRole}
-                      style={{ display: 'block', width: '100%', textAlign: 'left', background: 'transparent', border: 'none', color: '#b8b4a8', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.06em', textTransform: 'uppercase', padding: '0.5rem 0.5rem', cursor: recheckingRole ? 'default' : 'pointer' }}
-                    >{recheckingRole ? 'Tjekker…' : 'Skift til coach-visning'}</button>
-                  )}
-                  <button
-                    onClick={() => { setAccountMenuOpen(false); restartOnboardingGuide() }}
-                    style={{ display: 'block', width: '100%', textAlign: 'left', background: 'transparent', border: 'none', color: '#b8b4a8', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.06em', textTransform: 'uppercase', padding: '0.5rem 0.5rem', cursor: 'pointer' }}
-                  >Se guiden igen</button>
-                  <button
-                    onClick={() => { setAccountMenuOpen(false); askConfirm('Log ud af Entropi? Du skal logge ind igen for at fortsætte.', () => signOutHard()) }}
-                    style={{ display: 'block', width: '100%', textAlign: 'left', background: 'transparent', border: 'none', color: '#e05555', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.06em', textTransform: 'uppercase', padding: '0.5rem 0.5rem', cursor: 'pointer' }}
-                  >Log ud</button>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
+      <Ramme
+        {...{
+          accountMenuOpen, askConfirm, athleteVideoCoachFrameRef, athleteVideoCoachInstant, athleteVideoCoachOpen, backBtn, confirmDialog, handleRecheckRole,
+          onExitPreview, onRecheckRole, openRpePicker, recheckingRole, restartOnboardingGuide, role, setAccountMenuOpen, setConfirmDialog,
+          setOpenRpePicker, setShowRpeGuide, showRpeGuide, undoDelete, undoPending, undoToast,
+        }}
+      />
       {/* Toast-pladsen (ORDRE 339 · F5): under topbaren på alle faner undtagen
           forsiden, hvor den ligger under overskrift + strimmel (se toastSlot). */}
       {!(tab === 'hjem' && !onHoliday) && toastSlot}
