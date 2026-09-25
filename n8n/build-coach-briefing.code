@@ -20,24 +20,43 @@ const timeValue = value => {
   return Number.isFinite(timestamp) ? timestamp : Number.POSITIVE_INFINITY;
 };
 
+// ORDRE 370: en coachs rækkefølge, ikke kun "alerts først". Smerte, så
+// fravær, så afvigelse fra plan, så beskeder/videoer, til sidst fremgang;
+// inden for samme rang alert før context. Samme tabel som DETECTOR_RANK i
+// src/coachBriefingRules.js (testet i src/coachBriefingRules.test.js).
+const DETECTOR_RANK = { pain: 0, missed_sessions: 1, dropout: 1, rpe_drift: 2, stagnation: 2, data_conflict: 2, pr: 4 };
+const MESSAGE_VIDEO_RANK = 3;
+
 const rawTasks = [
   ...signals.map(item => {
     const detectorLabel = item.detector === 'dropout' ? 'Træningsmængde'
       : item.detector === 'stagnation' ? 'Udvikling'
-        : item.detector === 'rpe_drift' ? 'RPE' : 'Træning';
-    const summaryParts = [item.headline, item.detail || item.detector]
+        : item.detector === 'rpe_drift' ? 'RPE'
+          : item.detector === 'pain' ? 'Smerte'
+            : item.detector === 'missed_sessions' ? 'Fremmøde'
+              : item.detector === 'data_conflict' ? 'Datatjek'
+                : item.detector === 'pr' ? 'PR' : 'Træning';
+    // Navnet står allerede i rækken; gentag det ikke foran fundet.
+    const headline = String(item.headline || '');
+    const namePrefix = `${item.athlete_name}: `;
+    const finding = headline.startsWith(namePrefix) ? headline.slice(namePrefix.length) : headline;
+    // v2-signaler bærer handlingen i metrics.action (og i detail). Fra et
+    // v1-signal uden action vises detail som før, bare uden handlingslinje.
+    const action = item.metrics && typeof item.metrics.action === 'string' ? item.metrics.action : null;
+    const summaryParts = [finding, item.detail && item.detail !== action ? item.detail : null]
       .filter((value, index, all) => value && all.indexOf(value) === index);
     return {
       key: `signal-${item.athlete_id}-${item.detector}`,
-      kind: 'signal', rank: 0, athleteId: item.athlete_id,
+      kind: 'signal', rank: (DETECTOR_RANK[item.detector] ?? 2) + (item.severity === 'alert' ? 0 : 0.5),
+      athleteId: item.athlete_id,
       athleteName: item.athlete_name, label: detectorLabel,
-      summary: summaryParts.join(' · ') || 'Kræver et kig', timestamp: null,
+      summary: summaryParts.join(' · ') || item.detail || 'Kræver et kig', action, timestamp: null,
       fingerprint: [item.athlete_id, item.detector, item.severity, item.headline, item.detail, item.metrics]
     };
   }),
   ...messages.map(item => ({
     key: `message-${item.athlete_id}-${item.track}`,
-    kind: 'message', rank: 1, athleteId: item.athlete_id,
+    kind: 'message', rank: MESSAGE_VIDEO_RANK, athleteId: item.athlete_id,
     athleteName: item.athlete_name,
     label: item.track === 'teknik' ? 'Teknik & løft' : 'Besked',
     summary: `${item.unread_count} ulæst${Number(item.unread_count) === 1 ? '' : 'e'} · senest ${when(item.latest_at)}`,
@@ -50,7 +69,7 @@ const rawTasks = [
     const reps = item.reps_count == null ? '' : ` · ${item.reps_count} reps`;
     return {
       key: `video-${item.id}`,
-      kind: 'video', rank: 1, athleteId: item.athlete_id,
+      kind: 'video', rank: MESSAGE_VIDEO_RANK, athleteId: item.athlete_id,
       athleteName: item.athlete_name, label: 'Videoanalyse',
       summary: `${lift}${load}${reps} · modtaget ${when(item.created_at)}`,
       timestamp: item.created_at,
@@ -59,13 +78,15 @@ const rawTasks = [
   })
 ];
 
-// Samme kontrakt som appen: alerts først, derefter ældste besked/video.
-// En stabil nøgle forhindrer, at samme opgave tæller dobbelt ved upstream-dubletter.
-const tasks = [...new Map(rawTasks.map(task => [task.key, task])).values()]
-  .sort((left, right) => left.rank - right.rank
-    || timeValue(left.timestamp) - timeValue(right.timestamp)
-    || String(left.athleteName).localeCompare(String(right.athleteName), 'da')
-    || left.key.localeCompare(right.key));
+// Rang (se DETECTOR_RANK), derefter ældste besked/video. En stabil nøgle
+// forhindrer, at samme opgave tæller dobbelt ved upstream-dubletter; ved
+// dublet-nøgler (v1 gav én stagnationsrække pr. løft) vinder den vigtigste.
+const byPriority = (left, right) => left.rank - right.rank
+  || timeValue(left.timestamp) - timeValue(right.timestamp)
+  || String(left.athleteName).localeCompare(String(right.athleteName), 'da')
+  || left.key.localeCompare(right.key);
+const tasks = [...new Map([...rawTasks].sort(byPriority).reverse().map(task => [task.key, task])).values()]
+  .sort(byPriority);
 
 // Sikkerhedsnet, ikke en nyhedsmail: en opgave nævnes højst én gang hver
 // tredje dag. Manuelle/editor-previews springer denne undertrykkelse over,
@@ -101,14 +122,14 @@ const countSummary = [
   counts.message ? `${counts.message} beskedspor` : '',
   counts.video ? `${counts.video} video${counts.video === 1 ? '' : 'er'}` : ''
 ].filter(Boolean).join(' · ');
-// Static per-kind action phrase, neutral in tone. Signals already carry a
-// handling-oriented `detail` from the SQL detector and are left alone.
+// Static per-kind action phrase, neutral in tone. Signals carry their own,
+// detector-specific action (metrics.action, ORDRE 370) and never get these.
 const actionByKind = {
   message: 'Svar de ulæste beskeder',
   video: 'Gennemgå og giv feedback på løftet'
 };
 const taskRow = (task, index) => {
-  const action = actionByKind[task.kind];
+  const action = task.action || actionByKind[task.kind];
   const actionRow = action ? `<div style="font-size:13px;color:#c8923a;margin-top:4px">${esc(action)}</div>` : '';
   return `<div style="display:flex;gap:10px;padding:12px 0;border-top:1px solid #34342e"><div style="width:22px;height:22px;flex:0 0 22px;border:1px solid #57544c;color:#c8923a;text-align:center;line-height:22px;font-size:12px">${index + 1}</div><div><div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#7f7b72">${esc(task.label)}</div><div style="font-weight:650;color:#edeae2;margin-top:2px">${esc(task.athleteName)}</div><div style="font-size:13px;line-height:1.5;color:#aaa79f;margin-top:2px">${esc(task.summary)}</div>${actionRow}</div></div>`;
 };
@@ -124,8 +145,9 @@ const moreRow = hiddenTaskCount > 0
 const orderedRows = visibleTasks.map(taskRow).join('') + moreRow;
 
 const appUrl = config.appUrl.replace(/\/$/, '');
-const subject = `Coach Briefing: ${total} ting har ventet et døgn`;
-const html = `<div style="background:#141410;padding:28px 18px;font-family:Arial,sans-serif"><div style="max-width:620px;margin:auto;background:#1c1c18;border:1px solid #34342e;padding:24px"><div style="font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:#c8923a;margin-bottom:8px">Entropi Coach</div><h1 style="font-size:24px;line-height:1.2;color:#edeae2;margin:0 0 8px">Din coach-indbakke</h1><p style="color:#aaa79f;margin:0 0 20px;line-height:1.5">Kun åbne handlinger. Ingen videofiler eller beskedindhold er sendt gennem n8n.</p><div style="border-left:3px solid #c8923a;background:#24231d;padding:14px 16px;margin:0 0 22px"><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#c8923a">Næste opgave</div><div style="font-size:18px;font-weight:700;color:#edeae2;margin-top:5px">${esc(first.athleteName)}</div><div style="font-size:13px;line-height:1.5;color:#b9b5ab;margin-top:3px">${esc(first.label)} · ${esc(first.summary)}</div></div><section style="margin:0 0 22px"><h2 style="font-size:17px;margin:0;color:#edeae2">Din rækkefølge <span style="color:#c8923a">${total}</span></h2><p style="font-size:12px;color:#77746d;margin:4px 0 8px">${esc(countSummary)} · samme prioritering som i appen</p>${orderedRows}</section><a href="${esc(appUrl)}" style="display:inline-block;background:#c8923a;color:#141410;text-decoration:none;font-weight:700;padding:11px 16px;border-radius:3px">Åbn næste opgave i appen</a><p style="font-size:11px;color:#68665f;margin:22px 0 0">Automatisk morgenbriefing · Europe/Copenhagen</p></div></div>`;
+// Emnet siger også hvem og hvad der står øverst, så mailen kan læses fra indbakken.
+const subject = `Coach Briefing: ${total} ting har ventet et døgn · først: ${first.athleteName} (${first.label})`;
+const html = `<div style="background:#141410;padding:28px 18px;font-family:Arial,sans-serif"><div style="max-width:620px;margin:auto;background:#1c1c18;border:1px solid #34342e;padding:24px"><div style="font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:#c8923a;margin-bottom:8px">Entropi Coach</div><h1 style="font-size:24px;line-height:1.2;color:#edeae2;margin:0 0 8px">Din coach-indbakke</h1><p style="color:#aaa79f;margin:0 0 20px;line-height:1.5">Kun åbne handlinger. Ingen videofiler eller beskedindhold er sendt gennem n8n.</p><div style="border-left:3px solid #c8923a;background:#24231d;padding:14px 16px;margin:0 0 22px"><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#c8923a">Næste opgave</div><div style="font-size:18px;font-weight:700;color:#edeae2;margin-top:5px">${esc(first.athleteName)}</div><div style="font-size:13px;line-height:1.5;color:#b9b5ab;margin-top:3px">${esc(first.label)} · ${esc(first.summary)}</div>${first.action ? `<div style="font-size:13px;line-height:1.5;color:#c8923a;margin-top:4px">${esc(first.action)}</div>` : ''}</div><section style="margin:0 0 22px"><h2 style="font-size:17px;margin:0;color:#edeae2">Din rækkefølge <span style="color:#c8923a">${total}</span></h2><p style="font-size:12px;color:#77746d;margin:4px 0 8px">${esc(countSummary)} · smerte og fravær først, så afvigelse fra plan</p>${orderedRows}</section><a href="${esc(appUrl)}" style="display:inline-block;background:#c8923a;color:#141410;text-decoration:none;font-weight:700;padding:11px 16px;border-radius:3px">Åbn næste opgave i appen</a><p style="font-size:11px;color:#68665f;margin:22px 0 0">Automatisk morgenbriefing · Europe/Copenhagen</p></div></div>`;
 
 const source = JSON.stringify({
   recipient: config.coachEmail,
@@ -139,6 +161,6 @@ for (let i = 0; i < source.length; i++) {
 
 return [{ json: {
   recipient: config.coachEmail, subject, html, total, briefingDate,
-  priorityVersion: 'app-order-v1', digestHash: `v2-${(hash >>> 0).toString(16)}`,
+  priorityVersion: 'coach-order-v2', digestHash: `v2-${(hash >>> 0).toString(16)}`,
   taskKeys: activeTasks.map(task => task.key)
 } }];

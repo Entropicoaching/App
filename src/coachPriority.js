@@ -27,7 +27,11 @@ export function buildCoachPriorityItems({ athletes, trainingSignals, unreadByTra
     const alert = signal.o_severity === 'alert'
     const detectorLabel = signal.o_detector === 'dropout' ? 'Træningsmængde'
       : signal.o_detector === 'stagnation' ? 'Udvikling'
-        : signal.o_detector === 'rpe_drift' ? 'RPE' : 'Træning'
+        : signal.o_detector === 'rpe_drift' ? 'RPE'
+          : signal.o_detector === 'pain' ? 'Smerte'
+            : signal.o_detector === 'missed_sessions' ? 'Fremmøde'
+              : signal.o_detector === 'data_conflict' ? 'Datatjek'
+                : signal.o_detector === 'pr' ? 'PR' : 'Træning'
     items.push({
       key: `signal-${signal.o_athlete_id}-${signal.o_detector}`,
       kind: 'signal', athlete, signal,

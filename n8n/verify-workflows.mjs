@@ -337,13 +337,14 @@ assert.equal(
 assert.match(filteredBriefing.subject, /Coach Briefing: 4 ting har ventet et døgn/);
 assert.match(
   filteredEmail,
-  /1 signal · 2 beskedspor · 1 video · samme prioritering som i appen/,
+  /1 signal · 2 beskedspor · 1 video · smerte og fravær først, så afvigelse fra plan/,
   'The ordered queue must retain transparent task counts by kind',
 );
 assert.match(filteredEmail, /2 ulæste/, 'Conversation rows must retain their actual unread-message count');
 assert.match(filteredEmail, /Næste opgave/, 'The fallback email must name one next task');
 assert.match(filteredEmail, /coach=inbox&amp;focus=next/, 'The fallback CTA must request the current safe next task');
-assert.equal(filteredBriefing.priorityVersion, 'app-order-v1');
+assert.equal(filteredBriefing.priorityVersion, 'coach-order-v2');
+assert.match(filteredBriefing.subject, /· først: Alert \(Træning\)$/, 'Subject must name the first athlete and its label');
 const orderedQueue = filteredEmail.slice(filteredEmail.indexOf('Din rækkefølge'));
 const queuePositions = [
   orderedQueue.indexOf('Alert'),
@@ -370,6 +371,32 @@ assert.equal(messageActionCount, 2, 'Both fallback message rows must show the me
 assert.equal(videoActionCount, 1, 'The fallback video row must show the video action phrase');
 const signalRowHtml = orderedQueue.slice(orderedQueue.indexOf('Alert'), orderedQueue.indexOf('Videoatlet'));
 assert.doesNotMatch(signalRowHtml, /Svar de ulæste beskeder|Gennemgå og giv feedback på løftet/, 'Signal rows must not gain a static action phrase');
+
+// ORDRE 370: coach-rækkefølge (smerte > fravær > afvigelse > besked/video >
+// PR), navnet gentages ikke foran fundet, og v2-signalets metrics.action
+// vises som handlingslinje. Et v1-signal uden action beholder detail i resuméet.
+const coachOrderBriefing = runCode(node(coach, 'Build briefing').parameters.jsCode, {
+  input: { json: {
+    ...validBriefing,
+    unread_messages: [{ athlete_id: 'msg', athlete_name: 'Beskedatlet', track: 'besked', unread_count: 1, latest_at: new Date(now - 30 * 60 * 60 * 1000).toISOString() }],
+    training_signals: [
+      { athlete_id: 'p', athlete_name: 'Fremgang', detector: 'pr', severity: 'context', headline: 'Fremgang: PR på Bænk 100×3', detail: 'Anerkend det', metrics: { action: 'Anerkend det' } },
+      { athlete_id: 'r', athlete_name: 'Tung', detector: 'rpe_drift', severity: 'alert', headline: 'Tung: træner tungere end planlagt', detail: 'snit-afvigelse 1.66 RPE' },
+      { athlete_id: 'm', athlete_name: 'Fraværende', detector: 'missed_sessions', severity: 'alert', headline: 'Fraværende: mistede 2 af 3 pas i uge 7', detail: 'Skriv i dag', metrics: { action: 'Skriv i dag' } },
+      { athlete_id: 's', athlete_name: 'Knæ', detector: 'pain', severity: 'alert', headline: 'Knæ: melder ondt i knæet', detail: 'Kontakt i dag', metrics: { action: 'Kontakt i dag' } },
+    ],
+  } },
+  mode: 'test',
+  config,
+})[0].json;
+const coachQueue = coachOrderBriefing.html.slice(coachOrderBriefing.html.indexOf('Din rækkefølge'));
+const coachPositions = ['Knæ', 'Fraværende', 'Tung', 'Beskedatlet', 'Fremgang'].map(name => coachQueue.indexOf(`>${name}<`));
+assert.ok(coachPositions.every(position => position >= 0), 'Every coach-order task must appear');
+assert.deepEqual([...coachPositions].sort((left, right) => left - right), coachPositions, 'Pain, then absence, then plan deviation, then messages, then progress');
+assert.match(coachQueue, />melder ondt i knæet</, 'The athlete name must not be repeated in front of the finding');
+assert.match(coachQueue, />Kontakt i dag</, 'A v2 signal must show its action line');
+assert.match(coachQueue, /træner tungere end planlagt · snit-afvigelse 1.66 RPE/, 'A v1 signal without action keeps its detail in the summary');
+assert.match(coachOrderBriefing.subject, /først: Knæ \(Smerte\)$/);
 
 const duplicatedInput = {
   ...filteredProduction[0].json,
