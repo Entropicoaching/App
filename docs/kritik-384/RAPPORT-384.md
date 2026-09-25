@@ -92,5 +92,5 @@ Scriptet siger, at Q16 er lukket, fordi de to sætninger fra 374 er væk. Min l�
 - Tjekkene for Q8-Q11, Q14-Q16 og Q18 er tekstmønstre. Q16 viser, at et mønster kan melde "lukket", selvom gentagelsen står der i ny form (A6).
 - Panelets billeder er taget midt i animationen og skifter fra kørsel til kørsel (`fig-390-panel-*`, `artikel-390/025-026`). De viser figurens stil og ikke en bestemt fase.
 - Scriptets første Q14-tælling var forkert (den talte "skulle" med små bogstaver). Det er rettet i commit 2.
-- I dette worktree er filer under `outputs/kritik-skole/` og `outputs/kritik-skole-2/` ændret eller tilføjet af en anden undervejs. Jeg har ikke rørt dem, og de er ikke med i mine commits. Træet er rent for mine egne filer, men ikke for dem.
+- I dette worktree er filer under `outputs/kritik-skole/`, `outputs/kritik-skole-2/` og (kl. 20:29, efter min sidste kørsel kl. 20:28) `outputs/kritik-374/` ændret eller tilføjet af en anden proces undervejs. `kritik-384.mjs` skriver kun i `outputs/kritik-384/` og stopper, hvis en sti ligger udenfor. Jeg har ikke rørt dem, og de er ikke med i mine commits. Træet er rent for mine egne filer, men ikke for dem.
 - Ingen push, ingen merges, ingen atletnavne. Sitet og løftmodellen er ikke rørt.
