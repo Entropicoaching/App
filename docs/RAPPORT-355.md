@@ -8,7 +8,7 @@
 - Genstart efter strømsvigtet 19:07: blok 2 var skrevet, men ikke committet. Den blev genoptaget uændret fra de to urene filer og derefter verificeret.
 - GENSTART 3 (25. sep): samme tilstand (fire urene filer). Verificeringen er kørt igen på de urene filer uden ændringer i koden, og derefter er blok 2 committet.
 
-## Hvad blev ændret
+## Hvad ændret
 
 **Klip:** `test-clips\doedloeft-3reps.mp4` findes ikke. Det primære bevis er derfor Marcs eget `marc-doedloeft-270.mov` (1440x1920, 3,88 s, manuelt pladecenter 705,1375, R=195). Det er et andet klip end telefonens sæt på tre reps, men nedturen har samme mønster. Kontrol: `vis-mig-nu-4-reps-realistisk.mp4`.
 
