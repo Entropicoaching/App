@@ -11,7 +11,7 @@ Har arbejdet betydning for Hara (Coaching-planeten, delmål "Appen mærkbart bed
 
 ## Gren
 
-Gren `atleteview-moduler`, forgrenet fra `main` (`5d1486f`). Ti commits:
+Gren `atleteview-moduler`, forgrenet fra `main` (`5d1486f`). Ti commits (plus én, der kun sætter blok 3-hashen ind her):
 
 - `a50e128` blok 1: kortet over filen og sikkerhedslinen FØR (foer.json, 11 skærmbilleder)
 - `a81c4eb` blok 2: de 16 statiske verify-tjek læser `AthleteView.jsx` + modulerne via `scripts/athleteViewKilde.mjs`
@@ -22,7 +22,7 @@ Gren `atleteview-moduler`, forgrenet fra `main` (`5d1486f`). Ti commits:
 - `cb82d26` blok 2: læsninger og sæt-skrivning som fabrikker; kaldene står før effekterne
 - `21a9351` blok 2: VideoCoach-broens effekter som hooks
 - `d3b893b` blok 2: skærme, kost-kort, toast, bundnav og parathedsudkast
-- blok 3-commit (denne rapport, efter.json, skærmbilleder, nyt kort): se `git log -1`
+- `75b6735` blok 3: efter.json, skærmbilleder efter, pixel- og flytte-tjek, nyt kort, denne rapport
 
 ## Hvad ændret
 
