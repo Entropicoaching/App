@@ -11,8 +11,9 @@
 // kildekoden.
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+import { athleteViewKilde } from './athleteViewKilde.mjs'
 
-const athleteView = readFileSync(new URL('../src/AthleteView.jsx', import.meta.url), 'utf8')
+const athleteView = athleteViewKilde()
 // TDEE (KOST), e1RM (PROGRAM) og beskedsporene (BESKEDER) flyttede til deres
 // egne lazy-loadede faner i ordre 232 · commit 3 (ren udflytning, se
 // docs/RAPPORT-232.md) — teksttjekkene kører derfor mod ALLE fire filer

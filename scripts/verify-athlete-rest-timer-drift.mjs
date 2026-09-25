@@ -8,8 +8,9 @@
 // eller lignende, og begge genregner ved visibilitychange.
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+import { athleteViewKilde } from './athleteViewKilde.mjs'
 
-const athleteView = readFileSync(new URL('../src/AthleteView.jsx', import.meta.url), 'utf8')
+const athleteView = athleteViewKilde()
 // ExerciseTimer flyttede til sin egen lazy-loadede fane i ordre 232 · commit 3
 // (ren udflytning, se docs/RAPPORT-232.md) — samme tjek, ny fil.
 const programTab = readFileSync(new URL('../src/athlete/ProgramTab.jsx', import.meta.url), 'utf8')

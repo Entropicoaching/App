@@ -15,8 +15,9 @@
 // "præcis ét sted"-krav som før, blot i den fil koden faktisk bor i nu.
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+import { athleteViewKilde } from './athleteViewKilde.mjs'
 
-const athleteView = readFileSync(new URL('../src/AthleteView.jsx', import.meta.url), 'utf8')
+const athleteView = athleteViewKilde()
 const dashboard = readFileSync(new URL('../src/Dashboard.jsx', import.meta.url), 'utf8')
 const analyseTab = readFileSync(new URL('../src/dashboard/AnalyseTab.jsx', import.meta.url), 'utf8')
 const note = readFileSync(new URL('../src/AthleteSilentFailNote.jsx', import.meta.url), 'utf8')

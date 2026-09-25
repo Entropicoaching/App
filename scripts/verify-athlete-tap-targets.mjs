@@ -8,8 +8,9 @@
 // trykfladen under grænsen igen uden at et script fejler synligt.
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+import { athleteViewKilde } from './athleteViewKilde.mjs'
 
-const athleteView = readFileSync(new URL('../src/AthleteView.jsx', import.meta.url), 'utf8')
+const athleteView = athleteViewKilde()
 // Sæt-loggeren, blok-skift-chippen og session-vurderingen flyttede til deres
 // egen lazy-loadede fane i ordre 232 · commit 3 (ren udflytning, se
 // docs/RAPPORT-232.md) — samme tjek, ny fil.

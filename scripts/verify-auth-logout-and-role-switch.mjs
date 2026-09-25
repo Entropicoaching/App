@@ -5,6 +5,7 @@
 // `supabase.auth.signOut()`-kald (selve bugen) er sneget sig ind igen.
 import assert from 'node:assert/strict'
 import { readFileSync as readFileRaw } from 'node:fs'
+import { athleteViewKilde } from './athleteViewKilde.mjs'
 
 // Kildefilerne kan ligge som CRLF på disken (fx `core.autocrlf=true` på en
 // Windows-checkout) uden at det betyder noget for koden. Normalisér til LF før
@@ -14,7 +15,7 @@ const readFileSync = (url, enc) => readFileRaw(url, enc).replace(/\r\n/g, '\n')
 
 const supabaseJs = readFileSync(new URL('../src/supabase.js', import.meta.url), 'utf8')
 const dashboard = readFileSync(new URL('../src/Dashboard.jsx', import.meta.url), 'utf8')
-const athleteView = readFileSync(new URL('../src/AthleteView.jsx', import.meta.url), 'utf8')
+const athleteView = athleteViewKilde()
 const appJsx = readFileSync(new URL('../src/App.jsx', import.meta.url), 'utf8')
 const authSignOut = readFileSync(new URL('../src/authSignOut.js', import.meta.url), 'utf8')
 

@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
+import { athleteViewKilde } from './athleteViewKilde.mjs'
 
-const athleteView = readFileSync(new URL('../src/AthleteView.jsx', import.meta.url), 'utf8')
+const athleteView = athleteViewKilde()
 // Programmets readiness-prompt flyttede til sin egen lazy-loadede fane i
 // ordre 232 · commit 3 (ren udflytning, se docs/RAPPORT-232.md) — tælles nu
 // på tværs af begge filer.

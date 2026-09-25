@@ -14,9 +14,10 @@
 // kildekoden.
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+import { athleteViewKilde } from './athleteViewKilde.mjs'
 
 const auth = readFileSync(new URL('../src/Auth.jsx', import.meta.url), 'utf8')
-const athleteView = readFileSync(new URL('../src/AthleteView.jsx', import.meta.url), 'utf8')
+const athleteView = athleteViewKilde()
 
 // --- G6: send bekræftelseslink igen -----------------------------------------
 assert.match(auth, /rawMessage\.includes\('email not confirmed'\)/,

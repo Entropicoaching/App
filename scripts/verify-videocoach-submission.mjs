@@ -5,6 +5,7 @@ import { flushVideoCoachDraftQueue, isRetryableVideoCoachError, purgeVideoCoachD
   queueVideoCoachDraft,
   saveVideoCoachDraft, validateVideoCoachPayloadBounds,
   videoCoachSavedIdentityMatches } from '../src/videoCoachSubmission.js'
+import { athleteViewKilde } from './athleteViewKilde.mjs'
 
 const row = {
   client_analysis_id: '11111111-1111-4111-8111-111111111111',
@@ -109,7 +110,7 @@ assert.equal(isRetryableVideoCoachError({ code: 'PGRST001' }), true)
 assert.equal(isRetryableVideoCoachError({ code: '42501' }), false)
 assert.equal(isRetryableVideoCoachError({ code: 'VC_IDENTITY_MISMATCH' }), false)
 
-const athleteView = await readFile(new URL('../src/AthleteView.jsx', import.meta.url), 'utf8')
+const athleteView = athleteViewKilde()
 assert.match(athleteView, /queueVideoCoachDraft\(safeRow,[\s\S]*dispatchEvent\(new Event\(ATHLETE_VIDEOCOACH_QUEUE_CHANGED\)\)/,
   'En ny offlinekladde skal selv starte retry-kæden uden et online-event')
 assert.match(athleteView, /addEventListener\(ATHLETE_VIDEOCOACH_QUEUE_CHANGED, retryWhenQueueChanges\)/)

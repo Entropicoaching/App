@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs'
 import { buildAwaitingAnalysisRow, buildVideoUploadPath, VIDEOCOACH_UPLOAD_BUCKET,
   VIDEOCOACH_UPLOAD_MAX_BYTES, validateVideoUploadRequest, videoUploadAlreadyExistsError,
   videoUploadExtForMime, videoUploadMimeAllowed } from '../src/videoCoachUpload.js'
+import { athleteViewKilde } from './athleteViewKilde.mjs'
 
 const athleteId = '11111111-1111-4111-8111-111111111111'
 const clientAnalysisId = '22222222-2222-4222-8222-222222222222'
@@ -131,7 +132,7 @@ console.log('Migrationsfilen er versionsstyret, markeret som allerede kørt, og 
   assert.match(supabaseSource, /return fetch\(input, \{ \.\.\.init, headers, signal \}\)/,
     'Klienten skal bruge storage-js\'s fetch-parameter til at afbryde via signal (ordre 226 · commit 2: ikke længere via @supabase/supabase-js)')
 
-  const athleteView = await readFile(new URL('../src/AthleteView.jsx', import.meta.url), 'utf8')
+  const athleteView = athleteViewKilde()
   assert.match(athleteView, /createAbortableUploadClient/,
     'AthleteView skal bruge engangsklienten, ikke den delte supabase-klient, til uploaden')
   assert.match(athleteView, /athleteVideoUploadAbortsRef/,
