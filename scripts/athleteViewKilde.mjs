@@ -19,6 +19,7 @@ export const ATHLETEVIEW_MODULER = [
   'athlete/useVideoCoachBro.js',
   'athlete/laesninger.js',
   'athlete/saetSkrivning.js',
+  'athlete/beskederOgVaegt.jsx',
   'athlete/kostHandlinger.js',
   'athlete/OnboardingGuide.jsx',
   'athlete/Ramme.jsx',

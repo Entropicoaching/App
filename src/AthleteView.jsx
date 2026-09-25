@@ -2,8 +2,6 @@ import { useState, useEffect, useRef } from 'react'
 import { supabase, withRetry, queueWrite, signOutHard, createAbortableUploadClient } from './supabase'
 import { mergeAthleteSetInputs, nextAthleteSetInput } from './athleteTrainingInputs'
 import { sanitizeVideoCoachFeedbackEvidence } from './videoCoachFeedbackEvidence'
-import { videoCoachPersonalBaselineAthleteText, videoCoachPersonalBaselineForAnalysis } from './videoCoachPersonalFeedback'
-import { VIDEOCOACH_LIFT_LABELS as ATHLETE_VIDEO_LIFTS, videoCoachVariationLabel as athleteVideoVariationLabel } from './videoCoachLabels'
 import { hasCompletedOnboardingGuide, isLastOnboardingGuideStep } from './athleteOnboardingGuide'
 import { runGuardedWrite } from './athleteWriteGuard'
 import { runGuardedRead } from './athleteReadGuard'
@@ -24,16 +22,17 @@ import { flushVideoCoachDraftQueue, isRetryableVideoCoachError,
 import { buildAwaitingAnalysisRow, buildVideoUploadPath, validateVideoUploadRequest,
   videoUploadAlreadyExistsError, VIDEOCOACH_UPLOAD_BUCKET } from './videoCoachUpload'
 import LazyBoundary from './LazyBoundary'
-import { s, shiftDate, today, unitsForFood } from './athleteShared'
+import { s, today } from './athleteShared'
 import { ATHLETE_VIDEOCOACH_PREFIX, ATHLETE_VIDEOCOACH_QUEUE_CHANGED,
-  isUuid, validateAthleteVideoCoachRow, athleteVideoPathPreview } from './athlete/videoCoachBro'
+  isUuid, validateAthleteVideoCoachRow } from './athlete/videoCoachBro'
 import { computeActiveWeekIdx, weekFullyLogged, weekStartDate, fmtWeekRange,
   WEEKDAYS_LONG, parsePlannedRpe, logFrontendError } from './athlete/ugeHjaelp'
-import { LOCAL_FOODS } from './athlete/lokaleFoedevarer'
 import { NAV_ITEMS } from './athlete/NavItems'
 import HjemTab from './athlete/HjemTab'
 import OnboardingGuide from './athlete/OnboardingGuide'
 import Ramme from './athlete/Ramme'
+import { lavBeskederOgVaegt } from './athlete/beskederOgVaegt'
+import { lavKostHandlinger } from './athlete/kostHandlinger'
 
 // Indlæses via LazyBoundary (ordre 232 · commit 2), samme mønster som Dashboard.jsx's fire faner.
 const mobiliseringFactory = () => import('./athlete/MobiliseringTab')
@@ -646,6 +645,28 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       showFlash(`${label} kunne ikke hentes. Tjek din forbindelse og prøv igen.`, 'error')
     }
   }
+
+  const {
+    fetchWeightLogs, logWeight, fetchAthleteMessages, markTrackRead, sendAthleteMessage, formatMsgTime, renderSharedFeedbackCards,
+  } = lavBeskederOgVaegt({
+    athlete, messageInput, msgTrack, onReadError, openSharedVideoId, setMessageInput, setMessages, setOpenSharedVideoId,
+    setSavingWeight, setSharedVideoAnalyses, setUnreadMsgCount, setWeightInput, setWeightLogs, sharedVideoAnalyses, showFlash, weightInput,
+    weightLogs,
+  })
+
+  const {
+    fetchLogs, fetchHistoricalMealLogs, fetchFrequentFoods, quickLogFood, fetchMealTemplates, copyYesterday, saveTemplate, logTemplate,
+    deleteTemplate, fetchCustomFoods, onSearchInput, selectFood, addFromSearch, quickAddSearchFood, saveCustomFood, deleteLog,
+    undoDelete, parseLoggedGrams, startEditLog, saveEditLog, totKcal, totProtein, totCarb, totFat,
+    kcalPct, proteinPct, pKcal, cKcal, fKcal, macroTotal, circ, pLen,
+    cLen, fLen, tdeeEstimate,
+  } = lavKostHandlinger({
+    amount, athlete, createFood, customFoods, editGrams, editMacros, historicalMealLogs, kostDate,
+    logs, onReadError, selectedFood, setAmount, setCreateFood, setCustomFoods, setEditGrams, setEditMacros,
+    setEditingLogId, setFrequentFoods, setHistoricalMealLogs, setLogs, setMealTemplates, setSearchQuery, setSearchResults, setSelectedFood,
+    setShowCreateFood, setShowSaveTemplate, setShowTemplates, setTemplateNameInput, setUndoPending, setUndoToast, setUnitIdx, shareFood,
+    showFlash, templateNameInput, undoPending, undoTimerRef, undoToast, unitIdx, weightLogs,
+  })
 
   async function fetchAthlete() {
     if (!coachAthleteId && role !== 'athlete') { setLoading(false); return }
@@ -1613,408 +1634,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     })))
   }
 
-  async function fetchWeightLogs(athleteId) {
-    const { data, ok } = await runGuardedRead(
-      () => supabase
-        .from('weight_logs')
-        .select('*')
-        .eq('athlete_id', athleteId)
-        .order('logged_at', { ascending: false })
-        .limit(30),
-      onReadError('Vægtloggen', athleteId),
-    )
-    if (!ok) return
-    setWeightLogs(data || [])
-  }
 
-  // G15 (ordre 131): var før et rent "fyr og glem" — feltet blev ryddet og
-  // ingen fejl vist uanset om skrivningen lykkedes. En fejlet vægtlogning så
-  // derfor ud som en gemt vægt; kun et efterfølgende (uændret) tal i grafen
-  // afslørede det, og kun hvis atleten selv lagde mærke til det.
-  async function logWeight() {
-    if (!weightInput || !athlete) return
-    setSavingWeight(true)
-    const todayStr = today()
-    const existing = weightLogs.find(l => l.logged_at === todayStr)
-    const ok = await runGuardedWrite(
-      () => existing
-        ? supabase.from('weight_logs').update({ weight: parseFloat(weightInput) }).eq('id', existing.id)
-        : supabase.from('weight_logs').insert({ athlete_id: athlete.id, weight: parseFloat(weightInput), logged_at: todayStr }),
-      error => {
-        logFrontendError('logWeight fejlede', error, athlete.id)
-        recordSilentFail(athlete.id, 'silent:weight-log-failed')
-        showFlash('Vægten blev ikke gemt. Tjek din forbindelse og prøv igen.', 'error')
-      },
-    )
-    setSavingWeight(false)
-    if (!ok) return // input bevares bevidst, så atleten ikke skal taste tallet igen
-    setWeightInput('')
-    fetchWeightLogs(athlete.id)
-  }
-
-  async function fetchAthleteMessages(id) {
-    const athleteId = id || athlete?.id
-    if (!athleteId) return
-    const { data, ok } = await runGuardedRead(
-      () => supabase.from('messages').select('*').eq('athlete_id', athleteId).order('created_at'),
-      onReadError('Beskederne', athleteId),
-    )
-    if (!ok) return
-    const msgs = data || []
-    setMessages(msgs)
-    const unread = msgs.filter(m => m.sender_role === 'coach' && !m.read_at).length
-    setUnreadMsgCount(unread)
-  }
-
-  // Markér ét spor som set: coach-beskeder i sporet (read_at) og — for teknik —
-  // også de delte målinger (athlete_seen_at), så coachen kan se at feedback er set.
-  async function markTrackRead(track) {
-    if (!athlete) return
-    await supabase.from('messages')
-      .update({ read_at: new Date().toISOString() })
-      .eq('athlete_id', athlete.id)
-      .eq('sender_role', 'coach')
-      .eq('category', track)
-      .is('read_at', null)
-    fetchAthleteMessages(athlete.id)
-  }
-
-  // Markér én delt måling som set når atleten åbner den ("Se måling"), så
-  // coachen kan se at feedbacken faktisk er set (parity med read_by_coach).
-  async function markVideoSeen(id) {
-    const target = sharedVideoAnalyses.find(a => a.id === id)
-    if (!target || target.athlete_seen_at) return
-    const now = new Date().toISOString()
-    // Fejl her (RLS/net) må ikke vælte visningen; prøves igen næste åbning.
-    const { error } = await supabase.from('video_analyses').update({ athlete_seen_at: now }).eq('id', id)
-    if (!error) setSharedVideoAnalyses(prev => prev.map(a => a.id === id ? { ...a, athlete_seen_at: now } : a))
-  }
-
-  async function sendAthleteMessage() {
-    if (!messageInput.trim() || !athlete) return
-    const content = messageInput.trim()
-    // Ryd IKKE feltet før skrivningen er bekræftet — ellers ser en fejlet
-    // afsendelse ud som en succes, og beskeden er væk uden mulighed for at prøve igen.
-    const ok = await runGuardedWrite(
-      () => supabase.from('messages').insert({ athlete_id: athlete.id, sender_role: 'athlete', content, category: msgTrack }),
-      () => showFlash('Beskeden blev ikke sendt. Tjek din forbindelse og prøv igen.', 'error'),
-    )
-    if (!ok) return
-    setMessageInput('')
-    fetchAthleteMessages(athlete.id)
-  }
-
-  function formatMsgTime(ts) {
-    const d = new Date(ts)
-    const now = new Date()
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-    const msgDay = new Date(d.getFullYear(), d.getMonth(), d.getDate())
-    const dayDiff = Math.floor((today - msgDay) / 86400000)
-    const time = d.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' })
-    if (dayDiff === 0) return time
-    if (dayDiff === 1) return `I går ${time}`
-    if (dayDiff < 7) return d.toLocaleDateString('da-DK', { weekday: 'long' }) + ' ' + time
-    return d.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' }) + ' ' + time
-  }
-
-  // Coachens delte videofeedback som udfoldelige kort (én kilde: video_analyses).
-  // Bruges både på hjem og i "Teknik & løft"-sporet — "se måling" udfolder banen.
-  const renderSharedFeedbackCards = () => (
-    <div style={{ display: 'grid', gap: '0.55rem' }}>
-      {sharedVideoAnalyses.map(analysis => {
-        const open = openSharedVideoId === analysis.id
-        const preview = athleteVideoPathPreview(analysis.bar_path)
-        const feedback = analysis.athlete_feedback || {}
-        const works = Array.isArray(feedback.works) ? feedback.works.filter(item => item?.text).slice(0, 2) : []
-        const focus = Array.isArray(feedback.focus) ? feedback.focus.filter(item => item?.text).slice(0, 2) : []
-        const nextSet = Array.isArray(feedback.next_set) ? feedback.next_set.filter(item => item?.text).slice(0, 2) : []
-        const personalBaseline = videoCoachPersonalBaselineForAnalysis(feedback, analysis,
-          athlete?.id)
-        return (
-          <div key={analysis.id} style={{ border: '1px solid rgba(237,234,226,0.08)', background: 'rgba(20,20,16,0.55)' }}>
-            <button onClick={() => { const opening = !open; setOpenSharedVideoId(opening ? analysis.id : null); if (opening) markVideoSeen(analysis.id) }} style={{ width: '100%', border: 0, background: 'transparent', color: '#edeae2', cursor: 'pointer', padding: '0.75rem', textAlign: 'left', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.7rem' }}>
-              <span style={{ minWidth: 0 }}>
-                <span style={{ display: 'block', fontSize: '0.78rem' }}>
-                  {!analysis.athlete_seen_at && <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: '#c8923a', marginRight: 6, verticalAlign: 'middle' }} />}
-                  {ATHLETE_VIDEO_LIFTS[analysis.lift] || analysis.lift} · {athleteVideoVariationLabel(analysis.lift, analysis.variation)}
-                </span>
-                <span style={{ display: 'block', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', marginTop: '0.25rem' }}>
-                  {new Date(analysis.analyzed_at).toLocaleDateString('da-DK')}{analysis.load_kg != null ? ` · ${analysis.load_kg} kg` : ''}{analysis.reps_count ? ` · ${analysis.reps_count} reps` : ''}{analysis.rpe != null ? ` · RPE ${analysis.rpe}` : ''}
-                </span>
-              </span>
-              <span style={{ color: '#c8923a', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.06em', flexShrink: 0, display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                {open ? 'Skjul' : 'Se måling'}<span style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }}>⌄</span>
-              </span>
-            </button>
-            {open && (
-              <div style={{ borderTop: '1px solid rgba(237,234,226,0.07)', padding: '0.75rem', display: 'grid', gridTemplateColumns: '1fr', gap: '0.8rem' }}>
-                {preview && (
-                  <div style={{ minHeight: '170px', background: '#141410', border: '1px solid rgba(237,234,226,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.6rem' }}>
-                    <svg viewBox={preview.viewBox} width="100%" height="170" preserveAspectRatio="xMidYMid meet" style={{ display: 'block', overflow: 'visible' }}>
-                      <line x1={preview.referenceX} y1={preview.y1} x2={preview.referenceX} y2={preview.y2} stroke="rgba(237,234,226,0.14)" strokeWidth="1" strokeDasharray="5 5" vectorEffect="non-scaling-stroke" />
-                      <polyline points={preview.points} fill="none" stroke="#c8923a" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
-                      <circle cx={preview.start.x} cy={preview.start.y} r="4" fill="#67dff5" vectorEffect="non-scaling-stroke" />
-                      <circle cx={preview.end.x} cy={preview.end.y} r="4" fill="#edeae2" vectorEffect="non-scaling-stroke" />
-                    </svg>
-                  </div>
-                )}
-                <div style={{ display: 'grid', gap: '0.7rem' }}>
-                  {personalBaseline && <div style={{ borderLeft: '2px solid #c8923a', background: 'rgba(200,146,58,0.04)', padding: '0.55rem 0.65rem' }}><div style={{ ...s.fieldLabel, color: '#c8923a' }}>Din udvikling</div><div style={{ color: '#c9b47f', fontSize: '0.68rem', lineHeight: 1.45, marginTop: '0.25rem' }}>{videoCoachPersonalBaselineAthleteText(personalBaseline)}</div><div style={{ color: '#77746d', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', lineHeight: 1.4, marginTop: '0.25rem' }}>Sammenlignet med {personalBaseline.evidence_ref.n_analyses} kvalitetssikrede analyser af samme løft og variation.</div></div>}
-                  {works.length > 0 && <div><div style={s.fieldLabel}>Det fungerer</div>{works.map((item, index) => <div key={index} style={{ color: '#9fbd9a', fontSize: '0.68rem', lineHeight: 1.45, marginTop: '0.25rem' }}>{item.text}</div>)}</div>}
-                  {focus.length > 0 && <div><div style={s.fieldLabel}>Dit fokus</div>{focus.map((item, index) => <div key={index} style={{ color: '#d79a83', fontSize: '0.68rem', lineHeight: 1.45, marginTop: '0.25rem' }}>{item.text}</div>)}</div>}
-                  {nextSet.length > 0 && <div><div style={s.fieldLabel}>Næste gang</div>{nextSet.map((item, index) => <div key={index} style={{ color: '#c9b47f', fontSize: '0.68rem', lineHeight: 1.45, marginTop: '0.25rem' }}>{item.text}</div>)}</div>}
-                  {!works.length && !focus.length && !nextSet.length && <div style={{ color: '#7a7770', fontSize: '0.66rem', lineHeight: 1.45 }}>Coachen har delt målingen uden en særskilt tekstkommentar.</div>}
-                </div>
-              </div>
-            )}
-          </div>
-        )
-      })}
-    </div>
-  )
-
-  async function fetchLogs(athleteId, date = kostDate) {
-    const { data, ok } = await runGuardedRead(
-      () => supabase
-        .from('meal_logs')
-        .select('*')
-        .eq('athlete_id', athleteId)
-        .eq('date', date)
-        .order('created_at'),
-      onReadError('Dagens kostlog', athleteId),
-    )
-    if (!ok) return
-    setLogs(data || [])
-  }
-
-  async function fetchHistoricalMealLogs(athleteId) {
-    const from = new Date()
-    from.setDate(from.getDate() - 28)
-    const { data, ok } = await runGuardedRead(
-      () => supabase
-        .from('meal_logs')
-        .select('date, kcal')
-        .eq('athlete_id', athleteId)
-        .gte('date', from.toISOString().slice(0, 10))
-        .order('date'),
-      onReadError('Kosthistorikken', athleteId),
-    )
-    if (!ok) return
-    setHistoricalMealLogs(data || [])
-  }
-
-  // Find de fødevarer atleten oftest logger (sidste 30 dage) til hurtig gen-log.
-  async function fetchFrequentFoods(athleteId) {
-    const from = new Date()
-    from.setDate(from.getDate() - 30)
-    const { data, ok } = await runGuardedRead(
-      () => supabase
-        .from('meal_logs')
-        .select('meal, kcal, protein, carb, fat, date')
-        .eq('athlete_id', athleteId)
-        .gte('date', from.toISOString().slice(0, 10))
-        .order('date', { ascending: false }),
-      onReadError('Hyppige fødevarer', athleteId),
-    )
-    if (!ok) return
-    const map = new Map()
-    for (const l of data || []) {
-      if (!map.has(l.meal)) map.set(l.meal, { meal: l.meal, kcal: l.kcal, protein: l.protein, carb: l.carb, fat: l.fat, count: 0 })
-      map.get(l.meal).count++
-    }
-    const list = [...map.values()].filter(f => f.count >= 2).sort((a, b) => b.count - a.count).slice(0, 8)
-    setFrequentFoods(list)
-  }
-
-  async function quickLogFood(f) {
-    if (!athlete) return
-    const ok = await runGuardedWrite(
-      () => supabase.from('meal_logs').insert({
-        athlete_id: athlete.id, date: kostDate,
-        meal: f.meal, kcal: f.kcal, protein: f.protein, carb: f.carb, fat: f.fat,
-      }),
-      () => showFlash('Måltidet blev ikke logget. Tjek din forbindelse og prøv igen.', 'error'),
-    )
-    if (ok) fetchLogs(athlete.id)
-  }
-
-  async function fetchMealTemplates(athleteId) {
-    const { data, ok } = await runGuardedRead(
-      () => supabase
-        .from('meal_templates')
-        .select('*')
-        .eq('athlete_id', athleteId)
-        .order('created_at', { ascending: false }),
-      onReadError('Skabelonerne', athleteId),
-    )
-    if (!ok) return
-    setMealTemplates(data || [])
-  }
-
-  async function copyYesterday() {
-    const yStr = shiftDate(kostDate, -1) // dagen før den viste dag
-    const { data } = await supabase
-      .from('meal_logs')
-      .select('meal, kcal, protein, carb, fat')
-      .eq('athlete_id', athlete.id)
-      .eq('date', yStr)
-    if (!data || data.length === 0) return
-    const ok = await runGuardedWrite(
-      () => supabase.from('meal_logs').insert(
-        data.map(item => ({ ...item, athlete_id: athlete.id, date: kostDate }))
-      ),
-      () => showFlash('Måltiderne kunne ikke kopieres. Tjek din forbindelse og prøv igen.', 'error'),
-    )
-    if (ok) fetchLogs(athlete.id)
-  }
-
-  async function saveTemplate() {
-    if (!templateNameInput.trim() || !logs.length || !athlete) return
-    const items = logs.map(({ meal, kcal, protein, carb, fat }) => ({ meal, kcal, protein, carb, fat }))
-    const ok = await runGuardedWrite(
-      () => supabase.from('meal_templates').insert({ athlete_id: athlete.id, name: templateNameInput.trim(), items }),
-      () => showFlash('Skabelonen blev ikke gemt. Tjek din forbindelse og prøv igen.', 'error'),
-    )
-    if (!ok) return
-    fetchMealTemplates(athlete.id)
-    setShowSaveTemplate(false)
-    setTemplateNameInput('')
-  }
-
-  async function logTemplate(template) {
-    if (!athlete) return
-    const ok = await runGuardedWrite(
-      () => supabase.from('meal_logs').insert(
-        template.items.map(item => ({ ...item, athlete_id: athlete.id, date: kostDate }))
-      ),
-      () => showFlash('Skabelonen kunne ikke logges. Tjek din forbindelse og prøv igen.', 'error'),
-    )
-    if (!ok) return
-    fetchLogs(athlete.id)
-    setShowTemplates(false)
-  }
-
-  async function deleteTemplate(id) {
-    await supabase.from('meal_templates').delete().eq('id', id)
-    setMealTemplates(prev => prev.filter(t => t.id !== id))
-  }
-
-  async function fetchCustomFoods(athleteId) {
-    // RLS returnerer delte fødevarer (is_shared) + egne. Tag 'mine' til badges/sletning.
-    const { data, ok } = await runGuardedRead(
-      () => supabase
-        .from('custom_foods')
-        .select('*')
-        .order('name', { ascending: true }),
-      onReadError('Fødevarelisten', athleteId),
-    )
-    if (!ok) return
-    setCustomFoods((data || []).map(f => ({ ...f, mine: f.athlete_id === athleteId })))
-  }
-
-  function onSearchInput(e) {
-    const q = e.target.value
-    setSearchQuery(q)
-    setSelectedFood(null)
-    if (q.length < 2) { setSearchResults([]); return }
-    const ql = q.toLowerCase()
-    const custom = customFoods
-      .filter(f => f.name.toLowerCase().includes(ql))
-      .map(f => ({ ...f, isCustom: f.mine, isShared: !f.mine }))
-    const builtin = LOCAL_FOODS.filter(f => f.name.toLowerCase().includes(ql))
-    setSearchResults([...custom, ...builtin])
-  }
-
-  function selectFood(f) {
-    setSelectedFood(f)
-    setSearchQuery(f.name)
-    setSearchResults([])
-    // Hvis fødevaren har en stk-enhed, default til 1 af den (hurtigere); ellers 100 g.
-    const units = unitsForFood(f)
-    if (units.length > 1) { setUnitIdx(1); setAmount('1') }
-    else { setUnitIdx(0); setAmount('100') }
-  }
-
-  async function addFromSearch() {
-    if (!selectedFood || !athlete) return
-    const units = unitsForFood(selectedFood)
-    const unit = units[unitIdx] || units[0]
-    const amt = parseFloat(amount) || 0
-    const grams = amt * unit.grams
-    const ratio = grams / 100
-    // Beskriv portionen i navnet når enheden ikke er gram, så loggen er læsbar.
-    const label = unit.label === 'g'
-      ? `${selectedFood.name} · ${Math.round(grams)} g`
-      : `${selectedFood.name} · ${amt} ${unit.label} (${Math.round(grams)} g)`
-    const ok = await runGuardedWrite(
-      () => supabase.from('meal_logs').insert({
-        athlete_id: athlete.id,
-        date: kostDate,
-        meal: label,
-        kcal: Math.round(selectedFood.kcal100 * ratio),
-        protein: Math.round(selectedFood.protein100 * ratio),
-        carb: Math.round(selectedFood.carb100 * ratio),
-        fat: Math.round(selectedFood.fat100 * ratio),
-      }),
-      () => showFlash('Fødevaren blev ikke logget. Tjek din forbindelse og prøv igen.', 'error'),
-    )
-    if (!ok) return
-    setSelectedFood(null)
-    setSearchQuery('')
-    fetchLogs(athlete.id)
-  }
-
-  // Hurtig-tilføj direkte fra søgeresultatet: 1 stk-enhed hvis den findes, ellers 100 g.
-  // Rydder IKKE søgningen, så man kan trykke + på flere varer i træk (multi-add).
-  async function quickAddSearchFood(f) {
-    if (!athlete) return
-    const units = unitsForFood(f)
-    const unit = units.length > 1 ? units[1] : units[0]
-    const amt = unit.label === 'g' ? 100 : 1
-    const grams = amt * unit.grams
-    const ratio = grams / 100
-    const label = unit.label === 'g'
-      ? `${f.name} · ${Math.round(grams)} g`
-      : `${f.name} · ${amt} ${unit.label} (${Math.round(grams)} g)`
-    const ok = await runGuardedWrite(
-      () => supabase.from('meal_logs').insert({
-        athlete_id: athlete.id,
-        date: kostDate,
-        meal: label,
-        kcal: Math.round(f.kcal100 * ratio),
-        protein: Math.round(f.protein100 * ratio),
-        carb: Math.round(f.carb100 * ratio),
-        fat: Math.round(f.fat100 * ratio),
-      }),
-      () => showFlash(`${f.name} blev ikke logget. Tjek din forbindelse og prøv igen.`, 'error'),
-    )
-    if (!ok) return
-    fetchLogs(athlete.id)
-    showFlash(`${f.name} tilføjet`)
-  }
-
-  async function saveCustomFood() {
-    if (!createFood.name.trim() || !athlete) return
-    const food = {
-      athlete_id: athlete.id,
-      name: createFood.name.trim(),
-      kcal100: parseFloat(createFood.kcal100) || 0,
-      protein100: parseFloat(createFood.protein100) || 0,
-      carb100: parseFloat(createFood.carb100) || 0,
-      fat100: parseFloat(createFood.fat100) || 0,
-      unit_label: createFood.unit_label.trim() || null,
-      unit_grams: parseFloat(createFood.unit_grams) || null,
-      is_shared: shareFood,
-    }
-    const { data } = await supabase.from('custom_foods').insert(food).select().maybeSingle()
-    if (data) {
-      const saved = { ...data, isCustom: true, mine: true }
-      setCustomFoods(prev => [saved, ...prev])
-      selectFood(saved)
-      setShowCreateFood(false)
-      setCreateFood({ name: '', kcal100: '', protein100: '', carb100: '', fat100: '', unit_label: '', unit_grams: '' })
-    }
-  }
 
   async function autoCompleteSession(session) {
     const exerciseIds = (session.exercises || []).map(e => e.id)
@@ -2102,20 +1722,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     await fetchPastLogs(allWeeks[viewingWeekIdx], athlete.id)
   }
 
-  async function deleteLog(l) {
-    const ok = await runGuardedWrite(
-      () => supabase.from('meal_logs').delete().eq('id', l.id),
-      () => showFlash('Måltidet blev ikke slettet. Tjek din forbindelse og prøv igen.', 'error'),
-    )
-    if (!ok) return
-    fetchLogs(athlete.id)
-    if (undoTimerRef.current) clearTimeout(undoTimerRef.current)
-    setUndoToast({
-      label: 'Måltid slettet',
-      restore: { athlete_id: athlete.id, date: l.date, meal: l.meal, kcal: l.kcal, protein: l.protein, carb: l.carb, fat: l.fat },
-    })
-    undoTimerRef.current = setTimeout(() => setUndoToast(null), 5000)
-  }
 
   function showFlash(message, kind = 'info') {
     if (flashTimerRef.current) clearTimeout(flashTimerRef.current)
@@ -2127,107 +1733,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     setConfirmDialog({ message, onConfirm })
   }
 
-  async function undoDelete() {
-    const t = undoToast
-    if (!t || undoPending) return
-    if (undoTimerRef.current) clearTimeout(undoTimerRef.current)
-    setUndoPending(true)
-    const ok = await runGuardedWrite(
-      () => supabase.from('meal_logs').insert(t.restore),
-      () => showFlash('Måltidet kunne ikke gendannes. Tjek din forbindelse og prøv igen.', 'error'),
-    )
-    setUndoPending(false)
-    if (!ok) return
-    setUndoToast(null)
-    fetchLogs(athlete.id)
-  }
 
-  // Find gram-mængden i et logget måltidsnavn, fx "Kyllingebryst · 250 g" eller
-  // "... (300 g)". Returnerer { base, grams } eller null hvis den ikke kan læses.
-  function parseLoggedGrams(meal) {
-    const m = String(meal).match(/(\d+)\s*g\)?\s*$/)
-    if (!m) return null
-    const grams = parseInt(m[1])
-    if (!grams) return null
-    return { base: String(meal).split(' · ')[0], grams }
-  }
-
-  function startEditLog(l) {
-    setEditingLogId(l.id)
-    const parsed = parseLoggedGrams(l.meal)
-    if (parsed) setEditGrams(String(parsed.grams))
-    else setEditGrams('')
-    setEditMacros({ kcal: String(l.kcal ?? ''), protein: String(l.protein ?? ''), carb: String(l.carb ?? ''), fat: String(l.fat ?? '') })
-  }
-
-  async function saveEditLog(l) {
-    const parsed = parseLoggedGrams(l.meal)
-    let update
-    if (parsed) {
-      // Gram-skalering: vægt op/ned proportionalt og opdater gram i navnet.
-      const newGrams = parseFloat(editGrams) || 0
-      if (newGrams <= 0) return
-      const factor = newGrams / parsed.grams
-      update = {
-        meal: `${parsed.base} · ${Math.round(newGrams)} g`,
-        kcal: Math.round((l.kcal || 0) * factor),
-        protein: Math.round((l.protein || 0) * factor),
-        carb: Math.round((l.carb || 0) * factor),
-        fat: Math.round((l.fat || 0) * factor),
-      }
-    } else {
-      // Fallback: rediger makroerne direkte.
-      update = {
-        kcal: parseInt(editMacros.kcal) || 0,
-        protein: parseInt(editMacros.protein) || 0,
-        carb: parseInt(editMacros.carb) || 0,
-        fat: parseInt(editMacros.fat) || 0,
-      }
-    }
-    const ok = await runGuardedWrite(
-      () => supabase.from('meal_logs').update(update).eq('id', l.id),
-      () => showFlash('Ændringen blev ikke gemt. Tjek din forbindelse og prøv igen.', 'error'),
-    )
-    if (!ok) return
-    setEditingLogId(null)
-    fetchLogs(athlete.id)
-  }
-
-  const totKcal = logs.reduce((a, l) => a + (l.kcal || 0), 0)
-  const totProtein = logs.reduce((a, l) => a + (l.protein || 0), 0)
-  const totCarb = logs.reduce((a, l) => a + (l.carb || 0), 0)
-  const totFat = logs.reduce((a, l) => a + (l.fat || 0), 0)
-  const kcalPct = athlete?.kcal_target ? Math.min(100, Math.round(totKcal / athlete.kcal_target * 100)) : 0
-  const proteinPct = athlete?.protein_target ? Math.min(100, Math.round(totProtein / athlete.protein_target * 100)) : 0
-
-  const pKcal = totProtein * 4
-  const cKcal = totCarb * 4
-  const fKcal = totFat * 9
-  const macroTotal = pKcal + cKcal + fKcal || 1
-  const circ = 2 * Math.PI * 48
-  const pLen = (pKcal / macroTotal) * circ
-  const cLen = (cKcal / macroTotal) * circ
-  const fLen = (fKcal / macroTotal) * circ
-
-  const tdeeEstimate = (() => {
-    const kcalByDate = {}
-    for (const log of historicalMealLogs) {
-      kcalByDate[log.date] = (kcalByDate[log.date] || 0) + (log.kcal || 0)
-    }
-    const kcalDays = Object.values(kcalByDate)
-    if (kcalDays.length < 7) return { ready: false, missingKcalDays: Math.max(0, 7 - kcalDays.length) }
-    const wLogs = [...weightLogs].sort((a, b) => a.logged_at > b.logged_at ? 1 : -1)
-    if (wLogs.length < 2) return { ready: false, missingWeight: true }
-    const oldest = wLogs[0]
-    const newest = wLogs[wLogs.length - 1]
-    const daySpan = (new Date(newest.logged_at) - new Date(oldest.logged_at)) / 86400000
-    if (daySpan < 7) return { ready: false, missingWeight: true }
-    const avgKcal = kcalDays.reduce((a, b) => a + b, 0) / kcalDays.length
-    const weightChangePrDay = (newest.weight - oldest.weight) / daySpan
-    const tdee = Math.round(avgKcal - weightChangePrDay * 7700)
-    const confidence = kcalDays.length >= 14 && daySpan >= 21 ? 'høj' : kcalDays.length >= 10 && daySpan >= 14 ? 'moderat' : 'lav'
-    return { ready: true, tdee, avgKcal: Math.round(avgKcal), kcalDays: kcalDays.length, daySpan: Math.round(daySpan), confidence }
-  })()
 
   const now = new Date()
   const days = ['søndag', 'mandag', 'tirsdag', 'onsdag', 'torsdag', 'fredag', 'lørdag']
