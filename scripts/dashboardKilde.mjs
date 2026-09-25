@@ -38,6 +38,10 @@ export const DASHBOARD_MODULER = [
   'dashboard/Sidebar.jsx',
   'dashboard/MobilNav.jsx',
   'dashboard/ProfilHoved.jsx',
+  'dashboard/WeekdayPicker.jsx',
+  'dashboard/ExFormRow.jsx',
+  'dashboard/BlockSequenceRows.jsx',
+  'dashboard/profilTal.js',
 ]
 
 export function dashboardKilde() {

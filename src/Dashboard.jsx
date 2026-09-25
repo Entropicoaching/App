@@ -3,14 +3,13 @@ import { supabase } from './supabase'
 import LazyBoundary from './LazyBoundary'
 import { buildCoachPriorityItems, coachPriorityQueueContext } from './coachPriority'
 import { coachInboxEntryIntent, coachInboxFocusDecision, createSingleFlightRunner } from './coachInboxState'
-import { blockPurpose, withBlockPurposes } from './periodizationAssistant'
+import { withBlockPurposes } from './periodizationAssistant'
 import {
   BLOCK_NAMES, blockColor, computePhases, currentWeekNo,
   VIDEOCOACH_STATUS, VIDEOCOACH_METRICS, videoCoachMetric, videoCoachBaseline,
   videoCoachMetricText, videoCoachBaselineText, s,
   readinessSignal, formatLastSeen, parsePlannedRpe, initials,
 } from './dashboardShared'
-import { WEEKDAYS_SHORT } from './dashboard/coachKonstanter'
 import { coachVideoPriorityDetail } from './dashboard/coachVideoHjaelp'
 import { lavLaesninger } from './dashboard/laesninger'
 import { lavNavigation } from './dashboard/navigation'
@@ -38,6 +37,10 @@ import Overlays from './dashboard/Overlays'
 import Sidebar from './dashboard/Sidebar'
 import MobilNav from './dashboard/MobilNav'
 import ProfilHoved from './dashboard/ProfilHoved'
+import WeekdayPicker from './dashboard/WeekdayPicker'
+import ExFormRow from './dashboard/ExFormRow'
+import BlockSequenceRows from './dashboard/BlockSequenceRows'
+import { lavProfilTal } from './dashboard/profilTal'
 
 
 
@@ -373,6 +376,12 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     showFlash, weekDateFill, weekDraft, weekForm, weeks,
   })
 
+  const {
+    currentWeight, weightTrend, bestLog,
+  } = lavProfilTal({
+    athleteLogs, athleteWeightLogs,
+  })
+
   useEffect(() => {
     const handler = () => setIsMobile(window.innerWidth < 768)
     window.addEventListener('resize', handler)
@@ -544,34 +553,9 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   // Bygger til kalender-blok-opstilling: returnerer blok-sekvens-editoren (delt UI).
   function blockSequenceRows() {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
-        {blockPlan.map((block, i) => (
-          <div key={block.id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div style={{ width: '10px', height: '10px', borderRadius: '2px', background: blockColor(block.name), flexShrink: 0 }} />
-            <select
-              value={block.name}
-              onChange={e => setBlockPlan(p => p.map((b, j) => j === i ? { ...b, name: e.target.value, description: blockPurpose(e.target.value) } : b))}
-              style={{ ...s.fieldSelect, width: '160px', padding: '0.35rem 0.6rem', fontSize: '0.72rem' }}
-            >
-              {BLOCK_NAMES.map(n => <option key={n} value={n}>{n}</option>)}
-            </select>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <input
-                type="number" min="1" max="20"
-                value={block.weeks}
-                onChange={e => setBlockPlan(p => p.map((b, j) => j === i ? { ...b, weeks: Math.max(1, parseInt(e.target.value) || 1) } : b))}
-                style={{ ...s.fieldInput, width: '52px', padding: '0.35rem 0.5rem', fontSize: '0.72rem', textAlign: 'center' }}
-              />
-              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770' }}>uge{block.weeks !== 1 ? 'r' : ''}</span>
-            </div>
-            <button onClick={() => setBlockPlan(p => p.filter((_, j) => j !== i))} style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.7rem', padding: '0.1rem 0.3rem' }}>✕</button>
-          </div>
-        ))}
-        <button
-          onClick={() => setBlockPlan(p => [...p, { id: Date.now(), name: BLOCK_NAMES[0], weeks: 2, description: blockPurpose(BLOCK_NAMES[0]) }])}
-          style={{ ...s.btnGhost, fontSize: '0.52rem', padding: '0.3rem 0.7rem', alignSelf: 'flex-start', marginTop: '0.25rem' }}
-        >+ Tilføj blok</button>
-      </div>
+      <BlockSequenceRows {...{
+        blockPlan, setBlockPlan,
+      }} />
     )
   }
 
@@ -670,190 +654,20 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [coachPriorityItems, inboxRefreshStatus, inboxRefreshing, view])
 
-  const currentWeight = (() => {
-    if (!athleteWeightLogs.length) return null
-    const recent = athleteWeightLogs.slice(0, 5).map(l => l.weight)
-    if (recent.length >= 5) {
-      const sorted = [...recent].sort((a, b) => a - b)
-      return sorted[Math.floor(sorted.length / 2)]
-    }
-    return Math.round((recent.reduce((s, v) => s + v, 0) / recent.length) * 10) / 10
-  })()
-
-  const weightTrend = (() => {
-    if (athleteWeightLogs.length < 2) return null
-    const now = new Date()
-    const d7 = new Date(now); d7.setDate(now.getDate() - 7)
-    const d14 = new Date(now); d14.setDate(now.getDate() - 14)
-    const thisWeek = athleteWeightLogs.filter(l => new Date(l.logged_at) >= d7).map(l => l.weight)
-    const prevWeek = athleteWeightLogs.filter(l => { const d = new Date(l.logged_at); return d >= d14 && d < d7 }).map(l => l.weight)
-    if (!thisWeek.length || !prevWeek.length) return null
-    const thisAvg = thisWeek.reduce((s, v) => s + v, 0) / thisWeek.length
-    const prevAvg = prevWeek.reduce((s, v) => s + v, 0) / prevWeek.length
-    return Math.round((thisAvg - prevAvg) * 10) / 10
-  })()
-
-  const lastLogPerExercise = {}
-  for (const log of athleteLogs) {
-    const name = log.exercises?.name
-    if (name && (log.weight > 0 || log.reps_completed > 0)) {
-      if (!lastLogPerExercise[name]) lastLogPerExercise[name] = []
-      lastLogPerExercise[name].push({ weight: log.weight, reps_completed: log.reps_completed, logged_at: log.logged_at })
-    }
-  }
-
-  function repZone(r) {
-    const n = parseInt(r) || 0
-    if (n <= 3) return 0
-    if (n <= 6) return 1
-    if (n <= 10) return 2
-    return 3
-  }
-
-  function bestLog(name, plannedReps) {
-    const logs = lastLogPerExercise[name]
-    if (!logs?.length) return null
-    const planned = parseInt(plannedReps) || 0
-    if (planned > 0) {
-      const zone = repZone(planned)
-      const sameZone = logs.filter(l => repZone(l.reps_completed) === zone)
-      if (sameZone.length > 0) return sameZone[0]
-    }
-    return logs[0]
-  }
 
   // Delt ugedags-vælger (bruges i både rediger- og tilføj-session-formen).
   const weekdayPicker = (
-    <div style={{ marginBottom: '0.5rem' }}>
-      <div style={s.fieldLabel}>Fast ugedag (valgfri)</div>
-      <div style={{ display: 'flex', gap: '0.25rem', flexWrap: 'wrap' }}>
-        {WEEKDAYS_SHORT.map((d, i) => {
-          const active = sessionForm.weekday === i
-          return (
-            <button key={i} onClick={() => setSessionForm(p => ({ ...p, weekday: active ? null : i }))}
-              style={{ ...s.btnSm, fontSize: '0.55rem', padding: '0.25rem 0.5rem', background: active ? 'rgba(200,146,58,0.18)' : 'transparent', borderColor: active ? '#c8923a' : 'rgba(237,234,226,0.12)', color: active ? '#c8923a' : '#7a7770' }}>{d}</button>
-          )
-        })}
-        <button onClick={() => setSessionForm(p => ({ ...p, weekday: null }))}
-          style={{ ...s.btnSm, fontSize: '0.55rem', padding: '0.25rem 0.5rem', background: 'transparent', borderColor: sessionForm.weekday == null ? '#c8923a' : 'rgba(237,234,226,0.12)', color: sessionForm.weekday == null ? '#c8923a' : '#7a7770' }}>Ingen</button>
-      </div>
-    </div>
+    <WeekdayPicker {...{
+      sessionForm, setSessionForm,
+    }} />
   )
 
   const exFormRow = (() => {
-    const searchLower = (exerciseForm.name || '').toLowerCase()
-    const grouped = {}
-    for (const ex of exerciseLibrary) {
-      const cat = ex.category || 'Andet'
-      if (!grouped[cat]) grouped[cat] = []
-      if (ex.name.toLowerCase().includes(searchLower)) grouped[cat].push(ex)
-    }
-    const competitionOrder = ['Squat', 'Bænkpres', 'Dødløft']
-    const filteredCategories = Object.entries(grouped)
-      .filter(([, exs]) => exs.length > 0)
-      .sort(([a], [b]) => {
-        const ai = competitionOrder.indexOf(a)
-        const bi = competitionOrder.indexOf(b)
-        if (ai !== -1 && bi !== -1) return ai - bi
-        if (ai !== -1) return -1
-        if (bi !== -1) return 1
-        return a.localeCompare(b)
-      })
-    const exactMatch = exerciseLibrary.some(e => e.name.toLowerCase() === searchLower && searchLower !== '')
-    const showDropdown = exerciseSearchOpen && (filteredCategories.length > 0 || (exerciseForm.name.trim() && !exactMatch))
-
     return (
-      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 0.5fr 0.7fr minmax(200px, 2fr) 1.5fr', gap: '0.5rem', alignItems: 'end' }}>
-        <div style={{ position: 'relative' }}>
-          <div style={s.fieldLabel}>Navn</div>
-          <input
-            style={{ ...s.fieldInput, fontSize: '0.8rem', padding: '0.4rem 0.6rem', minHeight: '44px', boxSizing: 'border-box' }}
-            type="text"
-            placeholder="Søg øvelse..."
-            value={exerciseForm.name}
-            autoComplete="off"
-            onChange={e => { setExerciseForm(p => ({ ...p, name: e.target.value })); setExerciseSearchOpen(true) }}
-            onFocus={() => setExerciseSearchOpen(true)}
-            onBlur={() => setTimeout(() => setExerciseSearchOpen(false), 180)}
-          />
-          {exerciseForm.name.trim() && !exactMatch && !exerciseSearchOpen && (
-            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#c8923a', marginTop: '0.2rem', letterSpacing: '0.06em' }}>
-              Ikke i bibliotek — tilføj via dropdown
-            </div>
-          )}
-          {showDropdown && (
-            <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: '#1c1c18', border: '1px solid rgba(237,234,226,0.13)', borderTop: 'none', zIndex: 100, maxHeight: '240px', overflowY: 'auto' }}>
-              {filteredCategories.map(([cat, exs]) => (
-                <div key={cat}>
-                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a', padding: '0.3rem 0.6rem 0.15rem', background: 'rgba(14,14,10,0.7)', position: 'sticky', top: 0 }}>{cat}</div>
-                  {exs.map(ex => (
-                    <div
-                      key={ex.id}
-                      onMouseDown={e => { e.preventDefault(); setExerciseForm(p => ({ ...p, name: ex.name })); setExerciseSearchOpen(false) }}
-                      style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem', color: '#b8b4a8', cursor: 'pointer' }}
-                      onMouseEnter={e => e.currentTarget.style.background = 'rgba(237,234,226,0.06)'}
-                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                    >{ex.name}</div>
-                  ))}
-                </div>
-              ))}
-              {exerciseForm.name.trim() && !exactMatch && (
-                <div
-                  onMouseDown={e => { e.preventDefault(); addToLibraryQuick(exerciseForm.name.trim()); setExerciseSearchOpen(false) }}
-                  style={{ padding: '0.4rem 0.75rem', fontSize: '0.68rem', color: '#c8923a', cursor: 'pointer', borderTop: '1px solid rgba(237,234,226,0.07)', fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.06em' }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(200,146,58,0.08)'}
-                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                >+ Tilføj "{exerciseForm.name.trim()}" til bibliotek</div>
-              )}
-            </div>
-          )}
-        </div>
-        {[['Sæt', 'sets', 'number'], ['Reps', 'reps', 'text']].map(([label, key, type]) => (
-          <div key={key}>
-            <div style={s.fieldLabel}>{label}</div>
-            <input
-              style={{ ...s.fieldInput, fontSize: '0.8rem', padding: '0.4rem 0.6rem', minHeight: '44px', boxSizing: 'border-box' }}
-              type={type}
-              placeholder={label}
-              value={exerciseForm[key]}
-              onChange={e => setExerciseForm(p => ({ ...p, [key]: e.target.value }))}
-            />
-          </div>
-        ))}
-        <div>
-          <div style={s.fieldLabel}>Intensitet</div>
-          <div style={{ display: 'flex', gap: '0.25rem' }}>
-            <select
-              aria-label="Intensitetsenhed"
-              style={{ ...s.fieldInput, fontSize: '0.72rem', padding: '0.4rem 0.3rem', width: 'auto', flexShrink: 0, cursor: 'pointer', minHeight: '44px', boxSizing: 'border-box' }}
-              value={exerciseForm.intensityPrefix}
-              onChange={e => setExerciseForm(p => ({ ...p, intensityPrefix: e.target.value }))}
-            >
-              <option value="RPE">RPE</option>
-              <option value="%">%</option>
-              <option value="Tid">Tid</option>
-              <option value="Fri tekst">Fri</option>
-            </select>
-            <input
-              style={{ ...s.fieldInput, fontSize: '0.8rem', padding: '0.4rem 0.6rem', flex: 1, minWidth: 0, minHeight: '44px', boxSizing: 'border-box' }}
-              type={exerciseForm.intensityPrefix === 'Fri tekst' ? 'text' : 'number'}
-              placeholder={exerciseForm.intensityPrefix === 'RPE' ? 'f.eks. 8' : exerciseForm.intensityPrefix === '%' ? 'f.eks. 80' : exerciseForm.intensityPrefix === 'Tid' ? 'sek, f.eks. 20' : 'tekst...'}
-              value={exerciseForm.intensity}
-              onChange={e => setExerciseForm(p => ({ ...p, intensity: e.target.value }))}
-            />
-          </div>
-        </div>
-        <div>
-          <div style={s.fieldLabel}>Note</div>
-          <input
-            style={{ ...s.fieldInput, fontSize: '0.8rem', padding: '0.4rem 0.6rem', minHeight: '44px', boxSizing: 'border-box' }}
-            type="text"
-            placeholder="Note"
-            value={exerciseForm.note}
-            onChange={e => setExerciseForm(p => ({ ...p, note: e.target.value }))}
-          />
-        </div>
-      </div>
+      <ExFormRow {...{
+        addToLibraryQuick, exerciseForm, exerciseLibrary, exerciseSearchOpen, isMobile, setExerciseForm,
+        setExerciseSearchOpen,
+      }} />
     )
   })()
 
