@@ -22,6 +22,19 @@ function run(name) {
   return { ok, status: r.status, ...(ok ? {} : { tail }) }
 }
 
+// --kun <script>: kør ét script igen og flet det ind i en eksisterende
+// <fase>.json. Det første udfald bevares under `foersteKoersel`, så en
+// omkørsel aldrig skjuler, at første kørsel fejlede.
+const kun = process.argv.indexOf('--kun') > -1 ? process.argv[process.argv.indexOf('--kun') + 1] : null
+if (kun) {
+  const file = join(ROOT, 'outputs', '373', `${FASE}.json`)
+  const prev = JSON.parse(readFileSync(file, 'utf8'))
+  const first = prev.scripts[kun]
+  prev.scripts[kun] = { ...run(kun), omkoert: true, foersteKoersel: first }
+  writeFileSync(file, JSON.stringify(prev, null, 2) + '\n')
+  process.exit(prev.scripts[kun].ok ? 0 : 1)
+}
+
 const result = { fase: FASE, scripts: {} }
 result.scripts.build = run('build')
 const assets = join(ROOT, 'dist', 'assets')
