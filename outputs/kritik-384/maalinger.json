@@ -919,5 +919,820 @@
         "Blå skygge: usikkerhedsbånd på det målte led (gul: hoften)"
       ]
     }
+  },
+  "artikel": {
+    "q": {
+      "Q1": {
+        "ok": true,
+        "hvad": "kapitel 8: tyngdepunktet; stangen 0,9 / 4,5 cm bagved, figurerne 0,9 / 4,5 cm"
+      },
+      "Q2": {
+        "ok": true,
+        "hvad": "lockout-figurens knae 179°, forbehold om ulaast lockout: 0"
+      },
+      "Q3": {
+        "ok": true,
+        "hvad": "teksten 45°, panelet 45° i alle seks kombinationer"
+      },
+      "Q4": {
+        "ok": true,
+        "hvad": "kommaceller 0/0, tabellen 311 px i ramme paa 311 px"
+      },
+      "Q5": {
+        "ok": true,
+        "hvad": "overskrifter: MUSKELGRUPPE | VINKEL | ARM, CM | ANDEL AF MAX | STATUS"
+      },
+      "Q6": {
+        "ok": true,
+        "hvad": "canvas-tekst om dybde: Dybdekrav: ja"
+      },
+      "Q7": {
+        "ok": true,
+        "hvad": "mindste img-SVG-tekst paa 390: 11.3 px, H/K 10.9 px"
+      },
+      "Q8": {
+        "ok": true,
+        "hvad": "good morning: torsoen tipper 12,6° i figur og tekst"
+      },
+      "Q9": {
+        "ok": true,
+        "hvad": "valgus = indad; taellingen: seks"
+      },
+      "Q10": {
+        "ok": true,
+        "hvad": "vendepunktet 0,38 s, ingen \"11 %\""
+      },
+      "Q11": {
+        "ok": true,
+        "hvad": "\"inden for baandet\" forklaret"
+      },
+      "Q12": {
+        "ok": true,
+        "hvad": "figur til nederste skyder 742/844 px (390), 395/900 px (1280)"
+      },
+      "Q13": {
+        "ok": true,
+        "hvad": "decimalpunktum: 0"
+      },
+      "Q14": {
+        "ok": true,
+        "hvad": "SKULLE/filnavn/licensnote/\"endnu\" i broedteksten: 0 (filnavnet staar kun i referencelisten)"
+      },
+      "Q15": {
+        "ok": true,
+        "hvad": "meta-henvisninger fra 374: 0"
+      },
+      "Q16": {
+        "ok": true,
+        "hvad": "fold \"Hvad figurerne bygger paa\" vaek, \"samme positur\" i kap. 3 nej"
+      },
+      "Q17": {
+        "venter": true,
+        "hvad": "venter paa Marcs svar"
+      },
+      "Q18": {
+        "ok": true,
+        "hvad": "kapitel 1 til foerste fase 0.7 skaerm paa 390"
+      },
+      "Q19": {
+        "ok": true,
+        "hvad": "kapitel 5: 49° mod 37° ved siden af maalte ca. 10° og ingen forskel"
+      },
+      "Q20": {
+        "ok": true,
+        "hvad": "knaestraekkere tekst 90 %/74 %/89 % = tabel 90 %/74 %/89 %"
+      },
+      "Q21": {
+        "ok": false,
+        "hvad": "trykflader under 44 px paa 390: \"Start (stangen forlader \" 32px, \"Mellem start og knæhøjde\" 32px, \"Knæhøjde\" 32px, \"Mellem knæhøjde og locko\" 32px, \"Lockout\" 32px, \"Model 1\" 32px, \"Model 2\" 32px",
+        "smaaV": [
+          {
+            "t": "Start (stangen forlader ",
+            "b": 206,
+            "h": 32
+          },
+          {
+            "t": "Mellem start og knæhøjde",
+            "b": 185,
+            "h": 32
+          },
+          {
+            "t": "Knæhøjde",
+            "b": 85,
+            "h": 32
+          },
+          {
+            "t": "Mellem knæhøjde og locko",
+            "b": 204,
+            "h": 32
+          },
+          {
+            "t": "Lockout",
+            "b": 71,
+            "h": 32
+          },
+          {
+            "t": "Model 1",
+            "b": 73,
+            "h": 32
+          },
+          {
+            "t": "Model 2",
+            "b": 73,
+            "h": 32
+          }
+        ]
+      },
+      "Q22": {
+        "venter": true,
+        "hvad": "[MARC: ...] 10, \"Kommer\"-boks: ja (med vilje til Marc)"
+      }
+    },
+    "stil": {
+      "tankestreger": 0,
+      "manSkal": 0,
+      "skal": 8,
+      "interne": 0,
+      "udraab": 0,
+      "kapitelHenvisninger": 1,
+      "referencekrop": 37,
+      "iModellen": 46,
+      "jeg": 18,
+      "forbeholdSidst": true,
+      "konsol": [],
+      "vandretRulning390": false,
+      "ordAabne": 8143,
+      "ordLukket": 5312,
+      "skaerme390": 65.7,
+      "laesetid": "39 min. læsning"
+    },
+    "egennavne": [
+      "Arandjelovi",
+      "Bengtsson",
+      "Hales",
+      "Instagram",
+      "Kompf",
+      "Kristiansen",
+      "Lai",
+      "Larsen",
+      "Målt",
+      "Nm",
+      "Open",
+      "Rulebook",
+      "Technical",
+      "Tillaar",
+      "Uhlrich"
+    ],
+    "squat390": {
+      "konsol": [],
+      "panelStart": "Stangens position over midtfoden ved bunden: 0,9 cm bagved midtfoden\nTorsohældning ved bunden: 49,1°\nKnæ over tå ved bunden: 7,5 cm\nHoftemoment / knæmoment: 0,90 : 1\nModellens dybdekrav ved bunden: ja (hofteled 3,0 cm under knæled, skinneben 40°)\nKROPSTYPE\nBalanceret\nLang lårknogle\nLang torso\nMIN KROP\nSTANGPLACERING\nLowbar\nHighbar\nSKINNEBENSVINKEL I BUNDEN, MINDST 40,0°\nANKELGRÆNSE, SKINNEBEN HØJST 45°\nVis momentarme",
+      "figurTekst": [
+        {
+          "src": "anatomi-balanceret-lowbar-opstilling.svg",
+          "visB": 138,
+          "mindstePx": null
+        },
+        {
+          "src": "anatomi-balanceret-lowbar-halvvejs.svg",
+          "visB": 187,
+          "mindstePx": null
+        },
+        {
+          "src": "anatomi-balanceret-lowbar-bund.svg",
+          "visB": 283,
+          "mindstePx": 12
+        },
+        {
+          "src": "anatomi-balanceret-lowbar-sticking.svg",
+          "visB": 193,
+          "mindstePx": null
+        },
+        {
+          "src": "1-start-model1.svg",
+          "visB": 350,
+          "mindstePx": null
+        },
+        {
+          "src": "2-foer-knae-model1.svg",
+          "visB": 350,
+          "mindstePx": null
+        },
+        {
+          "src": "3-knaehoejde-model1.svg",
+          "visB": 350,
+          "mindstePx": null
+        },
+        {
+          "src": "4-efter-knae-model1.svg",
+          "visB": 350,
+          "mindstePx": null
+        },
+        {
+          "src": "5-lockout-model1.svg",
+          "visB": 350,
+          "mindstePx": null
+        },
+        {
+          "src": "fejlbillede-balanceret-lowbar-god-morgen.svg",
+          "visB": 316,
+          "mindstePx": 11.3
+        },
+        {
+          "src": "fejlbillede-balanceret-lowbar-haele-letter.svg",
+          "visB": 316,
+          "mindstePx": 11.6
+        },
+        {
+          "src": "fejlbillede-balanceret-lowbar-stang-foran-midtfod.svg",
+          "visB": 307,
+          "mindstePx": 11.7
+        },
+        {
+          "src": "fejlbillede-balanceret-lowbar-for-lidt-dybde.svg",
+          "visB": 285,
+          "mindstePx": 11.6
+        }
+      ],
+      "hkMaerker": 10.9,
+      "panel": [
+        {
+          "krop": "Balanceret",
+          "stang": "0,9 cm bagved midtfoden",
+          "ankel": "45°",
+          "skinneben": "40,0°",
+          "dybde": "ja (hofteled 3,0 cm under knæled, skinneben 40°)",
+          "tekst": "Stangens position over midtfoden ved bunden: 0,9 cm bagved midtfoden Torsohældning ved bunden: 49,1° Knæ over tå ved bunden: 7,5 cm Hoftemoment / knæmoment: 0,90 : 1 Modellens dybdekrav ved bunden: ja (hofteled 3,0 cm under knæled, skinneben 40°) KROPSTYPE Balanceret Lang lårknogle Lang torso MIN KROP STANGPLACERING Lowbar Highbar SKINNEBENSVINKEL I BUNDEN, MINDST 40,0° ANKELGRÆNSE, SKINNEBEN HØJST 45° Vis momentarme"
+        },
+        {
+          "krop": "Balanceret",
+          "stang": "0,2 cm foran midtfoden",
+          "ankel": "45°",
+          "skinneben": "43,0°",
+          "dybde": "ja (hofteled 3,0 cm under knæled, skinneben 43°)",
+          "tekst": "Stangens position over midtfoden ved bunden: 0,2 cm foran midtfoden Torsohældning ved bunden: 37,2° Knæ over tå ved bunden: 9,1 cm Hoftemoment / knæmoment: 0,76 : 1 Modellens dybdekrav ved bunden: ja (hofteled 3,0 cm under knæled, skinneben 43°) KROPSTYPE Balanceret Lang lårknogle Lang torso MIN KROP STANGPLACERING Lowbar Highbar SKINNEBENSVINKEL I BUNDEN, MINDST 43,0° ANKELGRÆNSE, SKINNEBEN HØJST 45° Vis momentarme"
+        },
+        {
+          "krop": "Lang lårknogle",
+          "stang": "0,2 cm foran midtfoden",
+          "ankel": "45°",
+          "skinneben": "45,0°",
+          "dybde": "ja (hofteled 3,0 cm under knæled, skinneben 45°)",
+          "tekst": "Stangens position over midtfoden ved bunden: 0,2 cm foran midtfoden Torsohældning ved bunden: 59,0° Knæ over tå ved bunden: 8,8 cm Hoftemoment / knæmoment: 1,04 : 1 Modellens dybdekrav ved bunden: ja (hofteled 3,0 cm under knæled, skinneben 45°) KROPSTYPE Balanceret Lang lårknogle Lang torso MIN KROP STANGPLACERING Lowbar Highbar SKINNEBENSVINKEL I BUNDEN, MINDST 45,0° ANKELGRÆNSE, SKINNEBEN HØJST 45° Vis momentarme"
+        },
+        {
+          "krop": "Lang lårknogle",
+          "stang": "2,2 cm foran midtfoden",
+          "ankel": "45°",
+          "skinneben": "45,0°",
+          "dybde": "ja (hofteled 3,0 cm under knæled, skinneben 45°, torsoen hælder mere end modellens spænd ved 45° skinneben)",
+          "tekst": "Stangens position over midtfoden ved bunden: 2,2 cm foran midtfoden Torsohældning ved bunden: 47,4° Knæ over tå ved bunden: 8,8 cm Hoftemoment / knæmoment: 1,04 : 1 Modellens dybdekrav ved bunden: ja (hofteled 3,0 cm under knæled, skinneben 45°, torsoen hælder mere end modellens spænd ved 45° skinneben) KROPSTYPE Balanceret Lang lårknogle Lang torso MIN KROP STANGPLACERING Lowbar Highbar SKINNEBENSVINKEL I BUNDEN, MINDST 45,0° ANKELGRÆNSE, SKINNEBEN HØJST 45° Vis momentarme"
+        },
+        {
+          "krop": "Lang torso",
+          "stang": "0,3 cm foran midtfoden",
+          "ankel": "45°",
+          "skinneben": "29,0°",
+          "dybde": "ja (hofteled 3,0 cm under knæled, skinneben 29°)",
+          "tekst": "Stangens position over midtfoden ved bunden: 0,3 cm foran midtfoden Torsohældning ved bunden: 48,8° Knæ over tå ved bunden: 0,6 cm Hoftemoment / knæmoment: 1,69 : 1 Modellens dybdekrav ved bunden: ja (hofteled 3,0 cm under knæled, skinneben 29°) KROPSTYPE Balanceret Lang lårknogle Lang torso MIN KROP STANGPLACERING Lowbar Highbar SKINNEBENSVINKEL I BUNDEN, MINDST 29,0° ANKELGRÆNSE, SKINNEBEN HØJST 45° Vis momentarme"
+        },
+        {
+          "krop": "Lang torso",
+          "stang": "2,0 cm foran midtfoden",
+          "ankel": "45°",
+          "skinneben": "31,0°",
+          "dybde": "ja (hofteled 3,0 cm under knæled, skinneben 31°)",
+          "tekst": "Stangens position over midtfoden ved bunden: 2,0 cm foran midtfoden Torsohældning ved bunden: 37,9° Knæ over tå ved bunden: 1,9 cm Hoftemoment / knæmoment: 1,46 : 1 Modellens dybdekrav ved bunden: ja (hofteled 3,0 cm under knæled, skinneben 31°) KROPSTYPE Balanceret Lang lårknogle Lang torso MIN KROP STANGPLACERING Lowbar Highbar SKINNEBENSVINKEL I BUNDEN, MINDST 31,0° ANKELGRÆNSE, SKINNEBEN HØJST 45° Vis momentarme"
+        }
+      ],
+      "panelSamtidig": {
+        "canvasH": 321,
+        "spaendPx": 742,
+        "vindue": 844,
+        "kanSesSamtidig": true
+      },
+      "tabel": {
+        "overskrifter": [
+          "MUSKELGRUPPE",
+          "VINKEL",
+          "ARM, CM",
+          "ANDEL AF MAX",
+          "STATUS"
+        ],
+        "kommaCeller": 0,
+        "rammeB": 311,
+        "scrollB": 311,
+        "alleKolonnerSynlige": true
+      },
+      "anatomiFaser": {
+        "Halvvejs ned": {
+          "Knæstrækkere": "90 %",
+          "Sædemuskel": "29 %",
+          "Baglår": "16 %",
+          "Stor adduktor": "32 %",
+          "Dyb lægmuskel": "95 %",
+          "Overfladisk lægmuskel": "96 %",
+          "Rygstrækkere": "8 %"
+        },
+        "Bund": {
+          "Knæstrækkere": "74 %",
+          "Sædemuskel": "-",
+          "Baglår": "-",
+          "Stor adduktor": "-",
+          "Dyb lægmuskel": "87 %",
+          "Overfladisk lægmuskel": "91 %",
+          "Rygstrækkere": "57 %"
+        },
+        "Sticking point": {
+          "Knæstrækkere": "89 %",
+          "Sædemuskel": "55 %",
+          "Baglår": "38 %",
+          "Stor adduktor": "55 %",
+          "Dyb lægmuskel": "97 %",
+          "Overfladisk lægmuskel": "98 %",
+          "Rygstrækkere": "29 %"
+        }
+      },
+      "figurTitler": {
+        "ft-opstilling": "Opstilling. Squat set fra siden, balanceret referencekrop med lowbar. Knæ 179 grader, hofte 177 grader, torso 5 grader fra lodret, stangen 4,5 centimeter bagved midtfoden.",
+        "ft-unrack": "Unrack. Squat set fra siden, balanceret referencekrop med lowbar. Knæ 179 grader, hofte 177 grader, torso 5 grader fra lodret, stangen 4,5 centimeter bagved midtfoden.",
+        "ft-nedtur": "Nedtur. Squat set fra siden, balanceret referencekrop med lowbar. Knæ 84 grader, hofte 97 grader, torso 30 grader fra lodret, stangen 3,4 centimeter bagved midtfoden.",
+        "ft-bund": "Bund. Squat set fra siden, balanceret referencekrop med lowbar. Knæ 46 grader, hofte 37 grader, torso 49 grader fra lodret, stangen 0,9 centimeter bagved midtfoden.",
+        "ft-vendepunkt": "Vendepunkt. Squat set fra siden, balanceret referencekrop med lowbar. Knæ 49 grader, hofte 44 grader, torso 47 grader fra lodret, stangen 1,2 centimeter bagved midtfoden.",
+        "ft-sticking-point": "Sticking point. Squat set fra siden, balanceret referencekrop med lowbar. Knæ 69 grader, hofte 75 grader, torso 38 grader fra lodret, stangen 2,5 centimeter bagved midtfoden.",
+        "ft-lockout": "Lockout. Squat set fra siden, balanceret referencekrop med lowbar. Knæ 179 grader, hofte 177 grader, torso 5 grader fra lodret, stangen 4,5 centimeter bagved midtfoden.",
+        "ft-stang-lowbar": "Lowbar i bunden. Squat set fra siden, balanceret referencekrop. Knæ 46 grader, hofte 37 grader, torso 49 grader fra lodret, stangen 0,9 centimeter bagved midtfoden.",
+        "ft-stang-highbar": "Highbar i bunden. Squat set fra siden, balanceret referencekrop. Knæ 43 grader, hofte 49 grader, torso 37 grader fra lodret, stangen 0,2 centimeter foran midtfoden.",
+        "ft-stang-front": "Front squat i bunden. Squat set fra siden, balanceret referencekrop. Knæ 47 grader, hofte 64 grader, torso 22 grader fra lodret, stangen 5,2 centimeter foran midtfoden.",
+        "ft-stang-safetybar": "Safety bar i bunden. Squat set fra siden, balanceret referencekrop. Knæ 43 grader, hofte 62 grader, torso 24 grader fra lodret, stangen 3,2 centimeter foran midtfoden."
+      },
+      "smaaTryk": [
+        {
+          "t": "Start (stangen forlader ",
+          "b": 206,
+          "h": 32
+        },
+        {
+          "t": "Mellem start og knæhøjde",
+          "b": 185,
+          "h": 32
+        },
+        {
+          "t": "Knæhøjde",
+          "b": 85,
+          "h": 32
+        },
+        {
+          "t": "Mellem knæhøjde og locko",
+          "b": 204,
+          "h": 32
+        },
+        {
+          "t": "Lockout",
+          "b": 71,
+          "h": 32
+        },
+        {
+          "t": "Model 1",
+          "b": 73,
+          "h": 32
+        },
+        {
+          "t": "Model 2",
+          "b": 73,
+          "h": 32
+        }
+      ],
+      "lukket": [
+        {
+          "id": "kap-faserne",
+          "skaerme": 13.2,
+          "ord": 1500
+        },
+        {
+          "id": "kap-segmentmodellen",
+          "skaerme": 1.9,
+          "ord": 147
+        },
+        {
+          "id": "kap-anatomien",
+          "skaerme": 7.6,
+          "ord": 832
+        },
+        {
+          "id": "kap-kropstyper",
+          "skaerme": 2.4,
+          "ord": 345
+        },
+        {
+          "id": "kap-stang",
+          "skaerme": 4.6,
+          "ord": 517
+        },
+        {
+          "id": "kap-virkeligheden",
+          "skaerme": 3.5,
+          "ord": 640
+        },
+        {
+          "id": "kap-fejlbilleder",
+          "skaerme": 9,
+          "ord": 1062
+        },
+        {
+          "id": "kap-praksis",
+          "skaerme": 1.7,
+          "ord": 269
+        }
+      ],
+      "foersteFaseY": 0.7,
+      "aaben": [
+        {
+          "id": "kap-faserne",
+          "titel": "01 Faserne i tid",
+          "skaerme": 18.5,
+          "ord": 2664
+        },
+        {
+          "id": "kap-segmentmodellen",
+          "titel": "02 Segmentmodellen",
+          "skaerme": 3.8,
+          "ord": 431
+        },
+        {
+          "id": "kap-anatomien",
+          "titel": "03 Anatomien: kraftlinjer og momentarme",
+          "skaerme": 8.7,
+          "ord": 1080
+        },
+        {
+          "id": "kap-kropstyper",
+          "titel": "04 Kropstyper",
+          "skaerme": 4.1,
+          "ord": 732
+        },
+        {
+          "id": "kap-stang",
+          "titel": "05 Stang og variant",
+          "skaerme": 5.9,
+          "ord": 796
+        },
+        {
+          "id": "kap-virkeligheden",
+          "titel": "06 Virkeligheden mod modellen",
+          "skaerme": 5.5,
+          "ord": 970
+        },
+        {
+          "id": "kap-fejlbilleder",
+          "titel": "07 Når det ser forkert ud",
+          "skaerme": 9.4,
+          "ord": 1133
+        },
+        {
+          "id": "kap-praksis",
+          "titel": "08 Min praksis",
+          "skaerme": 2,
+          "ord": 337
+        }
+      ],
+      "canvasTekst": [
+        "Dybdekrav: ja",
+        "Bund",
+        "Knæhøjde · billede 30 · model 1",
+        "Grå silhuet: modellens figur (segmenter, masse, balance)",
+        "Blå: det målte skelet fra videoen (rekonstrueret fra vinkler)",
+        "Blå skygge: usikkerhedsbånd på det målte led (gul: hoften)",
+        "Halvvejs ned",
+        "Sticking point"
+      ],
+      "sideBredde": 390,
+      "skaerme": 65.7,
+      "artikelSkaermbilleder": 71
+    },
+    "squat1280": {
+      "konsol": [],
+      "panelStart": "Stangens position over midtfoden ved bunden: 0,9 cm bagved midtfoden\nTorsohældning ved bunden: 49,1°\nKnæ over tå ved bunden: 7,5 cm\nHoftemoment / knæmoment: 0,90 : 1\nModellens dybdekrav ved bunden: ja (hofteled 3,0 cm under knæled, skinneben 40°)\nKROPSTYPE\nBalanceret\nLang lårknogle\nLang torso\nMIN KROP\nSTANGPLACERING\nLowbar\nHighbar\nSKINNEBENSVINKEL I BUNDEN, MINDST 40,0°\nANKELGRÆNSE, SKINNEBEN HØJST 45°\nVis momentarme",
+      "figurTekst": [
+        {
+          "src": "anatomi-balanceret-lowbar-opstilling.svg",
+          "visB": 138,
+          "mindstePx": null
+        },
+        {
+          "src": "anatomi-balanceret-lowbar-halvvejs.svg",
+          "visB": 187,
+          "mindstePx": null
+        },
+        {
+          "src": "anatomi-balanceret-lowbar-bund.svg",
+          "visB": 283,
+          "mindstePx": 12
+        },
+        {
+          "src": "anatomi-balanceret-lowbar-sticking.svg",
+          "visB": 193,
+          "mindstePx": null
+        },
+        {
+          "src": "1-start-model1.svg",
+          "visB": 656,
+          "mindstePx": null
+        },
+        {
+          "src": "2-foer-knae-model1.svg",
+          "visB": 656,
+          "mindstePx": null
+        },
+        {
+          "src": "3-knaehoejde-model1.svg",
+          "visB": 656,
+          "mindstePx": null
+        },
+        {
+          "src": "4-efter-knae-model1.svg",
+          "visB": 656,
+          "mindstePx": null
+        },
+        {
+          "src": "5-lockout-model1.svg",
+          "visB": 656,
+          "mindstePx": null
+        },
+        {
+          "src": "fejlbillede-balanceret-lowbar-god-morgen.svg",
+          "visB": 325,
+          "mindstePx": 11.7
+        },
+        {
+          "src": "fejlbillede-balanceret-lowbar-haele-letter.svg",
+          "visB": 318,
+          "mindstePx": 11.7
+        },
+        {
+          "src": "fejlbillede-balanceret-lowbar-stang-foran-midtfod.svg",
+          "visB": 307,
+          "mindstePx": 11.7
+        },
+        {
+          "src": "fejlbillede-balanceret-lowbar-for-lidt-dybde.svg",
+          "visB": 285,
+          "mindstePx": 11.6
+        }
+      ],
+      "hkMaerker": 10.9,
+      "panel": [
+        {
+          "krop": "Balanceret",
+          "stang": "0,9 cm bagved midtfoden",
+          "ankel": "45°",
+          "skinneben": "40,0°",
+          "dybde": "ja (hofteled 3,0 cm under knæled, skinneben 40°)",
+          "tekst": "Stangens position over midtfoden ved bunden: 0,9 cm bagved midtfoden Torsohældning ved bunden: 49,1° Knæ over tå ved bunden: 7,5 cm Hoftemoment / knæmoment: 0,90 : 1 Modellens dybdekrav ved bunden: ja (hofteled 3,0 cm under knæled, skinneben 40°) KROPSTYPE Balanceret Lang lårknogle Lang torso MIN KROP STANGPLACERING Lowbar Highbar SKINNEBENSVINKEL I BUNDEN, MINDST 40,0° ANKELGRÆNSE, SKINNEBEN HØJST 45° Vis momentarme"
+        },
+        {
+          "krop": "Balanceret",
+          "stang": "0,2 cm foran midtfoden",
+          "ankel": "45°",
+          "skinneben": "43,0°",
+          "dybde": "ja (hofteled 3,0 cm under knæled, skinneben 43°)",
+          "tekst": "Stangens position over midtfoden ved bunden: 0,2 cm foran midtfoden Torsohældning ved bunden: 37,2° Knæ over tå ved bunden: 9,1 cm Hoftemoment / knæmoment: 0,76 : 1 Modellens dybdekrav ved bunden: ja (hofteled 3,0 cm under knæled, skinneben 43°) KROPSTYPE Balanceret Lang lårknogle Lang torso MIN KROP STANGPLACERING Lowbar Highbar SKINNEBENSVINKEL I BUNDEN, MINDST 43,0° ANKELGRÆNSE, SKINNEBEN HØJST 45° Vis momentarme"
+        },
+        {
+          "krop": "Lang lårknogle",
+          "stang": "0,2 cm foran midtfoden",
+          "ankel": "45°",
+          "skinneben": "45,0°",
+          "dybde": "ja (hofteled 3,0 cm under knæled, skinneben 45°)",
+          "tekst": "Stangens position over midtfoden ved bunden: 0,2 cm foran midtfoden Torsohældning ved bunden: 59,0° Knæ over tå ved bunden: 8,8 cm Hoftemoment / knæmoment: 1,04 : 1 Modellens dybdekrav ved bunden: ja (hofteled 3,0 cm under knæled, skinneben 45°) KROPSTYPE Balanceret Lang lårknogle Lang torso MIN KROP STANGPLACERING Lowbar Highbar SKINNEBENSVINKEL I BUNDEN, MINDST 45,0° ANKELGRÆNSE, SKINNEBEN HØJST 45° Vis momentarme"
+        },
+        {
+          "krop": "Lang lårknogle",
+          "stang": "2,2 cm foran midtfoden",
+          "ankel": "45°",
+          "skinneben": "45,0°",
+          "dybde": "ja (hofteled 3,0 cm under knæled, skinneben 45°, torsoen hælder mere end modellens spænd ved 45° skinneben)",
+          "tekst": "Stangens position over midtfoden ved bunden: 2,2 cm foran midtfoden Torsohældning ved bunden: 47,4° Knæ over tå ved bunden: 8,8 cm Hoftemoment / knæmoment: 1,04 : 1 Modellens dybdekrav ved bunden: ja (hofteled 3,0 cm under knæled, skinneben 45°, torsoen hælder mere end modellens spænd ved 45° skinneben) KROPSTYPE Balanceret Lang lårknogle Lang torso MIN KROP STANGPLACERING Lowbar Highbar SKINNEBENSVINKEL I BUNDEN, MINDST 45,0° ANKELGRÆNSE, SKINNEBEN HØJST 45° Vis momentarme"
+        },
+        {
+          "krop": "Lang torso",
+          "stang": "0,3 cm foran midtfoden",
+          "ankel": "45°",
+          "skinneben": "29,0°",
+          "dybde": "ja (hofteled 3,0 cm under knæled, skinneben 29°)",
+          "tekst": "Stangens position over midtfoden ved bunden: 0,3 cm foran midtfoden Torsohældning ved bunden: 48,8° Knæ over tå ved bunden: 0,6 cm Hoftemoment / knæmoment: 1,69 : 1 Modellens dybdekrav ved bunden: ja (hofteled 3,0 cm under knæled, skinneben 29°) KROPSTYPE Balanceret Lang lårknogle Lang torso MIN KROP STANGPLACERING Lowbar Highbar SKINNEBENSVINKEL I BUNDEN, MINDST 29,0° ANKELGRÆNSE, SKINNEBEN HØJST 45° Vis momentarme"
+        },
+        {
+          "krop": "Lang torso",
+          "stang": "2,0 cm foran midtfoden",
+          "ankel": "45°",
+          "skinneben": "31,0°",
+          "dybde": "ja (hofteled 3,0 cm under knæled, skinneben 31°)",
+          "tekst": "Stangens position over midtfoden ved bunden: 2,0 cm foran midtfoden Torsohældning ved bunden: 37,9° Knæ over tå ved bunden: 1,9 cm Hoftemoment / knæmoment: 1,46 : 1 Modellens dybdekrav ved bunden: ja (hofteled 3,0 cm under knæled, skinneben 31°) KROPSTYPE Balanceret Lang lårknogle Lang torso MIN KROP STANGPLACERING Lowbar Highbar SKINNEBENSVINKEL I BUNDEN, MINDST 31,0° ANKELGRÆNSE, SKINNEBEN HØJST 45° Vis momentarme"
+        }
+      ],
+      "panelSamtidig": {
+        "canvasH": 353,
+        "spaendPx": 395,
+        "vindue": 900,
+        "kanSesSamtidig": true
+      },
+      "tabel": {
+        "overskrifter": [
+          "MUSKELGRUPPE",
+          "VINKEL",
+          "ARM, CM",
+          "ANDEL AF MAX",
+          "STATUS"
+        ],
+        "kommaCeller": 0,
+        "rammeB": 606,
+        "scrollB": 606,
+        "alleKolonnerSynlige": true
+      },
+      "anatomiFaser": {
+        "Halvvejs ned": {
+          "Knæstrækkere": "90 %",
+          "Sædemuskel": "29 %",
+          "Baglår": "16 %",
+          "Stor adduktor": "32 %",
+          "Dyb lægmuskel": "95 %",
+          "Overfladisk lægmuskel": "96 %",
+          "Rygstrækkere": "8 %"
+        },
+        "Bund": {
+          "Knæstrækkere": "74 %",
+          "Sædemuskel": "-",
+          "Baglår": "-",
+          "Stor adduktor": "-",
+          "Dyb lægmuskel": "87 %",
+          "Overfladisk lægmuskel": "91 %",
+          "Rygstrækkere": "57 %"
+        },
+        "Sticking point": {
+          "Knæstrækkere": "89 %",
+          "Sædemuskel": "55 %",
+          "Baglår": "38 %",
+          "Stor adduktor": "55 %",
+          "Dyb lægmuskel": "97 %",
+          "Overfladisk lægmuskel": "98 %",
+          "Rygstrækkere": "29 %"
+        }
+      },
+      "figurTitler": {
+        "ft-opstilling": "Opstilling. Squat set fra siden, balanceret referencekrop med lowbar. Knæ 179 grader, hofte 177 grader, torso 5 grader fra lodret, stangen 4,5 centimeter bagved midtfoden.",
+        "ft-unrack": "Unrack. Squat set fra siden, balanceret referencekrop med lowbar. Knæ 179 grader, hofte 177 grader, torso 5 grader fra lodret, stangen 4,5 centimeter bagved midtfoden.",
+        "ft-nedtur": "Nedtur. Squat set fra siden, balanceret referencekrop med lowbar. Knæ 84 grader, hofte 97 grader, torso 30 grader fra lodret, stangen 3,4 centimeter bagved midtfoden.",
+        "ft-bund": "Bund. Squat set fra siden, balanceret referencekrop med lowbar. Knæ 46 grader, hofte 37 grader, torso 49 grader fra lodret, stangen 0,9 centimeter bagved midtfoden.",
+        "ft-vendepunkt": "Vendepunkt. Squat set fra siden, balanceret referencekrop med lowbar. Knæ 49 grader, hofte 44 grader, torso 47 grader fra lodret, stangen 1,2 centimeter bagved midtfoden.",
+        "ft-sticking-point": "Sticking point. Squat set fra siden, balanceret referencekrop med lowbar. Knæ 69 grader, hofte 75 grader, torso 38 grader fra lodret, stangen 2,5 centimeter bagved midtfoden.",
+        "ft-lockout": "Lockout. Squat set fra siden, balanceret referencekrop med lowbar. Knæ 179 grader, hofte 177 grader, torso 5 grader fra lodret, stangen 4,5 centimeter bagved midtfoden.",
+        "ft-stang-lowbar": "Lowbar i bunden. Squat set fra siden, balanceret referencekrop. Knæ 46 grader, hofte 37 grader, torso 49 grader fra lodret, stangen 0,9 centimeter bagved midtfoden.",
+        "ft-stang-highbar": "Highbar i bunden. Squat set fra siden, balanceret referencekrop. Knæ 43 grader, hofte 49 grader, torso 37 grader fra lodret, stangen 0,2 centimeter foran midtfoden.",
+        "ft-stang-front": "Front squat i bunden. Squat set fra siden, balanceret referencekrop. Knæ 47 grader, hofte 64 grader, torso 22 grader fra lodret, stangen 5,2 centimeter foran midtfoden.",
+        "ft-stang-safetybar": "Safety bar i bunden. Squat set fra siden, balanceret referencekrop. Knæ 43 grader, hofte 62 grader, torso 24 grader fra lodret, stangen 3,2 centimeter foran midtfoden."
+      },
+      "smaaTryk": [
+        {
+          "t": "Start (stangen forlader ",
+          "b": 206,
+          "h": 32
+        },
+        {
+          "t": "Mellem start og knæhøjde",
+          "b": 185,
+          "h": 32
+        },
+        {
+          "t": "Knæhøjde",
+          "b": 85,
+          "h": 32
+        },
+        {
+          "t": "Mellem knæhøjde og locko",
+          "b": 204,
+          "h": 32
+        },
+        {
+          "t": "Lockout",
+          "b": 71,
+          "h": 32
+        },
+        {
+          "t": "Model 1",
+          "b": 73,
+          "h": 32
+        },
+        {
+          "t": "Model 2",
+          "b": 73,
+          "h": 32
+        }
+      ],
+      "lukket": [
+        {
+          "id": "kap-faserne",
+          "skaerme": 9,
+          "ord": 1500
+        },
+        {
+          "id": "kap-segmentmodellen",
+          "skaerme": 1.2,
+          "ord": 147
+        },
+        {
+          "id": "kap-anatomien",
+          "skaerme": 5.6,
+          "ord": 832
+        },
+        {
+          "id": "kap-kropstyper",
+          "skaerme": 1.5,
+          "ord": 345
+        },
+        {
+          "id": "kap-stang",
+          "skaerme": 3,
+          "ord": 517
+        },
+        {
+          "id": "kap-virkeligheden",
+          "skaerme": 2.9,
+          "ord": 640
+        },
+        {
+          "id": "kap-fejlbilleder",
+          "skaerme": 6.6,
+          "ord": 1062
+        },
+        {
+          "id": "kap-praksis",
+          "skaerme": 1.1,
+          "ord": 269
+        }
+      ],
+      "foersteFaseY": 0.5,
+      "aaben": [
+        {
+          "id": "kap-faserne",
+          "titel": "01 Faserne i tid",
+          "skaerme": 12.3,
+          "ord": 2664
+        },
+        {
+          "id": "kap-segmentmodellen",
+          "titel": "02 Segmentmodellen",
+          "skaerme": 2.4,
+          "ord": 431
+        },
+        {
+          "id": "kap-anatomien",
+          "titel": "03 Anatomien: kraftlinjer og momentarme",
+          "skaerme": 6.3,
+          "ord": 1080
+        },
+        {
+          "id": "kap-kropstyper",
+          "titel": "04 Kropstyper",
+          "skaerme": 2.5,
+          "ord": 732
+        },
+        {
+          "id": "kap-stang",
+          "titel": "05 Stang og variant",
+          "skaerme": 3.8,
+          "ord": 796
+        },
+        {
+          "id": "kap-virkeligheden",
+          "titel": "06 Virkeligheden mod modellen",
+          "skaerme": 4.4,
+          "ord": 970
+        },
+        {
+          "id": "kap-fejlbilleder",
+          "titel": "07 Når det ser forkert ud",
+          "skaerme": 6.9,
+          "ord": 1133
+        },
+        {
+          "id": "kap-praksis",
+          "titel": "08 Min praksis",
+          "skaerme": 1.3,
+          "ord": 337
+        }
+      ],
+      "canvasTekst": [
+        "Dybdekrav: ja",
+        "Bund",
+        "Knæhøjde · billede 30 · model 1",
+        "Grå silhuet: modellens figur (segmenter, masse, balance)",
+        "Blå: det målte skelet fra videoen (rekonstrueret fra vinkler)",
+        "Blå skygge: usikkerhedsbånd på det målte led (gul: hoften)",
+        "Halvvejs ned",
+        "Sticking point"
+      ],
+      "sideBredde": 1280,
+      "skaerme": 45.1
+    }
   }
 }

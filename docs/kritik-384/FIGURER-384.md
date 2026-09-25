@@ -19,6 +19,7 @@ Nummereret F1-F10, så de kan skelnes fra Q-fundene fra 374. Alvor som i 374.
 - Sted: kapitel 1, Opstilling, Unrack og Lockout (`fig-390-01`, `-02`, `-07`), anatomi-stillbilledet "Opstilling / lockout" (`fig-390-10`) og panelets startbillede.
 - Hvad coachen ser: hele kroppen hælder fremad fra anklen, fordi skinnebenet står 9° med låst knæ. Stangen står 4,5 cm bag midtfoden. En lockout, som en dommer godkender, har et næsten lodret skinneben og stangen over midtfoden. Figuren ligner en løfter, der er ved at falde forover og holder sig oppe med stangen bagved.
 - Teksten er ærlig om tallene ("det går kun op fordi resten af kroppens masse ligger foran midtfoden"), men den siger ikke, at 9° skinneben i toppen er modellens løsning og ikke det, man ser på platformen. Det er det første og det sidste billede i kapitlet.
+- (Tilføjet i blok 2:) Folden "Modellens topposition" forklarer hvorfor. Modellen prøver en torso fra 0,5 til 5° og vælger 5,0°, altså kanten af sit eget søgeområde. Stangen står stadig 4,5 cm bagved. Toppen er derfor bestemt af søgeområdet og ikke af en balance, modellen har fundet frit.
 
 **F2. Front squat ligner ikke en front squat. Alvor: vigtigt.**
 - Sted: kapitel 5, Front squat (`fig-390-16`).
@@ -44,7 +45,7 @@ Nummereret F1-F10, så de kan skelnes fra Q-fundene fra 374. Alvor som i 374.
 
 **F7. Kapitel 6: det målte skelet er ikke et dødløft, og startbilledet mangler modellen. Alvor: vigtigt.**
 - Sted: kapitel 6, indlejringen ved "Knæhøjde" (`fig-390-18`) og stillbillederne "Start" og "Knæhøjde" (`fig-390-19`, `-21`).
-- Målt: stillbilledet "Start" har kun det blå skelet. Den grå figur og stangen mangler, og SVG'en har 13 stier mod 25 i de andre fire. Figurteksten begynder med "Gråt: modellens figur".
+- Målt: stillbilledet "Start" har kun det blå skelet. Den grå figur og stangen mangler, og SVG'en har 13 stier mod 25 i de andre fire. Figurteksten begynder med "Gråt: modellens figur". (Tilføjet i blok 2: hovedteksten siger længere nede, at model 1 ikke finder en positur i starten, fordi torsoen er 75,1° mod grænsen på 75°. Den grå figur mangler altså med vilje. Det står bare ikke under billedet, og billedteksten siger det modsatte.)
 - Hvad coachen ser: i "Start" og "Knæhøjde" står det blå knæ 15-20 cm foran stangen, med skinnebenet i ca. 45-49°. Ved knæhøjde i et dødløft ville stangen gå gennem knæet. Tabellen i indlejringen viser skinnebenet "48,8° ± 24,6 (tilpasset)", og "Gå dybere" siger, at skinnebenets vinkel "ikke er pålidelig i videoen" og "derfor ikke står i tabellen". Den står i tabellen, og den er tegnet ind i skelettet.
 
 **F8. Kapitel 6's forklaring i canvas kan ikke læses på telefonen. Alvor: irriterer.**

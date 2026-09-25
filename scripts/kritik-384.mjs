@@ -251,8 +251,8 @@ const TJEK = (m390, m1280) => {
   q.Q12 = { ok: m390.panelSamtidig.kanSesSamtidig && m1280.panelSamtidig.kanSesSamtidig, hvad: `figur til nederste skyder ${m390.panelSamtidig.spaendPx}/${m390.panelSamtidig.vindue} px (390), ${m1280.panelSamtidig.spaendPx}/${m1280.panelSamtidig.vindue} px (1280)` };
   const decimal = ((broed.replace(/(afsnit|og) \d(\.\d)+|OpenSim \d\.\d/g, '') + m390.panelStart + m1280.panelStart).match(/\d\.\d/g) || []).length;
   q.Q13 = { ok: decimal === 0, hvad: `decimalpunktum: ${decimal}` };
-  const q14 = (t.match(/SKULLE|RajagopalLaiUhlrich2023|Licensen|ikke sit eget led endnu/gi) || []).length;
-  q.Q14 = { ok: q14 === 0, hvad: `SKULLE/filnavn/licensnote/"endnu": ${q14}` };
+  const q14 = (broed.match(/SKULLE|RajagopalLaiUhlrich2023|Licensen|[Ii]kke sit eget led endnu|IKKE SIT EGET LED ENDNU/g) || []).length;
+  q.Q14 = { ok: q14 === 0, hvad: `SKULLE/filnavn/licensnote/"endnu" i broedteksten: ${q14} (filnavnet staar kun i referencelisten)` };
   const meta = (broed.match(/se kapitlets indledning|samme legende som vælgeren|i kapitlet om segmentmodellen|målingerne herunder|se referencerne|står ved bunden i kapitel 1|resten af kapitel 2 og 3|Forbeholdet nederst\./g) || []).length;
   q.Q15 = { ok: meta === 0, hvad: `meta-henvisninger fra 374: ${meta}` };
   const q16 = { fold: /Hvad figurerne bygger på/i.test(t), samme: /samme positur/i.test(k['kap-anatomien']) };
@@ -267,8 +267,8 @@ const TJEK = (m390, m1280) => {
   q.Q20 = { ok: tekstPct.join() === tabelPct.join() && pct('Bund').saede === '-', hvad: `knaestraekkere tekst ${tekstPct.join('/')} = tabel ${tabelPct.join('/')}` };
   const smaaV = m390.smaaTryk.filter((x) => /virkelig|Model|Start|knæ|Lockout|figur/i.test(x.t));
   q.Q21 = { ok: m390.smaaTryk.length === 0, hvad: `trykflader under 44 px paa 390: ${m390.smaaTryk.map((x) => `"${x.t}" ${x.h}px`).join(', ') || 'ingen'}`, smaaV };
-  const marc = (t.match(/\[MARC:/g) || []).length; const kommer = /\bKommer\b/.test(k['kap-praksis'] ?? '');
-  q.Q22 = { venter: true, hvad: `[MARC: ...] ${marc}, "Kommer"-boks i kapitel 8: ${kommer ? 'ja' : 'nej'} (med vilje til Marc)` };
+  const marc = (t.match(/\[MARC:/g) || []).length; const kommer = /\nKOMMER\n/i.test(t);
+  q.Q22 = { venter: true, hvad: `[MARC: ...] ${marc}, "Kommer"-boks: ${kommer ? 'ja' : 'nej'} (med vilje til Marc)` };
   const stil = {
     tankestreger: (t.match(/[\u2014\u2013]/g) || []).length,
     manSkal: (t.match(/\bman skal\b/gi) || []).length,
@@ -279,7 +279,7 @@ const TJEK = (m390, m1280) => {
     referencekrop: (broed.match(/referencekrop/gi) || []).length,
     iModellen: (broed.match(/i modellen/gi) || []).length,
     jeg: (broed.match(/\b(jeg|min|mine|mit)\b/gi) || []).length,
-    forbeholdSidst: t.lastIndexOf('Forbehold') > t.length * 0.8,
+    forbeholdSidst: broed.lastIndexOf('\nFORBEHOLD\n') > broed.length * 0.85,
     konsol: [...m390.konsol, ...m1280.konsol],
     vandretRulning390: m390.sideBredde > 390,
     ordAabne: m390.aaben.reduce((a, x) => a + x.ord, 0), ordLukket: m390.lukket.reduce((a, x) => a + x.ord, 0),

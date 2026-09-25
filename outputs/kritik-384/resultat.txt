@@ -1,0 +1,27 @@
+Kritik 384 mod squat-opslag-9 64cd729 (headless Chromium, 390x844 touch 2x og 1280x900)
+LUKKET Q1: kapitel 8: tyngdepunktet; stangen 0,9 / 4,5 cm bagved, figurerne 0,9 / 4,5 cm
+LUKKET Q2: lockout-figurens knae 179°, forbehold om ulaast lockout: 0
+LUKKET Q3: teksten 45°, panelet 45° i alle seks kombinationer
+LUKKET Q4: kommaceller 0/0, tabellen 311 px i ramme paa 311 px
+LUKKET Q5: overskrifter: MUSKELGRUPPE | VINKEL | ARM, CM | ANDEL AF MAX | STATUS
+LUKKET Q6: canvas-tekst om dybde: Dybdekrav: ja
+LUKKET Q7: mindste img-SVG-tekst paa 390: 11.3 px, H/K 10.9 px
+LUKKET Q8: good morning: torsoen tipper 12,6° i figur og tekst
+LUKKET Q9: valgus = indad; taellingen: seks
+LUKKET Q10: vendepunktet 0,38 s, ingen "11 %"
+LUKKET Q11: "inden for baandet" forklaret
+LUKKET Q12: figur til nederste skyder 742/844 px (390), 395/900 px (1280)
+LUKKET Q13: decimalpunktum: 0
+LUKKET Q14: SKULLE/filnavn/licensnote/"endnu" i broedteksten: 0 (filnavnet staar kun i referencelisten)
+LUKKET Q15: meta-henvisninger fra 374: 0
+LUKKET Q16: fold "Hvad figurerne bygger paa" vaek, "samme positur" i kap. 3 nej
+VENTER Q17: venter paa Marcs svar
+LUKKET Q18: kapitel 1 til foerste fase 0.7 skaerm paa 390
+LUKKET Q19: kapitel 5: 49° mod 37° ved siden af maalte ca. 10° og ingen forskel
+LUKKET Q20: knaestraekkere tekst 90 %/74 %/89 % = tabel 90 %/74 %/89 %
+AABEN  Q21: trykflader under 44 px paa 390: "Start (stangen forlader " 32px, "Mellem start og knæhøjde" 32px, "Knæhøjde" 32px, "Mellem knæhøjde og locko" 32px, "Lockout" 32px, "Model 1" 32px, "Model 2" 32px
+VENTER Q22: [MARC: ...] 10, "Kommer"-boks: ja (med vilje til Marc)
+Stil: tankestreger 0, "man skal" 0, "skal" 8, interne navne 0, udraabstegn 0, "kapitel N" 1, "referencekrop" 37, "i modellen" 46, jeg/min 18, forbehold sidst ja.
+Laengde: 5312 ord lukket, 8143 aabne, 65.7 skaerme paa 390 med folde aabne; siden siger "39 min. læsning". Konsol: 0. Vandret rulning paa 390: nej.
+Egennavne i broedteksten (gennemgaaet for atletnavne): Arandjelovi, Bengtsson, Hales, Instagram, Kompf, Kristiansen, Lai, Larsen, Målt, Nm, Open, Rulebook, Technical, Tillaar, Uhlrich
+Lukket: Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8, Q9, Q10, Q11, Q12, Q13, Q14, Q15, Q16, Q18, Q19, Q20. Aabne: Q21. Venter: Q17, Q22.
