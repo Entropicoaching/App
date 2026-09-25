@@ -169,6 +169,9 @@ const rpeText = value => (Number.isInteger(value) ? String(value) : dec(value))
 const dayText = ms => `${new Date(ms).getUTCDate()}. ${MONTHS[new Date(ms).getUTCMonth()]}`
 
 const PAIN_WORDS = /smert|ondt|skade|stikker|jager|pain|hurt|injur/i
+// "ingen smerter", "gør ikke ondt", "smertefri" er det modsatte af en melding.
+const PAIN_NEGATED = /(ingen|uden|ikke noget|ikke)\s+(smert\w*|ondt)|smertefri\w*|no pain/gi
+export const mentionsPain = text => PAIN_WORDS.test(String(text || '').replace(PAIN_NEGATED, ''))
 const BODY_PARTS = [
   [/knæ|knae|knee/i, 'knæet'], [/hofte|hip/i, 'hoften'], [/lyske/i, 'lysken'],
   [/lænd|ryg|back/i, 'ryggen'], [/skulder|shoulder/i, 'skulderen'], [/albue|elbow/i, 'albuen'],
@@ -197,7 +200,7 @@ function detectPain({ athlete, weeks = [], readiness = [] }, L, T) {
   const hits = weeks
     .filter(week => toDay(week.start_date) >= since)
     .flatMap(week => (week.sessions || [])
-      .filter(session => session.athlete_comment && PAIN_WORDS.test(session.athlete_comment))
+      .filter(session => mentionsPain(session.athlete_comment))
       .map(session => ({
         week: week.week_number, title: session.title,
         part: bodyPartOf(session.athlete_comment),

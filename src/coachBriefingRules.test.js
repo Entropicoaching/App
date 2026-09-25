@@ -6,7 +6,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { fixtures } from '../test/fixtures/briefing/index.mjs'
 import { buildAthlete } from '../test/fixtures/briefing/helpers.mjs'
-import { DETECTOR_RANK, MESSAGE_VIDEO_RANK, briefingOrder, briefingVisible, detectSignalsV1, detectSignalsV2 } from './coachBriefingRules.js'
+import { DETECTOR_RANK, MESSAGE_VIDEO_RANK, briefingOrder, briefingVisible, detectSignalsV1, detectSignalsV2, mentionsPain } from './coachBriefingRules.js'
 
 const v1 = fixture => briefingVisible(detectSignalsV1(fixture))
 const only = fixture => {
@@ -70,7 +70,7 @@ test('E: PR paa baenk -> fremgang med tal og forrige bedste, lav prioritet (cont
   hasAction(signal)
 })
 
-test('F: intet at bemaerke -> ingen linjer, hverken foer eller efter', () => {
+test('F: intet at bemaerke (ogsaa "ingen smerter" i en kommentar) -> ingen linjer, hverken foer eller efter', () => {
   assert.deepEqual(v1(fixtures.f), [])
   assert.deepEqual(detectSignalsV2(fixtures.f), [])
 })
@@ -140,4 +140,13 @@ test('stagnation: et signal pr. atlet, selv naar flere loeft staar stille', () =
   assert.equal(stagnation.length, 1)
   assert.equal(stagnation[0].severity, 'context', 'fladt uden stigende RPE er ikke akut')
   assert.match(stagnation[0].headline, /\(\+1 løft mere fladt\)$/)
+})
+
+test('smerteord: negationer taeller ikke, rigtige meldinger goer', () => {
+  for (const text of ['Ingen smerter i dag', 'Det gør ikke ondt længere', 'Helt smertefrit', 'uden smerte', null]) {
+    assert.equal(mentionsPain(text), false, String(text))
+  }
+  for (const text of ['Knæet gør ondt i bunden', 'Smerter i lænden efter dødløft', 'Ingen smerter i knæet, men skulderen gør ondt']) {
+    assert.equal(mentionsPain(text), true, text)
+  }
 })

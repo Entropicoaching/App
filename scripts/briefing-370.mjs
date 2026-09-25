@@ -1,7 +1,8 @@
 // ORDRE 370 · koerer Coach Briefingen paa de syntetiske atlet-uger i
 // test/fixtures/briefing/ og skriver hvad den siger.
 //
-//   node scripts/briefing-370.mjs --dump foer   -> JSON for "i dag" (main 7409552)
+//   node scripts/briefing-370.mjs --dump         -> JSON for "i dag" (main 7409552)
+//   node scripts/briefing-370.mjs --dump efter   -> JSON efter ordre 370 (v2 + arbejdstraeets n8n)
 //
 // "I dag" = reglerne fra training-signals-v1.sql (porteret i
 // src/coachBriefingRules.js) -> RPC'ens alert/context-filter -> n8n-flowets
@@ -12,7 +13,7 @@ import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import fixtures from '../test/fixtures/briefing/index.mjs'
-import { briefingVisible, detectSignalsV1 } from '../src/coachBriefingRules.js'
+import { briefingOrder, briefingVisible, detectSignalsV1, detectSignalsV2 } from '../src/coachBriefingRules.js'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 export const BASE_COMMIT = '7409552'
@@ -56,7 +57,10 @@ export function runMail(workflow, signals) {
 }
 
 // Appens "Kraever dit blik": title = headline, detail = detail, label fra detektor.
-const appLabel = detector => ({ dropout: 'Træningsmængde', stagnation: 'Udvikling', rpe_drift: 'RPE' })[detector] || 'Træning'
+const appLabel = detector => ({
+  dropout: 'Træningsmængde', stagnation: 'Udvikling', rpe_drift: 'RPE',
+  pain: 'Smerte', missed_sessions: 'Fremmøde', data_conflict: 'Datatjek', pr: 'PR',
+})[detector] || 'Træning'
 export const appRows = signals => signals.map(signal => [signal.severity, appLabel(signal.detector), signal.headline, signal.detail])
 
 export function foer() {
@@ -69,6 +73,17 @@ export function foer() {
   return { perAthlete, combined: runMail(workflow, all), app: appRows(all) }
 }
 
+export function efter() {
+  const workflow = loadWorkflow()
+  const perAthlete = fixtures.map(fixture => {
+    const signals = detectSignalsV2(fixture)
+    return { id: fixture.athlete.id, name: fixture.athlete.name, about: fixture.about, app: appRows(signals), mail: runMail(workflow, signals).rows, signals }
+  })
+  const all = briefingOrder(perAthlete.flatMap(entry => entry.signals))
+  return { perAthlete, combined: runMail(workflow, all), app: appRows(all) }
+}
+
 if (process.argv.includes('--dump')) {
-  console.log(JSON.stringify(foer(), (key, value) => (key === 'signals' ? undefined : value), 2))
+  const result = process.argv.includes('efter') ? efter() : foer()
+  console.log(JSON.stringify(result, (key, value) => (key === 'signals' ? undefined : value), 2))
 }

@@ -70,6 +70,7 @@ set search_path to pg_catalog, public as $$
 declare
   NB constant text := 'belt|hack|split|bulgar|goblet|smith|pendul|maskine|machine|leg press|sissy|db |dumbbell|håndvægt';
   PAIN constant text := 'smert|ondt|skade|stikker|jager|pain|hurt|injur';
+  PAIN_NEGATED constant text := '(ingen|uden|ikke noget|ikke)\s+(smert\w*|ondt)|smertefri\w*|no pain';
   MONTHS constant text[] := array['jan.','feb.','mar.','apr.','maj','jun.','jul.','aug.','sep.','okt.','nov.','dec.'];
 begin
   return query
@@ -236,7 +237,8 @@ begin
     join public.weeks wk on wk.id=s.week_id
     join my on my.id=wk.athlete_id
     where wk.start_date >= date_trunc('week',current_date)::date - 7
-      and s.athlete_comment ~* PAIN
+      -- "ingen smerter", "gør ikke ondt", "smertefri" taeller ikke (som mentionsPain i JS).
+      and regexp_replace(s.athlete_comment, PAIN_NEGATED, '', 'gi') ~* PAIN
     order by wk.athlete_id, wk.start_date desc, s.session_order desc nulls last, s.id desc
   ),
   sore as (
