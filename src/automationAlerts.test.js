@@ -50,7 +50,9 @@ test('løste rækker og rækker uden id vises ikke', () => {
   assert.deepEqual(build({ automationAlerts: [resolvedAlert] }), [])
 })
 
-test('rækkefølge: alert-signal, ventende besked, automatiseringsfejl, øvrigt signal', () => {
+// ORDRE 377: mailens rækkefølge; fravær (dropout, også context) før
+// afvigelse (stagnation), så beskeder, så automatiseringsfejlen.
+test('rækkefølge: fravær, afvigelse, ventende besked, automatiseringsfejl', () => {
   const items = build({
     automationAlerts: [openAlert],
     trainingSignals: [
@@ -61,7 +63,7 @@ test('rækkefølge: alert-signal, ventende besked, automatiseringsfejl, øvrigt 
     latestByTrack: { ath1: { besked: { content: 'hej', created_at: minutesAgo(30) } } },
   })
   assert.deepEqual(items.map(item => item.kind + ':' + (item.signal?.o_severity || '')), [
-    'signal:alert', 'message:', 'automation:', 'signal:context',
+    'signal:context', 'signal:alert', 'message:', 'automation:',
   ])
 })
 

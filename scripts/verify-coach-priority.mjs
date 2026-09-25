@@ -34,21 +34,24 @@ const items = buildCoachPriorityItems({
   describeVideo: video => `Video ${video.lift}`,
 })
 
+// ORDRE 377: samme rækkefølge som Coach Briefing-mailen: fravær (dropout, 1)
+// før afvigelse fra plan (stagnation, 2; context 2,5) før beskeder/videoer (3).
 assert.deepEqual(items.map(item => item.key), [
   'signal-athlete-b-dropout',
+  'signal-athlete-a-stagnation',
   'video-video-a',
   'message-athlete-b-teknik',
   'message-athlete-a-besked',
   'message-athlete-a-teknik',
-  'signal-athlete-a-stagnation',
 ])
-assert.equal(items[0].rank, 0, 'alerts must be first')
-assert.equal(items[1].detail, 'Video squat', 'the oldest unanswered video or message must lead the shared task rank')
-assert.equal(items[2].detail, 'Ældste ulæste', 'messages and videos must share chronological ordering')
-assert.equal(items[3].count, 2, 'unread count must be preserved')
-assert.equal(items[4].createdAt, 'ikke-en-dato', 'invalid timestamps must sort last without crashing')
-assert.equal(items[1].rank, items[2].rank, 'messages and videos must share one chronological task rank')
-assert.equal(items.at(-1).rank, 3, 'context signals must be last')
+assert.equal(items[0].rank, 1, 'absence (dropout alert) must rank as in the mail')
+assert.equal(items[1].rank, 2.5, 'a deviation-from-plan context signal must rank as in the mail')
+assert.equal(items[2].detail, 'Video squat', 'the oldest unanswered video or message must lead the shared task rank')
+assert.equal(items[3].detail, 'Ældste ulæste', 'messages and videos must share chronological ordering')
+assert.equal(items[4].count, 2, 'unread count must be preserved')
+assert.equal(items[5].createdAt, 'ikke-en-dato', 'invalid timestamps must sort last without crashing')
+assert.equal(items[2].rank, items[3].rank, 'messages and videos must share one chronological task rank')
+assert.equal(items.at(-1).rank, 3, 'messages/videos must come after deviation signals')
 assert.equal(items.some(item => item.athlete.id === 'hidden-athlete'), false, 'items for athletes outside the visible list must be excluded')
 assert.equal(items.some(item => item.key === 'message-athlete-b-besked'), false, 'read message tracks must not enter the priority queue')
 assert.equal(nextCoachPriorityItem(items, items[0].key)?.key, items[1].key, 'next item must skip the currently open priority item')
@@ -104,5 +107,20 @@ const reorderedSignals = buildCoachPriorityItems({
 assert.deepEqual(reorderedSignals.map(item => item.key), [
   'signal-athlete-b-dropout', 'signal-athlete-a-stagnation',
 ], 'signal task keys must remain stable when source ordering changes')
+
+// ORDRE 377: rangtabellen skal være mailens (smerte 0, fravær 1, afvigelse 2,
+// beskeder/videoer 3, fremgang 4; context +0,5). Samme rang: titel.
+const mailOrder = buildCoachPriorityItems({
+  athletes,
+  trainingSignals: ['pr', 'data_conflict', 'rpe_drift', 'missed_sessions', 'pain'].map(detector => (
+    { o_athlete_id: 'athlete-a', o_detector: detector, o_severity: 'alert', o_headline: detector, o_detail: '' }
+  )),
+  unreadByTrack: { 'athlete-b': { besked: 1 } },
+  latestByTrack: { 'athlete-b': { besked: { content: 'Hej', created_at: '2026-07-01T08:00:00Z' } } },
+  videoReviewQueue: [], describeVideo: () => '',
+})
+assert.deepEqual(mailOrder.map(item => item.kind === 'signal' ? item.signal.o_detector : item.kind), [
+  'pain', 'missed_sessions', 'data_conflict', 'rpe_drift', 'message', 'pr',
+], 'the app must rank pain, absence, deviation, messages and progress like the briefing mail')
 
 console.log('OK: coach priority order, age handling and visibility filters are valid')
