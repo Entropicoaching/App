@@ -19,6 +19,7 @@ export const DASHBOARD_MODULER = [
   'dashboard/atletHandlinger.js',
   'dashboard/aiRapport.js',
   'dashboard/programHandlinger.js',
+  'dashboard/useVideoCoachBro.js',
 ]
 
 export function dashboardKilde() {
