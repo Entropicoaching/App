@@ -14,6 +14,7 @@ export const DASHBOARD_MODULER = [
   'dashboard/hubSektioner.jsx',
   'dashboard/laesninger.js',
   'dashboard/navigation.js',
+  'dashboard/indbakkeHandlinger.js',
 ]
 
 export function dashboardKilde() {
