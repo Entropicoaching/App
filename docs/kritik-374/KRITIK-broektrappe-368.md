@@ -44,7 +44,7 @@ Alvor: **vigtigt** (en elev eller lærer bliver snydt for noget lovet), **irrite
 - RAPPORT-368 siger: "'Du har gået hele brøktrappen' siges kun efter forløb 8". Det passer ikke med det, eleven ser. Eleven, der netop har mestret blandede tal, får ingen afslutning. Forløbet skifter bare til det næste.
 
 **B3. Hintet lander ved skærmens underkant. Alvor: irriterer.**
-- Målt: 28 af 47 hint sluttede under vinduets bund (844 px), op til 43 px nede (`hintSynlig`).
+- Målt: 27-28 af 47 hint sluttede under vinduets bund (844 px) i to kørsler, op til 43 px nede (`hintSynlig`).
 - Svarknapperne ligger nederst, og hintet kommer under dem. Den sidste linje eller boksens kant er ofte skåret (`broek-02-hint-trin2.png`).
 - En elev, der gætter igen uden at rulle, ser måske ikke "hvorfor".
 
