@@ -1,0 +1,756 @@
+Entropi
+.
+< ARTIKLER
+TEKNIK
+2026
+39 min. læsning
+Squattens biomekanik:
+individuel variation fra opstilling til lockout.
+
+På nettet og på Instagram bliver én bestemt squat-teknik ofte gjort til den rigtige. Efter min erfaring fører den idealisering oftere til stagnation, og for nogle til skader, end til fremgang, fordi den enkelte atlets egne forudsætninger bliver overset. Det jeg leder efter som coach, er atletens naturlige position: den der føles bedst for netop den krop, og som giver et løft, der kan godkendes i konkurrence.
+
+Positionen findes ved at prøve sig frem. Kropsproportioner, stangplacering og anklens bevægelighed sætter rammen, og inden for den har hver løfter sit eget bias. Når det der virker er fundet, bygges de svage punkter op. Undervejs kigger jeg mest efter tre ting: stangens position over midtfoden, knæets og hoftens bevægelse gennem løftet, og om coret holder i bunden.
+
+Ledvinkler og momenter kommer fra en segmentmodel af en opdigtet referencekrop, ikke fra en atlet. Den kan regne på de to første af de tre ting, ikke på coret. Den er med, fordi den viser hvad geometrien tvinger, når lårbenet er langt, stangen sidder lavt eller anklen er stiv, og det gør det lettere at skelne en krops naturlige position fra en fejl.
+
+INDHOLD
+Faserne i tid
+Segmentmodellen
+Anatomien: kraftlinjer og momentarme
+Kropstyper
+Stang og variant
+Virkeligheden mod modellen
+Når det ser forkert ud
+Min praksis
+Forbehold
+Referencer
+01
+Faserne i tid
+
+Her deles squatten i syv faser: opstilling, unrack og lockout er konkurrencemomenter, nedtur, bund og vendepunkt følger bevægelsen, og sticking point er en målbar region i opturen, ikke ét bestemt øjeblik.
+
+Knæ- og hoftevinklen er den indvendige vinkel i leddet, hvor 180° er strakt: en hofte på 37° i bunden betyder, at torso og lår er foldet langt sammen. Skinnebenet og torsoen er angivet som hældning fra lodret. De orange linjer i figurerne er stangens vandrette afstand til hofte (H) og knæ (K), og det orange mærke ved foden er midtfoden.
+
+SÅDAN ER FIGURERNE LAVET
+TALLENE
+Figurerne og tallene er fra segmentmodellen for den balancerede referencekrop med lowbar og modellens dybdekrav, medmindre der står andet. En anden kropstype eller en highbar giver andre tal, og dem viser panelet. Modellen regner kvasistatisk og kender ikke hastighed, så tider og hastigheder er enten modellens antagelser eller målinger fra litteraturen, og det står ved hvert tal. Modellen tegner torsoen som én stiv linje og kan derfor intet sige om coret; balancen i hver fase handler om foden.
+Modelvalg.
+TEGNINGEN
+Figurerne er stillbilleder fra modellens bevægelse. Stangen ses fra enden med en skive på 45 cm, og den stiplede linje er stangens lod. Leddene, stangen og vinklerne er modellens; kroppens omrids, hals, hoved og arme er tegnet omkring dem og er ikke en del af modellen. Modellen har hverken opstilling eller unrack for sig: begge tegnes som den oprejste udgangsposition, som også er modellens topposition ved lockout.
+Modelvalg.
+Opstilling
+
+Opstillingen er stangens plads på ryggen og løfterens placering under den, før stangen forlader stativet.
+
+H
+K
+Opstilling. Den oprejste udgangsposition med låste knæ. Knæ 179°, hofte 177°, skinneben 9°, torso 5° fra lodret. Stangen står 4,5 cm bagved midtfoden, 10,2 cm bagved hoften (H) og 4,3 cm bagved knæet (K). Balanceret referencekrop, lowbar.
+
+Ledvinkler. Løfteren står oprejst med låste knæ. I modellen er knæet 179° og hoften 177°, skinnebenet hælder 9° og torsoen 5° fra lodret.
+
+Momentet. Stangen står 10 cm bagved hoften og 4 cm bagved knæet. I bunden er afstanden 20 cm til hoften og 21 cm til knæet, så stangens moment om leddene er lille i denne fase, for samme stangvægt.
+
+Balancen. Foden: modellen kræver at tyngdepunktet af løfter og stang ligger over midtfoden. Stangen står 4,5 cm bagved midtfoden, og det går kun op fordi resten af kroppens masse ligger foran midtfoden.
+
+Udefra. Stangen ligger på ryggen, lowbar eller highbar, og valget er det første der prøves af for den enkelte. [MARC: Hvad ser du først, når en atlet stiller sig under stangen: foden, grebet eller stangens plads, og hvad tjekker du til sidst?]
+
+GÅ DYBERE
+BALANCEN
+Tyngdepunktet af løfter og stang ligger over midtfoden i hver eneste pose i modellen. Det er en betingelse modellen løser for, ikke en måling af en løfter.
+Modellens egen dokumentation. Modelvalg.
+Unrack
+
+Efter IPF's regler tager løfteren stangen ud af stativet, går tilbage til startpositionen og står stille, oprejst med låste knæ, indtil dommeren giver signal.
+
+H
+K
+Unrack. Samme oprejste position som opstillingen. Knæ 179°, hofte 177°, skinneben 9°, torso 5° fra lodret. Stangen står 4,5 cm bagved midtfoden, 10,2 cm bagved hoften (H) og 4,3 cm bagved knæet (K). Balanceret referencekrop, lowbar.
+
+Ledvinkler. Ingen ændring i modellen: samme oprejste position som i opstillingen. Modellen regner ikke på selve udtagningen af stangen, kun på positionen bagefter.
+
+Momentet. Stangen står stadig 10 cm bagved hoften og 4 cm bagved knæet, så stangens moment om leddene er lille, men hele vægten hviler nu på løfteren.
+
+Balancen. For at stå stille skal tyngdepunktet af løfter og stang ligge inden for støttefladen under foden; i modellen er det lagt over midtfoden.
+
+Udefra. Dommeren venter på en løfter der står stille og oprejst. Set fra siden ligger stangen på ryggen, i modellen 4,5 cm bagved midtfoden.
+
+GÅ DYBERE
+REGLEN
+Efter at stangen er taget ud af stativet skal løfteren gå tilbage og indtage startpositionen. Når løfteren står stille, oprejst (en lille afvigelse er tilladt) med låste knæ, giver overdommeren signal: en nedadgående armbevægelse og kommandoen "Squat". Forsøget regnes for påbegyndt, når knæene er låst op.
+IPF Technical Rulebook 2026, afsnit 4.1, punkt 2 og 3.
+INGEN TID I REGLEN
+Regelbogen kræver at løfteren står stille, men angiver ingen varighed. Modellen holder positionen i 0,9 s i hver ende af en gentagelse.
+Modelvalg, ikke et litteraturtal.
+Nedtur
+
+Efter IPF's regler er nedturen én bevægelse ned til dybden, hvor overkanten af låret ved hoften ligger under toppen af knæet.
+
+H
+K
+Nedtur. Halvvejs nede i modellens nedtur. Knæ 84°, hofte 97°, skinneben 43°, torso 30° fra lodret. Stangen står 3,4 cm bagved midtfoden, 7,9 cm foran hoften (H) og 25,6 cm bagved knæet (K). Balanceret referencekrop, lowbar.
+
+Ledvinkler. Knæ, hofte og ankel bøjer samtidig. Halvvejs nede i modellen er knæet 84° (fra 179° stående) og hoften 97° (fra 177°). Skinnebenet hælder 43°, så knæet er kommet frem, og torsoen hælder 30° fra lodret. I bunden er knæet 46° og hoften 37°.
+
+Momentet. Stangens afstand til hoften vokser mest i anden halvdel af nedturen: 8 cm halvvejs mod 20 cm i bunden. Afstanden til knæet, hvor stangen står bagved, er 26 cm halvvejs og 21 cm i bunden, så knæet har den længste arm allerede halvvejs nede. Tallene gælder stangens eksterne arm i den balancerede lowbar-referencekrop; leddenes samlede belastning siger de ikke noget om.
+
+Balancen. Foden: i modellen er tyngdepunktet af løfter og stang lagt over midtfoden hele vejen ned som en balancebetingelse; en rigtig løfters tyngdepunkt skal holdes inden for støttefladen under foden og kan flytte sig inden for den. I modellen sker balancen ved at torso og skinneben hælder, og stangen flytter sig kun ca. 4 cm vandret gennem hele løftet.
+
+Udefra. I modellen går stangen næsten lodret ned, lige bag midtfoden, og hofte og knæ bøjer samtidig, som hos konkurrenceløftere (Hales m.fl., 2009). Nedturen tager 1,5 s i modellen, en antagelse og ikke et litteraturtal.
+
+GÅ DYBERE
+REGLEN
+Der er kun ét nedturforsøg. Løfteren skal bøje knæene og sænke kroppen, til overkanten af låret ved hoften er lavere end toppen af knæene.
+IPF Technical Rulebook 2026, afsnit 4.1, punkt 3.
+ALLE LED SAMTIDIG
+Hos 25 løftere ved en regional styrkeløftskonkurrence blev squatten beskrevet som en synergistisk og samtidig bevægelse, i modsætning til dødløftets, hvor leddene bevæger sig efter hinanden.
+Hales m.fl. (2009).
+VARIGHED
+Ingen af de kilder bag modellen giver et tal for nedturens varighed ved konkurrencevægt. Nedturen er beskrevet som selvvalgt men kontrolleret. Modellen bruger 1,5 s som antagelse.
+van den Tillaar m.fl. (2014), 15 styrketrænede mænd, sidste gentagelse af 6RM.
+STANGENS VEJ
+Stangens vandring var 0,60 til 0,64 m hos 18 fritidstrænede ved 3RM. Modellen har 58 cm for den balancerede referencekrop med lowbar, og 51 til 70 cm på tværs af de tre kropstyper og begge stangplaceringer.
+Larsen m.fl. (2021), studiet af standbredde og stangplacering. Modellens tal.
+Bund
+
+Bunden er nået, når overkanten af låret ved hoften ligger under toppen af knæet, og modellen regner det som hofteleddet mindst 3 cm under knæleddet.
+
+H
+K
+Bund. Hofteleddet ligger 3 cm under knæleddet, modellens dybdekrav. Knæ 46°, hofte 37°, skinneben 40°, torso 49° fra lodret. Stangen står 0,9 cm bagved midtfoden, 20,5 cm foran hoften (H) og 21,4 cm bagved knæet (K). Balanceret referencekrop, lowbar.
+
+Ledvinkler. Knæet er 46°, hoften 37° og skinnebenet hælder 40°, mens torsoen hælder 49° fra lodret. Knæet står 7,5 cm foran tåen.
+
+Momentet. Stangen står 20 cm foran hoften og 21 cm bagved knæet, så de to arme er næsten lige lange, og knæets er en anelse længst. Hoftemomentet er 0,90 gange knæmomentet i modellen ved lowbar og 0,76 gange ved highbar.
+
+Balancen. Foden: stangen står 0,9 cm bagved midtfoden, og tyngdepunktet af løfter og stang ligger over midtfoden.
+
+Udefra. Dommeren ser hoftefolden under knæets top. Her i bunden ser jeg de tre ting samlet: stangen over midtfoden, hvor knæ og hofte er endt, og om coret holder eller folder sammen. [MARC: Hvordan ser du udefra, at coret folder sammen i bunden: hvad er tegnet, og hvor tidligt ser du det?]
+
+GÅ DYBERE
+KNÆVINKLEN HOS LØFTERE
+Hos 10 styrkeløftere ved 5RM (158 ± 29 kg) var knævinklen i bunden 60° ved highbar og 62° ved lowbar. Modellen har 43° ved highbar og 46° ved lowbar for den balancerede krop, altså 16 til 17° mere bøjet i knæet end løfterne. Hoftevinklen er ikke sammenlignet, fordi litteraturens hoftevinkler og modellens ikke er målt på samme måde, og kilderne afgør ikke forskellen.
+van den Tillaar m.fl. (2020). Modellens tal, balanceret krop.
+MOMENTER
+I dyb squat ved 65 % af 1RM var hoftemomentet 324 Nm ved lowbar og 230 Nm ved highbar, og knæmomentet 139 og 191 Nm. Regnet af de tal er forholdet hofte til knæ 2,3 ved lowbar og 1,2 ved highbar, mod modellens 0,90 og 0,76. Retningen er den samme, forholdet er størst ved lowbar, men i modellen er knæmomentet størst ved begge placeringer, mens det i målingerne var hoftemomentet. Grupperne var forskellige, seks styrkeløftere ved lowbar og otte vægtløftere ved highbar.
+Wretenberg m.fl. (1996).
+CORET
+Hos 23 konkurrenceløftere (14 mænd og 9 kvinder) ved 70 % af 1RM gik den nedre lænd (L2 til S2) i gennemsnit fra 16,5° ± 10,7° lordose stående til minus 4,5° ± 8,0° i bunden, altså fra lordose til fleksion. Spredningen er stor. I et andet datasæt, 18 erfarne løftere ved 70 % af 1RM, hang squattens dybde ikke signifikant sammen med fleksionen.
+Bengtsson m.fl. (2023). Berglund m.fl. (2024).
+Vendepunkt
+
+Vendepunktet er der, hvor stangen holder op med at gå ned og begynder at gå op, og efter IPF's regler må der ikke være nogen ny nedadgående bevægelse i opturen.
+
+H
+K
+Vendepunkt. Modellens første hastighedstop i opturen, 0,38 s efter bunden i modellens tidsforløb, stangen 3,6 cm over bunden. Knæ 49°, hofte 44°, skinneben 42°, torso 47° fra lodret. Stangen står 1,2 cm bagved midtfoden, 19,2 cm foran hoften (H) og 22,7 cm bagved knæet (K). Balanceret referencekrop, lowbar.
+
+Ledvinkler. Leddene åbner kun lidt i selve vendingen. 0,38 s efter bunden er knæet 49° og hoften 44° i modellen, og stangen er 3,6 cm over bunden.
+
+Momentet. Stangens afstand til hoften er stadig 19 cm og til knæet 23 cm, så stangens arme har næsten ikke ændret sig siden bunden.
+
+Balancen. Lænden er dér, hvor den er mindst svajet: hos 23 konkurrenceløftere var lordosen i gennemsnit mindst i bunden (Bengtsson m.fl., 2023).
+
+Udefra. Stangen går fra stilstand til det første hastighedstop 0,24 til 0,38 s efter bunden, og stangen er dér 6 til 6,7 cm over bunden. Modellen når sit første hastighedstop 0,38 s efter bunden, men stangen er kun 3,6 cm oppe.
+
+GÅ DYBERE
+MÅLT
+Hos 25 fritidstrænede (13 kvinder og 12 mænd) ved 3RM (90 ± 27 kg) var stanghastigheden 0,34 m/s ved det første hastighedstop, 0,24 s efter bunden og 0,06 m over den. Hos 15 styrketrænede mænd ved sidste gentagelse af 6RM (137 ± 28 kg) var den 0,174 m/s, 0,380 s efter bunden og 0,067 m over den. Bunden var i det studie defineret som 80° knævinkel.
+Larsen m.fl. (2021), studiet af sticking region. van den Tillaar m.fl. (2014).
+MODELLENS FORSKEL
+Modellens første hastighedstop ligger 0,38 s inde i en optur på 2,8 s, og stangen er da 3,6 cm oppe mod 6 til 6,7 cm i målingerne. Det er en grænse i modellens tidsforløb, som er formet efter litteraturen men ikke tilpasset hvert tal.
+Modellens tal.
+REGLEN
+Dobbelt hop i bunden eller enhver nedadgående bevægelse i opturen er en grund til underkendelse.
+IPF Technical Rulebook 2026, afsnit 4.1.1, punkt 2.
+Sticking point
+
+Sticking point er det sted i opturen, hvor stangens hastighed er lavest, og ved tunge løft ligger det i opturens første tredjedel og ikke i bunden eller ved lockout.
+
+H
+K
+Sticking point. Modellens sticking-tidspunkt, 1,5 s efter bunden i modellens tidsforløb, stangen 20,9 cm over bunden. Knæ 69°, hofte 75°, skinneben 44°, torso 38° fra lodret. Stangen står 2,5 cm bagved midtfoden, 13,4 cm foran hoften (H) og 25,1 cm bagved knæet (K). Balanceret referencekrop, lowbar.
+
+Ledvinkler. Ved modellens sticking-tidspunkt, 1,5 s efter bunden, er knæet 69° og hoften 75° i modellen, og låret hælder 23° over vandret. Målt hos 25 løftere ved en konkurrence var låret 32,5° ± 3,0 over vandret, så modellen har sticking point tidligere i lårets rotation end målingerne. Stangen er 21 cm oppe, 36 % af vandringen. Målingerne siger 12 til 40 %.
+
+Momentet. Stangen står 13 cm foran hoften og 25 cm bagved knæet, så knæets arm er næsten dobbelt så lang som hoftens. Modellen regner kvasistatisk og har ikke de kræfter der kommer af at stangen accelererer, så den kan ikke forklare hvorfor hastigheden falder her.
+
+Udefra. Stangen sænker næsten farten. Hos 25 løftere ved en konkurrence var den lodrette stanghastighed 0,09 m/s, låret 32,5° over vandret og torsoen ca. 49° fra lodret. I modellen hælder torsoen 38° fra lodret ved lowbar. [MARC: Hvor i opturen går dine atleter oftest i stå, og hvad er årsagen oftest: stangen, hoften, knæet eller coret?]
+
+GÅ DYBERE
+HVOR I OPTUREN
+Hos 10 styrkeløftere ved 5RM (158 ± 29 kg) begyndte sticking-regionen ved 12,2 ± 3,7 % og sluttede ved 39,7 ± 9,7 % af stangens opadgående vandring. Hos 25 fritidstrænede ved 3RM lå hastighedens minimum, 0,11 m/s, 1,48 s efter bunden og 0,24 m over den. Hos 15 styrketrænede mænd ved 6RM viste kun 10 af 15 en sticking-region, og den varede 0,21 ± 0,10 s.
+van den Tillaar m.fl. (2020). Larsen m.fl. (2021), studiet af sticking region. van den Tillaar m.fl. (2014).
+LÅRETS VINKEL
+Lårvinklen over vandret ved sticking point var 32,5° ± 3,0 hos 25 løftere ved en regional konkurrence, og ca. 30° ± 2 hos 24 løftere ved et amerikansk mesterskab i 1974. Torsoen var 40,6° ± 6,3 mod vandret, det vil sige ca. 49° fra lodret. Oversigten samler det som at sticking point ligger i opturens første tredjedel.
+Hales m.fl. (2009). McLaughlin m.fl. (1977), tallet gengivet efter Kompf & Arandjelović (2017).
+MODELLEN MOD MÅLINGERNE
+Modellens sticking-tidspunkt er, hvor hastighedskurven har sit minimum, midtvejs i opturens tid, 1,48 s efter bunden. Det passer med de 1,48 s hos Larsen m.fl., og stangens 36 % af vandringen ligger i spændet 12 til 40 %. Lårets 23° ligger under målingernes 30 til 32,5°, og knæet (69°) er mere bøjet end de 95° indvendig vinkel Larsen m.fl. fandt. Mulig årsag, ikke undersøgt: modellen driver alle led med én fælles fremdriftsvariabel.
+Modellens tal og modellens dokumentation.
+Lockout
+
+Efter IPF's regler er lockout nået, når løfteren står oprejst med låste knæ, og løftet er først færdigt, når dommeren giver signal til at stille stangen.
+
+H
+K
+Lockout. Modellens topposition, oprejst med låste knæ. Knæ 179°, hofte 177°, skinneben 9°, torso 5° fra lodret. Stangen står 4,5 cm bagved midtfoden, 10,2 cm bagved hoften (H) og 4,3 cm bagved knæet (K). Balanceret referencekrop, lowbar.
+
+Ledvinkler. Knæ og hofte åbner fra 69° og 75° ved sticking point til 179° og 177°: knæet er låst, og torsoen hælder 5° fra lodret.
+
+Momentet. Stangen står igen 10 cm bagved hoften og 4 cm bagved knæet, som i opstillingen.
+
+Balancen. Foden: tyngdepunktet ligger over midtfoden, og stangen står 4,5 cm bagved den.
+
+Udefra. Løfteren står oprejst og stille med låste knæ. Efter IPF's regler må der ikke være nogen nedadgående bevægelse i opturen.
+
+GÅ DYBERE
+REGLEN
+Løfteren skal rejse sig frit til en oprejst position med låste knæ. Når løfteren står stille i den tilsyneladende sluttilstand, giver overdommeren signal til at stille stangen.
+IPF Technical Rulebook 2026, afsnit 4.1, punkt 4.
+MODELLENS TOPPOSITION
+Modellen finder toppen med strakt ben og prøver torsohældninger fra 0,5 til 5° fra lodret. Den vælger den positur, hvor tyngdepunktet ligger over midtfoden, og stangen står nærmest den. For den balancerede referencekrop er det 5,0° torso og 179,4° i knæet. Det er et valg, der giver en mulig positur, ikke en måling.Modelvalg, modellens dokumentation.
+OPTURENS LÆNGDE
+Opturen tager 2,8 s i modellen. Hos 25 fritidstrænede ved 3RM lå det andet hastighedstop 2,8 s efter bunden.
+Larsen m.fl. (2021), studiet af sticking region. Modellens tal.
+02
+Segmentmodellen
+
+Segmentmodellen tegner løfteren som stive segmenter set fra siden og kræver, at tyngdepunktet af løfter og stang står over midtfoden gennem hele løftet.
+
+Modellen regner i to dimensioner og gælder derfor kun for løftet set fra siden. Panelet viser stangens position i forhold til midtfoden som et tal for de tre kropstyper og for lowbar og highbar. Det er ikke en opskrift: det viser hvorfor to kroppe med hver sine proportioner ender i hver sin bund ved samme dybde og samme stang.
+
+Stangens position over midtfoden ved bunden: 0,9 cm bagved midtfoden
+Torsohældning ved bunden: 49,1°
+Knæ over tå ved bunden: 7,5 cm
+Hoftemoment / knæmoment: 0,90 : 1
+Modellens dybdekrav ved bunden: ja (hofteled 3,0 cm under knæled, skinneben 40°)
+KROPSTYPE
+Balanceret
+Lang lårknogle
+Lang torso
+MIN KROP
+
+Skriv dine egne mål ind. Med et målebånd og en ven tager det under tre minutter. Mangler et mål, bruges en standardværdi udledt af højden.
+
+HØJDE (CM)
+LÅRLÆNGDE (CM)
+Fra hoftens fremspring (træk benet lidt til siden for at mærke det) til knæets yderside.
+SKINNEBENSLÆNGDE (CM)
+Fra knæets yderside til den udstående ankelknude.
+TORSOLÆNGDE (CM)
+Fra hoftens fremspring til skulderens spidse knogleparti.
+OVERARMSLÆNGDE (CM)
+Fra skulderens spidse knogleparti til albuens yderside.
+UNDERARMSLÆNGDE (CM)
+Fra albuens yderside til håndleddets knogleknude på tommelfingersiden.
+FODLÆNGDE (CM)
+Fra hælens bagkant til den længste tå.
+STANGPLACERING
+Lowbar
+Highbar
+SKINNEBENSVINKEL I BUNDEN, MINDST 40,0°
+ANKELGRÆNSE, SKINNEBEN HØJST 45°
+Vis momentarme
+GÅ DYBERE
+BALANCEN
+Modellen finder den torsovinkel, der lægger det samlede tyngdepunkt over midtfoden, for hver kombination af dybde, skinnebensvinkel og stangplacering. Findes ingen, vises ingen positur.
+Modelvalg, ikke et litteraturtal.
+MODELLENS DYBDEKRAV
+Modellens dybdekrav er opfyldt, når hofteleddet ligger mindst 3 cm under knæleddet. IPF vurderer noget andet: overkanten af låret ved hoften mod toppen af knæet, ikke to ledcentre. Modellen har kun ledcentre, så de 3 cm er en valgt margin, og en position kan opfylde kravet uden at bestå dommernes vurdering, og omvendt.
+IPF Technical Rulebook 2026, afsnit 4.1 og 4.1.1. Marginen er ikke et tal fra regelbogen.
+SKINNEBENSVINKLEN
+Skinnebensvinklen er en fri indstilling, fordi ledvinklerne ved en given hoftehøjde ikke er entydige. Panelet starter med den mindste skinnebensvinkel, der opfylder modellens dybdekrav uden at torsoen hælder mere end modellens spænd tillader, højst 65° ved lowbar og 45° ved highbar. Skyderen kan hæve den.
+Modelvalg. Spændet er modellens eget valg, ikke hentet fra en bestemt kilde og ikke valideret mod målte løft.
+TO DIMENSIONER
+Todimensional analyse undervurderer hofte- og lårvinkler med 3 til 13° i forhold til tredimensional, målt hos 39 løftere ved et nationalt styrkeløftsmesterskab. Modellen deler den fejlkilde.
+Escamilla m.fl. (2001).
+03
+Anatomien: kraftlinjer og momentarme
+
+Stangens vandrette afstand til knæ og hofte er momentarmene for stangens vægt, og jo længere væk stangen er fra et led, jo større er stangens eksterne bidrag til det moment, leddet skal holde imod. Sædemuskel, baglår og adduktor har et krav i modellen halvvejs nede og ved sticking point, men ikke i bunden, hvor hoften er bøjet mere, end modellens hofteled kan regne på.
+
+Panelets kontakt "Vis momentarme" tegner afstanden fra stangen til knæ og hofte. Alle tal i kapitlet gælder den balancerede referencekrop med lowbar.
+
+Kraftlinjerne er udledt af musklernes egne forløb i en åben muskuloskeletal model, ikke af litteraturens enkeltpunkter. De viser hvor stort et krav hver muskelgruppe har i forhold til sit eget største krav gennem løftet, ikke hvor stor en kraft musklen faktisk leverer. Tabellen viser knæets og hoftens ledvinkel som i kapitel 1 og i parentes bøjningen, 180° minus ledvinklen: knæet på 46° i bunden er bøjet 134°. Figurteksterne under stillbillederne bruger bøjningen. For læggen er tallet skinnebenets hældning, og for ryggen torsoens hældning.
+
+Opstilling
+Halvvejs ned
+Bund
+Sticking point
+Lockout
+MUSKELGRUPPE	VINKEL	ARM, CM	ANDEL AF MAX	STATUS
+Knæstrækkere (quadriceps)	45,9° (bøjning 134,1°)	2,2	74 %	udledt
+Sædemuskel (gluteus maximus)	36,8° (bøjning 143,2°)	2,4	-	uden for modellens område, intet krav
+Baglår (hamstrings)	36,8° (bøjning 143,2°)	1,4	-	uden for modellens område, intet krav
+Stor adduktor (adductor magnus)	36,8° (bøjning 143,2°)	2,7	-	uden for modellens område, intet krav
+Dyb lægmuskel (soleus)	bøjning 40,0°	2,5	87 %	udledt
+Overfladisk lægmuskel (gastrocnemius)	bøjning 40,0°	3,1	91 %	udledt
+Rygstrækkere (erector spinae)	bøjning 49,1°	4,9	57 %	udledt
+
+Hvad stregerne bygger på: tykkelsen er kravet (ledmoment ÷ momentarm: den kraft gruppen skulle levere hvis den alene bar hele leddets moment, ikke den kraft musklen leverer) i forhold til gruppens eget største krav gennem løftet. Ledmomentet regner segmentmodellen ud (stang, krop og segmenter, kvasistatisk). Momentarmene er udledt af den åbne OpenSim-model og længdeskaleret til denne krops lår og skinneben; rygstrækkerne er en litteraturkurve. Der er ingen squat-specifik validering af momentarmene (ingen EMG, intet squat-modelstudie lagt ind), og de kan ikke måles på en levende atlet, derfor vises ingen absolutte muskelkræfter. Tykkelsen kan ikke sammenlignes mellem grupper og siger intet om hvad musklen faktisk leverer; modellen kender hverken enkelte muskler, fibre, aktivering eller co-kontraktion. Stiplet: vinklen ligger uden for det område modellen dækker. Prikket: gruppen kan ikke bruges som strækker i stillingen.
+
+Knæstrækkere
+Sædemuskel
+Baglår
+Stor adduktor
+Dyb lægmuskel
+Overfladisk lægmuskel
+Rygstrækkere
+
+Jo tykkere streg, jo større krav i forhold til gruppens eget største. Stiplet: uden for modellens område, intet krav vist.
+
+Opstilling og lockout
+
+Stående er kravet lille: læggen ligger over halvdelen af sit eget største krav for at holde balancen, og knæ-, hofte- og rygstrækkerne har i modellen intet krav.
+
+Torsoen hælder kun 5°, og knæ og hofte er strakte, så stangens eksterne bidrag til momentet om knæ, hofte og ryg er tæt på nul i modellen; en lodret torso viser ikke i sig selv, at nettomomentet er nul. Tabellen viser derfor ingen andel for de tre grupper. Læggens krav er 54-64 % af sit eget største, fordi anklens momentarm er lille selv i en oprejst stilling.
+
+Opstilling / lockout. Skinneben 9°, knæfleksion 1°, hoftefleksion 3° (torso-lår), torso 5° fra lodret.
+Halvvejs ned
+
+Halvvejs ned er knæstrækkernes og læggens krav tæt på deres eget største, hoftestrækkernes er under en tredjedel, og rygstrækkerne har næsten intet.
+
+Knæstrækkernes krav er 90 % af deres eget største, læggens 95-96 %, sædemusklens 29 %, baglårets 16 %, stor adduktors 32 % og rygstrækkernes 8 %. Hoften er her bøjet 83° mellem torso og lår, inden for de 120°, modellens hofteled er bygget til at regne på, så hoftestrækkerne har et krav i tabellen.
+
+Halvvejs ned. Skinneben 43°, knæfleksion 96°, hoftefleksion 83° (torso-lår), torso 30° fra lodret.
+Bund
+
+I bunden er hoften bøjet mere, end modellens hofteled kan regne på, så sædemuskel, baglår og adduktor står uden for modellens område netop dér, hvor de arbejder.
+
+Knæstrækkernes krav er 74 % af deres eget største, læggens 87-91 % og rygstrækkernes 57 %. Hoften er her bøjet 143°, over modellens grænse på 120°, så hoftestrækkerne viser intet krav, ikke fordi de ikke arbejder, men fordi vinklen ligger uden for modellens område.
+
+Bund. Skinneben 40°, knæfleksion 134°, hoftefleksion 143° (torso-lår), torso 49° fra lodret.
+Sticking point
+
+Ved sticking point er hoften igen inden for modellens område, og sædemusklen og stor adduktor er oppe på godt halvdelen af deres eget største krav.
+
+Knæstrækkernes krav er 89 % af deres eget største, læggens 97-98 %, sædemusklens og stor adduktors 55 %, baglårets 38 % og rygstrækkernes 29 %. Knæet er mindre bøjet her end i bunden (111° mod 134°), men knæstrækkernes krav er højere (89 % mod 74 %), fordi stangen står længere bag knæet (25 mod 21 cm), og knæstrækkernes momentarm er en anelse kortere (2,0 mod 2,2 cm): momentarmen er ikke en fast størrelse gennem bevægelsen.
+
+Sticking point. Skinneben 44°, knæfleksion 111°, hoftefleksion 105° (torso-lår), torso 38° fra lodret.
+GÅ DYBERE
+STANGENS MOMENT OG LEDDETS MOMENT
+Stangens afstand til leddet siger kun noget om stangens bidrag, når resten af kroppen holdes uændret. Leddets netto moment består også af kroppens egne segmentvægte og jordreaktionen; bevægelsens acceleration regner modellen ikke på.
+Modelvalg.
+MODELLEN BAG ANATOMILAGET
+Momentarmene og kraftlinjernes hjørner er udledt af en generisk, uskaleret muskuloskeletal model, ikke af en atlet, ved OpenSim 4.6. Rygstrækkerne følger stadig litteraturens punkter (samme kilder som resten af kapitlet), fordi modellen ikke har et eget ryg-led.
+Rajagopal m.fl. (2016), i varianten der bruger Lai m.fl. (2017) og Uhlrich m.fl. (2022) til knæets forløb.
+SÅDAN LÆSES "KRAV"
+Krav er ledmoment divideret med momentarm: den kraft gruppen skulle levere, hvis den alene bar hele leddets moment. Det er ikke den kraft musklen leverer, og modellen regner ikke på hastighed. Stregens tykkelse i figurerne er kravet sat i forhold til netop den gruppes eget største krav gennem hele gentagelsen for denne krop og stangplacering, og kan derfor ikke sammenlignes mellem grupper. Derfor viser figurerne procent og ingen absolutte kræfter.
+Løftmodellens dokumentation.
+BÆKKENET ER IKKE SIT EGET LED
+Modellens hofteled er torso mod lår, ikke bækken mod lår, og er bygget til højst 120° fleksion. I modellens bund er hoftefleksionen 143°, over de 120°, så gluteus maximus, baglåret og adduktor magnus vises som uden for området i netop den stilling, hvor de arbejder mest. Halvvejs nede (83°) og ved sticking point (105°) er hoften inden for. Det er en grænse i modellen, ikke et fund om hoftemusklerne.
+Løftmodellens dokumentation.
+04
+Kropstyper
+
+Kropstyperne viser, hvordan længden af lårknogle og overkrop ændrer den position, kroppen kan komme i i bunden.
+
+Den naturlige position skal både føles bedst og kunne godkendes, og de to trækker ikke altid samme vej. Komfort alene fastslår hverken vævstolerance, konkurrencedybde eller hvordan belastningen fordeler sig, så det er kun det ene af to. [MARC: Hvad betyder "føles naturligt" i praksis for dig: hvad spørger du atleten om, og hvad ser du efter, mens I prøver jer frem?]
+
+De tre kropstyper i panelet, balanceret, lang lårknogle og lang torso, er referencepunkter og ikke målte atleter.
+
+Skinnebensvinklen og knæet
+
+Hvor meget skinnebenet hælder frem i bunden, og hvor knæet ender, finder jeg ud fra hvad der føles naturligt for atleten, og hvad der giver en godkendt dybde.
+
+Alle løftere har deres eget bias. Opgaven er at finde det der virker for den enkelte og derefter bygge de svage punkter op, ikke at flytte alle hen til samme vinkel. I modellen spænder den mindste skinnebensvinkel, der giver dybden, fra 29° til 45° på tværs af de tre referencekroppe og de to stangplaceringer.
+
+En goblet squat bruger jeg til at se atletens bias; det er praksis og ikke et litteraturfund. [MARC: Hvad viser goblet squatten dig konkret om atletens bias, og hvilke svage punkter bygger du op bagefter?]
+
+GÅ DYBERE
+KROPSTYPERNES MÅL
+Balanceret: lår 42 cm, skinneben 42 cm, overkrop 50 cm, 78 kg. Lang lårknogle: lår 48, skinneben 40, overkrop 50, 82 kg. Lang torso: lår 38, skinneben 40, overkrop 58, 76 kg.
+Opdigtede referencepunkter i modellen, ikke målte atleter.
+SKINNEBENSVINKLEN I MODELLEN
+Modellens startvinkel for skinnebenet er 40° (balanceret), 45° (lang lårknogle) og 29° (lang torso) ved lowbar, og 43°, 45° og 31° ved highbar. Det er den mindste vinkel der opfylder modellens dybdekrav inden for torsospændet. Lang lårknogle står på modellens loft for skinnebenet, 45°, ved begge placeringer, og ved highbar hælder torsoen da 47°, lidt over spændets 45°.
+Modellens tal for de tre referencekroppe. Gælder ikke en bestemt atlet.
+HVAD MÅLINGER SIGER
+Hos 11 mænd i parallel squat ved ca. 75 % af 1RM hang mere ankelbevægelighed sammen med en mere oprejst torso, mens forholdet mellem torso, lår og skinneben ikke gjorde det signifikant. Hos 18 erfarne løftere ved 70 % af 1RM havde lår-, skinnebens- og torsolængde ingen signifikant sammenhæng med fleksionen i lænd og bækken. Modellens forskelle mellem kropstyperne er derfor geometriens konsekvens, ikke et målt facit.
+Fuglsang m.fl. (2017). Berglund m.fl. (2024).
+Ankelmobilitet
+
+Hvor langt skinnebenet kan hælde fremad i bunden, er ikke kun et valg, det er også en grænse, anklens bevægelighed kan sætte.
+
+Panelets ankelgrænse sætter et loft over skinnebensvinklen. Sæt grænsen lavere, og skyderen for skinnebensvinklen kan ikke gå længere op: for at nå samme dybde med et mere begrænset skinneben må hoften da længere tilbage og torsoen længere frem, den samme sammenhæng panelet allerede viser ved en lavere skinnebensvinkel generelt. Det er geometriens konsekvens af en snævrere ankel, ikke en fejl i teknikken.
+
+Anklen er en af de ting, der sætter en løfters bias. Er en begrænset ankelbevægelighed den mulige årsag til en høj torsohældning, kan mobilitetsarbejde være et relevant eksperiment; en lavere skinnebensvinkel viser ikke i sig selv et svagt punkt.
+
+GÅ DYBERE
+ANKELGRÆNSEN I PANELET
+Panelets ankelgrænse starter på 45° for alle tre kropstyper og begge stangplaceringer, modellens øvre grænse for skinnebenet, så den ikke begrænser noget, før den sættes ned. Den kan sættes til enhver værdi fra -5° til 45°. Sættes den under den skinnebensvinkel, en kropstype skal bruge til dybden (29° til 45° i modellen), hæver panelet skinnebenet igen og skriver "hævet fra" i aflæsningen: modellen lader dybden gå forud for ankelgrænsen. Grænsen er ikke målt på en atlet.
+Modelvalg, ikke et litteraturtal.
+ANKELBEVÆGELIGHED I MÅLINGER
+Hos 44 raske deltagere havde gruppen med begrænset ankeldorsalfleksion (under 30° i en weight-bearing lunge-test, mod over 35° i kontrolgruppen) mere fremadhældning af overkroppen og mere hofte- og lændfleksion i en squat. Hos 18 erfarne løftere hang mere ankelbevægelighed derimod sammen med mere lumbopelvin fleksion. De to studier peger i hver sin retning, så en snæver ankel er ikke et sikkert tegn på et bestemt mønster.
+Zawadka m.fl. (2025). Berglund m.fl. (2024).
+SKINNEBENSVINKLEN ER EN MODEL-PROXY
+Panelets gradtal for skinneben og ankel er modellens egen vinkel for hvor langt skinnebenet hælder, ikke en klinisk måling af ankelleddets bevægeudslag. De to hænger sammen, men er ikke nødvendigvis samme tal.
+Modelvalg, ikke et litteraturtal.
+05
+Stang og variant
+
+I min erfaring er der blandt styrkeløftere en tendens til lowbar; det er en erfaring og ikke en opgjort andel. En undtagelse er en løfter hvis mobilitet eller tidligere skader gør, at en fast placering så langt nede ikke er mulig.
+
+Stangens plads prøves af som resten af positionen, efter hvad der føles bedst og hvad der giver et godkendt løft. [MARC: Hvornår vælger du highbar, front squat eller safety bar til en atlet, ud over mobilitet og skader?]
+
+I modellen bliver stangen over midtfoden, når dens plads på ryggen ændres; det er resten af kroppen der flytter sig. I referencekroppen hælder torsoen mindre jo tættere stangen er på skulderleddet; greb, stangens faktiske massecenter, fodstilling, mobilitet og valgt dybde kan ændre det for en rigtig løfter. Momentarmene ved hofte og knæ flytter kravet mellem de to led. Figurerne er samme model og samme balancerede referencekrop i bunden, kun med stangen flyttet.
+
+Modellen har 49° torsohældning ved lowbar og 37° ved highbar, en forskel på 12°. Hos 18 fritidstrænede ved 3RM var forskellen ca. 10°, og hos 10 styrkeløftere med samme vægt, dybde og fodstilling var der ingen forskel i leddenes bevægelse mellem de to placeringer (Larsen m.fl., 2021; van den Tillaar m.fl., 2020).
+
+H
+K
+Lowbar. Modellens dybdekrav. Knæ 46°, hofte 37°, torso 49° fra lodret. Stangen står 0,9 cm bagved midtfoden. Hoftemoment/knæmoment 0,90 : 1. Balanceret referencekrop.
+H
+K
+Highbar. Modellens dybdekrav. Knæ 43°, hofte 49°, torso 37° fra lodret. Stangen står 0,2 cm foran midtfoden. Hoftemoment/knæmoment 0,76 : 1. Balanceret referencekrop.
+H
+K
+Front squat. Modellens dybdekrav. Knæ 47°, hofte 64°, torso 22° fra lodret. Stangen står 5,2 cm foran midtfoden. Hoftemoment/knæmoment 0,96 : 1. Balanceret referencekrop. Modellen lægger stangen 9 cm foran skulderleddet, på forreste deltoid.
+H
+K
+Safety bar. Modellens dybdekrav. Knæ 43°, hofte 62°, torso 24° fra lodret. Stangen står 3,2 cm foran midtfoden. Hoftemoment/knæmoment 0,76 : 1. Balanceret referencekrop. Punktet er modellens bud på lastens tyngdepunkt og ligger foran brystet; selve stangen hviler på øvre trapezius som ved highbar, og armene holder håndtagene foran.
+Front squat
+
+Med stangen foran skuldrene hælder torsoen i modellen mindre end ved både lowbar og highbar, og hofte- og knæmomentet er næsten lige store.
+
+I modellen hælder torsoen 22° ved front squat mod 37° ved highbar og 49° ved lowbar, og hoftemomentet er 0,96 gange knæmomentet, mod highbars 0,76 og lowbars 0,90. Torsospændet, modellen søger inden for, er ikke et litteraturtal for front squat.
+
+Safety bar
+
+Med en safety bar hælder torsoen i modellen omtrent som ved front squat, og forholdet mellem hofte- og knæmoment er det samme som ved highbar.
+
+Torsoen hælder 24° i modellen, og hoftemomentet er 0,76 gange knæmomentet, som ved highbar. Front squat og safety bar ligger begge ved det mål, modellen sigter efter inden for sit torsospænd (22,5° og 24°), så ligheden mellem dem kommer af modelvalget og ikke af en måling. Stangens plads på skuldrene er modellens antagelse for en generisk safety bar, ikke et mål på en bestemt bar eller opsætning, og tallene her er derfor ikke et generelt fund om safety bars.
+
+GÅ DYBERE
+MODELLENS FORSKEL
+For den balancerede referencekrop ved modellens dybdekrav hælder torsoen 49,1° ved lowbar, 37,2° ved highbar, 22,1° ved front squat og 23,6° ved safety bar. Hoftemomentet er 0,90 gange knæmomentet ved lowbar, 0,76 ved highbar, 0,96 ved front squat og 0,76 ved safety bar.
+Modellens tal, balanceret krop.
+SAFETY BARS PLACERING I MODELLEN
+Safety bar fik sin egen stangposition i modellen efter front squat, ud fra Kristiansen m.fl. (2021), som kun angiver retningen: hos 14 rekreativt trænede var torsohældningen størst ved lowbar, dernæst highbar og mindst ved safety bar, målt ved 3RM. Kilden angiver ikke hvor langt foran skuldrene stangens tyngdepunkt sidder, så centimetertallene er modelvalg og ikke litteraturtal.
+Kristiansen m.fl. (2021).
+MÅLT FORSKEL I TORSO
+Hos 18 fritidstrænede ved 3RM var forskellen på lowbar og highbar ca. 10° mere foroverbøjning ved lowbar. Reviewet af highbar og lowbar peger samme vej: mere oprejst torso og mere knæfleksion ved highbar, mere hoftefleksion ved lowbar.
+Larsen m.fl. (2021), studiet af standbredde og stangplacering. Glassbrook m.fl. (2017).
+MÅLT FORSKEL I LED OG MOMENT
+Hos 10 styrkeløftere ved 5RM (158 ± 29 kg), med samme vægt, dybde og fodstilling, var der ingen forskel i stangens eller leddenes kinematik mellem placeringerne; hoftevinklen i bunden var 65° ved highbar og 62° ved lowbar. Modellen giver en tydeligere forskel.
+van den Tillaar m.fl. (2020). Wretenberg m.fl. (1996).
+FRONT SQUATS TORSOSPÆND
+Modellen finder bundpositionen ved at søge den mindste skinnebensvinkel, der opfylder modellens dybdekrav inden for et torsospænd. For front squat er spændet sat til 15-30°, efter samme mønster som lowbar og highbar, uden at en kilde i litteraturgennemgangen nævner en gradspændvidde for front squat specifikt.
+Modelvalg, ikke et litteraturtal. Se løftmodellens egen dokumentation for lowbar/highbar-spændene.
+06
+Virkeligheden mod modellen
+
+Squat-udgaven kommer, når der er film; her er dødløftet som eksempel på metoden.
+
+Metoden er den samme uanset løft: et målt løft fra video lægges oven på modellens figur med de samme mål, og hvert led får en afvigelse, målt minus model, ved siden af et usikkerhedsbånd. Eksemplet her er et 270 kg dødløft fra én film, ét kamera, fra siden, fem stillinger fra start til lockout. Modellen får kroppens mål (183 cm, 120 kg) og stangens højde fra målingen, og løser resten.
+
+Start (stangen forlader gulvet)Mellem start og knæhøjdeKnæhøjdeMellem knæhøjde og lockoutLockout
+Model 1Model 2
+ Modellens figur Målt skelet og bånd
+Led	Målt ± bånd	Model	Afvigelse	Inden for båndet
+Skinneben mod lodret (tilpasset)	48,8 ° ± 24,6	18,0 °	+30,8 °	tilpasset
+Knæ	76,5 ° ± 33,6	102,2 °	-25,7 °	ja
+Hofte	80,1 ° ± 12,3	79,2 °	+0,9 °	ja
+Torso mod lodret	45,2 ° ± 7,2	41,0 °	+4,2 °	ja
+Stang, vandret fra midtfod	2,7 cm ± 1,5	2,5 cm	+0,1 cm	ja
+Stang, højde over gulv	44,8 cm ± 6,2	48,7 cm	-4,0 cm	ja
+
+Modellen regner på segmentlængder, masse, balance og momenter. Den viser ikke enkelte muskler, sener eller en bøjelig ryg. Det målte skelet er rekonstrueret fra fire målte vinkler på modellens egne segmentlængder. Eget klip, 270 kg.
+
+DE FEM STILLINGER SOM STILLBILLEDER
+Start. Gråt: modellens figur. Blåt: det målte skelet, rekonstrueret fra vinkler, med usikkerhedsbåndet som skygge (gult ved hoften). Model 1, samme skala i alle fem.
+Før knæ. Modellens figur med det målte skelet og usikkerhedsbåndet oven på. Model 1, samme skala i alle fem.
+Knæhøjde. Modellens figur med det målte skelet og usikkerhedsbåndet oven på. Model 1, samme skala i alle fem.
+Efter knæ. Modellens figur med det målte skelet og usikkerhedsbåndet oven på. Model 1, samme skala i alle fem.
+Lockout. Modellens figur med det målte skelet og usikkerhedsbåndet oven på. Model 1, samme skala i alle fem.
+Målt ± bånd og model 1 pr. led, 270 kg dødløft. Afvigelse er målt minus model. "Inden for" betyder inden for båndet, ikke at modellen rammer.
+LED	START	FØR KNÆ	KNÆHØJDE	EFTER KNÆ	LOCKOUT
+Knæ	
+85,4 ± 16,1°
+ingen løsning
+	
+79,1 ± 11,5°
+model 119,7°, uden for
+	
+76,5 ± 33,5°
+model 102,2°, inden for
+	
+166,3 ± 6,3°
+model 153,8°, uden for
+	
+171,8 ± 4,8°
+model 172,6°, inden for
+
+Hofte	
+79,7 ± 6,9°
+ingen løsning
+	
+81,4 ± 6,9°
+model 52,1°, uden for
+	
+80,1 ± 12,3°
+model 79,2°, inden for
+	
+153,5 ± 13,8°
+model 143,1°, inden for
+	
+171,8 ± 12,7°
+model 180,0°, inden for
+
+Torso mod lodret	
+50,3 ± 6,8°
+ingen løsning
+	
+49,3 ± 5,1°
+model 69,3°, uden for
+	
+45,2 ± 7,2°
+model 41,0°, inden for
+	
+15,7 ± 8,9°
+model 18,2°, inden for
+	
+3,5 ± 5,8°
+model 0,0°, inden for
+
+Stang, vandret fra midtfod	
+3,8 ± 1,8 cm
+ingen løsning
+	
+3,2 ± 0,3 cm
+model 5,1 cm, uden for
+	
+2,7 ± 1,5 cm
+model 2,5 cm, inden for
+	
+-2,6 ± 0,9 cm
+model 0,7 cm, uden for
+	
+-2,6 ± 0,3 cm
+model -1,4 cm, uden for
+
+Stang, højde over gulv	
+24,8 ± 2,1 cm
+ingen løsning
+	
+31,0 ± 4,4 cm
+model 30,6 cm, inden for
+	
+44,8 ± 6,2 cm
+model 48,7 cm, inden for
+	
+69,2 ± 3,8 cm
+model 80,8 cm, uden for
+	
+73,0 ± 0,0 cm
+model 85,8 cm, uden for
+
+"Inden for" betyder inden for båndet, og båndet er bredt: på knæet er det ± 33,5° ved knæhøjde. Et "ja" i tabellen er derfor en svag enighed og ikke en bekræftelse. Tabellen og figuren viser model 1, løserens egen. Figuren kan skifte til model 2, som resten af opslaget bruger, og som ingen positur finder ved lockout.
+
+Ved lockout ligger knæet 0,8° fra målingen, hoften 8,2° og torsoen 3,5°. Stangens højde gør ikke: 73,0 cm målt mod modellens 85,8. Ved knæhøjde er alle fem led inden for båndet, men knæet afviger -25,7° og er kun med, fordi båndet er så bredt; den største afvigelse ligger lige før, 40,6° på knæet. I starten finder model 1 ingen positur, fordi torsohældningen på 75,1° ligger over modellens grænse på 75°.
+
+Modellen viser hvad geometrien tvinger ved de mål, den får, ikke hvad en bestemt løfter gør. Hvor målingen og modellen mødes, siger det noget om geometrien; hvor de skilles, er det den enkelte løfters måde at løfte på, eller en usikkerhed i målingen. [MARC: Hvad ser du selv de steder, hvor målingen og modellen skilles?]
+
+GÅ DYBERE
+HVAD DER ER MÅLT
+Et 270 kg dødløft, én gentagelse, ét kamera, 2D fra siden. Skelettet er ikke optaget led for led: det er bygget af fire målte vinkler (skinneben, knæ, torso, hofte) på modellens egne segmentlængder, så kun vinklerne kan afvige. Hoftevinklen bruges ikke til at bygge det og kommer tilbage identisk. Stangen er vist som punkt, fordi armlængden ikke er målt.
+Løftmodellens dokumentation.
+BÅNDET
+Båndet er et spænd, største minus mindste værdi over fem varianter af målingen, og bruges som tolerance til begge sider. Det gør "inden for" mildt: på knæet er båndet 33,5° ved knæhøjde og 16,1° i starten. Stangens højde ved lockout har båndet 0,0, fordi alle fem varianter aflæser samme skive, og det undervurderer usikkerheden.
+SKINNEBENET
+Skinnebenets vinkel er tilpasset modellen og er ikke pålidelig i videoen (synligheden er under 0,5 i flere billeder), så afvigelser på 30 til 50° dér siger ikke noget om modellen. Skinnebenet står derfor ikke i tabellen.
+SKALA
+Stangen er omregnet med tabelkroppens fodlængde (27,8 cm). Den målte stang ved lockout ligger 15 % lavere end modellens. Det kan være, at kroppen i videoen er mindre end tabelkroppen, eller en skalafejl i videoen; det afgør målingen ikke.
+MODELVERSION
+Model 2 finder en positur ved start, med hoften 37° fra det målte.
+GYLDIGHED
+Ét klip, én krop, én side, én gentagelse. Intet her gælder for andre kroppe eller kameravinkler uden ny måling.
+07
+Når det ser forkert ud
+
+Et fejlbillede har i modellen en geometrisk årsag og en momentomkostning, ikke kun en regel om hvad der er rigtigt.
+
+De fire fejlbilleder tager udgangspunkt i den balancerede referencekrops egen løste positur i bunden af løftet (modellens dybdekrav, lowbar) og ændrer ét punkt ad gangen. I hver figur er referencekroppens løste positur tegnet i gråt og fejlbilledet i halvgennemsigtigt blåt, i samme skala, og de vandrette streger ved hofte og knæ er stangens afstand til leddet. Referencekroppen er ikke en måling af en rigtig atlet. Gælder balanceret referencekrop, medmindre andet står, og en anden krop eller stangplacering kan give andre tal. Modellen har ingen fast talgrænse for, hvornår en afvigelse er en fejl, og hvornår den er atletens bias; det er en coach-vurdering for den enkelte løfter. [MARC: Hvilke tre fejlbilleder ser du oftest, og hvilke ligner en fejl, men er atletens naturlige position?]
+
+Good morning
+
+Hoften kører op, mens skuldrene bliver i samme højde, så torsoen tipper frem.
+
+I modellen hæves hoften 9 cm ved uændret skulderhøjde, og torsoen hælder 12,6° mere, fra 49° til 62°. Knæmomentet falder 89 Nm, og hofte- og lændmomentet stiger 90 og 57 Nm: arbejdet flytter fra knæet til hoften og ryggen. Modellen regner kvasistatisk, så den viser posituren, ikke hvor hurtigt hoften kører op.
+
+Good morning. Hoften 9 cm op ved samme skulderhøjde, torsoen 12,6° mere foroverbøjet. Balanceret referencekrop, lowbar, modellens dybdekrav.
+Moment om leddet før og efter, i Nm. Balanceret referencekrop, lowbar.
+LED	FØR	EFTER	ÆNDRING
+Ankel	112,5	112,5	0,0
+Knæ	345,4	256,0	-89,4
+Hofte	312,4	402,5	+90,1
+Lænd (L5/S1)	109,9	166,7	+56,8
+
+Værd at undersøge hvis lændmomentet stiger mere end hoftemomentet falder, eller hvis torsohældningen nærmer sig modellens grænse ved den dybde atleten faktisk løfter i. Snarere bias hvis ændringen er lille og leddene er langt fra deres grænse: en anelse tidlig hoftestrækning er en normal del af en rytme, ikke automatisk en fejl.
+
+Skinnebenet presset forbi ankelgrænsen
+
+I modellen presses skinnebenet længere frem end ankelgrænsen tillader, og resten af kroppen kompenserer; det er typisk her, hælene letter i et rigtigt løft.
+
+Modellen kan kun vise selve kompensationen i knæ, hofte og torso, ikke hælens løft selv, fordi modellens fod er fast. I fejlbilledet er ankelgrænsen sat til 35°, lavere end panelets 45°, og posituren forsøges 5 cm dybere med skinnebenet på 45°. Vinklen klippes til grænsen, under referencekroppens egne 40°, så knæet kommer mindre frem, og torsoen hælder 4° mere. Knæmomentet falder 49 Nm, og hofte- og lændmomentet stiger 31 og 19 Nm.
+
+Skinnebenet presset forbi ankelgrænsen. Skinnebenet klippet til ankelgrænsen (35° mod ønskede 45°) 5 cm dybere, knæmomentet ned, hofte- og lændmoment op. Balanceret referencekrop, lowbar, modellens dybdekrav.
+Moment om leddet før og efter, i Nm. Balanceret referencekrop, lowbar.
+LED	FØR	EFTER	ÆNDRING
+Ankel	112,5	112,5	0,0
+Knæ	345,4	296,1	-49,3
+Hofte	312,4	343,5	+31,1
+Lænd (L5/S1)	109,9	129,0	+19,1
+
+Værd at undersøge hvis kompensationen presser hofte- eller lændmomentet op, eller hvis knæ- eller hoftevinklen nærmer sig sin grænse i modellen. Om hælen faktisk letter i et rigtigt løft, og hvorfor, kan modellen med sin faste fod ikke sige. Snarere bias hvis kompensationen er lille og leddene er langt fra deres grænser: en anelse tå-ud eller et forreste fodtryk er ikke i sig selv en fejl.
+
+Stangen foran midtfod
+
+Stangen flytter sig frem over foden ved uændret krop, og momentet om alle led stiger eller falder med det samme.
+
+Flyttes stangen 5 cm frem, fra 0,9 cm bagved til 4,1 cm foran midtfoden, stiger momentet om både ankel, hofte og lænd med 49 Nm hver i modellen, mens knæmomentet falder tilsvarende. Modellen viser kun denne isolerede omkostning ved uændret krop, ikke hvordan en atlet reelt ville rette balancen op igen.
+
+Stangen foran midtfod. Stangen 5 cm længere fremme ved uændret krop, moment om ankel, hofte og lænd op 49 Nm hver. Balanceret referencekrop, lowbar, modellens dybdekrav.
+Moment om leddet før og efter, i Nm. Balanceret referencekrop, lowbar.
+LED	FØR	EFTER	ÆNDRING
+Ankel	112,5	161,5	+49,0
+Knæ	345,4	296,4	-49,0
+Hofte	312,4	361,4	+49,0
+Lænd (L5/S1)	109,9	158,9	+49,0
+
+Værd at undersøge hvis momentstigningen ved hofte eller ankel er stor i forhold til leddets øvrige krav ved denne dybde, eller hvis atleten reelt måtte tilføje ekstra torsohældning eller hoftestrækning for at komme tilbage over midtfoden. Snarere bias hvis en enkelt frame viser stangen en anelse foran linjen: det alene siger intet om hvorvidt det var systematisk gennem løftet.
+
+For lidt dybde
+
+Hoften stopper højere ved samme torsohældning, og positionen mister modellens dybdekrav.
+
+Stopper hoften 8 cm højere ved uændret torsohældning, mister posituren dybdekravet i modellen: hofteleddet ligger ikke længere mindst 3 cm under knæleddet. Momentet om knæ, hofte og lænd ændrer sig næsten ikke (knæet -2,7 Nm), så det er ikke en tungere positur at holde, det er en positur der ikke består dybdekravet.
+
+For lidt dybde. Hoften 8 cm højere ved uændret torsohældning, dybdekravet mistet. Balanceret referencekrop, lowbar.
+Moment om leddet før og efter, i Nm. Balanceret referencekrop, lowbar.
+LED	FØR	EFTER	ÆNDRING
+Ankel	112,5	112,5	0,0
+Knæ	345,4	342,7	-2,7
+Hofte	312,4	312,4	0,0
+Lænd (L5/S1)	109,9	109,9	0,0
+
+Problem: ved samme torsohældning mister denne positur dybdekravet, hofteleddet ligger ikke længere under knæleddet med margin. Det er en geometrisk for lidt dybde ved den prøvede hældning, ikke kun en stilistisk variation.
+
+Det modellen ikke kan vise
+
+Tre fejlbilleder kan modellen slet ikke tegne: knæ der falder indad, et bækken der står skævt, og et bækken der vipper.
+
+Knævalgus, knæet der falder indad, er en bevægelse i frontalplanet, på tværs af løfteretningen. Modellen regner kun i to dimensioner set fra siden og har hverken en bredde-akse eller et frontalplans-led at regne på. Et tal her ville være at opfinde data modellen ikke har.
+
+Bækkenobliquitet, hvor den ene side af bækkenet ligger højere end den anden, rammer samme grænse af en anden grund: modellens hofte er ét punkt, midtpunktet mellem de to hofteled, ikke to hofteled der kan stå forskudt i forhold til hinanden. Den bevægelse er frontalplans og tredimensional, og den todimensionale, sagittale hoftemodel kan ikke repræsentere den.
+
+"Bækkenvip" bruges også om bækkenets tilt i sagittalplanet i bunden af en squat. Den bevægelse ligger heller ikke i modellen, som har torso mod lår og ikke et eget bækkenled.
+
+Det er ikke fordi de tre ting ikke betyder noget. Det er grænsen for hvad en todimensional model, set fra siden, kan sige noget om.
+
+GÅ DYBERE
+MODELLEN BAG FEJLBILLEDERNE
+Hvert fejlbillede er en afvigelse fra den balancerede referencekrops løste positur i bunden, med moment før og efter regnet af segmentmodellen. Gælder balanceret krop, lowbar.
+Løftmodellens dokumentation.
+HVORFOR KUN FIRE FIGURER
+Modellen har registreret seks fejlbilleder i alt: de fire med figur, plus knæ indad og bækkenets obliquitet, som den ikke kan tegne. Bækkenets tilt er ikke registreret som fejlbillede, men ligger heller ikke i modellen.
+Løftmodellens dokumentation.
+08
+Min praksis
+Hvad jeg kigger efter
+
+Når jeg vurderer en squat, kigger jeg mest på tre ting: stangens position i forhold til midtfoden, knæets og hoftens bevægelse gennem løftet, og coret, altså hvordan det holder, og om det folder sammen i bunden.
+
+Modellens balancebetingelse er det samlede tyngdepunkt af løfter og stang over midtfoden, ikke stangen alene. I bunden står stangen næsten over midtfoden, 0,9 cm bagved. Oprejst står den 4,5 cm bagved, fordi resten af kroppens masse ligger foran. Knæets og hoftens bevægelse er ledvinklerne og momentarmene, og kropstyperne viser hvorfor de ser forskellige ud fra løfter til løfter. De to kan aflæses og kontrolleres mod en figur. Coret vurderes af en coach, der ser løfteren.
+
+GÅ DYBERE
+MODELOBSERVATION OG COACH-DOM
+Stangens afstand til midtfoden og momentet om knæ og hofte er modelobservationer: de er regnet ud fra en referencekrop og gælder kun den. Om coret holder, og om det er et problem for netop denne løfter, er en coach-dom, som modellen ikke giver, fordi den tegner torsoen som én stiv linje. Modellen viser hvad geometrien koster, ikke hvad det betyder for en bestemt løfter.
+Modelvalg.
+Hvad det betyder for teknikvalg
+
+Jeg starter med atletens egen position, ikke med en bestemt teknik.
+
+Fremgangsmåden er at prøve sig frem til det der føles bedst og kan godkendes i konkurrence, se efter atletens bias, for eksempel i en goblet squat, og derefter bygge de svage punkter op. For styrkeløftere ender det efter min erfaring oftest med lowbar, medmindre mobilitet eller tidligere skader taler imod.
+
+Det faste punkt er dommernes: overkanten af låret ved hoften under toppen af knæet, og oprejst med låste knæ til sidst (IPF Technical Rulebook 2026, afsnit 4.1). Inden for de krav er positionen den enkeltes.
+
+KOMMER
+
+Hvad jeg siger til en atlet i bunden af en squat, og hvornår jeg lader være. [MARC: Hvad siger du til en atlet i bunden af en tung squat, og hvornår siger du ingenting?] [MARC: Hvornår retter du bevidst ikke en squat, selvom den ser skæv ud?]
+
+FORBEHOLD
+
+Modellen bag panelet regner i to dimensioner på segmentlængder, masse, balance og ledmomenter. Den kan ikke sige noget om hvordan coret holder, eller om ryggen folder sammen i bunden, og den regner ikke på enkelte muskler. Kropstyperne er opdigtede referencepunkter, og en sammenligning af to kropstyper siger intet om faktisk styrke, mobilitet eller teknik. Musklernes tal viser den kraft en muskelgruppe skulle levere, hvis den alene bar hele ledmomentet. Det er et højere tal end virkeligheden, hvor flere muskler deler arbejdet. Modellen regner heller ikke på bevægelsens hastighed.
+
+REFERENCER
+
+International Powerlifting Federation. (2026). Technical Rulebook 2026 (v3, gældende fra 1. marts 2026), afsnit 4.1 "Squat". https://www.powerlifting.sport/fileadmin/ipf/data/rules/technical-rules/english/2026_IPF_Technical_Rulebook__effective_01_March_2026__v3.pdf
+
+van den Tillaar, R., Andersen, V., & Saeterbakken, A. H. (2014). The existence of a sticking region in free weight squats. Journal of Human Kinetics, 42, 63-71. https://doi.org/10.2478/hukin-2014-0061
+
+Larsen, S., Kristiansen, E., & van den Tillaar, R. (2021). New insights about the sticking region in back squats: an analysis of kinematics, kinetics, and myoelectric activity. Frontiers in Sports and Active Living, 3, 691459. https://doi.org/10.3389/fspor.2021.691459
+
+Hales, M. E., Johnson, B. F., & Johnson, J. T. (2009). Kinematic analysis of the powerlifting style squat and the conventional deadlift during competition: is there a cross-over effect between lifts? Journal of Strength and Conditioning Research, 23(9), 2574-2580. https://doi.org/10.1519/JSC.0b013e3181bc1d2a
+
+McLaughlin, T. M., Dillman, C. J., & Lardner, T. J. (1977). A kinematic model of performance in the parallel squat by champion powerlifters. Medicine and Science in Sports, 9(2), 128-133.
+
+Kompf, J., & Arandjelović, O. (2017). The sticking point in the bench press, the squat, and the deadlift: similarities and differences, and their significance for research and practice. Sports Medicine, 47(4), 631-640. https://doi.org/10.1007/s40279-016-0615-9
+
+Glassbrook, D. J., Helms, E. R., Brown, S. R., & Storey, A. G. (2017). A review of the biomechanical differences between the high-bar and low-bar back-squat. Journal of Strength and Conditioning Research, 31(9), 2618-2634. https://doi.org/10.1519/JSC.0000000000002007
+
+van den Tillaar, R., Knutli, T. R., & Larsen, S. (2020). The effects of barbell placement on kinematics and muscle activation around the sticking region in squats. Frontiers in Sports and Active Living, 2, 604177. https://doi.org/10.3389/fspor.2020.604177
+
+Larsen, S., Kristiansen, E., Helms, E., & van den Tillaar, R. (2021). Effects of stance width and barbell placement on kinematics, kinetics, and myoelectric activity in back squats. Frontiers in Sports and Active Living, 3, 719013. https://doi.org/10.3389/fspor.2021.719013
+
+Fuglsang, E. I., Telling, A. S., & Sørensen, H. (2017). Effect of ankle mobility and segment ratios on trunk lean in the barbell back squat. Journal of Strength and Conditioning Research, 31(11), 3024-3033. https://doi.org/10.1519/JSC.0000000000001872
+
+Krevolin, J. L., Pandy, M. G., & Pearce, J. C. (2004). Moment arm of the patellar tendon in the human knee. Journal of Biomechanics, 37(5), 785-788. https://doi.org/10.1016/S0021-9290(03)00331-2
+
+Tsaopoulos, D. E., Baltzopoulos, V., & Maganaris, C. N. (2006). Human patellar tendon moment arm length: measurement considerations and clinical implications for joint loading assessment. Clinical Biomechanics, 21(7), 657-667.
+
+Németh, G., & Ohlsén, H. (1985). In vivo moment arm lengths for hip extensor muscles at different angles of hip flexion. Journal of Biomechanics, 18(2), 129-140.
+
+Dostal, W. F., Soderberg, G. L., & Andrews, J. G. (1986). Actions of hip muscles. Physical Therapy, 66(3), 351-361.
+
+McGill, S. M., Patt, N., & Norman, R. W. (1988). Measurement of the trunk musculature of active males using CT scan radiography: implications for force and moment generating capacity about the L4/L5 joint. Journal of Biomechanics, 21(4), 329-341.
+
+McGill, S. M. (2002). Low Back Disorders: Evidence-Based Prevention and Rehabilitation. Human Kinetics.
+
+Bogduk, N., Macintosh, J. E., & Pearcy, M. J. (1992). A universal model of the lumbar back muscles in the upright position. Spine, 17(8), 897-913.
+
+Tveit, P., Daggfeldt, K., Hetland, S., & Thorstensson, A. (1994). Erector spinae lever arm length variations with changes in spinal curvature. Spine, 19(2), 199-204.
+
+Rugg, S. G., Gregor, R. J., Mandelbaum, B. R., & Chiu, L. (1990). In vivo moment arm calculations at the ankle using magnetic resonance imaging (MRI). Journal of Biomechanics, 23(5), 495-501.
+
+Rajagopal, A., Dembia, C. L., DeMers, M. S., Delp, D. D., Hicks, J. L., & Delp, S. L. (2016). Full-body musculoskeletal model for muscle-driven simulation of human gait. IEEE Transactions on Biomedical Engineering, 63(10), 2068-2079. https://doi.org/10.1109/TBME.2016.2586891 (modelvarianten RajagopalLaiUhlrich2023.osim, opensim-org/opensim-models, bruger desuden Lai, Arnold & Wakeling (2017), Annals of Biomedical Engineering, 45, 2762-2774, https://doi.org/10.1007/s10439-017-1920-7, og Uhlrich m.fl. (2022), Scientific Reports, 12, 9264, https://doi.org/10.1038/s41598-022-13386-9, til knæets forløb ved høj fleksion.)
+
+Escamilla, R. F., Fleisig, G. S., Lowry, T. M., Barrentine, S. W., & Andrews, J. R. (2001). A three-dimensional biomechanical analysis of the squat during varying stance widths. Medicine and Science in Sports and Exercise, 33(6), 984-998. https://doi.org/10.1097/00005768-200106000-00019
+
+Wretenberg, P., Feng, Y., & Arborelius, U. P. (1996). High- and low-bar squatting techniques during weight-training. Medicine and Science in Sports and Exercise, 28(2), 218-224. https://doi.org/10.1097/00005768-199602000-00010
+
+Berglund, L., Öhberg, F., Strömbäck, E., & Papacosta, D. (2024). Are anthropometric measures, range of motion, or movement control tests associated with lumbopelvic flexion during barbell back squats? International Journal of Sports Physical Therapy, 19(9), 1097-1107. https://doi.org/10.26603/001c.122637
+
+Kristiansen, E., Larsen, S., Haugen, M. E., Helms, E., & van den Tillaar, R. (2021). A biomechanical comparison of the safety-bar, high-bar and low-bar squat around the sticking region among recreationally resistance-trained men and women. International Journal of Environmental Research and Public Health, 18(16), 8351. https://doi.org/10.3390/ijerph18168351
+
+Zawadka, M., Smolka, J., Skublewska-Paszkowska, M., Lukasik, E., & Gawda, P. (2025). Effect of limited ankle dorsiflexion on lower limbs and trunk kinematics during squatting. Journal of Manipulative and Physiological Therapeutics, 48(1-5), 395-403.
+
+Bengtsson, V., Berglund, L., Öhberg, F., & Aasa, U. (2023). Thoracolumbar and lumbopelvic spinal alignment during the barbell back squat: a comparison between men and women. International Journal of Sports Physical Therapy, 18(4), 820-830.
+
+M
+FORFATTER
+Marc Schlichting
+Stifter af Entropi Coaching. Styrkeløft-coach med 8+ års erfaring.
+FLERE ARTIKLER
+Viden om styrkeløft
+De øvrige artikler om programmering og træning ligger samlet her.
+→
+TILBAGE TIL ARTIKLER
+Entropi.
+SYSTEMATISK STYRKE · DATA, DISCIPLIN & DYBDE
+FILOSOFI
+RESULTATER
+COACHING
+INSTAGRAM
+Marc Schlichting
+coach@entropicoaching.dk
+Entropi Coaching · CVR 46684443
+Privatliv · © 2026
