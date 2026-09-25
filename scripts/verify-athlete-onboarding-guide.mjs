@@ -9,8 +9,9 @@
 //      tjekker dette script, via tekstmatch mod selve kildekoden.
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+import { athleteViewKilde } from './athleteViewKilde.mjs'
 
-const athleteView = readFileSync(new URL('../src/AthleteView.jsx', import.meta.url), 'utf8')
+const athleteView = athleteViewKilde()
 
 // --- Guiden vises ved første login, og aldrig af sig selv igen -------------
 // onboardingDone kommer udelukkende fra den server-gemte kolonne, hentet ved

@@ -10,8 +10,9 @@
 // bekræftet svar (dvs. "if (!ok) return" før setteren).
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+import { athleteViewKilde } from './athleteViewKilde.mjs'
 
-const athleteView = readFileSync(new URL('../src/AthleteView.jsx', import.meta.url), 'utf8')
+const athleteView = athleteViewKilde()
 // Programmets JSX (herunder den tomme-program-gren) flyttede til sin egen
 // lazy-loadede fane i ordre 232 · commit 3 (ren udflytning, se
 // docs/RAPPORT-232.md) — samme tjek, ny fil.

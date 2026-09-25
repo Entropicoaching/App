@@ -4,6 +4,7 @@ import vm from 'node:vm'
 import { sanitizeVideoCoachFeedbackEvidence } from '../src/videoCoachFeedbackEvidence.js'
 import { videoCoachFeedbackQuality } from '../src/videoCoachFeedbackQuality.js'
 import { sanitizeVideoCoachPersonalBaseline, videoCoachPersonalBaselineAthleteText, videoCoachPersonalBaselineForAnalysis, videoCoachPersonalBaselineOptions, videoCoachPersonalBaselineSelection, withVideoCoachPersonalBaseline } from '../src/videoCoachPersonalFeedback.js'
+import { athleteViewKilde } from './athleteViewKilde.mjs'
 
 const personalAnalysis = {
   id: 'analysis-01', athlete_id: 'athlete-01', lift: 'bench', variation: 'slingshot',
@@ -230,7 +231,7 @@ assert.doesNotMatch(html, /const cues = suggestCues\(lift, vals\)\.slice\(0, 2\)
 assert.match(html, /feedback: 'coach-feedback-priority-v2-2026-07-27'/)
 assert.match(html, /feedback_evidence: vcV3FeedbackEvidence\(prioritizedFeedback\)/)
 
-const athleteView = fs.readFileSync(new URL('../src/AthleteView.jsx', import.meta.url), 'utf8')
+const athleteView = athleteViewKilde()
 assert.match(athleteView, /feedback_evidence:\s*sanitizeVideoCoachFeedbackEvidence\(/)
 assert.match(athleteView, /v=\$\{VIDEOCOACH_BUILD_ID\}/)
 

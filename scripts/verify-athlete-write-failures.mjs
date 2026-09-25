@@ -9,8 +9,9 @@
 // beskedfeltet ryddes FØR skrivningen er bekræftet — er væk.
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+import { athleteViewKilde } from './athleteViewKilde.mjs'
 
-const athleteView = readFileSync(new URL('../src/AthleteView.jsx', import.meta.url), 'utf8')
+const athleteView = athleteViewKilde()
 // F5 (markGoodAndSave) flyttede til sin egen lazy-loadede fane i ordre 232 ·
 // commit 2 (ren udflytning, se docs/RAPPORT-232.md) — samme tjek, ny fil.
 const staevnedagTab = readFileSync(new URL('../src/athlete/StaevnedagTab.jsx', import.meta.url), 'utf8')
