@@ -13,6 +13,7 @@ export const DASHBOARD_MODULER = [
   'dashboard/coachKonstanter.js',
   'dashboard/hubSektioner.jsx',
   'dashboard/laesninger.js',
+  'dashboard/navigation.js',
 ]
 
 export function dashboardKilde() {

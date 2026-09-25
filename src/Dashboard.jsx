@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase, signOutHard } from './supabase'
 import LazyBoundary from './LazyBoundary'
-import { buildCoachPriorityItems, coachPriorityQueueContext, coachPriorityTaskContext } from './coachPriority'
+import { buildCoachPriorityItems, coachPriorityQueueContext } from './coachPriority'
 import { automationAlertResolveErrorMessage, RESOLVE_AUTOMATION_ALERT_RPC } from './automationAlerts'
 import { coachBriefingPointKey, coachBriefingSeenErrorMessage } from './coachBriefingSeen'
 import { coachInboxEntryIntent, coachInboxFocusDecision, createSingleFlightRunner, trainingSignalFingerprint } from './coachInboxState'
@@ -30,6 +30,7 @@ import { WEEKDAYS_SHORT, statusLabels, holidayInfo, ferieBadgeLabel, ATHLETE_LOG
 import { HUB_SECTIONS } from './dashboard/hubSektioner'
 import { VIDEOCOACH_V3_PREFIX, VIDEOCOACH_V3_URL, videoCoachBridgeConfig, validateVideoCoachV3Row, videoCoachPathPreview, videoCoachFeedbackDraft, videoCoachFeedbackPayload, coachVideoPriorityDetail, videoCoachMeasurementSummary, videoCoachMeasurementText } from './dashboard/coachVideoHjaelp'
 import { lavLaesninger } from './dashboard/laesninger'
+import { lavNavigation } from './dashboard/navigation'
 
 
 
@@ -293,6 +294,19 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     setTrainingSignals, setTrainingSignalsError, setUnreadByTrack, setUnreadCounts, setVideoAnalyses, setVideoAnalysisError,
     setVideoAnalysisLoading, setVideoBaselines, setVideoReviewQueue, setVideoReviewQueueError, setWarmupTemplates, setWeeklyActivity,
     setWeeks, videoCoachAthletesRef,
+  })
+
+  const {
+    goToMyProfile, openProfile, openPlanReview, startEdit, openCoachPriorityItem,
+  } = lavNavigation({
+    analyseTabFactory, athletes, calendarWeeks, isMobile, listScrollYRef, messageThreadAthleteRef,
+    myAthleteId, onPreviewAthlete, setActiveTab, setAddingExercise, setAddingSession, setAddingWeek,
+    setAthleteWeightLogs, setBlockPlan, setCalBlockAthlete, setCoachMsgTrack, setEditData, setEditing,
+    setEditingExercise, setEditingSession, setEditingWeek, setMenuSheetOpen, setMessageInput, setMessages,
+    setMessageSendError, setMessageThreadError, setOpenSessionId, setOpenWeekId, setPickingMine, setPlanAssistantFocus,
+    setPlanStartDate, setPreviewPickerOpen, setProfilePriorityContext, setProfilePriorityKey, setProfileReturnView, setProgramBlockStart,
+    setSelectedAthlete, setSheetPreviewPick, setShowBlockPlanner, setSidebarOpen, setVideoAnalysisReview, setVideoAnalysisReviewError,
+    setVideoLiftFilter, setVideoReviewRequest, setView, setWeekDraft, setWeeks, viewRef,
   })
 
   useEffect(() => {
@@ -1066,23 +1080,6 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     setCalBlockAthlete({ id: a.id, name: a.name })
   }
 
-  // Hop direkte ind i coachens egen atlet-profil (preview) for hurtig logging.
-  // Første gang (eller hvis den gemte ikke findes): åbn picker i "vælg din egen"-mode.
-  function goToMyProfile() {
-    if (!onPreviewAthlete) return
-    if (myAthleteId && athletes.some(a => a.id === myAthleteId)) {
-      onPreviewAthlete(myAthleteId)
-    } else if (isMobile) {
-      // På mobil: brug menu-arkets atletvælger (aldrig desktop-sidebaren)
-      setPickingMine(true)
-      setSheetPreviewPick(true)
-      setMenuSheetOpen(true)
-    } else {
-      setPickingMine(true)
-      setPreviewPickerOpen(true)
-      setSidebarOpen(true)
-    }
-  }
 
   // Tastaturgenvej: tast "M" (uden for input-felter) → min profil.
   useEffect(() => {
@@ -2331,59 +2328,6 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     setExportingBackup(false)
   }
 
-  // En eksplicit returadresse holder indbakkens arbejdsflow samlet. Alle andre
-  // profilåbninger bevarer den hidtidige retur til atletoversigten.
-  function openProfile(athlete, initialTab = 'hub', returnView = 'list', priorityKey = null, priorityContext = null) {
-    // ORDRE 175: forudhent Analyse-fanens lazy chunk med det samme — coachen
-    // åbner ofte "Videoer" et par klik senere (via "Mere" → "Analyse"), og
-    // chunken (48 KB) hentede sig selv først PÅ det klik. En fejlet/afbrudt
-    // forudhentning er harmløs: LazyBoundary/lazy() prøver selv igen ved det
-    // rigtige klik, uændret.
-    analyseTabFactory().catch(() => {})
-    if (viewRef.current === 'list') listScrollYRef.current = window.scrollY
-    setProfileReturnView(returnView === 'inbox' ? 'inbox' : 'list')
-    setProfilePriorityKey(priorityKey)
-    setProfilePriorityContext(priorityContext)
-    setVideoAnalysisReview(null)
-    setVideoAnalysisReviewError(null)
-    messageThreadAthleteRef.current = athlete.id
-    setSelectedAthlete(athlete)
-    setActiveTab(initialTab)
-    setEditing(null)
-    setView('profile')
-    setMessages([])
-    setMessageInput('')
-    setMessageThreadError(null)
-    setMessageSendError(null)
-    setWeeks([])
-    setAthleteWeightLogs([])
-    setOpenWeekId(null)
-    setProgramBlockStart(null)
-    setOpenSessionId(null)
-    setAddingWeek(false)
-    setAddingSession(null)
-    setAddingExercise(null)
-    setEditingWeek(null)
-    setEditingSession(null)
-    setEditingExercise(null)
-  }
-
-  // Åbner kun den lokale planflade for den valgte atlet. Ingen blokke eller
-  // uger oprettes, før coachen senere vælger "Opret" i planlæggeren.
-  function openPlanReview(planEntry) {
-    setPlanStartDate(nextWeekStartDate(calendarWeeks[planEntry.athlete.id] || []))
-    setPlanAssistantFocus(planEntry.suggested_focus)
-    setBlockPlan([])
-    setWeekDraft(null)
-    setCalBlockAthlete(null)
-    setShowBlockPlanner(true)
-    openProfile(planEntry.athlete, 'program')
-  }
-
-  function startEdit(section, data) {
-    setEditing(section)
-    setEditData(data)
-  }
 
   const a = selectedAthlete
   const total = a ? (a.squat || 0) + (a.bench || 0) + (a.deadlift || 0) : 0
@@ -2414,29 +2358,6 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     videoMeasurementByAthlete[video.athlete_id] = video
   }
 
-  function openCoachPriorityItem(item, returnView = 'inbox') {
-    if (!item) return
-    // ORDRE 301: en automatiseringsfejl har ingen atlet at åbne; fra forsiden
-    // fører rækken til Indbakken, hvor "Markeret som set" ligger.
-    if (item.kind === 'automation') {
-      setView('inbox')
-      setSelectedAthlete(null)
-      return
-    }
-    const priorityContext = coachPriorityTaskContext(item)
-    if (item.kind === 'signal') {
-      openProfile(item.athlete, 'log', returnView, item.key, priorityContext)
-      return
-    }
-    if (item.kind === 'message') {
-      setCoachMsgTrack(item.track)
-      openProfile(item.athlete, 'beskeder', returnView, item.key, priorityContext)
-      return
-    }
-    setVideoReviewRequest({ item: item.video, token: `${item.video.id}:${Date.now()}` })
-    setVideoLiftFilter(item.video.lift || 'all')
-    openProfile(item.athlete, 'analyse', returnView, item.key, priorityContext)
-  }
 
   // Mailens sikre deep-link indeholder ingen atletidentifikator. Efter den første
   // komplette opdatering åbner appen selv den aktuelle topprioritet præcis én gang.
