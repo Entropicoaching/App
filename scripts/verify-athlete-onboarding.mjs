@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { athleteAuthErrorMessage, normalizeAthleteLoginEmail } from '../src/athleteOnboarding.js'
 import { athleteViewKilde } from './athleteViewKilde.mjs'
+import { dashboardKilde } from './dashboardKilde.mjs'
 
 assert.equal(normalizeAthleteLoginEmail('  Athlete.Name@Example.COM  '),
   'athlete.name@example.com')
@@ -15,7 +16,8 @@ assert.equal(athleteAuthErrorMessage({ message: 'unmapped provider error' }, 'si
   'Kontoen kunne ikke oprettes. Tjek oplysningerne eller kontakt din coach.')
 
 const auth = readFileSync(new URL('../src/Auth.jsx', import.meta.url), 'utf8')
-const dashboard = readFileSync(new URL('../src/Dashboard.jsx', import.meta.url), 'utf8')
+// ORDRE 377: Dashboard.jsx + modulerne den blev delt i (scripts/dashboardKilde.mjs).
+const dashboard = dashboardKilde()
 const athleteView = athleteViewKilde()
 
 assert.match(auth, /const normalizedEmail = normalizeAthleteLoginEmail\(email\)/)

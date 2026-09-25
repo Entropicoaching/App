@@ -5,6 +5,7 @@ import { sanitizeVideoCoachFeedbackEvidence } from '../src/videoCoachFeedbackEvi
 import { videoCoachFeedbackQuality } from '../src/videoCoachFeedbackQuality.js'
 import { sanitizeVideoCoachPersonalBaseline, videoCoachPersonalBaselineAthleteText, videoCoachPersonalBaselineForAnalysis, videoCoachPersonalBaselineOptions, videoCoachPersonalBaselineSelection, withVideoCoachPersonalBaseline } from '../src/videoCoachPersonalFeedback.js'
 import { athleteViewKilde } from './athleteViewKilde.mjs'
+import { dashboardKilde } from './dashboardKilde.mjs'
 
 const personalAnalysis = {
   id: 'analysis-01', athlete_id: 'athlete-01', lift: 'bench', variation: 'slingshot',
@@ -235,7 +236,8 @@ const athleteView = athleteViewKilde()
 assert.match(athleteView, /feedback_evidence:\s*sanitizeVideoCoachFeedbackEvidence\(/)
 assert.match(athleteView, /v=\$\{VIDEOCOACH_BUILD_ID\}/)
 
-const dashboard = fs.readFileSync(new URL('../src/Dashboard.jsx', import.meta.url), 'utf8')
+// ORDRE 377: Dashboard.jsx + modulerne den blev delt i (scripts/dashboardKilde.mjs).
+const dashboard = dashboardKilde()
 assert.match(dashboard, /v=\$\{VIDEOCOACH_BUILD_ID\}/,
   'Coach- og atletversionen skal bruge samme versionskilde')
 assert.match(dashboard, /Målegrundlag for feedbackudkastet/)

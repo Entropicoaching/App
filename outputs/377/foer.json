@@ -1,0 +1,288 @@
+{
+  "fase": "foer",
+  "scripts": {
+    "build": {
+      "ok": true,
+      "status": 0
+    },
+    "lint": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:auth-logout-role-switch": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:athlete-training-inputs": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:athlete-reps-per-set-mobile": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:athlete-onboarding": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:athlete-onboarding-guide": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:athlete-first-day-flow": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:athlete-write-failures": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:athlete-read-failures": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:athlete-readiness-draft": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:athlete-rest-timer-drift": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:athlete-tap-targets": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:athlete-password-reset": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:athlete-jargon-explained": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:athlete-self-service": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:athlete-silent-fails-5": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:athlete-silent-fail-visibility": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:coach-inbox-flow": {
+      "ok": true,
+      "status": 0,
+      "omkoert": true,
+      "foersteKoersel": {
+        "ok": false,
+        "status": 1,
+        "tail": "}\r | \r | Node.js v24.18.0"
+      }
+    },
+    "verify:coach-priority": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:progression-state": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:videocoach-baseline-progress": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:videocoach-feedback-quality": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:videocoach-labels": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:videocoach-variation-migration": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:videocoach-submission": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:videocoach-upload": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:videocoach-migrations": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:videocoach-zoom": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:storage-policies": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:videocoach-clip": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:videocoach-upload-flow": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:videocoach-buttons-layout": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:videocoach-film-guide": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:videocoach-plate-detect": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:ugen-faar-dato": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:atletens-uge": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:atletens-uge-holder": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:mandagsrunden-tilstande": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:n8n": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:kritik-skole": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:kritik-skole-2": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:kritik-skole-3": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:kritik-skole-4": {
+      "ok": true,
+      "status": 0
+    },
+    "verify:kritik-374": {
+      "ok": true,
+      "status": 0
+    }
+  },
+  "bundle": [
+    {
+      "fil": "AnalyseTab.js",
+      "kB": 47.85,
+      "gzipKB": 11.47
+    },
+    {
+      "fil": "athleteSilentFailLog.js",
+      "kB": 1.7,
+      "gzipKB": 0.76
+    },
+    {
+      "fil": "AthleteView.js",
+      "kB": 173.25,
+      "gzipKB": 46.35
+    },
+    {
+      "fil": "beregn.js",
+      "kB": 60.89,
+      "gzipKB": 8.12
+    },
+    {
+      "fil": "BeskederTab.js",
+      "kB": 6.32,
+      "gzipKB": 2.05
+    },
+    {
+      "fil": "CountdownRing.js",
+      "kB": 1.36,
+      "gzipKB": 0.65
+    },
+    {
+      "fil": "Dashboard.js",
+      "kB": 257.34,
+      "gzipKB": 64.93
+    },
+    {
+      "fil": "FremgangTab.js",
+      "kB": 4.89,
+      "gzipKB": 1.94
+    },
+    {
+      "fil": "IndbakkeView.js",
+      "kB": 13,
+      "gzipKB": 3.39
+    },
+    {
+      "fil": "index.js",
+      "kB": 359.11,
+      "gzipKB": 100.67
+    },
+    {
+      "fil": "KostTab.js",
+      "kB": 24,
+      "gzipKB": 5.36
+    },
+    {
+      "fil": "MobiliseringTab.js",
+      "kB": 60.6,
+      "gzipKB": 14.66
+    },
+    {
+      "fil": "ProgramTab.js",
+      "kB": 46.01,
+      "gzipKB": 10.09
+    },
+    {
+      "fil": "ProgramTab.js",
+      "kB": 32.04,
+      "gzipKB": 8.26
+    },
+    {
+      "fil": "StaevnedagTab.js",
+      "kB": 14.41,
+      "gzipKB": 3.53
+    },
+    {
+      "fil": "videoCoachUpload.js",
+      "kB": 10.36,
+      "gzipKB": 3.61
+    },
+    {
+      "fil": "VolumenGraf.js",
+      "kB": 1.37,
+      "gzipKB": 0.77
+    },
+    {
+      "fil": "VolumenKort.js",
+      "kB": 18.76,
+      "gzipKB": 5.98
+    },
+    {
+      "fil": "VolumenTab.js",
+      "kB": 3.76,
+      "gzipKB": 1.4
+    }
+  ]
+}

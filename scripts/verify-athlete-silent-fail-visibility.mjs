@@ -16,9 +16,11 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { athleteViewKilde } from './athleteViewKilde.mjs'
+import { dashboardKilde } from './dashboardKilde.mjs'
 
 const athleteView = athleteViewKilde()
-const dashboard = readFileSync(new URL('../src/Dashboard.jsx', import.meta.url), 'utf8')
+// ORDRE 377: Dashboard.jsx + modulerne den blev delt i (scripts/dashboardKilde.mjs).
+const dashboard = dashboardKilde()
 const analyseTab = readFileSync(new URL('../src/dashboard/AnalyseTab.jsx', import.meta.url), 'utf8')
 const note = readFileSync(new URL('../src/AthleteSilentFailNote.jsx', import.meta.url), 'utf8')
 const silentFailLog = readFileSync(new URL('../src/athleteSilentFailLog.js', import.meta.url), 'utf8')

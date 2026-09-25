@@ -1,18 +1,25 @@
 import { AUTOMATION_ALERT_COLOR, AUTOMATION_ALERT_LABEL, automationAlertDetail, filterOpenAutomationAlerts } from './automationAlerts.js'
+import { MESSAGE_VIDEO_RANK, signalRank } from './coachBriefingRules.js'
+
+// ORDRE 377: samme rækkefølge som Coach Briefing-mailen (ORDRE 370):
+// smerte 0 · fravær 1 · afvigelse fra plan 2 · beskeder/videoer 3 ·
+// fremgang (PR) 4; inden for samme rang alert (+0) før context (+0,5).
+// Tabellen er DETECTOR_RANK i coachBriefingRules.js, som n8n spejler.
+// En automatiseringsfejl er ikke i mailen; den står efter beskeder og
+// videoer og før fremgang.
+export const AUTOMATION_RANK = MESSAGE_VIDEO_RANK + 0.75
 
 export function buildCoachPriorityItems({ athletes, trainingSignals, unreadByTrack, latestByTrack, videoReviewQueue, describeVideo, automationAlerts = [], now = Date.now() }) {
   const athleteById = new Map(athletes.map(athlete => [athlete.id, athlete]))
   const items = []
 
   // ORDRE 301: en automatiseringsfejl har ingen atlet, så den må ikke gå
-  // gennem athleteById-opslaget som de andre typer. Rang 2: under
-  // alert-signaler (0) og ventende beskeder/videoer (1), over de øvrige
-  // træningssignaler (3, fx manglende logs).
+  // gennem athleteById-opslaget som de andre typer. Rang: se AUTOMATION_RANK.
   filterOpenAutomationAlerts(automationAlerts).forEach(alert => {
     items.push({
       key: `automation-${alert.id}`,
       kind: 'automation', alert,
-      rank: 2,
+      rank: AUTOMATION_RANK,
       color: AUTOMATION_ALERT_COLOR,
       label: AUTOMATION_ALERT_LABEL,
       title: alert.workflow_name || 'Ukendt workflow',
@@ -35,7 +42,7 @@ export function buildCoachPriorityItems({ athletes, trainingSignals, unreadByTra
     items.push({
       key: `signal-${signal.o_athlete_id}-${signal.o_detector}`,
       kind: 'signal', athlete, signal,
-      rank: alert ? 0 : 3,
+      rank: signalRank({ detector: signal.o_detector, severity: signal.o_severity }),
       color: alert ? '#e05555' : '#c8923a',
       label: detectorLabel,
       title: signal.o_headline,
@@ -51,7 +58,7 @@ export function buildCoachPriorityItems({ athletes, trainingSignals, unreadByTra
       items.push({
         key: `message-${athlete.id}-${track}`,
         kind: 'message', athlete, track,
-        rank: 1, color: track === 'teknik' ? '#67dff5' : '#c8923a',
+        rank: MESSAGE_VIDEO_RANK, color: track === 'teknik' ? '#67dff5' : '#c8923a',
         label: track === 'teknik' ? 'Teknik & løft' : 'Besked',
         title: athlete.name,
         detail: last.content,
@@ -67,7 +74,7 @@ export function buildCoachPriorityItems({ athletes, trainingSignals, unreadByTra
     items.push({
       key: `video-${video.id}`,
       kind: 'video', athlete, video,
-      rank: 1, color: '#67dff5', label: 'Video',
+      rank: MESSAGE_VIDEO_RANK, color: '#67dff5', label: 'Video',
       title: athlete.name,
       detail: describeVideo(video),
       createdAt: video.created_at || video.analyzed_at,
@@ -78,7 +85,10 @@ export function buildCoachPriorityItems({ athletes, trainingSignals, unreadByTra
     const value = item.createdAt ? new Date(item.createdAt).getTime() : Number.POSITIVE_INFINITY
     return Number.isFinite(value) ? value : Number.POSITIVE_INFINITY
   }
-  return items.sort((left, right) => left.rank - right.rank || itemTime(left) - itemTime(right) || left.title.localeCompare(right.title, 'da'))
+  // Som mailen: rang, ældste besked/video, atletens navn; titlen til sidst.
+  const itemName = item => item.athlete?.name || item.title
+  return items.sort((left, right) => left.rank - right.rank || itemTime(left) - itemTime(right)
+    || itemName(left).localeCompare(itemName(right), 'da') || left.title.localeCompare(right.title, 'da'))
 }
 
 export function nextCoachPriorityItem(items, currentKey) {
