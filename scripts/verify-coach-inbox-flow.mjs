@@ -85,7 +85,9 @@ function inboxSnapshot() {
 }
 
 let snapshot = inboxSnapshot()
-assert.deepEqual(snapshot.priorityItems.map(item => item.kind), ['signal', 'video', 'message', 'signal'], 'the oldest unanswered video or message must follow alerts')
+// ORDRE 377: mailens rækkefølge — fravær (dropout) og afvigelse fra plan
+// (stagnation, også context) før beskeder/videoer.
+assert.deepEqual(snapshot.priorityItems.map(item => item.kind), ['signal', 'signal', 'video', 'message'], 'the oldest unanswered video or message must follow training signals, as in the briefing mail')
 assert.equal(snapshot.count, 4, 'initial badge must equal four visible work items')
 assert.equal(snapshot.priorityItems.find(item => item.kind === 'message').count, 2, 'two unread messages in one track must be one work item with count two')
 assert.equal(snapshot.priorityItems.some(item => item.athlete.id === 'hidden-athlete'), false, 'hidden athletes must not create visible work items')
