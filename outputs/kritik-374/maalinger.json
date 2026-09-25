@@ -3243,17 +3243,17 @@
             "mestringsbeskedVed": [],
             "opgaver": [
               {
-                "opgave": "Mølleren har delt sin mark i 5 lige store stykker, og 2 er sået: ■■□□□. Hvor stor en del af marken er sået?",
+                "opgave": "Kværnhjulet er delt i 4 lige store felter, og 1 er malet: ■□□□. Hvor stor en del af hjulet er malet?",
                 "valg": [
-                  "5/2",
-                  "2/5",
-                  "3/5"
+                  "1/4",
+                  "3/4",
+                  "4/1"
                 ],
-                "trin": null,
+                "trin": 1,
                 "forsoeg": [
                   {
-                    "svar": "5/2",
-                    "besked": "Ikke helt — Hint 1 af 2. Nævneren, tallet under brøkstregen, fortæller hvor mange lige store stykker helheden er delt i. Her er det 5.",
+                    "svar": "4/1",
+                    "besked": "Ikke helt — Hint 1 af 2. Nævneren, tallet under brøkstregen, fortæller hvor mange lige store felter helheden er delt i. Her er det 4.",
                     "art": "quest-besked--hint",
                     "hintSynlig": {
                       "top": 740,
@@ -3261,78 +3261,184 @@
                       "vindue": 844,
                       "heltSynlig": true
                     }
-                  }
-                ],
-                "foersteForsoegRigtigt": false
-              },
-              {
-                "opgave": "Mølleren har delt sin mark i 5 lige store stykker, og 2 er sået: ■■□□□. Hvor stor en del af marken er sået?",
-                "valg": [
-                  "5/2",
-                  "2/5",
-                  "3/5"
-                ],
-                "trin": null,
-                "forsoeg": [
+                  },
                   {
-                    "svar": "5/2",
-                    "besked": "Ikke helt — Hint 2 af 2. Nævneren, tallet under brøkstregen, fortæller hvor mange lige store stykker helheden er delt i. Her er det 5.",
-                    "art": "quest-besked--hint",
+                    "svar": "1/4",
+                    "besked": "Rigtigt!",
+                    "art": "quest-besked--korrekt",
                     "hintSynlig": {
-                      "top": 741,
-                      "bund": 824,
+                      "top": 617,
+                      "bund": 658,
                       "vindue": 844,
                       "heltSynlig": true
                     }
                   }
                 ],
+                "bevidstFejl": "byttet taeller og naevner",
                 "foersteForsoegRigtigt": false
               },
               {
                 "opgave": "Mølleren har delt sin mark i 5 lige store stykker, og 2 er sået: ■■□□□. Hvor stor en del af marken er sået?",
                 "valg": [
-                  "5/2",
+                  "3/5",
                   "2/5",
-                  "3/5"
-                ],
-                "trin": null,
-                "forsoeg": [
-                  {
-                    "svar": "5/2",
-                    "besked": "Løsningen: 2 af 5 lige store stykker er sået: brøken 2/5, og den kan ikke forkortes.",
-                    "art": "quest-besked--loesning",
-                    "hintSynlig": {
-                      "top": 597,
-                      "bund": 659,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "foersteForsoegRigtigt": false
-              },
-              {
-                "opgave": "Kværnhjulet er delt i 7 lige store felter, og 6 er malet: ■■■■■■□. Hvor stor en del af hjulet er malet?",
-                "valg": [
-                  "7/6",
-                  "6/7",
-                  "1/7"
+                  "2/3"
                 ],
                 "trin": 1,
                 "forsoeg": [
                   {
-                    "svar": "7/6",
-                    "besked": "Ikke helt — Hint 1 af 2. Nævneren, tallet under brøkstregen, fortæller hvor mange lige store felter helheden er delt i. Her er det 7.",
+                    "svar": "3/5",
+                    "besked": "Ikke helt — Hint 1 af 2. Du har talt de stykker, der IKKE er sået. Spørgsmålet gælder de såede.",
                     "art": "quest-besked--hint",
                     "hintSynlig": {
-                      "top": 758,
+                      "top": 779,
                       "bund": 841,
                       "vindue": 844,
                       "heltSynlig": true
                     }
                   },
                   {
+                    "svar": "2/5",
+                    "besked": "Rigtigt!",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 617,
+                      "bund": 658,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "bevidstFejl": "talt de umalede",
+                "foersteForsoegRigtigt": false
+              },
+              {
+                "opgave": "Mølleren har delt sin mark i 11 lige store stykker, og 3 er sået: ■■■□□□□□□□□. Hvor stor en del af marken er sået?",
+                "valg": [
+                  "3/8",
+                  "3/11",
+                  "11/3"
+                ],
+                "trin": 1,
+                "forsoeg": [
+                  {
+                    "svar": "11/3",
+                    "besked": "Ikke helt — Hint 1 af 2. Nævneren, tallet under brøkstregen, fortæller hvor mange lige store stykker helheden er delt i. Her er det 11.",
+                    "art": "quest-besked--hint",
+                    "hintSynlig": {
+                      "top": 779,
+                      "bund": 862,
+                      "vindue": 844,
+                      "heltSynlig": false
+                    }
+                  },
+                  {
+                    "svar": "3/11",
+                    "besked": "Rigtigt!",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 617,
+                      "bund": 658,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "bevidstFejl": "byttet taeller og naevner",
+                "foersteForsoegRigtigt": false
+              },
+              {
+                "opgave": "Kværnhjulet er delt i 5 lige store felter, og 4 er malet: ■■■■□. Hvor stor en del af hjulet er malet?",
+                "valg": [
+                  "1/5",
+                  "4/5",
+                  "4/1"
+                ],
+                "trin": 1,
+                "forsoeg": [
+                  {
+                    "svar": "1/5",
+                    "besked": "Ikke helt — Hint 1 af 2. Du har talt de felter, der IKKE er malet. Spørgsmålet gælder de malede.",
+                    "art": "quest-besked--hint",
+                    "hintSynlig": {
+                      "top": 780,
+                      "bund": 842,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  },
+                  {
+                    "svar": "4/5",
+                    "besked": "Rigtigt!",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 618,
+                      "bund": 659,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "bevidstFejl": "talt de umalede",
+                "foersteForsoegRigtigt": false
+              },
+              {
+                "opgave": "Mølleren har delt sin mark i 7 lige store stykker, og 1 er sået: ■□□□□□□. Hvor stor en del af marken er sået?",
+                "valg": [
+                  "6/7",
+                  "1/7",
+                  "1/6"
+                ],
+                "trin": 1,
+                "forsoeg": [
+                  {
                     "svar": "6/7",
+                    "besked": "Ikke helt — Hint 1 af 2. Du har talt de stykker, der IKKE er sået. Spørgsmålet gælder de såede.",
+                    "art": "quest-besked--hint",
+                    "hintSynlig": {
+                      "top": 741,
+                      "bund": 803,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  },
+                  {
+                    "svar": "1/7",
+                    "besked": "Rigtigt!",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 618,
+                      "bund": 659,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "bevidstFejl": "talt de umalede",
+                "foersteForsoegRigtigt": false
+              },
+              {
+                "opgave": "Kværnhjulet er delt i 11 lige store felter, og 9 er malet: ■■■■■■■■■□□. Hvor stor en del af hjulet er malet?",
+                "valg": [
+                  "9/11",
+                  "11/9",
+                  "9/2"
+                ],
+                "trin": 1,
+                "forsoeg": [
+                  {
+                    "svar": "11/9",
+                    "besked": "Ikke helt — Hint 1 af 2. Nævneren, tallet under brøkstregen, fortæller hvor mange lige store felter helheden er delt i. Her er det 11.",
+                    "art": "quest-besked--hint",
+                    "hintSynlig": {
+                      "top": 780,
+                      "bund": 863,
+                      "vindue": 844,
+                      "heltSynlig": false
+                    }
+                  },
+                  {
+                    "svar": "9/11",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
@@ -3347,37 +3453,25 @@
                 "foersteForsoegRigtigt": false
               },
               {
-                "opgave": "Mølleren har delt sin mark i 12 lige store stykker, og 2 er sået: ■■□□□□□□□□□□. Hvor stor en del af marken er sået?",
+                "opgave": "Mølleren har delt sin mark i 6 lige store stykker, og 3 er sået: ■■■□□□. Hvor stor en del af marken er sået?",
                 "valg": [
-                  "1/6",
-                  "10/12",
-                  "12/2"
+                  "3/3",
+                  "6/3",
+                  "1/2"
                 ],
-                "trin": null,
+                "trin": 1,
                 "forsoeg": [
                   {
-                    "svar": "1/6",
-                    "besked": "Rigtigt!",
-                    "art": "quest-besked--korrekt",
+                    "svar": "6/3",
+                    "besked": "Ikke helt — Hint 1 af 2. Nævneren, tallet under brøkstregen, fortæller hvor mange lige store stykker helheden er delt i. Her er det 6.",
+                    "art": "quest-besked--hint",
                     "hintSynlig": {
-                      "top": 618,
-                      "bund": 659,
+                      "top": 780,
+                      "bund": 863,
                       "vindue": 844,
-                      "heltSynlig": true
+                      "heltSynlig": false
                     }
-                  }
-                ],
-                "foersteForsoegRigtigt": true
-              },
-              {
-                "opgave": "Mølleren har delt sin mark i 4 lige store stykker, og 2 er sået: ■■□□. Hvor stor en del af marken er sået?",
-                "valg": [
-                  "1/2",
-                  "4/2",
-                  "2/2"
-                ],
-                "trin": null,
-                "forsoeg": [
+                  },
                   {
                     "svar": "1/2",
                     "besked": "Rigtigt!",
@@ -3390,55 +3484,21 @@
                     }
                   }
                 ],
-                "foersteForsoegRigtigt": true
-              },
-              {
-                "opgave": "Kværnhjulet er delt i 5 lige store felter, og 1 er malet: ■□□□□. Hvor stor en del af hjulet er malet?",
-                "valg": [
-                  "1/5",
-                  "5/1",
-                  "1/4"
-                ],
-                "trin": 1,
-                "forsoeg": [
-                  {
-                    "svar": "5/1",
-                    "besked": "Ikke helt — Hint 1 af 2. Nævneren, tallet under brøkstregen, fortæller hvor mange lige store felter helheden er delt i. Her er det 5.",
-                    "art": "quest-besked--hint",
-                    "hintSynlig": {
-                      "top": 780,
-                      "bund": 863,
-                      "vindue": 844,
-                      "heltSynlig": false
-                    }
-                  },
-                  {
-                    "svar": "1/5",
-                    "besked": "Rigtigt!",
-                    "art": "quest-besked--korrekt",
-                    "hintSynlig": {
-                      "top": 618,
-                      "bund": 659,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
                 "bevidstFejl": "byttet taeller og naevner",
                 "foersteForsoegRigtigt": false
               },
               {
-                "opgave": "Kværnhjulet er delt i 10 lige store felter, og 5 er malet: ■■■■■□□□□□. Hvor stor en del af hjulet er malet?",
+                "opgave": "Mølleren har delt sin mark i 4 lige store stykker, og 2 er sået: ■■□□. Hvor stor en del af marken er sået?",
                 "valg": [
-                  "5/5",
-                  "1/2",
-                  "10/5"
+                  "4/2",
+                  "2/2",
+                  "1/2"
                 ],
                 "trin": 1,
                 "forsoeg": [
                   {
-                    "svar": "10/5",
-                    "besked": "Ikke helt — Hint 1 af 2. Nævneren, tallet under brøkstregen, fortæller hvor mange lige store felter helheden er delt i. Her er det 10.",
+                    "svar": "4/2",
+                    "besked": "Ikke helt — Hint 1 af 2. Nævneren, tallet under brøkstregen, fortæller hvor mange lige store stykker helheden er delt i. Her er det 4.",
                     "art": "quest-besked--hint",
                     "hintSynlig": {
                       "top": 780,
@@ -3467,19 +3527,17 @@
               "kaede": "Forløb 1 af 8",
               "titel": "Lige store dele",
               "status": "",
-              "fremdrift": "0 af 3 opgaver løst · mestret ved 3 rigtige i første forsøg",
-              "beskeder": [
-                "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal."
-              ]
+              "fremdrift": "2 af 3 opgaver løst · mestret ved 3 rigtige i første forsøg",
+              "beskeder": []
             },
-            "rigtigeFoerste": 2,
+            "rigtigeFoerste": 0,
             "raekkefoelgeTrin": [
-              null,
-              null,
-              null,
               1,
-              null,
-              null,
+              1,
+              1,
+              1,
+              1,
+              1,
               1,
               1
             ],
@@ -3490,23 +3548,21 @@
             "kaede": "Forløb 1 af 8",
             "titel": "Lige store dele",
             "replik": "Kværnhjulet og markerne er delt i lige store dele. Kan du se, hvor stor en del der er malet eller sået?",
-            "fremdriftFoer": "0 af 3 opgaver løst · mestret ved 3 rigtige i første forsøg",
-            "mestringsbeskedVed": [
-              "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal."
-            ],
+            "fremdriftFoer": "2 af 3 opgaver løst · mestret ved 3 rigtige i første forsøg",
+            "mestringsbeskedVed": [],
             "opgaver": [
               {
-                "opgave": "Mølleren har delt sin mark i 5 lige store stykker, og 4 er sået: ■■■■□. Hvor stor en del af marken er sået?",
+                "opgave": "Mølleren har delt sin mark i 10 lige store stykker, og 5 er sået: ■■■■■□□□□□. Hvor stor en del af marken er sået?",
                 "valg": [
-                  "4/5",
-                  "5/4",
-                  "1/5"
+                  "10/5",
+                  "5/5",
+                  "5/10"
                 ],
-                "trin": null,
+                "trin": 1,
                 "forsoeg": [
                   {
-                    "svar": "4/5",
-                    "besked": "Rigtigt!",
+                    "svar": "5/10",
+                    "besked": "Rigtigt! 5/10 kan også skrives 1/2.",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
                       "top": 617,
@@ -3519,21 +3575,21 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Mølleren har delt sin mark i 6 lige store stykker, og 3 er sået: ■■■□□□. Hvor stor en del af marken er sået?",
+                "opgave": "Mølleren har delt sin mark i 4 lige store stykker, og 2 er sået: ■■□□. Hvor stor en del af marken er sået?",
                 "valg": [
                   "1/2",
-                  "6/3",
-                  "3/3"
+                  "2/2",
+                  "4/2"
                 ],
-                "trin": null,
+                "trin": 1,
                 "forsoeg": [
                   {
                     "svar": "1/2",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
+                      "top": 618,
+                      "bund": 659,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -3542,80 +3598,11 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Mølleren har delt sin mark i 7 lige store stykker, og 1 er sået: ■□□□□□□. Hvor stor en del af marken er sået?",
-                "valg": [
-                  "6/7",
-                  "1/7",
-                  "7/1"
-                ],
-                "trin": null,
-                "forsoeg": [
-                  {
-                    "svar": "6/7",
-                    "besked": "Ikke helt — Hint 1 af 2. Du har talt de stykker, der IKKE er sået. Spørgsmålet gælder de såede.",
-                    "art": "quest-besked--hint",
-                    "hintSynlig": {
-                      "top": 779,
-                      "bund": 841,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "foersteForsoegRigtigt": false
-              },
-              {
-                "opgave": "Mølleren har delt sin mark i 7 lige store stykker, og 1 er sået: ■□□□□□□. Hvor stor en del af marken er sået?",
-                "valg": [
-                  "6/7",
-                  "1/7",
-                  "7/1"
-                ],
-                "trin": null,
-                "forsoeg": [
-                  {
-                    "svar": "6/7",
-                    "besked": "Ikke helt — Hint 2 af 2. Du har talt de stykker, der IKKE er sået. Spørgsmålet gælder de såede.",
-                    "art": "quest-besked--hint",
-                    "hintSynlig": {
-                      "top": 779,
-                      "bund": 841,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "foersteForsoegRigtigt": false
-              },
-              {
-                "opgave": "Mølleren har delt sin mark i 7 lige store stykker, og 1 er sået: ■□□□□□□. Hvor stor en del af marken er sået?",
-                "valg": [
-                  "6/7",
-                  "1/7",
-                  "7/1"
-                ],
-                "trin": null,
-                "forsoeg": [
-                  {
-                    "svar": "6/7",
-                    "besked": "Løsningen: 1 af 7 lige store stykker er sået: brøken 1/7, og den kan ikke forkortes.",
-                    "art": "quest-besked--loesning",
-                    "hintSynlig": {
-                      "top": 617,
-                      "bund": 679,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "foersteForsoegRigtigt": false
-              },
-              {
                 "opgave": "Kværnhjulet er delt i 5 lige store felter, og 3 er malet: ■■■□□. Hvor stor en del af hjulet er malet?",
                 "valg": [
-                  "3/5",
+                  "2/5",
                   "3/2",
-                  "2/5"
+                  "3/5"
                 ],
                 "trin": 1,
                 "forsoeg": [
@@ -3624,8 +3611,8 @@
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
+                      "top": 618,
+                      "bund": 659,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -3634,44 +3621,21 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Mølleren har delt sin mark i 6 lige store stykker, og 3 er sået: ■■■□□□. Hvor stor en del af marken er sået?",
+                "opgave": "Mølleren har delt sin mark i 9 lige store stykker, og 3 er sået: ■■■□□□□□□. Hvor stor en del af marken er sået?",
                 "valg": [
+                  "3/9",
                   "3/6",
-                  "3/3",
-                  "6/3"
-                ],
-                "trin": null,
-                "forsoeg": [
-                  {
-                    "svar": "3/6",
-                    "besked": "Rigtigt! 3/6 kan også skrives 1/2.",
-                    "art": "quest-besked--korrekt",
-                    "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "foersteForsoegRigtigt": true
-              },
-              {
-                "opgave": "Kværnhjulet er delt i 7 lige store felter, og 6 er malet: ■■■■■■□. Hvor stor en del af hjulet er malet?",
-                "valg": [
-                  "6/7",
-                  "1/7",
-                  "7/6"
+                  "6/9"
                 ],
                 "trin": 1,
                 "forsoeg": [
                   {
-                    "svar": "6/7",
-                    "besked": "Rigtigt!",
+                    "svar": "3/9",
+                    "besked": "Rigtigt! 3/9 kan også skrives 1/3.",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
+                      "top": 618,
+                      "bund": 659,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -3687,15 +3651,11 @@
               "fremdrift": "0 af 4 opgaver løst · mestret ved 3 rigtige i første forsøg",
               "beskeder": []
             },
-            "rigtigeFoerste": 5,
+            "rigtigeFoerste": 4,
             "raekkefoelgeTrin": [
-              null,
-              null,
-              null,
-              null,
-              null,
               1,
-              null,
+              1,
+              1,
               1
             ],
             "sidetekstHeleTrappen": false
@@ -3714,120 +3674,27 @@
             "mestringsbeskedVed": [],
             "opgaver": [
               {
-                "opgave": "Mølleren deler 3 sække korn ligeligt mellem 4 gårde. Hvor meget korn får hver gård?",
+                "opgave": "Mølleren deler 2 sække korn ligeligt mellem 4 gårde. Hvor meget korn får hver gård?",
                 "valg": [
-                  "3/4",
-                  "4/3",
-                  "1/4"
+                  "4/2",
+                  "1/4",
+                  "1/2"
                 ],
                 "trin": 2,
                 "forsoeg": [
                   {
-                    "svar": "4/3",
+                    "svar": "4/2",
                     "besked": "Ikke helt — Hint 1 af 2. Der er færre sække end gårde, så hver gård får mindre end en hel sæk. Sækkene står øverst (tælleren), gårdene nederst (nævneren).",
                     "art": "quest-besked--hint",
                     "hintSynlig": {
-                      "top": 740,
-                      "bund": 844,
+                      "top": 741,
+                      "bund": 845,
                       "vindue": 844,
                       "heltSynlig": false
                     }
                   },
                   {
-                    "svar": "3/4",
-                    "besked": "Rigtigt!",
-                    "art": "quest-besked--korrekt",
-                    "hintSynlig": {
-                      "top": 618,
-                      "bund": 659,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "bevidstFejl": "gaarde over saekke",
-                "foersteForsoegRigtigt": false
-              },
-              {
-                "opgave": "Mølleren deler 1 sæk korn ligeligt mellem 5 gårde. Hvor meget korn får hver gård?",
-                "valg": [
-                  "1/5",
-                  "2/5",
-                  "5/1"
-                ],
-                "trin": 2,
-                "forsoeg": [
-                  {
-                    "svar": "5/1",
-                    "besked": "Ikke helt — Hint 1 af 2. Der er færre sække end gårde, så hver gård får mindre end en hel sæk. Sækkene står øverst (tælleren), gårdene nederst (nævneren).",
-                    "art": "quest-besked--hint",
-                    "hintSynlig": {
-                      "top": 780,
-                      "bund": 884,
-                      "vindue": 844,
-                      "heltSynlig": false
-                    }
-                  },
-                  {
-                    "svar": "1/5",
-                    "besked": "Rigtigt!",
-                    "art": "quest-besked--korrekt",
-                    "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "bevidstFejl": "gaarde over saekke",
-                "foersteForsoegRigtigt": false
-              },
-              {
-                "opgave": "Kværnhjulet er delt i 7 lige store felter, og 2 er malet: ■■□□□□□. Hvor stor en del af hjulet er malet?",
-                "valg": [
-                  "5/7",
-                  "2/5",
-                  "2/7"
-                ],
-                "trin": 1,
-                "forsoeg": [
-                  {
-                    "svar": "2/7",
-                    "besked": "Rigtigt!",
-                    "art": "quest-besked--korrekt",
-                    "hintSynlig": {
-                      "top": 642,
-                      "bund": 683,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "foersteForsoegRigtigt": true
-              },
-              {
-                "opgave": "Mølleren deler 2 sække korn ligeligt mellem 5 gårde. Hvor meget korn får hver gård?",
-                "valg": [
-                  "1/5",
-                  "2/5",
-                  "5/2"
-                ],
-                "trin": 2,
-                "forsoeg": [
-                  {
-                    "svar": "5/2",
-                    "besked": "Ikke helt — Hint 1 af 2. Der er færre sække end gårde, så hver gård får mindre end en hel sæk. Sækkene står øverst (tælleren), gårdene nederst (nævneren).",
-                    "art": "quest-besked--hint",
-                    "hintSynlig": {
-                      "top": 756,
-                      "bund": 860,
-                      "vindue": 844,
-                      "heltSynlig": false
-                    }
-                  },
-                  {
-                    "svar": "2/5",
+                    "svar": "1/2",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
@@ -3844,9 +3711,9 @@
               {
                 "opgave": "Mølleren deler 2 sække korn ligeligt mellem 4 gårde. Hvor meget korn får hver gård?",
                 "valg": [
+                  "1/2",
                   "4/2",
-                  "1/4",
-                  "1/2"
+                  "1/4"
                 ],
                 "trin": 2,
                 "forsoeg": [
@@ -3877,6 +3744,64 @@
                 "foersteForsoegRigtigt": false
               },
               {
+                "opgave": "Mølleren har delt sin mark i 7 lige store stykker, og 6 er sået: ■■■■■■□. Hvor stor en del af marken er sået?",
+                "valg": [
+                  "1/7",
+                  "6/1",
+                  "6/7"
+                ],
+                "trin": 1,
+                "forsoeg": [
+                  {
+                    "svar": "6/7",
+                    "besked": "Rigtigt!",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 642,
+                      "bund": 683,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "foersteForsoegRigtigt": true
+              },
+              {
+                "opgave": "Mølleren deler 4 sække korn ligeligt mellem 5 gårde. Hvor meget korn får hver gård?",
+                "valg": [
+                  "5/4",
+                  "4/5",
+                  "1/5"
+                ],
+                "trin": 2,
+                "forsoeg": [
+                  {
+                    "svar": "5/4",
+                    "besked": "Ikke helt — Hint 1 af 2. Der er færre sække end gårde, så hver gård får mindre end en hel sæk. Sækkene står øverst (tælleren), gårdene nederst (nævneren).",
+                    "art": "quest-besked--hint",
+                    "hintSynlig": {
+                      "top": 741,
+                      "bund": 845,
+                      "vindue": 844,
+                      "heltSynlig": false
+                    }
+                  },
+                  {
+                    "svar": "4/5",
+                    "besked": "Rigtigt!",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 618,
+                      "bund": 659,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "bevidstFejl": "gaarde over saekke",
+                "foersteForsoegRigtigt": false
+              },
+              {
                 "opgave": "Mølleren deler 3 sække korn ligeligt mellem 4 gårde. Hvor meget korn får hver gård?",
                 "valg": [
                   "3/4",
@@ -3912,49 +3837,96 @@
                 "foersteForsoegRigtigt": false
               },
               {
-                "opgave": "Mølleren har delt sin mark i 6 lige store stykker, og 4 er sået: ■■■■□□. Hvor stor en del af marken er sået?",
+                "opgave": "Mølleren deler 2 sække korn ligeligt mellem 5 gårde. Hvor meget korn får hver gård?",
                 "valg": [
-                  "2/6",
-                  "2/3",
-                  "6/4"
+                  "1/5",
+                  "5/2",
+                  "2/5"
                 ],
-                "trin": null,
+                "trin": 2,
                 "forsoeg": [
                   {
-                    "svar": "2/6",
-                    "besked": "Ikke helt — Hint 1 af 2. Du har talt de stykker, der IKKE er sået. Spørgsmålet gælder de såede.",
+                    "svar": "5/2",
+                    "besked": "Ikke helt — Hint 1 af 2. Der er færre sække end gårde, så hver gård får mindre end en hel sæk. Sækkene står øverst (tælleren), gårdene nederst (nævneren).",
                     "art": "quest-besked--hint",
                     "hintSynlig": {
-                      "top": 741,
-                      "bund": 803,
+                      "top": 780,
+                      "bund": 884,
+                      "vindue": 844,
+                      "heltSynlig": false
+                    }
+                  },
+                  {
+                    "svar": "2/5",
+                    "besked": "Rigtigt!",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 618,
+                      "bund": 659,
                       "vindue": 844,
                       "heltSynlig": true
                     }
                   }
                 ],
+                "bevidstFejl": "gaarde over saekke",
                 "foersteForsoegRigtigt": false
               },
               {
-                "opgave": "Mølleren har delt sin mark i 6 lige store stykker, og 4 er sået: ■■■■□□. Hvor stor en del af marken er sået?",
+                "opgave": "Mølleren har delt sin mark i 5 lige store stykker, og 4 er sået: ■■■■□. Hvor stor en del af marken er sået?",
                 "valg": [
-                  "2/6",
-                  "2/3",
-                  "6/4"
+                  "4/5",
+                  "5/4",
+                  "4/1"
                 ],
-                "trin": null,
+                "trin": 1,
                 "forsoeg": [
                   {
-                    "svar": "2/6",
-                    "besked": "Ikke helt — Hint 2 af 2. Du har talt de stykker, der IKKE er sået. Spørgsmålet gælder de såede.",
-                    "art": "quest-besked--hint",
+                    "svar": "4/5",
+                    "besked": "Rigtigt!",
+                    "art": "quest-besked--korrekt",
                     "hintSynlig": {
-                      "top": 741,
-                      "bund": 803,
+                      "top": 642,
+                      "bund": 683,
                       "vindue": 844,
                       "heltSynlig": true
                     }
                   }
                 ],
+                "foersteForsoegRigtigt": true
+              },
+              {
+                "opgave": "Mølleren deler 4 sække korn ligeligt mellem 6 gårde. Hvor meget korn får hver gård?",
+                "valg": [
+                  "6/4",
+                  "1/6",
+                  "4/6"
+                ],
+                "trin": 2,
+                "forsoeg": [
+                  {
+                    "svar": "6/4",
+                    "besked": "Ikke helt — Hint 1 af 2. Der er færre sække end gårde, så hver gård får mindre end en hel sæk. Sækkene står øverst (tælleren), gårdene nederst (nævneren).",
+                    "art": "quest-besked--hint",
+                    "hintSynlig": {
+                      "top": 756,
+                      "bund": 860,
+                      "vindue": 844,
+                      "heltSynlig": false
+                    }
+                  },
+                  {
+                    "svar": "4/6",
+                    "besked": "Rigtigt! 4/6 kan også skrives 2/3.",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 618,
+                      "bund": 659,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "bevidstFejl": "gaarde over saekke",
                 "foersteForsoegRigtigt": false
               }
             ],
@@ -3962,12 +3934,12 @@
               "kaede": "Forløb 2 af 8",
               "titel": "Del kornet",
               "status": "",
-              "fremdrift": "2 af 4 opgaver løst · mestret ved 3 rigtige i første forsøg",
+              "fremdrift": "0 af 4 opgaver løst · mestret ved 3 rigtige i første forsøg",
               "beskeder": [
-                "Ikke helt — Hint 2 af 2. Du har talt de stykker, der IKKE er sået. Spørgsmålet gælder de såede."
+                "Du kom igennem, og 1 af 4 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal."
               ]
             },
-            "rigtigeFoerste": 1,
+            "rigtigeFoerste": 2,
             "raekkefoelgeTrin": [
               2,
               2,
@@ -3975,8 +3947,8 @@
               2,
               2,
               2,
-              null,
-              null
+              1,
+              2
             ],
             "sidetekstHeleTrappen": false
           },
@@ -3985,55 +3957,11 @@
             "kaede": "Forløb 2 af 8",
             "titel": "Del kornet",
             "replik": "Sækkene vokser hurtigere, end jeg kan nå at male. Kan du hjælpe mig med at dele kornet ligeligt?",
-            "fremdriftFoer": "2 af 4 opgaver løst · mestret ved 3 rigtige i første forsøg",
-            "mestringsbeskedVed": [],
+            "fremdriftFoer": "0 af 4 opgaver løst · mestret ved 3 rigtige i første forsøg",
+            "mestringsbeskedVed": [
+              "Du kom igennem, og 1 af 4 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal."
+            ],
             "opgaver": [
-              {
-                "opgave": "Mølleren har delt sin mark i 6 lige store stykker, og 4 er sået: ■■■■□□. Hvor stor en del af marken er sået?",
-                "valg": [
-                  "2/6",
-                  "2/3",
-                  "6/4"
-                ],
-                "trin": null,
-                "forsoeg": [
-                  {
-                    "svar": "2/6",
-                    "besked": "Løsningen: 4 af 6 lige store stykker er sået: brøken 4/6, som forkortes til 2/3.",
-                    "art": "quest-besked--loesning",
-                    "hintSynlig": {
-                      "top": 596,
-                      "bund": 658,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "foersteForsoegRigtigt": false
-              },
-              {
-                "opgave": "Mølleren deler 4 sække korn ligeligt mellem 6 gårde. Hvor meget korn får hver gård?",
-                "valg": [
-                  "1/6",
-                  "4/6",
-                  "6/4"
-                ],
-                "trin": 2,
-                "forsoeg": [
-                  {
-                    "svar": "4/6",
-                    "besked": "Rigtigt! 4/6 kan også skrives 2/3.",
-                    "art": "quest-besked--korrekt",
-                    "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "foersteForsoegRigtigt": true
-              },
               {
                 "opgave": "Mølleren deler 2 sække korn ligeligt mellem 4 gårde. Hvor meget korn får hver gård?",
                 "valg": [
@@ -4060,15 +3988,15 @@
               {
                 "opgave": "Mølleren deler 2 sække korn ligeligt mellem 4 gårde. Hvor meget korn får hver gård?",
                 "valg": [
+                  "1/2",
                   "1/4",
-                  "2/4",
                   "4/2"
                 ],
                 "trin": 2,
                 "forsoeg": [
                   {
-                    "svar": "2/4",
-                    "besked": "Rigtigt! 2/4 kan også skrives 1/2.",
+                    "svar": "1/2",
+                    "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
                       "top": 617,
@@ -4081,21 +4009,21 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Kværnhjulet er delt i 7 lige store felter, og 3 er malet: ■■■□□□□. Hvor stor en del af hjulet er malet?",
+                "opgave": "Kværnhjulet er delt i 5 lige store felter, og 2 er malet: ■■□□□. Hvor stor en del af hjulet er malet?",
                 "valg": [
-                  "3/7",
-                  "7/3",
-                  "4/7"
+                  "2/3",
+                  "2/5",
+                  "3/5"
                 ],
                 "trin": 1,
                 "forsoeg": [
                   {
-                    "svar": "3/7",
+                    "svar": "2/5",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
-                      "top": 641,
-                      "bund": 682,
+                      "top": 617,
+                      "bund": 658,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -4104,21 +4032,21 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Mølleren deler 4 sække korn ligeligt mellem 5 gårde. Hvor meget korn får hver gård?",
+                "opgave": "Mølleren deler 1 sæk korn ligeligt mellem 5 gårde. Hvor meget korn får hver gård?",
                 "valg": [
-                  "4/5",
-                  "5/4",
-                  "1/5"
+                  "2/5",
+                  "1/5",
+                  "5/1"
                 ],
                 "trin": 2,
                 "forsoeg": [
                   {
-                    "svar": "4/5",
+                    "svar": "1/5",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
+                      "top": 618,
+                      "bund": 659,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -4134,10 +4062,8 @@
               "fremdrift": "0 af 4 opgaver løst · mestret ved 3 rigtige i første forsøg",
               "beskeder": []
             },
-            "rigtigeFoerste": 5,
+            "rigtigeFoerste": 4,
             "raekkefoelgeTrin": [
-              null,
-              2,
               2,
               2,
               1,
@@ -4159,17 +4085,17 @@
             "mestringsbeskedVed": [],
             "opgaver": [
               {
-                "opgave": "Én dag delte mølleren en sæk i 5 lige store dele, en anden dag i 7 lige store dele. Hvilken portion var størst?",
+                "opgave": "Én dag delte mølleren en sæk i 4 lige store dele, en anden dag i 6 lige store dele. Hvilken portion var størst?",
                 "valg": [
+                  "1/4 sæk",
                   "Lige store",
-                  "1/7 sæk",
-                  "1/5 sæk"
+                  "1/6 sæk"
                 ],
                 "trin": 3,
                 "forsoeg": [
                   {
-                    "svar": "1/7 sæk",
-                    "besked": "Ikke helt — Hint 1 af 2. Flere dele betyder MINDRE dele. Når sækken deles i 7, bliver hver del mindre end når den deles i 5.",
+                    "svar": "1/6 sæk",
+                    "besked": "Ikke helt — Hint 1 af 2. Flere dele betyder MINDRE dele. Når sækken deles i 6, bliver hver del mindre end når den deles i 4.",
                     "art": "quest-besked--hint",
                     "hintSynlig": {
                       "top": 779,
@@ -4178,141 +4104,13 @@
                       "heltSynlig": false
                     }
                   },
-                  {
-                    "svar": "1/5 sæk",
-                    "besked": "Rigtigt!",
-                    "art": "quest-besked--korrekt",
-                    "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "bevidstFejl": "flere dele = stoerre",
-                "foersteForsoegRigtigt": false
-              },
-              {
-                "opgave": "Hvilken portion er størst: 3/6 sæk eller 3/8 sæk?",
-                "valg": [
-                  "3/8 sæk",
-                  "Lige store",
-                  "3/6 sæk"
-                ],
-                "trin": 3,
-                "forsoeg": [
-                  {
-                    "svar": "3/8 sæk",
-                    "besked": "Ikke helt — Hint 1 af 2. Flere dele betyder MINDRE dele. Når sækken deles i 8, bliver hver del mindre end når den deles i 6.",
-                    "art": "quest-besked--hint",
-                    "hintSynlig": {
-                      "top": 740,
-                      "bund": 823,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  },
-                  {
-                    "svar": "3/6 sæk",
-                    "besked": "Rigtigt!",
-                    "art": "quest-besked--korrekt",
-                    "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "bevidstFejl": "flere dele = stoerre",
-                "foersteForsoegRigtigt": false
-              },
-              {
-                "opgave": "Mølleren deler 3 sække korn ligeligt mellem 5 gårde. Hvor meget korn får hver gård?",
-                "valg": [
-                  "5/3",
-                  "1/5",
-                  "3/5"
-                ],
-                "trin": 2,
-                "forsoeg": [
-                  {
-                    "svar": "3/5",
-                    "besked": "Rigtigt!",
-                    "art": "quest-besked--korrekt",
-                    "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "foersteForsoegRigtigt": true
-              },
-              {
-                "opgave": "Om mandagen malede mølleren 3/5 sæk, om tirsdagen 2/5 sæk. Hvilken dag malede han mest?",
-                "valg": [
-                  "2/5 sæk",
-                  "Lige meget",
-                  "3/5 sæk"
-                ],
-                "trin": 3,
-                "forsoeg": [
-                  {
-                    "svar": "2/5 sæk",
-                    "besked": "Ikke helt — Hint 1 af 2. Delene er lige store (5-dele), så den brøk med FLEST dele er størst: 3 dele er mere end 2.",
-                    "art": "quest-besked--hint",
-                    "hintSynlig": {
-                      "top": 803,
-                      "bund": 886,
-                      "vindue": 844,
-                      "heltSynlig": false
-                    }
-                  },
-                  {
-                    "svar": "3/5 sæk",
-                    "besked": "Rigtigt!",
-                    "art": "quest-besked--korrekt",
-                    "hintSynlig": {
-                      "top": 641,
-                      "bund": 682,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "bevidstFejl": "flere dele = stoerre",
-                "foersteForsoegRigtigt": false
-              },
-              {
-                "opgave": "Én dag delte mølleren en sæk i 4 lige store dele, en anden dag i 3 lige store dele. Hvilken portion var størst?",
-                "valg": [
-                  "Lige store",
-                  "1/4 sæk",
-                  "1/3 sæk"
-                ],
-                "trin": 3,
-                "forsoeg": [
                   {
                     "svar": "1/4 sæk",
-                    "besked": "Ikke helt — Hint 1 af 2. Flere dele betyder MINDRE dele. Når sækken deles i 4, bliver hver del mindre end når den deles i 3.",
-                    "art": "quest-besked--hint",
-                    "hintSynlig": {
-                      "top": 779,
-                      "bund": 862,
-                      "vindue": 844,
-                      "heltSynlig": false
-                    }
-                  },
-                  {
-                    "svar": "1/3 sæk",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
+                      "top": 618,
+                      "bund": 659,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -4322,32 +4120,32 @@
                 "foersteForsoegRigtigt": false
               },
               {
-                "opgave": "Hvilken portion er størst: 2/5 sæk eller 2/6 sæk?",
+                "opgave": "Hvilken portion er størst: 3/6 sæk eller 3/4 sæk?",
                 "valg": [
-                  "2/6 sæk",
-                  "Lige store",
-                  "2/5 sæk"
+                  "3/4 sæk",
+                  "3/6 sæk",
+                  "Lige store"
                 ],
                 "trin": 3,
                 "forsoeg": [
                   {
-                    "svar": "2/6 sæk",
-                    "besked": "Ikke helt — Hint 1 af 2. Flere dele betyder MINDRE dele. Når sækken deles i 6, bliver hver del mindre end når den deles i 5.",
+                    "svar": "3/6 sæk",
+                    "besked": "Ikke helt — Hint 1 af 2. Flere dele betyder MINDRE dele. Når sækken deles i 6, bliver hver del mindre end når den deles i 4.",
                     "art": "quest-besked--hint",
                     "hintSynlig": {
-                      "top": 755,
-                      "bund": 838,
+                      "top": 756,
+                      "bund": 839,
                       "vindue": 844,
                       "heltSynlig": true
                     }
                   },
                   {
-                    "svar": "2/5 sæk",
+                    "svar": "3/4 sæk",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
+                      "top": 618,
+                      "bund": 659,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -4359,9 +4157,9 @@
               {
                 "opgave": "Mølleren deler 2 sække korn ligeligt mellem 5 gårde. Hvor meget korn får hver gård?",
                 "valg": [
+                  "1/5",
                   "5/2",
-                  "2/5",
-                  "1/5"
+                  "2/5"
                 ],
                 "trin": 2,
                 "forsoeg": [
@@ -4370,8 +4168,8 @@
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
+                      "top": 618,
+                      "bund": 659,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -4380,23 +4178,93 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Hvilken portion er størst: 2/3 sæk eller 2/5 sæk?",
+                "opgave": "Om mandagen malede mølleren 6/11 sæk, om tirsdagen 9/11 sæk. Hvilken dag malede han mest?",
                 "valg": [
-                  "2/5 sæk",
+                  "6/11 sæk",
+                  "9/11 sæk",
+                  "Lige meget"
+                ],
+                "trin": 3,
+                "forsoeg": [
+                  {
+                    "svar": "6/11 sæk",
+                    "besked": "Ikke helt — Hint 1 af 2. Delene er lige store (11-dele), så den brøk med FLEST dele er størst: 9 dele er mere end 6.",
+                    "art": "quest-besked--hint",
+                    "hintSynlig": {
+                      "top": 804,
+                      "bund": 887,
+                      "vindue": 844,
+                      "heltSynlig": false
+                    }
+                  },
+                  {
+                    "svar": "9/11 sæk",
+                    "besked": "Rigtigt!",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 642,
+                      "bund": 683,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "bevidstFejl": "flere dele = stoerre",
+                "foersteForsoegRigtigt": false
+              },
+              {
+                "opgave": "Én dag delte mølleren en sæk i 3 lige store dele, en anden dag i 4 lige store dele. Hvilken portion var størst?",
+                "valg": [
+                  "1/4 sæk",
+                  "1/3 sæk",
+                  "Lige store"
+                ],
+                "trin": 3,
+                "forsoeg": [
+                  {
+                    "svar": "1/4 sæk",
+                    "besked": "Ikke helt — Hint 1 af 2. Flere dele betyder MINDRE dele. Når sækken deles i 4, bliver hver del mindre end når den deles i 3.",
+                    "art": "quest-besked--hint",
+                    "hintSynlig": {
+                      "top": 780,
+                      "bund": 863,
+                      "vindue": 844,
+                      "heltSynlig": false
+                    }
+                  },
+                  {
+                    "svar": "1/3 sæk",
+                    "besked": "Rigtigt!",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 618,
+                      "bund": 659,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "bevidstFejl": "flere dele = stoerre",
+                "foersteForsoegRigtigt": false
+              },
+              {
+                "opgave": "Hvilken portion er størst: 2/4 sæk eller 2/3 sæk?",
+                "valg": [
                   "Lige store",
+                  "2/4 sæk",
                   "2/3 sæk"
                 ],
                 "trin": 3,
                 "forsoeg": [
                   {
-                    "svar": "2/5 sæk",
-                    "besked": "Ikke helt — Hint 1 af 2. Flere dele betyder MINDRE dele. Når sækken deles i 5, bliver hver del mindre end når den deles i 3.",
+                    "svar": "2/4 sæk",
+                    "besked": "Ikke helt — Hint 1 af 2. Flere dele betyder MINDRE dele. Når sækken deles i 4, bliver hver del mindre end når den deles i 3.",
                     "art": "quest-besked--hint",
                     "hintSynlig": {
-                      "top": 779,
-                      "bund": 862,
+                      "top": 756,
+                      "bund": 839,
                       "vindue": 844,
-                      "heltSynlig": false
+                      "heltSynlig": true
                     }
                   },
                   {
@@ -4404,8 +4272,66 @@
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
+                      "top": 618,
+                      "bund": 659,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "bevidstFejl": "flere dele = stoerre",
+                "foersteForsoegRigtigt": false
+              },
+              {
+                "opgave": "Mølleren deler 2 sække korn ligeligt mellem 4 gårde. Hvor meget korn får hver gård?",
+                "valg": [
+                  "2/4",
+                  "1/4",
+                  "4/2"
+                ],
+                "trin": 2,
+                "forsoeg": [
+                  {
+                    "svar": "2/4",
+                    "besked": "Rigtigt! 2/4 kan også skrives 1/2.",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 618,
+                      "bund": 659,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "foersteForsoegRigtigt": true
+              },
+              {
+                "opgave": "Om mandagen malede mølleren 4/6 sæk, om tirsdagen 2/6 sæk. Hvilken dag malede han mest?",
+                "valg": [
+                  "2/6 sæk",
+                  "Lige meget",
+                  "4/6 sæk"
+                ],
+                "trin": 3,
+                "forsoeg": [
+                  {
+                    "svar": "2/6 sæk",
+                    "besked": "Ikke helt — Hint 1 af 2. Delene er lige store (6-dele), så den brøk med FLEST dele er størst: 4 dele er mere end 2.",
+                    "art": "quest-besked--hint",
+                    "hintSynlig": {
+                      "top": 804,
+                      "bund": 887,
+                      "vindue": 844,
+                      "heltSynlig": false
+                    }
+                  },
+                  {
+                    "svar": "4/6 sæk",
+                    "besked": "Rigtigt!",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 642,
+                      "bund": 683,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -4448,11 +4374,11 @@
             ],
             "opgaver": [
               {
-                "opgave": "Én dag delte mølleren en sæk i 3 lige store dele, en anden dag i 5 lige store dele. Hvilken portion var størst?",
+                "opgave": "Én dag delte mølleren en sæk i 5 lige store dele, en anden dag i 3 lige store dele. Hvilken portion var størst?",
                 "valg": [
-                  "1/3 sæk",
                   "Lige store",
-                  "1/5 sæk"
+                  "1/5 sæk",
+                  "1/3 sæk"
                 ],
                 "trin": 3,
                 "forsoeg": [
@@ -4461,8 +4387,8 @@
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
-                      "top": 641,
-                      "bund": 682,
+                      "top": 617,
+                      "bund": 658,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -4471,16 +4397,16 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Hvilken portion er størst: 3/6 sæk eller 3/4 sæk?",
+                "opgave": "Hvilken portion er størst: 2/4 sæk eller 2/5 sæk?",
                 "valg": [
+                  "2/4 sæk",
                   "Lige store",
-                  "3/6 sæk",
-                  "3/4 sæk"
+                  "2/5 sæk"
                 ],
                 "trin": 3,
                 "forsoeg": [
                   {
-                    "svar": "3/4 sæk",
+                    "svar": "2/4 sæk",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
@@ -4494,16 +4420,16 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Mølleren deler 2 sække korn ligeligt mellem 5 gårde. Hvor meget korn får hver gård?",
+                "opgave": "Mølleren deler 4 sække korn ligeligt mellem 5 gårde. Hvor meget korn får hver gård?",
                 "valg": [
-                  "5/2",
                   "1/5",
-                  "2/5"
+                  "4/5",
+                  "5/4"
                 ],
                 "trin": 2,
                 "forsoeg": [
                   {
-                    "svar": "2/5",
+                    "svar": "4/5",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
@@ -4517,16 +4443,16 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Om mandagen malede mølleren 5/10 sæk, om tirsdagen 7/10 sæk. Hvilken dag malede han mest?",
+                "opgave": "Om mandagen malede mølleren 10/11 sæk, om tirsdagen 8/11 sæk. Hvilken dag malede han mest?",
                 "valg": [
-                  "5/10 sæk",
+                  "10/11 sæk",
                   "Lige meget",
-                  "7/10 sæk"
+                  "8/11 sæk"
                 ],
                 "trin": 3,
                 "forsoeg": [
                   {
-                    "svar": "7/10 sæk",
+                    "svar": "10/11 sæk",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
@@ -4570,17 +4496,17 @@
             "mestringsbeskedVed": [],
             "opgaver": [
               {
-                "opgave": "Mølleren har 2/3 sæk mel. Han hælder det i små poser, der hver rummer 1/9 sæk. Hvilken brøk er lige så meget som 2/3?",
+                "opgave": "Mølleren har 1/2 sæk mel. Han hælder det i små poser, der hver rummer 1/4 sæk. Hvilken brøk er lige så meget som 1/2?",
                 "valg": [
-                  "6/9",
-                  "6/3",
-                  "8/9"
+                  "3/4",
+                  "2/4",
+                  "1/4"
                 ],
                 "trin": 4,
                 "forsoeg": [
                   {
-                    "svar": "6/3",
-                    "besked": "Ikke helt — Hint 1 af 2. Du har ganget tælleren med 3, men ikke nævneren. Så bliver det 3 gange så meget mel.",
+                    "svar": "1/4",
+                    "besked": "Ikke helt — Hint 1 af 2. Du har ganget nævneren med 2, men ikke tælleren. Delene blev 2 gange så små, så der skal 2 gange så mange af dem.",
                     "art": "quest-besked--hint",
                     "hintSynlig": {
                       "top": 803,
@@ -4590,8 +4516,8 @@
                     }
                   },
                   {
-                    "svar": "6/9",
-                    "besked": "Rigtigt! 6/9 kan også skrives 2/3.",
+                    "svar": "2/4",
+                    "besked": "Rigtigt! 2/4 kan også skrives 1/2.",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
                       "top": 641,
@@ -4601,32 +4527,32 @@
                     }
                   }
                 ],
-                "bevidstFejl": "kun naevneren ganget/trukket fra (ikke vist, tog et andet forkert)",
+                "bevidstFejl": "kun naevneren ganget/trukket fra",
                 "foersteForsoegRigtigt": false
               },
               {
-                "opgave": "Mølleren har 2/3 sæk mel. Han hælder det i små poser, der hver rummer 1/12 sæk. Hvilken brøk er lige så meget som 2/3?",
+                "opgave": "Mølleren har 1/2 sæk mel. Han hælder det i små poser, der hver rummer 1/8 sæk. Hvilken brøk er lige så meget som 1/2?",
                 "valg": [
-                  "11/12",
-                  "8/12",
-                  "8/3"
+                  "1/8",
+                  "4/2",
+                  "4/8"
                 ],
                 "trin": 4,
                 "forsoeg": [
                   {
-                    "svar": "11/12",
-                    "besked": "Ikke helt — Hint 1 af 2. Du har lagt 9 til både tæller og nævner. At lægge det samme til ændrer brøkens størrelse; man skal GANGE begge med det samme tal (her 4).",
+                    "svar": "1/8",
+                    "besked": "Ikke helt — Hint 1 af 2. Du har ganget nævneren med 4, men ikke tælleren. Delene blev 4 gange så små, så der skal 4 gange så mange af dem.",
                     "art": "quest-besked--hint",
                     "hintSynlig": {
                       "top": 779,
-                      "bund": 883,
+                      "bund": 862,
                       "vindue": 844,
                       "heltSynlig": false
                     }
                   },
                   {
-                    "svar": "8/12",
-                    "besked": "Rigtigt! 8/12 kan også skrives 2/3.",
+                    "svar": "4/8",
+                    "besked": "Rigtigt! 4/8 kan også skrives 1/2.",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
                       "top": 617,
@@ -4636,20 +4562,20 @@
                     }
                   }
                 ],
-                "bevidstFejl": "kun naevneren ganget/trukket fra (ikke vist, tog et andet forkert)",
+                "bevidstFejl": "kun naevneren ganget/trukket fra",
                 "foersteForsoegRigtigt": false
               },
               {
-                "opgave": "Hvilken portion er størst: 2/6 sæk eller 2/3 sæk?",
+                "opgave": "Hvilken portion er størst: 3/4 sæk eller 3/7 sæk?",
                 "valg": [
-                  "2/3 sæk",
-                  "2/6 sæk",
+                  "3/4 sæk",
+                  "3/7 sæk",
                   "Lige store"
                 ],
                 "trin": 3,
                 "forsoeg": [
                   {
-                    "svar": "2/3 sæk",
+                    "svar": "3/4 sæk",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
@@ -4663,23 +4589,23 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Mølleren har skrevet 3/18 sæk i regnebogen. Skriv brøken så kort som muligt.",
+                "opgave": "Mølleren har skrevet 4/24 sæk i regnebogen. Skriv brøken så kort som muligt.",
                 "valg": [
-                  "1/16",
-                  "1/6",
-                  "1/18"
+                  "1/21",
+                  "1/24",
+                  "1/6"
                 ],
                 "trin": 4,
                 "forsoeg": [
                   {
-                    "svar": "1/16",
-                    "besked": "Ikke helt — Hint 1 af 2. Du har trukket 2 fra både tæller og nævner. Forkorte betyder at DIVIDERE begge med samme tal: 3 : 3 og 18 : 3.",
+                    "svar": "1/21",
+                    "besked": "Ikke helt — Hint 1 af 2. Du har trukket 3 fra både tæller og nævner. Forkorte betyder at DIVIDERE begge med samme tal: 4 : 4 og 24 : 4.",
                     "art": "quest-besked--hint",
                     "hintSynlig": {
-                      "top": 779,
-                      "bund": 862,
+                      "top": 740,
+                      "bund": 823,
                       "vindue": 844,
-                      "heltSynlig": false
+                      "heltSynlig": true
                     }
                   },
                   {
@@ -4700,9 +4626,9 @@
               {
                 "opgave": "Mølleren har 1/4 sæk mel. Han hælder det i små poser, der hver rummer 1/12 sæk. Hvilken brøk er lige så meget som 1/4?",
                 "valg": [
-                  "3/4",
+                  "1/12",
                   "3/12",
-                  "1/12"
+                  "9/12"
                 ],
                 "trin": 4,
                 "forsoeg": [
@@ -4711,10 +4637,10 @@
                     "besked": "Ikke helt — Hint 1 af 2. Du har ganget nævneren med 3, men ikke tælleren. Delene blev 3 gange så små, så der skal 3 gange så mange af dem.",
                     "art": "quest-besked--hint",
                     "hintSynlig": {
-                      "top": 637,
-                      "bund": 720,
+                      "top": 803,
+                      "bund": 886,
                       "vindue": 844,
-                      "heltSynlig": true
+                      "heltSynlig": false
                     }
                   },
                   {
@@ -4722,8 +4648,8 @@
                     "besked": "Rigtigt! 3/12 kan også skrives 1/4.",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
+                      "top": 641,
+                      "bund": 682,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -4733,17 +4659,17 @@
                 "foersteForsoegRigtigt": false
               },
               {
-                "opgave": "Mølleren har 1/2 sæk mel. Han hælder det i små poser, der hver rummer 1/4 sæk. Hvilken brøk er lige så meget som 1/2?",
+                "opgave": "Mølleren har 2/3 sæk mel. Han hælder det i små poser, der hver rummer 1/12 sæk. Hvilken brøk er lige så meget som 2/3?",
                 "valg": [
-                  "2/4",
-                  "2/2",
-                  "1/4"
+                  "8/12",
+                  "11/12",
+                  "2/12"
                 ],
                 "trin": 4,
                 "forsoeg": [
                   {
-                    "svar": "1/4",
-                    "besked": "Ikke helt — Hint 1 af 2. Du har ganget nævneren med 2, men ikke tælleren. Delene blev 2 gange så små, så der skal 2 gange så mange af dem.",
+                    "svar": "2/12",
+                    "besked": "Ikke helt — Hint 1 af 2. Du har ganget nævneren med 4, men ikke tælleren. Delene blev 4 gange så små, så der skal 4 gange så mange af dem.",
                     "art": "quest-besked--hint",
                     "hintSynlig": {
                       "top": 779,
@@ -4753,8 +4679,8 @@
                     }
                   },
                   {
-                    "svar": "2/4",
-                    "besked": "Rigtigt! 2/4 kan også skrives 1/2.",
+                    "svar": "8/12",
+                    "besked": "Rigtigt! 8/12 kan også skrives 2/3.",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
                       "top": 617,
@@ -4768,16 +4694,16 @@
                 "foersteForsoegRigtigt": false
               },
               {
-                "opgave": "Hvilken portion er størst: 3/7 sæk eller 3/4 sæk?",
+                "opgave": "Hvilken portion er størst: 2/3 sæk eller 2/4 sæk?",
                 "valg": [
-                  "3/4 sæk",
+                  "2/3 sæk",
                   "Lige store",
-                  "3/7 sæk"
+                  "2/4 sæk"
                 ],
                 "trin": 3,
                 "forsoeg": [
                   {
-                    "svar": "3/4 sæk",
+                    "svar": "2/3 sæk",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
@@ -4791,17 +4717,17 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Mølleren har skrevet 6/8 sæk i regnebogen. Skriv brøken så kort som muligt.",
+                "opgave": "Mølleren har skrevet 12/16 sæk i regnebogen. Skriv brøken så kort som muligt.",
                 "valg": [
-                  "3/8",
+                  "12/4",
                   "3/4",
-                  "6/4"
+                  "3/7"
                 ],
                 "trin": 4,
                 "forsoeg": [
                   {
-                    "svar": "3/8",
-                    "besked": "Ikke helt — Hint 1 af 2. Du har divideret tælleren med 2, men ikke nævneren. Begge skal divideres med det samme tal.",
+                    "svar": "3/7",
+                    "besked": "Ikke helt — Hint 1 af 2. Du har trukket 9 fra både tæller og nævner. Forkorte betyder at DIVIDERE begge med samme tal: 12 : 4 og 16 : 4.",
                     "art": "quest-besked--hint",
                     "hintSynlig": {
                       "top": 779,
@@ -4859,17 +4785,17 @@
             ],
             "opgaver": [
               {
-                "opgave": "Mølleren har 3/4 sæk mel. Han hælder det i små poser, der hver rummer 1/12 sæk. Hvilken brøk er lige så meget som 3/4?",
+                "opgave": "Mølleren har 1/4 sæk mel. Han hælder det i små poser, der hver rummer 1/8 sæk. Hvilken brøk er lige så meget som 1/4?",
                 "valg": [
-                  "3/12",
-                  "9/12",
-                  "9/4"
+                  "5/8",
+                  "2/8",
+                  "1/8"
                 ],
                 "trin": 4,
                 "forsoeg": [
                   {
-                    "svar": "9/12",
-                    "besked": "Rigtigt! 9/12 kan også skrives 3/4.",
+                    "svar": "2/8",
+                    "besked": "Rigtigt! 2/8 kan også skrives 1/4.",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
                       "top": 631,
@@ -4882,17 +4808,17 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Mølleren har 1/3 sæk mel. Han hælder det i små poser, der hver rummer 1/6 sæk. Hvilken brøk er lige så meget som 1/3?",
+                "opgave": "Mølleren har 1/4 sæk mel. Han hælder det i små poser, der hver rummer 1/16 sæk. Hvilken brøk er lige så meget som 1/4?",
                 "valg": [
-                  "2/6",
-                  "1/6",
-                  "4/6"
+                  "4/16",
+                  "4/4",
+                  "13/16"
                 ],
                 "trin": 4,
                 "forsoeg": [
                   {
-                    "svar": "2/6",
-                    "besked": "Rigtigt! 2/6 kan også skrives 1/3.",
+                    "svar": "4/16",
+                    "besked": "Rigtigt! 4/16 kan også skrives 1/4.",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
                       "top": 617,
@@ -4905,16 +4831,16 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Hvilken portion er størst: 3/5 sæk eller 3/4 sæk?",
+                "opgave": "Hvilken portion er størst: 2/6 sæk eller 2/4 sæk?",
                 "valg": [
-                  "3/4 sæk",
                   "Lige store",
-                  "3/5 sæk"
+                  "2/6 sæk",
+                  "2/4 sæk"
                 ],
                 "trin": 3,
                 "forsoeg": [
                   {
-                    "svar": "3/4 sæk",
+                    "svar": "2/4 sæk",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
@@ -4928,16 +4854,16 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Mølleren har skrevet 4/12 sæk i regnebogen. Skriv brøken så kort som muligt.",
+                "opgave": "Mølleren har skrevet 9/12 sæk i regnebogen. Skriv brøken så kort som muligt.",
                 "valg": [
-                  "4/3",
-                  "1/9",
-                  "1/3"
+                  "3/6",
+                  "3/12",
+                  "3/4"
                 ],
                 "trin": 4,
                 "forsoeg": [
                   {
-                    "svar": "1/3",
+                    "svar": "3/4",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
@@ -4981,104 +4907,11 @@
             "mestringsbeskedVed": [],
             "opgaver": [
               {
-                "opgave": "Mølleren fylder 2/6 sæk korn om morgenen og 1/6 sæk mere om eftermiddagen. Hvor meget har han fyldt i alt?",
-                "valg": [
-                  "1/2",
-                  "3/36",
-                  "3/12"
-                ],
-                "trin": 5,
-                "forsoeg": [
-                  {
-                    "svar": "3/36",
-                    "besked": "Ikke helt — Hint 1 af 2. Du har ganget nævnerne. Delene er lige store, så nævneren bliver ved med at være 6.",
-                    "art": "quest-besked--hint",
-                    "hintSynlig": {
-                      "top": 779,
-                      "bund": 862,
-                      "vindue": 844,
-                      "heltSynlig": false
-                    }
-                  },
-                  {
-                    "svar": "1/2",
-                    "besked": "Rigtigt!",
-                    "art": "quest-besked--korrekt",
-                    "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "bevidstFejl": "naevnerne lagt sammen (ikke vist, tog et andet forkert)",
-                "foersteForsoegRigtigt": false
-              },
-              {
-                "opgave": "Mølleren fylder 3/8 sæk korn om morgenen og 2/8 sæk mere om eftermiddagen. Hvor meget har han fyldt i alt?",
-                "valg": [
-                  "5/64",
-                  "5/8",
-                  "5/16"
-                ],
-                "trin": 5,
-                "forsoeg": [
-                  {
-                    "svar": "5/16",
-                    "besked": "Ikke helt — Hint 1 af 2. Du har lagt nævnerne sammen. Nævneren siger, hvilken slags dele det er: 8-dele plus 8-dele er stadig 8-dele.",
-                    "art": "quest-besked--hint",
-                    "hintSynlig": {
-                      "top": 779,
-                      "bund": 862,
-                      "vindue": 844,
-                      "heltSynlig": false
-                    }
-                  },
-                  {
-                    "svar": "5/8",
-                    "besked": "Rigtigt!",
-                    "art": "quest-besked--korrekt",
-                    "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "bevidstFejl": "naevnerne lagt sammen",
-                "foersteForsoegRigtigt": false
-              },
-              {
-                "opgave": "Mølleren har 1/3 sæk mel. Han hælder det i små poser, der hver rummer 1/12 sæk. Hvilken brøk er lige så meget som 1/3?",
-                "valg": [
-                  "10/12",
-                  "1/12",
-                  "4/12"
-                ],
-                "trin": 4,
-                "forsoeg": [
-                  {
-                    "svar": "4/12",
-                    "besked": "Rigtigt! 4/12 kan også skrives 1/3.",
-                    "art": "quest-besked--korrekt",
-                    "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "foersteForsoegRigtigt": true
-              },
-              {
                 "opgave": "Mølleren fylder 1/7 sæk korn om morgenen og 3/7 sæk mere om eftermiddagen. Hvor meget har han fyldt i alt?",
                 "valg": [
+                  "4/7",
                   "4/14",
-                  "4/49",
-                  "4/7"
+                  "4/49"
                 ],
                 "trin": 5,
                 "forsoeg": [
@@ -5109,96 +4942,27 @@
                 "foersteForsoegRigtigt": false
               },
               {
-                "opgave": "Mølleren har delt sin mark i 7 lige store stykker, og 1 er sået: ■□□□□□□. Hvor stor en del af marken er sået?",
+                "opgave": "Mølleren fylder 2/7 sæk korn om morgenen og 3/7 sæk mere om eftermiddagen. Hvor meget har han fyldt i alt?",
                 "valg": [
-                  "6/7",
-                  "1/7",
-                  "7/1"
-                ],
-                "trin": null,
-                "forsoeg": [
-                  {
-                    "svar": "6/7",
-                    "besked": "Ikke helt — Hint 1 af 2. Du har talt de stykker, der IKKE er sået. Spørgsmålet gælder de såede.",
-                    "art": "quest-besked--hint",
-                    "hintSynlig": {
-                      "top": 740,
-                      "bund": 802,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "foersteForsoegRigtigt": false
-              },
-              {
-                "opgave": "Mølleren har delt sin mark i 7 lige store stykker, og 1 er sået: ■□□□□□□. Hvor stor en del af marken er sået?",
-                "valg": [
-                  "6/7",
-                  "1/7",
-                  "7/1"
-                ],
-                "trin": null,
-                "forsoeg": [
-                  {
-                    "svar": "6/7",
-                    "besked": "Ikke helt — Hint 2 af 2. Du har talt de stykker, der IKKE er sået. Spørgsmålet gælder de såede.",
-                    "art": "quest-besked--hint",
-                    "hintSynlig": {
-                      "top": 740,
-                      "bund": 802,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "foersteForsoegRigtigt": false
-              },
-              {
-                "opgave": "Mølleren har delt sin mark i 7 lige store stykker, og 1 er sået: ■□□□□□□. Hvor stor en del af marken er sået?",
-                "valg": [
-                  "6/7",
-                  "1/7",
-                  "7/1"
-                ],
-                "trin": null,
-                "forsoeg": [
-                  {
-                    "svar": "6/7",
-                    "besked": "Løsningen: 1 af 7 lige store stykker er sået: brøken 1/7, og den kan ikke forkortes.",
-                    "art": "quest-besked--loesning",
-                    "hintSynlig": {
-                      "top": 596,
-                      "bund": 658,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "foersteForsoegRigtigt": false
-              },
-              {
-                "opgave": "Mølleren havde 3/7 sæk mel og solgte 2/7 sæk. Hvor meget har han tilbage?",
-                "valg": [
-                  "1/7",
                   "5/7",
-                  "2/7"
+                  "5/49",
+                  "5/14"
                 ],
                 "trin": 5,
                 "forsoeg": [
                   {
-                    "svar": "5/7",
-                    "besked": "Ikke helt — Hint 1 af 2. Han solgte noget, så der bliver mindre. Der skal trækkes fra, ikke lægges til.",
+                    "svar": "5/14",
+                    "besked": "Ikke helt — Hint 1 af 2. Du har lagt nævnerne sammen. Nævneren siger, hvilken slags dele det er: 7-dele plus 7-dele er stadig 7-dele.",
                     "art": "quest-besked--hint",
                     "hintSynlig": {
-                      "top": 734,
-                      "bund": 817,
+                      "top": 740,
+                      "bund": 823,
                       "vindue": 844,
                       "heltSynlig": true
                     }
                   },
                   {
-                    "svar": "1/7",
+                    "svar": "5/7",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
@@ -5209,49 +4973,78 @@
                     }
                   }
                 ],
-                "bevidstFejl": "foerste forkerte",
+                "bevidstFejl": "naevnerne lagt sammen",
                 "foersteForsoegRigtigt": false
-              }
-            ],
-            "efter": {
-              "kaede": "Forløb 5 af 8",
-              "titel": "Sæk på sæk",
-              "status": "",
-              "fremdrift": "1 af 5 opgaver løst · mestret ved 4 rigtige i første forsøg",
-              "beskeder": []
-            },
-            "rigtigeFoerste": 1,
-            "raekkefoelgeTrin": [
-              5,
-              5,
-              4,
-              5,
-              null,
-              null,
-              null,
-              5
-            ],
-            "sidetekstHeleTrappen": false
-          },
-          {
-            "runde": 2,
-            "kaede": "Forløb 5 af 8",
-            "titel": "Sæk på sæk",
-            "replik": "Morgenens korn skal lægges til, og det solgte skal trækkes fra. Vil du holde regnskab?",
-            "fremdriftFoer": "1 af 5 opgaver løst · mestret ved 4 rigtige i første forsøg",
-            "mestringsbeskedVed": [],
-            "opgaver": [
+              },
               {
-                "opgave": "Mølleren havde 6/7 sæk mel og solgte 4/7 sæk. Hvor meget har han tilbage?",
+                "opgave": "Mølleren har 2/5 sæk mel. Han hælder det i små poser, der hver rummer 1/15 sæk. Hvilken brøk er lige så meget som 2/5?",
                 "valg": [
-                  "4/7",
-                  "2/7",
-                  "10/7"
+                  "6/5",
+                  "12/15",
+                  "6/15"
+                ],
+                "trin": 4,
+                "forsoeg": [
+                  {
+                    "svar": "6/15",
+                    "besked": "Rigtigt! 6/15 kan også skrives 2/5.",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 617,
+                      "bund": 658,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "foersteForsoegRigtigt": true
+              },
+              {
+                "opgave": "Mølleren fylder 2/7 sæk korn om morgenen og 3/7 sæk mere om eftermiddagen. Hvor meget har han fyldt i alt?",
+                "valg": [
+                  "5/49",
+                  "5/14",
+                  "5/7"
                 ],
                 "trin": 5,
                 "forsoeg": [
                   {
-                    "svar": "2/7",
+                    "svar": "5/14",
+                    "besked": "Ikke helt — Hint 1 af 2. Du har lagt nævnerne sammen. Nævneren siger, hvilken slags dele det er: 7-dele plus 7-dele er stadig 7-dele.",
+                    "art": "quest-besked--hint",
+                    "hintSynlig": {
+                      "top": 779,
+                      "bund": 862,
+                      "vindue": 844,
+                      "heltSynlig": false
+                    }
+                  },
+                  {
+                    "svar": "5/7",
+                    "besked": "Rigtigt!",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 617,
+                      "bund": 658,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "bevidstFejl": "naevnerne lagt sammen",
+                "foersteForsoegRigtigt": false
+              },
+              {
+                "opgave": "Hvilken portion er størst: 2/4 sæk eller 2/3 sæk?",
+                "valg": [
+                  "Lige store",
+                  "2/4 sæk",
+                  "2/3 sæk"
+                ],
+                "trin": 3,
+                "forsoeg": [
+                  {
+                    "svar": "2/3 sæk",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
@@ -5265,11 +5058,81 @@
                 "foersteForsoegRigtigt": true
               },
               {
+                "opgave": "Mølleren havde 6/7 sæk mel og solgte 4/7 sæk. Hvor meget har han tilbage?",
+                "valg": [
+                  "4/7",
+                  "10/7",
+                  "2/7"
+                ],
+                "trin": 5,
+                "forsoeg": [
+                  {
+                    "svar": "4/7",
+                    "besked": "Ikke helt — Hint 1 af 2. 4/7 er det, han solgte. Spørgsmålet er, hvad der er TILBAGE.",
+                    "art": "quest-besked--hint",
+                    "hintSynlig": {
+                      "top": 779,
+                      "bund": 841,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  },
+                  {
+                    "svar": "2/7",
+                    "besked": "Rigtigt!",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 617,
+                      "bund": 658,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "bevidstFejl": "foerste forkerte",
+                "foersteForsoegRigtigt": false
+              },
+              {
+                "opgave": "Mølleren havde 3/6 sæk mel og solgte 1/6 sæk. Hvor meget har han tilbage?",
+                "valg": [
+                  "4/6",
+                  "1/6",
+                  "2/6"
+                ],
+                "trin": 5,
+                "forsoeg": [
+                  {
+                    "svar": "4/6",
+                    "besked": "Ikke helt — Hint 1 af 2. Han solgte noget, så der bliver mindre. Der skal trækkes fra, ikke lægges til.",
+                    "art": "quest-besked--hint",
+                    "hintSynlig": {
+                      "top": 779,
+                      "bund": 862,
+                      "vindue": 844,
+                      "heltSynlig": false
+                    }
+                  },
+                  {
+                    "svar": "2/6",
+                    "besked": "Rigtigt! 2/6 kan også skrives 1/3.",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 617,
+                      "bund": 658,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "bevidstFejl": "foerste forkerte",
+                "foersteForsoegRigtigt": false
+              },
+              {
                 "opgave": "Mølleren har 1/2 sæk mel. Han hælder det i små poser, der hver rummer 1/8 sæk. Hvilken brøk er lige så meget som 1/2?",
                 "valg": [
-                  "4/8",
+                  "7/8",
                   "4/2",
-                  "1/8"
+                  "4/8"
                 ],
                 "trin": 4,
                 "forsoeg": [
@@ -5286,18 +5149,47 @@
                   }
                 ],
                 "foersteForsoegRigtigt": true
-              },
+              }
+            ],
+            "efter": {
+              "kaede": "Forløb 5 af 8",
+              "titel": "Sæk på sæk",
+              "status": "",
+              "fremdrift": "3 af 5 opgaver løst · mestret ved 4 rigtige i første forsøg",
+              "beskeder": []
+            },
+            "rigtigeFoerste": 3,
+            "raekkefoelgeTrin": [
+              5,
+              5,
+              4,
+              5,
+              3,
+              5,
+              5,
+              4
+            ],
+            "sidetekstHeleTrappen": false
+          },
+          {
+            "runde": 2,
+            "kaede": "Forløb 5 af 8",
+            "titel": "Sæk på sæk",
+            "replik": "Morgenens korn skal lægges til, og det solgte skal trækkes fra. Vil du holde regnskab?",
+            "fremdriftFoer": "3 af 5 opgaver løst · mestret ved 4 rigtige i første forsøg",
+            "mestringsbeskedVed": [],
+            "opgaver": [
               {
-                "opgave": "Mølleren fylder 1/8 sæk korn om morgenen og 3/8 sæk mere om eftermiddagen. Hvor meget har han fyldt i alt?",
+                "opgave": "Mølleren fylder 2/7 sæk korn om morgenen og 3/7 sæk mere om eftermiddagen. Hvor meget har han fyldt i alt?",
                 "valg": [
-                  "1/2",
-                  "4/16",
-                  "4/64"
+                  "5/7",
+                  "5/49",
+                  "5/14"
                 ],
                 "trin": 5,
                 "forsoeg": [
                   {
-                    "svar": "1/2",
+                    "svar": "5/7",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
@@ -5311,21 +5203,136 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Hvilken portion er størst: 3/6 sæk eller 3/7 sæk?",
+                "opgave": "Mølleren deler 1 sæk korn ligeligt mellem 5 gårde. Hvor meget korn får hver gård?",
                 "valg": [
-                  "Lige store",
-                  "3/6 sæk",
-                  "3/7 sæk"
+                  "2/5",
+                  "1/5",
+                  "5/1"
                 ],
-                "trin": 3,
+                "trin": 2,
                 "forsoeg": [
                   {
-                    "svar": "3/6 sæk",
+                    "svar": "1/5",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
                       "top": 617,
                       "bund": 658,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "foersteForsoegRigtigt": true
+              },
+              {
+                "opgave": "Mølleren fylder 2/6 sæk korn om morgenen og 2/6 sæk mere om eftermiddagen. Hvor meget har han fyldt i alt?",
+                "valg": [
+                  "4/36",
+                  "2/3",
+                  "4/12"
+                ],
+                "trin": 5,
+                "forsoeg": [
+                  {
+                    "svar": "2/3",
+                    "besked": "Rigtigt!",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 631,
+                      "bund": 672,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "foersteForsoegRigtigt": true
+              },
+              {
+                "opgave": "Mølleren fylder 1/7 sæk korn om morgenen og 5/7 sæk mere om eftermiddagen. Hvor meget har han fyldt i alt?",
+                "valg": [
+                  "6/7",
+                  "6/49",
+                  "6/14"
+                ],
+                "trin": 5,
+                "forsoeg": [
+                  {
+                    "svar": "6/7",
+                    "besked": "Rigtigt!",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 617,
+                      "bund": 658,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "foersteForsoegRigtigt": true
+              },
+              {
+                "opgave": "Mølleren har 1/2 sæk mel. Han hælder det i små poser, der hver rummer 1/8 sæk. Hvilken brøk er lige så meget som 1/2?",
+                "valg": [
+                  "7/8",
+                  "4/8",
+                  "1/8"
+                ],
+                "trin": 4,
+                "forsoeg": [
+                  {
+                    "svar": "4/8",
+                    "besked": "Rigtigt! 4/8 kan også skrives 1/2.",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 617,
+                      "bund": 658,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "foersteForsoegRigtigt": true
+              },
+              {
+                "opgave": "Mølleren havde 4/8 sæk mel og solgte 2/8 sæk. Hvor meget har han tilbage?",
+                "valg": [
+                  "6/8",
+                  "1/4",
+                  "3/8"
+                ],
+                "trin": 5,
+                "forsoeg": [
+                  {
+                    "svar": "1/4",
+                    "besked": "Rigtigt!",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 617,
+                      "bund": 658,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "foersteForsoegRigtigt": true
+              },
+              {
+                "opgave": "Mølleren har delt sin mark i 5 lige store stykker, og 4 er sået: ■■■■□. Hvor stor en del af marken er sået?",
+                "valg": [
+                  "4/5",
+                  "4/1",
+                  "5/4"
+                ],
+                "trin": 1,
+                "forsoeg": [
+                  {
+                    "svar": "4/5",
+                    "besked": "Rigtigt!",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 641,
+                      "bund": 682,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -5341,12 +5348,15 @@
               "fremdrift": "0 af 5 opgaver løst · mestret ved 4 rigtige i første forsøg",
               "beskeder": []
             },
-            "rigtigeFoerste": 4,
+            "rigtigeFoerste": 7,
             "raekkefoelgeTrin": [
+              5,
+              2,
+              5,
               5,
               4,
               5,
-              3
+              1
             ],
             "sidetekstHeleTrappen": false
           }
@@ -5364,52 +5374,17 @@
             "mestringsbeskedVed": [],
             "opgaver": [
               {
-                "opgave": "Mølleren har 12 sække mel. 1/2 af dem skal til bageren. Hvor mange sække skal bageren have?",
+                "opgave": "Mølleren har 15 sække mel. 1/3 af dem skal til bageren. Hvor mange sække skal bageren have?",
                 "valg": [
-                  "18",
-                  "12",
-                  "6"
+                  "10",
+                  "15",
+                  "5"
                 ],
                 "trin": 6,
                 "forsoeg": [
                   {
-                    "svar": "12",
-                    "besked": "Ikke helt — Hint 1 af 2. Du har ganget med 1, men ikke delt i 2 lige store grupper først.",
-                    "art": "quest-besked--hint",
-                    "hintSynlig": {
-                      "top": 803,
-                      "bund": 865,
-                      "vindue": 844,
-                      "heltSynlig": false
-                    }
-                  },
-                  {
-                    "svar": "6",
-                    "besked": "Rigtigt!",
-                    "art": "quest-besked--korrekt",
-                    "hintSynlig": {
-                      "top": 641,
-                      "bund": 682,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "bevidstFejl": "glemt at dele helheden i grupper",
-                "foersteForsoegRigtigt": false
-              },
-              {
-                "opgave": "Mølleren har 30 sække mel. 4/5 af dem skal til bageren. Hvor mange sække skal bageren have?",
-                "valg": [
-                  "24",
-                  "6",
-                  "120"
-                ],
-                "trin": 6,
-                "forsoeg": [
-                  {
-                    "svar": "120",
-                    "besked": "Ikke helt — Hint 1 af 2. Du har ganget med 4, men ikke delt i 5 lige store grupper først.",
+                    "svar": "15",
+                    "besked": "Ikke helt — Hint 1 af 2. Du har ganget med 1, men ikke delt i 3 lige store grupper først.",
                     "art": "quest-besked--hint",
                     "hintSynlig": {
                       "top": 779,
@@ -5419,12 +5394,12 @@
                     }
                   },
                   {
-                    "svar": "24",
+                    "svar": "5",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
+                      "top": 618,
+                      "bund": 659,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -5434,21 +5409,56 @@
                 "foersteForsoegRigtigt": false
               },
               {
-                "opgave": "Mølleren havde 3/6 sæk mel og solgte 1/6 sæk. Hvor meget har han tilbage?",
+                "opgave": "Mølleren har 27 sække mel. 2/3 af dem skal til bageren. Hvor mange sække skal bageren have?",
                 "valg": [
-                  "1/6",
-                  "4/6",
-                  "2/6"
+                  "18",
+                  "54",
+                  "9"
+                ],
+                "trin": 6,
+                "forsoeg": [
+                  {
+                    "svar": "54",
+                    "besked": "Ikke helt — Hint 1 af 2. Du har ganget med 2, men ikke delt i 3 lige store grupper først.",
+                    "art": "quest-besked--hint",
+                    "hintSynlig": {
+                      "top": 780,
+                      "bund": 842,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  },
+                  {
+                    "svar": "18",
+                    "besked": "Rigtigt!",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 618,
+                      "bund": 659,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "bevidstFejl": "glemt at dele helheden i grupper",
+                "foersteForsoegRigtigt": false
+              },
+              {
+                "opgave": "Mølleren havde 5/6 sæk mel og solgte 1/6 sæk. Hvor meget har han tilbage?",
+                "valg": [
+                  "6/6",
+                  "2/3",
+                  "1/6"
                 ],
                 "trin": 5,
                 "forsoeg": [
                   {
-                    "svar": "2/6",
-                    "besked": "Rigtigt! 2/6 kan også skrives 1/3.",
+                    "svar": "2/3",
+                    "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
+                      "top": 618,
+                      "bund": 659,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -5457,32 +5467,32 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Mølleren har 72 sække mel. 4/6 af dem skal til bageren. Hvor mange sække skal bageren have?",
+                "opgave": "Mølleren har 32 sække mel. 3/8 af dem skal til bageren. Hvor mange sække skal bageren have?",
                 "valg": [
-                  "12",
-                  "18",
-                  "48"
+                  "4",
+                  "20",
+                  "12"
                 ],
                 "trin": 6,
                 "forsoeg": [
                   {
-                    "svar": "12",
-                    "besked": "Ikke helt — Hint 1 af 2. 12 er 1/6 af 72. Der skal bruges 4 af de lige store grupper, så gang med 4.",
+                    "svar": "4",
+                    "besked": "Ikke helt — Hint 1 af 2. 4 er 1/8 af 32. Der skal bruges 3 af de lige store grupper, så gang med 3.",
                     "art": "quest-besked--hint",
                     "hintSynlig": {
-                      "top": 803,
-                      "bund": 886,
+                      "top": 804,
+                      "bund": 887,
                       "vindue": 844,
                       "heltSynlig": false
                     }
                   },
                   {
-                    "svar": "48",
+                    "svar": "12",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
-                      "top": 641,
-                      "bund": 682,
+                      "top": 642,
+                      "bund": 683,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -5492,21 +5502,21 @@
                 "foersteForsoegRigtigt": false
               },
               {
-                "opgave": "Kværnhjulet er delt i 8 lige store felter, og 4 er malet: ■■■■□□□□. Hvor stor en del af hjulet er malet?",
+                "opgave": "Kværnhjulet er delt i 8 lige store felter, og 2 er malet: ■■□□□□□□. Hvor stor en del af hjulet er malet?",
                 "valg": [
-                  "8/4",
-                  "4/8",
-                  "4/4"
+                  "6/8",
+                  "8/2",
+                  "2/8"
                 ],
                 "trin": 1,
                 "forsoeg": [
                   {
-                    "svar": "4/8",
-                    "besked": "Rigtigt! 4/8 kan også skrives 1/2.",
+                    "svar": "2/8",
+                    "besked": "Rigtigt! 2/8 kan også skrives 1/4.",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
+                      "top": 618,
+                      "bund": 659,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -5515,32 +5525,32 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Mølleren har 18 sække mel. 1/3 af dem skal til bageren. Hvor mange sække skal bageren have?",
+                "opgave": "Mølleren har 12 sække mel. 1/3 af dem skal til bageren. Hvor mange sække skal bageren have?",
                 "valg": [
-                  "18",
                   "12",
-                  "6"
+                  "8",
+                  "4"
                 ],
                 "trin": 6,
                 "forsoeg": [
                   {
-                    "svar": "18",
+                    "svar": "12",
                     "besked": "Ikke helt — Hint 1 af 2. Du har ganget med 1, men ikke delt i 3 lige store grupper først.",
                     "art": "quest-besked--hint",
                     "hintSynlig": {
-                      "top": 658,
-                      "bund": 720,
+                      "top": 780,
+                      "bund": 842,
                       "vindue": 844,
                       "heltSynlig": true
                     }
                   },
                   {
-                    "svar": "6",
+                    "svar": "4",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
+                      "top": 618,
+                      "bund": 659,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -5550,32 +5560,32 @@
                 "foersteForsoegRigtigt": false
               },
               {
-                "opgave": "Mølleren har 30 sække mel. 5/6 af dem skal til bageren. Hvor mange sække skal bageren have?",
+                "opgave": "Mølleren har 32 sække mel. 3/4 af dem skal til bageren. Hvor mange sække skal bageren have?",
                 "valg": [
-                  "25",
-                  "150",
-                  "5"
+                  "8",
+                  "24",
+                  "96"
                 ],
                 "trin": 6,
                 "forsoeg": [
                   {
-                    "svar": "150",
-                    "besked": "Ikke helt — Hint 1 af 2. Du har ganget med 5, men ikke delt i 6 lige store grupper først.",
+                    "svar": "96",
+                    "besked": "Ikke helt — Hint 1 af 2. Du har ganget med 3, men ikke delt i 4 lige store grupper først.",
                     "art": "quest-besked--hint",
                     "hintSynlig": {
-                      "top": 779,
-                      "bund": 841,
+                      "top": 780,
+                      "bund": 842,
                       "vindue": 844,
                       "heltSynlig": true
                     }
                   },
                   {
-                    "svar": "25",
+                    "svar": "24",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
+                      "top": 618,
+                      "bund": 659,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -5585,21 +5595,21 @@
                 "foersteForsoegRigtigt": false
               },
               {
-                "opgave": "Mølleren fylder 2/7 sæk korn om morgenen og 1/7 sæk mere om eftermiddagen. Hvor meget har han fyldt i alt?",
+                "opgave": "Mølleren fylder 1/8 sæk korn om morgenen og 5/8 sæk mere om eftermiddagen. Hvor meget har han fyldt i alt?",
                 "valg": [
-                  "3/7",
-                  "3/49",
-                  "3/14"
+                  "6/8",
+                  "6/64",
+                  "6/16"
                 ],
                 "trin": 5,
                 "forsoeg": [
                   {
-                    "svar": "3/7",
-                    "besked": "Rigtigt!",
+                    "svar": "6/8",
+                    "besked": "Rigtigt! 6/8 kan også skrives 3/4.",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
+                      "top": 618,
+                      "bund": 659,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -5637,16 +5647,16 @@
             "mestringsbeskedVed": [],
             "opgaver": [
               {
-                "opgave": "Mølleren har 100 sække mel. 3/10 af dem skal til bageren. Hvor mange sække skal bageren have?",
+                "opgave": "Mølleren har 40 sække mel. 4/5 af dem skal til bageren. Hvor mange sække skal bageren have?",
                 "valg": [
-                  "10",
-                  "30",
-                  "300"
+                  "160",
+                  "8",
+                  "32"
                 ],
                 "trin": 6,
                 "forsoeg": [
                   {
-                    "svar": "30",
+                    "svar": "32",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
@@ -5660,16 +5670,16 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Kværnhjulet er delt i 4 lige store felter, og 2 er malet: ■■□□. Hvor stor en del af hjulet er malet?",
+                "opgave": "Mølleren deler 3 sække korn ligeligt mellem 5 gårde. Hvor meget korn får hver gård?",
                 "valg": [
-                  "2/2",
-                  "4/2",
-                  "1/2"
+                  "3/5",
+                  "5/3",
+                  "1/5"
                 ],
-                "trin": 1,
+                "trin": 2,
                 "forsoeg": [
                   {
-                    "svar": "1/2",
+                    "svar": "3/5",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
@@ -5683,21 +5693,21 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Mølleren har 20 sække mel. 3/4 af dem skal til bageren. Hvor mange sække skal bageren have?",
+                "opgave": "Mølleren har 8 sække mel. 1/2 af dem skal til bageren. Hvor mange sække skal bageren have?",
                 "valg": [
-                  "5",
-                  "60",
-                  "15"
+                  "4",
+                  "8",
+                  "12"
                 ],
                 "trin": 6,
                 "forsoeg": [
                   {
-                    "svar": "15",
+                    "svar": "4",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
+                      "top": 641,
+                      "bund": 682,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -5706,16 +5716,16 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Mølleren har 30 sække mel. 2/6 af dem skal til bageren. Hvor mange sække skal bageren have?",
+                "opgave": "Mølleren har 35 sække mel. 4/5 af dem skal til bageren. Hvor mange sække skal bageren have?",
                 "valg": [
-                  "15",
-                  "10",
-                  "60"
+                  "28",
+                  "7",
+                  "140"
                 ],
                 "trin": 6,
                 "forsoeg": [
                   {
-                    "svar": "10",
+                    "svar": "28",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
@@ -5731,15 +5741,15 @@
               {
                 "opgave": "Mølleren fylder 2/6 sæk korn om morgenen og 1/6 sæk mere om eftermiddagen. Hvor meget har han fyldt i alt?",
                 "valg": [
-                  "3/12",
                   "3/36",
-                  "1/2"
+                  "3/6",
+                  "3/12"
                 ],
                 "trin": 5,
                 "forsoeg": [
                   {
-                    "svar": "1/2",
-                    "besked": "Rigtigt!",
+                    "svar": "3/6",
+                    "besked": "Rigtigt! 3/6 kan også skrives 1/2.",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
                       "top": 617,
@@ -5752,16 +5762,16 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Mølleren har 20 sække mel. 2/4 af dem skal til bageren. Hvor mange sække skal bageren have?",
+                "opgave": "Mølleren har 50 sække mel. 2/5 af dem skal til bageren. Hvor mange sække skal bageren have?",
                 "valg": [
-                  "40",
-                  "5",
-                  "10"
+                  "30",
+                  "25",
+                  "20"
                 ],
                 "trin": 6,
                 "forsoeg": [
                   {
-                    "svar": "10",
+                    "svar": "20",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
@@ -5775,104 +5785,27 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Mølleren har delt sin mark i 4 lige store stykker, og 2 er sået: ■■□□. Hvor stor en del af marken er sået?",
+                "opgave": "Mølleren har 3/4 sæk mel. Han hælder det i små poser, der hver rummer 1/12 sæk. Hvilken brøk er lige så meget som 3/4?",
                 "valg": [
-                  "2/2",
-                  "2/4",
-                  "4/2"
+                  "3/12",
+                  "9/4",
+                  "9/12"
                 ],
-                "trin": null,
+                "trin": 4,
                 "forsoeg": [
                   {
-                    "svar": "2/2",
-                    "besked": "Ikke helt — Hint 1 af 2. 2/2 sammenligner de såede med resten. En brøk af helheden skal have ALLE 4 stykker i nævneren.",
-                    "art": "quest-besked--hint",
-                    "hintSynlig": {
-                      "top": 779,
-                      "bund": 862,
-                      "vindue": 844,
-                      "heltSynlig": false
-                    }
-                  }
-                ],
-                "foersteForsoegRigtigt": false
-              },
-              {
-                "opgave": "Mølleren har delt sin mark i 4 lige store stykker, og 2 er sået: ■■□□. Hvor stor en del af marken er sået?",
-                "valg": [
-                  "2/2",
-                  "2/4",
-                  "4/2"
-                ],
-                "trin": null,
-                "forsoeg": [
-                  {
-                    "svar": "2/2",
-                    "besked": "Ikke helt — Hint 2 af 2. 2/2 sammenligner de såede med resten. En brøk af helheden skal have ALLE 4 stykker i nævneren.",
-                    "art": "quest-besked--hint",
-                    "hintSynlig": {
-                      "top": 779,
-                      "bund": 862,
-                      "vindue": 844,
-                      "heltSynlig": false
-                    }
-                  }
-                ],
-                "foersteForsoegRigtigt": false
-              }
-            ],
-            "efter": {
-              "kaede": "Forløb 6 af 8",
-              "titel": "Bagerens del",
-              "status": "",
-              "fremdrift": "4 af 5 opgaver løst · mestret ved 4 rigtige i første forsøg",
-              "beskeder": [
-                "Ikke helt — Hint 2 af 2. 2/2 sammenligner de såede med resten. En brøk af helheden skal have ALLE 4 stykker i nævneren."
-              ]
-            },
-            "rigtigeFoerste": 6,
-            "raekkefoelgeTrin": [
-              6,
-              1,
-              6,
-              6,
-              5,
-              6,
-              null,
-              null
-            ],
-            "sidetekstHeleTrappen": false
-          },
-          {
-            "runde": 3,
-            "kaede": "Forløb 6 af 8",
-            "titel": "Bagerens del",
-            "replik": "Bageren skal have en brøkdel af alle mine sække. Hvor mange sække er det?",
-            "fremdriftFoer": "4 af 5 opgaver løst · mestret ved 4 rigtige i første forsøg",
-            "mestringsbeskedVed": [],
-            "opgaver": [
-              {
-                "opgave": "Mølleren har delt sin mark i 4 lige store stykker, og 2 er sået: ■■□□. Hvor stor en del af marken er sået?",
-                "valg": [
-                  "2/2",
-                  "2/4",
-                  "4/2"
-                ],
-                "trin": null,
-                "forsoeg": [
-                  {
-                    "svar": "2/2",
-                    "besked": "Løsningen: 2 af 4 lige store stykker er sået: brøken 2/4, som forkortes til 1/2.",
-                    "art": "quest-besked--loesning",
+                    "svar": "9/12",
+                    "besked": "Rigtigt! 9/12 kan også skrives 3/4.",
+                    "art": "quest-besked--korrekt",
                     "hintSynlig": {
                       "top": 617,
-                      "bund": 679,
+                      "bund": 658,
                       "vindue": 844,
                       "heltSynlig": true
                     }
                   }
                 ],
-                "foersteForsoegRigtigt": false
+                "foersteForsoegRigtigt": true
               }
             ],
             "efter": {
@@ -5882,9 +5815,15 @@
               "fremdrift": "0 af 5 opgaver løst · mestret ved 4 rigtige i første forsøg",
               "beskeder": []
             },
-            "rigtigeFoerste": 0,
+            "rigtigeFoerste": 7,
             "raekkefoelgeTrin": [
-              null
+              6,
+              2,
+              6,
+              6,
+              5,
+              6,
+              4
             ],
             "sidetekstHeleTrappen": false
           }
@@ -5902,43 +5841,43 @@
             "mestringsbeskedVed": [],
             "opgaver": [
               {
-                "opgave": "Mølleren har 2/3 sæk hvedemel og 2/9 sæk rugmel. Hvor meget mel har han i alt?",
+                "opgave": "Mølleren har 1/3 sæk hvedemel og 5/9 sæk rugmel. Hvor meget mel har han i alt?",
                 "valg": [
-                  "4/12",
                   "8/9",
-                  "4/9"
+                  "6/9",
+                  "6/12"
                 ],
                 "trin": 7,
                 "forsoeg": [
                   {
-                    "svar": "4/12",
-                    "besked": "Ikke helt — Hint 1 af 2. Du har lagt tællerne sammen og nævnerne sammen. Man kan kun lægge dele sammen, når de er lige store: skriv først begge med nævneren 9.",
+                    "svar": "6/9",
+                    "besked": "Ikke helt — Hint 1 af 2. Du har skrevet begge brøker med nævneren 9, men glemt at gange tællerne med det samme tal som nævnerne.",
                     "art": "quest-besked--hint",
                     "hintSynlig": {
-                      "top": 758,
+                      "top": 779,
                       "bund": 862,
                       "vindue": 844,
                       "heltSynlig": false
                     }
                   },
                   {
-                    "svar": "4/12",
-                    "besked": "Ikke helt — Hint 2 af 2. Du har lagt tællerne sammen og nævnerne sammen. Man kan kun lægge dele sammen, når de er lige store: skriv først begge med nævneren 9.",
+                    "svar": "6/9",
+                    "besked": "Ikke helt — Hint 2 af 2. Du har skrevet begge brøker med nævneren 9, men glemt at gange tællerne med det samme tal som nævnerne.",
                     "art": "quest-besked--hint",
                     "hintSynlig": {
-                      "top": 758,
-                      "bund": 862,
+                      "top": 780,
+                      "bund": 863,
                       "vindue": 844,
                       "heltSynlig": false
                     }
                   },
                   {
-                    "svar": "4/12",
-                    "besked": "Løsningen: Fælles nævner 9: 2/3 = 6/9 og 2/9 = 2/9. 6 + 2 = 8, altså 8/9, og den kan ikke forkortes.",
+                    "svar": "6/9",
+                    "besked": "Løsningen: Fælles nævner 9: 1/3 = 3/9 og 5/9 = 5/9. 3 + 5 = 8, altså 8/9, og den kan ikke forkortes.",
                     "art": "quest-besked--loesning",
                     "hintSynlig": {
-                      "top": 596,
-                      "bund": 679,
+                      "top": 618,
+                      "bund": 701,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -5949,168 +5888,17 @@
                 "foersteForsoegRigtigt": false
               },
               {
-                "opgave": "Mølleren havde 3/4 sæk mel og brugte 1/12 sæk til brød. Hvor meget har han tilbage?",
+                "opgave": "Mølleren har 5/8 sæk hvedemel og 1/4 sæk rugmel. Hvor meget mel har han i alt?",
                 "valg": [
-                  "2/3",
-                  "5/6",
-                  "2/12"
+                  "7/8",
+                  "6/12",
+                  "6/8"
                 ],
                 "trin": 7,
                 "forsoeg": [
                   {
-                    "svar": "5/6",
-                    "besked": "Ikke helt — Hint 1 af 2. Han brugte noget, så der bliver mindre. Der skal trækkes fra, ikke lægges til.",
-                    "art": "quest-besked--hint",
-                    "hintSynlig": {
-                      "top": 740,
-                      "bund": 823,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  },
-                  {
-                    "svar": "2/3",
-                    "besked": "Rigtigt!",
-                    "art": "quest-besked--korrekt",
-                    "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "bevidstFejl": "foerste forkerte",
-                "foersteForsoegRigtigt": false
-              },
-              {
-                "opgave": "Mølleren har 20 sække mel. 4/5 af dem skal til bageren. Hvor mange sække skal bageren have?",
-                "valg": [
-                  "4",
-                  "16",
-                  "80"
-                ],
-                "trin": 6,
-                "forsoeg": [
-                  {
-                    "svar": "16",
-                    "besked": "Rigtigt!",
-                    "art": "quest-besked--korrekt",
-                    "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "foersteForsoegRigtigt": true
-              },
-              {
-                "opgave": "Mølleren har 1/3 sæk hvedemel og 1/2 sæk rugmel. Hvor meget mel har han i alt?",
-                "valg": [
-                  "2/6",
-                  "5/6",
-                  "2/5"
-                ],
-                "trin": 7,
-                "forsoeg": [
-                  {
-                    "svar": "2/6",
-                    "besked": "Ikke helt — Hint 1 af 2. Du har skrevet begge brøker med nævneren 6, men glemt at gange tællerne med det samme tal som nævnerne.",
-                    "art": "quest-besked--hint",
-                    "hintSynlig": {
-                      "top": 755,
-                      "bund": 838,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  },
-                  {
-                    "svar": "5/6",
-                    "besked": "Rigtigt!",
-                    "art": "quest-besked--korrekt",
-                    "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "bevidstFejl": "taeller+taeller, naevner+naevner (eller taeller ikke ganget)",
-                "foersteForsoegRigtigt": false
-              },
-              {
-                "opgave": "Kværnhjulet er delt i 4 lige store felter, og 2 er malet: ■■□□. Hvor stor en del af hjulet er malet?",
-                "valg": [
-                  "4/2",
-                  "2/4",
-                  "2/2"
-                ],
-                "trin": 1,
-                "forsoeg": [
-                  {
-                    "svar": "2/4",
-                    "besked": "Rigtigt! 2/4 kan også skrives 1/2.",
-                    "art": "quest-besked--korrekt",
-                    "hintSynlig": {
-                      "top": 641,
-                      "bund": 682,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "foersteForsoegRigtigt": true
-              },
-              {
-                "opgave": "Mølleren har 1/9 sæk hvedemel og 2/3 sæk rugmel. Hvor meget mel har han i alt?",
-                "valg": [
-                  "3/12",
-                  "3/9",
-                  "7/9"
-                ],
-                "trin": 7,
-                "forsoeg": [
-                  {
-                    "svar": "3/12",
-                    "besked": "Ikke helt — Hint 1 af 2. Du har lagt tællerne sammen og nævnerne sammen. Man kan kun lægge dele sammen, når de er lige store: skriv først begge med nævneren 9.",
-                    "art": "quest-besked--hint",
-                    "hintSynlig": {
-                      "top": 755,
-                      "bund": 859,
-                      "vindue": 844,
-                      "heltSynlig": false
-                    }
-                  },
-                  {
-                    "svar": "7/9",
-                    "besked": "Rigtigt!",
-                    "art": "quest-besked--korrekt",
-                    "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "bevidstFejl": "taeller+taeller, naevner+naevner (eller taeller ikke ganget)",
-                "foersteForsoegRigtigt": false
-              },
-              {
-                "opgave": "Mølleren har 1/2 sæk hvedemel og 1/6 sæk rugmel. Hvor meget mel har han i alt?",
-                "valg": [
-                  "2/3",
-                  "2/8",
-                  "2/6"
-                ],
-                "trin": 7,
-                "forsoeg": [
-                  {
-                    "svar": "2/8",
-                    "besked": "Ikke helt — Hint 1 af 2. Du har lagt tællerne sammen og nævnerne sammen. Man kan kun lægge dele sammen, når de er lige store: skriv først begge med nævneren 6.",
+                    "svar": "6/12",
+                    "besked": "Ikke helt — Hint 1 af 2. Du har lagt tællerne sammen og nævnerne sammen. Man kan kun lægge dele sammen, når de er lige store: skriv først begge med nævneren 8.",
                     "art": "quest-besked--hint",
                     "hintSynlig": {
                       "top": 780,
@@ -6120,7 +5908,7 @@
                     }
                   },
                   {
-                    "svar": "2/3",
+                    "svar": "7/8",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
@@ -6135,21 +5923,172 @@
                 "foersteForsoegRigtigt": false
               },
               {
-                "opgave": "Mølleren har 36 sække mel. 3/6 af dem skal til bageren. Hvor mange sække skal bageren have?",
+                "opgave": "Mølleren har 24 sække mel. 3/6 af dem skal til bageren. Hvor mange sække skal bageren have?",
                 "valg": [
-                  "108",
                   "12",
-                  "18"
+                  "4",
+                  "8"
                 ],
                 "trin": 6,
                 "forsoeg": [
                   {
-                    "svar": "18",
+                    "svar": "12",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
                       "top": 642,
                       "bund": 683,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "foersteForsoegRigtigt": true
+              },
+              {
+                "opgave": "Mølleren har 3/7 sæk hvedemel og 1/3 sæk rugmel. Hvor meget mel har han i alt?",
+                "valg": [
+                  "4/21",
+                  "4/10",
+                  "16/21"
+                ],
+                "trin": 7,
+                "forsoeg": [
+                  {
+                    "svar": "4/21",
+                    "besked": "Ikke helt — Hint 1 af 2. Du har skrevet begge brøker med nævneren 21, men glemt at gange tællerne med det samme tal som nævnerne.",
+                    "art": "quest-besked--hint",
+                    "hintSynlig": {
+                      "top": 756,
+                      "bund": 839,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  },
+                  {
+                    "svar": "16/21",
+                    "besked": "Rigtigt!",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 618,
+                      "bund": 659,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "bevidstFejl": "taeller+taeller, naevner+naevner (eller taeller ikke ganget)",
+                "foersteForsoegRigtigt": false
+              },
+              {
+                "opgave": "Kværnhjulet er delt i 6 lige store felter, og 3 er malet: ■■■□□□. Hvor stor en del af hjulet er malet?",
+                "valg": [
+                  "3/3",
+                  "3/6",
+                  "6/3"
+                ],
+                "trin": 1,
+                "forsoeg": [
+                  {
+                    "svar": "3/6",
+                    "besked": "Rigtigt! 3/6 kan også skrives 1/2.",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 642,
+                      "bund": 683,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "foersteForsoegRigtigt": true
+              },
+              {
+                "opgave": "Mølleren har 1/6 sæk hvedemel og 1/2 sæk rugmel. Hvor meget mel har han i alt?",
+                "valg": [
+                  "2/8",
+                  "4/6",
+                  "2/6"
+                ],
+                "trin": 7,
+                "forsoeg": [
+                  {
+                    "svar": "2/8",
+                    "besked": "Ikke helt — Hint 1 af 2. Du har lagt tællerne sammen og nævnerne sammen. Man kan kun lægge dele sammen, når de er lige store: skriv først begge med nævneren 6.",
+                    "art": "quest-besked--hint",
+                    "hintSynlig": {
+                      "top": 756,
+                      "bund": 860,
+                      "vindue": 844,
+                      "heltSynlig": false
+                    }
+                  },
+                  {
+                    "svar": "4/6",
+                    "besked": "Rigtigt! 4/6 kan også skrives 2/3.",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 618,
+                      "bund": 659,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "bevidstFejl": "taeller+taeller, naevner+naevner (eller taeller ikke ganget)",
+                "foersteForsoegRigtigt": false
+              },
+              {
+                "opgave": "Mølleren har 1/4 sæk hvedemel og 5/12 sæk rugmel. Hvor meget mel har han i alt?",
+                "valg": [
+                  "8/12",
+                  "6/12",
+                  "6/16"
+                ],
+                "trin": 7,
+                "forsoeg": [
+                  {
+                    "svar": "6/12",
+                    "besked": "Ikke helt — Hint 1 af 2. Du har skrevet begge brøker med nævneren 12, men glemt at gange tællerne med det samme tal som nævnerne.",
+                    "art": "quest-besked--hint",
+                    "hintSynlig": {
+                      "top": 780,
+                      "bund": 863,
+                      "vindue": 844,
+                      "heltSynlig": false
+                    }
+                  },
+                  {
+                    "svar": "8/12",
+                    "besked": "Rigtigt! 8/12 kan også skrives 2/3.",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 618,
+                      "bund": 659,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "bevidstFejl": "taeller+taeller, naevner+naevner (eller taeller ikke ganget)",
+                "foersteForsoegRigtigt": false
+              },
+              {
+                "opgave": "Mølleren har 9 sække mel. 2/3 af dem skal til bageren. Hvor mange sække skal bageren have?",
+                "valg": [
+                  "6",
+                  "18",
+                  "3"
+                ],
+                "trin": 6,
+                "forsoeg": [
+                  {
+                    "svar": "6",
+                    "besked": "Rigtigt!",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 618,
+                      "bund": 659,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -6187,21 +6126,21 @@
             "mestringsbeskedVed": [],
             "opgaver": [
               {
-                "opgave": "Mølleren har 1/4 sæk hvedemel og 2/3 sæk rugmel. Hvor meget mel har han i alt?",
+                "opgave": "Mølleren har 1/5 sæk hvedemel og 1/2 sæk rugmel. Hvor meget mel har han i alt?",
                 "valg": [
-                  "3/7",
-                  "3/12",
-                  "11/12"
+                  "2/10",
+                  "2/7",
+                  "7/10"
                 ],
                 "trin": 7,
                 "forsoeg": [
                   {
-                    "svar": "11/12",
+                    "svar": "7/10",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
-                      "top": 618,
-                      "bund": 659,
+                      "top": 617,
+                      "bund": 658,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -6210,21 +6149,21 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Hvilken portion er størst: 2/4 sæk eller 2/3 sæk?",
+                "opgave": "Mølleren har 1/6 sæk mel. Han hælder det i små poser, der hver rummer 1/24 sæk. Hvilken brøk er lige så meget som 1/6?",
                 "valg": [
-                  "2/3 sæk",
-                  "Lige store",
-                  "2/4 sæk"
+                  "4/24",
+                  "1/24",
+                  "4/6"
                 ],
-                "trin": 3,
+                "trin": 4,
                 "forsoeg": [
                   {
-                    "svar": "2/3 sæk",
-                    "besked": "Rigtigt!",
+                    "svar": "4/24",
+                    "besked": "Rigtigt! 4/24 kan også skrives 1/6.",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
-                      "top": 618,
-                      "bund": 659,
+                      "top": 641,
+                      "bund": 682,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -6233,10 +6172,10 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Mølleren har 2/3 sæk hvedemel og 1/6 sæk rugmel. Hvor meget mel har han i alt?",
+                "opgave": "Mølleren har 1/6 sæk hvedemel og 2/3 sæk rugmel. Hvor meget mel har han i alt?",
                 "valg": [
-                  "3/9",
                   "5/6",
+                  "3/9",
                   "3/6"
                 ],
                 "trin": 7,
@@ -6246,8 +6185,8 @@
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
-                      "top": 618,
-                      "bund": 659,
+                      "top": 617,
+                      "bund": 658,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -6256,90 +6195,90 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Mølleren havde 3/4 sæk mel og brugte 1/12 sæk til brød. Hvor meget har han tilbage?",
+                "opgave": "Mølleren har 1/2 sæk hvedemel og 1/6 sæk rugmel. Hvor meget mel har han i alt?",
                 "valg": [
-                  "2/3",
-                  "2/12",
-                  "5/6"
+                  "2/8",
+                  "2/6",
+                  "4/6"
                 ],
                 "trin": 7,
-                "forsoeg": [
-                  {
-                    "svar": "2/3",
-                    "besked": "Rigtigt!",
-                    "art": "quest-besked--korrekt",
-                    "hintSynlig": {
-                      "top": 618,
-                      "bund": 659,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "foersteForsoegRigtigt": true
-              },
-              {
-                "opgave": "Mølleren har 9 sække mel. 2/3 af dem skal til bageren. Hvor mange sække skal bageren have?",
-                "valg": [
-                  "6",
-                  "3",
-                  "18"
-                ],
-                "trin": 6,
-                "forsoeg": [
-                  {
-                    "svar": "6",
-                    "besked": "Rigtigt!",
-                    "art": "quest-besked--korrekt",
-                    "hintSynlig": {
-                      "top": 642,
-                      "bund": 683,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "foersteForsoegRigtigt": true
-              },
-              {
-                "opgave": "Mølleren havde 1/3 sæk mel og brugte 1/7 sæk til brød. Hvor meget har han tilbage?",
-                "valg": [
-                  "10/21",
-                  "5/21",
-                  "4/21"
-                ],
-                "trin": 7,
-                "forsoeg": [
-                  {
-                    "svar": "4/21",
-                    "besked": "Rigtigt!",
-                    "art": "quest-besked--korrekt",
-                    "hintSynlig": {
-                      "top": 618,
-                      "bund": 659,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "foersteForsoegRigtigt": true
-              },
-              {
-                "opgave": "Mølleren har 2/3 sæk mel. Han hælder det i små poser, der hver rummer 1/6 sæk. Hvilken brøk er lige så meget som 2/3?",
-                "valg": [
-                  "4/6",
-                  "5/6",
-                  "4/3"
-                ],
-                "trin": 4,
                 "forsoeg": [
                   {
                     "svar": "4/6",
                     "besked": "Rigtigt! 4/6 kan også skrives 2/3.",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
-                      "top": 642,
-                      "bund": 683,
+                      "top": 617,
+                      "bund": 658,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "foersteForsoegRigtigt": true
+              },
+              {
+                "opgave": "Mølleren har 15 sække mel. 3/5 af dem skal til bageren. Hvor mange sække skal bageren have?",
+                "valg": [
+                  "45",
+                  "6",
+                  "9"
+                ],
+                "trin": 6,
+                "forsoeg": [
+                  {
+                    "svar": "9",
+                    "besked": "Rigtigt!",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 641,
+                      "bund": 682,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "foersteForsoegRigtigt": true
+              },
+              {
+                "opgave": "Mølleren har 1/2 sæk hvedemel og 1/5 sæk rugmel. Hvor meget mel har han i alt?",
+                "valg": [
+                  "2/7",
+                  "7/10",
+                  "2/10"
+                ],
+                "trin": 7,
+                "forsoeg": [
+                  {
+                    "svar": "7/10",
+                    "besked": "Rigtigt!",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 617,
+                      "bund": 658,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "foersteForsoegRigtigt": true
+              },
+              {
+                "opgave": "Mølleren havde 3/8 sæk mel og solgte 1/8 sæk. Hvor meget har han tilbage?",
+                "valg": [
+                  "2/8",
+                  "4/8",
+                  "1/8"
+                ],
+                "trin": 5,
+                "forsoeg": [
+                  {
+                    "svar": "2/8",
+                    "besked": "Rigtigt! 2/8 kan også skrives 1/4.",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 617,
+                      "bund": 658,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -6358,12 +6297,12 @@
             "rigtigeFoerste": 7,
             "raekkefoelgeTrin": [
               7,
-              3,
+              4,
               7,
               7,
               6,
               7,
-              4
+              5
             ],
             "sidetekstHeleTrappen": false
           }
@@ -6381,27 +6320,27 @@
             "mestringsbeskedVed": [],
             "opgaver": [
               {
-                "opgave": "Mølleren har 17/5 sæk mel. Skriv det som et blandet tal: hele sække og en brøk.",
+                "opgave": "Mølleren har 11/6 sæk mel. Skriv det som et blandet tal: hele sække og en brøk.",
                 "valg": [
-                  "3 2/5",
-                  "3 2/17",
-                  "17 1/5"
+                  "5 1/6",
+                  "1 5/6",
+                  "2 5/6"
                 ],
                 "trin": 8,
                 "forsoeg": [
                   {
-                    "svar": "3 2/17",
-                    "besked": "Ikke helt — Hint 1 af 2. Nævneren skal stadig være 5: delene er stadig 5-dele.",
+                    "svar": "5 1/6",
+                    "besked": "Ikke helt — Hint 1 af 2. De hele er antal gange 6 går op i 11 (1); resten 5 er brøkdelen.",
                     "art": "quest-besked--hint",
                     "hintSynlig": {
-                      "top": 741,
-                      "bund": 803,
+                      "top": 755,
+                      "bund": 817,
                       "vindue": 844,
                       "heltSynlig": true
                     }
                   },
                   {
-                    "svar": "3 2/5",
+                    "svar": "1 5/6",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
@@ -6416,17 +6355,17 @@
                 "foersteForsoegRigtigt": false
               },
               {
-                "opgave": "Mølleren har 1 2/3 sæk mel og får 2 2/3 sæk mere. Hvor meget har han nu?",
+                "opgave": "Mølleren har 1 1/2 sæk mel og får 2 3/4 sæk mere. Hvor meget har han nu?",
                 "valg": [
-                  "3 4/6",
-                  "3 1/3",
-                  "4 1/3"
+                  "4 1/4",
+                  "3 1/4",
+                  "3 5/8"
                 ],
                 "trin": 8,
                 "forsoeg": [
                   {
-                    "svar": "3 4/6",
-                    "besked": "Ikke helt — Hint 1 af 2. Du har lagt nævnerne sammen. 3-dele plus 3-dele er stadig 3-dele.",
+                    "svar": "3 1/4",
+                    "besked": "Ikke helt — Hint 1 af 2. 2/4 + 3/4 er mere end en hel. Den hele skal lægges til de hele tal.",
                     "art": "quest-besked--hint",
                     "hintSynlig": {
                       "top": 780,
@@ -6436,7 +6375,7 @@
                     }
                   },
                   {
-                    "svar": "4 1/3",
+                    "svar": "4 1/4",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
@@ -6451,16 +6390,16 @@
                 "foersteForsoegRigtigt": false
               },
               {
-                "opgave": "Mølleren havde 1/3 sæk mel og brugte 2/9 sæk til brød. Hvor meget har han tilbage?",
+                "opgave": "Mølleren havde 1/4 sæk mel og brugte 1/8 sæk til brød. Hvor meget har han tilbage?",
                 "valg": [
-                  "5/9",
-                  "1/9",
-                  "2/9"
+                  "2/8",
+                  "1/8",
+                  "3/8"
                 ],
                 "trin": 7,
                 "forsoeg": [
                   {
-                    "svar": "1/9",
+                    "svar": "1/8",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
@@ -6474,17 +6413,17 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Mølleren havde 2 2/3 sæk mel og solgte 1 5/6 sæk. Hvor meget har han tilbage?",
+                "opgave": "Mølleren havde 3 1/3 sæk mel og solgte 2 2/3 sæk. Hvor meget har han tilbage?",
                 "valg": [
-                  "1 5/6",
-                  "5/6",
-                  "1 1/6"
+                  "2/3",
+                  "1 2/3",
+                  "1 1/3"
                 ],
                 "trin": 8,
                 "forsoeg": [
                   {
-                    "svar": "1 5/6",
-                    "besked": "Ikke helt — Hint 1 af 2. Når du veksler én hel til 6/6, er der én hel mindre tilbage i de hele tal.",
+                    "svar": "1 2/3",
+                    "besked": "Ikke helt — Hint 1 af 2. Når du veksler én hel til 3/3, er der én hel mindre tilbage i de hele tal.",
                     "art": "quest-besked--hint",
                     "hintSynlig": {
                       "top": 780,
@@ -6494,7 +6433,100 @@
                     }
                   },
                   {
-                    "svar": "5/6",
+                    "svar": "2/3",
+                    "besked": "Rigtigt!",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 618,
+                      "bund": 659,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "bevidstFejl": "foerste forkerte",
+                "foersteForsoegRigtigt": false
+              },
+              {
+                "opgave": "Mølleren har delt sin mark i 8 lige store stykker, og 4 er sået: ■■■■□□□□. Hvor stor en del af marken er sået?",
+                "valg": [
+                  "4/4",
+                  "8/4",
+                  "1/2"
+                ],
+                "trin": 1,
+                "forsoeg": [
+                  {
+                    "svar": "1/2",
+                    "besked": "Rigtigt!",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 642,
+                      "bund": 683,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "foersteForsoegRigtigt": true
+              },
+              {
+                "opgave": "Mølleren har 13/4 sæk mel. Skriv det som et blandet tal: hele sække og en brøk.",
+                "valg": [
+                  "1 3/4",
+                  "13 1/4",
+                  "3 1/4"
+                ],
+                "trin": 8,
+                "forsoeg": [
+                  {
+                    "svar": "1 3/4",
+                    "besked": "Ikke helt — Hint 1 af 2. De hele er antal gange 4 går op i 13 (3); resten 1 er brøkdelen.",
+                    "art": "quest-besked--hint",
+                    "hintSynlig": {
+                      "top": 756,
+                      "bund": 818,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  },
+                  {
+                    "svar": "3 1/4",
+                    "besked": "Rigtigt!",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 618,
+                      "bund": 659,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "bevidstFejl": "foerste forkerte",
+                "foersteForsoegRigtigt": false
+              },
+              {
+                "opgave": "Mølleren har 1 5/6 sæk mel og får 1 2/3 sæk mere. Hvor meget har han nu?",
+                "valg": [
+                  "3 1/2",
+                  "2 9/12",
+                  "2 1/2"
+                ],
+                "trin": 8,
+                "forsoeg": [
+                  {
+                    "svar": "2 9/12",
+                    "besked": "Ikke helt — Hint 1 af 2. Du har lagt nævnerne sammen. 6-dele plus 6-dele er stadig 6-dele.",
+                    "art": "quest-besked--hint",
+                    "hintSynlig": {
+                      "top": 741,
+                      "bund": 803,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  },
+                  {
+                    "svar": "3 1/2",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
@@ -6509,109 +6541,16 @@
                 "foersteForsoegRigtigt": false
               },
               {
-                "opgave": "Hvilken portion er størst: 2/6 sæk eller 2/5 sæk?",
+                "opgave": "Mølleren har 1/4 sæk hvedemel og 1/2 sæk rugmel. Hvor meget mel har han i alt?",
                 "valg": [
-                  "Lige store",
-                  "2/5 sæk",
-                  "2/6 sæk"
-                ],
-                "trin": 3,
-                "forsoeg": [
-                  {
-                    "svar": "2/5 sæk",
-                    "besked": "Rigtigt!",
-                    "art": "quest-besked--korrekt",
-                    "hintSynlig": {
-                      "top": 618,
-                      "bund": 659,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "foersteForsoegRigtigt": true
-              },
-              {
-                "opgave": "Mølleren har 9/8 sæk mel. Skriv det som et blandet tal: hele sække og en brøk.",
-                "valg": [
-                  "1 1/9",
-                  "9 1/8",
-                  "1 1/8"
-                ],
-                "trin": 8,
-                "forsoeg": [
-                  {
-                    "svar": "1 1/9",
-                    "besked": "Ikke helt — Hint 1 af 2. Nævneren skal stadig være 8: delene er stadig 8-dele.",
-                    "art": "quest-besked--hint",
-                    "hintSynlig": {
-                      "top": 780,
-                      "bund": 842,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  },
-                  {
-                    "svar": "1 1/8",
-                    "besked": "Rigtigt!",
-                    "art": "quest-besked--korrekt",
-                    "hintSynlig": {
-                      "top": 618,
-                      "bund": 659,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "bevidstFejl": "foerste forkerte",
-                "foersteForsoegRigtigt": false
-              },
-              {
-                "opgave": "Mølleren har 3 3/5 sæk mel og får 2 3/5 sæk mere. Hvor meget har han nu?",
-                "valg": [
-                  "5 6/10",
-                  "6 1/5",
-                  "5 1/5"
-                ],
-                "trin": 8,
-                "forsoeg": [
-                  {
-                    "svar": "5 6/10",
-                    "besked": "Ikke helt — Hint 1 af 2. Du har lagt nævnerne sammen. 5-dele plus 5-dele er stadig 5-dele.",
-                    "art": "quest-besked--hint",
-                    "hintSynlig": {
-                      "top": 780,
-                      "bund": 842,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  },
-                  {
-                    "svar": "6 1/5",
-                    "besked": "Rigtigt!",
-                    "art": "quest-besked--korrekt",
-                    "hintSynlig": {
-                      "top": 618,
-                      "bund": 659,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "bevidstFejl": "foerste forkerte",
-                "foersteForsoegRigtigt": false
-              },
-              {
-                "opgave": "Mølleren havde 2/3 sæk mel og brugte 1/9 sæk til brød. Hvor meget har han tilbage?",
-                "valg": [
-                  "7/9",
-                  "1/9",
-                  "5/9"
+                  "2/4",
+                  "2/6",
+                  "3/4"
                 ],
                 "trin": 7,
                 "forsoeg": [
                   {
-                    "svar": "5/9",
+                    "svar": "3/4",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
@@ -6638,7 +6577,7 @@
               8,
               7,
               8,
-              3,
+              1,
               8,
               8,
               7
@@ -6654,16 +6593,16 @@
             "mestringsbeskedVed": [],
             "opgaver": [
               {
-                "opgave": "Mølleren havde 2 1/8 sæk mel og solgte 1 1/2 sæk. Hvor meget har han tilbage?",
+                "opgave": "Mølleren havde 3 2/5 sæk mel og solgte 2 4/5 sæk. Hvor meget har han tilbage?",
                 "valg": [
-                  "5/8",
-                  "1 3/8",
-                  "1 5/8"
+                  "1 3/5",
+                  "1 2/5",
+                  "3/5"
                 ],
                 "trin": 8,
                 "forsoeg": [
                   {
-                    "svar": "5/8",
+                    "svar": "3/5",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
@@ -6677,39 +6616,16 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Kværnhjulet er delt i 8 lige store felter, og 3 er malet: ■■■□□□□□. Hvor stor en del af hjulet er malet?",
+                "opgave": "Hvilken portion er størst: 2/4 sæk eller 2/5 sæk?",
                 "valg": [
-                  "8/3",
-                  "5/8",
-                  "3/8"
+                  "2/4 sæk",
+                  "Lige store",
+                  "2/5 sæk"
                 ],
-                "trin": 1,
+                "trin": 3,
                 "forsoeg": [
                   {
-                    "svar": "3/8",
-                    "besked": "Rigtigt!",
-                    "art": "quest-besked--korrekt",
-                    "hintSynlig": {
-                      "top": 641,
-                      "bund": 682,
-                      "vindue": 844,
-                      "heltSynlig": true
-                    }
-                  }
-                ],
-                "foersteForsoegRigtigt": true
-              },
-              {
-                "opgave": "Mølleren har 19/5 sæk mel. Skriv det som et blandet tal: hele sække og en brøk.",
-                "valg": [
-                  "3 4/5",
-                  "4 3/5",
-                  "3 4/19"
-                ],
-                "trin": 8,
-                "forsoeg": [
-                  {
-                    "svar": "3 4/5",
+                    "svar": "2/4 sæk",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
@@ -6723,16 +6639,16 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Mølleren har 2 5/8 sæk mel og får 2 1/2 sæk mere. Hvor meget har han nu?",
+                "opgave": "Mølleren har 5/2 sæk mel. Skriv det som et blandet tal: hele sække og en brøk.",
                 "valg": [
-                  "5 1/8",
-                  "4 1/8",
-                  "4 9/16"
+                  "3 1/2",
+                  "2 1/5",
+                  "2 1/2"
                 ],
                 "trin": 8,
                 "forsoeg": [
                   {
-                    "svar": "5 1/8",
+                    "svar": "2 1/2",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
@@ -6746,21 +6662,44 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Mølleren har 1/6 sæk hvedemel og 1/2 sæk rugmel. Hvor meget mel har han i alt?",
+                "opgave": "Mølleren har 1 1/4 sæk mel og får 1 7/8 sæk mere. Hvor meget har han nu?",
                 "valg": [
-                  "2/6",
-                  "2/8",
-                  "4/6"
+                  "3 1/8",
+                  "2 9/16",
+                  "2 1/8"
+                ],
+                "trin": 8,
+                "forsoeg": [
+                  {
+                    "svar": "3 1/8",
+                    "besked": "Rigtigt!",
+                    "art": "quest-besked--korrekt",
+                    "hintSynlig": {
+                      "top": 617,
+                      "bund": 658,
+                      "vindue": 844,
+                      "heltSynlig": true
+                    }
+                  }
+                ],
+                "foersteForsoegRigtigt": true
+              },
+              {
+                "opgave": "Mølleren havde 2/3 sæk mel og brugte 1/6 sæk til brød. Hvor meget har han tilbage?",
+                "valg": [
+                  "5/6",
+                  "1/2",
+                  "1/6"
                 ],
                 "trin": 7,
                 "forsoeg": [
                   {
-                    "svar": "4/6",
-                    "besked": "Rigtigt! 4/6 kan også skrives 2/3.",
+                    "svar": "1/2",
+                    "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
+                      "top": 618,
+                      "bund": 659,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -6769,21 +6708,21 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Mølleren havde 3 1/2 sæk mel og solgte 1 3/4 sæk. Hvor meget har han tilbage?",
+                "opgave": "Mølleren havde 3 1/2 sæk mel og solgte 2 3/4 sæk. Hvor meget har han tilbage?",
                 "valg": [
-                  "2 3/4",
-                  "1 3/4",
-                  "2 1/4"
+                  "3/4",
+                  "1 1/4",
+                  "1 3/4"
                 ],
                 "trin": 8,
                 "forsoeg": [
                   {
-                    "svar": "1 3/4",
+                    "svar": "3/4",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
+                      "top": 618,
+                      "bund": 659,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -6792,21 +6731,21 @@
                 "foersteForsoegRigtigt": true
               },
               {
-                "opgave": "Mølleren fylder 2/8 sæk korn om morgenen og 1/8 sæk mere om eftermiddagen. Hvor meget har han fyldt i alt?",
+                "opgave": "Mølleren deler 2 sække korn ligeligt mellem 5 gårde. Hvor meget korn får hver gård?",
                 "valg": [
-                  "3/16",
-                  "3/8",
-                  "3/64"
+                  "2/5",
+                  "5/2",
+                  "1/5"
                 ],
-                "trin": 5,
+                "trin": 2,
                 "forsoeg": [
                   {
-                    "svar": "3/8",
+                    "svar": "2/5",
                     "besked": "Rigtigt!",
                     "art": "quest-besked--korrekt",
                     "hintSynlig": {
-                      "top": 617,
-                      "bund": 658,
+                      "top": 618,
+                      "bund": 659,
                       "vindue": 844,
                       "heltSynlig": true
                     }
@@ -6825,12 +6764,12 @@
             "rigtigeFoerste": 7,
             "raekkefoelgeTrin": [
               8,
-              1,
+              3,
               8,
               8,
               7,
               8,
-              5
+              2
             ],
             "sidetekstHeleTrappen": false
           }
@@ -6839,9 +6778,8 @@
     ],
     "skaermbilleder": [
       "broek-00-kirken-foerste-opgave.png",
+      "broek-00-kirken-trin3.png",
       "broek-01-moellen-start.png",
-      "broek-01-hint-trinnull.png",
-      "broek-01-loesning.png",
       "broek-01-hint-trin1.png",
       "broek-01-mestring-runde2.png",
       "broek-01-ros.png",
@@ -6856,6 +6794,7 @@
       "broek-06-hint-trin6.png",
       "broek-06-mestring-runde2.png",
       "broek-07-hint-trin7.png",
+      "broek-07-loesning.png",
       "broek-07-mestring-runde2.png",
       "broek-08-hint-trin8.png",
       "broek-08-mestring-runde2.png",
@@ -6895,13 +6834,36 @@
     ],
     "kirkenFoerst": {
       "titel": "Det du allerede kan",
-      "opgave": "Mølleren har delt sin mark i 3 lige store stykker, og 2 er sået: ■■□. Hvor stor en del af marken er sået?",
-      "valg": [
-        "1/3",
-        "3/2",
-        "2/3"
-      ],
-      "trin": null
+      "replik": "Før klokken kalder til time, lad os se, hvad du husker.",
+      "opgaver": [
+        {
+          "opgave": "Kværnhjulet er delt i 4 lige store felter, og 2 er malet: ■■□□. Hvor stor en del af hjulet er malet?",
+          "valg": [
+            "2/2",
+            "4/2",
+            "2/4"
+          ],
+          "trin": 1
+        },
+        {
+          "opgave": "Mølleren deler 1 sæk korn ligeligt mellem 3 gårde. Hvor meget korn får hver gård?",
+          "valg": [
+            "1/3",
+            "2/3",
+            "3/1"
+          ],
+          "trin": 2
+        },
+        {
+          "opgave": "Én dag delte mølleren en sæk i 3 lige store dele, en anden dag i 4 lige store dele. Hvilken portion var størst?",
+          "valg": [
+            "1/4 sæk",
+            "1/3 sæk",
+            "Lige store"
+          ],
+          "trin": 3
+        }
+      ]
     },
     "stederEfterForloeb1": [
       {

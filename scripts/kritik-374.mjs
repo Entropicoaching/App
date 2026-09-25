@@ -9,7 +9,7 @@ import { createRequire } from 'node:module';
 import { execFileSync } from 'node:child_process';
 import { createServer } from 'node:http';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, statSync, writeFileSync } from 'node:fs';
-import { pathToFileURL } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import os from 'node:os';
 import path from 'node:path';
 
@@ -220,7 +220,7 @@ const BL = '(\\d+ \\d+/\\d+|\\d+/\\d+)';
 // Klassificerer opgaven til et trin (efter BROEK-TRAPPE.md) og regner facit.
 function loesOpgave(tekst) {
   let m;
-  if ((m = /delt i (\d+) lige store (felter|stykker), og (\d+) er/.exec(tekst))) return { trin: 1, facit: R(+m[3], +m[1]), n: +m[1], m: +m[3] };
+  if ((m = /delt (?:sin mark )?i (\d+) lige store (felter|stykker), og (\d+) er/.exec(tekst))) return { trin: 1, facit: R(+m[3], +m[1]), n: +m[1], m: +m[3] };
   if ((m = /deler (\d+) sæk(?:ke)? korn ligeligt mellem (\d+) gårde/.exec(tekst))) return { trin: 2, facit: R(+m[1], +m[2]), s: +m[1], g: +m[2] };
   if ((m = /malede mølleren (\d+)\/(\d+) sæk, om tirsdagen (\d+)\/(\d+) sæk/.exec(tekst))) return { trin: 3, facit: +m[1] > +m[3] ? R(+m[1], +m[2]) : R(+m[3], +m[4]) };
   if ((m = /en sæk i (\d+) lige store dele, en anden dag i (\d+) lige store dele/.exec(tekst))) return { trin: 3, facit: R(1, Math.min(+m[1], +m[2])) };
@@ -295,8 +295,20 @@ async function broekSession(browser) {
   try {
     await gaaTil('Kirken');
     const k = await laesQuest();
-    B.kirkenFoerst = { titel: k.titel, opgave: k.opgave, valg: k.valg, trin: loesOpgave(k.opgave).trin };
+    B.kirkenFoerst = { titel: k.titel, replik: k.replik, opgaver: [] };
     await bille('broek-00-kirken-foerste-opgave.png');
+    // Kirkens foerste forloeb spilles helt (rigtige svar), for at se hvilke trin det kraever paa dag 1.
+    for (let i = 0; i < 6; i++) {
+      const q = await laesQuest();
+      if (!q.opgave || q.titel !== k.titel) break;
+      const l = loesOpgave(q.opgave);
+      const rigtigt = q.valg.filter((t) => { const x = laesTal(t); return x && l.facit && ens(x, l.facit); });
+      B.kirkenFoerst.opgaver.push({ opgave: q.opgave, valg: q.valg, trin: l.trin });
+      if (l.trin === 3 && !B.skaermbilleder.includes('broek-00-kirken-trin3.png')) await bille('broek-00-kirken-trin3.png');
+      for (const svar of rigtigt.length ? [rigtigt[0]] : q.valg) { if (await page.locator('#quest-videre').isVisible().catch(() => false)) break; await tryk(svar); }
+      if (await page.locator('#quest-videre').isVisible().catch(() => false)) { await page.locator('#quest-videre').tap(); await page.waitForTimeout(120); }
+      await lukBanner();
+    }
   } catch (e) { B.kirkenFoerst = { fejl: e.message.slice(0, 80) }; }
   await gaaTil('Møllen');
   await bille('broek-01-moellen-start.png');
@@ -323,7 +335,7 @@ async function broekSession(browser) {
           if (f) { plan.push(f.tekst); rec.bevidstFejl = f.hvilken; }
           if (!fastTestet && k === 7 && f) { plan.push(f.tekst, f.tekst); fastTestet = true; rec.fastTest = 'samme forkerte svar tre gange'; }
         }
-        plan.push(uforkortet ?? rigtigt[0] ?? q.valg[0]);
+        if (rigtigt.length) plan.push(uforkortet ?? rigtigt[0]); else { plan.push(...q.valg); rec.ukendt = true; }
         for (const svar of plan) {
           const foer = await laesQuest();
           if (foer.videre) break;
