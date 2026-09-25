@@ -1,0 +1,2794 @@
+{
+ "skakMain": "e3d13ec",
+ "taktikTekster": [
+  {
+   "id": "ubeskyttet",
+   "titel": "Slå den ubeskyttede brik",
+   "forklaring": {
+    "ord": 19,
+    "lix": 10
+   },
+   "opgave": {
+    "ord": 9,
+    "lix": 9
+   },
+   "hint": {
+    "ord": 10,
+    "lix": 25
+   }
+  },
+  {
+   "id": "forsvar",
+   "titel": "Red din brik",
+   "forklaring": {
+    "ord": 17,
+    "lix": 20
+   },
+   "opgave": {
+    "ord": 9,
+    "lix": 16
+   },
+   "hint": {
+    "ord": 15,
+    "lix": 28
+   }
+  },
+  {
+   "id": "mat-i-1",
+   "titel": "Mat i 1 med dronning og tårn",
+   "forklaring": {
+    "ord": 17,
+    "lix": 9
+   },
+   "opgave": {
+    "ord": 5,
+    "lix": 5
+   },
+   "hint": {
+    "ord": 13,
+    "lix": 7
+   }
+  },
+  {
+   "id": "baglinjemat",
+   "titel": "Baglinjemat",
+   "forklaring": {
+    "ord": 20,
+    "lix": 20
+   },
+   "opgave": {
+    "ord": 5,
+    "lix": 25
+   },
+   "hint": {
+    "ord": 11,
+    "lix": 15
+   }
+  },
+  {
+   "id": "gaffel-springer",
+   "titel": "Gaffel med springeren",
+   "forklaring": {
+    "ord": 15,
+    "lix": 21
+   },
+   "opgave": {
+    "ord": 7,
+    "lix": 50
+   },
+   "hint": {
+    "ord": 20,
+    "lix": 20
+   }
+  },
+  {
+   "id": "gaffel-andre",
+   "titel": "Gaffel med andre brikker",
+   "forklaring": {
+    "ord": 12,
+    "lix": 31
+   },
+   "opgave": {
+    "ord": 7,
+    "lix": 36
+   },
+   "hint": {
+    "ord": 15,
+    "lix": 14
+   }
+  },
+  {
+   "id": "binding",
+   "titel": "Binding",
+   "forklaring": {
+    "ord": 18,
+    "lix": 9
+   },
+   "opgave": {
+    "ord": 5,
+    "lix": 45
+   },
+   "hint": {
+    "ord": 17,
+    "lix": 14
+   }
+  },
+  {
+   "id": "spid",
+   "titel": "Spid",
+   "forklaring": {
+    "ord": 19,
+    "lix": 25
+   },
+   "opgave": {
+    "ord": 6,
+    "lix": 39
+   },
+   "hint": {
+    "ord": 13,
+    "lix": 37
+   }
+  },
+  {
+   "id": "afdaekket",
+   "titel": "Afdækket angreb",
+   "forklaring": {
+    "ord": 19,
+    "lix": 15
+   },
+   "opgave": {
+    "ord": 8,
+    "lix": 21
+   },
+   "hint": {
+    "ord": 15,
+    "lix": 28
+   }
+  },
+  {
+   "id": "kvaelningsmat",
+   "titel": "Kvælningsmat",
+   "forklaring": {
+    "ord": 16,
+    "lix": 29
+   },
+   "opgave": {
+    "ord": 4,
+    "lix": 29
+   },
+   "hint": {
+    "ord": 13,
+    "lix": 22
+   }
+  },
+  {
+   "id": "mat-i-2",
+   "titel": "Mat i 2",
+   "forklaring": {
+    "ord": 16,
+    "lix": 23
+   },
+   "opgave": {
+    "ord": 5,
+    "lix": 5
+   },
+   "hint": {
+    "ord": 13,
+    "lix": 30
+   }
+  }
+ ],
+ "taktik": {
+  "start": {
+   "taeller": "Mønster 1 af 11 · eksempel 1 af 3",
+   "titel": "Slå den ubeskyttede brik",
+   "forklaring": "Kig efter en brik som ingen passer på. Kan du slå den uden at miste noget, så gør det.",
+   "tekst": "Se: Springeren på d5 er ikke dækket. Slå med Txd5.",
+   "besked": "",
+   "rekt": {
+    "titel": {
+     "top": 165,
+     "bund": 185,
+     "h": 20,
+     "px": 17.6
+    },
+    "forklaring": {
+     "top": 188,
+     "bund": 228,
+     "h": 40,
+     "px": 14.4
+    },
+    "tekst": {
+     "top": 231,
+     "bund": 273,
+     "h": 42,
+     "px": 16
+    },
+    "besked": null
+   },
+   "braet": {
+    "top": 294,
+    "bund": 668,
+    "b": 374
+   },
+   "vindue": 844,
+   "scrollY": 0,
+   "listeTop": 1082,
+   "tegnelagElementer": 1,
+   "teksterOgBraetSamtidig": true
+  },
+  "moenstre": [
+   {
+    "id": "ubeskyttet",
+    "titel": "Slå den ubeskyttede brik",
+    "eksempler": [
+     {
+      "gaade": "u01",
+      "indeks": 0,
+      "taeller": "Mønster 1 af 11 · eksempel 1 af 3",
+      "tekst": "Se: Springeren på d5 er ikke dækket. Slå med Txd5.",
+      "samtidig": true,
+      "braet": {
+       "top": 294,
+       "bund": 668,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "forkertIEksempel": {
+       "traek": "f3",
+       "besked": "Følg den grønne pil."
+      },
+      "efterTraek1": "Rigtigt!",
+      "naeste": true
+     },
+     {
+      "gaade": "u02",
+      "indeks": 1,
+      "taeller": "Mønster 1 af 11 · eksempel 2 af 3",
+      "tekst": "Se: Tårnet på e5 er ikke dækket. Slå med Lxe5.",
+      "samtidig": true,
+      "braet": {
+       "top": 273,
+       "bund": 647,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Rigtigt!",
+      "naeste": true
+     },
+     {
+      "gaade": "u03",
+      "indeks": 2,
+      "taeller": "Mønster 1 af 11 · eksempel 3 af 3",
+      "tekst": "Se: Springeren på d5 er ikke dækket. Slå med exd5.",
+      "samtidig": true,
+      "braet": {
+       "top": 294,
+       "bund": 668,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Rigtigt!",
+      "naeste": true
+     }
+    ],
+    "gaader": [
+     {
+      "taeller": "Mønster 1 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. Find en brik som ingen dækker, og slå den.",
+      "samtidig": true,
+      "gaade": "u04",
+      "indeks": 3,
+      "rating": null,
+      "fejl": [
+       {
+        "traek": "Nd4",
+        "grund": "et tilfaeldigt andet traek",
+        "besked": "Kunne modstanderen slå tilbage? Find en brik som ingen dækker.",
+        "braetTop": 294,
+        "braetTopFoer": 294
+       }
+      ],
+      "efterTraek1": "Løst - næste gang i første forsøg.",
+      "slut": "Løst - næste gang i første forsøg.",
+      "braetTopSlut": 294
+     },
+     {
+      "taeller": "Mønster 1 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. Find en brik som ingen dækker, og slå den.",
+      "samtidig": true,
+      "gaade": "u05",
+      "indeks": 4,
+      "rating": null,
+      "fejl": [
+       {
+        "traek": "a3",
+        "grund": "et tilfaeldigt andet traek",
+        "besked": "Kunne modstanderen slå tilbage? Find en brik som ingen dækker.",
+        "braetTop": 294,
+        "braetTopFoer": 294
+       },
+       {
+        "traek": "a3",
+        "grund": "et tilfaeldigt andet traek",
+        "besked": "Kunne modstanderen slå tilbage? Find en brik som ingen dækker. Pilen viser vejen.",
+        "braetTop": 294,
+        "braetTopFoer": 294
+       }
+      ],
+      "pilEfterToFejl": 1,
+      "efterTraek1": "Løst - næste gang i første forsøg.",
+      "slut": "Løst - næste gang i første forsøg.",
+      "braetTopSlut": 294
+     },
+     {
+      "taeller": "Mønster 1 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. Find en brik som ingen dækker, og slå den.",
+      "samtidig": true,
+      "gaade": "u06",
+      "indeks": 5,
+      "rating": null,
+      "fejl": [],
+      "efterTraek1": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 294
+     },
+     {
+      "taeller": "Mønster 1 af 11 · 1 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. Find en brik som ingen dækker, og slå den.",
+      "samtidig": true,
+      "gaade": "u07",
+      "indeks": 6,
+      "rating": null,
+      "fejl": [],
+      "efterTraek1": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 294
+     },
+     {
+      "taeller": "Mønster 1 af 11 · 2 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. Find en brik som ingen dækker, og slå den.",
+      "samtidig": true,
+      "gaade": "u08",
+      "indeks": 7,
+      "rating": null,
+      "fejl": [],
+      "efterTraek1": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 294
+     },
+     {
+      "taeller": "Mønster 1 af 11 · 3 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. Find en brik som ingen dækker, og slå den.",
+      "samtidig": true,
+      "gaade": "u09",
+      "indeks": 8,
+      "rating": null,
+      "fejl": [],
+      "efterTraek1": "Du har lært: Slå den ubeskyttede brik!",
+      "slut": "Du har lært: Slå den ubeskyttede brik!",
+      "braetTopSlut": 294
+     }
+    ],
+    "skaerme": [],
+    "mestretEfter": 6,
+    "efter": {
+     "taeller": "Mønster 2 af 11 · eksempel 1 af 3",
+     "titel": "Red din brik",
+     "forklaring": "Din brik er angrebet. Flyt den til et sikkert felt, dæk den, eller sæt noget i vejen.",
+     "tekst": "Se: Springeren på d4 er angrebet. Sb3 redder den.",
+     "besked": "",
+     "rekt": {
+      "titel": {
+       "top": 165,
+       "bund": 185,
+       "h": 20,
+       "px": 17.6
+      },
+      "forklaring": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "tekst": {
+       "top": 231,
+       "bund": 273,
+       "h": 42,
+       "px": 16
+      },
+      "besked": null
+     },
+     "braet": {
+      "top": 294,
+      "bund": 668,
+      "b": 374
+     },
+     "vindue": 844,
+     "scrollY": 0,
+     "listeTop": 1082,
+     "tegnelagElementer": 1,
+     "teksterOgBraetSamtidig": true
+    },
+    "listeMarkering": "✓ 1. Slå den ubeskyttede brik"
+   },
+   {
+    "id": "forsvar",
+    "titel": "Red din brik",
+    "eksempler": [
+     {
+      "gaade": "f01",
+      "indeks": 0,
+      "taeller": "Mønster 2 af 11 · eksempel 1 af 3",
+      "tekst": "Se: Springeren på d4 er angrebet. Sb3 redder den.",
+      "samtidig": true,
+      "braet": {
+       "top": 294,
+       "bund": 668,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Rigtigt!",
+      "naeste": true
+     },
+     {
+      "gaade": "f02",
+      "indeks": 1,
+      "taeller": "Mønster 2 af 11 · eksempel 2 af 3",
+      "tekst": "Se: Dronningen på e2 er angrebet. d3 redder den.",
+      "samtidig": true,
+      "braet": {
+       "top": 294,
+       "bund": 668,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Rigtigt!",
+      "naeste": true
+     },
+     {
+      "gaade": "f03",
+      "indeks": 2,
+      "taeller": "Mønster 2 af 11 · eksempel 3 af 3",
+      "tekst": "Se: Tårnet på d4 er angrebet. Ta4 redder den.",
+      "samtidig": true,
+      "braet": {
+       "top": 273,
+       "bund": 647,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Rigtigt!",
+      "naeste": true
+     }
+    ],
+    "gaader": [
+     {
+      "taeller": "Mønster 2 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. En af dine brikker er i fare. Red den.",
+      "samtidig": true,
+      "gaade": "f04",
+      "indeks": 3,
+      "rating": null,
+      "fejl": [
+       {
+        "traek": "Bg6",
+        "grund": "flytter brikken til et felt der ogsaa er angrebet",
+        "besked": "Nu kan modstanderen stadig vinde en brik. Hvilken er angrebet, og hvor er den sikker?",
+        "braetTop": 294,
+        "braetTopFoer": 273
+       }
+      ],
+      "efterTraek1": "Løst - næste gang i første forsøg.",
+      "slut": "Løst - næste gang i første forsøg.",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 2 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. En af dine brikker er i fare. Red den.",
+      "samtidig": true,
+      "gaade": "f05",
+      "indeks": 4,
+      "rating": null,
+      "fejl": [
+       {
+        "traek": "b4",
+        "grund": "laver et andet traek og glemmer truslen",
+        "besked": "Nu kan modstanderen stadig vinde en brik. Hvilken er angrebet, og hvor er den sikker?",
+        "braetTop": 294,
+        "braetTopFoer": 273
+       },
+       {
+        "traek": "b4",
+        "grund": "laver et andet traek og glemmer truslen",
+        "besked": "Nu kan modstanderen stadig vinde en brik. Hvilken er angrebet, og hvor er den sikker? Pilen viser vejen.",
+        "braetTop": 315,
+        "braetTopFoer": 273
+       }
+      ],
+      "pilEfterToFejl": 1,
+      "efterTraek1": "Løst - næste gang i første forsøg.",
+      "slut": "Løst - næste gang i første forsøg.",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 2 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. En af dine brikker er i fare. Red den.",
+      "samtidig": true,
+      "gaade": "f06",
+      "indeks": 5,
+      "rating": null,
+      "fejl": [],
+      "efterTraek1": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 2 af 11 · 1 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. En af dine brikker er i fare. Red den.",
+      "samtidig": true,
+      "gaade": "f07",
+      "indeks": 6,
+      "rating": null,
+      "fejl": [],
+      "efterTraek1": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 2 af 11 · 2 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. En af dine brikker er i fare. Red den.",
+      "samtidig": true,
+      "gaade": "f08",
+      "indeks": 7,
+      "rating": null,
+      "fejl": [],
+      "efterTraek1": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 2 af 11 · 3 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. En af dine brikker er i fare. Red den.",
+      "samtidig": true,
+      "gaade": "f09",
+      "indeks": 8,
+      "rating": null,
+      "fejl": [],
+      "efterTraek1": "Du har lært: Red din brik!",
+      "slut": "Du har lært: Red din brik!",
+      "braetTopSlut": 274
+     }
+    ],
+    "skaerme": [],
+    "mestretEfter": 6,
+    "efter": {
+     "taeller": "Mønster 3 af 11 · eksempel 1 af 3",
+     "titel": "Mat i 1 med dronning og tårn",
+     "forklaring": "Mat er skak, som kongen ikke kan komme ud af. Tjek alle dine skak, før du vælger.",
+     "tekst": "Se: Dxg2# er mat: kongen kan ikke flygte, og intet kan dække.",
+     "besked": "",
+     "rekt": {
+      "titel": {
+       "top": 165,
+       "bund": 185,
+       "h": 20,
+       "px": 17.6
+      },
+      "forklaring": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "tekst": {
+       "top": 231,
+       "bund": 273,
+       "h": 42,
+       "px": 16
+      },
+      "besked": null
+     },
+     "braet": {
+      "top": 294,
+      "bund": 668,
+      "b": 374
+     },
+     "vindue": 844,
+     "scrollY": 0,
+     "listeTop": 1082,
+     "tegnelagElementer": 1,
+     "teksterOgBraetSamtidig": true
+    },
+    "listeMarkering": "✓ 2. Red din brik"
+   },
+   {
+    "id": "mat-i-1",
+    "titel": "Mat i 1 med dronning og tårn",
+    "eksempler": [
+     {
+      "gaade": "0Oziu",
+      "indeks": 0,
+      "taeller": "Mønster 3 af 11 · eksempel 1 af 3",
+      "tekst": "Se: Dxg2# er mat: kongen kan ikke flygte, og intet kan dække.",
+      "samtidig": true,
+      "braet": {
+       "top": 294,
+       "bund": 668,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Rigtigt!",
+      "naeste": true
+     },
+     {
+      "gaade": "0TCde",
+      "indeks": 1,
+      "taeller": "Mønster 3 af 11 · eksempel 2 af 3",
+      "tekst": "Se: Dxh7# er mat: kongen kan ikke flygte, og intet kan dække.",
+      "samtidig": true,
+      "braet": {
+       "top": 294,
+       "bund": 668,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Rigtigt!",
+      "naeste": true
+     },
+     {
+      "gaade": "0HlNl",
+      "indeks": 2,
+      "taeller": "Mønster 3 af 11 · eksempel 3 af 3",
+      "tekst": "Se: Dxh3# er mat: kongen kan ikke flygte, og intet kan dække.",
+      "samtidig": true,
+      "braet": {
+       "top": 294,
+       "bund": 668,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Rigtigt!",
+      "naeste": true
+     }
+    ],
+    "gaader": [
+     {
+      "taeller": "Mønster 3 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Sort i træk. Sæt mat i ét træk.",
+      "samtidig": true,
+      "gaade": "0Psb8",
+      "indeks": 3,
+      "rating": 434,
+      "fejl": [
+       {
+        "traek": "Kd8",
+        "grund": "et tilfaeldigt andet traek",
+        "besked": "Det var ikke mat - kongen kunne komme væk. Prøv et andet skak.",
+        "braetTop": 294,
+        "braetTopFoer": 273
+       }
+      ],
+      "efterTraek1": "Løst - næste gang i første forsøg.",
+      "slut": "Løst - næste gang i første forsøg.",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 3 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Sort i træk. Sæt mat i ét træk.",
+      "samtidig": true,
+      "gaade": "04X15",
+      "indeks": 4,
+      "rating": 439,
+      "fejl": [
+       {
+        "traek": "e5",
+        "grund": "et tilfaeldigt andet traek",
+        "besked": "Det var ikke mat - kongen kunne komme væk. Prøv et andet skak.",
+        "braetTop": 294,
+        "braetTopFoer": 273
+       },
+       {
+        "traek": "e5",
+        "grund": "et tilfaeldigt andet traek",
+        "besked": "Det var ikke mat - kongen kunne komme væk. Prøv et andet skak. Pilen viser vejen.",
+        "braetTop": 294,
+        "braetTopFoer": 273
+       }
+      ],
+      "pilEfterToFejl": 1,
+      "efterTraek1": "Løst - næste gang i første forsøg.",
+      "slut": "Løst - næste gang i første forsøg.",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 3 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Sort i træk. Sæt mat i ét træk.",
+      "samtidig": true,
+      "gaade": "0GM2F",
+      "indeks": 5,
+      "rating": 447,
+      "fejl": [],
+      "efterTraek1": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 3 af 11 · 1 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Sort i træk. Sæt mat i ét træk.",
+      "samtidig": true,
+      "gaade": "063On",
+      "indeks": 6,
+      "rating": 448,
+      "fejl": [],
+      "efterTraek1": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 3 af 11 · 2 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. Sæt mat i ét træk.",
+      "samtidig": true,
+      "gaade": "0EbOV",
+      "indeks": 7,
+      "rating": 454,
+      "fejl": [],
+      "efterTraek1": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 3 af 11 · 3 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Sort i træk. Sæt mat i ét træk.",
+      "samtidig": true,
+      "gaade": "0VFdQ",
+      "indeks": 8,
+      "rating": 464,
+      "fejl": [],
+      "efterTraek1": "Du har lært: Mat i 1 med dronning og tårn!",
+      "slut": "Du har lært: Mat i 1 med dronning og tårn!",
+      "braetTopSlut": 274
+     }
+    ],
+    "skaerme": [],
+    "mestretEfter": 6,
+    "efter": {
+     "taeller": "Mønster 4 af 11 · eksempel 1 af 3",
+     "titel": "Baglinjemat",
+     "forklaring": "En konge bag sine egne bønder kan ikke komme op. Et tårn eller en dronning på bagerste række er mat.",
+     "tekst": "Se: Dxg8#: kongen er spærret inde af sine egne brikker på bagerste række.",
+     "besked": "",
+     "rekt": {
+      "titel": {
+       "top": 165,
+       "bund": 185,
+       "h": 20,
+       "px": 17.6
+      },
+      "forklaring": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "tekst": {
+       "top": 231,
+       "bund": 273,
+       "h": 42,
+       "px": 16
+      },
+      "besked": null
+     },
+     "braet": {
+      "top": 294,
+      "bund": 668,
+      "b": 374
+     },
+     "vindue": 844,
+     "scrollY": 0,
+     "listeTop": 1082,
+     "tegnelagElementer": 1,
+     "teksterOgBraetSamtidig": true
+    },
+    "listeMarkering": "✓ 3. Mat i 1 med dronning og tårn"
+   },
+   {
+    "id": "baglinjemat",
+    "titel": "Baglinjemat",
+    "eksempler": [
+     {
+      "gaade": "0JEfX",
+      "indeks": 0,
+      "taeller": "Mønster 4 af 11 · eksempel 1 af 3",
+      "tekst": "Se: Dxg8#: kongen er spærret inde af sine egne brikker på bagerste række.",
+      "samtidig": true,
+      "braet": {
+       "top": 294,
+       "bund": 668,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Rigtigt!",
+      "naeste": true
+     },
+     {
+      "gaade": "0Rwlq",
+      "indeks": 1,
+      "taeller": "Mønster 4 af 11 · eksempel 2 af 3",
+      "tekst": "Se: Txd1#: kongen er spærret inde af sine egne brikker på bagerste række.",
+      "samtidig": true,
+      "braet": {
+       "top": 294,
+       "bund": 668,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Rigtigt!",
+      "naeste": true
+     },
+     {
+      "gaade": "0I9kn",
+      "indeks": 2,
+      "taeller": "Mønster 4 af 11 · eksempel 3 af 3",
+      "tekst": "Se: Txd8#: kongen er spærret inde af sine egne brikker på bagerste række.",
+      "samtidig": true,
+      "braet": {
+       "top": 294,
+       "bund": 668,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Rigtigt!",
+      "naeste": true
+     }
+    ],
+    "gaader": [
+     {
+      "taeller": "Mønster 4 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Sort i træk. Sæt mat på bagerste række.",
+      "samtidig": true,
+      "gaade": "0ACeu",
+      "indeks": 3,
+      "rating": 421,
+      "fejl": [
+       {
+        "traek": "Bd7",
+        "grund": "et tilfaeldigt andet traek",
+        "besked": "Kig på den bagerste række: hvem kan komme derned med skak?",
+        "braetTop": 294,
+        "braetTopFoer": 273
+       }
+      ],
+      "efterTraek1": "Løst - næste gang i første forsøg.",
+      "slut": "Løst - næste gang i første forsøg.",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 4 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Sort i træk. Sæt mat på bagerste række.",
+      "samtidig": true,
+      "gaade": "0E0oB",
+      "indeks": 4,
+      "rating": 423,
+      "fejl": [
+       {
+        "traek": "Rg8",
+        "grund": "et tilfaeldigt andet traek",
+        "besked": "Kig på den bagerste række: hvem kan komme derned med skak?",
+        "braetTop": 294,
+        "braetTopFoer": 273
+       },
+       {
+        "traek": "Rg8",
+        "grund": "et tilfaeldigt andet traek",
+        "besked": "Kig på den bagerste række: hvem kan komme derned med skak? Pilen viser vejen.",
+        "braetTop": 294,
+        "braetTopFoer": 273
+       }
+      ],
+      "pilEfterToFejl": 1,
+      "efterTraek1": "Løst - næste gang i første forsøg.",
+      "slut": "Løst - næste gang i første forsøg.",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 4 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. Sæt mat på bagerste række.",
+      "samtidig": true,
+      "gaade": "0L7ju",
+      "indeks": 5,
+      "rating": 423,
+      "fejl": [],
+      "efterTraek1": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 4 af 11 · 1 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. Sæt mat på bagerste række.",
+      "samtidig": true,
+      "gaade": "0CLrY",
+      "indeks": 6,
+      "rating": 426,
+      "fejl": [],
+      "efterTraek1": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 4 af 11 · 2 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. Sæt mat på bagerste række.",
+      "samtidig": true,
+      "gaade": "0V6H5",
+      "indeks": 7,
+      "rating": 428,
+      "fejl": [],
+      "efterTraek1": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 4 af 11 · 3 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Sort i træk. Sæt mat på bagerste række.",
+      "samtidig": true,
+      "gaade": "0TWfR",
+      "indeks": 8,
+      "rating": 436,
+      "fejl": [],
+      "efterTraek1": "Du har lært: Baglinjemat!",
+      "slut": "Du har lært: Baglinjemat!",
+      "braetTopSlut": 274
+     }
+    ],
+    "skaerme": [],
+    "mestretEfter": 6,
+    "efter": {
+     "taeller": "Mønster 5 af 11 · eksempel 1 af 3",
+     "titel": "Gaffel med springeren",
+     "forklaring": "En gaffel er ét træk der angriber to ting. Modstanderen kan kun redde den ene.",
+     "tekst": "Se: Sd6+: springeren angriber kongen på b7 og løberen på c4 på én gang.",
+     "besked": "",
+     "rekt": {
+      "titel": {
+       "top": 165,
+       "bund": 185,
+       "h": 20,
+       "px": 17.6
+      },
+      "forklaring": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "tekst": {
+       "top": 231,
+       "bund": 273,
+       "h": 42,
+       "px": 16
+      },
+      "besked": null
+     },
+     "braet": {
+      "top": 294,
+      "bund": 668,
+      "b": 374
+     },
+     "vindue": 844,
+     "scrollY": 0,
+     "listeTop": 1082,
+     "tegnelagElementer": 1,
+     "teksterOgBraetSamtidig": true
+    },
+    "listeMarkering": "✓ 4. Baglinjemat"
+   },
+   {
+    "id": "gaffel-springer",
+    "titel": "Gaffel med springeren",
+    "eksempler": [
+     {
+      "gaade": "06ySG",
+      "indeks": 0,
+      "taeller": "Mønster 5 af 11 · eksempel 1 af 3",
+      "tekst": "Se: Sd6+: springeren angriber kongen på b7 og løberen på c4 på én gang.",
+      "samtidig": true,
+      "braet": {
+       "top": 294,
+       "bund": 668,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterSvar": "Din tur igen: følg pilen.",
+      "pilEfterSvar": 1,
+      "efterTraek2": "Rigtigt!",
+      "naeste": true
+     },
+     {
+      "gaade": "02u0t",
+      "indeks": 1,
+      "taeller": "Mønster 5 af 11 · eksempel 2 af 3",
+      "tekst": "Se: Se4+: springeren angriber tårnet på d6 og kongen på g5 på én gang.",
+      "samtidig": true,
+      "braet": {
+       "top": 294,
+       "bund": 668,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterSvar": "Din tur igen: følg pilen.",
+      "pilEfterSvar": 1,
+      "efterTraek2": "Rigtigt!",
+      "naeste": true
+     },
+     {
+      "gaade": "0E0md",
+      "indeks": 2,
+      "taeller": "Mønster 5 af 11 · eksempel 3 af 3",
+      "tekst": "Se: Se6+: springeren angriber tårnet på d8 og kongen på g7 på én gang.",
+      "samtidig": true,
+      "braet": {
+       "top": 294,
+       "bund": 668,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterSvar": "Din tur igen: følg pilen.",
+      "pilEfterSvar": 1,
+      "efterTraek2": "Rigtigt!",
+      "naeste": true
+     }
+    ],
+    "gaader": [
+     {
+      "taeller": "Mønster 5 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Sort i træk. Find springergaflen - og vind brikken bagefter.",
+      "samtidig": true,
+      "gaade": "0GFi6",
+      "indeks": 3,
+      "rating": 554,
+      "fejl": [
+       {
+        "traek": "Nb6",
+        "grund": "flytter gaffelbrikken et andet sted hen",
+        "besked": "Det træk angreb ikke to ting. Find et felt hvor springeren rammer to brikker - eller kongen og en brik.",
+        "braetTop": 315,
+        "braetTopFoer": 294
+       }
+      ],
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "fejlTraek2": {
+       "traek": "h6",
+       "besked": "Det træk angreb ikke to ting. Find et felt hvor springeren rammer to brikker - eller kongen og en brik. Pilen viser vejen."
+      },
+      "efterTraek2": "Løst - næste gang i første forsøg.",
+      "slut": "Løst - næste gang i første forsøg.",
+      "braetTopSlut": 294
+     },
+     {
+      "taeller": "Mønster 5 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. Find springergaflen - og vind brikken bagefter.",
+      "samtidig": true,
+      "gaade": "030iQ",
+      "indeks": 4,
+      "rating": 567,
+      "fejl": [
+       {
+        "traek": "Ne5",
+        "grund": "flytter gaffelbrikken et andet sted hen",
+        "besked": "Det træk angreb ikke to ting. Find et felt hvor springeren rammer to brikker - eller kongen og en brik.",
+        "braetTop": 315,
+        "braetTopFoer": 294
+       },
+       {
+        "traek": "Ne5",
+        "grund": "flytter gaffelbrikken et andet sted hen",
+        "besked": "Det træk angreb ikke to ting. Find et felt hvor springeren rammer to brikker - eller kongen og en brik. Pilen viser vejen.",
+        "braetTop": 315,
+        "braetTopFoer": 294
+       }
+      ],
+      "pilEfterToFejl": 1,
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterTraek2": "Løst - næste gang i første forsøg.",
+      "slut": "Løst - næste gang i første forsøg.",
+      "braetTopSlut": 294
+     },
+     {
+      "taeller": "Mønster 5 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Sort i træk. Find springergaflen - og vind brikken bagefter.",
+      "samtidig": true,
+      "gaade": "00OPi",
+      "indeks": 5,
+      "rating": 589,
+      "fejl": [],
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterTraek2": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 294
+     },
+     {
+      "taeller": "Mønster 5 af 11 · 1 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. Find springergaflen - og vind brikken bagefter.",
+      "samtidig": true,
+      "gaade": "011Ob",
+      "indeks": 6,
+      "rating": 595,
+      "fejl": [],
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterTraek2": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 294
+     },
+     {
+      "taeller": "Mønster 5 af 11 · 2 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Sort i træk. Find springergaflen - og vind brikken bagefter.",
+      "samtidig": true,
+      "gaade": "0OvD9",
+      "indeks": 7,
+      "rating": 597,
+      "fejl": [],
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterTraek2": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 294
+     },
+     {
+      "taeller": "Mønster 5 af 11 · 3 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. Find springergaflen - og vind brikken bagefter.",
+      "samtidig": true,
+      "gaade": "0K0hW",
+      "indeks": 8,
+      "rating": 599,
+      "fejl": [],
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterTraek2": "Du har lært: Gaffel med springeren!",
+      "slut": "Du har lært: Gaffel med springeren!",
+      "braetTopSlut": 294
+     }
+    ],
+    "skaerme": [],
+    "mestretEfter": 6,
+    "efter": {
+     "taeller": "Mønster 6 af 11 · eksempel 1 af 3",
+     "titel": "Gaffel med andre brikker",
+     "forklaring": "Alle brikker kan gafle: dronningen, løberen, tårnet - selv bonden og kongen.",
+     "tekst": "Se: Dc1+: dronningen angriber tårnet på d2 og kongen på g1 på én gang.",
+     "besked": "",
+     "rekt": {
+      "titel": {
+       "top": 165,
+       "bund": 185,
+       "h": 20,
+       "px": 17.6
+      },
+      "forklaring": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "tekst": {
+       "top": 231,
+       "bund": 273,
+       "h": 42,
+       "px": 16
+      },
+      "besked": null
+     },
+     "braet": {
+      "top": 294,
+      "bund": 668,
+      "b": 374
+     },
+     "vindue": 844,
+     "scrollY": 0,
+     "listeTop": 1082,
+     "tegnelagElementer": 1,
+     "teksterOgBraetSamtidig": true
+    },
+    "listeMarkering": "✓ 5. Gaffel med springeren"
+   },
+   {
+    "id": "gaffel-andre",
+    "titel": "Gaffel med andre brikker",
+    "eksempler": [
+     {
+      "gaade": "0F9vA",
+      "indeks": 0,
+      "taeller": "Mønster 6 af 11 · eksempel 1 af 3",
+      "tekst": "Se: Dc1+: dronningen angriber tårnet på d2 og kongen på g1 på én gang.",
+      "samtidig": true,
+      "braet": {
+       "top": 294,
+       "bund": 668,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterSvar": "Din tur igen: følg pilen.",
+      "pilEfterSvar": 1,
+      "efterTraek2": "Rigtigt!",
+      "naeste": true
+     },
+     {
+      "gaade": "04ikT",
+      "indeks": 1,
+      "taeller": "Mønster 6 af 11 · eksempel 2 af 3",
+      "tekst": "Se: Le3+: løberen angriber kongen på g5 og tårnet på c1 på én gang.",
+      "samtidig": true,
+      "braet": {
+       "top": 294,
+       "bund": 668,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterSvar": "Din tur igen: følg pilen.",
+      "pilEfterSvar": 1,
+      "efterTraek2": "Rigtigt!",
+      "naeste": true
+     },
+     {
+      "gaade": "0CwCS",
+      "indeks": 2,
+      "taeller": "Mønster 6 af 11 · eksempel 3 af 3",
+      "tekst": "Se: Dc1+: dronningen angriber tårnet på d2 og kongen på g1 på én gang.",
+      "samtidig": true,
+      "braet": {
+       "top": 294,
+       "bund": 668,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterSvar": "Din tur igen: følg pilen.",
+      "pilEfterSvar": 1,
+      "efterTraek2": "Rigtigt!",
+      "naeste": true
+     }
+    ],
+    "gaader": [
+     {
+      "taeller": "Mønster 6 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. Find gaflen - og vind brikken bagefter.",
+      "samtidig": true,
+      "gaade": "07Fyj",
+      "indeks": 3,
+      "rating": 610,
+      "fejl": [
+       {
+        "traek": "Bxh6",
+        "grund": "slaar med det samme i stedet for at gafle (ser ikke gaflen)",
+        "besked": "Find et træk der angriber to ting på én gang. Skak tæller som den ene.",
+        "braetTop": 294,
+        "braetTopFoer": 294
+       }
+      ],
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "fejlTraek2": {
+       "traek": "Bd6",
+       "besked": "Find et træk der angriber to ting på én gang. Skak tæller som den ene. Pilen viser vejen."
+      },
+      "efterTraek2": "Løst - næste gang i første forsøg.",
+      "slut": "Løst - næste gang i første forsøg.",
+      "braetTopSlut": 294
+     },
+     {
+      "taeller": "Mønster 6 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. Find gaflen - og vind brikken bagefter.",
+      "samtidig": true,
+      "gaade": "0UJKS",
+      "indeks": 4,
+      "rating": 616,
+      "fejl": [
+       {
+        "traek": "Nxg7",
+        "grund": "slaar med det samme i stedet for at gafle (ser ikke gaflen)",
+        "besked": "Find et træk der angriber to ting på én gang. Skak tæller som den ene.",
+        "braetTop": 294,
+        "braetTopFoer": 294
+       },
+       {
+        "traek": "Nxg7",
+        "grund": "slaar med det samme i stedet for at gafle (ser ikke gaflen)",
+        "besked": "Find et træk der angriber to ting på én gang. Skak tæller som den ene. Pilen viser vejen.",
+        "braetTop": 294,
+        "braetTopFoer": 294
+       }
+      ],
+      "pilEfterToFejl": 1,
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterTraek2": "Løst - næste gang i første forsøg.",
+      "slut": "Løst - næste gang i første forsøg.",
+      "braetTopSlut": 294
+     },
+     {
+      "taeller": "Mønster 6 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Sort i træk. Find gaflen - og vind brikken bagefter.",
+      "samtidig": true,
+      "gaade": "0UlGW",
+      "indeks": 5,
+      "rating": 617,
+      "fejl": [],
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterTraek2": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 294
+     },
+     {
+      "taeller": "Mønster 6 af 11 · 1 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. Find gaflen - og vind brikken bagefter.",
+      "samtidig": true,
+      "gaade": "069SD",
+      "indeks": 6,
+      "rating": 662,
+      "fejl": [],
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterTraek2": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 294
+     },
+     {
+      "taeller": "Mønster 6 af 11 · 2 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Sort i træk. Find gaflen - og vind brikken bagefter.",
+      "samtidig": true,
+      "gaade": "0CwF4",
+      "indeks": 7,
+      "rating": 664,
+      "fejl": [],
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterTraek2": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 294
+     },
+     {
+      "taeller": "Mønster 6 af 11 · 3 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. Find gaflen - og vind brikken bagefter.",
+      "samtidig": true,
+      "gaade": "0JnUQ",
+      "indeks": 8,
+      "rating": 674,
+      "fejl": [],
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterTraek2": "Du har lært: Gaffel med andre brikker!",
+      "slut": "Du har lært: Gaffel med andre brikker!",
+      "braetTopSlut": 294
+     }
+    ],
+    "skaerme": [],
+    "mestretEfter": 6,
+    "efter": {
+     "taeller": "Mønster 7 af 11 · eksempel 1 af 3",
+     "titel": "Binding",
+     "forklaring": "En bundet brik kan ikke flytte, fordi noget mere værd står bag den. Bind den, eller angrib den.",
+     "tekst": "Se: Tc8: dronningen på d8 kan ikke flytte uden at kongen bagved står åben.",
+     "besked": "",
+     "rekt": {
+      "titel": {
+       "top": 165,
+       "bund": 185,
+       "h": 20,
+       "px": 17.6
+      },
+      "forklaring": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "tekst": {
+       "top": 231,
+       "bund": 273,
+       "h": 42,
+       "px": 16
+      },
+      "besked": null
+     },
+     "braet": {
+      "top": 294,
+      "bund": 668,
+      "b": 374
+     },
+     "vindue": 844,
+     "scrollY": 0,
+     "listeTop": 1082,
+     "tegnelagElementer": 1,
+     "teksterOgBraetSamtidig": true
+    },
+    "listeMarkering": "✓ 6. Gaffel med andre brikker"
+   },
+   {
+    "id": "binding",
+    "titel": "Binding",
+    "eksempler": [
+     {
+      "gaade": "0NLTN",
+      "indeks": 0,
+      "taeller": "Mønster 7 af 11 · eksempel 1 af 3",
+      "tekst": "Se: Tc8: dronningen på d8 kan ikke flytte uden at kongen bagved står åben.",
+      "samtidig": true,
+      "braet": {
+       "top": 294,
+       "bund": 668,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterSvar": "Din tur igen: følg pilen.",
+      "pilEfterSvar": 1,
+      "efterTraek2": "Rigtigt!",
+      "naeste": true
+     },
+     {
+      "gaade": "0C50G",
+      "indeks": 1,
+      "taeller": "Mønster 7 af 11 · eksempel 2 af 3",
+      "tekst": "Se: Lf5: dronningen på c2 kan ikke flytte uden at kongen bagved står åben.",
+      "samtidig": true,
+      "braet": {
+       "top": 294,
+       "bund": 668,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterSvar": "Din tur igen: følg pilen.",
+      "pilEfterSvar": 1,
+      "efterTraek2": "Rigtigt!",
+      "naeste": true
+     },
+     {
+      "gaade": "07tu0",
+      "indeks": 2,
+      "taeller": "Mønster 7 af 11 · eksempel 3 af 3",
+      "tekst": "Se: Lc5: springeren på d4 kan ikke flytte uden at kongen bagved står åben.",
+      "samtidig": true,
+      "braet": {
+       "top": 294,
+       "bund": 668,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterSvar": "Din tur igen: følg pilen.",
+      "pilEfterSvar": 1,
+      "efterTraek2": "Rigtigt!",
+      "naeste": true
+     }
+    ],
+    "gaader": [
+     {
+      "taeller": "Mønster 7 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Sort i træk. Brug bindingen og vind materiale.",
+      "samtidig": true,
+      "gaade": "0CaOX",
+      "indeks": 3,
+      "rating": 762,
+      "fejl": [
+       {
+        "traek": "Ka5",
+        "grund": "et tilfaeldigt andet traek",
+        "besked": "Find en brik der står foran sin konge eller dronning. Kan du stille dig på den linje?",
+        "braetTop": 294,
+        "braetTopFoer": 273
+       }
+      ],
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "fejlTraek2": {
+       "traek": "Ka5",
+       "besked": "Find en brik der står foran sin konge eller dronning. Kan du stille dig på den linje? Pilen viser vejen."
+      },
+      "efterTraek2": "Løst - næste gang i første forsøg.",
+      "slut": "Løst - næste gang i første forsøg.",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 7 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. Brug bindingen og vind materiale.",
+      "samtidig": true,
+      "gaade": "053Mo",
+      "indeks": 4,
+      "rating": 764,
+      "fejl": [
+       {
+        "traek": "Ka5",
+        "grund": "ser ikke bindingen: flytter samme brik et andet sted hen",
+        "besked": "Find en brik der står foran sin konge eller dronning. Kan du stille dig på den linje?",
+        "braetTop": 294,
+        "braetTopFoer": 273
+       },
+       {
+        "traek": "Ka5",
+        "grund": "ser ikke bindingen: flytter samme brik et andet sted hen",
+        "besked": "Find en brik der står foran sin konge eller dronning. Kan du stille dig på den linje? Pilen viser vejen.",
+        "braetTop": 315,
+        "braetTopFoer": 273
+       }
+      ],
+      "pilEfterToFejl": 1,
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterTraek2": "Løst - næste gang i første forsøg.",
+      "slut": "Løst - næste gang i første forsøg.",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 7 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Sort i træk. Brug bindingen og vind materiale.",
+      "samtidig": true,
+      "gaade": "0OuMr",
+      "indeks": 5,
+      "rating": 820,
+      "fejl": [],
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterTraek2": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 7 af 11 · 1 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. Brug bindingen og vind materiale.",
+      "samtidig": true,
+      "gaade": "0CGDp",
+      "indeks": 6,
+      "rating": 821,
+      "fejl": [],
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterTraek2": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 7 af 11 · 2 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Sort i træk. Brug bindingen og vind materiale.",
+      "samtidig": true,
+      "gaade": "0E6ma",
+      "indeks": 7,
+      "rating": 849,
+      "fejl": [],
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterTraek2": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 7 af 11 · 3 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Sort i træk. Brug bindingen og vind materiale.",
+      "samtidig": true,
+      "gaade": "0Ahyx",
+      "indeks": 8,
+      "rating": 864,
+      "fejl": [],
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterTraek2": "Du har lært: Binding!",
+      "slut": "Du har lært: Binding!",
+      "braetTopSlut": 274
+     }
+    ],
+    "skaerme": [],
+    "mestretEfter": 6,
+    "efter": {
+     "taeller": "Mønster 8 af 11 · eksempel 1 af 3",
+     "titel": "Spid",
+     "forklaring": "Et spid er en omvendt binding: den dyre brik står forrest, må flytte - og så falder den bagved.",
+     "tekst": "Se: Txe3+: kongen på e5 må flytte, og så falder tårnet bagved.",
+     "besked": "",
+     "rekt": {
+      "titel": {
+       "top": 165,
+       "bund": 185,
+       "h": 20,
+       "px": 17.6
+      },
+      "forklaring": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "tekst": {
+       "top": 231,
+       "bund": 273,
+       "h": 42,
+       "px": 16
+      },
+      "besked": null
+     },
+     "braet": {
+      "top": 294,
+      "bund": 668,
+      "b": 374
+     },
+     "vindue": 844,
+     "scrollY": 0,
+     "listeTop": 1082,
+     "tegnelagElementer": 1,
+     "teksterOgBraetSamtidig": true
+    },
+    "listeMarkering": "✓ 7. Binding"
+   },
+   {
+    "id": "spid",
+    "titel": "Spid",
+    "eksempler": [
+     {
+      "gaade": "0P56F",
+      "indeks": 0,
+      "taeller": "Mønster 8 af 11 · eksempel 1 af 3",
+      "tekst": "Se: Txe3+: kongen på e5 må flytte, og så falder tårnet bagved.",
+      "samtidig": true,
+      "braet": {
+       "top": 294,
+       "bund": 668,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterSvar": "Din tur igen: følg pilen.",
+      "pilEfterSvar": 1,
+      "efterTraek2": "Rigtigt!",
+      "naeste": true
+     },
+     {
+      "gaade": "0FvQ7",
+      "indeks": 1,
+      "taeller": "Mønster 8 af 11 · eksempel 2 af 3",
+      "tekst": "Se: Txd3+: kongen på d5 må flytte, og så falder tårnet bagved.",
+      "samtidig": true,
+      "braet": {
+       "top": 294,
+       "bund": 668,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterSvar": "Din tur igen: følg pilen.",
+      "pilEfterSvar": 1,
+      "efterTraek2": "Rigtigt!",
+      "naeste": true
+     },
+     {
+      "gaade": "09F87",
+      "indeks": 2,
+      "taeller": "Mønster 8 af 11 · eksempel 3 af 3",
+      "tekst": "Se: Th8+: kongen på f8 må flytte, og så falder tårnet bagved.",
+      "samtidig": true,
+      "braet": {
+       "top": 294,
+       "bund": 668,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterSvar": "Din tur igen: følg pilen.",
+      "pilEfterSvar": 1,
+      "efterTraek2": "Rigtigt!",
+      "naeste": true
+     }
+    ],
+    "gaader": [
+     {
+      "taeller": "Mønster 8 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Sort i træk. Find spiddet og vind brikken bagved.",
+      "samtidig": true,
+      "gaade": "0J1zL",
+      "indeks": 3,
+      "rating": 584,
+      "fejl": [
+       {
+        "traek": "Rh8",
+        "grund": "angriber fra en side hvor der ikke staar noget bagved",
+        "besked": "Find to brikker på samme linje med den dyreste forrest. Angrib den forreste.",
+        "braetTop": 294,
+        "braetTopFoer": 294
+       }
+      ],
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "fejlTraek2": {
+       "traek": "Kc7",
+       "besked": "Find to brikker på samme linje med den dyreste forrest. Angrib den forreste. Pilen viser vejen."
+      },
+      "efterTraek2": "Løst - næste gang i første forsøg.",
+      "slut": "Løst - næste gang i første forsøg.",
+      "braetTopSlut": 294
+     },
+     {
+      "taeller": "Mønster 8 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Sort i træk. Find spiddet og vind brikken bagved.",
+      "samtidig": true,
+      "gaade": "0695y",
+      "indeks": 4,
+      "rating": 595,
+      "fejl": [
+       {
+        "traek": "Ra5",
+        "grund": "angriber fra en side hvor der ikke staar noget bagved",
+        "besked": "Find to brikker på samme linje med den dyreste forrest. Angrib den forreste.",
+        "braetTop": 294,
+        "braetTopFoer": 294
+       },
+       {
+        "traek": "Ra5",
+        "grund": "angriber fra en side hvor der ikke staar noget bagved",
+        "besked": "Find to brikker på samme linje med den dyreste forrest. Angrib den forreste. Pilen viser vejen.",
+        "braetTop": 315,
+        "braetTopFoer": 294
+       }
+      ],
+      "pilEfterToFejl": 1,
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterTraek2": "Løst - næste gang i første forsøg.",
+      "slut": "Løst - næste gang i første forsøg.",
+      "braetTopSlut": 294
+     },
+     {
+      "taeller": "Mønster 8 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. Find spiddet og vind brikken bagved.",
+      "samtidig": true,
+      "gaade": "0TehT",
+      "indeks": 5,
+      "rating": 608,
+      "fejl": [],
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterTraek2": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 294
+     },
+     {
+      "taeller": "Mønster 8 af 11 · 1 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Sort i træk. Find spiddet og vind brikken bagved.",
+      "samtidig": true,
+      "gaade": "0BtUA",
+      "indeks": 6,
+      "rating": 619,
+      "fejl": [],
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterTraek2": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 294
+     },
+     {
+      "taeller": "Mønster 8 af 11 · 2 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Sort i træk. Find spiddet og vind brikken bagved.",
+      "samtidig": true,
+      "gaade": "07xxw",
+      "indeks": 7,
+      "rating": 621,
+      "fejl": [],
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterTraek2": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 294
+     },
+     {
+      "taeller": "Mønster 8 af 11 · 3 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. Find spiddet og vind brikken bagved.",
+      "samtidig": true,
+      "gaade": "0ErbV",
+      "indeks": 8,
+      "rating": 621,
+      "fejl": [],
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterTraek2": "Du har lært: Spid!",
+      "slut": "Du har lært: Spid!",
+      "braetTopSlut": 294
+     }
+    ],
+    "skaerme": [],
+    "mestretEfter": 6,
+    "efter": {
+     "taeller": "Mønster 9 af 11 · eksempel 1 af 3",
+     "titel": "Afdækket angreb",
+     "forklaring": "Flyt en brik af vejen, så en anden brik bagved angriber. Så truer du to ting på én gang.",
+     "tekst": "Se: Sxf7+: springeren flytter af vejen, og dronningen på h4 angriber nu dronningen på e7.",
+     "besked": "",
+     "rekt": {
+      "titel": {
+       "top": 165,
+       "bund": 185,
+       "h": 20,
+       "px": 17.6
+      },
+      "forklaring": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "tekst": {
+       "top": 231,
+       "bund": 294,
+       "h": 63,
+       "px": 16
+      },
+      "besked": null
+     },
+     "braet": {
+      "top": 315,
+      "bund": 689,
+      "b": 374
+     },
+     "vindue": 844,
+     "scrollY": 0,
+     "listeTop": 1103,
+     "tegnelagElementer": 1,
+     "teksterOgBraetSamtidig": true
+    },
+    "listeMarkering": "✓ 8. Spid"
+   },
+   {
+    "id": "afdaekket",
+    "titel": "Afdækket angreb",
+    "eksempler": [
+     {
+      "gaade": "0NPdN",
+      "indeks": 0,
+      "taeller": "Mønster 9 af 11 · eksempel 1 af 3",
+      "tekst": "Se: Sxf7+: springeren flytter af vejen, og dronningen på h4 angriber nu dronningen på e7.",
+      "samtidig": true,
+      "braet": {
+       "top": 315,
+       "bund": 689,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterSvar": "Din tur igen: følg pilen.",
+      "pilEfterSvar": 1,
+      "efterTraek2": "Rigtigt!",
+      "naeste": true
+     },
+     {
+      "gaade": "0VCp7",
+      "indeks": 1,
+      "taeller": "Mønster 9 af 11 · eksempel 2 af 3",
+      "tekst": "Se: Sg3+: springeren flytter af vejen, og dronningen på h7 angriber nu dronningen på d3.",
+      "samtidig": true,
+      "braet": {
+       "top": 315,
+       "bund": 689,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterSvar": "Din tur igen: følg pilen.",
+      "pilEfterSvar": 1,
+      "efterTraek2": "Rigtigt!",
+      "naeste": true
+     },
+     {
+      "gaade": "0A5bd",
+      "indeks": 2,
+      "taeller": "Mønster 9 af 11 · eksempel 3 af 3",
+      "tekst": "Se: Sxf6+: springeren flytter af vejen, og tårnet på e1 angriber nu dronningen på e8.",
+      "samtidig": true,
+      "braet": {
+       "top": 294,
+       "bund": 668,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterSvar": "Din tur igen: følg pilen.",
+      "pilEfterSvar": 1,
+      "efterTraek2": "Rigtigt!",
+      "naeste": true
+     }
+    ],
+    "gaader": [],
+    "skaerme": [],
+    "sprungetOver": {
+     "foer": "Mønster 9 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+     "efter": "Mønster 10 af 11 · eksempel 1 af 3",
+     "titelEfter": "Kvælningsmat",
+     "scrollY": 574,
+     "listeMarkering": "9. Afdækket angreb",
+     "lager": "{\"indeks\":9,\"fase\":\"eksempel\",\"gaadeTaeller\":{\"ubeskyttet\":6,\"forsvar\":6,\"mat-i-1\":6,\"baglinjemat\":6,\"gaffel-springer\":6,\"gaffel-andre\":6,\"binding\":6,\"spid\":6},\"fremgang\":{\"ubeskyttet\":{\"seneste\":[false,true,true,true,true],\"mestret\":true,\"sprunget\":false},\"forsvar\":{\"seneste\":[false,true,true,true,true],\"mestret\":true,\"sprunget\":false},\"mat-i-1\":{\"seneste\":[false,true,true,true,true],\"mestret\":true,\"sprunget\":false},\"baglinjemat\":{\"seneste\":[false,true,true,true,true],\"mestret\":true,\"sprunget\":false},\"gaffel-springer\":{\"seneste\":[false,true,true,true,true],\"mestret\":true,\"sprunget\":false},\"gaffel-andre\":{\"seneste\":[false,true,true,true,true],\"mestret\":true,\"sprunget\":false},\"binding\":{\"seneste\":[false,true,true,true,true],\"mestret\":true,\"sprunget\":false},\"spid\":{\"seneste\":[false,true,true,true,true],\"mestret\":true,\"sprunget\":false},\"afdaekket\":{\"seneste\":[],\"mestret\":false,\"sprunget\":true}}}"
+    },
+    "springKnapPlacering": {
+     "top": 973,
+     "h": 44,
+     "b": 218
+    }
+   },
+   {
+    "id": "kvaelningsmat",
+    "titel": "Kvælningsmat",
+    "eksempler": [
+     {
+      "gaade": "0R0hX",
+      "indeks": 0,
+      "taeller": "Mønster 10 af 11 · eksempel 1 af 3",
+      "tekst": "Se: Sf7#: kongen er kvalt af sine egne brikker - springeren giver mat.",
+      "samtidig": false,
+      "braet": {
+       "top": -280,
+       "bund": 94,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": -386,
+       "bund": -346,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Rigtigt!",
+      "naeste": true
+     },
+     {
+      "gaade": "0G7lb",
+      "indeks": 1,
+      "taeller": "Mønster 10 af 11 · eksempel 2 af 3",
+      "tekst": "Se: Sf2#: kongen er kvalt af sine egne brikker - springeren giver mat.",
+      "samtidig": true,
+      "braet": {
+       "top": 294,
+       "bund": 668,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Rigtigt!",
+      "naeste": true
+     },
+     {
+      "gaade": "01H4V",
+      "indeks": 2,
+      "taeller": "Mønster 10 af 11 · eksempel 3 af 3",
+      "tekst": "Se: Sf2#: kongen er kvalt af sine egne brikker - springeren giver mat.",
+      "samtidig": true,
+      "braet": {
+       "top": 294,
+       "bund": 668,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Rigtigt!",
+      "naeste": true
+     }
+    ],
+    "gaader": [
+     {
+      "taeller": "Mønster 10 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Sort i træk. Sæt mat med springeren.",
+      "samtidig": true,
+      "gaade": "0TvyB",
+      "indeks": 3,
+      "rating": 858,
+      "fejl": [
+       {
+        "traek": "Rb8",
+        "grund": "et tilfaeldigt andet traek",
+        "besked": "Kongen kan ikke flytte. Hvilken brik kan give skak, som ikke kan blokeres?",
+        "braetTop": 294,
+        "braetTopFoer": 273
+       }
+      ],
+      "efterTraek1": "Løst - næste gang i første forsøg.",
+      "slut": "Løst - næste gang i første forsøg.",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 10 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. Sæt mat med springeren.",
+      "samtidig": true,
+      "gaade": "0O4JU",
+      "indeks": 4,
+      "rating": 863,
+      "fejl": [
+       {
+        "traek": "Nxg8",
+        "grund": "et tilfaeldigt andet traek",
+        "besked": "Kongen kan ikke flytte. Hvilken brik kan give skak, som ikke kan blokeres?",
+        "braetTop": 294,
+        "braetTopFoer": 273
+       },
+       {
+        "traek": "Nxg8",
+        "grund": "et tilfaeldigt andet traek",
+        "besked": "Kongen kan ikke flytte. Hvilken brik kan give skak, som ikke kan blokeres? Pilen viser vejen.",
+        "braetTop": 294,
+        "braetTopFoer": 273
+       }
+      ],
+      "pilEfterToFejl": 1,
+      "efterTraek1": "Løst - næste gang i første forsøg.",
+      "slut": "Løst - næste gang i første forsøg.",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 10 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. Sæt mat med springeren.",
+      "samtidig": true,
+      "gaade": "0NRqp",
+      "indeks": 5,
+      "rating": 906,
+      "fejl": [],
+      "efterTraek1": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 10 af 11 · 1 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Sort i træk. Sæt mat med springeren.",
+      "samtidig": true,
+      "gaade": "06Fmf",
+      "indeks": 6,
+      "rating": 916,
+      "fejl": [],
+      "efterTraek1": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 10 af 11 · 2 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. Sæt mat med springeren.",
+      "samtidig": true,
+      "gaade": "02Int",
+      "indeks": 7,
+      "rating": 919,
+      "fejl": [],
+      "efterTraek1": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 10 af 11 · 3 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. Sæt mat med springeren.",
+      "samtidig": true,
+      "gaade": "05V0f",
+      "indeks": 8,
+      "rating": 919,
+      "fejl": [],
+      "efterTraek1": "Du har lært: Kvælningsmat!",
+      "slut": "Du har lært: Kvælningsmat!",
+      "braetTopSlut": 274
+     }
+    ],
+    "skaerme": [],
+    "mestretEfter": 6,
+    "efter": {
+     "taeller": "Mønster 11 af 11 · eksempel 1 af 3",
+     "titel": "Mat i 2",
+     "forklaring": "Mat i to: første træk tvinger modstanderen, andet træk er mat. Tænk: hvad kan modstanderen svare?",
+     "tekst": "Se: Td8+ tvinger modstanderen, og næste træk er mat.",
+     "besked": "",
+     "rekt": {
+      "titel": {
+       "top": 165,
+       "bund": 185,
+       "h": 20,
+       "px": 17.6
+      },
+      "forklaring": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "tekst": {
+       "top": 231,
+       "bund": 273,
+       "h": 42,
+       "px": 16
+      },
+      "besked": null
+     },
+     "braet": {
+      "top": 294,
+      "bund": 668,
+      "b": 374
+     },
+     "vindue": 844,
+     "scrollY": 0,
+     "listeTop": 1082,
+     "tegnelagElementer": 1,
+     "teksterOgBraetSamtidig": true
+    },
+    "listeMarkering": "✓ 10. Kvælningsmat"
+   },
+   {
+    "id": "mat-i-2",
+    "titel": "Mat i 2",
+    "eksempler": [
+     {
+      "gaade": "01oq6",
+      "indeks": 0,
+      "taeller": "Mønster 11 af 11 · eksempel 1 af 3",
+      "tekst": "Se: Td8+ tvinger modstanderen, og næste træk er mat.",
+      "samtidig": true,
+      "braet": {
+       "top": 294,
+       "bund": 668,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterSvar": "Din tur igen: følg pilen.",
+      "pilEfterSvar": 1,
+      "efterTraek2": "Rigtigt!",
+      "naeste": true
+     },
+     {
+      "gaade": "04FOX",
+      "indeks": 1,
+      "taeller": "Mønster 11 af 11 · eksempel 2 af 3",
+      "tekst": "Se: Td8+ tvinger modstanderen, og næste træk er mat.",
+      "samtidig": true,
+      "braet": {
+       "top": 294,
+       "bund": 668,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterSvar": "Din tur igen: følg pilen.",
+      "pilEfterSvar": 1,
+      "efterTraek2": "Rigtigt!",
+      "naeste": true
+     },
+     {
+      "gaade": "04go3",
+      "indeks": 2,
+      "taeller": "Mønster 11 af 11 · eksempel 3 af 3",
+      "tekst": "Se: Tc1+ tvinger modstanderen, og næste træk er mat.",
+      "samtidig": true,
+      "braet": {
+       "top": 294,
+       "bund": 668,
+       "b": 374
+      },
+      "forklaringRekt": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterSvar": "Din tur igen: følg pilen.",
+      "pilEfterSvar": 1,
+      "efterTraek2": "Rigtigt!",
+      "naeste": true
+     }
+    ],
+    "gaader": [
+     {
+      "taeller": "Mønster 11 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. Sæt mat i to træk.",
+      "samtidig": true,
+      "gaade": "05QcZ",
+      "indeks": 3,
+      "rating": 400,
+      "fejl": [
+       {
+        "traek": "Rxh6+",
+        "grund": "giver et andet skak, der ikke fører til mat",
+        "besked": "Modstanderen havde et forsvar. Start med et skak, så modstanderen ikke har tid.",
+        "braetTop": 294,
+        "braetTopFoer": 273
+       }
+      ],
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "fejlTraek2": {
+       "traek": "Re7",
+       "besked": "Modstanderen havde et forsvar. Start med et skak, så modstanderen ikke har tid. Pilen viser vejen."
+      },
+      "efterTraek2": "Løst - næste gang i første forsøg.",
+      "slut": "Løst - næste gang i første forsøg.",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 11 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Sort i træk. Sæt mat i to træk.",
+      "samtidig": true,
+      "gaade": "06jn4",
+      "indeks": 4,
+      "rating": 400,
+      "fejl": [
+       {
+        "traek": "Kc8",
+        "grund": "et tilfaeldigt andet traek",
+        "besked": "Modstanderen havde et forsvar. Start med et skak, så modstanderen ikke har tid.",
+        "braetTop": 294,
+        "braetTopFoer": 273
+       },
+       {
+        "traek": "Kc8",
+        "grund": "et tilfaeldigt andet traek",
+        "besked": "Modstanderen havde et forsvar. Start med et skak, så modstanderen ikke har tid. Pilen viser vejen.",
+        "braetTop": 315,
+        "braetTopFoer": 273
+       }
+      ],
+      "pilEfterToFejl": 1,
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterTraek2": "Løst - næste gang i første forsøg.",
+      "slut": "Løst - næste gang i første forsøg.",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 11 af 11 · 0 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Sort i træk. Sæt mat i to træk.",
+      "samtidig": true,
+      "gaade": "0CJD3",
+      "indeks": 5,
+      "rating": 400,
+      "fejl": [],
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterTraek2": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 11 af 11 · 1 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. Sæt mat i to træk.",
+      "samtidig": true,
+      "gaade": "0GAjm",
+      "indeks": 6,
+      "rating": 400,
+      "fejl": [],
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterTraek2": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 11 af 11 · 2 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Hvid i træk. Sæt mat i to træk.",
+      "samtidig": true,
+      "gaade": "0IBpi",
+      "indeks": 7,
+      "rating": 400,
+      "fejl": [],
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterTraek2": "Rigtigt!",
+      "slut": "Rigtigt!",
+      "braetTopSlut": 274
+     },
+     {
+      "taeller": "Mønster 11 af 11 · 3 af de sidste 5 rigtige (mål: 4)",
+      "tekst": "Sort i træk. Sæt mat i to træk.",
+      "samtidig": true,
+      "gaade": "0NsWK",
+      "indeks": 8,
+      "rating": 400,
+      "fejl": [],
+      "efterTraek1": "Godt! Modstanderen svarer...",
+      "efterTraek2": "Du har lært: Mat i 2!",
+      "slut": "Du har lært: Mat i 2!",
+      "braetTopSlut": 274
+     }
+    ],
+    "skaerme": [],
+    "mestretEfter": 6,
+    "efter": {
+     "taeller": "Mønster 9 af 11 · eksempel 1 af 3",
+     "titel": "Afdækket angreb",
+     "forklaring": "Flyt en brik af vejen, så en anden brik bagved angriber. Så truer du to ting på én gang.",
+     "tekst": "Se: Sxf7+: springeren flytter af vejen, og dronningen på h4 angriber nu dronningen på e7.",
+     "besked": "",
+     "rekt": {
+      "titel": {
+       "top": 165,
+       "bund": 185,
+       "h": 20,
+       "px": 17.6
+      },
+      "forklaring": {
+       "top": 188,
+       "bund": 228,
+       "h": 40,
+       "px": 14.4
+      },
+      "tekst": {
+       "top": 231,
+       "bund": 294,
+       "h": 63,
+       "px": 16
+      },
+      "besked": null
+     },
+     "braet": {
+      "top": 315,
+      "bund": 689,
+      "b": 374
+     },
+     "vindue": 844,
+     "scrollY": 0,
+     "listeTop": 1103,
+     "tegnelagElementer": 1,
+     "teksterOgBraetSamtidig": true
+    },
+    "listeMarkering": "✓ 11. Mat i 2"
+   }
+  ],
+  "fund": [],
+  "listeTekster": [
+   {
+    "t": "1. Slå den ubeskyttede brik",
+    "title": "",
+    "h": 44
+   },
+   {
+    "t": "2. Red din brik",
+    "title": "Godt at kunne først: Slå den ubeskyttede brik",
+    "h": 44
+   },
+   {
+    "t": "3. Mat i 1 med dronning og tårn",
+    "title": "",
+    "h": 44
+   },
+   {
+    "t": "4. Baglinjemat",
+    "title": "Godt at kunne først: Mat i 1 med dronning og tårn",
+    "h": 44
+   },
+   {
+    "t": "5. Gaffel med springeren",
+    "title": "Godt at kunne først: Slå den ubeskyttede brik",
+    "h": 44
+   },
+   {
+    "t": "6. Gaffel med andre brikker",
+    "title": "Godt at kunne først: Gaffel med springeren",
+    "h": 44
+   },
+   {
+    "t": "7. Binding",
+    "title": "Godt at kunne først: Slå den ubeskyttede brik, Gaffel med andre brikker",
+    "h": 44
+   },
+   {
+    "t": "8. Spid",
+    "title": "Godt at kunne først: Binding",
+    "h": 44
+   },
+   {
+    "t": "9. Afdækket angreb",
+    "title": "Godt at kunne først: Gaffel med andre brikker",
+    "h": 44
+   },
+   {
+    "t": "10. Kvælningsmat",
+    "title": "Godt at kunne først: Mat i 1 med dronning og tårn, Gaffel med springeren",
+    "h": 44
+   },
+   {
+    "t": "11. Mat i 2",
+    "title": "Godt at kunne først: Mat i 1 med dronning og tårn, Baglinjemat",
+    "h": 44
+   }
+  ],
+  "panelTekst": "Taktik\nSpring dette mønster over\nStart forfra\n\nVælg et mønster at øve. ✓ = lært (4 af de sidste 5 rigtige i første forsøg).\n\n1. Slå den ubeskyttede brik\n2. Red din brik\n3. Mat i 1 med dronning og tårn\n4. Baglinjemat\n5. Gaffel med springeren\n6. Gaffel med andre brikker\n7. Binding\n8. Spid\n9. Afdækket angreb\n10. Kvælningsmat\n11. Mat i 2",
+  "efterSidste": {
+   "taeller": "Mønster 9 af 11 · eksempel 1 af 3",
+   "titel": "Afdækket angreb",
+   "forklaring": "Flyt en brik af vejen, så en anden brik bagved angriber. Så truer du to ting på én gang.",
+   "tekst": "Se: Sxf7+: springeren flytter af vejen, og dronningen på h4 angriber nu dronningen på e7.",
+   "besked": "",
+   "rekt": {
+    "titel": {
+     "top": 165,
+     "bund": 185,
+     "h": 20,
+     "px": 17.6
+    },
+    "forklaring": {
+     "top": 188,
+     "bund": 228,
+     "h": 40,
+     "px": 14.4
+    },
+    "tekst": {
+     "top": 231,
+     "bund": 294,
+     "h": 63,
+     "px": 16
+    },
+    "besked": null
+   },
+   "braet": {
+    "top": 315,
+    "bund": 689,
+    "b": 374
+   },
+   "vindue": 844,
+   "scrollY": 0,
+   "listeTop": 1103,
+   "tegnelagElementer": 1,
+   "teksterOgBraetSamtidig": true
+  },
+  "lagerFoerGenindlaes": "{\"indeks\":8,\"fase\":\"eksempel\",\"gaadeTaeller\":{\"ubeskyttet\":6,\"forsvar\":6,\"mat-i-1\":6,\"baglinjemat\":6,\"gaffel-springer\":6,\"gaffel-andre\":6,\"binding\":6,\"spid\":6,\"kvaelningsmat\":6,\"mat-i-2\":6},\"fremgang\":{\"ubeskyttet\":{\"seneste\":[false,true,true,true,true],\"mestret\":true,\"sprunget\":false},\"forsvar\":{\"seneste\":[false,true,true,true,true],\"mestret\":true,\"sprunget\":false},\"mat-i-1\":{\"seneste\":[false,true,true,true,true],\"mestret\":true,\"sprunget\":false},\"baglinjemat\":{\"seneste\":[false,true,true,true,true],\"mestret\":true,\"sprunget\":false},\"gaffel-springer\":{\"seneste\":[false,true,true,true,true],\"mestret\":true,\"sprunget\":false},\"gaffel-andre\":{\"seneste\":[false,true,true,true,true],\"mestret\":true,\"sprunget\":false},\"binding\":{\"seneste\":[false,true,true,true,true],\"mestret\":true,\"sprunget\":false},\"spid\":{\"seneste\":[false,true,true,true,true],\"mestret\":true,\"sprunget\":false},\"afdaekket\":{\"seneste\":[],\"mestret\":false,\"sprunget\":true},\"kvaelningsmat\":{\"seneste\":[false,true,true,true,true],\"mestret\":true,\"sprunget\":false},\"mat-i-2\":{\"seneste\":[false,true,true,true,true],\"mestret\":true,\"sprunget\":false}}}",
+  "efterGenindlaes": {
+   "taeller": "Mønster 9 af 11 · eksempel 1 af 3",
+   "titel": "Afdækket angreb",
+   "forklaring": "Flyt en brik af vejen, så en anden brik bagved angriber. Så truer du to ting på én gang.",
+   "tekst": "Se: Sxf7+: springeren flytter af vejen, og dronningen på h4 angriber nu dronningen på e7.",
+   "besked": "",
+   "rekt": {
+    "titel": {
+     "top": 165,
+     "bund": 185,
+     "h": 20,
+     "px": 17.6
+    },
+    "forklaring": {
+     "top": 188,
+     "bund": 228,
+     "h": 40,
+     "px": 14.4
+    },
+    "tekst": {
+     "top": 231,
+     "bund": 294,
+     "h": 63,
+     "px": 16
+    },
+    "besked": null
+   },
+   "braet": {
+    "top": 315,
+    "bund": 689,
+    "b": 374
+   },
+   "vindue": 844,
+   "scrollY": 0,
+   "listeTop": 1103,
+   "tegnelagElementer": 1,
+   "teksterOgBraetSamtidig": true
+  },
+  "listeEfter": [
+   {
+    "t": "✓ 1. Slå den ubeskyttede brik",
+    "title": ""
+   },
+   {
+    "t": "✓ 2. Red din brik",
+    "title": ""
+   },
+   {
+    "t": "✓ 3. Mat i 1 med dronning og tårn",
+    "title": ""
+   },
+   {
+    "t": "✓ 4. Baglinjemat",
+    "title": ""
+   },
+   {
+    "t": "✓ 5. Gaffel med springeren",
+    "title": ""
+   },
+   {
+    "t": "✓ 6. Gaffel med andre brikker",
+    "title": ""
+   },
+   {
+    "t": "✓ 7. Binding",
+    "title": ""
+   },
+   {
+    "t": "✓ 8. Spid",
+    "title": ""
+   },
+   {
+    "t": "9. Afdækket angreb",
+    "title": ""
+   },
+   {
+    "t": "✓ 10. Kvælningsmat",
+    "title": ""
+   },
+   {
+    "t": "✓ 11. Mat i 2",
+    "title": ""
+   }
+  ],
+  "startForfra": {
+   "dialog": null,
+   "efter": {
+    "taeller": "Mønster 1 af 11 · eksempel 1 af 3",
+    "titel": "Slå den ubeskyttede brik",
+    "forklaring": "Kig efter en brik som ingen passer på. Kan du slå den uden at miste noget, så gør det.",
+    "tekst": "Se: Springeren på d5 er ikke dækket. Slå med Txd5.",
+    "besked": "",
+    "rekt": {
+     "titel": {
+      "top": -689,
+      "bund": -669,
+      "h": 20,
+      "px": 17.6
+     },
+     "forklaring": {
+      "top": -666,
+      "bund": -626,
+      "h": 40,
+      "px": 14.4
+     },
+     "tekst": {
+      "top": -623,
+      "bund": -581,
+      "h": 42,
+      "px": 16
+     },
+     "besked": null
+    },
+    "braet": {
+     "top": -560,
+     "bund": -186,
+     "b": 374
+    },
+    "vindue": 844,
+    "scrollY": 854,
+    "listeTop": 1082,
+    "tegnelagElementer": 1,
+    "teksterOgBraetSamtidig": false
+   },
+   "lager": "{\"indeks\":0,\"fase\":\"eksempel\",\"gaadeTaeller\":{},\"fremgang\":{}}"
+  },
+  "bundenBrik": {
+   "gaade": "0Psb8",
+   "felt": "d7",
+   "brik": "q",
+   "lovligeFelter": [
+    "e6",
+    "f5",
+    "g4",
+    "h3"
+   ],
+   "proevetFelt": "e7",
+   "valgt": {
+    "markeret": true,
+    "viste": 4
+   },
+   "efter": {
+    "besked": "",
+    "tekstFoer": "Sort i træk. Sæt mat i ét træk.",
+    "tekstEfter": "Sort i træk. Sæt mat i ét træk.",
+    "stillingUaendret": true
+   }
+  },
+  "smaaTryk": [],
+  "konsol": []
+ },
+ "gaader": {
+  "skakMain": "e3d13ec",
+  "matFraStartIkkeMatMoenster": [
+   {
+    "moenster": "forsvar",
+    "indeks": 1,
+    "eksempel": true,
+    "id": "f02",
+    "fen": "6k1/5ppp/8/1p6/2b5/8/3PQPPP/6K1 w - - 0 1",
+    "mat": [
+     "Qe8#"
+    ],
+    "facit": "11 gode foerste traek"
+   },
+   {
+    "moenster": "forsvar",
+    "indeks": 2,
+    "eksempel": true,
+    "id": "f03",
+    "fen": "6k1/5ppp/8/2p5/3R4/8/5PPP/6K1 w - - 0 1",
+    "mat": [
+     "Rd8#"
+    ],
+    "facit": "13 gode foerste traek"
+   },
+   {
+    "moenster": "forsvar",
+    "indeks": 8,
+    "eksempel": false,
+    "id": "f09",
+    "fen": "6k1/5ppp/8/8/8/5b2/5PPP/3R2K1 w - - 0 1",
+    "mat": [
+     "Rd8#"
+    ],
+    "facit": "12 gode foerste traek"
+   },
+   {
+    "moenster": "forsvar",
+    "indeks": 9,
+    "eksempel": false,
+    "id": "f10",
+    "fen": "6k1/5ppp/8/8/8/1n6/P4PPP/2Q3K1 w - - 0 1",
+    "mat": [
+     "Qc8#"
+    ],
+    "facit": "16 gode foerste traek"
+   },
+   {
+    "moenster": "forsvar",
+    "indeks": 12,
+    "eksempel": false,
+    "id": "f13",
+    "fen": "6k1/5ppp/8/8/3q4/4P3/5PPP/6K1 b - - 0 1",
+    "mat": [
+     "Qd1#",
+     "Qa1#"
+    ],
+    "facit": "21 gode foerste traek"
+   }
+  ],
+  "modstanderMatEfterLoesning": [],
+  "matITraek2": [],
+  "soegning4": [
+   {
+    "moenster": "ubeskyttet",
+    "indeks": 0,
+    "id": "u01",
+    "fen": "6k1/5ppp/8/3n4/8/8/5PPP/3R2K1 w - - 0 1",
+    "facit": "d1d5",
+    "foerste": "f2f3 er næsten lige så godt (3 mod 3)",
+    "trin2": null
+   },
+   {
+    "moenster": "gaffel-andre",
+    "indeks": 7,
+    "id": "0CwF4",
+    "fen": "6k1/p4p1p/5Qp1/4p3/3b2P1/P7/2r2PKP/8 b - - 0 33",
+    "facit": "c2f2 f6f2 d4f2",
+    "foerste": "h7h6 er næsten lige så godt (1 mod 2)",
+    "trin2": "ok"
+   }
+  ],
+  "stillinger": 143
+ }
+}
