@@ -25,13 +25,13 @@ Script: `node scripts/kritik-379.mjs --kun atlet`. Billeder: `outputs/kritik-379
 | 01-forside | 0 % |
 | 01-forside-hel | 0 % |
 | 02-efter-godkendt | 0 % |
-| 03-video-1 (VideoCoach åben) | 0 % |
+| 03-video-1 (VideoCoach åben) | 0 % i første kørsel, 3,99 % i den fulde `verify:kritik-379`-kørsel (se A5) |
 | 04-forside-mere (hele siden, 3.021 px) | 0 % |
 | 05-program | 0 % |
 | 06-kost | 0 % |
 | 07-bundnav-sidste | 0 % |
 
-(pixelmatch, threshold 0, på billederne som de er, uden maskering.)
+(pixelmatch, threshold 0, på billederne som de er, uden maskering.) Tallene er fra første kørsel (`--kun atlet`). I den fulde kørsel var 7 af 8 igen 0 %.
 
 Adfærden er ens i de to versioner:
 
@@ -51,11 +51,12 @@ Sammen med 373's egne 11 skærme (også 0 %), 44/44 verify og 11 e2e-specs er de
 |---|---|---|---|
 | A1 | hele appen | **Intet ser anderledes ud, og intet virker anderledes** på de skærme og handlinger ordren nævner. | - |
 | A2 | opstart | Chunken `AthleteView` er 11,4 kB større (2,8 kB gzip), ifølge 373's egen måling. Atleten henter den ved opstart. Jeg har ikke målt indlæsningstid på en rigtig telefon, og det har 373 heller ikke. På wifi er det ubetydeligt, på 3G i et kældercenter ca. 0,1 s. | lav |
-| A3 | push-indhold | `main` indeholder mere end 373 siden `e524d5e`: `src/coachBriefingRules.js` (+430 linjer, ny fil med test) og en ændring på 6 linjer i `src/coachPriority.js`. Det er coachens side, ikke atletens, og derfor ikke kritiseret her. Marc skal vide, at et push også sender dem ud. | info |
+| A3 | push-indhold | `main` indeholder mere end 373 siden `e524d5e`: `src/coachBriefingRules.js` (+430 linjer, ny fil med test, ordre 370) og en ændring på 6 linjer i `src/coachPriority.js`. Det er coachens side, ikke atletens, og derfor ikke kritiseret her. Marc skal vide, at et push også sender dem ud. | info |
+| A5 | VideoCoach-iframen | I den fulde kørsel afveg `03-video-1` 3,99 % (`outputs/kritik-379/atlet-diff-03-video-1.png`). Live-billedet er taget, før iframens webfont (IBM Plex Mono) var indlæst, så teksten står i reserveskrift (Courier). Placering, tekst og knapper er de samme. Det er timing i mit script (1,5 s efter tryk), ikke 373: `src/` rører ikke iframen, og ved første kørsel var billedet 0 %. `public/videocoach.html` er dog ændret siden `e524d5e`, af ordre 355 (hold stangen på hurtig dødløft-nedtur, kun trackerkode, ingen layout). Den ændring går også ud med et push. | info |
 | A4 | forside, "Mere" (begge versioner) | Et helsidebillede viser pauselinjen og bundnavet midt på siden (y ≈ 740). Det er et artefakt af helsidebilledet (faste elementer), ikke noget atleten ser. Det er ens før og efter. | - |
 
 ## Klar til push: **ja**
 
 Fordi alle 8 skærme er pixel-identiske med den version, atleterne har i dag. Sæt-logning, VideoCoach (åbn og luk via broen), kost og alle 8 faner opfører sig ens, og der er ingen fejl i konsol eller netværk. Det eneste, atleten kan mærke, er 2,8 kB ekstra gzip ved opstart.
 
-Forbehold: "ja" gælder atletens app. Pushet tager også coach-ændringerne i A3 med. Dem har denne ordre ikke set.
+Forbehold: "ja" gælder atletens app. Pushet tager også coach-ændringerne i A3 og trackerændringen i A5 (ordre 355) med. Dem har denne ordre ikke set.
