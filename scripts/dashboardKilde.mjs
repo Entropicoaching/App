@@ -12,6 +12,7 @@ export const DASHBOARD_MODULER = [
   'dashboard/coachVideoHjaelp.js',
   'dashboard/coachKonstanter.js',
   'dashboard/hubSektioner.jsx',
+  'dashboard/laesninger.js',
 ]
 
 export function dashboardKilde() {
