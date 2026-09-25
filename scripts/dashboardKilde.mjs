@@ -15,6 +15,7 @@ export const DASHBOARD_MODULER = [
   'dashboard/laesninger.js',
   'dashboard/navigation.js',
   'dashboard/indbakkeHandlinger.js',
+  'dashboard/videoReviewHandlinger.js',
 ]
 
 export function dashboardKilde() {
