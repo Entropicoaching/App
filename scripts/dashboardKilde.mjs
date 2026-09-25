@@ -20,6 +20,20 @@ export const DASHBOARD_MODULER = [
   'dashboard/aiRapport.js',
   'dashboard/programHandlinger.js',
   'dashboard/useVideoCoachBro.js',
+  'dashboard/BibliotekView.jsx',
+  'dashboard/KalenderView.jsx',
+  'dashboard/ForsideView.jsx',
+  'dashboard/HubTab.jsx',
+  'dashboard/OpvarmningTab.jsx',
+  'dashboard/OversigtTab.jsx',
+  'dashboard/KostTab.jsx',
+  'dashboard/LogTab.jsx',
+  'dashboard/StaevneTab.jsx',
+  'dashboard/NoterTab.jsx',
+  'dashboard/BeskederTab.jsx',
+  'dashboard/VideoReviewModal.jsx',
+  'dashboard/StaevneResultatModal.jsx',
+  'dashboard/NyAtletModal.jsx',
 ]
 
 export function dashboardKilde() {
