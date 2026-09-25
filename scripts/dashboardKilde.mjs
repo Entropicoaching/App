@@ -34,6 +34,10 @@ export const DASHBOARD_MODULER = [
   'dashboard/VideoReviewModal.jsx',
   'dashboard/StaevneResultatModal.jsx',
   'dashboard/NyAtletModal.jsx',
+  'dashboard/Overlays.jsx',
+  'dashboard/Sidebar.jsx',
+  'dashboard/MobilNav.jsx',
+  'dashboard/ProfilHoved.jsx',
 ]
 
 export function dashboardKilde() {

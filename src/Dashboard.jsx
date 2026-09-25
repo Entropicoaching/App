@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { supabase, signOutHard } from './supabase'
+import { supabase } from './supabase'
 import LazyBoundary from './LazyBoundary'
 import { buildCoachPriorityItems, coachPriorityQueueContext } from './coachPriority'
 import { coachInboxEntryIntent, coachInboxFocusDecision, createSingleFlightRunner } from './coachInboxState'
@@ -10,9 +10,8 @@ import {
   videoCoachMetricText, videoCoachBaselineText, s,
   readinessSignal, formatLastSeen, parsePlannedRpe, initials,
 } from './dashboardShared'
-import { WEEKDAYS_SHORT, statusLabels, holidayInfo, ferieBadgeLabel } from './dashboard/coachKonstanter'
-import { HUB_SECTIONS } from './dashboard/hubSektioner'
-import { VIDEOCOACH_V3_URL, coachVideoPriorityDetail } from './dashboard/coachVideoHjaelp'
+import { WEEKDAYS_SHORT } from './dashboard/coachKonstanter'
+import { coachVideoPriorityDetail } from './dashboard/coachVideoHjaelp'
 import { lavLaesninger } from './dashboard/laesninger'
 import { lavNavigation } from './dashboard/navigation'
 import { lavIndbakkeHandlinger } from './dashboard/indbakkeHandlinger'
@@ -35,6 +34,10 @@ import BeskederTab from './dashboard/BeskederTab'
 import VideoReviewModal from './dashboard/VideoReviewModal'
 import StaevneResultatModal from './dashboard/StaevneResultatModal'
 import NyAtletModal from './dashboard/NyAtletModal'
+import Overlays from './dashboard/Overlays'
+import Sidebar from './dashboard/Sidebar'
+import MobilNav from './dashboard/MobilNav'
+import ProfilHoved from './dashboard/ProfilHoved'
 
 
 
@@ -856,192 +859,16 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
   return (
     <div style={s.wrap}>
-      {/* VideoCoach som iframe — coachen optager/gemmer for en valgt atlet (inkl.
-          sig selv) uden at forlade portalen. Luk sker via VideoCoachs egen ✕,
-          der poster :close til broen ovenfor. */}
-      {videoCoachOpen && (
-        <div role="dialog" aria-label="VideoCoach" style={{ position: 'fixed', inset: 0, zIndex: 12000, background: '#0f0e0b' }}>
-          <iframe
-            ref={videoCoachFrameRef}
-            src={VIDEOCOACH_V3_URL}
-            title="VideoCoach"
-            allow="fullscreen"
-            allowFullScreen
-            style={{ display: 'block', width: '100%', height: '100%', border: 0, background: '#0f0e0b' }}
-          />
-        </div>
-      )}
-      {/* Toast */}
-      {flash && (
-        <div style={{
-          position: 'fixed', top: '1.25rem', left: '50%', transform: 'translateX(-50%)',
-          background: '#1c1c18', border: `1px solid ${flash.kind === 'error' ? 'rgba(224,85,85,0.55)' : 'rgba(200,146,58,0.55)'}`,
-          padding: '0.65rem 1.4rem', zIndex: 10000, maxWidth: '90vw',
-          fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', letterSpacing: '0.06em',
-          color: flash.kind === 'error' ? '#e05555' : '#c8923a', boxShadow: '0 4px 24px rgba(0,0,0,0.55)',
-        }}>{flash.message}</div>
-      )}
-      {/* Bekræftelses-modal */}
-      {confirmDialog && (
-        <div onClick={() => setConfirmDialog(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(10,10,8,0.6)', zIndex: 10001, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.13)', padding: '1.5rem', maxWidth: '360px', width: '100%', boxShadow: '0 8px 40px rgba(0,0,0,0.6)' }}>
-            <div style={{ fontSize: '0.95rem', color: '#edeae2', lineHeight: 1.5, marginBottom: '1.25rem' }}>{confirmDialog.message}</div>
-            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-              <button style={s.btnGhost} onClick={() => setConfirmDialog(null)}>Annuller</button>
-              <button style={confirmDialog.kind === 'primary'
-                ? { ...s.btnPrimary }
-                : { ...s.btnPrimary, background: '#e05555', borderColor: '#e05555', color: '#141410' }}
-                onClick={() => { const fn = confirmDialog.onConfirm; setConfirmDialog(null); fn && fn() }}>{confirmDialog.confirmLabel || 'Bekræft'}</button>
-            </div>
-          </div>
-        </div>
-      )}
-      {isMobile && (
-        <style>{`
-          button { min-height: 44px !important; }
-          input, select, textarea { font-size: 16px !important; }
-        `}</style>
-      )}
-      {isMobile && sidebarOpen && (
-        <div
-          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', zIndex: 199 }}
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-      <aside style={{
-        ...s.sidebar,
-        ...(isMobile ? {
-          transform: sidebarOpen ? 'translateX(0)' : 'translateX(-100%)',
-          transition: 'transform 0.25s ease',
-          zIndex: 200,
-        } : {}),
-      }}>
-        <div style={{ ...s.sidebarLogo, cursor: 'pointer' }} onClick={() => { setView('list'); setSelectedAthlete(null); setSidebarOpen(false) }}>
-          <div style={s.wordmark}>Entropi<span style={{ color: '#c8923a' }}>.</span></div>
-          <div style={s.sub}>Coach Portal</div>
-        </div>
-        <nav style={{ flex: 1, padding: '0.75rem 0', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
-          {[
-            { icon: <><path d="M3 10.5 12 3l9 7.5" /><path d="M5 9.5V21h14V9.5" /></>, label: 'Forside', active: view === 'list', onClick: () => { setView('list'); setSelectedAthlete(null); setSidebarOpen(false) } },
-            { icon: <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />, label: 'Min træning', active: false, onClick: () => { setSidebarOpen(false); goToMyProfile() } },
-            { icon: <><rect x="3" y="5" width="18" height="16" rx="2" /><line x1="3" y1="10" x2="21" y2="10" /><line x1="8" y1="3" x2="8" y2="7" /><line x1="16" y1="3" x2="16" y2="7" /></>, label: 'Kalender', active: view === 'calendar', onClick: () => { setView('calendar'); setSelectedAthlete(null); setSidebarOpen(false) } },
-            { icon: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />, label: 'Coach Briefing', active: view === 'inbox', badge: coachPriorityCount, onClick: () => { setView('inbox'); setSelectedAthlete(null); setSidebarOpen(false) } },
-            { icon: <><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></>, label: 'Bibliotek', active: view === 'library', onClick: () => { setView('library'); setSelectedAthlete(null); setSidebarOpen(false) } },
-          ].map(item => (
-            <div
-              key={item.label}
-              onClick={item.onClick}
-              style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', padding: '0.55rem 1.25rem', cursor: 'pointer', borderLeft: item.active ? '2px solid #c8923a' : '2px solid transparent', background: item.active ? 'rgba(200,146,58,0.08)' : 'transparent', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: item.active ? '#c8923a' : '#b8b4a8' }}
-              onMouseEnter={e => { if (!item.active) e.currentTarget.style.background = 'rgba(237,234,226,0.03)' }}
-              onMouseLeave={e => { if (!item.active) e.currentTarget.style.background = 'transparent' }}
-            >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>{item.icon}</svg>
-              <span style={{ flex: 1 }}>{item.label}</span>
-              {item.badge > 0 && (
-                <span style={{ background: '#c8923a', color: '#141410', fontSize: '0.46rem', fontWeight: 700, borderRadius: '999px', padding: '0.1rem 0.35rem', flexShrink: 0 }}>{item.badge}</span>
-              )}
-            </div>
-          ))}
-          <div style={{ borderTop: '1px solid rgba(237,234,226,0.06)', margin: '0.75rem 1.25rem' }} />
-          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', padding: '0 1.25rem', marginBottom: '0.45rem' }}>Atleter</div>
-          {athletes.filter(a => !hiddenAthleteIds.has(a.id)).map(ath => {
-            const isActive = (view === 'profile' || view === 'list') && selectedAthlete?.id === ath.id
-            const unread = unreadCounts[ath.id] || 0
-            const ws = athleteWeekSummary[ath.id]
-            const hol = holidayInfo(ath)
-            const trainedToday = todayData.logs.some(l => l.athlete_id === ath.id)
-            const ringColor = hol?.onHoliday ? 'rgba(91,155,181,0.6)' : unread > 0 ? 'rgba(200,146,58,0.7)' : trainedToday ? 'rgba(108,186,108,0.6)' : 'rgba(237,234,226,0.12)'
-            return (
-              <div
-                key={ath.id}
-                onClick={() => { openProfile(ath); setSidebarOpen(false) }}
-                style={{ padding: '0.4rem 1.25rem', cursor: 'pointer', borderLeft: isActive ? '2px solid #c8923a' : '2px solid transparent', background: isActive ? 'rgba(200,146,58,0.08)' : 'transparent', display: 'flex', alignItems: 'center', gap: '0.6rem' }}
-                onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'rgba(237,234,226,0.03)' }}
-                onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'transparent' }}
-              >
-                <div style={{ width: 28, height: 28, borderRadius: '50%', border: `1.5px solid ${ringColor}`, background: '#141410', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: isActive ? '#c8923a' : '#b8b4a8' }}>
-                  {initials(ath.name)}
-                </div>
-                <div style={{ minWidth: 0, flex: 1 }}>
-                  <div style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontWeight: 300, fontSize: '0.78rem', color: isActive ? '#c8923a' : '#d5d2c8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ath.name.split(' ')[0]}</div>
-                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#5f5c55', marginTop: '0.05rem', letterSpacing: '0.04em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {hol?.onHoliday ? ferieBadgeLabel(hol) : ws ? `Uge ${ws.week_number}${ws.session_count > 0 ? '' : ' · tom'}` : 'Intet program'}
-                  </div>
-                </div>
-                {unread > 0 && (
-                  <span style={{ background: '#c8923a', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', fontWeight: 700, borderRadius: '999px', padding: '0.1rem 0.35rem', flexShrink: 0 }}>{unread}</span>
-                )}
-              </div>
-            )
-          })}
-          {athletes.length === 0 && (
-            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', padding: '0.5rem 1.25rem' }}>Ingen atleter</div>
-          )}
-        </nav>
-        <div style={s.sidebarFooter}>
-          {onPreviewAthlete && !previewPickerOpen && (
-            <button
-              onClick={() => { setPickingMine(false); setPreviewPickerOpen(true) }}
-              style={{ ...s.btnPrimary, width: '100%' }}
-            >Se som atlet</button>
-          )}
-          {onPreviewAthlete && previewPickerOpen && (
-            <div style={{ background: '#141410', border: '1px solid rgba(200,146,58,0.3)', padding: '0.5rem' }}>
-              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.4rem' }}>{pickingMine ? 'Vælg din egen profil (huskes)' : 'Vælg profil'}</div>
-              {athletes.map(a => (
-                <div
-                  key={a.id}
-                  onClick={() => { setPreviewPickerOpen(false); if (pickingMine) { localStorage.setItem('entropi_my_athlete_id', a.id); setMyAthleteId(a.id); setPickingMine(false) } onPreviewAthlete(a.id) }}
-                  style={{ padding: '0.4rem 0.5rem', fontSize: '0.8rem', color: '#b8b4a8', cursor: 'pointer', borderRadius: '1px' }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(237,234,226,0.06)'}
-                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                >{a.name}</div>
-              ))}
-              <button onClick={() => { setPreviewPickerOpen(false); setPickingMine(false) }} style={{ ...s.btnGhost, fontSize: '0.48rem', padding: '0.2rem 0.5rem', marginTop: '0.3rem', width: '100%' }}>Annuller</button>
-            </div>
-          )}
-          {/* Værktøjer samlet bag ét punkt — eksport/backup/VideoCoach/log ud er
-              sjældne handlinger og skal ikke fylde i det daglige. */}
-          <button
-            onClick={() => setSidebarMoreOpen(o => !o)}
-            style={{ background: 'transparent', border: 'none', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.55rem 0.1rem 0.15rem', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: sidebarMoreOpen ? '#c8923a' : '#7a7770' }}
-          >
-            <span>Værktøjer</span>
-            <span style={{ fontSize: '0.5rem', transform: sidebarMoreOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }}>▾</span>
-          </button>
-          {sidebarMoreOpen && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem', paddingTop: '0.3rem' }}>
-              {(() => {
-                const days = lastBackup ? Math.floor((Date.now() - new Date(lastBackup)) / 86400000) : null
-                const stale = days == null || days >= 7
-                const backupNote = days == null ? '⚠ aldrig' : days === 0 ? '✓ i dag' : stale ? `⚠ ${days}d` : `✓ ${days}d`
-                const row = { background: 'transparent', border: 'none', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.4rem 0.1rem', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.06em', color: '#7a7770', textAlign: 'left' }
-                return (
-                  <>
-                    <button onClick={openVideoCoachV3} style={row}
-                      onMouseEnter={e => e.currentTarget.style.color = '#b8b4a8'} onMouseLeave={e => e.currentTarget.style.color = '#7a7770'}>
-                      <span>VideoCoach</span><span>→</span>
-                    </button>
-                    <button onClick={exportTraeningsdata} disabled={exportingTraening} style={row}
-                      onMouseEnter={e => e.currentTarget.style.color = '#b8b4a8'} onMouseLeave={e => e.currentTarget.style.color = '#7a7770'}>
-                      <span>{exportingTraening ? 'Henter…' : 'Træningsdata'}</span><span>↓</span>
-                    </button>
-                    <button onClick={exportBackup} disabled={exportingBackup} style={row}
-                      onMouseEnter={e => e.currentTarget.style.color = '#b8b4a8'} onMouseLeave={e => e.currentTarget.style.color = '#7a7770'}>
-                      <span>{exportingBackup ? 'Henter…' : 'Sikkerhedskopi'}</span>
-                      <span style={{ color: stale ? '#c8923a' : '#4a4844' }}>{backupNote}</span>
-                    </button>
-                    <button onClick={() => signOutHard()} style={row}
-                      onMouseEnter={e => e.currentTarget.style.color = '#e05555'} onMouseLeave={e => e.currentTarget.style.color = '#7a7770'}>
-                      <span>Log ud</span><span>→</span>
-                    </button>
-                  </>
-                )
-              })()}
-            </div>
-          )}
-        </div>
-      </aside>
+      <Overlays {...{
+        confirmDialog, flash, isMobile, setConfirmDialog, videoCoachFrameRef, videoCoachOpen,
+      }} />
+      <Sidebar {...{
+        athletes, athleteWeekSummary, coachPriorityCount, exportBackup, exportingBackup, exportingTraening,
+        exportTraeningsdata, goToMyProfile, hiddenAthleteIds, isMobile, lastBackup, onPreviewAthlete,
+        openProfile, openVideoCoachV3, pickingMine, previewPickerOpen, selectedAthlete, setMyAthleteId,
+        setPickingMine, setPreviewPickerOpen, setSelectedAthlete, setSidebarMoreOpen, setSidebarOpen, setView,
+        sidebarMoreOpen, sidebarOpen, todayData, unreadCounts, view,
+      }} />
 
       <main style={{ ...s.main, ...(isMobile ? { marginLeft: 0, overflowX: 'hidden', paddingBottom: '76px' } : {}) }}>
         <div style={s.topbar}>
@@ -1055,112 +882,12 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           )}
         </div>
 
-        {/* Mobil bundnavigation — erstatter hamburger-menuen som primær navigation.
-            Samme mønster som atlet-appen: 4 faste punkter, guld = aktiv.
-            "Menu" åbner sidebaren (atleter, eksport, VideoCoach, log ud). */}
-        {isMobile && (
-          <nav style={{
-            position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 150,
-            display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
-            background: '#171713', borderTop: '1px solid rgba(237,234,226,0.09)',
-            paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-          }}>
-            {[
-              {
-                key: 'list', label: 'Forside', active: view === 'list' && !selectedAthlete,
-                onClick: () => { setView('list'); setSelectedAthlete(null); setSidebarOpen(false); setMenuSheetOpen(false) },
-                icon: <><path d="M3 10.5 12 3l9 7.5" /><path d="M5 9.5V21h14V9.5" /></>,
-              },
-              {
-                key: 'inbox', label: 'Coach Briefing', active: view === 'inbox',
-                onClick: () => { setView('inbox'); setSelectedAthlete(null); setSidebarOpen(false); setMenuSheetOpen(false) },
-                icon: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />,
-              },
-              {
-                key: 'mine', label: 'Min træning', active: false,
-                onClick: () => { setSidebarOpen(false); setMenuSheetOpen(false); goToMyProfile() },
-                icon: <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />,
-              },
-              {
-                key: 'menu', label: 'Menu', active: menuSheetOpen,
-                onClick: () => { setSheetPreviewPick(false); setMenuSheetOpen(o => !o) },
-                icon: <><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" /></>,
-              },
-            ].map(item => {
-              const priorityCount = item.key === 'inbox' ? coachPriorityCount : 0
-              return (
-                <button
-                  key={item.key}
-                  onClick={item.onClick}
-                  style={{
-                    position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center',
-                    justifyContent: 'center', gap: '0.25rem', padding: '0.55rem 0 0.5rem',
-                    background: 'none', border: 'none', cursor: 'pointer',
-                    color: item.active ? '#c8923a' : '#7a7770',
-                  }}
-                >
-                  <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">{item.icon}</svg>
-                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>{item.label}</span>
-                  {priorityCount > 0 && (
-                    <span style={{ position: 'absolute', top: '0.3rem', right: 'calc(50% - 1.15rem)', background: '#c8923a', color: '#141410', borderRadius: '999px', fontSize: '0.44rem', minWidth: '0.85rem', height: '0.85rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, padding: '0 0.15rem', fontFamily: "'IBM Plex Mono', monospace" }}>{priorityCount}</span>
-                  )}
-                </button>
-              )
-            })}
-          </nav>
-        )}
-
-        {/* Mobil menu-ark: sekundære handlinger i et bund-ark i stedet for
-            desktop-sidebaren presset ind fra siden. */}
-        {isMobile && menuSheetOpen && (
-          <>
-            <div onClick={() => setMenuSheetOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 205 }} />
-            <div style={{ position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 210, background: '#1c1c18', borderTop: '1px solid rgba(237,234,226,0.12)', borderRadius: '14px 14px 0 0', padding: '0.85rem 1rem calc(1.1rem + env(safe-area-inset-bottom, 0px))' }}>
-              <div style={{ width: 36, height: 4, background: 'rgba(237,234,226,0.2)', borderRadius: 2, margin: '0 auto 0.8rem' }} />
-              {sheetPreviewPick ? (
-                <>
-                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.6rem' }}>Se som atlet</div>
-                  <div style={{ maxHeight: '40vh', overflowY: 'auto' }}>
-                    {athletes.map(a2 => (
-                      <div key={a2.id}
-                        onClick={() => {
-                          setMenuSheetOpen(false); setSheetPreviewPick(false)
-                          if (pickingMine) { localStorage.setItem('entropi_my_athlete_id', a2.id); setMyAthleteId(a2.id); setPickingMine(false) }
-                          onPreviewAthlete && onPreviewAthlete(a2.id)
-                        }}
-                        style={{ padding: '0.65rem 0.25rem', fontSize: '0.9rem', color: '#b8b4a8', cursor: 'pointer', borderBottom: '1px solid rgba(237,234,226,0.05)' }}
-                      >{a2.name}</div>
-                    ))}
-                  </div>
-                  <button onClick={() => setSheetPreviewPick(false)} style={{ ...s.btnGhost, marginTop: '0.75rem', width: '100%' }}>← Tilbage</button>
-                </>
-              ) : (
-                <>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                    {[
-                      { label: 'Kalender', onClick: () => { setMenuSheetOpen(false); setSelectedAthlete(null); setView('calendar') }, icon: <><rect x="3" y="5" width="18" height="16" rx="2" /><line x1="3" y1="10" x2="21" y2="10" /><line x1="8" y1="3" x2="8" y2="7" /><line x1="16" y1="3" x2="16" y2="7" /></> },
-                      { label: 'Bibliotek', onClick: () => { setMenuSheetOpen(false); setSelectedAthlete(null); setView('library') }, icon: <><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></> },
-                      { label: 'VideoCoach', onClick: () => { setMenuSheetOpen(false); openVideoCoachV3() }, icon: <><rect x="2" y="6" width="13" height="12" rx="2" /><path d="M15 10.5 22 7v10l-7-3.5" /></> },
-                      { label: 'Se som atlet', onClick: () => setSheetPreviewPick(true), icon: <><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></> },
-                    ].map(m => (
-                      <button key={m.label} onClick={m.onClick}
-                        style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.35rem', padding: '0.8rem 0.5rem', background: '#16150f', border: '1px solid rgba(237,234,226,0.1)', borderRadius: 8, cursor: 'pointer', color: '#b8b4a8' }}>
-                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">{m.icon}</svg>
-                        <span style={{ fontSize: '0.72rem' }}>{m.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                  <div style={{ borderTop: '1px solid rgba(237,234,226,0.07)', paddingTop: '0.6rem', display: 'flex', flexDirection: 'column' }}>
-                    <button onClick={() => { setMenuSheetOpen(false); setShowAddModal(true) }} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#b8b4a8', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>+ Tilføj atlet</button>
-                    <button onClick={exportTraeningsdata} disabled={exportingTraening} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>{exportingTraening ? '...' : '↓ Træningsdata'}</button>
-                    <button onClick={exportBackup} disabled={exportingBackup} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>{exportingBackup ? '...' : '↓ Sikkerhedskopi'}</button>
-                    <button onClick={() => signOutHard()} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>Log ud</button>
-                  </div>
-                </>
-              )}
-            </div>
-          </>
-        )}
+        <MobilNav {...{
+          athletes, coachPriorityCount, exportBackup, exportingBackup, exportingTraening, exportTraeningsdata,
+          goToMyProfile, isMobile, menuSheetOpen, onPreviewAthlete, openVideoCoachV3, pickingMine,
+          selectedAthlete, setMenuSheetOpen, setMyAthleteId, setPickingMine, setSelectedAthlete, setSheetPreviewPick,
+          setShowAddModal, setSidebarOpen, setView, sheetPreviewPick, view,
+        }} />
 
         {/* INDBAKKE — samlet beskedoverblik på tværs af atleter */}
         {view === 'inbox' && (
@@ -1221,148 +948,11 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         {/* PROFILE VIEW */}
         {view === 'profile' && a && (
           <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '1.75rem' }}>
-              <button onClick={() => setView(profileReturnView)} style={{ background: 'none', border: 'none', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', cursor: 'pointer', padding: 0 }}>
-                ← Tilbage til {profileReturnView === 'inbox' ? 'indbakken' : 'atleter'}
-              </button>
-              {priorityQueueContext && (
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', flexWrap: 'wrap', gap: '0.5rem' }}>
-                  <span style={{ color: priorityQueueContext.state === 'complete' ? '#6cba6c' : '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.04em', whiteSpace: 'nowrap' }}>
-                    {priorityQueueContext.state === 'complete'
-                      ? 'Køen er ryddet ✓'
-                      : priorityQueueContext.state === 'last'
-                        ? 'Sidste opgave'
-                        : `${priorityQueueContext.remainingCount} tilbage${priorityQueueContext.currentOpen ? ' efter denne' : ''}`}
-                  </span>
-                  {nextPriorityItem && (
-                    <button onClick={() => openCoachPriorityItem(nextPriorityItem, 'inbox')}
-                      style={{ ...s.btnGhost, minHeight: 36, padding: '0.35rem 0.6rem', fontSize: '0.46rem', flexShrink: 0 }}>
-                      Næste opgave →
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {profilePriorityContext && (
-              <div style={{ ...s.card, marginBottom: '1rem', padding: '0.75rem 0.85rem', borderColor: `${profilePriorityContext.color}38`, background: `${profilePriorityContext.color}08` }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.35rem' }}>
-                  <span style={{ width: 7, height: 7, borderRadius: '50%', flexShrink: 0, background: profilePriorityContext.color, boxShadow: `0 0 0 3px ${profilePriorityContext.color}16` }} />
-                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770' }}>Aktuel opgave</span>
-                  <span style={{ color: profilePriorityContext.color, border: `1px solid ${profilePriorityContext.color}44`, padding: '0.08rem 0.3rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.4rem', letterSpacing: '0.05em', textTransform: 'uppercase' }}>{profilePriorityContext.label}</span>
-                </div>
-                <div style={{ color: '#d8d4ca', fontSize: '0.72rem', lineHeight: 1.45 }}>{profilePriorityContext.summary}</div>
-                {profilePriorityContext.detail && <div style={{ color: '#7a7770', fontSize: '0.64rem', lineHeight: 1.45, marginTop: '0.22rem' }}>{profilePriorityContext.detail}</div>}
-              </div>
-            )}
-
-            <div style={{ ...s.card, display: isMobile ? 'flex' : 'grid', gridTemplateColumns: isMobile ? undefined : 'auto 1fr auto', alignItems: 'center', gap: isMobile ? '0.85rem' : '1.5rem', marginBottom: '1.5rem', ...(isMobile ? { flexWrap: 'wrap', padding: '0.85rem 1rem' } : {}) }}>
-              <div style={{ ...s.avatar, width: isMobile ? '44px' : '56px', height: isMobile ? '44px' : '56px', fontSize: isMobile ? '1rem' : '1.3rem', flexShrink: 0 }}>{initials(a.name)}</div>
-              <div style={isMobile ? { flex: 1, minWidth: 0 } : undefined}>
-                <div style={{ fontFamily: "'Playfair Display', serif", fontSize: isMobile ? '1.2rem' : '1.5rem', fontWeight: 400, color: '#edeae2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: isMobile ? 'nowrap' : 'normal' }}>{a.name}</div>
-                {!isMobile && <div style={{ fontSize: '0.8rem', color: '#7a7770', marginTop: '0.2rem' }}>{a.email}{a.age ? ' · ' + a.age + ' år' : ''}</div>}
-                {/* Det lange atlet-ID er skjult på mobil — det bruges kun til scripts på desktop */}
-                {!isMobile && <div
-                  onClick={() => { navigator.clipboard?.writeText(a.id); showFlash('Atlet-ID kopieret') }}
-                  title="Klik for at kopiere — bruges som athleteId i cowork-scripts"
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.04em', color: '#4a4844', marginTop: '0.3rem', cursor: 'pointer', wordBreak: 'break-all' }}
-                >
-                  <span>ID: {a.id}</span>
-                  <span style={{ color: '#7a7770' }}>⧉</span>
-                </div>}
-                {(() => {
-                  const ls = formatLastSeen(profilesLastSeen[a.user_id])
-                  if (!ls) return null
-                  return (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.3rem' }}>
-                      <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: ls.dotColor, flexShrink: 0 }} />
-                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.07em', color: ls.dotColor }}>{ls.text}</span>
-                    </div>
-                  )
-                })()}
-              </div>
-              <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                <span style={s.badge(a.status)}>{statusLabels[a.status]}</span>
-                <button style={s.btnDanger} onClick={() => setShowDeleteModal(true)}>Fjern</button>
-              </div>
-            </div>
-
-            {/* Sektions-navigation: de sektioner man bruger dagligt står som
-                tydelige TEKST-faner; resten ligger i en "Mere"-menu. Erstatter den
-                gamle ikon-kun-bar, hvor man ikke kunne se hvad hver knap var. */}
-            {(() => {
-              const navItems = [{ key: 'hub', label: 'Hjem' }, ...HUB_SECTIONS]
-              const EMOJI = { hub: '🏠', oversigt: '📊', kost: '🍽️', program: '🏋️', log: '📓', analyse: '📈', opvarmning: '🔥', stævne: '🏆', noter: '🗒️', beskeder: '💬' }
-              const PRIMARY = ['hub', 'program', 'log', 'beskeder']
-              const primary = PRIMARY.map(k => navItems.find(n => n.key === k)).filter(Boolean)
-              const more = navItems.filter(n => !PRIMARY.includes(n.key))
-              const activeInMore = more.some(n => n.key === activeTab)
-              const activeMoreLabel = more.find(n => n.key === activeTab)?.label
-              const go = (key) => { setActiveTab(key); setEditing(null); setNavMenuOpen(false) }
-              const tabBtn = (active) => ({
-                position: 'relative', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem',
-                fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase',
-                padding: isMobile ? '0.6rem 0.7rem' : '0.65rem 1.1rem', cursor: 'pointer',
-                color: active ? '#c8923a' : '#7a7770', background: 'none', border: 'none',
-                borderBottom: active ? '2px solid #c8923a' : '2px solid transparent',
-                marginBottom: '-1px', whiteSpace: 'nowrap',
-              })
-              return (
-                <div style={{ marginBottom: '1.5rem', position: 'relative' }}>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.1rem', borderBottom: '1px solid rgba(237,234,226,0.07)' }}>
-                    {primary.map(n => {
-                      const active = activeTab === n.key
-                      return (
-                        <button
-                          key={n.key}
-                          onClick={() => go(n.key)}
-                          style={tabBtn(active)}
-                          onMouseEnter={e => { if (!active) e.currentTarget.style.color = '#b8b4a8' }}
-                          onMouseLeave={e => { if (!active) e.currentTarget.style.color = '#7a7770' }}
-                        >
-                          <span style={{ marginRight: '0.35rem' }}>{EMOJI[n.key]}</span>{n.label}
-                          {n.key === 'beskeder' && unreadCounts[a.id] > 0 && (
-                            <span style={{ position: 'absolute', top: '0.15rem', right: '0.05rem', background: '#c8923a', color: '#141410', borderRadius: '999px', fontSize: '0.45rem', minWidth: '0.85rem', height: '0.85rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, padding: '0 0.15rem' }}>{unreadCounts[a.id]}</span>
-                          )}
-                        </button>
-                      )
-                    })}
-                    <button
-                      onClick={() => setNavMenuOpen(o => !o)}
-                      style={{ ...tabBtn(activeInMore), display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
-                      onMouseEnter={e => { if (!activeInMore) e.currentTarget.style.color = '#b8b4a8' }}
-                      onMouseLeave={e => { if (!activeInMore) e.currentTarget.style.color = '#7a7770' }}
-                    >
-                      {activeInMore ? <><span style={{ marginRight: '0.35rem' }}>{EMOJI[activeTab]}</span>{activeMoreLabel}</> : 'Mere'}
-                      <span style={{ fontSize: '0.5rem', transform: navMenuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }}>▾</span>
-                    </button>
-                  </div>
-
-                  {navMenuOpen && (
-                    <>
-                      {/* usynligt lag: klik udenfor lukker menuen */}
-                      <div onClick={() => setNavMenuOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 40 }} />
-                      <div style={{ position: 'absolute', right: 0, top: '100%', marginTop: '0.25rem', zIndex: 41, background: '#1c1c18', border: '1px solid rgba(237,234,226,0.13)', boxShadow: '0 10px 30px rgba(0,0,0,0.5)', minWidth: '11rem', padding: '0.3rem 0' }}>
-                        {more.map(n => {
-                          const active = activeTab === n.key
-                          return (
-                            <button
-                              key={n.key}
-                              onClick={() => go(n.key)}
-                              style={{ display: 'block', width: '100%', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0.6rem 1rem', cursor: 'pointer', background: active ? 'rgba(200,146,58,0.1)' : 'none', border: 'none', borderLeft: active ? '2px solid #c8923a' : '2px solid transparent', color: active ? '#c8923a' : '#b8b4a8' }}
-                              onMouseEnter={e => { e.currentTarget.style.color = '#edeae2' }}
-                              onMouseLeave={e => { e.currentTarget.style.color = active ? '#c8923a' : '#b8b4a8' }}
-                            >
-                              <span style={{ display: 'inline-block', width: '1.5rem' }}>{EMOJI[n.key]}</span>{n.label}
-                            </button>
-                          )
-                        })}
-                      </div>
-                    </>
-                  )}
-                </div>
-              )
-            })()}
+            <ProfilHoved {...{
+              a, activeTab, isMobile, navMenuOpen, nextPriorityItem, openCoachPriorityItem,
+              priorityQueueContext, profilePriorityContext, profileReturnView, profilesLastSeen, setActiveTab, setEditing,
+              setNavMenuOpen, setShowDeleteModal, setView, showFlash, unreadCounts,
+            }} />
 
             {/* TAB: HUB — coach-landingsside med status + sektionsnavigation */}
             {activeTab === 'hub' && (() => {
