@@ -2790,5 +2790,599 @@
    }
   ],
   "stillinger": 143
+ },
+ "atlet": {
+  "versioner": {
+   "live": {
+    "rev": "e524d5e",
+    "hash": "e524d5e",
+    "fejl": [],
+    "net": [],
+    "forside": {
+     "tekst": "Entropi.\n2026-09-25\n⋯\nFredag · Dag 1 — Squat\nI DAG · #datoMAN\nHVILE\nTIR\nHVILE\nONS\nHVILE\nTOR\nHVILE\nFRE\n●\nLØR\nHVILE\nSØN\nHVILE\nDAGENS PAS\nSæt 1/4\nSquat\nAnbefalet: 80kg\n4 SÆT · × 4-6 · RPE 8\n−\n+\n×\n−\n+\nRPE 8\nGODKENDT\nSPRING OVER\nNæste: 4 reps @ 80 kg\nVis næste sæt\nPARATHED\nIkke logget\nBESKED\nFILM ET SÆT\nMERE\n▾\nHJEM\nPROGRAM\nVOLUMEN\nFREMGANG\nKOST\nMOBILITET\nBESKEDER\nSTÆVNE",
+     "knapper": [
+      {
+       "t": "⋯",
+       "b": 44,
+       "h": 44,
+       "top": 4
+      },
+      {
+       "t": "MAN HVILE",
+       "b": 48,
+       "h": 70,
+       "top": 150
+      },
+      {
+       "t": "TIR HVILE",
+       "b": 48,
+       "h": 70,
+       "top": 150
+      },
+      {
+       "t": "ONS HVILE",
+       "b": 48,
+       "h": 70,
+       "top": 150
+      },
+      {
+       "t": "TOR HVILE",
+       "b": 48,
+       "h": 70,
+       "top": 150
+      },
+      {
+       "t": "FRE ●",
+       "b": 48,
+       "h": 70,
+       "top": 150
+      },
+      {
+       "t": "LØR HVILE",
+       "b": 48,
+       "h": 70,
+       "top": 150
+      },
+      {
+       "t": "SØN HVILE",
+       "b": 48,
+       "h": 70,
+       "top": 150
+      },
+      {
+       "t": "−",
+       "b": 44,
+       "h": 52,
+       "top": 408
+      },
+      {
+       "t": "+",
+       "b": 44,
+       "h": 52,
+       "top": 408
+      },
+      {
+       "t": "−",
+       "b": 44,
+       "h": 52,
+       "top": 468
+      },
+      {
+       "t": "+",
+       "b": 44,
+       "h": 52,
+       "top": 468
+      },
+      {
+       "t": "GODKENDT",
+       "b": 198,
+       "h": 60,
+       "top": 530
+      },
+      {
+       "t": "SPRING OVER",
+       "b": 108,
+       "h": 60,
+       "top": 530
+      },
+      {
+       "t": "PARATHED Ikke logget",
+       "b": 113,
+       "h": 52,
+       "top": 688
+      },
+      {
+       "t": "BESKED",
+       "b": 113,
+       "h": 52,
+       "top": 688
+      },
+      {
+       "t": "FILM ET SÆT",
+       "b": 113,
+       "h": 52,
+       "top": 688
+      },
+      {
+       "t": "MERE ▾",
+       "b": 356,
+       "h": 44,
+       "top": 756
+      },
+      {
+       "t": "HJEM",
+       "b": 49,
+       "h": 57,
+       "top": 787
+      },
+      {
+       "t": "PROGRAM",
+       "b": 49,
+       "h": 57,
+       "top": 787
+      },
+      {
+       "t": "VOLUMEN",
+       "b": 49,
+       "h": 57,
+       "top": 787
+      },
+      {
+       "t": "FREMGANG",
+       "b": 49,
+       "h": 57,
+       "top": 787
+      },
+      {
+       "t": "KOST",
+       "b": 49,
+       "h": 57,
+       "top": 787
+      },
+      {
+       "t": "MOBILITET",
+       "b": 49,
+       "h": 57,
+       "top": 787
+      },
+      {
+       "t": "BESKEDER",
+       "b": 49,
+       "h": 57,
+       "top": 787
+      },
+      {
+       "t": "STÆVNE",
+       "b": 49,
+       "h": 57,
+       "top": 787
+      }
+     ],
+     "nav": [
+      {
+       "t": "HJEM",
+       "aktiv": ""
+      },
+      {
+       "t": "PROGRAM",
+       "aktiv": ""
+      },
+      {
+       "t": "VOLUMEN",
+       "aktiv": ""
+      },
+      {
+       "t": "FREMGANG",
+       "aktiv": ""
+      },
+      {
+       "t": "KOST",
+       "aktiv": ""
+      },
+      {
+       "t": "MOBILITET",
+       "aktiv": ""
+      },
+      {
+       "t": "BESKEDER",
+       "aktiv": ""
+      },
+      {
+       "t": "STÆVNE",
+       "aktiv": ""
+      }
+     ],
+     "videoKnapper": [
+      {
+       "t": "FILM ET SÆT",
+       "b": 113,
+       "h": 52,
+       "top": 688
+      }
+     ],
+     "sideHoejde": 896,
+     "scrollB": 390
+    },
+    "dagensPas": null,
+    "efterGodkendt": "Entropi.\n2026-09-25\n⋯\nFredag · Dag 1 — Squat\nI DAG · 25. SEPTEMBER\nMAN\nHVILE\nTIR\nHVILE\nONS\nHVILE\nTOR\nHVILE\nFRE\n✓\nLØR\nHVILE\nSØN\nHVILE\nDAGENS PAS\nSæt 2/4\nSquat\nAnbefalet: 80kg\n4 SÆT · × 4-6 · RPE 8\n✓ 1 sæt klaret · senest 80kg × 4\n↺ fortryd\nvis / ret ▾\n−\n+\n×\n−\n+\nRPE 8\nGODKENDT\nSPRING OVER\nNæste: 4 reps @ 80 kg\nVis næste sæt\nPAUSE · SQUAT\n89s\nNæste: Squat · sæt 2/4\n✕\nPARATHED\nIkke logget\nBESKED\nFILM ET SÆT\nMERE\n▾\nHJEM\nPROGRAM\nVOLUMEN\nFREMGANG\nKOST\nMOBILITET\nBESKEDER\nSTÆVNE",
+    "video": [
+     {
+      "t": "FILM ET SÆT",
+      "iframe": [
+       "videocoach.html"
+      ],
+      "dialog": true,
+      "tekst": "Entropi.\n2026-09-25\n⋯\nFredag · Dag 1 — Squat\nI DAG · 25. SEPTEMBER\nMAN\nHVILE\nTIR\nHVILE\nONS\nHVILE\nTOR\nHVILE\nFRE\n✓\nLØR\nHVILE\nSØN\nHVILE\nDAGENS PAS\nSæt 2/4\nSquat\nAnbefalet: 80kg\n4 SÆT · × 4-6 · RPE 8\n✓ 1 ",
+      "rammeTekst": "VIDEO BANE EKSPORT ✕ FILM ET SÆT Se svaret med det samme Reps, bane og afvigelse — ingen dom om teknik. Du vælger selv om det gemmes. 📷 FØR DU FILMER Kamera fra siden, i hoftehøjde — ikke skråt. Hele",
+      "lukketIndefra": true
+     }
+    ],
+    "kost": "Entropi.\n2026-09-25\n⋯\nKOST\nKostlog.\n←\nI DAG\n→\nKALORIER\n0 / ? kcal\n0%\nPROTEIN\n0 / ? g\n0%\nESTIMERET TDEE\nLog kalorier i mindst 7 dage mere for at aktivere dette estimat.\nTILFØJ FØDEVARE\nKOPIER I GÅR\nSKABELONER\n+ OPRET NY FØDEVARE\nDAGENS MÅLTIDER\nIngen måltider logget endnu i dag.\nHJEM\nPROGRAM\nVOLUMEN\nFREMGANG\nKOST\nMOBILITET\nBESKEDER\nSTÆVNE",
+    "bundnav": [
+     {
+      "label": "HJEM",
+      "overskrift": "Fredag · Dag 1 — Squat",
+      "fejlVises": true
+     },
+     {
+      "label": "PROGRAM",
+      "overskrift": "Base.",
+      "fejlVises": false
+     },
+     {
+      "label": "VOLUMEN",
+      "overskrift": "Din volumen.",
+      "fejlVises": false
+     },
+     {
+      "label": "FREMGANG",
+      "overskrift": "Bliver du stærkere?",
+      "fejlVises": false
+     },
+     {
+      "label": "KOST",
+      "overskrift": "Kostlog.",
+      "fejlVises": false
+     },
+     {
+      "label": "MOBILITET",
+      "overskrift": "Hvad har du brug for?",
+      "fejlVises": false
+     },
+     {
+      "label": "BESKEDER",
+      "overskrift": "Din coach.",
+      "fejlVises": false
+     },
+     {
+      "label": "STÆVNE",
+      "overskrift": "71 dage\ntil stævne.",
+      "fejlVises": false
+     }
+    ],
+    "billeder": [
+     "01-forside.png",
+     "01-forside-hel.png",
+     "02-efter-godkendt.png",
+     "03-video-1.png",
+     "04-forside-mere.png",
+     "05-program.png",
+     "06-kost.png",
+     "07-bundnav-sidste.png"
+    ]
+   },
+   "efter": {
+    "rev": "main",
+    "hash": "c8aa336",
+    "fejl": [],
+    "net": [],
+    "forside": {
+     "tekst": "Entropi.\n2026-09-25\n⋯\nFredag · Dag 1 — Squat\nI DAG · #datoMAN\nHVILE\nTIR\nHVILE\nONS\nHVILE\nTOR\nHVILE\nFRE\n●\nLØR\nHVILE\nSØN\nHVILE\nDAGENS PAS\nSæt 1/4\nSquat\nAnbefalet: 80kg\n4 SÆT · × 4-6 · RPE 8\n−\n+\n×\n−\n+\nRPE 8\nGODKENDT\nSPRING OVER\nNæste: 4 reps @ 80 kg\nVis næste sæt\nPARATHED\nIkke logget\nBESKED\nFILM ET SÆT\nMERE\n▾\nHJEM\nPROGRAM\nVOLUMEN\nFREMGANG\nKOST\nMOBILITET\nBESKEDER\nSTÆVNE",
+     "knapper": [
+      {
+       "t": "⋯",
+       "b": 44,
+       "h": 44,
+       "top": 4
+      },
+      {
+       "t": "MAN HVILE",
+       "b": 48,
+       "h": 70,
+       "top": 150
+      },
+      {
+       "t": "TIR HVILE",
+       "b": 48,
+       "h": 70,
+       "top": 150
+      },
+      {
+       "t": "ONS HVILE",
+       "b": 48,
+       "h": 70,
+       "top": 150
+      },
+      {
+       "t": "TOR HVILE",
+       "b": 48,
+       "h": 70,
+       "top": 150
+      },
+      {
+       "t": "FRE ●",
+       "b": 48,
+       "h": 70,
+       "top": 150
+      },
+      {
+       "t": "LØR HVILE",
+       "b": 48,
+       "h": 70,
+       "top": 150
+      },
+      {
+       "t": "SØN HVILE",
+       "b": 48,
+       "h": 70,
+       "top": 150
+      },
+      {
+       "t": "−",
+       "b": 44,
+       "h": 52,
+       "top": 408
+      },
+      {
+       "t": "+",
+       "b": 44,
+       "h": 52,
+       "top": 408
+      },
+      {
+       "t": "−",
+       "b": 44,
+       "h": 52,
+       "top": 468
+      },
+      {
+       "t": "+",
+       "b": 44,
+       "h": 52,
+       "top": 468
+      },
+      {
+       "t": "GODKENDT",
+       "b": 198,
+       "h": 60,
+       "top": 530
+      },
+      {
+       "t": "SPRING OVER",
+       "b": 108,
+       "h": 60,
+       "top": 530
+      },
+      {
+       "t": "PARATHED Ikke logget",
+       "b": 113,
+       "h": 52,
+       "top": 688
+      },
+      {
+       "t": "BESKED",
+       "b": 113,
+       "h": 52,
+       "top": 688
+      },
+      {
+       "t": "FILM ET SÆT",
+       "b": 113,
+       "h": 52,
+       "top": 688
+      },
+      {
+       "t": "MERE ▾",
+       "b": 356,
+       "h": 44,
+       "top": 756
+      },
+      {
+       "t": "HJEM",
+       "b": 49,
+       "h": 57,
+       "top": 787
+      },
+      {
+       "t": "PROGRAM",
+       "b": 49,
+       "h": 57,
+       "top": 787
+      },
+      {
+       "t": "VOLUMEN",
+       "b": 49,
+       "h": 57,
+       "top": 787
+      },
+      {
+       "t": "FREMGANG",
+       "b": 49,
+       "h": 57,
+       "top": 787
+      },
+      {
+       "t": "KOST",
+       "b": 49,
+       "h": 57,
+       "top": 787
+      },
+      {
+       "t": "MOBILITET",
+       "b": 49,
+       "h": 57,
+       "top": 787
+      },
+      {
+       "t": "BESKEDER",
+       "b": 49,
+       "h": 57,
+       "top": 787
+      },
+      {
+       "t": "STÆVNE",
+       "b": 49,
+       "h": 57,
+       "top": 787
+      }
+     ],
+     "nav": [
+      {
+       "t": "HJEM",
+       "aktiv": ""
+      },
+      {
+       "t": "PROGRAM",
+       "aktiv": ""
+      },
+      {
+       "t": "VOLUMEN",
+       "aktiv": ""
+      },
+      {
+       "t": "FREMGANG",
+       "aktiv": ""
+      },
+      {
+       "t": "KOST",
+       "aktiv": ""
+      },
+      {
+       "t": "MOBILITET",
+       "aktiv": ""
+      },
+      {
+       "t": "BESKEDER",
+       "aktiv": ""
+      },
+      {
+       "t": "STÆVNE",
+       "aktiv": ""
+      }
+     ],
+     "videoKnapper": [
+      {
+       "t": "FILM ET SÆT",
+       "b": 113,
+       "h": 52,
+       "top": 688
+      }
+     ],
+     "sideHoejde": 896,
+     "scrollB": 390
+    },
+    "dagensPas": null,
+    "efterGodkendt": "Entropi.\n2026-09-25\n⋯\nFredag · Dag 1 — Squat\nI DAG · 25. SEPTEMBER\nMAN\nHVILE\nTIR\nHVILE\nONS\nHVILE\nTOR\nHVILE\nFRE\n✓\nLØR\nHVILE\nSØN\nHVILE\nDAGENS PAS\nSæt 2/4\nSquat\nAnbefalet: 80kg\n4 SÆT · × 4-6 · RPE 8\n✓ 1 sæt klaret · senest 80kg × 4\n↺ fortryd\nvis / ret ▾\n−\n+\n×\n−\n+\nRPE 8\nGODKENDT\nSPRING OVER\nNæste: 4 reps @ 80 kg\nVis næste sæt\nPAUSE · SQUAT\n89s\nNæste: Squat · sæt 2/4\n✕\nPARATHED\nIkke logget\nBESKED\nFILM ET SÆT\nMERE\n▾\nHJEM\nPROGRAM\nVOLUMEN\nFREMGANG\nKOST\nMOBILITET\nBESKEDER\nSTÆVNE",
+    "video": [
+     {
+      "t": "FILM ET SÆT",
+      "iframe": [
+       "videocoach.html"
+      ],
+      "dialog": true,
+      "tekst": "Entropi.\n2026-09-25\n⋯\nFredag · Dag 1 — Squat\nI DAG · 25. SEPTEMBER\nMAN\nHVILE\nTIR\nHVILE\nONS\nHVILE\nTOR\nHVILE\nFRE\n✓\nLØR\nHVILE\nSØN\nHVILE\nDAGENS PAS\nSæt 2/4\nSquat\nAnbefalet: 80kg\n4 SÆT · × 4-6 · RPE 8\n✓ 1 ",
+      "rammeTekst": "VIDEO BANE EKSPORT ✕ FILM ET SÆT Se svaret med det samme Reps, bane og afvigelse — ingen dom om teknik. Du vælger selv om det gemmes. 📷 FØR DU FILMER Kamera fra siden, i hoftehøjde — ikke skråt. Hele",
+      "lukketIndefra": true
+     }
+    ],
+    "kost": "Entropi.\n2026-09-25\n⋯\nKOST\nKostlog.\n←\nI DAG\n→\nKALORIER\n0 / ? kcal\n0%\nPROTEIN\n0 / ? g\n0%\nESTIMERET TDEE\nLog kalorier i mindst 7 dage mere for at aktivere dette estimat.\nTILFØJ FØDEVARE\nKOPIER I GÅR\nSKABELONER\n+ OPRET NY FØDEVARE\nDAGENS MÅLTIDER\nIngen måltider logget endnu i dag.\nHJEM\nPROGRAM\nVOLUMEN\nFREMGANG\nKOST\nMOBILITET\nBESKEDER\nSTÆVNE",
+    "bundnav": [
+     {
+      "label": "HJEM",
+      "overskrift": "Fredag · Dag 1 — Squat",
+      "fejlVises": true
+     },
+     {
+      "label": "PROGRAM",
+      "overskrift": "Base.",
+      "fejlVises": false
+     },
+     {
+      "label": "VOLUMEN",
+      "overskrift": "Din volumen.",
+      "fejlVises": false
+     },
+     {
+      "label": "FREMGANG",
+      "overskrift": "Bliver du stærkere?",
+      "fejlVises": false
+     },
+     {
+      "label": "KOST",
+      "overskrift": "Kostlog.",
+      "fejlVises": false
+     },
+     {
+      "label": "MOBILITET",
+      "overskrift": "Hvad har du brug for?",
+      "fejlVises": false
+     },
+     {
+      "label": "BESKEDER",
+      "overskrift": "Din coach.",
+      "fejlVises": false
+     },
+     {
+      "label": "STÆVNE",
+      "overskrift": "71 dage\ntil stævne.",
+      "fejlVises": false
+     }
+    ],
+    "billeder": [
+     "01-forside.png",
+     "01-forside-hel.png",
+     "02-efter-godkendt.png",
+     "03-video-1.png",
+     "04-forside-mere.png",
+     "05-program.png",
+     "06-kost.png",
+     "07-bundnav-sidste.png"
+    ]
+   }
+  },
+  "skaerme": {
+   "01-forside.png": {
+    "afvigelsePixels": 0,
+    "afvigelseProcent": 0
+   },
+   "01-forside-hel.png": {
+    "afvigelsePixels": 0,
+    "afvigelseProcent": 0
+   },
+   "02-efter-godkendt.png": {
+    "afvigelsePixels": 0,
+    "afvigelseProcent": 0
+   },
+   "03-video-1.png": {
+    "afvigelsePixels": 0,
+    "afvigelseProcent": 0
+   },
+   "04-forside-mere.png": {
+    "afvigelsePixels": 0,
+    "afvigelseProcent": 0
+   },
+   "05-program.png": {
+    "afvigelsePixels": 0,
+    "afvigelseProcent": 0
+   },
+   "06-kost.png": {
+    "afvigelsePixels": 0,
+    "afvigelseProcent": 0
+   },
+   "07-bundnav-sidste.png": {
+    "afvigelsePixels": 0,
+    "afvigelseProcent": 0
+   }
+  }
  }
 }

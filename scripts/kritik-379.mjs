@@ -483,11 +483,17 @@ async function atletSession(rod, navn) {
       const efter = await page.evaluate(() => ({ iframe: [...document.querySelectorAll('iframe')].map((f) => (f.getAttribute('src') || '').replace(/[?#].*$/, '')), dialog: !!document.querySelector('[role=dialog]'), tekst: document.body.innerText.slice(0, 200) }));
       R.video.push({ t, ...efter });
       await shot(`03-video-${i + 1}`);
-      // luk igen (Escape eller en luk-knap)
-      await page.keyboard.press('Escape');
-      const luk = page.getByRole('button', { name: /Luk|Tilbage|×/ }).first();
-      if (efter.iframe.length && (await luk.count()) && (await luk.isVisible())) await luk.click().catch(() => {});
-      await page.waitForTimeout(600);
+      // VideoCoach lukkes inde fra iframen (broen). Proev dens luk/tilbage-knap; ellers genindlaes.
+      if (efter.dialog) {
+        const fr = page.frameLocator('iframe[title="VideoCoach"]');
+        R.video[R.video.length - 1].rammeTekst = await fr.locator('body').innerText({ timeout: 5000 }).then((t) => t.replace(/\s+/g, ' ').slice(0, 200)).catch(() => null);
+        const luk = fr.getByRole('button', { name: /Luk|Tilbage|Afslut|×|✕/ }).first();
+        const lukket = await luk.click({ timeout: 3000 }).then(() => true).catch(() => false);
+        await page.waitForTimeout(800);
+        R.video[R.video.length - 1].lukketIndefra = lukket && !(await page.locator('[role=dialog][aria-label="VideoCoach"]').count());
+        if (await page.locator('[role=dialog][aria-label="VideoCoach"]').count()) { await page.reload(); await page.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 20000 }); await settle(); }
+      }
+      await page.waitForTimeout(400);
     }
     await nav('Hjem').catch(() => {});
     await settle();
