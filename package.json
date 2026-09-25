@@ -54,6 +54,7 @@
     "verify:videocoach-upload": "node scripts/verify-videocoach-upload.mjs",
     "verify:videocoach-migrations": "node scripts/verify-videocoach-migrations.mjs",
     "verify:videocoach-zoom": "node scripts/verify-videocoach-zoom.mjs",
+    "verify:storage-policies": "node scripts/verify-storage-policies.mjs",
     "byg:muskelkort": "node scripts/byg-muskelkort.mjs",
     "gate:tracker": "node scripts/gate-tracker.mjs",
     "opvarmning:tabel": "node scripts/opvarmningstabel.mjs",
