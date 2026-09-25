@@ -27,6 +27,7 @@ export function useVideoCoachBro({
       try { client.postMessage(config, window.location.origin) }
       catch { videoCoachClientsRef.current.delete(client) }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- refs, settere og handlere kommer fra Dashboard (stabile refs/settere; handlerne fanges som før ordre 377); effekten kører bevidst på de samme deps som før
   }, [athletes])
 
   useEffect(() => {
@@ -38,6 +39,7 @@ export function useVideoCoachBro({
       try { client.postMessage(config, window.location.origin) }
       catch { videoCoachClientsRef.current.delete(client) }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- refs, settere og handlere kommer fra Dashboard (stabile refs/settere; handlerne fanges som før ordre 377); effekten kører bevidst på de samme deps som før
   }, [selectedAthlete?.id])
 
   useEffect(() => {
@@ -235,5 +237,6 @@ export function useVideoCoachBro({
     }
     window.addEventListener('message', onVideoCoachMessage)
     return () => window.removeEventListener('message', onVideoCoachMessage)
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- refs, settere og handlere kommer fra Dashboard (stabile refs/settere; handlerne fanges som før ordre 377); effekten kører bevidst på de samme deps som før
   }, [])
 }

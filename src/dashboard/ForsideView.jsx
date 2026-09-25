@@ -265,6 +265,7 @@ export default function ForsideView({
                       // ikke lettere, hvilket var hele ordrens pointe.
                       const afvigelse = afvigelseByAthleteId.get(athlete.id)
                       const lastLogDate = athleteLastLogs[athlete.id]
+                      // eslint-disable-next-line react-hooks/purity -- uændret fra før ordre 377; lint ser det først nu (se RAPPORT-377)
                       const daysSinceLog = lastLogDate ? Math.floor((Date.now() - new Date(lastLogDate + 'T12:00:00')) / 86400000) : null
                       const lastLogText = daysSinceLog == null ? 'Ingen logs' : daysSinceLog === 0 ? 'I dag' : daysSinceLog === 1 ? 'I går' : `${daysSinceLog}d siden`
                       // Gråt som standard, grønt kun når ugen er i mål eller

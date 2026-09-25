@@ -42,6 +42,8 @@ export const DASHBOARD_MODULER = [
   'dashboard/ExFormRow.jsx',
   'dashboard/BlockSequenceRows.jsx',
   'dashboard/profilTal.js',
+  'dashboard/useDashboardEffekter.js',
+  'dashboard/useCoachPrioritet.js',
 ]
 
 export function dashboardKilde() {

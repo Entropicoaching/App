@@ -124,6 +124,7 @@ export default function Sidebar({
           {sidebarMoreOpen && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem', paddingTop: '0.3rem' }}>
               {(() => {
+                // eslint-disable-next-line react-hooks/purity -- uændret fra før ordre 377; lint ser det først nu (se RAPPORT-377)
                 const days = lastBackup ? Math.floor((Date.now() - new Date(lastBackup)) / 86400000) : null
                 const stale = days == null || days >= 7
                 const backupNote = days == null ? '⚠ aldrig' : days === 0 ? '✓ i dag' : stale ? `⚠ ${days}d` : `✓ ${days}d`

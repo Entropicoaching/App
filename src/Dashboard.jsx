@@ -1,16 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
-import { supabase } from './supabase'
 import LazyBoundary from './LazyBoundary'
-import { buildCoachPriorityItems, coachPriorityQueueContext } from './coachPriority'
-import { coachInboxEntryIntent, coachInboxFocusDecision, createSingleFlightRunner } from './coachInboxState'
+import { coachInboxEntryIntent, createSingleFlightRunner } from './coachInboxState'
 import { withBlockPurposes } from './periodizationAssistant'
-import {
-  BLOCK_NAMES, blockColor, computePhases, currentWeekNo,
-  VIDEOCOACH_STATUS, VIDEOCOACH_METRICS, videoCoachMetric, videoCoachBaseline,
-  videoCoachMetricText, videoCoachBaselineText, s,
-  readinessSignal, formatLastSeen, parsePlannedRpe, initials,
-} from './dashboardShared'
-import { coachVideoPriorityDetail } from './dashboard/coachVideoHjaelp'
+import { s } from './dashboardShared'
 import { lavLaesninger } from './dashboard/laesninger'
 import { lavNavigation } from './dashboard/navigation'
 import { lavIndbakkeHandlinger } from './dashboard/indbakkeHandlinger'
@@ -41,6 +33,8 @@ import WeekdayPicker from './dashboard/WeekdayPicker'
 import ExFormRow from './dashboard/ExFormRow'
 import BlockSequenceRows from './dashboard/BlockSequenceRows'
 import { lavProfilTal } from './dashboard/profilTal'
+import { useDashboardEffekter } from './dashboard/useDashboardEffekter'
+import { useCoachPrioritet } from './dashboard/useCoachPrioritet'
 
 
 
@@ -68,7 +62,9 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [athletes, setAthletes] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
+  // eslint-disable-next-line react-hooks/refs -- uændret fra før ordre 377; lint ser det først nu (se RAPPORT-377)
   const [view, setView] = useState(initialCoachEntryRef.current.view)
+  // eslint-disable-next-line react-hooks/refs -- uændret fra før ordre 377; lint ser det først nu (se RAPPORT-377)
   const focusNextFromLinkRef = useRef(initialCoachEntryRef.current.focusNext)
   const [profileReturnView, setProfileReturnView] = useState('list')
   const [profilePriorityKey, setProfilePriorityKey] = useState(null)
@@ -289,6 +285,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [videoCoachOpen, setVideoCoachOpen] = useState(false)
   const openVideoCoachV3 = () => setVideoCoachOpen(true)
 
+  /* eslint-disable react-hooks/refs -- fabrikkerne får ref-objekterne med, men læser .current kun i hændelses- og effekt-callbacks, præcis som før ordre 377 */
   const {
     refreshCoachInbox, fetchLastBackup, fetchAthletes, fetchAthleteWeekSummaries, fetchCalendarWeeks, fetchCalendarProgress,
     fetchVideoReviewQueue, fetchWeeks, fetchExerciseLibrary, fetchLatestMessages, fetchMessages, fetchAthleteLogs,
@@ -381,6 +378,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   } = lavProfilTal({
     athleteLogs, athleteWeightLogs,
   })
+  /* eslint-enable react-hooks/refs */
 
   useEffect(() => {
     const handler = () => setIsMobile(window.innerWidth < 768)
@@ -403,140 +401,14 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     videoCoachClientsRef, videoCoachFrameRef, videoCoachPendingCompletionRef, videoCoachPendingShareRef, videoCoachSelectedAthleteRef,
   })
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- kører bevidst kun ved mount af Dashboard; session.user.id er fast for instansens levetid
-  useEffect(() => { fetchAthletes(); fetchExerciseLibrary(); fetchLastBackup() }, [])
-  // Engangs-migrering: flyt evt. gamle localStorage-snoozes ind i DB, så de ikke tabes
-  // når snooze nu synces via athletes.snooze_until. Kører én gang når atleter er hentet.
-  useEffect(() => {
-    if (snoozeMigratedRef.current || !athletes.length) return
-    snoozeMigratedRef.current = true
-    let local
-    try { local = JSON.parse(localStorage.getItem('entropi_calendar_snooze') || '{}') } catch { local = {} }
-    const entries = Object.entries(local).filter(([id, until]) => until && athletes.some(a => a.id === id))
-    if (entries.length) {
-      Promise.all(entries.map(([id, until]) => supabase.from('athletes').update({ snooze_until: until }).eq('id', id)))
-        .then(() => { localStorage.removeItem('entropi_calendar_snooze'); fetchAthletes() })
-    } else {
-      localStorage.removeItem('entropi_calendar_snooze')
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [athletes])
-  useEffect(() => {
-    if ((view === 'calendar' || view === 'list') && athletes.length) {
-      const ids = athletes.map(a => a.id)
-      fetchCalendarWeeks(ids)
-      fetchCalendarProgress(ids)
-    }
-  }, [view, athletes])
-  // ORDRE 175: program/log/analyse-fanerne deler samme weeks+athleteLogs-data.
-  // ORDRE 185 commit 1: 'oversigt' tilføjet til listen — VolumenKort.jsx har nu
-  // brug for `weeks` (planlagt mod gennemført), ikke kun `athleteLogs`.
-  // Uden vagten nedenfor genhentede et klik MELLEM disse fire faner (samme
-  // atlet, ingen skrivning imellem) begge kald hver gang — målt til 2 unødige
-  // kald pr. faneskift (se docs/RAPPORT-175.md). Enhver ægte skrivning (tilføj
-  // øvelse, omarrangér osv.) kalder allerede fetchWeeks/fetchAthleteLogs
-  // eksplicit selv bagefter (grep'et før denne rettelse), så et rent
-  // faneskift er trygt at springe over. weeksLogsLoadedForRef ryddes når
-  // profilen lukkes (se effekten nedenfor), så et senere genbesøg altid
-  // henter friskt.
-  useEffect(() => {
-    if ((activeTab === 'program' || activeTab === 'analyse' || activeTab === 'log' || activeTab === 'oversigt') && selectedAthlete?.id) {
-      if (weeksLogsLoadedForRef.current === selectedAthlete.id) return
-      weeksLogsLoadedForRef.current = selectedAthlete.id
-      fetchWeeks(selectedAthlete.id)
-      fetchAthleteLogs(selectedAthlete.id)
-    }
-  }, [activeTab, selectedAthlete?.id])
-  useEffect(() => {
-    if (!selectedAthlete) weeksLogsLoadedForRef.current = null
-  }, [selectedAthlete])
-
-  useEffect(() => {
-    if (activeTab === 'beskeder' && selectedAthlete?.id) {
-      fetchMessages(selectedAthlete.id)
-      markMessagesRead(selectedAthlete.id, coachMsgTrack)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- markMessagesRead læser athletes synkront ved kørsel, ikke en ældre snapshot
-  }, [activeTab, selectedAthlete?.id, coachMsgTrack])
-
-  useEffect(() => {
-    if ((activeTab === 'oversigt' || activeTab === 'analyse') && selectedAthlete?.id) {
-      fetchAthleteWeightLogs(selectedAthlete.id)
-      fetchAthleteReadiness(selectedAthlete.id)
-      fetchAthletePRs(selectedAthlete.id)
-      fetchMeetResults(selectedAthlete.id)
-    }
-    // Volumenkortet (ordre 177/185) bor i 'oversigt' og deler weeks+athleteLogs
-    // med 'program'/'analyse'/'log' — hentes nu af den guardede effekt ovenfor.
-    // Hubben viser dagens parathed i statuslinjen.
-    if (activeTab === 'hub' && selectedAthlete?.id) fetchAthleteReadiness(selectedAthlete.id)
-  }, [activeTab, selectedAthlete?.id])
-
-  useEffect(() => {
-    if ((activeTab === 'hub' || activeTab === 'analyse') && selectedAthlete?.id) {
-      fetchVideoCoachHistory(selectedAthlete.id)
-    }
-  }, [activeTab, selectedAthlete?.id])
-
-  // Et tryk i den samlede indbakke skifter først atlet og åbner derefter
-  // den konkrete måling. Rækkefølgen forhindrer reviewdata fra en anden
-  // atlet i kortvarigt at blive vist under den forkerte profil.
-  useEffect(() => {
-    const target = videoReviewRequest?.item
-    if (!target || selectedAthlete?.id !== target.athlete_id ||
-        videoReviewOpenedRef.current === videoReviewRequest.token) return
-    videoReviewOpenedRef.current = videoReviewRequest.token
-    // ORDRE 57 · commit 2: en afventende video har intet at gennemgå endnu -
-    // åbn den til sporing i stedet for den almindelige reviewmodal.
-    if (target.analysis_state === 'awaiting_analysis') openAwaitingAnalysisVideo(target)
-    else openVideoAnalysisReview(target)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [videoReviewRequest, selectedAthlete?.id])
-
-  useEffect(() => {
-    if (!videoAnalysisReview || !isMobile) return undefined
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => { document.body.style.overflow = previousOverflow }
-  }, [videoAnalysisReview, isMobile])
-
-  useEffect(() => {
-    if (activeTab === 'opvarmning' && selectedAthlete?.id) {
-      fetchWarmupTemplates(selectedAthlete.id)
-    }
-  }, [activeTab, selectedAthlete?.id])
-
-  useEffect(() => {
-    if (activeTab === 'stævne' && selectedAthlete?.id) {
-      fetchMeetPlan(selectedAthlete.id)
-      fetchMeetResults(selectedAthlete.id)
-      fetchAthletePRs(selectedAthlete.id)
-    }
-  }, [activeTab, selectedAthlete?.id])
-
-
-  // Coachens forside og indbakke holdes friske ved navigation, tilbagevenden
-  // til appen og et roligt interval, mens fanen er synlig. Single-flight-runneren
-  // sikrer, at fokus, interval og manuelt tryk ikke starter parallelle kald.
-  useEffect(() => {
-    if (loading || loadError || (view !== 'list' && view !== 'inbox')) return undefined
-    const refreshWhenVisible = () => {
-      if (document.visibilityState === 'visible') refreshCoachInbox()
-    }
-
-    refreshCoachInbox()
-    window.addEventListener('focus', refreshWhenVisible)
-    document.addEventListener('visibilitychange', refreshWhenVisible)
-    const intervalId = window.setInterval(refreshWhenVisible, 5 * 60 * 1000)
-
-    return () => {
-      window.removeEventListener('focus', refreshWhenVisible)
-      document.removeEventListener('visibilitychange', refreshWhenVisible)
-      window.clearInterval(intervalId)
-    }
-    // Funktionskaldet læser seneste atletliste fra ref; view styrer abonnementets levetid.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [view, loading, loadError])
+  useDashboardEffekter({
+    activeTab, athletes, coachMsgTrack, fetchAthleteLogs, fetchAthletePRs, fetchAthleteReadiness,
+    fetchAthletes, fetchAthleteWeightLogs, fetchCalendarProgress, fetchCalendarWeeks, fetchExerciseLibrary, fetchLastBackup,
+    fetchMeetPlan, fetchMeetResults, fetchMessages, fetchVideoCoachHistory, fetchWarmupTemplates, fetchWeeks,
+    isMobile, loadError, loading, markMessagesRead, openAwaitingAnalysisVideo, openVideoAnalysisReview,
+    refreshCoachInbox, selectedAthlete, snoozeMigratedRef, videoAnalysisReview, videoReviewOpenedRef, videoReviewRequest,
+    view, weeksLogsLoadedForRef,
+  })
 
 
   function showFlash(message, kind = 'info') {
@@ -590,69 +462,13 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const a = selectedAthlete
   const total = a ? (a.squat || 0) + (a.bench || 0) + (a.deadlift || 0) : 0
   const trainingTotal = a ? (a.training_squat || 0) + (a.training_bench || 0) + (a.training_deadlift || 0) : 0
-  const coachPriorityItems = buildCoachPriorityItems({
-    athletes: athletes.filter(athlete => !hiddenAthleteIds.has(athlete.id)),
-    trainingSignals,
-    unreadByTrack,
-    latestByTrack,
-    videoReviewQueue,
-    describeVideo: coachVideoPriorityDetail,
-    automationAlerts,
+  const {
+    coachPriorityItems, coachPriorityCount, priorityQueueContext, nextPriorityItem, videoMeasurementByAthlete,
+  } = useCoachPrioritet({
+    athletes, automationAlerts, focusNextFromLinkRef, hiddenAthleteIds, inboxRefreshing, inboxRefreshStatus,
+    latestByTrack, openCoachPriorityItem, profilePriorityKey, profileReturnView, trainingSignals, unreadByTrack,
+    videoReviewQueue, view,
   })
-  const coachPriorityCount = coachPriorityItems.length
-  const priorityQueueContext = profileReturnView === 'inbox'
-    ? coachPriorityQueueContext(coachPriorityItems, profilePriorityKey)
-    : null
-  const nextPriorityItem = priorityQueueContext?.nextItem || null
-
-  // ORDRE 266 · commit 1: nyeste GEMTE måling pr. atlet (reps_count sat),
-  // udledt af videoReviewQueue (allerede hentet ved mount, sorteret nyeste
-  // først) - ingen ny forespørgsel. En atlet uden nogen sporet måling
-  // (fx en "Film et sæt"-video der endnu ikke er analyseret) er blot
-  // fraværende her, se videoCoachMeasurementSummary.
-  const videoMeasurementByAthlete = {}
-  for (const video of videoReviewQueue) {
-    if (video.reps_count == null || videoMeasurementByAthlete[video.athlete_id]) continue
-    videoMeasurementByAthlete[video.athlete_id] = video
-  }
-
-
-  // Mailens sikre deep-link indeholder ingen atletidentifikator. Efter den første
-  // komplette opdatering åbner appen selv den aktuelle topprioritet præcis én gang.
-  useEffect(() => {
-    const focusDecision = coachInboxFocusDecision({
-      requested: focusNextFromLinkRef.current,
-      view,
-      refreshing: inboxRefreshing,
-      refreshStatus: inboxRefreshStatus,
-      priorityItems: coachPriorityItems,
-    })
-    if (!focusDecision.ready) return
-
-    const consumeFocusIntent = () => {
-      focusNextFromLinkRef.current = false
-      if (typeof window === 'undefined') return
-      const url = new URL(window.location.href)
-      url.searchParams.delete('focus')
-      window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`)
-    }
-
-    const nextItem = focusDecision.nextItem
-    if (!nextItem) {
-      consumeFocusIntent()
-      return undefined
-    }
-
-    const openTimer = window.setTimeout(() => {
-      if (!focusNextFromLinkRef.current) return
-      consumeFocusIntent()
-      openCoachPriorityItem(nextItem, 'inbox')
-    }, 0)
-
-    return () => window.clearTimeout(openTimer)
-    // openCoachPriorityItem reads the current item only; the ref makes this one-shot.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [coachPriorityItems, inboxRefreshStatus, inboxRefreshing, view])
 
 
   // Delt ugedags-vælger (bruges i både rediger- og tilføj-session-formen).
@@ -738,6 +554,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               askConfirm, athleteCurrentWeek, athleteLastLogs, athletes, blockPlan, blockSequenceRows,
               calBlockAthlete, calendarWeeks, createCalendarWeek, generateWeeksFromPlan, hiddenAthleteIds, hoverCell,
               isMobile, openCalBlockBuilder, openPlanReview, openProfile, planStartDate, setBlockStartDate,
+              // eslint-disable-next-line react-hooks/refs -- uændret fra før ordre 377; lint ser det først nu (se RAPPORT-377)
               setCalBlockAthlete, setHoverCell, setPlanStartDate, setTimelineEdit, showFlash, snoozeAthlete,
               snoozedAthletes, timelineEdit,
             }} />
