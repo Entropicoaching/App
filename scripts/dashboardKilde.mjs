@@ -9,6 +9,9 @@
 import { readFileSync, existsSync } from 'node:fs'
 
 export const DASHBOARD_MODULER = [
+  'dashboard/coachVideoHjaelp.js',
+  'dashboard/coachKonstanter.js',
+  'dashboard/hubSektioner.jsx',
 ]
 
 export function dashboardKilde() {

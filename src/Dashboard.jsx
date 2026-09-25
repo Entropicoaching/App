@@ -8,11 +8,11 @@ import { coachInboxEntryIntent, coachInboxFocusDecision, createSingleFlightRunne
 import { videoCoachBaselineReviewImpact } from './videoCoachBaselineProgress'
 import { sanitizeVideoCoachFeedbackEvidence } from './videoCoachFeedbackEvidence'
 import { videoCoachFeedbackQuality } from './videoCoachFeedbackQuality'
-import { videoCoachPersonalBaselineForAnalysis, videoCoachPersonalBaselineOptions, videoCoachPersonalBaselineSelection, withVideoCoachPersonalBaseline } from './videoCoachPersonalFeedback'
+import { videoCoachPersonalBaselineForAnalysis, videoCoachPersonalBaselineOptions, videoCoachPersonalBaselineSelection } from './videoCoachPersonalFeedback'
 import { VIDEOCOACH_LIFT_LABELS as VIDEOCOACH_LIFTS, videoCoachVariationLabel } from './videoCoachLabels'
-import { saveVideoCoachDraft, validateVideoCoachPayloadBounds } from './videoCoachSubmission'
+import { saveVideoCoachDraft } from './videoCoachSubmission'
 import { VIDEOCOACH_UPLOAD_BUCKET } from './videoCoachUpload'
-import { VIDEOCOACH_BASELINE_VERSION, VIDEOCOACH_BUILD_ID } from './videoCoachVersion'
+import { VIDEOCOACH_BASELINE_VERSION } from './videoCoachVersion'
 import { normalizeAthleteLoginEmail } from './athleteOnboarding'
 import { progressionOverrideErrors, updateDraftForecast, updateForecastOverrideReason } from './progressionDraft'
 import { blockPurpose, buildPeriodizationSuggestion, withBlockPurposes } from './periodizationAssistant'
@@ -26,191 +26,13 @@ import {
   readinessSignal, formatLastSeen, parsePlannedRpe, initials,
 } from './dashboardShared'
 import { nextWeekStartDate, fillMissingWeekDates } from './weekDates'
+import { WEEKDAYS_SHORT, statusLabels, holidayInfo, ferieBadgeLabel, ATHLETE_LOGS_LIMIT } from './dashboard/coachKonstanter'
+import { HUB_SECTIONS } from './dashboard/hubSektioner'
+import { VIDEOCOACH_V3_PREFIX, VIDEOCOACH_V3_URL, videoCoachBridgeConfig, validateVideoCoachV3Row, videoCoachPathPreview, videoCoachFeedbackDraft, videoCoachFeedbackPayload, coachVideoPriorityDetail, videoCoachMeasurementSummary, videoCoachMeasurementText } from './dashboard/coachVideoHjaelp'
 
-// Valgfri fast ugedag pr. session (0=mandag .. 6=søndag). null = fleksibel (Træning 1/2/3).
-const WEEKDAYS_SHORT = ['Man', 'Tir', 'Ons', 'Tor', 'Fre', 'Lør', 'Søn']
 
-const statusLabels = { active: 'Aktiv', peaking: 'Peaking', offseason: 'Off-season', ferie: 'Ferie' }
 
-const VIDEOCOACH_V3_PREFIX = 'entropi:videocoach:v3'
-const VIDEOCOACH_V3_URL = `videocoach.html?coach=1&bridge=v3&v=${VIDEOCOACH_BUILD_ID}`
-const VIDEOCOACH_V3_COLUMNS = new Set([
-  'client_analysis_id', 'athlete_id', 'athlete_name', 'source_mode', 'status',
-  'lift', 'variation', 'load_kg', 'rpe', 'reps_count', 'rep_details',
-  'session_context', 'capture_context', 'schema_version', 'schema_v',
-  'engine_version', 'tracker_version', 'skeleton_version', 'feedback_version',
-  'low_conf_pct', 'position_quality_pct', 'quality_flags', 'metrics', 'skeleton',
-  'findings', 'coach_note', 'athlete_feedback', 'ai_draft', 'bar_path',
-  'analyzed_at', 'reps', 'load_note', 'bias_note', 'rom_cm', 'loss_pct',
-  'stick_pct', 'dip_pct', 'drift_cm', 'extra', 'ai_text',
-  // ORDRE 57 · commit 2: enhver række gemt via trackeren er nu 'complete'.
-  'analysis_state',
-])
 
-function videoCoachBridgeConfig(athletes, selectedAthleteId) {
-  return {
-    type: `${VIDEOCOACH_V3_PREFIX}:config`,
-    athletes: (athletes || []).map(({ id, name }) => ({ id, name })),
-    selectedAthleteId: selectedAthleteId || null,
-  }
-}
-
-// ORDRE 57 · commit 2: allowedCompletionClientId er sat, når coachen lige har
-// åbnet EN BESTEMT afventende atlet-video (video_analyses.analysis_state=
-// 'awaiting_analysis') for at spore den færdig. Kun dén ene rækkes egen
-// source_mode='athlete_submission' er tilladt gennem broen - alt andet skal
-// stadig være coachens egne coach_web-analyser.
-function validateVideoCoachV3Row(row, athletes, allowedCompletionClientId = null) {
-  if (!row || typeof row !== 'object' || Array.isArray(row))
-    return 'Ugyldig analysepayload'
-  if (Object.keys(row).some(key => !VIDEOCOACH_V3_COLUMNS.has(key)))
-    return 'Analysen indeholder et felt, som coach-broen ikke tillader'
-  if (row.schema_version !== 3 || row.schema_v !== 3 || row.status !== 'draft')
-    return 'Kun schema-v3 drafts kan gemmes gennem coach-broen'
-  const isAllowedCompletion = !!allowedCompletionClientId &&
-    row.source_mode === 'athlete_submission' && row.client_analysis_id === allowedCompletionClientId
-  if (row.source_mode !== 'coach_web' && !isAllowedCompletion) return 'Ugyldig analysekilde'
-  if (!['squat', 'bench', 'deadlift'].includes(row.lift)) return 'Ugyldigt løft'
-  if (!/^[a-z0-9]+([._-][a-z0-9]+)*$/.test(row.variation || ''))
-    return 'Ugyldig variation'
-  if (!athletes.some(athlete => athlete.id === row.athlete_id))
-    return 'Atleten tilhører ikke den indloggede coach'
-  if (!Array.isArray(row.reps) || row.reps.some(value => typeof value !== 'number'))
-    return 'Legacy reps skal være numeriske'
-  if (!Array.isArray(row.rep_details) || row.reps_count !== row.rep_details.length)
-    return 'Repantal og repdetaljer stemmer ikke'
-  const boundsError = validateVideoCoachPayloadBounds(row)
-  if (boundsError) return boundsError
-  return null
-}
-
-function videoCoachPathPreview(barPath) {
-  if (!barPath || !Array.isArray(barPath.dx) || !Array.isArray(barPath.dy) ||
-      barPath.dx.length !== barPath.dy.length || barPath.dx.length > 240 ||
-      !Number.isFinite(Number(barPath.x0)) || !Number.isFinite(Number(barPath.y0))) return null
-  let x = Number(barPath.x0), y = Number(barPath.y0)
-  const points = [{ x, y }]
-  for (let i = 0; i < barPath.dx.length; i++) {
-    const dx = Number(barPath.dx[i]), dy = Number(barPath.dy[i])
-    if (!Number.isFinite(dx) || !Number.isFinite(dy) || Math.abs(dx) > 1000 || Math.abs(dy) > 1000)
-      return null
-    x += dx; y += dy; points.push({ x, y })
-  }
-  if (points.length < 2) return null
-  const xs = points.map(point => point.x), ys = points.map(point => point.y)
-  const minX = Math.min(...xs), maxX = Math.max(...xs)
-  const minY = Math.min(...ys), maxY = Math.max(...ys)
-  const width = Math.max(30, maxX - minX), height = Math.max(60, maxY - minY)
-  const padX = Math.max(12, width * 0.22), padY = Math.max(12, height * 0.1)
-  return {
-    points: points.map(point => `${point.x},${point.y}`).join(' '),
-    viewBox: `${minX - padX} ${minY - padY} ${width + padX * 2} ${height + padY * 2}`,
-    start: points[0], end: points[points.length - 1], referenceX: points[0].x,
-    y1: minY - padY, y2: maxY + padY,
-  }
-}
-
-function videoCoachFeedbackDraft(feedback) {
-  const source = feedback && typeof feedback === 'object' ? feedback : {}
-  const text = key => Array.isArray(source[key])
-    ? source[key].filter(item => item && typeof item.text === 'string')
-      .slice(0, 2).map(item => item.text.trim()).filter(Boolean).join('\n')
-    : ''
-  return { works: text('works'), focus: text('focus'), next_set: text('next_set') }
-}
-
-function videoCoachFeedbackPayload(existing, draft, personalBaseline) {
-  const source = existing && typeof existing === 'object' ? existing : {}
-  const section = key => String(draft?.[key] || '').split(/\r?\n/)
-    .map(text => text.trim()).filter(Boolean).slice(0, 2)
-    .map((text, index) => ({
-      ...(source[key]?.[index] && typeof source[key][index] === 'object' ? source[key][index] : {}),
-      text,
-      evidence_refs: Array.isArray(source[key]?.[index]?.evidence_refs)
-        ? source[key][index].evidence_refs : ['coach_review'],
-    }))
-  return withVideoCoachPersonalBaseline({
-    ...source, works: section('works'), focus: section('focus'), next_set: section('next_set'),
-  }, personalBaseline)
-}
-
-function coachVideoPriorityDetail(video) {
-  const lift = `${VIDEOCOACH_LIFTS[video.lift] || video.lift} · ${videoCoachVariationLabel(video.lift, video.variation)}${video.load_kg != null ? ` · ${video.load_kg} kg` : ''}`
-  // ORDRE 266 · commit 2: en atlet-indsendt måling (fra "Film et sæt" eller
-  // standardvejens "Send til coach") fortjener sin egen ordlyd i indbakken -
-  // "afventer sporing" er teknisk sandt, men ikke det coachen skal reagere på.
-  if (video.source_mode === 'athlete_submission') return `Ny måling fra et sæt · ${lift}`
-  const prefix = video.analysis_state === 'awaiting_analysis' ? 'Afventer sporing · ' : ''
-  return `${prefix}${lift}`
-}
-
-// ORDRE 266 · commit 1: kompakt gengivelse af en allerede GEMT måling (samme
-// felter en fuld analyse allerede skriver til video_analyses - reps_count,
-// rep_details, metrics.bar_drift_cm, bar_path - se AnalyseTab/"Gennemgå
-// måling"). Rører intet i videocoach.html; viser kun hvad der allerede er i
-// rækken. Returnerer null hvis videoen endnu ikke er sporet (reps_count er
-// database-default null for enhver "Film et sæt"/"Send til coach"-video
-// FØR nogen - atlet eller coach - rent faktisk har kørt sporingen).
-function videoCoachMeasurementSummary(video) {
-  if (!video || video.reps_count == null) return null
-  const repDetails = Array.isArray(video.rep_details) ? video.rep_details : []
-  const repTimesS = repDetails.map(rep => {
-    const m = rep?.metrics || {}
-    const parts = [m.eccentric_s?.value, m.pause_s?.value, m.concentric_s?.value]
-      .filter(v => Number.isFinite(v))
-    return parts.length ? parts.reduce((sum, v) => sum + v, 0) : null
-  }).filter(v => Number.isFinite(v))
-  const avgTimeS = repTimesS.length ? repTimesS.reduce((sum, v) => sum + v, 0) / repTimesS.length : null
-  const driftCm = video.metrics?.bar_drift_cm?.value
-  return {
-    repsCount: video.reps_count,
-    avgTimeS: Number.isFinite(avgTimeS) ? avgTimeS : null,
-    driftCm: Number.isFinite(driftCm) ? driftCm : null,
-    pathPreview: videoCoachPathPreview(video.bar_path),
-  }
-}
-
-function videoCoachMeasurementText(summary) {
-  const parts = [`${summary.repsCount} rep${summary.repsCount === 1 ? '' : 's'}`]
-  if (summary.driftCm != null) parts.push(`Ø ${summary.driftCm.toFixed(1)} cm sidelæns`)
-  if (summary.avgTimeS != null) parts.push(`Ø ${summary.avgTimeS.toFixed(1)}s/rep`)
-  return parts.join(' · ')
-}
-
-// Sektioner vist som kort på atlet-hubben (coach-landingsside). Rækkefølgen
-// matcher fane-bar'en; ikonet er en kompakt 24×24 stroke-SVG.
-const ic = (d) => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">{d}</svg>
-const HUB_SECTIONS = [
-  { key: 'oversigt', label: 'Oversigt', desc: 'Maks, kropsvægt & status', icon: ic(<><rect x="3" y="3" width="7" height="9" rx="1" /><rect x="14" y="3" width="7" height="5" rx="1" /><rect x="14" y="12" width="7" height="9" rx="1" /><rect x="3" y="16" width="7" height="5" rx="1" /></>) },
-  { key: 'kost', label: 'Kost & mål', desc: 'Kcal- og proteinmål', icon: ic(<><path d="M3 2v7a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V2" /><line x1="5" y1="11" x2="5" y2="22" /><path d="M17 2c-1.5 1-2 3-2 5v6h4V2" /><line x1="17" y1="13" x2="17" y2="22" /></>) },
-  { key: 'program', label: 'Program', desc: 'Ugeplan & sessioner', icon: ic(<><line x1="6" y1="12" x2="18" y2="12" /><rect x="2.5" y="9" width="3.5" height="6" rx="1" /><rect x="18" y="9" width="3.5" height="6" rx="1" /></>) },
-  { key: 'log', label: 'Log', desc: 'Træningslog & historik', icon: ic(<><path d="M4 4h16v16H4z" /><line x1="8" y1="9" x2="16" y2="9" /><line x1="8" y1="13" x2="16" y2="13" /><line x1="8" y1="17" x2="12" y2="17" /></>) },
-  { key: 'analyse', label: 'Analyse', desc: 'Grafer & belastning', icon: ic(<><line x1="3" y1="21" x2="21" y2="21" /><polyline points="4 15 9 10 13 14 20 6" /></>) },
-  { key: 'opvarmning', label: 'Opvarmning', desc: 'Mobilitet & rutiner', icon: ic(<><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></>) },
-  { key: 'stævne', label: 'Stævne', desc: 'Plan, historik & rekorder', icon: ic(<><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></>) },
-  { key: 'noter', label: 'Noter', desc: 'Coach-noter', icon: ic(<><path d="M4 3h12l4 4v14H4z" /><polyline points="16 3 16 7 20 7" /><line x1="8" y1="12" x2="16" y2="12" /><line x1="8" y1="16" x2="13" y2="16" /></>) },
-  { key: 'beskeder', label: 'Beskeder', desc: 'Chat med atleten', icon: ic(<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />) },
-]
-
-// Ferie-status: returnerer { onHoliday, until } eller null hvis ikke på ferie.
-// onHoliday = ingen slutdato eller slutdato >= i dag. Ellers er ferien slut (tilbage).
-function holidayInfo(a) {
-  if (a?.status !== 'ferie') return null
-  const until = a.vacation_until || null
-  const onHoliday = !until || until >= new Date().toISOString().slice(0, 10)
-  return { onHoliday, until }
-}
-function ferieBadgeLabel(info) {
-  if (info?.until) {
-    const d = new Date(info.until + 'T12:00:00')
-    return `Ferie til ${d.getDate()}/${d.getMonth() + 1}`
-  }
-  return 'Ferie'
-}
-
-// Maks. antal sæt-rækker hentet pr. atlet (Log-fane + AI-rapport). Hævet fra 500 så
-// lange perioder ikke afkortes lydløst i rapporten; bruges også til afkortnings-advarsel.
-const ATHLETE_LOGS_LIMIT = 2000
 
 // Lazy-loadede underfaner (ordre 130 · commit 2): coachens tungeste skærme
 // (videoer, program-redigering, indbakke) hentes kun når coachen rent faktisk
