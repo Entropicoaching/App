@@ -468,3 +468,5 @@ faelles.html):
 DEPLOY-STATUS: IKKE deployet (jernregel R2: Marcs test foerst). Naar
 Marc har telefontestet skelet-flowet: Opus deployer med standard-
 flowet (copy til public + commit + push). Alt andet er allerede live.
+
+SUNDHEDSTJEK (ordre 365): Dhruva koerer supabase/health/videocoach-health.sql med Supabase MCP execute_sql (hele filen som query, kun SELECT); en raekke pr. dag i 14 dage med objekter/indsendelser, og en ADVARSEL-raekke hvis der er indsendelser med video uden objekt eller 0 objekter i 7 dage.
