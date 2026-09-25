@@ -4752,6 +4752,7 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
   octx.drawImage(video,0,0,ocan.width,ocan.height);
   const anchorExtent=radius*.82+12;
   let anchorFrame=mpFrame(p0,anchorExtent),anchorTime=startT,cur={x:p0.x,y:p0.y},vel={x:0,y:0};
+  let lastGoodVel={x:0,y:0};
   let features=mpGoodFeatures(anchorFrame,cur,radius),lost=0,gapStrikes=0,lastSlowT=-Infinity;
   let lastMediaT=startT,stableFrames=0,lastRateChangeT=startT;
   const sourceSteps=[],workSamples=[];
@@ -5032,6 +5033,7 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
           const iv={x:(nx-cur.x)/dt,y:(ny-cur.y)/dt};
           vel={x:vel.x*.35+iv.x*.65,y:vel.y*.35+iv.y*.65};cur={x:nx,y:ny};
           anchorFrame=currentFrame;anchorTime=tNow;features=nextFeatures;accepted=true;lost=0;
+          lastGoodVel=vel;
           frameConfidence=Math.min(1,kept.length/Math.max(5,moves.length));
           homeCorrectionPending=null;recoveryPending=null;
         }
@@ -5039,11 +5041,36 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
     }
     if(!accepted){
       lost++;vel={x:vel.x*.75,y:vel.y*.75};path.lowConf=(path.lowConf||0)+1;
+      // ORDRE 355 · blok 2 — hurtig dødløft-nedtur: bevægelsessløret giver
+      // moves<5 (feature-match), og home-recovery kan kun genfinde ved gulvet,
+      // så banen frøs midt i nedturen til næste rep. Søg derfor pladen allerede
+      // ved lost=1 omkring nedturs-forudsigelsen (hastigheden FØR tabet, ikke
+      // den dæmpede), med home-recoveryens stærke pladekrav og kun nedad.
+      // Et fund genankrer, også med få features: sløret frame spores på pladen.
+      if(plateIdentityUsable&&deadliftMode&&lastGoodVel.y>radius){
+        const dPred={x:cur.x+lastGoodVel.x*dt,y:cur.y+lastGoodVel.y*dt};
+        const dR=Math.min(radius*.9,radius*.3+Math.hypot(lastGoodVel.x,lastGoodVel.y)*dt*.25);
+        const dStep=Math.max(3,radius*.10),pad=dR+radius*1.4+dStep*2;
+        const dFrame=plCapture(dPred.x-pad,dPred.y-pad,pad*2,pad*2);
+        const hit=plSearch(dFrame,dPred,radius,plateModel,dR,dStep,'descent',tNow);
+        const strong=hit&&hit.circle>Math.max(9,plateBase.circle*.34)&&
+          hit.cover>=.45&&hit.pairCover>=.35&&hit.app<2.6;
+        const c=strong?{x:hit.x-localBias.x,y:hit.y-localBias.y}:null;
+        if(probe)probe.descentGate=!hit?'no-hit':!strong?'weak':c.y<cur.y-radius*.1?'upward':'accepted';
+        if(c&&c.y>=cur.y-radius*.1){
+          const dFeatFrame=COACHWEB?await mpFrameCooperative(c,anchorExtent):mpFrame(c,anchorExtent);
+          const iv={x:(c.x-cur.x)/dt,y:(c.y-cur.y)/dt};
+          vel={x:lastGoodVel.x*.35+iv.x*.65,y:lastGoodVel.y*.35+iv.y*.65};lastGoodVel=vel;
+          cur=c;anchorFrame=dFeatFrame;anchorTime=tNow;features=mpGoodFeatures(dFeatFrame,c,radius);
+          accepted=true;lost=0;frameConfidence=.5;recoveryPending=null;homeCorrectionPending=null;
+          path.descentHolds=(path.descentHolds||0)+1;
+        }
+      }
       // Hvis identiteten blev tabt under et gulvslag/vending, må trackeren
       // først genstarte ved den oprindelige rep-position og efter to enige
       // frames. Ingen global jagt gennem billedet: sleeve/krop kan derfor ikke
       // kapre resten af sættet.
-      if(plateIdentityUsable&&lost>=2){
+      if(!accepted&&plateIdentityUsable&&lost>=2){
         const homeR=radius*1.15,step=Math.max(3,radius*.10);
         const pad=homeR+radius*1.4+step*2;
         const homeFrame=plCapture(p0.x-pad,p0.y-pad,pad*2,pad*2);

@@ -102,7 +102,7 @@ try {
     const q = r.q
     const gate = !q ? 'skip' : q.accepted ? 'ok' : q.rejectGate
     const nums = !q ? '' : ` moves=${q.moves} kept=${q.kept} (>=5) jump=${q.jump == null ? '-' : q.jump.toFixed(1)}/${q.maxJump == null ? '-' : q.maxJump.toFixed(1)}` +
-      (q.identityChecked ? ` id=${q.identityOK}` : '') + (q.recoveryGate ? ` rec=${q.recoveryGate}` : '') +
+      (q.identityChecked ? ` id=${q.identityOK}` : '') + (q.descentGate ? ` desc=${q.descentGate}` : '') + (q.recoveryGate ? ` rec=${q.recoveryGate}` : '') +
       (q.homeSearch ? ` home(c=${q.homeSearch.circle} cov=${q.homeSearch.cover})` : '')
     return `  f${String(r.i).padStart(4)} t=${r.t.toFixed(3)} pos=(${r.p ? r.p.x.toFixed(0) : '-'},${r.p ? r.p.y.toFixed(0) : '-'}) dy/p0=${r.p ? ((r.p.y - auto.y) / R).toFixed(2) : '-'}R vel=(${r.v.x.toFixed(0)},${r.v.y.toFixed(0)})px/s lost=${r.lost} ${gate}${nums}`
   }

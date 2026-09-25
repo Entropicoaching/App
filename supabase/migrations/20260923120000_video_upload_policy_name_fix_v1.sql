@@ -1,4 +1,4 @@
--- ORDRE 333 · IKKE KØRT. Marc kører den (Supabase MCP apply_migration eller SQL-editoren).
+-- ORDRE 333 · KØRT 24. sep 2026 17:45 af Dhruva (Supabase MCP), Marcs ja.
 --
 -- Fejlen (fra video_upload_and_go_v1, 5. sep, ORDRE 57): de fire storage-policies
 -- skrev `(storage.foldername(name))[1]` INDE i `exists (select 1 from public.athletes a ...)`.
