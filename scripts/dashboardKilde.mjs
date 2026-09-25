@@ -16,6 +16,8 @@ export const DASHBOARD_MODULER = [
   'dashboard/navigation.js',
   'dashboard/indbakkeHandlinger.js',
   'dashboard/videoReviewHandlinger.js',
+  'dashboard/atletHandlinger.js',
+  'dashboard/aiRapport.js',
 ]
 
 export function dashboardKilde() {
