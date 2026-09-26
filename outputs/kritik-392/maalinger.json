@@ -813,7 +813,7 @@
     "forside": {
      "braetPx": 374,
      "feltPx": 47,
-     "brikAndel": 0.96,
+     "brikAndel": 0.95,
      "braetTop": 267,
      "braetBund": 641,
      "vindue": 844,
@@ -847,6 +847,14 @@
        "lys": true
       }
      ],
+     "tapHighlight": {
+      "felt": "rgba(51, 181, 229, 0.4)",
+      "brik": "rgba(51, 181, 229, 0.4)"
+     },
+     "vaerktoejslinje": {
+      "top": 163,
+      "h": 96
+     },
      "wrapPx": 374
     },
     "gaader": [
@@ -854,48 +862,38 @@
       "titel": "Gåde",
       "forsoeg": [
        {
-        "traek": "a6",
+        "traek": "b5",
         "status": "Find det bedste træk."
        },
        {
-        "traek": "a2e2",
+        "traek": "h2h1",
         "hvordan": "med hint",
         "status": "Din tur igen."
        },
        {
-        "traek": "e2d2",
-        "hvordan": "med hint",
-        "status": "Din tur igen."
-       },
-       {
-        "traek": "d2d5",
+        "traek": "h1c1",
         "hvordan": "med hint",
         "status": "Løst! Spyd. (løst med hint)"
        }
       ],
-      "fen": "8/8/2k5/P2RK1p1/8/5P2/r7/8 w - - 0 1",
+      "fen": "8/6pp/p7/8/1Pk3P1/P1P2P1P/7r/2R2K2 w - - 0 1",
       "loest": true
      },
      {
       "titel": "Gåde",
       "forsoeg": [
        {
-        "traek": "b6b1",
+        "traek": "d7c7",
         "hvordan": "med hint",
         "status": "Din tur igen."
        },
        {
-        "traek": "c4c1",
-        "hvordan": "med hint",
-        "status": "Din tur igen."
-       },
-       {
-        "traek": "c1d1",
-        "hvordan": "med hint",
-        "status": "Løst! Mat i 3. (løst med hint)"
+        "traek": "h5a5",
+        "hvordan": "selv (mat i 1)",
+        "status": "Løst! Mat i 2. (løst med hint)"
        }
       ],
-      "fen": "6k1/5pp1/pq5p/4p3/P1r1B3/5Q2/5PPP/1R4K1 w - - 0 1",
+      "fen": "8/3K4/k7/7Q/8/8/8/8 w - - 0 1",
       "loest": true
      }
     ],
@@ -925,7 +923,7 @@
      "lydStandard": false
     },
     "udseendeUnderBraet": {
-     "top": 607,
+     "top": 770,
      "vindue": 844
     },
     "temaer": [
@@ -1061,27 +1059,27 @@
     "saet": [
      {
       "saet": "merida",
-      "brikAndel": 0.96,
+      "brikAndel": 0.95,
       "href": "merida"
      },
      {
       "saet": "chessnut",
-      "brikAndel": 0.96,
+      "brikAndel": 0.95,
       "href": "chessnut"
      },
      {
       "saet": "klassisk",
-      "brikAndel": 0.96,
+      "brikAndel": 0.95,
       "href": "klassisk"
      },
      {
       "saet": "bogstav",
-      "brikAndel": 0.96,
+      "brikAndel": 0.95,
       "href": "bogstav"
      },
      {
       "saet": "staunton",
-      "brikAndel": 0.96,
+      "brikAndel": 0.95,
       "href": "staunton"
      }
     ],
@@ -1099,7 +1097,7 @@
       "traek": "e2e4",
       "glid": {
        "glider": true,
-       "transform": "matrix(1, 0, 0, 1, -0.495543, 48.9266)",
+       "transform": "matrix(1, 0, 0, 1, -0.495751, 48.9472)",
        "transition": "0.18s"
       },
       "fra": "e2",
@@ -1111,7 +1109,7 @@
       "traek": "e7e5",
       "glid": {
        "glider": true,
-       "transform": "matrix(1, 0, 0, 1, -0.495609, -49.9243)",
+       "transform": "matrix(1, 0, 0, 1, -0.495444, -49.9077)",
        "transition": "0.18s"
       },
       "fra": "e7",
@@ -1123,7 +1121,7 @@
       "traek": "d1h5",
       "glid": {
        "glider": true,
-       "transform": "matrix(1, 0, 0, 1, -99.3618, 98.3705)",
+       "transform": "matrix(1, 0, 0, 1, -99.3991, 98.4075)",
        "transition": "0.18s"
       },
       "fra": "d1",
@@ -1140,7 +1138,7 @@
       "traek": "h5f7",
       "glid": {
        "glider": true,
-       "transform": "matrix(1, 0, 0, 1, 48.9742, 48.9742)",
+       "transform": "matrix(1, 0, 0, 1, 48.9234, 48.9234)",
        "transition": "0.18s"
       },
       "fra": "h5",
@@ -1152,7 +1150,7 @@
       "traek": "e8f7",
       "glid": {
        "glider": true,
-       "transform": "matrix(1, 0, 0, 1, -11.3984, -11.3984)",
+       "transform": "matrix(1, 0, 0, 1, -17.1737, -17.1737)",
        "transition": "0.18s"
       },
       "fra": "e8",
@@ -1212,6 +1210,11 @@
         "lys": true
        }
       ],
+      "tapHighlight": {
+       "felt": "rgba(51, 181, 229, 0.4)",
+       "brik": "rgba(51, 181, 229, 0.4)"
+      },
+      "vaerktoejslinje": null,
       "wrapPx": 374
      }
     },
@@ -1222,7 +1225,7 @@
     "forside": {
      "braetPx": 537,
      "feltPx": 67,
-     "brikAndel": 0.95,
+     "brikAndel": 0.96,
      "braetTop": 193,
      "braetBund": 729,
      "vindue": 800,
@@ -1256,6 +1259,14 @@
        "lys": true
       }
      ],
+     "tapHighlight": {
+      "felt": "rgba(0, 0, 0, 0.18)",
+      "brik": "rgba(0, 0, 0, 0.18)"
+     },
+     "vaerktoejslinje": {
+      "top": 140,
+      "h": 44
+     },
      "wrapPx": 537
     },
     "gaader": [
@@ -1263,38 +1274,43 @@
       "titel": "Gåde",
       "forsoeg": [
        {
-        "traek": "Rb8+",
-        "status": "Ikke den vej. Tag trækket tilbage og prøv igen."
+        "traek": "e7",
+        "status": "Find det bedste træk."
        },
        {
-        "traek": "f4e6",
+        "traek": "h7h4",
         "hvordan": "med hint",
         "status": "Din tur igen."
        },
        {
-        "traek": "b7g7",
-        "hvordan": "selv (mat i 1)",
-        "status": "Løst! Mat i 2. (løst med hint)"
+        "traek": "h4h5",
+        "hvordan": "med hint",
+        "status": "Din tur igen."
+       },
+       {
+        "traek": "h5a5",
+        "hvordan": "med hint",
+        "status": "Løst! Spyd. (løst med hint)"
        }
       ],
-      "fen": "r4k1r/pR4pp/4pn2/1B1p4/5N2/2q2n2/P1P4P/3Q3K w - - 0 1",
+      "fen": "6k1/7r/4P1p1/Q7/3PK3/1r6/6P1/8 w - - 0 1",
       "loest": true
      },
      {
       "titel": "Gåde",
       "forsoeg": [
        {
-        "traek": "g5h6",
+        "traek": "d2c4",
         "hvordan": "med hint",
         "status": "Din tur igen."
        },
        {
-        "traek": "e7g7",
-        "hvordan": "selv (mat i 1)",
-        "status": "Løst! Mat i 2. (løst med hint)"
+        "traek": "c4b6",
+        "hvordan": "med hint",
+        "status": "Løst! Gaffel. (løst med hint)"
        }
       ],
-      "fen": "2K3k1/4Q3/8/6B1/8/8/6P1/8 w - - 0 1",
+      "fen": "8/2Pk4/1B6/p7/P3P1p1/4K1P1/3n4/8 w - - 0 1",
       "loest": true
      }
     ],
@@ -1498,7 +1514,7 @@
       "traek": "e2e4",
       "glid": {
        "glider": true,
-       "transform": "matrix(1, 0, 0, 1, -0.710765, 70.2335)",
+       "transform": "matrix(1, 0, 0, 1, -0.710278, 70.1854)",
        "transition": "0.18s"
       },
       "fra": "e2",
@@ -1510,7 +1526,7 @@
       "traek": "e7e5",
       "glid": {
        "glider": true,
-       "transform": "matrix(1, 0, 0, 1, -0.710859, -71.6645)",
+       "transform": "matrix(1, 0, 0, 1, -0.710372, -71.6154)",
        "transition": "0.18s"
       },
       "fra": "e7",
@@ -1522,7 +1538,7 @@
       "traek": "d1h5",
       "glid": {
        "glider": true,
-       "transform": "matrix(1, 0, 0, 1, -142.637, 141.215)",
+       "transform": "matrix(1, 0, 0, 1, -142.64, 141.218)",
        "transition": "0.18s"
       },
       "fra": "d1",
@@ -1539,7 +1555,7 @@
       "traek": "h5f7",
       "glid": {
        "glider": true,
-       "transform": "matrix(1, 0, 0, 1, 70.1621, 70.1621)",
+       "transform": "matrix(1, 0, 0, 1, 70.1637, 70.1637)",
        "transition": "0.18s"
       },
       "fra": "h5",
@@ -1551,7 +1567,7 @@
       "traek": "e8f7",
       "glid": {
        "glider": true,
-       "transform": "matrix(1, 0, 0, 1, -24.6516, -24.6516)",
+       "transform": "matrix(1, 0, 0, 1, -24.651, -24.651)",
        "transition": "0.18s"
       },
       "fra": "e8",
@@ -1611,6 +1627,11 @@
         "lys": true
        }
       ],
+      "tapHighlight": {
+       "felt": "rgba(0, 0, 0, 0.18)",
+       "brik": "rgba(0, 0, 0, 0.18)"
+      },
+      "vaerktoejslinje": null,
       "wrapPx": 537
      }
     },

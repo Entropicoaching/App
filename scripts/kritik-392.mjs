@@ -333,7 +333,9 @@ async function skak(browser) {
         braetTop: Math.round(b.top), braetBund: Math.round(b.bottom), vindue: innerHeight,
         tema: document.documentElement.dataset.braetTema, saet: document.querySelector('#braet .brik-svg use')?.getAttribute('href')?.split('-')[1] ?? null,
         ramme: getComputedStyle(document.querySelector('#braet')).borderWidth, skygge: getComputedStyle(document.querySelector('#braet')).boxShadow.slice(0, 60),
-        labels: lab.slice(0, 2).concat(lab.filter((l) => l.lys).slice(0, 1)), wrapPx: Math.round(wrap.getBoundingClientRect().width) };
+        labels: lab.slice(0, 2).concat(lab.filter((l) => l.lys).slice(0, 1)),
+        tapHighlight: { felt: getComputedStyle(document.querySelector('#braet .felt')).webkitTapHighlightColor, brik: document.querySelector('#braet .brik-svg') ? getComputedStyle(document.querySelector('#braet .brik-svg')).webkitTapHighlightColor : null },
+        vaerktoejslinje: (() => { const v = document.querySelector('#vaerktoejslinje'); if (!v || !v.offsetParent) return null; const r = v.getBoundingClientRect(); return { top: Math.round(r.top), h: Math.round(r.height) }; })(), wrapPx: Math.round(wrap.getBoundingClientRect().width) };
     });
 
     // Forsiden (gaaden) som den moeder eleven.
