@@ -1,0 +1,596 @@
+{
+ "trin": {
+  "kortStart": {
+   "tekst": "Næste for digMat i 1 med dronning og tårnDu tjekker alle dine skak og finder det der er mat.Træn",
+   "top": 274,
+   "bund": 388,
+   "synligUdenScroll": true
+  },
+  "foersteKompetence": "Mat i 1 med dronning og tårn",
+  "braetVedStart": {
+   "top": 444,
+   "bund": 818,
+   "helt": true
+  },
+  "projektorHint": {
+   "h1": {
+    "besked": "Tip: Tjek alle dine skak - ét af dem er mat. Brikken i ringen skal flytte.",
+    "stjerner": "☆☆☆☆☆",
+    "knap": "Vis trækket",
+    "ring": 1,
+    "pil": 0
+   },
+   "h2": {
+    "besked": "Hint: pilen viser trækket. Kan du se hvorfor det virker?",
+    "stjerner": "☆☆☆☆☆",
+    "knap": "Vis et hint",
+    "ring": 0,
+    "pil": 2
+   }
+  },
+  "projektorLoest": [
+   {
+    "id": "0Psb8",
+    "besked": "Løst! Skakmat! Men med fejl eller hint, så rækken starter forfra.",
+    "stjerner": "☆☆☆☆☆",
+    "knap": "Vis et hint"
+   },
+   {
+    "id": "04X15",
+    "besked": "Rigtigt! Skakmat! (1 af 5 i træk)",
+    "stjerner": "★☆☆☆☆",
+    "knap": "Vis et hint"
+   }
+  ],
+  "elev": [
+   {
+    "forventet": "mat-i-1",
+    "kort": {
+     "tekst": "Næste for digMat i 1 med dronning og tårnDu tjekker alle dine skak og finder det der er mat.Træn",
+     "top": 274,
+     "bund": 388,
+     "synligUdenScroll": true
+    },
+    "id": "mat-i-1",
+    "oevelser": 9,
+    "sidder": true,
+    "forloeb": [
+     {
+      "n": 0,
+      "id": "0Psb8",
+      "besked": "Rigtigt! Skakmat! (1 af 5 i træk)",
+      "stjerner": "★☆☆☆☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 1,
+      "id": "04X15",
+      "fejl": "e6e5",
+      "fejlBesked": "Det var ikke skak. Mat er altid skak - tjek alle dine skak. Prøv igen.",
+      "besked": "Løst! Skakmat! Men med fejl eller hint, så rækken starter forfra.",
+      "stjerner": "☆☆☆☆☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 2,
+      "id": "0GM2F",
+      "besked": "Rigtigt! Skakmat! (1 af 5 i træk)",
+      "stjerner": "★☆☆☆☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 3,
+      "id": "063On",
+      "hint": "Tip: Tjek alle dine skak - ét af dem er mat. Brikken i ringen skal flytte.",
+      "besked": "Løst! Skakmat! Men med fejl eller hint, så rækken starter forfra.",
+      "stjerner": "☆☆☆☆☆",
+      "knap": "Vis trækket"
+     },
+     {
+      "n": 4,
+      "id": "0EbOV",
+      "besked": "Rigtigt! Skakmat! (1 af 5 i træk)",
+      "stjerner": "★☆☆☆☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 5,
+      "id": "0VFdQ",
+      "besked": "Rigtigt! Skakmat! (2 af 5 i træk)",
+      "stjerner": "★★☆☆☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 6,
+      "id": "0O8vI",
+      "besked": "Rigtigt! Skakmat! (3 af 5 i træk)",
+      "stjerner": "★★★☆☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 7,
+      "id": "0V0hJ",
+      "besked": "Rigtigt! Skakmat! (4 af 5 i træk)",
+      "stjerner": "★★★★☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 8,
+      "id": "0Gomm",
+      "besked": "Det sidder! ★★★★★ Du tjekker alle dine skak og finder det der er mat.",
+      "stjerner": "★★★★★",
+      "knap": "Vis et hint"
+     }
+    ],
+    "efter": {
+     "knapper": [
+      "‹ Biblioteket",
+      "Næste øvelse"
+     ]
+    }
+   },
+   {
+    "forventet": "damemat",
+    "kort": {
+     "tekst": "Næste for digDronningematDu sætter mat med dronning og konge mod en konge på kanten.Træn",
+     "top": 274,
+     "bund": 388,
+     "synligUdenScroll": true
+    },
+    "id": "damemat",
+    "oevelser": 8,
+    "sidder": true,
+    "forloeb": [
+     {
+      "n": 0,
+      "id": "dm01",
+      "besked": "Rigtigt! Skakmat! (1 af 5 i træk)",
+      "stjerner": "★☆☆☆☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 1,
+      "id": "dm02",
+      "besked": "Rigtigt! Skakmat! (2 af 5 i træk)",
+      "stjerner": "★★☆☆☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 2,
+      "id": "dm03",
+      "fejl": "c6c7",
+      "fejlBesked": "Det var ikke skak. Mat er altid skak - hvor kan dronningen give skak? Prøv igen.",
+      "besked": "Løst! Skakmat! Men med fejl eller hint, så rækken starter forfra.",
+      "stjerner": "☆☆☆☆☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 3,
+      "id": "dm04",
+      "besked": "Rigtigt! Skakmat! (1 af 5 i træk)",
+      "stjerner": "★☆☆☆☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 4,
+      "id": "dm05",
+      "besked": "Rigtigt! Skakmat! (2 af 5 i træk)",
+      "stjerner": "★★☆☆☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 5,
+      "id": "dm06",
+      "besked": "Rigtigt! Skakmat! (3 af 5 i træk)",
+      "stjerner": "★★★☆☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 6,
+      "id": "dm07",
+      "besked": "Rigtigt! Skakmat! (4 af 5 i træk)",
+      "stjerner": "★★★★☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 7,
+      "id": "dm08",
+      "besked": "Det sidder! ★★★★★ Du sætter mat med dronning og konge mod en konge på kanten.",
+      "stjerner": "★★★★★",
+      "knap": "Vis et hint"
+     }
+    ],
+    "efter": {
+     "knapper": [
+      "‹ Biblioteket",
+      "Næste øvelse"
+     ]
+    }
+   },
+   {
+    "forventet": "taarnmat",
+    "kort": {
+     "tekst": "Næste for digTårnmatDu sætter mat med tårn og konge langs kanten.Træn",
+     "top": 274,
+     "bund": 388,
+     "synligUdenScroll": true
+    },
+    "id": "taarnmat",
+    "oevelser": 7,
+    "sidder": true,
+    "forloeb": [
+     {
+      "n": 0,
+      "id": "tm01",
+      "besked": "Rigtigt! Skakmat! (1 af 5 i træk)",
+      "stjerner": "★☆☆☆☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 1,
+      "id": "tm02",
+      "hint": "Tip: Hvor står din konge? Giv skak med tårnet langs kanten. Brikken i ringen skal flytte.",
+      "besked": "Løst! Skakmat! Men med fejl eller hint, så rækken starter forfra.",
+      "stjerner": "☆☆☆☆☆",
+      "knap": "Vis trækket"
+     },
+     {
+      "n": 2,
+      "id": "tm03",
+      "besked": "Rigtigt! Skakmat! (1 af 5 i træk)",
+      "stjerner": "★☆☆☆☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 3,
+      "id": "tm04",
+      "besked": "Rigtigt! Skakmat! (2 af 5 i træk)",
+      "stjerner": "★★☆☆☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 4,
+      "id": "tm05",
+      "besked": "Rigtigt! Skakmat! (3 af 5 i træk)",
+      "stjerner": "★★★☆☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 5,
+      "id": "tm06",
+      "besked": "Rigtigt! Skakmat! (4 af 5 i træk)",
+      "stjerner": "★★★★☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 6,
+      "id": "tm07",
+      "besked": "Det sidder! ★★★★★ Du sætter mat med tårn og konge langs kanten.",
+      "stjerner": "★★★★★",
+      "knap": "Vis et hint"
+     }
+    ],
+    "efter": {
+     "knapper": [
+      "‹ Biblioteket",
+      "Næste øvelse"
+     ]
+    }
+   }
+  ],
+  "hurtige": [
+   {
+    "forventet": "ubeskyttet",
+    "kort": {
+     "tekst": "Næste for digSlå den ubeskyttede brikDu ser en brik som ingen passer på - og tager den.Træn",
+     "top": 274,
+     "bund": 388,
+     "synligUdenScroll": true
+    },
+    "id": "ubeskyttet",
+    "oevelser": 6,
+    "sidder": true,
+    "forloeb": [
+     {
+      "n": 0,
+      "id": "u04",
+      "fejl": "f3d4",
+      "fejlBesked": "Det træk slog ingen brik. Find en brik som ingen dækker, og slå den. Prøv igen.",
+      "besked": "Løst! Ingen dækkede den - du vandt dronningen. Men med fejl eller hint, så rækken starter forfra.",
+      "stjerner": "☆☆☆☆☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 1,
+      "id": "u05",
+      "besked": "Rigtigt! Ingen dækkede den - du vandt dronningen. (1 af 5 i træk)",
+      "stjerner": "★☆☆☆☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 2,
+      "id": "u06",
+      "besked": "Rigtigt! Ingen dækkede den - du vandt et tårn. (2 af 5 i træk)",
+      "stjerner": "★★☆☆☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 3,
+      "id": "u07",
+      "besked": "Rigtigt! Ingen dækkede den - du vandt en løber. (3 af 5 i træk)",
+      "stjerner": "★★★☆☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 4,
+      "id": "u08",
+      "besked": "Rigtigt! Ingen dækkede den - du vandt en løber. (4 af 5 i træk)",
+      "stjerner": "★★★★☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 5,
+      "id": "u09",
+      "besked": "Det sidder! ★★★★★ Du ser en brik som ingen passer på - og tager den.",
+      "stjerner": "★★★★★",
+      "knap": "Vis et hint"
+     }
+    ],
+    "efter": {
+     "knapper": [
+      "‹ Biblioteket",
+      "Næste øvelse"
+     ]
+    }
+   },
+   {
+    "forventet": "forsvar",
+    "kort": {
+     "tekst": "Næste for digRed din brikDu ser hvilken af dine brikker der er angrebet - og redder den.Træn",
+     "top": 274,
+     "bund": 388,
+     "synligUdenScroll": true
+    },
+    "id": "forsvar",
+    "oevelser": 7,
+    "sidder": true,
+    "forloeb": [
+     {
+      "n": 0,
+      "id": "f04",
+      "besked": "Rigtigt! Brikken er i sikkerhed. (1 af 5 i træk)",
+      "stjerner": "★☆☆☆☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 1,
+      "id": "f05",
+      "fejl": "b2b4",
+      "fejlBesked": "Nu kan modstanderen stadig vinde en brik. Hvilken er angrebet, og hvor er den sikker? Prøv igen.",
+      "besked": "Løst! Brikken er i sikkerhed. Men med fejl eller hint, så rækken starter forfra.",
+      "stjerner": "☆☆☆☆☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 2,
+      "id": "f06",
+      "besked": "Rigtigt! Brikken er i sikkerhed. (1 af 5 i træk)",
+      "stjerner": "★☆☆☆☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 3,
+      "id": "f07",
+      "besked": "Rigtigt! Brikken er i sikkerhed. (2 af 5 i træk)",
+      "stjerner": "★★☆☆☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 4,
+      "id": "f08",
+      "besked": "Rigtigt! Brikken er i sikkerhed. (3 af 5 i træk)",
+      "stjerner": "★★★☆☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 5,
+      "id": "f09",
+      "besked": "Rigtigt! Brikken er i sikkerhed. (4 af 5 i træk)",
+      "stjerner": "★★★★☆",
+      "knap": "Vis et hint"
+     },
+     {
+      "n": 6,
+      "id": "f10",
+      "besked": "Det sidder! ★★★★★ Du ser hvilken af dine brikker der er angrebet - og redder den.",
+      "stjerner": "★★★★★",
+      "knap": "Vis et hint"
+     }
+    ],
+    "efter": {
+     "knapper": [
+      "‹ Biblioteket",
+      "Næste øvelse"
+     ]
+    }
+   }
+  ],
+  "kortEfter": {
+   "tekst": "Næste for digBaglinjematDu ser en konge spærret inde på bagerste række.Træn",
+   "top": 274,
+   "bund": 388,
+   "synligUdenScroll": true
+  },
+  "samlet": "5 af 24 kompetencer sidder.",
+  "stopMatten": {
+   "opgave": "Du er hvid. Modstanderen truer mat i ét træk. Stop det.",
+   "dg4": {
+    "besked": "Matten er stoppet - men se hvad han kan slå bagefter. Det koster dig en brik. Find et svar der stopper matten uden at give noget væk. Prøv igen.",
+    "stjerner": "☆☆☆☆☆",
+    "knap": "Vis et hint"
+   },
+   "rigtigt": {
+    "uci": "d2f3",
+    "besked": "Løst! Matten er stoppet. Men med fejl eller hint, så rækken starter forfra.",
+    "stjerner": "☆☆☆☆☆",
+    "knap": "Vis et hint"
+   },
+   "godeFoerste": [
+    "d2f3",
+    "d4f3"
+   ]
+  },
+  "efterGenindlaesning": {
+   "samlet": "5 af 24 kompetencer sidder.",
+   "kort": {
+    "tekst": "Næste for digBaglinjematDu ser en konge spærret inde på bagerste række.Træn",
+    "top": 274,
+    "bund": 388,
+    "synligUdenScroll": true
+   }
+  },
+  "pattDamemat": {
+   "oevelse": "dm01",
+   "traek": "Qg6",
+   "besked": "Patt! Kongen kan ikke flytte og står ikke i skak - det er uafgjort. Giv den et felt. Prøv igen.",
+   "stjerner": "★★★★★",
+   "knap": "Vis et hint"
+  }
+ },
+ "sidefejl": [],
+ "log": [
+  {
+   "hvad": "naeste for dig ved start",
+   "tekst": "Næste for digMat i 1 med dronning og tårnDu tjekker alle dine skak og finder det der er mat.Træn",
+   "top": 274,
+   "bund": 388,
+   "synligUdenScroll": true
+  },
+  {
+   "hvad": "projektor hint-trappe",
+   "h1": {
+    "besked": "Tip: Tjek alle dine skak - ét af dem er mat. Brikken i ringen skal flytte.",
+    "stjerner": "☆☆☆☆☆",
+    "knap": "Vis trækket",
+    "ring": 1,
+    "pil": 0
+   },
+   "h2": {
+    "besked": "Hint: pilen viser trækket. Kan du se hvorfor det virker?",
+    "stjerner": "☆☆☆☆☆",
+    "knap": "Vis et hint",
+    "ring": 0,
+    "pil": 2
+   }
+  },
+  {
+   "0": {
+    "id": "0Psb8",
+    "besked": "Løst! Skakmat! Men med fejl eller hint, så rækken starter forfra.",
+    "stjerner": "☆☆☆☆☆",
+    "knap": "Vis et hint"
+   },
+   "1": {
+    "id": "04X15",
+    "besked": "Rigtigt! Skakmat! (1 af 5 i træk)",
+    "stjerner": "★☆☆☆☆",
+    "knap": "Vis et hint"
+   },
+   "hvad": "projektor to loest"
+  },
+  {
+   "hvad": "elev mat-i-1",
+   "kort": "Næste for digMat i 1 med dronning og tårnDu tjekker alle dine skak og finder det der er mat.Træn",
+   "oevelser": 9,
+   "sidder": true,
+   "sidst": "Det sidder! ★★★★★ Du tjekker alle dine skak og finder det der er mat.",
+   "knapper": [
+    "‹ Biblioteket",
+    "Næste øvelse"
+   ]
+  },
+  {
+   "hvad": "elev damemat",
+   "kort": "Næste for digDronningematDu sætter mat med dronning og konge mod en konge på kanten.Træn",
+   "oevelser": 8,
+   "sidder": true,
+   "sidst": "Det sidder! ★★★★★ Du sætter mat med dronning og konge mod en konge på kanten.",
+   "knapper": [
+    "‹ Biblioteket",
+    "Næste øvelse"
+   ]
+  },
+  {
+   "hvad": "elev taarnmat",
+   "kort": "Næste for digTårnmatDu sætter mat med tårn og konge langs kanten.Træn",
+   "oevelser": 7,
+   "sidder": true,
+   "sidst": "Det sidder! ★★★★★ Du sætter mat med tårn og konge langs kanten.",
+   "knapper": [
+    "‹ Biblioteket",
+    "Næste øvelse"
+   ]
+  },
+  {
+   "hvad": "hurtige ubeskyttet",
+   "kort": "Næste for digSlå den ubeskyttede brikDu ser en brik som ingen passer på - og tager den.Træn",
+   "oevelser": 6,
+   "sidder": true,
+   "fejlBesked": "Det træk slog ingen brik. Find en brik som ingen dækker, og slå den. Prøv igen."
+  },
+  {
+   "hvad": "hurtige forsvar",
+   "kort": "Næste for digRed din brikDu ser hvilken af dine brikker der er angrebet - og redder den.Træn",
+   "oevelser": 7,
+   "sidder": true,
+   "fejlBesked": "Nu kan modstanderen stadig vinde en brik. Hvilken er angrebet, og hvor er den sikker? Prøv igen."
+  },
+  {
+   "hvad": "kort efter de fem",
+   "kort": {
+    "tekst": "Næste for digBaglinjematDu ser en konge spærret inde på bagerste række.Træn",
+    "top": 274,
+    "bund": 388,
+    "synligUdenScroll": true
+   },
+   "samlet": "5 af 24 kompetencer sidder."
+  },
+  {
+   "hvad": "stop matten sm07",
+   "opgave": "Du er hvid. Modstanderen truer mat i ét træk. Stop det.",
+   "dg4": {
+    "besked": "Matten er stoppet - men se hvad han kan slå bagefter. Det koster dig en brik. Find et svar der stopper matten uden at give noget væk. Prøv igen.",
+    "stjerner": "☆☆☆☆☆",
+    "knap": "Vis et hint"
+   },
+   "rigtigt": {
+    "uci": "d2f3",
+    "besked": "Løst! Matten er stoppet. Men med fejl eller hint, så rækken starter forfra.",
+    "stjerner": "☆☆☆☆☆",
+    "knap": "Vis et hint"
+   },
+   "godeFoerste": [
+    "d2f3",
+    "d4f3"
+   ]
+  },
+  {
+   "hvad": "efter genindlaesning",
+   "samlet": "5 af 24 kompetencer sidder.",
+   "kort": {
+    "tekst": "Næste for digBaglinjematDu ser en konge spærret inde på bagerste række.Træn",
+    "top": 274,
+    "bund": 388,
+    "synligUdenScroll": true
+   }
+  },
+  {
+   "hvad": "damemat patt",
+   "oevelse": "dm01",
+   "traek": "Qg6",
+   "besked": "Patt! Kongen kan ikke flytte og står ikke i skak - det er uafgjort. Giv den et felt. Prøv igen.",
+   "stjerner": "★★★★★",
+   "knap": "Vis et hint"
+  }
+ ]
+}

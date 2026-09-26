@@ -1,0 +1,2533 @@
+{
+ "resultat": {
+  "marc": {
+   "oversigt": {
+    "samlet": "0 af 24 kompetencer sidder.",
+    "kategorier": [
+     {
+      "titel": "Brikkerne og reglerne",
+      "kompetencer": [
+       "Lær skak"
+      ]
+     },
+     {
+      "titel": "Matmønstre",
+      "kompetencer": [
+       "Mat i 1 med dronning og tårn",
+       "Dronningemat",
+       "Tårnmat",
+       "Baglinjemat",
+       "Kvælningsmat"
+      ]
+     },
+     {
+      "titel": "Taktik",
+      "kompetencer": [
+       "Slå den ubeskyttede brik",
+       "Red din brik",
+       "Gaffel med springeren",
+       "Gaffel med andre brikker",
+       "Binding",
+       "Spid",
+       "Afdækket angreb"
+      ]
+     },
+     {
+      "titel": "Forsvar",
+      "kompetencer": [
+       "Stop matten",
+       "Byt rigtigt"
+      ]
+     },
+     {
+      "titel": "Åbningsprincipper",
+      "kompetencer": [
+       "Rokér i tide",
+       "Tag centrum",
+       "Udvikl brikkerne"
+      ]
+     },
+     {
+      "titel": "Slutspil",
+      "kompetencer": [
+       "Dronning mod konge",
+       "Kvadratreglen",
+       "Konge og bonde: oppositionen",
+       "Tårnmat: gør kassen mindre",
+       "Tårn mod konge"
+      ]
+     },
+     {
+      "titel": "Regn frem",
+      "kompetencer": [
+       "Mat i 2",
+       "Hvad svarer modstanderen?"
+      ]
+     }
+    ],
+    "sidehoejde": 4563,
+    "knapHoejde": 44
+   },
+   "damemat": {
+    "oevelse": "dm01",
+    "forkert1": "h7g8",
+    "b1": {
+     "tekst": "Du er hvid. Sæt mat i ét træk.",
+     "besked": "Det var ikke skak. Mat er altid skak - hvor kan dronningen give skak? Prøv igen.",
+     "stjerner": "☆☆☆☆☆"
+    },
+    "forkert2": "h7h8",
+    "b2": {
+     "tekst": "Du er hvid. Sæt mat i ét træk.",
+     "besked": "Det var ikke mat. Hvilke felter kan kongen flygte til? Find skakken der dækker dem alle. Pilen viser vejen.",
+     "stjerner": "☆☆☆☆☆"
+    },
+    "rigtigt": {
+     "tekst": "Du er hvid. Sæt mat i ét træk.",
+     "besked": "Løst! Skakmat! Men med fejl eller hint, så rækken starter forfra.",
+     "stjerner": "☆☆☆☆☆"
+    }
+   },
+   "damematEfter": [
+    {
+     "id": "dm02",
+     "tekst": "Du er hvid. Sæt mat i ét træk.",
+     "besked": "Rigtigt! Skakmat! (1 af 5 i træk)",
+     "stjerner": "★☆☆☆☆"
+    },
+    {
+     "id": "dm03",
+     "tekst": "Du er hvid. Sæt mat i ét træk.",
+     "besked": "Rigtigt! Skakmat! (2 af 5 i træk)",
+     "stjerner": "★★☆☆☆"
+    },
+    {
+     "id": "dm04",
+     "tekst": "Du er hvid. Sæt mat i ét træk.",
+     "besked": "Rigtigt! Skakmat! (3 af 5 i træk)",
+     "stjerner": "★★★☆☆"
+    }
+   ],
+   "dronningMat": {
+    "oevelse": "dk1",
+    "traek": 6,
+    "mat": true,
+    "patt": false,
+    "tekst": "Træk 6 af 20. Sæt mat inden for 20 træk.",
+    "besked": "Rigtigt! Skakmat i 6 træk! (1 af 3 i træk)",
+    "stjerner": "★☆☆"
+   },
+   "dronningHaengt": {
+    "oevelse": "dk2",
+    "traek": 1,
+    "mat": false,
+    "patt": false,
+    "tekst": "Træk 1 af 20. Sæt mat inden for 20 træk.",
+    "besked": "Kongen slog din brik - nu kan ingen vinde. Hold den dækket af din konge, eller langt fra hans. Stjernerne starter forfra.",
+    "stjerner": "☆☆☆"
+   },
+   "dronningPatt": {
+    "oevelse": "dk3",
+    "traek": 6,
+    "mat": false,
+    "patt": true,
+    "tekst": "Træk 6 af 20. Sæt mat inden for 20 træk.",
+    "besked": "Patt - kongen kunne ikke flytte, men stod ikke i skak. Det er uafgjort. Giv den altid et felt, indtil du sætter mat. Stjernerne starter forfra.",
+    "stjerner": "☆☆☆"
+   },
+   "opposition": {
+    "oevelse": "op01",
+    "fen": "8/8/2k5/8/3K4/8/1P6/8 w - - 0 1",
+    "bondeTraek": "b3",
+    "b1": {
+     "tekst": "Du er hvid. Find det træk der vinder. Kongen først - bonden venter.",
+     "besked": "Det træk giver kun uafgjort. Stil din konge over for modstanderens konge, med ét felt imellem. Prøv igen.",
+     "stjerner": "☆☆☆☆☆"
+    },
+    "b2": {
+     "tekst": "Du er hvid. Find det træk der vinder. Kongen først - bonden venter.",
+     "besked": "Godt! Hans konge veg. Gå til siden, så du igen står over for ham - stadig med kongen.",
+     "stjerner": "☆☆☆☆☆"
+    },
+    "b3": {
+     "tekst": "Du er hvid. Find det træk der vinder. Kongen først - bonden venter.",
+     "besked": "Løst! Kongen står rigtigt - nu kommer bonden igennem. Se den gå hele vejen. Men med fejl eller hint, så rækken starter forfra.",
+     "stjerner": "☆☆☆☆☆"
+    }
+   },
+   "kapitelRokade": {
+    "foer": {
+     "titel": "Rokade",
+     "tekst": "Du er hvid. Kongen og et tårn kan rokere sammen, hvis ingen har flyttet før. Klik kongen, og flyt den to felter.",
+     "besked": "",
+     "taeller": "Trin 12 af 32",
+     "videre": true
+    },
+    "efter": {
+     "titel": "Rokade",
+     "tekst": "Du er hvid. Kongen og et tårn kan rokere sammen, hvis ingen har flyttet før. Klik kongen, og flyt den to felter.",
+     "besked": "Rigtigt! Kongen står sikkert, og tårnet er kommet ud.",
+     "taeller": "Trin 12 af 32",
+     "videre": true
+    }
+   }
+  },
+  "frit": {
+   "gaffel": [
+    {
+     "runde": 0,
+     "id": "0GFi6",
+     "tekst": "Du er sort. Find springergaflen - og vind brikken bagefter.",
+     "besked": "Rigtigt! Gaflen ramte to ting på én gang - og du vandt et tårn. (1 af 5 i træk)",
+     "stjerner": "★☆☆☆☆"
+    },
+    {
+     "runde": 1,
+     "id": "030iQ",
+     "tekst": "Du er hvid. Find springergaflen - og vind brikken bagefter.",
+     "besked": "Rigtigt! Gaflen ramte to ting på én gang - og du vandt et tårn. (2 af 5 i træk)",
+     "stjerner": "★★☆☆☆"
+    },
+    {
+     "runde": 2,
+     "id": "00OPi",
+     "tekst": "Du er sort. Find springergaflen - og vind brikken bagefter.",
+     "besked": "Rigtigt! Gaflen ramte to ting på én gang - og du vandt en løber. (3 af 5 i træk)",
+     "stjerner": "★★★☆☆"
+    },
+    {
+     "runde": 3,
+     "id": "011Ob",
+     "forkert": "b8c7",
+     "hint": "Det træk angreb ikke to ting. Find et felt hvor springeren rammer to brikker - eller kongen og en brik. Prøv igen."
+    },
+    {
+     "runde": 3,
+     "id": "011Ob",
+     "tekst": "Du er hvid. Find springergaflen - og vind brikken bagefter.",
+     "besked": "Løst! Gaflen ramte to ting på én gang - og du vandt et tårn. Men med fejl eller hint, så rækken starter forfra.",
+     "stjerner": "☆☆☆☆☆"
+    },
+    {
+     "runde": 4,
+     "id": "0OvD9",
+     "tekst": "Du er sort. Find springergaflen - og vind brikken bagefter.",
+     "besked": "Rigtigt! Gaflen ramte to ting på én gang - og du vandt et tårn. (1 af 5 i træk)",
+     "stjerner": "★☆☆☆☆"
+    },
+    {
+     "runde": 5,
+     "id": "0K0hW",
+     "tekst": "Du er hvid. Find springergaflen - og vind brikken bagefter.",
+     "besked": "Rigtigt! Gaflen ramte to ting på én gang - og du vandt et tårn. (2 af 5 i træk)",
+     "stjerner": "★★☆☆☆"
+    },
+    {
+     "runde": 6,
+     "id": "0QN9N",
+     "tekst": "Du er hvid. Find springergaflen - og vind brikken bagefter.",
+     "besked": "Rigtigt! Gaflen ramte to ting på én gang - og du vandt et tårn. (3 af 5 i træk)",
+     "stjerner": "★★★☆☆"
+    },
+    {
+     "runde": 7,
+     "id": "01Yjm",
+     "tekst": "Du er hvid. Find springergaflen - og vind brikken bagefter.",
+     "besked": "Rigtigt! Gaflen ramte to ting på én gang - og du vandt en løber. (4 af 5 i træk)",
+     "stjerner": "★★★★☆"
+    },
+    {
+     "runde": 8,
+     "id": "0DBIv",
+     "tekst": "Du er hvid. Find springergaflen - og vind brikken bagefter.",
+     "besked": "Det sidder! ★★★★★ Du finder springertræk der angriber to ting på én gang.",
+     "stjerner": "★★★★★"
+    }
+   ],
+   "taarnmat": [
+    {
+     "runde": 0,
+     "id": "tm01",
+     "tekst": "Du er hvid. Sæt mat i ét træk.",
+     "besked": "Rigtigt! Skakmat! (1 af 5 i træk)",
+     "stjerner": "★☆☆☆☆"
+    },
+    {
+     "runde": 1,
+     "hint": "Tip: Hvor står din konge? Giv skak med tårnet langs kanten. Brikken i ringen skal flytte."
+    },
+    {
+     "runde": 1,
+     "id": "tm02",
+     "tekst": "Du er hvid. Sæt mat i ét træk.",
+     "besked": "Løst! Skakmat! Men med fejl eller hint, så rækken starter forfra.",
+     "stjerner": "☆☆☆☆☆"
+    },
+    {
+     "runde": 2,
+     "id": "tm03",
+     "tekst": "Du er hvid. Sæt mat i ét træk.",
+     "besked": "Rigtigt! Skakmat! (1 af 5 i træk)",
+     "stjerner": "★☆☆☆☆"
+    },
+    {
+     "runde": 3,
+     "id": "tm04",
+     "tekst": "Du er hvid. Sæt mat i ét træk.",
+     "besked": "Rigtigt! Skakmat! (2 af 5 i træk)",
+     "stjerner": "★★☆☆☆"
+    },
+    {
+     "runde": 4,
+     "id": "tm05",
+     "tekst": "Du er hvid. Sæt mat i ét træk.",
+     "besked": "Rigtigt! Skakmat! (3 af 5 i træk)",
+     "stjerner": "★★★☆☆"
+    },
+    {
+     "runde": 5,
+     "id": "tm06",
+     "tekst": "Du er hvid. Sæt mat i ét træk.",
+     "besked": "Rigtigt! Skakmat! (4 af 5 i træk)",
+     "stjerner": "★★★★☆"
+    },
+    {
+     "runde": 6,
+     "id": "tm07",
+     "tekst": "Du er hvid. Sæt mat i ét træk.",
+     "besked": "Det sidder! ★★★★★ Du sætter mat med tårn og konge langs kanten.",
+     "stjerner": "★★★★★"
+    }
+   ],
+   "taarnKasse": [
+    {
+     "oevelse": "tk1",
+     "traek": 18,
+     "mat": true,
+     "patt": false,
+     "tekst": "Træk 18 af 50. Sæt mat inden for 50 træk.",
+     "besked": "Rigtigt! Skakmat i 18 træk! (1 vundet af de sidste 1 - 3 af 4 skal til)",
+     "stjerner": "★☆☆"
+    },
+    {
+     "oevelse": "tk2",
+     "traek": 12,
+     "mat": true,
+     "patt": false,
+     "tekst": "Træk 12 af 50. Sæt mat inden for 50 træk.",
+     "besked": "Rigtigt! Skakmat i 12 træk! (2 vundet af de sidste 2 - 3 af 4 skal til)",
+     "stjerner": "★★☆"
+    },
+    {
+     "oevelse": "tk3",
+     "traek": 41,
+     "mat": true,
+     "patt": false,
+     "tekst": "Træk 41 af 50. Sæt mat inden for 50 træk.",
+     "besked": "Det sidder! ★★★ Du vinder med tårn og konge mod en konge.",
+     "stjerner": "★★★"
+    }
+   ]
+  },
+  "laer": [
+   {
+    "navn": "braettet",
+    "foer": {
+     "titel": "Brættet",
+     "tekst": "Felterne har navne: bogstav for linjen (a-h), tal for rækken (1-8). Klik e4.",
+     "besked": "",
+     "taeller": "Trin 1 af 32",
+     "videre": true,
+     "stjerneStatus": "",
+     "stjernerTilbage": [],
+     "brikker": [
+      "a8",
+      "b8",
+      "c8",
+      "d8",
+      "e8",
+      "f8",
+      "g8",
+      "h8",
+      "a7",
+      "b7",
+      "c7",
+      "d7",
+      "e7",
+      "f7",
+      "g7",
+      "h7",
+      "a2",
+      "b2",
+      "c2",
+      "d2",
+      "e2",
+      "f2",
+      "g2",
+      "h2",
+      "a1",
+      "b1",
+      "c1",
+      "d1",
+      "e1",
+      "f1",
+      "g1",
+      "h1"
+     ],
+     "iSkak": [],
+     "ringe": 1,
+     "proevIgen": false
+    },
+    "forsoeg": [
+     {
+      "beskrivelse": "forkert: d4",
+      "titel": "Brættet",
+      "tekst": "Felterne har navne: bogstav for linjen (a-h), tal for rækken (1-8). Klik e4.",
+      "besked": "Prøv igen - klik det ringede felt.",
+      "taeller": "Trin 1 af 32",
+      "videre": true,
+      "stjerneStatus": "",
+      "stjernerTilbage": [],
+      "brikker": [
+       "a8",
+       "b8",
+       "c8",
+       "d8",
+       "e8",
+       "f8",
+       "g8",
+       "h8",
+       "a7",
+       "b7",
+       "c7",
+       "d7",
+       "e7",
+       "f7",
+       "g7",
+       "h7",
+       "a2",
+       "b2",
+       "c2",
+       "d2",
+       "e2",
+       "f2",
+       "g2",
+       "h2",
+       "a1",
+       "b1",
+       "c1",
+       "d1",
+       "e1",
+       "f1",
+       "g1",
+       "h1"
+      ],
+      "iSkak": [],
+      "ringe": 1,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "rigtigt: e4",
+      "titel": "Brættet",
+      "tekst": "Felterne har navne: bogstav for linjen (a-h), tal for rækken (1-8). Klik e4.",
+      "besked": "Rigtigt! Det er e4: linje e, række 4.",
+      "taeller": "Trin 1 af 32",
+      "videre": true,
+      "stjerneStatus": "",
+      "stjernerTilbage": [],
+      "brikker": [
+       "a8",
+       "b8",
+       "c8",
+       "d8",
+       "e8",
+       "f8",
+       "g8",
+       "h8",
+       "a7",
+       "b7",
+       "c7",
+       "d7",
+       "e7",
+       "f7",
+       "g7",
+       "h7",
+       "a2",
+       "b2",
+       "c2",
+       "d2",
+       "e2",
+       "f2",
+       "g2",
+       "h2",
+       "a1",
+       "b1",
+       "c1",
+       "d1",
+       "e1",
+       "f1",
+       "g1",
+       "h1"
+      ],
+      "iSkak": [],
+      "ringe": 1,
+      "proevIgen": false
+     }
+    ]
+   },
+   {
+    "navn": "kongen (omvej)",
+    "foer": {
+     "titel": "Kongen",
+     "tekst": "Du er hvid. Kongen går ét felt i alle retninger. Tryk på kongen (i ringen), og saml alle stjernerne - på så få træk som muligt.",
+     "besked": "",
+     "taeller": "Trin 2 af 32",
+     "videre": true,
+     "stjerneStatus": "Stjerner: 0 af 4 · Træk: 0 (færrest mulige: 4)",
+     "stjernerTilbage": [
+      "e6",
+      "f6",
+      "g5",
+      "f4"
+     ],
+     "brikker": [
+      "e3"
+     ],
+     "iSkak": [],
+     "ringe": 1,
+     "proevIgen": false
+    },
+    "forsoeg": [
+     {
+      "beskrivelse": "forkert: tomt felt a1",
+      "titel": "Kongen",
+      "tekst": "Du er hvid. Kongen går ét felt i alle retninger. Tryk på kongen (i ringen), og saml alle stjernerne - på så få træk som muligt.",
+      "besked": "",
+      "taeller": "Trin 2 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 0 af 4 · Træk: 0 (færrest mulige: 4)",
+      "stjernerTilbage": [
+       "e6",
+       "f6",
+       "g5",
+       "f4"
+      ],
+      "brikker": [
+       "e3"
+      ],
+      "iSkak": [],
+      "ringe": 1,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "e3d3",
+      "titel": "Kongen",
+      "tekst": "Du er hvid. Kongen går ét felt i alle retninger. Tryk på kongen (i ringen), og saml alle stjernerne - på så få træk som muligt.",
+      "besked": "",
+      "taeller": "Trin 2 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 0 af 4 · Træk: 1 (færrest mulige: 4)",
+      "stjernerTilbage": [
+       "e6",
+       "f6",
+       "g5",
+       "f4"
+      ],
+      "brikker": [
+       "d3"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "d3e4",
+      "titel": "Kongen",
+      "tekst": "Du er hvid. Kongen går ét felt i alle retninger. Tryk på kongen (i ringen), og saml alle stjernerne - på så få træk som muligt.",
+      "besked": "",
+      "taeller": "Trin 2 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 0 af 4 · Træk: 2 (færrest mulige: 4)",
+      "stjernerTilbage": [
+       "e6",
+       "f6",
+       "g5",
+       "f4"
+      ],
+      "brikker": [
+       "e4"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "e4f4",
+      "titel": "Kongen",
+      "tekst": "Du er hvid. Kongen går ét felt i alle retninger. Tryk på kongen (i ringen), og saml alle stjernerne - på så få træk som muligt.",
+      "besked": "Stjerne! Find den næste.",
+      "taeller": "Trin 2 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 1 af 4 · Træk: 3 (færrest mulige: 4)",
+      "stjernerTilbage": [
+       "e6",
+       "f6",
+       "g5"
+      ],
+      "brikker": [
+       "f4"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "f4g5",
+      "titel": "Kongen",
+      "tekst": "Du er hvid. Kongen går ét felt i alle retninger. Tryk på kongen (i ringen), og saml alle stjernerne - på så få træk som muligt.",
+      "besked": "Stjerne! Find den næste.",
+      "taeller": "Trin 2 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 2 af 4 · Træk: 4 (færrest mulige: 4)",
+      "stjernerTilbage": [
+       "e6",
+       "f6"
+      ],
+      "brikker": [
+       "g5"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "g5f6",
+      "titel": "Kongen",
+      "tekst": "Du er hvid. Kongen går ét felt i alle retninger. Tryk på kongen (i ringen), og saml alle stjernerne - på så få træk som muligt.",
+      "besked": "Stjerne! Find den næste.",
+      "taeller": "Trin 2 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 3 af 4 · Træk: 5 (færrest mulige: 4)",
+      "stjernerTilbage": [
+       "e6"
+      ],
+      "brikker": [
+       "f6"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "f6e6",
+      "titel": "Kongen",
+      "tekst": "Du er hvid. Kongen går ét felt i alle retninger. Tryk på kongen (i ringen), og saml alle stjernerne - på så få træk som muligt.",
+      "besked": "Godt klaret! Du brugte 6 træk. Det kan gøres på 4 - prøv igen, hvis du vil.",
+      "taeller": "Trin 2 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 4 af 4 · Træk: 6 (færrest mulige: 4)",
+      "stjernerTilbage": [],
+      "brikker": [
+       "e6"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": true
+     }
+    ]
+   },
+   {
+    "navn": "kongen (igen, faerrest)",
+    "foer": {
+     "titel": "Kongen",
+     "tekst": "Du er hvid. Kongen går ét felt i alle retninger. Tryk på kongen (i ringen), og saml alle stjernerne - på så få træk som muligt.",
+     "besked": "",
+     "taeller": "Trin 2 af 32",
+     "videre": true,
+     "stjerneStatus": "Stjerner: 0 af 4 · Træk: 0 (færrest mulige: 4)",
+     "stjernerTilbage": [
+      "e6",
+      "f6",
+      "g5",
+      "f4"
+     ],
+     "brikker": [
+      "e3"
+     ],
+     "iSkak": [],
+     "ringe": 1,
+     "proevIgen": false
+    },
+    "forsoeg": [
+     {
+      "beskrivelse": "e3f4",
+      "titel": "Kongen",
+      "tekst": "Du er hvid. Kongen går ét felt i alle retninger. Tryk på kongen (i ringen), og saml alle stjernerne - på så få træk som muligt.",
+      "besked": "Stjerne! Find den næste.",
+      "taeller": "Trin 2 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 1 af 4 · Træk: 1 (færrest mulige: 4)",
+      "stjernerTilbage": [
+       "e6",
+       "f6",
+       "g5"
+      ],
+      "brikker": [
+       "f4"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "f4g5",
+      "titel": "Kongen",
+      "tekst": "Du er hvid. Kongen går ét felt i alle retninger. Tryk på kongen (i ringen), og saml alle stjernerne - på så få træk som muligt.",
+      "besked": "Stjerne! Find den næste.",
+      "taeller": "Trin 2 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 2 af 4 · Træk: 2 (færrest mulige: 4)",
+      "stjernerTilbage": [
+       "e6",
+       "f6"
+      ],
+      "brikker": [
+       "g5"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "g5f6",
+      "titel": "Kongen",
+      "tekst": "Du er hvid. Kongen går ét felt i alle retninger. Tryk på kongen (i ringen), og saml alle stjernerne - på så få træk som muligt.",
+      "besked": "Stjerne! Find den næste.",
+      "taeller": "Trin 2 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 3 af 4 · Træk: 3 (færrest mulige: 4)",
+      "stjernerTilbage": [
+       "e6"
+      ],
+      "brikker": [
+       "f6"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "f6e6",
+      "titel": "Kongen",
+      "tekst": "Du er hvid. Kongen går ét felt i alle retninger. Tryk på kongen (i ringen), og saml alle stjernerne - på så få træk som muligt.",
+      "besked": "Godt klaret! Alle stjerner på 4 træk - færrest mulige.",
+      "taeller": "Trin 2 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 4 af 4 · Træk: 4 (færrest mulige: 4)",
+      "stjernerTilbage": [],
+      "brikker": [
+       "e6"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     }
+    ]
+   },
+   {
+    "navn": "dronningen",
+    "foer": {
+     "titel": "Dronningen",
+     "tekst": "Du er hvid. Dronningen går så langt den vil - lige ud eller på skrå. Saml alle stjernerne på så få træk som muligt.",
+     "besked": "",
+     "taeller": "Trin 3 af 32",
+     "videre": true,
+     "stjerneStatus": "Stjerner: 0 af 4 · Træk: 0 (færrest mulige: 4)",
+     "stjernerTilbage": [
+      "d8",
+      "h8",
+      "h4",
+      "a1"
+     ],
+     "brikker": [
+      "d4"
+     ],
+     "iSkak": [],
+     "ringe": 0,
+     "proevIgen": false
+    },
+    "forsoeg": [
+     {
+      "beskrivelse": "forkert: springertraek d4-e6",
+      "titel": "Dronningen",
+      "tekst": "Du er hvid. Dronningen går så langt den vil - lige ud eller på skrå. Saml alle stjernerne på så få træk som muligt.",
+      "besked": "Dertil kan dronningen ikke gå. Dronningen går så langt den vil - lige ud eller på skrå.",
+      "taeller": "Trin 3 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 0 af 4 · Træk: 0 (færrest mulige: 4)",
+      "stjernerTilbage": [
+       "d8",
+       "h8",
+       "h4",
+       "a1"
+      ],
+      "brikker": [
+       "d4"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "d4a1",
+      "titel": "Dronningen",
+      "tekst": "Du er hvid. Dronningen går så langt den vil - lige ud eller på skrå. Saml alle stjernerne på så få træk som muligt.",
+      "besked": "Stjerne! Find den næste.",
+      "taeller": "Trin 3 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 1 af 4 · Træk: 1 (færrest mulige: 4)",
+      "stjernerTilbage": [
+       "d8",
+       "h8",
+       "h4"
+      ],
+      "brikker": [
+       "a1"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "a1h8",
+      "titel": "Dronningen",
+      "tekst": "Du er hvid. Dronningen går så langt den vil - lige ud eller på skrå. Saml alle stjernerne på så få træk som muligt.",
+      "besked": "Stjerne! Find den næste.",
+      "taeller": "Trin 3 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 2 af 4 · Træk: 2 (færrest mulige: 4)",
+      "stjernerTilbage": [
+       "d8",
+       "h4"
+      ],
+      "brikker": [
+       "h8"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "h8d8",
+      "titel": "Dronningen",
+      "tekst": "Du er hvid. Dronningen går så langt den vil - lige ud eller på skrå. Saml alle stjernerne på så få træk som muligt.",
+      "besked": "Stjerne! Find den næste.",
+      "taeller": "Trin 3 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 3 af 4 · Træk: 3 (færrest mulige: 4)",
+      "stjernerTilbage": [
+       "h4"
+      ],
+      "brikker": [
+       "d8"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "d8h4",
+      "titel": "Dronningen",
+      "tekst": "Du er hvid. Dronningen går så langt den vil - lige ud eller på skrå. Saml alle stjernerne på så få træk som muligt.",
+      "besked": "Godt klaret! Alle stjerner på 4 træk - færrest mulige.",
+      "taeller": "Trin 3 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 4 af 4 · Træk: 4 (færrest mulige: 4)",
+      "stjernerTilbage": [],
+      "brikker": [
+       "h4"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     }
+    ]
+   },
+   {
+    "navn": "taarnet",
+    "foer": {
+     "titel": "Tårnet",
+     "tekst": "Du er hvid. Tårnet går lige ud - vandret eller lodret, så langt det vil. Saml alle stjernerne på så få træk som muligt.",
+     "besked": "",
+     "taeller": "Trin 4 af 32",
+     "videre": true,
+     "stjerneStatus": "Stjerner: 0 af 4 · Træk: 0 (færrest mulige: 4)",
+     "stjernerTilbage": [
+      "e8",
+      "h8",
+      "a5",
+      "e5"
+     ],
+     "brikker": [
+      "a1"
+     ],
+     "iSkak": [],
+     "ringe": 0,
+     "proevIgen": false
+    },
+    "forsoeg": [
+     {
+      "beskrivelse": "a1a5",
+      "titel": "Tårnet",
+      "tekst": "Du er hvid. Tårnet går lige ud - vandret eller lodret, så langt det vil. Saml alle stjernerne på så få træk som muligt.",
+      "besked": "Stjerne! Find den næste.",
+      "taeller": "Trin 4 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 1 af 4 · Træk: 1 (færrest mulige: 4)",
+      "stjernerTilbage": [
+       "e8",
+       "h8",
+       "e5"
+      ],
+      "brikker": [
+       "a5"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "a5e5",
+      "titel": "Tårnet",
+      "tekst": "Du er hvid. Tårnet går lige ud - vandret eller lodret, så langt det vil. Saml alle stjernerne på så få træk som muligt.",
+      "besked": "Stjerne! Find den næste.",
+      "taeller": "Trin 4 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 2 af 4 · Træk: 2 (færrest mulige: 4)",
+      "stjernerTilbage": [
+       "e8",
+       "h8"
+      ],
+      "brikker": [
+       "e5"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "e5e8",
+      "titel": "Tårnet",
+      "tekst": "Du er hvid. Tårnet går lige ud - vandret eller lodret, så langt det vil. Saml alle stjernerne på så få træk som muligt.",
+      "besked": "Stjerne! Find den næste.",
+      "taeller": "Trin 4 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 3 af 4 · Træk: 3 (færrest mulige: 4)",
+      "stjernerTilbage": [
+       "h8"
+      ],
+      "brikker": [
+       "e8"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "e8h8",
+      "titel": "Tårnet",
+      "tekst": "Du er hvid. Tårnet går lige ud - vandret eller lodret, så langt det vil. Saml alle stjernerne på så få træk som muligt.",
+      "besked": "Godt klaret! Alle stjerner på 4 træk - færrest mulige.",
+      "taeller": "Trin 4 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 4 af 4 · Træk: 4 (færrest mulige: 4)",
+      "stjernerTilbage": [],
+      "brikker": [
+       "h8"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     }
+    ]
+   },
+   {
+    "navn": "loeberen",
+    "foer": {
+     "titel": "Løberen",
+     "tekst": "Du er hvid. Løberen går på skrå, så langt den vil, og bliver på sin feltfarve. Saml alle stjernerne på så få træk som muligt.",
+     "besked": "",
+     "taeller": "Trin 5 af 32",
+     "videre": true,
+     "stjerneStatus": "Stjerner: 0 af 4 · Træk: 0 (færrest mulige: 4)",
+     "stjernerTilbage": [
+      "d8",
+      "b6",
+      "g5",
+      "e3"
+     ],
+     "brikker": [
+      "c1"
+     ],
+     "iSkak": [],
+     "ringe": 0,
+     "proevIgen": false
+    },
+    "forsoeg": [
+     {
+      "beskrivelse": "forkert: loeberen lige frem c1-c3",
+      "titel": "Løberen",
+      "tekst": "Du er hvid. Løberen går på skrå, så langt den vil, og bliver på sin feltfarve. Saml alle stjernerne på så få træk som muligt.",
+      "besked": "Dertil kan løberen ikke gå. Løberen går på skrå, så langt den vil, og bliver på sin feltfarve.",
+      "taeller": "Trin 5 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 0 af 4 · Træk: 0 (færrest mulige: 4)",
+      "stjernerTilbage": [
+       "d8",
+       "b6",
+       "g5",
+       "e3"
+      ],
+      "brikker": [
+       "c1"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "c1e3",
+      "titel": "Løberen",
+      "tekst": "Du er hvid. Løberen går på skrå, så langt den vil, og bliver på sin feltfarve. Saml alle stjernerne på så få træk som muligt.",
+      "besked": "Stjerne! Find den næste.",
+      "taeller": "Trin 5 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 1 af 4 · Træk: 1 (færrest mulige: 4)",
+      "stjernerTilbage": [
+       "d8",
+       "b6",
+       "g5"
+      ],
+      "brikker": [
+       "e3"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "e3g5",
+      "titel": "Løberen",
+      "tekst": "Du er hvid. Løberen går på skrå, så langt den vil, og bliver på sin feltfarve. Saml alle stjernerne på så få træk som muligt.",
+      "besked": "Stjerne! Find den næste.",
+      "taeller": "Trin 5 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 2 af 4 · Træk: 2 (færrest mulige: 4)",
+      "stjernerTilbage": [
+       "d8",
+       "b6"
+      ],
+      "brikker": [
+       "g5"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "g5d8",
+      "titel": "Løberen",
+      "tekst": "Du er hvid. Løberen går på skrå, så langt den vil, og bliver på sin feltfarve. Saml alle stjernerne på så få træk som muligt.",
+      "besked": "Stjerne! Find den næste.",
+      "taeller": "Trin 5 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 3 af 4 · Træk: 3 (færrest mulige: 4)",
+      "stjernerTilbage": [
+       "b6"
+      ],
+      "brikker": [
+       "d8"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "d8b6",
+      "titel": "Løberen",
+      "tekst": "Du er hvid. Løberen går på skrå, så langt den vil, og bliver på sin feltfarve. Saml alle stjernerne på så få træk som muligt.",
+      "besked": "Godt klaret! Alle stjerner på 4 træk - færrest mulige.",
+      "taeller": "Trin 5 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 4 af 4 · Træk: 4 (færrest mulige: 4)",
+      "stjernerTilbage": [],
+      "brikker": [
+       "b6"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     }
+    ]
+   },
+   {
+    "navn": "springeren",
+    "foer": {
+     "titel": "Springeren",
+     "tekst": "Du er hvid. Springeren hopper i et \"L\": to felter frem, ét til siden - også over brikker. Saml alle stjernerne på så få træk som muligt.",
+     "besked": "",
+     "taeller": "Trin 6 af 32",
+     "videre": true,
+     "stjerneStatus": "Stjerner: 0 af 4 · Træk: 0 (færrest mulige: 4)",
+     "stjernerTilbage": [
+      "h7",
+      "f6",
+      "d5",
+      "c3"
+     ],
+     "brikker": [
+      "b1"
+     ],
+     "iSkak": [],
+     "ringe": 0,
+     "proevIgen": false
+    },
+    "forsoeg": [
+     {
+      "beskrivelse": "b1c3",
+      "titel": "Springeren",
+      "tekst": "Du er hvid. Springeren hopper i et \"L\": to felter frem, ét til siden - også over brikker. Saml alle stjernerne på så få træk som muligt.",
+      "besked": "Stjerne! Find den næste.",
+      "taeller": "Trin 6 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 1 af 4 · Træk: 1 (færrest mulige: 4)",
+      "stjernerTilbage": [
+       "h7",
+       "f6",
+       "d5"
+      ],
+      "brikker": [
+       "c3"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "c3d5",
+      "titel": "Springeren",
+      "tekst": "Du er hvid. Springeren hopper i et \"L\": to felter frem, ét til siden - også over brikker. Saml alle stjernerne på så få træk som muligt.",
+      "besked": "Stjerne! Find den næste.",
+      "taeller": "Trin 6 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 2 af 4 · Træk: 2 (færrest mulige: 4)",
+      "stjernerTilbage": [
+       "h7",
+       "f6"
+      ],
+      "brikker": [
+       "d5"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "d5f6",
+      "titel": "Springeren",
+      "tekst": "Du er hvid. Springeren hopper i et \"L\": to felter frem, ét til siden - også over brikker. Saml alle stjernerne på så få træk som muligt.",
+      "besked": "Stjerne! Find den næste.",
+      "taeller": "Trin 6 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 3 af 4 · Træk: 3 (færrest mulige: 4)",
+      "stjernerTilbage": [
+       "h7"
+      ],
+      "brikker": [
+       "f6"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "f6h7",
+      "titel": "Springeren",
+      "tekst": "Du er hvid. Springeren hopper i et \"L\": to felter frem, ét til siden - også over brikker. Saml alle stjernerne på så få træk som muligt.",
+      "besked": "Godt klaret! Alle stjerner på 4 træk - færrest mulige.",
+      "taeller": "Trin 6 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 4 af 4 · Træk: 4 (færrest mulige: 4)",
+      "stjernerTilbage": [],
+      "brikker": [
+       "h7"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     }
+    ]
+   },
+   {
+    "navn": "bonden",
+    "foer": {
+     "titel": "Bonden",
+     "tekst": "Du er hvid. Bonden går lige frem: to felter første gang, ellers ét. Saml alle stjernerne på så få træk som muligt.",
+     "besked": "",
+     "taeller": "Trin 7 af 32",
+     "videre": true,
+     "stjerneStatus": "Stjerner: 0 af 3 · Træk: 0 (færrest mulige: 3)",
+     "stjernerTilbage": [
+      "e6",
+      "e5",
+      "e4"
+     ],
+     "brikker": [
+      "e2"
+     ],
+     "iSkak": [],
+     "ringe": 0,
+     "proevIgen": false
+    },
+    "forsoeg": [
+     {
+      "beskrivelse": "e2e4",
+      "titel": "Bonden",
+      "tekst": "Du er hvid. Bonden går lige frem: to felter første gang, ellers ét. Saml alle stjernerne på så få træk som muligt.",
+      "besked": "Stjerne! Find den næste.",
+      "taeller": "Trin 7 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 1 af 3 · Træk: 1 (færrest mulige: 3)",
+      "stjernerTilbage": [
+       "e6",
+       "e5"
+      ],
+      "brikker": [
+       "e4"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "e4e5",
+      "titel": "Bonden",
+      "tekst": "Du er hvid. Bonden går lige frem: to felter første gang, ellers ét. Saml alle stjernerne på så få træk som muligt.",
+      "besked": "Stjerne! Find den næste.",
+      "taeller": "Trin 7 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 2 af 3 · Træk: 2 (færrest mulige: 3)",
+      "stjernerTilbage": [
+       "e6"
+      ],
+      "brikker": [
+       "e5"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "e5e6",
+      "titel": "Bonden",
+      "tekst": "Du er hvid. Bonden går lige frem: to felter første gang, ellers ét. Saml alle stjernerne på så få træk som muligt.",
+      "besked": "Godt klaret! Alle stjerner på 3 træk - færrest mulige.",
+      "taeller": "Trin 7 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+      "stjernerTilbage": [],
+      "brikker": [
+       "e6"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     }
+    ]
+   },
+   {
+    "navn": "bonden slaar",
+    "foer": {
+     "titel": "Bonden slår på skrå",
+     "tekst": "Du er hvid. Bonden slår ét felt på skrå fremad, aldrig lige frem. Slå den sorte bonde på d5.",
+     "besked": "",
+     "taeller": "Trin 8 af 32",
+     "videre": true,
+     "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+     "stjernerTilbage": [],
+     "brikker": [
+      "h8",
+      "d5",
+      "e4",
+      "e1"
+     ],
+     "iSkak": [],
+     "ringe": 1,
+     "proevIgen": false
+    },
+    "forsoeg": [
+     {
+      "beskrivelse": "forkert: bonden lige frem e4-e5",
+      "titel": "Bonden slår på skrå",
+      "tekst": "Du er hvid. Bonden slår ét felt på skrå fremad, aldrig lige frem. Slå den sorte bonde på d5.",
+      "besked": "Et lovligt træk - men ikke det, opgaven beder om. Trækket går tilbage; læs opgaven og prøv igen.",
+      "taeller": "Trin 8 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+      "stjernerTilbage": [],
+      "brikker": [
+       "h8",
+       "d5",
+       "e5",
+       "e1"
+      ],
+      "iSkak": [],
+      "ringe": 1,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "bonden slaar d5",
+      "titel": "Bonden slår på skrå",
+      "tekst": "Du er hvid. Bonden slår ét felt på skrå fremad, aldrig lige frem. Slå den sorte bonde på d5.",
+      "besked": "Rigtigt! Brikken er slået og taget af brættet.",
+      "taeller": "Trin 8 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+      "stjernerTilbage": [],
+      "brikker": [
+       "h8",
+       "d5",
+       "e1"
+      ],
+      "iSkak": [],
+      "ringe": 1,
+      "proevIgen": false
+     }
+    ]
+   },
+   {
+    "navn": "slag",
+    "foer": {
+     "titel": "Slag",
+     "tekst": "Du er hvid. Man slår ved at flytte hen på modstanderens brik - så er den væk. Slå den sorte brik i ringen.",
+     "besked": "",
+     "taeller": "Trin 9 af 32",
+     "videre": true,
+     "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+     "stjernerTilbage": [],
+     "brikker": [
+      "h8",
+      "b5",
+      "d4",
+      "e1"
+     ],
+     "iSkak": [],
+     "ringe": 1,
+     "proevIgen": false
+    },
+    "forsoeg": [
+     {
+      "beskrivelse": "forkert: springeren d4-f5 (intet slag)",
+      "titel": "Slag",
+      "tekst": "Du er hvid. Man slår ved at flytte hen på modstanderens brik - så er den væk. Slå den sorte brik i ringen.",
+      "besked": "Et lovligt træk - men ikke det, opgaven beder om. Trækket går tilbage; læs opgaven og prøv igen.",
+      "taeller": "Trin 9 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+      "stjernerTilbage": [],
+      "brikker": [
+       "h8",
+       "b5",
+       "f5",
+       "e1"
+      ],
+      "iSkak": [],
+      "ringe": 1,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "springeren slaar b5",
+      "titel": "Slag",
+      "tekst": "Du er hvid. Man slår ved at flytte hen på modstanderens brik - så er den væk. Slå den sorte brik i ringen.",
+      "besked": "Rigtigt! Brikken er slået og taget af brættet.",
+      "taeller": "Trin 9 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+      "stjernerTilbage": [],
+      "brikker": [
+       "h8",
+       "b5",
+       "e1"
+      ],
+      "iSkak": [],
+      "ringe": 1,
+      "proevIgen": false
+     }
+    ]
+   },
+   {
+    "navn": "skak og mat",
+    "foer": {
+     "titel": "Skak og mat",
+     "tekst": "Du er hvid. Skak: kongen er angrebet. Mat: skak, som kongen ikke kan komme ud af. Sæt den sorte konge (i ringen) mat.",
+     "besked": "",
+     "taeller": "Trin 10 af 32",
+     "videre": true,
+     "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+     "stjernerTilbage": [],
+     "brikker": [
+      "g8",
+      "f7",
+      "g7",
+      "h7",
+      "e1",
+      "h1"
+     ],
+     "iSkak": [],
+     "ringe": 1,
+     "proevIgen": false
+    },
+    "forsoeg": [
+     {
+      "beskrivelse": "forkert: Te7 (ikke skak)",
+      "titel": "Skak og mat",
+      "tekst": "Du er hvid. Skak: kongen er angrebet. Mat: skak, som kongen ikke kan komme ud af. Sæt den sorte konge (i ringen) mat.",
+      "besked": "Et lovligt træk - men ikke det, opgaven beder om. Trækket går tilbage; læs opgaven og prøv igen.",
+      "taeller": "Trin 10 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+      "stjernerTilbage": [],
+      "brikker": [
+       "g8",
+       "e7",
+       "f7",
+       "g7",
+       "h7",
+       "h1"
+      ],
+      "iSkak": [],
+      "ringe": 1,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "Te8 mat",
+      "titel": "Skak og mat",
+      "tekst": "Du er hvid. Skak: kongen er angrebet. Mat: skak, som kongen ikke kan komme ud af. Sæt den sorte konge (i ringen) mat.",
+      "besked": "Rigtigt! Skakmat - partiet er vundet!",
+      "taeller": "Trin 10 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+      "stjernerTilbage": [],
+      "brikker": [
+       "e8",
+       "g8",
+       "f7",
+       "g7",
+       "h7",
+       "h1"
+      ],
+      "iSkak": [],
+      "ringe": 1,
+      "proevIgen": false
+     }
+    ]
+   },
+   {
+    "navn": "svar paa skak",
+    "foer": {
+     "titel": "Svar på skak",
+     "tekst": "Du er hvid. Din konge er i skak fra tårnet på e8. Red den: flyt kongen, slå tårnet med dit tårn, eller sæt løberen imellem.",
+     "besked": "",
+     "taeller": "Trin 11 af 32",
+     "videre": true,
+     "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+     "stjernerTilbage": [],
+     "brikker": [
+      "a8",
+      "e8",
+      "h8",
+      "h4",
+      "e1"
+     ],
+     "iSkak": [
+      "e1"
+     ],
+     "ringe": 1,
+     "proevIgen": false
+    },
+    "forsoeg": [
+     {
+      "beskrivelse": "kongen d2",
+      "titel": "Svar på skak",
+      "tekst": "Du er hvid. Din konge er i skak fra tårnet på e8. Red den: flyt kongen, slå tårnet med dit tårn, eller sæt løberen imellem.",
+      "besked": "Rigtigt! Kongen er ude af skak.",
+      "taeller": "Trin 11 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+      "stjernerTilbage": [],
+      "brikker": [
+       "a8",
+       "e8",
+       "h8",
+       "h4",
+       "d2"
+      ],
+      "iSkak": [],
+      "ringe": 1,
+      "proevIgen": false
+     }
+    ]
+   },
+   {
+    "navn": "rokade",
+    "foer": {
+     "titel": "Rokade",
+     "tekst": "Du er hvid. Kongen og et tårn kan rokere sammen, hvis ingen har flyttet før. Klik kongen, og flyt den to felter.",
+     "besked": "",
+     "taeller": "Trin 12 af 32",
+     "videre": true,
+     "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+     "stjernerTilbage": [],
+     "brikker": [
+      "e8",
+      "a1",
+      "e1",
+      "h1"
+     ],
+     "iSkak": [],
+     "ringe": 1,
+     "proevIgen": false
+    },
+    "forsoeg": [
+     {
+      "beskrivelse": "forkert: kongen et felt f1",
+      "titel": "Rokade",
+      "tekst": "Du er hvid. Kongen og et tårn kan rokere sammen, hvis ingen har flyttet før. Klik kongen, og flyt den to felter.",
+      "besked": "Et lovligt træk - men ikke det, opgaven beder om. Trækket går tilbage; læs opgaven og prøv igen.",
+      "taeller": "Trin 12 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+      "stjernerTilbage": [],
+      "brikker": [
+       "e8",
+       "a1",
+       "f1",
+       "h1"
+      ],
+      "iSkak": [],
+      "ringe": 1,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "rokade lang e1-c1",
+      "titel": "Rokade",
+      "tekst": "Du er hvid. Kongen og et tårn kan rokere sammen, hvis ingen har flyttet før. Klik kongen, og flyt den to felter.",
+      "besked": "Rigtigt! Kongen står sikkert, og tårnet er kommet ud.",
+      "taeller": "Trin 12 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+      "stjernerTilbage": [],
+      "brikker": [
+       "e8",
+       "c1",
+       "d1",
+       "h1"
+      ],
+      "iSkak": [],
+      "ringe": 1,
+      "proevIgen": false
+     }
+    ]
+   },
+   {
+    "navn": "en passant",
+    "foer": {
+     "titel": "En passant",
+     "tekst": "Du er hvid. En bonde der lige gik to felter frem, kan slås \"i forbifarten\" - men kun med det samme.",
+     "besked": "",
+     "taeller": "Trin 13 af 32",
+     "videre": true,
+     "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+     "stjernerTilbage": [],
+     "brikker": [
+      "e8",
+      "d5",
+      "e5",
+      "e1"
+     ],
+     "iSkak": [],
+     "ringe": 1,
+     "proevIgen": false
+    },
+    "forsoeg": [
+     {
+      "beskrivelse": "en passant e5-d6",
+      "titel": "En passant",
+      "tekst": "Du er hvid. En bonde der lige gik to felter frem, kan slås \"i forbifarten\" - men kun med det samme.",
+      "besked": "Rigtigt! Bonden slog i forbifarten.",
+      "taeller": "Trin 13 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+      "stjernerTilbage": [],
+      "brikker": [
+       "e8",
+       "d6",
+       "e1"
+      ],
+      "iSkak": [],
+      "ringe": 1,
+      "proevIgen": false
+     }
+    ]
+   },
+   {
+    "navn": "forvandling",
+    "foer": {
+     "titel": "Forvandling",
+     "tekst": "Du er hvid. Når en bonde når den sidste række, forvandles den til en ny brik - oftest en dronning. Før bonden i mål.",
+     "besked": "",
+     "taeller": "Trin 14 af 32",
+     "videre": true,
+     "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+     "stjernerTilbage": [],
+     "brikker": [
+      "h8",
+      "e7",
+      "e1"
+     ],
+     "iSkak": [],
+     "ringe": 1,
+     "proevIgen": false
+    },
+    "forsoeg": [
+     {
+      "beskrivelse": "e7-e8 dronning",
+      "titel": "Forvandling",
+      "tekst": "Du er hvid. Når en bonde når den sidste række, forvandles den til en ny brik - oftest en dronning. Før bonden i mål.",
+      "besked": "Rigtigt! Bonden blev til en dronning.",
+      "taeller": "Trin 14 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+      "stjernerTilbage": [],
+      "brikker": [
+       "e8",
+       "h8",
+       "e1"
+      ],
+      "iSkak": [
+       "h8"
+      ],
+      "ringe": 1,
+      "proevIgen": false
+     }
+    ]
+   },
+   {
+    "navn": "patt",
+    "foer": {
+     "titel": "Patt er remis",
+     "tekst": "Du er hvid. Patt: den der skal trække er ikke i skak, men har ingen lovlige træk. Så er det remis! Find trækket der giver patt - ikke mat.",
+     "besked": "",
+     "taeller": "Trin 15 af 32",
+     "videre": true,
+     "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+     "stjernerTilbage": [],
+     "brikker": [
+      "h8",
+      "f7",
+      "g1"
+     ],
+     "iSkak": [],
+     "ringe": 1,
+     "proevIgen": false
+    },
+    "forsoeg": [
+     {
+      "beskrivelse": "forkert: Dg7+ (ikke patt)",
+      "titel": "Patt er remis",
+      "tekst": "Du er hvid. Patt: den der skal trække er ikke i skak, men har ingen lovlige træk. Så er det remis! Find trækket der giver patt - ikke mat.",
+      "besked": "Et lovligt træk - men ikke det, opgaven beder om. Trækket går tilbage; læs opgaven og prøv igen.",
+      "taeller": "Trin 15 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+      "stjernerTilbage": [],
+      "brikker": [
+       "h8",
+       "f7",
+       "g7"
+      ],
+      "iSkak": [],
+      "ringe": 1,
+      "proevIgen": false
+     },
+     {
+      "beskrivelse": "Dg6 patt",
+      "titel": "Patt er remis",
+      "tekst": "Du er hvid. Patt: den der skal trække er ikke i skak, men har ingen lovlige træk. Så er det remis! Find trækket der giver patt - ikke mat.",
+      "besked": "Rigtigt! Patt: ingen kan vinde. Pas på det, når du selv er foran!",
+      "taeller": "Trin 15 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+      "stjernerTilbage": [],
+      "brikker": [
+       "h8",
+       "f7",
+       "g6"
+      ],
+      "iSkak": [],
+      "ringe": 1,
+      "proevIgen": false
+     }
+    ]
+   },
+   {
+    "navn": "moenster mat (sprunget over)",
+    "foer": {
+     "titel": "Mønster: mat i 1",
+     "tekst": "Du er hvid. Det første mønster: find skakmat i ét træk.",
+     "besked": "",
+     "taeller": "Trin 16 af 32",
+     "videre": true,
+     "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+     "stjernerTilbage": [],
+     "brikker": [
+      "a8",
+      "b8",
+      "c8",
+      "g8",
+      "h8",
+      "a7",
+      "b7",
+      "f7",
+      "h7",
+      "e6",
+      "f6",
+      "a5",
+      "d5",
+      "c4",
+      "d4",
+      "g4",
+      "g3",
+      "a2",
+      "d2",
+      "f2",
+      "g2",
+      "h2",
+      "e1",
+      "f1",
+      "h1"
+     ],
+     "iSkak": [],
+     "ringe": 0,
+     "proevIgen": false
+    },
+    "forsoeg": []
+   },
+   {
+    "navn": "moenster gaffel (sprunget over)",
+    "foer": {
+     "titel": "Mønster: gaffel",
+     "tekst": "Du er hvid. En gaffel: én brik angriber to ting på én gang. Find trækket.",
+     "besked": "",
+     "taeller": "Trin 17 af 32",
+     "videre": true,
+     "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+     "stjernerTilbage": [],
+     "brikker": [
+      "b7",
+      "h7",
+      "a6",
+      "e5",
+      "f5",
+      "c4",
+      "e3",
+      "g2",
+      "d1"
+     ],
+     "iSkak": [],
+     "ringe": 0,
+     "proevIgen": false
+    },
+    "forsoeg": []
+   },
+   {
+    "navn": "moenster spyd (sprunget over)",
+    "foer": {
+     "titel": "Mønster: spyd",
+     "tekst": "Du er hvid. Et spyd: en brik tvinges væk, og noget bagved den falder. Find trækket.",
+     "besked": "",
+     "taeller": "Trin 18 af 32",
+     "videre": true,
+     "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+     "stjernerTilbage": [],
+     "brikker": [
+      "e8",
+      "a7",
+      "b6",
+      "c6",
+      "d5",
+      "e5",
+      "a4",
+      "b4",
+      "c3",
+      "e3",
+      "c2",
+      "e1"
+     ],
+     "iSkak": [],
+     "ringe": 0,
+     "proevIgen": false
+    },
+    "forsoeg": []
+   },
+   {
+    "navn": "princip centrum",
+    "foer": {
+     "titel": "Princip: centrum",
+     "tekst": "Du er hvid. Midten er vigtigst. Flyt en bonde ind mod midten - fx fra e2 til e4. (Kantbonden a3 gør ikke noget for midten.)",
+     "besked": "",
+     "taeller": "Trin 19 af 32",
+     "videre": true,
+     "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+     "stjernerTilbage": [],
+     "brikker": [
+      "a8",
+      "b8",
+      "c8",
+      "d8",
+      "e8",
+      "f8",
+      "g8",
+      "h8",
+      "a7",
+      "b7",
+      "c7",
+      "d7",
+      "e7",
+      "f7",
+      "g7",
+      "h7",
+      "a2",
+      "b2",
+      "c2",
+      "d2",
+      "e2",
+      "f2",
+      "g2",
+      "h2",
+      "a1",
+      "b1",
+      "c1",
+      "d1",
+      "e1",
+      "f1",
+      "g1",
+      "h1"
+     ],
+     "iSkak": [],
+     "ringe": 0,
+     "proevIgen": false
+    },
+    "forsoeg": [
+     {
+      "beskrivelse": "e2-e4",
+      "titel": "Princip: centrum",
+      "tekst": "Du er hvid. Midten er vigtigst. Flyt en bonde ind mod midten - fx fra e2 til e4. (Kantbonden a3 gør ikke noget for midten.)",
+      "besked": "e4 tager plads i centrum med det samme.",
+      "taeller": "Trin 19 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+      "stjernerTilbage": [],
+      "brikker": [
+       "a8",
+       "b8",
+       "c8",
+       "d8",
+       "e8",
+       "f8",
+       "g8",
+       "h8",
+       "a7",
+       "b7",
+       "c7",
+       "d7",
+       "e7",
+       "f7",
+       "g7",
+       "h7",
+       "e4",
+       "a2",
+       "b2",
+       "c2",
+       "d2",
+       "f2",
+       "g2",
+       "h2",
+       "a1",
+       "b1",
+       "c1",
+       "d1",
+       "e1",
+       "f1",
+       "g1",
+       "h1"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     }
+    ]
+   },
+   {
+    "navn": "princip udvikling",
+    "foer": {
+     "titel": "Princip: udvikling",
+     "tekst": "Du er hvid. Få brikkerne ud mod midten. Flyt springeren fra g1 til f3 - ikke ud til kanten på h3.",
+     "besked": "",
+     "taeller": "Trin 20 af 32",
+     "videre": true,
+     "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+     "stjernerTilbage": [],
+     "brikker": [
+      "a8",
+      "c8",
+      "d8",
+      "e8",
+      "f8",
+      "g8",
+      "h8",
+      "a7",
+      "b7",
+      "c7",
+      "d7",
+      "f7",
+      "g7",
+      "h7",
+      "c6",
+      "e5",
+      "e4",
+      "a2",
+      "b2",
+      "c2",
+      "d2",
+      "f2",
+      "g2",
+      "h2",
+      "a1",
+      "b1",
+      "c1",
+      "d1",
+      "e1",
+      "f1",
+      "g1",
+      "h1"
+     ],
+     "iSkak": [],
+     "ringe": 0,
+     "proevIgen": false
+    },
+    "forsoeg": [
+     {
+      "beskrivelse": "g1-f3",
+      "titel": "Princip: udvikling",
+      "tekst": "Du er hvid. Få brikkerne ud mod midten. Flyt springeren fra g1 til f3 - ikke ud til kanten på h3.",
+      "besked": "Springeren på f3 er ude, peger mod midten og holder øje med e5.",
+      "taeller": "Trin 20 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+      "stjernerTilbage": [],
+      "brikker": [
+       "a8",
+       "c8",
+       "d8",
+       "e8",
+       "f8",
+       "g8",
+       "h8",
+       "a7",
+       "b7",
+       "c7",
+       "d7",
+       "f7",
+       "g7",
+       "h7",
+       "c6",
+       "e5",
+       "e4",
+       "f3",
+       "a2",
+       "b2",
+       "c2",
+       "d2",
+       "f2",
+       "g2",
+       "h2",
+       "a1",
+       "b1",
+       "c1",
+       "d1",
+       "e1",
+       "f1",
+       "h1"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     }
+    ]
+   },
+   {
+    "navn": "princip konge",
+    "foer": {
+     "titel": "Princip: kongens sikkerhed",
+     "tekst": "Du er hvid. Få kongen i sikkerhed tidligt: rokér kort (kongen to felter mod højre). Bonden på g2 skal blive, hvor den er.",
+     "besked": "",
+     "taeller": "Trin 21 af 32",
+     "videre": true,
+     "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+     "stjernerTilbage": [],
+     "brikker": [
+      "c8",
+      "d8",
+      "e8",
+      "f2",
+      "g2",
+      "h2",
+      "a1",
+      "e1",
+      "h1"
+     ],
+     "iSkak": [],
+     "ringe": 0,
+     "proevIgen": false
+    },
+    "forsoeg": [
+     {
+      "beskrivelse": "rokade e1-g1",
+      "titel": "Princip: kongens sikkerhed",
+      "tekst": "Du er hvid. Få kongen i sikkerhed tidligt: rokér kort (kongen to felter mod højre). Bonden på g2 skal blive, hvor den er.",
+      "besked": "Rokaden bringer kongen i sikkerhed bag bønderne.",
+      "taeller": "Trin 21 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+      "stjernerTilbage": [],
+      "brikker": [
+       "c8",
+       "d8",
+       "e8",
+       "f2",
+       "g2",
+       "h2",
+       "a1",
+       "f1",
+       "g1"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     }
+    ]
+   },
+   {
+    "navn": "princip samme brik",
+    "foer": {
+     "titel": "Princip: ikke samme brik to gange",
+     "tekst": "Du er hvid. Få en NY brik ud i stedet for at flytte den samme igen. Flyt løberen fra f1 til c4.",
+     "besked": "",
+     "taeller": "Trin 22 af 32",
+     "videre": true,
+     "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+     "stjernerTilbage": [],
+     "brikker": [
+      "a8",
+      "c8",
+      "d8",
+      "e8",
+      "f8",
+      "g8",
+      "h8",
+      "a7",
+      "b7",
+      "c7",
+      "d7",
+      "f7",
+      "g7",
+      "h7",
+      "c6",
+      "e5",
+      "e4",
+      "f3",
+      "a2",
+      "b2",
+      "c2",
+      "d2",
+      "f2",
+      "g2",
+      "h2",
+      "a1",
+      "b1",
+      "c1",
+      "d1",
+      "e1",
+      "f1",
+      "h1"
+     ],
+     "iSkak": [],
+     "ringe": 0,
+     "proevIgen": false
+    },
+    "forsoeg": [
+     {
+      "beskrivelse": "f1-c4",
+      "titel": "Princip: ikke samme brik to gange",
+      "tekst": "Du er hvid. Få en NY brik ud i stedet for at flytte den samme igen. Flyt løberen fra f1 til c4.",
+      "besked": "Løberen på c4 er en ny brik i spil, og den sigter mod f7.",
+      "taeller": "Trin 22 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+      "stjernerTilbage": [],
+      "brikker": [
+       "a8",
+       "c8",
+       "d8",
+       "e8",
+       "f8",
+       "g8",
+       "h8",
+       "a7",
+       "b7",
+       "c7",
+       "d7",
+       "f7",
+       "g7",
+       "h7",
+       "c6",
+       "e5",
+       "c4",
+       "e4",
+       "f3",
+       "a2",
+       "b2",
+       "c2",
+       "d2",
+       "f2",
+       "g2",
+       "h2",
+       "a1",
+       "b1",
+       "c1",
+       "d1",
+       "e1",
+       "h1"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     }
+    ]
+   },
+   {
+    "navn": "princip aabne linjer",
+    "foer": {
+     "titel": "Princip: tårne på åbne linjer",
+     "tekst": "Du er hvid. Tårne vil have en linje uden bønder. Flyt tårnet til c1 - på b1 står din egen bonde i vejen.",
+     "besked": "",
+     "taeller": "Trin 23 af 32",
+     "videre": true,
+     "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+     "stjernerTilbage": [],
+     "brikker": [
+      "h8",
+      "b2",
+      "a1",
+      "e1"
+     ],
+     "iSkak": [],
+     "ringe": 0,
+     "proevIgen": false
+    },
+    "forsoeg": [
+     {
+      "beskrivelse": "taarnet a1-c1",
+      "titel": "Princip: tårne på åbne linjer",
+      "tekst": "Du er hvid. Tårne vil have en linje uden bønder. Flyt tårnet til c1 - på b1 står din egen bonde i vejen.",
+      "besked": "c-linjen er helt åben - tårnet får fri bane.",
+      "taeller": "Trin 23 af 32",
+      "videre": true,
+      "stjerneStatus": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)",
+      "stjernerTilbage": [],
+      "brikker": [
+       "h8",
+       "b2",
+       "c1",
+       "e1"
+      ],
+      "iSkak": [],
+      "ringe": 0,
+      "proevIgen": false
+     }
+    ]
+   }
+  ],
+  "alternativer": [],
+  "sidefejl": []
+ },
+ "log": [
+  {
+   "hvad": "oversigt",
+   "samlet": "0 af 24 kompetencer sidder.",
+   "kategorier": [
+    {
+     "titel": "Brikkerne og reglerne",
+     "kompetencer": [
+      "Lær skak"
+     ]
+    },
+    {
+     "titel": "Matmønstre",
+     "kompetencer": [
+      "Mat i 1 med dronning og tårn",
+      "Dronningemat",
+      "Tårnmat",
+      "Baglinjemat",
+      "Kvælningsmat"
+     ]
+    },
+    {
+     "titel": "Taktik",
+     "kompetencer": [
+      "Slå den ubeskyttede brik",
+      "Red din brik",
+      "Gaffel med springeren",
+      "Gaffel med andre brikker",
+      "Binding",
+      "Spid",
+      "Afdækket angreb"
+     ]
+    },
+    {
+     "titel": "Forsvar",
+     "kompetencer": [
+      "Stop matten",
+      "Byt rigtigt"
+     ]
+    },
+    {
+     "titel": "Åbningsprincipper",
+     "kompetencer": [
+      "Rokér i tide",
+      "Tag centrum",
+      "Udvikl brikkerne"
+     ]
+    },
+    {
+     "titel": "Slutspil",
+     "kompetencer": [
+      "Dronning mod konge",
+      "Kvadratreglen",
+      "Konge og bonde: oppositionen",
+      "Tårnmat: gør kassen mindre",
+      "Tårn mod konge"
+     ]
+    },
+    {
+     "titel": "Regn frem",
+     "kompetencer": [
+      "Mat i 2",
+      "Hvad svarer modstanderen?"
+     ]
+    }
+   ],
+   "sidehoejde": 4563,
+   "knapHoejde": 44
+  },
+  {
+   "hvad": "damemat forkert/pil/rigtigt",
+   "oevelse": "dm01",
+   "forkert1": "h7g8",
+   "b1": {
+    "tekst": "Du er hvid. Sæt mat i ét træk.",
+    "besked": "Det var ikke skak. Mat er altid skak - hvor kan dronningen give skak? Prøv igen.",
+    "stjerner": "☆☆☆☆☆"
+   },
+   "forkert2": "h7h8",
+   "b2": {
+    "tekst": "Du er hvid. Sæt mat i ét træk.",
+    "besked": "Det var ikke mat. Hvilke felter kan kongen flygte til? Find skakken der dækker dem alle. Pilen viser vejen.",
+    "stjerner": "☆☆☆☆☆"
+   },
+   "rigtigt": {
+    "tekst": "Du er hvid. Sæt mat i ét træk.",
+    "besked": "Løst! Skakmat! Men med fejl eller hint, så rækken starter forfra.",
+    "stjerner": "☆☆☆☆☆"
+   }
+  },
+  {
+   "0": {
+    "id": "dm02",
+    "tekst": "Du er hvid. Sæt mat i ét træk.",
+    "besked": "Rigtigt! Skakmat! (1 af 5 i træk)",
+    "stjerner": "★☆☆☆☆"
+   },
+   "1": {
+    "id": "dm03",
+    "tekst": "Du er hvid. Sæt mat i ét træk.",
+    "besked": "Rigtigt! Skakmat! (2 af 5 i træk)",
+    "stjerner": "★★☆☆☆"
+   },
+   "2": {
+    "id": "dm04",
+    "tekst": "Du er hvid. Sæt mat i ét træk.",
+    "besked": "Rigtigt! Skakmat! (3 af 5 i træk)",
+    "stjerner": "★★★☆☆"
+   },
+   "hvad": "damemat 3 rigtige"
+  },
+  {
+   "hvad": "dronning mod konge (optimalt)",
+   "oevelse": "dk1",
+   "traek": 6,
+   "mat": true,
+   "patt": false,
+   "tekst": "Træk 6 af 20. Sæt mat inden for 20 træk.",
+   "besked": "Rigtigt! Skakmat i 6 træk! (1 af 3 i træk)",
+   "stjerner": "★☆☆"
+  },
+  {
+   "hvad": "dronning haengt",
+   "oevelse": "dk2",
+   "traek": 1,
+   "mat": false,
+   "patt": false,
+   "tekst": "Træk 1 af 20. Sæt mat inden for 20 træk.",
+   "besked": "Kongen slog din brik - nu kan ingen vinde. Hold den dækket af din konge, eller langt fra hans. Stjernerne starter forfra.",
+   "stjerner": "☆☆☆"
+  },
+  {
+   "hvad": "dronning: patt med vilje",
+   "oevelse": "dk3",
+   "traek": 6,
+   "mat": false,
+   "patt": true,
+   "tekst": "Træk 6 af 20. Sæt mat inden for 20 træk.",
+   "besked": "Patt - kongen kunne ikke flytte, men stod ikke i skak. Det er uafgjort. Giv den altid et felt, indtil du sætter mat. Stjernerne starter forfra.",
+   "stjerner": "☆☆☆"
+  },
+  {
+   "hvad": "opposition",
+   "oevelse": "op01",
+   "fen": "8/8/2k5/8/3K4/8/1P6/8 w - - 0 1",
+   "bondeTraek": "b3",
+   "b1": {
+    "tekst": "Du er hvid. Find det træk der vinder. Kongen først - bonden venter.",
+    "besked": "Det træk giver kun uafgjort. Stil din konge over for modstanderens konge, med ét felt imellem. Prøv igen.",
+    "stjerner": "☆☆☆☆☆"
+   },
+   "b2": {
+    "tekst": "Du er hvid. Find det træk der vinder. Kongen først - bonden venter.",
+    "besked": "Godt! Hans konge veg. Gå til siden, så du igen står over for ham - stadig med kongen.",
+    "stjerner": "☆☆☆☆☆"
+   },
+   "b3": {
+    "tekst": "Du er hvid. Find det træk der vinder. Kongen først - bonden venter.",
+    "besked": "Løst! Kongen står rigtigt - nu kommer bonden igennem. Se den gå hele vejen. Men med fejl eller hint, så rækken starter forfra.",
+    "stjerner": "☆☆☆☆☆"
+   }
+  },
+  {
+   "hvad": "kapitel rokade",
+   "foer": {
+    "titel": "Rokade",
+    "tekst": "Du er hvid. Kongen og et tårn kan rokere sammen, hvis ingen har flyttet før. Klik kongen, og flyt den to felter.",
+    "besked": "",
+    "taeller": "Trin 12 af 32",
+    "videre": true
+   },
+   "efter": {
+    "titel": "Rokade",
+    "tekst": "Du er hvid. Kongen og et tårn kan rokere sammen, hvis ingen har flyttet før. Klik kongen, og flyt den to felter.",
+    "besked": "Rigtigt! Kongen står sikkert, og tårnet er kommet ud.",
+    "taeller": "Trin 12 af 32",
+    "videre": true
+   }
+  },
+  {
+   "hvad": "gaffel til stjerner",
+   "runder": 10,
+   "sidste": {
+    "runde": 8,
+    "id": "0DBIv",
+    "tekst": "Du er hvid. Find springergaflen - og vind brikken bagefter.",
+    "besked": "Det sidder! ★★★★★ Du finder springertræk der angriber to ting på én gang.",
+    "stjerner": "★★★★★"
+   }
+  },
+  {
+   "hvad": "taarnmat",
+   "runder": 8,
+   "sidste": {
+    "runde": 6,
+    "id": "tm07",
+    "tekst": "Du er hvid. Sæt mat i ét træk.",
+    "besked": "Det sidder! ★★★★★ Du sætter mat med tårn og konge langs kanten.",
+    "stjerner": "★★★★★"
+   }
+  },
+  {
+   "hvad": "taarn mod konge (kasse)",
+   "oevelse": "tk1",
+   "traek": 18,
+   "mat": true,
+   "patt": false,
+   "tekst": "Træk 18 af 50. Sæt mat inden for 50 træk.",
+   "besked": "Rigtigt! Skakmat i 18 træk! (1 vundet af de sidste 1 - 3 af 4 skal til)",
+   "stjerner": "★☆☆"
+  },
+  {
+   "hvad": "taarn mod konge (kasse)",
+   "oevelse": "tk2",
+   "traek": 12,
+   "mat": true,
+   "patt": false,
+   "tekst": "Træk 12 af 50. Sæt mat inden for 50 træk.",
+   "besked": "Rigtigt! Skakmat i 12 træk! (2 vundet af de sidste 2 - 3 af 4 skal til)",
+   "stjerner": "★★☆"
+  },
+  {
+   "hvad": "taarn mod konge (kasse)",
+   "oevelse": "tk3",
+   "traek": 41,
+   "mat": true,
+   "patt": false,
+   "tekst": "Træk 41 af 50. Sæt mat inden for 50 træk.",
+   "besked": "Det sidder! ★★★ Du vinder med tårn og konge mod en konge.",
+   "stjerner": "★★★"
+  },
+  {
+   "hvad": "laer braettet",
+   "foer": "Brættet",
+   "sidst": "Rigtigt! Det er e4: linje e, række 4.",
+   "status": ""
+  },
+  {
+   "hvad": "laer kongen (omvej)",
+   "foer": "Kongen",
+   "sidst": "Godt klaret! Du brugte 6 træk. Det kan gøres på 4 - prøv igen, hvis du vil.",
+   "status": "Stjerner: 4 af 4 · Træk: 6 (færrest mulige: 4)"
+  },
+  {
+   "hvad": "laer kongen (igen, faerrest)",
+   "foer": "Kongen",
+   "sidst": "Godt klaret! Alle stjerner på 4 træk - færrest mulige.",
+   "status": "Stjerner: 4 af 4 · Træk: 4 (færrest mulige: 4)"
+  },
+  {
+   "hvad": "laer dronningen",
+   "foer": "Dronningen",
+   "sidst": "Godt klaret! Alle stjerner på 4 træk - færrest mulige.",
+   "status": "Stjerner: 4 af 4 · Træk: 4 (færrest mulige: 4)"
+  },
+  {
+   "hvad": "laer taarnet",
+   "foer": "Tårnet",
+   "sidst": "Godt klaret! Alle stjerner på 4 træk - færrest mulige.",
+   "status": "Stjerner: 4 af 4 · Træk: 4 (færrest mulige: 4)"
+  },
+  {
+   "hvad": "laer loeberen",
+   "foer": "Løberen",
+   "sidst": "Godt klaret! Alle stjerner på 4 træk - færrest mulige.",
+   "status": "Stjerner: 4 af 4 · Træk: 4 (færrest mulige: 4)"
+  },
+  {
+   "hvad": "laer springeren",
+   "foer": "Springeren",
+   "sidst": "Godt klaret! Alle stjerner på 4 træk - færrest mulige.",
+   "status": "Stjerner: 4 af 4 · Træk: 4 (færrest mulige: 4)"
+  },
+  {
+   "hvad": "laer bonden",
+   "foer": "Bonden",
+   "sidst": "Godt klaret! Alle stjerner på 3 træk - færrest mulige.",
+   "status": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)"
+  },
+  {
+   "hvad": "laer bonden slaar",
+   "foer": "Bonden slår på skrå",
+   "sidst": "Rigtigt! Brikken er slået og taget af brættet.",
+   "status": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)"
+  },
+  {
+   "hvad": "laer slag",
+   "foer": "Slag",
+   "sidst": "Rigtigt! Brikken er slået og taget af brættet.",
+   "status": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)"
+  },
+  {
+   "hvad": "laer skak og mat",
+   "foer": "Skak og mat",
+   "sidst": "Rigtigt! Skakmat - partiet er vundet!",
+   "status": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)"
+  },
+  {
+   "hvad": "laer svar paa skak",
+   "foer": "Svar på skak",
+   "sidst": "Rigtigt! Kongen er ude af skak.",
+   "status": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)"
+  },
+  {
+   "hvad": "laer rokade",
+   "foer": "Rokade",
+   "sidst": "Rigtigt! Kongen står sikkert, og tårnet er kommet ud.",
+   "status": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)"
+  },
+  {
+   "hvad": "laer en passant",
+   "foer": "En passant",
+   "sidst": "Rigtigt! Bonden slog i forbifarten.",
+   "status": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)"
+  },
+  {
+   "hvad": "laer forvandling",
+   "foer": "Forvandling",
+   "sidst": "Rigtigt! Bonden blev til en dronning.",
+   "status": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)"
+  },
+  {
+   "hvad": "laer patt",
+   "foer": "Patt er remis",
+   "sidst": "Rigtigt! Patt: ingen kan vinde. Pas på det, når du selv er foran!",
+   "status": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)"
+  },
+  {
+   "hvad": "laer princip centrum",
+   "foer": "Princip: centrum",
+   "sidst": "e4 tager plads i centrum med det samme.",
+   "status": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)"
+  },
+  {
+   "hvad": "laer princip udvikling",
+   "foer": "Princip: udvikling",
+   "sidst": "Springeren på f3 er ude, peger mod midten og holder øje med e5.",
+   "status": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)"
+  },
+  {
+   "hvad": "laer princip konge",
+   "foer": "Princip: kongens sikkerhed",
+   "sidst": "Rokaden bringer kongen i sikkerhed bag bønderne.",
+   "status": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)"
+  },
+  {
+   "hvad": "laer princip samme brik",
+   "foer": "Princip: ikke samme brik to gange",
+   "sidst": "Løberen på c4 er en ny brik i spil, og den sigter mod f7.",
+   "status": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)"
+  },
+  {
+   "hvad": "laer princip aabne linjer",
+   "foer": "Princip: tårne på åbne linjer",
+   "sidst": "c-linjen er helt åben - tårnet får fri bane.",
+   "status": "Stjerner: 3 af 3 · Træk: 3 (færrest mulige: 3)"
+  }
+ ]
+}
