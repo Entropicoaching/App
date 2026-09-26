@@ -2,7 +2,7 @@
 // Forsiden: hurtigknapper, "Kræver dit blik" og atletlisten.
 // Samme navne som props som i Dashboard; kun kroppen er flyttet.
 import { currentWeekNo, s, initials } from '../dashboardShared'
-import { beregnUgensAfvigelse, sorterEfterAfvigelse } from './afvigelse'
+import { beregnUgensAfvigelse, sorterEfterAfvigelse, ugensStemme } from './afvigelse'
 import { coachBriefingPointKey } from '../coachBriefingSeen'
 import { supabase } from '../supabase'
 import { holidayInfo, ferieBadgeLabel } from './coachKonstanter'
@@ -42,9 +42,13 @@ export default function ForsideView({
               completedSets: completion.sets,
               completedTonnage: completion.tonnage,
             })
-            return { athlete, afvigelse, current }
+            // ORDRE 428 (C2): ugens stemme (laveste vurdering, nyeste
+            // kommentar/note) og antal pas med mindst ét logget sæt (C3).
+            const stemme = ugensStemme(current?.session_voices, completion.notes)
+            return { athlete, afvigelse, current, stemme, pasLogget: completion.pas || 0 }
           })
           const afvigelseByAthleteId = new Map(athletesWithAfvigelse.map(r => [r.athlete.id, r.afvigelse]))
+          const ugeStatusByAthleteId = new Map(athletesWithAfvigelse.map(r => [r.athlete.id, r]))
           const currentWeekByAthleteId = new Map(athletesWithAfvigelse.map(r => [r.athlete.id, r.current]))
           const sortedVisibleAthletes = athleteSortMode === 'afvigelse'
             ? sorterEfterAfvigelse(athletesWithAfvigelse).map(r => r.athlete)
@@ -248,8 +252,12 @@ export default function ForsideView({
                       const weekNo = current?.week_number ?? fallback?.week_number
                       const blockName = current?.block_name || fallback?.block_name
                       const sessionCount = current?.session_count ?? fallback?.session_count
+                      const ugeStatus = ugeStatusByAthleteId.get(athlete.id)
+                      // ORDRE 428 (C3): standardlinjen siger, hvem der har
+                      // trænet: "2 af 4 pas · 4d siden" i stedet for kun
+                      // planens størrelse (som var ens for alle).
                       const programLine = weekNo != null
-                        ? `Uge ${weekNo}${blockName ? ` · ${blockName}` : ''}${sessionCount != null ? ` · ${sessionCount} pas` : ''}`
+                        ? `Uge ${weekNo}${blockName ? ` · ${blockName}` : ''}${sessionCount != null ? (ugeStatus ? ` · ${ugeStatus.pasLogget} af ${sessionCount} pas` : ` · ${sessionCount} pas`) : ''}`
                         : 'Intet aktivt program'
                       const holiday = holidayInfo(athlete)
                       const unread = unreadCounts[athlete.id] || 0
@@ -293,7 +301,25 @@ export default function ForsideView({
                             {athleteSortMode === 'afvigelse' ? (
                               <span style={{ display: 'block', marginTop: '0.18rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: !afvigelse?.harPlan ? '#7a7770' : paaSporet ? '#6cba6c' : '#7a7770', lineHeight: 1.4 }}>{afvigelseText}</span>
                             ) : (
-                              <span style={{ display: 'block', marginTop: '0.18rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: weekNo != null ? '#7a7770' : '#b07b68', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{programLine}</span>
+                              <span style={{ display: 'block', marginTop: '0.18rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: weekNo != null ? '#7a7770' : '#b07b68', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{programLine}{weekNo != null && ugeStatus ? ` · ${lastLogText}` : ''}</span>
+                            )}
+                            {/* ORDRE 428 (C2): ugens stemme. Et klik åbner Log,
+                                hvor vurderinger, kommentarer og noter står. */}
+                            {ugeStatus?.stemme && (
+                              <button
+                                onClick={event => { event.stopPropagation(); openProfile(athlete, 'log') }}
+                                aria-label={`Ugens stemme fra ${athlete.name}: åbn Log`}
+                                style={{ display: 'flex', alignItems: 'baseline', gap: '0.35rem', maxWidth: '100%', marginTop: '0.22rem', padding: 0, border: 'none', background: 'transparent', cursor: 'pointer', textAlign: 'left', minWidth: 0 }}>
+                                {ugeStatus.stemme.laveste != null && (
+                                  <span style={{ flexShrink: 0, fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: ugeStatus.stemme.laveste <= 2 ? '#d79a83' : '#c8923a' }}>★ {ugeStatus.stemme.laveste}/5</span>
+                                )}
+                                {ugeStatus.stemme.tekst && (
+                                  <span style={{ minWidth: 0, color: '#b8b4a8', fontSize: isMobile ? '0.66rem' : '0.7rem', fontStyle: 'italic', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ugeStatus.stemme.tekst}</span>
+                                )}
+                                {ugeStatus.stemme.flereTekster > 0 && (
+                                  <span style={{ flexShrink: 0, fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#7a7770' }}>+{ugeStatus.stemme.flereTekster}</span>
+                                )}
+                              </button>
                             )}
                             {measurement && (
                               <button

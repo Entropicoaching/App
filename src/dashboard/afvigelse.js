@@ -55,3 +55,42 @@ export function sorterEfterAfvigelse(rows) {
   medPlan.sort((a, b) => b.afvigelse.score - a.afvigelse.score)
   return [...medPlan, ...udenPlan]
 }
+
+// ORDRE 428 (C3): planlagt og gennemført kg skal regnes på samme måde, ellers
+// står en fuldført plan som fx "2180 kg planlagt, 12160 kg gennemført".
+// Reps-feltet er fri tekst ("5", "4-6", "8-10", "45s"). Et interval tæller
+// som midten. Alt andet end tal/interval (tid, AMRAP) giver null, og så
+// tæller øvelsen hverken med i planlagt eller gennemført kg.
+export function planlagteReps(reps) {
+  const m = String(reps ?? '').trim().match(/^(\d+(?:[.,]\d+)?)(?:\s*[-–]\s*(\d+(?:[.,]\d+)?))?$/)
+  if (!m) return null
+  const lav = Number(m[1].replace(',', '.'))
+  const hoej = m[2] != null ? Number(m[2].replace(',', '.')) : lav
+  return (lav + hoej) / 2
+}
+
+// Tæller en øvelse med i kg-sammenligningen? Kun med anbefalet vægt og reps
+// der kan regnes (samme betingelse på begge sider).
+export function taellerIKg(exercise) {
+  return exercise?.recommended_weight != null && planlagteReps(exercise.reps) != null
+}
+
+// ORDRE 428 (C2): ugens stemme for coachens atletliste. Laveste vurdering
+// (1-5) og den nyeste tekst atleten har skrevet, pas-kommentar eller
+// sæt-note. "Nyeste" er efter passets rækkefølge i ugen; inden for samme pas
+// står kommentaren (skrevet efter passet) efter noterne.
+//   pas:   [{ order, rating, comment }]   (ugens pas)
+//   noter: [{ order, note }]              (sæt-noter i ugens pas)
+export function ugensStemme(pas = [], noter = []) {
+  const vurderinger = pas.map(p => Number(p.rating)).filter(v => v >= 1 && v <= 5)
+  const tekster = [
+    ...pas.filter(p => p.comment && String(p.comment).trim()).map(p => ({ order: Number(p.order) || 0, tekst: String(p.comment).trim() })),
+    ...noter.filter(n => n.note && String(n.note).trim()).map(n => ({ order: (Number(n.order) || 0) - 0.5, tekst: String(n.note).trim() })),
+  ].sort((a, b) => b.order - a.order)
+  if (!vurderinger.length && !tekster.length) return null
+  return {
+    laveste: vurderinger.length ? Math.min(...vurderinger) : null,
+    tekst: tekster[0]?.tekst || null,
+    flereTekster: Math.max(0, tekster.length - 1),
+  }
+}

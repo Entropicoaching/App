@@ -57,7 +57,9 @@ function seedTreAtleterForskelligtStillet() {
   const { tables } = seed
 
   // ---- Athlete 1 (fixtures' egen "Testatlet", ATHLETE_ID) — PÅ SPORET:
-  // planlagt 6 sæt × 100kg = 600kg, gennemført 6 sæt × 100kg = 600kg. ----
+  // planlagt 6 sæt × 5 × 100kg = 3000kg, gennemført 6 sæt × 5 × 100kg = 3000kg.
+  // (ORDRE 428: planlagt kg regnes som sæt × reps × vægt, samme regning som
+  // gennemført; før stod reps 1 i loggen og sæt × vægt i planen.) ----
   const paaSporetUge = ekstraUge({
     weekId: PAA_SPORET_WEEK_ID, athleteId: ATHLETE_ID, sessionId: PAA_SPORET_SESSION_ID,
     exerciseId: PAA_SPORET_EXERCISE_ID, weekNumber: 2, sets: 6, recommendedWeight: 100,
@@ -66,11 +68,11 @@ function seedTreAtleterForskelligtStillet() {
   tables.sessions.push(...paaSporetUge.sessions)
   tables.exercises.push(...paaSporetUge.exercises)
   for (let i = 1; i <= 6; i++) {
-    tables.exercise_logs.push(logRaekke(`eeeeeeee-6666-4666-8666-eeeeeeee000${i}`, ATHLETE_ID, PAA_SPORET_EXERCISE_ID, i, 100, 1))
+    tables.exercise_logs.push(logRaekke(`eeeeeeee-6666-4666-8666-eeeeeeee000${i}`, ATHLETE_ID, PAA_SPORET_EXERCISE_ID, i, 100, 5))
   }
 
-  // ---- Athlete 2 (ny, "Skredet") — planlagt 10 sæt × 80kg = 800kg,
-  // gennemført kun 2 sæt × 80kg = 160kg. ----
+  // ---- Athlete 2 (ny, "Skredet") — planlagt 10 sæt × 5 × 80kg = 4000kg,
+  // gennemført kun 2 sæt × 5 × 80kg = 800kg. ----
   tables.profiles.push({ id: SKREDET_USER_ID, role: 'athlete', email: 'skredet@e2e.test', last_seen: null })
   tables.athletes.push({
     id: SKREDET_ATHLETE_ID, user_id: SKREDET_USER_ID, name: 'Ø Skredet', email: 'skredet@e2e.test',
@@ -83,8 +85,8 @@ function seedTreAtleterForskelligtStillet() {
   tables.weeks.push(...skredetUge.weeks)
   tables.sessions.push(...skredetUge.sessions)
   tables.exercises.push(...skredetUge.exercises)
-  tables.exercise_logs.push(logRaekke('cccccccc-6666-4666-8666-cccccccccc01', SKREDET_ATHLETE_ID, SKREDET_EXERCISE_ID, 1, 80, 1))
-  tables.exercise_logs.push(logRaekke('cccccccc-6666-4666-8666-cccccccccc02', SKREDET_ATHLETE_ID, SKREDET_EXERCISE_ID, 2, 80, 1))
+  tables.exercise_logs.push(logRaekke('cccccccc-6666-4666-8666-cccccccccc01', SKREDET_ATHLETE_ID, SKREDET_EXERCISE_ID, 1, 80, 5))
+  tables.exercise_logs.push(logRaekke('cccccccc-6666-4666-8666-cccccccccc02', SKREDET_ATHLETE_ID, SKREDET_EXERCISE_ID, 2, 80, 5))
 
   // ---- Athlete 3 (ny, "Ingen plan") — ingen uger, ingen sessioner. ----
   tables.profiles.push({ id: INGEN_PLAN_USER_ID, role: 'athlete', email: 'ingenplan@e2e.test', last_seen: null })
@@ -131,8 +133,8 @@ export async function runCoachAfvigelse(page, { appUrl, outDir }) {
     `forventede rækkefølge Skredet → Testatlet (på sporet) → Ingen Plan, fik indekser ${iSkredet}/${iPaaSporet}/${iIngenPlan}`)
 
   // Tallene er der, ingen rød tekst, ingen procent-lignende karakter.
-  await page.getByText('Planlagt 10 sæt · 800 kg', { exact: false }).waitFor({ state: 'visible' })
-  await page.getByText('gennemført 2 sæt · 160 kg', { exact: false }).waitFor({ state: 'visible' })
+  await page.getByText('Planlagt 10 sæt · 4000 kg', { exact: false }).waitFor({ state: 'visible' })
+  await page.getByText('gennemført 2 sæt · 800 kg', { exact: false }).waitFor({ state: 'visible' })
   await page.getByText('Ingen plan', { exact: true }).waitFor({ state: 'visible' })
   const bodyText = await page.locator('body').innerText()
   assert.ok(!/%/.test(bodyText.split('Afleveret')[0] || bodyText), 'ingen procent-tal må vises i afvigelseslinjen')

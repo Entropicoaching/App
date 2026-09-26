@@ -140,6 +140,14 @@ async function c1() {
   }
   o.fund.laesbareEfterKlik = await laesbar()
   s()
+  // Kg-kontrollen staar i afvigelsesvisningen (efter tidtagningen, taelles ikke).
+  if (o.klik === 0) {
+    o.fund.standardRaekker = {}
+    for (const p of ATLETER) o.fund.standardRaekker[p.navn] = (await listeRaekke(page, p.navn)).replace(/\n/g, ' | ')
+    await page.getByRole('button', { name: 'Afvigelse denne uge' }).click()
+    await page.waitForTimeout(600)
+    await shot(page, 'C3-afvigelse-1280')
+  }
   o.fund.raekker = {}
   for (const p of ATLETER) o.fund.raekker[p.navn] = (await listeRaekke(page, p.navn)).replace(/\n/g, ' | ')
   // Alfa har gennemfoert hele planen: planlagt og gennemfoert kg boer ligge taet.
