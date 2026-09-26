@@ -116,3 +116,52 @@ Irritationerne er rangeret efter hyppighed × pris. I1 rammer hvert pas og kan g
 forkert tal. I2 rammer hver gang et sæt ikke gik som planlagt, og den planlagte RPE
 gemmes stille. I3 rammer hvert pas, og coachen mister vurderingen. I4 og I5 rammer en
 gang imellem. Blok 2 retter I1–I3.
+
+## Blok 2: I1–I3 rettet, målt før og efter
+
+Samme script og samme uge. Før er `outputs/419/foer/`, efter er `outputs/419/efter/`
+(`node outputs/419/uge.mjs` med `UGE_UD`). Intet er ændret i skemaet, i hvad der gemmes
+pr. sæt eller i coachens visning.
+
+| Afsnit | Tryk før → efter | Rul før → efter | Anslået før → efter | Maskine før → efter |
+|---|---|---|---|---|
+| Pas 1, squat | 15 → 12 | 0 → 0 | ~18 s → ~14 s | 8,2 s → 8,1 s |
+| Pas 2, bænk | 18 → 14 | 0 → 0 | ~22 s → ~17 s | 7,2 s → 7,1 s |
+| Pas 3, dødløft med RPE og note | 17 → 11 | 1 → 0 | ~25 s → ~16 s | 10,2 s → 6,4 s |
+| Pas 4, volumen med vurdering | 16 → 11 | 1 → 0 | ~21 s → ~13 s | 10,6 s → 8,3 s |
+| **Ugen** (alle afsnit) | **79 → 61** | **4 → 1** | **~112 s → ~86 s** | |
+
+Log ind, historik, Fremgang og video er uændrede (3, 3, 1 og 6 tryk). Historikken gik
+fra 1 til 0 rulninger, men kun fordi forrige afsnit ikke længere slutter nede i
+Program-fanen. Det skyldes ikke en rettelse.
+
+**I1, vægten.** `src/setLogDefaults.js`: `defaultSetWeight` har fået `coachWeight`, som
+vinder over sidste gang. Rækkefølgen er nu tastet, coachens anbefalede, sidste gang og
+til sidst appens forslag. `DagensPasCard.jsx` giver `ex.recommended_weight` som
+`coachWeight`. Resultatet: +/−-tryk for at nå den anbefalede vægt faldt fra 11 til 0
+om ugen, og alle 7 første sæt stod på det anbefalede tal
+(`outputs/419/efter/02-pas1-foer-justering.png`: 100, ikke 92.5). Øvelser uden
+anbefaling bruger sidste gang som før. `e2e/dagens-pas-historik.spec.mjs` låste den
+gamle rækkefølge (95 før coachens 80) og er rettet til 80. Den viser stadig, at
+forudfyldningen kører igen, når historikken kommer, via reps (4 → 5).
+
+**I2, RPE og note på kortet.** RPE-boksen er nu en knap (`RPE 8 ▾`), der åbner en række
+med RPE 5,5–10, samme skala som Program-fanen. "+ note" i vægtrækken åbner et notefelt,
+der får fokus. Begge skriver i sættets `logInputs` (`rpe`, `note`), som Godkendt
+allerede gemte. Uden valg gemmes den planlagte RPE som før. Resultatet: 1 dødt tryk + 7
+tryk + 1 rulning blev til 4 tryk (RPE, 9, + note, Godkendt), og atleten forlader ikke
+Dagens pas (`efter/09-pas3-rpe-note.png`). Mocken har `note: "ryg stram", rpe_actual: 9`
+på sæt 3 i begge kørsler.
+
+**I3, vurderingen.** Når sidste sæt i et pas er logget fra kortet, og passet ikke har en
+vurdering, står "Dag 1 — Squat er klaret. Hvordan gik det? 1 2 3 4 5 · spring over"
+øverst på kortet (`efter/05-pas1-faerdig.png`, `efter/11-pas4-faerdig.png`). Et tryk
+kalder `saveFeedback(id, { rating })` (`saetSkrivning.js`, samme skrivning af
+`athlete_rating` som Program-fanen). Fejler den, bliver linjen stående, og den kendte
+fejlbesked vises. Linjen forsvinder, når atleten logger første sæt i næste pas. Resultatet:
+4 tryk + 1 rulning blev til 1 tryk, og mocken har `athlete_rating: 4` på Dag 4.
+Kommentarfeltet er stadig kun i Program.
+
+**Fanget undervejs.** Den første udgave satte "+ note" i reps-rækken. Ved 360 px brækkede
+det rækken, og `e2e:rolig-forside` gik rød (chips-bund 805 over folden 780). Knappen står
+nu i vægtrækken, og chips-bunden er 745 som på main.

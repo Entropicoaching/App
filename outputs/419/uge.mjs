@@ -199,9 +199,12 @@ try {
   const rulFoerRpe = cur.rul
   if (maaling.noteFeltPaaKortet || !maaling.doedeTryk.length) {
     // Efter rettelsen: RPE og note paa selve kortet (se blok 2).
-    await tryk(page.getByRole('button', { name: /^RPE/ }).first(), 'RPE paa kortet')
-    await tryk(page.getByRole('button', { name: '9', exact: true }).first(), 'RPE 9')
-    await tast(page.getByPlaceholder(/note/i).first(), 'ryg stram', 'note paa kortet')
+    await tryk(page.getByRole('button', { name: /^RPE, sæt 3/ }), 'RPE paa kortet')
+    await tryk(page.getByRole('button', { name: 'RPE 9', exact: true }), 'RPE 9')
+    await tryk(page.getByRole('button', { name: 'Note, sæt 3', exact: true }), '+ note')
+    // Feltet faar fokus af sig selv, saa kun tegnene taelles.
+    await page.getByLabel('Note til sæt 3', { exact: true }).pressSequentially('ryg stram')
+    cur.tast += 'ryg stram'.length
     await shot('09-pas3-rpe-note')
     await logSaet('Dødløft', 3)
   } else {
@@ -233,15 +236,19 @@ try {
   const tFb = Date.now()
   const trykFoerFb = cur.tryk
   const rulFoerFb = cur.rul
-  const fbPaaHjem = page.getByText('Hvordan gik træningen?', { exact: false })
-  if (!(await fbPaaHjem.count())) {
+  const fbPaaHjem = page.locator('[data-vurder-pas]')
+  if (await fbPaaHjem.count()) {
+    // Efter rettelsen (I3): kortet spoerger selv, et tryk.
+    await tryk(page.getByRole('button', { name: 'Passet gik: 4 af 5', exact: true }), 'vurdering 4 paa kortet')
+    await fbPaaHjem.waitFor({ state: 'detached', timeout: 10000 })
+  } else {
     await gaaTilFane('Program')
     await tryk(page.getByText(/^Dag 4 — Volumen/), 'aabn Dag 4 i Program')
+    await tryk(page.getByRole('button', { name: '4', exact: true }).last(), 'vurdering 4')
+    await tryk(page.getByRole('button', { name: 'Gem feedback' }), 'Gem feedback')
   }
-  await tryk(page.getByRole('button', { name: '4', exact: true }).last(), 'vurdering 4')
-  await tryk(page.getByRole('button', { name: 'Gem feedback' }), 'Gem feedback')
   await page.waitForTimeout(800)
-  maaling.feedback = { tryk: cur.tryk - trykFoerFb, rul: cur.rul - rulFoerFb, ms: Date.now() - tFb, paaHjem: (await fbPaaHjem.count()) > 0 }
+  maaling.feedback = { tryk: cur.tryk - trykFoerFb, rul: cur.rul - rulFoerFb, ms: Date.now() - tFb, paaKortet: cur.log.includes('vurdering 4 paa kortet') }
   await shot('12-pas4-feedback')
   slut()
 
@@ -290,6 +297,10 @@ try {
   maaling.medNote = logs.filter(r => r.note).map(r => ({ note: r.note, rpe: r.rpe_actual }))
   const forventet = PAS.reduce((a, p) => a + p.oevelser.reduce((b, o) => b + o.saet, 0), 0)
   assert.equal(logs.length, forventet, `en raekke pr. saet i ugen (${forventet}), fik ${logs.length}`)
+  assert.equal(maaling.sprungetOver, 1, 'et saet sprunget over')
+  assert.deepEqual(maaling.medNote, [{ note: 'ryg stram', rpe: 9 }], 'doedloeft saet 3 har noten og RPE 9')
+  const dag4 = (await table('sessions')).find(r => r.title === 'Dag 4 — Volumen' && r.week_id === seed.tables.weeks.at(-1).id)
+  assert.equal(dag4?.athlete_rating, 4, 'Dag 4 har vurderingen 4')
   maaling.groen = true
 } catch (e) {
   maaling.groen = false
@@ -297,10 +308,10 @@ try {
   await shot('fejl').catch(() => {})
   console.error(e)
 } finally {
-  writeFileSync(path.join(UD, 'maaling.json'), JSON.stringify(maaling, null, 2) + '\n')
   // Anslaaet menneske-tid (KLM-agtig, ikke maalt): 1,2 s pr. tryk, 1,5 s pr.
   // rulning, 0,3 s pr. tegn. Maskintiden (ms) er klik til naeste tilstand.
   for (const a of Object.values(maaling.afsnit)) a.anslaaetS = Math.round((a.tryk * 1.2 + a.rul * 1.5 + a.tast * 0.3) * 10) / 10
+  writeFileSync(path.join(UD, 'maaling.json'), JSON.stringify(maaling, null, 2) + '\n')
   for (const [navn, a] of Object.entries(maaling.afsnit)) console.log(`${navn.padEnd(38)} tryk ${String(a.tryk).padStart(3)}  rul ${String(a.rul).padStart(2)}  tast ${String(a.tast).padStart(3)}  ${(a.ms / 1000).toFixed(1)} s maskine, ~${a.anslaaetS} s menneske${a.justeringer ? `  (+/- for at naa anbefalet: ${a.justeringer})` : ''}`)
   console.log('doede tryk:', maaling.doedeTryk, 'rpe/note:', maaling.rpeNote, 'feedback:', maaling.feedback)
   await browser.close(); server.close(); await mock.close()
