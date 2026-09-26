@@ -1,0 +1,261 @@
+{
+  "afsnit": {
+    "log ind": {
+      "tryk": 3,
+      "rul": 0,
+      "tast": 28,
+      "ms": 2540,
+      "log": [
+        "email",
+        "kodeord",
+        "Log ind"
+      ],
+      "anslaaetS": 12
+    },
+    "pas 1 (squat): log + fortryd": {
+      "tryk": 12,
+      "rul": 0,
+      "tast": 0,
+      "ms": 8074,
+      "log": [
+        "Squat s1: Godkendt",
+        "Squat s2: Godkendt",
+        "Squat s3: Godkendt",
+        "Squat s3: fortryd",
+        "Squat s3: Godkendt",
+        "Squat s4: Godkendt",
+        "Bænkpres s1: Godkendt",
+        "Bænkpres s2: Godkendt",
+        "Bænkpres s3: Godkendt",
+        "Bulgarsk split squat s1: Godkendt",
+        "Bulgarsk split squat s2: Godkendt",
+        "Bulgarsk split squat s3: Godkendt"
+      ],
+      "felter": [
+        "Squat s1: felt 100, anbefalet 100",
+        "Squat s2: felt 100, anbefalet 100",
+        "Squat s3: felt 100, anbefalet 100",
+        "Squat s3: felt 100, anbefalet 100",
+        "Squat s4: felt 100, anbefalet 100",
+        "Bænkpres s1: felt 70, anbefalet 70",
+        "Bænkpres s2: felt 70, anbefalet 70",
+        "Bænkpres s3: felt 70, anbefalet 70",
+        "Bulgarsk split squat s1: felt 30",
+        "Bulgarsk split squat s2: felt 30",
+        "Bulgarsk split squat s3: felt 30"
+      ],
+      "godkendtMs": [
+        45,
+        31,
+        27,
+        26,
+        37,
+        26,
+        21,
+        34,
+        25,
+        21,
+        31
+      ],
+      "anslaaetS": 14.4
+    },
+    "pas 2 (baenk): spring over + ret": {
+      "tryk": 14,
+      "rul": 0,
+      "tast": 0,
+      "ms": 7058,
+      "log": [
+        "Bænkpres s1: Godkendt",
+        "Bænkpres s2: Godkendt",
+        "vis klarede saet",
+        "Ret saet 1",
+        "ret: 1 rep mere",
+        "ret: Godkendt",
+        "Bænkpres s3: Godkendt",
+        "Baenkpres s4: Spring over",
+        "Rows s1: Godkendt",
+        "Rows s2: Godkendt",
+        "Rows s3: Godkendt",
+        "Triceps pushdown s1: Godkendt",
+        "Triceps pushdown s2: Godkendt",
+        "Triceps pushdown s3: Godkendt"
+      ],
+      "felter": [
+        "Bænkpres s1: felt 80, anbefalet 80",
+        "Bænkpres s2: felt 80, anbefalet 80",
+        "Bænkpres s3: felt 80, anbefalet 80",
+        "Rows s1: felt 25",
+        "Rows s2: felt 25",
+        "Rows s3: felt 25",
+        "Triceps pushdown s1: felt 30",
+        "Triceps pushdown s2: felt 30",
+        "Triceps pushdown s3: felt 30"
+      ],
+      "godkendtMs": [
+        38,
+        114,
+        30,
+        32,
+        43,
+        23,
+        18,
+        25,
+        96
+      ],
+      "anslaaetS": 16.8
+    },
+    "pas 3 (doedloeft): RPE + note": {
+      "tryk": 11,
+      "rul": 0,
+      "tast": 9,
+      "ms": 6449,
+      "log": [
+        "Dødløft s1: Godkendt",
+        "Dødløft s2: Godkendt",
+        "RPE paa kortet",
+        "RPE 9",
+        "+ note",
+        "Dødløft s3: Godkendt",
+        "Pause squat s1: Godkendt",
+        "Pause squat s2: Godkendt",
+        "Pause squat s3: Godkendt",
+        "Planke s1: Godkendt",
+        "Planke s2: Godkendt"
+      ],
+      "felter": [
+        "Dødløft s1: felt 140, anbefalet 140",
+        "Dødløft s2: felt 140, anbefalet 140",
+        "Dødløft s3: felt 140, anbefalet 140",
+        "Pause squat s1: felt 85, anbefalet 85",
+        "Pause squat s2: felt 85, anbefalet 85",
+        "Pause squat s3: felt 85, anbefalet 85",
+        "Planke s1: felt (tomt)",
+        "Planke s2: felt (tomt)"
+      ],
+      "godkendtMs": [
+        61,
+        94,
+        37,
+        48,
+        39,
+        38,
+        32,
+        24
+      ],
+      "anslaaetS": 15.9
+    },
+    "pas 4 (volumen): log + feedback": {
+      "tryk": 11,
+      "rul": 0,
+      "tast": 0,
+      "ms": 8288,
+      "log": [
+        "Squat s1: Godkendt",
+        "Squat s2: Godkendt",
+        "Squat s3: Godkendt",
+        "Bænkpres s1: Godkendt",
+        "Bænkpres s2: Godkendt",
+        "Bænkpres s3: Godkendt",
+        "Bænkpres s4: Godkendt",
+        "Pull-ups s1: Godkendt",
+        "Pull-ups s2: Godkendt",
+        "Pull-ups s3: Godkendt",
+        "vurdering 4 paa kortet"
+      ],
+      "felter": [
+        "Squat s1: felt 95, anbefalet 95",
+        "Squat s2: felt 95, anbefalet 95",
+        "Squat s3: felt 95, anbefalet 95",
+        "Bænkpres s1: felt 72.5, anbefalet 72.5",
+        "Bænkpres s2: felt 72.5, anbefalet 72.5",
+        "Bænkpres s3: felt 72.5, anbefalet 72.5",
+        "Bænkpres s4: felt 72.5, anbefalet 72.5",
+        "Pull-ups s1: felt (tomt)",
+        "Pull-ups s2: felt (tomt)",
+        "Pull-ups s3: felt (tomt)"
+      ],
+      "godkendtMs": [
+        40,
+        35,
+        23,
+        28,
+        54,
+        24,
+        32,
+        27,
+        35,
+        54
+      ],
+      "anslaaetS": 13.2
+    },
+    "historik: sidste uges Dag 1": {
+      "tryk": 3,
+      "rul": 0,
+      "tast": 0,
+      "ms": 1699,
+      "log": [
+        "fane Program",
+        "forrige uge",
+        "aabn Dag 1"
+      ],
+      "anslaaetS": 3.6
+    },
+    "fremskridt: Fremgang-fanen": {
+      "tryk": 1,
+      "rul": 0,
+      "tast": 0,
+      "ms": 1929,
+      "log": [
+        "fane Fremgang"
+      ],
+      "anslaaetS": 1.2
+    },
+    "video: upload og send": {
+      "tryk": 6,
+      "rul": 1,
+      "tast": 0,
+      "ms": 1707,
+      "log": [
+        "fane Hjem",
+        "Mere",
+        "(rul) VideoCoach",
+        "VideoCoach",
+        "vaelg video (filvaelger)",
+        "vaelg loeft",
+        "Send"
+      ],
+      "anslaaetS": 8.7
+    }
+  },
+  "doedeTryk": [],
+  "konsolFejl": [],
+  "navTop": 784.828125,
+  "foersteKort": {
+    "navn": "Squat",
+    "vaegt": "100",
+    "anbefalet": 100,
+    "sidsteGang": "Sidste gang: 92.5kg × 6 @7.5"
+  },
+  "noteFeltPaaKortet": false,
+  "rpeNote": {
+    "tryk": 4,
+    "rul": 0,
+    "ms": 908
+  },
+  "feedback": {
+    "tryk": 1,
+    "rul": 0,
+    "ms": 900,
+    "paaKortet": true
+  },
+  "fremgangTekst": "Entropi.\n2026-09-26\n⋯\nFREMGANG\nBliver du stærkere?\nSQUAT\nBÆNK\nDØDLØFT\nSQUAT\nPAUSE SQUAT\nANDRE ØVELSER\nVælg øvelse…\nBulgarsk split squat\nPlanke\nPull-ups\nRows\nTriceps pushdown\nSquat\n117 kg e1RM\n100×5\nW36\nW39\nTungeste gennemførte sæt pr. uge, og det beregnede énrepetitionsmaksimum (Epley).\nHJEM\nPROGRAM\nVOLUMEN\nFREMGANG\nKOST\nMOBILITET\nBESKEDER",
+  "ugensRaekker": 38,
+  "sprungetOver": 1,
+  "medNote": [
+    {
+      "note": "ryg stram",
+      "rpe": 9
+    }
+  ],
+  "groen": true
+}

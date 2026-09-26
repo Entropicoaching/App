@@ -4,7 +4,7 @@
 // tilstand; alt kommer ind som props med samme navne som i AthleteView.
 
 import { isMainLift } from '../warmup'
-import { findDagensPas } from '../nextSet'
+import { findDagensPas, isSessionDone } from '../nextSet'
 import { shouldNudgeCheckin } from '../checkinReminder'
 import { compareReadiness, readinessComparisonText, readinessTrainingNote, summarizeReadinessForCoach, lastCheckinDrivenChange } from '../readinessInsight'
 import { s, today } from '../athleteShared'
@@ -23,7 +23,7 @@ function HjemTab({
   readinessInput, readinessLog, renderSharedFeedbackCards, restPause, role, saveReadiness, savingReadiness, savingWeight,
   setAthleteVideoCoachInstant, setAthleteVideoCoachOpen, setLogInputs, setMereOpen, setReadinessInput, setRestPause, setTab, setWeightInput,
   sharedVideoAnalyses, sharedVideoError, sharedVideoLoading, skipSet, suggestNextWeight, tab, toastSlot, undoLoggedSet,
-  unreadMsgCount, updateLoggedSet, weeklyTonnage, weightInput, weightLogs,
+  unreadMsgCount, updateLoggedSet, weeklyTonnage, weightInput, weightLogs, saveFeedback,
 }) {
   return (
     <>
@@ -113,6 +113,17 @@ function HjemTab({
                     pendingSyncKeys={pendingSyncKeys}
                     parkedSets={parkedSets}
                     todayStr={today()}
+                    finishedSession={(() => {
+                      // ORDRE 419 (I3): passet, hvis sidste sæt lige er logget fra
+                      // kortet, og som ikke har en vurdering. Vurderingen læses fra
+                      // allWeeks, fordi saveFeedback kun opdaterer den.
+                      if (!lastLoggedSet || !currentWeek) return null
+                      const sess = (currentWeek.sessions || []).find(se => (se.exercises || []).some(e => e.id === lastLoggedSet.exerciseId))
+                      if (!sess || !isSessionDone(sess, exerciseLogs)) return null
+                      const frisk = (allWeeks || []).flatMap(w => w.sessions || []).find(se => se.id === sess.id) || sess
+                      return frisk.athlete_rating ? null : frisk
+                    })()}
+                    onRateSession={saveFeedback ? (id, rating) => saveFeedback(id, { rating }) : undefined}
                     checkinNudge={(() => {
                       // ORDRE 267 · commit 3: samme uge-udregning som WeekCalendar
                       // ovenfor (weekStartDate + 6 dage), ingen ny hentning — kun

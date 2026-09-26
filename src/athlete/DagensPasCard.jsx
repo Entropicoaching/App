@@ -9,13 +9,16 @@ import { defaultSetWeight, defaultSetReps, stepWeight, stepReps, stepRepsInInput
 import { s } from '../athleteShared'
 import { parsePlannedRpe } from './ugeHjaelp'
 
+// ORDRE 419 (I2): samme RPE-skala som Program-fanens vælger (ProgramTab.jsx).
+const RPE_VALUES = [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10]
+
 // ORDRE 263 · commit 1 — "Dagens pas": øverst på forsiden, præcis det næste
 // sæt (øvelse, vægt, reps, RPE), stort nok til at læses på armslængde, med
 // log/spring over lige ved hånden (samme skrivefunktioner som Program-fanen
 // — logInputs-nøglen er `${exerciseId}_${setNumber}`, delt på tværs af
 // begge faner). Under det: resten af DENNE session i kort form. `pas` kommer
 // fra findDagensPas (src/nextSet.js, ren funktion, se dens tests).
-function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogInputs, onLogSet, skipSet, suggestNextWeight, onOpenSession, todayStr, checkinNudge, lastLoggedSet, onUndoLastSet, onUpdateLoggedSet, pendingSyncCount, pendingSyncKeys = [], parkedSets = [] }) {
+function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogInputs, onLogSet, skipSet, suggestNextWeight, onOpenSession, todayStr, checkinNudge, lastLoggedSet, onUndoLastSet, onUpdateLoggedSet, pendingSyncCount, pendingSyncKeys = [], parkedSets = [], finishedSession = null, onRateSession }) {
   const activeNext = pas && pas.status === 'open' ? pas.next : null
 
   // ORDRE 314 · blok 1 — Marcs dom: man kunne se det næste sæt, men ikke
@@ -33,6 +36,13 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
   const [editInput, setEditInput] = useState({ weight: '', reps: '' })
   // ORDRE 339 · blok 1 (F3) — klarede sæt er kollapset til én linje som standard.
   const [showPriorSets, setShowPriorSets] = useState(false)
+  // ORDRE 419 (I2): RPE-vælgeren og notefeltet på kortet. Nøglen er sættets
+  // logInputs-nøgle, så de lukker af sig selv, når kortet går videre.
+  const [rpeOpenFor, setRpeOpenFor] = useState(null)
+  const [noteOpenFor, setNoteOpenFor] = useState(null)
+  // ORDRE 419 (I3): pas atleten har vurderet eller sprunget over her på kortet.
+  const [ratedHere, setRatedHere] = useState(() => new Set())
+  const [ratingBusy, setRatingBusy] = useState(false)
   const startEditingSet = (exerciseId, setNumber, log) => {
     setEditingSet({ exerciseId, setNumber })
     setEditInput({ weight: log.skipped ? '' : String(log.weight ?? ''), reps: log.skipped ? '' : String(log.reps_completed ?? '') })
@@ -58,7 +68,8 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
     const repsPrescription = parseRepsPrescription(ex.reps)
     const repsIsEditable = repsPrescription.type !== 'fixed'
     const suggestion = ex.recommended_weight == null ? suggestNextWeight(ex.name, ex.intensity) : null
-    const weightDefault = defaultSetWeight('', { lastWeight: last?.weight, recommendedWeight: ex.recommended_weight ?? suggestion?.weight })
+    // ORDRE 419 (I1): coachens anbefalede vægt først, så sidste gang, så appens forslag.
+    const weightDefault = defaultSetWeight('', { coachWeight: ex.recommended_weight, lastWeight: last?.weight, recommendedWeight: suggestion?.weight })
     const repsDefaultValue = repsIsEditable
       ? defaultSetReps('', { lastReps: last?.reps, planReps: repsPrescription.type === 'range' ? repsPrescription.min : null })
       : ''
@@ -91,6 +102,41 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
     </button>
   )
 
+  // ORDRE 419 (I3): passet slutter ikke længere uden at spørge. Når sidste sæt
+  // i et pas er logget herfra (finishedSession, se HjemTab), står én linje
+  // øverst: 1-5 eller "spring over". Et tryk gemmer athlete_rating samme vej som
+  // Program-fanens "Træningsfeedback" (saveFeedback); kommentaren bliver dér.
+  const rateSession = finishedSession && !ratedHere.has(finishedSession.id) ? finishedSession : null
+  const rateLine = rateSession && onRateSession && (
+    <div data-vurder-pas={rateSession.id} style={{ borderBottom: '1px solid rgba(237,234,226,0.08)', padding: '0 0 0.6rem', marginBottom: '0.85rem' }}>
+      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', letterSpacing: '0.04em', color: '#b8b4a8', marginBottom: '0.4rem' }}>
+        {rateSession.title || 'Passet'} er klaret. Hvordan gik det?
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+        {[1, 2, 3, 4, 5].map(n => (
+          <button
+            key={n}
+            type="button"
+            aria-label={`Passet gik: ${n} af 5`}
+            disabled={ratingBusy}
+            onClick={async () => {
+              setRatingBusy(true)
+              const ok = await onRateSession(rateSession.id, n)
+              setRatingBusy(false)
+              if (ok !== false) setRatedHere(p => new Set([...p, rateSession.id]))
+            }}
+            style={{ ...s.btnGhost, width: '44px', minWidth: '44px', minHeight: '44px', boxSizing: 'border-box', padding: 0, fontSize: '0.95rem', flexShrink: 0, opacity: ratingBusy ? 0.5 : 1 }}
+          >{n}</button>
+        ))}
+        <button
+          type="button"
+          onClick={() => setRatedHere(p => new Set([...p, rateSession.id]))}
+          style={{ background: 'none', border: 'none', color: '#7a7770', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.04em', marginLeft: 'auto', minWidth: '44px', minHeight: '44px', boxSizing: 'border-box', padding: '0 0.25rem' }}
+        >spring over</button>
+      </div>
+    </div>
+  )
+
   // ORDRE 397: ventende og parkerede sæt vises både mens passet er åbent og
   // når det er færdigt (det sidste sæt kan sagtens være logget uden net).
   const ventendeSaet = (
@@ -120,6 +166,7 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
     return (
       <div style={s.card}>
         {nudge}
+        {rateLine}
         <div style={s.cardLabel}>Dagens pas</div>
         <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', color: '#edeae2', marginBottom: '0.5rem' }}>
           {pas.status === 'done' ? 'Passet er færdigt. ✓' : 'Intet pas i dag.'}
@@ -181,6 +228,7 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
   return (
     <div style={s.card}>
       {nudge}
+      {rateLine}
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.5rem' }}>
         <div style={s.cardLabel}>Dagens pas</div>
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.06em', color: '#7a7770' }}>Sæt {setNumber}/{totalSets}</div>
@@ -375,6 +423,15 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
             onClick={() => stepWeightBy(2.5)}
             style={{ ...s.btnGhost, minWidth: '44px', minHeight: '52px', boxSizing: 'border-box', padding: 0, fontSize: '1.1rem', flexShrink: 0 }}
           >+</button>
+          {/* ORDRE 419 (I2): "+ note" står i vægtrækken, som har plads til den
+              ved 360 px; i reps-rækken brækkede den linjen (rolig-forside). */}
+          <button
+            type="button"
+            aria-label={`Note, sæt ${setNumber}`}
+            aria-expanded={noteOpenFor === key || !!input.note}
+            onClick={() => setNoteOpenFor(noteOpenFor === key ? null : key)}
+            style={{ background: 'none', border: 'none', color: input.note ? '#c8923a' : '#7a7770', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.04em', marginLeft: 'auto', minWidth: '44px', minHeight: '52px', boxSizing: 'border-box', padding: '0 0.25rem', flexShrink: 0 }}
+          >{input.note ? '✎ note' : '+ note'}</button>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
           {repsIsEditable ? (
@@ -403,10 +460,49 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
           ) : (
             <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '1rem', color: '#c8923a', whiteSpace: 'nowrap' }}>× {ex.reps || '—'}</span>
           )}
-          {plannedRpe != null && (
-            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#7a7770', letterSpacing: '0.06em', border: '1px solid rgba(237,234,226,0.13)', padding: '0.3rem 0.5rem', minHeight: '52px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>RPE {input.rpe || plannedRpe}</span>
-          )}
+          {/* ORDRE 419 (I2): boksen lignede en knap, men var død, og den
+              planlagte RPE blev gemt som den faktiske. Nu en knap, der åbner
+              vælgeren nedenfor; uden valg gemmes den planlagte som før. */}
+          <button
+            type="button"
+            aria-label={`RPE, sæt ${setNumber}: ${input.rpe || plannedRpe || 'ikke valgt'}`}
+            aria-expanded={rpeOpenFor === key}
+            onClick={() => setRpeOpenFor(rpeOpenFor === key ? null : key)}
+            style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: input.rpe ? '#c8923a' : '#7a7770', letterSpacing: '0.06em', background: input.rpe ? 'rgba(200,146,58,0.15)' : 'transparent', border: `1px solid ${input.rpe ? 'rgba(200,146,58,0.4)' : 'rgba(237,234,226,0.13)'}`, padding: '0.3rem 0.5rem', minWidth: '44px', minHeight: '52px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center', flexShrink: 0, cursor: 'pointer' }}
+          >RPE {input.rpe || plannedRpe || '–'} ▾</button>
         </div>
+        {rpeOpenFor === key && (
+          <div role="group" aria-label={`Vælg RPE, sæt ${setNumber}`} style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '0.35rem' }}>
+            {RPE_VALUES.map(v => {
+              const valgt = parseFloat(input.rpe || plannedRpe) === v
+              return (
+                <button
+                  key={v}
+                  type="button"
+                  aria-label={`RPE ${v}`}
+                  aria-pressed={valgt}
+                  onClick={() => {
+                    setLogInputs(p => ({ ...p, [key]: { ...(p[key] || input), rpe: String(v) } }))
+                    setRpeOpenFor(null)
+                  }}
+                  style={{ ...s.btnGhost, minHeight: '44px', boxSizing: 'border-box', padding: 0, fontSize: '0.8rem', color: valgt ? '#c8923a' : '#edeae2', borderColor: valgt ? 'rgba(200,146,58,0.6)' : undefined, background: valgt ? 'rgba(200,146,58,0.15)' : undefined }}
+                >{String(v).replace('.', ',')}</button>
+              )
+            })}
+          </div>
+        )}
+        {(noteOpenFor === key || !!input.note) && (
+          <input
+            aria-label={`Note til sæt ${setNumber}`}
+            autoFocus={noteOpenFor === key}
+            type="text"
+            placeholder="Note til coachen, fx ryg stram"
+            maxLength={200}
+            value={input.note || ''}
+            onChange={e => { const v = e.target.value; setLogInputs(p => ({ ...p, [key]: { ...(p[key] || input), note: v } })) }}
+            style={{ ...s.fieldInput, minHeight: '44px', boxSizing: 'border-box', fontSize: '0.8rem', fontStyle: 'italic' }}
+          />
+        )}
       </div>
       {/* ORDRE 280 · commit 2 — "Godkendt" er den mest gentagne handling i hele
           appen (ét tryk pr. sæt, hele træningen), derfor flex:1 og 60px høj —

@@ -536,7 +536,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
             readinessInput, readinessLog, renderSharedFeedbackCards, restPause, role, saveReadiness, savingReadiness, savingWeight,
             setAthleteVideoCoachInstant, setAthleteVideoCoachOpen, setLogInputs, setMereOpen, setReadinessInput, setRestPause, setTab, setWeightInput,
             sharedVideoAnalyses, sharedVideoError, sharedVideoLoading, skipSet, suggestNextWeight, tab, toastSlot, undoLoggedSet,
-            unreadMsgCount, updateLoggedSet, weeklyTonnage, weightInput, weightLogs,
+            unreadMsgCount, updateLoggedSet, weeklyTonnage, weightInput, weightLogs, saveFeedback,
           }}
         />
 

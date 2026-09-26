@@ -12,8 +12,16 @@
 // Er det tomt, falder vi tilbage til sidste gang på øvelsen, dernæst planens
 // anbefalede/foreslåede vægt, ellers tomt (samme rækkefølge som Dagens pas
 // allerede VISTE som hint — nu bliver det selve feltets værdi).
-export function defaultSetWeight(current, { lastWeight, recommendedWeight } = {}) {
+//
+// ORDRE 419 (I1 i docs/ATLETENS-UGE.md): coachens anbefalede vægt på øvelsen
+// (`coachWeight`) vinder over sidste gang. "Sidste gang" er seneste pas med
+// øvelsen, tit et andet og lettere pas i ugen, så feltet stod på fx 92.5,
+// mens kortet sagde "Anbefalet: 100kg"; atleten skulle trykke sig op hver
+// gang, og et Godkendt uden at se efter gemte det forkerte tal.
+// `recommendedWeight` er nu kun appens eget forslag (suggestNextWeight).
+export function defaultSetWeight(current, { coachWeight, lastWeight, recommendedWeight } = {}) {
   if (current) return current
+  if (coachWeight != null) return String(coachWeight)
   if (lastWeight != null) return String(lastWeight)
   if (recommendedWeight != null) return String(recommendedWeight)
   return ''

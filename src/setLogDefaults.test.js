@@ -15,6 +15,13 @@ test('defaultSetWeight: ingen historik → planens anbefalede vægt', () => {
   assert.equal(defaultSetWeight('', { lastWeight: null, recommendedWeight: 90 }), '90')
 })
 
+test('defaultSetWeight: coachens anbefalede vægt vinder over sidste gang (ordre 419, I1)', () => {
+  assert.equal(defaultSetWeight('', { coachWeight: 100, lastWeight: 92.5, recommendedWeight: 97.5 }), '100')
+  assert.equal(defaultSetWeight('', { coachWeight: 0, lastWeight: 92.5 }), '0')
+  assert.equal(defaultSetWeight('', { coachWeight: null, lastWeight: 92.5, recommendedWeight: 97.5 }), '92.5')
+  assert.equal(defaultSetWeight('75', { coachWeight: 100, lastWeight: 92.5 }), '75', 'en tastet vægt vinder stadig')
+})
+
 test('defaultSetWeight: hverken historik eller plan → tomt', () => {
   assert.equal(defaultSetWeight('', {}), '')
 })

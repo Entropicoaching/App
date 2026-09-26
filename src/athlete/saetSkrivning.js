@@ -571,9 +571,12 @@ export function lavSaetSkrivning({
     fetchExerciseLogs(athlete.id, currentWeek)
   }
 
-  async function saveFeedback(sessionId) {
-    const input = feedbackInputs[sessionId] || {}
-    if (!input.rating) return
+  // ORDRE 419 (I3): `direkte` = { rating } fra Dagens pas-kortet (samme
+  // skrivning, uden om feedbackInputs, som ikke er opdateret i samme tryk).
+  // Returnerer true/false, så kortet ved, om vurderingen blev gemt.
+  async function saveFeedback(sessionId, direkte = null) {
+    const input = direkte || feedbackInputs[sessionId] || {}
+    if (!input.rating) return false
     setPendingSessionAction(`${sessionId}:feedback`)
     const ok = await runGuardedWrite(
       () => supabase.from('sessions').update({
@@ -583,11 +586,12 @@ export function lavSaetSkrivning({
       () => showFlash('Feedbacken blev ikke gemt. Tjek din forbindelse og prøv igen.', 'error'),
     )
     setPendingSessionAction(null)
-    if (!ok) return
+    if (!ok) return false
     setAllWeeks(prev => prev.map(w => ({
       ...w,
       sessions: (w.sessions || []).map(s => s.id === sessionId ? { ...s, athlete_rating: input.rating, athlete_comment: input.comment || null } : s),
     })))
+    return true
   }
 
   async function autoCompleteSession(session) {

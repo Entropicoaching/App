@@ -9,6 +9,8 @@
 // browserens netværkslag, så rækkefølgen er deterministisk: først planens tal,
 // så historikken. Tre kørsler efter hinanden på samme login:
 //   1) urørt: feltet skifter 80/4 → 95/5 når historikken er der.
+//      ORDRE 419 (I1): nu 80/4 → 80/5; coachens anbefalede vægt vinder over
+//      sidste gang, reps følger stadig sidste gang.
 //   2) atleten trykker plus/plus før historikken kommer: 82.5/5 bliver stående.
 //   3) atleten taster selv 70 før historikken kommer: 70 bliver stående.
 //
@@ -92,8 +94,11 @@ export async function runDagensPasHistorik(page, { appUrl, outDir }) {
   assert.equal(await page.getByLabel('Reps, sæt 1').inputValue(), '4', 'før historikken: ordinationens nederste tal')
   await shot('01-foer-historik')
   await releaseAndWaitForHistory()
-  await page.waitForFunction(() => document.querySelector('[aria-label="Vægt, sæt 1"]')?.value === '95', null, { timeout: 5000 })
-  assert.equal(await page.getByLabel('Vægt, sæt 1').inputValue(), '95', 'efter historikken: vægten skal være sidste gang, ikke planens 80')
+  // ORDRE 419 (I1): coachens anbefalede vægt (80) vinder nu over sidste gang
+  // (95); reps har ingen coach-værdi og følger stadig sidste gang, så det er
+  // dem, der viser at forudfyldningen kører igen, når historikken kommer.
+  await page.waitForFunction(() => document.querySelector('[aria-label="Reps, sæt 1"]')?.value === '5', null, { timeout: 5000 })
+  assert.equal(await page.getByLabel('Vægt, sæt 1').inputValue(), '80', 'efter historikken: vægten er coachens anbefalede 80, ikke sidste gangs 95 (ordre 419)')
   assert.equal(await page.getByLabel('Reps, sæt 1').inputValue(), '5', 'efter historikken: reps skal være sidste gang, ikke planens 4')
   await shot('02-efter-historik')
 
@@ -117,7 +122,7 @@ export async function runDagensPasHistorik(page, { appUrl, outDir }) {
   assert.equal(await page.getByLabel('Vægt, sæt 1').inputValue(), '70', 'en tastet vægt må ikke overskrives af historikken')
   await shot('04-tastet-bevaret')
 
-  console.log('GRØN: første øvelse forudfyldes med sidste gang (95/5) når historikken ankommer; en vægt/reps atleten har trykket (82.5/5) eller tastet (70) bliver stående.')
+  console.log('GRØN: første øvelse forudfyldes når historikken ankommer (reps fra sidste gang, vægten er coachens anbefalede 80, ordre 419); en vægt/reps atleten har trykket (82.5/5) eller tastet (70) bliver stående.')
 }
 
 async function main() {
