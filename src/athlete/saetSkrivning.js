@@ -9,9 +9,25 @@ import { recordSilentFail } from '../athleteSilentFailLog'
 import { applySetEdit } from '../editLoggedSet'
 import { restSecondsForExercise } from '../restBetweenSets'
 import { startRestPause, clearRestPause } from '../restPause'
-import { saveOfflineSet, loadOfflineSets, clearOfflineSet, countOfflineSets } from '../offlineSetQueue'
+import {
+  saveOfflineSet, loadOfflineSets, clearOfflineSet, countOfflineSets, clearOfflineSetIfSame, newSetClientId,
+  orderedOfflineSets, parkOfflineSet,
+} from '../offlineSetQueue'
+import { browserSaysOffline, seemsOffline } from '../offlineSession'
 import { estimatedOneRepMax } from '../exerciseProgress'
 import { parsePlannedRpe, logFrontendError } from './ugeHjaelp'
+
+// ORDRE 397 (docs/OFFLINE-PAS.md): uden net forsøges ingen skrivning; den
+// ville ellers stå i queueWrite's kø bag et auth-refresh, der selv prøver i
+// ~25 s, og holde alle senere skrivninger tilbage. Sættet ligger allerede i
+// den lokale kø og sendes af flushOfflineSets.
+const OFFLINE_ERROR = { code: 'OFFLINE', message: 'Ingen forbindelse' }
+// Én afsendelse af køen ad gangen i denne fane ('online', app-åbning og
+// genhentning kan starte den samtidig). Modul-niveau, fordi fabrikken kaldes
+// i hvert render.
+let flushInFlight = false
+// Fremmednøgle-brud: øvelsen findes ikke mere (coachen har slettet den).
+const isPermanentSetError = (error) => error?.code === '23503'
 
 export function lavSaetSkrivning({
   allWeeks, athlete, currentWeek, exerciseLogs, feedbackInputs, fetchExerciseLogs, fetchPastLogs, lastLogByExerciseName,
@@ -22,20 +38,59 @@ export function lavSaetSkrivning({
   // (chain.then), ser en efterfølgende skrivning altid det rigtige id fra den
   // foregående INSERT → aldrig dubletter, og seneste værdi vinder. Returnerer
   // { data, error } fra det underliggende kald, så kalderen kan rulle tilbage.
-  function persistSetLog(key, exerciseId, setNumber, payload, realExistingId) {
+  // ORDRE 397: idempotent INSERT. Rækken får et klient-dannet id (clientId,
+  // samme ved hvert genforsøg), så et INSERT der nåede frem, men hvis svar gik
+  // tabt, ikke bliver til to rækker: nummer to afvises med 23505, og så
+  // opdateres den række der allerede står der. Ingen migration: id er
+  // primærnøglen i forvejen.
+  async function insertSetLog(exerciseId, setNumber, payload, clientId) {
+    const row = { exercise_id: exerciseId, athlete_id: athlete.id, set_number: setNumber, ...payload }
+    const findExisting = () => supabase
+      .from('exercise_logs').select('id')
+      .eq('athlete_id', athlete.id).eq('exercise_id', exerciseId).eq('set_number', setNumber)
+      .limit(1)
+    const updateExisting = async (id) => {
+      const upd = await supabase.from('exercise_logs').update(payload).eq('id', id).select('id')
+      if (upd.error) return upd
+      return { data: { id }, error: null }
+    }
+    let res = await supabase.from('exercise_logs').insert(clientId ? { id: clientId, ...row } : row).select('id').single()
+    if (clientId && (res.error?.code === '22P02' || res.error?.code === '42804')) {
+      // id-kolonnen tog mod forventning ikke imod et UUID: samme INSERT uden
+      // id, med opslag-før-indsæt som værn mod dubletter.
+      const found = await findExisting()
+      if (found.error) return found
+      if (found.data?.[0]?.id) return updateExisting(found.data[0].id)
+      res = await supabase.from('exercise_logs').insert(row).select('id').single()
+    }
+    if (res.error?.code === '23505') {
+      // Rækken findes allerede: først vores eget id, ellers (atlet, øvelse, sæt).
+      if (clientId) {
+        const own = await supabase.from('exercise_logs').update(payload).eq('id', clientId).select('id')
+        if (own.error) return own
+        if (Array.isArray(own.data) && own.data.length) return { data: { id: clientId }, error: null }
+      }
+      const found = await findExisting()
+      if (found.error) return found
+      if (!found.data?.[0]?.id) return res
+      return updateExisting(found.data[0].id)
+    }
+    return res
+  }
+
+  function persistSetLog(key, exerciseId, setNumber, payload, realExistingId, clientId) {
     const ref = setWriteRef.current[key] || (setWriteRef.current[key] = { realId: null, chain: Promise.resolve() })
     if (realExistingId) ref.realId = realExistingId
+    if (clientId) ref.clientId = clientId
     const task = ref.chain.then(async () => {
+      if (browserSaysOffline()) return { data: null, error: OFFLINE_ERROR }
       if (ref.realId) {
         const upd = await queueWrite(() => supabase.from('exercise_logs').update(payload).eq('id', ref.realId).select('id'))
         if (upd.error) return upd                                   // transient fejl → lad kalderen vise fejl/retry (ingen dublet)
         if (Array.isArray(upd.data) && upd.data.length) return upd  // rækken blev opdateret
         ref.realId = null                                           // rækken findes ikke mere (fx slettet) → INSERT nedenfor
       }
-      const res = await queueWrite(() => supabase
-        .from('exercise_logs')
-        .insert({ exercise_id: exerciseId, athlete_id: athlete.id, set_number: setNumber, ...payload })
-        .select('id').single())
+      const res = await queueWrite(() => insertSetLog(exerciseId, setNumber, payload, ref.clientId))
       if (res?.data?.id) ref.realId = res.data.id
       return res
     })
@@ -112,8 +167,20 @@ export function lavSaetSkrivning({
     // net) — lukkes/dræbes fanen i det vindue, var et bekræftet sæt væk.
     // pendingSyncCount røres først ved en fejlet skrivning: "gemt lokalt"-
     // linjen må ikke blinke ved hver vellykket skrivning.
-    if (localFallback) saveOfflineSet(athlete.id, key, { exerciseId, setNumber, payload })
-    const { error } = await persistSetLog(key, exerciseId, setNumber, payload, realExisting?.id)
+    // ORDRE 397: samme række-id ved hvert forsøg (også efter genstart og efter
+    // "fortryd"), se insertSetLog. Uden net vises markeringen med det samme.
+    const clientId = loadOfflineSets(athlete.id)[key]?.clientId || setWriteRef.current[key]?.clientId || newSetClientId()
+    const queued = localFallback
+      ? saveOfflineSet(athlete.id, key, { exerciseId, setNumber, payload, clientId, exerciseName: loggedExercise?.name || null })
+      : false
+    // Er nettet kendt dødt (også når browseren tror den er online, se
+    // offlineSession.js), forsøges intet: sættet ligger i køen og sendes af
+    // flushOfflineSets, når et kald lykkes igen.
+    const skipNetwork = queued && seemsOffline()
+    if (skipNetwork) setPendingSyncCount(countOfflineSets(athlete.id))
+    const { error } = skipNetwork
+      ? { error: OFFLINE_ERROR }
+      : await persistSetLog(key, exerciseId, setNumber, payload, realExisting?.id, clientId)
     if (error) {
       // ORDRE 280 · commit 4 — "Godkendt" i Dagens pas beder om localFallback:
       // sættet er allerede vist som logget (optimistisk, ovenfor); i stedet
@@ -122,8 +189,13 @@ export function lavSaetSkrivning({
       // flushOfflineSets). Ingen ny tabel — samme exercise_logs-række som
       // ellers, bare forsinket. (Selve kø-posten er lagt FØR skrivningen, se
       // ovenfor; her skrives den igen, hvis den første gang ikke kunne gemmes.)
-      if (localFallback) {
-        saveOfflineSet(athlete.id, key, { exerciseId, setNumber, payload })
+      if (localFallback && isPermanentSetError(error)) {
+        parkOfflineSet(athlete.id, key, { exerciseId, setNumber, payload, clientId, exerciseName: loggedExercise?.name || null }, error.code)
+        logFrontendError('Sæt kunne ikke gemmes: øvelsen findes ikke mere', error, athlete.id)
+        setPendingSyncCount(countOfflineSets(athlete.id))
+        return
+      }
+      if (localFallback && queued) {
         setPendingSyncCount(countOfflineSets(athlete.id))
         return
       }
@@ -138,7 +210,7 @@ export function lavSaetSkrivning({
       return
     }
     if (localFallback) {
-      clearOfflineSet(athlete.id, key)
+      clearOfflineSetIfSame(athlete.id, key, { payload })
       setPendingSyncCount(countOfflineSets(athlete.id))
     }
     fetchExerciseLogs(athlete.id, currentWeek)
@@ -224,28 +296,47 @@ export function lavSaetSkrivning({
   // forbindelsen er der. Kaldes ved athlete-load og ved 'online'-event; en
   // fejlet skrivning her bliver liggende i køen til næste forsøg.
   async function flushOfflineSets() {
-    if (!athlete?.id) return
-    const queue = loadOfflineSets(athlete.id)
-    const keys = Object.keys(queue)
-    if (!keys.length) return
-    for (const key of keys) {
-      const { exerciseId, setNumber, payload } = queue[key]
-      let realId = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber && !l._optimistic)?.id
-      if (!realId) {
-        // ORDRE 293 · F5: køen står nu FØR skrivningen, så en post kan høre til
-        // et sæt serveren allerede har taget imod (appen døde før svaret kom
-        // tilbage). Slå rækken op først, så genafspilningen bliver en UPDATE
-        // og ikke en dublet. Kan opslaget ikke gennemføres, ligger posten
-        // stadig i køen til næste forsøg.
-        const { data: found, error: lookupError } = await supabase
-          .from('exercise_logs').select('id')
-          .eq('athlete_id', athlete.id).eq('exercise_id', exerciseId).eq('set_number', setNumber)
-          .limit(1)
-        if (lookupError) continue
-        realId = found?.[0]?.id
+    if (!athlete?.id || flushInFlight || browserSaysOffline()) return
+    if (!Object.keys(loadOfflineSets(athlete.id)).length) return
+    flushInFlight = true
+    try {
+      // ORDRE 397: i den rækkefølge sættene blev logget, ét ad gangen.
+      for (const [key, entry] of orderedOfflineSets(athlete.id)) {
+        if (browserSaysOffline()) break
+        const { exerciseId, setNumber, payload, clientId } = entry
+        if (entry.op === 'delete') {
+          // Fortryd uden net af et sæt der måske nåede serveren (se undoLoggedSet).
+          const { error } = await queueWrite(() => supabase.from('exercise_logs').delete().eq('id', clientId).eq('athlete_id', athlete.id))
+          if (!error) clearOfflineSetIfSame(athlete.id, key, entry)
+          else if (seemsOffline()) break
+          continue
+        }
+        let realId = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber && !l._optimistic)?.id
+        if (!realId) {
+          // ORDRE 293 · F5: køen står nu FØR skrivningen, så en post kan høre til
+          // et sæt serveren allerede har taget imod (appen døde før svaret kom
+          // tilbage). Slå rækken op først, så genafspilningen bliver en UPDATE
+          // og ikke en dublet. Kan opslaget ikke gennemføres, ligger posten
+          // stadig i køen til næste forsøg.
+          const { data: found, error: lookupError } = await supabase
+            .from('exercise_logs').select('id')
+            .eq('athlete_id', athlete.id).eq('exercise_id', exerciseId).eq('set_number', setNumber)
+            .limit(1)
+          if (lookupError) { if (seemsOffline()) break; continue }
+          realId = found?.[0]?.id
+        }
+        const { error } = await persistSetLog(key, exerciseId, setNumber, payload, realId, clientId)
+        if (!error) clearOfflineSetIfSame(athlete.id, key, entry)
+        else if (seemsOffline()) break
+        else if (isPermanentSetError(error)) {
+          // Coachen har slettet øvelsen imens: kan aldrig gemmes. Parkeres
+          // synligt for atleten i stedet for at blive prøvet for evigt.
+          parkOfflineSet(athlete.id, key, entry, error.code)
+          logFrontendError('Ventende sæt kunne ikke gemmes: øvelsen findes ikke mere', error, athlete.id)
+        }
       }
-      const { error } = await persistSetLog(key, exerciseId, setNumber, payload, realId)
-      if (!error) clearOfflineSet(athlete.id, key)
+    } finally {
+      flushInFlight = false
     }
     setPendingSyncCount(countOfflineSets(athlete.id))
     fetchExerciseLogs(athlete.id, currentWeek)
@@ -265,16 +356,27 @@ export function lavSaetSkrivning({
     setLastLoggedSet(null)
     // Sættet kan være ventende lokalt (blev "Godkendt" uden net, se
     // flushOfflineSets) — fortryd skal ikke sende det senere.
+    const queuedEntry = loadOfflineSets(athlete.id)[key]
     clearOfflineSet(athlete.id, key)
     setPendingSyncCount(countOfflineSets(athlete.id))
     const ref = setWriteRef.current[key]
     const chain = ref ? ref.chain : Promise.resolve()
     const task = chain.then(async () => {
-      const idToDelete = ref?.realId
+      // ORDRE 397: har vi intet bekræftet id, men en køpost med række-id, kan
+      // INSERT'et være nået frem uden at svaret gjorde. Slet på det id, og
+      // lykkes det ikke (uden net), så læg sletningen i køen, så rækken ikke
+      // bliver et spøgelsessæt.
+      const idToDelete = ref?.realId || (queuedEntry?.op !== 'delete' ? queuedEntry?.clientId : null)
       if (!idToDelete) return
+      const tombstone = { op: 'delete', exerciseId, setNumber, clientId: idToDelete, payload: null }
+      if (seemsOffline()) { saveOfflineSet(athlete.id, key, tombstone); return }
       const { error } = await queueWrite(() => supabase.from('exercise_logs').delete().eq('id', idToDelete))
-      if (error) { logFrontendError('Fortryd sæt: sletning fejlede', error, athlete.id); return }
-      if (ref.realId === idToDelete) ref.realId = null
+      if (error) {
+        logFrontendError('Fortryd sæt: sletning fejlede', error, athlete.id)
+        if (!loadOfflineSets(athlete.id)[key]) saveOfflineSet(athlete.id, key, tombstone)
+        return
+      }
+      if (ref?.realId === idToDelete) ref.realId = null
     })
     if (ref) ref.chain = task.then(() => {}, () => {})
     await task
@@ -292,8 +394,12 @@ export function lavSaetSkrivning({
   // clearOfflineSet), så "ret" også virker uden forbindelse (se 293).
   async function updateLoggedSet(exerciseId, setNumber, updates) {
     const key = `${exerciseId}_${setNumber}`
-    const existing = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber && !l._optimistic)
+    // ORDRE 397: også et sæt der er logget uden net (optimistisk række, ligger
+    // i køen) kan rettes; så opdateres køposten, og afsendelsen bliver et
+    // INSERT med sættets række-id i stedet for en UPDATE.
+    const existing = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber)
     if (!existing) return false
+    const realExistingId = existing._optimistic ? undefined : existing.id
     const payload = {
       weight: parseFloat(updates.weight) || 0,
       reps_completed: parseInt(updates.reps) || 0,
@@ -303,16 +409,21 @@ export function lavSaetSkrivning({
       skipped: false,
     }
     setExerciseLogs(prev => applySetEdit(prev, exerciseId, setNumber, payload))
-    saveOfflineSet(athlete.id, key, { exerciseId, setNumber, payload })
-    const { error } = await persistSetLog(key, exerciseId, setNumber, payload, existing.id)
+    const clientId = loadOfflineSets(athlete.id)[key]?.clientId || setWriteRef.current[key]?.clientId || newSetClientId()
+    const queued = saveOfflineSet(athlete.id, key, { exerciseId, setNumber, payload, clientId })
+    const skipNetwork = queued && seemsOffline()
+    if (skipNetwork) setPendingSyncCount(countOfflineSets(athlete.id))
+    const { error } = skipNetwork
+      ? { error: OFFLINE_ERROR }
+      : await persistSetLog(key, exerciseId, setNumber, payload, realExistingId, clientId)
     if (error) {
       // Samme optimistiske fallback som logSet: forbliver rettet i UI,
       // ligger i offline-køen til flushOfflineSets sender den igen.
-      logFrontendError('Ret sæt: opdatering fejlede, lagt i offline-kø', error, athlete.id)
+      if (error.code !== 'OFFLINE') logFrontendError('Ret sæt: opdatering fejlede, lagt i offline-kø', error, athlete.id)
       setPendingSyncCount(countOfflineSets(athlete.id))
       return true
     }
-    clearOfflineSet(athlete.id, key)
+    clearOfflineSetIfSame(athlete.id, key, { payload })
     setPendingSyncCount(countOfflineSets(athlete.id))
     fetchExerciseLogs(athlete.id, currentWeek)
     return true

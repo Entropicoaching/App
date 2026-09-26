@@ -1,0 +1,68 @@
+[
+  {
+    "skaerm": "01-forside.png",
+    "størrelse": "390x844",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "02-forside-mere.png",
+    "størrelse": "390x2999",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "03-program.png",
+    "størrelse": "390x844",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "04-volumen.png",
+    "størrelse": "390x844",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "05-fremgang.png",
+    "størrelse": "390x844",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "06-kost.png",
+    "størrelse": "390x995",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "07-mobilitet.png",
+    "størrelse": "390x844",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "08-beskeder.png",
+    "størrelse": "390x844",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "09-staevne.png",
+    "størrelse": "390x844",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "10-program-session-aaben.png",
+    "størrelse": "390x1276",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "11-guide.png",
+    "størrelse": "390x844",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  }
+]

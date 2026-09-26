@@ -30,6 +30,8 @@ export const ATHLETEVIEW_MODULER = [
   'athlete/KostKort.jsx',
   'athlete/ToastPlads.jsx',
   'athlete/BundNav.jsx',
+  'athlete/offlineSnapshot.js',
+  'athlete/IngenForbindelse.jsx',
 ]
 
 export function athleteViewKilde() {

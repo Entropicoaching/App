@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#141410" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <script>
-      // service worker: kun til "Del til VideoCoach" (ingen app-caching)
+      // service worker: "Del til VideoCoach" + offline-app (se public/sw.js)
       if ('serviceWorker' in navigator)
         navigator.serviceWorker.register('/sw.js').catch(function(){});
     </script>

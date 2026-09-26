@@ -18,6 +18,8 @@ import { PostgrestClient } from '@supabase/postgrest-js'
 import { StorageClient } from '@supabase/storage-js'
 import { FunctionsClient } from '@supabase/functions-js'
 import { signOutHardCore, isSupabaseAuthTokenKey } from './authSignOut'
+import { clearOfflineSnapshots } from './athlete/offlineSnapshot'
+import { markNetworkFailure, markNetworkSuccess } from './offlineSession'
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_KEY
@@ -45,7 +47,13 @@ function fetchWithTimeout(input, init = {}) {
     if (outer.aborted) ctrl.abort()
     else outer.addEventListener('abort', () => ctrl.abort(), { once: true })
   }
-  return fetch(input, { ...init, signal: ctrl.signal }).finally(() => clearTimeout(timer))
+  // ORDRE 397: husk om nettet faktisk virker (se offlineSession.js). Kun
+  // fejl på selve nettet/vores timeout tæller; afbryder kalderen selv, er det
+  // ikke et tegn på manglende net.
+  return fetch(input, { ...init, signal: ctrl.signal }).then(
+    (res) => { markNetworkSuccess(); return res },
+    (err) => { if (!outer?.aborted) markNetworkFailure(); throw err },
+  ).finally(() => clearTimeout(timer))
 }
 
 // Samme storageKey-format som @supabase/supabase-js selv beregner
@@ -208,6 +216,10 @@ export async function signOutHard() {
           if (isSupabaseAuthTokenKey(key)) localStorage.removeItem(key)
         }
       } catch { /* localStorage utilgængelig (fx privat browsing) */ }
+      // ORDRE 397: øjebliksbilledet af Dagens pas må ikke blive liggende på
+      // en delt telefon. (Køen af usendte sæt bliver: den sendes næste gang
+      // samme atlet logger ind, se docs/OFFLINE-PAS.md.)
+      clearOfflineSnapshots()
     },
     SIGNOUT_TIMEOUT_MS,
   )
