@@ -18,7 +18,7 @@
 // hovedløfts-widget allerede brugte (maskiner/håndvægte giver misvisende
 // høje 1RM-tal for et hovedløft).
 
-import { ugenoegle } from './volume/beregn.js'
+import { ugenoegle } from './volume/ugenoegle.js'
 
 /** Epley: vægt × (1 + reps / 30). Samme formel i hele appen — se filens egen note. */
 export function estimatedOneRepMax(weight, reps) {

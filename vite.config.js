@@ -46,6 +46,26 @@ function roleGuessPreloadPlugin() {
           coach: `/${dashboardChunk.fileName}`,
           athlete: `/${athleteChunk.fileName}`,
         }
+        // ORDRE 387: skærm-chunken har selv statiske imports (små delte chunks
+        // som ugenoegle/videoCoachUpload). Uden preload opdages de først, når
+        // hovedbundtet kører import(), altså én rundtur senere på langsomt net.
+        // Samme rolle, samme gæt: læg dem side om side med skærm-chunken.
+        // Hovedbundtet (entry) udelades, det hentes allerede.
+        const entryFiles = new Set(chunks.filter((c) => c.isEntry).map((c) => c.fileName))
+        // Transitivt (videoCoachUpload importerer selv exerciseNames).
+        const depHrefs = (chunk) => {
+          const seen = new Set()
+          const walk = (c) => {
+            for (const f of c.imports) {
+              if (entryFiles.has(f) || seen.has(f)) continue
+              seen.add(f)
+              if (ctx.bundle[f]) walk(ctx.bundle[f])
+            }
+          }
+          walk(chunk)
+          return [...seen].map((f) => `/${f}`)
+        }
+        const chunkDeps = { coach: depHrefs(dashboardChunk), athlete: depHrefs(athleteChunk) }
         // Kommentar-linjerne strippes af to grunde: (1) det holder scriptet
         // det er, "lille" og hurtigt at parse FØR hovedbundtet, (2) de er
         // danske (æ/ø/å, multi-byte UTF-8) — dumpet råt ville skubbe
@@ -70,6 +90,13 @@ function roleGuessPreloadPlugin() {
           `    __link.rel = 'modulepreload';\n` +
           `    __link.href = __href;\n` +
           `    document.head.appendChild(__link);\n` +
+          `    var __deps = ${JSON.stringify(chunkDeps)}[__role] || [];\n` +
+          `    for (var __i = 0; __i < __deps.length; __i++) {\n` +
+          `      var __d = document.createElement('link');\n` +
+          `      __d.rel = 'modulepreload';\n` +
+          `      __d.href = __deps[__i];\n` +
+          `      document.head.appendChild(__d);\n` +
+          `    }\n` +
           `  }\n` +
           `} catch (e) { /* ingen forudindlæsning ved fejl, adfærd som i dag */ }\n` +
           `})();`
