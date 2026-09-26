@@ -19,7 +19,7 @@ function HjemTab({
   allWeeks, athlete, currentWeek, days, exerciseHistory, exerciseLogs, fetchForloebLogs, fetchSharedVideoAnalyses,
   forloebLoading, forloebLogs, formatMsgTime, holidayReturn, kostCompact, lastLoggedSet, lastReadiness, liftProgress,
   logDagensPasSet, logInputs, logWeight, mereOpen, messages, months, now, onHoliday,
-  openReadiness, openSession, pendingSyncCount, prs, prsError, readinessCardRef, readinessError, readinessHistory,
+  openReadiness, openSession, parkedSets, pendingSyncCount, pendingSyncKeys, prs, prsError, readinessCardRef, readinessError, readinessHistory,
   readinessInput, readinessLog, renderSharedFeedbackCards, restPause, role, saveReadiness, savingReadiness, savingWeight,
   setAthleteVideoCoachInstant, setAthleteVideoCoachOpen, setLogInputs, setMereOpen, setReadinessInput, setRestPause, setTab, setWeightInput,
   sharedVideoAnalyses, sharedVideoError, sharedVideoLoading, skipSet, suggestNextWeight, tab, toastSlot, undoLoggedSet,
@@ -110,6 +110,8 @@ function HjemTab({
                     onUndoLastSet={undoLoggedSet}
                     onUpdateLoggedSet={updateLoggedSet}
                     pendingSyncCount={pendingSyncCount}
+                    pendingSyncKeys={pendingSyncKeys}
+                    parkedSets={parkedSets}
                     todayStr={today()}
                     checkinNudge={(() => {
                       // ORDRE 267 · commit 3: samme uge-udregning som WeekCalendar

@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { remainingSeconds } from './restTimer'
-import { countOfflineSets } from './offlineSetQueue'
+import { countOfflineSets, pendingSetKeys, loadParkedSets } from './offlineSetQueue'
+import { browserSaysOffline, seemsOffline } from './offlineSession'
+import IngenForbindelse from './athlete/IngenForbindelse'
 import { calcWarmupSets } from './warmup'
 import { applyWarmupCorrection, saveWarmupOverride, suggestWarmupOverride } from './warmupOverride'
 import LazyBoundary from './LazyBoundary'
@@ -58,6 +60,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   // offlineSetQueue.js). Kun til "Dagens pas"-kortets linje — Program-fanens
   // Log-knap er urørt.
   const [pendingSyncCount, setPendingSyncCount] = useState(0)
+  // ORDRE 397: tidspunktet for det øjebliksbillede af Dagens pas der vises,
+  // fordi serveren ikke kunne nås (null = data er frisk fra serveren). Se
+  // athlete/offlineSnapshot.js og docs/OFFLINE-PAS.md.
+  const [offlineSnapshotAt, setOfflineSnapshotAt] = useState(null)
   const athleteVideoCoachRef = useRef(null)
   const athleteVideoCoachFrameRef = useRef(null)
   const athleteVideoCoachClientsRef = useRef(new Set())
@@ -255,6 +261,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   // sidst kendte indhold forbliver på skærmen.
   function onReadError(label, athleteId) {
     return (error) => {
+      // ORDRE 397: uden net står der én rolig linje øverst (IngenForbindelse)
+      // i stedet for en rød toast pr. kort; loggen ville heller ikke nå frem.
+      if (seemsOffline()) return
       logFrontendError(`${label} kunne ikke hentes`, error, athleteId)
       showFlash(`${label} kunne ikke hentes. Tjek din forbindelse og prøv igen.`, 'error')
     }
@@ -296,6 +305,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     setMeetType, setMereOpen, setOnboardingDone, setOpenSharedVideoId, setPastLogs, setProgOpenSession, setProgramError, setPrs,
     setPrsError, setReadinessError, setReadinessHistory, setReadinessLog, setRestPause, setSavingReadiness, setSharedVideoAnalyses, setSharedVideoError,
     setSharedVideoLoading, setTab, setViewingWeekIdx, setVolumeLoading, setVolumeLogs, setWarmupTemplates, setWeeklyTonnage,
+    setOfflineSnapshotAt,
   })
 
   const {
@@ -337,10 +347,38 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     // eslint-disable-next-line react-hooks/set-state-in-effect -- uændret fra før ordre 373; lint ser det først nu (se RAPPORT-373)
     setPendingSyncCount(countOfflineSets(athlete.id))
     flushOfflineSets()
+    // ORDRE 397: også når et kald lykkes igen efter "nettet er dødt" (ingen
+    // 'online'-event, når browseren aldrig troede det var væk).
+    const onForbindelse = (e) => { if (!e.detail?.offline) flushOfflineSets() }
     window.addEventListener('online', flushOfflineSets)
-    return () => window.removeEventListener('online', flushOfflineSets)
+    window.addEventListener('entropi:forbindelse', onForbindelse)
+    return () => {
+      window.removeEventListener('online', flushOfflineSets)
+      window.removeEventListener('entropi:forbindelse', onForbindelse)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- flushOfflineSets læser kun athlete/currentWeek/exerciseLogs, alle friske ved kald (samme mønster som fetchAthlete ovenfor)
   }, [athlete?.id])
+  // ORDRE 397: vises Dagens pas fra øjebliksbilledet (ingen forbindelse ved
+  // åbning), hentes alt igen fra serveren når nettet kommer.
+  // ORDRE 397: ligger der sæt og venter, prøves der igen hvert 20. sekund.
+  // Et lykket forsøg er selv det der opdager at nettet er tilbage.
+  useEffect(() => {
+    if (!athlete?.id || (pendingSyncCount === 0 && !offlineSnapshotAt)) return
+    const id = setInterval(() => {
+      if (pendingSyncCount > 0) flushOfflineSets()
+      else if (offlineSnapshotAt && !browserSaysOffline()) fetchAthlete()
+    }, 20000)
+    return () => clearInterval(id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- flushOfflineSets/fetchAthlete læser friske værdier ved kald; genstartes når der er/ikke er noget at sende
+  }, [athlete?.id, pendingSyncCount, offlineSnapshotAt])
+  useEffect(() => {
+    if (!offlineSnapshotAt) return
+    const refetch = (e) => { if (!e?.detail?.offline) fetchAthlete() }
+    window.addEventListener('online', refetch)
+    window.addEventListener('entropi:forbindelse', refetch)
+    return () => { window.removeEventListener('online', refetch); window.removeEventListener('entropi:forbindelse', refetch) }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchAthlete læser kun faste props (session/role/coachAthleteId), samme mønster som mount-effekten ovenfor
+  }, [offlineSnapshotAt])
   useEffect(() => {
     if (role === 'athlete' && athlete?.id) fetchSharedVideoAnalyses()
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchSharedVideoAnalyses er ren ift. role/athlete.id, som er i deps; uændret fra før ordre 373
@@ -452,6 +490,11 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   // EFTER overskrift + strimmel: et sticky element kan kun glide ned over
   // indhold der kommer efter det, så dagen kan aldrig dækkes. På de andre
   // faner står den lige under topbaren.
+  // ORDRE 397: hvilke sæt der venter på net (markering pr. sæt i Dagens pas),
+  // og sæt der aldrig kan gemmes, fordi coachen har slettet øvelsen.
+  const pendingSyncKeys = pendingSyncCount > 0 ? pendingSetKeys(athlete.id) : []
+  const parkedSets = Object.values(loadParkedSets(athlete.id))
+
   const toastSlot = (prToast || flash) ? (
     <ToastPlads {...{ flash, prToast, prToastFading }} />
   ) : null
@@ -467,6 +510,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       />
       {/* Toast-pladsen (ORDRE 339 · F5): under topbaren på alle faner undtagen
           forsiden, hvor den ligger under overskrift + strimmel (se toastSlot). */}
+      <IngenForbindelse {...{ offlineSnapshotAt }} />
       {!(tab === 'hjem' && !onHoliday) && toastSlot}
       {recheckMsg && !onExitPreview && (
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.04em', color: '#7a7770', textAlign: 'right', padding: '0.4rem 1.5rem 0' }}>{recheckMsg}</div>
@@ -481,7 +525,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
             allWeeks, athlete, currentWeek, days, exerciseHistory, exerciseLogs, fetchForloebLogs, fetchSharedVideoAnalyses,
             forloebLoading, forloebLogs, formatMsgTime, holidayReturn, kostCompact, lastLoggedSet, lastReadiness, liftProgress,
             logDagensPasSet, logInputs, logWeight, mereOpen, messages, months, now, onHoliday,
-            openReadiness, openSession, pendingSyncCount, prs, prsError, readinessCardRef, readinessError, readinessHistory,
+            openReadiness, openSession, parkedSets, pendingSyncCount, pendingSyncKeys, prs, prsError, readinessCardRef, readinessError, readinessHistory,
             readinessInput, readinessLog, renderSharedFeedbackCards, restPause, role, saveReadiness, savingReadiness, savingWeight,
             setAthleteVideoCoachInstant, setAthleteVideoCoachOpen, setLogInputs, setMereOpen, setReadinessInput, setRestPause, setTab, setWeightInput,
             sharedVideoAnalyses, sharedVideoError, sharedVideoLoading, skipSet, suggestNextWeight, tab, toastSlot, undoLoggedSet,

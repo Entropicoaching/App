@@ -15,7 +15,7 @@ import { parsePlannedRpe } from './ugeHjaelp'
 // — logInputs-nøglen er `${exerciseId}_${setNumber}`, delt på tværs af
 // begge faner). Under det: resten af DENNE session i kort form. `pas` kommer
 // fra findDagensPas (src/nextSet.js, ren funktion, se dens tests).
-function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogInputs, onLogSet, skipSet, suggestNextWeight, onOpenSession, todayStr, checkinNudge, lastLoggedSet, onUndoLastSet, onUpdateLoggedSet, pendingSyncCount }) {
+function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogInputs, onLogSet, skipSet, suggestNextWeight, onOpenSession, todayStr, checkinNudge, lastLoggedSet, onUndoLastSet, onUpdateLoggedSet, pendingSyncCount, pendingSyncKeys = [], parkedSets = [] }) {
   const activeNext = pas && pas.status === 'open' ? pas.next : null
 
   // ORDRE 314 · blok 1 — Marcs dom: man kunne se det næste sæt, men ikke
@@ -91,6 +91,26 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
     </button>
   )
 
+  // ORDRE 397: ventende og parkerede sæt vises både mens passet er åbent og
+  // når det er færdigt (det sidste sæt kan sagtens være logget uden net).
+  const ventendeSaet = (
+    <>
+      {parkedSets.length > 0 && (
+        // ORDRE 397: coachen har slettet øvelsen, mens sættet ventede på net.
+        // Tallene står her, så atleten kan give dem videre; intet slettes.
+        <div data-parkerede-saet={parkedSets.length} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.04em', color: '#c8923a', marginTop: '0.5rem', textAlign: 'center' }}>
+          {parkedSets.length} sæt kunne ikke sendes, fordi coachen har ændret øvelsen. Skriv tallene til din coach:{' '}
+          {parkedSets.map(p => `${p.exerciseName || 'øvelse'} sæt ${p.setNumber}: ${p.payload?.weight ?? 0}kg × ${p.payload?.reps_completed ?? 0}`).join(' · ')}
+        </div>
+      )}
+      {pendingSyncCount > 0 && (
+        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.04em', color: '#7a7770', marginTop: '0.5rem', textAlign: 'center' }}>
+          ☁ {pendingSyncCount} {pendingSyncCount === 1 ? 'sæt' : 'sæt'} gemt lokalt — sendes når forbindelsen er tilbage
+        </div>
+      )}
+    </>
+  )
+
   if (pas.status !== 'open') {
     const up = pas.upcoming
     return (
@@ -117,6 +137,7 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
         ) : (
           <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Der er ikke planlagt mere endnu.</div>
         )}
+        {ventendeSaet}
       </div>
     )
   }
@@ -197,6 +218,11 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
           <div data-klarede-saet="kollapset" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', marginBottom: '0.75rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.64rem', color: '#7a7770' }}>
             <span style={{ flex: 1, minWidth: 0 }}>
               ✓ {priorSetNumbers.length} sæt klaret{lastPrior && !lastPrior.skipped ? ` · senest ${lastPrior.weight}kg × ${lastPrior.reps_completed}` : ''}
+              {/* ORDRE 397: sæt fra denne øvelse der venter på net. */}
+              {(() => {
+                const waiting = priorSetNumbers.filter(n => pendingSyncKeys.includes(`${ex.id}_${n}`)).length
+                return waiting > 0 ? <>{' '}<span data-venter-paa-net={waiting} style={{ color: '#c8923a', whiteSpace: 'nowrap' }}>· ☁ {waiting} sendes når du har net</span></> : null
+              })()}
             </span>
             {/* "Fortryd sidste sæt" står i den kollapsede linje i stedet for
                 som egen fuld-bredde-række (sparer ~50 px, F3); samme handling. */}
@@ -295,8 +321,11 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
             }
             return (
               <div key={n} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.64rem', color: '#7a7770' }}>
-                <span>
+                <span style={{ textAlign: 'left' }}>
                   Sæt {n}: {log.skipped ? 'Sprunget over' : `${log.weight}kg × ${log.reps_completed}${log.rpe_actual != null ? `, RPE ${log.rpe_actual}` : ''}`}
+                  {pendingSyncKeys.includes(`${ex.id}_${n}`) && (
+                    <>{' '}<span data-venter-paa-net="1" style={{ color: '#c8923a', whiteSpace: 'nowrap' }}>· ☁ sendes når du har net</span></>
+                  )}
                 </span>
                 <button
                   type="button"
@@ -399,11 +428,7 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
           style={{ ...s.btnGhost, marginTop: '0.5rem', width: '100%', minHeight: '44px', boxSizing: 'border-box', fontSize: '0.56rem', color: '#7a7770' }}
         >↺ Fortryd sidste sæt</button>
       )}
-      {pendingSyncCount > 0 && (
-        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.04em', color: '#7a7770', marginTop: '0.5rem', textAlign: 'center' }}>
-          ☁ {pendingSyncCount} {pendingSyncCount === 1 ? 'sæt' : 'sæt'} gemt lokalt — sendes når forbindelsen er tilbage
-        </div>
-      )}
+      {ventendeSaet}
 
       {/* ORDRE 314 · blok 1 — "næste sæt" er højst ÉN dæmpet linje, aldrig med
           felter (dem har kun det aktuelle sæt), og kan slås fra her (se

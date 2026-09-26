@@ -14,6 +14,14 @@ import { fremgangLogsQuery, fremgangLogsKronologisk } from '../fremgangLogs'
 import { today } from '../athleteShared'
 import { computeActiveWeekIdx, weekFullyLogged, parsePlannedRpe, logFrontendError } from './ugeHjaelp'
 import { isUuid } from './videoCoachBro'
+import { loadOfflineSets, overlayQueuedSets } from '../offlineSetQueue'
+import { browserSaysOffline, seemsOffline } from '../offlineSession'
+import { loadOfflineSnapshot, saveOfflineSnapshot, snapshotLogsForWeek } from './offlineSnapshot'
+
+// ORDRE 397: svarer serveren ikke inden da (browseren siger online, men
+// kælderens net er dødt), vises øjebliksbilledet. Under AthleteView's 10 s-
+// grænse for "Kunne ikke indlæse", og langt over et normalt svar.
+const SNAPSHOT_AFTER_MS = 8000
 
 export function lavLaesninger({
   athlete, coachAthleteId, currentWeek, exerciseHistory, fetchAthleteMessages, fetchCustomFoods, fetchFrequentFoods, fetchHistoricalMealLogs,
@@ -24,9 +32,56 @@ export function lavLaesninger({
   setMeetType, setMereOpen, setOnboardingDone, setOpenSharedVideoId, setPastLogs, setProgOpenSession, setProgramError, setPrs,
   setPrsError, setReadinessError, setReadinessHistory, setReadinessLog, setRestPause, setSavingReadiness, setSharedVideoAnalyses, setSharedVideoError,
   setSharedVideoLoading, setTab, setViewingWeekIdx, setVolumeLoading, setVolumeLogs, setWarmupTemplates, setWeeklyTonnage,
+  setOfflineSnapshotAt,
 }) {
+  // ORDRE 397 (docs/OFFLINE-PAS.md): kun atletens egen visning, aldrig
+  // coachens forhåndsvisning.
+  const ownView = () => !coachAthleteId && !!session?.user?.id
+  function rememberForOffline(patch) {
+    if (ownView()) saveOfflineSnapshot(session.user.id, patch)
+  }
+
+  // Viser Dagens pas fra øjebliksbilledet, med køens ventende sæt ovenpå.
+  // false = intet øjebliksbillede; så opfører appen sig som før.
+  function showOfflineSnapshot() {
+    if (!ownView()) return false
+    const snap = loadOfflineSnapshot(session.user.id)
+    if (!snap?.athlete?.id) return false
+    const a = snap.athlete
+    setOnboardingDone(hasCompletedOnboardingGuide(a))
+    setAthlete(a)
+    setRestPause(loadRestPause(a.id))
+    if (snap.week) {
+      const rows = snapshotLogsForWeek(snap)
+      setAllWeeks([snap.week])
+      setViewingWeekIdx(0)
+      setCurrentWeek(snap.week)
+      setExerciseLogs(overlayQueuedSets(rows, loadOfflineSets(a.id), a.id))
+      setLogInputs(prev => mergeAthleteSetInputs(prev, rows))
+    }
+    setOfflineSnapshotAt(snap.savedAt || Date.now())
+    setLoading(false)
+    return true
+  }
+
   async function fetchAthlete() {
     if (!coachAthleteId && role !== 'athlete') { setLoading(false); return }
+    // ORDRE 397: uden net venter vi ikke på netværket (auth-refresh alene
+    // prøver i ~25 s): øjebliksbilledet vises med det samme. Melder browseren
+    // offline, stopper vi dér ('online'/'entropi:forbindelse' i AthleteView
+    // henter det rigtige bagefter); er nettet bare dødt bag et "online", prøver
+    // vi serveren i baggrunden, og et svar erstatter øjebliksbilledet.
+    let usedSnapshot = seemsOffline() && showOfflineSnapshot()
+    if (usedSnapshot && browserSaysOffline()) return
+    const slowTimer = usedSnapshot ? null : setTimeout(() => { usedSnapshot = showOfflineSnapshot() }, SNAPSHOT_AFTER_MS)
+    try {
+      await fetchAthleteFromServer(() => usedSnapshot, () => { usedSnapshot = usedSnapshot || showOfflineSnapshot(); return usedSnapshot })
+    } finally {
+      if (slowTimer) clearTimeout(slowTimer)
+    }
+  }
+
+  async function fetchAthleteFromServer(snapshotShown, fallBackToSnapshot) {
     let data
     let error
     if (coachAthleteId) {
@@ -57,8 +112,15 @@ export function lavLaesninger({
     }
     // Reel fejl: vis fejl/retry-skærmen i stedet for misvisende "ikke tilknyttet".
     // (Bliver i loading-tilstanden, som renderer loadError-grenen med "Prøv igen".)
-    if (error) { setLoadError(true); return }
+    // ORDRE 397: medmindre et øjebliksbillede af Dagens pas kan vises.
+    if (error) {
+      if (snapshotShown() || fallBackToSnapshot()) return
+      setLoadError(true)
+      return
+    }
     if (data) {
+      setOfflineSnapshotAt(null)
+      rememberForOffline({ athlete: data })
       if (!coachAthleteId) {
         supabase.from('profiles').update({ last_seen: new Date().toISOString() }).eq('id', session.user.id)
         setOnboardingDone(hasCompletedOnboardingGuide(data))
@@ -389,6 +451,8 @@ export function lavLaesninger({
         .order('week_number', { ascending: true }),
       onReadError('Dit program', athleteId),
     )
+    // ORDRE 397: Dagens pas fra øjebliksbilledet hellere end et tomt kort.
+    if (!ok && showOfflineSnapshot()) return
     if (!ok) { setProgramError(true); return }
     // Bekræftet svar (om end evt. tomt) — en tidligere fejlvisning er ikke
     // længere retvisende.
@@ -416,6 +480,7 @@ export function lavLaesninger({
     setViewingWeekIdx(activeIdx)
     const activeWeek = weeks[activeIdx]
     setCurrentWeek(activeWeek)
+    rememberForOffline({ week: activeWeek })
     fetchExerciseLogs(athleteId, activeWeek)
     fetchLastLogs(athleteId, activeWeek)
     fetchExerciseHistory(athleteId)
@@ -569,12 +634,17 @@ export function lavLaesninger({
     )
     if (!ok) return
     const rows = data || []
+    if (week?.id) rememberForOffline({ logs: rows, logsWeekId: week.id })
+    // ORDRE 397: sæt der venter i den lokale kø er nyere end serverens rækker
+    // (og findes måske slet ikke der endnu); de lægges ovenpå, så et sæt logget
+    // uden net aldrig ser ulogget ud efter en genhentning.
+    const merged = overlayQueuedSets(rows, loadOfflineSets(athleteId), athleteId)
     setExerciseLogs(prev => {
       // Behold endnu-ikke-bekræftede optimistiske rækker (baggrundsskrivning stadig
       // i kø), så et flueben ikke blinker væk mens en anden skrivning er undervejs.
       const pending = prev.filter(l => l._optimistic &&
-        !rows.some(r => r.exercise_id === l.exercise_id && r.set_number === l.set_number))
-      return [...rows, ...pending]
+        !merged.some(r => r.exercise_id === l.exercise_id && r.set_number === l.set_number))
+      return [...merged, ...pending]
     })
     setLogInputs(prev => mergeAthleteSetInputs(prev, rows))
   }

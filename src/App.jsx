@@ -6,6 +6,7 @@ import ErrorBoundary from './ErrorBoundary'
 import { purgeVideoCoachDraftQueues } from './videoCoachSubmission'
 import LazyBoundary from './LazyBoundary'
 import { readCachedRole, writeCachedRole } from './roleCache'
+import { offlineAthleteSession, seemsOffline } from './offlineSession'
 
 // Lazy-load de to store views, så atleter ikke downloader coach-dashboardet (og
 // omvendt). Halverer det første bundt der skal hentes på mobil. Indlæses via
@@ -100,6 +101,13 @@ function App() {
   const resolvingFor = useRef(null)
   // Holder den seneste resolveRole, så "Prøv igen"-knappen kan kalde den.
   const resolveRef = useRef(null)
+  // ORDRE 397: bruger-id for en atlet der vises fra den gemte session, fordi
+  // serveren ikke kunne nås (se offlineSession.js). Når auth-js senere får en
+  // rigtig session for SAMME bruger, bekræftes rollen i baggrunden uden at
+  // rive visningen ned (samme som rollegættet, hadGuess).
+  const offlineUserRef = useRef(null)
+  // Sand når auth-js har givet en rigtig session (til sikkerhedsnettet nedenfor).
+  const gotSessionRef = useRef(false)
 
   useEffect(() => {
     let cancelled = false
@@ -154,8 +162,37 @@ function App() {
     }
     resolveRef.current = resolveRole
 
+    // ORDRE 397 (docs/OFFLINE-PAS.md, "Login uden net"): kun når auth-js ikke
+    // har en gyldig session, men den stadig ligger i storage (= serveren
+    // kunne ikke nås), og rollehukommelsen siger atlet for netop den bruger.
+    function showOfflineAthlete() {
+      if (cancelled) return false
+      const stored = offlineAthleteSession()
+      if (!stored) return false
+      offlineUserRef.current = stored.user.id
+      setSession(stored)
+      setRole('athlete')
+      setLoadError(false)
+      setLoading(false)
+      return true
+    }
+    // Uden net: vent ikke på auth-js' fornyelsesforsøg (~25 s). seemsOffline
+    // er også sand, hvis auth-js' første forsøg allerede er fejlet på nettet
+    // (det starter ved modul-load, før denne effekt).
+    if (seemsOffline()) showOfflineAthlete()
+    // Nettet er dødt bag et "online" (wifi uden internet): en fornyelse der
+    // ikke er færdig efter 6 s, venter atleten ikke på. Normalt tager den
+    // under et sekund; kun et udløbet token skal fornyes, før getSession svarer.
+    const offlineGrace = setTimeout(() => { if (!gotSessionRef.current) showOfflineAthlete() }, 6000)
+    // Fejler fornyelsen på selve nettet (kælder-wifi uden internet svarer ofte
+    // med det samme), er der ingen grund til at vente de 6 s.
+    const onForbindelse = (e) => { if (e.detail?.offline && !gotSessionRef.current) showOfflineAthlete() }
+    window.addEventListener('entropi:forbindelse', onForbindelse)
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (cancelled) return
+      if (!session && showOfflineAthlete()) return
+      if (session) gotSessionRef.current = true
       setSession(session)
       if (session) {
         // Vis det cachede gæt MED DET SAMME (ingen ventetid på netværket) —
@@ -169,6 +206,10 @@ function App() {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (cancelled) return
+      // ORDRE 397: en fornyelse der fejlede på net (sessionen ligger stadig i
+      // storage) er ikke et log ud. Et rigtigt log ud rydder storage først.
+      if (!session && _event !== 'SIGNED_OUT' && showOfflineAthlete()) return
+      if (session) gotSessionRef.current = true
       const previousUserId = resolvedFor.current
       if (!session || (previousUserId && previousUserId !== session.user.id)) {
         purgeVideoCoachDraftQueues()
@@ -180,6 +221,11 @@ function App() {
       // setTimeout(0) — at await'e supabase inde i onAuthStateChange kan låse
       // klientens auth-mutex og give intermitterende stall.
       if (resolvedFor.current === session.user.id) return
+      if (offlineUserRef.current === session.user.id) {
+        offlineUserRef.current = null
+        setTimeout(() => { if (!cancelled) resolveRole(session.user.id, session.user.email, { hadGuess: true }) }, 0)
+        return
+      }
       setLoading(true)
       setTimeout(() => { if (!cancelled) resolveRole(session.user.id, session.user.email) }, 0)
     })
@@ -187,10 +233,13 @@ function App() {
     // Sidste sikkerhedsnet: efterlad aldrig brugeren i "Indlæser..." for evigt.
     const safety = setTimeout(() => {
       if (cancelled) return
+      // ORDRE 397: svagt net i kælderen: hellere Dagens pas fra telefonen end
+      // "Kunne ikke indlæse".
+      if (!gotSessionRef.current && showOfflineAthlete()) return
       setLoading(prev => { if (prev) setLoadError(true); return false })
     }, 12000)
 
-    return () => { cancelled = true; subscription.unsubscribe(); clearTimeout(safety) }
+    return () => { cancelled = true; subscription.unsubscribe(); clearTimeout(safety); clearTimeout(offlineGrace); window.removeEventListener('entropi:forbindelse', onForbindelse) }
   }, [])
 
   // Vises FØR loading/session-grenene nedenfor: recovery-sessionen etableres i

@@ -366,6 +366,12 @@ export function createMockSupabase({ users, tables }) {
       const onConflict = url.searchParams.get('on_conflict')
       const prefer = req.headers['prefer'] || ''
       const ignoreDuplicates = prefer.includes('resolution=ignore-duplicates')
+      // ORDRE 397: som Postgres: primærnøglen er unik. Et INSERT med et id der
+      // allerede findes, afvises helt (409/23505) — ellers ville mocken skjule
+      // netop de dubletter, klientens idempotens skal forhindre.
+      if (!onConflict && incoming.some(item => item?.id != null && rows.some(r => r.id === item.id))) {
+        return sendJson(res, 409, { code: '23505', message: `duplicate key value violates unique constraint "${table}_pkey"`, details: null, hint: null })
+      }
       const created = []
       for (const item of incoming) {
         if (onConflict) {
