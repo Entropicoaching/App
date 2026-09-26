@@ -23,8 +23,8 @@ import { lavBeskederOgVaegt } from './athlete/beskederOgVaegt'
 import { lavKostHandlinger } from './athlete/kostHandlinger'
 import { useVideoCoachBro, useAfbrudtUploadVarsel } from './athlete/useVideoCoachBro'
 import { useParathedUdkast } from './athlete/useParathedUdkast'
-import { bygGrundlag, tidligereSaet } from './athlete/rekorder'
-import { loadOfflineSnapshot, saveOfflineSnapshot } from './athlete/offlineSnapshot'
+import { bygGrundlag, ugensSaet } from './athlete/rekorder'
+import { tomtIndeks, loadRekordIndeks, saveRekordIndeks, laegRaekkerTil, medUgensSaet, grundlagFoer, hentSiden } from './athlete/rekordIndeks'
 
 // Indlæses via LazyBoundary (ordre 232 · commit 2), samme mønster som Dashboard.jsx's fire faner.
 const mobiliseringFactory = () => import('./athlete/MobiliseringTab')
@@ -144,17 +144,22 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   // ORDRE 284 · commit 1: al historik (ikke kun et par uger) til Fremgang-
   // fanens pr.-øvelse-kurver — lazy-hentet først når fanen åbnes, samme
   // mønster som volumeLogs/forloebLogs ovenfor.
-  // ORDRE 439: null = endnu ikke hentet (rekorderne må ikke regne en tom
-  // historik for "ingen historik"). Hentes nu også i baggrunden ved åbning.
+  // ORDRE 439: null = endnu ikke hentet. ORDRE 450: hentes igen kun når
+  // fanen åbnes; rekorderne klarer sig med rekord-indekset nedenfor.
   const [fremgangLogs, setFremgangLogs] = useState(null)
   const [fremgangLoading, setFremgangLoading] = useState(false)
   // ORDRE 439 · blok 1: rekord-fejringen på Dagens pas-kortet ({ id, key, tekst })
   // og de sæt der allerede er fejret i denne åbning (fejres kun én gang).
   const [rekordFejring, setRekordFejring] = useState(null)
   const fejredeRef = useRef(new Set())
-  // Grundlaget fra tidligere uger, som det blev gemt på telefonen sidst
-  // (bruges kun, indtil historikken er hentet i denne åbning, fx uden net).
-  const [gemtRekordFoer] = useState(() => (!coachAthleteId && session?.user?.id ? loadOfflineSnapshot(session.user.id)?.rekordFoer || null : null))
+  // ORDRE 450 · blok 1: rekord-indekset (src/athlete/rekordIndeks.js) i
+  // stedet for hele historikken ved hver åbning. Ligger på telefonen (kun
+  // atletens egen visning; coachens forhåndsvisning har det kun i hukommelsen).
+  const [rekordIndeks, setRekordIndeks] = useState(() => (!coachAthleteId && session?.user?.id ? loadRekordIndeks(session.user.id) : null))
+  // Id på den uge, hvis sæt er hentet fra serveren i denne åbning: så er
+  // Dagens pas brugbart, og først da hentes rekord-rækkerne.
+  const [ugensLogsHentet, setUgensLogsHentet] = useState(null)
+  const rekordHentetRef = useRef(null)
   const [weeklyTonnage, setWeeklyTonnage] = useState([])
   const [liftProgress, setLiftProgress] = useState([])
   const [weightLogs, setWeightLogs] = useState([])
@@ -282,10 +287,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   // ORDRE 439 · blok 1: rekord-grundlaget fra tidligere uger (maksima pr.
   // øvelse). Ugens egne sæt lægges til ved hver logning (saetSkrivning.js).
-  const rekordGrundlagFoer = useMemo(() => {
-    if (fremgangLogs && currentWeek) return bygGrundlag(tidligereSaet(fremgangLogs, currentWeek))
-    return gemtRekordFoer && currentWeek && gemtRekordFoer.weekId === currentWeek.id ? gemtRekordFoer.grundlag : null
-  }, [fremgangLogs, currentWeek, gemtRekordFoer])
+  // ORDRE 450: læses af rekord-indekset (alle andre uger end den aktive).
+  const indeksForAtlet = rekordIndeks && athlete?.id && rekordIndeks.athleteId && rekordIndeks.athleteId !== athlete.id ? null : rekordIndeks
+  const rekordGrundlagFoer = useMemo(() => grundlagFoer(indeksForAtlet, currentWeek), [indeksForAtlet, currentWeek])
 
   /* eslint-disable react-hooks/refs -- fabrikkerne får ref-objekterne med, men læser .current kun i hændelses- og effekt-callbacks, præcis som før ordre 373 */
   const {
@@ -312,7 +316,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   })
 
   const {
-    fetchAthlete, fetchSharedVideoAnalyses, fetchMeetPlan, fetchVolumeLogs, fetchFremgangLogs, fetchForloebLogs, fetchMeetResults, suggestNextWeight,
+    fetchAthlete, fetchSharedVideoAnalyses, fetchMeetPlan, fetchVolumeLogs, fetchFremgangLogs, fetchRekordRaekker, fetchForloebLogs, fetchMeetResults, suggestNextWeight,
     saveReadiness, fetchProgram, openSession, openReadiness, completeOnboardingGuide, advanceOnboardingGuide, restartOnboardingGuide, fetchPastLogs,
     fetchExerciseLogs,
   } = lavLaesninger({
@@ -324,7 +328,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     setMeetType, setMereOpen, setOnboardingDone, setOpenSharedVideoId, setPastLogs, setProgOpenSession, setProgramError, setPrs,
     setPrsError, setReadinessError, setReadinessHistory, setReadinessLog, setRestPause, setSavingReadiness, setSharedVideoAnalyses, setSharedVideoError,
     setSharedVideoLoading, setTab, setViewingWeekIdx, setVolumeLoading, setVolumeLogs, setWarmupTemplates, setWeeklyTonnage,
-    setOfflineSnapshotAt,
+    setOfflineSnapshotAt, setUgensLogsHentet,
   })
 
   const {
@@ -419,15 +423,52 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   useEffect(() => { if (tab === 'volumen' && athlete?.id) fetchVolumeLogs(athlete.id) }, [tab, athlete?.id])
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchFremgangLogs er ren ift. athleteId, som allerede er i deps
   useEffect(() => { if (tab === 'fremgang' && athlete?.id) fetchFremgangLogs(athlete.id) }, [tab, athlete?.id])
-  // ORDRE 439 · blok 1: historikken hentes også i baggrunden ved åbning, så et
-  // sæt kan kendes som rekord, allerede når det logges fra Dagens pas.
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchFremgangLogs er ren ift. athleteId, som allerede er i deps
-  useEffect(() => { if (athlete?.id && tab !== 'fremgang') fetchFremgangLogs(athlete.id) }, [athlete?.id])
-  // ... og grundlaget gemmes på telefonen, så det også findes uden net.
+  // ORDRE 450 · blok 1: rekord-indekset holdes ajour.
+  // (a) Den aktive uges spand er præcis ugens sæt, som telefonen kender dem
+  //     (også køens og uden fortrudte); uger der er forbi, foldes ned i base.
   useEffect(() => {
-    if (coachAthleteId || !session?.user?.id || !fremgangLogs || !currentWeek || !rekordGrundlagFoer) return
-    saveOfflineSnapshot(session.user.id, { rekordFoer: { weekId: currentWeek.id, grundlag: rekordGrundlagFoer } })
-  }, [rekordGrundlagFoer, fremgangLogs, currentWeek, coachAthleteId, session?.user?.id])
+    if (!athlete?.id || !currentWeek?.id) return
+    const ugens = bygGrundlag(ugensSaet(exerciseLogs, currentWeek, allWeeks))
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- afledt af exerciseLogs; uændret indhold giver samme objekt, så React stopper her
+    setRekordIndeks(prev => {
+      const start = prev && prev.athleteId === athlete.id ? prev : tomtIndeks(athlete.id)
+      const naeste = medUgensSaet(start, ugens, allWeeks, currentWeek)
+      return prev && JSON.stringify(naeste) === JSON.stringify(prev) ? prev : naeste
+    })
+  }, [athlete?.id, currentWeek, allWeeks, exerciseLogs])
+  // (b) Rækker nyere end indekset (første gang: hele historikken, én gang)
+  //     hentes kun, når Dagens pas er vist (ugens sæt er hentet), og efter
+  //     næste frame, så hentningen ikke står i vejen for kortet.
+  useEffect(() => {
+    if (!athlete?.id || !currentWeek?.id || ugensLogsHentet !== currentWeek.id || rekordHentetRef.current === athlete.id) return
+    rekordHentetRef.current = athlete.id
+    const athleteId = athlete.id
+    const siden = hentSiden(indeksForAtlet)
+    let stop = false
+    let startet = false
+    const raf = requestAnimationFrame(() => setTimeout(async () => {
+      if (stop) return
+      startet = true
+      const rows = await fetchRekordRaekker(athleteId, siden)
+      if (!mountedRef.current) return
+      if (!rows) { rekordHentetRef.current = null; return }
+      setRekordIndeks(prev => laegRaekkerTil(prev && prev.athleteId === athleteId ? prev : tomtIndeks(athleteId), rows, allWeeks, currentWeek))
+    }, 0))
+    return () => { if (startet) return; stop = true; cancelAnimationFrame(raf); if (rekordHentetRef.current === athleteId) rekordHentetRef.current = null }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- kører én gang pr. atlet, når ugens sæt er hentet; indekset læses ved start
+  }, [athlete?.id, currentWeek, ugensLogsHentet])
+  // (c) Åbnes Fremgang, er hele historikken der alligevel: den lægges også i indekset.
+  useEffect(() => {
+    if (!athlete?.id || !currentWeek?.id || !fremgangLogs) return
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- afledt af den netop hentede historik
+    setRekordIndeks(prev => laegRaekkerTil(prev && prev.athleteId === athlete.id ? prev : tomtIndeks(athlete.id), fremgangLogs, allWeeks, currentWeek))
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- kun når historikken er (gen)hentet
+  }, [fremgangLogs])
+  // (d) ... og gemmes på telefonen, så det også findes uden net.
+  useEffect(() => {
+    if (coachAthleteId || !session?.user?.id || !rekordIndeks) return
+    saveRekordIndeks(session.user.id, rekordIndeks)
+  }, [rekordIndeks, coachAthleteId, session?.user?.id])
 
   useEffect(() => {
     if (tab === 'mobilisering' && mobilityMode === 'opvarmning' && currentWeek && warmupPhase === 'focus' && !warmupFocus) {
@@ -566,7 +607,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
             setAthleteVideoCoachInstant, setAthleteVideoCoachOpen, setLogInputs, setMereOpen, setReadinessInput, setRestPause, setTab, setWeightInput,
             sharedVideoAnalyses, sharedVideoError, sharedVideoLoading, skipSet, suggestNextWeight, tab, toastSlot, undoLoggedSet,
             unreadMsgCount, updateLoggedSet, weeklyTonnage, weightInput, weightLogs, saveFeedback,
-            rekordFejring, fremgangLogs, sendUgeLinje,
+            rekordFejring, rekordGrundlagFoer, sendUgeLinje,
           }}
         />
 

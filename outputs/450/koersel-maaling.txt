@@ -1,0 +1,30 @@
+$ node outputs/450/maal.mjs --runs 5
+Bygger før (main) og efter mod mocken ...
+foer (dd68c77): første åbning (login) hentede 3512 rækker til rekorderne; historik i mocken: 4014 sæt
+  foer fast3g #1: brugbart 6416 ms · lange opgaver efter 0 ms · stille 12239 ms · rekord-kald start 5721 ms · 3512 rækker (564 kB, alt) · exercise_logs i alt 5875 · indeks 0 B
+  foer fast3g #2: brugbart 6361 ms · lange opgaver efter 0 ms · stille 12208 ms · rekord-kald start 5676 ms · 3512 rækker (564 kB, alt) · exercise_logs i alt 5875 · indeks 0 B
+  foer fast3g #3: brugbart 6387 ms · lange opgaver efter 0 ms · stille 12231 ms · rekord-kald start 5720 ms · 3512 rækker (564 kB, alt) · exercise_logs i alt 5875 · indeks 0 B
+  foer fast3g #4: brugbart 6302 ms · lange opgaver efter 0 ms · stille 12181 ms · rekord-kald start 5622 ms · 3512 rækker (564 kB, alt) · exercise_logs i alt 5875 · indeks 0 B
+  foer fast3g #5: brugbart 6314 ms · lange opgaver efter 0 ms · stille 12193 ms · rekord-kald start 5632 ms · 3512 rækker (564 kB, alt) · exercise_logs i alt 5875 · indeks 0 B
+  foer slow4g #1: brugbart 4326 ms · lange opgaver efter 59 ms · stille 8899 ms · rekord-kald start 4066 ms · 3512 rækker (564 kB, alt) · exercise_logs i alt 5875 · indeks 0 B
+  foer slow4g #2: brugbart 4379 ms · lange opgaver efter 0 ms · stille 8923 ms · rekord-kald start 4137 ms · 3512 rækker (564 kB, alt) · exercise_logs i alt 5875 · indeks 0 B
+  foer slow4g #3: brugbart 4724 ms · lange opgaver efter 283 ms · stille 8917 ms · rekord-kald start 4078 ms · 3512 rækker (564 kB, alt) · exercise_logs i alt 5875 · indeks 0 B
+  foer slow4g #4: brugbart 4439 ms · lange opgaver efter 59 ms · stille 8981 ms · rekord-kald start 4169 ms · 3512 rækker (564 kB, alt) · exercise_logs i alt 5875 · indeks 0 B
+  foer slow4g #5: brugbart 4438 ms · lange opgaver efter 52 ms · stille 8944 ms · rekord-kald start 4183 ms · 3512 rækker (564 kB, alt) · exercise_logs i alt 5875 · indeks 0 B
+efter (dd68c77 + arbejdstræ): første åbning (login) hentede 3512 rækker til rekorderne; historik i mocken: 4014 sæt
+  efter fast3g #1: brugbart 6406 ms · lange opgaver efter 0 ms · stille 9589 ms · rekord-kald start 7448 ms · 34 rækker (5.8 kB, gte.2026-09-12T10:12:00.000Z) · exercise_logs i alt 2397 · indeks 876 B
+  efter fast3g #2: brugbart 6437 ms · lange opgaver efter 0 ms · stille 9617 ms · rekord-kald start 7484 ms · 34 rækker (5.8 kB, gte.2026-09-12T10:12:00.000Z) · exercise_logs i alt 2397 · indeks 876 B
+  efter fast3g #3: brugbart 6407 ms · lange opgaver efter 0 ms · stille 9597 ms · rekord-kald start 7449 ms · 34 rækker (5.8 kB, gte.2026-09-12T10:12:00.000Z) · exercise_logs i alt 2397 · indeks 876 B
+  efter fast3g #4: brugbart 6393 ms · lange opgaver efter 0 ms · stille 9580 ms · rekord-kald start 7448 ms · 34 rækker (5.8 kB, gte.2026-09-12T10:12:00.000Z) · exercise_logs i alt 2397 · indeks 876 B
+  efter fast3g #5: brugbart 6425 ms · lange opgaver efter 0 ms · stille 9594 ms · rekord-kald start 7472 ms · 34 rækker (5.8 kB, gte.2026-09-12T10:12:00.000Z) · exercise_logs i alt 2397 · indeks 876 B
+  efter slow4g #1: brugbart 4608 ms · lange opgaver efter 0 ms · stille 6342 ms · rekord-kald start 4746 ms · 34 rækker (5.8 kB, gte.2026-09-12T10:12:00.000Z) · exercise_logs i alt 2397 · indeks 876 B
+  efter slow4g #2: brugbart 4397 ms · lange opgaver efter 0 ms · stille 6199 ms · rekord-kald start 4626 ms · 34 rækker (5.8 kB, gte.2026-09-12T10:12:00.000Z) · exercise_logs i alt 2397 · indeks 876 B
+  efter slow4g #3: brugbart 4363 ms · lange opgaver efter 0 ms · stille 6173 ms · rekord-kald start 4596 ms · 34 rækker (5.8 kB, gte.2026-09-12T10:12:00.000Z) · exercise_logs i alt 2397 · indeks 876 B
+  efter slow4g #4: brugbart 4445 ms · lange opgaver efter 0 ms · stille 6209 ms · rekord-kald start 4650 ms · 34 rækker (5.8 kB, gte.2026-09-12T10:12:00.000Z) · exercise_logs i alt 2397 · indeks 876 B
+  efter slow4g #5: brugbart 4394 ms · lange opgaver efter 0 ms · stille 6191 ms · rekord-kald start 4644 ms · 34 rækker (5.8 kB, gte.2026-09-12T10:12:00.000Z) · exercise_logs i alt 2397 · indeks 876 B
+
+Median af genåbninger:
+  fast3g: brugbart 6361 → 6407 ms (0.7 %) · lange opgaver efter 0 → 0 ms · stille 12208 → 9594 ms · rækker til rekorder 3512 → 34 · 564 → 5.8 kB · exercise_logs i alt 5875 → 2397
+  slow4g: brugbart 4438 → 4397 ms (-0.9 %) · lange opgaver efter 59 → 0 ms · stille 8923 → 6199 ms · rækker til rekorder 3512 → 34 · 564 → 5.8 kB · exercise_logs i alt 5875 → 2397
+
+exit 0

@@ -1,0 +1,153 @@
+[
+  {
+    "navn": "lint",
+    "cmd": "npm run lint",
+    "groen": true,
+    "sek": 32
+  },
+  {
+    "navn": "enhedstest",
+    "cmd": "node --test src/athlete/rekordIndeks.test.js src/athlete/rekorder.test.js src/athlete/dinUge.test.js src/fremgangLogs.test.js src/offlineDagensPas.test.js",
+    "groen": true,
+    "sek": 1
+  },
+  {
+    "navn": "build",
+    "cmd": "npm run build",
+    "groen": true,
+    "sek": 1
+  },
+  {
+    "navn": "samme-som-439",
+    "cmd": "node outputs/439/verify-439.mjs --blok 1",
+    "groen": true,
+    "sek": 10
+  },
+  {
+    "navn": "din-uge-439",
+    "cmd": "node outputs/439/verify-439.mjs --blok 2 --no-build",
+    "groen": true,
+    "sek": 7
+  },
+  {
+    "navn": "genindlaes",
+    "cmd": "node outputs/450/genindlaes.mjs --no-build",
+    "groen": true,
+    "sek": 15
+  },
+  {
+    "navn": "offline-bevis",
+    "cmd": "node outputs/439/verify-439.mjs --blok 3 --no-build",
+    "groen": true,
+    "sek": 9
+  },
+  {
+    "navn": "offline-bevis-414",
+    "cmd": "node outputs/414/offline-bevis.mjs",
+    "groen": true,
+    "sek": 56
+  },
+  {
+    "navn": "silent-fails-5",
+    "cmd": "npm run verify:athlete-silent-fails-5",
+    "groen": true,
+    "sek": 1
+  },
+  {
+    "navn": "read-failures",
+    "cmd": "npm run verify:athlete-read-failures",
+    "groen": true,
+    "sek": 1
+  },
+  {
+    "navn": "auth-logout",
+    "cmd": "npm run verify:auth-logout-role-switch",
+    "groen": true,
+    "sek": 0
+  },
+  {
+    "navn": "videocoach-baseline-progress",
+    "cmd": "npm run verify:videocoach-baseline-progress",
+    "groen": true,
+    "sek": 1
+  },
+  {
+    "navn": "videocoach-feedback-quality",
+    "cmd": "npm run verify:videocoach-feedback-quality",
+    "groen": true,
+    "sek": 1
+  },
+  {
+    "navn": "videocoach-labels",
+    "cmd": "npm run verify:videocoach-labels",
+    "groen": true,
+    "sek": 0
+  },
+  {
+    "navn": "videocoach-variation-migration",
+    "cmd": "npm run verify:videocoach-variation-migration",
+    "groen": true,
+    "sek": 0
+  },
+  {
+    "navn": "videocoach-submission",
+    "cmd": "npm run verify:videocoach-submission",
+    "groen": true,
+    "sek": 0
+  },
+  {
+    "navn": "videocoach-upload",
+    "cmd": "npm run verify:videocoach-upload",
+    "groen": true,
+    "sek": 0
+  },
+  {
+    "navn": "videocoach-migrations",
+    "cmd": "npm run verify:videocoach-migrations",
+    "groen": true,
+    "sek": 0
+  },
+  {
+    "navn": "videocoach-zoom",
+    "cmd": "npm run verify:videocoach-zoom",
+    "groen": true,
+    "sek": 0
+  },
+  {
+    "navn": "videocoach-clip",
+    "cmd": "npm run verify:videocoach-clip",
+    "groen": true,
+    "sek": 322,
+    "note": "RØD i kørsel 1 og 2 (tidsgrænse 1,12-1,14x mod 1,1x, maskinen under last), GRØN i kørsel 3; se koersel-videocoach-clip.txt"
+  },
+  {
+    "navn": "videocoach-upload-flow",
+    "cmd": "npm run verify:videocoach-upload-flow",
+    "groen": true,
+    "sek": 87
+  },
+  {
+    "navn": "videocoach-buttons-layout",
+    "cmd": "npm run verify:videocoach-buttons-layout",
+    "groen": true,
+    "sek": 3
+  },
+  {
+    "navn": "videocoach-film-guide",
+    "cmd": "npm run verify:videocoach-film-guide",
+    "groen": true,
+    "sek": 3
+  },
+  {
+    "navn": "videocoach-plate-detect",
+    "cmd": "npm run verify:videocoach-plate-detect",
+    "groen": true,
+    "sek": 1
+  },
+  {
+    "navn": "build-igen",
+    "cmd": "npm run build",
+    "groen": true,
+    "sek": 1
+  }
+]

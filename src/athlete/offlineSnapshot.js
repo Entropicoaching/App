@@ -7,6 +7,8 @@
 // sæt-logs fra serveren. Køens ventende sæt lægges ovenpå ved brug
 // (overlayQueuedSets), ikke her. Ryddes ved log ud (clearOfflineSnapshots).
 const PREFIX = 'entropi_offline_pas'
+// ORDRE 450: rekord-indekset (rekordIndeks.js) ryddes sammen med øjebliksbilledet.
+export const REKORD_INDEKS_PREFIX = 'entropi_rekord_indeks'
 
 function snapshotKey(userId) {
   return `${PREFIX}:${userId}`
@@ -50,6 +52,6 @@ export function clearOfflineSnapshots(storage = globalThis.localStorage) {
   try {
     if (!storage) return
     const keys = Array.from({ length: storage.length }, (_, i) => storage.key(i))
-    for (const k of keys) if (k && k.startsWith(`${PREFIX}:`)) storage.removeItem(k)
+    for (const k of keys) if (k && (k.startsWith(`${PREFIX}:`) || k.startsWith(`${REKORD_INDEKS_PREFIX}:`))) storage.removeItem(k)
   } catch { /* log ud må aldrig vælte på oprydning */ }
 }

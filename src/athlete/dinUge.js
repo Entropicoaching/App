@@ -7,7 +7,7 @@ import { rekordListe, tidligereSaet, ugensSaet } from './rekorder.js'
 
 // null = ugen er ikke klaret endnu (et pas med øvelser mangler sæt), eller
 // intet blev gennemført (kun sprunget over / tom uge).
-export function dinUge({ week, allWeeks, exerciseLogs, fremgangLogs }) {
+export function dinUge({ week, allWeeks, exerciseLogs, fremgangLogs, rekordGrundlagFoer }) {
   const sessioner = (week?.sessions || []).filter(s => (s.exercises || []).length > 0)
   if (sessioner.length === 0) return null
   if (!sessioner.every(s => isSessionDone(s, exerciseLogs))) return null
@@ -24,9 +24,13 @@ export function dinUge({ week, allWeeks, exerciseLogs, fremgangLogs }) {
 
   // Ugens rekorder: samme regel som fejringen (rekorder.js). Kendes historikken
   // ikke (ikke hentet), er tallet ukendt (null), ikke 0.
-  const rekorder = fremgangLogs
-    ? rekordListe([...tidligereSaet(fremgangLogs, week), ...ugensSaet(exerciseLogs, week, allWeeks)]).filter(r => r.denneUge)
-    : null
+  // ORDRE 450: appen giver rekord-indeksets grundlag (tidligere uger); hele
+  // historikken (fremgangLogs) bruges kun, hvis der ikke er et grundlag.
+  const rekorder = rekordGrundlagFoer
+    ? rekordListe(ugensSaet(exerciseLogs, week, allWeeks), rekordGrundlagFoer).filter(r => r.denneUge)
+    : fremgangLogs
+      ? rekordListe([...tidligereSaet(fremgangLogs, week), ...ugensSaet(exerciseLogs, week, allWeeks)]).filter(r => r.denneUge)
+      : null
 
   // Vurderingen læses fra allWeeks (saveFeedback opdaterer den dér).
   const frisk = new Map((allWeeks || []).flatMap(w => w.sessions || []).map(s => [s.id, s]))

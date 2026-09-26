@@ -1,0 +1,20 @@
+[
+  {
+    "navn": "lint",
+    "cmd": "npm run lint",
+    "groen": true,
+    "sek": 20
+  },
+  {
+    "navn": "enhedstest",
+    "cmd": "node --test src/athlete/rekordIndeks.test.js src/athlete/rekorder.test.js src/athlete/dinUge.test.js src/fremgangLogs.test.js src/offlineDagensPas.test.js",
+    "groen": true,
+    "sek": 1
+  },
+  {
+    "navn": "maaling",
+    "cmd": "node outputs/450/maal.mjs --runs 5",
+    "groen": true,
+    "sek": 331
+  }
+]

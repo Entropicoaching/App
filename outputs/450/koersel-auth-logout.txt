@@ -1,0 +1,8 @@
+$ npm run verify:auth-logout-role-switch
+
+> entropi-app@0.0.0 verify:auth-logout-role-switch
+> node scripts/verify-auth-logout-and-role-switch.mjs
+
+Log ud rydder altid sessionen (session + gemt/cachet rolle via en fuld genindlæsning), og coach-visning kan vælges uden at logge ud.
+
+exit 0

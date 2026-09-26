@@ -1,7 +1,7 @@
 // ORDRE 439, blok 3: offline-beviset for rekorder. Kaldes fra
 // verify-439.mjs --blok 3. dist/ serveres med public/sw.js som i produktion.
 //   1. Online: log ind, service workeren tager siden, historikken hentes og
-//      rekord-grundlaget lægges i øjebliksbilledet på telefonen.
+//      rekord-grundlaget lægges på telefonen (ORDRE 450: i rekord-indekset).
 //   2. Uden net: appen genåbnes (kælderen), Dagens pas vises fra telefonen.
 //      Squat sæt 1 (100 kg × 5, bedst før 97,5 × 5) logges: fejringen står på
 //      kortet, så snart sættet ligger i den lokale kø, uden et eneste kald.
@@ -28,15 +28,18 @@ export async function blok3({ page, context, port, sq, shot, trin, resultat, moc
   await page.reload()
   await page.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 30000 })
   assert.ok(await page.evaluate(() => !!navigator.serviceWorker.controller), 'service workeren skal styre siden')
+  // ORDRE 450: grundlaget ligger nu i rekord-indekset (entropi_rekord_indeks:<bruger>),
+  // ikke i øjebliksbilledet. Samme krav: bygget, med de forgangne ugers maksima.
   await page.waitForFunction(() => {
-    const k = Object.keys(localStorage).find(x => x.startsWith('entropi_offline_pas:'))
+    const k = Object.keys(localStorage).find(x => x.startsWith('entropi_rekord_indeks:'))
     const s = k && JSON.parse(localStorage.getItem(k))
-    return s && s.week && s.rekordFoer && s.rekordFoer.weekId === s.week.id && Object.keys(s.rekordFoer.grundlag || {}).length > 0
+    return s && s.bygget && Object.keys(s.base || {}).length > 0
   }, null, { timeout: 20000 })
   const grundlag = await page.evaluate(() => {
-    const k = Object.keys(localStorage).find(x => x.startsWith('entropi_offline_pas:'))
-    const g = JSON.parse(localStorage.getItem(k)).rekordFoer.grundlag
-    return { oevelser: Object.keys(g).length, squatE1rm: Math.round(g.squat?.e1rm || 0), bytes: JSON.stringify(g).length }
+    const k = Object.keys(localStorage).find(x => x.startsWith('entropi_rekord_indeks:'))
+    const ix = JSON.parse(localStorage.getItem(k))
+    const g = ix.base
+    return { oevelser: Object.keys(g).length, squatE1rm: Math.round(g.squat?.e1rm || 0), bytes: localStorage.getItem(k).length }
   })
   resultat.fund.grundlag = grundlag
   trin(`online: logget ind, service workeren styrer siden; rekord-grundlaget ligger på telefonen (${grundlag.oevelser} øvelser, squat bedst e1RM ${grundlag.squatE1rm} kg, ${grundlag.bytes} bytes)`)

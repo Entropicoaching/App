@@ -1,0 +1,8 @@
+$ npm run e2e
+
+> entropi-app@0.0.0 e2e
+> node e2e/run-all.mjs
+
+
+GRØN: atlet → coach, ende-til-ende (glat rejse + video + fejl + beskeder), 28.2s.
+exit 0
