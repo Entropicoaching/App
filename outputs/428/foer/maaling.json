@@ -1,0 +1,193 @@
+{
+  "blok": "1",
+  "tid": "2026-09-26T19:31:22.103Z",
+  "opgaver": {
+    "C1-kopier-og-ret-naeste-uge": {
+      "klik": 32,
+      "tegn": 22,
+      "ms": 12953,
+      "log": [
+        "aabn Echo",
+        "Kopiér seneste uge",
+        "Rediger Dag 1 — Squat",
+        "ugedag Man",
+        "Gem",
+        "fold Dag 1 — Squat ud",
+        "Squat: Sidst logget: 100kg × 5 reps\n✎",
+        "skriv 102.5 + Enter",
+        "Bænkpres: Sidst logget: 70kg × 8 reps\n✎",
+        "skriv 70 + Enter",
+        "Rediger Dag 2 — Bænk",
+        "ugedag Tir",
+        "Gem",
+        "fold Dag 2 — Bænk ud",
+        "Bænkpres: Sidst logget: 80kg × 4 reps\n✎",
+        "skriv 80 + Enter",
+        "Rediger Dag 3 — Dødløft",
+        "ugedag Tor",
+        "Gem",
+        "fold Dag 3 — Dødløft ud",
+        "Dødløft: Sidst logget: 140kg × 3 reps\n✎",
+        "skriv 142.5 + Enter",
+        "Pause squat: Sidst logget: 85kg × 4 reps\n✎",
+        "skriv 85 + Enter",
+        "Rediger Dag 4 — Volumen",
+        "ugedag Fre",
+        "Gem",
+        "fold Dag 4 — Volumen ud",
+        "Squat: Sidst logget: 100kg × 5 reps\n✎",
+        "skriv 95 + Enter",
+        "Bænkpres: Sidst logget: 80kg × 4 reps\n✎",
+        "skriv 72.5 + Enter"
+      ],
+      "fund": {
+        "ugedagManglede": 4,
+        "vaegtManglede": 7,
+        "vaegtRettet": 0,
+        "foersteFelt": "Sidst logget: 100kg × 5 reps\n✎",
+        "uge6Ugedage": [
+          0,
+          1,
+          3,
+          4
+        ],
+        "uge6Vaegte": [
+          "Squat 102.5",
+          "Bænkpres 70",
+          "Bulgarsk split squat -",
+          "Bænkpres 80",
+          "Rows -",
+          "Dødløft 142.5",
+          "Pause squat 85",
+          "Squat 95",
+          "Bænkpres 72.5"
+        ]
+      }
+    },
+    "C2-ugens-stemme": {
+      "klik": 15,
+      "tegn": 0,
+      "ms": 11362,
+      "log": [
+        "aabn Alfa Testsen",
+        "Log",
+        "tilbage",
+        "aabn Bravo Testsen",
+        "Log",
+        "tilbage",
+        "aabn Delta Testsen",
+        "Log",
+        "tilbage",
+        "aabn Echo Testsen",
+        "Log",
+        "tilbage",
+        "aabn Foxtrot Testsen",
+        "Log",
+        "tilbage"
+      ],
+      "fund": {
+        "paaForsiden": [
+          "Charlie Testsen (intet at laese)"
+        ],
+        "aabnet": [
+          "Alfa Testsen",
+          "Bravo Testsen",
+          "Delta Testsen",
+          "Echo Testsen",
+          "Foxtrot Testsen"
+        ]
+      },
+      "aabnetFundet": {
+        "Alfa Testsen": true,
+        "Bravo Testsen": true,
+        "Delta Testsen": true,
+        "Echo Testsen": true,
+        "Foxtrot Testsen": true
+      }
+    },
+    "C3-hvem-har-traenet": {
+      "klik": 1,
+      "tegn": 0,
+      "ms": 792,
+      "log": [
+        "Afvigelse denne uge"
+      ],
+      "fund": {
+        "laesbareUdenKlik": 0,
+        "laesbareEfterKlik": 6,
+        "raekker": {
+          "Alfa Testsen": "AT | Alfa Testsen | Planlagt 30 sæt · 2180 kg — gennemført 30 sæt · 12160 kg · I går | 5 reps | →",
+          "Bravo Testsen": "BT | Bravo Testsen | Planlagt 30 sæt · 2180 kg — gennemført 14 sæt · 5680 kg · 4d siden | →",
+          "Charlie Testsen": "CT | Charlie Testsen | Planlagt 30 sæt · 2180 kg — gennemført 0 sæt · 0 kg · 8d siden | →",
+          "Delta Testsen": "DT | Delta Testsen | Planlagt 30 sæt · 2180 kg — gennemført 30 sæt · 12160 kg · I går | →",
+          "Echo Testsen": "ET | Echo Testsen | Planlagt 30 sæt · 2180 kg — gennemført 23 sæt · 8710 kg · 2d siden | →",
+          "Foxtrot Testsen": "FT | Foxtrot Testsen | Planlagt 30 sæt · 2180 kg — gennemført 10 sæt · 4400 kg · 5d siden | →"
+        },
+        "alfaKg": {
+          "planlagt": 2180,
+          "gennemfoert": 12160
+        },
+        "alfaKgForhold": 5.58
+      }
+    },
+    "C4-sprunget-over-i-log": {
+      "klik": 2,
+      "tegn": 0,
+      "ms": 1653,
+      "log": [
+        "aabn Bravo",
+        "Log"
+      ],
+      "fund": {
+        "dag2": "2 træninger · 17 sæt | ▾ | 2026-09-22 | UGE 5 | Dag 2 — Bænk | 7/7 SÆT | Ø 80 KG | ★☆☆☆☆ | Knæet gør ondt, stoppede rows | Rows | Plan: 3 sæt · × 10 · RPE 8 | 3/3 sæt | S1 ✕ | S2 ✕ | S3 ✕ | Bænkpres | ↑ +10kg siden sidst | Plan: 4 sæt · × 4-6 · RPE 8 | 4/4 sæt | Ø 80kg | S1 80kg × 4RPE 8.5/8Smerte i venstre knæ | S2 80kg × 4RPE 8.5/8 | S3 80k",
+        "visesSomFuldt": true,
+        "naevnerSprunget": false
+      }
+    },
+    "C5-telefon-kraever-dit-blik": {
+      "klik": 0,
+      "tegn": 0,
+      "ms": 7,
+      "log": [],
+      "fund": {
+        "klip": [
+          [
+            {
+              "tekst": "Bravo Testsen: melder ondt i knæet (pas-kommentar, uge 5, Da",
+              "synligAndel": 0.29
+            },
+            {
+              "tekst": "Kontakt i dag, før næste bænk-pas. Skift til en smertefri va",
+              "synligAndel": 0.54
+            }
+          ],
+          [
+            {
+              "tekst": "Delta Testsen: RPE i snit +1,1 over plan de sidste 3 uger (6",
+              "synligAndel": 0.46
+            },
+            {
+              "tekst": "Hold belastningen næste uge i stedet for at øge; spørg til r",
+              "synligAndel": 0.79
+            }
+          ],
+          [
+            {
+              "tekst": "Alfa Testsen",
+              "synligAndel": 1
+            },
+            {
+              "tekst": "Ny måling fra et sæt · Squat · high-bar · 100 kg",
+              "synligAndel": 1
+            }
+          ]
+        ],
+        "foersteAtletTop": 639,
+        "sidsteAtletBund": 1156,
+        "skaermhoejde": 844,
+        "skaerme": 1.4
+      }
+    }
+  },
+  "konsolFejl": []
+}
