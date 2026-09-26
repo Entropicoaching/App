@@ -1,0 +1,76 @@
+[
+  {
+    "vp": "mobil",
+    "n": 1,
+    "opgave": "Mølleren har delt sin mark i 6 lige store stykker, og 4 er sået: ■■■■□□. Hvor st",
+    "svar": "4/6",
+    "besked": "Rigtigt! 4/6 kan også skrives 2/3.",
+    "glyfKasse": {
+      "bredde": 193,
+      "hoejde": 18
+    },
+    "proever": 32,
+    "kornSynligt_ms": "84-891",
+    "proeverMedKornPaaTeksten": 27,
+    "tidMedKornPaaTeksten_ms": 702,
+    "forsteOgSidste_ms": [
+      84,
+      761
+    ],
+    "flestKornPaaTekstenSamtidig": 7
+  },
+  {
+    "vp": "mobil",
+    "n": 2,
+    "opgave": "Mølleren har delt sin mark i 5 lige store stykker, og 1 er sået: ■□□□□. Hvor sto",
+    "svar": "1/5",
+    "besked": "Rigtigt!",
+    "glyfKasse": {
+      "bredde": 43,
+      "hoejde": 18
+    },
+    "proever": 32,
+    "kornSynligt_ms": "66-868",
+    "proeverMedKornPaaTeksten": 0,
+    "tidMedKornPaaTeksten_ms": 0,
+    "forsteOgSidste_ms": null,
+    "flestKornPaaTekstenSamtidig": 0
+  },
+  {
+    "vp": "mobil",
+    "n": 3,
+    "opgave": "Mølleren har delt sin mark i 11 lige store stykker, og 10 er sået: ■■■■■■■■■■□. ",
+    "svar": "10/11",
+    "besked": "Rigtigt!",
+    "glyfKasse": {
+      "bredde": 43,
+      "hoejde": 18
+    },
+    "proever": 31,
+    "kornSynligt_ms": "66-849",
+    "proeverMedKornPaaTeksten": 0,
+    "tidMedKornPaaTeksten_ms": 0,
+    "forsteOgSidste_ms": null,
+    "flestKornPaaTekstenSamtidig": 0
+  },
+  {
+    "vp": "desktop",
+    "n": 1,
+    "opgave": "Mølleren har delt sin mark i 6 lige store stykker, og 4 er sået: ■■■■□□. Hvor st",
+    "svar": "4/6",
+    "besked": "Rigtigt! 4/6 kan også skrives 2/3.",
+    "glyfKasse": {
+      "bredde": 193,
+      "hoejde": 18
+    },
+    "proever": 32,
+    "kornSynligt_ms": "53-854",
+    "proeverMedKornPaaTeksten": 4,
+    "tidMedKornPaaTeksten_ms": 101,
+    "forsteOgSidste_ms": [
+      650,
+      726
+    ],
+    "flestKornPaaTekstenSamtidig": 1
+  }
+]
