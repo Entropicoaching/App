@@ -1,0 +1,162 @@
+{
+  "drosling": {
+    "net": {
+      "offline": false,
+      "latency": 150,
+      "downloadThroughput": 209715.2,
+      "uploadThroughput": 96000
+    },
+    "cpu": 4
+  },
+  "aabninger": 3,
+  "maalinger": [
+    {
+      "historik": "let",
+      "uger": 3,
+      "saetIHistorik": 114,
+      "saetDerTaeller": 99,
+      "version": "foer",
+      "runder": [
+        {
+          "brugbartMs": 1006,
+          "ugeHentetMs": 912,
+          "historikFaerdigMs": null,
+          "historikBytes": null,
+          "tonnageBytes": 10575,
+          "kald": 23,
+          "bytesIalt": 51316
+        },
+        {
+          "brugbartMs": 951,
+          "ugeHentetMs": 916,
+          "historikFaerdigMs": null,
+          "historikBytes": null,
+          "tonnageBytes": 10575,
+          "kald": 23,
+          "bytesIalt": 51316
+        },
+        {
+          "brugbartMs": 1036,
+          "ugeHentetMs": 940,
+          "historikFaerdigMs": null,
+          "historikBytes": null,
+          "tonnageBytes": 10575,
+          "kald": 23,
+          "bytesIalt": 51316
+        }
+      ],
+      "medianBrugbartMs": 1006
+    },
+    {
+      "historik": "let",
+      "uger": 3,
+      "saetIHistorik": 114,
+      "saetDerTaeller": 99,
+      "version": "efter",
+      "runder": [
+        {
+          "brugbartMs": 963,
+          "ugeHentetMs": 912,
+          "historikFaerdigMs": 1318,
+          "historikBytes": 15822,
+          "tonnageBytes": 10575,
+          "kald": 24,
+          "bytesIalt": 67138
+        },
+        {
+          "brugbartMs": 1012,
+          "ugeHentetMs": 920,
+          "historikFaerdigMs": 1324,
+          "historikBytes": 15822,
+          "tonnageBytes": 10575,
+          "kald": 24,
+          "bytesIalt": 67138
+        },
+        {
+          "brugbartMs": 997,
+          "ugeHentetMs": 903,
+          "historikFaerdigMs": 1306,
+          "historikBytes": 15822,
+          "tonnageBytes": 10575,
+          "kald": 24,
+          "bytesIalt": 67138
+        }
+      ],
+      "medianBrugbartMs": 997
+    },
+    {
+      "historik": "tung",
+      "uger": 130,
+      "saetIHistorik": 4940,
+      "saetDerTaeller": 4290,
+      "version": "foer",
+      "runder": [
+        {
+          "brugbartMs": 3408,
+          "ugeHentetMs": 3215,
+          "historikFaerdigMs": null,
+          "historikBytes": null,
+          "tonnageBytes": 38695,
+          "kald": 23,
+          "bytesIalt": 769830
+        },
+        {
+          "brugbartMs": 3329,
+          "ugeHentetMs": 3172,
+          "historikFaerdigMs": null,
+          "historikBytes": null,
+          "tonnageBytes": 38695,
+          "kald": 23,
+          "bytesIalt": 769830
+        },
+        {
+          "brugbartMs": 3265,
+          "ugeHentetMs": 3106,
+          "historikFaerdigMs": null,
+          "historikBytes": null,
+          "tonnageBytes": 38695,
+          "kald": 23,
+          "bytesIalt": 769830
+        }
+      ],
+      "medianBrugbartMs": 3329
+    },
+    {
+      "historik": "tung",
+      "uger": 130,
+      "saetIHistorik": 4940,
+      "saetDerTaeller": 4290,
+      "version": "efter",
+      "runder": [
+        {
+          "brugbartMs": 5264,
+          "ugeHentetMs": 5096,
+          "historikFaerdigMs": 7780,
+          "historikBytes": 638077,
+          "tonnageBytes": 38695,
+          "kald": 24,
+          "bytesIalt": 1407907
+        },
+        {
+          "brugbartMs": 5278,
+          "ugeHentetMs": 5173,
+          "historikFaerdigMs": 7827,
+          "historikBytes": 638077,
+          "tonnageBytes": 38695,
+          "kald": 24,
+          "bytesIalt": 1407907
+        },
+        {
+          "brugbartMs": 5074,
+          "ugeHentetMs": 4966,
+          "historikFaerdigMs": 7678,
+          "historikBytes": 638077,
+          "tonnageBytes": 38695,
+          "kald": 24,
+          "bytesIalt": 1407907
+        }
+      ],
+      "medianBrugbartMs": 5264
+    }
+  ]
+}
