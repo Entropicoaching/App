@@ -1,0 +1,86 @@
+{
+  "blok": "1",
+  "foer": true,
+  "fund": {
+    "squat": {
+      "linje": null,
+      "linjePx": null,
+      "tekster": [
+        {
+          "tekst": "114 kg e1RM",
+          "px": 8,
+          "inde": false
+        },
+        {
+          "tekst": "97.5×5",
+          "px": 6,
+          "inde": true
+        },
+        {
+          "tekst": "W36",
+          "px": 6,
+          "inde": true
+        },
+        {
+          "tekst": "W38",
+          "px": 6,
+          "inde": true
+        }
+      ]
+    },
+    "baenk": {
+      "linje": null,
+      "linjePx": null,
+      "tekster": [
+        {
+          "tekst": "88 kg e1RM",
+          "px": 8,
+          "inde": false
+        },
+        {
+          "tekst": "77.5×4",
+          "px": 6,
+          "inde": true
+        },
+        {
+          "tekst": "W36",
+          "px": 6,
+          "inde": true
+        },
+        {
+          "tekst": "W38",
+          "px": 6,
+          "inde": true
+        }
+      ]
+    },
+    "doedloeft": {
+      "linje": null,
+      "linjePx": null,
+      "tekster": [
+        {
+          "tekst": "151 kg e1RM",
+          "px": 8,
+          "inde": false
+        },
+        {
+          "tekst": "137.5×3",
+          "px": 6,
+          "inde": true
+        },
+        {
+          "tekst": "W36",
+          "px": 6,
+          "inde": true
+        },
+        {
+          "tekst": "W38",
+          "px": 6,
+          "inde": true
+        }
+      ]
+    }
+  },
+  "konsolFejl": [],
+  "groen": false
+}

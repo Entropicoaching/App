@@ -1,0 +1,32 @@
+== verify:videocoach-upload-flow
+exit 0
+med kun Supabase-netværket stubbet lokalt - samme række, fra "afventer" til "complete".
+== verify:videocoach-submission
+exit 0
+Belastning, RPE og notat udfyldes samme sted for begge sende-veje.
+== verify:videocoach-buttons-layout
+exit 0
+GRØN: chippen overlapper ikke footer/scrubRow, og forsvinder mens en sporing kører.
+== verify:videocoach-upload
+exit 0
+Annullér under upload afbryder selve overførslen og efterlader aldrig en afventende række.
+== verify:videocoach-labels
+exit 0
+VideoCoach lift- og variationsnavne er konsistente.
+== verify:videocoach-film-guide
+exit 0
+GRØN: filmvejledningen vises fuldt første gang, som én linje derefter, "vis igen" folder ud igen, ≥44px trykflade, ingen vandret scroll, ingen browser-fejl.
+== verify:videocoach-zoom
+exit 0
+videocoach.html bruger den delte, enhedstestede zoom-matematik til både pinch og Ctrl/Cmd-hjul, og blokerer Safaris native pinch-zoom.
+== verify:videocoach-clip
+exit 1
+  FEJL  test-clips\vis-mig-nu-4-reps-realistisk.mp4: 3 vindue(r), forhold 1.12x (krav ≤1.1x), meanPx=0.00, maxPx=0.00
+
+== verify:videocoach-clip, genkoert (kravet er et tidsforhold, maalt paa maskinen)
+Foerste koersel lige efter de andre tests: vis-mig-nu 1.12x (krav <=1.1x), meanPx=0.00.
+Samme test paa main's videocoach.html: groen, 1.09x.
+Paa grenen, genkoert to gange: groen begge gange.
+  GRØN  marc-doedloeft-270.mov: 1.08x / 1.07x, meanPx 4.00 / 4.08
+  GRØN  vis-mig-nu-4-reps-realistisk.mp4: 1.08x / 1.08x, meanPx 0.00
+Trackeren er ikke roert i denne ordre (kun say(), banner-CSS og Send-vejens kvittering).

@@ -969,6 +969,12 @@
        tekster som "Tryk på skivens TOP" blev delvist skjult. Kun body.athlete,
        hvor begge de andre elementer er fast placeret i denne bredde. */
     body.athlete #banner { top:116px; }
+    /* ORDRE 422 (I5): kvitteringen efter Send skal kunne læses over en
+       farverig video: tæt baggrund, almindelig skrift, bred nok til to linjer. */
+    body.athlete #banner[data-kvittering] { background:#141410; color:#78d89a;
+      font-family:system-ui,sans-serif; font-size:16px; letter-spacing:0;
+      line-height:1.35; width:min(88vw,360px); padding:12px 16px;
+      border-color:rgba(120,216,154,.55); border-radius:12px; }
     #stage, body.slim #stage { inset:60px 0 126px; }
     body.athlete[data-athlete-state="empty"] #stage { inset:60px 0 0; }
     #barPathHUD { inset:auto 8px 126px 8px; max-height:40vh; overflow:auto;
@@ -7120,8 +7126,15 @@ async function vcAthleteUploadAndGo() {
     if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Send til coach'; }
     if (setAthleteState) setAthleteState('sent');
     if (setAthleteSubmitOpen) setAthleteSubmitOpen(false);
+    // ORDRE 422 (I5): kun én kvittering efter Send. Statuskortet "Sendt til
+    // din coach" stod oven i banneret, og ingen af dem kunne læses. Kortet
+    // skjules her (kun på denne vej; trackerens egne veje er uændrede), og
+    // banneret står som læselig kvittering i 8 s (før 5 s), eller til næste besked.
+    const athleteStatusEl = document.getElementById('athleteStatus');
+    if (athleteStatusEl) athleteStatusEl.hidden = true;
     say('Video modtaget ✓ · din coach ser den, når han åbner den');
-    setTimeout(() => say(''), 5000);
+    banner.dataset.kvittering = String(Date.now() + 8000);
+    setTimeout(() => say(''), 8100);
   } catch (error) {
     vcAthleteUploadRequestId = null;
     if (athleteUploadCancelBtn) athleteUploadCancelBtn.hidden = true;
@@ -9627,9 +9640,14 @@ guidePanel.onclick = e => {          // tap udenfor kortet = luk
 };
 
 const banner = document.getElementById('banner');
+// ORDRE 422 (I5): kvitteringen efter Send (data-kvittering = udløbstid) må
+// ikke ryddes af en ældre say('')-timer fra videoindlæsningen, før atleten
+// har nået at læse den. En ny besked erstatter den stadig med det samme.
 function say(txt) {
+  if (!txt && banner.dataset.kvittering && Date.now() < Number(banner.dataset.kvittering)) return;
   banner.textContent = txt;
   banner.hidden = !txt;
+  delete banner.dataset.kvittering;
 }
 // MOBIL-FIX: bjælkerne er fixed med HÅRDKODEDE afstande - når footeren
 // ombryder til flere rækker på smalle skærme, lå tidslinjen oven i knapperne.
