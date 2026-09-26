@@ -1,0 +1,5 @@
+
+> entropi-app@0.0.0 verify:videocoach-migrations
+> node scripts/verify-videocoach-migrations.mjs
+
+VideoCoach-migrationerne er versionsstyrede og opfylder den lokale RLS/lifecycle-kontrakt.

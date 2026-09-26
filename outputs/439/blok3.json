@@ -1,0 +1,45 @@
+{
+  "blok": "3",
+  "fund": {
+    "grundlag": {
+      "oevelser": 7,
+      "squatE1rm": 114,
+      "bytes": 480
+    },
+    "fejringUdenNet": [
+      {
+        "key": "c0000000-0000-4000-8000-000000000168_1",
+        "tekst": "🏆 Ny rekord: Squat e1RM 117 kg, +3 kg",
+        "t": 1790459935789
+      }
+    ],
+    "kaldUdenNet": [
+      "GET /rest/v1/profiles",
+      "GET /rest/v1/athletes",
+      "GET /rest/v1/meal_logs",
+      "POST /rest/v1/rpc/get_my_shared_video_analyses_v3",
+      "GET /rest/v1/exercise_logs",
+      "GET /rest/v1/profiles"
+    ],
+    "fejringerIalt": [
+      {
+        "key": "c0000000-0000-4000-8000-000000000168_1",
+        "tekst": "🏆 Ny rekord: Squat e1RM 117 kg, +3 kg",
+        "t": 1790459935789
+      }
+    ],
+    "fremgangIDag": [
+      "26. sep Squat e1RM 117 kg +3 kg · 100 kg × 5"
+    ]
+  },
+  "trin": [
+    "online: logget ind, service workeren styrer siden; rekord-grundlaget ligger på telefonen (7 øvelser, squat bedst e1RM 114 kg, 480 bytes)",
+    "uden net: appen genåbnet, Dagens pas vist fra telefonen (Squat sæt 1/4)",
+    "uden net: sæt 1 (100 kg × 5) fejret: \"🏆 Ny rekord: Squat e1RM 117 kg, +3 kg\"; i køen: c0000000-0000-4000-8000-000000000168_1; appens øvrige hentninger forsøgt uden net (ingen nåede frem): 5",
+    "uden net: sæt 2 (samme vægt) logget, ingen ny fejring; \"2 sæt gemt lokalt\"",
+    "nettet tilbage: køen tømt; mocken har squat-sæt [1,2]; fejringer i alt: 1 (sæt 1)",
+    "Fremgang efter afsendelsen: i dag = [\"26. sep Squat e1RM 117 kg +3 kg · 100 kg × 5\"]"
+  ],
+  "konsolFejl": [],
+  "groen": true
+}

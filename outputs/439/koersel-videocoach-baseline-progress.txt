@@ -1,0 +1,5 @@
+
+> entropi-app@0.0.0 verify:videocoach-baseline-progress
+> node scripts/verify-videocoach-baseline-progress.mjs
+
+VideoCoach baseline-fremdrift tæller profiler og aliases korrekt.

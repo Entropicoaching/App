@@ -1,0 +1,6 @@
+
+> entropi-app@0.0.0 verify:videocoach-submission
+> node scripts/verify-videocoach-submission.mjs
+
+VideoCoach gemmer accepterer kun en identisk, profilkoblet dublet.
+Belastning, RPE og notat udfyldes samme sted for begge sende-veje.

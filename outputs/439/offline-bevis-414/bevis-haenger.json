@@ -1,0 +1,24 @@
+{
+  "groen": true,
+  "trin": [
+    "online: logget ind, service worker styrer siden, sæt 1 logget og gemt i mocken",
+    "wifi uden internet (navigator.onLine=true): sæt 2 gik videre til sæt 3 med det samme og blev vist som \"gemt lokalt\" efter 8534 ms; dets INSERT nåede mocken, svaret kom aldrig",
+    "sæt 3: vist som ventende efter 31 ms uden noget kald; sæt 2 og 3 har hver \"sendes når du har net\"",
+    "nettet virker igen: køen sendt af sig selv efter 18912 ms, markeringerne væk",
+    "mocken: én række pr. sæt [1,1,1,0]; sæt 2, hvis første INSERT nåede frem, er ikke dubleret; sæt 2 og 3 har deres række-id og godkendt-tid"
+  ],
+  "markering2Ms": 8534,
+  "markering3Ms": 31,
+  "sendtEfterMs": 18912,
+  "raekkerPrSaet": [
+    1,
+    1,
+    1,
+    0
+  ],
+  "insertForsoegUnderHaeng": {
+    "2": 1,
+    "3": 0
+  },
+  "konsolFejl": []
+}
