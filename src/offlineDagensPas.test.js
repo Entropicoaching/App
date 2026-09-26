@@ -3,7 +3,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import {
   saveOfflineSet, loadOfflineSets, countOfflineSets, clearOfflineSetIfSame, newSetClientId,
-  orderedOfflineSets, pendingSetKeys, parkOfflineSet, loadParkedSets, overlayQueuedSets, queuedPayloadWithTime, noteOfflineSetFailure,
+  orderedOfflineSets, pendingSetKeys, parkOfflineSet, loadParkedSets, overlayQueuedSets, queuedPayloadWithTime, noteOfflineSetFailure, queueUndoTombstone,
 } from './offlineSetQueue.js'
 import { saveOfflineSnapshot, loadOfflineSnapshot, snapshotLogsForWeek, clearOfflineSnapshots } from './athlete/offlineSnapshot.js'
 import { readStoredSession, offlineAthleteSession, withSlowNetCutoff, seemsOffline, markNetworkSuccess, SLOW_NET_MS } from './offlineSession.js'
@@ -191,4 +191,72 @@ test('login uden net siger "Ingen forbindelse", ikke "tjek oplysningerne"', () =
   assert.equal(athleteAuthErrorMessage({ name: 'AuthRetryableFetchError', message: 'Failed to fetch', status: 0 }), NO_CONNECTION_MESSAGE)
   assert.equal(athleteAuthErrorMessage({ message: 'Load failed' }), NO_CONNECTION_MESSAGE)
   assert.equal(athleteAuthErrorMessage({ message: 'Invalid login credentials', status: 400 }), 'Email eller adgangskode er forkert.')
+})
+
+// ORDRE 414 (O4 i docs/kritik-403)
+test('fortryd: sletningen står i køen med det samme, i stedet for sættets post', () => {
+  const st = fakeStorage()
+  saveOfflineSet('a', 'e_2', { exerciseId: 'e', setNumber: 2, payload: { weight: 80 }, clientId: 'id-2' }, st)
+  const foer = loadOfflineSets('a', st).e_2.queuedAt
+  const t = queueUndoTombstone('a', 'e_2', { exerciseId: 'e', setNumber: 2, rowId: 'id-2' }, st)
+  const post = loadOfflineSets('a', st).e_2
+  assert.equal(post.op, 'delete')
+  assert.equal(post.clientId, 'id-2')
+  assert.equal(post.payload, null)
+  assert.equal(post.queuedAt, foer, 'sletningen beholder sættets plads i rækkefølgen')
+  assert.equal(countOfflineSets('a', st), 0, 'en ventende sletning er ikke et sæt gemt lokalt')
+  // Sættets sene svar (sendQueuedSet/logSet) må ikke fjerne sletningen.
+  clearOfflineSetIfSame('a', 'e_2', { payload: { weight: 80 } }, st)
+  assert.equal(loadOfflineSets('a', st).e_2?.op, 'delete')
+  // Når sletningen er gennemført, fjernes den.
+  clearOfflineSetIfSame('a', 'e_2', t, st)
+  assert.equal(loadOfflineSets('a', st).e_2, undefined)
+})
+
+test('fortryd uden kendt række-id fjerner bare posten; et nyt "Godkendt" erstatter sletningen', () => {
+  const st = fakeStorage()
+  saveOfflineSet('a', 'e_1', { exerciseId: 'e', setNumber: 1, payload: { weight: 80 } }, st)
+  assert.equal(queueUndoTombstone('a', 'e_1', { exerciseId: 'e', setNumber: 1, rowId: null }, st), null)
+  assert.equal(loadOfflineSets('a', st).e_1, undefined)
+  queueUndoTombstone('a', 'e_3', { exerciseId: 'e', setNumber: 3, rowId: 'id-3' }, st)
+  saveOfflineSet('a', 'e_3', { exerciseId: 'e', setNumber: 3, payload: { weight: 90 }, clientId: 'id-3' }, st)
+  const q = loadOfflineSets('a', st).e_3
+  assert.equal(q.op, undefined)
+  assert.equal(q.clientId, 'id-3', 'samme række-id, så en række der nåede frem, opdateres')
+})
+
+// ORDRE 414 (O7 i docs/kritik-403)
+test('withSlowNetCutoff: uret starter først, når kaldet får sin tur i skrivekøen', async () => {
+  markNetworkSuccess()
+  let tur
+  const startWhen = new Promise(r => { tur = r })
+  let svar
+  const kald = new Promise(r => { svar = r })
+  const t0 = Date.now()
+  const res = withSlowNetCutoff(kald, 60, { startWhen, maxWaitMs: 5000 })
+  // 150 ms i kø bag andre skrivninger: tæller ikke med.
+  await new Promise(r => setTimeout(r, 150))
+  assert.equal(seemsOffline(), false, 'ventetid i køen udløser ikke SLOW_NET')
+  tur()
+  await new Promise(r => setTimeout(r, 20))
+  svar({ data: { id: 'x' }, error: null })
+  assert.deepEqual(await res, { data: { id: 'x' }, error: null })
+  assert.ok(Date.now() - t0 >= 150)
+  assert.equal(seemsOffline(), false)
+})
+
+test('withSlowNetCutoff: et kald der har fået sin tur og hænger, giver SLOW_NET efter ms', async () => {
+  markNetworkSuccess()
+  const res = await withSlowNetCutoff(new Promise(() => {}), 50, { startWhen: Promise.resolve(), maxWaitMs: 5000 })
+  assert.equal(res.error.code, 'SLOW_NET')
+  markNetworkSuccess()
+})
+
+test('withSlowNetCutoff: et kald der aldrig får sin tur, stoppes af loftet', async () => {
+  markNetworkSuccess()
+  const t0 = Date.now()
+  const res = await withSlowNetCutoff(new Promise(() => {}), 50, { startWhen: new Promise(() => {}), maxWaitMs: 120 })
+  assert.equal(res.error.code, 'SLOW_NET')
+  assert.ok(Date.now() - t0 >= 100 && Date.now() - t0 < 1000)
+  markNetworkSuccess()
 })

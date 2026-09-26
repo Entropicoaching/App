@@ -86,10 +86,19 @@ if (typeof window !== 'undefined') {
 export const SLOW_NET_MS = 8000
 export const SLOW_NET_ERROR = { code: 'SLOW_NET', message: 'Serveren svarede ikke' }
 
-export function withSlowNetCutoff(call, ms = SLOW_NET_MS) {
+// ORDRE 414 (O7 i docs/kritik-403): startWhen = et løfte der opfyldes, når
+// kaldet faktisk får sin tur i skrivekøen (queueWrite's onStart). Så tæller
+// ventetid bag andre skrivninger ikke med i de 8 s. maxWaitMs er et loft over
+// hele ventetiden, så et kald der aldrig kommer til, heller ikke hænger.
+export function withSlowNetCutoff(call, ms = SLOW_NET_MS, { startWhen = null, maxWaitMs = 4 * ms } = {}) {
   let timer
+  let capTimer
+  let done = false
   const cutoff = new Promise((resolve) => {
-    timer = setTimeout(() => { markNetworkFailure(); resolve({ data: null, error: SLOW_NET_ERROR }) }, ms)
+    const giveUp = () => { if (done) return; markNetworkFailure(); resolve({ data: null, error: SLOW_NET_ERROR }) }
+    if (!startWhen) { timer = setTimeout(giveUp, ms); return }
+    Promise.resolve(startWhen).then(() => { if (!done) timer = setTimeout(giveUp, ms) }, () => {})
+    capTimer = setTimeout(giveUp, maxWaitMs)
   })
-  return Promise.race([Promise.resolve(call), cutoff]).finally(() => clearTimeout(timer))
+  return Promise.race([Promise.resolve(call), cutoff]).finally(() => { done = true; clearTimeout(timer); clearTimeout(capTimer) })
 }

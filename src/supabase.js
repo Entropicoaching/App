@@ -260,8 +260,12 @@ let writeChain = Promise.resolve()
 // ORDRE 401: `giveUpIf` stopper genforsøgene, når det er nytteløst (nettet er
 // kendt dødt, og kalderen har selv en kø der sender igen). Ellers står et
 // hængende kald og holder alle senere skrivninger tilbage i op mod et minut.
-export function queueWrite(run, { tries = 4, delay = 600, giveUpIf = null } = {}) {
+// ORDRE 414 (O7): `onStart` kaldes, når skrivningen får sin tur (før
+// auth-opvarmningen, der er skrivningens første kald), så kalderens 8-s-ur
+// ikke tæller ventetid bag andre skrivninger med (se withSlowNetCutoff).
+export function queueWrite(run, { tries = 4, delay = 600, giveUpIf = null, onStart = null } = {}) {
   const task = writeChain.then(async () => {
+    try { onStart?.() } catch { /* uret må ikke vælte skrivningen */ }
     await warmupAuth()
     let last
     for (let i = 0; i < tries; i++) {

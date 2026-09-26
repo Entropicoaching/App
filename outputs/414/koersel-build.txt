@@ -1,0 +1,6 @@
+dist/assets/AthleteView-B44_rdcL.js           183.30 kB │ gzip:  49.86 kB
+dist/assets/Dashboard-DgOmmjQI.js             283.23 kB │ gzip:  73.11 kB
+dist/assets/index-BPlqFqIj.js                 362.22 kB │ gzip: 102.65 kB
+
+[32m✓ built in 251ms[39m
+BUILD EXIT 0

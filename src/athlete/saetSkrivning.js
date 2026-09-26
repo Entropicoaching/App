@@ -10,8 +10,8 @@ import { applySetEdit } from '../editLoggedSet'
 import { restSecondsForExercise } from '../restBetweenSets'
 import { startRestPause, clearRestPause } from '../restPause'
 import {
-  saveOfflineSet, loadOfflineSets, clearOfflineSet, countOfflineSets, clearOfflineSetIfSame, newSetClientId,
-  orderedOfflineSets, parkOfflineSet, queuedPayloadWithTime, noteOfflineSetFailure,
+  saveOfflineSet, loadOfflineSets, countOfflineSets, clearOfflineSetIfSame, newSetClientId,
+  orderedOfflineSets, parkOfflineSet, queuedPayloadWithTime, noteOfflineSetFailure, queueUndoTombstone,
 } from '../offlineSetQueue'
 import { browserSaysOffline, seemsOffline, withSlowNetCutoff } from '../offlineSession'
 import { estimatedOneRepMax } from '../exerciseProgress'
@@ -106,7 +106,11 @@ export function lavSaetSkrivning({
   // ORDRE 406: lookupFirst = række-id'et er nyt (ingen køpost, ingen tidligere
   // skrivning i denne åbning), så insertSetLog slår sættet op før INSERT.
   function persistSetLog(key, exerciseId, setNumber, payload, realExistingId, clientId, { hasQueue = false, lookupFirst = false } = {}) {
-    const writeOpts = hasQueue ? { giveUpIf: seemsOffline } : undefined
+    // ORDRE 414 (O7): `sent` opfyldes, når skrivningen får sin tur i den globale
+    // skrivekø; det er dér kalderens 8-s-ur starter (withSlowNetCutoff's startWhen).
+    let markSent
+    const sent = new Promise((resolve) => { markSent = resolve })
+    const writeOpts = hasQueue ? { giveUpIf: seemsOffline, onStart: markSent } : { onStart: markSent }
     const ref = setWriteRef.current[key] || (setWriteRef.current[key] = { realId: null, chain: Promise.resolve() })
     if (realExistingId) ref.realId = realExistingId
     if (clientId) ref.clientId = clientId
@@ -124,6 +128,7 @@ export function lavSaetSkrivning({
     })
     // Hold kæden i live selv hvis en skrivning fejler/kaster.
     ref.chain = task.then(() => {}, () => {})
+    task.sent = sent
     return task
   }
 
@@ -133,7 +138,7 @@ export function lavSaetSkrivning({
   // køposten her (ellers sender flushOfflineSets den med samme række-id).
   async function sendQueuedSet(key, exerciseId, setNumber, payload, realExistingId, clientId, { lookupFirst = false } = {}) {
     const write = persistSetLog(key, exerciseId, setNumber, payload, realExistingId, clientId, { hasQueue: true, lookupFirst })
-    const res = await withSlowNetCutoff(write)
+    const res = await withSlowNetCutoff(write, undefined, { startWhen: write.sent })
     if (res.error?.code === 'SLOW_NET') {
       write.then((late) => {
         if (late?.error) return
@@ -376,7 +381,9 @@ export function lavSaetSkrivning({
         const payload = queuedPayloadWithTime(entry)
         if (entry.op === 'delete') {
           // Fortryd uden net af et sæt der måske nåede serveren (se undoLoggedSet).
-          const { error } = await withSlowNetCutoff(queueWrite(() => supabase.from('exercise_logs').delete().eq('id', clientId).eq('athlete_id', athlete.id), { giveUpIf: seemsOffline }))
+          let markSent
+          const sent = new Promise((resolve) => { markSent = resolve })
+          const { error } = await withSlowNetCutoff(queueWrite(() => supabase.from('exercise_logs').delete().eq('id', clientId).eq('athlete_id', athlete.id), { giveUpIf: seemsOffline, onStart: markSent }), undefined, { startWhen: sent })
           if (!error) clearOfflineSetIfSame(athlete.id, key, entry)
           else if (seemsOffline()) break
           continue
@@ -398,7 +405,8 @@ export function lavSaetSkrivning({
         }
         // ORDRE 401: et hængende kald stopper runden efter SLOW_NET_MS (nettet
         // huskes som dødt); posten bliver i køen til næste runde.
-        const { error } = await withSlowNetCutoff(persistSetLog(key, exerciseId, setNumber, payload, realId, clientId, { hasQueue: true }))
+        const write = persistSetLog(key, exerciseId, setNumber, payload, realId, clientId, { hasQueue: true })
+        const { error } = await withSlowNetCutoff(write, undefined, { startWhen: write.sent })
         if (!error) clearOfflineSetIfSame(athlete.id, key, entry)
         else if (seemsOffline()) break
         else if (isPermanentSetError(error)) {
@@ -429,26 +437,33 @@ export function lavSaetSkrivning({
     setLastLoggedSet(null)
     // Sættet kan være ventende lokalt (blev "Godkendt" uden net, se
     // flushOfflineSets) — fortryd skal ikke sende det senere.
+    // ORDRE 414 (O4): sættets køpost erstattes med det samme (synkront) af en
+    // sletning på det række-id, sættet har eller kan have fået hos serveren
+    // (397: INSERT'et kan være nået frem, uden at svaret gjorde). Dør appen,
+    // mens sættets skrivning stadig hænger, sletter køens runde rækken senere.
     const queuedEntry = loadOfflineSets(athlete.id)[key]
-    clearOfflineSet(athlete.id, key)
-    setPendingSyncCount(countOfflineSets(athlete.id))
     const ref = setWriteRef.current[key]
+    let tombstone = queueUndoTombstone(athlete.id, key, { exerciseId, setNumber, rowId: ref?.realId || ref?.clientId || queuedEntry?.clientId })
+    setPendingSyncCount(countOfflineSets(athlete.id))
     const chain = ref ? ref.chain : Promise.resolve()
     const task = chain.then(async () => {
-      // ORDRE 397: har vi intet bekræftet id, men en køpost med række-id, kan
-      // INSERT'et være nået frem uden at svaret gjorde. Slet på det id, og
-      // lykkes det ikke (uden net), så læg sletningen i køen, så rækken ikke
-      // bliver et spøgelsessæt.
-      const idToDelete = ref?.realId || (queuedEntry?.op !== 'delete' ? queuedEntry?.clientId : null)
-      if (!idToDelete) return
-      const tombstone = { op: 'delete', exerciseId, setNumber, clientId: idToDelete, payload: null }
-      if (seemsOffline()) { saveOfflineSet(athlete.id, key, tombstone); return }
+      if (!tombstone) return
+      // Sættets skrivning er færdig nu. Fandt den en række med et andet id (opslag
+      // før INSERT, 406), er det den, der skal slettes; køens post rettes til.
+      const idToDelete = ref?.realId || tombstone.clientId
+      if (idToDelete !== tombstone.clientId) {
+        const current = loadOfflineSets(athlete.id)[key]
+        if (current?.op === 'delete' && current.clientId === tombstone.clientId) {
+          tombstone = queueUndoTombstone(athlete.id, key, { exerciseId, setNumber, rowId: idToDelete })
+        }
+      }
+      if (seemsOffline()) return
       const { error } = await queueWrite(() => supabase.from('exercise_logs').delete().eq('id', idToDelete))
       if (error) {
-        logFrontendError('Fortryd sæt: sletning fejlede', error, athlete.id)
-        if (!loadOfflineSets(athlete.id)[key]) saveOfflineSet(athlete.id, key, tombstone)
+        logFrontendError('Fortryd sæt: sletning fejlede, ligger i køen', error, athlete.id)
         return
       }
+      clearOfflineSetIfSame(athlete.id, key, tombstone)
       if (ref?.realId === idToDelete) ref.realId = null
     })
     if (ref) ref.chain = task.then(() => {}, () => {})
