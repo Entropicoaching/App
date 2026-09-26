@@ -1,0 +1,24 @@
+[
+ {
+  "oevelse": "sm07",
+  "uci": "d1g4",
+  "godeFoerste": [
+   "d1g4",
+   "d2f3",
+   "d4f3"
+  ],
+  "hint": "Hint: pilen viser trækket. Kan du se hvorfor det virker?",
+  "svar": "Løst! Matten er stoppet. Men med fejl eller hint, så rækken starter forfra."
+ },
+ {
+  "oevelse": "sm03",
+  "uci": "d2d3",
+  "godeFoerste": [
+   "d2d3",
+   "d2e2",
+   "d5d4"
+  ],
+  "hint": "Hint: pilen viser trækket. Kan du se hvorfor det virker?",
+  "svar": "Løst! Matten er stoppet. Men med fejl eller hint, så rækken starter forfra."
+ }
+]

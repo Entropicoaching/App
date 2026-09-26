@@ -1,0 +1,2586 @@
+{
+ "dybde": 4,
+ "kompetencer": {
+  "rokade": {
+   "form": "gaader",
+   "niveau": 1,
+   "antal": 8,
+   "oevelser": [
+    {
+     "id": "ro1",
+     "fen": "r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4",
+     "loesning": [
+      "e1g1"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQ1RK1 b kq - 5 4",
+      "mat": false
+     },
+     "lovligeRokader": [
+      "O-O"
+     ],
+     "andenSide": [
+      {
+       "side": "O-O-O",
+       "brikkerIVejen": [
+        "d1",
+        "c1",
+        "b1"
+       ],
+       "angrebne": []
+      }
+     ],
+     "entydig": true,
+     "hvorfor": "Den lange vej er spærret: springeren, løberen og dronningen står i vejen.",
+     "rokadeMateriale": -1,
+     "bedsteMateriale": 0,
+     "ms": 27509
+    },
+    {
+     "id": "ro4",
+     "fen": "3rk2r/ppp2ppp/8/8/8/8/PPP2PPP/R3K2R w KQk - 0 1",
+     "loesning": [
+      "e1g1"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "3rk2r/ppp2ppp/8/8/8/8/PPP2PPP/R4RK1 b k - 1 1",
+      "mat": false
+     },
+     "lovligeRokader": [
+      "O-O"
+     ],
+     "andenSide": [
+      {
+       "side": "O-O-O",
+       "brikkerIVejen": [],
+       "angrebne": [
+        "d1"
+       ]
+      }
+     ],
+     "entydig": true,
+     "hvorfor": "Lang rokade er ulovlig: kongen skal hen over d1, og tårnet på d8 angriber d1.",
+     "rokadeMateriale": 0,
+     "bedsteMateriale": 0,
+     "ms": 2049
+    },
+    {
+     "id": "ro8",
+     "fen": "r3k2r/ppp2ppp/8/8/8/8/PPP2PPP/3RK2R b Kkq - 0 1",
+     "loesning": [
+      "e8g8"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "r4rk1/ppp2ppp/8/8/8/8/PPP2PPP/3RK2R w K - 1 2",
+      "mat": false
+     },
+     "lovligeRokader": [
+      "O-O"
+     ],
+     "andenSide": [
+      {
+       "side": "O-O-O",
+       "brikkerIVejen": [],
+       "angrebne": [
+        "d8"
+       ]
+      }
+     ],
+     "entydig": true,
+     "hvorfor": "Sort: lang rokade er ulovlig, kongen skal hen over d8, og tårnet på d1 angriber d8.",
+     "rokadeMateriale": 0,
+     "bedsteMateriale": 0,
+     "ms": 1862
+    }
+   ]
+  },
+  "damemat": {
+   "form": "gaader",
+   "niveau": 1,
+   "antal": 8,
+   "oevelser": [
+    {
+     "id": "dm04",
+     "fen": "8/8/3Q4/8/8/K7/8/1k6 w - - 0 1",
+     "loesning": [
+      "d6d1"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "8/8/8/8/8/K7/8/1k1Q4 b - - 1 1",
+      "mat": true
+     },
+     "tema": {
+      "ok": true,
+      "noter": []
+     },
+     "matTraek": [
+      "Qd1#"
+     ],
+     "pattFaelder": [],
+     "entydig": true,
+     "ms": 26
+    },
+    {
+     "id": "dm06",
+     "fen": "8/2Q5/8/8/8/6K1/8/7k w - - 0 1",
+     "loesning": [
+      "c7c1"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "8/8/8/8/8/6K1/8/2Q4k b - - 1 1",
+      "mat": true
+     },
+     "tema": {
+      "ok": true,
+      "noter": []
+     },
+     "matTraek": [
+      "Qc1#"
+     ],
+     "pattFaelder": [
+      "c7c5",
+      "c7b6",
+      "c7a7",
+      "g3f2"
+     ],
+     "entydig": true,
+     "ms": 29
+    },
+    {
+     "id": "dm08",
+     "fen": "5k2/8/4K3/8/3Q4/8/8/8 w - - 0 1",
+     "loesning": [
+      "d4h8"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "5k1Q/8/4K3/8/8/8/8/8 b - - 1 1",
+      "mat": true
+     },
+     "tema": {
+      "ok": true,
+      "noter": []
+     },
+     "matTraek": [
+      "Qh8#"
+     ],
+     "pattFaelder": [],
+     "entydig": true,
+     "ms": 33
+    }
+   ]
+  },
+  "taarnmat": {
+   "form": "gaader",
+   "niveau": 1,
+   "antal": 8,
+   "oevelser": [
+    {
+     "id": "tm01",
+     "fen": "6k1/8/4R1K1/8/8/8/8/8 w - - 0 1",
+     "loesning": [
+      "e6e8"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "4R1k1/8/6K1/8/8/8/8/8 b - - 1 1",
+      "mat": true
+     },
+     "tema": {
+      "ok": true,
+      "noter": []
+     },
+     "matTraek": [
+      "Re8#"
+     ],
+     "pattFaelder": [],
+     "entydig": true,
+     "ms": 14
+    },
+    {
+     "id": "tm03",
+     "fen": "8/8/2R5/8/8/8/5K2/7k w - - 0 1",
+     "loesning": [
+      "c6h6"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "8/8/7R/8/8/8/5K2/7k b - - 1 1",
+      "mat": true
+     },
+     "tema": {
+      "ok": true,
+      "noter": []
+     },
+     "matTraek": [
+      "Rh6#"
+     ],
+     "pattFaelder": [],
+     "entydig": true,
+     "ms": 16
+    },
+    {
+     "id": "tm04",
+     "fen": "4k3/8/4K3/8/8/8/8/6R1 w - - 0 1",
+     "loesning": [
+      "g1g8"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "4k1R1/8/4K3/8/8/8/8/8 b - - 1 1",
+      "mat": true
+     },
+     "tema": {
+      "ok": true,
+      "noter": []
+     },
+     "matTraek": [
+      "Rg8#"
+     ],
+     "pattFaelder": [],
+     "entydig": true,
+     "ms": 15
+    }
+   ]
+  },
+  "mat-i-1": {
+   "form": "gaader",
+   "niveau": 1,
+   "antal": 10,
+   "oevelser": [
+    {
+     "id": "063On",
+     "fen": "7K/5qQ1/5k2/8/8/8/8/8 b - - 2 65",
+     "loesning": [
+      "f7g7"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "7K/6q1/5k2/8/8/8/8/8 w - - 0 66",
+      "mat": true
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "matbrik q"
+      ]
+     },
+     "matTraek": [
+      "Qxg7#"
+     ],
+     "pattFaelder": [],
+     "entydig": true,
+     "ms": 3
+    },
+    {
+     "id": "0O8vI",
+     "fen": "r3kbnr/1b1p1ppp/p3p3/8/1pq3P1/4B3/PPPQNP1P/2KR1BR1 w kq - 4 13",
+     "loesning": [
+      "d2d7"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "r3kbnr/1b1Q1ppp/p3p3/8/1pq3P1/4B3/PPP1NP1P/2KR1BR1 b kq - 0 13",
+      "mat": true
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "matbrik q"
+      ]
+     },
+     "matTraek": [
+      "Qxd7#"
+     ],
+     "pattFaelder": [],
+     "entydig": true,
+     "ms": 32
+    },
+    {
+     "id": "0Gomm",
+     "fen": "1br2rk1/ppq2ppp/2n1p3/3p2N1/3P4/1NP1P2P/PP3QP1/4RRK1 b - - 6 17",
+     "loesning": [
+      "c7h2"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "1br2rk1/pp3ppp/2n1p3/3p2N1/3P4/1NP1P2P/PP3QPq/4RRK1 w - - 7 18",
+      "mat": true
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "matbrik q"
+      ]
+     },
+     "matTraek": [
+      "Qh2#"
+     ],
+     "pattFaelder": [],
+     "entydig": true,
+     "ms": 28
+    }
+   ]
+  },
+  "baglinjemat": {
+   "form": "gaader",
+   "niveau": 2,
+   "antal": 10,
+   "oevelser": [
+    {
+     "id": "0L7ju",
+     "fen": "6k1/2R2p1p/1rp2Pp1/p7/3p4/3P3P/P1P3PK/8 w - - 2 33",
+     "loesning": [
+      "c7c8"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "2R3k1/5p1p/1rp2Pp1/p7/3p4/3P3P/P1P3PK/8 b - - 3 33",
+      "mat": true
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "konge g8, mat paa c8"
+      ]
+     },
+     "matTraek": [
+      "Rc8#"
+     ],
+     "pattFaelder": [],
+     "entydig": true,
+     "ms": 8
+    },
+    {
+     "id": "0CLrY",
+     "fen": "r1b1r1k1/1pp2ppp/p1n2q2/3p4/P2b2PP/1PN5/1BPPQPB1/2KR3R w - - 0 14",
+     "loesning": [
+      "e2e8"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "r1b1Q1k1/1pp2ppp/p1n2q2/3p4/P2b2PP/1PN5/1BPP1PB1/2KR3R b - - 0 14",
+      "mat": true
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "konge g8, mat paa e8"
+      ]
+     },
+     "matTraek": [
+      "Qxe8#"
+     ],
+     "pattFaelder": [],
+     "entydig": true,
+     "ms": 46
+    },
+    {
+     "id": "0TWfR",
+     "fen": "3r3k/r3b1pp/3p1p2/4p3/1P2P2B/8/1PPR1PPP/2KR4 b - - 0 27",
+     "loesning": [
+      "a7a1"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "3r3k/4b1pp/3p1p2/4p3/1P2P2B/8/1PPR1PPP/r1KR4 w - - 1 28",
+      "mat": true
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "konge c1, mat paa a1"
+      ]
+     },
+     "matTraek": [
+      "Ra1#"
+     ],
+     "pattFaelder": [],
+     "entydig": true,
+     "ms": 14
+    }
+   ]
+  },
+  "kvaelningsmat": {
+   "form": "gaader",
+   "niveau": 2,
+   "antal": 10,
+   "oevelser": [
+    {
+     "id": "0O4JU",
+     "fen": "q5rk/1b4np/2p1pbpN/8/p1BP4/P6P/5PP1/2R1R1K1 w - - 0 31",
+     "loesning": [
+      "h6f7"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "q5rk/1b3Nnp/2p1pbp1/8/p1BP4/P6P/5PP1/2R1R1K1 b - - 1 31",
+      "mat": true
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "springer true, 3 af 3 nabofelter egne brikker"
+      ]
+     },
+     "matTraek": [
+      "Nf7#"
+     ],
+     "pattFaelder": [],
+     "entydig": true,
+     "ms": 25
+    },
+    {
+     "id": "0NRqp",
+     "fen": "rnbkn2r/ppppb2p/3N4/8/4P3/2N5/PPPP3P/R1B1KB1q w Q - 0 13",
+     "loesning": [
+      "d6f7"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "rnbkn2r/ppppbN1p/8/8/4P3/2N5/PPPP3P/R1B1KB1q b Q - 1 13",
+      "mat": true
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "springer true, 5 af 5 nabofelter egne brikker"
+      ]
+     },
+     "matTraek": [
+      "Nf7#"
+     ],
+     "pattFaelder": [],
+     "entydig": true,
+     "ms": 19
+    },
+    {
+     "id": "05V0f",
+     "fen": "kr5r/pp6/N4b2/5P2/3p4/Pq3NP1/1P4KP/1RB4R w - - 0 36",
+     "loesning": [
+      "a6c7"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "kr5r/ppN5/5b2/5P2/3p4/Pq3NP1/1P4KP/1RB4R b - - 1 36",
+      "mat": true
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "springer true, 3 af 3 nabofelter egne brikker"
+      ]
+     },
+     "matTraek": [
+      "Nc7#"
+     ],
+     "pattFaelder": [],
+     "entydig": true,
+     "ms": 18
+    }
+   ]
+  },
+  "ubeskyttet": {
+   "form": "gaader",
+   "niveau": 1,
+   "antal": 10,
+   "oevelser": [
+    {
+     "id": "u07",
+     "fen": "6k1/5ppp/8/8/1b6/8/3Q1PPP/6K1 w - - 0 1",
+     "loesning": [
+      "d2b4"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "6k1/5ppp/8/8/1Q6/8/5PPP/6K1 b - - 0 1",
+      "mat": false
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "foerste traek Qxb4"
+      ]
+     },
+     "gevinst": 3,
+     "bedste": [
+      {
+       "uci": "d2b4",
+       "gevinst": 3
+      },
+      {
+       "uci": "d2d3",
+       "gevinst": 0
+      },
+      {
+       "uci": "d2d4",
+       "gevinst": 0
+      },
+      {
+       "uci": "d2d5",
+       "gevinst": 0
+      }
+     ],
+     "lige_saa_gode": [],
+     "entydig": true,
+     "ms": 15416
+    },
+    {
+     "id": "u09",
+     "fen": "6k1/5ppp/8/4p3/3n2b1/8/P4PPP/3Q2K1 w - - 0 1",
+     "loesning": [
+      "d1g4"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "6k1/5ppp/8/4p3/3n2Q1/8/P4PPP/6K1 b - - 0 1",
+      "mat": false
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "foerste traek Qxg4"
+      ]
+     },
+     "gevinst": 3,
+     "bedste": [
+      {
+       "uci": "d1g4",
+       "gevinst": 3
+      },
+      {
+       "uci": "f2f3",
+       "gevinst": 0
+      },
+      {
+       "uci": "d1a4",
+       "gevinst": 0
+      },
+      {
+       "uci": "d1d2",
+       "gevinst": 0
+      }
+     ],
+     "lige_saa_gode": [],
+     "entydig": true,
+     "ms": 26799
+    },
+    {
+     "id": "u12",
+     "fen": "6k1/5pp1/7p/7n/8/7Q/5PPP/6K1 w - - 0 1",
+     "loesning": [
+      "h3h5"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "6k1/5pp1/7p/7Q/8/8/5PPP/6K1 b - - 0 1",
+      "mat": false
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "foerste traek Qxh5"
+      ]
+     },
+     "gevinst": 3,
+     "bedste": [
+      {
+       "uci": "h3h5",
+       "gevinst": 3
+      },
+      {
+       "uci": "h3c8",
+       "gevinst": 1
+      },
+      {
+       "uci": "h3g4",
+       "gevinst": 0
+      },
+      {
+       "uci": "h3f5",
+       "gevinst": 0
+      }
+     ],
+     "lige_saa_gode": [],
+     "entydig": true,
+     "ms": 11023
+    }
+   ]
+  },
+  "gaffel-springer": {
+   "form": "gaader",
+   "niveau": 2,
+   "antal": 10,
+   "oevelser": [
+    {
+     "id": "0K0hW",
+     "fen": "3N4/6k1/p3p1pp/2P5/5rPn/1P5P/P6K/8 w - - 1 37",
+     "loesning": [
+      "d8e6",
+      "g7f6",
+      "e6f4"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "8/8/p4kpp/2P5/5NPn/1P5P/P6K/8 b - - 0 38",
+      "mat": false
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "Nxe6+: angriber kg7,rf4"
+      ]
+     },
+     "gevinst": 6,
+     "bedste": [
+      {
+       "uci": "d8e6",
+       "gevinst": 6
+      },
+      {
+       "uci": "h2g3",
+       "gevinst": 3
+      },
+      {
+       "uci": "d8c6",
+       "gevinst": 0
+      },
+      {
+       "uci": "d8b7",
+       "gevinst": 0
+      }
+     ],
+     "lige_saa_gode": [],
+     "entydig": true,
+     "andetTraek": {
+      "facit": "e6f4",
+      "gevinst": 5,
+      "lige_saa_gode": []
+     },
+     "ms": 5658
+    },
+    {
+     "id": "0QN9N",
+     "fen": "4k3/pr2np2/2p1p3/6P1/2NB4/4P3/P3KP2/8 w - - 5 27",
+     "loesning": [
+      "c4d6",
+      "e8d7",
+      "d6b7"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "8/pN1knp2/2p1p3/6P1/3B4/4P3/P3KP2/8 b - - 0 28",
+      "mat": false
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "Nd6+: angriber ke8,rb7,pf7"
+      ]
+     },
+     "gevinst": 5,
+     "bedste": [
+      {
+       "uci": "c4d6",
+       "gevinst": 5
+      },
+      {
+       "uci": "g5g6",
+       "gevinst": 0
+      },
+      {
+       "uci": "c4a5",
+       "gevinst": 0
+      },
+      {
+       "uci": "c4e5",
+       "gevinst": 0
+      }
+     ],
+     "lige_saa_gode": [],
+     "entydig": true,
+     "andetTraek": {
+      "facit": "d6b7",
+      "gevinst": 5,
+      "lige_saa_gode": []
+     },
+     "ms": 46129
+    },
+    {
+     "id": "01Yjm",
+     "fen": "8/5Npk/p3b3/3p3p/8/6P1/1P4KP/8 w - - 2 39",
+     "loesning": [
+      "f7g5",
+      "h7h6",
+      "g5e6"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "8/6p1/p3N2k/3p3p/8/6P1/1P4KP/8 b - - 0 40",
+      "mat": false
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "Ng5+: angriber kh7,be6"
+      ]
+     },
+     "gevinst": 3,
+     "bedste": [
+      {
+       "uci": "f7g5",
+       "gevinst": 3
+      },
+      {
+       "uci": "f7d8",
+       "gevinst": 0
+      },
+      {
+       "uci": "f7e5",
+       "gevinst": 0
+      },
+      {
+       "uci": "f7d6",
+       "gevinst": 0
+      }
+     ],
+     "lige_saa_gode": [],
+     "entydig": true,
+     "andetTraek": {
+      "facit": "g5e6",
+      "gevinst": 3,
+      "lige_saa_gode": []
+     },
+     "ms": 2613
+    }
+   ]
+  },
+  "gaffel-andre": {
+   "form": "gaader",
+   "niveau": 2,
+   "antal": 10,
+   "oevelser": [
+    {
+     "id": "0JnUQ",
+     "fen": "r1bk3r/ppp2p2/4pp1p/6B1/4P3/8/PPP3PP/RN4K1 w - - 0 13",
+     "loesning": [
+      "g5f6",
+      "d8d7",
+      "f6h8"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "r1b4B/pppk1p2/4p2p/8/4P3/8/PPP3PP/RN4K1 b - - 0 14",
+      "mat": false
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "Bxf6+: angriber kd8,rh8"
+      ]
+     },
+     "gevinst": 6,
+     "bedste": [
+      {
+       "uci": "g5f6",
+       "gevinst": 6
+      },
+      {
+       "uci": "g5h4",
+       "gevinst": 1
+      },
+      {
+       "uci": "g5f4",
+       "gevinst": 0
+      },
+      {
+       "uci": "g5e3",
+       "gevinst": 0
+      }
+     ],
+     "lige_saa_gode": [],
+     "entydig": true,
+     "andetTraek": {
+      "facit": "f6h8",
+      "gevinst": 5,
+      "lige_saa_gode": []
+     },
+     "ms": 16761
+    },
+    {
+     "id": "02Km7",
+     "fen": "5rk1/6p1/8/8/4P1B1/1r3pKP/5P2/4R3 w - - 6 44",
+     "loesning": [
+      "g4e6",
+      "g8h7",
+      "e6b3"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "5r2/6pk/8/8/4P3/1B3pKP/5P2/4R3 b - - 0 45",
+      "mat": false
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "Be6+: angriber kg8,rb3"
+      ]
+     },
+     "gevinst": 5,
+     "bedste": [
+      {
+       "uci": "g4e6",
+       "gevinst": 5
+      },
+      {
+       "uci": "e4e5",
+       "gevinst": 0
+      },
+      {
+       "uci": "g4f5",
+       "gevinst": 0
+      },
+      {
+       "uci": "g4d7",
+       "gevinst": 0
+      }
+     ],
+     "lige_saa_gode": [],
+     "entydig": true,
+     "andetTraek": {
+      "facit": "e6b3",
+      "gevinst": 5,
+      "lige_saa_gode": []
+     },
+     "ms": 23927
+    },
+    {
+     "id": "03kMc",
+     "fen": "8/8/2p3r1/1pkp4/5R1p/2PK3B/8/8 b - - 3 49",
+     "loesning": [
+      "g6g3",
+      "d3d2",
+      "g3h3"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "8/8/2p5/1pkp4/5R1p/2P4r/3K4/8 w - - 0 51",
+      "mat": false
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "Rg3+: angriber kd3,bh3"
+      ]
+     },
+     "gevinst": 3,
+     "bedste": [
+      {
+       "uci": "g6g3",
+       "gevinst": 3
+      },
+      {
+       "uci": "g6h6",
+       "gevinst": 0
+      },
+      {
+       "uci": "g6g7",
+       "gevinst": -1
+      },
+      {
+       "uci": "g6g8",
+       "gevinst": -1
+      }
+     ],
+     "lige_saa_gode": [],
+     "entydig": true,
+     "andetTraek": {
+      "facit": "g3h3",
+      "gevinst": 3,
+      "lige_saa_gode": []
+     },
+     "ms": 20181
+    }
+   ]
+  },
+  "binding": {
+   "form": "gaader",
+   "niveau": 2,
+   "antal": 10,
+   "oevelser": [
+    {
+     "id": "0OuMr",
+     "fen": "5k2/1p1r2p1/p1b5/8/5Q2/3p3P/PP3K2/8 b - - 5 44",
+     "loesning": [
+      "d7f7",
+      "f2e3",
+      "f7f4"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "5k2/1p4p1/p1b5/8/5r2/3pK2P/PP6/8 w - - 0 46",
+      "mat": false
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "foerste traek Rf7"
+      ]
+     },
+     "gevinst": 4,
+     "bedste": [
+      {
+       "uci": "d7f7",
+       "gevinst": 4
+      },
+      {
+       "uci": "f8g8",
+       "gevinst": 0
+      },
+      {
+       "uci": "f8e7",
+       "gevinst": 0
+      },
+      {
+       "uci": "f8e8",
+       "gevinst": 0
+      }
+     ],
+     "lige_saa_gode": [],
+     "entydig": true,
+     "andetTraek": {
+      "facit": "f7f4",
+      "gevinst": 4,
+      "lige_saa_gode": []
+     },
+     "ms": 7961
+    },
+    {
+     "id": "0Ahyx",
+     "fen": "8/8/6p1/4bbk1/4B3/5R1P/4PPK1/8 b - - 4 45",
+     "loesning": [
+      "f5e4",
+      "g2g1",
+      "e4f3"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "8/8/6p1/4b1k1/8/5b1P/4PP2/6K1 w - - 0 47",
+      "mat": false
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "foerste traek Bxe4"
+      ]
+     },
+     "gevinst": 5,
+     "bedste": [
+      {
+       "uci": "f5e4",
+       "gevinst": 5
+      },
+      {
+       "uci": "e5d6",
+       "gevinst": 0
+      },
+      {
+       "uci": "e5c7",
+       "gevinst": 0
+      },
+      {
+       "uci": "e5b8",
+       "gevinst": 0
+      }
+     ],
+     "lige_saa_gode": [],
+     "entydig": true,
+     "andetTraek": {
+      "facit": "e4f3",
+      "gevinst": 2,
+      "lige_saa_gode": []
+     },
+     "ms": 33738
+    },
+    {
+     "id": "0QzKs",
+     "fen": "1q1r1rk1/p2bbppp/2N5/2P5/1P3PP1/P2RPQ1P/1B4K1/R7 b - - 2 32",
+     "loesning": [
+      "d7c6",
+      "f3c6",
+      "d8d3"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "1q3rk1/p3bppp/2Q5/2P5/1P3PP1/P2rP2P/1B4K1/R7 w - - 0 34",
+      "mat": false
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "foerste traek Bxc6"
+      ]
+     },
+     "gevinst": 4,
+     "bedste": [
+      {
+       "uci": "d7c6",
+       "gevinst": 4
+      },
+      {
+       "uci": "b8c7",
+       "gevinst": -3
+      },
+      {
+       "uci": "b8b5",
+       "gevinst": -3
+      },
+      {
+       "uci": "d7c8",
+       "gevinst": -5
+      }
+     ],
+     "lige_saa_gode": [],
+     "entydig": true,
+     "andetTraek": {
+      "facit": "d8d3",
+      "gevinst": 5,
+      "lige_saa_gode": []
+     },
+     "ms": 348167
+    }
+   ]
+  },
+  "spid": {
+   "form": "gaader",
+   "niveau": 2,
+   "antal": 10,
+   "oevelser": [
+    {
+     "id": "0J1zL",
+     "fen": "8/5p1r/2k1pP2/8/P5P1/8/1R3K2/8 b - - 0 41",
+     "loesning": [
+      "h7h2",
+      "f2e1",
+      "h2b2"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "8/5p2/2k1pP2/8/P5P1/8/1r6/4K3 w - - 0 43",
+      "mat": false
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "foerste traek Rh2+"
+      ]
+     },
+     "gevinst": 5,
+     "bedste": [
+      {
+       "uci": "h7h2",
+       "gevinst": 5
+      },
+      {
+       "uci": "h7h8",
+       "gevinst": 0
+      },
+      {
+       "uci": "h7h6",
+       "gevinst": 0
+      },
+      {
+       "uci": "h7h4",
+       "gevinst": 0
+      }
+     ],
+     "lige_saa_gode": [],
+     "entydig": true,
+     "andetTraek": {
+      "facit": "h2b2",
+      "gevinst": 5,
+      "lige_saa_gode": []
+     },
+     "ms": 18213
+    },
+    {
+     "id": "0BtUA",
+     "fen": "8/5k2/6R1/4PpKp/7P/5rP1/8/8 b - - 0 54",
+     "loesning": [
+      "f3g3",
+      "g5f4",
+      "g3g6"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "8/5k2/6r1/4Pp1p/5K1P/8/8/8 w - - 0 56",
+      "mat": false
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "foerste traek Rxg3+"
+      ]
+     },
+     "gevinst": 5,
+     "bedste": [
+      {
+       "uci": "f3g3",
+       "gevinst": 5
+      },
+      {
+       "uci": "f7e8",
+       "gevinst": -1
+      },
+      {
+       "uci": "f7f8",
+       "gevinst": -1
+      },
+      {
+       "uci": "f7e7",
+       "gevinst": -1
+      }
+     ],
+     "lige_saa_gode": [],
+     "entydig": true,
+     "andetTraek": {
+      "facit": "g3g6",
+      "gevinst": 4,
+      "lige_saa_gode": []
+     },
+     "ms": 6427
+    },
+    {
+     "id": "0ErbV",
+     "fen": "4k1r1/2R2p2/4p2p/pp2P3/5P2/1P1n3P/P7/5K2 w - - 6 33",
+     "loesning": [
+      "c7c8",
+      "e8d7",
+      "c8g8"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "6R1/3k1p2/4p2p/pp2P3/5P2/1P1n3P/P7/5K2 b - - 0 34",
+      "mat": false
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "foerste traek Rc8+"
+      ]
+     },
+     "gevinst": 4,
+     "bedste": [
+      {
+       "uci": "c7c8",
+       "gevinst": 4
+      },
+      {
+       "uci": "c7c6",
+       "gevinst": 0
+      },
+      {
+       "uci": "c7c3",
+       "gevinst": 0
+      },
+      {
+       "uci": "c7c2",
+       "gevinst": 0
+      }
+     ],
+     "lige_saa_gode": [],
+     "entydig": true,
+     "andetTraek": {
+      "facit": "c8g8",
+      "gevinst": 4,
+      "lige_saa_gode": []
+     },
+     "ms": 17727
+    }
+   ]
+  },
+  "afdaekket": {
+   "form": "gaader",
+   "niveau": 3,
+   "antal": 10,
+   "oevelser": [
+    {
+     "id": "0VCp7",
+     "fen": "5rk1/p5pq/1pp5/3pPn2/8/3Q1B2/PP3P1P/R5RK b - - 0 26",
+     "loesning": [
+      "f5g3",
+      "g1g3",
+      "h7d3"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "5rk1/p5p1/1pp5/3pP3/8/3q1BR1/PP3P1P/R6K w - - 0 28",
+      "mat": false
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "foerste traek Ng3+"
+      ]
+     },
+     "gevinst": 6,
+     "bedste": [
+      {
+       "uci": "f5g3",
+       "gevinst": 6
+      },
+      {
+       "uci": "f5h4",
+       "gevinst": 1
+      },
+      {
+       "uci": "f8f7",
+       "gevinst": 0
+      },
+      {
+       "uci": "f8e8",
+       "gevinst": 0
+      }
+     ],
+     "lige_saa_gode": [],
+     "entydig": true,
+     "andetTraek": {
+      "facit": "h7d3",
+      "gevinst": 9,
+      "lige_saa_gode": []
+     },
+     "ms": 300802
+    },
+    {
+     "id": "09CIl",
+     "fen": "3r2k1/5ppp/8/p1p1P1P1/3q3P/PP1Q1P2/2PN3R/1K6 b - - 1 38",
+     "loesning": [
+      "d4g1",
+      "d3f1",
+      "g1h2"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "3r2k1/5ppp/8/p1p1P1P1/7P/PP3P2/2PN3q/1K3Q2 w - - 0 40",
+      "mat": false
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "foerste traek Qg1+"
+      ]
+     },
+     "gevinst": 6,
+     "bedste": [
+      {
+       "uci": "d4g1",
+       "gevinst": 6
+      },
+      {
+       "uci": "d4d3",
+       "gevinst": 1
+      },
+      {
+       "uci": "d8e8",
+       "gevinst": 0
+      },
+      {
+       "uci": "d8f8",
+       "gevinst": 0
+      }
+     ],
+     "lige_saa_gode": [],
+     "entydig": true,
+     "andetTraek": {
+      "facit": "g1h2",
+      "gevinst": 6,
+      "lige_saa_gode": []
+     },
+     "ms": 75589
+    },
+    {
+     "id": "03CF0",
+     "fen": "r2qr1k1/p1p1bpBp/2pp1n2/8/4P1bP/6Q1/PPP2PP1/RN2K2R w KQ - 2 13",
+     "loesning": [
+      "g7f6",
+      "e7f6",
+      "g3g4"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "r2qr1k1/p1p2p1p/2pp1b2/8/4P1QP/8/PPP2PP1/RN2K2R b KQ - 0 14",
+      "mat": false
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "foerste traek Bxf6"
+      ]
+     },
+     "gevinst": 3,
+     "bedste": [
+      {
+       "uci": "g7f6",
+       "gevinst": 3
+      },
+      {
+       "uci": "g7h6",
+       "gevinst": 0
+      },
+      {
+       "uci": "e4e5",
+       "gevinst": -1
+      },
+      {
+       "uci": "h4h5",
+       "gevinst": -1
+      }
+     ],
+     "lige_saa_gode": [],
+     "entydig": true,
+     "andetTraek": {
+      "facit": "g3g4",
+      "gevinst": 3,
+      "lige_saa_gode": [
+       {
+        "uci": "f2f3",
+        "gevinst": 2
+       }
+      ]
+     },
+     "ms": 140229
+    }
+   ]
+  },
+  "forsvar": {
+   "form": "gaader",
+   "niveau": 1,
+   "antal": 10,
+   "oevelser": [
+    {
+     "id": "f06",
+     "fen": "6k1/5pp1/8/7p/6b1/5Q2/5PPP/6K1 w - - 0 1",
+     "loesning": [],
+     "godeFoerste": [
+      "f3a3",
+      "f3a8",
+      "f3b3",
+      "f3b7",
+      "f3c3",
+      "f3c6",
+      "f3d3",
+      "f3d5",
+      "f3e3",
+      "f3e4",
+      "f3f4",
+      "f3g3"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "foerste traek Qa3"
+      ]
+     },
+     "sikre": [
+      "f3a3",
+      "f3a8",
+      "f3b3",
+      "f3b7",
+      "f3c3",
+      "f3c6",
+      "f3d3",
+      "f3d5",
+      "f3e3",
+      "f3e4",
+      "f3f4",
+      "f3g3"
+     ],
+     "appGodtager": [
+      "f3a3",
+      "f3a8",
+      "f3b3",
+      "f3b7",
+      "f3c3",
+      "f3c6",
+      "f3d3",
+      "f3d5",
+      "f3e3",
+      "f3e4",
+      "f3f4",
+      "f3g3"
+     ],
+     "afvistMenSikker": [],
+     "godtagetMenUsikker": [],
+     "entydig": true,
+     "ms": 23095
+    },
+    {
+     "id": "f11",
+     "fen": "r5k1/5ppp/8/8/8/8/5PPP/B5K1 w - - 0 1",
+     "loesning": [],
+     "godeFoerste": [
+      "a1b2",
+      "a1c3",
+      "a1d4",
+      "a1e5"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "foerste traek Bb2"
+      ]
+     },
+     "sikre": [
+      "a1b2",
+      "a1c3",
+      "a1d4",
+      "a1e5"
+     ],
+     "appGodtager": [
+      "a1b2",
+      "a1c3",
+      "a1d4",
+      "a1e5"
+     ],
+     "afvistMenSikker": [],
+     "godtagetMenUsikker": [],
+     "entydig": true,
+     "ms": 6731
+    },
+    {
+     "id": "f12",
+     "fen": "6k1/5ppp/8/8/4n3/3B4/5PPP/6K1 b - - 0 1",
+     "loesning": [],
+     "godeFoerste": [
+      "e4c3",
+      "e4c5",
+      "e4d2",
+      "e4d6",
+      "e4f6",
+      "e4g5",
+      "f7f5"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "foerste traek Nc3"
+      ]
+     },
+     "sikre": [
+      "e4c3",
+      "e4c5",
+      "e4d2",
+      "e4d6",
+      "e4f6",
+      "e4g5",
+      "f7f5"
+     ],
+     "appGodtager": [
+      "e4c3",
+      "e4c5",
+      "e4d2",
+      "e4d6",
+      "e4f6",
+      "e4g5",
+      "f7f5"
+     ],
+     "afvistMenSikker": [],
+     "godtagetMenUsikker": [],
+     "entydig": true,
+     "ms": 6021
+    }
+   ]
+  },
+  "stop-matten": {
+   "form": "gaader",
+   "niveau": 2,
+   "antal": 8,
+   "oevelser": [
+    {
+     "id": "sm04",
+     "fen": "r1b2rk1/5pp1/p2qpb1p/3p4/1ppP4/2P1PN2/PPQ2PPP/1BKR3R b - - 0 16",
+     "loesning": [
+      "f8d8"
+     ],
+     "godeFoerste": [
+      "f8d8",
+      "f8e8",
+      "g7g6"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "r1br2k1/5pp1/p2qpb1p/3p4/1ppP4/2P1PN2/PPQ2PPP/1BKR3R w - - 1 17",
+      "mat": false
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "foerste traek Rd8"
+      ]
+     },
+     "stopper": [
+      {
+       "uci": "f8e8",
+       "san": "Re8",
+       "materialeEfter3": -1
+      },
+      {
+       "uci": "f8d8",
+       "san": "Rd8",
+       "materialeEfter3": 0
+      },
+      {
+       "uci": "g7g6",
+       "san": "g6",
+       "materialeEfter3": 0
+      }
+     ],
+     "appGodtager": [
+      "f8d8",
+      "f8e8",
+      "g7g6"
+     ],
+     "forskel": [],
+     "entydig": true,
+     "ms": 21495
+    },
+    {
+     "id": "sm06",
+     "fen": "2rq1rk1/1b3pp1/1np1pb1p/pp6/3P4/2NQPN2/PP3PPP/1BR2RK1 b - - 0 16",
+     "loesning": [
+      "f8e8"
+     ],
+     "godeFoerste": [
+      "f8e8",
+      "g7g6"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "2rqr1k1/1b3pp1/1np1pb1p/pp6/3P4/2NQPN2/PP3PPP/1BR2RK1 w - - 1 17",
+      "mat": false
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "foerste traek Re8"
+      ]
+     },
+     "stopper": [
+      {
+       "uci": "f8e8",
+       "san": "Re8",
+       "materialeEfter3": 0
+      },
+      {
+       "uci": "g7g6",
+       "san": "g6",
+       "materialeEfter3": 0
+      }
+     ],
+     "appGodtager": [
+      "f8e8",
+      "g7g6"
+     ],
+     "forskel": [],
+     "entydig": true,
+     "ms": 49702
+    },
+    {
+     "id": "sm07",
+     "fen": "r1b2rk1/ppp5/3p3p/3Pbp2/3Npq2/2P4P/PP1N1P2/R2QRB1K w - - 1 19",
+     "loesning": [
+      "d1g4"
+     ],
+     "godeFoerste": [
+      "d1g4",
+      "d2f3",
+      "d4f3"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "r1b2rk1/ppp5/3p3p/3Pbp2/3NpqQ1/2P4P/PP1N1P2/R3RB1K b - - 2 19",
+      "mat": false
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "foerste traek Qg4+"
+      ]
+     },
+     "stopper": [
+      {
+       "uci": "d4f3",
+       "san": "N4f3",
+       "materialeEfter3": -2
+      },
+      {
+       "uci": "d2f3",
+       "san": "N2f3",
+       "materialeEfter3": -2
+      },
+      {
+       "uci": "d1g4",
+       "san": "Qg4+",
+       "materialeEfter3": -9
+      }
+     ],
+     "appGodtager": [
+      "d1g4",
+      "d2f3",
+      "d4f3"
+     ],
+     "forskel": [],
+     "entydig": true,
+     "ms": 95171
+    }
+   ]
+  },
+  "mat-i-2": {
+   "form": "gaader",
+   "niveau": 3,
+   "antal": 10,
+   "oevelser": [
+    {
+     "id": "0CJD3",
+     "fen": "2kr3r/ppp4p/5Q2/8/8/5N2/P4PPP/3R2K1 b - - 0 21",
+     "loesning": [
+      "d8d1",
+      "f3e1",
+      "d1e1"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "2k4r/ppp4p/5Q2/8/8/8/P4PPP/4r1K1 w - - 0 23",
+      "mat": true
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "foerste traek Rxd1+"
+      ]
+     },
+     "matI1": [],
+     "matI2Foerste": [
+      "d8d1"
+     ],
+     "entydig": true,
+     "appAfviser": [],
+     "ms": 301
+    },
+    {
+     "id": "0GAjm",
+     "fen": "1k3r2/ppp5/1bp5/8/3P2p1/2PKR1P1/P4q2/4R3 w - - 10 35",
+     "loesning": [
+      "e3e8",
+      "f8e8",
+      "e1e8"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "1k2R3/ppp5/1bp5/8/3P2p1/2PK2P1/P4q2/8 b - - 0 36",
+      "mat": true
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "foerste traek Re8+"
+      ]
+     },
+     "matI1": [],
+     "matI2Foerste": [
+      "e3e8"
+     ],
+     "entydig": true,
+     "appAfviser": [],
+     "ms": 198
+    },
+    {
+     "id": "0S5Mf",
+     "fen": "4R3/p4Bpk/7p/8/8/2r2bP1/P4P1P/6K1 b - - 2 29",
+     "loesning": [
+      "c3c1",
+      "e8e1",
+      "c1e1"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "8/p4Bpk/7p/8/8/5bP1/P4P1P/4r1K1 w - - 0 31",
+      "mat": true
+     },
+     "tema": {
+      "ok": true,
+      "noter": [
+       "foerste traek Rc1+"
+      ]
+     },
+     "matI1": [],
+     "matI2Foerste": [
+      "c3c1"
+     ],
+     "entydig": true,
+     "appAfviser": [],
+     "ms": 411
+    }
+   ]
+  },
+  "dronning-mod-konge": {
+   "form": "slutspil",
+   "niveau": 2,
+   "antal": 6,
+   "oevelser": [
+    {
+     "id": "dk1",
+     "fen": "8/8/5K1Q/8/8/5k2/8/8 w - - 0 1",
+     "loesning": [],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "afstandTilMatHalvtraek": 11,
+     "perfektModApp": {
+      "traek": 6,
+      "mat": true
+     },
+     "ms": 2721
+    },
+    {
+     "id": "dk2",
+     "fen": "Q7/8/8/2k5/8/5K2/8/8 w - - 0 1",
+     "loesning": [],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "afstandTilMatHalvtraek": 13,
+     "perfektModApp": {
+      "traek": 6,
+      "mat": true
+     },
+     "ms": 7
+    },
+    {
+     "id": "dk4",
+     "fen": "1K6/8/8/6Q1/8/2k5/8/8 w - - 0 1",
+     "loesning": [],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "afstandTilMatHalvtraek": 15,
+     "perfektModApp": {
+      "traek": 8,
+      "mat": true
+     },
+     "ms": 10
+    }
+   ]
+  },
+  "taarn-mod-konge": {
+   "form": "slutspil",
+   "niveau": 3,
+   "antal": 6,
+   "oevelser": [
+    {
+     "id": "tk3",
+     "fen": "6R1/4K3/8/8/8/2k5/8/8 w - - 0 1",
+     "loesning": [],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "afstandTilMatHalvtraek": 25,
+     "perfektModApp": {
+      "traek": 8,
+      "mat": true
+     },
+     "ms": 3270
+    },
+    {
+     "id": "tk5",
+     "fen": "4K3/8/8/2k5/4R3/8/8/8 w - - 0 1",
+     "loesning": [],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "afstandTilMatHalvtraek": 25,
+     "perfektModApp": {
+      "traek": 6,
+      "mat": true
+     },
+     "ms": 4
+    },
+    {
+     "id": "tk6",
+     "fen": "4K3/5R2/8/2k5/8/8/8/8 w - - 0 1",
+     "loesning": [],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "afstandTilMatHalvtraek": 27,
+     "perfektModApp": {
+      "traek": 11,
+      "mat": true
+     },
+     "ms": 13
+    }
+   ]
+  },
+  "opposition": {
+   "form": "gaader",
+   "niveau": 2,
+   "antal": 8,
+   "oevelser": [
+    {
+     "id": "op03",
+     "fen": "8/2k5/8/3K4/8/1P6/8/8 w - - 0 1",
+     "loesning": [
+      "d5c5",
+      "c7b7",
+      "c5b5"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "8/1k6/8/1K6/8/1P6/8/8 b - - 3 2",
+      "mat": false
+     },
+     "trin": [
+      {
+       "facit": "d5c5",
+       "vindere": [
+        "d5c5"
+       ]
+      },
+      {
+       "facit": "c5b5",
+       "vindere": [
+        "c5b5"
+       ]
+      }
+     ],
+     "entydig": true,
+     "ms": 746
+    },
+    {
+     "id": "op04",
+     "fen": "8/3k4/8/2K5/8/4P3/8/8 w - - 0 1",
+     "loesning": [
+      "c5d5",
+      "d7e7",
+      "d5e5"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "8/4k3/8/4K3/8/4P3/8/8 b - - 3 2",
+      "mat": false
+     },
+     "trin": [
+      {
+       "facit": "c5d5",
+       "vindere": [
+        "c5d5"
+       ]
+      },
+      {
+       "facit": "d5e5",
+       "vindere": [
+        "d5e5"
+       ]
+      }
+     ],
+     "entydig": true,
+     "ms": 0
+    },
+    {
+     "id": "op07",
+     "fen": "2k5/8/3K4/1P6/8/8/8/8 w - - 0 1",
+     "loesning": [
+      "d6c6",
+      "c8b8",
+      "c6b6"
+     ],
+     "lovlig": {
+      "ok": true,
+      "fejl": []
+     },
+     "linje": {
+      "ok": true,
+      "slutFen": "1k6/8/1K6/1P6/8/8/8/8 b - - 3 2",
+      "mat": false
+     },
+     "trin": [
+      {
+       "facit": "d6c6",
+       "vindere": [
+        "d6c6"
+       ]
+      },
+      {
+       "facit": "c6b6",
+       "vindere": [
+        "c6b6"
+       ]
+      }
+     ],
+     "entydig": true,
+     "ms": 1
+    }
+   ]
+  }
+ },
+ "helBank": {
+  "damemat": [
+   {
+    "id": "dm01",
+    "mat": [
+     "Qh1#"
+    ],
+    "patt": 7
+   },
+   {
+    "id": "dm02",
+    "mat": [
+     "Qc8#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "dm03",
+    "mat": [
+     "Qa4#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "dm04",
+    "mat": [
+     "Qd1#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "dm05",
+    "mat": [
+     "Qa7#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "dm06",
+    "mat": [
+     "Qc1#"
+    ],
+    "patt": 4
+   },
+   {
+    "id": "dm07",
+    "mat": [
+     "Qh1#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "dm08",
+    "mat": [
+     "Qh8#"
+    ],
+    "patt": 0
+   }
+  ],
+  "taarnmat": [
+   {
+    "id": "tm01",
+    "mat": [
+     "Re8#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "tm02",
+    "mat": [
+     "Ra8#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "tm03",
+    "mat": [
+     "Rh6#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "tm04",
+    "mat": [
+     "Rg8#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "tm05",
+    "mat": [
+     "Rd1#"
+    ],
+    "patt": 1
+   },
+   {
+    "id": "tm06",
+    "mat": [
+     "Rf8#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "tm07",
+    "mat": [
+     "Rh5#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "tm08",
+    "mat": [
+     "Rf1#"
+    ],
+    "patt": 0
+   }
+  ],
+  "mat-i-1": [
+   {
+    "id": "0Psb8",
+    "mat": [
+     "Qxh3#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "04X15",
+    "mat": [
+     "Rc1#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "0GM2F",
+    "mat": [
+     "Qxg2#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "063On",
+    "mat": [
+     "Qxg7#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "0EbOV",
+    "mat": [
+     "Qh7#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "0VFdQ",
+    "mat": [
+     "Rd3#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "0O8vI",
+    "mat": [
+     "Qxd7#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "0V0hJ",
+    "mat": [
+     "Qxh7#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "0Gomm",
+    "mat": [
+     "Qh2#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "0LY3P",
+    "mat": [
+     "Qxh7#"
+    ],
+    "patt": 0
+   }
+  ],
+  "baglinjemat": [
+   {
+    "id": "0ACeu",
+    "mat": [
+     "Rxf1#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "0E0oB",
+    "mat": [
+     "Rxf1#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "0L7ju",
+    "mat": [
+     "Rc8#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "0CLrY",
+    "mat": [
+     "Qxe8#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "0V6H5",
+    "mat": [
+     "Qd8#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "0TWfR",
+    "mat": [
+     "Ra1#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "0CBPG",
+    "mat": [
+     "Rd8#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "01HvT",
+    "mat": [
+     "Rd8#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "0BkMS",
+    "mat": [
+     "Rxd1#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "03c9m",
+    "mat": [
+     "Rxe8#"
+    ],
+    "patt": 0
+   }
+  ],
+  "kvaelningsmat": [
+   {
+    "id": "01H4V",
+    "mat": [
+     "Nf2#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "0TvyB",
+    "mat": [
+     "Nf2#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "0O4JU",
+    "mat": [
+     "Nf7#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "0NRqp",
+    "mat": [
+     "Nf7#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "06Fmf",
+    "mat": [
+     "Nf2#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "05V0f",
+    "mat": [
+     "Nc7#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "0DKpp",
+    "mat": [
+     "Nf2#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "07VlN",
+    "mat": [
+     "Nf7#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "00Tmr",
+    "mat": [
+     "Nf7#"
+    ],
+    "patt": 0
+   },
+   {
+    "id": "0VQYm",
+    "mat": [
+     "Nf6#"
+    ],
+    "patt": 0
+   }
+  ],
+  "rokade": [
+   {
+    "id": "ro1",
+    "lovlige": [
+     "O-O"
+    ],
+    "andenSideBlokeretAfBrikker": [
+     "b1",
+     "c1",
+     "d1"
+    ],
+    "kanKongenOverhovedetTrykkesDerhen": false,
+    "andenKongeFelt": "c1"
+   },
+   {
+    "id": "ro2",
+    "lovlige": [
+     "O-O-O"
+    ],
+    "andenSideBlokeretAfBrikker": [
+     "f1",
+     "g1"
+    ],
+    "kanKongenOverhovedetTrykkesDerhen": false,
+    "andenKongeFelt": "g1"
+   },
+   {
+    "id": "ro3",
+    "lovlige": [
+     "O-O"
+    ],
+    "andenSideBlokeretAfBrikker": [
+     "b8",
+     "c8",
+     "d8"
+    ],
+    "kanKongenOverhovedetTrykkesDerhen": false,
+    "andenKongeFelt": "c8"
+   },
+   {
+    "id": "ro4",
+    "lovlige": [
+     "O-O"
+    ],
+    "andenSideBlokeretAfBrikker": [],
+    "kanKongenOverhovedetTrykkesDerhen": true,
+    "andenKongeFelt": "c1"
+   },
+   {
+    "id": "ro5",
+    "lovlige": [
+     "O-O-O"
+    ],
+    "andenSideBlokeretAfBrikker": [],
+    "kanKongenOverhovedetTrykkesDerhen": true,
+    "andenKongeFelt": "g1"
+   },
+   {
+    "id": "ro6",
+    "lovlige": [
+     "O-O-O"
+    ],
+    "andenSideBlokeretAfBrikker": [],
+    "kanKongenOverhovedetTrykkesDerhen": true,
+    "andenKongeFelt": "g1"
+   },
+   {
+    "id": "ro7",
+    "lovlige": [
+     "O-O-O"
+    ],
+    "andenSideBlokeretAfBrikker": [],
+    "kanKongenOverhovedetTrykkesDerhen": true,
+    "andenKongeFelt": "g8"
+   },
+   {
+    "id": "ro8",
+    "lovlige": [
+     "O-O"
+    ],
+    "andenSideBlokeretAfBrikker": [],
+    "kanKongenOverhovedetTrykkesDerhen": true,
+    "andenKongeFelt": "c8"
+   }
+  ],
+  "opposition": [
+   {
+    "id": "op01",
+    "fen": "8/8/2k5/8/3K4/8/1P6/8 w - - 0 1",
+    "loesning": "d4c4 c6b6 c4b4"
+   },
+   {
+    "id": "op02",
+    "fen": "8/8/3k4/8/2K5/8/4P3/8 w - - 0 1",
+    "loesning": "c4d4 d6e6 d4e4"
+   },
+   {
+    "id": "op03",
+    "fen": "8/2k5/8/3K4/8/1P6/8/8 w - - 0 1",
+    "loesning": "d5c5 c7b7 c5b5"
+   },
+   {
+    "id": "op04",
+    "fen": "8/3k4/8/2K5/8/4P3/8/8 w - - 0 1",
+    "loesning": "c5d5 d7e7 d5e5"
+   },
+   {
+    "id": "op05",
+    "fen": "8/2k5/8/3K4/1P6/8/8/8 w - - 0 1",
+    "loesning": "d5c5 c7b7 c5b5"
+   },
+   {
+    "id": "op06",
+    "fen": "8/2k5/8/8/2K1P3/8/8/8 w - - 0 1",
+    "loesning": "c4c5 c7d8 c5d6"
+   },
+   {
+    "id": "op07",
+    "fen": "2k5/8/3K4/1P6/8/8/8/8 w - - 0 1",
+    "loesning": "d6c6 c8b8 c6b6"
+   },
+   {
+    "id": "op08",
+    "fen": "3k4/8/2K5/4P3/8/8/8/8 w - - 0 1",
+    "loesning": "c6d6 d8e8 d6e6"
+   }
+  ]
+ }
+}

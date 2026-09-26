@@ -1,0 +1,8 @@
+sm01 6k1/2R2p1p/1rp2Pp1/p7/3p4/3P3P/P1P3PK/8 b - - 2 33 godtaget: b6b8(-1) h7h5(0) h7h6(0) | bedste overhovedet: h7h6(0)
+sm02 r2q1r1k/pp3p2/2p1p2b/8/3P4/2PQ3P/PPB2PP1/R5K1 b - - 0 21 godtaget: f7f5(0) h8g7(-3) | bedste overhovedet: f7f5(0)
+sm03 8/6p1/R7/3pkPp1/6P1/2p1K2P/p2r4/8 b - - 6 43 godtaget: d2d3(-6) d2e2(-5) d5d4(0) | bedste overhovedet: d5d4(0)
+sm04 r1b2rk1/5pp1/p2qpb1p/3p4/1ppP4/2P1PN2/PPQ2PPP/1BKR3R b - - 0 16 godtaget: f8d8(0) f8e8(-1) g7g6(0) | bedste overhovedet: f8d8(0)
+sm05 R7/8/5p2/8/7K/1P3k2/Pr6/8 w - - 3 46 godtaget: h4h3(0) h4h5(0) | bedste overhovedet: h4h5(0)
+sm06 2rq1rk1/1b3pp1/1np1pb1p/pp6/3P4/2NQPN2/PP3PPP/1BR2RK1 b - - 0 16 godtaget: f8e8(0) g7g6(0) | bedste overhovedet: f8e8(0)
+sm07 r1b2rk1/ppp5/3p3p/3Pbp2/3Npq2/2P4P/PP1N1P2/R2QRB1K w - - 1 19 godtaget: d1g4(-12) d2f3(-2) d4f3(-2) | bedste overhovedet: d4f3(-2)
+sm08 8/2r3p1/R4p2/2ppkPp1/6P1/2P2K1P/8/8 b - - 4 50 godtaget: c7c6(-6) c7e7(0) d5d4(0) | bedste overhovedet: c7e7(0)
