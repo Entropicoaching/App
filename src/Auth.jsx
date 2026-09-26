@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { supabase } from './supabase'
-import { athleteAuthErrorMessage, normalizeAthleteLoginEmail } from './athleteOnboarding'
+import { athleteAuthErrorMessage, normalizeAthleteLoginEmail, NO_CONNECTION_MESSAGE } from './athleteOnboarding'
 
 export default function Auth() {
   const [email, setEmail] = useState('')
@@ -25,6 +25,13 @@ export default function Auth() {
       return
     }
     setEmail(normalizedEmail)
+    // ORDRE 406 (O3 i docs/kritik-403): uden net siger login-skærmen det, i
+    // stedet for at lade atleten tro, at koden er forkert.
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+      setError(NO_CONNECTION_MESSAGE)
+      setLoading(false)
+      return
+    }
 
     if (mode === 'reset') {
       // Supabase svarer altid uden fejl her, uanset om email findes, for ikke at

@@ -1,0 +1,29 @@
+{
+  "scenarie": "o2-anden-telefon",
+  "koerselOk": true,
+  "fejl": null,
+  "trin": [
+    "telefon B loggede saet 1 (2026-09-26T14:11:48.307Z); telefon A viser stadig \"Sæt 1/4\"",
+    "telefon A trykker \"Godkendt\" paa Sæt 1/4: mocken [2,0,0,0]; saet 1's tid uaendret; koeen tom=true; A viser Sæt 2/4"
+  ],
+  "aSkaermFoer": {
+    "naesteSaet": "Sæt 1/4",
+    "linjer": [],
+    "godkendtKnap": true
+  },
+  "bTid": "2026-09-26T14:11:48.307Z",
+  "raekker": [
+    2,
+    0,
+    0,
+    0
+  ],
+  "saet1Tid": "2026-09-26T14:11:48.307Z",
+  "koeTomt": true,
+  "aSkaermEfter": {
+    "naesteSaet": "Sæt 2/4",
+    "linjer": [],
+    "godkendtKnap": true
+  },
+  "konsolFejl": []
+}

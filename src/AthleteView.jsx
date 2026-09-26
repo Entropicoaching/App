@@ -510,7 +510,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     <div style={s.wrap}>
       <Ramme
         {...{
-          accountMenuOpen, askConfirm, athleteVideoCoachFrameRef, athleteVideoCoachInstant, athleteVideoCoachOpen, backBtn, confirmDialog, handleRecheckRole,
+          accountMenuOpen, askConfirm, athleteId: athlete?.id, athleteVideoCoachFrameRef, athleteVideoCoachInstant, athleteVideoCoachOpen, backBtn, confirmDialog, handleRecheckRole,
           onExitPreview, onRecheckRole, openRpePicker, recheckingRole, restartOnboardingGuide, role, setAccountMenuOpen, setConfirmDialog,
           setOpenRpePicker, setShowRpeGuide, showRpeGuide, undoDelete, undoPending, undoToast,
         }}

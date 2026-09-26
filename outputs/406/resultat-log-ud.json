@@ -1,0 +1,33 @@
+{
+  "scenarie": "log-ud",
+  "koerselOk": true,
+  "fejl": null,
+  "trin": [
+    "uden net: 2 saet i koeen",
+    "log ud uden net: spoergsmaalet var \"Log ud af Entropi? Du har 2 sæt, der ikke er sendt endnu. De sendes først, når du logger ind igen på denne telefon med net. Annuller, hvis du vil vente, til de er sendt.\"; login-skaerm efter 126 ms; koeen ligger stadig paa telefonen: 2",
+    "log ind uden net: \"Ingen forbindelse. Du kan logge ind, når du har net igen.\"",
+    "logget ind igen med net: koeen tom=true; mocken [1,1,0,0]; Sæt 3/4"
+  ],
+  "bekraeftTekst": "Log ud af Entropi? Du har 2 sæt, der ikke er sendt endnu. De sendes først, når du logger ind igen på denne telefon med net. Annuller, hvis du vil vente, til de er sendt.",
+  "logUdMs": 126,
+  "skaermEfterLogUd": {
+    "naesteSaet": null,
+    "linjer": [],
+    "godkendtKnap": false
+  },
+  "koeEfterLogUd": 2,
+  "loginUdenNetTekst": "Ingen forbindelse. Du kan logge ind, når du har net igen.",
+  "koeTomt": true,
+  "raekker": [
+    1,
+    1,
+    0,
+    0
+  ],
+  "skaermEfterLogInd": {
+    "naesteSaet": "Sæt 3/4",
+    "linjer": [],
+    "godkendtKnap": true
+  },
+  "konsolFejl": []
+}

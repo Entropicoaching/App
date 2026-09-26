@@ -3,11 +3,19 @@
 // ud af AthleteView.jsx (ordre 373). Ingen egen tilstand; alt kommer ind som
 // props med samme navne som i AthleteView.
 import { signOutHard } from '../supabase'
+import { countOfflineSets } from '../offlineSetQueue'
 import { s, today } from '../athleteShared'
 import { ATHLETE_VIDEOCOACH_URL } from './videoCoachBro'
 
+// ORDRE 406 (O3 i docs/kritik-403): usendte sæt sendes kun, når samme atlet
+// logger ind igen på denne telefon. Det skal atleten vide, før de logger ud.
+function logOutQuestion(unsent) {
+  if (!unsent) return 'Log ud af Entropi? Du skal logge ind igen for at fortsætte.'
+  return `Log ud af Entropi? Du har ${unsent} sæt, der ikke er sendt endnu. De sendes først, når du logger ind igen på denne telefon med net. Annuller, hvis du vil vente, til de er sendt.`
+}
+
 function Ramme({
-  accountMenuOpen, askConfirm, athleteVideoCoachFrameRef, athleteVideoCoachInstant, athleteVideoCoachOpen, backBtn, confirmDialog, handleRecheckRole,
+  accountMenuOpen, askConfirm, athleteId, athleteVideoCoachFrameRef, athleteVideoCoachInstant, athleteVideoCoachOpen, backBtn, confirmDialog, handleRecheckRole,
   onExitPreview, onRecheckRole, openRpePicker, recheckingRole, restartOnboardingGuide, role, setAccountMenuOpen, setConfirmDialog,
   setOpenRpePicker, setShowRpeGuide, showRpeGuide, undoDelete, undoPending, undoToast,
 }) {
@@ -117,7 +125,7 @@ function Ramme({
                     style={{ display: 'block', width: '100%', textAlign: 'left', background: 'transparent', border: 'none', color: '#b8b4a8', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.06em', textTransform: 'uppercase', padding: '0.5rem 0.5rem', cursor: 'pointer' }}
                   >Se guiden igen</button>
                   <button
-                    onClick={() => { setAccountMenuOpen(false); askConfirm('Log ud af Entropi? Du skal logge ind igen for at fortsætte.', () => signOutHard()) }}
+                    onClick={() => { setAccountMenuOpen(false); askConfirm(logOutQuestion(countOfflineSets(athleteId)), () => signOutHard()) }}
                     style={{ display: 'block', width: '100%', textAlign: 'left', background: 'transparent', border: 'none', color: '#e05555', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.06em', textTransform: 'uppercase', padding: '0.5rem 0.5rem', cursor: 'pointer' }}
                   >Log ud</button>
                 </div>

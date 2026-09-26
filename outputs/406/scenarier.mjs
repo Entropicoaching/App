@@ -1,5 +1,6 @@
 // ORDRE 406: kopi af outputs/kritik-403/scenarier.mjs (Bhishak, ordre 403), koert mod grenen
-// dagens-pas-offline-3. Kun build-mappen og hvor resultaterne lander er aendret (her: outputs/406/).
+// dagens-pas-offline-3. AEndret: build-mappen, hvor resultaterne lander (her: outputs/406/),
+// log-ud proever ogsaa at logge ind uden net (O3), og et tiende scenarie o2-anden-telefon (O2).
 // Original-hovedet foelger.
 // ORDRE 403 blok 1: atleten i kaelderen.
 // Ret intet: scriptet koerer appen, som den staar paa main, og noterer hvad der sker.
@@ -416,6 +417,14 @@ async function logUdScenarie({ browser, origin, fx, trin, shot, r, konsol }) {
   r.koeEfterLogUd = Object.keys(await koe(page, fx.ATHLETE_ID)).length
   trin(`log ud uden net: spoergsmaalet var "${r.bekraeftTekst}"; login-skaerm efter ${r.logUdMs} ms; koeen ligger stadig paa telefonen: ${r.koeEfterLogUd}`)
   await shot(page, '02-login-uden-net')
+  // ORDRE 406: atleten proever at logge ind igen uden net.
+  await page.locator('#athlete-auth-email').fill(fx.ATHLETE_USER.email).catch(() => {})
+  await page.locator('#athlete-auth-password').fill(fx.ATHLETE_USER.password).catch(() => {})
+  await page.getByRole('button', { name: 'Log ind' }).click().catch(() => {})
+  await sleep(1500)
+  r.loginUdenNetTekst = await page.evaluate(() => document.body.innerText.split('\n').find((l) => /forbindelse|Tjek oplysningerne|forkert/i.test(l)) || null)
+  trin(`log ind uden net: "${r.loginUdenNetTekst}"`)
+  await shot(page, '02b-log-ind-uden-net')
 
   await context.setOffline(false)
   await logInd(page, fx.ATHLETE_USER)
@@ -426,6 +435,36 @@ async function logUdScenarie({ browser, origin, fx, trin, shot, r, konsol }) {
   trin(`logget ind igen med net: koeen tom=${r.koeTomt}; mocken ${JSON.stringify(r.raekker)}; ${r.skaermEfterLogInd.naesteSaet}`)
   await shot(page, '03-logget-ind-igen')
   await context.close()
+}
+
+// ORDRE 406 (O2): telefon A er aabnet med net og viser "Sæt 1/4". Saet 1 logges
+// fra telefon B. A ved det ikke og trykker "Godkendt": der maa ikke komme en
+// dublet, og saet 1 skal beholde B's tid.
+async function o2AndenTelefon({ browser, origin, fx, trin, shot, r }) {
+  const ctxA = await nyKontekst(browser)
+  const a = await nySide(ctxA, origin, [])
+  await logIndOgVarm(a, fx.ATHLETE_USER)
+  r.aSkaermFoer = await skaerm(a)
+  const ctxB = await nyKontekst(browser)
+  const b = await nySide(ctxB, origin, [])
+  await logInd(b, fx.ATHLETE_USER)
+  await b.getByText(/Sæt \d+\/\d+/).first().waitFor({ state: 'visible', timeout: 15000 })
+  await godkend(b)
+  await vent(async () => (await raekker(fx.ATHLETE_ID)).length >= 1, 10000)
+  const bRow = (await raekker(fx.ATHLETE_ID)).find((x) => x.set_number === 1)
+  r.bTid = bRow?.logged_at || null
+  trin(`telefon B loggede saet 1 (${r.bTid}); telefon A viser stadig "${r.aSkaermFoer.naesteSaet}"`)
+  await sleep(1500)
+  const g = await godkend(a)
+  await sleep(3000)
+  const rows = await raekker(fx.ATHLETE_ID)
+  r.raekker = taelPrSaet(rows, fx.EXERCISE_ID, 4)
+  r.saet1Tid = rows.find((x) => x.exercise_id === fx.EXERCISE_ID && x.set_number === 1)?.logged_at || null
+  r.koeTomt = Object.keys(await koe(a, fx.ATHLETE_ID)).length === 0
+  r.aSkaermEfter = await skaerm(a)
+  trin(`telefon A trykker "Godkendt" paa ${g.saet}: mocken ${JSON.stringify(r.raekker)}; saet 1's tid ${r.saet1Tid === r.bTid ? 'uaendret' : 'flyttet til ' + r.saet1Tid}; koeen tom=${r.koeTomt}; A viser ${r.aSkaermEfter.naesteSaet}`)
+  await shot(a, '01-telefon-a-efter-godkendt')
+  await ctxA.close(); await ctxB.close()
 }
 
 async function skiftAtlet({ browser, origin, fx, trin, shot, r, konsol }) {
@@ -515,6 +554,7 @@ async function forkertUr({ browser, origin, fx, trin, shot, r, konsol }) {
 const SCENARIER = {
   kaelder, 'online-start': onlineStart, 'aabn-med-net': aabnMedNet, haenger, 'to-faner': toFaner,
   'log-ud': logUdScenarie, 'skift-atlet': skiftAtlet, 'sw-opdatering': swOpdatering, 'forkert-ur': forkertUr,
+  'o2-anden-telefon': o2AndenTelefon,
 }
 
 async function koer(navn, { chromium, createMockSupabase, fx }) {

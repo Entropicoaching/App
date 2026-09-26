@@ -43,6 +43,27 @@ export function saveOfflineSet(athleteId, key, entry, storage = globalThis.local
   }
 }
 
+// ORDRE 406 (O6 i docs/kritik-403): køens runde noterer en fejlet afsendelse på
+// posten, så den kan logges én gang pr. fejlkode og parkeres efter N afviste
+// forsøg. Kun hvis posten stadig er den der blev sendt (som clearOfflineSetIfSame);
+// et nyt "Godkendt" eller en rettelse starter forfra. Returnerer { failures,
+// newCode }: antal talte fejl og om fejlkoden er ny for posten.
+export function noteOfflineSetFailure(athleteId, key, sent, code, { count = true } = {}, storage = globalThis.localStorage) {
+  try {
+    if (!storage || !athleteId || !key || !sent) return { failures: 0, newCode: false }
+    const queue = readOfflineSetQueue(athleteId, storage)
+    const current = queue[key]
+    if (!current || JSON.stringify(current.payload ?? null) !== JSON.stringify(sent.payload ?? null)) return { failures: 0, newCode: false }
+    const newCode = current.lastErrorCode !== code
+    const failures = (current.failures || 0) + (count ? 1 : 0)
+    queue[key] = { ...current, failures, lastErrorCode: code }
+    storage.setItem(offlineSetQueueKey(athleteId), JSON.stringify(queue))
+    return { failures, newCode }
+  } catch {
+    return { failures: 0, newCode: true }
+  }
+}
+
 export function loadOfflineSets(athleteId, storage = globalThis.localStorage) {
   return readOfflineSetQueue(athleteId, storage)
 }
