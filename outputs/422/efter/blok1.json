@@ -1,0 +1,86 @@
+{
+  "blok": "1",
+  "foer": false,
+  "fund": {
+    "squat": {
+      "linje": "Squat e1RM 114 kg, +6 kg siden uge 36",
+      "linjePx": 15.2,
+      "tekster": [
+        {
+          "tekst": "108 kg",
+          "px": 13,
+          "inde": true
+        },
+        {
+          "tekst": "114 kg 97.5×5",
+          "px": 14,
+          "inde": true
+        },
+        {
+          "tekst": "uge 36",
+          "px": 12,
+          "inde": true
+        },
+        {
+          "tekst": "uge 38",
+          "px": 12,
+          "inde": true
+        }
+      ]
+    },
+    "baenk": {
+      "linje": "Bænkpres e1RM 88 kg, +6 kg siden uge 36",
+      "linjePx": 15.2,
+      "tekster": [
+        {
+          "tekst": "82 kg",
+          "px": 13,
+          "inde": true
+        },
+        {
+          "tekst": "88 kg 77.5×4",
+          "px": 14,
+          "inde": true
+        },
+        {
+          "tekst": "uge 36",
+          "px": 12,
+          "inde": true
+        },
+        {
+          "tekst": "uge 38",
+          "px": 12,
+          "inde": true
+        }
+      ]
+    },
+    "doedloeft": {
+      "linje": "Dødløft e1RM 151 kg, +5 kg siden uge 36",
+      "linjePx": 15.2,
+      "tekster": [
+        {
+          "tekst": "146 kg",
+          "px": 13,
+          "inde": true
+        },
+        {
+          "tekst": "151 kg 137.5×3",
+          "px": 14,
+          "inde": true
+        },
+        {
+          "tekst": "uge 36",
+          "px": 12,
+          "inde": true
+        },
+        {
+          "tekst": "uge 38",
+          "px": 12,
+          "inde": true
+        }
+      ]
+    }
+  },
+  "konsolFejl": [],
+  "groen": true
+}

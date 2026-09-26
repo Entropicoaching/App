@@ -48,38 +48,63 @@ function hovednavnForFamilie(familie, navneIFamilie) {
   return eksakt || navneIFamilie[0] || null
 }
 
+// "Squat e1RM 117 kg, +7 kg siden uge 36" (ordre 422, I4): tallet atleten
+// leder efter står i normal størrelse over grafen, ikke kun som 7 px-etiket
+// i grafens hjørne. Ugen er kalenderugen fra ugenoegle ("2026-W36" → 36).
+function ugeNr(uge) {
+  return Number(String(uge).split('-W')[1]) || uge
+}
+
+function fremgangLinje(navn, punkter) {
+  if (punkter.length < 2) return null
+  const forste = punkter[0], sidste = punkter[punkter.length - 1]
+  const diff = sidste.e1rm - forste.e1rm
+  const aendring = diff > 0 ? `+${diff} kg` : diff < 0 ? `−${-diff} kg` : 'uændret'
+  return `${navn} e1RM ${sidste.e1rm} kg, ${aendring} siden uge ${ugeNr(forste.uge)}`
+}
+
 // Linjegraf over ugentligt bedste e1RM — samme visuelle sprog som
 // AthleteView.jsx's E1RMChart/ReadinessSparkline (én linje, ingen akser med
 // tal ud over start/slut), men for ÉN øvelse og med vægt×reps synlig pr.
 // punkt (ordrens "tungeste sæt pr. uge", ikke kun det udregnede tal).
+// Ordre 422: etiketterne står inden for grafen (sidste punkts tal til
+// venstre for punktet, første punkts til højre) og er store nok til at læse
+// i 390 px; før stod de uden for højre kant med 7–8 px og blev skåret af.
 function FremgangGraf({ punkter }) {
   if (punkter.length < 2) return null
-  const W = 400, H = 170, PL = 8, PR = 46, PT = 14, PB = 20
+  const W = 400, H = 190, PL = 10, PR = 10, PT = 34, PB = 26
   const vals = punkter.map(p => p.e1rm)
   const minV = Math.min(...vals), maxV = Math.max(...vals)
   const range = (maxV - minV) || 1
   const x = i => PL + (i / (punkter.length - 1)) * (W - PL - PR)
   const y = v => PT + (1 - (v - minV) / range) * (H - PT - PB)
   const pts = punkter.map((p, i) => `${x(i).toFixed(1)},${y(p.e1rm).toFixed(1)}`).join(' ')
+  const forste = punkter[0]
   const sidste = punkter[punkter.length - 1]
-  const forsteUge = punkter[0].uge.slice(5)
-  const sidsteUge = sidste.uge.slice(5)
+  // Etiketten står over punktet, når der er plads, ellers under — altid
+  // inden for [0, H - PB].
+  // Første punkts tal står højere over punktet, så en stigende linje ikke
+  // løber gennem teksten.
+  const etiketY = (v, over) => (y(v) - over >= 16 ? y(v) - over : y(v) + 22)
+  const ly = etiketY(sidste.e1rm, 12)
+  const fy = etiketY(forste.e1rm, 26)
   return (
     <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block' }}>
       <line x1={PL} y1={H - PB} x2={W - PR} y2={H - PB} stroke="rgba(237,234,226,0.08)" strokeWidth="1" />
-      <polyline points={pts} fill="none" stroke="#c8923a" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round" />
+      <polyline points={pts} fill="none" stroke="#c8923a" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
       {punkter.map((p, i) => (
-        <circle key={p.uge} cx={x(i)} cy={y(p.e1rm)} r={i === punkter.length - 1 ? 3.5 : 2}
+        <circle key={p.uge} cx={x(i)} cy={y(p.e1rm)} r={i === punkter.length - 1 ? 4.5 : 2.5}
           fill={i === punkter.length - 1 ? '#edeae2' : '#c8923a'} />
       ))}
-      <text x={x(punkter.length - 1) + 6} y={y(sidste.e1rm) - 5} fontSize="8" fill="#edeae2" fontFamily={mono}>
-        {sidste.e1rm} kg e1RM
+      <text x={x(0)} y={fy} textAnchor="start" fontSize="14" fill="#7a7770" fontFamily={mono}>
+        {forste.e1rm} kg
       </text>
-      <text x={x(punkter.length - 1) + 6} y={y(sidste.e1rm) + 8} fontSize="7" fill="#7a7770" fontFamily={mono}>
-        {sidste.weight}×{sidste.reps}
+      <text x={x(punkter.length - 1)} y={ly} textAnchor="end" fill="#edeae2" fontFamily={mono}>
+        <tspan fontSize="15">{sidste.e1rm} kg</tspan>
+        <tspan fontSize="12" fill="#7a7770"> {sidste.weight}×{sidste.reps}</tspan>
       </text>
-      <text x={PL} y={H - 4} textAnchor="start" fontSize="7" fill="#4a4844" fontFamily={mono}>{forsteUge}</text>
-      <text x={x(punkter.length - 1)} y={H - 4} textAnchor="end" fontSize="7" fill="#4a4844" fontFamily={mono}>{sidsteUge}</text>
+      <text x={PL} y={H - 6} textAnchor="start" fontSize="13" fill="#7a7770" fontFamily={mono}>uge {ugeNr(forste.uge)}</text>
+      <text x={W - PR} y={H - 6} textAnchor="end" fontSize="13" fill="#7a7770" fontFamily={mono}>uge {ugeNr(sidste.uge)}</text>
     </svg>
   )
 }
@@ -188,6 +213,9 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks })
                 </div>
               ) : (
                 <>
+                  <div data-fremgang-linje style={{ fontSize: '0.95rem', color: '#edeae2', marginBottom: '0.7rem', lineHeight: 1.35 }}>
+                    {fremgangLinje(oevelse, punkter)}
+                  </div>
                   <FremgangGraf punkter={punkter} />
                   <div style={{ fontSize: '0.56rem', color: '#4a4844', marginTop: '0.85rem', lineHeight: 1.5 }}>
                     Tungeste gennemførte sæt pr. uge, og det beregnede énrepetitionsmaksimum (Epley).
