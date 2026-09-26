@@ -1,0 +1,8 @@
+$ npm run verify:videocoach-zoom
+
+> entropi-app@0.0.0 verify:videocoach-zoom
+> node scripts/verify-videocoach-zoom.mjs
+
+videocoach.html bruger den delte, enhedstestede zoom-matematik til både pinch og Ctrl/Cmd-hjul, og blokerer Safaris native pinch-zoom.
+
+exit 0

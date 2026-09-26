@@ -1,0 +1,10 @@
+$ npm run e2e:rolig-forside
+
+> entropi-app@0.0.0 e2e:rolig-forside
+> node e2e/rolig-forside.spec.mjs
+
+efter 390x844: 5 blokke / 31 ting over folden (31 paa hele forsiden), siden 897 px hoej, PR-toast top 408 (topbar-bund 53, h1-top 77), celle 48.3 px, chips-bund midt i pas 745
+efter 360x780: 5 blokke / 31 ting over folden (31 paa hele forsiden), siden 897 px hoej, PR-toast top 292 (topbar-bund 53, h1-top -39), celle 44.1 px, chips-bund midt i pas 745
+
+GRØN: rolig-forside (ordre 330, fase efter).
+exit 0

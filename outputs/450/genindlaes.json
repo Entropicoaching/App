@@ -1,0 +1,45 @@
+{
+  "fund": {
+    "foersteAabning": {
+      "rekordKald": [
+        {
+          "filter": "alt",
+          "raekker": 3512
+        }
+      ],
+      "indeksBytes": 876,
+      "historik": 4014
+    },
+    "genaabning": [
+      {
+        "filter": "gte.2026-09-12T10:12:00.000Z",
+        "raekker": 34
+      }
+    ],
+    "indeksEfter": {
+      "bytes": 940,
+      "uger": [
+        "c0000000-0000-4000-8000-000000000166"
+      ],
+      "squatUge": 120,
+      "squatBase": 114
+    },
+    "fremgangIDag": [
+      "27. sep Squat e1RM 120 kg +3 kg · 102,5 kg × 5",
+      "27. sep Squat e1RM 117 kg +3 kg · 100 kg × 5"
+    ]
+  },
+  "trin": [
+    "første åbning: 3512 rækker (alt); indekset bygget, 876 bytes, squat bedst e1RM 114 kg",
+    "genåbning: 34 rækker (gte.2026-09-12T10:12:00.000Z)",
+    "sæt 1 (100 kg × 5): \"🏆 Ny rekord: Squat e1RM 117 kg, +3 kg\"",
+    "genindlæst efter sæt 1: fejring på skærmen nej; fejringer i alt 1",
+    "sæt 2 (100 kg × 5): fejringer i alt 1",
+    "sæt 3 (102,5 kg × 5): \"🏆 Ny rekord: Squat e1RM 120 kg, +3 kg\"",
+    "genindlæst igen: fejring på skærmen nej; fejringer i alt 2; indekset: ugens squat 120 kg, før ugen 114 kg",
+    "Fremgang, i dag: [\"27. sep Squat e1RM 120 kg +3 kg · 102,5 kg × 5\",\"27. sep Squat e1RM 117 kg +3 kg · 100 kg × 5\"]",
+    "mocken: squat-sæt 1:100×5 2:100×5 3:102.5×5"
+  ],
+  "konsolFejl": [],
+  "groen": true
+}

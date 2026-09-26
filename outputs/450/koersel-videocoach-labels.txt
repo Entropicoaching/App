@@ -1,0 +1,8 @@
+$ npm run verify:videocoach-labels
+
+> entropi-app@0.0.0 verify:videocoach-labels
+> node scripts/verify-videocoach-labels.mjs
+
+VideoCoach lift- og variationsnavne er konsistente.
+
+exit 0

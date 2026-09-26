@@ -32,7 +32,7 @@ const TRIN = {
     ['build', 'npm run build'],
     ['samme-som-439', 'node outputs/439/verify-439.mjs --blok 1'],
     ['din-uge-439', 'node outputs/439/verify-439.mjs --blok 2 --no-build'],
-    ['genindlaes', 'node outputs/450/genindlaes.mjs'],
+    ['genindlaes', 'node outputs/450/genindlaes.mjs --no-build'],
     ['offline-bevis', 'node outputs/439/verify-439.mjs --blok 3 --no-build'],
     ['offline-bevis-414', 'node outputs/414/offline-bevis.mjs'],
     ['silent-fails-5', 'npm run verify:athlete-silent-fails-5'],
@@ -46,7 +46,10 @@ const TRIN = {
 const resultat = []
 for (const [navn, cmd] of TRIN[blok]) {
   const t0 = Date.now()
-  const r = spawnSync(cmd, { cwd: ROOT, shell: true, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 })
+  // Egen mock-port (kun i denne proces), så en samtidig kørsel på 419's
+  // standardport (8997) ikke støder sammen med denne.
+  const env = { ...process.env, UGE_MOCK_PORT: process.env.UGE_MOCK_PORT || '8987' }
+  const r = spawnSync(cmd, { cwd: ROOT, shell: true, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, env })
   const ud = `$ ${cmd}\n${r.stdout || ''}${r.stderr || ''}\nexit ${r.status}\n`
   writeFileSync(path.join(UD, `koersel-${navn}.txt`), ud)
   const groen = r.status === 0

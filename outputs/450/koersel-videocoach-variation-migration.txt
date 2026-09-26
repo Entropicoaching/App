@@ -1,0 +1,8 @@
+$ npm run verify:videocoach-variation-migration
+
+> entropi-app@0.0.0 verify:videocoach-variation-migration
+> node scripts/verify-videocoach-variation-migration.mjs
+
+VideoCoach variation-migrationens sikkerheds- og kompatibilitetskontrakt er gyldig.
+
+exit 0

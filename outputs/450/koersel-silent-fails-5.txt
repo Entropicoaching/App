@@ -1,0 +1,8 @@
+$ npm run verify:athlete-silent-fails-5
+
+> entropi-app@0.0.0 verify:athlete-silent-fails-5
+> node scripts/verify-athlete-silent-fails-5.mjs
+
+G14 (PR-detektion), G15 (vægtlogning) og G16 (afbrudt videoupload) viser nu en ærlig fejl/aldrig en falsk succes.
+
+exit 0

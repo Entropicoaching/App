@@ -1,0 +1,8 @@
+$ npm run verify:videocoach-feedback-quality
+
+> entropi-app@0.0.0 verify:videocoach-feedback-quality
+> node scripts/verify-videocoach-feedback-quality.mjs
+
+VideoCoach gemmer ét prioriteret, handlingsrettet cue og reviewet fanger svag feedback.
+
+exit 0

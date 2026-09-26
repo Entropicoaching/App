@@ -1,0 +1,10 @@
+$ npm run verify:athlete-read-failures
+
+> entropi-app@0.0.0 verify:athlete-read-failures
+> node scripts/verify-athlete-read-failures.mjs
+
+fetchProgram og 17 andre rå læsninger i AthleteView.jsx går nu gennem runGuardedRead (ordre 76, G1).
+En fejlet programhentning viser en ærlig fejllinje, ikke "Dit program er på vej".
+fetchPRs (ordre 163 · del 3) fejler nu roligt i kortet med baggrunds-genforsøg, ikke en app-bred rød banner.
+
+exit 0

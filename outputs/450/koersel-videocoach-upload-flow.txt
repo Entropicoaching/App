@@ -1,0 +1,19 @@
+$ npm run verify:videocoach-upload-flow
+
+> entropi-app@0.0.0 verify:videocoach-upload-flow
+> node scripts/verify-videocoach-upload-flow.mjs
+
+== A) Atleten: fil valgt -> sti bygget -> række dannet -> "Video modtaget" ==
+banner: "Video modtaget ✓ · din coach ser den, når han åbner den"
+client_analysis_id: 576e1d61-80df-49eb-b56a-84b531dc99db
+
+== B) Coachen: lokalt "signeret" URL -> video indlæst -> sporet -> samme række -> complete ==
+  video indlæst i coach-tilstand (canvas har fået klippets mål)
+  runFullAnalysis afsluttet: tracked=undefined -> succes (73812ms)
+sporing gennemført: true (73812ms, ægte requestVideoFrameCallback-afspilning)
+saveBtn: "Sendt ✓"
+
+GRØN: atletens standardvej og coachens fuldførelse virker ende til ende mod det rigtige klip,
+med kun Supabase-netværket stubbet lokalt - samme række, fra "afventer" til "complete".
+
+exit 0
