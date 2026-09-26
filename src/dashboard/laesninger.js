@@ -8,6 +8,7 @@ import { summarizeRefreshResults, filterDraftVideoReviews, filterOpenTrainingSig
 import { supabase, withRetry } from '../supabase'
 import { filterOpenAutomationAlerts } from '../automationAlerts'
 import { ATHLETE_LOGS_LIMIT } from './coachKonstanter'
+import { planlagteReps, taellerIKg } from './afvigelse'
 import { VIDEOCOACH_BASELINE_VERSION } from '../videoCoachVersion'
 
 export function lavLaesninger({
@@ -148,7 +149,7 @@ export function lavLaesninger({
     // kalender-tidslinjen selv viser (session_count/exercise_count uændret).
     const { data } = await supabase
       .from('weeks')
-      .select('id, athlete_id, week_number, block_name, start_date, sessions(id, exercises(id, sets, recommended_weight))')
+      .select('id, athlete_id, week_number, block_name, start_date, sessions(id, session_order, athlete_rating, athlete_comment, exercises(id, sets, reps, recommended_weight))')
       .in('athlete_id', athleteIds)
     if (!data) return
     const map = {}
@@ -164,7 +165,9 @@ export function lavLaesninger({
         // Tonnage kan kun regnes for øvelser med en anbefalet vægt — uden
         // den er der intet kg-tal at sammenligne imod (samme grænse som
         // src/dashboard/afvigelse.js's egen dokumentation).
-        if (ex.recommended_weight != null) plannedTonnage += sets * Number(ex.recommended_weight)
+        // ORDRE 428 (C3): sæt × reps × vægt, samme regning som gennemført
+        // (vægt × reps pr. sæt) og kun for de samme øvelser (taellerIKg).
+        if (taellerIKg(ex)) plannedTonnage += sets * planlagteReps(ex.reps) * Number(ex.recommended_weight)
       }
       map[w.athlete_id].push({
         id: w.id,
@@ -175,6 +178,8 @@ export function lavLaesninger({
         exercise_count: exercises.length,
         planned_sets: plannedSets,
         planned_tonnage: plannedTonnage,
+        // ORDRE 428 (C2): ugens pas med atletens vurdering og kommentar.
+        session_voices: sessions.map(sess => ({ order: sess.session_order, rating: sess.athlete_rating, comment: sess.athlete_comment })),
       })
     }
     // Sortér uger pr. atlet efter ugenummer (stigende)
@@ -191,7 +196,7 @@ export function lavLaesninger({
     // tonnage, pr. programuge) uden endnu en rundtur.
     const { data } = await supabase
       .from('exercise_logs')
-      .select('athlete_id, logged_at, weight, reps_completed, skipped, exercises(sessions(weeks(week_number)))')
+      .select('athlete_id, logged_at, weight, reps_completed, skipped, note, exercises(reps, recommended_weight, sessions(id, session_order, weeks(week_number)))')
       .in('athlete_id', athleteIds)
       .gte('logged_at', since.toISOString())
       .order('logged_at', { ascending: false })
@@ -203,14 +208,21 @@ export function lavLaesninger({
         const wn = log.exercises?.sessions?.weeks?.week_number
         if (wn != null) map[log.athlete_id] = wn
       }
-      if (log.skipped) continue
       const wn = log.exercises?.sessions?.weeks?.week_number
       if (wn == null) continue
       const aid = log.athlete_id
       if (!completion[aid]) completion[aid] = {}
-      if (!completion[aid][wn]) completion[aid][wn] = { sets: 0, tonnage: 0 }
-      completion[aid][wn].sets += 1
-      completion[aid][wn].tonnage += (Number(log.weight) || 0) * (Number(log.reps_completed) || 0)
+      if (!completion[aid][wn]) completion[aid][wn] = { sets: 0, tonnage: 0, pas: 0, sessionIds: {}, notes: [] }
+      const c = completion[aid][wn]
+      // ORDRE 428 (C2): sæt-noter tælles også fra sprungne sæt (atleten
+      // skriver ofte hvorfor).
+      if (log.note) c.notes.push({ order: log.exercises?.sessions?.session_order, note: log.note })
+      if (log.skipped) continue
+      c.sets += 1
+      // ORDRE 428 (C3): kun øvelser der også tæller i planlagt kg.
+      if (taellerIKg(log.exercises)) c.tonnage += (Number(log.weight) || 0) * (Number(log.reps_completed) || 0)
+      const sid = log.exercises?.sessions?.id
+      if (sid && !c.sessionIds[sid]) { c.sessionIds[sid] = true; c.pas += 1 }
     }
     setAthleteCurrentWeek(map)
     setAthleteWeekCompletion(completion)

@@ -1,0 +1,10 @@
+
+> entropi-app@0.0.0 verify:videocoach-upload
+> node scripts/verify-videocoach-upload.mjs
+
+Upload-stien er korrekt udledt af mime, aldrig af filnavnet.
+Upload-forespørgslen håndhæver samme grænser som databasen, plus mime/størrelse.
+En afventende række opfylder entropi_vc3_athlete_insert_own_draft-tjeklisten.
+En gentaget upload-sti genkendes som "allerede uploadet", ikke som en fatal fejl.
+Migrationsfilen er versionsstyret, markeret som allerede kørt, og matcher det aftalte skema.
+Annullér under upload afbryder selve overførslen og efterlader aldrig en afventende række.

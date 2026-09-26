@@ -546,6 +546,9 @@ export function lavProgramHandlinger({
         week_id: newWeek.id,
         title: session.title,
         session_order: session.session_order,
+        // ORDRE 428 (C1): ugedagen følger med, ellers ved atletens
+        // ugestrimmel ikke, hvornår passene ligger.
+        weekday: session.weekday ?? null,
       }).select().single()
       if (newSession) {
         for (const ex of (session.exercises || [])) {
@@ -557,6 +560,9 @@ export function lavProgramHandlinger({
             intensity: ex.intensity,
             note: ex.note,
             exercise_order: ex.exercise_order,
+            // ORDRE 428 (C1): anbefalet vægt følger med, så coachen kun
+            // retter det, der ændres (før: alle vægte skulle skrives igen).
+            recommended_weight: ex.recommended_weight ?? null,
           })
         }
       }

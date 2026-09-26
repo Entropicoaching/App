@@ -1,7 +1,7 @@
 // ORDRE 277 · commit 1.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { beregnUgensAfvigelse, sorterEfterAfvigelse } from './afvigelse.js'
+import { beregnUgensAfvigelse, sorterEfterAfvigelse, planlagteReps, taellerIKg, ugensStemme } from './afvigelse.js'
 
 test('ingen planlagte sæt denne uge → ingen plan, ikke en afvigelse', () => {
   const r = beregnUgensAfvigelse({ plannedSets: 0, plannedTonnage: 0, completedSets: 0, completedTonnage: 0 })
@@ -58,4 +58,32 @@ test('sorterEfterAfvigelse: stabil rækkefølge for flere "ingen plan"-atleter (
     { navn: 'Y', afvigelse: beregnUgensAfvigelse({ plannedSets: 0 }) },
   ]
   assert.deepEqual(sorterEfterAfvigelse(rows).map(r => r.navn), ['X', 'Y'])
+})
+
+// ORDRE 428
+
+test('planlagteReps: tal, interval som midten, tid giver null', () => {
+  assert.equal(planlagteReps('5'), 5)
+  assert.equal(planlagteReps('4-6'), 5)
+  assert.equal(planlagteReps('8 - 10'), 9)
+  assert.equal(planlagteReps(8), 8)
+  assert.equal(planlagteReps('45s'), null)
+  assert.equal(planlagteReps(''), null)
+  assert.equal(planlagteReps(null), null)
+})
+
+test('taellerIKg: kun med anbefalet vægt og regnbare reps', () => {
+  assert.equal(taellerIKg({ recommended_weight: 100, reps: '5' }), true)
+  assert.equal(taellerIKg({ recommended_weight: null, reps: '5' }), false)
+  assert.equal(taellerIKg({ recommended_weight: 60, reps: 'AMRAP' }), false)
+})
+
+test('ugensStemme: laveste vurdering og nyeste tekst, kommentar efter noter i samme pas', () => {
+  const s = ugensStemme(
+    [{ order: 1, rating: 2, comment: null }, { order: 2, rating: 1, comment: 'Knæet gør ondt' }],
+    [{ order: 2, note: 'Smerte i venstre knæ' }],
+  )
+  assert.deepEqual(s, { laveste: 1, tekst: 'Knæet gør ondt', flereTekster: 1 })
+  assert.deepEqual(ugensStemme([{ order: 1, rating: null, comment: null }], [{ order: 3, note: 'Stiv hofte' }]), { laveste: null, tekst: 'Stiv hofte', flereTekster: 0 })
+  assert.equal(ugensStemme([{ order: 1, rating: null, comment: '  ' }], []), null)
 })
