@@ -1,0 +1,19 @@
+Bygger mod mocken ...
+  [tid] online: logget ind, service worker styrer siden, sæt 1 logget og gemt i mocken
+  [tid] uden net: appen genåbnet med udløbet token, Dagens pas vist fra telefonen (sæt 2/4)
+  [tid] uden net: sæt 2, 3, 4 logget; hver køpost bærer tidspunktet for "Godkendt" (21:59:04, 21:59:06, 21:59:07 UTC)
+  [tid] nettet tilbage: køen tømt; 1 INSERT fik sit svar tabt undervejs
+  [tid] mocken: én række pr. sæt [1,1,1,1]; sæt 2 blev godkendt 11 s før nettet kom og står med godkendt-tiden; sorteret på logged_at (nyeste først) er rækkefølgen [4,3,2,1]
+GRØN: tid
+  [haenger] online: logget ind, service worker styrer siden, sæt 1 logget og gemt i mocken
+  [haenger] wifi uden internet (navigator.onLine=true): sæt 2 gik videre til sæt 3 med det samme og blev vist som "gemt lokalt" efter 8534 ms; dets INSERT nåede mocken, svaret kom aldrig
+  [haenger] sæt 3: vist som ventende efter 31 ms uden noget kald; sæt 2 og 3 har hver "sendes når du har net"
+  [haenger] nettet virker igen: køen sendt af sig selv efter 18912 ms, markeringerne væk
+  [haenger] mocken: én række pr. sæt [1,1,1,0]; sæt 2, hvis første INSERT nåede frem, er ikke dubleret; sæt 2 og 3 har deres række-id og godkendt-tid
+GRØN: haenger
+  [fortryd-doer] online: logget ind, service worker styrer siden, sæt 1 logget og gemt i mocken
+  [fortryd-doer] saet 2: INSERT naaede mocken (0 gang), svaret haenger; koeposten har raekke-id
+  [fortryd-doer] fortryd trykket; koeens post for saet 2 lige efter: {"op":"delete","sammeId":true}
+  [fortryd-doer] appen doer (siden lukket) med saet 2's raekke stadig i mocken (1)
+  [fortryd-doer] appen aabnet igen med net: koeen toem; mocken [1,0,0,0]
+GRØN: fortryd-doer

@@ -12,6 +12,8 @@ import { weekStartDate, fmtWeekRange, WEEKDAYS_LONG } from './ugeHjaelp'
 import UgensStatusKort from './UgensStatusKort'
 import WeekCalendar from './WeekCalendar'
 import DagensPasCard from './DagensPasCard'
+import DinUgeKort from './DinUgeKort'
+import { dinUge } from './dinUge'
 import RestPauseFooter from './RestPauseFooter'
 import { WeeklyTonnageChart, E1RMChart, ReadinessSparkline } from './ForsideGrafer'
 
@@ -24,6 +26,7 @@ function HjemTab({
   setAthleteVideoCoachInstant, setAthleteVideoCoachOpen, setLogInputs, setMereOpen, setReadinessInput, setRestPause, setTab, setWeightInput,
   sharedVideoAnalyses, sharedVideoError, sharedVideoLoading, skipSet, suggestNextWeight, tab, toastSlot, undoLoggedSet,
   unreadMsgCount, updateLoggedSet, weeklyTonnage, weightInput, weightLogs, saveFeedback,
+  rekordFejring, fremgangLogs, sendUgeLinje,
 }) {
   return (
     <>
@@ -112,6 +115,7 @@ function HjemTab({
                     pendingSyncCount={pendingSyncCount}
                     pendingSyncKeys={pendingSyncKeys}
                     parkedSets={parkedSets}
+                    rekordFejring={rekordFejring}
                     todayStr={today()}
                     finishedSession={(() => {
                       // ORDRE 419 (I3): passet, hvis sidste sæt lige er logget fra
@@ -141,6 +145,18 @@ function HjemTab({
                       }) ? { onClick: openReadiness } : null
                     })()}
                   />
+                  {/* ORDRE 439 · blok 2: "din uge", når ugens sidste pas er klaret.
+                      Linjen til coachen kun i atletens egen visning, ikke i
+                      coachens forhåndsvisning. */}
+                  {dagensPas?.status === 'done' && currentWeek && (
+                    <DinUgeKort
+                      key={currentWeek.id}
+                      uge={dinUge({ week: currentWeek, allWeeks, exerciseLogs, fremgangLogs })}
+                      athleteId={athlete?.id}
+                      weekId={currentWeek.id}
+                      sendUgeLinje={role === 'athlete' ? sendUgeLinje : null}
+                    />
+                  )}
                   {restPause && (
                     <RestPauseFooter
                       athleteId={athlete?.id}

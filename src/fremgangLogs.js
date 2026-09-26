@@ -9,7 +9,9 @@ export const FREMGANG_LOG_LIMIT = 4000
 export function fremgangLogsQuery(client, athleteId) {
   return client
     .from('exercise_logs')
-    .select('weight, reps_completed, logged_at, exercises(name)')
+    // ORDRE 439: exercise_id, så ugens egne sæt kan tages fra exerciseLogs
+    // i stedet (rekorder.js), uden at et sæt tælles to gange.
+    .select('exercise_id, weight, reps_completed, logged_at, exercises(name)')
     .eq('athlete_id', athleteId)
     .eq('skipped', false)
     .gt('weight', 0)

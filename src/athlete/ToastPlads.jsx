@@ -1,4 +1,4 @@
-// Toast-pladsen (PR-toast + almindelig besked), sticky i sidens flow — JSX'en
+// Toast-pladsen (rekord-toast + almindelig besked), sticky i sidens flow — JSX'en
 // flyttet uaendret ud af AthleteView.jsx (ordre 373). Hvornaar og hvor den
 // vises, bestemmes stadig i AthleteView (toastSlot).
 
@@ -16,7 +16,10 @@ function ToastPlads({
           boxShadow: '0 4px 24px rgba(0,0,0,0.55)',
           opacity: prToastFading ? 0 : 1, transition: 'opacity 0.6s ease',
         }}>
-          {prToast.type === 'vægt' ? '🏆 Ny personlig rekord (vægt)' : prToast.type === 'rep' ? '🔥 Ny personlig rekord (reps)' : '⚡ Stærkeste sæt'} på {prToast.name}
+          {/* ORDRE 439: teksten kommer fra rekorder.js (rekordTekst), fx
+              "Ny rekord: Squat e1RM 122 kg, +3 kg". Kun fra Program-fanen;
+              fra Dagens pas står fejringen på kortet. */}
+          {prToast.tekst}
         </div>
       )}
       {flash && (

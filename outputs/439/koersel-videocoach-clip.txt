@@ -1,0 +1,103 @@
+
+> entropi-app@0.0.0 verify:videocoach-clip
+> node scripts/verify-videocoach-clip.mjs
+
+2 klip fundet i test-clips\ — kører alle: marc-doedloeft-270.mov, vis-mig-nu-4-reps-realistisk.mp4.
+test-clips\marc-doedloeft-270.mov er ikke mp4-container — transkoder en midlertidig kopi (remux, ingen genkodning) til docs\videocoach\clip-cache\real-marc-doedloeft-270.mp4 ...
+ffmpeg version 6.1.1-essentials_build-www.gyan.dev Copyright (c) 2000-2023 the FFmpeg developers
+  built with gcc 12.2.0 (Rev10, Built by MSYS2 project)
+  configuration: --enable-gpl --enable-version3 --enable-static --pkg-config=pkgconf --disable-w32threads --disable-autodetect --enable-fontconfig --enable-iconv --enable-gnutls --enable-libxml2 --enable-gmp --enable-bzlib --enable-lzma --enable-zlib --enable-libsrt --enable-libssh --enable-libzmq --enable-avisynth --enable-sdl2 --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxvid --enable-libaom --enable-libopenjpeg --enable-libvpx --enable-mediafoundation --enable-libass --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libvidstab --enable-libvmaf --enable-libzimg --enable-amf --enable-cuda-llvm --enable-cuvid --enable-ffnvcodec --enable-nvdec --enable-nvenc --enable-dxva2 --enable-d3d11va --enable-libvpl --enable-libgme --enable-libopenmpt --enable-libopencore-amrwb --enable-libmp3lame --enable-libtheora --enable-libvo-amrwbenc --enable-libgsm --enable-libopencore-amrnb --enable-libopus --enable-libspeex --enable-libvorbis --enable-librubberband
+  libavutil      58. 29.100 / 58. 29.100
+  libavcodec     60. 31.102 / 60. 31.102
+  libavformat    60. 16.100 / 60. 16.100
+  libavdevice    60.  3.100 / 60.  3.100
+  libavfilter     9. 12.100 /  9. 12.100
+  libswscale      7.  5.100 /  7.  5.100
+  libswresample   4. 12.100 /  4. 12.100
+  libpostproc    57.  3.100 / 57.  3.100
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from 'C:\Users\Entropi\Desktop\entropi-app\test-clips\marc-doedloeft-270.mov':
+  Duration: 00:00:03.85, start: 0.000000, bitrate: 20863 kb/s
+  Stream #0:0[0x1](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, mono, fltp, 223 kb/s (default)
+  Stream #0:1[0x2](und): Video: h264 (High) (avc1 / 0x31637661), yuvj420p(pc, bt709, progressive), 1920x1440, 20624 kb/s, 30.43 fps, 30 tbr, 600 tbn (default)
+    Side data:
+      displaymatrix: rotation of -90.00 degrees
+  Stream #0:2[0x3](und): Data: none (mebx / 0x7862656D), 0 kb/s (default)
+Output #0, mp4, to 'C:\Users\Entropi\Desktop\entropi-app\docs\videocoach\clip-cache\real-marc-doedloeft-270.mp4':
+  Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuvj420p(pc, bt709, progressive), 1920x1440, q=2-31, 20624 kb/s, 30.43 fps, 30 tbr, 19200 tbn (default)
+    Side data:
+      displaymatrix: rotation of -90.00 degrees
+  Stream #0:1(und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, mono, fltp, 223 kb/s (default)
+Stream mapping:
+  Stream #0:1 -> #0:0 (copy)
+  Stream #0:0 -> #0:1 (copy)
+Press [q] to stop, [?] for help
+size=       0kB time=-00:00:00.04 bitrate=  -0.0kbits/s speed=N/A    [mp4 @ 000002297833b1c0] Starting second pass: moving the moov atom to the beginning of the file
+[out#0/mp4 @ 0000022978877d00] video:9680kB audio:107kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.056607%
+size=    9792kB time=00:00:03.82 bitrate=20946.0kbits/s speed= 148x    
+Stangens startpunkt fundet automatisk: (444, 550) px, radius 308px, metode "autoCalib-grid" (tier 1 - autoCalib fandt en tydelig cirkulær kant)
+2 gentagelse(r) fundet automatisk (presearch, 5997ms - samme vindues-kilde som den rigtige "Vis mig nu"): 0.00-2.55s, 2.25-3.84s
+
+== Klip: test-clips\marc-doedloeft-270.mov (RIGTIGT klip, deadlift, facit = den fulde analyses egen bane) ==
+== Kombination: --windows=new --seek=new --strategy=current ==
+== A) Fuld analyse (uændret siden ordre 73) ==
+ok=true frames=117 tid=21275.2ms meanPx=0.00 maxPx=0.00
+
+== B) "Vis mig nu" (2 vindue(r): færre end 3 fundet i klippet) - denne GATER testen - tal PR. VINDUE ==
+  vindue 1 [0.00s-2.55s, 2.55s afspillet]
+    ok=true frames sporet=56 sprunget over=0 ms/frame=47.8 tid/afspillet=1.05x
+    afvigelse meanPx=1.36 maxPx=8.00 hop=0 (grænse 200px/s)
+    pr. frame: hent=1.14ms nedskaler=11.38ms søg=15.02ms tegn=0.00ms(*) filter(total)=0.40ms  [(*) altid 0 headless, se note]
+    pr. vindue: seek=38.7ms 1.frame=15.6ms sporing=2622.3ms tegn=0.0ms(*) samlet=2677.6ms (1.05x)
+    visningsbane: raw+analysis sat=true visualPts=57 punkter, maks. forskydning fra rå bane=0.00px
+  vindue 2 [2.25s-3.84s, 1.59s afspillet]
+    ok=true frames sporet=47 sprunget over=0 ms/frame=37.2 tid/afspillet=1.10x
+    afvigelse meanPx=4.15 maxPx=8.00 hop=0 (grænse 200px/s)
+    pr. frame: hent=1.19ms nedskaler=12.71ms søg=13.90ms tegn=0.00ms(*) filter(total)=0.60ms  [(*) altid 0 headless, se note]
+    pr. vindue: seek=111.8ms 1.frame=17.0ms sporing=1619.5ms tegn=0.0ms(*) samlet=1748.9ms (1.10x)
+    visningsbane: raw+analysis sat=true visualPts=48 punkter, maks. forskydning fra rå bane=0.79px
+  samlet tid (2 vindue(r)): 4426.5ms · samlet afspillet varighed: 4143.3ms · forhold: 1.07x (grænse 1.1x)
+
+Tolerance: mean ≤ 15px, max ≤ 35px (se kildekoden for begrundelsen).
+
+GRØN: alle reps fundet i den fulde analyse, alle "Vis mig nu"-vinduer fundet inden for tolerance, og "Vis mig nu" var færdig senest 1.1x sin egen afspillede varighed.
+
+(Kun 2 gentagelse(r) i dette klip — et sæt på 3-5 reps giver et mere sigende billede, se docs/videocoach/TEST-CLIPS.md.)
+Fandt vis-mig-nu-4-reps-realistisk.meta.json — felterne [lift, windows, repeatedIdenticalWindows] vinder over automatikken, resten findes automatisk.
+Stangens startpunkt fundet automatisk: (259, 550) px, radius 268px, metode "autoCalib-grid" (tier 1 - autoCalib fandt en tydelig cirkulær kant)
+4 gentagelse(r) fra sidecar-filen: 0.00-3.00s, 7.00-10.00s, 14.00-17.00s, 21.00-24.00s
+repeatedIdenticalWindows: facit for vindue 2+ er vindue 1's eget spor, tidsforskudt (ikke ét globalt facit hen over klip-samlingerne).
+
+== Klip: test-clips\vis-mig-nu-4-reps-realistisk.mp4 (RIGTIGT klip, deadlift, facit = den fulde analyses egen bane) ==
+== Kombination: --windows=new --seek=new --strategy=current ==
+== A) Fuld analyse (uændret siden ordre 73) ==
+ok=true frames=845 tid=193496.0ms meanPx=0.00 maxPx=0.00
+
+== B) "Vis mig nu" (3 vindue(r): første, midt, sidste) - denne GATER testen - tal PR. VINDUE ==
+  vindue 1 [0.00s-3.00s, 3.00s afspillet]
+    ok=true frames sporet=88 sprunget over=0 ms/frame=34.5 tid/afspillet=1.01x
+    afvigelse meanPx=0.00 maxPx=0.00 hop=0 (grænse 200px/s)
+    pr. frame: hent=1.15ms nedskaler=11.23ms søg=11.13ms tegn=0.00ms(*) filter(total)=0.70ms  [(*) altid 0 headless, se note]
+    pr. vindue: seek=36.4ms 1.frame=17.9ms sporing=2979.5ms tegn=0.0ms(*) samlet=3034.9ms (1.01x)
+    visningsbane: raw+analysis sat=true visualPts=89 punkter, maks. forskydning fra rå bane=0.00px
+  vindue 2 [7.00s-10.00s, 3.00s afspillet]
+    ok=true frames sporet=88 sprunget over=0 ms/frame=38.1 tid/afspillet=1.12x
+    afvigelse meanPx=0.00 maxPx=0.00 hop=0 (grænse 200px/s)
+    pr. frame: hent=1.13ms nedskaler=11.88ms søg=11.54ms tegn=0.00ms(*) filter(total)=0.10ms  [(*) altid 0 headless, se note]
+    pr. vindue: seek=359.0ms 1.frame=12.3ms sporing=2977.9ms tegn=0.0ms(*) samlet=3349.5ms (1.12x)
+    visningsbane: raw+analysis sat=true visualPts=89 punkter, maks. forskydning fra rå bane=0.00px
+  vindue 3 [21.00s-24.00s, 3.00s afspillet]
+    ok=true frames sporet=89 sprunget over=0 ms/frame=38.0 tid/afspillet=1.13x
+    afvigelse meanPx=0.00 maxPx=0.00 hop=0 (grænse 200px/s)
+    pr. frame: hent=1.17ms nedskaler=12.11ms søg=12.99ms tegn=0.00ms(*) filter(total)=0.20ms  [(*) altid 0 headless, se note]
+    pr. vindue: seek=385.7ms 1.frame=14.0ms sporing=2982.1ms tegn=0.0ms(*) samlet=3382.1ms (1.13x)
+    visningsbane: raw+analysis sat=true visualPts=90 punkter, maks. forskydning fra rå bane=0.00px
+  samlet tid (3 vindue(r)): 9766.5ms · samlet afspillet varighed: 9000.0ms · forhold: 1.09x (grænse 1.1x)
+
+Tolerance: mean ≤ 15px, max ≤ 35px (se kildekoden for begrundelsen).
+
+GRØN: alle reps fundet i den fulde analyse, alle "Vis mig nu"-vinduer fundet inden for tolerance, og "Vis mig nu" var færdig senest 1.1x sin egen afspillede varighed.
+
+== Sammenfatning (ét klip pr. linje) ==
+  GRØN  test-clips\marc-doedloeft-270.mov: 2 vindue(r), forhold 1.07x (krav ≤1.1x), meanPx=4.15, maxPx=8.00
+  GRØN  test-clips\vis-mig-nu-4-reps-realistisk.mp4: 3 vindue(r), forhold 1.09x (krav ≤1.1x), meanPx=0.00, maxPx=0.00
+[ORDRE 439: ffmpeg-metadata (tid, sted, telefon) fjernet fra denne log foer commit]

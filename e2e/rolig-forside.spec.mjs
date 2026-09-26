@@ -6,7 +6,7 @@
 //      felter og tekststykker man kan laese), og skriver dem til
 //      outputs/330/taelling-<fase>.json,
 //   2) tager skaermbilleder (skaerm + hele siden) til outputs/330/,
-//   3) logger et tungt saet, saa "Ny personlig rekord"-toasten kommer, og
+//   3) logger et tungt saet, saa rekord-fejringen kommer ("Ny rekord: ...", ordre 439), og
 //      maaler om den daekker topbaren (F12 fra 292).
 // Med ROLIG_FASE=foer (koert paa main foer aendringen) maales og fotograferes
 // der kun. Uden (standard, "efter") tjekkes ogsaa det ordren kraever:
@@ -151,12 +151,15 @@ async function runViewport(page, { tag, width, height }) {
   // PR-toasten (F12 fra 292): foerste saet paa en oevelse uden rekorder gemmes
   // kun som baseline (ingen toast, se logSet) — derfor et almindeligt saet 1,
   // saa et tungt saet 2, og toasten maales mod topbaren.
+  // ORDRE 439: fejringen ("Ny rekord: ...") staar nu paa Dagens pas-kortet,
+  // ikke i toast-pladsen; de samme krav (under topbaren, inden for skaermen,
+  // daekker hverken overskrift eller strimmel) gaelder stadig.
   await page.getByRole('button', { name: 'Godkendt', exact: true }).click()
   await page.getByText('Sæt 2/4', { exact: true }).waitFor({ state: 'visible', timeout: 5000 })
   await page.waitForTimeout(1000)
   await page.getByLabel('Vægt, sæt 2').fill('200')
   await page.getByRole('button', { name: 'Godkendt', exact: true }).click()
-  const toast = page.getByText('Ny personlig rekord', { exact: false })
+  const toast = page.getByText('Ny rekord:', { exact: false })
   let toastBox = null
   try {
     await toast.first().waitFor({ state: 'visible', timeout: 5000 })
@@ -182,7 +185,7 @@ async function runViewport(page, { tag, width, height }) {
   result.topbarBottom = topbarBottom
   result.h1Top = h1Box.top
   if (FASE === 'efter') {
-    assert.ok(toastBox, `${tag}: "Ny personlig rekord"-toasten kom ikke`)
+    assert.ok(toastBox, `${tag}: rekord-fejringen ("Ny rekord: ...") kom ikke`)
     assert.ok(toastBox.top >= topbarBottom, `${tag}: toasten (top ${toastBox.top}) daekker topbaren (bund ${topbarBottom})`)
     assert.ok(toastBox.left >= 0 && toastBox.right <= width, `${tag}: toasten gaar ud over skaermkanten`)
     assert.ok(!overlaps(toastBox, h1Box), `${tag}: toasten (${Math.round(toastBox.top)}-${Math.round(toastBox.bottom)}) daekker overskriften (${Math.round(h1Box.top)}-${Math.round(h1Box.bottom)})`)
@@ -192,7 +195,7 @@ async function runViewport(page, { tag, width, height }) {
     // sekundaere chips stadig over folden, fordi "ret"-raekkerne er kollapset.
     await page.getByRole('button', { name: 'Godkendt', exact: true }).click()
     await page.getByText('Sæt 4/4', { exact: true }).waitFor({ state: 'visible', timeout: 5000 })
-    await page.getByText('Ny personlig rekord', { exact: false }).first().waitFor({ state: 'detached', timeout: 6000 }).catch(() => {})
+    await page.getByText('Ny rekord:', { exact: false }).first().waitFor({ state: 'detached', timeout: 6000 }).catch(() => {})
     await page.evaluate(() => window.scrollTo(0, 0))
     await page.waitForTimeout(300)
     assert.equal(await page.getByRole('button', { name: /^Ret sæt \d$/ }).count(), 0, `${tag}: "ret"-raekkerne skal vaere kollapset som standard`)

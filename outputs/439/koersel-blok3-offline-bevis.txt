@@ -1,0 +1,8 @@
+Bygger mod mocken ...
+  [blok 3] online: logget ind, service workeren styrer siden; rekord-grundlaget ligger på telefonen (7 øvelser, squat bedst e1RM 114 kg, 480 bytes)
+  [blok 3] uden net: appen genåbnet, Dagens pas vist fra telefonen (Squat sæt 1/4)
+  [blok 3] uden net: sæt 1 (100 kg × 5) fejret: "🏆 Ny rekord: Squat e1RM 117 kg, +3 kg"; i køen: c0000000-0000-4000-8000-000000000168_1; appens øvrige hentninger forsøgt uden net (ingen nåede frem): 5
+  [blok 3] uden net: sæt 2 (samme vægt) logget, ingen ny fejring; "2 sæt gemt lokalt"
+  [blok 3] nettet tilbage: køen tømt; mocken har squat-sæt [1,2]; fejringer i alt: 1 (sæt 1)
+  [blok 3] Fremgang efter afsendelsen: i dag = ["26. sep Squat e1RM 117 kg +3 kg · 100 kg × 5"]
+GRØN: blok 3

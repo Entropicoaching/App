@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { remainingSeconds } from './restTimer'
 import { countOfflineSets, pendingSetKeys, loadParkedSets } from './offlineSetQueue'
 import { browserSaysOffline, seemsOffline } from './offlineSession'
@@ -23,6 +23,8 @@ import { lavBeskederOgVaegt } from './athlete/beskederOgVaegt'
 import { lavKostHandlinger } from './athlete/kostHandlinger'
 import { useVideoCoachBro, useAfbrudtUploadVarsel } from './athlete/useVideoCoachBro'
 import { useParathedUdkast } from './athlete/useParathedUdkast'
+import { bygGrundlag, tidligereSaet } from './athlete/rekorder'
+import { loadOfflineSnapshot, saveOfflineSnapshot } from './athlete/offlineSnapshot'
 
 // Indlæses via LazyBoundary (ordre 232 · commit 2), samme mønster som Dashboard.jsx's fire faner.
 const mobiliseringFactory = () => import('./athlete/MobiliseringTab')
@@ -142,8 +144,17 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   // ORDRE 284 · commit 1: al historik (ikke kun et par uger) til Fremgang-
   // fanens pr.-øvelse-kurver — lazy-hentet først når fanen åbnes, samme
   // mønster som volumeLogs/forloebLogs ovenfor.
-  const [fremgangLogs, setFremgangLogs] = useState([])
+  // ORDRE 439: null = endnu ikke hentet (rekorderne må ikke regne en tom
+  // historik for "ingen historik"). Hentes nu også i baggrunden ved åbning.
+  const [fremgangLogs, setFremgangLogs] = useState(null)
   const [fremgangLoading, setFremgangLoading] = useState(false)
+  // ORDRE 439 · blok 1: rekord-fejringen på Dagens pas-kortet ({ id, key, tekst })
+  // og de sæt der allerede er fejret i denne åbning (fejres kun én gang).
+  const [rekordFejring, setRekordFejring] = useState(null)
+  const fejredeRef = useRef(new Set())
+  // Grundlaget fra tidligere uger, som det blev gemt på telefonen sidst
+  // (bruges kun, indtil historikken er hentet i denne åbning, fx uden net).
+  const [gemtRekordFoer] = useState(() => (!coachAthleteId && session?.user?.id ? loadOfflineSnapshot(session.user.id)?.rekordFoer || null : null))
   const [weeklyTonnage, setWeeklyTonnage] = useState([])
   const [liftProgress, setLiftProgress] = useState([])
   const [weightLogs, setWeightLogs] = useState([])
@@ -269,9 +280,17 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     }
   }
 
+  // ORDRE 439 · blok 1: rekord-grundlaget fra tidligere uger (maksima pr.
+  // øvelse). Ugens egne sæt lægges til ved hver logning (saetSkrivning.js).
+  const rekordGrundlagFoer = useMemo(() => {
+    if (fremgangLogs && currentWeek) return bygGrundlag(tidligereSaet(fremgangLogs, currentWeek))
+    return gemtRekordFoer && currentWeek && gemtRekordFoer.weekId === currentWeek.id ? gemtRekordFoer.grundlag : null
+  }, [fremgangLogs, currentWeek, gemtRekordFoer])
+
   /* eslint-disable react-hooks/refs -- fabrikkerne får ref-objekterne med, men læser .current kun i hændelses- og effekt-callbacks, præcis som før ordre 373 */
   const {
     fetchWeightLogs, logWeight, fetchAthleteMessages, markTrackRead, sendAthleteMessage, formatMsgTime, renderSharedFeedbackCards,
+    sendUgeLinje,
   } = lavBeskederOgVaegt({
     athlete, messageInput, msgTrack, onReadError, openSharedVideoId, setMessageInput, setMessages, setOpenSharedVideoId,
     setSavingWeight, setSharedVideoAnalyses, setUnreadMsgCount, setWeightInput, setWeightLogs, sharedVideoAnalyses, showFlash, weightInput,
@@ -315,6 +334,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     allWeeks, athlete, currentWeek, exerciseLogs, feedbackInputs, fetchExerciseLogs, fetchPastLogs, lastLogByExerciseName,
     logInputs, setAllWeeks, setExerciseLogs, setLastLoggedSet, setLogInputs, setPendingSessionAction, setPendingSyncCount, setPrToast,
     setPrToastFading, setRestPause, setSetConfirm, setWriteRef, showFlash, viewingWeekIdx,
+    rekordGrundlagFoer, setRekordFejring, fejredeRef,
   })
   // ORDRE 406 (O1 i docs/kritik-403): lytterne nedenfor registreres én gang pr.
   // atlet, men flushOfflineSets er en ny lukning i hvert render. Kaldte de den
@@ -399,6 +419,15 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   useEffect(() => { if (tab === 'volumen' && athlete?.id) fetchVolumeLogs(athlete.id) }, [tab, athlete?.id])
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchFremgangLogs er ren ift. athleteId, som allerede er i deps
   useEffect(() => { if (tab === 'fremgang' && athlete?.id) fetchFremgangLogs(athlete.id) }, [tab, athlete?.id])
+  // ORDRE 439 · blok 1: historikken hentes også i baggrunden ved åbning, så et
+  // sæt kan kendes som rekord, allerede når det logges fra Dagens pas.
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchFremgangLogs er ren ift. athleteId, som allerede er i deps
+  useEffect(() => { if (athlete?.id && tab !== 'fremgang') fetchFremgangLogs(athlete.id) }, [athlete?.id])
+  // ... og grundlaget gemmes på telefonen, så det også findes uden net.
+  useEffect(() => {
+    if (coachAthleteId || !session?.user?.id || !fremgangLogs || !currentWeek || !rekordGrundlagFoer) return
+    saveOfflineSnapshot(session.user.id, { rekordFoer: { weekId: currentWeek.id, grundlag: rekordGrundlagFoer } })
+  }, [rekordGrundlagFoer, fremgangLogs, currentWeek, coachAthleteId, session?.user?.id])
 
   useEffect(() => {
     if (tab === 'mobilisering' && mobilityMode === 'opvarmning' && currentWeek && warmupPhase === 'focus' && !warmupFocus) {
@@ -537,6 +566,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
             setAthleteVideoCoachInstant, setAthleteVideoCoachOpen, setLogInputs, setMereOpen, setReadinessInput, setRestPause, setTab, setWeightInput,
             sharedVideoAnalyses, sharedVideoError, sharedVideoLoading, skipSet, suggestNextWeight, tab, toastSlot, undoLoggedSet,
             unreadMsgCount, updateLoggedSet, weeklyTonnage, weightInput, weightLogs, saveFeedback,
+            rekordFejring, fremgangLogs, sendUgeLinje,
           }}
         />
 
@@ -573,7 +603,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         {tab === 'fremgang' && (
           <LazyBoundary
             factory={fremgangFactory} label="Fremgang" loading={<div style={s.page}>Indlæser…</div>}
-            componentProps={{ fremgangLogs, fremgangLoading, allWeeks }}
+            componentProps={{ fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek }}
           />
         )}
 
