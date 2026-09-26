@@ -1,0 +1,65 @@
+Kritik 432 mod udgivelse-squat be28ed5 (headless Chromium, 390x844 touch 2x og 1280x900)
+LUKKET Q1: kapitel 8: tyngdepunktet; stangen 0,9 / 3,3 cm bagved, figurerne 0,9 / 3,3 cm
+LUKKET Q2: lockout-figurens knae 179°, forbehold om ulaast lockout: 0
+LUKKET Q3: teksten 45°, panelet 45° i alle seks kombinationer
+LUKKET Q4: kommaceller 0/0, tabellen 311 px i ramme paa 311 px
+LUKKET Q5: overskrifter: MUSKELGRUPPE | VINKEL | ARM, CM | ANDEL AF MAX | STATUS
+LUKKET Q6: canvas-tekst om dybde: Dybdekrav: ja
+LUKKET Q7: mindste img-SVG-tekst paa 390: 11.6 px, H/K 12 px
+LUKKET Q8: good morning: torsoen tipper 12,6° i figur og tekst
+LUKKET Q9: valgus = indad; taellingen: seks
+LUKKET Q10: vendepunktet 0,38 s, ingen "11 %"
+LUKKET Q11: "inden for baandet" forklaret
+LUKKET Q12: figur til nederste skyder 742/844 px (390), 395/900 px (1280)
+LUKKET Q13: decimalpunktum: 0
+LUKKET Q14: SKULLE/filnavn/licensnote/"endnu" i broedteksten: 0 (filnavnet staar kun i referencelisten)
+LUKKET Q15: meta-henvisninger fra 374: 0
+LUKKET Q16: fold "Hvad figurerne bygger paa" vaek, "samme positur" i kap. 3 nej
+VENTER Q17: venter paa Marcs svar
+LUKKET Q18: kapitel 1 til foerste fase 0.7 skaerm paa 390
+LUKKET Q19: kapitel 5: 49° mod 37° ved siden af maalte ca. 10° og ingen forskel
+LUKKET Q20: knaestraekkere tekst 85 %/75 %/90 % = tabel 85 %/75 %/90 %
+LUKKET Q21: trykflader under 44 px paa 390: ingen
+VENTER Q22: [MARC: ...] 0, "Kommer"-boks: nej (med vilje til Marc)
+LUKKET A1: titlen: "Ankelgrænsen stopper skinnebenet", "dybere squat"/"5 cm dybere" 0, foerste saetning: knaeet kommer mindre frem ja; "presset forbi" 0
+LUKKET A2: "stang 100 kg" under kapitel 7's tabeller 4 af 4, stangvaegt ved kropstyperne 3, "100 kg" i kapitel 1 2
+LUKKET A3: good morning: kriteriet er hofte og laend op, knae ned, som scenariet
+LUKKET A4: skinnebenet i den statiske tabel: ja, i indlejringens tabel: ja; "staar derfor ikke i tabellen" nej; 6 raekker x 5 celler mod loeftmodellens tal.json (7e3ef64): 0 forskelle
+LUKKET K6: start-SVG'en har den graa figur: ja; gamle tal (85,8 / 33,5 / 75,1 / "ingen positur") i kapitel 6: 0; lockout 78,8 mod 73,0: ja; tabellen hedder "Maalt ± en standardafvigelse": ja
+LUKKET A5: "stiv linje" 0, "et stift segment" 2
+LUKKET A6: "skulle levere" 2 (var 4; nu vaelgerens forklaring og folden "Saadan laeses krav"), laarets 32,5 i kapitel 1 2 (var 4), afsnit der forklarer hoften uden for modellen i kapitel 3 2 (var 4; tabelceller og legenden ikke talt), kapitel 5's tal gentaget i fold og front squat-afsnit 0
+LUKKET A7: "Balancen." om lordose nej, "maaling.Modelvalg" nej, "frame" nej, meta-henvisninger nej
+Stil: tankestreger 0, "man skal" 0, "skal" 10, interne navne 0, udraabstegn 0, "kapitel N" 1, "referencekrop" 40, "i modellen" 50, jeg/min 28, forbehold sidst ja.
+Laengde: 6045 ord lukket, 9017 aabne, 75.7 skaerme paa 390 med folde aabne; siden siger "44 min. læsning". Konsol: 0. Vandret rulning paa 390: nej.
+Egennavne i broedteksten (gennemgaaet for atletnavne): Arandjelovi, Bengtsson, Hales, Instagram, Kompf, Kristiansen, Lai, Larsen, Målt, Nm, Open, Rulebook, Technical, Tillaar, Uhlrich
+Lukket: Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8, Q9, Q10, Q11, Q12, Q13, Q14, Q15, Q16, Q18, Q19, Q20, Q21. Aabne: ingen. Venter: Q17, Q22.
+
+--- Blok 3: udgivelsen (ORDRE 432) ---
+FUND   titel: 88 tegn ("Squattens biomekanik: individuel variation fra opstilling ti..."); Google viser ca. 60
+FUND   metabeskrivelse: 209 tegn; Google viser ca. 155, klippet efter "stangplacering og ankel ændre"
+OK     robots: meta robots ingen; canonical https://entropicoaching.dk/artikel-squat.html
+OK     og: og:* 8/8 udfyldt, twitter:card summary_large_image
+OK     delingsbillede: 1200x630, 28 kB; kopi i outputs/kritik-432/squat-deling.png
+FUND   datePublished: ld+json datePublished 2026-09-21, dateModified 2026-09-26; siden viser kun "2026"
+FUND   html-kommentarer: 6 af 6 kommentarer i kilden er interne noter (fx "Marc svarede ikke på tone (samtale eller briefing) eller på et eget øjeblik hvor han indså")
+OK     MARC i kilden: 4 [MARC:]-tekster i HTML-kilden, body class="skjul-marc"
+OK     sitemap: 15 URL'er, artiklen med: ja, uden fil: 0
+OK     noindex-sider: artikel-doedloeft-kropsbygning.html (linkes fra: intet); artikel-doedloeft-stangbane.html (linkes fra: intet); artikel-skabelon.html (linkes fra: intet)
+OK     artiklen linkes fra: artikler.html
+OK     390 forsiden/artikler/viden: konsol 0/0/0; squat-kort: forsiden nej, artikler.html plads 6 af 6 (aabner artiklen: ja), viden.html nej; artiklens "< Artikler" -> viden.html#artikler
+OK     390 MARC-bokse: kap-faserne: skjult ja, sidst i afsnittet, afsnittet slutter "...odellen begynder, når løfteren står under stangen." | kap-faserne: skjult ja, midt i afsnittet, afsnittet slutter "...i modellen, en antagelse og ikke et litteraturtal." | kap-fejlbilleder: skjult ja, sidst i afsnittet, afsnittet slutter "...ts plads, hælen og stangen 3,3 cm foran midtfoden." | kap-fejlbilleder: skjult ja, sidst i afsnittet, afsnittet slutter "...mønstret, som det næste fejlbillede viser for sig."
+OK     390 kapitelmenu: knap "KAPITLER 01/08" 48px, aabner ja, lukker efter valg ja, kapitel 6 lander 76px fra toppen (efter 3 s blid rulning; forloeb 22472 8660 3496 1206 301 76 76 76 76 76 76 76), knappen viser "KAPITLER 06/08"
+OK     390 folde: 19 folde, alle aabnet i maalingen
+OK     390 N3-N6 (394): N3 vaek, N4 vaek, N5 vaek, N6 vaek
+OK     390 N2 kapitel 5's maerker: mindste tekst i kapitel 5's figurer 12 px
+OK     390 vandret rulning: 390 px, konsol i artiklen 0
+OK     1280 forsiden/artikler/viden: konsol 0/0/0; squat-kort: forsiden nej, artikler.html plads 6 af 6 (aabner artiklen: ja), viden.html nej; artiklens "< Artikler" -> viden.html#artikler
+OK     1280 MARC-bokse: kap-faserne: skjult ja, sidst i afsnittet, afsnittet slutter "...odellen begynder, når løfteren står under stangen." | kap-faserne: skjult ja, midt i afsnittet, afsnittet slutter "...i modellen, en antagelse og ikke et litteraturtal." | kap-fejlbilleder: skjult ja, sidst i afsnittet, afsnittet slutter "...ts plads, hælen og stangen 3,3 cm foran midtfoden." | kap-fejlbilleder: skjult ja, sidst i afsnittet, afsnittet slutter "...mønstret, som det næste fejlbillede viser for sig."
+OK     1280 kapitelmenu: menuen fast ved siden af teksten ja, overlapper teksten nej, kapitel 6 lander 76px fra toppen (efter 3 s blid rulning; forloeb 19367 7470 3021 1049 241 76 76 76 76 76 76 76)
+OK     1280 folde: 19 folde, alle aabnet i maalingen
+OK     1280 N3-N6 (394): N3 vaek, N4 vaek, N5 vaek, N6 vaek
+OK     1280 N2 kapitel 5's maerker: mindste tekst i kapitel 5's figurer 11.4 px
+OK     1280 vandret rulning: 1280 px, konsol i artiklen 0
+OK     pushet: 68 commits foran origin/main 8df8846 (lokal main foran: 7), 1540 nye filer ((roden) 4, assets/ 37, docs/ 1, outputs/ 1486, scripts/ 12); outputs/ gaar fra 15 til 1501 offentlige filer
+FUND   offentlige tekstfiler: 167 nye tekstfiler: interne navne i 24, Marcs ubesvarede stikord/"digtes" i 4 (artikel-squat.html, outputs/RAPPORT-289.md, outputs/SVAR-squat-2.md, outputs/SVAR-squat.md), atletnavne (3 fornavne tjekket) i 0
+FUND   deploy-kommandoerne: deploy-mappen staar paa artikel-skabelon, 0 aendrede sporede filer, 6 usporede; usporede filer grenen vil skrive over: outputs/artikel-squat/desktop.png (andet indhold), outputs/artikel-squat/mobil-390px.png (andet indhold); merge-tree main+udgivelse-squat: rent

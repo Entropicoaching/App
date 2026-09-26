@@ -1,0 +1,33 @@
+Figurer i squat-artiklen, udgivelse-squat be28ed5
+
+ 1 kap-faserne        img    k1-opstilling.svg                            390: 220px bred, tekst 12 px | 1280: 220px, tekst 12 px
+ 2 kap-faserne        img    k1-unrack.svg                                390: 220px bred, tekst 12 px | 1280: 220px, tekst 12 px
+ 3 kap-faserne        img    k1-nedtur.svg                                390: 220px bred, tekst 12 px | 1280: 220px, tekst 12 px
+ 4 kap-faserne        img    k1-bund.svg                                  390: 220px bred, tekst 12 px | 1280: 220px, tekst 12 px
+ 5 kap-faserne        img    k1-vendepunkt.svg                            390: 220px bred, tekst 12 px | 1280: 220px, tekst 12 px
+ 6 kap-faserne        img    k1-sticking-point.svg                        390: 220px bred, tekst 12 px | 1280: 220px, tekst 12 px
+ 7 kap-faserne        img    k1-lockout.svg                               390: 220px bred, tekst 12 px | 1280: 220px, tekst 12 px
+ 8 kap-segmentmodellen canvas squat-panel                                  390: 241px bred, tekst - px | 1280: 265px, tekst - px
+ 9 kap-anatomien      canvas anatomi-panel                                390: 311px bred, tekst - px | 1280: 480px, tekst - px
+10 kap-anatomien      img    anatomi-balanceret-lowbar-opstilling.svg     390: 144px bred, tekst - px | 1280: 144px, tekst - px
+11 kap-anatomien      img    anatomi-balanceret-lowbar-halvvejs.svg       390: 193px bred, tekst - px | 1280: 193px, tekst - px
+12 kap-anatomien      img    anatomi-balanceret-lowbar-bund.svg           390: 221px bred, tekst - px | 1280: 221px, tekst - px
+13 kap-anatomien      img    anatomi-balanceret-lowbar-sticking.svg       390: 200px bred, tekst - px | 1280: 200px, tekst - px
+14 kap-stang          img    k5-lowbar.svg                                390: 322px bred, tekst 12 px | 1280: 306px, tekst 11.4 px
+15 kap-stang          img    k5-highbar.svg                               390: 322px bred, tekst 12 px | 1280: 306px, tekst 11.4 px
+16 kap-stang          img    k5-front.svg                                 390: 322px bred, tekst 12 px | 1280: 306px, tekst 11.4 px
+17 kap-stang          img    k5-safetybar.svg                             390: 322px bred, tekst 12 px | 1280: 306px, tekst 11.4 px
+18 kap-virkeligheden  canvas maalt-over-model-mount                       390: 326px bred, tekst - px | 1280: 620px, tekst - px
+19 kap-virkeligheden  img    1-start-model1.svg                           390: 169px bred, tekst - px | 1280: 169px, tekst - px (i fold)
+20 kap-virkeligheden  img    2-foer-knae-model1.svg                       390: 165px bred, tekst - px | 1280: 165px, tekst - px (i fold)
+21 kap-virkeligheden  img    3-knaehoejde-model1.svg                      390: 153px bred, tekst - px | 1280: 153px, tekst - px (i fold)
+22 kap-virkeligheden  img    4-efter-knae-model1.svg                      390: 103px bred, tekst - px | 1280: 103px, tekst - px (i fold)
+23 kap-virkeligheden  img    5-lockout-model1.svg                         390: 103px bred, tekst - px | 1280: 103px, tekst - px (i fold)
+24 kap-fejlbilleder   img    k7-kun-knae-bund.svg                         390: 271px bred, tekst 12 px | 1280: 255px, tekst 11.3 px
+25 kap-fejlbilleder   img    k7-kun-knae-optur.svg                        390: 271px bred, tekst 12 px | 1280: 255px, tekst 11.3 px
+26 kap-fejlbilleder   img    k7-hofte-tilbage-bund.svg                    390: 271px bred, tekst 12 px | 1280: 255px, tekst 11.3 px
+27 kap-fejlbilleder   img    k7-hofte-tilbage-optur.svg                   390: 271px bred, tekst 12 px | 1280: 255px, tekst 11.3 px
+28 kap-fejlbilleder   img    fejlbillede-balanceret-lowbar-god-morgen.svg 390: 316px bred, tekst 11.6 px | 1280: 318px, tekst 11.7 px
+29 kap-fejlbilleder   img    fejlbillede-balanceret-lowbar-haele-letter.s 390: 313px bred, tekst 11.7 px | 1280: 313px, tekst 11.7 px
+30 kap-fejlbilleder   img    fejlbillede-balanceret-lowbar-stang-foran-mi 390: 296px bred, tekst 11.7 px | 1280: 296px, tekst 11.7 px
+31 kap-fejlbilleder   img    fejlbillede-balanceret-lowbar-for-lidt-dybde 390: 275px bred, tekst 11.7 px | 1280: 275px, tekst 11.7 px
