@@ -1,0 +1,2953 @@
+{
+  "antalSalte": 300,
+  "quests": [
+    {
+      "id": "mel-til-bageren",
+      "titel": "Mel til bageren",
+      "giver": "Ane, bagerkonen",
+      "sted": "moellen",
+      "hvorfor": "Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe mølleren med at dele sækkene?",
+      "opgaver": [
+        "broek1 (1)",
+        "broek1 (2)",
+        "broek1 (2)"
+      ],
+      "kraever": {
+        "forloeb": [
+          "moellen",
+          1
+        ]
+      },
+      "beloenning": {
+        "id": "melsaekke",
+        "type": "kort",
+        "navn": "Melsække ved møllen",
+        "x": 58.5,
+        "y": 73
+      },
+      "tekstModGrund": {
+        "andelOpgaverDerPasser": 1,
+        "andelQuestsHvorAllePasser": 1,
+        "andelQuestsHvorIngenPasser": 0,
+        "skabeloner": [
+          {
+            "skabelon": "Ane har # lige store melkrukker på hylden i bageriet, og # er fyldt med mel: ▰▱. Hvor stor en del af krukkerne er fyldt?",
+            "andel": 0.271,
+            "passer": true
+          },
+          {
+            "skabelon": "Ane har hældt en sæk mel i # lige store poser, og # af poserne er brugt til dejen: ▰▱. Hvor stor en del af melet er brugt?",
+            "andel": 0.251,
+            "passer": true
+          },
+          {
+            "skabelon": "Ane har formet # lige store brød af dejen, og # er bagt: ▰▱. Hvor stor en del af brødene er bagt?",
+            "andel": 0.246,
+            "passer": true
+          },
+          {
+            "skabelon": "Ane skal bruge # lige store sække mel til morgenbrødet. Mølleren har fyldt # af dem: ▰▱. Hvor stor en del af sækkene er fyldt?",
+            "andel": 0.232,
+            "passer": true
+          }
+        ]
+      },
+      "svarmuligheder": [
+        3
+      ]
+    },
+    {
+      "id": "broed-til-alle",
+      "titel": "Brød til alle",
+      "giver": "Ane, bagerkonen",
+      "sted": "moellen",
+      "hvorfor": "Brødet er bagt, og nu skal det deles ligeligt mellem gårdene. Ingen må få mindre end de andre.",
+      "opgaver": [
+        "broek2 (1)",
+        "broek2 (2)",
+        "broek1 (2)"
+      ],
+      "kraever": {
+        "forloeb": [
+          "moellen",
+          2
+        ],
+        "quests": [
+          "mel-til-bageren"
+        ]
+      },
+      "beloenning": {
+        "id": "bagerhue",
+        "type": "figur",
+        "plads": "hoved",
+        "navn": "Bagerhuen"
+      },
+      "tekstModGrund": {
+        "andelOpgaverDerPasser": 1,
+        "andelQuestsHvorAllePasser": 1,
+        "andelQuestsHvorIngenPasser": 0,
+        "skabeloner": [
+          {
+            "skabelon": "Bagerkonen deler # rugbrød ligeligt mellem # høstkarle i marken. Hvor meget rugbrød får hver høstkarl?",
+            "andel": 0.122,
+            "passer": true
+          },
+          {
+            "skabelon": "Bagerkonen deler # brød ligeligt mellem # familier i landsbyen. Hvor meget brød får hver familie?",
+            "andel": 0.121,
+            "passer": true
+          },
+          {
+            "skabelon": "Ane har bagt # lige store brød til familierne, og # er pakket i kurven: ▰▱. Hvor stor en del af brødene er pakket?",
+            "andel": 0.117,
+            "passer": true
+          },
+          {
+            "skabelon": "Ane deler # brød ligeligt mellem # familier i landsbyen. Hvor meget brød får hver familie?",
+            "andel": 0.114,
+            "passer": true
+          },
+          {
+            "skabelon": "Ane har skåret en kringle i # lige store stykker, og # er delt ud: ▰▱. Hvor stor en del af kringlen er delt ud?",
+            "andel": 0.113,
+            "passer": true
+          },
+          {
+            "skabelon": "Ane har skåret et stort rugbrød i # lige store skiver, og karlene har spist #: ▰▱. Hvor stor en del af brødet er spist?",
+            "andel": 0.103,
+            "passer": true
+          },
+          {
+            "skabelon": "Ane deler # kringler ligeligt mellem # huse på gaden. Hvor meget kringle får hvert hus?",
+            "andel": 0.099,
+            "passer": true
+          },
+          {
+            "skabelon": "Ane deler # rugbrød ligeligt mellem # høstkarle i marken. Hvor meget rugbrød får hver høstkarl?",
+            "andel": 0.087,
+            "passer": true
+          },
+          {
+            "skabelon": "Bagerkonen deler # kringler ligeligt mellem # huse på gaden. Hvor meget kringle får hvert hus?",
+            "andel": 0.079,
+            "passer": true
+          },
+          {
+            "skabelon": "Ane deler # kringle ligeligt mellem # huse på gaden. Hvor meget kringle får hvert hus?",
+            "andel": 0.026,
+            "passer": true
+          },
+          {
+            "skabelon": "Bagerkonen deler # kringle ligeligt mellem # huse på gaden. Hvor meget kringle får hvert hus?",
+            "andel": 0.019,
+            "passer": true
+          }
+        ]
+      },
+      "svarmuligheder": [
+        3
+      ]
+    },
+    {
+      "id": "aenderne",
+      "titel": "Ænderne i åen",
+      "giver": "Niels, møllerens dreng",
+      "sted": "moellen",
+      "hvorfor": "Far siger, jeg først må fodre ænderne, når jeg kan se, hvilken portion der er størst. Vil du øve med mig?",
+      "opgaver": [
+        "broek3 (1)",
+        "broek3 (2)",
+        "broek2 (2)"
+      ],
+      "kraever": {
+        "forloeb": [
+          "moellen",
+          3
+        ]
+      },
+      "beloenning": {
+        "id": "aender",
+        "type": "kort",
+        "navn": "Ænder i åen",
+        "x": 73.5,
+        "y": 88.5
+      },
+      "tekstModGrund": {
+        "andelOpgaverDerPasser": 1,
+        "andelQuestsHvorAllePasser": 1,
+        "andelQuestsHvorIngenPasser": 0,
+        "skabeloner": [
+          {
+            "skabelon": "Om morgenen fik ænderne #/# pose brødkrummer, om aftenen #/# pose. Hvilken portion er størst?",
+            "andel": 0.127,
+            "passer": true
+          },
+          {
+            "skabelon": "Niels vil give den gamle andrik den største portion. Han kan dele en pose korn i # eller i # lige store dele. Hvilken portion er størst?",
+            "andel": 0.124,
+            "passer": true
+          },
+          {
+            "skabelon": "Niels deler en pose korn i # lige store portioner til ænderne. Hans søster deler en lige så stor pose i # portioner. Hvilken portion er størst?",
+            "andel": 0.112,
+            "passer": true
+          },
+          {
+            "skabelon": "Far siger, at ænderne må få enten #/# pose eller #/# pose korn i dag. Hvilken portion er størst?",
+            "andel": 0.103,
+            "passer": true
+          },
+          {
+            "skabelon": "Niels kan give ænderne #/# pose korn eller #/# pose korn. Hvilken portion er størst?",
+            "andel": 0.103,
+            "passer": true
+          },
+          {
+            "skabelon": "Niels har to lige store poser brødkrummer. Den ene deler han mellem # ænder, den anden mellem # ænder. Hvilken portion er størst?",
+            "andel": 0.097,
+            "passer": true
+          },
+          {
+            "skabelon": "Møllerens dreng deler # brød ligeligt mellem # ænder i åen. Hvor meget brød får hver and?",
+            "andel": 0.076,
+            "passer": true
+          },
+          {
+            "skabelon": "Møllerens dreng deler # poser korn ligeligt mellem # ænder ved møllen. Hvor meget korn får hver and?",
+            "andel": 0.049,
+            "passer": true
+          },
+          {
+            "skabelon": "Niels deler # skiver brød ligeligt mellem # ællinger i åen. Hvor meget brød får hver ælling?",
+            "andel": 0.049,
+            "passer": true
+          },
+          {
+            "skabelon": "Møllerens dreng deler # skiver brød ligeligt mellem # ællinger i åen. Hvor meget brød får hver ælling?",
+            "andel": 0.041,
+            "passer": true
+          },
+          {
+            "skabelon": "Niels deler # poser korn ligeligt mellem # ænder ved møllen. Hvor meget korn får hver and?",
+            "andel": 0.041,
+            "passer": true
+          },
+          {
+            "skabelon": "Niels deler # brød ligeligt mellem # ænder i åen. Hvor meget brød får hver and?",
+            "andel": 0.038,
+            "passer": true
+          },
+          {
+            "skabelon": "Niels deler # skive brød ligeligt mellem # ællinger i åen. Hvor meget brød får hver ælling?",
+            "andel": 0.012,
+            "passer": true
+          },
+          {
+            "skabelon": "Møllerens dreng deler # skive brød ligeligt mellem # ællinger i åen. Hvor meget brød får hver ælling?",
+            "andel": 0.011,
+            "passer": true
+          },
+          {
+            "skabelon": "Niels deler # pose korn ligeligt mellem # ænder ved møllen. Hvor meget korn får hver and?",
+            "andel": 0.009,
+            "passer": true
+          },
+          {
+            "skabelon": "Møllerens dreng deler # pose korn ligeligt mellem # ænder ved møllen. Hvor meget korn får hver and?",
+            "andel": 0.008,
+            "passer": true
+          }
+        ]
+      },
+      "svarmuligheder": [
+        3
+      ]
+    },
+    {
+      "id": "nyt-bed",
+      "titel": "Et nyt bed",
+      "giver": "Graveren",
+      "sted": "landsby",
+      "hvorfor": "Jeg skal lægge et nyt blomsterbed ved kirken og sætte hegn og kantsten hele vejen rundt om det. Hvor langt skal det være?",
+      "opgaver": [
+        "kirkeOmkreds (1)",
+        "kirkeOmkreds (2)",
+        "kirkeOmkreds (2)"
+      ],
+      "kraever": {
+        "aabent": "landsby",
+        "forloeb": [
+          "stenbrud",
+          4
+        ]
+      },
+      "beloenning": {
+        "id": "blomsterbed",
+        "type": "kort",
+        "navn": "Blomsterbedet ved kirken",
+        "x": 89,
+        "y": 44.5
+      },
+      "tekstModGrund": {
+        "andelOpgaverDerPasser": 1,
+        "andelQuestsHvorAllePasser": 1,
+        "andelQuestsHvorIngenPasser": 0,
+        "skabeloner": [
+          {
+            "skabelon": "Rundt om det nye rosenbed skal der et lavt hegn. Bedet er # m langt og # m bredt. Hvor mange meter hegn skal der til?",
+            "andel": 0.35,
+            "passer": true
+          },
+          {
+            "skabelon": "Graveren lægger et nyt bed ved kirken, der er # m langt og # m bredt. Hvor mange meter kantsten skal der til hele vejen rundt?",
+            "andel": 0.34,
+            "passer": true
+          },
+          {
+            "skabelon": "Blomsterbedet langs kirkediget skal være # m langt og # m bredt. Hvor langt hegn skal graveren sætte hele vejen rundt?",
+            "andel": 0.31,
+            "passer": true
+          }
+        ]
+      },
+      "svarmuligheder": [
+        3
+      ]
+    },
+    {
+      "id": "lys-til-kirken",
+      "titel": "Lys til høstgudstjenesten",
+      "giver": "Kirsten, degnens kone",
+      "sted": "landsby",
+      "hvorfor": "Der skal købes lys til høstgudstjenesten, og pengene skal passe til sidste krone.",
+      "opgaver": [
+        "kirkePris (1)",
+        "kirkePris (2)",
+        "kirkeKasse (1)",
+        "kirkeDel (2)"
+      ],
+      "kraever": {
+        "quests": [
+          "nyt-bed"
+        ]
+      },
+      "beloenning": {
+        "id": "kirkelys",
+        "type": "kort",
+        "navn": "Lys i kirkevinduet",
+        "x": 88.8,
+        "y": 57.2
+      },
+      "tekstModGrund": {
+        "andelOpgaverDerPasser": 1,
+        "andelQuestsHvorAllePasser": 1,
+        "andelQuestsHvorIngenPasser": 0,
+        "skabeloner": [
+          {
+            "skabelon": "En æske tændstikker koster # kr. Kirsten køber # æsker, så alle lysene kan tændes. Hvad koster de?",
+            "andel": 0.148,
+            "passer": true
+          },
+          {
+            "skabelon": "Et stort alterlys koster # kr. Kirsten køber # til høstgudstjenesten. Hvad skal hun betale?",
+            "andel": 0.145,
+            "passer": true
+          },
+          {
+            "skabelon": "Kirsten køber # lys til høstgudstjenesten. Et lys koster # kr. Hvad koster de i alt?",
+            "andel": 0.132,
+            "passer": true
+          },
+          {
+            "skabelon": "I kirken hænger # lysekroner med plads til # lys i hver. Hvor mange lys skal Kirsten sætte i?",
+            "andel": 0.089,
+            "passer": true
+          },
+          {
+            "skabelon": "Kirsten stiller # lys i kirkens # vinduer, lige mange i hvert. Hvor mange lys står der i hvert vindue?",
+            "andel": 0.087,
+            "passer": true
+          },
+          {
+            "skabelon": "Lysene til høstgudstjenesten kostede # kr, og # familier deler regningen ligeligt. Hvor meget skal hver familie betale?",
+            "andel": 0.083,
+            "passer": true
+          },
+          {
+            "skabelon": "Kirsten stiller # lys i hver af kirkens # vindueskarme. Hvor mange lys er det?",
+            "andel": 0.081,
+            "passer": true
+          },
+          {
+            "skabelon": "Kirsten får # æsker lys til høstgudstjenesten med # lys i hver. Hvor mange lys er det?",
+            "andel": 0.08,
+            "passer": true
+          },
+          {
+            "skabelon": "Kirsten har # lys og fordeler dem ligeligt på kirkens # lysekroner. Hvor mange lys kommer der i hver lysekrone?",
+            "andel": 0.079,
+            "passer": true
+          },
+          {
+            "skabelon": "Kirsten køber # lys à # kr og betaler med en #-kroneseddel. Hvor meget får hun tilbage?",
+            "andel": 0.043,
+            "passer": true
+          },
+          {
+            "skabelon": "Kirsten køber # alterlys à # kr og betaler med en #-kroneseddel. Hvor meget får hun tilbage?",
+            "andel": 0.033,
+            "passer": true
+          }
+        ]
+      },
+      "svarmuligheder": [
+        3
+      ]
+    },
+    {
+      "id": "klokkerebet",
+      "titel": "Det nye klokkereb",
+      "giver": "Klokkeren",
+      "sted": "landsby",
+      "hvorfor": "Det nye klokkereb er målt i meter, men snorene står i centimeter og millimeter. Kan du regne dem om?",
+      "opgaver": [
+        "maal3 (1)",
+        "maal3 (2)",
+        "maal2 (2)"
+      ],
+      "kraever": {
+        "forloeb": [
+          "stenbrud",
+          3
+        ],
+        "quests": [
+          "lys-til-kirken"
+        ]
+      },
+      "beloenning": {
+        "id": "klokkerens_hjaelper",
+        "type": "titel",
+        "navn": "Klokkerens hjælper"
+      },
+      "tekstModGrund": {
+        "andelOpgaverDerPasser": 1,
+        "andelQuestsHvorAllePasser": 1,
+        "andelQuestsHvorIngenPasser": 0,
+        "skabeloner": [
+          {
+            "skabelon": "Når klokken ringer, kan den høres # km væk. Hvor mange m er det?",
+            "andel": 0.127,
+            "passer": true
+          },
+          {
+            "skabelon": "Knuden for enden af klokkerebet er # cm bred. Hvor mange mm er det?",
+            "andel": 0.104,
+            "passer": true
+          },
+          {
+            "skabelon": "Det nye klokkereb er # m langt. Hvor mange cm er det?",
+            "andel": 0.102,
+            "passer": true
+          },
+          {
+            "skabelon": "Klokken kan høres # ___ væk. Hvilken enhed passer?",
+            "andel": 0.097,
+            "passer": true
+          },
+          {
+            "skabelon": "Klokkerebet er # cm og # mm tykt. Hvor mange mm er det i alt?",
+            "andel": 0.089,
+            "passer": true
+          },
+          {
+            "skabelon": "Det nye klokkereb er # m og # cm langt. Hvor mange cm er det i alt?",
+            "andel": 0.084,
+            "passer": true
+          },
+          {
+            "skabelon": "Knuden på klokkerebet er # cm og # mm bred. Hvor mange mm er det i alt?",
+            "andel": 0.084,
+            "passer": true
+          },
+          {
+            "skabelon": "Det nye klokkereb er # ___ langt. Hvilken enhed passer?",
+            "andel": 0.083,
+            "passer": true
+          },
+          {
+            "skabelon": "Den lille klokke i tårnet er # ___ høj. Hvilken enhed passer?",
+            "andel": 0.08,
+            "passer": true
+          },
+          {
+            "skabelon": "Fra klokken ned til gulvet i tårnet er der # m og # cm. Hvor mange cm er det i alt?",
+            "andel": 0.076,
+            "passer": true
+          },
+          {
+            "skabelon": "Klokkerebet er # ___ tykt. Hvilken enhed passer?",
+            "andel": 0.073,
+            "passer": true
+          }
+        ]
+      },
+      "svarmuligheder": [
+        3
+      ]
+    },
+    {
+      "id": "sten-til-diget",
+      "titel": "Sten til diget",
+      "giver": "Hans, karl i grusgraven",
+      "sted": "stenbrud",
+      "hvorfor": "Stendiget ved grusgraven er faldet sammen, og hver sten skal måles, før den lægges på plads.",
+      "opgaver": [
+        "maal1 (1)",
+        "maal1 (2)",
+        "maal1 (2)"
+      ],
+      "kraever": {
+        "forloeb": [
+          "stenbrud",
+          1
+        ]
+      },
+      "beloenning": {
+        "id": "stendige",
+        "type": "kort",
+        "navn": "Stendiget",
+        "x": 19,
+        "y": 72.5
+      },
+      "tekstModGrund": {
+        "andelOpgaverDerPasser": 1,
+        "andelQuestsHvorAllePasser": 1,
+        "andelQuestsHvorIngenPasser": 0,
+        "skabeloner": [
+          {
+            "skabelon": "Hans fylder hullerne i diget med små kilesten. En kilesten ligger på linealen fra #-stregen og ender # små streger efter # cm-stregen. Hver lille streg er # mm. Hvor lang er kilestenen i mm?",
+            "andel": 0.201,
+            "passer": true
+          },
+          {
+            "skabelon": "Hans vil vide, om stenene passer i sprækkerne. En flad sten ligger på linealen fra #-stregen og ender # små streger efter # cm-stregen. Hver lille streg er # mm. Hvor lang er stenen i mm?",
+            "andel": 0.2,
+            "passer": true
+          },
+          {
+            "skabelon": "Mellem de store sten i diget skal der småsten. En småsten ligger på linealen fra #-stregen og ender # små streger efter # cm-stregen. Hver lille streg er # mm. Hvor lang er småstenen i mm?",
+            "andel": 0.196,
+            "passer": true
+          },
+          {
+            "skabelon": "Hans vil vide, om stenene passer i sprækkerne. En flad sten ligger på linealen fra # cm-stregen til # cm-stregen. Hvor lang er stenen?",
+            "andel": 0.119,
+            "passer": true
+          },
+          {
+            "skabelon": "Mellem de store sten i diget skal der småsten. En småsten ligger på linealen fra # cm-stregen til # cm-stregen. Hvor lang er småstenen?",
+            "andel": 0.111,
+            "passer": true
+          },
+          {
+            "skabelon": "Hans fylder hullerne i diget med små kilesten. En kilesten ligger på linealen fra # cm-stregen til # cm-stregen. Hvor lang er kilestenen?",
+            "andel": 0.103,
+            "passer": true
+          },
+          {
+            "skabelon": "Mellem de store sten i diget skal der småsten. En småsten ligger på linealen fra #-stregen og ender # lille streg efter # cm-stregen. Hver lille streg er # mm. Hvor lang er småstenen i mm?",
+            "andel": 0.024,
+            "passer": true
+          },
+          {
+            "skabelon": "Hans vil vide, om stenene passer i sprækkerne. En flad sten ligger på linealen fra #-stregen og ender # lille streg efter # cm-stregen. Hver lille streg er # mm. Hvor lang er stenen i mm?",
+            "andel": 0.024,
+            "passer": true
+          },
+          {
+            "skabelon": "Hans fylder hullerne i diget med små kilesten. En kilesten ligger på linealen fra #-stregen og ender # lille streg efter # cm-stregen. Hver lille streg er # mm. Hvor lang er kilestenen i mm?",
+            "andel": 0.021,
+            "passer": true
+          }
+        ]
+      },
+      "svarmuligheder": [
+        3
+      ]
+    },
+    {
+      "id": "stien",
+      "titel": "Stien over bakken",
+      "giver": "Hans, karl i grusgraven",
+      "sted": "stenbrud",
+      "hvorfor": "Hvis vi lægger en sti over bakken, kan folk gå direkte fra grusgraven til sporvognen. Hvilke mål skal jeg bruge?",
+      "opgaver": [
+        "maal2 (1)",
+        "maal2 (2)",
+        "maal1 (2)"
+      ],
+      "kraever": {
+        "forloeb": [
+          "stenbrud",
+          2
+        ],
+        "quests": [
+          "sten-til-diget"
+        ]
+      },
+      "beloenning": {
+        "id": "stien",
+        "type": "genvej",
+        "navn": "Stien over bakken",
+        "x": 25,
+        "y": 34
+      },
+      "tekstModGrund": {
+        "andelOpgaverDerPasser": 1,
+        "andelQuestsHvorAllePasser": 1,
+        "andelQuestsHvorIngenPasser": 0,
+        "skabeloner": [
+          {
+            "skabelon": "Gruset på stien er små sten på # ___. Hvilken enhed passer?",
+            "andel": 0.177,
+            "passer": true
+          },
+          {
+            "skabelon": "Der er # ___ fra den ene pæl langs stien til den næste. Hvilken enhed passer?",
+            "andel": 0.166,
+            "passer": true
+          },
+          {
+            "skabelon": "Hele stien over bakken og ned til sporvognen bliver # ___ lang. Hvilken enhed passer?",
+            "andel": 0.162,
+            "passer": true
+          },
+          {
+            "skabelon": "Hvert trappetrin op ad bakken er # ___ højt. Hvilken enhed passer?",
+            "andel": 0.162,
+            "passer": true
+          },
+          {
+            "skabelon": "Trappetrinene op ad bakken skal sømmes fast. Et søm ligger på linealen fra #-stregen og ender # små streger efter # cm-stregen. Hver lille streg er # mm. Hvor langt er sømmet i mm?",
+            "andel": 0.147,
+            "passer": true
+          },
+          {
+            "skabelon": "Hans finder en flintesten, hvor stien skal gå. Flintestenen ligger på linealen fra #-stregen og ender # små streger efter # cm-stregen. Hver lille streg er # mm. Hvor lang er flintestenen i mm?",
+            "andel": 0.141,
+            "passer": true
+          },
+          {
+            "skabelon": "Hans finder en flintesten, hvor stien skal gå. Flintestenen ligger på linealen fra #-stregen og ender # lille streg efter # cm-stregen. Hver lille streg er # mm. Hvor lang er flintestenen i mm?",
+            "andel": 0.024,
+            "passer": true
+          },
+          {
+            "skabelon": "Trappetrinene op ad bakken skal sømmes fast. Et søm ligger på linealen fra #-stregen og ender # lille streg efter # cm-stregen. Hver lille streg er # mm. Hvor langt er sømmet i mm?",
+            "andel": 0.021,
+            "passer": true
+          }
+        ]
+      },
+      "svarmuligheder": [
+        3
+      ]
+    },
+    {
+      "id": "maalepaele",
+      "titel": "Målepælene",
+      "giver": "Maren, landmålerens datter",
+      "sted": "stenbrud",
+      "hvorfor": "Den nye mark skal pæles ud, og jeg skal vide, hvor langt der er hele vejen rundt.",
+      "opgaver": [
+        "maal4 (1)",
+        "maal4 (2)",
+        "maal3 (2)",
+        "maal4 (2)"
+      ],
+      "kraever": {
+        "forloeb": [
+          "stenbrud",
+          4
+        ],
+        "quests": [
+          "stien"
+        ]
+      },
+      "beloenning": {
+        "id": "straahat",
+        "type": "figur",
+        "plads": "hoved",
+        "navn": "Stråhatten"
+      },
+      "tekstModGrund": {
+        "andelOpgaverDerPasser": 1,
+        "andelQuestsHvorAllePasser": 1,
+        "andelQuestsHvorIngenPasser": 0,
+        "skabeloner": [
+          {
+            "skabelon": "Folden til kalvene skal være # m lang og # m bred. Hvor langt hegn skal Maren sætte hele vejen rundt?",
+            "andel": 0.259,
+            "passer": true
+          },
+          {
+            "skabelon": "Maren sætter en pæl i hvert hjørne af et nyt kartoffelstykke, der er # m langt og # m bredt. Hvor mange meter snor skal der til mellem pælene hele vejen rundt?",
+            "andel": 0.254,
+            "passer": true
+          },
+          {
+            "skabelon": "Maren pæler en ny kålmark ud. Den er # m lang og # m bred. Hvor mange meter snor skal der til hele vejen rundt om pælene?",
+            "andel": 0.237,
+            "passer": true
+          },
+          {
+            "skabelon": "Maren måler toppen af en målepæl: den er # cm og # mm tyk. Hvor mange mm er det i alt?",
+            "andel": 0.068,
+            "passer": true
+          },
+          {
+            "skabelon": "Snoren mellem to målepæle er # m og # cm lang. Hvor mange cm er det i alt?",
+            "andel": 0.066,
+            "passer": true
+          },
+          {
+            "skabelon": "En målepæl er # m og # cm lang. Hvor mange cm er det i alt?",
+            "andel": 0.064,
+            "passer": true
+          },
+          {
+            "skabelon": "Sømmet, der holder skiltet på pælen, er # cm og # mm langt. Hvor mange mm er det i alt?",
+            "andel": 0.052,
+            "passer": true
+          }
+        ]
+      },
+      "svarmuligheder": [
+        3
+      ]
+    },
+    {
+      "id": "aeblerne",
+      "titel": "Æbler til gaden",
+      "giver": "Else",
+      "sted": "marked",
+      "hvorfor": "Æblerne fra min have skal sælges på gaden. Hvad skal de koste, og hvordan deler vi pengene?",
+      "opgaver": [
+        "delHandel (1)",
+        "delHandel (2)",
+        "pris (1)"
+      ],
+      "kraever": {
+        "forloeb": [
+          "marked",
+          1
+        ]
+      },
+      "beloenning": {
+        "id": "aeblebod",
+        "type": "kort",
+        "navn": "Æbleboden på gaden",
+        "x": 90.5,
+        "y": 75
+      },
+      "tekstModGrund": {
+        "andelOpgaverDerPasser": 1,
+        "andelQuestsHvorAllePasser": 1,
+        "andelQuestsHvorIngenPasser": 0,
+        "skabeloner": [
+          {
+            "skabelon": "Else pakker # æbler i poser med # i hver. Hvor mange poser bliver det?",
+            "andel": 0.234,
+            "passer": true
+          },
+          {
+            "skabelon": "Else har plukket # æbler og lægger dem i # kurve med lige mange i hver. Hvor mange æbler kommer der i hver kurv?",
+            "andel": 0.221,
+            "passer": true
+          },
+          {
+            "skabelon": "Else har solgt æbler for # kr. Hun deler pengene ligeligt mellem de # børn, der har hjulpet med at plukke. Hvor meget får hvert barn?",
+            "andel": 0.211,
+            "passer": true
+          },
+          {
+            "skabelon": "En kurv æbler koster # kr hos Else. Hvad koster # kurve?",
+            "andel": 0.091,
+            "passer": true
+          },
+          {
+            "skabelon": "Else sælger æbler på gaden. Et æble koster # kr. Hvad koster # æbler?",
+            "andel": 0.087,
+            "passer": true
+          },
+          {
+            "skabelon": "Else sælger også æblemost. En flaske koster # kr. Hvad koster # flasker?",
+            "andel": 0.079,
+            "passer": true
+          },
+          {
+            "skabelon": "En pose æbler koster # kr i Elses bod. Hvad koster # poser?",
+            "andel": 0.077,
+            "passer": true
+          }
+        ]
+      },
+      "svarmuligheder": [
+        3
+      ]
+    },
+    {
+      "id": "kassen",
+      "titel": "Kassen skal stemme",
+      "giver": "Søren, skomageren",
+      "sted": "marked",
+      "hvorfor": "Jeg har solgt sko hele dagen, og nu kan jeg ikke få kassen til at stemme. Vil du regne efter?",
+      "opgaver": [
+        "pris (2)",
+        "kasse (1)",
+        "kasse (2)",
+        "delHandel (2)"
+      ],
+      "kraever": {
+        "forloeb": [
+          "marked",
+          2
+        ],
+        "quests": [
+          "aeblerne"
+        ]
+      },
+      "beloenning": {
+        "id": "toerklaede",
+        "type": "figur",
+        "plads": "hals",
+        "navn": "Halstørklædet"
+      },
+      "tekstModGrund": {
+        "andelOpgaverDerPasser": 1,
+        "andelQuestsHvorAllePasser": 1,
+        "andelQuestsHvorIngenPasser": 0,
+        "skabeloner": [
+          {
+            "skabelon": "Kassen skal stemme med skoene. Søren har # hylder med # par sko på hver. Hvor mange par sko står der?",
+            "andel": 0.18,
+            "passer": true
+          },
+          {
+            "skabelon": "I kassen ligger # ruller med # enkroner i hver. Hvor mange kroner er det?",
+            "andel": 0.168,
+            "passer": true
+          },
+          {
+            "skabelon": "Søren har solgt # pakker snørebånd med # par i hver. Hvor mange par skal der være penge for i kassen?",
+            "andel": 0.152,
+            "passer": true
+          },
+          {
+            "skabelon": "Søren ruller # enkroner fra kassen i ruller med # i hver. Hvor mange ruller bliver det?",
+            "andel": 0.087,
+            "passer": true
+          },
+          {
+            "skabelon": "Søren tæller kassen op: # enkroner lagt i # lige store bunker. Hvor mange kroner er der i hver bunke?",
+            "andel": 0.087,
+            "passer": true
+          },
+          {
+            "skabelon": "Der er # kr for meget i kassen: det er drikkepenge. Søren deler dem ligeligt mellem sine # svende. Hvor meget får hver svend?",
+            "andel": 0.076,
+            "passer": true
+          },
+          {
+            "skabelon": "Et par snørebånd koster # kr. Søren har solgt # par i dag. Hvor mange penge skal der være i kassen for dem?",
+            "andel": 0.064,
+            "passer": true
+          },
+          {
+            "skabelon": "Søren har sat nye såler under # par sko i dag. Han tager # kr for et par. Hvor mange penge skal der være i kassen for dem?",
+            "andel": 0.056,
+            "passer": true
+          },
+          {
+            "skabelon": "Et par træsko koster # kr hos Søren. Han har solgt # par i dag. Hvor mange penge skal der være i kassen for dem?",
+            "andel": 0.051,
+            "passer": true
+          },
+          {
+            "skabelon": "En bonde får sålet # par sko à # kr og betaler med en #-kroneseddel. Hvor meget skal Søren give tilbage fra kassen?",
+            "andel": 0.045,
+            "passer": true
+          },
+          {
+            "skabelon": "En kunde køber # par snørebånd à # kr og betaler med en #-kroneseddel. Hvor meget skal Søren give tilbage fra kassen?",
+            "andel": 0.034,
+            "passer": true
+          }
+        ]
+      },
+      "svarmuligheder": [
+        3
+      ]
+    },
+    {
+      "id": "bedstemor",
+      "titel": "Bedstemor kommer",
+      "giver": "Inger",
+      "sted": "havn",
+      "hvorfor": "Bedstemor kommer med sporvognen i dag. Hvornår skal jeg stå på holdepladsen?",
+      "opgaver": [
+        "ankomst (1)",
+        "tabel (1)",
+        "ankomst (2)"
+      ],
+      "kraever": {
+        "aabent": "havn"
+      },
+      "beloenning": {
+        "id": "baenk",
+        "type": "kort",
+        "navn": "Bænken ved holdepladsen",
+        "x": 44.5,
+        "y": 31.5
+      },
+      "tekstModGrund": {
+        "andelOpgaverDerPasser": 1,
+        "andelQuestsHvorAllePasser": 1,
+        "andelQuestsHvorIngenPasser": 0,
+        "skabeloner": [
+          {
+            "skabelon": "Bedstemor skriver: \"Jeg tager sporvognen fra møllen kl. #. Den er # minutter om turen.\" Hvornår er hun fremme på holdepladsen?",
+            "andel": 0.059,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor stiger på sporvognen ved møllen kl. #. Turen til holdepladsen tager # minutter. Hvornår skal Inger stå på holdepladsen?",
+            "andel": 0.056,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor stiger på sporvognen ved kirken kl. #. Turen til holdepladsen tager # minutter. Hvornår skal Inger stå på holdepladsen?",
+            "andel": 0.05,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemors sporvogn kører fra kirken kl. # og er # minutter om turen. Hvornår er den ved holdepladsen?",
+            "andel": 0.049,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor stiger på sporvognen ved skoven kl. #. Turen til holdepladsen tager # minutter. Hvornår skal Inger stå på holdepladsen?",
+            "andel": 0.049,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver: \"Jeg tager sporvognen fra skoven kl. #. Den er # minutter om turen.\" Hvornår er hun fremme på holdepladsen?",
+            "andel": 0.047,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemors sporvogn kører fra grusgraven kl. # og er # minutter om turen. Hvornår er den ved holdepladsen?",
+            "andel": 0.044,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver: \"Jeg tager sporvognen fra kirken kl. #. Den er # minutter om turen.\" Hvornår er hun fremme på holdepladsen?",
+            "andel": 0.042,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor stiger på sporvognen ved søen kl. #. Turen til holdepladsen tager # minutter. Hvornår skal Inger stå på holdepladsen?",
+            "andel": 0.042,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver: \"Jeg tager sporvognen fra grusgraven kl. #. Den er # minutter om turen.\" Hvornår er hun fremme på holdepladsen?",
+            "andel": 0.041,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemors sporvogn kører fra møllen kl. # og er # minutter om turen. Hvornår er den ved holdepladsen?",
+            "andel": 0.04,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver: \"Jeg tager sporvognen fra søen kl. #. Den er # minutter om turen.\" Hvornår er hun fremme på holdepladsen?",
+            "andel": 0.039,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor stiger på sporvognen ved grusgraven kl. #. Turen til holdepladsen tager # minutter. Hvornår skal Inger stå på holdepladsen?",
+            "andel": 0.039,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemors sporvogn kører fra skoven kl. # og er # minutter om turen. Hvornår er den ved holdepladsen?",
+            "andel": 0.039,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemors sporvogn kører fra søen kl. # og er # minutter om turen. Hvornår er den ved holdepladsen?",
+            "andel": 0.031,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Skovlinjen. Inger læser tavlen på holdepladsen: Grusgravslinjen – #, Søbanen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår kører Skovlinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Møllelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Kirkelinjen – #, Søbanen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Søbanen – #, Grusgravslinjen – #, Skovlinjen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Skovlinjen og hente bedstemor. Afgangstavlen på holdepladsen: Kirkelinjen – #, Møllelinjen – #, Søbanen – #, Skovlinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Skovlinjen – #, Søbanen – #, Møllelinjen – #, Kirkelinjen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Grusgravslinjen og hente bedstemor. Afgangstavlen på holdepladsen: Grusgravslinjen – #, Kirkelinjen – #, Skovlinjen – #, Søbanen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Kirkelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Møllelinjen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Grusgravslinjen og hente bedstemor. Afgangstavlen på holdepladsen: Kirkelinjen – #, Søbanen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Kirkelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Grusgravslinjen – #, Møllelinjen – #, Kirkelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Møllelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Søbanen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Skovlinjen. Inger læser tavlen på holdepladsen: Grusgravslinjen – #, Skovlinjen – #, Kirkelinjen – #, Møllelinjen – #. Hvornår kører Skovlinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Kirkelinjen. Inger læser tavlen på holdepladsen: Kirkelinjen – #, Søbanen – #, Grusgravslinjen – #, Skovlinjen – #. Hvornår kører Kirkelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Kirkelinjen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Kirkelinjen – #, Grusgravslinjen – #, Søbanen – #. Hvornår kører Kirkelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Grusgravslinjen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Møllelinjen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Skovlinjen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Søbanen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Møllelinjen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Grusgravslinjen – #, Søbanen – #, Møllelinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Møllelinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Søbanen. Inger læser tavlen på holdepladsen: Skovlinjen – #, Kirkelinjen – #, Møllelinjen – #, Søbanen – #. Hvornår kører Søbanen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Søbanen. Inger læser tavlen på holdepladsen: Kirkelinjen – #, Søbanen – #, Grusgravslinjen – #, Skovlinjen – #. Hvornår kører Søbanen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Kirkelinjen – #, Søbanen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Skovlinjen – #, Kirkelinjen – #, Søbanen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Grusgravslinjen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Skovlinjen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår kører Grusgravslinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Søbanen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Grusgravslinjen – #, Skovlinjen – #, Søbanen – #. Hvornår kører Søbanen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Kirkelinjen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Skovlinjen – #, Søbanen – #, Kirkelinjen – #. Hvornår kører Kirkelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Skovlinjen. Inger læser tavlen på holdepladsen: Kirkelinjen – #, Grusgravslinjen – #, Skovlinjen – #, Møllelinjen – #. Hvornår kører Skovlinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Kirkelinjen. Inger læser tavlen på holdepladsen: Søbanen – #, Møllelinjen – #, Kirkelinjen – #, Grusgravslinjen – #. Hvornår kører Kirkelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Skovlinjen og hente bedstemor. Afgangstavlen på holdepladsen: Grusgravslinjen – #, Søbanen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Kirkelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Skovlinjen – #, Møllelinjen – #, Kirkelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Grusgravslinjen. Inger læser tavlen på holdepladsen: Søbanen – #, Møllelinjen – #, Kirkelinjen – #, Grusgravslinjen – #. Hvornår kører Grusgravslinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Skovlinjen. Inger læser tavlen på holdepladsen: Kirkelinjen – #, Skovlinjen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår kører Skovlinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Kirkelinjen – #, Grusgravslinjen – #, Skovlinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Søbanen – #, Skovlinjen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Kirkelinjen – #, Skovlinjen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Grusgravslinjen – #, Søbanen – #, Kirkelinjen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Grusgravslinjen. Inger læser tavlen på holdepladsen: Grusgravslinjen – #, Søbanen – #, Kirkelinjen – #, Skovlinjen – #. Hvornår kører Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Skovlinjen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Møllelinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Skovlinjen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Kirkelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Kirkelinjen – #, Skovlinjen – #, Søbanen – #, Møllelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Søbanen – #, Kirkelinjen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Grusgravslinjen. Inger læser tavlen på holdepladsen: Grusgravslinjen – #, Møllelinjen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår kører Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Grusgravslinjen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Møllelinjen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Kirkelinjen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Kirkelinjen – #, Søbanen – #, Skovlinjen – #. Hvornår kører Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Skovlinjen – #, Kirkelinjen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Møllelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Møllelinjen – #, Skovlinjen – #, Søbanen – #, Kirkelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Skovlinjen – #, Kirkelinjen – #, Søbanen – #, Møllelinjen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Kirkelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Kirkelinjen – #, Grusgravslinjen – #, Skovlinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Skovlinjen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Kirkelinjen – #, Skovlinjen – #, Møllelinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Skovlinjen. Inger læser tavlen på holdepladsen: Grusgravslinjen – #, Søbanen – #, Møllelinjen – #, Skovlinjen – #. Hvornår kører Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Grusgravslinjen. Inger læser tavlen på holdepladsen: Kirkelinjen – #, Søbanen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår kører Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Grusgravslinjen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Møllelinjen – #, Grusgravslinjen – #, Skovlinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Kirkelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Grusgravslinjen – #, Søbanen – #, Kirkelinjen – #, Skovlinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Skovlinjen. Inger læser tavlen på holdepladsen: Grusgravslinjen – #, Søbanen – #, Skovlinjen – #, Møllelinjen – #. Hvornår kører Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Skovlinjen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Skovlinjen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Kirkelinjen. Inger læser tavlen på holdepladsen: Grusgravslinjen – #, Kirkelinjen – #, Møllelinjen – #, Søbanen – #. Hvornår kører Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Grusgravslinjen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Grusgravslinjen og hente bedstemor. Afgangstavlen på holdepladsen: Kirkelinjen – #, Møllelinjen – #, Grusgravslinjen – #, Skovlinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Grusgravslinjen. Inger læser tavlen på holdepladsen: Grusgravslinjen – #, Søbanen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår kører Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Skovlinjen. Inger læser tavlen på holdepladsen: Søbanen – #, Kirkelinjen – #, Skovlinjen – #, Grusgravslinjen – #. Hvornår kører Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Grusgravslinjen og hente bedstemor. Afgangstavlen på holdepladsen: Grusgravslinjen – #, Kirkelinjen – #, Skovlinjen – #, Møllelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Skovlinjen og hente bedstemor. Afgangstavlen på holdepladsen: Grusgravslinjen – #, Skovlinjen – #, Søbanen – #, Møllelinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Grusgravslinjen. Inger læser tavlen på holdepladsen: Kirkelinjen – #, Skovlinjen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår kører Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Kirkelinjen. Inger læser tavlen på holdepladsen: Skovlinjen – #, Kirkelinjen – #, Grusgravslinjen – #, Søbanen – #. Hvornår kører Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Skovlinjen og hente bedstemor. Afgangstavlen på holdepladsen: Møllelinjen – #, Grusgravslinjen – #, Skovlinjen – #, Søbanen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Grusgravslinjen. Inger læser tavlen på holdepladsen: Kirkelinjen – #, Møllelinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår kører Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Kirkelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Møllelinjen – #, Kirkelinjen – #, Grusgravslinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Møllelinjen – #, Søbanen – #, Grusgravslinjen – #, Skovlinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Grusgravslinjen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Grusgravslinjen – #, Kirkelinjen – #, Møllelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Skovlinjen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Grusgravslinjen. Inger læser tavlen på holdepladsen: Søbanen – #, Kirkelinjen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår kører Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Grusgravslinjen – #, Møllelinjen – #, Søbanen – #, Skovlinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Grusgravslinjen og hente bedstemor. Afgangstavlen på holdepladsen: Møllelinjen – #, Kirkelinjen – #, Grusgravslinjen – #, Søbanen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Skovlinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Søbanen – #, Kirkelinjen – #, Skovlinjen – #, Møllelinjen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Kirkelinjen – #, Søbanen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Møllelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Søbanen – #, Kirkelinjen – #, Møllelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Grusgravslinjen. Inger læser tavlen på holdepladsen: Søbanen – #, Kirkelinjen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår kører Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Skovlinjen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Grusgravslinjen – #, Kirkelinjen – #, Møllelinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Kirkelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Kirkelinjen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Kirkelinjen. Inger læser tavlen på holdepladsen: Grusgravslinjen – #, Skovlinjen – #, Møllelinjen – #, Kirkelinjen – #. Hvornår kører Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Grusgravslinjen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Skovlinjen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Grusgravslinjen – #, Kirkelinjen – #, Søbanen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Skovlinjen. Inger læser tavlen på holdepladsen: Kirkelinjen – #, Møllelinjen – #, Søbanen – #, Skovlinjen – #. Hvornår kører Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Kirkelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Kirkelinjen – #, Grusgravslinjen – #, Skovlinjen – #, Møllelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Kirkelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Møllelinjen – #, Skovlinjen – #, Kirkelinjen – #, Grusgravslinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Kirkelinjen. Inger læser tavlen på holdepladsen: Kirkelinjen – #, Søbanen – #, Skovlinjen – #, Møllelinjen – #. Hvornår kører Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Skovlinjen og hente bedstemor. Afgangstavlen på holdepladsen: Møllelinjen – #, Skovlinjen – #, Søbanen – #, Kirkelinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Møllelinjen – #, Kirkelinjen – #, Grusgravslinjen – #, Søbanen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Grusgravslinjen. Inger læser tavlen på holdepladsen: Skovlinjen – #, Grusgravslinjen – #, Søbanen – #, Møllelinjen – #. Hvornår kører Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Kirkelinjen – #, Søbanen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Kirkelinjen. Inger læser tavlen på holdepladsen: Søbanen – #, Skovlinjen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår kører Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Søbanen – #, Kirkelinjen – #, Skovlinjen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Skovlinjen. Inger læser tavlen på holdepladsen: Søbanen – #, Møllelinjen – #, Skovlinjen – #, Grusgravslinjen – #. Hvornår kører Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Grusgravslinjen. Inger læser tavlen på holdepladsen: Kirkelinjen – #, Skovlinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår kører Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Kirkelinjen – #, Søbanen – #, Skovlinjen – #, Møllelinjen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Skovlinjen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Møllelinjen – #, Grusgravslinjen – #, Skovlinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Skovlinjen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Møllelinjen – #, Søbanen – #, Kirkelinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Kirkelinjen – #, Skovlinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Skovlinjen. Inger læser tavlen på holdepladsen: Skovlinjen – #, Møllelinjen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår kører Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Grusgravslinjen. Inger læser tavlen på holdepladsen: Skovlinjen – #, Møllelinjen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår kører Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Skovlinjen og hente bedstemor. Afgangstavlen på holdepladsen: Kirkelinjen – #, Skovlinjen – #, Møllelinjen – #, Søbanen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Skovlinjen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Grusgravslinjen – #, Søbanen – #, Møllelinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Møllelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Grusgravslinjen – #, Møllelinjen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Skovlinjen og hente bedstemor. Afgangstavlen på holdepladsen: Møllelinjen – #, Skovlinjen – #, Kirkelinjen – #, Grusgravslinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Grusgravslinjen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Kirkelinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Grusgravslinjen – #, Kirkelinjen – #, Søbanen – #, Skovlinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Kirkelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Grusgravslinjen – #, Kirkelinjen – #, Søbanen – #, Skovlinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Grusgravslinjen. Inger læser tavlen på holdepladsen: Kirkelinjen – #, Skovlinjen – #, Grusgravslinjen – #, Søbanen – #. Hvornår kører Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Søbanen. Inger læser tavlen på holdepladsen: Søbanen – #, Kirkelinjen – #, Skovlinjen – #, Møllelinjen – #. Hvornår kører Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Grusgravslinjen. Inger læser tavlen på holdepladsen: Kirkelinjen – #, Grusgravslinjen – #, Søbanen – #, Møllelinjen – #. Hvornår kører Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Skovlinjen. Inger læser tavlen på holdepladsen: Skovlinjen – #, Grusgravslinjen – #, Kirkelinjen – #, Møllelinjen – #. Hvornår kører Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Grusgravslinjen og hente bedstemor. Afgangstavlen på holdepladsen: Møllelinjen – #, Skovlinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Møllelinjen – #, Grusgravslinjen – #, Kirkelinjen – #, Søbanen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Søbanen. Inger læser tavlen på holdepladsen: Grusgravslinjen – #, Søbanen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår kører Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Skovlinjen. Inger læser tavlen på holdepladsen: Kirkelinjen – #, Grusgravslinjen – #, Møllelinjen – #, Skovlinjen – #. Hvornår kører Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Møllelinjen – #, Kirkelinjen – #, Søbanen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Møllelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Grusgravslinjen – #, Skovlinjen – #, Møllelinjen – #, Søbanen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Møllelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Møllelinjen – #, Kirkelinjen – #, Grusgravslinjen – #, Skovlinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Kirkelinjen – #, Søbanen – #, Møllelinjen – #, Skovlinjen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Grusgravslinjen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Grusgravslinjen – #, Kirkelinjen – #, Møllelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Skovlinjen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Skovlinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår kører Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Skovlinjen – #, Grusgravslinjen – #, Søbanen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Møllelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Kirkelinjen – #, Møllelinjen – #, Søbanen – #, Skovlinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Kirkelinjen. Inger læser tavlen på holdepladsen: Skovlinjen – #, Møllelinjen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår kører Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Møllelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Møllelinjen – #, Skovlinjen – #, Grusgravslinjen – #, Søbanen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Skovlinjen. Inger læser tavlen på holdepladsen: Søbanen – #, Kirkelinjen – #, Møllelinjen – #, Skovlinjen – #. Hvornår kører Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Grusgravslinjen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Skovlinjen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Møllelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Møllelinjen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Grusgravslinjen og hente bedstemor. Afgangstavlen på holdepladsen: Kirkelinjen – #, Grusgravslinjen – #, Søbanen – #, Møllelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Grusgravslinjen – #, Kirkelinjen – #, Skovlinjen – #, Søbanen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Grusgravslinjen. Inger læser tavlen på holdepladsen: Skovlinjen – #, Grusgravslinjen – #, Søbanen – #, Kirkelinjen – #. Hvornår kører Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Kirkelinjen. Inger læser tavlen på holdepladsen: Grusgravslinjen – #, Søbanen – #, Kirkelinjen – #, Skovlinjen – #. Hvornår kører Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Grusgravslinjen – #, Skovlinjen – #, Søbanen – #, Møllelinjen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Skovlinjen – #, Søbanen – #, Kirkelinjen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Søbanen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Kirkelinjen – #, Skovlinjen – #, Søbanen – #. Hvornår kører Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Søbanen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Søbanen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår kører Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Grusgravslinjen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Søbanen – #, Kirkelinjen – #, Grusgravslinjen – #. Hvornår kører Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Kirkelinjen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Skovlinjen – #, Kirkelinjen – #, Søbanen – #. Hvornår kører Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Kirkelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Møllelinjen – #, Søbanen – #, Kirkelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Søbanen. Inger læser tavlen på holdepladsen: Kirkelinjen – #, Skovlinjen – #, Søbanen – #, Møllelinjen – #. Hvornår kører Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Skovlinjen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Skovlinjen – #, Kirkelinjen – #, Møllelinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Kirkelinjen. Inger læser tavlen på holdepladsen: Kirkelinjen – #, Skovlinjen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår kører Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Søbanen. Inger læser tavlen på holdepladsen: Søbanen – #, Skovlinjen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår kører Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Skovlinjen – #, Møllelinjen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Grusgravslinjen – #, Søbanen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Kirkelinjen. Inger læser tavlen på holdepladsen: Søbanen – #, Kirkelinjen – #, Skovlinjen – #, Grusgravslinjen – #. Hvornår kører Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Møllelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Møllelinjen – #, Kirkelinjen – #, Skovlinjen – #, Grusgravslinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Søbanen. Inger læser tavlen på holdepladsen: Kirkelinjen – #, Møllelinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår kører Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Grusgravslinjen. Inger læser tavlen på holdepladsen: Kirkelinjen – #, Grusgravslinjen – #, Skovlinjen – #, Søbanen – #. Hvornår kører Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Grusgravslinjen – #, Kirkelinjen – #, Møllelinjen – #, Søbanen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Kirkelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Møllelinjen – #, Kirkelinjen – #, Skovlinjen – #, Søbanen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Møllelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Kirkelinjen – #, Søbanen – #, Skovlinjen – #, Møllelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Kirkelinjen – #, Møllelinjen – #, Søbanen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Søbanen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Grusgravslinjen – #, Søbanen – #, Kirkelinjen – #. Hvornår kører Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Kirkelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Møllelinjen – #, Skovlinjen – #, Kirkelinjen – #, Søbanen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Skovlinjen – #, Søbanen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Skovlinjen og hente bedstemor. Afgangstavlen på holdepladsen: Møllelinjen – #, Skovlinjen – #, Kirkelinjen – #, Søbanen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Kirkelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Kirkelinjen – #, Møllelinjen – #, Søbanen – #, Skovlinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Grusgravslinjen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Kirkelinjen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Møllelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Grusgravslinjen – #, Skovlinjen – #, Møllelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Grusgravslinjen. Inger læser tavlen på holdepladsen: Grusgravslinjen – #, Kirkelinjen – #, Møllelinjen – #, Søbanen – #. Hvornår kører Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Kirkelinjen. Inger læser tavlen på holdepladsen: Grusgravslinjen – #, Kirkelinjen – #, Søbanen – #, Skovlinjen – #. Hvornår kører Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Skovlinjen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Kirkelinjen – #, Møllelinjen – #, Skovlinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Kirkelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Grusgravslinjen – #, Søbanen – #, Kirkelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Møllelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Grusgravslinjen – #, Møllelinjen – #, Kirkelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Grusgravslinjen. Inger læser tavlen på holdepladsen: Grusgravslinjen – #, Skovlinjen – #, Kirkelinjen – #, Møllelinjen – #. Hvornår kører Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Søbanen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Kirkelinjen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Søbanen – #, Kirkelinjen – #, Grusgravslinjen – #. Hvornår kører Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Møllelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Møllelinjen – #, Grusgravslinjen – #, Kirkelinjen – #, Søbanen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Kirkelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Grusgravslinjen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Kirkelinjen. Inger læser tavlen på holdepladsen: Søbanen – #, Møllelinjen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår kører Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Møllelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Grusgravslinjen – #, Søbanen – #, Møllelinjen – #, Kirkelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Skovlinjen. Inger læser tavlen på holdepladsen: Kirkelinjen – #, Grusgravslinjen – #, Skovlinjen – #, Søbanen – #. Hvornår kører Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Skovlinjen. Inger læser tavlen på holdepladsen: Grusgravslinjen – #, Skovlinjen – #, Kirkelinjen – #, Søbanen – #. Hvornår kører Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Grusgravslinjen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Kirkelinjen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Søbanen. Inger læser tavlen på holdepladsen: Skovlinjen – #, Møllelinjen – #, Kirkelinjen – #, Søbanen – #. Hvornår kører Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Skovlinjen. Inger læser tavlen på holdepladsen: Kirkelinjen – #, Møllelinjen – #, Skovlinjen – #, Grusgravslinjen – #. Hvornår kører Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Skovlinjen og hente bedstemor. Afgangstavlen på holdepladsen: Grusgravslinjen – #, Søbanen – #, Skovlinjen – #, Møllelinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Kirkelinjen. Inger læser tavlen på holdepladsen: Kirkelinjen – #, Møllelinjen – #, Søbanen – #, Skovlinjen – #. Hvornår kører Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Skovlinjen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Møllelinjen – #, Grusgravslinjen – #, Søbanen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Skovlinjen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Kirkelinjen – #, Grusgravslinjen – #, Skovlinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Grusgravslinjen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Kirkelinjen – #, Grusgravslinjen – #, Skovlinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Søbanen – #, Grusgravslinjen – #, Møllelinjen – #, Kirkelinjen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Kirkelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Søbanen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Kirkelinjen. Inger læser tavlen på holdepladsen: Søbanen – #, Grusgravslinjen – #, Kirkelinjen – #, Møllelinjen – #. Hvornår kører Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Søbanen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Kirkelinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår kører Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Kirkelinjen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Kirkelinjen – #, Skovlinjen – #, Møllelinjen – #, Søbanen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Grusgravslinjen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Grusgravslinjen – #, Søbanen – #, Kirkelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Grusgravslinjen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Søbanen – #, Skovlinjen – #, Grusgravslinjen – #. Hvornår kører Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Møllelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Skovlinjen – #, Møllelinjen – #, Kirkelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Kirkelinjen. Inger læser tavlen på holdepladsen: Skovlinjen – #, Møllelinjen – #, Kirkelinjen – #, Søbanen – #. Hvornår kører Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Skovlinjen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Søbanen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Søbanen. Inger læser tavlen på holdepladsen: Skovlinjen – #, Møllelinjen – #, Grusgravslinjen – #, Søbanen – #. Hvornår kører Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Grusgravslinjen – #, Møllelinjen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Skovlinjen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Søbanen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Grusgravslinjen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Søbanen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår kører Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Søbanen – #, Kirkelinjen – #, Grusgravslinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Skovlinjen. Inger læser tavlen på holdepladsen: Skovlinjen – #, Grusgravslinjen – #, Søbanen – #, Møllelinjen – #. Hvornår kører Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Skovlinjen og hente bedstemor. Afgangstavlen på holdepladsen: Kirkelinjen – #, Skovlinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Skovlinjen. Inger læser tavlen på holdepladsen: Skovlinjen – #, Grusgravslinjen – #, Møllelinjen – #, Kirkelinjen – #. Hvornår kører Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Grusgravslinjen. Inger læser tavlen på holdepladsen: Grusgravslinjen – #, Kirkelinjen – #, Søbanen – #, Møllelinjen – #. Hvornår kører Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Kirkelinjen. Inger læser tavlen på holdepladsen: Grusgravslinjen – #, Skovlinjen – #, Kirkelinjen – #, Søbanen – #. Hvornår kører Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Kirkelinjen – #, Skovlinjen – #, Møllelinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Møllelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Grusgravslinjen – #, Skovlinjen – #, Søbanen – #, Møllelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Kirkelinjen. Inger læser tavlen på holdepladsen: Skovlinjen – #, Møllelinjen – #, Kirkelinjen – #, Grusgravslinjen – #. Hvornår kører Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Grusgravslinjen og hente bedstemor. Afgangstavlen på holdepladsen: Møllelinjen – #, Søbanen – #, Kirkelinjen – #, Grusgravslinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Kirkelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Møllelinjen – #, Søbanen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Kirkelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Kirkelinjen – #, Skovlinjen – #, Grusgravslinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Grusgravslinjen – #, Møllelinjen – #, Kirkelinjen – #, Søbanen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Skovlinjen – #, Kirkelinjen – #, Møllelinjen – #, Søbanen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Møllelinjen – #, Skovlinjen – #, Grusgravslinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Møllelinjen – #, Søbanen – #, Kirkelinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Møllelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Grusgravslinjen – #, Skovlinjen – #, Kirkelinjen – #, Møllelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Møllelinjen – #, Grusgravslinjen – #, Søbanen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Kirkelinjen – #, Møllelinjen – #, Grusgravslinjen – #, Skovlinjen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Søbanen. Inger læser tavlen på holdepladsen: Kirkelinjen – #, Søbanen – #, Møllelinjen – #, Skovlinjen – #. Hvornår kører Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Grusgravslinjen. Inger læser tavlen på holdepladsen: Skovlinjen – #, Kirkelinjen – #, Grusgravslinjen – #, Søbanen – #. Hvornår kører Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Søbanen. Inger læser tavlen på holdepladsen: Grusgravslinjen – #, Søbanen – #, Møllelinjen – #, Kirkelinjen – #. Hvornår kører Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Skovlinjen. Inger læser tavlen på holdepladsen: Søbanen – #, Kirkelinjen – #, Skovlinjen – #, Møllelinjen – #. Hvornår kører Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Kirkelinjen – #, Grusgravslinjen – #, Skovlinjen – #, Møllelinjen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Søbanen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Skovlinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår kører Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Skovlinjen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Kirkelinjen – #, Skovlinjen – #, Grusgravslinjen – #. Hvornår kører Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Kirkelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Kirkelinjen – #, Skovlinjen – #, Grusgravslinjen – #, Søbanen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Kirkelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Kirkelinjen – #, Søbanen – #, Skovlinjen – #, Grusgravslinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Skovlinjen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Grusgravslinjen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Møllelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Kirkelinjen – #, Møllelinjen – #, Søbanen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Kirkelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Møllelinjen – #, Skovlinjen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Kirkelinjen. Inger læser tavlen på holdepladsen: Skovlinjen – #, Kirkelinjen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår kører Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Søbanen – #, Kirkelinjen – #, Møllelinjen – #, Skovlinjen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Grusgravslinjen og hente bedstemor. Afgangstavlen på holdepladsen: Kirkelinjen – #, Møllelinjen – #, Skovlinjen – #, Grusgravslinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Skovlinjen. Inger læser tavlen på holdepladsen: Søbanen – #, Grusgravslinjen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår kører Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Søbanen. Inger læser tavlen på holdepladsen: Søbanen – #, Grusgravslinjen – #, Møllelinjen – #, Kirkelinjen – #. Hvornår kører Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Grusgravslinjen – #, Skovlinjen – #, Møllelinjen – #, Søbanen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Skovlinjen. Inger læser tavlen på holdepladsen: Skovlinjen – #, Møllelinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår kører Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Grusgravslinjen – #, Møllelinjen – #, Søbanen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Kirkelinjen – #, Grusgravslinjen – #, Skovlinjen – #, Søbanen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Møllelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Kirkelinjen – #, Grusgravslinjen – #, Møllelinjen – #, Skovlinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Møllelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Møllelinjen – #, Skovlinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Møllelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Møllelinjen – #, Grusgravslinjen – #, Skovlinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Søbanen. Inger læser tavlen på holdepladsen: Søbanen – #, Skovlinjen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår kører Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Grusgravslinjen og hente bedstemor. Afgangstavlen på holdepladsen: Kirkelinjen – #, Skovlinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Grusgravslinjen og hente bedstemor. Afgangstavlen på holdepladsen: Grusgravslinjen – #, Skovlinjen – #, Søbanen – #, Møllelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Grusgravslinjen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Skovlinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår kører Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Kirkelinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Søbanen. Inger læser tavlen på holdepladsen: Skovlinjen – #, Søbanen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår kører Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Søbanen. Inger læser tavlen på holdepladsen: Grusgravslinjen – #, Søbanen – #, Kirkelinjen – #, Skovlinjen – #. Hvornår kører Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Kirkelinjen. Inger læser tavlen på holdepladsen: Søbanen – #, Kirkelinjen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår kører Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Søbanen. Inger læser tavlen på holdepladsen: Skovlinjen – #, Søbanen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår kører Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Kirkelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Grusgravslinjen – #, Skovlinjen – #, Kirkelinjen – #, Søbanen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Søbanen. Inger læser tavlen på holdepladsen: Grusgravslinjen – #, Kirkelinjen – #, Møllelinjen – #, Søbanen – #. Hvornår kører Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Møllelinjen. Inger læser tavlen på holdepladsen: Grusgravslinjen – #, Kirkelinjen – #, Skovlinjen – #, Møllelinjen – #. Hvornår kører Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Møllelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Grusgravslinjen – #, Kirkelinjen – #, Møllelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Søbanen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Skovlinjen – #, Søbanen – #, Kirkelinjen – #. Hvornår kører Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Kirkelinjen. Inger læser tavlen på holdepladsen: Grusgravslinjen – #, Kirkelinjen – #, Søbanen – #, Møllelinjen – #. Hvornår kører Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Skovlinjen. Inger læser tavlen på holdepladsen: Skovlinjen – #, Søbanen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår kører Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Kirkelinjen. Inger læser tavlen på holdepladsen: Møllelinjen – #, Søbanen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår kører Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Kirkelinjen. Inger læser tavlen på holdepladsen: Søbanen – #, Grusgravslinjen – #, Kirkelinjen – #, Skovlinjen – #. Hvornår kører Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Kirkelinjen og hente bedstemor. Afgangstavlen på holdepladsen: Skovlinjen – #, Grusgravslinjen – #, Kirkelinjen – #, Møllelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Søbanen. Inger læser tavlen på holdepladsen: Grusgravslinjen – #, Møllelinjen – #, Kirkelinjen – #, Søbanen – #. Hvornår kører Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Søbanen. Inger læser tavlen på holdepladsen: Skovlinjen – #, Møllelinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår kører Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Søbanen – #, Kirkelinjen – #, Skovlinjen – #, Grusgravslinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Inger vil tage Søbanen og hente bedstemor. Afgangstavlen på holdepladsen: Kirkelinjen – #, Grusgravslinjen – #, Møllelinjen – #, Søbanen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Bedstemor skriver, at hun kommer med Grusgravslinjen. Inger læser tavlen på holdepladsen: Søbanen – #, Kirkelinjen – #, Skovlinjen – #, Grusgravslinjen – #. Hvornår kører Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          }
+        ]
+      },
+      "svarmuligheder": [
+        3,
+        4
+      ]
+    },
+    {
+      "id": "sidste-vogn",
+      "titel": "Den sidste vogn hjem",
+      "giver": "Poul, vognstyreren",
+      "sted": "havn",
+      "hvorfor": "Den sidste vogn hjem må ikke køre fra nogen. Kan du regne køreplanen efter?",
+      "opgaver": [
+        "turtid (1)",
+        "afgangTilbage (1)",
+        "turtid (2)"
+      ],
+      "kraever": {
+        "forloeb": [
+          "havn",
+          2
+        ],
+        "quests": [
+          "bedstemor"
+        ]
+      },
+      "beloenning": {
+        "id": "sporvognens_ven",
+        "type": "titel",
+        "navn": "Sporvognens ven"
+      },
+      "tekstModGrund": {
+        "andelOpgaverDerPasser": 1,
+        "andelQuestsHvorAllePasser": 1,
+        "andelQuestsHvorIngenPasser": 0,
+        "skabeloner": [
+          {
+            "skabelon": "I køreplanen for den sidste vogn står der: holdepladsen kl. #, grusgraven kl. #. Hvor mange minutter tager turen?",
+            "andel": 0.054,
+            "passer": true
+          },
+          {
+            "skabelon": "I køreplanen for den sidste vogn står der: holdepladsen kl. #, skoven kl. #. Hvor mange minutter tager turen?",
+            "andel": 0.051,
+            "passer": true
+          },
+          {
+            "skabelon": "Den sidste vogn kører fra holdepladsen kl. # og er ved møllen kl. #. Hvor mange minutter tager turen?",
+            "andel": 0.051,
+            "passer": true
+          },
+          {
+            "skabelon": "I køreplanen for den sidste vogn står der: holdepladsen kl. #, møllen kl. #. Hvor mange minutter tager turen?",
+            "andel": 0.048,
+            "passer": true
+          },
+          {
+            "skabelon": "Poul kører aftenvognen fra holdepladsen kl. # og holder ved grusgraven kl. #. Hvor mange minutter var han om turen?",
+            "andel": 0.047,
+            "passer": true
+          },
+          {
+            "skabelon": "Den sidste vogn kører fra holdepladsen kl. # og er ved søen kl. #. Hvor mange minutter tager turen?",
+            "andel": 0.046,
+            "passer": true
+          },
+          {
+            "skabelon": "Poul kører aftenvognen fra holdepladsen kl. # og holder ved skoven kl. #. Hvor mange minutter var han om turen?",
+            "andel": 0.044,
+            "passer": true
+          },
+          {
+            "skabelon": "Poul kører aftenvognen fra holdepladsen kl. # og holder ved søen kl. #. Hvor mange minutter var han om turen?",
+            "andel": 0.042,
+            "passer": true
+          },
+          {
+            "skabelon": "I køreplanen for den sidste vogn står der: holdepladsen kl. #, kirken kl. #. Hvor mange minutter tager turen?",
+            "andel": 0.042,
+            "passer": true
+          },
+          {
+            "skabelon": "Den sidste vogn kører fra holdepladsen kl. # og er ved grusgraven kl. #. Hvor mange minutter tager turen?",
+            "andel": 0.041,
+            "passer": true
+          },
+          {
+            "skabelon": "Poul kører aftenvognen fra holdepladsen kl. # og holder ved møllen kl. #. Hvor mange minutter var han om turen?",
+            "andel": 0.041,
+            "passer": true
+          },
+          {
+            "skabelon": "Poul kører aftenvognen fra holdepladsen kl. # og holder ved kirken kl. #. Hvor mange minutter var han om turen?",
+            "andel": 0.041,
+            "passer": true
+          },
+          {
+            "skabelon": "Den sidste vogn kører fra holdepladsen kl. # og er ved skoven kl. #. Hvor mange minutter tager turen?",
+            "andel": 0.041,
+            "passer": true
+          },
+          {
+            "skabelon": "Den sidste vogn skal være ved møllen senest kl. #, så ingen står tilbage. Turen tager # minutter. Hvornår skal Poul senest køre fra holdepladsen?",
+            "andel": 0.04,
+            "passer": true
+          },
+          {
+            "skabelon": "Den sidste vogn kører fra holdepladsen kl. # og er ved kirken kl. #. Hvor mange minutter tager turen?",
+            "andel": 0.04,
+            "passer": true
+          },
+          {
+            "skabelon": "Folk fra høstdansen venter på vognen ved søen kl. #. Turen fra holdepladsen tager # minutter. Hvornår skal Poul senest køre?",
+            "andel": 0.037,
+            "passer": true
+          },
+          {
+            "skabelon": "I køreplanen for den sidste vogn står der: holdepladsen kl. #, søen kl. #. Hvor mange minutter tager turen?",
+            "andel": 0.037,
+            "passer": true
+          },
+          {
+            "skabelon": "Folk fra høstdansen venter på vognen ved møllen kl. #. Turen fra holdepladsen tager # minutter. Hvornår skal Poul senest køre?",
+            "andel": 0.037,
+            "passer": true
+          },
+          {
+            "skabelon": "Folk fra høstdansen venter på vognen ved grusgraven kl. #. Turen fra holdepladsen tager # minutter. Hvornår skal Poul senest køre?",
+            "andel": 0.034,
+            "passer": true
+          },
+          {
+            "skabelon": "Den sidste vogn skal være ved søen senest kl. #, så ingen står tilbage. Turen tager # minutter. Hvornår skal Poul senest køre fra holdepladsen?",
+            "andel": 0.033,
+            "passer": true
+          },
+          {
+            "skabelon": "Den sidste vogn skal være ved grusgraven senest kl. #, så ingen står tilbage. Turen tager # minutter. Hvornår skal Poul senest køre fra holdepladsen?",
+            "andel": 0.032,
+            "passer": true
+          },
+          {
+            "skabelon": "Den sidste vogn skal være ved kirken senest kl. #, så ingen står tilbage. Turen tager # minutter. Hvornår skal Poul senest køre fra holdepladsen?",
+            "andel": 0.032,
+            "passer": true
+          },
+          {
+            "skabelon": "Folk fra høstdansen venter på vognen ved kirken kl. #. Turen fra holdepladsen tager # minutter. Hvornår skal Poul senest køre?",
+            "andel": 0.03,
+            "passer": true
+          },
+          {
+            "skabelon": "Den sidste vogn skal være ved skoven senest kl. #, så ingen står tilbage. Turen tager # minutter. Hvornår skal Poul senest køre fra holdepladsen?",
+            "andel": 0.029,
+            "passer": true
+          },
+          {
+            "skabelon": "Folk fra høstdansen venter på vognen ved skoven kl. #. Turen fra holdepladsen tager # minutter. Hvornår skal Poul senest køre?",
+            "andel": 0.029,
+            "passer": true
+          }
+        ]
+      },
+      "svarmuligheder": [
+        3
+      ]
+    },
+    {
+      "id": "hoestmarked",
+      "titel": "Høstmarkedet",
+      "giver": "Karen, fra kroen",
+      "sted": "marked",
+      "hvorfor": "Hele landsbyen holder høstmarked, og alle boderne mangler en hjælpende hånd. Du kender jo alle sammen nu.",
+      "opgaver": [
+        "broek2 (2)",
+        "maal1 (2)",
+        "pris (2)",
+        "delHandel (2)"
+      ],
+      "kraever": {
+        "quests": [
+          "broed-til-alle",
+          "sten-til-diget",
+          "aeblerne"
+        ]
+      },
+      "beloenning": {
+        "id": "hoestmarked",
+        "type": "kort",
+        "navn": "Høstmarkedet",
+        "x": 53,
+        "y": 59
+      },
+      "tekstModGrund": {
+        "andelOpgaverDerPasser": 1,
+        "andelQuestsHvorAllePasser": 1,
+        "andelQuestsHvorIngenPasser": 0,
+        "skabeloner": [
+          {
+            "skabelon": "Spillemændene fik # kr for at spille til dansen, og de # spillemænd deler ligeligt. Hvor meget får hver spillemand?",
+            "andel": 0.088,
+            "passer": true
+          },
+          {
+            "skabelon": "Karen har # vimpler og hænger lige mange op ved hver af de # boder. Hvor mange vimpler kommer der ved hver bod?",
+            "andel": 0.084,
+            "passer": true
+          },
+          {
+            "skabelon": "Karen har bagt # boller og lægger dem på # fade med lige mange på hvert. Hvor mange boller kommer der på hvert fad?",
+            "andel": 0.077,
+            "passer": true
+          },
+          {
+            "skabelon": "Karen måler honningkagerne til boden. Et stykke honningkage ligger på linealen fra #-stregen og ender # små streger efter # cm-stregen. Hver lille streg er # mm. Hvor langt er stykket i mm?",
+            "andel": 0.077,
+            "passer": true
+          },
+          {
+            "skabelon": "Karen klipper bånd til vimplerne. Et stykke bånd ligger på linealen fra #-stregen og ender # små streger efter # cm-stregen. Hver lille streg er # mm. Hvor langt er båndet i mm?",
+            "andel": 0.075,
+            "passer": true
+          },
+          {
+            "skabelon": "Til lotteriet har Karen skåret små pinde. En lotteripind ligger på linealen fra #-stregen og ender # små streger efter # cm-stregen. Hver lille streg er # mm. Hvor lang er pinden i mm?",
+            "andel": 0.069,
+            "passer": true
+          },
+          {
+            "skabelon": "Karen sælger saftevand ved sin bod. Et glas koster # kr. Hvad koster # glas?",
+            "andel": 0.06,
+            "passer": true
+          },
+          {
+            "skabelon": "Et stykke lagkage koster # kr på høstmarkedet. Hvad skal en familie betale for # stykker?",
+            "andel": 0.053,
+            "passer": true
+          },
+          {
+            "skabelon": "En pølse koster # kr i Karens bod. Hvad koster # pølser?",
+            "andel": 0.052,
+            "passer": true
+          },
+          {
+            "skabelon": "Du køber # pølser à # kr i Karens bod og betaler med en #-kroneseddel. Hvor meget får du tilbage?",
+            "andel": 0.044,
+            "passer": true
+          },
+          {
+            "skabelon": "En gæst på høstmarkedet køber # stykker lagkage à # kr og betaler med en #-kroneseddel. Hvor meget skal gæsten have tilbage?",
+            "andel": 0.04,
+            "passer": true
+          },
+          {
+            "skabelon": "Kromutteren deler # lagkager ligeligt mellem # spillemænd ved dansen. Hvor meget lagkage får hver spillemand?",
+            "andel": 0.04,
+            "passer": true
+          },
+          {
+            "skabelon": "Karen deler # æblekager ligeligt mellem # boder på markedet. Hvor meget æblekage får hver bod?",
+            "andel": 0.037,
+            "passer": true
+          },
+          {
+            "skabelon": "Kromutteren deler # honningkager ligeligt mellem # børn ved gyngen. Hvor meget honningkage får hvert barn?",
+            "andel": 0.036,
+            "passer": true
+          },
+          {
+            "skabelon": "Kromutteren deler # æblekager ligeligt mellem # boder på markedet. Hvor meget æblekage får hver bod?",
+            "andel": 0.035,
+            "passer": true
+          },
+          {
+            "skabelon": "Karen deler # lagkager ligeligt mellem # spillemænd ved dansen. Hvor meget lagkage får hver spillemand?",
+            "andel": 0.033,
+            "passer": true
+          },
+          {
+            "skabelon": "Karen deler # honningkager ligeligt mellem # børn ved gyngen. Hvor meget honningkage får hvert barn?",
+            "andel": 0.028,
+            "passer": true
+          },
+          {
+            "skabelon": "Karen måler honningkagerne til boden. Et stykke honningkage ligger på linealen fra #-stregen og ender # lille streg efter # cm-stregen. Hver lille streg er # mm. Hvor langt er stykket i mm?",
+            "andel": 0.011,
+            "passer": true
+          },
+          {
+            "skabelon": "Kromutteren deler # honningkage ligeligt mellem # børn ved gyngen. Hvor meget honningkage får hvert barn?",
+            "andel": 0.011,
+            "passer": true
+          },
+          {
+            "skabelon": "Til lotteriet har Karen skåret små pinde. En lotteripind ligger på linealen fra #-stregen og ender # lille streg efter # cm-stregen. Hver lille streg er # mm. Hvor lang er pinden i mm?",
+            "andel": 0.01,
+            "passer": true
+          },
+          {
+            "skabelon": "Karen deler # honningkage ligeligt mellem # børn ved gyngen. Hvor meget honningkage får hvert barn?",
+            "andel": 0.009,
+            "passer": true
+          },
+          {
+            "skabelon": "Karen klipper bånd til vimplerne. Et stykke bånd ligger på linealen fra #-stregen og ender # lille streg efter # cm-stregen. Hver lille streg er # mm. Hvor langt er båndet i mm?",
+            "andel": 0.008,
+            "passer": true
+          },
+          {
+            "skabelon": "Kromutteren deler # lagkage ligeligt mellem # spillemænd ved dansen. Hvor meget lagkage får hver spillemand?",
+            "andel": 0.008,
+            "passer": true
+          },
+          {
+            "skabelon": "Karen deler # lagkage ligeligt mellem # spillemænd ved dansen. Hvor meget lagkage får hver spillemand?",
+            "andel": 0.005,
+            "passer": true
+          },
+          {
+            "skabelon": "Kromutteren deler # æblekage ligeligt mellem # boder på markedet. Hvor meget æblekage får hver bod?",
+            "andel": 0.004,
+            "passer": true
+          },
+          {
+            "skabelon": "Karen deler # æblekage ligeligt mellem # boder på markedet. Hvor meget æblekage får hver bod?",
+            "andel": 0.004,
+            "passer": true
+          }
+        ]
+      },
+      "svarmuligheder": [
+        3
+      ]
+    }
+  ],
+  "gaet": {
+    "maksForsoeg": 3,
+    "svarmuligheder": [
+      3,
+      4
+    ],
+    "gaetterRammerAltidRigtigt": false,
+    "forventetTrykPrOpgaveVedGaet": 2,
+    "forventetErfaringVedGaet": "+10 pr. opgave (erfaringen gives ved \"Rigtigt!\" uanset forsoeg nr.)",
+    "sandsynlighedRigtigFoersteGang": "1/3"
+  },
+  "kaeder": [
+    {
+      "id": "mel-til-bageren",
+      "kraever": {
+        "forloeb": [
+          "moellen",
+          1
+        ]
+      },
+      "mestretVedAabning": {
+        "moellen": 1,
+        "stenbrud": 0
+      },
+      "trin": [
+        "broek1",
+        "broek1",
+        "broek1"
+      ],
+      "brud": []
+    },
+    {
+      "id": "broed-til-alle",
+      "kraever": {
+        "forloeb": [
+          "moellen",
+          2
+        ],
+        "quests": [
+          "mel-til-bageren"
+        ]
+      },
+      "mestretVedAabning": {
+        "moellen": 2,
+        "stenbrud": 0
+      },
+      "trin": [
+        "broek2",
+        "broek2",
+        "broek1"
+      ],
+      "brud": []
+    },
+    {
+      "id": "aenderne",
+      "kraever": {
+        "forloeb": [
+          "moellen",
+          3
+        ]
+      },
+      "mestretVedAabning": {
+        "moellen": 3,
+        "stenbrud": 0
+      },
+      "trin": [
+        "broek3",
+        "broek3",
+        "broek2"
+      ],
+      "brud": []
+    },
+    {
+      "id": "nyt-bed",
+      "kraever": {
+        "aabent": "landsby",
+        "forloeb": [
+          "stenbrud",
+          4
+        ]
+      },
+      "mestretVedAabning": {
+        "moellen": 3,
+        "stenbrud": 4
+      },
+      "trin": [
+        "kirkeOmkreds",
+        "kirkeOmkreds",
+        "kirkeOmkreds"
+      ],
+      "brud": []
+    },
+    {
+      "id": "lys-til-kirken",
+      "kraever": {
+        "quests": [
+          "nyt-bed"
+        ]
+      },
+      "mestretVedAabning": {
+        "moellen": 3,
+        "stenbrud": 4
+      },
+      "trin": [
+        "kirkePris",
+        "kirkePris",
+        "kirkeKasse",
+        "kirkeDel"
+      ],
+      "brud": []
+    },
+    {
+      "id": "klokkerebet",
+      "kraever": {
+        "forloeb": [
+          "stenbrud",
+          3
+        ],
+        "quests": [
+          "lys-til-kirken"
+        ]
+      },
+      "mestretVedAabning": {
+        "moellen": 3,
+        "stenbrud": 4
+      },
+      "trin": [
+        "maal3",
+        "maal3",
+        "maal2"
+      ],
+      "brud": []
+    },
+    {
+      "id": "sten-til-diget",
+      "kraever": {
+        "forloeb": [
+          "stenbrud",
+          1
+        ]
+      },
+      "mestretVedAabning": {
+        "moellen": 2,
+        "stenbrud": 1
+      },
+      "trin": [
+        "maal1",
+        "maal1",
+        "maal1"
+      ],
+      "brud": []
+    },
+    {
+      "id": "stien",
+      "kraever": {
+        "forloeb": [
+          "stenbrud",
+          2
+        ],
+        "quests": [
+          "sten-til-diget"
+        ]
+      },
+      "mestretVedAabning": {
+        "moellen": 2,
+        "stenbrud": 2
+      },
+      "trin": [
+        "maal2",
+        "maal2",
+        "maal1"
+      ],
+      "brud": []
+    },
+    {
+      "id": "maalepaele",
+      "kraever": {
+        "forloeb": [
+          "stenbrud",
+          4
+        ],
+        "quests": [
+          "stien"
+        ]
+      },
+      "mestretVedAabning": {
+        "moellen": 2,
+        "stenbrud": 4
+      },
+      "trin": [
+        "maal4",
+        "maal4",
+        "maal3",
+        "maal4"
+      ],
+      "brud": []
+    },
+    {
+      "id": "aeblerne",
+      "kraever": {
+        "forloeb": [
+          "marked",
+          1
+        ]
+      },
+      "mestretVedAabning": {
+        "moellen": 0,
+        "stenbrud": 0
+      },
+      "trin": [
+        "delHandel",
+        "delHandel",
+        "pris"
+      ],
+      "brud": []
+    },
+    {
+      "id": "kassen",
+      "kraever": {
+        "forloeb": [
+          "marked",
+          2
+        ],
+        "quests": [
+          "aeblerne"
+        ]
+      },
+      "mestretVedAabning": {
+        "moellen": 0,
+        "stenbrud": 0
+      },
+      "trin": [
+        "pris",
+        "kasse",
+        "kasse",
+        "delHandel"
+      ],
+      "brud": []
+    },
+    {
+      "id": "bedstemor",
+      "kraever": {
+        "aabent": "havn"
+      },
+      "mestretVedAabning": {
+        "moellen": 0,
+        "stenbrud": 2
+      },
+      "trin": [
+        "ankomst",
+        "tabel",
+        "ankomst"
+      ],
+      "brud": []
+    },
+    {
+      "id": "sidste-vogn",
+      "kraever": {
+        "forloeb": [
+          "havn",
+          2
+        ],
+        "quests": [
+          "bedstemor"
+        ]
+      },
+      "mestretVedAabning": {
+        "moellen": 0,
+        "stenbrud": 2
+      },
+      "trin": [
+        "turtid",
+        "afgangTilbage",
+        "turtid"
+      ],
+      "brud": []
+    },
+    {
+      "id": "hoestmarked",
+      "kraever": {
+        "quests": [
+          "broed-til-alle",
+          "sten-til-diget",
+          "aeblerne"
+        ]
+      },
+      "mestretVedAabning": {
+        "moellen": 2,
+        "stenbrud": 1
+      },
+      "trin": [
+        "broek2",
+        "maal1",
+        "pris",
+        "delHandel"
+      ],
+      "brud": []
+    }
+  ]
+}

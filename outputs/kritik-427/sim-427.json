@@ -1,0 +1,202 @@
+{
+  "elever": 4000,
+  "opgaver": 150,
+  "krav": [
+    {
+      "opgaver": 3,
+      "krav": 3,
+      "quests": [
+        "mel-til-bageren",
+        "broed-til-alle",
+        "aenderne",
+        "nyt-bed",
+        "klokkerebet",
+        "sten-til-diget",
+        "stien",
+        "aeblerne",
+        "bedstemor",
+        "sidste-vogn"
+      ]
+    },
+    {
+      "opgaver": 4,
+      "krav": 3,
+      "quests": [
+        "lys-til-kirken",
+        "maalepaele",
+        "kassen",
+        "hoestmarked"
+      ]
+    }
+  ],
+  "resultater": [
+    {
+      "p": 0.333,
+      "elever": 4000,
+      "opgaver": 150,
+      "beloenninger": {
+        "gennemsnit": 0.13,
+        "median": 0,
+        "min": 0,
+        "max": 3,
+        "ingen": 0.876
+      },
+      "hvil": {
+        "gennemsnit": 3.35,
+        "median": 4,
+        "ingen": 0.163,
+        "treEllerFlere": 0.531,
+        "andelAfQuestForsoeg": 0.962,
+        "sammeQuestIgen": 1.96
+      },
+      "questForsoeg": 3.49,
+      "foersteBeloenningOpgave": 92,
+      "foersteHvilOpgave": 48,
+      "venteFraHvilTilNyeTal": 20,
+      "foersteQuestErHvil": 0.81,
+      "melTilBagerenFoersteGangHvil": 0.81,
+      "hueEfter150": 0.006,
+      "gentagForloeb": 37.09,
+      "mestredeForloeb": 2.58,
+      "niveau": 11,
+      "hvilFordeling": {
+        "mel-til-bageren": 0.69,
+        "aenderne": 0.261,
+        "broed-til-alle": 0.049
+      }
+    },
+    {
+      "p": 0.6,
+      "elever": 4000,
+      "opgaver": 150,
+      "beloenninger": {
+        "gennemsnit": 2.77,
+        "median": 3,
+        "min": 0,
+        "max": 10,
+        "ingen": 0.031
+      },
+      "hvil": {
+        "gennemsnit": 9.87,
+        "median": 10,
+        "ingen": 0.003,
+        "treEllerFlere": 0.978,
+        "andelAfQuestForsoeg": 0.781,
+        "sammeQuestIgen": 6.61
+      },
+      "questForsoeg": 12.64,
+      "foersteBeloenningOpgave": 39,
+      "foersteHvilOpgave": 15,
+      "venteFraHvilTilNyeTal": 10,
+      "foersteQuestErHvil": 0.789,
+      "melTilBagerenFoersteGangHvil": 0.789,
+      "hueEfter150": 0.639,
+      "gentagForloeb": 17.5,
+      "mestredeForloeb": 9.27,
+      "niveau": 13,
+      "hvilFordeling": {
+        "mel-til-bageren": 0.318,
+        "aenderne": 0.28,
+        "broed-til-alle": 0.228,
+        "sten-til-diget": 0.09,
+        "bedstemor": 0.046,
+        "stien": 0.023,
+        "nyt-bed": 0.011,
+        "lys-til-kirken": 0.002,
+        "maalepaele": 0.001,
+        "klokkerebet": 0.001,
+        "aeblerne": 0
+      }
+    },
+    {
+      "p": 0.8,
+      "elever": 4000,
+      "opgaver": 150,
+      "beloenninger": {
+        "gennemsnit": 10.35,
+        "median": 10,
+        "min": 2,
+        "max": 13,
+        "ingen": 0
+      },
+      "hvil": {
+        "gennemsnit": 8.23,
+        "median": 8,
+        "ingen": 0.001,
+        "treEllerFlere": 0.976,
+        "andelAfQuestForsoeg": 0.443,
+        "sammeQuestIgen": 3.62
+      },
+      "questForsoeg": 18.59,
+      "foersteBeloenningOpgave": 13,
+      "foersteHvilOpgave": 13,
+      "venteFraHvilTilNyeTal": 7,
+      "foersteQuestErHvil": 0.502,
+      "melTilBagerenFoersteGangHvil": 0.502,
+      "hueEfter150": 0.999,
+      "gentagForloeb": 6.6,
+      "mestredeForloeb": 15.45,
+      "niveau": 13,
+      "hvilFordeling": {
+        "broed-til-alle": 0.121,
+        "mel-til-bageren": 0.12,
+        "aenderne": 0.117,
+        "sten-til-diget": 0.115,
+        "bedstemor": 0.109,
+        "nyt-bed": 0.108,
+        "stien": 0.107,
+        "klokkerebet": 0.085,
+        "aeblerne": 0.054,
+        "maalepaele": 0.026,
+        "lys-til-kirken": 0.025,
+        "hoestmarked": 0.008,
+        "kassen": 0.007
+      }
+    },
+    {
+      "p": 0.9,
+      "elever": 4000,
+      "opgaver": 150,
+      "beloenninger": {
+        "gennemsnit": 12.95,
+        "median": 13,
+        "min": 9,
+        "max": 13,
+        "ingen": 0
+      },
+      "hvil": {
+        "gennemsnit": 3.59,
+        "median": 3,
+        "ingen": 0.044,
+        "treEllerFlere": 0.647,
+        "andelAfQuestForsoeg": 0.217,
+        "sammeQuestIgen": 0.94
+      },
+      "questForsoeg": 16.53,
+      "foersteBeloenningOpgave": 6,
+      "foersteHvilOpgave": 20,
+      "venteFraHvilTilNyeTal": 5,
+      "foersteQuestErHvil": 0.274,
+      "melTilBagerenFoersteGangHvil": 0.274,
+      "hueEfter150": 1,
+      "gentagForloeb": 2.62,
+      "mestredeForloeb": 19.34,
+      "niveau": 13,
+      "hvilFordeling": {
+        "aeblerne": 0.107,
+        "aenderne": 0.107,
+        "nyt-bed": 0.106,
+        "sten-til-diget": 0.106,
+        "klokkerebet": 0.105,
+        "stien": 0.105,
+        "mel-til-bageren": 0.104,
+        "broed-til-alle": 0.101,
+        "bedstemor": 0.099,
+        "lys-til-kirken": 0.016,
+        "kassen": 0.015,
+        "hoestmarked": 0.015,
+        "maalepaele": 0.015
+      }
+    }
+  ]
+}
