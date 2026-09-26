@@ -47,12 +47,19 @@ function preloadHrefForRole(role, chunkHrefs) {
 
 try {
   var __role = guessRoleFromStorage(window.localStorage);
-  var __href = preloadHrefForRole(__role, {"coach":"/assets/Dashboard-CaFCwK2v.js","athlete":"/assets/AthleteView-vY5o27If.js"});
+  var __href = preloadHrefForRole(__role, {"coach":"/assets/Dashboard-D60n-Ca8.js","athlete":"/assets/AthleteView-CiaKb0JX.js"});
   if (__href) {
     var __link = document.createElement('link');
     __link.rel = 'modulepreload';
     __link.href = __href;
     document.head.appendChild(__link);
+    var __deps = {"coach":["/assets/videoCoachUpload-B4_EFAOb.js","/assets/exerciseNames-B2_FFuAZ.js"],"athlete":["/assets/ugenoegle-Cz0lROPu.js","/assets/videoCoachUpload-B4_EFAOb.js","/assets/athleteSilentFailLog-Cv3iZoLk.js"]}[__role] || [];
+    for (var __i = 0; __i < __deps.length; __i++) {
+      var __d = document.createElement('link');
+      __d.rel = 'modulepreload';
+      __d.href = __deps[__i];
+      document.head.appendChild(__d);
+    }
   }
 } catch (e) { /* ingen forudindlæsning ved fejl, adfærd som i dag */ }
 })();</script>
@@ -71,7 +78,7 @@ try {
     <meta name="apple-mobile-web-app-title" content="Entropi" />
     <meta name="mobile-web-app-capable" content="yes" />
     <title>Entropi Coaching</title>
-    <script type="module" crossorigin src="/assets/index-D_oh7T6Y.js"></script>
+    <script type="module" crossorigin src="/assets/index-PPmz2O-8.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-nqMpL4T3.css">
   </head>
   <body>

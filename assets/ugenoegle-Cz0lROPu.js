@@ -1,0 +1,1 @@
+function e(e){return(e instanceof Date?e.toISOString():String(e)).slice(0,10)}function t(t){let[n,r,i]=e(t).split(`-`).map(Number),a=new Date(Date.UTC(n,r-1,i)),o=(a.getUTCDay()+6)%7;a.setUTCDate(a.getUTCDate()-o+3);let s=new Date(Date.UTC(a.getUTCFullYear(),0,1)),c=Math.ceil(((a-s)/864e5+1)/7);return`${a.getUTCFullYear()}-W${String(c).padStart(2,`0`)}`}export{t as n,e as t};
