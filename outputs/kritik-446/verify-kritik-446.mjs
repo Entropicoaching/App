@@ -77,6 +77,22 @@ if (blok >= 2) {
   if (c) {
     ok(!c.fejl, `coach-446 stoppede: ${String(c.fejl).slice(0, 200)}`)
     for (const b of ['390', '1280']) ok(c.bredder?.[b]?.log, `coach ${b}: Log ikke maalt`)
+    const t = (n) => tjekAf(c, n)
+    for (const b of ['390', '1280']) {
+      ok(t(`${b}: forsiden siger 4 af 4 pas`)?.ok, `coach ${b}: forsiden siger ikke 4 af 4 pas`)
+      ok(t(`${b}: "Kraever dit blik" viser atletens linje`)?.ok, `coach ${b}: atletens linje fra "din uge" mangler`)
+      ok(t(`${b}: Log viser det sprungne saet fra pas 3`)?.ok, `coach ${b}: et sprunget saet (med net) staar ikke i Log`)
+      ok(t(`${b}: Log viser noten og RPE 9`)?.ok, `coach ${b}: noten fra kaelderen staar ikke i Log`)
+      // Fund (roede, naar de er rettet):
+      ok(t(`${b}: Log viser baenkpres 4 i pas 2 som sprunget over`)?.ok === false, `A-spring (${b}): coachen ser nu kaelderens spring - opdater KRITIK`)
+      ok(t(`${b}: PR-tidslinjen har kaelderens`)?.ok === false, `A-pr (${b}): PR-tidslinjen har nu kaelderens rekorder - opdater KRITIK`)
+      ok(c.bredder[b].kopi?.nyeUger?.length >= 1, `coach ${b}: "Kopier seneste uge" ikke maalt`)
+    }
+    ok(c.bredder['390'].kopi?.nyeUger?.length === 2, 'A-kopi: dobbelttryk paa telefonen giver ikke laengere to uger - opdater KRITIK')
+    ok(c.bredder['1280'].kopi?.nyeUger?.length === 1, 'coach 1280: et tryk paa "Kopier seneste uge" gav ikke een uge')
+    ok(c.bredder['390'].forsideRigtigMs - c.bredder['390'].forsideMs >= 2000, 'A-forside: telefonens forside viser ikke laengere "Ingen logs" i flere sekunder - opdater KRITIK')
+    ok(c.personalRecords?.length > new Set(c.personalRecords).size, 'A-pr: personal_records har ikke laengere dubletter - opdater KRITIK')
+    ok(!c.konsolFejl?.length, `coach: konsolfejl ${c.konsolFejl?.join(' | ')}`)
   }
   ok(png.some(f => f.startsWith('C-390-')) && png.some(f => f.startsWith('C-1280-')), 'blok 2: skaermbilleder mangler')
 }

@@ -23,7 +23,7 @@ import { fileURLToPath } from 'node:url'
 import { UD, MOCK_PORT, MOCK_URL, BYG, statiskServer, hentChromium, bygSeed, nyTelefon, logIndAtlet, brugbart, drosl, tabel, PAS } from './faelles-446.mjs'
 import { ensureSyntheticClip } from '../../e2e/harness.mjs'
 
-export async function koerUge({ browser, dist, fx, createMockSupabase, uger = 130, prefix = 'U' }) {
+export async function koerUge({ browser, dist, fx, createMockSupabase, uger = 130, prefix = 'U', springMedNet = false }) {
   const { seed, exerciseIds } = bygSeed(fx.buildSeed, fx, { uger })
   const mock = createMockSupabase(seed)
   await mock.listen(MOCK_PORT)
@@ -234,8 +234,23 @@ export async function koerUge({ browser, dist, fx, createMockSupabase, uger = 13
   await shot('08-efter-afsendelse')
 
   // ---- pas 3 og 4 med net ----
-  await logPas(2)
-  trin('pas 3 med net')
+  if (springMedNet) {
+    // Blok 2: et sprunget saet med net (Planke 2/2), saa coachen har et at se.
+    for (const o of PAS[2].oevelser) for (let n = 1; n <= o.saet; n++) {
+      if (o.navn === 'Planke' && n === 2) {
+        await venter('Planke', 2)
+        await page.waitForTimeout(400)
+        await page.getByRole('button', { name: 'Spring over', exact: true }).click()
+        await page.waitForTimeout(3000)
+        continue
+      }
+      await logSaet(2, o.navn, n)
+    }
+    trin('pas 3 med net, Planke saet 2 sprunget over')
+  } else {
+    await logPas(2)
+    trin('pas 3 med net')
+  }
   await logPas(3)
   trin('pas 4 med net')
   r.vurderingPas4 = await vurder(3, 4)
