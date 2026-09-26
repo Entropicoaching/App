@@ -1,0 +1,4057 @@
+{
+ "kilde": "skak main (git archive), data/gaader-lette.json",
+ "dybde": 5,
+ "froe": 437,
+ "antal": 60,
+ "iAlt": 330,
+ "sekunder": 207,
+ "knudeLoft": 3000000,
+ "dybdeBrugt": {
+  "5": 60
+ },
+ "prTema": {
+  "hangingPiece": 14,
+  "mateIn1": 20,
+  "defensiveMove": 12,
+  "fork": 14
+ },
+ "ulovlige": [],
+ "forkertTema": [],
+ "toLoesninger": [
+  {
+   "id": "425-0076",
+   "tema": "hangingPiece",
+   "rating": 355,
+   "fen": "8/1P6/8/7k/3Q4/8/8/1Kb5 w - - 0 1",
+   "facit": [
+    "b1c1"
+   ],
+   "ogsaa": [
+    "Qd1+"
+   ]
+  },
+  {
+   "id": "425-0200",
+   "tema": "defensiveMove",
+   "rating": 495,
+   "fen": "8/8/4K3/8/1N6/5p2/8/6kN w - - 0 1",
+   "facit": [
+    "h1g3"
+   ],
+   "ogsaa": [
+    "Kd7",
+    "Ke7",
+    "Kf7",
+    "Kf6",
+    "Kf5",
+    "Ke5",
+    "Kd5",
+    "Kd6",
+    "Nd5",
+    "Nd3",
+    "Nc2",
+    "Nf2"
+   ]
+  },
+  {
+   "id": "425-0247",
+   "tema": "defensiveMove",
+   "rating": 480,
+   "fen": "7K/8/8/k7/8/3p4/8/1B1r4 w - - 0 1",
+   "facit": [
+    "b1a2"
+   ],
+   "ogsaa": [
+    "Bxd3"
+   ]
+  }
+ ],
+ "ligeSaaFristende": [
+  {
+   "id": "425-0052",
+   "tema": "hangingPiece",
+   "rating": 325,
+   "fen": "8/8/r7/4K3/2B2r2/8/8/4k3 w - - 0 1",
+   "facit": [
+    "c4a6"
+   ],
+   "facitSer": 5,
+   "ogsaa": [
+    "Kxf4 (+5)"
+   ]
+  },
+  {
+   "id": "425-0076",
+   "tema": "hangingPiece",
+   "rating": 355,
+   "fen": "8/1P6/8/7k/3Q4/8/8/1Kb5 w - - 0 1",
+   "facit": [
+    "b1c1"
+   ],
+   "facitSer": 3,
+   "ogsaa": [
+    "b8=R (+4)",
+    "b8=Q (+8)"
+   ]
+  }
+ ],
+ "facitVinderIkke": [
+  {
+   "id": "425-0200",
+   "tema": "defensiveMove",
+   "gevinst": -2
+  },
+  {
+   "id": "425-0247",
+   "tema": "defensiveMove",
+   "gevinst": -2
+  }
+ ],
+ "matOverset": [],
+ "svaerereEndRating": [],
+ "lokkendeSlagIMatI1": 5,
+ "kongenSlaar": 1,
+ "resultater": [
+  {
+   "id": "425-0008",
+   "tema": "hangingPiece",
+   "rating": 370,
+   "fen": "1K1n4/3rQ3/8/8/3P4/2k5/8/8 w - - 0 1",
+   "facit": [
+    "e7d7"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 6
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "slaaet": "r",
+    "slaarMed": "q"
+   },
+   "soeg": {
+    "nu": 2,
+    "facitGevinst": 7,
+    "facitScore": 9,
+    "bedsteAndet": {
+     "uci": "e7e8",
+     "san": "Qe8",
+     "gevinst": 4,
+     "score": 6
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 6,
+    "lovligeTraek": 23,
+    "farve": "w",
+    "brik": "q",
+    "laengde": 1,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [
+     "Qxd8"
+    ],
+    "andreSkak": [
+     "Qe3+",
+     "Qe1+",
+     "Qc5+",
+     "Qb4+",
+     "Qa3+"
+    ]
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": {
+    "facitSer": 5,
+    "ligeSaaFristende": []
+   },
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 12394
+  },
+  {
+   "id": "425-0011",
+   "tema": "hangingPiece",
+   "rating": 360,
+   "fen": "2q3k1/1P3p2/1KP5/8/8/8/8/8 w - - 0 1",
+   "facit": [
+    "b7c8q"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 6
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "slaaet": "q",
+    "slaarMed": "p"
+   },
+   "soeg": {
+    "nu": -8,
+    "facitGevinst": 17,
+    "facitScore": 9,
+    "bedsteAndet": {
+     "uci": "b7c8r",
+     "san": "bxc8=R+",
+     "gevinst": 14,
+     "score": 6
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 6,
+    "lovligeTraek": 14,
+    "farve": "w",
+    "brik": "p",
+    "laengde": 1,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": true,
+    "andreSlag": [
+     "bxc8=N",
+     "bxc8=B",
+     "bxc8=R+"
+    ],
+    "andreSkak": [
+     "bxc8=R+"
+    ]
+   },
+   "dom": {
+    "tunge": [
+     "3 andre slag",
+     "facit er en forvandling"
+    ],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": {
+    "facitSer": 17,
+    "ligeSaaFristende": []
+   },
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 3429
+  },
+  {
+   "id": "425-0022",
+   "tema": "hangingPiece",
+   "rating": 365,
+   "fen": "8/8/4B2q/2K5/k3q3/8/8/8 b - - 0 1",
+   "facit": [
+    "e4e6"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 5
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "slaaet": "b",
+    "slaarMed": "q"
+   },
+   "soeg": {
+    "nu": 15,
+    "facitGevinst": "mat",
+    "facitScore": 1002,
+    "bedsteAndet": {
+     "uci": "h6f8",
+     "san": "Qf8+",
+     "gevinst": "mat",
+     "score": 1000
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 4
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 5,
+    "lovligeTraek": 43,
+    "farve": "b",
+    "brik": "q",
+    "laengde": 2,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [
+     "Qhxe6"
+    ],
+    "andreSkak": [
+     "Qf8+",
+     "Qh5+",
+     "Qg5+",
+     "Qhe3+",
+     "Qc1+",
+     "Qd5+",
+     "Qc6+",
+     "Qe5+",
+     "Qf5+",
+     "Qee3+",
+     "Qc2+",
+     "Qd4+",
+     "Qc4+",
+     "Qb4+"
+    ]
+   },
+   "dom": {
+    "tunge": [
+     "sort i traek"
+    ],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": {
+    "facitSer": 3,
+    "ligeSaaFristende": []
+   },
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 150289
+  },
+  {
+   "id": "425-0030",
+   "tema": "hangingPiece",
+   "rating": 345,
+   "fen": "6K1/8/4r3/2N5/1k6/8/8/8 w - - 0 1",
+   "facit": [
+    "c5e6"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 4
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "slaaet": "r",
+    "slaarMed": "n"
+   },
+   "soeg": {
+    "nu": -2,
+    "facitGevinst": 5,
+    "facitScore": 3,
+    "bedsteAndet": {
+     "uci": "g8g7",
+     "san": "Kg7",
+     "gevinst": 2,
+     "score": 0
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 4,
+    "lovligeTraek": 13,
+    "farve": "w",
+    "brik": "n",
+    "laengde": 2,
+    "springer": true,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Na6+",
+     "Nd3+"
+    ]
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": {
+    "facitSer": 5,
+    "ligeSaaFristende": []
+   },
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 1719
+  },
+  {
+   "id": "425-0035",
+   "tema": "hangingPiece",
+   "rating": 320,
+   "fen": "1r6/6k1/1R6/8/8/6K1/8/8 w - - 0 1",
+   "facit": [
+    "b6b8"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 4
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "slaaet": "r",
+    "slaarMed": "r"
+   },
+   "soeg": {
+    "nu": 0,
+    "facitGevinst": 5,
+    "facitScore": 5,
+    "bedsteAndet": {
+     "uci": "b6c6",
+     "san": "Rc6",
+     "gevinst": 0,
+     "score": 0
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 4,
+    "lovligeTraek": 22,
+    "farve": "w",
+    "brik": "r",
+    "laengde": 2,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Rb7+",
+     "Rg6+"
+    ]
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": {
+    "facitSer": 5,
+    "ligeSaaFristende": []
+   },
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 4152
+  },
+  {
+   "id": "425-0045",
+   "tema": "hangingPiece",
+   "rating": 375,
+   "fen": "8/1R6/8/2k5/6K1/q3R3/8/8 w - - 0 1",
+   "facit": [
+    "e3a3"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 5
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "slaaet": "q",
+    "slaarMed": "r"
+   },
+   "soeg": {
+    "nu": 1,
+    "facitGevinst": 9,
+    "facitScore": 10,
+    "bedsteAndet": {
+     "uci": "e3e6",
+     "san": "Re6",
+     "gevinst": 6,
+     "score": 7
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 5,
+    "lovligeTraek": 36,
+    "farve": "w",
+    "brik": "r",
+    "laengde": 4,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Rc7+",
+     "Rb5+",
+     "Re5+",
+     "Rc3+"
+    ]
+   },
+   "dom": {
+    "tunge": [
+     "langt traek (4 felter)"
+    ],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": {
+    "facitSer": 9,
+    "ligeSaaFristende": []
+   },
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 38354
+  },
+  {
+   "id": "425-0050",
+   "tema": "hangingPiece",
+   "rating": 335,
+   "fen": "8/8/8/5k2/8/3r4/6R1/5BK1 w - - 0 1",
+   "facit": [
+    "f1d3"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 5
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "slaaet": "r",
+    "slaarMed": "b"
+   },
+   "soeg": {
+    "nu": 3,
+    "facitGevinst": 5,
+    "facitScore": 8,
+    "bedsteAndet": {
+     "uci": "g2g7",
+     "san": "Rg7",
+     "gevinst": 2,
+     "score": 5
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 5,
+    "lovligeTraek": 18,
+    "farve": "w",
+    "brik": "b",
+    "laengde": 2,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Rg5+",
+     "Rf2+"
+    ]
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": {
+    "facitSer": 5,
+    "ligeSaaFristende": []
+   },
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 11590
+  },
+  {
+   "id": "425-0052",
+   "tema": "hangingPiece",
+   "rating": 325,
+   "fen": "8/8/r7/4K3/2B2r2/8/8/4k3 w - - 0 1",
+   "facit": [
+    "c4a6"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 5
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "slaaet": "r",
+    "slaarMed": "b"
+   },
+   "soeg": {
+    "nu": -7,
+    "facitGevinst": 5,
+    "facitScore": -2,
+    "bedsteAndet": {
+     "uci": "e5f4",
+     "san": "Kxf4",
+     "gevinst": 2,
+     "score": -5
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 5,
+    "lovligeTraek": 13,
+    "farve": "w",
+    "brik": "b",
+    "laengde": 2,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [
+     "Kxf4"
+    ],
+    "andreSkak": []
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": {
+    "facitSer": 5,
+    "ligeSaaFristende": [
+     "Kxf4 (+5)"
+    ]
+   },
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 11792
+  },
+  {
+   "id": "425-0065",
+   "tema": "hangingPiece",
+   "rating": 320,
+   "fen": "8/8/8/8/1q6/7K/1k1B4/8 w - - 0 1",
+   "facit": [
+    "d2b4"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 4
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "slaaet": "q",
+    "slaarMed": "b"
+   },
+   "soeg": {
+    "nu": -6,
+    "facitGevinst": 9,
+    "facitScore": 3,
+    "bedsteAndet": {
+     "uci": "d2e3",
+     "san": "Be3",
+     "gevinst": 6,
+     "score": 0
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 4,
+    "lovligeTraek": 11,
+    "farve": "w",
+    "brik": "b",
+    "laengde": 2,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Bc3+",
+     "Bc1+"
+    ]
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": {
+    "facitSer": 9,
+    "ligeSaaFristende": []
+   },
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 3092
+  },
+  {
+   "id": "425-0068",
+   "tema": "hangingPiece",
+   "rating": 335,
+   "fen": "8/1K4k1/8/8/8/4R3/8/4r1n1 w - - 0 1",
+   "facit": [
+    "e3e1"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 5
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "slaaet": "r",
+    "slaarMed": "r"
+   },
+   "soeg": {
+    "nu": -3,
+    "facitGevinst": 5,
+    "facitScore": 2,
+    "bedsteAndet": {
+     "uci": "b7c8",
+     "san": "Kc8",
+     "gevinst": 0,
+     "score": -3
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 5,
+    "lovligeTraek": 22,
+    "farve": "w",
+    "brik": "r",
+    "laengde": 2,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Re7+",
+     "Rg3+"
+    ]
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": {
+    "facitSer": 5,
+    "ligeSaaFristende": []
+   },
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 5657
+  },
+  {
+   "id": "425-0069",
+   "tema": "hangingPiece",
+   "rating": 355,
+   "fen": "8/2K5/8/7B/8/8/R5n1/2k5 w - - 0 1",
+   "facit": [
+    "a2g2"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 5
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "slaaet": "n",
+    "slaarMed": "r"
+   },
+   "soeg": {
+    "nu": 5,
+    "facitGevinst": 3,
+    "facitScore": 8,
+    "bedsteAndet": {
+     "uci": "c7b8",
+     "san": "Kb8",
+     "gevinst": 0,
+     "score": 5
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 5,
+    "lovligeTraek": 28,
+    "farve": "w",
+    "brik": "r",
+    "laengde": 6,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Rc2+",
+     "Ra1+"
+    ]
+   },
+   "dom": {
+    "tunge": [
+     "langt traek (6 felter)"
+    ],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": {
+    "facitSer": 3,
+    "ligeSaaFristende": []
+   },
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 14056
+  },
+  {
+   "id": "425-0076",
+   "tema": "hangingPiece",
+   "rating": 355,
+   "fen": "8/1P6/8/7k/3Q4/8/8/1Kb5 w - - 0 1",
+   "facit": [
+    "b1c1"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 5
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "slaaet": "b",
+    "slaarMed": "k"
+   },
+   "soeg": {
+    "nu": 7,
+    "facitGevinst": 11,
+    "facitScore": 18,
+    "bedsteAndet": {
+     "uci": "d4d1",
+     "san": "Qd1+",
+     "gevinst": 11,
+     "score": 18
+    },
+    "ligeSaaGode": [
+     "Qd1+"
+    ],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 5,
+    "lovligeTraek": 35,
+    "farve": "w",
+    "brik": "k",
+    "laengde": 1,
+    "springer": false,
+    "kongenSlaar": true,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Qc5+",
+     "Qd5+",
+     "Qe5+",
+     "Qh8+",
+     "Qg4+",
+     "Qh4+",
+     "Qd1+"
+    ]
+   },
+   "dom": {
+    "tunge": [
+     "kongen slaar"
+    ],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": true,
+   "facitVinder": true,
+   "graad": {
+    "facitSer": 3,
+    "ligeSaaFristende": [
+     "b8=R (+4)",
+     "b8=Q (+8)"
+    ]
+   },
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 83735
+  },
+  {
+   "id": "425-0085",
+   "tema": "hangingPiece",
+   "rating": 360,
+   "fen": "1n6/3k4/8/8/3K1Q2/8/8/8 w - - 0 1",
+   "facit": [
+    "f4b8"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 4
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "slaaet": "n",
+    "slaarMed": "q"
+   },
+   "soeg": {
+    "nu": 6,
+    "facitGevinst": 3,
+    "facitScore": 9,
+    "bedsteAndet": {
+     "uci": "d4c5",
+     "san": "Kc5",
+     "gevinst": 0,
+     "score": 6
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 4,
+    "lovligeTraek": 29,
+    "farve": "w",
+    "brik": "q",
+    "laengde": 4,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Qd6+",
+     "Qc7+",
+     "Qf5+",
+     "Qf7+",
+     "Qg4+"
+    ]
+   },
+   "dom": {
+    "tunge": [
+     "langt traek (4 felter)"
+    ],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": {
+    "facitSer": 3,
+    "ligeSaaFristende": []
+   },
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 18648
+  },
+  {
+   "id": "425-0089",
+   "tema": "hangingPiece",
+   "rating": 355,
+   "fen": "r7/1k6/8/8/N1P5/8/6K1/8 b - - 0 1",
+   "facit": [
+    "a8a4"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 5
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "slaaet": "n",
+    "slaarMed": "r"
+   },
+   "soeg": {
+    "nu": 1,
+    "facitGevinst": 4,
+    "facitScore": 5,
+    "bedsteAndet": {
+     "uci": "a8c8",
+     "san": "Rc8",
+     "gevinst": 1,
+     "score": 2
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 5,
+    "lovligeTraek": 17,
+    "farve": "b",
+    "brik": "r",
+    "laengde": 4,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Rg8+"
+    ]
+   },
+   "dom": {
+    "tunge": [
+     "langt traek (4 felter)",
+     "sort i traek"
+    ],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": {
+    "facitSer": 3,
+    "ligeSaaFristende": []
+   },
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 8505
+  },
+  {
+   "id": "425-0100",
+   "tema": "mateIn1",
+   "rating": 390,
+   "fen": "8/8/8/8/4p1Q1/6K1/8/5k2 w - - 0 1",
+   "facit": [
+    "g4d1"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 4
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "mattraek": 1
+   },
+   "soeg": {
+    "nu": 8,
+    "facitGevinst": "mat",
+    "facitScore": 1004,
+    "bedsteAndet": {
+     "uci": "g4e4",
+     "san": "Qxe4",
+     "gevinst": "mat",
+     "score": 1002
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 11
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 4,
+    "lovligeTraek": 20,
+    "farve": "w",
+    "brik": "q",
+    "laengde": 3,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [
+     "Qxe4"
+    ],
+    "andreSkak": [
+     "Qf5+",
+     "Qh3+",
+     "Qf3+",
+     "Qe2+",
+     "Qf4+"
+    ]
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 10282
+  },
+  {
+   "id": "425-0101",
+   "tema": "mateIn1",
+   "rating": 395,
+   "fen": "k7/8/1K6/8/8/8/8/2Q5 w - - 0 1",
+   "facit": [
+    "c1c8"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 3
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "mattraek": 1
+   },
+   "soeg": {
+    "nu": 9,
+    "facitGevinst": "mat",
+    "facitScore": 1004,
+    "bedsteAndet": {
+     "uci": "b6c7",
+     "san": "Kc7",
+     "gevinst": "mat",
+     "score": 1002
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 24
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 3,
+    "lovligeTraek": 27,
+    "farve": "w",
+    "brik": "q",
+    "laengde": 7,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Qa3+",
+     "Qc6+",
+     "Qh1+",
+     "Qa1+"
+    ]
+   },
+   "dom": {
+    "tunge": [
+     "langt traek (7 felter)"
+    ],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 5041
+  },
+  {
+   "id": "425-0105",
+   "tema": "mateIn1",
+   "rating": 380,
+   "fen": "4N3/8/5R2/1p6/8/8/n4K2/7k w - - 0 1",
+   "facit": [
+    "f6h6"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 6
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "mattraek": 1
+   },
+   "soeg": {
+    "nu": 4,
+    "facitGevinst": "mat",
+    "facitScore": 1004,
+    "bedsteAndet": {
+     "uci": "e8g7",
+     "san": "Ng7",
+     "gevinst": "mat",
+     "score": 1002
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 20
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 6,
+    "lovligeTraek": 21,
+    "farve": "w",
+    "brik": "r",
+    "laengde": 2,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": []
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 14910
+  },
+  {
+   "id": "425-0110",
+   "tema": "mateIn1",
+   "rating": 415,
+   "fen": "K7/8/8/8/8/2kN4/3r4/1r6 b - - 0 1",
+   "facit": [
+    "d2a2"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 5
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "mattraek": 1
+   },
+   "soeg": {
+    "nu": 7,
+    "facitGevinst": "mat",
+    "facitScore": 1004,
+    "bedsteAndet": {
+     "uci": "c3d3",
+     "san": "Kxd3",
+     "gevinst": "mat",
+     "score": 1002
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 12
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 5,
+    "lovligeTraek": 28,
+    "farve": "b",
+    "brik": "r",
+    "laengde": 3,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [
+     "Kxd3",
+     "Rxd3"
+    ],
+    "andreSkak": [
+     "Rb8+",
+     "Ra1+"
+    ]
+   },
+   "dom": {
+    "tunge": [
+     "2 andre slag",
+     "sort i traek"
+    ],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 25168
+  },
+  {
+   "id": "425-0117",
+   "tema": "mateIn1",
+   "rating": 390,
+   "fen": "5K2/8/1B6/8/3Q4/8/8/5k2 w - - 0 1",
+   "facit": [
+    "d4f2"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 4
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "mattraek": 1
+   },
+   "soeg": {
+    "nu": 12,
+    "facitGevinst": "mat",
+    "facitScore": 1004,
+    "bedsteAndet": {
+     "uci": "f8g8",
+     "san": "Kg8",
+     "gevinst": "mat",
+     "score": 1000
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 16
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 4,
+    "lovligeTraek": 35,
+    "farve": "w",
+    "brik": "q",
+    "laengde": 2,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Qf6+",
+     "Qf4+",
+     "Qg1+",
+     "Qd3+",
+     "Qd1+",
+     "Qa1+",
+     "Qc4+"
+    ]
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 13176
+  },
+  {
+   "id": "425-0127",
+   "tema": "mateIn1",
+   "rating": 440,
+   "fen": "5K2/4r1Nk/8/1Q6/8/6r1/8/8 w - - 0 1",
+   "facit": [
+    "b5h5"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 6
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "mattraek": 1
+   },
+   "soeg": {
+    "nu": 2,
+    "facitGevinst": "mat",
+    "facitScore": 1004,
+    "bedsteAndet": {
+     "uci": "b5b1",
+     "san": "Qb1+",
+     "gevinst": "mat",
+     "score": 1000
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 1
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 6,
+    "lovligeTraek": 28,
+    "farve": "w",
+    "brik": "q",
+    "laengde": 6,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [
+     "Kxe7"
+    ],
+    "andreSkak": [
+     "Qf5+",
+     "Qd3+",
+     "Qb1+"
+    ]
+   },
+   "dom": {
+    "tunge": [
+     "langt traek (6 felter)"
+    ],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 14990
+  },
+  {
+   "id": "425-0131",
+   "tema": "mateIn1",
+   "rating": 415,
+   "fen": "8/6K1/8/8/3N4/1Q6/8/k7 w - - 0 1",
+   "facit": [
+    "d4c2"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 4
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "mattraek": 1
+   },
+   "soeg": {
+    "nu": 12,
+    "facitGevinst": "mat",
+    "facitScore": 1004,
+    "bedsteAndet": {
+     "uci": "b3a4",
+     "san": "Qa4+",
+     "gevinst": "mat",
+     "score": 1000
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 19
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 4,
+    "lovligeTraek": 38,
+    "farve": "w",
+    "brik": "n",
+    "laengde": 2,
+    "springer": true,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Qa4+",
+     "Qc3+",
+     "Qd1+",
+     "Qb2+",
+     "Qb1+",
+     "Qa2+",
+     "Qa3+"
+    ]
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 15760
+  },
+  {
+   "id": "425-0132",
+   "tema": "mateIn1",
+   "rating": 405,
+   "fen": "K7/8/6R1/8/4r2k/8/R7/8 w - - 0 1",
+   "facit": [
+    "a2h2"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 5
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "mattraek": 1
+   },
+   "soeg": {
+    "nu": 5,
+    "facitGevinst": "mat",
+    "facitScore": 1004,
+    "bedsteAndet": {
+     "uci": "a8b7",
+     "san": "Kb7",
+     "gevinst": 5,
+     "score": 10
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 5,
+    "lovligeTraek": 30,
+    "farve": "w",
+    "brik": "r",
+    "laengde": 7,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Rh6+",
+     "Rg4+"
+    ]
+   },
+   "dom": {
+    "tunge": [
+     "langt traek (7 felter)"
+    ],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 4885
+  },
+  {
+   "id": "425-0140",
+   "tema": "mateIn1",
+   "rating": 360,
+   "fen": "k7/5R2/1K6/8/8/3N4/8/8 w - - 0 1",
+   "facit": [
+    "f7f8"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 4
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "mattraek": 1
+   },
+   "soeg": {
+    "nu": 8,
+    "facitGevinst": "mat",
+    "facitScore": 1004,
+    "bedsteAndet": {
+     "uci": "f7g7",
+     "san": "Rg7",
+     "gevinst": "mat",
+     "score": 1002
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 24
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 4,
+    "lovligeTraek": 28,
+    "farve": "w",
+    "brik": "r",
+    "laengde": 1,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Ra7+"
+    ]
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 7364
+  },
+  {
+   "id": "425-0141",
+   "tema": "mateIn1",
+   "rating": 360,
+   "fen": "8/8/5K1k/2R5/5R2/8/8/8 w - - 0 1",
+   "facit": [
+    "f4h4"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 4
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "mattraek": 1
+   },
+   "soeg": {
+    "nu": 10,
+    "facitGevinst": "mat",
+    "facitScore": 1004,
+    "bedsteAndet": {
+     "uci": "f6f7",
+     "san": "Kf7",
+     "gevinst": "mat",
+     "score": 1002
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 27
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 4,
+    "lovligeTraek": 30,
+    "farve": "w",
+    "brik": "r",
+    "laengde": 2,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Rh5+"
+    ]
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 15524
+  },
+  {
+   "id": "425-0147",
+   "tema": "mateIn1",
+   "rating": 400,
+   "fen": "k7/8/4R3/8/8/8/8/1R2K3 w - - 0 1",
+   "facit": [
+    "e6a6"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 4
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "mattraek": 1
+   },
+   "soeg": {
+    "nu": 10,
+    "facitGevinst": "mat",
+    "facitScore": 1004,
+    "bedsteAndet": {
+     "uci": "e6e5",
+     "san": "Re5",
+     "gevinst": "mat",
+     "score": 1002
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 23
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 4,
+    "lovligeTraek": 28,
+    "farve": "w",
+    "brik": "r",
+    "laengde": 4,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Re8+",
+     "Rb8+",
+     "Ra1+"
+    ]
+   },
+   "dom": {
+    "tunge": [
+     "langt traek (4 felter)"
+    ],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 11595
+  },
+  {
+   "id": "425-0150",
+   "tema": "mateIn1",
+   "rating": 410,
+   "fen": "7K/8/3r4/8/8/8/3k2r1/8 b - - 0 1",
+   "facit": [
+    "d6h6"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 4
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "mattraek": 1
+   },
+   "soeg": {
+    "nu": 10,
+    "facitGevinst": "mat",
+    "facitScore": 1004,
+    "bedsteAndet": {
+     "uci": "d6d5",
+     "san": "Rd5",
+     "gevinst": "mat",
+     "score": 1002
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 26
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 4,
+    "lovligeTraek": 30,
+    "farve": "b",
+    "brik": "r",
+    "laengde": 4,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Rd8+",
+     "Rg8+",
+     "Rh2+"
+    ]
+   },
+   "dom": {
+    "tunge": [
+     "langt traek (4 felter)",
+     "sort i traek"
+    ],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 13745
+  },
+  {
+   "id": "425-0169",
+   "tema": "mateIn1",
+   "rating": 380,
+   "fen": "k7/8/8/2R5/1R6/4K3/8/8 w - - 0 1",
+   "facit": [
+    "c5a5"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 4
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "mattraek": 1
+   },
+   "soeg": {
+    "nu": 10,
+    "facitGevinst": "mat",
+    "facitScore": 1004,
+    "bedsteAndet": {
+     "uci": "c5d5",
+     "san": "Rd5",
+     "gevinst": "mat",
+     "score": 1002
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 32
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 4,
+    "lovligeTraek": 36,
+    "farve": "w",
+    "brik": "r",
+    "laengde": 2,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Rc8+",
+     "Rb8+",
+     "Ra4+"
+    ]
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 11640
+  },
+  {
+   "id": "425-0171",
+   "tema": "mateIn1",
+   "rating": 420,
+   "fen": "1K6/7k/b7/8/8/8/6q1/8 b - - 0 1",
+   "facit": [
+    "g2b7"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 4
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "mattraek": 1
+   },
+   "soeg": {
+    "nu": 12,
+    "facitGevinst": "mat",
+    "facitScore": 1004,
+    "bedsteAndet": {
+     "uci": "g2c6",
+     "san": "Qc6",
+     "gevinst": "mat",
+     "score": 1002
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 26
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 4,
+    "lovligeTraek": 35,
+    "farve": "b",
+    "brik": "q",
+    "laengde": 5,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Qa8+",
+     "Qg3+",
+     "Qg8+",
+     "Qh2+",
+     "Qb2+"
+    ]
+   },
+   "dom": {
+    "tunge": [
+     "langt traek (5 felter)",
+     "sort i traek"
+    ],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 19949
+  },
+  {
+   "id": "425-0177",
+   "tema": "mateIn1",
+   "rating": 435,
+   "fen": "6K1/1r6/8/8/k7/8/P3r3/8 b - - 0 1",
+   "facit": [
+    "e2e8"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 5
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "mattraek": 1
+   },
+   "soeg": {
+    "nu": 9,
+    "facitGevinst": "mat",
+    "facitScore": 1004,
+    "bedsteAndet": {
+     "uci": "e2d2",
+     "san": "Rd2",
+     "gevinst": "mat",
+     "score": 1002
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 27
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 5,
+    "lovligeTraek": 32,
+    "farve": "b",
+    "brik": "r",
+    "laengde": 6,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [
+     "Rxa2"
+    ],
+    "andreSkak": [
+     "Rb8+",
+     "Rg7+",
+     "Rg2+"
+    ]
+   },
+   "dom": {
+    "tunge": [
+     "langt traek (6 felter)",
+     "sort i traek"
+    ],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 21960
+  },
+  {
+   "id": "425-0180",
+   "tema": "mateIn1",
+   "rating": 390,
+   "fen": "8/5K2/7k/3N4/8/8/8/4Q3 w - - 0 1",
+   "facit": [
+    "e1h4"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 4
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "mattraek": 1
+   },
+   "soeg": {
+    "nu": 12,
+    "facitGevinst": "mat",
+    "facitScore": 1004,
+    "bedsteAndet": {
+     "uci": "e1e5",
+     "san": "Qe5",
+     "gevinst": "mat",
+     "score": 1002
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 32
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 4,
+    "lovligeTraek": 35,
+    "farve": "w",
+    "brik": "q",
+    "laengde": 3,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Qd2+",
+     "Qe3+",
+     "Qe6+",
+     "Qh1+",
+     "Qc1+"
+    ]
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 26079
+  },
+  {
+   "id": "425-0181",
+   "tema": "mateIn1",
+   "rating": 395,
+   "fen": "7k/5K1n/8/8/8/8/3B3Q/8 w - - 0 1",
+   "facit": [
+    "d2c3"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 5
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "mattraek": 1
+   },
+   "soeg": {
+    "nu": 9,
+    "facitGevinst": "mat",
+    "facitScore": 1004,
+    "bedsteAndet": {
+     "uci": "d2h6",
+     "san": "Bh6",
+     "gevinst": "mat",
+     "score": 1002
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 14
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 5,
+    "lovligeTraek": 29,
+    "farve": "w",
+    "brik": "b",
+    "laengde": 1,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [
+     "Qxh7+"
+    ],
+    "andreSkak": [
+     "Qe5+",
+     "Qb8+",
+     "Qxh7+"
+    ]
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 9051
+  },
+  {
+   "id": "425-0185",
+   "tema": "mateIn1",
+   "rating": 390,
+   "fen": "7K/8/5r2/6r1/8/7k/8/8 b - - 0 1",
+   "facit": [
+    "f6h6"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 4
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "mattraek": 1
+   },
+   "soeg": {
+    "nu": 10,
+    "facitGevinst": "mat",
+    "facitScore": 1004,
+    "bedsteAndet": {
+     "uci": "f6f4",
+     "san": "Rf4",
+     "gevinst": "mat",
+     "score": 1002
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 28
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 4,
+    "lovligeTraek": 33,
+    "farve": "b",
+    "brik": "r",
+    "laengde": 2,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Rf8+",
+     "Rg8+",
+     "Rh5+"
+    ]
+   },
+   "dom": {
+    "tunge": [
+     "sort i traek"
+    ],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 13024
+  },
+  {
+   "id": "425-0186",
+   "tema": "mateIn1",
+   "rating": 400,
+   "fen": "6R1/2R5/8/8/8/1K6/8/7k w - - 0 1",
+   "facit": [
+    "c7h7"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 4
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "mattraek": 1
+   },
+   "soeg": {
+    "nu": 10,
+    "facitGevinst": "mat",
+    "facitScore": 1004,
+    "bedsteAndet": {
+     "uci": "g8g6",
+     "san": "Rg6",
+     "gevinst": "mat",
+     "score": 1002
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 26
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 4,
+    "lovligeTraek": 36,
+    "farve": "w",
+    "brik": "r",
+    "laengde": 5,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Rh8+",
+     "Rg1+",
+     "Rc1+"
+    ]
+   },
+   "dom": {
+    "tunge": [
+     "langt traek (5 felter)"
+    ],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 27203
+  },
+  {
+   "id": "425-0189",
+   "tema": "mateIn1",
+   "rating": 410,
+   "fen": "4K3/7r/1k6/8/8/8/8/6r1 b - - 0 1",
+   "facit": [
+    "g1g8"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 4
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "mattraek": 1
+   },
+   "soeg": {
+    "nu": 10,
+    "facitGevinst": "mat",
+    "facitScore": 1004,
+    "bedsteAndet": {
+     "uci": "g1f1",
+     "san": "Rf1",
+     "gevinst": "mat",
+     "score": 1002
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 32
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 4,
+    "lovligeTraek": 36,
+    "farve": "b",
+    "brik": "r",
+    "laengde": 7,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Rh8+",
+     "Re7+",
+     "Re1+"
+    ]
+   },
+   "dom": {
+    "tunge": [
+     "langt traek (7 felter)",
+     "sort i traek"
+    ],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 23465
+  },
+  {
+   "id": "425-0193",
+   "tema": "defensiveMove",
+   "rating": 495,
+   "fen": "8/8/1K3kB1/3P1p2/7r/8/8/8 w - - 0 1",
+   "facit": [
+    "g6e8"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 6
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "sikreFelter": [
+     "Be8"
+    ]
+   },
+   "soeg": {
+    "nu": -2,
+    "facitGevinst": 0,
+    "facitScore": -2,
+    "bedsteAndet": {
+     "uci": "g6f5",
+     "san": "Bxf5",
+     "gevinst": -2,
+     "score": -4
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 6,
+    "lovligeTraek": 14,
+    "farve": "w",
+    "brik": "b",
+    "laengde": 2,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [
+     "Bxf5"
+    ],
+    "andreSkak": []
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": {
+    "facitSer": 0,
+    "ligeSaaFristende": []
+   },
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 5009
+  },
+  {
+   "id": "425-0195",
+   "tema": "defensiveMove",
+   "rating": 490,
+   "fen": "8/3k4/4b3/3PK3/8/6R1/8/8 b - - 0 1",
+   "facit": [
+    "e6f7"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 5
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "sikreFelter": [
+     "Bf7"
+    ]
+   },
+   "soeg": {
+    "nu": -3,
+    "facitGevinst": 0,
+    "facitScore": -3,
+    "bedsteAndet": {
+     "uci": "e6d5",
+     "san": "Bxd5",
+     "gevinst": -2,
+     "score": -5
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 5,
+    "lovligeTraek": 11,
+    "farve": "b",
+    "brik": "b",
+    "laengde": 1,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [
+     "Bxd5"
+    ],
+    "andreSkak": []
+   },
+   "dom": {
+    "tunge": [
+     "sort i traek"
+    ],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": {
+    "facitSer": 0,
+    "ligeSaaFristende": []
+   },
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 5915
+  },
+  {
+   "id": "425-0199",
+   "tema": "defensiveMove",
+   "rating": 515,
+   "fen": "8/8/8/8/3k4/7B/6P1/3Kn3 b - - 0 1",
+   "facit": [
+    "e1d3"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 5
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "sikreFelter": [
+     "Nd3"
+    ]
+   },
+   "soeg": {
+    "nu": -1,
+    "facitGevinst": 0,
+    "facitScore": -1,
+    "bedsteAndet": {
+     "uci": "e1g2",
+     "san": "Nxg2",
+     "gevinst": -2,
+     "score": -3
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 5,
+    "lovligeTraek": 12,
+    "farve": "b",
+    "brik": "n",
+    "laengde": 2,
+    "springer": true,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [
+     "Nxg2"
+    ],
+    "andreSkak": []
+   },
+   "dom": {
+    "tunge": [
+     "sort i traek"
+    ],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": {
+    "facitSer": 0,
+    "ligeSaaFristende": []
+   },
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 2765
+  },
+  {
+   "id": "425-0200",
+   "tema": "defensiveMove",
+   "rating": 495,
+   "fen": "8/8/4K3/8/1N6/5p2/8/6kN w - - 0 1",
+   "facit": [
+    "h1g3"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 5
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "sikreFelter": [
+     "Ng3"
+    ]
+   },
+   "soeg": {
+    "nu": 5,
+    "facitGevinst": -2,
+    "facitScore": 3,
+    "bedsteAndet": {
+     "uci": "e6d7",
+     "san": "Kd7",
+     "gevinst": -3,
+     "score": 2
+    },
+    "ligeSaaGode": [
+     "Kd7",
+     "Ke7",
+     "Kf7",
+     "Kf6",
+     "Kf5",
+     "Ke5",
+     "Kd5",
+     "Kd6",
+     "Nd5",
+     "Nd3",
+     "Nc2",
+     "Nf2"
+    ],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 5,
+    "lovligeTraek": 16,
+    "farve": "w",
+    "brik": "n",
+    "laengde": 2,
+    "springer": true,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": []
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": true,
+   "facitVinder": false,
+   "graad": {
+    "facitSer": 0,
+    "ligeSaaFristende": []
+   },
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 5484
+  },
+  {
+   "id": "425-0202",
+   "tema": "defensiveMove",
+   "rating": 530,
+   "fen": "1K6/7p/1b6/3k4/8/8/8/2rN4 w - - 0 1",
+   "facit": [
+    "d1b2"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 6
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "sikreFelter": [
+     "Nb2"
+    ]
+   },
+   "soeg": {
+    "nu": -6,
+    "facitGevinst": 0,
+    "facitScore": -6,
+    "bedsteAndet": {
+     "uci": "b8b7",
+     "san": "Kb7",
+     "gevinst": -3,
+     "score": -9
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 6,
+    "lovligeTraek": 6,
+    "farve": "w",
+    "brik": "n",
+    "laengde": 2,
+    "springer": true,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Nc3+",
+     "Ne3+"
+    ]
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": {
+    "facitSer": 0,
+    "ligeSaaFristende": []
+   },
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 11565
+  },
+  {
+   "id": "425-0205",
+   "tema": "defensiveMove",
+   "rating": 505,
+   "fen": "8/N7/1k6/6p1/6K1/8/8/5N2 w - - 0 1",
+   "facit": [
+    "a7c8"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 5
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "sikreFelter": [
+     "Nc8+"
+    ]
+   },
+   "soeg": {
+    "nu": 5,
+    "facitGevinst": 0,
+    "facitScore": 5,
+    "bedsteAndet": {
+     "uci": "a7c6",
+     "san": "Nc6",
+     "gevinst": -2,
+     "score": 3
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 5,
+    "lovligeTraek": 13,
+    "farve": "w",
+    "brik": "n",
+    "laengde": 2,
+    "springer": true,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [
+     "Kxg5"
+    ],
+    "andreSkak": []
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": {
+    "facitSer": 0,
+    "ligeSaaFristende": []
+   },
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 1944
+  },
+  {
+   "id": "425-0214",
+   "tema": "defensiveMove",
+   "rating": 480,
+   "fen": "5K2/8/8/8/8/5p2/8/Nk6 w - - 0 1",
+   "facit": [
+    "a1b3"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 4
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "sikreFelter": [
+     "Nb3"
+    ]
+   },
+   "soeg": {
+    "nu": 2,
+    "facitGevinst": 0,
+    "facitScore": 2,
+    "bedsteAndet": {
+     "uci": "f8g8",
+     "san": "Kg8",
+     "gevinst": -3,
+     "score": -1
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 4,
+    "lovligeTraek": 7,
+    "farve": "w",
+    "brik": "n",
+    "laengde": 2,
+    "springer": true,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": []
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": {
+    "facitSer": 0,
+    "ligeSaaFristende": []
+   },
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 540
+  },
+  {
+   "id": "425-0228",
+   "tema": "defensiveMove",
+   "rating": 495,
+   "fen": "7b/4K2p/8/8/8/8/5k2/6N1 w - - 0 1",
+   "facit": [
+    "g1h3"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 5
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "sikreFelter": [
+     "Nh3+"
+    ]
+   },
+   "soeg": {
+    "nu": -1,
+    "facitGevinst": 0,
+    "facitScore": -1,
+    "bedsteAndet": {
+     "uci": "e7f8",
+     "san": "Kf8",
+     "gevinst": -2,
+     "score": -3
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 5,
+    "lovligeTraek": 10,
+    "farve": "w",
+    "brik": "n",
+    "laengde": 2,
+    "springer": true,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": []
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": {
+    "facitSer": 0,
+    "ligeSaaFristende": []
+   },
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 3106
+  },
+  {
+   "id": "425-0230",
+   "tema": "defensiveMove",
+   "rating": 495,
+   "fen": "4K3/8/8/8/3P1p2/8/8/5Nk1 w - - 0 1",
+   "facit": [
+    "f1d2"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 5
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "sikreFelter": [
+     "Nd2"
+    ]
+   },
+   "soeg": {
+    "nu": 3,
+    "facitGevinst": 0,
+    "facitScore": 3,
+    "bedsteAndet": {
+     "uci": "e8f8",
+     "san": "Kf8",
+     "gevinst": -3,
+     "score": 0
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 5,
+    "lovligeTraek": 10,
+    "farve": "w",
+    "brik": "n",
+    "laengde": 2,
+    "springer": true,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": []
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": {
+    "facitSer": 0,
+    "ligeSaaFristende": []
+   },
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 420
+  },
+  {
+   "id": "425-0241",
+   "tema": "defensiveMove",
+   "rating": 480,
+   "fen": "8/8/Nk6/p7/K7/8/8/8 w - - 0 1",
+   "facit": [
+    "a6b8"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 4
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "sikreFelter": [
+     "Nb8"
+    ]
+   },
+   "soeg": {
+    "nu": 2,
+    "facitGevinst": 0,
+    "facitScore": 2,
+    "bedsteAndet": {
+     "uci": "a6c7",
+     "san": "Nc7",
+     "gevinst": -2,
+     "score": 0
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 4,
+    "lovligeTraek": 6,
+    "farve": "w",
+    "brik": "n",
+    "laengde": 2,
+    "springer": true,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": []
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": {
+    "facitSer": 0,
+    "ligeSaaFristende": []
+   },
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 279
+  },
+  {
+   "id": "425-0247",
+   "tema": "defensiveMove",
+   "rating": 480,
+   "fen": "7K/8/8/k7/8/3p4/8/1B1r4 w - - 0 1",
+   "facit": [
+    "b1a2"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 5
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "sikreFelter": [
+     "Ba2"
+    ]
+   },
+   "soeg": {
+    "nu": -3,
+    "facitGevinst": -2,
+    "facitScore": -5,
+    "bedsteAndet": {
+     "uci": "b1d3",
+     "san": "Bxd3",
+     "gevinst": -2,
+     "score": -5
+    },
+    "ligeSaaGode": [
+     "Bxd3"
+    ],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 5,
+    "lovligeTraek": 6,
+    "farve": "w",
+    "brik": "b",
+    "laengde": 1,
+    "springer": false,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [
+     "Bxd3"
+    ],
+    "andreSkak": []
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": true,
+   "facitVinder": false,
+   "graad": {
+    "facitSer": 0,
+    "ligeSaaFristende": []
+   },
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 4241
+  },
+  {
+   "id": "425-0258",
+   "tema": "defensiveMove",
+   "rating": 490,
+   "fen": "n7/K7/8/8/2P2k2/8/8/8 b - - 0 1",
+   "facit": [
+    "a8c7"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 4
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "sikreFelter": [
+     "Nc7"
+    ]
+   },
+   "soeg": {
+    "nu": 2,
+    "facitGevinst": 0,
+    "facitScore": 2,
+    "bedsteAndet": {
+     "uci": "f4e5",
+     "san": "Ke5",
+     "gevinst": -2,
+     "score": 0
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": null,
+   "svaerhed": {
+    "brikker": 4,
+    "lovligeTraek": 10,
+    "farve": "b",
+    "brik": "n",
+    "laengde": 2,
+    "springer": true,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": []
+   },
+   "dom": {
+    "tunge": [
+     "sort i traek"
+    ],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": {
+    "facitSer": 0,
+    "ligeSaaFristende": []
+   },
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 732
+  },
+  {
+   "id": "425-0269",
+   "tema": "fork",
+   "rating": 545,
+   "fen": "1k3r2/8/5N2/8/6K1/8/8/8 w - - 0 1",
+   "facit": [
+    "f6d7",
+    "b8c8",
+    "d7f8"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 4
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "svarMuligheder": 5,
+    "kongeSvar": 5,
+    "gafletBrik": "r"
+   },
+   "soeg": {
+    "nu": -2,
+    "facitGevinst": 5,
+    "facitScore": 3,
+    "bedsteAndet": {
+     "uci": "f6g8",
+     "san": "Ng8",
+     "gevinst": 2,
+     "score": 0
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": {
+    "nu": -2,
+    "facitGevinst": 5,
+    "facitScore": 3,
+    "bedsteAndet": {
+     "uci": "d7f6",
+     "san": "Nf6",
+     "gevinst": 2,
+     "score": 0
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "svaerhed": {
+    "brikker": 4,
+    "lovligeTraek": 15,
+    "farve": "w",
+    "brik": "n",
+    "laengde": 2,
+    "springer": true,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": []
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 2991
+  },
+  {
+   "id": "425-0271",
+   "tema": "fork",
+   "rating": 570,
+   "fen": "1K6/7p/8/5k2/8/8/8/5N1r w - - 0 1",
+   "facit": [
+    "f1g3",
+    "f5e6",
+    "g3h1"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 5
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "svarMuligheder": 7,
+    "kongeSvar": 7,
+    "gafletBrik": "r"
+   },
+   "soeg": {
+    "nu": -3,
+    "facitGevinst": 5,
+    "facitScore": 2,
+    "bedsteAndet": {
+     "uci": "f1d2",
+     "san": "Nd2",
+     "gevinst": 0,
+     "score": -3
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": {
+    "nu": -3,
+    "facitGevinst": 5,
+    "facitScore": 2,
+    "bedsteAndet": {
+     "uci": "b8c8",
+     "san": "Kc8",
+     "gevinst": 0,
+     "score": -3
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "svaerhed": {
+    "brikker": 5,
+    "lovligeTraek": 9,
+    "farve": "w",
+    "brik": "n",
+    "laengde": 2,
+    "springer": true,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Ne3+"
+    ]
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 3282
+  },
+  {
+   "id": "425-0272",
+   "tema": "fork",
+   "rating": 600,
+   "fen": "8/8/p7/8/Q1K5/3n2k1/8/7b b - - 0 1",
+   "facit": [
+    "d3b2",
+    "c4b3",
+    "b2a4"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 6
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "svarMuligheder": 5,
+    "kongeSvar": 5,
+    "gafletBrik": "q"
+   },
+   "soeg": {
+    "nu": -2,
+    "facitGevinst": 6,
+    "facitScore": 4,
+    "bedsteAndet": {
+     "uci": "d3e5",
+     "san": "Ne5+",
+     "gevinst": 3,
+     "score": 1
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": {
+    "nu": -2,
+    "facitGevinst": 6,
+    "facitScore": 4,
+    "bedsteAndet": {
+     "uci": "h1f3",
+     "san": "Bf3",
+     "gevinst": 3,
+     "score": 1
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "svaerhed": {
+    "brikker": 6,
+    "lovligeTraek": 24,
+    "farve": "b",
+    "brik": "n",
+    "laengde": 2,
+    "springer": true,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Ne5+",
+     "Bd5+"
+    ]
+   },
+   "dom": {
+    "tunge": [
+     "sort i traek"
+    ],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 43567
+  },
+  {
+   "id": "425-0273",
+   "tema": "fork",
+   "rating": 570,
+   "fen": "8/8/2nk4/6p1/8/8/2Q1K3/8 b - - 0 1",
+   "facit": [
+    "c6d4",
+    "e2d3",
+    "d4c2"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 5
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "svarMuligheder": 7,
+    "kongeSvar": 7,
+    "gafletBrik": "q"
+   },
+   "soeg": {
+    "nu": -5,
+    "facitGevinst": 6,
+    "facitScore": 1,
+    "bedsteAndet": {
+     "uci": "c6a7",
+     "san": "Na7",
+     "gevinst": 0,
+     "score": -5
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": {
+    "nu": -5,
+    "facitGevinst": 6,
+    "facitScore": 1,
+    "bedsteAndet": {
+     "uci": "d4b5",
+     "san": "Nb5",
+     "gevinst": 0,
+     "score": -5
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "svaerhed": {
+    "brikker": 5,
+    "lovligeTraek": 15,
+    "farve": "b",
+    "brik": "n",
+    "laengde": 2,
+    "springer": true,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": []
+   },
+   "dom": {
+    "tunge": [
+     "sort i traek"
+    ],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 11953
+  },
+  {
+   "id": "425-0278",
+   "tema": "fork",
+   "rating": 580,
+   "fen": "8/8/8/8/8/1n3P2/R3K1k1/8 b - - 0 1",
+   "facit": [
+    "b3c1",
+    "e2e3",
+    "c1a2"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 5
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "svarMuligheder": 4,
+    "kongeSvar": 4,
+    "gafletBrik": "r"
+   },
+   "soeg": {
+    "nu": -3,
+    "facitGevinst": 5,
+    "facitScore": 2,
+    "bedsteAndet": {
+     "uci": "b3a1",
+     "san": "Na1",
+     "gevinst": 2,
+     "score": -1
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": {
+    "nu": -3,
+    "facitGevinst": 5,
+    "facitScore": 2,
+    "bedsteAndet": {
+     "uci": "g2g3",
+     "san": "Kg3",
+     "gevinst": 0,
+     "score": -3
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "svaerhed": {
+    "brikker": 5,
+    "lovligeTraek": 11,
+    "farve": "b",
+    "brik": "n",
+    "laengde": 2,
+    "springer": true,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Nd4+"
+    ]
+   },
+   "dom": {
+    "tunge": [
+     "sort i traek"
+    ],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 2248
+  },
+  {
+   "id": "425-0281",
+   "tema": "fork",
+   "rating": 555,
+   "fen": "8/8/8/5R2/8/8/4K3/1k5n b - - 0 1",
+   "facit": [
+    "h1g3",
+    "e2d3",
+    "g3f5"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 4
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "svarMuligheder": 7,
+    "kongeSvar": 7,
+    "gafletBrik": "r"
+   },
+   "soeg": {
+    "nu": -2,
+    "facitGevinst": 5,
+    "facitScore": 3,
+    "bedsteAndet": {
+     "uci": "b1a2",
+     "san": "Ka2",
+     "gevinst": 0,
+     "score": -2
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": {
+    "nu": -2,
+    "facitGevinst": 5,
+    "facitScore": 3,
+    "bedsteAndet": {
+     "uci": "b1a2",
+     "san": "Ka2",
+     "gevinst": 0,
+     "score": -2
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "svaerhed": {
+    "brikker": 4,
+    "lovligeTraek": 7,
+    "farve": "b",
+    "brik": "n",
+    "laengde": 2,
+    "springer": true,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": []
+   },
+   "dom": {
+    "tunge": [
+     "sort i traek"
+    ],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 1800
+  },
+  {
+   "id": "425-0284",
+   "tema": "fork",
+   "rating": 555,
+   "fen": "4N1r1/8/8/3k4/8/8/2K5/8 w - - 0 1",
+   "facit": [
+    "e8f6",
+    "d5c6",
+    "f6g8"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 4
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "svarMuligheder": 7,
+    "kongeSvar": 7,
+    "gafletBrik": "r"
+   },
+   "soeg": {
+    "nu": -2,
+    "facitGevinst": 5,
+    "facitScore": 3,
+    "bedsteAndet": {
+     "uci": "c2c3",
+     "san": "Kc3",
+     "gevinst": 2,
+     "score": 0
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": {
+    "nu": -2,
+    "facitGevinst": 5,
+    "facitScore": 3,
+    "bedsteAndet": {
+     "uci": "f6e8",
+     "san": "Ne8",
+     "gevinst": 2,
+     "score": 0
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "svaerhed": {
+    "brikker": 4,
+    "lovligeTraek": 12,
+    "farve": "w",
+    "brik": "n",
+    "laengde": 2,
+    "springer": true,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Nc7+"
+    ]
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 4999
+  },
+  {
+   "id": "425-0291",
+   "tema": "fork",
+   "rating": 570,
+   "fen": "4K1n1/7R/3k4/8/8/8/6P1/8 b - - 0 1",
+   "facit": [
+    "g8f6",
+    "e8f8",
+    "f6h7"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 5
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "svarMuligheder": 3,
+    "kongeSvar": 3,
+    "gafletBrik": "r"
+   },
+   "soeg": {
+    "nu": -3,
+    "facitGevinst": 5,
+    "facitScore": 2,
+    "bedsteAndet": {
+     "uci": "g8e7",
+     "san": "Ne7",
+     "gevinst": 2,
+     "score": -1
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": {
+    "nu": -3,
+    "facitGevinst": 5,
+    "facitScore": 2,
+    "bedsteAndet": {
+     "uci": "d6d5",
+     "san": "Kd5",
+     "gevinst": 2,
+     "score": -1
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "svaerhed": {
+    "brikker": 5,
+    "lovligeTraek": 8,
+    "farve": "b",
+    "brik": "n",
+    "laengde": 2,
+    "springer": true,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": []
+   },
+   "dom": {
+    "tunge": [
+     "sort i traek"
+    ],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 5651
+  },
+  {
+   "id": "425-0302",
+   "tema": "fork",
+   "rating": 555,
+   "fen": "3K4/8/8/1k6/8/8/2N5/1q6 w - - 0 1",
+   "facit": [
+    "c2a3",
+    "b5a6",
+    "a3b1"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 4
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "svarMuligheder": 7,
+    "kongeSvar": 7,
+    "gafletBrik": "q"
+   },
+   "soeg": {
+    "nu": -6,
+    "facitGevinst": 9,
+    "facitScore": 3,
+    "bedsteAndet": {
+     "uci": "d8e8",
+     "san": "Ke8",
+     "gevinst": 6,
+     "score": 0
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": {
+    "nu": -6,
+    "facitGevinst": 9,
+    "facitScore": 3,
+    "bedsteAndet": {
+     "uci": "d8e8",
+     "san": "Ke8",
+     "gevinst": 6,
+     "score": 0
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "svaerhed": {
+    "brikker": 4,
+    "lovligeTraek": 11,
+    "farve": "w",
+    "brik": "n",
+    "laengde": 2,
+    "springer": true,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Nd4+"
+    ]
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 3792
+  },
+  {
+   "id": "425-0317",
+   "tema": "fork",
+   "rating": 580,
+   "fen": "8/8/8/8/5K2/2k5/8/n1n3R1 b - - 0 1",
+   "facit": [
+    "c1e2",
+    "f4e5",
+    "e2g1"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 5
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "svarMuligheder": 7,
+    "kongeSvar": 7,
+    "gafletBrik": "r"
+   },
+   "soeg": {
+    "nu": 1,
+    "facitGevinst": 5,
+    "facitScore": 6,
+    "bedsteAndet": {
+     "uci": "c3b4",
+     "san": "Kb4",
+     "gevinst": 2,
+     "score": 3
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": {
+    "nu": 1,
+    "facitGevinst": 5,
+    "facitScore": 6,
+    "bedsteAndet": {
+     "uci": "c3b4",
+     "san": "Kb4",
+     "gevinst": 2,
+     "score": 3
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "svaerhed": {
+    "brikker": 5,
+    "lovligeTraek": 14,
+    "farve": "b",
+    "brik": "n",
+    "laengde": 2,
+    "springer": true,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Nd3+"
+    ]
+   },
+   "dom": {
+    "tunge": [
+     "sort i traek"
+    ],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 8165
+  },
+  {
+   "id": "425-0318",
+   "tema": "fork",
+   "rating": 555,
+   "fen": "2N1r3/8/8/5k2/8/7K/8/8 w - - 0 1",
+   "facit": [
+    "c8d6",
+    "f5e6",
+    "d6e8"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 4
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "svarMuligheder": 6,
+    "kongeSvar": 6,
+    "gafletBrik": "r"
+   },
+   "soeg": {
+    "nu": -2,
+    "facitGevinst": 5,
+    "facitScore": 3,
+    "bedsteAndet": {
+     "uci": "c8b6",
+     "san": "Nb6",
+     "gevinst": 0,
+     "score": -2
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": {
+    "nu": -2,
+    "facitGevinst": 5,
+    "facitScore": 3,
+    "bedsteAndet": {
+     "uci": "d6b7",
+     "san": "Nb7",
+     "gevinst": 0,
+     "score": -2
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "svaerhed": {
+    "brikker": 4,
+    "lovligeTraek": 8,
+    "farve": "w",
+    "brik": "n",
+    "laengde": 2,
+    "springer": true,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Ne7+"
+    ]
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 2256
+  },
+  {
+   "id": "425-0320",
+   "tema": "fork",
+   "rating": 570,
+   "fen": "5k2/2K5/5N2/6q1/8/2P5/8/8 w - - 0 1",
+   "facit": [
+    "f6h7",
+    "f8g8",
+    "h7g5"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 5
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "svarMuligheder": 5,
+    "kongeSvar": 5,
+    "gafletBrik": "q"
+   },
+   "soeg": {
+    "nu": -5,
+    "facitGevinst": 9,
+    "facitScore": 4,
+    "bedsteAndet": {
+     "uci": "c7c8",
+     "san": "Kc8",
+     "gevinst": 6,
+     "score": 1
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": {
+    "nu": -5,
+    "facitGevinst": 9,
+    "facitScore": 4,
+    "bedsteAndet": {
+     "uci": "c7b8",
+     "san": "Kb8",
+     "gevinst": 6,
+     "score": 1
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "svaerhed": {
+    "brikker": 5,
+    "lovligeTraek": 17,
+    "farve": "w",
+    "brik": "n",
+    "laengde": 2,
+    "springer": true,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Nd7+"
+    ]
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 5115
+  },
+  {
+   "id": "425-0323",
+   "tema": "fork",
+   "rating": 570,
+   "fen": "4r3/8/8/5k2/1K2N3/8/1b6/8 w - - 0 1",
+   "facit": [
+    "e4d6",
+    "f5e6",
+    "d6e8"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 5
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "svarMuligheder": 7,
+    "kongeSvar": 7,
+    "gafletBrik": "r"
+   },
+   "soeg": {
+    "nu": -5,
+    "facitGevinst": 5,
+    "facitScore": 0,
+    "bedsteAndet": {
+     "uci": "b4c5",
+     "san": "Kc5",
+     "gevinst": 2,
+     "score": -3
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": {
+    "nu": -5,
+    "facitGevinst": 2,
+    "facitScore": -3,
+    "bedsteAndet": {
+     "uci": "d6e4",
+     "san": "Ne4",
+     "gevinst": 0,
+     "score": -5
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "svaerhed": {
+    "brikker": 5,
+    "lovligeTraek": 14,
+    "farve": "w",
+    "brik": "n",
+    "laengde": 2,
+    "springer": true,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [],
+    "andreSkak": [
+     "Ng3+"
+    ]
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 9703
+  },
+  {
+   "id": "425-0327",
+   "tema": "fork",
+   "rating": 580,
+   "fen": "8/7n/6K1/1r6/8/8/k3N3/8 w - - 0 1",
+   "facit": [
+    "e2c3",
+    "a2a3",
+    "c3b5"
+   ],
+   "lovlig": {
+    "ok": true,
+    "brikker": 5
+   },
+   "tema_": {
+    "ok": true,
+    "grund": "",
+    "svarMuligheder": 4,
+    "kongeSvar": 4,
+    "gafletBrik": "r"
+   },
+   "soeg": {
+    "nu": -5,
+    "facitGevinst": 5,
+    "facitScore": 0,
+    "bedsteAndet": {
+     "uci": "g6h7",
+     "san": "Kxh7",
+     "gevinst": 3,
+     "score": -2
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "soeg3": {
+    "nu": -5,
+    "facitGevinst": 5,
+    "facitScore": 0,
+    "bedsteAndet": {
+     "uci": "g6h7",
+     "san": "Kxh7",
+     "gevinst": 3,
+     "score": -2
+    },
+    "ligeSaaGode": [],
+    "bedreEndFacit": [],
+    "ogsaaMat": 0
+   },
+   "svaerhed": {
+    "brikker": 5,
+    "lovligeTraek": 10,
+    "farve": "w",
+    "brik": "n",
+    "laengde": 2,
+    "springer": true,
+    "kongenSlaar": false,
+    "forvandling": false,
+    "andreSlag": [
+     "Kxh7"
+    ],
+    "andreSkak": [
+     "Nc1+"
+    ]
+   },
+   "dom": {
+    "tunge": [],
+    "svaerereEndRating": false
+   },
+   "toLoesninger": false,
+   "facitVinder": true,
+   "graad": null,
+   "matOverset": false,
+   "dybdeBrugt": 5,
+   "ms": 7144
+  }
+ ]
+}
