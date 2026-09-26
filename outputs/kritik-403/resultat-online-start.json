@@ -1,0 +1,48 @@
+{
+  "scenarie": "online-start",
+  "koerselOk": true,
+  "fejl": null,
+  "trin": [
+    "online: saet 1 logget og gemt",
+    "appen genaabnet med net; saet 2 logget og gemt",
+    "nettet vaek (ingen genaabning): Sæt 3/4 logget; [\"Ingen forbindelse. Dagens pas og dine sæt virker; resten opdateres, når du har net.\",\"✓ 3 sæt klaret · senest 80kg × 4 · ☁ 1 sendes når du har net\",\"☁ 1 sæt gemt lokalt — sendes når forbindelsen er tilbage\"]",
+    "nettet tilbage: koeen tom=true; mocken [1,1,1,0]; Dagens pas viser nu \"Sæt 1/4\" (rigtigt ville vaere Sæt 4/4)",
+    "atleten trykker \"Godkendt\" paa Sæt 1/4: mocken [2,1,1,0]; skaermen viser nu Sæt 4/4"
+  ],
+  "skaermUdenNet": {
+    "naesteSaet": "Sæt 4/4",
+    "linjer": [
+      "Ingen forbindelse. Dagens pas og dine sæt virker; resten opdateres, når du har net.",
+      "✓ 3 sæt klaret · senest 80kg × 4 · ☁ 1 sendes når du har net",
+      "☁ 1 sæt gemt lokalt — sendes når forbindelsen er tilbage"
+    ],
+    "godkendtKnap": true
+  },
+  "koeTomt": true,
+  "skaermEfterSendt": {
+    "naesteSaet": "Sæt 1/4",
+    "linjer": [],
+    "godkendtKnap": true
+  },
+  "raekkerEfterSendt": [
+    1,
+    1,
+    1,
+    0
+  ],
+  "atletTrykkerIgen": {
+    "saet": "Sæt 1/4",
+    "raekker": [
+      2,
+      1,
+      1,
+      0
+    ],
+    "skaerm": {
+      "naesteSaet": "Sæt 4/4",
+      "linjer": [],
+      "godkendtKnap": true
+    }
+  },
+  "konsolFejl": []
+}

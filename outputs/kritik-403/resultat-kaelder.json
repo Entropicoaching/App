@@ -1,0 +1,71 @@
+{
+  "scenarie": "kaelder",
+  "koerselOk": true,
+  "fejl": null,
+  "trin": [
+    "online: logget ind, service worker styrer siden, ugen gemt paa telefonen",
+    "uden net: appen aabnet paa 853 ms, viser Sæt 1/4",
+    "3 saet logget uden net; koeen har 3; skaermen: [\"Ingen forbindelse. Dagens pas og dine sæt virker; resten opdateres, når du har net. Program fra kl. 15.09.\",\"✓ 3 sæt klaret · senest 80kg × 4 · ☁ 3 sendes når du har net\",\"☁ 3 sæt gemt lokalt — sendes når forbindelsen er tilbage\"]",
+    "Sæt 4/4: \"Godkendt\" trykket, appen lukket med det samme",
+    "genaabnet uden net: koeen har 4 saet, skaermen viser Sæt 1/2 [\"Ingen forbindelse. Dagens pas og dine sæt virker; resten opdateres, når du har net. Program fra kl. 15.09.\",\"☁ 4 sæt gemt lokalt — sendes når forbindelsen er tilbage\"]",
+    "5. saet (Sæt 1/2) logget; koeen har 5; [\"Ingen forbindelse. Dagens pas og dine sæt virker; resten opdateres, når du har net. Program fra kl. 15.09.\",\"✓ 1 sæt klaret · senest 60kg × 6 · ☁ 1 sendes når du har net\",\"☁ 5 sæt gemt lokalt — sendes når forbindelsen er tilbage\"]",
+    "online: koeen tom=true efter 23665 ms; raekker squat [1,1,1,1] baenk [1,0]; tid fra \"Godkendt\" bevaret=true; skaermen viser nu Sæt 2/2 []"
+  ],
+  "aabnUdenNetMs": 853,
+  "skaermVedAabning": {
+    "naesteSaet": "Sæt 1/4",
+    "linjer": [
+      "Ingen forbindelse. Dagens pas og dine sæt virker; resten opdateres, når du har net. Program fra kl. 15.09."
+    ],
+    "godkendtKnap": true
+  },
+  "skaermEfter3": {
+    "naesteSaet": "Sæt 4/4",
+    "linjer": [
+      "Ingen forbindelse. Dagens pas og dine sæt virker; resten opdateres, når du har net. Program fra kl. 15.09.",
+      "✓ 3 sæt klaret · senest 80kg × 4 · ☁ 3 sendes når du har net",
+      "☁ 3 sæt gemt lokalt — sendes når forbindelsen er tilbage"
+    ],
+    "godkendtKnap": true
+  },
+  "koeEfter3": 3,
+  "skaermGenaabnet": {
+    "naesteSaet": "Sæt 1/2",
+    "linjer": [
+      "Ingen forbindelse. Dagens pas og dine sæt virker; resten opdateres, når du har net. Program fra kl. 15.09.",
+      "☁ 4 sæt gemt lokalt — sendes når forbindelsen er tilbage"
+    ],
+    "godkendtKnap": true
+  },
+  "koeGenaabnet": 4,
+  "skaermEfter5": {
+    "naesteSaet": "Sæt 2/2",
+    "linjer": [
+      "Ingen forbindelse. Dagens pas og dine sæt virker; resten opdateres, når du har net. Program fra kl. 15.09.",
+      "✓ 1 sæt klaret · senest 60kg × 6 · ☁ 1 sendes når du har net",
+      "☁ 5 sæt gemt lokalt — sendes når forbindelsen er tilbage"
+    ],
+    "godkendtKnap": true
+  },
+  "koeEfter5": 5,
+  "koeTomt": true,
+  "sendtEfterMs": 23665,
+  "skaermEfterSendt": {
+    "naesteSaet": "Sæt 2/2",
+    "linjer": [],
+    "godkendtKnap": true
+  },
+  "squatPrSaet": [
+    1,
+    1,
+    1,
+    1
+  ],
+  "baenkPrSaet": [
+    1,
+    0
+  ],
+  "tidRigtig": true,
+  "forsinkelseMin": 3390,
+  "konsolFejl": []
+}

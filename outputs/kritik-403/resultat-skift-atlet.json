@@ -1,0 +1,29 @@
+{
+  "scenarie": "skift-atlet",
+  "koerselOk": true,
+  "fejl": null,
+  "trin": [
+    "atlet A uden net: 2 saet i koeen",
+    "atlet B logget ind med net: A's saet i mocken=0, A's koe paa telefonen=2, B ser A's ventende saet=false, B viser Sæt 1/3",
+    "atlet A logget ind igen: koeen tom=true; A's raekker [1,1,0,0]; B's raekker 0"
+  ],
+  "aRaekkerMensB": 0,
+  "aKoeMensB": 2,
+  "skaermB": {
+    "naesteSaet": "Sæt 1/3",
+    "linjer": [],
+    "godkendtKnap": true
+  },
+  "bSerAsSaet": false,
+  "bRaekker": 0,
+  "oejebliksbilleder": 1,
+  "koeTomt": true,
+  "aRaekker": [
+    1,
+    1,
+    0,
+    0
+  ],
+  "bRaekkerEfter": 0,
+  "konsolFejl": []
+}

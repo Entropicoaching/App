@@ -1,0 +1,31 @@
+{
+  "scenarie": "log-ud",
+  "koerselOk": true,
+  "fejl": null,
+  "trin": [
+    "uden net: 2 saet i koeen",
+    "log ud uden net: spoergsmaalet var \"Log ud af Entropi? Du skal logge ind igen for at fortsætte.\"; login-skaerm efter 143 ms; koeen ligger stadig paa telefonen: 2",
+    "logget ind igen med net: koeen tom=true; mocken [1,1,0,0]; Sæt 1/4"
+  ],
+  "bekraeftTekst": "Log ud af Entropi? Du skal logge ind igen for at fortsætte.",
+  "logUdMs": 143,
+  "skaermEfterLogUd": {
+    "naesteSaet": null,
+    "linjer": [],
+    "godkendtKnap": false
+  },
+  "koeEfterLogUd": 2,
+  "koeTomt": true,
+  "raekker": [
+    1,
+    1,
+    0,
+    0
+  ],
+  "skaermEfterLogInd": {
+    "naesteSaet": "Sæt 1/4",
+    "linjer": [],
+    "godkendtKnap": true
+  },
+  "konsolFejl": []
+}
