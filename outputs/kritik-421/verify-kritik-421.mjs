@@ -129,7 +129,18 @@ if (existsSync(kritikSti)) {
   ok(/^klar til klassen: (ja|nej), fordi/im.test(kritik), 'KRITIK-bibliotek-2 mangler linjen "klar til klassen: ja/nej, fordi"')
   for (let i = 1; i <= 10; i++) ok(kritik.includes(`B${i}`), `KRITIK-bibliotek-2 mangler status for B${i}`)
   const time = json('time-421.json')
-  if (time) ok(time.sidefejl.length === 0, `blok 2: sidefejl i timen ${time.sidefejl.join(' | ')}`)
+  if (time) {
+    ok(time.sidefejl.length === 0, `blok 2: sidefejl i timen ${time.sidefejl.join(' | ')}`)
+    const t = time.trin
+    ok(t.kortStart?.synligUdenScroll && /Mat i 1/.test(t.kortStart.tekst), 'blok 2: "Naeste for dig" viser ikke Mat i 1 over folden')
+    ok(t.projektorHint.h1.ring === 1 && t.projektorHint.h1.pil === 0 && t.projektorHint.h2.pil > 0, 'blok 2: hint-trappen paa projektoren')
+    const vej = [...t.elev, ...t.hurtige]
+    ok(vej.map((e) => e.forventet).join() === 'mat-i-1,damemat,taarnmat,ubeskyttet,forsvar', 'blok 2: timens raekkefoelge')
+    ok(vej.every((e) => e.sidder && e.kort), 'blok 2: en kompetence i timen kom ikke til "Det sidder" via kortet')
+    ok(/5 af 24/.test(t.efterGenindlaesning.samlet), 'blok 2: stjernerne overlevede ikke genindlaesning')
+    ok(/koster dig/.test(t.stopMatten.dg4.besked) && /^Løst!/.test(t.stopMatten.rigtigt.besked), 'blok 2: Stop matten sm07 paa projektoren')
+    ok(/^Patt!/.test(t.pattDamemat?.besked ?? ''), 'B9: patt-traek i Dronningemat giver ikke patt-hintet')
+  }
 }
 if (existsSync(rapportSti)) {
   const rapport = readFileSync(rapportSti, 'utf8').replace(/\r/g, '')
