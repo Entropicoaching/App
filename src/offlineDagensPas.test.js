@@ -3,10 +3,10 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import {
   saveOfflineSet, loadOfflineSets, countOfflineSets, clearOfflineSetIfSame, newSetClientId,
-  orderedOfflineSets, pendingSetKeys, parkOfflineSet, loadParkedSets, overlayQueuedSets,
+  orderedOfflineSets, pendingSetKeys, parkOfflineSet, loadParkedSets, overlayQueuedSets, queuedPayloadWithTime,
 } from './offlineSetQueue.js'
 import { saveOfflineSnapshot, loadOfflineSnapshot, snapshotLogsForWeek, clearOfflineSnapshots } from './athlete/offlineSnapshot.js'
-import { readStoredSession, offlineAthleteSession } from './offlineSession.js'
+import { readStoredSession, offlineAthleteSession, withSlowNetCutoff, seemsOffline, markNetworkSuccess, SLOW_NET_MS } from './offlineSession.js'
 
 function fakeStorage(initial = {}) {
   const map = new Map(Object.entries(initial))
@@ -125,4 +125,47 @@ test('offlineAthleteSession: kun gemt session + rollehukommelse "athlete"', () =
   assert.equal(offlineAthleteSession(fakeStorage({ [tokenKey]: JSON.stringify(session), entropi_role_guess_u1: 'athlete' })).user.id, 'u1')
   assert.equal(offlineAthleteSession(fakeStorage({ [tokenKey]: 'ikke json', entropi_role_guess_u1: 'athlete' })), null)
   assert.equal(offlineAthleteSession(fakeStorage({ [tokenKey]: JSON.stringify({ user: { id: 'u1' } }), entropi_role_guess_u1: 'athlete' })), null, 'uden refresh-token')
+})
+
+// ORDRE 401 — sættets tid er "Godkendt", ikke afsendelsen.
+test('queuedPayloadWithTime: medsendt logged_at bevares; ældre køposter får køtiden', () => {
+  const st = fakeStorage()
+  const godkendt = '2026-09-26T15:10:00.000Z'
+  saveOfflineSet('a', 'e_1', { exerciseId: 'e', setNumber: 1, payload: { weight: 80, logged_at: godkendt } }, st)
+  // En "ret" 80 min. senere sender samme tid med (updateLoggedSet).
+  saveOfflineSet('a', 'e_1', { exerciseId: 'e', setNumber: 1, payload: { weight: 85, logged_at: godkendt } }, st)
+  assert.equal(queuedPayloadWithTime(loadOfflineSets('a', st).e_1).logged_at, godkendt)
+  const gammel = { exerciseId: 'e', setNumber: 2, payload: { weight: 80 }, queuedAt: Date.parse('2026-09-26T15:13:00.000Z') }
+  assert.equal(queuedPayloadWithTime(gammel).logged_at, '2026-09-26T15:13:00.000Z')
+  assert.equal(gammel.payload.logged_at, undefined, 'køposten muteres ikke')
+  assert.equal(queuedPayloadWithTime({ op: 'delete', payload: null }), null)
+})
+
+test('overlayQueuedSets: et ventende sæt viser sin egen tid, ikke nu', () => {
+  const queue = { e_1: { exerciseId: 'e', setNumber: 1, payload: { weight: 80, logged_at: '2026-09-26T15:10:00.000Z' } } }
+  assert.equal(overlayQueuedSets([], queue, 'a')[0].logged_at, '2026-09-26T15:10:00.000Z')
+})
+
+// ORDRE 401 — wifi uden internet: et kald der hænger, regnes som offline.
+test('withSlowNetCutoff: et hængende kald giver SLOW_NET og markerer nettet dødt', async () => {
+  markNetworkSuccess()
+  assert.equal(SLOW_NET_MS, 8000)
+  const haenger = new Promise(() => {})
+  const t0 = Date.now()
+  const res = await withSlowNetCutoff(haenger, 50)
+  assert.equal(res.error.code, 'SLOW_NET')
+  assert.ok(Date.now() - t0 < 1000)
+  assert.equal(seemsOffline(), true)
+  markNetworkSuccess()
+  assert.equal(seemsOffline(), false)
+})
+
+test('withSlowNetCutoff: et hurtigt svar går igennem uændret og rører ikke nettets tilstand', async () => {
+  markNetworkSuccess()
+  const svar = { data: { id: 'x' }, error: null }
+  assert.deepEqual(await withSlowNetCutoff(Promise.resolve(svar), 50), svar)
+  const thenable = { then: (ok) => ok({ data: [], error: null }) }
+  assert.deepEqual(await withSlowNetCutoff(thenable, 50), { data: [], error: null })
+  await new Promise(r => setTimeout(r, 80))
+  assert.equal(seemsOffline(), false, 'timeren er ryddet')
 })

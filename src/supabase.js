@@ -256,7 +256,10 @@ export async function withRetry(run, { tries = 3, delay = 400 } = {}) {
 // `run` bygger og udfører skrivningen og returnerer { data, error }. Returnerer
 // det sidste resultat, så kalderen kan vise en diskret fejl hvis det slog fejl.
 let writeChain = Promise.resolve()
-export function queueWrite(run, { tries = 4, delay = 600 } = {}) {
+// ORDRE 401: `giveUpIf` stopper genforsøgene, når det er nytteløst (nettet er
+// kendt dødt, og kalderen har selv en kø der sender igen). Ellers står et
+// hængende kald og holder alle senere skrivninger tilbage i op mod et minut.
+export function queueWrite(run, { tries = 4, delay = 600, giveUpIf = null } = {}) {
   const task = writeChain.then(async () => {
     await warmupAuth()
     let last
@@ -268,7 +271,10 @@ export function queueWrite(run, { tries = 4, delay = 600 } = {}) {
       catch (e) { last = { error: e } }
       if (!last?.error) { if (DEBUG && i > 0) log(`skriv ok efter ${i + 1} forsøg (${Date.now() - t0}ms)`); return last }
       log(`skriv fejlede (forsøg ${i + 1}/${tries}):`, last.error?.message || last.error)
-      if (i < tries - 1) await new Promise(r => setTimeout(r, delay * (i + 1)))
+      if (i < tries - 1) {
+        if (giveUpIf?.()) break
+        await new Promise(r => setTimeout(r, delay * (i + 1)))
+      }
     }
     return last
   })
