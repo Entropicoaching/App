@@ -12,7 +12,7 @@ Script: `outputs/kritik-403/scenarier.mjs`. Tal pr. scenarie ligger i
 
 | Scenarie | Hvad der skete | Rækker i mocken | Dom |
 |---|---|---|---|
-| **kaelder**: åbnet uden net, 3 sæt, appen lukket midt i sæt 4, genåbnet, sæt 5, online | Åbnede på 0,85 s. Sæt 4 overlevede, at appen blev lukket samme øjeblik, som der blev trykket. Efter genåbning stod der "Baenkpres Sæt 1/2" og "4 sæt gemt lokalt". Da nettet kom, var køen sendt efter 23,7 s. | squat [1,1,1,1], bænk [1,0], alle med tiden fra "Godkendt" | **Holder** |
+| **kaelder**: åbnet uden net, 3 sæt, appen lukket midt i sæt 4, genåbnet, sæt 5, online | Åbnede på 0,35-0,85 s (to kørsler). Sæt 4 overlevede, at appen blev lukket samme øjeblik, som der blev trykket. Efter genåbning stod der "Baenkpres Sæt 1/2" og "4 sæt gemt lokalt". Da nettet kom, var køen sendt efter 23,7 s. | squat [1,1,1,1], bænk [1,0], alle med tiden fra "Godkendt" | **Holder** |
 | **online-start**: åbnet med net, sæt 1, genåbnet med net, sæt 2, nettet væk, sæt 3, nettet tilbage | Køen blev sendt rigtigt. Derefter viste Dagens pas **"Sæt 1/4"**, som om intet var logget. Atleten trykker "Godkendt" igen, og sæt 1 står nu **to gange**. | [1,1,1,0], efter nyt tryk **[2,1,1,0]** | **O1** |
 | **aabn-med-net**: 3 sæt uden net, appen lukket, åbnet igen hjemme med net | Sendt rigtigt, men Dagens pas viser **"Sæt 1/4"** og viser det stadig 28 s senere. Et nyt tryk laver ingen dublet her, fordi id'et stadig er i hukommelsen, men **sæt 1 får ny tid**, 30 s efter kældertiden. | [1,1,1,0] | **O1** |
 | **haenger**: wifi uden internet, derefter virker nettet igen uden 'online' | Sæt 2 blev markeret efter 8,3 s og sendt efter 19 s. Dagens pas viste det rigtige sæt (4/4), fordi 20-s-runden kom først. | [1,1,1,0] | Holder (heldigt, se O1) |
