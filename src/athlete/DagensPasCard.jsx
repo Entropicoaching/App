@@ -95,14 +95,18 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
   // når det er færdigt (det sidste sæt kan sagtens være logget uden net).
   const ventendeSaet = (
     <>
-      {parkedSets.length > 0 && (
+      {[
         // ORDRE 397: coachen har slettet øvelsen, mens sættet ventede på net.
+        // ORDRE 406 (O6): serveren har afvist sættet flere runder i træk.
         // Tallene står her, så atleten kan give dem videre; intet slettes.
-        <div data-parkerede-saet={parkedSets.length} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.04em', color: '#c8923a', marginTop: '0.5rem', textAlign: 'center' }}>
-          {parkedSets.length} sæt kunne ikke sendes, fordi coachen har ændret øvelsen. Skriv tallene til din coach:{' '}
-          {parkedSets.map(p => `${p.exerciseName || 'øvelse'} sæt ${p.setNumber}: ${p.payload?.weight ?? 0}kg × ${p.payload?.reps_completed ?? 0}`).join(' · ')}
+        { sets: parkedSets.filter(p => p.reason === '23503'), why: 'fordi coachen har ændret øvelsen' },
+        { sets: parkedSets.filter(p => p.reason !== '23503'), why: 'efter flere forsøg' },
+      ].filter(g => g.sets.length > 0).map(g => (
+        <div key={g.why} data-parkerede-saet={g.sets.length} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.04em', color: '#c8923a', marginTop: '0.5rem', textAlign: 'center' }}>
+          {g.sets.length} sæt kunne ikke sendes, {g.why}. Skriv tallene til din coach:{' '}
+          {g.sets.map(p => `${p.exerciseName || 'øvelse'} sæt ${p.setNumber}: ${p.payload?.weight ?? 0}kg × ${p.payload?.reps_completed ?? 0}`).join(' · ')}
         </div>
-      )}
+      ))}
       {pendingSyncCount > 0 && (
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.04em', color: '#7a7770', marginTop: '0.5rem', textAlign: 'center' }}>
           ☁ {pendingSyncCount} {pendingSyncCount === 1 ? 'sæt' : 'sæt'} gemt lokalt — sendes når forbindelsen er tilbage

@@ -1,0 +1,14 @@
+Bygger mod mocken ...
+  [tid] online: logget ind, service worker styrer siden, sæt 1 logget og gemt i mocken
+  [tid] uden net: appen genåbnet med udløbet token, Dagens pas vist fra telefonen (sæt 2/4)
+  [tid] uden net: sæt 2, 3, 4 logget; hver køpost bærer tidspunktet for "Godkendt" (14:17:04, 14:17:06, 14:17:07 UTC)
+  [tid] nettet tilbage: køen tømt; 1 INSERT fik sit svar tabt undervejs
+  [tid] mocken: én række pr. sæt [1,1,1,1]; sæt 2 blev godkendt 11 s før nettet kom og står med godkendt-tiden; sorteret på logged_at (nyeste først) er rækkefølgen [4,3,2,1]
+GRØN: tid
+  [haenger] online: logget ind, service worker styrer siden, sæt 1 logget og gemt i mocken
+  [haenger] wifi uden internet (navigator.onLine=true): sæt 2 gik videre til sæt 3 med det samme og blev vist som "gemt lokalt" efter 8042 ms; dets INSERT nåede mocken, svaret kom aldrig
+  [haenger] sæt 3: vist som ventende efter 45 ms uden noget kald; sæt 2 og 3 har hver "sendes når du har net"
+  [haenger] nettet virker igen: køen sendt af sig selv efter 18922 ms, markeringerne væk
+  [haenger] mocken: én række pr. sæt [1,1,1,0]; sæt 2, hvis første INSERT nåede frem, er ikke dubleret; sæt 2 og 3 har deres række-id og godkendt-tid
+GRØN: haenger
+exit 0

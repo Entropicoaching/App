@@ -1,0 +1,42 @@
+$ npm run verify:kritik-403   (ordre 406, gren dagens-pas-offline-3 @ eb93c6e; exit 1 forventet)
+
+> entropi-app@0.0.0 verify:kritik-403
+> node outputs/kritik-403/verify-kritik-403.mjs
+
+Koerer scenarierne (ca. 5 min) ...
+Bygger mod mocken til C:\Users\Entropi\AppData\Local\Temp\kritik-403-dist ...
+  [kaelder] online: logget ind, service worker styrer siden, ugen gemt paa telefonen
+  [kaelder] uden net: appen aabnet paa 375 ms, viser Sæt 1/4
+  [kaelder] 3 saet logget uden net; koeen har 3; skaermen: ["Ingen forbindelse. Dagens pas og dine sæt virker; resten opdateres, når du har net. Program fra kl. 16.13.","✓ 3 sæt klaret · senest 80kg × 4 · ☁ 3 sendes når du har net","☁ 3 sæt gemt lokalt — sendes når forbindelsen er tilbage"]
+  [kaelder] Sæt 4/4: "Godkendt" trykket, appen lukket med det samme
+  [kaelder] genaabnet uden net: koeen har 4 saet, skaermen viser Sæt 1/2 ["Ingen forbindelse. Dagens pas og dine sæt virker; resten opdateres, når du har net. Program fra kl. 16.13.","☁ 4 sæt gemt lokalt — sendes når forbindelsen er tilbage"]
+  [kaelder] 5. saet (Sæt 1/2) logget; koeen har 5; ["Ingen forbindelse. Dagens pas og dine sæt virker; resten opdateres, når du har net. Program fra kl. 16.13.","✓ 1 sæt klaret · senest 60kg × 6 · ☁ 1 sendes når du har net","☁ 5 sæt gemt lokalt — sendes når forbindelsen er tilbage"]
+  [kaelder] online: koeen tom=true efter 23697 ms; raekker squat [1,1,1,1] baenk [1,0]; tid fra "Godkendt" bevaret=true; skaermen viser nu Sæt 2/2 []
+  [online-start] online: saet 1 logget og gemt
+  [online-start] appen genaabnet med net; saet 2 logget og gemt
+  [online-start] nettet vaek (ingen genaabning): Sæt 3/4 logget; ["Ingen forbindelse. Dagens pas og dine sæt virker; resten opdateres, når du har net.","✓ 3 sæt klaret · senest 80kg × 4 · ☁ 1 sendes når du har net","☁ 1 sæt gemt lokalt — sendes når forbindelsen er tilbage"]
+  [online-start] nettet tilbage: koeen tom=true; mocken [1,1,1,0]; Dagens pas viser nu "Sæt 4/4" (rigtigt ville vaere Sæt 4/4)
+  [aabn-med-net] uden net: 3 saet i koeen; appen lukkes
+  [aabn-med-net] aabnet med net: koeen tom=true; mocken [1,1,1,0]; Dagens pas viser "Sæt 4/4" (rigtigt: Sæt 4/4)
+  [aabn-med-net] 28 s senere: Dagens pas viser stadig "Sæt 4/4"
+  [haenger] online: saet 1 logget
+  [haenger] wifi uden internet: saet 2 markeret efter 8323 ms; ["Ingen forbindelse. Dagens pas og dine sæt virker; resten opdateres, når du har net.","✓ 3 sæt klaret · senest 80kg × 4 · ☁ 2 sendes når du har net","☁ 2 sæt gemt lokalt — sendes når forbindelsen er tilbage"]
+  [haenger] nettet virker igen: koeen tom=true efter 1060 ms; mocken [1,1,1,0]; Dagens pas viser Sæt 4/4
+  [to-faner] to faner aabne, begge logget ind, begge viser Sæt 1/4
+  [to-faner] uden net: fane A har logget saet 1 og 2; fane B viser stadig Sæt 1/4
+  [to-faner] fane B trykker "Godkendt" paa Sæt 1/4; koeen har 2 poster
+  [to-faner] online: koeen tom=true; mocken [1,1,0,0]; fane A viser Sæt 3/4, fane B viser Sæt 3/4
+  [log-ud] uden net: 2 saet i koeen
+  [log-ud] log ud uden net: spoergsmaalet var "Log ud af Entropi? Du har 2 sæt, der ikke er sendt endnu. De sendes først, når du logger ind igen på denne telefon med net. Annuller, hvis du vil vente, til de er sendt."; login-skaerm efter 156 ms; koeen ligger stadig paa telefonen: 2
+  [log-ud] logget ind igen med net: koeen tom=true; mocken [1,1,0,0]; Sæt 3/4
+  [skift-atlet] atlet A uden net: 2 saet i koeen
+  [skift-atlet] atlet B logget ind med net: A's saet i mocken=0, A's koe paa telefonen=2, B ser A's ventende saet=false, B viser Sæt 1/3
+  [skift-atlet] atlet A logget ind igen: koeen tom=true; A's raekker [1,1,0,0]; B's raekker 0
+  [sw-opdatering] uden net: 2 saet i koeen
+  [sw-opdatering] online med ny build: siden genindlaest 1 gang(e); koeen tom=true; mocken [1,1,0,0]; Sæt 3/4
+  [forkert-ur] telefonens ur 7 dage bagud: raekkerne staar med logged_at ["2026-09-19T14:15:25.034Z","2026-09-19T14:15:25.379Z"] (7 dage foer serverens nu)
+verify:kritik-403 ROED (3):
+ - O1 genskabes ikke laengere. Er den rettet? Opdater docs/kritik-403/KRITIK-offline-pas.md
+ - O2 genskabes ikke laengere. Er den rettet? Opdater docs/kritik-403/KRITIK-offline-pas.md
+ - O3 genskabes ikke laengere. Er den rettet? Opdater docs/kritik-403/KRITIK-offline-pas.md
+exit 1

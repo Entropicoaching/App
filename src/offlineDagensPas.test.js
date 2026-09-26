@@ -3,10 +3,11 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import {
   saveOfflineSet, loadOfflineSets, countOfflineSets, clearOfflineSetIfSame, newSetClientId,
-  orderedOfflineSets, pendingSetKeys, parkOfflineSet, loadParkedSets, overlayQueuedSets, queuedPayloadWithTime,
+  orderedOfflineSets, pendingSetKeys, parkOfflineSet, loadParkedSets, overlayQueuedSets, queuedPayloadWithTime, noteOfflineSetFailure,
 } from './offlineSetQueue.js'
 import { saveOfflineSnapshot, loadOfflineSnapshot, snapshotLogsForWeek, clearOfflineSnapshots } from './athlete/offlineSnapshot.js'
 import { readStoredSession, offlineAthleteSession, withSlowNetCutoff, seemsOffline, markNetworkSuccess, SLOW_NET_MS } from './offlineSession.js'
+import { athleteAuthErrorMessage, NO_CONNECTION_MESSAGE } from './athleteOnboarding.js'
 
 function fakeStorage(initial = {}) {
   const map = new Map(Object.entries(initial))
@@ -168,4 +169,26 @@ test('withSlowNetCutoff: et hurtigt svar går igennem uændret og rører ikke ne
   assert.deepEqual(await withSlowNetCutoff(thenable, 50), { data: [], error: null })
   await new Promise(r => setTimeout(r, 80))
   assert.equal(seemsOffline(), false, 'timeren er ryddet')
+})
+
+// ORDRE 406 (O6 i docs/kritik-403)
+test('noteOfflineSetFailure tæller afviste forsøg, melder ny fejlkode én gang og starter forfra ved et nyt "Godkendt"', () => {
+  const st = fakeStorage()
+  const entry = { exerciseId: 'e', setNumber: 1, payload: { weight: 80 }, clientId: 'c' }
+  saveOfflineSet('a', 'e_1', entry, st)
+  const sendt = loadOfflineSets('a', st).e_1
+  assert.deepEqual(noteOfflineSetFailure('a', 'e_1', sendt, '42501', {}, st), { failures: 1, newCode: true })
+  assert.deepEqual(noteOfflineSetFailure('a', 'e_1', sendt, '42501', {}, st), { failures: 2, newCode: false })
+  assert.deepEqual(noteOfflineSetFailure('a', 'e_1', sendt, 'ukendt', { count: false }, st), { failures: 2, newCode: true })
+  assert.equal(loadOfflineSets('a', st).e_1.clientId, 'c', 'posten er stadig i køen med sit række-id')
+  saveOfflineSet('a', 'e_1', { ...entry, payload: { weight: 82.5 } }, st)
+  assert.deepEqual(noteOfflineSetFailure('a', 'e_1', sendt, '42501', {}, st), { failures: 0, newCode: false }, 'en rettet post tælles ikke med den gamles fejl')
+  assert.equal(loadOfflineSets('a', st).e_1.failures, undefined)
+})
+
+// ORDRE 406 (O3 i docs/kritik-403)
+test('login uden net siger "Ingen forbindelse", ikke "tjek oplysningerne"', () => {
+  assert.equal(athleteAuthErrorMessage({ name: 'AuthRetryableFetchError', message: 'Failed to fetch', status: 0 }), NO_CONNECTION_MESSAGE)
+  assert.equal(athleteAuthErrorMessage({ message: 'Load failed' }), NO_CONNECTION_MESSAGE)
+  assert.equal(athleteAuthErrorMessage({ message: 'Invalid login credentials', status: 400 }), 'Email eller adgangskode er forkert.')
 })

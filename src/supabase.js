@@ -218,7 +218,8 @@ export async function signOutHard() {
       } catch { /* localStorage utilgængelig (fx privat browsing) */ }
       // ORDRE 397: øjebliksbilledet af Dagens pas må ikke blive liggende på
       // en delt telefon. (Køen af usendte sæt bliver: den sendes næste gang
-      // samme atlet logger ind, se docs/OFFLINE-PAS.md.)
+      // samme atlet logger ind, se docs/OFFLINE-PAS.md. ORDRE 406: log ud
+      // spørger derfor først, når der ligger usendte sæt, se Ramme.jsx.)
       clearOfflineSnapshots()
     },
     SIGNOUT_TIMEOUT_MS,

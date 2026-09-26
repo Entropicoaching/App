@@ -1,0 +1,38 @@
+{
+  "scenarie": "to-faner",
+  "koerselOk": true,
+  "fejl": null,
+  "trin": [
+    "to faner aabne, begge logget ind, begge viser Sæt 1/4",
+    "uden net: fane A har logget saet 1 og 2; fane B viser stadig Sæt 1/4",
+    "fane B trykker \"Godkendt\" paa Sæt 1/4; koeen har 2 poster",
+    "online: koeen tom=true; mocken [1,1,0,0]; fane A viser Sæt 3/4, fane B viser Sæt 3/4"
+  ],
+  "fanebFoer": {
+    "naesteSaet": "Sæt 1/4",
+    "linjer": [
+      "Ingen forbindelse. Dagens pas og dine sæt virker; resten opdateres, når du har net."
+    ],
+    "godkendtKnap": true
+  },
+  "fanebLoggede": "Sæt 1/4",
+  "koe": 2,
+  "koeTomt": true,
+  "raekker": [
+    1,
+    1,
+    0,
+    0
+  ],
+  "skaermA": {
+    "naesteSaet": "Sæt 3/4",
+    "linjer": [],
+    "godkendtKnap": true
+  },
+  "skaermB": {
+    "naesteSaet": "Sæt 3/4",
+    "linjer": [],
+    "godkendtKnap": true
+  },
+  "konsolFejl": []
+}
