@@ -1,0 +1,40 @@
+{
+  "groen": true,
+  "trin": [
+    "online: logget ind, service worker styrer siden, sæt 1 logget og gemt i mocken",
+    "uden net: appen genåbnet med udløbet token, Dagens pas vist fra telefonen (sæt 2/4)",
+    "uden net: sæt 2, 3, 4 logget; hver køpost bærer tidspunktet for \"Godkendt\" (12:50:41, 12:50:42, 12:50:44 UTC)",
+    "nettet tilbage: køen tømt; 1 INSERT fik sit svar tabt undervejs",
+    "mocken: én række pr. sæt [1,1,1,1]; sæt 2 blev godkendt 11 s før nettet kom og står med godkendt-tiden; sorteret på logged_at (nyeste først) er rækkefølgen [4,3,2,1]"
+  ],
+  "raekkerPrSaet": [
+    1,
+    1,
+    1,
+    1
+  ],
+  "loggedAt": {
+    "2": "2026-09-26T12:50:41.251Z",
+    "3": "2026-09-26T12:50:42.817Z",
+    "4": "2026-09-26T12:50:44.350Z"
+  },
+  "sendtFra": "2026-09-26T12:50:51.950Z",
+  "ventetidSaet2S": 11,
+  "coachOrden": [
+    4,
+    3,
+    2,
+    1
+  ],
+  "skrivninger": [
+    "POST",
+    "POST",
+    "POST",
+    "PATCH",
+    "POST",
+    "POST"
+  ],
+  "konsolFejl": [
+    "Failed to load resource: the server responded with a status of 409 (Conflict)"
+  ]
+}

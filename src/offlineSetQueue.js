@@ -94,6 +94,15 @@ export function newSetClientId(cryptoImpl = globalThis.crypto) {
   return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`
 }
 
+// ORDRE 401: et sæts tid er tidspunktet for "Godkendt", ikke for afsendelsen.
+// logSet lægger logged_at i payloaden; poster lagt i køen før 401 har den
+// ikke, så får de tiden da de kom i køen (samme øjeblik som "Godkendt").
+export function queuedPayloadWithTime(entry) {
+  const payload = entry?.payload
+  if (!payload || payload.logged_at || !entry.queuedAt) return payload
+  return { ...payload, logged_at: new Date(entry.queuedAt).toISOString() }
+}
+
 // Køens poster i den rækkefølge de blev logget: [[key, entry], ...].
 export function orderedOfflineSets(athleteId, storage = globalThis.localStorage) {
   return Object.entries(readOfflineSetQueue(athleteId, storage))

@@ -28,9 +28,9 @@ import { join } from 'node:path'
 // Tabel -> { embedNavn: { type: 'children'|'parent', table, fk } }
 //   children: fremmedtabellens `fk`-kolonne peger PÅ denne række (én-til-mange)
 //   parent:   DENNE rækkes `fk`-kolonne peger på fremmedtabellens id (mange-til-én)
-// Kolonner den ægte Postgres-tabel sætter via `DEFAULT now()` og klienten
-// derfor ALDRIG sender selv ved insert (grep'et i src/ før dette blev
-// skrevet — se fx AthleteView.jsx's logSet(), der aldrig sætter logged_at).
+// Kolonner den ægte Postgres-tabel sætter via `DEFAULT now()`, når klienten
+// ikke sender dem selv (ORDRE 401: logSet sender nu logged_at = tidspunktet
+// for "Godkendt"; mocken beholder en medsendt værdi, som Postgres).
 // Uden denne default insertede rækker med `undefined`, og fx Dashboard.jsx's
 // fetchAthleteLastLogs crashede på `.slice()` af et undefined felt — samme
 // slags stille fejl ordre 153 findes for at fange, blot her i mocken selv.

@@ -11,7 +11,7 @@ import { restSecondsForExercise } from '../restBetweenSets'
 import { startRestPause, clearRestPause } from '../restPause'
 import {
   saveOfflineSet, loadOfflineSets, clearOfflineSet, countOfflineSets, clearOfflineSetIfSame, newSetClientId,
-  orderedOfflineSets, parkOfflineSet,
+  orderedOfflineSets, parkOfflineSet, queuedPayloadWithTime,
 } from '../offlineSetQueue'
 import { browserSaysOffline, seemsOffline } from '../offlineSession'
 import { estimatedOneRepMax } from '../exerciseProgress'
@@ -102,7 +102,15 @@ export function lavSaetSkrivning({
   async function logSet(exerciseId, setNumber, totalSets, repsCompleted, plannedRpe, { localFallback = false } = {}) {
     const key = `${exerciseId}_${setNumber}`
     const input = logInputs[key] || {}
+    // Kun en rigtig (bekræftet) række afgør INSERT vs. UPDATE i databasen — en
+    // optimistisk række har ikke et gyldigt db-id at opdatere på.
+    const realExisting = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber && !l._optimistic)
+    const existing = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber)
     const payload = {
+      // ORDRE 401: tidspunktet for "Godkendt" følger sættet ind i køen, så et
+      // sæt sendt senere beholder sin tid hos coachen. Et sæt der allerede
+      // står som logget, beholder sin første tid.
+      logged_at: existing?.logged_at || new Date().toISOString(),
       weight: parseFloat(input.weight) || 0,
       reps_completed: parseInt(repsCompleted) || 0,
       note: input.note || null,
@@ -112,10 +120,6 @@ export function lavSaetSkrivning({
       rpe_planned: plannedRpe ?? null,
       skipped: false,
     }
-    // Kun en rigtig (bekræftet) række afgør INSERT vs. UPDATE i databasen — en
-    // optimistisk række har ikke et gyldigt db-id at opdatere på.
-    const realExisting = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber && !l._optimistic)
-    const existing = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber)
 
     // OPTIMISTISK: vis fluebenet ØJEBLIKKELIGT og skriv i baggrunden. Atleten skal
     // aldrig vente på netværket for at se at sættet er registreret — det var netop
@@ -303,7 +307,8 @@ export function lavSaetSkrivning({
       // ORDRE 397: i den rækkefølge sættene blev logget, ét ad gangen.
       for (const [key, entry] of orderedOfflineSets(athlete.id)) {
         if (browserSaysOffline()) break
-        const { exerciseId, setNumber, payload, clientId } = entry
+        const { exerciseId, setNumber, clientId } = entry
+        const payload = queuedPayloadWithTime(entry)
         if (entry.op === 'delete') {
           // Fortryd uden net af et sæt der måske nåede serveren (se undoLoggedSet).
           const { error } = await queueWrite(() => supabase.from('exercise_logs').delete().eq('id', clientId).eq('athlete_id', athlete.id))
@@ -401,6 +406,8 @@ export function lavSaetSkrivning({
     if (!existing) return false
     const realExistingId = existing._optimistic ? undefined : existing.id
     const payload = {
+      // ORDRE 401: en rettelse flytter ikke sættet i tid.
+      logged_at: existing.logged_at || new Date().toISOString(),
       weight: parseFloat(updates.weight) || 0,
       reps_completed: parseInt(updates.reps) || 0,
       note: existing.note ?? null,
