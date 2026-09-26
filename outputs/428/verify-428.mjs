@@ -37,7 +37,7 @@ if (blok === '3') {
   koer('build-igen', 'npm run build')
   const r = readFileSync(path.join(ROOT, 'docs', 'RAPPORT-428.md'), 'utf8')
   assert.equal(r.split('\n')[0].trim(), 'Ordre 428', 'foerste linje skal vaere "Ordre 428"')
-  for (const h of ['Gren', 'Hvad blev', 'Test', 'Hvad er n', 'rlige gr']) assert.ok(r.includes(h), `RAPPORT-428 mangler afsnit: ${h}`)
+  for (const h of ['Gren', 'Hvad ændret', 'Test', 'Hvad er n', 'rlige gr']) assert.ok(r.includes(h), `RAPPORT-428 mangler afsnit: ${h}`)
   assert.ok(/C4/.test(r) && /C5/.test(r), 'Hvad er naeste skal naevne C4 og C5')
   console.log('GROEN: blok 3')
   process.exit(0)

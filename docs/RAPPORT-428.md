@@ -16,7 +16,7 @@ JS-spejl af SQL-reglerne. Der er ingen atletdata og ingen kald mod prod.
 
 En verificeringskommando pr. blok: `node outputs/428/verify-428.mjs --blok 1|2|3`.
 
-## Hvad blev ændret
+## Hvad ændret
 
 **Blok 1, målingen.** Marcs uge: se hvem der har trænet, læse RPE, noter og vurderinger, se
 en video, kopiere og rette næste uge. Scriptet klikker det hele igennem og tæller. De fem
