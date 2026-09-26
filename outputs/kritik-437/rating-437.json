@@ -1,0 +1,506 @@
+{
+ "kilde": "skak main (git archive)",
+ "puljeLovlige": 5068,
+ "sidstVist": 15,
+ "sortITraek": {
+  "pulje": 2404,
+  "puljeAndel": 0.47,
+  "lette": 101,
+  "letteAntal": 330
+ },
+ "elever": {
+  "fast-70": {
+   "styrke": null,
+   "ratingEfter": {
+    "20": {
+     "gns": 944,
+     "p10": 810,
+     "p90": 1071
+    },
+    "50": {
+     "gns": 1056,
+     "p10": 899,
+     "p90": 1204
+    },
+    "100": {
+     "gns": 1247,
+     "p10": 1076,
+     "p90": 1422
+    },
+    "200": {
+     "gns": 1630,
+     "p10": 1434,
+     "p90": 1840
+    }
+   },
+   "sdGaade101til200": 114,
+   "stoersteSving10": 94,
+   "loestAndelGaade101til200": 0.7,
+   "minFoerste20": 556,
+   "minEfter20": 549,
+   "andelLetteGaader": 0,
+   "forskelligeGaaderIGaade101til200": 98
+  },
+  "fast-30": {
+   "styrke": null,
+   "ratingEfter": {
+    "20": {
+     "gns": 578,
+     "p10": 431,
+     "p90": 719
+    },
+    "50": {
+     "gns": 432,
+     "p10": 299,
+     "p90": 586
+    },
+    "100": {
+     "gns": 280,
+     "p10": 208,
+     "p90": 361
+    },
+    "200": {
+     "gns": 225,
+     "p10": 200,
+     "p90": 258
+    }
+   },
+   "sdGaade101til200": 29,
+   "stoersteSving10": 64,
+   "loestAndelGaade101til200": 0.3,
+   "minFoerste20": 400,
+   "minEfter20": 200,
+   "andelLetteGaader": 0.79,
+   "forskelligeGaaderIGaade101til200": 65
+  },
+  "elo-70": {
+   "styrke": 947,
+   "ratingEfter": {
+    "20": {
+     "gns": 892,
+     "p10": 818,
+     "p90": 965
+    },
+    "50": {
+     "gns": 920,
+     "p10": 858,
+     "p90": 978
+    },
+    "100": {
+     "gns": 940,
+     "p10": 886,
+     "p90": 994
+    },
+    "200": {
+     "gns": 946,
+     "p10": 893,
+     "p90": 997
+    }
+   },
+   "sdGaade101til200": 29,
+   "stoersteSving10": 70,
+   "loestAndelGaade101til200": 0.52,
+   "minFoerste20": 679,
+   "minEfter20": 682,
+   "andelLetteGaader": 0,
+   "forskelligeGaaderIGaade101til200": 96
+  },
+  "elo-30": {
+   "styrke": 653,
+   "ratingEfter": {
+    "20": {
+     "gns": 695,
+     "p10": 623,
+     "p90": 767
+    },
+    "50": {
+     "gns": 669,
+     "p10": 610,
+     "p90": 727
+    },
+    "100": {
+     "gns": 657,
+     "p10": 601,
+     "p90": 710
+    },
+    "200": {
+     "gns": 653,
+     "p10": 600,
+     "p90": 707
+    }
+   },
+   "sdGaade101til200": 29,
+   "stoersteSving10": 70,
+   "loestAndelGaade101til200": 0.51,
+   "minFoerste20": 521,
+   "minEfter20": 500,
+   "andelLetteGaader": 0.11,
+   "forskelligeGaaderIGaade101til200": 97
+  },
+  "stoej-70": {
+   "styrke": 947,
+   "ratingEfter": {
+    "20": {
+     "gns": 877,
+     "p10": 795,
+     "p90": 957
+    },
+    "50": {
+     "gns": 903,
+     "p10": 836,
+     "p90": 969
+    },
+    "100": {
+     "gns": 929,
+     "p10": 866,
+     "p90": 994
+    },
+    "200": {
+     "gns": 939,
+     "p10": 886,
+     "p90": 999
+    }
+   },
+   "sdGaade101til200": 31,
+   "stoersteSving10": 73,
+   "loestAndelGaade101til200": 0.53,
+   "minFoerste20": 641,
+   "minEfter20": 644,
+   "andelLetteGaader": 0,
+   "forskelligeGaaderIGaade101til200": 96
+  },
+  "svag-250": {
+   "styrke": 250,
+   "ratingEfter": {
+    "20": {
+     "gns": 464,
+     "p10": 401,
+     "p90": 535
+    },
+    "50": {
+     "gns": 344,
+     "p10": 286,
+     "p90": 403
+    },
+    "100": {
+     "gns": 275,
+     "p10": 223,
+     "p90": 325
+    },
+    "200": {
+     "gns": 259,
+     "p10": 215,
+     "p90": 306
+    }
+   },
+   "sdGaade101til200": 28,
+   "stoersteSving10": 68,
+   "loestAndelGaade101til200": 0.38,
+   "minFoerste20": 400,
+   "minEfter20": 200,
+   "andelLetteGaader": 0.86,
+   "forskelligeGaaderIGaade101til200": 69
+  }
+ },
+ "bundBrud": [],
+ "bundBrudAntal": 0,
+ "halvtreds": {
+  "skiftevis (R F R F ...)": {
+   "slut": 802,
+   "vist": [
+    "+30",
+    "−30",
+    "+21",
+    "−30",
+    "+32",
+    "−23",
+    "+24",
+    "−29",
+    "+24",
+    "−22",
+    "+24",
+    "−15",
+    "+13",
+    "−18",
+    "+13",
+    "−16",
+    "+17",
+    "−13",
+    "+14",
+    "−14"
+   ]
+  },
+  "foerst 10 rigtige, saa 10 forkerte": {
+   "slut": 867,
+   "vist": [
+    "+30",
+    "+28",
+    "+24",
+    "+27",
+    "+30",
+    "+30",
+    "+24",
+    "+28",
+    "+23",
+    "+26",
+    "−22",
+    "−15",
+    "−18",
+    "−25",
+    "−26",
+    "−25",
+    "−23",
+    "−18",
+    "−16",
+    "−15"
+   ]
+  },
+  "foerst 10 forkerte, saa 10 rigtige": {
+   "slut": 598,
+   "vist": [
+    "−30",
+    "−36",
+    "−23",
+    "−45",
+    "−42",
+    "−40",
+    "−40",
+    "−34",
+    "−32",
+    "−28",
+    "+13",
+    "+17",
+    "+18",
+    "+20",
+    "+13",
+    "+18",
+    "+13",
+    "+15",
+    "+10",
+    "+11"
+   ]
+  },
+  "tilfaeldig (froe 437)": {
+   "slut": 825,
+   "vist": [
+    "−30",
+    "+22",
+    "+22",
+    "+27",
+    "+31",
+    "−25",
+    "+17",
+    "+17",
+    "−27",
+    "+24",
+    "−18",
+    "+19",
+    "−19",
+    "−21",
+    "+17",
+    "−11",
+    "+17",
+    "−16",
+    "−9",
+    "−12"
+   ]
+  }
+ },
+ "halvtredsFordeling": {
+  "gns": 775,
+  "min": 655,
+  "p10": 730,
+  "p90": 823,
+  "maks": 897
+ },
+ "kTrappe": [
+  {
+   "gaadeNr": 1,
+   "K": 60,
+   "vundetVedLige": "+30",
+   "tabtVedLige": "−30"
+  },
+  {
+   "gaadeNr": 2,
+   "K": 58,
+   "vundetVedLige": "+29",
+   "tabtVedLige": "−29"
+  },
+  {
+   "gaadeNr": 6,
+   "K": 50,
+   "vundetVedLige": "+25",
+   "tabtVedLige": "−25"
+  },
+  {
+   "gaadeNr": 11,
+   "K": 40,
+   "vundetVedLige": "+20",
+   "tabtVedLige": "−20"
+  },
+  {
+   "gaadeNr": 16,
+   "K": 30,
+   "vundetVedLige": "+15",
+   "tabtVedLige": "−15"
+  },
+  {
+   "gaadeNr": 20,
+   "K": 22,
+   "vundetVedLige": "+11",
+   "tabtVedLige": "−11"
+  },
+  {
+   "gaadeNr": 21,
+   "K": 20,
+   "vundetVedLige": "+10",
+   "tabtVedLige": "−10"
+  },
+  {
+   "gaadeNr": 51,
+   "K": 20,
+   "vundetVedLige": "+10",
+   "tabtVedLige": "−10"
+  }
+ ],
+ "dagensPcer": [
+  {
+   "froe": 1,
+   "dato": "2026-09-28",
+   "id": "07tcW",
+   "rating": 721,
+   "tz": "Europe/Copenhagen",
+   "dagsNoegleKl0030Dansk": "2026-09-28"
+  },
+  {
+   "froe": 2,
+   "dato": "2026-09-28",
+   "id": "07tcW",
+   "rating": 721,
+   "tz": "Europe/Copenhagen",
+   "dagsNoegleKl0030Dansk": "2026-09-28"
+  },
+  {
+   "froe": 3,
+   "dato": "2026-09-28",
+   "id": "07tcW",
+   "rating": 721,
+   "tz": "UTC",
+   "dagsNoegleKl0030Dansk": "2026-09-27"
+  },
+  {
+   "froe": 1,
+   "dato": "2026-12-24",
+   "id": "0BRVD",
+   "rating": 754,
+   "tz": "Europe/Copenhagen",
+   "dagsNoegleKl0030Dansk": "2026-09-28"
+  },
+  {
+   "froe": 2,
+   "dato": "2026-12-24",
+   "id": "0BRVD",
+   "rating": 754,
+   "tz": "Europe/Copenhagen",
+   "dagsNoegleKl0030Dansk": "2026-09-28"
+  },
+  {
+   "froe": 3,
+   "dato": "2026-12-24",
+   "id": "0BRVD",
+   "rating": 754,
+   "tz": "UTC",
+   "dagsNoegleKl0030Dansk": "2026-09-27"
+  },
+  {
+   "froe": 1,
+   "dato": "2027-03-28",
+   "id": "0Bmhp",
+   "rating": 791,
+   "tz": "Europe/Copenhagen",
+   "dagsNoegleKl0030Dansk": "2026-09-28"
+  },
+  {
+   "froe": 2,
+   "dato": "2027-03-28",
+   "id": "0Bmhp",
+   "rating": 791,
+   "tz": "Europe/Copenhagen",
+   "dagsNoegleKl0030Dansk": "2026-09-28"
+  },
+  {
+   "froe": 3,
+   "dato": "2027-03-28",
+   "id": "0Bmhp",
+   "rating": 791,
+   "tz": "UTC",
+   "dagsNoegleKl0030Dansk": "2026-09-27"
+  }
+ ],
+ "dagensEnsPaaSammeDato": true,
+ "dagensAar": {
+  "kandidater": 1110,
+  "forskellige": 332,
+  "gentagetInden30Dage": 4,
+  "fraLette": 43,
+  "alleI500til800": true,
+  "alleLovlige": true,
+  "temaer": {
+   "mateIn1": 162,
+   "pin": 3,
+   "fork": 78,
+   "defensiveMove": 14,
+   "mateIn2": 60,
+   "skewer": 20,
+   "mateIn3": 27,
+   "discoveredAttack": 1
+  },
+  "ratingGns": 654
+ },
+ "dagensRaekkefoelgeLigegyldig": true,
+ "dagensUdenLichess": {
+  "kandidater": 504,
+  "andenGaadeAntalDage": 364
+ },
+ "stime": {
+  "log": [
+   {
+    "dag": "2026-09-28",
+    "rent": true,
+    "dage": 1,
+    "rigtigeIRaekke": 1,
+    "loestIDag": 1
+   },
+   {
+    "dag": "2026-09-28",
+    "rent": false,
+    "dage": 1,
+    "rigtigeIRaekke": 0,
+    "loestIDag": 2
+   },
+   {
+    "dag": "2026-09-29",
+    "rent": true,
+    "dage": 2,
+    "rigtigeIRaekke": 1,
+    "loestIDag": 1
+   },
+   {
+    "dag": "2026-09-30",
+    "rent": true,
+    "dage": 3,
+    "rigtigeIRaekke": 1,
+    "loestIDag": 1
+   },
+   {
+    "dag": "2026-10-02",
+    "rent": true,
+    "dage": 1,
+    "rigtigeIRaekke": 1,
+    "loestIDag": 1
+   }
+  ],
+  "visningDagenEfterHul": 0
+ },
+ "stimeOk": true
+}
