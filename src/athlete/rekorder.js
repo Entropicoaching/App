@@ -1,0 +1,106 @@
+// ORDRE 439 · blok 1 — nye rekorder, regnet ud fra de sæt appen allerede har
+// (exercise_logs: Fremgangs historik + ugens sæt). Intet nyt i databasen.
+// Rene funktioner, samme mønster som ugeStatus.js, så de testes uden browser.
+//
+// En rekord er et gennemført sæt (vægt > 0, reps > 0, ikke sprunget over), der
+// enten giver øvelsens højeste e1RM (Epley, afrundet til hele kg, så "+0 kg"
+// aldrig fejres), eller flest reps på en vægt, der er løftet før. Øvelsens
+// allerførste sæt er ingen rekord: der er intet at slå. Et fortrudt sæt er
+// væk fra loggen og tæller derfor heller ikke.
+import { estimatedOneRepMax } from '../exerciseProgress.js'
+
+export const e1rmKg = (weight, reps) => Math.round(estimatedOneRepMax(weight, reps))
+
+const noegle = (navn) => String(navn || '').trim().toLowerCase()
+const vaegtNoegle = (weight) => String(Number(weight))
+
+export function gyldigtSaet(saet) {
+  return !!saet && !saet.skipped && Number(saet.weight) > 0 && Number(saet.reps) > 0 && !!noegle(saet.navn)
+}
+
+// Grundlaget er kun maksima (bedste e1RM og flest reps pr. vægt pr. øvelse),
+// så rækkefølgen sættene lægges til i er ligegyldig.
+export function laegTil(grundlag, saet) {
+  if (!gyldigtSaet(saet)) return grundlag
+  const k = noegle(saet.navn)
+  const cur = grundlag[k] || { e1rm: 0, vaegte: {} }
+  const w = vaegtNoegle(saet.weight)
+  const reps = Number(saet.reps)
+  grundlag[k] = {
+    e1rm: Math.max(cur.e1rm, estimatedOneRepMax(saet.weight, reps)),
+    vaegte: { ...cur.vaegte, [w]: Math.max(cur.vaegte[w] || 0, reps) },
+  }
+  return grundlag
+}
+
+export function bygGrundlag(saetListe, start = {}) {
+  const g = { ...start }
+  for (const s of saetListe || []) laegTil(g, s)
+  return g
+}
+
+// null, eller { type: 'e1rm', navn, e1rm, plus } | { type: 'reps', navn, weight, reps, plus }.
+export function findRekord(grundlag, saet) {
+  if (!gyldigtSaet(saet)) return null
+  const cur = grundlag?.[noegle(saet.navn)]
+  if (!cur) return null
+  const ny = e1rmKg(saet.weight, saet.reps)
+  const bedst = Math.round(cur.e1rm)
+  if (ny > bedst) return { type: 'e1rm', navn: saet.navn, e1rm: ny, plus: ny - bedst, weight: Number(saet.weight), reps: Number(saet.reps) }
+  const foer = cur.vaegte[vaegtNoegle(saet.weight)]
+  if (foer && Number(saet.reps) > foer) return { type: 'reps', navn: saet.navn, weight: Number(saet.weight), reps: Number(saet.reps), plus: Number(saet.reps) - foer }
+  return null
+}
+
+const kg = (n) => String(n).replace('.', ',')
+
+export function rekordTekst(r) {
+  if (!r) return ''
+  if (r.type === 'e1rm') return `Ny rekord: ${r.navn} e1RM ${r.e1rm} kg, +${r.plus} kg`
+  return `Ny rekord: ${r.navn} ${kg(r.weight)} kg × ${r.reps}, ${r.plus === 1 ? '1 rep' : `${r.plus} reps`} mere end før`
+}
+
+// Kronologisk gennemgang: hver rekord med dato (Fremgang og "din uge").
+// saetListe: [{ navn, weight, reps, dato, ...ekstra }]; ekstra-felterne følger med.
+export function rekordListe(saetListe) {
+  const sorteret = [...(saetListe || [])].filter(gyldigtSaet).sort((a, b) => String(a.dato || '').localeCompare(String(b.dato || '')))
+  const g = {}
+  const ud = []
+  for (const s of sorteret) {
+    const r = findRekord(g, s)
+    if (r) ud.push({ ...s, ...r })
+    laegTil(g, s)
+  }
+  return ud
+}
+
+// ---- Fra appens egne data ----
+
+// Øvelsens navn ud fra id (programmet, allWeeks).
+export function navnForOevelse(allWeeks) {
+  const m = new Map()
+  for (const w of allWeeks || []) for (const s of w.sessions || []) for (const e of s.exercises || []) m.set(e.id, e.name)
+  return m
+}
+
+export function ugensOevelsesIds(week) {
+  return new Set((week?.sessions || []).flatMap(s => (s.exercises || []).map(e => e.id)))
+}
+
+// Historikken (Fremgang, fra serveren) uden ugens egne øvelser — dem kender
+// exerciseLogs bedre (fortrudte, rettede og ventende sæt). Rækker uden
+// exercise_id (ældre select) tages med som de er.
+export function tidligereSaet(fremgangLogs, week) {
+  const ids = ugensOevelsesIds(week)
+  return (fremgangLogs || [])
+    .filter(l => !l.exercise_id || !ids.has(l.exercise_id))
+    .map(l => ({ navn: l.exercises?.name, weight: l.weight, reps: l.reps_completed, dato: l.logged_at, skipped: false }))
+}
+
+export function ugensSaet(exerciseLogs, week, allWeeks, udenNoegle = null) {
+  const ids = ugensOevelsesIds(week)
+  const navne = navnForOevelse(allWeeks?.length ? allWeeks : [week])
+  return (exerciseLogs || [])
+    .filter(l => ids.has(l.exercise_id) && `${l.exercise_id}_${l.set_number}` !== udenNoegle)
+    .map(l => ({ navn: navne.get(l.exercise_id), weight: l.weight, reps: l.reps_completed, dato: l.logged_at || '9999', skipped: !!l.skipped, denneUge: true, noegle: `${l.exercise_id}_${l.set_number}` }))
+}

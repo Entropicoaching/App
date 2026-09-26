@@ -17,6 +17,7 @@ import {
 import { browserSaysOffline, seemsOffline, withSlowNetCutoff } from '../offlineSession'
 import { estimatedOneRepMax } from '../exerciseProgress'
 import { parsePlannedRpe, logFrontendError } from './ugeHjaelp'
+import { bygGrundlag, findRekord, rekordTekst, ugensSaet, ugensOevelsesIds } from './rekorder'
 
 // ORDRE 397 (docs/OFFLINE-PAS.md): uden net forsøges ingen skrivning; den
 // ville ellers stå i queueWrite's kø bag et auth-refresh, der selv prøver i
@@ -41,7 +42,38 @@ export function lavSaetSkrivning({
   allWeeks, athlete, currentWeek, exerciseLogs, feedbackInputs, fetchExerciseLogs, fetchPastLogs, lastLogByExerciseName,
   logInputs, setAllWeeks, setExerciseLogs, setLastLoggedSet, setLogInputs, setPendingSessionAction, setPendingSyncCount, setPrToast,
   setPrToastFading, setRestPause, setSetConfirm, setWriteRef, showFlash, viewingWeekIdx,
+  rekordGrundlagFoer, setRekordFejring, fejredeRef,
 }) {
+  // ORDRE 439 · blok 1: er sættet en ny rekord? Regnes mod alle ANDRE sæt:
+  // tidligere uger (rekordGrundlagFoer, fra Fremgangs historik) + ugens sæt
+  // uden dette. Kendes historikken ikke (endnu ikke hentet, intet
+  // øjebliksbillede), fejres intet: hellere ingen fejring end en falsk.
+  function rekordForSaet(exerciseId, key, navn, payload) {
+    if (!rekordGrundlagFoer || !ugensOevelsesIds(currentWeek).has(exerciseId)) return null
+    const grundlag = bygGrundlag(ugensSaet(exerciseLogs, currentWeek, allWeeks, key), rekordGrundlagFoer)
+    return findRekord(grundlag, { navn, weight: payload.weight, reps: payload.reps_completed })
+  }
+
+  // Én fejring pr. sæt og værdi: køens senere afsendelse, en genhentning
+  // eller et nyt tryk på samme sæt fejrer ikke igen. Fra Dagens pas står den
+  // på kortet (paaKortet); fra Program-fanen i toast-pladsen.
+  function fejrRekord(rekord, key, payload, paaKortet) {
+    if (!rekord || !fejredeRef) return
+    const id = `${key}:${payload.weight}:${payload.reps_completed}`
+    if (fejredeRef.current.has(id)) return
+    fejredeRef.current.add(id)
+    const tekst = rekordTekst(rekord)
+    if (paaKortet && setRekordFejring) {
+      setRekordFejring({ id, key, tekst })
+      setTimeout(() => setRekordFejring(p => (p?.id === id ? null : p)), 5000)
+      return
+    }
+    setPrToast({ tekst })
+    setPrToastFading(false)
+    setTimeout(() => setPrToastFading(true), 3400)
+    setTimeout(() => setPrToast(null), 4000)
+  }
+
   // Skriver ét sæt til databasen, serialiseret pr. nøgle. Fordi skridtene kædes
   // (chain.then), ser en efterfølgende skrivning altid det rigtige id fra den
   // foregående INSERT → aldrig dubletter, og seneste værdi vinder. Returnerer
@@ -203,6 +235,7 @@ export function lavSaetSkrivning({
     // ORDRE 422: efter passets sidste sæt er der ingen næste at holde pause
     // til — pausen startes ikke, og en pause fra forrige sæt ryddes.
     const loggedExercise = allWeeks.flatMap(w => w.sessions || []).flatMap(sess => sess.exercises || []).find(e => e.id === exerciseId)
+    const rekord = rekordForSaet(exerciseId, key, loggedExercise?.name, payload)
     if (pasFaerdigtEfter(exerciseId, setNumber)) {
       clearRestPause(athlete.id)
       setRestPause(null)
@@ -251,6 +284,8 @@ export function lavSaetSkrivning({
     // Er nettet kendt dødt (også når browseren tror den er online, se
     // offlineSession.js), forsøges intet: sættet ligger i køen og sendes af
     // flushOfflineSets, når et kald lykkes igen.
+    // ORDRE 439: sættet er gemt på telefonen → fejres nu, også uden net.
+    if (queued) fejrRekord(rekord, key, payload, true)
     const skipNetwork = queued && seemsOffline()
     if (skipNetwork) setPendingSyncCount(countOfflineSets(athlete.id))
     const { error } = skipNetwork
@@ -290,6 +325,9 @@ export function lavSaetSkrivning({
       clearOfflineSetIfSame(athlete.id, key, { payload })
       setPendingSyncCount(countOfflineSets(athlete.id))
     }
+    // Ikke i køen (Program-fanen, eller lageret var fuldt): fejres først nu,
+    // hvor serveren har sættet. Et sæt der rulles tilbage, fejres aldrig.
+    if (!queued) fejrRekord(rekord, key, payload, localFallback)
     fetchExerciseLogs(athlete.id, currentWeek)
 
     // PR-detektion (est. 1RM-baseret, Epley) — skelner vægt/rep/styrke-PR
@@ -347,12 +385,9 @@ export function lavSaetSkrivning({
             if (prSaveError) {
               logFrontendError('PR-detektion: INSERT på personal_records fejlede', prSaveError, athlete.id)
               recordSilentFail(athlete.id, 'silent:pr-insert-failed')
-            } else {
-              setPrToast({ name: exerciseName, type: prType })
-              setPrToastFading(false)
-              setTimeout(() => setPrToastFading(true), 2400)
-              setTimeout(() => setPrToast(null), 3000)
             }
+            // ORDRE 439: fejringen kommer nu fra fejrRekord ovenfor (regnet
+            // ud fra loggen, også uden net); her gemmes kun rækken.
           }
         }
       }
@@ -449,6 +484,9 @@ export function lavSaetSkrivning({
   // spøgelsesrække, hvis sletningen ramte databasen FØR insertet).
   async function undoLoggedSet(exerciseId, setNumber) {
     const key = `${exerciseId}_${setNumber}`
+    // ORDRE 439: et fortrudt sæt er ingen rekord; logges det igen, må det fejres.
+    if (setRekordFejring) setRekordFejring(p => (p?.key === key ? null : p))
+    if (fejredeRef) for (const id of [...fejredeRef.current]) if (id.startsWith(`${key}:`)) fejredeRef.current.delete(id)
     setExerciseLogs(prev => prev.filter(l => !(l.exercise_id === exerciseId && l.set_number === setNumber)))
     clearRestPause(athlete.id)
     setRestPause(null)

@@ -15,6 +15,7 @@
 import { useMemo, useState } from 'react'
 import { heaviestSetPerWeek, grupperOevelsesnavne, HOVEDLOEFT_FAMILIER } from '../exerciseProgress.js'
 import { s } from '../athleteShared'
+import { rekordListe, tidligereSaet, ugensSaet } from './rekorder'
 
 const mono = "'IBM Plex Mono', monospace"
 
@@ -109,7 +110,43 @@ function FremgangGraf({ punkter }) {
   )
 }
 
-export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks }) {
+// ORDRE 439 · blok 1: "12. sep".
+const MDR = ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec']
+function kortDato(iso) {
+  const d = new Date(iso)
+  return Number.isNaN(d.getTime()) ? '' : `${d.getDate()}. ${MDR[d.getMonth()]}`
+}
+const kgTal = (n) => String(n).replace('.', ',')
+
+// Rekorderne (nyeste først) med dato. Samme regel som fejringen i Dagens pas
+// (rekorder.js); ugens sæt tages fra exerciseLogs, så et sæt logget uden net
+// står her med det samme og kun én gang, også når det senere er sendt.
+function RekordListe({ rekorder }) {
+  if (rekorder.length === 0) {
+    return <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen rekorder endnu. Slår du dit bedste sæt på en øvelse, står det her.</div>
+  }
+  return (
+    <div data-rekord-liste={rekorder.length} style={{ display: 'flex', flexDirection: 'column' }}>
+      {rekorder.map((r, i) => (
+        <div key={`${r.navn}-${r.dato}-${i}`} data-rekord={r.type} style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', padding: '0.5rem 0', borderBottom: i < rekorder.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none' }}>
+          <span style={{ fontFamily: mono, fontSize: '0.62rem', color: '#7a7770', width: '3.6rem', flexShrink: 0 }}>{kortDato(r.dato)}</span>
+          <span style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
+            <span style={{ display: 'block', fontSize: '0.88rem', color: '#edeae2' }}>
+              {r.type === 'e1rm' ? `${r.navn} e1RM ${r.e1rm} kg` : `${r.navn} ${kgTal(r.weight)} kg × ${r.reps}`}
+            </span>
+            <span style={{ display: 'block', fontFamily: mono, fontSize: '0.6rem', color: '#7a7770', marginTop: '0.1rem' }}>
+              {r.type === 'e1rm'
+                ? `+${r.plus} kg · ${kgTal(r.weight)} kg × ${r.reps}`
+                : `${r.plus === 1 ? '1 rep' : `${r.plus} reps`} mere end før på ${kgTal(r.weight)} kg`}
+            </span>
+          </span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek }) {
   const alleNavne = useMemo(() => navneFraProgram(allWeeks), [allWeeks])
   const navneMedLogs = useMemo(() => navneFraLogs(fremgangLogs), [fremgangLogs])
   const grupper = useMemo(() => grupperOevelsesnavne(alleNavne), [alleNavne])
@@ -146,6 +183,11 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks })
     const logsForOevelse = (fremgangLogs || []).filter(l => l.exercises?.name === oevelse)
     return heaviestSetPerWeek(logsForOevelse)
   }, [fremgangLogs, oevelse])
+
+  const rekorder = useMemo(() => {
+    if (!fremgangLogs) return null
+    return rekordListe([...tidligereSaet(fremgangLogs, currentWeek), ...ugensSaet(exerciseLogs, currentWeek, allWeeks)]).reverse().slice(0, 10)
+  }, [fremgangLogs, exerciseLogs, currentWeek, allWeeks])
 
   return (
     <>
@@ -226,6 +268,13 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks })
           </>
         )}
       </div>
+
+      {rekorder && (
+        <div style={s.card}>
+          <div style={s.cardLabel}>Dine rekorder</div>
+          <RekordListe rekorder={rekorder} />
+        </div>
+      )}
     </>
   )
 }

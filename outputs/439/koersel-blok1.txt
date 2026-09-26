@@ -1,0 +1,10 @@
+Bygger mod mocken ...
+  [blok 1] sæt 1 (100 kg × 5): "🏆 Ny rekord: Squat e1RM 117 kg, +3 kg" på kortet
+  [blok 1] sæt 2 (100 kg × 5, samme som sæt 1): fejring stadig fra sæt 1
+  [blok 1] sæt 3 (102,5 kg × 5): "🏆 Ny rekord: Squat e1RM 120 kg, +3 kg"
+  [blok 1] sæt 3 fortrudt: fejring væk
+  [blok 1] sæt 3 logget igen på 100 kg × 5: fejring ingen
+  [blok 1] sæt 4 (105 kg, sprunget over): fejring ingen
+  [blok 1] Fremgang, "Dine rekorder" (10 i alt): i dag = ["26. sep Squat e1RM 117 kg +3 kg · 100 kg × 5"]
+  [blok 1] mocken: squat-sæt 1:100×5 2:100×5 3:100×5 4:sprunget
+GRØN: blok 1

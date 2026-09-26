@@ -32,6 +32,7 @@ export const ATHLETEVIEW_MODULER = [
   'athlete/BundNav.jsx',
   'athlete/offlineSnapshot.js',
   'athlete/IngenForbindelse.jsx',
+  'athlete/rekorder.js',
 ]
 
 export function athleteViewKilde() {

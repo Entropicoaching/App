@@ -24,6 +24,7 @@ function HjemTab({
   setAthleteVideoCoachInstant, setAthleteVideoCoachOpen, setLogInputs, setMereOpen, setReadinessInput, setRestPause, setTab, setWeightInput,
   sharedVideoAnalyses, sharedVideoError, sharedVideoLoading, skipSet, suggestNextWeight, tab, toastSlot, undoLoggedSet,
   unreadMsgCount, updateLoggedSet, weeklyTonnage, weightInput, weightLogs, saveFeedback,
+  rekordFejring,
 }) {
   return (
     <>
@@ -112,6 +113,7 @@ function HjemTab({
                     pendingSyncCount={pendingSyncCount}
                     pendingSyncKeys={pendingSyncKeys}
                     parkedSets={parkedSets}
+                    rekordFejring={rekordFejring}
                     todayStr={today()}
                     finishedSession={(() => {
                       // ORDRE 419 (I3): passet, hvis sidste sæt lige er logget fra

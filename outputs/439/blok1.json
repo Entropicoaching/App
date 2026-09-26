@@ -1,0 +1,33 @@
+{
+  "blok": "1",
+  "fund": {
+    "saet1": {
+      "key": "c0000000-0000-4000-8000-000000000168_1",
+      "tekst": "🏆 Ny rekord: Squat e1RM 117 kg, +3 kg"
+    },
+    "fremgang": [
+      "26. sep Squat e1RM 117 kg +3 kg · 100 kg × 5",
+      "19. sep Squat 92,5 kg × 6 1 rep mere end før på 92,5 kg",
+      "17. sep Dødløft e1RM 151 kg +2 kg · 137,5 kg × 3",
+      "17. sep Pause squat e1RM 94 kg +3 kg · 82,5 kg × 4",
+      "15. sep Bænkpres e1RM 88 kg +2 kg · 77,5 kg × 4",
+      "14. sep Squat e1RM 114 kg +3 kg · 97,5 kg × 5",
+      "14. sep Bænkpres e1RM 86 kg +1 kg · 67,5 kg × 8",
+      "10. sep Dødløft e1RM 149 kg +3 kg · 135 kg × 3",
+      "10. sep Pause squat e1RM 91 kg +3 kg · 80 kg × 4",
+      "8. sep Bænkpres e1RM 85 kg +3 kg · 75 kg × 4"
+    ]
+  },
+  "trin": [
+    "sæt 1 (100 kg × 5): \"🏆 Ny rekord: Squat e1RM 117 kg, +3 kg\" på kortet",
+    "sæt 2 (100 kg × 5, samme som sæt 1): fejring stadig fra sæt 1",
+    "sæt 3 (102,5 kg × 5): \"🏆 Ny rekord: Squat e1RM 120 kg, +3 kg\"",
+    "sæt 3 fortrudt: fejring væk",
+    "sæt 3 logget igen på 100 kg × 5: fejring ingen",
+    "sæt 4 (105 kg, sprunget over): fejring ingen",
+    "Fremgang, \"Dine rekorder\" (10 i alt): i dag = [\"26. sep Squat e1RM 117 kg +3 kg · 100 kg × 5\"]",
+    "mocken: squat-sæt 1:100×5 2:100×5 3:100×5 4:sprunget"
+  ],
+  "konsolFejl": [],
+  "groen": true
+}

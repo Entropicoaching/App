@@ -18,7 +18,7 @@ const RPE_VALUES = [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10]
 // — logInputs-nøglen er `${exerciseId}_${setNumber}`, delt på tværs af
 // begge faner). Under det: resten af DENNE session i kort form. `pas` kommer
 // fra findDagensPas (src/nextSet.js, ren funktion, se dens tests).
-function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogInputs, onLogSet, skipSet, suggestNextWeight, onOpenSession, todayStr, checkinNudge, lastLoggedSet, onUndoLastSet, onUpdateLoggedSet, pendingSyncCount, pendingSyncKeys = [], parkedSets = [], finishedSession = null, onRateSession }) {
+function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogInputs, onLogSet, skipSet, suggestNextWeight, onOpenSession, todayStr, checkinNudge, lastLoggedSet, onUndoLastSet, onUpdateLoggedSet, pendingSyncCount, pendingSyncKeys = [], parkedSets = [], finishedSession = null, onRateSession, rekordFejring = null }) {
   const activeNext = pas && pas.status === 'open' ? pas.next : null
 
   // ORDRE 314 · blok 1 — Marcs dom: man kunne se det næste sæt, men ikke
@@ -139,6 +139,14 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
     </div>
   )
 
+  // ORDRE 439 · blok 1: en kort, rolig fejring på sættet, der lige blev
+  // logget (sat og ryddet i saetSkrivning.js: 5 s, eller fortryd).
+  const rekordLinje = rekordFejring && (
+    <div data-rekord-fejring={rekordFejring.key} role="status" style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.66rem', letterSpacing: '0.03em', lineHeight: 1.45, color: '#c8923a', background: 'rgba(200,146,58,0.07)', borderLeft: '2px solid #c8923a', padding: '0.5rem 0.65rem', marginBottom: '0.75rem' }}>
+      <span aria-hidden="true">🏆 </span>{rekordFejring.tekst}
+    </div>
+  )
+
   // ORDRE 397: ventende og parkerede sæt vises både mens passet er åbent og
   // når det er færdigt (det sidste sæt kan sagtens være logget uden net).
   const ventendeSaet = (
@@ -173,6 +181,7 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
         <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', color: '#edeae2', marginBottom: '0.5rem' }}>
           {pas.status === 'done' ? 'Passet er færdigt. ✓' : 'Intet pas i dag.'}
         </div>
+        {rekordLinje}
         {up ? (
           <button
             type="button"
@@ -266,6 +275,7 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
           folden midt i et pas. Rækkerne er derfor kollapset til ÉN linje som
           standard ("n sæt klaret" + seneste sæt); et tryk folder dem ud. Står
           et sæt åbent til redigering, er listen altid foldet ud. */}
+      {rekordLinje}
       {priorSetNumbers.length > 0 && !priorSetsOpen && (() => {
         const lastPrior = (exerciseLogs || []).find(l => l.exercise_id === ex.id && l.set_number === priorSetNumbers.length)
         return (

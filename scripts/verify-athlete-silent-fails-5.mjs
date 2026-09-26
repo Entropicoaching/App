@@ -32,8 +32,14 @@ assert.match(logSet, /error: prSaveError[\s\S]*recordSilentFail\(athlete\.id, 's
 // Det konkrete symptom: setPrToast må ALDRIG stå ubetinget efter savePR() længere.
 assert.doesNotMatch(logSet, /await savePR\(\)\s*\n\s*setPrToast/,
   'setPrToast må ikke kaldes ubetinget efter savePR() — kun når INSERT\'en er bekræftet')
-assert.match(logSet, /if \(prSaveError\) \{[\s\S]*?\} else \{\s*\n\s*setPrToast/,
-  'setPrToast skal stå i else-grenen af en fejltjekket PR-INSERT')
+// ORDRE 439: fejringen regnes nu ud fra loggen (rekorder.js) og vises af
+// fejrRekord, ikke efter personal_records-INSERT'en. Samme princip som G14:
+// ingen fejring af et sæt, der ikke er gemt. Den må kun komme, når sættet
+// ligger i den lokale kø (queued), eller efter fejltjekket af skrivningen.
+assert.doesNotMatch(logSet, /setPrToast\(/, 'logSet må ikke selv vise en PR-toast; fejringen går gennem fejrRekord')
+assert.match(logSet, /if \(queued\) fejrRekord\(/, 'fejringen fra køen skal kræve at sættet er gemt lokalt (queued)')
+const efterFejl = logSet.split(/\n    if \(error\) \{/)[1] || ''
+assert.match(efterFejl, /if \(!queued\) fejrRekord\(/, 'uden kø fejres først efter at skrivningens fejl er håndteret')
 
 // --- G15: logWeight ryddede feltet og genindlæste uden noget fejltjek ---
 const logWeight = extractFn('logWeight')

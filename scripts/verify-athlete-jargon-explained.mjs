@@ -38,8 +38,14 @@ assert.match(
 )
 
 // --- PR-toasten skriver ordet ud i stedet for forkortelsen ------------------
-assert.match(athleteView, /Ny personlig rekord \(vægt\)/, 'PR-toasten skal skrive "personlig rekord" ud i stedet for forkortelsen')
-assert.match(athleteView, /Ny personlig rekord \(reps\)/, 'PR-toasten skal skrive "personlig rekord" ud i stedet for forkortelsen')
+// ORDRE 439: fejringen siger "Ny rekord: <øvelse> ..." (rekorder.js), aldrig "PR".
+assert.match(athleteView, /Ny rekord: \$\{r\.navn\} e1RM/, 'rekord-fejringen skal skrive "rekord" ud i stedet for forkortelsen')
+{
+  const { rekordTekst } = await import('../src/athlete/rekorder.js')
+  for (const r of [{ type: 'e1rm', navn: 'Squat', e1rm: 122, plus: 3 }, { type: 'reps', navn: 'Squat', weight: 100, reps: 7, plus: 1 }]) {
+    assert.doesNotMatch(rekordTekst(r), /\bPR\b|!/, 'rekord-fejringen må hverken bruge forkortelsen "PR" eller udråbstegn')
+  }
+}
 
 // --- Ingen udråbstegn i de tekster denne ordre rører ------------------------
 assert.ok(
