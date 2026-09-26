@@ -10,7 +10,7 @@ import { runGuardedRead } from '../athleteReadGuard'
 import { clearReadinessDraft } from '../readinessDraft'
 import { loadRestPause } from '../restPause'
 import { estimatedOneRepMax, HOVEDLOEFT_FAMILIER } from '../exerciseProgress'
-import { fremgangLogsQuery, fremgangLogsKronologisk } from '../fremgangLogs'
+import { fremgangLogsQuery, fremgangLogsKronologisk, rekordRaekkerQuery } from '../fremgangLogs'
 import { today } from '../athleteShared'
 import { computeActiveWeekIdx, weekFullyLogged, parsePlannedRpe, logFrontendError } from './ugeHjaelp'
 import { isUuid } from './videoCoachBro'
@@ -32,7 +32,7 @@ export function lavLaesninger({
   setMeetType, setMereOpen, setOnboardingDone, setOpenSharedVideoId, setPastLogs, setProgOpenSession, setProgramError, setPrs,
   setPrsError, setReadinessError, setReadinessHistory, setReadinessLog, setRestPause, setSavingReadiness, setSharedVideoAnalyses, setSharedVideoError,
   setSharedVideoLoading, setTab, setViewingWeekIdx, setVolumeLoading, setVolumeLogs, setWarmupTemplates, setWeeklyTonnage,
-  setOfflineSnapshotAt,
+  setOfflineSnapshotAt, setUgensLogsHentet,
 }) {
   // ORDRE 397 (docs/OFFLINE-PAS.md): kun atletens egen visning, aldrig
   // coachens forhåndsvisning.
@@ -259,6 +259,18 @@ export function lavLaesninger({
     setFremgangLoading(false)
     if (!ok) return
     setFremgangLogs(fremgangLogsKronologisk(data))
+  }
+
+  // ORDRE 450: rækkerne til rekord-indekset (rekordIndeks.js), kun dem fra
+  // `siden` og frem. Hentes i baggrunden, efter at Dagens pas er vist; en fejl
+  // logges, men giver ingen rød linje (atleten har ikke bedt om noget, og
+  // rekorderne venter bare til næste åbning). null = ikke hentet.
+  async function fetchRekordRaekker(athleteId, siden) {
+    const { data, ok } = await runGuardedRead(
+      () => rekordRaekkerQuery(supabase, athleteId, siden),
+      (error) => { if (!seemsOffline()) logFrontendError('Rekord-indekset kunne ikke hentes', error, athleteId) },
+    )
+    return ok ? (data || []) : null
   }
 
   // ORDRE 268 · commit 2: "hele forløbet" i UgensStatusKort — samme kilde
@@ -650,6 +662,8 @@ export function lavLaesninger({
       return [...merged, ...pending]
     })
     setLogInputs(prev => mergeAthleteSetInputs(prev, rows))
+    // ORDRE 450: nu er Dagens pas brugbart; først derefter hentes rekord-rækkerne.
+    setUgensLogsHentet?.(week.id)
   }
 
   async function fetchLastLogs(athleteId, week) {
@@ -706,7 +720,7 @@ export function lavLaesninger({
   }
 
   return {
-    fetchAthlete, fetchSharedVideoAnalyses, fetchMeetPlan, fetchVolumeLogs, fetchFremgangLogs, fetchForloebLogs, fetchMeetResults, suggestNextWeight,
+    fetchAthlete, fetchSharedVideoAnalyses, fetchMeetPlan, fetchVolumeLogs, fetchFremgangLogs, fetchRekordRaekker, fetchForloebLogs, fetchMeetResults, suggestNextWeight,
     saveReadiness, fetchProgram, openSession, openReadiness, completeOnboardingGuide, advanceOnboardingGuide, restartOnboardingGuide, fetchPastLogs,
     fetchExerciseLogs,
   }

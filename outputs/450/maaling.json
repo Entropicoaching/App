@@ -1,0 +1,343 @@
+{
+  "dato": "2026-09-26",
+  "metode": "se kommentaren øverst i outputs/450/maal.mjs",
+  "profiler": {
+    "fast3g": {
+      "latency": 562.5,
+      "downloadThroughput": 180000,
+      "uploadThroughput": 84375,
+      "cpuRate": 4
+    },
+    "slow4g": {
+      "latency": 150,
+      "downloadThroughput": 200000,
+      "uploadThroughput": 93750,
+      "cpuRate": 4
+    }
+  },
+  "runs": 5,
+  "versioner": {
+    "foer": {
+      "commit": "dd68c77",
+      "historikISaet": 4014,
+      "raekkerFoersteAabning": 3512,
+      "profiler": {
+        "fast3g": {
+          "median": {
+            "brugbartMs": 6361,
+            "raekkerRekord": 3512,
+            "kBRekord": 564,
+            "raekkerIalt": 5875,
+            "langeOpgaverEfterMs": 0,
+            "stilleMs": 12208
+          },
+          "koersler": [
+            {
+              "brugbartMs": 6416,
+              "rekordKaldStartMs": 5721,
+              "raekkerRekord": 3512,
+              "rekordFilter": [
+                "alt"
+              ],
+              "kBRekord": 564,
+              "raekkerIalt": 5875,
+              "indeksBytes": 0,
+              "langeOpgaverEfterMs": 0,
+              "stilleMs": 12239
+            },
+            {
+              "brugbartMs": 6361,
+              "rekordKaldStartMs": 5676,
+              "raekkerRekord": 3512,
+              "rekordFilter": [
+                "alt"
+              ],
+              "kBRekord": 564,
+              "raekkerIalt": 5875,
+              "indeksBytes": 0,
+              "langeOpgaverEfterMs": 0,
+              "stilleMs": 12208
+            },
+            {
+              "brugbartMs": 6387,
+              "rekordKaldStartMs": 5720,
+              "raekkerRekord": 3512,
+              "rekordFilter": [
+                "alt"
+              ],
+              "kBRekord": 564,
+              "raekkerIalt": 5875,
+              "indeksBytes": 0,
+              "langeOpgaverEfterMs": 0,
+              "stilleMs": 12231
+            },
+            {
+              "brugbartMs": 6302,
+              "rekordKaldStartMs": 5622,
+              "raekkerRekord": 3512,
+              "rekordFilter": [
+                "alt"
+              ],
+              "kBRekord": 564,
+              "raekkerIalt": 5875,
+              "indeksBytes": 0,
+              "langeOpgaverEfterMs": 0,
+              "stilleMs": 12181
+            },
+            {
+              "brugbartMs": 6314,
+              "rekordKaldStartMs": 5632,
+              "raekkerRekord": 3512,
+              "rekordFilter": [
+                "alt"
+              ],
+              "kBRekord": 564,
+              "raekkerIalt": 5875,
+              "indeksBytes": 0,
+              "langeOpgaverEfterMs": 0,
+              "stilleMs": 12193
+            }
+          ]
+        },
+        "slow4g": {
+          "median": {
+            "brugbartMs": 4438,
+            "raekkerRekord": 3512,
+            "kBRekord": 564,
+            "raekkerIalt": 5875,
+            "langeOpgaverEfterMs": 59,
+            "stilleMs": 8923
+          },
+          "koersler": [
+            {
+              "brugbartMs": 4326,
+              "rekordKaldStartMs": 4066,
+              "raekkerRekord": 3512,
+              "rekordFilter": [
+                "alt"
+              ],
+              "kBRekord": 564,
+              "raekkerIalt": 5875,
+              "indeksBytes": 0,
+              "langeOpgaverEfterMs": 59,
+              "stilleMs": 8899
+            },
+            {
+              "brugbartMs": 4379,
+              "rekordKaldStartMs": 4137,
+              "raekkerRekord": 3512,
+              "rekordFilter": [
+                "alt"
+              ],
+              "kBRekord": 564,
+              "raekkerIalt": 5875,
+              "indeksBytes": 0,
+              "langeOpgaverEfterMs": 0,
+              "stilleMs": 8923
+            },
+            {
+              "brugbartMs": 4724,
+              "rekordKaldStartMs": 4078,
+              "raekkerRekord": 3512,
+              "rekordFilter": [
+                "alt"
+              ],
+              "kBRekord": 564,
+              "raekkerIalt": 5875,
+              "indeksBytes": 0,
+              "langeOpgaverEfterMs": 283,
+              "stilleMs": 8917
+            },
+            {
+              "brugbartMs": 4439,
+              "rekordKaldStartMs": 4169,
+              "raekkerRekord": 3512,
+              "rekordFilter": [
+                "alt"
+              ],
+              "kBRekord": 564,
+              "raekkerIalt": 5875,
+              "indeksBytes": 0,
+              "langeOpgaverEfterMs": 59,
+              "stilleMs": 8981
+            },
+            {
+              "brugbartMs": 4438,
+              "rekordKaldStartMs": 4183,
+              "raekkerRekord": 3512,
+              "rekordFilter": [
+                "alt"
+              ],
+              "kBRekord": 564,
+              "raekkerIalt": 5875,
+              "indeksBytes": 0,
+              "langeOpgaverEfterMs": 52,
+              "stilleMs": 8944
+            }
+          ]
+        }
+      }
+    },
+    "efter": {
+      "commit": "dd68c77 + arbejdstræ",
+      "historikISaet": 4014,
+      "raekkerFoersteAabning": 3512,
+      "profiler": {
+        "fast3g": {
+          "median": {
+            "brugbartMs": 6407,
+            "raekkerRekord": 34,
+            "kBRekord": 5.8,
+            "raekkerIalt": 2397,
+            "langeOpgaverEfterMs": 0,
+            "stilleMs": 9594
+          },
+          "koersler": [
+            {
+              "brugbartMs": 6406,
+              "rekordKaldStartMs": 7448,
+              "raekkerRekord": 34,
+              "rekordFilter": [
+                "gte.2026-09-12T10:12:00.000Z"
+              ],
+              "kBRekord": 5.8,
+              "raekkerIalt": 2397,
+              "indeksBytes": 876,
+              "langeOpgaverEfterMs": 0,
+              "stilleMs": 9589
+            },
+            {
+              "brugbartMs": 6437,
+              "rekordKaldStartMs": 7484,
+              "raekkerRekord": 34,
+              "rekordFilter": [
+                "gte.2026-09-12T10:12:00.000Z"
+              ],
+              "kBRekord": 5.8,
+              "raekkerIalt": 2397,
+              "indeksBytes": 876,
+              "langeOpgaverEfterMs": 0,
+              "stilleMs": 9617
+            },
+            {
+              "brugbartMs": 6407,
+              "rekordKaldStartMs": 7449,
+              "raekkerRekord": 34,
+              "rekordFilter": [
+                "gte.2026-09-12T10:12:00.000Z"
+              ],
+              "kBRekord": 5.8,
+              "raekkerIalt": 2397,
+              "indeksBytes": 876,
+              "langeOpgaverEfterMs": 0,
+              "stilleMs": 9597
+            },
+            {
+              "brugbartMs": 6393,
+              "rekordKaldStartMs": 7448,
+              "raekkerRekord": 34,
+              "rekordFilter": [
+                "gte.2026-09-12T10:12:00.000Z"
+              ],
+              "kBRekord": 5.8,
+              "raekkerIalt": 2397,
+              "indeksBytes": 876,
+              "langeOpgaverEfterMs": 0,
+              "stilleMs": 9580
+            },
+            {
+              "brugbartMs": 6425,
+              "rekordKaldStartMs": 7472,
+              "raekkerRekord": 34,
+              "rekordFilter": [
+                "gte.2026-09-12T10:12:00.000Z"
+              ],
+              "kBRekord": 5.8,
+              "raekkerIalt": 2397,
+              "indeksBytes": 876,
+              "langeOpgaverEfterMs": 0,
+              "stilleMs": 9594
+            }
+          ]
+        },
+        "slow4g": {
+          "median": {
+            "brugbartMs": 4397,
+            "raekkerRekord": 34,
+            "kBRekord": 5.8,
+            "raekkerIalt": 2397,
+            "langeOpgaverEfterMs": 0,
+            "stilleMs": 6199
+          },
+          "koersler": [
+            {
+              "brugbartMs": 4608,
+              "rekordKaldStartMs": 4746,
+              "raekkerRekord": 34,
+              "rekordFilter": [
+                "gte.2026-09-12T10:12:00.000Z"
+              ],
+              "kBRekord": 5.8,
+              "raekkerIalt": 2397,
+              "indeksBytes": 876,
+              "langeOpgaverEfterMs": 0,
+              "stilleMs": 6342
+            },
+            {
+              "brugbartMs": 4397,
+              "rekordKaldStartMs": 4626,
+              "raekkerRekord": 34,
+              "rekordFilter": [
+                "gte.2026-09-12T10:12:00.000Z"
+              ],
+              "kBRekord": 5.8,
+              "raekkerIalt": 2397,
+              "indeksBytes": 876,
+              "langeOpgaverEfterMs": 0,
+              "stilleMs": 6199
+            },
+            {
+              "brugbartMs": 4363,
+              "rekordKaldStartMs": 4596,
+              "raekkerRekord": 34,
+              "rekordFilter": [
+                "gte.2026-09-12T10:12:00.000Z"
+              ],
+              "kBRekord": 5.8,
+              "raekkerIalt": 2397,
+              "indeksBytes": 876,
+              "langeOpgaverEfterMs": 0,
+              "stilleMs": 6173
+            },
+            {
+              "brugbartMs": 4445,
+              "rekordKaldStartMs": 4650,
+              "raekkerRekord": 34,
+              "rekordFilter": [
+                "gte.2026-09-12T10:12:00.000Z"
+              ],
+              "kBRekord": 5.8,
+              "raekkerIalt": 2397,
+              "indeksBytes": 876,
+              "langeOpgaverEfterMs": 0,
+              "stilleMs": 6209
+            },
+            {
+              "brugbartMs": 4394,
+              "rekordKaldStartMs": 4644,
+              "raekkerRekord": 34,
+              "rekordFilter": [
+                "gte.2026-09-12T10:12:00.000Z"
+              ],
+              "kBRekord": 5.8,
+              "raekkerIalt": 2397,
+              "indeksBytes": 876,
+              "langeOpgaverEfterMs": 0,
+              "stilleMs": 6191
+            }
+          ]
+        }
+      }
+    }
+  }
+}

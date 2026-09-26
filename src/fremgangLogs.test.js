@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { fremgangLogsQuery, fremgangLogsKronologisk, FREMGANG_LOG_LIMIT } from './fremgangLogs.js'
+import { fremgangLogsQuery, fremgangLogsKronologisk, FREMGANG_LOG_LIMIT, rekordRaekkerQuery } from './fremgangLogs.js'
 import { heaviestSetPerWeek } from './exerciseProgress.js'
 
 // Falsk klient der opfører sig som PostgREST: sorterer efter .order(), og
@@ -71,4 +71,24 @@ test('fremgangLogsKronologisk tåler null og rører ikke sit input', () => {
   const input = [{ a: 2 }, { a: 1 }]
   fremgangLogsKronologisk(input)
   assert.deepEqual(input, [{ a: 2 }, { a: 1 }])
+})
+
+test('rekordRaekkerQuery (ORDRE 450): kun rækker fra "siden", ellers alt; samme felter og grænse', async () => {
+  const kald = []
+  const lav = () => {
+    const b = {
+      from(t) { kald.push(['from', t]); return b }, select(c) { kald.push(['select', c]); return b },
+      eq(k, v) { kald.push(['eq', k, v]); return b }, gt(k, v) { kald.push(['gt', k, v]); return b },
+      gte(k, v) { kald.push(['gte', k, v]); return b }, order(k, o) { kald.push(['order', k, o.ascending]); return b },
+      limit(n) { kald.push(['limit', n]); return b },
+    }
+    return b
+  }
+  rekordRaekkerQuery(lav(), 'atlet-1', '2026-09-01T00:00:00.000Z')
+  assert.ok(kald.some(k => k[0] === 'gte' && k[1] === 'logged_at' && k[2] === '2026-09-01T00:00:00.000Z'))
+  assert.ok(kald.some(k => k[0] === 'select' && k[1].includes('exercises(name)') && k[1].includes('exercise_id')))
+  assert.ok(kald.some(k => k[0] === 'limit' && k[1] === FREMGANG_LOG_LIMIT))
+  kald.length = 0
+  rekordRaekkerQuery(lav(), 'atlet-1', null)
+  assert.ok(!kald.some(k => k[0] === 'gte'))
 })

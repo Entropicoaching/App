@@ -62,9 +62,10 @@ export function rekordTekst(r) {
 
 // Kronologisk gennemgang: hver rekord med dato (Fremgang og "din uge").
 // saetListe: [{ navn, weight, reps, dato, ...ekstra }]; ekstra-felterne følger med.
-export function rekordListe(saetListe) {
+// start (ORDRE 450): et grundlag fra før listen (rekord-indekset); ændres ikke.
+export function rekordListe(saetListe, start = {}) {
   const sorteret = [...(saetListe || [])].filter(gyldigtSaet).sort((a, b) => String(a.dato || '').localeCompare(String(b.dato || '')))
-  const g = {}
+  const g = { ...start }
   const ud = []
   for (const s of sorteret) {
     const r = findRekord(g, s)

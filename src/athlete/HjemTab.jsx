@@ -26,7 +26,7 @@ function HjemTab({
   setAthleteVideoCoachInstant, setAthleteVideoCoachOpen, setLogInputs, setMereOpen, setReadinessInput, setRestPause, setTab, setWeightInput,
   sharedVideoAnalyses, sharedVideoError, sharedVideoLoading, skipSet, suggestNextWeight, tab, toastSlot, undoLoggedSet,
   unreadMsgCount, updateLoggedSet, weeklyTonnage, weightInput, weightLogs, saveFeedback,
-  rekordFejring, fremgangLogs, sendUgeLinje,
+  rekordFejring, rekordGrundlagFoer, sendUgeLinje,
 }) {
   return (
     <>
@@ -151,7 +151,7 @@ function HjemTab({
                   {dagensPas?.status === 'done' && currentWeek && (
                     <DinUgeKort
                       key={currentWeek.id}
-                      uge={dinUge({ week: currentWeek, allWeeks, exerciseLogs, fremgangLogs })}
+                      uge={dinUge({ week: currentWeek, allWeeks, exerciseLogs, rekordGrundlagFoer })}
                       athleteId={athlete?.id}
                       weekId={currentWeek.id}
                       sendUgeLinje={role === 'athlete' ? sendUgeLinje : null}

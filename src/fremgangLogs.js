@@ -23,3 +23,18 @@ export function fremgangLogsQuery(client, athleteId) {
 export function fremgangLogsKronologisk(rows) {
   return [...(rows || [])].reverse()
 }
+
+// ORDRE 450: rækkerne til rekord-indekset (src/athlete/rekordIndeks.js).
+// Samme felter og filtre som ovenfor, men kun rækker fra `siden` og frem
+// (null = alt, første gang). Faldende med samme grænse, så en grænse også her
+// koster de ældste rækker.
+export function rekordRaekkerQuery(client, athleteId, siden = null) {
+  let q = client
+    .from('exercise_logs')
+    .select('exercise_id, weight, reps_completed, logged_at, exercises(name)')
+    .eq('athlete_id', athleteId)
+    .eq('skipped', false)
+    .gt('weight', 0)
+  if (siden) q = q.gte('logged_at', siden)
+  return q.order('logged_at', { ascending: false }).limit(FREMGANG_LOG_LIMIT)
+}
