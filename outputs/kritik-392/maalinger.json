@@ -1,0 +1,1637 @@
+{
+ "moellen": {
+  "matMain": "53f01a6",
+  "forloeb": [
+   {
+    "forloeb": 1,
+    "opgaver": [
+     {
+      "opgave": "Kværnhjulet er delt i 4 lige store felter, og 2 er malet: ■■□□. Hvor stor en del af hjulet er malet?",
+      "titel": "Lige store dele",
+      "replik": "Kværnhjulet og markerne er delt i lige store dele. Kan du se, hvor stor en del der er malet eller sået?",
+      "forsoeg": [
+       {
+        "svar": "forkert",
+        "besked": "Ikke helt. Hint 1 af 2: 2/2 er én hel, men kun nogle af felterne er malet. 2/2 sammenligner de malede med resten. En brøk af helheden skal have ALLE 4 felter i nævneren.",
+        "art": "quest-besked--hint"
+       },
+       {
+        "svar": "rigtigt",
+        "besked": "Rigtigt!",
+        "lyde": 0
+       }
+      ]
+     },
+     {
+      "opgave": "Mølleren har delt sin mark i 6 lige store stykker, og 4 er sået: ■■■■□□. Hvor stor en del af marken er sået?",
+      "titel": "Lige store dele",
+      "replik": "Kværnhjulet og markerne er delt i lige store dele. Kan du se, hvor stor en del der er malet eller sået?",
+      "forsoeg": [
+       {
+        "svar": "rigtigt",
+        "besked": "Rigtigt!",
+        "lyde": 0
+       }
+      ]
+     },
+     {
+      "opgave": "Kværnhjulet er delt i 12 lige store felter, og 2 er malet: ■■□□□□□□□□□□. Hvor stor en del af hjulet er malet?",
+      "titel": "Lige store dele",
+      "replik": "Kværnhjulet og markerne er delt i lige store dele. Kan du se, hvor stor en del der er malet eller sået?",
+      "forsoeg": [
+       {
+        "svar": "rigtigt",
+        "besked": "Rigtigt! 2/12 kan også skrives 1/6.",
+        "lyde": 0
+       }
+      ]
+     },
+     {
+      "opgave": "Kværnhjulet er delt i 4 lige store felter, og 2 er malet: ■■□□. Hvor stor en del af hjulet er malet?",
+      "titel": "Lige store dele",
+      "replik": "Kværnhjulet og markerne er delt i lige store dele. Kan du se, hvor stor en del der er malet eller sået?",
+      "forsoeg": [
+       {
+        "svar": "rigtigt",
+        "besked": "Rigtigt! 2/4 kan også skrives 1/2.",
+        "lyde": 0
+       }
+      ]
+     },
+     {
+      "opgave": "Kværnhjulet er delt i 4 lige store felter, og 2 er malet: ■■□□. Hvor stor en del af hjulet er malet?",
+      "titel": "Lige store dele",
+      "replik": "Kværnhjulet og markerne er delt i lige store dele. Kan du se, hvor stor en del der er malet eller sået?",
+      "forsoeg": [
+       {
+        "svar": "rigtigt",
+        "besked": "Rigtigt! 2/4 kan også skrives 1/2.",
+        "lyde": 0
+       }
+      ]
+     },
+     {
+      "opgave": "Kværnhjulet er delt i 12 lige store felter, og 4 er malet: ■■■■□□□□□□□□. Hvor stor en del af hjulet er malet?",
+      "titel": "Lige store dele",
+      "replik": "Kværnhjulet og markerne er delt i lige store dele. Kan du se, hvor stor en del der er malet eller sået?",
+      "forsoeg": [
+       {
+        "svar": "rigtigt",
+        "besked": "Rigtigt! 4/12 kan også skrives 1/3.",
+        "lyde": 0
+       }
+      ]
+     }
+    ],
+    "foer": {
+     "trin": 0,
+     "prikker": 0,
+     "indbyggere": "12 indbyggere",
+     "naeste": "Næste: \"Lige store dele\" hos Mølleren.",
+     "lydKnap": "Lyd: fra",
+     "vaagner": null,
+     "vaagnerISyne": null,
+     "ring": false,
+     "scrollY": 0,
+     "sideHoejde": 1593
+    },
+    "vaagnerFoerVidere": false,
+    "vaagnerSomSet": {
+     "top": 463,
+     "bund": 699,
+     "vindue": 844,
+     "synlig": true,
+     "scrollY": 710,
+     "indbyggereStraks": "Indbyggere: 13 (før 12) "
+    },
+    "indbyggereEfter1300ms": "Indbyggere: 19 (før 12) ",
+    "efter": {
+     "trin": 1,
+     "prikker": 1,
+     "indbyggere": "19 indbyggere",
+     "naeste": "Møllerdrengen venter på dig: \"Del kornet\" hos Mølleren.",
+     "lydKnap": "Lyd: fra",
+     "vaagner": "BYEN VÅGNER Kværnhjulet drejer igen Indbyggere: 19 (før 12) Møllerdrengen: \"Hjulet går! Nu skal kornet bare ud til gårdene.\" Ny opgave: Del kornet Se det på kortet",
+     "vaagnerISyne": {
+      "top": 459,
+      "bund": 695,
+      "vindue": 844,
+      "synlig": true
+     },
+     "ring": true,
+     "scrollY": 710,
+     "sideHoejde": 1945
+    },
+    "efterSeKortet": {
+     "trin": 1,
+     "prikker": 1,
+     "indbyggere": "19 indbyggere",
+     "naeste": "Møllerdrengen venter på dig: \"Del kornet\" hos Mølleren.",
+     "lydKnap": "Lyd: fra",
+     "vaagner": "BYEN VÅGNER Kværnhjulet drejer igen Indbyggere: 19 (før 12) Møllerdrengen: \"Hjulet går! Nu skal kornet bare ud til gårdene.\" Ny opgave: Del kornet Se det på kortet",
+     "vaagnerISyne": {
+      "top": 917,
+      "bund": 1153,
+      "vindue": 844,
+      "synlig": false
+     },
+     "ring": true,
+     "scrollY": 252,
+     "sideHoejde": 1945
+    },
+    "anim": {
+     "koerende": 32,
+     "uendelige": 32,
+     "hurtigsteUendelige": {
+      "navn": "vand-dryp",
+      "ms": 1000,
+      "uendelig": true,
+      "opacitetSpaend": 0,
+      "maal": "vand-dryp"
+     },
+     "blinkAgtige": [
+      "flimmer 2400ms op 0.3"
+     ],
+     "navne": {
+      "aandedraet 3600ms": 2,
+      "kappe-sving 3600ms": 2,
+      "aa-flyd-kort 7000ms": 1,
+      "ring-ud 3400ms": 3,
+      "trae-vind 5500ms": 5,
+      "roeg-driv 4200ms": 5,
+      "dreje-rundt 9000ms": 1,
+      "vand-dryp 1200ms": 1,
+      "liv-vug 4800ms": 1,
+      "dreje-rundt 6000ms": 2,
+      "flimmer 2400ms": 1,
+      "spade-grav 2400ms": 1,
+      "sporvogn-ikon-rul 7000ms": 1,
+      "vand-dryp 1000ms": 1,
+      "dreje-rundt 16000ms": 1,
+      "aa-vand-flyd 2800ms": 1,
+      "roeg-driv-scene 4600ms": 3
+     }
+    }
+   },
+   {
+    "forloeb": 2,
+    "opgaver": [
+     {
+      "opgave": "Mølleren deler 2 sække korn ligeligt mellem 4 gårde. Hvor meget korn får hver gård?",
+      "titel": "Del kornet",
+      "replik": "Sækkene vokser hurtigere, end jeg kan nå at male. Kan du hjælpe mig med at dele kornet ligeligt?",
+      "forsoeg": [
+       {
+        "svar": "forkert",
+        "besked": "Ikke helt. Hint 1 af 2: 1/4 er det, hver gård får af ÉN sæk. Der er 2 sække, så hver gård får 2 af de små dele.",
+        "art": "quest-besked--hint"
+       },
+       {
+        "svar": "rigtigt",
+        "besked": "Rigtigt! 2/4 kan også skrives 1/2.",
+        "lyde": 0
+       }
+      ]
+     },
+     {
+      "opgave": "Mølleren deler 3 sække korn ligeligt mellem 4 gårde. Hvor meget korn får hver gård?",
+      "titel": "Del kornet",
+      "replik": "Sækkene vokser hurtigere, end jeg kan nå at male. Kan du hjælpe mig med at dele kornet ligeligt?",
+      "forsoeg": [
+       {
+        "svar": "rigtigt",
+        "besked": "Rigtigt!",
+        "lyde": 0
+       }
+      ]
+     },
+     {
+      "opgave": "Mølleren har delt sin mark i 8 lige store stykker, og 6 er sået: ■■■■■■□□. Hvor stor en del af marken er sået?",
+      "titel": "Del kornet",
+      "replik": "Sækkene vokser hurtigere, end jeg kan nå at male. Kan du hjælpe mig med at dele kornet ligeligt?",
+      "forsoeg": [
+       {
+        "svar": "rigtigt",
+        "besked": "Rigtigt!",
+        "lyde": 0
+       }
+      ]
+     },
+     {
+      "opgave": "Mølleren deler 2 sække korn ligeligt mellem 6 gårde. Hvor meget korn får hver gård?",
+      "titel": "Del kornet",
+      "replik": "Sækkene vokser hurtigere, end jeg kan nå at male. Kan du hjælpe mig med at dele kornet ligeligt?",
+      "forsoeg": [
+       {
+        "svar": "rigtigt",
+        "besked": "Rigtigt!",
+        "lyde": 0
+       }
+      ]
+     }
+    ],
+    "foer": {
+     "trin": 1,
+     "prikker": 1,
+     "indbyggere": "19 indbyggere",
+     "naeste": "Møllerdrengen venter på dig: \"Del kornet\" hos Mølleren.",
+     "lydKnap": "Lyd: fra",
+     "vaagner": "BYEN VÅGNER Kværnhjulet drejer igen Indbyggere: 19 (før 12) Møllerdrengen: \"Hjulet går! Nu skal kornet bare ud til gårdene.\" Ny opgave: Del kornet Se det på kortet",
+     "vaagnerISyne": {
+      "top": 1169,
+      "bund": 1405,
+      "vindue": 844,
+      "synlig": false
+     },
+     "ring": true,
+     "scrollY": 0,
+     "sideHoejde": 1945
+    },
+    "vaagnerFoerVidere": false,
+    "vaagnerSomSet": {
+     "top": 466,
+     "bund": 727,
+     "vindue": 844,
+     "synlig": true,
+     "scrollY": 707,
+     "indbyggereStraks": "Indbyggere: 20 (før 19) Kusken: \"Hver gård har fået sin del. Bageren vil have det bedste mel, men hvilken portion er størst?\" Ny opgave: Hvilken portion er størst? Se det på kortet"
+    },
+    "indbyggereEfter1300ms": "Indbyggere: 27 (før 19) Kusken: \"Hver gård har fået sin del. Bageren vil have det bedste mel, men hvilken portion er størst?\" Ny opgave: Hvilken portion er størst? Se det på kortet",
+    "efter": {
+     "trin": 2,
+     "prikker": 2,
+     "indbyggere": "27 indbyggere",
+     "naeste": "Kusken venter på dig: \"Hvilken portion er størst?\" hos Mølleren.",
+     "lydKnap": "Lyd: fra",
+     "vaagner": "BYEN VÅGNER Kornvognen kører Indbyggere: 27 (før 19) Kusken: \"Hver gård har fået sin del. Bageren vil have det bedste mel, men hvilken portion er størst?\" Ny opgave: Hvilken portion er størst? Se det på kortet",
+     "vaagnerISyne": {
+      "top": 462,
+      "bund": 722,
+      "vindue": 844,
+      "synlig": true
+     },
+     "ring": true,
+     "scrollY": 707,
+     "sideHoejde": 1969
+    },
+    "efterSeKortet": {
+     "trin": 2,
+     "prikker": 2,
+     "indbyggere": "27 indbyggere",
+     "naeste": "Kusken venter på dig: \"Hvilken portion er størst?\" hos Mølleren.",
+     "lydKnap": "Lyd: fra",
+     "vaagner": "BYEN VÅGNER Kornvognen kører Indbyggere: 27 (før 19) Kusken: \"Hver gård har fået sin del. Bageren vil have det bedste mel, men hvilken portion er størst?\" Ny opgave: Hvilken portion er størst? Se det på kortet",
+     "vaagnerISyne": {
+      "top": 917,
+      "bund": 1177,
+      "vindue": 844,
+      "synlig": false
+     },
+     "ring": true,
+     "scrollY": 252,
+     "sideHoejde": 1969
+    },
+    "anim": {
+     "koerende": 33,
+     "uendelige": 33,
+     "hurtigsteUendelige": {
+      "navn": "vand-dryp",
+      "ms": 1000,
+      "uendelig": true,
+      "opacitetSpaend": 0,
+      "maal": "vand-dryp"
+     },
+     "blinkAgtige": [
+      "flimmer 2400ms op 0.3"
+     ],
+     "navne": {
+      "aandedraet 3600ms": 2,
+      "kappe-sving 3600ms": 2,
+      "aa-flyd-kort 7000ms": 1,
+      "ring-ud 3400ms": 3,
+      "trae-vind 5500ms": 5,
+      "roeg-driv 4200ms": 5,
+      "dreje-rundt 9000ms": 1,
+      "vand-dryp 1200ms": 1,
+      "liv-vug 4800ms": 1,
+      "liv-vogn-koer 14000ms": 1,
+      "dreje-rundt 6000ms": 2,
+      "flimmer 2400ms": 1,
+      "spade-grav 2400ms": 1,
+      "sporvogn-ikon-rul 7000ms": 1,
+      "vand-dryp 1000ms": 1,
+      "dreje-rundt 16000ms": 1,
+      "aa-vand-flyd 2800ms": 1,
+      "roeg-driv-scene 4600ms": 3
+     }
+    }
+   },
+   {
+    "forloeb": 3,
+    "opgaver": [
+     {
+      "opgave": "Én dag delte mølleren en sæk i 6 lige store dele, en anden dag i 5 lige store dele. Hvilken portion var størst?",
+      "titel": "Hvilken portion er størst?",
+      "replik": "To delinger, ét spørgsmål: hvem fik mest? Pas på, flere dele er ikke altid mere.",
+      "forsoeg": [
+       {
+        "svar": "forkert",
+        "besked": "Ikke helt. Hint 1 af 2: Tællerne er ens, men delene er ikke lige store, fordi sækken er delt i forskelligt antal dele.",
+        "art": "quest-besked--hint"
+       },
+       {
+        "svar": "rigtigt",
+        "besked": "Rigtigt!",
+        "lyde": 0
+       }
+      ]
+     },
+     {
+      "opgave": "Hvilken portion er størst: 2/4 sæk eller 2/3 sæk?",
+      "titel": "Hvilken portion er størst?",
+      "replik": "To delinger, ét spørgsmål: hvem fik mest? Pas på, flere dele er ikke altid mere.",
+      "forsoeg": [
+       {
+        "svar": "rigtigt",
+        "besked": "Rigtigt!",
+        "lyde": 0
+       }
+      ]
+     },
+     {
+      "opgave": "Mølleren deler 1 sæk korn ligeligt mellem 4 gårde. Hvor meget korn får hver gård?",
+      "titel": "Hvilken portion er størst?",
+      "replik": "To delinger, ét spørgsmål: hvem fik mest? Pas på, flere dele er ikke altid mere.",
+      "forsoeg": [
+       {
+        "svar": "rigtigt",
+        "besked": "Rigtigt!",
+        "lyde": 0
+       }
+      ]
+     },
+     {
+      "opgave": "Om mandagen malede mølleren 4/6 sæk, om tirsdagen 5/6 sæk. Hvilken dag malede han mest?",
+      "titel": "Hvilken portion er størst?",
+      "replik": "To delinger, ét spørgsmål: hvem fik mest? Pas på, flere dele er ikke altid mere.",
+      "forsoeg": [
+       {
+        "svar": "rigtigt",
+        "besked": "Rigtigt!",
+        "lyde": 0
+       }
+      ]
+     }
+    ],
+    "foer": {
+     "trin": 2,
+     "prikker": 2,
+     "indbyggere": "27 indbyggere",
+     "naeste": "Kusken venter på dig: \"Hvilken portion er størst?\" hos Mølleren.",
+     "lydKnap": "Lyd: fra",
+     "vaagner": "BYEN VÅGNER Kornvognen kører Indbyggere: 27 (før 19) Kusken: \"Hver gård har fået sin del. Bageren vil have det bedste mel, men hvilken portion er størst?\" Ny opgave: Hvilken portion er størst? Se det på kortet",
+     "vaagnerISyne": {
+      "top": 1169,
+      "bund": 1429,
+      "vindue": 844,
+      "synlig": false
+     },
+     "ring": true,
+     "scrollY": 0,
+     "sideHoejde": 1969
+    },
+    "vaagnerFoerVidere": false,
+    "vaagnerSomSet": {
+     "top": 490,
+     "bund": 750,
+     "vindue": 844,
+     "synlig": true,
+     "scrollY": 683,
+     "indbyggereStraks": "Indbyggere: 29 (før 27) Bageren: \"Der dufter af brød igen! "
+    },
+    "indbyggereEfter1300ms": "Indbyggere: 38 (før 27) Bageren: \"Der dufter af brød igen! ",
+    "efter": {
+     "trin": 3,
+     "prikker": 3,
+     "indbyggere": "38 indbyggere",
+     "naeste": "Bageren venter på dig: \"Samme mel, nye poser\" hos Mølleren.",
+     "lydKnap": "Lyd: fra",
+     "vaagner": "BYEN VÅGNER Bagerens ovn er tændt Indbyggere: 38 (før 27) Bageren: \"Der dufter af brød igen! Men broen over åen er rådden, så jeg kan ikke køre brødet ud.\" Ny opgave: Samme mel, nye poser Se det på kortet",
+     "vaagnerISyne": {
+      "top": 486,
+      "bund": 746,
+      "vindue": 844,
+      "synlig": true
+     },
+     "ring": true,
+     "scrollY": 683,
+     "sideHoejde": 1993
+    },
+    "efterSeKortet": {
+     "trin": 3,
+     "prikker": 3,
+     "indbyggere": "38 indbyggere",
+     "naeste": "Bageren venter på dig: \"Samme mel, nye poser\" hos Mølleren.",
+     "lydKnap": "Lyd: fra",
+     "vaagner": "BYEN VÅGNER Bagerens ovn er tændt Indbyggere: 38 (før 27) Bageren: \"Der dufter af brød igen! Men broen over åen er rådden, så jeg kan ikke køre brødet ud.\" Ny opgave: Samme mel, nye poser Se det på kortet",
+     "vaagnerISyne": {
+      "top": 917,
+      "bund": 1177,
+      "vindue": 844,
+      "synlig": false
+     },
+     "ring": true,
+     "scrollY": 252,
+     "sideHoejde": 1993
+    },
+    "anim": {
+     "koerende": 38,
+     "uendelige": 38,
+     "hurtigsteUendelige": {
+      "navn": "vand-dryp",
+      "ms": 1000,
+      "uendelig": true,
+      "opacitetSpaend": 0,
+      "maal": "vand-dryp"
+     },
+     "blinkAgtige": [
+      "flimmer 2400ms op 0.3"
+     ],
+     "navne": {
+      "aandedraet 3600ms": 2,
+      "kappe-sving 3600ms": 2,
+      "aa-flyd-kort 7000ms": 1,
+      "ring-ud 3400ms": 3,
+      "trae-vind 5500ms": 5,
+      "roeg-driv 4200ms": 8,
+      "dreje-rundt 9000ms": 1,
+      "vand-dryp 1200ms": 1,
+      "liv-vug 4800ms": 2,
+      "liv-vogn-koer 14000ms": 1,
+      "flimmer 4000ms": 1,
+      "dreje-rundt 6000ms": 2,
+      "flimmer 2400ms": 1,
+      "spade-grav 2400ms": 1,
+      "sporvogn-ikon-rul 7000ms": 1,
+      "vand-dryp 1000ms": 1,
+      "dreje-rundt 16000ms": 1,
+      "aa-vand-flyd 2800ms": 1,
+      "roeg-driv-scene 4600ms": 3
+     }
+    }
+   },
+   {
+    "forloeb": 4,
+    "opgaver": [
+     {
+      "opgave": "Mølleren har 1/4 sæk mel. Han hælder det i små poser, der hver rummer 1/8 sæk. Hvilken brøk er lige så meget som 1/4?",
+      "titel": "Samme mel, nye poser",
+      "replik": "Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+      "forsoeg": [
+       {
+        "svar": "forkert",
+        "besked": "Ikke helt. Hint 1 af 2: Du har ganget tælleren med 2, men ikke nævneren. Så bliver det 2 gange så meget mel.",
+        "art": "quest-besked--hint"
+       },
+       {
+        "svar": "rigtigt",
+        "besked": "Rigtigt! 2/8 kan også skrives 1/4.",
+        "lyde": 0
+       }
+      ]
+     },
+     {
+      "opgave": "Mølleren har 1/4 sæk mel. Han hælder det i små poser, der hver rummer 1/16 sæk. Hvilken brøk er lige så meget som 1/4?",
+      "titel": "Samme mel, nye poser",
+      "replik": "Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+      "forsoeg": [
+       {
+        "svar": "rigtigt",
+        "besked": "Rigtigt! 4/16 kan også skrives 1/4.",
+        "lyde": 0
+       }
+      ]
+     },
+     {
+      "opgave": "Hvilken portion er størst: 2/3 sæk eller 2/6 sæk?",
+      "titel": "Samme mel, nye poser",
+      "replik": "Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+      "forsoeg": [
+       {
+        "svar": "rigtigt",
+        "besked": "Rigtigt!",
+        "lyde": 0
+       }
+      ]
+     },
+     {
+      "opgave": "Mølleren har skrevet 10/14 sæk i regnebogen. Skriv brøken så kort som muligt.",
+      "titel": "Samme mel, nye poser",
+      "replik": "Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+      "forsoeg": [
+       {
+        "svar": "rigtigt",
+        "besked": "Rigtigt!",
+        "lyde": 0
+       }
+      ]
+     }
+    ],
+    "foer": {
+     "trin": 3,
+     "prikker": 3,
+     "indbyggere": "38 indbyggere",
+     "naeste": "Bageren venter på dig: \"Samme mel, nye poser\" hos Mølleren.",
+     "lydKnap": "Lyd: fra",
+     "vaagner": "BYEN VÅGNER Bagerens ovn er tændt Indbyggere: 38 (før 27) Bageren: \"Der dufter af brød igen! Men broen over åen er rådden, så jeg kan ikke køre brødet ud.\" Ny opgave: Samme mel, nye poser Se det på kortet",
+     "vaagnerISyne": {
+      "top": 1169,
+      "bund": 1429,
+      "vindue": 844,
+      "synlig": false
+     },
+     "ring": true,
+     "scrollY": 0,
+     "sideHoejde": 1993
+    },
+    "vaagnerFoerVidere": false,
+    "vaagnerSomSet": {
+     "top": 613,
+     "bund": 850,
+     "vindue": 844,
+     "synlig": true,
+     "scrollY": 707,
+     "indbyggereStraks": "Indbyggere: 40 (før 38) Tømreren: \"Broen holder. Nu mangler vi lys langs vejen, før det bliver mørkt.\" Ny opgave: Sæk på sæk Se det på kortet"
+    },
+    "indbyggereEfter1300ms": "Indbyggere: 50 (før 38) Tømreren: \"Broen holder. Nu mangler vi lys langs vejen, før det bliver mørkt.\" Ny opgave: Sæk på sæk Se det på kortet",
+    "efter": {
+     "trin": 4,
+     "prikker": 4,
+     "indbyggere": "50 indbyggere",
+     "naeste": "Tømreren venter på dig: \"Sæk på sæk\" hos Mølleren.",
+     "lydKnap": "Lyd: fra",
+     "vaagner": "BYEN VÅGNER Broen over åen er repareret Indbyggere: 50 (før 38) Tømreren: \"Broen holder. Nu mangler vi lys langs vejen, før det bliver mørkt.\" Ny opgave: Sæk på sæk Se det på kortet",
+     "vaagnerISyne": {
+      "top": 1156,
+      "bund": 1393,
+      "vindue": 844,
+      "synlig": false
+     },
+     "ring": true,
+     "scrollY": 0,
+     "sideHoejde": 1900
+    },
+    "efterSeKortet": {
+     "trin": 4,
+     "prikker": 4,
+     "indbyggere": "50 indbyggere",
+     "naeste": "Tømreren venter på dig: \"Sæk på sæk\" hos Mølleren.",
+     "lydKnap": "Lyd: fra",
+     "vaagner": "BYEN VÅGNER Broen over åen er repareret Indbyggere: 50 (før 38) Tømreren: \"Broen holder. Nu mangler vi lys langs vejen, før det bliver mørkt.\" Ny opgave: Sæk på sæk Se det på kortet",
+     "vaagnerISyne": {
+      "top": 917,
+      "bund": 1153,
+      "vindue": 844,
+      "synlig": false
+     },
+     "ring": true,
+     "scrollY": 231,
+     "sideHoejde": 1900
+    },
+    "anim": {
+     "koerende": 39,
+     "uendelige": 39,
+     "hurtigsteUendelige": {
+      "navn": "vand-dryp",
+      "ms": 1000,
+      "uendelig": true,
+      "opacitetSpaend": 0,
+      "maal": "vand-dryp"
+     },
+     "blinkAgtige": [
+      "flimmer 2400ms op 0.3"
+     ],
+     "navne": {
+      "aandedraet 3600ms": 2,
+      "kappe-sving 3600ms": 2,
+      "aa-flyd-kort 7000ms": 1,
+      "ring-ud 3400ms": 3,
+      "trae-vind 5500ms": 5,
+      "roeg-driv 4200ms": 8,
+      "dreje-rundt 9000ms": 1,
+      "vand-dryp 1200ms": 1,
+      "liv-vug 4800ms": 3,
+      "liv-vogn-koer 14000ms": 1,
+      "flimmer 4000ms": 1,
+      "dreje-rundt 6000ms": 2,
+      "flimmer 2400ms": 1,
+      "spade-grav 2400ms": 1,
+      "sporvogn-ikon-rul 7000ms": 1,
+      "vand-dryp 1000ms": 1,
+      "dreje-rundt 16000ms": 1,
+      "aa-vand-flyd 2800ms": 1,
+      "roeg-driv-scene 4600ms": 3
+     }
+    }
+   }
+  ],
+  "konsol": [],
+  "start": {
+   "trin": 0,
+   "prikker": 0,
+   "indbyggere": "12 indbyggere",
+   "naeste": "Næste: \"Lige store dele\" hos Mølleren.",
+   "lydKnap": "Lyd: fra",
+   "vaagner": null,
+   "vaagnerISyne": null,
+   "ring": false,
+   "scrollY": 0,
+   "sideHoejde": 1593,
+   "anim": {
+    "koerende": 21,
+    "uendelige": 21,
+    "hurtigsteUendelige": {
+     "navn": "flimmer",
+     "ms": 2400,
+     "uendelig": true,
+     "opacitetSpaend": 0.3,
+     "maal": "grav-lys"
+    },
+    "blinkAgtige": [
+     "flimmer 2400ms op 0.3"
+    ],
+    "navne": {
+     "aandedraet 3600ms": 2,
+     "kappe-sving 3600ms": 2,
+     "aa-flyd-kort 7000ms": 1,
+     "ring-ud 3400ms": 3,
+     "trae-vind 5500ms": 5,
+     "roeg-driv 4200ms": 2,
+     "dreje-rundt 6000ms": 2,
+     "flimmer 2400ms": 1,
+     "spade-grav 2400ms": 1,
+     "sporvogn-ikon-rul 7000ms": 1,
+     "aa-vand-flyd 2800ms": 1
+    }
+   }
+  },
+  "dop": {
+   "melkorn": 7,
+   "flyver": 1,
+   "dopBesked": true,
+   "nikker": true,
+   "melkornEfter1s": 0
+  },
+  "lydeMedLydFra": 0,
+  "klikkerProeve": {
+   "tryk": 30,
+   "indbyggereFoer": "50 indbyggere",
+   "indbyggereEfter": "50 indbyggere",
+   "trinFoer": 4,
+   "trinEfter": 4
+  },
+  "lydKnapEfterTryk": "Lyd: til",
+  "lydeVedRigtigtMedLydTil": 1,
+  "gaettemaskine": {
+   "opgaver": 16,
+   "beskeder": [
+    "Rigtigt!",
+    "Rigtigt! 2/6 kan også skrives 1/3.",
+    "Rigtigt! 6/8 kan også skrives 3/4.",
+    "Rigtigt!",
+    "Rigtigt!",
+    "Rigtigt!",
+    "Rigtigt!",
+    "Rigtigt! 4/8 kan også skrives 1/2.",
+    "Rigtigt!",
+    "Rigtigt!",
+    "Rigtigt!",
+    "Rigtigt!",
+    "Rigtigt!",
+    "Rigtigt!",
+    "Rigtigt! 3/6 kan også skrives 1/2.",
+    "Rigtigt!"
+   ],
+   "by": {
+    "trin": 0,
+    "prikker": 0,
+    "indbyggere": "12 indbyggere",
+    "naeste": "Næste: \"Lige store dele\" hos Mølleren.",
+    "lydKnap": "Lyd: fra",
+    "vaagner": null,
+    "vaagnerISyne": null,
+    "ring": false,
+    "scrollY": 710,
+    "sideHoejde": 1593
+   },
+   "kaede": "Forløb 1 af 8"
+  },
+  "trin8": {
+   "by": {
+    "trin": 8,
+    "prikker": 8,
+    "indbyggere": "124 indbyggere",
+    "naeste": "Hele byen er vågnet.",
+    "lydKnap": "Lyd: fra",
+    "vaagner": null,
+    "vaagnerISyne": null,
+    "ring": false,
+    "scrollY": 0,
+    "sideHoejde": 1228
+   },
+   "anim": {
+    "koerende": 55,
+    "uendelige": 55,
+    "hurtigsteUendelige": {
+     "navn": "vand-dryp",
+     "ms": 1000,
+     "uendelig": true,
+     "opacitetSpaend": 0,
+     "maal": "vand-dryp"
+    },
+    "blinkAgtige": [
+     "liv-lydbue 2800ms op 1",
+     "liv-lydbue 2800ms op 1",
+     "flimmer 2400ms op 0.3"
+    ],
+    "navne": {
+     "aandedraet 3600ms": 2,
+     "kappe-sving 3600ms": 2,
+     "aa-flyd-kort 7000ms": 1,
+     "ring-ud 3400ms": 3,
+     "trae-vind 5500ms": 5,
+     "roeg-driv 4200ms": 8,
+     "liv-boelge 5500ms": 2,
+     "liv-vug 4800ms": 9,
+     "dreje-rundt 9000ms": 1,
+     "vand-dryp 1200ms": 1,
+     "liv-vogn-koer 14000ms": 1,
+     "flimmer 4000ms": 1,
+     "liv-aander 4000ms": 3,
+     "klokke-svaj 2800ms": 1,
+     "liv-lydbue 2800ms": 2,
+     "liv-vimpel 4400ms": 1,
+     "liv-flag 3200ms": 1,
+     "dreje-rundt 6000ms": 2,
+     "flimmer 2400ms": 1,
+     "spade-grav 2400ms": 1,
+     "sporvogn-ikon-rul 7000ms": 1,
+     "vand-dryp 1000ms": 1,
+     "dreje-rundt 16000ms": 1,
+     "aa-vand-flyd 2800ms": 1,
+     "roeg-driv-scene 4600ms": 3
+    }
+   }
+  },
+  "trin8Reduceret": {
+   "by": {
+    "trin": 8,
+    "prikker": 8,
+    "indbyggere": "124 indbyggere",
+    "naeste": "Hele byen er vågnet.",
+    "lydKnap": "Lyd: fra",
+    "vaagner": null,
+    "vaagnerISyne": null,
+    "ring": false,
+    "scrollY": 0,
+    "sideHoejde": 1228
+   },
+   "anim": {
+    "koerende": 0,
+    "uendelige": 0,
+    "hurtigsteUendelige": null,
+    "blinkAgtige": [],
+    "navne": {}
+   }
+  }
+ },
+ "skak": {
+  "skakMain": "afbd125",
+  "bredder": {
+   "390": {
+    "konsol": [],
+    "forside": {
+     "braetPx": 374,
+     "feltPx": 47,
+     "brikAndel": 0.95,
+     "braetTop": 267,
+     "braetBund": 641,
+     "vindue": 844,
+     "tema": "trae",
+     "saet": "staunton",
+     "ramme": "0px",
+     "skygge": "rgba(40, 28, 16, 0.22) 0px 8px 22px 0px, rgba(40, 28, 16, 0.",
+     "labels": [
+      {
+       "t": "8",
+       "px": 12.48,
+       "vaegt": "700",
+       "farve": "rgb(181, 136, 99)",
+       "bag": "rgb(240, 217, 181)",
+       "lys": true
+      },
+      {
+       "t": "7",
+       "px": 12.48,
+       "vaegt": "700",
+       "farve": "rgb(240, 217, 181)",
+       "bag": "rgb(181, 136, 99)",
+       "lys": false
+      },
+      {
+       "t": "8",
+       "px": 12.48,
+       "vaegt": "700",
+       "farve": "rgb(181, 136, 99)",
+       "bag": "rgb(240, 217, 181)",
+       "lys": true
+      }
+     ],
+     "tapHighlight": {
+      "felt": "rgba(51, 181, 229, 0.4)",
+      "brik": "rgba(51, 181, 229, 0.4)"
+     },
+     "vaerktoejslinje": {
+      "top": 163,
+      "h": 96
+     },
+     "wrapPx": 374
+    },
+    "gaader": [
+     {
+      "titel": "Gåde",
+      "forsoeg": [
+       {
+        "traek": "Bf7",
+        "status": "Ikke den vej. Tag trækket tilbage og prøv igen."
+       },
+       {
+        "traek": "g6h6",
+        "hvordan": "selv (mat i 1)",
+        "status": "Løst! Mat i 1. (løst uden hint)"
+       }
+      ],
+      "fen": "r1bq1r1k/pp1nb1n1/2p1B1Q1/8/3P3N/8/PPP2PPP/R3K2R w - - 0 1",
+      "loest": true
+     },
+     {
+      "titel": "Gåde",
+      "forsoeg": [
+       {
+        "traek": "g3g5",
+        "hvordan": "selv (mat i 1)",
+        "status": "Løst! Mat i 1. (løst uden hint)"
+       }
+      ],
+      "fen": "r6q/pp3p2/1bn1bk2/1N1p1p2/1P1P1P2/P2BP1Q1/6PP/R5K1 w - - 0 1",
+      "loest": true
+     }
+    ],
+    "tegnevaerktoej": {
+     "synlig": true,
+     "pil": {
+      "tegnet": true,
+      "elementer": 1,
+      "startAfvigelsePx": 0,
+      "tag": "line"
+     }
+    },
+    "valg": {
+     "saet": [
+      "staunton:Staunton",
+      "merida:Merida",
+      "chessnut:Chessnut",
+      "klassisk:Egen tegning",
+      "bogstav:Bogstav (projektor)"
+     ],
+     "tema": [
+      "trae:Træ",
+      "skov:Grøn",
+      "havblaa:Blå",
+      "nat:Nat"
+     ],
+     "lydStandard": false
+    },
+    "udseendeUnderBraet": {
+     "top": 770,
+     "vindue": 844
+    },
+    "temaer": [
+     {
+      "tema": "trae",
+      "kontraster": [
+       {
+        "t": "8",
+        "px": 12.48,
+        "vaegt": "700",
+        "lysFelt": true,
+        "kontrast": 2.29
+       },
+       {
+        "t": "7",
+        "px": 12.48,
+        "vaegt": "700",
+        "lysFelt": false,
+        "kontrast": 2.29
+       },
+       {
+        "t": "8",
+        "px": 12.48,
+        "vaegt": "700",
+        "lysFelt": true,
+        "kontrast": 2.29
+       }
+      ],
+      "felter": {
+       "lys": "#f0d9b5",
+       "moerk": "#b58863"
+      },
+      "lysMoerkKontrast": 2.29,
+      "sortBrikMoerktFelt": 6.67
+     },
+     {
+      "tema": "skov",
+      "kontraster": [
+       {
+        "t": "8",
+        "px": 12.48,
+        "vaegt": "700",
+        "lysFelt": true,
+        "kontrast": 2.84
+       },
+       {
+        "t": "7",
+        "px": 12.48,
+        "vaegt": "700",
+        "lysFelt": false,
+        "kontrast": 2.84
+       },
+       {
+        "t": "8",
+        "px": 12.48,
+        "vaegt": "700",
+        "lysFelt": true,
+        "kontrast": 2.84
+       }
+      ],
+      "felter": {
+       "lys": "#eeeed2",
+       "moerk": "#769656"
+      },
+      "lysMoerkKontrast": 2.84,
+      "sortBrikMoerktFelt": 6.27
+     },
+     {
+      "tema": "havblaa",
+      "kontraster": [
+       {
+        "t": "8",
+        "px": 12.48,
+        "vaegt": "700",
+        "lysFelt": true,
+        "kontrast": 2.06
+       },
+       {
+        "t": "7",
+        "px": 12.48,
+        "vaegt": "700",
+        "lysFelt": false,
+        "kontrast": 2.06
+       },
+       {
+        "t": "8",
+        "px": 12.48,
+        "vaegt": "700",
+        "lysFelt": true,
+        "kontrast": 2.06
+       }
+      ],
+      "felter": {
+       "lys": "#dee3e6",
+       "moerk": "#8ca2ad"
+      },
+      "lysMoerkKontrast": 2.06,
+      "sortBrikMoerktFelt": 7.89
+     },
+     {
+      "tema": "nat",
+      "kontraster": [
+       {
+        "t": "8",
+        "px": 12.48,
+        "vaegt": "700",
+        "lysFelt": true,
+        "kontrast": 2.17
+       },
+       {
+        "t": "7",
+        "px": 12.48,
+        "vaegt": "700",
+        "lysFelt": false,
+        "kontrast": 2.17
+       },
+       {
+        "t": "8",
+        "px": 12.48,
+        "vaegt": "700",
+        "lysFelt": true,
+        "kontrast": 2.17
+       }
+      ],
+      "felter": {
+       "lys": "#a3aab5",
+       "moerk": "#646f80"
+      },
+      "lysMoerkKontrast": 2.17,
+      "sortBrikMoerktFelt": 4.13
+     }
+    ],
+    "saet": [
+     {
+      "saet": "merida",
+      "brikAndel": 0.96,
+      "href": "merida"
+     },
+     {
+      "saet": "chessnut",
+      "brikAndel": 0.96,
+      "href": "chessnut"
+     },
+     {
+      "saet": "klassisk",
+      "brikAndel": 0.96,
+      "href": "klassisk"
+     },
+     {
+      "saet": "bogstav",
+      "brikAndel": 0.96,
+      "href": "bogstav"
+     },
+     {
+      "saet": "staunton",
+      "brikAndel": 0.96,
+      "href": "staunton"
+     }
+    ],
+    "spilVedAabning": {
+     "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+     "status": "Hvid trækker."
+    },
+    "spilForfraSpoerger": true,
+    "spilEfterForfra": {
+     "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+     "status": "Hvid trækker."
+    },
+    "parti": [
+     {
+      "traek": "e2e4",
+      "glid": {
+       "glider": true,
+       "transform": "matrix(1, 0, 0, 1, -0.496277, 48.9991)",
+       "transition": "0.18s"
+      },
+      "fra": "e2",
+      "til": "e4",
+      "skak": null,
+      "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1"
+     },
+     {
+      "traek": "e7e5",
+      "glid": {
+       "glider": true,
+       "transform": "matrix(1, 0, 0, 1, -0.495247, -49.8879)",
+       "transition": "0.18s"
+      },
+      "fra": "e7",
+      "til": "e5",
+      "skak": null,
+      "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"
+     },
+     {
+      "traek": "d1h5",
+      "glid": {
+       "glider": true,
+       "transform": "matrix(1, 0, 0, 1, -99.2893, 98.2987)",
+       "transition": "0.18s"
+      },
+      "fra": "d1",
+      "til": "h5",
+      "skak": null,
+      "fen": "rnbqkbnr/pppp1ppp/8/4p2Q/4P3/8/PPPP1PPP/RNB1KBNR b KQkq - 1 2"
+     },
+     {
+      "traek": "b8c6",
+      "fra": "b8",
+      "til": "c6"
+     },
+     {
+      "traek": "h5f7",
+      "glid": {
+       "glider": true,
+       "transform": "matrix(1, 0, 0, 1, 69.224, 69.224)",
+       "transition": "0.18s"
+      },
+      "fra": "h5",
+      "til": "f7",
+      "skak": "e8",
+      "fen": "r1bqkbnr/pppp1Qpp/2n5/4p3/4P3/8/PPPP1PPP/RNB1KBNR b KQkq - 0 3"
+     },
+     {
+      "traek": "e8f7",
+      "glid": {
+       "glider": true,
+       "transform": "matrix(1, 0, 0, 1, -25.2083, -25.2083)",
+       "transition": "0.18s"
+      },
+      "fra": "e8",
+      "til": "f7",
+      "skak": null,
+      "fen": "r1bq1bnr/pppp1kpp/2n5/4p3/4P3/8/PPPP1PPP/RNB1KBNR w KQ - 0 4"
+     }
+    ],
+    "lydeFraStandard": 0,
+    "skakFelt": {
+     "felt": "e8",
+     "baggrund": "radial-gradient(rgb(255, 0, 0) 0%, rgb(231, 0, 0) 25%, rgba(169, 0, 0, 0) 89%, rgba(158, 0"
+    },
+    "lydeEtTraekMedLyd": 1,
+    "laer": {
+     "titel": "Åbning: Italiensk",
+     "tekst": "Løberen sigter hurtigt mod f7. Spil hvids træk - e4, Sf3, Lc4.",
+     "efter": {
+      "titel": "Åbning: Italiensk",
+      "besked": "",
+      "taeller": "Trin 24 af 32"
+     },
+     "braet": {
+      "braetPx": 374,
+      "feltPx": 47,
+      "brikAndel": 0.94,
+      "braetTop": 205,
+      "braetBund": 579,
+      "vindue": 844,
+      "tema": "trae",
+      "saet": "staunton",
+      "ramme": "0px",
+      "skygge": "rgba(40, 28, 16, 0.22) 0px 8px 22px 0px, rgba(40, 28, 16, 0.",
+      "labels": [
+       {
+        "t": "8",
+        "px": 12.48,
+        "vaegt": "700",
+        "farve": "rgb(181, 136, 99)",
+        "bag": "rgb(240, 217, 181)",
+        "lys": true
+       },
+       {
+        "t": "7",
+        "px": 12.48,
+        "vaegt": "700",
+        "farve": "rgb(240, 217, 181)",
+        "bag": "rgb(181, 136, 99)",
+        "lys": false
+       },
+       {
+        "t": "8",
+        "px": 12.48,
+        "vaegt": "700",
+        "farve": "rgb(181, 136, 99)",
+        "bag": "rgb(240, 217, 181)",
+        "lys": true
+       }
+      ],
+      "tapHighlight": {
+       "felt": "rgba(51, 181, 229, 0.4)",
+       "brik": "rgba(51, 181, 229, 0.4)"
+      },
+      "vaerktoejslinje": null,
+      "wrapPx": 374
+     }
+    },
+    "smaaKnapper": []
+   },
+   "1280": {
+    "konsol": [],
+    "forside": {
+     "braetPx": 537,
+     "feltPx": 67,
+     "brikAndel": 0.95,
+     "braetTop": 193,
+     "braetBund": 729,
+     "vindue": 800,
+     "tema": "trae",
+     "saet": "staunton",
+     "ramme": "0px",
+     "skygge": "rgba(40, 28, 16, 0.22) 0px 8px 22px 0px, rgba(40, 28, 16, 0.",
+     "labels": [
+      {
+       "t": "8",
+       "px": 13.26,
+       "vaegt": "700",
+       "farve": "rgb(181, 136, 99)",
+       "bag": "rgb(240, 217, 181)",
+       "lys": true
+      },
+      {
+       "t": "7",
+       "px": 13.26,
+       "vaegt": "700",
+       "farve": "rgb(240, 217, 181)",
+       "bag": "rgb(181, 136, 99)",
+       "lys": false
+      },
+      {
+       "t": "8",
+       "px": 13.26,
+       "vaegt": "700",
+       "farve": "rgb(181, 136, 99)",
+       "bag": "rgb(240, 217, 181)",
+       "lys": true
+      }
+     ],
+     "tapHighlight": {
+      "felt": "rgba(0, 0, 0, 0.18)",
+      "brik": "rgba(0, 0, 0, 0.18)"
+     },
+     "vaerktoejslinje": {
+      "top": 140,
+      "h": 44
+     },
+     "wrapPx": 537
+    },
+    "gaader": [
+     {
+      "titel": "Gåde",
+      "forsoeg": [
+       {
+        "traek": "g5",
+        "status": "Ikke den vej. Tag trækket tilbage og prøv igen."
+       },
+       {
+        "traek": "d1d8",
+        "hvordan": "med hint",
+        "status": "Din tur igen."
+       },
+       {
+        "traek": "d8e8",
+        "hvordan": "med hint",
+        "status": "Din tur igen."
+       },
+       {
+        "traek": "e2e8",
+        "hvordan": "selv (mat i 1)",
+        "status": "Løst! Mat i 3. (løst med hint)"
+       }
+      ],
+      "fen": "6k1/q4ppp/5n2/8/6P1/4r2P/4Q3/3R1K2 w - - 0 1",
+      "loest": true
+     },
+     {
+      "titel": "Gåde",
+      "forsoeg": [
+       {
+        "traek": "f5e7",
+        "hvordan": "med hint",
+        "status": "Din tur igen."
+       },
+       {
+        "traek": "g4h4",
+        "hvordan": "med hint",
+        "status": "Din tur igen."
+       },
+       {
+        "traek": "h4h5",
+        "hvordan": "selv (mat i 1)",
+        "status": "Løst! Mat i 3. (løst med hint)"
+       }
+      ],
+      "fen": "r4rk1/1p3pp1/8/2p1pNP1/4PnR1/P7/1q5N/3R3K w - - 0 1",
+      "loest": true
+     }
+    ],
+    "tegnevaerktoej": {
+     "synlig": true,
+     "pil": {
+      "tegnet": true,
+      "elementer": 1,
+      "startAfvigelsePx": 0,
+      "tag": "line"
+     }
+    },
+    "valg": {
+     "saet": [
+      "staunton:Staunton",
+      "merida:Merida",
+      "chessnut:Chessnut",
+      "klassisk:Egen tegning",
+      "bogstav:Bogstav (projektor)"
+     ],
+     "tema": [
+      "trae:Træ",
+      "skov:Grøn",
+      "havblaa:Blå",
+      "nat:Nat"
+     ],
+     "lydStandard": false
+    },
+    "udseendeUnderBraet": {
+     "top": 547,
+     "vindue": 800
+    },
+    "temaer": [
+     {
+      "tema": "trae",
+      "kontraster": [
+       {
+        "t": "8",
+        "px": 13.26,
+        "vaegt": "700",
+        "lysFelt": true,
+        "kontrast": 2.29
+       },
+       {
+        "t": "7",
+        "px": 13.26,
+        "vaegt": "700",
+        "lysFelt": false,
+        "kontrast": 2.29
+       },
+       {
+        "t": "8",
+        "px": 13.26,
+        "vaegt": "700",
+        "lysFelt": true,
+        "kontrast": 2.29
+       }
+      ],
+      "felter": {
+       "lys": "#f0d9b5",
+       "moerk": "#b58863"
+      },
+      "lysMoerkKontrast": 2.29,
+      "sortBrikMoerktFelt": 6.67
+     },
+     {
+      "tema": "skov",
+      "kontraster": [
+       {
+        "t": "8",
+        "px": 13.26,
+        "vaegt": "700",
+        "lysFelt": true,
+        "kontrast": 2.84
+       },
+       {
+        "t": "7",
+        "px": 13.26,
+        "vaegt": "700",
+        "lysFelt": false,
+        "kontrast": 2.84
+       },
+       {
+        "t": "8",
+        "px": 13.26,
+        "vaegt": "700",
+        "lysFelt": true,
+        "kontrast": 2.84
+       }
+      ],
+      "felter": {
+       "lys": "#eeeed2",
+       "moerk": "#769656"
+      },
+      "lysMoerkKontrast": 2.84,
+      "sortBrikMoerktFelt": 6.27
+     },
+     {
+      "tema": "havblaa",
+      "kontraster": [
+       {
+        "t": "8",
+        "px": 13.26,
+        "vaegt": "700",
+        "lysFelt": true,
+        "kontrast": 2.06
+       },
+       {
+        "t": "7",
+        "px": 13.26,
+        "vaegt": "700",
+        "lysFelt": false,
+        "kontrast": 2.06
+       },
+       {
+        "t": "8",
+        "px": 13.26,
+        "vaegt": "700",
+        "lysFelt": true,
+        "kontrast": 2.06
+       }
+      ],
+      "felter": {
+       "lys": "#dee3e6",
+       "moerk": "#8ca2ad"
+      },
+      "lysMoerkKontrast": 2.06,
+      "sortBrikMoerktFelt": 7.89
+     },
+     {
+      "tema": "nat",
+      "kontraster": [
+       {
+        "t": "8",
+        "px": 13.26,
+        "vaegt": "700",
+        "lysFelt": true,
+        "kontrast": 2.17
+       },
+       {
+        "t": "7",
+        "px": 13.26,
+        "vaegt": "700",
+        "lysFelt": false,
+        "kontrast": 2.17
+       },
+       {
+        "t": "8",
+        "px": 13.26,
+        "vaegt": "700",
+        "lysFelt": true,
+        "kontrast": 2.17
+       }
+      ],
+      "felter": {
+       "lys": "#a3aab5",
+       "moerk": "#646f80"
+      },
+      "lysMoerkKontrast": 2.17,
+      "sortBrikMoerktFelt": 4.13
+     }
+    ],
+    "saet": [
+     {
+      "saet": "merida",
+      "brikAndel": 0.95,
+      "href": "merida"
+     },
+     {
+      "saet": "chessnut",
+      "brikAndel": 0.95,
+      "href": "chessnut"
+     },
+     {
+      "saet": "klassisk",
+      "brikAndel": 0.95,
+      "href": "klassisk"
+     },
+     {
+      "saet": "bogstav",
+      "brikAndel": 0.95,
+      "href": "bogstav"
+     },
+     {
+      "saet": "staunton",
+      "brikAndel": 0.95,
+      "href": "staunton"
+     }
+    ],
+    "spilVedAabning": {
+     "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+     "status": "Hvid trækker."
+    },
+    "spilForfraSpoerger": true,
+    "spilEfterForfra": {
+     "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+     "status": "Hvid trækker."
+    },
+    "parti": [
+     {
+      "traek": "e2e4",
+      "glid": {
+       "glider": true,
+       "transform": "matrix(1, 0, 0, 1, -0.709995, 70.1575)",
+       "transition": "0.18s"
+      },
+      "fra": "e2",
+      "til": "e4",
+      "skak": null,
+      "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1"
+     },
+     {
+      "traek": "e7e5",
+      "glid": {
+       "glider": true,
+       "transform": "matrix(1, 0, 0, 1, -0.71009, -71.5869)",
+       "transition": "0.18s"
+      },
+      "fra": "e7",
+      "til": "e5",
+      "skak": null,
+      "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"
+     },
+     {
+      "traek": "d1h5",
+      "glid": {
+       "glider": true,
+       "transform": "matrix(1, 0, 0, 1, -142.691, 141.268)",
+       "transition": "0.18s"
+      },
+      "fra": "d1",
+      "til": "h5",
+      "skak": null,
+      "fen": "rnbqkbnr/pppp1ppp/8/4p2Q/4P3/8/PPPP1PPP/RNB1KBNR b KQkq - 1 2"
+     },
+     {
+      "traek": "b8c6",
+      "fra": "b8",
+      "til": "c6"
+     },
+     {
+      "traek": "h5f7",
+      "glid": {
+       "glider": true,
+       "transform": "matrix(1, 0, 0, 1, 70.2382, 70.2382)",
+       "transition": "0.18s"
+      },
+      "fra": "h5",
+      "til": "f7",
+      "skak": "e8",
+      "fen": "r1bqkbnr/pppp1Qpp/2n5/4p3/4P3/8/PPPP1PPP/RNB1KBNR b KQkq - 0 3"
+     },
+     {
+      "traek": "e8f7",
+      "glid": {
+       "glider": true,
+       "transform": "matrix(1, 0, 0, 1, -24.6604, -24.6604)",
+       "transition": "0.18s"
+      },
+      "fra": "e8",
+      "til": "f7",
+      "skak": null,
+      "fen": "r1bq1bnr/pppp1kpp/2n5/4p3/4P3/8/PPPP1PPP/RNB1KBNR w KQ - 0 4"
+     }
+    ],
+    "lydeFraStandard": 0,
+    "skakFelt": {
+     "felt": "e8",
+     "baggrund": "radial-gradient(rgb(255, 0, 0) 0%, rgb(231, 0, 0) 25%, rgba(169, 0, 0, 0) 89%, rgba(158, 0"
+    },
+    "lydeEtTraekMedLyd": 1,
+    "laer": {
+     "titel": "Åbning: Italiensk",
+     "tekst": "Løberen sigter hurtigt mod f7. Spil hvids træk - e4, Sf3, Lc4.",
+     "efter": {
+      "titel": "Åbning: Italiensk",
+      "besked": "",
+      "taeller": "Trin 24 af 32"
+     },
+     "braet": {
+      "braetPx": 537,
+      "feltPx": 67,
+      "brikAndel": 0.94,
+      "braetTop": 210,
+      "braetBund": 747,
+      "vindue": 800,
+      "tema": "trae",
+      "saet": "staunton",
+      "ramme": "0px",
+      "skygge": "rgba(40, 28, 16, 0.22) 0px 8px 22px 0px, rgba(40, 28, 16, 0.",
+      "labels": [
+       {
+        "t": "8",
+        "px": 13.26,
+        "vaegt": "700",
+        "farve": "rgb(181, 136, 99)",
+        "bag": "rgb(240, 217, 181)",
+        "lys": true
+       },
+       {
+        "t": "7",
+        "px": 13.26,
+        "vaegt": "700",
+        "farve": "rgb(240, 217, 181)",
+        "bag": "rgb(181, 136, 99)",
+        "lys": false
+       },
+       {
+        "t": "8",
+        "px": 13.26,
+        "vaegt": "700",
+        "farve": "rgb(181, 136, 99)",
+        "bag": "rgb(240, 217, 181)",
+        "lys": true
+       }
+      ],
+      "tapHighlight": {
+       "felt": "rgba(0, 0, 0, 0.18)",
+       "brik": "rgba(0, 0, 0, 0.18)"
+      },
+      "vaerktoejslinje": null,
+      "wrapPx": 537
+     }
+    },
+    "smaaKnapper": []
+   }
+  }
+ }
+}
