@@ -316,6 +316,13 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     logInputs, setAllWeeks, setExerciseLogs, setLastLoggedSet, setLogInputs, setPendingSessionAction, setPendingSyncCount, setPrToast,
     setPrToastFading, setRestPause, setSetConfirm, setWriteRef, showFlash, viewingWeekIdx,
   })
+  // ORDRE 406 (O1 i docs/kritik-403): lytterne nedenfor registreres én gang pr.
+  // atlet, men flushOfflineSets er en ny lukning i hvert render. Kaldte de den
+  // fra første render, var currentWeek null, og afsendelsen sluttede med at
+  // tømme Dagens pas. De kalder derfor altid den nyeste via denne ref (sat
+  // efter hvert render, før effekterne nedenfor kører).
+  const flushRef = useRef(flushOfflineSets)
+  useEffect(() => { flushRef.current = flushOfflineSets })
   /* eslint-enable react-hooks/refs */
 
   function showFlash(message, kind = 'info') {
@@ -346,17 +353,17 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     if (!athlete?.id) return
     // eslint-disable-next-line react-hooks/set-state-in-effect -- uændret fra før ordre 373; lint ser det først nu (se RAPPORT-373)
     setPendingSyncCount(countOfflineSets(athlete.id))
-    flushOfflineSets()
+    flushRef.current()
     // ORDRE 397: også når et kald lykkes igen efter "nettet er dødt" (ingen
     // 'online'-event, når browseren aldrig troede det var væk).
-    const onForbindelse = (e) => { if (!e.detail?.offline) flushOfflineSets() }
-    window.addEventListener('online', flushOfflineSets)
+    const onOnline = () => flushRef.current()
+    const onForbindelse = (e) => { if (!e.detail?.offline) flushRef.current() }
+    window.addEventListener('online', onOnline)
     window.addEventListener('entropi:forbindelse', onForbindelse)
     return () => {
-      window.removeEventListener('online', flushOfflineSets)
+      window.removeEventListener('online', onOnline)
       window.removeEventListener('entropi:forbindelse', onForbindelse)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- flushOfflineSets læser kun athlete/currentWeek/exerciseLogs, alle friske ved kald (samme mønster som fetchAthlete ovenfor)
   }, [athlete?.id])
   // ORDRE 397: vises Dagens pas fra øjebliksbilledet (ingen forbindelse ved
   // åbning), hentes alt igen fra serveren når nettet kommer.
@@ -365,7 +372,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   useEffect(() => {
     if (!athlete?.id || (pendingSyncCount === 0 && !offlineSnapshotAt)) return
     const id = setInterval(() => {
-      if (pendingSyncCount > 0) flushOfflineSets()
+      if (pendingSyncCount > 0) flushRef.current()
       else if (offlineSnapshotAt && !browserSaysOffline()) fetchAthlete()
     }, 20000)
     return () => clearInterval(id)

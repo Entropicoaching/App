@@ -622,6 +622,9 @@ export function lavLaesninger({
   }
 
   async function fetchExerciseLogs(athleteId, week) {
+    // ORDRE 406 (O1 i docs/kritik-403): uden uge ved vi ikke, hvilke sæt der
+    // hører til. Så lader vi listen stå i stedet for at tømme Dagens pas.
+    if (!week) return
     const exerciseIds = (week?.sessions || []).flatMap(s => (s.exercises || []).map(e => e.id))
     if (exerciseIds.length === 0) { setExerciseLogs([]); return }
     const { data, ok } = await runGuardedRead(
