@@ -1,0 +1,191 @@
+{
+  "beloenninger": {
+    "ting": [
+      {
+        "id": "melsaekke",
+        "bredde": 46,
+        "hoejde": 45,
+        "daekket": [
+          {
+            "navn": "Møllen",
+            "andel": 0.07
+          },
+          {
+            "navn": "Møllen",
+            "andel": 0.07
+          }
+        ]
+      },
+      {
+        "id": "aender",
+        "bredde": 57,
+        "hoejde": 32,
+        "daekket": []
+      },
+      {
+        "id": "blomsterbed",
+        "bredde": 53,
+        "hoejde": 40,
+        "daekket": [
+          {
+            "navn": "Kirken og Landsbygaden",
+            "andel": 0.07
+          },
+          {
+            "navn": "Kirken og Landsbygaden",
+            "andel": 0.07
+          }
+        ]
+      },
+      {
+        "id": "kirkelys",
+        "bredde": 37,
+        "hoejde": 47,
+        "daekket": []
+      },
+      {
+        "id": "stendige",
+        "bredde": 80,
+        "hoejde": 30,
+        "daekket": [
+          {
+            "navn": "Skoven og Søen",
+            "andel": 0.22
+          }
+        ]
+      },
+      {
+        "id": "stien",
+        "bredde": 45,
+        "hoejde": 79,
+        "daekket": [
+          {
+            "navn": "Grusgraven",
+            "andel": 0.14
+          },
+          {
+            "navn": "Sporvognen",
+            "andel": 0.28
+          }
+        ]
+      },
+      {
+        "id": "aeblebod",
+        "bredde": 42,
+        "hoejde": 40,
+        "daekket": []
+      },
+      {
+        "id": "baenk",
+        "bredde": 40,
+        "hoejde": 41,
+        "daekket": []
+      },
+      {
+        "id": "hoestmarked",
+        "bredde": 65,
+        "hoejde": 49,
+        "daekket": []
+      }
+    ],
+    "hoved": {
+      "titel": "Sporvognens ven",
+      "niveauTitel": "Niveau 9 · Mester",
+      "hue": 1,
+      "hals": 1,
+      "udraab": 0,
+      "personerPaaKortet": 13
+    },
+    "sidefejl": []
+  },
+  "gaetter": {
+    "opgaver": 150,
+    "tryk": 440,
+    "rigtigeFoerste": 38,
+    "loesningVist": 0,
+    "niveau": 11,
+    "erfaring": 820,
+    "klaret": [],
+    "beloenninger": [],
+    "fremdrift": {
+      "moellen": 0,
+      "stenbrud": 0,
+      "marked": 1,
+      "landsby": 0,
+      "havn": 0
+    },
+    "haendelser": [
+      {
+        "opgaver": 1,
+        "hvad": "forloeb klaret",
+        "fremdrift": {
+          "moellen": 0,
+          "stenbrud": 0,
+          "marked": 0,
+          "landsby": 0,
+          "havn": 0
+        }
+      },
+      {
+        "opgaver": 4,
+        "hvad": "Niveau 2!"
+      },
+      {
+        "opgaver": 11,
+        "hvad": "Niveau 3!"
+      },
+      {
+        "opgaver": 11,
+        "hvad": "gaar til Landsbygaden"
+      },
+      {
+        "opgaver": 20,
+        "hvad": "Niveau 4!"
+      },
+      {
+        "opgaver": 29,
+        "hvad": "Niveau 5!"
+      },
+      {
+        "opgaver": 40,
+        "hvad": "Niveau 6!"
+      },
+      {
+        "opgaver": 54,
+        "hvad": "Niveau 7!"
+      },
+      {
+        "opgaver": 70,
+        "hvad": "Niveau 8!"
+      },
+      {
+        "opgaver": 77,
+        "hvad": "forloeb klaret",
+        "fremdrift": {
+          "moellen": 0,
+          "stenbrud": 0,
+          "marked": 1,
+          "landsby": 0,
+          "havn": 0
+        }
+      },
+      {
+        "opgaver": 77,
+        "hvad": "starter quest: aeblerne"
+      },
+      {
+        "opgaver": 91,
+        "hvad": "Niveau 9!"
+      },
+      {
+        "opgaver": 115,
+        "hvad": "Niveau 10!"
+      },
+      {
+        "opgaver": 133,
+        "hvad": "Niveau 11!"
+      }
+    ],
+    "sidefejl": []
+  }
+}
