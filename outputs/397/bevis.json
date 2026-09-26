@@ -1,0 +1,32 @@
+{
+  "groen": true,
+  "trin": [
+    "online: Dagens pas vist, service worker styrer siden",
+    "online: sæt 1 logget og gemt i mocken; øjebliksbillede af Dagens pas ligger på telefonen",
+    "service workeren har 6 app-filer i cachen",
+    "offline + udløbet token: appen åbnede fra telefonen og viste Dagens pas (sæt 2/4) på 351 ms, uden login-skærm (navigator.onLine=true); linjen: \"Ingen forbindelse. Dagens pas og dine sæt virker; resten opdateres, når du har net. Program fra kl. 14.36.\"",
+    "uden net: sæt 2, 3, 4 logget; køen har 3 poster med hvert sit række-id; sæt 2 og 3 viste \"sendes når du har net\" pr. sæt; \"3 sæt gemt lokalt\" står også når passet er færdigt; 0 skrivninger af sæt forsøgt",
+    "nettet tilbage: køen tømt; 1 INSERT fik sit svar tabt undervejs",
+    "mocken: sæt 1-4 har hver præcis én række ([1,1,1,1]); 4 POST og 1 PATCH efter nettet kom (den ekstra POST er genforsøget efter det tabte svar, afvist som 23505 og lavet om til en PATCH af samme række)",
+    "genindlæst online: ingen offline-linje, intet ventende"
+  ],
+  "offlineStartMs": 351,
+  "assetsCachet": 6,
+  "raekkerPrSaet": [
+    1,
+    1,
+    1,
+    1
+  ],
+  "skrivningerEfterOnline": [
+    "POST",
+    "POST",
+    "PATCH",
+    "POST",
+    "POST"
+  ],
+  "konsolFejl": [
+    "Failed to load resource: net::ERR_FAILED",
+    "Failed to load resource: the server responded with a status of 409 (Conflict)"
+  ]
+}
