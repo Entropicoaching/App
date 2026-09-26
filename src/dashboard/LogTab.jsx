@@ -4,8 +4,10 @@
 import { parsePlannedRpe } from '../dashboardShared'
 
 export default function LogTab({
-  athleteLogs, logExerciseFilter, openLogWeeks, setLogExerciseFilter, setOpenLogWeeks,
+  athleteLogs, isMobile, logExerciseFilter, openLogWeeks, setLogExerciseFilter, setOpenLogWeeks,
 }) {
+  // Telefon: saet og noter i Log skal kunne laeses uden at zoome (ordre 433).
+  const chipSize = isMobile ? '0.72rem' : '0.54rem'
               // Build trend index: exName → sorted [{ date, avg }]
               const trendEntries = {}
               for (const log of athleteLogs) {
@@ -67,7 +69,7 @@ export default function LogTab({
                 const g = wgMap[key]
                 g.sessions.push(sess)
                 if (sess.date > g.latestDate) g.latestDate = sess.date
-                g.totalSets += Object.values(sess.exerciseMap).reduce((acc, ex) => acc + ex.sets.length, 0)
+                g.totalSets += Object.values(sess.exerciseMap).reduce((acc, ex) => acc + ex.sets.filter(s => !s.skipped).length, 0)
               }
               weekGroups.sort((a, b) => b.latestDate.localeCompare(a.latestDate))
               const latestKey = weekGroups[0]?.key
@@ -98,7 +100,9 @@ export default function LogTab({
               const renderSession = (sess, i) => {
                     const exercises = Object.values(sess.exerciseMap)
                     const totalPlanned = exercises.reduce((acc, ex) => acc + ex.plannedSets, 0)
-                    const totalLogged = exercises.reduce((acc, ex) => acc + ex.sets.length, 0)
+                    // Et sprunget saet er logget, men ikke lavet: taelles for sig (ordre 433, C4).
+                    const totalLogged = exercises.reduce((acc, ex) => acc + ex.sets.filter(s => !s.skipped).length, 0)
+                    const totalSkipped = exercises.reduce((acc, ex) => acc + ex.sets.filter(s => s.skipped).length, 0)
                     const allWeights = exercises.flatMap(ex => ex.sets.map(s => s.weight || 0)).filter(w => w > 0)
                     const sessAvg = allWeights.length > 0 ? Math.round(allWeights.reduce((a, b) => a + b, 0) / allWeights.length * 10) / 10 : 0
 
@@ -117,6 +121,11 @@ export default function LogTab({
                             <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: totalLogged >= totalPlanned && totalPlanned > 0 ? '#6cba6c' : '#7a7770', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                               {totalLogged}/{totalPlanned} sæt
                             </div>
+                            {totalSkipped > 0 && (
+                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#c8923a', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: '0.15rem' }}>
+                                {totalSkipped} sprunget over
+                              </div>
+                            )}
                             {sessAvg > 0 && (
                               <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', textTransform: 'uppercase', marginTop: '0.15rem' }}>
                                 Ø {sessAvg} kg
@@ -142,10 +151,12 @@ export default function LogTab({
                           const weights = sortedSets.map(s => s.weight || 0).filter(w => w > 0)
                           const exAvg = weights.length > 0 ? Math.round(weights.reduce((a, b) => a + b, 0) / weights.length * 10) / 10 : 0
                           const maxW = weights.length > 0 ? Math.max(...weights) : 0
-                          const completion = ex.plannedSets > 0 ? Math.min(1, ex.sets.length / ex.plannedSets) : 0
+                          const doneSets = ex.sets.filter(s => !s.skipped).length
+                          const skippedSets = ex.sets.length - doneSets
+                          const completion = ex.plannedSets > 0 ? Math.min(1, doneSets / ex.plannedSets) : 0
                           const trend = getTrend(ex.name, sess.date)
                           const planText = [ex.plannedSets && `${ex.plannedSets} sæt`, ex.plannedReps && `× ${ex.plannedReps}`, ex.intensity].filter(Boolean).join(' · ')
-                          const borderColor = completion >= 1 ? '#6cba6c' : completion > 0 ? '#c8923a' : 'rgba(237,234,226,0.07)'
+                          const borderColor = completion >= 1 ? '#6cba6c' : completion > 0 || skippedSets > 0 ? '#c8923a' : 'rgba(237,234,226,0.07)'
 
                           return (
                             <div key={j} style={{ marginBottom: '1rem', paddingLeft: '0.75rem', borderLeft: `2px solid ${borderColor}` }}>
@@ -162,7 +173,7 @@ export default function LogTab({
                                     <div style={{ height: '3px', width: `${completion * 100}%`, background: completion >= 1 ? '#6cba6c' : '#c8923a', borderRadius: '2px' }} />
                                   </div>
                                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844' }}>{ex.sets.length}/{ex.plannedSets} sæt</div>
+                                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: isMobile ? '0.64rem' : '0.5rem', color: isMobile ? '#7a7770' : '#4a4844' }}>{doneSets}/{ex.plannedSets} sæt{skippedSets > 0 && <span style={{ color: '#c8923a' }}>{doneSets === 0 ? ' · sprunget over' : ` · ${skippedSets} sprunget over`}</span>}</div>
                                     {exAvg > 0 && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#7a7770' }}>Ø {exAvg}kg{maxW > exAvg ? ` · maks ${maxW}kg` : ''}</div>}
                                   </div>
                                 </div>
@@ -170,7 +181,7 @@ export default function LogTab({
                               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
                                 {sortedSets.map(set => {
                                   if (set.skipped) return (
-                                    <div key={set.n} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.06)', padding: '0.2rem 0.5rem', color: '#4a4844' }}>
+                                    <div key={set.n} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: chipSize, background: '#1c1c18', border: '1px solid rgba(237,234,226,0.06)', padding: '0.2rem 0.5rem', color: '#4a4844' }}>
                                       <span>S{set.n} </span><span>✕</span>
                                     </div>
                                   )
@@ -178,7 +189,7 @@ export default function LogTab({
                                     ? (set.rpe_actual >= set.rpe_planned + 1 ? '#c8923a' : Math.abs(set.rpe_actual - set.rpe_planned) <= 0.5 ? '#6cba6c' : '#edeae2')
                                     : '#7a7770'
                                   return (
-                                    <div key={set.n} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.08)', padding: '0.2rem 0.5rem', color: '#edeae2' }}>
+                                    <div key={set.n} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: chipSize, background: '#1c1c18', border: '1px solid rgba(237,234,226,0.08)', padding: '0.2rem 0.5rem', color: '#edeae2' }}>
                                       <span style={{ color: '#4a4844' }}>S{set.n} </span>
                                       <span style={{ color: '#c8923a' }}>{set.weight}kg</span>
                                       {set.reps && <span style={{ color: '#7a7770' }}> × {set.reps}</span>}
@@ -187,7 +198,7 @@ export default function LogTab({
                                           RPE {set.rpe_actual}{set.rpe_planned != null ? `/${set.rpe_planned}` : ''}
                                         </span>
                                       )}
-                                      {set.note && <span style={{ color: '#4a4844', marginLeft: '0.3rem', fontStyle: 'italic' }}>{set.note}</span>}
+                                      {set.note && <span style={{ color: isMobile ? '#9a968c' : '#4a4844', marginLeft: '0.3rem', fontStyle: 'italic' }}>{set.note}</span>}
                                     </div>
                                   )
                                 })}
@@ -255,7 +266,7 @@ export default function LogTab({
                                     {row.planText && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', marginBottom: '0.4rem' }}>Plan: {row.planText}</div>}
                                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
                                       {row.sortedSets.map(set => (
-                                        <div key={set.n} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.08)', padding: '0.2rem 0.5rem', color: '#edeae2' }}>
+                                        <div key={set.n} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: chipSize, background: '#1c1c18', border: '1px solid rgba(237,234,226,0.08)', padding: '0.2rem 0.5rem', color: '#edeae2' }}>
                                           <span style={{ color: '#4a4844' }}>S{set.n} </span>
                                           <span style={{ color: '#c8923a' }}>{set.weight}kg</span>
                                           {set.reps && <span style={{ color: '#7a7770' }}> × {set.reps}</span>}

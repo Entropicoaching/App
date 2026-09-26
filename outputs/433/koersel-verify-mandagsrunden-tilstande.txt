@@ -1,0 +1,6 @@
+GRØN (A): ingen atleter siger "Ingen aktive atleter" — ikke en blank eller fejlende side.
+GRØN (B): én atlet sorteres og vises uden at listen (eller sorteringen) forudsætter flere end én række.
+GRØN (C): atleter uden plan viser "Intet aktivt program" (navn-sort) og "Ingen plan" × 2 (afvigelse-sort) — ingen af dem talt som en afvigelse.
+GRØN (D): en atlet der ikke har logget i tre uger viser et reelt dagetal ("~3 uger siden", ikke "Ingen logs") ved siden af denne uges reelle afvigelse.
+GRØN (E): "Ø Kristoffer-Alexander Skovgaard-Rasmussen-Andersen-Bertelsen-Nedergaard" (72 tegn) klippes med ellipse i sin egen boks — siden ruller ikke vandret på 390px.
+GRØN (F): en uge hvor ingen af de tre atleter har logget noget viser alle tre, hver med sin egen reelle afvigelse — ingen ser ud som en fejl.

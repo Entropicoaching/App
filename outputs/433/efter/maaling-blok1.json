@@ -1,0 +1,68 @@
+{
+  "blok": "1",
+  "foer": false,
+  "tid": "2026-09-26T20:09:29.879Z",
+  "fund": {
+    "C4-390": {
+      "hoved": "2026-09-22 UGE 5 Dag 2 — Bænk 4/7 SÆT 3 SPRUNGET OVER Ø 80 KG",
+      "rows": "Rows Plan: 3 sæt · × 10 · RPE 8 0/3 sæt · sprunget over S1 ✕ S2 ✕ S3 ✕",
+      "rowsKant": "rgb(200, 146, 58)",
+      "rowsBjaelkeBredde": 0,
+      "rowsBjaelkeFarve": "rgb(200, 146, 58)"
+    },
+    "C5-390": [
+      {
+        "titel": "Bravo Testsen: melder ondt i knæet (pas-kommentar,",
+        "titelAndel": 0.49,
+        "handlingAndel": 1,
+        "titelHoejde": 32,
+        "kerneSynlig": true
+      },
+      {
+        "titel": "Delta Testsen: RPE i snit +1,1 over plan de sidste",
+        "titelAndel": 0.65,
+        "handlingAndel": 1,
+        "titelHoejde": 32,
+        "kerneSynlig": true
+      },
+      {
+        "titel": "Alfa Testsen",
+        "titelAndel": 1,
+        "handlingAndel": 1,
+        "titelHoejde": 16,
+        "kerneSynlig": true
+      }
+    ],
+    "C4-1280": {
+      "hoved": "2026-09-22 UGE 5 Dag 2 — Bænk 4/7 SÆT 3 SPRUNGET OVER Ø 80 KG",
+      "rows": "Rows Plan: 3 sæt · × 10 · RPE 8 0/3 sæt · sprunget over S1 ✕ S2 ✕ S3 ✕",
+      "rowsKant": "rgb(200, 146, 58)",
+      "rowsBjaelkeBredde": 0,
+      "rowsBjaelkeFarve": "rgb(200, 146, 58)"
+    },
+    "C5-1280": [
+      {
+        "titel": "Bravo Testsen: melder ondt i knæet (pas-kommentar,",
+        "titelAndel": 0.82,
+        "handlingAndel": 1,
+        "titelHoejde": 18,
+        "kerneSynlig": true
+      },
+      {
+        "titel": "Delta Testsen: RPE i snit +1,1 over plan de sidste",
+        "titelAndel": 1,
+        "handlingAndel": 1,
+        "titelHoejde": 18,
+        "kerneSynlig": true
+      },
+      {
+        "titel": "Alfa Testsen",
+        "titelAndel": 1,
+        "handlingAndel": 1,
+        "titelHoejde": 18,
+        "kerneSynlig": true
+      }
+    ]
+  },
+  "konsolFejl": []
+}

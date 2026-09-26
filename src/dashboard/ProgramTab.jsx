@@ -549,7 +549,7 @@ export default function ProgramTab({
                                         <button
                                           onClick={e => { e.stopPropagation(); setRenameValue(phase.name || ''); setRenamingBlock(first.id) }}
                                           title="Omdøb blok"
-                                          style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#7a7770', cursor: 'pointer', fontSize: '0.7rem', padding: '0 2px', flexShrink: 0 }}
+                                          style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#7a7770', cursor: 'pointer', fontSize: '0.7rem', padding: '0 2px', flexShrink: 0, ...(isMobile ? { minWidth: 44, minHeight: 32 } : {}) }}
                                         >✎</button>
                                       </>
                                     )}
@@ -828,10 +828,11 @@ export default function ProgramTab({
                               </div>
                             ) : (
                               <div
-                                style={{ background: '#181816', border: '1px solid rgba(237,234,226,0.06)', borderLeft: `3px solid ${sessionLogStatus(session).color}`, padding: '0.75rem 1rem', cursor: 'pointer', display: 'flex', alignItems: isMobile ? 'flex-start' : 'center', justifyContent: 'space-between', gap: '0.5rem' }}
+                                style={{ background: '#181816', border: '1px solid rgba(237,234,226,0.06)', borderLeft: `3px solid ${sessionLogStatus(session).color}`, padding: '0.75rem 1rem', cursor: 'pointer', display: 'flex', alignItems: isMobile ? 'flex-start' : 'center', justifyContent: 'space-between', gap: '0.5rem', flexWrap: isMobile ? 'wrap' : 'nowrap' }}
                                 onClick={() => setOpenSessionId(openSessionId === session.id ? null : session.id)}
                               >
-                                <div style={{ flex: 1, minWidth: 0 }}>
+                                {/* Telefon: titlen faar hele bredden og knapperne en linje under (ordre 433). */}
+                                <div style={{ flex: isMobile ? '1 1 100%' : 1, minWidth: 0 }}>
                                   <div style={{ fontSize: '0.88rem', color: '#edeae2', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                                     {session.title}
                                     {session.weekday != null && WEEKDAYS_LONG[session.weekday] && (
@@ -849,8 +850,8 @@ export default function ProgramTab({
                                   </div>
                                 </div>
                                 <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexShrink: 0, flexWrap: 'wrap' }}>
-                                  <button aria-label={`Flyt ${session.title} op`} style={{ ...s.btnEdit, opacity: sessionIdx === 0 ? 0.25 : 1 }} onClick={e => { e.stopPropagation(); reorderSession(week.id, session.id, 'up') }} disabled={sessionIdx === 0}>↑</button>
-                                  <button aria-label={`Flyt ${session.title} ned`} style={{ ...s.btnEdit, opacity: sessionIdx === sessionsArr.length - 1 ? 0.25 : 1 }} onClick={e => { e.stopPropagation(); reorderSession(week.id, session.id, 'down') }} disabled={sessionIdx === sessionsArr.length - 1}>↓</button>
+                                  <button aria-label={`Flyt ${session.title} op`} style={{ ...s.btnEdit, ...(isMobile ? { minWidth: 44 } : {}), opacity: sessionIdx === 0 ? 0.25 : 1 }} onClick={e => { e.stopPropagation(); reorderSession(week.id, session.id, 'up') }} disabled={sessionIdx === 0}>↑</button>
+                                  <button aria-label={`Flyt ${session.title} ned`} style={{ ...s.btnEdit, ...(isMobile ? { minWidth: 44 } : {}), opacity: sessionIdx === sessionsArr.length - 1 ? 0.25 : 1 }} onClick={e => { e.stopPropagation(); reorderSession(week.id, session.id, 'down') }} disabled={sessionIdx === sessionsArr.length - 1}>↓</button>
                                   {copyingSession === session.id ? (
                                     <>
                                       <select
@@ -960,10 +961,10 @@ export default function ProgramTab({
                                           ) : (
                                             <button style={s.btnEdit} onClick={() => setCopyingExercise(ex.id)}>Kopiér</button>
                                           )}
-                                          <button aria-label={`Flyt ${ex.name} op`} style={{ ...s.btnEdit, opacity: exIdx === 0 ? 0.25 : 1 }} disabled={exIdx === 0} onClick={() => reorderExercise(session.id, ex.id, 'up')}>↑</button>
-                                          <button aria-label={`Flyt ${ex.name} ned`} style={{ ...s.btnEdit, opacity: exIdx === exArr.length - 1 ? 0.25 : 1 }} disabled={exIdx === exArr.length - 1} onClick={() => reorderExercise(session.id, ex.id, 'down')}>↓</button>
-                                          <button aria-label={`Rediger ${ex.name}`} style={s.btnEdit} onClick={() => { setEditingExercise(ex.id); const { intensityPrefix, intensity } = parseIntensity(ex.intensity); setExerciseForm({ name: ex.name, sets: ex.sets || '', reps: ex.reps || '', intensity, intensityPrefix, note: ex.note || '' }) }}>✎</button>
-                                          <button aria-label={`Slet ${ex.name}`} style={s.btnDanger} onClick={() => deleteExercise(ex.id)}>✕</button>
+                                          <button aria-label={`Flyt ${ex.name} op`} style={{ ...s.btnEdit, ...(isMobile ? { minWidth: 44 } : {}), opacity: exIdx === 0 ? 0.25 : 1 }} disabled={exIdx === 0} onClick={() => reorderExercise(session.id, ex.id, 'up')}>↑</button>
+                                          <button aria-label={`Flyt ${ex.name} ned`} style={{ ...s.btnEdit, ...(isMobile ? { minWidth: 44 } : {}), opacity: exIdx === exArr.length - 1 ? 0.25 : 1 }} disabled={exIdx === exArr.length - 1} onClick={() => reorderExercise(session.id, ex.id, 'down')}>↓</button>
+                                          <button aria-label={`Rediger ${ex.name}`} style={{ ...s.btnEdit, ...(isMobile ? { minWidth: 44 } : {}) }} onClick={() => { setEditingExercise(ex.id); const { intensityPrefix, intensity } = parseIntensity(ex.intensity); setExerciseForm({ name: ex.name, sets: ex.sets || '', reps: ex.reps || '', intensity, intensityPrefix, note: ex.note || '' }) }}>✎</button>
+                                          <button aria-label={`Slet ${ex.name}`} style={{ ...s.btnDanger, ...(isMobile ? { minWidth: 44 } : {}) }} onClick={() => deleteExercise(ex.id)}>✕</button>
                                         </div>
                                       </div>
                                     )}

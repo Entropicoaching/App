@@ -152,6 +152,10 @@ export default function ForsideView({
                       const briefingSeen = briefingPointKey ? Boolean(coachBriefingSeen[briefingPointKey]) : false
                       const briefingSeenSaving = briefingPointKey && coachBriefingSeenSavingKey === briefingPointKey
                       const canMarkBriefingSeen = briefingPointKey && (item.kind === 'message' || item.kind === 'video')
+                      // Telefon: overskrift og handling paa to linjer i stedet for een med "…" (ordre 433, C5).
+                      const clip = isMobile
+                        ? { overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflowWrap: 'anywhere' }
+                        : { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }
                       return (
                         <div key={item.key} data-coach-briefing-point={briefingPointKey || undefined} data-coach-briefing-seen={briefingSeen ? 'true' : 'false'}
                           style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minHeight: 58, borderBottom: index < priorityPreview.length - 1 ? '1px solid rgba(237,234,226,0.055)' : 'none', opacity: briefingSeen ? 0.45 : 1 }}>
@@ -159,11 +163,11 @@ export default function ForsideView({
                             style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', minWidth: 0, flex: 1, minHeight: 52, padding: '0.35rem 0', border: 'none', background: 'transparent', cursor: 'pointer', textAlign: 'left' }}>
                             <span style={{ width: 8, height: 8, flexShrink: 0, borderRadius: '50%', background: item.color, boxShadow: `0 0 0 3px ${item.color}18` }} />
                             <span style={{ minWidth: 0, flex: 1 }}>
-                              <span style={{ display: 'flex', alignItems: 'center', gap: '0.38rem', minWidth: 0 }}>
-                                <span style={{ color: '#edeae2', fontSize: '0.78rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.title}</span>
+                              <span style={{ display: 'flex', alignItems: isMobile ? 'flex-start' : 'center', gap: '0.38rem', minWidth: 0 }}>
+                                <span data-kraever-titel style={{ color: '#edeae2', fontSize: '0.78rem', lineHeight: 1.3, ...clip }}>{item.title}</span>
                                 <span style={{ flexShrink: 0, color: item.color, border: `1px solid ${item.color}44`, padding: '0.08rem 0.3rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.4rem', letterSpacing: '0.05em', textTransform: 'uppercase' }}>{item.label}</span>
                               </span>
-                              <span style={{ display: 'block', marginTop: '0.14rem', color: '#7a7770', fontSize: '0.66rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.detail}</span>
+                              <span data-kraever-handling style={{ display: 'block', marginTop: '0.14rem', color: '#7a7770', fontSize: '0.66rem', lineHeight: 1.3, ...clip }}>{item.detail}</span>
                             </span>
                             {item.count > 0 && <span style={{ minWidth: 19, height: 19, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 0.25rem', borderRadius: '999px', background: '#c8923a', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem', fontWeight: 700 }}>{item.count}</span>}
                             <span style={{ color: item.color, flexShrink: 0, fontSize: '0.7rem' }}>→</span>
@@ -309,9 +313,9 @@ export default function ForsideView({
                               <button
                                 onClick={event => { event.stopPropagation(); openProfile(athlete, 'log') }}
                                 aria-label={`Ugens stemme fra ${athlete.name}: åbn Log`}
-                                style={{ display: 'flex', alignItems: 'baseline', gap: '0.35rem', maxWidth: '100%', marginTop: '0.22rem', padding: 0, border: 'none', background: 'transparent', cursor: 'pointer', textAlign: 'left', minWidth: 0 }}>
+                                style={{ display: 'flex', gap: '0.35rem', maxWidth: '100%', marginTop: '0.22rem', padding: 0, border: 'none', background: 'transparent', cursor: 'pointer', textAlign: 'left', minWidth: isMobile ? 64 : 0, minHeight: isMobile ? 32 : undefined, alignItems: isMobile ? 'center' : 'baseline' }}>
                                 {ugeStatus.stemme.laveste != null && (
-                                  <span style={{ flexShrink: 0, fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: ugeStatus.stemme.laveste <= 2 ? '#d79a83' : '#c8923a' }}>★ {ugeStatus.stemme.laveste}/5</span>
+                                  <span style={{ flexShrink: 0, fontFamily: "'IBM Plex Mono', monospace", fontSize: isMobile ? '0.62rem' : '0.5rem', color: ugeStatus.stemme.laveste <= 2 ? '#d79a83' : '#c8923a' }}>★ {ugeStatus.stemme.laveste}/5</span>
                                 )}
                                 {ugeStatus.stemme.tekst && (
                                   <span style={{ minWidth: 0, color: '#b8b4a8', fontSize: isMobile ? '0.66rem' : '0.7rem', fontStyle: 'italic', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ugeStatus.stemme.tekst}</span>
@@ -329,7 +333,7 @@ export default function ForsideView({
                                     key: `video-${measurementVideo.id}`, title: athlete.name,
                                     detail: coachVideoPriorityDetail(measurementVideo), color: '#67dff5', label: 'Video' }, 'list')
                                 }}
-                                style={{ display: 'flex', alignItems: 'center', gap: '0.32rem', marginTop: '0.22rem', padding: 0, border: 'none', background: 'transparent', cursor: 'pointer' }}
+                                style={{ display: 'flex', alignItems: 'center', gap: '0.32rem', marginTop: '0.22rem', padding: 0, border: 'none', background: 'transparent', cursor: 'pointer', minWidth: isMobile ? 64 : undefined, minHeight: isMobile ? 32 : undefined }}
                                 aria-label={`Åbn gemt måling · ${videoCoachMeasurementText(measurement)}`}>
                                 {measurement.pathPreview && (
                                   <svg width="11" height="18" viewBox={measurement.pathPreview.viewBox} style={{ flexShrink: 0 }} aria-hidden="true">

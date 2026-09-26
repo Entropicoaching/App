@@ -1,0 +1,62 @@
+{
+  "blok": "1",
+  "foer": true,
+  "tid": "2026-09-26T20:06:33.802Z",
+  "fund": {
+    "C4-390": {
+      "hoved": "2026-09-22 UGE 5 Dag 2 — Bænk 7/7 SÆT Ø 80 KG",
+      "rows": "Rows Plan: 3 sæt · × 10 · RPE 8 3/3 sæt S1 ✕ S2 ✕ S3 ✕",
+      "rowsKant": "rgb(108, 186, 108)",
+      "rowsBjaelkeBredde": 338,
+      "rowsBjaelkeFarve": "rgb(108, 186, 108)"
+    },
+    "C5-390": [
+      {
+        "titel": "Bravo Testsen: melder ondt i knæet (pas-kommentar,",
+        "titelAndel": 0.29,
+        "handlingAndel": 0.54,
+        "linjerTitel": null
+      },
+      {
+        "titel": "Delta Testsen: RPE i snit +1,1 over plan de sidste",
+        "titelAndel": 0.46,
+        "handlingAndel": 0.79,
+        "linjerTitel": null
+      },
+      {
+        "titel": "Alfa Testsen",
+        "titelAndel": 1,
+        "handlingAndel": 1,
+        "linjerTitel": null
+      }
+    ],
+    "C4-1280": {
+      "hoved": "2026-09-22 UGE 5 Dag 2 — Bænk 7/7 SÆT Ø 80 KG",
+      "rows": "Rows Plan: 3 sæt · × 10 · RPE 8 3/3 sæt S1 ✕ S2 ✕ S3 ✕",
+      "rowsKant": "rgb(108, 186, 108)",
+      "rowsBjaelkeBredde": 812,
+      "rowsBjaelkeFarve": "rgb(108, 186, 108)"
+    },
+    "C5-1280": [
+      {
+        "titel": "Bravo Testsen: melder ondt i knæet (pas-kommentar,",
+        "titelAndel": 0.82,
+        "handlingAndel": 1,
+        "linjerTitel": null
+      },
+      {
+        "titel": "Delta Testsen: RPE i snit +1,1 over plan de sidste",
+        "titelAndel": 1,
+        "handlingAndel": 1,
+        "linjerTitel": null
+      },
+      {
+        "titel": "Alfa Testsen",
+        "titelAndel": 1,
+        "handlingAndel": 1,
+        "linjerTitel": null
+      }
+    ]
+  },
+  "konsolFejl": []
+}

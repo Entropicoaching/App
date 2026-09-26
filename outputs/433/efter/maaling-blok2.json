@@ -1,0 +1,1782 @@
+{
+  "blok": "2",
+  "foer": false,
+  "tid": "2026-09-26T20:13:31.092Z",
+  "fund": {
+    "forside": {
+      "sidelaens": 0,
+      "udover": [],
+      "smaaTryk": [
+        {
+          "el": "SET",
+          "w": 30,
+          "h": 44
+        }
+      ],
+      "lilleTekst": [
+        {
+          "t": "Coach Portal",
+          "fs": 8.3
+        },
+        {
+          "t": "Forside",
+          "fs": 7
+        },
+        {
+          "t": "Min træning",
+          "fs": 7
+        },
+        {
+          "t": "Kalender",
+          "fs": 9.6
+        },
+        {
+          "t": "Coach Briefing",
+          "fs": 7
+        },
+        {
+          "t": "3",
+          "fs": 9.9
+        },
+        {
+          "t": "Bibliotek",
+          "fs": 9.6
+        },
+        {
+          "t": "Atleter",
+          "fs": 9
+        },
+        {
+          "t": "AT",
+          "fs": 8
+        },
+        {
+          "t": "Uge 5",
+          "fs": 7.4
+        },
+        {
+          "t": "BT",
+          "fs": 8
+        },
+        {
+          "t": "CT",
+          "fs": 8
+        },
+        {
+          "t": "DT",
+          "fs": 8
+        },
+        {
+          "t": "ET",
+          "fs": 8
+        },
+        {
+          "t": "FT",
+          "fs": 8
+        },
+        {
+          "t": "Se som atlet",
+          "fs": 9.6
+        },
+        {
+          "t": "Værktøjer",
+          "fs": 8.3
+        },
+        {
+          "t": "▾",
+          "fs": 8
+        },
+        {
+          "t": "Menu",
+          "fs": 7
+        },
+        {
+          "t": "lørdag 26. september",
+          "fs": 8.8
+        },
+        {
+          "t": "Åbn dit eget program",
+          "fs": 7.7
+        },
+        {
+          "t": "Analysér et løft",
+          "fs": 7.7
+        },
+        {
+          "t": "3 åbne ting · vigtigste først",
+          "fs": 7.7
+        },
+        {
+          "t": "Smerte",
+          "fs": 6.4
+        },
+        {
+          "t": "Set",
+          "fs": 6.9
+        },
+        {
+          "t": "RPE",
+          "fs": 6.4
+        },
+        {
+          "t": "Video",
+          "fs": 6.4
+        },
+        {
+          "t": "6",
+          "fs": 7.7
+        },
+        {
+          "t": "aktive",
+          "fs": 7.7
+        },
+        {
+          "t": "Navn",
+          "fs": 7.7
+        },
+        {
+          "t": "Afvigelse denne uge",
+          "fs": 7.7
+        },
+        {
+          "t": "Uge 5 · Styrke · 4 af 4 pas",
+          "fs": 8
+        },
+        {
+          "t": "· I går",
+          "fs": 8
+        },
+        {
+          "t": "★",
+          "fs": 9.9
+        },
+        {
+          "t": "4",
+          "fs": 9.9
+        },
+        {
+          "t": "/5",
+          "fs": 9.9
+        },
+        {
+          "t": "+",
+          "fs": 7.4
+        },
+        {
+          "t": "1",
+          "fs": 7.4
+        },
+        {
+          "t": "5 reps",
+          "fs": 7.7
+        },
+        {
+          "t": "Uge 5 · Styrke · 2 af 4 pas",
+          "fs": 8
+        },
+        {
+          "t": "· 4d siden",
+          "fs": 8
+        },
+        {
+          "t": "Uge 5 · Styrke · 0 af 4 pas",
+          "fs": 8
+        },
+        {
+          "t": "· 8d siden",
+          "fs": 8
+        },
+        {
+          "t": "2",
+          "fs": 7.4
+        },
+        {
+          "t": "Uge 5 · Styrke · 3 af 4 pas",
+          "fs": 8
+        },
+        {
+          "t": "· 2d siden",
+          "fs": 8
+        },
+        {
+          "t": "Uge 5 · Styrke · 1 af 4 pas",
+          "fs": 8
+        },
+        {
+          "t": "· 5d siden",
+          "fs": 8
+        }
+      ]
+    },
+    "forsideStemme": [
+      {
+        "el": "Ugens stemme fra Alfa Testsen: åbn Log",
+        "w": 153,
+        "h": 44
+      },
+      {
+        "el": "Åbn gemt måling · 5 reps",
+        "w": 64,
+        "h": 44
+      },
+      {
+        "el": "Ugens stemme fra Bravo Testsen: åbn Log",
+        "w": 197,
+        "h": 44
+      },
+      {
+        "el": "Ugens stemme fra Delta Testsen: åbn Log",
+        "w": 120,
+        "h": 44
+      },
+      {
+        "el": "Ugens stemme fra Echo Testsen: åbn Log",
+        "w": 119,
+        "h": 44
+      },
+      {
+        "el": "Ugens stemme fra Foxtrot Testsen: åbn Lo",
+        "w": 64,
+        "h": 44
+      }
+    ],
+    "kommentar": {
+      "sidelaens": 0,
+      "udover": [],
+      "smaaTryk": [],
+      "lilleTekst": [
+        {
+          "t": "Coach Portal",
+          "fs": 8.3
+        },
+        {
+          "t": "Forside",
+          "fs": 7
+        },
+        {
+          "t": "Min træning",
+          "fs": 7
+        },
+        {
+          "t": "Kalender",
+          "fs": 9.6
+        },
+        {
+          "t": "Coach Briefing",
+          "fs": 7
+        },
+        {
+          "t": "3",
+          "fs": 8.3
+        },
+        {
+          "t": "Bibliotek",
+          "fs": 9.6
+        },
+        {
+          "t": "Atleter",
+          "fs": 7.4
+        },
+        {
+          "t": "AT",
+          "fs": 8
+        },
+        {
+          "t": "Uge 5",
+          "fs": 9.6
+        },
+        {
+          "t": "BT",
+          "fs": 8
+        },
+        {
+          "t": "CT",
+          "fs": 8
+        },
+        {
+          "t": "DT",
+          "fs": 8
+        },
+        {
+          "t": "ET",
+          "fs": 8
+        },
+        {
+          "t": "FT",
+          "fs": 8
+        },
+        {
+          "t": "Se som atlet",
+          "fs": 9.6
+        },
+        {
+          "t": "Værktøjer",
+          "fs": 8.3
+        },
+        {
+          "t": "▾",
+          "fs": 8
+        },
+        {
+          "t": "Menu",
+          "fs": 7
+        },
+        {
+          "t": "← Tilbage til",
+          "fs": 9.6
+        },
+        {
+          "t": "atleter",
+          "fs": 9.6
+        },
+        {
+          "t": "Aktiv i dag",
+          "fs": 8.3
+        },
+        {
+          "t": "Aktiv",
+          "fs": 8
+        },
+        {
+          "t": "Fjern",
+          "fs": 9.3
+        },
+        {
+          "t": "🏠",
+          "fs": 9.6
+        },
+        {
+          "t": "Hjem",
+          "fs": 9.6
+        },
+        {
+          "t": "🏋️",
+          "fs": 9.6
+        },
+        {
+          "t": "Program",
+          "fs": 9.6
+        },
+        {
+          "t": "📓",
+          "fs": 9.6
+        },
+        {
+          "t": "Log",
+          "fs": 9.6
+        },
+        {
+          "t": "💬",
+          "fs": 9.6
+        },
+        {
+          "t": "Beskeder",
+          "fs": 9.6
+        },
+        {
+          "t": "Mere",
+          "fs": 9.6
+        },
+        {
+          "t": "Træningslog",
+          "fs": 9
+        },
+        {
+          "t": "Øvelse",
+          "fs": 8.3
+        },
+        {
+          "t": "2",
+          "fs": 8.3
+        },
+        {
+          "t": "træning",
+          "fs": 8.3
+        },
+        {
+          "t": "er",
+          "fs": 8.3
+        },
+        {
+          "t": "·",
+          "fs": 8.3
+        },
+        {
+          "t": "14",
+          "fs": 8.3
+        },
+        {
+          "t": "sæt",
+          "fs": 8.3
+        },
+        {
+          "t": "2026-09-22",
+          "fs": 9
+        },
+        {
+          "t": "Uge",
+          "fs": 8.3
+        },
+        {
+          "t": "5",
+          "fs": 8.3
+        },
+        {
+          "t": "4",
+          "fs": 8.3
+        },
+        {
+          "t": "/",
+          "fs": 9
+        },
+        {
+          "t": "7",
+          "fs": 9
+        },
+        {
+          "t": "sprunget over",
+          "fs": 8.3
+        },
+        {
+          "t": "Ø",
+          "fs": 8
+        },
+        {
+          "t": "80",
+          "fs": 8
+        },
+        {
+          "t": "kg",
+          "fs": 8
+        },
+        {
+          "t": "★",
+          "fs": 9.9
+        },
+        {
+          "t": "☆☆☆☆",
+          "fs": 9.9
+        },
+        {
+          "t": "Plan:",
+          "fs": 8.3
+        },
+        {
+          "t": "3 sæt · × 10 · RPE 8",
+          "fs": 8.3
+        },
+        {
+          "t": "↑ +10kg siden sidst",
+          "fs": 8
+        },
+        {
+          "t": "4 sæt · × 4-6 · RPE 8",
+          "fs": 8.3
+        },
+        {
+          "t": "2026-09-21",
+          "fs": 9
+        },
+        {
+          "t": "10",
+          "fs": 9
+        },
+        {
+          "t": "70",
+          "fs": 8
+        },
+        {
+          "t": "★★",
+          "fs": 9.9
+        },
+        {
+          "t": "☆☆☆",
+          "fs": 9.9
+        },
+        {
+          "t": "= Samme som sidst",
+          "fs": 8
+        },
+        {
+          "t": "3 sæt · × 8-10 · RPE 8",
+          "fs": 8.3
+        },
+        {
+          "t": "30",
+          "fs": 8.3
+        },
+        {
+          "t": "3 sæt · × 8 · RPE 7",
+          "fs": 8.3
+        },
+        {
+          "t": "↑ +7.5kg siden sidst",
+          "fs": 8
+        },
+        {
+          "t": "4 sæt · × 5 · RPE 7",
+          "fs": 8.3
+        },
+        {
+          "t": "100",
+          "fs": 8
+        },
+        {
+          "t": "Uge 4",
+          "fs": 9.6
+        }
+      ]
+    },
+    "logTekst": {
+      "chipPx": 11.52,
+      "notePx": 11.52,
+      "noteFarve": "rgb(154, 150, 140)"
+    },
+    "uge": {
+      "sidelaens": 0,
+      "udover": [],
+      "smaaTryk": [],
+      "lilleTekst": [
+        {
+          "t": "Coach Portal",
+          "fs": 8.3
+        },
+        {
+          "t": "Forside",
+          "fs": 7
+        },
+        {
+          "t": "Min træning",
+          "fs": 7
+        },
+        {
+          "t": "Kalender",
+          "fs": 9.6
+        },
+        {
+          "t": "Coach Briefing",
+          "fs": 7
+        },
+        {
+          "t": "3",
+          "fs": 8
+        },
+        {
+          "t": "Bibliotek",
+          "fs": 9.6
+        },
+        {
+          "t": "Atleter",
+          "fs": 7.4
+        },
+        {
+          "t": "AT",
+          "fs": 8
+        },
+        {
+          "t": "Uge 5",
+          "fs": 7.4
+        },
+        {
+          "t": "BT",
+          "fs": 8
+        },
+        {
+          "t": "CT",
+          "fs": 8
+        },
+        {
+          "t": "DT",
+          "fs": 8
+        },
+        {
+          "t": "ET",
+          "fs": 8
+        },
+        {
+          "t": "FT",
+          "fs": 8
+        },
+        {
+          "t": "Se som atlet",
+          "fs": 9.6
+        },
+        {
+          "t": "Værktøjer",
+          "fs": 8.3
+        },
+        {
+          "t": "▾",
+          "fs": 8
+        },
+        {
+          "t": "Menu",
+          "fs": 7
+        },
+        {
+          "t": "← Tilbage til",
+          "fs": 9.6
+        },
+        {
+          "t": "atleter",
+          "fs": 9.6
+        },
+        {
+          "t": "Aktiv i dag",
+          "fs": 8.3
+        },
+        {
+          "t": "Aktiv",
+          "fs": 8
+        },
+        {
+          "t": "Fjern",
+          "fs": 9.3
+        },
+        {
+          "t": "🏠",
+          "fs": 9.6
+        },
+        {
+          "t": "Hjem",
+          "fs": 9.6
+        },
+        {
+          "t": "🏋️",
+          "fs": 9.6
+        },
+        {
+          "t": "Program",
+          "fs": 9.6
+        },
+        {
+          "t": "📓",
+          "fs": 9.6
+        },
+        {
+          "t": "Log",
+          "fs": 9.6
+        },
+        {
+          "t": "💬",
+          "fs": 9.6
+        },
+        {
+          "t": "Beskeder",
+          "fs": 9.6
+        },
+        {
+          "t": "Mere",
+          "fs": 9.6
+        },
+        {
+          "t": "2",
+          "fs": 8
+        },
+        {
+          "t": "uge",
+          "fs": 9
+        },
+        {
+          "t": "r",
+          "fs": 9
+        },
+        {
+          "t": "Periodiseringsplan",
+          "fs": 9.6
+        },
+        {
+          "t": "Kopiér seneste uge →",
+          "fs": 9.6
+        },
+        {
+          "t": "⚡ Generér næste uge",
+          "fs": 9.6
+        },
+        {
+          "t": "+ Ny uge",
+          "fs": 9.6
+        },
+        {
+          "t": "Periodisering · klik ✎ for at omdøbe blo",
+          "fs": 8
+        },
+        {
+          "t": "nu",
+          "fs": 6.4
+        },
+        {
+          "t": "uge 4–5",
+          "fs": 8
+        },
+        {
+          "t": "·",
+          "fs": 8
+        },
+        {
+          "t": "u",
+          "fs": 8
+        },
+        {
+          "t": "14. sep. – 27. sep.",
+          "fs": 7.7
+        },
+        {
+          "t": "Volumen & intensitet",
+          "fs": 8
+        },
+        {
+          "t": "sæt/uge",
+          "fs": 7.4
+        },
+        {
+          "t": "ø RPE",
+          "fs": 7.4
+        },
+        {
+          "t": "4",
+          "fs": 8
+        },
+        {
+          "t": "5",
+          "fs": 9
+        },
+        {
+          "t": "UGE",
+          "fs": 7.7
+        },
+        {
+          "t": "træninger",
+          "fs": 8
+        },
+        {
+          "t": "100",
+          "fs": 8.3
+        },
+        {
+          "t": "%",
+          "fs": 8.3
+        },
+        {
+          "t": "47",
+          "fs": 8.3
+        },
+        {
+          "t": "Uge",
+          "fs": 9
+        },
+        {
+          "t": "14. sep.",
+          "fs": 8
+        },
+        {
+          "t": "–",
+          "fs": 8
+        },
+        {
+          "t": "20. sep.",
+          "fs": 8
+        },
+        {
+          "t": "Rediger",
+          "fs": 8.3
+        },
+        {
+          "t": "Slet",
+          "fs": 9.3
+        },
+        {
+          "t": "21. sep.",
+          "fs": 8
+        },
+        {
+          "t": "27. sep.",
+          "fs": 8
+        },
+        {
+          "t": "Mandag",
+          "fs": 7.4
+        },
+        {
+          "t": "✓ Logget",
+          "fs": 7.4
+        },
+        {
+          "t": "øvelser",
+          "fs": 8
+        },
+        {
+          "t": "↑",
+          "fs": 8.3
+        },
+        {
+          "t": "↓",
+          "fs": 8.3
+        },
+        {
+          "t": "Kopiér",
+          "fs": 8.3
+        },
+        {
+          "t": "▼",
+          "fs": 9.6
+        },
+        {
+          "t": "Tirsdag",
+          "fs": 7.4
+        },
+        {
+          "t": "4/7 sæt",
+          "fs": 7.4
+        },
+        {
+          "t": "Torsdag",
+          "fs": 7.4
+        },
+        {
+          "t": "Ikke logget",
+          "fs": 7.4
+        },
+        {
+          "t": "Fredag",
+          "fs": 7.4
+        },
+        {
+          "t": "+ Tilføj træning",
+          "fs": 8.6
+        }
+      ]
+    },
+    "ugePas": {
+      "titelBredde": 302,
+      "raekkeBredde": 338,
+      "titelHoejde": 29,
+      "opBredde": 44
+    },
+    "ugeOevelse": [
+      {
+        "el": "Flyt Squat op",
+        "w": 44
+      },
+      {
+        "el": "Flyt Squat ned",
+        "w": 44
+      },
+      {
+        "el": "Rediger Squat",
+        "w": 44
+      },
+      {
+        "el": "Slet Squat",
+        "w": 44
+      }
+    ],
+    "ugeAabnet": {
+      "sidelaens": 0,
+      "udover": [],
+      "smaaTryk": [],
+      "lilleTekst": [
+        {
+          "t": "Coach Portal",
+          "fs": 8.3
+        },
+        {
+          "t": "Forside",
+          "fs": 7
+        },
+        {
+          "t": "Min træning",
+          "fs": 7
+        },
+        {
+          "t": "Kalender",
+          "fs": 9.6
+        },
+        {
+          "t": "Coach Briefing",
+          "fs": 7
+        },
+        {
+          "t": "3",
+          "fs": 8
+        },
+        {
+          "t": "Bibliotek",
+          "fs": 9.6
+        },
+        {
+          "t": "Atleter",
+          "fs": 7.4
+        },
+        {
+          "t": "AT",
+          "fs": 8
+        },
+        {
+          "t": "Uge 5",
+          "fs": 7.4
+        },
+        {
+          "t": "BT",
+          "fs": 8
+        },
+        {
+          "t": "CT",
+          "fs": 8
+        },
+        {
+          "t": "DT",
+          "fs": 8
+        },
+        {
+          "t": "ET",
+          "fs": 8
+        },
+        {
+          "t": "FT",
+          "fs": 8
+        },
+        {
+          "t": "Se som atlet",
+          "fs": 9.6
+        },
+        {
+          "t": "Værktøjer",
+          "fs": 8.3
+        },
+        {
+          "t": "▾",
+          "fs": 8
+        },
+        {
+          "t": "Menu",
+          "fs": 7
+        },
+        {
+          "t": "← Tilbage til",
+          "fs": 9.6
+        },
+        {
+          "t": "atleter",
+          "fs": 9.6
+        },
+        {
+          "t": "Aktiv i dag",
+          "fs": 8.3
+        },
+        {
+          "t": "Aktiv",
+          "fs": 8
+        },
+        {
+          "t": "Fjern",
+          "fs": 9.3
+        },
+        {
+          "t": "🏠",
+          "fs": 9.6
+        },
+        {
+          "t": "Hjem",
+          "fs": 9.6
+        },
+        {
+          "t": "🏋️",
+          "fs": 9.6
+        },
+        {
+          "t": "Program",
+          "fs": 9.6
+        },
+        {
+          "t": "📓",
+          "fs": 9.6
+        },
+        {
+          "t": "Log",
+          "fs": 9.6
+        },
+        {
+          "t": "💬",
+          "fs": 9.6
+        },
+        {
+          "t": "Beskeder",
+          "fs": 9.6
+        },
+        {
+          "t": "Mere",
+          "fs": 9.6
+        },
+        {
+          "t": "2",
+          "fs": 8
+        },
+        {
+          "t": "uge",
+          "fs": 9
+        },
+        {
+          "t": "r",
+          "fs": 9
+        },
+        {
+          "t": "Periodiseringsplan",
+          "fs": 9.6
+        },
+        {
+          "t": "Kopiér seneste uge →",
+          "fs": 9.6
+        },
+        {
+          "t": "⚡ Generér næste uge",
+          "fs": 9.6
+        },
+        {
+          "t": "+ Ny uge",
+          "fs": 9.6
+        },
+        {
+          "t": "Periodisering · klik ✎ for at omdøbe blo",
+          "fs": 8
+        },
+        {
+          "t": "nu",
+          "fs": 6.4
+        },
+        {
+          "t": "uge 4–5",
+          "fs": 8
+        },
+        {
+          "t": "·",
+          "fs": 8
+        },
+        {
+          "t": "u",
+          "fs": 8
+        },
+        {
+          "t": "14. sep. – 27. sep.",
+          "fs": 7.7
+        },
+        {
+          "t": "Volumen & intensitet",
+          "fs": 8
+        },
+        {
+          "t": "sæt/uge",
+          "fs": 7.4
+        },
+        {
+          "t": "ø RPE",
+          "fs": 7.4
+        },
+        {
+          "t": "4",
+          "fs": 8
+        },
+        {
+          "t": "5",
+          "fs": 9
+        },
+        {
+          "t": "UGE",
+          "fs": 7.7
+        },
+        {
+          "t": "træninger",
+          "fs": 8
+        },
+        {
+          "t": "100",
+          "fs": 9.3
+        },
+        {
+          "t": "%",
+          "fs": 8.3
+        },
+        {
+          "t": "47",
+          "fs": 8.3
+        },
+        {
+          "t": "Uge",
+          "fs": 9
+        },
+        {
+          "t": "14. sep.",
+          "fs": 8
+        },
+        {
+          "t": "–",
+          "fs": 8
+        },
+        {
+          "t": "20. sep.",
+          "fs": 8
+        },
+        {
+          "t": "Rediger",
+          "fs": 8.3
+        },
+        {
+          "t": "Slet",
+          "fs": 9.3
+        },
+        {
+          "t": "21. sep.",
+          "fs": 8
+        },
+        {
+          "t": "27. sep.",
+          "fs": 8
+        },
+        {
+          "t": "Mandag",
+          "fs": 7.4
+        },
+        {
+          "t": "✓ Logget",
+          "fs": 7.4
+        },
+        {
+          "t": "øvelser",
+          "fs": 8
+        },
+        {
+          "t": "↑",
+          "fs": 8.3
+        },
+        {
+          "t": "↓",
+          "fs": 8.3
+        },
+        {
+          "t": "Kopiér",
+          "fs": 8.3
+        },
+        {
+          "t": "▲",
+          "fs": 9.6
+        },
+        {
+          "t": "4 sæt",
+          "fs": 8.3
+        },
+        {
+          "t": "× 5",
+          "fs": 8.3
+        },
+        {
+          "t": "· RPE 7",
+          "fs": 8.3
+        },
+        {
+          "t": "Anbefalet:",
+          "fs": 9.3
+        },
+        {
+          "t": "kg",
+          "fs": 9.3
+        },
+        {
+          "t": "✎",
+          "fs": 8.3
+        },
+        {
+          "t": "✕",
+          "fs": 9.3
+        },
+        {
+          "t": "3 sæt",
+          "fs": 8.3
+        },
+        {
+          "t": "× 8",
+          "fs": 8.3
+        },
+        {
+          "t": "70",
+          "fs": 9.3
+        },
+        {
+          "t": "× 8-10",
+          "fs": 8.3
+        },
+        {
+          "t": "· RPE 8",
+          "fs": 8.3
+        },
+        {
+          "t": "Sidst logget:",
+          "fs": 9.3
+        },
+        {
+          "t": "30",
+          "fs": 9.3
+        },
+        {
+          "t": "kg ×",
+          "fs": 9.3
+        },
+        {
+          "t": "8",
+          "fs": 9.3
+        },
+        {
+          "t": "reps",
+          "fs": 9.3
+        },
+        {
+          "t": "+ Tilføj øvelse",
+          "fs": 8
+        },
+        {
+          "t": "Tirsdag",
+          "fs": 7.4
+        },
+        {
+          "t": "4/7 sæt",
+          "fs": 7.4
+        },
+        {
+          "t": "▼",
+          "fs": 9.6
+        },
+        {
+          "t": "Torsdag",
+          "fs": 7.4
+        },
+        {
+          "t": "Ikke logget",
+          "fs": 7.4
+        },
+        {
+          "t": "Fredag",
+          "fs": 7.4
+        },
+        {
+          "t": "+ Tilføj træning",
+          "fs": 8.6
+        }
+      ]
+    },
+    "video": {
+      "sidelaens": 0,
+      "udover": [],
+      "smaaTryk": [],
+      "lilleTekst": [
+        {
+          "t": "Coach Portal",
+          "fs": 8.3
+        },
+        {
+          "t": "Forside",
+          "fs": 7
+        },
+        {
+          "t": "Min træning",
+          "fs": 7
+        },
+        {
+          "t": "Kalender",
+          "fs": 9.6
+        },
+        {
+          "t": "Coach Briefing",
+          "fs": 7
+        },
+        {
+          "t": "3",
+          "fs": 7
+        },
+        {
+          "t": "Bibliotek",
+          "fs": 9.6
+        },
+        {
+          "t": "Atleter",
+          "fs": 7.4
+        },
+        {
+          "t": "AT",
+          "fs": 8
+        },
+        {
+          "t": "Uge 5",
+          "fs": 7.4
+        },
+        {
+          "t": "BT",
+          "fs": 8
+        },
+        {
+          "t": "CT",
+          "fs": 8
+        },
+        {
+          "t": "DT",
+          "fs": 8
+        },
+        {
+          "t": "ET",
+          "fs": 8
+        },
+        {
+          "t": "FT",
+          "fs": 8
+        },
+        {
+          "t": "Se som atlet",
+          "fs": 9.6
+        },
+        {
+          "t": "Værktøjer",
+          "fs": 8.3
+        },
+        {
+          "t": "▾",
+          "fs": 8
+        },
+        {
+          "t": "Menu",
+          "fs": 7
+        },
+        {
+          "t": "← Tilbage til",
+          "fs": 9.6
+        },
+        {
+          "t": "atleter",
+          "fs": 9.6
+        },
+        {
+          "t": "Aktuel opgave",
+          "fs": 7.2
+        },
+        {
+          "t": "Video",
+          "fs": 6.4
+        },
+        {
+          "t": "Aktiv i dag",
+          "fs": 8.3
+        },
+        {
+          "t": "Aktiv",
+          "fs": 8
+        },
+        {
+          "t": "Fjern",
+          "fs": 9.3
+        },
+        {
+          "t": "🏠",
+          "fs": 9.6
+        },
+        {
+          "t": "Hjem",
+          "fs": 9.6
+        },
+        {
+          "t": "🏋️",
+          "fs": 9.6
+        },
+        {
+          "t": "Program",
+          "fs": 9.6
+        },
+        {
+          "t": "📓",
+          "fs": 9.6
+        },
+        {
+          "t": "Log",
+          "fs": 9.6
+        },
+        {
+          "t": "💬",
+          "fs": 9.6
+        },
+        {
+          "t": "Beskeder",
+          "fs": 9.6
+        },
+        {
+          "t": "📈",
+          "fs": 9.6
+        },
+        {
+          "t": "Analyse",
+          "fs": 9.6
+        },
+        {
+          "t": "AI Rapport",
+          "fs": 9.6
+        },
+        {
+          "t": "VideoCoach · individuelle bevægelsesanal",
+          "fs": 9
+        },
+        {
+          "t": "Ny videoanalyse →",
+          "fs": 9.3
+        },
+        {
+          "t": "Analyser",
+          "fs": 8.6
+        },
+        {
+          "t": "Afventer coach",
+          "fs": 8.6
+        },
+        {
+          "t": "Godkendte",
+          "fs": 8.6
+        },
+        {
+          "t": "Profiler klare",
+          "fs": 8.6
+        },
+        {
+          "t": "Alle",
+          "fs": 8.3
+        },
+        {
+          "t": "Squat",
+          "fs": 8.3
+        },
+        {
+          "t": "Bænk",
+          "fs": 8.3
+        },
+        {
+          "t": "Dødløft",
+          "fs": 8.3
+        },
+        {
+          "t": "Senest",
+          "fs": 8
+        },
+        {
+          "t": "1.1.1970",
+          "fs": 8
+        },
+        {
+          "t": "Modtaget",
+          "fs": 8
+        },
+        {
+          "t": "26.9.2026",
+          "fs": 8
+        },
+        {
+          "t": "· 100 kg",
+          "fs": 8
+        },
+        {
+          "t": "· RPE 8",
+          "fs": 8
+        },
+        {
+          "t": "Afventer sporing",
+          "fs": 7.7
+        },
+        {
+          "t": "Spor nu →",
+          "fs": 8.3
+        },
+        {
+          "t": "Træningsoverblik",
+          "fs": 9
+        },
+        {
+          "t": "Sessioner (4 uger)",
+          "fs": 8.6
+        },
+        {
+          "t": "Sæt logget (4 uger)",
+          "fs": 8.6
+        },
+        {
+          "t": "Sessioner i program",
+          "fs": 8.6
+        },
+        {
+          "t": "Seneste aktivitet",
+          "fs": 8.6
+        },
+        {
+          "t": "Compliance",
+          "fs": 8.6
+        },
+        {
+          "t": "8",
+          "fs": 8.8
+        },
+        {
+          "t": "/",
+          "fs": 9.6
+        },
+        {
+          "t": "Træningskonsistens",
+          "fs": 9
+        },
+        {
+          "t": "dage ·",
+          "fs": 8.8
+        },
+        {
+          "t": "7",
+          "fs": 8.8
+        },
+        {
+          "t": "% de seneste",
+          "fs": 8.8
+        },
+        {
+          "t": "16",
+          "fs": 8.8
+        },
+        {
+          "t": "uger",
+          "fs": 8.8
+        },
+        {
+          "t": "M",
+          "fs": 9
+        },
+        {
+          "t": "O",
+          "fs": 9
+        },
+        {
+          "t": "F",
+          "fs": 9
+        },
+        {
+          "t": "S",
+          "fs": 9
+        },
+        {
+          "t": "Jul",
+          "fs": 9
+        },
+        {
+          "t": "Aug",
+          "fs": 9
+        },
+        {
+          "t": "Sep",
+          "fs": 9
+        },
+        {
+          "t": "Primære løft — sværeste sæt per session",
+          "fs": 9
+        },
+        {
+          "t": "83",
+          "fs": 9
+        },
+        {
+          "t": "91",
+          "fs": 9
+        },
+        {
+          "t": "100",
+          "fs": 9
+        },
+        {
+          "t": "14/9",
+          "fs": 9
+        },
+        {
+          "t": "18/9",
+          "fs": 9
+        },
+        {
+          "t": "21/9",
+          "fs": 9
+        },
+        {
+          "t": "25/9",
+          "fs": 9
+        },
+        {
+          "t": "Bænkpres",
+          "fs": 8.3
+        },
+        {
+          "t": "68",
+          "fs": 9
+        },
+        {
+          "t": "74",
+          "fs": 9
+        },
+        {
+          "t": "80",
+          "fs": 9
+        },
+        {
+          "t": "138",
+          "fs": 9
+        },
+        {
+          "t": "139",
+          "fs": 9
+        },
+        {
+          "t": "140",
+          "fs": 9
+        },
+        {
+          "t": "17/9",
+          "fs": 9
+        },
+        {
+          "t": "24/9",
+          "fs": 9
+        },
+        {
+          "t": "Planlagt vs faktisk",
+          "fs": 9
+        },
+        {
+          "t": "Faktisk",
+          "fs": 8
+        },
+        {
+          "t": "Planlagt",
+          "fs": 8
+        },
+        {
+          "t": "Seneste sessioner",
+          "fs": 9
+        },
+        {
+          "t": "25. sep.",
+          "fs": 8
+        },
+        {
+          "t": "sæt",
+          "fs": 7.7
+        },
+        {
+          "t": "24. sep.",
+          "fs": 8
+        },
+        {
+          "t": "22. sep.",
+          "fs": 8
+        },
+        {
+          "t": "21. sep.",
+          "fs": 8
+        },
+        {
+          "t": "18. sep.",
+          "fs": 8
+        },
+        {
+          "t": "17. sep.",
+          "fs": 8
+        },
+        {
+          "t": "15. sep.",
+          "fs": 8
+        },
+        {
+          "t": "14. sep.",
+          "fs": 8
+        },
+        {
+          "t": "RPE afvigelse",
+          "fs": 9
+        },
+        {
+          "t": "Gns. afvigelse",
+          "fs": 8.6
+        },
+        {
+          "t": "Sæt med RPE",
+          "fs": 8.6
+        },
+        {
+          "t": "Positiv afvigelse = faktisk RPE højere e",
+          "fs": 8.3
+        },
+        {
+          "t": "Parathed over tid",
+          "fs": 9
+        },
+        {
+          "t": "Parathed — nøgletal",
+          "fs": 9
+        },
+        {
+          "t": "Logs i alt",
+          "fs": 8.6
+        },
+        {
+          "t": "Gns. søvn (2 uger)",
+          "fs": 8.6
+        },
+        {
+          "t": "Seneste score",
+          "fs": 8.6
+        },
+        {
+          "t": "Belastningsoverblik — sæt per uge",
+          "fs": 9
+        },
+        {
+          "t": "0",
+          "fs": 9
+        },
+        {
+          "t": "15",
+          "fs": 9
+        },
+        {
+          "t": "30",
+          "fs": 8
+        },
+        {
+          "t": "U4",
+          "fs": 9
+        },
+        {
+          "t": "U5",
+          "fs": 9
+        },
+        {
+          "t": "Normal",
+          "fs": 8
+        },
+        {
+          "t": "Under 70% compliance",
+          "fs": 8
+        },
+        {
+          "t": "Fremgang på primære løft",
+          "fs": 9
+        },
+        {
+          "t": "Løftet",
+          "fs": 8
+        },
+        {
+          "t": "Trend",
+          "fs": 8
+        },
+        {
+          "t": "↑ Fremgang",
+          "fs": 8.3
+        }
+      ]
+    }
+  },
+  "konsolFejl": []
+}
