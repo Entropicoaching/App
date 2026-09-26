@@ -1,0 +1,132 @@
+{
+ "tilfaelde": [
+  {
+   "oevelse": "sm07",
+   "uci": "d1g4",
+   "godeFoerste": [
+    "d2f3",
+    "d4f3"
+   ],
+   "dyre": [
+    "d1g4"
+   ],
+   "svar": {
+    "besked": "Matten er stoppet - men se hvad han kan slå bagefter. Det koster dig en brik. Find et svar der stopper matten uden at give noget væk. Prøv igen.",
+    "knap": "Vis et hint",
+    "ring": 0,
+    "pil": 0,
+    "stjerner": "☆☆☆☆☆"
+   },
+   "hint1": {
+    "besked": "Tip: Hvilken brik vil give mat, og på hvilket felt? Slå den, dæk feltet, eller giv kongen luft - uden at give en brik væk. Brikken i ringen skal flytte.",
+    "knap": "Vis trækket",
+    "ring": 1,
+    "pil": 0,
+    "stjerner": "☆☆☆☆☆"
+   },
+   "hint2": {
+    "besked": "Hint: pilen viser trækket. Kan du se hvorfor det virker?",
+    "knap": "Vis et hint",
+    "ring": 0,
+    "pil": 2,
+    "stjerner": "☆☆☆☆☆"
+   }
+  },
+  {
+   "oevelse": "sm03",
+   "uci": "d2d3",
+   "godeFoerste": [
+    "d5d4"
+   ],
+   "dyre": [
+    "d2d3",
+    "d2e2"
+   ],
+   "svar": {
+    "besked": "Matten er stoppet - men se hvad han kan slå bagefter. Det koster dig en brik. Find et svar der stopper matten uden at give noget væk. Prøv igen.",
+    "knap": "Vis et hint",
+    "ring": 0,
+    "pil": 0,
+    "stjerner": "☆☆☆☆☆"
+   },
+   "hint1": {
+    "besked": "Tip: Hvilken brik vil give mat, og på hvilket felt? Slå den, dæk feltet, eller giv kongen luft - uden at give en brik væk. Brikken i ringen skal flytte.",
+    "knap": "Vis trækket",
+    "ring": 1,
+    "pil": 0,
+    "stjerner": "☆☆☆☆☆"
+   },
+   "hint2": {
+    "besked": "Hint: pilen viser trækket. Kan du se hvorfor det virker?",
+    "knap": "Vis et hint",
+    "ring": 0,
+    "pil": 2,
+    "stjerner": "☆☆☆☆☆"
+   }
+  },
+  {
+   "oevelse": "sm08",
+   "uci": "c7c6",
+   "godeFoerste": [
+    "c7e7",
+    "d5d4"
+   ],
+   "dyre": [
+    "c7c6"
+   ],
+   "svar": {
+    "besked": "Matten er stoppet - men se hvad han kan slå bagefter. Det koster dig en brik. Find et svar der stopper matten uden at give noget væk. Prøv igen.",
+    "knap": "Vis et hint",
+    "ring": 0,
+    "pil": 0,
+    "stjerner": "☆☆☆☆☆"
+   },
+   "hint1": {
+    "besked": "Tip: Hvilken brik vil give mat, og på hvilket felt? Slå den, dæk feltet, eller giv kongen luft - uden at give en brik væk. Brikken i ringen skal flytte.",
+    "knap": "Vis trækket",
+    "ring": 1,
+    "pil": 0,
+    "stjerner": "☆☆☆☆☆"
+   },
+   "hint2": {
+    "besked": "Hint: pilen viser trækket. Kan du se hvorfor det virker?",
+    "knap": "Vis et hint",
+    "ring": 0,
+    "pil": 2,
+    "stjerner": "☆☆☆☆☆"
+   }
+  },
+  {
+   "oevelse": "sm02",
+   "uci": "h8g7",
+   "godeFoerste": [
+    "f7f5"
+   ],
+   "dyre": [
+    "h8g7"
+   ],
+   "svar": {
+    "besked": "Matten er stoppet - men se hvad han kan slå bagefter. Det koster dig en brik. Find et svar der stopper matten uden at give noget væk. Prøv igen.",
+    "knap": "Vis et hint",
+    "ring": 0,
+    "pil": 0,
+    "stjerner": "☆☆☆☆☆"
+   },
+   "hint1": {
+    "besked": "Tip: Hvilken brik vil give mat, og på hvilket felt? Slå den, dæk feltet, eller giv kongen luft - uden at give en brik væk. Brikken i ringen skal flytte.",
+    "knap": "Vis trækket",
+    "ring": 1,
+    "pil": 0,
+    "stjerner": "☆☆☆☆☆"
+   },
+   "hint2": {
+    "besked": "Hint: pilen viser trækket. Kan du se hvorfor det virker?",
+    "knap": "Vis et hint",
+    "ring": 0,
+    "pil": 2,
+    "stjerner": "☆☆☆☆☆"
+   }
+  }
+ ],
+ "sidefejl": []
+}

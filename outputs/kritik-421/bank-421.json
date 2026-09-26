@@ -1,0 +1,676 @@
+{
+ "dybde": 4,
+ "B1": [
+  {
+   "id": "sm01",
+   "fen": "6k1/2R2p1p/1rp2Pp1/p7/3p4/3P3P/P1P3PK/8 b - - 2 33",
+   "godeFoerste": [
+    "h7h5",
+    "h7h6",
+    "b6b8"
+   ],
+   "dyre": [],
+   "bedst": 0,
+   "stopper": [
+    {
+     "uci": "h7h6",
+     "san": "h6",
+     "materiale": 0
+    },
+    {
+     "uci": "h7h5",
+     "san": "h5",
+     "materiale": 0
+    },
+    {
+     "uci": "b6b8",
+     "san": "Rb8",
+     "materiale": -1
+    }
+   ]
+  },
+  {
+   "id": "sm02",
+   "fen": "r2q1r1k/pp3p2/2p1p2b/8/3P4/2PQ3P/PPB2PP1/R5K1 b - - 0 21",
+   "godeFoerste": [
+    "f7f5"
+   ],
+   "dyre": [
+    "h8g7"
+   ],
+   "bedst": 0,
+   "stopper": [
+    {
+     "uci": "h8g7",
+     "san": "Kg7",
+     "materiale": -3
+    },
+    {
+     "uci": "f7f5",
+     "san": "f5",
+     "materiale": 0
+    }
+   ]
+  },
+  {
+   "id": "sm03",
+   "fen": "8/6p1/R7/3pkPp1/6P1/2p1K2P/p2r4/8 b - - 6 43",
+   "godeFoerste": [
+    "d5d4"
+   ],
+   "dyre": [
+    "d2d3",
+    "d2e2"
+   ],
+   "bedst": 0,
+   "stopper": [
+    {
+     "uci": "d5d4",
+     "san": "d4+",
+     "materiale": 0
+    },
+    {
+     "uci": "d2d3",
+     "san": "Rd3+",
+     "materiale": -6
+    },
+    {
+     "uci": "d2e2",
+     "san": "Re2+",
+     "materiale": -5
+    }
+   ]
+  },
+  {
+   "id": "sm04",
+   "fen": "r1b2rk1/5pp1/p2qpb1p/3p4/1ppP4/2P1PN2/PPQ2PPP/1BKR3R b - - 0 16",
+   "godeFoerste": [
+    "f8d8",
+    "g7g6",
+    "f8e8"
+   ],
+   "dyre": [],
+   "bedst": 0,
+   "stopper": [
+    {
+     "uci": "f8e8",
+     "san": "Re8",
+     "materiale": -1
+    },
+    {
+     "uci": "f8d8",
+     "san": "Rd8",
+     "materiale": 0
+    },
+    {
+     "uci": "g7g6",
+     "san": "g6",
+     "materiale": 0
+    }
+   ]
+  },
+  {
+   "id": "sm05",
+   "fen": "R7/8/5p2/8/7K/1P3k2/Pr6/8 w - - 3 46",
+   "godeFoerste": [
+    "h4h3",
+    "h4h5"
+   ],
+   "dyre": [],
+   "bedst": 0,
+   "stopper": [
+    {
+     "uci": "h4h5",
+     "san": "Kh5",
+     "materiale": 0
+    },
+    {
+     "uci": "h4h3",
+     "san": "Kh3",
+     "materiale": 0
+    }
+   ]
+  },
+  {
+   "id": "sm06",
+   "fen": "2rq1rk1/1b3pp1/1np1pb1p/pp6/3P4/2NQPN2/PP3PPP/1BR2RK1 b - - 0 16",
+   "godeFoerste": [
+    "f8e8",
+    "g7g6"
+   ],
+   "dyre": [],
+   "bedst": 0,
+   "stopper": [
+    {
+     "uci": "f8e8",
+     "san": "Re8",
+     "materiale": 0
+    },
+    {
+     "uci": "g7g6",
+     "san": "g6",
+     "materiale": 0
+    }
+   ]
+  },
+  {
+   "id": "sm07",
+   "fen": "r1b2rk1/ppp5/3p3p/3Pbp2/3Npq2/2P4P/PP1N1P2/R2QRB1K w - - 1 19",
+   "godeFoerste": [
+    "d2f3",
+    "d4f3"
+   ],
+   "dyre": [
+    "d1g4"
+   ],
+   "bedst": -2,
+   "stopper": [
+    {
+     "uci": "d4f3",
+     "san": "N4f3",
+     "materiale": -2
+    },
+    {
+     "uci": "d2f3",
+     "san": "N2f3",
+     "materiale": -2
+    },
+    {
+     "uci": "d1g4",
+     "san": "Qg4+",
+     "materiale": -12
+    }
+   ]
+  },
+  {
+   "id": "sm08",
+   "fen": "8/2r3p1/R4p2/2ppkPp1/6P1/2P2K1P/8/8 b - - 4 50",
+   "godeFoerste": [
+    "c7e7",
+    "d5d4"
+   ],
+   "dyre": [
+    "c7c6"
+   ],
+   "bedst": 0,
+   "stopper": [
+    {
+     "uci": "c7e7",
+     "san": "Re7",
+     "materiale": 0
+    },
+    {
+     "uci": "c7c6",
+     "san": "Rc6",
+     "materiale": -6
+    },
+    {
+     "uci": "d5d4",
+     "san": "d4",
+     "materiale": 0
+    }
+   ]
+  }
+ ],
+ "B1sekunder": 2345,
+ "B2": [
+  {
+   "trin": "braet-felter",
+   "felt": "fen",
+   "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+   "ikkeITraekISkak": false
+  },
+  {
+   "trin": "brik-konge",
+   "felt": "fen",
+   "fen": "8/8/8/8/8/4K3/8/8 w - - 0 1",
+   "ikkeITraekISkak": null
+  },
+  {
+   "trin": "brik-dronning",
+   "felt": "fen",
+   "fen": "8/8/8/8/3Q4/8/8/8 w - - 0 1",
+   "ikkeITraekISkak": null
+  },
+  {
+   "trin": "brik-taarn",
+   "felt": "fen",
+   "fen": "8/8/8/8/8/8/8/R7 w - - 0 1",
+   "ikkeITraekISkak": null
+  },
+  {
+   "trin": "brik-loeber",
+   "felt": "fen",
+   "fen": "8/8/8/8/8/8/8/2B5 w - - 0 1",
+   "ikkeITraekISkak": null
+  },
+  {
+   "trin": "brik-springer",
+   "felt": "fen",
+   "fen": "8/8/8/8/8/8/8/1N6 w - - 0 1",
+   "ikkeITraekISkak": null
+  },
+  {
+   "trin": "brik-bonde",
+   "felt": "fen",
+   "fen": "8/8/8/8/8/8/4P3/8 w - - 0 1",
+   "ikkeITraekISkak": null
+  },
+  {
+   "trin": "bonde-slag",
+   "felt": "fen",
+   "fen": "7k/8/8/3p4/4P3/8/8/4K3 w - - 0 1",
+   "ikkeITraekISkak": false
+  },
+  {
+   "trin": "slag",
+   "felt": "fen",
+   "fen": "7k/8/8/1p6/3N4/8/8/4K3 w - - 0 1",
+   "ikkeITraekISkak": false
+  },
+  {
+   "trin": "skak-mat",
+   "felt": "fen",
+   "fen": "6k1/5ppp/8/8/8/8/8/4R2K w - - 0 1",
+   "ikkeITraekISkak": false
+  },
+  {
+   "trin": "svar-paa-skak",
+   "felt": "fen",
+   "fen": "R3r2k/8/8/8/7B/8/8/4K3 w - - 0 1",
+   "ikkeITraekISkak": false
+  },
+  {
+   "trin": "rokade",
+   "felt": "fen",
+   "fen": "4k3/8/8/8/8/8/8/R3K2R w KQ - 0 1",
+   "ikkeITraekISkak": false
+  },
+  {
+   "trin": "en-passant",
+   "felt": "fen",
+   "fen": "4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 1",
+   "ikkeITraekISkak": false
+  },
+  {
+   "trin": "forvandling",
+   "felt": "fen",
+   "fen": "7k/4P3/8/8/8/8/8/4K3 w - - 0 1",
+   "ikkeITraekISkak": false
+  },
+  {
+   "trin": "patt",
+   "felt": "fen",
+   "fen": "7k/5K2/8/8/8/8/8/6Q1 w - - 0 1",
+   "ikkeITraekISkak": false
+  },
+  {
+   "trin": "princip-centrum",
+   "felt": "fen",
+   "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+   "ikkeITraekISkak": false
+  },
+  {
+   "trin": "princip-udvikling",
+   "felt": "fen",
+   "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 2 3",
+   "ikkeITraekISkak": false
+  },
+  {
+   "trin": "princip-konge",
+   "felt": "fen",
+   "fen": "2bqk3/8/8/8/8/8/5PPP/R3K2R w KQ - 0 1",
+   "ikkeITraekISkak": false
+  },
+  {
+   "trin": "princip-samme-brik",
+   "felt": "fen",
+   "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 4 3",
+   "ikkeITraekISkak": false
+  },
+  {
+   "trin": "princip-aabne-linjer",
+   "felt": "fen",
+   "fen": "7k/8/8/8/8/8/1P6/R3K3 w Q - 0 1",
+   "ikkeITraekISkak": false
+  },
+  {
+   "trin": "aabning-italiensk",
+   "felt": "fen",
+   "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+   "ikkeITraekISkak": false
+  },
+  {
+   "trin": "aabning-spansk",
+   "felt": "fen",
+   "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+   "ikkeITraekISkak": false
+  },
+  {
+   "trin": "aabning-dronninggambit",
+   "felt": "fen",
+   "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+   "ikkeITraekISkak": false
+  },
+  {
+   "trin": "aabning-siciliansk",
+   "felt": "fen",
+   "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+   "ikkeITraekISkak": false
+  },
+  {
+   "trin": "slutspil-dronning",
+   "felt": "demoFen",
+   "fen": "4k3/8/8/8/8/8/4K3/3Q4 w - - 0 1",
+   "ikkeITraekISkak": false
+  },
+  {
+   "trin": "slutspil-dronning",
+   "felt": "spilFen",
+   "fen": "4k3/8/8/8/8/8/4K3/3Q4 w - - 0 1",
+   "ikkeITraekISkak": false
+  },
+  {
+   "trin": "slutspil-taarn",
+   "felt": "demoFen",
+   "fen": "4k3/8/8/8/8/8/4K3/3R4 w - - 0 1",
+   "ikkeITraekISkak": false
+  },
+  {
+   "trin": "slutspil-taarn",
+   "felt": "spilFen",
+   "fen": "4k3/8/8/8/8/8/4K3/3R4 w - - 0 1",
+   "ikkeITraekISkak": false
+  },
+  {
+   "trin": "slutspil-bonde",
+   "felt": "demoFen",
+   "fen": "k7/8/8/8/3K4/3P4/8/8 w - - 0 1",
+   "ikkeITraekISkak": false
+  },
+  {
+   "trin": "slutspil-bonde",
+   "felt": "spilFen",
+   "fen": "k7/8/8/8/3K4/3P4/8/8 w - - 0 1",
+   "ikkeITraekISkak": false
+  },
+  {
+   "trin": "slutspil-centrum",
+   "felt": "demoFen",
+   "fen": "k7/8/8/8/8/8/3P4/K7 w - - 0 1",
+   "ikkeITraekISkak": false
+  },
+  {
+   "trin": "slutspil-centrum",
+   "felt": "spilFen",
+   "fen": "k7/8/8/8/8/8/3P4/K7 w - - 0 1",
+   "ikkeITraekISkak": false
+  },
+  {
+   "trin": "miniparti",
+   "felt": "fen",
+   "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+   "ikkeITraekISkak": false
+  }
+ ],
+ "B3": {
+  "traekGraense": 50,
+  "sidderVindue": 4,
+  "maal": 3,
+  "kassenFoerPartiet": true,
+  "kassenOevelser": 4
+ },
+ "B4": [
+  {
+   "id": "op01",
+   "fen": "8/8/2k5/8/3K4/8/1P6/8 w - - 0 1",
+   "loesning": [
+    "d4c4",
+    "c6b6",
+    "c4b4"
+   ],
+   "hint2": "Godt! Hans konge veg. Gå til siden, så du igen står over for ham - stadig med kongen.",
+   "manoevre": "-1,0|-1,0"
+  },
+  {
+   "id": "op02",
+   "fen": "8/8/3k4/8/2K5/8/4P3/8 w - - 0 1",
+   "loesning": [
+    "c4d4",
+    "d6e6",
+    "d4e4"
+   ],
+   "hint2": "Godt! Hans konge veg. Gå til siden, så du igen står over for ham - stadig med kongen.",
+   "manoevre": "1,0|1,0"
+  },
+  {
+   "id": "op03",
+   "fen": "8/8/8/4k3/8/8/3PK3/8 w - - 0 1",
+   "loesning": [
+    "e2e3",
+    "e5d5",
+    "e3d3"
+   ],
+   "hint2": "Godt! Hans konge veg. Gå til siden, så du igen står over for ham - stadig med kongen.",
+   "manoevre": "0,1|-1,0"
+  },
+  {
+   "id": "op04",
+   "fen": "8/8/4k3/8/8/3P1K2/8/8 w - - 0 1",
+   "loesning": [
+    "f3e4",
+    "e6d6",
+    "e4d4"
+   ],
+   "hint2": "Godt! Hans konge veg. Gå til siden, så du igen står over for ham - stadig med kongen.",
+   "manoevre": "-1,1|-1,0"
+  },
+  {
+   "id": "op05",
+   "fen": "8/2k5/8/8/2K1P3/8/8/8 w - - 0 1",
+   "loesning": [
+    "c4c5",
+    "c7d8",
+    "c5d6"
+   ],
+   "hint2": "Godt! Hans konge veg. Gå skråt frem, så du igen står over for ham - stadig med kongen.",
+   "manoevre": "0,1|1,1"
+  },
+  {
+   "id": "op06",
+   "fen": "8/2k5/8/8/1K6/3P4/8/8 w - - 0 1",
+   "loesning": [
+    "b4c5",
+    "c7d7",
+    "c5d5"
+   ],
+   "hint2": "Godt! Hans konge veg. Gå til siden, så du igen står over for ham - stadig med kongen.",
+   "manoevre": "1,1|1,0"
+  },
+  {
+   "id": "op07",
+   "fen": "2k5/8/3K4/1P6/8/8/8/8 w - - 0 1",
+   "loesning": [
+    "d6c6",
+    "c8b8",
+    "c6b6"
+   ],
+   "hint2": "Godt! Hans konge veg. Gå til siden, så du igen står over for ham - stadig med kongen.",
+   "manoevre": "-1,0|-1,0"
+  },
+  {
+   "id": "op08",
+   "fen": "3k4/8/2P1K3/8/8/8/8/8 w - - 0 1",
+   "loesning": [
+    "e6d6",
+    "d8c8",
+    "c6c7"
+   ],
+   "hint2": "Godt! Hans konge veg. Nu står din konge rigtigt - så må bonden gå.",
+   "manoevre": "-1,0|0,1"
+  }
+ ],
+ "B4manoevrer": 7,
+ "B4udspilles": false,
+ "B6": {
+  "sti": [
+   "mat-i-1",
+   "damemat",
+   "taarnmat",
+   "ubeskyttet",
+   "forsvar",
+   "baglinjemat",
+   "gaffel-springer",
+   "stop-matten",
+   "rokade",
+   "tag-centrum",
+   "udvikl",
+   "gaffel-andre",
+   "dronning-mod-konge",
+   "kvadratreglen",
+   "binding",
+   "byt-rigtigt",
+   "spid",
+   "kvaelningsmat",
+   "opposition",
+   "mat-i-2",
+   "hvad-svarer",
+   "kassen",
+   "taarn-mod-konge",
+   "afdaekket"
+  ],
+  "naesteForNyElev": "mat-i-1",
+  "forsvarEfterUbeskyttet": true,
+  "oppositionFoerTaarn": true,
+  "dronningFoerMatI2": true
+ },
+ "B8": [
+  {
+   "id": "ro1",
+   "kortFri": true,
+   "langFri": true,
+   "lovlige": [
+    "O-O"
+   ]
+  },
+  {
+   "id": "ro2",
+   "kortFri": true,
+   "langFri": true,
+   "lovlige": [
+    "O-O-O"
+   ]
+  },
+  {
+   "id": "ro3",
+   "kortFri": true,
+   "langFri": true,
+   "lovlige": [
+    "O-O"
+   ]
+  },
+  {
+   "id": "ro4",
+   "kortFri": true,
+   "langFri": true,
+   "lovlige": [
+    "O-O"
+   ]
+  },
+  {
+   "id": "ro5",
+   "kortFri": true,
+   "langFri": true,
+   "lovlige": [
+    "O-O-O"
+   ]
+  },
+  {
+   "id": "ro6",
+   "kortFri": true,
+   "langFri": true,
+   "lovlige": [
+    "O-O-O"
+   ]
+  },
+  {
+   "id": "ro7",
+   "kortFri": true,
+   "langFri": true,
+   "lovlige": [
+    "O-O-O"
+   ]
+  },
+  {
+   "id": "ro8",
+   "kortFri": true,
+   "langFri": true,
+   "lovlige": [
+    "O-O"
+   ]
+  }
+ ],
+ "B9": {
+  "pattFaelder": [
+   {
+    "id": "dm01",
+    "patt": 7
+   },
+   {
+    "id": "dm02",
+    "patt": 0
+   },
+   {
+    "id": "dm03",
+    "patt": 0
+   },
+   {
+    "id": "dm04",
+    "patt": 0
+   },
+   {
+    "id": "dm05",
+    "patt": 0
+   },
+   {
+    "id": "dm06",
+    "patt": 4
+   },
+   {
+    "id": "dm07",
+    "patt": 0
+   },
+   {
+    "id": "dm08",
+    "patt": 0
+   }
+  ],
+  "hint": "Patt! Kongen kan ikke flytte og står ikke i skak - det er uafgjort. Giv den et felt.",
+  "uiSenderPatt": true
+ },
+ "B10": {
+  "afdaekket03CF0": {
+   "uci": "f2f3",
+   "san": "f3",
+   "godtaget": false,
+   "facit": "g3g4"
+  },
+  "vundetTekst": true,
+  "rokadeRingVedLanding": true,
+  "stjerneUlovligBesked": true,
+  "springOverUnderBraettet": [
+   {
+    "id": "knap-bib-forfra",
+    "pos": 15678
+   },
+   {
+    "id": "knap-laer-spring-over",
+    "pos": 15108
+   },
+   {
+    "id": "braet",
+    "pos": 8561
+   }
+  ]
+ }
+}
