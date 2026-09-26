@@ -1,0 +1,47 @@
+{
+  "scenarie": "aabn-med-net",
+  "koerselOk": true,
+  "fejl": null,
+  "trin": [
+    "uden net: 3 saet i koeen; appen lukkes",
+    "aabnet med net: koeen tom=true; mocken [1,1,1,0]; Dagens pas viser \"Sæt 1/4\" (rigtigt: Sæt 4/4)",
+    "28 s senere: Dagens pas viser stadig \"Sæt 1/4\"",
+    "atleten trykker \"Godkendt\" paa Sæt 1/4: mocken [1,1,1,0]; saet 1's tid flyttet 30 s frem (fra kaelder-tiden til nu); skaermen viser nu Sæt 4/4"
+  ],
+  "koeFoer": 3,
+  "koeTomt": true,
+  "raekker": [
+    1,
+    1,
+    1,
+    0
+  ],
+  "skaermEfter3s": {
+    "naesteSaet": "Sæt 1/4",
+    "linjer": [],
+    "godkendtKnap": true
+  },
+  "saet1TidFoer": "2026-09-26T13:21:46.779Z",
+  "skaermEfter28s": {
+    "naesteSaet": "Sæt 1/4",
+    "linjer": [],
+    "godkendtKnap": true
+  },
+  "atletTrykkerIgen": {
+    "saet": "Sæt 1/4",
+    "raekker": [
+      1,
+      1,
+      1,
+      0
+    ],
+    "skaerm": {
+      "naesteSaet": "Sæt 4/4",
+      "linjer": [],
+      "godkendtKnap": true
+    }
+  },
+  "saet1TidEfter": "2026-09-26T13:22:16.880Z",
+  "saet1TidFlyttetS": 30,
+  "konsolFejl": []
+}

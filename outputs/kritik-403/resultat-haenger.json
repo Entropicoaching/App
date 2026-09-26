@@ -1,0 +1,34 @@
+{
+  "scenarie": "haenger",
+  "koerselOk": true,
+  "fejl": null,
+  "trin": [
+    "online: saet 1 logget",
+    "wifi uden internet: saet 2 markeret efter 8314 ms; [\"Ingen forbindelse. Dagens pas og dine sæt virker; resten opdateres, når du har net.\",\"✓ 3 sæt klaret · senest 80kg × 4 · ☁ 2 sendes når du har net\",\"☁ 2 sæt gemt lokalt — sendes når forbindelsen er tilbage\"]",
+    "nettet virker igen: koeen tom=true efter 19098 ms; mocken [1,1,1,0]; Dagens pas viser Sæt 4/4"
+  ],
+  "markering2Ms": 8314,
+  "skaermHaenger": {
+    "naesteSaet": "Sæt 4/4",
+    "linjer": [
+      "Ingen forbindelse. Dagens pas og dine sæt virker; resten opdateres, når du har net.",
+      "✓ 3 sæt klaret · senest 80kg × 4 · ☁ 2 sendes når du har net",
+      "☁ 2 sæt gemt lokalt — sendes når forbindelsen er tilbage"
+    ],
+    "godkendtKnap": true
+  },
+  "koeTomt": true,
+  "sendtEfterMs": 19098,
+  "skaermEfterSendt": {
+    "naesteSaet": "Sæt 4/4",
+    "linjer": [],
+    "godkendtKnap": true
+  },
+  "raekker": [
+    1,
+    1,
+    1,
+    0
+  ],
+  "konsolFejl": []
+}
