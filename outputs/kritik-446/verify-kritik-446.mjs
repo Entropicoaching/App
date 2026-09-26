@@ -107,7 +107,8 @@ if (blok >= 3) {
   const r = tekst('RAPPORT-446.md')
   if (r) {
     ok(r.split('\n')[0].trim() === 'Ordre 446', 'RAPPORT: foerste linje skal vaere "Ordre 446"')
-    for (const h of ['Hvad blev lavet', 'Hvad blev testet', 'Hvad er næste', 'Ærlige grænser']) ok(new RegExp(`^## ${h}`, 'm').test(r), `RAPPORT: afsnit "${h}" mangler`)
+    ok(/Til Vaidya/.test(r) && /klar til push: nej/i.test(r), 'RAPPORT: "nej" skal give fundene til Vaidya under Hvad er naeste')
+    for (const h of ['Gren', 'Hvad ændret', 'Testresultat', 'Hvad er næste', 'Ærlige grænser']) ok(new RegExp(`^## ${h}`, 'm').test(r), `RAPPORT: afsnit "${h}" mangler`)
   }
 }
 
