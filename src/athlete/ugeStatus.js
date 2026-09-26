@@ -18,7 +18,7 @@
 // princip som planlagt.js's ugePlaceret.
 
 import { parseRepsPrescription } from '../repsPrescription.js'
-import { ugenoegle } from '../volume/beregn.js'
+import { ugenoegle } from '../volume/ugenoegle.js'
 
 function planlagtRepsForExercise(reps) {
   const prescription = parseRepsPrescription(reps)

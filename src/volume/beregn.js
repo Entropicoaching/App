@@ -21,29 +21,11 @@
 // opfundet her.
 
 import { slaaOevelseOp } from './muskelkort.js'
-
-function kalenderdato(loggetDato) {
-  const s = loggetDato instanceof Date ? loggetDato.toISOString() : String(loggetDato)
-  return s.slice(0, 10)
-}
-
-/**
- * ISO 8601-ugenøgle ("YYYY-Www") for en kalenderdato. Mandag=ugens første
- * dag, ugen der indeholder årets første torsdag er uge 1 — standard
- * ISO-regel, ingen egen opfindelse.
- *
- * @param {string|Date} loggetDato
- * @returns {string}
- */
-export function ugenoegle(loggetDato) {
-  const [aar, maaned, dag] = kalenderdato(loggetDato).split('-').map(Number)
-  const d = new Date(Date.UTC(aar, maaned - 1, dag))
-  const ugedagMandag0 = (d.getUTCDay() + 6) % 7 // 0=mandag..6=søndag
-  d.setUTCDate(d.getUTCDate() - ugedagMandag0 + 3) // torsdag i samme uge
-  const aarStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1))
-  const ugeNr = Math.ceil(((d - aarStart) / 86400000 + 1) / 7)
-  return `${d.getUTCFullYear()}-W${String(ugeNr).padStart(2, '0')}`
-}
+// ORDRE 387: kalenderdato/ugenoegle bor i ./ugenoegle.js, så atletens forside
+// (athlete/ugeStatus.js) kan bruge ugenøglen uden at hente muskelkortet
+// (muskelkort.generet.json, ~54 kB) med. Genudsendt her, så intet andet ændres.
+import { kalenderdato, ugenoegle } from './ugenoegle.js'
+export { ugenoegle }
 
 // Mandagen (UTC-midnat) i den kalenderuge en dato ligger i — bruges kun til
 // at gå N uger tilbage, ikke til selve ugenøglen (den er ISO-numrene ovenfor).

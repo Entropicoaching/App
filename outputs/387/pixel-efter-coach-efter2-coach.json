@@ -1,0 +1,212 @@
+[
+  {
+    "skaerm": "1280-01-forside.png",
+    "størrelse": "1280x900",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "1280-02-coach-briefing.png",
+    "størrelse": "1280x900",
+    "pixelsForskellige": 13,
+    "afvigelseProcent": 0.0011
+  },
+  {
+    "skaerm": "1280-03-kalender.png",
+    "størrelse": "1280x1115",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "1280-04-bibliotek.png",
+    "størrelse": "1280x900",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "1280-05-vaerktoejer.png",
+    "størrelse": "1280x900",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "1280-06-profil-program.png",
+    "størrelse": "1280x939",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "1280-07-profil-hjem.png",
+    "størrelse": "1280x1008",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "1280-08-profil-log.png",
+    "størrelse": "1280x900",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "1280-09-profil-beskeder.png",
+    "størrelse": "1280x900",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "1280-10-profil-oversigt.png",
+    "størrelse": "1280x2218",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "1280-11-profil-kost-maal.png",
+    "størrelse": "1280x900",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "1280-12-profil-analyse.png",
+    "størrelse": "1280x3928",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "1280-13-profil-opvarmning.png",
+    "størrelse": "1280x1501",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "1280-14-profil-staevne.png",
+    "størrelse": "1280x1519",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "1280-15-profil-noter.png",
+    "størrelse": "1280x900",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "1280-16-gennemgaa-maaling.png",
+    "størrelse": "1280x900",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "1280-17-staevneresultat.png",
+    "størrelse": "1280x900",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "390-01-forside.png",
+    "størrelse": "390x859",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "390-02-coach-briefing.png",
+    "størrelse": "390x844",
+    "pixelsForskellige": 8,
+    "afvigelseProcent": 0.0024
+  },
+  {
+    "skaerm": "390-03-kalender.png",
+    "størrelse": "390x1286",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "390-04-bibliotek.png",
+    "størrelse": "390x844",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "390-05-menu.png",
+    "størrelse": "390x844",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "390-06-profil-program.png",
+    "størrelse": "390x1037",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "390-07-profil-hjem.png",
+    "størrelse": "390x1408",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "390-08-profil-log.png",
+    "størrelse": "390x905",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "390-09-profil-beskeder.png",
+    "størrelse": "390x846",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "390-10-profil-oversigt.png",
+    "størrelse": "390x2601",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "390-11-profil-kost-maal.png",
+    "størrelse": "390x844",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "390-12-profil-analyse.png",
+    "størrelse": "390x4431",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "390-13-profil-opvarmning.png",
+    "størrelse": "390x1472",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "390-14-profil-staevne.png",
+    "størrelse": "390x1493",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "390-15-profil-noter.png",
+    "størrelse": "390x844",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "390-16-gennemgaa-maaling.png",
+    "størrelse": "390x844",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "390-17-staevneresultat.png",
+    "størrelse": "390x844",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  },
+  {
+    "skaerm": "390-18-ny-atlet.png",
+    "størrelse": "390x844",
+    "pixelsForskellige": 0,
+    "afvigelseProcent": 0
+  }
+]

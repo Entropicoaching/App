@@ -1,0 +1,269 @@
+{
+  "fase": "efter",
+  "dato": "2026-09-26",
+  "metode": "se kommentaren øverst i outputs/387/maal-start.mjs",
+  "profiler": {
+    "fast3g": {
+      "latency": 562.5,
+      "downloadThroughput": 180000,
+      "uploadThroughput": 84375,
+      "cpuRate": 4
+    },
+    "slow4g": {
+      "latency": 150,
+      "downloadThroughput": 200000,
+      "uploadThroughput": 93750,
+      "cpuRate": 4
+    }
+  },
+  "bundt": [
+    {
+      "fil": "AnalyseTab.js",
+      "kB": 47.89,
+      "gzipKB": 11.5
+    },
+    {
+      "fil": "athleteSilentFailLog.js",
+      "kB": 1.7,
+      "gzipKB": 0.76
+    },
+    {
+      "fil": "AthleteView.js",
+      "kB": 173.25,
+      "gzipKB": 46.38
+    },
+    {
+      "fil": "BeskederTab.js",
+      "kB": 6.32,
+      "gzipKB": 2.05
+    },
+    {
+      "fil": "CountdownRing.js",
+      "kB": 1.36,
+      "gzipKB": 0.65
+    },
+    {
+      "fil": "Dashboard.js",
+      "kB": 283.24,
+      "gzipKB": 72.73
+    },
+    {
+      "fil": "exerciseNames.js",
+      "kB": 0.65,
+      "gzipKB": 0.41
+    },
+    {
+      "fil": "FremgangTab.js",
+      "kB": 4.89,
+      "gzipKB": 1.94
+    },
+    {
+      "fil": "IndbakkeView.js",
+      "kB": 13.02,
+      "gzipKB": 3.4
+    },
+    {
+      "fil": "index.js",
+      "kB": 359.11,
+      "gzipKB": 100.67
+    },
+    {
+      "fil": "KostTab.js",
+      "kB": 24,
+      "gzipKB": 5.36
+    },
+    {
+      "fil": "MobiliseringTab.js",
+      "kB": 60.59,
+      "gzipKB": 14.64
+    },
+    {
+      "fil": "ProgramTab.js",
+      "kB": 32.04,
+      "gzipKB": 8.26
+    },
+    {
+      "fil": "ProgramTab.js",
+      "kB": 46,
+      "gzipKB": 10.1
+    },
+    {
+      "fil": "StaevnedagTab.js",
+      "kB": 14.41,
+      "gzipKB": 3.53
+    },
+    {
+      "fil": "ugenoegle.js",
+      "kB": 0.38,
+      "gzipKB": 0.28
+    },
+    {
+      "fil": "videoCoachUpload.js",
+      "kB": 9.71,
+      "gzipKB": 3.32
+    },
+    {
+      "fil": "VolumenGraf.js",
+      "kB": 61.91,
+      "gzipKB": 8.68
+    },
+    {
+      "fil": "VolumenKort.js",
+      "kB": 18.77,
+      "gzipKB": 5.98
+    },
+    {
+      "fil": "VolumenTab.js",
+      "kB": 3.73,
+      "gzipKB": 1.39
+    }
+  ],
+  "maalinger": {
+    "fast3g": {
+      "median": {
+        "forsideMs": 6096,
+        "interaktivMs": 7718,
+        "jsFoerForsideKB": 545.2,
+        "kaldFoerForside": 35
+      },
+      "koersler": [
+        {
+          "forsideMs": 6096,
+          "interaktivMs": 7718,
+          "jsFoerForsideKB": 545.2,
+          "jsFilerFoerForside": [
+            "AthleteView.js",
+            "athleteSilentFailLog.js",
+            "index.js",
+            "ugenoegle.js",
+            "videoCoachUpload.js"
+          ],
+          "jsFilerIalt": [
+            "AthleteView.js",
+            "athleteSilentFailLog.js",
+            "index.js",
+            "ugenoegle.js",
+            "videoCoachUpload.js"
+          ],
+          "kaldFoerForside": 35,
+          "langeOpgaverMs": 323
+        },
+        {
+          "forsideMs": 6124,
+          "interaktivMs": 7749,
+          "jsFoerForsideKB": 545.2,
+          "jsFilerFoerForside": [
+            "AthleteView.js",
+            "athleteSilentFailLog.js",
+            "index.js",
+            "ugenoegle.js",
+            "videoCoachUpload.js"
+          ],
+          "jsFilerIalt": [
+            "AthleteView.js",
+            "athleteSilentFailLog.js",
+            "index.js",
+            "ugenoegle.js",
+            "videoCoachUpload.js"
+          ],
+          "kaldFoerForside": 35,
+          "langeOpgaverMs": 300
+        },
+        {
+          "forsideMs": 6057,
+          "interaktivMs": 7717,
+          "jsFoerForsideKB": 545.2,
+          "jsFilerFoerForside": [
+            "AthleteView.js",
+            "athleteSilentFailLog.js",
+            "index.js",
+            "ugenoegle.js",
+            "videoCoachUpload.js"
+          ],
+          "jsFilerIalt": [
+            "AthleteView.js",
+            "athleteSilentFailLog.js",
+            "index.js",
+            "ugenoegle.js",
+            "videoCoachUpload.js"
+          ],
+          "kaldFoerForside": 39,
+          "langeOpgaverMs": 255
+        }
+      ]
+    },
+    "slow4g": {
+      "median": {
+        "forsideMs": 4054,
+        "interaktivMs": 4485,
+        "jsFoerForsideKB": 545.2,
+        "kaldFoerForside": 35
+      },
+      "koersler": [
+        {
+          "forsideMs": 4070,
+          "interaktivMs": 4485,
+          "jsFoerForsideKB": 545.2,
+          "jsFilerFoerForside": [
+            "AthleteView.js",
+            "athleteSilentFailLog.js",
+            "index.js",
+            "ugenoegle.js",
+            "videoCoachUpload.js"
+          ],
+          "jsFilerIalt": [
+            "AthleteView.js",
+            "athleteSilentFailLog.js",
+            "index.js",
+            "ugenoegle.js",
+            "videoCoachUpload.js"
+          ],
+          "kaldFoerForside": 35,
+          "langeOpgaverMs": 266
+        },
+        {
+          "forsideMs": 4047,
+          "interaktivMs": 4462,
+          "jsFoerForsideKB": 545.2,
+          "jsFilerFoerForside": [
+            "AthleteView.js",
+            "athleteSilentFailLog.js",
+            "index.js",
+            "ugenoegle.js",
+            "videoCoachUpload.js"
+          ],
+          "jsFilerIalt": [
+            "AthleteView.js",
+            "athleteSilentFailLog.js",
+            "index.js",
+            "ugenoegle.js",
+            "videoCoachUpload.js"
+          ],
+          "kaldFoerForside": 35,
+          "langeOpgaverMs": 249
+        },
+        {
+          "forsideMs": 4054,
+          "interaktivMs": 4487,
+          "jsFoerForsideKB": 545.2,
+          "jsFilerFoerForside": [
+            "AthleteView.js",
+            "athleteSilentFailLog.js",
+            "index.js",
+            "ugenoegle.js",
+            "videoCoachUpload.js"
+          ],
+          "jsFilerIalt": [
+            "AthleteView.js",
+            "athleteSilentFailLog.js",
+            "index.js",
+            "ugenoegle.js",
+            "videoCoachUpload.js"
+          ],
+          "kaldFoerForside": 35,
+          "langeOpgaverMs": 247
+        }
+      ]
+    }
+  }
+}
