@@ -1,0 +1,157 @@
+{
+  "salt": 999982,
+  "fejl": 2,
+  "hvil": [
+    {
+      "tekst": "Ane: \"Tak, fordi du prøvede. 2 af 3 var rigtige i første forsøg, og jeg skal se 3, før det holder. Mestr et forløb mere, så kommer jeg igen med nye tal.\"",
+      "inde": true,
+      "top": 61
+    }
+  ],
+  "efterHvil": {
+    "panel": "Del ligeligt",
+    "udraab": [],
+    "anePaaKortet": [
+      ""
+    ],
+    "gemt": {
+      "klaret": [],
+      "hoved": null,
+      "hviler": {
+        "mel-til-bageren": 1
+      }
+    }
+  },
+  "bogAfsnit": [
+    "Nye (0)",
+    "Senere (2)",
+    "Det du har fået"
+  ],
+  "vejTilBroed": "\"!\" paa kortet",
+  "huen": true,
+  "hue": {
+    "paaTakkekort": 1,
+    "portraet": 1,
+    "gemt": {
+      "klaret": [
+        "mel-til-bageren",
+        "broed-til-alle"
+      ],
+      "hoved": "bagerhue",
+      "hviler": {}
+    }
+  },
+  "tekster": [
+    {
+      "id": "fejl-1-hint",
+      "sel": ".quest-besked--hint",
+      "tekst": "Ikke helt. Hint 1 af 2: 2/2 er én hel, men kun nogle af stykkerne er sået. 2/2 sammenligner de såede med resten. En brøk af helheden skal have ALLE 4 stykker i nævneren.",
+      "inde": true,
+      "top": 594,
+      "billede": "A-02-fejl-1-hint.png",
+      "uret": 72,
+      "dom": "venlig, men ikke klar: to hint-grunde til samme svar 2/2 modsiger hinanden (N3); siger hvad hun skal (proev igen)."
+    },
+    {
+      "id": "forloeb-ikke-mestret",
+      "sel": ".quest-besked--hint",
+      "tekst": "Du kom igennem, og 2 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal.",
+      "inde": true,
+      "top": 504,
+      "billede": "A-03-forloeb-1-ikke-mestret.png",
+      "uret": 130,
+      "dom": "klar, men lang og i tal: \"2 af 3 ... mindst 3\"; siger hvad der sker (samme forloeb, nye tal). Venlig nok."
+    },
+    {
+      "id": "klaret-ny-quest-1",
+      "sel": ".klaret-ny-quest",
+      "tekst": "! Ane, bagerkonen, står med et ! ved møllen og har brug for din hjælp. Hjælp Ane",
+      "inde": true,
+      "top": 456,
+      "billede": "A-05-forloeb-1-mestret-hjaelp-ane.png",
+      "uret": 210,
+      "dom": "klar: hvem, hvor, og en knap."
+    },
+    {
+      "id": "fejl-2-hint",
+      "sel": ".quest-besked--hint",
+      "tekst": "Ikke helt. Hint 1 af 2: Nævneren, tallet under brøkstregen, er antallet af lige store poser i alt. Her er det 6.",
+      "inde": true,
+      "top": 576,
+      "billede": "A-07-fejl-2-hint.png",
+      "uret": 237,
+      "dom": "venlig og klar, som fejl 1."
+    },
+    {
+      "id": "hvil",
+      "sel": ".bog-hvile",
+      "tekst": "Ane: \"Tak, fordi du prøvede. 2 af 3 var rigtige i første forsøg, og jeg skal se 3, før det holder. Mestr et forløb mere, så kommer jeg igen med nye tal.\"",
+      "inde": true,
+      "top": 61,
+      "billede": "A-08-ane-hviler.png",
+      "uret": 312,
+      "dom": "hoeflig, men foeles som et nej: hun har loest alle tre, og \"jeg skal se 3, foer det holder\" siger at een fejl ikke er godt nok. \"Mestr et forloeb mere\" siger ikke hvilket eller hvor."
+    },
+    {
+      "id": "questbog-mens-ane-hviler",
+      "sel": "[data-bog-post=\"mel-til-bageren\"]",
+      "tekst": "Ane, bagerkonen · Møllen Mel til bageren 🔒 Ane: \"Kom tilbage, når du har mestret et forløb mere, så har jeg nye tal til dig.\" Belønning: Melsække ved møllen (på kortet)",
+      "inde": true,
+      "top": 288,
+      "billede": "A-10-questbog-mens-ane-hviler.png",
+      "uret": 325,
+      "dom": "klar nok, men samme ord (\"mestret et forloeb mere\") uden sted."
+    },
+    {
+      "id": "klaret-ny-quest-2",
+      "sel": ".klaret-ny-quest",
+      "tekst": "! Ane, bagerkonen, står med et ! ved møllen og har brug for din hjælp. Hjælp Ane",
+      "inde": true,
+      "top": 636,
+      "billede": "A-12-forloeb-2-mestret-ane-igen.png",
+      "uret": 428,
+      "dom": "klar: Ane er der igen, med knap."
+    },
+    {
+      "id": "tak-mel",
+      "sel": ".bog-tak",
+      "tekst": "Quest klaret Mel til bageren Ane: \"Tak! Nu kan jeg bage. Mølleren har stillet sækkene ud til mig.\" Du fik: Melsække ved møllen. Den står nu på kortet og bliver stående. Nyt i questbogen:Ane, bagerkonen: \"Brød til alle\" Se det på kortet Åbn questbogen",
+      "inde": true,
+      "top": 389,
+      "billede": "A-14-tak-mel-til-bageren.png",
+      "uret": 504,
+      "dom": "varm og klar (\"Du fik ...\", \"Hvad nu?\")."
+    },
+    {
+      "id": "tak-broed",
+      "sel": ".bog-tak",
+      "tekst": "Quest klaret Brød til alle Ane: \"Alle fik lige meget. Her, tag min gamle bagerhue: du har fortjent den.\" Du fik: Bagerhuen. Din figur har den på nu, også på kortet. Hvad nu? Karen: \"Kom tilbage, når du har hjulpet Hans med \"Sten til diget\" og du har hjulpet Else med \"Æbler til gaden\".\" Åbn questbogen",
+      "inde": true,
+      "top": 240,
+      "billede": "A-15-tak-broed-til-alle-huen.png",
+      "uret": 587,
+      "dom": "varm; huen er belønningen, hun kan se den."
+    }
+  ],
+  "sidefejl": [],
+  "uret": 610,
+  "tryk": 51,
+  "billeder": [
+    "A-01-start.png",
+    "A-02-fejl-1-hint.png",
+    "A-03-forloeb-1-ikke-mestret.png",
+    "A-04-niveau-banner.png",
+    "A-05-forloeb-1-mestret-hjaelp-ane.png",
+    "A-06-mel-panel.png",
+    "A-07-fejl-2-hint.png",
+    "A-08-ane-hviler.png",
+    "A-09-kortet-mens-ane-hviler.png",
+    "A-10-questbog-mens-ane-hviler.png",
+    "A-11-niveau-banner.png",
+    "A-12-forloeb-2-mestret-ane-igen.png",
+    "A-13-niveau-banner.png",
+    "A-14-tak-mel-til-bageren.png",
+    "A-15-tak-broed-til-alle-huen.png",
+    "A-16-huen-paa-takkekortet.png"
+  ]
+}

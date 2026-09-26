@@ -50,7 +50,7 @@ function nyTilstand() {
   return { figur: fig.nyFigur('Model', 'lilla'), questFremdrift, questbog: bog.tomBog() }
 }
 
-function elev(p, seed) {
+function elev(p, seed, questMestret = sq.erMestret) {
   const r = terning(seed)
   let t = nyTilstand()
   let brugt = 0
@@ -82,7 +82,7 @@ function elev(p, seed) {
       if (brugt - start < antal) break // tiden slap op midt i questen
       log.questForsoeg++
       if (hvileStart[aaben.id] !== undefined) { log.venteEfterHvil.push(start - hvileStart[aaben.id]); delete hvileStart[aaben.id] }
-      if (sq.erMestret(rigtige, antal)) {
+      if (questMestret(rigtige, antal)) {
         t = { ...t, questbog: bog.klarQuest(t, aaben.id).bog }
         log.beloenninger.push({ id: aaben.id, opgave: brugt })
         log.foersteBeloenning ??= brugt
@@ -118,8 +118,8 @@ const median = (xs) => { if (!xs.length) return null; const s = [...xs].sort((a,
 const andel = (xs, f) => +(xs.filter(f).length / xs.length).toFixed(3)
 const gennemsnit = (xs) => (xs.length ? +(xs.reduce((a, b) => a + b, 0) / xs.length).toFixed(2) : null)
 
-function koer(p) {
-  const alle = Array.from({ length: ELEVER }, (_, i) => elev(p, 1000 + i * 7919 + Math.round(p * 1e6)))
+function koer(p, questMestret) {
+  const alle = Array.from({ length: ELEVER }, (_, i) => elev(p, 1000 + i * 7919 + Math.round(p * 1e6), questMestret))
   const b = alle.map((e) => e.beloenninger.length)
   const h = alle.map((e) => e.hvil.length)
   const qf = alle.map((e) => e.questForsoeg)
@@ -150,9 +150,15 @@ function koer(p) {
 
 // Mestringskravet pr. quest-laengde: 3 opgaver -> 3 af 3 (ingen fejl).
 const krav = [...new Set(bog.BOG_QUESTS.map((q) => q.opgaver.length))].sort().map((n) => ({ opgaver: n, krav: sq.mestringsKrav(n), quests: bog.BOG_QUESTS.filter((q) => q.opgaver.length === n).map((q) => q.id) }))
-const ud = { elever: ELEVER, opgaver: OPGAVER, krav, resultater: [1 / 3, 0.6, 0.8, 0.9].map((p) => koer(+p.toFixed(3))) }
+// Blok 2: et alternativ til Ganita, KUN i modellen (spillet er uroert): en
+// quest med 3 opgaver kraever 2 af 3 i foerste forsoeg, 4 opgaver stadig 3 af 4.
+// Forloebene i Moellen/Grusgraven/Landsbygaden er uaendrede.
+const toAfTre = (rigtige, antal) => rigtige >= (antal === 3 ? 2 : sq.mestringsKrav(antal))
+const P = [1 / 3, 0.6, 0.8, 0.9].map((p) => +p.toFixed(3))
+const ud = { elever: ELEVER, opgaver: OPGAVER, krav, resultater: P.map((p) => koer(p)), alternativToAfTre: P.map((p) => koer(p, toAfTre)) }
 writeFileSync(path.join(her, 'sim-427.json'), JSON.stringify(ud, null, 2) + '\n', 'utf8')
 console.log('krav', JSON.stringify(krav.map((k) => `${k.krav} af ${k.opgaver} (${k.quests.length} quests)`)))
 for (const r of ud.resultater) {
   console.log(`p=${r.p}: beloenninger ${r.beloenninger.gennemsnit} (median ${r.beloenninger.median}, ingen ${Math.round(r.beloenninger.ingen * 100)} %), hvil ${r.hvil.gennemsnit} (median ${r.hvil.median}, >=3: ${Math.round(r.hvil.treEllerFlere * 100)} %, ${Math.round(r.hvil.andelAfQuestForsoeg * 100)} % af quest-forsoeg), foerste quest = hvil ${Math.round(r.foersteQuestErHvil * 100)} %, huen ${Math.round(r.hueEfter150 * 100)} %, niveau ${r.niveau}, venter ${r.venteFraHvilTilNyeTal} opgaver`)
 }
+for (const r of ud.alternativToAfTre) console.log(`2 af 3, p=${r.p}: beloenninger ${r.beloenninger.gennemsnit} (ingen ${Math.round(r.beloenninger.ingen * 100)} %), hvil ${r.hvil.gennemsnit} (${Math.round(r.hvil.andelAfQuestForsoeg * 100)} % af quest-forsoeg), foerste quest = hvil ${Math.round(r.foersteQuestErHvil * 100)} %, huen ${Math.round(r.hueEfter150 * 100)} %`)
