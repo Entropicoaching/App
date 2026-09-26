@@ -1,6 +1,6 @@
 # Blok 2: teksten i squat-opslagsværket, top til bund med alle folde åbne
 
-Læst på `squat-opslag-11` (`7356445`), headless Chromium på 390x844 (touch, 2x) og 1280x900. Kommando: `node scripts/kritik-394.mjs --blok artikel`. Hele teksten med åbne folde ligger i `outputs/kritik-394/squat-390-tekst-aabne-folder.txt` og skærm for skærm i `outputs/kritik-394/artikel-390/` (80 skærmbilleder). De mekaniske tjek står i `outputs/kritik-394/resultat.txt`. Jeg har læst teksten som Marc: passer ord og tal til figuren lige over, og passer de til tabellen lige under? Intet er rettet i sitet.
+Læst på `squat-opslag-11` (`7356445`), headless Chromium på 390x844 (touch, 2x) og 1280x900. Kommando: `node scripts/kritik-394.mjs --blok artikel`. Hele teksten med åbne folde ligger i `outputs/kritik-394/squat-390-tekst-aabne-folder.txt` og skærm for skærm i `outputs/kritik-394/artikel-390/` (72 skærmbilleder). De mekaniske tjek står i `outputs/kritik-394/resultat.txt`. Jeg har læst teksten som Marc: passer ord og tal til figuren lige over, og passer de til tabellen lige under? Intet er rettet i sitet.
 
 ## Nye tekstfund
 
