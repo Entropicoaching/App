@@ -1,0 +1,2998 @@
+{
+  "antalSalte": 300,
+  "quests": [
+    {
+      "id": "mel-til-bageren",
+      "titel": "Mel til bageren",
+      "giver": "Ane, bagerkonen",
+      "sted": "moellen",
+      "hvorfor": "Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe mølleren med at dele sækkene?",
+      "opgaver": [
+        "broek1 (1)",
+        "broek1 (2)",
+        "broek1 (2)"
+      ],
+      "kraever": {
+        "forloeb": [
+          "moellen",
+          1
+        ]
+      },
+      "beloenning": {
+        "id": "melsaekke",
+        "type": "kort",
+        "navn": "Melsække ved møllen",
+        "x": 58.5,
+        "y": 73
+      },
+      "tekstModGrund": {
+        "andelOpgaverDerPasser": 0.75,
+        "andelQuestsHvorAllePasser": 0.42,
+        "andelQuestsHvorIngenPasser": 0,
+        "skabeloner": [
+          {
+            "skabelon": "Mølleren har # lige store sække på vognen, og # er fyldt med mel: ▰▱. Hvor stor en del af sækkene er fyldt?",
+            "andel": 0.271,
+            "passer": true
+          },
+          {
+            "skabelon": "Mølleren har delt sin mark i # lige store stykker, og # er sået: ▰▱. Hvor stor en del af marken er sået?",
+            "andel": 0.251,
+            "passer": false
+          },
+          {
+            "skabelon": "Bageren har bagt # lige store brød, og # er solgt: ▰▱. Hvor stor en del af brødene er solgt?",
+            "andel": 0.246,
+            "passer": true
+          },
+          {
+            "skabelon": "Bageren har skåret en kageplade i # lige store stykker, og # er spist: ▰▱. Hvor stor en del af kagen er spist?",
+            "andel": 0.232,
+            "passer": true
+          }
+        ]
+      },
+      "svarmuligheder": [
+        3
+      ]
+    },
+    {
+      "id": "broed-til-alle",
+      "titel": "Brød til alle",
+      "giver": "Ane, bagerkonen",
+      "sted": "moellen",
+      "hvorfor": "Brødet er bagt, og nu skal det deles ligeligt mellem gårdene. Ingen må få mindre end de andre.",
+      "opgaver": [
+        "broek2 (1)",
+        "broek2 (2)",
+        "broek1 (2)"
+      ],
+      "kraever": {
+        "forloeb": [
+          "moellen",
+          2
+        ],
+        "quests": [
+          "mel-til-bageren"
+        ]
+      },
+      "beloenning": {
+        "id": "bagerhue",
+        "type": "figur",
+        "plads": "hoved",
+        "navn": "Bagerhuen"
+      },
+      "tekstModGrund": {
+        "andelOpgaverDerPasser": 0.64,
+        "andelQuestsHvorAllePasser": 0.24,
+        "andelQuestsHvorIngenPasser": 0.03,
+        "skabeloner": [
+          {
+            "skabelon": "Mølleren har delt sin mark i # lige store stykker, og # er sået: ▰▱. Hvor stor en del af marken er sået?",
+            "andel": 0.093,
+            "passer": false
+          },
+          {
+            "skabelon": "Bagerkonen deler # brød ligeligt mellem # karle på møllen. Hvor meget brød får hver karl?",
+            "andel": 0.093,
+            "passer": true
+          },
+          {
+            "skabelon": "Bageren deler # brød ligeligt mellem # karle på møllen. Hvor meget brød får hver karl?",
+            "andel": 0.087,
+            "passer": true
+          },
+          {
+            "skabelon": "Mølleren har # lige store sække på vognen, og # er fyldt med mel: ▰▱. Hvor stor en del af sækkene er fyldt?",
+            "andel": 0.084,
+            "passer": false
+          },
+          {
+            "skabelon": "Mølledrengen deler # æbler ligeligt mellem # børn. Hvor meget æble får hvert barn?",
+            "andel": 0.082,
+            "passer": false
+          },
+          {
+            "skabelon": "Bageren har bagt # lige store brød, og # er solgt: ▰▱. Hvor stor en del af brødene er solgt?",
+            "andel": 0.08,
+            "passer": true
+          },
+          {
+            "skabelon": "Bageren har skåret en kageplade i # lige store stykker, og # er spist: ▰▱. Hvor stor en del af kagen er spist?",
+            "andel": 0.076,
+            "passer": true
+          },
+          {
+            "skabelon": "Mølledrengen deler # sække mel ligeligt mellem # bagere. Hvor meget mel får hver bager?",
+            "andel": 0.069,
+            "passer": true
+          },
+          {
+            "skabelon": "Møllerkonen deler # æbler ligeligt mellem # børn. Hvor meget æble får hvert barn?",
+            "andel": 0.062,
+            "passer": false
+          },
+          {
+            "skabelon": "Mølleren deler # sække mel ligeligt mellem # bagere. Hvor meget mel får hver bager?",
+            "andel": 0.06,
+            "passer": true
+          },
+          {
+            "skabelon": "Bagerkonen deler # kager ligeligt mellem # børn. Hvor meget kage får hvert barn?",
+            "andel": 0.057,
+            "passer": true
+          },
+          {
+            "skabelon": "Bageren deler # kager ligeligt mellem # børn. Hvor meget kage får hvert barn?",
+            "andel": 0.049,
+            "passer": true
+          },
+          {
+            "skabelon": "Bagerkonen deler # kage ligeligt mellem # børn. Hvor meget kage får hvert barn?",
+            "andel": 0.023,
+            "passer": true
+          },
+          {
+            "skabelon": "Mølledrengen deler # sæk mel ligeligt mellem # bagere. Hvor meget mel får hver bager?",
+            "andel": 0.023,
+            "passer": true
+          },
+          {
+            "skabelon": "Mølledrengen deler # æble ligeligt mellem # børn. Hvor meget æble får hvert barn?",
+            "andel": 0.02,
+            "passer": false
+          },
+          {
+            "skabelon": "Mølleren deler # sæk mel ligeligt mellem # bagere. Hvor meget mel får hver bager?",
+            "andel": 0.019,
+            "passer": true
+          },
+          {
+            "skabelon": "Møllerkonen deler # æble ligeligt mellem # børn. Hvor meget æble får hvert barn?",
+            "andel": 0.013,
+            "passer": false
+          },
+          {
+            "skabelon": "Bageren deler # kage ligeligt mellem # børn. Hvor meget kage får hvert barn?",
+            "andel": 0.009,
+            "passer": true
+          }
+        ]
+      },
+      "svarmuligheder": [
+        3
+      ]
+    },
+    {
+      "id": "aenderne",
+      "titel": "Ænderne i åen",
+      "giver": "Niels, møllerens dreng",
+      "sted": "moellen",
+      "hvorfor": "Far siger, jeg først må fodre ænderne, når jeg kan se, hvilken portion der er størst. Vil du øve med mig?",
+      "opgaver": [
+        "broek3 (1)",
+        "broek3 (2)",
+        "broek2 (2)"
+      ],
+      "kraever": {
+        "forloeb": [
+          "moellen",
+          3
+        ]
+      },
+      "beloenning": {
+        "id": "aender",
+        "type": "kort",
+        "navn": "Ænder i åen",
+        "x": 73.5,
+        "y": 88.5
+      },
+      "tekstModGrund": {
+        "andelOpgaverDerPasser": 0.67,
+        "andelQuestsHvorAllePasser": 0,
+        "andelQuestsHvorIngenPasser": 0,
+        "skabeloner": [
+          {
+            "skabelon": "Bageren kan få #/# sæk fra den ene mølle eller #/# sæk fra den anden. Hvilken portion er størst?",
+            "andel": 0.127,
+            "passer": true
+          },
+          {
+            "skabelon": "Mølledrengen skal bære enten #/# sæk eller #/# sæk. Hvilken portion er størst?",
+            "andel": 0.103,
+            "passer": true
+          },
+          {
+            "skabelon": "Hvilken portion er størst: #/# sæk eller #/# sæk?",
+            "andel": 0.103,
+            "passer": true
+          },
+          {
+            "skabelon": "Mølledrengen hælder en sæk mel i # lige store poser og en anden sæk i # lige store poser. Hvilken pose rummer mest?",
+            "andel": 0.091,
+            "passer": true
+          },
+          {
+            "skabelon": "Én dag delte mølleren en sæk i # lige store dele, en anden dag i # lige store dele. Hvilken portion var størst?",
+            "andel": 0.088,
+            "passer": true
+          },
+          {
+            "skabelon": "Den ene bager får en sæk mel delt i # lige store portioner, den anden en sæk delt i #. Hvilken portion er størst?",
+            "andel": 0.086,
+            "passer": true
+          },
+          {
+            "skabelon": "En sæk mel deles ligeligt mellem # bagere, en anden mellem # bagere. Hvilken portion er størst?",
+            "andel": 0.069,
+            "passer": true
+          },
+          {
+            "skabelon": "Bagerkonen deler # brød ligeligt mellem # karle på møllen. Hvor meget brød får hver karl?",
+            "andel": 0.047,
+            "passer": false
+          },
+          {
+            "skabelon": "Mølledrengen deler # sække mel ligeligt mellem # bagere. Hvor meget mel får hver bager?",
+            "andel": 0.043,
+            "passer": false
+          },
+          {
+            "skabelon": "Bagerkonen deler # kager ligeligt mellem # børn. Hvor meget kage får hvert barn?",
+            "andel": 0.039,
+            "passer": false
+          },
+          {
+            "skabelon": "Mølledrengen deler # æbler ligeligt mellem # børn. Hvor meget æble får hvert barn?",
+            "andel": 0.036,
+            "passer": false
+          },
+          {
+            "skabelon": "Bageren deler # brød ligeligt mellem # karle på møllen. Hvor meget brød får hver karl?",
+            "andel": 0.036,
+            "passer": false
+          },
+          {
+            "skabelon": "Bageren deler # kager ligeligt mellem # børn. Hvor meget kage får hvert barn?",
+            "andel": 0.033,
+            "passer": false
+          },
+          {
+            "skabelon": "Møllerkonen deler # æbler ligeligt mellem # børn. Hvor meget æble får hvert barn?",
+            "andel": 0.029,
+            "passer": false
+          },
+          {
+            "skabelon": "Mølleren deler # sække mel ligeligt mellem # bagere. Hvor meget mel får hver bager?",
+            "andel": 0.024,
+            "passer": false
+          },
+          {
+            "skabelon": "Mølledrengen deler # sæk mel ligeligt mellem # bagere. Hvor meget mel får hver bager?",
+            "andel": 0.011,
+            "passer": false
+          },
+          {
+            "skabelon": "Møllerkonen deler # æble ligeligt mellem # børn. Hvor meget æble får hvert barn?",
+            "andel": 0.01,
+            "passer": false
+          },
+          {
+            "skabelon": "Mølledrengen deler # æble ligeligt mellem # børn. Hvor meget æble får hvert barn?",
+            "andel": 0.009,
+            "passer": false
+          },
+          {
+            "skabelon": "Bageren deler # kage ligeligt mellem # børn. Hvor meget kage får hvert barn?",
+            "andel": 0.008,
+            "passer": false
+          },
+          {
+            "skabelon": "Bagerkonen deler # kage ligeligt mellem # børn. Hvor meget kage får hvert barn?",
+            "andel": 0.006,
+            "passer": false
+          },
+          {
+            "skabelon": "Mølleren deler # sæk mel ligeligt mellem # bagere. Hvor meget mel får hver bager?",
+            "andel": 0.003,
+            "passer": false
+          }
+        ]
+      },
+      "svarmuligheder": [
+        3
+      ]
+    },
+    {
+      "id": "nyt-bed",
+      "titel": "Et nyt bed",
+      "giver": "Graveren",
+      "sted": "landsby",
+      "hvorfor": "Jeg skal lægge et nyt blomsterbed ved kirken og sætte hegn om det. Hvor langt og hvor stort?",
+      "opgaver": [
+        "kirkeOmkreds (1)",
+        "kirkeOmkreds (2)",
+        "kirkeAreal (1)"
+      ],
+      "kraever": {
+        "aabent": "landsby"
+      },
+      "beloenning": {
+        "id": "blomsterbed",
+        "type": "kort",
+        "navn": "Blomsterbedet ved kirken",
+        "x": 89,
+        "y": 44.5
+      },
+      "tekstModGrund": {
+        "andelOpgaverDerPasser": 0,
+        "andelQuestsHvorAllePasser": 0,
+        "andelQuestsHvorIngenPasser": 1,
+        "skabeloner": [
+          {
+            "skabelon": "Skolestuen er # m lang og # m bred. Degnen vil sætte en bort langs alle fire vægge. Hvor lang skal borten være?",
+            "andel": 0.237,
+            "passer": false
+          },
+          {
+            "skabelon": "Degnens køkkenhave er # m lang og # m bred. Hvor mange meter hegn skal der til hele vejen rundt?",
+            "andel": 0.223,
+            "passer": false
+          },
+          {
+            "skabelon": "Præstens have er # m lang og # m bred. Hvor langt hegn skal der til hele vejen rundt om den?",
+            "andel": 0.207,
+            "passer": false
+          },
+          {
+            "skabelon": "Degnens køkkenhave er # m lang og # m bred. Den er delt i felter på # m × # m: ■■■■ / ■■■■ / ■■■■. Hvor stort er arealet?",
+            "andel": 0.047,
+            "passer": false
+          },
+          {
+            "skabelon": "Gulvet i skolestuen er # m langt og # m bredt. Det er delt i felter på # m × # m: ■■■■ / ■■■■ / ■■■■. Hvor stort er arealet?",
+            "andel": 0.047,
+            "passer": false
+          },
+          {
+            "skabelon": "Kirkegulvet er # m langt og # m bredt. Det er delt i felter på # m × # m: ■■■■■ / ■■■■■ / ■■■■■ / ■■■■■. Hvor stort er arealet?",
+            "andel": 0.023,
+            "passer": false
+          },
+          {
+            "skabelon": "Gulvet i skolestuen er # m langt og # m bredt. Det er delt i felter på # m × # m: ■■■■■ / ■■■■■ / ■■■■■ / ■■■■■. Hvor stort er arealet?",
+            "andel": 0.02,
+            "passer": false
+          },
+          {
+            "skabelon": "Degnens køkkenhave er # m lang og # m bred. Den er delt i felter på # m × # m: ■■■■■■ / ■■■■■■. Hvor stort er arealet?",
+            "andel": 0.018,
+            "passer": false
+          },
+          {
+            "skabelon": "Degnens køkkenhave er # m lang og # m bred. Den er delt i felter på # m × # m: ■■■■■ / ■■■■■ / ■■■■■ / ■■■■■. Hvor stort er arealet?",
+            "andel": 0.018,
+            "passer": false
+          },
+          {
+            "skabelon": "Degnens køkkenhave er # m lang og # m bred. Den er delt i felter på # m × # m: ■■■■ / ■■■■. Hvor stort er arealet?",
+            "andel": 0.017,
+            "passer": false
+          },
+          {
+            "skabelon": "Degnens køkkenhave er # m lang og # m bred. Den er delt i felter på # m × # m: ■■■■■ / ■■■■■ / ■■■■■. Hvor stort er arealet?",
+            "andel": 0.017,
+            "passer": false
+          },
+          {
+            "skabelon": "Gulvet i skolestuen er # m langt og # m bredt. Det er delt i felter på # m × # m: ■■■■■■ / ■■■■■■. Hvor stort er arealet?",
+            "andel": 0.016,
+            "passer": false
+          },
+          {
+            "skabelon": "Degnens køkkenhave er # m lang og # m bred. Den er delt i felter på # m × # m: ■■■ / ■■■. Hvor stort er arealet?",
+            "andel": 0.013,
+            "passer": false
+          },
+          {
+            "skabelon": "Gulvet i skolestuen er # m langt og # m bredt. Det er delt i felter på # m × # m: ■■■■■ / ■■■■■. Hvor stort er arealet?",
+            "andel": 0.013,
+            "passer": false
+          },
+          {
+            "skabelon": "Gulvet i skolestuen er # m langt og # m bredt. Det er delt i felter på # m × # m: ■■■■■■ / ■■■■■■ / ■■■■■■ / ■■■■■■. Hvor stort er arealet?",
+            "andel": 0.011,
+            "passer": false
+          },
+          {
+            "skabelon": "Degnens køkkenhave er # m lang og # m bred. Den er delt i felter på # m × # m: ■■■■■ / ■■■■■. Hvor stort er arealet?",
+            "andel": 0.011,
+            "passer": false
+          },
+          {
+            "skabelon": "Gulvet i skolestuen er # m langt og # m bredt. Det er delt i felter på # m × # m: ■■■■ / ■■■■. Hvor stort er arealet?",
+            "andel": 0.01,
+            "passer": false
+          },
+          {
+            "skabelon": "Gulvet i skolestuen er # m langt og # m bredt. Det er delt i felter på # m × # m: ■■■■■ / ■■■■■ / ■■■■■. Hvor stort er arealet?",
+            "andel": 0.01,
+            "passer": false
+          },
+          {
+            "skabelon": "Degnens køkkenhave er # m lang og # m bred. Den er delt i felter på # m × # m: ■■■■■■ / ■■■■■■ / ■■■■■■. Hvor stort er arealet?",
+            "andel": 0.01,
+            "passer": false
+          },
+          {
+            "skabelon": "Gulvet i skolestuen er # m langt og # m bredt. Det er delt i felter på # m × # m: ■■■■■■ / ■■■■■■ / ■■■■■■. Hvor stort er arealet?",
+            "andel": 0.01,
+            "passer": false
+          },
+          {
+            "skabelon": "Kirkegulvet er # m langt og # m bredt. Det er delt i felter på # m × # m: ■■■■■■ / ■■■■■■ / ■■■■■■ / ■■■■■■. Hvor stort er arealet?",
+            "andel": 0.009,
+            "passer": false
+          },
+          {
+            "skabelon": "Degnens køkkenhave er # m lang og # m bred. Den er delt i felter på # m × # m: ■■■■■■ / ■■■■■■ / ■■■■■■ / ■■■■■■. Hvor stort er arealet?",
+            "andel": 0.009,
+            "passer": false
+          },
+          {
+            "skabelon": "Gulvet i skolestuen er # m langt og # m bredt. Det er delt i felter på # m × # m: ■■■ / ■■■. Hvor stort er arealet?",
+            "andel": 0.006,
+            "passer": false
+          }
+        ]
+      },
+      "svarmuligheder": [
+        3
+      ]
+    },
+    {
+      "id": "lys-til-kirken",
+      "titel": "Lys til høstgudstjenesten",
+      "giver": "Kirsten, degnens kone",
+      "sted": "landsby",
+      "hvorfor": "Der skal købes lys til høstgudstjenesten, og pengene skal passe til sidste krone.",
+      "opgaver": [
+        "kirkePris (1)",
+        "kirkePris (2)",
+        "kirkeKasse (1)",
+        "kirkeDel (2)"
+      ],
+      "kraever": {
+        "quests": [
+          "nyt-bed"
+        ]
+      },
+      "beloenning": {
+        "id": "kirkelys",
+        "type": "kort",
+        "navn": "Lys i kirkevinduet",
+        "x": 88.8,
+        "y": 57.2
+      },
+      "tekstModGrund": {
+        "andelOpgaverDerPasser": 0.21,
+        "andelQuestsHvorAllePasser": 0,
+        "andelQuestsHvorIngenPasser": 0.33,
+        "skabeloner": [
+          {
+            "skabelon": "Til høstfesten køber degnen # kager à # kr. Hvad koster kagerne?",
+            "andel": 0.148,
+            "passer": false
+          },
+          {
+            "skabelon": "En salmebog koster # kr. Degnen køber # nye til kirken. Hvad koster de i alt?",
+            "andel": 0.145,
+            "passer": false
+          },
+          {
+            "skabelon": "Degnen køber # lys til kirken à # kr. Hvad koster de?",
+            "andel": 0.132,
+            "passer": true
+          },
+          {
+            "skabelon": "Kirken har # bænke med plads til # på hver. Hvor mange personer kan der sidde?",
+            "andel": 0.089,
+            "passer": false
+          },
+          {
+            "skabelon": "Degnen stiller # rækker stole op i skolestuen med # stole i hver række. Hvor mange stole er det?",
+            "andel": 0.081,
+            "passer": false
+          },
+          {
+            "skabelon": "Til høstfesten kommer # kurve med # æbler i hver. Hvor mange æbler er det?",
+            "andel": 0.08,
+            "passer": false
+          },
+          {
+            "skabelon": "Degnen køber # lys à # kr og betaler med en #-kroneseddel. Hvor meget får han tilbage?",
+            "andel": 0.075,
+            "passer": true
+          },
+          {
+            "skabelon": "Degnen har # salmebøger og lægger lige mange på hver af de # bænke. Hvor mange ligger der på hver bænk?",
+            "andel": 0.072,
+            "passer": false
+          },
+          {
+            "skabelon": "# børn samler # kr ind til høstfesten og giver lige meget hver. Hvor meget giver hvert barn?",
+            "andel": 0.068,
+            "passer": false
+          },
+          {
+            "skabelon": "# venner køber en kage for # kr og deler regningen. Hvor meget skal hver betale?",
+            "andel": 0.062,
+            "passer": false
+          },
+          {
+            "skabelon": "Degnen deler # æbler fra præstens have i # kurve til høstfesten, lige mange i hver. Hvor mange æbler kommer der i hver kurv?",
+            "andel": 0.049,
+            "passer": false
+          }
+        ]
+      },
+      "svarmuligheder": [
+        3
+      ]
+    },
+    {
+      "id": "klokkerebet",
+      "titel": "Det nye klokkereb",
+      "giver": "Klokkeren",
+      "sted": "landsby",
+      "hvorfor": "Det nye klokkereb er målt i meter, men snorene står i centimeter og millimeter. Kan du regne dem om?",
+      "opgaver": [
+        "maal3 (1)",
+        "maal3 (2)",
+        "maal2 (2)"
+      ],
+      "kraever": {
+        "forloeb": [
+          "stenbrud",
+          3
+        ],
+        "quests": [
+          "lys-til-kirken"
+        ]
+      },
+      "beloenning": {
+        "id": "klokkerens_hjaelper",
+        "type": "titel",
+        "navn": "Klokkerens hjælper"
+      },
+      "tekstModGrund": {
+        "andelOpgaverDerPasser": 0,
+        "andelQuestsHvorAllePasser": 0,
+        "andelQuestsHvorIngenPasser": 1,
+        "skabeloner": [
+          {
+            "skabelon": "Vejen fra grusgraven ud til landevejen er # km. Hvor mange m er det?",
+            "andel": 0.127,
+            "passer": false
+          },
+          {
+            "skabelon": "Et søm i skuret er # cm. Hvor mange mm er det?",
+            "andel": 0.104,
+            "passer": false
+          },
+          {
+            "skabelon": "Et stykke skinne er # m. Hvor mange cm er det?",
+            "andel": 0.102,
+            "passer": false
+          },
+          {
+            "skabelon": "Et søm i skuret er # cm og # mm langt. Hvor mange mm er det i alt?",
+            "andel": 0.089,
+            "passer": false
+          },
+          {
+            "skabelon": "Et stykke skinne er # m og # cm langt. Hvor mange cm er det i alt?",
+            "andel": 0.084,
+            "passer": false
+          },
+          {
+            "skabelon": "Grusgraverens blyant er # cm og # mm lang. Hvor mange mm er det i alt?",
+            "andel": 0.084,
+            "passer": false
+          },
+          {
+            "skabelon": "Tipvognens spor er # m og # cm langt. Hvor mange cm er det i alt?",
+            "andel": 0.076,
+            "passer": false
+          },
+          {
+            "skabelon": "Sporvognens tur er # ___ lang. Hvilken enhed passer?",
+            "andel": 0.034,
+            "passer": false
+          },
+          {
+            "skabelon": "Kornvognen kører # ___ til byen og hjem igen. Hvilken enhed passer?",
+            "andel": 0.03,
+            "passer": false
+          },
+          {
+            "skabelon": "Skinnestykket er # ___ langt. Hvilken enhed passer?",
+            "andel": 0.028,
+            "passer": false
+          },
+          {
+            "skabelon": "Et søm i skuret er # ___ langt. Hvilken enhed passer?",
+            "andel": 0.028,
+            "passer": false
+          },
+          {
+            "skabelon": "Gruspladsen er # ___ lang. Hvilken enhed passer?",
+            "andel": 0.026,
+            "passer": false
+          },
+          {
+            "skabelon": "Grusgraverens trillebør er # ___ lang. Hvilken enhed passer?",
+            "andel": 0.026,
+            "passer": false
+          },
+          {
+            "skabelon": "Grusgraverens støvle er # ___ lang. Hvilken enhed passer?",
+            "andel": 0.024,
+            "passer": false
+          },
+          {
+            "skabelon": "Tipvognen er # ___ lang. Hvilken enhed passer?",
+            "andel": 0.023,
+            "passer": false
+          },
+          {
+            "skabelon": "Hegnspælen er # ___ høj. Hvilken enhed passer?",
+            "andel": 0.022,
+            "passer": false
+          },
+          {
+            "skabelon": "En loppe i hundens pels er # ___ lang. Hvilken enhed passer?",
+            "andel": 0.022,
+            "passer": false
+          },
+          {
+            "skabelon": "En myre på en sten er # ___ lang. Hvilken enhed passer?",
+            "andel": 0.021,
+            "passer": false
+          },
+          {
+            "skabelon": "Grusgraverens blyant er # ___ lang. Hvilken enhed passer?",
+            "andel": 0.018,
+            "passer": false
+          },
+          {
+            "skabelon": "Skovlens blad er # ___ bredt. Hvilken enhed passer?",
+            "andel": 0.017,
+            "passer": false
+          },
+          {
+            "skabelon": "Vejen fra grusgraven til kirken er # ___. Hvilken enhed passer?",
+            "andel": 0.014,
+            "passer": false
+          }
+        ]
+      },
+      "svarmuligheder": [
+        3
+      ]
+    },
+    {
+      "id": "sten-til-diget",
+      "titel": "Sten til diget",
+      "giver": "Hans, karl i grusgraven",
+      "sted": "stenbrud",
+      "hvorfor": "Stendiget ved grusgraven er faldet sammen, og hver sten skal måles, før den lægges på plads.",
+      "opgaver": [
+        "maal1 (1)",
+        "maal1 (2)",
+        "maal1 (2)"
+      ],
+      "kraever": {
+        "forloeb": [
+          "stenbrud",
+          1
+        ]
+      },
+      "beloenning": {
+        "id": "stendige",
+        "type": "kort",
+        "navn": "Stendiget",
+        "x": 19,
+        "y": 72.5
+      },
+      "tekstModGrund": {
+        "andelOpgaverDerPasser": 0.23,
+        "andelQuestsHvorAllePasser": 0,
+        "andelQuestsHvorIngenPasser": 0.46,
+        "skabeloner": [
+          {
+            "skabelon": "Et søm ligger på linealen fra #-stregen og ender # små streger efter # cm-stregen. Hver lille streg er # mm. Hvor langt er sømmet i mm?",
+            "andel": 0.158,
+            "passer": false
+          },
+          {
+            "skabelon": "En kvist ligger på linealen fra #-stregen og ender # små streger efter # cm-stregen. Hver lille streg er # mm. Hvor lang er kvisten i mm?",
+            "andel": 0.152,
+            "passer": false
+          },
+          {
+            "skabelon": "En pind ligger på linealen fra #-stregen og ender # små streger efter # cm-stregen. Hver lille streg er # mm. Hvor lang er pinden i mm?",
+            "andel": 0.15,
+            "passer": false
+          },
+          {
+            "skabelon": "En sten ligger på linealen fra #-stregen og ender # små streger efter # cm-stregen. Hver lille streg er # mm. Hvor lang er stenen i mm?",
+            "andel": 0.137,
+            "passer": true
+          },
+          {
+            "skabelon": "Et søm ligger på linealen fra # cm-stregen til # cm-stregen. Hvor langt er sømmet?",
+            "andel": 0.089,
+            "passer": false
+          },
+          {
+            "skabelon": "En pind ligger på linealen fra # cm-stregen til # cm-stregen. Hvor lang er pinden?",
+            "andel": 0.084,
+            "passer": false
+          },
+          {
+            "skabelon": "En kvist ligger på linealen fra # cm-stregen til # cm-stregen. Hvor lang er kvisten?",
+            "andel": 0.081,
+            "passer": false
+          },
+          {
+            "skabelon": "En sten ligger på linealen fra # cm-stregen til # cm-stregen. Hvor lang er stenen?",
+            "andel": 0.079,
+            "passer": true
+          },
+          {
+            "skabelon": "Et søm ligger på linealen fra #-stregen og ender # lille streg efter # cm-stregen. Hver lille streg er # mm. Hvor langt er sømmet i mm?",
+            "andel": 0.022,
+            "passer": false
+          },
+          {
+            "skabelon": "En kvist ligger på linealen fra #-stregen og ender # lille streg efter # cm-stregen. Hver lille streg er # mm. Hvor lang er kvisten i mm?",
+            "andel": 0.019,
+            "passer": false
+          },
+          {
+            "skabelon": "En sten ligger på linealen fra #-stregen og ender # lille streg efter # cm-stregen. Hver lille streg er # mm. Hvor lang er stenen i mm?",
+            "andel": 0.014,
+            "passer": true
+          },
+          {
+            "skabelon": "En pind ligger på linealen fra #-stregen og ender # lille streg efter # cm-stregen. Hver lille streg er # mm. Hvor lang er pinden i mm?",
+            "andel": 0.014,
+            "passer": false
+          }
+        ]
+      },
+      "svarmuligheder": [
+        3
+      ]
+    },
+    {
+      "id": "stien",
+      "titel": "Stien over bakken",
+      "giver": "Hans, karl i grusgraven",
+      "sted": "stenbrud",
+      "hvorfor": "Hvis vi lægger en sti over bakken, kan folk gå direkte fra grusgraven til sporvognen. Hvilke mål skal jeg bruge?",
+      "opgaver": [
+        "maal2 (1)",
+        "maal2 (2)",
+        "maal1 (2)"
+      ],
+      "kraever": {
+        "forloeb": [
+          "stenbrud",
+          2
+        ],
+        "quests": [
+          "sten-til-diget"
+        ]
+      },
+      "beloenning": {
+        "id": "stien",
+        "type": "genvej",
+        "navn": "Stien over bakken",
+        "x": 25,
+        "y": 34
+      },
+      "tekstModGrund": {
+        "andelOpgaverDerPasser": 0,
+        "andelQuestsHvorAllePasser": 0,
+        "andelQuestsHvorIngenPasser": 1,
+        "skabeloner": [
+          {
+            "skabelon": "En kvist ligger på linealen fra #-stregen og ender # små streger efter # cm-stregen. Hver lille streg er # mm. Hvor lang er kvisten i mm?",
+            "andel": 0.084,
+            "passer": false
+          },
+          {
+            "skabelon": "En pind ligger på linealen fra #-stregen og ender # små streger efter # cm-stregen. Hver lille streg er # mm. Hvor lang er pinden i mm?",
+            "andel": 0.078,
+            "passer": false
+          },
+          {
+            "skabelon": "En sten ligger på linealen fra #-stregen og ender # små streger efter # cm-stregen. Hver lille streg er # mm. Hvor lang er stenen i mm?",
+            "andel": 0.067,
+            "passer": false
+          },
+          {
+            "skabelon": "Et søm ligger på linealen fra #-stregen og ender # små streger efter # cm-stregen. Hver lille streg er # mm. Hvor langt er sømmet i mm?",
+            "andel": 0.061,
+            "passer": false
+          },
+          {
+            "skabelon": "Grusgraverens trillebør er # ___ lang. Hvilken enhed passer?",
+            "andel": 0.054,
+            "passer": false
+          },
+          {
+            "skabelon": "Vejen fra grusgraven til kirken er # ___. Hvilken enhed passer?",
+            "andel": 0.053,
+            "passer": false
+          },
+          {
+            "skabelon": "Tipvognen er # ___ lang. Hvilken enhed passer?",
+            "andel": 0.052,
+            "passer": false
+          },
+          {
+            "skabelon": "En myre på en sten er # ___ lang. Hvilken enhed passer?",
+            "andel": 0.051,
+            "passer": false
+          },
+          {
+            "skabelon": "Grusgraverens blyant er # ___ lang. Hvilken enhed passer?",
+            "andel": 0.05,
+            "passer": false
+          },
+          {
+            "skabelon": "Et søm i skuret er # ___ langt. Hvilken enhed passer?",
+            "andel": 0.049,
+            "passer": false
+          },
+          {
+            "skabelon": "Skinnestykket er # ___ langt. Hvilken enhed passer?",
+            "andel": 0.048,
+            "passer": false
+          },
+          {
+            "skabelon": "Grusgraverens støvle er # ___ lang. Hvilken enhed passer?",
+            "andel": 0.047,
+            "passer": false
+          },
+          {
+            "skabelon": "En loppe i hundens pels er # ___ lang. Hvilken enhed passer?",
+            "andel": 0.047,
+            "passer": false
+          },
+          {
+            "skabelon": "Sporvognens tur er # ___ lang. Hvilken enhed passer?",
+            "andel": 0.046,
+            "passer": false
+          },
+          {
+            "skabelon": "Skovlens blad er # ___ bredt. Hvilken enhed passer?",
+            "andel": 0.046,
+            "passer": false
+          },
+          {
+            "skabelon": "Gruspladsen er # ___ lang. Hvilken enhed passer?",
+            "andel": 0.046,
+            "passer": false
+          },
+          {
+            "skabelon": "Kornvognen kører # ___ til byen og hjem igen. Hvilken enhed passer?",
+            "andel": 0.044,
+            "passer": false
+          },
+          {
+            "skabelon": "Hegnspælen er # ___ høj. Hvilken enhed passer?",
+            "andel": 0.034,
+            "passer": false
+          },
+          {
+            "skabelon": "En kvist ligger på linealen fra #-stregen og ender # lille streg efter # cm-stregen. Hver lille streg er # mm. Hvor lang er kvisten i mm?",
+            "andel": 0.013,
+            "passer": false
+          },
+          {
+            "skabelon": "En sten ligger på linealen fra #-stregen og ender # lille streg efter # cm-stregen. Hver lille streg er # mm. Hvor lang er stenen i mm?",
+            "andel": 0.012,
+            "passer": false
+          },
+          {
+            "skabelon": "Et søm ligger på linealen fra #-stregen og ender # lille streg efter # cm-stregen. Hver lille streg er # mm. Hvor langt er sømmet i mm?",
+            "andel": 0.01,
+            "passer": false
+          },
+          {
+            "skabelon": "En pind ligger på linealen fra #-stregen og ender # lille streg efter # cm-stregen. Hver lille streg er # mm. Hvor lang er pinden i mm?",
+            "andel": 0.008,
+            "passer": false
+          }
+        ]
+      },
+      "svarmuligheder": [
+        3
+      ]
+    },
+    {
+      "id": "maalepaele",
+      "titel": "Målepælene",
+      "giver": "Maren, landmålerens datter",
+      "sted": "stenbrud",
+      "hvorfor": "Den nye mark skal pæles ud, og jeg skal vide, hvor langt der er hele vejen rundt.",
+      "opgaver": [
+        "maal4 (1)",
+        "maal4 (2)",
+        "maal3 (2)",
+        "maal4 (2)"
+      ],
+      "kraever": {
+        "forloeb": [
+          "stenbrud",
+          4
+        ],
+        "quests": [
+          "stien"
+        ]
+      },
+      "beloenning": {
+        "id": "straahat",
+        "type": "figur",
+        "plads": "hoved",
+        "navn": "Stråhatten"
+      },
+      "tekstModGrund": {
+        "andelOpgaverDerPasser": 0.75,
+        "andelQuestsHvorAllePasser": 0,
+        "andelQuestsHvorIngenPasser": 0,
+        "skabeloner": [
+          {
+            "skabelon": "En rektangulær grusplads er # m lang og # m bred. Hvor langt hegn skal der til hele vejen rundt?",
+            "andel": 0.75,
+            "passer": true
+          },
+          {
+            "skabelon": "Et stykke skinne er # m og # cm langt. Hvor mange cm er det i alt?",
+            "andel": 0.068,
+            "passer": false
+          },
+          {
+            "skabelon": "Et søm i skuret er # cm og # mm langt. Hvor mange mm er det i alt?",
+            "andel": 0.065,
+            "passer": false
+          },
+          {
+            "skabelon": "Tipvognens spor er # m og # cm langt. Hvor mange cm er det i alt?",
+            "andel": 0.064,
+            "passer": false
+          },
+          {
+            "skabelon": "Grusgraverens blyant er # cm og # mm lang. Hvor mange mm er det i alt?",
+            "andel": 0.053,
+            "passer": false
+          }
+        ]
+      },
+      "svarmuligheder": [
+        3
+      ]
+    },
+    {
+      "id": "aeblerne",
+      "titel": "Æbler til gaden",
+      "giver": "Else",
+      "sted": "marked",
+      "hvorfor": "Æblerne fra min have skal sælges på gaden. Hvad skal de koste, og hvordan deler vi pengene?",
+      "opgaver": [
+        "delHandel (1)",
+        "delHandel (2)",
+        "pris (1)"
+      ],
+      "kraever": {
+        "aabent": "marked"
+      },
+      "beloenning": {
+        "id": "aeblebod",
+        "type": "kort",
+        "navn": "Æbleboden på gaden",
+        "x": 90.5,
+        "y": 75
+      },
+      "tekstModGrund": {
+        "andelOpgaverDerPasser": 0.26,
+        "andelQuestsHvorAllePasser": 0.01,
+        "andelQuestsHvorIngenPasser": 0.38,
+        "skabeloner": [
+          {
+            "skabelon": "Købmanden har # æbler og lægger dem i # kurve med lige mange i hver. Hvor mange æbler kommer der i hver kurv?",
+            "andel": 0.177,
+            "passer": true
+          },
+          {
+            "skabelon": "Købmanden har # æg og pakker dem i bakker med # i hver. Hvor mange bakker bliver det?",
+            "andel": 0.169,
+            "passer": false
+          },
+          {
+            "skabelon": "# børn køber en pose bolsjer sammen for # kr. De betaler lige meget. Hvor meget skal hver betale?",
+            "andel": 0.163,
+            "passer": false
+          },
+          {
+            "skabelon": "# venner køber en kage for # kr og deler regningen. Hvor meget skal hver betale?",
+            "andel": 0.158,
+            "passer": false
+          },
+          {
+            "skabelon": "En pose bolsjer koster # kr. Du køber # poser. Hvad skal du betale?",
+            "andel": 0.09,
+            "passer": false
+          },
+          {
+            "skabelon": "Et æble koster # kr. Hvad koster # æbler?",
+            "andel": 0.088,
+            "passer": true
+          },
+          {
+            "skabelon": "Et rugbrød koster # kr hos købmanden. Hvad koster # rugbrød?",
+            "andel": 0.08,
+            "passer": false
+          },
+          {
+            "skabelon": "En flaske saft koster # kr. Hvad koster # flasker?",
+            "andel": 0.076,
+            "passer": false
+          }
+        ]
+      },
+      "svarmuligheder": [
+        3
+      ]
+    },
+    {
+      "id": "kassen",
+      "titel": "Kassen skal stemme",
+      "giver": "Søren, skomageren",
+      "sted": "marked",
+      "hvorfor": "Jeg har solgt sko hele dagen, og nu kan jeg ikke få kassen til at stemme. Vil du regne efter?",
+      "opgaver": [
+        "pris (2)",
+        "kasse (1)",
+        "kasse (2)",
+        "delHandel (2)"
+      ],
+      "kraever": {
+        "forloeb": [
+          "marked",
+          2
+        ],
+        "quests": [
+          "aeblerne"
+        ]
+      },
+      "beloenning": {
+        "id": "toerklaede",
+        "type": "figur",
+        "plads": "hals",
+        "navn": "Halstørklædet"
+      },
+      "tekstModGrund": {
+        "andelOpgaverDerPasser": 0,
+        "andelQuestsHvorAllePasser": 0,
+        "andelQuestsHvorIngenPasser": 1,
+        "skabeloner": [
+          {
+            "skabelon": "Købmanden får # kasser med # flasker saft i hver. Hvor mange flasker er det?",
+            "andel": 0.139,
+            "passer": false
+          },
+          {
+            "skabelon": "Vognen kommer med # kasser æg. I hver kasse er der # bakker. Hvor mange bakker æg er det?",
+            "andel": 0.132,
+            "passer": false
+          },
+          {
+            "skabelon": "Købmanden får # sække kartofler, og hver sæk vejer # kg. Hvor mange kg kartofler er det?",
+            "andel": 0.116,
+            "passer": false
+          },
+          {
+            "skabelon": "På hylden står # rækker dåser med # dåser i hver række. Hvor mange dåser står der?",
+            "andel": 0.113,
+            "passer": false
+          },
+          {
+            "skabelon": "Købmanden har # æg og pakker dem i bakker med # i hver. Hvor mange bakker bliver det?",
+            "andel": 0.068,
+            "passer": false
+          },
+          {
+            "skabelon": "Købmanden har # æbler og lægger dem i # kurve med lige mange i hver. Hvor mange æbler kommer der i hver kurv?",
+            "andel": 0.065,
+            "passer": false
+          },
+          {
+            "skabelon": "# børn køber en pose bolsjer sammen for # kr. De betaler lige meget. Hvor meget skal hver betale?",
+            "andel": 0.061,
+            "passer": false
+          },
+          {
+            "skabelon": "# venner køber en kage for # kr og deler regningen. Hvor meget skal hver betale?",
+            "andel": 0.057,
+            "passer": false
+          },
+          {
+            "skabelon": "En flaske saft koster # kr. Hvad koster # flasker?",
+            "andel": 0.05,
+            "passer": false
+          },
+          {
+            "skabelon": "Du køber # poser bolsjer à # kr og betaler med en #-kroneseddel. Hvor meget får du tilbage?",
+            "andel": 0.045,
+            "passer": false
+          },
+          {
+            "skabelon": "Et rugbrød koster # kr hos købmanden. Hvad koster # rugbrød?",
+            "andel": 0.043,
+            "passer": false
+          },
+          {
+            "skabelon": "Et æble koster # kr. Hvad koster # æbler?",
+            "andel": 0.041,
+            "passer": false
+          },
+          {
+            "skabelon": "En pose bolsjer koster # kr. Du køber # poser. Hvad skal du betale?",
+            "andel": 0.037,
+            "passer": false
+          },
+          {
+            "skabelon": "Du køber # rugbrød à # kr og betaler med en #-kroneseddel. Hvor meget får du tilbage?",
+            "andel": 0.034,
+            "passer": false
+          }
+        ]
+      },
+      "svarmuligheder": [
+        3
+      ]
+    },
+    {
+      "id": "bedstemor",
+      "titel": "Bedstemor kommer",
+      "giver": "Inger",
+      "sted": "havn",
+      "hvorfor": "Bedstemor kommer med sporvognen i dag. Hvornår skal jeg stå på holdepladsen?",
+      "opgaver": [
+        "ankomst (1)",
+        "tabel (1)",
+        "ankomst (2)"
+      ],
+      "kraever": {
+        "aabent": "havn"
+      },
+      "beloenning": {
+        "id": "baenk",
+        "type": "kort",
+        "navn": "Bænken ved holdepladsen",
+        "x": 44.5,
+        "y": 31.5
+      },
+      "tekstModGrund": {
+        "andelOpgaverDerPasser": 1,
+        "andelQuestsHvorAllePasser": 1,
+        "andelQuestsHvorIngenPasser": 0,
+        "skabeloner": [
+          {
+            "skabelon": "Sporvognen kører fra holdepladsen kl. #. Turen til møllen tager # minutter. Hvad er klokken, når den er fremme?",
+            "andel": 0.076,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognen kører fra holdepladsen kl. #. Turen til skoven tager # minutter. Hvad er klokken, når den er fremme?",
+            "andel": 0.074,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognen kører fra holdepladsen kl. #. Turen til søen tager # minutter. Hvad er klokken, når den er fremme?",
+            "andel": 0.07,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognen til kirken kører kl. # og er # minutter om turen. Hvornår er den fremme?",
+            "andel": 0.069,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognen til møllen kører kl. # og er # minutter om turen. Hvornår er den fremme?",
+            "andel": 0.068,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognen kører fra holdepladsen kl. #. Turen til kirken tager # minutter. Hvad er klokken, når den er fremme?",
+            "andel": 0.066,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognen til skoven kører kl. # og er # minutter om turen. Hvornår er den fremme?",
+            "andel": 0.066,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognen til grusgraven kører kl. # og er # minutter om turen. Hvornår er den fremme?",
+            "andel": 0.061,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognen til søen kører kl. # og er # minutter om turen. Hvornår er den fremme?",
+            "andel": 0.06,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognen kører fra holdepladsen kl. #. Turen til grusgraven tager # minutter. Hvad er klokken, når den er fremme?",
+            "andel": 0.058,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Søbanen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.004,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Søbanen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.003,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Møllelinjen – #, Søbanen – #, Skovlinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.003,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Søbanen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.003,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Møllelinjen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.003,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Skovlinjen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.003,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Møllelinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.003,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Kirkelinjen – #, Møllelinjen – #, Søbanen – #. Hvornår afgår Søbanen?",
+            "andel": 0.003,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Møllelinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Søbanen – #, Grusgravslinjen – #, Skovlinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Søbanen – #, Møllelinjen – #, Kirkelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Kirkelinjen – #, Skovlinjen – #, Søbanen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Skovlinjen – #, Søbanen – #, Kirkelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Møllelinjen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Kirkelinjen – #, Skovlinjen – #, Møllelinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Grusgravslinjen – #, Møllelinjen – #, Kirkelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Søbanen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Søbanen – #, Kirkelinjen – #, Skovlinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Søbanen – #, Skovlinjen – #, Møllelinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Møllelinjen – #, Kirkelinjen – #, Grusgravslinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Skovlinjen – #, Kirkelinjen – #, Møllelinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Skovlinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Søbanen – #, Grusgravslinjen – #, Skovlinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Kirkelinjen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Kirkelinjen – #, Grusgravslinjen – #, Søbanen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Grusgravslinjen – #, Kirkelinjen – #, Møllelinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Grusgravslinjen – #, Kirkelinjen – #, Søbanen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Skovlinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Søbanen – #, Skovlinjen – #, Møllelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Grusgravslinjen – #, Søbanen – #, Møllelinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Møllelinjen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Kirkelinjen – #, Søbanen – #, Skovlinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Kirkelinjen – #, Skovlinjen – #, Møllelinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Grusgravslinjen – #, Søbanen – #, Møllelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Søbanen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Skovlinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Møllelinjen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Søbanen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Møllelinjen – #, Kirkelinjen – #, Søbanen – #. Hvornår afgår Søbanen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Skovlinjen – #, Grusgravslinjen – #, Søbanen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Kirkelinjen – #, Møllelinjen – #, Skovlinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Møllelinjen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Grusgravslinjen – #, Søbanen – #, Kirkelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Grusgravslinjen – #, Søbanen – #, Møllelinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Skovlinjen – #, Søbanen – #, Møllelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Søbanen – #, Kirkelinjen – #, Grusgravslinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Skovlinjen – #, Kirkelinjen – #, Søbanen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Søbanen – #, Grusgravslinjen – #, Skovlinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Søbanen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Skovlinjen – #, Kirkelinjen – #, Søbanen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Kirkelinjen – #, Skovlinjen – #, Grusgravslinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Kirkelinjen – #, Møllelinjen – #, Søbanen – #. Hvornår afgår Søbanen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Møllelinjen – #, Søbanen – #, Skovlinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Skovlinjen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Grusgravslinjen – #, Skovlinjen – #, Søbanen – #. Hvornår afgår Søbanen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Grusgravslinjen – #, Møllelinjen – #, Kirkelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Skovlinjen – #, Søbanen – #, Kirkelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Grusgravslinjen – #, Skovlinjen – #, Møllelinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Møllelinjen – #, Kirkelinjen – #, Grusgravslinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Skovlinjen – #, Møllelinjen – #, Kirkelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Søbanen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Møllelinjen – #, Grusgravslinjen – #, Søbanen – #. Hvornår afgår Søbanen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Møllelinjen – #, Kirkelinjen – #, Grusgravslinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Skovlinjen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Skovlinjen – #, Kirkelinjen – #, Søbanen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Kirkelinjen – #, Grusgravslinjen – #, Skovlinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Skovlinjen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Søbanen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Møllelinjen – #, Kirkelinjen – #, Søbanen – #. Hvornår afgår Søbanen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Kirkelinjen – #, Møllelinjen – #, Søbanen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Skovlinjen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Grusgravslinjen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.002,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Grusgravslinjen – #, Søbanen – #, Kirkelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Søbanen – #, Kirkelinjen – #, Skovlinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Skovlinjen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Skovlinjen – #, Søbanen – #, Møllelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Kirkelinjen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Møllelinjen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Møllelinjen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Kirkelinjen – #, Søbanen – #, Skovlinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Kirkelinjen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Kirkelinjen – #, Søbanen – #, Møllelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Kirkelinjen – #, Grusgravslinjen – #, Skovlinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Søbanen – #, Møllelinjen – #, Skovlinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Møllelinjen – #, Grusgravslinjen – #, Skovlinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Skovlinjen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Kirkelinjen – #, Møllelinjen – #, Søbanen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Grusgravslinjen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Møllelinjen – #, Grusgravslinjen – #, Skovlinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Søbanen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Kirkelinjen – #, Skovlinjen – #, Grusgravslinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Kirkelinjen – #, Skovlinjen – #, Møllelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Skovlinjen – #, Søbanen – #, Møllelinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Skovlinjen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Kirkelinjen – #, Grusgravslinjen – #, Søbanen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Grusgravslinjen – #, Skovlinjen – #, Søbanen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Møllelinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Søbanen – #, Grusgravslinjen – #, Skovlinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Grusgravslinjen – #, Kirkelinjen – #, Møllelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Skovlinjen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Kirkelinjen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Møllelinjen – #, Søbanen – #, Skovlinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Kirkelinjen – #, Grusgravslinjen – #, Søbanen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Kirkelinjen – #, Skovlinjen – #, Møllelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Søbanen – #, Kirkelinjen – #, Møllelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Kirkelinjen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Skovlinjen – #, Møllelinjen – #, Kirkelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Skovlinjen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Grusgravslinjen – #, Skovlinjen – #, Møllelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Skovlinjen – #, Kirkelinjen – #, Grusgravslinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Søbanen – #, Skovlinjen – #, Møllelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Skovlinjen – #, Søbanen – #, Kirkelinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Kirkelinjen – #, Grusgravslinjen – #, Søbanen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Grusgravslinjen – #, Søbanen – #, Møllelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Søbanen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Skovlinjen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Søbanen – #, Kirkelinjen – #, Skovlinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Møllelinjen – #, Skovlinjen – #, Grusgravslinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Møllelinjen – #, Grusgravslinjen – #, Skovlinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Møllelinjen – #, Søbanen – #, Kirkelinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Skovlinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Møllelinjen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Skovlinjen – #, Møllelinjen – #, Søbanen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Skovlinjen – #, Kirkelinjen – #, Grusgravslinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Kirkelinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Kirkelinjen – #, Søbanen – #, Skovlinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Skovlinjen – #, Grusgravslinjen – #, Søbanen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Grusgravslinjen – #, Kirkelinjen – #, Søbanen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Grusgravslinjen – #, Møllelinjen – #, Skovlinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Skovlinjen – #, Møllelinjen – #, Søbanen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Kirkelinjen – #, Grusgravslinjen – #, Skovlinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Søbanen – #, Møllelinjen – #, Skovlinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Grusgravslinjen – #, Kirkelinjen – #, Møllelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Skovlinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Møllelinjen – #, Søbanen – #, Skovlinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Møllelinjen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Skovlinjen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Kirkelinjen – #, Skovlinjen – #, Søbanen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Kirkelinjen – #, Skovlinjen – #, Søbanen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Søbanen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Møllelinjen – #, Søbanen – #, Kirkelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Skovlinjen – #, Søbanen – #, Møllelinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Skovlinjen – #, Kirkelinjen – #, Møllelinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Skovlinjen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Skovlinjen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Kirkelinjen – #, Skovlinjen – #, Grusgravslinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Møllelinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Grusgravslinjen – #, Skovlinjen – #, Søbanen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Kirkelinjen – #, Skovlinjen – #, Søbanen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Grusgravslinjen – #, Søbanen – #, Kirkelinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Søbanen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Skovlinjen – #, Kirkelinjen – #, Søbanen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Kirkelinjen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Grusgravslinjen – #, Skovlinjen – #, Møllelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Kirkelinjen – #, Møllelinjen – #, Søbanen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Grusgravslinjen – #, Søbanen – #, Kirkelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Skovlinjen – #, Kirkelinjen – #, Møllelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Søbanen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Søbanen – #, Kirkelinjen – #, Grusgravslinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Grusgravslinjen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Møllelinjen – #, Skovlinjen – #, Kirkelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Søbanen – #, Møllelinjen – #, Kirkelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Grusgravslinjen – #, Skovlinjen – #, Søbanen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Skovlinjen – #, Kirkelinjen – #, Søbanen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Møllelinjen – #, Skovlinjen – #, Grusgravslinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Møllelinjen – #, Grusgravslinjen – #, Søbanen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Kirkelinjen – #, Grusgravslinjen – #, Skovlinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Kirkelinjen – #, Grusgravslinjen – #, Skovlinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Søbanen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Grusgravslinjen – #, Kirkelinjen – #, Møllelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Kirkelinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Kirkelinjen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Skovlinjen – #, Møllelinjen – #, Søbanen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Søbanen – #, Skovlinjen – #, Grusgravslinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Skovlinjen – #, Møllelinjen – #, Kirkelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Møllelinjen – #, Kirkelinjen – #, Søbanen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Søbanen – #, Grusgravslinjen – #, Møllelinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Søbanen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Søbanen – #, Kirkelinjen – #, Grusgravslinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Skovlinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Grusgravslinjen – #, Møllelinjen – #, Kirkelinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Kirkelinjen – #, Søbanen – #, Møllelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Møllelinjen – #, Skovlinjen – #, Grusgravslinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Møllelinjen – #, Søbanen – #, Kirkelinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Skovlinjen – #, Kirkelinjen – #, Møllelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Møllelinjen – #, Grusgravslinjen – #, Skovlinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Søbanen – #, Møllelinjen – #, Skovlinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Kirkelinjen – #, Grusgravslinjen – #, Søbanen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Søbanen – #, Møllelinjen – #, Kirkelinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Grusgravslinjen – #, Skovlinjen – #, Møllelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Skovlinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Kirkelinjen – #, Skovlinjen – #, Grusgravslinjen – #. Hvornår afgår Skovlinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Skovlinjen – #, Grusgravslinjen – #, Søbanen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Søbanen – #, Skovlinjen – #, Grusgravslinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Skovlinjen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Kirkelinjen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Kirkelinjen – #, Møllelinjen – #, Skovlinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Møllelinjen – #, Skovlinjen – #, Grusgravslinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Grusgravslinjen – #, Møllelinjen – #, Kirkelinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Skovlinjen – #, Møllelinjen – #, Søbanen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Grusgravslinjen – #, Møllelinjen – #, Søbanen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Grusgravslinjen – #, Skovlinjen – #, Søbanen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Grusgravslinjen – #, Møllelinjen – #, Skovlinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Møllelinjen – #, Grusgravslinjen – #, Skovlinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Skovlinjen – #, Søbanen – #, Møllelinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Kirkelinjen – #, Søbanen – #, Grusgravslinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Søbanen – #, Grusgravslinjen – #, Kirkelinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Søbanen – #, Kirkelinjen – #, Skovlinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Kirkelinjen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Søbanen – #, Møllelinjen – #, Grusgravslinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Kirkelinjen – #, Skovlinjen – #, Møllelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Grusgravslinjen – #, Kirkelinjen – #, Møllelinjen – #. Hvornår afgår Møllelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Møllelinjen – #, Skovlinjen – #, Søbanen – #, Kirkelinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Grusgravslinjen – #, Kirkelinjen – #, Søbanen – #, Møllelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Grusgravslinjen – #, Kirkelinjen – #, Skovlinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Skovlinjen – #, Grusgravslinjen – #, Kirkelinjen – #, Møllelinjen – #. Hvornår afgår Kirkelinjen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Kirkelinjen – #, Skovlinjen – #, Grusgravslinjen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Kirkelinjen – #, Grusgravslinjen – #, Møllelinjen – #, Søbanen – #. Hvornår afgår Søbanen?",
+            "andel": 0.001,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognens afgangstavle på holdepladsen: Søbanen – #, Kirkelinjen – #, Skovlinjen – #, Grusgravslinjen – #. Hvornår afgår Grusgravslinjen?",
+            "andel": 0.001,
+            "passer": true
+          }
+        ]
+      },
+      "svarmuligheder": [
+        3,
+        4
+      ]
+    },
+    {
+      "id": "sidste-vogn",
+      "titel": "Den sidste vogn hjem",
+      "giver": "Poul, vognstyreren",
+      "sted": "havn",
+      "hvorfor": "Den sidste vogn hjem må ikke køre fra nogen. Kan du regne køreplanen efter?",
+      "opgaver": [
+        "turtid (1)",
+        "afgangTilbage (1)",
+        "turtid (2)"
+      ],
+      "kraever": {
+        "forloeb": [
+          "havn",
+          2
+        ],
+        "quests": [
+          "bedstemor"
+        ]
+      },
+      "beloenning": {
+        "id": "sporvognens_ven",
+        "type": "titel",
+        "navn": "Sporvognens ven"
+      },
+      "tekstModGrund": {
+        "andelOpgaverDerPasser": 1,
+        "andelQuestsHvorAllePasser": 1,
+        "andelQuestsHvorIngenPasser": 0,
+        "skabeloner": [
+          {
+            "skabelon": "Du stiger på sporvognen kl. # og står af ved grusgraven kl. #. Hvor mange minutter varede turen?",
+            "andel": 0.079,
+            "passer": true
+          },
+          {
+            "skabelon": "Du stiger på sporvognen kl. # og står af ved skoven kl. #. Hvor mange minutter varede turen?",
+            "andel": 0.074,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognen kører fra holdepladsen kl. # og er ved møllen kl. #. Hvor mange minutter tog turen?",
+            "andel": 0.071,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognen kører fra holdepladsen kl. # og er ved søen kl. #. Hvor mange minutter tog turen?",
+            "andel": 0.069,
+            "passer": true
+          },
+          {
+            "skabelon": "Du stiger på sporvognen kl. # og står af ved møllen kl. #. Hvor mange minutter varede turen?",
+            "andel": 0.069,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognen kører fra holdepladsen kl. # og er ved grusgraven kl. #. Hvor mange minutter tog turen?",
+            "andel": 0.063,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognen kører fra holdepladsen kl. # og er ved kirken kl. #. Hvor mange minutter tog turen?",
+            "andel": 0.062,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognen kører fra holdepladsen kl. # og er ved skoven kl. #. Hvor mange minutter tog turen?",
+            "andel": 0.062,
+            "passer": true
+          },
+          {
+            "skabelon": "Du stiger på sporvognen kl. # og står af ved kirken kl. #. Hvor mange minutter varede turen?",
+            "andel": 0.061,
+            "passer": true
+          },
+          {
+            "skabelon": "Du stiger på sporvognen kl. # og står af ved søen kl. #. Hvor mange minutter varede turen?",
+            "andel": 0.056,
+            "passer": true
+          },
+          {
+            "skabelon": "Du skal være ved møllen kl. #. Sporvognen er # minutter om turen fra holdepladsen. Hvornår skal den senest køre?",
+            "andel": 0.04,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognen skal være ved søen senest kl. #, og turen tager # minutter. Hvornår skal den senest køre fra holdepladsen?",
+            "andel": 0.037,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognen skal være ved møllen senest kl. #, og turen tager # minutter. Hvornår skal den senest køre fra holdepladsen?",
+            "andel": 0.037,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognen skal være ved grusgraven senest kl. #, og turen tager # minutter. Hvornår skal den senest køre fra holdepladsen?",
+            "andel": 0.034,
+            "passer": true
+          },
+          {
+            "skabelon": "Du skal være ved søen kl. #. Sporvognen er # minutter om turen fra holdepladsen. Hvornår skal den senest køre?",
+            "andel": 0.033,
+            "passer": true
+          },
+          {
+            "skabelon": "Du skal være ved grusgraven kl. #. Sporvognen er # minutter om turen fra holdepladsen. Hvornår skal den senest køre?",
+            "andel": 0.032,
+            "passer": true
+          },
+          {
+            "skabelon": "Du skal være ved kirken kl. #. Sporvognen er # minutter om turen fra holdepladsen. Hvornår skal den senest køre?",
+            "andel": 0.032,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognen skal være ved kirken senest kl. #, og turen tager # minutter. Hvornår skal den senest køre fra holdepladsen?",
+            "andel": 0.03,
+            "passer": true
+          },
+          {
+            "skabelon": "Du skal være ved skoven kl. #. Sporvognen er # minutter om turen fra holdepladsen. Hvornår skal den senest køre?",
+            "andel": 0.029,
+            "passer": true
+          },
+          {
+            "skabelon": "Sporvognen skal være ved skoven senest kl. #, og turen tager # minutter. Hvornår skal den senest køre fra holdepladsen?",
+            "andel": 0.029,
+            "passer": true
+          }
+        ]
+      },
+      "svarmuligheder": [
+        3
+      ]
+    },
+    {
+      "id": "hoestmarked",
+      "titel": "Høstmarkedet",
+      "giver": "Karen, fra kroen",
+      "sted": "marked",
+      "hvorfor": "Hele landsbyen holder høstmarked, og alle boderne mangler en hjælpende hånd. Du kender jo alle sammen nu.",
+      "opgaver": [
+        "broek2 (2)",
+        "maal1 (2)",
+        "pris (2)",
+        "delHandel (2)"
+      ],
+      "kraever": {
+        "quests": [
+          "broed-til-alle",
+          "sten-til-diget",
+          "aeblerne"
+        ]
+      },
+      "beloenning": {
+        "id": "hoestmarked",
+        "type": "kort",
+        "navn": "Høstmarkedet",
+        "x": 53,
+        "y": 59
+      },
+      "tekstModGrund": {
+        "andelOpgaverDerPasser": 0,
+        "andelQuestsHvorAllePasser": 0,
+        "andelQuestsHvorIngenPasser": 1,
+        "skabeloner": [
+          {
+            "skabelon": "Købmanden har # æbler og lægger dem i # kurve med lige mange i hver. Hvor mange æbler kommer der i hver kurv?",
+            "andel": 0.072,
+            "passer": false
+          },
+          {
+            "skabelon": "# venner køber en kage for # kr og deler regningen. Hvor meget skal hver betale?",
+            "andel": 0.062,
+            "passer": false
+          },
+          {
+            "skabelon": "# børn køber en pose bolsjer sammen for # kr. De betaler lige meget. Hvor meget skal hver betale?",
+            "andel": 0.061,
+            "passer": false
+          },
+          {
+            "skabelon": "En pind ligger på linealen fra #-stregen og ender # små streger efter # cm-stregen. Hver lille streg er # mm. Hvor lang er pinden i mm?",
+            "andel": 0.059,
+            "passer": false
+          },
+          {
+            "skabelon": "Købmanden har # æg og pakker dem i bakker med # i hver. Hvor mange bakker bliver det?",
+            "andel": 0.056,
+            "passer": false
+          },
+          {
+            "skabelon": "En sten ligger på linealen fra #-stregen og ender # små streger efter # cm-stregen. Hver lille streg er # mm. Hvor lang er stenen i mm?",
+            "andel": 0.055,
+            "passer": false
+          },
+          {
+            "skabelon": "En kvist ligger på linealen fra #-stregen og ender # små streger efter # cm-stregen. Hver lille streg er # mm. Hvor lang er kvisten i mm?",
+            "andel": 0.055,
+            "passer": false
+          },
+          {
+            "skabelon": "Et søm ligger på linealen fra #-stregen og ender # små streger efter # cm-stregen. Hver lille streg er # mm. Hvor langt er sømmet i mm?",
+            "andel": 0.052,
+            "passer": false
+          },
+          {
+            "skabelon": "En pose bolsjer koster # kr. Du køber # poser. Hvad skal du betale?",
+            "andel": 0.046,
+            "passer": false
+          },
+          {
+            "skabelon": "Et rugbrød koster # kr hos købmanden. Hvad koster # rugbrød?",
+            "andel": 0.045,
+            "passer": false
+          },
+          {
+            "skabelon": "Du køber # rugbrød à # kr og betaler med en #-kroneseddel. Hvor meget får du tilbage?",
+            "andel": 0.044,
+            "passer": false
+          },
+          {
+            "skabelon": "Et æble koster # kr. Hvad koster # æbler?",
+            "andel": 0.042,
+            "passer": false
+          },
+          {
+            "skabelon": "Du køber # poser bolsjer à # kr og betaler med en #-kroneseddel. Hvor meget får du tilbage?",
+            "andel": 0.04,
+            "passer": false
+          },
+          {
+            "skabelon": "Bagerkonen deler # brød ligeligt mellem # karle på møllen. Hvor meget brød får hver karl?",
+            "andel": 0.036,
+            "passer": false
+          },
+          {
+            "skabelon": "En flaske saft koster # kr. Hvad koster # flasker?",
+            "andel": 0.033,
+            "passer": false
+          },
+          {
+            "skabelon": "Bageren deler # brød ligeligt mellem # karle på møllen. Hvor meget brød får hver karl?",
+            "andel": 0.033,
+            "passer": false
+          },
+          {
+            "skabelon": "Mølledrengen deler # sække mel ligeligt mellem # bagere. Hvor meget mel får hver bager?",
+            "andel": 0.029,
+            "passer": false
+          },
+          {
+            "skabelon": "Mølleren deler # sække mel ligeligt mellem # bagere. Hvor meget mel får hver bager?",
+            "andel": 0.028,
+            "passer": false
+          },
+          {
+            "skabelon": "Møllerkonen deler # æbler ligeligt mellem # børn. Hvor meget æble får hvert barn?",
+            "andel": 0.028,
+            "passer": false
+          },
+          {
+            "skabelon": "Bagerkonen deler # kager ligeligt mellem # børn. Hvor meget kage får hvert barn?",
+            "andel": 0.023,
+            "passer": false
+          },
+          {
+            "skabelon": "Bageren deler # kager ligeligt mellem # børn. Hvor meget kage får hvert barn?",
+            "andel": 0.02,
+            "passer": false
+          },
+          {
+            "skabelon": "Mølledrengen deler # æbler ligeligt mellem # børn. Hvor meget æble får hvert barn?",
+            "andel": 0.02,
+            "passer": false
+          },
+          {
+            "skabelon": "En sten ligger på linealen fra #-stregen og ender # lille streg efter # cm-stregen. Hver lille streg er # mm. Hvor lang er stenen i mm?",
+            "andel": 0.013,
+            "passer": false
+          },
+          {
+            "skabelon": "En kvist ligger på linealen fra #-stregen og ender # lille streg efter # cm-stregen. Hver lille streg er # mm. Hvor lang er kvisten i mm?",
+            "andel": 0.009,
+            "passer": false
+          },
+          {
+            "skabelon": "Møllerkonen deler # æble ligeligt mellem # børn. Hvor meget æble får hvert barn?",
+            "andel": 0.008,
+            "passer": false
+          },
+          {
+            "skabelon": "Mølledrengen deler # æble ligeligt mellem # børn. Hvor meget æble får hvert barn?",
+            "andel": 0.007,
+            "passer": false
+          },
+          {
+            "skabelon": "Bagerkonen deler # kage ligeligt mellem # børn. Hvor meget kage får hvert barn?",
+            "andel": 0.007,
+            "passer": false
+          },
+          {
+            "skabelon": "Bageren deler # kage ligeligt mellem # børn. Hvor meget kage får hvert barn?",
+            "andel": 0.005,
+            "passer": false
+          },
+          {
+            "skabelon": "Et søm ligger på linealen fra #-stregen og ender # lille streg efter # cm-stregen. Hver lille streg er # mm. Hvor langt er sømmet i mm?",
+            "andel": 0.004,
+            "passer": false
+          },
+          {
+            "skabelon": "Mølledrengen deler # sæk mel ligeligt mellem # bagere. Hvor meget mel får hver bager?",
+            "andel": 0.003,
+            "passer": false
+          },
+          {
+            "skabelon": "En pind ligger på linealen fra #-stregen og ender # lille streg efter # cm-stregen. Hver lille streg er # mm. Hvor lang er pinden i mm?",
+            "andel": 0.003,
+            "passer": false
+          },
+          {
+            "skabelon": "Mølleren deler # sæk mel ligeligt mellem # bagere. Hvor meget mel får hver bager?",
+            "andel": 0.003,
+            "passer": false
+          }
+        ]
+      },
+      "svarmuligheder": [
+        3
+      ]
+    }
+  ],
+  "gaet": {
+    "maksForsoeg": 3,
+    "svarmuligheder": [
+      3,
+      4
+    ],
+    "gaetterRammerAltidRigtigt": false,
+    "forventetTrykPrOpgaveVedGaet": 2,
+    "forventetErfaringVedGaet": "+10 pr. opgave (erfaringen gives ved \"Rigtigt!\" uanset forsoeg nr.)",
+    "sandsynlighedRigtigFoersteGang": "1/3"
+  },
+  "kaeder": [
+    {
+      "id": "mel-til-bageren",
+      "kraever": {
+        "forloeb": [
+          "moellen",
+          1
+        ]
+      },
+      "mestretVedAabning": {
+        "moellen": 1,
+        "stenbrud": 0
+      },
+      "trin": [
+        "broek1",
+        "broek1",
+        "broek1"
+      ],
+      "brud": []
+    },
+    {
+      "id": "broed-til-alle",
+      "kraever": {
+        "forloeb": [
+          "moellen",
+          2
+        ],
+        "quests": [
+          "mel-til-bageren"
+        ]
+      },
+      "mestretVedAabning": {
+        "moellen": 2,
+        "stenbrud": 0
+      },
+      "trin": [
+        "broek2",
+        "broek2",
+        "broek1"
+      ],
+      "brud": []
+    },
+    {
+      "id": "aenderne",
+      "kraever": {
+        "forloeb": [
+          "moellen",
+          3
+        ]
+      },
+      "mestretVedAabning": {
+        "moellen": 3,
+        "stenbrud": 0
+      },
+      "trin": [
+        "broek3",
+        "broek3",
+        "broek2"
+      ],
+      "brud": []
+    },
+    {
+      "id": "nyt-bed",
+      "kraever": {
+        "aabent": "landsby"
+      },
+      "mestretVedAabning": {
+        "moellen": 3,
+        "stenbrud": 0
+      },
+      "trin": [
+        "kirkeOmkreds",
+        "kirkeOmkreds",
+        "kirkeAreal"
+      ],
+      "brud": [
+        "kirkeOmkreds er maaletrappens trin 4, Grusgraven mestret: 0",
+        "kirkeOmkreds er maaletrappens trin 4, Grusgraven mestret: 0",
+        "kirkeAreal er maaletrappens trin 5, Grusgraven mestret: 0"
+      ]
+    },
+    {
+      "id": "lys-til-kirken",
+      "kraever": {
+        "quests": [
+          "nyt-bed"
+        ]
+      },
+      "mestretVedAabning": {
+        "moellen": 3,
+        "stenbrud": 0
+      },
+      "trin": [
+        "kirkePris",
+        "kirkePris",
+        "kirkeKasse",
+        "kirkeDel"
+      ],
+      "brud": []
+    },
+    {
+      "id": "klokkerebet",
+      "kraever": {
+        "forloeb": [
+          "stenbrud",
+          3
+        ],
+        "quests": [
+          "lys-til-kirken"
+        ]
+      },
+      "mestretVedAabning": {
+        "moellen": 3,
+        "stenbrud": 3
+      },
+      "trin": [
+        "maal3",
+        "maal3",
+        "maal2"
+      ],
+      "brud": []
+    },
+    {
+      "id": "sten-til-diget",
+      "kraever": {
+        "forloeb": [
+          "stenbrud",
+          1
+        ]
+      },
+      "mestretVedAabning": {
+        "moellen": 2,
+        "stenbrud": 1
+      },
+      "trin": [
+        "maal1",
+        "maal1",
+        "maal1"
+      ],
+      "brud": []
+    },
+    {
+      "id": "stien",
+      "kraever": {
+        "forloeb": [
+          "stenbrud",
+          2
+        ],
+        "quests": [
+          "sten-til-diget"
+        ]
+      },
+      "mestretVedAabning": {
+        "moellen": 2,
+        "stenbrud": 2
+      },
+      "trin": [
+        "maal2",
+        "maal2",
+        "maal1"
+      ],
+      "brud": []
+    },
+    {
+      "id": "maalepaele",
+      "kraever": {
+        "forloeb": [
+          "stenbrud",
+          4
+        ],
+        "quests": [
+          "stien"
+        ]
+      },
+      "mestretVedAabning": {
+        "moellen": 2,
+        "stenbrud": 4
+      },
+      "trin": [
+        "maal4",
+        "maal4",
+        "maal3",
+        "maal4"
+      ],
+      "brud": []
+    },
+    {
+      "id": "aeblerne",
+      "kraever": {
+        "aabent": "marked"
+      },
+      "mestretVedAabning": {
+        "moellen": 0,
+        "stenbrud": 0
+      },
+      "trin": [
+        "delHandel",
+        "delHandel",
+        "pris"
+      ],
+      "brud": []
+    },
+    {
+      "id": "kassen",
+      "kraever": {
+        "forloeb": [
+          "marked",
+          2
+        ],
+        "quests": [
+          "aeblerne"
+        ]
+      },
+      "mestretVedAabning": {
+        "moellen": 0,
+        "stenbrud": 0
+      },
+      "trin": [
+        "pris",
+        "kasse",
+        "kasse",
+        "delHandel"
+      ],
+      "brud": []
+    },
+    {
+      "id": "bedstemor",
+      "kraever": {
+        "aabent": "havn"
+      },
+      "mestretVedAabning": {
+        "moellen": 0,
+        "stenbrud": 2
+      },
+      "trin": [
+        "ankomst",
+        "tabel",
+        "ankomst"
+      ],
+      "brud": []
+    },
+    {
+      "id": "sidste-vogn",
+      "kraever": {
+        "forloeb": [
+          "havn",
+          2
+        ],
+        "quests": [
+          "bedstemor"
+        ]
+      },
+      "mestretVedAabning": {
+        "moellen": 0,
+        "stenbrud": 2
+      },
+      "trin": [
+        "turtid",
+        "afgangTilbage",
+        "turtid"
+      ],
+      "brud": []
+    },
+    {
+      "id": "hoestmarked",
+      "kraever": {
+        "quests": [
+          "broed-til-alle",
+          "sten-til-diget",
+          "aeblerne"
+        ]
+      },
+      "mestretVedAabning": {
+        "moellen": 2,
+        "stenbrud": 1
+      },
+      "trin": [
+        "broek2",
+        "maal1",
+        "pris",
+        "delHandel"
+      ],
+      "brud": []
+    }
+  ]
+}

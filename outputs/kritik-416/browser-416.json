@@ -1,0 +1,227 @@
+{
+  "beloenninger": {
+    "ting": [
+      {
+        "id": "melsaekke",
+        "bredde": 20,
+        "hoejde": 20,
+        "daekket": []
+      },
+      {
+        "id": "aender",
+        "bredde": 31,
+        "hoejde": 13,
+        "daekket": []
+      },
+      {
+        "id": "blomsterbed",
+        "bredde": 26,
+        "hoejde": 13,
+        "daekket": []
+      },
+      {
+        "id": "kirkelys",
+        "bredde": 20,
+        "hoejde": 22,
+        "daekket": []
+      },
+      {
+        "id": "stendige",
+        "bredde": 48,
+        "hoejde": 11,
+        "daekket": []
+      },
+      {
+        "id": "stien",
+        "bredde": 44,
+        "hoejde": 79,
+        "daekket": [
+          {
+            "navn": "Grusgraven",
+            "andel": 0.14
+          },
+          {
+            "navn": "Sporvognen",
+            "andel": 0.27
+          }
+        ]
+      },
+      {
+        "id": "aeblebod",
+        "bredde": 16,
+        "hoejde": 12,
+        "daekket": []
+      },
+      {
+        "id": "baenk",
+        "bredde": 23,
+        "hoejde": 24,
+        "daekket": []
+      },
+      {
+        "id": "hoestmarked",
+        "bredde": 38,
+        "hoejde": 23,
+        "daekket": []
+      }
+    ],
+    "hoved": {
+      "titel": "Sporvognens ven",
+      "niveauTitel": "Niveau 9 · Mester",
+      "hue": 1,
+      "hals": 1,
+      "udraab": 0,
+      "personerPaaKortet": 13
+    },
+    "sidefejl": []
+  },
+  "gaetter": {
+    "opgaver": 38,
+    "tryk": 122,
+    "rigtigeFoerste": 10,
+    "loesningVist": 0,
+    "niveau": 7,
+    "erfaring": 380,
+    "klaret": [
+      "aeblerne",
+      "kassen"
+    ],
+    "beloenninger": [
+      "aeblebod",
+      "toerklaede"
+    ],
+    "fremdrift": {
+      "moellen": 0,
+      "stenbrud": 0,
+      "marked": 6,
+      "landsby": 0,
+      "havn": 0
+    },
+    "haendelser": [
+      {
+        "opgaver": 1,
+        "hvad": "forloeb klaret",
+        "fremdrift": {
+          "moellen": 0,
+          "stenbrud": 0,
+          "marked": 0,
+          "landsby": 0,
+          "havn": 0
+        }
+      },
+      {
+        "opgaver": 3,
+        "hvad": "Niveau 2!"
+      },
+      {
+        "opgaver": 7,
+        "hvad": "Niveau 3!"
+      },
+      {
+        "opgaver": 7,
+        "hvad": "starter quest: aeblerne"
+      },
+      {
+        "opgaver": 10,
+        "hvad": "quest klaret: aeblerne",
+        "beloenning": "aeblebod"
+      },
+      {
+        "opgaver": 12,
+        "hvad": "Niveau 4!"
+      },
+      {
+        "opgaver": 13,
+        "hvad": "forloeb klaret",
+        "fremdrift": {
+          "moellen": 0,
+          "stenbrud": 0,
+          "marked": 1,
+          "landsby": 0,
+          "havn": 0
+        }
+      },
+      {
+        "opgaver": 16,
+        "hvad": "forloeb klaret",
+        "fremdrift": {
+          "moellen": 0,
+          "stenbrud": 0,
+          "marked": 2,
+          "landsby": 0,
+          "havn": 0
+        }
+      },
+      {
+        "opgaver": 16,
+        "hvad": "starter quest: kassen"
+      },
+      {
+        "opgaver": 18,
+        "hvad": "Niveau 5!"
+      },
+      {
+        "opgaver": 20,
+        "hvad": "quest klaret: kassen",
+        "beloenning": "toerklaede"
+      },
+      {
+        "opgaver": 24,
+        "hvad": "forloeb klaret",
+        "fremdrift": {
+          "moellen": 0,
+          "stenbrud": 0,
+          "marked": 3,
+          "landsby": 0,
+          "havn": 0
+        }
+      },
+      {
+        "opgaver": 25,
+        "hvad": "Niveau 6!"
+      },
+      {
+        "opgaver": 28,
+        "hvad": "forloeb klaret",
+        "fremdrift": {
+          "moellen": 0,
+          "stenbrud": 0,
+          "marked": 4,
+          "landsby": 0,
+          "havn": 0
+        }
+      },
+      {
+        "opgaver": 33,
+        "hvad": "forloeb klaret",
+        "fremdrift": {
+          "moellen": 0,
+          "stenbrud": 0,
+          "marked": 5,
+          "landsby": 0,
+          "havn": 0
+        }
+      },
+      {
+        "opgaver": 33,
+        "hvad": "Niveau 7!"
+      },
+      {
+        "opgaver": 38,
+        "hvad": "forloeb klaret",
+        "fremdrift": {
+          "moellen": 0,
+          "stenbrud": 0,
+          "marked": 6,
+          "landsby": 0,
+          "havn": 0
+        }
+      },
+      {
+        "opgaver": 38,
+        "hvad": "intet at svare paa her"
+      }
+    ],
+    "sidefejl": []
+  }
+}

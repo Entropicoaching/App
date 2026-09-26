@@ -1,0 +1,1184 @@
+{
+  "resultat": {
+    "salt": 999982,
+    "adfaerd": "se kommentaren oeverst",
+    "forloeb": [
+      {
+        "nr": 1,
+        "titel": "Lige store dele",
+        "opgaver": 3,
+        "uret": 125,
+        "tryk": 8,
+        "klaretTekst": "Forløbet \"Lige store dele\" er klaret. Mølleren: \"Nu ved du, hvad en brøk er: nogle af de lige store dele af en helhed.\"",
+        "byVaagner": "Byen vågner\n        Kværnhjulet drejer igen\n        \n    \n      \n        \n        \n    \n      \n      \n    \n      \n      \n      \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n  \n      \n    \n    \n    \n      \n      \n      \n    \n    \n    \n      \n      \n      \n    \n    \n  \n    \n        Indbyggere: 16 (før 12)\n        Møllerdrengen: \"Hjulet går! Nu skal melet bare deles ligeligt.\"\n        Ny opgave: Del ligeligt\n        Se det på kortet",
+        "efter": {
+          "udraab": [
+            {
+              "tekst": "!",
+              "quest": "mel-til-bageren",
+              "top": 184,
+              "venstre": 225,
+              "bredde": 24,
+              "inde": true,
+              "oeverst": true
+            }
+          ],
+          "knap": {
+            "tekst": "Questbogen 1 ny",
+            "inde": false
+          },
+          "scrollY": 713
+        }
+      },
+      {
+        "nr": 2,
+        "titel": "Del ligeligt",
+        "opgaver": 4,
+        "uret": 332,
+        "tryk": 26,
+        "klaretTekst": "Forløbet \"Del ligeligt\" er klaret. Mølleren: \"Tak skal du have. Nu har alle fået lige meget.\"",
+        "byVaagner": "Byen vågner\n        Kornvognen kører\n        \n    \n      \n        \n        \n    \n      \n      \n    \n      \n      \n      \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n      \n      \n      \n      \n      \n      \n      \n      \n    \n  \n      \n    \n    \n    \n      \n      \n      \n    \n    \n    \n      \n      \n      \n    \n    \n  \n    \n        Indbyggere: 24 (før 19)\n        Kusken: \"Alle har fået deres del. Bageren vil have det bedste mel, men hvilken portion er størst?\"\n        Ny opgave: Hvilken portion er størst?\n        Se det på kortet",
+        "efter": {
+          "udraab": [
+            {
+              "tekst": "!",
+              "quest": "broed-til-alle",
+              "top": 25,
+              "venstre": 225,
+              "bredde": 24,
+              "inde": true,
+              "oeverst": true
+            },
+            {
+              "tekst": "!",
+              "quest": "aeblerne",
+              "top": 30,
+              "venstre": 335,
+              "bredde": 24,
+              "inde": true,
+              "oeverst": true
+            }
+          ],
+          "knap": {
+            "tekst": "Questbogen 2 nye",
+            "inde": false
+          },
+          "scrollY": 732
+        }
+      },
+      {
+        "nr": 3,
+        "titel": "Hvilken portion er størst?",
+        "opgaver": 4,
+        "uret": 536,
+        "tryk": 43,
+        "klaretTekst": "Forløbet \"Hvilken portion er størst?\" er klaret. Mølleren: \"Nu ved du, at flere dele giver mindre dele.\"",
+        "byVaagner": "Byen vågner\n        Bagerens ovn er tændt\n        \n    \n      \n        \n        \n    \n      \n      \n    \n      \n      \n      \n    \n    \n    \n    \n      \n      \n      \n      \n      \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n      \n      \n      \n      \n      \n      \n      \n      \n    \n  \n      \n    \n    \n      \n      \n    \n    \n    \n      \n      \n      \n    \n    \n    \n      \n      \n      \n    \n    \n  \n    \n        Indbyggere: 34 (før 27)\n        Bageren: \"Der dufter af brød igen! Men broen over åen er rådden, så jeg kan ikke køre brødet ud.\"\n        Ny opgave: Samme mel, nye poser\n        Se det på kortet",
+        "efter": {
+          "udraab": [
+            {
+              "tekst": "!",
+              "quest": "aenderne",
+              "top": 101,
+              "venstre": 235,
+              "bredde": 24,
+              "inde": true,
+              "oeverst": true
+            },
+            {
+              "tekst": "!",
+              "quest": "nyt-bed",
+              "top": -34,
+              "venstre": 291,
+              "bredde": 24,
+              "inde": false,
+              "oeverst": false
+            },
+            {
+              "tekst": "!",
+              "quest": "aeblerne",
+              "top": 25,
+              "venstre": 335,
+              "bredde": 24,
+              "inde": true,
+              "oeverst": true
+            }
+          ],
+          "knap": {
+            "tekst": "Questbogen 3 nye",
+            "inde": false
+          },
+          "scrollY": 737
+        }
+      }
+    ],
+    "quests": [
+      {
+        "questId": "mel-til-bageren",
+        "bogAaben": true,
+        "fokus": true,
+        "hvorforIBog": {
+          "tekst": "\"Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe mølleren med at dele sækkene?\"",
+          "inde": true
+        },
+        "infoIBog": "3 opgaver · Belønning: Melsække ved møllen (på kortet)",
+        "afsnit": [
+          "Nye (1)",
+          "Låst (13)",
+          "Det du har fået"
+        ],
+        "panel": {
+          "person": {
+            "tekst": "Ane, bagerkonen",
+            "top": 284,
+            "inde": true
+          },
+          "hvorfor": {
+            "tekst": "Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe mølleren med at dele sækkene?",
+            "top": 334,
+            "inde": true
+          },
+          "beloenning": {
+            "tekst": "Belønning: Melsække ved møllen",
+            "top": 416,
+            "inde": true
+          },
+          "opgave": {
+            "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 3 er sået: ▰▰▰▱▱▱. Hvor stor en del af marken er sået?",
+            "top": 488,
+            "inde": true
+          },
+          "svar": {
+            "tekst": "6/33/63/3",
+            "top": 576,
+            "inde": true
+          }
+        },
+        "opgaver": [
+          "Mølleren har delt sin mark i 6 lige store stykker, og 3 er sået: ▰▰▰▱▱▱. Hvor stor en del af marken er sået?",
+          "Mølleren har delt sin mark i 7 lige store stykker, og 1 er sået: ▰▱▱▱▱▱▱. Hvor stor en del af marken er sået?",
+          "Mølleren har delt sin mark i 8 lige store stykker, og 5 er sået: ▰▰▰▰▰▱▱▱. Hvor stor en del af marken er sået?"
+        ],
+        "lige": {
+          "scrollY": 477,
+          "kortTop": 0
+        },
+        "ny": {
+          "ting": [
+            "melsaekke"
+          ],
+          "ring": 1,
+          "hueNed": 0
+        },
+        "tak": {
+          "tekst": "QUEST KLARET Mel til bageren Ane: \"Tak! Nu kan jeg bage. Mølleren har stillet sækkene ud til mig.\" Du fik: Melsække ved møllen. Den står nu på kortet og bliver stående. Se det på kortet Åbn questbogen",
+          "top": 389,
+          "inde": true
+        },
+        "uret": 221,
+        "tryk": 17
+      },
+      {
+        "questId": "broed-til-alle",
+        "bogAaben": true,
+        "fokus": true,
+        "hvorforIBog": {
+          "tekst": "\"Brødet er bagt, og nu skal det deles ligeligt mellem gårdene. Ingen må få mindre end de andre.\"",
+          "inde": true
+        },
+        "infoIBog": "3 opgaver · Belønning: Bagerhuen (til din figur)",
+        "afsnit": [
+          "Nye (2)",
+          "Klaret (1)",
+          "Låst (11)",
+          "Det du har fået"
+        ],
+        "panel": {
+          "person": {
+            "tekst": "Ane, bagerkonen",
+            "top": 284,
+            "inde": true
+          },
+          "hvorfor": {
+            "tekst": "Brødet er bagt, og nu skal det deles ligeligt mellem gårdene. Ingen må få mindre end de andre.",
+            "top": 334,
+            "inde": true
+          },
+          "beloenning": {
+            "tekst": "Belønning: Bagerhuen",
+            "top": 416,
+            "inde": true
+          },
+          "opgave": {
+            "tekst": "Bagerkonen deler 2 brød ligeligt mellem 3 karle på møllen. Hvor meget brød får hver karl?",
+            "top": 488,
+            "inde": true
+          },
+          "svar": {
+            "tekst": "2/31/33/2",
+            "top": 576,
+            "inde": true
+          }
+        },
+        "opgaver": [
+          "Bagerkonen deler 2 brød ligeligt mellem 3 karle på møllen. Hvor meget brød får hver karl?",
+          "Bagerkonen deler 1 brød ligeligt mellem 5 karle på møllen. Hvor meget brød får hver karl?",
+          "Mølleren har 5 lige store sække på vognen, og 4 er fyldt med mel: ▰▰▰▰▱. Hvor stor en del af sækkene er fyldt?"
+        ],
+        "lige": {
+          "scrollY": 803,
+          "kortTop": -275
+        },
+        "ny": {
+          "ting": [],
+          "ring": 0,
+          "hueNed": 1
+        },
+        "tak": {
+          "tekst": "QUEST KLARET Brød til alle Ane: \"Alle fik lige meget. Her, tag min gamle bagerhue: du har fortjent den.\" Du fik: Bagerhuen. Din figur har den på nu, også på kortet. Åbn questbogen",
+          "top": 114,
+          "inde": true
+        },
+        "uret": 426,
+        "tryk": 35
+      },
+      {
+        "questId": "aenderne",
+        "bogAaben": true,
+        "fokus": true,
+        "hvorforIBog": {
+          "tekst": "\"Far siger, jeg først må fodre ænderne, når jeg kan se, hvilken portion der er størst. Vil du øve med mig?\"",
+          "inde": true
+        },
+        "infoIBog": "3 opgaver · Belønning: Ænder i åen (på kortet)",
+        "afsnit": [
+          "Nye (3)",
+          "Klaret (2)",
+          "Låst (9)",
+          "Det du har fået"
+        ],
+        "panel": {
+          "person": {
+            "tekst": "Niels, møllerens dreng",
+            "top": 284,
+            "inde": true
+          },
+          "hvorfor": {
+            "tekst": "Far siger, jeg først må fodre ænderne, når jeg kan se, hvilken portion der er størst. Vil du øve med mig?",
+            "top": 334,
+            "inde": true
+          },
+          "beloenning": {
+            "tekst": "Belønning: Ænder i åen",
+            "top": 416,
+            "inde": true
+          },
+          "opgave": {
+            "tekst": "Mølledrengen hælder en sæk mel i 6 lige store poser og en anden sæk i 3 lige store poser. Hvilken pose rummer mest?",
+            "top": 488,
+            "inde": true
+          },
+          "svar": {
+            "tekst": "Lige store1/3 sæk1/6 sæk",
+            "top": 576,
+            "inde": true
+          }
+        },
+        "opgaver": [
+          "Mølledrengen hælder en sæk mel i 6 lige store poser og en anden sæk i 3 lige store poser. Hvilken pose rummer mest?",
+          "Hvilken portion er størst: 3/4 sæk eller 3/10 sæk?",
+          "Bageren deler 2 brød ligeligt mellem 4 karle på møllen. Hvor meget brød får hver karl?"
+        ],
+        "lige": {
+          "scrollY": 528,
+          "kortTop": 0
+        },
+        "ny": {
+          "ting": [
+            "aender"
+          ],
+          "ring": 1,
+          "hueNed": 0
+        },
+        "tak": {
+          "tekst": "QUEST KLARET Ænderne i åen Niels: \"Nu ved jeg det! Se, ænderne er kommet tilbage til åen.\" Du fik: Ænder i åen. Den står nu på kortet og bliver stående. Se det på kortet Åbn questbogen",
+          "top": 389,
+          "inde": true
+        },
+        "uret": 632,
+        "tryk": 52
+      }
+    ],
+    "udraab": [
+      {
+        "hvornaar": "efter-moellen-1",
+        "foer": {
+          "udraab": [
+            {
+              "tekst": "!",
+              "quest": "mel-til-bageren",
+              "top": 184,
+              "venstre": 225,
+              "bredde": 24,
+              "inde": true,
+              "oeverst": true
+            }
+          ],
+          "knap": {
+            "tekst": "Questbogen 1 ny",
+            "inde": false
+          },
+          "scrollY": 713
+        },
+        "nu": {
+          "udraab": [
+            {
+              "tekst": "!",
+              "quest": "mel-til-bageren",
+              "top": 184,
+              "venstre": 225,
+              "bredde": 24,
+              "inde": true,
+              "oeverst": true
+            }
+          ],
+          "knap": {
+            "tekst": "Questbogen 1 ny",
+            "inde": false
+          },
+          "scrollY": 713
+        },
+        "vej": "straks",
+        "uret": 125,
+        "tryk": 8,
+        "billede": "E-05-udraab-efter-moellen-1.png"
+      },
+      {
+        "hvornaar": "efter-moellen-2",
+        "foer": {
+          "udraab": [
+            {
+              "tekst": "!",
+              "quest": "broed-til-alle",
+              "top": 25,
+              "venstre": 225,
+              "bredde": 24,
+              "inde": true,
+              "oeverst": true
+            },
+            {
+              "tekst": "!",
+              "quest": "aeblerne",
+              "top": 30,
+              "venstre": 335,
+              "bredde": 24,
+              "inde": true,
+              "oeverst": true
+            }
+          ],
+          "knap": {
+            "tekst": "Questbogen 2 nye",
+            "inde": false
+          },
+          "scrollY": 732
+        },
+        "nu": {
+          "udraab": [
+            {
+              "tekst": "!",
+              "quest": "broed-til-alle",
+              "top": 25,
+              "venstre": 225,
+              "bredde": 24,
+              "inde": true,
+              "oeverst": true
+            },
+            {
+              "tekst": "!",
+              "quest": "aeblerne",
+              "top": 30,
+              "venstre": 335,
+              "bredde": 24,
+              "inde": true,
+              "oeverst": true
+            }
+          ],
+          "knap": {
+            "tekst": "Questbogen 2 nye",
+            "inde": false
+          },
+          "scrollY": 732
+        },
+        "vej": "straks",
+        "uret": 332,
+        "tryk": 26,
+        "billede": "E-13-udraab-efter-moellen-2.png"
+      },
+      {
+        "hvornaar": "efter-moellen-3",
+        "foer": {
+          "udraab": [
+            {
+              "tekst": "!",
+              "quest": "aenderne",
+              "top": 101,
+              "venstre": 235,
+              "bredde": 24,
+              "inde": true,
+              "oeverst": true
+            },
+            {
+              "tekst": "!",
+              "quest": "nyt-bed",
+              "top": -34,
+              "venstre": 291,
+              "bredde": 24,
+              "inde": false,
+              "oeverst": false
+            },
+            {
+              "tekst": "!",
+              "quest": "aeblerne",
+              "top": 25,
+              "venstre": 335,
+              "bredde": 24,
+              "inde": true,
+              "oeverst": true
+            }
+          ],
+          "knap": {
+            "tekst": "Questbogen 3 nye",
+            "inde": false
+          },
+          "scrollY": 737
+        },
+        "nu": {
+          "udraab": [
+            {
+              "tekst": "!",
+              "quest": "aenderne",
+              "top": 101,
+              "venstre": 235,
+              "bredde": 24,
+              "inde": true,
+              "oeverst": true
+            },
+            {
+              "tekst": "!",
+              "quest": "nyt-bed",
+              "top": -34,
+              "venstre": 291,
+              "bredde": 24,
+              "inde": false,
+              "oeverst": false
+            },
+            {
+              "tekst": "!",
+              "quest": "aeblerne",
+              "top": 25,
+              "venstre": 335,
+              "bredde": 24,
+              "inde": true,
+              "oeverst": true
+            }
+          ],
+          "knap": {
+            "tekst": "Questbogen 3 nye",
+            "inde": false
+          },
+          "scrollY": 737
+        },
+        "vej": "straks",
+        "uret": 536,
+        "tryk": 43,
+        "billede": "E-21-udraab-efter-moellen-3.png"
+      }
+    ],
+    "genindlaest": {
+      "ting": [
+        "melsaekke",
+        "aender"
+      ],
+      "hue": 1,
+      "hueKort": 1,
+      "udraab": [
+        "nyt-bed",
+        "aeblerne"
+      ],
+      "knap": "Questbogen 2 nye",
+      "sidenSidst": "Siden sidst: du klarede \"Hvilken portion er størst?\" hos Mølleren. Mølleren venter med \"Samme mel, nye poser\".",
+      "gemt": {
+        "klaret": [
+          "mel-til-bageren",
+          "broed-til-alle",
+          "aenderne"
+        ],
+        "hoved": "bagerhue"
+      },
+      "bog": [
+        "Nye (2)",
+        "Klaret (3)",
+        "Låst (9)",
+        "Det du har fået"
+      ]
+    },
+    "start": {
+      "udraab": [],
+      "knap": {
+        "tekst": "Questbogen",
+        "inde": true
+      },
+      "scrollY": 0,
+      "sted": "Mølleren",
+      "forloeb": "Forløb 1 af 8",
+      "replik": "Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt eller sået?"
+    },
+    "foersteUdraab": {
+      "uret": 125,
+      "tryk": 8,
+      "vej": "straks"
+    },
+    "efterQuest1": {
+      "forloeb": "Forløb 2 af 8",
+      "fremdrift": "0 af 4 opgaver løst · mestret ved 3 rigtige i første forsøg"
+    },
+    "udraabEfter2": [
+      {
+        "tekst": "!",
+        "quest": "broed-til-alle",
+        "top": 25,
+        "venstre": 225,
+        "bredde": 24,
+        "inde": true,
+        "oeverst": true
+      },
+      {
+        "tekst": "!",
+        "quest": "aeblerne",
+        "top": 30,
+        "venstre": 335,
+        "bredde": 24,
+        "inde": true,
+        "oeverst": true
+      }
+    ],
+    "udraabEfter3": [
+      {
+        "tekst": "!",
+        "quest": "aenderne",
+        "top": 101,
+        "venstre": 235,
+        "bredde": 24,
+        "inde": true,
+        "oeverst": true
+      },
+      {
+        "tekst": "!",
+        "quest": "nyt-bed",
+        "top": -34,
+        "venstre": 291,
+        "bredde": 24,
+        "inde": false,
+        "oeverst": false
+      },
+      {
+        "tekst": "!",
+        "quest": "aeblerne",
+        "top": 25,
+        "venstre": 335,
+        "bredde": 24,
+        "inde": true,
+        "oeverst": true
+      }
+    ],
+    "sidefejl": [],
+    "slutUr": 632,
+    "slutTryk": 53,
+    "billeder": [
+      "E-01-lav-figur.png",
+      "E-02-foerste-skaerm.png",
+      "E-03-foerste-skaerm-hel.png",
+      "E-04-moellen-1-mestret-det-eleven-ser.png",
+      "E-05-udraab-efter-moellen-1.png",
+      "E-06-bog-mel-til-bageren.png",
+      "E-07-panel-mel-til-bageren.png",
+      "E-08-beloenning-mel-til-bageren-straks.png",
+      "E-09-beloenning-mel-til-bageren-efter-pop.png",
+      "E-10-tak-mel-til-bageren.png",
+      "E-11-niveau-banner.png",
+      "E-12-moellen-2-mestret-det-eleven-ser.png",
+      "E-13-udraab-efter-moellen-2.png",
+      "E-14-bog-broed-til-alle.png",
+      "E-15-panel-broed-til-alle.png",
+      "E-16-panel-broed-til-alle-rigtigt.png",
+      "E-17-beloenning-broed-til-alle-straks.png",
+      "E-18-beloenning-broed-til-alle-efter-pop.png",
+      "E-19-tak-broed-til-alle.png",
+      "E-20-moellen-3-mestret-det-eleven-ser.png",
+      "E-21-udraab-efter-moellen-3.png",
+      "E-22-bog-aenderne.png",
+      "E-23-panel-aenderne.png",
+      "E-24-panel-aenderne-rigtigt.png",
+      "E-25-beloenning-aenderne-straks.png",
+      "E-26-beloenning-aenderne-efter-pop.png",
+      "E-27-tak-aenderne.png",
+      "E-28-genindlaest.png",
+      "E-29-genindlaest-kortet.png",
+      "E-30-genindlaest-questbog.png"
+    ]
+  },
+  "log": [
+    {
+      "hvad": "ny figur",
+      "tid": 39,
+      "udraab": [],
+      "knap": {
+        "tekst": "Questbogen",
+        "inde": true
+      },
+      "scrollY": 0,
+      "sted": "Mølleren",
+      "forloeb": "Forløb 1 af 8",
+      "replik": "Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt eller sået?"
+    },
+    {
+      "hvad": "Moellens forloeb 1 mestret",
+      "tid": 125,
+      "nr": 1,
+      "titel": "Lige store dele",
+      "opgaver": 3,
+      "uret": 125,
+      "tryk": 8,
+      "klaretTekst": "Forløbet \"Lige store dele\" er klaret. Mølleren: \"Nu ved du, hvad en brøk er: nogle af de lige store dele af en helhed.\"",
+      "byVaagner": "Byen vågner\n        Kværnhjulet drejer igen\n        \n    \n      \n        \n        \n    \n      \n      \n    \n      \n      \n      \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n  \n      \n    \n    \n    \n      \n      \n      \n    \n    \n    \n      \n      \n      \n    \n    \n  \n    \n        Indbyggere: 16 (før 12)\n        Møllerdrengen: \"Hjulet går! Nu skal melet bare deles ligeligt.\"\n        Ny opgave: Del ligeligt\n        Se det på kortet",
+      "efter": {
+        "udraab": [
+          {
+            "tekst": "!",
+            "quest": "mel-til-bageren",
+            "top": 184,
+            "venstre": 225,
+            "bredde": 24,
+            "inde": true,
+            "oeverst": true
+          }
+        ],
+        "knap": {
+          "tekst": "Questbogen 1 ny",
+          "inde": false
+        },
+        "scrollY": 713
+      }
+    },
+    {
+      "hvad": "\"!\" efter-moellen-1",
+      "tid": 125,
+      "hvornaar": "efter-moellen-1",
+      "foer": {
+        "udraab": [
+          {
+            "tekst": "!",
+            "quest": "mel-til-bageren",
+            "top": 184,
+            "venstre": 225,
+            "bredde": 24,
+            "inde": true,
+            "oeverst": true
+          }
+        ],
+        "knap": {
+          "tekst": "Questbogen 1 ny",
+          "inde": false
+        },
+        "scrollY": 713
+      },
+      "nu": {
+        "udraab": [
+          {
+            "tekst": "!",
+            "quest": "mel-til-bageren",
+            "top": 184,
+            "venstre": 225,
+            "bredde": 24,
+            "inde": true,
+            "oeverst": true
+          }
+        ],
+        "knap": {
+          "tekst": "Questbogen 1 ny",
+          "inde": false
+        },
+        "scrollY": 713
+      },
+      "vej": "straks",
+      "uret": 125,
+      "tryk": 8,
+      "billede": "E-05-udraab-efter-moellen-1.png"
+    },
+    {
+      "hvad": "quest mel-til-bageren klaret",
+      "tid": 221,
+      "questId": "mel-til-bageren",
+      "bogAaben": true,
+      "fokus": true,
+      "hvorforIBog": {
+        "tekst": "\"Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe mølleren med at dele sækkene?\"",
+        "inde": true
+      },
+      "infoIBog": "3 opgaver · Belønning: Melsække ved møllen (på kortet)",
+      "afsnit": [
+        "Nye (1)",
+        "Låst (13)",
+        "Det du har fået"
+      ],
+      "panel": {
+        "person": {
+          "tekst": "Ane, bagerkonen",
+          "top": 284,
+          "inde": true
+        },
+        "hvorfor": {
+          "tekst": "Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe mølleren med at dele sækkene?",
+          "top": 334,
+          "inde": true
+        },
+        "beloenning": {
+          "tekst": "Belønning: Melsække ved møllen",
+          "top": 416,
+          "inde": true
+        },
+        "opgave": {
+          "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 3 er sået: ▰▰▰▱▱▱. Hvor stor en del af marken er sået?",
+          "top": 488,
+          "inde": true
+        },
+        "svar": {
+          "tekst": "6/33/63/3",
+          "top": 576,
+          "inde": true
+        }
+      },
+      "opgaver": [
+        "Mølleren har delt sin mark i 6 lige store stykker, og 3 er sået: ▰▰▰▱▱▱. Hvor stor en del af marken er sået?",
+        "Mølleren har delt sin mark i 7 lige store stykker, og 1 er sået: ▰▱▱▱▱▱▱. Hvor stor en del af marken er sået?",
+        "Mølleren har delt sin mark i 8 lige store stykker, og 5 er sået: ▰▰▰▰▰▱▱▱. Hvor stor en del af marken er sået?"
+      ],
+      "lige": {
+        "scrollY": 477,
+        "kortTop": 0
+      },
+      "ny": {
+        "ting": [
+          "melsaekke"
+        ],
+        "ring": 1,
+        "hueNed": 0
+      },
+      "tak": {
+        "tekst": "QUEST KLARET Mel til bageren Ane: \"Tak! Nu kan jeg bage. Mølleren har stillet sækkene ud til mig.\" Du fik: Melsække ved møllen. Den står nu på kortet og bliver stående. Se det på kortet Åbn questbogen",
+        "top": 389,
+        "inde": true
+      },
+      "uret": 221,
+      "tryk": 17
+    },
+    {
+      "hvad": "niveau-banner",
+      "tid": 246,
+      "tekst": "Niveau 3!\n        Hoved steg til 3.\n        Fedt!"
+    },
+    {
+      "hvad": "Moellens forloeb 2 mestret",
+      "tid": 332,
+      "nr": 2,
+      "titel": "Del ligeligt",
+      "opgaver": 4,
+      "uret": 332,
+      "tryk": 26,
+      "klaretTekst": "Forløbet \"Del ligeligt\" er klaret. Mølleren: \"Tak skal du have. Nu har alle fået lige meget.\"",
+      "byVaagner": "Byen vågner\n        Kornvognen kører\n        \n    \n      \n        \n        \n    \n      \n      \n    \n      \n      \n      \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n      \n      \n      \n      \n      \n      \n      \n      \n    \n  \n      \n    \n    \n    \n      \n      \n      \n    \n    \n    \n      \n      \n      \n    \n    \n  \n    \n        Indbyggere: 24 (før 19)\n        Kusken: \"Alle har fået deres del. Bageren vil have det bedste mel, men hvilken portion er størst?\"\n        Ny opgave: Hvilken portion er størst?\n        Se det på kortet",
+      "efter": {
+        "udraab": [
+          {
+            "tekst": "!",
+            "quest": "broed-til-alle",
+            "top": 25,
+            "venstre": 225,
+            "bredde": 24,
+            "inde": true,
+            "oeverst": true
+          },
+          {
+            "tekst": "!",
+            "quest": "aeblerne",
+            "top": 30,
+            "venstre": 335,
+            "bredde": 24,
+            "inde": true,
+            "oeverst": true
+          }
+        ],
+        "knap": {
+          "tekst": "Questbogen 2 nye",
+          "inde": false
+        },
+        "scrollY": 732
+      }
+    },
+    {
+      "hvad": "\"!\" efter-moellen-2",
+      "tid": 332,
+      "hvornaar": "efter-moellen-2",
+      "foer": {
+        "udraab": [
+          {
+            "tekst": "!",
+            "quest": "broed-til-alle",
+            "top": 25,
+            "venstre": 225,
+            "bredde": 24,
+            "inde": true,
+            "oeverst": true
+          },
+          {
+            "tekst": "!",
+            "quest": "aeblerne",
+            "top": 30,
+            "venstre": 335,
+            "bredde": 24,
+            "inde": true,
+            "oeverst": true
+          }
+        ],
+        "knap": {
+          "tekst": "Questbogen 2 nye",
+          "inde": false
+        },
+        "scrollY": 732
+      },
+      "nu": {
+        "udraab": [
+          {
+            "tekst": "!",
+            "quest": "broed-til-alle",
+            "top": 25,
+            "venstre": 225,
+            "bredde": 24,
+            "inde": true,
+            "oeverst": true
+          },
+          {
+            "tekst": "!",
+            "quest": "aeblerne",
+            "top": 30,
+            "venstre": 335,
+            "bredde": 24,
+            "inde": true,
+            "oeverst": true
+          }
+        ],
+        "knap": {
+          "tekst": "Questbogen 2 nye",
+          "inde": false
+        },
+        "scrollY": 732
+      },
+      "vej": "straks",
+      "uret": 332,
+      "tryk": 26,
+      "billede": "E-13-udraab-efter-moellen-2.png"
+    },
+    {
+      "hvad": "quest broed-til-alle klaret",
+      "tid": 426,
+      "questId": "broed-til-alle",
+      "bogAaben": true,
+      "fokus": true,
+      "hvorforIBog": {
+        "tekst": "\"Brødet er bagt, og nu skal det deles ligeligt mellem gårdene. Ingen må få mindre end de andre.\"",
+        "inde": true
+      },
+      "infoIBog": "3 opgaver · Belønning: Bagerhuen (til din figur)",
+      "afsnit": [
+        "Nye (2)",
+        "Klaret (1)",
+        "Låst (11)",
+        "Det du har fået"
+      ],
+      "panel": {
+        "person": {
+          "tekst": "Ane, bagerkonen",
+          "top": 284,
+          "inde": true
+        },
+        "hvorfor": {
+          "tekst": "Brødet er bagt, og nu skal det deles ligeligt mellem gårdene. Ingen må få mindre end de andre.",
+          "top": 334,
+          "inde": true
+        },
+        "beloenning": {
+          "tekst": "Belønning: Bagerhuen",
+          "top": 416,
+          "inde": true
+        },
+        "opgave": {
+          "tekst": "Bagerkonen deler 2 brød ligeligt mellem 3 karle på møllen. Hvor meget brød får hver karl?",
+          "top": 488,
+          "inde": true
+        },
+        "svar": {
+          "tekst": "2/31/33/2",
+          "top": 576,
+          "inde": true
+        }
+      },
+      "opgaver": [
+        "Bagerkonen deler 2 brød ligeligt mellem 3 karle på møllen. Hvor meget brød får hver karl?",
+        "Bagerkonen deler 1 brød ligeligt mellem 5 karle på møllen. Hvor meget brød får hver karl?",
+        "Mølleren har 5 lige store sække på vognen, og 4 er fyldt med mel: ▰▰▰▰▱. Hvor stor en del af sækkene er fyldt?"
+      ],
+      "lige": {
+        "scrollY": 803,
+        "kortTop": -275
+      },
+      "ny": {
+        "ting": [],
+        "ring": 0,
+        "hueNed": 1
+      },
+      "tak": {
+        "tekst": "QUEST KLARET Brød til alle Ane: \"Alle fik lige meget. Her, tag min gamle bagerhue: du har fortjent den.\" Du fik: Bagerhuen. Din figur har den på nu, også på kortet. Åbn questbogen",
+        "top": 114,
+        "inde": true
+      },
+      "uret": 426,
+      "tryk": 35
+    },
+    {
+      "hvad": "Moellens forloeb 3 mestret",
+      "tid": 536,
+      "nr": 3,
+      "titel": "Hvilken portion er størst?",
+      "opgaver": 4,
+      "uret": 536,
+      "tryk": 43,
+      "klaretTekst": "Forløbet \"Hvilken portion er størst?\" er klaret. Mølleren: \"Nu ved du, at flere dele giver mindre dele.\"",
+      "byVaagner": "Byen vågner\n        Bagerens ovn er tændt\n        \n    \n      \n        \n        \n    \n      \n      \n    \n      \n      \n      \n    \n    \n    \n    \n      \n      \n      \n      \n      \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n      \n      \n      \n      \n      \n      \n      \n      \n    \n  \n      \n    \n    \n      \n      \n    \n    \n    \n      \n      \n      \n    \n    \n    \n      \n      \n      \n    \n    \n  \n    \n        Indbyggere: 34 (før 27)\n        Bageren: \"Der dufter af brød igen! Men broen over åen er rådden, så jeg kan ikke køre brødet ud.\"\n        Ny opgave: Samme mel, nye poser\n        Se det på kortet",
+      "efter": {
+        "udraab": [
+          {
+            "tekst": "!",
+            "quest": "aenderne",
+            "top": 101,
+            "venstre": 235,
+            "bredde": 24,
+            "inde": true,
+            "oeverst": true
+          },
+          {
+            "tekst": "!",
+            "quest": "nyt-bed",
+            "top": -34,
+            "venstre": 291,
+            "bredde": 24,
+            "inde": false,
+            "oeverst": false
+          },
+          {
+            "tekst": "!",
+            "quest": "aeblerne",
+            "top": 25,
+            "venstre": 335,
+            "bredde": 24,
+            "inde": true,
+            "oeverst": true
+          }
+        ],
+        "knap": {
+          "tekst": "Questbogen 3 nye",
+          "inde": false
+        },
+        "scrollY": 737
+      }
+    },
+    {
+      "hvad": "\"!\" efter-moellen-3",
+      "tid": 536,
+      "hvornaar": "efter-moellen-3",
+      "foer": {
+        "udraab": [
+          {
+            "tekst": "!",
+            "quest": "aenderne",
+            "top": 101,
+            "venstre": 235,
+            "bredde": 24,
+            "inde": true,
+            "oeverst": true
+          },
+          {
+            "tekst": "!",
+            "quest": "nyt-bed",
+            "top": -34,
+            "venstre": 291,
+            "bredde": 24,
+            "inde": false,
+            "oeverst": false
+          },
+          {
+            "tekst": "!",
+            "quest": "aeblerne",
+            "top": 25,
+            "venstre": 335,
+            "bredde": 24,
+            "inde": true,
+            "oeverst": true
+          }
+        ],
+        "knap": {
+          "tekst": "Questbogen 3 nye",
+          "inde": false
+        },
+        "scrollY": 737
+      },
+      "nu": {
+        "udraab": [
+          {
+            "tekst": "!",
+            "quest": "aenderne",
+            "top": 101,
+            "venstre": 235,
+            "bredde": 24,
+            "inde": true,
+            "oeverst": true
+          },
+          {
+            "tekst": "!",
+            "quest": "nyt-bed",
+            "top": -34,
+            "venstre": 291,
+            "bredde": 24,
+            "inde": false,
+            "oeverst": false
+          },
+          {
+            "tekst": "!",
+            "quest": "aeblerne",
+            "top": 25,
+            "venstre": 335,
+            "bredde": 24,
+            "inde": true,
+            "oeverst": true
+          }
+        ],
+        "knap": {
+          "tekst": "Questbogen 3 nye",
+          "inde": false
+        },
+        "scrollY": 737
+      },
+      "vej": "straks",
+      "uret": 536,
+      "tryk": 43,
+      "billede": "E-21-udraab-efter-moellen-3.png"
+    },
+    {
+      "hvad": "quest aenderne klaret",
+      "tid": 632,
+      "questId": "aenderne",
+      "bogAaben": true,
+      "fokus": true,
+      "hvorforIBog": {
+        "tekst": "\"Far siger, jeg først må fodre ænderne, når jeg kan se, hvilken portion der er størst. Vil du øve med mig?\"",
+        "inde": true
+      },
+      "infoIBog": "3 opgaver · Belønning: Ænder i åen (på kortet)",
+      "afsnit": [
+        "Nye (3)",
+        "Klaret (2)",
+        "Låst (9)",
+        "Det du har fået"
+      ],
+      "panel": {
+        "person": {
+          "tekst": "Niels, møllerens dreng",
+          "top": 284,
+          "inde": true
+        },
+        "hvorfor": {
+          "tekst": "Far siger, jeg først må fodre ænderne, når jeg kan se, hvilken portion der er størst. Vil du øve med mig?",
+          "top": 334,
+          "inde": true
+        },
+        "beloenning": {
+          "tekst": "Belønning: Ænder i åen",
+          "top": 416,
+          "inde": true
+        },
+        "opgave": {
+          "tekst": "Mølledrengen hælder en sæk mel i 6 lige store poser og en anden sæk i 3 lige store poser. Hvilken pose rummer mest?",
+          "top": 488,
+          "inde": true
+        },
+        "svar": {
+          "tekst": "Lige store1/3 sæk1/6 sæk",
+          "top": 576,
+          "inde": true
+        }
+      },
+      "opgaver": [
+        "Mølledrengen hælder en sæk mel i 6 lige store poser og en anden sæk i 3 lige store poser. Hvilken pose rummer mest?",
+        "Hvilken portion er størst: 3/4 sæk eller 3/10 sæk?",
+        "Bageren deler 2 brød ligeligt mellem 4 karle på møllen. Hvor meget brød får hver karl?"
+      ],
+      "lige": {
+        "scrollY": 528,
+        "kortTop": 0
+      },
+      "ny": {
+        "ting": [
+          "aender"
+        ],
+        "ring": 1,
+        "hueNed": 0
+      },
+      "tak": {
+        "tekst": "QUEST KLARET Ænderne i åen Niels: \"Nu ved jeg det! Se, ænderne er kommet tilbage til åen.\" Du fik: Ænder i åen. Den står nu på kortet og bliver stående. Se det på kortet Åbn questbogen",
+        "top": 389,
+        "inde": true
+      },
+      "uret": 632,
+      "tryk": 52
+    },
+    {
+      "hvad": "genindlaest",
+      "tid": 632,
+      "ting": [
+        "melsaekke",
+        "aender"
+      ],
+      "hue": 1,
+      "hueKort": 1,
+      "udraab": [
+        "nyt-bed",
+        "aeblerne"
+      ],
+      "knap": "Questbogen 2 nye",
+      "sidenSidst": "Siden sidst: du klarede \"Hvilken portion er størst?\" hos Mølleren. Mølleren venter med \"Samme mel, nye poser\".",
+      "gemt": {
+        "klaret": [
+          "mel-til-bageren",
+          "broed-til-alle",
+          "aenderne"
+        ],
+        "hoved": "bagerhue"
+      },
+      "bog": [
+        "Nye (2)",
+        "Klaret (3)",
+        "Låst (9)",
+        "Det du har fået"
+      ]
+    }
+  ]
+}
