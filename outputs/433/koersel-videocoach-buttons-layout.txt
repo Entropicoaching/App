@@ -1,0 +1,9 @@
+
+> entropi-app@0.0.0 verify:videocoach-buttons-layout
+> node scripts/verify-videocoach-buttons-layout.mjs
+
+Skærmbillede (efter, chip synlig): C:\Users\Entropi\Desktop\entropi-app\outputs\vis-mig-nu-realtid\coachweb-390px-efter.png
+Bokse (idle): {"trackerFastSeg":{"x":289,"y":7,"w":93,"h":48,"hidden":false},"tag:footer":{"x":8,"y":769,"w":374,"h":69,"hidden":false},"scrubRow":{"x":12,"y":711,"w":366,"h":117,"hidden":false}}
+Boks mens sporing kører: {"trackerFastSeg":{"x":0,"y":0,"w":0,"h":0,"hidden":true}}
+
+GRØN: chippen overlapper ikke footer/scrubRow, og forsvinder mens en sporing kører.

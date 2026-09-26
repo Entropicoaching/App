@@ -20,7 +20,8 @@ if (blok === '3') {
   const koer = (navn, cmd, env = {}) => {
     console.log(`== ${navn}`)
     const r = spawnSync(cmd, { cwd: ROOT, shell: true, encoding: 'utf8', env: { ...process.env, ...env } })
-    const ud = (r.stdout || '') + (r.stderr || '')
+    // ffmpeg skriver videoens metadata (GPS-position, telefon, tidspunkt); den maa ikke i repoet.
+    const ud = ((r.stdout || '') + (r.stderr || '')).split('\n').filter(l => !/com\.apple\.quicktime|creation_time|location/i.test(l)).join('\n')
     writeFileSync(path.join(DIR, `koersel-${navn}.txt`), ud)
     console.log(ud.trim().split('\n').slice(-3).join('\n'))
     assert.equal(r.status, 0, `${navn} fejlede (se outputs/433/koersel-${navn}.txt)`)
@@ -30,7 +31,7 @@ if (blok === '3') {
   koer('offline-bevis', 'node outputs/414/offline-bevis.mjs', { BEVIS_UD: 'outputs/433/offline-bevis' })
   for (const t of ['upload-flow', 'submission', 'buttons-layout', 'upload', 'labels', 'film-guide', 'zoom', 'clip']) koer(`videocoach-${t}`, `npm run verify:videocoach-${t}`)
   koer('build-igen', 'npm run build')
-  const r = readFileSync(path.join(ROOT, 'docs', 'RAPPORT-433.md'), 'utf8')
+  const r = readFileSync(path.join(ROOT, 'docs', 'RAPPORT-433.md'), 'utf8').replace(/\r\n/g, '\n')
   assert.equal(r.split('\n')[0].trim(), 'Ordre 433', 'foerste linje skal vaere "Ordre 433"')
   for (const h of ['## Gren', '## Hvad ændret', '## Testresultat', '## Hvad er næste', '## Ærlige grænser']) assert.ok(r.includes(h), `RAPPORT-433 mangler afsnit: ${h}`)
   const naeste = r.split('## Hvad er næste')[1].split('\n## ')[0]

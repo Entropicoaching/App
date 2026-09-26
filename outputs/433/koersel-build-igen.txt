@@ -1,0 +1,32 @@
+
+> entropi-app@0.0.0 build
+> vite build
+
+[36mvite v8.2.1 [32mbuilding client environment for production...[36m[39m
+[2Ktransforming...✓ 183 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                 3.25 kB │ gzip:   1.37 kB
+dist/assets/index-nqMpL4T3.css                  1.78 kB │ gzip:   0.81 kB
+dist/assets/ugenoegle-Cz0lROPu.js               0.37 kB │ gzip:   0.27 kB
+dist/assets/exerciseNames-B2_FFuAZ.js           0.65 kB │ gzip:   0.40 kB
+dist/assets/CountdownRing-DeYZwvGS.js           1.35 kB │ gzip:   0.65 kB
+dist/assets/athleteSilentFailLog-Cv3iZoLk.js    1.70 kB │ gzip:   0.76 kB
+dist/assets/VolumenTab-BBjPtW8j.js              3.72 kB │ gzip:   1.38 kB
+dist/assets/FremgangTab-CIs6ZPHw.js             5.45 kB │ gzip:   2.16 kB
+dist/assets/BeskederTab-q7CYUULa.js             6.32 kB │ gzip:   2.05 kB
+dist/assets/videoCoachUpload-B4_EFAOb.js        9.70 kB │ gzip:   3.32 kB
+dist/assets/IndbakkeView-DUXu4T6h.js           13.02 kB │ gzip:   3.40 kB
+dist/assets/StaevnedagTab-CoE9lnXO.js          14.41 kB │ gzip:   3.53 kB
+dist/assets/VolumenKort-DVb1n3nT.js            18.77 kB │ gzip:   6.00 kB
+dist/assets/KostTab-DQIW1ciB.js                24.00 kB │ gzip:   5.35 kB
+dist/assets/ProgramTab-CCY-JZfu.js             32.03 kB │ gzip:   8.27 kB
+dist/assets/ProgramTab-CFCIY_kx.js             46.21 kB │ gzip:  10.18 kB
+dist/assets/AnalyseTab-DFhyY3pw.js             47.89 kB │ gzip:  11.52 kB
+dist/assets/MobiliseringTab-QQAfBM8E.js        60.58 kB │ gzip:  14.70 kB
+dist/assets/VolumenGraf-DRTEQnoG.js            61.90 kB │ gzip:   8.67 kB
+dist/assets/AthleteView-BUHXi9v4.js           187.15 kB │ gzip:  50.79 kB
+dist/assets/Dashboard-C6GIGvJ-.js             286.34 kB │ gzip:  74.07 kB
+dist/assets/index-C_3opJ7U.js                 362.22 kB │ gzip: 102.65 kB
+
+[32m✓ built in 244ms[39m
