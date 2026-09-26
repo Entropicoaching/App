@@ -34,7 +34,7 @@ Kilde: matematik `main` @ `89abfd2`, kun læst (kopi). Tre målinger:
 | 13 | Den sidste vogn hjem | køreplanen | turens minutter, hvornår den senest skal køre | 100 % | passer |
 | 14 | Høstmarkedet | "alle boderne mangler en hånd" | blanding fra møllen, grusgraven og købmanden | (per design) | passer som samlequest |
 
-**Samlet:** 4 passer (3, 12, 13, 14), 1 næsten (9), 3 delvis/svag (1, 2, 7, 10),
+**Samlet:** 4 passer (3, 12, 13, 14), 1 næsten (9), 4 delvis/svag (1, 2, 7, 10),
 **5 passer ikke (4, 5, 6, 8, 11)**. Det er ikke enkelte uheld: generatorerne
 er stedets, med stedets personer (Degnen, Købmanden, Grusgraveren), så når
 questgiveren er en anden end stedets egen person, taler opgaven om en anden.
