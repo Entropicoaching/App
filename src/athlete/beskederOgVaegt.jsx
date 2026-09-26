@@ -11,6 +11,7 @@ import { VIDEOCOACH_LIFT_LABELS as ATHLETE_VIDEO_LIFTS, videoCoachVariationLabel
 import { s, today } from '../athleteShared'
 import { athleteVideoPathPreview } from './videoCoachBro'
 import { logFrontendError } from './ugeHjaelp'
+import { ugeBesked } from './dinUge'
 
 export function lavBeskederOgVaegt({
   athlete, messageInput, msgTrack, onReadError, openSharedVideoId, setMessageInput, setMessages, setOpenSharedVideoId,
@@ -108,6 +109,19 @@ export function lavBeskederOgVaegt({
     fetchAthleteMessages(athlete.id)
   }
 
+  // ORDRE 439 · blok 2: linjen fra "din uge" er en almindelig besked i
+  // besked-sporet, samme skrivevej og samme fejlvisning som sendAthleteMessage.
+  async function sendUgeLinje(ugeNr, tekst) {
+    const content = ugeBesked(ugeNr, tekst)
+    if (!content || !athlete) return false
+    const ok = await runGuardedWrite(
+      () => supabase.from('messages').insert({ athlete_id: athlete.id, sender_role: 'athlete', content, category: 'besked' }),
+      () => showFlash('Beskeden blev ikke sendt. Tjek din forbindelse og prøv igen.', 'error'),
+    )
+    if (ok) fetchAthleteMessages(athlete.id)
+    return ok
+  }
+
   function formatMsgTime(ts) {
     const d = new Date(ts)
     const now = new Date()
@@ -179,5 +193,6 @@ export function lavBeskederOgVaegt({
 
   return {
     fetchWeightLogs, logWeight, fetchAthleteMessages, markTrackRead, sendAthleteMessage, formatMsgTime, renderSharedFeedbackCards,
+    sendUgeLinje,
   }
 }

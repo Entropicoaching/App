@@ -1,0 +1,29 @@
+{
+  "blok": "2",
+  "fund": {
+    "kortTekst": "DIN UGE Uge 4 er klaret. 4/4 PAS 13.240kg TONNAGE 7 REKORDER 🏆 Squat e1RM 117 kg +3 kg 🏆 Bænkpres e1RM 89 kg +1 kg 🏆 Bænkpres e1RM 91 kg +2 kg 🏆 Dødløft e1RM 154 kg +3 kg 🏆 Pause squat e1RM 96 kg +2 kg 🏆 Squat 95 kg × 6 +1 rep 🏆 Bænkpres 72,5 kg × 6 +2 reps DINE VURDERINGER Dag 1 — Squat 4/5 Dag 2 — Bænk 3/5 Dag 3 — Dødløft 5/5 Dag 4 — Volumen – Vil du skrive noget til din coach om ugen? SEND",
+    "nyeBeskeder": [
+      {
+        "sender_role": "athlete",
+        "category": "besked",
+        "content": "Om uge 4: Squatten føltes let i denne uge."
+      }
+    ],
+    "skrevetTil": [
+      "exercise_logs",
+      "messages",
+      "sessions"
+    ]
+  },
+  "trin": [
+    "før sidste sæt: Dagens pas står på Pull-ups sæt 3/3, intet \"din uge\"-kort",
+    "kortet: \"DIN UGE Uge 4 er klaret. 4/4 PAS 13.240kg TONNAGE 7 REKORDER 🏆 Squat e1RM 117 kg +3 kg 🏆 Bænkpres e1RM 89 kg +1 kg 🏆 Bænkpres e1RM 91 kg +2 kg 🏆 Dødløft e1RM 154 kg +3 kg 🏆 Pause squat e1RM 96 kg +2 kg 🏆 Squat 95 k\"",
+    "tal: 4/4 pas, 13.240 kg (= mockens 38 gennemførte sæt), 7 rekorder",
+    "vurderinger: før [\"4\",\"3\",\"5\",\"\"], efter Dag 4 = 4: [4,3,5,4]",
+    "sendt: 1 ny besked [{\"sender_role\":\"athlete\",\"category\":\"besked\",\"content\":\"Om uge 4: Squatten føltes let i denne uge.\"}]",
+    "genåbnet: kortet står stadig, linjen står som sendt, stadig én besked",
+    "skrivninger i forløbet: exercise_logs, messages, sessions"
+  ],
+  "konsolFejl": [],
+  "groen": true
+}

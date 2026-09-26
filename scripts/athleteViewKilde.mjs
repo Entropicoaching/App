@@ -33,6 +33,8 @@ export const ATHLETEVIEW_MODULER = [
   'athlete/offlineSnapshot.js',
   'athlete/IngenForbindelse.jsx',
   'athlete/rekorder.js',
+  'athlete/dinUge.js',
+  'athlete/DinUgeKort.jsx',
 ]
 
 export function athleteViewKilde() {

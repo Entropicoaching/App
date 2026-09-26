@@ -22,6 +22,10 @@ if (!arg('--no-build')) { console.log('Bygger mod mocken ...'); byg() }
 const { createMockSupabase } = await import('../../e2e/mock-supabase.mjs')
 const fx = await import('../../e2e/fixtures.mjs')
 const { seed, exerciseIds } = bygSeed(fx.buildSeed, fx)
+let blok2 = async () => { throw new Error('blok 2 ikke skrevet endnu') }
+let blok3 = async () => { throw new Error('blok 3 ikke skrevet endnu') }
+if (blok === '2') { const m = await import('./blok2.mjs'); blok2 = m.blok2; m.forbered?.(seed, exerciseIds, fx) }
+if (blok === '3') { const m = await import('./blok3.mjs'); blok3 = m.blok3; m.forbered?.(seed, exerciseIds, fx) }
 const mock = createMockSupabase(seed)
 await mock.listen(MOCK_PORT)
 const mockUrl = `http://127.0.0.1:${MOCK_PORT}`
@@ -144,12 +148,7 @@ async function blok1() {
   trin(`mocken: squat-sæt ${rows.map(r => `${r.set_number}:${r.skipped ? 'sprunget' : `${r.weight}×${r.reps_completed}`}`).sort().join(' ')}`)
 }
 
-let blok2 = async () => { throw new Error('blok 2 ikke skrevet endnu') }
-let blok3 = async () => { throw new Error('blok 3 ikke skrevet endnu') }
-try { const m = await import('./blok2.mjs'); blok2 = m.blok2 } catch { /* endnu ikke */ }
-try { const m = await import('./blok3.mjs'); blok3 = m.blok3 } catch { /* endnu ikke */ }
-
-const ctx = { page, context, shot, trin, resultat, fane, mockUrl, fx, exerciseIds, log, venterPaa, godkendt, fejring, rekordRaekker, mockRaekker, iDag, logInd }
+const ctx = { page, context, port, sq, shot, trin, resultat, fane, mockUrl, fx, exerciseIds, log, venterPaa, godkendt, fejring, rekordRaekker, mockRaekker, iDag, logInd }
 try {
   if (blok !== '3') await logInd()
   if (blok === '1') await blok1()
