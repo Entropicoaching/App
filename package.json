@@ -85,7 +85,8 @@
     "verify:kritik-374": "node scripts/kritik-374.mjs",
     "verify:kritik-379": "node scripts/kritik-379.mjs",
     "verify:kritik-384": "node scripts/kritik-384.mjs",
-    "verify:kritik-392": "node scripts/kritik-392.mjs"
+    "verify:kritik-392": "node scripts/kritik-392.mjs",
+    "verify:kritik-394": "node scripts/kritik-394.mjs"
   },
   "dependencies": {
     "@supabase/auth-js": "^2.112.3",

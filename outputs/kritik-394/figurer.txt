@@ -1,0 +1,29 @@
+Figurer i squat-artiklen, squat-opslag-11 7356445
+
+ 1 kap-faserne        img    k1-opstilling.svg                            390: 210px bred, tekst 12 px | 1280: 210px, tekst 12 px
+ 2 kap-faserne        img    k1-unrack.svg                                390: 210px bred, tekst 12 px | 1280: 210px, tekst 12 px
+ 3 kap-faserne        img    k1-nedtur.svg                                390: 210px bred, tekst 12 px | 1280: 210px, tekst 12 px
+ 4 kap-faserne        img    k1-bund.svg                                  390: 210px bred, tekst 12 px | 1280: 210px, tekst 12 px
+ 5 kap-faserne        img    k1-vendepunkt.svg                            390: 210px bred, tekst 12 px | 1280: 210px, tekst 12 px
+ 6 kap-faserne        img    k1-sticking-point.svg                        390: 210px bred, tekst 12 px | 1280: 210px, tekst 12 px
+ 7 kap-faserne        img    k1-lockout.svg                               390: 210px bred, tekst 12 px | 1280: 210px, tekst 12 px
+ 8 kap-segmentmodellen canvas squat-panel                                  390: 241px bred, tekst - px | 1280: 265px, tekst - px
+ 9 kap-anatomien      canvas anatomi-panel                                390: 311px bred, tekst - px | 1280: 480px, tekst - px
+10 kap-anatomien      img    anatomi-balanceret-lowbar-opstilling.svg     390: 144px bred, tekst - px | 1280: 144px, tekst - px
+11 kap-anatomien      img    anatomi-balanceret-lowbar-halvvejs.svg       390: 177px bred, tekst - px | 1280: 177px, tekst - px
+12 kap-anatomien      img    anatomi-balanceret-lowbar-bund.svg           390: 268px bred, tekst 12 px | 1280: 268px, tekst 12 px
+13 kap-anatomien      img    anatomi-balanceret-lowbar-sticking.svg       390: 180px bred, tekst - px | 1280: 180px, tekst - px
+14 kap-stang          img    k5-lowbar.svg                                390: 306px bred, tekst 12 px | 1280: 230px, tekst 9 px
+15 kap-stang          img    k5-highbar.svg                               390: 307px bred, tekst 12 px | 1280: 230px, tekst 9 px
+16 kap-stang          img    k5-front.svg                                 390: 306px bred, tekst 12 px | 1280: 230px, tekst 9 px
+17 kap-stang          img    k5-safetybar.svg                             390: 306px bred, tekst 12 px | 1280: 230px, tekst 9 px
+18 kap-virkeligheden  canvas maalt-over-model-mount                       390: 326px bred, tekst - px | 1280: 620px, tekst - px
+19 kap-virkeligheden  img    1-start-model1.svg                           390: 0px bred, tekst - px | 1280: 0px, tekst - px (i fold)
+20 kap-virkeligheden  img    2-foer-knae-model1.svg                       390: 0px bred, tekst - px | 1280: 0px, tekst - px (i fold)
+21 kap-virkeligheden  img    3-knaehoejde-model1.svg                      390: 0px bred, tekst - px | 1280: 0px, tekst - px (i fold)
+22 kap-virkeligheden  img    4-efter-knae-model1.svg                      390: 0px bred, tekst - px | 1280: 0px, tekst - px (i fold)
+23 kap-virkeligheden  img    5-lockout-model1.svg                         390: 0px bred, tekst - px | 1280: 0px, tekst - px (i fold)
+24 kap-fejlbilleder   img    fejlbillede-balanceret-lowbar-god-morgen.svg 390: 299px bred, tekst 11.7 px | 1280: 299px, tekst 11.7 px
+25 kap-fejlbilleder   img    fejlbillede-balanceret-lowbar-haele-letter.s 390: 296px bred, tekst 11.7 px | 1280: 296px, tekst 11.7 px
+26 kap-fejlbilleder   img    fejlbillede-balanceret-lowbar-stang-foran-mi 390: 281px bred, tekst 11.7 px | 1280: 281px, tekst 11.7 px
+27 kap-fejlbilleder   img    fejlbillede-balanceret-lowbar-for-lidt-dybde 390: 261px bred, tekst 11.6 px | 1280: 261px, tekst 11.6 px
