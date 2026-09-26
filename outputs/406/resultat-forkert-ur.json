@@ -1,0 +1,17 @@
+{
+  "scenarie": "forkert-ur",
+  "koerselOk": true,
+  "fejl": null,
+  "trin": [
+    "telefonens ur 7 dage bagud: raekkerne staar med logged_at [\"2026-09-19T14:20:36.704Z\",\"2026-09-19T14:20:37.069Z\"] (7 dage foer serverens nu)"
+  ],
+  "telefonensDato": "2026-09-19T14:20:36.167Z",
+  "koeTomt": true,
+  "loggedAt": [
+    "2026-09-19T14:20:36.704Z",
+    "2026-09-19T14:20:37.069Z"
+  ],
+  "afvigelseDage": 7,
+  "godkendtKl": "2026-09-19T14:20:36.674Z",
+  "konsolFejl": []
+}

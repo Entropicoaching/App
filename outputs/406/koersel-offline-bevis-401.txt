@@ -1,0 +1,23 @@
+Bygger mod mocken ...
+  [tid] online: logget ind, service worker styrer siden, sæt 1 logget og gemt i mocken
+  [tid] uden net: appen genåbnet med udløbet token, Dagens pas vist fra telefonen (sæt 2/4)
+  [tid] uden net: sæt 2, 3, 4 logget; hver køpost bærer tidspunktet for "Godkendt" (14:15:58, 14:16:00, 14:16:02 UTC)
+  [tid] nettet tilbage: køen tømt; 1 INSERT fik sit svar tabt undervejs
+  [tid] mocken: én række pr. sæt [1,1,1,1]; sæt 2 blev godkendt 11 s før nettet kom og står med godkendt-tiden; sorteret på logged_at (nyeste først) er rækkefølgen [4,3,2,1]
+GRØN: tid
+  [haenger] online: logget ind, service worker styrer siden, sæt 1 logget og gemt i mocken
+AssertionError [ERR_ASSERTION]: det første INSERT nåede frem til mocken
+
+0 !== 1
+
+    at Object.scenarieHaenger [as haenger] (file:///C:/Users/Entropi/Desktop/entropi-app/outputs/401/offline-bevis.mjs:188:10)
+    at async koer (file:///C:/Users/Entropi/Desktop/entropi-app/outputs/401/offline-bevis.mjs:256:5)
+    at async main (file:///C:/Users/Entropi/Desktop/entropi-app/outputs/401/offline-bevis.mjs:283:33) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 0,
+  expected: 1,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+exit 1

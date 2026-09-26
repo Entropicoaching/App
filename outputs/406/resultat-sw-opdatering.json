@@ -1,0 +1,23 @@
+{
+  "scenarie": "sw-opdatering",
+  "koerselOk": true,
+  "fejl": null,
+  "trin": [
+    "uden net: 2 saet i koeen",
+    "online med ny build: siden genindlaest 1 gang(e); koeen tom=true; mocken [1,1,0,0]; Sæt 3/4"
+  ],
+  "koeTomt": true,
+  "genindlaesninger": 1,
+  "raekker": [
+    1,
+    1,
+    0,
+    0
+  ],
+  "skaerm": {
+    "naesteSaet": "Sæt 3/4",
+    "linjer": [],
+    "godkendtKnap": true
+  },
+  "konsolFejl": []
+}
