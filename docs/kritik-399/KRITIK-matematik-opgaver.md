@@ -81,13 +81,13 @@ Kodeplaceringerne herunder er i matematik-repoet, `main` @ `e662c66`.
   - "Forlænge" spørger om poser, men vil have en brøk (U4): "Han hælder det i små poser, der hver
     rummer 1/9 sæk. Hvilken brøk er lige så meget som 2/3?" Barnet vil svare "6 poser".
   - "Skriv brøken så kort som muligt" er ikke skolesprog (U3).
-- **Kode:** `src/broek-trappe.js`:
-  - 163-205 (`sammenligningOpgave`)
-  - 211-250 (`lignendeBroekOpgave`: tekst 223 og 244; distraktoren "lagt d til" i 228)
-  - 263-310 (`sammenlaegning`, `fratraekning`: tekst 273 og 299)
-  - 322-350 (`broekAfMaengdeOpgave`: tekst 348)
-  - 367-420 (`forskelligeNaevnereOpgave`)
-  - 451 (`blandetTalOpgave`: "Mølleren har 11/8 sæk mel")
+- **Kode:**
+  - `src/broek-trappe.js:163-205` (`sammenligningOpgave`)
+  - `src/broek-trappe.js:211-250` (`lignendeBroekOpgave`: tekst 223 og 244; distraktoren "lagt d til" i 228)
+  - `src/broek-trappe.js:263-310` (`sammenlaegning`, `fratraekning`: tekst 273 og 299)
+  - `src/broek-trappe.js:322-350` (`broekAfMaengdeOpgave`: tekst 348)
+  - `src/broek-trappe.js:367-420` (`forskelligeNaevnereOpgave`)
+  - `src/broek-trappe.js:451` (`blandetTalOpgave`: "Mølleren har 11/8 sæk mel")
 - **Før:** "Mølleren havde 3/9 sæk mel og solgte 1/9 sæk. Hvor meget har han tilbage?"
 - **Nu:** "Mølleren havde 5/8 sæk mel og solgte 3/8 sæk til bageren. Hvor meget er der tilbage?"
 - **Før:** "Mølleren har 2/3 sæk mel. Han hælder det i små poser, der hver rummer 1/9 sæk. Hvilken
@@ -116,11 +116,11 @@ Kodeplaceringerne herunder er i matematik-repoet, `main` @ `e662c66`.
     selvom forkortning først kommer på trin 4 (U4).
   - Stangen `■■■■□□□□` tegnes med en stor fyldt og en lille tom firkant, fordi skrifttypen har to
     størrelser. Det ses i `outputs/kritik-399/korn/mobil-svar1-250ms.png` (U7).
-- **Kode:** `src/broek-trappe.js`:
-  - 96-100 (`HELHEDER`: "Kværnhjulet er delt i … er malet")
-  - 108 (stangen)
-  - 125 og 152 (`vis: rng() < 0.5 ? raa : facit`)
-  - 135-160 (`delOpgave`: tekst 144 har `sæk${saekke === 1 ? "" : "ke"}`, men hint og forklaring
+- **Kode:**
+  - `src/broek-trappe.js:96-100` (`HELHEDER`: "Kværnhjulet er delt i … er malet")
+  - `src/broek-trappe.js:108` (stangen)
+  - `src/broek-trappe.js:125` og `src/broek-trappe.js:152` (`vis: rng() < 0.5 ? raa : facit`)
+  - `src/broek-trappe.js:135-160` (`delOpgave`: tekst 144 har `sæk${saekke === 1 ? "" : "ke"}`, men hint og forklaring
     i 152-157 skriver altid "sække")
 - **Før:** "Kværnhjulet er delt i 6 lige store felter, og 2 er malet: ■■□□□□. Hvor stor en del af
   hjulet er malet?"
