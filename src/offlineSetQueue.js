@@ -98,6 +98,19 @@ export function clearOfflineSetIfSame(athleteId, key, sent, storage = globalThis
   } catch { /* som clearOfflineSet */ }
 }
 
+// ORDRE 414 (O4 i docs/kritik-403): "fortryd" skriver sletningen i køen med det
+// samme, i stedet for sættets post, og ikke først når sættets hængende
+// skrivning er færdig. Dør appen imens, og nåede INSERT'et frem, sletter køens
+// runde rækken ved næste åbning. rowId = det id rækken har eller kan have fået
+// hos serveren; uden id er der intet at slette, og posten fjernes bare.
+// Returnerer den lagte sletning (eller null).
+export function queueUndoTombstone(athleteId, key, { exerciseId, setNumber, rowId }, storage = globalThis.localStorage) {
+  if (!rowId) { clearOfflineSet(athleteId, key, storage); return null }
+  const tombstone = { op: 'delete', exerciseId, setNumber, clientId: rowId, payload: null }
+  if (!saveOfflineSet(athleteId, key, tombstone, storage)) clearOfflineSet(athleteId, key, storage)
+  return tombstone
+}
+
 // --- ORDRE 397: idempotens, rækkefølge, parkerede sæt, overlay -------------
 // Se docs/OFFLINE-PAS.md. Stadig rene funktioner med storage som parameter.
 
