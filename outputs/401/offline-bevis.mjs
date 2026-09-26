@@ -8,8 +8,14 @@
 //            der går mindst 6 s fra sættene logges til de sendes, og hvert
 //            sæt skal stå i mocken med tidspunktet for "Godkendt", ikke for
 //            afsendelsen, i den rækkefølge de blev løftet.
+//   haenger: wifi uden internet. Browseren melder online, men alle kald til
+//            serveren hænger (ingen svar, ingen fejl). Det første INSERT når
+//            dog frem til mocken (rækken oprettes), svaret gør ikke. Sæt 2
+//            skal vises som "sendes når du har net" efter ca. 8 s, sæt 3 med
+//            det samme uden at der forsøges et kald, og når nettet virker
+//            igen, sendes køen af sig selv, med én række pr. sæt.
 //
-// Kørsel: node outputs/401/offline-bevis.mjs [tid]
+// Kørsel: node outputs/401/offline-bevis.mjs [tid] [haenger]  (uden argument: begge)
 //   -> outputs/401/<scenarie>/*.png + outputs/401/bevis-<scenarie>.json
 import { createServer } from 'node:http'
 import { spawnSync } from 'node:child_process'
@@ -24,7 +30,7 @@ const MOCK_PORT = Number(process.env.BEVIS_MOCK_PORT || 8998)
 const MOCK_KEY = 'mock-anon-key-bevis-401'
 const MOBILE_UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1'
 const MIME = { '.html': 'text/html', '.js': 'application/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png', '.json': 'application/json', '.webmanifest': 'application/manifest+json' }
-const ALLE = ['tid']
+const ALLE = ['tid', 'haenger']
 
 function startStaticServer() {
   const server = createServer((req, res) => {
@@ -147,7 +153,85 @@ async function scenarieTid({ page, context, mockUrl, table, trin, shot, fx, resu
   Object.assign(resultat, { raekkerPrSaet: prSaet, loggedAt: tider, sendtFra: new Date(sendtFra).toISOString(), ventetidSaet2S: ventetid, coachOrden, skrivninger: skrivninger.map(s => s.metode) })
 }
 
-const SCENARIER = { tid: scenarieTid }
+async function scenarieHaenger({ page, context, mockUrl, table, trin, shot, fx, resultat }) {
+  const { ATHLETE_ID, EXERCISE_ID } = fx
+  const koeNoegle = `entropi_offline_sets:${ATHLETE_ID}`
+  await onlineSaet1({ page, mockUrl, trin, shot, ATHLETE_USER: fx.ATHLETE_USER })
+
+  // Wifi uden internet: alt hænger, men det første INSERT af et sæt når frem.
+  let haenger = true
+  let slip
+  const sluppet = new Promise((r) => { slip = r })
+  let naaedeFrem = 0
+  const saetPost = { 2: 0, 3: 0 }
+  await context.route(`${mockUrl}/**`, async (route) => {
+    if (!haenger) return route.continue().catch(() => {})
+    const r = route.request()
+    if (r.method() === 'POST' && r.url().includes('/rest/v1/exercise_logs')) {
+      const n = JSON.parse(r.postData() || '{}').set_number
+      if (n in saetPost) saetPost[n]++
+      if (naaedeFrem === 0) { naaedeFrem++; await route.fetch().catch(() => {}) }
+    }
+    await sluppet
+    return route.abort('failed').catch(() => {})
+  })
+  assert.equal(await page.evaluate(() => navigator.onLine), true, 'browseren tror den er online')
+
+  // Sæt 2: kaldet hænger; efter ca. 8 s regnes det som offline.
+  await page.getByText('Sæt 2/4', { exact: true }).waitFor({ state: 'visible', timeout: 10000 })
+  const godkendt2 = await page.evaluate(() => Date.now())
+  await page.getByRole('button', { name: 'Godkendt', exact: true }).click()
+  await page.getByText('Sæt 3/4', { exact: true }).waitFor({ state: 'visible', timeout: 3000 })
+  await page.getByText('1 sæt gemt lokalt', { exact: false }).waitFor({ state: 'visible', timeout: 20000 })
+  const markering2Ms = Date.now() - godkendt2
+  assert.ok(markering2Ms >= 7000 && markering2Ms <= 10500, `sæt 2 skal vises som ventende efter ca. 8 s, tog ${markering2Ms} ms`)
+  assert.equal(naaedeFrem, 1, 'det første INSERT nåede frem til mocken')
+  trin(`wifi uden internet (navigator.onLine=true): sæt 2 gik videre til sæt 3 med det samme og blev vist som "gemt lokalt" efter ${markering2Ms} ms; dets INSERT nåede mocken, svaret kom aldrig`)
+  await shot('02-haenger-saet-2-venter')
+
+  // Sæt 3: nettet er kendt dødt, så intet kald, markering med det samme.
+  const godkendt3 = await page.evaluate(() => Date.now())
+  await page.getByRole('button', { name: 'Godkendt', exact: true }).click()
+  await page.getByText('2 sæt gemt lokalt', { exact: false }).waitFor({ state: 'visible', timeout: 5000 })
+  const markering3Ms = Date.now() - godkendt3
+  assert.ok(markering3Ms < 2000, `sæt 3 skal vises som ventende med det samme, tog ${markering3Ms} ms`)
+  await page.waitForTimeout(1000)
+  assert.equal(saetPost[3], 0, 'sæt 3: intet kald forsøgt, mens nettet er kendt dødt')
+  await page.getByRole('button', { name: /klarede sæt/ }).first().click()
+  await page.locator('[data-venter-paa-net="1"]').first().waitFor({ state: 'visible', timeout: 5000 })
+  const markeringer = await page.locator('[data-venter-paa-net="1"]').count()
+  assert.equal(markeringer, 2, 'sæt 2 og 3 viser "sendes når du har net"')
+  trin(`sæt 3: vist som ventende efter ${markering3Ms} ms uden noget kald; sæt 2 og 3 har hver "sendes når du har net"`)
+  await shot('03-haenger-to-venter')
+  const koe = await page.evaluate((k) => JSON.parse(localStorage.getItem(k) || '{}'), koeNoegle)
+  assert.deepEqual(Object.keys(koe).sort(), [2, 3].map(n => `${EXERCISE_ID}_${n}`).sort())
+  assert.equal((await table('exercise_logs')).filter(r => r.set_number === 2 && !r.skipped).length, 1, 'mocken har allerede sæt 2 (det hængende INSERT nåede frem)')
+
+  // Nettet virker igen. Ingen 'online'-event (browseren var aldrig offline);
+  // køen prøver selv igen (hvert 20. s) og opdager det.
+  haenger = false
+  slip()
+  const tilbage = Date.now()
+  await page.waitForFunction((k) => Object.keys(JSON.parse(localStorage.getItem(k) || '{}')).length === 0, koeNoegle, { timeout: 60000 })
+  await page.waitForFunction(() => !document.querySelector('[data-venter-paa-net]'), null, { timeout: 15000 })
+  const sendtEfterMs = Date.now() - tilbage
+  await context.unroute(`${mockUrl}/**`)
+  trin(`nettet virker igen: køen sendt af sig selv efter ${sendtEfterMs} ms, markeringerne væk`)
+  await shot('04-haenger-sendt')
+
+  const rows = (await table('exercise_logs')).filter(r => r.athlete_id === ATHLETE_ID && r.exercise_id === EXERCISE_ID && !r.skipped)
+  const prSaet = [1, 2, 3, 4].map(n => rows.filter(r => r.set_number === n).length)
+  assert.deepEqual(prSaet, [1, 1, 1, 0], `præcis én række for sæt 1-3, fik ${JSON.stringify(prSaet)}`)
+  for (const n of [2, 3]) {
+    const row = rows.find(r => r.set_number === n)
+    assert.equal(row.id, koe[`${EXERCISE_ID}_${n}`].clientId, `sæt ${n} gemt med sit række-id`)
+    assert.equal(row.logged_at, koe[`${EXERCISE_ID}_${n}`].payload.logged_at, `sæt ${n} har tiden fra "Godkendt"`)
+  }
+  trin(`mocken: én række pr. sæt ${JSON.stringify(prSaet)}; sæt 2, hvis første INSERT nåede frem, er ikke dubleret; sæt 2 og 3 har deres række-id og godkendt-tid`)
+  Object.assign(resultat, { markering2Ms, markering3Ms, sendtEfterMs, raekkerPrSaet: prSaet, insertForsoegUnderHaeng: saetPost })
+}
+
+const SCENARIER = { tid: scenarieTid, haenger: scenarieHaenger }
 
 async function koer(navn, { chromium, createMockSupabase, fx }) {
   const mock = createMockSupabase(fx.buildSeed())

@@ -75,3 +75,21 @@ export function seemsOffline() {
 if (typeof window !== 'undefined') {
   window.addEventListener('online', () => { netFailedAt = 0 })
 }
+
+// ORDRE 401: wifi uden internet fejler ikke, det hænger. supabase.js' fetch
+// giver først op efter 12 s, og queueWrite prøver fire gange. Et sæt-kald der
+// ikke har svaret inden for SLOW_NET_MS, regnes derfor som offline: kalderen
+// får SLOW_NET_ERROR (sættet ligger allerede i køen og vises som ventende),
+// nettet huskes som dødt, og køen sender igen senere med samme række-id. Det
+// oprindelige kald kører videre; når det frem, afviser databasen genforsøget
+// (23505), så der ikke bliver to rækker.
+export const SLOW_NET_MS = 8000
+export const SLOW_NET_ERROR = { code: 'SLOW_NET', message: 'Serveren svarede ikke' }
+
+export function withSlowNetCutoff(call, ms = SLOW_NET_MS) {
+  let timer
+  const cutoff = new Promise((resolve) => {
+    timer = setTimeout(() => { markNetworkFailure(); resolve({ data: null, error: SLOW_NET_ERROR }) }, ms)
+  })
+  return Promise.race([Promise.resolve(call), cutoff]).finally(() => clearTimeout(timer))
+}

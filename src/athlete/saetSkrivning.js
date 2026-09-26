@@ -13,7 +13,7 @@ import {
   saveOfflineSet, loadOfflineSets, clearOfflineSet, countOfflineSets, clearOfflineSetIfSame, newSetClientId,
   orderedOfflineSets, parkOfflineSet, queuedPayloadWithTime,
 } from '../offlineSetQueue'
-import { browserSaysOffline, seemsOffline } from '../offlineSession'
+import { browserSaysOffline, seemsOffline, withSlowNetCutoff } from '../offlineSession'
 import { estimatedOneRepMax } from '../exerciseProgress'
 import { parsePlannedRpe, logFrontendError } from './ugeHjaelp'
 
@@ -78,25 +78,45 @@ export function lavSaetSkrivning({
     return res
   }
 
-  function persistSetLog(key, exerciseId, setNumber, payload, realExistingId, clientId) {
+  // ORDRE 401: hasQueue = sættet ligger i den lokale kø, som sender igen. Så
+  // stoppes genforsøgene, når nettet er kendt dødt (se queueWrite's giveUpIf).
+  function persistSetLog(key, exerciseId, setNumber, payload, realExistingId, clientId, { hasQueue = false } = {}) {
+    const writeOpts = hasQueue ? { giveUpIf: seemsOffline } : undefined
     const ref = setWriteRef.current[key] || (setWriteRef.current[key] = { realId: null, chain: Promise.resolve() })
     if (realExistingId) ref.realId = realExistingId
     if (clientId) ref.clientId = clientId
     const task = ref.chain.then(async () => {
       if (browserSaysOffline()) return { data: null, error: OFFLINE_ERROR }
       if (ref.realId) {
-        const upd = await queueWrite(() => supabase.from('exercise_logs').update(payload).eq('id', ref.realId).select('id'))
+        const upd = await queueWrite(() => supabase.from('exercise_logs').update(payload).eq('id', ref.realId).select('id'), writeOpts)
         if (upd.error) return upd                                   // transient fejl → lad kalderen vise fejl/retry (ingen dublet)
         if (Array.isArray(upd.data) && upd.data.length) return upd  // rækken blev opdateret
         ref.realId = null                                           // rækken findes ikke mere (fx slettet) → INSERT nedenfor
       }
-      const res = await queueWrite(() => insertSetLog(exerciseId, setNumber, payload, ref.clientId))
+      const res = await queueWrite(() => insertSetLog(exerciseId, setNumber, payload, ref.clientId), writeOpts)
       if (res?.data?.id) ref.realId = res.data.id
       return res
     })
     // Hold kæden i live selv hvis en skrivning fejler/kaster.
     ref.chain = task.then(() => {}, () => {})
     return task
+  }
+
+  // ORDRE 401: et sæt der ligger i køen, venter højst SLOW_NET_MS på serveren.
+  // Svarer den ikke (wifi uden internet), får kalderen SLOW_NET og viser sættet
+  // som ventende; kaldet kører videre i baggrunden, og når det frem, fjernes
+  // køposten her (ellers sender flushOfflineSets den med samme række-id).
+  async function sendQueuedSet(key, exerciseId, setNumber, payload, realExistingId, clientId) {
+    const write = persistSetLog(key, exerciseId, setNumber, payload, realExistingId, clientId, { hasQueue: true })
+    const res = await withSlowNetCutoff(write)
+    if (res.error?.code === 'SLOW_NET') {
+      write.then((late) => {
+        if (late?.error) return
+        clearOfflineSetIfSame(athlete.id, key, { payload })
+        setPendingSyncCount(countOfflineSets(athlete.id))
+      }, () => {})
+    }
+    return res
   }
 
   async function logSet(exerciseId, setNumber, totalSets, repsCompleted, plannedRpe, { localFallback = false } = {}) {
@@ -184,7 +204,9 @@ export function lavSaetSkrivning({
     if (skipNetwork) setPendingSyncCount(countOfflineSets(athlete.id))
     const { error } = skipNetwork
       ? { error: OFFLINE_ERROR }
-      : await persistSetLog(key, exerciseId, setNumber, payload, realExisting?.id, clientId)
+      : queued
+        ? await sendQueuedSet(key, exerciseId, setNumber, payload, realExisting?.id, clientId)
+        : await persistSetLog(key, exerciseId, setNumber, payload, realExisting?.id, clientId)
     if (error) {
       // ORDRE 280 · commit 4 — "Godkendt" i Dagens pas beder om localFallback:
       // sættet er allerede vist som logget (optimistisk, ovenfor); i stedet
@@ -311,7 +333,7 @@ export function lavSaetSkrivning({
         const payload = queuedPayloadWithTime(entry)
         if (entry.op === 'delete') {
           // Fortryd uden net af et sæt der måske nåede serveren (se undoLoggedSet).
-          const { error } = await queueWrite(() => supabase.from('exercise_logs').delete().eq('id', clientId).eq('athlete_id', athlete.id))
+          const { error } = await withSlowNetCutoff(queueWrite(() => supabase.from('exercise_logs').delete().eq('id', clientId).eq('athlete_id', athlete.id), { giveUpIf: seemsOffline }))
           if (!error) clearOfflineSetIfSame(athlete.id, key, entry)
           else if (seemsOffline()) break
           continue
@@ -323,14 +345,16 @@ export function lavSaetSkrivning({
           // tilbage). Slå rækken op først, så genafspilningen bliver en UPDATE
           // og ikke en dublet. Kan opslaget ikke gennemføres, ligger posten
           // stadig i køen til næste forsøg.
-          const { data: found, error: lookupError } = await supabase
+          const { data: found, error: lookupError } = await withSlowNetCutoff(supabase
             .from('exercise_logs').select('id')
             .eq('athlete_id', athlete.id).eq('exercise_id', exerciseId).eq('set_number', setNumber)
-            .limit(1)
+            .limit(1))
           if (lookupError) { if (seemsOffline()) break; continue }
           realId = found?.[0]?.id
         }
-        const { error } = await persistSetLog(key, exerciseId, setNumber, payload, realId, clientId)
+        // ORDRE 401: et hængende kald stopper runden efter SLOW_NET_MS (nettet
+        // huskes som dødt); posten bliver i køen til næste runde.
+        const { error } = await withSlowNetCutoff(persistSetLog(key, exerciseId, setNumber, payload, realId, clientId, { hasQueue: true }))
         if (!error) clearOfflineSetIfSame(athlete.id, key, entry)
         else if (seemsOffline()) break
         else if (isPermanentSetError(error)) {
@@ -422,11 +446,13 @@ export function lavSaetSkrivning({
     if (skipNetwork) setPendingSyncCount(countOfflineSets(athlete.id))
     const { error } = skipNetwork
       ? { error: OFFLINE_ERROR }
-      : await persistSetLog(key, exerciseId, setNumber, payload, realExistingId, clientId)
+      : queued
+        ? await sendQueuedSet(key, exerciseId, setNumber, payload, realExistingId, clientId)
+        : await persistSetLog(key, exerciseId, setNumber, payload, realExistingId, clientId)
     if (error) {
       // Samme optimistiske fallback som logSet: forbliver rettet i UI,
       // ligger i offline-køen til flushOfflineSets sender den igen.
-      if (error.code !== 'OFFLINE') logFrontendError('Ret sæt: opdatering fejlede, lagt i offline-kø', error, athlete.id)
+      if (error.code !== 'OFFLINE' && error.code !== 'SLOW_NET') logFrontendError('Ret sæt: opdatering fejlede, lagt i offline-kø', error, athlete.id)
       setPendingSyncCount(countOfflineSets(athlete.id))
       return true
     }
