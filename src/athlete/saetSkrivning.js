@@ -8,6 +8,7 @@ import { runGuardedWrite } from '../athleteWriteGuard'
 import { recordSilentFail } from '../athleteSilentFailLog'
 import { applySetEdit } from '../editLoggedSet'
 import { restSecondsForExercise } from '../restBetweenSets'
+import { isSessionDone } from '../nextSet'
 import { startRestPause, clearRestPause } from '../restPause'
 import {
   saveOfflineSet, loadOfflineSets, countOfflineSets, clearOfflineSetIfSame, newSetClientId,
@@ -149,6 +150,16 @@ export function lavSaetSkrivning({
     return res
   }
 
+  // ORDRE 422: er passet færdigt, når dette sæt (logget eller sprunget over)
+  // står som gjort? Samme regel som Dagens pas' "Passet er færdigt"
+  // (isSessionDone: alle sæt har en række).
+  function pasFaerdigtEfter(exerciseId, setNumber) {
+    const sess = allWeeks.flatMap(w => w.sessions || []).find(se => (se.exercises || []).some(e => e.id === exerciseId))
+    if (!sess) return false
+    const logs = exerciseLogs.filter(l => !(l.exercise_id === exerciseId && l.set_number === setNumber))
+    return isSessionDone(sess, [...logs, { exercise_id: exerciseId, set_number: setNumber }])
+  }
+
   async function logSet(exerciseId, setNumber, totalSets, repsCompleted, plannedRpe, { localFallback = false } = {}) {
     const key = `${exerciseId}_${setNumber}`
     const input = logInputs[key] || {}
@@ -189,10 +200,17 @@ export function lavSaetSkrivning({
     // øvelsens note (se restBetweenSets.js); ingen note → en fornuftig
     // standard. Persisteres (restPause.js), så den overlever et lukket/
     // genåbnet vindue.
+    // ORDRE 422: efter passets sidste sæt er der ingen næste at holde pause
+    // til — pausen startes ikke, og en pause fra forrige sæt ryddes.
     const loggedExercise = allWeeks.flatMap(w => w.sessions || []).flatMap(sess => sess.exercises || []).find(e => e.id === exerciseId)
-    const restSeconds = restSecondsForExercise(loggedExercise)
-    startRestPause(athlete.id, restSeconds, loggedExercise?.name)
-    setRestPause({ startedAt: Date.now(), durationSeconds: restSeconds, label: loggedExercise?.name || null })
+    if (pasFaerdigtEfter(exerciseId, setNumber)) {
+      clearRestPause(athlete.id)
+      setRestPause(null)
+    } else {
+      const restSeconds = restSecondsForExercise(loggedExercise)
+      startRestPause(athlete.id, restSeconds, loggedExercise?.name)
+      setRestPause({ startedAt: Date.now(), durationSeconds: restSeconds, label: loggedExercise?.name || null })
+    }
     setSetConfirm(p => ({ ...p, [key]: 'saved' }))
     let fadeTimer
     const scheduleFade = () => {
@@ -541,6 +559,7 @@ export function lavSaetSkrivning({
       () => showFlash('Sættet kunne ikke springes over. Tjek din forbindelse og prøv igen.', 'error'),
     )
     if (!ok) return
+    if (pasFaerdigtEfter(exerciseId, setNumber)) { clearRestPause(athlete.id); setRestPause(null) }
     fetchExerciseLogs(athlete.id, currentWeek)
   }
 

@@ -35,7 +35,9 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
   const [editingSet, setEditingSet] = useState(null) // { exerciseId, setNumber } | null
   const [editInput, setEditInput] = useState({ weight: '', reps: '' })
   // ORDRE 339 · blok 1 (F3) — klarede sæt er kollapset til én linje som standard.
-  const [showPriorSets, setShowPriorSets] = useState(false)
+  // ORDRE 422: holder øvelsens id i stedet for true/false, så listen foldes
+  // sammen af sig selv, når kortet går videre til en ny øvelse eller et nyt pas.
+  const [showPriorSetsFor, setShowPriorSetsFor] = useState(null)
   // ORDRE 419 (I2): RPE-vælgeren og notefeltet på kortet. Nøglen er sættets
   // logInputs-nøgle, så de lukker af sig selv, når kortet går videre.
   const [rpeOpenFor, setRpeOpenFor] = useState(null)
@@ -220,7 +222,7 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
   const nextSetNumber = setNumber + 1
   // ORDRE 339 · blok 1 (F3) — klarede sæt foldet ud (tryk, eller et sæt står
   // åbent til redigering); ellers én linje, der også bærer "fortryd".
-  const priorSetsOpen = showPriorSets || editingSet != null
+  const priorSetsOpen = showPriorSetsFor === ex.id || editingSet != null
   const undoInline = priorSetNumbers.length > 0 && !priorSetsOpen && lastLoggedSet && lastLoggedSet.exerciseId === ex.id
   const nextSetReps = repsIsEditable ? (last?.reps ?? (repsPrescription.type === 'range' ? repsPrescription.min : null)) : ex.reps
   const nextSetWeight = ex.recommended_weight ?? suggestion?.weight ?? last?.weight ?? null
@@ -290,7 +292,7 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
               type="button"
               aria-expanded="false"
               aria-label={`Vis ${priorSetNumbers.length} klarede sæt`}
-              onClick={() => setShowPriorSets(true)}
+              onClick={() => setShowPriorSetsFor(ex.id)}
               style={{ background: 'none', border: 'none', color: '#7a7770', cursor: 'pointer', fontSize: '0.58rem', letterSpacing: '0.04em', padding: 0, minWidth: '44px', minHeight: '44px', boxSizing: 'border-box', flexShrink: 0 }}
             >vis / ret ▾</button>
           </div>
@@ -306,7 +308,10 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
               return (
                 <div key={n} style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', padding: '0.5rem', marginBottom: '0.2rem', border: '1px solid rgba(200,146,58,0.25)', background: 'rgba(200,146,58,0.04)' }}>
                   <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.04em', color: '#c8923a' }}>Retter sæt {n}</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                  {/* ORDRE 422: vægt og reps på hver sin linje (ingen flexWrap), så
+                      rækken ikke brækker midt i reps-kontrollerne ved 390 px —
+                      samme rettelse som ORDRE 314 gav selve kortet. */}
+                  <div data-ret-raekke="vaegt" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                     <button
                       type="button" aria-label="2,5 kg mindre (ret)"
                       onClick={() => setEditInput(p => ({ ...p, weight: stepWeight(p.weight, -2.5) }))}
@@ -326,31 +331,31 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
                       onClick={() => setEditInput(p => ({ ...p, weight: stepWeight(p.weight, 2.5) }))}
                       style={{ ...s.btnGhost, minWidth: '44px', minHeight: '44px', boxSizing: 'border-box', padding: 0, fontSize: '1rem', flexShrink: 0 }}
                     >+</button>
-                    {repsIsEditable && (
-                      <>
-                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.9rem', color: '#c8923a' }}>×</span>
-                        <button
-                          type="button" aria-label="1 rep mindre (ret)"
-                          onClick={() => setEditInput(p => ({ ...p, reps: stepReps(p.reps, -1) }))}
-                          style={{ ...s.btnGhost, minWidth: '44px', minHeight: '44px', boxSizing: 'border-box', padding: 0, fontSize: '1rem', flexShrink: 0 }}
-                        >−</button>
-                        <input
-                          aria-label={`Reps, ret sæt ${n}`}
-                          style={{ ...s.fieldInput, width: '56px', minWidth: '56px', minHeight: '44px', boxSizing: 'border-box', flexShrink: 0, textAlign: 'center' }}
-                          type="text" inputMode="numeric" value={editInput.reps}
-                          onChange={e => {
-                            const v = e.target.value
-                            if (v === '' || /^\d*$/.test(v)) setEditInput(p => ({ ...p, reps: v }))
-                          }}
-                        />
-                        <button
-                          type="button" aria-label="1 rep mere (ret)"
-                          onClick={() => setEditInput(p => ({ ...p, reps: stepReps(p.reps, 1) }))}
-                          style={{ ...s.btnGhost, minWidth: '44px', minHeight: '44px', boxSizing: 'border-box', padding: 0, fontSize: '1rem', flexShrink: 0 }}
-                        >+</button>
-                      </>
-                    )}
                   </div>
+                  {repsIsEditable && (
+                    <div data-ret-raekke="reps" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.9rem', color: '#c8923a' }}>×</span>
+                      <button
+                        type="button" aria-label="1 rep mindre (ret)"
+                        onClick={() => setEditInput(p => ({ ...p, reps: stepReps(p.reps, -1) }))}
+                        style={{ ...s.btnGhost, minWidth: '44px', minHeight: '44px', boxSizing: 'border-box', padding: 0, fontSize: '1rem', flexShrink: 0 }}
+                      >−</button>
+                      <input
+                        aria-label={`Reps, ret sæt ${n}`}
+                        style={{ ...s.fieldInput, width: '56px', minWidth: '56px', minHeight: '44px', boxSizing: 'border-box', flexShrink: 0, textAlign: 'center' }}
+                        type="text" inputMode="numeric" value={editInput.reps}
+                        onChange={e => {
+                          const v = e.target.value
+                          if (v === '' || /^\d*$/.test(v)) setEditInput(p => ({ ...p, reps: v }))
+                        }}
+                      />
+                      <button
+                        type="button" aria-label="1 rep mere (ret)"
+                        onClick={() => setEditInput(p => ({ ...p, reps: stepReps(p.reps, 1) }))}
+                        style={{ ...s.btnGhost, minWidth: '44px', minHeight: '44px', boxSizing: 'border-box', padding: 0, fontSize: '1rem', flexShrink: 0 }}
+                      >+</button>
+                    </div>
+                  )}
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
                     <button
                       type="button"

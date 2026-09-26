@@ -1,0 +1,51 @@
+{
+  "blok": "2",
+  "foer": true,
+  "fund": {
+    "squatEfterVis": "foldet-ud",
+    "baenkEfterSkift": "foldet-ud",
+    "retPanel": {
+      "repsMindre": {
+        "top": 286,
+        "right": 293
+      },
+      "repsFelt": {
+        "top": 336,
+        "right": 103
+      },
+      "repsMere": {
+        "top": 336,
+        "right": 153
+      },
+      "kgMindre": {
+        "top": 286,
+        "right": 91
+      },
+      "kgMere": {
+        "top": 286,
+        "right": 228
+      },
+      "bredde": 390
+    },
+    "pauseFoerSidste": 1,
+    "pauseEfterSidste": 1,
+    "kvittering": {
+      "banner": "Video modtaget ✓ · din coach ser den, når han åbner den",
+      "status": "Sendt til din coach Din måling ligger klar til coachens gennemgang.",
+      "px": 14,
+      "baggrund": "rgba(20, 20, 16, 0.8)",
+      "indenfor": true,
+      "linjer": 4
+    },
+    "kvitteringEfter6s": {
+      "banner": null,
+      "status": "Sendt til din coach Din måling ligger klar til coachens gennemgang.",
+      "px": 14,
+      "baggrund": "rgba(20, 20, 16, 0.8)",
+      "indenfor": true,
+      "linjer": 0
+    }
+  },
+  "konsolFejl": [],
+  "groen": false
+}
