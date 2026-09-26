@@ -1,0 +1,2 @@
+
+GRØN: atletlisten sorteres efter afvigelse denne uge (skredet → på sporet → ingen plan), og et klik ind på en atlet og tilbage bevarer sorteringen.

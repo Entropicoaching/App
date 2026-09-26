@@ -1,0 +1,1 @@
+OK: progressionstilstand v1 er komplet, valideres fail-closed og kræver eksplicit godkendelse.

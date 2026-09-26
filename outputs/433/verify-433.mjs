@@ -146,8 +146,7 @@ async function tur() {
     await page.getByText('Dag 1 — Squat').last().click(); await page.waitForTimeout(700)
     r.ugeOevelse = await page.evaluate(() => [...document.querySelectorAll('button[aria-label^="Flyt Squat"], button[aria-label^="Rediger Squat"], button[aria-label^="Slet Squat"]')].map(b => ({ el: b.getAttribute('aria-label'), w: Math.round(b.getBoundingClientRect().width) })))
     r.ugeAabnet = await telefonTjek(page)
-    await page.getByText('Dag 1 — Squat').last().scrollIntoViewIfNeeded()
-    await page.evaluate(() => window.scrollBy(0, -120))
+    await page.evaluate(() => { const b = document.querySelector('button[aria-label^="Flyt Dag 1"]'); window.scrollTo(0, b.getBoundingClientRect().top + window.scrollY - 160) })
     await shot(page, 'T-uge-dag1-390')
     await slut()
   }

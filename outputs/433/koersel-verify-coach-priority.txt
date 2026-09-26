@@ -1,0 +1,1 @@
+OK: coach priority order, age handling and visibility filters are valid

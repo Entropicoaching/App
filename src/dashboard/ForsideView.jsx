@@ -313,9 +313,9 @@ export default function ForsideView({
                               <button
                                 onClick={event => { event.stopPropagation(); openProfile(athlete, 'log') }}
                                 aria-label={`Ugens stemme fra ${athlete.name}: åbn Log`}
-                                style={{ display: 'flex', alignItems: 'baseline', gap: '0.35rem', maxWidth: '100%', marginTop: '0.22rem', padding: 0, border: 'none', background: 'transparent', cursor: 'pointer', textAlign: 'left', minWidth: 0 }}>
+                                style={{ display: 'flex', gap: '0.35rem', maxWidth: '100%', marginTop: '0.22rem', padding: 0, border: 'none', background: 'transparent', cursor: 'pointer', textAlign: 'left', minWidth: isMobile ? 64 : 0, minHeight: isMobile ? 32 : undefined, alignItems: isMobile ? 'center' : 'baseline' }}>
                                 {ugeStatus.stemme.laveste != null && (
-                                  <span style={{ flexShrink: 0, fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: ugeStatus.stemme.laveste <= 2 ? '#d79a83' : '#c8923a' }}>★ {ugeStatus.stemme.laveste}/5</span>
+                                  <span style={{ flexShrink: 0, fontFamily: "'IBM Plex Mono', monospace", fontSize: isMobile ? '0.62rem' : '0.5rem', color: ugeStatus.stemme.laveste <= 2 ? '#d79a83' : '#c8923a' }}>★ {ugeStatus.stemme.laveste}/5</span>
                                 )}
                                 {ugeStatus.stemme.tekst && (
                                   <span style={{ minWidth: 0, color: '#b8b4a8', fontSize: isMobile ? '0.66rem' : '0.7rem', fontStyle: 'italic', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ugeStatus.stemme.tekst}</span>
@@ -333,7 +333,7 @@ export default function ForsideView({
                                     key: `video-${measurementVideo.id}`, title: athlete.name,
                                     detail: coachVideoPriorityDetail(measurementVideo), color: '#67dff5', label: 'Video' }, 'list')
                                 }}
-                                style={{ display: 'flex', alignItems: 'center', gap: '0.32rem', marginTop: '0.22rem', padding: 0, border: 'none', background: 'transparent', cursor: 'pointer' }}
+                                style={{ display: 'flex', alignItems: 'center', gap: '0.32rem', marginTop: '0.22rem', padding: 0, border: 'none', background: 'transparent', cursor: 'pointer', minWidth: isMobile ? 64 : undefined, minHeight: isMobile ? 32 : undefined }}
                                 aria-label={`Åbn gemt måling · ${videoCoachMeasurementText(measurement)}`}>
                                 {measurement.pathPreview && (
                                   <svg width="11" height="18" viewBox={measurement.pathPreview.viewBox} style={{ flexShrink: 0 }} aria-hidden="true">

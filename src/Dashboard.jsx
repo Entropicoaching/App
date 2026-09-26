@@ -682,7 +682,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             {activeTab === 'log' && (() => {
               return (
                 <LogTab {...{
-                  athleteLogs, logExerciseFilter, openLogWeeks, setLogExerciseFilter, setOpenLogWeeks,
+                  athleteLogs, isMobile, logExerciseFilter, openLogWeeks, setLogExerciseFilter, setOpenLogWeeks,
                 }} />
               )
             })()}
