@@ -1,0 +1,205 @@
+{
+  "gren": "udgivelse-squat-min-krop",
+  "top": "273d670",
+  "kilde": {
+    "marcIKilde": 0,
+    "marcDato": 2,
+    "classMarc": 0,
+    "titelLaengde": 67,
+    "beskrivelseLaengde": 150,
+    "noindex": true,
+    "datoer": [
+      "[MARC-DATO]",
+      "[MARC-DATO]"
+    ],
+    "sitemapSquat": false,
+    "sitemapKlar": true,
+    "ordreIKommentarer": 6,
+    "tilbageLinks": [
+      "artikler.html",
+      "viden.html#artikler",
+      "artikler.html"
+    ],
+    "larsen2021": {
+      "a": 4,
+      "b": 4,
+      "uden": 0
+    },
+    "modellensKilder": true,
+    "minKropSti": [
+      "assets/min-krop/index.html",
+      "assets/min-krop/kort.html"
+    ],
+    "bundtMarcs": 4,
+    "bundtSyntetisk": true,
+    "anatomiIntetKrav": false,
+    "anatomiIkkeRegnet": true
+  },
+  "vaerktoejSti": [
+    "assets/vaerktoejer/min-krop/index.html"
+  ],
+  "mainPrivat": {
+    "antal": 22,
+    "eksempler": [
+      "outputs/FORSLAG-TIL-MARC.md",
+      "outputs/RAPPORT-174.md",
+      "scripts/maal.mjs"
+    ]
+  },
+  "sider": [
+    {
+      "side": "artikel-squat.html",
+      "bredde": 390,
+      "sidefejl": 0,
+      "konsol": 0,
+      "http404": [],
+      "eksterne": 1,
+      "vandret": true,
+      "synligMarc": 0,
+      "synligMarcs": 2,
+      "tankestreger": 0,
+      "atletnavne": 0,
+      "u2": true,
+      "u3": {
+        "ikkeRegnetIBunden": true,
+        "menIkkeIBunden": false,
+        "intetKravIBunden": false
+      },
+      "u6": true,
+      "u15": {
+        "tal009": true,
+        "opslaget": true
+      },
+      "u13": 2,
+      "anatomiSkrift": {
+        "td": 11.52,
+        "egenRul": false
+      }
+    },
+    {
+      "side": "artikel-squat.html",
+      "bredde": 1280,
+      "sidefejl": 0,
+      "konsol": 0,
+      "http404": [],
+      "eksterne": 1,
+      "vandret": true,
+      "synligMarc": 0,
+      "synligMarcs": 2,
+      "tankestreger": 0,
+      "atletnavne": 0,
+      "u2": true,
+      "u3": {
+        "ikkeRegnetIBunden": true,
+        "menIkkeIBunden": false,
+        "intetKravIBunden": false
+      },
+      "u6": true,
+      "u15": {
+        "tal009": true,
+        "opslaget": true
+      },
+      "u13": 2
+    },
+    {
+      "side": "artikler.html",
+      "bredde": 390,
+      "sidefejl": 0,
+      "konsol": 0,
+      "http404": [],
+      "eksterne": 1,
+      "vandret": true,
+      "synligMarc": 0,
+      "synligMarcs": 0,
+      "tankestreger": 0,
+      "atletnavne": 0,
+      "u2": false,
+      "u3": {
+        "ikkeRegnetIBunden": false,
+        "menIkkeIBunden": false,
+        "intetKravIBunden": false
+      },
+      "u6": false,
+      "u15": {
+        "tal009": false,
+        "opslaget": false
+      },
+      "u13": 0
+    },
+    {
+      "side": "artikler.html",
+      "bredde": 1280,
+      "sidefejl": 0,
+      "konsol": 0,
+      "http404": [],
+      "eksterne": 1,
+      "vandret": true,
+      "synligMarc": 0,
+      "synligMarcs": 0,
+      "tankestreger": 0,
+      "atletnavne": 0,
+      "u2": false,
+      "u3": {
+        "ikkeRegnetIBunden": false,
+        "menIkkeIBunden": false,
+        "intetKravIBunden": false
+      },
+      "u6": false,
+      "u15": {
+        "tal009": false,
+        "opslaget": false
+      },
+      "u13": 0
+    },
+    {
+      "side": "assets/min-krop/index.html",
+      "bredde": 390,
+      "sidefejl": 0,
+      "konsol": 0,
+      "http404": [],
+      "eksterne": 0,
+      "vandret": true,
+      "synligMarc": 0,
+      "synligMarcs": 0,
+      "tankestreger": 8,
+      "atletnavne": 0,
+      "u2": false,
+      "u3": {
+        "ikkeRegnetIBunden": false,
+        "menIkkeIBunden": false,
+        "intetKravIBunden": false
+      },
+      "u6": false,
+      "u15": {
+        "tal009": false,
+        "opslaget": false
+      },
+      "u13": 0
+    },
+    {
+      "side": "assets/min-krop/index.html",
+      "bredde": 1280,
+      "sidefejl": 0,
+      "konsol": 0,
+      "http404": [],
+      "eksterne": 0,
+      "vandret": true,
+      "synligMarc": 0,
+      "synligMarcs": 0,
+      "tankestreger": 8,
+      "atletnavne": 0,
+      "u2": false,
+      "u3": {
+        "ikkeRegnetIBunden": false,
+        "menIkkeIBunden": false,
+        "intetKravIBunden": false
+      },
+      "u6": false,
+      "u15": {
+        "tal009": false,
+        "opslaget": false
+      },
+      "u13": 0
+    }
+  ]
+}

@@ -83,13 +83,20 @@ if (blok >= 2) {
   const rap = tekst('RAPPORT-525.md')
   if (sq) {
     ok(/^squat-artiklen klar til udgivelse naar Marc har valgt: (ja|nej)\b/.test(sq.split('\n')[0]), 'SQUAT-2: foerste linje')
-    for (let n = 1; n <= 16; n++) ok(new RegExp(`^\\| U${n} \\| (lukket|venter paa Marc|venter paa Yantra|aaben)`, 'm').test(sq), `SQUAT-2: U${n} mangler status`)
+    for (let n = 1; n <= 16; n++) ok(new RegExp(`^\\| U${n} \\| (lukket|venter paa Marc|aaben) \\|`, 'm').test(sq), `SQUAT-2: U${n} mangler status`)
   }
   if (s && sq) {
     ok(s.gren === 'udgivelse-squat-min-krop' && s.top === '273d670', 'squat: grenens top er 273d670')
-    ok(s.sider.every((x) => x.sidefejl === 0 && x.vandret && x.synligMarc === 0 && x.tankestreger === 0), 'squat: sider uden fejl, vandret rulning, [MARC] og tankestreger')
+    ok(s.sider.every((x) => x.sidefejl === 0 && x.vandret && x.synligMarc === 0 && x.atletnavne === 0 && x.tankestreger === (x.side.includes('min-krop') ? 8 : 0)), 'squat: sider uden fejl, vandret rulning, [MARC] og tankestreger')
     ok(s.kilde.marcIKilde === 0 && s.kilde.classMarc === 0, 'U1/U4: ingen [MARC] i kilden')
     ok(s.kilde.titelLaengde === 67 && s.kilde.beskrivelseLaengde === 150, 'U7: 67 og 150 tegn')
+    const st = (x) => (sq.match(new RegExp(`^\\| U\\d+ \\| ${x} \\|`, 'gm')) ?? []).length
+    ok(st('lukket') === 7 && st('venter paa Marc') === 7 && st('aaben') === 2, `U1-U16: 7 lukket, 7 venter, 2 aabne (${st('lukket')}/${st('venter paa Marc')}/${st('aaben')})`)
+    ok(s.kilde.marcDato === 2 && s.kilde.noindex && !s.kilde.sitemapSquat && s.kilde.sitemapKlar, 'U8: MARC-DATO, noindex og SITEMAP-KLAR venter')
+    ok(s.kilde.minKropSti.every((x) => x.startsWith('assets/min-krop/')) && s.vaerktoejSti.includes('assets/vaerktoejer/min-krop/index.html') && /^\| N1 \|/m.test(sq), 'N1: artiklen peger paa assets/min-krop/, vaerktoejsgrenen har assets/vaerktoejer/min-krop/')
+    const a390 = s.sider.find((x) => x.side === 'artikel-squat.html' && x.bredde === 390)
+    ok(a390.anatomiSkrift.td === 11.52 && !a390.anatomiSkrift.egenRul && a390.u3.ikkeRegnetIBunden && !a390.u3.intetKravIBunden, 'U3/U16 paa 390')
+    ok(a390.u15.tal009 && a390.u2 && a390.u6 && a390.synligMarcs === 2 && s.kilde.ordreIKommentarer === 6 && s.mainPrivat.antal === 22, 'U2/U5/U6/U10/U11/U15 som beskrevet')
   }
   if (rap) {
     ok(rap.split('\n')[0].startsWith('Ordre 525'), 'RAPPORT: foerste linje "Ordre 525"')
