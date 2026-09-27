@@ -1,0 +1,590 @@
+{
+ "snapshot": "entropi-loeftmodel min-krop-klar af7172f",
+ "kroppe": {
+  "A": {
+   "hoejde": 180,
+   "vaegt": 90,
+   "laar": 47.6,
+   "skinneben": 43.4,
+   "torso": 48.7,
+   "overarm": 33.5,
+   "underarm": 26.3
+  },
+  "B": {
+   "hoejde": 170,
+   "vaegt": 75,
+   "laar": 38.7,
+   "skinneben": 42.7,
+   "torso": 51.9,
+   "overarm": 30,
+   "underarm": 23.6
+  },
+  "C": {
+   "hoejde": 188,
+   "vaegt": 105,
+   "laar": 46.1,
+   "skinneben": 46.2,
+   "torso": 52.5,
+   "overarm": 37.4,
+   "underarm": 29.1
+  }
+ },
+ "alle114": {
+  "hoejde": 178,
+  "vaegt": 85,
+  "laar": 49.7,
+  "skinneben": 49.9,
+  "torso": 58.4,
+  "overarm": 37.7,
+  "underarm": 29.6
+ },
+ "hoftekam": {
+  "hoejde": 178,
+  "vaegt": 85,
+  "laar": 48.6,
+  "skinneben": 43.8,
+  "torso": 46.3,
+  "overarm": 33.1,
+  "underarm": 26
+ },
+ "linjer": {
+  "A": {
+   "squatBund": "Største forskel i bunden: overkrop og skinneben tilsammen. Overkroppen 54,7° fra lodret mod gennemsnittets 49°, skinnebenet 45° mod 40°. De to er samme byttehandel, og modellen vælger selv skinnebenet: en forskel i det ene kan lige så vel vise sig i det andet, så læs dem sammen.",
+   "squatSticking": "Største forskel i sticking point: hoftevinkel, 64° mod gennemsnittets 73,5°.",
+   "dlOpstilling": "Største forskel ved opstillingen: knævinkel, 108,2° mod gennemsnittets 98,9°.",
+   "baenkLockout": "Dine proportioner flytter næsten intet ved lockout i modellen: alle forskelle er under ca. 4° og 3 cm, som et målebånd kan tage fejl med."
+  },
+  "B": {
+   "squatBund": "Største forskel i bunden: overkrop og skinneben tilsammen. Overkroppen 48,7° fra lodret mod gennemsnittets 48,7°, skinnebenet 33° mod 41°. De to er samme byttehandel, og modellen vælger selv skinnebenet: en forskel i det ene kan lige så vel vise sig i det andet, så læs dem sammen.",
+   "squatSticking": "Største forskel i sticking point: overkrop og skinneben tilsammen. Overkroppen 39,3° fra lodret mod gennemsnittets 39,4°, skinnebenet 36,9° mod 44°. De to er samme byttehandel, og modellen vælger selv skinnebenet: en forskel i det ene kan lige så vel vise sig i det andet, så læs dem sammen.",
+   "dlOpstilling": "Største forskel ved opstillingen: knævinkel, 90,6° mod gennemsnittets 103,6°.",
+   "baenkLockout": "Dine proportioner flytter næsten intet ved lockout i modellen: alle forskelle er under ca. 4° og 3 cm, som et målebånd kan tage fejl med."
+  },
+  "C": {
+   "squatBund": "Dine proportioner flytter næsten intet i bunden i modellen: alle forskelle er under ca. 4° og 3 cm, som et målebånd kan tage fejl med.",
+   "squatSticking": "Dine proportioner flytter næsten intet i sticking point i modellen: alle forskelle er under ca. 4° og 3 cm, som et målebånd kan tage fejl med.",
+   "dlOpstilling": "Største forskel ved opstillingen: hoftevinkel, 56,6° mod gennemsnittets 50°.",
+   "baenkLockout": "Dine proportioner flytter næsten intet ved lockout i modellen: alle forskelle er under ca. 4° og 3 cm, som et målebånd kan tage fejl med."
+  }
+ },
+ "plus2": {
+  "laar": 3,
+  "skinneben": 2.7,
+  "torso": 3.5,
+  "overarm": 3.3,
+  "underarm": 2.7
+ },
+ "haand": {
+  "grebCm": 9.6,
+  "gammelReach": 68.7,
+  "nyReach": 68.7,
+  "plus8Gammel": 11,
+  "udgangspunkt": {
+   "hofte": 51.4,
+   "torso": 61.5
+  },
+  "underarmPlus8Nu": {
+   "hofte": 62.5,
+   "torso": 56.8
+  }
+ },
+ "tegningBredde": {
+  "talje": 35,
+  "hoftekam": 39,
+  "trochanter": 46
+ },
+ "side": {
+  "390": {
+   "hoejde": 9841,
+   "res": {
+    "A": {
+     "besked": "",
+     "figurer": 0,
+     "linjer": [
+      {
+       "loeft": "squat",
+       "linje": "Største forskel i bunden: overkrop og skinneben tilsammen. Overkroppen 54,7° fra lodret mod gennemsnittets 49°, skinnebenet 45° mod 40°. De to er samme byttehandel, og modellen vælger selv skinnebenet: en forskel i det ene kan lige så vel vise sig i det andet, så læs dem sammen."
+      },
+      {
+       "loeft": "doedloeft",
+       "linje": "Største forskel ved opstillingen: knævinkel, 108,2° mod gennemsnittets 98,9°."
+      },
+      {
+       "loeft": "baenk",
+       "linje": "Dine proportioner flytter næsten intet på brystet i modellen: alle forskelle er under ca. 4° og 3 cm, som et målebånd kan tage fejl med."
+      }
+     ],
+     "invalid": [],
+     "hoejde": 9865,
+     "vandretRul": false
+    },
+    "B": {
+     "besked": "",
+     "figurer": 0,
+     "linjer": [
+      {
+       "loeft": "squat",
+       "linje": "Største forskel i bunden: overkrop og skinneben tilsammen. Overkroppen 48,7° fra lodret mod gennemsnittets 48,7°, skinnebenet 33° mod 41°. De to er samme byttehandel, og modellen vælger selv skinnebenet: en forskel i det ene kan lige så vel vise sig i det andet, så læs dem sammen."
+      },
+      {
+       "loeft": "doedloeft",
+       "linje": "Største forskel ved opstillingen: knævinkel, 90,6° mod gennemsnittets 103,6°."
+      },
+      {
+       "loeft": "baenk",
+       "linje": "Største forskel på brystet: albuevinkel, 76° mod gennemsnittets 67,9°."
+      }
+     ],
+     "invalid": [],
+     "hoejde": 9841,
+     "vandretRul": false
+    },
+    "C": {
+     "besked": "",
+     "figurer": 0,
+     "linjer": [
+      {
+       "loeft": "squat",
+       "linje": "Dine proportioner flytter næsten intet i bunden i modellen: alle forskelle er under ca. 4° og 3 cm, som et målebånd kan tage fejl med."
+      },
+      {
+       "loeft": "doedloeft",
+       "linje": "Største forskel ved opstillingen: hoftevinkel, 56,6° mod gennemsnittets 50°."
+      },
+      {
+       "loeft": "baenk",
+       "linje": "Største forskel på brystet: albuevinkel, 58,3° mod gennemsnittets 64,4°."
+      }
+     ],
+     "invalid": [],
+     "hoejde": 9745,
+     "vandretRul": false
+    },
+    "alle114": {
+     "besked": "Et eller flere mål ser ikke rigtige ud, så figurerne venter.\n\nDine mål passer tilsammen til en højde på 203 cm, ikke 178 cm: lår, skinneben og overkrop er 158 cm, 114 % af det, modellen venter ved din højde (92-108 % tages). Hvert mål kan se rimeligt ud for sig. Tjek højden, eller mål de tre igen, og brug de samme knoglepunkter.",
+     "figurer": 0,
+     "linjer": [
+      {
+       "loeft": "squat",
+       "linje": null
+      },
+      {
+       "loeft": "doedloeft",
+       "linje": null
+      },
+      {
+       "loeft": "baenk",
+       "linje": null
+      }
+     ],
+     "invalid": [
+      "laar",
+      "skinneben",
+      "torso"
+     ],
+     "hoejde": 5469,
+     "vandretRul": false
+    },
+    "hoftekam": {
+     "besked": "",
+     "figurer": 0,
+     "linjer": [
+      {
+       "loeft": "squat",
+       "linje": "Største forskel i bunden: overkrop og skinneben tilsammen. Overkroppen 59,3° fra lodret mod gennemsnittets 49,2°, skinnebenet 45° mod 40°. De to er samme byttehandel, og modellen vælger selv skinnebenet: en forskel i det ene kan lige så vel vise sig i det andet, så læs dem sammen."
+      },
+      {
+       "loeft": "doedloeft",
+       "linje": "Største forskel ved opstillingen: knævinkel, 112,5° mod gennemsnittets 99,9°."
+      },
+      {
+       "loeft": "baenk",
+       "linje": "Største forskel på brystet: albuevinkel, 60,8° mod gennemsnittets 66,4°."
+      }
+     ],
+     "invalid": [],
+     "hoejde": 9841,
+     "vandretRul": false
+    }
+   }
+  },
+  "1280": {
+   "res": {
+    "A": {
+     "besked": "",
+     "figurer": 0,
+     "linjer": [
+      {
+       "loeft": "squat",
+       "linje": "Største forskel i bunden: overkrop og skinneben tilsammen. Overkroppen 54,7° fra lodret mod gennemsnittets 49°, skinnebenet 45° mod 40°. De to er samme byttehandel, og modellen vælger selv skinnebenet: en forskel i det ene kan lige så vel vise sig i det andet, så læs dem sammen."
+      },
+      {
+       "loeft": "doedloeft",
+       "linje": "Største forskel ved opstillingen: knævinkel, 108,2° mod gennemsnittets 98,9°."
+      },
+      {
+       "loeft": "baenk",
+       "linje": "Dine proportioner flytter næsten intet på brystet i modellen: alle forskelle er under ca. 4° og 3 cm, som et målebånd kan tage fejl med."
+      }
+     ],
+     "invalid": [],
+     "hoejde": 5518,
+     "vandretRul": false
+    },
+    "B": {
+     "besked": "",
+     "figurer": 0,
+     "linjer": [
+      {
+       "loeft": "squat",
+       "linje": "Største forskel i bunden: overkrop og skinneben tilsammen. Overkroppen 48,7° fra lodret mod gennemsnittets 48,7°, skinnebenet 33° mod 41°. De to er samme byttehandel, og modellen vælger selv skinnebenet: en forskel i det ene kan lige så vel vise sig i det andet, så læs dem sammen."
+      },
+      {
+       "loeft": "doedloeft",
+       "linje": "Største forskel ved opstillingen: knævinkel, 90,6° mod gennemsnittets 103,6°."
+      },
+      {
+       "loeft": "baenk",
+       "linje": "Største forskel på brystet: albuevinkel, 76° mod gennemsnittets 67,9°."
+      }
+     ],
+     "invalid": [],
+     "hoejde": 5494,
+     "vandretRul": false
+    },
+    "C": {
+     "besked": "",
+     "figurer": 0,
+     "linjer": [
+      {
+       "loeft": "squat",
+       "linje": "Dine proportioner flytter næsten intet i bunden i modellen: alle forskelle er under ca. 4° og 3 cm, som et målebånd kan tage fejl med."
+      },
+      {
+       "loeft": "doedloeft",
+       "linje": "Største forskel ved opstillingen: hoftevinkel, 56,6° mod gennemsnittets 50°."
+      },
+      {
+       "loeft": "baenk",
+       "linje": "Største forskel på brystet: albuevinkel, 58,3° mod gennemsnittets 64,4°."
+      }
+     ],
+     "invalid": [],
+     "hoejde": 5470,
+     "vandretRul": false
+    },
+    "alle114": {
+     "besked": "Et eller flere mål ser ikke rigtige ud, så figurerne venter.\n\nDine mål passer tilsammen til en højde på 203 cm, ikke 178 cm: lår, skinneben og overkrop er 158 cm, 114 % af det, modellen venter ved din højde (92-108 % tages). Hvert mål kan se rimeligt ud for sig. Tjek højden, eller mål de tre igen, og brug de samme knoglepunkter.",
+     "figurer": 0,
+     "linjer": [
+      {
+       "loeft": "squat",
+       "linje": null
+      },
+      {
+       "loeft": "doedloeft",
+       "linje": null
+      },
+      {
+       "loeft": "baenk",
+       "linje": null
+      }
+     ],
+     "invalid": [
+      "laar",
+      "skinneben",
+      "torso"
+     ],
+     "hoejde": 2659,
+     "vandretRul": false
+    },
+    "hoftekam": {
+     "besked": "",
+     "figurer": 0,
+     "linjer": [
+      {
+       "loeft": "squat",
+       "linje": "Største forskel i bunden: overkrop og skinneben tilsammen. Overkroppen 59,3° fra lodret mod gennemsnittets 49,2°, skinnebenet 45° mod 40°. De to er samme byttehandel, og modellen vælger selv skinnebenet: en forskel i det ene kan lige så vel vise sig i det andet, så læs dem sammen."
+      },
+      {
+       "loeft": "doedloeft",
+       "linje": "Største forskel ved opstillingen: knævinkel, 112,5° mod gennemsnittets 99,9°."
+      },
+      {
+       "loeft": "baenk",
+       "linje": "Største forskel på brystet: albuevinkel, 60,8° mod gennemsnittets 66,4°."
+      }
+     ],
+     "invalid": [],
+     "hoejde": 5494,
+     "vandretRul": false
+    }
+   }
+  }
+ },
+ "tjek": [
+  {
+   "m": "M1",
+   "hvad": "krop B i bunden og i sticking point: linjen naevner overkrop og skinneben sammen",
+   "ok": true,
+   "data": "Største forskel i bunden: overkrop og skinneben tilsammen. Overkroppen 48,7° fra lodret mod gennemsnittets 48,7°, skinnebenet 33° mod 41°. De to er samme byttehandel, og modellen vælger selv skinnebenet: en forskel i det ene kan lige så vel vise sig i det andet, så læs dem sammen."
+  },
+  {
+   "m": "M1",
+   "hvad": "krop A (lange laar) faar ogsaa parret, med overkroppen mere haeldende",
+   "ok": true,
+   "data": "Største forskel i bunden: overkrop og skinneben tilsammen. Overkroppen 54,7° fra lodret mod gennemsnittets 49°, skinnebenet 45° mod 40°. De to er samme byttehandel, og modellen vælger selv skinnebenet: en forskel i det ene kan lige så vel vise sig i det andet, så læs dem sammen."
+  },
+  {
+   "m": "M1",
+   "hvad": "krop B: linjen siger ikke, hvilken vej de korte laar trækker (mere oprejst overkrop), kun at de to skal laeses sammen",
+   "ok": true,
+   "data": null
+  },
+  {
+   "m": "M2",
+   "hvad": "taersklen er 4 grader og 3 cm i koden",
+   "ok": true,
+   "data": {
+    "grader": 4,
+    "cm": 3
+   }
+  },
+  {
+   "m": "M2",
+   "hvad": "eet maal 2 cm for langt flytter stadig den stoerste vinkel 2,7-3,6 grader: under 4-graders-taersklen",
+   "ok": true,
+   "data": {
+    "laar": 3,
+    "skinneben": 2.7,
+    "torso": 3.5,
+    "overarm": 3.3,
+    "underarm": 2.7
+   }
+  },
+  {
+   "m": "M2",
+   "hvad": "ingen \"stoerste forskel\" for A, B, C i nogen stilling fremhaever noget under taersklen",
+   "ok": true,
+   "data": []
+  },
+  {
+   "m": "M2",
+   "hvad": "krop B: baenkens lockout fremhaeves ikke laengere",
+   "ok": true,
+   "data": "Dine proportioner flytter næsten intet ved lockout i modellen: alle forskelle er under ca. 4° og 3 cm, som et målebånd kan tage fejl med."
+  },
+  {
+   "m": "M3",
+   "hvad": "114 %-kroppen afvises med \"203 cm\" og ingen figur",
+   "ok": true,
+   "data": [
+    "Dine mål passer tilsammen til en højde på 203 cm, ikke 178 cm: lår, skinneben og overkrop er 158 cm, 114 % af det, modellen venter ved din højde (92-108 % tages). Hvert mål kan se rimeligt ud for sig. Tjek højden, eller mål de tre igen, og brug de samme knoglepunkter."
+   ]
+  },
+  {
+   "m": "M3",
+   "hvad": "A, B og C passer (99-101 %)",
+   "ok": true,
+   "data": {
+    "A": 99.6,
+    "B": 100.7,
+    "C": 98.9
+   }
+  },
+  {
+   "m": "M3",
+   "hvad": "hoftepunktet ved hoftekammen (8 cm) paa baade laar og overkrop afvises af spaendet pr. maal",
+   "ok": true,
+   "data": [
+    "laar",
+    "torso"
+   ]
+  },
+  {
+   "m": "M3",
+   "hvad": "men hoftepunktet 5 cm for hoejt paa begge maal tages: laar 111 % og overkrop 90 % er hver for sig i spaendet, og summen udligner til 100 %",
+   "ok": true,
+   "data": {
+    "laarPct": 111.5,
+    "torsoPct": 90.3,
+    "sumPct": 100
+   }
+  },
+  {
+   "m": "M3",
+   "hvad": "og den krop faar en figur og en linje, der fremhaever en forskel over taersklen",
+   "ok": true,
+   "data": {
+    "squat": "Største forskel i bunden: overkrop og skinneben tilsammen. Overkroppen 59,3° fra lodret mod gennemsnittets 49,2°, skinnebenet 45° mod 40°. De to er samme byttehandel, og modellen vælger selv skinnebenet: en forskel i det ene kan lige så vel vise sig i det andet, så læs dem sammen.",
+    "doedloeft": "Største forskel ved opstillingen: knævinkel, 112,5° mod gennemsnittets 99,9°."
+   }
+  },
+  {
+   "m": "M4",
+   "hvad": "haanden er 0,054 x hoejden og foelger hoejden, ikke underarmen",
+   "ok": true
+  },
+  {
+   "m": "M4",
+   "hvad": "for tabellens krop er den gamle haand (broek af underarmen) = den nye (0,054 H): mit 471-udgangspunkt havde allerede en haand",
+   "ok": true,
+   "data": {
+    "gammel": 68.7,
+    "ny": 68.7,
+    "grebCm": 9.6
+   }
+  },
+  {
+   "m": "M4",
+   "hvad": "i 471 flyttede min \"+8 cm\" stangen ca. 11 cm (haanden skaleret med), altsaa til ca. 20 cm under haandleddet - mit tal for haanden var for stort",
+   "ok": true,
+   "data": 11
+  },
+  {
+   "m": "M4",
+   "hvad": "med 488: underarm +8 cm flytter nu kun armen (hofte og torso flytter mindre end i 471: 15,4 og 6,6 grader)",
+   "ok": true,
+   "data": {
+    "hofte": [
+     51.4,
+     62.5
+    ],
+    "torso": [
+     61.5,
+     56.8
+    ]
+   }
+  },
+  {
+   "m": "M4",
+   "hvad": "forskellen dig/snit i doedloeftet for krop C (lange arme) er stadig tydelig, og haanden er ens for begge",
+   "ok": true,
+   "data": {
+    "Knævinkel": 5.9,
+    "Hoftevinkel": 6.6,
+    "Skinneben fra lodret": 0,
+    "Torso fra lodret": -0.8,
+    "Vandret afstand stang–hofte": -1.8,
+    "Vandret afstand stang–knæ": 0,
+    "Vandret afstand stang–lænd": -1.1,
+    "Stangens vej, hele løftet": -5.8
+   }
+  },
+  {
+   "m": "M5",
+   "hvad": "tegningen markerer baeltet \"ikke her\"",
+   "ok": true
+  },
+  {
+   "m": "M5",
+   "hvad": "felternes tekst siger \"ikke hoftekammen og ikke baeltet\"",
+   "ok": true,
+   "data": "hoftens knoglefremspring på ydersiden (trochanter major, hvor hoften er bredest; ikke hoftekammen og ikke bæltestedet, men knoglen man mærker på ydersiden af hoften, når benet drejes)"
+  },
+  {
+   "m": "M5",
+   "hvad": "omridset er smallest ved taljen, bredere ved hoftekammen og bredest ved trochanter",
+   "ok": true,
+   "data": {
+    "talje": 35,
+    "hoftekam": 39,
+    "trochanter": 46
+   }
+  },
+  {
+   "m": "M3",
+   "hvad": "siden paa 390: 114 % giver beskeden med 203 cm, ingen figurer, tre felter markeret",
+   "ok": true,
+   "data": {
+    "besked": "Et eller flere mål ser ikke rigtige ud, så figurerne venter.\n\nDine mål passer tilsammen til en højde på 203 cm, ikke 178 cm: lår, skinneben og overkrop er 158 cm, 114 % af det, modellen venter ved din højde (92-108 % tages). Hvert mål kan se rimeligt ud for sig. Tjek højden, eller mål de tre igen, og brug de samme knoglepunkter.",
+    "figurer": 0,
+    "linjer": [
+     {
+      "loeft": "squat",
+      "linje": null
+     },
+     {
+      "loeft": "doedloeft",
+      "linje": null
+     },
+     {
+      "loeft": "baenk",
+      "linje": null
+     }
+    ],
+    "invalid": [
+     "laar",
+     "skinneben",
+     "torso"
+    ],
+    "hoejde": 5469,
+    "vandretRul": false
+   }
+  },
+  {
+   "m": "M3",
+   "hvad": "siden paa 390: ingen synlig \"stoerste forskel\" ved 114 %",
+   "ok": true,
+   "data": [
+    {
+     "loeft": "squat",
+     "linje": null
+    },
+    {
+     "loeft": "doedloeft",
+     "linje": null
+    },
+    {
+     "loeft": "baenk",
+     "linje": null
+    }
+   ]
+  },
+  {
+   "m": "M1",
+   "hvad": "siden paa 390: krop B viser parret i squatten",
+   "ok": true,
+   "data": [
+    {
+     "loeft": "squat",
+     "linje": "Største forskel i bunden: overkrop og skinneben tilsammen. Overkroppen 48,7° fra lodret mod gennemsnittets 48,7°, skinnebenet 33° mod 41°. De to er samme byttehandel, og modellen vælger selv skinnebenet: en forskel i det ene kan lige så vel vise sig i det andet, så læs dem sammen."
+    },
+    {
+     "loeft": "doedloeft",
+     "linje": "Største forskel ved opstillingen: knævinkel, 90,6° mod gennemsnittets 103,6°."
+    },
+    {
+     "loeft": "baenk",
+     "linje": "Største forskel på brystet: albuevinkel, 76° mod gennemsnittets 67,9°."
+    }
+   ]
+  },
+  {
+   "m": "M6",
+   "hvad": "\"Sådan måler du\" siger alle maal paa samme side",
+   "ok": true
+  },
+  {
+   "m": "M4",
+   "hvad": "siden siger \"Hånden er med, men ikke målt\"",
+   "ok": true
+  },
+  {
+   "m": "M2",
+   "hvad": "forbeholdet siger \"under ca. 4° eller 3 cm\"",
+   "ok": true
+  },
+  {
+   "m": "M7",
+   "hvad": "siden er stadig lang paa 390 (over 9000 px)",
+   "ok": true,
+   "data": 9841
+  },
+  {
+   "m": "alle",
+   "hvad": "ingen net og ingen vandret rulning paa 390 og 1280",
+   "ok": true
+  }
+ ]
+}

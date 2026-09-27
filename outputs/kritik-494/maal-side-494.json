@@ -1,0 +1,2029 @@
+{
+ "syn390": {
+  "foer": {
+   "vandretRul": false,
+   "sideH": 3970,
+   "vindueH": 844,
+   "vejl": {
+    "top": 492,
+    "bund": 578,
+    "h": 86,
+    "w": 358
+   },
+   "billede": {
+    "top": 749,
+    "bund": 1226,
+    "h": 477,
+    "w": 358
+   },
+   "model": null,
+   "resultat": {
+    "top": 1226,
+    "bund": 1226,
+    "h": 0,
+    "w": 358
+   },
+   "tabel": null,
+   "advarsel": null,
+   "udenskala": {
+    "top": 696,
+    "bund": 740,
+    "h": 44,
+    "w": 256
+   }
+  },
+  "lay": {
+   "vandretRul": false,
+   "sideH": 6214,
+   "vindueH": 844,
+   "vejl": {
+    "top": 492,
+    "bund": 578,
+    "h": 86,
+    "w": 358
+   },
+   "billede": {
+    "top": 749,
+    "bund": 1226,
+    "h": 477,
+    "w": 358
+   },
+   "model": {
+    "top": 1238,
+    "bund": 1826,
+    "h": 587,
+    "w": 358
+   },
+   "resultat": {
+    "top": 1858,
+    "bund": 2668,
+    "h": 810,
+    "w": 358
+   },
+   "tabel": {
+    "top": 2952,
+    "bund": 3322,
+    "h": 371,
+    "w": 358
+   },
+   "advarsel": {
+    "top": 1898,
+    "bund": 2102,
+    "h": 203,
+    "w": 358
+   },
+   "udenskala": {
+    "top": 696,
+    "bund": 740,
+    "h": 44,
+    "w": 256
+   }
+  },
+  "t1": {
+   "maaling": {
+    "torso": [
+     "61,4°"
+    ],
+    "hofte": [
+     "51,1°"
+    ],
+    "knae": [
+     "99,4°"
+    ],
+    "skinneben": [
+     "13,1°"
+    ],
+    "stangFraMidtfod": [
+     "2,4 cm"
+    ],
+    "stangHofte": [
+     "32,7 cm"
+    ],
+    "skulderForanStang": [
+     "4,1 cm"
+    ]
+   },
+   "sammen": {
+    "torso": [
+     "61,4°",
+     "61,5°"
+    ],
+    "hofte": [
+     "51,1°",
+     "51,4°"
+    ],
+    "knae": [
+     "99,4°",
+     "99,9°"
+    ],
+    "skinneben": [
+     "13,1°",
+     "13,0°"
+    ],
+    "balanceStang": [
+     "2,4 cm",
+     "3,3 cm"
+    ]
+   },
+   "advarsel": "Tjek skalaen: med den er skinneben, lår og overkrop 112,3 cm i billedet, mens tabellens krop for 178 cm har 138,7 cm (81 %). Skiven står sandsynligvis tættere på kameraet end kroppen, så cm-tallene er for små, og modellen tegnes for stor. Prøv Brug kroppens længder som skala og se, hvor meget tallene flytter.",
+   "vejl": "Færdig. Træk i et punkt for at flytte det.Tallene nedenfor regnes om, mens du flytter.",
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model"
+   ],
+   "punkter": [
+    "stang",
+    "midtfod",
+    "ankel",
+    "knae",
+    "hofte",
+    "skulder",
+    "skalaA",
+    "skalaB"
+   ],
+   "traek": null
+  },
+  "afst": {
+   "midtfod-skalaB": 32.7,
+   "midtfod-ankel": 18.3,
+   "knae-skalaA": 19,
+   "stang-knae": 72.5,
+   "cmPrCssPx": 0.4
+  },
+  "flyttet": [
+   "midtfod"
+  ],
+  "forkert": {
+   "maaling": {
+    "torso": [
+     "77,6°"
+    ],
+    "hofte": [
+     "45,8°"
+    ],
+    "knae": [
+     "110,3°"
+    ],
+    "skinneben": [
+     "13,1°"
+    ],
+    "stangFraMidtfod": [
+     "2,4 cm"
+    ],
+    "stangHofte": [
+     "32,7 cm"
+    ],
+    "skulderForanStang": [
+     "4,1 cm"
+    ]
+   },
+   "sammen": {
+    "torso": [
+     "77,6°",
+     "61,5°"
+    ],
+    "hofte": [
+     "45,8°",
+     "51,4°"
+    ],
+    "knae": [
+     "110,3°",
+     "99,9°"
+    ],
+    "skinneben": [
+     "13,1°",
+     "13,0°"
+    ],
+    "balanceStang": [
+     "2,4 cm",
+     "3,3 cm"
+    ]
+   },
+   "advarsel": "Tjek skalaen: med den er skinneben, lår og overkrop 111,8 cm i billedet, mens tabellens krop for 178 cm har 138,7 cm (81 %). Skiven står sandsynligvis tættere på kameraet end kroppen, så cm-tallene er for små, og modellen tegnes for stor. Prøv Brug kroppens længder som skala og se, hvor meget tallene flytter.",
+   "vejl": "Færdig. Træk i et punkt for at flytte det.Tallene nedenfor regnes om, mens du flytter.",
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model"
+   ],
+   "punkter": [
+    "stang",
+    "midtfod",
+    "ankel",
+    "knae",
+    "hofte",
+    "skulder",
+    "skalaA",
+    "skalaB"
+   ],
+   "traek": null
+  },
+  "kroppensSkala": {
+   "maaling": {
+    "torso": [
+     "77,6°"
+    ],
+    "hofte": [
+     "45,8°"
+    ],
+    "knae": [
+     "110,3°"
+    ],
+    "skinneben": [
+     "13,1°"
+    ],
+    "stangFraMidtfod": [
+     "3,0 cm"
+    ],
+    "stangHofte": [
+     "40,6 cm"
+    ],
+    "skulderForanStang": [
+     "5,1 cm"
+    ]
+   },
+   "sammen": {
+    "torso": [
+     "77,6°",
+     "61,5°"
+    ],
+    "hofte": [
+     "45,8°",
+     "51,4°"
+    ],
+    "knae": [
+     "110,3°",
+     "99,9°"
+    ],
+    "skinneben": [
+     "13,1°",
+     "13,0°"
+    ],
+    "balanceStang": [
+     "3,0 cm",
+     "3,3 cm"
+    ]
+   },
+   "advarsel": null,
+   "vejl": "Færdig. Træk i et punkt for at flytte det.Tallene nedenfor regnes om, mens du flytter.",
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model"
+   ],
+   "punkter": [
+    "stang",
+    "midtfod",
+    "ankel",
+    "knae",
+    "hofte",
+    "skulder"
+   ],
+   "traek": null
+  },
+  "kg100": {
+   "maaling": {
+    "torso": [
+     "77,6°"
+    ],
+    "hofte": [
+     "45,8°"
+    ],
+    "knae": [
+     "110,3°"
+    ],
+    "skinneben": [
+     "13,1°"
+    ],
+    "stangFraMidtfod": [
+     "kræver skala"
+    ],
+    "stangHofte": [
+     "kræver skala"
+    ],
+    "skulderForanStang": [
+     "kræver skala"
+    ]
+   },
+   "sammen": {
+    "torso": [
+     "77,6°",
+     "61,5°"
+    ],
+    "hofte": [
+     "45,8°",
+     "51,4°"
+    ],
+    "knae": [
+     "110,3°",
+     "99,9°"
+    ],
+    "skinneben": [
+     "13,1°",
+     "13,0°"
+    ],
+    "balanceStang": [
+     "kræver skala",
+     "5,8 cm"
+    ]
+   },
+   "advarsel": null,
+   "vejl": "Skala, punkt 1 af 2: klik skivens øverste kant.Den kendte længde: klik den ene ende, fx skivens øverste kant lige over navet.",
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model"
+   ],
+   "punkter": [
+    "stang",
+    "midtfod",
+    "ankel",
+    "knae",
+    "hofte",
+    "skulder"
+   ],
+   "traek": null
+  },
+  "net": [],
+  "skriv": 0
+ },
+ "squat1280": {
+  "t1": {
+   "maaling": {
+    "torso": [
+     "54,6°"
+    ],
+    "hofte": [
+     "31,8°"
+    ],
+    "knae": [
+     "41,4°"
+    ],
+    "skinneben": [
+     "45,1°"
+    ],
+    "stangFraMidtfod": [
+     "−0,4 cm"
+    ],
+    "stangHofte": [
+     "18,9 cm"
+    ]
+   },
+   "sammen": {
+    "torso": [
+     "54,6°",
+     "49,0°",
+     "54,7°"
+    ],
+    "hofte": [
+     "31,8°",
+     "37,1°",
+     "31,6°"
+    ],
+    "knae": [
+     "41,4°",
+     "46,1°",
+     "41,4°"
+    ],
+    "stangFraMidtfod": [
+     "−0,4 cm",
+     "−0,8 cm",
+     "−0,5 cm"
+    ],
+    "stangHofte": [
+     "18,9 cm",
+     "21,5 cm",
+     "23,1 cm"
+    ]
+   },
+   "advarsel": "Tjek skalaen: med den er skinneben, lår og overkrop 113,1 cm i billedet, mens målene fra Min krop har 139,7 cm (81 %). Skiven står sandsynligvis tættere på kameraet end kroppen, så cm-tallene er for små, og modellen tegnes for stor. Prøv Brug kroppens længder som skala og se, hvor meget tallene flytter.",
+   "vejl": "Færdig. Træk i et punkt for at flytte det.Tallene nedenfor regnes om, mens du flytter.",
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "punkter": [
+    "stang",
+    "midtfod",
+    "ankel",
+    "knae",
+    "hofte",
+    "skulder",
+    "skalaA",
+    "skalaB"
+   ],
+   "traek": null
+  },
+  "lay": {
+   "vandretRul": false,
+   "sideH": 3556,
+   "vindueH": 900,
+   "vejl": {
+    "top": 290,
+    "bund": 376,
+    "h": 86,
+    "w": 1068
+   },
+   "billede": {
+    "top": 495,
+    "bund": 1170,
+    "h": 675,
+    "w": 506
+   },
+   "model": {
+    "top": 495,
+    "bund": 1281,
+    "h": 785,
+    "w": 528
+   },
+   "resultat": {
+    "top": 1313,
+    "bund": 1900,
+    "h": 587,
+    "w": 1068
+   },
+   "tabel": {
+    "top": 2066,
+    "bund": 2316,
+    "h": 251,
+    "w": 1068
+   },
+   "advarsel": {
+    "top": 1353,
+    "bund": 1440,
+    "h": 86,
+    "w": 1068
+   },
+   "udenskala": {
+    "top": 442,
+    "bund": 486,
+    "h": 44,
+    "w": 256
+   }
+  },
+  "ryst": {
+   "maaling": {
+    "torso": [
+     "50,6°"
+    ],
+    "hofte": [
+     "33,1°"
+    ],
+    "knae": [
+     "42,2°"
+    ],
+    "skinneben": [
+     "41,6°"
+    ],
+    "stangFraMidtfod": [
+     "2,4 cm"
+    ],
+    "stangHofte": [
+     "18,3 cm"
+    ]
+   },
+   "sammen": {
+    "torso": [
+     "50,6°",
+     "49,0°",
+     "54,7°"
+    ],
+    "hofte": [
+     "33,1°",
+     "37,1°",
+     "31,6°"
+    ],
+    "knae": [
+     "42,2°",
+     "46,1°",
+     "41,4°"
+    ],
+    "stangFraMidtfod": [
+     "2,4 cm",
+     "−0,8 cm",
+     "−0,5 cm"
+    ],
+    "stangHofte": [
+     "18,3 cm",
+     "21,5 cm",
+     "23,1 cm"
+    ]
+   },
+   "advarsel": "Tjek skalaen: med den er skinneben, lår og overkrop 107,5 cm i billedet, mens målene fra Min krop har 139,7 cm (77 %). Skiven står sandsynligvis tættere på kameraet end kroppen, så cm-tallene er for små, og modellen tegnes for stor. Prøv Brug kroppens længder som skala og se, hvor meget tallene flytter.",
+   "vejl": "Færdig. Træk i et punkt for at flytte det.Tallene nedenfor regnes om, mens du flytter.",
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "punkter": [
+    "stang",
+    "midtfod",
+    "ankel",
+    "knae",
+    "hofte",
+    "skulder",
+    "skalaA",
+    "skalaB"
+   ],
+   "traek": null
+  },
+  "kroppensSkala": {
+   "maaling": {
+    "torso": [
+     "50,6°"
+    ],
+    "hofte": [
+     "33,1°"
+    ],
+    "knae": [
+     "42,2°"
+    ],
+    "skinneben": [
+     "41,6°"
+    ],
+    "stangFraMidtfod": [
+     "3,1 cm"
+    ],
+    "stangHofte": [
+     "23,8 cm"
+    ]
+   },
+   "sammen": {
+    "torso": [
+     "50,6°",
+     "49,0°",
+     "54,7°"
+    ],
+    "hofte": [
+     "33,1°",
+     "37,1°",
+     "31,6°"
+    ],
+    "knae": [
+     "42,2°",
+     "46,1°",
+     "41,4°"
+    ],
+    "stangFraMidtfod": [
+     "3,1 cm",
+     "−0,8 cm",
+     "−0,5 cm"
+    ],
+    "stangHofte": [
+     "23,8 cm",
+     "21,5 cm",
+     "23,1 cm"
+    ]
+   },
+   "advarsel": null,
+   "vejl": "Færdig. Træk i et punkt for at flytte det.Tallene nedenfor regnes om, mens du flytter.",
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "punkter": [
+    "stang",
+    "midtfod",
+    "ankel",
+    "knae",
+    "hofte",
+    "skulder"
+   ],
+   "traek": null
+  },
+  "net": [],
+  "skriv": 0
+ },
+ "knaeB390": {
+  "t1": {
+   "maaling": {
+    "torso": [
+     "53,8°"
+    ],
+    "hofte": [
+     "88,2°"
+    ],
+    "knae": [
+     "141,3°"
+    ],
+    "skinneben": [
+     "0,6°"
+    ],
+    "stangFraMidtfod": [
+     "0,0 cm"
+    ],
+    "stangHofte": [
+     "29,9 cm"
+    ],
+    "skulderForanStang": [
+     "12,0 cm"
+    ]
+   },
+   "sammen": {
+    "torso": [
+     "53,8°",
+     "53,9°",
+     "53,8°"
+    ],
+    "hofte": [
+     "88,2°",
+     "95,0°",
+     "88,2°"
+    ],
+    "knae": [
+     "141,3°",
+     "148,2°",
+     "141,3°"
+    ],
+    "skinneben": [
+     "0,6°",
+     "0,6°",
+     "0,6°"
+    ],
+    "balanceStang": [
+     "0,0 cm",
+     "1,6 cm",
+     "1,8 cm"
+    ]
+   },
+   "advarsel": null,
+   "vejl": "Færdig. Træk i et punkt for at flytte det.Tallene nedenfor regnes om, mens du flytter.",
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "punkter": [
+    "stang",
+    "midtfod",
+    "ankel",
+    "knae",
+    "hofte",
+    "skulder",
+    "skalaA",
+    "skalaB"
+   ],
+   "traek": null
+  }
+ },
+ "marc": {
+  "390-start": {
+   "t1": {
+    "maaling": {
+     "torso": [
+      "45,9°"
+     ],
+     "hofte": [
+      "83,3°"
+     ],
+     "knae": [
+      "118,0°"
+     ],
+     "skinneben": [
+      "11,2°"
+     ],
+     "stangFraMidtfod": [
+      "2,0 cm"
+     ],
+     "stangHofte": [
+      "17,4 cm"
+     ],
+     "skulderForanStang": [
+      "5,2 cm"
+     ]
+    },
+    "sammen": {
+     "torso": [
+      "45,9°",
+      "60,7°",
+      "60,7°"
+     ],
+     "hofte": [
+      "83,3°",
+      "50,6°",
+      "50,6°"
+     ],
+     "knae": [
+      "118,0°",
+      "97,5°",
+      "97,5°"
+     ],
+     "skinneben": [
+      "11,2°",
+      "13,8°",
+      "13,8°"
+     ],
+     "balanceStang": [
+      "2,0 cm",
+      "4,2 cm",
+      "4,2 cm"
+     ]
+    },
+    "advarsel": "Tjek skalaen: med den er skinneben, lår og overkrop 98,3 cm i billedet, mens målene fra Min krop har 142,5 cm (69 %). Skiven står sandsynligvis tættere på kameraet end kroppen, så cm-tallene er for små, og modellen tegnes for stor. Prøv Brug kroppens længder som skala og se, hvor meget tallene flytter.",
+    "vejl": "Færdig. Træk i et punkt for at flytte det.Tallene nedenfor regnes om, mens du flytter.",
+    "kolonner": [
+     "Mål",
+     "Billedet",
+     "Model, snit",
+     "Model, dine mål"
+    ],
+    "punkter": [
+     "stang",
+     "midtfod",
+     "ankel",
+     "knae",
+     "hofte",
+     "skulder",
+     "skalaA",
+     "skalaB"
+    ],
+    "traek": null
+   },
+   "kroppensSkala": {
+    "maaling": {
+     "torso": [
+      "45,9°"
+     ],
+     "hofte": [
+      "83,3°"
+     ],
+     "knae": [
+      "118,0°"
+     ],
+     "skinneben": [
+      "11,2°"
+     ],
+     "stangFraMidtfod": [
+      "2,8 cm"
+     ],
+     "stangHofte": [
+      "25,3 cm"
+     ],
+     "skulderForanStang": [
+      "7,5 cm"
+     ]
+    },
+    "sammen": {
+     "torso": [
+      "45,9°",
+      "60,7°",
+      "60,7°"
+     ],
+     "hofte": [
+      "83,3°",
+      "50,6°",
+      "50,6°"
+     ],
+     "knae": [
+      "118,0°",
+      "97,5°",
+      "97,5°"
+     ],
+     "skinneben": [
+      "11,2°",
+      "13,8°",
+      "13,8°"
+     ],
+     "balanceStang": [
+      "2,8 cm",
+      "4,2 cm",
+      "4,2 cm"
+     ]
+    },
+    "advarsel": null,
+    "vejl": "Færdig. Træk i et punkt for at flytte det.Tallene nedenfor regnes om, mens du flytter.",
+    "kolonner": [
+     "Mål",
+     "Billedet",
+     "Model, snit",
+     "Model, dine mål"
+    ],
+    "punkter": [
+     "stang",
+     "midtfod",
+     "ankel",
+     "knae",
+     "hofte",
+     "skulder"
+    ],
+    "traek": null
+   },
+   "baelte": {
+    "maaling": {
+     "torso": [
+      "56,8°"
+     ],
+     "hofte": [
+      "83,4°"
+     ],
+     "knae": [
+      "129,0°"
+     ],
+     "skinneben": [
+      "11,2°"
+     ],
+     "stangFraMidtfod": [
+      "2,0 cm"
+     ],
+     "stangHofte": [
+      "17,4 cm"
+     ],
+     "skulderForanStang": [
+      "5,2 cm"
+     ]
+    },
+    "sammen": {
+     "torso": [
+      "56,8°",
+      "60,7°",
+      "60,7°"
+     ],
+     "hofte": [
+      "83,4°",
+      "50,6°",
+      "50,6°"
+     ],
+     "knae": [
+      "129,0°",
+      "97,5°",
+      "97,5°"
+     ],
+     "skinneben": [
+      "11,2°",
+      "13,8°",
+      "13,8°"
+     ],
+     "balanceStang": [
+      "2,0 cm",
+      "4,2 cm",
+      "4,2 cm"
+     ]
+    },
+    "advarsel": "Tjek skalaen: med den er skinneben, lår og overkrop 98,9 cm i billedet, mens målene fra Min krop har 142,5 cm (69 %). Skiven står sandsynligvis tættere på kameraet end kroppen, så cm-tallene er for små, og modellen tegnes for stor. Prøv Brug kroppens længder som skala og se, hvor meget tallene flytter.",
+    "vejl": "Færdig. Træk i et punkt for at flytte det.Tallene nedenfor regnes om, mens du flytter.",
+    "kolonner": [
+     "Mål",
+     "Billedet",
+     "Model, snit",
+     "Model, dine mål"
+    ],
+    "punkter": [
+     "stang",
+     "midtfod",
+     "ankel",
+     "knae",
+     "hofte",
+     "skulder",
+     "skalaA",
+     "skalaB"
+    ],
+    "traek": null
+   },
+   "lay": {
+    "vandretRul": false,
+    "sideH": 6448,
+    "vindueH": 844,
+    "vejl": {
+     "top": 514,
+     "bund": 600,
+     "h": 86,
+     "w": 358
+    },
+    "billede": {
+     "top": 771,
+     "bund": 1248,
+     "h": 477,
+     "w": 358
+    },
+    "model": {
+     "top": 1260,
+     "bund": 1892,
+     "h": 632,
+     "w": 358
+    },
+    "resultat": {
+     "top": 1924,
+     "bund": 2734,
+     "h": 810,
+     "w": 358
+    },
+    "tabel": {
+     "top": 3018,
+     "bund": 3557,
+     "h": 539,
+     "w": 358
+    },
+    "advarsel": {
+     "top": 1965,
+     "bund": 2168,
+     "h": 203,
+     "w": 358
+    },
+    "udenskala": {
+     "top": 718,
+     "bund": 762,
+     "h": 44,
+     "w": 256
+    }
+   },
+   "overlap": {
+    "cssPx": 5.2,
+    "flyttet": [
+     "skalaB"
+    ]
+   }
+  },
+  "390-knaehoejde": {
+   "t1": {
+    "maaling": {
+     "torso": [
+      "41,6°"
+     ],
+     "hofte": [
+      "88,0°"
+     ],
+     "knae": [
+      "119,6°"
+     ],
+     "skinneben": [
+      "10,1°"
+     ],
+     "stangFraMidtfod": [
+      "1,3 cm"
+     ],
+     "stangHofte": [
+      "17,6 cm"
+     ],
+     "skulderForanStang": [
+      "4,9 cm"
+     ]
+    },
+    "sammen": {
+     "torso": [
+      "41,6°",
+      "52,9°",
+      "52,9°"
+     ],
+     "hofte": [
+      "88,0°",
+      "94,6°",
+      "94,6°"
+     ],
+     "knae": [
+      "119,6°",
+      "146,3°",
+      "146,3°"
+     ],
+     "skinneben": [
+      "10,1°",
+      "1,2°",
+      "1,2°"
+     ],
+     "balanceStang": [
+      "1,3 cm",
+      "2,6 cm",
+      "2,6 cm"
+     ]
+    },
+    "advarsel": "Tjek skalaen: med den er skinneben, lår og overkrop 109,9 cm i billedet, mens målene fra Min krop har 142,5 cm (77 %). Skiven står sandsynligvis tættere på kameraet end kroppen, så cm-tallene er for små, og modellen tegnes for stor. Prøv Brug kroppens længder som skala og se, hvor meget tallene flytter.",
+    "vejl": "Færdig. Træk i et punkt for at flytte det.Tallene nedenfor regnes om, mens du flytter.",
+    "kolonner": [
+     "Mål",
+     "Billedet",
+     "Model, snit",
+     "Model, dine mål"
+    ],
+    "punkter": [
+     "stang",
+     "midtfod",
+     "ankel",
+     "knae",
+     "hofte",
+     "skulder",
+     "skalaA",
+     "skalaB"
+    ],
+    "traek": null
+   },
+   "kroppensSkala": {
+    "maaling": {
+     "torso": [
+      "41,6°"
+     ],
+     "hofte": [
+      "88,0°"
+     ],
+     "knae": [
+      "119,6°"
+     ],
+     "skinneben": [
+      "10,1°"
+     ],
+     "stangFraMidtfod": [
+      "1,7 cm"
+     ],
+     "stangHofte": [
+      "22,9 cm"
+     ],
+     "skulderForanStang": [
+      "6,3 cm"
+     ]
+    },
+    "sammen": {
+     "torso": [
+      "41,6°",
+      "52,9°",
+      "52,9°"
+     ],
+     "hofte": [
+      "88,0°",
+      "94,6°",
+      "94,6°"
+     ],
+     "knae": [
+      "119,6°",
+      "146,3°",
+      "146,3°"
+     ],
+     "skinneben": [
+      "10,1°",
+      "1,2°",
+      "1,2°"
+     ],
+     "balanceStang": [
+      "1,7 cm",
+      "2,6 cm",
+      "2,6 cm"
+     ]
+    },
+    "advarsel": null,
+    "vejl": "Færdig. Træk i et punkt for at flytte det.Tallene nedenfor regnes om, mens du flytter.",
+    "kolonner": [
+     "Mål",
+     "Billedet",
+     "Model, snit",
+     "Model, dine mål"
+    ],
+    "punkter": [
+     "stang",
+     "midtfod",
+     "ankel",
+     "knae",
+     "hofte",
+     "skulder"
+    ],
+    "traek": null
+   },
+   "baelte": {
+    "maaling": {
+     "torso": [
+      "51,6°"
+     ],
+     "hofte": [
+      "88,8°"
+     ],
+     "knae": [
+      "130,4°"
+     ],
+     "skinneben": [
+      "10,1°"
+     ],
+     "stangFraMidtfod": [
+      "1,3 cm"
+     ],
+     "stangHofte": [
+      "17,6 cm"
+     ],
+     "skulderForanStang": [
+      "4,9 cm"
+     ]
+    },
+    "sammen": {
+     "torso": [
+      "51,6°",
+      "52,9°",
+      "52,9°"
+     ],
+     "hofte": [
+      "88,8°",
+      "94,6°",
+      "94,6°"
+     ],
+     "knae": [
+      "130,4°",
+      "146,3°",
+      "146,3°"
+     ],
+     "skinneben": [
+      "10,1°",
+      "1,2°",
+      "1,2°"
+     ],
+     "balanceStang": [
+      "1,3 cm",
+      "2,6 cm",
+      "2,6 cm"
+     ]
+    },
+    "advarsel": "Tjek skalaen: med den er skinneben, lår og overkrop 110,1 cm i billedet, mens målene fra Min krop har 142,5 cm (77 %). Skiven står sandsynligvis tættere på kameraet end kroppen, så cm-tallene er for små, og modellen tegnes for stor. Prøv Brug kroppens længder som skala og se, hvor meget tallene flytter.",
+    "vejl": "Færdig. Træk i et punkt for at flytte det.Tallene nedenfor regnes om, mens du flytter.",
+    "kolonner": [
+     "Mål",
+     "Billedet",
+     "Model, snit",
+     "Model, dine mål"
+    ],
+    "punkter": [
+     "stang",
+     "midtfod",
+     "ankel",
+     "knae",
+     "hofte",
+     "skulder",
+     "skalaA",
+     "skalaB"
+    ],
+    "traek": null
+   },
+   "lay": {
+    "vandretRul": false,
+    "sideH": 6477,
+    "vindueH": 844,
+    "vejl": {
+     "top": 514,
+     "bund": 600,
+     "h": 86,
+     "w": 358
+    },
+    "billede": {
+     "top": 771,
+     "bund": 1248,
+     "h": 477,
+     "w": 358
+    },
+    "model": {
+     "top": 1260,
+     "bund": 1892,
+     "h": 632,
+     "w": 358
+    },
+    "resultat": {
+     "top": 1924,
+     "bund": 2763,
+     "h": 839,
+     "w": 358
+    },
+    "tabel": {
+     "top": 3047,
+     "bund": 3585,
+     "h": 539,
+     "w": 358
+    },
+    "advarsel": {
+     "top": 1993,
+     "bund": 2197,
+     "h": 203,
+     "w": 358
+    },
+    "udenskala": {
+     "top": 718,
+     "bund": 762,
+     "h": 44,
+     "w": 256
+    }
+   },
+   "overlap": {
+    "cssPx": 20.9,
+    "flyttet": [
+     "midtfod"
+    ]
+   }
+  },
+  "390-net": [],
+  "1280-start": {
+   "t1": {
+    "maaling": {
+     "torso": [
+      "45,9°"
+     ],
+     "hofte": [
+      "83,3°"
+     ],
+     "knae": [
+      "118,0°"
+     ],
+     "skinneben": [
+      "11,2°"
+     ],
+     "stangFraMidtfod": [
+      "2,0 cm"
+     ],
+     "stangHofte": [
+      "17,4 cm"
+     ],
+     "skulderForanStang": [
+      "5,2 cm"
+     ]
+    },
+    "sammen": {
+     "torso": [
+      "45,9°",
+      "60,7°",
+      "60,7°"
+     ],
+     "hofte": [
+      "83,3°",
+      "50,6°",
+      "50,6°"
+     ],
+     "knae": [
+      "118,0°",
+      "97,5°",
+      "97,5°"
+     ],
+     "skinneben": [
+      "11,2°",
+      "13,8°",
+      "13,8°"
+     ],
+     "balanceStang": [
+      "2,0 cm",
+      "4,2 cm",
+      "4,2 cm"
+     ]
+    },
+    "advarsel": "Tjek skalaen: med den er skinneben, lår og overkrop 98,3 cm i billedet, mens målene fra Min krop har 142,5 cm (69 %). Skiven står sandsynligvis tættere på kameraet end kroppen, så cm-tallene er for små, og modellen tegnes for stor. Prøv Brug kroppens længder som skala og se, hvor meget tallene flytter.",
+    "vejl": "Færdig. Træk i et punkt for at flytte det.Tallene nedenfor regnes om, mens du flytter.",
+    "kolonner": [
+     "Mål",
+     "Billedet",
+     "Model, snit",
+     "Model, dine mål"
+    ],
+    "punkter": [
+     "stang",
+     "midtfod",
+     "ankel",
+     "knae",
+     "hofte",
+     "skulder",
+     "skalaA",
+     "skalaB"
+    ],
+    "traek": null
+   },
+   "kroppensSkala": {
+    "maaling": {
+     "torso": [
+      "45,9°"
+     ],
+     "hofte": [
+      "83,3°"
+     ],
+     "knae": [
+      "118,0°"
+     ],
+     "skinneben": [
+      "11,2°"
+     ],
+     "stangFraMidtfod": [
+      "2,8 cm"
+     ],
+     "stangHofte": [
+      "25,3 cm"
+     ],
+     "skulderForanStang": [
+      "7,5 cm"
+     ]
+    },
+    "sammen": {
+     "torso": [
+      "45,9°",
+      "60,7°",
+      "60,7°"
+     ],
+     "hofte": [
+      "83,3°",
+      "50,6°",
+      "50,6°"
+     ],
+     "knae": [
+      "118,0°",
+      "97,5°",
+      "97,5°"
+     ],
+     "skinneben": [
+      "11,2°",
+      "13,8°",
+      "13,8°"
+     ],
+     "balanceStang": [
+      "2,8 cm",
+      "4,2 cm",
+      "4,2 cm"
+     ]
+    },
+    "advarsel": null,
+    "vejl": "Færdig. Træk i et punkt for at flytte det.Tallene nedenfor regnes om, mens du flytter.",
+    "kolonner": [
+     "Mål",
+     "Billedet",
+     "Model, snit",
+     "Model, dine mål"
+    ],
+    "punkter": [
+     "stang",
+     "midtfod",
+     "ankel",
+     "knae",
+     "hofte",
+     "skulder"
+    ],
+    "traek": null
+   },
+   "baelte": {
+    "maaling": {
+     "torso": [
+      "56,8°"
+     ],
+     "hofte": [
+      "83,4°"
+     ],
+     "knae": [
+      "129,0°"
+     ],
+     "skinneben": [
+      "11,2°"
+     ],
+     "stangFraMidtfod": [
+      "2,0 cm"
+     ],
+     "stangHofte": [
+      "17,4 cm"
+     ],
+     "skulderForanStang": [
+      "5,2 cm"
+     ]
+    },
+    "sammen": {
+     "torso": [
+      "56,8°",
+      "60,7°",
+      "60,7°"
+     ],
+     "hofte": [
+      "83,4°",
+      "50,6°",
+      "50,6°"
+     ],
+     "knae": [
+      "129,0°",
+      "97,5°",
+      "97,5°"
+     ],
+     "skinneben": [
+      "11,2°",
+      "13,8°",
+      "13,8°"
+     ],
+     "balanceStang": [
+      "2,0 cm",
+      "4,2 cm",
+      "4,2 cm"
+     ]
+    },
+    "advarsel": "Tjek skalaen: med den er skinneben, lår og overkrop 98,9 cm i billedet, mens målene fra Min krop har 142,5 cm (69 %). Skiven står sandsynligvis tættere på kameraet end kroppen, så cm-tallene er for små, og modellen tegnes for stor. Prøv Brug kroppens længder som skala og se, hvor meget tallene flytter.",
+    "vejl": "Færdig. Træk i et punkt for at flytte det.Tallene nedenfor regnes om, mens du flytter.",
+    "kolonner": [
+     "Mål",
+     "Billedet",
+     "Model, snit",
+     "Model, dine mål"
+    ],
+    "punkter": [
+     "stang",
+     "midtfod",
+     "ankel",
+     "knae",
+     "hofte",
+     "skulder",
+     "skalaA",
+     "skalaB"
+    ],
+    "traek": null
+   },
+   "lay": {
+    "vandretRul": false,
+    "sideH": 3664,
+    "vindueH": 900,
+    "vejl": {
+     "top": 290,
+     "bund": 376,
+     "h": 86,
+     "w": 1068
+    },
+    "billede": {
+     "top": 495,
+     "bund": 1170,
+     "h": 675,
+     "w": 506
+    },
+    "model": {
+     "top": 495,
+     "bund": 1281,
+     "h": 785,
+     "w": 528
+    },
+    "resultat": {
+     "top": 1313,
+     "bund": 1962,
+     "h": 649,
+     "w": 1068
+    },
+    "tabel": {
+     "top": 2127,
+     "bund": 2402,
+     "h": 275,
+     "w": 1068
+    },
+    "advarsel": {
+     "top": 1353,
+     "bund": 1440,
+     "h": 86,
+     "w": 1068
+    },
+    "udenskala": {
+     "top": 442,
+     "bund": 486,
+     "h": 44,
+     "w": 256
+    }
+   },
+   "overlap": {
+    "cssPx": 7.3,
+    "flyttet": [
+     "midtfod"
+    ]
+   }
+  },
+  "1280-knaehoejde": {
+   "t1": {
+    "maaling": {
+     "torso": [
+      "41,6°"
+     ],
+     "hofte": [
+      "88,0°"
+     ],
+     "knae": [
+      "119,6°"
+     ],
+     "skinneben": [
+      "10,1°"
+     ],
+     "stangFraMidtfod": [
+      "1,3 cm"
+     ],
+     "stangHofte": [
+      "17,6 cm"
+     ],
+     "skulderForanStang": [
+      "4,9 cm"
+     ]
+    },
+    "sammen": {
+     "torso": [
+      "41,6°",
+      "52,9°",
+      "52,9°"
+     ],
+     "hofte": [
+      "88,0°",
+      "94,6°",
+      "94,6°"
+     ],
+     "knae": [
+      "119,6°",
+      "146,3°",
+      "146,3°"
+     ],
+     "skinneben": [
+      "10,1°",
+      "1,2°",
+      "1,2°"
+     ],
+     "balanceStang": [
+      "1,3 cm",
+      "2,6 cm",
+      "2,6 cm"
+     ]
+    },
+    "advarsel": "Tjek skalaen: med den er skinneben, lår og overkrop 109,9 cm i billedet, mens målene fra Min krop har 142,5 cm (77 %). Skiven står sandsynligvis tættere på kameraet end kroppen, så cm-tallene er for små, og modellen tegnes for stor. Prøv Brug kroppens længder som skala og se, hvor meget tallene flytter.",
+    "vejl": "Færdig. Træk i et punkt for at flytte det.Tallene nedenfor regnes om, mens du flytter.",
+    "kolonner": [
+     "Mål",
+     "Billedet",
+     "Model, snit",
+     "Model, dine mål"
+    ],
+    "punkter": [
+     "stang",
+     "midtfod",
+     "ankel",
+     "knae",
+     "hofte",
+     "skulder",
+     "skalaA",
+     "skalaB"
+    ],
+    "traek": null
+   },
+   "kroppensSkala": {
+    "maaling": {
+     "torso": [
+      "41,6°"
+     ],
+     "hofte": [
+      "88,0°"
+     ],
+     "knae": [
+      "119,6°"
+     ],
+     "skinneben": [
+      "10,1°"
+     ],
+     "stangFraMidtfod": [
+      "1,7 cm"
+     ],
+     "stangHofte": [
+      "22,9 cm"
+     ],
+     "skulderForanStang": [
+      "6,3 cm"
+     ]
+    },
+    "sammen": {
+     "torso": [
+      "41,6°",
+      "52,9°",
+      "52,9°"
+     ],
+     "hofte": [
+      "88,0°",
+      "94,6°",
+      "94,6°"
+     ],
+     "knae": [
+      "119,6°",
+      "146,3°",
+      "146,3°"
+     ],
+     "skinneben": [
+      "10,1°",
+      "1,2°",
+      "1,2°"
+     ],
+     "balanceStang": [
+      "1,7 cm",
+      "2,6 cm",
+      "2,6 cm"
+     ]
+    },
+    "advarsel": null,
+    "vejl": "Færdig. Træk i et punkt for at flytte det.Tallene nedenfor regnes om, mens du flytter.",
+    "kolonner": [
+     "Mål",
+     "Billedet",
+     "Model, snit",
+     "Model, dine mål"
+    ],
+    "punkter": [
+     "stang",
+     "midtfod",
+     "ankel",
+     "knae",
+     "hofte",
+     "skulder"
+    ],
+    "traek": null
+   },
+   "baelte": {
+    "maaling": {
+     "torso": [
+      "51,6°"
+     ],
+     "hofte": [
+      "88,8°"
+     ],
+     "knae": [
+      "130,4°"
+     ],
+     "skinneben": [
+      "10,1°"
+     ],
+     "stangFraMidtfod": [
+      "1,3 cm"
+     ],
+     "stangHofte": [
+      "17,6 cm"
+     ],
+     "skulderForanStang": [
+      "4,9 cm"
+     ]
+    },
+    "sammen": {
+     "torso": [
+      "51,6°",
+      "52,9°",
+      "52,9°"
+     ],
+     "hofte": [
+      "88,8°",
+      "94,6°",
+      "94,6°"
+     ],
+     "knae": [
+      "130,4°",
+      "146,3°",
+      "146,3°"
+     ],
+     "skinneben": [
+      "10,1°",
+      "1,2°",
+      "1,2°"
+     ],
+     "balanceStang": [
+      "1,3 cm",
+      "2,6 cm",
+      "2,6 cm"
+     ]
+    },
+    "advarsel": "Tjek skalaen: med den er skinneben, lår og overkrop 110,1 cm i billedet, mens målene fra Min krop har 142,5 cm (77 %). Skiven står sandsynligvis tættere på kameraet end kroppen, så cm-tallene er for små, og modellen tegnes for stor. Prøv Brug kroppens længder som skala og se, hvor meget tallene flytter.",
+    "vejl": "Færdig. Træk i et punkt for at flytte det.Tallene nedenfor regnes om, mens du flytter.",
+    "kolonner": [
+     "Mål",
+     "Billedet",
+     "Model, snit",
+     "Model, dine mål"
+    ],
+    "punkter": [
+     "stang",
+     "midtfod",
+     "ankel",
+     "knae",
+     "hofte",
+     "skulder",
+     "skalaA",
+     "skalaB"
+    ],
+    "traek": null
+   },
+   "lay": {
+    "vandretRul": false,
+    "sideH": 3664,
+    "vindueH": 900,
+    "vejl": {
+     "top": 290,
+     "bund": 376,
+     "h": 86,
+     "w": 1068
+    },
+    "billede": {
+     "top": 495,
+     "bund": 1170,
+     "h": 675,
+     "w": 506
+    },
+    "model": {
+     "top": 495,
+     "bund": 1281,
+     "h": 785,
+     "w": 528
+    },
+    "resultat": {
+     "top": 1313,
+     "bund": 1962,
+     "h": 649,
+     "w": 1068
+    },
+    "tabel": {
+     "top": 2127,
+     "bund": 2402,
+     "h": 275,
+     "w": 1068
+    },
+    "advarsel": {
+     "top": 1353,
+     "bund": 1440,
+     "h": 86,
+     "w": 1068
+    },
+    "udenskala": {
+     "top": 442,
+     "bund": 486,
+     "h": 44,
+     "w": 256
+    }
+   },
+   "overlap": {
+    "cssPx": 29.5,
+    "flyttet": [
+     "midtfod"
+    ]
+   }
+  },
+  "1280-net": []
+ },
+ "tjek": [
+  {
+   "hvad": "390: 8 tryk med touch saetter alle punkter, og tabellen \"billede mod model\" kommer",
+   "ok": true,
+   "data": [
+    "stang",
+    "midtfod",
+    "ankel",
+    "knae",
+    "hofte",
+    "skulder",
+    "skalaA",
+    "skalaB"
+   ]
+  },
+  {
+   "hvad": "390: skiven 3 m fra kameraet giver skala-advarslen (som regnet)",
+   "ok": true,
+   "data": "Tjek skalaen: med den er skinneben, lår og overkrop 112,3 cm i billedet, mens tabellens krop for 178 cm har 138,7 cm (81 %). Skiven står sandsynligvis tættere p"
+  },
+  {
+   "hvad": "390: vinklerne i siden er modellens (torso inden for 1 grad af 61,5)",
+   "ok": true,
+   "data": [
+    "61,4°",
+    "61,5°"
+   ]
+  },
+  {
+   "hvad": "390: naar alle punkter er sat, flytter et traek fra midtfoden kun midtfoden (naermeste punkt vinder)",
+   "ok": true,
+   "data": {
+    "afst": {
+     "midtfod-skalaB": 32.7,
+     "midtfod-ankel": 18.3,
+     "knae-skalaA": 19,
+     "stang-knae": 72.5,
+     "cmPrCssPx": 0.4
+    },
+    "flyttet": [
+     "midtfod"
+    ]
+   }
+  },
+  {
+   "hvad": "390: \"Brug kroppens laengder\" frem og tilbage sletter skivens to punkter; tabellen siger \"kraever skala\" igen",
+   "ok": true,
+   "data": [
+    "stang",
+    "midtfod",
+    "ankel",
+    "knae",
+    "hofte",
+    "skulder"
+   ]
+  },
+  {
+   "hvad": "390: hoften ved baeltet + skulderen midt i leddet giver torso ca. 12 grader mere vandret end sandt (regningen: 8,4 + 4,1)",
+   "ok": true,
+   "data": {
+    "rigtigt": "61,4°",
+    "forkert": "77,6°"
+   }
+  },
+  {
+   "hvad": "390: stangens vaegt 100 kg flytter modellens balancepunkt ved gulvet ca. 2,5 cm",
+   "ok": true,
+   "data": {
+    "kg270": [
+     "2,4 cm",
+     "3,3 cm"
+    ],
+    "kg100": [
+     "kræver skala",
+     "5,8 cm"
+    ]
+   }
+  },
+  {
+   "hvad": "390: ingen vandret rulning, intet net, intet skrevet til lageret",
+   "ok": true,
+   "data": {
+    "net": [],
+    "skriv": 0
+   }
+  },
+  {
+   "hvad": "390: billedet og vejledningen kan ikke ses samtidig med tabellen (coachen ruller efter hvert traek)",
+   "ok": true,
+   "data": {
+    "billede": {
+     "top": 749,
+     "bund": 1226,
+     "h": 477,
+     "w": 358
+    },
+    "tabel": {
+     "top": 2952,
+     "bund": 3322,
+     "h": 371,
+     "w": 358
+    },
+    "vindueH": 844
+   }
+  },
+  {
+   "hvad": "1280: med Min krop (krop A) har tabellen kolonnen \"Model, dine mål\", og modellen staar ved siden af billedet",
+   "ok": true,
+   "data": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ]
+  },
+  {
+   "hvad": "1280: squattens stang-hofte med skiven er flere cm kortere end med kroppens skala (3 m)",
+   "ok": true,
+   "data": {
+    "skive": [
+     "18,9 cm"
+    ],
+    "krop": [
+     "23,8 cm"
+    ]
+   }
+  },
+  {
+   "hvad": "1280: 2 cm fingerfejl flytter squattens vinkler faa grader",
+   "ok": true,
+   "data": {
+    "torso": [
+     "54,6°",
+     "50,6°"
+    ],
+    "hofte": [
+     "31,8°",
+     "33,1°"
+    ],
+    "knae": [
+     "41,4°",
+     "42,2°"
+    ]
+   }
+  },
+  {
+   "hvad": "390: krop B i knaehoejde uden perspektiv: billedets vinkler = modellens med dine maal, ingen advarsel",
+   "ok": true,
+   "data": {
+    "torso": [
+     "53,8°",
+     "53,9°",
+     "53,8°"
+    ],
+    "hofte": [
+     "88,2°",
+     "95,0°",
+     "88,2°"
+    ],
+    "knae": [
+     "141,3°",
+     "148,2°",
+     "141,3°"
+    ],
+    "skinneben": [
+     "0,6°",
+     "0,6°",
+     "0,6°"
+    ],
+    "balanceStang": [
+     "0,0 cm",
+     "1,6 cm",
+     "1,8 cm"
+    ]
+   }
+  },
+  {
+   "hvad": "Marc: mine klik paa 390 og 1280 giver samme tal (inden for 0,5 grad)",
+   "ok": true,
+   "data": {
+    "390": [
+     "45,9°"
+    ],
+    "1280": [
+     "45,9°"
+    ]
+   }
+  },
+  {
+   "hvad": "Marc: mine klik ligger inden for 3 grader af Yantras paa torsoen (48,5 og 43,8)",
+   "ok": true,
+   "data": {
+    "start": [
+     "45,9°"
+    ],
+    "knae": [
+     "41,6°"
+    ]
+   }
+  },
+  {
+   "hvad": "Marc: siden advarer om skalaen paa begge billeder",
+   "ok": true,
+   "data": [
+    "(69 %)",
+    "(77 %)"
+   ]
+  },
+  {
+   "hvad": "Marc: \"knaehoejde\"-billedet giver knaevinkel ca. 120 grader mod modellens ca. 146, og siden siger intet om, at stangen staar under knaeet",
+   "ok": true,
+   "data": [
+    "119,6°",
+    "146,3°",
+    "146,3°"
+   ]
+  },
+  {
+   "hvad": "Marc: hoften ved baeltet flytter torsoen og knaeet flere grader i klippet",
+   "ok": true,
+   "data": {
+    "rigtig": {
+     "torso": [
+      "45,9°"
+     ],
+     "hofte": [
+      "83,3°"
+     ],
+     "knae": [
+      "118,0°"
+     ],
+     "skinneben": [
+      "11,2°"
+     ],
+     "stangFraMidtfod": [
+      "2,0 cm"
+     ],
+     "stangHofte": [
+      "17,4 cm"
+     ],
+     "skulderForanStang": [
+      "5,2 cm"
+     ]
+    },
+    "baelte": {
+     "torso": [
+      "56,8°"
+     ],
+     "hofte": [
+      "83,4°"
+     ],
+     "knae": [
+      "129,0°"
+     ],
+     "skinneben": [
+      "11,2°"
+     ],
+     "stangFraMidtfod": [
+      "2,0 cm"
+     ],
+     "stangHofte": [
+      "17,4 cm"
+     ],
+     "skulderForanStang": [
+      "5,2 cm"
+     ]
+    }
+   }
+  },
+  {
+   "hvad": "Marc paa 390: midtfoden og skivens nederste kant ligger under 10 CSS-px fra hinanden, og et traek 3 px ved siden af midtfoden flytter skivens kant",
+   "ok": true,
+   "data": {
+    "cssPx": 5.2,
+    "flyttet": [
+     "skalaB"
+    ]
+   }
+  },
+  {
+   "hvad": "Marc: intet net paa 390 og 1280",
+   "ok": true
+  }
+ ]
+}
