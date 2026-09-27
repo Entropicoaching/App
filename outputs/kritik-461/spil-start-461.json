@@ -1,0 +1,79 @@
+{
+ "skakMain": "1791bc0",
+ "bredder": {
+  "390": {
+   "startFane": "Gåder",
+   "efterSpil": {
+    "fen": "8/8/4K3/1Q6/8/k7/2B5/8 w - - 0 1",
+    "modusValgt": "makker",
+    "niveauerSynlige": false,
+    "status": "Hvid trækker."
+   },
+   "efterModComputeren": {
+    "fen": "8/8/4K3/1Q6/8/k7/2B5/8 w - - 0 1",
+    "modusValgt": "computer",
+    "niveauerSynlige": true,
+    "status": "Hvid trækker."
+   },
+   "startstilling": false,
+   "hvemITraek": "w",
+   "forfraBeder": true,
+   "efterForfra": {
+    "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "modusValgt": "computer",
+    "niveauerSynlige": true,
+    "status": "Hvid trækker."
+   },
+   "traenOgTilbage": {
+    "foer": {
+     "fen": "rnb1kbnr/pppp1ppp/8/4p3/6Pq/5P2/PPPPP2P/RNBQKBNR w KQkq - 1 3",
+     "traek": 2,
+     "knap": "Træn \"Stop matten\""
+    },
+    "efter": {
+     "fen": "6k1/2R2p1p/1rp2Pp1/p7/3p4/3P3P/P1P3PK/8 b - - 2 33",
+     "traek": 0,
+     "vendepunkter": true
+    },
+    "partietStaar": false
+   }
+  },
+  "1280": {
+   "startFane": "Gåder",
+   "efterSpil": {
+    "fen": "K6k/8/8/6N1/4Q3/8/8/8 w - - 0 1",
+    "modusValgt": "makker",
+    "niveauerSynlige": false,
+    "status": "Hvid trækker."
+   },
+   "efterModComputeren": {
+    "fen": "K6k/8/8/6N1/4Q3/8/8/8 w - - 0 1",
+    "modusValgt": "computer",
+    "niveauerSynlige": true,
+    "status": "Hvid trækker."
+   },
+   "startstilling": false,
+   "hvemITraek": "w",
+   "forfraBeder": true,
+   "efterForfra": {
+    "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "modusValgt": "computer",
+    "niveauerSynlige": true,
+    "status": "Hvid trækker."
+   },
+   "traenOgTilbage": {
+    "foer": {
+     "fen": "rnb1kbnr/pppp1ppp/8/4p3/6Pq/5P2/PPPPP2P/RNBQKBNR w KQkq - 1 3",
+     "traek": 2,
+     "knap": "Træn \"Stop matten\""
+    },
+    "efter": {
+     "fen": "6k1/2R2p1p/1rp2Pp1/p7/3p4/3P3P/P1P3PK/8 b - - 2 33",
+     "traek": 0,
+     "vendepunkter": true
+    },
+    "partietStaar": false
+   }
+  }
+ }
+}
