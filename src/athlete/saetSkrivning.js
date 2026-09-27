@@ -13,9 +13,10 @@ import { startRestPause, clearRestPause } from '../restPause'
 import {
   saveOfflineSet, loadOfflineSets, countOfflineSets, clearOfflineSetIfSame, newSetClientId,
   orderedOfflineSets, parkOfflineSet, queuedPayloadWithTime, noteOfflineSetFailure, queueUndoTombstone,
+  saveQueuedRating, loadQueuedRatings, clearQueuedRatingIfSame,
+  saveQueuedRecord, loadQueuedRecords, clearQueuedRecord, recordKey,
 } from '../offlineSetQueue'
 import { browserSaysOffline, seemsOffline, withSlowNetCutoff } from '../offlineSession'
-import { estimatedOneRepMax } from '../exerciseProgress'
 import { parsePlannedRpe, logFrontendError } from './ugeHjaelp'
 import { bygGrundlag, findRekord, rekordTekst, ugensSaet, ugensOevelsesIds } from './rekorder'
 
@@ -28,6 +29,11 @@ const OFFLINE_ERROR = { code: 'OFFLINE', message: 'Ingen forbindelse' }
 // genhentning kan starte den samtidig). Modul-niveau, fordi fabrikken kaldes
 // i hvert render.
 let flushInFlight = false
+// ORDRE 456 (A3): samme for køen af vurderinger.
+let ratingFlushInFlight = false
+// ORDRE 456 (A5): rekord-rækkerne til personal_records skrives én ad gangen,
+// så to afsendelser af samme sæt (køen og det direkte svar) ikke begge skriver.
+let prKaede = Promise.resolve()
 // Fremmednøgle-brud: øvelsen findes ikke mere (coachen har slettet den).
 const isPermanentSetError = (error) => error?.code === '23503'
 // ORDRE 406 (O6 i docs/kritik-403): en fejl, serveren selv har sagt (en kode fra
@@ -169,7 +175,7 @@ export function lavSaetSkrivning({
   // Svarer den ikke (wifi uden internet), får kalderen SLOW_NET og viser sættet
   // som ventende; kaldet kører videre i baggrunden, og når det frem, fjernes
   // køposten her (ellers sender flushOfflineSets den med samme række-id).
-  async function sendQueuedSet(key, exerciseId, setNumber, payload, realExistingId, clientId, { lookupFirst = false } = {}) {
+  async function sendQueuedSet(key, exerciseId, setNumber, payload, realExistingId, clientId, { lookupFirst = false, pr = null } = {}) {
     const write = persistSetLog(key, exerciseId, setNumber, payload, realExistingId, clientId, { hasQueue: true, lookupFirst })
     const res = await withSlowNetCutoff(write, undefined, { startWhen: write.sent })
     if (res.error?.code === 'SLOW_NET') {
@@ -177,9 +183,60 @@ export function lavSaetSkrivning({
         if (late?.error) return
         clearOfflineSetIfSame(athlete.id, key, { payload })
         setPendingSyncCount(countOfflineSets(athlete.id))
+        gemRekordRaekke(pr)
       }, () => {})
     }
     return res
+  }
+
+  // ORDRE 456 (A5 i docs/kritik-446): personal_records (coachens PR-tidslinje og
+  // "Dine rekorder") skrives fra de samme rekorder, som fejres (rekorder.js), og
+  // først når sættet er hos serveren, også når køen sender det senere. Én gang:
+  // står (øvelse, vægt, reps) der allerede, skrives intet. Før 456 blev
+  // rekorden regnet ud igen mod personal_records ved hvert sæt, kun når
+  // serveren svarede i samme tryk, og to hurtige sæt gav dubletter.
+  // Rækken ligger i en lokal kø (offlineSetQueue.js), til den er skrevet: lukkes
+  // appen mellem sættet og rækken, skrives den ved næste åbning.
+  // Uden pr: send bare det, der ligger i køen (flushOfflineSets).
+  async function gemRekordRaekke(pr = null) {
+    if (!athlete?.id) return
+    const lagt = pr ? saveQueuedRecord(athlete.id, pr) : false
+    const opgave = prKaede.then(async () => {
+      if (browserSaysOffline()) return
+      const koe = { ...loadQueuedRecords(athlete.id) }
+      if (pr && !lagt && Number(pr.weight) > 0 && Number(pr.reps) > 0) koe[recordKey(pr)] = pr
+      for (const [id, r] of Object.entries(koe)) {
+        const { data: prData, error: prFetchError } = await supabase
+          .from('personal_records')
+          .select('weight, reps')
+          .eq('athlete_id', athlete.id)
+          .eq('exercise_name', r.exercise_name)
+          .eq('weight', r.weight)
+          .eq('reps', r.reps)
+          .limit(1)
+        if (prFetchError) {
+          // En fejlet SELECT er ikke "ingen række": hellere vente end lave en dublet.
+          if (!seemsOffline()) logFrontendError('Rekord ikke skrevet endnu: SELECT på personal_records fejlede', prFetchError, athlete.id)
+          return
+        }
+        if (!(prData || []).length) {
+          const { error: prSaveError } = await queueWrite(() => supabase.from('personal_records').insert({
+            athlete_id: athlete.id,
+            exercise_name: r.exercise_name,
+            weight: r.weight,
+            reps: r.reps,
+          }))
+          if (prSaveError) {
+            logFrontendError('Rekord: INSERT på personal_records fejlede, ligger i køen', prSaveError, athlete.id)
+            recordSilentFail(athlete.id, 'silent:pr-insert-failed')
+            return
+          }
+        }
+        clearQueuedRecord(athlete.id, id)
+      }
+    })
+    prKaede = opgave.catch(() => {})
+    return opgave
   }
 
   // ORDRE 422: er passet færdigt, når dette sæt (logget eller sprunget over)
@@ -278,8 +335,11 @@ export function lavSaetSkrivning({
     const clientId = knownClientId || newSetClientId()
     // ORDRE 406 (O2): nyt id og ingen række på skærmen → slå op før INSERT.
     const lookupFirst = !knownClientId && !realExisting
+    // ORDRE 456 (A5): rekorden følger sættet ind i køen og skrives i
+    // personal_records, når sættet er sendt (her eller af flushOfflineSets).
+    const pr = rekord && loggedExercise?.name ? { exercise_name: loggedExercise.name, weight: payload.weight, reps: payload.reps_completed } : null
     const queued = localFallback
-      ? saveOfflineSet(athlete.id, key, { exerciseId, setNumber, payload, clientId, exerciseName: loggedExercise?.name || null })
+      ? saveOfflineSet(athlete.id, key, { exerciseId, setNumber, payload, clientId, exerciseName: loggedExercise?.name || null, pr })
       : false
     // Er nettet kendt dødt (også når browseren tror den er online, se
     // offlineSession.js), forsøges intet: sættet ligger i køen og sendes af
@@ -291,7 +351,7 @@ export function lavSaetSkrivning({
     const { error } = skipNetwork
       ? { error: OFFLINE_ERROR }
       : queued
-        ? await sendQueuedSet(key, exerciseId, setNumber, payload, realExisting?.id, clientId, { lookupFirst })
+        ? await sendQueuedSet(key, exerciseId, setNumber, payload, realExisting?.id, clientId, { lookupFirst, pr })
         : await persistSetLog(key, exerciseId, setNumber, payload, realExisting?.id, clientId, { lookupFirst })
     if (error) {
       // ORDRE 280 · commit 4 — "Godkendt" i Dagens pas beder om localFallback:
@@ -329,69 +389,8 @@ export function lavSaetSkrivning({
     // hvor serveren har sættet. Et sæt der rulles tilbage, fejres aldrig.
     if (!queued) fejrRekord(rekord, key, payload, localFallback)
     fetchExerciseLogs(athlete.id, currentWeek)
-
-    // PR-detektion (est. 1RM-baseret, Epley) — skelner vægt/rep/styrke-PR
-    const newReps = parseInt(repsCompleted) || 0
-    if (payload.weight > 0 && newReps > 0) {
-      const exerciseName = allWeeks
-        .flatMap(w => w.sessions || [])
-        .flatMap(s => s.exercises || [])
-        .find(e => e.id === exerciseId)?.name
-      if (exerciseName) {
-        const e1rm = r => estimatedOneRepMax(r.weight, r.reps || 1)
-        const newSet = { weight: payload.weight, reps: newReps }
-        const { data: prData, error: prFetchError } = await supabase
-          .from('personal_records')
-          .select('weight, reps')
-          .eq('athlete_id', athlete.id)
-          .eq('exercise_name', exerciseName)
-        // G14 (ordre 131): en fejlet INSERT her blev tidligere aldrig tjekket —
-        // atleten kunne se PR-fejringen ("PR!") selvom rækken aldrig nåede
-        // databasen. queueWrite giver samme genforsøg-med-backoff som resten af
-        // appens skrivninger; lykkes den stadig ikke, vises INGEN fejring (en
-        // udeblevet fejring er rigtigere end en løgnagtig), og coachen kan se
-        // det via session_context næste gang atleten uploader en video.
-        const savePR = () => queueWrite(() => supabase.from('personal_records').insert({
-          athlete_id: athlete.id,
-          exercise_name: exerciseName,
-          weight: newSet.weight,
-          reps: newSet.reps,
-        }))
-        if (prFetchError) {
-          // En fejlet SELECT er IKKE det samme som "ingen tidligere data" — tolkes
-          // den sådan, overskrives en ægte baseline af det aktuelle sæt. Springes
-          // over her; selve sætloggen er allerede gemt ovenfor.
-          logFrontendError('PR-detektion sprunget over: SELECT på personal_records fejlede', prFetchError, athlete.id)
-        } else if ((prData || []).length === 0) {
-          // Allerførste registrering på øvelsen → gem baseline uden notifikation
-          const { error: baselineError } = await savePR()
-          if (baselineError) {
-            logFrontendError('PR-detektion: baseline-INSERT på personal_records fejlede', baselineError, athlete.id)
-            recordSilentFail(athlete.id, 'silent:pr-insert-failed')
-          }
-        } else {
-          const rows = prData
-          const bestWeight = Math.max(...rows.map(r => r.weight || 0))
-          const bestE1rm = Math.max(...rows.map(e1rm))
-          // Flest reps tidligere på en vægt mindst lige så tung som det nye sæt
-          const repsAtWeight = rows.filter(r => (r.weight || 0) >= newSet.weight).map(r => r.reps || 0)
-          const bestRepsAtWeight = repsAtWeight.length ? Math.max(...repsAtWeight) : 0
-          let prType = null
-          if (newSet.weight > bestWeight) prType = 'vægt'
-          else if (bestRepsAtWeight > 0 && newSet.reps > bestRepsAtWeight) prType = 'rep'
-          else if (e1rm(newSet) > bestE1rm * 1.001) prType = 'styrke'
-          if (prType) {
-            const { error: prSaveError } = await savePR()
-            if (prSaveError) {
-              logFrontendError('PR-detektion: INSERT på personal_records fejlede', prSaveError, athlete.id)
-              recordSilentFail(athlete.id, 'silent:pr-insert-failed')
-            }
-            // ORDRE 439: fejringen kommer nu fra fejrRekord ovenfor (regnet
-            // ud fra loggen, også uden net); her gemmes kun rækken.
-          }
-        }
-      }
-    }
+    // ORDRE 456 (A5): rekorden i personal_records (se gemRekordRaekke).
+    gemRekordRaekke(pr)
   }
 
   // ORDRE 280 · commit 2 — Dagens pas' "Godkendt"-knap kalder logSet gennem
@@ -423,7 +422,12 @@ export function lavSaetSkrivning({
   }
 
   async function flushOfflineSets() {
-    if (!athlete?.id || flushInFlight || browserSaysOffline()) return
+    if (!athlete?.id || browserSaysOffline()) return
+    // ORDRE 456 (A3, A5): ventende vurderinger af passet og rekord-rækker sendes
+    // ved samme lejligheder.
+    sendVurderinger()
+    gemRekordRaekke()
+    if (flushInFlight) return
     if (!Object.keys(loadOfflineSets(athlete.id)).length) return
     flushInFlight = true
     try {
@@ -460,8 +464,11 @@ export function lavSaetSkrivning({
         // huskes som dødt); posten bliver i køen til næste runde.
         const write = persistSetLog(key, exerciseId, setNumber, payload, realId, clientId, { hasQueue: true })
         const { error } = await withSlowNetCutoff(write, undefined, { startWhen: write.sent })
-        if (!error) clearOfflineSetIfSame(athlete.id, key, entry)
-        else if (seemsOffline()) break
+        if (!error) {
+          clearOfflineSetIfSame(athlete.id, key, entry)
+          // ORDRE 456 (A5): en rekord sat uden net kommer nu også i personal_records.
+          gemRekordRaekke(entry.pr)
+        } else if (seemsOffline()) break
         else if (isPermanentSetError(error)) {
           // Coachen har slettet øvelsen imens: kan aldrig gemmes. Parkeres
           // synligt for atleten i stedet for at blive prøvet for evigt.
@@ -587,7 +594,55 @@ export function lavSaetSkrivning({
     return true
   }
 
+  // ORDRE 456 (A2 i docs/kritik-446): "Spring over" går gennem samme lokale kø
+  // som "Godkendt": sættet står som sprunget over med det samme, med tiden for
+  // trykket, og sendes, når der er net. Før skrev det direkte og gav uden net
+  // kun en fejlbesked, så atleten måtte godkende et sæt, der ikke blev lavet.
+  // null = lageret kunne ikke tage sættet; så skriver kalderen direkte som før.
+  function springOverIKoe(exerciseId, setNumber, plannedRpe, { pause = false } = {}) {
+    const key = `${exerciseId}_${setNumber}`
+    const existing = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber)
+    const realExisting = existing && !existing._optimistic ? existing : null
+    const payload = { logged_at: new Date().toISOString(), skipped: true, weight: 0, reps_completed: 0, note: null, rpe_actual: null, rpe_planned: plannedRpe ?? null }
+    const knownClientId = loadOfflineSets(athlete.id)[key]?.clientId || setWriteRef.current[key]?.clientId
+    const clientId = knownClientId || newSetClientId()
+    const exerciseName = allWeeks.flatMap(w => w.sessions || []).flatMap(se => se.exercises || []).find(e => e.id === exerciseId)?.name || null
+    if (!saveOfflineSet(athlete.id, key, { exerciseId, setNumber, payload, clientId, exerciseName })) return null
+    if (existing) {
+      setExerciseLogs(prev => prev.map(l => (l.exercise_id === exerciseId && l.set_number === setNumber) ? { ...l, ...payload } : l))
+    } else {
+      setExerciseLogs(prev => [
+        ...prev,
+        { id: `optimistic_${key}`, exercise_id: exerciseId, athlete_id: athlete.id, set_number: setNumber, ...payload, _optimistic: true },
+      ])
+    }
+    if (pause && pasFaerdigtEfter(exerciseId, setNumber)) { clearRestPause(athlete.id); setRestPause(null) }
+    setPendingSyncCount(countOfflineSets(athlete.id))
+    return { key, exerciseId, setNumber, payload, clientId, realExistingId: realExisting?.id, lookupFirst: !knownClientId && !realExisting }
+  }
+
+  // Sender et sprunget sæt fra køen. true = serveren har det.
+  async function sendSpring(spring) {
+    if (seemsOffline()) return false
+    const { key, exerciseId, setNumber, payload, realExistingId, clientId, lookupFirst } = spring
+    const { error } = await sendQueuedSet(key, exerciseId, setNumber, payload, realExistingId, clientId, { lookupFirst })
+    if (error) {
+      if (error.code !== 'OFFLINE' && error.code !== 'SLOW_NET') logFrontendError('Spring over: afsendelse fejlede, ligger i køen', error, athlete.id)
+      setPendingSyncCount(countOfflineSets(athlete.id))
+      return false
+    }
+    clearOfflineSetIfSame(athlete.id, key, { payload })
+    setPendingSyncCount(countOfflineSets(athlete.id))
+    return true
+  }
+
   async function skipSet(exerciseId, setNumber, plannedRpe) {
+    const spring = springOverIKoe(exerciseId, setNumber, plannedRpe, { pause: true })
+    if (spring) {
+      if (await sendSpring(spring)) fetchExerciseLogs(athlete.id, currentWeek)
+      return
+    }
+    // Lageret kunne ikke tage sættet: direkte, med garden, som før 456.
     const existing = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber)
     const payload = { skipped: true, weight: 0, reps_completed: 0, note: null, rpe_actual: null, rpe_planned: plannedRpe ?? null }
     const ok = await runGuardedWrite(
@@ -607,9 +662,18 @@ export function lavSaetSkrivning({
       !exerciseLogs.find(l => l.exercise_id === ex.id && l.set_number === setNum)
     )
     if (toSkip.length === 0) return
+    // ORDRE 456 (A2): samme kø som skipSet; kun det, lageret ikke kunne tage,
+    // skrives direkte som før.
+    const iKoe = toSkip.map(setNum => springOverIKoe(ex.id, setNum, plannedRpe))
+    if (iKoe.some(Boolean)) {
+      const sendt = await Promise.all(iKoe.filter(Boolean).map(sendSpring))
+      if (sendt.every(Boolean) && iKoe.every(Boolean)) fetchExerciseLogs(athlete.id, currentWeek)
+    }
+    const direkte = toSkip.filter((_, i) => !iKoe[i])
+    if (direkte.length === 0) return
     const ok = await runGuardedWrite(
       () => supabase.from('exercise_logs').insert(
-        toSkip.map(setNum => ({ exercise_id: ex.id, athlete_id: athlete.id, set_number: setNum, skipped: true, weight: 0, reps_completed: 0, rpe_planned: plannedRpe ?? null }))
+        direkte.map(setNum => ({ exercise_id: ex.id, athlete_id: athlete.id, set_number: setNum, skipped: true, weight: 0, reps_completed: 0, rpe_planned: plannedRpe ?? null }))
       ),
       () => showFlash('Øvelsen kunne ikke springes over. Tjek din forbindelse og prøv igen.', 'error'),
     )
@@ -620,6 +684,13 @@ export function lavSaetSkrivning({
   async function unskipSet(exerciseId, setNumber) {
     const existing = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber)
     if (!existing) return
+    // ORDRE 456 (A2): et spring, der venter i køen (eller hvis række-id ikke er
+    // kendt endnu), fortrydes som "Fortryd sidste sæt": køposten erstattes af en
+    // sletning, der også virker uden net.
+    if (existing._optimistic || loadOfflineSets(athlete.id)[`${exerciseId}_${setNumber}`]) {
+      await undoLoggedSet(exerciseId, setNumber)
+      return
+    }
     const ok = await runGuardedWrite(
       () => supabase.from('exercise_logs').delete().eq('id', existing.id),
       () => showFlash('Kunne ikke fortryde spring over. Tjek din forbindelse og prøv igen.', 'error'),
@@ -634,6 +705,19 @@ export function lavSaetSkrivning({
   async function saveFeedback(sessionId, direkte = null) {
     const input = direkte || feedbackInputs[sessionId] || {}
     if (!input.rating) return false
+    // ORDRE 456 (A3 i docs/kritik-446): vurderingen lægges i en lokal kø
+    // (offlineSetQueue.js) og vises med det samme; den sendes nu, eller når der
+    // er net igen, også efter en genåbning (flushOfflineSets). Før gik den tabt
+    // uden net. Kan lageret ikke tage den, skrives direkte som før.
+    const vurdering = { rating: input.rating, comment: input.comment || null }
+    if (saveQueuedRating(athlete.id, sessionId, vurdering)) {
+      setAllWeeks(prev => prev.map(w => ({
+        ...w,
+        sessions: (w.sessions || []).map(s => s.id === sessionId ? { ...s, athlete_rating: vurdering.rating, athlete_comment: vurdering.comment } : s),
+      })))
+      sendVurderinger()
+      return true
+    }
     setPendingSessionAction(`${sessionId}:feedback`)
     const ok = await runGuardedWrite(
       () => supabase.from('sessions').update({
@@ -649,6 +733,32 @@ export function lavSaetSkrivning({
       sessions: (w.sessions || []).map(s => s.id === sessionId ? { ...s, athlete_rating: input.rating, athlete_comment: input.comment || null } : s),
     })))
     return true
+  }
+
+  // ORDRE 456 (A3): sender køens vurderinger, én ad gangen. En fejl lader
+  // resten ligge til næste runde ('online', app-åbning, flushOfflineSets).
+  async function sendVurderinger() {
+    if (!athlete?.id || ratingFlushInFlight || browserSaysOffline()) return
+    const koe = loadQueuedRatings(athlete.id)
+    if (!Object.keys(koe).length) return
+    ratingFlushInFlight = true
+    try {
+      for (const [sessionId, v] of Object.entries(koe)) {
+        let markSent
+        const sent = new Promise((resolve) => { markSent = resolve })
+        const { error } = await withSlowNetCutoff(queueWrite(() => supabase.from('sessions').update({
+          athlete_rating: v.rating,
+          athlete_comment: v.comment || null,
+        }).eq('id', sessionId), { giveUpIf: seemsOffline, onStart: markSent }), undefined, { startWhen: sent })
+        if (error) {
+          if (!seemsOffline() && error.code !== 'SLOW_NET') logFrontendError('Vurdering af passet: afsendelse fejlede, ligger i køen', error, athlete.id)
+          break
+        }
+        clearQueuedRatingIfSame(athlete.id, sessionId, v)
+      }
+    } finally {
+      ratingFlushInFlight = false
+    }
   }
 
   async function autoCompleteSession(session) {

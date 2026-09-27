@@ -9,6 +9,18 @@ import { defaultSetWeight, defaultSetReps, stepWeight, stepReps, stepRepsInInput
 import { s } from '../athleteShared'
 import { parsePlannedRpe } from './ugeHjaelp'
 
+// ORDRE 456 (A1 i docs/kritik-446): ugens seneste gennemførte sæt med vægt på
+// samme øvelse (også et sæt, der venter i køen), det kortet viser som
+// "senest". Bruges, når historikken fra serveren ikke er hentet (uden net).
+function ugensSenesteSaet(exerciseLogs, exerciseId) {
+  let bedst = null
+  for (const l of exerciseLogs || []) {
+    if (l.exercise_id !== exerciseId || l.skipped || !(Number(l.weight) > 0)) continue
+    if (!bedst || l.set_number > bedst.set_number) bedst = l
+  }
+  return bedst ? { weight: Number(bedst.weight), reps: bedst.reps_completed } : null
+}
+
 // ORDRE 419 (I2): samme RPE-skala som Program-fanens vælger (ProgramTab.jsx).
 const RPE_VALUES = [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10]
 
@@ -45,6 +57,9 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
   // ORDRE 419 (I3): pas atleten har vurderet eller sprunget over her på kortet.
   const [ratedHere, setRatedHere] = useState(() => new Set())
   const [ratingBusy, setRatingBusy] = useState(false)
+  // ORDRE 456 (A1): Godkendt med tomt vægtfelt på en vægtøvelse spørger først
+  // (nøglen på det sæt, der er spurgt om); næste tryk gemmer 0 kg.
+  const [nulKgSpurgt, setNulKgSpurgt] = useState(null)
   const startEditingSet = (exerciseId, setNumber, log) => {
     setEditingSet({ exerciseId, setNumber })
     setEditInput({ weight: log.skipped ? '' : String(log.weight ?? ''), reps: log.skipped ? '' : String(log.reps_completed ?? '') })
@@ -62,11 +77,13 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
   // køre igen ved hver tastning.
   const autoFilledRef = useRef({})
   const touchedRef = useRef(new Set())
+  const ugensVaegt = activeNext ? ugensSenesteSaet(exerciseLogs, activeNext.exercise.id)?.weight ?? null : null
   useEffect(() => {
     if (!activeNext) return
     const { exercise: ex, setNumber } = activeNext
     const key = `${ex.id}_${setNumber}`
-    const last = lastHeaviestSet(exerciseHistory, ex.name, todayStr)
+    // ORDRE 456 (A1): uden historik (ikke hentet uden net) vægten fra ugens seneste sæt.
+    const last = lastHeaviestSet(exerciseHistory, ex.name, todayStr) || ugensSenesteSaet(exerciseLogs, ex.id)
     const repsPrescription = parseRepsPrescription(ex.reps)
     const repsIsEditable = repsPrescription.type !== 'fixed'
     const suggestion = ex.recommended_weight == null ? suggestNextWeight(ex.name, ex.intensity) : null
@@ -81,8 +98,8 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
     if (!decide(logInputs[key])) return
     autoFilledRef.current[key] = { weight: weightDefault, reps: repsDefaultValue }
     setLogInputs(p => { const next = decide(p[key]); return next ? { ...p, [key]: next } : p })
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- kør kun når sættet (øvelse+sætnummer) skifter eller historikken ankommer
-  }, [activeNext?.exercise?.id, activeNext?.setNumber, exerciseHistory])
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- kør kun når sættet (øvelse+sætnummer) skifter, historikken ankommer eller ugens seneste vægt på øvelsen bliver kendt (A1)
+  }, [activeNext?.exercise?.id, activeNext?.setNumber, exerciseHistory, ugensVaegt])
 
   if (!pas) return null
 
@@ -217,6 +234,10 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
   const repsToLog = repsIsEditable ? repsValue : ex.reps
   const last = lastHeaviestSet(exerciseHistory, ex.name, todayStr)
   const suggestion = ex.recommended_weight == null ? suggestNextWeight(ex.name, ex.intensity) : null
+  // ORDRE 456 (A1): en vægtøvelse = coachen, historikken, ugens sæt eller
+  // appens forslag kender en vægt. Kropsvægtøvelser (Planke, Pull-ups) spørges ikke.
+  const vaegtOevelse = Number(ex.recommended_weight) > 0 || Number(last?.weight) > 0 || !!ugensSenesteSaet(exerciseLogs, ex.id) || Number(suggestion?.weight) > 0
+  const spoergNulKg = vaegtOevelse && !(parseFloat(input.weight) > 0)
   const sessionExercises = session.exercises || []
   const exIdx = sessionExercises.findIndex(e => e.id === ex.id)
   const nextExercise = exIdx >= 0 ? sessionExercises[exIdx + 1] || null : null
@@ -527,13 +548,22 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
       <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.6rem' }}>
         <button
           style={{ ...s.btnPrimary, flex: 1, minHeight: '60px', boxSizing: 'border-box', fontSize: '0.85rem' }}
-          onClick={() => onLogSet(ex, setNumber, totalSets, repsToLog, plannedRpe)}
+          onClick={() => {
+            if (spoergNulKg && nulKgSpurgt !== key) { setNulKgSpurgt(key); return }
+            setNulKgSpurgt(null)
+            onLogSet(ex, setNumber, totalSets, repsToLog, plannedRpe)
+          }}
         >Godkendt</button>
         <button
           style={{ ...s.btnGhost, minHeight: '60px', boxSizing: 'border-box', fontSize: '0.6rem' }}
           onClick={() => skipSet(ex.id, setNumber, plannedRpe)}
         >Spring over</button>
       </div>
+      {spoergNulKg && nulKgSpurgt === key && (
+        <div data-nul-kg={key} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.03em', lineHeight: 1.45, color: '#c8923a', marginTop: '0.5rem' }}>
+          Vægtfeltet er tomt. Skriv vægten, eller tryk Godkendt igen for at gemme sættet uden vægt (0 kg).
+        </div>
+      )}
       {/* Fortryd — kun mens man ikke har forladt øvelsen: næste sæt i kortet
           skal stadig høre til den øvelse man lige loggede et sæt på. */}
       {lastLoggedSet && lastLoggedSet.exerciseId === ex.id && !undoInline && (

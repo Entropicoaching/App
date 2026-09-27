@@ -23,12 +23,15 @@ assert.match(athleteView,
 
 // --- G14: PR-detektion viste "PR!" selv når INSERT'en på personal_records fejlede ---
 const logSet = extractFn('logSet')
-assert.match(logSet, /queueWrite\(\(\) => supabase\.from\('personal_records'\)\.insert/,
+// ORDRE 456 (A5): rækken skrives nu af gemRekordRaekke (fra de rekorder, der
+// fejres, når sættet er hos serveren), ikke længere inde i logSet, og der
+// skrives ingen "baseline" mere. Samme krav til selve INSERT'en.
+const gemRekordRaekke = extractFn('gemRekordRaekke')
+assert.match(gemRekordRaekke, /queueWrite\(\(\) => supabase\.from\('personal_records'\)\.insert/,
   'PR-INSERT skal gå igennem queueWrite (samme genforsøg-med-backoff som resten af skrivningerne)')
-assert.match(logSet, /error: baselineError[\s\S]*recordSilentFail\(athlete\.id, 'silent:pr-insert-failed'\)/,
-  'en fejlet baseline-INSERT skal registreres som en stille fejl')
-assert.match(logSet, /error: prSaveError[\s\S]*recordSilentFail\(athlete\.id, 'silent:pr-insert-failed'\)/,
+assert.match(gemRekordRaekke, /error: prSaveError[\s\S]*recordSilentFail\(athlete\.id, 'silent:pr-insert-failed'\)/,
   'en fejlet PR-INSERT skal registreres som en stille fejl')
+assert.match(logSet, /gemRekordRaekke\(pr\)/, 'logSet skal skrive rekorden, når sættet er gemt')
 // Det konkrete symptom: setPrToast må ALDRIG stå ubetinget efter savePR() længere.
 assert.doesNotMatch(logSet, /await savePR\(\)\s*\n\s*setPrToast/,
   'setPrToast må ikke kaldes ubetinget efter savePR() — kun når INSERT\'en er bekræftet')
