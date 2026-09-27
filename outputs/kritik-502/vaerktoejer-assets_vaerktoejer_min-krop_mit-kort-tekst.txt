@@ -1,0 +1,67 @@
+Mit kort: min krop i de tre løft
+
+Lavet 27. september 2026 i browseren. Guld er dine mål, blå er gennemsnittet for samme højde og vægt. Forskellen mellem dem er kun proportionerne. Intet er sendt nogen steder hen.
+
+Print eller gem som PDF
+Til siden
+Løftene
+Fejl
+Mine mål
+Mål	Dig	Snit	Dig i % af snit
+Højde	178,0 cm		
+Lår	43,6 cm	43,6 cm	100 %
+Skinneben	43,8 cm	43,8 cm	100 %
+Overkrop	51,3 cm	51,3 cm	100 %
+Overarm	33,1 cm	33,1 cm	100 %
+Underarm	26,0 cm	26,0 cm	100 %
+Kropsvægt	85,0 kg		
+Squat · bunden
+Dine mål
+Gennemsnit
+
+Dine proportioner flytter næsten intet i bunden i modellen: alle forskelle er under ca. 4° og 3 cm, som et målebånd kan tage fejl med.
+
+Bunden	Dig	Snit	Forskel
+Knævinkel (°)	46,1	46,1	0,0
+Hoftevinkel (°)	36,9	36,9	+0,1°
+Skinneben fra lodret (°)	40,0	40,0	0,0
+Torso fra lodret (°)	49,1	49,2	−0,1°
+Vandret afstand stang–hofte (cm)	21,3	21,3	0,0
+Vandret afstand stang–knæ (cm)	−22,2	−22,2	0,0
+Vandret afstand stang–lænd (cm)	7,5	7,5	0,0
+Stangens vej, hele løftet (cm)	62,2	62,2	0,0
+Dødløft · opstilling
+Dine mål
+Gennemsnit
+
+Dine proportioner flytter næsten intet ved opstillingen i modellen: alle forskelle er under ca. 4° og 3 cm, som et målebånd kan tage fejl med.
+
+Opstilling	Dig	Snit	Forskel
+Knævinkel (°)	99,8	99,9	−0,1°
+Hoftevinkel (°)	51,4	51,4	0,0
+Skinneben fra lodret (°)	13,0	13,0	0,0
+Torso fra lodret (°)	61,5	61,5	0,0
+Vandret afstand stang–hofte (cm)	40,1	40,1	0,0
+Vandret afstand stang–knæ (cm)	−0,1	−0,1	0,0
+Vandret afstand stang–lænd (cm)	24,1	24,1	0,0
+Stangens vej, hele løftet (cm)	55,0	55,0	0,0
+Bænkpres · stangen på brystet
+Dine mål
+Gennemsnit
+
+Dine proportioner flytter næsten intet på brystet i modellen: alle forskelle er under ca. 4° og 3 cm, som et målebånd kan tage fejl med.
+
+Stangen på brystet	Dig	Snit	Forskel
+Albuevinkel (°)	66,5	66,4	0,0
+Overarm ud fra kroppen (°)	29,2	29,2	0,0
+Afstand stang–skulder, siden og forfra i alt (cm)	28,0	28,0	0,0
+Afstand stang–albue, siden og forfra i alt (cm)	4,6	4,6	0,0
+Stangens vej, hele løftet (cm)	40,1	40,1	0,0
+Hvad kortet ikke siger
+Ingen muskler. Modellen regner på længder, masse og balance. Den ved ikke, hvor stærk eller smidig du er, eller hvilke muskler der gør arbejdet.
+Ryggen er ét stift stykke. Holdt op mod et filmet dødløft står modellens ryg mere vandret (ca. 60° mod 50° ved gulvet), også for dig.
+Ingen tal i Nm. Størrelsen er modellens og sandsynligvis 10-15 % for høj; retningen kan bruges. Kortet viser kun vinkler og afstande.
+Kun længderne er dine. Hvor meget hver del vejer, kommer fra en tabel (de Leva 1996), ikke fra dig.
+Stillingerne er valgt, ikke målt: squat ved IPF-dybde (modellen vælger selv skinnebenets hældning), stangen 3 cm foran midtfoden i dødløftet. Hånden måles ikke: dødløftet lægger en halv hånd (0,054 × højden) til underarmen, ens for dig og gennemsnittet.
+Kun konventionelt dødløft. Sumo regnes kun fra siden, så det er ikke med.
+Et målebånd har et par cm usikkerhed, og 2 cm på ét mål flytter en vinkel 3-4°. Forskelle under ca. 4° eller 3 cm skal ikke tolkes som en teknikforskel, og linjen under figurerne fremhæver først fra dér. Spændet (85-115 % af gennemsnittet) er et valg.

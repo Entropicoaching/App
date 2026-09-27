@@ -1,0 +1,1459 @@
+{
+ "gren": "udgivelse-squat-min-krop",
+ "sha": "2087136",
+ "maalt": "2026-09-27T10:16:52.855Z",
+ "sider": [
+  {
+   "side": "artikel-squat.html",
+   "bredde": 390,
+   "konsol": [],
+   "sidefejl": [],
+   "fejlkald": [],
+   "eksterne": [
+    "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"
+   ],
+   "http404": [],
+   "title": "Squattens biomekanik: individuel variation fra opstilling til lockout | Entropi Coaching",
+   "description": "Squatten gennemgået fase for fase med en segmentmodel, litteraturens målinger og min egen praksis: hvordan kropsproportioner, stangplacering og ankel ændrer positionen, og hvordan den enkeltes position findes.",
+   "robots": null,
+   "canonical": "https://entropicoaching.dk/artikel-squat.html",
+   "ogTitle": "Squattens biomekanik: individuel variation fra opstilling til lockout | Entropi Coaching",
+   "ogDescription": "Squatten gennemgået fase for fase med en segmentmodel, litteraturens målinger og min egen praksis: hvordan kropsproportioner, stangplacering og ankel ændrer positionen, og hvordan den enkeltes position findes.",
+   "ogImage": "https://entropicoaching.dk/assets/squat-deling.png",
+   "lang": "da",
+   "h1": [
+    "Squattens biomekanik:individuel variation fra opstilling til lockout."
+   ],
+   "h2": [
+    "01Faserne i tid",
+    "02Segmentmodellen",
+    "03Anatomien: kraftlinjer og momentarme",
+    "04Kropstyper",
+    "05Stang og variant",
+    "06Virkeligheden mod modellen",
+    "07Når det ser forkert ud",
+    "08Min praksis"
+   ],
+   "scrollW": 390,
+   "clientW": 390,
+   "hoejde": 50979,
+   "links": [
+    {
+     "href": "index.html",
+     "tekst": "Entropi.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "viden.html#artikler",
+     "tekst": "< Artikler",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-faserne",
+     "tekst": "Faserne i tid 13 min.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-segmentmodellen",
+     "tekst": "Segmentmodellen 2 min.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-anatomien",
+     "tekst": "Anatomien: kraftlinjer og momentarme 5 min.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-kropstyper",
+     "tekst": "Kropstyper 3 min.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-stang",
+     "tekst": "Stang og variant 4 min.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-virkeligheden",
+     "tekst": "Virkeligheden mod modellen 5 min.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-fejlbilleder",
+     "tekst": "Når det ser forkert ud 9 min.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-praksis",
+     "tekst": "Min praksis 2 min.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#forbehold",
+     "tekst": "Forbehold",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#referencer",
+     "tekst": "Referencer",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-faserne",
+     "tekst": "Til toppen af kapitlet",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-segmentmodellen",
+     "tekst": "Til toppen af kapitlet",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-anatomien",
+     "tekst": "Til toppen af kapitlet",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "assets/min-krop/index.html",
+     "tekst": "Skriv dine egne mål ind",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-kropstyper",
+     "tekst": "Til toppen af kapitlet",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-stang",
+     "tekst": "Til toppen af kapitlet",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-virkeligheden",
+     "tekst": "Til toppen af kapitlet",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-fejlbilleder",
+     "tekst": "Til toppen af kapitlet",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-praksis",
+     "tekst": "Til toppen af kapitlet",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "om.html",
+     "tekst": "Marc Schlichting",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "viden.html#artikler",
+     "tekst": "Flere artiklerViden om styrkeløftDe øvrige artikler om programmering og træning ",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "viden.html#artikler",
+     "tekst": "Tilbage til artikler",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "index.html#filosofi",
+     "tekst": "Filosofi",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "resultater.html",
+     "tekst": "Resultater",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "coaching.html",
+     "tekst": "Coaching",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "https://instagram.com/entropicoaching",
+     "tekst": "Instagram",
+     "rel": "noopener",
+     "synlig": true
+    },
+    {
+     "href": "mailto:coach@entropicoaching.dk",
+     "tekst": "coach@entropicoaching.dk",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "privatliv.html",
+     "tekst": "Privatliv",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-faserne",
+     "tekst": "01Faserne i tid 13 min.",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "#kap-segmentmodellen",
+     "tekst": "02Segmentmodellen 2 min.",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "#kap-anatomien",
+     "tekst": "03Anatomien: kraftlinjer og momentarme 5 min.",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "#kap-kropstyper",
+     "tekst": "04Kropstyper 3 min.",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "#kap-stang",
+     "tekst": "05Stang og variant 4 min.",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "#kap-virkeligheden",
+     "tekst": "06Virkeligheden mod modellen 5 min.",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "#kap-fejlbilleder",
+     "tekst": "07Når det ser forkert ud 9 min.",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "#kap-praksis",
+     "tekst": "08Min praksis 2 min.",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "#forbehold",
+     "tekst": "Forbehold",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "#referencer",
+     "tekst": "Referencer",
+     "rel": "",
+     "synlig": false
+    }
+   ],
+   "brudte": [],
+   "iframes": [
+    {
+     "src": "assets/tre-loeft/indlejret.html?loeft=squat&start=lange-laar",
+     "h": 1000,
+     "w": 350
+    },
+    {
+     "src": "assets/min-krop/kort.html",
+     "h": 980,
+     "w": 350
+    }
+   ],
+   "brede": [],
+   "iframeTekst": [
+    "[iframe svarede ikke: ]",
+    "[iframe svarede ikke: ]"
+   ],
+   "marcFelter": [
+    "[MARC]"
+   ],
+   "firkant": [],
+   "tankestreger": [],
+   "navne": [
+    0,
+    0,
+    0
+   ],
+   "marc": 4
+  },
+  {
+   "side": "artikel-squat.html",
+   "bredde": 1280,
+   "konsol": [],
+   "sidefejl": [],
+   "fejlkald": [],
+   "eksterne": [
+    "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"
+   ],
+   "http404": [],
+   "title": "Squattens biomekanik: individuel variation fra opstilling til lockout | Entropi Coaching",
+   "description": "Squatten gennemgået fase for fase med en segmentmodel, litteraturens målinger og min egen praksis: hvordan kropsproportioner, stangplacering og ankel ændrer positionen, og hvordan den enkeltes position findes.",
+   "robots": null,
+   "canonical": "https://entropicoaching.dk/artikel-squat.html",
+   "ogTitle": "Squattens biomekanik: individuel variation fra opstilling til lockout | Entropi Coaching",
+   "ogDescription": "Squatten gennemgået fase for fase med en segmentmodel, litteraturens målinger og min egen praksis: hvordan kropsproportioner, stangplacering og ankel ændrer positionen, og hvordan den enkeltes position findes.",
+   "ogImage": "https://entropicoaching.dk/assets/squat-deling.png",
+   "lang": "da",
+   "h1": [
+    "Squattens biomekanik:individuel variation fra opstilling til lockout."
+   ],
+   "h2": [
+    "01Faserne i tid",
+    "02Segmentmodellen",
+    "03Anatomien: kraftlinjer og momentarme",
+    "04Kropstyper",
+    "05Stang og variant",
+    "06Virkeligheden mod modellen",
+    "07Når det ser forkert ud",
+    "08Min praksis"
+   ],
+   "scrollW": 1280,
+   "clientW": 1280,
+   "hoejde": 39401,
+   "links": [
+    {
+     "href": "index.html",
+     "tekst": "Entropi.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "viden.html#artikler",
+     "tekst": "< Artikler",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-faserne",
+     "tekst": "Faserne i tid 13 min.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-segmentmodellen",
+     "tekst": "Segmentmodellen 2 min.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-anatomien",
+     "tekst": "Anatomien: kraftlinjer og momentarme 5 min.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-kropstyper",
+     "tekst": "Kropstyper 3 min.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-stang",
+     "tekst": "Stang og variant 4 min.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-virkeligheden",
+     "tekst": "Virkeligheden mod modellen 5 min.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-fejlbilleder",
+     "tekst": "Når det ser forkert ud 9 min.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-praksis",
+     "tekst": "Min praksis 2 min.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#forbehold",
+     "tekst": "Forbehold",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#referencer",
+     "tekst": "Referencer",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-faserne",
+     "tekst": "Til toppen af kapitlet",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-segmentmodellen",
+     "tekst": "Til toppen af kapitlet",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-anatomien",
+     "tekst": "Til toppen af kapitlet",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "assets/min-krop/index.html",
+     "tekst": "Skriv dine egne mål ind",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-kropstyper",
+     "tekst": "Til toppen af kapitlet",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-stang",
+     "tekst": "Til toppen af kapitlet",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-virkeligheden",
+     "tekst": "Til toppen af kapitlet",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-fejlbilleder",
+     "tekst": "Til toppen af kapitlet",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-praksis",
+     "tekst": "Til toppen af kapitlet",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "om.html",
+     "tekst": "Marc Schlichting",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "viden.html#artikler",
+     "tekst": "Flere artiklerViden om styrkeløftDe øvrige artikler om programmering og træning ",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "viden.html#artikler",
+     "tekst": "Tilbage til artikler",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "index.html#filosofi",
+     "tekst": "Filosofi",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "resultater.html",
+     "tekst": "Resultater",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "coaching.html",
+     "tekst": "Coaching",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "https://instagram.com/entropicoaching",
+     "tekst": "Instagram",
+     "rel": "noopener",
+     "synlig": true
+    },
+    {
+     "href": "mailto:coach@entropicoaching.dk",
+     "tekst": "coach@entropicoaching.dk",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "privatliv.html",
+     "tekst": "Privatliv",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-faserne",
+     "tekst": "01Faserne i tid 13 min.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-segmentmodellen",
+     "tekst": "02Segmentmodellen 2 min.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-anatomien",
+     "tekst": "03Anatomien: kraftlinjer og momentarme 5 min.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-kropstyper",
+     "tekst": "04Kropstyper 3 min.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-stang",
+     "tekst": "05Stang og variant 4 min.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-virkeligheden",
+     "tekst": "06Virkeligheden mod modellen 5 min.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-fejlbilleder",
+     "tekst": "07Når det ser forkert ud 9 min.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#kap-praksis",
+     "tekst": "08Min praksis 2 min.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#forbehold",
+     "tekst": "Forbehold",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "#referencer",
+     "tekst": "Referencer",
+     "rel": "",
+     "synlig": true
+    }
+   ],
+   "brudte": [],
+   "iframes": [
+    {
+     "src": "assets/tre-loeft/indlejret.html?loeft=squat&start=lange-laar",
+     "h": 1000,
+     "w": 656
+    },
+    {
+     "src": "assets/min-krop/kort.html",
+     "h": 980,
+     "w": 656
+    }
+   ],
+   "brede": [],
+   "iframeTekst": [
+    "[iframe svarede ikke: ]",
+    "[iframe svarede ikke: ]"
+   ],
+   "marcFelter": [
+    "[MARC]"
+   ],
+   "firkant": [],
+   "tankestreger": [],
+   "navne": [
+    0,
+    0,
+    0
+   ],
+   "marc": 4
+  },
+  {
+   "side": "assets/min-krop/index.html",
+   "bredde": 390,
+   "konsol": [],
+   "sidefejl": [],
+   "fejlkald": [],
+   "eksterne": [],
+   "http404": [],
+   "title": "Min krop i de tre løft",
+   "description": null,
+   "robots": null,
+   "canonical": null,
+   "ogTitle": null,
+   "ogDescription": null,
+   "ogImage": null,
+   "lang": "da",
+   "h1": [
+    "Min krop i de tre løft"
+   ],
+   "h2": [
+    "Squat",
+    "Dødløft",
+    "Bænkpres",
+    "Sådan måler du",
+    "Sådan læses figurerne",
+    "Hvad modellen ikke kan sige om din krop"
+   ],
+   "scrollW": 390,
+   "clientW": 390,
+   "hoejde": 9771,
+   "links": [
+    {
+     "href": "mit-kort.html#hoejde=178&laar=43%2C6&skinneben=43%2C8&torso=51%2C3&overarm=33%2C1&underarm=26&vaegt=85",
+     "tekst": "Mit kort",
+     "rel": "noopener",
+     "synlig": true
+    }
+   ],
+   "brudte": [],
+   "iframes": [],
+   "brede": [],
+   "iframeTekst": [],
+   "marcFelter": [],
+   "firkant": [],
+   "tankestreger": [
+    "Vandret afstand stang–hofte (cm)\t21,3\t21,3\t0,0",
+    "Vandret afstand stang–knæ (cm)\t−22,2\t−22,2\t0,0",
+    "Vandret afstand stang–lænd (cm)\t7,5\t7,5\t0,0",
+    "Vandret afstand stang–hofte (cm)\t40,1\t40,1\t0,0",
+    "Vandret afstand stang–knæ (cm)\t−0,1\t−0,1\t0,0",
+    "Vandret afstand stang–lænd (cm)\t24,1\t24,1\t0,0",
+    "Afstand stang–skulder, siden og forfra i alt",
+    "Afstand stang–albue, siden og forfra i alt ("
+   ],
+   "navne": [
+    0,
+    0,
+    0
+   ],
+   "marc": 0
+  },
+  {
+   "side": "assets/min-krop/index.html",
+   "bredde": 1280,
+   "konsol": [],
+   "sidefejl": [],
+   "fejlkald": [],
+   "eksterne": [],
+   "http404": [],
+   "title": "Min krop i de tre løft",
+   "description": null,
+   "robots": null,
+   "canonical": null,
+   "ogTitle": null,
+   "ogDescription": null,
+   "ogImage": null,
+   "lang": "da",
+   "h1": [
+    "Min krop i de tre løft"
+   ],
+   "h2": [
+    "Squat",
+    "Dødløft",
+    "Bænkpres",
+    "Sådan måler du",
+    "Sådan læses figurerne",
+    "Hvad modellen ikke kan sige om din krop"
+   ],
+   "scrollW": 1280,
+   "clientW": 1280,
+   "hoejde": 5518,
+   "links": [
+    {
+     "href": "mit-kort.html#hoejde=178&laar=43%2C6&skinneben=43%2C8&torso=51%2C3&overarm=33%2C1&underarm=26&vaegt=85",
+     "tekst": "Mit kort",
+     "rel": "noopener",
+     "synlig": true
+    }
+   ],
+   "brudte": [],
+   "iframes": [],
+   "brede": [],
+   "iframeTekst": [],
+   "marcFelter": [],
+   "firkant": [],
+   "tankestreger": [
+    "Vandret afstand stang–hofte (cm)\t21,3\t21,3\t0,0",
+    "Vandret afstand stang–knæ (cm)\t−22,2\t−22,2\t0,0",
+    "Vandret afstand stang–lænd (cm)\t7,5\t7,5\t0,0",
+    "Vandret afstand stang–hofte (cm)\t40,1\t40,1\t0,0",
+    "Vandret afstand stang–knæ (cm)\t−0,1\t−0,1\t0,0",
+    "Vandret afstand stang–lænd (cm)\t24,1\t24,1\t0,0",
+    "Afstand stang–skulder, siden og forfra i alt",
+    "Afstand stang–albue, siden og forfra i alt ("
+   ],
+   "navne": [
+    0,
+    0,
+    0
+   ],
+   "marc": 0
+  },
+  {
+   "side": "assets/min-krop/kort.html",
+   "bredde": 390,
+   "konsol": [],
+   "sidefejl": [],
+   "fejlkald": [],
+   "eksterne": [],
+   "http404": [],
+   "title": "Min krop i de tre løft (kort)",
+   "description": null,
+   "robots": null,
+   "canonical": null,
+   "ogTitle": null,
+   "ogDescription": null,
+   "ogImage": null,
+   "lang": "da",
+   "h1": [],
+   "h2": [
+    "Squat",
+    "Dødløft",
+    "Bænkpres"
+   ],
+   "scrollW": 390,
+   "clientW": 390,
+   "hoejde": 992,
+   "links": [
+    {
+     "href": "mit-kort.html#hoejde=178&laar=43%2C6&skinneben=43%2C8&torso=51%2C3&overarm=33%2C1&underarm=26&vaegt=85",
+     "tekst": "Mit kort",
+     "rel": "noopener",
+     "synlig": true
+    },
+    {
+     "href": "index.html#forbehold",
+     "tekst": "Hele siden med tabeller og forbehold",
+     "rel": "noopener",
+     "synlig": true
+    }
+   ],
+   "brudte": [],
+   "iframes": [],
+   "brede": [],
+   "iframeTekst": [],
+   "marcFelter": [],
+   "firkant": [],
+   "tankestreger": [],
+   "navne": [
+    0,
+    0,
+    0
+   ],
+   "marc": 0
+  },
+  {
+   "side": "assets/min-krop/kort.html",
+   "bredde": 1280,
+   "konsol": [],
+   "sidefejl": [],
+   "fejlkald": [],
+   "eksterne": [],
+   "http404": [],
+   "title": "Min krop i de tre løft (kort)",
+   "description": null,
+   "robots": null,
+   "canonical": null,
+   "ogTitle": null,
+   "ogDescription": null,
+   "ogImage": null,
+   "lang": "da",
+   "h1": [],
+   "h2": [
+    "Squat",
+    "Dødløft",
+    "Bænkpres"
+   ],
+   "scrollW": 1280,
+   "clientW": 1280,
+   "hoejde": 1143,
+   "links": [
+    {
+     "href": "mit-kort.html#hoejde=178&laar=43%2C6&skinneben=43%2C8&torso=51%2C3&overarm=33%2C1&underarm=26&vaegt=85",
+     "tekst": "Mit kort",
+     "rel": "noopener",
+     "synlig": true
+    },
+    {
+     "href": "index.html#forbehold",
+     "tekst": "Hele siden med tabeller og forbehold",
+     "rel": "noopener",
+     "synlig": true
+    }
+   ],
+   "brudte": [],
+   "iframes": [],
+   "brede": [],
+   "iframeTekst": [],
+   "marcFelter": [],
+   "firkant": [],
+   "tankestreger": [],
+   "navne": [
+    0,
+    0,
+    0
+   ],
+   "marc": 0
+  },
+  {
+   "side": "assets/min-krop/mit-kort.html",
+   "bredde": 390,
+   "konsol": [],
+   "sidefejl": [],
+   "fejlkald": [],
+   "eksterne": [],
+   "http404": [],
+   "title": "Mit kort: min krop i de tre løft",
+   "description": null,
+   "robots": null,
+   "canonical": null,
+   "ogTitle": null,
+   "ogDescription": null,
+   "ogImage": null,
+   "lang": "da",
+   "h1": [
+    "Mit kort: min krop i de tre løft"
+   ],
+   "h2": [
+    "Mine mål",
+    "Squat · bunden",
+    "Dødløft · opstilling",
+    "Bænkpres · stangen på brystet",
+    "Hvad kortet ikke siger"
+   ],
+   "scrollW": 390,
+   "clientW": 390,
+   "hoejde": 2818,
+   "links": [
+    {
+     "href": "index.html",
+     "tekst": "Til siden",
+     "rel": "",
+     "synlig": true
+    }
+   ],
+   "brudte": [],
+   "iframes": [],
+   "brede": [],
+   "iframeTekst": [],
+   "marcFelter": [],
+   "firkant": [],
+   "tankestreger": [
+    "Vandret afstand stang–hofte (cm)\t21,3\t21,3\t0,0",
+    "Vandret afstand stang–knæ (cm)\t−22,2\t−22,2\t0,0",
+    "Vandret afstand stang–lænd (cm)\t7,5\t7,5\t0,0",
+    "Vandret afstand stang–hofte (cm)\t40,1\t40,1\t0,0",
+    "Vandret afstand stang–knæ (cm)\t−0,1\t−0,1\t0,0",
+    "Vandret afstand stang–lænd (cm)\t24,1\t24,1\t0,0",
+    "Afstand stang–skulder, siden og forfra i alt",
+    "Afstand stang–albue, siden og forfra i alt ("
+   ],
+   "navne": [
+    0,
+    0,
+    0
+   ],
+   "marc": 0
+  },
+  {
+   "side": "assets/min-krop/mit-kort.html",
+   "bredde": 1280,
+   "konsol": [],
+   "sidefejl": [],
+   "fejlkald": [],
+   "eksterne": [],
+   "http404": [],
+   "title": "Mit kort: min krop i de tre løft",
+   "description": null,
+   "robots": null,
+   "canonical": null,
+   "ogTitle": null,
+   "ogDescription": null,
+   "ogImage": null,
+   "lang": "da",
+   "h1": [
+    "Mit kort: min krop i de tre løft"
+   ],
+   "h2": [
+    "Mine mål",
+    "Squat · bunden",
+    "Dødløft · opstilling",
+    "Bænkpres · stangen på brystet",
+    "Hvad kortet ikke siger"
+   ],
+   "scrollW": 1280,
+   "clientW": 1280,
+   "hoejde": 1295,
+   "links": [
+    {
+     "href": "index.html",
+     "tekst": "Til siden",
+     "rel": "",
+     "synlig": true
+    }
+   ],
+   "brudte": [],
+   "iframes": [],
+   "brede": [],
+   "iframeTekst": [],
+   "marcFelter": [],
+   "firkant": [],
+   "tankestreger": [
+    "Vandret afstand stang–hofte (cm)\t21,3\t21,3\t0,0",
+    "Vandret afstand stang–knæ (cm)\t−22,2\t−22,2\t0,0",
+    "Vandret afstand stang–lænd (cm)\t7,5\t7,5\t0,0",
+    "Vandret afstand stang–hofte (cm)\t40,1\t40,1\t0,0",
+    "Vandret afstand stang–knæ (cm)\t−0,1\t−0,1\t0,0",
+    "Vandret afstand stang–lænd (cm)\t24,1\t24,1\t0,0",
+    "Afstand stang–skulder, siden og forfra i alt",
+    "Afstand stang–albue, siden og forfra i alt ("
+   ],
+   "navne": [
+    0,
+    0,
+    0
+   ],
+   "marc": 0
+  },
+  {
+   "side": "artikler.html",
+   "bredde": 390,
+   "konsol": [],
+   "sidefejl": [],
+   "fejlkald": [],
+   "eksterne": [
+    "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"
+   ],
+   "http404": [],
+   "title": "Viden | Entropi Coaching",
+   "description": "Artikler og gratis programmer om styrkeløft-træning: volumen, intensitet, frekvens og autoregulering. Evidensbaseret viden fra Entropi Coaching.",
+   "robots": null,
+   "canonical": "https://entropicoaching.dk/viden.html",
+   "ogTitle": "Viden | Entropi Coaching",
+   "ogDescription": "Artikler og gratis programmer om styrkeløft-træning: volumen, intensitet, frekvens og autoregulering. Evidensbaseret viden fra Entropi Coaching.",
+   "ogImage": "https://entropicoaching.dk/IMG_9902.jpg",
+   "lang": "da",
+   "h1": [
+    "Viden omstyrkeløft."
+   ],
+   "h2": [
+    "Har du brug for at vendedin træning?"
+   ],
+   "scrollW": 390,
+   "clientW": 390,
+   "hoejde": 3261,
+   "links": [
+    {
+     "href": "index.html",
+     "tekst": "Entropi.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "coaching.html",
+     "tekst": "Coaching",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "resultater.html",
+     "tekst": "Resultater",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "viden.html",
+     "tekst": "Viden",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "om.html",
+     "tekst": "Om Entropi",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "coaching.html#ansoeg",
+     "tekst": "Ansøg om coaching",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "coaching.html",
+     "tekst": "Coaching",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "resultater.html",
+     "tekst": "Resultater",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "viden.html",
+     "tekst": "Viden",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "om.html",
+     "tekst": "Om Entropi",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "https://app.entropicoaching.dk",
+     "tekst": "Portal",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "coaching.html#ansoeg",
+     "tekst": "Ansøg om coaching",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "artikel-volumen.html",
+     "tekst": "Programmering Volumen er ikkebare sæt gange reps. Volumen er den mest omtalte va",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "artikel-intensitet.html",
+     "tekst": "Programmering Intensitet handler ikke omhvor hårdt det føles. Intensitet i styrk",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "artikel-frekvens.html",
+     "tekst": "Programmering Frekvens: denundervurderede variabel. Frekvens afgør ikke bare hvo",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "artikel-autoregulering.html",
+     "tekst": "Træning Fatigue er ikkemanglende fremgang. Du har løftet de samme kilo i tre uge",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "artikel-deload.html",
+     "tekst": "Træning Deload: hvornår giver detfaktisk mening? Lær at kende forskel på en lett",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "artikel-squat.html",
+     "tekst": "Teknik Squattens biomekanik:individuel variation fra opstilling til lockout. Squ",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "afklaring.html",
+     "tekst": "Få en kort afklaring",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "coaching.html#ansoeg",
+     "tekst": "Læs om individuel coaching",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "coaching.html",
+     "tekst": "Coaching",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "resultater.html",
+     "tekst": "Resultater",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "viden.html",
+     "tekst": "Viden",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "om.html",
+     "tekst": "Om Entropi",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "https://app.entropicoaching.dk",
+     "tekst": "Atletportal",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "https://instagram.com/entropicoaching",
+     "tekst": "Instagram",
+     "rel": "noopener",
+     "synlig": true
+    },
+    {
+     "href": "mailto:coach@entropicoaching.dk",
+     "tekst": "coach@entropicoaching.dk",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "privatliv.html",
+     "tekst": "Privatliv",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "coaching.html#ansoeg",
+     "tekst": "Ansøg om coaching",
+     "rel": "",
+     "synlig": true
+    }
+   ],
+   "brudte": [],
+   "iframes": [],
+   "brede": [],
+   "iframeTekst": [],
+   "marcFelter": [],
+   "firkant": [],
+   "tankestreger": [
+    "ge, en fuld pause og en taper — og vurder behovet ud fra mere"
+   ],
+   "navne": [
+    0,
+    0,
+    0
+   ],
+   "marc": 1
+  },
+  {
+   "side": "artikler.html",
+   "bredde": 1280,
+   "konsol": [],
+   "sidefejl": [],
+   "fejlkald": [],
+   "eksterne": [
+    "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"
+   ],
+   "http404": [],
+   "title": "Viden | Entropi Coaching",
+   "description": "Artikler og gratis programmer om styrkeløft-træning: volumen, intensitet, frekvens og autoregulering. Evidensbaseret viden fra Entropi Coaching.",
+   "robots": null,
+   "canonical": "https://entropicoaching.dk/viden.html",
+   "ogTitle": "Viden | Entropi Coaching",
+   "ogDescription": "Artikler og gratis programmer om styrkeløft-træning: volumen, intensitet, frekvens og autoregulering. Evidensbaseret viden fra Entropi Coaching.",
+   "ogImage": "https://entropicoaching.dk/IMG_9902.jpg",
+   "lang": "da",
+   "h1": [
+    "Viden omstyrkeløft."
+   ],
+   "h2": [
+    "Har du brug for at vendedin træning?"
+   ],
+   "scrollW": 1280,
+   "clientW": 1280,
+   "hoejde": 1880,
+   "links": [
+    {
+     "href": "index.html",
+     "tekst": "Entropi.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "coaching.html",
+     "tekst": "Coaching",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "resultater.html",
+     "tekst": "Resultater",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "viden.html",
+     "tekst": "Viden",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "om.html",
+     "tekst": "Om Entropi",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "coaching.html#ansoeg",
+     "tekst": "Ansøg om coaching",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "coaching.html",
+     "tekst": "Coaching",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "resultater.html",
+     "tekst": "Resultater",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "viden.html",
+     "tekst": "Viden",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "om.html",
+     "tekst": "Om Entropi",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "https://app.entropicoaching.dk",
+     "tekst": "Portal",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "coaching.html#ansoeg",
+     "tekst": "Ansøg om coaching",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "artikel-volumen.html",
+     "tekst": "Programmering Volumen er ikkebare sæt gange reps. Volumen er den mest omtalte va",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "artikel-intensitet.html",
+     "tekst": "Programmering Intensitet handler ikke omhvor hårdt det føles. Intensitet i styrk",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "artikel-frekvens.html",
+     "tekst": "Programmering Frekvens: denundervurderede variabel. Frekvens afgør ikke bare hvo",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "artikel-autoregulering.html",
+     "tekst": "Træning Fatigue er ikkemanglende fremgang. Du har løftet de samme kilo i tre uge",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "artikel-deload.html",
+     "tekst": "Træning Deload: hvornår giver detfaktisk mening? Lær at kende forskel på en lett",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "artikel-squat.html",
+     "tekst": "Teknik Squattens biomekanik:individuel variation fra opstilling til lockout. Squ",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "afklaring.html",
+     "tekst": "Få en kort afklaring",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "coaching.html#ansoeg",
+     "tekst": "Læs om individuel coaching",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "coaching.html",
+     "tekst": "Coaching",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "resultater.html",
+     "tekst": "Resultater",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "viden.html",
+     "tekst": "Viden",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "om.html",
+     "tekst": "Om Entropi",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "https://app.entropicoaching.dk",
+     "tekst": "Atletportal",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "https://instagram.com/entropicoaching",
+     "tekst": "Instagram",
+     "rel": "noopener",
+     "synlig": true
+    },
+    {
+     "href": "mailto:coach@entropicoaching.dk",
+     "tekst": "coach@entropicoaching.dk",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "privatliv.html",
+     "tekst": "Privatliv",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "coaching.html#ansoeg",
+     "tekst": "Ansøg om coaching",
+     "rel": "",
+     "synlig": false
+    }
+   ],
+   "brudte": [],
+   "iframes": [],
+   "brede": [],
+   "iframeTekst": [],
+   "marcFelter": [],
+   "firkant": [],
+   "tankestreger": [
+    "ge, en fuld pause og en taper — og vurder behovet ud fra mere"
+   ],
+   "navne": [
+    0,
+    0,
+    0
+   ],
+   "marc": 1
+  }
+ ],
+ "interneLinks": [
+  "artikel-squat.html -> index.html => ok",
+  "artikel-squat.html -> viden.html#artikler => ok",
+  "artikel-squat.html -> assets/min-krop/index.html => ok",
+  "artikel-squat.html -> om.html => ok",
+  "artikel-squat.html -> index.html#filosofi => ok",
+  "artikel-squat.html -> resultater.html => ok",
+  "artikel-squat.html -> coaching.html => ok",
+  "artikel-squat.html -> privatliv.html => ok",
+  "assets/min-krop/index.html -> mit-kort.html#hoejde=178&laar=43%2C6&skinneben=43%2C8&torso=51%2C3&overarm=33%2C1&underarm=26&vaegt=85 => ok",
+  "assets/min-krop/kort.html -> mit-kort.html#hoejde=178&laar=43%2C6&skinneben=43%2C8&torso=51%2C3&overarm=33%2C1&underarm=26&vaegt=85 => ok",
+  "assets/min-krop/kort.html -> index.html#forbehold => ok",
+  "assets/min-krop/mit-kort.html -> index.html => ok",
+  "artikler.html -> index.html => ok",
+  "artikler.html -> coaching.html => ok",
+  "artikler.html -> resultater.html => ok",
+  "artikler.html -> viden.html => ok",
+  "artikler.html -> om.html => ok",
+  "artikler.html -> coaching.html#ansoeg => ok",
+  "artikler.html -> artikel-volumen.html => ok",
+  "artikler.html -> artikel-intensitet.html => ok",
+  "artikler.html -> artikel-frekvens.html => ok",
+  "artikler.html -> artikel-autoregulering.html => ok",
+  "artikler.html -> artikel-deload.html => ok",
+  "artikler.html -> artikel-squat.html => ok",
+  "artikler.html -> afklaring.html => ok",
+  "artikler.html -> privatliv.html => ok"
+ ],
+ "eksterneLinks": [
+  "https://instagram.com/entropicoaching",
+  "https://app.entropicoaching.dk",
+  "https://app.entropicoaching.dk/videocoach.html",
+  "https://adaptiv.entropicoaching.dk/"
+ ],
+ "privateFiler": [
+  "outputs/FORSLAG-TIL-MARC.md",
+  "outputs/MAAL-EFTER.json",
+  "outputs/MAAL-EFTER.md",
+  "outputs/MAAL-FOER.json",
+  "outputs/MAAL-FOER.md",
+  "outputs/RAPPORT-111.md",
+  "outputs/RAPPORT-174.md",
+  "outputs/forside-efter-mobil.png",
+  "outputs/forside-foer-mobil.png",
+  "outputs/skaermbilleder-174/efter-footer.png",
+  "outputs/skaermbilleder-174/efter-hero.png",
+  "outputs/skaermbilleder-174/efter-navn.png",
+  "outputs/skaermbilleder-174/foer-footer.png",
+  "outputs/skaermbilleder-174/foer-hero.png",
+  "outputs/skaermbilleder-174/foer-navn.png",
+  "scripts/maal.mjs",
+  "scripts/optimer-billede.mjs"
+ ],
+ "antalFiler": 117
+}

@@ -1,0 +1,116 @@
+Min krop i de tre løft
+
+Mål dig selv med et målebånd og en makker, og skriv målene ind. Så regner modellen squat, dødløft og bænkpres med dine proportioner og viser dem ved siden af gennemsnittet for samme højde og vægt. Forskellen mellem de to figurer er kun proportionerne.
+
+Målene bliver i din egen browser. Intet sendes nogen steder hen.
+
+ikke her
+bæltet og hoftekammen: ikke her
+Højde
+Lår
+Skinneben
+Overkrop
+Overarm
+Underarm
+Højde
+Fra gulvet til issen (toppen af hovedet).
+cm
+Lår
+Fra hoftens knoglefremspring på ydersiden (trochanter major, hvor hoften er bredest; ikke hoftekammen og ikke bæltestedet, men knoglen man mærker på ydersiden af hoften, når benet drejes) til knæleddets yderside (ledspalten).
+cm
+Skinneben
+Fra knæleddets yderside (ledspalten) til ankelknoen på ydersiden (laterale malleol).
+cm
+Overkrop
+Fra samme knoglefremspring som for låret (trochanter major, ikke hoftekammen og ikke bæltet) til skulderens yderste knoglespids (acromion).
+cm
+Overarm
+Fra skulderens yderste knoglespids (acromion) til albuens yderste knoglepunkt (laterale epikondyl).
+cm
+Underarm
+Fra albuens yderste knoglepunkt (laterale epikondyl) til håndleddets knogleknude på tommelfingersiden.
+cm
+Kropsvægt
+Vægten fordeles på segmenterne efter samme tabel som resten af modellen.
+kg
+Brug gennemsnit ud fra højden
+Glem mine mål
+Mit kort
+
+Ved 178 cm tager modellen: lår 37,1-50,2, skinneben 37,2-50,4, overkrop 43,6-59,0, overarm 28,1-38,1, underarm 22,1-29,9 cm.
+
+Løftene
+Fejl
+Squat
+Bunden
+Sticking point
+Lockout
+
+Dine proportioner flytter næsten intet i bunden i modellen: alle forskelle er under ca. 4° og 3 cm, som et målebånd kan tage fejl med.
+
+Bunden	Dig	Snit	Forskel
+Knævinkel (°)	46,1	46,1	0,0
+Hoftevinkel (°)	36,9	36,9	+0,1°
+Skinneben fra lodret (°)	40,0	40,0	0,0
+Torso fra lodret (°)	49,1	49,2	−0,1°
+Vandret afstand stang–hofte (cm)	21,3	21,3	0,0
+Vandret afstand stang–knæ (cm)	−22,2	−22,2	0,0
+Vandret afstand stang–lænd (cm)	7,5	7,5	0,0
+Stangens vej, hele løftet (cm)	62,2	62,2	0,0
+Dødløft
+Opstilling
+Knæhøjde
+Lockout
+
+Dine proportioner flytter næsten intet ved opstillingen i modellen: alle forskelle er under ca. 4° og 3 cm, som et målebånd kan tage fejl med.
+
+Opstilling	Dig	Snit	Forskel
+Knævinkel (°)	99,8	99,9	−0,1°
+Hoftevinkel (°)	51,4	51,4	0,0
+Skinneben fra lodret (°)	13,0	13,0	0,0
+Torso fra lodret (°)	61,5	61,5	0,0
+Vandret afstand stang–hofte (cm)	40,1	40,1	0,0
+Vandret afstand stang–knæ (cm)	−0,1	−0,1	0,0
+Vandret afstand stang–lænd (cm)	24,1	24,1	0,0
+Stangens vej, hele løftet (cm)	55,0	55,0	0,0
+Bænkpres
+Stangen på brystet
+Midt i opturen
+Lockout
+
+Dine proportioner flytter næsten intet på brystet i modellen: alle forskelle er under ca. 4° og 3 cm, som et målebånd kan tage fejl med.
+
+Stangen på brystet	Dig	Snit	Forskel
+Albuevinkel (°)	66,5	66,4	0,0
+Overarm ud fra kroppen (°)	29,2	29,2	0,0
+Afstand stang–skulder, siden og forfra i alt (cm)	28,0	28,0	0,0
+Afstand stang–albue, siden og forfra i alt (cm)	4,6	4,6	0,0
+Stangens vej, hele løftet (cm)	40,1	40,1	0,0
+Sådan måler du
+Stå oprejst og afslappet. Mål på ydersiden af kroppen mellem knoglepunkterne, ikke over tøj. Hold målebåndet stramt uden at trykke huden ind.
+Alle mål på samme side af kroppen, fx højre. Tegningen viser benets mål på den ene side og armens på den anden, kun så stregerne ikke ligger oven i hinanden.
+Hoftens knoglefremspring (trochanter) er der, hvor hoften er bredest, et godt stykke under bæltet. Det er ikke hoftekammen og ikke bæltestedet, men knoglen man mærker på ydersiden af hoften, når benet drejes ind og ud. Det er den hyppigste fejl med et målebånd.
+Tryk på et felt, så viser tegningen, hvor målet går fra og til.
+Et mål uden for det, modellen tager, giver en besked i stedet for en figur. Det er ofte et forkert punkt eller et tal i m i stedet for cm. Mål igen.
+Mit kort viser dine mål, de tre løft ved siden af gennemsnittet, vinklerne og afstandene og forbeholdene på én side, som du kan printe eller vise din coach. Målene står kun i adressens #-del og i din browser.
+Brug gennemsnit ud fra højden fylder de fem længder ud med tabellens tal for din højde. Så kan du rette dem én ad gangen og se, hvad hvert mål flytter.
+Sådan læses figurerne
+Guld er dig. Blå er gennemsnittet for samme højde og vægt. De to står i samme skala.
+Den stiplede lodrette linje er stangens lodlinje. Den korte streg ved gulvet er midtfoden.
+De vandrette streger er de vandrette afstande fra stangens lodlinje til leddene.
+Tabellen viser kun det, modellen er sikker på: vinkler og afstande. Den viser ikke kræfter i Nm.
+Løftene regnes med de samme valg som tre-løft-siden: squat med low bar og 120 kg, konventionelt dødløft med 270 kg og bænkpres med middel bue, middel greb og 100 kg.
+Hvad modellen ikke kan sige om din krop
+
+Brug forskellen mellem dig og gennemsnittet, ikke tallene alene. Modellen er en tegning af længder, masse og balance. Den er ikke et billede af, hvordan du løfter.
+
+Ryggen. Modellens overkrop er ét stift stykke. Den kan ikke runde eller strække ryggen. Holdt op mod et filmet dødløft står modellens ryg mere vandret: ca. 60° mod 50° fra lodret ved gulvet og 53° mod 45° ved knæhøjde. Overkroppens vinkel er derfor nok lidt for vandret i dødløftet, også for dig. Stangens plads forklarer en del af det, men ikke det hele.
+Hvor tungt det er for leddene. Siden viser ingen tal i Nm. Størrelsen er modellens, og for et rigtigt løft er den sandsynligvis 10-15 % for høj. Retningen kan bruges: om hoften eller knæet får mere at holde, og om stangen kommer længere væk. Derfor viser tabellen kun vinkler og afstande.
+Sumo er ikke med. Modellen regner sumo kun fra siden. Knæ, der skubbes ud, hoftens rotation og kræfter til siden findes ikke i den, og skinnebenet står for skråt set fra siden. Dine proportioner ville kun flytte den halve del af billedet, så siden viser kun konventionelt dødløft.
+Ingen muskler. Modellen ved, hvor langt der er mellem to knoglepunkter, og hvordan vægten fordeler sig. Den ved ikke, hvor stærk eller smidig du er, eller hvilke muskler der gør arbejdet.
+Kun længderne er dine. Hvor meget hver del af kroppen vejer, kommer fra en tabel målt på unge idrætsstuderende (de Leva 1996), ikke fra dig. En styrkeløfter med store lår eller en tung overkrop afviger. Fod og skulderbredde følger højden.
+Hånden er med, men ikke målt. Underarmen måles til håndleddet. I dødløftet lægger modellen en halv hånd til, fra håndleddet til grebets midte: 0,054 × højden (ca. 10 cm ved 178 cm, efter Winter 2009). Den følger højden, ikke dine mål, så den er den samme for dig og gennemsnittet. Hånden flytter dødløftets tal meget: uden den stod hoften ca. 13° mere lukket og overkroppen 5° mere vandret ved gulvet. Forskellen mellem dig og gennemsnittet flytter den næsten ikke. Holdt op mod et filmet dødløft forklarer hånden ikke, at modellens ryg står mere vandret (se ryggen ovenfor).
+Stillingerne er valgt, ikke målt. Squattens bund ligger ved IPF-dybde, og modellen vælger selv skinnebenets hældning. Den kender hverken ankelmobilitet, standbredde eller hælesko. I dødløftet står stangen 3 cm foran midtfoden ved gulvet. Et filmet løft havde den 3-4 cm fremme. Med meget lange lår og kort skinneben eller overkrop kan modellen ikke finde en squat ved IPF-dybde. Det siger noget om modellen, ikke om dig: en rigtig løfter løser det med bredere stand, knæ ud eller hælesko.
+Spændet er et valg. Tabellen bag gennemsnittet (Winter 2009 efter Drillis og Contini 1966) giver kun gennemsnit, ikke hvor meget folk varierer. Siden tager hvert mål inden for 85-115 % af gennemsnittet for din højde. Uden for det spænd er modellen ikke prøvet.
+Et målebånd har et par cm usikkerhed. Mål hellere to gange, og brug gennemsnittet. Ét mål 2 cm for langt flytter en vinkel 3-4° i modellen. En forskel på under ca. 4° eller 3 cm i tabellen er derfor inden for målefejlen og skal ikke tolkes som en teknikforskel. Linjen under figurerne fremhæver først en forskel fra 4° eller 3 cm.
+Målene skal passe sammen. Hvert mål må ligge 85-115 % af gennemsnittet, men lår, skinneben og overkrop skal også tilsammen passe til højden (92-108 % af tabellens 0,779 × højden). Ellers giver siden en besked i stedet for figurer: fem mål, der hver især ser rimelige ud, kan tilsammen høre til en anden højde.

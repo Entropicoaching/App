@@ -1,0 +1,18 @@
+Længere lårben: knæets moment stiger 13 % i bunden (416 → 471 Nm).
+
+Højde
+178 cm
+Kropsvægt
+85 kg
+Lår
+110 % · 48,0 cm
+Skinneben
+100 % · 43,8 cm
+Torso
+100 % · 51,3 cm
+Arme
+100 % · 59,1 cm
+Stang
+120 kg
+
+Modellen regner på segmentlængder, masse, balance og momenter, statisk og set fra siden. Den har ingen muskler.
