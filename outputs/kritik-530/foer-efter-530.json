@@ -1,0 +1,717 @@
+{
+  "kilde": {
+    "loeftmodel": "entropi-loeftmodel-dhruva main c9950e0 (522 merget), via git archive",
+    "marc": "MARC_GULV (Marcs eget klip, 462)"
+  },
+  "antagelser": {
+    "dybderDoedloeft": {
+      "stang": -75,
+      "midtfod": -12,
+      "ankel": -14,
+      "knae": -13,
+      "hofte": -18,
+      "skulder": -20
+    },
+    "fjerntNav": "+75 cm (modsat side)",
+    "dybderSquat": {
+      "stang": -70,
+      "midtfod": -15,
+      "ankel": -16,
+      "knae": -18,
+      "hofte": -18,
+      "skulder": -20
+    },
+    "klikStoej": {
+      "omhyggelig": {
+        "stang": 0.5,
+        "midtfod": 1,
+        "ankel": 1,
+        "knae": 1,
+        "hofte": 1.5,
+        "skulder": 1.5
+      },
+      "typisk": {
+        "stang": 1,
+        "midtfod": 1.5,
+        "ankel": 1,
+        "knae": 1.5,
+        "hofte": 2.5,
+        "skulder": 2
+      }
+    },
+    "navSd": {
+      "skarpt": 0.5,
+      "skoennet": 2.5
+    },
+    "sammeStedPaaKanten": "navets fejl trukket een gang pr. billede (SD 2,5 cm) plus 0,5 cm pr. runde",
+    "kamera": "pinhole som 511/521, referencen 3 m"
+  },
+  "NAV_SKOENNET_FAKTOR": 2,
+  "E7": {
+    "ingenAendring": {
+      "omhyggelig-1-udenNav": {
+        "n": 2000,
+        "udenKryds": {
+          "alle": 16,
+          "stang": 0
+        },
+        "medKryds": {
+          "alle": 16,
+          "stang": 0
+        },
+        "faktor15": {
+          "alle": 16,
+          "stang": 0
+        },
+        "kontrolEnig": 100
+      },
+      "omhyggelig-1-navSkarpt": {
+        "n": 2000,
+        "udenKryds": {
+          "alle": 23,
+          "stang": 12
+        },
+        "medKryds": {
+          "alle": 14,
+          "stang": 0
+        },
+        "faktor15": {
+          "alle": 15,
+          "stang": 1
+        },
+        "kontrolEnig": 100
+      },
+      "omhyggelig-1-navSkoennet": {
+        "n": 2000,
+        "udenKryds": {
+          "alle": 41,
+          "stang": 33
+        },
+        "medKryds": {
+          "alle": 16,
+          "stang": 1
+        },
+        "faktor15": {
+          "alle": 21,
+          "stang": 8
+        },
+        "kontrolEnig": 100
+      },
+      "omhyggelig-3-udenNav": {
+        "n": 2000,
+        "udenKryds": {
+          "alle": 11,
+          "stang": 0
+        },
+        "medKryds": {
+          "alle": 11,
+          "stang": 0
+        },
+        "faktor15": {
+          "alle": 11,
+          "stang": 0
+        },
+        "kontrolEnig": 100
+      },
+      "omhyggelig-3-navSkarpt": {
+        "n": 2000,
+        "udenKryds": {
+          "alle": 20,
+          "stang": 10
+        },
+        "medKryds": {
+          "alle": 13,
+          "stang": 0
+        },
+        "faktor15": {
+          "alle": 13,
+          "stang": 1
+        },
+        "kontrolEnig": 100
+      },
+      "omhyggelig-3-navSkoennet": {
+        "n": 2000,
+        "udenKryds": {
+          "alle": 27,
+          "stang": 18
+        },
+        "medKryds": {
+          "alle": 13,
+          "stang": 1
+        },
+        "faktor15": {
+          "alle": 15,
+          "stang": 4
+        },
+        "kontrolEnig": 100
+      },
+      "typisk-1-udenNav": {
+        "n": 2000,
+        "udenKryds": {
+          "alle": 50,
+          "stang": 0
+        },
+        "medKryds": {
+          "alle": 50,
+          "stang": 0
+        },
+        "faktor15": {
+          "alle": 50,
+          "stang": 0
+        },
+        "kontrolEnig": 100
+      },
+      "typisk-1-navSkarpt": {
+        "n": 2000,
+        "udenKryds": {
+          "alle": 65,
+          "stang": 43
+        },
+        "medKryds": {
+          "alle": 48,
+          "stang": 2
+        },
+        "faktor15": {
+          "alle": 51,
+          "stang": 10
+        },
+        "kontrolEnig": 100
+      },
+      "typisk-1-navSkoennet": {
+        "n": 2000,
+        "udenKryds": {
+          "alle": 73,
+          "stang": 55
+        },
+        "medKryds": {
+          "alle": 50,
+          "stang": 6
+        },
+        "faktor15": {
+          "alle": 57,
+          "stang": 23
+        },
+        "kontrolEnig": 100
+      },
+      "typisk-3-udenNav": {
+        "n": 2000,
+        "udenKryds": {
+          "alle": 24,
+          "stang": 0
+        },
+        "medKryds": {
+          "alle": 24,
+          "stang": 0
+        },
+        "faktor15": {
+          "alle": 24,
+          "stang": 0
+        },
+        "kontrolEnig": 100
+      },
+      "typisk-3-navSkarpt": {
+        "n": 2000,
+        "udenKryds": {
+          "alle": 40,
+          "stang": 21
+        },
+        "medKryds": {
+          "alle": 28,
+          "stang": 1
+        },
+        "faktor15": {
+          "alle": 30,
+          "stang": 4
+        },
+        "kontrolEnig": 100
+      },
+      "typisk-3-navSkoennet": {
+        "n": 2000,
+        "udenKryds": {
+          "alle": 43,
+          "stang": 24
+        },
+        "medKryds": {
+          "alle": 28,
+          "stang": 2
+        },
+        "faktor15": {
+          "alle": 31,
+          "stang": 7
+        },
+        "kontrolEnig": 100
+      }
+    },
+    "sammeStedPaaKanten": {
+      "omhyggelig-3": {
+        "n": 2000,
+        "udenKryds": {
+          "alle": 51,
+          "stang": 46
+        },
+        "medKryds": {
+          "alle": 18,
+          "stang": 9
+        },
+        "faktor15": {
+          "alle": 29,
+          "stang": 21
+        },
+        "kontrolEnig": 100
+      },
+      "typisk-3": {
+        "n": 2000,
+        "udenKryds": {
+          "alle": 58,
+          "stang": 47
+        },
+        "medKryds": {
+          "alle": 31,
+          "stang": 8
+        },
+        "faktor15": {
+          "alle": 40,
+          "stang": 21
+        },
+        "kontrolEnig": 100
+      }
+    },
+    "stangFlyttet": {
+      "2cm-1-navSkarpt": {
+        "n": 1000,
+        "udenKryds": {
+          "alle": 52,
+          "stang": 45
+        },
+        "medKryds": {
+          "alle": 14,
+          "stang": 1
+        },
+        "faktor15": {
+          "alle": 22,
+          "stang": 10
+        },
+        "kontrolEnig": 100
+      },
+      "2cm-1-navSkoennet": {
+        "n": 1000,
+        "udenKryds": {
+          "alle": 55,
+          "stang": 49
+        },
+        "medKryds": {
+          "alle": 20,
+          "stang": 6
+        },
+        "faktor15": {
+          "alle": 31,
+          "stang": 20
+        },
+        "kontrolEnig": 100
+      },
+      "2cm-3-navSkarpt": {
+        "n": 1000,
+        "udenKryds": {
+          "alle": 79,
+          "stang": 77
+        },
+        "medKryds": {
+          "alle": 16,
+          "stang": 5
+        },
+        "faktor15": {
+          "alle": 36,
+          "stang": 29
+        },
+        "kontrolEnig": 100
+      },
+      "2cm-3-navSkoennet": {
+        "n": 1000,
+        "udenKryds": {
+          "alle": 59,
+          "stang": 54
+        },
+        "medKryds": {
+          "alle": 20,
+          "stang": 7
+        },
+        "faktor15": {
+          "alle": 34,
+          "stang": 24
+        },
+        "kontrolEnig": 100
+      },
+      "3cm-1-navSkarpt": {
+        "n": 1000,
+        "udenKryds": {
+          "alle": 76,
+          "stang": 73
+        },
+        "medKryds": {
+          "alle": 19,
+          "stang": 4
+        },
+        "faktor15": {
+          "alle": 37,
+          "stang": 27
+        },
+        "kontrolEnig": 100
+      },
+      "3cm-1-navSkoennet": {
+        "n": 1000,
+        "udenKryds": {
+          "alle": 70,
+          "stang": 66
+        },
+        "medKryds": {
+          "alle": 25,
+          "stang": 13
+        },
+        "faktor15": {
+          "alle": 44,
+          "stang": 35
+        },
+        "kontrolEnig": 100
+      },
+      "3cm-3-navSkarpt": {
+        "n": 1000,
+        "udenKryds": {
+          "alle": 98,
+          "stang": 98
+        },
+        "medKryds": {
+          "alle": 35,
+          "stang": 27
+        },
+        "faktor15": {
+          "alle": 76,
+          "stang": 74
+        },
+        "kontrolEnig": 100
+      },
+      "3cm-3-navSkoennet": {
+        "n": 1000,
+        "udenKryds": {
+          "alle": 79,
+          "stang": 77
+        },
+        "medKryds": {
+          "alle": 28,
+          "stang": 19
+        },
+        "faktor15": {
+          "alle": 53,
+          "stang": 47
+        },
+        "kontrolEnig": 100
+      },
+      "5cm-1-navSkarpt": {
+        "n": 1000,
+        "udenKryds": {
+          "alle": 98,
+          "stang": 98
+        },
+        "medKryds": {
+          "alle": 42,
+          "stang": 34
+        },
+        "faktor15": {
+          "alle": 81,
+          "stang": 79
+        },
+        "kontrolEnig": 100
+      },
+      "5cm-1-navSkoennet": {
+        "n": 1000,
+        "udenKryds": {
+          "alle": 92,
+          "stang": 92
+        },
+        "medKryds": {
+          "alle": 48,
+          "stang": 40
+        },
+        "faktor15": {
+          "alle": 73,
+          "stang": 70
+        },
+        "kontrolEnig": 100
+      },
+      "5cm-3-navSkarpt": {
+        "n": 1000,
+        "udenKryds": {
+          "alle": 100,
+          "stang": 100
+        },
+        "medKryds": {
+          "alle": 95,
+          "stang": 95
+        },
+        "faktor15": {
+          "alle": 100,
+          "stang": 100
+        },
+        "kontrolEnig": 100
+      },
+      "5cm-3-navSkoennet": {
+        "n": 1000,
+        "udenKryds": {
+          "alle": 99,
+          "stang": 98
+        },
+        "medKryds": {
+          "alle": 70,
+          "stang": 67
+        },
+        "faktor15": {
+          "alle": 91,
+          "stang": 90
+        },
+        "kontrolEnig": 100
+      }
+    },
+    "aendring507": {
+      "omhyggelig-1-navSkarpt": {
+        "n": 1000,
+        "udenKryds": {
+          "alle": 71,
+          "stang": 43
+        },
+        "medKryds": {
+          "alle": 51,
+          "stang": 1
+        },
+        "faktor15": {
+          "alle": 55,
+          "stang": 10
+        },
+        "kontrolEnig": 100
+      },
+      "omhyggelig-1-navSkoennet": {
+        "n": 1000,
+        "udenKryds": {
+          "alle": 74,
+          "stang": 51
+        },
+        "medKryds": {
+          "alle": 52,
+          "stang": 6
+        },
+        "faktor15": {
+          "alle": 60,
+          "stang": 22
+        },
+        "kontrolEnig": 100
+      },
+      "omhyggelig-3-navSkarpt": {
+        "n": 1000,
+        "udenKryds": {
+          "alle": 96,
+          "stang": 79
+        },
+        "medKryds": {
+          "alle": 83,
+          "stang": 5
+        },
+        "faktor15": {
+          "alle": 87,
+          "stang": 28
+        },
+        "kontrolEnig": 100
+      },
+      "omhyggelig-3-navSkoennet": {
+        "n": 1000,
+        "udenKryds": {
+          "alle": 91,
+          "stang": 56
+        },
+        "medKryds": {
+          "alle": 82,
+          "stang": 8
+        },
+        "faktor15": {
+          "alle": 85,
+          "stang": 24
+        },
+        "kontrolEnig": 100
+      }
+    },
+    "stangTaerskler": {
+      "stangFraMidtfod": {
+        "uden": 3,
+        "med": 6
+      },
+      "stangHofte": {
+        "uden": 4,
+        "med": 8
+      },
+      "skulderForanStang": {
+        "uden": 4,
+        "med": 8
+      }
+    },
+    "udenNavKrydsGoerIntet": true
+  },
+  "E8": {
+    "dlUdenNav": {
+      "n": 5,
+      "andel": "ca. hvert sjette"
+    },
+    "dlMedNav": {
+      "n": 8,
+      "andel": "ca. hvert fjerde"
+    },
+    "mc": {
+      "udenNav": 16,
+      "navSkarpt": 23,
+      "navSkoennetKryds": 16,
+      "typiskUdenNav": 50,
+      "typiskNavSkarpt": 65
+    }
+  },
+  "E3rest": {
+    "hintGraense": {
+      "squat-midt": 8
+    },
+    "kameraer": [
+      {
+        "kamera": "ref",
+        "nav": false,
+        "forskelCm": 2.9,
+        "graense": 5,
+        "dom": "ok",
+        "hint": true
+      },
+      {
+        "kamera": "ref",
+        "nav": true,
+        "forskelCm": -0.8,
+        "graense": 3,
+        "dom": "ok",
+        "hint": false
+      },
+      {
+        "kamera": "op30vip",
+        "nav": false,
+        "forskelCm": -5.8,
+        "graense": 5,
+        "dom": "lavere",
+        "hint": true
+      },
+      {
+        "kamera": "op30vip",
+        "nav": true,
+        "forskelCm": -2.3,
+        "graense": 3,
+        "dom": "ok",
+        "hint": false
+      },
+      {
+        "kamera": "lav60",
+        "nav": false,
+        "forskelCm": 7.4,
+        "graense": 5,
+        "dom": "hoejere",
+        "hint": true
+      },
+      {
+        "kamera": "lav60",
+        "nav": true,
+        "forskelCm": -0.8,
+        "graense": 3,
+        "dom": "ok",
+        "hint": false
+      },
+      {
+        "kamera": "skraa10",
+        "nav": false,
+        "forskelCm": 4.1,
+        "graense": 5,
+        "dom": "ok",
+        "hint": true
+      },
+      {
+        "kamera": "skraa10",
+        "nav": true,
+        "forskelCm": 0.5,
+        "graense": 3,
+        "dom": "ok",
+        "hint": false
+      }
+    ],
+    "rigtigFasefejl": [
+      {
+        "stangFlyttetCm": -12,
+        "kamera": "ref",
+        "nav": false,
+        "forskelCm": -11.8,
+        "graense": 5,
+        "dom": "lavere",
+        "hint": false
+      },
+      {
+        "stangFlyttetCm": -12,
+        "kamera": "ref",
+        "nav": true,
+        "forskelCm": -12.7,
+        "graense": 3,
+        "dom": "lavere",
+        "hint": false
+      },
+      {
+        "stangFlyttetCm": -6,
+        "kamera": "ref",
+        "nav": false,
+        "forskelCm": -4.5,
+        "graense": 5,
+        "dom": "ok",
+        "hint": true
+      },
+      {
+        "stangFlyttetCm": -6,
+        "kamera": "ref",
+        "nav": true,
+        "forskelCm": -6.7,
+        "graense": 3,
+        "dom": "lavere",
+        "hint": false
+      },
+      {
+        "stangFlyttetCm": 6,
+        "kamera": "ref",
+        "nav": false,
+        "forskelCm": 10.2,
+        "graense": 5,
+        "dom": "hoejere",
+        "hint": false
+      },
+      {
+        "stangFlyttetCm": 6,
+        "kamera": "ref",
+        "nav": true,
+        "forskelCm": 5.2,
+        "graense": 3,
+        "dom": "hoejere",
+        "hint": false
+      },
+      {
+        "stangFlyttetCm": 12,
+        "kamera": "ref",
+        "nav": false,
+        "forskelCm": 17.5,
+        "graense": 5,
+        "dom": "hoejere",
+        "hint": false
+      },
+      {
+        "stangFlyttetCm": 12,
+        "kamera": "ref",
+        "nav": true,
+        "forskelCm": 11.1,
+        "graense": 3,
+        "dom": "hoejere",
+        "hint": false
+      }
+    ]
+  }
+}
