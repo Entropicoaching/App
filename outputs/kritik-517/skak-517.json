@@ -1,0 +1,704 @@
+{
+ "390": {
+  "startFane": "Gåder",
+  "startStatus": "Hvid trækker. Find det bedste træk.",
+  "spil": {
+   "modComputerY": 901,
+   "valgtModus": "Mod en makker",
+   "bordNrSynlig": false,
+   "bordTekst": "Til klassens turnering: tallet på bordets seddel",
+   "vindueH": 844,
+   "niveauSynligEfterValg": true,
+   "statusFoer": "Hvid trækker.",
+   "statusEfter": "Computeren spillede f4-g6. Din tur.",
+   "traek": 70,
+   "svartiderMs": {
+    "median": 1412,
+    "max": 1692,
+    "antal": 70
+   },
+   "aabningsnavne": [],
+   "slut": "eleven gav op",
+   "statusSlut": "Hvid gav op. Sort vinder."
+  },
+  "analyse": {
+   "tal": [
+    "",
+    "Du",
+    "Computeren",
+    "Nøjagtighed",
+    "79 %",
+    "83 %",
+    "?! Unøjagtigheder",
+    "4",
+    "4",
+    "? Fejl",
+    "6",
+    "4",
+    "?? Bukke",
+    "5",
+    "6"
+   ],
+   "forklaring": "Nøjagtighed: hvor tæt dine træk var på motorens bedste (100 % = som motoren). Sammenlign med dine egne partier.",
+   "status": "",
+   "graf": true,
+   "laerFejl": true,
+   "laerFejlTekst": "Lær af dine fejl Motoren fandt 11 træk, hvor du kunne have spillet meget bedre (fejl og bukke). Kan du selv finde det bedre træk? Lær af dine fejl Prøv igen Vis løsningen Næste fejl ▶ Stop",
+   "vendepunkter": [
+    "Tre steder hvor partiet vendte Motoren har regnet hvert træk igennem. Her faldt vurderingen mest. Træk 8: Her tabte du et tårn og fik kun en løber. Du spillede ",
+    ""
+   ],
+   "trakliste": "a4Sf6Sa3b5?axb5c5bxc6Sa6?!cxd7+Sxd7b4?Sxb4Sb1La6??Txa6??Dc7??Txa7?Dxa7h4??Dc7?!e4?!Df4??Sa3??e6??Lb5?f6?Lxd7+Kxd7Kf1?!h6?!De2Tb8Sb1?Ld6?e5??Le7??Th3?fxe5Dxe5??Dxe5Tf3Dd4Tf4Dxf2+??Txf2Thd8?c4?Sa2Sc3Sxc1d4h5?!c5Tb3c6+?!Kxc6Sh3?!Txc3Td2Kd6g3Kc7Td3Tf8+Kg1Sxd3Sg5La3Sxe6+Kc8Sxf8Le7Sd7Kxd7Kg2Sb4Kh3Sd3g4hxg",
+   "yGraf": 662,
+   "yBraetBund": 576,
+   "ventetidMs": 2371,
+   "rul": 0
+  },
+  "laerFejl": "Lær af dine fejl Lær af dine fejl Find et bedre træk. Du spillede 6. b4 - en fejl (?). Hvid i træk. Tryk på en brik og så på feltet. Prøv igen Vis løsningen Næste fejl ▶ 1 / 8 Stop",
+  "laerFejlOeveFen": null,
+  "laerFejlSpillet": "b4",
+  "gennemse": {
+   "statusTilbage": "Du ser 69. Kc4 (træk 137 af 140)",
+   "tilbageVirker": true,
+   "statusNu": "Hvid gav op. Sort vinder.",
+   "braetSkiftede": true,
+   "tilbageTilNu": true
+  },
+  "pgn": {
+   "besked": "Partiet er kopieret. Sæt det ind i en besked, eller på lichess under \"Importer parti\".",
+   "kopieret": "[Event \"Parti på skakbrættet\"]\r\n[Site \"?\"]\r\n[Date \"2026.09.27\"]\r\n[Round \"-\"]\r\n[White \"Du\"]\r\n[Black \"Computer (niveau 3)\"]\r\n[Result \"0-1\"]\r\n\r\n1. a4 Nf6 2. Na3 b5? 3. axb5 c5 4. bxc6 Na6?! 5. cxd7+ Nxd7 6. b4? Nxb4 7. Nb1\r\nBa6?? 8. Rxa6?? Qc7?? 9. Rxa7? Qxa7 10. h4?? Qc7?! 11. e4?! Qf4?? 12. Na3?? e6??\r\n13. Bb5? f6? 14. Bxd7+ Kxd7 15. Kf1?! h6?! 16. Qe2 Rb8 17. Nb1? Bd6? 18. e5??\r\nBe7?? 19. Rh3? fxe5 20. Qxe5?? Qxe5 21. Rf3 Qd4 22. Rf4 Qxf2+?? 23. Rxf2 Rhd8?\r\n24. c4? Na2 25. Nc3 Nxc1 26. d4 h5?! 27. c5 Rb3 28. c6+?! Kxc6 29. Nh3?! Rxc3\r\n30. Rd2 Kd6 31. g3 Kc7 32. Rd3 Rf8+ 33. Kg1 Nxd3 34. Ng5 Ba",
+   "kopieretHeaders": [
+    "Event",
+    "Site",
+    "Date",
+    "Round",
+    "White",
+    "Black",
+    "Result"
+   ],
+   "filnavn": "skak-2026-09-27.pgn",
+   "lichess": {
+    "besked": "Partiet er indlæst i Spil (26 halvtræk). Gå igennem det med pilene.",
+    "fen": "r2q4/ppp2kpp/5n2/2bPp3/8/3P4/PPPQ3P/RNB1K2b w Q - 0 14",
+    "status": "Du ser Startstillingen (træk 0 af 26)",
+    "fane": "true",
+    "analyse": true,
+    "forventetFen": "r2q4/ppp2kpp/5n2/2bPp3/8/3P4/PPPQ3P/RNB1K2b w Q - 0 14",
+    "analyseTal": [
+     "",
+     "Hvid",
+     "Sort",
+     "Nøjagtighed",
+     "47 %",
+     "74 %",
+     "?! Unøjagtigheder",
+     "1",
+     "2",
+     "? Fejl",
+     "0",
+     "0",
+     "?? Bukke",
+     "1",
+     "1"
+    ],
+    "aabning": "Italiensk parti: Giuoco Pianissimo",
+    "navne": [
+     "Hvid",
+     "Sort"
+    ]
+   },
+   "medVariant": {
+    "besked": "Partiet er indlæst i Spil (6 halvtræk). Gå igennem det med pilene.",
+    "fen": "r1bqkbnr/1ppp1ppp/p1n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4",
+    "status": "Du ser Startstillingen (træk 0 af 6)",
+    "fane": "true",
+    "analyse": false
+   },
+   "dansk": {
+    "besked": "Partiet er indlæst i Spil (10 halvtræk). Gå igennem det med pilene.",
+    "fen": "r1bqk2r/1pppbppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQ1RK1 w kq - 4 6",
+    "status": "Du ser Startstillingen (træk 0 af 10)",
+    "fane": "true",
+    "analyse": false
+   },
+   "forkert": {
+    "besked": "Træk 2. Ke3 er ikke et lovligt træk i stillingen.",
+    "fen": "r1bqk2r/1pppbppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQ1RK1 w kq - 4 6",
+    "status": "Du ser Startstillingen (træk 0 af 10)",
+    "fane": "true",
+    "analyse": false
+   },
+   "forkertTraeksliste": "e4e5Sf3Sc6Lb5a6La4Sf6O-OLe7",
+   "remis": {
+    "besked": "Partiet er indlæst i Spil (10 halvtræk). Gå igennem det med pilene.",
+    "fen": "r1bqk2r/1pppbppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQ1RK1 w kq - 4 6",
+    "status": "Du ser Startstillingen (træk 0 af 10)",
+    "fane": "true",
+    "analyse": false,
+    "analyseEfter4s": false
+   },
+   "overskriver": {
+    "iGangFoer": "r1bqk1nr/ppppbppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4",
+    "besked": "Partiet er indlæst i Spil (4 halvtræk). Gå igennem det med pilene.",
+    "fenEfter": "rnbqkbnr/ppp2ppp/4p3/3p4/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3",
+    "modalSynlig": false,
+    "dialog": false,
+    "modstanderEfter": "Mod en makker"
+   }
+  },
+  "forhaand": {
+   "1": {
+    "forsoeg": 4,
+    "naaedeAtLaegge": 2,
+    "lagt": 2,
+    "spillet": 2,
+    "tider": [
+     998,
+     1357
+    ]
+   },
+   "8": {
+    "forsoeg": 4,
+    "naaedeAtLaegge": 2,
+    "lagt": 2,
+    "spillet": 2,
+    "tider": [
+     638,
+     1500
+    ]
+   }
+  },
+  "storm": {
+   "startKortY": 915,
+   "vindueH": 844,
+   "hjaelp": "Dagens storm: hele klassen får de samme gåder i dag. Start, når læreren siger til. Tilfældig storm: dine egne gåder, uden kode.",
+   "rekordFoer": "Ingen rekord endnu på denne enhed - sæt den første!",
+   "barSynlig": true,
+   "barOverBraet": {
+    "bar": 0,
+    "braetTop": 54,
+    "braetBund": 428,
+    "vindueH": 844
+   },
+   "traek": 35,
+   "spor": [
+    {
+     "tid": "2:59",
+     "aendring": "",
+     "loeste": "1"
+    },
+    {
+     "tid": "2:58",
+     "aendring": "",
+     "loeste": "2"
+    },
+    {
+     "tid": "2:58",
+     "aendring": "",
+     "loeste": "2"
+    },
+    {
+     "tid": "2:57",
+     "aendring": "",
+     "loeste": "3"
+    },
+    {
+     "tid": "2:56",
+     "aendring": "",
+     "loeste": "4"
+    },
+    {
+     "tid": "2:58",
+     "aendring": "+3 s",
+     "loeste": "5"
+    },
+    {
+     "tid": "2:47",
+     "aendring": "−10 s",
+     "loeste": "5"
+    },
+    {
+     "tid": "2:36",
+     "aendring": "−10 s",
+     "loeste": "5"
+    },
+    {
+     "tid": "2:35",
+     "aendring": "−10 s",
+     "loeste": "5"
+    },
+    {
+     "tid": "2:34",
+     "aendring": "",
+     "loeste": "6"
+    },
+    {
+     "tid": "2:33",
+     "aendring": "",
+     "loeste": "7"
+    },
+    {
+     "tid": "2:23",
+     "aendring": "−10 s",
+     "loeste": "7"
+    }
+   ],
+   "resultat": "Tiden er gået! Du løste 15 gåder. Ny rekord på denne enhed! 16 forkerte træk (−160 s)Flest rigtige i træk: 5 (+6 s bonustid)Sværeste løste gåde: rating 959 Her gik det galt - træn det i biblioteket Mat i 2: 7 af 9 gik galtTræn: Mat i 2Spyd: 4 af 6 gik galtTræn: SpidRed din brik: 2 af 3 gik galtTræn: Red din brikHold remis: 2 af 2 gik galtTræn: Bonde mod kongeGaffel: 1 af 1 gik galtTræn: Gaffel med springeren Ny storm Dagens storm igen Tilbage til gåderne",
+   "rekordEfter": null
+  },
+  "forfraSpurgt": 3,
+  "rul": 0,
+  "net": [],
+  "fejl": []
+ },
+ "1280": {
+  "startFane": "Gåder",
+  "startStatus": "Sort trækker. Find det bedste træk.",
+  "spil": {
+   "modComputerY": 201,
+   "valgtModus": "Mod en makker",
+   "bordNrSynlig": false,
+   "bordTekst": "Til klassens turnering: tallet på bordets seddel",
+   "vindueH": 800,
+   "niveauSynligEfterValg": true,
+   "statusFoer": "Hvid trækker.",
+   "statusEfter": "Skakmat! Sort vinder.",
+   "traek": 38,
+   "svartiderMs": {
+    "median": 1266,
+    "max": 1583,
+    "antal": 38
+   },
+   "aabningsnavne": [],
+   "slut": "partiet sluttede paa braettet",
+   "statusSlut": "Skakmat! Sort vinder."
+  },
+  "analyse": {
+   "tal": [
+    "",
+    "Du",
+    "Computeren",
+    "Nøjagtighed",
+    "81 %",
+    "94 %",
+    "?! Unøjagtigheder",
+    "1",
+    "3",
+    "? Fejl",
+    "0",
+    "1",
+    "?? Bukke",
+    "2",
+    "0"
+   ],
+   "forklaring": "Nøjagtighed: hvor tæt dine træk var på motorens bedste (100 % = som motoren). Sammenlign med dine egne partier.",
+   "status": "",
+   "graf": true,
+   "laerFejl": true,
+   "laerFejlTekst": "Lær af dine fejl Motoren fandt 2 træk, hvor du kunne have spillet meget bedre (fejl og bukke). Kan du selv finde det bedre træk? Lær af dine fejl Prøv igen Vis løsningen Næste fejl ▶ Stop",
+   "vendepunkter": [
+    "Tre steder hvor partiet vendte Motoren har regnet hvert træk igennem. Her faldt vurderingen mest. Træk 6: Her tabte du en dronning og fik kun en løber. Du spill",
+    ""
+   ],
+   "trakliste": "e3g6b4d6d3Lh6g3a6Df3Lf5?!Dxf5??gxf5f3d5h4Sf6h5Sc6Sh3a5bxa5e6Kd2Txa5d4b6a4Sd7?!Tg1?!Ta8?!c3Df6Ke1Ke7Ke2Lf8La3+Kd8Lxf8Sxd4+?Kd1??Sxf3Le7+Kxe7Sd2Sfe5Lc4Sxc4Sxc4dxc4Tb1f4exf4Ta6Txb6Txb6Kc1h6Kc2Df5+Kd2Td8Sf2Dc5Ke2Dxh5+Sg4Tg8Td1Dxg4+Ke3Dxd1g4Tc8Ke4Dd3#",
+   "yGraf": 766,
+   "yBraetBund": 677,
+   "ventetidMs": 1769,
+   "rul": 0
+  },
+  "laerFejl": "Lær af dine fejl Lær af dine fejl Find et bedre træk. Du spillede 6. Dxf5 - en bukke (??). Hvid i træk. Tryk på en brik og så på feltet. Prøv igen Vis løsningen Næste fejl ▶ 1 / 2 Stop",
+  "laerFejlOeveFen": null,
+  "laerFejlSpillet": "Dxf5",
+  "gennemse": {
+   "statusTilbage": "Du ser 37. g4 (træk 73 af 76)",
+   "tilbageVirker": true,
+   "statusPilHoejre": "Du ser 37... Tc8 (træk 74 af 76)",
+   "pilHoejre": true,
+   "statusNu": "Skakmat! Sort vinder.",
+   "braetSkiftede": true,
+   "tilbageTilNu": true
+  },
+  "pgn": {
+   "besked": "Partiet er kopieret. Sæt det ind i en besked, eller på lichess under \"Importer parti\".",
+   "kopieret": "[Event \"Parti på skakbrættet\"]\r\n[Site \"?\"]\r\n[Date \"2026.09.27\"]\r\n[Round \"-\"]\r\n[White \"Du\"]\r\n[Black \"Computer (niveau 3)\"]\r\n[Result \"0-1\"]\r\n\r\n1. e3 g6 2. b4 d6 3. d3 Bh6 4. g3 a6 5. Qf3 Bf5?! 6. Qxf5?? gxf5 7. f3 d5 8. h4\r\nNf6 9. h5 Nc6 10. Nh3 a5 11. bxa5 e6 12. Kd2 Rxa5 13. d4 b6 14. a4 Nd7?! 15.\r\nRg1?! Ra8?! 16. c3 Qf6 17. Ke1 Ke7 18. Ke2 Bf8 19. Ba3+ Kd8 20. Bxf8 Nxd4+? 21.\r\nKd1?? Nxf3 22. Be7+ Kxe7 23. Nd2 Nfe5 24. Bc4 Nxc4 25. Nxc4 dxc4 26. Rb1 f4 27.\r\nexf4 Ra6 28. Rxb6 Rxb6 29. Kc1 h6 30. Kc2 Qf5+ 31. Kd2 Rd8 32. Nf2 Qc5 33. Ke2\r\nQxh5+ 34. Ng4 Rg8 35. Rd1 Qxg4+ 36. Ke3 Qxd1 37. g4 Rc8 38",
+   "kopieretHeaders": [
+    "Event",
+    "Site",
+    "Date",
+    "Round",
+    "White",
+    "Black",
+    "Result"
+   ],
+   "filnavn": "skak-2026-09-27.pgn",
+   "lichess": {
+    "besked": "Partiet er indlæst i Spil (26 halvtræk). Gå igennem det med pilene.",
+    "fen": "r2q4/ppp2kpp/5n2/2bPp3/8/3P4/PPPQ3P/RNB1K2b w Q - 0 14",
+    "status": "Du ser Startstillingen (træk 0 af 26)",
+    "fane": "true",
+    "analyse": true,
+    "forventetFen": "r2q4/ppp2kpp/5n2/2bPp3/8/3P4/PPPQ3P/RNB1K2b w Q - 0 14",
+    "analyseTal": [
+     "",
+     "Hvid",
+     "Sort",
+     "Nøjagtighed",
+     "47 %",
+     "74 %",
+     "?! Unøjagtigheder",
+     "1",
+     "2",
+     "? Fejl",
+     "0",
+     "0",
+     "?? Bukke",
+     "1",
+     "1"
+    ],
+    "aabning": "Italiensk parti: Giuoco Pianissimo",
+    "navne": [
+     "Hvid",
+     "Sort"
+    ]
+   },
+   "medVariant": {
+    "besked": "Partiet er indlæst i Spil (6 halvtræk). Gå igennem det med pilene.",
+    "fen": "r1bqkbnr/1ppp1ppp/p1n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4",
+    "status": "Du ser Startstillingen (træk 0 af 6)",
+    "fane": "true",
+    "analyse": false
+   },
+   "dansk": {
+    "besked": "Partiet er indlæst i Spil (10 halvtræk). Gå igennem det med pilene.",
+    "fen": "r1bqk2r/1pppbppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQ1RK1 w kq - 4 6",
+    "status": "Du ser Startstillingen (træk 0 af 10)",
+    "fane": "true",
+    "analyse": false
+   },
+   "forkert": {
+    "besked": "Træk 2. Ke3 er ikke et lovligt træk i stillingen.",
+    "fen": "r1bqk2r/1pppbppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQ1RK1 w kq - 4 6",
+    "status": "Du ser Startstillingen (træk 0 af 10)",
+    "fane": "true",
+    "analyse": false
+   },
+   "forkertTraeksliste": "e4e5Sf3Sc6Lb5a6La4Sf6O-OLe7",
+   "remis": {
+    "besked": "Partiet er indlæst i Spil (10 halvtræk). Gå igennem det med pilene.",
+    "fen": "r1bqk2r/1pppbppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQ1RK1 w kq - 4 6",
+    "status": "Du ser Startstillingen (træk 0 af 10)",
+    "fane": "true",
+    "analyse": false,
+    "analyseEfter4s": false
+   },
+   "overskriver": {
+    "iGangFoer": "r1bq1bnr/ppppkppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQ - 4 4",
+    "besked": "Partiet er indlæst i Spil (4 halvtræk). Gå igennem det med pilene.",
+    "fenEfter": "rnbqkbnr/ppp2ppp/4p3/3p4/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3",
+    "modalSynlig": false,
+    "dialog": false,
+    "modstanderEfter": "Mod en makker"
+   }
+  },
+  "forhaand": {
+   "1": {
+    "forsoeg": 4,
+    "naaedeAtLaegge": 2,
+    "lagt": 2,
+    "spillet": 2,
+    "tider": [
+     594,
+     1108
+    ]
+   },
+   "8": {
+    "forsoeg": 4,
+    "naaedeAtLaegge": 2,
+    "lagt": 2,
+    "spillet": 2,
+    "tider": [
+     599,
+     1428
+    ]
+   }
+  },
+  "storm": {
+   "startKortY": 197,
+   "vindueH": 800,
+   "hjaelp": "Dagens storm: hele klassen får de samme gåder i dag. Start, når læreren siger til. Tilfældig storm: dine egne gåder, uden kode.",
+   "rekordFoer": "Ingen rekord endnu på denne enhed - sæt den første!",
+   "barSynlig": true,
+   "barOverBraet": {
+    "bar": 140,
+    "braetTop": 251,
+    "braetBund": 787,
+    "vindueH": 800
+   },
+   "traek": 33,
+   "spor": [
+    {
+     "tid": "2:59",
+     "aendring": "",
+     "loeste": "1"
+    },
+    {
+     "tid": "2:59",
+     "aendring": "",
+     "loeste": "2"
+    },
+    {
+     "tid": "2:58",
+     "aendring": "",
+     "loeste": "3"
+    },
+    {
+     "tid": "2:57",
+     "aendring": "",
+     "loeste": "4"
+    },
+    {
+     "tid": "2:46",
+     "aendring": "−10 s",
+     "loeste": "4"
+    },
+    {
+     "tid": "2:35",
+     "aendring": "−10 s",
+     "loeste": "4"
+    },
+    {
+     "tid": "2:24",
+     "aendring": "−10 s",
+     "loeste": "4"
+    },
+    {
+     "tid": "2:13",
+     "aendring": "−10 s",
+     "loeste": "4"
+    },
+    {
+     "tid": "2:13",
+     "aendring": "−10 s",
+     "loeste": "5"
+    },
+    {
+     "tid": "2:12",
+     "aendring": "",
+     "loeste": "6"
+    },
+    {
+     "tid": "2:11",
+     "aendring": "",
+     "loeste": "7"
+    },
+    {
+     "tid": "2:10",
+     "aendring": "",
+     "loeste": "8"
+    }
+   ],
+   "resultat": "Tiden er gået! Du løste 16 gåder. Ny rekord på denne enhed! 16 forkerte træk (−160 s)Flest rigtige i træk: 5 (+3 s bonustid)Sværeste løste gåde: rating 1242 Her gik det galt - træn det i biblioteket Gaffel: 5 af 5 gik galtTræn: Gaffel med springerenRed din brik: 3 af 3 gik galtTræn: Red din brikBinding: 3 af 3 gik galtTræn: BindingSpyd: 3 af 3 gik galtTræn: SpidMat i 2: 2 af 3 gik galtTræn: Mat i 2 Ny storm Dagens storm igen Tilbage til gåderne",
+   "rekordEfter": null
+  },
+  "forfraSpurgt": 3,
+  "rul": 0,
+  "net": [],
+  "fejl": []
+ },
+ "skak": "61f0dd6",
+ "bredder": [
+  390,
+  1280
+ ],
+ "tjek": [
+  {
+   "hvad": "Start: siden aabner i Gaader (niveau-test), ikke i Spil",
+   "ok": true,
+   "data": [
+    "Hvid trækker. Find det bedste træk.",
+    "Sort trækker. Find det bedste træk."
+   ]
+  },
+  {
+   "hvad": "K: Spil staar paa \"Mod en makker\"; paa 390 er \"Mod computeren\" under skaermens kant",
+   "ok": true,
+   "data": [
+    901,
+    844,
+    201
+   ]
+  },
+  {
+   "hvad": "K: klassens \"Bord nr.\" staar i Spil hjemme",
+   "ok": true
+  },
+  {
+   "hvad": "Spil mod computeren (niveau 3): partiet spillet til ende med tryk/klik, computeren svarer paa 0,5-2,5 s",
+   "ok": true,
+   "data": [
+    [
+     70,
+     "Hvid gav op. Sort vinder.",
+     {
+      "median": 1412,
+      "max": 1692,
+      "antal": 70
+     }
+    ],
+    [
+     38,
+     "Skakmat! Sort vinder.",
+     {
+      "median": 1266,
+      "max": 1583,
+      "antal": 38
+     }
+    ]
+   ]
+  },
+  {
+   "hvad": "Analyse: graf, noejagtighed for begge sider og taelling inden for 10 s",
+   "ok": true,
+   "data": [
+    [
+     [
+      "Nøjagtighed",
+      "79 %",
+      "83 %"
+     ],
+     2371
+    ],
+    [
+     [
+      "Nøjagtighed",
+      "81 %",
+      "94 %"
+     ],
+     1769
+    ]
+   ]
+  },
+  {
+   "hvad": "Laer af dine fejl: knappen og en opgave med \"Find et bedre træk\"",
+   "ok": true,
+   "data": [
+    "Lær af dine fejl Lær af dine fejl Find et bedre træk. Du spillede 6. b4 - en fejl (?). Hvi",
+    "Lær af dine fejl Lær af dine fejl Find et bedre træk. Du spillede 6. Dxf5 - en bukke (??)."
+   ]
+  },
+  {
+   "hvad": "Gennemse: tilbage viser en tidligere stilling, og \"nu\" kommer tilbage; pil hoejre virker paa 1280",
+   "ok": true,
+   "data": [
+    "Du ser 69. Kc4 (træk 137 af 140)",
+    "Du ser 37. g4 (træk 73 af 76)"
+   ]
+  },
+  {
+   "hvad": "PGN ud: kopieret med syv koder og gemt som skak-DATO.pgn",
+   "ok": true,
+   "data": [
+    "skak-2026-09-27.pgn",
+    "skak-2026-09-27.pgn"
+   ]
+  },
+  {
+   "hvad": "PGN ind: et lichess-parti med ur og vurdering i kommentarer giver samme slutstilling, aabningsnavnet og analysen",
+   "ok": true,
+   "data": [
+    "Italiensk parti: Giuoco Pianissimo",
+    "Italiensk parti: Giuoco Pianissimo"
+   ]
+  },
+  {
+   "hvad": "PGN ind: sidevariant springes over, danske bogstaver virker, et ulovligt traek siges med traeknummer",
+   "ok": true
+  },
+  {
+   "hvad": "K: spillernes navne fra PGN vises ikke (Hvid/Sort)",
+   "ok": true
+  },
+  {
+   "hvad": "K: et remis-parti fra PGN faar ingen analyse og ingen besked om hvorfor",
+   "ok": true
+  },
+  {
+   "hvad": "K: \"Indlaes parti\" erstatter et parti mod computeren i gang uden at spoerge (\"Start forfra\" spoerger)",
+   "ok": true
+  },
+  {
+   "hvad": "Forhaandstraek i rigtig tid mod computeren, niveau 1 og 8: lagt og spillet hver gang eleven naaede det",
+   "ok": true,
+   "data": [
+    {
+     "1": {
+      "forsoeg": 4,
+      "naaedeAtLaegge": 2,
+      "lagt": 2,
+      "spillet": 2,
+      "tider": [
+       998,
+       1357
+      ]
+     },
+     "8": {
+      "forsoeg": 4,
+      "naaedeAtLaegge": 2,
+      "lagt": 2,
+      "spillet": 2,
+      "tider": [
+       638,
+       1500
+      ]
+     }
+    },
+    {
+     "1": {
+      "forsoeg": 4,
+      "naaedeAtLaegge": 2,
+      "lagt": 2,
+      "spillet": 2,
+      "tider": [
+       594,
+       1108
+      ]
+     },
+     "8": {
+      "forsoeg": 4,
+      "naaedeAtLaegge": 2,
+      "lagt": 2,
+      "spillet": 2,
+      "tider": [
+       599,
+       1428
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "hvad": "Storm: uret over braettet, -10 s ved forkert, slutkort med traening i biblioteket og ny rekord",
+   "ok": true,
+   "data": [
+    "Tiden er gået! Du løste 15 gåder. Ny rek",
+    "Tiden er gået! Du løste 16 gåder. Ny rek"
+   ]
+  },
+  {
+   "hvad": "K: paa 390 staar stormens startkort under skaermens kant (under dagens gaade)",
+   "ok": true,
+   "data": [
+    915,
+    844
+   ]
+  },
+  {
+   "hvad": "K: to ord for samme motiv: \"Spyd\" (stormens og gaadernes knapper) og \"Spid\" (biblioteket, \"Træn: Spid\")",
+   "ok": true
+  },
+  {
+   "hvad": "Intet net, ingen JS-fejl, ingen vandret rulning paa 390 og 1280",
+   "ok": true
+  }
+ ]
+}
