@@ -1,0 +1,858 @@
+{
+  "ordre": 457,
+  "fraOrdre": 441,
+  "loeftmodelMain": "0869560",
+  "bredder": {
+    "390": {
+      "dl": {
+        "rullerSidelaens": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "mindsteHtmlTekstPx": 14.4,
+        "figurer": [
+          {
+            "src": "dl-konventionel-opstilling.svg",
+            "fil": "fig-390-dl-01-konventionel-opstilling.png",
+            "vistPx": 358,
+            "hentet": true,
+            "mindsteSvgTekstPx": 12.5
+          },
+          {
+            "src": "dl-konventionel-knaehoejde.svg",
+            "fil": "fig-390-dl-02-konventionel-knaehoejde.png",
+            "vistPx": 358,
+            "hentet": true,
+            "mindsteSvgTekstPx": 12.5
+          },
+          {
+            "src": "dl-konventionel-lockout.svg",
+            "fil": "fig-390-dl-03-konventionel-lockout.png",
+            "vistPx": 358,
+            "hentet": true,
+            "mindsteSvgTekstPx": 12.5
+          },
+          {
+            "src": "dl-sumo-opstilling.svg",
+            "fil": "fig-390-dl-04-sumo-opstilling.png",
+            "vistPx": 358,
+            "hentet": true,
+            "mindsteSvgTekstPx": 12.5
+          },
+          {
+            "src": "dl-sumo-knaehoejde.svg",
+            "fil": "fig-390-dl-05-sumo-knaehoejde.png",
+            "vistPx": 358,
+            "hentet": true,
+            "mindsteSvgTekstPx": 12.5
+          },
+          {
+            "src": "dl-sumo-lockout.svg",
+            "fil": "fig-390-dl-06-sumo-lockout.png",
+            "vistPx": 358,
+            "hentet": true,
+            "mindsteSvgTekstPx": 12.5
+          },
+          {
+            "src": "dl-klip-start.svg",
+            "fil": "fig-390-dl-07-klip-start.png",
+            "vistPx": 358,
+            "hentet": true,
+            "mindsteSvgTekstPx": 13.3
+          },
+          {
+            "src": "dl-klip-foer-knae.svg",
+            "fil": "fig-390-dl-08-klip-foer-knae.png",
+            "vistPx": 358,
+            "hentet": true,
+            "mindsteSvgTekstPx": 12.1
+          },
+          {
+            "src": "dl-klip-knaehoejde.svg",
+            "fil": "fig-390-dl-09-klip-knaehoejde.png",
+            "vistPx": 358,
+            "hentet": true,
+            "mindsteSvgTekstPx": 12.7
+          },
+          {
+            "src": "dl-klip-efter-knae.svg",
+            "fil": "fig-390-dl-10-klip-efter-knae.png",
+            "vistPx": 358,
+            "hentet": true,
+            "mindsteSvgTekstPx": null
+          },
+          {
+            "src": "dl-klip-lockout.svg",
+            "fil": "fig-390-dl-11-klip-lockout.png",
+            "vistPx": 358,
+            "hentet": true,
+            "mindsteSvgTekstPx": null
+          }
+        ]
+      },
+      "bp": {
+        "rullerSidelaens": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "mindsteHtmlTekstPx": 14.4,
+        "figurer": [
+          {
+            "src": "baenk-bryst.svg",
+            "fil": "fig-390-bp-01-bryst.png",
+            "vistPx": 358,
+            "hentet": true,
+            "mindsteSvgTekstPx": 12.5
+          },
+          {
+            "src": "baenk-midt.svg",
+            "fil": "fig-390-bp-02-midt.png",
+            "vistPx": 358,
+            "hentet": true,
+            "mindsteSvgTekstPx": 12.5
+          },
+          {
+            "src": "baenk-lockout.svg",
+            "fil": "fig-390-bp-03-lockout.png",
+            "vistPx": 358,
+            "hentet": true,
+            "mindsteSvgTekstPx": 12.5
+          },
+          {
+            "src": "baenk-bue-lille.svg",
+            "fil": "fig-390-bp-04-bue-lille.png",
+            "vistPx": 358,
+            "hentet": true,
+            "mindsteSvgTekstPx": 12.5
+          },
+          {
+            "src": "baenk-bue-middel.svg",
+            "fil": "fig-390-bp-05-bue-middel.png",
+            "vistPx": 358,
+            "hentet": true,
+            "mindsteSvgTekstPx": 12.5
+          },
+          {
+            "src": "baenk-bue-stor.svg",
+            "fil": "fig-390-bp-06-bue-stor.png",
+            "vistPx": 358,
+            "hentet": true,
+            "mindsteSvgTekstPx": 12.5
+          },
+          {
+            "src": "baenk-greb-smal.svg",
+            "fil": "fig-390-bp-07-greb-smal.png",
+            "vistPx": 358,
+            "hentet": true,
+            "mindsteSvgTekstPx": 12.5
+          },
+          {
+            "src": "baenk-greb-middel.svg",
+            "fil": "fig-390-bp-08-greb-middel.png",
+            "vistPx": 358,
+            "hentet": true,
+            "mindsteSvgTekstPx": 12.5
+          },
+          {
+            "src": "baenk-greb-bred.svg",
+            "fil": "fig-390-bp-09-greb-bred.png",
+            "vistPx": 358,
+            "hentet": true,
+            "mindsteSvgTekstPx": 12.5
+          }
+        ]
+      }
+    },
+    "1280": {
+      "dl": {
+        "rullerSidelaens": false,
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "mindsteHtmlTekstPx": 14.4,
+        "figurer": [
+          {
+            "src": "dl-konventionel-opstilling.svg",
+            "fil": "fig-1280-dl-01-konventionel-opstilling.png",
+            "vistPx": 406,
+            "hentet": true,
+            "mindsteSvgTekstPx": 14.2
+          },
+          {
+            "src": "dl-konventionel-knaehoejde.svg",
+            "fil": "fig-1280-dl-02-konventionel-knaehoejde.png",
+            "vistPx": 406,
+            "hentet": true,
+            "mindsteSvgTekstPx": 14.2
+          },
+          {
+            "src": "dl-konventionel-lockout.svg",
+            "fil": "fig-1280-dl-03-konventionel-lockout.png",
+            "vistPx": 406,
+            "hentet": true,
+            "mindsteSvgTekstPx": 14.2
+          },
+          {
+            "src": "dl-sumo-opstilling.svg",
+            "fil": "fig-1280-dl-04-sumo-opstilling.png",
+            "vistPx": 406,
+            "hentet": true,
+            "mindsteSvgTekstPx": 14.2
+          },
+          {
+            "src": "dl-sumo-knaehoejde.svg",
+            "fil": "fig-1280-dl-05-sumo-knaehoejde.png",
+            "vistPx": 406,
+            "hentet": true,
+            "mindsteSvgTekstPx": 14.2
+          },
+          {
+            "src": "dl-sumo-lockout.svg",
+            "fil": "fig-1280-dl-06-sumo-lockout.png",
+            "vistPx": 406,
+            "hentet": true,
+            "mindsteSvgTekstPx": 14.2
+          },
+          {
+            "src": "dl-klip-start.svg",
+            "fil": "fig-1280-dl-07-klip-start.png",
+            "vistPx": 406,
+            "hentet": true,
+            "mindsteSvgTekstPx": 15.1
+          },
+          {
+            "src": "dl-klip-foer-knae.svg",
+            "fil": "fig-1280-dl-08-klip-foer-knae.png",
+            "vistPx": 406,
+            "hentet": true,
+            "mindsteSvgTekstPx": 13.8
+          },
+          {
+            "src": "dl-klip-knaehoejde.svg",
+            "fil": "fig-1280-dl-09-klip-knaehoejde.png",
+            "vistPx": 406,
+            "hentet": true,
+            "mindsteSvgTekstPx": 14.4
+          },
+          {
+            "src": "dl-klip-efter-knae.svg",
+            "fil": "fig-1280-dl-10-klip-efter-knae.png",
+            "vistPx": 406,
+            "hentet": true,
+            "mindsteSvgTekstPx": null
+          },
+          {
+            "src": "dl-klip-lockout.svg",
+            "fil": "fig-1280-dl-11-klip-lockout.png",
+            "vistPx": 406,
+            "hentet": true,
+            "mindsteSvgTekstPx": null
+          }
+        ]
+      },
+      "bp": {
+        "rullerSidelaens": false,
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "mindsteHtmlTekstPx": 14.4,
+        "figurer": [
+          {
+            "src": "baenk-bryst.svg",
+            "fil": "fig-1280-bp-01-bryst.png",
+            "vistPx": 406,
+            "hentet": true,
+            "mindsteSvgTekstPx": 14.2
+          },
+          {
+            "src": "baenk-midt.svg",
+            "fil": "fig-1280-bp-02-midt.png",
+            "vistPx": 406,
+            "hentet": true,
+            "mindsteSvgTekstPx": 14.2
+          },
+          {
+            "src": "baenk-lockout.svg",
+            "fil": "fig-1280-bp-03-lockout.png",
+            "vistPx": 406,
+            "hentet": true,
+            "mindsteSvgTekstPx": 14.2
+          },
+          {
+            "src": "baenk-bue-lille.svg",
+            "fil": "fig-1280-bp-04-bue-lille.png",
+            "vistPx": 406,
+            "hentet": true,
+            "mindsteSvgTekstPx": 14.2
+          },
+          {
+            "src": "baenk-bue-middel.svg",
+            "fil": "fig-1280-bp-05-bue-middel.png",
+            "vistPx": 406,
+            "hentet": true,
+            "mindsteSvgTekstPx": 14.2
+          },
+          {
+            "src": "baenk-bue-stor.svg",
+            "fil": "fig-1280-bp-06-bue-stor.png",
+            "vistPx": 406,
+            "hentet": true,
+            "mindsteSvgTekstPx": 14.2
+          },
+          {
+            "src": "baenk-greb-smal.svg",
+            "fil": "fig-1280-bp-07-greb-smal.png",
+            "vistPx": 406,
+            "hentet": true,
+            "mindsteSvgTekstPx": 14.2
+          },
+          {
+            "src": "baenk-greb-middel.svg",
+            "fil": "fig-1280-bp-08-greb-middel.png",
+            "vistPx": 406,
+            "hentet": true,
+            "mindsteSvgTekstPx": 14.2
+          },
+          {
+            "src": "baenk-greb-bred.svg",
+            "fil": "fig-1280-bp-09-greb-bred.png",
+            "vistPx": 406,
+            "hentet": true,
+            "mindsteSvgTekstPx": 14.2
+          }
+        ]
+      }
+    }
+  },
+  "doedloeft": {
+    "konventionel": {
+      "opstilling": {
+        "knae": 97.5,
+        "hofte": 50.6,
+        "skinneben": 13.8,
+        "torso": 60.7,
+        "stangHoejde": 22.5,
+        "stangFraMidtfod": 3,
+        "hofteHoejde": 67.2,
+        "skulderForanStang": 5,
+        "tp": -1.4
+      },
+      "knaehoejde": {
+        "knae": 146.3,
+        "hofte": 94.6,
+        "skinneben": 1.2,
+        "torso": 52.9,
+        "stangHoejde": 52.1,
+        "stangFraMidtfod": 0,
+        "hofteHoejde": 90,
+        "skulderForanStang": 12,
+        "tp": -2.5
+      },
+      "lockout": {
+        "knae": 180,
+        "hofte": 180,
+        "skinneben": 0,
+        "torso": 0,
+        "stangHoejde": 79.8,
+        "stangFraMidtfod": 3,
+        "hofteHoejde": 97,
+        "skulderForanStang": -10,
+        "tp": 0
+      }
+    },
+    "sumo": {
+      "opstilling": {
+        "knae": 88.9,
+        "hofte": 52.8,
+        "skinneben": 13.8,
+        "torso": 49.8,
+        "stangHoejde": 22.5,
+        "stangFraMidtfod": 3,
+        "hofteHoejde": 59,
+        "skulderForanStang": 5,
+        "tp": -0.7
+      },
+      "knaehoejde": {
+        "knae": 148.3,
+        "hofte": 105.3,
+        "skinneben": 1.2,
+        "torso": 44.2,
+        "stangHoejde": 52.1,
+        "stangFraMidtfod": 0,
+        "hofteHoejde": 84,
+        "skulderForanStang": 12,
+        "tp": -1.9
+      },
+      "lockout": {
+        "knae": 180,
+        "hofte": 180,
+        "skinneben": 0,
+        "torso": 0,
+        "stangHoejde": 71.9,
+        "stangFraMidtfod": 3,
+        "hofteHoejde": 89.1,
+        "skulderForanStang": -10,
+        "tp": 0
+      }
+    },
+    "stangvejCm": {
+      "konventionel": 57.3,
+      "sumo": 49.4
+    },
+    "sumoStance": {
+      "stil": "sumo",
+      "standbredde": 85.3,
+      "fodvinkel": 40,
+      "effectiveFemurCm": 37
+    },
+    "krop": {
+      "femur": 44.835,
+      "tibia": 45.018,
+      "torso": 52.70399999999999,
+      "overarm": 34.038,
+      "underarm": 26.718
+    },
+    "klip": [
+      {
+        "navn": "start",
+        "billede": 21,
+        "knaeGrader": {
+          "maalt": 85.4,
+          "model": 97.5,
+          "paalidelig": false
+        },
+        "hofteGrader": {
+          "maalt": 79.7,
+          "model": 50.6,
+          "paalidelig": true
+        },
+        "torsoGrader": {
+          "maalt": 50.3,
+          "model": 60.7,
+          "paalidelig": true
+        }
+      },
+      {
+        "navn": "foer-knae",
+        "billede": 25,
+        "knaeGrader": {
+          "maalt": 79.1,
+          "model": 115.7,
+          "paalidelig": false
+        },
+        "hofteGrader": {
+          "maalt": 81.4,
+          "model": 60.2,
+          "paalidelig": true
+        },
+        "torsoGrader": {
+          "maalt": 49.3,
+          "model": 63.4,
+          "paalidelig": true
+        }
+      },
+      {
+        "navn": "knaehoejde",
+        "billede": 30,
+        "knaeGrader": {
+          "maalt": 76.5,
+          "model": 139.4,
+          "paalidelig": false
+        },
+        "hofteGrader": {
+          "maalt": 80.1,
+          "model": 84.8,
+          "paalidelig": true
+        },
+        "torsoGrader": {
+          "maalt": 45.2,
+          "model": 56.9,
+          "paalidelig": true
+        }
+      },
+      {
+        "navn": "efter-knae",
+        "billede": 39,
+        "knaeGrader": {
+          "maalt": 166.3,
+          "model": 162.1,
+          "paalidelig": true
+        },
+        "hofteGrader": {
+          "maalt": 153.5,
+          "model": 145.6,
+          "paalidelig": true
+        },
+        "torsoGrader": {
+          "maalt": 15.7,
+          "model": 16.5,
+          "paalidelig": true
+        }
+      },
+      {
+        "navn": "lockout",
+        "billede": 48,
+        "knaeGrader": {
+          "maalt": 171.8,
+          "model": 180,
+          "paalidelig": true
+        },
+        "hofteGrader": {
+          "maalt": 171.8,
+          "model": 180,
+          "paalidelig": true
+        },
+        "torsoGrader": {
+          "maalt": 3.5,
+          "model": 0,
+          "paalidelig": true
+        }
+      }
+    ],
+    "overslagKnaehoejde": {
+      "model": {
+        "knae": 146.3,
+        "hofteArmCm": 30.1,
+        "hofteHoejereCm": 0,
+        "torsoGrader": 53,
+        "hofteMomentNmGroft": 986
+      },
+      "escamilla159": {
+        "knae": 159,
+        "hofteArmCm": 21.2,
+        "hofteHoejereCm": 4.4,
+        "torsoGrader": 39,
+        "hofteMomentNmGroft": 695
+      },
+      "modelArmCm": 30.1,
+      "modelTorso": 52.9
+    },
+    "marcTorsoOverslag": {
+      "opstilling": {
+        "modelTorso": 60.7,
+        "marcTorso": 50.3,
+        "modelArmCm": 41,
+        "kontrolArmCm": 41,
+        "marcArmCm": 35.6,
+        "modelHofteNm": 1293.7
+      },
+      "knaehoejde": {
+        "modelTorso": 52.9,
+        "marcTorso": 45.2,
+        "modelArmCm": 30.1,
+        "kontrolArmCm": 30,
+        "marcArmCm": 25.4,
+        "modelHofteNm": 986.8
+      },
+      "faldModel": 0.73,
+      "faldMarcTorso": 0.71
+    },
+    "lockoutSkulderForanAnkelCm": 0,
+    "svgTegn": {
+      "sumoMedVindue": 3,
+      "sumoIalt": 3,
+      "klipIkkeVist": 3,
+      "klipIalt": 5,
+      "modelHaandOmStang": 6,
+      "modelIalt": 6,
+      "forladerGulvetFigur": false
+    }
+  },
+  "baenk": {
+    "krop": {
+      "kilde": "kroppe/marc.json",
+      "hoejdeCm": 183,
+      "overarmCm": 34,
+      "underarmCm": 26.7,
+      "skulderbreddeCm": 47.4,
+      "torsoCm": 52.7
+    },
+    "kombinationer": [
+      {
+        "bue": "lille",
+        "greb": "smal",
+        "grebCm": 47.4,
+        "romCm": 47.5,
+        "bryst": {
+          "stangOverSkulderCm": 13,
+          "stangOverBaenkCm": 25.2,
+          "albueGrader": 49.2,
+          "overarmUdGrader": 9.3,
+          "overarmUnderBrystGrader": 25.6,
+          "underarmFraLodretSideGrader": -20.4,
+          "underarmFraLodretForfraGrader": 0,
+          "albueUnderSkulderCm": 12
+        },
+        "midt": {
+          "albueGrader": 74.2,
+          "overarmUdGrader": 10.8,
+          "underarmFraLodretForfraGrader": 0
+        }
+      },
+      {
+        "bue": "lille",
+        "greb": "middel",
+        "grebCm": 64.2,
+        "romCm": 46.2,
+        "bryst": {
+          "stangOverSkulderCm": 13,
+          "stangOverBaenkCm": 25.2,
+          "albueGrader": 55.3,
+          "overarmUdGrader": 26.1,
+          "overarmUnderBrystGrader": 26.8,
+          "underarmFraLodretSideGrader": -13.8,
+          "underarmFraLodretForfraGrader": 0,
+          "albueUnderSkulderCm": 12.9
+        },
+        "midt": {
+          "albueGrader": 77.7,
+          "overarmUdGrader": 28.4,
+          "underarmFraLodretForfraGrader": 0
+        }
+      },
+      {
+        "bue": "lille",
+        "greb": "bred",
+        "grebCm": 81,
+        "romCm": 43.7,
+        "bryst": {
+          "stangOverSkulderCm": 13,
+          "stangOverBaenkCm": 25.2,
+          "albueGrader": 66,
+          "overarmUdGrader": 45.9,
+          "overarmUnderBrystGrader": 27.3,
+          "underarmFraLodretSideGrader": -0.4,
+          "underarmFraLodretForfraGrader": 0,
+          "albueUnderSkulderCm": 13.7
+        },
+        "midt": {
+          "albueGrader": 84.2,
+          "overarmUdGrader": 45.2,
+          "underarmFraLodretForfraGrader": 0
+        }
+      },
+      {
+        "bue": "middel",
+        "greb": "smal",
+        "grebCm": 47.4,
+        "romCm": 43,
+        "bryst": {
+          "stangOverSkulderCm": 17.5,
+          "stangOverBaenkCm": 29,
+          "albueGrader": 59.9,
+          "overarmUdGrader": 10,
+          "overarmUnderBrystGrader": 33.5,
+          "underarmFraLodretSideGrader": -16.5,
+          "underarmFraLodretForfraGrader": 0,
+          "albueUnderSkulderCm": 8.1
+        },
+        "midt": {
+          "albueGrader": 79.8,
+          "overarmUdGrader": 9.3,
+          "underarmFraLodretForfraGrader": 0
+        }
+      },
+      {
+        "bue": "middel",
+        "greb": "middel",
+        "grebCm": 64.2,
+        "romCm": 41.8,
+        "bryst": {
+          "stangOverSkulderCm": 17.5,
+          "stangOverBaenkCm": 29,
+          "albueGrader": 65.4,
+          "overarmUdGrader": 27.8,
+          "overarmUnderBrystGrader": 32.9,
+          "underarmFraLodretSideGrader": -10.7,
+          "underarmFraLodretForfraGrader": 0,
+          "albueUnderSkulderCm": 8.7
+        },
+        "midt": {
+          "albueGrader": 83.1,
+          "overarmUdGrader": 25.2,
+          "underarmFraLodretForfraGrader": 0
+        }
+      },
+      {
+        "bue": "middel",
+        "greb": "bred",
+        "grebCm": 81,
+        "romCm": 39.2,
+        "bryst": {
+          "stangOverSkulderCm": 17.5,
+          "stangOverBaenkCm": 29,
+          "albueGrader": 75.3,
+          "overarmUdGrader": 47.5,
+          "overarmUnderBrystGrader": 30,
+          "underarmFraLodretSideGrader": 1.2,
+          "underarmFraLodretForfraGrader": 0,
+          "albueUnderSkulderCm": 9.2
+        },
+        "midt": {
+          "albueGrader": 89.3,
+          "overarmUdGrader": 42,
+          "underarmFraLodretForfraGrader": 0
+        }
+      },
+      {
+        "bue": "stor",
+        "greb": "smal",
+        "grebCm": 47.4,
+        "romCm": 37.1,
+        "bryst": {
+          "stangOverSkulderCm": 23.5,
+          "stangOverBaenkCm": 32.9,
+          "albueGrader": 66.9,
+          "overarmUdGrader": 11.3,
+          "overarmUnderBrystGrader": 41.9,
+          "underarmFraLodretSideGrader": -20.9,
+          "underarmFraLodretForfraGrader": 0,
+          "albueUnderSkulderCm": 1.5
+        },
+        "midt": {
+          "albueGrader": 87.4,
+          "overarmUdGrader": 8.5,
+          "underarmFraLodretForfraGrader": 0
+        }
+      },
+      {
+        "bue": "stor",
+        "greb": "middel",
+        "grebCm": 64.2,
+        "romCm": 35.8,
+        "bryst": {
+          "stangOverSkulderCm": 23.5,
+          "stangOverBaenkCm": 32.9,
+          "albueGrader": 72,
+          "overarmUdGrader": 30.7,
+          "overarmUnderBrystGrader": 39.8,
+          "underarmFraLodretSideGrader": -15.5,
+          "underarmFraLodretForfraGrader": 0,
+          "albueUnderSkulderCm": 2.2
+        },
+        "midt": {
+          "albueGrader": 90.6,
+          "overarmUdGrader": 23.3,
+          "underarmFraLodretForfraGrader": 0
+        }
+      },
+      {
+        "bue": "stor",
+        "greb": "bred",
+        "grebCm": 81,
+        "romCm": 33.2,
+        "bryst": {
+          "stangOverSkulderCm": 23.5,
+          "stangOverBaenkCm": 32.9,
+          "albueGrader": 81.6,
+          "overarmUdGrader": 50.6,
+          "overarmUnderBrystGrader": 34.2,
+          "underarmFraLodretSideGrader": -4,
+          "underarmFraLodretForfraGrader": 0,
+          "albueUnderSkulderCm": 3.1
+        },
+        "midt": {
+          "albueGrader": 96.6,
+          "overarmUdGrader": 40,
+          "underarmFraLodretForfraGrader": 0
+        }
+      }
+    ],
+    "midtAlbueValg": [
+      {
+        "albueUdenForHaandCm": 0,
+        "albueModFodderCm": 21.2,
+        "underarmSideGrader": 52.7,
+        "underarmForfraGrader": 0,
+        "albueArmIAltCm": 21.2
+      },
+      {
+        "albueUdenForHaandCm": 4,
+        "albueModFodderCm": 19.7,
+        "underarmSideGrader": 48.4,
+        "underarmForfraGrader": 12.8,
+        "albueArmIAltCm": 20.1
+      },
+      {
+        "albueUdenForHaandCm": 8,
+        "albueModFodderCm": 17.1,
+        "underarmSideGrader": 42.2,
+        "underarmForfraGrader": 23,
+        "albueArmIAltCm": 18.9
+      },
+      {
+        "albueUdenForHaandCm": 10,
+        "albueModFodderCm": 15.2,
+        "underarmSideGrader": 37.9,
+        "underarmForfraGrader": 27.1,
+        "albueArmIAltCm": 18.2
+      },
+      {
+        "albueUdenForHaandCm": 12,
+        "albueModFodderCm": 12.7,
+        "underarmSideGrader": 32.3,
+        "underarmForfraGrader": 30.8,
+        "albueArmIAltCm": 17.5
+      },
+      {
+        "albueUdenForHaandCm": 14,
+        "albueModFodderCm": 9.2,
+        "underarmSideGrader": 23.9,
+        "underarmForfraGrader": 34,
+        "albueArmIAltCm": 16.8
+      }
+    ],
+    "midtModel": {
+      "albueArmCm": 21.3,
+      "albueNm": 104.3,
+      "skulderNm": 65.6,
+      "underarmSideGrader": -52.8
+    },
+    "svg": {
+      "bryst": {
+        "stangFoerBrystTopCm": 0.1,
+        "stangUnderBrystTopCm": -1.5,
+        "forfraAlbueUdenForHaandCm": 0,
+        "forfraHaandUdenForSkulderCm": 13.9
+      },
+      "bue-lille": {
+        "stangFoerBrystTopCm": -2.8,
+        "stangUnderBrystTopCm": -5.3,
+        "forfraAlbueUdenForHaandCm": 0,
+        "forfraHaandUdenForSkulderCm": 13.9
+      },
+      "bue-middel": {
+        "stangFoerBrystTopCm": 0.1,
+        "stangUnderBrystTopCm": -1.5,
+        "forfraAlbueUdenForHaandCm": 0,
+        "forfraHaandUdenForSkulderCm": 13.9
+      },
+      "bue-stor": {
+        "stangFoerBrystTopCm": -1.5,
+        "stangUnderBrystTopCm": 2.4,
+        "forfraAlbueUdenForHaandCm": 0,
+        "forfraHaandUdenForSkulderCm": 13.9
+      },
+      "greb-smal": {
+        "stangFoerBrystTopCm": 0.1,
+        "stangUnderBrystTopCm": -1.5,
+        "forfraAlbueUdenForHaandCm": 0,
+        "forfraHaandUdenForSkulderCm": 5.1
+      },
+      "greb-middel": {
+        "stangFoerBrystTopCm": 0.1,
+        "stangUnderBrystTopCm": -1.5,
+        "forfraAlbueUdenForHaandCm": 0,
+        "forfraHaandUdenForSkulderCm": 13.9
+      },
+      "greb-bred": {
+        "stangFoerBrystTopCm": 0.1,
+        "stangUnderBrystTopCm": -1.5,
+        "forfraAlbueUdenForHaandCm": 0,
+        "forfraHaandUdenForSkulderCm": 22.7
+      },
+      "midt": {
+        "stangFoerBrystTopCm": 24.4,
+        "stangUnderBrystTopCm": -22.3,
+        "forfraAlbueUdenForHaandCm": 0,
+        "forfraHaandUdenForSkulderCm": 13.9
+      }
+    }
+  }
+}
