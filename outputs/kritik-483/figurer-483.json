@@ -1,0 +1,107 @@
+{
+  "outputs/476/side-om-side-dl-hofte-foerst.svg": "F-side-om-side-dl-hofte-foerst.png",
+  "outputs/481/side-om-side-dl-hofte-foerst-skulder-frem.svg": "F-side-om-side-dl-hofte-foerst-skulder-frem.png",
+  "outputs/476/side-om-side-dl-stang-frem.svg": "F-side-om-side-dl-stang-frem.png",
+  "outputs/481/side-om-side-dl-stang-frem-kroppen-bagud.svg": "F-side-om-side-dl-stang-frem-kroppen-bagud.png",
+  "outputs/476/side-om-side-bp.svg": "F-side-om-side-bp.png",
+  "side390": {
+    "vandretRul": false,
+    "hoejde": 14947,
+    "billeder": 10,
+    "overskrifter": [
+      "Fejl i dødløft og bænk, som modellen viser dem",
+      "Dødløft",
+      "Hoften stiger først",
+      "Stangen glider frem",
+      "Bænkpres",
+      "Albuen helt ude",
+      "Stangen for højt",
+      "Hvad figurerne ikke kan sige",
+      "Alle fire fejl",
+      "Dødløftet",
+      "Skulderen i bænken"
+    ],
+    "naevnerVariant": 11,
+    "naevnerMarc": 2,
+    "naevnerBhishak": 1,
+    "skulderAfstandPx": 3995
+  },
+  "side1280": {
+    "vandretRul": false,
+    "hoejde": 8237,
+    "billeder": 10,
+    "overskrifter": [
+      "Fejl i dødløft og bænk, som modellen viser dem",
+      "Dødløft",
+      "Hoften stiger først",
+      "Stangen glider frem",
+      "Bænkpres",
+      "Albuen helt ude",
+      "Stangen for højt",
+      "Hvad figurerne ikke kan sige",
+      "Alle fire fejl",
+      "Dødløftet",
+      "Skulderen i bænken"
+    ],
+    "naevnerVariant": 11,
+    "naevnerMarc": 2,
+    "naevnerBhishak": 1,
+    "skulderAfstandPx": 2136
+  },
+  "netvaerk": [],
+  "svgTekst": {
+    "bp-albue-ud.svg": {
+      "skulderFald": [
+        "skulder −44 %"
+      ],
+      "laendFald": [],
+      "forbehold": false
+    },
+    "bp-hoejt-bryst.svg": {
+      "skulderFald": [
+        "skulder −41 %"
+      ],
+      "laendFald": [],
+      "forbehold": false
+    },
+    "bp-model.svg": {
+      "skulderFald": [],
+      "laendFald": [],
+      "forbehold": false
+    },
+    "dl-hofte-foerst-model.svg": {
+      "skulderFald": [],
+      "laendFald": [],
+      "forbehold": false
+    },
+    "dl-hofte-foerst-skulder-frem.svg": {
+      "skulderFald": [],
+      "laendFald": [
+        "lænd −11 %"
+      ],
+      "forbehold": false
+    },
+    "dl-hofte-foerst.svg": {
+      "skulderFald": [],
+      "laendFald": [],
+      "forbehold": false
+    },
+    "dl-stang-frem-kroppen-bagud.svg": {
+      "skulderFald": [],
+      "laendFald": [],
+      "forbehold": false
+    },
+    "dl-stang-frem-model.svg": {
+      "skulderFald": [],
+      "laendFald": [],
+      "forbehold": false
+    },
+    "dl-stang-frem.svg": {
+      "skulderFald": [
+        "skulder −54 %"
+      ],
+      "laendFald": [],
+      "forbehold": false
+    }
+  }
+}
