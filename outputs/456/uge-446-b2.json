@@ -1,0 +1,894 @@
+{
+  "trin": [
+    "logget ind paa en aeldre telefon; Dagens pas brugbart efter 6385 ms, ved genaabning 3263 ms",
+    "rekord-grundlaget gemt paa telefonen 5827 ms efter brugbart",
+    "pas 1: squat 4 saet med net",
+    "kaelderen: nettet vaek efter squat saet 4",
+    "pas 1 klaret uden net; vurdering 4: {\"vist\":true,\"linjenStaarTilbage\":false,\"flash\":[]}",
+    "pas 2 klaret uden net; 17 saet i koeen (\"☁ 17 sæt gemt lokalt — sendes når forbindelsen er tilbage\")",
+    "nettet tilbage: appen lukket efter 18 skrivninger (15 i koeen), koeen tom efter 8.7 s",
+    "pas 3 med net, Planke saet 2 sprunget over",
+    "pas 4 med net",
+    "\"din uge\": {\"vist\":true,\"rekorder\":7,\"vurderinger\":[\"4\",\"3\",\"\",\"4\"],\"sendt\":true}",
+    "Fremgang: 7 rekorder i ugen: [\"27. sep Bænkpres 72,5 kg × 6 2 reps mere end før på 72,5 kg\",\"27. sep Squat 95 kg × 6 1 rep mere end før på 95 kg\",\"27. sep Pause squat e1RM 96 kg +2 kg · 85 kg × 4\",\"27. sep Dødløft e1RM 154 kg +3 kg · 140 kg × 3\",\"27. sep Bænkpres e1RM 96 kg +7 kg · 80 kg × 6\",\"27. sep Bænkpres e1RM 89 kg +1 kg · 70 kg × 8\",\"27. sep Squat e1RM 117 kg +3 kg · 100 kg × 5\"]",
+    "video: kvittering efter 1006 ms, synlige kvitteringer [\"Video modtaget ✓ · din coach ser den, når han åbner den\"], 1 raekke i video_analyses"
+  ],
+  "tjek": [
+    {
+      "navn": "Spring over virker uden net",
+      "ok": true,
+      "detalje": "{\"kortetStaarPaa\":\"DAGENS PAS Sæt 1/3\",\"saet\":1,\"flash\":[]}"
+    },
+    {
+      "navn": "genaabnet uden net: Dagens pas staar paa Rows saet 2",
+      "ok": true,
+      "detalje": "2126 ms, saet 2, koe 12, login 0"
+    },
+    {
+      "navn": "genaabnet uden net: vaegtfeltet er udfyldt",
+      "ok": true,
+      "detalje": "{\"vaegt\":\"25\",\"senest\":\"senest 25kg × 10 · ☁ 1 sendes når du har net\"}"
+    },
+    {
+      "navn": "ingen vaegtoevelse gemt med 0 kg",
+      "ok": true,
+      "detalje": ""
+    },
+    {
+      "navn": "intet saet tabt",
+      "ok": true,
+      "detalje": ""
+    },
+    {
+      "navn": "ingen dubletter",
+      "ok": true,
+      "detalje": ""
+    },
+    {
+      "navn": "hvert saet har tiden fra Godkendt (+-5 s)",
+      "ok": true,
+      "detalje": ""
+    },
+    {
+      "navn": "RPE 9 og note fra kaelderen naaede frem",
+      "ok": true,
+      "detalje": "{\"rpe\":9,\"note\":\"skulder lidt oem\"}"
+    },
+    {
+      "navn": "vurderingerne givet uden net naaede frem",
+      "ok": true,
+      "detalje": "[4,3,null,4]"
+    },
+    {
+      "navn": "hver rekord fejres een gang",
+      "ok": true,
+      "detalje": "[{\"key\":\"e4460000-0000-4000-8000-000000007153_1\",\"gange\":1,\"navn\":\"Squat\",\"saet\":1,\"pas\":1,\"tekst\":\"🏆 Ny rekord: Squat e1RM 117 kg, +3 kg\"},{\"key\":\"e4460000-0000-4000-8000-000000007154_1\",\"gange\":1,\"navn\":\"Bænkpres\",\"saet\":1,\"pas\":1,\"tekst\":\"🏆 Ny rekord: Bænkpres e1RM 89 kg, +1 kg\"},{\"key\":\"e4460000-0000-4000-8000-000000007157_1\",\"gange\":1,\"navn\":\"Bænkpres\",\"saet\":1,\"pas\":2,\"tekst\":\"🏆 Ny rekord: Bænkpres e1RM 96 kg, +7 kg\"},{\"key\":\"e4460000-0000-4000-8000-000000007161_1\",\"gange\":1,\"navn\":\"Dødløft\",\"saet\":1,\"pas\":3,\"tekst\":\"🏆 Ny rekord: Dødløft e1RM 154 kg, +3 kg\"},{\"key\":\"e4460000-0000-4000-8000-000000007162_1\",\"gange\":1,\"navn\":\"Pause squat\",\"saet\":1,\"pas\":3,\"tekst\":\"🏆 Ny rekord: Pause squat e1RM 96 kg, +2 kg\"},{\"key\":\"e4460000-0000-4000-8000-000000007165_1\",\"gange\":1,\"navn\":\"Squat\",\"saet\":1,\"pas\":4,\"tekst\":\"🏆 Ny rekord: Squat 95 kg × 6, 1 rep mere end før\"},{\"key\":\"e4460000-0000-4000-8000-000000007166_1\",\"gange\":1,\"navn\":\"Bænkpres\",\"saet\":1,\"pas\":4,\"tekst\":\"🏆 Ny rekord: Bænkpres 72,5 kg × 6, 2 reps mere end før\"}]"
+    },
+    {
+      "navn": "Fremgang viser hver rekord een gang",
+      "ok": true,
+      "detalje": "7 raekker, 7 forskellige"
+    },
+    {
+      "navn": "en rekord sat uden net staar ogsaa i personal_records (coachens og \"Mere\"s rekorder)",
+      "ok": true,
+      "detalje": "fejret uden net: 🏆 Ny rekord: Bænkpres e1RM 89 kg, +1 kg; personal_records: [{\"oevelse\":\"Squat\",\"weight\":100,\"reps\":5},{\"oevelse\":\"Bænkpres\",\"weight\":70,\"reps\":8},{\"oevelse\":\"Bænkpres\",\"weight\":80,\"reps\":6},{\"oevelse\":\"Dødløft\",\"weight\":140,\"reps\":3},{\"oevelse\":\"Pause squat\",\"weight\":85,\"reps\":4},{\"oevelse\":\"Squat\",\"weight\":95,\"reps\":6},{\"oevelse\":\"Bænkpres\",\"weight\":72.5,\"reps\":6}]"
+    },
+    {
+      "navn": "ingen konsolfejl",
+      "ok": true,
+      "detalje": ""
+    },
+    {
+      "navn": "ingen vandret rul paa 390 px",
+      "ok": true,
+      "detalje": "0 px"
+    }
+  ],
+  "fejringer": [
+    {
+      "key": "e4460000-0000-4000-8000-000000007153_1",
+      "tekst": "🏆 Ny rekord: Squat e1RM 117 kg, +3 kg",
+      "t": 1790475559434
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007154_1",
+      "tekst": "🏆 Ny rekord: Bænkpres e1RM 89 kg, +1 kg",
+      "t": 1790475561471
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007157_1",
+      "tekst": "🏆 Ny rekord: Bænkpres e1RM 96 kg, +7 kg",
+      "t": 1790475576756
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007161_1",
+      "tekst": "🏆 Ny rekord: Dødløft e1RM 154 kg, +3 kg",
+      "t": 1790475618892
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007162_1",
+      "tekst": "🏆 Ny rekord: Pause squat e1RM 96 kg, +2 kg",
+      "t": 1790475620302
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007165_1",
+      "tekst": "🏆 Ny rekord: Squat 95 kg × 6, 1 rep mere end før",
+      "t": 1790475625618
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007166_1",
+      "tekst": "🏆 Ny rekord: Bænkpres 72,5 kg × 6, 2 reps mere end før",
+      "t": 1790475627018
+    }
+  ],
+  "klik": {
+    "e4460000-0000-4000-8000-000000007153_1": {
+      "t": 1790475559332,
+      "navn": "Squat",
+      "n": 1,
+      "pas": 1,
+      "felt": "100"
+    },
+    "e4460000-0000-4000-8000-000000007153_2": {
+      "t": 1790475560027,
+      "navn": "Squat",
+      "n": 2,
+      "pas": 1,
+      "felt": "100"
+    },
+    "e4460000-0000-4000-8000-000000007153_3": {
+      "t": 1790475560478,
+      "navn": "Squat",
+      "n": 3,
+      "pas": 1,
+      "felt": "100"
+    },
+    "e4460000-0000-4000-8000-000000007153_4": {
+      "t": 1790475560930,
+      "navn": "Squat",
+      "n": 4,
+      "pas": 1,
+      "felt": "100"
+    },
+    "e4460000-0000-4000-8000-000000007154_1": {
+      "t": 1790475561444,
+      "navn": "Bænkpres",
+      "n": 1,
+      "pas": 1,
+      "felt": "70"
+    },
+    "e4460000-0000-4000-8000-000000007154_2": {
+      "t": 1790475561977,
+      "navn": "Bænkpres",
+      "n": 2,
+      "pas": 1,
+      "felt": "70"
+    },
+    "e4460000-0000-4000-8000-000000007154_3": {
+      "t": 1790475562660,
+      "navn": "Bænkpres",
+      "n": 3,
+      "pas": 1,
+      "felt": "70"
+    },
+    "e4460000-0000-4000-8000-000000007155_1": {
+      "t": 1790475563141,
+      "navn": "Bulgarsk split squat",
+      "n": 1,
+      "pas": 1,
+      "felt": "30"
+    },
+    "e4460000-0000-4000-8000-000000007155_2": {
+      "t": 1790475563609,
+      "navn": "Bulgarsk split squat",
+      "n": 2,
+      "pas": 1,
+      "felt": "30"
+    },
+    "e4460000-0000-4000-8000-000000007155_3": {
+      "t": 1790475564059,
+      "navn": "Bulgarsk split squat",
+      "n": 3,
+      "pas": 1,
+      "felt": "30"
+    },
+    "e4460000-0000-4000-8000-000000007157_1": {
+      "t": 1790475576727,
+      "navn": "Bænkpres",
+      "n": 1,
+      "pas": 2,
+      "felt": "80"
+    },
+    "e4460000-0000-4000-8000-000000007157_2": {
+      "t": 1790475577193,
+      "navn": "Bænkpres",
+      "n": 2,
+      "pas": 2,
+      "felt": "80"
+    },
+    "e4460000-0000-4000-8000-000000007157_3": {
+      "t": 1790475578003,
+      "navn": "Bænkpres",
+      "n": 3,
+      "pas": 2,
+      "felt": "80"
+    },
+    "e4460000-0000-4000-8000-000000007158_1": {
+      "t": 1790475590630,
+      "navn": "Rows",
+      "n": 1,
+      "pas": 2,
+      "felt": "25"
+    },
+    "e4460000-0000-4000-8000-000000007158_2": {
+      "t": 1790475593407,
+      "navn": "Rows",
+      "n": 2,
+      "pas": 2,
+      "felt": "25"
+    },
+    "e4460000-0000-4000-8000-000000007158_3": {
+      "t": 1790475593886,
+      "navn": "Rows",
+      "n": 3,
+      "pas": 2,
+      "felt": "25"
+    },
+    "e4460000-0000-4000-8000-000000007159_1": {
+      "t": 1790475594383,
+      "navn": "Triceps pushdown",
+      "n": 1,
+      "pas": 2,
+      "felt": "30"
+    },
+    "e4460000-0000-4000-8000-000000007159_2": {
+      "t": 1790475594875,
+      "navn": "Triceps pushdown",
+      "n": 2,
+      "pas": 2,
+      "felt": "30"
+    },
+    "e4460000-0000-4000-8000-000000007159_3": {
+      "t": 1790475595340,
+      "navn": "Triceps pushdown",
+      "n": 3,
+      "pas": 2,
+      "felt": "30"
+    },
+    "e4460000-0000-4000-8000-000000007161_1": {
+      "t": 1790475618809,
+      "navn": "Dødløft",
+      "n": 1,
+      "pas": 3,
+      "felt": "140"
+    },
+    "e4460000-0000-4000-8000-000000007161_2": {
+      "t": 1790475619338,
+      "navn": "Dødløft",
+      "n": 2,
+      "pas": 3,
+      "felt": "140"
+    },
+    "e4460000-0000-4000-8000-000000007161_3": {
+      "t": 1790475619792,
+      "navn": "Dødløft",
+      "n": 3,
+      "pas": 3,
+      "felt": "140"
+    },
+    "e4460000-0000-4000-8000-000000007162_1": {
+      "t": 1790475620260,
+      "navn": "Pause squat",
+      "n": 1,
+      "pas": 3,
+      "felt": "85"
+    },
+    "e4460000-0000-4000-8000-000000007162_2": {
+      "t": 1790475620724,
+      "navn": "Pause squat",
+      "n": 2,
+      "pas": 3,
+      "felt": "85"
+    },
+    "e4460000-0000-4000-8000-000000007162_3": {
+      "t": 1790475621170,
+      "navn": "Pause squat",
+      "n": 3,
+      "pas": 3,
+      "felt": "85"
+    },
+    "e4460000-0000-4000-8000-000000007163_1": {
+      "t": 1790475621621,
+      "navn": "Planke",
+      "n": 1,
+      "pas": 3,
+      "felt": ""
+    },
+    "e4460000-0000-4000-8000-000000007165_1": {
+      "t": 1790475625576,
+      "navn": "Squat",
+      "n": 1,
+      "pas": 4,
+      "felt": "95"
+    },
+    "e4460000-0000-4000-8000-000000007165_2": {
+      "t": 1790475626055,
+      "navn": "Squat",
+      "n": 2,
+      "pas": 4,
+      "felt": "95"
+    },
+    "e4460000-0000-4000-8000-000000007165_3": {
+      "t": 1790475626509,
+      "navn": "Squat",
+      "n": 3,
+      "pas": 4,
+      "felt": "95"
+    },
+    "e4460000-0000-4000-8000-000000007166_1": {
+      "t": 1790475626974,
+      "navn": "Bænkpres",
+      "n": 1,
+      "pas": 4,
+      "felt": "72.5"
+    },
+    "e4460000-0000-4000-8000-000000007166_2": {
+      "t": 1790475627456,
+      "navn": "Bænkpres",
+      "n": 2,
+      "pas": 4,
+      "felt": "72.5"
+    },
+    "e4460000-0000-4000-8000-000000007166_3": {
+      "t": 1790475627925,
+      "navn": "Bænkpres",
+      "n": 3,
+      "pas": 4,
+      "felt": "72.5"
+    },
+    "e4460000-0000-4000-8000-000000007166_4": {
+      "t": 1790475628373,
+      "navn": "Bænkpres",
+      "n": 4,
+      "pas": 4,
+      "felt": "72.5"
+    },
+    "e4460000-0000-4000-8000-000000007167_1": {
+      "t": 1790475628826,
+      "navn": "Pull-ups",
+      "n": 1,
+      "pas": 4,
+      "felt": ""
+    },
+    "e4460000-0000-4000-8000-000000007167_2": {
+      "t": 1790475629319,
+      "navn": "Pull-ups",
+      "n": 2,
+      "pas": 4,
+      "felt": ""
+    },
+    "e4460000-0000-4000-8000-000000007167_3": {
+      "t": 1790475629771,
+      "navn": "Pull-ups",
+      "n": 3,
+      "pas": 4,
+      "felt": ""
+    }
+  },
+  "konsolFejl": [],
+  "flash": [
+    {
+      "tekst": "🏆 Ny rekord: Squat e1RM 117 kg, +3 kg",
+      "t": 1790475559435
+    },
+    {
+      "tekst": "Ingen forbindelse. Dagens pas og dine sæt virker; resten opdateres, når du har net.",
+      "t": 1790475561009
+    },
+    {
+      "tekst": "🏆 Ny rekord: Bænkpres e1RM 89 kg, +1 kg",
+      "t": 1790475561471
+    },
+    {
+      "tekst": "🏆 Ny rekord: Bænkpres e1RM 96 kg, +7 kg",
+      "t": 1790475576756
+    },
+    {
+      "tekst": "Ingen forbindelse. Dagens pas og dine sæt virker; resten opdateres, når du har net. Program fra kl. 04.19.",
+      "t": 1790475591285
+    },
+    {
+      "tekst": "Forbindelsen er svag. Dagens pas og dine sæt virker; resten opdateres, når du har net. Program fra kl. 04.19.",
+      "t": 1790475607562
+    },
+    {
+      "tekst": "🏆 Ny rekord: Dødløft e1RM 154 kg, +3 kg",
+      "t": 1790475618892
+    },
+    {
+      "tekst": "🏆 Ny rekord: Pause squat e1RM 96 kg, +2 kg",
+      "t": 1790475620303
+    },
+    {
+      "tekst": "🏆 Ny rekord: Squat 95 kg × 6, 1 rep mere end før",
+      "t": 1790475625619
+    },
+    {
+      "tekst": "🏆 Ny rekord: Bænkpres 72,5 kg × 6, 2 reps mere end før",
+      "t": 1790475627019
+    },
+    {
+      "tekst": "Kræver mindst 2 analyserede reps",
+      "t": 1790475651935
+    }
+  ],
+  "logIndTilBrugbartMs": 6385,
+  "genaabnetMedNetMs": 3263,
+  "grundlagGemtMs": 5827,
+  "vurderingUdenNet": {
+    "vist": true,
+    "linjenStaarTilbage": false,
+    "flash": []
+  },
+  "springOverUdenNet": {
+    "kortetStaarPaa": "DAGENS PAS Sæt 1/3",
+    "saet": 1,
+    "flash": []
+  },
+  "genaabnetUdenNetMs": 2126,
+  "feltEfterGenaabning": {
+    "vaegt": "25",
+    "senest": "senest 25kg × 10 · ☁ 1 sendes når du har net"
+  },
+  "vurderingPas2UdenNet": {
+    "vist": true,
+    "linjenStaarTilbage": false,
+    "flash": []
+  },
+  "koeUdenNet": {
+    "poster": 17,
+    "tekst": "☁ 17 sæt gemt lokalt — sendes når forbindelsen er tilbage"
+  },
+  "afsendelse": {
+    "skrivningerFoerLuk": 18,
+    "koeVedLuk": 15,
+    "sekunderTilTom": 8.7,
+    "koeTilSidst": 0
+  },
+  "vurderingPas4": {
+    "vist": true,
+    "linjenStaarTilbage": false,
+    "flash": []
+  },
+  "dinUge": {
+    "vist": true,
+    "tekst": "DIN UGE Uge 131 er klaret. 4/4 PAS 13.080kg TONNAGE 7 REKORDER 🏆 Squat e1RM 117 kg +3 kg 🏆 Bænkpres e1RM 89 kg +1 kg 🏆 Bænkpres e1RM 96 kg +7 kg 🏆 Dødløft e1RM 154 kg +3 kg 🏆 Pause squat e1RM 96 kg +2 kg 🏆 Squat 95 kg × 6 +1 rep 🏆 Bænkpres 72,5 kg × 6 +2 reps DINE VURDERINGER Dag 1 — Squat 4/5 Dag 2 — Bænk 3/5 Dag 3 — Dødløft – Dag 4 — Volumen 4/5 Vil du skrive noget til din coach om ugen? SEND",
+    "rekorder": 7,
+    "vurderinger": [
+      "4",
+      "3",
+      "",
+      "4"
+    ],
+    "sendt": true
+  },
+  "fremgang": {
+    "alle": 10,
+    "iUgen": [
+      "27. sep Bænkpres 72,5 kg × 6 2 reps mere end før på 72,5 kg",
+      "27. sep Squat 95 kg × 6 1 rep mere end før på 95 kg",
+      "27. sep Pause squat e1RM 96 kg +2 kg · 85 kg × 4",
+      "27. sep Dødløft e1RM 154 kg +3 kg · 140 kg × 3",
+      "27. sep Bænkpres e1RM 96 kg +7 kg · 80 kg × 6",
+      "27. sep Bænkpres e1RM 89 kg +1 kg · 70 kg × 8",
+      "27. sep Squat e1RM 117 kg +3 kg · 100 kg × 5"
+    ]
+  },
+  "video": {
+    "kvitteringMs": 1006,
+    "synligeKvitteringer": [
+      "Video modtaget ✓ · din coach ser den, når han åbner den"
+    ],
+    "raekker": 1
+  },
+  "regnskab": {
+    "nulKg": [],
+    "forventet": 38,
+    "raekker": 38,
+    "dubletter": [],
+    "mangler": [],
+    "sprunget": 2
+  },
+  "tider": [
+    {
+      "key": "e4460000-0000-4000-8000-000000007153_1",
+      "pas": 1,
+      "navn": "Squat",
+      "n": 1,
+      "afvigelseS": 0.1,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007153_2",
+      "pas": 1,
+      "navn": "Squat",
+      "n": 2,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007153_3",
+      "pas": 1,
+      "navn": "Squat",
+      "n": 3,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007153_4",
+      "pas": 1,
+      "navn": "Squat",
+      "n": 4,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007154_1",
+      "pas": 1,
+      "navn": "Bænkpres",
+      "n": 1,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007154_2",
+      "pas": 1,
+      "navn": "Bænkpres",
+      "n": 2,
+      "afvigelseS": 0.3,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007154_3",
+      "pas": 1,
+      "navn": "Bænkpres",
+      "n": 3,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007155_1",
+      "pas": 1,
+      "navn": "Bulgarsk split squat",
+      "n": 1,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007155_2",
+      "pas": 1,
+      "navn": "Bulgarsk split squat",
+      "n": 2,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007155_3",
+      "pas": 1,
+      "navn": "Bulgarsk split squat",
+      "n": 3,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007157_1",
+      "pas": 2,
+      "navn": "Bænkpres",
+      "n": 1,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007157_2",
+      "pas": 2,
+      "navn": "Bænkpres",
+      "n": 2,
+      "afvigelseS": 0.1,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007157_3",
+      "pas": 2,
+      "navn": "Bænkpres",
+      "n": 3,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007158_1",
+      "pas": 2,
+      "navn": "Rows",
+      "n": 1,
+      "afvigelseS": 0.1,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007158_2",
+      "pas": 2,
+      "navn": "Rows",
+      "n": 2,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007158_3",
+      "pas": 2,
+      "navn": "Rows",
+      "n": 3,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007159_1",
+      "pas": 2,
+      "navn": "Triceps pushdown",
+      "n": 1,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007159_2",
+      "pas": 2,
+      "navn": "Triceps pushdown",
+      "n": 2,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007159_3",
+      "pas": 2,
+      "navn": "Triceps pushdown",
+      "n": 3,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007161_1",
+      "pas": 3,
+      "navn": "Dødløft",
+      "n": 1,
+      "afvigelseS": 0.1,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007161_2",
+      "pas": 3,
+      "navn": "Dødløft",
+      "n": 2,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007161_3",
+      "pas": 3,
+      "navn": "Dødløft",
+      "n": 3,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007162_1",
+      "pas": 3,
+      "navn": "Pause squat",
+      "n": 1,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007162_2",
+      "pas": 3,
+      "navn": "Pause squat",
+      "n": 2,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007162_3",
+      "pas": 3,
+      "navn": "Pause squat",
+      "n": 3,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007163_1",
+      "pas": 3,
+      "navn": "Planke",
+      "n": 1,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007165_1",
+      "pas": 4,
+      "navn": "Squat",
+      "n": 1,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007165_2",
+      "pas": 4,
+      "navn": "Squat",
+      "n": 2,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007165_3",
+      "pas": 4,
+      "navn": "Squat",
+      "n": 3,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007166_1",
+      "pas": 4,
+      "navn": "Bænkpres",
+      "n": 1,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007166_2",
+      "pas": 4,
+      "navn": "Bænkpres",
+      "n": 2,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007166_3",
+      "pas": 4,
+      "navn": "Bænkpres",
+      "n": 3,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007166_4",
+      "pas": 4,
+      "navn": "Bænkpres",
+      "n": 4,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007167_1",
+      "pas": 4,
+      "navn": "Pull-ups",
+      "n": 1,
+      "afvigelseS": 0.1,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007167_2",
+      "pas": 4,
+      "navn": "Pull-ups",
+      "n": 2,
+      "afvigelseS": 0,
+      "skipped": false
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007167_3",
+      "pas": 4,
+      "navn": "Pull-ups",
+      "n": 3,
+      "afvigelseS": 0,
+      "skipped": false
+    }
+  ],
+  "vurderingerIMocken": [
+    4,
+    3,
+    null,
+    4
+  ],
+  "fejringPrSaet": [
+    {
+      "key": "e4460000-0000-4000-8000-000000007153_1",
+      "gange": 1,
+      "navn": "Squat",
+      "saet": 1,
+      "pas": 1,
+      "tekst": "🏆 Ny rekord: Squat e1RM 117 kg, +3 kg"
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007154_1",
+      "gange": 1,
+      "navn": "Bænkpres",
+      "saet": 1,
+      "pas": 1,
+      "tekst": "🏆 Ny rekord: Bænkpres e1RM 89 kg, +1 kg"
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007157_1",
+      "gange": 1,
+      "navn": "Bænkpres",
+      "saet": 1,
+      "pas": 2,
+      "tekst": "🏆 Ny rekord: Bænkpres e1RM 96 kg, +7 kg"
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007161_1",
+      "gange": 1,
+      "navn": "Dødløft",
+      "saet": 1,
+      "pas": 3,
+      "tekst": "🏆 Ny rekord: Dødløft e1RM 154 kg, +3 kg"
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007162_1",
+      "gange": 1,
+      "navn": "Pause squat",
+      "saet": 1,
+      "pas": 3,
+      "tekst": "🏆 Ny rekord: Pause squat e1RM 96 kg, +2 kg"
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007165_1",
+      "gange": 1,
+      "navn": "Squat",
+      "saet": 1,
+      "pas": 4,
+      "tekst": "🏆 Ny rekord: Squat 95 kg × 6, 1 rep mere end før"
+    },
+    {
+      "key": "e4460000-0000-4000-8000-000000007166_1",
+      "gange": 1,
+      "navn": "Bænkpres",
+      "saet": 1,
+      "pas": 4,
+      "tekst": "🏆 Ny rekord: Bænkpres 72,5 kg × 6, 2 reps mere end før"
+    }
+  ],
+  "personalRecords": [
+    {
+      "oevelse": "Squat",
+      "weight": 100,
+      "reps": 5
+    },
+    {
+      "oevelse": "Bænkpres",
+      "weight": 70,
+      "reps": 8
+    },
+    {
+      "oevelse": "Bænkpres",
+      "weight": 80,
+      "reps": 6
+    },
+    {
+      "oevelse": "Dødløft",
+      "weight": 140,
+      "reps": 3
+    },
+    {
+      "oevelse": "Pause squat",
+      "weight": 85,
+      "reps": 4
+    },
+    {
+      "oevelse": "Squat",
+      "weight": 95,
+      "reps": 6
+    },
+    {
+      "oevelse": "Bænkpres",
+      "weight": 72.5,
+      "reps": 6
+    }
+  ]
+}

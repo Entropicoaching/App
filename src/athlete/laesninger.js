@@ -10,10 +10,11 @@ import { runGuardedRead } from '../athleteReadGuard'
 import { clearReadinessDraft } from '../readinessDraft'
 import { loadRestPause } from '../restPause'
 import { estimatedOneRepMax, HOVEDLOEFT_FAMILIER } from '../exerciseProgress'
-import { fremgangLogsQuery, fremgangLogsKronologisk, rekordRaekkerQuery } from '../fremgangLogs'
+import { fremgangLogsQuery, fremgangLogsKronologisk, rekordRaekkerQuery, hentAlleSider } from '../fremgangLogs'
 import { today } from '../athleteShared'
 import { computeActiveWeekIdx, weekFullyLogged, parsePlannedRpe, logFrontendError } from './ugeHjaelp'
 import { isUuid } from './videoCoachBro'
+import { unikkeRekorder } from '../personalRecords'
 import { loadOfflineSets, overlayQueuedSets, loadQueuedRatings, overlayQueuedRatings } from '../offlineSetQueue'
 import { browserSaysOffline, seemsOffline } from '../offlineSession'
 import { loadOfflineSnapshot, saveOfflineSnapshot, snapshotLogsForWeek } from './offlineSnapshot'
@@ -206,7 +207,8 @@ export function lavLaesninger({
     }
     if (!mountedRef.current) return
     setPrsError(false)
-    setPrs(data || [])
+    // ORDRE 456 (A5): dubletter fra før 456 vises kun én gang.
+    setPrs(unikkeRekorder(data))
   }
 
   async function fetchMeetPlan(athleteId) {
@@ -260,7 +262,9 @@ export function lavLaesninger({
   async function fetchFremgangLogs(athleteId) {
     setFremgangLoading(true)
     const { data, ok } = await runGuardedRead(
-      () => fremgangLogsQuery(supabase, athleteId),
+      // ORDRE 456 (A4): hele historikken (side for side), så Fremgangs
+      // rekorder ikke regnes fra en afskåret historik.
+      () => hentAlleSider((fra, til) => fremgangLogsQuery(supabase, athleteId, { fra, til })),
       onReadError('Fremgang', athleteId),
     )
     setFremgangLoading(false)
@@ -274,7 +278,8 @@ export function lavLaesninger({
   // rekorderne venter bare til næste åbning). null = ikke hentet.
   async function fetchRekordRaekker(athleteId, siden) {
     const { data, ok } = await runGuardedRead(
-      () => rekordRaekkerQuery(supabase, athleteId, siden),
+      // ORDRE 456 (A4): alle sider; først da er indekset "bygget" og fejrer.
+      () => hentAlleSider((fra, til) => rekordRaekkerQuery(supabase, athleteId, siden, { fra, til })),
       (error) => { if (!seemsOffline()) logFrontendError('Rekord-indekset kunne ikke hentes', error, athleteId) },
     )
     return ok ? (data || []) : null

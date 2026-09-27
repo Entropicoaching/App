@@ -92,3 +92,50 @@ test('rekordRaekkerQuery (ORDRE 450): kun rækker fra "siden", ellers alt; samme
   rekordRaekkerQuery(lav(), 'atlet-1', null)
   assert.ok(!kald.some(k => k[0] === 'gte'))
 })
+
+// ORDRE 456 (A4): hele historikken side for side, uanset Supabase' "Max rows".
+// Falsk klient med range (offset/limit) og et loft på maxRows pr. svar.
+function sideKlient(rows, maxRows, { fejlPaaSide = null } = {}) {
+  const kald = []
+  const lav = () => {
+    const q = { orden: [] }
+    const b = {
+      from() { return b }, select() { return b }, eq() { return b }, gt() { return b }, gte() { return b },
+      order(col, { ascending }) { q.orden.push({ col, ascending }); return b },
+      limit(n) { q.fra = 0; q.til = n - 1; return b },
+      range(fra, til) { q.fra = fra; q.til = til; return b },
+      then(resolve) {
+        kald.push([q.fra, q.til])
+        if (fejlPaaSide != null && kald.length - 1 === fejlPaaSide) return resolve({ data: null, error: { code: '57014', message: 'timeout' } })
+        const sorted = [...rows].sort((a, b) => (a.logged_at < b.logged_at ? 1 : a.logged_at > b.logged_at ? -1 : (a.id < b.id ? 1 : -1)))
+        resolve({ data: sorted.slice(q.fra, q.til + 1).slice(0, maxRows), error: null })
+      },
+    }
+    return b
+  }
+  return { lav, kald }
+}
+
+test('hentAlleSider (ORDRE 456, A4): med et loft på 1000 kommer alle 4500 rækker, også den ældste top', async () => {
+  const { hentAlleSider } = await import('./fremgangLogs.js')
+  const rows = historik(4500).map((r, i) => ({ ...r, id: `r${String(i).padStart(5, '0')}`, exercise_id: 'x' }))
+  rows[0].weight = 200 // den ældste række er toppen
+  for (const loft of [1000, 4000, 250]) {
+    const { lav, kald } = sideKlient(rows, loft)
+    const { data, error } = await hentAlleSider((fra, til) => rekordRaekkerQuery(lav(), 'atlet-1', null, { fra, til }))
+    assert.equal(error, null)
+    assert.equal(data.length, 4500, `loft ${loft}: alle rækker`)
+    assert.equal(new Set(data.map(r => r.id)).size, 4500, `loft ${loft}: ingen række to gange`)
+    assert.ok(data.some(r => r.weight === 200), `loft ${loft}: den ældste top er med`)
+    assert.deepEqual(kald.at(-1)[0], 4500, 'sidste side er den tomme efter de 4500')
+  }
+})
+
+test('hentAlleSider: en fejl på en side giver fejl, ikke en halv historik', async () => {
+  const { hentAlleSider } = await import('./fremgangLogs.js')
+  const rows = historik(2500).map((r, i) => ({ ...r, id: `r${i}` }))
+  const { lav } = sideKlient(rows, 1000, { fejlPaaSide: 1 })
+  const { data, error } = await hentAlleSider((fra, til) => fremgangLogsQuery(lav(), 'atlet-1', { fra, til }))
+  assert.equal(data, null)
+  assert.equal(error.code, '57014')
+})

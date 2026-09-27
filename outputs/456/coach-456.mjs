@@ -145,7 +145,17 @@ try {
       const kopi = page.getByRole('button', { name: /Kopiér seneste uge/ })
       await kopi.waitFor({ timeout: 30000 })
       const tK = Date.now()
-      if (mobil) { await kopi.click(); await page.waitForTimeout(250); await kopi.click().catch(() => {}) } else await kopi.click()
+      if (mobil) {
+        // 456: to tryk paa samme sted paa skaermen (som en finger), 250 ms imellem.
+        // 446 brugte kopi.click() to gange; Playwright venter saa paa, at knappen
+        // er aktiv igen, og med 456's spaerre kom andet tryk foerst, naar den
+        // foerste kopi var faerdig. Det er ikke et dobbelttryk.
+        const b = await kopi.boundingBox()
+        await page.touchscreen.tap(b.x + b.width / 2, b.y + b.height / 2)
+        await page.waitForTimeout(250)
+        f.knapEfter250Ms = await page.evaluate(() => { const k = [...document.querySelectorAll('button')].find(x => /Kopier/.test(x.textContent)); return k ? { tekst: k.textContent.trim(), disabled: k.disabled } : null })
+        await page.touchscreen.tap(b.x + b.width / 2, b.y + b.height / 2)
+      } else await kopi.click()
       const graense = Date.now() + 60000
       while (Date.now() < graense && (await tabel('exercises')).length < uge.seed.tables.exercises.length + 12 * ((await tabel('weeks')).filter(w => w.athlete_id === fx.ATHLETE_ID).length - ugerFoer.length) - 0) await page.waitForTimeout(300)
       await page.waitForTimeout(4000)

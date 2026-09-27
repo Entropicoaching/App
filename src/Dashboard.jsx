@@ -222,6 +222,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [recommendedInput, setRecommendedInput] = useState('')
   const [copyingExercise, setCopyingExercise] = useState(null)
   const [copyingSession, setCopyingSession] = useState(null)
+  // ORDRE 456 (A6): "Kopiér seneste uge" kører.
+  const [copyingWeek, setCopyingWeek] = useState(false)
 
   // Meet plan state
   const [meetPlan, setMeetPlan] = useState(null)
@@ -370,7 +372,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     setCopyingSession, setEditingExercise, setEditingLibraryEx, setEditingRecommended, setEditingSession, setEditingWeek,
     setExerciseForm, setLibraryAddForm, setOpenSessionId, setOpenWeekId, setPlanStartDate, setProgramBlockStart,
     setSessionForm, setShowBlockPlanner, setSnoozedAthletes, setWeekDateFill, setWeekDraft, setWeekForm,
-    showFlash, weekDateFill, weekDraft, weekForm, weeks,
+    showFlash, weekDateFill, weekDraft, weekForm, weeks, setCopyingWeek,
   })
 
   const {
@@ -653,7 +655,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   applyPeriodizationSuggestion, applyWeekDateFill, approveDraftProgressionState,
                   approvingProgression, assignEdits, athleteLogs, bestLog,
                   blockPlan, copyExerciseToSession, copyingExercise,
-                  copyingSession, copySessionToWeek, copyWeek, deleteExercise,
+                  copyingSession, copySessionToWeek, copyWeek, copyingWeek, deleteExercise,
                   deleteSession, deleteWeek, editDraftForecast, editingExercise,
                   editingRecommended, editingSession, editingWeek, exFormRow,
                   fetchWeeks, generateWeeksFromPlan, gotoWeek, isMobile,

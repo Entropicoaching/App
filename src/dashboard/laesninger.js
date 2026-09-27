@@ -10,6 +10,7 @@ import { filterOpenAutomationAlerts } from '../automationAlerts'
 import { ATHLETE_LOGS_LIMIT } from './coachKonstanter'
 import { planlagteReps, taellerIKg } from './afvigelse'
 import { VIDEOCOACH_BASELINE_VERSION } from '../videoCoachVersion'
+import { unikkeRekorder } from '../personalRecords'
 
 export function lavLaesninger({
   inboxRefreshRunnerRef, messageThreadAthleteRef, session, setAthleteCurrentWeek, setAthleteLastLogs, setAthleteLogs,
@@ -452,7 +453,8 @@ export function lavLaesninger({
       .eq('athlete_id', athleteId)
       .order('logged_at', { ascending: false })
     if (!data) { setAthletePRs([]); setAthletePRHistory([]); return }
-    setAthletePRHistory(data)
+    // ORDRE 456 (A5): dubletter fra før 456 vises kun én gang (personalRecords.js).
+    setAthletePRHistory(unikkeRekorder(data))
     // Vis den tungeste registrering pr. øvelse som rekord — ikke blot den seneste —
     // så et lavere (fx stævne-)løft aldrig vises som aktuel rekord.
     const bestByName = {}
