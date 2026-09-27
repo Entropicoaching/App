@@ -1,0 +1,17 @@
+# ORDRE 464, punkt 8: kan 456 rulles tilbage? Kun laesning (git apply --check), intet aendret.
+4902c48 forælder f11501f  klar-til-push blok 1: A1-A3, ingen stille forkerte data fra kaelderen (ordre 456)
+3849d8d forælder 4902c48  klar-til-push blok 2: A4-A6, rekorderne og kopien (ordre 456)
+0f4aa10 forælder 3849d8d  klar-til-push blok 3: A7-A9, verificering og RAPPORT-456 (ordre 456)
+e5089f7 forældre 7ce8437 0f4aa10  merge: klar-til-push (ORDRE 456, Vaidya) - package.json loest af Dhruva
+
+A) Vaidyas punkt 8, 'en revert af de tre commits' (4902c48, 3849d8d, 0f4aa10) omvendt mod main:
+$ git diff --binary 0f4aa10 f11501f | git apply --check
+error: patch failed: package.json:96
+error: package.json: patch does not apply
+
+   kun appen (src, e2e, public):
+OK: gaar rent
+
+B) revert af merge-committen (git revert -m 1 e5089f7) omvendt mod main:
+$ git diff --binary e5089f7 e5089f7^1 | git apply --check
+OK: gaar rent

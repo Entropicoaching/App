@@ -1,0 +1,6 @@
+indeks, loft ingen: brugbart 4264 ms; ved klik v2 bygget=false efter 1 sider; bygget 5272 ms efter brugbart paa 6 sider/4291 raekker; v2 squat 128; fejret under opbygning []; 115x5: ["🏆 Ny rekord: Squat e1RM 134 kg, +6 kg"]; genaabnet 3259 ms, 2 sider/36 raekker, v2 squat 128
+indeks, loft 1000: brugbart 4228 ms; ved klik v2 bygget=false efter 1 sider; bygget 6223 ms efter brugbart paa 6 sider/4291 raekker; v2 squat 128; fejret under opbygning []; 115x5: ["🏆 Ny rekord: Squat e1RM 134 kg, +6 kg"]; genaabnet 3409 ms, 2 sider/36 raekker, v2 squat 128
+indeks, loft 100: brugbart 3254 ms; ved klik v2 bygget=false efter 0 sider; bygget 9782 ms efter brugbart paa 31 sider/2971 raekker; v2 squat 128; fejret under opbygning []; 115x5: ["🏆 Ny rekord: Squat e1RM 134 kg, +6 kg"]; genaabnet 2595 ms, 2 sider/36 raekker, v2 squat 128
+kopi, dobbelttryk 60 ms: knap ved andet tryk {"tekst":"Kopierer ugen …","disabled":true}, 1 nye uger [5]
+kopi, dobbelttryk 120 ms: knap ved andet tryk {"tekst":"Kopierer ugen …","disabled":true}, 1 nye uger [5]
+exit 0

@@ -1,0 +1,28 @@
+$ node outputs/kritik-464/diag-loft-464.mjs 130 100
+Entropi. | 2026-09-27 | ⋯ | Søndag · Ugens pas er klaret | I DAG · 27. SEPTEMBER | MAN | 16 | ✓ | TIR | 17 | ✓ | ONS | 18 | HVILE | TOR | 19 | ✓ | FRE | 20 | HVILE | LØR | 21 | ✓ | SØN | 22 | HVILE | DAGENS PAS | Passet er færdigt. ✓ | Der er ikke planlagt mere endnu. | DIN UGE | Uge 100 er klaret. | 4/4 | PAS | 11.088kg | TONNAGE | 0 | REKORDER | DINE VURDERINGER | Dag 1 — Squat | 4/5 | Dag 2 — Bænk | 4/5 | Dag 3 — Dødløft | 4/5 | Dag 4 — Volumen | 4/5 | Vil du skrive noget til din coach om ugen? | SEND | PARATHED | Ikke logget | BESKED | FILM ET SÆT | MERE | ▾ | HJEM | PROGRAM | VOLUMEN | FREMGANG | KOST | MO
+200 100 weeks?select=*,sessions(*,exercises(*))&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=week_number.a
+200 38 exercise_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&exercise_id=in.(e4460000-0000-4000-8
+200 100 exercise_logs?select=weight,reps_completed,logged_at,exercises(name)&athlete_id=eq.33333333-3333-4333-8333-333
+200 100 exercise_logs?select=weight,reps_completed,rpe_actual,logged_at,set_number,exercises(name)&athlete_id=eq.33333
+200 100 exercise_logs?select=weight,reps_completed,logged_at,exercises(name)&athlete_id=eq.33333333-3333-4333-8333-333
+200 100 exercise_logs?select=exercise_id,weight,reps_completed,logged_at,exercises(name)&athlete_id=eq.33333333-3333-4
+200 100 exercise_logs?select=exercise_id,weight,reps_completed,logged_at,exercises(name)&athlete_id=eq.33333333-3333-4
+200 100 exercise_logs?select=exercise_id,weight,reps_completed,logged_at,exercises(name)&athlete_id=eq.33333333-3333-4
+200 100 exercise_logs?select=exercise_id,weight,reps_completed,logged_at,exercises(name)&athlete_id=eq.33333333-3333-4
+200 100 exercise_logs?select=exercise_id,weight,reps_completed,logged_at,exercises(name)&athlete_id=eq.33333333-3333-4
+200 100 exercise_logs?select=exercise_id,weight,reps_completed,logged_at,exercises(name)&athlete_id=eq.33333333-3333-4
+200 100 exercise_logs?select=exercise_id,weight,reps_completed,logged_at,exercises(name)&athlete_id=eq.33333333-3333-4
+$ node outputs/kritik-464/diag-loft-464.mjs 60 100
+Entropi. | 2026-09-27 | ⋯ | Mandag · Dag 1 — Squat | I DAG ER DET SØNDAG · 27. SEPTEMBER | MAN | 21 | ● | TIR | 22 | ● | ONS | 23 | HVILE | TOR | 24 | ● | FRE | 25 | HVILE | LØR | 26 | ● | SØN | 27 | HVILE | Ugens check-in mangler stadig. | Log den → | DAGENS PAS | Sæt 1/4 | Squat | Sidste gang: 92.5kg × 6 @7.5 | Anbefalet: 100kg | 4 SÆT · × 5 · RPE 7 | − | + | + note | × 5 | RPE 7 ▾ | GODKENDT | SPRING OVER | Næste: 5 reps @ 100 kg | Vis næste sæt | Næste øvelse: Bænkpres · 3 sæt × 8 (+1) | PARATHED | Ikke logget | BESKED | FILM ET SÆT | MERE | ▾ | HJEM | PROGRAM | VOLUMEN | FREMGANG | KOST | MOBILITET
+200 61 weeks?select=*,sessions(*,exercises(*))&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=week_number.a
+200 0 exercise_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&exercise_id=in.(e4460000-0000-4000-8
+200 100 exercise_logs?select=weight,reps_completed,logged_at,exercises(name)&athlete_id=eq.33333333-3333-4333-8333-333
+200 100 exercise_logs?select=weight,reps_completed,rpe_actual,logged_at,set_number,exercises(name)&athlete_id=eq.33333
+200 100 exercise_logs?select=weight,reps_completed,logged_at,exercises(name)&athlete_id=eq.33333333-3333-4333-8333-333
+200 100 exercise_logs?select=exercise_id,weight,reps_completed,logged_at,exercises(name)&athlete_id=eq.33333333-3333-4
+200 100 exercise_logs?select=exercise_id,weight,reps_completed,logged_at,exercises(name)&athlete_id=eq.33333333-3333-4
+200 100 exercise_logs?select=exercise_id,weight,reps_completed,logged_at,exercises(name)&athlete_id=eq.33333333-3333-4
+200 100 exercise_logs?select=exercise_id,weight,reps_completed,logged_at,exercises(name)&athlete_id=eq.33333333-3333-4
+200 100 exercise_logs?select=exercise_id,weight,reps_completed,logged_at,exercises(name)&athlete_id=eq.33333333-3333-4
+200 100 exercise_logs?select=exercise_id,weight,reps_completed,logged_at,exercises(name)&athlete_id=eq.33333333-3333-4
+200 100 exercise_logs?select=exercise_id,weight,reps_completed,logged_at,exercises(name)&athlete_id=eq.33333333-3333-4

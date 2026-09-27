@@ -1,0 +1,22 @@
+$ node outputs/kritik-464/verify-446-kopi.mjs 2   (min 446-verify, uaendret: skal vaere roed paa praecis fundene)
+verify:kritik-446 (blok 2) ROED:
+ - A-tid: tung historik er kun -27 ms langsommere efter 439 (KRITIK siger ca. 2 s)
+ - A-tid: historik-kaldet er ikke laengere > 500 kB og faerdigt efter Dagens pas
+ - A-rekord genskabes ikke: top for 130 uger siden (uden for 4000) fejres ikke laengere falsk
+ - A-rekord med loft 1000 genskabes ikke
+ - A-spring: "Spring over" virker nu uden net - opdater KRITIK
+ - A-vurdering: vurderingen uden net naar nu frem - opdater KRITIK
+ - A-felt: vaegtfeltet er nu udfyldt efter genaabning uden net - opdater KRITIK
+ - A-felt: ingen 0 kg-saet mere - opdater KRITIK
+ - A-pr: offline-rekorden staar nu i personal_records - opdater KRITIK
+ - A-spring (390): coachen ser nu kaelderens spring - opdater KRITIK
+ - A-pr (390): PR-tidslinjen har nu kaelderens rekorder - opdater KRITIK
+ - A-spring (1280): coachen ser nu kaelderens spring - opdater KRITIK
+ - A-pr (1280): PR-tidslinjen har nu kaelderens rekorder - opdater KRITIK
+ - A-kopi: dobbelttryk paa telefonen giver ikke laengere to uger - opdater KRITIK
+ - A-pr: personal_records har ikke laengere dubletter - opdater KRITIK
+exit 1
+
+$ node outputs/kritik-464/verify-456-kopi.mjs 2   (Vaidyas forventninger: fundene maa ikke genskabes)
+verify:456 (blok 2) GROEN
+exit 0

@@ -1,0 +1,458 @@
+{
+  "prodBundt": "/assets/index-D0XGVcpR.js",
+  "mainBundt": "/assets/index-BYzaNRvF.js",
+  "iDag": "27. sep 2026",
+  "varianter": {
+    "straks": {
+      "punkter": {
+        "2": {
+          "brugbartMs": 7456,
+          "loads": [
+            "/assets/index-BYzaNRvF.js styret=true",
+            "/assets/index-BYzaNRvF.js styret=true"
+          ],
+          "bundt": "/assets/index-BYzaNRvF.js",
+          "indeksByggetVedKaelder": false,
+          "assetsICache": true
+        },
+        "3": {
+          "vurderingVist": true,
+          "flash": [
+            "Ingen forbindelse. Dagens pas og dine sæt virker; resten opdateres, når du har net. Program fra kl. 05.45."
+          ],
+          "logget": [
+            "Squat 1: 100",
+            "Squat 2: 100",
+            "Squat 3: 100",
+            "Squat 4: 100",
+            "Bænkpres 1: 70",
+            "Bænkpres 3: 70",
+            "Bulgarsk split squat 1: 30",
+            "Bulgarsk split squat 2: 30",
+            "Bulgarsk split squat 3: 30"
+          ],
+          "gemtLokalt": "☁ 10 sæt gemt lokalt — sendes når forbindelsen er tilbage"
+        },
+        "4": {
+          "ms": 2601,
+          "kortVist": true,
+          "tekst": "Entropi.\n2026-09-27\n⋯\nIngen forbindelse. Dagens pas og dine sæt virker; resten opdateres, når du har net. Program fra kl. 05.45.\nMandag · Dag 1 — Squat\nI DAG ER DET SØNDAG · 27. SEPTEMBER\nMAN\n21\n●\nTIR",
+          "vaegt": "30",
+          "login": 0
+        },
+        "5": {
+          "vaek": true,
+          "sekunder": 5,
+          "foer": "☁ 10 sæt gemt lokalt — sendes når forbindelsen er tilbage",
+          "koe": 0
+        },
+        "6": {
+          "dag1": "s pushdown | UGE 131 | 1 træning · 9 sæt | ▾ | 27. SEP 2026 | UGE 131 | Dag 1 — Squat | 9/10 SÆT | 1 SPRUNGET OVER | Ø 70 KG | ★★★★☆ | Bulgarsk split squat | = Samme som sidst | Plan: 3 sæt · × 8-10 · RPE 8 | 3/3 sæt | Ø 30kg | S1 30kg × 8RPE 8/8 | S2 30kg × 8RPE 8/8 | S3 30kg × 8RPE 8/8 | Bænkpres | = Samme som sidst | Plan: 3 sæt · × 8 · RPE 7 | 2/3 sæt · 1 sprunget over | Ø 70kg | S1 70kg × 8RPE 7/7 | S2 ✕ | S3 70kg × 8RPE 7/7 | Squat | ↑ +7.5kg siden sidst | Plan: 4 sæt · × 5 · RPE 7 | 4/4 sæt | Ø 100kg | S1 100kg × 5RPE 7/7 | S2 100kg × 5RPE 7/7 | S3 100kg × 5RPE 7/7 | S4 100kg × 5RPE 7/7 | UGE 130 | 4 træninger · 38 sæt | ▸ | UGE 129 | 4 træninger · 38 sæt | ▸ | UGE 128 | 4 træninger ·",
+          "saetLinjer": 10
+        },
+        "7": {
+          "prTidslinje": "",
+          "iDagRaekker": [],
+          "nyeUger": [
+            132
+          ],
+          "slettet": {
+            "foer": 131,
+            "efter": 131,
+            "rigtigUgeSlettet": true
+          }
+        }
+      },
+      "tjek": [
+        {
+          "pkt": 2,
+          "navn": "appen koerer main efter pushet (nyt bundt)",
+          "ok": true,
+          "detalje": "[\"/assets/index-BYzaNRvF.js styret=true\",\"/assets/index-BYzaNRvF.js styret=true\"]"
+        },
+        {
+          "pkt": 2,
+          "navn": "main-bundtet ligger i service workerens cache, foer nettet forsvinder",
+          "ok": true,
+          "detalje": "/assets/index-BYzaNRvF.js"
+        },
+        {
+          "pkt": 3,
+          "navn": "Spring over uden net flytter kortet videre (Baenkpres saet 3)",
+          "ok": true,
+          "detalje": "DAGENS PAS\nSæt 3/3"
+        },
+        {
+          "pkt": 4,
+          "navn": "appen aabner uden net paa Dagens pas (ingen login-skaerm)",
+          "ok": true,
+          "detalje": "2601 ms: \"Entropi.\\n2026-09-27\\n⋯\\nIngen forbindelse. Dagens pas og dine sæt virker; resten opdateres, når du har net. Program fra kl\""
+        },
+        {
+          "pkt": 4,
+          "navn": "vaegtfeltet er udfyldt",
+          "ok": true,
+          "detalje": "30 (Sæt 1/3)"
+        },
+        {
+          "pkt": 3,
+          "navn": "vurderingen kan gives uden net",
+          "ok": true,
+          "detalje": "[\"Ingen forbindelse. Dagens pas og dine sæt virker; resten opdateres, når du har net. Program fra kl. 05.45.\"]"
+        },
+        {
+          "pkt": 5,
+          "navn": "\"gemt lokalt\"-linjen var der og forsvinder, koeen er tom",
+          "ok": true,
+          "detalje": "{\"vaek\":true,\"sekunder\":5,\"foer\":\"☁ 10 sæt gemt lokalt — sendes når forbindelsen er tilbage\",\"koe\":0}"
+        },
+        {
+          "pkt": 5,
+          "navn": "hvert saet een gang i databasen, springet som sprunget over",
+          "ok": true,
+          "detalje": "[\"Bulgarsk split squat 1: 30x8\",\"Bulgarsk split squat 2: 30x8\",\"Bulgarsk split squat 3: 30x8\",\"Bænkpres 1: 70x8\",\"Bænkpres 2: sprunget over\",\"Bænkpres 3: 70x8\",\"Squat 1: 100x5\",\"Squat 2: 100x5\",\"Squat 3: 100x5\",\"Squat 4: 100x5\"]"
+        },
+        {
+          "pkt": 5,
+          "navn": "vurderingen naaede frem",
+          "ok": true,
+          "detalje": "4"
+        },
+        {
+          "pkt": 5,
+          "navn": "fejrede rekorder = raekker i personal_records",
+          "ok": true,
+          "detalje": "fejret []; personal_records []"
+        },
+        {
+          "pkt": 6,
+          "navn": "Log: pas 1 har 9/10 saet og \"1 sprunget over\"",
+          "ok": true,
+          "detalje": "s pushdown | UGE 131 | 1 træning · 9 sæt | ▾ | 27. SEP 2026 | UGE 131 | Dag 1 — Squat | 9/10 SÆT | 1 SPRUNGET OVER | Ø 70 KG | ★★★★☆ | Bulgarsk split squat | = Samme som sidst | Plan: 3 sæt · × 8-10 ·"
+        },
+        {
+          "pkt": 6,
+          "navn": "Log: vurderingen staar (4 af 5)",
+          "ok": true,
+          "detalje": "★★★★☆"
+        },
+        {
+          "pkt": 6,
+          "navn": "Log: datoen er i dag paa dansk (27. sep 2026)",
+          "ok": true,
+          "detalje": "27. SEP 2026"
+        },
+        {
+          "pkt": 7,
+          "navn": "PR-tidslinjen har kaelderens rekorder een gang hver",
+          "ok": false,
+          "detalje": "0 i dag: []"
+        },
+        {
+          "pkt": 7,
+          "navn": "dobbelttryk (150 ms) paa \"Kopier seneste uge\" giver een uge",
+          "ok": true,
+          "detalje": "[132]"
+        },
+        {
+          "pkt": 7,
+          "navn": "den kopierede uge kan slettes i appen (og kun den)",
+          "ok": true,
+          "detalje": "{\"foer\":131,\"efter\":131,\"rigtigUgeSlettet\":true}"
+        },
+        {
+          "pkt": "-",
+          "navn": "ingen konsolfejl",
+          "ok": true,
+          "detalje": ""
+        }
+      ],
+      "loads": [
+        {
+          "bundt": "/assets/index-D0XGVcpR.js",
+          "styret": false,
+          "t": 1790480721162
+        },
+        {
+          "bundt": "/assets/index-D0XGVcpR.js",
+          "styret": true,
+          "t": 1790480722105
+        },
+        {
+          "bundt": "/assets/index-BYzaNRvF.js",
+          "styret": true,
+          "t": 1790480728128
+        },
+        {
+          "bundt": "/assets/index-BYzaNRvF.js",
+          "styret": true,
+          "t": 1790480729231
+        },
+        {
+          "bundt": "/assets/index-BYzaNRvF.js",
+          "styret": true,
+          "t": 1790480742291
+        }
+      ],
+      "konsolFejl": [],
+      "fejringer": [],
+      "foerPush": {
+        "bundt": "/assets/index-D0XGVcpR.js",
+        "styret": true
+      },
+      "mock": {
+        "saet": [
+          "Bulgarsk split squat 1: 30x8",
+          "Bulgarsk split squat 2: 30x8",
+          "Bulgarsk split squat 3: 30x8",
+          "Bænkpres 1: 70x8",
+          "Bænkpres 2: sprunget over",
+          "Bænkpres 3: 70x8",
+          "Squat 1: 100x5",
+          "Squat 2: 100x5",
+          "Squat 3: 100x5",
+          "Squat 4: 100x5"
+        ],
+        "vurdering": 4,
+        "personalRecords": []
+      },
+      "fejretIalt": []
+    },
+    "vent": {
+      "punkter": {
+        "2": {
+          "brugbartMs": 7449,
+          "loads": [
+            "/assets/index-BYzaNRvF.js styret=true",
+            "/assets/index-BYzaNRvF.js styret=true"
+          ],
+          "bundt": "/assets/index-BYzaNRvF.js",
+          "ventetTilIndeksMs": 12942,
+          "indeksByggetVedKaelder": true,
+          "assetsICache": true
+        },
+        "3": {
+          "vurderingVist": true,
+          "flash": [
+            "Ingen forbindelse. Dagens pas og dine sæt virker; resten opdateres, når du har net. Program fra kl. 05.47."
+          ],
+          "logget": [
+            "Squat 1: 100",
+            "Squat 2: 100",
+            "Squat 3: 100",
+            "Squat 4: 100",
+            "Bænkpres 1: 70",
+            "Bænkpres 3: 70",
+            "Bulgarsk split squat 1: 30",
+            "Bulgarsk split squat 2: 30",
+            "Bulgarsk split squat 3: 30"
+          ],
+          "gemtLokalt": "☁ 10 sæt gemt lokalt — sendes når forbindelsen er tilbage"
+        },
+        "4": {
+          "ms": 2395,
+          "kortVist": true,
+          "tekst": "Entropi.\n2026-09-27\n⋯\nIngen forbindelse. Dagens pas og dine sæt virker; resten opdateres, når du har net. Program fra kl. 05.47.\nMandag · Dag 1 — Squat\nI DAG ER DET SØNDAG · 27. SEPTEMBER\nMAN\n21\n●\nTIR",
+          "vaegt": "30",
+          "login": 0
+        },
+        "5": {
+          "vaek": true,
+          "sekunder": 4.9,
+          "foer": "☁ 10 sæt gemt lokalt — sendes når forbindelsen er tilbage",
+          "koe": 0
+        },
+        "6": {
+          "dag1": "s pushdown | UGE 131 | 1 træning · 9 sæt | ▾ | 27. SEP 2026 | UGE 131 | Dag 1 — Squat | 9/10 SÆT | 1 SPRUNGET OVER | Ø 70 KG | ★★★★☆ | Bulgarsk split squat | = Samme som sidst | Plan: 3 sæt · × 8-10 · RPE 8 | 3/3 sæt | Ø 30kg | S1 30kg × 8RPE 8/8 | S2 30kg × 8RPE 8/8 | S3 30kg × 8RPE 8/8 | Bænkpres | = Samme som sidst | Plan: 3 sæt · × 8 · RPE 7 | 2/3 sæt · 1 sprunget over | Ø 70kg | S1 70kg × 8RPE 7/7 | S2 ✕ | S3 70kg × 8RPE 7/7 | Squat | ↑ +7.5kg siden sidst | Plan: 4 sæt · × 5 · RPE 7 | 4/4 sæt | Ø 100kg | S1 100kg × 5RPE 7/7 | S2 100kg × 5RPE 7/7 | S3 100kg × 5RPE 7/7 | S4 100kg × 5RPE 7/7 | UGE 130 | 4 træninger · 38 sæt | ▸ | UGE 129 | 4 træninger · 38 sæt | ▸ | UGE 128 | 4 træninger ·",
+          "saetLinjer": 10
+        },
+        "7": {
+          "prTidslinje": "PR-TIDSLINJE | BÆNKPRES | 70 kg × 8 | 27 sep 2026 | SQUAT | 100 kg × 5 | 27 sep 2026",
+          "iDagRaekker": [
+            "70 kg × 8 | 27 sep 2026",
+            "100 kg × 5 | 27 sep 2026"
+          ],
+          "nyeUger": [
+            132
+          ],
+          "slettet": {
+            "foer": 131,
+            "efter": 131,
+            "rigtigUgeSlettet": true
+          }
+        }
+      },
+      "tjek": [
+        {
+          "pkt": 2,
+          "navn": "appen koerer main efter pushet (nyt bundt)",
+          "ok": true,
+          "detalje": "[\"/assets/index-BYzaNRvF.js styret=true\",\"/assets/index-BYzaNRvF.js styret=true\"]"
+        },
+        {
+          "pkt": 2,
+          "navn": "main-bundtet ligger i service workerens cache, foer nettet forsvinder",
+          "ok": true,
+          "detalje": "/assets/index-BYzaNRvF.js"
+        },
+        {
+          "pkt": 3,
+          "navn": "Spring over uden net flytter kortet videre (Baenkpres saet 3)",
+          "ok": true,
+          "detalje": "DAGENS PAS\nSæt 3/3"
+        },
+        {
+          "pkt": 4,
+          "navn": "appen aabner uden net paa Dagens pas (ingen login-skaerm)",
+          "ok": true,
+          "detalje": "2395 ms: \"Entropi.\\n2026-09-27\\n⋯\\nIngen forbindelse. Dagens pas og dine sæt virker; resten opdateres, når du har net. Program fra kl\""
+        },
+        {
+          "pkt": 4,
+          "navn": "vaegtfeltet er udfyldt",
+          "ok": true,
+          "detalje": "30 (Sæt 1/3)"
+        },
+        {
+          "pkt": 3,
+          "navn": "vurderingen kan gives uden net",
+          "ok": true,
+          "detalje": "[\"Ingen forbindelse. Dagens pas og dine sæt virker; resten opdateres, når du har net. Program fra kl. 05.47.\"]"
+        },
+        {
+          "pkt": 5,
+          "navn": "\"gemt lokalt\"-linjen var der og forsvinder, koeen er tom",
+          "ok": true,
+          "detalje": "{\"vaek\":true,\"sekunder\":4.9,\"foer\":\"☁ 10 sæt gemt lokalt — sendes når forbindelsen er tilbage\",\"koe\":0}"
+        },
+        {
+          "pkt": 5,
+          "navn": "hvert saet een gang i databasen, springet som sprunget over",
+          "ok": true,
+          "detalje": "[\"Bulgarsk split squat 1: 30x8\",\"Bulgarsk split squat 2: 30x8\",\"Bulgarsk split squat 3: 30x8\",\"Bænkpres 1: 70x8\",\"Bænkpres 2: sprunget over\",\"Bænkpres 3: 70x8\",\"Squat 1: 100x5\",\"Squat 2: 100x5\",\"Squat 3: 100x5\",\"Squat 4: 100x5\"]"
+        },
+        {
+          "pkt": 5,
+          "navn": "vurderingen naaede frem",
+          "ok": true,
+          "detalje": "4"
+        },
+        {
+          "pkt": 5,
+          "navn": "fejrede rekorder = raekker i personal_records",
+          "ok": true,
+          "detalje": "fejret [\"🏆 Ny rekord: Squat e1RM 117 kg, +3 kg\",\"🏆 Ny rekord: Bænkpres e1RM 89 kg, +1 kg\"]; personal_records [\"Squat 100x5\",\"Bænkpres 70x8\"]"
+        },
+        {
+          "pkt": 6,
+          "navn": "Log: pas 1 har 9/10 saet og \"1 sprunget over\"",
+          "ok": true,
+          "detalje": "s pushdown | UGE 131 | 1 træning · 9 sæt | ▾ | 27. SEP 2026 | UGE 131 | Dag 1 — Squat | 9/10 SÆT | 1 SPRUNGET OVER | Ø 70 KG | ★★★★☆ | Bulgarsk split squat | = Samme som sidst | Plan: 3 sæt · × 8-10 ·"
+        },
+        {
+          "pkt": 6,
+          "navn": "Log: vurderingen staar (4 af 5)",
+          "ok": true,
+          "detalje": "★★★★☆"
+        },
+        {
+          "pkt": 6,
+          "navn": "Log: datoen er i dag paa dansk (27. sep 2026)",
+          "ok": true,
+          "detalje": "27. SEP 2026"
+        },
+        {
+          "pkt": 7,
+          "navn": "PR-tidslinjen har kaelderens rekorder een gang hver",
+          "ok": true,
+          "detalje": "2 i dag: [\"70 kg × 8 | 27 sep 2026\",\"100 kg × 5 | 27 sep 2026\"]"
+        },
+        {
+          "pkt": 7,
+          "navn": "dobbelttryk (150 ms) paa \"Kopier seneste uge\" giver een uge",
+          "ok": true,
+          "detalje": "[132]"
+        },
+        {
+          "pkt": 7,
+          "navn": "den kopierede uge kan slettes i appen (og kun den)",
+          "ok": true,
+          "detalje": "{\"foer\":131,\"efter\":131,\"rigtigUgeSlettet\":true}"
+        },
+        {
+          "pkt": "-",
+          "navn": "ingen konsolfejl",
+          "ok": true,
+          "detalje": ""
+        }
+      ],
+      "loads": [
+        {
+          "bundt": "/assets/index-D0XGVcpR.js",
+          "styret": true,
+          "t": 1790480859063
+        },
+        {
+          "bundt": "/assets/index-D0XGVcpR.js",
+          "styret": true,
+          "t": 1790480859993
+        },
+        {
+          "bundt": "/assets/index-BYzaNRvF.js",
+          "styret": true,
+          "t": 1790480866008
+        },
+        {
+          "bundt": "/assets/index-BYzaNRvF.js",
+          "styret": true,
+          "t": 1790480867107
+        },
+        {
+          "bundt": "/assets/index-BYzaNRvF.js",
+          "styret": true,
+          "t": 1790480883023
+        }
+      ],
+      "konsolFejl": [],
+      "fejringer": [
+        {
+          "key": "e4460000-0000-4000-8000-000000007153_1",
+          "tekst": "🏆 Ny rekord: Squat e1RM 117 kg, +3 kg",
+          "t": 1790480876458
+        },
+        {
+          "key": "e4460000-0000-4000-8000-000000007154_1",
+          "tekst": "🏆 Ny rekord: Bænkpres e1RM 89 kg, +1 kg",
+          "t": 1790480878760
+        }
+      ],
+      "foerPush": {
+        "bundt": "/assets/index-D0XGVcpR.js",
+        "styret": true
+      },
+      "mock": {
+        "saet": [
+          "Bulgarsk split squat 1: 30x8",
+          "Bulgarsk split squat 2: 30x8",
+          "Bulgarsk split squat 3: 30x8",
+          "Bænkpres 1: 70x8",
+          "Bænkpres 2: sprunget over",
+          "Bænkpres 3: 70x8",
+          "Squat 1: 100x5",
+          "Squat 2: 100x5",
+          "Squat 3: 100x5",
+          "Squat 4: 100x5"
+        ],
+        "vurdering": 4,
+        "personalRecords": [
+          "Squat 100x5",
+          "Bænkpres 70x8"
+        ]
+      },
+      "fejretIalt": [
+        "🏆 Ny rekord: Squat e1RM 117 kg, +3 kg",
+        "🏆 Ny rekord: Bænkpres e1RM 89 kg, +1 kg"
+      ]
+    }
+  }
+}

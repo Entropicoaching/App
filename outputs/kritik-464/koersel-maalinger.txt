@@ -1,0 +1,89 @@
+=== uge
+  [uge] logget ind paa en aeldre telefon; Dagens pas brugbart efter 6559 ms, ved genaabning 3354 ms
+  [uge] rekord-grundlaget gemt paa telefonen 5629 ms efter brugbart
+  [uge] pas 1: squat 4 saet med net
+  [uge] kaelderen: nettet vaek efter squat saet 4
+  [uge] pas 1 klaret uden net; vurdering 4: {"vist":true,"linjenStaarTilbage":false,"flash":[]}
+  [uge] OK  Spring over virker uden net: {"kortetStaarPaa":"DAGENS PAS Sæt 1/3","saet":1,"flash":[]}
+  [uge] OK  genaabnet uden net: Dagens pas staar paa Rows saet 2: 2194 ms, saet 2, koe 12, login 0
+  [uge] OK  genaabnet uden net: vaegtfeltet er udfyldt: {"vaegt":"25","senest":"senest 25kg × 10 · ☁ 1 sendes når du har net"}
+  [uge] pas 2 klaret uden net; 17 saet i koeen ("☁ 17 sæt gemt lokalt — sendes når forbindelsen er tilbage")
+  [uge] nettet tilbage: appen lukket efter 18 skrivninger (15 i koeen), koeen tom efter 8.3 s
+  [uge] pas 3 med net
+  [uge] pas 4 med net
+  [uge] "din uge": {"vist":true,"rekorder":7,"vurderinger":["4","3","","4"],"sendt":true}
+  [uge] Fremgang: 7 rekorder i ugen: ["27. sep Bænkpres 72,5 kg × 6 2 reps mere end før på 72,5 kg","27. sep Squat 95 kg × 6 1 rep mere end før på 95 kg","27. sep Pause squat e1RM 96 kg +2 kg · 85 kg × 4","27. sep Dødløft e1RM 154 kg +3 kg · 140 kg × 3","27. sep Bænkpres e1RM 96 kg +7 kg · 80 kg × 6","27. sep Bænkpres e1RM 89 kg +1 kg · 70 kg × 8","27. sep Squat e1RM 117 kg +3 kg · 100 kg × 5"]
+  [uge] video: kvittering efter 997 ms, synlige kvitteringer ["Video modtaget ✓ · din coach ser den, når han åbner den"], 1 raekke i video_analyses
+  [uge] OK  ingen vaegtoevelse gemt med 0 kg
+  [uge] OK  intet saet tabt
+  [uge] OK  ingen dubletter
+  [uge] OK  hvert saet har tiden fra Godkendt (+-5 s)
+  [uge] OK  RPE 9 og note fra kaelderen naaede frem: {"rpe":9,"note":"skulder lidt oem"}
+  [uge] OK  vurderingerne givet uden net naaede frem: [4,3,null,4]
+  [uge] OK  hver rekord fejres een gang: [{"key":"e4460000-0000-4000-8000-000000007153_1","gange":1,"navn":"Squat","saet":1,"pas":1,"tekst":"🏆 Ny rekord: Squat e1RM 117 kg, +3 kg"},{"key":"e4460000-0000-4000-8000-000000007154_1","gange":1,"navn":"Bænkpres","saet":1,"pas":1,"tekst":"🏆 Ny rekord: Bænkpres e1RM 89 kg, +1 kg"},{"key":"e4460000-0000-4000-8000-000000007157_1","gange":1,"navn":"Bænkpres","saet":1,"pas":2,"tekst":"🏆 Ny rekord: Bænkpres e1RM 96 kg, +7 kg"},{"key":"e4460000-0000-4000-8000-000000007161_1","gange":1,"navn":"Dødløft","saet":1,"pas":3,"tekst":"🏆 Ny rekord: Dødløft e1RM 154 kg, +3 kg"},{"key":"e4460000-0000-4000-8000-000000007162_1","gange":1,"navn":"Pause squat","saet":1,"pas":3,"tekst":"🏆 Ny rekord: Pause squat e1RM 96 kg, +2 kg"},{"key":"e4460000-0000-4000-8000-000000007165_1","gange":1,"navn":"Squat","saet":1,"pas":4,"tekst":"🏆 Ny rekord: Squat 95 kg × 6, 1 rep mere end før"},{"key":"e4460000-0000-4000-8000-000000007166_1","gange":1,"navn":"Bænkpres","saet":1,"pas":4,"tekst":"🏆 Ny rekord: Bænkpres 72,5 kg × 6, 2 reps mere end før"}]
+  [uge] OK  Fremgang viser hver rekord een gang: 7 raekker, 7 forskellige
+  [uge] OK  en rekord sat uden net staar ogsaa i personal_records (coachens og "Mere"s rekorder): fejret uden net: 🏆 Ny rekord: Bænkpres e1RM 89 kg, +1 kg; personal_records: [{"oevelse":"Squat","weight":100,"reps":5},{"oevelse":"Bænkpres","weight":70,"reps":8},{"oevelse":"Bænkpres","weight":80,"reps":6},{"oevelse":"Dødløft","weight":140,"reps":3},{"oevelse":"Pause squat","weight":85,"reps":4},{"oevelse":"Squat","weight":95,"reps":6},{"oevelse":"Bænkpres","weight":72.5,"reps":6}]
+  [uge] OK  ingen konsolfejl
+  [uge] OK  ingen vandret rul paa 390 px: 0 px
+exit 0
+=== graense
+top for 130 uger siden, loft ingen: 4290 raekker paa 6 sider, bedst foer squat e1RM 128, fejring: ingen
+top for 60 uger siden, loft ingen: 4290 raekker paa 6 sider, bedst foer squat e1RM 128, fejring: ingen
+top for 60 uger siden, loft 1000: 4290 raekker paa 6 sider, bedst foer squat e1RM 128, fejring: ingen
+exit 0
+=== coach
+  [uge] logget ind paa en aeldre telefon; Dagens pas brugbart efter 6436 ms, ved genaabning 3366 ms
+  [uge] rekord-grundlaget gemt paa telefonen 5636 ms efter brugbart
+  [uge] pas 1: squat 4 saet med net
+  [uge] kaelderen: nettet vaek efter squat saet 4
+  [uge] pas 1 klaret uden net; vurdering 4: {"vist":true,"linjenStaarTilbage":false,"flash":[]}
+  [uge] OK  Spring over virker uden net: {"kortetStaarPaa":"DAGENS PAS Sæt 1/3","saet":1,"flash":[]}
+  [uge] OK  genaabnet uden net: Dagens pas staar paa Rows saet 2: 2792 ms, saet 2, koe 12, login 0
+  [uge] OK  genaabnet uden net: vaegtfeltet er udfyldt: {"vaegt":"25","senest":"senest 25kg × 10 · ☁ 1 sendes når du har net"}
+  [uge] pas 2 klaret uden net; 17 saet i koeen ("☁ 17 sæt gemt lokalt — sendes når forbindelsen er tilbage")
+  [uge] nettet tilbage: appen lukket efter 18 skrivninger (15 i koeen), koeen tom efter 8.6 s
+  [uge] pas 3 med net, Planke saet 2 sprunget over
+  [uge] pas 4 med net
+  [uge] "din uge": {"vist":true,"rekorder":7,"vurderinger":["4","3","","4"],"sendt":true}
+  [uge] Fremgang: 7 rekorder i ugen: ["27. sep Bænkpres 72,5 kg × 6 2 reps mere end før på 72,5 kg","27. sep Squat 95 kg × 6 1 rep mere end før på 95 kg","27. sep Pause squat e1RM 96 kg +2 kg · 85 kg × 4","27. sep Dødløft e1RM 154 kg +3 kg · 140 kg × 3","27. sep Bænkpres e1RM 96 kg +7 kg · 80 kg × 6","27. sep Bænkpres e1RM 89 kg +1 kg · 70 kg × 8","27. sep Squat e1RM 117 kg +3 kg · 100 kg × 5"]
+  [uge] video: kvittering efter 1051 ms, synlige kvitteringer ["Video modtaget ✓ · din coach ser den, når han åbner den"], 1 raekke i video_analyses
+  [uge] OK  ingen vaegtoevelse gemt med 0 kg
+  [uge] OK  intet saet tabt
+  [uge] OK  ingen dubletter
+  [uge] OK  hvert saet har tiden fra Godkendt (+-5 s)
+  [uge] OK  RPE 9 og note fra kaelderen naaede frem: {"rpe":9,"note":"skulder lidt oem"}
+  [uge] OK  vurderingerne givet uden net naaede frem: [4,3,null,4]
+  [uge] OK  hver rekord fejres een gang: [{"key":"e4460000-0000-4000-8000-000000007153_1","gange":1,"navn":"Squat","saet":1,"pas":1,"tekst":"🏆 Ny rekord: Squat e1RM 117 kg, +3 kg"},{"key":"e4460000-0000-4000-8000-000000007154_1","gange":1,"navn":"Bænkpres","saet":1,"pas":1,"tekst":"🏆 Ny rekord: Bænkpres e1RM 89 kg, +1 kg"},{"key":"e4460000-0000-4000-8000-000000007157_1","gange":1,"navn":"Bænkpres","saet":1,"pas":2,"tekst":"🏆 Ny rekord: Bænkpres e1RM 96 kg, +7 kg"},{"key":"e4460000-0000-4000-8000-000000007161_1","gange":1,"navn":"Dødløft","saet":1,"pas":3,"tekst":"🏆 Ny rekord: Dødløft e1RM 154 kg, +3 kg"},{"key":"e4460000-0000-4000-8000-000000007162_1","gange":1,"navn":"Pause squat","saet":1,"pas":3,"tekst":"🏆 Ny rekord: Pause squat e1RM 96 kg, +2 kg"},{"key":"e4460000-0000-4000-8000-000000007165_1","gange":1,"navn":"Squat","saet":1,"pas":4,"tekst":"🏆 Ny rekord: Squat 95 kg × 6, 1 rep mere end før"},{"key":"e4460000-0000-4000-8000-000000007166_1","gange":1,"navn":"Bænkpres","saet":1,"pas":4,"tekst":"🏆 Ny rekord: Bænkpres 72,5 kg × 6, 2 reps mere end før"}]
+  [uge] OK  Fremgang viser hver rekord een gang: 7 raekker, 7 forskellige
+  [uge] OK  en rekord sat uden net staar ogsaa i personal_records (coachens og "Mere"s rekorder): fejret uden net: 🏆 Ny rekord: Bænkpres e1RM 89 kg, +1 kg; personal_records: [{"oevelse":"Squat","weight":100,"reps":5},{"oevelse":"Bænkpres","weight":70,"reps":8},{"oevelse":"Bænkpres","weight":80,"reps":6},{"oevelse":"Dødløft","weight":140,"reps":3},{"oevelse":"Pause squat","weight":85,"reps":4},{"oevelse":"Squat","weight":95,"reps":6},{"oevelse":"Bænkpres","weight":72.5,"reps":6}]
+  [uge] OK  ingen konsolfejl
+  [uge] OK  ingen vandret rul paa 390 px: 0 px
+  [coach] OK  390: forsiden siger aldrig "Ingen logs" eller "0 af 4 pas", mens den henter (A7): ["T | Testatlet | Intet aktivt program | →","T | Testatlet | Intet aktivt program | 1 | →","T | Testatlet | Uge 131 · Styrke · 4 pas | 1 | →","T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · I dag | ★ 3/5 | skulder lidt oem | 1 | →"]
+  [coach] OK  390: forsiden siger 4 af 4 pas: T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · I dag | ★ 3/5 | skulder lidt oem | 1 | →
+  [coach] OK  390: "Kraever dit blik" viser atletens linje fra "din uge"
+  [coach] OK  390: Log viser det sprungne saet fra pas 3 (med net):  | S2 95kg × 6RPE 7/7 | S3 95kg × 6RPE 7/7 | 27. SEP 2026 | UGE 131 | Dag 3 — Dødløft | 7/8 SÆT | 1 SPRUNGET OVER | Ø 112.5 KG | Planke | Plan: 2 sæt · × 45s | 1/2 sæt · 1 sprunget over | S1 0kg × 45 | S2 ✕ | Pause squat | ↑ +2.5kg siden sidst | Plan: 3 sæt · 
+  [coach] OK  390: Log viser baenkpres 4 i pas 2 som sprunget over (atletens hensigt i kaelderen): 2 140kg × 3RPE 8/8 | S3 140kg × 3RPE 8/8 | 27. SEP 2026 | UGE 131 | Dag 2 — Bænk | 9/10 SÆT | 1 SPRUNGET OVER | Ø 45 KG | ★★★☆☆ | Triceps pushdown | = Samme som sidst | Plan: 3 sæt · × 12-15 · RPE 9 | 3/3 sæt | Ø 30kg | S1 30kg × 12RPE 9/9 | S2 30kg × 12RPE 9/
+  [coach] OK  390: Log viser datoer paa dansk, ingen UTC-dato som 2026-09-26 (A8): 27. SEP 2026
+  [coach] OK  390: Log viser noten og RPE 9 fra kaelderen
+  [coach] OK  390: PR-tidslinjen har kaelderens baenkpres-rekorder (70 x 8, 80 x 6): PR-TIDSLINJE | BÆNKPRES | 70 kg × 8 | 27 sep 2026 | 80 kg × 6 | 27 sep 2026 | 72.5 kg × 6 | 27 sep 2026 | SQUAT | 100 kg × 5 | 27 sep 2026 | 95 kg × 6 | 27 sep 2026 | PAUSE SQUAT | 85 kg × 4 | 27 sep 2026 | DØDLØFT | 140 kg × 3 | 27 sep 2026
+  [coach] OK  390: "Kopier seneste uge" (dobbelttryk (250 ms)) giver een ny uge: [{"uge":132,"start":"2026-09-28","pas":4,"oevelser":12}]
+  [coach] OK  1280: forsiden siger aldrig "Ingen logs" eller "0 af 4 pas", mens den henter (A7): ["T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · I dag | ★ 3/5 | skulder lidt oem | 1 | →"]
+  [coach] OK  1280: forsiden siger 4 af 4 pas: T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · I dag | ★ 3/5 | skulder lidt oem | 1 | →
+  [coach] OK  1280: "Kraever dit blik" viser atletens linje fra "din uge"
+  [coach] OK  1280: Log viser det sprungne saet fra pas 3 (med net):  | S2 95kg × 6RPE 7/7 | S3 95kg × 6RPE 7/7 | 27. SEP 2026 | UGE 131 | Dag 3 — Dødløft | 7/8 SÆT | 1 SPRUNGET OVER | Ø 112.5 KG | Planke | Plan: 2 sæt · × 45s | 1/2 sæt · 1 sprunget over | S1 0kg × 45 | S2 ✕ | Pause squat | ↑ +2.5kg siden sidst | Plan: 3 sæt · 
+  [coach] OK  1280: Log viser baenkpres 4 i pas 2 som sprunget over (atletens hensigt i kaelderen): 2 140kg × 3RPE 8/8 | S3 140kg × 3RPE 8/8 | 27. SEP 2026 | UGE 131 | Dag 2 — Bænk | 9/10 SÆT | 1 SPRUNGET OVER | Ø 45 KG | ★★★☆☆ | Triceps pushdown | = Samme som sidst | Plan: 3 sæt · × 12-15 · RPE 9 | 3/3 sæt | Ø 30kg | S1 30kg × 12RPE 9/9 | S2 30kg × 12RPE 9/
+  [coach] OK  1280: Log viser datoer paa dansk, ingen UTC-dato som 2026-09-26 (A8): 27. SEP 2026
+  [coach] OK  1280: Log viser noten og RPE 9 fra kaelderen
+  [coach] OK  1280: PR-tidslinjen har kaelderens baenkpres-rekorder (70 x 8, 80 x 6): PR-TIDSLINJE | BÆNKPRES | 70 kg × 8 | 27 sep 2026 | 80 kg × 6 | 27 sep 2026 | 72.5 kg × 6 | 27 sep 2026 | SQUAT | 100 kg × 5 | 27 sep 2026 | 95 kg × 6 | 27 sep 2026 | PAUSE SQUAT | 85 kg × 4 | 27 sep 2026 | DØDLØFT | 140 kg × 3 | 27 sep 2026
+  [coach] OK  1280: "Kopier seneste uge" (et tryk) giver een ny uge: [{"uge":132,"start":"2026-09-28","pas":4,"oevelser":12}]
+exit 0
+=== tid
+Bygger foer 439 og efter 439 mod mocken ...
+  let  foer  aabning 1: brugbart 980 ms, historik -, 23 kald
+  let  foer  aabning 2: brugbart 1037 ms, historik -, 23 kald
+  let  foer  aabning 3: brugbart 956 ms, historik -, 23 kald
+  let  efter aabning 1: brugbart 962 ms, historik 1681 ms, 5 kB, 25 kald
+  let  efter aabning 2: brugbart 1008 ms, historik 1713 ms, 5 kB, 25 kald
+  let  efter aabning 3: brugbart 945 ms, historik 1711 ms, 5 kB, 25 kald
+  tung foer  aabning 1: brugbart 3365 ms, historik -, 23 kald
+exit 1
