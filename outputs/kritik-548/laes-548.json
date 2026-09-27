@@ -1,0 +1,738 @@
+{
+ "laes": "C:/Users/Entropi/Desktop/LAES-SQUAT.html",
+ "ref": {
+  "marc": "915e57b",
+  "ny": "9390990",
+  "main": "8df8846"
+ },
+ "bredder": [
+  390,
+  1280
+ ],
+ "L": {
+  "390": {
+   "hoejde": 70204,
+   "skaerme": 83.2,
+   "valgSlut": 7.6,
+   "sammenligningSlut": 15.2,
+   "artikelStart": 23.5,
+   "side": 390,
+   "klient": 390,
+   "minSkrift": 10.88,
+   "broedskrift": 17,
+   "minKontrast": 4.29,
+   "minKontrastTekst": "Nu",
+   "smaaTryk": [
+    {
+     "t": "De ni valg",
+     "h": 20
+    },
+    {
+     "t": "Sammenlignet med artiklerne på sitet",
+     "h": 20
+    },
+    {
+     "t": "Dine ord mod den nye tekst",
+     "h": 20
+    },
+    {
+     "t": "Hele artiklen, som den ville blive udgiv",
+     "h": 20
+    }
+   ],
+   "antalTryk": 4,
+   "billeder": 0,
+   "folde": 18,
+   "net": [],
+   "fejl": []
+  },
+  "1280": {
+   "hoejde": 52865,
+   "skaerme": 58.7,
+   "valgSlut": 5,
+   "sammenligningSlut": 9.3,
+   "artikelStart": 14.9,
+   "side": 1280,
+   "klient": 1280,
+   "minSkrift": 10.88,
+   "broedskrift": 17,
+   "minKontrast": 4.29,
+   "minKontrastTekst": "Nu",
+   "smaaTryk": [
+    {
+     "t": "De ni valg",
+     "h": 20
+    },
+    {
+     "t": "Sammenlignet med artiklerne på sitet",
+     "h": 20
+    },
+    {
+     "t": "Dine ord mod den nye tekst",
+     "h": 20
+    },
+    {
+     "t": "Hele artiklen, som den ville blive udgiv",
+     "h": 20
+    }
+   ],
+   "antalTryk": 4,
+   "billeder": 0,
+   "folde": 18,
+   "net": [],
+   "fejl": []
+  },
+  "390-moerk": {
+   "hoejde": 70204,
+   "skaerme": 83.2,
+   "valgSlut": 7.6,
+   "sammenligningSlut": 15.2,
+   "artikelStart": 23.5,
+   "side": 390,
+   "klient": 390,
+   "minSkrift": 10.88,
+   "broedskrift": 17,
+   "minKontrast": 6.56,
+   "minKontrastTekst": "Eksempel på et svar med én ændring: squat udgiv, men 6: et k",
+   "smaaTryk": [
+    {
+     "t": "De ni valg",
+     "h": 20
+    },
+    {
+     "t": "Sammenlignet med artiklerne på sitet",
+     "h": 20
+    },
+    {
+     "t": "Dine ord mod den nye tekst",
+     "h": 20
+    },
+    {
+     "t": "Hele artiklen, som den ville blive udgiv",
+     "h": 20
+    }
+   ],
+   "antalTryk": 4,
+   "billeder": 0,
+   "folde": 18,
+   "net": [],
+   "fejl": []
+  },
+  "1280-moerk": {
+   "hoejde": 52865,
+   "skaerme": 58.7,
+   "valgSlut": 5,
+   "sammenligningSlut": 9.3,
+   "artikelStart": 14.9,
+   "side": 1280,
+   "klient": 1280,
+   "minSkrift": 10.88,
+   "broedskrift": 17,
+   "minKontrast": 6.56,
+   "minKontrastTekst": "Eksempel på et svar med én ændring: squat udgiv, men 6: et k",
+   "smaaTryk": [
+    {
+     "t": "De ni valg",
+     "h": 20
+    },
+    {
+     "t": "Sammenlignet med artiklerne på sitet",
+     "h": 20
+    },
+    {
+     "t": "Dine ord mod den nye tekst",
+     "h": 20
+    },
+    {
+     "t": "Hele artiklen, som den ville blive udgiv",
+     "h": 20
+    }
+   ],
+   "antalTryk": 4,
+   "billeder": 0,
+   "folde": 18,
+   "net": [],
+   "fejl": []
+  }
+ },
+ "C": {
+  "antal": 54,
+  "pr": {
+   "NU": 34,
+   "DINE STIKORD 13. SEP": 7,
+   "21. SEP": 12,
+   "DINE SVAR 26. SEP": 1
+  },
+  "klippet": [
+   {
+    "q": "Se hvad der føles bedre for atleten, og hvilke positioner der tillader et",
+    "mangler": "konkurrencegodkendt squat."
+   },
+   {
+    "q": "Undtagelsen er mobilitet eller tidligere skader, der gør at man ikke kan have en fast",
+    "mangler": "placering så langt nede."
+   },
+   {
+    "q": "Alle løftere har deres egne bias. Opgaven er at finde ud af hvad der fungerer for",
+    "mangler": "atleten, og derefter bygge de svage punkter op."
+   },
+   {
+    "q": "bias afsløres (fx med",
+    "mangler": "goblet squat), svage punkter bygges op, og teknikken skal kunne holde til et"
+   },
+   {
+    "q": "Ikke besvaret. Modellens egne grænser står i løftmodellens dokumentation og må",
+    "mangler": "gengives derfra, uden at der lægges holdninger i munden på Marc."
+   }
+  ],
+  "ikkeOrdret": [],
+  "ikkeMarc": [
+   {
+    "q": "Ikke besvaret. Modellens egne grænser står i løftmodellens dokumentation og må",
+    "grund": "Dhruvas note \"Ikke besvaret ...\", ikke Marcs ord"
+   }
+  ],
+  "svar398ErOrdret": true,
+  "siden": true,
+  "citater": [
+   {
+    "mrk": "NU",
+    "q": "På nettet og på Instagram bliver én bestemt squat-teknik ofte gjort til den rigtige."
+   },
+   {
+    "mrk": "DINE STIKORD 13. SEP",
+    "q": "Kobl den til det man ser på nettet og på Instagram."
+   },
+   {
+    "mrk": "21. SEP",
+    "q": "kan det føre til stagnation og til værre skader."
+   },
+   {
+    "mrk": "NU",
+    "q": "Efter min erfaring fører den idealisering oftere til stagnation, og for nogle til skader, end til fremgang"
+   },
+   {
+    "mrk": "21. SEP",
+    "q": "Det jeg arbejder med som coach er at finde den naturlige position for den enkelte atlet."
+   },
+   {
+    "mrk": "NU",
+    "q": "Det jeg leder efter som coach, er atletens naturlige position"
+   },
+   {
+    "mrk": "NU",
+    "q": "Ledvinkler og momenter kommer fra en segmentmodel af en opdigtet referencekrop, ikke fra en atlet."
+   },
+   {
+    "mrk": "NU",
+    "q": "Den kan regne på de to første af de tre ting, ikke på coret."
+   },
+   {
+    "mrk": "NU",
+    "q": "De tre kropstyper i panelet, balanceret, lang lårknogle og lang torso, er referencepunkter og ikke målte atleter."
+   },
+   {
+    "mrk": "DINE STIKORD 13. SEP",
+    "q": "Se hvad der føles bedre for atleten, og hvilke positioner der tillader et"
+   },
+   {
+    "mrk": "21. SEP",
+    "q": "Den naturlige position findes gennem trial and error."
+   },
+   {
+    "mrk": "NU",
+    "q": "Positionen findes ved at prøve sig frem."
+   },
+   {
+    "mrk": "21. SEP",
+    "q": "Jeg ser på hvad der føles bedre for atleten"
+   },
+   {
+    "mrk": "NU",
+    "q": "Den naturlige position skal både føles bedst og kunne godkendes, og de to trækker ikke altid samme vej."
+   },
+   {
+    "mrk": "NU",
+    "q": "Komfort alene fastslår hverken vævstolerance, konkurrencedybde eller hvordan belastningen fordeler sig"
+   },
+   {
+    "mrk": "NU",
+    "q": "I figuren herunder kan du selv skrue på længderne og se, hvad kroppen flytter i bunden."
+   },
+   {
+    "mrk": "NU",
+    "q": "En undtagelse er en løfter hvis mobilitet eller tidligere skader gør, at en fast placering så langt nede ikke er mulig."
+   },
+   {
+    "mrk": "DINE STIKORD 13. SEP",
+    "q": "Undtagelsen er mobilitet eller tidligere skader, der gør at man ikke kan have en fast"
+   },
+   {
+    "mrk": "21. SEP",
+    "q": "Blandt styrkeløftere er der et bias mod lowbar."
+   },
+   {
+    "mrk": "NU",
+    "q": "I min erfaring er der blandt styrkeløftere en tendens til lowbar; det er en erfaring og ikke en opgjort andel."
+   },
+   {
+    "mrk": "21. SEP",
+    "q": "Samme princip som ved kropstyper: den naturlige position findes gennem trial and error."
+   },
+   {
+    "mrk": "NU",
+    "q": "Stangens plads prøves af som resten af positionen, efter hvad der føles bedst og hvad der giver et godkendt løft."
+   },
+   {
+    "mrk": "NU",
+    "q": "Modellen har 49° torsohældning ved lowbar og 37° ved highbar, en forskel på 12°."
+   },
+   {
+    "mrk": "NU",
+    "q": "Opgaven er at finde det der virker for den enkelte og derefter bygge de svage punkter op"
+   },
+   {
+    "mrk": "DINE STIKORD 13. SEP",
+    "q": "Alle løftere har deres egne bias. Opgaven er at finde ud af hvad der fungerer for"
+   },
+   {
+    "mrk": "21. SEP",
+    "q": "Goblet squat er god til at afsløre atletens bias."
+   },
+   {
+    "mrk": "NU",
+    "q": "En goblet squat bruger jeg til at se atletens bias; det er praksis og ikke et litteraturfund."
+   },
+   {
+    "mrk": "21. SEP",
+    "q": "Der findes ingen fast regel for knæ og fodstilling. Det er individuelt."
+   },
+   {
+    "mrk": "NU",
+    "q": "ikke at flytte alle hen til samme vinkel."
+   },
+   {
+    "mrk": "NU",
+    "q": "Hvor langt skinnebenet kan hælde fremad i bunden, er ikke kun et valg, det er også en grænse, anklens bevægelighed kan sætte."
+   },
+   {
+    "mrk": "NU",
+    "q": "stangens position over midtfoden, knæets og hoftens bevægelse gennem løftet, og om coret holder i bunden."
+   },
+   {
+    "mrk": "DINE STIKORD 13. SEP",
+    "q": "Coret: hvordan det holder, og om det folder sammen i bunden."
+   },
+   {
+    "mrk": "21. SEP",
+    "q": "Jo længere væk stangen er fra et led, jo større moment skal leddet holde imod."
+   },
+   {
+    "mrk": "NU",
+    "q": "jo større er stangens eksterne bidrag til det moment, leddet skal holde imod."
+   },
+   {
+    "mrk": "21. SEP",
+    "q": "Coret kan panelet ikke sige noget om, se forbeholdet nederst."
+   },
+   {
+    "mrk": "NU",
+    "q": "Coret vurderes af en coach, der ser løfteren."
+   },
+   {
+    "mrk": "DINE SVAR 26. SEP",
+    "q": "atletens greb, stangens position paa ryggen, hvordan atleten kommer ind under stangen"
+   },
+   {
+    "mrk": "NU",
+    "q": "De to fejl jeg ser oftest går hver sin vej."
+   },
+   {
+    "mrk": "NU",
+    "q": "Kraftlinjerne er udledt af musklernes egne forløb i en åben muskuloskeletal model"
+   },
+   {
+    "mrk": "NU",
+    "q": "se efter atletens bias, for eksempel i en goblet squat, og derefter bygge de svage punkter op."
+   },
+   {
+    "mrk": "DINE STIKORD 13. SEP",
+    "q": "bias afsløres (fx med"
+   },
+   {
+    "mrk": "21. SEP",
+    "q": "Teknikken skal kunne holde til et konkurrencegodkendt løft."
+   },
+   {
+    "mrk": "NU",
+    "q": "Det faste punkt er dommernes: overkanten af låret ved hoften under toppen af knæet"
+   },
+   {
+    "mrk": "NU",
+    "q": "Jeg starter med atletens egen position, ikke med en bestemt teknik."
+   },
+   {
+    "mrk": "NU",
+    "q": "For styrkeløftere ender det efter min erfaring oftest med lowbar"
+   },
+   {
+    "mrk": "NU",
+    "q": "Modellen bag panelet regner i to dimensioner på segmentlængder, masse, balance og ledmomenter."
+   },
+   {
+    "mrk": "DINE STIKORD 13. SEP",
+    "q": "Ikke besvaret. Modellens egne grænser står i løftmodellens dokumentation og må"
+   },
+   {
+    "mrk": "21. SEP",
+    "q": "Det er et højere tal end virkeligheden, hvor flere muskler deler arbejdet."
+   },
+   {
+    "mrk": "NU",
+    "q": "Musklernes krav er højere end virkeligheden, hvor flere muskler deler arbejdet."
+   },
+   {
+    "mrk": "NU",
+    "q": "ikke et litteraturtal"
+   },
+   {
+    "mrk": "NU",
+    "q": "Her deles squatten i syv faser"
+   },
+   {
+    "mrk": "NU",
+    "q": "Segmentmodellen tegner løfteren som stive segmenter set fra siden"
+   },
+   {
+    "mrk": "NU",
+    "q": "Metoden er den samme uanset løft"
+   },
+   {
+    "mrk": "NU",
+    "q": "Et fejlbillede har i modellen en geometrisk årsag og en momentomkostning"
+   }
+  ]
+ },
+ "T": {
+  "deload": {
+   "ordUdenFold": 1071,
+   "ordBroed": 872,
+   "overskrifter": 7,
+   "tabeller": 0,
+   "laes": "9 min. læsning",
+   "tankestregerSynligt": 7,
+   "tankestregerIkkeRef": 7,
+   "aabner": "En deload er en kort periode, hvor træningen bliver mindre krævende."
+  },
+  "coach": {
+   "ordUdenFold": 701,
+   "ordBroed": 593,
+   "overskrifter": 6,
+   "tabeller": 0,
+   "laes": "7 min. læsning",
+   "tankestregerSynligt": 1,
+   "tankestregerIkkeRef": 1,
+   "aabner": "Et program og et ugentligt svar er den synlige del af online coaching."
+  },
+  "squat21": {
+   "ordUdenFold": 453,
+   "ordBroed": 348,
+   "overskrifter": 5,
+   "tabeller": 1,
+   "laes": "4 min. læsning",
+   "tankestregerSynligt": 14,
+   "tankestregerIkkeRef": 0,
+   "aabner": "På nettet og på Instagram bliver én bestemt squat-teknik ofte gjort til den rigtige."
+  },
+  "fagordIValg": {
+   "noindex": 2,
+   "sitemap": 2,
+   "datePublished": 1,
+   "commit": 5,
+   "assets/": 5,
+   "src=": 1,
+   "kildekode": 1,
+   "vis kilde": 1,
+   "outputs/": 3,
+   "scripts/": 2,
+   "HTTP 200": 1,
+   "main": 1,
+   "gren": 1,
+   "fold": 1,
+   "indlejre": 1,
+   "U2": 1,
+   "U5": 1,
+   "U6": 1,
+   "U7": 1,
+   "U8": 1,
+   "U10": 1,
+   "U11": 1,
+   "U13": 1,
+   "N1/V8": 1,
+   "kildemærke": 1,
+   "jeg-form": 1,
+   "fagord": 1,
+   "segmentmodel": 2
+  },
+  "valgOrd": 968,
+  "setuDeload": " Deload 1.055 9 min. (10 min. beregnet) 7 0 / 0 16,6 (6 over 25) 1 af 4 intet afsnit Frekvens 930 8 min. (8 min. beregnet) 5 0 / 0 15,5 (5 o",
+  "setuCoach": " Hvad laver en coach 696 7 min. (6 min. beregnet) 6 0 / 0 13,5 (3 over 25) 0 af 0 intet afsnit Sådan er det målt: alle otte sider er åbnet i"
+ },
+ "tjek": [
+  {
+   "hvad": "Ingen vandret rulning paa 390 og 1280, lys og moerk",
+   "ok": true,
+   "data": [
+    [
+     390,
+     390
+    ],
+    [
+     1280,
+     1280
+    ],
+    [
+     390,
+     390
+    ],
+    [
+     1280,
+     1280
+    ]
+   ]
+  },
+  {
+   "hvad": "Intet net og ingen JS- eller konsolfejl",
+   "ok": true,
+   "data": [
+    [
+     0,
+     []
+    ],
+    [
+     0,
+     []
+    ],
+    [
+     0,
+     []
+    ],
+    [
+     0,
+     []
+    ]
+   ]
+  },
+  {
+   "hvad": "Alle billeder er indlaest",
+   "ok": true
+  },
+  {
+   "hvad": "Skrift uden for artiklen: mindste maalt (fund: under 12 px er etiketterne og tallenes parenteser)",
+   "ok": true,
+   "data": [
+    [
+     10.88,
+     17
+    ],
+    [
+     10.88,
+     17
+    ],
+    [
+     10.88,
+     17
+    ],
+    [
+     10.88,
+     17
+    ]
+   ]
+  },
+  {
+   "hvad": "Kontrast uden for artiklen: mindste maalt, over 4 i lys og moerk (under 4,5 er et lavt fund)",
+   "ok": true,
+   "data": [
+    [
+     4.29,
+     "Nu"
+    ],
+    [
+     4.29,
+     "Nu"
+    ],
+    [
+     6.56,
+     "Eksempel på et svar med én ændring: squat udgiv, men 6: et k"
+    ],
+    [
+     6.56,
+     "Eksempel på et svar med én ændring: squat udgiv, men 6: et k"
+    ]
+   ]
+  },
+  {
+   "hvad": "Siden paa 390: skaerme til valgene, sammenligningen, Marcs ord og artiklen maalt",
+   "ok": true,
+   "data": {
+    "skaerme": 83.2,
+    "valgSlut": 7.6,
+    "sammenligningSlut": 15.2,
+    "artikelStart": 23.5
+   }
+  },
+  {
+   "hvad": "Trykflader foer artiklen maalt (under 44 px taelles)",
+   "ok": true,
+   "data": {
+    "antal": 4,
+    "under44": 4,
+    "eks": [
+     {
+      "t": "De ni valg",
+      "h": 20
+     },
+     {
+      "t": "Sammenlignet med artiklerne på sitet",
+      "h": 20
+     },
+     {
+      "t": "Dine ord mod den nye tekst",
+      "h": 20
+     },
+     {
+      "t": "Hele artiklen, som den ville blive udgiv",
+      "h": 20
+     }
+    ]
+   }
+  },
+  {
+   "hvad": "Marcs ord: 54 citater fundet og holdt op mod kilderne",
+   "ok": true,
+   "data": {
+    "NU": 34,
+    "DINE STIKORD 13. SEP": 7,
+    "21. SEP": 12,
+    "DINE SVAR 26. SEP": 1
+   }
+  },
+  {
+   "hvad": "Alle citater staar ordret i deres kilde",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "Stikord klippet midt i Marcs saetning ved kildens linjeskift (fund, ikke fejl i scriptet)",
+   "ok": true,
+   "data": [
+    {
+     "q": "Se hvad der føles bedre for atleten, og hvilke positioner der tillader et",
+     "mangler": "konkurrencegodkendt squat."
+    },
+    {
+     "q": "Undtagelsen er mobilitet eller tidligere skader, der gør at man ikke kan have en fast",
+     "mangler": "placering så langt nede."
+    },
+    {
+     "q": "Alle løftere har deres egne bias. Opgaven er at finde ud af hvad der fungerer for",
+     "mangler": "atleten, og derefter bygge de svage punkter op."
+    },
+    {
+     "q": "bias afsløres (fx med",
+     "mangler": "goblet squat), svage punkter bygges op, og teknikken skal kunne holde til et"
+    },
+    {
+     "q": "Ikke besvaret. Modellens egne grænser står i løftmodellens dokumentation og må",
+     "mangler": "gengives derfra, uden at der lægges holdninger i munden på Marc."
+    }
+   ]
+  },
+  {
+   "hvad": "\"DINE STIKORD\" om Dhruvas note \"Ikke besvaret\" (fund)",
+   "ok": true,
+   "data": [
+    {
+     "q": "Ikke besvaret. Modellens egne grænser står i løftmodellens dokumentation og må",
+     "grund": "Dhruvas note \"Ikke besvaret ...\", ikke Marcs ord"
+    }
+   ]
+  },
+  {
+   "hvad": "Marcs svar 26. sep er \"ordret i substans\" i kilden, siden kalder dem \"dine egne ord\"",
+   "ok": true
+  },
+  {
+   "hvad": "Sammenligningen: deload talt selv, inden for 3 % af Setus ord og samme overskrifter",
+   "ok": true,
+   "data": {
+    "mig": {
+     "ordUdenFold": 1071,
+     "ordBroed": 872,
+     "overskrifter": 7,
+     "tabeller": 0,
+     "laes": "9 min. læsning",
+     "tankestregerSynligt": 7,
+     "tankestregerIkkeRef": 7,
+     "aabner": "En deload er en kort periode, hvor træningen bliver mindre krævende."
+    },
+    "setu": " Deload 1.055 9 min. (10 min. beregnet) 7 0 / 0 16,6 (6 over 25) 1 af 4 intet afsnit Frekvens 930 8 min. (8 min. beregnet) 5 0 / 0 15,5 (5 o"
+   }
+  },
+  {
+   "hvad": "Sammenligningen: \"Hvad laver en coach\" talt selv, inden for 3 % og samme overskrifter",
+   "ok": true,
+   "data": {
+    "mig": {
+     "ordUdenFold": 701,
+     "ordBroed": 593,
+     "overskrifter": 6,
+     "tabeller": 0,
+     "laes": "7 min. læsning",
+     "tankestregerSynligt": 1,
+     "tankestregerIkkeRef": 1,
+     "aabner": "Et program og et ugentligt svar er den synlige del af online coaching."
+    },
+    "setu": " Hvad laver en coach 696 7 min. (6 min. beregnet) 6 0 / 0 13,5 (3 over 25) 0 af 0 intet afsnit Sådan er det målt: alle otte sider er åbnet i"
+   }
+  },
+  {
+   "hvad": "Squat 21. sep: 453 ord som Setu",
+   "ok": true
+  },
+  {
+   "hvad": "Fagord i de ni valg talt",
+   "ok": true,
+   "data": {
+    "noindex": 2,
+    "sitemap": 2,
+    "datePublished": 1,
+    "commit": 5,
+    "assets/": 5,
+    "src=": 1,
+    "kildekode": 1,
+    "vis kilde": 1,
+    "outputs/": 3,
+    "scripts/": 2,
+    "HTTP 200": 1,
+    "main": 1,
+    "gren": 1,
+    "fold": 1,
+    "indlejre": 1,
+    "U2": 1,
+    "U5": 1,
+    "U6": 1,
+    "U7": 1,
+    "U8": 1,
+    "U10": 1,
+    "U11": 1,
+    "U13": 1,
+    "N1/V8": 1,
+    "kildemærke": 1,
+    "jeg-form": 1,
+    "fagord": 1,
+    "segmentmodel": 2
+   }
+  }
+ ]
+}
