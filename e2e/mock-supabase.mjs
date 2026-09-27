@@ -180,7 +180,9 @@ function applyOrder(rows, orderParam) {
   })
 }
 
-export function createMockSupabase({ users, tables }) {
+// ORDRE 456: maxRows efterligner Supabase' "Max rows" (PostgREST db-max-rows):
+// et GET giver hoejst saa mange raekker, uanset limit.
+export function createMockSupabase({ users, tables }, { maxRows = null } = {}) {
   const db = {}
   for (const [table, rows] of Object.entries(tables || {})) {
     db[table] = rows.map(r => ({ ...r }))
@@ -351,8 +353,11 @@ export function createMockSupabase({ users, tables }) {
     if (req.method === 'GET') {
       let result = applyFilters(rows, url.searchParams)
       result = applyOrder(result, url.searchParams.get('order'))
+      const offset = url.searchParams.get('offset')
+      if (offset) result = result.slice(Number(offset))
       const limit = url.searchParams.get('limit')
       if (limit) result = result.slice(0, Number(limit))
+      if (maxRows) result = result.slice(0, maxRows)
       const projected = result.map(r => project(table, r, selectStr))
       if (wantsSingleObject(req)) {
         return sendJson(res, 200, projected[0] ?? null)

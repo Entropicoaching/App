@@ -41,7 +41,7 @@ export default function KalenderView({
             // ellers seneste loggede uge, ellers første planlagte uge.
             const ref = currentWeekNo(weeks, loggedWeek) ?? minPlannedWeekNo   // hvor de er nu
             const runway = ref != null ? planned.filter(w => w.week_number >= ref).length : planned.length
-            const lastLog = athleteLastLogs[a.id]
+            const lastLog = athleteLastLogs?.[a.id]
             const daysSince = lastLog ? Math.floor((today0 - new Date(lastLog + 'T12:00:00')) / dayMs) : null
             const holiday = holidayInfo(a)
             const returned = holiday && !holiday.onHoliday           // ferie slut → skal genaktiveres/planlægges

@@ -63,3 +63,39 @@ test('en fejlende storage (fx privat vindue) vælter ikke', () => {
   assert.doesNotThrow(() => clearOfflineSet('athlete-1', 'ex1_1', throwingStorage))
   assert.equal(countOfflineSets('athlete-1', throwingStorage), 0)
 })
+
+// ORDRE 456 (A3): vurderinger af passet i en lokal kø.
+test('saveQueuedRating/clearQueuedRatingIfSame: nyeste vurdering vinder, og kun den sendte ryddes', async () => {
+  const { saveQueuedRating, loadQueuedRatings, clearQueuedRatingIfSame } = await import('./offlineSetQueue.js')
+  const storage = fakeStorage()
+  assert.equal(saveQueuedRating('a1', 's1', { rating: 4 }, storage), true)
+  assert.equal(saveQueuedRating('a1', 's1', { rating: 3, comment: 'tung' }, storage), true)
+  assert.deepEqual({ rating: loadQueuedRatings('a1', storage).s1.rating, comment: loadQueuedRatings('a1', storage).s1.comment }, { rating: 3, comment: 'tung' })
+  clearQueuedRatingIfSame('a1', 's1', { rating: 4, comment: null }, storage)
+  assert.equal(loadQueuedRatings('a1', storage).s1.rating, 3, 'en ældre afsendelse må ikke rydde den nyere vurdering')
+  clearQueuedRatingIfSame('a1', 's1', { rating: 3, comment: 'tung' }, storage)
+  assert.deepEqual(loadQueuedRatings('a1', storage), {})
+  assert.equal(saveQueuedRating('a1', 's1', { rating: null }, storage), false)
+})
+
+test('overlayQueuedRatings lægger ventende vurderinger på ugens pas', async () => {
+  const { overlayQueuedRatings } = await import('./offlineSetQueue.js')
+  const weeks = [{ id: 'w', sessions: [{ id: 's1', athlete_rating: null }, { id: 's2', athlete_rating: 5 }] }]
+  const ud = overlayQueuedRatings(weeks, { s1: { rating: 4, comment: null } })
+  assert.equal(ud[0].sessions[0].athlete_rating, 4)
+  assert.equal(ud[0].sessions[1].athlete_rating, 5)
+  assert.equal(overlayQueuedRatings(weeks, {}), weeks)
+})
+
+// ORDRE 456 (A5): rekord-rækker, der venter på personal_records.
+test('saveQueuedRecord: én post pr. (øvelse, vægt, reps), clearQueuedRecord fjerner den', async () => {
+  const { saveQueuedRecord, loadQueuedRecords, clearQueuedRecord, recordKey } = await import('./offlineSetQueue.js')
+  const storage = fakeStorage()
+  const pr = { exercise_name: 'Bænkpres', weight: 70, reps: 8 }
+  assert.equal(saveQueuedRecord('a1', pr, storage), true)
+  assert.equal(saveQueuedRecord('a1', { ...pr, exercise_name: 'bænkpres ' }, storage), true)
+  assert.equal(Object.keys(loadQueuedRecords('a1', storage)).length, 1, 'samme rekord to gange er én post')
+  assert.equal(saveQueuedRecord('a1', { exercise_name: 'Planke', weight: 0, reps: 1 }, storage), false)
+  clearQueuedRecord('a1', recordKey(pr), storage)
+  assert.deepEqual(loadQueuedRecords('a1', storage), {})
+})

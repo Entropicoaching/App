@@ -9,6 +9,11 @@ import { progressionOverrideErrors, updateDraftForecast, updateForecastOverrideR
 import { blockPurpose, buildPeriodizationSuggestion } from '../periodizationAssistant'
 import { nextWeekStartDate, fillMissingWeekDates } from '../weekDates'
 
+// ORDRE 456 (A6 i docs/kritik-446): "Kopiér seneste uge" kører ~8 s på en
+// langsom telefon; et dobbelttryk gav to uger. Spærren står på modul-niveau
+// (fabrikken kaldes i hvert render), og knappen viser "Kopierer ..." imens.
+let kopiererUge = false
+
 export function lavProgramHandlinger({
   askConfirm, athleteLogs, athletes, blockPlan, calendarWeeks, exerciseForm,
   exerciseLibrary, fetchAthleteWeekSummaries, fetchCalendarWeeks, fetchExerciseLibrary, fetchWeeks, libraryAddForm,
@@ -18,7 +23,7 @@ export function lavProgramHandlinger({
   setCopyingSession, setEditingExercise, setEditingLibraryEx, setEditingRecommended, setEditingSession, setEditingWeek,
   setExerciseForm, setLibraryAddForm, setOpenSessionId, setOpenWeekId, setPlanStartDate, setProgramBlockStart,
   setSessionForm, setShowBlockPlanner, setSnoozedAthletes, setWeekDateFill, setWeekDraft, setWeekForm,
-  showFlash, weekDateFill, weekDraft, weekForm, weeks,
+  showFlash, weekDateFill, weekDraft, weekForm, weeks, setCopyingWeek,
 }) {
   // --- Program-fane: blok-accordion (vis én blok ad gangen) ---
   function programActiveStart() {
@@ -529,8 +534,20 @@ export function lavProgramHandlinger({
   }
 
   async function copyWeek(weekId) {
+    if (kopiererUge) return
     const week = weeks.find(w => w.id === weekId)
     if (!week) return
+    kopiererUge = true
+    setCopyingWeek?.(true)
+    try {
+      await kopierUge(week)
+    } finally {
+      kopiererUge = false
+      setCopyingWeek?.(false)
+    }
+  }
+
+  async function kopierUge(week) {
     const nextNum = Math.max(...weeks.map(w => w.week_number)) + 1
     const { data: newWeek } = await supabase.from('weeks').insert({
       athlete_id: selectedAthlete.id,

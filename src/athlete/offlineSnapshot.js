@@ -25,7 +25,8 @@ export function loadOfflineSnapshot(userId, storage = globalThis.localStorage) {
   }
 }
 
-// patch: { athlete } | { week } | { logs, logsWeekId }. Skifter ugen, gælder
+// patch: { athlete } | { week } | { logs, logsWeekId } | { historik } (ORDRE 456:
+// de seneste sæt pr. øvelse, som fetchExerciseHistory). Skifter ugen, gælder
 // de gamle logs ikke længere.
 export function saveOfflineSnapshot(userId, patch, storage = globalThis.localStorage, now = Date.now()) {
   try {

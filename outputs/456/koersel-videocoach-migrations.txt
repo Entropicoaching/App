@@ -1,0 +1,3 @@
+$ npm run -s verify:videocoach-migrations
+VideoCoach-migrationerne er versionsstyrede og opfylder den lokale RLS/lifecycle-kontrakt.
+exit 0

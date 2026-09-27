@@ -1,0 +1,36 @@
+$ npm run -s verify:videocoach-plate-detect
+== ORDRE 109/120: autoCalib mod 14 betingelser (13 syntetiske + 1 ægte frame) ==
+
+Betingelse                                                                                                                                                       Fundet  Radius-fejl (px)  Forventning
+baseline (god kontrast, fri bane)                                                                                                                                ja      2.0               fundet
+kontrast (lys skive på lys baggrund, diff 22)                                                                                                                    ja      2.0               ikke fundet
+radius uden for forventet interval (skive > maxR)                                                                                                                nej     -                 ikke fundet
+kant mod rack (stolper + bjælke på 3 af 4 sider)                                                                                                                 ja      0.0               fundet, men FORKERT
+mørk skive på mørk baggrund (diff 19)                                                                                                                            ja      0.0               ikke fundet
+lille video (160×120, skive-radius 8px)                                                                                                                          nej     -                 ikke fundet
+skive delvist ude af billedet (klippet af højrekant)                                                                                                             ja      0.0               grænsetilfælde
+telefon i portrait med sort bjælke (over+under)                                                                                                                  ja      0.0               fundet, men FORKERT
+sort skive på mørkegrå baggrund (diff 23)                                                                                                                        ja      2.0               ikke fundet (før), fundet (efter)
+sort skive på sort gulv med lys nav (diff 9, nav-radius 15)                                                                                                      ja      1.0               fundet, men FORKERT (før ORDRE 127) - fundet, korrekt (efter)
+mørkeblå kalibreret skive (25 kg) på mørk baggrund (lum-diff ~3, farve-afstand ~96)                                                                              ja      2.0               ikke fundet (før) - luminans alene ser næsten intet
+mørk skive med lys ring-tekst (skivekant spring 20, to bogstav-klatter ved r≈90)                                                                                 ja      2.0               ikke fundet (før), fundet ved YDERKANTEN (efter) - ikke ved bogstaverne
+mørk skive under top-lys (blankt refleks midt i skiven, ikke ved kanten)                                                                                         ja      2.0               ikke fundet (før), fundet ved YDERKANTEN (efter)
+ægte frame (marc-doedloeft-270.mov, frame 30) - sort/rød skive mod mørkegråt gulv-gummi, sølv-muffe synlig gennem midterhullet - dødløft, ca. 1s inde i klippet  ja      8.0               ikke fundet ELLER fundet men forkert (før) - skivens position er MÅLT i hånden, ikke en uafhængig facit
+
+- baseline (god kontrast, fri bane): kontrast 80, ingen forstyrrelser - det tilfælde autoCalib er bygget til.
+- kontrast (lys skive på lys baggrund, diff 22): kontrast-spring (22) under grænsen (28 - se autoCalib) på alle 16 stråler.
+- radius uden for forventet interval (skive > maxR): kanten ligger uden for søgeradius (maxR=324px) - scanningen ser aldrig et spring.
+- kant mod rack (stolper + bjælke på 3 af 4 sider): rackets spring (85) > skivens (60) på flertallet af de 16 stråler - autoCalib returnerer en tro og sikker, men forkert, radius. INGEN fejlbesked.
+- mørk skive på mørk baggrund (diff 19): samme mekanisme som kontrast-sagen ovenfor, men den mest sandsynlige virkelige version af den.
+- lille video (160×120, skive-radius 8px): bevidst gulv i autoCalib: "rad < 12" -> for få pixels til at bære en måling.
+- skive delvist ude af billedet (klippet af højrekant): de stråler der peger ud af billedet mister kanten (clamp) - resten kan stadig nå de 6/16 stemmer.
+- telefon i portrait med sort bjælke (over+under): bjælkernes spring (170) > skivens (60) på flertallet af stråler op/ned - samme svaghed som rack-sagen: sikker, men forkert radius.
+- sort skive på mørkegrå baggrund (diff 23): spring 23 < grænsen (28) på gråtone alene - samme mekanisme som skive-5, anden gråtone-kombination.
+- sort skive på sort gulv med lys nav (diff 9, nav-radius 15): navets kant er en ÆGTE, fuldt konsistent cirkel og scorer højere end skivens egen svage rand ved r=125 - men navets radius (16px fundet) er under 50% af den anden gyldige kandidats (126px), så ORDRE 127s nav-vagt vælger den STORE i stedet. Se docs/videocoach/RAPPORT-127.md.
+- mørkeblå kalibreret skive (25 kg) på mørk baggrund (lum-diff ~3, farve-afstand ~96): lum(baggrund)=55, lum(skive)≈52 - under enhver rimelig gråtone-grænse. Farve-afstanden (blåt kanal-spring) er derimod stor.
+- mørk skive med lys ring-tekst (skivekant spring 20, to bogstav-klatter ved r≈90): to stråler ser en stærk, men FORKERT, kant ved bogstaverne (r≈90); resten ser kun skivens svage yderkant (r=130, spring 20). Ring-scoring skal foretrække den kant der er konsistent hele vejen rundt.
+- mørk skive under top-lys (blankt refleks midt i skiven, ikke ved kanten): refleksets kant er stærkere end skivens egen, men rammer kun 2-3 af 32 ring-punkter - dækningskravet (≥14/32 punkter skal vise en kant) forkaster refleksen som kandidat, så kun skivens egen (svage, men SAMMENHÆNGENDE) rand er tilbage.
+- ægte frame (marc-doedloeft-270.mov, frame 30) - sort/rød skive mod mørkegråt gulv-gummi, sølv-muffe synlig gennem midterhullet - dødløft, ca. 1s inde i klippet: ægte gym-lys, video-kompressionsstøj og en skæv kameravinkel - det virkelige tilfælde alle de syntetiske tilfælde ovenfor prøver at efterligne.
+
+GRØN: autoCalib opfører sig som dokumenteret i docs/videocoach/SKIVEN-FINDES-IKKE.md og RAPPORT-120.md.
+exit 0

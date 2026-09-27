@@ -1,0 +1,3 @@
+$ npm run -s verify:videocoach-variation-migration
+VideoCoach variation-migrationens sikkerheds- og kompatibilitetskontrakt er gyldig.
+exit 0

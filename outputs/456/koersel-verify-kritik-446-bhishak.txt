@@ -1,0 +1,3 @@
+$ npm run verify:kritik-446  (Bhishaks egne maalinger i outputs/kritik-446, uroert)
+verify:kritik-446 (blok 3) GROEN
+exit 0

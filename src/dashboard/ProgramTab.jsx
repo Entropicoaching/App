@@ -14,7 +14,7 @@ export default function ProgramTab({
   addExercise, addingExercise, addingSession, addingWeek, addSession, addWeek,
   applyPeriodizationSuggestion, applyWeekDateFill,
   approveDraftProgressionState, approvingProgression, assignEdits, athleteLogs, bestLog,
-  blockPlan, copyExerciseToSession, copyingExercise, copyingSession, copySessionToWeek, copyWeek,
+  blockPlan, copyExerciseToSession, copyingExercise, copyingSession, copySessionToWeek, copyWeek, copyingWeek,
   deleteExercise, deleteSession, deleteWeek, editDraftForecast, editingExercise, editingRecommended,
   editingSession, editingWeek, exFormRow, fetchWeeks, generateWeeksFromPlan, gotoWeek, isMobile,
   openSessionId, openWeekId, parseIntensity, planAssistantFocus, planStartDate, previewWeekDateFill, programActiveStart,
@@ -45,8 +45,8 @@ export default function ProgramTab({
                       Periodiseringsplan
                     </button>
                     {weeks.length > 0 && (
-                      <button style={s.btnGhost} onClick={() => copyWeek(weeks[weeks.length - 1].id)}>
-                        Kopiér seneste uge →
+                      <button style={{ ...s.btnGhost, opacity: copyingWeek ? 0.5 : 1 }} disabled={!!copyingWeek} aria-busy={!!copyingWeek} onClick={() => copyWeek(weeks[weeks.length - 1].id)}>
+                        {copyingWeek ? 'Kopierer ugen …' : 'Kopiér seneste uge →'}
                       </button>
                     )}
                     {weeks.some(w => w.start_date) && weeks.some(w => !w.start_date) && (

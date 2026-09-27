@@ -80,9 +80,10 @@ assert.match(markGoodAndSave, /if \(ok\) setAthlete\(/,
 // F6: logSet skal skelne en fejlet SELECT på personal_records fra en tom (men
 // fejlfri) SELECT, og logge den fejlede variant til frontend_errors i stedet
 // for at gemme en ny baseline.
-const logSet = extractFn('logSet')
-assert.match(logSet, /error:\s*prFetchError/, 'logSet skal kigge på fejlen fra SELECT på personal_records')
-assert.match(logSet, /if \(prFetchError\)[\s\S]*logFrontendError\(/,
+// ORDRE 456 (A5): opslaget ligger nu i gemRekordRaekke (saetSkrivning.js).
+const gemRekord = extractFn('gemRekordRaekke')
+assert.match(gemRekord, /error:\s*prFetchError/, 'gemRekordRaekke skal kigge på fejlen fra SELECT på personal_records')
+assert.match(gemRekord, /if \(prFetchError\)[\s\S]*logFrontendError\(/,
   'en fejlet SELECT skal logges til frontend_errors, ikke tolkes som "ingen tidligere data"')
 
 // F7: saveReadiness må ikke vise den rå Supabase-fejlbesked til atleten.

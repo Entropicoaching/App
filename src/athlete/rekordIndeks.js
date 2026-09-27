@@ -18,7 +18,10 @@ import { laegTil } from './rekorder.js'
 // Nøglens præfiks står i offlineSnapshot.js, som rydder indekset ved log ud
 // (uden at hovedbundtet skal have rekorder.js med).
 import { REKORD_INDEKS_PREFIX as PREFIX } from './offlineSnapshot.js'
-const VERSION = 1
+// ORDRE 456 (A4): version 2. Et indeks fra 450 kan være bygget af en afskåret
+// historik (4000 rækker, eller Supabase' "Max rows"); det bygges forfra af alle
+// sider (fremgangLogs.js, hentAlleSider), og indtil da fejres intet.
+const VERSION = 2
 // Rækker hentes fra lidt før indeksets nyeste række: et sæt, der først når
 // serveren senere (fx fra en anden telefon), har et ældre logged_at. Det er
 // ufarligt at se en række to gange, for indekset er kun maksima.

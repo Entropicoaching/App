@@ -1,0 +1,18 @@
+Bygger foer 439 og efter 439 mod mocken ...
+  let  foer  aabning 1: brugbart 939 ms, historik -, 23 kald
+  let  foer  aabning 2: brugbart 987 ms, historik -, 23 kald
+  let  foer  aabning 3: brugbart 945 ms, historik -, 23 kald
+  let  efter aabning 1: brugbart 971 ms, historik 1683 ms, 5 kB, 25 kald
+  let  efter aabning 2: brugbart 962 ms, historik 1682 ms, 5 kB, 25 kald
+  let  efter aabning 3: brugbart 904 ms, historik 1681 ms, 5 kB, 25 kald
+  tung foer  aabning 1: brugbart 3363 ms, historik -, 23 kald
+  tung foer  aabning 2: brugbart 3364 ms, historik -, 23 kald
+  tung foer  aabning 3: brugbart 3196 ms, historik -, 23 kald
+  tung efter aabning 1: brugbart 3312 ms, historik 3800 ms, 5 kB, 25 kald
+  tung efter aabning 2: brugbart 3266 ms, historik 3780 ms, 5 kB, 25 kald
+  tung efter aabning 3: brugbart 3331 ms, historik 3800 ms, 5 kB, 25 kald
+let (114 saet) foer: median 945 ms til brugbart
+let (114 saet) efter: median 962 ms til brugbart
+tung (4940 saet) foer: median 3363 ms til brugbart
+tung (4940 saet) efter: median 3312 ms til brugbart
+exit 0

@@ -1,0 +1,33 @@
+{
+  "gammelTop": "110 x 5",
+  "idag": "100 x 5",
+  "koersler": [
+    {
+      "topForUger": 130,
+      "loft": "ingen",
+      "historikRaekker": 4290,
+      "sider": 6,
+      "bedstFoerSquatE1rm": 128,
+      "feltetsVaegt": "100",
+      "fejring": null
+    },
+    {
+      "topForUger": 60,
+      "loft": "ingen",
+      "historikRaekker": 4290,
+      "sider": 6,
+      "bedstFoerSquatE1rm": 128,
+      "feltetsVaegt": "100",
+      "fejring": null
+    },
+    {
+      "topForUger": 60,
+      "loft": 1000,
+      "historikRaekker": 4290,
+      "sider": 6,
+      "bedstFoerSquatE1rm": 128,
+      "feltetsVaegt": "100",
+      "fejring": null
+    }
+  ]
+}

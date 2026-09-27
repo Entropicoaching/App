@@ -222,6 +222,8 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [recommendedInput, setRecommendedInput] = useState('')
   const [copyingExercise, setCopyingExercise] = useState(null)
   const [copyingSession, setCopyingSession] = useState(null)
+  // ORDRE 456 (A6): "Kopiér seneste uge" kører.
+  const [copyingWeek, setCopyingWeek] = useState(false)
 
   // Meet plan state
   const [meetPlan, setMeetPlan] = useState(null)
@@ -241,13 +243,15 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [libraryAddForm, setLibraryAddForm] = useState({ name: '', category: 'Accessory' })
   const [librarySearch, setLibrarySearch] = useState('')
   const [athleteWeekSummary, setAthleteWeekSummary] = useState({})
-  const [athleteLastLogs, setAthleteLastLogs] = useState({})
+  // ORDRE 456 (A7): null = endnu ikke hentet (forsiden siger "henter" i stedet
+  // for "Ingen logs"/"0 af 4 pas", som på en langsom telefon stod i ca. 5 s).
+  const [athleteLastLogs, setAthleteLastLogs] = useState(null)
   const [calendarWeeks, setCalendarWeeks] = useState({}) // athlete_id -> [{week_number, block_name, start_date, session_count, exercise_count, planned_sets, planned_tonnage}]
   const [athleteCurrentWeek, setAthleteCurrentWeek] = useState({}) // athlete_id -> ugenummer for seneste logg. træning
   // ORDRE 277 · commit 1: athlete_id -> { [week_number]: { sets, tonnage } } —
   // gennemførte (ikke sprunget over) sæt/tonnage pr. programuge, til
   // afvigelse-sorteringen (src/dashboard/afvigelse.js).
-  const [athleteWeekCompletion, setAthleteWeekCompletion] = useState({})
+  const [athleteWeekCompletion, setAthleteWeekCompletion] = useState(null) // ORDRE 456 (A7): null = ikke hentet
   const [athleteSortMode, setAthleteSortMode] = useState('navn') // 'navn' | 'afvigelse'
   const [timelineEdit, setTimelineEdit] = useState(null) // { athleteId, weeks, name, block, firstStartIso } — åbent dato-panel i kalender-tidslinjen
   // Kilde = athletes.snooze_until (DB). localStorage bruges kun som midlertidig seed for
@@ -370,7 +374,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     setCopyingSession, setEditingExercise, setEditingLibraryEx, setEditingRecommended, setEditingSession, setEditingWeek,
     setExerciseForm, setLibraryAddForm, setOpenSessionId, setOpenWeekId, setPlanStartDate, setProgramBlockStart,
     setSessionForm, setShowBlockPlanner, setSnoozedAthletes, setWeekDateFill, setWeekDraft, setWeekForm,
-    showFlash, weekDateFill, weekDraft, weekForm, weeks,
+    showFlash, weekDateFill, weekDraft, weekForm, weeks, setCopyingWeek,
   })
 
   const {
@@ -653,7 +657,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   applyPeriodizationSuggestion, applyWeekDateFill, approveDraftProgressionState,
                   approvingProgression, assignEdits, athleteLogs, bestLog,
                   blockPlan, copyExerciseToSession, copyingExercise,
-                  copyingSession, copySessionToWeek, copyWeek, deleteExercise,
+                  copyingSession, copySessionToWeek, copyWeek, copyingWeek, deleteExercise,
                   deleteSession, deleteWeek, editDraftForecast, editingExercise,
                   editingRecommended, editingSession, editingWeek, exFormRow,
                   fetchWeeks, generateWeeksFromPlan, gotoWeek, isMobile,

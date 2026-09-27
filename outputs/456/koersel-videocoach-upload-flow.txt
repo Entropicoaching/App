@@ -1,0 +1,14 @@
+$ npm run -s verify:videocoach-upload-flow
+== A) Atleten: fil valgt -> sti bygget -> række dannet -> "Video modtaget" ==
+banner: "Video modtaget ✓ · din coach ser den, når han åbner den"
+client_analysis_id: e7d84b46-9eee-4a27-a788-5cf2beed6952
+
+== B) Coachen: lokalt "signeret" URL -> video indlæst -> sporet -> samme række -> complete ==
+  video indlæst i coach-tilstand (canvas har fået klippets mål)
+  runFullAnalysis afsluttet: tracked=undefined -> succes (73740ms)
+sporing gennemført: true (73740ms, ægte requestVideoFrameCallback-afspilning)
+saveBtn: "Sendt ✓"
+
+GRØN: atletens standardvej og coachens fuldførelse virker ende til ende mod det rigtige klip,
+med kun Supabase-netværket stubbet lokalt - samme række, fra "afventer" til "complete".
+exit 0

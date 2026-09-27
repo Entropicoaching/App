@@ -206,3 +206,104 @@ export function overlayQueuedSets(rows, queue, athleteId) {
   }
   return out
 }
+
+// --- ORDRE 456 (A3 i docs/kritik-446): vurderinger af passet -----------------
+// "Hvordan gik det? 1-5" uden net gik tabt. Nu ligger vurderingen på telefonen
+// (én pr. pas, nyeste vinder), til sessions-rækken har fået den. Samme regler
+// som sæt-køen: rene funktioner, storage som parameter, fejl sluger sig selv.
+const RATING_PREFIX = 'entropi_offline_vurderinger'
+
+function readRatingQueue(athleteId, storage) {
+  try {
+    if (!storage || !athleteId) return {}
+    const raw = storage.getItem(`${RATING_PREFIX}:${athleteId}`)
+    const parsed = raw ? JSON.parse(raw) : {}
+    return parsed && typeof parsed === 'object' ? parsed : {}
+  } catch {
+    return {}
+  }
+}
+
+export function saveQueuedRating(athleteId, sessionId, { rating, comment = null }, storage = globalThis.localStorage) {
+  try {
+    if (!storage || !athleteId || !sessionId || !rating) return false
+    const queue = readRatingQueue(athleteId, storage)
+    queue[sessionId] = { rating, comment: comment || null, queuedAt: Date.now() }
+    storage.setItem(`${RATING_PREFIX}:${athleteId}`, JSON.stringify(queue))
+    return true
+  } catch {
+    return false
+  }
+}
+
+export function loadQueuedRatings(athleteId, storage = globalThis.localStorage) {
+  return readRatingQueue(athleteId, storage)
+}
+
+// Fjern kun, hvis det stadig er den vurdering, der blev sendt.
+export function clearQueuedRatingIfSame(athleteId, sessionId, sent, storage = globalThis.localStorage) {
+  try {
+    if (!storage || !athleteId || !sessionId || !sent) return
+    const queue = readRatingQueue(athleteId, storage)
+    const cur = queue[sessionId]
+    if (!cur || cur.rating !== sent.rating || (cur.comment || null) !== (sent.comment || null)) return
+    delete queue[sessionId]
+    storage.setItem(`${RATING_PREFIX}:${athleteId}`, JSON.stringify(queue))
+  } catch { /* som clearOfflineSet */ }
+}
+
+// Ventende vurderinger lagt oven på ugerne (programmet eller øjebliksbilledet),
+// så "din uge" og coachens-linjen viser dem, før de er sendt. Ren funktion.
+export function overlayQueuedRatings(weeks, queue) {
+  const ids = Object.keys(queue || {})
+  if (!ids.length) return weeks
+  return (weeks || []).map(w => ({
+    ...w,
+    sessions: (w.sessions || []).map(s => queue[s.id] ? { ...s, athlete_rating: queue[s.id].rating, athlete_comment: queue[s.id].comment ?? s.athlete_comment ?? null } : s),
+  }))
+}
+
+// --- ORDRE 456 (A5 i docs/kritik-446): rekord-rækker til personal_records ----
+// En rekord, hvis sæt ER sendt, men hvis række i personal_records endnu ikke er
+// skrevet (appen lukket imellem, eller nettet døde). Nøglen er (øvelse, vægt,
+// reps), så samme rekord aldrig står to gange.
+const RECORD_PREFIX = 'entropi_offline_rekorder'
+
+export const recordKey = (pr) => `${String(pr?.exercise_name || '').trim().toLowerCase()}|${Number(pr?.weight)}|${Number(pr?.reps)}`
+
+function readRecordQueue(athleteId, storage) {
+  try {
+    if (!storage || !athleteId) return {}
+    const raw = storage.getItem(`${RECORD_PREFIX}:${athleteId}`)
+    const parsed = raw ? JSON.parse(raw) : {}
+    return parsed && typeof parsed === 'object' ? parsed : {}
+  } catch {
+    return {}
+  }
+}
+
+export function saveQueuedRecord(athleteId, pr, storage = globalThis.localStorage) {
+  try {
+    if (!storage || !athleteId || !pr?.exercise_name || !(Number(pr.weight) > 0) || !(Number(pr.reps) > 0)) return false
+    const queue = readRecordQueue(athleteId, storage)
+    queue[recordKey(pr)] = { exercise_name: pr.exercise_name, weight: Number(pr.weight), reps: Number(pr.reps) }
+    storage.setItem(`${RECORD_PREFIX}:${athleteId}`, JSON.stringify(queue))
+    return true
+  } catch {
+    return false
+  }
+}
+
+export function loadQueuedRecords(athleteId, storage = globalThis.localStorage) {
+  return readRecordQueue(athleteId, storage)
+}
+
+export function clearQueuedRecord(athleteId, key, storage = globalThis.localStorage) {
+  try {
+    if (!storage || !athleteId || !key) return
+    const queue = readRecordQueue(athleteId, storage)
+    if (!(key in queue)) return
+    delete queue[key]
+    storage.setItem(`${RECORD_PREFIX}:${athleteId}`, JSON.stringify(queue))
+  } catch { /* som clearOfflineSet */ }
+}

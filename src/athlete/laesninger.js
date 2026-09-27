@@ -10,11 +10,12 @@ import { runGuardedRead } from '../athleteReadGuard'
 import { clearReadinessDraft } from '../readinessDraft'
 import { loadRestPause } from '../restPause'
 import { estimatedOneRepMax, HOVEDLOEFT_FAMILIER } from '../exerciseProgress'
-import { fremgangLogsQuery, fremgangLogsKronologisk, rekordRaekkerQuery } from '../fremgangLogs'
+import { fremgangLogsQuery, fremgangLogsKronologisk, rekordRaekkerQuery, hentAlleSider } from '../fremgangLogs'
 import { today } from '../athleteShared'
 import { computeActiveWeekIdx, weekFullyLogged, parsePlannedRpe, logFrontendError } from './ugeHjaelp'
 import { isUuid } from './videoCoachBro'
-import { loadOfflineSets, overlayQueuedSets } from '../offlineSetQueue'
+import { unikkeRekorder } from '../personalRecords'
+import { loadOfflineSets, overlayQueuedSets, loadQueuedRatings, overlayQueuedRatings } from '../offlineSetQueue'
 import { browserSaysOffline, seemsOffline } from '../offlineSession'
 import { loadOfflineSnapshot, saveOfflineSnapshot, snapshotLogsForWeek } from './offlineSnapshot'
 
@@ -53,11 +54,18 @@ export function lavLaesninger({
     setRestPause(loadRestPause(a.id))
     if (snap.week) {
       const rows = snapshotLogsForWeek(snap)
-      setAllWeeks([snap.week])
+      // ORDRE 456 (A3): vurderinger, der venter på net, står også efter en genåbning.
+      const [week] = overlayQueuedRatings([snap.week], loadQueuedRatings(a.id))
+      setAllWeeks([week])
       setViewingWeekIdx(0)
-      setCurrentWeek(snap.week)
+      setCurrentWeek(week)
       setExerciseLogs(overlayQueuedSets(rows, loadOfflineSets(a.id), a.id))
       setLogInputs(prev => mergeAthleteSetInputs(prev, rows))
+    }
+    // ORDRE 456 (A1): historikkens seneste sæt ("Sidste gang" og vægten, der
+    // forudfyldes), så vægtfeltet ikke står tomt efter en genåbning uden net.
+    if (snap.historik && typeof snap.historik === 'object') {
+      setExerciseHistory(prev => (prev && Object.keys(prev).length ? prev : snap.historik))
     }
     setOfflineSnapshotAt(snap.savedAt || Date.now())
     setLoading(false)
@@ -199,7 +207,8 @@ export function lavLaesninger({
     }
     if (!mountedRef.current) return
     setPrsError(false)
-    setPrs(data || [])
+    // ORDRE 456 (A5): dubletter fra før 456 vises kun én gang.
+    setPrs(unikkeRekorder(data))
   }
 
   async function fetchMeetPlan(athleteId) {
@@ -253,7 +262,9 @@ export function lavLaesninger({
   async function fetchFremgangLogs(athleteId) {
     setFremgangLoading(true)
     const { data, ok } = await runGuardedRead(
-      () => fremgangLogsQuery(supabase, athleteId),
+      // ORDRE 456 (A4): hele historikken (side for side), så Fremgangs
+      // rekorder ikke regnes fra en afskåret historik.
+      () => hentAlleSider((fra, til) => fremgangLogsQuery(supabase, athleteId, { fra, til })),
       onReadError('Fremgang', athleteId),
     )
     setFremgangLoading(false)
@@ -267,7 +278,8 @@ export function lavLaesninger({
   // rekorderne venter bare til næste åbning). null = ikke hentet.
   async function fetchRekordRaekker(athleteId, siden) {
     const { data, ok } = await runGuardedRead(
-      () => rekordRaekkerQuery(supabase, athleteId, siden),
+      // ORDRE 456 (A4): alle sider; først da er indekset "bygget" og fejrer.
+      () => hentAlleSider((fra, til) => rekordRaekkerQuery(supabase, athleteId, siden, { fra, til })),
       (error) => { if (!seemsOffline()) logFrontendError('Rekord-indekset kunne ikke hentes', error, athleteId) },
     )
     return ok ? (data || []) : null
@@ -470,12 +482,13 @@ export function lavLaesninger({
     // længere retvisende.
     setProgramError(false)
     if (!data || data.length === 0) return
-    const weeks = data.map(w => ({
+    // ORDRE 456 (A3): vurderinger, der endnu ikke er sendt, lægges ovenpå.
+    const weeks = overlayQueuedRatings(data.map(w => ({
       ...w,
       sessions: (w.sessions || [])
         .sort((a, b) => a.session_order - b.session_order)
         .map(s => ({ ...s, exercises: (s.exercises || []).sort((a, b) => a.exercise_order - b.exercise_order) }))
-    }))
+    })), coachAthleteId ? {} : loadQueuedRatings(athleteId))
     setAllWeeks(weeks)
     const dateIdx = computeActiveWeekIdx(weeks)
     // Lås næste uge op tidligt: er den dato-aktuelle uge fuldt logget, og findes
@@ -717,6 +730,7 @@ export function lavLaesninger({
       history[name] = dates.map(date => ({ date, sets: dateMap[date].sort((a, b) => a.set - b.set) }))
     }
     setExerciseHistory(history)
+    rememberForOffline({ historik: history })
   }
 
   return {
