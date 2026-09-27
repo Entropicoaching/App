@@ -1,0 +1,1782 @@
+{
+ "360": {
+  "k6": {
+   "computer": {
+    "fold": false,
+    "foldAaben": false,
+    "felt": false,
+    "titel": "Klassens turnering"
+   },
+   "makkerHjemme": {
+    "fold": true,
+    "foldAaben": false,
+    "felt": false,
+    "titel": "Klassens turnering",
+    "foldY": {
+     "top": 544,
+     "bund": 588,
+     "venstre": 25,
+     "hoejre": 335,
+     "h": 44,
+     "w": 310,
+     "vinduH": 780
+    }
+   },
+   "skrevet": "7",
+   "efterGenindlaes": {
+    "fold": true,
+    "foldAaben": true,
+    "felt": true,
+    "titel": "Klassens turnering",
+    "vaerdi": "7"
+   },
+   "slettetOgGenindlaest": {
+    "fold": true,
+    "foldAaben": false,
+    "felt": false,
+    "titel": "Klassens turnering"
+   }
+  },
+  "parti": {
+   "traek": 25,
+   "analyse": true,
+   "navne": [
+    "Du",
+    "Computeren"
+   ]
+  },
+  "k8": "Nøjagtighed: hvor tæt dine træk var på motorens bedste (100 % = som motoren). Sammenlign med dine egne partier. Tallet kan ikke sammenlignes med lichess, og efter et afgjort parti stiger det.",
+  "k10": {
+   "knap": true,
+   "filer": "abcdefgh",
+   "raekker": "87654321",
+   "skrift": 12.48,
+   "opgave": "Find et bedre træk. Du spillede 10. Txg7 - en bukke (??). 8765432a1bcdefgh Hvid i træk. Tryk på en brik og så på feltet. Prøv igen Vis løsningen Og hvad så? ▶ N",
+   "braet": {
+    "top": 2246,
+    "bund": 2556,
+    "venstre": 25,
+    "hoejre": 335,
+    "h": 310,
+    "w": 310,
+    "vinduH": 780
+   },
+   "sort": {
+    "knap": true,
+    "filer": "hgfedcba",
+    "raekker": "12345678",
+    "bedoemt": true,
+    "besked": "Rigtigt! De7 er motorens bedste træk."
+   }
+  },
+  "k4": {
+   "lichess": {
+    "analyse": true,
+    "navne": [
+     "ven123",
+     "elev2014"
+    ],
+    "resume": "ven123: 1 bukke, 1 unøjagtighed. Nøjagtighed 47 %. elev2014: 1 bukke, 2 unøjagtigheder. Nøjagtighed 74 %.",
+    "rul": 0
+   },
+   "delIgen": true,
+   "efterGenindlaes": [
+    "ven123",
+    "elev2014"
+   ],
+   "lang": {
+    "navne": [
+     "Storebror der altid…",
+     "Sort"
+    ],
+    "rul": 0,
+    "tabel": {
+     "top": 474,
+     "bund": 980,
+     "venstre": 20,
+     "hoejre": 340,
+     "h": 506,
+     "w": 320,
+     "vinduH": 780
+    },
+    "resume": "Storebror der altid…: ingen fejl. Nøjagtighed 100 %. Sort: 1 bukke. Nøjagtighed 28 %."
+   },
+   "udenNavne": [
+    "Hvid",
+    "Sort"
+   ],
+   "nytMakkerparti": {
+    "slut": "Skakmat! Hvid vinder.",
+    "analyse": true,
+    "navne": [
+     "Hvid",
+     "Sort"
+    ]
+   }
+  },
+  "k7": {
+   "knap": {
+    "top": 228,
+    "bund": 272,
+    "venstre": 266,
+    "hoejre": 335,
+    "h": 44,
+    "w": 69,
+    "vinduH": 780
+   },
+   "braet": {
+    "top": 287,
+    "bund": 631,
+    "venstre": 8,
+    "hoejre": 352,
+    "h": 344,
+    "w": 344,
+    "vinduH": 780
+   },
+   "startKort": {
+    "top": 908,
+    "bund": 1393,
+    "venstre": 25,
+    "hoejre": 335,
+    "h": 485,
+    "w": 310,
+    "vinduH": 780
+   },
+   "rul": 0,
+   "tekst": "Storm",
+   "linje": {
+    "tekst": "Sort trækker Vi finder dit niveau: 0 af 10 Storm",
+    "h": 57
+   },
+   "efterTryk": {
+    "startKort": {
+     "top": 0,
+     "bund": 485,
+     "venstre": 25,
+     "hoejre": 335,
+     "h": 485,
+     "w": 310,
+     "vinduH": 780
+    },
+    "fokus": "knap-storm-dagens"
+   }
+  },
+  "k11": {
+   "overskrift": "Stormen er stoppet. Du løste 13 gåder.",
+   "rekord": "En stoppet storm tæller ikke som rekord. Lad uret løbe ud næste gang.",
+   "nyRekord": false,
+   "tal": [
+    "8 forkerte træk (−80 s)",
+    "Flest rigtige i træk: 5 (+3 s bonustid)",
+    "Sværeste løste gåde: rating 977"
+   ],
+   "galt": [
+    "Red din brik: 3 af 3 gik galt",
+    "Gaffel: 2 af 3 gik galt",
+    "Mat i 2: 2 af 2 gik galt",
+    "Spyd: 1 af 1 gik galt"
+   ],
+   "missede": [
+    "Gåde 6: Red din brik",
+    "Gåde 7: Red din brik",
+    "Gåde 8: Red din brik",
+    "Gåde 10: Spyd",
+    "Gåde 13: Gaffel",
+    "Gåde 18: Mat i 2",
+    "Gåde 19: Mat i 2",
+    "Gåde 20: Gaffel"
+   ],
+   "missedeTitel": "Se løsningen på gåderne, der gik galt",
+   "traek": 31,
+   "haengt": 1,
+   "set": 30,
+   "foersteMisset": {
+    "navn": "Gåde 6: Red din brik",
+    "knapBoks": {
+     "h": 44,
+     "w": 182
+    },
+    "aaben": true,
+    "tekst": "Sort trækker. Løsningen: 1... Sc2",
+    "oeverst": "1",
+    "filer": "hgfedcba",
+    "antalFelter": 64,
+    "pile": 2,
+    "braet": {
+     "venstre": 43,
+     "hoejre": 320,
+     "w": 276,
+     "top": 475,
+     "bund": 751
+    },
+    "boksBund": 780,
+    "vinduH": 780,
+    "stilling": "8/8/5k1P/8/P7/8/K7/n7 b",
+    "saaDenSelv": true,
+    "linje": [
+     "Sc2"
+    ],
+    "lovlige": 1,
+    "slut": "ikke mat"
+   }
+  },
+  "k9": {
+   "overskrift": "Tiden er gået! Du løste 11 gåder.",
+   "rekord": "",
+   "nyRekord": true,
+   "tal": [
+    "15 forkerte træk (−150 s)",
+    "Flest rigtige i træk: 3",
+    "Sværeste løste gåde: rating 1100"
+   ],
+   "galt": [
+    "Gaffel: 5 af 6 gik galt",
+    "Spyd: 4 af 4 gik galt",
+    "Mat i 2: 3 af 4 gik galt",
+    "Binding: 1 af 2 gik galt",
+    "Red din brik: 1 af 1 gik galt",
+    "Kvadratet: 1 af 1 gik galt"
+   ],
+   "missede": [
+    "Gåde 4: Mat i 2",
+    "Gåde 6: Red din brik",
+    "Gåde 7: Kvadratet",
+    "Gåde 8: Gaffel",
+    "Gåde 9: Gaffel",
+    "Gåde 12: Spyd",
+    "Gåde 13: Gaffel",
+    "Gåde 16: Spyd",
+    "Gåde 18: Mat i 2",
+    "Gåde 19: Spyd",
+    "Gåde 21: Spyd",
+    "Gåde 22: Mat i 2",
+    "Gåde 23: Gaffel",
+    "Gåde 24: Binding",
+    "Gåde 26: Gaffel"
+   ],
+   "missedeTitel": "Se løsningen på gåderne, der gik galt",
+   "traek": 43,
+   "haengt": 0,
+   "set": 43,
+   "liste": {
+    "top": 601,
+    "bund": 1350,
+    "venstre": 43,
+    "hoejre": 320,
+    "h": 749,
+    "w": 276,
+    "vinduH": 780
+   },
+   "tilstand": {
+    "resultat": true,
+    "koerer": false,
+    "knapper": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "resultat": {
+    "top": 0,
+    "bund": 1471,
+    "venstre": 25,
+    "hoejre": 335,
+    "h": 1471,
+    "w": 310,
+    "vinduH": 780
+   },
+   "aabnet": [
+    {
+     "navn": "Gåde 4: Mat i 2",
+     "knapBoks": {
+      "h": 44,
+      "w": 145
+     },
+     "aaben": true,
+     "tekst": "Sort trækker. Løsningen: 22... Te1+ 23. Td1 Txd1#",
+     "oeverst": "1",
+     "filer": "hgfedcba",
+     "antalFelter": 64,
+     "pile": 2,
+     "braet": {
+      "venstre": 43,
+      "hoejre": 320,
+      "w": 276,
+      "top": 454,
+      "bund": 730
+     },
+     "boksBund": 780,
+     "vinduH": 780,
+     "stilling": "1r4k1/1p1R2np/p5p1/4p1P1/4P3/4r3/PPP5/1K3B1R b",
+     "saaDenSelv": true,
+     "linje": [
+      "Te1+",
+      "Td1",
+      "Txd1#"
+     ],
+     "lovlige": 3,
+     "slut": "mat"
+    },
+    {
+     "navn": "Gåde 16: Spyd",
+     "knapBoks": {
+      "h": 44,
+      "w": 139
+     },
+     "aaben": true,
+     "tekst": "Sort trækker. Løsningen: 62... Tg5+ 63. Kf4 Txg1",
+     "oeverst": "1",
+     "filer": "hgfedcba",
+     "antalFelter": 64,
+     "pile": 2,
+     "braet": {
+      "venstre": 43,
+      "hoejre": 320,
+      "w": 276,
+      "top": 427,
+      "bund": 703
+     },
+     "boksBund": 753,
+     "vinduH": 780,
+     "stilling": "8/8/5pk1/1r6/4P1K1/5P2/8/6R1 b",
+     "saaDenSelv": true,
+     "linje": [
+      "Tg5+",
+      "Kf4",
+      "Txg1"
+     ],
+     "lovlige": 3,
+     "slut": "ikke mat"
+    },
+    {
+     "navn": "Gåde 26: Gaffel",
+     "knapBoks": {
+      "h": 44,
+      "w": 147
+     },
+     "aaben": true,
+     "tekst": "Hvid trækker. Løsningen: 8. Da4+ Ld7 9. Dxb4",
+     "oeverst": "8",
+     "filer": "abcdefgh",
+     "antalFelter": 64,
+     "pile": 2,
+     "braet": {
+      "venstre": 43,
+      "hoejre": 320,
+      "w": 276,
+      "top": 426,
+      "bund": 702
+     },
+     "boksBund": 752,
+     "vinduH": 780,
+     "stilling": "r1bqk1nr/pp3ppp/4p3/3p4/1b1PP3/8/PP1N1PPP/R1BQKB1R w",
+     "saaDenSelv": true,
+     "linje": [
+      "Da4+",
+      "Ld7",
+      "Dxb4"
+     ],
+     "lovlige": 3,
+     "slut": "ikke mat"
+    }
+   ],
+   "lukket": true,
+   "rul": 0
+  },
+  "rul": 0,
+  "net": [],
+  "fejl": []
+ },
+ "390": {
+  "k6": {
+   "computer": {
+    "fold": false,
+    "foldAaben": false,
+    "felt": false,
+    "titel": "Klassens turnering"
+   },
+   "makkerHjemme": {
+    "fold": true,
+    "foldAaben": false,
+    "felt": false,
+    "titel": "Klassens turnering",
+    "foldY": {
+     "top": 576,
+     "bund": 620,
+     "venstre": 25,
+     "hoejre": 365,
+     "h": 44,
+     "w": 340,
+     "vinduH": 844
+    }
+   },
+   "skrevet": "7",
+   "efterGenindlaes": {
+    "fold": true,
+    "foldAaben": true,
+    "felt": true,
+    "titel": "Klassens turnering",
+    "vaerdi": "7"
+   },
+   "slettetOgGenindlaest": {
+    "fold": true,
+    "foldAaben": false,
+    "felt": false,
+    "titel": "Klassens turnering"
+   }
+  },
+  "parti": {
+   "traek": 25,
+   "analyse": true,
+   "navne": [
+    "Du",
+    "Computeren"
+   ]
+  },
+  "k8": "Nøjagtighed: hvor tæt dine træk var på motorens bedste (100 % = som motoren). Sammenlign med dine egne partier. Tallet kan ikke sammenlignes med lichess, og efter et afgjort parti stiger det.",
+  "k10": {
+   "knap": true,
+   "filer": "abcdefgh",
+   "raekker": "87654321",
+   "skrift": 12.48,
+   "opgave": "Find et bedre træk. Du spillede 4. Sxa7 - en bukke (??). 8765432a1bcdefgh Hvid i træk. Tryk på en brik og så på feltet. Prøv igen Vis løsningen Og hvad så? ▶ Næ",
+   "braet": {
+    "top": 1794,
+    "bund": 2134,
+    "venstre": 25,
+    "hoejre": 365,
+    "h": 340,
+    "w": 340,
+    "vinduH": 844
+   },
+   "sort": {
+    "knap": true,
+    "filer": "hgfedcba",
+    "raekker": "12345678",
+    "bedoemt": true,
+    "besked": "Rigtigt! De7 er motorens bedste træk."
+   }
+  },
+  "k4": {
+   "lichess": {
+    "analyse": true,
+    "navne": [
+     "ven123",
+     "elev2014"
+    ],
+    "resume": "ven123: 1 bukke, 1 unøjagtighed. Nøjagtighed 47 %. elev2014: 1 bukke, 2 unøjagtigheder. Nøjagtighed 74 %.",
+    "rul": 0
+   },
+   "delIgen": true,
+   "efterGenindlaes": [
+    "ven123",
+    "elev2014"
+   ],
+   "lang": {
+    "navne": [
+     "Storebror der altid…",
+     "Sort"
+    ],
+    "rul": 0,
+    "tabel": {
+     "top": 504,
+     "bund": 1010,
+     "venstre": 35,
+     "hoejre": 355,
+     "h": 506,
+     "w": 320,
+     "vinduH": 844
+    },
+    "resume": "Storebror der altid…: ingen fejl. Nøjagtighed 100 %. Sort: 1 bukke. Nøjagtighed 28 %."
+   },
+   "udenNavne": [
+    "Hvid",
+    "Sort"
+   ],
+   "nytMakkerparti": {
+    "slut": "Skakmat! Hvid vinder.",
+    "analyse": true,
+    "navne": [
+     "Hvid",
+     "Sort"
+    ]
+   }
+  },
+  "k7": {
+   "knap": {
+    "top": 228,
+    "bund": 272,
+    "venstre": 296,
+    "hoejre": 365,
+    "h": 44,
+    "w": 69,
+    "vinduH": 844
+   },
+   "braet": {
+    "top": 287,
+    "bund": 661,
+    "venstre": 8,
+    "hoejre": 382,
+    "h": 374,
+    "w": 374,
+    "vinduH": 844
+   },
+   "startKort": {
+    "top": 938,
+    "bund": 1403,
+    "venstre": 25,
+    "hoejre": 365,
+    "h": 465,
+    "w": 340,
+    "vinduH": 844
+   },
+   "rul": 0,
+   "tekst": "Storm",
+   "linje": {
+    "tekst": "Hvid trækker Vi finder dit niveau: 0 af 10 Storm",
+    "h": 57
+   },
+   "efterTryk": {
+    "startKort": {
+     "top": 0,
+     "bund": 465,
+     "venstre": 25,
+     "hoejre": 365,
+     "h": 465,
+     "w": 340,
+     "vinduH": 844
+    },
+    "fokus": "knap-storm-dagens"
+   }
+  },
+  "k11": {
+   "overskrift": "Stormen er stoppet. Du løste 15 gåder.",
+   "rekord": "En stoppet storm tæller ikke som rekord. Lad uret løbe ud næste gang.",
+   "nyRekord": false,
+   "tal": [
+    "8 forkerte træk (−80 s)",
+    "Flest rigtige i træk: 10 (+3 s bonustid)",
+    "Sværeste løste gåde: rating 918"
+   ],
+   "galt": [
+    "Red din brik: 3 af 4 gik galt",
+    "Mat i 2: 2 af 4 gik galt",
+    "Gaffel: 2 af 3 gik galt",
+    "Spyd: 1 af 1 gik galt"
+   ],
+   "missede": [
+    "Gåde 5: Red din brik",
+    "Gåde 6: Red din brik",
+    "Gåde 7: Red din brik",
+    "Gåde 9: Gaffel",
+    "Gåde 20: Gaffel",
+    "Gåde 21: Spyd",
+    "Gåde 22: Mat i 2",
+    "Gåde 23: Mat i 2"
+   ],
+   "missedeTitel": "Se løsningen på gåderne, der gik galt",
+   "traek": 33,
+   "haengt": 0,
+   "set": 33,
+   "foersteMisset": {
+    "navn": "Gåde 5: Red din brik",
+    "knapBoks": {
+     "h": 44,
+     "w": 182
+    },
+    "aaben": true,
+    "tekst": "Hvid trækker. Løsningen: 1. Sb6",
+    "oeverst": "8",
+    "filer": "abcdefgh",
+    "antalFelter": 64,
+    "pile": 2,
+    "braet": {
+     "venstre": 43,
+     "hoejre": 343,
+     "w": 300,
+     "top": 515,
+     "bund": 815
+    },
+    "boksBund": 844,
+    "vinduH": 844,
+    "stilling": "Nk4K1/8/8/4r3/p7/8/8/8 w",
+    "saaDenSelv": true,
+    "linje": [
+     "Sb6"
+    ],
+    "lovlige": 1,
+    "slut": "ikke mat"
+   }
+  },
+  "k9": {
+   "overskrift": "Tiden er gået! Du løste 19 gåder.",
+   "rekord": "",
+   "nyRekord": true,
+   "tal": [
+    "15 forkerte træk (−150 s)",
+    "Flest rigtige i træk: 5 (+3 s bonustid)",
+    "Sværeste løste gåde: rating 1217"
+   ],
+   "galt": [
+    "Gaffel: 3 af 5 gik galt",
+    "Mat i 2: 3 af 5 gik galt",
+    "Spyd: 3 af 3 gik galt",
+    "Mat med dronning eller tårn: 2 af 2 gik galt",
+    "Binding: 2 af 2 gik galt",
+    "Red din brik: 1 af 1 gik galt",
+    "Oppositionen: 1 af 1 gik galt"
+   ],
+   "missede": [
+    "Gåde 5: Mat i 2",
+    "Gåde 6: Red din brik",
+    "Gåde 12: Spyd",
+    "Gåde 16: Gaffel",
+    "Gåde 17: Oppositionen",
+    "Gåde 20: Gaffel",
+    "Gåde 22: Gaffel",
+    "Gåde 24: Binding",
+    "Gåde 25: Binding",
+    "Gåde 26: Mat i 2",
+    "Gåde 28: Spyd",
+    "Gåde 31: Mat med dronning eller tårn",
+    "Gåde 32: Mat med dronning eller tårn",
+    "Gåde 33: Spyd",
+    "Gåde 34: Mat i 2"
+   ],
+   "missedeTitel": "Se løsningen på gåderne, der gik galt",
+   "traek": 52,
+   "haengt": 0,
+   "set": 52,
+   "liste": {
+    "top": 647,
+    "bund": 1226,
+    "venstre": 43,
+    "hoejre": 350,
+    "h": 579,
+    "w": 306,
+    "vinduH": 844
+   },
+   "tilstand": {
+    "resultat": true,
+    "koerer": false,
+    "knapper": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "resultat": {
+    "top": 0,
+    "bund": 1295,
+    "venstre": 25,
+    "hoejre": 365,
+    "h": 1295,
+    "w": 340,
+    "vinduH": 844
+   },
+   "aabnet": [
+    {
+     "navn": "Gåde 5: Mat i 2",
+     "knapBoks": {
+      "h": 44,
+      "w": 145
+     },
+     "aaben": true,
+     "tekst": "Hvid trækker. Løsningen: 28. Td8+ Se8 29. Txe8#",
+     "oeverst": "8",
+     "filer": "abcdefgh",
+     "antalFelter": 64,
+     "pile": 2,
+     "braet": {
+      "venstre": 43,
+      "hoejre": 343,
+      "w": 300,
+      "top": 494,
+      "bund": 794
+     },
+     "boksBund": 844,
+     "vinduH": 844,
+     "stilling": "6k1/5ppp/p2Rbn2/4p3/4P3/1nrB2NP/5PP1/6K1 w",
+     "saaDenSelv": true,
+     "linje": [
+      "Td8+",
+      "Se8",
+      "Txe8#"
+     ],
+     "lovlige": 3,
+     "slut": "mat"
+    },
+    {
+     "navn": "Gåde 24: Binding",
+     "knapBoks": {
+      "h": 44,
+      "w": 159
+     },
+     "aaben": true,
+     "tekst": "Hvid trækker. Løsningen: 35. Dd8+ Df8 36. Te8",
+     "oeverst": "8",
+     "filer": "abcdefgh",
+     "antalFelter": 64,
+     "pile": 2,
+     "braet": {
+      "venstre": 43,
+      "hoejre": 343,
+      "w": 300,
+      "top": 459,
+      "bund": 759
+     },
+     "boksBund": 809,
+     "vinduH": 844,
+     "stilling": "6k1/pp3qpp/1n3p2/1P6/1Pr2P2/5N1P/3Q2P1/4R1K1 w",
+     "saaDenSelv": true,
+     "linje": [
+      "Dd8+",
+      "Df8",
+      "Te8"
+     ],
+     "lovlige": 3,
+     "slut": "ikke mat"
+    },
+    {
+     "navn": "Gåde 34: Mat i 2",
+     "knapBoks": {
+      "h": 44,
+      "w": 154
+     },
+     "aaben": true,
+     "tekst": "Hvid trækker. Løsningen: 38. Df5+ Ke7 39. De6#",
+     "oeverst": "8",
+     "filer": "abcdefgh",
+     "antalFelter": 64,
+     "pile": 2,
+     "braet": {
+      "venstre": 43,
+      "hoejre": 343,
+      "w": 300,
+      "top": 469,
+      "bund": 769
+     },
+     "boksBund": 819,
+     "vinduH": 844,
+     "stilling": "2R5/3k1r1p/p2p1n2/3Pp1Q1/8/1P3P2/P3q3/6K1 w",
+     "saaDenSelv": true,
+     "linje": [
+      "Df5+",
+      "Ke7",
+      "De6#"
+     ],
+     "lovlige": 3,
+     "slut": "mat"
+    }
+   ],
+   "lukket": true,
+   "rul": 0
+  },
+  "rul": 0,
+  "net": [],
+  "fejl": []
+ },
+ "1280": {
+  "k6": {
+   "computer": {
+    "fold": false,
+    "foldAaben": false,
+    "felt": false,
+    "titel": "Klassens turnering"
+   },
+   "makkerHjemme": {
+    "fold": true,
+    "foldAaben": false,
+    "felt": false,
+    "titel": "Klassens turnering",
+    "foldY": {
+     "top": 342,
+     "bund": 389,
+     "venstre": 783,
+     "hoejre": 1195,
+     "h": 47,
+     "w": 412,
+     "vinduH": 800
+    }
+   },
+   "skrevet": "7",
+   "efterGenindlaes": {
+    "fold": true,
+    "foldAaben": true,
+    "felt": true,
+    "titel": "Klassens turnering",
+    "vaerdi": "7"
+   },
+   "slettetOgGenindlaest": {
+    "fold": true,
+    "foldAaben": false,
+    "felt": false,
+    "titel": "Klassens turnering"
+   }
+  },
+  "parti": {
+   "traek": 25,
+   "analyse": true,
+   "navne": [
+    "Du",
+    "Computeren"
+   ]
+  },
+  "k8": "Nøjagtighed: hvor tæt dine træk var på motorens bedste (100 % = som motoren). Sammenlign med dine egne partier. Tallet kan ikke sammenlignes med lichess, og efter et afgjort parti stiger det.",
+  "k10": {
+   "knap": true,
+   "filer": "abcdefgh",
+   "raekker": "87654321",
+   "skrift": 13.26,
+   "opgave": "Find et bedre træk. Du spillede 7. b6 - en fejl (?). 8765432a1bcdefgh Hvid i træk. Tryk på en brik og så på feltet. Prøv igen Vis løsningen Og hvad så? ▶ Næste ",
+   "braet": {
+    "top": 695,
+    "bund": 1055,
+    "venstre": 783,
+    "hoejre": 1143,
+    "h": 360,
+    "w": 360,
+    "vinduH": 800
+   },
+   "sort": {
+    "knap": true,
+    "filer": "hgfedcba",
+    "raekker": "12345678",
+    "bedoemt": true,
+    "besked": "Rigtigt! De7 er motorens bedste træk."
+   }
+  },
+  "k4": {
+   "lichess": {
+    "analyse": true,
+    "navne": [
+     "ven123",
+     "elev2014"
+    ],
+    "resume": "ven123: 1 bukke, 1 unøjagtighed. Nøjagtighed 47 %. elev2014: 1 bukke, 2 unøjagtigheder. Nøjagtighed 74 %.",
+    "rul": 0
+   },
+   "delIgen": true,
+   "efterGenindlaes": [
+    "ven123",
+    "elev2014"
+   ],
+   "lang": {
+    "navne": [
+     "Storebror der altid…",
+     "Sort"
+    ],
+    "rul": 0,
+    "tabel": {
+     "top": 621,
+     "bund": 1092,
+     "venstre": 135,
+     "hoejre": 671,
+     "h": 471,
+     "w": 537,
+     "vinduH": 800
+    },
+    "resume": "Storebror der altid…: ingen fejl. Nøjagtighed 100 %. Sort: 1 bukke. Nøjagtighed 28 %."
+   },
+   "udenNavne": [
+    "Hvid",
+    "Sort"
+   ],
+   "nytMakkerparti": {
+    "slut": "Skakmat! Hvid vinder.",
+    "analyse": true,
+    "navne": [
+     "Hvid",
+     "Sort"
+    ]
+   }
+  },
+  "k7": {
+   "knap": null,
+   "braet": {
+    "top": 237,
+    "bund": 774,
+    "venstre": 135,
+    "hoejre": 671,
+    "h": 537,
+    "w": 537,
+    "vinduH": 800
+   },
+   "startKort": {
+    "top": 197,
+    "bund": 618,
+    "venstre": 783,
+    "hoejre": 1195,
+    "h": 420,
+    "w": 412,
+    "vinduH": 800
+   },
+   "rul": 0,
+   "tekst": "Storm",
+   "linje": {
+    "tekst": "Sort trækker Vi finder dit niveau: 0 af 10 Storm",
+    "h": 36
+   }
+  },
+  "k11": {
+   "overskrift": "Stormen er stoppet. Du løste 14 gåder.",
+   "rekord": "En stoppet storm tæller ikke som rekord. Lad uret løbe ud næste gang.",
+   "nyRekord": false,
+   "tal": [
+    "9 forkerte træk (−90 s)",
+    "Flest rigtige i træk: 8 (+6 s bonustid)",
+    "Sværeste løste gåde: rating 888"
+   ],
+   "galt": [
+    "Gaffel: 3 af 5 gik galt",
+    "Mat i 2: 2 af 3 gik galt",
+    "Binding: 2 af 2 gik galt",
+    "Hold remis: 1 af 1 gik galt",
+    "Kvadratet: 1 af 1 gik galt"
+   ],
+   "missede": [
+    "Gåde 6: Mat i 2",
+    "Gåde 7: Gaffel",
+    "Gåde 8: Kvadratet",
+    "Gåde 9: Gaffel",
+    "Gåde 18: Hold remis",
+    "Gåde 20: Gaffel",
+    "Gåde 21: Mat i 2",
+    "Gåde 22: Binding",
+    "Gåde 23: Binding"
+   ],
+   "missedeTitel": "Se løsningen på gåderne, der gik galt",
+   "traek": 35,
+   "haengt": 0,
+   "set": 35,
+   "foersteMisset": {
+    "navn": "Gåde 6: Mat i 2",
+    "knapBoks": {
+     "h": 44,
+     "w": 154
+    },
+    "aaben": true,
+    "tekst": "Sort trækker. Løsningen: 18... Td1+ 19. Te1 Txe1#",
+    "oeverst": "1",
+    "filer": "hgfedcba",
+    "antalFelter": 64,
+    "pile": 2,
+    "braet": {
+     "venstre": 802,
+     "hoejre": 1102,
+     "w": 300,
+     "top": 470,
+     "bund": 770
+    },
+    "boksBund": 800,
+    "vinduH": 800,
+    "stilling": "r2r2k1/ppp1Rppp/8/2P5/2b5/2P5/P4PPP/R1B3K1 b",
+    "saaDenSelv": true,
+    "linje": [
+     "Td1+",
+     "Te1",
+     "Txe1#"
+    ],
+    "lovlige": 3,
+    "slut": "mat"
+   }
+  },
+  "k9": {
+   "overskrift": "Tiden er gået! Du løste 22 gåder.",
+   "rekord": "",
+   "nyRekord": true,
+   "tal": [
+    "15 forkerte træk (−150 s)",
+    "Flest rigtige i træk: 6 (+6 s bonustid)",
+    "Sværeste løste gåde: rating 1278"
+   ],
+   "galt": [
+    "Mat i 2: 5 af 5 gik galt",
+    "Spyd: 4 af 4 gik galt",
+    "Gaffel: 3 af 6 gik galt",
+    "Red din brik: 1 af 2 gik galt",
+    "Oppositionen: 1 af 1 gik galt",
+    "Kvadratet: 1 af 1 gik galt"
+   ],
+   "missede": [
+    "Gåde 6: Red din brik",
+    "Gåde 8: Gaffel",
+    "Gåde 9: Kvadratet",
+    "Gåde 16: Spyd",
+    "Gåde 21: Mat i 2",
+    "Gåde 23: Mat i 2",
+    "Gåde 24: Oppositionen",
+    "Gåde 25: Mat i 2",
+    "Gåde 29: Mat i 2",
+    "Gåde 30: Spyd",
+    "Gåde 33: Gaffel",
+    "Gåde 34: Spyd",
+    "Gåde 35: Mat i 2",
+    "Gåde 36: Spyd",
+    "Gåde 37: Gaffel"
+   ],
+   "missedeTitel": "Se løsningen på gåderne, der gik galt",
+   "traek": 53,
+   "haengt": 0,
+   "set": 53,
+   "liste": {
+    "top": 604,
+    "bund": 1004,
+    "venstre": 802,
+    "hoejre": 1179,
+    "h": 400,
+    "w": 377,
+    "vinduH": 800
+   },
+   "tilstand": {
+    "resultat": true,
+    "koerer": false,
+    "knapper": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "resultat": {
+    "top": 0,
+    "bund": 1074,
+    "venstre": 783,
+    "hoejre": 1195,
+    "h": 1074,
+    "w": 412,
+    "vinduH": 800
+   },
+   "aabnet": [
+    {
+     "navn": "Gåde 6: Red din brik",
+     "knapBoks": {
+      "h": 44,
+      "w": 193
+     },
+     "aaben": true,
+     "tekst": "Sort trækker. Løsningen: 1... Sc8+",
+     "oeverst": "1",
+     "filer": "hgfedcba",
+     "antalFelter": 64,
+     "pile": 2,
+     "braet": {
+      "venstre": 802,
+      "hoejre": 1102,
+      "w": 300,
+      "top": 469,
+      "bund": 769
+     },
+     "boksBund": 800,
+     "vinduH": 800,
+     "stilling": "8/n5p1/1K6/3P4/1k6/6R1/8/8 b",
+     "saaDenSelv": true,
+     "linje": [
+      "Sc8+"
+     ],
+     "lovlige": 1,
+     "slut": "ikke mat"
+    },
+    {
+     "navn": "Gåde 25: Mat i 2",
+     "knapBoks": {
+      "h": 44,
+      "w": 163
+     },
+     "aaben": true,
+     "tekst": "Hvid trækker. Løsningen: 1. Dc8+ Ka7 2. Ld4#",
+     "oeverst": "8",
+     "filer": "abcdefgh",
+     "antalFelter": 64,
+     "pile": 2,
+     "braet": {
+      "venstre": 802,
+      "hoejre": 1102,
+      "w": 300,
+      "top": 437,
+      "bund": 737
+     },
+     "boksBund": 768,
+     "vinduH": 800,
+     "stilling": "k4K2/8/8/4B3/8/2Q5/8/8 w",
+     "saaDenSelv": true,
+     "linje": [
+      "Dc8+",
+      "Ka7",
+      "Ld4#"
+     ],
+     "lovlige": 3,
+     "slut": "mat"
+    },
+    {
+     "navn": "Gåde 37: Gaffel",
+     "knapBoks": {
+      "h": 44,
+      "w": 156
+     },
+     "aaben": true,
+     "tekst": "Hvid trækker. Løsningen: 29. e4 Dd3 30. exf5",
+     "oeverst": "8",
+     "filer": "abcdefgh",
+     "antalFelter": 64,
+     "pile": 2,
+     "braet": {
+      "venstre": 802,
+      "hoejre": 1102,
+      "w": 300,
+      "top": 438,
+      "bund": 738
+     },
+     "boksBund": 768,
+     "vinduH": 800,
+     "stilling": "3b2k1/5p1p/4p3/3q1np1/1Q6/P3P3/5PPP/1R4K1 w",
+     "saaDenSelv": true,
+     "linje": [
+      "e4",
+      "Dd3",
+      "exf5"
+     ],
+     "lovlige": 3,
+     "slut": "ikke mat"
+    }
+   ],
+   "lukket": true,
+   "rul": 0
+  },
+  "rul": 0,
+  "net": [],
+  "fejl": []
+ },
+ "skak": "3048e71",
+ "bredder": [
+  360,
+  390,
+  1280
+ ],
+ "net": 0,
+ "jsFejl": 0,
+ "sha": "3048e71",
+ "tjek": [
+  {
+   "hvad": "K4: et lichess-parti viser \"ven123\" og \"elev2014\" i tabellen og resumeet, ogsaa efter en genindlaesning",
+   "ok": true,
+   "data": [
+    [
+     [
+      "ven123",
+      "elev2014"
+     ],
+     [
+      "ven123",
+      "elev2014"
+     ]
+    ],
+    [
+     [
+      "ven123",
+      "elev2014"
+     ],
+     [
+      "ven123",
+      "elev2014"
+     ]
+    ],
+    [
+     [
+      "ven123",
+      "elev2014"
+     ],
+     [
+      "ven123",
+      "elev2014"
+     ]
+    ]
+   ]
+  },
+  {
+   "hvad": "K4: navnene kommer med, naar partiet deles igen",
+   "ok": true
+  },
+  {
+   "hvad": "K4: et langt navn klippes til 20 tegn, \"?\" bliver \"Sort\", og tabellen holder paa 360",
+   "ok": true,
+   "data": [
+    [
+     [
+      "Storebror der altid…",
+      "Sort"
+     ],
+     0
+    ],
+    [
+     [
+      "Storebror der altid…",
+      "Sort"
+     ],
+     0
+    ],
+    [
+     [
+      "Storebror der altid…",
+      "Sort"
+     ],
+     0
+    ]
+   ]
+  },
+  {
+   "hvad": "K4: et parti uden navne giver \"Hvid/Sort\", mod computeren \"Du/Computeren\"",
+   "ok": true,
+   "data": [
+    [
+     [
+      "Hvid",
+      "Sort"
+     ],
+     [
+      "Du",
+      "Computeren"
+     ]
+    ],
+    [
+     [
+      "Hvid",
+      "Sort"
+     ],
+     [
+      "Du",
+      "Computeren"
+     ]
+    ],
+    [
+     [
+      "Hvid",
+      "Sort"
+     ],
+     [
+      "Du",
+      "Computeren"
+     ]
+    ]
+   ]
+  },
+  {
+   "hvad": "K4: et nyt makkerparti med samme aabning faar ikke lichess-navnene",
+   "ok": true,
+   "data": [
+    {
+     "slut": "Skakmat! Hvid vinder.",
+     "analyse": true,
+     "navne": [
+      "Hvid",
+      "Sort"
+     ]
+    },
+    {
+     "slut": "Skakmat! Hvid vinder.",
+     "analyse": true,
+     "navne": [
+      "Hvid",
+      "Sort"
+     ]
+    },
+    {
+     "slut": "Skakmat! Hvid vinder.",
+     "analyse": true,
+     "navne": [
+      "Hvid",
+      "Sort"
+     ]
+    }
+   ]
+  },
+  {
+   "hvad": "K6: mod computeren intet bordfelt; mod en makker hjemme en lukket fold \"Klassens turnering\"",
+   "ok": true,
+   "data": [
+    [
+     {
+      "fold": false,
+      "foldAaben": false,
+      "felt": false,
+      "titel": "Klassens turnering"
+     },
+     "Klassens turnering"
+    ],
+    [
+     {
+      "fold": false,
+      "foldAaben": false,
+      "felt": false,
+      "titel": "Klassens turnering"
+     },
+     "Klassens turnering"
+    ],
+    [
+     {
+      "fold": false,
+      "foldAaben": false,
+      "felt": false,
+      "titel": "Klassens turnering"
+     },
+     "Klassens turnering"
+    ]
+   ]
+  },
+  {
+   "hvad": "K6: bordet kan skrives, er aabent efter en genindlaesning og lukket igen, naar det er slettet",
+   "ok": true,
+   "data": [
+    [
+     "7",
+     {
+      "fold": true,
+      "foldAaben": true,
+      "felt": true,
+      "titel": "Klassens turnering",
+      "vaerdi": "7"
+     },
+     {
+      "fold": true,
+      "foldAaben": false,
+      "felt": false,
+      "titel": "Klassens turnering"
+     }
+    ],
+    [
+     "7",
+     {
+      "fold": true,
+      "foldAaben": true,
+      "felt": true,
+      "titel": "Klassens turnering",
+      "vaerdi": "7"
+     },
+     {
+      "fold": true,
+      "foldAaben": false,
+      "felt": false,
+      "titel": "Klassens turnering"
+     }
+    ],
+    [
+     "7",
+     {
+      "fold": true,
+      "foldAaben": true,
+      "felt": true,
+      "titel": "Klassens turnering",
+      "vaerdi": "7"
+     },
+     {
+      "fold": true,
+      "foldAaben": false,
+      "felt": false,
+      "titel": "Klassens turnering"
+     }
+    ]
+   ]
+  },
+  {
+   "hvad": "K7: paa 360 og 390 staar \"Storm\" (mindst 44 px) over braettet uden at rulle, og et tryk viser startkortet med fokus paa Dagens storm",
+   "ok": true,
+   "data": [
+    [
+     {
+      "top": 228,
+      "bund": 272,
+      "venstre": 266,
+      "hoejre": 335,
+      "h": 44,
+      "w": 69,
+      "vinduH": 780
+     },
+     287,
+     {
+      "tekst": "Sort trækker Vi finder dit niveau: 0 af 10 Storm",
+      "h": 57
+     },
+     {
+      "startKort": {
+       "top": 0,
+       "bund": 485,
+       "venstre": 25,
+       "hoejre": 335,
+       "h": 485,
+       "w": 310,
+       "vinduH": 780
+      },
+      "fokus": "knap-storm-dagens"
+     }
+    ],
+    [
+     {
+      "top": 228,
+      "bund": 272,
+      "venstre": 296,
+      "hoejre": 365,
+      "h": 44,
+      "w": 69,
+      "vinduH": 844
+     },
+     287,
+     {
+      "tekst": "Hvid trækker Vi finder dit niveau: 0 af 10 Storm",
+      "h": 57
+     },
+     {
+      "startKort": {
+       "top": 0,
+       "bund": 465,
+       "venstre": 25,
+       "hoejre": 365,
+       "h": 465,
+       "w": 340,
+       "vinduH": 844
+      },
+      "fokus": "knap-storm-dagens"
+     }
+    ]
+   ]
+  },
+  {
+   "hvad": "K7: paa 1280 ingen knap (stormen staar ved siden af)",
+   "ok": true
+  },
+  {
+   "hvad": "K8: forklaringen siger, at tallet ikke kan sammenlignes med lichess",
+   "ok": true,
+   "data": "Nøjagtighed: hvor tæt dine træk var på motorens bedste (100 % = som motoren). Sammenlign med dine egne partier. Tallet kan ikke sammenlignes med lichess, og efter et afgjort parti stiger det."
+  },
+  {
+   "hvad": "K10: \"Laer af dine fejl\" har bogstaver og tal, a-h fra hvid og h-a vendt fra sort, og et tryk-traek bedoemmes",
+   "ok": true,
+   "data": [
+    [
+     "abcdefgh",
+     "87654321",
+     "hgfedcba",
+     true,
+     12.48
+    ],
+    [
+     "abcdefgh",
+     "87654321",
+     "hgfedcba",
+     true,
+     12.48
+    ],
+    [
+     "abcdefgh",
+     "87654321",
+     "hgfedcba",
+     true,
+     13.26
+    ]
+   ]
+  },
+  {
+   "hvad": "K11: en stoppet storm siger \"En stoppet storm taeller ikke som rekord\" og ikke \"Ingen rekord endnu\"",
+   "ok": true,
+   "data": [
+    [
+     "Stormen er stoppet. Du løste 13 gåder.",
+     "En stoppet storm tæller ikke som rekord. Lad uret løbe ud næste gang."
+    ],
+    [
+     "Stormen er stoppet. Du løste 15 gåder.",
+     "En stoppet storm tæller ikke som rekord. Lad uret løbe ud næste gang."
+    ],
+    [
+     "Stormen er stoppet. Du løste 14 gåder.",
+     "En stoppet storm tæller ikke som rekord. Lad uret løbe ud næste gang."
+    ]
+   ]
+  },
+  {
+   "hvad": "K9: en hel storm slutter med \"Tiden er gaaet\", og antallet af missede gaader = forkerte traek = summen i \"gik galt\"",
+   "ok": true,
+   "data": [
+    [
+     "Tiden er gået! Du løste 11 gåder.",
+     15,
+     15,
+     15
+    ],
+    [
+     "Tiden er gået! Du løste 19 gåder.",
+     15,
+     15,
+     15
+    ],
+    [
+     "Tiden er gået! Du løste 22 gåder.",
+     15,
+     15,
+     15
+    ]
+   ]
+  },
+  {
+   "hvad": "K9: hver aabnet loesning staar paa en stilling, eleven selv fik, og hele linjen er lovlig",
+   "ok": true,
+   "data": [
+    [
+     "Sort trækker. Løsningen: 22... Te1+ 23. Td1 Txd1#",
+     true,
+     3,
+     3,
+     "mat"
+    ],
+    [
+     "Sort trækker. Løsningen: 62... Tg5+ 63. Kf4 Txg1",
+     true,
+     3,
+     3,
+     "ikke mat"
+    ],
+    [
+     "Hvid trækker. Løsningen: 8. Da4+ Ld7 9. Dxb4",
+     true,
+     3,
+     3,
+     "ikke mat"
+    ],
+    [
+     "Sort trækker. Løsningen: 1... Sc2",
+     true,
+     1,
+     1,
+     "ikke mat"
+    ],
+    [
+     "Hvid trækker. Løsningen: 28. Td8+ Se8 29. Txe8#",
+     true,
+     3,
+     3,
+     "mat"
+    ],
+    [
+     "Hvid trækker. Løsningen: 35. Dd8+ Df8 36. Te8",
+     true,
+     3,
+     3,
+     "ikke mat"
+    ],
+    [
+     "Hvid trækker. Løsningen: 38. Df5+ Ke7 39. De6#",
+     true,
+     3,
+     3,
+     "mat"
+    ],
+    [
+     "Hvid trækker. Løsningen: 1. Sb6",
+     true,
+     1,
+     1,
+     "ikke mat"
+    ],
+    [
+     "Sort trækker. Løsningen: 1... Sc8+",
+     true,
+     1,
+     1,
+     "ikke mat"
+    ],
+    [
+     "Hvid trækker. Løsningen: 1. Dc8+ Ka7 2. Ld4#",
+     true,
+     3,
+     3,
+     "mat"
+    ],
+    [
+     "Hvid trækker. Løsningen: 29. e4 Dd3 30. exf5",
+     true,
+     3,
+     3,
+     "ikke mat"
+    ],
+    [
+     "Sort trækker. Løsningen: 18... Td1+ 19. Te1 Txe1#",
+     true,
+     3,
+     3,
+     "mat"
+    ]
+   ]
+  },
+  {
+   "hvad": "K9: braettet er vendt mod den, der trak, har koordinater og een pil og staar inden for skaermen; knappen er mindst 44 px",
+   "ok": true,
+   "data": [
+    [
+     [
+      "1",
+      276,
+      44
+     ],
+     [
+      "1",
+      276,
+      44
+     ],
+     [
+      "8",
+      276,
+      44
+     ]
+    ],
+    [
+     [
+      "8",
+      300,
+      44
+     ],
+     [
+      "8",
+      300,
+      44
+     ],
+     [
+      "8",
+      300,
+      44
+     ]
+    ],
+    [
+     [
+      "1",
+      300,
+      44
+     ],
+     [
+      "8",
+      300,
+      44
+     ],
+     [
+      "8",
+      300,
+      44
+     ]
+    ]
+   ]
+  },
+  {
+   "hvad": "K9: en aabnet mat-gaade ender i mat (Mat i 2, Mat i 1, Mat med ...)",
+   "ok": true,
+   "data": [
+    [
+     "Gåde 4: Mat i 2",
+     "mat"
+    ],
+    [
+     "Gåde 16: Spyd",
+     "ikke mat"
+    ],
+    [
+     "Gåde 26: Gaffel",
+     "ikke mat"
+    ],
+    [
+     "Gåde 6: Red din brik",
+     "ikke mat"
+    ],
+    [
+     "Gåde 5: Mat i 2",
+     "mat"
+    ],
+    [
+     "Gåde 24: Binding",
+     "ikke mat"
+    ],
+    [
+     "Gåde 34: Mat i 2",
+     "mat"
+    ],
+    [
+     "Gåde 5: Red din brik",
+     "ikke mat"
+    ],
+    [
+     "Gåde 6: Red din brik",
+     "ikke mat"
+    ],
+    [
+     "Gåde 25: Mat i 2",
+     "mat"
+    ],
+    [
+     "Gåde 37: Gaffel",
+     "ikke mat"
+    ],
+    [
+     "Gåde 6: Mat i 2",
+     "mat"
+    ]
+   ]
+  },
+  {
+   "hvad": "K9: et tryk mere lukker loesningen",
+   "ok": true
+  },
+  {
+   "hvad": "Intet net, ingen JS-fejl, ingen vandret rulning",
+   "ok": true,
+   "data": [
+    [
+     0,
+     [],
+     0
+    ],
+    [
+     0,
+     [],
+     0
+    ],
+    [
+     0,
+     [],
+     0
+    ]
+   ]
+  }
+ ]
+}
