@@ -1,0 +1,1222 @@
+{
+ "ref": "c9950e0",
+ "minKrop": "gennemsnitsMaal(183, 120)",
+ "faser": {
+  "360-squat-bund": {
+   "side": 360,
+   "klient": 360,
+   "tabel": 328,
+   "tallinje": "Torso 48,5° Hofte 37,7° Knæ 46,2° Stang −1,0 cm",
+   "tallinjeHoejre": 262,
+   "tallinjeLinjer": 2,
+   "tallinjeBredde": 328,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "360-squat-midt": {
+   "side": 360,
+   "klient": 360,
+   "tabel": 328,
+   "tallinje": "Torso 39,1° Hofte 73,8° Knæ 70,3° Stang −2,6 cm",
+   "tallinjeHoejre": 262,
+   "tallinjeLinjer": 2,
+   "tallinjeBredde": 328,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "360-dl-gulv": {
+   "side": 360,
+   "klient": 360,
+   "tabel": 328,
+   "tallinje": "Torso 60,7° Hofte 50,6° Knæ 97,5° Stang 3,0 cm",
+   "tallinjeHoejre": 262,
+   "tallinjeLinjer": 2,
+   "tallinjeBredde": 328,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "360-dl-knae": {
+   "side": 360,
+   "klient": 360,
+   "tabel": 328,
+   "tallinje": "Torso 52,9° Hofte 94,6° Knæ 146,3° Stang 0,0 cm",
+   "tallinjeHoejre": 270,
+   "tallinjeLinjer": 2,
+   "tallinjeBredde": 328,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "360-baenk-bryst": {
+   "side": 360,
+   "klient": 360,
+   "tabel": 328,
+   "tallinje": "Stang mod fødderne 25,6 cm Knæ 79,1°",
+   "tallinjeHoejre": 293,
+   "tallinjeLinjer": 1,
+   "tallinjeBredde": 328,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "360-baenk-midt": {
+   "side": 360,
+   "klient": 360,
+   "tabel": 328,
+   "tallinje": "Stang mod fødderne 0,8 cm Knæ 79,1°",
+   "tallinjeHoejre": 285,
+   "tallinjeLinjer": 1,
+   "tallinjeBredde": 328,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "360-net": [],
+  "360-fejl": [],
+  "375-squat-bund": {
+   "side": 375,
+   "klient": 375,
+   "tabel": 343,
+   "tallinje": "Torso 48,5° Hofte 37,7° Knæ 46,2° Stang −1,0 cm",
+   "tallinjeHoejre": 262,
+   "tallinjeLinjer": 2,
+   "tallinjeBredde": 343,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "375-squat-midt": {
+   "side": 375,
+   "klient": 375,
+   "tabel": 343,
+   "tallinje": "Torso 39,1° Hofte 73,8° Knæ 70,3° Stang −2,6 cm",
+   "tallinjeHoejre": 262,
+   "tallinjeLinjer": 2,
+   "tallinjeBredde": 343,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "375-dl-gulv": {
+   "side": 375,
+   "klient": 375,
+   "tabel": 343,
+   "tallinje": "Torso 60,7° Hofte 50,6° Knæ 97,5° Stang 3,0 cm",
+   "tallinjeHoejre": 262,
+   "tallinjeLinjer": 2,
+   "tallinjeBredde": 343,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "375-dl-knae": {
+   "side": 375,
+   "klient": 375,
+   "tabel": 343,
+   "tallinje": "Torso 52,9° Hofte 94,6° Knæ 146,3° Stang 0,0 cm",
+   "tallinjeHoejre": 270,
+   "tallinjeLinjer": 2,
+   "tallinjeBredde": 343,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "375-baenk-bryst": {
+   "side": 375,
+   "klient": 375,
+   "tabel": 343,
+   "tallinje": "Stang mod fødderne 25,6 cm Knæ 79,1°",
+   "tallinjeHoejre": 293,
+   "tallinjeLinjer": 1,
+   "tallinjeBredde": 343,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "375-baenk-midt": {
+   "side": 375,
+   "klient": 375,
+   "tabel": 343,
+   "tallinje": "Stang mod fødderne 0,8 cm Knæ 79,1°",
+   "tallinjeHoejre": 285,
+   "tallinjeLinjer": 1,
+   "tallinjeBredde": 343,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "375-net": [],
+  "375-fejl": [],
+  "390-squat-bund": {
+   "side": 390,
+   "klient": 390,
+   "tabel": 358,
+   "tallinje": "Torso 48,5° Hofte 37,7° Knæ 46,2° Stang −1,0 cm",
+   "tallinjeHoejre": 373,
+   "tallinjeLinjer": 1,
+   "tallinjeBredde": 358,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "390-squat-midt": {
+   "side": 390,
+   "klient": 390,
+   "tabel": 358,
+   "tallinje": "Torso 39,1° Hofte 73,8° Knæ 70,3° Stang −2,6 cm",
+   "tallinjeHoejre": 373,
+   "tallinjeLinjer": 1,
+   "tallinjeBredde": 358,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "390-dl-gulv": {
+   "side": 390,
+   "klient": 390,
+   "tabel": 358,
+   "tallinje": "Torso 60,7° Hofte 50,6° Knæ 97,5° Stang 3,0 cm",
+   "tallinjeHoejre": 362,
+   "tallinjeLinjer": 1,
+   "tallinjeBredde": 358,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "390-dl-knae": {
+   "side": 390,
+   "klient": 390,
+   "tabel": 358,
+   "tallinje": "Torso 52,9° Hofte 94,6° Knæ 146,3° Stang 0,0 cm",
+   "tallinjeHoejre": 370,
+   "tallinjeLinjer": 1,
+   "tallinjeBredde": 358,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "390-baenk-bryst": {
+   "side": 390,
+   "klient": 390,
+   "tabel": 358,
+   "tallinje": "Stang mod fødderne 25,6 cm Knæ 79,1°",
+   "tallinjeHoejre": 293,
+   "tallinjeLinjer": 1,
+   "tallinjeBredde": 358,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "390-baenk-midt": {
+   "side": 390,
+   "klient": 390,
+   "tabel": 358,
+   "tallinje": "Stang mod fødderne 0,8 cm Knæ 79,1°",
+   "tallinjeHoejre": 285,
+   "tallinjeLinjer": 1,
+   "tallinjeBredde": 358,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "390-net": [],
+  "390-fejl": [],
+  "1280-squat-bund": {
+   "side": 1280,
+   "klient": 1280,
+   "tabel": 1068,
+   "tallinje": "Torso 48,5° Hofte 37,7° Knæ 46,2° Stang −1,0 cm",
+   "tallinjeHoejre": 463,
+   "tallinjeLinjer": 1,
+   "tallinjeBredde": 528,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "1280-squat-midt": {
+   "side": 1280,
+   "klient": 1280,
+   "tabel": 1068,
+   "tallinje": "Torso 39,1° Hofte 73,8° Knæ 70,3° Stang −2,6 cm",
+   "tallinjeHoejre": 463,
+   "tallinjeLinjer": 1,
+   "tallinjeBredde": 528,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "1280-dl-gulv": {
+   "side": 1280,
+   "klient": 1280,
+   "tabel": 1068,
+   "tallinje": "Torso 60,7° Hofte 50,6° Knæ 97,5° Stang 3,0 cm",
+   "tallinjeHoejre": 452,
+   "tallinjeLinjer": 1,
+   "tallinjeBredde": 528,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "1280-dl-knae": {
+   "side": 1280,
+   "klient": 1280,
+   "tabel": 1068,
+   "tallinje": "Torso 52,9° Hofte 94,6° Knæ 146,3° Stang 0,0 cm",
+   "tallinjeHoejre": 460,
+   "tallinjeLinjer": 1,
+   "tallinjeBredde": 528,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "1280-baenk-bryst": {
+   "side": 1280,
+   "klient": 1280,
+   "tabel": 1068,
+   "tallinje": "Stang mod fødderne 25,6 cm Knæ 79,1°",
+   "tallinjeHoejre": 383,
+   "tallinjeLinjer": 1,
+   "tallinjeBredde": 528,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "1280-baenk-midt": {
+   "side": 1280,
+   "klient": 1280,
+   "tabel": 1068,
+   "tallinje": "Stang mod fødderne 0,8 cm Knæ 79,1°",
+   "tallinjeHoejre": 375,
+   "tallinjeLinjer": 1,
+   "tallinjeBredde": 528,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "1280-net": [],
+  "1280-fejl": []
+ },
+ "lang": {
+  "360-plus": {
+   "side": 360,
+   "klient": 360,
+   "tabel": 328,
+   "tallinje": "Torso 60,7° Hofte 50,6° Knæ 97,5° Stang 13,7 cm",
+   "tallinjeHoejre": 262,
+   "tallinjeLinjer": 2,
+   "tallinjeBredde": 328,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "360-minus": {
+   "side": 360,
+   "klient": 360,
+   "tabel": 328,
+   "tallinje": "Torso 60,7° Hofte 50,6° Knæ 97,5° Stang −10,7 cm",
+   "tallinjeHoejre": 262,
+   "tallinjeLinjer": 2,
+   "tallinjeBredde": 328,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "375-plus": {
+   "side": 375,
+   "klient": 375,
+   "tabel": 343,
+   "tallinje": "Torso 60,7° Hofte 50,6° Knæ 97,5° Stang 13,7 cm",
+   "tallinjeHoejre": 262,
+   "tallinjeLinjer": 2,
+   "tallinjeBredde": 343,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "375-minus": {
+   "side": 375,
+   "klient": 375,
+   "tabel": 343,
+   "tallinje": "Torso 60,7° Hofte 50,6° Knæ 97,5° Stang −10,7 cm",
+   "tallinjeHoejre": 262,
+   "tallinjeLinjer": 2,
+   "tallinjeBredde": 343,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "390-plus": {
+   "side": 390,
+   "klient": 390,
+   "tabel": 358,
+   "tallinje": "Torso 60,7° Hofte 50,6° Knæ 97,5° Stang 13,7 cm",
+   "tallinjeHoejre": 370,
+   "tallinjeLinjer": 1,
+   "tallinjeBredde": 358,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "390-minus": {
+   "side": 390,
+   "klient": 390,
+   "tabel": 358,
+   "tallinje": "Torso 60,7° Hofte 50,6° Knæ 97,5° Stang −10,7 cm",
+   "tallinjeHoejre": 262,
+   "tallinjeLinjer": 2,
+   "tallinjeBredde": 358,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "1280-plus": {
+   "side": 1280,
+   "klient": 1280,
+   "tabel": 1068,
+   "tallinje": "Torso 60,7° Hofte 50,6° Knæ 97,5° Stang 13,7 cm",
+   "tallinjeHoejre": 460,
+   "tallinjeLinjer": 1,
+   "tallinjeBredde": 528,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "1280-minus": {
+   "side": 1280,
+   "klient": 1280,
+   "tabel": 1068,
+   "tallinje": "Torso 60,7° Hofte 50,6° Knæ 97,5° Stang −10,7 cm",
+   "tallinjeHoejre": 471,
+   "tallinjeLinjer": 1,
+   "tallinjeBredde": 528,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  }
+ },
+ "marc": {
+  "360-knaehoejde": {
+   "side": 360,
+   "klient": 360,
+   "tabel": 328,
+   "tallinje": "Torso 41,6° Hofte 88,0° Knæ 119,6° (stangen 31 cm under knæet) Stang 1,7 cm",
+   "tallinjeHoejre": 299,
+   "tallinjeLinjer": 3,
+   "tallinjeBredde": 328,
+   "maerke": {
+    "tekst": "(stangen 31 cm under knæet)",
+    "dom": "under"
+   },
+   "knaefase": "Stangen står ca. 31 cm under knæet, så billedet er ikke fra knæhøjde (grænsen er 5 cm). Vælg et billede senere i løftet, eller brug Dødløft gulv. I modellen åbner knæet ca. 1,7° pr. cm, stangen stiger, så modellens tal i knæhøjde passer ikke til billedet.",
+   "forBrede": []
+  },
+  "360-start": {
+   "side": 360,
+   "klient": 360,
+   "tabel": 328,
+   "tallinje": "Torso 45,9° Hofte 83,3° Knæ 118,0° Stang 2,8 cm",
+   "tallinjeHoejre": 270,
+   "tallinjeLinjer": 2,
+   "tallinjeBredde": 328,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "360-fejl": [],
+  "360-net": [],
+  "390-knaehoejde": {
+   "side": 390,
+   "klient": 390,
+   "tabel": 358,
+   "tallinje": "Torso 41,6° Hofte 88,0° Knæ 119,6° (stangen 31 cm under knæet) Stang 1,7 cm",
+   "tallinjeHoejre": 299,
+   "tallinjeLinjer": 3,
+   "tallinjeBredde": 358,
+   "maerke": {
+    "tekst": "(stangen 31 cm under knæet)",
+    "dom": "under"
+   },
+   "knaefase": "Stangen står ca. 31 cm under knæet, så billedet er ikke fra knæhøjde (grænsen er 5 cm). Vælg et billede senere i løftet, eller brug Dødløft gulv. I modellen åbner knæet ca. 1,7° pr. cm, stangen stiger, så modellens tal i knæhøjde passer ikke til billedet.",
+   "forBrede": []
+  },
+  "390-start": {
+   "side": 390,
+   "klient": 390,
+   "tabel": 358,
+   "tallinje": "Torso 45,9° Hofte 83,3° Knæ 118,0° Stang 2,8 cm",
+   "tallinjeHoejre": 370,
+   "tallinjeLinjer": 1,
+   "tallinjeBredde": 358,
+   "maerke": null,
+   "knaefase": null,
+   "forBrede": []
+  },
+  "390-fejl": [],
+  "390-net": []
+ },
+ "foerEfter": {
+  "360-skraa10": {
+   "side": 360,
+   "tallinje": "Torso 46,5° Hofte 84,4° Knæ 120,9° Stang −8,5 cm",
+   "saetning": "Efter: ingen forskel over målefejlen. Stangens plads er ikke med: den kræver det fjerne nav i begge billeder. Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang.",
+   "note": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det fjerne nav i begge billeder (Sæt det fjerne nav). Uden det kræver de samme kameraplads (stativ, tape på gulvet, samme retning), fordi hver grad, kameraet står skråt, flytter stangens tal ca. 1,4 cm. De er ikke med i sætningen. Sætningen læser 5 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert sjette par med omhyggelige klik (oftere med hurtige).",
+   "raekker": "Sætningen læser 5 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert sjette par med omhyggelige klik (oftere med hurtige).",
+   "boks": {
+    "synlig": false,
+    "h": 0,
+    "hoejre": 0,
+    "tekst": "Et af de fjerne nav er skønnet (skjult bag benet og klikket ud fra skivens kant)",
+    "krydset": false
+   },
+   "stang": [
+    "4,8 cm",
+    "−8,5 cm",
+    "−13,3 cmkræver samme kameraplads"
+   ],
+   "stangHofte": [
+    "28,3 cm",
+    "15,6 cm",
+    "−12,6 cmkræver samme kameraplads"
+   ],
+   "vejledning": "Efter-billede: efter.png (kun i din browser) | Samme atlet, samme løft og fase, helst fra samme kameraplads. Vælg billedet under Efter, og klik de samme punkter. Fasen, kroppen og skalaen er fælles for de to. | Færdig med runde 1 af 3. Tryk Klik billedet igen.Kan du se selve det fjerne nav, så tryk Sæt det fjerne nav og midt på det: midt mellem de to nav er stangens midte, samme dybde som kroppen. Er det skjult bag benet, så lad være: et skønnet nav gør stangens tal usikre. Klik så de samme punkter igen fra bunden. Siden tager gennemsnittet af runderne og ser selv, hvor meget klikkene spreder. | Kroppen er målene fra Min krop i denne browser (183,0 cm). | ■ Guld: modellen med målene fra Min krop■ Grå: modellen, samme højde og vægt med gennemsnitlige proportioner■ Blå: dine klik i billedetMidtfoden og gulvet står samme sted som i billedet, og den stiplede linje er stangens lodlinje. Skalaen er kroppens længder. | Dødløft, ved gulvet, begge billeder målt med kroppens længder som skala. Efter: ingen forskel over målefejlen. Stangens plads er ikke med: den kræver det fjerne nav i begge billeder. Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang. | Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det fjerne nav i begge billeder (Sæt det fjerne nav). Uden det kræver de samme kameraplads (stativ, tape på gulvet, samme retning), fordi hver grad, kameraet står skråt, flytter stangens tal ca. 1,4 cm. De er ikke med i sætningen. Sætningen læser 5 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert sjette par med omhyggelige klik (oftere med hurtige). | ■ Før (stiplet) og ■ efter: dine klik i de to billeder, midtfoden og gulvet samme sted, samme skala. Billederne ovenfor er skaleret, så atleten har samme størrelse i begge. | Atleten vender mod højre i billedet (fundet af, at hoften står bag midtfoden). Skala fra kroppens længder (målene fra Min krop): den antager, at skinneben, lår og overkrop ligger i billedets plan. Kontrol med skiven: 79 % af kroppens længde. 75-105 % er normalt: skiven står nærmere kameraet end kroppen og ser større ud. | Mål fra Min krop i denne browser: 183,0 cm og 120,0 kg. Modellen står både med de mål og med gennemsnitlige proportioner for samme højde og vægt. | ≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm. | Stangens plads og skulderen foran stangen er ikke med som modeltal: modellen sætter stangen 3 cm foran ",
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "net": [],
+   "fejl": []
+  },
+  "375-skraa10": {
+   "side": 375,
+   "tallinje": "Torso 46,5° Hofte 84,4° Knæ 120,9° Stang −8,5 cm",
+   "saetning": "Efter: ingen forskel over målefejlen. Stangens plads er ikke med: den kræver det fjerne nav i begge billeder. Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang.",
+   "note": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det fjerne nav i begge billeder (Sæt det fjerne nav). Uden det kræver de samme kameraplads (stativ, tape på gulvet, samme retning), fordi hver grad, kameraet står skråt, flytter stangens tal ca. 1,4 cm. De er ikke med i sætningen. Sætningen læser 5 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert sjette par med omhyggelige klik (oftere med hurtige).",
+   "raekker": "Sætningen læser 5 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert sjette par med omhyggelige klik (oftere med hurtige).",
+   "boks": {
+    "synlig": false,
+    "h": 0,
+    "hoejre": 0,
+    "tekst": "Et af de fjerne nav er skønnet (skjult bag benet og klikket ud fra skivens kant)",
+    "krydset": false
+   },
+   "stang": [
+    "4,8 cm",
+    "−8,5 cm",
+    "−13,3 cmkræver samme kameraplads"
+   ],
+   "stangHofte": [
+    "28,3 cm",
+    "15,6 cm",
+    "−12,6 cmkræver samme kameraplads"
+   ],
+   "vejledning": "Efter-billede: efter.png (kun i din browser) | Samme atlet, samme løft og fase, helst fra samme kameraplads. Vælg billedet under Efter, og klik de samme punkter. Fasen, kroppen og skalaen er fælles for de to. | Færdig med runde 1 af 3. Tryk Klik billedet igen.Kan du se selve det fjerne nav, så tryk Sæt det fjerne nav og midt på det: midt mellem de to nav er stangens midte, samme dybde som kroppen. Er det skjult bag benet, så lad være: et skønnet nav gør stangens tal usikre. Klik så de samme punkter igen fra bunden. Siden tager gennemsnittet af runderne og ser selv, hvor meget klikkene spreder. | Kroppen er målene fra Min krop i denne browser (183,0 cm). | ■ Guld: modellen med målene fra Min krop■ Grå: modellen, samme højde og vægt med gennemsnitlige proportioner■ Blå: dine klik i billedetMidtfoden og gulvet står samme sted som i billedet, og den stiplede linje er stangens lodlinje. Skalaen er kroppens længder. | Dødløft, ved gulvet, begge billeder målt med kroppens længder som skala. Efter: ingen forskel over målefejlen. Stangens plads er ikke med: den kræver det fjerne nav i begge billeder. Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang. | Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det fjerne nav i begge billeder (Sæt det fjerne nav). Uden det kræver de samme kameraplads (stativ, tape på gulvet, samme retning), fordi hver grad, kameraet står skråt, flytter stangens tal ca. 1,4 cm. De er ikke med i sætningen. Sætningen læser 5 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert sjette par med omhyggelige klik (oftere med hurtige). | ■ Før (stiplet) og ■ efter: dine klik i de to billeder, midtfoden og gulvet samme sted, samme skala. Billederne ovenfor er skaleret, så atleten har samme størrelse i begge. | Atleten vender mod højre i billedet (fundet af, at hoften står bag midtfoden). Skala fra kroppens længder (målene fra Min krop): den antager, at skinneben, lår og overkrop ligger i billedets plan. Kontrol med skiven: 79 % af kroppens længde. 75-105 % er normalt: skiven står nærmere kameraet end kroppen og ser større ud. | Mål fra Min krop i denne browser: 183,0 cm og 120,0 kg. Modellen står både med de mål og med gennemsnitlige proportioner for samme højde og vægt. | ≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm. | Stangens plads og skulderen foran stangen er ikke med som modeltal: modellen sætter stangen 3 cm foran ",
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "net": [],
+   "fejl": []
+  },
+  "390-skraa10": {
+   "side": 390,
+   "tallinje": "Torso 46,5° Hofte 84,4° Knæ 120,9° Stang −8,5 cm",
+   "saetning": "Efter: ingen forskel over målefejlen. Stangens plads er ikke med: den kræver det fjerne nav i begge billeder. Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang.",
+   "note": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det fjerne nav i begge billeder (Sæt det fjerne nav). Uden det kræver de samme kameraplads (stativ, tape på gulvet, samme retning), fordi hver grad, kameraet står skråt, flytter stangens tal ca. 1,4 cm. De er ikke med i sætningen. Sætningen læser 5 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert sjette par med omhyggelige klik (oftere med hurtige).",
+   "raekker": "Sætningen læser 5 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert sjette par med omhyggelige klik (oftere med hurtige).",
+   "boks": {
+    "synlig": false,
+    "h": 0,
+    "hoejre": 0,
+    "tekst": "Et af de fjerne nav er skønnet (skjult bag benet og klikket ud fra skivens kant)",
+    "krydset": false
+   },
+   "stang": [
+    "4,8 cm",
+    "−8,5 cm",
+    "−13,3 cmkræver samme kameraplads"
+   ],
+   "stangHofte": [
+    "28,3 cm",
+    "15,6 cm",
+    "−12,6 cmkræver samme kameraplads"
+   ],
+   "vejledning": "Efter-billede: efter.png (kun i din browser) | Samme atlet, samme løft og fase, helst fra samme kameraplads. Vælg billedet under Efter, og klik de samme punkter. Fasen, kroppen og skalaen er fælles for de to. | Færdig med runde 1 af 3. Tryk Klik billedet igen.Kan du se selve det fjerne nav, så tryk Sæt det fjerne nav og midt på det: midt mellem de to nav er stangens midte, samme dybde som kroppen. Er det skjult bag benet, så lad være: et skønnet nav gør stangens tal usikre. Klik så de samme punkter igen fra bunden. Siden tager gennemsnittet af runderne og ser selv, hvor meget klikkene spreder. | Kroppen er målene fra Min krop i denne browser (183,0 cm). | ■ Guld: modellen med målene fra Min krop■ Grå: modellen, samme højde og vægt med gennemsnitlige proportioner■ Blå: dine klik i billedetMidtfoden og gulvet står samme sted som i billedet, og den stiplede linje er stangens lodlinje. Skalaen er kroppens længder. | Dødløft, ved gulvet, begge billeder målt med kroppens længder som skala. Efter: ingen forskel over målefejlen. Stangens plads er ikke med: den kræver det fjerne nav i begge billeder. Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang. | Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det fjerne nav i begge billeder (Sæt det fjerne nav). Uden det kræver de samme kameraplads (stativ, tape på gulvet, samme retning), fordi hver grad, kameraet står skråt, flytter stangens tal ca. 1,4 cm. De er ikke med i sætningen. Sætningen læser 5 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert sjette par med omhyggelige klik (oftere med hurtige). | ■ Før (stiplet) og ■ efter: dine klik i de to billeder, midtfoden og gulvet samme sted, samme skala. Billederne ovenfor er skaleret, så atleten har samme størrelse i begge. | Atleten vender mod højre i billedet (fundet af, at hoften står bag midtfoden). Skala fra kroppens længder (målene fra Min krop): den antager, at skinneben, lår og overkrop ligger i billedets plan. Kontrol med skiven: 79 % af kroppens længde. 75-105 % er normalt: skiven står nærmere kameraet end kroppen og ser større ud. | Mål fra Min krop i denne browser: 183,0 cm og 120,0 kg. Modellen står både med de mål og med gennemsnitlige proportioner for samme højde og vægt. | ≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm. | Stangens plads og skulderen foran stangen er ikke med som modeltal: modellen sætter stangen 3 cm foran ",
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "net": [],
+   "fejl": []
+  },
+  "1280-skraa10": {
+   "side": 1280,
+   "tallinje": "Torso 46,5° Hofte 84,4° Knæ 120,9° Stang −8,5 cm",
+   "saetning": "Efter: ingen forskel over målefejlen. Stangens plads er ikke med: den kræver det fjerne nav i begge billeder. Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang.",
+   "note": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det fjerne nav i begge billeder (Sæt det fjerne nav). Uden det kræver de samme kameraplads (stativ, tape på gulvet, samme retning), fordi hver grad, kameraet står skråt, flytter stangens tal ca. 1,4 cm. De er ikke med i sætningen. Sætningen læser 5 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert sjette par med omhyggelige klik (oftere med hurtige).",
+   "raekker": "Sætningen læser 5 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert sjette par med omhyggelige klik (oftere med hurtige).",
+   "boks": {
+    "synlig": false,
+    "h": 0,
+    "hoejre": 0,
+    "tekst": "Et af de fjerne nav er skønnet (skjult bag benet og klikket ud fra skivens kant)",
+    "krydset": false
+   },
+   "stang": [
+    "4,8 cm",
+    "−8,5 cm",
+    "−13,3 cmkræver samme kameraplads"
+   ],
+   "stangHofte": [
+    "28,3 cm",
+    "15,6 cm",
+    "−12,6 cmkræver samme kameraplads"
+   ],
+   "vejledning": "Efter-billede: efter.png (kun i din browser) | Samme atlet, samme løft og fase, helst fra samme kameraplads. Vælg billedet under Efter, og klik de samme punkter. Fasen, kroppen og skalaen er fælles for de to. | Færdig med runde 1 af 3. Tryk Klik billedet igen.Kan du se selve det fjerne nav, så tryk Sæt det fjerne nav og midt på det: midt mellem de to nav er stangens midte, samme dybde som kroppen. Er det skjult bag benet, så lad være: et skønnet nav gør stangens tal usikre. Klik så de samme punkter igen fra bunden. Siden tager gennemsnittet af runderne og ser selv, hvor meget klikkene spreder. | Kroppen er målene fra Min krop i denne browser (183,0 cm). | ■ Guld: modellen med målene fra Min krop■ Grå: modellen, samme højde og vægt med gennemsnitlige proportioner■ Blå: dine klik i billedetMidtfoden og gulvet står samme sted som i billedet, og den stiplede linje er stangens lodlinje. Skalaen er kroppens længder. | Dødløft, ved gulvet, begge billeder målt med kroppens længder som skala. Efter: ingen forskel over målefejlen. Stangens plads er ikke med: den kræver det fjerne nav i begge billeder. Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang. | Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det fjerne nav i begge billeder (Sæt det fjerne nav). Uden det kræver de samme kameraplads (stativ, tape på gulvet, samme retning), fordi hver grad, kameraet står skråt, flytter stangens tal ca. 1,4 cm. De er ikke med i sætningen. Sætningen læser 5 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert sjette par med omhyggelige klik (oftere med hurtige). | ■ Før (stiplet) og ■ efter: dine klik i de to billeder, midtfoden og gulvet samme sted, samme skala. Billederne ovenfor er skaleret, så atleten har samme størrelse i begge. | Atleten vender mod højre i billedet (fundet af, at hoften står bag midtfoden). Skala fra kroppens længder (målene fra Min krop): den antager, at skinneben, lår og overkrop ligger i billedets plan. Kontrol med skiven: 79 % af kroppens længde. 75-105 % er normalt: skiven står nærmere kameraet end kroppen og ser større ud. | Mål fra Min krop i denne browser: 183,0 cm og 120,0 kg. Modellen står både med de mål og med gennemsnitlige proportioner for samme højde og vægt. | ≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm. | Stangens plads og skulderen foran stangen er ikke med som modeltal: modellen sætter stangen 3 cm foran ",
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "net": [],
+   "fejl": []
+  }
+ },
+ "e7": {
+  "360": {
+   "uden": {
+    "side": 360,
+    "tallinje": "Torso 43,9° Hofte 81,0° Knæ 114,8° Stang 0,8 cm",
+    "saetning": "Efter: ingen forskel over målefejlen. Stangen samme sted (inden for målefejlen). Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang.",
+    "note": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangen er midtpunktet af de to nav i begge billeder, så et kamera, der står lidt skråt, flytter ikke stangens tal. Klik kun et nav, du kan se; er det skjult bag benet, så sæt kryds ved Et af de fjerne nav er skønnet. Sætningen læser 8 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert fjerde par med omhyggelige klik (oftere med hurtige).",
+    "raekker": "Sætningen læser 8 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert fjerde par med omhyggelige klik (oftere med hurtige).",
+    "boks": {
+     "synlig": true,
+     "h": 44,
+     "hoejre": 337,
+     "tekst": "Et af de fjerne nav er skønnet (skjult bag benet og klikket ud fra skivens kant)",
+     "krydset": false
+    },
+    "stang": [
+     "2,8 cm",
+     "0,8 cm",
+     "≈−2,0 cmgrænse 3,0 cm"
+    ],
+    "stangHofte": [
+     "26,3 cm",
+     "24,2 cm",
+     "≈−2,1 cmgrænse 4,0 cm"
+    ],
+    "vejledning": "Efter-billede: efter.png (kun i din browser) | Samme atlet, samme løft og fase, helst fra samme kameraplads. Vælg billedet under Efter, og klik de samme punkter. Fasen, kroppen og skalaen er fælles for de to. | Færdig med runde 1 af 3. Tryk Klik billedet igen.Klik så de samme punkter igen fra bunden. Siden tager gennemsnittet af runderne og ser selv, hvor meget klikkene spreder. | Kroppen er målene fra Min krop i denne browser (183,0 cm). | ■ Guld: modellen med målene fra Min krop■ Grå: modellen, samme højde og vægt med gennemsnitlige proportioner■ Blå: dine klik i billedetMidtfoden og gulvet står samme sted som i billedet, og den stiplede linje er stangens lodlinje. Skalaen er kroppens længder. | Dødløft, ved gulvet, begge billeder målt med kroppens længder som skala. Efter: ingen forskel over målefejlen. Stangen samme sted (inden for målefejlen). Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang. | Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangen er midtpunktet af de to nav i begge billeder, så et kamera, der står lidt skråt, flytter ikke stangens tal. Klik kun et nav, du kan se; er det skjult bag benet, så sæt kryds ved Et af de fjerne nav er skønnet. Sætningen læser 8 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert fjerde par med omhyggelige klik (oftere med hurtige). | ■ Før (stiplet) og ■ efter: dine klik i de to billeder, midtfoden og gulvet samme sted, samme skala. Efter-billedet er spejlvendt, så atleten vender samme vej i begge. Billederne ovenfor er skaleret, så atleten har samme størrelse i begge. | Atleten vender mod venstre i billedet (fundet af, at hoften står bag midtfoden). Skala fra kroppens længder (målene fra Min krop): den antager, at skinneben, lår og overkrop ligger i billedets plan. Kontrol med skiven: 100 % af kroppens længde. 75-105 % er normalt: skiven står nærmere kameraet end kroppen og ser større ud. | Mål fra Min krop i denne browser: 183,0 cm og 120,0 kg. Modellen står både med de mål og med gennemsnitlige proportioner for samme højde og vægt. | ≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm. | Stangens plads og skulderen foran stangen er ikke med som modeltal: modellen sætter stangen 3 cm foran midtfoden ved gulvet og over midtfoden ved knæhøjde og skulderen 5 og 12 cm foran stangen. Figuren viser de valg. Ingen tal i Nm: størrelsen er modellens.",
+    "lager": [
+     "loeftmodel-min-krop-468"
+    ]
+   },
+   "med": {
+    "side": 360,
+    "tallinje": "Torso 43,9° Hofte 81,0° Knæ 114,8° Stang 0,8 cm",
+    "saetning": "Efter: ingen forskel over målefejlen. Stangen samme sted (inden for målefejlen). Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang.",
+    "note": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangen er midtpunktet af de to nav i begge billeder, så et kamera, der står lidt skråt, flytter ikke stangens tal. Klik kun et nav, du kan se; er det skjult bag benet, så sæt kryds ved Et af de fjerne nav er skønnet. Et fjernt nav er skønnet, så stangens grænser er ganget med 2: et skønnet nav spreder ca. 2,5 cm mod 0,5 cm for et nav, man kan se. Sætningen læser 8 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert fjerde par med omhyggelige klik (oftere med hurtige).",
+    "raekker": "Sætningen læser 8 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert fjerde par med omhyggelige klik (oftere med hurtige).",
+    "boks": {
+     "synlig": true,
+     "h": 44,
+     "hoejre": 337,
+     "tekst": "Et af de fjerne nav er skønnet (skjult bag benet og klikket ud fra skivens kant)",
+     "krydset": true
+    },
+    "stang": [
+     "2,8 cm",
+     "0,8 cm",
+     "≈−2,0 cmgrænse 6,0 cm"
+    ],
+    "stangHofte": [
+     "26,3 cm",
+     "24,2 cm",
+     "≈−2,1 cmgrænse 8,0 cm"
+    ],
+    "vejledning": "Efter-billede: efter.png (kun i din browser) | Samme atlet, samme løft og fase, helst fra samme kameraplads. Vælg billedet under Efter, og klik de samme punkter. Fasen, kroppen og skalaen er fælles for de to. | Færdig med runde 1 af 3. Tryk Klik billedet igen.Klik så de samme punkter igen fra bunden. Siden tager gennemsnittet af runderne og ser selv, hvor meget klikkene spreder. | Kroppen er målene fra Min krop i denne browser (183,0 cm). | ■ Guld: modellen med målene fra Min krop■ Grå: modellen, samme højde og vægt med gennemsnitlige proportioner■ Blå: dine klik i billedetMidtfoden og gulvet står samme sted som i billedet, og den stiplede linje er stangens lodlinje. Skalaen er kroppens længder. | Dødløft, ved gulvet, begge billeder målt med kroppens længder som skala. Efter: ingen forskel over målefejlen. Stangen samme sted (inden for målefejlen). Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang. | Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangen er midtpunktet af de to nav i begge billeder, så et kamera, der står lidt skråt, flytter ikke stangens tal. Klik kun et nav, du kan se; er det skjult bag benet, så sæt kryds ved Et af de fjerne nav er skønnet. Et fjernt nav er skønnet, så stangens grænser er ganget med 2: et skønnet nav spreder ca. 2,5 cm mod 0,5 cm for et nav, man kan se. Sætningen læser 8 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert fjerde par med omhyggelige klik (oftere med hurtige). | ■ Før (stiplet) og ■ efter: dine klik i de to billeder, midtfoden og gulvet samme sted, samme skala. Efter-billedet er spejlvendt, så atleten vender samme vej i begge. Billederne ovenfor er skaleret, så atleten har samme størrelse i begge. | Atleten vender mod venstre i billedet (fundet af, at hoften står bag midtfoden). Skala fra kroppens længder (målene fra Min krop): den antager, at skinneben, lår og overkrop ligger i billedets plan. Kontrol med skiven: 100 % af kroppens længde. 75-105 % er normalt: skiven står nærmere kameraet end kroppen og ser større ud. | Mål fra Min krop i denne browser: 183,0 cm og 120,0 kg. Modellen står både med de mål og med gennemsnitlige proportioner for samme højde og vægt. | ≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm. | Stangens plads og skulderen foran stangen er ikke med som modeltal: modellen sætter stangen 3 cm foran midtfoden ved gulvet og over midtfoden ved knæhøjde og skulderen 5 og 12 cm foran ",
+    "lager": [
+     "loeftmodel-min-krop-468"
+    ]
+   },
+   "efterFaseskift": {
+    "krydset": true,
+    "tilstand": true
+   },
+   "net": [],
+   "fejl": []
+  },
+  "375": {
+   "uden": {
+    "side": 375,
+    "tallinje": "Torso 43,9° Hofte 81,0° Knæ 114,8° Stang 0,8 cm",
+    "saetning": "Efter: ingen forskel over målefejlen. Stangen samme sted (inden for målefejlen). Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang.",
+    "note": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangen er midtpunktet af de to nav i begge billeder, så et kamera, der står lidt skråt, flytter ikke stangens tal. Klik kun et nav, du kan se; er det skjult bag benet, så sæt kryds ved Et af de fjerne nav er skønnet. Sætningen læser 8 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert fjerde par med omhyggelige klik (oftere med hurtige).",
+    "raekker": "Sætningen læser 8 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert fjerde par med omhyggelige klik (oftere med hurtige).",
+    "boks": {
+     "synlig": true,
+     "h": 44,
+     "hoejre": 352,
+     "tekst": "Et af de fjerne nav er skønnet (skjult bag benet og klikket ud fra skivens kant)",
+     "krydset": false
+    },
+    "stang": [
+     "2,8 cm",
+     "0,8 cm",
+     "≈−2,0 cmgrænse 3,0 cm"
+    ],
+    "stangHofte": [
+     "26,3 cm",
+     "24,2 cm",
+     "≈−2,1 cmgrænse 4,0 cm"
+    ],
+    "vejledning": "Efter-billede: efter.png (kun i din browser) | Samme atlet, samme løft og fase, helst fra samme kameraplads. Vælg billedet under Efter, og klik de samme punkter. Fasen, kroppen og skalaen er fælles for de to. | Færdig med runde 1 af 3. Tryk Klik billedet igen.Klik så de samme punkter igen fra bunden. Siden tager gennemsnittet af runderne og ser selv, hvor meget klikkene spreder. | Kroppen er målene fra Min krop i denne browser (183,0 cm). | ■ Guld: modellen med målene fra Min krop■ Grå: modellen, samme højde og vægt med gennemsnitlige proportioner■ Blå: dine klik i billedetMidtfoden og gulvet står samme sted som i billedet, og den stiplede linje er stangens lodlinje. Skalaen er kroppens længder. | Dødløft, ved gulvet, begge billeder målt med kroppens længder som skala. Efter: ingen forskel over målefejlen. Stangen samme sted (inden for målefejlen). Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang. | Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangen er midtpunktet af de to nav i begge billeder, så et kamera, der står lidt skråt, flytter ikke stangens tal. Klik kun et nav, du kan se; er det skjult bag benet, så sæt kryds ved Et af de fjerne nav er skønnet. Sætningen læser 8 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert fjerde par med omhyggelige klik (oftere med hurtige). | ■ Før (stiplet) og ■ efter: dine klik i de to billeder, midtfoden og gulvet samme sted, samme skala. Efter-billedet er spejlvendt, så atleten vender samme vej i begge. Billederne ovenfor er skaleret, så atleten har samme størrelse i begge. | Atleten vender mod venstre i billedet (fundet af, at hoften står bag midtfoden). Skala fra kroppens længder (målene fra Min krop): den antager, at skinneben, lår og overkrop ligger i billedets plan. Kontrol med skiven: 100 % af kroppens længde. 75-105 % er normalt: skiven står nærmere kameraet end kroppen og ser større ud. | Mål fra Min krop i denne browser: 183,0 cm og 120,0 kg. Modellen står både med de mål og med gennemsnitlige proportioner for samme højde og vægt. | ≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm. | Stangens plads og skulderen foran stangen er ikke med som modeltal: modellen sætter stangen 3 cm foran midtfoden ved gulvet og over midtfoden ved knæhøjde og skulderen 5 og 12 cm foran stangen. Figuren viser de valg. Ingen tal i Nm: størrelsen er modellens.",
+    "lager": [
+     "loeftmodel-min-krop-468"
+    ]
+   },
+   "med": {
+    "side": 375,
+    "tallinje": "Torso 43,9° Hofte 81,0° Knæ 114,8° Stang 0,8 cm",
+    "saetning": "Efter: ingen forskel over målefejlen. Stangen samme sted (inden for målefejlen). Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang.",
+    "note": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangen er midtpunktet af de to nav i begge billeder, så et kamera, der står lidt skråt, flytter ikke stangens tal. Klik kun et nav, du kan se; er det skjult bag benet, så sæt kryds ved Et af de fjerne nav er skønnet. Et fjernt nav er skønnet, så stangens grænser er ganget med 2: et skønnet nav spreder ca. 2,5 cm mod 0,5 cm for et nav, man kan se. Sætningen læser 8 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert fjerde par med omhyggelige klik (oftere med hurtige).",
+    "raekker": "Sætningen læser 8 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert fjerde par med omhyggelige klik (oftere med hurtige).",
+    "boks": {
+     "synlig": true,
+     "h": 44,
+     "hoejre": 352,
+     "tekst": "Et af de fjerne nav er skønnet (skjult bag benet og klikket ud fra skivens kant)",
+     "krydset": true
+    },
+    "stang": [
+     "2,8 cm",
+     "0,8 cm",
+     "≈−2,0 cmgrænse 6,0 cm"
+    ],
+    "stangHofte": [
+     "26,3 cm",
+     "24,2 cm",
+     "≈−2,1 cmgrænse 8,0 cm"
+    ],
+    "vejledning": "Efter-billede: efter.png (kun i din browser) | Samme atlet, samme løft og fase, helst fra samme kameraplads. Vælg billedet under Efter, og klik de samme punkter. Fasen, kroppen og skalaen er fælles for de to. | Færdig med runde 1 af 3. Tryk Klik billedet igen.Klik så de samme punkter igen fra bunden. Siden tager gennemsnittet af runderne og ser selv, hvor meget klikkene spreder. | Kroppen er målene fra Min krop i denne browser (183,0 cm). | ■ Guld: modellen med målene fra Min krop■ Grå: modellen, samme højde og vægt med gennemsnitlige proportioner■ Blå: dine klik i billedetMidtfoden og gulvet står samme sted som i billedet, og den stiplede linje er stangens lodlinje. Skalaen er kroppens længder. | Dødløft, ved gulvet, begge billeder målt med kroppens længder som skala. Efter: ingen forskel over målefejlen. Stangen samme sted (inden for målefejlen). Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang. | Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangen er midtpunktet af de to nav i begge billeder, så et kamera, der står lidt skråt, flytter ikke stangens tal. Klik kun et nav, du kan se; er det skjult bag benet, så sæt kryds ved Et af de fjerne nav er skønnet. Et fjernt nav er skønnet, så stangens grænser er ganget med 2: et skønnet nav spreder ca. 2,5 cm mod 0,5 cm for et nav, man kan se. Sætningen læser 8 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert fjerde par med omhyggelige klik (oftere med hurtige). | ■ Før (stiplet) og ■ efter: dine klik i de to billeder, midtfoden og gulvet samme sted, samme skala. Efter-billedet er spejlvendt, så atleten vender samme vej i begge. Billederne ovenfor er skaleret, så atleten har samme størrelse i begge. | Atleten vender mod venstre i billedet (fundet af, at hoften står bag midtfoden). Skala fra kroppens længder (målene fra Min krop): den antager, at skinneben, lår og overkrop ligger i billedets plan. Kontrol med skiven: 100 % af kroppens længde. 75-105 % er normalt: skiven står nærmere kameraet end kroppen og ser større ud. | Mål fra Min krop i denne browser: 183,0 cm og 120,0 kg. Modellen står både med de mål og med gennemsnitlige proportioner for samme højde og vægt. | ≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm. | Stangens plads og skulderen foran stangen er ikke med som modeltal: modellen sætter stangen 3 cm foran midtfoden ved gulvet og over midtfoden ved knæhøjde og skulderen 5 og 12 cm foran ",
+    "lager": [
+     "loeftmodel-min-krop-468"
+    ]
+   },
+   "efterFaseskift": {
+    "krydset": true,
+    "tilstand": true
+   },
+   "net": [],
+   "fejl": []
+  },
+  "390": {
+   "uden": {
+    "side": 390,
+    "tallinje": "Torso 43,9° Hofte 81,0° Knæ 114,8° Stang 0,8 cm",
+    "saetning": "Efter: ingen forskel over målefejlen. Stangen samme sted (inden for målefejlen). Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang.",
+    "note": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangen er midtpunktet af de to nav i begge billeder, så et kamera, der står lidt skråt, flytter ikke stangens tal. Klik kun et nav, du kan se; er det skjult bag benet, så sæt kryds ved Et af de fjerne nav er skønnet. Sætningen læser 8 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert fjerde par med omhyggelige klik (oftere med hurtige).",
+    "raekker": "Sætningen læser 8 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert fjerde par med omhyggelige klik (oftere med hurtige).",
+    "boks": {
+     "synlig": true,
+     "h": 44,
+     "hoejre": 367,
+     "tekst": "Et af de fjerne nav er skønnet (skjult bag benet og klikket ud fra skivens kant)",
+     "krydset": false
+    },
+    "stang": [
+     "2,8 cm",
+     "0,8 cm",
+     "≈−2,0 cmgrænse 3,0 cm"
+    ],
+    "stangHofte": [
+     "26,3 cm",
+     "24,2 cm",
+     "≈−2,1 cmgrænse 4,0 cm"
+    ],
+    "vejledning": "Efter-billede: efter.png (kun i din browser) | Samme atlet, samme løft og fase, helst fra samme kameraplads. Vælg billedet under Efter, og klik de samme punkter. Fasen, kroppen og skalaen er fælles for de to. | Færdig med runde 1 af 3. Tryk Klik billedet igen.Klik så de samme punkter igen fra bunden. Siden tager gennemsnittet af runderne og ser selv, hvor meget klikkene spreder. | Kroppen er målene fra Min krop i denne browser (183,0 cm). | ■ Guld: modellen med målene fra Min krop■ Grå: modellen, samme højde og vægt med gennemsnitlige proportioner■ Blå: dine klik i billedetMidtfoden og gulvet står samme sted som i billedet, og den stiplede linje er stangens lodlinje. Skalaen er kroppens længder. | Dødløft, ved gulvet, begge billeder målt med kroppens længder som skala. Efter: ingen forskel over målefejlen. Stangen samme sted (inden for målefejlen). Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang. | Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangen er midtpunktet af de to nav i begge billeder, så et kamera, der står lidt skråt, flytter ikke stangens tal. Klik kun et nav, du kan se; er det skjult bag benet, så sæt kryds ved Et af de fjerne nav er skønnet. Sætningen læser 8 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert fjerde par med omhyggelige klik (oftere med hurtige). | ■ Før (stiplet) og ■ efter: dine klik i de to billeder, midtfoden og gulvet samme sted, samme skala. Efter-billedet er spejlvendt, så atleten vender samme vej i begge. Billederne ovenfor er skaleret, så atleten har samme størrelse i begge. | Atleten vender mod venstre i billedet (fundet af, at hoften står bag midtfoden). Skala fra kroppens længder (målene fra Min krop): den antager, at skinneben, lår og overkrop ligger i billedets plan. Kontrol med skiven: 100 % af kroppens længde. 75-105 % er normalt: skiven står nærmere kameraet end kroppen og ser større ud. | Mål fra Min krop i denne browser: 183,0 cm og 120,0 kg. Modellen står både med de mål og med gennemsnitlige proportioner for samme højde og vægt. | ≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm. | Stangens plads og skulderen foran stangen er ikke med som modeltal: modellen sætter stangen 3 cm foran midtfoden ved gulvet og over midtfoden ved knæhøjde og skulderen 5 og 12 cm foran stangen. Figuren viser de valg. Ingen tal i Nm: størrelsen er modellens.",
+    "lager": [
+     "loeftmodel-min-krop-468"
+    ]
+   },
+   "med": {
+    "side": 390,
+    "tallinje": "Torso 43,9° Hofte 81,0° Knæ 114,8° Stang 0,8 cm",
+    "saetning": "Efter: ingen forskel over målefejlen. Stangen samme sted (inden for målefejlen). Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang.",
+    "note": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangen er midtpunktet af de to nav i begge billeder, så et kamera, der står lidt skråt, flytter ikke stangens tal. Klik kun et nav, du kan se; er det skjult bag benet, så sæt kryds ved Et af de fjerne nav er skønnet. Et fjernt nav er skønnet, så stangens grænser er ganget med 2: et skønnet nav spreder ca. 2,5 cm mod 0,5 cm for et nav, man kan se. Sætningen læser 8 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert fjerde par med omhyggelige klik (oftere med hurtige).",
+    "raekker": "Sætningen læser 8 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert fjerde par med omhyggelige klik (oftere med hurtige).",
+    "boks": {
+     "synlig": true,
+     "h": 44,
+     "hoejre": 367,
+     "tekst": "Et af de fjerne nav er skønnet (skjult bag benet og klikket ud fra skivens kant)",
+     "krydset": true
+    },
+    "stang": [
+     "2,8 cm",
+     "0,8 cm",
+     "≈−2,0 cmgrænse 6,0 cm"
+    ],
+    "stangHofte": [
+     "26,3 cm",
+     "24,2 cm",
+     "≈−2,1 cmgrænse 8,0 cm"
+    ],
+    "vejledning": "Efter-billede: efter.png (kun i din browser) | Samme atlet, samme løft og fase, helst fra samme kameraplads. Vælg billedet under Efter, og klik de samme punkter. Fasen, kroppen og skalaen er fælles for de to. | Færdig med runde 1 af 3. Tryk Klik billedet igen.Klik så de samme punkter igen fra bunden. Siden tager gennemsnittet af runderne og ser selv, hvor meget klikkene spreder. | Kroppen er målene fra Min krop i denne browser (183,0 cm). | ■ Guld: modellen med målene fra Min krop■ Grå: modellen, samme højde og vægt med gennemsnitlige proportioner■ Blå: dine klik i billedetMidtfoden og gulvet står samme sted som i billedet, og den stiplede linje er stangens lodlinje. Skalaen er kroppens længder. | Dødløft, ved gulvet, begge billeder målt med kroppens længder som skala. Efter: ingen forskel over målefejlen. Stangen samme sted (inden for målefejlen). Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang. | Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangen er midtpunktet af de to nav i begge billeder, så et kamera, der står lidt skråt, flytter ikke stangens tal. Klik kun et nav, du kan se; er det skjult bag benet, så sæt kryds ved Et af de fjerne nav er skønnet. Et fjernt nav er skønnet, så stangens grænser er ganget med 2: et skønnet nav spreder ca. 2,5 cm mod 0,5 cm for et nav, man kan se. Sætningen læser 8 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert fjerde par med omhyggelige klik (oftere med hurtige). | ■ Før (stiplet) og ■ efter: dine klik i de to billeder, midtfoden og gulvet samme sted, samme skala. Efter-billedet er spejlvendt, så atleten vender samme vej i begge. Billederne ovenfor er skaleret, så atleten har samme størrelse i begge. | Atleten vender mod venstre i billedet (fundet af, at hoften står bag midtfoden). Skala fra kroppens længder (målene fra Min krop): den antager, at skinneben, lår og overkrop ligger i billedets plan. Kontrol med skiven: 100 % af kroppens længde. 75-105 % er normalt: skiven står nærmere kameraet end kroppen og ser større ud. | Mål fra Min krop i denne browser: 183,0 cm og 120,0 kg. Modellen står både med de mål og med gennemsnitlige proportioner for samme højde og vægt. | ≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm. | Stangens plads og skulderen foran stangen er ikke med som modeltal: modellen sætter stangen 3 cm foran midtfoden ved gulvet og over midtfoden ved knæhøjde og skulderen 5 og 12 cm foran ",
+    "lager": [
+     "loeftmodel-min-krop-468"
+    ]
+   },
+   "efterFaseskift": {
+    "krydset": true,
+    "tilstand": true
+   },
+   "net": [],
+   "fejl": []
+  },
+  "1280": {
+   "uden": {
+    "side": 1280,
+    "tallinje": "Torso 43,9° Hofte 81,0° Knæ 114,8° Stang 0,8 cm",
+    "saetning": "Efter: ingen forskel over målefejlen. Stangen samme sted (inden for målefejlen). Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang.",
+    "note": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangen er midtpunktet af de to nav i begge billeder, så et kamera, der står lidt skråt, flytter ikke stangens tal. Klik kun et nav, du kan se; er det skjult bag benet, så sæt kryds ved Et af de fjerne nav er skønnet. Sætningen læser 8 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert fjerde par med omhyggelige klik (oftere med hurtige).",
+    "raekker": "Sætningen læser 8 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert fjerde par med omhyggelige klik (oftere med hurtige).",
+    "boks": {
+     "synlig": true,
+     "h": 44,
+     "hoejre": 1161,
+     "tekst": "Et af de fjerne nav er skønnet (skjult bag benet og klikket ud fra skivens kant)",
+     "krydset": false
+    },
+    "stang": [
+     "2,8 cm",
+     "0,8 cm",
+     "≈−2,0 cmgrænse 3,0 cm"
+    ],
+    "stangHofte": [
+     "26,3 cm",
+     "24,2 cm",
+     "≈−2,1 cmgrænse 4,0 cm"
+    ],
+    "vejledning": "Efter-billede: efter.png (kun i din browser) | Samme atlet, samme løft og fase, helst fra samme kameraplads. Vælg billedet under Efter, og klik de samme punkter. Fasen, kroppen og skalaen er fælles for de to. | Færdig med runde 1 af 3. Tryk Klik billedet igen.Klik så de samme punkter igen fra bunden. Siden tager gennemsnittet af runderne og ser selv, hvor meget klikkene spreder. | Kroppen er målene fra Min krop i denne browser (183,0 cm). | ■ Guld: modellen med målene fra Min krop■ Grå: modellen, samme højde og vægt med gennemsnitlige proportioner■ Blå: dine klik i billedetMidtfoden og gulvet står samme sted som i billedet, og den stiplede linje er stangens lodlinje. Skalaen er kroppens længder. | Dødløft, ved gulvet, begge billeder målt med kroppens længder som skala. Efter: ingen forskel over målefejlen. Stangen samme sted (inden for målefejlen). Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang. | Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangen er midtpunktet af de to nav i begge billeder, så et kamera, der står lidt skråt, flytter ikke stangens tal. Klik kun et nav, du kan se; er det skjult bag benet, så sæt kryds ved Et af de fjerne nav er skønnet. Sætningen læser 8 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert fjerde par med omhyggelige klik (oftere med hurtige). | ■ Før (stiplet) og ■ efter: dine klik i de to billeder, midtfoden og gulvet samme sted, samme skala. Efter-billedet er spejlvendt, så atleten vender samme vej i begge. Billederne ovenfor er skaleret, så atleten har samme størrelse i begge. | Atleten vender mod venstre i billedet (fundet af, at hoften står bag midtfoden). Skala fra kroppens længder (målene fra Min krop): den antager, at skinneben, lår og overkrop ligger i billedets plan. Kontrol med skiven: 100 % af kroppens længde. 75-105 % er normalt: skiven står nærmere kameraet end kroppen og ser større ud. | Mål fra Min krop i denne browser: 183,0 cm og 120,0 kg. Modellen står både med de mål og med gennemsnitlige proportioner for samme højde og vægt. | ≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm. | Stangens plads og skulderen foran stangen er ikke med som modeltal: modellen sætter stangen 3 cm foran midtfoden ved gulvet og over midtfoden ved knæhøjde og skulderen 5 og 12 cm foran stangen. Figuren viser de valg. Ingen tal i Nm: størrelsen er modellens.",
+    "lager": [
+     "loeftmodel-min-krop-468"
+    ]
+   },
+   "med": {
+    "side": 1280,
+    "tallinje": "Torso 43,9° Hofte 81,0° Knæ 114,8° Stang 0,8 cm",
+    "saetning": "Efter: ingen forskel over målefejlen. Stangen samme sted (inden for målefejlen). Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang.",
+    "note": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangen er midtpunktet af de to nav i begge billeder, så et kamera, der står lidt skråt, flytter ikke stangens tal. Klik kun et nav, du kan se; er det skjult bag benet, så sæt kryds ved Et af de fjerne nav er skønnet. Et fjernt nav er skønnet, så stangens grænser er ganget med 2: et skønnet nav spreder ca. 2,5 cm mod 0,5 cm for et nav, man kan se. Sætningen læser 8 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert fjerde par med omhyggelige klik (oftere med hurtige).",
+    "raekker": "Sætningen læser 8 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert fjerde par med omhyggelige klik (oftere med hurtige).",
+    "boks": {
+     "synlig": true,
+     "h": 44,
+     "hoejre": 1161,
+     "tekst": "Et af de fjerne nav er skønnet (skjult bag benet og klikket ud fra skivens kant)",
+     "krydset": true
+    },
+    "stang": [
+     "2,8 cm",
+     "0,8 cm",
+     "≈−2,0 cmgrænse 6,0 cm"
+    ],
+    "stangHofte": [
+     "26,3 cm",
+     "24,2 cm",
+     "≈−2,1 cmgrænse 8,0 cm"
+    ],
+    "vejledning": "Efter-billede: efter.png (kun i din browser) | Samme atlet, samme løft og fase, helst fra samme kameraplads. Vælg billedet under Efter, og klik de samme punkter. Fasen, kroppen og skalaen er fælles for de to. | Færdig med runde 1 af 3. Tryk Klik billedet igen.Klik så de samme punkter igen fra bunden. Siden tager gennemsnittet af runderne og ser selv, hvor meget klikkene spreder. | Kroppen er målene fra Min krop i denne browser (183,0 cm). | ■ Guld: modellen med målene fra Min krop■ Grå: modellen, samme højde og vægt med gennemsnitlige proportioner■ Blå: dine klik i billedetMidtfoden og gulvet står samme sted som i billedet, og den stiplede linje er stangens lodlinje. Skalaen er kroppens længder. | Dødløft, ved gulvet, begge billeder målt med kroppens længder som skala. Efter: ingen forskel over målefejlen. Stangen samme sted (inden for målefejlen). Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang. | Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangen er midtpunktet af de to nav i begge billeder, så et kamera, der står lidt skråt, flytter ikke stangens tal. Klik kun et nav, du kan se; er det skjult bag benet, så sæt kryds ved Et af de fjerne nav er skønnet. Et fjernt nav er skønnet, så stangens grænser er ganget med 2: et skønnet nav spreder ca. 2,5 cm mod 0,5 cm for et nav, man kan se. Sætningen læser 8 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert fjerde par med omhyggelige klik (oftere med hurtige). | ■ Før (stiplet) og ■ efter: dine klik i de to billeder, midtfoden og gulvet samme sted, samme skala. Efter-billedet er spejlvendt, så atleten vender samme vej i begge. Billederne ovenfor er skaleret, så atleten har samme størrelse i begge. | Atleten vender mod venstre i billedet (fundet af, at hoften står bag midtfoden). Skala fra kroppens længder (målene fra Min krop): den antager, at skinneben, lår og overkrop ligger i billedets plan. Kontrol med skiven: 100 % af kroppens længde. 75-105 % er normalt: skiven står nærmere kameraet end kroppen og ser større ud. | Mål fra Min krop i denne browser: 183,0 cm og 120,0 kg. Modellen står både med de mål og med gennemsnitlige proportioner for samme højde og vægt. | ≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm. | Stangens plads og skulderen foran stangen er ikke med som modeltal: modellen sætter stangen 3 cm foran midtfoden ved gulvet og over midtfoden ved knæhøjde og skulderen 5 og 12 cm foran ",
+    "lager": [
+     "loeftmodel-min-krop-468"
+    ]
+   },
+   "efterFaseskift": {
+    "krydset": true,
+    "tilstand": true
+   },
+   "net": [],
+   "fejl": []
+  }
+ },
+ "e3": {
+  "360-ref-udenNav": {
+   "dom": "ok",
+   "hint": "1",
+   "tekst": "Stangen står ca. 98 cm over gulvet (39 % af vejen fra bunden til lockout). Modellens sticking point er 96 cm (35 %). Inden for 5 cm, så modellens tal kan holdes op mod billedet. Perspektivet er ikke regnet med: navet står nærmere kameraet og ser typisk 2-4 cm for højt ud. Sæt det fjerne nav, så bliver grænsen 3 cm. Uden det fjerne nav er \"inden for\" kun et hint, ikke en dom: et kamera, der står højere eller lavere, kan alene flytte stangens højde 6-7 cm.",
+   "side": 360
+  },
+  "360-ref-nav": {
+   "dom": "ok",
+   "hint": null,
+   "tekst": "Stangen står ca. 95 cm over gulvet (34 % af vejen fra bunden til lockout). Modellens sticking point er 96 cm (35 %). Inden for 3 cm, så modellens tal kan holdes op mod billedet. Stangen er midt mellem de to nav, så perspektivet er regnet med.",
+   "side": 360
+  },
+  "360-op30vip-udenNav": {
+   "dom": "lavere",
+   "hint": "1",
+   "tekst": "Stangen står ca. 90 cm over gulvet (25 % af vejen fra bunden til lockout). Modellens sticking point er 96 cm (35 %). Billedets stang ser 6 cm lavere ud end modellens (grænsen er 5 cm), så billedet er måske fra et andet sted i opturen. Perspektivet er ikke regnet med: navet står nærmere kameraet og ser typisk 2-4 cm for højt ud. Sæt det fjerne nav, så bliver grænsen 3 cm. Uden det fjerne nav er \"lavere\" kun et hint, ikke en dom: et kamera, der står højere eller lavere, kan alene flytte stangens højde 6-7 cm. Står stangen også lavere med navet, så vælg et billede lidt senere i løftet.",
+   "side": 360
+  },
+  "360-op30vip-nav": {
+   "dom": "ok",
+   "hint": null,
+   "tekst": "Stangen står ca. 93 cm over gulvet (31 % af vejen fra bunden til lockout). Modellens sticking point er 96 cm (35 %). Inden for 3 cm, så modellens tal kan holdes op mod billedet. Stangen er midt mellem de to nav, så perspektivet er regnet med.",
+   "side": 360
+  },
+  "360-lav60-udenNav": {
+   "dom": "hoejere",
+   "hint": "1",
+   "tekst": "Stangen står ca. 103 cm over gulvet (47 % af vejen fra bunden til lockout). Modellens sticking point er 96 cm (35 %). Billedets stang ser 7 cm højere ud end modellens (grænsen er 5 cm), så billedet er måske fra et andet sted i opturen. Perspektivet er ikke regnet med: navet står nærmere kameraet og ser typisk 2-4 cm for højt ud. Sæt det fjerne nav, så bliver grænsen 3 cm. Uden det fjerne nav er \"højere\" kun et hint, ikke en dom: et kamera, der står højere eller lavere, kan alene flytte stangens højde 6-7 cm. Står stangen også højere med navet, så vælg et billede lidt tidligere i løftet.",
+   "side": 360
+  },
+  "360-lav60-nav": {
+   "dom": "ok",
+   "hint": null,
+   "tekst": "Stangen står ca. 95 cm over gulvet (33 % af vejen fra bunden til lockout). Modellens sticking point er 96 cm (35 %). Inden for 3 cm, så modellens tal kan holdes op mod billedet. Stangen er midt mellem de to nav, så perspektivet er regnet med.",
+   "side": 360
+  },
+  "360-skraa10-udenNav": {
+   "dom": "ok",
+   "hint": "1",
+   "tekst": "Stangen står ca. 100 cm over gulvet (41 % af vejen fra bunden til lockout). Modellens sticking point er 96 cm (35 %). Inden for 5 cm, så modellens tal kan holdes op mod billedet. Perspektivet er ikke regnet med: navet står nærmere kameraet og ser typisk 2-4 cm for højt ud. Sæt det fjerne nav, så bliver grænsen 3 cm. Uden det fjerne nav er \"inden for\" kun et hint, ikke en dom: et kamera, der står højere eller lavere, kan alene flytte stangens højde 6-7 cm.",
+   "side": 360
+  },
+  "360-skraa10-nav": {
+   "dom": "ok",
+   "hint": null,
+   "tekst": "Stangen står ca. 96 cm over gulvet (36 % af vejen fra bunden til lockout). Modellens sticking point er 96 cm (35 %). Inden for 3 cm, så modellens tal kan holdes op mod billedet. Stangen er midt mellem de to nav, så perspektivet er regnet med.",
+   "side": 360
+  },
+  "360-fejl": [],
+  "360-net": [],
+  "390-ref-udenNav": {
+   "dom": "ok",
+   "hint": "1",
+   "tekst": "Stangen står ca. 98 cm over gulvet (39 % af vejen fra bunden til lockout). Modellens sticking point er 96 cm (35 %). Inden for 5 cm, så modellens tal kan holdes op mod billedet. Perspektivet er ikke regnet med: navet står nærmere kameraet og ser typisk 2-4 cm for højt ud. Sæt det fjerne nav, så bliver grænsen 3 cm. Uden det fjerne nav er \"inden for\" kun et hint, ikke en dom: et kamera, der står højere eller lavere, kan alene flytte stangens højde 6-7 cm.",
+   "side": 390
+  },
+  "390-ref-nav": {
+   "dom": "ok",
+   "hint": null,
+   "tekst": "Stangen står ca. 95 cm over gulvet (34 % af vejen fra bunden til lockout). Modellens sticking point er 96 cm (35 %). Inden for 3 cm, så modellens tal kan holdes op mod billedet. Stangen er midt mellem de to nav, så perspektivet er regnet med.",
+   "side": 390
+  },
+  "390-op30vip-udenNav": {
+   "dom": "lavere",
+   "hint": "1",
+   "tekst": "Stangen står ca. 90 cm over gulvet (25 % af vejen fra bunden til lockout). Modellens sticking point er 96 cm (35 %). Billedets stang ser 6 cm lavere ud end modellens (grænsen er 5 cm), så billedet er måske fra et andet sted i opturen. Perspektivet er ikke regnet med: navet står nærmere kameraet og ser typisk 2-4 cm for højt ud. Sæt det fjerne nav, så bliver grænsen 3 cm. Uden det fjerne nav er \"lavere\" kun et hint, ikke en dom: et kamera, der står højere eller lavere, kan alene flytte stangens højde 6-7 cm. Står stangen også lavere med navet, så vælg et billede lidt senere i løftet.",
+   "side": 390
+  },
+  "390-op30vip-nav": {
+   "dom": "ok",
+   "hint": null,
+   "tekst": "Stangen står ca. 93 cm over gulvet (31 % af vejen fra bunden til lockout). Modellens sticking point er 96 cm (35 %). Inden for 3 cm, så modellens tal kan holdes op mod billedet. Stangen er midt mellem de to nav, så perspektivet er regnet med.",
+   "side": 390
+  },
+  "390-lav60-udenNav": {
+   "dom": "hoejere",
+   "hint": "1",
+   "tekst": "Stangen står ca. 103 cm over gulvet (47 % af vejen fra bunden til lockout). Modellens sticking point er 96 cm (35 %). Billedets stang ser 7 cm højere ud end modellens (grænsen er 5 cm), så billedet er måske fra et andet sted i opturen. Perspektivet er ikke regnet med: navet står nærmere kameraet og ser typisk 2-4 cm for højt ud. Sæt det fjerne nav, så bliver grænsen 3 cm. Uden det fjerne nav er \"højere\" kun et hint, ikke en dom: et kamera, der står højere eller lavere, kan alene flytte stangens højde 6-7 cm. Står stangen også højere med navet, så vælg et billede lidt tidligere i løftet.",
+   "side": 390
+  },
+  "390-lav60-nav": {
+   "dom": "ok",
+   "hint": null,
+   "tekst": "Stangen står ca. 95 cm over gulvet (33 % af vejen fra bunden til lockout). Modellens sticking point er 96 cm (35 %). Inden for 3 cm, så modellens tal kan holdes op mod billedet. Stangen er midt mellem de to nav, så perspektivet er regnet med.",
+   "side": 390
+  },
+  "390-skraa10-udenNav": {
+   "dom": "ok",
+   "hint": "1",
+   "tekst": "Stangen står ca. 100 cm over gulvet (41 % af vejen fra bunden til lockout). Modellens sticking point er 96 cm (35 %). Inden for 5 cm, så modellens tal kan holdes op mod billedet. Perspektivet er ikke regnet med: navet står nærmere kameraet og ser typisk 2-4 cm for højt ud. Sæt det fjerne nav, så bliver grænsen 3 cm. Uden det fjerne nav er \"inden for\" kun et hint, ikke en dom: et kamera, der står højere eller lavere, kan alene flytte stangens højde 6-7 cm.",
+   "side": 390
+  },
+  "390-skraa10-nav": {
+   "dom": "ok",
+   "hint": null,
+   "tekst": "Stangen står ca. 96 cm over gulvet (36 % af vejen fra bunden til lockout). Modellens sticking point er 96 cm (35 %). Inden for 3 cm, så modellens tal kan holdes op mod billedet. Stangen er midt mellem de to nav, så perspektivet er regnet med.",
+   "side": 390
+  },
+  "390-fejl": [],
+  "390-net": []
+ },
+ "tjek": [
+  {
+   "hvad": "B13 360 px med Min krop og stangens vaegt: siden <= 360 og tallinjens hoejre kant <= 360 i alle seks faser",
+   "ok": true,
+   "data": {
+    "squat-bund": [
+     360,
+     262,
+     2
+    ],
+    "squat-midt": [
+     360,
+     262,
+     2
+    ],
+    "dl-gulv": [
+     360,
+     262,
+     2
+    ],
+    "dl-knae": [
+     360,
+     270,
+     2
+    ],
+    "baenk-bryst": [
+     360,
+     293,
+     1
+    ],
+    "baenk-midt": [
+     360,
+     285,
+     1
+    ]
+   }
+  },
+  {
+   "hvad": "B13 375 px med Min krop og stangens vaegt: siden <= 375 og tallinjens hoejre kant <= 375 i alle seks faser",
+   "ok": true,
+   "data": {
+    "squat-bund": [
+     375,
+     262,
+     2
+    ],
+    "squat-midt": [
+     375,
+     262,
+     2
+    ],
+    "dl-gulv": [
+     375,
+     262,
+     2
+    ],
+    "dl-knae": [
+     375,
+     270,
+     2
+    ],
+    "baenk-bryst": [
+     375,
+     293,
+     1
+    ],
+    "baenk-midt": [
+     375,
+     285,
+     1
+    ]
+   }
+  },
+  {
+   "hvad": "B13 390 px med Min krop og stangens vaegt: siden <= 390 og tallinjens hoejre kant <= 390 i alle seks faser",
+   "ok": true,
+   "data": {
+    "squat-bund": [
+     390,
+     373,
+     1
+    ],
+    "squat-midt": [
+     390,
+     373,
+     1
+    ],
+    "dl-gulv": [
+     390,
+     362,
+     1
+    ],
+    "dl-knae": [
+     390,
+     370,
+     1
+    ],
+    "baenk-bryst": [
+     390,
+     293,
+     1
+    ],
+    "baenk-midt": [
+     390,
+     285,
+     1
+    ]
+   }
+  },
+  {
+   "hvad": "B13: mellemrum mellem tallinjens tal i alle faser og bredder",
+   "ok": true,
+   "data": [
+    "Torso 48,5° Hofte 37,7° Knæ 46,2° Stang −1,0 cm",
+    "Torso 39,1° Hofte 73,8° Knæ 70,3° Stang −2,6 cm"
+   ]
+  },
+  {
+   "hvad": "B13 med det lange minus-tal (\"Stang -10,x cm\"): siden <= bredden paa 360, 375 og 390",
+   "ok": true,
+   "data": {
+    "360-plus": [
+     360,
+     262,
+     "Torso 60,7° Hofte 50,6° Knæ 97,5° Stang 13,7 cm"
+    ],
+    "360-minus": [
+     360,
+     262,
+     "Torso 60,7° Hofte 50,6° Knæ 97,5° Stang −10,7 cm"
+    ],
+    "375-plus": [
+     375,
+     262,
+     "Torso 60,7° Hofte 50,6° Knæ 97,5° Stang 13,7 cm"
+    ],
+    "375-minus": [
+     375,
+     262,
+     "Torso 60,7° Hofte 50,6° Knæ 97,5° Stang −10,7 cm"
+    ],
+    "390-plus": [
+     390,
+     370,
+     "Torso 60,7° Hofte 50,6° Knæ 97,5° Stang 13,7 cm"
+    ],
+    "390-minus": [
+     390,
+     262,
+     "Torso 60,7° Hofte 50,6° Knæ 97,5° Stang −10,7 cm"
+    ],
+    "1280-plus": [
+     1280,
+     460,
+     "Torso 60,7° Hofte 50,6° Knæ 97,5° Stang 13,7 cm"
+    ],
+    "1280-minus": [
+     1280,
+     471,
+     "Torso 60,7° Hofte 50,6° Knæ 97,5° Stang −10,7 cm"
+    ]
+   }
+  },
+  {
+   "hvad": "1280: siden er 1280 i alle faser",
+   "ok": true
+  },
+  {
+   "hvad": "A: intet net og ingen JS-fejl",
+   "ok": true
+  },
+  {
+   "hvad": "B12 holder efter B13: maerket i tallinjen paa Marcs knaehoejde-billede, samme cm som beskeden, og siden <= bredden (360, 390)",
+   "ok": true,
+   "data": [
+    [
+     "Torso 41,6° Hofte 88,0° Knæ 119,6° (stangen 31 cm under knæet) Stang 1,7 cm",
+     360
+    ],
+    [
+     "Torso 41,6° Hofte 88,0° Knæ 119,6° (stangen 31 cm under knæet) Stang 1,7 cm",
+     390
+    ]
+   ]
+  },
+  {
+   "hvad": "B13 i Marcs gulvbillede: 360 holder nu (517: 385 px)",
+   "ok": true,
+   "data": [
+    360,
+    390
+   ]
+  },
+  {
+   "hvad": "E6/B13 i foer/efter: \"Stang -8,5 cm\" i efter-billedet, siden <= bredden paa 360, 375 og 390 (517: 385-395)",
+   "ok": true,
+   "data": [
+    360,
+    375,
+    390
+   ]
+  },
+  {
+   "hvad": "E7: afkrydsningen staar, naar begge billeder har navet, er >= 44 px hoej og inden for skaermen (360, 375, 390)",
+   "ok": true,
+   "data": [
+    {
+     "synlig": true,
+     "h": 44,
+     "hoejre": 337,
+     "tekst": "Et af de fjerne nav er skønnet (skjult bag benet og klikket ud fra skivens kant)",
+     "krydset": false
+    },
+    {
+     "synlig": true,
+     "h": 44,
+     "hoejre": 352,
+     "tekst": "Et af de fjerne nav er skønnet (skjult bag benet og klikket ud fra skivens kant)",
+     "krydset": false
+    },
+    {
+     "synlig": true,
+     "h": 44,
+     "hoejre": 367,
+     "tekst": "Et af de fjerne nav er skønnet (skjult bag benet og klikket ud fra skivens kant)",
+     "krydset": false
+    }
+   ]
+  },
+  {
+   "hvad": "E7: et tryk paa teksten saetter krydset, og stangens graense gaar fra 3,0 til 6,0 cm (360, 375, 390, 1280)",
+   "ok": true,
+   "data": [
+    [
+     "2,8 cm",
+     "0,8 cm",
+     "≈−2,0 cmgrænse 3,0 cm"
+    ],
+    [
+     "2,8 cm",
+     "0,8 cm",
+     "≈−2,0 cmgrænse 6,0 cm"
+    ]
+   ]
+  },
+  {
+   "hvad": "E7: noten siger \"Klik kun et nav, du kan se\", og med krydset hvorfor graenserne er fordoblet",
+   "ok": true,
+   "data": "ter ikke stangens tal. Klik kun et nav, du kan se; er det skjult bag benet, så sæt kryds ved Et af de fjerne nav er skønnet. Et fjernt nav er skønnet, så stangens grænser er ganget med 2: et skønnet nav spreder ca. 2,5 cm mod 0,5 cm for et nav, man kan se. Sætningen læser 8 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert fjerde par med omhyggelige klik (oftere med hurtige)."
+  },
+  {
+   "hvad": "E7: afkrydsningen staar ikke uden nav (517-sagen)",
+   "ok": true
+  },
+  {
+   "hvad": "E8: noten siger, hvor mange raekker saetningen laeser, og hvor ofte en falsk forskel kommer",
+   "ok": true,
+   "data": [
+    "Sætningen læser 8 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert fjerde par med omhyggelige klik (oftere med hurtige).",
+    "Sætningen læser 5 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert sjette par med omhyggelige klik (oftere med hurtige)."
+   ]
+  },
+  {
+   "hvad": "Foer/efter: intet net, ingen JS-fejl, intet gemt ud over Min krop",
+   "ok": true
+  },
+  {
+   "hvad": "E3-rest: uden navet siger de to forkerte kamerapladser (30 cm hoejere, 60 cm lavt) \"lavere\"/\"hoejere\" som et hint, ikke en dom (360, 390)",
+   "ok": true,
+   "data": "Stangen står ca. 103 cm over gulvet (47 % af vejen fra bunden til lockout). Modellens sticking point er 96 cm (35 %). Billedets stang ser 7 cm højere ud end modellens (grænsen er 5 cm), så billedet er måske fra et andet sted i opturen. Perspektivet er ikke regnet med: navet står nærmere kameraet og ser typisk 2-4 cm for højt ud. Sæt det fjerne nav, så bliver grænsen 3 cm. Uden det fjerne nav er \"højere\" kun et hint, ikke en dom: et kamera, der står højere eller lavere, kan alene flytte stangens højde 6-7 cm. Står stangen også højere med navet, så vælg et billede lidt tidligere i løftet."
+  },
+  {
+   "hvad": "E3-rest: med navet er alle fire kamerapladser \"ok\" uden hint",
+   "ok": true
+  },
+  {
+   "hvad": "E3-rest: siden <= bredden og ingen JS-fejl",
+   "ok": true
+  }
+ ]
+}

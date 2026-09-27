@@ -1,0 +1,985 @@
+{
+ "360": {
+  "k1": {
+   "kort": {
+    "top": 202,
+    "bund": 409,
+    "tekst": "Hvem vil du spille mod? Mod computeren Mod en makker Niveau 1 er for begyndere. Niveau og farve står under brættet.",
+    "knapper": [
+     {
+      "t": "Mod computeren",
+      "h": 44
+     },
+     {
+      "t": "Mod en makker",
+      "h": 44
+     }
+    ]
+   },
+   "braetTop": 417,
+   "vindueH": 780,
+   "valgtModus": "Mod en makker",
+   "efterValg": {
+    "modus": "Mod computeren",
+    "kortVaek": true,
+    "status": "Hvid trækker."
+   },
+   "efterGenindlaes": {
+    "modus": "Mod computeren",
+    "niveau": "3",
+    "kort": null
+   }
+  },
+  "k6": {
+   "modComputeren": null,
+   "modMakker": "Bord nr."
+  },
+  "parti": {
+   "traek": 25,
+   "slut": "gav op",
+   "status": "Hvid gav op. Sort vinder."
+  },
+  "k8": {
+   "tal": [
+    "",
+    "Du",
+    "Computeren",
+    "Nøjagtighed",
+    "75 %",
+    "75 %",
+    "?! Unøjagtigheder",
+    "1",
+    "2",
+    "? Fejl",
+    "0",
+    "1",
+    "?? Bukke",
+    "3",
+    "3"
+   ],
+   "forklaring": "Nøjagtighed: hvor tæt dine træk var på motorens bedste (100 % = som motoren). Sammenlign med dine egne partier."
+  },
+  "k10": {
+   "knap": true,
+   "koordOevebraet": 0,
+   "koordHovedbraet": 16,
+   "tekst": "Lær af dine fejl Lær af dine fejl Find et bedre træk. Du spillede 4. Sb5 - en bukke (??). Hvid i træk. Tryk på en brik og så på feltet. Prøv igen Vis løsningen Næste fejl ▶ 1 / 3 Stop"
+  },
+  "k2": {
+   "annuller": {
+    "spurgt": true,
+    "spoergsmaal": "Indlæs partiet? Det nuværende parti i Spil forsvinder. Ja, indlæs Annuller",
+    "besked": "",
+    "fen": "r1bqkbnr/pppp2pp/2n2p2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4",
+    "status": "Computeren spillede f7-f6. Din tur.",
+    "partietBlev": true
+   },
+   "ja": {
+    "spurgt": true,
+    "spoergsmaal": "Indlæs partiet? Det nuværende parti i Spil forsvinder. Ja, indlæs Annuller",
+    "besked": "Partiet er indlæst i Spil (4 halvtræk). Motoren ser det igennem under brættet - gå igennem det med pilene.",
+    "fen": "rnbqkbnr/ppp2ppp/4p3/3p4/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3",
+    "status": "Du ser Startstillingen (træk 0 af 4)",
+    "erstattet": true
+   }
+  },
+  "k3": {
+   "remis": {
+    "spurgt": true,
+    "spoergsmaal": "Indlæs partiet? Det nuværende parti i Spil forsvinder. Ja, indlæs Annuller",
+    "besked": "Partiet er indlæst i Spil (10 halvtræk). Motoren ser det igennem under brættet - gå igennem det med pilene.",
+    "fen": "r1bqk2r/1pppbppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQ1RK1 w kq - 4 6",
+    "status": "Du ser Startstillingen (træk 0 af 10)",
+    "analyse": true
+   },
+   "stjerne": {
+    "spurgt": true,
+    "spoergsmaal": "Indlæs partiet? Det nuværende parti i Spil forsvinder. Ja, indlæs Annuller",
+    "besked": "Partiet er indlæst i Spil (10 halvtræk). Motoren ser det igennem under brættet - gå igennem det med pilene.",
+    "fen": "rnbqkb1r/1p2pppp/p2p1n2/8/3NP3/2N5/PPP2PPP/R1BQKB1R w KQkq - 0 6",
+    "status": "Du ser Startstillingen (træk 0 af 10)",
+    "analyse": true
+   },
+   "tom": {
+    "spurgt": false,
+    "spoergsmaal": null,
+    "besked": "Fandt ingen træk i teksten.",
+    "fen": "rnbqkb1r/1p2pppp/p2p1n2/8/3NP3/2N5/PPP2PPP/R1BQKB1R w KQkq - 0 6",
+    "status": "Du ser Startstillingen (træk 0 af 10)"
+   }
+  },
+  "k4": {
+   "spurgt": true,
+   "spoergsmaal": "Indlæs partiet? Det nuværende parti i Spil forsvinder. Ja, indlæs Annuller",
+   "besked": "Partiet er indlæst i Spil (26 halvtræk). Motoren ser det igennem under brættet - gå igennem det med pilene.",
+   "fen": "r2q4/ppp2kpp/5n2/2bPp3/8/3P4/PPPQ3P/RNB1K2b w Q - 0 14",
+   "status": "Du ser Startstillingen (træk 0 af 26)",
+   "analyse": true,
+   "navne": {
+    "tabel": [
+     "",
+     "Hvid",
+     "Sort"
+    ],
+    "side": false
+   }
+  },
+  "koord": {
+   "foldY": {
+    "top": 2968,
+    "bund": 3013,
+    "h": 44,
+    "w": 310
+   },
+   "vindueH": 780,
+   "foldTitel": "Find feltet (koordinater)",
+   "hjaelp": "Find feltet (koordinater) Appen siger et felt, fx e4. Tryk på det på brættet - der står ingen bogstaver og tal. Hvor mange når du på 30 sekunder? Fra hvid Fra sort Tilfældig 0:30 Start Rekord: 0 som hvid, 0 som sort.",
+   "sider": [
+    {
+     "side": "w",
+     "lay": {
+      "feltTop": 3149,
+      "feltH": 35,
+      "feltFont": 35.2,
+      "braetTop": 3198,
+      "braetBund": 3508,
+      "braetW": 310,
+      "tidTop": 3160,
+      "startBund": 3606,
+      "feltPx": 38,
+      "vindueH": 780,
+      "hjoerne": "a8",
+      "koordTegn": 0,
+      "spaendPx": 457,
+      "enSkaerm": true,
+      "efterStartTryk": {
+       "feltTopSkaerm": 310,
+       "braetBundSkaerm": 669,
+       "vindueH": 780
+      }
+     },
+     "rigtige": 26,
+     "forkerte": 7,
+     "gentagetEfterRigtig": 0,
+     "tryk": 33,
+     "besked": "Tiden er gået: 26 felter (7 forkerte tryk). Ny rekord som hvid!",
+     "fundet": "Fundet: 26",
+     "rekord": "Rekord: 26 som hvid, 0 som sort.",
+     "feltSkjult": true,
+     "knap": "Igen"
+    },
+    {
+     "side": "b",
+     "lay": {
+      "feltTop": 3149,
+      "feltH": 35,
+      "feltFont": 35.2,
+      "braetTop": 3198,
+      "braetBund": 3508,
+      "braetW": 310,
+      "tidTop": 3160,
+      "startBund": 3606,
+      "feltPx": 38,
+      "vindueH": 780,
+      "hjoerne": "h1",
+      "koordTegn": 0,
+      "spaendPx": 457,
+      "enSkaerm": true,
+      "efterStartTryk": {
+       "feltTopSkaerm": 291,
+       "braetBundSkaerm": 650,
+       "vindueH": 780
+      }
+     },
+     "rigtige": 27,
+     "forkerte": 6,
+     "gentagetEfterRigtig": 0,
+     "tryk": 33,
+     "besked": "Tiden er gået: 27 felter (6 forkerte tryk). Ny rekord som sort!",
+     "fundet": "Fundet: 27",
+     "rekord": "Rekord: 26 som hvid, 27 som sort.",
+     "feltSkjult": true,
+     "knap": "Igen"
+    }
+   ],
+   "partietUroert": true,
+   "rekordEfterGenindlaes": "Rekord: 26 som hvid, 27 som sort.",
+   "lukketMidtI": {
+    "feltSkjult": true,
+    "tid": "0:30"
+   }
+  },
+  "k7": {
+   "startKort": {
+    "top": 886,
+    "bund": 1371,
+    "h": 485,
+    "w": 310
+   },
+   "vindueH": 780
+  },
+  "k9": {
+   "tekst": "Stormen er stoppet. Du løste 14 gåder. Ny rekord på denne enhed! Ingen rekord endnu på denne enhed - sæt den første! 14 forkerte træk (−140 s)Flest rigtige i træk: 4Sværeste løste gåde: rating 1121 Her gik det galt - træn det i biblioteket Mat i 2: 9 af 12 gik galtTræn: Mat i 2Gaffel: 3 af 3 gik galtTræn: Gaffel med springerenRed din brik: 1 af 1 gik galtTræn: Red din brikSpyd: 1 af 1 gik galtTræn: Spyd Ny storm Dagens storm igen Tilbage til gåderne",
+   "knapper": [
+    "Træn: Mat i 2",
+    "Træn: Gaffel med springeren",
+    "Træn: Red din brik",
+    "Træn: Spyd",
+    "Ny storm",
+    "Dagens storm igen",
+    "Tilbage til gåderne"
+   ],
+   "smaaBraet": 0
+  },
+  "rul": 0,
+  "net": [],
+  "fejl": []
+ },
+ "390": {
+  "k1": {
+   "kort": {
+    "top": 202,
+    "bund": 357,
+    "tekst": "Hvem vil du spille mod? Mod computeren Mod en makker Niveau 1 er for begyndere. Niveau og farve står under brættet.",
+    "knapper": [
+     {
+      "t": "Mod computeren",
+      "h": 44
+     },
+     {
+      "t": "Mod en makker",
+      "h": 44
+     }
+    ]
+   },
+   "braetTop": 365,
+   "vindueH": 844,
+   "valgtModus": "Mod en makker",
+   "efterValg": {
+    "modus": "Mod computeren",
+    "kortVaek": true,
+    "status": "Hvid trækker."
+   },
+   "efterGenindlaes": {
+    "modus": "Mod computeren",
+    "niveau": "3",
+    "kort": null
+   }
+  },
+  "k6": {
+   "modComputeren": null,
+   "modMakker": "Bord nr."
+  },
+  "parti": {
+   "traek": 25,
+   "slut": "gav op",
+   "status": "Hvid gav op. Sort vinder."
+  },
+  "k8": {
+   "tal": [
+    "",
+    "Du",
+    "Computeren",
+    "Nøjagtighed",
+    "76 %",
+    "89 %",
+    "?! Unøjagtigheder",
+    "1",
+    "5",
+    "? Fejl",
+    "1",
+    "1",
+    "?? Bukke",
+    "3",
+    "0"
+   ],
+   "forklaring": "Nøjagtighed: hvor tæt dine træk var på motorens bedste (100 % = som motoren). Sammenlign med dine egne partier."
+  },
+  "k10": {
+   "knap": true,
+   "koordOevebraet": 0,
+   "koordHovedbraet": 16,
+   "tekst": "Lær af dine fejl Lær af dine fejl Find et bedre træk. Du spillede 8. Kd2 - en fejl (?). Hvid i træk. Tryk på en brik og så på feltet. Prøv igen Vis løsningen Næste fejl ▶ 1 / 4 Stop"
+  },
+  "k2": {
+   "annuller": {
+    "spurgt": true,
+    "spoergsmaal": "Indlæs partiet? Det nuværende parti i Spil forsvinder. Ja, indlæs Annuller",
+    "besked": "",
+    "fen": "r1bqkb1r/ppppnppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4",
+    "status": "Computeren spillede g8-e7. Din tur.",
+    "partietBlev": true
+   },
+   "ja": {
+    "spurgt": true,
+    "spoergsmaal": "Indlæs partiet? Det nuværende parti i Spil forsvinder. Ja, indlæs Annuller",
+    "besked": "Partiet er indlæst i Spil (4 halvtræk). Motoren ser det igennem under brættet - gå igennem det med pilene.",
+    "fen": "rnbqkbnr/ppp2ppp/4p3/3p4/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3",
+    "status": "Du ser Startstillingen (træk 0 af 4)",
+    "erstattet": true
+   }
+  },
+  "k3": {
+   "remis": {
+    "spurgt": true,
+    "spoergsmaal": "Indlæs partiet? Det nuværende parti i Spil forsvinder. Ja, indlæs Annuller",
+    "besked": "Partiet er indlæst i Spil (10 halvtræk). Motoren ser det igennem under brættet - gå igennem det med pilene.",
+    "fen": "r1bqk2r/1pppbppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQ1RK1 w kq - 4 6",
+    "status": "Du ser Startstillingen (træk 0 af 10)",
+    "analyse": true
+   },
+   "stjerne": {
+    "spurgt": true,
+    "spoergsmaal": "Indlæs partiet? Det nuværende parti i Spil forsvinder. Ja, indlæs Annuller",
+    "besked": "Partiet er indlæst i Spil (10 halvtræk). Motoren ser det igennem under brættet - gå igennem det med pilene.",
+    "fen": "rnbqkb1r/1p2pppp/p2p1n2/8/3NP3/2N5/PPP2PPP/R1BQKB1R w KQkq - 0 6",
+    "status": "Du ser Startstillingen (træk 0 af 10)",
+    "analyse": true
+   },
+   "tom": {
+    "spurgt": false,
+    "spoergsmaal": null,
+    "besked": "Fandt ingen træk i teksten.",
+    "fen": "rnbqkb1r/1p2pppp/p2p1n2/8/3NP3/2N5/PPP2PPP/R1BQKB1R w KQkq - 0 6",
+    "status": "Du ser Startstillingen (træk 0 af 10)"
+   }
+  },
+  "k4": {
+   "spurgt": true,
+   "spoergsmaal": "Indlæs partiet? Det nuværende parti i Spil forsvinder. Ja, indlæs Annuller",
+   "besked": "Partiet er indlæst i Spil (26 halvtræk). Motoren ser det igennem under brættet - gå igennem det med pilene.",
+   "fen": "r2q4/ppp2kpp/5n2/2bPp3/8/3P4/PPPQ3P/RNB1K2b w Q - 0 14",
+   "status": "Du ser Startstillingen (træk 0 af 26)",
+   "analyse": true,
+   "navne": {
+    "tabel": [
+     "",
+     "Hvid",
+     "Sort"
+    ],
+    "side": false
+   }
+  },
+  "koord": {
+   "foldY": {
+    "top": 2926,
+    "bund": 2971,
+    "h": 44,
+    "w": 340
+   },
+   "vindueH": 844,
+   "foldTitel": "Find feltet (koordinater)",
+   "hjaelp": "Find feltet (koordinater) Appen siger et felt, fx e4. Tryk på det på brættet - der står ingen bogstaver og tal. Hvor mange når du på 30 sekunder? Fra hvid Fra sort Tilfældig 0:30 Start Rekord: 0 som hvid, 0 som sort.",
+   "sider": [
+    {
+     "side": "w",
+     "lay": {
+      "feltTop": 3107,
+      "feltH": 35,
+      "feltFont": 35.2,
+      "braetTop": 3156,
+      "braetBund": 3496,
+      "braetW": 340,
+      "tidTop": 3118,
+      "startBund": 3594,
+      "feltPx": 42,
+      "vindueH": 844,
+      "hjoerne": "a8",
+      "koordTegn": 0,
+      "spaendPx": 487,
+      "enSkaerm": true,
+      "efterStartTryk": {
+       "feltTopSkaerm": 344,
+       "braetBundSkaerm": 733,
+       "vindueH": 844
+      }
+     },
+     "rigtige": 27,
+     "forkerte": 6,
+     "gentagetEfterRigtig": 0,
+     "tryk": 33,
+     "besked": "Tiden er gået: 27 felter (6 forkerte tryk). Ny rekord som hvid!",
+     "fundet": "Fundet: 27",
+     "rekord": "Rekord: 27 som hvid, 0 som sort.",
+     "feltSkjult": true,
+     "knap": "Igen"
+    },
+    {
+     "side": "b",
+     "lay": {
+      "feltTop": 3107,
+      "feltH": 35,
+      "feltFont": 35.2,
+      "braetTop": 3156,
+      "braetBund": 3496,
+      "braetW": 340,
+      "tidTop": 3118,
+      "startBund": 3594,
+      "feltPx": 42,
+      "vindueH": 844,
+      "hjoerne": "h1",
+      "koordTegn": 0,
+      "spaendPx": 487,
+      "enSkaerm": true,
+      "efterStartTryk": {
+       "feltTopSkaerm": 325,
+       "braetBundSkaerm": 714,
+       "vindueH": 844
+      }
+     },
+     "rigtige": 26,
+     "forkerte": 7,
+     "gentagetEfterRigtig": 0,
+     "tryk": 33,
+     "besked": "Tiden er gået: 26 felter (7 forkerte tryk). Ny rekord som sort!",
+     "fundet": "Fundet: 26",
+     "rekord": "Rekord: 27 som hvid, 26 som sort.",
+     "feltSkjult": true,
+     "knap": "Igen"
+    }
+   ],
+   "partietUroert": true,
+   "rekordEfterGenindlaes": "Rekord: 27 som hvid, 26 som sort.",
+   "lukketMidtI": {
+    "feltSkjult": true,
+    "tid": "0:30"
+   }
+  },
+  "k7": {
+   "startKort": {
+    "top": 895,
+    "bund": 1360,
+    "h": 465,
+    "w": 340
+   },
+   "vindueH": 844
+  },
+  "k9": {
+   "tekst": "Stormen er stoppet. Du løste 15 gåder. Ny rekord på denne enhed! Ingen rekord endnu på denne enhed - sæt den første! 13 forkerte træk (−130 s)Flest rigtige i træk: 6 (+3 s bonustid)Sværeste løste gåde: rating 1121 Her gik det galt - træn det i biblioteket Mat i 2: 4 af 6 gik galtTræn: Mat i 2Gaffel: 4 af 4 gik galtTræn: Gaffel med springerenSpyd: 1 af 2 gik galtTræn: SpydRed din brik: 1 af 1 gik galtTræn: Red din brikHold remis: 1 af 1 gik galtTræn: Bonde mod kongeOppositionen: 1 af 1 gik galtTr",
+   "knapper": [
+    "Træn: Mat i 2",
+    "Træn: Gaffel med springeren",
+    "Træn: Spyd",
+    "Træn: Red din brik",
+    "Træn: Bonde mod konge",
+    "Træn: Oppositionen",
+    "Træn: Binding",
+    "Ny storm",
+    "Dagens storm igen",
+    "Tilbage til gåderne"
+   ],
+   "smaaBraet": 0
+  },
+  "rul": 0,
+  "net": [],
+  "fejl": []
+ },
+ "1280": {
+  "k1": {
+   "kort": null,
+   "braetTop": 140,
+   "vindueH": 800,
+   "valgtModus": "Mod en makker",
+   "efterValg": {
+    "modus": "Mod computeren",
+    "kortVaek": true,
+    "status": "Hvid trækker."
+   },
+   "efterGenindlaes": {
+    "modus": "Mod computeren",
+    "niveau": "3",
+    "kort": null
+   }
+  },
+  "k6": {
+   "modComputeren": null,
+   "modMakker": "Bord nr."
+  },
+  "parti": {
+   "traek": 25,
+   "slut": "gav op",
+   "status": "Hvid gav op. Sort vinder."
+  },
+  "k8": {
+   "tal": [
+    "",
+    "Du",
+    "Computeren",
+    "Nøjagtighed",
+    "79 %",
+    "62 %",
+    "?! Unøjagtigheder",
+    "0",
+    "1",
+    "? Fejl",
+    "0",
+    "0",
+    "?? Bukke",
+    "2",
+    "2"
+   ],
+   "forklaring": "Nøjagtighed: hvor tæt dine træk var på motorens bedste (100 % = som motoren). Sammenlign med dine egne partier."
+  },
+  "k10": {
+   "knap": true,
+   "koordOevebraet": 0,
+   "koordHovedbraet": 16,
+   "tekst": "Lær af dine fejl Lær af dine fejl Find et bedre træk. Du spillede 5. Sxd5 - en bukke (??). Hvid i træk. Tryk på en brik og så på feltet. Prøv igen Vis løsningen Næste fejl ▶ 1 / 2 Stop"
+  },
+  "k2": {
+   "annuller": {
+    "spurgt": true,
+    "spoergsmaal": "Indlæs partiet? Det nuværende parti i Spil forsvinder. Ja, indlæs Annuller",
+    "besked": "",
+    "fen": "r1bqkb1r/ppppnppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4",
+    "status": "Computeren spillede g8-e7. Din tur.",
+    "partietBlev": true
+   },
+   "ja": {
+    "spurgt": true,
+    "spoergsmaal": "Indlæs partiet? Det nuværende parti i Spil forsvinder. Ja, indlæs Annuller",
+    "besked": "Partiet er indlæst i Spil (4 halvtræk). Motoren ser det igennem under brættet - gå igennem det med pilene.",
+    "fen": "rnbqkbnr/ppp2ppp/4p3/3p4/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3",
+    "status": "Du ser Startstillingen (træk 0 af 4)",
+    "erstattet": true
+   }
+  },
+  "k3": {
+   "remis": {
+    "spurgt": true,
+    "spoergsmaal": "Indlæs partiet? Det nuværende parti i Spil forsvinder. Ja, indlæs Annuller",
+    "besked": "Partiet er indlæst i Spil (10 halvtræk). Motoren ser det igennem under brættet - gå igennem det med pilene.",
+    "fen": "r1bqk2r/1pppbppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQ1RK1 w kq - 4 6",
+    "status": "Du ser Startstillingen (træk 0 af 10)",
+    "analyse": true
+   },
+   "stjerne": {
+    "spurgt": true,
+    "spoergsmaal": "Indlæs partiet? Det nuværende parti i Spil forsvinder. Ja, indlæs Annuller",
+    "besked": "Partiet er indlæst i Spil (10 halvtræk). Motoren ser det igennem under brættet - gå igennem det med pilene.",
+    "fen": "rnbqkb1r/1p2pppp/p2p1n2/8/3NP3/2N5/PPP2PPP/R1BQKB1R w KQkq - 0 6",
+    "status": "Du ser Startstillingen (træk 0 af 10)",
+    "analyse": true
+   },
+   "tom": {
+    "spurgt": false,
+    "spoergsmaal": null,
+    "besked": "Fandt ingen træk i teksten.",
+    "fen": "rnbqkb1r/1p2pppp/p2p1n2/8/3NP3/2N5/PPP2PPP/R1BQKB1R w KQkq - 0 6",
+    "status": "Du ser Startstillingen (træk 0 af 10)"
+   }
+  },
+  "k4": {
+   "spurgt": true,
+   "spoergsmaal": "Indlæs partiet? Det nuværende parti i Spil forsvinder. Ja, indlæs Annuller",
+   "besked": "Partiet er indlæst i Spil (26 halvtræk). Motoren ser det igennem under brættet - gå igennem det med pilene.",
+   "fen": "r2q4/ppp2kpp/5n2/2bPp3/8/3P4/PPPQ3P/RNB1K2b w Q - 0 14",
+   "status": "Du ser Startstillingen (træk 0 af 26)",
+   "analyse": true,
+   "navne": {
+    "tabel": [
+     "",
+     "Hvid",
+     "Sort"
+    ],
+    "side": false
+   }
+  },
+  "koord": {
+   "foldY": {
+    "top": 2015,
+    "bund": 2062,
+    "h": 47,
+    "w": 412
+   },
+   "vindueH": 800,
+   "foldTitel": "Find feltet (koordinater)",
+   "hjaelp": "Find feltet (koordinater) Appen siger et felt, fx e4. Tryk på det på brættet - der står ingen bogstaver og tal. Hvor mange når du på 30 sekunder? Fra hvid Fra sort Tilfældig 0:30 Start Rekord: 0 som hvid, 0 som sort.",
+   "sider": [
+    {
+     "side": "w",
+     "lay": {
+      "feltTop": 2177,
+      "feltH": 37,
+      "feltFont": 37.4,
+      "braetTop": 2230,
+      "braetBund": 2590,
+      "braetW": 360,
+      "tidTop": 2189,
+      "startBund": 2692,
+      "feltPx": 44,
+      "vindueH": 800,
+      "hjoerne": "a8",
+      "koordTegn": 0,
+      "spaendPx": 515,
+      "enSkaerm": true,
+      "efterStartTryk": {
+       "feltTopSkaerm": 273,
+       "braetBundSkaerm": 686,
+       "vindueH": 800
+      }
+     },
+     "rigtige": 27,
+     "forkerte": 5,
+     "gentagetEfterRigtig": 0,
+     "tryk": 32,
+     "besked": "Tiden er gået: 27 felter (5 forkerte tryk). Ny rekord som hvid!",
+     "fundet": "Fundet: 27",
+     "rekord": "Rekord: 27 som hvid, 0 som sort.",
+     "feltSkjult": true,
+     "knap": "Igen"
+    },
+    {
+     "side": "b",
+     "lay": {
+      "feltTop": 2177,
+      "feltH": 37,
+      "feltFont": 37.4,
+      "braetTop": 2230,
+      "braetBund": 2590,
+      "braetW": 360,
+      "tidTop": 2189,
+      "startBund": 2692,
+      "feltPx": 44,
+      "vindueH": 800,
+      "hjoerne": "h1",
+      "koordTegn": 0,
+      "spaendPx": 515,
+      "enSkaerm": true,
+      "efterStartTryk": {
+       "feltTopSkaerm": 253,
+       "braetBundSkaerm": 666,
+       "vindueH": 800
+      }
+     },
+     "rigtige": 30,
+     "forkerte": 1,
+     "gentagetEfterRigtig": 0,
+     "tryk": 31,
+     "besked": "Tiden er gået: 30 felter (1 forkerte tryk). Ny rekord som sort!",
+     "fundet": "Fundet: 30",
+     "rekord": "Rekord: 27 som hvid, 30 som sort.",
+     "feltSkjult": true,
+     "knap": "Igen"
+    }
+   ],
+   "partietUroert": true,
+   "rekordEfterGenindlaes": "Rekord: 27 som hvid, 30 som sort.",
+   "lukketMidtI": {
+    "feltSkjult": true,
+    "tid": "0:30"
+   }
+  },
+  "k7": {
+   "startKort": {
+    "top": 197,
+    "bund": 618,
+    "h": 420,
+    "w": 412
+   },
+   "vindueH": 800
+  },
+  "k9": {
+   "tekst": "Stormen er stoppet. Du løste 17 gåder. Ny rekord på denne enhed! Ingen rekord endnu på denne enhed - sæt den første! 15 forkerte træk (−150 s)Flest rigtige i træk: 6 (+3 s bonustid)Sværeste løste gåde: rating 1200 Her gik det galt - træn det i biblioteket Mat i 2: 5 af 6 gik galtTræn: Mat i 2Gaffel: 3 af 3 gik galtTræn: Gaffel med springerenRed din brik: 2 af 2 gik galtTræn: Red din brikBinding: 2 af 2 gik galtTræn: BindingSpyd: 2 af 2 gik galtTræn: SpydKvadratet: 1 af 1 gik galtTræn: Bonde mod ",
+   "knapper": [
+    "Træn: Mat i 2",
+    "Træn: Gaffel med springeren",
+    "Træn: Red din brik",
+    "Træn: Binding",
+    "Træn: Spyd",
+    "Træn: Bonde mod konge",
+    "Ny storm",
+    "Dagens storm igen",
+    "Tilbage til gåderne"
+   ],
+   "smaaBraet": 0
+  },
+  "rul": 0,
+  "net": [],
+  "fejl": []
+ },
+ "skak": "e460aa7",
+ "bredder": [
+  360,
+  390,
+  1280
+ ],
+ "tjek": [
+  {
+   "hvad": "K1 lukket: paa telefonen staar \"Hvem vil du spille mod?\" over braettet ved foerste besoeg, synligt uden at rulle",
+   "ok": true,
+   "data": [
+    [
+     202,
+     409,
+     417,
+     [
+      {
+       "t": "Mod computeren",
+       "h": 44
+      },
+      {
+       "t": "Mod en makker",
+       "h": 44
+      }
+     ]
+    ],
+    [
+     202,
+     357,
+     365,
+     [
+      {
+       "t": "Mod computeren",
+       "h": 44
+      },
+      {
+       "t": "Mod en makker",
+       "h": 44
+      }
+     ]
+    ]
+   ]
+  },
+  {
+   "hvad": "K1: et tryk paa \"Mod computeren\" vaelger computeren, og kortet gaar vaek; paa 1280 er der intet kort",
+   "ok": true,
+   "data": [
+    {
+     "modus": "Mod computeren",
+     "kortVaek": true,
+     "status": "Hvid trækker."
+    },
+    {
+     "modus": "Mod computeren",
+     "kortVaek": true,
+     "status": "Hvid trækker."
+    }
+   ]
+  },
+  {
+   "hvad": "K1: efter en genindlaesning staar Spil stadig paa computeren (sidste niveau)",
+   "ok": true,
+   "data": [
+    {
+     "modus": "Mod computeren",
+     "niveau": "3",
+     "kort": null
+    },
+    {
+     "modus": "Mod computeren",
+     "niveau": "3",
+     "kort": null
+    }
+   ]
+  },
+  {
+   "hvad": "K2 lukket: \"Indlaes parti\" spoerger, naar et parti er i gang; Annuller lader partiet vaere, Ja indlaeser",
+   "ok": true,
+   "data": "Indlæs partiet? Det nuværende parti i Spil forsvinder. Ja, indlæs Annuller"
+  },
+  {
+   "hvad": "K3 lukket: remis og \"*\" fra PGN analyseres; et parti uden traek siger hvorfor ikke",
+   "ok": true,
+   "data": [
+    "Du ser Startstillingen (træk 0 af 10)",
+    "Du ser Startstillingen (træk 0 af 10)",
+    "Fandt ingen træk i teksten."
+   ]
+  },
+  {
+   "hvad": "K4 aaben: spillernes navne fra PGN vises ikke (ven123/elev2014)",
+   "ok": true,
+   "data": {
+    "tabel": [
+     "",
+     "Hvid",
+     "Sort"
+    ],
+    "side": false
+   }
+  },
+  {
+   "hvad": "K5 lukket: \"Spid\" staar ingen steder, eleven kan se det (kun den interne noegle \"spid\")",
+   "ok": true
+  },
+  {
+   "hvad": "K6 delvis: bordfeltet staar kun i \"Mod en makker\"; den, der vaelger computeren (K1), ser det ikke",
+   "ok": true,
+   "data": {
+    "modComputeren": null,
+    "modMakker": "Bord nr."
+   }
+  },
+  {
+   "hvad": "K7 aaben: paa telefonen staar stormens startkort under skaermens kant",
+   "ok": true,
+   "data": [
+    [
+     886,
+     780
+    ],
+    [
+     895,
+     844
+    ]
+   ]
+  },
+  {
+   "hvad": "K8 aaben: forklaringen siger ikke, at noejagtigheden ikke kan sammenlignes med lichess",
+   "ok": true,
+   "data": "Nøjagtighed: hvor tæt dine træk var på motorens bedste (100 % = som motoren). Sammenlign med dine egne partier."
+  },
+  {
+   "hvad": "K9 aaben: stormens slutkort viser ikke de missede gaader",
+   "ok": true,
+   "data": [
+    "Træn: Mat i 2",
+    "Træn: Gaffel med springeren",
+    "Træn: Spyd",
+    "Træn: Red din brik",
+    "Træn: Bonde mod konge",
+    "Træn: Oppositionen",
+    "Træn: Binding",
+    "Ny storm",
+    "Dagens storm igen",
+    "Tilbage til gåderne"
+   ]
+  },
+  {
+   "hvad": "K10 aaben: \"Laer af dine fejl\"-braettet har ingen koordinater (hovedbraettet har)",
+   "ok": true,
+   "data": [
+    [
+     true,
+     0,
+     16
+    ],
+    [
+     true,
+     0,
+     16
+    ],
+    [
+     true,
+     0,
+     16
+    ]
+   ]
+  },
+  {
+   "hvad": "Koordinater: en rigtig runde paa 30 s fra begge sider paa 360 og 390; hvert rigtigt tryk taeller, forkerte taelles, slutbesked og rekord",
+   "ok": true,
+   "data": [
+    [
+     "w",
+     26,
+     7,
+     "Tiden er gået: 26 felter (7 forkerte tryk). Ny rekord som hvid!"
+    ],
+    [
+     "b",
+     27,
+     6,
+     "Tiden er gået: 27 felter (6 forkerte tryk). Ny rekord som sort!"
+    ],
+    [
+     "w",
+     27,
+     6,
+     "Tiden er gået: 27 felter (6 forkerte tryk). Ny rekord som hvid!"
+    ],
+    [
+     "b",
+     26,
+     7,
+     "Tiden er gået: 26 felter (7 forkerte tryk). Ny rekord som sort!"
+    ]
+   ]
+  },
+  {
+   "hvad": "Koordinater: aldrig samme felt to gange i traek efter et rigtigt tryk",
+   "ok": true
+  },
+  {
+   "hvad": "Koordinater: braettet har ingen bogstaver og tal, og fra sort staar h1 oeverst til venstre",
+   "ok": true
+  },
+  {
+   "hvad": "Koordinater: rekorden staar efter en genindlaesning, og partiet i Spil er uroert",
+   "ok": true,
+   "data": [
+    "Rekord: 26 som hvid, 27 som sort.",
+    "Rekord: 27 som hvid, 26 som sort."
+   ]
+  },
+  {
+   "hvad": "Koordinater: lukkes folden midt i en runde, stopper den",
+   "ok": true
+  },
+  {
+   "hvad": "Koordinater paa telefonen: feltets navn, braettet og Start fylder under een skaerm, og efter tryk paa Start staar navnet og hele braettet paa skaermen",
+   "ok": true,
+   "data": [
+    {
+     "side": "w",
+     "spaend": 457,
+     "felt": 38,
+     "efterStart": {
+      "feltTopSkaerm": 310,
+      "braetBundSkaerm": 669,
+      "vindueH": 780
+     }
+    },
+    {
+     "side": "b",
+     "spaend": 457,
+     "felt": 38,
+     "efterStart": {
+      "feltTopSkaerm": 291,
+      "braetBundSkaerm": 650,
+      "vindueH": 780
+     }
+    },
+    {
+     "side": "w",
+     "spaend": 487,
+     "felt": 42,
+     "efterStart": {
+      "feltTopSkaerm": 344,
+      "braetBundSkaerm": 733,
+      "vindueH": 844
+     }
+    },
+    {
+     "side": "b",
+     "spaend": 487,
+     "felt": 42,
+     "efterStart": {
+      "feltTopSkaerm": 325,
+      "braetBundSkaerm": 714,
+      "vindueH": 844
+     }
+    }
+   ]
+  },
+  {
+   "hvad": "Intet net, ingen JS-fejl, ingen vandret rulning",
+   "ok": true,
+   "data": [
+    [
+     [],
+     0
+    ],
+    [
+     [],
+     0
+    ],
+    [
+     [],
+     0
+    ]
+   ]
+  }
+ ]
+}
