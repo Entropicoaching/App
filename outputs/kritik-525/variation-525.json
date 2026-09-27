@@ -1,0 +1,68 @@
+{
+  "moellen-1": {
+    "titel": "Lige store dele",
+    "opgaverPrRunde": 3,
+    "gentagetAndel": 0.053,
+    "hyppigstePar": null
+  },
+  "moellen-2": {
+    "titel": "Del ligeligt",
+    "opgaverPrRunde": 4,
+    "gentagetAndel": 0.057,
+    "hyppigstePar": null
+  },
+  "moellen-3": {
+    "titel": "Hvilken portion er størst?",
+    "opgaverPrRunde": 4,
+    "gentagetAndel": 0.062,
+    "hyppigstePar": {
+      "par": "2/3 og 2/5",
+      "andel": 0.093
+    }
+  },
+  "moellen-4": {
+    "titel": "Samme mel, nye poser",
+    "opgaverPrRunde": 4,
+    "gentagetAndel": 0.074,
+    "hyppigstePar": {
+      "par": "1/2 og 1/6",
+      "andel": 0.075
+    }
+  },
+  "moellen-5": {
+    "titel": "Sæk på sæk",
+    "opgaverPrRunde": 5,
+    "gentagetAndel": 0.032,
+    "hyppigstePar": {
+      "par": "5/8 og 1/8",
+      "andel": 0.04
+    }
+  },
+  "moellen-6": {
+    "titel": "Bagerens del",
+    "opgaverPrRunde": 5,
+    "gentagetAndel": 0.018,
+    "hyppigstePar": {
+      "par": "3/8 og 1/8",
+      "andel": 0.012
+    }
+  },
+  "moellen-7": {
+    "titel": "Hvede og rug",
+    "opgaverPrRunde": 5,
+    "gentagetAndel": 0.05,
+    "hyppigstePar": {
+      "par": "1/2 og 1/6",
+      "andel": 0.053
+    }
+  },
+  "moellen-8": {
+    "titel": "Mesterens regnskab",
+    "opgaverPrRunde": 5,
+    "gentagetAndel": 0.018,
+    "hyppigstePar": {
+      "par": "1/2 og 1/6",
+      "andel": 0.027
+    }
+  }
+}
