@@ -1,0 +1,1024 @@
+{
+ "ref": "ca860bf",
+ "L9node": [
+  {
+   "hc": 2,
+   "status": "ligner",
+   "fejl": "sq-hofte-tilbage-bund"
+  },
+  {
+   "hc": 2.5,
+   "status": "ligner",
+   "fejl": "sq-hofte-tilbage-bund"
+  },
+  {
+   "hc": 3,
+   "status": "ligner",
+   "fejl": "sq-hofte-tilbage-bund"
+  }
+ ],
+ "L9HC": 2,
+ "sider": {
+  "360": {
+   "l1-nav": {
+    "status": "usikker-fase",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Billedet kan ikke tjekkes for fejl: stangen står for højt til, at billedet er fra gulvet.",
+    "linjePx": 14.72,
+    "hint": null,
+    "hintGrader": null,
+    "haeleTekst": null,
+    "hoejre": 344,
+    "img": [],
+    "side": 360,
+    "klient": 360,
+    "lager": []
+   },
+   "l1-udenNav": {
+    "status": "usikker-kamera",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Billedet kan ikke tjekkes for fejl: stangens højde ved gulvet kræver det fjerne nav.",
+    "linjePx": 14.72,
+    "hint": null,
+    "hintGrader": null,
+    "haeleTekst": null,
+    "hoejre": 344,
+    "img": [],
+    "side": 360,
+    "klient": 360,
+    "lager": []
+   },
+   "dl-0": {
+    "status": "ingen",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Ligner ingen af modellens fejlfigurer over målefejlen.",
+    "linjePx": 14.72,
+    "hint": null,
+    "hintGrader": null,
+    "haeleTekst": null,
+    "hoejre": 344,
+    "img": [],
+    "side": 360,
+    "klient": 360,
+    "lager": []
+   },
+   "l2": {
+    "status": "usikker-fase",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Billedet kan ikke tjekkes for fejl: hoften står for højt til, at billedet er fra bunden (tæerne ud kan også give det).",
+    "linjePx": 14.72,
+    "hint": null,
+    "hintGrader": "0",
+    "haeleTekst": "Fladt fodtøj (0 cm). Står løfteren i sko med hæl, så skriv hælens højde over forfoden (vægtløftersko typisk 2-2,5 cm); ellers kan billedet ligne \"kun knæene\" uden at være det.",
+    "hoejre": 344,
+    "img": [],
+    "side": 360,
+    "klient": 360,
+    "lager": []
+   },
+   "l3-0": {
+    "status": "ligner",
+    "fejl": "sq-kun-knae-bund",
+    "vist": true,
+    "titel": "Ligner: kun knæene",
+    "saetning": "Skinnebenet hælder ca. 9° mere frem end i modellens bund med gennemsnittet for din højde og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen, og dér letter hælen i modellen.",
+    "graense": "Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. Modellen regner med hælen i feltet \"Sko med hæle\" (0 = fladt). Står feltet på 0, men løfteren har sko med 2 cm hæl, ligner modellens egen squat \"kun knæene\" i ca. hvert femte billede. Billedet har intet punkt på hælen. Telefonen holdt i hånden (ca. 140 cm, vippet ned mod hoften) lægger skinnebenet ca. 3° frem i billedet; det ligner lidt \"kun knæene\" og skjuler \"hoften tilbage\". Film i hoftehøjde.",
+    "linje": null,
+    "linjePx": null,
+    "hint": null,
+    "hintGrader": "0",
+    "haeleTekst": "Fladt fodtøj (0 cm). Står løfteren i sko med hæl, så skriv hælens højde over forfoden (vægtløftersko typisk 2-2,5 cm); ellers kan billedet ligne \"kun knæene\" uden at være det.",
+    "hoejre": 344,
+    "img": [
+     {
+      "src": "../squat-figurer/k7-kun-knae-bund.svg",
+      "hentet": true
+     }
+    ],
+    "side": 360,
+    "klient": 360,
+    "lager": []
+   },
+   "l3-2": {
+    "status": "ingen",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Ligner ingen af modellens fejlfigurer over målefejlen.",
+    "linjePx": 14.72,
+    "hint": null,
+    "hintGrader": "0",
+    "haeleTekst": "Modellen regner med 2 cm hæl: foden står på en kile, og skinnebenet står ca. 3° længere frem pr. cm med samme ankelbøjning. Med hæl står modellens egen bund allerede tæt på \"kun knæene\", så den fejl kan næsten ikke ses; se vejledningen.",
+    "hoejre": 344,
+    "img": [],
+    "side": 360,
+    "klient": 360,
+    "lager": []
+   },
+   "l4": {
+    "status": "ligner",
+    "fejl": "sq-hofte-tilbage-bund",
+    "vist": true,
+    "titel": "Ligner: hoften skudt for langt tilbage",
+    "saetning": "Torsoen hælder ca. 15° mere frem og skinnebenet står ca. 10° mere lodret end i modellens bund med gennemsnittet for din højde; sådan står modellens figur, når hoften skydes for langt tilbage.",
+    "graense": "Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. En bred fodstilling med tæerne ud får skinnebenet til at se mere lodret ud fra siden (ca. 4-5° ved 30° ud), men torsoen ser samtidig mere oprejst ud; derfor kræver reglen også torsoen. Et kamera skråt forfra skjuler fejlen. Telefonen holdt i hånden (ca. 140 cm, vippet ned mod hoften) lægger skinnebenet ca. 3° frem i billedet; det ligner lidt \"kun knæene\" og skjuler \"hoften tilbage\". Film i hoftehøjde.",
+    "linje": null,
+    "linjePx": null,
+    "hint": null,
+    "hintGrader": "0",
+    "haeleTekst": "Fladt fodtøj (0 cm). Står løfteren i sko med hæl, så skriv hælens højde over forfoden (vægtløftersko typisk 2-2,5 cm); ellers kan billedet ligne \"kun knæene\" uden at være det.",
+    "hoejre": 344,
+    "img": [
+     {
+      "src": "../squat-figurer/k7-hofte-tilbage-bund.svg",
+      "hentet": true
+     }
+    ],
+    "side": 360,
+    "klient": 360,
+    "lager": []
+   },
+   "l6": {
+    "status": "ingen",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Ligner ingen af modellens fejlfigurer over målefejlen.",
+    "linjePx": 14.72,
+    "hint": null,
+    "hintGrader": "0",
+    "haeleTekst": "Modellen regner med 2 cm hæl: foden står på en kile, og skinnebenet står ca. 3° længere frem pr. cm med samme ankelbøjning. Med hæl står modellens egen bund allerede tæt på \"kun knæene\", så den fejl kan næsten ikke ses; se vejledningen.",
+    "hoejre": 344,
+    "img": [],
+    "side": 360,
+    "klient": 360,
+    "lager": []
+   },
+   "hael3-felt0": {
+    "status": "ligner",
+    "fejl": "sq-kun-knae-bund",
+    "vist": true,
+    "titel": "Ligner: kun knæene",
+    "saetning": "Skinnebenet hælder ca. 10° mere frem end i modellens bund med gennemsnittet for din højde og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen, og dér letter hælen i modellen.",
+    "graense": "Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. Modellen regner med hælen i feltet \"Sko med hæle\" (0 = fladt). Står feltet på 0, men løfteren har sko med 2 cm hæl, ligner modellens egen squat \"kun knæene\" i ca. hvert femte billede. Billedet har intet punkt på hælen. Telefonen holdt i hånden (ca. 140 cm, vippet ned mod hoften) lægger skinnebenet ca. 3° frem i billedet; det ligner lidt \"kun knæene\" og skjuler \"hoften tilbage\". Film i hoftehøjde.",
+    "linje": null,
+    "linjePx": null,
+    "hint": null,
+    "hintGrader": "0",
+    "haeleTekst": "Fladt fodtøj (0 cm). Står løfteren i sko med hæl, så skriv hælens højde over forfoden (vægtløftersko typisk 2-2,5 cm); ellers kan billedet ligne \"kun knæene\" uden at være det.",
+    "hoejre": 344,
+    "img": [
+     {
+      "src": "../squat-figurer/k7-kun-knae-bund.svg",
+      "hentet": true
+     }
+    ],
+    "side": 360,
+    "klient": 360,
+    "lager": []
+   },
+   "hael3-felt3": {
+    "status": "ingen",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Ligner ingen af modellens fejlfigurer over målefejlen.",
+    "linjePx": 14.72,
+    "hint": null,
+    "hintGrader": "0",
+    "haeleTekst": "Modellen regner med 3 cm hæl: foden står på en kile, og skinnebenet står ca. 3° længere frem pr. cm med samme ankelbøjning. Med hæl står modellens egen bund allerede tæt på \"kun knæene\", så den fejl kan næsten ikke ses; se vejledningen.",
+    "hoejre": 344,
+    "img": [],
+    "side": 360,
+    "klient": 360,
+    "lager": []
+   },
+   "l7": {
+    "status": "ingen",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Ligner ingen af modellens fejlfigurer over målefejlen.",
+    "linjePx": 14.72,
+    "hint": "Filmet mere end 5° skråt (ca. 8°: de to nav står 23 cm fra hinanden). Så flytter modellens egne vinkler sig mere end 4° i billedet: skråt forfra ser torsoen mere oprejst og skinnebenet mere lodret ud, skråt bagfra ser knæet mere strakt ud. Squattens fejl overses oftere, og tabellens forskelle er kameraets. Stil kameraet mere vinkelret på løfteren.",
+    "hintGrader": "8",
+    "haeleTekst": "Fladt fodtøj (0 cm). Står løfteren i sko med hæl, så skriv hælens højde over forfoden (vægtløftersko typisk 2-2,5 cm); ellers kan billedet ligne \"kun knæene\" uden at være det.",
+    "hoejre": 344,
+    "img": [],
+    "side": 360,
+    "klient": 360,
+    "lager": []
+   },
+   "skraa10": {
+    "status": "ingen",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Ligner ingen af modellens fejlfigurer over målefejlen.",
+    "linjePx": 14.72,
+    "hint": "Filmet mere end 5° skråt (ca. 9°: de to nav står 25 cm fra hinanden). Så flytter modellens egne vinkler sig mere end 4° i billedet: skråt forfra ser torsoen mere oprejst og skinnebenet mere lodret ud, skråt bagfra ser knæet mere strakt ud. Squattens fejl overses oftere, og tabellens forskelle er kameraets. Stil kameraet mere vinkelret på løfteren.",
+    "hintGrader": "9",
+    "haeleTekst": "Fladt fodtøj (0 cm). Står løfteren i sko med hæl, så skriv hælens højde over forfoden (vægtløftersko typisk 2-2,5 cm); ellers kan billedet ligne \"kun knæene\" uden at være det.",
+    "hoejre": 344,
+    "img": [],
+    "side": 360,
+    "klient": 360,
+    "lager": []
+   },
+   "l9": {
+    "status": "ligner",
+    "fejl": "sq-hofte-tilbage-bund",
+    "vist": true,
+    "titel": "Ligner: hoften skudt for langt tilbage",
+    "saetning": "Torsoen hælder ca. 9° mere frem og skinnebenet står ca. 6° mere lodret end i modellens bund med gennemsnittet for din højde; sådan står modellens figur, når hoften skydes for langt tilbage.",
+    "graense": "Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. En bred fodstilling med tæerne ud får skinnebenet til at se mere lodret ud fra siden (ca. 4-5° ved 30° ud), men torsoen ser samtidig mere oprejst ud; derfor kræver reglen også torsoen. Et kamera skråt forfra skjuler fejlen. Telefonen holdt i hånden (ca. 140 cm, vippet ned mod hoften) lægger skinnebenet ca. 3° frem i billedet; det ligner lidt \"kun knæene\" og skjuler \"hoften tilbage\". Film i hoftehøjde.",
+    "linje": null,
+    "linjePx": null,
+    "hint": null,
+    "hintGrader": "0",
+    "haeleTekst": "Modellen regner med 2 cm hæl: foden står på en kile, og skinnebenet står ca. 3° længere frem pr. cm med samme ankelbøjning. Med hæl står modellens egen bund allerede tæt på \"kun knæene\", så den fejl kan næsten ikke ses; se vejledningen.",
+    "hoejre": 344,
+    "img": [
+     {
+      "src": "../squat-figurer/k7-hofte-tilbage-bund.svg",
+      "hentet": true
+     }
+    ],
+    "side": 360,
+    "klient": 360,
+    "lager": []
+   },
+   "marc-yantra": {
+    "status": "usikker-kamera",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Billedet kan ikke tjekkes for fejl: stangens højde ved gulvet kræver det fjerne nav.",
+    "linjePx": 14.72,
+    "hint": null,
+    "hintGrader": null,
+    "haeleTekst": null,
+    "hoejre": 344,
+    "img": [],
+    "side": 360,
+    "klient": 360,
+    "lager": []
+   },
+   "marc-bhishak": {
+    "status": "usikker-kamera",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Billedet kan ikke tjekkes for fejl: stangens højde ved gulvet kræver det fjerne nav.",
+    "linjePx": 14.72,
+    "hint": null,
+    "hintGrader": null,
+    "haeleTekst": null,
+    "hoejre": 344,
+    "img": [],
+    "side": 360,
+    "klient": 360,
+    "lager": []
+   },
+   "net": [],
+   "jsFejl": []
+  },
+  "390": {
+   "l1-nav": {
+    "status": "usikker-fase",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Billedet kan ikke tjekkes for fejl: stangen står for højt til, at billedet er fra gulvet.",
+    "linjePx": 14.72,
+    "hint": null,
+    "hintGrader": null,
+    "haeleTekst": null,
+    "hoejre": 374,
+    "img": [],
+    "side": 390,
+    "klient": 390,
+    "lager": []
+   },
+   "l1-udenNav": {
+    "status": "usikker-kamera",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Billedet kan ikke tjekkes for fejl: stangens højde ved gulvet kræver det fjerne nav.",
+    "linjePx": 14.72,
+    "hint": null,
+    "hintGrader": null,
+    "haeleTekst": null,
+    "hoejre": 374,
+    "img": [],
+    "side": 390,
+    "klient": 390,
+    "lager": []
+   },
+   "dl-0": {
+    "status": "ingen",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Ligner ingen af modellens fejlfigurer over målefejlen.",
+    "linjePx": 14.72,
+    "hint": null,
+    "hintGrader": null,
+    "haeleTekst": null,
+    "hoejre": 374,
+    "img": [],
+    "side": 390,
+    "klient": 390,
+    "lager": []
+   },
+   "l2": {
+    "status": "usikker-fase",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Billedet kan ikke tjekkes for fejl: hoften står for højt til, at billedet er fra bunden (tæerne ud kan også give det).",
+    "linjePx": 14.72,
+    "hint": null,
+    "hintGrader": "0",
+    "haeleTekst": "Fladt fodtøj (0 cm). Står løfteren i sko med hæl, så skriv hælens højde over forfoden (vægtløftersko typisk 2-2,5 cm); ellers kan billedet ligne \"kun knæene\" uden at være det.",
+    "hoejre": 374,
+    "img": [],
+    "side": 390,
+    "klient": 390,
+    "lager": []
+   },
+   "l3-0": {
+    "status": "ligner",
+    "fejl": "sq-kun-knae-bund",
+    "vist": true,
+    "titel": "Ligner: kun knæene",
+    "saetning": "Skinnebenet hælder ca. 9° mere frem end i modellens bund med gennemsnittet for din højde og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen, og dér letter hælen i modellen.",
+    "graense": "Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. Modellen regner med hælen i feltet \"Sko med hæle\" (0 = fladt). Står feltet på 0, men løfteren har sko med 2 cm hæl, ligner modellens egen squat \"kun knæene\" i ca. hvert femte billede. Billedet har intet punkt på hælen. Telefonen holdt i hånden (ca. 140 cm, vippet ned mod hoften) lægger skinnebenet ca. 3° frem i billedet; det ligner lidt \"kun knæene\" og skjuler \"hoften tilbage\". Film i hoftehøjde.",
+    "linje": null,
+    "linjePx": null,
+    "hint": null,
+    "hintGrader": "0",
+    "haeleTekst": "Fladt fodtøj (0 cm). Står løfteren i sko med hæl, så skriv hælens højde over forfoden (vægtløftersko typisk 2-2,5 cm); ellers kan billedet ligne \"kun knæene\" uden at være det.",
+    "hoejre": 374,
+    "img": [
+     {
+      "src": "../squat-figurer/k7-kun-knae-bund.svg",
+      "hentet": true
+     }
+    ],
+    "side": 390,
+    "klient": 390,
+    "lager": []
+   },
+   "l3-2": {
+    "status": "ingen",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Ligner ingen af modellens fejlfigurer over målefejlen.",
+    "linjePx": 14.72,
+    "hint": null,
+    "hintGrader": "0",
+    "haeleTekst": "Modellen regner med 2 cm hæl: foden står på en kile, og skinnebenet står ca. 3° længere frem pr. cm med samme ankelbøjning. Med hæl står modellens egen bund allerede tæt på \"kun knæene\", så den fejl kan næsten ikke ses; se vejledningen.",
+    "hoejre": 374,
+    "img": [],
+    "side": 390,
+    "klient": 390,
+    "lager": []
+   },
+   "l4": {
+    "status": "ligner",
+    "fejl": "sq-hofte-tilbage-bund",
+    "vist": true,
+    "titel": "Ligner: hoften skudt for langt tilbage",
+    "saetning": "Torsoen hælder ca. 15° mere frem og skinnebenet står ca. 10° mere lodret end i modellens bund med gennemsnittet for din højde; sådan står modellens figur, når hoften skydes for langt tilbage.",
+    "graense": "Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. En bred fodstilling med tæerne ud får skinnebenet til at se mere lodret ud fra siden (ca. 4-5° ved 30° ud), men torsoen ser samtidig mere oprejst ud; derfor kræver reglen også torsoen. Et kamera skråt forfra skjuler fejlen. Telefonen holdt i hånden (ca. 140 cm, vippet ned mod hoften) lægger skinnebenet ca. 3° frem i billedet; det ligner lidt \"kun knæene\" og skjuler \"hoften tilbage\". Film i hoftehøjde.",
+    "linje": null,
+    "linjePx": null,
+    "hint": null,
+    "hintGrader": "0",
+    "haeleTekst": "Fladt fodtøj (0 cm). Står løfteren i sko med hæl, så skriv hælens højde over forfoden (vægtløftersko typisk 2-2,5 cm); ellers kan billedet ligne \"kun knæene\" uden at være det.",
+    "hoejre": 374,
+    "img": [
+     {
+      "src": "../squat-figurer/k7-hofte-tilbage-bund.svg",
+      "hentet": true
+     }
+    ],
+    "side": 390,
+    "klient": 390,
+    "lager": []
+   },
+   "l6": {
+    "status": "ingen",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Ligner ingen af modellens fejlfigurer over målefejlen.",
+    "linjePx": 14.72,
+    "hint": null,
+    "hintGrader": "0",
+    "haeleTekst": "Modellen regner med 2 cm hæl: foden står på en kile, og skinnebenet står ca. 3° længere frem pr. cm med samme ankelbøjning. Med hæl står modellens egen bund allerede tæt på \"kun knæene\", så den fejl kan næsten ikke ses; se vejledningen.",
+    "hoejre": 374,
+    "img": [],
+    "side": 390,
+    "klient": 390,
+    "lager": []
+   },
+   "hael3-felt0": {
+    "status": "ligner",
+    "fejl": "sq-kun-knae-bund",
+    "vist": true,
+    "titel": "Ligner: kun knæene",
+    "saetning": "Skinnebenet hælder ca. 10° mere frem end i modellens bund med gennemsnittet for din højde og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen, og dér letter hælen i modellen.",
+    "graense": "Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. Modellen regner med hælen i feltet \"Sko med hæle\" (0 = fladt). Står feltet på 0, men løfteren har sko med 2 cm hæl, ligner modellens egen squat \"kun knæene\" i ca. hvert femte billede. Billedet har intet punkt på hælen. Telefonen holdt i hånden (ca. 140 cm, vippet ned mod hoften) lægger skinnebenet ca. 3° frem i billedet; det ligner lidt \"kun knæene\" og skjuler \"hoften tilbage\". Film i hoftehøjde.",
+    "linje": null,
+    "linjePx": null,
+    "hint": null,
+    "hintGrader": "0",
+    "haeleTekst": "Fladt fodtøj (0 cm). Står løfteren i sko med hæl, så skriv hælens højde over forfoden (vægtløftersko typisk 2-2,5 cm); ellers kan billedet ligne \"kun knæene\" uden at være det.",
+    "hoejre": 374,
+    "img": [
+     {
+      "src": "../squat-figurer/k7-kun-knae-bund.svg",
+      "hentet": true
+     }
+    ],
+    "side": 390,
+    "klient": 390,
+    "lager": []
+   },
+   "hael3-felt3": {
+    "status": "ingen",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Ligner ingen af modellens fejlfigurer over målefejlen.",
+    "linjePx": 14.72,
+    "hint": null,
+    "hintGrader": "0",
+    "haeleTekst": "Modellen regner med 3 cm hæl: foden står på en kile, og skinnebenet står ca. 3° længere frem pr. cm med samme ankelbøjning. Med hæl står modellens egen bund allerede tæt på \"kun knæene\", så den fejl kan næsten ikke ses; se vejledningen.",
+    "hoejre": 374,
+    "img": [],
+    "side": 390,
+    "klient": 390,
+    "lager": []
+   },
+   "l7": {
+    "status": "ingen",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Ligner ingen af modellens fejlfigurer over målefejlen.",
+    "linjePx": 14.72,
+    "hint": "Filmet mere end 5° skråt (ca. 8°: de to nav står 23 cm fra hinanden). Så flytter modellens egne vinkler sig mere end 4° i billedet: skråt forfra ser torsoen mere oprejst og skinnebenet mere lodret ud, skråt bagfra ser knæet mere strakt ud. Squattens fejl overses oftere, og tabellens forskelle er kameraets. Stil kameraet mere vinkelret på løfteren.",
+    "hintGrader": "8",
+    "haeleTekst": "Fladt fodtøj (0 cm). Står løfteren i sko med hæl, så skriv hælens højde over forfoden (vægtløftersko typisk 2-2,5 cm); ellers kan billedet ligne \"kun knæene\" uden at være det.",
+    "hoejre": 374,
+    "img": [],
+    "side": 390,
+    "klient": 390,
+    "lager": []
+   },
+   "skraa10": {
+    "status": "ingen",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Ligner ingen af modellens fejlfigurer over målefejlen.",
+    "linjePx": 14.72,
+    "hint": "Filmet mere end 5° skråt (ca. 9°: de to nav står 25 cm fra hinanden). Så flytter modellens egne vinkler sig mere end 4° i billedet: skråt forfra ser torsoen mere oprejst og skinnebenet mere lodret ud, skråt bagfra ser knæet mere strakt ud. Squattens fejl overses oftere, og tabellens forskelle er kameraets. Stil kameraet mere vinkelret på løfteren.",
+    "hintGrader": "9",
+    "haeleTekst": "Fladt fodtøj (0 cm). Står løfteren i sko med hæl, så skriv hælens højde over forfoden (vægtløftersko typisk 2-2,5 cm); ellers kan billedet ligne \"kun knæene\" uden at være det.",
+    "hoejre": 374,
+    "img": [],
+    "side": 390,
+    "klient": 390,
+    "lager": []
+   },
+   "l9": {
+    "status": "ligner",
+    "fejl": "sq-hofte-tilbage-bund",
+    "vist": true,
+    "titel": "Ligner: hoften skudt for langt tilbage",
+    "saetning": "Torsoen hælder ca. 9° mere frem og skinnebenet står ca. 6° mere lodret end i modellens bund med gennemsnittet for din højde; sådan står modellens figur, når hoften skydes for langt tilbage.",
+    "graense": "Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. En bred fodstilling med tæerne ud får skinnebenet til at se mere lodret ud fra siden (ca. 4-5° ved 30° ud), men torsoen ser samtidig mere oprejst ud; derfor kræver reglen også torsoen. Et kamera skråt forfra skjuler fejlen. Telefonen holdt i hånden (ca. 140 cm, vippet ned mod hoften) lægger skinnebenet ca. 3° frem i billedet; det ligner lidt \"kun knæene\" og skjuler \"hoften tilbage\". Film i hoftehøjde.",
+    "linje": null,
+    "linjePx": null,
+    "hint": null,
+    "hintGrader": "0",
+    "haeleTekst": "Modellen regner med 2 cm hæl: foden står på en kile, og skinnebenet står ca. 3° længere frem pr. cm med samme ankelbøjning. Med hæl står modellens egen bund allerede tæt på \"kun knæene\", så den fejl kan næsten ikke ses; se vejledningen.",
+    "hoejre": 374,
+    "img": [
+     {
+      "src": "../squat-figurer/k7-hofte-tilbage-bund.svg",
+      "hentet": true
+     }
+    ],
+    "side": 390,
+    "klient": 390,
+    "lager": []
+   },
+   "marc-yantra": {
+    "status": "usikker-kamera",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Billedet kan ikke tjekkes for fejl: stangens højde ved gulvet kræver det fjerne nav.",
+    "linjePx": 14.72,
+    "hint": null,
+    "hintGrader": null,
+    "haeleTekst": null,
+    "hoejre": 374,
+    "img": [],
+    "side": 390,
+    "klient": 390,
+    "lager": []
+   },
+   "marc-bhishak": {
+    "status": "usikker-kamera",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Billedet kan ikke tjekkes for fejl: stangens højde ved gulvet kræver det fjerne nav.",
+    "linjePx": 14.72,
+    "hint": null,
+    "hintGrader": null,
+    "haeleTekst": null,
+    "hoejre": 374,
+    "img": [],
+    "side": 390,
+    "klient": 390,
+    "lager": []
+   },
+   "net": [],
+   "jsFejl": []
+  },
+  "1280": {
+   "l1-nav": {
+    "status": "usikker-fase",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Billedet kan ikke tjekkes for fejl: stangen står for højt til, at billedet er fra gulvet.",
+    "linjePx": 14.72,
+    "hint": null,
+    "hintGrader": null,
+    "haeleTekst": null,
+    "hoejre": 1174,
+    "img": [],
+    "side": 1280,
+    "klient": 1280,
+    "lager": []
+   },
+   "l1-udenNav": {
+    "status": "usikker-kamera",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Billedet kan ikke tjekkes for fejl: stangens højde ved gulvet kræver det fjerne nav.",
+    "linjePx": 14.72,
+    "hint": null,
+    "hintGrader": null,
+    "haeleTekst": null,
+    "hoejre": 1174,
+    "img": [],
+    "side": 1280,
+    "klient": 1280,
+    "lager": []
+   },
+   "dl-0": {
+    "status": "ingen",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Ligner ingen af modellens fejlfigurer over målefejlen.",
+    "linjePx": 14.72,
+    "hint": null,
+    "hintGrader": null,
+    "haeleTekst": null,
+    "hoejre": 1174,
+    "img": [],
+    "side": 1280,
+    "klient": 1280,
+    "lager": []
+   },
+   "l2": {
+    "status": "usikker-fase",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Billedet kan ikke tjekkes for fejl: hoften står for højt til, at billedet er fra bunden (tæerne ud kan også give det).",
+    "linjePx": 14.72,
+    "hint": null,
+    "hintGrader": "0",
+    "haeleTekst": "Fladt fodtøj (0 cm). Står løfteren i sko med hæl, så skriv hælens højde over forfoden (vægtløftersko typisk 2-2,5 cm); ellers kan billedet ligne \"kun knæene\" uden at være det.",
+    "hoejre": 1174,
+    "img": [],
+    "side": 1280,
+    "klient": 1280,
+    "lager": []
+   },
+   "l3-0": {
+    "status": "ligner",
+    "fejl": "sq-kun-knae-bund",
+    "vist": true,
+    "titel": "Ligner: kun knæene",
+    "saetning": "Skinnebenet hælder ca. 9° mere frem end i modellens bund med gennemsnittet for din højde og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen, og dér letter hælen i modellen.",
+    "graense": "Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. Modellen regner med hælen i feltet \"Sko med hæle\" (0 = fladt). Står feltet på 0, men løfteren har sko med 2 cm hæl, ligner modellens egen squat \"kun knæene\" i ca. hvert femte billede. Billedet har intet punkt på hælen. Telefonen holdt i hånden (ca. 140 cm, vippet ned mod hoften) lægger skinnebenet ca. 3° frem i billedet; det ligner lidt \"kun knæene\" og skjuler \"hoften tilbage\". Film i hoftehøjde.",
+    "linje": null,
+    "linjePx": null,
+    "hint": null,
+    "hintGrader": "0",
+    "haeleTekst": "Fladt fodtøj (0 cm). Står løfteren i sko med hæl, så skriv hælens højde over forfoden (vægtløftersko typisk 2-2,5 cm); ellers kan billedet ligne \"kun knæene\" uden at være det.",
+    "hoejre": 1174,
+    "img": [
+     {
+      "src": "../squat-figurer/k7-kun-knae-bund.svg",
+      "hentet": true
+     }
+    ],
+    "side": 1280,
+    "klient": 1280,
+    "lager": []
+   },
+   "l3-2": {
+    "status": "ingen",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Ligner ingen af modellens fejlfigurer over målefejlen.",
+    "linjePx": 14.72,
+    "hint": null,
+    "hintGrader": "0",
+    "haeleTekst": "Modellen regner med 2 cm hæl: foden står på en kile, og skinnebenet står ca. 3° længere frem pr. cm med samme ankelbøjning. Med hæl står modellens egen bund allerede tæt på \"kun knæene\", så den fejl kan næsten ikke ses; se vejledningen.",
+    "hoejre": 1174,
+    "img": [],
+    "side": 1280,
+    "klient": 1280,
+    "lager": []
+   },
+   "l4": {
+    "status": "ligner",
+    "fejl": "sq-hofte-tilbage-bund",
+    "vist": true,
+    "titel": "Ligner: hoften skudt for langt tilbage",
+    "saetning": "Torsoen hælder ca. 15° mere frem og skinnebenet står ca. 10° mere lodret end i modellens bund med gennemsnittet for din højde; sådan står modellens figur, når hoften skydes for langt tilbage.",
+    "graense": "Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. En bred fodstilling med tæerne ud får skinnebenet til at se mere lodret ud fra siden (ca. 4-5° ved 30° ud), men torsoen ser samtidig mere oprejst ud; derfor kræver reglen også torsoen. Et kamera skråt forfra skjuler fejlen. Telefonen holdt i hånden (ca. 140 cm, vippet ned mod hoften) lægger skinnebenet ca. 3° frem i billedet; det ligner lidt \"kun knæene\" og skjuler \"hoften tilbage\". Film i hoftehøjde.",
+    "linje": null,
+    "linjePx": null,
+    "hint": null,
+    "hintGrader": "0",
+    "haeleTekst": "Fladt fodtøj (0 cm). Står løfteren i sko med hæl, så skriv hælens højde over forfoden (vægtløftersko typisk 2-2,5 cm); ellers kan billedet ligne \"kun knæene\" uden at være det.",
+    "hoejre": 1174,
+    "img": [
+     {
+      "src": "../squat-figurer/k7-hofte-tilbage-bund.svg",
+      "hentet": true
+     }
+    ],
+    "side": 1280,
+    "klient": 1280,
+    "lager": []
+   },
+   "l6": {
+    "status": "ingen",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Ligner ingen af modellens fejlfigurer over målefejlen.",
+    "linjePx": 14.72,
+    "hint": null,
+    "hintGrader": "0",
+    "haeleTekst": "Modellen regner med 2 cm hæl: foden står på en kile, og skinnebenet står ca. 3° længere frem pr. cm med samme ankelbøjning. Med hæl står modellens egen bund allerede tæt på \"kun knæene\", så den fejl kan næsten ikke ses; se vejledningen.",
+    "hoejre": 1174,
+    "img": [],
+    "side": 1280,
+    "klient": 1280,
+    "lager": []
+   },
+   "hael3-felt0": {
+    "status": "ligner",
+    "fejl": "sq-kun-knae-bund",
+    "vist": true,
+    "titel": "Ligner: kun knæene",
+    "saetning": "Skinnebenet hælder ca. 10° mere frem end i modellens bund med gennemsnittet for din højde og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen, og dér letter hælen i modellen.",
+    "graense": "Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. Modellen regner med hælen i feltet \"Sko med hæle\" (0 = fladt). Står feltet på 0, men løfteren har sko med 2 cm hæl, ligner modellens egen squat \"kun knæene\" i ca. hvert femte billede. Billedet har intet punkt på hælen. Telefonen holdt i hånden (ca. 140 cm, vippet ned mod hoften) lægger skinnebenet ca. 3° frem i billedet; det ligner lidt \"kun knæene\" og skjuler \"hoften tilbage\". Film i hoftehøjde.",
+    "linje": null,
+    "linjePx": null,
+    "hint": null,
+    "hintGrader": "0",
+    "haeleTekst": "Fladt fodtøj (0 cm). Står løfteren i sko med hæl, så skriv hælens højde over forfoden (vægtløftersko typisk 2-2,5 cm); ellers kan billedet ligne \"kun knæene\" uden at være det.",
+    "hoejre": 1174,
+    "img": [
+     {
+      "src": "../squat-figurer/k7-kun-knae-bund.svg",
+      "hentet": true
+     }
+    ],
+    "side": 1280,
+    "klient": 1280,
+    "lager": []
+   },
+   "hael3-felt3": {
+    "status": "ingen",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Ligner ingen af modellens fejlfigurer over målefejlen.",
+    "linjePx": 14.72,
+    "hint": null,
+    "hintGrader": "0",
+    "haeleTekst": "Modellen regner med 3 cm hæl: foden står på en kile, og skinnebenet står ca. 3° længere frem pr. cm med samme ankelbøjning. Med hæl står modellens egen bund allerede tæt på \"kun knæene\", så den fejl kan næsten ikke ses; se vejledningen.",
+    "hoejre": 1174,
+    "img": [],
+    "side": 1280,
+    "klient": 1280,
+    "lager": []
+   },
+   "l7": {
+    "status": "ingen",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Ligner ingen af modellens fejlfigurer over målefejlen.",
+    "linjePx": 14.72,
+    "hint": "Filmet mere end 5° skråt (ca. 8°: de to nav står 23 cm fra hinanden). Så flytter modellens egne vinkler sig mere end 4° i billedet: skråt forfra ser torsoen mere oprejst og skinnebenet mere lodret ud, skråt bagfra ser knæet mere strakt ud. Squattens fejl overses oftere, og tabellens forskelle er kameraets. Stil kameraet mere vinkelret på løfteren.",
+    "hintGrader": "8",
+    "haeleTekst": "Fladt fodtøj (0 cm). Står løfteren i sko med hæl, så skriv hælens højde over forfoden (vægtløftersko typisk 2-2,5 cm); ellers kan billedet ligne \"kun knæene\" uden at være det.",
+    "hoejre": 1174,
+    "img": [],
+    "side": 1280,
+    "klient": 1280,
+    "lager": []
+   },
+   "skraa10": {
+    "status": "ingen",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Ligner ingen af modellens fejlfigurer over målefejlen.",
+    "linjePx": 14.72,
+    "hint": "Filmet mere end 5° skråt (ca. 9°: de to nav står 25 cm fra hinanden). Så flytter modellens egne vinkler sig mere end 4° i billedet: skråt forfra ser torsoen mere oprejst og skinnebenet mere lodret ud, skråt bagfra ser knæet mere strakt ud. Squattens fejl overses oftere, og tabellens forskelle er kameraets. Stil kameraet mere vinkelret på løfteren.",
+    "hintGrader": "9",
+    "haeleTekst": "Fladt fodtøj (0 cm). Står løfteren i sko med hæl, så skriv hælens højde over forfoden (vægtløftersko typisk 2-2,5 cm); ellers kan billedet ligne \"kun knæene\" uden at være det.",
+    "hoejre": 1174,
+    "img": [],
+    "side": 1280,
+    "klient": 1280,
+    "lager": []
+   },
+   "l9": {
+    "status": "ligner",
+    "fejl": "sq-hofte-tilbage-bund",
+    "vist": true,
+    "titel": "Ligner: hoften skudt for langt tilbage",
+    "saetning": "Torsoen hælder ca. 9° mere frem og skinnebenet står ca. 6° mere lodret end i modellens bund med gennemsnittet for din højde; sådan står modellens figur, når hoften skydes for langt tilbage.",
+    "graense": "Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. En bred fodstilling med tæerne ud får skinnebenet til at se mere lodret ud fra siden (ca. 4-5° ved 30° ud), men torsoen ser samtidig mere oprejst ud; derfor kræver reglen også torsoen. Et kamera skråt forfra skjuler fejlen. Telefonen holdt i hånden (ca. 140 cm, vippet ned mod hoften) lægger skinnebenet ca. 3° frem i billedet; det ligner lidt \"kun knæene\" og skjuler \"hoften tilbage\". Film i hoftehøjde.",
+    "linje": null,
+    "linjePx": null,
+    "hint": null,
+    "hintGrader": "0",
+    "haeleTekst": "Modellen regner med 2 cm hæl: foden står på en kile, og skinnebenet står ca. 3° længere frem pr. cm med samme ankelbøjning. Med hæl står modellens egen bund allerede tæt på \"kun knæene\", så den fejl kan næsten ikke ses; se vejledningen.",
+    "hoejre": 1174,
+    "img": [
+     {
+      "src": "../squat-figurer/k7-hofte-tilbage-bund.svg",
+      "hentet": true
+     }
+    ],
+    "side": 1280,
+    "klient": 1280,
+    "lager": []
+   },
+   "marc-yantra": {
+    "status": "usikker-kamera",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Billedet kan ikke tjekkes for fejl: stangens højde ved gulvet kræver det fjerne nav.",
+    "linjePx": 14.72,
+    "hint": null,
+    "hintGrader": null,
+    "haeleTekst": null,
+    "hoejre": 1174,
+    "img": [],
+    "side": 1280,
+    "klient": 1280,
+    "lager": []
+   },
+   "marc-bhishak": {
+    "status": "usikker-kamera",
+    "fejl": null,
+    "vist": true,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "linje": "Billedet kan ikke tjekkes for fejl: stangens højde ved gulvet kræver det fjerne nav.",
+    "linjePx": 14.72,
+    "hint": null,
+    "hintGrader": null,
+    "haeleTekst": null,
+    "hoejre": 1174,
+    "img": [],
+    "side": 1280,
+    "klient": 1280,
+    "lager": []
+   },
+   "net": [],
+   "jsFejl": []
+  }
+ },
+ "tjek": [
+  {
+   "hvad": "L1 lukket: modellens bane 16,5 cm oppe med det fjerne nav giver intet \"Ligner\", men \"kan ikke tjekkes ... stangen står for højt\"",
+   "ok": true,
+   "data": "Billedet kan ikke tjekkes for fejl: stangen står for højt til, at billedet er fra gulvet."
+  },
+  {
+   "hvad": "L1: uden det fjerne nav \"kræver det fjerne nav\"",
+   "ok": true,
+   "data": "Billedet kan ikke tjekkes for fejl: stangens højde ved gulvet kræver det fjerne nav."
+  },
+  {
+   "hvad": "L1 kontrol: modellens egen stilling ved gulvet giver \"Ligner ingen ...\"",
+   "ok": true,
+   "data": "Ligner ingen af modellens fejlfigurer over målefejlen."
+  },
+  {
+   "hvad": "L2 lukket: knaeene 30 grader ud giver en synlig linje med grunden og taeerne",
+   "ok": true,
+   "data": "Billedet kan ikke tjekkes for fejl: hoften står for højt til, at billedet er fra bunden (tæerne ud kan også give det)."
+  },
+  {
+   "hvad": "L3 aaben: high bar + 6 grader, feltet paa 0: \"Ligner: kun knaeene\" med \"dér letter hælen\"",
+   "ok": true,
+   "data": "Skinnebenet hælder ca. 9° mere frem end i modellens bund med gennemsnittet for din højde og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen, og dér letter hælen i modellen."
+  },
+  {
+   "hvad": "L3: feltet paa 2 cm fjerner det",
+   "ok": true,
+   "data": [
+    "ingen",
+    "ingen",
+    "ingen"
+   ]
+  },
+  {
+   "hvad": "L4 lukket: uden Min krop siger saetningen \"gennemsnittet for din højde\"",
+   "ok": true,
+   "data": "Torsoen hælder ca. 15° mere frem og skinnebenet står ca. 10° mere lodret end i modellens bund med gennemsnittet for din højde; sådan står modellens figur, når hoften skydes for langt tilbage."
+  },
+  {
+   "hvad": "L5 lukket: graensen naevner telefonen i haanden",
+   "ok": true
+  },
+  {
+   "hvad": "L6: fejlfiguren \"kun knaeene\" i sko med 2 cm hael og feltet paa 2 faar \"Ligner ingen af modellens fejlfigurer over målefejlen.\"",
+   "ok": true,
+   "data": "Ligner ingen af modellens fejlfigurer over målefejlen."
+  },
+  {
+   "hvad": "Hael: modellens bund i 3 cm hael, feltet paa 0 = \"Ligner: kun knaeene\", feltet paa 3 = \"Ligner ingen\"",
+   "ok": true,
+   "data": [
+    [
+     "ligner",
+     "ingen"
+    ],
+    [
+     "ligner",
+     "ingen"
+    ],
+    [
+     "ligner",
+     "ingen"
+    ]
+   ]
+  },
+  {
+   "hvad": "L7: kameraet 50 cm forskudt uden at dreje giver hintet \"Filmet mere end 5° skråt\"",
+   "ok": true,
+   "data": [
+    "8",
+    "Filmet mere end 5° skråt (ca. 8°: de to nav står 23 cm fra hinanden). Så flytter modellens egne vinkler sig mere end 4° i billedet: skråt forfra ser torsoen mere oprejst og skinnebenet mere lodret ud, skråt bagfra ser knæet mere strakt ud. Squattens fejl overses oftere, og tabellens forskelle er kameraets. Stil kameraet mere vinkelret på løfteren."
+   ]
+  },
+  {
+   "hvad": "Hintet ved 10 grader drejet skoenner under 10",
+   "ok": true,
+   "data": [
+    "9",
+    "9",
+    "9"
+   ]
+  },
+  {
+   "hvad": "L9: fladt fodtoej i billedet og feltet paa 2 cm giver \"Ligner: hoften skudt for langt tilbage\"",
+   "ok": true,
+   "data": [
+    "ligner",
+    "Torsoen hælder ca. 9° mere frem og skinnebenet står ca. 6° mere lodret end i modellens bund med gennemsnittet for din højde; sådan står modellens figur, når hoften skydes for langt tilbage."
+   ]
+  },
+  {
+   "hvad": "M: Marcs gulvbillede: \"kan ikke tjekkes ... kræver det fjerne nav\" med begge klik",
+   "ok": true
+  },
+  {
+   "hvad": "Linjen og boksen inden for skaermen, ingen vandret rulning",
+   "ok": true
+  },
+  {
+   "hvad": "Intet net, ingen JS-fejl, intet gemt",
+   "ok": true,
+   "data": [
+    [
+     [],
+     []
+    ],
+    [
+     [],
+     []
+    ],
+    [
+     [],
+     []
+    ]
+   ]
+  }
+ ]
+}
