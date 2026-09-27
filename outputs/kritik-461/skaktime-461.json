@@ -1,0 +1,282 @@
+{
+ "skakMain": "1791bc0",
+ "A": {
+  "turneringFoerst": true,
+  "optaelling": "11 spillere, 4 runder, én sidder over hver runde (fri runde = 1 point).",
+  "navneRenset": true,
+  "egetVinduePopup": true,
+  "projRunde1": {
+   "synlig": true,
+   "overflowY": 0,
+   "overflowX": 0,
+   "mindstePx": 25.296,
+   "stoerstePx": 60,
+   "parPx": 41.4,
+   "stillingPx": 40.8,
+   "afskaaret": [],
+   "udenfor": 0
+  },
+  "retTilAndet": true,
+  "tryktIgenFjerner": true,
+  "runde1": [
+   "1-0",
+   "0-1",
+   "0-1",
+   "0-1",
+   "1-0"
+  ],
+  "projFoelgerMed": true,
+  "statusEfterRunde": "Alle resultater er skrevet.",
+  "msParr2": 20,
+  "projRunde2": {
+   "synlig": true,
+   "overflowY": 0,
+   "overflowX": 0,
+   "mindstePx": 25.296,
+   "stoerstePx": 60,
+   "parPx": 41.4,
+   "stillingPx": 40.8,
+   "afskaaret": [],
+   "udenfor": 0
+  },
+  "runde2": [
+   "0-1",
+   "1-0",
+   "0-1",
+   "1-0",
+   "0-1"
+  ],
+  "msParr3": 36,
+  "projRunde3": {
+   "synlig": true,
+   "overflowY": 0,
+   "overflowX": 0,
+   "mindstePx": 25.296,
+   "stoerstePx": 60,
+   "parPx": 41.4,
+   "stillingPx": 40.8,
+   "afskaaret": [],
+   "udenfor": 0
+  },
+  "runde3": [
+   "0-1",
+   "0-1",
+   "1-0",
+   "1-0",
+   "0-1"
+  ],
+  "msParr4": 38,
+  "projRunde4": {
+   "synlig": true,
+   "overflowY": 0,
+   "overflowX": 0,
+   "mindstePx": 25.296,
+   "stoerstePx": 60,
+   "parPx": 41.4,
+   "stillingPx": 40.8,
+   "afskaaret": [],
+   "udenfor": 0
+  },
+  "runde4": [
+   "0-1",
+   "0-1",
+   "0-1",
+   "1-0",
+   "1/2"
+  ],
+  "slutStatus": "Turneringen er slut. Vinder: Tårnet og Spyddet.",
+  "fri": [
+   "Passanten",
+   "Spyddet",
+   "Løberen",
+   "Springeren"
+  ],
+  "friUnikke": true,
+  "farver": [
+   "hshs",
+   "shsh",
+   "hsh",
+   "shsh",
+   "hssh",
+   "shs",
+   "hhss",
+   "shhs",
+   "hssh",
+   "shs",
+   "shh"
+  ],
+  "omkampe": 0,
+  "stilling": [
+   {
+    "plads": 1,
+    "point": 3,
+    "buchholz": 10.5
+   },
+   {
+    "plads": 1,
+    "point": 3,
+    "buchholz": 10.5
+   },
+   {
+    "plads": 3,
+    "point": 3,
+    "buchholz": 9
+   },
+   {
+    "plads": 3,
+    "point": 3,
+    "buchholz": 9
+   },
+   {
+    "plads": 5,
+    "point": 3,
+    "buchholz": 7.5
+   },
+   {
+    "plads": 6,
+    "point": 2,
+    "buchholz": 9.5
+   },
+   {
+    "plads": 7,
+    "point": 2,
+    "buchholz": 6.5
+   },
+   {
+    "plads": 8,
+    "point": 1.5,
+    "buchholz": 8.5
+   },
+   {
+    "plads": 8,
+    "point": 1.5,
+    "buchholz": 8.5
+   },
+   {
+    "plads": 10,
+    "point": 1,
+    "buchholz": 9
+   },
+   {
+    "plads": 11,
+    "point": 1,
+    "buchholz": 7.5
+   }
+  ],
+  "deltePladser": 6,
+  "laererSidelaens": 0,
+  "projStilling": {
+   "synlig": true,
+   "overflowY": 0,
+   "overflowX": 0,
+   "mindstePx": 24.924,
+   "stoerstePx": 60,
+   "parPx": 64,
+   "stillingPx": 40.2,
+   "afskaaret": [],
+   "udenfor": 0
+  },
+  "vinderKrone": 2,
+  "projBeggeSlut": {
+   "synlig": true,
+   "overflowY": 0,
+   "overflowX": 0,
+   "mindstePx": 25.296,
+   "stoerstePx": 60,
+   "parPx": 41.4,
+   "stillingPx": 40.8,
+   "afskaaret": [],
+   "udenfor": 0
+  },
+  "csvNavn": "turnering-2026-09-27-runde-4.csv",
+  "csvBom": true,
+  "csvLinjer": 40,
+  "csvAlleNavne": true,
+  "csvFri": 4,
+  "sikkerhedskopiOk": true,
+  "sletNoegler": [
+   "skak-laerer-fane-v1",
+   "skak-laerer-projektor-tema-v1"
+  ],
+  "sletNavnIStorage": [],
+  "sletNavnPaaSiden": [],
+  "sletNavnPaaProjektor": [],
+  "fortrydSletSynlig": true,
+  "efterGenindlaesFortryd": false,
+  "efterGenindlaesNavne": []
+ },
+ "B": {
+  "dubletAccepteret": true,
+  "dubletAdvarsel": "Runde 1 er parret.",
+  "dubletSkelnes": false,
+  "langeNavne": {
+   "synlig": true,
+   "overflowY": 0,
+   "overflowX": 12,
+   "mindstePx": 25.296,
+   "stoerstePx": 60,
+   "parPx": 41.4,
+   "stillingPx": 40.8,
+   "afskaaret": [
+    "Dronningegambitten",
+    "Springer-på-f3-Kalle",
+    "Kongeindisk-forsvar",
+    "Siciliansk-Najdorf"
+   ],
+   "udenfor": 12
+  },
+  "sygIkkeParret": true,
+  "sygRunde2Borde": 5,
+  "sygRunde2Fri": null,
+  "parrLaastUdenResultater": true,
+  "fortrydKnap": true,
+  "fortrydVirker": true,
+  "senBesked": "Nykommeren er med fra næste runde.",
+  "senParret": true,
+  "runde3Borde": 6,
+  "retGammelt": true,
+  "senStilling": {
+   "id": 11,
+   "navn": "Nykommeren",
+   "point": 0,
+   "buchholz": 0,
+   "partier": 0,
+   "fri": 0,
+   "plads": 12
+  },
+  "sygStilling": {
+   "id": 6,
+   "navn": "Kongen",
+   "point": 0,
+   "buchholz": 1,
+   "partier": 1,
+   "fri": 0,
+   "plads": 11
+  },
+  "sidefejl": 0
+ },
+ "C": {
+  "turneringer": 300,
+  "omkampe": 0,
+  "dobbeltFri": 0,
+  "runderUdenFri": 0,
+  "friIkkeLavest": 0,
+  "treEnsFarver": 0,
+  "farveSkaev3": 0,
+  "maksFarveSkaev": 2,
+  "borde": 6000,
+  "bordeMedPointforskel": 1514,
+  "maksPointforskel": 1,
+  "maksMsPrRunde": 3,
+  "fejl": [],
+  "deltFoerstePct3": 6,
+  "ligePointITopPct3": 39,
+  "deltFoerstePct4": 4,
+  "ligePointITopPct4": 26,
+  "sekunder": 0,
+  "standardRunder11": 4
+ },
+ "sidefejl": [],
+ "netvaerk": [],
+ "fejl": []
+}
