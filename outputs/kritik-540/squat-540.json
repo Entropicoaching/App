@@ -1,0 +1,548 @@
+{
+  "gren": "udgivelse-squat-min-krop",
+  "top": "9390990",
+  "loeftmodelMain": "ca860bf",
+  "navneTjekket": 3,
+  "kroppe": {
+    "balanceret": {
+      "hoejde": "ingen (ca. 171-174 omregnet)",
+      "vaegt": "78 kg",
+      "stang": "100 kg",
+      "laengder": "42,0 / 42,0 / 50,0",
+      "arme": "20,5 / 21,4",
+      "momenter": "312 / 345"
+    },
+    "fejlkroppen": {
+      "hoejde": "183 cm (antaget)",
+      "vaegt": "120 kg (antaget)",
+      "stang": "120 kg",
+      "laengder": "44,8 / 45,0 / 52,7",
+      "arme": "21,7 / 23,0",
+      "momenter": "435 / 497"
+    },
+    "gennemsnitlig": {
+      "hoejde": "178 cm",
+      "vaegt": "85 kg",
+      "stang": "120 kg",
+      "laengder": "43,6 / 43,8 / 51,3",
+      "arme": "21,3 / 22,2",
+      "momenter": "376 / 416"
+    }
+  },
+  "fund": {
+    "U17": {
+      "tekst": true
+    },
+    "U18": {
+      "tekst": true,
+      "iModellen": 8,
+      "liste": [
+        "kun-knae",
+        "hofte-tilbage",
+        "god-morgen",
+        "haele-letter",
+        "stang-foran-midtfod",
+        "for-lidt-dybde",
+        "knae-indad",
+        "baekkenvip"
+      ]
+    },
+    "U19": {
+      "u12NaevnerKap6": false,
+      "u12NaevnerKap8": false,
+      "kap6": "Modellen får kroppens mål (183 cm, 120 kg)",
+      "kap6Antaget": false,
+      "intro": true
+    },
+    "U20": {
+      "minKropSomVaerktoej": true,
+      "markeret": false
+    }
+  },
+  "tjek": [
+    {
+      "hvad": "REFERENCEKROPPE: tre kroppe laest fra main",
+      "ok": true,
+      "data": {
+        "b": {
+          "hoejde": "ingen (ca. 171-174 omregnet)",
+          "vaegt": "78 kg",
+          "stang": "100 kg",
+          "laengder": "42,0 / 42,0 / 50,0",
+          "arme": "20,5 / 21,4",
+          "momenter": "312 / 345"
+        },
+        "f": {
+          "hoejde": "183 cm (antaget)",
+          "vaegt": "120 kg (antaget)",
+          "stang": "120 kg",
+          "laengder": "44,8 / 45,0 / 52,7",
+          "arme": "21,7 / 23,0",
+          "momenter": "435 / 497"
+        },
+        "g": {
+          "hoejde": "178 cm",
+          "vaegt": "85 kg",
+          "stang": "120 kg",
+          "laengder": "43,6 / 43,8 / 51,3",
+          "arme": "21,3 / 22,2",
+          "momenter": "376 / 416"
+        }
+      }
+    },
+    {
+      "hvad": "U12 balanceret: 78 kg, 100 kg, 42/42/50, ca. 171-174, kap. 1-5 og de fire sidste",
+      "ok": true
+    },
+    {
+      "hvad": "U12 fejlkroppen: 183 cm og 120 kg antaget, stang 120 kg, laengder udledt",
+      "ok": true
+    },
+    {
+      "hvad": "U12 gennemsnit: 178 cm, 85 kg, 120 kg i squat",
+      "ok": true
+    },
+    {
+      "hvad": "kap. 7 indledning og begge momenttabeller siger den antagne krop",
+      "ok": true
+    },
+    {
+      "hvad": "kap. 7 fejlkroppens arme og momenter = REFERENCEKROPPE (21,7/23,0 cm, 435/497 Nm)",
+      "ok": true,
+      "data": {
+        "armF": [
+          "21,7",
+          "23,0"
+        ],
+        "momF": [
+          "435",
+          "497"
+        ]
+      }
+    },
+    {
+      "hvad": "kap. 7 balanceret: stang til hofte/knae 20,5/21,4 cm og 312/345 Nm = REFERENCEKROPPE",
+      "ok": true,
+      "data": {
+        "armB": [
+          "20,5",
+          "21,4"
+        ],
+        "momB": [
+          "312",
+          "345"
+        ]
+      }
+    },
+    {
+      "hvad": "U15: saetningen staar een gang, med Hales m.fl. 2009",
+      "ok": true,
+      "data": "Hos 25 løftere ved en konkurrence var den lodrette stanghastighed 0,09 m/s ved sticking point og torsoen ca. 49° fra lodret (Hales m.fl., 2009). I modellen hælder torsoen "
+    },
+    {
+      "hvad": "U15: kilde 4 siger 25 loeftere, konkurrence, 0,09 m/s ved sticking point (ordret \"squat (0.09 m/s)\")",
+      "ok": true
+    },
+    {
+      "hvad": "U15: torsoen ca. 49 grader fra lodret = 90 - 40,6",
+      "ok": true
+    },
+    {
+      "hvad": "U15: Hales i referencelisten, 0,11 m/s stadig med Larsen",
+      "ok": true
+    },
+    {
+      "hvad": "kap. 3's tekst: 11 tal-saetninger = anatomi-tallene",
+      "ok": true,
+      "data": []
+    },
+    {
+      "hvad": "kap. 3's fire billedtekster = anatomi-tallene",
+      "ok": true,
+      "data": []
+    },
+    {
+      "hvad": "kap. 3: krop og stang i anatomi-tallene er balanceret 78/100, lowbar",
+      "ok": true
+    },
+    {
+      "hvad": "kap. 7: alle seks momenttabeller = loeftmodellens tal (24 raekker)",
+      "ok": true,
+      "data": []
+    },
+    {
+      "hvad": "kap. 7's tekst og billedtekster: 27 tal-saetninger = loeftmodellens tal",
+      "ok": true,
+      "data": []
+    },
+    {
+      "hvad": "kap. 7: fejl-marc er regnet paa 183 cm-kroppen med 120 kg stang",
+      "ok": true
+    },
+    {
+      "hvad": "fund U17-U20 er som beskrevet i SQUAT.md",
+      "ok": true,
+      "data": {
+        "U17": {
+          "tekst": true
+        },
+        "U18": {
+          "tekst": true,
+          "iModellen": 8,
+          "liste": [
+            "kun-knae",
+            "hofte-tilbage",
+            "god-morgen",
+            "haele-letter",
+            "stang-foran-midtfod",
+            "for-lidt-dybde",
+            "knae-indad",
+            "baekkenvip"
+          ]
+        },
+        "U19": {
+          "u12NaevnerKap6": false,
+          "u12NaevnerKap8": false,
+          "kap6": "Modellen får kroppens mål (183 cm, 120 kg)",
+          "kap6Antaget": false,
+          "intro": true
+        },
+        "U20": {
+          "minKropSomVaerktoej": true,
+          "markeret": false
+        }
+      }
+    },
+    {
+      "hvad": "390: ingen vandret rul, 0 JS-fejl, 0 404, 0 tankestreger, 0 [MARC, 0 atletnavne",
+      "ok": true,
+      "data": {
+        "e": 1,
+        "f": [],
+        "h": [],
+        "t": 0
+      }
+    },
+    {
+      "hvad": "390: U12 og U15 synlige",
+      "ok": true
+    },
+    {
+      "hvad": "390: kap. 3's tabel i alle fem stillinger (35 raekker) = anatomi-tallene",
+      "ok": true,
+      "data": []
+    },
+    {
+      "hvad": "1280: ingen vandret rul, 0 JS-fejl, 0 404, 0 tankestreger, 0 [MARC, 0 atletnavne",
+      "ok": true,
+      "data": {
+        "e": 1,
+        "f": [],
+        "h": [],
+        "t": 0
+      }
+    },
+    {
+      "hvad": "1280: U12 og U15 synlige",
+      "ok": true
+    },
+    {
+      "hvad": "1280: kap. 3's tabel i alle fem stillinger (35 raekker) = anatomi-tallene",
+      "ok": true,
+      "data": []
+    }
+  ],
+  "sider": [
+    {
+      "bredde": 390,
+      "sidefejl": [],
+      "http404": [],
+      "eksterne": 1,
+      "vandret": true,
+      "tankestreger": 0,
+      "synligMarc": 0,
+      "atletnavne": 0,
+      "u12Synlig": true,
+      "u15Synlig": true,
+      "tabelAfvig": [],
+      "tabelSkrift": {
+        "px": 11.52,
+        "egetRullelag": false
+      }
+    },
+    {
+      "bredde": 1280,
+      "sidefejl": [],
+      "http404": [],
+      "eksterne": 1,
+      "vandret": true,
+      "tankestreger": 0,
+      "synligMarc": 0,
+      "atletnavne": 0,
+      "u12Synlig": true,
+      "u15Synlig": true,
+      "tabelAfvig": [],
+      "tabelSkrift": {
+        "px": 11.84,
+        "egetRullelag": false
+      }
+    }
+  ],
+  "tabel390": {
+    "opstilling": [
+      [
+        "Knæstrækkere (quadriceps)",
+        "179,4° (bøjning 0,6°)",
+        "4,1",
+        "-",
+        "kan ikke bruges som strækker her"
+      ],
+      [
+        "Sædemuskel (gluteus maximus)",
+        "170,0° (bøjning 10,0°)",
+        "6,2",
+        "0 %",
+        "udledt"
+      ],
+      [
+        "Baglår (hamstrings)",
+        "170,0° (bøjning 10,0°)",
+        "5,4",
+        "0 %",
+        "udledt"
+      ],
+      [
+        "Stor adduktor (adductor magnus)",
+        "170,0° (bøjning 10,0°)",
+        "1,6",
+        "1 %",
+        "udledt"
+      ],
+      [
+        "Dyb lægmuskel (soleus)",
+        "bøjning 4,9°",
+        "4,2",
+        "52 %",
+        "udledt"
+      ],
+      [
+        "Overfladisk lægmuskel (gastrocnemius)",
+        "bøjning 4,9°",
+        "4,5",
+        "63 %",
+        "udledt"
+      ],
+      [
+        "Rygstrækkere (erector spinae)",
+        "bøjning 14,4°",
+        "5,3",
+        "-",
+        "kan ikke bruges som strækker her"
+      ]
+    ],
+    "halvvejs": [
+      [
+        "Knæstrækkere (quadriceps)",
+        "85,2° (bøjning 94,8°)",
+        "2,0",
+        "85 %",
+        "udledt"
+      ],
+      [
+        "Sædemuskel (gluteus maximus)",
+        "91,3° (bøjning 88,7°)",
+        "3,5",
+        "38 %",
+        "udledt"
+      ],
+      [
+        "Baglår (hamstrings)",
+        "91,3° (bøjning 88,7°)",
+        "4,0",
+        "22 %",
+        "udledt"
+      ],
+      [
+        "Stor adduktor (adductor magnus)",
+        "91,3° (bøjning 88,7°)",
+        "3,7",
+        "41 %",
+        "udledt"
+      ],
+      [
+        "Dyb lægmuskel (soleus)",
+        "bøjning 40,3°",
+        "2,5",
+        "88 %",
+        "udledt"
+      ],
+      [
+        "Overfladisk lægmuskel (gastrocnemius)",
+        "bøjning 40,3°",
+        "3,1",
+        "91 %",
+        "udledt"
+      ],
+      [
+        "Rygstrækkere (erector spinae)",
+        "bøjning 34,3°",
+        "5,1",
+        "18 %",
+        "udledt"
+      ]
+    ],
+    "bund": [
+      [
+        "Knæstrækkere (quadriceps)",
+        "45,9° (bøjning 134,1°)",
+        "2,2",
+        "75 %",
+        "udledt"
+      ],
+      [
+        "Sædemuskel (gluteus maximus)",
+        "36,8° (bøjning 143,2°)",
+        "2,4",
+        "-",
+        "ikke regnet (uden for modellens område)"
+      ],
+      [
+        "Baglår (hamstrings)",
+        "36,8° (bøjning 143,2°)",
+        "1,4",
+        "-",
+        "ikke regnet (uden for modellens område)"
+      ],
+      [
+        "Stor adduktor (adductor magnus)",
+        "36,8° (bøjning 143,2°)",
+        "2,7",
+        "-",
+        "ikke regnet (uden for modellens område)"
+      ],
+      [
+        "Dyb lægmuskel (soleus)",
+        "bøjning 40,0°",
+        "2,5",
+        "87 %",
+        "udledt"
+      ],
+      [
+        "Overfladisk lægmuskel (gastrocnemius)",
+        "bøjning 40,0°",
+        "3,1",
+        "91 %",
+        "udledt"
+      ],
+      [
+        "Rygstrækkere (erector spinae)",
+        "bøjning 49,1°",
+        "4,9",
+        "57 %",
+        "udledt"
+      ]
+    ],
+    "sticking": [
+      [
+        "Knæstrækkere (quadriceps)",
+        "70,0° (bøjning 110,0°)",
+        "2,0",
+        "90 %",
+        "udledt"
+      ],
+      [
+        "Sædemuskel (gluteus maximus)",
+        "73,4° (bøjning 106,6°)",
+        "2,8",
+        "59 %",
+        "udledt"
+      ],
+      [
+        "Baglår (hamstrings)",
+        "73,4° (bøjning 106,6°)",
+        "2,6",
+        "42 %",
+        "udledt"
+      ],
+      [
+        "Stor adduktor (adductor magnus)",
+        "73,4° (bøjning 106,6°)",
+        "3,2",
+        "59 %",
+        "udledt"
+      ],
+      [
+        "Dyb lægmuskel (soleus)",
+        "bøjning 43,0°",
+        "2,3",
+        "94 %",
+        "udledt"
+      ],
+      [
+        "Overfladisk lægmuskel (gastrocnemius)",
+        "bøjning 43,0°",
+        "2,9",
+        "96 %",
+        "udledt"
+      ],
+      [
+        "Rygstrækkere (erector spinae)",
+        "bøjning 39,6°",
+        "5,1",
+        "32 %",
+        "udledt"
+      ]
+    ],
+    "lockout": [
+      [
+        "Knæstrækkere (quadriceps)",
+        "179,4° (bøjning 0,6°)",
+        "4,1",
+        "-",
+        "kan ikke bruges som strækker her"
+      ],
+      [
+        "Sædemuskel (gluteus maximus)",
+        "170,0° (bøjning 10,0°)",
+        "6,2",
+        "0 %",
+        "udledt"
+      ],
+      [
+        "Baglår (hamstrings)",
+        "170,0° (bøjning 10,0°)",
+        "5,4",
+        "0 %",
+        "udledt"
+      ],
+      [
+        "Stor adduktor (adductor magnus)",
+        "170,0° (bøjning 10,0°)",
+        "1,6",
+        "1 %",
+        "udledt"
+      ],
+      [
+        "Dyb lægmuskel (soleus)",
+        "bøjning 4,9°",
+        "4,2",
+        "52 %",
+        "udledt"
+      ],
+      [
+        "Overfladisk lægmuskel (gastrocnemius)",
+        "bøjning 4,9°",
+        "4,5",
+        "63 %",
+        "udledt"
+      ],
+      [
+        "Rygstrækkere (erector spinae)",
+        "bøjning 14,4°",
+        "5,3",
+        "-",
+        "kan ikke bruges som strækker her"
+      ]
+    ]
+  }
+}
