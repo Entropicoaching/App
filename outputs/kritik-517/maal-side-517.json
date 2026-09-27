@@ -1,0 +1,5816 @@
+{
+ "ref": "7f604f7",
+ "minKrop": "gennemsnitsMaal(183, 120)",
+ "faser": {
+  "360-squat-bund-udenKg": {
+   "side": 387,
+   "klient": 360,
+   "tabel": 328,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈48,5°",
+     "48,5°",
+     "48,5°"
+    ],
+    "hofte": [
+     "≈37,7°",
+     "37,6°",
+     "37,7°"
+    ],
+    "knae": [
+     "≈46,2°",
+     "46,2°",
+     "46,2°"
+    ],
+    "stangFraMidtfod": [
+     "−1,0 cm",
+     "skriv stangens vægt",
+     "skriv stangens vægt"
+    ],
+    "stangHofte": [
+     "≈21,7 cm",
+     "21,7 cm",
+     "21,7 cm"
+    ]
+   },
+   "indenAntal": 4,
+   "indenRaekker": 4,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 2987,
+    "bund": 3313,
+    "w": 328,
+    "h": 326,
+    "right": 344
+   },
+   "taerskelRect": {
+    "top": 3328,
+    "bund": 3438,
+    "w": 328,
+    "h": 110,
+    "right": 344
+   },
+   "tallinje": "Torso 48,5°Hofte 37,7°Knæ 46,2°Stang −1,0 cm",
+   "tallinjeRect": {
+    "top": 1423,
+    "bund": 1446,
+    "w": 371,
+    "h": 23,
+    "right": 387
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 980,
+    "bund": 1417,
+    "w": 328,
+    "h": 437,
+    "right": 344
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [
+    "div billedeboks 387",
+    "p tallinje 387",
+    "span id 373",
+    "div modelboks 387",
+    "div forklaring 387"
+   ],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 908
+  },
+  "360-squat-bund-kg": {
+   "side": 387,
+   "klient": 360,
+   "tabel": 328,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈48,5°",
+     "49,3°",
+     "49,2°"
+    ],
+    "hofte": [
+     "≈37,7°",
+     "36,9°",
+     "36,9°"
+    ],
+    "knae": [
+     "≈46,2°",
+     "46,2°",
+     "46,2°"
+    ],
+    "stangFraMidtfod": [
+     "≈−1,0 cm",
+     "−0,5 cm",
+     "−0,5 cm"
+    ],
+    "stangHofte": [
+     "≈21,7 cm",
+     "22,2 cm",
+     "22,2 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 3059,
+    "bund": 3385,
+    "w": 328,
+    "h": 326,
+    "right": 344
+   },
+   "taerskelRect": {
+    "top": 3400,
+    "bund": 3510,
+    "w": 328,
+    "h": 110,
+    "right": 344
+   },
+   "tallinje": "Torso 48,5°Hofte 37,7°Knæ 46,2°Stang −1,0 cm",
+   "tallinjeRect": {
+    "top": 1481,
+    "bund": 1504,
+    "w": 371,
+    "h": 23,
+    "right": 387
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 980,
+    "bund": 1475,
+    "w": 371,
+    "h": 495,
+    "right": 387
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [
+    "div billedeboks 387",
+    "canvas billede 387",
+    "p tallinje 387",
+    "span id 373",
+    "div modelboks 387"
+   ],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 908
+  },
+  "360-squat-midt-udenKg": {
+   "side": 387,
+   "klient": 360,
+   "tabel": 328,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈39,1°",
+     "39,8°",
+     "39,8°"
+    ],
+    "hofte": [
+     "≈73,8°",
+     "73,5°",
+     "73,5°"
+    ],
+    "knae": [
+     "≈70,3°",
+     "70,1°",
+     "70,1°"
+    ],
+    "stangFraMidtfod": [
+     "≈−2,6 cm",
+     "−1,5 cm",
+     "−1,5 cm"
+    ],
+    "stangHofte": [
+     "≈15,3 cm",
+     "15,8 cm",
+     "15,8 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 3162,
+    "bund": 3488,
+    "w": 328,
+    "h": 326,
+    "right": 344
+   },
+   "taerskelRect": {
+    "top": 3503,
+    "bund": 3613,
+    "w": 328,
+    "h": 110,
+    "right": 344
+   },
+   "tallinje": "Torso 39,1°Hofte 73,8°Knæ 70,3°Stang −2,6 cm",
+   "tallinjeRect": {
+    "top": 1481,
+    "bund": 1504,
+    "w": 371,
+    "h": 23,
+    "right": 387
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 980,
+    "bund": 1475,
+    "w": 371,
+    "h": 495,
+    "right": 387
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [
+    "div billedeboks 387",
+    "canvas billede 387",
+    "p tallinje 387",
+    "span id 373",
+    "div modelboks 387"
+   ],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 908
+  },
+  "360-squat-midt-kg": {
+   "side": 387,
+   "klient": 360,
+   "tabel": 328,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈39,1°",
+     "39,8°",
+     "39,8°"
+    ],
+    "hofte": [
+     "≈73,8°",
+     "73,5°",
+     "73,5°"
+    ],
+    "knae": [
+     "≈70,3°",
+     "70,1°",
+     "70,1°"
+    ],
+    "stangFraMidtfod": [
+     "≈−2,6 cm",
+     "−1,5 cm",
+     "−1,5 cm"
+    ],
+    "stangHofte": [
+     "≈15,3 cm",
+     "15,8 cm",
+     "15,8 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 3162,
+    "bund": 3488,
+    "w": 328,
+    "h": 326,
+    "right": 344
+   },
+   "taerskelRect": {
+    "top": 3503,
+    "bund": 3613,
+    "w": 328,
+    "h": 110,
+    "right": 344
+   },
+   "tallinje": "Torso 39,1°Hofte 73,8°Knæ 70,3°Stang −2,6 cm",
+   "tallinjeRect": {
+    "top": 1481,
+    "bund": 1504,
+    "w": 371,
+    "h": 23,
+    "right": 387
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 980,
+    "bund": 1475,
+    "w": 371,
+    "h": 495,
+    "right": 387
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [
+    "div billedeboks 387",
+    "canvas billede 387",
+    "p tallinje 387",
+    "span id 373",
+    "div modelboks 387"
+   ],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 908
+  },
+  "360-dl-gulv-udenKg": {
+   "side": 377,
+   "klient": 360,
+   "tabel": 328,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈60,7°",
+     "60,7°",
+     "60,7°"
+    ],
+    "hofte": [
+     "≈50,6°",
+     "50,6°",
+     "50,6°"
+    ],
+    "knae": [
+     "≈97,5°",
+     "97,5°",
+     "97,5°"
+    ],
+    "skinneben": [
+     "≈13,8°",
+     "13,8°",
+     "13,8°"
+    ],
+    "balanceStang": [
+     "≈3,0 cm",
+     "4,2 cm",
+     "4,2 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 3120,
+    "bund": 3595,
+    "w": 328,
+    "h": 474,
+    "right": 344
+   },
+   "taerskelRect": {
+    "top": 3609,
+    "bund": 3720,
+    "w": 328,
+    "h": 110,
+    "right": 344
+   },
+   "tallinje": "Torso 60,7°Hofte 50,6°Knæ 97,5°Stang 3,0 cm",
+   "tallinjeRect": {
+    "top": 1481,
+    "bund": 1504,
+    "w": 361,
+    "h": 23,
+    "right": 377
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 980,
+    "bund": 1475,
+    "w": 361,
+    "h": 495,
+    "right": 377
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [
+    "div billedeboks 377",
+    "canvas billede 377",
+    "p tallinje 377",
+    "span id 362",
+    "div modelboks 377"
+   ],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 884
+  },
+  "360-dl-gulv-kg": {
+   "side": 377,
+   "klient": 360,
+   "tabel": 328,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈60,7°",
+     "60,7°",
+     "60,7°"
+    ],
+    "hofte": [
+     "≈50,6°",
+     "50,6°",
+     "50,6°"
+    ],
+    "knae": [
+     "≈97,5°",
+     "97,5°",
+     "97,5°"
+    ],
+    "skinneben": [
+     "≈13,8°",
+     "13,8°",
+     "13,8°"
+    ],
+    "balanceStang": [
+     "≈3,0 cm",
+     "4,2 cm",
+     "4,2 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 3092,
+    "bund": 3567,
+    "w": 328,
+    "h": 474,
+    "right": 344
+   },
+   "taerskelRect": {
+    "top": 3581,
+    "bund": 3692,
+    "w": 328,
+    "h": 110,
+    "right": 344
+   },
+   "tallinje": "Torso 60,7°Hofte 50,6°Knæ 97,5°Stang 3,0 cm",
+   "tallinjeRect": {
+    "top": 1467,
+    "bund": 1490,
+    "w": 361,
+    "h": 23,
+    "right": 377
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 980,
+    "bund": 1461,
+    "w": 361,
+    "h": 481,
+    "right": 377
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [
+    "div billedeboks 377",
+    "canvas billede 377",
+    "p tallinje 377",
+    "span id 362",
+    "div modelboks 377"
+   ],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 884
+  },
+  "360-dl-knae-udenKg": {
+   "side": 385,
+   "klient": 360,
+   "tabel": 328,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈52,9°",
+     "52,9°",
+     "52,9°"
+    ],
+    "hofte": [
+     "≈94,6°",
+     "94,6°",
+     "94,6°"
+    ],
+    "knae": [
+     "≈146,3°",
+     "146,3°",
+     "146,3°"
+    ],
+    "skinneben": [
+     "≈1,2°",
+     "1,2°",
+     "1,2°"
+    ],
+    "balanceStang": [
+     "≈0,0 cm",
+     "2,6 cm",
+     "2,6 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 3121,
+    "bund": 3574,
+    "w": 328,
+    "h": 453,
+    "right": 344
+   },
+   "taerskelRect": {
+    "top": 3589,
+    "bund": 3699,
+    "w": 328,
+    "h": 110,
+    "right": 344
+   },
+   "tallinje": "Torso 52,9°Hofte 94,6°Knæ 146,3°Stang 0,0 cm",
+   "tallinjeRect": {
+    "top": 1467,
+    "bund": 1490,
+    "w": 369,
+    "h": 23,
+    "right": 385
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 980,
+    "bund": 1461,
+    "w": 361,
+    "h": 481,
+    "right": 377
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [
+    "div billedeboks 385",
+    "canvas billede 377",
+    "p tallinje 385",
+    "span id 370",
+    "div modelboks 385"
+   ],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 903
+  },
+  "360-dl-knae-kg": {
+   "side": 385,
+   "klient": 360,
+   "tabel": 328,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈52,9°",
+     "52,9°",
+     "52,9°"
+    ],
+    "hofte": [
+     "≈94,6°",
+     "94,6°",
+     "94,6°"
+    ],
+    "knae": [
+     "≈146,3°",
+     "146,3°",
+     "146,3°"
+    ],
+    "skinneben": [
+     "≈1,2°",
+     "1,2°",
+     "1,2°"
+    ],
+    "balanceStang": [
+     "≈0,0 cm",
+     "2,6 cm",
+     "2,6 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 3143,
+    "bund": 3596,
+    "w": 328,
+    "h": 453,
+    "right": 344
+   },
+   "taerskelRect": {
+    "top": 3611,
+    "bund": 3721,
+    "w": 328,
+    "h": 110,
+    "right": 344
+   },
+   "tallinje": "Torso 52,9°Hofte 94,6°Knæ 146,3°Stang 0,0 cm",
+   "tallinjeRect": {
+    "top": 1478,
+    "bund": 1501,
+    "w": 369,
+    "h": 23,
+    "right": 385
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 980,
+    "bund": 1472,
+    "w": 369,
+    "h": 492,
+    "right": 385
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [
+    "div billedeboks 385",
+    "canvas billede 385",
+    "p tallinje 385",
+    "span id 370",
+    "div modelboks 385"
+   ],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 903
+  },
+  "360-baenk-bryst-udenKg": {
+   "side": 360,
+   "klient": 360,
+   "tabel": 328,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "stangModFodder": [
+     "≈25,6 cm",
+     "25,1 cm",
+     "25,1 cm"
+    ]
+   },
+   "indenAntal": 1,
+   "indenRaekker": 1,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 2920,
+    "bund": 3113,
+    "w": 328,
+    "h": 193,
+    "right": 344
+   },
+   "taerskelRect": {
+    "top": 3128,
+    "bund": 3238,
+    "w": 328,
+    "h": 110,
+    "right": 344
+   },
+   "tallinje": "Stang mod fødderne 25,6 cmKnæ 79,1°",
+   "tallinjeRect": {
+    "top": 1478,
+    "bund": 1501,
+    "w": 328,
+    "h": 23,
+    "right": 344
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 980,
+    "bund": 1472,
+    "w": 328,
+    "h": 492,
+    "right": 344
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 844
+  },
+  "360-baenk-bryst-kg": {
+   "side": 360,
+   "klient": 360,
+   "tabel": 328,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "stangModFodder": [
+     "≈25,6 cm",
+     "25,1 cm",
+     "25,1 cm"
+    ]
+   },
+   "indenAntal": 1,
+   "indenRaekker": 1,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 2810,
+    "bund": 3003,
+    "w": 328,
+    "h": 193,
+    "right": 344
+   },
+   "taerskelRect": {
+    "top": 3018,
+    "bund": 3128,
+    "w": 328,
+    "h": 110,
+    "right": 344
+   },
+   "tallinje": "Stang mod fødderne 25,6 cmKnæ 79,1°",
+   "tallinjeRect": {
+    "top": 1423,
+    "bund": 1446,
+    "w": 328,
+    "h": 23,
+    "right": 344
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 980,
+    "bund": 1417,
+    "w": 328,
+    "h": 437,
+    "right": 344
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 844
+  },
+  "360-baenk-midt-udenKg": {
+   "side": 360,
+   "klient": 360,
+   "tabel": 328,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "stangModFodder": [
+     "0,8 cm",
+     "modelvalg",
+     "modelvalg"
+    ]
+   },
+   "indenAntal": 0,
+   "indenRaekker": 0,
+   "indenStil": null,
+   "taerskel": "Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 2913,
+    "bund": 3191,
+    "w": 328,
+    "h": 278,
+    "right": 344
+   },
+   "taerskelRect": {
+    "top": 3205,
+    "bund": 3272,
+    "w": 328,
+    "h": 66,
+    "right": 344
+   },
+   "tallinje": "Stang mod fødderne 0,8 cmKnæ 79,1°",
+   "tallinjeRect": {
+    "top": 1423,
+    "bund": 1446,
+    "w": 328,
+    "h": 23,
+    "right": 344
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 980,
+    "bund": 1417,
+    "w": 328,
+    "h": 437,
+    "right": 344
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 844
+  },
+  "360-baenk-midt-kg": {
+   "side": 360,
+   "klient": 360,
+   "tabel": 328,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "stangModFodder": [
+     "0,8 cm",
+     "modelvalg",
+     "modelvalg"
+    ]
+   },
+   "indenAntal": 0,
+   "indenRaekker": 0,
+   "indenStil": null,
+   "taerskel": "Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 2913,
+    "bund": 3191,
+    "w": 328,
+    "h": 278,
+    "right": 344
+   },
+   "taerskelRect": {
+    "top": 3205,
+    "bund": 3272,
+    "w": 328,
+    "h": 66,
+    "right": 344
+   },
+   "tallinje": "Stang mod fødderne 0,8 cmKnæ 79,1°",
+   "tallinjeRect": {
+    "top": 1423,
+    "bund": 1446,
+    "w": 328,
+    "h": 23,
+    "right": 344
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 980,
+    "bund": 1417,
+    "w": 328,
+    "h": 437,
+    "right": 344
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 844
+  },
+  "360-net": [],
+  "360-fejl": [],
+  "375-squat-bund-udenKg": {
+   "side": 388,
+   "klient": 375,
+   "tabel": 343,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈48,5°",
+     "48,5°",
+     "48,5°"
+    ],
+    "hofte": [
+     "≈37,7°",
+     "37,6°",
+     "37,7°"
+    ],
+    "knae": [
+     "≈46,2°",
+     "46,2°",
+     "46,2°"
+    ],
+    "stangFraMidtfod": [
+     "−1,0 cm",
+     "skriv stangens vægt",
+     "skriv stangens vægt"
+    ],
+    "stangHofte": [
+     "≈21,7 cm",
+     "21,7 cm",
+     "21,7 cm"
+    ]
+   },
+   "indenAntal": 4,
+   "indenRaekker": 4,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 2975,
+    "bund": 3301,
+    "w": 343,
+    "h": 326,
+    "right": 359
+   },
+   "taerskelRect": {
+    "top": 3316,
+    "bund": 3426,
+    "w": 343,
+    "h": 110,
+    "right": 359
+   },
+   "tallinje": "Torso 48,5°Hofte 37,7°Knæ 46,2°Stang −1,0 cm",
+   "tallinjeRect": {
+    "top": 1391,
+    "bund": 1414,
+    "w": 371,
+    "h": 23,
+    "right": 387
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 928,
+    "bund": 1385,
+    "w": 343,
+    "h": 457,
+    "right": 359
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [
+    "div billedeboks 387",
+    "p tallinje 387",
+    "div modelboks 387",
+    "div forklaring 387"
+   ],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 872
+  },
+  "375-squat-bund-kg": {
+   "side": 388,
+   "klient": 375,
+   "tabel": 343,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈48,5°",
+     "49,3°",
+     "49,2°"
+    ],
+    "hofte": [
+     "≈37,7°",
+     "36,9°",
+     "36,9°"
+    ],
+    "knae": [
+     "≈46,2°",
+     "46,2°",
+     "46,2°"
+    ],
+    "stangFraMidtfod": [
+     "≈−1,0 cm",
+     "−0,5 cm",
+     "−0,5 cm"
+    ],
+    "stangHofte": [
+     "≈21,7 cm",
+     "22,2 cm",
+     "22,2 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 3007,
+    "bund": 3333,
+    "w": 343,
+    "h": 326,
+    "right": 359
+   },
+   "taerskelRect": {
+    "top": 3348,
+    "bund": 3458,
+    "w": 343,
+    "h": 110,
+    "right": 359
+   },
+   "tallinje": "Torso 48,5°Hofte 37,7°Knæ 46,2°Stang −1,0 cm",
+   "tallinjeRect": {
+    "top": 1429,
+    "bund": 1452,
+    "w": 371,
+    "h": 23,
+    "right": 387
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 928,
+    "bund": 1423,
+    "w": 371,
+    "h": 495,
+    "right": 387
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [
+    "div billedeboks 387",
+    "canvas billede 387",
+    "p tallinje 387",
+    "div modelboks 387",
+    "canvas model 387"
+   ],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 872
+  },
+  "375-squat-midt-udenKg": {
+   "side": 388,
+   "klient": 375,
+   "tabel": 343,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈39,1°",
+     "39,8°",
+     "39,8°"
+    ],
+    "hofte": [
+     "≈73,8°",
+     "73,5°",
+     "73,5°"
+    ],
+    "knae": [
+     "≈70,3°",
+     "70,1°",
+     "70,1°"
+    ],
+    "stangFraMidtfod": [
+     "≈−2,6 cm",
+     "−1,5 cm",
+     "−1,5 cm"
+    ],
+    "stangHofte": [
+     "≈15,3 cm",
+     "15,8 cm",
+     "15,8 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 3110,
+    "bund": 3436,
+    "w": 343,
+    "h": 326,
+    "right": 359
+   },
+   "taerskelRect": {
+    "top": 3451,
+    "bund": 3561,
+    "w": 343,
+    "h": 110,
+    "right": 359
+   },
+   "tallinje": "Torso 39,1°Hofte 73,8°Knæ 70,3°Stang −2,6 cm",
+   "tallinjeRect": {
+    "top": 1429,
+    "bund": 1452,
+    "w": 371,
+    "h": 23,
+    "right": 387
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 928,
+    "bund": 1423,
+    "w": 371,
+    "h": 495,
+    "right": 387
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [
+    "div billedeboks 387",
+    "canvas billede 387",
+    "p tallinje 387",
+    "div modelboks 387",
+    "canvas model 387"
+   ],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 872
+  },
+  "375-squat-midt-kg": {
+   "side": 388,
+   "klient": 375,
+   "tabel": 343,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈39,1°",
+     "39,8°",
+     "39,8°"
+    ],
+    "hofte": [
+     "≈73,8°",
+     "73,5°",
+     "73,5°"
+    ],
+    "knae": [
+     "≈70,3°",
+     "70,1°",
+     "70,1°"
+    ],
+    "stangFraMidtfod": [
+     "≈−2,6 cm",
+     "−1,5 cm",
+     "−1,5 cm"
+    ],
+    "stangHofte": [
+     "≈15,3 cm",
+     "15,8 cm",
+     "15,8 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 3110,
+    "bund": 3436,
+    "w": 343,
+    "h": 326,
+    "right": 359
+   },
+   "taerskelRect": {
+    "top": 3451,
+    "bund": 3561,
+    "w": 343,
+    "h": 110,
+    "right": 359
+   },
+   "tallinje": "Torso 39,1°Hofte 73,8°Knæ 70,3°Stang −2,6 cm",
+   "tallinjeRect": {
+    "top": 1429,
+    "bund": 1452,
+    "w": 371,
+    "h": 23,
+    "right": 387
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 928,
+    "bund": 1423,
+    "w": 371,
+    "h": 495,
+    "right": 387
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [
+    "div billedeboks 387",
+    "canvas billede 387",
+    "p tallinje 387",
+    "div modelboks 387",
+    "canvas model 387"
+   ],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 872
+  },
+  "375-dl-gulv-udenKg": {
+   "side": 377,
+   "klient": 375,
+   "tabel": 343,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈60,7°",
+     "60,7°",
+     "60,7°"
+    ],
+    "hofte": [
+     "≈50,6°",
+     "50,6°",
+     "50,6°"
+    ],
+    "knae": [
+     "≈97,5°",
+     "97,5°",
+     "97,5°"
+    ],
+    "skinneben": [
+     "≈13,8°",
+     "13,8°",
+     "13,8°"
+    ],
+    "balanceStang": [
+     "≈3,0 cm",
+     "4,2 cm",
+     "4,2 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 3068,
+    "bund": 3521,
+    "w": 343,
+    "h": 453,
+    "right": 359
+   },
+   "taerskelRect": {
+    "top": 3536,
+    "bund": 3647,
+    "w": 343,
+    "h": 110,
+    "right": 359
+   },
+   "tallinje": "Torso 60,7°Hofte 50,6°Knæ 97,5°Stang 3,0 cm",
+   "tallinjeRect": {
+    "top": 1429,
+    "bund": 1452,
+    "w": 361,
+    "h": 23,
+    "right": 377
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 928,
+    "bund": 1423,
+    "w": 361,
+    "h": 495,
+    "right": 377
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [
+    "div billedeboks 377",
+    "canvas billede 377",
+    "p tallinje 377",
+    "div modelboks 377",
+    "canvas model 377"
+   ],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 849
+  },
+  "375-dl-gulv-kg": {
+   "side": 377,
+   "klient": 375,
+   "tabel": 343,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈60,7°",
+     "60,7°",
+     "60,7°"
+    ],
+    "hofte": [
+     "≈50,6°",
+     "50,6°",
+     "50,6°"
+    ],
+    "knae": [
+     "≈97,5°",
+     "97,5°",
+     "97,5°"
+    ],
+    "skinneben": [
+     "≈13,8°",
+     "13,8°",
+     "13,8°"
+    ],
+    "balanceStang": [
+     "≈3,0 cm",
+     "4,2 cm",
+     "4,2 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 3040,
+    "bund": 3493,
+    "w": 343,
+    "h": 453,
+    "right": 359
+   },
+   "taerskelRect": {
+    "top": 3508,
+    "bund": 3619,
+    "w": 343,
+    "h": 110,
+    "right": 359
+   },
+   "tallinje": "Torso 60,7°Hofte 50,6°Knæ 97,5°Stang 3,0 cm",
+   "tallinjeRect": {
+    "top": 1415,
+    "bund": 1438,
+    "w": 361,
+    "h": 23,
+    "right": 377
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 928,
+    "bund": 1409,
+    "w": 361,
+    "h": 481,
+    "right": 377
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [
+    "div billedeboks 377",
+    "canvas billede 377",
+    "p tallinje 377",
+    "div modelboks 377",
+    "canvas model 377"
+   ],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 849
+  },
+  "375-dl-knae-udenKg": {
+   "side": 385,
+   "klient": 375,
+   "tabel": 343,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈52,9°",
+     "52,9°",
+     "52,9°"
+    ],
+    "hofte": [
+     "≈94,6°",
+     "94,6°",
+     "94,6°"
+    ],
+    "knae": [
+     "≈146,3°",
+     "146,3°",
+     "146,3°"
+    ],
+    "skinneben": [
+     "≈1,2°",
+     "1,2°",
+     "1,2°"
+    ],
+    "balanceStang": [
+     "≈0,0 cm",
+     "2,6 cm",
+     "2,6 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 3069,
+    "bund": 3522,
+    "w": 343,
+    "h": 453,
+    "right": 359
+   },
+   "taerskelRect": {
+    "top": 3537,
+    "bund": 3647,
+    "w": 343,
+    "h": 110,
+    "right": 359
+   },
+   "tallinje": "Torso 52,9°Hofte 94,6°Knæ 146,3°Stang 0,0 cm",
+   "tallinjeRect": {
+    "top": 1415,
+    "bund": 1438,
+    "w": 369,
+    "h": 23,
+    "right": 385
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 928,
+    "bund": 1409,
+    "w": 361,
+    "h": 481,
+    "right": 377
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [
+    "div billedeboks 385",
+    "canvas billede 377",
+    "p tallinje 385",
+    "div modelboks 385",
+    "canvas model 377"
+   ],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 867
+  },
+  "375-dl-knae-kg": {
+   "side": 385,
+   "klient": 375,
+   "tabel": 343,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈52,9°",
+     "52,9°",
+     "52,9°"
+    ],
+    "hofte": [
+     "≈94,6°",
+     "94,6°",
+     "94,6°"
+    ],
+    "knae": [
+     "≈146,3°",
+     "146,3°",
+     "146,3°"
+    ],
+    "skinneben": [
+     "≈1,2°",
+     "1,2°",
+     "1,2°"
+    ],
+    "balanceStang": [
+     "≈0,0 cm",
+     "2,6 cm",
+     "2,6 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 3091,
+    "bund": 3544,
+    "w": 343,
+    "h": 453,
+    "right": 359
+   },
+   "taerskelRect": {
+    "top": 3559,
+    "bund": 3669,
+    "w": 343,
+    "h": 110,
+    "right": 359
+   },
+   "tallinje": "Torso 52,9°Hofte 94,6°Knæ 146,3°Stang 0,0 cm",
+   "tallinjeRect": {
+    "top": 1426,
+    "bund": 1449,
+    "w": 369,
+    "h": 23,
+    "right": 385
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 928,
+    "bund": 1420,
+    "w": 369,
+    "h": 492,
+    "right": 385
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [
+    "div billedeboks 385",
+    "canvas billede 385",
+    "p tallinje 385",
+    "div modelboks 385",
+    "canvas model 385"
+   ],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 867
+  },
+  "375-baenk-bryst-udenKg": {
+   "side": 375,
+   "klient": 375,
+   "tabel": 343,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "stangModFodder": [
+     "≈25,6 cm",
+     "25,1 cm",
+     "25,1 cm"
+    ]
+   },
+   "indenAntal": 1,
+   "indenRaekker": 1,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 2868,
+    "bund": 3040,
+    "w": 343,
+    "h": 172,
+    "right": 359
+   },
+   "taerskelRect": {
+    "top": 3055,
+    "bund": 3165,
+    "w": 343,
+    "h": 110,
+    "right": 359
+   },
+   "tallinje": "Stang mod fødderne 25,6 cmKnæ 79,1°",
+   "tallinjeRect": {
+    "top": 1426,
+    "bund": 1449,
+    "w": 343,
+    "h": 23,
+    "right": 359
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 928,
+    "bund": 1420,
+    "w": 343,
+    "h": 492,
+    "right": 359
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 844
+  },
+  "375-baenk-bryst-kg": {
+   "side": 375,
+   "klient": 375,
+   "tabel": 343,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "stangModFodder": [
+     "≈25,6 cm",
+     "25,1 cm",
+     "25,1 cm"
+    ]
+   },
+   "indenAntal": 1,
+   "indenRaekker": 1,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 2798,
+    "bund": 2970,
+    "w": 343,
+    "h": 172,
+    "right": 359
+   },
+   "taerskelRect": {
+    "top": 2985,
+    "bund": 3095,
+    "w": 343,
+    "h": 110,
+    "right": 359
+   },
+   "tallinje": "Stang mod fødderne 25,6 cmKnæ 79,1°",
+   "tallinjeRect": {
+    "top": 1391,
+    "bund": 1414,
+    "w": 343,
+    "h": 23,
+    "right": 359
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 928,
+    "bund": 1385,
+    "w": 343,
+    "h": 457,
+    "right": 359
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 844
+  },
+  "375-baenk-midt-udenKg": {
+   "side": 375,
+   "klient": 375,
+   "tabel": 343,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "stangModFodder": [
+     "0,8 cm",
+     "modelvalg",
+     "modelvalg"
+    ]
+   },
+   "indenAntal": 0,
+   "indenRaekker": 0,
+   "indenStil": null,
+   "taerskel": "Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 2901,
+    "bund": 3158,
+    "w": 343,
+    "h": 257,
+    "right": 359
+   },
+   "taerskelRect": {
+    "top": 3172,
+    "bund": 3239,
+    "w": 343,
+    "h": 66,
+    "right": 359
+   },
+   "tallinje": "Stang mod fødderne 0,8 cmKnæ 79,1°",
+   "tallinjeRect": {
+    "top": 1391,
+    "bund": 1414,
+    "w": 343,
+    "h": 23,
+    "right": 359
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 928,
+    "bund": 1385,
+    "w": 343,
+    "h": 457,
+    "right": 359
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 844
+  },
+  "375-baenk-midt-kg": {
+   "side": 375,
+   "klient": 375,
+   "tabel": 343,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "stangModFodder": [
+     "0,8 cm",
+     "modelvalg",
+     "modelvalg"
+    ]
+   },
+   "indenAntal": 0,
+   "indenRaekker": 0,
+   "indenStil": null,
+   "taerskel": "Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 2901,
+    "bund": 3158,
+    "w": 343,
+    "h": 257,
+    "right": 359
+   },
+   "taerskelRect": {
+    "top": 3172,
+    "bund": 3239,
+    "w": 343,
+    "h": 66,
+    "right": 359
+   },
+   "tallinje": "Stang mod fødderne 0,8 cmKnæ 79,1°",
+   "tallinjeRect": {
+    "top": 1391,
+    "bund": 1414,
+    "w": 343,
+    "h": 23,
+    "right": 359
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 928,
+    "bund": 1385,
+    "w": 343,
+    "h": 457,
+    "right": 359
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 844
+  },
+  "375-net": [],
+  "375-fejl": [],
+  "390-squat-bund-udenKg": {
+   "side": 390,
+   "klient": 390,
+   "tabel": 358,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈48,5°",
+     "48,5°",
+     "48,5°"
+    ],
+    "hofte": [
+     "≈37,7°",
+     "37,6°",
+     "37,7°"
+    ],
+    "knae": [
+     "≈46,2°",
+     "46,2°",
+     "46,2°"
+    ],
+    "stangFraMidtfod": [
+     "−1,0 cm",
+     "skriv stangens vægt",
+     "skriv stangens vægt"
+    ],
+    "stangHofte": [
+     "≈21,7 cm",
+     "21,7 cm",
+     "21,7 cm"
+    ]
+   },
+   "indenAntal": 4,
+   "indenRaekker": 4,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 3015,
+    "bund": 3341,
+    "w": 358,
+    "h": 326,
+    "right": 374
+   },
+   "taerskelRect": {
+    "top": 3356,
+    "bund": 3444,
+    "w": 358,
+    "h": 88,
+    "right": 374
+   },
+   "tallinje": "Torso 48,5°Hofte 37,7°Knæ 46,2°Stang −1,0 cm",
+   "tallinjeRect": {
+    "top": 1411,
+    "bund": 1434,
+    "w": 371,
+    "h": 23,
+    "right": 387
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 928,
+    "bund": 1405,
+    "w": 358,
+    "h": 477,
+    "right": 374
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 844
+  },
+  "390-squat-bund-kg": {
+   "side": 390,
+   "klient": 390,
+   "tabel": 358,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈48,5°",
+     "49,3°",
+     "49,2°"
+    ],
+    "hofte": [
+     "≈37,7°",
+     "36,9°",
+     "36,9°"
+    ],
+    "knae": [
+     "≈46,2°",
+     "46,2°",
+     "46,2°"
+    ],
+    "stangFraMidtfod": [
+     "≈−1,0 cm",
+     "−0,5 cm",
+     "−0,5 cm"
+    ],
+    "stangHofte": [
+     "≈21,7 cm",
+     "22,2 cm",
+     "22,2 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 3007,
+    "bund": 3333,
+    "w": 358,
+    "h": 326,
+    "right": 374
+   },
+   "taerskelRect": {
+    "top": 3348,
+    "bund": 3436,
+    "w": 358,
+    "h": 88,
+    "right": 374
+   },
+   "tallinje": "Torso 48,5°Hofte 37,7°Knæ 46,2°Stang −1,0 cm",
+   "tallinjeRect": {
+    "top": 1429,
+    "bund": 1452,
+    "w": 371,
+    "h": 23,
+    "right": 387
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 928,
+    "bund": 1423,
+    "w": 371,
+    "h": 495,
+    "right": 387
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 844
+  },
+  "390-squat-midt-udenKg": {
+   "side": 390,
+   "klient": 390,
+   "tabel": 358,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈39,1°",
+     "39,8°",
+     "39,8°"
+    ],
+    "hofte": [
+     "≈73,8°",
+     "73,5°",
+     "73,5°"
+    ],
+    "knae": [
+     "≈70,3°",
+     "70,1°",
+     "70,1°"
+    ],
+    "stangFraMidtfod": [
+     "≈−2,6 cm",
+     "−1,5 cm",
+     "−1,5 cm"
+    ],
+    "stangHofte": [
+     "≈15,3 cm",
+     "15,8 cm",
+     "15,8 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 3110,
+    "bund": 3436,
+    "w": 358,
+    "h": 326,
+    "right": 374
+   },
+   "taerskelRect": {
+    "top": 3451,
+    "bund": 3539,
+    "w": 358,
+    "h": 88,
+    "right": 374
+   },
+   "tallinje": "Torso 39,1°Hofte 73,8°Knæ 70,3°Stang −2,6 cm",
+   "tallinjeRect": {
+    "top": 1429,
+    "bund": 1452,
+    "w": 371,
+    "h": 23,
+    "right": 387
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 928,
+    "bund": 1423,
+    "w": 371,
+    "h": 495,
+    "right": 387
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 844
+  },
+  "390-squat-midt-kg": {
+   "side": 390,
+   "klient": 390,
+   "tabel": 358,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈39,1°",
+     "39,8°",
+     "39,8°"
+    ],
+    "hofte": [
+     "≈73,8°",
+     "73,5°",
+     "73,5°"
+    ],
+    "knae": [
+     "≈70,3°",
+     "70,1°",
+     "70,1°"
+    ],
+    "stangFraMidtfod": [
+     "≈−2,6 cm",
+     "−1,5 cm",
+     "−1,5 cm"
+    ],
+    "stangHofte": [
+     "≈15,3 cm",
+     "15,8 cm",
+     "15,8 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 3110,
+    "bund": 3436,
+    "w": 358,
+    "h": 326,
+    "right": 374
+   },
+   "taerskelRect": {
+    "top": 3451,
+    "bund": 3539,
+    "w": 358,
+    "h": 88,
+    "right": 374
+   },
+   "tallinje": "Torso 39,1°Hofte 73,8°Knæ 70,3°Stang −2,6 cm",
+   "tallinjeRect": {
+    "top": 1429,
+    "bund": 1452,
+    "w": 371,
+    "h": 23,
+    "right": 387
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 928,
+    "bund": 1423,
+    "w": 371,
+    "h": 495,
+    "right": 387
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 844
+  },
+  "390-dl-gulv-udenKg": {
+   "side": 390,
+   "klient": 390,
+   "tabel": 358,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈60,7°",
+     "60,7°",
+     "60,7°"
+    ],
+    "hofte": [
+     "≈50,6°",
+     "50,6°",
+     "50,6°"
+    ],
+    "knae": [
+     "≈97,5°",
+     "97,5°",
+     "97,5°"
+    ],
+    "skinneben": [
+     "≈13,8°",
+     "13,8°",
+     "13,8°"
+    ],
+    "balanceStang": [
+     "≈3,0 cm",
+     "4,2 cm",
+     "4,2 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 3068,
+    "bund": 3458,
+    "w": 358,
+    "h": 390,
+    "right": 374
+   },
+   "taerskelRect": {
+    "top": 3473,
+    "bund": 3561,
+    "w": 358,
+    "h": 88,
+    "right": 374
+   },
+   "tallinje": "Torso 60,7°Hofte 50,6°Knæ 97,5°Stang 3,0 cm",
+   "tallinjeRect": {
+    "top": 1429,
+    "bund": 1452,
+    "w": 361,
+    "h": 23,
+    "right": 377
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 928,
+    "bund": 1423,
+    "w": 361,
+    "h": 495,
+    "right": 377
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 844
+  },
+  "390-dl-gulv-kg": {
+   "side": 390,
+   "klient": 390,
+   "tabel": 358,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈60,7°",
+     "60,7°",
+     "60,7°"
+    ],
+    "hofte": [
+     "≈50,6°",
+     "50,6°",
+     "50,6°"
+    ],
+    "knae": [
+     "≈97,5°",
+     "97,5°",
+     "97,5°"
+    ],
+    "skinneben": [
+     "≈13,8°",
+     "13,8°",
+     "13,8°"
+    ],
+    "balanceStang": [
+     "≈3,0 cm",
+     "4,2 cm",
+     "4,2 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 3040,
+    "bund": 3430,
+    "w": 358,
+    "h": 390,
+    "right": 374
+   },
+   "taerskelRect": {
+    "top": 3445,
+    "bund": 3533,
+    "w": 358,
+    "h": 88,
+    "right": 374
+   },
+   "tallinje": "Torso 60,7°Hofte 50,6°Knæ 97,5°Stang 3,0 cm",
+   "tallinjeRect": {
+    "top": 1415,
+    "bund": 1438,
+    "w": 361,
+    "h": 23,
+    "right": 377
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 928,
+    "bund": 1409,
+    "w": 361,
+    "h": 481,
+    "right": 377
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 844
+  },
+  "390-dl-knae-udenKg": {
+   "side": 390,
+   "klient": 390,
+   "tabel": 358,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈52,9°",
+     "52,9°",
+     "52,9°"
+    ],
+    "hofte": [
+     "≈94,6°",
+     "94,6°",
+     "94,6°"
+    ],
+    "knae": [
+     "≈146,3°",
+     "146,3°",
+     "146,3°"
+    ],
+    "skinneben": [
+     "≈1,2°",
+     "1,2°",
+     "1,2°"
+    ],
+    "balanceStang": [
+     "≈0,0 cm",
+     "2,6 cm",
+     "2,6 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 3069,
+    "bund": 3459,
+    "w": 358,
+    "h": 390,
+    "right": 374
+   },
+   "taerskelRect": {
+    "top": 3474,
+    "bund": 3562,
+    "w": 358,
+    "h": 88,
+    "right": 374
+   },
+   "tallinje": "Torso 52,9°Hofte 94,6°Knæ 146,3°Stang 0,0 cm",
+   "tallinjeRect": {
+    "top": 1415,
+    "bund": 1438,
+    "w": 369,
+    "h": 23,
+    "right": 385
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 928,
+    "bund": 1409,
+    "w": 361,
+    "h": 481,
+    "right": 377
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 844
+  },
+  "390-dl-knae-kg": {
+   "side": 390,
+   "klient": 390,
+   "tabel": 358,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈52,9°",
+     "52,9°",
+     "52,9°"
+    ],
+    "hofte": [
+     "≈94,6°",
+     "94,6°",
+     "94,6°"
+    ],
+    "knae": [
+     "≈146,3°",
+     "146,3°",
+     "146,3°"
+    ],
+    "skinneben": [
+     "≈1,2°",
+     "1,2°",
+     "1,2°"
+    ],
+    "balanceStang": [
+     "≈0,0 cm",
+     "2,6 cm",
+     "2,6 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 3091,
+    "bund": 3481,
+    "w": 358,
+    "h": 390,
+    "right": 374
+   },
+   "taerskelRect": {
+    "top": 3496,
+    "bund": 3584,
+    "w": 358,
+    "h": 88,
+    "right": 374
+   },
+   "tallinje": "Torso 52,9°Hofte 94,6°Knæ 146,3°Stang 0,0 cm",
+   "tallinjeRect": {
+    "top": 1426,
+    "bund": 1449,
+    "w": 369,
+    "h": 23,
+    "right": 385
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 928,
+    "bund": 1420,
+    "w": 369,
+    "h": 492,
+    "right": 385
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 844
+  },
+  "390-baenk-bryst-udenKg": {
+   "side": 390,
+   "klient": 390,
+   "tabel": 358,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "stangModFodder": [
+     "≈25,6 cm",
+     "25,1 cm",
+     "25,1 cm"
+    ]
+   },
+   "indenAntal": 1,
+   "indenRaekker": 1,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 2844,
+    "bund": 3016,
+    "w": 358,
+    "h": 172,
+    "right": 374
+   },
+   "taerskelRect": {
+    "top": 3031,
+    "bund": 3119,
+    "w": 358,
+    "h": 88,
+    "right": 374
+   },
+   "tallinje": "Stang mod fødderne 25,6 cmKnæ 79,1°",
+   "tallinjeRect": {
+    "top": 1426,
+    "bund": 1449,
+    "w": 358,
+    "h": 23,
+    "right": 374
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 928,
+    "bund": 1420,
+    "w": 358,
+    "h": 492,
+    "right": 374
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 844
+  },
+  "390-baenk-bryst-kg": {
+   "side": 390,
+   "klient": 390,
+   "tabel": 358,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "stangModFodder": [
+     "≈25,6 cm",
+     "25,1 cm",
+     "25,1 cm"
+    ]
+   },
+   "indenAntal": 1,
+   "indenRaekker": 1,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 2814,
+    "bund": 2986,
+    "w": 358,
+    "h": 172,
+    "right": 374
+   },
+   "taerskelRect": {
+    "top": 3001,
+    "bund": 3089,
+    "w": 358,
+    "h": 88,
+    "right": 374
+   },
+   "tallinje": "Stang mod fødderne 25,6 cmKnæ 79,1°",
+   "tallinjeRect": {
+    "top": 1411,
+    "bund": 1434,
+    "w": 358,
+    "h": 23,
+    "right": 374
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 928,
+    "bund": 1405,
+    "w": 358,
+    "h": 477,
+    "right": 374
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 844
+  },
+  "390-baenk-midt-udenKg": {
+   "side": 390,
+   "klient": 390,
+   "tabel": 358,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "stangModFodder": [
+     "0,8 cm",
+     "modelvalg",
+     "modelvalg"
+    ]
+   },
+   "indenAntal": 0,
+   "indenRaekker": 0,
+   "indenStil": null,
+   "taerskel": "Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 2917,
+    "bund": 3153,
+    "w": 358,
+    "h": 235,
+    "right": 374
+   },
+   "taerskelRect": {
+    "top": 3167,
+    "bund": 3233,
+    "w": 358,
+    "h": 66,
+    "right": 374
+   },
+   "tallinje": "Stang mod fødderne 0,8 cmKnæ 79,1°",
+   "tallinjeRect": {
+    "top": 1411,
+    "bund": 1434,
+    "w": 358,
+    "h": 23,
+    "right": 374
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 928,
+    "bund": 1405,
+    "w": 358,
+    "h": 477,
+    "right": 374
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 844
+  },
+  "390-baenk-midt-kg": {
+   "side": 390,
+   "klient": 390,
+   "tabel": 358,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "stangModFodder": [
+     "0,8 cm",
+     "modelvalg",
+     "modelvalg"
+    ]
+   },
+   "indenAntal": 0,
+   "indenRaekker": 0,
+   "indenStil": null,
+   "taerskel": "Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 2917,
+    "bund": 3153,
+    "w": 358,
+    "h": 235,
+    "right": 374
+   },
+   "taerskelRect": {
+    "top": 3167,
+    "bund": 3233,
+    "w": 358,
+    "h": 66,
+    "right": 374
+   },
+   "tallinje": "Stang mod fødderne 0,8 cmKnæ 79,1°",
+   "tallinjeRect": {
+    "top": 1411,
+    "bund": 1434,
+    "w": 358,
+    "h": 23,
+    "right": 374
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 928,
+    "bund": 1405,
+    "w": 358,
+    "h": 477,
+    "right": 374
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 844
+  },
+  "390-net": [],
+  "390-fejl": [],
+  "1280-squat-bund-udenKg": {
+   "side": 1280,
+   "klient": 1280,
+   "tabel": 1068,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈48,5°",
+     "48,5°",
+     "48,5°"
+    ],
+    "hofte": [
+     "≈37,7°",
+     "37,6°",
+     "37,7°"
+    ],
+    "knae": [
+     "≈46,2°",
+     "46,2°",
+     "46,2°"
+    ],
+    "stangFraMidtfod": [
+     "−1,0 cm",
+     "skriv stangens vægt",
+     "skriv stangens vægt"
+    ],
+    "stangHofte": [
+     "≈21,7 cm",
+     "21,7 cm",
+     "21,7 cm"
+    ]
+   },
+   "indenAntal": 4,
+   "indenRaekker": 4,
+   "indenStil": {
+    "fontPx": 16,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 11,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 2107,
+    "bund": 2358,
+    "w": 1068,
+    "h": 251,
+    "right": 1174
+   },
+   "taerskelRect": {
+    "top": 2372,
+    "bund": 2416,
+    "w": 1068,
+    "h": 44,
+    "right": 1174
+   },
+   "tallinje": "Torso 48,5°Hofte 37,7°Knæ 46,2°Stang −1,0 cm",
+   "tallinjeRect": {
+    "top": 1272,
+    "bund": 1295,
+    "w": 528,
+    "h": 23,
+    "right": 634
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 591,
+    "bund": 1266,
+    "w": 506,
+    "h": 675,
+    "right": 612
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 900
+  },
+  "1280-squat-bund-kg": {
+   "side": 1280,
+   "klient": 1280,
+   "tabel": 1068,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈48,5°",
+     "49,3°",
+     "49,2°"
+    ],
+    "hofte": [
+     "≈37,7°",
+     "36,9°",
+     "36,9°"
+    ],
+    "knae": [
+     "≈46,2°",
+     "46,2°",
+     "46,2°"
+    ],
+    "stangFraMidtfod": [
+     "≈−1,0 cm",
+     "−0,5 cm",
+     "−0,5 cm"
+    ],
+    "stangHofte": [
+     "≈21,7 cm",
+     "22,2 cm",
+     "22,2 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 16,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 11,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 2085,
+    "bund": 2336,
+    "w": 1068,
+    "h": 251,
+    "right": 1174
+   },
+   "taerskelRect": {
+    "top": 2350,
+    "bund": 2394,
+    "w": 1068,
+    "h": 44,
+    "right": 1174
+   },
+   "tallinje": "Torso 48,5°Hofte 37,7°Knæ 46,2°Stang −1,0 cm",
+   "tallinjeRect": {
+    "top": 1272,
+    "bund": 1295,
+    "w": 528,
+    "h": 23,
+    "right": 634
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 591,
+    "bund": 1266,
+    "w": 506,
+    "h": 675,
+    "right": 612
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 900
+  },
+  "1280-squat-midt-udenKg": {
+   "side": 1280,
+   "klient": 1280,
+   "tabel": 1068,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈39,1°",
+     "39,8°",
+     "39,8°"
+    ],
+    "hofte": [
+     "≈73,8°",
+     "73,5°",
+     "73,5°"
+    ],
+    "knae": [
+     "≈70,3°",
+     "70,1°",
+     "70,1°"
+    ],
+    "stangFraMidtfod": [
+     "≈−2,6 cm",
+     "−1,5 cm",
+     "−1,5 cm"
+    ],
+    "stangHofte": [
+     "≈15,3 cm",
+     "15,8 cm",
+     "15,8 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 16,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 11,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 2144,
+    "bund": 2394,
+    "w": 1068,
+    "h": 251,
+    "right": 1174
+   },
+   "taerskelRect": {
+    "top": 2409,
+    "bund": 2453,
+    "w": 1068,
+    "h": 44,
+    "right": 1174
+   },
+   "tallinje": "Torso 39,1°Hofte 73,8°Knæ 70,3°Stang −2,6 cm",
+   "tallinjeRect": {
+    "top": 1272,
+    "bund": 1295,
+    "w": 528,
+    "h": 23,
+    "right": 634
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 591,
+    "bund": 1266,
+    "w": 506,
+    "h": 675,
+    "right": 612
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 900
+  },
+  "1280-squat-midt-kg": {
+   "side": 1280,
+   "klient": 1280,
+   "tabel": 1068,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈39,1°",
+     "39,8°",
+     "39,8°"
+    ],
+    "hofte": [
+     "≈73,8°",
+     "73,5°",
+     "73,5°"
+    ],
+    "knae": [
+     "≈70,3°",
+     "70,1°",
+     "70,1°"
+    ],
+    "stangFraMidtfod": [
+     "≈−2,6 cm",
+     "−1,5 cm",
+     "−1,5 cm"
+    ],
+    "stangHofte": [
+     "≈15,3 cm",
+     "15,8 cm",
+     "15,8 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 16,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 11,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 2144,
+    "bund": 2394,
+    "w": 1068,
+    "h": 251,
+    "right": 1174
+   },
+   "taerskelRect": {
+    "top": 2409,
+    "bund": 2453,
+    "w": 1068,
+    "h": 44,
+    "right": 1174
+   },
+   "tallinje": "Torso 39,1°Hofte 73,8°Knæ 70,3°Stang −2,6 cm",
+   "tallinjeRect": {
+    "top": 1272,
+    "bund": 1295,
+    "w": 528,
+    "h": 23,
+    "right": 634
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 591,
+    "bund": 1266,
+    "w": 506,
+    "h": 675,
+    "right": 612
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 900
+  },
+  "1280-dl-gulv-udenKg": {
+   "side": 1280,
+   "klient": 1280,
+   "tabel": 1068,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈60,7°",
+     "60,7°",
+     "60,7°"
+    ],
+    "hofte": [
+     "≈50,6°",
+     "50,6°",
+     "50,6°"
+    ],
+    "knae": [
+     "≈97,5°",
+     "97,5°",
+     "97,5°"
+    ],
+    "skinneben": [
+     "≈13,8°",
+     "13,8°",
+     "13,8°"
+    ],
+    "balanceStang": [
+     "≈3,0 cm",
+     "4,2 cm",
+     "4,2 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 16,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 11,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 2147,
+    "bund": 2421,
+    "w": 1068,
+    "h": 275,
+    "right": 1174
+   },
+   "taerskelRect": {
+    "top": 2436,
+    "bund": 2480,
+    "w": 1068,
+    "h": 44,
+    "right": 1174
+   },
+   "tallinje": "Torso 60,7°Hofte 50,6°Knæ 97,5°Stang 3,0 cm",
+   "tallinjeRect": {
+    "top": 1272,
+    "bund": 1295,
+    "w": 528,
+    "h": 23,
+    "right": 634
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 591,
+    "bund": 1266,
+    "w": 506,
+    "h": 675,
+    "right": 612
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 900
+  },
+  "1280-dl-gulv-kg": {
+   "side": 1280,
+   "klient": 1280,
+   "tabel": 1068,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈60,7°",
+     "60,7°",
+     "60,7°"
+    ],
+    "hofte": [
+     "≈50,6°",
+     "50,6°",
+     "50,6°"
+    ],
+    "knae": [
+     "≈97,5°",
+     "97,5°",
+     "97,5°"
+    ],
+    "skinneben": [
+     "≈13,8°",
+     "13,8°",
+     "13,8°"
+    ],
+    "balanceStang": [
+     "≈3,0 cm",
+     "4,2 cm",
+     "4,2 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 16,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 11,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 2147,
+    "bund": 2421,
+    "w": 1068,
+    "h": 275,
+    "right": 1174
+   },
+   "taerskelRect": {
+    "top": 2436,
+    "bund": 2480,
+    "w": 1068,
+    "h": 44,
+    "right": 1174
+   },
+   "tallinje": "Torso 60,7°Hofte 50,6°Knæ 97,5°Stang 3,0 cm",
+   "tallinjeRect": {
+    "top": 1272,
+    "bund": 1295,
+    "w": 528,
+    "h": 23,
+    "right": 634
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 591,
+    "bund": 1266,
+    "w": 506,
+    "h": 675,
+    "right": 612
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 900
+  },
+  "1280-dl-knae-udenKg": {
+   "side": 1280,
+   "klient": 1280,
+   "tabel": 1068,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈52,9°",
+     "52,9°",
+     "52,9°"
+    ],
+    "hofte": [
+     "≈94,6°",
+     "94,6°",
+     "94,6°"
+    ],
+    "knae": [
+     "≈146,3°",
+     "146,3°",
+     "146,3°"
+    ],
+    "skinneben": [
+     "≈1,2°",
+     "1,2°",
+     "1,2°"
+    ],
+    "balanceStang": [
+     "≈0,0 cm",
+     "2,6 cm",
+     "2,6 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 16,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 11,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 2147,
+    "bund": 2421,
+    "w": 1068,
+    "h": 275,
+    "right": 1174
+   },
+   "taerskelRect": {
+    "top": 2436,
+    "bund": 2480,
+    "w": 1068,
+    "h": 44,
+    "right": 1174
+   },
+   "tallinje": "Torso 52,9°Hofte 94,6°Knæ 146,3°Stang 0,0 cm",
+   "tallinjeRect": {
+    "top": 1272,
+    "bund": 1295,
+    "w": 528,
+    "h": 23,
+    "right": 634
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 591,
+    "bund": 1266,
+    "w": 506,
+    "h": 675,
+    "right": 612
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 900
+  },
+  "1280-dl-knae-kg": {
+   "side": 1280,
+   "klient": 1280,
+   "tabel": 1068,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈52,9°",
+     "52,9°",
+     "52,9°"
+    ],
+    "hofte": [
+     "≈94,6°",
+     "94,6°",
+     "94,6°"
+    ],
+    "knae": [
+     "≈146,3°",
+     "146,3°",
+     "146,3°"
+    ],
+    "skinneben": [
+     "≈1,2°",
+     "1,2°",
+     "1,2°"
+    ],
+    "balanceStang": [
+     "≈0,0 cm",
+     "2,6 cm",
+     "2,6 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 16,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 11,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 2147,
+    "bund": 2421,
+    "w": 1068,
+    "h": 275,
+    "right": 1174
+   },
+   "taerskelRect": {
+    "top": 2436,
+    "bund": 2480,
+    "w": 1068,
+    "h": 44,
+    "right": 1174
+   },
+   "tallinje": "Torso 52,9°Hofte 94,6°Knæ 146,3°Stang 0,0 cm",
+   "tallinjeRect": {
+    "top": 1272,
+    "bund": 1295,
+    "w": 528,
+    "h": 23,
+    "right": 634
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 591,
+    "bund": 1266,
+    "w": 506,
+    "h": 675,
+    "right": 612
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 900
+  },
+  "1280-baenk-bryst-udenKg": {
+   "side": 1280,
+   "klient": 1280,
+   "tabel": 1068,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "stangModFodder": [
+     "≈25,6 cm",
+     "25,1 cm",
+     "25,1 cm"
+    ]
+   },
+   "indenAntal": 1,
+   "indenRaekker": 1,
+   "indenStil": {
+    "fontPx": 16,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 11,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 1900,
+    "bund": 1999,
+    "w": 1068,
+    "h": 100,
+    "right": 1174
+   },
+   "taerskelRect": {
+    "top": 2014,
+    "bund": 2058,
+    "w": 1068,
+    "h": 44,
+    "right": 1174
+   },
+   "tallinje": "Stang mod fødderne 25,6 cmKnæ 79,1°",
+   "tallinjeRect": {
+    "top": 1272,
+    "bund": 1295,
+    "w": 528,
+    "h": 23,
+    "right": 634
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 591,
+    "bund": 1266,
+    "w": 506,
+    "h": 675,
+    "right": 612
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 900
+  },
+  "1280-baenk-bryst-kg": {
+   "side": 1280,
+   "klient": 1280,
+   "tabel": 1068,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "stangModFodder": [
+     "≈25,6 cm",
+     "25,1 cm",
+     "25,1 cm"
+    ]
+   },
+   "indenAntal": 1,
+   "indenRaekker": 1,
+   "indenStil": {
+    "fontPx": 16,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 11,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 1900,
+    "bund": 1999,
+    "w": 1068,
+    "h": 100,
+    "right": 1174
+   },
+   "taerskelRect": {
+    "top": 2014,
+    "bund": 2058,
+    "w": 1068,
+    "h": 44,
+    "right": 1174
+   },
+   "tallinje": "Stang mod fødderne 25,6 cmKnæ 79,1°",
+   "tallinjeRect": {
+    "top": 1272,
+    "bund": 1295,
+    "w": 528,
+    "h": 23,
+    "right": 634
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 591,
+    "bund": 1266,
+    "w": 506,
+    "h": 675,
+    "right": 612
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 900
+  },
+  "1280-baenk-midt-udenKg": {
+   "side": 1280,
+   "klient": 1280,
+   "tabel": 1068,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "stangModFodder": [
+     "0,8 cm",
+     "modelvalg",
+     "modelvalg"
+    ]
+   },
+   "indenAntal": 0,
+   "indenRaekker": 0,
+   "indenStil": null,
+   "taerskel": "Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 1958,
+    "bund": 2106,
+    "w": 1068,
+    "h": 148,
+    "right": 1174
+   },
+   "taerskelRect": {
+    "top": 2121,
+    "bund": 2143,
+    "w": 1068,
+    "h": 22,
+    "right": 1174
+   },
+   "tallinje": "Stang mod fødderne 0,8 cmKnæ 79,1°",
+   "tallinjeRect": {
+    "top": 1272,
+    "bund": 1295,
+    "w": 528,
+    "h": 23,
+    "right": 634
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 591,
+    "bund": 1266,
+    "w": 506,
+    "h": 675,
+    "right": 612
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 900
+  },
+  "1280-baenk-midt-kg": {
+   "side": 1280,
+   "klient": 1280,
+   "tabel": 1068,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "stangModFodder": [
+     "0,8 cm",
+     "modelvalg",
+     "modelvalg"
+    ]
+   },
+   "indenAntal": 0,
+   "indenRaekker": 0,
+   "indenStil": null,
+   "taerskel": "Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 1958,
+    "bund": 2106,
+    "w": 1068,
+    "h": 148,
+    "right": 1174
+   },
+   "taerskelRect": {
+    "top": 2121,
+    "bund": 2143,
+    "w": 1068,
+    "h": 22,
+    "right": 1174
+   },
+   "tallinje": "Stang mod fødderne 0,8 cmKnæ 79,1°",
+   "tallinjeRect": {
+    "top": 1272,
+    "bund": 1295,
+    "w": 528,
+    "h": 23,
+    "right": 634
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 591,
+    "bund": 1266,
+    "w": 506,
+    "h": 675,
+    "right": 612
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 900
+  },
+  "1280-net": [],
+  "1280-fejl": []
+ },
+ "marc": {
+  "360-knaehoejde": {
+   "side": 360,
+   "klient": 360,
+   "tabel": 328,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "41,6°",
+     "52,9°",
+     "52,9°"
+    ],
+    "hofte": [
+     "88,0°",
+     "94,6°",
+     "94,6°"
+    ],
+    "knae": [
+     "119,6°",
+     "146,3°",
+     "146,3°"
+    ],
+    "skinneben": [
+     "10,1°",
+     "1,2°",
+     "1,2°"
+    ],
+    "balanceStang": [
+     "≈1,7 cm",
+     "2,6 cm",
+     "2,6 cm"
+    ]
+   },
+   "indenAntal": 1,
+   "indenRaekker": 1,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 3247,
+    "bund": 3700,
+    "w": 328,
+    "h": 453,
+    "right": 344
+   },
+   "taerskelRect": {
+    "top": 3715,
+    "bund": 3825,
+    "w": 328,
+    "h": 110,
+    "right": 344
+   },
+   "tallinje": "Torso 41,6°Hofte 88,0°Knæ 119,6° (stangen 31 cm under knæet)Stang 1,7 cm",
+   "tallinjeRect": {
+    "top": 1423,
+    "bund": 1469,
+    "w": 328,
+    "h": 46,
+    "right": 344
+   },
+   "tallinjeLinjer": 2,
+   "billedeRect": {
+    "top": 980,
+    "bund": 1417,
+    "w": 328,
+    "h": 437,
+    "right": 344
+   },
+   "maerke": {
+    "tekst": "(stangen 31 cm under knæet)",
+    "dom": "under",
+    "stykker": 2,
+    "farve": "rgb(200, 146, 58)",
+    "knaeStykker": 2,
+    "knaeTekst": "Knæ 119,6° (stangen 31 cm under knæet)"
+   },
+   "knaefase": "Stangen står ca. 31 cm under knæet, så billedet er ikke fra knæhøjde (grænsen er 5 cm). Vælg et billede senere i løftet, eller brug Dødløft gulv. I modellen åbner knæet ca. 1,7° pr. cm, stangen stiger, så modellens tal i knæhøjde passer ikke til billedet.",
+   "knaefaseRect": {
+    "top": 2174,
+    "bund": 2353,
+    "w": 328,
+    "h": 179,
+    "right": 344
+   },
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 844,
+   "synlig": {
+    "linjeBund": 806,
+    "billedeBund": 754,
+    "vindueH": 844
+   }
+  },
+  "360-start": {
+   "side": 385,
+   "klient": 360,
+   "tabel": 328,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "45,9°",
+     "60,7°",
+     "60,7°"
+    ],
+    "hofte": [
+     "83,3°",
+     "50,6°",
+     "50,6°"
+    ],
+    "knae": [
+     "118,0°",
+     "97,5°",
+     "97,5°"
+    ],
+    "skinneben": [
+     "≈11,2°",
+     "13,8°",
+     "13,8°"
+    ],
+    "balanceStang": [
+     "≈2,8 cm",
+     "4,2 cm",
+     "4,2 cm"
+    ]
+   },
+   "indenAntal": 2,
+   "indenRaekker": 2,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 3004,
+    "bund": 3479,
+    "w": 328,
+    "h": 474,
+    "right": 344
+   },
+   "taerskelRect": {
+    "top": 3493,
+    "bund": 3604,
+    "w": 328,
+    "h": 110,
+    "right": 344
+   },
+   "tallinje": "Torso 45,9°Hofte 83,3°Knæ 118,0°Stang 2,8 cm",
+   "tallinjeRect": {
+    "top": 1423,
+    "bund": 1446,
+    "w": 369,
+    "h": 23,
+    "right": 385
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 980,
+    "bund": 1417,
+    "w": 328,
+    "h": 437,
+    "right": 344
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [
+    "div billedeboks 385",
+    "p tallinje 385",
+    "span id 370",
+    "div modelboks 385",
+    "div forklaring 385"
+   ],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 903,
+   "synlig": {
+    "linjeBund": 842,
+    "billedeBund": 813,
+    "vindueH": 903
+   }
+  },
+  "360-synKnae": {
+   "side": 385,
+   "klient": 360,
+   "tabel": 328,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈52,9°",
+     "52,9°",
+     "52,9°"
+    ],
+    "hofte": [
+     "≈94,6°",
+     "94,6°",
+     "94,6°"
+    ],
+    "knae": [
+     "≈146,3°",
+     "146,3°",
+     "146,3°"
+    ],
+    "skinneben": [
+     "≈1,2°",
+     "1,2°",
+     "1,2°"
+    ],
+    "balanceStang": [
+     "≈0,0 cm",
+     "2,6 cm",
+     "2,6 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 3143,
+    "bund": 3596,
+    "w": 328,
+    "h": 453,
+    "right": 344
+   },
+   "taerskelRect": {
+    "top": 3611,
+    "bund": 3721,
+    "w": 328,
+    "h": 110,
+    "right": 344
+   },
+   "tallinje": "Torso 52,9°Hofte 94,6°Knæ 146,3°Stang 0,0 cm",
+   "tallinjeRect": {
+    "top": 1478,
+    "bund": 1501,
+    "w": 369,
+    "h": 23,
+    "right": 385
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 980,
+    "bund": 1472,
+    "w": 369,
+    "h": 492,
+    "right": 385
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [
+    "div billedeboks 385",
+    "canvas billede 385",
+    "p tallinje 385",
+    "span id 370",
+    "div modelboks 385"
+   ],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 903
+  },
+  "360-net": [],
+  "360-fejl": [],
+  "390-knaehoejde": {
+   "side": 390,
+   "klient": 390,
+   "tabel": 358,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "41,6°",
+     "52,9°",
+     "52,9°"
+    ],
+    "hofte": [
+     "88,0°",
+     "94,6°",
+     "94,6°"
+    ],
+    "knae": [
+     "119,6°",
+     "146,3°",
+     "146,3°"
+    ],
+    "skinneben": [
+     "10,1°",
+     "1,2°",
+     "1,2°"
+    ],
+    "balanceStang": [
+     "≈1,7 cm",
+     "2,6 cm",
+     "2,6 cm"
+    ]
+   },
+   "indenAntal": 1,
+   "indenRaekker": 1,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 3251,
+    "bund": 3641,
+    "w": 358,
+    "h": 390,
+    "right": 374
+   },
+   "taerskelRect": {
+    "top": 3656,
+    "bund": 3744,
+    "w": 358,
+    "h": 88,
+    "right": 374
+   },
+   "tallinje": "Torso 41,6°Hofte 88,0°Knæ 119,6° (stangen 31 cm under knæet)Stang 1,7 cm",
+   "tallinjeRect": {
+    "top": 1411,
+    "bund": 1457,
+    "w": 358,
+    "h": 46,
+    "right": 374
+   },
+   "tallinjeLinjer": 2,
+   "billedeRect": {
+    "top": 928,
+    "bund": 1405,
+    "w": 358,
+    "h": 477,
+    "right": 374
+   },
+   "maerke": {
+    "tekst": "(stangen 31 cm under knæet)",
+    "dom": "under",
+    "stykker": 2,
+    "farve": "rgb(200, 146, 58)",
+    "knaeStykker": 2,
+    "knaeTekst": "Knæ 119,6° (stangen 31 cm under knæet)"
+   },
+   "knaefase": "Stangen står ca. 31 cm under knæet, så billedet er ikke fra knæhøjde (grænsen er 5 cm). Vælg et billede senere i løftet, eller brug Dødløft gulv. I modellen åbner knæet ca. 1,7° pr. cm, stangen stiger, så modellens tal i knæhøjde passer ikke til billedet.",
+   "knaefaseRect": {
+    "top": 2202,
+    "bund": 2357,
+    "w": 358,
+    "h": 155,
+    "right": 374
+   },
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 844,
+   "synlig": {
+    "linjeBund": 806,
+    "billedeBund": 754,
+    "vindueH": 844
+   }
+  },
+  "390-start": {
+   "side": 390,
+   "klient": 390,
+   "tabel": 358,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "45,9°",
+     "60,7°",
+     "60,7°"
+    ],
+    "hofte": [
+     "83,3°",
+     "50,6°",
+     "50,6°"
+    ],
+    "knae": [
+     "118,0°",
+     "97,5°",
+     "97,5°"
+    ],
+    "skinneben": [
+     "≈11,2°",
+     "13,8°",
+     "13,8°"
+    ],
+    "balanceStang": [
+     "≈2,8 cm",
+     "4,2 cm",
+     "4,2 cm"
+    ]
+   },
+   "indenAntal": 2,
+   "indenRaekker": 2,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 3032,
+    "bund": 3422,
+    "w": 358,
+    "h": 390,
+    "right": 374
+   },
+   "taerskelRect": {
+    "top": 3437,
+    "bund": 3525,
+    "w": 358,
+    "h": 88,
+    "right": 374
+   },
+   "tallinje": "Torso 45,9°Hofte 83,3°Knæ 118,0°Stang 2,8 cm",
+   "tallinjeRect": {
+    "top": 1411,
+    "bund": 1434,
+    "w": 369,
+    "h": 23,
+    "right": 385
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 928,
+    "bund": 1405,
+    "w": 358,
+    "h": 477,
+    "right": 374
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 844,
+   "synlig": {
+    "linjeBund": 783,
+    "billedeBund": 754,
+    "vindueH": 844
+   }
+  },
+  "390-synKnae": {
+   "side": 390,
+   "klient": 390,
+   "tabel": 358,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈52,9°",
+     "52,9°",
+     "52,9°"
+    ],
+    "hofte": [
+     "≈94,6°",
+     "94,6°",
+     "94,6°"
+    ],
+    "knae": [
+     "≈146,3°",
+     "146,3°",
+     "146,3°"
+    ],
+    "skinneben": [
+     "≈1,2°",
+     "1,2°",
+     "1,2°"
+    ],
+    "balanceStang": [
+     "≈0,0 cm",
+     "2,6 cm",
+     "2,6 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 3091,
+    "bund": 3481,
+    "w": 358,
+    "h": 390,
+    "right": 374
+   },
+   "taerskelRect": {
+    "top": 3496,
+    "bund": 3584,
+    "w": 358,
+    "h": 88,
+    "right": 374
+   },
+   "tallinje": "Torso 52,9°Hofte 94,6°Knæ 146,3°Stang 0,0 cm",
+   "tallinjeRect": {
+    "top": 1426,
+    "bund": 1449,
+    "w": 369,
+    "h": 23,
+    "right": 385
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 928,
+    "bund": 1420,
+    "w": 369,
+    "h": 492,
+    "right": 385
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 844
+  },
+  "390-net": [],
+  "390-fejl": [],
+  "1280-knaehoejde": {
+   "side": 1280,
+   "klient": 1280,
+   "tabel": 1068,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "41,6°",
+     "52,9°",
+     "52,9°"
+    ],
+    "hofte": [
+     "88,0°",
+     "94,6°",
+     "94,6°"
+    ],
+    "knae": [
+     "119,6°",
+     "146,3°",
+     "146,3°"
+    ],
+    "skinneben": [
+     "10,1°",
+     "1,2°",
+     "1,2°"
+    ],
+    "balanceStang": [
+     "≈1,7 cm",
+     "2,6 cm",
+     "2,6 cm"
+    ]
+   },
+   "indenAntal": 1,
+   "indenRaekker": 1,
+   "indenStil": {
+    "fontPx": 16,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 11,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 2245,
+    "bund": 2520,
+    "w": 1068,
+    "h": 275,
+    "right": 1174
+   },
+   "taerskelRect": {
+    "top": 2534,
+    "bund": 2579,
+    "w": 1068,
+    "h": 44,
+    "right": 1174
+   },
+   "tallinje": "Torso 41,6°Hofte 88,0°Knæ 119,6° (stangen 31 cm under knæet)Stang 1,7 cm",
+   "tallinjeRect": {
+    "top": 1272,
+    "bund": 1318,
+    "w": 528,
+    "h": 46,
+    "right": 634
+   },
+   "tallinjeLinjer": 2,
+   "billedeRect": {
+    "top": 591,
+    "bund": 1266,
+    "w": 506,
+    "h": 675,
+    "right": 612
+   },
+   "maerke": {
+    "tekst": "(stangen 31 cm under knæet)",
+    "dom": "under",
+    "stykker": 2,
+    "farve": "rgb(200, 146, 58)",
+    "knaeStykker": 2,
+    "knaeTekst": "Knæ 119,6° (stangen 31 cm under knæet)"
+   },
+   "knaefase": "Stangen står ca. 31 cm under knæet, så billedet er ikke fra knæhøjde (grænsen er 5 cm). Vælg et billede senere i løftet, eller brug Dødløft gulv. I modellen åbner knæet ca. 1,7° pr. cm, stangen stiger, så modellens tal i knæhøjde passer ikke til billedet.",
+   "knaefaseRect": {
+    "top": 1449,
+    "bund": 1535,
+    "w": 1068,
+    "h": 86,
+    "right": 1174
+   },
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 900,
+   "synlig": {
+    "linjeBund": 862,
+    "billedeBund": 810,
+    "vindueH": 900
+   }
+  },
+  "1280-start": {
+   "side": 1280,
+   "klient": 1280,
+   "tabel": 1068,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "45,9°",
+     "60,7°",
+     "60,7°"
+    ],
+    "hofte": [
+     "83,3°",
+     "50,6°",
+     "50,6°"
+    ],
+    "knae": [
+     "118,0°",
+     "97,5°",
+     "97,5°"
+    ],
+    "skinneben": [
+     "≈11,2°",
+     "13,8°",
+     "13,8°"
+    ],
+    "balanceStang": [
+     "≈2,8 cm",
+     "4,2 cm",
+     "4,2 cm"
+    ]
+   },
+   "indenAntal": 2,
+   "indenRaekker": 2,
+   "indenStil": {
+    "fontPx": 16,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 11,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 2147,
+    "bund": 2421,
+    "w": 1068,
+    "h": 275,
+    "right": 1174
+   },
+   "taerskelRect": {
+    "top": 2436,
+    "bund": 2480,
+    "w": 1068,
+    "h": 44,
+    "right": 1174
+   },
+   "tallinje": "Torso 45,9°Hofte 83,3°Knæ 118,0°Stang 2,8 cm",
+   "tallinjeRect": {
+    "top": 1272,
+    "bund": 1295,
+    "w": 528,
+    "h": 23,
+    "right": 634
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 591,
+    "bund": 1266,
+    "w": 506,
+    "h": 675,
+    "right": 612
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 900,
+   "synlig": {
+    "linjeBund": 839,
+    "billedeBund": 810,
+    "vindueH": 900
+   }
+  },
+  "1280-synKnae": {
+   "side": 1280,
+   "klient": 1280,
+   "tabel": 1068,
+   "kolonner": [
+    "Mål",
+    "Billedet",
+    "Model, snit",
+    "Model, dine mål"
+   ],
+   "raekker": {
+    "torso": [
+     "≈52,9°",
+     "52,9°",
+     "52,9°"
+    ],
+    "hofte": [
+     "≈94,6°",
+     "94,6°",
+     "94,6°"
+    ],
+    "knae": [
+     "≈146,3°",
+     "146,3°",
+     "146,3°"
+    ],
+    "skinneben": [
+     "≈1,2°",
+     "1,2°",
+     "1,2°"
+    ],
+    "balanceStang": [
+     "≈0,0 cm",
+     "2,6 cm",
+     "2,6 cm"
+    ]
+   },
+   "indenAntal": 5,
+   "indenRaekker": 5,
+   "indenStil": {
+    "fontPx": 16,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 11,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   },
+   "taerskel": "≈ ved billedets tal: billedet og modellen med dine mål er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "taerskelFontPx": 14.72,
+   "tabelRect": {
+    "top": 2147,
+    "bund": 2421,
+    "w": 1068,
+    "h": 275,
+    "right": 1174
+   },
+   "taerskelRect": {
+    "top": 2436,
+    "bund": 2480,
+    "w": 1068,
+    "h": 44,
+    "right": 1174
+   },
+   "tallinje": "Torso 52,9°Hofte 94,6°Knæ 146,3°Stang 0,0 cm",
+   "tallinjeRect": {
+    "top": 1272,
+    "bund": 1295,
+    "w": 528,
+    "h": 23,
+    "right": 634
+   },
+   "tallinjeLinjer": 1,
+   "billedeRect": {
+    "top": 591,
+    "bund": 1266,
+    "w": 506,
+    "h": 675,
+    "right": 612
+   },
+   "maerke": null,
+   "knaefase": null,
+   "knaefaseRect": null,
+   "forBrede": [],
+   "lager": [
+    "loeftmodel-min-krop-468"
+   ],
+   "vindueH": 900
+  },
+  "1280-net": [],
+  "1280-fejl": []
+ },
+ "foerEfter": {
+  "360-skraa10": {
+   "side": 395,
+   "tabel": 315,
+   "status": "Dødløft, ved gulvet, begge billeder målt med kroppens længder som skala. Størst forskel i efter-billedet: stangen længere tilbage mod hælen (stangen foran midtfoden −13,3 cm) og hoften tættere på stangen (vandret afstand stang–hofte −12,6 cm).",
+   "saetning": "Størst forskel i efter-billedet: stangen længere tilbage mod hælen (stangen foran midtfoden −13,3 cm) og hoften tættere på stangen (vandret afstand stang–hofte −12,6 cm).",
+   "taerskel": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm: hvert billede har sine egne klikfejl. Stod kameraet et andet sted anden gang, flytter det tallene lige så meget som en ændret teknik.",
+   "raekker": {
+    "torso": [
+     "48,5°",
+     "46,5°",
+     "≈−1,9°"
+    ],
+    "hofte": [
+     "82,9°",
+     "84,4°",
+     "≈+1,5°"
+    ],
+    "knae": [
+     "121,4°",
+     "120,9°",
+     "≈−0,5°"
+    ],
+    "skinneben": [
+     "10,0°",
+     "10,1°",
+     "≈0,0°"
+    ],
+    "stangFraMidtfod": [
+     "4,8 cm",
+     "−8,5 cm",
+     "−13,3 cm"
+    ],
+    "stangHofte": [
+     "28,3 cm",
+     "15,6 cm",
+     "−12,6 cm"
+    ],
+    "skulderForanStang": [
+     "4,0 cm",
+     "15,8 cm",
+     "+11,8 cm"
+    ]
+   },
+   "forBrede": [
+    "div billedeboks Efter-billedet vises her. Det sendes ing 395",
+    "p tallinje Torso 46,5°Hofte 84,4°Knæ 120,9°Stang −8 395",
+    "span id Stang −8,5 cm 381",
+    "div modelboks ■ Guld: modellen med målene fra Min krop 395",
+    "div forklaring ■ Guld: modellen med målene fra Min krop 395"
+   ],
+   "net": [],
+   "fejl": []
+  },
+  "360-op30": {
+   "side": 385,
+   "tabel": 315,
+   "status": "Dødløft, ved gulvet, begge billeder målt med kroppens længder som skala. Ingen forskel over målefejlen.",
+   "saetning": "Ingen forskel over målefejlen.",
+   "taerskel": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm: hvert billede har sine egne klikfejl. Stod kameraet et andet sted anden gang, flytter det tallene lige så meget som en ændret teknik.",
+   "raekker": {
+    "torso": [
+     "48,5°",
+     "48,4°",
+     "≈−0,1°"
+    ],
+    "hofte": [
+     "82,9°",
+     "82,4°",
+     "≈−0,5°"
+    ],
+    "knae": [
+     "121,4°",
+     "120,8°",
+     "≈−0,6°"
+    ],
+    "skinneben": [
+     "10,0°",
+     "10,0°",
+     "≈0,0°"
+    ],
+    "stangFraMidtfod": [
+     "4,8 cm",
+     "6,0 cm",
+     "≈+1,2 cm"
+    ],
+    "stangHofte": [
+     "28,3 cm",
+     "29,7 cm",
+     "≈+1,4 cm"
+    ],
+    "skulderForanStang": [
+     "4,0 cm",
+     "2,8 cm",
+     "≈−1,1 cm"
+    ]
+   },
+   "forBrede": [
+    "div billedeboks Efter-billedet vises her. Det sendes ing 385",
+    "p tallinje Torso 48,4°Hofte 82,4°Knæ 120,8°Stang 6, 385",
+    "span id Stang 6,0 cm 370",
+    "div modelboks ■ Guld: modellen med målene fra Min krop 385",
+    "div forklaring ■ Guld: modellen med målene fra Min krop 385"
+   ],
+   "net": [],
+   "fejl": []
+  },
+  "360-aendring507": {
+   "side": 385,
+   "tabel": 315,
+   "status": "Dødløft, ved gulvet, begge billeder målt med kroppens længder som skala. Størst forskel i efter-billedet: knæet mere bøjet (knævinkel −6,6°) og torsoen mere oprejst (torso fra lodret −4,6°).",
+   "saetning": "Størst forskel i efter-billedet: knæet mere bøjet (knævinkel −6,6°) og torsoen mere oprejst (torso fra lodret −4,6°).",
+   "taerskel": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm: hvert billede har sine egne klikfejl. Stod kameraet et andet sted anden gang, flytter det tallene lige så meget som en ændret teknik.",
+   "raekker": {
+    "torso": [
+     "48,5°",
+     "43,9°",
+     "−4,6°"
+    ],
+    "hofte": [
+     "82,9°",
+     "81,0°",
+     "≈−1,9°"
+    ],
+    "knae": [
+     "121,4°",
+     "114,8°",
+     "−6,6°"
+    ],
+    "skinneben": [
+     "10,0°",
+     "10,0°",
+     "≈0,0°"
+    ],
+    "stangFraMidtfod": [
+     "4,8 cm",
+     "2,7 cm",
+     "≈−2,0 cm"
+    ],
+    "stangHofte": [
+     "28,3 cm",
+     "26,2 cm",
+     "≈−2,1 cm"
+    ],
+    "skulderForanStang": [
+     "4,0 cm",
+     "5,9 cm",
+     "≈+2,0 cm"
+    ]
+   },
+   "forBrede": [
+    "div billedeboks Efter-billedet vises her. Det sendes ing 385",
+    "p tallinje Torso 43,9°Hofte 81,0°Knæ 114,8°Stang 2, 385",
+    "span id Stang 2,7 cm 370",
+    "div modelboks ■ Guld: modellen med målene fra Min krop 385",
+    "div forklaring ■ Guld: modellen med målene fra Min krop 385"
+   ],
+   "net": [],
+   "fejl": []
+  },
+  "390-skraa10": {
+   "side": 395,
+   "tabel": 345,
+   "status": "Dødløft, ved gulvet, begge billeder målt med kroppens længder som skala. Størst forskel i efter-billedet: stangen længere tilbage mod hælen (stangen foran midtfoden −13,3 cm) og hoften tættere på stangen (vandret afstand stang–hofte −12,6 cm).",
+   "saetning": "Størst forskel i efter-billedet: stangen længere tilbage mod hælen (stangen foran midtfoden −13,3 cm) og hoften tættere på stangen (vandret afstand stang–hofte −12,6 cm).",
+   "taerskel": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm: hvert billede har sine egne klikfejl. Stod kameraet et andet sted anden gang, flytter det tallene lige så meget som en ændret teknik.",
+   "raekker": {
+    "torso": [
+     "48,5°",
+     "46,5°",
+     "≈−1,9°"
+    ],
+    "hofte": [
+     "82,9°",
+     "84,4°",
+     "≈+1,5°"
+    ],
+    "knae": [
+     "121,4°",
+     "120,9°",
+     "≈−0,5°"
+    ],
+    "skinneben": [
+     "10,0°",
+     "10,1°",
+     "≈0,0°"
+    ],
+    "stangFraMidtfod": [
+     "4,8 cm",
+     "−8,5 cm",
+     "−13,3 cm"
+    ],
+    "stangHofte": [
+     "28,3 cm",
+     "15,6 cm",
+     "−12,6 cm"
+    ],
+    "skulderForanStang": [
+     "4,0 cm",
+     "15,8 cm",
+     "+11,8 cm"
+    ]
+   },
+   "forBrede": [
+    "div billedeboks Efter-billedet vises her. Det sendes ing 395",
+    "p tallinje Torso 46,5°Hofte 84,4°Knæ 120,9°Stang −8 395",
+    "div modelboks ■ Guld: modellen med målene fra Min krop 395",
+    "div forklaring ■ Guld: modellen med målene fra Min krop 395"
+   ],
+   "net": [],
+   "fejl": []
+  },
+  "390-op30": {
+   "side": 390,
+   "tabel": 345,
+   "status": "Dødløft, ved gulvet, begge billeder målt med kroppens længder som skala. Ingen forskel over målefejlen.",
+   "saetning": "Ingen forskel over målefejlen.",
+   "taerskel": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm: hvert billede har sine egne klikfejl. Stod kameraet et andet sted anden gang, flytter det tallene lige så meget som en ændret teknik.",
+   "raekker": {
+    "torso": [
+     "48,5°",
+     "48,4°",
+     "≈−0,1°"
+    ],
+    "hofte": [
+     "82,9°",
+     "82,4°",
+     "≈−0,5°"
+    ],
+    "knae": [
+     "121,4°",
+     "120,8°",
+     "≈−0,6°"
+    ],
+    "skinneben": [
+     "10,0°",
+     "10,0°",
+     "≈0,0°"
+    ],
+    "stangFraMidtfod": [
+     "4,8 cm",
+     "6,0 cm",
+     "≈+1,2 cm"
+    ],
+    "stangHofte": [
+     "28,3 cm",
+     "29,7 cm",
+     "≈+1,4 cm"
+    ],
+    "skulderForanStang": [
+     "4,0 cm",
+     "2,8 cm",
+     "≈−1,1 cm"
+    ]
+   },
+   "forBrede": [],
+   "net": [],
+   "fejl": []
+  },
+  "390-aendring507": {
+   "side": 390,
+   "tabel": 345,
+   "status": "Dødløft, ved gulvet, begge billeder målt med kroppens længder som skala. Størst forskel i efter-billedet: knæet mere bøjet (knævinkel −6,6°) og torsoen mere oprejst (torso fra lodret −4,6°).",
+   "saetning": "Størst forskel i efter-billedet: knæet mere bøjet (knævinkel −6,6°) og torsoen mere oprejst (torso fra lodret −4,6°).",
+   "taerskel": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm: hvert billede har sine egne klikfejl. Stod kameraet et andet sted anden gang, flytter det tallene lige så meget som en ændret teknik.",
+   "raekker": {
+    "torso": [
+     "48,5°",
+     "43,9°",
+     "−4,6°"
+    ],
+    "hofte": [
+     "82,9°",
+     "81,0°",
+     "≈−1,9°"
+    ],
+    "knae": [
+     "121,4°",
+     "114,8°",
+     "−6,6°"
+    ],
+    "skinneben": [
+     "10,0°",
+     "10,0°",
+     "≈0,0°"
+    ],
+    "stangFraMidtfod": [
+     "4,8 cm",
+     "2,7 cm",
+     "≈−2,0 cm"
+    ],
+    "stangHofte": [
+     "28,3 cm",
+     "26,2 cm",
+     "≈−2,1 cm"
+    ],
+    "skulderForanStang": [
+     "4,0 cm",
+     "5,9 cm",
+     "≈+2,0 cm"
+    ]
+   },
+   "forBrede": [],
+   "net": [],
+   "fejl": []
+  },
+  "1280-skraa10": {
+   "side": 1280,
+   "tabel": 1042,
+   "status": "Dødløft, ved gulvet, begge billeder målt med kroppens længder som skala. Størst forskel i efter-billedet: stangen længere tilbage mod hælen (stangen foran midtfoden −13,3 cm) og hoften tættere på stangen (vandret afstand stang–hofte −12,6 cm).",
+   "saetning": "Størst forskel i efter-billedet: stangen længere tilbage mod hælen (stangen foran midtfoden −13,3 cm) og hoften tættere på stangen (vandret afstand stang–hofte −12,6 cm).",
+   "taerskel": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm: hvert billede har sine egne klikfejl. Stod kameraet et andet sted anden gang, flytter det tallene lige så meget som en ændret teknik.",
+   "raekker": {
+    "torso": [
+     "48,5°",
+     "46,5°",
+     "≈−1,9°"
+    ],
+    "hofte": [
+     "82,9°",
+     "84,4°",
+     "≈+1,5°"
+    ],
+    "knae": [
+     "121,4°",
+     "120,9°",
+     "≈−0,5°"
+    ],
+    "skinneben": [
+     "10,0°",
+     "10,1°",
+     "≈0,0°"
+    ],
+    "stangFraMidtfod": [
+     "4,8 cm",
+     "−8,5 cm",
+     "−13,3 cm"
+    ],
+    "stangHofte": [
+     "28,3 cm",
+     "15,6 cm",
+     "−12,6 cm"
+    ],
+    "skulderForanStang": [
+     "4,0 cm",
+     "15,8 cm",
+     "+11,8 cm"
+    ]
+   },
+   "forBrede": [],
+   "net": [],
+   "fejl": []
+  },
+  "1280-op30": {
+   "side": 1280,
+   "tabel": 1042,
+   "status": "Dødløft, ved gulvet, begge billeder målt med kroppens længder som skala. Ingen forskel over målefejlen.",
+   "saetning": "Ingen forskel over målefejlen.",
+   "taerskel": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm: hvert billede har sine egne klikfejl. Stod kameraet et andet sted anden gang, flytter det tallene lige så meget som en ændret teknik.",
+   "raekker": {
+    "torso": [
+     "48,5°",
+     "48,4°",
+     "≈−0,1°"
+    ],
+    "hofte": [
+     "82,9°",
+     "82,4°",
+     "≈−0,5°"
+    ],
+    "knae": [
+     "121,4°",
+     "120,8°",
+     "≈−0,6°"
+    ],
+    "skinneben": [
+     "10,0°",
+     "10,0°",
+     "≈0,0°"
+    ],
+    "stangFraMidtfod": [
+     "4,8 cm",
+     "6,0 cm",
+     "≈+1,2 cm"
+    ],
+    "stangHofte": [
+     "28,3 cm",
+     "29,7 cm",
+     "≈+1,4 cm"
+    ],
+    "skulderForanStang": [
+     "4,0 cm",
+     "2,8 cm",
+     "≈−1,1 cm"
+    ]
+   },
+   "forBrede": [],
+   "net": [],
+   "fejl": []
+  },
+  "1280-aendring507": {
+   "side": 1280,
+   "tabel": 1042,
+   "status": "Dødløft, ved gulvet, begge billeder målt med kroppens længder som skala. Størst forskel i efter-billedet: knæet mere bøjet (knævinkel −6,6°) og torsoen mere oprejst (torso fra lodret −4,6°).",
+   "saetning": "Størst forskel i efter-billedet: knæet mere bøjet (knævinkel −6,6°) og torsoen mere oprejst (torso fra lodret −4,6°).",
+   "taerskel": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm: hvert billede har sine egne klikfejl. Stod kameraet et andet sted anden gang, flytter det tallene lige så meget som en ændret teknik.",
+   "raekker": {
+    "torso": [
+     "48,5°",
+     "43,9°",
+     "−4,6°"
+    ],
+    "hofte": [
+     "82,9°",
+     "81,0°",
+     "≈−1,9°"
+    ],
+    "knae": [
+     "121,4°",
+     "114,8°",
+     "−6,6°"
+    ],
+    "skinneben": [
+     "10,0°",
+     "10,0°",
+     "≈0,0°"
+    ],
+    "stangFraMidtfod": [
+     "4,8 cm",
+     "2,7 cm",
+     "≈−2,0 cm"
+    ],
+    "stangHofte": [
+     "28,3 cm",
+     "26,2 cm",
+     "≈−2,1 cm"
+    ],
+    "skulderForanStang": [
+     "4,0 cm",
+     "5,9 cm",
+     "≈+2,0 cm"
+    ]
+   },
+   "forBrede": [],
+   "net": [],
+   "fejl": []
+  }
+ },
+ "b13fund": {
+  "360": [
+   [
+    "360-squat-bund-kg",
+    387,
+    "p tallinje 387"
+   ],
+   [
+    "360-squat-midt-kg",
+    387,
+    "p tallinje 387"
+   ],
+   [
+    "360-dl-gulv-kg",
+    377,
+    "p tallinje 377"
+   ],
+   [
+    "360-dl-knae-kg",
+    385,
+    "p tallinje 385"
+   ]
+  ],
+  "375": [
+   [
+    "375-squat-bund-kg",
+    388,
+    "p tallinje 387"
+   ],
+   [
+    "375-squat-midt-kg",
+    388,
+    "p tallinje 387"
+   ],
+   [
+    "375-dl-gulv-kg",
+    377,
+    "p tallinje 377"
+   ],
+   [
+    "375-dl-knae-kg",
+    385,
+    "p tallinje 385"
+   ]
+  ]
+ },
+ "b13": {
+  "360-squat-bund-kg": {
+   "side": 387,
+   "tabel": 328,
+   "tallinje": "Torso 48,5°Hofte 37,7°Knæ 46,2°Stang −1,0 cm",
+   "tallinjeBredde": 371,
+   "forBrede": [
+    "div billedeboks 387",
+    "canvas billede 387",
+    "p tallinje 387",
+    "span id 373",
+    "div modelboks 387"
+   ]
+  },
+  "360-squat-midt-kg": {
+   "side": 387,
+   "tabel": 328,
+   "tallinje": "Torso 39,1°Hofte 73,8°Knæ 70,3°Stang −2,6 cm",
+   "tallinjeBredde": 371,
+   "forBrede": [
+    "div billedeboks 387",
+    "canvas billede 387",
+    "p tallinje 387",
+    "span id 373",
+    "div modelboks 387"
+   ]
+  },
+  "360-dl-gulv-kg": {
+   "side": 377,
+   "tabel": 328,
+   "tallinje": "Torso 60,7°Hofte 50,6°Knæ 97,5°Stang 3,0 cm",
+   "tallinjeBredde": 361,
+   "forBrede": [
+    "div billedeboks 377",
+    "canvas billede 377",
+    "p tallinje 377",
+    "span id 362",
+    "div modelboks 377"
+   ]
+  },
+  "360-dl-knae-kg": {
+   "side": 385,
+   "tabel": 328,
+   "tallinje": "Torso 52,9°Hofte 94,6°Knæ 146,3°Stang 0,0 cm",
+   "tallinjeBredde": 369,
+   "forBrede": [
+    "div billedeboks 385",
+    "canvas billede 385",
+    "p tallinje 385",
+    "span id 370",
+    "div modelboks 385"
+   ]
+  },
+  "360-baenk-bryst-kg": {
+   "side": 360,
+   "tabel": 328,
+   "tallinje": "Stang mod fødderne 25,6 cmKnæ 79,1°",
+   "tallinjeBredde": 328,
+   "forBrede": []
+  },
+  "360-baenk-midt-kg": {
+   "side": 360,
+   "tabel": 328,
+   "tallinje": "Stang mod fødderne 0,8 cmKnæ 79,1°",
+   "tallinjeBredde": 328,
+   "forBrede": []
+  },
+  "375-squat-bund-kg": {
+   "side": 388,
+   "tabel": 343,
+   "tallinje": "Torso 48,5°Hofte 37,7°Knæ 46,2°Stang −1,0 cm",
+   "tallinjeBredde": 371,
+   "forBrede": [
+    "div billedeboks 387",
+    "canvas billede 387",
+    "p tallinje 387",
+    "div modelboks 387",
+    "canvas model 387"
+   ]
+  },
+  "375-squat-midt-kg": {
+   "side": 388,
+   "tabel": 343,
+   "tallinje": "Torso 39,1°Hofte 73,8°Knæ 70,3°Stang −2,6 cm",
+   "tallinjeBredde": 371,
+   "forBrede": [
+    "div billedeboks 387",
+    "canvas billede 387",
+    "p tallinje 387",
+    "div modelboks 387",
+    "canvas model 387"
+   ]
+  },
+  "375-dl-gulv-kg": {
+   "side": 377,
+   "tabel": 343,
+   "tallinje": "Torso 60,7°Hofte 50,6°Knæ 97,5°Stang 3,0 cm",
+   "tallinjeBredde": 361,
+   "forBrede": [
+    "div billedeboks 377",
+    "canvas billede 377",
+    "p tallinje 377",
+    "div modelboks 377",
+    "canvas model 377"
+   ]
+  },
+  "375-dl-knae-kg": {
+   "side": 385,
+   "tabel": 343,
+   "tallinje": "Torso 52,9°Hofte 94,6°Knæ 146,3°Stang 0,0 cm",
+   "tallinjeBredde": 369,
+   "forBrede": [
+    "div billedeboks 385",
+    "canvas billede 385",
+    "p tallinje 385",
+    "div modelboks 385",
+    "canvas model 385"
+   ]
+  },
+  "375-baenk-bryst-kg": {
+   "side": 375,
+   "tabel": 343,
+   "tallinje": "Stang mod fødderne 25,6 cmKnæ 79,1°",
+   "tallinjeBredde": 343,
+   "forBrede": []
+  },
+  "375-baenk-midt-kg": {
+   "side": 375,
+   "tabel": 343,
+   "tallinje": "Stang mod fødderne 0,8 cmKnæ 79,1°",
+   "tallinjeBredde": 343,
+   "forBrede": []
+  },
+  "390-squat-bund-kg": {
+   "side": 390,
+   "tabel": 358,
+   "tallinje": "Torso 48,5°Hofte 37,7°Knæ 46,2°Stang −1,0 cm",
+   "tallinjeBredde": 371,
+   "forBrede": []
+  },
+  "390-squat-midt-kg": {
+   "side": 390,
+   "tabel": 358,
+   "tallinje": "Torso 39,1°Hofte 73,8°Knæ 70,3°Stang −2,6 cm",
+   "tallinjeBredde": 371,
+   "forBrede": []
+  },
+  "390-dl-gulv-kg": {
+   "side": 390,
+   "tabel": 358,
+   "tallinje": "Torso 60,7°Hofte 50,6°Knæ 97,5°Stang 3,0 cm",
+   "tallinjeBredde": 361,
+   "forBrede": []
+  },
+  "390-dl-knae-kg": {
+   "side": 390,
+   "tabel": 358,
+   "tallinje": "Torso 52,9°Hofte 94,6°Knæ 146,3°Stang 0,0 cm",
+   "tallinjeBredde": 369,
+   "forBrede": []
+  },
+  "390-baenk-bryst-kg": {
+   "side": 390,
+   "tabel": 358,
+   "tallinje": "Stang mod fødderne 25,6 cmKnæ 79,1°",
+   "tallinjeBredde": 358,
+   "forBrede": []
+  },
+  "390-baenk-midt-kg": {
+   "side": 390,
+   "tabel": 358,
+   "tallinje": "Stang mod fødderne 0,8 cmKnæ 79,1°",
+   "tallinjeBredde": 358,
+   "forBrede": []
+  },
+  "1280-squat-bund-kg": {
+   "side": 1280,
+   "tabel": 1068,
+   "tallinje": "Torso 48,5°Hofte 37,7°Knæ 46,2°Stang −1,0 cm",
+   "tallinjeBredde": 528,
+   "forBrede": []
+  },
+  "1280-squat-midt-kg": {
+   "side": 1280,
+   "tabel": 1068,
+   "tallinje": "Torso 39,1°Hofte 73,8°Knæ 70,3°Stang −2,6 cm",
+   "tallinjeBredde": 528,
+   "forBrede": []
+  },
+  "1280-dl-gulv-kg": {
+   "side": 1280,
+   "tabel": 1068,
+   "tallinje": "Torso 60,7°Hofte 50,6°Knæ 97,5°Stang 3,0 cm",
+   "tallinjeBredde": 528,
+   "forBrede": []
+  },
+  "1280-dl-knae-kg": {
+   "side": 1280,
+   "tabel": 1068,
+   "tallinje": "Torso 52,9°Hofte 94,6°Knæ 146,3°Stang 0,0 cm",
+   "tallinjeBredde": 528,
+   "forBrede": []
+  },
+  "1280-baenk-bryst-kg": {
+   "side": 1280,
+   "tabel": 1068,
+   "tallinje": "Stang mod fødderne 25,6 cmKnæ 79,1°",
+   "tallinjeBredde": 528,
+   "forBrede": []
+  },
+  "1280-baenk-midt-kg": {
+   "side": 1280,
+   "tabel": 1068,
+   "tallinje": "Stang mod fødderne 0,8 cmKnæ 79,1°",
+   "tallinjeBredde": 528,
+   "forBrede": []
+  }
+ },
+ "maerkeBrud": {
+  "360": {
+   "stykker": 2,
+   "knaeStykker": 2,
+   "linjer": 2,
+   "tekst": "Torso 41,6°Hofte 88,0°Knæ 119,6° (stangen 31 cm under knæet)Stang 1,7 cm"
+  },
+  "390": {
+   "stykker": 2,
+   "knaeStykker": 2,
+   "linjer": 2,
+   "tekst": "Torso 41,6°Hofte 88,0°Knæ 119,6° (stangen 31 cm under knæet)Stang 1,7 cm"
+  },
+  "1280": {
+   "stykker": 2,
+   "knaeStykker": 2,
+   "linjer": 2,
+   "tekst": "Torso 41,6°Hofte 88,0°Knæ 119,6° (stangen 31 cm under knæet)Stang 1,7 cm"
+  }
+ },
+ "udenMinKrop360": {
+  "squat-bund": {
+   "side": 360,
+   "kolonner": 3,
+   "tallinje": "Torso 48,5°Hofte 37,7°Knæ 46,2°Stang —"
+  },
+  "dl-gulv": {
+   "side": 360,
+   "kolonner": 3,
+   "tallinje": "Torso 60,7°Hofte 50,6°Knæ 97,5°Stang —"
+  },
+  "dl-knae": {
+   "side": 360,
+   "kolonner": 3,
+   "tallinje": "Torso 52,9°Hofte 94,6°Knæ 146,3°Stang —"
+  }
+ },
+ "tjek": [
+  {
+   "hvad": "B11 390 px: alle seks faser, med og uden stangens vaegt, tre talkolonner: siden <= 390 og tabellen <= 390",
+   "ok": true,
+   "data": {
+    "squat-bund-udenKg": [
+     390,
+     358
+    ],
+    "squat-bund-kg": [
+     390,
+     358
+    ],
+    "squat-midt-udenKg": [
+     390,
+     358
+    ],
+    "squat-midt-kg": [
+     390,
+     358
+    ],
+    "dl-gulv-udenKg": [
+     390,
+     358
+    ],
+    "dl-gulv-kg": [
+     390,
+     358
+    ],
+    "dl-knae-udenKg": [
+     390,
+     358
+    ],
+    "dl-knae-kg": [
+     390,
+     358
+    ],
+    "baenk-bryst-udenKg": [
+     390,
+     358
+    ],
+    "baenk-bryst-kg": [
+     390,
+     358
+    ],
+    "baenk-midt-udenKg": [
+     390,
+     358
+    ],
+    "baenk-midt-kg": [
+     390,
+     358
+    ]
+   }
+  },
+  {
+   "hvad": "B11 360/375: tabellen holder sig (328/343 px) i alle seks faser",
+   "ok": true,
+   "data": [
+    328,
+    343
+   ]
+  },
+  {
+   "hvad": "Nyt fund B13: paa 360 og 375 er siden bredere end skaermen i squat (begge) og doedloeft (begge), fordi tallinjen ikke kan bryde; baenk holder",
+   "ok": true,
+   "data": {
+    "360": [
+     [
+      "360-squat-bund-kg",
+      387,
+      "p tallinje 387"
+     ],
+     [
+      "360-squat-midt-kg",
+      387,
+      "p tallinje 387"
+     ],
+     [
+      "360-dl-gulv-kg",
+      377,
+      "p tallinje 377"
+     ],
+     [
+      "360-dl-knae-kg",
+      385,
+      "p tallinje 385"
+     ]
+    ],
+    "375": [
+     [
+      "375-squat-bund-kg",
+      388,
+      "p tallinje 387"
+     ],
+     [
+      "375-squat-midt-kg",
+      388,
+      "p tallinje 387"
+     ],
+     [
+      "375-dl-gulv-kg",
+      377,
+      "p tallinje 377"
+     ],
+     [
+      "375-dl-knae-kg",
+      385,
+      "p tallinje 385"
+     ]
+    ]
+   }
+  },
+  {
+   "hvad": "B11: tegnet foran tallet i hver raekke inden for maalefejlen, og forklaringen under tabellen",
+   "ok": true,
+   "data": [
+    [
+     "360-squat-bund-udenKg",
+     4
+    ],
+    [
+     "360-squat-bund-kg",
+     5
+    ],
+    [
+     "360-squat-midt-udenKg",
+     5
+    ],
+    [
+     "360-squat-midt-kg",
+     5
+    ],
+    [
+     "360-dl-gulv-udenKg",
+     5
+    ],
+    [
+     "360-dl-gulv-kg",
+     5
+    ]
+   ]
+  },
+  {
+   "hvad": "B11 390: tegnet ≈ er guld og samme skrift som tallet (ca. 15 px); ordene ligger i title/aria-label",
+   "ok": true,
+   "data": {
+    "fontPx": 14.08,
+    "farve": "rgb(200, 146, 58)",
+    "bredde": 9.7,
+    "title": "inden for målefejlen",
+    "aria": "inden for målefejlen"
+   }
+  },
+  {
+   "hvad": "1280: uaendret, tabellen fylder bredden og siden er 1280",
+   "ok": true
+  },
+  {
+   "hvad": "360/390/1280: intet net og ingen JS-fejl",
+   "ok": true
+  },
+  {
+   "hvad": "B12: Marcs \"knaehoejde\" (mine klik) faar maerket i tallinjen paa 360, 390 og 1280, med samme cm som beskeden",
+   "ok": true,
+   "data": {
+    "tekst": "(stangen 31 cm under knæet)",
+    "dom": "under",
+    "stykker": 2,
+    "farve": "rgb(200, 146, 58)",
+    "knaeStykker": 2,
+    "knaeTekst": "Knæ 119,6° (stangen 31 cm under knæet)"
+   }
+  },
+  {
+   "hvad": "B12: maerket er paa skaermen sammen med billedets bund og tallinjen (390)",
+   "ok": true,
+   "data": {
+    "linjeBund": 806,
+    "billedeBund": 754,
+    "vindueH": 844
+   }
+  },
+  {
+   "hvad": "B12: intet maerke i gulvbilledet og i et billede der er fra knaehoejde",
+   "ok": true
+  },
+  {
+   "hvad": "B11 med Marcs knaebillede og Min krop: siden <= bredden paa 360 og 390 (maerket kan bryde)",
+   "ok": true,
+   "data": [
+    [
+     360,
+     328
+    ],
+    [
+     390,
+     358
+    ]
+   ]
+  },
+  {
+   "hvad": "B13 i Marcs gulvbillede: 390 holder, 360 er for bred",
+   "ok": true,
+   "data": [
+    390,
+    385,
+    "Torso 45,9°Hofte 83,3°Knæ 118,0°Stang 2,8 cm"
+   ]
+  },
+  {
+   "hvad": "Marcs klip: intet net og ingen JS-fejl",
+   "ok": true
+  },
+  {
+   "hvad": "E6 fra 511 stadig aaben (samme aarsag som B13): paa 390 er siden 395 px med skraa10; paa 360 er alle tre for brede",
+   "ok": true,
+   "data": {
+    "skraa10": [
+     395,
+     395
+    ],
+    "op30": [
+     385,
+     390
+    ],
+    "aendring507": [
+     385,
+     390
+    ]
+   }
+  },
+  {
+   "hvad": "E5: saetningen siger retningen i ord (507-aendringen)",
+   "ok": true,
+   "data": "Størst forskel i efter-billedet: knæet mere bøjet (knævinkel −6,6°) og torsoen mere oprejst (torso fra lodret −4,6°)."
+  },
+  {
+   "hvad": "E2 stadig aaben: samme stilling, kameraet 10 grader skraat, giver en \"stoerste forskel\" i ord",
+   "ok": true,
+   "data": "Størst forskel i efter-billedet: stangen længere tilbage mod hælen (stangen foran midtfoden −13,3 cm) og hoften tættere på stangen (vandret afstand stang–hofte −12,6 cm)."
+  },
+  {
+   "hvad": "E2: 30 cm hoejere giver ingen forskel",
+   "ok": true,
+   "data": "Ingen forskel over målefejlen."
+  },
+  {
+   "hvad": "E1 stadig aaben: taersklen er 4 grader / 3 cm pr. raekke (uaendret siden 507)",
+   "ok": true,
+   "data": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm: hvert billede har sine egne klikfejl. Stod kameraet et andet sted anden gang, flytter det tallene lige så meget som en ændret teknik."
+  },
+  {
+   "hvad": "Foer/efter: intet net og ingen JS-fejl",
+   "ok": true
+  },
+  {
+   "hvad": "B13 kraever en kendt skala: uden Min krop og uden hoejde staar stangen som \"—\", og 360 holder",
+   "ok": true,
+   "data": {
+    "squat-bund": {
+     "side": 360,
+     "kolonner": 3,
+     "tallinje": "Torso 48,5°Hofte 37,7°Knæ 46,2°Stang —"
+    },
+    "dl-gulv": {
+     "side": 360,
+     "kolonner": 3,
+     "tallinje": "Torso 60,7°Hofte 50,6°Knæ 97,5°Stang —"
+    },
+    "dl-knae": {
+     "side": 360,
+     "kolonner": 3,
+     "tallinje": "Torso 52,9°Hofte 94,6°Knæ 146,3°Stang —"
+    }
+   }
+  }
+ ]
+}
