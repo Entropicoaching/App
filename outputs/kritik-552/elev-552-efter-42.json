@@ -1,0 +1,1778 @@
+{
+ "spil": "f9ef917",
+ "ref": "main",
+ "tag": "efter",
+ "seed": 42,
+ "T": 1748851200000,
+ "model": {
+  "P": [
+   0.7,
+   0.6,
+   0.5
+  ],
+  "SEK": {
+   "ord": 0.4,
+   "taenk": 10,
+   "tryk": 2,
+   "rul": 3
+  },
+  "GRAENSE": 1800
+ },
+ "bredder": [
+  390
+ ],
+ "udgaver": {
+  "travl": {
+   "390": {
+    "opgaver": 52,
+    "rigtigeFoerste": 40,
+    "ukendt": 0,
+    "foersteNiveauOp": {
+     "t": "3:32",
+     "opgaverFoer": 6
+    },
+    "foerstePerson": {
+     "t": "0:38",
+     "art": "aabning",
+     "opgaverFoer": 0
+    },
+    "foersteHjaelp": {
+     "t": "29:51",
+     "opgaverFoer": 51
+    },
+    "aabning": {
+     "ord": 49,
+     "scenenOgKnappenPaaEenSkaerm": true,
+     "aabningTop": 8,
+     "knapBund": 672
+    },
+    "sammeForloebIgen": 4,
+    "laerer": 0,
+    "taetPaa": 4,
+    "igenTekster": [
+     "2 af 3 + taet paa",
+     "2 af 4 + taet paa",
+     "2 af 4 + taet paa",
+     "3 af 5 + taet paa"
+    ],
+    "quests": 0,
+    "klaret": [],
+    "niveau": 9,
+    "hoved": 9,
+    "haand": 1,
+    "hjerte": 1,
+    "udstyr": "Udstyr 1 af 9 Titler 1 Erfaring 435",
+    "steder": [
+     "moellen"
+    ],
+    "nytStedSagt": 2,
+    "fortsaet": 2,
+    "historieAndel": 50,
+    "laengstUdenNyt": "5:28",
+    "rul": 8,
+    "jsFejl": 0,
+    "vandretOk": true,
+    "m5": {
+     "toTredjeModToFemtedele": 0,
+     "oftestTal": "2 og 4",
+     "oftestAntal": 3,
+     "sammeTekstIgen": 0
+    },
+    "ankomster": [],
+    "grusgraven": null,
+    "hansSagt": null,
+    "hansQuest": null
+   }
+  },
+  "foelger": {
+   "390": {
+    "opgaver": 49,
+    "rigtigeFoerste": 38,
+    "ukendt": 0,
+    "foersteNiveauOp": {
+     "t": "3:32",
+     "opgaverFoer": 6
+    },
+    "foerstePerson": {
+     "t": "0:38",
+     "art": "aabning",
+     "opgaverFoer": 0
+    },
+    "foersteHjaelp": {
+     "t": "3:57",
+     "opgaverFoer": 6
+    },
+    "aabning": {
+     "ord": 49,
+     "scenenOgKnappenPaaEenSkaerm": true,
+     "aabningTop": 8,
+     "knapBund": 672
+    },
+    "sammeForloebIgen": 3,
+    "laerer": 1,
+    "taetPaa": 2,
+    "igenTekster": [
+     "2 af 3 + taet paa",
+     "1 af 3 + laerer",
+     "2 af 3 + taet paa"
+    ],
+    "quests": 5,
+    "klaret": [
+     "mel-til-bageren",
+     "broed-til-alle",
+     "sten-til-diget",
+     "aeblerne",
+     "hoestmarked"
+    ],
+    "niveau": 8,
+    "hoved": 3,
+    "haand": 6,
+    "hjerte": 1,
+    "udstyr": "Udstyr 2 af 9 Titler 1 Erfaring 405",
+    "steder": [
+     "moellen",
+     "stenbrud",
+     "marked"
+    ],
+    "nytStedSagt": 2,
+    "fortsaet": 0,
+    "historieAndel": 54,
+    "laengstUdenNyt": "3:29",
+    "rul": 7,
+    "jsFejl": 0,
+    "vandretOk": true,
+    "m5": {
+     "toTredjeModToFemtedele": 0,
+     "oftestTal": "2 og 4",
+     "oftestAntal": 6,
+     "sammeTekstIgen": 0
+    },
+    "ankomster": [
+     {
+      "t": "12:20",
+      "tekst": "Tulle kommer ned i Grusgraven. Grusgraveren står ved den væltede tipvogn med en lineal i hånden. Grusgraveren: \"Godt, du kom. Hans, karl i grusgraven, venter på dig med \"Sten til diget\".\" Grusgraveren: \"Klar \"Læs lineale",
+      "sammeSkaerm": true,
+      "ankomstTop": 199,
+      "knapBund": 839
+     },
+     {
+      "t": "18:40",
+      "tekst": "Tulle kommer ind på Landsbygaden. Købmanden står i døren til butikken. Købmanden: \"Godt, du kom. Else venter på dig med \"Æbler til gaden\".\" Købmanden: \"Klar \"Tæl varerne\" med mig først, så kan du hjælpe Else.\"",
+      "sammeSkaerm": true,
+      "ankomstTop": 196,
+      "knapBund": 791
+     }
+    ],
+    "grusgraven": "11:59",
+    "hansSagt": {
+     "t": "12:20",
+     "art": "ankomst"
+    },
+    "hansQuest": "16:16"
+   }
+  }
+ },
+ "jsFejl": 0,
+ "net": 0,
+ "koersler": [
+  {
+   "variant": "travl",
+   "bredde": 390,
+   "ur": {
+    "s": 1821,
+    "rul": 8
+   },
+   "opg": {
+    "antal": 52,
+    "rigtigeFoerste": 40,
+    "loesning": 2,
+    "foresloeg": 67,
+    "ukendt": 0,
+    "ord": 1000
+   },
+   "historieOrd": {
+    "tak": 0,
+    "hvil": 0,
+    "replik": 143,
+    "mestring": 160,
+    "bogPanel": 80,
+    "niveau": 185,
+    "aabning": 49,
+    "byVaagner": 248,
+    "nytSted": 142
+   },
+   "foersteSkaerm": {
+    "opgaveTop": 1902,
+    "skaermHoejde": 844,
+    "sideHoejde": 2257
+   },
+   "naesteFejl": "Ikke helt. Hint 1 af 2: Nævneren, tallet under brøkstregen, er antallet af lige store stykker i alt. Her er det 10.",
+   "log": [
+    {
+     "t": 18,
+     "art": "start",
+     "opgaveTop": 1902,
+     "skaermHoejde": 844,
+     "sideHoejde": 2257
+    },
+    {
+     "t": 38,
+     "art": "aabning",
+     "tekst": "Tulle kommer ned ad vejen til Møllen. Mølleren står i døren, hvid af mel. Mølleren: \"Godt, du kom. Hjulet er gået i stå, og Ane, bagerkonen, har intet mel til morgenbrødet.\" Mølleren: \"Hjælp mig med \"Lige store dele\", så kan vi male igen, og så kan du hjælpe Ane.\"",
+     "aabningTop": 8,
+     "knapBund": 672,
+     "skaerm": 844
+    },
+    {
+     "t": 57,
+     "art": "opgave",
+     "nr": 1,
+     "tekst": "Mølleren har delt sin mark i 3 lige store stykker, og 1 er sået: ▰▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Tulle kommer ned ad vejen til Møllen. Mølleren står i døren, hvid af mel. Mølleren: \"Godt, du kom. Hjulet er gået i stå, og Ane, bag",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 80,
+     "art": "opgave",
+     "nr": 2,
+     "tekst": "Bageren har skåret en kageplade i 7 lige store stykker, og 1 er spist: ▰▱▱▱▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 103,
+     "art": "opgave",
+     "nr": 3,
+     "tekst": "Bageren har skåret en kageplade i 10 lige store stykker, og 5 er spist: ▰▰▰▰▰▱▱▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 137,
+     "art": "opgave",
+     "nr": 4,
+     "tekst": "Bageren har skåret en kageplade i 4 lige store stykker, og 2 er spist: ▰▰▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 153,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 2 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Mølleren: \"Tæt på. Én rigtig mere, så har du det.\""
+    },
+    {
+     "t": 176,
+     "art": "opgave",
+     "nr": 5,
+     "tekst": "Mølleren har 8 lige store sække på vognen, og 6 er fyldt med mel: ▰▰▰▰▰▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 200,
+     "art": "opgave",
+     "nr": 6,
+     "tekst": "Mølleren har 7 lige store sække på vognen, og 2 er fyldt med mel: ▰▰▱▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 212,
+     "art": "niveau-op",
+     "tekst": "NIVEAU OP! Niveau 2 Du mestrede \"Lige store dele\" hos Mølleren. Din figur er blevet klogere: Hoved er nu 2. Fedt!"
+    },
+    {
+     "t": 223,
+     "art": "replik",
+     "tekst": "Forløbet \"Lige store dele\" er klaret. Mølleren: \"Nu ved du, hvad en brøk er: nogle af de lige store dele af en helhed.\"",
+     "udraab": [
+      {
+       "quest": "mel-til-bageren",
+       "iSyne": false,
+       "px": -406
+      },
+      {
+       "questbogKnap": "Questbogen 1 ny"
+      }
+     ]
+    },
+    {
+     "t": 234,
+     "art": "byVaagner",
+     "tekst": "BYEN VÅGNER Kværnhjulet drejer igen Indbyggere: 19 (før 12) Møllerdrengen: \"Hjulet går! Nu skal melet bare deles ligeligt.\" Ny opgave: Del ligeligt Se det på kortet"
+    },
+    {
+     "t": 234,
+     "art": "fortsaet",
+     "tekst": "Fortsæt hos Mølleren"
+    },
+    {
+     "t": 252,
+     "art": "opgave",
+     "nr": 7,
+     "tekst": "Mølledrengen deler 4 sække mel ligeligt mellem 5 bagere. Hvor meget mel får hver bager?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløbet \"Lige store dele\" er klaret. Mølleren: \"Nu ved du, hvad en brøk er: nogle af de lige store dele af en helhed.\" ! Ane, bager",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 284,
+     "art": "opgave",
+     "nr": 8,
+     "tekst": "Bagerkonen deler 2 brød ligeligt mellem 4 karle på møllen. Hvor meget brød får hver karl?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 1 af 4 ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 320,
+     "art": "opgave",
+     "nr": 9,
+     "tekst": "Bageren har bagt 7 lige store brød, og 2 er solgt: ▰▰▱▱▱▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 2 af 4 ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 339,
+     "art": "opgave",
+     "nr": 10,
+     "tekst": "Mølledrengen deler 2 æbler ligeligt mellem 5 børn. Hvor meget æble får hvert barn?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 3 af 4 ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 360,
+     "art": "opgave",
+     "nr": 11,
+     "tekst": "Bageren deler 1 brød ligeligt mellem 4 karle på møllen. Hvor meget brød får hver karl?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 0 af 4 ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 376,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 2 af 4 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Mølleren: \"Tæt på. Én rigtig mere, så har du det.\""
+    },
+    {
+     "t": 395,
+     "art": "opgave",
+     "nr": 12,
+     "tekst": "Bagerkonen deler 3 kager ligeligt mellem 5 børn. Hvor meget kage får hvert barn?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 1 af 4 ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 418,
+     "art": "opgave",
+     "nr": 13,
+     "tekst": "Mølleren har 4 lige store sække på vognen, og 2 er fyldt med mel: ▰▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 2 af 4 ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 438,
+     "art": "opgave",
+     "nr": 14,
+     "tekst": "Mølledrengen deler 2 æbler ligeligt mellem 6 børn. Hvor meget æble får hvert barn?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 3 af 4 ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 452,
+     "art": "niveau-op",
+     "tekst": "NIVEAU OP! Niveau 3 · Lærling Du mestrede \"Del ligeligt\" hos Mølleren. Din figur er blevet klogere: Hoved er nu 3. Du er nu lærling. Fedt!"
+    },
+    {
+     "t": 461,
+     "art": "replik",
+     "tekst": "Forløbet \"Del ligeligt\" er klaret. Mølleren: \"Tak skal du have. Nu har alle fået lige meget.\"",
+     "udraab": [
+      {
+       "quest": "mel-til-bageren",
+       "iSyne": false,
+       "px": -41
+      },
+      {
+       "questbogKnap": "Questbogen 1 ny"
+      }
+     ]
+    },
+    {
+     "t": 475,
+     "art": "byVaagner",
+     "tekst": "BYEN VÅGNER Kornvognen kører Indbyggere: 27 (før 19) Kusken: \"Alle har fået deres del. Bageren vil have det bedste mel, men hvilken portion er størst?\" Ny opgave: Hvilken portion er størst? Se det på kortet"
+    },
+    {
+     "t": 499,
+     "art": "nyt-sted",
+     "tekst": "NYE STEDER Grusgraven er åben: Grusgraveren venter. Grusgraveren: \"Ingen har målt noget her i årevis. Tag din lineal frem: kan du læse, hvor lang en ting er, også når den ikke ligger fra 0?\" Gå til Grusgraven Landsbygaden er åben: Købmanden venter. Købmanden: \"Der er varer at tælle og priser at regne på. Har du sans for handel?\" Gå til Landsbygaden"
+    },
+    {
+     "t": 516,
+     "art": "opgave",
+     "nr": 15,
+     "tekst": "En sæk mel deles ligeligt mellem 4 bagere, en anden mellem 6 bagere. Hvilken portion er størst?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløbet \"Del ligeligt\" er klaret. Mølleren: \"Tak skal du have. Nu har alle fået lige meget.\" NYE STEDER Grusgraven er åben: Grusgra",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 555,
+     "art": "opgave",
+     "nr": 16,
+     "tekst": "To sække mel er lige store. Bageren kan få 3/10 af den ene sæk eller 3/4 af den anden sæk. Hvilken portion er størst?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 3 af 8 Hvilken portion er størst? To delinger, ét spørgsmål: hvem fik mest? Pas på, flere dele er ikke altid mere. 🔒 Niels, ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 575,
+     "art": "opgave",
+     "nr": 17,
+     "tekst": "Bagerkonen deler 4 brød ligeligt mellem 5 karle på møllen. Hvor meget brød får hver karl?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 3 af 8 Hvilken portion er størst? To delinger, ét spørgsmål: hvem fik mest? Pas på, flere dele er ikke altid mere. 🔒 Niels, ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 599,
+     "art": "opgave",
+     "nr": 18,
+     "tekst": "To sække mel er lige store. Bageren kan få 3/5 af den ene sæk eller 3/10 af den anden sæk. Hvilken portion er størst?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 3 af 8 Hvilken portion er størst? To delinger, ét spørgsmål: hvem fik mest? Pas på, flere dele er ikke altid mere. 🔒 Niels, ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 612,
+     "art": "niveau-op",
+     "tekst": "NIVEAU OP! Niveau 4 Du mestrede \"Hvilken portion er størst?\" hos Mølleren. Din figur er blevet klogere: Hoved er nu 4. Fedt!"
+    },
+    {
+     "t": 621,
+     "art": "replik",
+     "tekst": "Forløbet \"Hvilken portion er størst?\" er klaret. Mølleren: \"Nu ved du, at flere dele giver mindre dele.\"",
+     "udraab": [
+      {
+       "quest": "mel-til-bageren",
+       "iSyne": false,
+       "px": -406
+      },
+      {
+       "quest": "aenderne",
+       "iSyne": false,
+       "px": -263
+      },
+      {
+       "questbogKnap": "Questbogen 2 nye"
+      }
+     ]
+    },
+    {
+     "t": 636,
+     "art": "byVaagner",
+     "tekst": "BYEN VÅGNER Bagerens ovn er tændt Indbyggere: 38 (før 27) Bageren: \"Der dufter af brød igen! Men broen over åen er rådden, så jeg kan ikke køre brødet ud.\" Ny opgave: Samme mel, nye poser Se det på kortet"
+    },
+    {
+     "t": 669,
+     "art": "nyt-sted",
+     "tekst": "NYE STEDER Grusgraven er åben: Grusgraveren venter. Grusgraveren: \"Ingen har målt noget her i årevis. Tag din lineal frem: kan du læse, hvor lang en ting er, også når den ikke ligger fra 0?\" Gå til Grusgraven Landsbygaden er åben: Købmanden venter. Købmanden: \"Der er varer at tælle og priser at regne på. Har du sans for handel?\" Gå til Landsbygaden Kirken er åben: Degnen venter. Degnen: \"Før klokken kalder til time, lad os se, hvad du husker.\" Gå til Kirken"
+    },
+    {
+     "t": 669,
+     "art": "fortsaet",
+     "tekst": "Fortsæt hos Mølleren"
+    },
+    {
+     "t": 691,
+     "art": "opgave",
+     "nr": 19,
+     "tekst": "Mølleren har 3/4 sæk mel. Han hælder det i poser, der hver rummer 1/8 sæk. Hvor mange ottendedele sæk er det? Skriv det som en brøk.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløbet \"Hvilken portion er størst?\" er klaret. Mølleren: \"Nu ved du, at flere dele giver mindre dele.\" ! Niels, møllerens dreng, s",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 715,
+     "art": "opgave",
+     "nr": 20,
+     "tekst": "Bageren har 2/3 sæk mel. Han hælder det i poser, der hver rummer 1/12 sæk. Hvor mange tolvtedele sæk er det? Skriv det som en brøk.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 747,
+     "art": "opgave",
+     "nr": 21,
+     "tekst": "Hvilken portion er størst: 3/4 sæk eller 3/10 sæk?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 766,
+     "art": "opgave",
+     "nr": 22,
+     "tekst": "Mølledrengen har skrevet 8/12 sæk i regnebogen. Forkort brøken så meget som muligt.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 821,
+     "art": "opgave",
+     "nr": 23,
+     "tekst": "Bageren har 1/2 sæk mel. Han hælder det i poser, der hver rummer 1/4 sæk. Hvor mange fjerdedele sæk er det? Skriv det som en brøk.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 837,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 2 af 4 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Mølleren: \"Tæt på. Én rigtig mere, så har du det.\""
+    },
+    {
+     "t": 865,
+     "art": "opgave",
+     "nr": 24,
+     "tekst": "Mølledrengen har 1/4 sæk mel. Han hælder det i poser, der hver rummer 1/8 sæk. Hvor mange ottendedele sæk er det? Skriv det som en brøk.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 882,
+     "art": "opgave",
+     "nr": 25,
+     "tekst": "Hvilken portion er størst: 3/8 sæk eller 3/5 sæk?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 902,
+     "art": "opgave",
+     "nr": 26,
+     "tekst": "Mølledrengen har skrevet 8/10 sæk i regnebogen. Forkort brøken så meget som muligt.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 917,
+     "art": "niveau-op",
+     "tekst": "NIVEAU OP! Niveau 5 · Svend Du mestrede \"Samme mel, nye poser\" hos Mølleren. Din figur er blevet klogere: Hoved er nu 5. Du er nu svend. Fedt!"
+    },
+    {
+     "t": 926,
+     "art": "replik",
+     "tekst": "Forløbet \"Samme mel, nye poser\" er klaret. Mølleren: \"Du kan forlænge og forkorte: samme mængde, andet navn.\"",
+     "udraab": [
+      {
+       "quest": "mel-til-bageren",
+       "iSyne": false,
+       "px": -91
+      },
+      {
+       "quest": "aenderne",
+       "iSyne": true,
+       "px": 52
+      },
+      {
+       "questbogKnap": "Questbogen 2 nye"
+      }
+     ]
+    },
+    {
+     "t": 939,
+     "art": "byVaagner",
+     "tekst": "BYEN VÅGNER Broen over åen er repareret Indbyggere: 50 (før 38) Tømreren: \"Broen holder. Nu mangler vi lys langs vejen, før det bliver mørkt.\" Ny opgave: Sæk på sæk Se det på kortet"
+    },
+    {
+     "t": 956,
+     "art": "opgave",
+     "nr": 27,
+     "tekst": "Mølleren maler 1/5 sæk rugmel før middag og 3/5 sæk efter middag. Hvor meget har han malet i alt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløbet \"Samme mel, nye poser\" er klaret. Mølleren: \"Du kan forlænge og forkorte: samme mængde, andet navn.\" NYE STEDER Grusgraven ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 981,
+     "art": "opgave",
+     "nr": 28,
+     "tekst": "Mølledrengen fylder 1/8 sæk mel om morgenen og 3/8 sæk om eftermiddagen. Hvor meget har han fyldt i alt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 5 af 8 Sæk på sæk Morgenens korn skal lægges til, og det solgte skal trækkes fra. Vil du holde regnskab? 1 af 5 opgaver løst ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1005,
+     "art": "opgave",
+     "nr": 29,
+     "tekst": "Bageren har 1/4 sæk mel. Han hælder det i poser, der hver rummer 1/12 sæk. Hvor mange tolvtedele sæk er det? Skriv det som en brøk.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 5 af 8 Sæk på sæk Morgenens korn skal lægges til, og det solgte skal trækkes fra. Vil du holde regnskab? 2 af 5 opgaver løst ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1027,
+     "art": "opgave",
+     "nr": 30,
+     "tekst": "Bageren henter 1/10 sæk mel om morgenen og 3/10 sæk til om aftenen. Hvor meget har han hentet i alt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 5 af 8 Sæk på sæk Morgenens korn skal lægges til, og det solgte skal trækkes fra. Vil du holde regnskab? 3 af 5 opgaver løst ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1049,
+     "art": "opgave",
+     "nr": 31,
+     "tekst": "Bageren har bagt 7 lige store brød, og 6 er solgt: ▰▰▰▰▰▰▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 5 af 8 Sæk på sæk Morgenens korn skal lægges til, og det solgte skal trækkes fra. Vil du holde regnskab? 4 af 5 opgaver løst ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1073,
+     "art": "niveau-op",
+     "tekst": "NIVEAU OP! Niveau 6 Du mestrede \"Sæk på sæk\" hos Mølleren. Din figur er blevet klogere: Hoved er nu 6. Fedt!"
+    },
+    {
+     "t": 1080,
+     "art": "replik",
+     "tekst": "Forløbet \"Sæk på sæk\" er klaret. Mølleren: \"Regnestykket går op, akkurat som sækkene.\"",
+     "udraab": [
+      {
+       "quest": "mel-til-bageren",
+       "iSyne": false,
+       "px": -49
+      },
+      {
+       "quest": "aenderne",
+       "iSyne": true,
+       "px": 94
+      },
+      {
+       "questbogKnap": "Questbogen 2 nye"
+      }
+     ]
+    },
+    {
+     "t": 1093,
+     "art": "byVaagner",
+     "tekst": "BYEN VÅGNER Lygterne langs vejen lyser Indbyggere: 64 (før 50) Lygtetænderen: \"Nu kan folk finde hjem om aftenen. Men kirkeklokken har tiet i årevis.\" Ny opgave: Bagerens del Se det på kortet"
+    },
+    {
+     "t": 1110,
+     "art": "opgave",
+     "nr": 32,
+     "tekst": "Mølledrengen har 9 sække korn på vognen. 1/3 af dem er hvede. Hvor mange sække hvede er der?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløbet \"Sæk på sæk\" er klaret. Mølleren: \"Regnestykket går op, akkurat som sækkene.\" NYE STEDER Grusgraven er åben: Grusgraveren v",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1135,
+     "art": "opgave",
+     "nr": 33,
+     "tekst": "Bageren har 16 sække mel på lager. 3/4 af dem skal bruges til rugbrød. Hvor mange sække er det?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 6 af 8 Bagerens del Bageren skal have en brøkdel af alle mine sække. Hvor mange sække er det? 1 af 5 opgaver løst · mestret v",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1156,
+     "art": "opgave",
+     "nr": 34,
+     "tekst": "Mølleren maler 1/10 sæk rugmel før middag og 7/10 sæk efter middag. Hvor meget har han malet i alt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 6 af 8 Bagerens del Bageren skal have en brøkdel af alle mine sække. Hvor mange sække er det? 2 af 5 opgaver løst · mestret v",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1178,
+     "art": "opgave",
+     "nr": 35,
+     "tekst": "Mølledrengen har 110 sække korn på vognen. 7/10 af dem er hvede. Hvor mange sække hvede er der?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 6 af 8 Bagerens del Bageren skal have en brøkdel af alle mine sække. Hvor mange sække er det? 3 af 5 opgaver løst · mestret v",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1202,
+     "art": "opgave",
+     "nr": 36,
+     "tekst": "Mølleren har 1/2 sæk mel. Han hælder det i poser, der hver rummer 1/10 sæk. Hvor mange tiendedele sæk er det? Skriv det som en brøk.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 6 af 8 Bagerens del Bageren skal have en brøkdel af alle mine sække. Hvor mange sække er det? 4 af 5 opgaver løst · mestret v",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1214,
+     "art": "niveau-op",
+     "tekst": "NIVEAU OP! Niveau 7 Du mestrede \"Bagerens del\" hos Mølleren. Din figur er blevet klogere: Hoved er nu 7. Fedt!"
+    },
+    {
+     "t": 1223,
+     "art": "replik",
+     "tekst": "Forløbet \"Bagerens del\" er klaret. Mølleren: \"Nu kan du finde en brøkdel af en hel bunke sække.\"",
+     "udraab": [
+      {
+       "quest": "mel-til-bageren",
+       "iSyne": false,
+       "px": -70
+      },
+      {
+       "quest": "aenderne",
+       "iSyne": true,
+       "px": 73
+      },
+      {
+       "questbogKnap": "Questbogen 2 nye"
+      }
+     ]
+    },
+    {
+     "t": 1236,
+     "art": "byVaagner",
+     "tekst": "BYEN VÅGNER Kirkeklokken ringer igen Indbyggere: 81 (før 64) Klokkeren: \"Klokken kalder folk ud på markerne. Nu skal der sås hvede og rug.\" Ny opgave: Hvede og rug Se det på kortet"
+    },
+    {
+     "t": 1252,
+     "art": "opgave",
+     "nr": 37,
+     "tekst": "Mølleren har 1/4 sæk hvedemel og 1/2 sæk rugmel. Hvor meget mel har han i alt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløbet \"Bagerens del\" er klaret. Mølleren: \"Nu kan du finde en brøkdel af en hel bunke sække.\" NYE STEDER Grusgraven er åben: Grus",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1275,
+     "art": "opgave",
+     "nr": 38,
+     "tekst": "Mølleren har 1/6 sæk hvedemel og 1/2 sæk rugmel. Hvor meget mel har han i alt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 7 af 8 Hvede og rug Hvedemel og rugmel er målt i forskellige dele. Skal de lægges sammen, må delene først være lige store. 1 ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1297,
+     "art": "opgave",
+     "nr": 39,
+     "tekst": "Bageren har 20 sække mel på lager. 3/4 af dem skal bruges til rugbrød. Hvor mange sække er det?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 7 af 8 Hvede og rug Hvedemel og rugmel er målt i forskellige dele. Skal de lægges sammen, må delene først være lige store. 2 ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1329,
+     "art": "loesning",
+     "tekst": "Løsningen: 1/4 af 20 er 20 : 4 = 5. 3/4 er 3 af de grupper: 3 · 5 = 15."
+    },
+    {
+     "t": 1348,
+     "art": "opgave",
+     "nr": 40,
+     "tekst": "Bageren havde 4/5 sæk mel og brugte 1/6 sæk til boller. Hvor meget er der tilbage?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 7 af 8 Hvede og rug Hvedemel og rugmel er målt i forskellige dele. Skal de lægges sammen, må delene først være lige store. 3 ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1367,
+     "art": "opgave",
+     "nr": 41,
+     "tekst": "Møllerkonen deler 1 æble ligeligt mellem 5 børn. Hvor meget æble får hvert barn?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 7 af 8 Hvede og rug Hvedemel og rugmel er målt i forskellige dele. Skal de lægges sammen, må delene først være lige store. 4 ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1382,
+     "art": "niveau-op",
+     "tekst": "NIVEAU OP! Niveau 8 · Mester Du mestrede \"Hvede og rug\" hos Mølleren. Din figur er blevet klogere: Hoved er nu 8. Du er nu mester. Fedt!"
+    },
+    {
+     "t": 1389,
+     "art": "replik",
+     "tekst": "Forløbet \"Hvede og rug\" er klaret. Mølleren: \"Fælles nævner: det er hele hemmeligheden.\"",
+     "udraab": [
+      {
+       "quest": "mel-til-bageren",
+       "iSyne": false,
+       "px": -70
+      },
+      {
+       "quest": "aenderne",
+       "iSyne": true,
+       "px": 73
+      },
+      {
+       "questbogKnap": "Questbogen 2 nye"
+      }
+     ]
+    },
+    {
+     "t": 1400,
+     "art": "byVaagner",
+     "tekst": "BYEN VÅGNER Kornmarkerne bølger Indbyggere: 100 (før 81) Bondekonen: \"Sikke en høst! Går regnskabet op, holder vi høstgilde.\" Ny opgave: Mesterens regnskab Se det på kortet"
+    },
+    {
+     "t": 1420,
+     "art": "opgave",
+     "nr": 42,
+     "tekst": "Mølleren har fyldt 8 poser, der hver rummer 1/3 sæk. Hvor mange hele sække og hvor meget mere er det? Svar med et blandet tal.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløbet \"Hvede og rug\" er klaret. Mølleren: \"Fælles nævner: det er hele hemmeligheden.\" NYE STEDER Grusgraven er åben: Grusgraveren",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1444,
+     "art": "opgave",
+     "nr": 43,
+     "tekst": "Mølleren har 3 2/3 sæk mel og får 2 2/3 sæk mere. Hvor meget har han nu?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 8 af 8 Mesterens regnskab Sidste trin: hele sække og brøker på én gang. Det er mine sværeste tal. 1 af 5 opgaver løst · mestr",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1465,
+     "art": "opgave",
+     "nr": 44,
+     "tekst": "Mølledrengen bærer 1/6 sæk hvedemel og 1/3 sæk rugmel ind i bageriet. Hvor meget mel bærer han i alt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 8 af 8 Mesterens regnskab Sidste trin: hele sække og brøker på én gang. Det er mine sværeste tal. 2 af 5 opgaver løst · mestr",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1486,
+     "art": "opgave",
+     "nr": 45,
+     "tekst": "Bageren havde 3 1/6 sæk mel og brugte 1 5/6 sæk til julebagningen. Hvor meget er der tilbage?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 8 af 8 Mesterens regnskab Sidste trin: hele sække og brøker på én gang. Det er mine sværeste tal. 3 af 5 opgaver løst · mestr",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1549,
+     "art": "opgave",
+     "nr": 46,
+     "tekst": "Mølledrengen fylder 3/8 sæk mel om morgenen og 3/8 sæk om eftermiddagen. Hvor meget har han fyldt i alt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 8 af 8 Mesterens regnskab Sidste trin: hele sække og brøker på én gang. Det er mine sværeste tal. 4 af 5 opgaver løst · mestr",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1582,
+     "art": "opgave",
+     "nr": 47,
+     "tekst": "Mølledrengen har båret 19 poser à 1/6 sæk. Hvor mange sække er det, skrevet som et blandet tal?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 8 af 8 Mesterens regnskab Sidste trin: hele sække og brøker på én gang. Det er mine sværeste tal. 0 af 5 opgaver løst · mestr",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1598,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 3 af 5 var rigtige i første forsøg. Mølleren vil se mindst 4, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Mølleren: \"Tæt på. Én rigtig mere, så har du det.\""
+    },
+    {
+     "t": 1632,
+     "art": "loesning",
+     "tekst": "Løsningen: 6 går 3 gange op i 19 med 1 til rest: 19/6 = 3 hele og 1/6, altså 3 1/6."
+    },
+    {
+     "t": 1651,
+     "art": "opgave",
+     "nr": 48,
+     "tekst": "Bageren har 1 3/4 sæk mel og køber 2 3/4 sæk mere. Hvor meget har han nu?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 8 af 8 Mesterens regnskab Sidste trin: hele sække og brøker på én gang. Det er mine sværeste tal. 1 af 5 opgaver løst · mestr",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1671,
+     "art": "opgave",
+     "nr": 49,
+     "tekst": "Mølleren har 1/2 sæk hvedemel og 1/4 sæk rugmel. Hvor meget mel har han i alt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 8 af 8 Mesterens regnskab Sidste trin: hele sække og brøker på én gang. Det er mine sværeste tal. 2 af 5 opgaver løst · mestr",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1692,
+     "art": "opgave",
+     "nr": 50,
+     "tekst": "Bageren havde 3 1/6 sæk mel og brugte 2 5/6 sæk til julebagningen. Hvor meget er der tilbage?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 8 af 8 Mesterens regnskab Sidste trin: hele sække og brøker på én gang. Det er mine sværeste tal. 3 af 5 opgaver løst · mestr",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1716,
+     "art": "opgave",
+     "nr": 51,
+     "tekst": "To sække mel er lige store. Bageren kan få 3/10 af den ene sæk eller 3/8 af den anden sæk. Hvilken portion er størst?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 8 af 8 Mesterens regnskab Sidste trin: hele sække og brøker på én gang. Det er mine sværeste tal. 4 af 5 opgaver løst · mestr",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1728,
+     "art": "niveau-op",
+     "tekst": "NIVEAU OP! Niveau 9 Du mestrede \"Mesterens regnskab\" hos Mølleren. Din figur er blevet klogere: Hoved er nu 9. Fedt!"
+    },
+    {
+     "t": 1741,
+     "art": "replik",
+     "tekst": "Forløbet \"Mesterens regnskab\" er klaret. Mølleren: \"Du har gået hele brøktrappen, fra lige store dele til blandede tal. Du regner nu lige så sikkert, som jeg maler.\"",
+     "udraab": [
+      {
+       "quest": "mel-til-bageren",
+       "iSyne": false,
+       "px": -67
+      },
+      {
+       "quest": "aenderne",
+       "iSyne": true,
+       "px": 76
+      },
+      {
+       "questbogKnap": "Questbogen 2 nye"
+      }
+     ]
+    },
+    {
+     "t": 1751,
+     "art": "byVaagner",
+     "tekst": "BYEN VÅGNER Høstgilde i landsbyen Indbyggere: 124 (før 100) Spillemanden: \"Hele landsbyen er vågnet, og det er din fortjeneste. Spil op!\" Se det på kortet"
+    },
+    {
+     "t": 1751,
+     "art": "ser-udraab",
+     "quest": "mel-til-bageren"
+    },
+    {
+     "t": 1791,
+     "art": "hjaelper",
+     "quest": "mel-til-bageren",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Mel til bageren Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe mølleren med at dele sækkene? Belønning: Melsække ved møllen 0 af 3 opgaver løst · Ane vil se 2 rigtige i første forsøg Ane skal bruge 6 lige store sække mel til morgenbrødet. Mølleren har fyldt 4 af dem: ▰▰▰▰▱▱. Hvor stor en del af sækkene"
+    },
+    {
+     "t": 1811,
+     "art": "opgave",
+     "nr": 52,
+     "tekst": "Ane skal bruge 6 lige store sække mel til morgenbrødet. Mølleren har fyldt 4 af dem: ▰▰▰▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Mel til bageren Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1821,
+     "art": "slut"
+    }
+   ],
+   "hoved": "9 Tulle Niveau 9 · Mester Næste niveau: mestr et forløb. 435 erfaring",
+   "vandret": true,
+   "sidefejl": [],
+   "billeder": [
+    "E-efter-42-travl-390-00-opret.png",
+    "E-efter-42-travl-390-01-foerste-skaerm.png",
+    "E-efter-42-travl-390-03-aabning.png",
+    "E-efter-42-travl-390-02-foerste-opgave.png",
+    "E-efter-42-travl-390-10-hint.png",
+    "E-efter-42-travl-390-11-samme-forloeb-igen.png",
+    "E-efter-42-travl-390-20-niveau-op.png",
+    "E-efter-42-travl-390-2x-replik.png",
+    "E-efter-42-travl-390-2x-byVaagner.png",
+    "E-efter-42-travl-390-25-kort-efter-forloeb.png",
+    "E-efter-42-travl-390-25-kort-efter-forloeb.png",
+    "E-efter-42-travl-390-26-nyt-sted.png",
+    "E-efter-42-travl-390-30-questbog.png",
+    "E-efter-42-travl-390-31-quest-i-panelet.png",
+    "E-efter-42-travl-390-40-kortet-efter-30-min.png",
+    "E-efter-42-travl-390-50-min-helt.png",
+    "E-efter-42-travl-390-51-questbog.png"
+   ]
+  },
+  {
+   "variant": "foelger",
+   "bredde": 390,
+   "ur": {
+    "s": 1834,
+    "rul": 7
+   },
+   "opg": {
+    "antal": 49,
+    "rigtigeFoerste": 38,
+    "loesning": 2,
+    "foresloeg": 64,
+    "ukendt": 0,
+    "ord": 1013
+   },
+   "historieOrd": {
+    "tak": 282,
+    "hvil": 71,
+    "replik": 83,
+    "mestring": 123,
+    "bogPanel": 160,
+    "niveau": 170,
+    "aabning": 49,
+    "byVaagner": 97,
+    "nytSted": 87,
+    "ankomst": 78
+   },
+   "foersteSkaerm": {
+    "opgaveTop": 1902,
+    "skaermHoejde": 844,
+    "sideHoejde": 2257
+   },
+   "naesteFejl": "Ikke helt. Hint 1 af 2: Nævneren, tallet under brøkstregen, er antallet af lige store stykker i alt. Her er det 10.",
+   "log": [
+    {
+     "t": 18,
+     "art": "start",
+     "opgaveTop": 1902,
+     "skaermHoejde": 844,
+     "sideHoejde": 2257
+    },
+    {
+     "t": 38,
+     "art": "aabning",
+     "tekst": "Tulle kommer ned ad vejen til Møllen. Mølleren står i døren, hvid af mel. Mølleren: \"Godt, du kom. Hjulet er gået i stå, og Ane, bagerkonen, har intet mel til morgenbrødet.\" Mølleren: \"Hjælp mig med \"Lige store dele\", så kan vi male igen, og så kan du hjælpe Ane.\"",
+     "aabningTop": 8,
+     "knapBund": 672,
+     "skaerm": 844
+    },
+    {
+     "t": 57,
+     "art": "opgave",
+     "nr": 1,
+     "tekst": "Mølleren har delt sin mark i 3 lige store stykker, og 1 er sået: ▰▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Tulle kommer ned ad vejen til Møllen. Mølleren står i døren, hvid af mel. Mølleren: \"Godt, du kom. Hjulet er gået i stå, og Ane, bag",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 80,
+     "art": "opgave",
+     "nr": 2,
+     "tekst": "Bageren har skåret en kageplade i 7 lige store stykker, og 1 er spist: ▰▱▱▱▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 103,
+     "art": "opgave",
+     "nr": 3,
+     "tekst": "Bageren har skåret en kageplade i 10 lige store stykker, og 5 er spist: ▰▰▰▰▰▱▱▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 137,
+     "art": "opgave",
+     "nr": 4,
+     "tekst": "Bageren har skåret en kageplade i 4 lige store stykker, og 2 er spist: ▰▰▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 153,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 2 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Mølleren: \"Tæt på. Én rigtig mere, så har du det.\""
+    },
+    {
+     "t": 176,
+     "art": "opgave",
+     "nr": 5,
+     "tekst": "Mølleren har 8 lige store sække på vognen, og 6 er fyldt med mel: ▰▰▰▰▰▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 200,
+     "art": "opgave",
+     "nr": 6,
+     "tekst": "Mølleren har 7 lige store sække på vognen, og 2 er fyldt med mel: ▰▰▱▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 212,
+     "art": "niveau-op",
+     "tekst": "NIVEAU OP! Niveau 2 Du mestrede \"Lige store dele\" hos Mølleren. Din figur er blevet klogere: Hoved er nu 2. Fedt!"
+    },
+    {
+     "t": 223,
+     "art": "replik",
+     "tekst": "Forløbet \"Lige store dele\" er klaret. Mølleren: \"Nu ved du, hvad en brøk er: nogle af de lige store dele af en helhed.\"",
+     "udraab": [
+      {
+       "quest": "mel-til-bageren",
+       "iSyne": false,
+       "px": -406
+      },
+      {
+       "questbogKnap": "Questbogen 1 ny"
+      }
+     ]
+    },
+    {
+     "t": 234,
+     "art": "byVaagner",
+     "tekst": "BYEN VÅGNER Kværnhjulet drejer igen Indbyggere: 19 (før 12) Møllerdrengen: \"Hjulet går! Nu skal melet bare deles ligeligt.\" Ny opgave: Del ligeligt Se det på kortet"
+    },
+    {
+     "t": 234,
+     "art": "klaret-hjaelp",
+     "quest": "mel-til-bageren",
+     "iSyne": true
+    },
+    {
+     "t": 237,
+     "art": "hjaelper",
+     "quest": "mel-til-bageren",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Mel til bageren Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe mølleren med at dele sækkene? Belønning: Melsække ved møllen 0 af 3 opgaver løst · Ane vil se 2 rigtige i første forsøg Ane skal bruge 6 lige store sække mel til morgenbrødet. Mølleren har fyldt 4 af dem: ▰▰▰▰▱▱. Hvor stor en del af sækkene"
+    },
+    {
+     "t": 257,
+     "art": "opgave",
+     "nr": 7,
+     "tekst": "Ane skal bruge 6 lige store sække mel til morgenbrødet. Mølleren har fyldt 4 af dem: ▰▰▰▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Mel til bageren Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 290,
+     "art": "opgave",
+     "nr": 8,
+     "tekst": "Ane har formet 6 lige store brød af dejen, og 4 er bagt: ▰▰▰▰▱▱. Hvor stor en del af brødene er bagt?",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Mel til bageren Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 324,
+     "art": "opgave",
+     "nr": 9,
+     "tekst": "Ane har 4 lige store melkrukker på hylden i bageriet, og 2 er fyldt med mel: ▰▰▱▱. Hvor stor en del af krukkerne er fyldt?",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Mel til bageren Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 342,
+     "art": "hvil",
+     "tekst": "Ane: \"Du fik dem alle løst! 1 af 3 sad i første forsøg. Næste gang vil jeg gerne se 2. Klar \"Del ligeligt\" hos Mølleren lige her under, så har jeg nye tal til dig.\""
+    },
+    {
+     "t": 358,
+     "art": "opgave",
+     "nr": 10,
+     "tekst": "Mølledrengen deler 4 sække mel ligeligt mellem 5 bagere. Hvor meget mel får hver bager?",
+     "panel": "Ane: \"Du fik dem alle løst! 1 af 3 sad i første forsøg. Næste gang vil jeg gerne se 2. Klar \"Del ligeligt\" hos Mølleren lige her under, så har jeg nye tal til d",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 382,
+     "art": "opgave",
+     "nr": 11,
+     "tekst": "Bagerkonen deler 2 brød ligeligt mellem 4 karle på møllen. Hvor meget brød får hver karl?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 🔒 Ane,",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 404,
+     "art": "opgave",
+     "nr": 12,
+     "tekst": "Bageren har bagt 7 lige store brød, og 2 er solgt: ▰▰▱▱▱▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 🔒 Ane,",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 423,
+     "art": "opgave",
+     "nr": 13,
+     "tekst": "Mølledrengen deler 2 æbler ligeligt mellem 5 børn. Hvor meget æble får hvert barn?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 🔒 Ane,",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 438,
+     "art": "niveau-op",
+     "tekst": "NIVEAU OP! Niveau 3 · Lærling Du mestrede \"Del ligeligt\" hos Mølleren. Din figur er blevet klogere: Hoved er nu 3. Du er nu lærling. Fedt!"
+    },
+    {
+     "t": 446,
+     "art": "replik",
+     "tekst": "Forløbet \"Del ligeligt\" er klaret. Mølleren: \"Tak skal du have. Nu har alle fået lige meget.\"",
+     "udraab": [
+      {
+       "quest": "mel-til-bageren",
+       "iSyne": false,
+       "px": -406
+      },
+      {
+       "questbogKnap": "Questbogen 1 ny"
+      }
+     ]
+    },
+    {
+     "t": 460,
+     "art": "byVaagner",
+     "tekst": "BYEN VÅGNER Kornvognen kører Indbyggere: 27 (før 19) Kusken: \"Alle har fået deres del. Bageren vil have det bedste mel, men hvilken portion er størst?\" Ny opgave: Hvilken portion er størst? Se det på kortet"
+    },
+    {
+     "t": 460,
+     "art": "klaret-hjaelp",
+     "quest": "mel-til-bageren",
+     "iSyne": true
+    },
+    {
+     "t": 464,
+     "art": "hjaelper",
+     "quest": "mel-til-bageren",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Mel til bageren Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe mølleren med at dele sækkene? Belønning: Melsække ved møllen 0 af 3 opgaver løst · Ane vil se 2 rigtige i første forsøg Ane har 4 lige store melkrukker på hylden i bageriet, og 1 er fyldt med mel: ▰▱▱▱. Hvor stor en del af krukkerne er fyld"
+    },
+    {
+     "t": 484,
+     "art": "opgave",
+     "nr": 14,
+     "tekst": "Ane har 4 lige store melkrukker på hylden i bageriet, og 1 er fyldt med mel: ▰▱▱▱. Hvor stor en del af krukkerne er fyldt?",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Mel til bageren Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 508,
+     "art": "opgave",
+     "nr": 15,
+     "tekst": "Ane skal bruge 8 lige store sække mel til morgenbrødet. Mølleren har fyldt 2 af dem: ▰▰▱▱▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Mel til bageren Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 544,
+     "art": "opgave",
+     "nr": 16,
+     "tekst": "Ane har hældt en sæk mel i 8 lige store poser, og 6 af poserne er brugt til dejen: ▰▰▰▰▰▰▱▱. Hvor stor en del af melet er brugt?",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Mel til bageren Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 566,
+     "art": "tak",
+     "tekst": "QUEST KLARET Mel til bageren Ane: \"Tak! Nu kan jeg bage. Mølleren har stillet sækkene ud til mig.\" Du fik: Melsække ved møllen. De står nu på kortet og bliver stående. Nyt i questbogen: Ane, bagerkonen: \"Brød til alle\" Se det på kortet Åbn questbogen",
+     "udraab": [
+      {
+       "quest": "broed-til-alle",
+       "iSyne": false,
+       "px": -104
+      },
+      {
+       "questbogKnap": "Questbogen 1 ny"
+      }
+     ]
+    },
+    {
+     "t": 566,
+     "art": "ser-udraab",
+     "quest": "broed-til-alle"
+    },
+    {
+     "t": 603,
+     "art": "hjaelper",
+     "quest": "broed-til-alle",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Brød til alle Brødet er bagt, og nu skal det deles ligeligt mellem gårdene. Ingen må få mindre end de andre. Belønning: Bagerhuen 0 af 3 opgaver løst · Ane vil se 2 rigtige i første forsøg Ane deler 3 kringler ligeligt mellem 5 huse på gaden. Hvor meget kringle får hvert hus? 5/3 3/5 1/5"
+    },
+    {
+     "t": 620,
+     "art": "opgave",
+     "nr": 17,
+     "tekst": "Ane deler 3 kringler ligeligt mellem 5 huse på gaden. Hvor meget kringle får hvert hus?",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Brød til alle Brødet er bagt, og nu skal det deles ligeligt mellem gårdene. Ingen må få ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 640,
+     "art": "opgave",
+     "nr": 18,
+     "tekst": "Ane deler 4 kringler ligeligt mellem 5 huse på gaden. Hvor meget kringle får hvert hus?",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Brød til alle Brødet er bagt, og nu skal det deles ligeligt mellem gårdene. Ingen må få ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 664,
+     "art": "opgave",
+     "nr": 19,
+     "tekst": "Ane har bagt 4 lige store brød til familierne, og 2 er pakket i kurven: ▰▰▱▱. Hvor stor en del af brødene er pakket?",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Brød til alle Brødet er bagt, og nu skal det deles ligeligt mellem gårdene. Ingen må få ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 695,
+     "art": "tak",
+     "tekst": "QUEST KLARET Brød til alle Ane: \"Alle fik lige meget. Her, tag min gamle bagerhue: du har fortjent den.\" Du fik: Bagerhuen. Din figur har den på nu, også på kortet. Et halvt niveau. Hjælp én person mere, eller mestr et forløb, så stiger du. Hvad nu? Klar \"Hvilken portion er størst?\" hos Mølleren ved møllen, så står Niels, møllerens dreng, med et ! ved møllen. Åbn questbogen",
+     "udraab": [
+      {
+       "questbogKnap": "Questbogen"
+      }
+     ]
+    },
+    {
+     "t": 719,
+     "art": "nyt-sted",
+     "tekst": "NYE STEDER Grusgraven er åben: Grusgraveren venter. Grusgraveren: \"Ingen har målt noget her i årevis. Tag din lineal frem: kan du læse, hvor lang en ting er, også når den ikke ligger fra 0?\" Gå til Grusgraven Landsbygaden er åben: Købmanden venter. Købmanden: \"Der er varer at tælle og priser at regne på. Har du sans for handel?\" Gå til Landsbygaden"
+    },
+    {
+     "t": 719,
+     "art": "gaar-til",
+     "sted": "stenbrud",
+     "via": "nyt-sted"
+    },
+    {
+     "t": 740,
+     "art": "ankomst",
+     "tekst": "Tulle kommer ned i Grusgraven. Grusgraveren står ved den væltede tipvogn med en lineal i hånden. Grusgraveren: \"Godt, du kom. Hans, karl i grusgraven, venter på dig med \"Sten til diget\".\" Grusgraveren: \"Klar \"Læs linealen\" med mig først, så kan du hjælpe Hans.\"",
+     "ankomstTop": 199,
+     "ankomstBund": 438,
+     "knapBund": 839,
+     "skaerm": 844
+    },
+    {
+     "t": 756,
+     "art": "opgave",
+     "nr": 20,
+     "tekst": "Et søm ligger på linealen fra 4 cm-stregen til 6 cm-stregen. Hvor langt er sømmet?",
+     "panel": "Grusgraven og den gamle gang GRUSGRAVEREN Tulle kommer ned i Grusgraven. Grusgraveren står ved den væltede tipvogn med en lineal i hånden. Grusgraveren: \"Godt, ",
+     "hvem": "Grusgraven og den gamle gang"
+    },
+    {
+     "t": 795,
+     "art": "opgave",
+     "nr": 21,
+     "tekst": "Et søm ligger på linealen fra 0-stregen og ender 6 små streger efter 6 cm-stregen. Hver lille streg er 1 mm. Hvor langt er sømmet i mm?",
+     "panel": "Grusgraven og den gamle gang GRUSGRAVEREN Forløb 1 af 6 Læs linealen Ingen har målt noget her i årevis. Tag din lineal frem: kan du læse, hvor lang en ting er, ",
+     "hvem": "Grusgraven og den gamle gang"
+    },
+    {
+     "t": 818,
+     "art": "opgave",
+     "nr": 22,
+     "tekst": "En kvist ligger på linealen fra 1 cm-stregen og ender 5 små streger efter 7 cm-stregen. Hvor lang er kvisten i mm?",
+     "panel": "Grusgraven og den gamle gang GRUSGRAVEREN Forløb 1 af 6 Læs linealen Ingen har målt noget her i årevis. Tag din lineal frem: kan du læse, hvor lang en ting er, ",
+     "hvem": "Grusgraven og den gamle gang"
+    },
+    {
+     "t": 871,
+     "art": "opgave",
+     "nr": 23,
+     "tekst": "Et søm ligger på linealen fra 2 cm-stregen til 5 cm-stregen. Hvor langt er sømmet?",
+     "panel": "Grusgraven og den gamle gang GRUSGRAVEREN Forløb 1 af 6 Læs linealen Ingen har målt noget her i årevis. Tag din lineal frem: kan du læse, hvor lang en ting er, ",
+     "hvem": "Grusgraven og den gamle gang"
+    },
+    {
+     "t": 889,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Grusgraveren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 913,
+     "art": "opgave",
+     "nr": 24,
+     "tekst": "En pind ligger på linealen fra 0-stregen og ender 1 lille streg efter 4 cm-stregen. Hver lille streg er 1 mm. Hvor lang er pinden i mm?",
+     "panel": "Grusgraven og den gamle gang GRUSGRAVEREN Forløb 1 af 6 Læs linealen Ingen har målt noget her i årevis. Tag din lineal frem: kan du læse, hvor lang en ting er, ",
+     "hvem": "Grusgraven og den gamle gang"
+    },
+    {
+     "t": 936,
+     "art": "opgave",
+     "nr": 25,
+     "tekst": "Et søm ligger på linealen fra 2 cm-stregen og ender 5 små streger efter 4 cm-stregen. Hvor langt er sømmet i mm?",
+     "panel": "Grusgraven og den gamle gang GRUSGRAVEREN Forløb 1 af 6 Læs linealen Ingen har målt noget her i årevis. Tag din lineal frem: kan du læse, hvor lang en ting er, ",
+     "hvem": "Grusgraven og den gamle gang"
+    },
+    {
+     "t": 949,
+     "art": "niveau-op",
+     "tekst": "NIVEAU OP! Niveau 4 Du mestrede \"Læs linealen\" hos Grusgraveren. Din figur er blevet dygtigere med hænderne: Hånd er nu 2. Fedt!"
+    },
+    {
+     "t": 958,
+     "art": "replik",
+     "tekst": "Forløbet \"Læs linealen\" er klaret. Grusgraveren: \"Du læser linealen rigtigt, cm og mm. Nu kan vi måle igen.\"",
+     "udraab": [
+      {
+       "quest": "sten-til-diget",
+       "iSyne": false,
+       "px": -548
+      },
+      {
+       "questbogKnap": "Questbogen 1 ny"
+      }
+     ]
+    },
+    {
+     "t": 973,
+     "art": "byVaagner",
+     "tekst": "GRUSGRAVEN VÅGNER Målepælene står igen Læs grus kørt ud: 6 (før 0) Landmåleren: \"Nu kan vi måle igen. Men skinnerne er skrevet op i alle mulige enheder.\" Ny opgave: Den rigtige enhed Se det på kortet"
+    },
+    {
+     "t": 973,
+     "art": "klaret-hjaelp",
+     "quest": "sten-til-diget",
+     "iSyne": true
+    },
+    {
+     "t": 976,
+     "art": "hjaelper",
+     "quest": "sten-til-diget",
+     "panel": "Grusgraven og den gamle gang Quest fra questbogen Læg questen væk HANS, KARL I GRUSGRAVEN Sten til diget Stendiget ved grusgraven er faldet sammen, og hver sten skal måles, før den lægges på plads. Belønning: Stendiget 0 af 3 opgaver løst · Hans vil se 2 rigtige i første forsøg Mellem de store sten i diget skal der småsten. En småsten ligger på linealen fra 1 cm-stregen til 10 cm-stregen. Hvor lan"
+    },
+    {
+     "t": 996,
+     "art": "opgave",
+     "nr": 26,
+     "tekst": "Mellem de store sten i diget skal der småsten. En småsten ligger på linealen fra 1 cm-stregen til 10 cm-stregen. Hvor lang er småstenen?",
+     "panel": "Grusgraven og den gamle gang Quest fra questbogen Læg questen væk HANS, KARL I GRUSGRAVEN Sten til diget Stendiget ved grusgraven er faldet sammen, og hver sten",
+     "hvem": "Grusgraven og den gamle gang"
+    },
+    {
+     "t": 1024,
+     "art": "opgave",
+     "nr": 27,
+     "tekst": "Hans fylder hullerne i diget med små kilesten. En kilesten ligger på linealen fra 0-stregen og ender 6 små streger efter 5 cm-stregen. Hver ",
+     "panel": "Grusgraven og den gamle gang Quest fra questbogen Læg questen væk HANS, KARL I GRUSGRAVEN Sten til diget Stendiget ved grusgraven er faldet sammen, og hver sten",
+     "hvem": "Grusgraven og den gamle gang"
+    },
+    {
+     "t": 1052,
+     "art": "opgave",
+     "nr": 28,
+     "tekst": "Hans vil vide, om stenene passer i sprækkerne. En flad sten ligger på linealen fra 0-stregen og ender 9 små streger efter 8 cm-stregen. Hver",
+     "panel": "Grusgraven og den gamle gang Quest fra questbogen Læg questen væk HANS, KARL I GRUSGRAVEN Sten til diget Stendiget ved grusgraven er faldet sammen, og hver sten",
+     "hvem": "Grusgraven og den gamle gang"
+    },
+    {
+     "t": 1068,
+     "art": "niveau-op",
+     "tekst": "NIVEAU OP! Niveau 5 · Svend Du hjalp Hans med \"Sten til diget\". Din figur er blevet dygtigere med hænderne: Hånd er nu 3. Du er nu svend. Fedt!"
+    },
+    {
+     "t": 1089,
+     "art": "tak",
+     "tekst": "QUEST KLARET Sten til diget Hans: \"Diget står igen, sten for sten. Det holder i hundrede år.\" Du fik: Stendiget. Den står nu på kortet og bliver stående. Hvad nu? Hans: \"Kom tilbage, når du har mestret \"Den rigtige enhed\" hos Grusgraveren.\" Se det på kortet Åbn questbogen",
+     "udraab": [
+      {
+       "questbogKnap": "Questbogen"
+      }
+     ]
+    },
+    {
+     "t": 1099,
+     "art": "nyt-sted",
+     "tekst": "NYT STED Landsbygaden er åben: Købmanden venter. Købmanden: \"Der er varer at tælle og priser at regne på. Har du sans for handel?\" Gå til Landsbygaden"
+    },
+    {
+     "t": 1099,
+     "art": "gaar-til",
+     "sted": "marked",
+     "via": "nyt-sted"
+    },
+    {
+     "t": 1120,
+     "art": "ankomst",
+     "tekst": "Tulle kommer ind på Landsbygaden. Købmanden står i døren til butikken. Købmanden: \"Godt, du kom. Else venter på dig med \"Æbler til gaden\".\" Købmanden: \"Klar \"Tæl varerne\" med mig først, så kan du hjælpe Else.\"",
+     "ankomstTop": 196,
+     "ankomstBund": 434,
+     "knapBund": 791,
+     "skaerm": 844
+    },
+    {
+     "t": 1134,
+     "art": "opgave",
+     "nr": 29,
+     "tekst": "Et rugbrød koster 12 kr hos købmanden. Hvad koster 2 rugbrød?",
+     "panel": "Landsbygaden og købmanden KØBMANDEN Tulle kommer ind på Landsbygaden. Købmanden står i døren til butikken. Købmanden: \"Godt, du kom. Else venter på dig med \"Æbl",
+     "hvem": "Landsbygaden og købmanden"
+    },
+    {
+     "t": 1157,
+     "art": "opgave",
+     "nr": 30,
+     "tekst": "Købmanden har 15 æbler og lægger dem i 3 kurve med lige mange i hver. Hvor mange æbler kommer der i hver kurv?",
+     "panel": "Landsbygaden og købmanden KØBMANDEN Forløb 1 af 6 Tæl varerne Der er varer at tælle og priser at regne på. Har du sans for handel? 🔒 Else venter med \"Æbler til",
+     "hvem": "Landsbygaden og købmanden"
+    },
+    {
+     "t": 1178,
+     "art": "opgave",
+     "nr": 31,
+     "tekst": "Købmanden får 3 sække kartofler, og hver sæk vejer 5 kg. Hvor mange kg kartofler er det?",
+     "panel": "Landsbygaden og købmanden KØBMANDEN Forløb 1 af 6 Tæl varerne Der er varer at tælle og priser at regne på. Har du sans for handel? 🔒 Else venter med \"Æbler til",
+     "hvem": "Landsbygaden og købmanden"
+    },
+    {
+     "t": 1206,
+     "art": "opgave",
+     "nr": 32,
+     "tekst": "En flaske saft koster 6 kr. Hvad koster 5 flasker?",
+     "panel": "Landsbygaden og købmanden KØBMANDEN Forløb 1 af 6 Tæl varerne Der er varer at tælle og priser at regne på. Har du sans for handel? 🔒 Else venter med \"Æbler til",
+     "hvem": "Landsbygaden og købmanden"
+    },
+    {
+     "t": 1222,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 2 af 3 var rigtige i første forsøg. Købmanden vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Købmanden: \"Tæt på. Én rigtig mere, så har du det.\""
+    },
+    {
+     "t": 1243,
+     "art": "opgave",
+     "nr": 33,
+     "tekst": "2 børn køber en pose bolsjer sammen for 8 kr. De betaler lige meget. Hvor meget skal hver betale?",
+     "panel": "Landsbygaden og købmanden KØBMANDEN Forløb 1 af 6 Tæl varerne Der er varer at tælle og priser at regne på. Har du sans for handel? 🔒 Else venter med \"Æbler til",
+     "hvem": "Landsbygaden og købmanden"
+    },
+    {
+     "t": 1263,
+     "art": "opgave",
+     "nr": 34,
+     "tekst": "Købmanden får 2 kasser med 3 flasker saft i hver. Hvor mange flasker er det?",
+     "panel": "Landsbygaden og købmanden KØBMANDEN Forløb 1 af 6 Tæl varerne Der er varer at tælle og priser at regne på. Har du sans for handel? 🔒 Else venter med \"Æbler til",
+     "hvem": "Landsbygaden og købmanden"
+    },
+    {
+     "t": 1276,
+     "art": "niveau-op",
+     "tekst": "NIVEAU OP! Niveau 6 Du mestrede \"Tæl varerne\" hos Købmanden. Din figur er blevet dygtigere med hænderne: Hånd er nu 4. Fedt!"
+    },
+    {
+     "t": 1284,
+     "art": "replik",
+     "tekst": "Forløbet \"Tæl varerne\" er klaret. Købmanden: \"Så er regnskabet gjort op — skøn indsats!\"",
+     "udraab": [
+      {
+       "quest": "aeblerne",
+       "iSyne": false,
+       "px": -26
+      },
+      {
+       "questbogKnap": "Questbogen 1 ny"
+      }
+     ]
+    },
+    {
+     "t": 1284,
+     "art": "klaret-hjaelp",
+     "quest": "aeblerne",
+     "iSyne": true
+    },
+    {
+     "t": 1287,
+     "art": "hjaelper",
+     "quest": "aeblerne",
+     "panel": "Landsbygaden og købmanden Quest fra questbogen Læg questen væk ELSE Æbler til gaden Æblerne fra min have skal sælges på gaden. Hvad skal de koste, og hvordan deler vi pengene? Belønning: Æbleboden på gaden 0 af 3 opgaver løst · Else vil se 2 rigtige i første forsøg Else har plukket 18 æbler og lægger dem i 3 kurve med lige mange i hver. Hvor mange æbler kommer der i hver kurv? 6 æbler 3 æbler 7 æb"
+    },
+    {
+     "t": 1307,
+     "art": "opgave",
+     "nr": 35,
+     "tekst": "Else har plukket 18 æbler og lægger dem i 3 kurve med lige mange i hver. Hvor mange æbler kommer der i hver kurv?",
+     "panel": "Landsbygaden og købmanden Quest fra questbogen Læg questen væk ELSE Æbler til gaden Æblerne fra min have skal sælges på gaden. Hvad skal de koste, og hvordan de",
+     "hvem": "Landsbygaden og købmanden"
+    },
+    {
+     "t": 1330,
+     "art": "opgave",
+     "nr": 36,
+     "tekst": "Else har plukket 48 æbler og lægger dem i 6 kurve med lige mange i hver. Hvor mange æbler kommer der i hver kurv?",
+     "panel": "Landsbygaden og købmanden Quest fra questbogen Læg questen væk ELSE Æbler til gaden Æblerne fra min have skal sælges på gaden. Hvad skal de koste, og hvordan de",
+     "hvem": "Landsbygaden og købmanden"
+    },
+    {
+     "t": 1349,
+     "art": "opgave",
+     "nr": 37,
+     "tekst": "En kurv æbler koster 12 kr hos Else. Hvad koster 2 kurve?",
+     "panel": "Landsbygaden og købmanden Quest fra questbogen Læg questen væk ELSE Æbler til gaden Æblerne fra min have skal sælges på gaden. Hvad skal de koste, og hvordan de",
+     "hvem": "Landsbygaden og købmanden"
+    },
+    {
+     "t": 1376,
+     "art": "tak",
+     "tekst": "QUEST KLARET Æbler til gaden Else: \"Boden står, og de første æbler er allerede solgt. Tak!\" Du fik: Æbleboden på gaden. Den står nu på kortet og bliver stående. Et halvt niveau. Hjælp én person mere, eller mestr et forløb, så stiger du. Nyt i questbogen: Karen, fra kroen: \"Høstmarkedet\" Se det på kortet Åbn questbogen",
+     "udraab": [
+      {
+       "quest": "hoestmarked",
+       "iSyne": false,
+       "px": -77
+      },
+      {
+       "questbogKnap": "Questbogen 1 ny"
+      }
+     ]
+    },
+    {
+     "t": 1376,
+     "art": "ser-udraab",
+     "quest": "hoestmarked"
+    },
+    {
+     "t": 1416,
+     "art": "hjaelper",
+     "quest": "hoestmarked",
+     "panel": "Landsbygaden og købmanden Quest fra questbogen Læg questen væk KAREN, FRA KROEN Høstmarkedet Hele landsbyen holder høstmarked, og alle boderne mangler en hjælpende hånd. Du kender jo alle sammen nu. Belønning: Høstmarkedet 0 af 4 opgaver løst · Karen vil se 3 rigtige i første forsøg Karen deler 2 honningkager ligeligt mellem 4 børn ved gyngen. Hvor meget honningkage får hvert barn? 2/4 1/4 4/2"
+    },
+    {
+     "t": 1433,
+     "art": "opgave",
+     "nr": 38,
+     "tekst": "Karen deler 2 honningkager ligeligt mellem 4 børn ved gyngen. Hvor meget honningkage får hvert barn?",
+     "panel": "Landsbygaden og købmanden Quest fra questbogen Læg questen væk KAREN, FRA KROEN Høstmarkedet Hele landsbyen holder høstmarked, og alle boderne mangler en hjælpe",
+     "hvem": "Landsbygaden og købmanden"
+    },
+    {
+     "t": 1460,
+     "art": "opgave",
+     "nr": 39,
+     "tekst": "Karen klipper bånd til vimplerne. Et stykke bånd ligger på linealen fra 0-stregen og ender 2 små streger efter 7 cm-stregen. Hver lille stre",
+     "panel": "Landsbygaden og købmanden Quest fra questbogen Læg questen væk KAREN, FRA KROEN Høstmarkedet Hele landsbyen holder høstmarked, og alle boderne mangler en hjælpe",
+     "hvem": "Landsbygaden og købmanden"
+    },
+    {
+     "t": 1492,
+     "art": "loesning",
+     "tekst": "Løsningen: 7 cm og 2 mm er 70 + 2 = 72 mm."
+    },
+    {
+     "t": 1509,
+     "art": "opgave",
+     "nr": 40,
+     "tekst": "En pølse koster 8 kr i Karens bod. Hvad koster 5 pølser?",
+     "panel": "Landsbygaden og købmanden Quest fra questbogen Læg questen væk KAREN, FRA KROEN Høstmarkedet Hele landsbyen holder høstmarked, og alle boderne mangler en hjælpe",
+     "hvem": "Landsbygaden og købmanden"
+    },
+    {
+     "t": 1532,
+     "art": "opgave",
+     "nr": 41,
+     "tekst": "Karen har 24 vimpler og hænger lige mange op ved hver af de 4 boder. Hvor mange vimpler kommer der ved hver bod?",
+     "panel": "Landsbygaden og købmanden Quest fra questbogen Læg questen væk KAREN, FRA KROEN Høstmarkedet Hele landsbyen holder høstmarked, og alle boderne mangler en hjælpe",
+     "hvem": "Landsbygaden og købmanden"
+    },
+    {
+     "t": 1545,
+     "art": "niveau-op",
+     "tekst": "NIVEAU OP! Niveau 7 Du hjalp Karen med \"Høstmarkedet\". Din figur er blevet dygtigere med hænderne: Hånd er nu 5. Fedt!"
+    },
+    {
+     "t": 1573,
+     "art": "tak",
+     "tekst": "QUEST KLARET Høstmarkedet Karen: \"Boderne står, vimplerne vajer, og hele landsbyen er ude. Det er din fortjeneste.\" Du fik: Høstmarkedet. Den står nu på kortet og bliver stående. Hvad nu? Karen: \"Kom tilbage, når du har hjulpet Hans med \"Fårene bag diget\", du har hjulpet Klokkeren med \"Op til klokken\" og du har hjulpet Konduktøren med \"Holdepladsen ved søen\".\" Se det på kortet Åbn questbogen",
+     "udraab": [
+      {
+       "questbogKnap": "Questbogen"
+      }
+     ]
+    },
+    {
+     "t": 1590,
+     "art": "opgave",
+     "nr": 42,
+     "tekst": "Købmanden har 30 æg og pakker dem i bakker med 6 i hver. Hvor mange bakker bliver det?",
+     "panel": "QUEST KLARET Høstmarkedet Karen: \"Boderne står, vimplerne vajer, og hele landsbyen er ude. Det er din fortjeneste.\" Du fik: Høstmarkedet. Den står nu på kortet ",
+     "hvem": "Landsbygaden og købmanden"
+    },
+    {
+     "t": 1613,
+     "art": "opgave",
+     "nr": 43,
+     "tekst": "Købmanden får 4 kasser med 3 flasker saft i hver. Hvor mange flasker er det?",
+     "panel": "Landsbygaden og købmanden KØBMANDEN Forløb 2 af 6 Del lige over Kunderne vil dele regningen, og æblerne skal i kurve med lige mange i hver. Kan du dele lige ove",
+     "hvem": "Landsbygaden og købmanden"
+    },
+    {
+     "t": 1631,
+     "art": "opgave",
+     "nr": 44,
+     "tekst": "En flaske saft koster 6 kr. Hvad koster 3 flasker?",
+     "panel": "Landsbygaden og købmanden KØBMANDEN Forløb 2 af 6 Del lige over Kunderne vil dele regningen, og æblerne skal i kurve med lige mange i hver. Kan du dele lige ove",
+     "hvem": "Landsbygaden og købmanden"
+    },
+    {
+     "t": 1646,
+     "art": "niveau-op",
+     "tekst": "NIVEAU OP! Niveau 8 · Mester Du mestrede \"Del lige over\" hos Købmanden. Din figur er blevet dygtigere med hænderne: Hånd er nu 6. Du er nu mester. Fedt!"
+    },
+    {
+     "t": 1653,
+     "art": "replik",
+     "tekst": "Forløbet \"Del lige over\" er klaret. Købmanden: \"Alle har fået lige meget.\"",
+     "udraab": [
+      {
+       "quest": "kassen",
+       "iSyne": false,
+       "px": -45
+      },
+      {
+       "questbogKnap": "Questbogen 1 ny"
+      }
+     ]
+    },
+    {
+     "t": 1653,
+     "art": "klaret-hjaelp",
+     "quest": "kassen",
+     "iSyne": true
+    },
+    {
+     "t": 1657,
+     "art": "hjaelper",
+     "quest": "kassen",
+     "panel": "Landsbygaden og købmanden Quest fra questbogen Læg questen væk SØREN, SKOMAGEREN Kassen skal stemme Jeg har solgt sko hele dagen, og nu kan jeg ikke få kassen til at stemme. Vil du regne efter? Belønning: Halstørklædet 0 af 4 opgaver løst · Søren vil se 3 rigtige i første forsøg Et par træsko koster 40 kr hos Søren. Han har solgt 3 par i dag. Hvor mange penge skal der være i kassen for dem? 160 kr"
+    },
+    {
+     "t": 1677,
+     "art": "opgave",
+     "nr": 45,
+     "tekst": "Et par træsko koster 40 kr hos Søren. Han har solgt 3 par i dag. Hvor mange penge skal der være i kassen for dem?",
+     "panel": "Landsbygaden og købmanden Quest fra questbogen Læg questen væk SØREN, SKOMAGEREN Kassen skal stemme Jeg har solgt sko hele dagen, og nu kan jeg ikke få kassen t",
+     "hvem": "Landsbygaden og købmanden"
+    },
+    {
+     "t": 1721,
+     "art": "opgave",
+     "nr": 46,
+     "tekst": "Kassen skal stemme med skoene. Søren har 2 hylder med 4 par sko på hver. Hvor mange par sko står der?",
+     "panel": "Landsbygaden og købmanden Quest fra questbogen Læg questen væk SØREN, SKOMAGEREN Kassen skal stemme Jeg har solgt sko hele dagen, og nu kan jeg ikke få kassen t",
+     "hvem": "Landsbygaden og købmanden"
+    },
+    {
+     "t": 1753,
+     "art": "opgave",
+     "nr": 47,
+     "tekst": "Søren har solgt 5 pakker snørebånd med 6 par i hver. Hvor mange par skal der være penge for i kassen?",
+     "panel": "Landsbygaden og købmanden Quest fra questbogen Læg questen væk SØREN, SKOMAGEREN Kassen skal stemme Jeg har solgt sko hele dagen, og nu kan jeg ikke få kassen t",
+     "hvem": "Landsbygaden og købmanden"
+    },
+    {
+     "t": 1775,
+     "art": "loesning",
+     "tekst": "Løsningen: 5 pakker med 6 i hver: 5 × 6 = 30 par."
+    },
+    {
+     "t": 1794,
+     "art": "opgave",
+     "nr": 48,
+     "tekst": "Søren ruller 36 enkroner fra kassen i ruller med 6 i hver. Hvor mange ruller bliver det?",
+     "panel": "Landsbygaden og købmanden Quest fra questbogen Læg questen væk SØREN, SKOMAGEREN Kassen skal stemme Jeg har solgt sko hele dagen, og nu kan jeg ikke få kassen t",
+     "hvem": "Landsbygaden og købmanden"
+    },
+    {
+     "t": 1813,
+     "art": "hvil",
+     "tekst": "Søren: \"Du fik dem alle løst! 1 af 4 sad i første forsøg. Næste gang vil jeg gerne se 3. Klar \"Kasser og varer\" hos Købmanden lige her under, så har jeg nye tal til dig.\""
+    },
+    {
+     "t": 1829,
+     "art": "opgave",
+     "nr": 49,
+     "tekst": "Købmanden får 6 kasser med 8 flasker saft i hver. Hvor mange flasker er det?",
+     "panel": "Søren: \"Du fik dem alle løst! 1 af 4 sad i første forsøg. Næste gang vil jeg gerne se 3. Klar \"Kasser og varer\" hos Købmanden lige her under, så har jeg nye tal",
+     "hvem": "Landsbygaden og købmanden"
+    },
+    {
+     "t": 1834,
+     "art": "slut"
+    }
+   ],
+   "hoved": "8 Tulle Niveau 8 · Mester Næste niveau: mestr et forløb. 405 erfaring",
+   "vandret": true,
+   "sidefejl": [],
+   "billeder": [
+    "E-efter-42-foelger-390-00-opret.png",
+    "E-efter-42-foelger-390-01-foerste-skaerm.png",
+    "E-efter-42-foelger-390-03-aabning.png",
+    "E-efter-42-foelger-390-02-foerste-opgave.png",
+    "E-efter-42-foelger-390-10-hint.png",
+    "E-efter-42-foelger-390-11-samme-forloeb-igen.png",
+    "E-efter-42-foelger-390-20-niveau-op.png",
+    "E-efter-42-foelger-390-2x-replik.png",
+    "E-efter-42-foelger-390-2x-byVaagner.png",
+    "E-efter-42-foelger-390-25-kort-efter-forloeb.png",
+    "E-efter-42-foelger-390-31-quest-i-panelet.png",
+    "E-efter-42-foelger-390-2x-hvil.png",
+    "E-efter-42-foelger-390-2x-tak.png",
+    "E-efter-42-foelger-390-30-questbog.png",
+    "E-efter-42-foelger-390-26-nyt-sted.png",
+    "E-efter-42-foelger-390-27-nyt-sted-besoegt.png",
+    "E-efter-42-foelger-390-28-ankomst.png",
+    "E-efter-42-foelger-390-40-kortet-efter-30-min.png",
+    "E-efter-42-foelger-390-50-min-helt.png",
+    "E-efter-42-foelger-390-51-questbog.png"
+   ]
+  }
+ ],
+ "dag2": [],
+ "dag3": []
+}

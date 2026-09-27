@@ -1,0 +1,561 @@
+{
+ "skak": "5e6756c",
+ "partier": [
+  {
+   "id": "opera-1858",
+   "titel": "Partiet i operaen",
+   "hvid": "Paul Morphy",
+   "sort": "hertugen af Braunschweig og grev Isouard",
+   "sted": "Paris",
+   "aar": 1858,
+   "usikkert": "Datoen (oktober eller 2. november 1858) svinger i kilderne; aaret og stedet goer ikke.",
+   "traek": {
+    "app": 33,
+    "ref": 33,
+    "foersteForskel": -1,
+    "elevTraek": 2,
+    "startTraek": 16
+   },
+   "slutMat": true,
+   "slutterSomPartiet": true,
+   "alternativer": [],
+   "historie": "Paul Morphy spillede partiet i en loge i operaen i Paris i 1858 mod to adelsmænd, der rådede sammen. Det huskes, fordi det viser, hvad hurtig udvikling kan: Morphy fik alle brikker i spil, ofrede sin dronning og satte mat med de to brikker, han havde tilbage: et tårn og en løber."
+  },
+  {
+   "id": "udoedelige-1851",
+   "titel": "Det udødelige parti",
+   "hvid": "Adolf Anderssen",
+   "sort": "Lionel Kieseritzky",
+   "sted": "London",
+   "aar": 1851,
+   "usikkert": "Nogle gamle kilder har 18...Qxa1+ foer Bxg1; standardopgivelsen (den her) har 18...Bxg1 19.e5 Qxa1+.",
+   "traek": {
+    "app": 45,
+    "ref": 45,
+    "foersteForskel": -1,
+    "elevTraek": 2,
+    "startTraek": 22
+   },
+   "slutMat": true,
+   "slutterSomPartiet": true,
+   "alternativer": [],
+   "historie": "Adolf Anderssen spillede partiet mod Lionel Kieseritzky i London i 1851, som et venskabsparti under den første store internationale turnering. Det kaldes \"det udødelige parti\", fordi Anderssen ofrede begge tårne, en løber og til sidst dronningen og alligevel satte mat med de tre lette brikker, han havde tilbage."
+  },
+  {
+   "id": "stedsegroenne-1852",
+   "titel": "Det stedsegrønne parti",
+   "hvid": "Adolf Anderssen",
+   "sort": "Jean Dufresne",
+   "sted": "Berlin",
+   "aar": 1852,
+   "usikkert": null,
+   "traek": {
+    "app": 47,
+    "ref": 47,
+    "foersteForskel": -1,
+    "elevTraek": 4,
+    "startTraek": 21
+   },
+   "slutMat": true,
+   "slutterSomPartiet": true,
+   "alternativer": [],
+   "historie": "Adolf Anderssen spillede partiet mod Jean Dufresne i Berlin i 1852. Det kaldes \"det stedsegrønne parti\", fordi dronningeofret på d7 og matten med de to løbere stadig er lige smukke, uanset hvor mange gange man ser dem."
+  },
+  {
+   "id": "reti-tartakower-1910",
+   "titel": "Dronningeofret på d8",
+   "hvid": "Richard Réti",
+   "sort": "Savielly Tartakower",
+   "sted": "Wien",
+   "aar": 1910,
+   "usikkert": "Et fripartie (ikke et turneringsparti); nogle kilder skriver 1910, nogle \"ca. 1910\".",
+   "traek": {
+    "app": 21,
+    "ref": 21,
+    "foersteForskel": -1,
+    "elevTraek": 3,
+    "startTraek": 9
+   },
+   "slutMat": true,
+   "slutterSomPartiet": true,
+   "alternativer": [],
+   "historie": "Richard Réti spillede partiet mod Savielly Tartakower i Wien i 1910. Det huskes som et af de korteste partier mellem to af tidens stærkeste spillere: Réti ofrede dronningen, og en dobbeltskak fra løber og tårn gav mat i 11. træk."
+  },
+  {
+   "id": "lasker-thomas-1912",
+   "titel": "Kongejagten",
+   "hvid": "Edward Lasker",
+   "sort": "George Thomas",
+   "sted": "London",
+   "aar": 1912,
+   "usikkert": "Partiet sluttede 18.Kd2#; 18.O-O-O# var ogsaa mat (appen godtager begge).",
+   "traek": {
+    "app": 35,
+    "ref": 35,
+    "foersteForskel": -1,
+    "elevTraek": 8,
+    "startTraek": 11
+   },
+   "slutMat": true,
+   "slutterSomPartiet": true,
+   "alternativer": [
+    {
+     "halvtraek": 14,
+     "spillet": "Kd2#",
+     "matI1": [
+      "O-O-O#"
+     ],
+     "matI2": [],
+     "sidste": true,
+     "godtages": true
+    }
+   ],
+   "historie": "Edward Lasker spillede partiet mod George Thomas i London i 1912. Det huskes for en af de mest berømte kongejagter: efter dronningeofret på h7 blev den sorte konge jaget fra g8 hele vejen ned til g1, hvor den blev sat mat."
+  },
+  {
+   "id": "lasker-bauer-1889",
+   "titel": "To løbere ofres",
+   "hvid": "Emanuel Lasker",
+   "sort": "Johann Bauer",
+   "sted": "Amsterdam",
+   "aar": 1889,
+   "usikkert": null,
+   "traek": {
+    "app": 43,
+    "ref": 65,
+    "foersteForskel": -1,
+    "elevTraek": 8,
+    "startTraek": 15
+   },
+   "slutMat": false,
+   "slutterSomPartiet": false,
+   "alternativer": [],
+   "historie": "Emanuel Lasker, der senere blev verdensmester i 27 år, spillede partiet mod Johann Bauer i Amsterdam i 1889. Det huskes, fordi begge løbere ofres på h7 og g7 for at rive kongens bønder væk. Siden hedder den kombination \"Laskers dobbelte løberoffer\"."
+  },
+  {
+   "id": "steinitz-bardeleben-1895",
+   "titel": "Tårnet, der ikke kan slås",
+   "hvid": "Wilhelm Steinitz",
+   "sort": "Curt von Bardeleben",
+   "sted": "Hastings",
+   "aar": 1895,
+   "usikkert": null,
+   "traek": {
+    "app": 49,
+    "ref": 49,
+    "foersteForskel": -1,
+    "elevTraek": 4,
+    "startTraek": 22
+   },
+   "slutMat": false,
+   "slutterSomPartiet": true,
+   "alternativer": [],
+   "historie": "Wilhelm Steinitz, den første verdensmester, spillede partiet mod Curt von Bardeleben i Hastings i England i 1895. Det huskes for tårnet på e7, som sort ikke kan slå uden at blive sat mat. Von Bardeleben opgav ikke: han forlod bare salen og kom ikke tilbage."
+  },
+  {
+   "id": "rotlewi-rubinstein-1907",
+   "titel": "Rubinsteins udødelige",
+   "hvid": "Georg Rotlewi",
+   "sort": "Akiba Rubinstein",
+   "sted": "Łódź",
+   "aar": 1907,
+   "usikkert": "Spillet 26. december 1907 efter den gregorianske kalender; nogle samlinger skriver 1907/08. Łódź hoerte dengang til det russiske kejserrige.",
+   "traek": {
+    "app": 50,
+    "ref": 50,
+    "foersteForskel": -1,
+    "elevTraek": 3,
+    "startTraek": 23
+   },
+   "slutMat": false,
+   "slutterSomPartiet": true,
+   "alternativer": [],
+   "historie": "Akiba Rubinstein spillede partiet med de sorte brikker mod Georg Rotlewi i Łódź i Polen i 1907. Det kaldes \"Rubinsteins udødelige\": han lod sin dronning stå og blive slået, ofrede et tårn på d2 og lod de to løbere på de lange diagonaler gøre resten."
+  },
+  {
+   "id": "levitsky-marshall-1912",
+   "titel": "Guldmønterne",
+   "hvid": "Stepan Levitsky",
+   "sort": "Frank Marshall",
+   "sted": "Breslau",
+   "aar": 1912,
+   "usikkert": "Guldmoenterne er Marshalls egen fortaelling; den er ikke bekraeftet af andre (appen skriver \"ifoelge historien\").",
+   "traek": {
+    "app": 46,
+    "ref": 46,
+    "foersteForskel": -1,
+    "elevTraek": 1,
+    "startTraek": 23
+   },
+   "slutMat": false,
+   "slutterSomPartiet": true,
+   "alternativer": [],
+   "historie": "Frank Marshall spillede partiet med de sorte brikker mod Stepan Levitsky i Breslau i 1912. Dronningen på g3 kan slås på tre måder, men alle taber. Ifølge historien blev tilskuerne så begejstrede, at de kastede guldmønter op på brættet."
+  },
+  {
+   "id": "larsen-spassky-1970",
+   "titel": "Tårnofferet på h1",
+   "hvid": "Bent Larsen",
+   "sort": "Boris Spasskij",
+   "sted": "Beograd",
+   "aar": 1970,
+   "usikkert": null,
+   "traek": {
+    "app": 34,
+    "ref": 34,
+    "foersteForskel": -1,
+    "elevTraek": 4,
+    "startTraek": 14
+   },
+   "slutMat": false,
+   "slutterSomPartiet": true,
+   "alternativer": [],
+   "historie": "Den danske stormester Bent Larsen spillede partiet mod verdensmester Boris Spasskij i Beograd i 1970, i matchen \"Verden mod Sovjetunionen\", hvor Larsen sad ved førstebrættet foran Bobby Fischer. Larsen tabte på 17 træk, men partiet huskes for Spasskijs tårnoffer på h1."
+  }
+ ],
+ "steinitz": {
+  "slagPaaE7": [
+   "Kxe7",
+   "Qxe7"
+  ],
+  "qxe7": {
+   "mat": false,
+   "materialeFoer": -1,
+   "materialeEfter": 2
+  }
+ },
+ "tjek": [
+  {
+   "hvad": "opera-1858: alle 33 halvtraek (parti + loesning) = min reference",
+   "ok": true,
+   "data": {
+    "app": 33,
+    "ref": 33,
+    "foersteForskel": -1,
+    "elevTraek": 2,
+    "startTraek": 16
+   }
+  },
+  {
+   "hvad": "opera-1858: spillere, sted og aar = min reference",
+   "ok": true,
+   "data": {
+    "hvid": "Paul Morphy",
+    "sort": "hertugen af Braunschweig og grev Isouard",
+    "sted": "Paris",
+    "aar": 1858
+   }
+  },
+  {
+   "hvad": "opera-1858: historien naevner aar, sted og begge spillere",
+   "ok": true
+  },
+  {
+   "hvad": "udoedelige-1851: alle 45 halvtraek (parti + loesning) = min reference",
+   "ok": true,
+   "data": {
+    "app": 45,
+    "ref": 45,
+    "foersteForskel": -1,
+    "elevTraek": 2,
+    "startTraek": 22
+   }
+  },
+  {
+   "hvad": "udoedelige-1851: spillere, sted og aar = min reference",
+   "ok": true,
+   "data": {
+    "hvid": "Adolf Anderssen",
+    "sort": "Lionel Kieseritzky",
+    "sted": "London",
+    "aar": 1851
+   }
+  },
+  {
+   "hvad": "udoedelige-1851: historien naevner aar, sted og begge spillere",
+   "ok": true
+  },
+  {
+   "hvad": "stedsegroenne-1852: alle 47 halvtraek (parti + loesning) = min reference",
+   "ok": true,
+   "data": {
+    "app": 47,
+    "ref": 47,
+    "foersteForskel": -1,
+    "elevTraek": 4,
+    "startTraek": 21
+   }
+  },
+  {
+   "hvad": "stedsegroenne-1852: spillere, sted og aar = min reference",
+   "ok": true,
+   "data": {
+    "hvid": "Adolf Anderssen",
+    "sort": "Jean Dufresne",
+    "sted": "Berlin",
+    "aar": 1852
+   }
+  },
+  {
+   "hvad": "stedsegroenne-1852: historien naevner aar, sted og begge spillere",
+   "ok": true
+  },
+  {
+   "hvad": "reti-tartakower-1910: alle 21 halvtraek (parti + loesning) = min reference",
+   "ok": true,
+   "data": {
+    "app": 21,
+    "ref": 21,
+    "foersteForskel": -1,
+    "elevTraek": 3,
+    "startTraek": 9
+   }
+  },
+  {
+   "hvad": "reti-tartakower-1910: spillere, sted og aar = min reference",
+   "ok": true,
+   "data": {
+    "hvid": "Richard Réti",
+    "sort": "Savielly Tartakower",
+    "sted": "Wien",
+    "aar": 1910
+   }
+  },
+  {
+   "hvad": "reti-tartakower-1910: historien naevner aar, sted og begge spillere",
+   "ok": true
+  },
+  {
+   "hvad": "lasker-thomas-1912: alle 35 halvtraek (parti + loesning) = min reference",
+   "ok": true,
+   "data": {
+    "app": 35,
+    "ref": 35,
+    "foersteForskel": -1,
+    "elevTraek": 8,
+    "startTraek": 11
+   }
+  },
+  {
+   "hvad": "lasker-thomas-1912: spillere, sted og aar = min reference",
+   "ok": true,
+   "data": {
+    "hvid": "Edward Lasker",
+    "sort": "George Thomas",
+    "sted": "London",
+    "aar": 1912
+   }
+  },
+  {
+   "hvad": "lasker-thomas-1912: historien naevner aar, sted og begge spillere",
+   "ok": true
+  },
+  {
+   "hvad": "lasker-bauer-1889: alle 43 halvtraek (parti + loesning) = min reference",
+   "ok": true,
+   "data": {
+    "app": 43,
+    "ref": 65,
+    "foersteForskel": -1,
+    "elevTraek": 8,
+    "startTraek": 15
+   }
+  },
+  {
+   "hvad": "lasker-bauer-1889: spillere, sted og aar = min reference",
+   "ok": true,
+   "data": {
+    "hvid": "Emanuel Lasker",
+    "sort": "Johann Bauer",
+    "sted": "Amsterdam",
+    "aar": 1889
+   }
+  },
+  {
+   "hvad": "lasker-bauer-1889: historien naevner aar, sted og begge spillere",
+   "ok": true
+  },
+  {
+   "hvad": "steinitz-bardeleben-1895: alle 49 halvtraek (parti + loesning) = min reference",
+   "ok": true,
+   "data": {
+    "app": 49,
+    "ref": 49,
+    "foersteForskel": -1,
+    "elevTraek": 4,
+    "startTraek": 22
+   }
+  },
+  {
+   "hvad": "steinitz-bardeleben-1895: spillere, sted og aar = min reference",
+   "ok": true,
+   "data": {
+    "hvid": "Wilhelm Steinitz",
+    "sort": "Curt von Bardeleben",
+    "sted": "Hastings",
+    "aar": 1895
+   }
+  },
+  {
+   "hvad": "steinitz-bardeleben-1895: historien naevner aar, sted og begge spillere",
+   "ok": true
+  },
+  {
+   "hvad": "rotlewi-rubinstein-1907: alle 50 halvtraek (parti + loesning) = min reference",
+   "ok": true,
+   "data": {
+    "app": 50,
+    "ref": 50,
+    "foersteForskel": -1,
+    "elevTraek": 3,
+    "startTraek": 23
+   }
+  },
+  {
+   "hvad": "rotlewi-rubinstein-1907: spillere, sted og aar = min reference",
+   "ok": true,
+   "data": {
+    "hvid": "Georg Rotlewi",
+    "sort": "Akiba Rubinstein",
+    "sted": "Łódź",
+    "aar": 1907
+   }
+  },
+  {
+   "hvad": "rotlewi-rubinstein-1907: historien naevner aar, sted og begge spillere",
+   "ok": true
+  },
+  {
+   "hvad": "levitsky-marshall-1912: alle 46 halvtraek (parti + loesning) = min reference",
+   "ok": true,
+   "data": {
+    "app": 46,
+    "ref": 46,
+    "foersteForskel": -1,
+    "elevTraek": 1,
+    "startTraek": 23
+   }
+  },
+  {
+   "hvad": "levitsky-marshall-1912: spillere, sted og aar = min reference",
+   "ok": true,
+   "data": {
+    "hvid": "Stepan Levitsky",
+    "sort": "Frank Marshall",
+    "sted": "Breslau",
+    "aar": 1912
+   }
+  },
+  {
+   "hvad": "levitsky-marshall-1912: historien naevner aar, sted og begge spillere",
+   "ok": true
+  },
+  {
+   "hvad": "larsen-spassky-1970: alle 34 halvtraek (parti + loesning) = min reference",
+   "ok": true,
+   "data": {
+    "app": 34,
+    "ref": 34,
+    "foersteForskel": -1,
+    "elevTraek": 4,
+    "startTraek": 14
+   }
+  },
+  {
+   "hvad": "larsen-spassky-1970: spillere, sted og aar = min reference",
+   "ok": true,
+   "data": {
+    "hvid": "Bent Larsen",
+    "sort": "Boris Spasskij",
+    "sted": "Beograd",
+    "aar": 1970
+   }
+  },
+  {
+   "hvad": "larsen-spassky-1970: historien naevner aar, sted og begge spillere",
+   "ok": true
+  },
+  {
+   "hvad": "opera: Morphy havde kun et taarn og en loeber tilbage (plus bonder) og satte mat",
+   "ok": true,
+   "data": "bpppppppr"
+  },
+  {
+   "hvad": "udoedelige: mat med de tre lette brikker (loeber + to springere), ingen taarne eller dronning tilbage",
+   "ok": true,
+   "data": "bnnpppppp"
+  },
+  {
+   "hvad": "stedsegroenne: dronningeofret paa d7 og mat med de to loebere",
+   "ok": true,
+   "data": "bbr"
+  },
+  {
+   "hvad": "reti: 10.Bg5+ er dobbeltskak (loeber og taarn), og mat kommer i 11. traek",
+   "ok": true,
+   "data": {
+    "skakgivere": [
+     "g5",
+     "d1"
+    ],
+    "traek": 11
+   }
+  },
+  {
+   "hvad": "kongejagten: den sorte konge gaar fra g8 til g1 og saettes mat",
+   "ok": true,
+   "data": "g8-h7-h6-g5-f4-f3-g2-g1"
+  },
+  {
+   "hvad": "kongejagten: 18.O-O-O# er ogsaa mat",
+   "ok": true
+  },
+  {
+   "hvad": "guldmoenterne: dronningen paa g3 kan slaas paa tre maader",
+   "ok": true,
+   "data": [
+    "Qxg3",
+    "fxg3",
+    "hxg3"
+   ]
+  },
+  {
+   "hvad": "larsen: partiet slutter i 17. traek med ...gxf1=D+, taarnofferet er 14...Th1",
+   "ok": true,
+   "data": {
+    "traek": 17,
+    "offer": "Rh1"
+   }
+  },
+  {
+   "hvad": "lasker-bauer: loeberne ofres paa h7 og g7",
+   "ok": true,
+   "data": [
+    "Bxh7+",
+    "Kxh7",
+    "Qxh5+",
+    "Kg8",
+    "Bxg7"
+   ]
+  },
+  {
+   "hvad": "rubinstein: 22...Txc3 lader dronningen staa, 23.gxh4 slaar den, 23...Td2 er taarnofferet",
+   "ok": true
+  },
+  {
+   "hvad": "steinitz: taarnet paa e7 kan slaas med dronningen uden mat (sort taber en officer); kun Kxe7 giver mat",
+   "ok": true,
+   "data": {
+    "slagPaaE7": [
+     "Kxe7",
+     "Qxe7"
+    ],
+    "qxe7": {
+     "mat": false,
+     "materialeFoer": -1,
+     "materialeEfter": 2
+    }
+   }
+  }
+ ]
+}

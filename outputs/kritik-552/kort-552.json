@@ -1,0 +1,212 @@
+{
+ "e085b2b": {
+  "360": {
+   "skilt": null,
+   "andre": [
+    "Møllen",
+    "Kirken og Landsbygaden",
+    "Grusgraven",
+    "Sporvognen"
+   ],
+   "net": 0,
+   "fejl": [],
+   "vandret": true
+  },
+  "390": {
+   "skilt": null,
+   "andre": [
+    "Møllen",
+    "Kirken og Landsbygaden",
+    "Grusgraven",
+    "Sporvognen"
+   ],
+   "net": 0,
+   "fejl": [],
+   "vandret": true
+  },
+  "1280": {
+   "skilt": null,
+   "andre": [
+    "Møllen",
+    "Kirken og Landsbygaden",
+    "Grusgraven",
+    "Sporvognen"
+   ],
+   "net": 0,
+   "fejl": [],
+   "vandret": true
+  },
+  "hash": "e085b2b"
+ },
+ "main": {
+  "360": {
+   "skilt": {
+    "h": 24,
+    "w": 93,
+    "tekst": "Bigården",
+    "font": 12,
+    "ikon": true
+   },
+   "andreFont": [
+    12,
+    12,
+    12,
+    12
+   ],
+   "andreHoejde": [
+    49,
+    44,
+    49,
+    49
+   ],
+   "naermesteSkilt": {
+    "navn": "Kirken og Landsbygaden",
+    "afstand": 3,
+    "overlap": false
+   },
+   "udraab": [
+    {
+     "quest": "sten-til-diget",
+     "afstand": 52,
+     "overlap": false
+    },
+    {
+     "quest": "bedstemor",
+     "afstand": 141,
+     "overlap": false
+    },
+    {
+     "quest": "bistaderne",
+     "afstand": 6,
+     "overlap": false
+    }
+   ],
+   "indenforKortet": true,
+   "trykflade": {
+    "h": 45,
+    "w": 41,
+    "overlapMed": [],
+    "naermeste": {
+     "navn": "Kirken og Landsbygaden",
+     "afstand": 28
+    }
+   },
+   "net": 0,
+   "fejl": [],
+   "vandret": true
+  },
+  "390": {
+   "skilt": {
+    "h": 24,
+    "w": 93,
+    "tekst": "Bigården",
+    "font": 12,
+    "ikon": true
+   },
+   "andreFont": [
+    12,
+    12,
+    12,
+    12
+   ],
+   "andreHoejde": [
+    49,
+    44,
+    49,
+    49
+   ],
+   "naermesteSkilt": {
+    "navn": "Kirken og Landsbygaden",
+    "afstand": 8,
+    "overlap": false
+   },
+   "udraab": [
+    {
+     "quest": "sten-til-diget",
+     "afstand": 62,
+     "overlap": false
+    },
+    {
+     "quest": "bedstemor",
+     "afstand": 153,
+     "overlap": false
+    },
+    {
+     "quest": "bistaderne",
+     "afstand": 6,
+     "overlap": false
+    }
+   ],
+   "indenforKortet": true,
+   "trykflade": {
+    "h": 49,
+    "w": 44,
+    "overlapMed": [],
+    "naermeste": {
+     "navn": "Kirken og Landsbygaden",
+     "afstand": 33
+    }
+   },
+   "net": 0,
+   "fejl": [],
+   "vandret": true
+  },
+  "1280": {
+   "skilt": {
+    "h": 24,
+    "w": 93,
+    "tekst": "Bigården",
+    "font": 12,
+    "ikon": true
+   },
+   "andreFont": [
+    13,
+    13,
+    13,
+    13
+   ],
+   "andreHoejde": [
+    57,
+    44,
+    57,
+    57
+   ],
+   "naermesteSkilt": {
+    "navn": "Kirken og Landsbygaden",
+    "afstand": 28,
+    "overlap": false
+   },
+   "udraab": [
+    {
+     "quest": "sten-til-diget",
+     "afstand": 102,
+     "overlap": false
+    },
+    {
+     "quest": "bedstemor",
+     "afstand": 200,
+     "overlap": false
+    },
+    {
+     "quest": "bistaderne",
+     "afstand": 8,
+     "overlap": false
+    }
+   ],
+   "indenforKortet": true,
+   "trykflade": {
+    "h": 65,
+    "w": 59,
+    "overlapMed": [],
+    "naermeste": {
+     "navn": "Kirken og Landsbygaden",
+     "afstand": 53
+    }
+   },
+   "net": 0,
+   "fejl": [],
+   "vandret": true
+  },
+  "hash": "f9ef917"
+ }
+}
