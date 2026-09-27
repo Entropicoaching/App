@@ -1,0 +1,410 @@
+{
+  "dato": "2026-09-28",
+  "tjek": [
+    {
+      "navn": "projektoren (eget vindue) viser vejen: Gåder → Tema: Gafler → Dagens storm",
+      "ok": true,
+      "detalje": "Gør klar: Gåder → Tema: Gafler → Dagens storm. Tryk først, når der står Start!"
+    },
+    {
+      "navn": "projektoren viser dagens kode, saa eleverne kan tjekke deres egen",
+      "ok": false,
+      "detalje": "Start nedtællingen Fuld skærm Luk vinduet Klassens storm Dagens storm 28/9 · Gafler 3:00 Gør klar: Gåder → Tema: Gafler → Dagens storm. Tryk først, når der står Start!"
+    },
+    {
+      "navn": "laerersiden viser dagens kode",
+      "ok": false,
+      "detalje": "laerer.html har ikke gaadebanken og kan ikke regne koden ud"
+    },
+    {
+      "navn": "390: \"Dagens storm\" er den knap, der springer i oejnene",
+      "ok": false,
+      "detalje": "\"Start stormen\" er primaer (y 1157), \"Dagens storm\" er sekundaer lige under (y 1209)"
+    },
+    {
+      "navn": "390: \"Dagens storm\" kan ses uden at rulle, naar Gåder aabnes",
+      "ok": false,
+      "detalje": "y 1209 paa en 844 px skaerm"
+    },
+    {
+      "navn": "bord 5 (pc-uret en dag bagud) ser en anden dato paa knappen",
+      "ok": true,
+      "detalje": "Dagens storm (27/9) mod Dagens storm (28/9)"
+    },
+    {
+      "navn": "projektoren siger \"Start!\" efter 5 sekunder",
+      "ok": true,
+      "detalje": "Start!"
+    },
+    {
+      "navn": "bord 1-4 (rigtig dato) faar samme kode som Node regner ud",
+      "ok": true,
+      "detalje": "KP63 KP63 KP63 KP63 = KP63"
+    },
+    {
+      "navn": "bord 5 (forkert dato) faar en anden kode",
+      "ok": true,
+      "detalje": "RX6F (ventet for 27/9: RX6F)"
+    },
+    {
+      "navn": "bord 6 (trykkede \"Start stormen\") har ingen kode",
+      "ok": true,
+      "detalje": "Gåde-storm"
+    },
+    {
+      "navn": "390: braettet staar helt paa skaermen, naar stormen starter",
+      "ok": true,
+      "detalje": "1:true 2:true 3:true 4:true 5:true 6:true"
+    },
+    {
+      "navn": "projektoren: \"Tiden er gået\" efter 3 minutter",
+      "ok": true,
+      "detalje": "Tiden er gået. Har du bonustid, så spil færdig. Sig dit tal til læreren."
+    },
+    {
+      "navn": "bord 1-4: resultatlinjen har tallet og koden",
+      "ok": true,
+      "detalje": "Dagens storm 28/9 · Gafler: 4 gåder løst. Kode KP63. | Dagens storm 28/9 · Gafler: 2 gåder løst. Kode KP63. | Dagens storm 28/9 · Gafler: 3 gåder løst. Kode KP63. | Dagens storm 28/9 · Gafler: 1 gåde løst. Kode KP63."
+    },
+    {
+      "navn": "bord 6 (\"Start stormen\"): ingen linje til laereren",
+      "ok": true,
+      "detalje": ""
+    },
+    {
+      "navn": "bord 2 og 4 (fejlede): \"Træn: ...\" under \"Her gik det galt\"",
+      "ok": true,
+      "detalje": "1 og 1 knapper"
+    },
+    {
+      "navn": "projektoren viser \"Bedste borde\" (top 10)",
+      "ok": true,
+      "detalje": "1. 10 14 gåder | 2. 7 11 gåder | 3. 9 9 gåder"
+    },
+    {
+      "navn": "stormens projektorvindue skifter selv til turneringen",
+      "ok": false,
+      "detalje": "{\"stormLagSynligt\":true,\"turneringSynlig\":false}"
+    },
+    {
+      "navn": "25 elever: 12 borde og en fri runde",
+      "ok": true,
+      "detalje": "12 borde, Fri runde: Elev 25 (1 point)"
+    },
+    {
+      "navn": "projektoren (1280x720) viser alle 12 borde uden at rulle",
+      "ok": true,
+      "detalje": "12 af 12 synlige"
+    },
+    {
+      "navn": "elevens ur staar som standard paa noget, der slutter partiet",
+      "ok": false,
+      "detalje": "standard: intet; Frit starter paa 15+10"
+    },
+    {
+      "navn": "bord 1 (mat): \"Bord 1: 0-1 ...\"",
+      "ok": true,
+      "detalje": "Bord 1: 0-1. Sig resultatet til læreren."
+    },
+    {
+      "navn": "bord 2 (tid ude): \"Bord 2: 0-1 på tid\"",
+      "ok": true,
+      "detalje": "Bord 2: 0-1 på tid. Sig resultatet til læreren."
+    },
+    {
+      "navn": "bord 3 (giver op): boksen siger resultatet",
+      "ok": true,
+      "detalje": "Bord 3: 0-1. Sig resultatet til læreren."
+    },
+    {
+      "navn": "bord 4 (90 s for sent) er faerdigt, naar rundeuret staar paa 0",
+      "ok": false,
+      "detalje": "ved 9:00: ur \"Hvid 4.9 Sort 3.8 Hvids tid går. Pause Nulstil uret Stort ur Lyd ved tryk\", boks \"\"; 10 s senere: \"Bord 4: 0-1 på tid. Sig resultatet til læreren.\""
+    },
+    {
+      "navn": "rundeuret siger tydeligt, at runden er slut",
+      "ok": true,
+      "detalje": "{\"laerer\":\"0:00Tiden er gået\",\"projektor\":\"0:00Tiden er gået\"}"
+    },
+    {
+      "navn": "\"Parr runde 2\" er laast, til alle 12 resultater er inde (et sent bord holder klassen)",
+      "ok": true,
+      "detalje": "Mangler 12 resultater. Tryk på resultatet ved hvert bord."
+    },
+    {
+      "navn": "runde 2 er parret, og projektoren viser den",
+      "ok": true,
+      "detalje": "Runde 2 af 3"
+    },
+    {
+      "navn": "runde 2 paa elevens pc: \"Start forfra\" og uret er 4+0 igen",
+      "ok": true,
+      "detalje": "{\"skulleBekraefte\":true,\"bordHuskes\":\"1\",\"urHuskes\":\"frit\",\"fritHuskes\":\"4+0\",\"ur\":\"Hvid 4:00 Sort 4:00 Uret starter, når hvid har trukket. Den der har trukket, trykker på sit eget felt. Pause Nulstil uret Stort ur Lyd ved tryk\",\"handlinger\":2}"
+    },
+    {
+      "navn": "efter genindlaesning husker pc'en bord og 4+0",
+      "ok": true,
+      "detalje": "{\"bord\":\"1\",\"ur\":\"frit\",\"frit\":\"4+0\"}"
+    },
+    {
+      "navn": "stillingen: alle 25 kan ses paa projektoren (1024x768 og 1280x720)",
+      "ok": false,
+      "detalje": "{\"1280x720\":21,\"1024x768\":25,\"1280x800\":25,\"1920x1080\":25}"
+    },
+    {
+      "navn": "ingen JavaScript-fejl",
+      "ok": true,
+      "detalje": ""
+    },
+    {
+      "navn": "intet netvaerk",
+      "ok": true,
+      "detalje": ""
+    }
+  ],
+  "maal": {
+    "ventetKode": "KP63",
+    "kodeForkertDato": "RX6F",
+    "projektorStormUrl": "laerer.html#klassestorm",
+    "projektorViserKode": false,
+    "laererViserKode": false,
+    "elev390": {
+      "stormKortY": 915,
+      "startStormenY": 1157,
+      "dagensStormY": 1209,
+      "startStormenErPrimaer": true,
+      "dagensStormErPrimaer": false,
+      "skaermHoejde": 844
+    },
+    "stormIndtastning": {
+      "borde": 12,
+      "trykOgFeltskift": 36,
+      "tegn": 30
+    },
+    "bord5Resultat": "Dagens storm 27/9 · Gafler: 0 gåder løst. Kode RX6F.",
+    "turneringFoer": {
+      "navneFeltSynligt": true,
+      "runderStandard": ""
+    },
+    "navneTegn": 199,
+    "rundeurStandardMin": "12",
+    "stormVindueEfterTurnering": {
+      "stormLagSynligt": true,
+      "turneringSynlig": false
+    },
+    "projektorTurneringUrl": "laerer.html#projektor",
+    "parringR1": [
+      "1 ♔ Elev 01 ♚ Elev 13 ·",
+      "2 ♔ Elev 14 ♚ Elev 02 ·",
+      "3 ♔ Elev 03 ♚ Elev 15 ·",
+      "4 ♔ Elev 16 ♚ Elev 04 ·",
+      "5 ♔ Elev 05 ♚ Elev 17 ·",
+      "6 ♔ Elev 18 ♚ Elev 06 ·",
+      "7 ♔ Elev 07 ♚ Elev 19 ·",
+      "8 ♔ Elev 20 ♚ Elev 08 ·",
+      "9 ♔ Elev 09 ♚ Elev 21 ·",
+      "10 ♔ Elev 22 ♚ Elev 10 ·",
+      "11 ♔ Elev 11 ♚ Elev 23 ·",
+      "12 ♔ Elev 24 ♚ Elev 12 ·"
+    ],
+    "friRundeR1": "Fri runde: Elev 25 (1 point)",
+    "projektorTurRaekkerSynlige": 12,
+    "rundeurSidsteMinut": {
+      "laerer": "1:00",
+      "projektor": "1:00"
+    },
+    "rundeurVedNul": {
+      "laerer": "0:00Tiden er gået",
+      "projektor": "0:00Tiden er gået"
+    },
+    "parrLaastUdenResultater": true,
+    "statusUdenResultater": "Mangler 12 resultater. Tryk på resultatet ved hvert bord.",
+    "runde1Indtastning": {
+      "borde": 12,
+      "tryk": 14
+    },
+    "runde2": {
+      "titel": "Runde 2 af 3",
+      "fri": "Fri runde: Elev 23 (1 point)"
+    },
+    "parringR2": [
+      "1 ♔ Elev 02 ♚ Elev 11 ·",
+      "2 ♔ Elev 04 ♚ Elev 05 ·",
+      "3 ♔ Elev 08 ♚ Elev 19 ·",
+      "4 ♔ Elev 10 ♚ Elev 25 ·",
+      "5 ♔ Elev 15 ♚ Elev 13 ·",
+      "6 ♔ Elev 21 ♚ Elev 18 ·",
+      "7 ♔ Elev 06 ♚ Elev 24 ·",
+      "8 ♔ Elev 12 ♚ Elev 01 ·",
+      "9 ♔ Elev 17 ♚ Elev 03 ·",
+      "10 ♔ Elev 07 ♚ Elev 20 ·",
+      "11 ♔ Elev 22 ♚ Elev 09 ·",
+      "12 ♔ Elev 14 ♚ Elev 16 ·"
+    ],
+    "boerdSammeParRunde2": 0,
+    "eleverDerSkalFlytteRunde2": 22,
+    "rundeurEfterParring": {
+      "laerer": "0:00Tiden er gået"
+    },
+    "elevRunde2": {
+      "skulleBekraefte": true,
+      "bordHuskes": "1",
+      "urHuskes": "frit",
+      "fritHuskes": "4+0",
+      "ur": "Hvid 4:00 Sort 4:00 Uret starter, når hvid har trukket. Den der har trukket, trykker på sit eget felt. Pause Nulstil uret Stort ur Lyd ved tryk",
+      "handlinger": 2
+    },
+    "elevEfterGenindlaes": {
+      "bord": "1",
+      "ur": "frit",
+      "frit": "4+0"
+    },
+    "runde2Indtastning": {
+      "borde": 12,
+      "tryk": 12,
+      "rundeurTryk": 2
+    },
+    "runde3Indtastning": {
+      "borde": 12,
+      "tryk": 12,
+      "rundeurTryk": 2
+    },
+    "slut": {
+      "titel": "Runde 3 af 3",
+      "status": "Turneringen er slut. Vinder: Elev 13.",
+      "naesteKnap": null
+    },
+    "stillingKnapFindes": true,
+    "stillingSynlig": {
+      "1280x720": 21,
+      "1024x768": 25,
+      "1280x800": 25,
+      "1920x1080": 25
+    },
+    "lagerLaerer": [
+      "skak-laerer-klassestorm-v1",
+      "skak-laerer-rundeur-v1",
+      "skak-laerer-fane-v1",
+      "skak-laerer-turnering-v1"
+    ]
+  },
+  "elever": {
+    "1": {
+      "dato": "2026-09-28",
+      "klarMs": 344,
+      "knap": "Dagens storm (28/9)",
+      "titel": "Dagens storm 28/9 · Gafler · kode KP63",
+      "braetSynligtVedStart": true,
+      "resultat": "Dagens storm 28/9 · Gafler: 4 gåder løst. Kode KP63.",
+      "traenKnapper": 0,
+      "spil": {
+        "modusStandard": "makker",
+        "urStandard": "intet",
+        "fritStandard": "15+10",
+        "handlinger": 5,
+        "ur": "Hvid 4:00 Sort 4:00 Uret starter, når hvid har trukket. Den der har trukket, trykker på sit eget felt. Pause Nulstil uret Stort ur Lyd ved tryk",
+        "braetY": 202,
+        "urValgY": 1000
+      },
+      "meld": "Bord 1: 0-1. Sig resultatet til læreren."
+    },
+    "2": {
+      "dato": "2026-09-28",
+      "klarMs": 248,
+      "knap": "Dagens storm (28/9)",
+      "titel": "Dagens storm 28/9 · Gafler · kode KP63",
+      "braetSynligtVedStart": true,
+      "resultat": "Dagens storm 28/9 · Gafler: 2 gåder løst. Kode KP63.",
+      "traenKnapper": 1,
+      "spil": {
+        "modusStandard": "makker",
+        "urStandard": "intet",
+        "fritStandard": "15+10",
+        "handlinger": 5,
+        "ur": "Hvid 4:00 Sort 4:00 Uret starter, når hvid har trukket. Den der har trukket, trykker på sit eget felt. Pause Nulstil uret Stort ur Lyd ved tryk",
+        "braetY": 202,
+        "urValgY": 1000
+      },
+      "meld": "Bord 2: 0-1 på tid. Sig resultatet til læreren."
+    },
+    "3": {
+      "dato": "2026-09-28",
+      "klarMs": 254,
+      "knap": "Dagens storm (28/9)",
+      "titel": "Dagens storm 28/9 · Gafler · kode KP63",
+      "braetSynligtVedStart": true,
+      "resultat": "Dagens storm 28/9 · Gafler: 3 gåder løst. Kode KP63.",
+      "traenKnapper": 0,
+      "spil": {
+        "modusStandard": "makker",
+        "urStandard": "intet",
+        "fritStandard": "15+10",
+        "handlinger": 5,
+        "ur": "Hvid 4:00 Sort 4:00 Uret starter, når hvid har trukket. Den der har trukket, trykker på sit eget felt. Pause Nulstil uret Stort ur Lyd ved tryk",
+        "braetY": 202,
+        "urValgY": 1000
+      },
+      "meld": "Bord 3: 0-1. Sig resultatet til læreren."
+    },
+    "4": {
+      "dato": "2026-09-28",
+      "klarMs": 278,
+      "knap": "Dagens storm (28/9)",
+      "titel": "Dagens storm 28/9 · Gafler · kode KP63",
+      "braetSynligtVedStart": true,
+      "resultat": "Dagens storm 28/9 · Gafler: 1 gåde løst. Kode KP63.",
+      "traenKnapper": 1,
+      "spil": {
+        "modusStandard": "makker",
+        "urStandard": "intet",
+        "fritStandard": "15+10",
+        "handlinger": 5,
+        "ur": "Hvid 4:00 Sort 4:00 Uret starter, når hvid har trukket. Den der har trukket, trykker på sit eget felt. Pause Nulstil uret Stort ur Lyd ved tryk",
+        "braetY": 202,
+        "urValgY": 1000
+      },
+      "meld": "Bord 4: 0-1 på tid. Sig resultatet til læreren."
+    },
+    "5": {
+      "dato": "2026-09-27",
+      "klarMs": 269,
+      "knap": "Dagens storm (27/9)",
+      "titel": "Dagens storm 27/9 · Gafler · kode RX6F",
+      "braetSynligtVedStart": true,
+      "resultat": "Dagens storm 27/9 · Gafler: 0 gåder løst. Kode RX6F.",
+      "traenKnapper": 0
+    },
+    "6": {
+      "dato": "2026-09-28",
+      "klarMs": 236,
+      "knap": "Dagens storm (28/9)",
+      "titel": "Gåde-storm",
+      "braetSynligtVedStart": true,
+      "resultat": "",
+      "traenKnapper": 0
+    }
+  },
+  "skaermbilleder": [
+    "S-1280-01-laerer-storm.png",
+    "S-1280-02-projektor-storm-foer.png",
+    "S-390-01-elev-gaader-klar.png",
+    "S-1280-03-projektor-nedtaelling.png",
+    "S-390-02-elev-storm-koerer.png",
+    "S-1280-04-projektor-storm-koerer.png",
+    "S-390-03-elev-storm-resultat.png",
+    "S-390-04-elev-her-gik-det-galt.png",
+    "S-1280-05-projektor-bedste-borde.png",
+    "S-1280-06-projektor-runde1.png",
+    "S-1280-07-laerer-runde1.png",
+    "S-390-05-elev-spil-opsaetning.png",
+    "S-390-06-elev-tid-ude.png",
+    "S-1280-08-projektor-sidste-minut.png",
+    "S-1280-09-projektor-rundeur-nul.png",
+    "S-1280-10-projektor-slut.png",
+    "S-1280-11-laerer-slut.png",
+    "S-1024-12-projektor-stilling.png"
+  ],
+  "sideFejl": [],
+  "netvaerk": [],
+  "dialoger": []
+}
