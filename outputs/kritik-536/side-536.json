@@ -1,0 +1,716 @@
+{
+ "ref": "6d3129e",
+ "L1node": [
+  {
+   "cm": 12,
+   "nav": false,
+   "status": "ingen"
+  },
+  {
+   "cm": 12,
+   "nav": true,
+   "status": "ingen"
+  },
+  {
+   "cm": 12.5,
+   "nav": false,
+   "status": "ingen"
+  },
+  {
+   "cm": 12.5,
+   "nav": true,
+   "status": "ingen"
+  },
+  {
+   "cm": 13,
+   "nav": false,
+   "status": "ingen"
+  },
+  {
+   "cm": 13,
+   "nav": true,
+   "status": "ingen"
+  },
+  {
+   "cm": 13.5,
+   "nav": false,
+   "status": "ingen"
+  },
+  {
+   "cm": 13.5,
+   "nav": true,
+   "status": "ingen"
+  },
+  {
+   "cm": 14,
+   "nav": false,
+   "status": "ingen"
+  },
+  {
+   "cm": 14,
+   "nav": true,
+   "status": "ingen"
+  },
+  {
+   "cm": 14.5,
+   "nav": false,
+   "status": "ingen"
+  },
+  {
+   "cm": 14.5,
+   "nav": true,
+   "status": "ingen"
+  },
+  {
+   "cm": 15,
+   "nav": false,
+   "status": "ingen"
+  },
+  {
+   "cm": 15,
+   "nav": true,
+   "status": "ingen"
+  },
+  {
+   "cm": 15.5,
+   "nav": false,
+   "status": "ingen"
+  },
+  {
+   "cm": 15.5,
+   "nav": true,
+   "status": "ingen"
+  },
+  {
+   "cm": 16,
+   "nav": false,
+   "status": "ingen"
+  },
+  {
+   "cm": 16,
+   "nav": true,
+   "status": "ingen"
+  },
+  {
+   "cm": 16.5,
+   "nav": false,
+   "status": "ligner"
+  },
+  {
+   "cm": 16.5,
+   "nav": true,
+   "status": "ligner"
+  },
+  {
+   "cm": 17,
+   "nav": false,
+   "status": "ligner"
+  },
+  {
+   "cm": 17,
+   "nav": true,
+   "status": "ligner"
+  },
+  {
+   "cm": 17.5,
+   "nav": false,
+   "status": "ligner"
+  },
+  {
+   "cm": 17.5,
+   "nav": true,
+   "status": "ligner"
+  },
+  {
+   "cm": 18,
+   "nav": false,
+   "status": "usikker-fase"
+  },
+  {
+   "cm": 18,
+   "nav": true,
+   "status": "usikker-fase"
+  },
+  {
+   "cm": 18.5,
+   "nav": false,
+   "status": "usikker-fase"
+  },
+  {
+   "cm": 18.5,
+   "nav": true,
+   "status": "usikker-fase"
+  },
+  {
+   "cm": 19,
+   "nav": false,
+   "status": "usikker-fase"
+  },
+  {
+   "cm": 19,
+   "nav": true,
+   "status": "usikker-fase"
+  },
+  {
+   "cm": 19.5,
+   "nav": false,
+   "status": "usikker-fase"
+  },
+  {
+   "cm": 19.5,
+   "nav": true,
+   "status": "usikker-fase"
+  },
+  {
+   "cm": 20,
+   "nav": false,
+   "status": "usikker-fase"
+  },
+  {
+   "cm": 20,
+   "nav": true,
+   "status": "usikker-fase"
+  }
+ ],
+ "L1cm": 16.5,
+ "sider": {
+  "360": {
+   "l1-udenNav": {
+    "status": "ligner",
+    "fejl": "dl-hofte-foerst",
+    "vist": true,
+    "titel": "Ligner: hoften stiger først",
+    "saetning": "Skinnebenet står ca. 7° mere lodret og knæet er ca. 27° mere strakt end i modellens udførelse med samme krop; sådan står modellens figur, når knæene strækkes, før stangen slipper gulvet.",
+    "graense": null,
+    "hoejre": 344,
+    "img": [
+     {
+      "src": "../loeft-fejl/dl-hofte-foerst.svg",
+      "hentet": true
+     }
+    ],
+    "synligt": [
+     "Ligner: hoften stiger først"
+    ],
+    "side": 360,
+    "klient": 360,
+    "lager": []
+   },
+   "l1-nav": {
+    "status": "ligner",
+    "fejl": "dl-hofte-foerst",
+    "vist": true,
+    "titel": "Ligner: hoften stiger først",
+    "saetning": "Skinnebenet står ca. 7° mere lodret og knæet er ca. 27° mere strakt end i modellens udførelse med samme krop; sådan står modellens figur, når knæene strækkes, før stangen slipper gulvet.",
+    "graense": null,
+    "hoejre": 344,
+    "img": [
+     {
+      "src": "../loeft-fejl/dl-hofte-foerst.svg",
+      "hentet": true
+     }
+    ],
+    "synligt": [
+     "Ligner: hoften stiger først"
+    ],
+    "side": 360,
+    "klient": 360,
+    "lager": []
+   },
+   "dl-0": {
+    "status": "ingen",
+    "fejl": null,
+    "vist": false,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "hoejre": 0,
+    "img": [],
+    "synligt": [],
+    "side": 360,
+    "klient": 360,
+    "lager": []
+   },
+   "l2": {
+    "status": "usikker-fase",
+    "fejl": null,
+    "vist": false,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "hoejre": 0,
+    "img": [],
+    "synligt": [],
+    "side": 360,
+    "klient": 360,
+    "lager": []
+   },
+   "l3": {
+    "status": "ligner",
+    "fejl": "sq-kun-knae-bund",
+    "vist": true,
+    "titel": "Ligner: kun knæene",
+    "saetning": "Skinnebenet hælder ca. 9° mere frem end i modellens bund med samme krop og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen, og dér letter hælen i modellen.",
+    "graense": "Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. Modellen regner med fladt fodtøj: sko med hæl lægger også skinnebenet frem, og billedet har intet punkt på hælen.",
+    "hoejre": 344,
+    "img": [
+     {
+      "src": "../squat-figurer/k7-kun-knae-bund.svg",
+      "hentet": true
+     }
+    ],
+    "synligt": [
+     "Ligner: kun knæene"
+    ],
+    "side": 360,
+    "klient": 360,
+    "lager": []
+   },
+   "v": {
+    "status": "ligner",
+    "fejl": "sq-hofte-tilbage-bund",
+    "vist": true,
+    "titel": "Ligner: hoften skudt for langt tilbage",
+    "saetning": "Torsoen hælder ca. 15° mere frem og skinnebenet står ca. 10° mere lodret end i modellens bund med samme krop; sådan står modellens figur, når hoften skydes for langt tilbage.",
+    "graense": "Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. En bred fodstilling med tæerne ud får skinnebenet til at se mere lodret ud fra siden; derfor kræver reglen også torsoen.",
+    "hoejre": 344,
+    "img": [
+     {
+      "src": "../squat-figurer/k7-hofte-tilbage-bund.svg",
+      "hentet": true
+     }
+    ],
+    "synligt": [
+     "Ligner: hoften skudt for langt tilbage"
+    ],
+    "side": 360,
+    "klient": 360,
+    "lager": []
+   },
+   "marc-yantra": {
+    "status": "ingen",
+    "fejl": null,
+    "vist": false,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "hoejre": 0,
+    "img": [],
+    "synligt": [],
+    "side": 360,
+    "klient": 360,
+    "lager": []
+   },
+   "marc-bhishak": {
+    "status": "ingen",
+    "fejl": null,
+    "vist": false,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "hoejre": 0,
+    "img": [],
+    "synligt": [],
+    "side": 360,
+    "klient": 360,
+    "lager": []
+   },
+   "net": [],
+   "jsFejl": []
+  },
+  "390": {
+   "l1-udenNav": {
+    "status": "ligner",
+    "fejl": "dl-hofte-foerst",
+    "vist": true,
+    "titel": "Ligner: hoften stiger først",
+    "saetning": "Skinnebenet står ca. 7° mere lodret og knæet er ca. 27° mere strakt end i modellens udførelse med samme krop; sådan står modellens figur, når knæene strækkes, før stangen slipper gulvet.",
+    "graense": null,
+    "hoejre": 374,
+    "img": [
+     {
+      "src": "../loeft-fejl/dl-hofte-foerst.svg",
+      "hentet": true
+     }
+    ],
+    "synligt": [
+     "Ligner: hoften stiger først"
+    ],
+    "side": 390,
+    "klient": 390,
+    "lager": []
+   },
+   "l1-nav": {
+    "status": "ligner",
+    "fejl": "dl-hofte-foerst",
+    "vist": true,
+    "titel": "Ligner: hoften stiger først",
+    "saetning": "Skinnebenet står ca. 7° mere lodret og knæet er ca. 27° mere strakt end i modellens udførelse med samme krop; sådan står modellens figur, når knæene strækkes, før stangen slipper gulvet.",
+    "graense": null,
+    "hoejre": 374,
+    "img": [
+     {
+      "src": "../loeft-fejl/dl-hofte-foerst.svg",
+      "hentet": true
+     }
+    ],
+    "synligt": [
+     "Ligner: hoften stiger først"
+    ],
+    "side": 390,
+    "klient": 390,
+    "lager": []
+   },
+   "dl-0": {
+    "status": "ingen",
+    "fejl": null,
+    "vist": false,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "hoejre": 0,
+    "img": [],
+    "synligt": [],
+    "side": 390,
+    "klient": 390,
+    "lager": []
+   },
+   "l2": {
+    "status": "usikker-fase",
+    "fejl": null,
+    "vist": false,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "hoejre": 0,
+    "img": [],
+    "synligt": [],
+    "side": 390,
+    "klient": 390,
+    "lager": []
+   },
+   "l3": {
+    "status": "ligner",
+    "fejl": "sq-kun-knae-bund",
+    "vist": true,
+    "titel": "Ligner: kun knæene",
+    "saetning": "Skinnebenet hælder ca. 9° mere frem end i modellens bund med samme krop og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen, og dér letter hælen i modellen.",
+    "graense": "Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. Modellen regner med fladt fodtøj: sko med hæl lægger også skinnebenet frem, og billedet har intet punkt på hælen.",
+    "hoejre": 374,
+    "img": [
+     {
+      "src": "../squat-figurer/k7-kun-knae-bund.svg",
+      "hentet": true
+     }
+    ],
+    "synligt": [
+     "Ligner: kun knæene"
+    ],
+    "side": 390,
+    "klient": 390,
+    "lager": []
+   },
+   "v": {
+    "status": "ligner",
+    "fejl": "sq-hofte-tilbage-bund",
+    "vist": true,
+    "titel": "Ligner: hoften skudt for langt tilbage",
+    "saetning": "Torsoen hælder ca. 15° mere frem og skinnebenet står ca. 10° mere lodret end i modellens bund med samme krop; sådan står modellens figur, når hoften skydes for langt tilbage.",
+    "graense": "Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. En bred fodstilling med tæerne ud får skinnebenet til at se mere lodret ud fra siden; derfor kræver reglen også torsoen.",
+    "hoejre": 374,
+    "img": [
+     {
+      "src": "../squat-figurer/k7-hofte-tilbage-bund.svg",
+      "hentet": true
+     }
+    ],
+    "synligt": [
+     "Ligner: hoften skudt for langt tilbage"
+    ],
+    "side": 390,
+    "klient": 390,
+    "lager": []
+   },
+   "marc-yantra": {
+    "status": "ingen",
+    "fejl": null,
+    "vist": false,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "hoejre": 0,
+    "img": [],
+    "synligt": [],
+    "side": 390,
+    "klient": 390,
+    "lager": []
+   },
+   "marc-bhishak": {
+    "status": "ingen",
+    "fejl": null,
+    "vist": false,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "hoejre": 0,
+    "img": [],
+    "synligt": [],
+    "side": 390,
+    "klient": 390,
+    "lager": []
+   },
+   "net": [],
+   "jsFejl": []
+  },
+  "1280": {
+   "l1-udenNav": {
+    "status": "ligner",
+    "fejl": "dl-hofte-foerst",
+    "vist": true,
+    "titel": "Ligner: hoften stiger først",
+    "saetning": "Skinnebenet står ca. 7° mere lodret og knæet er ca. 27° mere strakt end i modellens udførelse med samme krop; sådan står modellens figur, når knæene strækkes, før stangen slipper gulvet.",
+    "graense": null,
+    "hoejre": 1174,
+    "img": [
+     {
+      "src": "../loeft-fejl/dl-hofte-foerst.svg",
+      "hentet": true
+     }
+    ],
+    "synligt": [
+     "Ligner: hoften stiger først"
+    ],
+    "side": 1280,
+    "klient": 1280,
+    "lager": []
+   },
+   "l1-nav": {
+    "status": "ligner",
+    "fejl": "dl-hofte-foerst",
+    "vist": true,
+    "titel": "Ligner: hoften stiger først",
+    "saetning": "Skinnebenet står ca. 7° mere lodret og knæet er ca. 27° mere strakt end i modellens udførelse med samme krop; sådan står modellens figur, når knæene strækkes, før stangen slipper gulvet.",
+    "graense": null,
+    "hoejre": 1174,
+    "img": [
+     {
+      "src": "../loeft-fejl/dl-hofte-foerst.svg",
+      "hentet": true
+     }
+    ],
+    "synligt": [
+     "Ligner: hoften stiger først"
+    ],
+    "side": 1280,
+    "klient": 1280,
+    "lager": []
+   },
+   "dl-0": {
+    "status": "ingen",
+    "fejl": null,
+    "vist": false,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "hoejre": 0,
+    "img": [],
+    "synligt": [],
+    "side": 1280,
+    "klient": 1280,
+    "lager": []
+   },
+   "l2": {
+    "status": "usikker-fase",
+    "fejl": null,
+    "vist": false,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "hoejre": 0,
+    "img": [],
+    "synligt": [],
+    "side": 1280,
+    "klient": 1280,
+    "lager": []
+   },
+   "l3": {
+    "status": "ligner",
+    "fejl": "sq-kun-knae-bund",
+    "vist": true,
+    "titel": "Ligner: kun knæene",
+    "saetning": "Skinnebenet hælder ca. 9° mere frem end i modellens bund med samme krop og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen, og dér letter hælen i modellen.",
+    "graense": "Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. Modellen regner med fladt fodtøj: sko med hæl lægger også skinnebenet frem, og billedet har intet punkt på hælen.",
+    "hoejre": 1174,
+    "img": [
+     {
+      "src": "../squat-figurer/k7-kun-knae-bund.svg",
+      "hentet": true
+     }
+    ],
+    "synligt": [
+     "Ligner: kun knæene"
+    ],
+    "side": 1280,
+    "klient": 1280,
+    "lager": []
+   },
+   "v": {
+    "status": "ligner",
+    "fejl": "sq-hofte-tilbage-bund",
+    "vist": true,
+    "titel": "Ligner: hoften skudt for langt tilbage",
+    "saetning": "Torsoen hælder ca. 15° mere frem og skinnebenet står ca. 10° mere lodret end i modellens bund med samme krop; sådan står modellens figur, når hoften skydes for langt tilbage.",
+    "graense": "Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. En bred fodstilling med tæerne ud får skinnebenet til at se mere lodret ud fra siden; derfor kræver reglen også torsoen.",
+    "hoejre": 1174,
+    "img": [
+     {
+      "src": "../squat-figurer/k7-hofte-tilbage-bund.svg",
+      "hentet": true
+     }
+    ],
+    "synligt": [
+     "Ligner: hoften skudt for langt tilbage"
+    ],
+    "side": 1280,
+    "klient": 1280,
+    "lager": []
+   },
+   "marc-yantra": {
+    "status": "ingen",
+    "fejl": null,
+    "vist": false,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "hoejre": 0,
+    "img": [],
+    "synligt": [],
+    "side": 1280,
+    "klient": 1280,
+    "lager": []
+   },
+   "marc-bhishak": {
+    "status": "ingen",
+    "fejl": null,
+    "vist": false,
+    "titel": null,
+    "saetning": null,
+    "graense": null,
+    "hoejre": 0,
+    "img": [],
+    "synligt": [],
+    "side": 1280,
+    "klient": 1280,
+    "lager": []
+   },
+   "net": [],
+   "jsFejl": []
+  }
+ },
+ "tjek": [
+  {
+   "hvad": "L1: modellens egen bane 16.5 cm over gulvet giver \"Ligner: hoften stiger foerst\" paa siden uden det fjerne nav (360, 390, 1280)",
+   "ok": true,
+   "data": [
+    "Ligner: hoften stiger først",
+    "Ligner: hoften stiger først",
+    "Ligner: hoften stiger først"
+   ]
+  },
+  {
+   "hvad": "L1: ogsaa med det fjerne nav klikket (fasevagten bruger det naere nav)",
+   "ok": true,
+   "data": [
+    "ligner",
+    "ligner",
+    "ligner"
+   ]
+  },
+  {
+   "hvad": "L1 kontrol: modellens egen stilling ved gulvet giver intet",
+   "ok": true
+  },
+  {
+   "hvad": "L2: squattens bund med knaeene 30 grader ud: status usikker-fase, og intet paa skaermen siger det",
+   "ok": true,
+   "data": [
+    [
+     "usikker-fase",
+     []
+    ],
+    [
+     "usikker-fase",
+     []
+    ],
+    [
+     "usikker-fase",
+     []
+    ]
+   ]
+  },
+  {
+   "hvad": "L3: high bar og skinnebenet 6 grader frem giver \"Ligner: kun knaeene\" med \"dér letter hælen\" i saetningen og hael-graensen under",
+   "ok": true,
+   "data": "Skinnebenet hælder ca. 9° mere frem end i modellens bund med samme krop og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen, og dér letter hælen i modellen."
+  },
+  {
+   "hvad": "V: fejlfiguren \"hoften skudt tilbage\" giver boksen, figuren er hentet, og boksen er inden for skaermen",
+   "ok": true,
+   "data": [
+    [
+     344,
+     [
+      {
+       "src": "../squat-figurer/k7-hofte-tilbage-bund.svg",
+       "hentet": true
+      }
+     ]
+    ],
+    [
+     374,
+     [
+      {
+       "src": "../squat-figurer/k7-hofte-tilbage-bund.svg",
+       "hentet": true
+      }
+     ]
+    ],
+    [
+     1174,
+     [
+      {
+       "src": "../squat-figurer/k7-hofte-tilbage-bund.svg",
+       "hentet": true
+      }
+     ]
+    ]
+   ]
+  },
+  {
+   "hvad": "M: Marcs gulvbillede (Yantras og mine klik) giver intet \"Ligner\"",
+   "ok": true
+  },
+  {
+   "hvad": "Ingen vandret rulning i nogen af tilfaeldene",
+   "ok": true
+  },
+  {
+   "hvad": "Intet net, ingen JS-fejl, intet gemt",
+   "ok": true,
+   "data": [
+    [
+     [],
+     []
+    ],
+    [
+     [],
+     []
+    ],
+    [
+     [],
+     []
+    ]
+   ]
+  }
+ ]
+}

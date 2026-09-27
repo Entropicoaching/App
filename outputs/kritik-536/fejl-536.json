@@ -1,0 +1,2752 @@
+{
+ "ref": "6d3129e",
+ "A": {
+  "kameraer": [
+   {
+    "id": "vinkelret",
+    "navn": "vinkelret, 3 m, i hoftehøjde"
+   },
+   {
+    "id": "hoej30",
+    "navn": "30 cm højere, vippet ned mod hoften"
+   },
+   {
+    "id": "haand140",
+    "navn": "i hånden, 140 cm, vippet ned mod hoften"
+   },
+   {
+    "id": "lav45",
+    "navn": "lavt (45 cm)"
+   },
+   {
+    "id": "taet2m",
+    "navn": "tæt, 2 m"
+   },
+   {
+    "id": "forskudt50",
+    "navn": "vinkelret, men 50 cm ved siden af stangen"
+   },
+   {
+    "id": "skraa5",
+    "navn": "5° skråt"
+   },
+   {
+    "id": "skraa10",
+    "navn": "10° skråt"
+   }
+  ],
+  "N": 60,
+  "regler": {
+   "dl-hofte-foerst": {
+    "fase": "dl-gulv",
+    "titel": "Hoften stiger først",
+    "kamera": {
+     "vinkelret": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "dl-hofte-foerst": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 1.3,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 0
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 5.3,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 0
+      }
+     },
+     "hoej30": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "dl-hofte-foerst": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 4.3,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 0
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 4.7,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 0
+      }
+     },
+     "haand140": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "dl-hofte-foerst": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 3.3,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 0
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 6.7,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 0
+      }
+     },
+     "lav45": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "dl-hofte-foerst": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 1.7,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 0
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 3.3,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 0
+      }
+     },
+     "taet2m": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "dl-hofte-foerst": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 2.3,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 0
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 4.7,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 0
+      }
+     },
+     "forskudt50": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "dl-hofte-foerst": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 0.7,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 0
+      },
+      "typisk": {
+       "falskAlarm": 0.3,
+       "overset": 3,
+       "oversetFordiUsikker": 1.3,
+       "normalUsikker": 0.7
+      }
+     },
+     "skraa5": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "dl-hofte-foerst": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 1.7,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 0
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 5.7,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 0
+      }
+     },
+     "skraa10": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "dl-hofte-foerst": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 1.3,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 0
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 10.7,
+       "oversetFordiUsikker": 5.3,
+       "normalUsikker": 2.3
+      }
+     }
+    }
+   },
+   "dl-stang-frem": {
+    "fase": "dl-knae",
+    "titel": "Stangen glider frem",
+    "kamera": {
+     "vinkelret": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "dl-stang-frem": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 4,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 0
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 17.3,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 0.7
+      }
+     },
+     "hoej30": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "dl-stang-frem": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 1.3,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 0
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 15,
+       "oversetFordiUsikker": 0.3,
+       "normalUsikker": 0.3
+      }
+     },
+     "haand140": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "dl-stang-frem": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 1.7,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 0
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 16.3,
+       "oversetFordiUsikker": 1.7,
+       "normalUsikker": 0.7
+      }
+     },
+     "lav45": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "dl-stang-frem": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 4.7,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 0
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 16.7,
+       "oversetFordiUsikker": 0.3,
+       "normalUsikker": 0
+      }
+     },
+     "taet2m": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "dl-stang-frem": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 3,
+       "oversetFordiUsikker": 0.3,
+       "normalUsikker": 0.3
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 18.3,
+       "oversetFordiUsikker": 3.3,
+       "normalUsikker": 4.3
+      }
+     },
+     "forskudt50": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "dl-stang-frem": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 0,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 0
+      },
+      "typisk": {
+       "falskAlarm": 0.3,
+       "overset": 6.3,
+       "oversetFordiUsikker": 0.3,
+       "normalUsikker": 0.3
+      }
+     },
+     "skraa5": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "dl-stang-frem": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 9.3,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 0
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 25,
+       "oversetFordiUsikker": 0.3,
+       "normalUsikker": 0
+      }
+     },
+     "skraa10": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "dl-stang-frem": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 25.3,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 0
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 43.3,
+       "oversetFordiUsikker": 3.3,
+       "normalUsikker": 2
+      }
+     }
+    }
+   },
+   "bp-hoejt-bryst": {
+    "fase": "baenk-bryst",
+    "titel": "Stangen for højt eller albuen helt ude",
+    "kamera": {
+     "vinkelret": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 80,
+       "fejlSvar": {
+        "bp-hoejt-bryst": 8,
+        "ingen": 2
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 19,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 13.3
+      },
+      "typisk": {
+       "falskAlarm": 0.4,
+       "overset": 18.8,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 15.3
+      }
+     },
+     "hoej30": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 80,
+       "fejlSvar": {
+        "bp-hoejt-bryst": 8,
+        "ingen": 2
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 19.5,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 16.2
+      },
+      "typisk": {
+       "falskAlarm": 0.1,
+       "overset": 19,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 17.3
+      }
+     },
+     "haand140": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 80,
+       "fejlSvar": {
+        "bp-hoejt-bryst": 8,
+        "ingen": 2
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 19.3,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 17.6
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 20.7,
+       "oversetFordiUsikker": 0.2,
+       "normalUsikker": 17.3
+      }
+     },
+     "lav45": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 80,
+       "fejlSvar": {
+        "bp-hoejt-bryst": 8,
+        "ingen": 2
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 17.8,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 13.1
+      },
+      "typisk": {
+       "falskAlarm": 0.3,
+       "overset": 19.2,
+       "oversetFordiUsikker": 0.3,
+       "normalUsikker": 15.1
+      }
+     },
+     "taet2m": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 80,
+       "fejlSvar": {
+        "bp-hoejt-bryst": 8,
+        "ingen": 2
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 19.7,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 21.4
+      },
+      "typisk": {
+       "falskAlarm": 0.2,
+       "overset": 18.2,
+       "oversetFordiUsikker": 0.2,
+       "normalUsikker": 21.3
+      }
+     },
+     "forskudt50": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 80,
+       "fejlSvar": {
+        "bp-hoejt-bryst": 8,
+        "ingen": 2
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 16.2,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 15.7
+      },
+      "typisk": {
+       "falskAlarm": 0.1,
+       "overset": 19.8,
+       "oversetFordiUsikker": 0.8,
+       "normalUsikker": 17.3
+      }
+     },
+     "skraa5": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 90,
+       "fejlSvar": {
+        "bp-hoejt-bryst": 9,
+        "ingen": 1
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0.1,
+       "overset": 14.7,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 10.3
+      },
+      "typisk": {
+       "falskAlarm": 0.7,
+       "overset": 15.7,
+       "oversetFordiUsikker": 0.3,
+       "normalUsikker": 13.7
+      }
+     },
+     "skraa10": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 90,
+       "fejlSvar": {
+        "bp-hoejt-bryst": 9,
+        "ingen": 1
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0.4,
+       "overset": 15,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 7.8
+      },
+      "typisk": {
+       "falskAlarm": 1.3,
+       "overset": 15,
+       "oversetFordiUsikker": 1.2,
+       "normalUsikker": 13.3
+      }
+     }
+    }
+   },
+   "sq-kun-knae-bund": {
+    "fase": "squat-bund",
+    "titel": "Kun knæene",
+    "kamera": {
+     "vinkelret": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-kun-knae-bund": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 0.7,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 2.7
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 3.7,
+       "oversetFordiUsikker": 3.3,
+       "normalUsikker": 10.8
+      }
+     },
+     "hoej30": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-kun-knae-bund": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0.2,
+       "overset": 0,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 3
+      },
+      "typisk": {
+       "falskAlarm": 1.5,
+       "overset": 6,
+       "oversetFordiUsikker": 4.7,
+       "normalUsikker": 9.5
+      }
+     },
+     "haand140": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-kun-knae-bund": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 1.7,
+       "overset": 0,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 3.5
+      },
+      "typisk": {
+       "falskAlarm": 3.3,
+       "overset": 5.3,
+       "oversetFordiUsikker": 3.7,
+       "normalUsikker": 10.2
+      }
+     },
+     "lav45": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-kun-knae-bund": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 1,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 4
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 5.7,
+       "oversetFordiUsikker": 3.7,
+       "normalUsikker": 9.8
+      }
+     },
+     "taet2m": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-kun-knae-bund": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0.2,
+       "overset": 0,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 3
+      },
+      "typisk": {
+       "falskAlarm": 0.5,
+       "overset": 3.7,
+       "oversetFordiUsikker": 3,
+       "normalUsikker": 8.8
+      }
+     },
+     "forskudt50": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-kun-knae-bund": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0.3,
+       "overset": 0,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 3.3
+      },
+      "typisk": {
+       "falskAlarm": 0.2,
+       "overset": 3,
+       "oversetFordiUsikker": 2.7,
+       "normalUsikker": 9.3
+      }
+     },
+     "skraa5": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-kun-knae-bund": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 0,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 7.2
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 4.3,
+       "oversetFordiUsikker": 3,
+       "normalUsikker": 14
+      }
+     },
+     "skraa10": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-kun-knae-bund": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 0.7,
+       "oversetFordiUsikker": 0.3,
+       "normalUsikker": 8.2
+      },
+      "typisk": {
+       "falskAlarm": 0.3,
+       "overset": 6,
+       "oversetFordiUsikker": 5.7,
+       "normalUsikker": 15.8
+      }
+     }
+    }
+   },
+   "sq-hofte-tilbage-bund": {
+    "fase": "squat-bund",
+    "titel": "Hoften skudt for langt tilbage",
+    "kamera": {
+     "vinkelret": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-hofte-tilbage-bund": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 3,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 2.5
+      },
+      "typisk": {
+       "falskAlarm": 0.3,
+       "overset": 12,
+       "oversetFordiUsikker": 3.7,
+       "normalUsikker": 9
+      }
+     },
+     "hoej30": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-hofte-tilbage-bund": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 8.3,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 3.2
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 17.7,
+       "oversetFordiUsikker": 4.7,
+       "normalUsikker": 12
+      }
+     },
+     "haand140": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 80,
+       "fejlSvar": {
+        "sq-hofte-tilbage-bund": 4,
+        "ingen": 1
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 16.7,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 3.7
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 20.7,
+       "oversetFordiUsikker": 1.7,
+       "normalUsikker": 10.7
+      }
+     },
+     "lav45": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-hofte-tilbage-bund": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 3.7,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 3.2
+      },
+      "typisk": {
+       "falskAlarm": 0.3,
+       "overset": 12,
+       "oversetFordiUsikker": 4.3,
+       "normalUsikker": 8.8
+      }
+     },
+     "taet2m": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-hofte-tilbage-bund": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 4.7,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 2.7
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 13.3,
+       "oversetFordiUsikker": 3.3,
+       "normalUsikker": 9.2
+      }
+     },
+     "forskudt50": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-hofte-tilbage-bund": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 4.7,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 3
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 10.7,
+       "oversetFordiUsikker": 3,
+       "normalUsikker": 9.2
+      }
+     },
+     "skraa5": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-hofte-tilbage-bund": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 4.3,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 6
+      },
+      "typisk": {
+       "falskAlarm": 0.2,
+       "overset": 10.3,
+       "oversetFordiUsikker": 3.7,
+       "normalUsikker": 13.3
+      }
+     },
+     "skraa10": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-hofte-tilbage-bund": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 4.3,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 10.3
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 11.7,
+       "oversetFordiUsikker": 6,
+       "normalUsikker": 15
+      }
+     }
+    }
+   },
+   "sq-kun-knae-midt": {
+    "fase": "squat-midt",
+    "titel": "Kun knæene",
+    "kamera": {
+     "vinkelret": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-kun-knae-midt": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0.3,
+       "overset": 32,
+       "oversetFordiUsikker": 2.7,
+       "normalUsikker": 1.8
+      },
+      "typisk": {
+       "falskAlarm": 0.4,
+       "overset": 48,
+       "oversetFordiUsikker": 13.3,
+       "normalUsikker": 7.4
+      }
+     },
+     "hoej30": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-kun-knae-midt": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 1.2,
+       "overset": 35.3,
+       "oversetFordiUsikker": 14.7,
+       "normalUsikker": 6.7
+      },
+      "typisk": {
+       "falskAlarm": 1.8,
+       "overset": 52.7,
+       "oversetFordiUsikker": 29.7,
+       "normalUsikker": 11
+      }
+     },
+     "haand140": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 80,
+       "fejlSvar": {
+        "sq-kun-knae-midt": 4,
+        "usikker-fase": 1
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 3.2,
+       "overset": 57.7,
+       "oversetFordiUsikker": 39,
+       "normalUsikker": 16.7
+      },
+      "typisk": {
+       "falskAlarm": 3.1,
+       "overset": 65,
+       "oversetFordiUsikker": 43.7,
+       "normalUsikker": 17.9
+      }
+     },
+     "lav45": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-kun-knae-midt": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0.2,
+       "overset": 30,
+       "oversetFordiUsikker": 2.7,
+       "normalUsikker": 1.3
+      },
+      "typisk": {
+       "falskAlarm": 0.2,
+       "overset": 47,
+       "oversetFordiUsikker": 9,
+       "normalUsikker": 6.7
+      }
+     },
+     "taet2m": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-kun-knae-midt": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0.1,
+       "overset": 29,
+       "oversetFordiUsikker": 4,
+       "normalUsikker": 2.4
+      },
+      "typisk": {
+       "falskAlarm": 0.7,
+       "overset": 51.7,
+       "oversetFordiUsikker": 16,
+       "normalUsikker": 7.1
+      }
+     },
+     "forskudt50": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-kun-knae-midt": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0.6,
+       "overset": 31,
+       "oversetFordiUsikker": 6.3,
+       "normalUsikker": 1.8
+      },
+      "typisk": {
+       "falskAlarm": 1.1,
+       "overset": 48.3,
+       "oversetFordiUsikker": 10.3,
+       "normalUsikker": 7
+      }
+     },
+     "skraa5": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-kun-knae-midt": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0.3,
+       "overset": 27.3,
+       "oversetFordiUsikker": 1.7,
+       "normalUsikker": 1.3
+      },
+      "typisk": {
+       "falskAlarm": 0.8,
+       "overset": 44,
+       "oversetFordiUsikker": 8.3,
+       "normalUsikker": 6.4
+      }
+     },
+     "skraa10": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 80,
+       "fejlSvar": {
+        "sq-kun-knae-midt": 4,
+        "ingen": 1
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0.1,
+       "overset": 29.7,
+       "oversetFordiUsikker": 1.7,
+       "normalUsikker": 1
+      },
+      "typisk": {
+       "falskAlarm": 0.9,
+       "overset": 45.3,
+       "oversetFordiUsikker": 5.3,
+       "normalUsikker": 5.2
+      }
+     }
+    }
+   },
+   "sq-hofte-tilbage-midt": {
+    "fase": "squat-midt",
+    "titel": "Hoften skudt for langt tilbage",
+    "kamera": {
+     "vinkelret": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-hofte-tilbage-midt": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 0.7,
+       "oversetFordiUsikker": 0.7,
+       "normalUsikker": 2.1
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 4.7,
+       "oversetFordiUsikker": 4,
+       "normalUsikker": 6.4
+      }
+     },
+     "hoej30": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-hofte-tilbage-midt": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 0,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 6.4
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 0.7,
+       "oversetFordiUsikker": 0.3,
+       "normalUsikker": 13.4
+      }
+     },
+     "haand140": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-hofte-tilbage-midt": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 1,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 16.6
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 5.7,
+       "oversetFordiUsikker": 1.3,
+       "normalUsikker": 20.8
+      }
+     },
+     "lav45": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-hofte-tilbage-midt": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 0.3,
+       "oversetFordiUsikker": 0.3,
+       "normalUsikker": 1.9
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 3,
+       "oversetFordiUsikker": 2.3,
+       "normalUsikker": 7.6
+      }
+     },
+     "taet2m": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-hofte-tilbage-midt": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 0.3,
+       "oversetFordiUsikker": 0.3,
+       "normalUsikker": 1.8
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 1.3,
+       "oversetFordiUsikker": 1.3,
+       "normalUsikker": 8
+      }
+     },
+     "forskudt50": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-hofte-tilbage-midt": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 1,
+       "oversetFordiUsikker": 0.7,
+       "normalUsikker": 2
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 2.7,
+       "oversetFordiUsikker": 2.7,
+       "normalUsikker": 7.8
+      }
+     },
+     "skraa5": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-hofte-tilbage-midt": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 0.3,
+       "oversetFordiUsikker": 0,
+       "normalUsikker": 2
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 4.3,
+       "oversetFordiUsikker": 4.3,
+       "normalUsikker": 7.6
+      }
+     },
+     "skraa10": {
+      "udenKlik": {
+       "falskAlarm": 0,
+       "fundet": 100,
+       "fejlSvar": {
+        "sq-hofte-tilbage-midt": 5
+       }
+      },
+      "omhyggelig": {
+       "falskAlarm": 0,
+       "overset": 2,
+       "oversetFordiUsikker": 2,
+       "normalUsikker": 1.3
+      },
+      "typisk": {
+       "falskAlarm": 0,
+       "overset": 8.3,
+       "oversetFordiUsikker": 8,
+       "normalUsikker": 6.4
+      }
+     }
+    }
+   }
+  },
+  "skaevhed": {
+   "squat-bund": {
+    "vinkelret": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "sq-kun-knae-bund:skinneben": 0.4,
+      "sq-kun-knae-bund:vaern-torso": 0.1,
+      "sq-hofte-tilbage-bund:torso": 0.1,
+      "sq-hofte-tilbage-bund:skinneben": -0.4
+     }
+    },
+    "hoej30": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "sq-kun-knae-bund:skinneben": 2,
+      "sq-kun-knae-bund:vaern-torso": 0.8,
+      "sq-hofte-tilbage-bund:torso": 0.8,
+      "sq-hofte-tilbage-bund:skinneben": -2
+     }
+    },
+    "haand140": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "sq-kun-knae-bund:skinneben": 3.2,
+      "sq-kun-knae-bund:vaern-torso": 1.7,
+      "sq-hofte-tilbage-bund:torso": 1.7,
+      "sq-hofte-tilbage-bund:skinneben": -3.2
+     }
+    },
+    "lav45": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "sq-kun-knae-bund:skinneben": 0.2,
+      "sq-kun-knae-bund:vaern-torso": -0.1,
+      "sq-hofte-tilbage-bund:torso": -0.1,
+      "sq-hofte-tilbage-bund:skinneben": -0.2
+     }
+    },
+    "taet2m": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "sq-kun-knae-bund:skinneben": 0.6,
+      "sq-kun-knae-bund:vaern-torso": 0.2,
+      "sq-hofte-tilbage-bund:torso": 0.2,
+      "sq-hofte-tilbage-bund:skinneben": -0.6
+     }
+    },
+    "forskudt50": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "sq-kun-knae-bund:skinneben": 0.7,
+      "sq-kun-knae-bund:vaern-torso": 0.4,
+      "sq-hofte-tilbage-bund:torso": 0.4,
+      "sq-hofte-tilbage-bund:skinneben": -0.7
+     }
+    },
+    "skraa5": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "sq-kun-knae-bund:skinneben": 0.6,
+      "sq-kun-knae-bund:vaern-torso": 0.1,
+      "sq-hofte-tilbage-bund:torso": 0.1,
+      "sq-hofte-tilbage-bund:skinneben": -0.6
+     }
+    },
+    "skraa10": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "sq-kun-knae-bund:skinneben": 0.5,
+      "sq-kun-knae-bund:vaern-torso": -0.1,
+      "sq-hofte-tilbage-bund:torso": -0.1,
+      "sq-hofte-tilbage-bund:skinneben": -0.5
+     }
+    }
+   },
+   "squat-midt": {
+    "vinkelret": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "sq-kun-knae-midt:skinneben": 0.4,
+      "sq-kun-knae-midt:knae": 0.4,
+      "sq-kun-knae-midt:vaern-torso": 0,
+      "sq-hofte-tilbage-midt:torso": 0,
+      "sq-hofte-tilbage-midt:skinneben": -0.4
+     }
+    },
+    "hoej30": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "sq-kun-knae-midt:skinneben": 1.9,
+      "sq-kun-knae-midt:knae": 2.3,
+      "sq-kun-knae-midt:vaern-torso": 0.4,
+      "sq-hofte-tilbage-midt:torso": 0.4,
+      "sq-hofte-tilbage-midt:skinneben": -1.9
+     }
+    },
+    "haand140": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "sq-kun-knae-midt:skinneben": 3.1,
+      "sq-kun-knae-midt:knae": 4.1,
+      "sq-kun-knae-midt:vaern-torso": 1.1,
+      "sq-hofte-tilbage-midt:torso": 1.1,
+      "sq-hofte-tilbage-midt:skinneben": -3.1
+     }
+    },
+    "lav45": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "sq-kun-knae-midt:skinneben": 0.2,
+      "sq-kun-knae-midt:knae": 0.2,
+      "sq-kun-knae-midt:vaern-torso": -0.1,
+      "sq-hofte-tilbage-midt:torso": -0.1,
+      "sq-hofte-tilbage-midt:skinneben": -0.2
+     }
+    },
+    "taet2m": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "sq-kun-knae-midt:skinneben": 0.7,
+      "sq-kun-knae-midt:knae": 0.7,
+      "sq-kun-knae-midt:vaern-torso": 0,
+      "sq-hofte-tilbage-midt:torso": 0,
+      "sq-hofte-tilbage-midt:skinneben": -0.7
+     }
+    },
+    "forskudt50": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "sq-kun-knae-midt:skinneben": 0.8,
+      "sq-kun-knae-midt:knae": 0.8,
+      "sq-kun-knae-midt:vaern-torso": 0.3,
+      "sq-hofte-tilbage-midt:torso": 0.3,
+      "sq-hofte-tilbage-midt:skinneben": -0.8
+     }
+    },
+    "skraa5": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "sq-kun-knae-midt:skinneben": 0.7,
+      "sq-kun-knae-midt:knae": 0.2,
+      "sq-kun-knae-midt:vaern-torso": -0.2,
+      "sq-hofte-tilbage-midt:torso": -0.2,
+      "sq-hofte-tilbage-midt:skinneben": -0.7
+     }
+    },
+    "skraa10": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "sq-kun-knae-midt:skinneben": 0.7,
+      "sq-kun-knae-midt:knae": -0.5,
+      "sq-kun-knae-midt:vaern-torso": -0.7,
+      "sq-hofte-tilbage-midt:torso": -0.7,
+      "sq-hofte-tilbage-midt:skinneben": -0.7
+     }
+    }
+   },
+   "dl-gulv": {
+    "vinkelret": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "dl-hofte-foerst:skinneben": 0,
+      "dl-hofte-foerst:knae": -0.5
+     }
+    },
+    "hoej30": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "dl-hofte-foerst:skinneben": -0.2,
+      "dl-hofte-foerst:knae": -1.6
+     }
+    },
+    "haand140": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "dl-hofte-foerst:skinneben": -0.5,
+      "dl-hofte-foerst:knae": -3.3
+     }
+    },
+    "lav45": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "dl-hofte-foerst:skinneben": 0,
+      "dl-hofte-foerst:knae": 0.1
+     }
+    },
+    "taet2m": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "dl-hofte-foerst:skinneben": 0,
+      "dl-hofte-foerst:knae": -0.8
+     }
+    },
+    "forskudt50": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "dl-hofte-foerst:skinneben": 0.2,
+      "dl-hofte-foerst:knae": 0.2
+     }
+    },
+    "skraa5": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "dl-hofte-foerst:skinneben": -0.1,
+      "dl-hofte-foerst:knae": -0.4
+     }
+    },
+    "skraa10": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "dl-hofte-foerst:skinneben": 0,
+      "dl-hofte-foerst:knae": 0.1
+     }
+    }
+   },
+   "dl-knae": {
+    "vinkelret": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "dl-stang-frem:stangFraMidtfod": 0,
+      "dl-stang-frem:stangKnae": -0.1
+     }
+    },
+    "hoej30": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "dl-stang-frem:stangFraMidtfod": 0,
+      "dl-stang-frem:stangKnae": -0.1
+     }
+    },
+    "haand140": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "dl-stang-frem:stangFraMidtfod": 0,
+      "dl-stang-frem:stangKnae": 0
+     }
+    },
+    "lav45": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "dl-stang-frem:stangFraMidtfod": 0,
+      "dl-stang-frem:stangKnae": -0.1
+     }
+    },
+    "taet2m": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "dl-stang-frem:stangFraMidtfod": 0,
+      "dl-stang-frem:stangKnae": -0.1
+     }
+    },
+    "forskudt50": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "dl-stang-frem:stangFraMidtfod": 1.2,
+      "dl-stang-frem:stangKnae": 0.9
+     }
+    },
+    "skraa5": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "dl-stang-frem:stangFraMidtfod": -0.6,
+      "dl-stang-frem:stangKnae": -0.6
+     }
+    },
+    "skraa10": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "dl-stang-frem:stangFraMidtfod": -1.2,
+      "dl-stang-frem:stangKnae": -1.1
+     }
+    }
+   },
+   "baenk-bryst": {
+    "vinkelret": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "bp-hoejt-bryst:stangModFodder": -1
+     }
+    },
+    "hoej30": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "bp-hoejt-bryst:stangModFodder": -1.2
+     }
+    },
+    "haand140": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "bp-hoejt-bryst:stangModFodder": -1.5
+     }
+    },
+    "lav45": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "bp-hoejt-bryst:stangModFodder": -1
+     }
+    },
+    "taet2m": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "bp-hoejt-bryst:stangModFodder": -1.2
+     }
+    },
+    "forskudt50": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "bp-hoejt-bryst:stangModFodder": -1
+     }
+    },
+    "skraa5": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "bp-hoejt-bryst:stangModFodder": -0.4
+     }
+    },
+    "skraa10": {
+     "status": "ingen",
+     "grund": null,
+     "raekker": {
+      "bp-hoejt-bryst:stangModFodder": 0.2
+     }
+    }
+   }
+  }
+ },
+ "B": {
+  "grader": [
+   0,
+   10,
+   20,
+   30,
+   40
+  ],
+  "normal": {
+   "squat-bund": {
+    "0": {
+     "ingen": 96.8,
+     "usikker-fase": 3.2
+    },
+    "10": {
+     "ingen": 85.7,
+     "usikker-fase": 14.2,
+     "sq-kun-knae-bund": 0.2
+    },
+    "20": {
+     "ingen": 58,
+     "usikker-fase": 41.7,
+     "sq-kun-knae-bund": 0.3
+    },
+    "30": {
+     "usikker-fase": 89,
+     "ingen": 11
+    },
+    "40": {
+     "usikker-fase": 99.8,
+     "ingen": 0.2
+    }
+   },
+   "squat-midt": {
+    "0": {
+     "ingen": 97.6,
+     "usikker-fase": 2.3,
+     "sq-kun-knae-midt": 0.1
+    },
+    "10": {
+     "ingen": 97.4,
+     "sq-kun-knae-midt": 0.8,
+     "usikker-fase": 1.8
+    },
+    "20": {
+     "ingen": 96.1,
+     "usikker-fase": 2.9,
+     "sq-kun-knae-midt": 1
+    },
+    "30": {
+     "ingen": 83.4,
+     "usikker-fase": 16.1,
+     "sq-kun-knae-midt": 0.4
+    },
+    "40": {
+     "ingen": 50.2,
+     "usikker-fase": 49.8
+    }
+   },
+   "dl-gulv": {
+    "0": {
+     "ingen": 100
+    },
+    "10": {
+     "ingen": 100
+    },
+    "20": {
+     "ingen": 100
+    },
+    "30": {
+     "ingen": 100
+    },
+    "40": {
+     "ingen": 95,
+     "dl-hofte-foerst": 5
+    }
+   }
+  },
+  "fejl": {
+   "squat-bund": {
+    "sq-kun-knae-bund": {
+     "0": 99.3,
+     "10": 98.7,
+     "20": 79,
+     "30": 10.7,
+     "40": 0
+    },
+    "sq-hofte-tilbage-bund": {
+     "0": 95,
+     "10": 89.3,
+     "20": 78,
+     "30": 29,
+     "40": 0.7
+    }
+   },
+   "squat-midt": {
+    "sq-kun-knae-midt": {
+     "0": 68.7,
+     "10": 68,
+     "20": 57.7,
+     "30": 17.7,
+     "40": 0
+    },
+    "sq-hofte-tilbage-midt": {
+     "0": 99.7,
+     "10": 98.3,
+     "20": 94.7,
+     "30": 62,
+     "40": 4
+    }
+   },
+   "dl-gulv": {
+    "dl-hofte-foerst": {
+     "0": 98.7,
+     "10": 98,
+     "20": 99.7,
+     "30": 100,
+     "40": 100
+    }
+   }
+  },
+  "tal": {
+   "squat-bund": {
+    "0": {
+     "skinneben": 0.4,
+     "knae": -0.4
+    },
+    "10": {
+     "skinneben": 2,
+     "knae": 0.3
+    },
+    "20": {
+     "skinneben": 3,
+     "knae": 2.4
+    },
+    "30": {
+     "skinneben": 3.5,
+     "knae": 6.1
+    },
+    "40": {
+     "skinneben": 3.1,
+     "knae": 12.3
+    }
+   },
+   "squat-midt": {
+    "0": {
+     "skinneben": 0.4,
+     "knae": -0.4
+    },
+    "10": {
+     "skinneben": 1.6,
+     "knae": 0.1
+    },
+    "20": {
+     "skinneben": 1.9,
+     "knae": 2.3
+    },
+    "30": {
+     "skinneben": 1.2,
+     "knae": 6.5
+    },
+    "40": {
+     "skinneben": -0.8,
+     "knae": 13.4
+    }
+   },
+   "dl-gulv": {
+    "0": {
+     "skinneben": 0,
+     "knae": -0.5
+    },
+    "10": {
+     "skinneben": 0.5,
+     "knae": -0.3
+    },
+    "20": {
+     "skinneben": 0.1,
+     "knae": 1.7
+    },
+    "30": {
+     "skinneben": -1.4,
+     "knae": 5.6
+    },
+    "40": {
+     "skinneben": -4,
+     "knae": 11.7
+    }
+   }
+  }
+ },
+ "C": {
+  "haelGrader": [
+   0,
+   2,
+   4,
+   6,
+   8
+  ],
+  "lowbar": {
+   "squat-bund": {
+    "0": {
+     "ingen": 99.7,
+     "usikker-fase": 0.3
+    },
+    "2": {
+     "ingen": 99.8,
+     "sq-kun-knae-bund": 0.2
+    },
+    "4": {
+     "ingen": 98.3,
+     "sq-kun-knae-bund": 1.7
+    },
+    "6": {
+     "ingen": 83.2,
+     "sq-kun-knae-bund": 16.5,
+     "usikker-fase": 0.3
+    },
+    "8": {
+     "ingen": 43.2,
+     "sq-kun-knae-bund": 56.8
+    }
+   },
+   "squat-midt": {
+    "0": {
+     "ingen": 99.8,
+     "usikker-fase": 0.2
+    },
+    "2": {
+     "ingen": 98.8,
+     "sq-kun-knae-midt": 1.2
+    },
+    "4": {
+     "ingen": 87.5,
+     "sq-kun-knae-midt": 12.3,
+     "usikker-fase": 0.2
+    },
+    "6": {
+     "ingen": 64.8,
+     "sq-kun-knae-midt": 34.2,
+     "usikker-fase": 1
+    },
+    "8": {
+     "ingen": 32.8,
+     "sq-kun-knae-midt": 63.2,
+     "usikker-fase": 4
+    }
+   }
+  },
+  "highbar": {
+   "squat-bund": {
+    "0": {
+     "ingen": 99.8,
+     "sq-kun-knae-bund": 0.2
+    },
+    "2": {
+     "ingen": 96,
+     "sq-kun-knae-bund": 4
+    },
+    "4": {
+     "ingen": 82.7,
+     "sq-kun-knae-bund": 17.3
+    },
+    "6": {
+     "ingen": 43.3,
+     "sq-kun-knae-bund": 56.7
+    },
+    "8": {
+     "sq-kun-knae-bund": 84.5,
+     "ingen": 15.2,
+     "usikker-fase": 0.3
+    }
+   },
+   "squat-midt": {
+    "0": {
+     "ingen": 99.3,
+     "sq-kun-knae-midt": 0.7
+    },
+    "2": {
+     "ingen": 94.7,
+     "sq-kun-knae-midt": 5.2,
+     "usikker-fase": 0.2
+    },
+    "4": {
+     "usikker-fase": 0.5,
+     "sq-kun-knae-midt": 24.8,
+     "ingen": 74.7
+    },
+    "6": {
+     "ingen": 42,
+     "sq-kun-knae-midt": 55.3,
+     "usikker-fase": 2.7
+    },
+    "8": {
+     "sq-kun-knae-midt": 75.7,
+     "ingen": 19,
+     "usikker-fase": 5.3
+    }
+   }
+  },
+  "highbarTal": {
+   "squat-bund": {
+    "skinneben": 3,
+    "torso": -12.1,
+    "knae": -3
+   },
+   "squat-midt": {
+    "skinneben": 2,
+    "torso": -9,
+    "knae": -1.9
+   }
+  }
+ },
+ "D": {
+  "squat": {
+   "squat-bund": {
+    "0.95": {
+     "normal": {
+      "ingen": 93.7,
+      "usikker-fase": 6.3
+     },
+     "kunKnae": {
+      "sq-kun-knae-bund": 96.7,
+      "usikker-fase": 2.3,
+      "ingen": 1
+     },
+     "hofteTilbage": {
+      "sq-hofte-tilbage-bund": 96,
+      "usikker-fase": 3.3,
+      "ingen": 0.7
+     }
+    },
+    "0.9": {
+     "normal": {
+      "usikker-fase": 58.7,
+      "ingen": 41.3
+     },
+     "kunKnae": {
+      "sq-kun-knae-bund": 54.7,
+      "usikker-fase": 44,
+      "ingen": 1.3
+     },
+     "hofteTilbage": {
+      "sq-hofte-tilbage-bund": 73.3,
+      "usikker-fase": 25.3,
+      "ingen": 1.3
+     }
+    },
+    "0.85": {
+     "normal": {
+      "usikker-fase": 97.7,
+      "ingen": 2.3
+     },
+     "kunKnae": {
+      "usikker-fase": 91.3,
+      "sq-kun-knae-bund": 8.7
+     },
+     "hofteTilbage": {
+      "usikker-fase": 78.3,
+      "sq-hofte-tilbage-bund": 21.7
+     }
+    }
+   },
+   "squat-midt": {
+    "-0.16": {
+     "normal": {
+      "ingen": 49.7,
+      "usikker-fase": 50.3
+     },
+     "kunKnae": {
+      "ingen": 93.7,
+      "usikker-fase": 6.3
+     },
+     "hofteTilbage": {
+      "usikker-fase": 84,
+      "sq-hofte-tilbage-midt": 14.7,
+      "ingen": 1.3
+     }
+    },
+    "-0.12": {
+     "normal": {
+      "ingen": 88.7,
+      "usikker-fase": 11.3
+     },
+     "kunKnae": {
+      "ingen": 99.3,
+      "usikker-fase": 0.7
+     },
+     "hofteTilbage": {
+      "usikker-fase": 48.7,
+      "sq-hofte-tilbage-midt": 50,
+      "ingen": 1.3
+     }
+    },
+    "-0.08": {
+     "normal": {
+      "ingen": 99,
+      "usikker-fase": 1
+     },
+     "kunKnae": {
+      "ingen": 95.3,
+      "sq-kun-knae-midt": 4.7
+     },
+     "hofteTilbage": {
+      "sq-hofte-tilbage-midt": 82.3,
+      "usikker-fase": 17.7
+     }
+    },
+    "0.08": {
+     "normal": {
+      "ingen": 95,
+      "usikker-fase": 4,
+      "sq-kun-knae-midt": 1
+     },
+     "kunKnae": {
+      "sq-kun-knae-midt": 16.7,
+      "usikker-fase": 71.7,
+      "ingen": 11.7
+     },
+     "hofteTilbage": {
+      "sq-hofte-tilbage-midt": 98.7,
+      "ingen": 1.3
+     }
+    },
+    "0.12": {
+     "normal": {
+      "ingen": 73.3,
+      "usikker-fase": 26,
+      "sq-kun-knae-midt": 0.7
+     },
+     "kunKnae": {
+      "usikker-fase": 95.3,
+      "sq-kun-knae-midt": 1,
+      "ingen": 3.7
+     },
+     "hofteTilbage": {
+      "sq-hofte-tilbage-midt": 95,
+      "usikker-fase": 2.3,
+      "ingen": 2.7
+     }
+    },
+    "0.16": {
+     "normal": {
+      "usikker-fase": 68.7,
+      "ingen": 31.3
+     },
+     "kunKnae": {
+      "usikker-fase": 100
+     },
+     "hofteTilbage": {
+      "sq-hofte-tilbage-midt": 81,
+      "usikker-fase": 16,
+      "ingen": 3
+     }
+    }
+   }
+  },
+  "doedloeft": {
+   "dl-gulv": {
+    "0": {
+     "ingen": 100
+    },
+    "2": {
+     "ingen": 100
+    },
+    "5": {
+     "ingen": 99.7,
+     "dl-hofte-foerst": 0.3
+    },
+    "8": {
+     "ingen": 99.3,
+     "dl-hofte-foerst": 0.7
+    },
+    "12": {
+     "ingen": 86.7,
+     "dl-hofte-foerst": 13.3
+    },
+    "16": {
+     "ingen": 51.7,
+     "dl-hofte-foerst": 45.3,
+     "usikker-fase": 3
+    },
+    "20": {
+     "usikker-fase": 99.3,
+     "ingen": 0.7
+    },
+    "0-fladt": {
+     "gulvAndelOver": 0
+    },
+    "0-andre": {
+     "midtNav": -0.025,
+     "lavt45Naer": -0.127,
+     "stangCmOverGulvMidt": 20.9,
+     "modelStangCm": 22.5
+    },
+    "0-udenKlik": {
+     "gulvAndelOver": -0.29600000000000004,
+     "faseOk": true,
+     "status": "ingen",
+     "raekker": [
+      [
+       "skinneben",
+       0
+      ],
+      [
+       "knae",
+       -0.5
+      ]
+     ]
+    },
+    "2-fladt": {
+     "gulvAndelOver": 0.04
+    },
+    "2-andre": {
+     "midtNav": 0.016,
+     "lavt45Naer": -0.076,
+     "stangCmOverGulvMidt": 23,
+     "modelStangCm": 22.5
+    },
+    "2-udenKlik": {
+     "gulvAndelOver": -0.245,
+     "faseOk": true,
+     "status": "ingen",
+     "raekker": [
+      [
+       "skinneben",
+       0.9
+      ],
+      [
+       "knae",
+       2.7
+      ]
+     ]
+    },
+    "5-fladt": {
+     "gulvAndelOver": 0.099
+    },
+    "5-andre": {
+     "midtNav": 0.077,
+     "lavt45Naer": 0,
+     "stangCmOverGulvMidt": 26.2,
+     "modelStangCm": 22.5
+    },
+    "5-udenKlik": {
+     "gulvAndelOver": -0.168,
+     "faseOk": true,
+     "status": "ingen",
+     "raekker": [
+      [
+       "skinneben",
+       2.1
+      ],
+      [
+       "knae",
+       7.6
+      ]
+     ]
+    },
+    "8-fladt": {
+     "gulvAndelOver": 0.157
+    },
+    "8-andre": {
+     "midtNav": 0.13699999999999998,
+     "lavt45Naer": 0.076,
+     "stangCmOverGulvMidt": 29.4,
+     "modelStangCm": 22.5
+    },
+    "8-udenKlik": {
+     "gulvAndelOver": -0.092,
+     "faseOk": true,
+     "status": "ingen",
+     "raekker": [
+      [
+       "skinneben",
+       3.4
+      ],
+      [
+       "knae",
+       12.7
+      ]
+     ]
+    },
+    "12-fladt": {
+     "gulvAndelOver": 0.235
+    },
+    "12-andre": {
+     "midtNav": 0.217,
+     "lavt45Naer": 0.17600000000000002,
+     "stangCmOverGulvMidt": 33.5,
+     "modelStangCm": 22.5
+    },
+    "12-udenKlik": {
+     "gulvAndelOver": 0.01,
+     "faseOk": true,
+     "status": "ingen",
+     "raekker": [
+      [
+       "skinneben",
+       5.1
+      ],
+      [
+       "knae",
+       19.5
+      ]
+     ]
+    },
+    "16-fladt": {
+     "gulvAndelOver": 0.313
+    },
+    "16-andre": {
+     "midtNav": 0.297,
+     "lavt45Naer": 0.276,
+     "stangCmOverGulvMidt": 37.6,
+     "modelStangCm": 22.5
+    },
+    "16-udenKlik": {
+     "gulvAndelOver": 0.11,
+     "faseOk": true,
+     "status": "ingen",
+     "raekker": [
+      [
+       "skinneben",
+       6.8
+      ],
+      [
+       "knae",
+       26.3
+      ]
+     ]
+    },
+    "20-fladt": {
+     "gulvAndelOver": 0.39
+    },
+    "20-andre": {
+     "midtNav": 0.376,
+     "lavt45Naer": 0.375,
+     "stangCmOverGulvMidt": 41.6,
+     "modelStangCm": 22.5
+    },
+    "20-udenKlik": {
+     "gulvAndelOver": 0.21,
+     "faseOk": false,
+     "status": "usikker-fase",
+     "raekker": []
+    }
+   },
+   "halvvejs": {
+    "0": {
+     "dl-hofte-foerst": 100
+    },
+    "3": {
+     "dl-hofte-foerst": 90,
+     "ingen": 10
+    },
+    "6": {
+     "ingen": 71.7,
+     "dl-hofte-foerst": 28.3
+    },
+    "9": {
+     "ingen": 100
+    }
+   }
+  }
+ },
+ "E": {
+  "yantra-gulv": {
+   "status": "ingen",
+   "regel": "dl-hofte-foerst",
+   "grund": null,
+   "raekker": [
+    {
+     "regel": "dl-hofte-foerst",
+     "status": "ingen",
+     "raekker": [
+      {
+       "id": "skinneben",
+       "billede": 10,
+       "model": 13.8,
+       "afvig": 3.8,
+       "taerskel": 7
+      },
+      {
+       "id": "knae",
+       "billede": 121.4,
+       "model": 97.5,
+       "afvig": 23.8,
+       "taerskel": 15
+      }
+     ]
+    }
+   ]
+  },
+  "yantra-gulv-to-nav": {
+   "status": "ingen",
+   "regel": "dl-hofte-foerst",
+   "grund": null,
+   "raekker": [
+    {
+     "regel": "dl-hofte-foerst",
+     "status": "ingen",
+     "raekker": [
+      {
+       "id": "skinneben",
+       "billede": 10,
+       "model": 13.8,
+       "afvig": 3.8,
+       "taerskel": 7
+      },
+      {
+       "id": "knae",
+       "billede": 121.4,
+       "model": 97.5,
+       "afvig": 23.8,
+       "taerskel": 15
+      }
+     ]
+    }
+   ]
+  },
+  "bhishak-gulv": {
+   "status": "ingen",
+   "regel": "dl-hofte-foerst",
+   "grund": null,
+   "raekker": [
+    {
+     "regel": "dl-hofte-foerst",
+     "status": "ingen",
+     "raekker": [
+      {
+       "id": "skinneben",
+       "billede": 11.2,
+       "model": 13.8,
+       "afvig": 2.6,
+       "taerskel": 7
+      },
+      {
+       "id": "knae",
+       "billede": 118,
+       "model": 97.5,
+       "afvig": 20.5,
+       "taerskel": 15
+      }
+     ]
+    }
+   ]
+  },
+  "yantra-knae": {
+   "status": "usikker-kamera",
+   "regel": "dl-stang-frem",
+   "grund": "Stangens plads kræver det fjerne nav.",
+   "raekker": [
+    {
+     "regel": "dl-stang-frem",
+     "status": "usikker-kamera",
+     "raekker": []
+    }
+   ]
+  },
+  "bhishak-knae": {
+   "status": "usikker-kamera",
+   "regel": "dl-stang-frem",
+   "grund": "Stangens plads kræver det fjerne nav.",
+   "raekker": [
+    {
+     "regel": "dl-stang-frem",
+     "status": "usikker-kamera",
+     "raekker": []
+    }
+   ]
+  },
+  "knaeUdForklaring": {
+   "0": {
+    "skinneben": 0,
+    "knae": -0.5
+   },
+   "10": {
+    "skinneben": 0.5,
+    "knae": -0.3
+   },
+   "20": {
+    "skinneben": 0.1,
+    "knae": 1.7
+   },
+   "30": {
+    "skinneben": -1.4,
+    "knae": 5.6
+   },
+   "40": {
+    "skinneben": -4,
+    "knae": 11.7
+   }
+  }
+ },
+ "F": {
+  "saetninger": [
+   {
+    "krop": "178 cm, 85 kg",
+    "regel": "dl-hofte-foerst",
+    "figur": "hoften stiger først",
+    "saetning": "Skinnebenet står ca. 13° mere lodret og knæet er ca. 27° mere strakt end i modellens udførelse med samme krop; sådan står modellens figur, når knæene strækkes, før stangen slipper gulvet.",
+    "ord": 31,
+    "forbudt": []
+   },
+   {
+    "krop": "178 cm, 85 kg",
+    "regel": "dl-stang-frem",
+    "figur": "stangen glider frem",
+    "saetning": "Stangen hænger ca. 6 cm længere fremme og ca. 6 cm længere fra knæet end i modellens knæhøjde; sådan står modellens figur, når stangen glider frem fra benene.",
+    "ord": 28,
+    "forbudt": []
+   },
+   {
+    "krop": "178 cm, 85 kg",
+    "regel": "bp-hoejt-bryst",
+    "figur": "stangen for højt",
+    "saetning": "Stangen rører ca. 15 cm nærmere halsen end i modellen; det gør den i modellen både, når stangen lander for højt, og når albuen står helt ude, og fra siden kan billedet ikke se albuen.",
+    "ord": 35,
+    "forbudt": []
+   },
+   {
+    "krop": "178 cm, 85 kg",
+    "regel": "bp-hoejt-bryst",
+    "figur": "albuen helt ude",
+    "saetning": "Stangen rører ca. 8 cm nærmere halsen end i modellen; det gør den i modellen både, når stangen lander for højt, og når albuen står helt ude, og fra siden kan billedet ikke se albuen.",
+    "ord": 35,
+    "forbudt": []
+   },
+   {
+    "krop": "178 cm, 85 kg",
+    "regel": "sq-kun-knae-bund",
+    "figur": "kun knæene",
+    "saetning": "Skinnebenet hælder ca. 17° mere frem end i modellens bund med samme krop og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen, og dér letter hælen i modellen.",
+    "ord": 35,
+    "forbudt": []
+   },
+   {
+    "krop": "178 cm, 85 kg",
+    "regel": "sq-hofte-tilbage-bund",
+    "figur": "hoften tilbage",
+    "saetning": "Torsoen hælder ca. 15° mere frem og skinnebenet står ca. 10° mere lodret end i modellens bund med samme krop; sådan står modellens figur, når hoften skydes for langt tilbage.",
+    "ord": 30,
+    "forbudt": []
+   },
+   {
+    "krop": "178 cm, 85 kg",
+    "regel": "sq-kun-knae-midt",
+    "figur": "kun knæene",
+    "saetning": "Skinnebenet hælder ca. 9° mere frem og knæet er ca. 11° mere bøjet end i modellens sticking point med samme krop og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen.",
+    "ord": 37,
+    "forbudt": []
+   },
+   {
+    "krop": "178 cm, 85 kg",
+    "regel": "sq-hofte-tilbage-midt",
+    "figur": "hoften tilbage",
+    "saetning": "Torsoen hælder ca. 30° mere frem og skinnebenet står ca. 18° mere lodret end i modellens sticking point med samme krop; sådan står modellens figur, når hoften skydes for langt tilbage.",
+    "ord": 31,
+    "forbudt": []
+   },
+   {
+    "krop": "160 cm, 60 kg",
+    "regel": "dl-hofte-foerst",
+    "figur": "hoften stiger først",
+    "saetning": "Skinnebenet står ca. 10° mere lodret og knæet er ca. 21° mere strakt end i modellens udførelse med samme krop; sådan står modellens figur, når knæene strækkes, før stangen slipper gulvet.",
+    "ord": 31,
+    "forbudt": []
+   },
+   {
+    "krop": "160 cm, 60 kg",
+    "regel": "dl-stang-frem",
+    "figur": "stangen glider frem",
+    "saetning": "Stangen hænger ca. 6 cm længere fremme og ca. 6 cm længere fra knæet end i modellens knæhøjde; sådan står modellens figur, når stangen glider frem fra benene.",
+    "ord": 28,
+    "forbudt": []
+   },
+   {
+    "krop": "160 cm, 60 kg",
+    "regel": "bp-hoejt-bryst",
+    "figur": "stangen for højt",
+    "saetning": "Stangen rører ca. 15 cm nærmere halsen end i modellen; det gør den i modellen både, når stangen lander for højt, og når albuen står helt ude, og fra siden kan billedet ikke se albuen.",
+    "ord": 35,
+    "forbudt": []
+   },
+   {
+    "krop": "160 cm, 60 kg",
+    "regel": "sq-kun-knae-bund",
+    "figur": "kun knæene",
+    "saetning": "Skinnebenet hælder ca. 14° mere frem end i modellens bund med samme krop og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen, og dér letter hælen i modellen.",
+    "ord": 35,
+    "forbudt": []
+   },
+   {
+    "krop": "160 cm, 60 kg",
+    "regel": "sq-hofte-tilbage-bund",
+    "figur": "hoften tilbage",
+    "saetning": "Torsoen hælder ca. 13° mere frem og skinnebenet står ca. 10° mere lodret end i modellens bund med samme krop; sådan står modellens figur, når hoften skydes for langt tilbage.",
+    "ord": 30,
+    "forbudt": []
+   },
+   {
+    "krop": "160 cm, 60 kg",
+    "regel": "sq-kun-knae-midt",
+    "figur": "kun knæene",
+    "saetning": "Skinnebenet hælder ca. 6° mere frem og knæet er ca. 9° mere bøjet end i modellens sticking point med samme krop og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen.",
+    "ord": 37,
+    "forbudt": []
+   },
+   {
+    "krop": "160 cm, 60 kg",
+    "regel": "sq-hofte-tilbage-midt",
+    "figur": "hoften tilbage",
+    "saetning": "Torsoen hælder ca. 27° mere frem og skinnebenet står ca. 19° mere lodret end i modellens sticking point med samme krop; sådan står modellens figur, når hoften skydes for langt tilbage.",
+    "ord": 31,
+    "forbudt": []
+   },
+   {
+    "krop": "183 cm, 120 kg",
+    "regel": "dl-hofte-foerst",
+    "figur": "hoften stiger først",
+    "saetning": "Skinnebenet står ca. 14° mere lodret og knæet er ca. 29° mere strakt end i modellens udførelse med samme krop; sådan står modellens figur, når knæene strækkes, før stangen slipper gulvet.",
+    "ord": 31,
+    "forbudt": []
+   },
+   {
+    "krop": "183 cm, 120 kg",
+    "regel": "dl-stang-frem",
+    "figur": "stangen glider frem",
+    "saetning": "Stangen hænger ca. 6 cm længere fremme og ca. 6 cm længere fra knæet end i modellens knæhøjde; sådan står modellens figur, når stangen glider frem fra benene.",
+    "ord": 28,
+    "forbudt": []
+   },
+   {
+    "krop": "183 cm, 120 kg",
+    "regel": "bp-hoejt-bryst",
+    "figur": "stangen for højt",
+    "saetning": "Stangen rører ca. 15 cm nærmere halsen end i modellen; det gør den i modellen både, når stangen lander for højt, og når albuen står helt ude, og fra siden kan billedet ikke se albuen.",
+    "ord": 35,
+    "forbudt": []
+   },
+   {
+    "krop": "183 cm, 120 kg",
+    "regel": "bp-hoejt-bryst",
+    "figur": "albuen helt ude",
+    "saetning": "Stangen rører ca. 9 cm nærmere halsen end i modellen; det gør den i modellen både, når stangen lander for højt, og når albuen står helt ude, og fra siden kan billedet ikke se albuen.",
+    "ord": 35,
+    "forbudt": []
+   },
+   {
+    "krop": "183 cm, 120 kg",
+    "regel": "sq-kun-knae-bund",
+    "figur": "kun knæene",
+    "saetning": "Skinnebenet hælder ca. 17° mere frem end i modellens bund med samme krop og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen, og dér letter hælen i modellen.",
+    "ord": 35,
+    "forbudt": []
+   },
+   {
+    "krop": "183 cm, 120 kg",
+    "regel": "sq-hofte-tilbage-bund",
+    "figur": "hoften tilbage",
+    "saetning": "Torsoen hælder ca. 16° mere frem og skinnebenet står ca. 10° mere lodret end i modellens bund med samme krop; sådan står modellens figur, når hoften skydes for langt tilbage.",
+    "ord": 30,
+    "forbudt": []
+   },
+   {
+    "krop": "183 cm, 120 kg",
+    "regel": "sq-kun-knae-midt",
+    "figur": "kun knæene",
+    "saetning": "Skinnebenet hælder ca. 9° mere frem og knæet er ca. 11° mere bøjet end i modellens sticking point med samme krop og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen.",
+    "ord": 37,
+    "forbudt": []
+   },
+   {
+    "krop": "183 cm, 120 kg",
+    "regel": "sq-hofte-tilbage-midt",
+    "figur": "hoften tilbage",
+    "saetning": "Torsoen hælder ca. 31° mere frem og skinnebenet står ca. 17° mere lodret end i modellens sticking point med samme krop; sådan står modellens figur, når hoften skydes for langt tilbage.",
+    "ord": 31,
+    "forbudt": []
+   },
+   {
+    "krop": "205 cm, 110 kg",
+    "regel": "dl-hofte-foerst",
+    "figur": "hoften stiger først",
+    "saetning": "Skinnebenet står ca. 17° mere lodret og knæet er ca. 36° mere strakt end i modellens udførelse med samme krop; sådan står modellens figur, når knæene strækkes, før stangen slipper gulvet.",
+    "ord": 31,
+    "forbudt": []
+   },
+   {
+    "krop": "205 cm, 110 kg",
+    "regel": "dl-stang-frem",
+    "figur": "stangen glider frem",
+    "saetning": "Stangen hænger ca. 6 cm længere fremme og ca. 6 cm længere fra knæet end i modellens knæhøjde; sådan står modellens figur, når stangen glider frem fra benene.",
+    "ord": 28,
+    "forbudt": []
+   },
+   {
+    "krop": "205 cm, 110 kg",
+    "regel": "bp-hoejt-bryst",
+    "figur": "stangen for højt",
+    "saetning": "Stangen rører ca. 14 cm nærmere halsen end i modellen; det gør den i modellen både, når stangen lander for højt, og når albuen står helt ude, og fra siden kan billedet ikke se albuen.",
+    "ord": 35,
+    "forbudt": []
+   },
+   {
+    "krop": "205 cm, 110 kg",
+    "regel": "bp-hoejt-bryst",
+    "figur": "albuen helt ude",
+    "saetning": "Stangen rører ca. 15 cm nærmere halsen end i modellen; det gør den i modellen både, når stangen lander for højt, og når albuen står helt ude, og fra siden kan billedet ikke se albuen.",
+    "ord": 35,
+    "forbudt": []
+   },
+   {
+    "krop": "205 cm, 110 kg",
+    "regel": "sq-kun-knae-bund",
+    "figur": "kun knæene",
+    "saetning": "Skinnebenet hælder ca. 18° mere frem end i modellens bund med samme krop og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen, og dér letter hælen i modellen.",
+    "ord": 35,
+    "forbudt": []
+   },
+   {
+    "krop": "205 cm, 110 kg",
+    "regel": "sq-hofte-tilbage-bund",
+    "figur": "hoften tilbage",
+    "saetning": "Torsoen hælder ca. 16° mere frem og skinnebenet står ca. 10° mere lodret end i modellens bund med samme krop; sådan står modellens figur, når hoften skydes for langt tilbage.",
+    "ord": 30,
+    "forbudt": []
+   },
+   {
+    "krop": "205 cm, 110 kg",
+    "regel": "sq-kun-knae-midt",
+    "figur": "kun knæene",
+    "saetning": "Skinnebenet hælder ca. 10° mere frem og knæet er ca. 12° mere bøjet end i modellens sticking point med samme krop og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen.",
+    "ord": 37,
+    "forbudt": []
+   },
+   {
+    "krop": "205 cm, 110 kg",
+    "regel": "sq-hofte-tilbage-midt",
+    "figur": "hoften tilbage",
+    "saetning": "Torsoen hælder ca. 32° mere frem og skinnebenet står ca. 17° mere lodret end i modellens sticking point med samme krop; sådan står modellens figur, når hoften skydes for langt tilbage.",
+    "ord": 31,
+    "forbudt": []
+   },
+   {
+    "krop": "183 cm, lange lår, kort torso",
+    "regel": "dl-hofte-foerst",
+    "figur": "hoften stiger først",
+    "saetning": "Skinnebenet står ca. 14° mere lodret og knæet er ca. 28° mere strakt end i modellens udførelse med samme krop; sådan står modellens figur, når knæene strækkes, før stangen slipper gulvet.",
+    "ord": 31,
+    "forbudt": []
+   },
+   {
+    "krop": "183 cm, lange lår, kort torso",
+    "regel": "dl-stang-frem",
+    "figur": "stangen glider frem",
+    "saetning": "Stangen hænger ca. 6 cm længere fremme og ca. 6 cm længere fra knæet end i modellens knæhøjde; sådan står modellens figur, når stangen glider frem fra benene.",
+    "ord": 28,
+    "forbudt": []
+   },
+   {
+    "krop": "183 cm, lange lår, kort torso",
+    "regel": "bp-hoejt-bryst",
+    "figur": "stangen for højt",
+    "saetning": "Stangen rører ca. 15 cm nærmere halsen end i modellen; det gør den i modellen både, når stangen lander for højt, og når albuen står helt ude, og fra siden kan billedet ikke se albuen.",
+    "ord": 35,
+    "forbudt": []
+   },
+   {
+    "krop": "183 cm, lange lår, kort torso",
+    "regel": "sq-kun-knae-bund",
+    "figur": "kun knæene",
+    "saetning": "Skinnebenet hælder ca. 12° mere frem end i modellens bund med samme krop og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen, og dér letter hælen i modellen.",
+    "ord": 35,
+    "forbudt": []
+   },
+   {
+    "krop": "183 cm, lange lår, kort torso",
+    "regel": "sq-hofte-tilbage-bund",
+    "figur": "hoften tilbage",
+    "saetning": "Torsoen hælder ca. 10° mere frem og skinnebenet står ca. 6° mere lodret end i modellens bund med samme krop; sådan står modellens figur, når hoften skydes for langt tilbage.",
+    "ord": 30,
+    "forbudt": []
+   },
+   {
+    "krop": "183 cm, lange lår, kort torso",
+    "regel": "sq-kun-knae-midt",
+    "figur": "kun knæene",
+    "saetning": "Skinnebenet hælder ca. 7° mere frem og knæet er ca. 8° mere bøjet end i modellens sticking point med samme krop og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen.",
+    "ord": 37,
+    "forbudt": []
+   },
+   {
+    "krop": "183 cm, lange lår, kort torso",
+    "regel": "sq-hofte-tilbage-midt",
+    "figur": "hoften tilbage",
+    "saetning": "Torsoen hælder ca. 24° mere frem og skinnebenet står ca. 12° mere lodret end i modellens sticking point med samme krop; sådan står modellens figur, når hoften skydes for langt tilbage.",
+    "ord": 31,
+    "forbudt": []
+   }
+  ],
+  "graenser": {
+   "sq-kun-knae-bund": "Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. Modellen regner med fladt fodtøj: sko med hæl lægger også skinnebenet frem, og billedet har intet punkt på hælen.",
+   "sq-hofte-tilbage-bund": "Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. En bred fodstilling med tæerne ud får skinnebenet til at se mere lodret ud fra siden; derfor kræver reglen også torsoen.",
+   "sq-kun-knae-midt": "Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. Modellen regner med fladt fodtøj: sko med hæl lægger også skinnebenet frem, og billedet har intet punkt på hælen.",
+   "sq-hofte-tilbage-midt": "Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. En bred fodstilling med tæerne ud får skinnebenet til at se mere lodret ud fra siden; derfor kræver reglen også torsoen."
+  },
+  "unikke": [
+   "Skinnebenet står ca. #° mere lodret og knæet er ca. #° mere strakt end i modellens udførelse med samme krop; sådan står modellens figur, når knæene strækkes, før stangen slipper gulvet.",
+   "Stangen hænger ca. # cm længere fremme og ca. # cm længere fra knæet end i modellens knæhøjde; sådan står modellens figur, når stangen glider frem fra benene.",
+   "Stangen rører ca. # cm nærmere halsen end i modellen; det gør den i modellen både, når stangen lander for højt, og når albuen står helt ude, og fra siden kan billedet ikke se albuen.",
+   "Skinnebenet hælder ca. #° mere frem end i modellens bund med samme krop og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen, og dér letter hælen i modellen.",
+   "Torsoen hælder ca. #° mere frem og skinnebenet står ca. #° mere lodret end i modellens bund med samme krop; sådan står modellens figur, når hoften skydes for langt tilbage.",
+   "Skinnebenet hælder ca. #° mere frem og knæet er ca. #° mere bøjet end i modellens sticking point med samme krop og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen.",
+   "Torsoen hælder ca. #° mere frem og skinnebenet står ca. #° mere lodret end i modellens sticking point med samme krop; sådan står modellens figur, når hoften skydes for langt tilbage."
+  ],
+  "maxOrd": 37,
+  "medForbudt": []
+ }
+}
