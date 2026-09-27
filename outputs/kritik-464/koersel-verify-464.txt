@@ -1,0 +1,6 @@
+
+> entropi-app@0.0.0 verify:kritik-464
+> node outputs/kritik-464/verify-kritik-464.mjs
+
+verify:kritik-464 (blok 2) GROEN
+exit 0
