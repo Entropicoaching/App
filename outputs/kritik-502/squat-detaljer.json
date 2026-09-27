@@ -1,0 +1,86 @@
+{
+ "gren": "udgivelse-squat-min-krop",
+ "side": "artikel-squat.html",
+ "fund": [
+  {
+   "tekst": "[MARC] ",
+   "bredde": 390,
+   "tag": "P",
+   "top": 22788,
+   "w": 350,
+   "h": 121,
+   "font": "15.52px",
+   "farve": "rgb(204, 200, 188)"
+  },
+  {
+   "tekst": "Sædemuskel (gluteus maximus)",
+   "bredde": 390,
+   "tag": "TD",
+   "top": 16152,
+   "w": 109,
+   "h": 81,
+   "font": "10.56px",
+   "farve": "rgb(204, 200, 188)"
+  },
+  {
+   "tekst": "Squat-udgaven kommer",
+   "bredde": 390,
+   "tag": "P",
+   "top": 29769,
+   "w": 350,
+   "h": 60,
+   "font": "16.64px",
+   "farve": "rgb(237, 234, 226)"
+  },
+  {
+   "tekst": "Blå: Marcs",
+   "bredde": 390,
+   "tag": "LI",
+   "top": 30864,
+   "w": 326,
+   "h": 55,
+   "font": "13px",
+   "farve": "rgb(185, 181, 170)"
+  },
+  {
+   "tekst": "[MARC] ",
+   "bredde": 1280,
+   "tag": "P",
+   "top": 18038,
+   "w": 656,
+   "h": 61,
+   "font": "15.52px",
+   "farve": "rgb(204, 200, 188)"
+  },
+  {
+   "tekst": "Sædemuskel (gluteus maximus)",
+   "bredde": 1280,
+   "tag": "TD",
+   "top": 12618,
+   "w": 195,
+   "h": 52,
+   "font": "11.84px",
+   "farve": "rgb(204, 200, 188)"
+  },
+  {
+   "tekst": "Squat-udgaven kommer",
+   "bredde": 1280,
+   "tag": "P",
+   "top": 23475,
+   "w": 656,
+   "h": 30,
+   "font": "16.64px",
+   "farve": "rgb(237, 234, 226)"
+  },
+  {
+   "tekst": "Blå: Marcs",
+   "bredde": 1280,
+   "tag": "LI",
+   "top": 24745,
+   "w": 632,
+   "h": 31,
+   "font": "13px",
+   "farve": "rgb(185, 181, 170)"
+  }
+ ]
+}
