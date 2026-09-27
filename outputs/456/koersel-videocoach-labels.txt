@@ -1,0 +1,3 @@
+$ npm run -s verify:videocoach-labels
+VideoCoach lift- og variationsnavne er konsistente.
+exit 0

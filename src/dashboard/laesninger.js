@@ -11,6 +11,7 @@ import { ATHLETE_LOGS_LIMIT } from './coachKonstanter'
 import { planlagteReps, taellerIKg } from './afvigelse'
 import { VIDEOCOACH_BASELINE_VERSION } from '../videoCoachVersion'
 import { unikkeRekorder } from '../personalRecords'
+import { danskDag } from '../danskDato'
 
 export function lavLaesninger({
   inboxRefreshRunnerRef, messageThreadAthleteRef, session, setAthleteCurrentWeek, setAthleteLastLogs, setAthleteLogs,
@@ -96,7 +97,8 @@ export function lavLaesninger({
     if (!data) return
     const lastLogMap = {}
     for (const log of data) {
-      if (!lastLogMap[log.athlete_id]) lastLogMap[log.athlete_id] = log.logged_at.slice(0, 10)
+      // ORDRE 456 (A8): dagen i dansk tid, ikke UTC.
+      if (!lastLogMap[log.athlete_id]) lastLogMap[log.athlete_id] = danskDag(log.logged_at)
     }
     setAthleteLastLogs(lastLogMap)
 
@@ -106,7 +108,7 @@ export function lavLaesninger({
       if (log.logged_at < mondayIso) continue
       const aid = log.athlete_id
       if (!weekMap[aid]) weekMap[aid] = { dates: new Set(), sets: 0 }
-      weekMap[aid].dates.add(log.logged_at.slice(0, 10))
+      weekMap[aid].dates.add(danskDag(log.logged_at))
       weekMap[aid].sets++
     }
     const weekSummary = {}

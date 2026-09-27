@@ -63,8 +63,12 @@ try {
     f.forsideRigtigMs = await page.waitForFunction(() => {
       const rows = [...document.querySelectorAll('[role="button"]')].filter(r => r.innerText.includes('Testatlet'))
       const t = rows.length ? rows[rows.length - 1].innerText : ''
+      // 456 (A7): hvad raekken viser undervejs, mens forsiden henter.
+      ;(window.__raekker ||= []).push(t.replace(/\n/g, ' | '))
       return /\d af 4 pas/.test(t) && !/Ingen logs/.test(t)
     }, null, { timeout: 120000, polling: 250 }).then(() => Date.now() - t0, () => null)
+    f.raekkeUnderHentning = [...new Set(await page.evaluate(() => window.__raekker || []))].filter(Boolean).slice(0, 8)
+    tjek(`${bredde}: forsiden siger aldrig "Ingen logs" eller "0 af 4 pas", mens den henter (A7)`, !f.raekkeUnderHentning.some(t => /Ingen logs|0 af 4 pas/.test(t)), JSON.stringify(f.raekkeUnderHentning).slice(0, 300))
     await page.waitForTimeout(1500)
 
     // ---- forsiden ----
@@ -115,6 +119,7 @@ try {
     tjek(`${bredde}: Log viser det sprungne saet fra pas 3 (med net)`, /sprunget over/.test(dag3), dag3.slice(0, 260))
     // Uden net kunne atleten ikke springe baenkpres 4 over (blok 1): coachen ser det som lavet.
     tjek(`${bredde}: Log viser baenkpres 4 i pas 2 som sprunget over (atletens hensigt i kaelderen)`, /sprunget over/.test(dag2), dag2.slice(0, 260))
+    tjek(`${bredde}: Log viser datoer paa dansk, ingen UTC-dato som 2026-09-26 (A8)`, !/\d{4}-\d{2}-\d{2}/.test(logTekst), (logTekst.match(/\d{1,2}\. [A-Za-z]{3} \d{4}/) || [''])[0])
     f.nulKgILog = (logTekst.match(/\b0 ?kg\b[^\n|]*/g) || []).slice(0, 8)
     tjek(`${bredde}: Log viser noten og RPE 9 fra kaelderen`, logTekst.includes('skulder lidt oem'), '')
     // Samme pas maa kun staa een gang i ugen (et pas delt paa to datoer = to grupper).

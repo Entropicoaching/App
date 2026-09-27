@@ -1,0 +1,37 @@
+{
+  "groen": true,
+  "trin": [
+    "online: logget ind, service worker styrer siden, sæt 1 logget og gemt i mocken",
+    "uden net: appen genåbnet med udløbet token, Dagens pas vist fra telefonen (sæt 2/4)",
+    "uden net: sæt 2, 3, 4 logget; hver køpost bærer tidspunktet for \"Godkendt\" (02:39:09, 02:39:11, 02:39:12 UTC)",
+    "nettet tilbage: køen tømt; 1 INSERT fik sit svar tabt undervejs",
+    "mocken: én række pr. sæt [1,1,1,1]; sæt 2 blev godkendt 11 s før nettet kom og står med godkendt-tiden; sorteret på logged_at (nyeste først) er rækkefølgen [4,3,2,1]"
+  ],
+  "raekkerPrSaet": [
+    1,
+    1,
+    1,
+    1
+  ],
+  "loggedAt": {
+    "2": "2026-09-27T02:39:09.532Z",
+    "3": "2026-09-27T02:39:11.080Z",
+    "4": "2026-09-27T02:39:12.631Z"
+  },
+  "sendtFra": "2026-09-27T02:39:20.241Z",
+  "ventetidSaet2S": 11,
+  "coachOrden": [
+    4,
+    3,
+    2,
+    1
+  ],
+  "skrivninger": [
+    "POST",
+    "POST",
+    "PATCH",
+    "POST",
+    "POST"
+  ],
+  "konsolFejl": []
+}

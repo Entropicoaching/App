@@ -1,0 +1,4 @@
+$ npm run -s verify:videocoach-submission
+VideoCoach gemmer accepterer kun en identisk, profilkoblet dublet.
+Belastning, RPE og notat udfyldes samme sted for begge sende-veje.
+exit 0

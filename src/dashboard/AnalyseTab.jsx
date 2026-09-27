@@ -12,6 +12,7 @@ import {
   videoCoachMetricText, videoCoachBaselineText, parsePlannedRpe, buildLiftSeries,
 } from '../dashboardShared'
 import { BarChart, LineChart, ScatterPlot } from '../dashboardCharts'
+import { danskDag } from '../danskDato' // ORDRE 456 (A8): PR-tidslinjen i dansk tid
 import AthleteSilentFailNote from '../AthleteSilentFailNote' // ORDRE 131 · commit 3, flyttet hertil ordre 137 · commit 1 (Dashboard.jsx splittet under 130) — eneste rendering, se RAPPORT-131.md
 
 export default function AnalyseTab({
@@ -585,7 +586,7 @@ export default function AnalyseTab({
                                         <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', color: isLatest ? '#edeae2' : '#7a7770', fontWeight: isLatest ? 500 : 400 }}>
                                           {pr.weight} kg{pr.reps > 1 ? ` × ${pr.reps}` : ''}
                                         </span>
-                                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', marginLeft: 'auto' }}>{fmtPRDate(pr.logged_at.slice(0, 10))}</span>
+                                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', marginLeft: 'auto' }}>{fmtPRDate(danskDag(pr.logged_at))}</span>
                                       </div>
                                     )
                                   })}

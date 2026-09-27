@@ -7,6 +7,7 @@ import { coachBriefingPointKey } from '../coachBriefingSeen'
 import { supabase } from '../supabase'
 import { holidayInfo, ferieBadgeLabel } from './coachKonstanter'
 import { videoCoachMeasurementSummary, coachVideoPriorityDetail, videoCoachMeasurementText } from './coachVideoHjaelp'
+import { dageSiden } from '../danskDato'
 
 export default function ForsideView({
   athleteCurrentWeek, athleteLastLogs, athletes, athleteSortMode, athleteWeekCompletion, athleteWeekSummary,
@@ -35,7 +36,7 @@ export default function ForsideView({
             const athleteWeeks = calendarWeeks[athlete.id] || []
             const currentNo = currentWeekNo(athleteWeeks, athleteCurrentWeek[athlete.id] ?? null)
             const current = athleteWeeks.find(week => week.week_number === currentNo)
-            const completion = (athleteWeekCompletion[athlete.id] || {})[currentNo] || { sets: 0, tonnage: 0 }
+            const completion = ((athleteWeekCompletion || {})[athlete.id] || {})[currentNo] || { sets: 0, tonnage: 0 }
             const afvigelse = beregnUgensAfvigelse({
               plannedSets: current?.planned_sets || 0,
               plannedTonnage: current?.planned_tonnage || 0,
@@ -256,7 +257,9 @@ export default function ForsideView({
                       const weekNo = current?.week_number ?? fallback?.week_number
                       const blockName = current?.block_name || fallback?.block_name
                       const sessionCount = current?.session_count ?? fallback?.session_count
-                      const ugeStatus = ugeStatusByAthleteId.get(athlete.id)
+                      // ORDRE 456 (A7): før ugens logs er hentet, siges "henter", ikke "0 af 4 pas · Ingen logs".
+                      const henterLogs = athleteLastLogs == null || athleteWeekCompletion == null
+                      const ugeStatus = henterLogs ? null : ugeStatusByAthleteId.get(athlete.id)
                       // ORDRE 428 (C3): standardlinjen siger, hvem der har
                       // trænet: "2 af 4 pas · 4d siden" i stedet for kun
                       // planens størrelse (som var ens for alle).
@@ -276,10 +279,10 @@ export default function ForsideView({
                       // to tal pr. atlet ville gøre listen sværere at skimme,
                       // ikke lettere, hvilket var hele ordrens pointe.
                       const afvigelse = afvigelseByAthleteId.get(athlete.id)
-                      const lastLogDate = athleteLastLogs[athlete.id]
-                      // eslint-disable-next-line react-hooks/purity -- uændret fra før ordre 377; lint ser det først nu (se RAPPORT-377)
-                      const daysSinceLog = lastLogDate ? Math.floor((Date.now() - new Date(lastLogDate + 'T12:00:00')) / 86400000) : null
-                      const lastLogText = daysSinceLog == null ? 'Ingen logs' : daysSinceLog === 0 ? 'I dag' : daysSinceLog === 1 ? 'I går' : `${daysSinceLog}d siden`
+                      const lastLogDate = athleteLastLogs?.[athlete.id]
+                      // ORDRE 456 (A8): hele dage i dansk tid (før: et sæt i dag før kl. 12 gav "-1d siden").
+                      const daysSinceLog = lastLogDate ? dageSiden(lastLogDate) : null
+                      const lastLogText = henterLogs ? 'henter …' : daysSinceLog == null ? 'Ingen logs' : daysSinceLog === 0 ? 'I dag' : daysSinceLog === 1 ? 'I går' : `${daysSinceLog}d siden`
                       // Gråt som standard, grønt kun når ugen er i mål eller
                       // foran — ALDRIG rødt/advarsel, uanset hvor stor
                       // afvigelsen er (ordrens egen grænse).

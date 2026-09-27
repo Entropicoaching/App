@@ -1,0 +1,174 @@
+{
+  "drosling": {
+    "net": {
+      "offline": false,
+      "latency": 150,
+      "downloadThroughput": 209715.2,
+      "uploadThroughput": 96000
+    },
+    "cpu": 4
+  },
+  "aabninger": 3,
+  "maalinger": [
+    {
+      "historik": "let",
+      "uger": 3,
+      "saetIHistorik": 114,
+      "saetDerTaeller": 99,
+      "version": "foer",
+      "runder": [
+        {
+          "brugbartMs": 939,
+          "ugeHentetMs": 877,
+          "historikFaerdigMs": null,
+          "historikBytes": null,
+          "historikSider": null,
+          "tonnageBytes": 10575,
+          "kald": 23,
+          "bytesIalt": 51316
+        },
+        {
+          "brugbartMs": 987,
+          "ugeHentetMs": 910,
+          "historikFaerdigMs": null,
+          "historikBytes": null,
+          "historikSider": null,
+          "tonnageBytes": 10575,
+          "kald": 23,
+          "bytesIalt": 51316
+        },
+        {
+          "brugbartMs": 945,
+          "ugeHentetMs": 867,
+          "historikFaerdigMs": null,
+          "historikBytes": null,
+          "historikSider": null,
+          "tonnageBytes": 10575,
+          "kald": 23,
+          "bytesIalt": 51316
+        }
+      ],
+      "medianBrugbartMs": 945
+    },
+    {
+      "historik": "let",
+      "uger": 3,
+      "saetIHistorik": 114,
+      "saetDerTaeller": 99,
+      "version": "efter",
+      "runder": [
+        {
+          "brugbartMs": 971,
+          "ugeHentetMs": 879,
+          "historikFaerdigMs": 1683,
+          "historikBytes": 5466,
+          "historikSider": 2,
+          "tonnageBytes": 10575,
+          "kald": 25,
+          "bytesIalt": 56782
+        },
+        {
+          "brugbartMs": 962,
+          "ugeHentetMs": 879,
+          "historikFaerdigMs": 1682,
+          "historikBytes": 5466,
+          "historikSider": 2,
+          "tonnageBytes": 10575,
+          "kald": 25,
+          "bytesIalt": 56782
+        },
+        {
+          "brugbartMs": 904,
+          "ugeHentetMs": 860,
+          "historikFaerdigMs": 1681,
+          "historikBytes": 5466,
+          "historikSider": 2,
+          "tonnageBytes": 10575,
+          "kald": 25,
+          "bytesIalt": 56782
+        }
+      ],
+      "medianBrugbartMs": 962
+    },
+    {
+      "historik": "tung",
+      "uger": 130,
+      "saetIHistorik": 4940,
+      "saetDerTaeller": 4290,
+      "version": "foer",
+      "runder": [
+        {
+          "brugbartMs": 3363,
+          "ugeHentetMs": 3162,
+          "historikFaerdigMs": null,
+          "historikBytes": null,
+          "historikSider": null,
+          "tonnageBytes": 38695,
+          "kald": 23,
+          "bytesIalt": 769830
+        },
+        {
+          "brugbartMs": 3364,
+          "ugeHentetMs": 3195,
+          "historikFaerdigMs": null,
+          "historikBytes": null,
+          "historikSider": null,
+          "tonnageBytes": 38695,
+          "kald": 23,
+          "bytesIalt": 769830
+        },
+        {
+          "brugbartMs": 3196,
+          "ugeHentetMs": 3123,
+          "historikFaerdigMs": null,
+          "historikBytes": null,
+          "historikSider": null,
+          "tonnageBytes": 38695,
+          "kald": 23,
+          "bytesIalt": 769830
+        }
+      ],
+      "medianBrugbartMs": 3363
+    },
+    {
+      "historik": "tung",
+      "uger": 130,
+      "saetIHistorik": 4940,
+      "saetDerTaeller": 4290,
+      "version": "efter",
+      "runder": [
+        {
+          "brugbartMs": 3312,
+          "ugeHentetMs": 3159,
+          "historikFaerdigMs": 3800,
+          "historikBytes": 5466,
+          "historikSider": 2,
+          "tonnageBytes": 38695,
+          "kald": 25,
+          "bytesIalt": 775296
+        },
+        {
+          "brugbartMs": 3266,
+          "ugeHentetMs": 3140,
+          "historikFaerdigMs": 3780,
+          "historikBytes": 5466,
+          "historikSider": 2,
+          "tonnageBytes": 38695,
+          "kald": 25,
+          "bytesIalt": 775296
+        },
+        {
+          "brugbartMs": 3331,
+          "ugeHentetMs": 3139,
+          "historikFaerdigMs": 3800,
+          "historikBytes": 5466,
+          "historikSider": 2,
+          "tonnageBytes": 38695,
+          "kald": 25,
+          "bytesIalt": 775296
+        }
+      ],
+      "medianBrugbartMs": 3312
+    }
+  ]
+}

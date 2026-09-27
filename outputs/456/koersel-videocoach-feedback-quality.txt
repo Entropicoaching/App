@@ -1,0 +1,3 @@
+$ npm run -s verify:videocoach-feedback-quality
+VideoCoach gemmer ét prioriteret, handlingsrettet cue og reviewet fanger svag feedback.
+exit 0

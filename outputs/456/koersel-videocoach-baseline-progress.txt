@@ -1,0 +1,3 @@
+$ npm run -s verify:videocoach-baseline-progress
+VideoCoach baseline-fremdrift tæller profiler og aliases korrekt.
+exit 0

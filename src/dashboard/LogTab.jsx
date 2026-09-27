@@ -2,6 +2,8 @@
 // Profilfanen Log: træningslog pr. uge og øvelsesfilter.
 // Samme navne som props som i Dashboard; kun kroppen er flyttet.
 import { parsePlannedRpe } from '../dashboardShared'
+// ORDRE 456 (A8): dagen i dansk tid, ikke UTC (logged_at.slice(0, 10)).
+import { danskDag, danskDatoTekst } from '../danskDato'
 
 export default function LogTab({
   athleteLogs, isMobile, logExerciseFilter, openLogWeeks, setLogExerciseFilter, setOpenLogWeeks,
@@ -13,7 +15,7 @@ export default function LogTab({
               for (const log of athleteLogs) {
                 const name = log.exercises?.name
                 if (!name) continue
-                const date = log.logged_at?.slice(0, 10) || ''
+                const date = danskDag(log.logged_at)
                 const tk = `${name}|${date}`
                 if (!trendEntries[tk]) trendEntries[tk] = { name, date, weights: [] }
                 if (log.weight) trendEntries[tk].weights.push(log.weight)
@@ -42,7 +44,7 @@ export default function LogTab({
               for (const log of athleteLogs) {
                 const ex = log.exercises
                 const sess = ex?.sessions
-                const date = log.logged_at?.slice(0, 10) || ''
+                const date = danskDag(log.logged_at)
                 const sessId = sess?.id || 'unknown'
                 const key = `${date}|${sessId}`
                 if (!grouped[key]) grouped[key] = { date, sessionTitle: sess?.title || '—', weekNum: sess?.weeks?.week_number, sessionRating: sess?.athlete_rating ?? null, sessionComment: sess?.athlete_comment ?? null, exerciseMap: {} }
@@ -112,7 +114,7 @@ export default function LogTab({
                         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1rem' }}>
                           <div>
                             <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'baseline', marginBottom: '0.25rem' }}>
-                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#c8923a', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{sess.date}</div>
+                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#c8923a', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{danskDatoTekst(sess.date)}</div>
                               {sess.weekNum && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', textTransform: 'uppercase' }}>Uge {sess.weekNum}</div>}
                             </div>
                             <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#edeae2' }}>{sess.sessionTitle}</div>
@@ -255,7 +257,7 @@ export default function LogTab({
                                   <div key={row.date + idx} style={{ marginBottom: '1rem', paddingBottom: '1rem', borderBottom: '1px solid rgba(237,234,226,0.05)' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '0.75rem', marginBottom: '0.4rem' }}>
                                       <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'baseline', minWidth: 0 }}>
-                                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#c8923a', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{row.date}</span>
+                                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#c8923a', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{danskDatoTekst(row.date)}</span>
                                         {row.weekNum != null && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', textTransform: 'uppercase' }}>Uge {row.weekNum}</span>}
                                       </div>
                                       <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'baseline', flexShrink: 0 }}>

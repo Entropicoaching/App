@@ -1,0 +1,7 @@
+$ npm run -s verify:videocoach-film-guide
+Skærmbillede (første besøg, hele vejledningen): C:\Users\Entropi\Desktop\entropi-app\outputs\_seneste\film-foer-du-sender\atlet-foerste-besoeg-390px.png
+Skærmbillede (andet besøg, én linje): C:\Users\Entropi\Desktop\entropi-app\outputs\_seneste\film-foer-du-sender\atlet-andet-besoeg-390px.png
+Skærmbillede ("vis igen", udfoldet): C:\Users\Entropi\Desktop\entropi-app\outputs\_seneste\film-foer-du-sender\atlet-vis-igen-390px.png
+
+GRØN: filmvejledningen vises fuldt første gang, som én linje derefter, "vis igen" folder ud igen, ≥44px trykflade, ingen vandret scroll, ingen browser-fejl.
+exit 0

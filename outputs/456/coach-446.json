@@ -2,9 +2,15 @@
   "bredder": {
     "390": {
       "signaler": [],
-      "forsideMs": 3772,
-      "forsideRigtigMs": 8695,
-      "raekke": "T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · -1d siden | ★ 3/5 | skulder lidt oem | 1 | →",
+      "forsideMs": 3939,
+      "forsideRigtigMs": 8916,
+      "raekkeUnderHentning": [
+        "T | Testatlet | Intet aktivt program | →",
+        "T | Testatlet | Intet aktivt program | 1 | →",
+        "T | Testatlet | Uge 131 · Styrke · 4 pas | 1 | →",
+        "T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · I dag | ★ 3/5 | skulder lidt oem | 1 | →"
+      ],
+      "raekke": "T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · I dag | ★ 3/5 | skulder lidt oem | 1 | →",
       "forsideTjek": {
         "sidelaens": 0,
         "udover": [],
@@ -115,7 +121,7 @@
             "fs": 8
           },
           {
-            "t": "· -1d siden",
+            "t": "· I dag",
             "fs": 8
           },
           {
@@ -132,14 +138,14 @@
           }
         ]
       },
-      "kraeverDitBlik": "Coach. | SØNDAG 27. SEPTEMBER | Min træning | Åbn dit eget program | Videoanalyse | Analysér et løft | Kræver dit blik | 2 åbne ting · vigtigste først | 2 | → | Testatlet | BESKED | Om uge 131: Kaelderen var uden net tirsdag, men alt kom med. | 1 | → | SET | Testatlet | VIDEO | Ny måling fra et sæt · Squat · Konkurrence squat | → | SET | ATLETER | 1 aktive | Navn | Afvigelse denne uge | T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · -1d siden | ★ 3/5 | skulder lidt oem | 1 | →",
+      "kraeverDitBlik": "Coach. | SØNDAG 27. SEPTEMBER | Min træning | Åbn dit eget program | Videoanalyse | Analysér et løft | Kræver dit blik | 2 åbne ting · vigtigste først | 2 | → | Testatlet | BESKED | Om uge 131: Kaelderen var uden net tirsdag, men alt kom med. | 1 | → | SET | Testatlet | VIDEO | Ny måling fra et sæt · Squat · Konkurrence squat | → | SET | ATLETER | 1 aktive | Navn | Afvigelse denne uge | T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · I dag | ★ 3/5 | skulder lidt oem | 1 | →",
       "stemmeKnap": 1,
-      "logMs": 8448,
+      "logMs": 8594,
       "log": {
-        "Dag 1 — Squat": " | S3 80kg × 4RPE 9/8skulder lidt oem | S4 ✕ | 2026-09-27 | UGE 131 | Dag 1 — Squat | 10/10 SÆT | Ø 70 KG | ★★★★☆ | Bulgarsk split squat | = Samme som sidst | Plan: 3 sæt · × 8-10 · RPE 8 | 3/3 sæt | Ø 30kg | S1 30kg × 8RPE 8/8 | S2 30kg × 8RPE 8/8 | S3 30kg × 8RPE 8/8 | Bænkpres | ↑ +4kg siden sidst | Plan: 3 sæt · × 8 · RPE 7 | 3/3 sæt | Ø 70kg | S1 70kg × 8RPE 7/7 | S2 70kg × 8RPE 7/7 | S3 70kg × 8RPE 7/7 | Squat | ↑ +5.4kg siden sidst | Plan: 4 sæt · × 5 · RPE 7 | 4/4 sæt | Ø 100kg | S1 100kg × 5RPE 7/7 | S2 100kg × 5RPE 7/7 | S3 100k",
-        "Dag 2 — Bænk": " | S2 140kg × 3RPE 8/8 | S3 140kg × 3RPE 8/8 | 2026-09-27 | UGE 131 | Dag 2 — Bænk | 9/10 SÆT | 1 SPRUNGET OVER | Ø 45 KG | ★★★☆☆ | Triceps pushdown | = Samme som sidst | Plan: 3 sæt · × 12-15 · RPE 9 | 3/3 sæt | Ø 30kg | S1 30kg × 12RPE 9/9 | S2 30kg × 12RPE 9/9 | S3 30kg × 12RPE 9/9 | Rows | = Samme som sidst | Plan: 3 sæt · × 10 · RPE 8 | 3/3 sæt | Ø 25kg | S1 25kg × 10RPE 8/8 | S2 25kg × 10RPE 8/8 | S3 25kg × 10RPE 8/8 | Bænkpres | ↑ +4kg siden sidst | Plan: 4 sæt · × 4-6 · RPE 8 | 3/4 sæt · 1 sprunget over | Ø 80kg | S1 80kg × 6RPE",
-        "Dag 3 — Dødløft": "/7 | S2 95kg × 6RPE 7/7 | S3 95kg × 6RPE 7/7 | 2026-09-27 | UGE 131 | Dag 3 — Dødløft | 7/8 SÆT | 1 SPRUNGET OVER | Ø 112.5 KG | Planke | Plan: 2 sæt · × 45s | 1/2 sæt · 1 sprunget over | S1 0kg × 45 | S2 ✕ | Pause squat | ↑ +2.5kg siden sidst | Plan: 3 sæt · × 4 · RPE 7 | 3/3 sæt | Ø 85kg | S1 85kg × 4RPE 7/7 | S2 85kg × 4RPE 7/7 | S3 85kg × 4RPE 7/7 | Dødløft | ↑ +2.5kg siden sidst | Plan: 3 sæt · × 3 · RPE 8 | 3/3 sæt | Ø 140kg | S1 140kg × 3RPE 8/8 | S2 140kg × 3RPE 8/8 | S3 140kg × 3RPE 8/8 | 2026-09-27 | UGE 131 | Dag 2 — Bænk | 9/10 ",
-        "Dag 4 — Volumen": " pushdown | UGE 131 | 4 træninger · 36 sæt | ▾ | 2026-09-27 | UGE 131 | Dag 4 — Volumen | 10/10 SÆT | Ø 82.1 KG | ★★★★☆ | Pull-ups | Plan: 3 sæt · × 6-8 · RPE 8 | 3/3 sæt | S1 0kg × 6RPE 8/8 | S2 0kg × 6RPE 8/8 | S3 0kg × 6RPE 8/8 | Bænkpres | ↑ +4kg siden sidst | Plan: 4 sæt · × 6 · RPE 7 | 4/4 sæt | Ø 72.5kg | S1 72.5kg × 6RPE 7/7 | S2 72.5kg × 6RPE 7/7 | S3 72.5kg × 6RPE 7/7 | S4 72.5kg × 6RPE 7/7 | Squat | ↑ +5.4kg siden sidst | Plan: 3 sæt · × 6 · RPE 7 | 3/3 sæt | Ø 95kg | S1 95kg × 6RPE 7/7 | S2 95kg × 6RPE 7/7 | S3 95kg × 6RPE 7/7"
+        "Dag 1 — Squat": "3 80kg × 4RPE 9/8skulder lidt oem | S4 ✕ | 27. SEP 2026 | UGE 131 | Dag 1 — Squat | 10/10 SÆT | Ø 70 KG | ★★★★☆ | Bulgarsk split squat | = Samme som sidst | Plan: 3 sæt · × 8-10 · RPE 8 | 3/3 sæt | Ø 30kg | S1 30kg × 8RPE 8/8 | S2 30kg × 8RPE 8/8 | S3 30kg × 8RPE 8/8 | Bænkpres | ↑ +4kg siden sidst | Plan: 3 sæt · × 8 · RPE 7 | 3/3 sæt | Ø 70kg | S1 70kg × 8RPE 7/7 | S2 70kg × 8RPE 7/7 | S3 70kg × 8RPE 7/7 | Squat | ↑ +5.4kg siden sidst | Plan: 4 sæt · × 5 · RPE 7 | 4/4 sæt | Ø 100kg | S1 100kg × 5RPE 7/7 | S2 100kg × 5RPE 7/7 | S3 100k",
+        "Dag 2 — Bænk": "2 140kg × 3RPE 8/8 | S3 140kg × 3RPE 8/8 | 27. SEP 2026 | UGE 131 | Dag 2 — Bænk | 9/10 SÆT | 1 SPRUNGET OVER | Ø 45 KG | ★★★☆☆ | Triceps pushdown | = Samme som sidst | Plan: 3 sæt · × 12-15 · RPE 9 | 3/3 sæt | Ø 30kg | S1 30kg × 12RPE 9/9 | S2 30kg × 12RPE 9/9 | S3 30kg × 12RPE 9/9 | Rows | = Samme som sidst | Plan: 3 sæt · × 10 · RPE 8 | 3/3 sæt | Ø 25kg | S1 25kg × 10RPE 8/8 | S2 25kg × 10RPE 8/8 | S3 25kg × 10RPE 8/8 | Bænkpres | ↑ +4kg siden sidst | Plan: 4 sæt · × 4-6 · RPE 8 | 3/4 sæt · 1 sprunget over | Ø 80kg | S1 80kg × 6RPE",
+        "Dag 3 — Dødløft": " | S2 95kg × 6RPE 7/7 | S3 95kg × 6RPE 7/7 | 27. SEP 2026 | UGE 131 | Dag 3 — Dødløft | 7/8 SÆT | 1 SPRUNGET OVER | Ø 112.5 KG | Planke | Plan: 2 sæt · × 45s | 1/2 sæt · 1 sprunget over | S1 0kg × 45 | S2 ✕ | Pause squat | ↑ +2.5kg siden sidst | Plan: 3 sæt · × 4 · RPE 7 | 3/3 sæt | Ø 85kg | S1 85kg × 4RPE 7/7 | S2 85kg × 4RPE 7/7 | S3 85kg × 4RPE 7/7 | Dødløft | ↑ +2.5kg siden sidst | Plan: 3 sæt · × 3 · RPE 8 | 3/3 sæt | Ø 140kg | S1 140kg × 3RPE 8/8 | S2 140kg × 3RPE 8/8 | S3 140kg × 3RPE 8/8 | 27. SEP 2026 | UGE 131 | Dag 2 — Bænk | 9/1",
+        "Dag 4 — Volumen": "ushdown | UGE 131 | 4 træninger · 36 sæt | ▾ | 27. SEP 2026 | UGE 131 | Dag 4 — Volumen | 10/10 SÆT | Ø 82.1 KG | ★★★★☆ | Pull-ups | Plan: 3 sæt · × 6-8 · RPE 8 | 3/3 sæt | S1 0kg × 6RPE 8/8 | S2 0kg × 6RPE 8/8 | S3 0kg × 6RPE 8/8 | Bænkpres | ↑ +4kg siden sidst | Plan: 4 sæt · × 6 · RPE 7 | 4/4 sæt | Ø 72.5kg | S1 72.5kg × 6RPE 7/7 | S2 72.5kg × 6RPE 7/7 | S3 72.5kg × 6RPE 7/7 | S4 72.5kg × 6RPE 7/7 | Squat | ↑ +5.4kg siden sidst | Plan: 3 sæt · × 6 · RPE 7 | 3/3 sæt | Ø 95kg | S1 95kg × 6RPE 7/7 | S2 95kg × 6RPE 7/7 | S3 95kg × 6RPE 7/7"
       },
       "logTjek": {
         "sidelaens": 0,
@@ -291,7 +297,7 @@
             "fs": 8.3
           },
           {
-            "t": "2026-09-27",
+            "t": "27. sep 2026",
             "fs": 9
           },
           {
@@ -705,7 +711,7 @@
       },
       "kopi": {
         "tryk": "dobbelttryk (250 ms)",
-        "ms": 7577,
+        "ms": 7672,
         "nyeUger": [
           {
             "uge": 132,
@@ -728,9 +734,12 @@
     },
     "1280": {
       "signaler": [],
-      "forsideMs": 935,
-      "forsideRigtigMs": 947,
-      "raekke": "T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · -1d siden | ★ 3/5 | skulder lidt oem | 1 | →",
+      "forsideMs": 921,
+      "forsideRigtigMs": 933,
+      "raekkeUnderHentning": [
+        "T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · I dag | ★ 3/5 | skulder lidt oem | 1 | →"
+      ],
+      "raekke": "T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · I dag | ★ 3/5 | skulder lidt oem | 1 | →",
       "forsideTjek": {
         "sidelaens": 0,
         "udover": [],
@@ -848,7 +857,7 @@
             "fs": 9
           },
           {
-            "t": "· -1d siden",
+            "t": "· I dag",
             "fs": 9
           },
           {
@@ -865,14 +874,14 @@
           }
         ]
       },
-      "kraeverDitBlik": "Coach. | SØNDAG 27. SEPTEMBER | Min træning | Åbn dit eget program | Videoanalyse | Analysér et løft | Kræver dit blik | 2 åbne ting · vigtigste først | 2 | → | Testatlet | BESKED | Om uge 131: Kaelderen var uden net tirsdag, men alt kom med. | 1 | → | SET | Testatlet | VIDEO | Ny måling fra et sæt · Squat · Konkurrence squat | → | SET | ATLETER | 1 aktive | Navn | Afvigelse denne uge | T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · -1d siden | ★ 3/5 | skulder lidt oem | 1 | →",
+      "kraeverDitBlik": "Coach. | SØNDAG 27. SEPTEMBER | Min træning | Åbn dit eget program | Videoanalyse | Analysér et løft | Kræver dit blik | 2 åbne ting · vigtigste først | 2 | → | Testatlet | BESKED | Om uge 131: Kaelderen var uden net tirsdag, men alt kom med. | 1 | → | SET | Testatlet | VIDEO | Ny måling fra et sæt · Squat · Konkurrence squat | → | SET | ATLETER | 1 aktive | Navn | Afvigelse denne uge | T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · I dag | ★ 3/5 | skulder lidt oem | 1 | →",
       "stemmeKnap": 1,
-      "logMs": 95,
+      "logMs": 199,
       "log": {
-        "Dag 1 — Squat": " | S3 80kg × 4RPE 9/8skulder lidt oem | S4 ✕ | 2026-09-27 | UGE 131 | Dag 1 — Squat | 10/10 SÆT | Ø 70 KG | ★★★★☆ | Bulgarsk split squat | = Samme som sidst | Plan: 3 sæt · × 8-10 · RPE 8 | 3/3 sæt | Ø 30kg | S1 30kg × 8RPE 8/8 | S2 30kg × 8RPE 8/8 | S3 30kg × 8RPE 8/8 | Bænkpres | ↑ +4kg siden sidst | Plan: 3 sæt · × 8 · RPE 7 | 3/3 sæt | Ø 70kg | S1 70kg × 8RPE 7/7 | S2 70kg × 8RPE 7/7 | S3 70kg × 8RPE 7/7 | Squat | ↑ +5.4kg siden sidst | Plan: 4 sæt · × 5 · RPE 7 | 4/4 sæt | Ø 100kg | S1 100kg × 5RPE 7/7 | S2 100kg × 5RPE 7/7 | S3 100k",
-        "Dag 2 — Bænk": " | S2 140kg × 3RPE 8/8 | S3 140kg × 3RPE 8/8 | 2026-09-27 | UGE 131 | Dag 2 — Bænk | 9/10 SÆT | 1 SPRUNGET OVER | Ø 45 KG | ★★★☆☆ | Triceps pushdown | = Samme som sidst | Plan: 3 sæt · × 12-15 · RPE 9 | 3/3 sæt | Ø 30kg | S1 30kg × 12RPE 9/9 | S2 30kg × 12RPE 9/9 | S3 30kg × 12RPE 9/9 | Rows | = Samme som sidst | Plan: 3 sæt · × 10 · RPE 8 | 3/3 sæt | Ø 25kg | S1 25kg × 10RPE 8/8 | S2 25kg × 10RPE 8/8 | S3 25kg × 10RPE 8/8 | Bænkpres | ↑ +4kg siden sidst | Plan: 4 sæt · × 4-6 · RPE 8 | 3/4 sæt · 1 sprunget over | Ø 80kg | S1 80kg × 6RPE",
-        "Dag 3 — Dødløft": "/7 | S2 95kg × 6RPE 7/7 | S3 95kg × 6RPE 7/7 | 2026-09-27 | UGE 131 | Dag 3 — Dødløft | 7/8 SÆT | 1 SPRUNGET OVER | Ø 112.5 KG | Planke | Plan: 2 sæt · × 45s | 1/2 sæt · 1 sprunget over | S1 0kg × 45 | S2 ✕ | Pause squat | ↑ +2.5kg siden sidst | Plan: 3 sæt · × 4 · RPE 7 | 3/3 sæt | Ø 85kg | S1 85kg × 4RPE 7/7 | S2 85kg × 4RPE 7/7 | S3 85kg × 4RPE 7/7 | Dødløft | ↑ +2.5kg siden sidst | Plan: 3 sæt · × 3 · RPE 8 | 3/3 sæt | Ø 140kg | S1 140kg × 3RPE 8/8 | S2 140kg × 3RPE 8/8 | S3 140kg × 3RPE 8/8 | 2026-09-27 | UGE 131 | Dag 2 — Bænk | 9/10 ",
-        "Dag 4 — Volumen": " pushdown | UGE 131 | 4 træninger · 36 sæt | ▾ | 2026-09-27 | UGE 131 | Dag 4 — Volumen | 10/10 SÆT | Ø 82.1 KG | ★★★★☆ | Pull-ups | Plan: 3 sæt · × 6-8 · RPE 8 | 3/3 sæt | S1 0kg × 6RPE 8/8 | S2 0kg × 6RPE 8/8 | S3 0kg × 6RPE 8/8 | Bænkpres | ↑ +4kg siden sidst | Plan: 4 sæt · × 6 · RPE 7 | 4/4 sæt | Ø 72.5kg | S1 72.5kg × 6RPE 7/7 | S2 72.5kg × 6RPE 7/7 | S3 72.5kg × 6RPE 7/7 | S4 72.5kg × 6RPE 7/7 | Squat | ↑ +5.4kg siden sidst | Plan: 3 sæt · × 6 · RPE 7 | 3/3 sæt | Ø 95kg | S1 95kg × 6RPE 7/7 | S2 95kg × 6RPE 7/7 | S3 95kg × 6RPE 7/7"
+        "Dag 1 — Squat": "3 80kg × 4RPE 9/8skulder lidt oem | S4 ✕ | 27. SEP 2026 | UGE 131 | Dag 1 — Squat | 10/10 SÆT | Ø 70 KG | ★★★★☆ | Bulgarsk split squat | = Samme som sidst | Plan: 3 sæt · × 8-10 · RPE 8 | 3/3 sæt | Ø 30kg | S1 30kg × 8RPE 8/8 | S2 30kg × 8RPE 8/8 | S3 30kg × 8RPE 8/8 | Bænkpres | ↑ +4kg siden sidst | Plan: 3 sæt · × 8 · RPE 7 | 3/3 sæt | Ø 70kg | S1 70kg × 8RPE 7/7 | S2 70kg × 8RPE 7/7 | S3 70kg × 8RPE 7/7 | Squat | ↑ +5.4kg siden sidst | Plan: 4 sæt · × 5 · RPE 7 | 4/4 sæt | Ø 100kg | S1 100kg × 5RPE 7/7 | S2 100kg × 5RPE 7/7 | S3 100k",
+        "Dag 2 — Bænk": "2 140kg × 3RPE 8/8 | S3 140kg × 3RPE 8/8 | 27. SEP 2026 | UGE 131 | Dag 2 — Bænk | 9/10 SÆT | 1 SPRUNGET OVER | Ø 45 KG | ★★★☆☆ | Triceps pushdown | = Samme som sidst | Plan: 3 sæt · × 12-15 · RPE 9 | 3/3 sæt | Ø 30kg | S1 30kg × 12RPE 9/9 | S2 30kg × 12RPE 9/9 | S3 30kg × 12RPE 9/9 | Rows | = Samme som sidst | Plan: 3 sæt · × 10 · RPE 8 | 3/3 sæt | Ø 25kg | S1 25kg × 10RPE 8/8 | S2 25kg × 10RPE 8/8 | S3 25kg × 10RPE 8/8 | Bænkpres | ↑ +4kg siden sidst | Plan: 4 sæt · × 4-6 · RPE 8 | 3/4 sæt · 1 sprunget over | Ø 80kg | S1 80kg × 6RPE",
+        "Dag 3 — Dødløft": " | S2 95kg × 6RPE 7/7 | S3 95kg × 6RPE 7/7 | 27. SEP 2026 | UGE 131 | Dag 3 — Dødløft | 7/8 SÆT | 1 SPRUNGET OVER | Ø 112.5 KG | Planke | Plan: 2 sæt · × 45s | 1/2 sæt · 1 sprunget over | S1 0kg × 45 | S2 ✕ | Pause squat | ↑ +2.5kg siden sidst | Plan: 3 sæt · × 4 · RPE 7 | 3/3 sæt | Ø 85kg | S1 85kg × 4RPE 7/7 | S2 85kg × 4RPE 7/7 | S3 85kg × 4RPE 7/7 | Dødløft | ↑ +2.5kg siden sidst | Plan: 3 sæt · × 3 · RPE 8 | 3/3 sæt | Ø 140kg | S1 140kg × 3RPE 8/8 | S2 140kg × 3RPE 8/8 | S3 140kg × 3RPE 8/8 | 27. SEP 2026 | UGE 131 | Dag 2 — Bænk | 9/1",
+        "Dag 4 — Volumen": "ushdown | UGE 131 | 4 træninger · 36 sæt | ▾ | 27. SEP 2026 | UGE 131 | Dag 4 — Volumen | 10/10 SÆT | Ø 82.1 KG | ★★★★☆ | Pull-ups | Plan: 3 sæt · × 6-8 · RPE 8 | 3/3 sæt | S1 0kg × 6RPE 8/8 | S2 0kg × 6RPE 8/8 | S3 0kg × 6RPE 8/8 | Bænkpres | ↑ +4kg siden sidst | Plan: 4 sæt · × 6 · RPE 7 | 4/4 sæt | Ø 72.5kg | S1 72.5kg × 6RPE 7/7 | S2 72.5kg × 6RPE 7/7 | S3 72.5kg × 6RPE 7/7 | S4 72.5kg × 6RPE 7/7 | Squat | ↑ +5.4kg siden sidst | Plan: 3 sæt · × 6 · RPE 7 | 3/3 sæt | Ø 95kg | S1 95kg × 6RPE 7/7 | S2 95kg × 6RPE 7/7 | S3 95kg × 6RPE 7/7"
       },
       "logTjek": {
         "sidelaens": 0,
@@ -1238,9 +1247,14 @@
   "konsolFejl": [],
   "tjek": [
     {
+      "navn": "390: forsiden siger aldrig \"Ingen logs\" eller \"0 af 4 pas\", mens den henter (A7)",
+      "ok": true,
+      "detalje": "[\"T | Testatlet | Intet aktivt program | →\",\"T | Testatlet | Intet aktivt program | 1 | →\",\"T | Testatlet | Uge 131 · Styrke · 4 pas | 1 | →\",\"T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · I dag | ★ 3/5 | skulder lidt oem | 1 | →\"]"
+    },
+    {
       "navn": "390: forsiden siger 4 af 4 pas",
       "ok": true,
-      "detalje": "T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · -1d siden | ★ 3/5 | skulder lidt oem | 1 | →"
+      "detalje": "T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · I dag | ★ 3/5 | skulder lidt oem | 1 | →"
     },
     {
       "navn": "390: \"Kraever dit blik\" viser atletens linje fra \"din uge\"",
@@ -1250,12 +1264,17 @@
     {
       "navn": "390: Log viser det sprungne saet fra pas 3 (med net)",
       "ok": true,
-      "detalje": "/7 | S2 95kg × 6RPE 7/7 | S3 95kg × 6RPE 7/7 | 2026-09-27 | UGE 131 | Dag 3 — Dødløft | 7/8 SÆT | 1 SPRUNGET OVER | Ø 112.5 KG | Planke | Plan: 2 sæt · × 45s | 1/2 sæt · 1 sprunget over | S1 0kg × 45 | S2 ✕ | Pause squat | ↑ +2.5kg siden sidst | Plan: 3 sæt · "
+      "detalje": " | S2 95kg × 6RPE 7/7 | S3 95kg × 6RPE 7/7 | 27. SEP 2026 | UGE 131 | Dag 3 — Dødløft | 7/8 SÆT | 1 SPRUNGET OVER | Ø 112.5 KG | Planke | Plan: 2 sæt · × 45s | 1/2 sæt · 1 sprunget over | S1 0kg × 45 | S2 ✕ | Pause squat | ↑ +2.5kg siden sidst | Plan: 3 sæt · "
     },
     {
       "navn": "390: Log viser baenkpres 4 i pas 2 som sprunget over (atletens hensigt i kaelderen)",
       "ok": true,
-      "detalje": " | S2 140kg × 3RPE 8/8 | S3 140kg × 3RPE 8/8 | 2026-09-27 | UGE 131 | Dag 2 — Bænk | 9/10 SÆT | 1 SPRUNGET OVER | Ø 45 KG | ★★★☆☆ | Triceps pushdown | = Samme som sidst | Plan: 3 sæt · × 12-15 · RPE 9 | 3/3 sæt | Ø 30kg | S1 30kg × 12RPE 9/9 | S2 30kg × 12RPE "
+      "detalje": "2 140kg × 3RPE 8/8 | S3 140kg × 3RPE 8/8 | 27. SEP 2026 | UGE 131 | Dag 2 — Bænk | 9/10 SÆT | 1 SPRUNGET OVER | Ø 45 KG | ★★★☆☆ | Triceps pushdown | = Samme som sidst | Plan: 3 sæt · × 12-15 · RPE 9 | 3/3 sæt | Ø 30kg | S1 30kg × 12RPE 9/9 | S2 30kg × 12RPE 9/"
+    },
+    {
+      "navn": "390: Log viser datoer paa dansk, ingen UTC-dato som 2026-09-26 (A8)",
+      "ok": true,
+      "detalje": "27. SEP 2026"
     },
     {
       "navn": "390: Log viser noten og RPE 9 fra kaelderen",
@@ -1273,9 +1292,14 @@
       "detalje": "[{\"uge\":132,\"start\":\"2026-09-28\",\"pas\":4,\"oevelser\":12}]"
     },
     {
+      "navn": "1280: forsiden siger aldrig \"Ingen logs\" eller \"0 af 4 pas\", mens den henter (A7)",
+      "ok": true,
+      "detalje": "[\"T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · I dag | ★ 3/5 | skulder lidt oem | 1 | →\"]"
+    },
+    {
       "navn": "1280: forsiden siger 4 af 4 pas",
       "ok": true,
-      "detalje": "T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · -1d siden | ★ 3/5 | skulder lidt oem | 1 | →"
+      "detalje": "T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · I dag | ★ 3/5 | skulder lidt oem | 1 | →"
     },
     {
       "navn": "1280: \"Kraever dit blik\" viser atletens linje fra \"din uge\"",
@@ -1285,12 +1309,17 @@
     {
       "navn": "1280: Log viser det sprungne saet fra pas 3 (med net)",
       "ok": true,
-      "detalje": "/7 | S2 95kg × 6RPE 7/7 | S3 95kg × 6RPE 7/7 | 2026-09-27 | UGE 131 | Dag 3 — Dødløft | 7/8 SÆT | 1 SPRUNGET OVER | Ø 112.5 KG | Planke | Plan: 2 sæt · × 45s | 1/2 sæt · 1 sprunget over | S1 0kg × 45 | S2 ✕ | Pause squat | ↑ +2.5kg siden sidst | Plan: 3 sæt · "
+      "detalje": " | S2 95kg × 6RPE 7/7 | S3 95kg × 6RPE 7/7 | 27. SEP 2026 | UGE 131 | Dag 3 — Dødløft | 7/8 SÆT | 1 SPRUNGET OVER | Ø 112.5 KG | Planke | Plan: 2 sæt · × 45s | 1/2 sæt · 1 sprunget over | S1 0kg × 45 | S2 ✕ | Pause squat | ↑ +2.5kg siden sidst | Plan: 3 sæt · "
     },
     {
       "navn": "1280: Log viser baenkpres 4 i pas 2 som sprunget over (atletens hensigt i kaelderen)",
       "ok": true,
-      "detalje": " | S2 140kg × 3RPE 8/8 | S3 140kg × 3RPE 8/8 | 2026-09-27 | UGE 131 | Dag 2 — Bænk | 9/10 SÆT | 1 SPRUNGET OVER | Ø 45 KG | ★★★☆☆ | Triceps pushdown | = Samme som sidst | Plan: 3 sæt · × 12-15 · RPE 9 | 3/3 sæt | Ø 30kg | S1 30kg × 12RPE 9/9 | S2 30kg × 12RPE "
+      "detalje": "2 140kg × 3RPE 8/8 | S3 140kg × 3RPE 8/8 | 27. SEP 2026 | UGE 131 | Dag 2 — Bænk | 9/10 SÆT | 1 SPRUNGET OVER | Ø 45 KG | ★★★☆☆ | Triceps pushdown | = Samme som sidst | Plan: 3 sæt · × 12-15 · RPE 9 | 3/3 sæt | Ø 30kg | S1 30kg × 12RPE 9/9 | S2 30kg × 12RPE 9/"
+    },
+    {
+      "navn": "1280: Log viser datoer paa dansk, ingen UTC-dato som 2026-09-26 (A8)",
+      "ok": true,
+      "detalje": "27. SEP 2026"
     },
     {
       "navn": "1280: Log viser noten og RPE 9 fra kaelderen",
