@@ -1,0 +1,5516 @@
+{
+ "360": {
+  "dag0": {
+   "gaader": [
+    {
+     "label": "som-de-kommer-0",
+     "maade": "forkert",
+     "tema": "mateIn2",
+     "noegle": "gaade:0PsAF",
+     "temaIBibliotek": true,
+     "forkert": {
+      "san": "Rxf7",
+      "besked": "Ikke den vej. Tag trækket tilbage og prøv igen."
+     },
+     "slut": "Mat i 2. Løst, men med et forkert træk først. Vi finder dit niveau: 1 af 10. Din stime er i gang: 1 dag. Den kommer igen i morgen."
+    },
+    {
+     "label": "som-de-kommer-1",
+     "maade": "hint",
+     "tema": "fork",
+     "noegle": "gaade:278-0311",
+     "temaIBibliotek": true,
+     "hintBesked": "Hint: se den fremhævede brik.",
+     "slut": "Gaffel. Løst med hint. Vi finder dit niveau: 2 af 10. Den kommer igen i morgen."
+    },
+    {
+     "label": "som-de-kommer-2",
+     "maade": "spring",
+     "tema": "mateIn1",
+     "noegle": "gaade:278-0251",
+     "temaIBibliotek": true,
+     "forkert": {
+      "san": "Kb6",
+      "besked": "Ikke den vej. Tag trækket tilbage og prøv igen."
+     },
+     "slut": "Sprunget over efter et forkert træk."
+    },
+    {
+     "label": "som-de-kommer-3",
+     "maade": "ren",
+     "tema": "mateIn1",
+     "noegle": "gaade:425-0178",
+     "temaIBibliotek": true,
+     "slut": "Løst! Mat i 1. Vi finder dit niveau: 4 af 10."
+    },
+    {
+     "label": "som-de-kommer-4",
+     "maade": "ren",
+     "tema": "mateIn1",
+     "noegle": "gaade:01uI5",
+     "temaIBibliotek": true,
+     "slut": "Løst! Mat i 1. Vi finder dit niveau: 5 af 10."
+    },
+    {
+     "label": "som-de-kommer-5",
+     "maade": "ren",
+     "tema": "mateIn1",
+     "noegle": "gaade:03935",
+     "temaIBibliotek": true,
+     "slut": "Løst! Mat i 1. Vi finder dit niveau: 6 af 10."
+    },
+    {
+     "label": "som-de-kommer-6",
+     "maade": "ren",
+     "tema": "mateIn1",
+     "noegle": "gaade:0Uvpr",
+     "temaIBibliotek": true,
+     "slut": "Løst! Mat i 1. Vi finder dit niveau: 7 af 10."
+    },
+    {
+     "label": "som-de-kommer-7",
+     "maade": "ren",
+     "tema": "mateIn2",
+     "noegle": "gaade:0401S",
+     "temaIBibliotek": true,
+     "slut": "Løst! Mat i 2. Vi finder dit niveau: 8 af 10."
+    },
+    {
+     "label": "gaffel",
+     "maade": "forkert",
+     "tema": "fork",
+     "noegle": "gaade:0JnTB",
+     "temaIBibliotek": true,
+     "forkert": {
+      "san": "Rf1",
+      "besked": "Ikke den vej. Tag trækket tilbage og prøv igen."
+     },
+     "slut": "Gaffel. Løst, men med et forkert træk først. Vi finder dit niveau: 9 af 10. Den kommer igen i morgen."
+    },
+    {
+     "label": "gaffel",
+     "maade": "forkert",
+     "tema": "fork",
+     "noegle": "gaade:01Yjm",
+     "temaIBibliotek": true,
+     "forkert": {
+      "san": "b3",
+      "besked": "Ikke den vej. Tag trækket tilbage og prøv igen."
+     },
+     "slut": "Gaffel. Løst, men med et forkert træk først. Dit niveau er fundet: 692. Den kommer igen i morgen."
+    },
+    {
+     "label": "gaffel",
+     "maade": "forkert",
+     "tema": "fork",
+     "noegle": "gaade:425-0303",
+     "temaIBibliotek": true,
+     "forkert": {
+      "san": "Ng7",
+      "besked": "Ikke den vej. Tag trækket tilbage og prøv igen."
+     },
+     "slut": "Gaffel. Løst, men med et forkert træk først: 655 (−37). Den kommer igen i morgen."
+    },
+    {
+     "label": "gaffel",
+     "maade": "ren",
+     "tema": "fork",
+     "noegle": "gaade:06ySG",
+     "temaIBibliotek": true,
+     "slut": "Løst! Gaffel. Rating: 661 (+6)."
+    },
+    {
+     "label": "binding",
+     "maade": "ren",
+     "tema": "pin",
+     "noegle": "gaade:0C50G",
+     "temaIBibliotek": true,
+     "slut": "Løst! Binding. Rating: 688 (+27)."
+    },
+    {
+     "label": "binding",
+     "maade": "ren",
+     "tema": "pin",
+     "noegle": "gaade:0NLTN",
+     "temaIBibliotek": true,
+     "slut": "Løst! Binding. Rating: 712 (+24)."
+    },
+    {
+     "label": "binding",
+     "maade": "ren",
+     "tema": "pin",
+     "noegle": "gaade:0CaOX",
+     "temaIBibliotek": true,
+     "slut": "Løst! Binding. Rating: 738 (+26)."
+    }
+   ],
+   "foer": {
+    "resume": "0 af 16 øvet",
+    "svageste": "Løs mindst 3 gåder i et tema, så finder vi dit svageste tema.",
+    "knap": null,
+    "raekker": [
+     {
+      "art": "tema",
+      "id": "mateIn1",
+      "navn": "Mat i 1",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "mateIn2",
+      "navn": "Mat i 2",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "backRankMate",
+      "navn": "Bagerste række",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "fork",
+      "navn": "Gaffel",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "pin",
+      "navn": "Binding",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "skewer",
+      "navn": "Spyd",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "discoveredAttack",
+      "navn": "Afdækket angreb",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "sacrifice",
+      "navn": "Offer",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "intermezzo",
+      "navn": "Mellemtræk",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "attackingF2F7",
+      "navn": "Angreb på f7",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "promotion",
+      "navn": "Forvandling",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "endgame",
+      "navn": "Slutspil",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "koordinat",
+      "id": "find",
+      "navn": "Find feltet",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "koordinat",
+      "id": "skriv",
+      "navn": "Skriv feltets navn",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "koordinat",
+      "id": "brik",
+      "navn": "Hvor står brikken?",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "kendte",
+      "id": "kendte",
+      "navn": "Kendte partier",
+      "tal": "0 af 10 løst · Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     }
+    ]
+   },
+   "optael": {
+    "mateIn2": {
+     "forsoeg": 2,
+     "rigtige": 1
+    },
+    "fork": {
+     "forsoeg": 5,
+     "rigtige": 2
+    },
+    "mateIn1": {
+     "forsoeg": 5,
+     "rigtige": 4
+    },
+    "pin": {
+     "forsoeg": 3,
+     "rigtige": 3
+    }
+   },
+   "efter": {
+    "resume": "4 af 16 øvet",
+    "svageste": "Dit svageste tema: Gaffel - 40 % rigtige i 5 forsøg.",
+    "knap": {
+     "tekst": "Øv gafler",
+     "tema": "fork"
+    },
+    "raekker": [
+     {
+      "art": "tema",
+      "id": "mateIn1",
+      "navn": "Mat i 1",
+      "tal": "80 % rigtige · 5 forsøg",
+      "maaler": "80%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "mateIn2",
+      "navn": "Mat i 2",
+      "tal": "50 % rigtige · 2 forsøg",
+      "maaler": "50%",
+      "svag": true,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "backRankMate",
+      "navn": "Bagerste række",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "fork",
+      "navn": "Gaffel",
+      "tal": "40 % rigtige · 5 forsøg",
+      "maaler": "40%",
+      "svag": true,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "pin",
+      "navn": "Binding",
+      "tal": "100 % rigtige · 3 forsøg",
+      "maaler": "100%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "skewer",
+      "navn": "Spyd",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "discoveredAttack",
+      "navn": "Afdækket angreb",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "sacrifice",
+      "navn": "Offer",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "intermezzo",
+      "navn": "Mellemtræk",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "attackingF2F7",
+      "navn": "Angreb på f7",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "promotion",
+      "navn": "Forvandling",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "endgame",
+      "navn": "Slutspil",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "koordinat",
+      "id": "find",
+      "navn": "Find feltet",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "koordinat",
+      "id": "skriv",
+      "navn": "Skriv feltets navn",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "koordinat",
+      "id": "brik",
+      "navn": "Hvor står brikken?",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "kendte",
+      "id": "kendte",
+      "navn": "Kendte partier",
+      "tal": "0 af 10 løst · Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     }
+    ]
+   },
+   "foldH": 1160,
+   "gentag": {
+    "vist": false,
+    "antal": "",
+    "hvad": "",
+    "knap": "Gentag nu",
+    "top": 1984,
+    "braetTop": 287,
+    "braetBund": 631,
+    "vinduH": 780,
+    "knapH": 0
+   },
+   "oev": {
+    "duOever": "Du øver: Gaffel (5 løst)",
+    "tema": "fork",
+    "braet": {
+     "top": 0,
+     "bund": 344,
+     "vinduH": 780
+    }
+   },
+   "kort": [
+    "gaade:01Yjm",
+    "gaade:03R4G",
+    "gaade:05IBE",
+    "gaade:0986Y",
+    "gaade:0CqFj",
+    "gaade:0GGWL",
+    "gaade:0JnTB",
+    "gaade:0M7Rq",
+    "gaade:0MQ7H",
+    "gaade:0PsAF",
+    "gaade:0QSEP",
+    "gaade:278-0251",
+    "gaade:278-0311",
+    "gaade:425-0303",
+    "gaade:li-1Gw02",
+    "gaade:li-BoR9g",
+    "gaade:li-E1nsc"
+   ],
+   "model": [
+    "gaade:01Yjm",
+    "gaade:03R4G",
+    "gaade:05IBE",
+    "gaade:0986Y",
+    "gaade:0CqFj",
+    "gaade:0GGWL",
+    "gaade:0JnTB",
+    "gaade:0M7Rq",
+    "gaade:0MQ7H",
+    "gaade:0PsAF",
+    "gaade:0QSEP",
+    "gaade:278-0251",
+    "gaade:278-0311",
+    "gaade:425-0303",
+    "gaade:li-1Gw02",
+    "gaade:li-BoR9g",
+    "gaade:li-E1nsc"
+   ],
+   "sammenlign": {
+    "vist": {
+     "mateIn1": "80 % rigtige · 5 forsøg",
+     "mateIn2": "50 % rigtige · 2 forsøg",
+     "backRankMate": "Ikke prøvet endnu",
+     "fork": "40 % rigtige · 5 forsøg",
+     "pin": "100 % rigtige · 3 forsøg",
+     "skewer": "Ikke prøvet endnu",
+     "discoveredAttack": "Ikke prøvet endnu",
+     "sacrifice": "Ikke prøvet endnu",
+     "intermezzo": "Ikke prøvet endnu",
+     "attackingF2F7": "Ikke prøvet endnu",
+     "promotion": "Ikke prøvet endnu",
+     "endgame": "Ikke prøvet endnu"
+    },
+    "forventet": {
+     "mateIn2": "50 % rigtige · 2 forsøg",
+     "fork": "40 % rigtige · 5 forsøg",
+     "mateIn1": "80 % rigtige · 5 forsøg",
+     "pin": "100 % rigtige · 3 forsøg"
+    }
+   },
+   "usynlige": [],
+   "minSvageste": {
+    "tema": "fork",
+    "procent": 40,
+    "forsoeg": 5
+   }
+  },
+  "dage": [
+   {
+    "d": 1,
+    "dagNr": 20725,
+    "forventet": [
+     "gaade:01Yjm",
+     "gaade:03R4G",
+     "gaade:05IBE",
+     "gaade:0986Y",
+     "gaade:0CqFj",
+     "gaade:0GGWL",
+     "gaade:0JnTB",
+     "gaade:0M7Rq",
+     "gaade:0MQ7H",
+     "gaade:0PsAF",
+     "gaade:0QSEP",
+     "gaade:278-0251",
+     "gaade:278-0311",
+     "gaade:425-0303",
+     "gaade:li-1Gw02",
+     "gaade:li-BoR9g",
+     "gaade:li-E1nsc"
+    ],
+    "gentag": {
+     "vist": true,
+     "antal": "Gentag i dag: 17",
+     "hvad": "17 gåder",
+     "knap": "Gentag nu",
+     "top": 908,
+     "braetTop": 287,
+     "braetBund": 631,
+     "vinduH": 780,
+     "knapH": 44
+    },
+    "spillet": [
+     {
+      "noegle": "gaade:01Yjm",
+      "label": "gaffel",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:03R4G",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:05IBE",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:0986Y",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:0CqFj",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:0GGWL",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:0JnTB",
+      "label": "gaffel",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:0M7Rq",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:0MQ7H",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:0PsAF",
+      "label": "som-de-kommer-0",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:0QSEP",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:278-0251",
+      "label": "som-de-kommer-2",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:278-0311",
+      "label": "som-de-kommer-1",
+      "fejl": true,
+      "besked": "Den kommer igen i morgen."
+     },
+     {
+      "noegle": "gaade:425-0303",
+      "label": "gaffel",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:li-1Gw02",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:li-BoR9g",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:li-E1nsc",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     }
+    ],
+    "ratingFoer": "738",
+    "stop": {
+     "titel": "Gåde",
+     "status": "Hvid trækker. Find det bedste træk."
+    },
+    "ratingEfter": "738",
+    "gentagEfter": {
+     "vist": false,
+     "antal": "Gentag i dag: 1",
+     "hvad": "1 gåde",
+     "knap": "Du gentager nu",
+     "top": 90,
+     "braetTop": 287,
+     "braetBund": 631,
+     "vinduH": 780,
+     "knapH": 0
+    },
+    "kortEfter": [
+     "gaade:01Yjm",
+     "gaade:03R4G",
+     "gaade:05IBE",
+     "gaade:0986Y",
+     "gaade:0CqFj",
+     "gaade:0GGWL",
+     "gaade:0JnTB",
+     "gaade:0M7Rq",
+     "gaade:0MQ7H",
+     "gaade:0PsAF",
+     "gaade:0QSEP",
+     "gaade:278-0251",
+     "gaade:278-0311",
+     "gaade:425-0303",
+     "gaade:li-1Gw02",
+     "gaade:li-BoR9g",
+     "gaade:li-E1nsc"
+    ],
+    "modelEfter": [
+     "gaade:01Yjm",
+     "gaade:03R4G",
+     "gaade:05IBE",
+     "gaade:0986Y",
+     "gaade:0CqFj",
+     "gaade:0GGWL",
+     "gaade:0JnTB",
+     "gaade:0M7Rq",
+     "gaade:0MQ7H",
+     "gaade:0PsAF",
+     "gaade:0QSEP",
+     "gaade:278-0251",
+     "gaade:278-0311",
+     "gaade:425-0303",
+     "gaade:li-1Gw02",
+     "gaade:li-BoR9g",
+     "gaade:li-E1nsc"
+    ]
+   },
+   {
+    "d": 2,
+    "dagNr": 20726,
+    "forventet": [
+     "gaade:278-0311"
+    ],
+    "gentag": {
+     "vist": true,
+     "antal": "Gentag i dag: 1",
+     "hvad": "1 gåde",
+     "knap": "Gentag nu",
+     "top": 908,
+     "braetTop": 287,
+     "braetBund": 631,
+     "vinduH": 780,
+     "knapH": 44
+    },
+    "spillet": [
+     {
+      "noegle": "gaade:278-0311",
+      "label": "som-de-kommer-1",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     }
+    ],
+    "ratingFoer": "738",
+    "stop": {
+     "titel": "Gåde",
+     "status": "Sort trækker. Find det bedste træk."
+    },
+    "ratingEfter": "738",
+    "gentagEfter": {
+     "vist": false,
+     "antal": "Gentag i dag: 1",
+     "hvad": "1 gåde",
+     "knap": "Du gentager nu",
+     "top": 287,
+     "braetTop": 287,
+     "braetBund": 631,
+     "vinduH": 780,
+     "knapH": 0
+    },
+    "kortEfter": [
+     "gaade:01Yjm",
+     "gaade:03R4G",
+     "gaade:05IBE",
+     "gaade:0986Y",
+     "gaade:0CqFj",
+     "gaade:0GGWL",
+     "gaade:0JnTB",
+     "gaade:0M7Rq",
+     "gaade:0MQ7H",
+     "gaade:0PsAF",
+     "gaade:0QSEP",
+     "gaade:278-0251",
+     "gaade:278-0311",
+     "gaade:425-0303",
+     "gaade:li-1Gw02",
+     "gaade:li-BoR9g",
+     "gaade:li-E1nsc"
+    ],
+    "modelEfter": [
+     "gaade:01Yjm",
+     "gaade:03R4G",
+     "gaade:05IBE",
+     "gaade:0986Y",
+     "gaade:0CqFj",
+     "gaade:0GGWL",
+     "gaade:0JnTB",
+     "gaade:0M7Rq",
+     "gaade:0MQ7H",
+     "gaade:0PsAF",
+     "gaade:0QSEP",
+     "gaade:278-0251",
+     "gaade:278-0311",
+     "gaade:425-0303",
+     "gaade:li-1Gw02",
+     "gaade:li-BoR9g",
+     "gaade:li-E1nsc"
+    ]
+   },
+   {
+    "d": 3,
+    "dagNr": 20727,
+    "forventet": [],
+    "gentag": {
+     "vist": false,
+     "antal": "",
+     "hvad": "",
+     "knap": "Gentag nu",
+     "top": 0,
+     "braetTop": 287,
+     "braetBund": 631,
+     "vinduH": 780,
+     "knapH": 0
+    },
+    "spillet": [],
+    "kortEfter": [
+     "gaade:01Yjm",
+     "gaade:03R4G",
+     "gaade:05IBE",
+     "gaade:0986Y",
+     "gaade:0CqFj",
+     "gaade:0GGWL",
+     "gaade:0JnTB",
+     "gaade:0M7Rq",
+     "gaade:0MQ7H",
+     "gaade:0PsAF",
+     "gaade:0QSEP",
+     "gaade:278-0251",
+     "gaade:278-0311",
+     "gaade:425-0303",
+     "gaade:li-1Gw02",
+     "gaade:li-BoR9g",
+     "gaade:li-E1nsc"
+    ],
+    "modelEfter": [
+     "gaade:01Yjm",
+     "gaade:03R4G",
+     "gaade:05IBE",
+     "gaade:0986Y",
+     "gaade:0CqFj",
+     "gaade:0GGWL",
+     "gaade:0JnTB",
+     "gaade:0M7Rq",
+     "gaade:0MQ7H",
+     "gaade:0PsAF",
+     "gaade:0QSEP",
+     "gaade:278-0251",
+     "gaade:278-0311",
+     "gaade:425-0303",
+     "gaade:li-1Gw02",
+     "gaade:li-BoR9g",
+     "gaade:li-E1nsc"
+    ]
+   },
+   {
+    "d": 4,
+    "dagNr": 20728,
+    "forventet": [
+     "gaade:01Yjm",
+     "gaade:03R4G",
+     "gaade:05IBE",
+     "gaade:0986Y",
+     "gaade:0CqFj",
+     "gaade:0GGWL",
+     "gaade:0JnTB",
+     "gaade:0M7Rq",
+     "gaade:0MQ7H",
+     "gaade:0PsAF",
+     "gaade:0QSEP",
+     "gaade:278-0251",
+     "gaade:425-0303",
+     "gaade:li-1Gw02",
+     "gaade:li-BoR9g",
+     "gaade:li-E1nsc"
+    ],
+    "gentag": {
+     "vist": true,
+     "antal": "Gentag i dag: 16",
+     "hvad": "16 gåder",
+     "knap": "Gentag nu",
+     "top": 908,
+     "braetTop": 287,
+     "braetBund": 631,
+     "vinduH": 780,
+     "knapH": 44
+    },
+    "spillet": [
+     {
+      "noegle": "gaade:01Yjm",
+      "label": "gaffel",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:03R4G",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:05IBE",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:0986Y",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:0CqFj",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:0GGWL",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:0JnTB",
+      "label": "gaffel",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:0M7Rq",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:0MQ7H",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:0PsAF",
+      "label": "som-de-kommer-0",
+      "fejl": true,
+      "besked": "Den kommer igen i morgen."
+     },
+     {
+      "noegle": "gaade:0QSEP",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:278-0251",
+      "label": "som-de-kommer-2",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:425-0303",
+      "label": "gaffel",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:li-1Gw02",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:li-BoR9g",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:li-E1nsc",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     }
+    ],
+    "ratingFoer": "738",
+    "stop": {
+     "titel": "Gåde",
+     "status": "Hvid trækker. Find det bedste træk."
+    },
+    "ratingEfter": "738",
+    "gentagEfter": {
+     "vist": false,
+     "antal": "Gentag i dag: 1",
+     "hvad": "1 gåde",
+     "knap": "Du gentager nu",
+     "top": 0,
+     "braetTop": 287,
+     "braetBund": 631,
+     "vinduH": 780,
+     "knapH": 0
+    },
+    "kortEfter": [
+     "gaade:0PsAF",
+     "gaade:278-0311"
+    ],
+    "modelEfter": [
+     "gaade:0PsAF",
+     "gaade:278-0311"
+    ]
+   },
+   {
+    "d": 5,
+    "dagNr": 20729,
+    "forventet": [
+     "gaade:0PsAF",
+     "gaade:278-0311"
+    ],
+    "gentag": {
+     "vist": true,
+     "antal": "Gentag i dag: 2",
+     "hvad": "2 gåder",
+     "knap": "Gentag nu",
+     "top": 908,
+     "braetTop": 287,
+     "braetBund": 631,
+     "vinduH": 780,
+     "knapH": 44
+    },
+    "spillet": [
+     {
+      "noegle": "gaade:0PsAF",
+      "label": "som-de-kommer-0",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 7 dage."
+     },
+     {
+      "noegle": "gaade:278-0311",
+      "label": "som-de-kommer-1",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     }
+    ],
+    "ratingFoer": "738",
+    "stop": {
+     "titel": "Gåde",
+     "status": "Sort trækker. Find det bedste træk."
+    },
+    "ratingEfter": "738",
+    "gentagEfter": {
+     "vist": false,
+     "antal": "Gentag i dag: 1",
+     "hvad": "1 gåde",
+     "knap": "Du gentager nu",
+     "top": 287,
+     "braetTop": 287,
+     "braetBund": 631,
+     "vinduH": 780,
+     "knapH": 0
+    },
+    "kortEfter": [
+     "gaade:0PsAF"
+    ],
+    "modelEfter": [
+     "gaade:0PsAF"
+    ]
+   },
+   {
+    "d": 11,
+    "dagNr": 20735,
+    "forventet": [],
+    "gentag": {
+     "vist": false,
+     "antal": "",
+     "hvad": "",
+     "knap": "Gentag nu",
+     "top": 0,
+     "braetTop": 287,
+     "braetBund": 631,
+     "vinduH": 780,
+     "knapH": 0
+    },
+    "spillet": [],
+    "kortEfter": [
+     "gaade:0PsAF"
+    ],
+    "modelEfter": [
+     "gaade:0PsAF"
+    ]
+   },
+   {
+    "d": 12,
+    "dagNr": 20736,
+    "forventet": [
+     "gaade:0PsAF"
+    ],
+    "gentag": {
+     "vist": true,
+     "antal": "Gentag i dag: 1",
+     "hvad": "1 gåde",
+     "knap": "Gentag nu",
+     "top": 908,
+     "braetTop": 287,
+     "braetBund": 631,
+     "vinduH": 780,
+     "knapH": 44
+    },
+    "spillet": [
+     {
+      "noegle": "gaade:0PsAF",
+      "label": "som-de-kommer-0",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     }
+    ],
+    "ratingFoer": "738",
+    "stop": {
+     "titel": "Gåde",
+     "status": "Hvid trækker. Find det bedste træk."
+    },
+    "ratingEfter": "738",
+    "gentagEfter": {
+     "vist": false,
+     "antal": "Gentag i dag: 1",
+     "hvad": "1 gåde",
+     "knap": "Du gentager nu",
+     "top": 287,
+     "braetTop": 287,
+     "braetBund": 631,
+     "vinduH": 780,
+     "knapH": 0
+    },
+    "kortEfter": [],
+    "modelEfter": []
+   },
+   {
+    "d": 13,
+    "dagNr": 20737,
+    "forventet": [],
+    "gentag": {
+     "vist": false,
+     "antal": "",
+     "hvad": "",
+     "knap": "Gentag nu",
+     "top": 0,
+     "braetTop": 287,
+     "braetBund": 631,
+     "vinduH": 780,
+     "knapH": 0
+    },
+    "spillet": [],
+    "kortEfter": [],
+    "modelEfter": []
+   }
+  ],
+  "storm": {
+   "resultat": {
+    "top": 843,
+    "bund": 1779,
+    "iVindue": false,
+    "h": 936,
+    "vinduH": 780
+   },
+   "nyStorm": {
+    "top": 906,
+    "bund": 950,
+    "iVindue": true,
+    "h": 44,
+    "vinduH": 780
+   },
+   "nyStormTekst": "Ny storm",
+   "liste": {
+    "top": 1508,
+    "bund": 1754,
+    "iVindue": false,
+    "h": 246,
+    "vinduH": 780
+   },
+   "missedeVist": 5,
+   "visAlle": "Vis alle 11",
+   "missedeTitel": "Se løsningen på gåderne, der gik galt",
+   "efterVisAlle": 11,
+   "kortEfter": 17
+  },
+  "slutBibliotek": {
+   "resume": "6 af 16 øvet",
+   "svageste": "Dit svageste tema: Gaffel - 75 % rigtige i 16 forsøg.",
+   "knap": {
+    "tekst": "Øv gafler",
+    "tema": "fork"
+   },
+   "raekker": [
+    {
+     "art": "tema",
+     "id": "mateIn1",
+     "navn": "Mat i 1",
+     "tal": "86 % rigtige · 7 forsøg",
+     "maaler": "86%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "mateIn2",
+     "navn": "Mat i 2",
+     "tal": "88 % rigtige · 16 forsøg",
+     "maaler": "88%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "backRankMate",
+     "navn": "Bagerste række",
+     "tal": "Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "fork",
+     "navn": "Gaffel",
+     "tal": "75 % rigtige · 16 forsøg",
+     "maaler": "75%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "pin",
+     "navn": "Binding",
+     "tal": "100 % rigtige · 5 forsøg",
+     "maaler": "100%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "skewer",
+     "navn": "Spyd",
+     "tal": "100 % rigtige · 4 forsøg",
+     "maaler": "100%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "discoveredAttack",
+     "navn": "Afdækket angreb",
+     "tal": "100 % rigtige · 4 forsøg",
+     "maaler": "100%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "sacrifice",
+     "navn": "Offer",
+     "tal": "Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "intermezzo",
+     "navn": "Mellemtræk",
+     "tal": "Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "attackingF2F7",
+     "navn": "Angreb på f7",
+     "tal": "Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "promotion",
+     "navn": "Forvandling",
+     "tal": "Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "endgame",
+     "navn": "Slutspil",
+     "tal": "Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "koordinat",
+     "id": "find",
+     "navn": "Find feltet",
+     "tal": "Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "koordinat",
+     "id": "skriv",
+     "navn": "Skriv feltets navn",
+     "tal": "Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "koordinat",
+     "id": "brik",
+     "navn": "Hvor står brikken?",
+     "tal": "Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "kendte",
+     "id": "kendte",
+     "navn": "Kendte partier",
+     "tal": "0 af 10 løst · Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    }
+   ]
+  },
+  "rul": 0,
+  "net": [],
+  "fejl": []
+ },
+ "390": {
+  "dag0": {
+   "gaader": [
+    {
+     "label": "som-de-kommer-0",
+     "maade": "forkert",
+     "tema": "mateIn3",
+     "noegle": "gaade:0TbOf",
+     "temaIBibliotek": false,
+     "forkert": {
+      "san": "Nxb2",
+      "besked": "Ikke den vej. Tag trækket tilbage og prøv igen."
+     },
+     "slut": "Mat i 3. Løst, men med et forkert træk først. Vi finder dit niveau: 1 af 10. Din stime er i gang: 1 dag. Den kommer igen i morgen."
+    },
+    {
+     "label": "som-de-kommer-1",
+     "maade": "hint",
+     "tema": "mateIn1",
+     "noegle": "gaade:0Ggqe",
+     "temaIBibliotek": true,
+     "hintBesked": "Hint: se den fremhævede brik.",
+     "slut": "Mat i 1. Løst med hint. Vi finder dit niveau: 2 af 10. Den kommer igen i morgen."
+    },
+    {
+     "label": "som-de-kommer-2",
+     "maade": "spring",
+     "tema": "fork",
+     "noegle": "gaade:425-0330",
+     "temaIBibliotek": true,
+     "forkert": {
+      "san": "Nb4",
+      "besked": "Ikke den vej. Tag trækket tilbage og prøv igen."
+     },
+     "slut": "Sprunget over efter et forkert træk."
+    },
+    {
+     "label": "som-de-kommer-3",
+     "maade": "ren",
+     "tema": "mateIn1",
+     "noegle": "gaade:0E0oB",
+     "temaIBibliotek": true,
+     "slut": "Løst! Mat i 1. Vi finder dit niveau: 4 af 10."
+    },
+    {
+     "label": "som-de-kommer-4",
+     "maade": "ren",
+     "tema": "mateIn2",
+     "noegle": "gaade:0UkkF",
+     "temaIBibliotek": true,
+     "slut": "Løst! Mat i 2. Vi finder dit niveau: 5 af 10."
+    },
+    {
+     "label": "som-de-kommer-5",
+     "maade": "ren",
+     "tema": "fork",
+     "noegle": "gaade:425-0276",
+     "temaIBibliotek": true,
+     "slut": "Løst! Gaffel. Vi finder dit niveau: 6 af 10."
+    },
+    {
+     "label": "som-de-kommer-6",
+     "maade": "ren",
+     "tema": "mateIn1",
+     "noegle": "gaade:01uI5",
+     "temaIBibliotek": true,
+     "slut": "Løst! Mat i 1. Vi finder dit niveau: 7 af 10."
+    },
+    {
+     "label": "som-de-kommer-7",
+     "maade": "ren",
+     "tema": "fork",
+     "noegle": "gaade:425-0279",
+     "temaIBibliotek": true,
+     "slut": "Løst! Gaffel. Vi finder dit niveau: 8 af 10."
+    },
+    {
+     "label": "gaffel",
+     "maade": "forkert",
+     "tema": "fork",
+     "noegle": "gaade:425-0302",
+     "temaIBibliotek": true,
+     "forkert": {
+      "san": "Kd7",
+      "besked": "Ikke den vej. Tag trækket tilbage og prøv igen."
+     },
+     "slut": "Gaffel. Løst, men med et forkert træk først. Vi finder dit niveau: 9 af 10. Den kommer igen i morgen."
+    },
+    {
+     "label": "gaffel",
+     "maade": "forkert",
+     "tema": "fork",
+     "noegle": "gaade:425-0292",
+     "temaIBibliotek": true,
+     "forkert": {
+      "san": "Nc5+",
+      "besked": "Ikke den vej. Tag trækket tilbage og prøv igen."
+     },
+     "slut": "Gaffel. Løst, men med et forkert træk først. Dit niveau er fundet: 667. Den kommer igen i morgen."
+    },
+    {
+     "label": "gaffel",
+     "maade": "forkert",
+     "tema": "fork",
+     "noegle": "gaade:425-0306",
+     "temaIBibliotek": true,
+     "forkert": {
+      "san": "Ne4",
+      "besked": "Ikke den vej. Tag trækket tilbage og prøv igen."
+     },
+     "slut": "Gaffel. Løst, men med et forkert træk først: 632 (−35). Den kommer igen i morgen."
+    },
+    {
+     "label": "gaffel",
+     "maade": "ren",
+     "tema": "fork",
+     "noegle": "gaade:02u0t",
+     "temaIBibliotek": true,
+     "slut": "Løst! Gaffel. Rating: 640 (+8)."
+    },
+    {
+     "label": "binding",
+     "maade": "ren",
+     "tema": "pin",
+     "noegle": "gaade:0NLTN",
+     "temaIBibliotek": true,
+     "slut": "Løst! Binding. Rating: 668 (+28)."
+    },
+    {
+     "label": "binding",
+     "maade": "ren",
+     "tema": "pin",
+     "noegle": "gaade:0C50G",
+     "temaIBibliotek": true,
+     "slut": "Løst! Binding. Rating: 693 (+25)."
+    },
+    {
+     "label": "binding",
+     "maade": "ren",
+     "tema": "pin",
+     "noegle": "gaade:li-318ry",
+     "temaIBibliotek": true,
+     "slut": "Løst! Binding. Rating: 728 (+35)."
+    }
+   ],
+   "foer": {
+    "resume": "0 af 16 øvet",
+    "svageste": "Løs mindst 3 gåder i et tema, så finder vi dit svageste tema.",
+    "knap": null,
+    "raekker": [
+     {
+      "art": "tema",
+      "id": "mateIn1",
+      "navn": "Mat i 1",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "mateIn2",
+      "navn": "Mat i 2",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "backRankMate",
+      "navn": "Bagerste række",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "fork",
+      "navn": "Gaffel",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "pin",
+      "navn": "Binding",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "skewer",
+      "navn": "Spyd",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "discoveredAttack",
+      "navn": "Afdækket angreb",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "sacrifice",
+      "navn": "Offer",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "intermezzo",
+      "navn": "Mellemtræk",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "attackingF2F7",
+      "navn": "Angreb på f7",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "promotion",
+      "navn": "Forvandling",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "endgame",
+      "navn": "Slutspil",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "koordinat",
+      "id": "find",
+      "navn": "Find feltet",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "koordinat",
+      "id": "skriv",
+      "navn": "Skriv feltets navn",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "koordinat",
+      "id": "brik",
+      "navn": "Hvor står brikken?",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "kendte",
+      "id": "kendte",
+      "navn": "Kendte partier",
+      "tal": "0 af 10 løst · Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     }
+    ]
+   },
+   "optael": {
+    "mateIn3": {
+     "forsoeg": 1,
+     "rigtige": 0
+    },
+    "mateIn1": {
+     "forsoeg": 3,
+     "rigtige": 3
+    },
+    "fork": {
+     "forsoeg": 7,
+     "rigtige": 3
+    },
+    "mateIn2": {
+     "forsoeg": 1,
+     "rigtige": 1
+    },
+    "pin": {
+     "forsoeg": 3,
+     "rigtige": 3
+    }
+   },
+   "efter": {
+    "resume": "4 af 16 øvet",
+    "svageste": "Dit svageste tema: Gaffel - 43 % rigtige i 7 forsøg.",
+    "knap": {
+     "tekst": "Øv gafler",
+     "tema": "fork"
+    },
+    "raekker": [
+     {
+      "art": "tema",
+      "id": "mateIn1",
+      "navn": "Mat i 1",
+      "tal": "100 % rigtige · 3 forsøg",
+      "maaler": "100%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "mateIn2",
+      "navn": "Mat i 2",
+      "tal": "100 % rigtige · 1 forsøg",
+      "maaler": "100%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "backRankMate",
+      "navn": "Bagerste række",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "fork",
+      "navn": "Gaffel",
+      "tal": "43 % rigtige · 7 forsøg",
+      "maaler": "43%",
+      "svag": true,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "pin",
+      "navn": "Binding",
+      "tal": "100 % rigtige · 3 forsøg",
+      "maaler": "100%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "skewer",
+      "navn": "Spyd",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "discoveredAttack",
+      "navn": "Afdækket angreb",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "sacrifice",
+      "navn": "Offer",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "intermezzo",
+      "navn": "Mellemtræk",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "attackingF2F7",
+      "navn": "Angreb på f7",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "promotion",
+      "navn": "Forvandling",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "endgame",
+      "navn": "Slutspil",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "koordinat",
+      "id": "find",
+      "navn": "Find feltet",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "koordinat",
+      "id": "skriv",
+      "navn": "Skriv feltets navn",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "koordinat",
+      "id": "brik",
+      "navn": "Hvor står brikken?",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "kendte",
+      "id": "kendte",
+      "navn": "Kendte partier",
+      "tal": "0 af 10 løst · Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     }
+    ]
+   },
+   "foldH": 1101,
+   "gentag": {
+    "vist": false,
+    "antal": "",
+    "hvad": "",
+    "knap": "Gentag nu",
+    "top": 1851,
+    "braetTop": 287,
+    "braetBund": 661,
+    "vinduH": 844,
+    "knapH": 0
+   },
+   "oev": {
+    "duOever": "Du øver: Gaffel (6 løst)",
+    "tema": "fork",
+    "braet": {
+     "top": 0,
+     "bund": 374,
+     "vinduH": 844
+    }
+   },
+   "kort": [
+    "gaade:06jn4",
+    "gaade:079wn",
+    "gaade:07n8C",
+    "gaade:07xxw",
+    "gaade:0CCtp",
+    "gaade:0DeYF",
+    "gaade:0Ggqe",
+    "gaade:0QFbJ",
+    "gaade:0R3Kk",
+    "gaade:0TbOf",
+    "gaade:278-0989",
+    "gaade:425-0217",
+    "gaade:425-0292",
+    "gaade:425-0302",
+    "gaade:425-0306",
+    "gaade:425-0330",
+    "gaade:448-0013",
+    "gaade:485-0006",
+    "gaade:485-0014",
+    "gaade:li-NkxET",
+    "gaade:li-lTTiL"
+   ],
+   "model": [
+    "gaade:06jn4",
+    "gaade:079wn",
+    "gaade:07n8C",
+    "gaade:07xxw",
+    "gaade:0CCtp",
+    "gaade:0DeYF",
+    "gaade:0Ggqe",
+    "gaade:0QFbJ",
+    "gaade:0R3Kk",
+    "gaade:0TbOf",
+    "gaade:278-0989",
+    "gaade:425-0217",
+    "gaade:425-0292",
+    "gaade:425-0302",
+    "gaade:425-0306",
+    "gaade:425-0330",
+    "gaade:448-0013",
+    "gaade:485-0006",
+    "gaade:485-0014",
+    "gaade:li-NkxET",
+    "gaade:li-lTTiL"
+   ],
+   "sammenlign": {
+    "vist": {
+     "mateIn1": "100 % rigtige · 3 forsøg",
+     "mateIn2": "100 % rigtige · 1 forsøg",
+     "backRankMate": "Ikke prøvet endnu",
+     "fork": "43 % rigtige · 7 forsøg",
+     "pin": "100 % rigtige · 3 forsøg",
+     "skewer": "Ikke prøvet endnu",
+     "discoveredAttack": "Ikke prøvet endnu",
+     "sacrifice": "Ikke prøvet endnu",
+     "intermezzo": "Ikke prøvet endnu",
+     "attackingF2F7": "Ikke prøvet endnu",
+     "promotion": "Ikke prøvet endnu",
+     "endgame": "Ikke prøvet endnu"
+    },
+    "forventet": {
+     "mateIn1": "100 % rigtige · 3 forsøg",
+     "fork": "43 % rigtige · 7 forsøg",
+     "mateIn2": "100 % rigtige · 1 forsøg",
+     "pin": "100 % rigtige · 3 forsøg"
+    }
+   },
+   "usynlige": [
+    "mateIn3"
+   ],
+   "minSvageste": {
+    "tema": "fork",
+    "procent": 43,
+    "forsoeg": 7
+   }
+  },
+  "dage": [
+   {
+    "d": 1,
+    "dagNr": 20725,
+    "forventet": [
+     "gaade:06jn4",
+     "gaade:079wn",
+     "gaade:07n8C",
+     "gaade:07xxw",
+     "gaade:0CCtp",
+     "gaade:0DeYF",
+     "gaade:0Ggqe",
+     "gaade:0QFbJ",
+     "gaade:0R3Kk",
+     "gaade:0TbOf",
+     "gaade:278-0989",
+     "gaade:425-0217",
+     "gaade:425-0292",
+     "gaade:425-0302",
+     "gaade:425-0306",
+     "gaade:425-0330",
+     "gaade:448-0013",
+     "gaade:485-0006",
+     "gaade:485-0014",
+     "gaade:li-NkxET",
+     "gaade:li-lTTiL"
+    ],
+    "gentag": {
+     "vist": true,
+     "antal": "Gentag i dag: 21",
+     "hvad": "21 gåder",
+     "knap": "Gentag nu",
+     "top": 938,
+     "braetTop": 287,
+     "braetBund": 661,
+     "vinduH": 844,
+     "knapH": 44
+    },
+    "spillet": [
+     {
+      "noegle": "gaade:06jn4",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:079wn",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:07n8C",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:07xxw",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:0CCtp",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:0DeYF",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:0Ggqe",
+      "label": "som-de-kommer-1",
+      "fejl": true,
+      "besked": "Den kommer igen i morgen."
+     },
+     {
+      "noegle": "gaade:0QFbJ",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:0R3Kk",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:0TbOf",
+      "label": "som-de-kommer-0",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:278-0989",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:425-0217",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:425-0292",
+      "label": "gaffel",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:425-0302",
+      "label": "gaffel",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:425-0306",
+      "label": "gaffel",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:425-0330",
+      "label": "som-de-kommer-2",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:448-0013",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:485-0006",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:485-0014",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:li-NkxET",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:li-lTTiL",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     }
+    ],
+    "ratingFoer": "728",
+    "stop": {
+     "titel": "Gåde",
+     "status": "Sort trækker. Find det bedste træk."
+    },
+    "ratingEfter": "728",
+    "gentagEfter": {
+     "vist": false,
+     "antal": "Gentag i dag: 1",
+     "hvad": "1 gåde",
+     "knap": "Du gentager nu",
+     "top": 0,
+     "braetTop": 287,
+     "braetBund": 661,
+     "vinduH": 844,
+     "knapH": 0
+    },
+    "kortEfter": [
+     "gaade:06jn4",
+     "gaade:079wn",
+     "gaade:07n8C",
+     "gaade:07xxw",
+     "gaade:0CCtp",
+     "gaade:0DeYF",
+     "gaade:0Ggqe",
+     "gaade:0QFbJ",
+     "gaade:0R3Kk",
+     "gaade:0TbOf",
+     "gaade:278-0989",
+     "gaade:425-0217",
+     "gaade:425-0292",
+     "gaade:425-0302",
+     "gaade:425-0306",
+     "gaade:425-0330",
+     "gaade:448-0013",
+     "gaade:485-0006",
+     "gaade:485-0014",
+     "gaade:li-NkxET",
+     "gaade:li-lTTiL"
+    ],
+    "modelEfter": [
+     "gaade:06jn4",
+     "gaade:079wn",
+     "gaade:07n8C",
+     "gaade:07xxw",
+     "gaade:0CCtp",
+     "gaade:0DeYF",
+     "gaade:0Ggqe",
+     "gaade:0QFbJ",
+     "gaade:0R3Kk",
+     "gaade:0TbOf",
+     "gaade:278-0989",
+     "gaade:425-0217",
+     "gaade:425-0292",
+     "gaade:425-0302",
+     "gaade:425-0306",
+     "gaade:425-0330",
+     "gaade:448-0013",
+     "gaade:485-0006",
+     "gaade:485-0014",
+     "gaade:li-NkxET",
+     "gaade:li-lTTiL"
+    ]
+   },
+   {
+    "d": 2,
+    "dagNr": 20726,
+    "forventet": [
+     "gaade:0Ggqe"
+    ],
+    "gentag": {
+     "vist": true,
+     "antal": "Gentag i dag: 1",
+     "hvad": "1 gåde",
+     "knap": "Gentag nu",
+     "top": 938,
+     "braetTop": 287,
+     "braetBund": 661,
+     "vinduH": 844,
+     "knapH": 44
+    },
+    "spillet": [
+     {
+      "noegle": "gaade:0Ggqe",
+      "label": "som-de-kommer-1",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     }
+    ],
+    "ratingFoer": "728",
+    "stop": {
+     "titel": "Gåde",
+     "status": "Sort trækker. Find det bedste træk."
+    },
+    "ratingEfter": "728",
+    "gentagEfter": {
+     "vist": false,
+     "antal": "Gentag i dag: 1",
+     "hvad": "1 gåde",
+     "knap": "Du gentager nu",
+     "top": 287,
+     "braetTop": 287,
+     "braetBund": 661,
+     "vinduH": 844,
+     "knapH": 0
+    },
+    "kortEfter": [
+     "gaade:06jn4",
+     "gaade:079wn",
+     "gaade:07n8C",
+     "gaade:07xxw",
+     "gaade:0CCtp",
+     "gaade:0DeYF",
+     "gaade:0Ggqe",
+     "gaade:0QFbJ",
+     "gaade:0R3Kk",
+     "gaade:0TbOf",
+     "gaade:278-0989",
+     "gaade:425-0217",
+     "gaade:425-0292",
+     "gaade:425-0302",
+     "gaade:425-0306",
+     "gaade:425-0330",
+     "gaade:448-0013",
+     "gaade:485-0006",
+     "gaade:485-0014",
+     "gaade:li-NkxET",
+     "gaade:li-lTTiL"
+    ],
+    "modelEfter": [
+     "gaade:06jn4",
+     "gaade:079wn",
+     "gaade:07n8C",
+     "gaade:07xxw",
+     "gaade:0CCtp",
+     "gaade:0DeYF",
+     "gaade:0Ggqe",
+     "gaade:0QFbJ",
+     "gaade:0R3Kk",
+     "gaade:0TbOf",
+     "gaade:278-0989",
+     "gaade:425-0217",
+     "gaade:425-0292",
+     "gaade:425-0302",
+     "gaade:425-0306",
+     "gaade:425-0330",
+     "gaade:448-0013",
+     "gaade:485-0006",
+     "gaade:485-0014",
+     "gaade:li-NkxET",
+     "gaade:li-lTTiL"
+    ]
+   },
+   {
+    "d": 3,
+    "dagNr": 20727,
+    "forventet": [],
+    "gentag": {
+     "vist": false,
+     "antal": "",
+     "hvad": "",
+     "knap": "Gentag nu",
+     "top": 0,
+     "braetTop": 287,
+     "braetBund": 661,
+     "vinduH": 844,
+     "knapH": 0
+    },
+    "spillet": [],
+    "kortEfter": [
+     "gaade:06jn4",
+     "gaade:079wn",
+     "gaade:07n8C",
+     "gaade:07xxw",
+     "gaade:0CCtp",
+     "gaade:0DeYF",
+     "gaade:0Ggqe",
+     "gaade:0QFbJ",
+     "gaade:0R3Kk",
+     "gaade:0TbOf",
+     "gaade:278-0989",
+     "gaade:425-0217",
+     "gaade:425-0292",
+     "gaade:425-0302",
+     "gaade:425-0306",
+     "gaade:425-0330",
+     "gaade:448-0013",
+     "gaade:485-0006",
+     "gaade:485-0014",
+     "gaade:li-NkxET",
+     "gaade:li-lTTiL"
+    ],
+    "modelEfter": [
+     "gaade:06jn4",
+     "gaade:079wn",
+     "gaade:07n8C",
+     "gaade:07xxw",
+     "gaade:0CCtp",
+     "gaade:0DeYF",
+     "gaade:0Ggqe",
+     "gaade:0QFbJ",
+     "gaade:0R3Kk",
+     "gaade:0TbOf",
+     "gaade:278-0989",
+     "gaade:425-0217",
+     "gaade:425-0292",
+     "gaade:425-0302",
+     "gaade:425-0306",
+     "gaade:425-0330",
+     "gaade:448-0013",
+     "gaade:485-0006",
+     "gaade:485-0014",
+     "gaade:li-NkxET",
+     "gaade:li-lTTiL"
+    ]
+   },
+   {
+    "d": 4,
+    "dagNr": 20728,
+    "forventet": [
+     "gaade:06jn4",
+     "gaade:079wn",
+     "gaade:07n8C",
+     "gaade:07xxw",
+     "gaade:0CCtp",
+     "gaade:0DeYF",
+     "gaade:0QFbJ",
+     "gaade:0R3Kk",
+     "gaade:0TbOf",
+     "gaade:278-0989",
+     "gaade:425-0217",
+     "gaade:425-0292",
+     "gaade:425-0302",
+     "gaade:425-0306",
+     "gaade:425-0330",
+     "gaade:448-0013",
+     "gaade:485-0006",
+     "gaade:485-0014",
+     "gaade:li-NkxET",
+     "gaade:li-lTTiL"
+    ],
+    "gentag": {
+     "vist": true,
+     "antal": "Gentag i dag: 20",
+     "hvad": "20 gåder",
+     "knap": "Gentag nu",
+     "top": 938,
+     "braetTop": 287,
+     "braetBund": 661,
+     "vinduH": 844,
+     "knapH": 44
+    },
+    "spillet": [
+     {
+      "noegle": "gaade:06jn4",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:079wn",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:07n8C",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:07xxw",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:0CCtp",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:0DeYF",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:0QFbJ",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:0R3Kk",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:0TbOf",
+      "label": "som-de-kommer-0",
+      "fejl": true,
+      "besked": "Den kommer igen i morgen."
+     },
+     {
+      "noegle": "gaade:278-0989",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:425-0217",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:425-0292",
+      "label": "gaffel",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:425-0302",
+      "label": "gaffel",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:425-0306",
+      "label": "gaffel",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:425-0330",
+      "label": "som-de-kommer-2",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:448-0013",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:485-0006",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:485-0014",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:li-NkxET",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:li-lTTiL",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     }
+    ],
+    "ratingFoer": "728",
+    "stop": {
+     "titel": "Gåde",
+     "status": "Hvid trækker. Find det bedste træk."
+    },
+    "ratingEfter": "728",
+    "gentagEfter": {
+     "vist": false,
+     "antal": "Gentag i dag: 1",
+     "hvad": "1 gåde",
+     "knap": "Du gentager nu",
+     "top": 215,
+     "braetTop": 287,
+     "braetBund": 661,
+     "vinduH": 844,
+     "knapH": 0
+    },
+    "kortEfter": [
+     "gaade:0Ggqe",
+     "gaade:0TbOf"
+    ],
+    "modelEfter": [
+     "gaade:0Ggqe",
+     "gaade:0TbOf"
+    ]
+   },
+   {
+    "d": 5,
+    "dagNr": 20729,
+    "forventet": [
+     "gaade:0Ggqe",
+     "gaade:0TbOf"
+    ],
+    "gentag": {
+     "vist": true,
+     "antal": "Gentag i dag: 2",
+     "hvad": "2 gåder",
+     "knap": "Gentag nu",
+     "top": 938,
+     "braetTop": 287,
+     "braetBund": 661,
+     "vinduH": 844,
+     "knapH": 44
+    },
+    "spillet": [
+     {
+      "noegle": "gaade:0Ggqe",
+      "label": "som-de-kommer-1",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:0TbOf",
+      "label": "som-de-kommer-0",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 7 dage."
+     }
+    ],
+    "ratingFoer": "728",
+    "stop": {
+     "titel": "Gåde",
+     "status": "Hvid trækker. Kun ét træk vinder. Find det."
+    },
+    "ratingEfter": "728",
+    "gentagEfter": {
+     "vist": false,
+     "antal": "Gentag i dag: 1",
+     "hvad": "1 gåde",
+     "knap": "Du gentager nu",
+     "top": 287,
+     "braetTop": 287,
+     "braetBund": 661,
+     "vinduH": 844,
+     "knapH": 0
+    },
+    "kortEfter": [
+     "gaade:0TbOf"
+    ],
+    "modelEfter": [
+     "gaade:0TbOf"
+    ]
+   },
+   {
+    "d": 11,
+    "dagNr": 20735,
+    "forventet": [],
+    "gentag": {
+     "vist": false,
+     "antal": "",
+     "hvad": "",
+     "knap": "Gentag nu",
+     "top": 0,
+     "braetTop": 287,
+     "braetBund": 661,
+     "vinduH": 844,
+     "knapH": 0
+    },
+    "spillet": [],
+    "kortEfter": [
+     "gaade:0TbOf"
+    ],
+    "modelEfter": [
+     "gaade:0TbOf"
+    ]
+   },
+   {
+    "d": 12,
+    "dagNr": 20736,
+    "forventet": [
+     "gaade:0TbOf"
+    ],
+    "gentag": {
+     "vist": true,
+     "antal": "Gentag i dag: 1",
+     "hvad": "1 gåde",
+     "knap": "Gentag nu",
+     "top": 938,
+     "braetTop": 287,
+     "braetBund": 661,
+     "vinduH": 844,
+     "knapH": 44
+    },
+    "spillet": [
+     {
+      "noegle": "gaade:0TbOf",
+      "label": "som-de-kommer-0",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     }
+    ],
+    "ratingFoer": "728",
+    "stop": {
+     "titel": "Gåde",
+     "status": "Hvid trækker. Find det bedste træk."
+    },
+    "ratingEfter": "728",
+    "gentagEfter": {
+     "vist": false,
+     "antal": "Gentag i dag: 1",
+     "hvad": "1 gåde",
+     "knap": "Du gentager nu",
+     "top": 287,
+     "braetTop": 287,
+     "braetBund": 661,
+     "vinduH": 844,
+     "knapH": 0
+    },
+    "kortEfter": [],
+    "modelEfter": []
+   },
+   {
+    "d": 13,
+    "dagNr": 20737,
+    "forventet": [],
+    "gentag": {
+     "vist": false,
+     "antal": "",
+     "hvad": "",
+     "knap": "Gentag nu",
+     "top": 0,
+     "braetTop": 287,
+     "braetBund": 661,
+     "vinduH": 844,
+     "knapH": 0
+    },
+    "spillet": [],
+    "kortEfter": [],
+    "modelEfter": []
+   }
+  ],
+  "storm": {
+   "resultat": {
+    "top": 853,
+    "bund": 1647,
+    "iVindue": false,
+    "h": 794,
+    "vinduH": 844
+   },
+   "nyStorm": {
+    "top": 893,
+    "bund": 937,
+    "iVindue": true,
+    "h": 44,
+    "vinduH": 844
+   },
+   "nyStormTekst": "Ny storm",
+   "liste": {
+    "top": 1427,
+    "bund": 1622,
+    "iVindue": true,
+    "h": 195,
+    "vinduH": 844
+   },
+   "missedeVist": 5,
+   "visAlle": "Vis alle 15",
+   "missedeTitel": "Se løsningen på gåderne, der gik galt",
+   "efterVisAlle": 15,
+   "kortEfter": 21
+  },
+  "slutBibliotek": {
+   "resume": "6 af 16 øvet",
+   "svageste": "Dit svageste tema: Gaffel - 76 % rigtige i 17 forsøg.",
+   "knap": {
+    "tekst": "Øv gafler",
+    "tema": "fork"
+   },
+   "raekker": [
+    {
+     "art": "tema",
+     "id": "mateIn1",
+     "navn": "Mat i 1",
+     "tal": "83 % rigtige · 6 forsøg",
+     "maaler": "83%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "mateIn2",
+     "navn": "Mat i 2",
+     "tal": "100 % rigtige · 15 forsøg",
+     "maaler": "100%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "backRankMate",
+     "navn": "Bagerste række",
+     "tal": "Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "fork",
+     "navn": "Gaffel",
+     "tal": "76 % rigtige · 17 forsøg",
+     "maaler": "76%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "pin",
+     "navn": "Binding",
+     "tal": "100 % rigtige · 3 forsøg",
+     "maaler": "100%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "skewer",
+     "navn": "Spyd",
+     "tal": "100 % rigtige · 4 forsøg",
+     "maaler": "100%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "discoveredAttack",
+     "navn": "Afdækket angreb",
+     "tal": "Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "sacrifice",
+     "navn": "Offer",
+     "tal": "Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "intermezzo",
+     "navn": "Mellemtræk",
+     "tal": "100 % rigtige · 2 forsøg",
+     "maaler": "100%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "attackingF2F7",
+     "navn": "Angreb på f7",
+     "tal": "Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "promotion",
+     "navn": "Forvandling",
+     "tal": "Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "endgame",
+     "navn": "Slutspil",
+     "tal": "Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "koordinat",
+     "id": "find",
+     "navn": "Find feltet",
+     "tal": "Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "koordinat",
+     "id": "skriv",
+     "navn": "Skriv feltets navn",
+     "tal": "Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "koordinat",
+     "id": "brik",
+     "navn": "Hvor står brikken?",
+     "tal": "Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "kendte",
+     "id": "kendte",
+     "navn": "Kendte partier",
+     "tal": "0 af 10 løst · Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    }
+   ]
+  },
+  "rul": 0,
+  "net": [],
+  "fejl": []
+ },
+ "1280": {
+  "dag0": {
+   "gaader": [
+    {
+     "label": "som-de-kommer-0",
+     "maade": "forkert",
+     "tema": "attackingF2F7",
+     "noegle": "gaade:li-batLH",
+     "temaIBibliotek": true,
+     "forkert": {
+      "san": "Rb8",
+      "besked": "Ikke den vej. Tag trækket tilbage og prøv igen."
+     },
+     "slut": "Angreb på f7. Løst, men med et forkert træk først. Vi finder dit niveau: 1 af 10. Din stime er i gang: 1 dag. Den kommer igen i morgen."
+    },
+    {
+     "label": "som-de-kommer-1",
+     "maade": "hint",
+     "tema": "mateIn1",
+     "noegle": "gaade:278-0548",
+     "temaIBibliotek": true,
+     "hintBesked": "Hint: se den fremhævede brik.",
+     "slut": "Mat i 1. Løst med hint. Vi finder dit niveau: 2 af 10. Den kommer igen i morgen."
+    },
+    {
+     "label": "som-de-kommer-2",
+     "maade": "spring",
+     "tema": "mateIn1",
+     "noegle": "gaade:09EoI",
+     "temaIBibliotek": true,
+     "forkert": {
+      "san": "Bg7",
+      "besked": "Ikke den vej. Tag trækket tilbage og prøv igen."
+     },
+     "slut": "Sprunget over efter et forkert træk."
+    },
+    {
+     "label": "som-de-kommer-3",
+     "maade": "ren",
+     "tema": "mateIn2",
+     "noegle": "gaade:0Nc6N",
+     "temaIBibliotek": true,
+     "slut": "Løst! Mat i 2. Vi finder dit niveau: 4 af 10."
+    },
+    {
+     "label": "som-de-kommer-4",
+     "maade": "ren",
+     "tema": "fork",
+     "noegle": "gaade:425-0287",
+     "temaIBibliotek": true,
+     "slut": "Løst! Gaffel. Vi finder dit niveau: 5 af 10."
+    },
+    {
+     "label": "som-de-kommer-5",
+     "maade": "ren",
+     "tema": "mateIn2",
+     "noegle": "gaade:03ba5",
+     "temaIBibliotek": true,
+     "slut": "Løst! Mat i 2. Vi finder dit niveau: 6 af 10."
+    },
+    {
+     "label": "som-de-kommer-6",
+     "maade": "ren",
+     "tema": "endgameSquare",
+     "noegle": "gaade:485-0028",
+     "temaIBibliotek": false,
+     "slut": "Løst! Kvadratet. Vi finder dit niveau: 7 af 10."
+    },
+    {
+     "label": "som-de-kommer-7",
+     "maade": "ren",
+     "tema": "fork",
+     "noegle": "gaade:0F9vA",
+     "temaIBibliotek": true,
+     "slut": "Løst! Gaffel. Vi finder dit niveau: 8 af 10."
+    },
+    {
+     "label": "gaffel",
+     "maade": "forkert",
+     "tema": "fork",
+     "noegle": "gaade:0NsEB",
+     "temaIBibliotek": true,
+     "forkert": {
+      "san": "Rd7",
+      "besked": "Ikke den vej. Tag trækket tilbage og prøv igen."
+     },
+     "slut": "Gaffel. Løst, men med et forkert træk først. Vi finder dit niveau: 9 af 10. Den kommer igen i morgen."
+    },
+    {
+     "label": "gaffel",
+     "maade": "forkert",
+     "tema": "fork",
+     "noegle": "gaade:425-0315",
+     "temaIBibliotek": true,
+     "forkert": {
+      "san": "Nf6+",
+      "besked": "Ikke den vej. Tag trækket tilbage og prøv igen."
+     },
+     "slut": "Gaffel. Løst, men med et forkert træk først. Dit niveau er fundet: 691. Den kommer igen i morgen."
+    },
+    {
+     "label": "gaffel",
+     "maade": "forkert",
+     "tema": "fork",
+     "noegle": "gaade:425-0302",
+     "temaIBibliotek": true,
+     "forkert": {
+      "san": "Ne3",
+      "besked": "Ikke den vej. Tag trækket tilbage og prøv igen."
+     },
+     "slut": "Gaffel. Løst, men med et forkert træk først: 654 (−37). Den kommer igen i morgen."
+    },
+    {
+     "label": "gaffel",
+     "maade": "ren",
+     "tema": "fork",
+     "noegle": "gaade:06ySG",
+     "temaIBibliotek": true,
+     "slut": "Løst! Gaffel. Rating: 660 (+6)."
+    },
+    {
+     "label": "binding",
+     "maade": "ren",
+     "tema": "pin",
+     "noegle": "gaade:0NLTN",
+     "temaIBibliotek": true,
+     "slut": "Løst! Binding. Rating: 687 (+27)."
+    },
+    {
+     "label": "binding",
+     "maade": "ren",
+     "tema": "pin",
+     "noegle": "gaade:0C50G",
+     "temaIBibliotek": true,
+     "slut": "Løst! Binding. Rating: 711 (+24)."
+    },
+    {
+     "label": "binding",
+     "maade": "ren",
+     "tema": "pin",
+     "noegle": "gaade:07tu0",
+     "temaIBibliotek": true,
+     "slut": "Løst! Binding. Rating: 737 (+26)."
+    }
+   ],
+   "foer": {
+    "resume": "0 af 16 øvet",
+    "svageste": "Løs mindst 3 gåder i et tema, så finder vi dit svageste tema.",
+    "knap": null,
+    "raekker": [
+     {
+      "art": "tema",
+      "id": "mateIn1",
+      "navn": "Mat i 1",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "mateIn2",
+      "navn": "Mat i 2",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "backRankMate",
+      "navn": "Bagerste række",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "fork",
+      "navn": "Gaffel",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "pin",
+      "navn": "Binding",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "skewer",
+      "navn": "Spyd",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "discoveredAttack",
+      "navn": "Afdækket angreb",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "sacrifice",
+      "navn": "Offer",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "intermezzo",
+      "navn": "Mellemtræk",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "attackingF2F7",
+      "navn": "Angreb på f7",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "promotion",
+      "navn": "Forvandling",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "endgame",
+      "navn": "Slutspil",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "koordinat",
+      "id": "find",
+      "navn": "Find feltet",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "koordinat",
+      "id": "skriv",
+      "navn": "Skriv feltets navn",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "koordinat",
+      "id": "brik",
+      "navn": "Hvor står brikken?",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "kendte",
+      "id": "kendte",
+      "navn": "Kendte partier",
+      "tal": "0 af 10 løst · Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     }
+    ]
+   },
+   "optael": {
+    "attackingF2F7": {
+     "forsoeg": 1,
+     "rigtige": 0
+    },
+    "mateIn1": {
+     "forsoeg": 2,
+     "rigtige": 1
+    },
+    "mateIn2": {
+     "forsoeg": 2,
+     "rigtige": 2
+    },
+    "fork": {
+     "forsoeg": 6,
+     "rigtige": 3
+    },
+    "endgameSquare": {
+     "forsoeg": 1,
+     "rigtige": 1
+    },
+    "pin": {
+     "forsoeg": 3,
+     "rigtige": 3
+    }
+   },
+   "efter": {
+    "resume": "5 af 16 øvet",
+    "svageste": "Dit svageste tema: Gaffel - 50 % rigtige i 6 forsøg.",
+    "knap": {
+     "tekst": "Øv gafler",
+     "tema": "fork"
+    },
+    "raekker": [
+     {
+      "art": "tema",
+      "id": "mateIn1",
+      "navn": "Mat i 1",
+      "tal": "50 % rigtige · 2 forsøg",
+      "maaler": "50%",
+      "svag": true,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "mateIn2",
+      "navn": "Mat i 2",
+      "tal": "100 % rigtige · 2 forsøg",
+      "maaler": "100%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "backRankMate",
+      "navn": "Bagerste række",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "fork",
+      "navn": "Gaffel",
+      "tal": "50 % rigtige · 6 forsøg",
+      "maaler": "50%",
+      "svag": true,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "pin",
+      "navn": "Binding",
+      "tal": "100 % rigtige · 3 forsøg",
+      "maaler": "100%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "skewer",
+      "navn": "Spyd",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "discoveredAttack",
+      "navn": "Afdækket angreb",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "sacrifice",
+      "navn": "Offer",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "intermezzo",
+      "navn": "Mellemtræk",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "attackingF2F7",
+      "navn": "Angreb på f7",
+      "tal": "0 % rigtige · 1 forsøg",
+      "maaler": "0%",
+      "svag": true,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "promotion",
+      "navn": "Forvandling",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "tema",
+      "id": "endgame",
+      "navn": "Slutspil",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "koordinat",
+      "id": "find",
+      "navn": "Find feltet",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "koordinat",
+      "id": "skriv",
+      "navn": "Skriv feltets navn",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "koordinat",
+      "id": "brik",
+      "navn": "Hvor står brikken?",
+      "tal": "Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     },
+     {
+      "art": "kendte",
+      "id": "kendte",
+      "navn": "Kendte partier",
+      "tal": "0 af 10 løst · Ikke prøvet endnu",
+      "maaler": "0%",
+      "svag": false,
+      "knapH": 44
+     }
+    ]
+   },
+   "foldH": 1094,
+   "gentag": {
+    "vist": false,
+    "antal": "",
+    "hvad": "",
+    "knap": "Gentag nu",
+    "top": 1093,
+    "braetTop": 237,
+    "braetBund": 774,
+    "vinduH": 800,
+    "knapH": 0
+   },
+   "oev": {
+    "duOever": "Du øver: Gaffel (6 løst)",
+    "tema": "fork",
+    "braet": {
+     "top": 0,
+     "bund": 537,
+     "vinduH": 800
+    }
+   },
+   "kort": [
+    "gaade:02MwE",
+    "gaade:02Z4F",
+    "gaade:03Pky",
+    "gaade:064RR",
+    "gaade:09EoI",
+    "gaade:0CCtp",
+    "gaade:0DdXQ",
+    "gaade:0EuUs",
+    "gaade:0F53J",
+    "gaade:0NsEB",
+    "gaade:0QAoB",
+    "gaade:278-0548",
+    "gaade:425-0302",
+    "gaade:425-0315",
+    "gaade:448-0011",
+    "gaade:485-0013",
+    "gaade:485-0058",
+    "gaade:li-30dw6",
+    "gaade:li-batLH",
+    "gaade:li-egASN",
+    "gaade:li-o3doC"
+   ],
+   "model": [
+    "gaade:02MwE",
+    "gaade:02Z4F",
+    "gaade:03Pky",
+    "gaade:064RR",
+    "gaade:09EoI",
+    "gaade:0CCtp",
+    "gaade:0DdXQ",
+    "gaade:0EuUs",
+    "gaade:0F53J",
+    "gaade:0NsEB",
+    "gaade:0QAoB",
+    "gaade:278-0548",
+    "gaade:425-0302",
+    "gaade:425-0315",
+    "gaade:448-0011",
+    "gaade:485-0013",
+    "gaade:485-0058",
+    "gaade:li-30dw6",
+    "gaade:li-batLH",
+    "gaade:li-egASN",
+    "gaade:li-o3doC"
+   ],
+   "sammenlign": {
+    "vist": {
+     "mateIn1": "50 % rigtige · 2 forsøg",
+     "mateIn2": "100 % rigtige · 2 forsøg",
+     "backRankMate": "Ikke prøvet endnu",
+     "fork": "50 % rigtige · 6 forsøg",
+     "pin": "100 % rigtige · 3 forsøg",
+     "skewer": "Ikke prøvet endnu",
+     "discoveredAttack": "Ikke prøvet endnu",
+     "sacrifice": "Ikke prøvet endnu",
+     "intermezzo": "Ikke prøvet endnu",
+     "attackingF2F7": "0 % rigtige · 1 forsøg",
+     "promotion": "Ikke prøvet endnu",
+     "endgame": "Ikke prøvet endnu"
+    },
+    "forventet": {
+     "attackingF2F7": "0 % rigtige · 1 forsøg",
+     "mateIn1": "50 % rigtige · 2 forsøg",
+     "mateIn2": "100 % rigtige · 2 forsøg",
+     "fork": "50 % rigtige · 6 forsøg",
+     "pin": "100 % rigtige · 3 forsøg"
+    }
+   },
+   "usynlige": [
+    "endgameSquare"
+   ],
+   "minSvageste": {
+    "tema": "fork",
+    "procent": 50,
+    "forsoeg": 6
+   }
+  },
+  "dage": [
+   {
+    "d": 1,
+    "dagNr": 20725,
+    "forventet": [
+     "gaade:02MwE",
+     "gaade:02Z4F",
+     "gaade:03Pky",
+     "gaade:064RR",
+     "gaade:09EoI",
+     "gaade:0CCtp",
+     "gaade:0DdXQ",
+     "gaade:0EuUs",
+     "gaade:0F53J",
+     "gaade:0NsEB",
+     "gaade:0QAoB",
+     "gaade:278-0548",
+     "gaade:425-0302",
+     "gaade:425-0315",
+     "gaade:448-0011",
+     "gaade:485-0013",
+     "gaade:485-0058",
+     "gaade:li-30dw6",
+     "gaade:li-batLH",
+     "gaade:li-egASN",
+     "gaade:li-o3doC"
+    ],
+    "gentag": {
+     "vist": true,
+     "antal": "Gentag i dag: 21",
+     "hvad": "21 gåder",
+     "knap": "Gentag nu",
+     "top": 197,
+     "braetTop": 237,
+     "braetBund": 774,
+     "vinduH": 800,
+     "knapH": 44
+    },
+    "spillet": [
+     {
+      "noegle": "gaade:02MwE",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:02Z4F",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:03Pky",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:064RR",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:09EoI",
+      "label": "som-de-kommer-2",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:0CCtp",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:0DdXQ",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:0EuUs",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:0F53J",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:0NsEB",
+      "label": "gaffel",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:0QAoB",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:278-0548",
+      "label": "som-de-kommer-1",
+      "fejl": true,
+      "besked": "Den kommer igen i morgen."
+     },
+     {
+      "noegle": "gaade:425-0302",
+      "label": "gaffel",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:425-0315",
+      "label": "gaffel",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:448-0011",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:485-0013",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:485-0058",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:li-30dw6",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:li-batLH",
+      "label": "som-de-kommer-0",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:li-egASN",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     },
+     {
+      "noegle": "gaade:li-o3doC",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     }
+    ],
+    "ratingFoer": "737",
+    "stop": {
+     "titel": "Gåde",
+     "status": "Hvid trækker. Find det bedste træk."
+    },
+    "ratingEfter": "737",
+    "gentagEfter": {
+     "vist": false,
+     "antal": "Gentag i dag: 1",
+     "hvad": "1 gåde",
+     "knap": "Du gentager nu",
+     "top": 0,
+     "braetTop": 237,
+     "braetBund": 774,
+     "vinduH": 800,
+     "knapH": 0
+    },
+    "kortEfter": [
+     "gaade:02MwE",
+     "gaade:02Z4F",
+     "gaade:03Pky",
+     "gaade:064RR",
+     "gaade:09EoI",
+     "gaade:0CCtp",
+     "gaade:0DdXQ",
+     "gaade:0EuUs",
+     "gaade:0F53J",
+     "gaade:0NsEB",
+     "gaade:0QAoB",
+     "gaade:278-0548",
+     "gaade:425-0302",
+     "gaade:425-0315",
+     "gaade:448-0011",
+     "gaade:485-0013",
+     "gaade:485-0058",
+     "gaade:li-30dw6",
+     "gaade:li-batLH",
+     "gaade:li-egASN",
+     "gaade:li-o3doC"
+    ],
+    "modelEfter": [
+     "gaade:02MwE",
+     "gaade:02Z4F",
+     "gaade:03Pky",
+     "gaade:064RR",
+     "gaade:09EoI",
+     "gaade:0CCtp",
+     "gaade:0DdXQ",
+     "gaade:0EuUs",
+     "gaade:0F53J",
+     "gaade:0NsEB",
+     "gaade:0QAoB",
+     "gaade:278-0548",
+     "gaade:425-0302",
+     "gaade:425-0315",
+     "gaade:448-0011",
+     "gaade:485-0013",
+     "gaade:485-0058",
+     "gaade:li-30dw6",
+     "gaade:li-batLH",
+     "gaade:li-egASN",
+     "gaade:li-o3doC"
+    ]
+   },
+   {
+    "d": 2,
+    "dagNr": 20726,
+    "forventet": [
+     "gaade:278-0548"
+    ],
+    "gentag": {
+     "vist": true,
+     "antal": "Gentag i dag: 1",
+     "hvad": "1 gåde",
+     "knap": "Gentag nu",
+     "top": 197,
+     "braetTop": 237,
+     "braetBund": 774,
+     "vinduH": 800,
+     "knapH": 44
+    },
+    "spillet": [
+     {
+      "noegle": "gaade:278-0548",
+      "label": "som-de-kommer-1",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 3 dage."
+     }
+    ],
+    "ratingFoer": "737",
+    "stop": {
+     "titel": "Gåde",
+     "status": "Hvid trækker. Find det bedste træk."
+    },
+    "ratingEfter": "737",
+    "gentagEfter": {
+     "vist": false,
+     "antal": "Gentag i dag: 1",
+     "hvad": "1 gåde",
+     "knap": "Du gentager nu",
+     "top": 0,
+     "braetTop": 237,
+     "braetBund": 774,
+     "vinduH": 800,
+     "knapH": 0
+    },
+    "kortEfter": [
+     "gaade:02MwE",
+     "gaade:02Z4F",
+     "gaade:03Pky",
+     "gaade:064RR",
+     "gaade:09EoI",
+     "gaade:0CCtp",
+     "gaade:0DdXQ",
+     "gaade:0EuUs",
+     "gaade:0F53J",
+     "gaade:0NsEB",
+     "gaade:0QAoB",
+     "gaade:278-0548",
+     "gaade:425-0302",
+     "gaade:425-0315",
+     "gaade:448-0011",
+     "gaade:485-0013",
+     "gaade:485-0058",
+     "gaade:li-30dw6",
+     "gaade:li-batLH",
+     "gaade:li-egASN",
+     "gaade:li-o3doC"
+    ],
+    "modelEfter": [
+     "gaade:02MwE",
+     "gaade:02Z4F",
+     "gaade:03Pky",
+     "gaade:064RR",
+     "gaade:09EoI",
+     "gaade:0CCtp",
+     "gaade:0DdXQ",
+     "gaade:0EuUs",
+     "gaade:0F53J",
+     "gaade:0NsEB",
+     "gaade:0QAoB",
+     "gaade:278-0548",
+     "gaade:425-0302",
+     "gaade:425-0315",
+     "gaade:448-0011",
+     "gaade:485-0013",
+     "gaade:485-0058",
+     "gaade:li-30dw6",
+     "gaade:li-batLH",
+     "gaade:li-egASN",
+     "gaade:li-o3doC"
+    ]
+   },
+   {
+    "d": 3,
+    "dagNr": 20727,
+    "forventet": [],
+    "gentag": {
+     "vist": false,
+     "antal": "",
+     "hvad": "",
+     "knap": "Gentag nu",
+     "top": 0,
+     "braetTop": 237,
+     "braetBund": 774,
+     "vinduH": 800,
+     "knapH": 0
+    },
+    "spillet": [],
+    "kortEfter": [
+     "gaade:02MwE",
+     "gaade:02Z4F",
+     "gaade:03Pky",
+     "gaade:064RR",
+     "gaade:09EoI",
+     "gaade:0CCtp",
+     "gaade:0DdXQ",
+     "gaade:0EuUs",
+     "gaade:0F53J",
+     "gaade:0NsEB",
+     "gaade:0QAoB",
+     "gaade:278-0548",
+     "gaade:425-0302",
+     "gaade:425-0315",
+     "gaade:448-0011",
+     "gaade:485-0013",
+     "gaade:485-0058",
+     "gaade:li-30dw6",
+     "gaade:li-batLH",
+     "gaade:li-egASN",
+     "gaade:li-o3doC"
+    ],
+    "modelEfter": [
+     "gaade:02MwE",
+     "gaade:02Z4F",
+     "gaade:03Pky",
+     "gaade:064RR",
+     "gaade:09EoI",
+     "gaade:0CCtp",
+     "gaade:0DdXQ",
+     "gaade:0EuUs",
+     "gaade:0F53J",
+     "gaade:0NsEB",
+     "gaade:0QAoB",
+     "gaade:278-0548",
+     "gaade:425-0302",
+     "gaade:425-0315",
+     "gaade:448-0011",
+     "gaade:485-0013",
+     "gaade:485-0058",
+     "gaade:li-30dw6",
+     "gaade:li-batLH",
+     "gaade:li-egASN",
+     "gaade:li-o3doC"
+    ]
+   },
+   {
+    "d": 4,
+    "dagNr": 20728,
+    "forventet": [
+     "gaade:02MwE",
+     "gaade:02Z4F",
+     "gaade:03Pky",
+     "gaade:064RR",
+     "gaade:09EoI",
+     "gaade:0CCtp",
+     "gaade:0DdXQ",
+     "gaade:0EuUs",
+     "gaade:0F53J",
+     "gaade:0NsEB",
+     "gaade:0QAoB",
+     "gaade:425-0302",
+     "gaade:425-0315",
+     "gaade:448-0011",
+     "gaade:485-0013",
+     "gaade:485-0058",
+     "gaade:li-30dw6",
+     "gaade:li-batLH",
+     "gaade:li-egASN",
+     "gaade:li-o3doC"
+    ],
+    "gentag": {
+     "vist": true,
+     "antal": "Gentag i dag: 20",
+     "hvad": "20 gåder",
+     "knap": "Gentag nu",
+     "top": 197,
+     "braetTop": 237,
+     "braetBund": 774,
+     "vinduH": 800,
+     "knapH": 44
+    },
+    "spillet": [
+     {
+      "noegle": "gaade:02MwE",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:02Z4F",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:03Pky",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:064RR",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:09EoI",
+      "label": "som-de-kommer-2",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:0CCtp",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:0DdXQ",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:0EuUs",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:0F53J",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:0NsEB",
+      "label": "gaffel",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:0QAoB",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:425-0302",
+      "label": "gaffel",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:425-0315",
+      "label": "gaffel",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:448-0011",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:485-0013",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:485-0058",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:li-30dw6",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:li-batLH",
+      "label": "som-de-kommer-0",
+      "fejl": true,
+      "besked": "Den kommer igen i morgen."
+     },
+     {
+      "noegle": "gaade:li-egASN",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:li-o3doC",
+      "label": "storm",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     }
+    ],
+    "ratingFoer": "737",
+    "stop": {
+     "titel": "Gåde",
+     "status": "Hvid trækker. Find det bedste træk."
+    },
+    "ratingEfter": "737",
+    "gentagEfter": {
+     "vist": false,
+     "antal": "Gentag i dag: 1",
+     "hvad": "1 gåde",
+     "knap": "Du gentager nu",
+     "top": 206,
+     "braetTop": 237,
+     "braetBund": 774,
+     "vinduH": 800,
+     "knapH": 0
+    },
+    "kortEfter": [
+     "gaade:278-0548",
+     "gaade:li-batLH"
+    ],
+    "modelEfter": [
+     "gaade:278-0548",
+     "gaade:li-batLH"
+    ]
+   },
+   {
+    "d": 5,
+    "dagNr": 20729,
+    "forventet": [
+     "gaade:278-0548",
+     "gaade:li-batLH"
+    ],
+    "gentag": {
+     "vist": true,
+     "antal": "Gentag i dag: 2",
+     "hvad": "2 gåder",
+     "knap": "Gentag nu",
+     "top": 197,
+     "braetTop": 237,
+     "braetBund": 774,
+     "vinduH": 800,
+     "knapH": 44
+    },
+    "spillet": [
+     {
+      "noegle": "gaade:278-0548",
+      "label": "som-de-kommer-1",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     },
+     {
+      "noegle": "gaade:li-batLH",
+      "label": "som-de-kommer-0",
+      "fejl": false,
+      "besked": "Rigtigt! Den kommer igen om 7 dage."
+     }
+    ],
+    "ratingFoer": "737",
+    "stop": {
+     "titel": "Gåde",
+     "status": "Sort trækker. Find det bedste træk."
+    },
+    "ratingEfter": "737",
+    "gentagEfter": {
+     "vist": false,
+     "antal": "Gentag i dag: 1",
+     "hvad": "1 gåde",
+     "knap": "Du gentager nu",
+     "top": 0,
+     "braetTop": 237,
+     "braetBund": 774,
+     "vinduH": 800,
+     "knapH": 0
+    },
+    "kortEfter": [
+     "gaade:li-batLH"
+    ],
+    "modelEfter": [
+     "gaade:li-batLH"
+    ]
+   },
+   {
+    "d": 11,
+    "dagNr": 20735,
+    "forventet": [],
+    "gentag": {
+     "vist": false,
+     "antal": "",
+     "hvad": "",
+     "knap": "Gentag nu",
+     "top": 0,
+     "braetTop": 237,
+     "braetBund": 774,
+     "vinduH": 800,
+     "knapH": 0
+    },
+    "spillet": [],
+    "kortEfter": [
+     "gaade:li-batLH"
+    ],
+    "modelEfter": [
+     "gaade:li-batLH"
+    ]
+   },
+   {
+    "d": 12,
+    "dagNr": 20736,
+    "forventet": [
+     "gaade:li-batLH"
+    ],
+    "gentag": {
+     "vist": true,
+     "antal": "Gentag i dag: 1",
+     "hvad": "1 gåde",
+     "knap": "Gentag nu",
+     "top": 197,
+     "braetTop": 237,
+     "braetBund": 774,
+     "vinduH": 800,
+     "knapH": 44
+    },
+    "spillet": [
+     {
+      "noegle": "gaade:li-batLH",
+      "label": "som-de-kommer-0",
+      "fejl": false,
+      "besked": "Den sidder nu - rigtigt to gange i træk."
+     }
+    ],
+    "ratingFoer": "737",
+    "stop": {
+     "titel": "Gåde",
+     "status": "Hvid trækker. Find det bedste træk."
+    },
+    "ratingEfter": "737",
+    "gentagEfter": {
+     "vist": false,
+     "antal": "Gentag i dag: 1",
+     "hvad": "1 gåde",
+     "knap": "Du gentager nu",
+     "top": 0,
+     "braetTop": 237,
+     "braetBund": 774,
+     "vinduH": 800,
+     "knapH": 0
+    },
+    "kortEfter": [],
+    "modelEfter": []
+   },
+   {
+    "d": 13,
+    "dagNr": 20737,
+    "forventet": [],
+    "gentag": {
+     "vist": false,
+     "antal": "",
+     "hvad": "",
+     "knap": "Gentag nu",
+     "top": 0,
+     "braetTop": 237,
+     "braetBund": 774,
+     "vinduH": 800,
+     "knapH": 0
+    },
+    "spillet": [],
+    "kortEfter": [],
+    "modelEfter": []
+   }
+  ],
+  "storm": {
+   "resultat": {
+    "top": 197,
+    "bund": 1094,
+    "iVindue": false,
+    "h": 897,
+    "vinduH": 800
+   },
+   "nyStorm": {
+    "top": 240,
+    "bund": 284,
+    "iVindue": true,
+    "h": 44,
+    "vinduH": 800
+   },
+   "nyStormTekst": "Ny storm",
+   "liste": {
+    "top": 922,
+    "bund": 1068,
+    "iVindue": false,
+    "h": 146,
+    "vinduH": 800
+   },
+   "missedeVist": 5,
+   "visAlle": "Vis alle 15",
+   "missedeTitel": "Se løsningen på gåderne, der gik galt",
+   "efterVisAlle": 15,
+   "kortEfter": 21
+  },
+  "slutBibliotek": {
+   "resume": "7 af 16 øvet",
+   "svageste": "Dit svageste tema: Angreb på f7 - 60 % rigtige i 5 forsøg.",
+   "knap": {
+    "tekst": "Øv angreb på f7",
+    "tema": "attackingF2F7"
+   },
+   "raekker": [
+    {
+     "art": "tema",
+     "id": "mateIn1",
+     "navn": "Mat i 1",
+     "tal": "71 % rigtige · 7 forsøg",
+     "maaler": "71%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "mateIn2",
+     "navn": "Mat i 2",
+     "tal": "100 % rigtige · 8 forsøg",
+     "maaler": "100%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "backRankMate",
+     "navn": "Bagerste række",
+     "tal": "100 % rigtige · 2 forsøg",
+     "maaler": "100%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "fork",
+     "navn": "Gaffel",
+     "tal": "85 % rigtige · 20 forsøg",
+     "maaler": "85%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "pin",
+     "navn": "Binding",
+     "tal": "100 % rigtige · 7 forsøg",
+     "maaler": "100%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "skewer",
+     "navn": "Spyd",
+     "tal": "100 % rigtige · 4 forsøg",
+     "maaler": "100%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "discoveredAttack",
+     "navn": "Afdækket angreb",
+     "tal": "Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "sacrifice",
+     "navn": "Offer",
+     "tal": "Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "intermezzo",
+     "navn": "Mellemtræk",
+     "tal": "Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "attackingF2F7",
+     "navn": "Angreb på f7",
+     "tal": "60 % rigtige · 5 forsøg",
+     "maaler": "60%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "promotion",
+     "navn": "Forvandling",
+     "tal": "Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "tema",
+     "id": "endgame",
+     "navn": "Slutspil",
+     "tal": "Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "koordinat",
+     "id": "find",
+     "navn": "Find feltet",
+     "tal": "Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "koordinat",
+     "id": "skriv",
+     "navn": "Skriv feltets navn",
+     "tal": "Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "koordinat",
+     "id": "brik",
+     "navn": "Hvor står brikken?",
+     "tal": "Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    },
+    {
+     "art": "kendte",
+     "id": "kendte",
+     "navn": "Kendte partier",
+     "tal": "0 af 10 løst · Ikke prøvet endnu",
+     "maaler": "0%",
+     "svag": false,
+     "knapH": 44
+    }
+   ]
+  },
+  "rul": 0,
+  "net": [],
+  "fejl": []
+ },
+ "skak": "6e9b86c",
+ "bredder": [
+  360,
+  390,
+  1280
+ ],
+ "net": 0,
+ "jsFejl": 0,
+ "logik": [
+  "i morgen",
+  "dag 0 igen: flyttet=false",
+  "om 3 dage",
+  "laert=true",
+  "om 7 dage"
+ ],
+ "tjek": [
+  {
+   "hvad": "360: foer: \"Løs mindst 3 gåder i et tema ...\" og 0 af N oevet",
+   "ok": true,
+   "data": [
+    "0 af 16 øvet",
+    "Løs mindst 3 gåder i et tema, så finder vi dit svageste tema."
+   ]
+  },
+  {
+   "hvad": "360: Mit bibliotek: hvert tema med forsoeg viser min optaelling (forsoeg = loest + opgivet, rigtigt = uden forkert traek)",
+   "ok": true,
+   "data": {
+    "vist": {
+     "mateIn1": "80 % rigtige · 5 forsøg",
+     "mateIn2": "50 % rigtige · 2 forsøg",
+     "backRankMate": "Ikke prøvet endnu",
+     "fork": "40 % rigtige · 5 forsøg",
+     "pin": "100 % rigtige · 3 forsøg",
+     "skewer": "Ikke prøvet endnu",
+     "discoveredAttack": "Ikke prøvet endnu",
+     "sacrifice": "Ikke prøvet endnu",
+     "intermezzo": "Ikke prøvet endnu",
+     "attackingF2F7": "Ikke prøvet endnu",
+     "promotion": "Ikke prøvet endnu",
+     "endgame": "Ikke prøvet endnu"
+    },
+    "forventet": {
+     "mateIn2": "50 % rigtige · 2 forsøg",
+     "fork": "40 % rigtige · 5 forsøg",
+     "mateIn1": "80 % rigtige · 5 forsøg",
+     "pin": "100 % rigtige · 3 forsøg"
+    }
+   }
+  },
+  {
+   "hvad": "360: gaader med et tema uden for de 12 (taeller ikke i biblioteket)",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "360: \"Dit svageste tema\" = min udregning (Gaffel, 40 %, 5 forsoeg) og knappen \"Øv gafler\"",
+   "ok": true,
+   "data": [
+    "Dit svageste tema: Gaffel - 40 % rigtige i 5 forsøg.",
+    {
+     "tekst": "Øv gafler",
+     "tema": "fork"
+    }
+   ]
+  },
+  {
+   "hvad": "360: \"Øv gafler\" giver en gaffel og \"Du øver: Gaffel\"",
+   "ok": true,
+   "data": {
+    "duOever": "Du øver: Gaffel (5 løst)",
+    "tema": "fork",
+    "braet": {
+     "top": 0,
+     "bund": 344,
+     "vinduH": 780
+    }
+   }
+  },
+  {
+   "hvad": "360: hint-gaaden taeller som rigtig i biblioteket, men som fejl i \"Gentag\" (samme gaade, to svar)",
+   "ok": true,
+   "data": {
+    "tema": "fork",
+    "noegle": "gaade:278-0311"
+   }
+  },
+  {
+   "hvad": "360: Oev-knapperne i biblioteket er mindst 44 px",
+   "ok": true,
+   "data": 44
+  },
+  {
+   "hvad": "360: dag 0: kortene = min model (fejl, hint, spring, gafler og stormens missede)",
+   "ok": true,
+   "data": [
+    17,
+    17
+   ]
+  },
+  {
+   "hvad": "360: dag 0: \"Gentag i dag\" skjult (intet forfaldent endnu)",
+   "ok": true
+  },
+  {
+   "hvad": "360: dag 1: \"Gentag i dag: 17\"",
+   "ok": true,
+   "data": [
+    "Gentag i dag: 17",
+    "17 gåder",
+    [
+     "gaade:01Yjm",
+     "gaade:03R4G",
+     "gaade:05IBE",
+     "gaade:0986Y",
+     "gaade:0CqFj",
+     "gaade:0GGWL",
+     "gaade:0JnTB",
+     "gaade:0M7Rq",
+     "gaade:0MQ7H",
+     "gaade:0PsAF",
+     "gaade:0QSEP",
+     "gaade:278-0251",
+     "gaade:278-0311",
+     "gaade:425-0303",
+     "gaade:li-1Gw02",
+     "gaade:li-BoR9g",
+     "gaade:li-E1nsc"
+    ]
+   ]
+  },
+  {
+   "hvad": "360: K19: \"Gentag i dag\" staar under braettet og under foerste skaerm (eleven skal rulle)",
+   "ok": true,
+   "data": [
+    908,
+    287,
+    631,
+    780
+   ]
+  },
+  {
+   "hvad": "360: dag 1: alle 17 gentaget, kortet skjult bagefter, ratingen uaendret",
+   "ok": true,
+   "data": [
+    17,
+    "Gentag i dag: 1",
+    "738",
+    "738"
+   ]
+  },
+  {
+   "hvad": "360: dag 1: kortene efter = min model",
+   "ok": true,
+   "data": [
+    17,
+    17
+   ]
+  },
+  {
+   "hvad": "360: dag 2: \"Gentag i dag: 1\"",
+   "ok": true,
+   "data": [
+    "Gentag i dag: 1",
+    "1 gåde",
+    [
+     "gaade:278-0311"
+    ]
+   ]
+  },
+  {
+   "hvad": "360: dag 2: alle 1 gentaget, kortet skjult bagefter, ratingen uaendret",
+   "ok": true,
+   "data": [
+    1,
+    "Gentag i dag: 1",
+    "738",
+    "738"
+   ]
+  },
+  {
+   "hvad": "360: dag 2: kortene efter = min model",
+   "ok": true,
+   "data": [
+    17,
+    17
+   ]
+  },
+  {
+   "hvad": "360: dag 3: intet at gentage (skjult)",
+   "ok": true,
+   "data": [
+    "",
+    "",
+    []
+   ]
+  },
+  {
+   "hvad": "360: dag 3: kortene efter = min model",
+   "ok": true,
+   "data": [
+    17,
+    17
+   ]
+  },
+  {
+   "hvad": "360: dag 4: \"Gentag i dag: 16\"",
+   "ok": true,
+   "data": [
+    "Gentag i dag: 16",
+    "16 gåder",
+    [
+     "gaade:01Yjm",
+     "gaade:03R4G",
+     "gaade:05IBE",
+     "gaade:0986Y",
+     "gaade:0CqFj",
+     "gaade:0GGWL",
+     "gaade:0JnTB",
+     "gaade:0M7Rq",
+     "gaade:0MQ7H",
+     "gaade:0PsAF",
+     "gaade:0QSEP",
+     "gaade:278-0251",
+     "gaade:425-0303",
+     "gaade:li-1Gw02",
+     "gaade:li-BoR9g",
+     "gaade:li-E1nsc"
+    ]
+   ]
+  },
+  {
+   "hvad": "360: dag 4: alle 16 gentaget, kortet skjult bagefter, ratingen uaendret",
+   "ok": true,
+   "data": [
+    16,
+    "Gentag i dag: 1",
+    "738",
+    "738"
+   ]
+  },
+  {
+   "hvad": "360: dag 4: kortene efter = min model",
+   "ok": true,
+   "data": [
+    2,
+    2
+   ]
+  },
+  {
+   "hvad": "360: dag 5: \"Gentag i dag: 2\"",
+   "ok": true,
+   "data": [
+    "Gentag i dag: 2",
+    "2 gåder",
+    [
+     "gaade:0PsAF",
+     "gaade:278-0311"
+    ]
+   ]
+  },
+  {
+   "hvad": "360: dag 5: alle 2 gentaget, kortet skjult bagefter, ratingen uaendret",
+   "ok": true,
+   "data": [
+    2,
+    "Gentag i dag: 1",
+    "738",
+    "738"
+   ]
+  },
+  {
+   "hvad": "360: dag 5: kortene efter = min model",
+   "ok": true,
+   "data": [
+    1,
+    1
+   ]
+  },
+  {
+   "hvad": "360: dag 11: intet at gentage (skjult)",
+   "ok": true,
+   "data": [
+    "",
+    "",
+    []
+   ]
+  },
+  {
+   "hvad": "360: dag 11: kortene efter = min model",
+   "ok": true,
+   "data": [
+    1,
+    1
+   ]
+  },
+  {
+   "hvad": "360: dag 12: \"Gentag i dag: 1\"",
+   "ok": true,
+   "data": [
+    "Gentag i dag: 1",
+    "1 gåde",
+    [
+     "gaade:0PsAF"
+    ]
+   ]
+  },
+  {
+   "hvad": "360: dag 12: alle 1 gentaget, kortet skjult bagefter, ratingen uaendret",
+   "ok": true,
+   "data": [
+    1,
+    "Gentag i dag: 1",
+    "738",
+    "738"
+   ]
+  },
+  {
+   "hvad": "360: dag 12: kortene efter = min model",
+   "ok": true,
+   "data": [
+    0,
+    0
+   ]
+  },
+  {
+   "hvad": "360: dag 13: intet at gentage (skjult)",
+   "ok": true,
+   "data": [
+    "",
+    "",
+    []
+   ]
+  },
+  {
+   "hvad": "360: dag 13: kortene efter = min model",
+   "ok": true,
+   "data": [
+    0,
+    0
+   ]
+  },
+  {
+   "hvad": "360: gaade nr. 0: dag 1 \"om 3 dage\", dag 4 (fejl) \"i morgen\", dag 5 \"om 7 dage\", dag 12 \"sidder nu\"",
+   "ok": true,
+   "data": [
+    "Rigtigt! Den kommer igen om 3 dage.",
+    "Den kommer igen i morgen.",
+    "Rigtigt! Den kommer igen om 7 dage.",
+    "Den sidder nu - rigtigt to gange i træk."
+   ]
+  },
+  {
+   "hvad": "360: en ren gaade: dag 1 \"om 3 dage\", dag 4 \"sidder nu\" (7 dage bruges ikke)",
+   "ok": true,
+   "data": [
+    "Rigtigt! Den kommer igen om 3 dage.",
+    "Den sidder nu - rigtigt to gange i træk."
+   ]
+  },
+  {
+   "hvad": "360: K12: \"Ny storm\" over listen med de missede, hoejst 5 vist og \"Vis alle\"",
+   "ok": true,
+   "data": {
+    "resultat": {
+     "top": 843,
+     "bund": 1779,
+     "iVindue": false,
+     "h": 936,
+     "vinduH": 780
+    },
+    "nyStorm": {
+     "top": 906,
+     "bund": 950,
+     "iVindue": true,
+     "h": 44,
+     "vinduH": 780
+    },
+    "nyStormTekst": "Ny storm",
+    "liste": {
+     "top": 1508,
+     "bund": 1754,
+     "iVindue": false,
+     "h": 246,
+     "vinduH": 780
+    },
+    "missedeVist": 5,
+    "visAlle": "Vis alle 11",
+    "missedeTitel": "Se løsningen på gåderne, der gik galt",
+    "efterVisAlle": 11,
+    "kortEfter": 17
+   }
+  },
+  {
+   "hvad": "360: ingen vandret rulning, intet net, ingen JS-fejl",
+   "ok": true,
+   "data": [
+    0,
+    0,
+    []
+   ]
+  },
+  {
+   "hvad": "390: foer: \"Løs mindst 3 gåder i et tema ...\" og 0 af N oevet",
+   "ok": true,
+   "data": [
+    "0 af 16 øvet",
+    "Løs mindst 3 gåder i et tema, så finder vi dit svageste tema."
+   ]
+  },
+  {
+   "hvad": "390: Mit bibliotek: hvert tema med forsoeg viser min optaelling (forsoeg = loest + opgivet, rigtigt = uden forkert traek)",
+   "ok": true,
+   "data": {
+    "vist": {
+     "mateIn1": "100 % rigtige · 3 forsøg",
+     "mateIn2": "100 % rigtige · 1 forsøg",
+     "backRankMate": "Ikke prøvet endnu",
+     "fork": "43 % rigtige · 7 forsøg",
+     "pin": "100 % rigtige · 3 forsøg",
+     "skewer": "Ikke prøvet endnu",
+     "discoveredAttack": "Ikke prøvet endnu",
+     "sacrifice": "Ikke prøvet endnu",
+     "intermezzo": "Ikke prøvet endnu",
+     "attackingF2F7": "Ikke prøvet endnu",
+     "promotion": "Ikke prøvet endnu",
+     "endgame": "Ikke prøvet endnu"
+    },
+    "forventet": {
+     "mateIn1": "100 % rigtige · 3 forsøg",
+     "fork": "43 % rigtige · 7 forsøg",
+     "mateIn2": "100 % rigtige · 1 forsøg",
+     "pin": "100 % rigtige · 3 forsøg"
+    }
+   }
+  },
+  {
+   "hvad": "390: gaader med et tema uden for de 12 (taeller ikke i biblioteket)",
+   "ok": true,
+   "data": [
+    "mateIn3"
+   ]
+  },
+  {
+   "hvad": "390: \"Dit svageste tema\" = min udregning (Gaffel, 43 %, 7 forsoeg) og knappen \"Øv gafler\"",
+   "ok": true,
+   "data": [
+    "Dit svageste tema: Gaffel - 43 % rigtige i 7 forsøg.",
+    {
+     "tekst": "Øv gafler",
+     "tema": "fork"
+    }
+   ]
+  },
+  {
+   "hvad": "390: \"Øv gafler\" giver en gaffel og \"Du øver: Gaffel\"",
+   "ok": true,
+   "data": {
+    "duOever": "Du øver: Gaffel (6 løst)",
+    "tema": "fork",
+    "braet": {
+     "top": 0,
+     "bund": 374,
+     "vinduH": 844
+    }
+   }
+  },
+  {
+   "hvad": "390: hint-gaaden taeller som rigtig i biblioteket, men som fejl i \"Gentag\" (samme gaade, to svar)",
+   "ok": true,
+   "data": {
+    "tema": "mateIn1",
+    "noegle": "gaade:0Ggqe"
+   }
+  },
+  {
+   "hvad": "390: Oev-knapperne i biblioteket er mindst 44 px",
+   "ok": true,
+   "data": 44
+  },
+  {
+   "hvad": "390: dag 0: kortene = min model (fejl, hint, spring, gafler og stormens missede)",
+   "ok": true,
+   "data": [
+    21,
+    21
+   ]
+  },
+  {
+   "hvad": "390: dag 0: \"Gentag i dag\" skjult (intet forfaldent endnu)",
+   "ok": true
+  },
+  {
+   "hvad": "390: dag 1: \"Gentag i dag: 21\"",
+   "ok": true,
+   "data": [
+    "Gentag i dag: 21",
+    "21 gåder",
+    [
+     "gaade:06jn4",
+     "gaade:079wn",
+     "gaade:07n8C",
+     "gaade:07xxw",
+     "gaade:0CCtp",
+     "gaade:0DeYF",
+     "gaade:0Ggqe",
+     "gaade:0QFbJ",
+     "gaade:0R3Kk",
+     "gaade:0TbOf",
+     "gaade:278-0989",
+     "gaade:425-0217",
+     "gaade:425-0292",
+     "gaade:425-0302",
+     "gaade:425-0306",
+     "gaade:425-0330",
+     "gaade:448-0013",
+     "gaade:485-0006",
+     "gaade:485-0014",
+     "gaade:li-NkxET",
+     "gaade:li-lTTiL"
+    ]
+   ]
+  },
+  {
+   "hvad": "390: K19: \"Gentag i dag\" staar under braettet og under foerste skaerm (eleven skal rulle)",
+   "ok": true,
+   "data": [
+    938,
+    287,
+    661,
+    844
+   ]
+  },
+  {
+   "hvad": "390: dag 1: alle 21 gentaget, kortet skjult bagefter, ratingen uaendret",
+   "ok": true,
+   "data": [
+    21,
+    "Gentag i dag: 1",
+    "728",
+    "728"
+   ]
+  },
+  {
+   "hvad": "390: dag 1: kortene efter = min model",
+   "ok": true,
+   "data": [
+    21,
+    21
+   ]
+  },
+  {
+   "hvad": "390: dag 2: \"Gentag i dag: 1\"",
+   "ok": true,
+   "data": [
+    "Gentag i dag: 1",
+    "1 gåde",
+    [
+     "gaade:0Ggqe"
+    ]
+   ]
+  },
+  {
+   "hvad": "390: dag 2: alle 1 gentaget, kortet skjult bagefter, ratingen uaendret",
+   "ok": true,
+   "data": [
+    1,
+    "Gentag i dag: 1",
+    "728",
+    "728"
+   ]
+  },
+  {
+   "hvad": "390: dag 2: kortene efter = min model",
+   "ok": true,
+   "data": [
+    21,
+    21
+   ]
+  },
+  {
+   "hvad": "390: dag 3: intet at gentage (skjult)",
+   "ok": true,
+   "data": [
+    "",
+    "",
+    []
+   ]
+  },
+  {
+   "hvad": "390: dag 3: kortene efter = min model",
+   "ok": true,
+   "data": [
+    21,
+    21
+   ]
+  },
+  {
+   "hvad": "390: dag 4: \"Gentag i dag: 20\"",
+   "ok": true,
+   "data": [
+    "Gentag i dag: 20",
+    "20 gåder",
+    [
+     "gaade:06jn4",
+     "gaade:079wn",
+     "gaade:07n8C",
+     "gaade:07xxw",
+     "gaade:0CCtp",
+     "gaade:0DeYF",
+     "gaade:0QFbJ",
+     "gaade:0R3Kk",
+     "gaade:0TbOf",
+     "gaade:278-0989",
+     "gaade:425-0217",
+     "gaade:425-0292",
+     "gaade:425-0302",
+     "gaade:425-0306",
+     "gaade:425-0330",
+     "gaade:448-0013",
+     "gaade:485-0006",
+     "gaade:485-0014",
+     "gaade:li-NkxET",
+     "gaade:li-lTTiL"
+    ]
+   ]
+  },
+  {
+   "hvad": "390: dag 4: alle 20 gentaget, kortet skjult bagefter, ratingen uaendret",
+   "ok": true,
+   "data": [
+    20,
+    "Gentag i dag: 1",
+    "728",
+    "728"
+   ]
+  },
+  {
+   "hvad": "390: dag 4: kortene efter = min model",
+   "ok": true,
+   "data": [
+    2,
+    2
+   ]
+  },
+  {
+   "hvad": "390: dag 5: \"Gentag i dag: 2\"",
+   "ok": true,
+   "data": [
+    "Gentag i dag: 2",
+    "2 gåder",
+    [
+     "gaade:0Ggqe",
+     "gaade:0TbOf"
+    ]
+   ]
+  },
+  {
+   "hvad": "390: dag 5: alle 2 gentaget, kortet skjult bagefter, ratingen uaendret",
+   "ok": true,
+   "data": [
+    2,
+    "Gentag i dag: 1",
+    "728",
+    "728"
+   ]
+  },
+  {
+   "hvad": "390: dag 5: kortene efter = min model",
+   "ok": true,
+   "data": [
+    1,
+    1
+   ]
+  },
+  {
+   "hvad": "390: dag 11: intet at gentage (skjult)",
+   "ok": true,
+   "data": [
+    "",
+    "",
+    []
+   ]
+  },
+  {
+   "hvad": "390: dag 11: kortene efter = min model",
+   "ok": true,
+   "data": [
+    1,
+    1
+   ]
+  },
+  {
+   "hvad": "390: dag 12: \"Gentag i dag: 1\"",
+   "ok": true,
+   "data": [
+    "Gentag i dag: 1",
+    "1 gåde",
+    [
+     "gaade:0TbOf"
+    ]
+   ]
+  },
+  {
+   "hvad": "390: dag 12: alle 1 gentaget, kortet skjult bagefter, ratingen uaendret",
+   "ok": true,
+   "data": [
+    1,
+    "Gentag i dag: 1",
+    "728",
+    "728"
+   ]
+  },
+  {
+   "hvad": "390: dag 12: kortene efter = min model",
+   "ok": true,
+   "data": [
+    0,
+    0
+   ]
+  },
+  {
+   "hvad": "390: dag 13: intet at gentage (skjult)",
+   "ok": true,
+   "data": [
+    "",
+    "",
+    []
+   ]
+  },
+  {
+   "hvad": "390: dag 13: kortene efter = min model",
+   "ok": true,
+   "data": [
+    0,
+    0
+   ]
+  },
+  {
+   "hvad": "390: gaade nr. 0: dag 1 \"om 3 dage\", dag 4 (fejl) \"i morgen\", dag 5 \"om 7 dage\", dag 12 \"sidder nu\"",
+   "ok": true,
+   "data": [
+    "Rigtigt! Den kommer igen om 3 dage.",
+    "Den kommer igen i morgen.",
+    "Rigtigt! Den kommer igen om 7 dage.",
+    "Den sidder nu - rigtigt to gange i træk."
+   ]
+  },
+  {
+   "hvad": "390: en ren gaade: dag 1 \"om 3 dage\", dag 4 \"sidder nu\" (7 dage bruges ikke)",
+   "ok": true,
+   "data": [
+    "Rigtigt! Den kommer igen om 3 dage.",
+    "Den sidder nu - rigtigt to gange i træk."
+   ]
+  },
+  {
+   "hvad": "390: K12: \"Ny storm\" over listen med de missede, hoejst 5 vist og \"Vis alle\"",
+   "ok": true,
+   "data": {
+    "resultat": {
+     "top": 853,
+     "bund": 1647,
+     "iVindue": false,
+     "h": 794,
+     "vinduH": 844
+    },
+    "nyStorm": {
+     "top": 893,
+     "bund": 937,
+     "iVindue": true,
+     "h": 44,
+     "vinduH": 844
+    },
+    "nyStormTekst": "Ny storm",
+    "liste": {
+     "top": 1427,
+     "bund": 1622,
+     "iVindue": true,
+     "h": 195,
+     "vinduH": 844
+    },
+    "missedeVist": 5,
+    "visAlle": "Vis alle 15",
+    "missedeTitel": "Se løsningen på gåderne, der gik galt",
+    "efterVisAlle": 15,
+    "kortEfter": 21
+   }
+  },
+  {
+   "hvad": "390: ingen vandret rulning, intet net, ingen JS-fejl",
+   "ok": true,
+   "data": [
+    0,
+    0,
+    []
+   ]
+  },
+  {
+   "hvad": "1280: foer: \"Løs mindst 3 gåder i et tema ...\" og 0 af N oevet",
+   "ok": true,
+   "data": [
+    "0 af 16 øvet",
+    "Løs mindst 3 gåder i et tema, så finder vi dit svageste tema."
+   ]
+  },
+  {
+   "hvad": "1280: Mit bibliotek: hvert tema med forsoeg viser min optaelling (forsoeg = loest + opgivet, rigtigt = uden forkert traek)",
+   "ok": true,
+   "data": {
+    "vist": {
+     "mateIn1": "50 % rigtige · 2 forsøg",
+     "mateIn2": "100 % rigtige · 2 forsøg",
+     "backRankMate": "Ikke prøvet endnu",
+     "fork": "50 % rigtige · 6 forsøg",
+     "pin": "100 % rigtige · 3 forsøg",
+     "skewer": "Ikke prøvet endnu",
+     "discoveredAttack": "Ikke prøvet endnu",
+     "sacrifice": "Ikke prøvet endnu",
+     "intermezzo": "Ikke prøvet endnu",
+     "attackingF2F7": "0 % rigtige · 1 forsøg",
+     "promotion": "Ikke prøvet endnu",
+     "endgame": "Ikke prøvet endnu"
+    },
+    "forventet": {
+     "attackingF2F7": "0 % rigtige · 1 forsøg",
+     "mateIn1": "50 % rigtige · 2 forsøg",
+     "mateIn2": "100 % rigtige · 2 forsøg",
+     "fork": "50 % rigtige · 6 forsøg",
+     "pin": "100 % rigtige · 3 forsøg"
+    }
+   }
+  },
+  {
+   "hvad": "1280: gaader med et tema uden for de 12 (taeller ikke i biblioteket)",
+   "ok": true,
+   "data": [
+    "endgameSquare"
+   ]
+  },
+  {
+   "hvad": "1280: \"Dit svageste tema\" = min udregning (Gaffel, 50 %, 6 forsoeg) og knappen \"Øv gafler\"",
+   "ok": true,
+   "data": [
+    "Dit svageste tema: Gaffel - 50 % rigtige i 6 forsøg.",
+    {
+     "tekst": "Øv gafler",
+     "tema": "fork"
+    }
+   ]
+  },
+  {
+   "hvad": "1280: \"Øv gafler\" giver en gaffel og \"Du øver: Gaffel\"",
+   "ok": true,
+   "data": {
+    "duOever": "Du øver: Gaffel (6 løst)",
+    "tema": "fork",
+    "braet": {
+     "top": 0,
+     "bund": 537,
+     "vinduH": 800
+    }
+   }
+  },
+  {
+   "hvad": "1280: hint-gaaden taeller som rigtig i biblioteket, men som fejl i \"Gentag\" (samme gaade, to svar)",
+   "ok": true,
+   "data": {
+    "tema": "mateIn1",
+    "noegle": "gaade:278-0548"
+   }
+  },
+  {
+   "hvad": "1280: dag 0: kortene = min model (fejl, hint, spring, gafler og stormens missede)",
+   "ok": true,
+   "data": [
+    21,
+    21
+   ]
+  },
+  {
+   "hvad": "1280: dag 0: \"Gentag i dag\" skjult (intet forfaldent endnu)",
+   "ok": true
+  },
+  {
+   "hvad": "1280: dag 1: \"Gentag i dag: 21\"",
+   "ok": true,
+   "data": [
+    "Gentag i dag: 21",
+    "21 gåder",
+    [
+     "gaade:02MwE",
+     "gaade:02Z4F",
+     "gaade:03Pky",
+     "gaade:064RR",
+     "gaade:09EoI",
+     "gaade:0CCtp",
+     "gaade:0DdXQ",
+     "gaade:0EuUs",
+     "gaade:0F53J",
+     "gaade:0NsEB",
+     "gaade:0QAoB",
+     "gaade:278-0548",
+     "gaade:425-0302",
+     "gaade:425-0315",
+     "gaade:448-0011",
+     "gaade:485-0013",
+     "gaade:485-0058",
+     "gaade:li-30dw6",
+     "gaade:li-batLH",
+     "gaade:li-egASN",
+     "gaade:li-o3doC"
+    ]
+   ]
+  },
+  {
+   "hvad": "1280: \"Gentag i dag\" staar paa foerste skaerm",
+   "ok": true,
+   "data": [
+    197,
+    237,
+    774,
+    800
+   ]
+  },
+  {
+   "hvad": "1280: dag 1: alle 21 gentaget, kortet skjult bagefter, ratingen uaendret",
+   "ok": true,
+   "data": [
+    21,
+    "Gentag i dag: 1",
+    "737",
+    "737"
+   ]
+  },
+  {
+   "hvad": "1280: dag 1: kortene efter = min model",
+   "ok": true,
+   "data": [
+    21,
+    21
+   ]
+  },
+  {
+   "hvad": "1280: dag 2: \"Gentag i dag: 1\"",
+   "ok": true,
+   "data": [
+    "Gentag i dag: 1",
+    "1 gåde",
+    [
+     "gaade:278-0548"
+    ]
+   ]
+  },
+  {
+   "hvad": "1280: dag 2: alle 1 gentaget, kortet skjult bagefter, ratingen uaendret",
+   "ok": true,
+   "data": [
+    1,
+    "Gentag i dag: 1",
+    "737",
+    "737"
+   ]
+  },
+  {
+   "hvad": "1280: dag 2: kortene efter = min model",
+   "ok": true,
+   "data": [
+    21,
+    21
+   ]
+  },
+  {
+   "hvad": "1280: dag 3: intet at gentage (skjult)",
+   "ok": true,
+   "data": [
+    "",
+    "",
+    []
+   ]
+  },
+  {
+   "hvad": "1280: dag 3: kortene efter = min model",
+   "ok": true,
+   "data": [
+    21,
+    21
+   ]
+  },
+  {
+   "hvad": "1280: dag 4: \"Gentag i dag: 20\"",
+   "ok": true,
+   "data": [
+    "Gentag i dag: 20",
+    "20 gåder",
+    [
+     "gaade:02MwE",
+     "gaade:02Z4F",
+     "gaade:03Pky",
+     "gaade:064RR",
+     "gaade:09EoI",
+     "gaade:0CCtp",
+     "gaade:0DdXQ",
+     "gaade:0EuUs",
+     "gaade:0F53J",
+     "gaade:0NsEB",
+     "gaade:0QAoB",
+     "gaade:425-0302",
+     "gaade:425-0315",
+     "gaade:448-0011",
+     "gaade:485-0013",
+     "gaade:485-0058",
+     "gaade:li-30dw6",
+     "gaade:li-batLH",
+     "gaade:li-egASN",
+     "gaade:li-o3doC"
+    ]
+   ]
+  },
+  {
+   "hvad": "1280: dag 4: alle 20 gentaget, kortet skjult bagefter, ratingen uaendret",
+   "ok": true,
+   "data": [
+    20,
+    "Gentag i dag: 1",
+    "737",
+    "737"
+   ]
+  },
+  {
+   "hvad": "1280: dag 4: kortene efter = min model",
+   "ok": true,
+   "data": [
+    2,
+    2
+   ]
+  },
+  {
+   "hvad": "1280: dag 5: \"Gentag i dag: 2\"",
+   "ok": true,
+   "data": [
+    "Gentag i dag: 2",
+    "2 gåder",
+    [
+     "gaade:278-0548",
+     "gaade:li-batLH"
+    ]
+   ]
+  },
+  {
+   "hvad": "1280: dag 5: alle 2 gentaget, kortet skjult bagefter, ratingen uaendret",
+   "ok": true,
+   "data": [
+    2,
+    "Gentag i dag: 1",
+    "737",
+    "737"
+   ]
+  },
+  {
+   "hvad": "1280: dag 5: kortene efter = min model",
+   "ok": true,
+   "data": [
+    1,
+    1
+   ]
+  },
+  {
+   "hvad": "1280: dag 11: intet at gentage (skjult)",
+   "ok": true,
+   "data": [
+    "",
+    "",
+    []
+   ]
+  },
+  {
+   "hvad": "1280: dag 11: kortene efter = min model",
+   "ok": true,
+   "data": [
+    1,
+    1
+   ]
+  },
+  {
+   "hvad": "1280: dag 12: \"Gentag i dag: 1\"",
+   "ok": true,
+   "data": [
+    "Gentag i dag: 1",
+    "1 gåde",
+    [
+     "gaade:li-batLH"
+    ]
+   ]
+  },
+  {
+   "hvad": "1280: dag 12: alle 1 gentaget, kortet skjult bagefter, ratingen uaendret",
+   "ok": true,
+   "data": [
+    1,
+    "Gentag i dag: 1",
+    "737",
+    "737"
+   ]
+  },
+  {
+   "hvad": "1280: dag 12: kortene efter = min model",
+   "ok": true,
+   "data": [
+    0,
+    0
+   ]
+  },
+  {
+   "hvad": "1280: dag 13: intet at gentage (skjult)",
+   "ok": true,
+   "data": [
+    "",
+    "",
+    []
+   ]
+  },
+  {
+   "hvad": "1280: dag 13: kortene efter = min model",
+   "ok": true,
+   "data": [
+    0,
+    0
+   ]
+  },
+  {
+   "hvad": "1280: gaade nr. 0: dag 1 \"om 3 dage\", dag 4 (fejl) \"i morgen\", dag 5 \"om 7 dage\", dag 12 \"sidder nu\"",
+   "ok": true,
+   "data": [
+    "Rigtigt! Den kommer igen om 3 dage.",
+    "Den kommer igen i morgen.",
+    "Rigtigt! Den kommer igen om 7 dage.",
+    "Den sidder nu - rigtigt to gange i træk."
+   ]
+  },
+  {
+   "hvad": "1280: en ren gaade: dag 1 \"om 3 dage\", dag 4 \"sidder nu\" (7 dage bruges ikke)",
+   "ok": true,
+   "data": [
+    "Rigtigt! Den kommer igen om 3 dage.",
+    "Den sidder nu - rigtigt to gange i træk."
+   ]
+  },
+  {
+   "hvad": "1280: K12: \"Ny storm\" over listen med de missede, hoejst 5 vist og \"Vis alle\"",
+   "ok": true,
+   "data": {
+    "resultat": {
+     "top": 197,
+     "bund": 1094,
+     "iVindue": false,
+     "h": 897,
+     "vinduH": 800
+    },
+    "nyStorm": {
+     "top": 240,
+     "bund": 284,
+     "iVindue": true,
+     "h": 44,
+     "vinduH": 800
+    },
+    "nyStormTekst": "Ny storm",
+    "liste": {
+     "top": 922,
+     "bund": 1068,
+     "iVindue": false,
+     "h": 146,
+     "vinduH": 800
+    },
+    "missedeVist": 5,
+    "visAlle": "Vis alle 15",
+    "missedeTitel": "Se løsningen på gåderne, der gik galt",
+    "efterVisAlle": 15,
+    "kortEfter": 21
+   }
+  },
+  {
+   "hvad": "1280: ingen vandret rulning, intet net, ingen JS-fejl",
+   "ok": true,
+   "data": [
+    0,
+    0,
+    []
+   ]
+  },
+  {
+   "hvad": "logik: felt og aabning foelger samme regel (i morgen; dag 0 igen flytter ikke; om 3 dage; laert; efter ny fejl om 7 dage)",
+   "ok": true,
+   "data": [
+    "i morgen",
+    "dag 0 igen: flyttet=false",
+    "om 3 dage",
+    "laert=true",
+    "om 7 dage"
+   ]
+  }
+ ]
+}
