@@ -1,0 +1,149 @@
+{
+  "indeks": [
+    {
+      "loft": "ingen",
+      "uger": 130,
+      "logIndTilBrugbartMs": 4264,
+      "feltSaet1": "100",
+      "indeksVedKlik": {
+        "v": 2,
+        "bygget": false,
+        "squat": 0
+      },
+      "siderVedKlik": 1,
+      "indeksByggetEfterMs": 5272,
+      "indeksEfter": {
+        "v": 2,
+        "bygget": true,
+        "squat": 128
+      },
+      "sider": 6,
+      "raekker": 4291,
+      "fejretUnderOpbygning": [],
+      "feltSaet2": "115",
+      "fejretRigtigRekord": [
+        "🏆 Ny rekord: Squat e1RM 134 kg, +6 kg"
+      ],
+      "genaabnetBrugbartMs": 3259,
+      "genaabnetSider": 2,
+      "genaabnetRaekker": 36,
+      "genaabnetIndeks": {
+        "v": 2,
+        "bygget": true,
+        "squat": 128
+      },
+      "fejringerIalt": [
+        "🏆 Ny rekord: Squat e1RM 134 kg, +6 kg"
+      ],
+      "logs": [
+        "100x5",
+        "115x5"
+      ]
+    },
+    {
+      "loft": 1000,
+      "uger": 130,
+      "logIndTilBrugbartMs": 4228,
+      "feltSaet1": "100",
+      "indeksVedKlik": {
+        "v": 2,
+        "bygget": false,
+        "squat": 0
+      },
+      "siderVedKlik": 1,
+      "indeksByggetEfterMs": 6223,
+      "indeksEfter": {
+        "v": 2,
+        "bygget": true,
+        "squat": 128
+      },
+      "sider": 6,
+      "raekker": 4291,
+      "fejretUnderOpbygning": [],
+      "feltSaet2": "115",
+      "fejretRigtigRekord": [
+        "🏆 Ny rekord: Squat e1RM 134 kg, +6 kg"
+      ],
+      "genaabnetBrugbartMs": 3409,
+      "genaabnetSider": 2,
+      "genaabnetRaekker": 36,
+      "genaabnetIndeks": {
+        "v": 2,
+        "bygget": true,
+        "squat": 128
+      },
+      "fejringerIalt": [
+        "🏆 Ny rekord: Squat e1RM 134 kg, +6 kg"
+      ],
+      "logs": [
+        "100x5",
+        "115x5"
+      ]
+    },
+    {
+      "loft": 100,
+      "uger": 90,
+      "logIndTilBrugbartMs": 3254,
+      "feltSaet1": "100",
+      "indeksVedKlik": {
+        "v": 2,
+        "bygget": false,
+        "squat": 0
+      },
+      "siderVedKlik": 0,
+      "indeksByggetEfterMs": 9782,
+      "indeksEfter": {
+        "v": 2,
+        "bygget": true,
+        "squat": 128
+      },
+      "sider": 31,
+      "raekker": 2971,
+      "fejretUnderOpbygning": [],
+      "feltSaet2": "115",
+      "fejretRigtigRekord": [
+        "🏆 Ny rekord: Squat e1RM 134 kg, +6 kg"
+      ],
+      "genaabnetBrugbartMs": 2595,
+      "genaabnetSider": 2,
+      "genaabnetRaekker": 36,
+      "genaabnetIndeks": {
+        "v": 2,
+        "bygget": true,
+        "squat": 128
+      },
+      "fejringerIalt": [
+        "🏆 Ny rekord: Squat e1RM 134 kg, +6 kg"
+      ],
+      "logs": [
+        "100x5",
+        "115x5"
+      ]
+    }
+  ],
+  "kopi": [
+    {
+      "msMellem": 60,
+      "knapVedAndetTryk": {
+        "tekst": "Kopierer ugen …",
+        "disabled": true
+      },
+      "kopiMs": 3236,
+      "nyeUger": [
+        5
+      ]
+    },
+    {
+      "msMellem": 120,
+      "knapVedAndetTryk": {
+        "tekst": "Kopierer ugen …",
+        "disabled": true
+      },
+      "kopiMs": 3190,
+      "nyeUger": [
+        5
+      ]
+    }
+  ],
+  "konsolFejl": []
+}

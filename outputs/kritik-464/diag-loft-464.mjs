@@ -1,0 +1,20 @@
+// ORDRE 464: diagnose. Hvad ser atleten efter login med Supabase' "Max rows" = loft? node outputs/kritik-464/diag-loft-464.mjs <uger> <loft>
+import { DIST, MOCK_PORT, statiskServer, hentChromium, bygSeed, nyTelefon } from './faelles-464.mjs'
+const { createMockSupabase } = await import('../../e2e/mock-supabase.mjs')
+const fx = await import('../../e2e/fixtures.mjs')
+const uger = Number(process.argv[2]); const loft = Number(process.argv[3])
+const { seed } = bygSeed(fx.buildSeed, fx, { uger })
+const mock = createMockSupabase(seed, { maxRows: loft }); await mock.listen(MOCK_PORT)
+const { server, port } = await statiskServer(DIST)
+const browser = await hentChromium().launch({ headless: true })
+const { page } = await nyTelefon(browser)
+const kald = []
+page.on('response', async r => { if (r.url().includes('/rest/v1/')) { const j = await r.json().catch(() => null); kald.push(`${r.status()} ${Array.isArray(j) ? j.length : typeof j} ${decodeURIComponent(r.url().replace(/^.*rest\/v1\//, '')).slice(0, 110)}`) } })
+await page.goto(`http://127.0.0.1:${port}/`)
+await page.locator('#athlete-auth-email').fill(fx.ATHLETE_USER.email)
+await page.locator('#athlete-auth-password').fill(fx.ATHLETE_USER.password)
+await page.getByRole('button', { name: 'Log ind' }).click()
+await page.waitForTimeout(15000)
+console.log((await page.evaluate(() => document.body.innerText)).slice(0, 500).replace(/\n+/g, ' | '))
+console.log(kald.filter(k => /weeks|exercise_logs/.test(k)).slice(0, 12).join('\n'))
+await browser.close(); server.close(); await mock.close(); process.exit(0)

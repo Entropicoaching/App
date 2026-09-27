@@ -1,0 +1,1352 @@
+{
+  "bredder": {
+    "390": {
+      "signaler": [],
+      "forsideMs": 3914,
+      "forsideRigtigMs": 8924,
+      "raekkeUnderHentning": [
+        "T | Testatlet | Intet aktivt program | →",
+        "T | Testatlet | Intet aktivt program | 1 | →",
+        "T | Testatlet | Uge 131 · Styrke · 4 pas | 1 | →",
+        "T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · I dag | ★ 3/5 | skulder lidt oem | 1 | →"
+      ],
+      "raekke": "T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · I dag | ★ 3/5 | skulder lidt oem | 1 | →",
+      "forsideTjek": {
+        "sidelaens": 0,
+        "udover": [],
+        "smaaTryk": [],
+        "lilleTekst": [
+          {
+            "t": "Coach Portal",
+            "fs": 8.3
+          },
+          {
+            "t": "Forside",
+            "fs": 7
+          },
+          {
+            "t": "Min træning",
+            "fs": 7
+          },
+          {
+            "t": "Kalender",
+            "fs": 9.6
+          },
+          {
+            "t": "Coach Briefing",
+            "fs": 7
+          },
+          {
+            "t": "2",
+            "fs": 8
+          },
+          {
+            "t": "Bibliotek",
+            "fs": 9.6
+          },
+          {
+            "t": "Atleter",
+            "fs": 9
+          },
+          {
+            "t": "T",
+            "fs": 8
+          },
+          {
+            "t": "Uge 131",
+            "fs": 7.4
+          },
+          {
+            "t": "1",
+            "fs": 7.4
+          },
+          {
+            "t": "Se som atlet",
+            "fs": 9.6
+          },
+          {
+            "t": "Værktøjer",
+            "fs": 8.3
+          },
+          {
+            "t": "▾",
+            "fs": 8
+          },
+          {
+            "t": "Menu",
+            "fs": 7
+          },
+          {
+            "t": "søndag 27. september",
+            "fs": 8.8
+          },
+          {
+            "t": "Åbn dit eget program",
+            "fs": 7.7
+          },
+          {
+            "t": "Analysér et løft",
+            "fs": 7.7
+          },
+          {
+            "t": "2 åbne ting · vigtigste først",
+            "fs": 7.7
+          },
+          {
+            "t": "Besked",
+            "fs": 6.4
+          },
+          {
+            "t": "Set",
+            "fs": 6.9
+          },
+          {
+            "t": "Video",
+            "fs": 6.4
+          },
+          {
+            "t": "aktive",
+            "fs": 7.7
+          },
+          {
+            "t": "Navn",
+            "fs": 7.7
+          },
+          {
+            "t": "Afvigelse denne uge",
+            "fs": 7.7
+          },
+          {
+            "t": "Uge 131 · Styrke · 4 af 4 pas",
+            "fs": 8
+          },
+          {
+            "t": "· I dag",
+            "fs": 8
+          },
+          {
+            "t": "★",
+            "fs": 9.9
+          },
+          {
+            "t": "3",
+            "fs": 9.9
+          },
+          {
+            "t": "/5",
+            "fs": 9.9
+          }
+        ]
+      },
+      "kraeverDitBlik": "Coach. | SØNDAG 27. SEPTEMBER | Min træning | Åbn dit eget program | Videoanalyse | Analysér et løft | Kræver dit blik | 2 åbne ting · vigtigste først | 2 | → | Testatlet | BESKED | Om uge 131: Kaelderen var uden net tirsdag, men alt kom med. | 1 | → | SET | Testatlet | VIDEO | Ny måling fra et sæt · Squat · Konkurrence squat | → | SET | ATLETER | 1 aktive | Navn | Afvigelse denne uge | T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · I dag | ★ 3/5 | skulder lidt oem | 1 | →",
+      "stemmeKnap": 1,
+      "logMs": 8660,
+      "log": {
+        "Dag 1 — Squat": "3 80kg × 4RPE 9/8skulder lidt oem | S4 ✕ | 27. SEP 2026 | UGE 131 | Dag 1 — Squat | 10/10 SÆT | Ø 70 KG | ★★★★☆ | Bulgarsk split squat | = Samme som sidst | Plan: 3 sæt · × 8-10 · RPE 8 | 3/3 sæt | Ø 30kg | S1 30kg × 8RPE 8/8 | S2 30kg × 8RPE 8/8 | S3 30kg × 8RPE 8/8 | Bænkpres | ↑ +4kg siden sidst | Plan: 3 sæt · × 8 · RPE 7 | 3/3 sæt | Ø 70kg | S1 70kg × 8RPE 7/7 | S2 70kg × 8RPE 7/7 | S3 70kg × 8RPE 7/7 | Squat | ↑ +5.4kg siden sidst | Plan: 4 sæt · × 5 · RPE 7 | 4/4 sæt | Ø 100kg | S1 100kg × 5RPE 7/7 | S2 100kg × 5RPE 7/7 | S3 100k",
+        "Dag 2 — Bænk": "2 140kg × 3RPE 8/8 | S3 140kg × 3RPE 8/8 | 27. SEP 2026 | UGE 131 | Dag 2 — Bænk | 9/10 SÆT | 1 SPRUNGET OVER | Ø 45 KG | ★★★☆☆ | Triceps pushdown | = Samme som sidst | Plan: 3 sæt · × 12-15 · RPE 9 | 3/3 sæt | Ø 30kg | S1 30kg × 12RPE 9/9 | S2 30kg × 12RPE 9/9 | S3 30kg × 12RPE 9/9 | Rows | = Samme som sidst | Plan: 3 sæt · × 10 · RPE 8 | 3/3 sæt | Ø 25kg | S1 25kg × 10RPE 8/8 | S2 25kg × 10RPE 8/8 | S3 25kg × 10RPE 8/8 | Bænkpres | ↑ +4kg siden sidst | Plan: 4 sæt · × 4-6 · RPE 8 | 3/4 sæt · 1 sprunget over | Ø 80kg | S1 80kg × 6RPE",
+        "Dag 3 — Dødløft": " | S2 95kg × 6RPE 7/7 | S3 95kg × 6RPE 7/7 | 27. SEP 2026 | UGE 131 | Dag 3 — Dødløft | 7/8 SÆT | 1 SPRUNGET OVER | Ø 112.5 KG | Planke | Plan: 2 sæt · × 45s | 1/2 sæt · 1 sprunget over | S1 0kg × 45 | S2 ✕ | Pause squat | ↑ +2.5kg siden sidst | Plan: 3 sæt · × 4 · RPE 7 | 3/3 sæt | Ø 85kg | S1 85kg × 4RPE 7/7 | S2 85kg × 4RPE 7/7 | S3 85kg × 4RPE 7/7 | Dødløft | ↑ +2.5kg siden sidst | Plan: 3 sæt · × 3 · RPE 8 | 3/3 sæt | Ø 140kg | S1 140kg × 3RPE 8/8 | S2 140kg × 3RPE 8/8 | S3 140kg × 3RPE 8/8 | 27. SEP 2026 | UGE 131 | Dag 2 — Bænk | 9/1",
+        "Dag 4 — Volumen": "ushdown | UGE 131 | 4 træninger · 36 sæt | ▾ | 27. SEP 2026 | UGE 131 | Dag 4 — Volumen | 10/10 SÆT | Ø 82.1 KG | ★★★★☆ | Pull-ups | Plan: 3 sæt · × 6-8 · RPE 8 | 3/3 sæt | S1 0kg × 6RPE 8/8 | S2 0kg × 6RPE 8/8 | S3 0kg × 6RPE 8/8 | Bænkpres | ↑ +4kg siden sidst | Plan: 4 sæt · × 6 · RPE 7 | 4/4 sæt | Ø 72.5kg | S1 72.5kg × 6RPE 7/7 | S2 72.5kg × 6RPE 7/7 | S3 72.5kg × 6RPE 7/7 | S4 72.5kg × 6RPE 7/7 | Squat | ↑ +5.4kg siden sidst | Plan: 3 sæt · × 6 · RPE 7 | 3/3 sæt | Ø 95kg | S1 95kg × 6RPE 7/7 | S2 95kg × 6RPE 7/7 | S3 95kg × 6RPE 7/7"
+      },
+      "logTjek": {
+        "sidelaens": 0,
+        "udover": [],
+        "smaaTryk": [],
+        "lilleTekst": [
+          {
+            "t": "Coach Portal",
+            "fs": 8.3
+          },
+          {
+            "t": "Forside",
+            "fs": 7
+          },
+          {
+            "t": "Min træning",
+            "fs": 7
+          },
+          {
+            "t": "Kalender",
+            "fs": 9.6
+          },
+          {
+            "t": "Coach Briefing",
+            "fs": 7
+          },
+          {
+            "t": "2",
+            "fs": 7
+          },
+          {
+            "t": "Bibliotek",
+            "fs": 9.6
+          },
+          {
+            "t": "Atleter",
+            "fs": 7.4
+          },
+          {
+            "t": "T",
+            "fs": 8
+          },
+          {
+            "t": "Uge 131",
+            "fs": 9.6
+          },
+          {
+            "t": "1",
+            "fs": 8.3
+          },
+          {
+            "t": "Se som atlet",
+            "fs": 9.6
+          },
+          {
+            "t": "Værktøjer",
+            "fs": 8.3
+          },
+          {
+            "t": "▾",
+            "fs": 8
+          },
+          {
+            "t": "Menu",
+            "fs": 7
+          },
+          {
+            "t": "← Tilbage til",
+            "fs": 9.6
+          },
+          {
+            "t": "atleter",
+            "fs": 9.6
+          },
+          {
+            "t": "Aktiv",
+            "fs": 8
+          },
+          {
+            "t": "Fjern",
+            "fs": 9.3
+          },
+          {
+            "t": "🏠",
+            "fs": 9.6
+          },
+          {
+            "t": "Hjem",
+            "fs": 9.6
+          },
+          {
+            "t": "🏋️",
+            "fs": 9.6
+          },
+          {
+            "t": "Program",
+            "fs": 9.6
+          },
+          {
+            "t": "📓",
+            "fs": 9.6
+          },
+          {
+            "t": "Log",
+            "fs": 9.6
+          },
+          {
+            "t": "💬",
+            "fs": 9.6
+          },
+          {
+            "t": "Beskeder",
+            "fs": 9.6
+          },
+          {
+            "t": "Mere",
+            "fs": 9.6
+          },
+          {
+            "t": "Træningslog",
+            "fs": 9
+          },
+          {
+            "t": "Øvelse",
+            "fs": 8.3
+          },
+          {
+            "t": "4",
+            "fs": 8.3
+          },
+          {
+            "t": "træning",
+            "fs": 8.3
+          },
+          {
+            "t": "er",
+            "fs": 8.3
+          },
+          {
+            "t": "·",
+            "fs": 8.3
+          },
+          {
+            "t": "36",
+            "fs": 8.3
+          },
+          {
+            "t": "sæt",
+            "fs": 8.3
+          },
+          {
+            "t": "27. sep 2026",
+            "fs": 9
+          },
+          {
+            "t": "Uge",
+            "fs": 8.3
+          },
+          {
+            "t": "131",
+            "fs": 8.3
+          },
+          {
+            "t": "10",
+            "fs": 9
+          },
+          {
+            "t": "/",
+            "fs": 9
+          },
+          {
+            "t": "Ø",
+            "fs": 8
+          },
+          {
+            "t": "82.1",
+            "fs": 8.3
+          },
+          {
+            "t": "kg",
+            "fs": 8
+          },
+          {
+            "t": "★★★★",
+            "fs": 9.9
+          },
+          {
+            "t": "☆",
+            "fs": 9.9
+          },
+          {
+            "t": "Plan:",
+            "fs": 8.3
+          },
+          {
+            "t": "3 sæt · × 6-8 · RPE 8",
+            "fs": 8.3
+          },
+          {
+            "t": "↑ +4kg siden sidst",
+            "fs": 8
+          },
+          {
+            "t": "4 sæt · × 6 · RPE 7",
+            "fs": 8.3
+          },
+          {
+            "t": "72.5",
+            "fs": 8
+          },
+          {
+            "t": "↑ +5.4kg siden sidst",
+            "fs": 8
+          },
+          {
+            "t": "3 sæt · × 6 · RPE 7",
+            "fs": 8.3
+          },
+          {
+            "t": "95",
+            "fs": 8
+          },
+          {
+            "t": "7",
+            "fs": 9
+          },
+          {
+            "t": "8",
+            "fs": 9
+          },
+          {
+            "t": "sprunget over",
+            "fs": 8.3
+          },
+          {
+            "t": "112.5",
+            "fs": 8.3
+          },
+          {
+            "t": "2 sæt · × 45s",
+            "fs": 8.3
+          },
+          {
+            "t": "↑ +2.5kg siden sidst",
+            "fs": 8
+          },
+          {
+            "t": "3 sæt · × 4 · RPE 7",
+            "fs": 8.3
+          },
+          {
+            "t": "85",
+            "fs": 8
+          },
+          {
+            "t": "3 sæt · × 3 · RPE 8",
+            "fs": 8.3
+          },
+          {
+            "t": "140",
+            "fs": 8
+          },
+          {
+            "t": "9",
+            "fs": 9
+          },
+          {
+            "t": "45",
+            "fs": 8.3
+          },
+          {
+            "t": "★★★",
+            "fs": 9.9
+          },
+          {
+            "t": "☆☆",
+            "fs": 9.9
+          },
+          {
+            "t": "= Samme som sidst",
+            "fs": 8
+          },
+          {
+            "t": "3 sæt · × 12-15 · RPE 9",
+            "fs": 8.3
+          },
+          {
+            "t": "30",
+            "fs": 8
+          },
+          {
+            "t": "3 sæt · × 10 · RPE 8",
+            "fs": 8.3
+          },
+          {
+            "t": "25",
+            "fs": 8
+          },
+          {
+            "t": "4 sæt · × 4-6 · RPE 8",
+            "fs": 8.3
+          },
+          {
+            "t": "80",
+            "fs": 8
+          },
+          {
+            "t": "70",
+            "fs": 8
+          },
+          {
+            "t": "3 sæt · × 8-10 · RPE 8",
+            "fs": 8.3
+          },
+          {
+            "t": "3 sæt · × 8 · RPE 7",
+            "fs": 8.3
+          },
+          {
+            "t": "4 sæt · × 5 · RPE 7",
+            "fs": 8.3
+          },
+          {
+            "t": "100",
+            "fs": 8
+          },
+          {
+            "t": "Uge 130",
+            "fs": 9.6
+          },
+          {
+            "t": "38",
+            "fs": 8.3
+          },
+          {
+            "t": "Uge 129",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 128",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 127",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 126",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 125",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 124",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 123",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 122",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 121",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 120",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 119",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 118",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 117",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 116",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 115",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 114",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 113",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 112",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 111",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 110",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 109",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 108",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 107",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 106",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 105",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 104",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 103",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 102",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 101",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 100",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 99",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 98",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 97",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 96",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 95",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 94",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 93",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 92",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 91",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 90",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 89",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 88",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 87",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 86",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 85",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 84",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 83",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 82",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 81",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 80",
+            "fs": 9.6
+          },
+          {
+            "t": "Uge 79",
+            "fs": 9.6
+          },
+          {
+            "t": "3",
+            "fs": 8.3
+          },
+          {
+            "t": "24",
+            "fs": 8.3
+          }
+        ]
+      },
+      "nulKgILog": [
+        "0kg × 6RPE 8/8",
+        "0kg × 6RPE 8/8",
+        "0kg × 6RPE 8/8",
+        "0kg × 45"
+      ],
+      "pasGrupper": {
+        "Dag 1 — Squat": 1,
+        "Dag 2 — Bænk": 1
+      },
+      "prTidslinje": "PR-TIDSLINJE | BÆNKPRES | 70 kg × 8 | 27 sep 2026 | 80 kg × 6 | 27 sep 2026 | 72.5 kg × 6 | 27 sep 2026 | SQUAT | 100 kg × 5 | 27 sep 2026 | 95 kg × 6 | 27 sep 2026 | PAUSE SQUAT | 85 kg × 4 | 27 sep 2026 | DØDLØFT | 140 kg × 3 | 27 sep 2026",
+      "knapEfter250Ms": {
+        "tekst": "Kopierer ugen …",
+        "disabled": true
+      },
+      "kopi": {
+        "tryk": "dobbelttryk (250 ms)",
+        "ms": 7606,
+        "nyeUger": [
+          {
+            "uge": 132,
+            "start": "2026-09-28",
+            "pas": 4,
+            "oevelser": 12
+          }
+        ]
+      },
+      "video": [
+        "Videoanalyse Analysér et løft",
+        "Testatlet VIDEO Ny måling fra et sæt · Squat · Konkurrence squat →"
+      ],
+      "videoRaekker": [
+        {
+          "state": "awaiting_analysis",
+          "lift": "squat"
+        }
+      ]
+    },
+    "1280": {
+      "signaler": [],
+      "forsideMs": 937,
+      "forsideRigtigMs": 949,
+      "raekkeUnderHentning": [
+        "T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · I dag | ★ 3/5 | skulder lidt oem | 1 | →"
+      ],
+      "raekke": "T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · I dag | ★ 3/5 | skulder lidt oem | 1 | →",
+      "forsideTjek": {
+        "sidelaens": 0,
+        "udover": [],
+        "smaaTryk": [
+          {
+            "el": "SE SOM ATLET",
+            "w": 175,
+            "h": 31
+          },
+          {
+            "el": "VÆRKTØJER ▾",
+            "w": 175,
+            "h": 24
+          },
+          {
+            "el": "⚡ MIN TRÆNING",
+            "w": 120,
+            "h": 27
+          },
+          {
+            "el": "Navn",
+            "w": 42,
+            "h": 23
+          },
+          {
+            "el": "Afvigelse denne uge",
+            "w": 119,
+            "h": 23
+          },
+          {
+            "el": "★ 3/5 skulder lidt oem",
+            "w": 122,
+            "h": 14
+          }
+        ],
+        "lilleTekst": [
+          {
+            "t": "Coach Portal",
+            "fs": 9.4
+          },
+          {
+            "t": "2",
+            "fs": 9
+          },
+          {
+            "t": "Atleter",
+            "fs": 8.3
+          },
+          {
+            "t": "T",
+            "fs": 9
+          },
+          {
+            "t": "Uge 131",
+            "fs": 8.3
+          },
+          {
+            "t": "1",
+            "fs": 8.3
+          },
+          {
+            "t": "Værktøjer",
+            "fs": 9.4
+          },
+          {
+            "t": "▾",
+            "fs": 9
+          },
+          {
+            "t": "⚡ Min træning",
+            "fs": 9.9
+          },
+          {
+            "t": "søndag 27. september",
+            "fs": 9.9
+          },
+          {
+            "t": "Åbn dit eget program",
+            "fs": 8.6
+          },
+          {
+            "t": "Analysér et løft",
+            "fs": 8.6
+          },
+          {
+            "t": "2 åbne ting · vigtigste først",
+            "fs": 8.6
+          },
+          {
+            "t": "Besked",
+            "fs": 7.2
+          },
+          {
+            "t": "Set",
+            "fs": 7.7
+          },
+          {
+            "t": "Video",
+            "fs": 7.2
+          },
+          {
+            "t": "aktive",
+            "fs": 8.6
+          },
+          {
+            "t": "Navn",
+            "fs": 8.6
+          },
+          {
+            "t": "Afvigelse denne uge",
+            "fs": 8.6
+          },
+          {
+            "t": "Uge 131 · Styrke · 4 af 4 pas",
+            "fs": 9
+          },
+          {
+            "t": "· I dag",
+            "fs": 9
+          },
+          {
+            "t": "★",
+            "fs": 9
+          },
+          {
+            "t": "3",
+            "fs": 9
+          },
+          {
+            "t": "/5",
+            "fs": 9
+          }
+        ]
+      },
+      "kraeverDitBlik": "Coach. | SØNDAG 27. SEPTEMBER | Min træning | Åbn dit eget program | Videoanalyse | Analysér et løft | Kræver dit blik | 2 åbne ting · vigtigste først | 2 | → | Testatlet | BESKED | Om uge 131: Kaelderen var uden net tirsdag, men alt kom med. | 1 | → | SET | Testatlet | VIDEO | Ny måling fra et sæt · Squat · Konkurrence squat | → | SET | ATLETER | 1 aktive | Navn | Afvigelse denne uge | T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · I dag | ★ 3/5 | skulder lidt oem | 1 | →",
+      "stemmeKnap": 1,
+      "logMs": 98,
+      "log": {
+        "Dag 1 — Squat": "3 80kg × 4RPE 9/8skulder lidt oem | S4 ✕ | 27. SEP 2026 | UGE 131 | Dag 1 — Squat | 10/10 SÆT | Ø 70 KG | ★★★★☆ | Bulgarsk split squat | = Samme som sidst | Plan: 3 sæt · × 8-10 · RPE 8 | 3/3 sæt | Ø 30kg | S1 30kg × 8RPE 8/8 | S2 30kg × 8RPE 8/8 | S3 30kg × 8RPE 8/8 | Bænkpres | ↑ +4kg siden sidst | Plan: 3 sæt · × 8 · RPE 7 | 3/3 sæt | Ø 70kg | S1 70kg × 8RPE 7/7 | S2 70kg × 8RPE 7/7 | S3 70kg × 8RPE 7/7 | Squat | ↑ +5.4kg siden sidst | Plan: 4 sæt · × 5 · RPE 7 | 4/4 sæt | Ø 100kg | S1 100kg × 5RPE 7/7 | S2 100kg × 5RPE 7/7 | S3 100k",
+        "Dag 2 — Bænk": "2 140kg × 3RPE 8/8 | S3 140kg × 3RPE 8/8 | 27. SEP 2026 | UGE 131 | Dag 2 — Bænk | 9/10 SÆT | 1 SPRUNGET OVER | Ø 45 KG | ★★★☆☆ | Triceps pushdown | = Samme som sidst | Plan: 3 sæt · × 12-15 · RPE 9 | 3/3 sæt | Ø 30kg | S1 30kg × 12RPE 9/9 | S2 30kg × 12RPE 9/9 | S3 30kg × 12RPE 9/9 | Rows | = Samme som sidst | Plan: 3 sæt · × 10 · RPE 8 | 3/3 sæt | Ø 25kg | S1 25kg × 10RPE 8/8 | S2 25kg × 10RPE 8/8 | S3 25kg × 10RPE 8/8 | Bænkpres | ↑ +4kg siden sidst | Plan: 4 sæt · × 4-6 · RPE 8 | 3/4 sæt · 1 sprunget over | Ø 80kg | S1 80kg × 6RPE",
+        "Dag 3 — Dødløft": " | S2 95kg × 6RPE 7/7 | S3 95kg × 6RPE 7/7 | 27. SEP 2026 | UGE 131 | Dag 3 — Dødløft | 7/8 SÆT | 1 SPRUNGET OVER | Ø 112.5 KG | Planke | Plan: 2 sæt · × 45s | 1/2 sæt · 1 sprunget over | S1 0kg × 45 | S2 ✕ | Pause squat | ↑ +2.5kg siden sidst | Plan: 3 sæt · × 4 · RPE 7 | 3/3 sæt | Ø 85kg | S1 85kg × 4RPE 7/7 | S2 85kg × 4RPE 7/7 | S3 85kg × 4RPE 7/7 | Dødløft | ↑ +2.5kg siden sidst | Plan: 3 sæt · × 3 · RPE 8 | 3/3 sæt | Ø 140kg | S1 140kg × 3RPE 8/8 | S2 140kg × 3RPE 8/8 | S3 140kg × 3RPE 8/8 | 27. SEP 2026 | UGE 131 | Dag 2 — Bænk | 9/1",
+        "Dag 4 — Volumen": "ushdown | UGE 131 | 4 træninger · 36 sæt | ▾ | 27. SEP 2026 | UGE 131 | Dag 4 — Volumen | 10/10 SÆT | Ø 82.1 KG | ★★★★☆ | Pull-ups | Plan: 3 sæt · × 6-8 · RPE 8 | 3/3 sæt | S1 0kg × 6RPE 8/8 | S2 0kg × 6RPE 8/8 | S3 0kg × 6RPE 8/8 | Bænkpres | ↑ +4kg siden sidst | Plan: 4 sæt · × 6 · RPE 7 | 4/4 sæt | Ø 72.5kg | S1 72.5kg × 6RPE 7/7 | S2 72.5kg × 6RPE 7/7 | S3 72.5kg × 6RPE 7/7 | S4 72.5kg × 6RPE 7/7 | Squat | ↑ +5.4kg siden sidst | Plan: 3 sæt · × 6 · RPE 7 | 3/3 sæt | Ø 95kg | S1 95kg × 6RPE 7/7 | S2 95kg × 6RPE 7/7 | S3 95kg × 6RPE 7/7"
+      },
+      "logTjek": {
+        "sidelaens": 0,
+        "udover": [],
+        "smaaTryk": [
+          {
+            "el": "SE SOM ATLET",
+            "w": 175,
+            "h": 31
+          },
+          {
+            "el": "VÆRKTØJER ▾",
+            "w": 175,
+            "h": 24
+          },
+          {
+            "el": "⚡ MIN TRÆNING",
+            "w": 120,
+            "h": 27
+          },
+          {
+            "el": "← TILBAGE TIL ATLETER",
+            "w": 147,
+            "h": 13
+          },
+          {
+            "el": "FJERN",
+            "w": 65,
+            "h": 29
+          },
+          {
+            "el": "Alle øvelser Bulgarsk split squat Bænkpres Dødløft",
+            "w": 167,
+            "h": 31
+          }
+        ],
+        "lilleTekst": [
+          {
+            "t": "Coach Portal",
+            "fs": 9.4
+          },
+          {
+            "t": "2",
+            "fs": 9.7
+          },
+          {
+            "t": "Atleter",
+            "fs": 8.3
+          },
+          {
+            "t": "T",
+            "fs": 9
+          },
+          {
+            "t": "Uge 131",
+            "fs": 8.3
+          },
+          {
+            "t": "1",
+            "fs": 9.7
+          },
+          {
+            "t": "Værktøjer",
+            "fs": 9.4
+          },
+          {
+            "t": "▾",
+            "fs": 9
+          },
+          {
+            "t": "⚡ Min træning",
+            "fs": 9.9
+          },
+          {
+            "t": "Aktiv",
+            "fs": 9
+          },
+          {
+            "t": "Øvelse",
+            "fs": 9.4
+          },
+          {
+            "t": "4",
+            "fs": 9.4
+          },
+          {
+            "t": "træning",
+            "fs": 9.4
+          },
+          {
+            "t": "er",
+            "fs": 9.4
+          },
+          {
+            "t": "·",
+            "fs": 9.4
+          },
+          {
+            "t": "36",
+            "fs": 9.4
+          },
+          {
+            "t": "sæt",
+            "fs": 9.4
+          },
+          {
+            "t": "Uge",
+            "fs": 9.4
+          },
+          {
+            "t": "131",
+            "fs": 9.4
+          },
+          {
+            "t": "Ø",
+            "fs": 9
+          },
+          {
+            "t": "82.1",
+            "fs": 9.4
+          },
+          {
+            "t": "kg",
+            "fs": 9.7
+          },
+          {
+            "t": "Plan:",
+            "fs": 9.4
+          },
+          {
+            "t": "3 sæt · × 6-8 · RPE 8",
+            "fs": 9.4
+          },
+          {
+            "t": "3",
+            "fs": 9.4
+          },
+          {
+            "t": "/",
+            "fs": 9
+          },
+          {
+            "t": "S",
+            "fs": 9.7
+          },
+          {
+            "t": "0",
+            "fs": 9.7
+          },
+          {
+            "t": "×",
+            "fs": 9.7
+          },
+          {
+            "t": "6",
+            "fs": 9.7
+          },
+          {
+            "t": "RPE",
+            "fs": 9.7
+          },
+          {
+            "t": "8",
+            "fs": 9.7
+          },
+          {
+            "t": "/8",
+            "fs": 9.7
+          },
+          {
+            "t": "↑ +4kg siden sidst",
+            "fs": 9
+          },
+          {
+            "t": "4 sæt · × 6 · RPE 7",
+            "fs": 9.4
+          },
+          {
+            "t": "72.5",
+            "fs": 9.7
+          },
+          {
+            "t": "7",
+            "fs": 9.7
+          },
+          {
+            "t": "/7",
+            "fs": 9.7
+          },
+          {
+            "t": "↑ +5.4kg siden sidst",
+            "fs": 9
+          },
+          {
+            "t": "3 sæt · × 6 · RPE 7",
+            "fs": 9.4
+          },
+          {
+            "t": "95",
+            "fs": 9.7
+          },
+          {
+            "t": "sprunget over",
+            "fs": 9.4
+          },
+          {
+            "t": "112.5",
+            "fs": 9.4
+          },
+          {
+            "t": "2 sæt · × 45s",
+            "fs": 9.4
+          },
+          {
+            "t": "· 1 sprunget over",
+            "fs": 9
+          },
+          {
+            "t": "45",
+            "fs": 9.4
+          },
+          {
+            "t": "✕",
+            "fs": 9.7
+          },
+          {
+            "t": "↑ +2.5kg siden sidst",
+            "fs": 9
+          },
+          {
+            "t": "3 sæt · × 4 · RPE 7",
+            "fs": 9.4
+          },
+          {
+            "t": "85",
+            "fs": 9.7
+          },
+          {
+            "t": "3 sæt · × 3 · RPE 8",
+            "fs": 9.4
+          },
+          {
+            "t": "140",
+            "fs": 9.7
+          },
+          {
+            "t": "= Samme som sidst",
+            "fs": 9
+          },
+          {
+            "t": "3 sæt · × 12-15 · RPE 9",
+            "fs": 9.4
+          },
+          {
+            "t": "30",
+            "fs": 9.7
+          },
+          {
+            "t": "12",
+            "fs": 9.7
+          },
+          {
+            "t": "9",
+            "fs": 9.7
+          },
+          {
+            "t": "/9",
+            "fs": 9.7
+          },
+          {
+            "t": "3 sæt · × 10 · RPE 8",
+            "fs": 9.4
+          },
+          {
+            "t": "25",
+            "fs": 9.7
+          },
+          {
+            "t": "10",
+            "fs": 9.7
+          },
+          {
+            "t": "4 sæt · × 4-6 · RPE 8",
+            "fs": 9.4
+          },
+          {
+            "t": "80",
+            "fs": 9.7
+          },
+          {
+            "t": "skulder lidt oem",
+            "fs": 9.7
+          },
+          {
+            "t": "70",
+            "fs": 9.7
+          },
+          {
+            "t": "3 sæt · × 8-10 · RPE 8",
+            "fs": 9.4
+          },
+          {
+            "t": "3 sæt · × 8 · RPE 7",
+            "fs": 9.4
+          },
+          {
+            "t": "4 sæt · × 5 · RPE 7",
+            "fs": 9.4
+          },
+          {
+            "t": "100",
+            "fs": 9.7
+          },
+          {
+            "t": "5",
+            "fs": 9.7
+          },
+          {
+            "t": "38",
+            "fs": 9.4
+          },
+          {
+            "t": "24",
+            "fs": 9.4
+          }
+        ]
+      },
+      "nulKgILog": [
+        "0kg × 6RPE 8/8",
+        "0kg × 6RPE 8/8",
+        "0kg × 6RPE 8/8",
+        "0kg × 45"
+      ],
+      "pasGrupper": {
+        "Dag 1 — Squat": 1,
+        "Dag 2 — Bænk": 1
+      },
+      "prTidslinje": "PR-TIDSLINJE | BÆNKPRES | 70 kg × 8 | 27 sep 2026 | 80 kg × 6 | 27 sep 2026 | 72.5 kg × 6 | 27 sep 2026 | SQUAT | 100 kg × 5 | 27 sep 2026 | 95 kg × 6 | 27 sep 2026 | PAUSE SQUAT | 85 kg × 4 | 27 sep 2026 | DØDLØFT | 140 kg × 3 | 27 sep 2026",
+      "kopi": {
+        "tryk": "et tryk",
+        "ms": 4086,
+        "nyeUger": [
+          {
+            "uge": 132,
+            "start": "2026-09-28",
+            "pas": 4,
+            "oevelser": 12
+          }
+        ]
+      },
+      "video": [
+        "Videoanalyse Analysér et løft",
+        "Testatlet VIDEO Ny måling fra et sæt · Squat · Konkurrence squat →"
+      ],
+      "videoRaekker": [
+        {
+          "state": "awaiting_analysis",
+          "lift": "squat"
+        }
+      ]
+    }
+  },
+  "konsolFejl": [],
+  "tjek": [
+    {
+      "navn": "390: forsiden siger aldrig \"Ingen logs\" eller \"0 af 4 pas\", mens den henter (A7)",
+      "ok": true,
+      "detalje": "[\"T | Testatlet | Intet aktivt program | →\",\"T | Testatlet | Intet aktivt program | 1 | →\",\"T | Testatlet | Uge 131 · Styrke · 4 pas | 1 | →\",\"T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · I dag | ★ 3/5 | skulder lidt oem | 1 | →\"]"
+    },
+    {
+      "navn": "390: forsiden siger 4 af 4 pas",
+      "ok": true,
+      "detalje": "T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · I dag | ★ 3/5 | skulder lidt oem | 1 | →"
+    },
+    {
+      "navn": "390: \"Kraever dit blik\" viser atletens linje fra \"din uge\"",
+      "ok": true,
+      "detalje": ""
+    },
+    {
+      "navn": "390: Log viser det sprungne saet fra pas 3 (med net)",
+      "ok": true,
+      "detalje": " | S2 95kg × 6RPE 7/7 | S3 95kg × 6RPE 7/7 | 27. SEP 2026 | UGE 131 | Dag 3 — Dødløft | 7/8 SÆT | 1 SPRUNGET OVER | Ø 112.5 KG | Planke | Plan: 2 sæt · × 45s | 1/2 sæt · 1 sprunget over | S1 0kg × 45 | S2 ✕ | Pause squat | ↑ +2.5kg siden sidst | Plan: 3 sæt · "
+    },
+    {
+      "navn": "390: Log viser baenkpres 4 i pas 2 som sprunget over (atletens hensigt i kaelderen)",
+      "ok": true,
+      "detalje": "2 140kg × 3RPE 8/8 | S3 140kg × 3RPE 8/8 | 27. SEP 2026 | UGE 131 | Dag 2 — Bænk | 9/10 SÆT | 1 SPRUNGET OVER | Ø 45 KG | ★★★☆☆ | Triceps pushdown | = Samme som sidst | Plan: 3 sæt · × 12-15 · RPE 9 | 3/3 sæt | Ø 30kg | S1 30kg × 12RPE 9/9 | S2 30kg × 12RPE 9/"
+    },
+    {
+      "navn": "390: Log viser datoer paa dansk, ingen UTC-dato som 2026-09-26 (A8)",
+      "ok": true,
+      "detalje": "27. SEP 2026"
+    },
+    {
+      "navn": "390: Log viser noten og RPE 9 fra kaelderen",
+      "ok": true,
+      "detalje": ""
+    },
+    {
+      "navn": "390: PR-tidslinjen har kaelderens baenkpres-rekorder (70 x 8, 80 x 6)",
+      "ok": true,
+      "detalje": "PR-TIDSLINJE | BÆNKPRES | 70 kg × 8 | 27 sep 2026 | 80 kg × 6 | 27 sep 2026 | 72.5 kg × 6 | 27 sep 2026 | SQUAT | 100 kg × 5 | 27 sep 2026 | 95 kg × 6 | 27 sep 2026 | PAUSE SQUAT | 85 kg × 4 | 27 sep 2026 | DØDLØFT | 140 kg × 3 | 27 sep 2026"
+    },
+    {
+      "navn": "390: \"Kopier seneste uge\" (dobbelttryk (250 ms)) giver een ny uge",
+      "ok": true,
+      "detalje": "[{\"uge\":132,\"start\":\"2026-09-28\",\"pas\":4,\"oevelser\":12}]"
+    },
+    {
+      "navn": "1280: forsiden siger aldrig \"Ingen logs\" eller \"0 af 4 pas\", mens den henter (A7)",
+      "ok": true,
+      "detalje": "[\"T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · I dag | ★ 3/5 | skulder lidt oem | 1 | →\"]"
+    },
+    {
+      "navn": "1280: forsiden siger 4 af 4 pas",
+      "ok": true,
+      "detalje": "T | Testatlet | Uge 131 · Styrke · 4 af 4 pas · I dag | ★ 3/5 | skulder lidt oem | 1 | →"
+    },
+    {
+      "navn": "1280: \"Kraever dit blik\" viser atletens linje fra \"din uge\"",
+      "ok": true,
+      "detalje": ""
+    },
+    {
+      "navn": "1280: Log viser det sprungne saet fra pas 3 (med net)",
+      "ok": true,
+      "detalje": " | S2 95kg × 6RPE 7/7 | S3 95kg × 6RPE 7/7 | 27. SEP 2026 | UGE 131 | Dag 3 — Dødløft | 7/8 SÆT | 1 SPRUNGET OVER | Ø 112.5 KG | Planke | Plan: 2 sæt · × 45s | 1/2 sæt · 1 sprunget over | S1 0kg × 45 | S2 ✕ | Pause squat | ↑ +2.5kg siden sidst | Plan: 3 sæt · "
+    },
+    {
+      "navn": "1280: Log viser baenkpres 4 i pas 2 som sprunget over (atletens hensigt i kaelderen)",
+      "ok": true,
+      "detalje": "2 140kg × 3RPE 8/8 | S3 140kg × 3RPE 8/8 | 27. SEP 2026 | UGE 131 | Dag 2 — Bænk | 9/10 SÆT | 1 SPRUNGET OVER | Ø 45 KG | ★★★☆☆ | Triceps pushdown | = Samme som sidst | Plan: 3 sæt · × 12-15 · RPE 9 | 3/3 sæt | Ø 30kg | S1 30kg × 12RPE 9/9 | S2 30kg × 12RPE 9/"
+    },
+    {
+      "navn": "1280: Log viser datoer paa dansk, ingen UTC-dato som 2026-09-26 (A8)",
+      "ok": true,
+      "detalje": "27. SEP 2026"
+    },
+    {
+      "navn": "1280: Log viser noten og RPE 9 fra kaelderen",
+      "ok": true,
+      "detalje": ""
+    },
+    {
+      "navn": "1280: PR-tidslinjen har kaelderens baenkpres-rekorder (70 x 8, 80 x 6)",
+      "ok": true,
+      "detalje": "PR-TIDSLINJE | BÆNKPRES | 70 kg × 8 | 27 sep 2026 | 80 kg × 6 | 27 sep 2026 | 72.5 kg × 6 | 27 sep 2026 | SQUAT | 100 kg × 5 | 27 sep 2026 | 95 kg × 6 | 27 sep 2026 | PAUSE SQUAT | 85 kg × 4 | 27 sep 2026 | DØDLØFT | 140 kg × 3 | 27 sep 2026"
+    },
+    {
+      "navn": "1280: \"Kopier seneste uge\" (et tryk) giver een ny uge",
+      "ok": true,
+      "detalje": "[{\"uge\":132,\"start\":\"2026-09-28\",\"pas\":4,\"oevelser\":12}]"
+    }
+  ],
+  "ugensUtcDatoer": [
+    "2026-09-27"
+  ],
+  "personalRecords": [
+    "Squat 100x5",
+    "Bænkpres 70x8",
+    "Bænkpres 80x6",
+    "Dødløft 140x3",
+    "Pause squat 85x4",
+    "Squat 95x6",
+    "Bænkpres 72.5x6"
+  ]
+}

@@ -99,7 +99,8 @@
     "verify:kritik-446": "node outputs/kritik-446/verify-kritik-446.mjs",
     "verify:kritik-457": "node outputs/kritik-457/verify-kritik-457.mjs",
     "verify:kritik-461": "node outputs/kritik-461/verify-kritik-461.mjs",
-    "verify:456": "node outputs/456/verify-456.mjs"
+    "verify:456": "node outputs/456/verify-456.mjs",
+    "verify:kritik-464": "node outputs/kritik-464/verify-kritik-464.mjs"
   },
   "dependencies": {
     "@supabase/auth-js": "^2.112.3",

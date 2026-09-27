@@ -1,0 +1,17 @@
+  let  foer  aabning 1: brugbart 928 ms, historik -, 23 kald
+  let  foer  aabning 2: brugbart 1047 ms, historik -, 23 kald
+  let  foer  aabning 3: brugbart 962 ms, historik -, 23 kald
+  let  efter aabning 1: brugbart 995 ms, historik 1719 ms, 5 kB, 25 kald
+  let  efter aabning 2: brugbart 1006 ms, historik 1726 ms, 5 kB, 25 kald
+  let  efter aabning 3: brugbart 980 ms, historik 1702 ms, 5 kB, 25 kald
+  tung foer  aabning 1: brugbart 3399 ms, historik -, 23 kald
+  tung foer  aabning 2: brugbart 3319 ms, historik -, 23 kald
+  tung foer  aabning 3: brugbart 3334 ms, historik -, 23 kald
+  tung efter aabning 1: brugbart 3307 ms, historik 3832 ms, 5 kB, 25 kald
+  tung efter aabning 2: brugbart 3358 ms, historik 3841 ms, 5 kB, 25 kald
+  tung efter aabning 3: brugbart 3288 ms, historik 3823 ms, 5 kB, 25 kald
+let (114 saet) foer: median 962 ms til brugbart
+let (114 saet) efter: median 995 ms til brugbart
+tung (4940 saet) foer: median 3334 ms til brugbart
+tung (4940 saet) efter: median 3307 ms til brugbart
+exit 0
