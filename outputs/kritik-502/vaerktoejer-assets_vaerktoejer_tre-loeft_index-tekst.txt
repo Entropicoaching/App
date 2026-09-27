@@ -1,0 +1,77 @@
+De tre løft i modellen
+
+Der findes ikke én rigtig teknik. Proportioner og valg flytter stangen, vinklerne og belastningen. Vælg et løft, skru på kroppen og valgene, og se hvad der sker med figuren, vinklerne og momentarmene.
+
+Løft
+Squat
+Dødløft
+Bænkpres
+Kropstype
+Marcs mål
+Gennemsnitlig løfter
+Lange lårben
+Korte lårben
+Lang torso
+Stangplacering
+Low bar
+High bar
+Front
+Højde
+183 cm
+Kropsvægt
+120 kg
+Lår
+100 % · 44,8 cm
+Skinneben
+100 % · 45,0 cm
+Torso
+100 % · 52,7 cm
+Arme
+100 % · 60,8 cm
+Stang
+120 kg
+Stilling
+Bunden
+Sticking point
+Lockout
+Lås denne indstilling
+
+Lås en indstilling for at sammenligne den med en anden side om side.
+
+Marcs mål mod gennemsnitlig løfter: knæets moment stiger 20 % i bunden (416 → 497 Nm).
+
+Bunden	Nu
+Knævinkel (°)	46,2
+Hoftevinkel (°)	37,6
+Skinneben fra lodret (°)	40,0
+Torso fra lodret (°)	48,5
+Momentarm hofte (cm)	21,7
+Momentarm knæ (cm)	−23,0
+Momentarm lænd (L5/S1) (cm)	7,7
+Moment hofte (Nm)	435,1
+Moment knæ (Nm)	497,0
+Moment lænd (L5/S1) (Nm)	155,9
+Stangens vej, hele løftet (cm)	63,8
+
+Momentarm: den vandrette afstand fra stangens lodlinje til leddet (+ = stangen foran leddet; knæets er negativ, fordi knæet står foran stangen). Moment: hele vægten over leddet (krop og stang) om leddet, + = bøjemoment. Knæets moment er derfor positivt, selv om momentarmen til stangen er negativ.
+
+Hvad modellen ikke kan sige om squat
+Sådan læses figuren
+Den stiplede lodrette linje er stangens lodlinje. Den korte streg ved gulvet er midtfoden.
+De vandrette streger er momentarmene: den vandrette afstand fra stangens lodlinje til leddet. Jo længere arm, jo større moment om leddet for samme vægt.
+Moment (Nm): hvor meget der skal holdes om leddet i den stilling. Det siger ikke, hvilke muskler der gør det.
+Bænkpres og sumo har en lille figur forfra i hjørnet: bænkens greb og arm set fra fødderne, sumoens stand og fødder. Sumoens vindue er en tegning; modellen regner kun fra siden.
+Når en indstilling er låst, står den låste i guld og den nye i blå, i samme skala. Har de samme krop, står den låste også svagt bag den blå.
+Skyderne
+Højde og kropsvægt. Længderne følger højden efter samme tabel som resten af modellen (Winter 2009 efter Drillis og Contini). Massen fordeles på segmenterne efter samme tabel.
+Lår, skinneben, torso og arme i procent af tabellens længde for den højde. 100 % er tabellens krop. Fod og skulderbredde følger højden.
+Stang: vægten på stangen. Standard er de vægte figurerne blev regnet med: squat 120 kg, dødløft 270 kg, bænkpres 100 kg.
+Squat: stangplacering (low bar, high bar, front). Dødløft: konventionel eller sumo; for sumo også standbredden (i skulderbredder) og hvor meget fødderne peger ud. Bænkpres: tre buer og tre greb, de samme som figurerne.
+Kun parametre modellen har, har en skyder. Squattens standbredde, ankelmobilitet og en bøjelig ryg er ikke i modellen og har derfor ingen.
+Marcs mål er kroppe/marc.json: 183 cm og 120 kg, længderne udledt af højden (ikke målt endnu). Med Marcs mål og standardvalgene er tallene de samme som i tabellerne til dødløft- og bænkfigurerne.
+Gennemsnitlig løfter: 178 cm og 85 kg med tabellens proportioner. Et modelvalg, ikke en bestemt person.
+Kropstyperne (lange lårben, korte lårben, lang torso, lange arme) er den gennemsnitlige løfter med én proportion sat til 110 % eller 90 %. De sætter kun kroppen; stangplacering, stil, bue, greb og stangvægt bliver stående. Lange arme vises kun til dødløft og bænkpres, fordi armene ikke flytter noget i squatmodellen.
+Linjen under figuren siger, hvad kroppen ændrede mest i den viste stilling: en kropstype mod tabellens proportioner, Marcs mål mod den gennemsnitlige løfter. Vinkler og momenter vejes, så 3° tæller som 5 % (et modelvalg), og momenter under 100 Nm tages ikke med.
+Hvad modellen er
+
+Modellen regner på segmentlængder, masse, balance og momenter, statisk, i én stilling ad gangen, set fra siden. Den repræsenterer ikke muskler eller muskelfibre og siger ikke, hvilken teknik der er bedst. Folden under tabellen siger, hvad den ikke kan sige om hvert løft.

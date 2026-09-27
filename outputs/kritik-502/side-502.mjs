@@ -88,9 +88,10 @@ for (const side of siderArg.split(',')) {
     r.tankestreger = [...alt.matchAll(/.{0,30}[\u2014\u2013].{0,30}/g)].map((m) => m[0])
     r.navne = navne.map((n) => (alt.match(new RegExp(`\\b${n}\\b`, 'gi')) ?? []).length)
     r.marc = (alt.match(/\bMarc/g) ?? []).length
-    const stem = `${navn}-${side.replace(/\.html$/, '').replace(/[\/.]/g, '_')}-${b}`
+    const filnavn = side.replace(/\?.*$/, '').replace(/\.html$/, '').replace(/[^A-Za-z0-9-]/g, '_')
+    const stem = `${navn}-${filnavn}-${b}`
     await page.screenshot({ path: join(HERE, `${stem}-top.png`) })
-    if (b === 390) writeFileSync(join(HERE, `${navn}-${side.replace(/\.html$/, '').replace(/[\/.]/g, '_')}-tekst.txt`), alt)
+    if (b === 390) writeFileSync(join(HERE, `${navn}-${filnavn}-tekst.txt`), alt)
     delete r.tekst
     ud.sider.push(r)
     console.log(side, b, 'hoejde', r.hoejde, 'rul', r.scrollW - r.clientW, 'konsol', r.konsol.length, 'sidefejl', r.sidefejl.length, '404', r.http404.length, 'ekst', r.eksterne.length, 'brudte', r.brudte.length, 'MARC', r.marcFelter.length, 'streg', r.tankestreger.length, 'navne', r.navne.join('/'))

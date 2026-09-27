@@ -1,0 +1,86 @@
+{
+ "gren": "vaerktoejer",
+ "side": "vaerktoejer/index.html",
+ "fund": [
+  {
+   "tekst": "Kommer snart",
+   "bredde": 390,
+   "tag": "DIV",
+   "top": 1034,
+   "w": 278,
+   "h": 32,
+   "font": "9.28px",
+   "farve": "rgb(146, 144, 140)"
+  },
+  {
+   "tekst": "Hele skiven i billedet.",
+   "bredde": 390,
+   "tag": "STRONG",
+   "top": 2221,
+   "w": 251,
+   "h": 24,
+   "font": "14.4px",
+   "farve": "rgb(237, 234, 226)"
+  },
+  {
+   "tekst": "[MARC: Hvor stiller",
+   "bredde": 390,
+   "tag": "P",
+   "top": 2665,
+   "w": 342,
+   "h": 87,
+   "font": "12px",
+   "farve": "rgb(200, 146, 58)"
+  },
+  {
+   "tekst": "Fra siden.",
+   "bredde": 390,
+   "tag": "STRONG",
+   "top": 1755,
+   "w": 251,
+   "h": 24,
+   "font": "14.4px",
+   "farve": "rgb(237, 234, 226)"
+  },
+  {
+   "tekst": "Kommer snart",
+   "bredde": 1280,
+   "tag": "DIV",
+   "top": 724,
+   "w": 335,
+   "h": 32,
+   "font": "9.28px",
+   "farve": "rgb(146, 144, 140)"
+  },
+  {
+   "tekst": "Hele skiven i billedet.",
+   "bredde": 1280,
+   "tag": "STRONG",
+   "top": 1476,
+   "w": 629,
+   "h": 24,
+   "font": "14.4px",
+   "farve": "rgb(237, 234, 226)"
+  },
+  {
+   "tekst": "[MARC: Hvor stiller",
+   "bredde": 1280,
+   "tag": "P",
+   "top": 1788,
+   "w": 720,
+   "h": 67,
+   "font": "12px",
+   "farve": "rgb(200, 146, 58)"
+  },
+  {
+   "tekst": "Fra siden.",
+   "bredde": 1280,
+   "tag": "STRONG",
+   "top": 1181,
+   "w": 629,
+   "h": 24,
+   "font": "14.4px",
+   "farve": "rgb(237, 234, 226)"
+  }
+ ]
+}

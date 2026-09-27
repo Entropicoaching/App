@@ -109,6 +109,19 @@ if (blok >= 2) {
     ok(v?.robots === 'noindex, nofollow', 'vaerktoejer: noindex mangler')
     ok(v?.marcFelter.length === 2, 'vaerktoejer: ikke to [MARC]-felter')
     ok(m2.sider.every((s) => s.eksterne.length === 0), 'vaerktoejer: kald ud af huset')
+    for (let i = 1; i <= 10; i++) ok(new RegExp(`^\\| V${i} \\|`, 'm').test(vt ?? ''), `VAERKTOEJER: V${i} mangler i tabellen`)
+    // V2: Marcs krop og filnavnet paa De tre loeft; ikke i den indlejrede udgave i artiklen
+    const tl = readFileSync(path.join(HERE, 'vaerktoejer-assets_vaerktoejer_tre-loeft_index-tekst.txt'), 'utf8')
+    ok(tl.includes('kroppe/marc.json') && tl.includes('ikke målt endnu') && tl.includes('Marcs mål mod gennemsnitlig løfter'), 'V2: teksten findes ikke')
+    const ind = json('squat-indlejret.json')
+    ok(ind && ind.sider.every((s) => s.marc === 0), 'V2: den indlejrede udgave naevner Marc')
+    // V10: kap. 7's tal er De tre loefts "Marcs maal" i bunden
+    ok(['21,7', '−23,0', '435,1', '497,0', '155,9'].every((x) => tl.includes(x)), 'V10: tallene i De tre loeft')
+    const sqt = readFileSync(path.join(HERE, 'squat-artikel-squat-tekst.txt'), 'utf8')
+    ok(sqt.includes('Knæ\t497,0\t595,3') && sqt.includes('Hofte\t435,1\t336,8') && sqt.includes('155,9'), 'V10: tallene i artiklens kap. 7')
+    // V1 og V9 fra naerbillederne
+    const d2 = json('vaerktoejer-detaljer.json')
+    ok(d2?.fund.some((f) => f.tekst.startsWith('[MARC') && f.h > 0) && d2?.fund.some((f) => f.tekst === 'Kommer snart' && f.font === '9.28px'), 'V1/V9: naerbillederne')
   }
   if (rap) {
     const l = rap.split('\n')

@@ -1,0 +1,842 @@
+{
+ "gren": "vaerktoejer",
+ "sha": "7fe59e1",
+ "maalt": "2026-09-27T10:25:42.712Z",
+ "sider": [
+  {
+   "side": "vaerktoejer/index.html",
+   "bredde": 390,
+   "konsol": [],
+   "sidefejl": [],
+   "fejlkald": [],
+   "eksterne": [],
+   "http404": [],
+   "title": "Værktøjer | Entropi Coaching",
+   "description": "Tre værktøjer fra løftmodellen: Min krop, Mål dit billede og De tre løft. De regner i browseren, og intet sendes.",
+   "robots": "noindex, nofollow",
+   "canonical": null,
+   "ogTitle": null,
+   "ogDescription": null,
+   "ogImage": null,
+   "lang": "da",
+   "h1": [
+    "Tre værktøjerfra løftmodellen."
+   ],
+   "h2": [
+    "Sådan filmer du dit løft,så billedet kan måles."
+   ],
+   "scrollW": 390,
+   "clientW": 390,
+   "hoejde": 3692,
+   "links": [
+    {
+     "href": "../index.html",
+     "tekst": "Entropi.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "../coaching.html",
+     "tekst": "Coaching",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "../resultater.html",
+     "tekst": "Resultater",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "../viden.html",
+     "tekst": "Viden",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "../om.html",
+     "tekst": "Om Entropi",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "../coaching.html#ansoeg",
+     "tekst": "Ansøg om coaching",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "../coaching.html",
+     "tekst": "Coaching",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "../resultater.html",
+     "tekst": "Resultater",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "../viden.html",
+     "tekst": "Viden",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "../om.html",
+     "tekst": "Om Entropi",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "https://app.entropicoaching.dk",
+     "tekst": "Portal",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "../coaching.html#ansoeg",
+     "tekst": "Ansøg om coaching",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "../assets/vaerktoejer/min-krop/index.html",
+     "tekst": "Proportioner Min krop Skriv dine mål ind, og se squat, dødløft og bænkpres regne",
+     "rel": "nofollow",
+     "synlig": true
+    },
+    {
+     "href": "../assets/vaerktoejer/tre-loeft/index.html",
+     "tekst": "Modellen De tre løft Skru på kroppen og valgene i squat, dødløft og bænkpres, og",
+     "rel": "nofollow",
+     "synlig": true
+    },
+    {
+     "href": "../viden.html",
+     "tekst": "Artikler og viden",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "../coaching.html",
+     "tekst": "Coaching",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "../resultater.html",
+     "tekst": "Resultater",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "../viden.html",
+     "tekst": "Viden",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "../om.html",
+     "tekst": "Om Entropi",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "https://app.entropicoaching.dk",
+     "tekst": "Atletportal",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "https://instagram.com/entropicoaching",
+     "tekst": "Instagram",
+     "rel": "noopener",
+     "synlig": true
+    },
+    {
+     "href": "mailto:coach@entropicoaching.dk",
+     "tekst": "coach@entropicoaching.dk",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "../privatliv.html",
+     "tekst": "Privatliv",
+     "rel": "",
+     "synlig": true
+    }
+   ],
+   "brudte": [],
+   "iframes": [],
+   "brede": [],
+   "iframeTekst": [],
+   "marcFelter": [
+    "[MARC: Hvor stiller du selv telefonen, når du filmer, og hvad går oftest galt i de videoer, du får tilsendt?]",
+    "[MARC: Beder du om noget andet til bænkpres, hvor skiven og bænken ofte dækker for kroppen?]"
+   ],
+   "firkant": [],
+   "tankestreger": [],
+   "navne": [
+    0,
+    0,
+    0
+   ],
+   "marc": 1
+  },
+  {
+   "side": "vaerktoejer/index.html",
+   "bredde": 1280,
+   "konsol": [],
+   "sidefejl": [],
+   "fejlkald": [],
+   "eksterne": [],
+   "http404": [],
+   "title": "Værktøjer | Entropi Coaching",
+   "description": "Tre værktøjer fra løftmodellen: Min krop, Mål dit billede og De tre løft. De regner i browseren, og intet sendes.",
+   "robots": "noindex, nofollow",
+   "canonical": null,
+   "ogTitle": null,
+   "ogDescription": null,
+   "ogImage": null,
+   "lang": "da",
+   "h1": [
+    "Tre værktøjerfra løftmodellen."
+   ],
+   "h2": [
+    "Sådan filmer du dit løft,så billedet kan måles."
+   ],
+   "scrollW": 1280,
+   "clientW": 1280,
+   "hoejde": 2439,
+   "links": [
+    {
+     "href": "../index.html",
+     "tekst": "Entropi.",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "../coaching.html",
+     "tekst": "Coaching",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "../resultater.html",
+     "tekst": "Resultater",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "../viden.html",
+     "tekst": "Viden",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "../om.html",
+     "tekst": "Om Entropi",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "../coaching.html#ansoeg",
+     "tekst": "Ansøg om coaching",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "../coaching.html",
+     "tekst": "Coaching",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "../resultater.html",
+     "tekst": "Resultater",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "../viden.html",
+     "tekst": "Viden",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "../om.html",
+     "tekst": "Om Entropi",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "https://app.entropicoaching.dk",
+     "tekst": "Portal",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "../coaching.html#ansoeg",
+     "tekst": "Ansøg om coaching",
+     "rel": "",
+     "synlig": false
+    },
+    {
+     "href": "../assets/vaerktoejer/min-krop/index.html",
+     "tekst": "Proportioner Min krop Skriv dine mål ind, og se squat, dødløft og bænkpres regne",
+     "rel": "nofollow",
+     "synlig": true
+    },
+    {
+     "href": "../assets/vaerktoejer/tre-loeft/index.html",
+     "tekst": "Modellen De tre løft Skru på kroppen og valgene i squat, dødløft og bænkpres, og",
+     "rel": "nofollow",
+     "synlig": true
+    },
+    {
+     "href": "../viden.html",
+     "tekst": "Artikler og viden",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "../coaching.html",
+     "tekst": "Coaching",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "../resultater.html",
+     "tekst": "Resultater",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "../viden.html",
+     "tekst": "Viden",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "../om.html",
+     "tekst": "Om Entropi",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "https://app.entropicoaching.dk",
+     "tekst": "Atletportal",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "https://instagram.com/entropicoaching",
+     "tekst": "Instagram",
+     "rel": "noopener",
+     "synlig": true
+    },
+    {
+     "href": "mailto:coach@entropicoaching.dk",
+     "tekst": "coach@entropicoaching.dk",
+     "rel": "",
+     "synlig": true
+    },
+    {
+     "href": "../privatliv.html",
+     "tekst": "Privatliv",
+     "rel": "",
+     "synlig": true
+    }
+   ],
+   "brudte": [],
+   "iframes": [],
+   "brede": [],
+   "iframeTekst": [],
+   "marcFelter": [
+    "[MARC: Hvor stiller du selv telefonen, når du filmer, og hvad går oftest galt i de videoer, du får tilsendt?]",
+    "[MARC: Beder du om noget andet til bænkpres, hvor skiven og bænken ofte dækker for kroppen?]"
+   ],
+   "firkant": [],
+   "tankestreger": [],
+   "navne": [
+    0,
+    0,
+    0
+   ],
+   "marc": 1
+  },
+  {
+   "side": "assets/vaerktoejer/min-krop/index.html",
+   "bredde": 390,
+   "konsol": [],
+   "sidefejl": [],
+   "fejlkald": [],
+   "eksterne": [],
+   "http404": [],
+   "title": "Min krop i de tre løft",
+   "description": null,
+   "robots": null,
+   "canonical": null,
+   "ogTitle": null,
+   "ogDescription": null,
+   "ogImage": null,
+   "lang": "da",
+   "h1": [
+    "Min krop i de tre løft"
+   ],
+   "h2": [
+    "Squat",
+    "Dødløft",
+    "Bænkpres",
+    "Sådan måler du",
+    "Sådan læses figurerne",
+    "Hvad modellen ikke kan sige om din krop"
+   ],
+   "scrollW": 390,
+   "clientW": 390,
+   "hoejde": 9771,
+   "links": [
+    {
+     "href": "mit-kort.html#hoejde=178&laar=43%2C6&skinneben=43%2C8&torso=51%2C3&overarm=33%2C1&underarm=26&vaegt=85",
+     "tekst": "Mit kort",
+     "rel": "noopener",
+     "synlig": true
+    }
+   ],
+   "brudte": [],
+   "iframes": [],
+   "brede": [],
+   "iframeTekst": [],
+   "marcFelter": [],
+   "firkant": [],
+   "tankestreger": [
+    "Vandret afstand stang–hofte (cm)\t21,3\t21,3\t0,0",
+    "Vandret afstand stang–knæ (cm)\t−22,2\t−22,2\t0,0",
+    "Vandret afstand stang–lænd (cm)\t7,5\t7,5\t0,0",
+    "Vandret afstand stang–hofte (cm)\t40,1\t40,1\t0,0",
+    "Vandret afstand stang–knæ (cm)\t−0,1\t−0,1\t0,0",
+    "Vandret afstand stang–lænd (cm)\t24,1\t24,1\t0,0",
+    "Afstand stang–skulder, siden og forfra i alt",
+    "Afstand stang–albue, siden og forfra i alt ("
+   ],
+   "navne": [
+    0,
+    0,
+    0
+   ],
+   "marc": 0
+  },
+  {
+   "side": "assets/vaerktoejer/min-krop/index.html",
+   "bredde": 1280,
+   "konsol": [],
+   "sidefejl": [],
+   "fejlkald": [],
+   "eksterne": [],
+   "http404": [],
+   "title": "Min krop i de tre løft",
+   "description": null,
+   "robots": null,
+   "canonical": null,
+   "ogTitle": null,
+   "ogDescription": null,
+   "ogImage": null,
+   "lang": "da",
+   "h1": [
+    "Min krop i de tre løft"
+   ],
+   "h2": [
+    "Squat",
+    "Dødløft",
+    "Bænkpres",
+    "Sådan måler du",
+    "Sådan læses figurerne",
+    "Hvad modellen ikke kan sige om din krop"
+   ],
+   "scrollW": 1280,
+   "clientW": 1280,
+   "hoejde": 5518,
+   "links": [
+    {
+     "href": "mit-kort.html#hoejde=178&laar=43%2C6&skinneben=43%2C8&torso=51%2C3&overarm=33%2C1&underarm=26&vaegt=85",
+     "tekst": "Mit kort",
+     "rel": "noopener",
+     "synlig": true
+    }
+   ],
+   "brudte": [],
+   "iframes": [],
+   "brede": [],
+   "iframeTekst": [],
+   "marcFelter": [],
+   "firkant": [],
+   "tankestreger": [
+    "Vandret afstand stang–hofte (cm)\t21,3\t21,3\t0,0",
+    "Vandret afstand stang–knæ (cm)\t−22,2\t−22,2\t0,0",
+    "Vandret afstand stang–lænd (cm)\t7,5\t7,5\t0,0",
+    "Vandret afstand stang–hofte (cm)\t40,1\t40,1\t0,0",
+    "Vandret afstand stang–knæ (cm)\t−0,1\t−0,1\t0,0",
+    "Vandret afstand stang–lænd (cm)\t24,1\t24,1\t0,0",
+    "Afstand stang–skulder, siden og forfra i alt",
+    "Afstand stang–albue, siden og forfra i alt ("
+   ],
+   "navne": [
+    0,
+    0,
+    0
+   ],
+   "marc": 0
+  },
+  {
+   "side": "assets/vaerktoejer/min-krop/kort.html",
+   "bredde": 390,
+   "konsol": [],
+   "sidefejl": [],
+   "fejlkald": [],
+   "eksterne": [],
+   "http404": [],
+   "title": "Min krop i de tre løft (kort)",
+   "description": null,
+   "robots": null,
+   "canonical": null,
+   "ogTitle": null,
+   "ogDescription": null,
+   "ogImage": null,
+   "lang": "da",
+   "h1": [],
+   "h2": [
+    "Squat",
+    "Dødløft",
+    "Bænkpres"
+   ],
+   "scrollW": 390,
+   "clientW": 390,
+   "hoejde": 992,
+   "links": [
+    {
+     "href": "mit-kort.html#hoejde=178&laar=43%2C6&skinneben=43%2C8&torso=51%2C3&overarm=33%2C1&underarm=26&vaegt=85",
+     "tekst": "Mit kort",
+     "rel": "noopener",
+     "synlig": true
+    },
+    {
+     "href": "index.html#forbehold",
+     "tekst": "Hele siden med tabeller og forbehold",
+     "rel": "noopener",
+     "synlig": true
+    }
+   ],
+   "brudte": [],
+   "iframes": [],
+   "brede": [],
+   "iframeTekst": [],
+   "marcFelter": [],
+   "firkant": [],
+   "tankestreger": [],
+   "navne": [
+    0,
+    0,
+    0
+   ],
+   "marc": 0
+  },
+  {
+   "side": "assets/vaerktoejer/min-krop/kort.html",
+   "bredde": 1280,
+   "konsol": [],
+   "sidefejl": [],
+   "fejlkald": [],
+   "eksterne": [],
+   "http404": [],
+   "title": "Min krop i de tre løft (kort)",
+   "description": null,
+   "robots": null,
+   "canonical": null,
+   "ogTitle": null,
+   "ogDescription": null,
+   "ogImage": null,
+   "lang": "da",
+   "h1": [],
+   "h2": [
+    "Squat",
+    "Dødløft",
+    "Bænkpres"
+   ],
+   "scrollW": 1280,
+   "clientW": 1280,
+   "hoejde": 1143,
+   "links": [
+    {
+     "href": "mit-kort.html#hoejde=178&laar=43%2C6&skinneben=43%2C8&torso=51%2C3&overarm=33%2C1&underarm=26&vaegt=85",
+     "tekst": "Mit kort",
+     "rel": "noopener",
+     "synlig": true
+    },
+    {
+     "href": "index.html#forbehold",
+     "tekst": "Hele siden med tabeller og forbehold",
+     "rel": "noopener",
+     "synlig": true
+    }
+   ],
+   "brudte": [],
+   "iframes": [],
+   "brede": [],
+   "iframeTekst": [],
+   "marcFelter": [],
+   "firkant": [],
+   "tankestreger": [],
+   "navne": [
+    0,
+    0,
+    0
+   ],
+   "marc": 0
+  },
+  {
+   "side": "assets/vaerktoejer/min-krop/mit-kort.html",
+   "bredde": 390,
+   "konsol": [],
+   "sidefejl": [],
+   "fejlkald": [],
+   "eksterne": [],
+   "http404": [],
+   "title": "Mit kort: min krop i de tre løft",
+   "description": null,
+   "robots": null,
+   "canonical": null,
+   "ogTitle": null,
+   "ogDescription": null,
+   "ogImage": null,
+   "lang": "da",
+   "h1": [
+    "Mit kort: min krop i de tre løft"
+   ],
+   "h2": [
+    "Mine mål",
+    "Squat · bunden",
+    "Dødløft · opstilling",
+    "Bænkpres · stangen på brystet",
+    "Hvad kortet ikke siger"
+   ],
+   "scrollW": 390,
+   "clientW": 390,
+   "hoejde": 2818,
+   "links": [
+    {
+     "href": "index.html",
+     "tekst": "Til siden",
+     "rel": "",
+     "synlig": true
+    }
+   ],
+   "brudte": [],
+   "iframes": [],
+   "brede": [],
+   "iframeTekst": [],
+   "marcFelter": [],
+   "firkant": [],
+   "tankestreger": [
+    "Vandret afstand stang–hofte (cm)\t21,3\t21,3\t0,0",
+    "Vandret afstand stang–knæ (cm)\t−22,2\t−22,2\t0,0",
+    "Vandret afstand stang–lænd (cm)\t7,5\t7,5\t0,0",
+    "Vandret afstand stang–hofte (cm)\t40,1\t40,1\t0,0",
+    "Vandret afstand stang–knæ (cm)\t−0,1\t−0,1\t0,0",
+    "Vandret afstand stang–lænd (cm)\t24,1\t24,1\t0,0",
+    "Afstand stang–skulder, siden og forfra i alt",
+    "Afstand stang–albue, siden og forfra i alt ("
+   ],
+   "navne": [
+    0,
+    0,
+    0
+   ],
+   "marc": 0
+  },
+  {
+   "side": "assets/vaerktoejer/min-krop/mit-kort.html",
+   "bredde": 1280,
+   "konsol": [],
+   "sidefejl": [],
+   "fejlkald": [],
+   "eksterne": [],
+   "http404": [],
+   "title": "Mit kort: min krop i de tre løft",
+   "description": null,
+   "robots": null,
+   "canonical": null,
+   "ogTitle": null,
+   "ogDescription": null,
+   "ogImage": null,
+   "lang": "da",
+   "h1": [
+    "Mit kort: min krop i de tre løft"
+   ],
+   "h2": [
+    "Mine mål",
+    "Squat · bunden",
+    "Dødløft · opstilling",
+    "Bænkpres · stangen på brystet",
+    "Hvad kortet ikke siger"
+   ],
+   "scrollW": 1280,
+   "clientW": 1280,
+   "hoejde": 1295,
+   "links": [
+    {
+     "href": "index.html",
+     "tekst": "Til siden",
+     "rel": "",
+     "synlig": true
+    }
+   ],
+   "brudte": [],
+   "iframes": [],
+   "brede": [],
+   "iframeTekst": [],
+   "marcFelter": [],
+   "firkant": [],
+   "tankestreger": [
+    "Vandret afstand stang–hofte (cm)\t21,3\t21,3\t0,0",
+    "Vandret afstand stang–knæ (cm)\t−22,2\t−22,2\t0,0",
+    "Vandret afstand stang–lænd (cm)\t7,5\t7,5\t0,0",
+    "Vandret afstand stang–hofte (cm)\t40,1\t40,1\t0,0",
+    "Vandret afstand stang–knæ (cm)\t−0,1\t−0,1\t0,0",
+    "Vandret afstand stang–lænd (cm)\t24,1\t24,1\t0,0",
+    "Afstand stang–skulder, siden og forfra i alt",
+    "Afstand stang–albue, siden og forfra i alt ("
+   ],
+   "navne": [
+    0,
+    0,
+    0
+   ],
+   "marc": 0
+  },
+  {
+   "side": "assets/vaerktoejer/tre-loeft/index.html",
+   "bredde": 390,
+   "konsol": [],
+   "sidefejl": [],
+   "fejlkald": [],
+   "eksterne": [],
+   "http404": [],
+   "title": "De tre løft i modellen",
+   "description": null,
+   "robots": null,
+   "canonical": null,
+   "ogTitle": null,
+   "ogDescription": null,
+   "ogImage": null,
+   "lang": "da",
+   "h1": [
+    "De tre løft i modellen"
+   ],
+   "h2": [
+    "Sådan læses figuren",
+    "Skyderne",
+    "Hvad modellen er"
+   ],
+   "scrollW": 390,
+   "clientW": 390,
+   "hoejde": 4101,
+   "links": [],
+   "brudte": [],
+   "iframes": [],
+   "brede": [],
+   "iframeTekst": [],
+   "marcFelter": [],
+   "firkant": [],
+   "tankestreger": [],
+   "navne": [
+    0,
+    0,
+    0
+   ],
+   "marc": 5
+  },
+  {
+   "side": "assets/vaerktoejer/tre-loeft/index.html",
+   "bredde": 1280,
+   "konsol": [],
+   "sidefejl": [],
+   "fejlkald": [],
+   "eksterne": [],
+   "http404": [],
+   "title": "De tre løft i modellen",
+   "description": null,
+   "robots": null,
+   "canonical": null,
+   "ogTitle": null,
+   "ogDescription": null,
+   "ogImage": null,
+   "lang": "da",
+   "h1": [
+    "De tre løft i modellen"
+   ],
+   "h2": [
+    "Sådan læses figuren",
+    "Skyderne",
+    "Hvad modellen er"
+   ],
+   "scrollW": 1280,
+   "clientW": 1280,
+   "hoejde": 2813,
+   "links": [],
+   "brudte": [],
+   "iframes": [],
+   "brede": [],
+   "iframeTekst": [],
+   "marcFelter": [],
+   "firkant": [],
+   "tankestreger": [],
+   "navne": [
+    0,
+    0,
+    0
+   ],
+   "marc": 5
+  }
+ ],
+ "interneLinks": [
+  "vaerktoejer/index.html -> ../index.html => ok",
+  "vaerktoejer/index.html -> ../coaching.html => ok",
+  "vaerktoejer/index.html -> ../resultater.html => ok",
+  "vaerktoejer/index.html -> ../viden.html => ok",
+  "vaerktoejer/index.html -> ../om.html => ok",
+  "vaerktoejer/index.html -> ../coaching.html#ansoeg => ok",
+  "vaerktoejer/index.html -> ../assets/vaerktoejer/min-krop/index.html => ok",
+  "vaerktoejer/index.html -> ../assets/vaerktoejer/tre-loeft/index.html => ok",
+  "vaerktoejer/index.html -> ../privatliv.html => ok",
+  "assets/vaerktoejer/min-krop/index.html -> mit-kort.html#hoejde=178&laar=43%2C6&skinneben=43%2C8&torso=51%2C3&overarm=33%2C1&underarm=26&vaegt=85 => ok",
+  "assets/vaerktoejer/min-krop/kort.html -> mit-kort.html#hoejde=178&laar=43%2C6&skinneben=43%2C8&torso=51%2C3&overarm=33%2C1&underarm=26&vaegt=85 => ok",
+  "assets/vaerktoejer/min-krop/kort.html -> index.html#forbehold => ok",
+  "assets/vaerktoejer/min-krop/mit-kort.html -> index.html => ok"
+ ],
+ "eksterneLinks": [
+  "https://app.entropicoaching.dk",
+  "https://instagram.com/entropicoaching"
+ ],
+ "privateFiler": [
+  "outputs/FORSLAG-TIL-MARC.md",
+  "outputs/MAAL-EFTER.json",
+  "outputs/MAAL-EFTER.md",
+  "outputs/MAAL-FOER.json",
+  "outputs/MAAL-FOER.md",
+  "outputs/RAPPORT-111.md",
+  "outputs/RAPPORT-174.md",
+  "outputs/forside-efter-mobil.png",
+  "outputs/forside-foer-mobil.png",
+  "outputs/skaermbilleder-174/efter-footer.png",
+  "outputs/skaermbilleder-174/efter-hero.png",
+  "outputs/skaermbilleder-174/efter-navn.png",
+  "outputs/skaermbilleder-174/foer-footer.png",
+  "outputs/skaermbilleder-174/foer-hero.png",
+  "outputs/skaermbilleder-174/foer-navn.png",
+  "scripts/maal.mjs",
+  "scripts/optimer-billede.mjs"
+ ],
+ "antalFiler": 82
+}
