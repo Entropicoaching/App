@@ -1,0 +1,1988 @@
+{
+ "kilde": "entropi-loeftmodel-dhruva main (484 merget)",
+ "kroppe": {
+  "snit": {
+   "hoejde": 178,
+   "vaegt": 85,
+   "laar": 43.6,
+   "skinneben": 43.8,
+   "torso": 51.3,
+   "overarm": 33.1,
+   "underarm": 26
+  },
+  "A": {
+   "hoejde": 180,
+   "vaegt": 90,
+   "laar": 47.6,
+   "skinneben": 43.4,
+   "torso": 48.7,
+   "overarm": 33.5,
+   "underarm": 26.3
+  },
+  "B": {
+   "hoejde": 170,
+   "vaegt": 75,
+   "laar": 38.7,
+   "skinneben": 42.7,
+   "torso": 51.9,
+   "overarm": 30,
+   "underarm": 23.6
+  },
+  "C": {
+   "hoejde": 188,
+   "vaegt": 105,
+   "laar": 46.1,
+   "skinneben": 46.2,
+   "torso": 52.5,
+   "overarm": 37.4,
+   "underarm": 29.1
+  },
+  "lille": {
+   "hoejde": 160,
+   "vaegt": 60,
+   "laar": 39.2,
+   "skinneben": 39.4,
+   "torso": 46.1,
+   "overarm": 29.8,
+   "underarm": 23.4
+  },
+  "stor": {
+   "hoejde": 196,
+   "vaegt": 110,
+   "laar": 48,
+   "skinneben": 48.2,
+   "torso": 56.4,
+   "overarm": 36.5,
+   "underarm": 28.6
+  }
+ },
+ "sideCm": {
+  "stang": 69,
+  "midtfod": 10,
+  "ankel": 10,
+  "knae": 11,
+  "hofte": 17,
+  "skulder": 19
+ },
+ "ortho": {
+  "squat-bund": {
+   "torso": 49.2,
+   "hofte": 36.9,
+   "knae": 46.1,
+   "stang": -0.8,
+   "kontrol": {
+    "forhold": 100,
+    "uenig": false
+   },
+   "model": {
+    "torso": 49.2,
+    "hofte": 36.9,
+    "knae": 46.1
+   }
+  },
+  "dl-gulv": {
+   "torso": 61.5,
+   "hofte": 51.4,
+   "knae": 99.9,
+   "stang": 3,
+   "kontrol": {
+    "forhold": 100,
+    "uenig": false
+   },
+   "model": {
+    "torso": 61.5,
+    "hofte": 51.4,
+    "knae": 99.9
+   }
+  },
+  "dl-knae": {
+   "torso": 53.3,
+   "hofte": 94.8,
+   "knae": 147,
+   "stang": 0,
+   "kontrol": {
+    "forhold": 100,
+    "uenig": false
+   },
+   "model": {
+    "torso": 53.3,
+    "hofte": 94.8,
+    "knae": 147
+   }
+  },
+  "baenk-bryst": {
+   "torso": -87,
+   "hofte": 180,
+   "knae": 80.9,
+   "stang": -65.3,
+   "kontrol": {
+    "forhold": 98,
+    "uenig": false
+   },
+   "model": {
+    "torso": null,
+    "hofte": null,
+    "knae": null
+   }
+  }
+ },
+ "perspektiv": {
+  "snit": {
+   "squat-bund": {
+    "200": {
+     "skalaKontrolPct": 70.6,
+     "advarer": true,
+     "skive": {
+      "torso": -0.2,
+      "hofte": 0.2,
+      "knae": 0,
+      "stangFraMidtfod": 0.3,
+      "stangHofte": -6.1,
+      "skulderForanStang": -4.8
+     },
+     "krop": {
+      "torso": -0.2,
+      "hofte": 0.2,
+      "knae": 0,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.3,
+      "skulderForanStang": 0.4
+     }
+    },
+    "300": {
+     "skalaKontrolPct": 80.9,
+     "advarer": true,
+     "skive": {
+      "torso": -0.1,
+      "hofte": 0.2,
+      "knae": 0,
+      "stangFraMidtfod": 0.2,
+      "stangHofte": -3.9,
+      "skulderForanStang": -3.1
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": 0.2,
+      "knae": 0,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.2,
+      "skulderForanStang": 0.3
+     }
+    },
+    "400": {
+     "skalaKontrolPct": 85.9,
+     "advarer": true,
+     "skive": {
+      "torso": -0.1,
+      "hofte": 0.1,
+      "knae": 0,
+      "stangFraMidtfod": 0.1,
+      "stangHofte": -2.9,
+      "skulderForanStang": -2.3
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": 0.1,
+      "knae": 0,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.1,
+      "skulderForanStang": 0.2
+     }
+    },
+    "600": {
+     "skalaKontrolPct": 90.7,
+     "advarer": false,
+     "skive": {
+      "torso": -0.1,
+      "hofte": 0.1,
+      "knae": 0,
+      "stangFraMidtfod": 0.1,
+      "stangHofte": -1.9,
+      "skulderForanStang": -1.5
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": 0.1,
+      "knae": 0,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.1,
+      "skulderForanStang": 0.1
+     }
+    },
+    "1000": {
+     "skalaKontrolPct": 94.5,
+     "advarer": false,
+     "skive": {
+      "torso": 0,
+      "hofte": 0,
+      "knae": 0,
+      "stangFraMidtfod": 0,
+      "stangHofte": -1.1,
+      "skulderForanStang": -0.9
+     },
+     "krop": {
+      "torso": 0,
+      "hofte": 0,
+      "knae": 0,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.1,
+      "skulderForanStang": 0.1
+     }
+    }
+   },
+   "dl-gulv": {
+    "200": {
+     "skalaKontrolPct": 70.7,
+     "advarer": true,
+     "skive": {
+      "torso": -0.2,
+      "hofte": -0.4,
+      "knae": -0.7,
+      "stangFraMidtfod": -0.9,
+      "stangHofte": -11.4,
+      "skulderForanStang": -1.4
+     },
+     "krop": {
+      "torso": -0.2,
+      "hofte": -0.4,
+      "knae": -0.7,
+      "stangFraMidtfod": -0.1,
+      "stangHofte": 0.5,
+      "skulderForanStang": 0.1
+     }
+    },
+    "300": {
+     "skalaKontrolPct": 81,
+     "advarer": true,
+     "skive": {
+      "torso": -0.2,
+      "hofte": -0.3,
+      "knae": -0.4,
+      "stangFraMidtfod": -0.6,
+      "stangHofte": -7.4,
+      "skulderForanStang": -0.9
+     },
+     "krop": {
+      "torso": -0.2,
+      "hofte": -0.3,
+      "knae": -0.4,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.3,
+      "skulderForanStang": 0.1
+     }
+    },
+    "400": {
+     "skalaKontrolPct": 85.9,
+     "advarer": true,
+     "skive": {
+      "torso": -0.1,
+      "hofte": -0.2,
+      "knae": -0.3,
+      "stangFraMidtfod": -0.5,
+      "stangHofte": -5.4,
+      "skulderForanStang": -0.7
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": -0.2,
+      "knae": -0.3,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.2,
+      "skulderForanStang": 0.1
+     }
+    },
+    "600": {
+     "skalaKontrolPct": 90.7,
+     "advarer": false,
+     "skive": {
+      "torso": -0.1,
+      "hofte": -0.1,
+      "knae": -0.2,
+      "stangFraMidtfod": -0.3,
+      "stangHofte": -3.6,
+      "skulderForanStang": -0.4
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": -0.1,
+      "knae": -0.2,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.2,
+      "skulderForanStang": 0
+     }
+    },
+    "1000": {
+     "skalaKontrolPct": 94.5,
+     "advarer": false,
+     "skive": {
+      "torso": 0,
+      "hofte": -0.1,
+      "knae": -0.1,
+      "stangFraMidtfod": -0.2,
+      "stangHofte": -2.1,
+      "skulderForanStang": -0.3
+     },
+     "krop": {
+      "torso": 0,
+      "hofte": -0.1,
+      "knae": -0.1,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.1,
+      "skulderForanStang": 0
+     }
+    }
+   },
+   "dl-knae": {
+    "200": {
+     "skalaKontrolPct": 70.4,
+     "advarer": true,
+     "skive": {
+      "torso": -0.2,
+      "hofte": -0.8,
+      "knae": -1,
+      "stangFraMidtfod": 0,
+      "stangHofte": -8.3,
+      "skulderForanStang": -3.3
+     },
+     "krop": {
+      "torso": -0.2,
+      "hofte": -0.8,
+      "knae": -1,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.5,
+      "skulderForanStang": 0.3
+     }
+    },
+    "300": {
+     "skalaKontrolPct": 80.7,
+     "advarer": true,
+     "skive": {
+      "torso": -0.1,
+      "hofte": -0.5,
+      "knae": -0.7,
+      "stangFraMidtfod": 0,
+      "stangHofte": -5.3,
+      "skulderForanStang": -2.1
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": -0.5,
+      "knae": -0.7,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.3,
+      "skulderForanStang": 0.2
+     }
+    },
+    "400": {
+     "skalaKontrolPct": 85.7,
+     "advarer": true,
+     "skive": {
+      "torso": -0.1,
+      "hofte": -0.4,
+      "knae": -0.5,
+      "stangFraMidtfod": 0,
+      "stangHofte": -4,
+      "skulderForanStang": -1.6
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": -0.4,
+      "knae": -0.5,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.2,
+      "skulderForanStang": 0.2
+     }
+    },
+    "600": {
+     "skalaKontrolPct": 90.6,
+     "advarer": false,
+     "skive": {
+      "torso": -0.1,
+      "hofte": -0.3,
+      "knae": -0.3,
+      "stangFraMidtfod": 0,
+      "stangHofte": -2.6,
+      "skulderForanStang": -1
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": -0.3,
+      "knae": -0.3,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.2,
+      "skulderForanStang": 0.1
+     }
+    },
+    "1000": {
+     "skalaKontrolPct": 94.4,
+     "advarer": false,
+     "skive": {
+      "torso": 0,
+      "hofte": -0.2,
+      "knae": -0.2,
+      "stangFraMidtfod": 0,
+      "stangHofte": -1.5,
+      "skulderForanStang": -0.6
+     },
+     "krop": {
+      "torso": 0,
+      "hofte": -0.2,
+      "knae": -0.2,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.1,
+      "skulderForanStang": 0.1
+     }
+    }
+   }
+  },
+  "A": {
+   "squat-bund": {
+    "200": {
+     "skalaKontrolPct": 70.6,
+     "advarer": true,
+     "skive": {
+      "torso": -0.2,
+      "hofte": 0.2,
+      "knae": 0,
+      "stangFraMidtfod": 0.2,
+      "stangHofte": -6.5,
+      "skulderForanStang": -4.6
+     },
+     "krop": {
+      "torso": -0.2,
+      "hofte": 0.2,
+      "knae": 0,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.3,
+      "skulderForanStang": 0.4
+     }
+    },
+    "300": {
+     "skalaKontrolPct": 80.9,
+     "advarer": true,
+     "skive": {
+      "torso": -0.1,
+      "hofte": 0.1,
+      "knae": 0,
+      "stangFraMidtfod": 0.1,
+      "stangHofte": -4.2,
+      "skulderForanStang": -3
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": 0.1,
+      "knae": 0,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.2,
+      "skulderForanStang": 0.3
+     }
+    },
+    "400": {
+     "skalaKontrolPct": 85.9,
+     "advarer": true,
+     "skive": {
+      "torso": -0.1,
+      "hofte": 0.1,
+      "knae": 0,
+      "stangFraMidtfod": 0.1,
+      "stangHofte": -3.1,
+      "skulderForanStang": -2.2
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": 0.1,
+      "knae": 0,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.2,
+      "skulderForanStang": 0.2
+     }
+    },
+    "600": {
+     "skalaKontrolPct": 90.7,
+     "advarer": false,
+     "skive": {
+      "torso": -0.1,
+      "hofte": 0.1,
+      "knae": 0,
+      "stangFraMidtfod": 0.1,
+      "stangHofte": -2.1,
+      "skulderForanStang": -1.4
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": 0.1,
+      "knae": 0,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.1,
+      "skulderForanStang": 0.1
+     }
+    },
+    "1000": {
+     "skalaKontrolPct": 94.5,
+     "advarer": false,
+     "skive": {
+      "torso": 0,
+      "hofte": 0,
+      "knae": 0,
+      "stangFraMidtfod": 0,
+      "stangHofte": -1.2,
+      "skulderForanStang": -0.8
+     },
+     "krop": {
+      "torso": 0,
+      "hofte": 0,
+      "knae": 0,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.1,
+      "skulderForanStang": 0.1
+     }
+    }
+   },
+   "dl-gulv": {
+    "200": {
+     "skalaKontrolPct": 70.6,
+     "advarer": true,
+     "skive": {
+      "torso": -0.2,
+      "hofte": -0.6,
+      "knae": -0.9,
+      "stangFraMidtfod": -0.9,
+      "stangHofte": -11.4,
+      "skulderForanStang": -1.4
+     },
+     "krop": {
+      "torso": -0.2,
+      "hofte": -0.6,
+      "knae": -0.9,
+      "stangFraMidtfod": -0.1,
+      "stangHofte": 0.6,
+      "skulderForanStang": 0.1
+     }
+    },
+    "300": {
+     "skalaKontrolPct": 80.9,
+     "advarer": true,
+     "skive": {
+      "torso": -0.1,
+      "hofte": -0.4,
+      "knae": -0.6,
+      "stangFraMidtfod": -0.6,
+      "stangHofte": -7.4,
+      "skulderForanStang": -0.9
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": -0.4,
+      "knae": -0.6,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.4,
+      "skulderForanStang": 0.1
+     }
+    },
+    "400": {
+     "skalaKontrolPct": 85.8,
+     "advarer": true,
+     "skive": {
+      "torso": -0.1,
+      "hofte": -0.3,
+      "knae": -0.4,
+      "stangFraMidtfod": -0.5,
+      "stangHofte": -5.5,
+      "skulderForanStang": -0.7
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": -0.3,
+      "knae": -0.4,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.3,
+      "skulderForanStang": 0.1
+     }
+    },
+    "600": {
+     "skalaKontrolPct": 90.7,
+     "advarer": false,
+     "skive": {
+      "torso": -0.1,
+      "hofte": -0.2,
+      "knae": -0.3,
+      "stangFraMidtfod": -0.3,
+      "stangHofte": -3.6,
+      "skulderForanStang": -0.4
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": -0.2,
+      "knae": -0.3,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.2,
+      "skulderForanStang": 0
+     }
+    },
+    "1000": {
+     "skalaKontrolPct": 94.5,
+     "advarer": false,
+     "skive": {
+      "torso": 0,
+      "hofte": -0.1,
+      "knae": -0.2,
+      "stangFraMidtfod": -0.2,
+      "stangHofte": -2.1,
+      "skulderForanStang": -0.3
+     },
+     "krop": {
+      "torso": 0,
+      "hofte": -0.1,
+      "knae": -0.2,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.1,
+      "skulderForanStang": 0
+     }
+    }
+   },
+   "dl-knae": {
+    "200": {
+     "skalaKontrolPct": 70.3,
+     "advarer": true,
+     "skive": {
+      "torso": -0.2,
+      "hofte": -0.8,
+      "knae": -1,
+      "stangFraMidtfod": 0,
+      "stangHofte": -8.1,
+      "skulderForanStang": -3.3
+     },
+     "krop": {
+      "torso": -0.2,
+      "hofte": -0.8,
+      "knae": -1,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.6,
+      "skulderForanStang": 0.4
+     }
+    },
+    "300": {
+     "skalaKontrolPct": 80.7,
+     "advarer": true,
+     "skive": {
+      "torso": -0.1,
+      "hofte": -0.5,
+      "knae": -0.6,
+      "stangFraMidtfod": 0,
+      "stangHofte": -5.3,
+      "skulderForanStang": -2.1
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": -0.5,
+      "knae": -0.6,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.4,
+      "skulderForanStang": 0.2
+     }
+    },
+    "400": {
+     "skalaKontrolPct": 85.7,
+     "advarer": true,
+     "skive": {
+      "torso": -0.1,
+      "hofte": -0.4,
+      "knae": -0.5,
+      "stangFraMidtfod": 0,
+      "stangHofte": -3.9,
+      "skulderForanStang": -1.6
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": -0.4,
+      "knae": -0.5,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.3,
+      "skulderForanStang": 0.2
+     }
+    },
+    "600": {
+     "skalaKontrolPct": 90.6,
+     "advarer": false,
+     "skive": {
+      "torso": -0.1,
+      "hofte": -0.3,
+      "knae": -0.3,
+      "stangFraMidtfod": 0,
+      "stangHofte": -2.6,
+      "skulderForanStang": -1
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": -0.3,
+      "knae": -0.3,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.2,
+      "skulderForanStang": 0.1
+     }
+    },
+    "1000": {
+     "skalaKontrolPct": 94.4,
+     "advarer": false,
+     "skive": {
+      "torso": 0,
+      "hofte": -0.1,
+      "knae": -0.2,
+      "stangFraMidtfod": 0,
+      "stangHofte": -1.5,
+      "skulderForanStang": -0.6
+     },
+     "krop": {
+      "torso": 0,
+      "hofte": -0.1,
+      "knae": -0.2,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.1,
+      "skulderForanStang": 0.1
+     }
+    }
+   }
+  },
+  "B": {
+   "squat-bund": {
+    "200": {
+     "skalaKontrolPct": 70.4,
+     "advarer": true,
+     "skive": {
+      "torso": -0.2,
+      "hofte": 0.2,
+      "knae": 0,
+      "stangFraMidtfod": 0.1,
+      "stangHofte": -6.1,
+      "skulderForanStang": -4.9
+     },
+     "krop": {
+      "torso": -0.2,
+      "hofte": 0.2,
+      "knae": 0,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.3,
+      "skulderForanStang": 0.4
+     }
+    },
+    "300": {
+     "skalaKontrolPct": 80.8,
+     "advarer": true,
+     "skive": {
+      "torso": -0.1,
+      "hofte": 0.2,
+      "knae": 0,
+      "stangFraMidtfod": 0.1,
+      "stangHofte": -4,
+      "skulderForanStang": -3.2
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": 0.2,
+      "knae": 0,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.2,
+      "skulderForanStang": 0.3
+     }
+    },
+    "400": {
+     "skalaKontrolPct": 85.7,
+     "advarer": true,
+     "skive": {
+      "torso": -0.1,
+      "hofte": 0.1,
+      "knae": 0,
+      "stangFraMidtfod": 0.1,
+      "stangHofte": -2.9,
+      "skulderForanStang": -2.3
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": 0.1,
+      "knae": 0,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.1,
+      "skulderForanStang": 0.2
+     }
+    },
+    "600": {
+     "skalaKontrolPct": 90.6,
+     "advarer": false,
+     "skive": {
+      "torso": -0.1,
+      "hofte": 0.1,
+      "knae": 0,
+      "stangFraMidtfod": 0,
+      "stangHofte": -1.9,
+      "skulderForanStang": -1.5
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": 0.1,
+      "knae": 0,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.1,
+      "skulderForanStang": 0.1
+     }
+    },
+    "1000": {
+     "skalaKontrolPct": 94.4,
+     "advarer": false,
+     "skive": {
+      "torso": 0,
+      "hofte": 0,
+      "knae": 0,
+      "stangFraMidtfod": 0,
+      "stangHofte": -1.1,
+      "skulderForanStang": -0.9
+     },
+     "krop": {
+      "torso": 0,
+      "hofte": 0,
+      "knae": 0,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0,
+      "skulderForanStang": 0.1
+     }
+    }
+   },
+   "dl-gulv": {
+    "200": {
+     "skalaKontrolPct": 70.6,
+     "advarer": true,
+     "skive": {
+      "torso": -0.2,
+      "hofte": -0.1,
+      "knae": -0.4,
+      "stangFraMidtfod": -0.9,
+      "stangHofte": -11.1,
+      "skulderForanStang": -1.4
+     },
+     "krop": {
+      "torso": -0.2,
+      "hofte": -0.1,
+      "knae": -0.4,
+      "stangFraMidtfod": -0.1,
+      "stangHofte": 0.4,
+      "skulderForanStang": 0.1
+     }
+    },
+    "300": {
+     "skalaKontrolPct": 80.9,
+     "advarer": true,
+     "skive": {
+      "torso": -0.2,
+      "hofte": -0.1,
+      "knae": -0.2,
+      "stangFraMidtfod": -0.6,
+      "stangHofte": -7.2,
+      "skulderForanStang": -0.9
+     },
+     "krop": {
+      "torso": -0.2,
+      "hofte": -0.1,
+      "knae": -0.2,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.3,
+      "skulderForanStang": 0.1
+     }
+    },
+    "400": {
+     "skalaKontrolPct": 85.8,
+     "advarer": true,
+     "skive": {
+      "torso": -0.1,
+      "hofte": -0.1,
+      "knae": -0.2,
+      "stangFraMidtfod": -0.5,
+      "stangHofte": -5.3,
+      "skulderForanStang": -0.7
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": -0.1,
+      "knae": -0.2,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.2,
+      "skulderForanStang": 0.1
+     }
+    },
+    "600": {
+     "skalaKontrolPct": 90.7,
+     "advarer": false,
+     "skive": {
+      "torso": -0.1,
+      "hofte": 0,
+      "knae": -0.1,
+      "stangFraMidtfod": -0.3,
+      "stangHofte": -3.5,
+      "skulderForanStang": -0.4
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": 0,
+      "knae": -0.1,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.1,
+      "skulderForanStang": 0
+     }
+    },
+    "1000": {
+     "skalaKontrolPct": 94.4,
+     "advarer": false,
+     "skive": {
+      "torso": 0,
+      "hofte": 0,
+      "knae": -0.1,
+      "stangFraMidtfod": -0.2,
+      "stangHofte": -2.1,
+      "skulderForanStang": -0.3
+     },
+     "krop": {
+      "torso": 0,
+      "hofte": 0,
+      "knae": -0.1,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.1,
+      "skulderForanStang": 0
+     }
+    }
+   },
+   "dl-knae": {
+    "200": {
+     "skalaKontrolPct": 70.2,
+     "advarer": true,
+     "skive": {
+      "torso": -0.2,
+      "hofte": -0.9,
+      "knae": -1,
+      "stangFraMidtfod": 0,
+      "stangHofte": -8.6,
+      "skulderForanStang": -3.4
+     },
+     "krop": {
+      "torso": -0.2,
+      "hofte": -0.9,
+      "knae": -1,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.4,
+      "skulderForanStang": 0.3
+     }
+    },
+    "300": {
+     "skalaKontrolPct": 80.6,
+     "advarer": true,
+     "skive": {
+      "torso": -0.1,
+      "hofte": -0.6,
+      "knae": -0.7,
+      "stangFraMidtfod": 0,
+      "stangHofte": -5.6,
+      "skulderForanStang": -2.2
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": -0.6,
+      "knae": -0.7,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.3,
+      "skulderForanStang": 0.2
+     }
+    },
+    "400": {
+     "skalaKontrolPct": 85.6,
+     "advarer": true,
+     "skive": {
+      "torso": -0.1,
+      "hofte": -0.4,
+      "knae": -0.5,
+      "stangFraMidtfod": 0,
+      "stangHofte": -4.1,
+      "skulderForanStang": -1.6
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": -0.4,
+      "knae": -0.5,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.2,
+      "skulderForanStang": 0.1
+     }
+    },
+    "600": {
+     "skalaKontrolPct": 90.5,
+     "advarer": false,
+     "skive": {
+      "torso": -0.1,
+      "hofte": -0.3,
+      "knae": -0.3,
+      "stangFraMidtfod": 0,
+      "stangHofte": -2.7,
+      "skulderForanStang": -1
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": -0.3,
+      "knae": -0.3,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.1,
+      "skulderForanStang": 0.1
+     }
+    },
+    "1000": {
+     "skalaKontrolPct": 94.4,
+     "advarer": false,
+     "skive": {
+      "torso": 0,
+      "hofte": -0.2,
+      "knae": -0.2,
+      "stangFraMidtfod": 0,
+      "stangHofte": -1.6,
+      "skulderForanStang": -0.6
+     },
+     "krop": {
+      "torso": 0,
+      "hofte": -0.2,
+      "knae": -0.2,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.1,
+      "skulderForanStang": 0.1
+     }
+    }
+   }
+  },
+  "C": {
+   "squat-bund": {
+    "200": {
+     "skalaKontrolPct": 70.9,
+     "advarer": true,
+     "skive": {
+      "torso": -0.2,
+      "hofte": 0.2,
+      "knae": -0.1,
+      "stangFraMidtfod": 0.3,
+      "stangHofte": -6.1,
+      "skulderForanStang": -4.8
+     },
+     "krop": {
+      "torso": -0.2,
+      "hofte": 0.2,
+      "knae": -0.1,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.3,
+      "skulderForanStang": 0.5
+     }
+    },
+    "300": {
+     "skalaKontrolPct": 81.1,
+     "advarer": true,
+     "skive": {
+      "torso": -0.1,
+      "hofte": 0.2,
+      "knae": 0,
+      "stangFraMidtfod": 0.2,
+      "stangHofte": -4,
+      "skulderForanStang": -3.1
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": 0.2,
+      "knae": 0,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.2,
+      "skulderForanStang": 0.3
+     }
+    },
+    "400": {
+     "skalaKontrolPct": 86,
+     "advarer": true,
+     "skive": {
+      "torso": -0.1,
+      "hofte": 0.1,
+      "knae": 0,
+      "stangFraMidtfod": 0.2,
+      "stangHofte": -2.9,
+      "skulderForanStang": -2.3
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": 0.1,
+      "knae": 0,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.2,
+      "skulderForanStang": 0.2
+     }
+    },
+    "600": {
+     "skalaKontrolPct": 90.8,
+     "advarer": false,
+     "skive": {
+      "torso": -0.1,
+      "hofte": 0.1,
+      "knae": 0,
+      "stangFraMidtfod": 0.1,
+      "stangHofte": -1.9,
+      "skulderForanStang": -1.5
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": 0.1,
+      "knae": 0,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.1,
+      "skulderForanStang": 0.1
+     }
+    },
+    "1000": {
+     "skalaKontrolPct": 94.5,
+     "advarer": false,
+     "skive": {
+      "torso": 0,
+      "hofte": 0,
+      "knae": 0,
+      "stangFraMidtfod": 0.1,
+      "stangHofte": -1.1,
+      "skulderForanStang": -0.9
+     },
+     "krop": {
+      "torso": 0,
+      "hofte": 0,
+      "knae": 0,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.1,
+      "skulderForanStang": 0.1
+     }
+    }
+   },
+   "dl-gulv": {
+    "200": {
+     "skalaKontrolPct": 70.9,
+     "advarer": true,
+     "skive": {
+      "torso": -0.3,
+      "hofte": -0.5,
+      "knae": -0.8,
+      "stangFraMidtfod": -0.9,
+      "stangHofte": -11.2,
+      "skulderForanStang": -1.4
+     },
+     "krop": {
+      "torso": -0.3,
+      "hofte": -0.5,
+      "knae": -0.8,
+      "stangFraMidtfod": -0.1,
+      "stangHofte": 0.6,
+      "skulderForanStang": 0.1
+     }
+    },
+    "300": {
+     "skalaKontrolPct": 81.1,
+     "advarer": true,
+     "skive": {
+      "torso": -0.2,
+      "hofte": -0.3,
+      "knae": -0.5,
+      "stangFraMidtfod": -0.6,
+      "stangHofte": -7.2,
+      "skulderForanStang": -0.9
+     },
+     "krop": {
+      "torso": -0.2,
+      "hofte": -0.3,
+      "knae": -0.5,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.4,
+      "skulderForanStang": 0.1
+     }
+    },
+    "400": {
+     "skalaKontrolPct": 86,
+     "advarer": true,
+     "skive": {
+      "torso": -0.1,
+      "hofte": -0.2,
+      "knae": -0.4,
+      "stangFraMidtfod": -0.5,
+      "stangHofte": -5.3,
+      "skulderForanStang": -0.6
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": -0.2,
+      "knae": -0.4,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.3,
+      "skulderForanStang": 0.1
+     }
+    },
+    "600": {
+     "skalaKontrolPct": 90.8,
+     "advarer": false,
+     "skive": {
+      "torso": -0.1,
+      "hofte": -0.2,
+      "knae": -0.3,
+      "stangFraMidtfod": -0.3,
+      "stangHofte": -3.5,
+      "skulderForanStang": -0.4
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": -0.2,
+      "knae": -0.3,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.2,
+      "skulderForanStang": 0
+     }
+    },
+    "1000": {
+     "skalaKontrolPct": 94.5,
+     "advarer": false,
+     "skive": {
+      "torso": 0,
+      "hofte": -0.1,
+      "knae": -0.1,
+      "stangFraMidtfod": -0.2,
+      "stangHofte": -2.1,
+      "skulderForanStang": -0.2
+     },
+     "krop": {
+      "torso": 0,
+      "hofte": -0.1,
+      "knae": -0.1,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.1,
+      "skulderForanStang": 0
+     }
+    }
+   },
+   "dl-knae": {
+    "200": {
+     "skalaKontrolPct": 70.6,
+     "advarer": true,
+     "skive": {
+      "torso": -0.2,
+      "hofte": -0.8,
+      "knae": -1,
+      "stangFraMidtfod": 0,
+      "stangHofte": -7.5,
+      "skulderForanStang": -3.3
+     },
+     "krop": {
+      "torso": -0.2,
+      "hofte": -0.8,
+      "knae": -1,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.5,
+      "skulderForanStang": 0.4
+     }
+    },
+    "300": {
+     "skalaKontrolPct": 80.9,
+     "advarer": true,
+     "skive": {
+      "torso": -0.1,
+      "hofte": -0.5,
+      "knae": -0.6,
+      "stangFraMidtfod": 0,
+      "stangHofte": -4.9,
+      "skulderForanStang": -2.1
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": -0.5,
+      "knae": -0.6,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.3,
+      "skulderForanStang": 0.2
+     }
+    },
+    "400": {
+     "skalaKontrolPct": 85.8,
+     "advarer": true,
+     "skive": {
+      "torso": -0.1,
+      "hofte": -0.4,
+      "knae": -0.5,
+      "stangFraMidtfod": 0,
+      "stangHofte": -3.6,
+      "skulderForanStang": -1.5
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": -0.4,
+      "knae": -0.5,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.3,
+      "skulderForanStang": 0.2
+     }
+    },
+    "600": {
+     "skalaKontrolPct": 90.7,
+     "advarer": false,
+     "skive": {
+      "torso": -0.1,
+      "hofte": -0.3,
+      "knae": -0.3,
+      "stangFraMidtfod": 0,
+      "stangHofte": -2.4,
+      "skulderForanStang": -1
+     },
+     "krop": {
+      "torso": -0.1,
+      "hofte": -0.3,
+      "knae": -0.3,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.2,
+      "skulderForanStang": 0.1
+     }
+    },
+    "1000": {
+     "skalaKontrolPct": 94.5,
+     "advarer": false,
+     "skive": {
+      "torso": 0,
+      "hofte": -0.1,
+      "knae": -0.2,
+      "stangFraMidtfod": 0,
+      "stangHofte": -1.4,
+      "skulderForanStang": -0.6
+     },
+     "krop": {
+      "torso": 0,
+      "hofte": -0.1,
+      "knae": -0.2,
+      "stangFraMidtfod": 0,
+      "stangHofte": 0.1,
+      "skulderForanStang": 0.1
+     }
+    }
+   }
+  }
+ },
+ "udenMinKrop": {
+  "lille": {
+   "hoejde": 160,
+   "skalaKontrolPct": 89.9,
+   "advarer": true,
+   "kroppensSkalaSkulderForanStang": 5.6,
+   "sandt": 5
+  },
+  "stor": {
+   "hoejde": 196,
+   "skalaKontrolPct": 110.1,
+   "advarer": true,
+   "kroppensSkalaSkulderForanStang": 4.5,
+   "sandt": 5
+  }
+ },
+ "klikfejl": {
+  "squat-bund": {
+   "hoften ved hoftekammen/baeltet (8 cm op)": {
+    "torso": 7.5,
+    "hofte": 3,
+    "knae": 10.5,
+    "stangFraMidtfod": 0,
+    "stangHofte": 0,
+    "skulderForanStang": 0
+   },
+   "hoften 3 cm for hoejt": {
+    "torso": 2.6,
+    "hofte": 1.3,
+    "knae": 3.9,
+    "stangFraMidtfod": 0,
+    "stangHofte": 0,
+    "skulderForanStang": 0
+   },
+   "hoften i balden (5 cm bag leddet)": {
+    "torso": 3.4,
+    "hofte": -3,
+    "knae": 0.4,
+    "stangFraMidtfod": 0,
+    "stangHofte": 5,
+    "skulderForanStang": 0
+   },
+   "skulderen midt i leddet (4 cm under acromion)": {
+    "torso": 3.6,
+    "hofte": -3.6,
+    "knae": 0,
+    "stangFraMidtfod": 0,
+    "stangHofte": 0,
+    "skulderForanStang": 0
+   },
+   "knaeet paa knaeskallen (3 cm frem)": {
+    "torso": 0,
+    "hofte": 0.3,
+    "knae": -2.6,
+    "stangFraMidtfod": 0,
+    "stangHofte": 0,
+    "skulderForanStang": 0
+   },
+   "midtfoden midt paa skoen (2 cm frem)": {
+    "torso": 0,
+    "hofte": 0,
+    "knae": 0,
+    "stangFraMidtfod": -2,
+    "stangHofte": 0,
+    "skulderForanStang": 0
+   },
+   "anklen 2 cm for lavt": {
+    "torso": 0,
+    "hofte": 0,
+    "knae": 1.6,
+    "stangFraMidtfod": 0,
+    "stangHofte": 0,
+    "skulderForanStang": 0
+   }
+  },
+  "dl-gulv": {
+   "hoften ved hoftekammen/baeltet (8 cm op)": {
+    "torso": 8.4,
+    "hofte": 0.5,
+    "knae": 9,
+    "stangFraMidtfod": 0,
+    "stangHofte": 0,
+    "skulderForanStang": 0
+   },
+   "hoften 3 cm for hoejt": {
+    "torso": 3,
+    "hofte": 0.5,
+    "knae": 3.5,
+    "stangFraMidtfod": 0,
+    "stangHofte": 0,
+    "skulderForanStang": 0
+   },
+   "hoften i balden (5 cm bag leddet)": {
+    "torso": 2.5,
+    "hofte": -4.8,
+    "knae": -2.3,
+    "stangFraMidtfod": 0,
+    "stangHofte": 5,
+    "skulderForanStang": 0
+   },
+   "skulderen midt i leddet (4 cm under acromion)": {
+    "torso": 4.1,
+    "hofte": -4.1,
+    "knae": 0,
+    "stangFraMidtfod": 0,
+    "stangHofte": 0,
+    "skulderForanStang": 0
+   },
+   "knaeet paa knaeskallen (3 cm frem)": {
+    "torso": 0,
+    "hofte": -1.4,
+    "knae": -5.2,
+    "stangFraMidtfod": 0,
+    "stangHofte": 0,
+    "skulderForanStang": 0
+   },
+   "midtfoden midt paa skoen (2 cm frem)": {
+    "torso": 0,
+    "hofte": 0,
+    "knae": 0,
+    "stangFraMidtfod": -2,
+    "stangHofte": 0,
+    "skulderForanStang": 0
+   },
+   "anklen 2 cm for lavt": {
+    "torso": 0,
+    "hofte": 0,
+    "knae": 0.6,
+    "stangFraMidtfod": 0,
+    "stangHofte": 0,
+    "skulderForanStang": 0
+   }
+  },
+  "dl-knae": {
+   "hoften ved hoftekammen/baeltet (8 cm op)": {
+    "torso": 7.9,
+    "hofte": -3.1,
+    "knae": 4.8,
+    "stangFraMidtfod": 0,
+    "stangHofte": 0,
+    "skulderForanStang": 0
+   },
+   "hoften 3 cm for hoejt": {
+    "torso": 2.8,
+    "hofte": -0.8,
+    "knae": 2,
+    "stangFraMidtfod": 0,
+    "stangHofte": 0,
+    "skulderForanStang": 0
+   },
+   "hoften i balden (5 cm bag leddet)": {
+    "torso": 3.1,
+    "hofte": -8.3,
+    "knae": -5.2,
+    "stangFraMidtfod": 0,
+    "stangHofte": 5,
+    "skulderForanStang": 0
+   },
+   "skulderen midt i leddet (4 cm under acromion)": {
+    "torso": 3.8,
+    "hofte": -3.8,
+    "knae": 0,
+    "stangFraMidtfod": 0,
+    "stangHofte": 0,
+    "skulderForanStang": 0
+   },
+   "knaeet paa knaeskallen (3 cm frem)": {
+    "torso": 0,
+    "hofte": -3.2,
+    "knae": -7.1,
+    "stangFraMidtfod": 0,
+    "stangHofte": 0,
+    "skulderForanStang": 0
+   },
+   "midtfoden midt paa skoen (2 cm frem)": {
+    "torso": 0,
+    "hofte": 0,
+    "knae": 0,
+    "stangFraMidtfod": -2,
+    "stangHofte": 0,
+    "skulderForanStang": 0
+   },
+   "anklen 2 cm for lavt": {
+    "torso": 0,
+    "hofte": 0,
+    "knae": 0,
+    "stangFraMidtfod": 0,
+    "stangHofte": 0,
+    "skulderForanStang": 0
+   }
+  }
+ },
+ "spredning": {
+  "squat-bund": {
+   "1 cm": {
+    "torso": 1.3,
+    "hofte": 1.6,
+    "knae": 1.8,
+    "stang": 1.1
+   },
+   "2 cm": {
+    "torso": 2.5,
+    "hofte": 3,
+    "knae": 3.6,
+    "stang": 2.3
+   }
+  },
+  "dl-gulv": {
+   "1 cm": {
+    "torso": 1.3,
+    "hofte": 1.7,
+    "knae": 2.2,
+    "stang": 1.1
+   },
+   "2 cm": {
+    "torso": 2.6,
+    "hofte": 3.2,
+    "knae": 4.5,
+    "stang": 2.3
+   }
+  }
+ },
+ "balance": {
+  "60": {
+   "gulv": 7.1,
+   "knae": 4.8
+  },
+  "100": {
+   "gulv": 5.8,
+   "knae": 3.7
+  },
+  "140": {
+   "gulv": 4.9,
+   "knae": 3
+  },
+  "180": {
+   "gulv": 4.3,
+   "knae": 2.6
+  },
+  "270": {
+   "gulv": 3.3,
+   "knae": 1.9
+  }
+ },
+ "knaeKurve": {
+  "knaeHoejdeCm": 50.7,
+  "gradPrCm": 1.7,
+  "kurve": [
+   {
+    "stangHoejdeCm": 22.5,
+    "knae": 99.9,
+    "hofte": 51.4,
+    "torso": 61.5
+   },
+   {
+    "stangHoejdeCm": 27.2,
+    "knae": 112.3,
+    "hofte": 57.7,
+    "torso": 63.6
+   },
+   {
+    "stangHoejdeCm": 31.9,
+    "knae": 121.6,
+    "hofte": 64.5,
+    "torso": 63.3
+   },
+   {
+    "stangHoejdeCm": 36.6,
+    "knae": 129,
+    "hofte": 71.6,
+    "torso": 61.8
+   },
+   {
+    "stangHoejdeCm": 41.3,
+    "knae": 135.5,
+    "hofte": 78.9,
+    "torso": 59.5
+   },
+   {
+    "stangHoejdeCm": 46,
+    "knae": 141.4,
+    "hofte": 86.6,
+    "torso": 56.6
+   },
+   {
+    "stangHoejdeCm": 50.7,
+    "knae": 147,
+    "hofte": 94.8,
+    "torso": 53.3
+   }
+  ]
+ },
+ "marc": {
+  "gulv": {
+   "stangUnderKnaeSkiveCm": 28.9,
+   "stangUnderKnaeKropCm": 43.3,
+   "stangOverGulvKropCm": 29,
+   "knae": 121.4
+  },
+  "knae": {
+   "stangUnderKnaeSkiveCm": 24.2,
+   "stangUnderKnaeKropCm": 31.6,
+   "stangOverGulvKropCm": 42.4,
+   "knae": 122.8
+  },
+  "stangLoeftetKropCm": 15.3
+ },
+ "tjek": [
+  {
+   "hvad": "uden perspektiv giver vaerktoejet modellens egne vinkler (squat/doedloeft) og skalaen er enig (100 %)",
+   "ok": true,
+   "data": {
+    "squat-bund": {
+     "torso": 49.2,
+     "hofte": 36.9,
+     "knae": 46.1,
+     "stang": -0.8,
+     "kontrol": {
+      "forhold": 100,
+      "uenig": false
+     },
+     "model": {
+      "torso": 49.2,
+      "hofte": 36.9,
+      "knae": 46.1
+     }
+    },
+    "dl-gulv": {
+     "torso": 61.5,
+     "hofte": 51.4,
+     "knae": 99.9,
+     "stang": 3,
+     "kontrol": {
+      "forhold": 100,
+      "uenig": false
+     },
+     "model": {
+      "torso": 61.5,
+      "hofte": 51.4,
+      "knae": 99.9
+     }
+    },
+    "dl-knae": {
+     "torso": 53.3,
+     "hofte": 94.8,
+     "knae": 147,
+     "stang": 0,
+     "kontrol": {
+      "forhold": 100,
+      "uenig": false
+     },
+     "model": {
+      "torso": 53.3,
+      "hofte": 94.8,
+      "knae": 147
+     }
+    },
+    "baenk-bryst": {
+     "torso": -87,
+     "hofte": 180,
+     "knae": 80.9,
+     "stang": -65.3,
+     "kontrol": {
+      "forhold": 98,
+      "uenig": false
+     },
+     "model": {
+      "torso": null,
+      "hofte": null,
+      "knae": null
+     }
+    }
+   }
+  },
+  {
+   "hvad": "Q2: med kameraet 2-4 m fra loefteren advarer siden ALTID (skiven 69 cm naermere end midtlinjen)",
+   "ok": true,
+   "data": {
+    "200": 70.7,
+    "300": 81,
+    "400": 85.9,
+    "600": 90.7,
+    "1000": 94.5
+   }
+  },
+  {
+   "hvad": "Q2: foerst ved ca. 6 m falder advarslen vaek (skala-kontrol over 90 %)",
+   "ok": true,
+   "data": {
+    "skalaKontrolPct": 90.7,
+    "advarer": false,
+    "skive": {
+     "torso": -0.1,
+     "hofte": -0.1,
+     "knae": -0.2,
+     "stangFraMidtfod": -0.3,
+     "stangHofte": -3.6,
+     "skulderForanStang": -0.4
+    },
+    "krop": {
+     "torso": -0.1,
+     "hofte": -0.1,
+     "knae": -0.2,
+     "stangFraMidtfod": 0,
+     "stangHofte": 0.2,
+     "skulderForanStang": 0
+    }
+   }
+  },
+  {
+   "hvad": "Q2: vinklerne flytter under 1,5 grad ved 3 m (perspektivet rammer cm, ikke vinklerne)",
+   "ok": true,
+   "data": {
+    "torso": -0.2,
+    "hofte": -0.3,
+    "knae": -0.4,
+    "stangFraMidtfod": -0.6,
+    "stangHofte": -7.4,
+    "skulderForanStang": -0.9
+   }
+  },
+  {
+   "hvad": "Q2: stangen foran midtfoden flytter under 1 cm uanset skala (kameraet ud for stangen)",
+   "ok": true,
+   "data": {
+    "skive": -0.6,
+    "krop": 0
+   }
+  },
+  {
+   "hvad": "Q2: squattens stang-hofte bliver flere cm for kort med skiven ved 3 m, kroppens skala rammer inden for 1 cm",
+   "ok": true,
+   "data": {
+    "skive": -3.9,
+    "krop": 0.2
+   }
+  },
+  {
+   "hvad": "Q2: uden Min krop og uden perspektiv advarer siden for en loefter paa 160 cm (tabellens krop er 178 cm)",
+   "ok": true,
+   "data": {
+    "lille": {
+     "hoejde": 160,
+     "skalaKontrolPct": 89.9,
+     "advarer": true,
+     "kroppensSkalaSkulderForanStang": 5.6,
+     "sandt": 5
+    },
+    "stor": {
+     "hoejde": 196,
+     "skalaKontrolPct": 110.1,
+     "advarer": true,
+     "kroppensSkalaSkulderForanStang": 4.5,
+     "sandt": 5
+    }
+   }
+  },
+  {
+   "hvad": "Q1: klikkes skulderen midt i leddet (som siden siger) og ikke paa acromion (modellens punkt), bliver doedloeftets torso ca. 3-4 grader mere vandret",
+   "ok": true,
+   "data": {
+    "torso": 4.1,
+    "hofte": -4.1,
+    "knae": 0,
+    "stangFraMidtfod": 0,
+    "stangHofte": 0,
+    "skulderForanStang": 0
+   }
+  },
+  {
+   "hvad": "Q1: hoften ved baeltet flytter doedloeftets torso og knaevinkel 8-9 grader (hoftevinklen naesten ikke)",
+   "ok": true,
+   "data": {
+    "torso": 8.4,
+    "hofte": 0.5,
+    "knae": 9,
+    "stangFraMidtfod": 0,
+    "stangHofte": 0,
+    "skulderForanStang": 0
+   }
+  },
+  {
+   "hvad": "Q1: hoften i balden flytter squattens torso og hofte flere grader og stang-hofte 5 cm",
+   "ok": true,
+   "data": {
+    "torso": 3.4,
+    "hofte": -3,
+    "knae": 0.4,
+    "stangFraMidtfod": 0,
+    "stangHofte": 5,
+    "skulderForanStang": 0
+   }
+  },
+  {
+   "hvad": "Q1: med 2 cm fingerfejl pr. punkt er 90 % af hoftevinklerne inden for ca. 5-6 grader og stangen inden for ca. 2-3 cm",
+   "ok": true,
+   "data": {
+    "squat-bund": {
+     "1 cm": {
+      "torso": 1.3,
+      "hofte": 1.6,
+      "knae": 1.8,
+      "stang": 1.1
+     },
+     "2 cm": {
+      "torso": 2.5,
+      "hofte": 3,
+      "knae": 3.6,
+      "stang": 2.3
+     }
+    },
+    "dl-gulv": {
+     "1 cm": {
+      "torso": 1.3,
+      "hofte": 1.7,
+      "knae": 2.2,
+      "stang": 1.1
+     },
+     "2 cm": {
+      "torso": 2.6,
+      "hofte": 3.2,
+      "knae": 4.5,
+      "stang": 2.3
+     }
+    }
+   }
+  },
+  {
+   "hvad": "Q3: balancepunktet ved gulvet flytter sig flere cm fra 270 til 60 kg (siden viser 270 kg, hvis coachen ikke retter vaegten)",
+   "ok": true,
+   "data": {
+    "60": {
+     "gulv": 7.1,
+     "knae": 4.8
+    },
+    "100": {
+     "gulv": 5.8,
+     "knae": 3.7
+    },
+    "140": {
+     "gulv": 4.9,
+     "knae": 3
+    },
+    "180": {
+     "gulv": 4.3,
+     "knae": 2.6
+    },
+    "270": {
+     "gulv": 3.3,
+     "knae": 1.9
+    }
+   }
+  },
+  {
+   "hvad": "Q4: i modellen aabner knaeet ca. 1,5-2 grader pr. cm stangen stiger fra gulv til knae",
+   "ok": true,
+   "data": {
+    "knaeHoejdeCm": 50.7,
+    "gradPrCm": 1.7,
+    "kurve": [
+     {
+      "stangHoejdeCm": 22.5,
+      "knae": 99.9,
+      "hofte": 51.4,
+      "torso": 61.5
+     },
+     {
+      "stangHoejdeCm": 27.2,
+      "knae": 112.3,
+      "hofte": 57.7,
+      "torso": 63.6
+     },
+     {
+      "stangHoejdeCm": 31.9,
+      "knae": 121.6,
+      "hofte": 64.5,
+      "torso": 63.3
+     },
+     {
+      "stangHoejdeCm": 36.6,
+      "knae": 129,
+      "hofte": 71.6,
+      "torso": 61.8
+     },
+     {
+      "stangHoejdeCm": 41.3,
+      "knae": 135.5,
+      "hofte": 78.9,
+      "torso": 59.5
+     },
+     {
+      "stangHoejdeCm": 46,
+      "knae": 141.4,
+      "hofte": 86.6,
+      "torso": 56.6
+     },
+     {
+      "stangHoejdeCm": 50.7,
+      "knae": 147,
+      "hofte": 94.8,
+      "torso": 53.3
+     }
+    ]
+   }
+  },
+  {
+   "hvad": "Q4: i Marcs \"knaehoejde\"-billede staar stangen stadig 20-30 cm under knaeet (ikke i knaehoejde); knaeet har kun flyttet sig ca. 1 grad",
+   "ok": true,
+   "data": {
+    "gulv": {
+     "stangUnderKnaeSkiveCm": 28.9,
+     "stangUnderKnaeKropCm": 43.3,
+     "stangOverGulvKropCm": 29,
+     "knae": 121.4
+    },
+    "knae": {
+     "stangUnderKnaeSkiveCm": 24.2,
+     "stangUnderKnaeKropCm": 31.6,
+     "stangOverGulvKropCm": 42.4,
+     "knae": 122.8
+    },
+    "stangLoeftetKropCm": 15.3
+   }
+  }
+ ]
+}
