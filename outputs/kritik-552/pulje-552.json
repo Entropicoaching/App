@@ -1,0 +1,133 @@
+{
+ "skak": "5e6756c",
+ "temaer": {
+  "mateIn1": {
+   "lichess-temaer (544)": {
+    "antal": 60,
+    "under900": 15
+   },
+   "gammel lichess (261)": {
+    "antal": 897,
+    "under900": 280
+   },
+   "egne (278)": {
+    "antal": 687,
+    "under900": 687
+   },
+   "lette (425)": {
+    "antal": 95,
+    "under900": 95
+   },
+   "andelFraLichessTemaer": 3
+  },
+  "mateIn2": {
+   "lichess-temaer (544)": {
+    "antal": 60,
+    "under900": 15
+   },
+   "gammel lichess (261)": {
+    "antal": 1084,
+    "under900": 255
+   },
+   "egne (278)": {
+    "antal": 57,
+    "under900": 0
+   },
+   "andelFraLichessTemaer": 5
+  },
+  "backRankMate": {
+   "lichess-temaer (544)": {
+    "antal": 60,
+    "under900": 15
+   },
+   "andelFraLichessTemaer": 100
+  },
+  "fork": {
+   "lichess-temaer (544)": {
+    "antal": 60,
+    "under900": 15
+   },
+   "gammel lichess (261)": {
+    "antal": 900,
+    "under900": 196
+   },
+   "egne (278)": {
+    "antal": 14,
+    "under900": 14
+   },
+   "lette (425)": {
+    "antal": 66,
+    "under900": 66
+   },
+   "andelFraLichessTemaer": 6
+  },
+  "pin": {
+   "lichess-temaer (544)": {
+    "antal": 60,
+    "under900": 15
+   },
+   "gammel lichess (261)": {
+    "antal": 429,
+    "under900": 25
+   },
+   "andelFraLichessTemaer": 12
+  },
+  "skewer": {
+   "lichess-temaer (544)": {
+    "antal": 60,
+    "under900": 15
+   },
+   "gammel lichess (261)": {
+    "antal": 455,
+    "under900": 93
+   },
+   "andelFraLichessTemaer": 12
+  },
+  "discoveredAttack": {
+   "lichess-temaer (544)": {
+    "antal": 60,
+    "under900": 15
+   },
+   "egne (278)": {
+    "antal": 342,
+    "under900": 330
+   },
+   "andelFraLichessTemaer": 15
+  },
+  "sacrifice": {
+   "lichess-temaer (544)": {
+    "antal": 60,
+    "under900": 15
+   },
+   "andelFraLichessTemaer": 100
+  },
+  "intermezzo": {
+   "lichess-temaer (544)": {
+    "antal": 60,
+    "under900": 15
+   },
+   "andelFraLichessTemaer": 100
+  },
+  "attackingF2F7": {
+   "lichess-temaer (544)": {
+    "antal": 60,
+    "under900": 15
+   },
+   "andelFraLichessTemaer": 100
+  },
+  "promotion": {
+   "lichess-temaer (544)": {
+    "antal": 60,
+    "under900": 15
+   },
+   "andelFraLichessTemaer": 100
+  },
+  "endgame": {
+   "lichess-temaer (544)": {
+    "antal": 60,
+    "under900": 15
+   },
+   "andelFraLichessTemaer": 100
+  }
+ }
+}

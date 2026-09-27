@@ -1,0 +1,234 @@
+{
+ "360": {
+  "tema": {
+   "braetISyne": false,
+   "statusISyne": false,
+   "afstandTilBraet": 994,
+   "skaerme": 1.3
+  },
+  "foer": {
+   "scrollY": 1326,
+   "vinduH": 780,
+   "braet": {
+    "top": -1039,
+    "bund": -695
+   },
+   "titel": {
+    "top": 1212,
+    "bund": 1233
+   },
+   "status": {
+    "top": -1171,
+    "bund": -1120
+   },
+   "liste": {
+    "top": 488,
+    "bund": 1196
+   },
+   "historie": null
+  },
+  "efter100": {
+   "scrollY": 1714,
+   "vinduH": 780,
+   "braet": {
+    "top": -1492,
+    "bund": -1148
+   },
+   "titel": {
+    "top": 759,
+    "bund": 780
+   },
+   "status": {
+    "top": -1559,
+    "bund": -1508
+   },
+   "liste": {
+    "top": 35,
+    "bund": 743
+   },
+   "historie": null
+  },
+  "efter1200": {
+   "scrollY": 1714,
+   "vinduH": 780,
+   "braet": {
+    "top": -1492,
+    "bund": -1148
+   },
+   "titel": {
+    "top": 759,
+    "bund": 780
+   },
+   "status": {
+    "top": -1559,
+    "bund": -1508
+   },
+   "liste": {
+    "top": 35,
+    "bund": 743
+   },
+   "historie": null
+  },
+  "braetISyne": false,
+  "titelISyne": true,
+  "statusISyne": false,
+  "afstandTilBraet": 1492,
+  "skaerme": 1.9,
+  "net": 0
+ },
+ "390": {
+  "tema": {
+   "braetISyne": false,
+   "statusISyne": false,
+   "afstandTilBraet": 1352,
+   "skaerme": 1.6
+  },
+  "foer": {
+   "scrollY": 1284,
+   "vinduH": 844,
+   "braet": {
+    "top": -997,
+    "bund": -623
+   },
+   "titel": {
+    "top": 1193,
+    "bund": 1214
+   },
+   "status": {
+    "top": -1129,
+    "bund": -1078
+   },
+   "liste": {
+    "top": 520,
+    "bund": 1177
+   },
+   "historie": null
+  },
+  "efter100": {
+   "scrollY": 1589,
+   "vinduH": 844,
+   "braet": {
+    "top": -1367,
+    "bund": -993
+   },
+   "titel": {
+    "top": 823,
+    "bund": 844
+   },
+   "status": {
+    "top": -1434,
+    "bund": -1383
+   },
+   "liste": {
+    "top": 150,
+    "bund": 807
+   },
+   "historie": null
+  },
+  "efter1200": {
+   "scrollY": 1589,
+   "vinduH": 844,
+   "braet": {
+    "top": -1367,
+    "bund": -993
+   },
+   "titel": {
+    "top": 823,
+    "bund": 844
+   },
+   "status": {
+    "top": -1434,
+    "bund": -1383
+   },
+   "liste": {
+    "top": 150,
+    "bund": 807
+   },
+   "historie": null
+  },
+  "braetISyne": false,
+  "titelISyne": true,
+  "statusISyne": false,
+  "afstandTilBraet": 1367,
+  "skaerme": 1.6,
+  "net": 0
+ },
+ "1280": {
+  "tema": {
+   "braetISyne": true,
+   "statusISyne": false,
+   "afstandTilBraet": 276,
+   "skaerme": 0.3
+  },
+  "foer": {
+   "scrollY": 515,
+   "vinduH": 800,
+   "braet": {
+    "top": -278,
+    "bund": 259
+   },
+   "titel": {
+    "top": 1210,
+    "bund": 1232
+   },
+   "status": {
+    "top": -424,
+    "bund": -392
+   },
+   "liste": {
+    "top": 504,
+    "bund": 1193
+   },
+   "historie": null
+  },
+  "efter100": {
+   "scrollY": 947,
+   "vinduH": 800,
+   "braet": {
+    "top": -754,
+    "bund": -218
+   },
+   "titel": {
+    "top": 778,
+    "bund": 800
+   },
+   "status": {
+    "top": -856,
+    "bund": -824
+   },
+   "liste": {
+    "top": 72,
+    "bund": 761
+   },
+   "historie": null
+  },
+  "efter1200": {
+   "scrollY": 947,
+   "vinduH": 800,
+   "braet": {
+    "top": -754,
+    "bund": -218
+   },
+   "titel": {
+    "top": 778,
+    "bund": 800
+   },
+   "status": {
+    "top": -856,
+    "bund": -824
+   },
+   "liste": {
+    "top": 72,
+    "bund": 761
+   },
+   "historie": null
+  },
+  "braetISyne": false,
+  "titelISyne": true,
+  "statusISyne": false,
+  "afstandTilBraet": 754,
+  "skaerme": 0.9,
+  "net": 0
+ },
+ "skak": "5e6756c"
+}

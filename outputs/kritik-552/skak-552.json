@@ -1,0 +1,2834 @@
+{
+ "360": {
+  "temaer": [
+   {
+    "tag": "mateIn1",
+    "knap": "Øv mat i 10 løst",
+    "forklaring": "Mat i 1: Find det træk, der sætter mat med det samme.",
+    "duOever": "Du øver: Mat i 1 (0 løst)",
+    "status": "Sort trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "278-0392",
+     "kilde": "egne (278)",
+     "tema": "mateIn1",
+     "rating": 722,
+     "traek": 1
+    },
+    "markeret": "",
+    "forTraekMarkeret": null,
+    "forkert": {
+     "san": "Qg5+",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Sort trækker. Find det bedste træk."
+    },
+    "loest": "Mat i 1. Løst, men med et forkert træk først. Vi finder dit niveau: 1 af 10. Din stime er i gang: 1 dag.",
+    "knapEfter": "Øv mat i 11 løst"
+   },
+   {
+    "tag": "mateIn2",
+    "knap": "Øv mat i 20 løst",
+    "forklaring": "Mat i 2: Mat i to træk, uanset hvad modstanderen svarer.",
+    "duOever": "Du øver: Mat i 2 (0 løst)",
+    "status": "Sort trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "0401S",
+     "kilde": "gammel lichess-bank (261)",
+     "tema": "mateIn2",
+     "rating": 682,
+     "traek": 2
+    },
+    "markeret": "",
+    "forTraekMarkeret": null,
+    "forkert": {
+     "san": "Rxc4",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Sort trækker. Find det bedste træk."
+    },
+    "loest": "Mat i 2. Løst, men med et forkert træk først. Vi finder dit niveau: 2 af 10.",
+    "knapEfter": "Øv mat i 21 løst"
+   },
+   {
+    "tag": "backRankMate",
+    "knap": "Øv mat på bagerste række0 løst",
+    "forklaring": "Bagerste række: Kongen er spærret inde af sine egne bønder. Et tårn eller en dronning på bagerste række sætter mat.",
+    "duOever": "Du øver: Bagerste række (0 løst)",
+    "status": "Sort trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "li-x0rdr",
+     "kilde": "lichess-temaer (544)",
+     "tema": "backRankMate",
+     "rating": 648,
+     "traek": 3
+    },
+    "markeret": "d3,e4",
+    "forTraekMarkeret": true,
+    "forkert": {
+     "san": "Rd8",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Sort trækker. Find det bedste træk."
+    },
+    "loest": "Bagerste række. Løst, men med et forkert træk først. Vi finder dit niveau: 3 af 10.",
+    "knapEfter": "Øv mat på bagerste række1 løst"
+   },
+   {
+    "tag": "fork",
+    "knap": "Øv gafler0 løst",
+    "forklaring": "Gaffel: Én brik angriber to på én gang. Modstanderen kan kun redde den ene.",
+    "duOever": "Du øver: Gaffel (0 løst)",
+    "status": "Hvid trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "02u0t",
+     "kilde": "gammel lichess-bank (261)",
+     "tema": "fork",
+     "rating": 477,
+     "traek": 2
+    },
+    "markeret": "",
+    "forTraekMarkeret": null,
+    "loest": "Løst! Gaffel. Vi finder dit niveau: 4 af 10.",
+    "knapEfter": "Øv gafler1 løst"
+   },
+   {
+    "tag": "pin",
+    "knap": "Øv bindinger0 løst",
+    "forklaring": "Binding: En brik kan ikke flytte, fordi en mere værdifuld brik står bag den.",
+    "duOever": "Du øver: Binding (0 løst)",
+    "status": "Sort trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "0C50G",
+     "kilde": "gammel lichess-bank (261)",
+     "tema": "pin",
+     "rating": 688,
+     "traek": 2
+    },
+    "markeret": "",
+    "forTraekMarkeret": null,
+    "loest": "Løst! Binding. Vi finder dit niveau: 5 af 10.",
+    "knapEfter": "Øv bindinger1 løst"
+   },
+   {
+    "tag": "skewer",
+    "knap": "Øv spyd0 løst",
+    "forklaring": "Spyd: Den værdifulde brik står forrest. Når den flytter, slår du brikken bag den.",
+    "duOever": "Du øver: Spyd (0 løst)",
+    "status": "Hvid trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "0FvQ7",
+     "kilde": "gammel lichess-bank (261)",
+     "tema": "skewer",
+     "rating": 567,
+     "traek": 2
+    },
+    "markeret": "",
+    "forTraekMarkeret": null,
+    "loest": "Løst! Spyd. Vi finder dit niveau: 6 af 10.",
+    "knapEfter": "Øv spyd1 løst"
+   },
+   {
+    "tag": "discoveredAttack",
+    "knap": "Øv afdækkede angreb0 løst",
+    "forklaring": "Afdækket angreb: Én brik flytter væk og åbner linjen for en anden, der så angriber.",
+    "duOever": "Du øver: Afdækket angreb (0 løst)",
+    "status": "Hvid trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "278-0632",
+     "kilde": "egne (278)",
+     "tema": "discoveredAttack",
+     "rating": 778,
+     "traek": 1
+    },
+    "markeret": "",
+    "forTraekMarkeret": null,
+    "loest": "Løst! Afdækket angreb. Vi finder dit niveau: 7 af 10.",
+    "knapEfter": "Øv afdækkede angreb1 løst"
+   },
+   {
+    "tag": "sacrifice",
+    "knap": "Øv ofre0 løst",
+    "forklaring": "Offer: Giv materiale væk med vilje, fordi du får mere tilbage.",
+    "duOever": "Du øver: Offer (0 løst)",
+    "status": "Hvid trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "li-sZ0sQ",
+     "kilde": "lichess-temaer (544)",
+     "tema": "sacrifice",
+     "rating": 790,
+     "traek": 3
+    },
+    "markeret": "d3,d4",
+    "forTraekMarkeret": true,
+    "loest": "Løst! Offer. Vi finder dit niveau: 8 af 10.",
+    "knapEfter": "Øv ofre1 løst"
+   },
+   {
+    "tag": "intermezzo",
+    "knap": "Øv mellemtræk0 løst",
+    "forklaring": "Mellemtræk: Før du slår tilbage, spiller du et træk, modstanderen skal svare på.",
+    "duOever": "Du øver: Mellemtræk (0 løst)",
+    "status": "Hvid trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "li-LmJKq",
+     "kilde": "lichess-temaer (544)",
+     "tema": "intermezzo",
+     "rating": 819,
+     "traek": 2
+    },
+    "markeret": "a7,a8",
+    "forTraekMarkeret": true,
+    "loest": "Løst! Mellemtræk. Vi finder dit niveau: 9 af 10.",
+    "knapEfter": "Øv mellemtræk1 løst"
+   },
+   {
+    "tag": "attackingF2F7",
+    "knap": "Øv angreb på f70 løst",
+    "forklaring": "Angreb på f7: f7 (og f2) er kun dækket af kongen i starten. Dér slår man til.",
+    "duOever": "Du øver: Angreb på f7 (0 løst)",
+    "status": "Sort trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "li-batLH",
+     "kilde": "lichess-temaer (544)",
+     "tema": "attackingF2F7",
+     "rating": 736,
+     "traek": 1
+    },
+    "markeret": "a3,b4",
+    "forTraekMarkeret": true,
+    "loest": "Løst! Angreb på f7. Dit niveau er fundet: 856.",
+    "knapEfter": "Øv angreb på f71 løst"
+   },
+   {
+    "tag": "promotion",
+    "knap": "Øv forvandling0 løst",
+    "forklaring": "Forvandling: Få en bonde hele vejen op og gør den til en dronning.",
+    "duOever": "Du øver: Forvandling (0 løst)",
+    "status": "Hvid trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "li-cXBLA",
+     "kilde": "lichess-temaer (544)",
+     "tema": "promotion",
+     "rating": 793,
+     "traek": 2
+    },
+    "markeret": "d5,e5",
+    "forTraekMarkeret": true,
+    "loest": "Løst! Forvandling. Rating: 878 (+22).",
+    "knapEfter": "Øv forvandling1 løst"
+   },
+   {
+    "tag": "endgame",
+    "knap": "Øv slutspil0 løst",
+    "forklaring": "Slutspil: Få brikker tilbage. Konger og bønder bliver vigtige.",
+    "duOever": "Du øver: Slutspil (0 løst)",
+    "status": "Sort trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "li-ZklVl",
+     "kilde": "lichess-temaer (544)",
+     "tema": "endgame",
+     "rating": 792,
+     "traek": 2
+    },
+    "markeret": "c3,f3",
+    "forTraekMarkeret": true,
+    "loest": "Løst! Slutspil. Rating: 898 (+20).",
+    "knapEfter": "Øv slutspil1 løst"
+   }
+  ],
+  "partier": [
+   {
+    "id": "opera-1858",
+    "titel": "Partiet i operaen (Paris 1858)",
+    "start": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -2062,
+     "bund": -1718,
+     "vinduH": 780,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Qxe6+",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet."
+    },
+    "elevTraek": 2,
+    "slut": "Løst! Præcis sådan spillede Paul Morphy.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Paul Morphy – hertugen af Braunschweig og grev Isouard, Paris 1858",
+     "tekst": "Paul Morphy spillede partiet i en loge i operaen i Paris i 1858 mod to adelsmænd, der rådede sammen. Det huskes, fordi det viser, hvad hurtig udvikling kan: Morphy fik alle brikker i spil, ofrede sin dronning og satte mat med de to brikker, han havde tilbage: et tårn og en løber.",
+     "iSyne": {
+      "top": 476,
+      "bund": 865,
+      "vinduH": 780,
+      "helt": false,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": true,
+     "parti": "udoedelige-1851"
+    },
+    "rul": 0
+   },
+   {
+    "id": "udoedelige-1851",
+    "titel": "Det udødelige parti (London 1851)",
+    "start": "Hvid trækker (Adolf Anderssen). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -2062,
+     "bund": -1718,
+     "vinduH": 780,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Qxf7",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Hvid trækker (Adolf Anderssen). Find det træk, der blev spillet."
+    },
+    "elevTraek": 2,
+    "slut": "Løst! Præcis sådan spillede Adolf Anderssen.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Adolf Anderssen – Lionel Kieseritzky, London 1851",
+     "tekst": "Adolf Anderssen spillede partiet mod Lionel Kieseritzky i London i 1851, som et venskabsparti under den første store internationale turnering. Det kaldes \"det udødelige parti\", fordi Anderssen ofrede begge tårne, en løber og til sidst dronningen og alligevel satte mat med de tre lette brikker, han havde tilbage.",
+     "iSyne": {
+      "top": 503,
+      "bund": 873,
+      "vinduH": 780,
+      "helt": false,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": true,
+     "parti": "stedsegroenne-1852"
+    },
+    "rul": 0
+   },
+   {
+    "id": "stedsegroenne-1852",
+    "titel": "Det stedsegrønne parti (Berlin 1852)",
+    "start": "Hvid trækker (Adolf Anderssen). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -2062,
+     "bund": -1718,
+     "vinduH": 780,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "fxe7",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Hvid trækker (Adolf Anderssen). Find det træk, der blev spillet."
+    },
+    "elevTraek": 4,
+    "slut": "Løst! Præcis sådan spillede Adolf Anderssen.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Adolf Anderssen – Jean Dufresne, Berlin 1852",
+     "tekst": "Adolf Anderssen spillede partiet mod Jean Dufresne i Berlin i 1852. Det kaldes \"det stedsegrønne parti\", fordi dronningeofret på d7 og matten med de to løbere stadig er lige smukke, uanset hvor mange gange man ser dem.",
+     "iSyne": {
+      "top": 527,
+      "bund": 876,
+      "vinduH": 780,
+      "helt": false,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": true,
+     "parti": "reti-tartakower-1910"
+    },
+    "rul": 0
+   },
+   {
+    "id": "reti-tartakower-1910",
+    "titel": "Dronningeofret på d8 (Wien 1910)",
+    "start": "Hvid trækker (Richard Réti). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -2062,
+     "bund": -1718,
+     "vinduH": 780,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Qxe4",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Hvid trækker (Richard Réti). Find det træk, der blev spillet."
+    },
+    "elevTraek": 3,
+    "slut": "Løst! Præcis sådan spillede Richard Réti.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Richard Réti – Savielly Tartakower, Wien 1910",
+     "tekst": "Richard Réti spillede partiet mod Savielly Tartakower i Wien i 1910. Det huskes som et af de korteste partier mellem to af tidens stærkeste spillere: Réti ofrede dronningen, og en dobbeltskak fra løber og tårn gav mat i 11. træk.",
+     "iSyne": {
+      "top": 524,
+      "bund": 873,
+      "vinduH": 780,
+      "helt": false,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": true,
+     "parti": "lasker-thomas-1912"
+    },
+    "rul": 0
+   },
+   {
+    "id": "lasker-thomas-1912",
+    "titel": "Kongejagten (London 1912)",
+    "start": "Hvid trækker (Edward Lasker). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -2389,
+     "bund": -2045,
+     "vinduH": 780,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Nxf6+",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Hvid trækker (Edward Lasker). Find det træk, der blev spillet."
+    },
+    "lang": "O-O-O#",
+    "elevTraek": 8,
+    "slut": "Løst! Præcis sådan spillede Edward Lasker.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Edward Lasker – George Thomas, London 1912",
+     "tekst": "Edward Lasker spillede partiet mod George Thomas i London i 1912. Det huskes for en af de mest berømte kongejagter: efter dronningeofret på h7 blev den sorte konge jaget fra g8 hele vejen ned til g1, hvor den blev sat mat.",
+     "iSyne": {
+      "top": 452,
+      "bund": 780,
+      "vinduH": 780,
+      "helt": false,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": true,
+     "parti": "lasker-bauer-1889"
+    },
+    "rul": 0
+   },
+   {
+    "id": "lasker-bauer-1889",
+    "titel": "To løbere ofres (Amsterdam 1889)",
+    "start": "Hvid trækker (Emanuel Lasker). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -2406,
+     "bund": -2062,
+     "vinduH": 780,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Rfd1",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Hvid trækker (Emanuel Lasker). Find det træk, der blev spillet."
+    },
+    "elevTraek": 8,
+    "slut": "Løst! Præcis sådan spillede Emanuel Lasker.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Emanuel Lasker – Johann Bauer, Amsterdam 1889",
+     "tekst": "Emanuel Lasker, der senere blev verdensmester i 27 år, spillede partiet mod Johann Bauer i Amsterdam i 1889. Det huskes, fordi begge løbere ofres på h7 og g7 for at rive kongens bønder væk. Siden hedder den kombination \"Laskers dobbelte løberoffer\".",
+     "iSyne": {
+      "top": 467,
+      "bund": 816,
+      "vinduH": 780,
+      "helt": false,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": true,
+     "parti": "steinitz-bardeleben-1895"
+    },
+    "rul": 0
+   },
+   {
+    "id": "steinitz-bardeleben-1895",
+    "titel": "Tårnet, der ikke kan slås (Hastings 1895)",
+    "start": "Hvid trækker (Wilhelm Steinitz). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -2427,
+     "bund": -2083,
+     "vinduH": 780,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Qxd7+",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Hvid trækker (Wilhelm Steinitz). Find det træk, der blev spillet."
+    },
+    "elevTraek": 4,
+    "slut": "Løst! Præcis sådan spillede Wilhelm Steinitz.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Wilhelm Steinitz – Curt von Bardeleben, Hastings 1895",
+     "tekst": "Wilhelm Steinitz, den første verdensmester, spillede partiet mod Curt von Bardeleben i Hastings i England i 1895. Det huskes for tårnet på e7, som sort ikke kan slå uden at blive sat mat. Von Bardeleben opgav ikke: han forlod bare salen og kom ikke tilbage.",
+     "iSyne": {
+      "top": 479,
+      "bund": 849,
+      "vinduH": 780,
+      "helt": false,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": true,
+     "parti": "rotlewi-rubinstein-1907"
+    },
+    "rul": 0
+   },
+   {
+    "id": "rotlewi-rubinstein-1907",
+    "titel": "Rubinsteins udødelige (Łódź 1907)",
+    "start": "Sort trækker (Akiba Rubinstein). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -2448,
+     "bund": -2104,
+     "vinduH": 780,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Bxe4+",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Sort trækker (Akiba Rubinstein). Find det træk, der blev spillet."
+    },
+    "elevTraek": 3,
+    "slut": "Løst! Præcis sådan spillede Akiba Rubinstein.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Georg Rotlewi – Akiba Rubinstein, Łódź 1907",
+     "tekst": "Akiba Rubinstein spillede partiet med de sorte brikker mod Georg Rotlewi i Łódź i Polen i 1907. Det kaldes \"Rubinsteins udødelige\": han lod sin dronning stå og blive slået, ofrede et tårn på d2 og lod de to løbere på de lange diagonaler gøre resten.",
+     "iSyne": {
+      "top": 510,
+      "bund": 859,
+      "vinduH": 780,
+      "helt": false,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": true,
+     "parti": "levitsky-marshall-1912"
+    },
+    "rul": 0
+   },
+   {
+    "id": "levitsky-marshall-1912",
+    "titel": "Guldmønterne (Breslau 1912)",
+    "start": "Sort trækker (Frank Marshall). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -2427,
+     "bund": -2083,
+     "vinduH": 780,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Qxc5",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Sort trækker (Frank Marshall). Find det træk, der blev spillet."
+    },
+    "elevTraek": 1,
+    "slut": "Løst! Præcis sådan spillede Frank Marshall.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Stepan Levitsky – Frank Marshall, Breslau 1912",
+     "tekst": "Frank Marshall spillede partiet med de sorte brikker mod Stepan Levitsky i Breslau i 1912. Dronningen på g3 kan slås på tre måder, men alle taber. Ifølge historien blev tilskuerne så begejstrede, at de kastede guldmønter op på brættet.",
+     "iSyne": {
+      "top": 534,
+      "bund": 883,
+      "vinduH": 780,
+      "helt": false,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": true,
+     "parti": "larsen-spassky-1970"
+    },
+    "rul": 0
+   },
+   {
+    "id": "larsen-spassky-1970",
+    "titel": "Tårnofferet på h1 (Beograd 1970)",
+    "start": "Sort trækker (Boris Spasskij). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -2427,
+     "bund": -2083,
+     "vinduH": 780,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Rxd2",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Sort trækker (Boris Spasskij). Find det træk, der blev spillet."
+    },
+    "elevTraek": 4,
+    "slut": "Løst! Præcis sådan spillede Boris Spasskij.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Bent Larsen – Boris Spasskij, Beograd 1970",
+     "tekst": "Den danske stormester Bent Larsen spillede partiet mod verdensmester Boris Spasskij i Beograd i 1970, i matchen \"Verden mod Sovjetunionen\", hvor Larsen sad ved førstebrættet foran Bobby Fischer. Larsen tabte på 17 træk, men partiet huskes for Spasskijs tårnoffer på h1.",
+     "iSyne": {
+      "top": 495,
+      "bund": 813,
+      "vinduH": 780,
+      "helt": false,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": false,
+     "parti": ""
+    },
+    "rul": 0
+   }
+  ],
+  "kilde": "Gåderne med temaer er fra lichess.org's åbne gådedatabase (database.lichess.org, fri til alle, CC0).",
+  "kildeSynlig": true,
+  "licensTekst": true,
+  "knapper": [
+   {
+    "tema": "alle",
+    "tekst": "Som de kommer0 løst i alt",
+    "h": 79,
+    "w": 152
+   },
+   {
+    "tema": "mateIn1",
+    "tekst": "Øv mat i 10 løst",
+    "h": 79,
+    "w": 152
+   },
+   {
+    "tema": "mateIn2",
+    "tekst": "Øv mat i 20 løst",
+    "h": 79,
+    "w": 152
+   },
+   {
+    "tema": "backRankMate",
+    "tekst": "Øv mat på bagerste række0 løst",
+    "h": 79,
+    "w": 152
+   },
+   {
+    "tema": "fork",
+    "tekst": "Øv gafler0 løst",
+    "h": 59,
+    "w": 152
+   },
+   {
+    "tema": "pin",
+    "tekst": "Øv bindinger0 løst",
+    "h": 59,
+    "w": 152
+   },
+   {
+    "tema": "skewer",
+    "tekst": "Øv spyd0 løst",
+    "h": 79,
+    "w": 152
+   },
+   {
+    "tema": "discoveredAttack",
+    "tekst": "Øv afdækkede angreb0 løst",
+    "h": 79,
+    "w": 152
+   },
+   {
+    "tema": "sacrifice",
+    "tekst": "Øv ofre0 løst",
+    "h": 59,
+    "w": 152
+   },
+   {
+    "tema": "intermezzo",
+    "tekst": "Øv mellemtræk0 løst",
+    "h": 59,
+    "w": 152
+   },
+   {
+    "tema": "attackingF2F7",
+    "tekst": "Øv angreb på f70 løst",
+    "h": 59,
+    "w": 152
+   },
+   {
+    "tema": "promotion",
+    "tekst": "Øv forvandling0 løst",
+    "h": 59,
+    "w": 152
+   },
+   {
+    "tema": "endgame",
+    "tekst": "Øv slutspil0 løst",
+    "h": 59,
+    "w": 152
+   }
+  ],
+  "foldTitel": "Øv et tema",
+  "temaRul": 0,
+  "kendteFoer": "0 af 10 løst",
+  "kendteKnapper": [
+   {
+    "id": "opera-1858",
+    "tekst": "Partiet i operaenPaul Morphy – hertugen af Braunschweig og grev Isouard, Paris 1858",
+    "h": 76
+   },
+   {
+    "id": "udoedelige-1851",
+    "tekst": "Det udødelige partiAdolf Anderssen – Lionel Kieseritzky, London 1851",
+    "h": 76
+   },
+   {
+    "id": "stedsegroenne-1852",
+    "tekst": "Det stedsegrønne partiAdolf Anderssen – Jean Dufresne, Berlin 1852",
+    "h": 59
+   },
+   {
+    "id": "reti-tartakower-1910",
+    "tekst": "Dronningeofret på d8Richard Réti – Savielly Tartakower, Wien 1910",
+    "h": 59
+   },
+   {
+    "id": "lasker-thomas-1912",
+    "tekst": "KongejagtenEdward Lasker – George Thomas, London 1912",
+    "h": 59
+   },
+   {
+    "id": "lasker-bauer-1889",
+    "tekst": "To løbere ofresEmanuel Lasker – Johann Bauer, Amsterdam 1889",
+    "h": 76
+   },
+   {
+    "id": "steinitz-bardeleben-1895",
+    "tekst": "Tårnet, der ikke kan slåsWilhelm Steinitz – Curt von Bardeleben, Hastings 1895",
+    "h": 76
+   },
+   {
+    "id": "rotlewi-rubinstein-1907",
+    "tekst": "Rubinsteins udødeligeGeorg Rotlewi – Akiba Rubinstein, Łódź 1907",
+    "h": 59
+   },
+   {
+    "id": "levitsky-marshall-1912",
+    "tekst": "GuldmønterneStepan Levitsky – Frank Marshall, Breslau 1912",
+    "h": 59
+   },
+   {
+    "id": "larsen-spassky-1970",
+    "tekst": "Tårnofferet på h1Bent Larsen – Boris Spasskij, Beograd 1970",
+    "h": 59
+   }
+  ],
+  "kendteEfter": "10 af 10 løst",
+  "kendteGenindlaest": "10 af 10 løst",
+  "net": [],
+  "fejl": []
+ },
+ "390": {
+  "temaer": [
+   {
+    "tag": "mateIn1",
+    "knap": "Øv mat i 10 løst",
+    "forklaring": "Mat i 1: Find det træk, der sætter mat med det samme.",
+    "duOever": "Du øver: Mat i 1 (0 løst)",
+    "status": "Hvid trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "0N3t2",
+     "kilde": "gammel lichess-bank (261)",
+     "tema": "mateIn1",
+     "rating": 600,
+     "traek": 1
+    },
+    "markeret": "",
+    "forTraekMarkeret": null,
+    "forkert": {
+     "san": "g6",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Hvid trækker. Find det bedste træk."
+    },
+    "loest": "Mat i 1. Løst, men med et forkert træk først. Vi finder dit niveau: 1 af 10. Din stime er i gang: 1 dag.",
+    "knapEfter": "Øv mat i 11 løst"
+   },
+   {
+    "tag": "mateIn2",
+    "knap": "Øv mat i 20 løst",
+    "forklaring": "Mat i 2: Mat i to træk, uanset hvad modstanderen svarer.",
+    "duOever": "Du øver: Mat i 2 (0 løst)",
+    "status": "Hvid trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "0Hrar",
+     "kilde": "gammel lichess-bank (261)",
+     "tema": "mateIn2",
+     "rating": 597,
+     "traek": 2
+    },
+    "markeret": "",
+    "forTraekMarkeret": null,
+    "forkert": {
+     "san": "gxf5",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Hvid trækker. Find det bedste træk."
+    },
+    "loest": "Mat i 2. Løst, men med et forkert træk først. Vi finder dit niveau: 2 af 10.",
+    "knapEfter": "Øv mat i 21 løst"
+   },
+   {
+    "tag": "backRankMate",
+    "knap": "Øv mat på bagerste række0 løst",
+    "forklaring": "Bagerste række: Kongen er spærret inde af sine egne bønder. Et tårn eller en dronning på bagerste række sætter mat.",
+    "duOever": "Du øver: Bagerste række (0 løst)",
+    "status": "Sort trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "li-x0rdr",
+     "kilde": "lichess-temaer (544)",
+     "tema": "backRankMate",
+     "rating": 648,
+     "traek": 3
+    },
+    "markeret": "d3,e4",
+    "forTraekMarkeret": true,
+    "forkert": {
+     "san": "Rg8",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Sort trækker. Find det bedste træk."
+    },
+    "loest": "Bagerste række. Løst, men med et forkert træk først. Vi finder dit niveau: 3 af 10.",
+    "knapEfter": "Øv mat på bagerste række1 løst"
+   },
+   {
+    "tag": "fork",
+    "knap": "Øv gafler0 løst",
+    "forklaring": "Gaffel: Én brik angriber to på én gang. Modstanderen kan kun redde den ene.",
+    "duOever": "Du øver: Gaffel (0 løst)",
+    "status": "Hvid trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "06ySG",
+     "kilde": "gammel lichess-bank (261)",
+     "tema": "fork",
+     "rating": 437,
+     "traek": 2
+    },
+    "markeret": "",
+    "forTraekMarkeret": null,
+    "loest": "Løst! Gaffel. Vi finder dit niveau: 4 af 10.",
+    "knapEfter": "Øv gafler1 løst"
+   },
+   {
+    "tag": "pin",
+    "knap": "Øv bindinger0 løst",
+    "forklaring": "Binding: En brik kan ikke flytte, fordi en mere værdifuld brik står bag den.",
+    "duOever": "Du øver: Binding (0 løst)",
+    "status": "Sort trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "0C50G",
+     "kilde": "gammel lichess-bank (261)",
+     "tema": "pin",
+     "rating": 688,
+     "traek": 2
+    },
+    "markeret": "",
+    "forTraekMarkeret": null,
+    "loest": "Løst! Binding. Vi finder dit niveau: 5 af 10.",
+    "knapEfter": "Øv bindinger1 løst"
+   },
+   {
+    "tag": "skewer",
+    "knap": "Øv spyd0 løst",
+    "forklaring": "Spyd: Den værdifulde brik står forrest. Når den flytter, slår du brikken bag den.",
+    "duOever": "Du øver: Spyd (0 løst)",
+    "status": "Hvid trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "0ErbV",
+     "kilde": "gammel lichess-bank (261)",
+     "tema": "skewer",
+     "rating": 621,
+     "traek": 2
+    },
+    "markeret": "",
+    "forTraekMarkeret": null,
+    "loest": "Løst! Spyd. Vi finder dit niveau: 6 af 10.",
+    "knapEfter": "Øv spyd1 løst"
+   },
+   {
+    "tag": "discoveredAttack",
+    "knap": "Øv afdækkede angreb0 løst",
+    "forklaring": "Afdækket angreb: Én brik flytter væk og åbner linjen for en anden, der så angriber.",
+    "duOever": "Du øver: Afdækket angreb (0 løst)",
+    "status": "Hvid trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "li-fyBI5",
+     "kilde": "lichess-temaer (544)",
+     "tema": "discoveredAttack",
+     "rating": 752,
+     "traek": 2
+    },
+    "markeret": "g4,h4",
+    "forTraekMarkeret": true,
+    "loest": "Løst! Afdækket angreb. Vi finder dit niveau: 7 af 10.",
+    "knapEfter": "Øv afdækkede angreb1 løst"
+   },
+   {
+    "tag": "sacrifice",
+    "knap": "Øv ofre0 løst",
+    "forklaring": "Offer: Giv materiale væk med vilje, fordi du får mere tilbage.",
+    "duOever": "Du øver: Offer (0 løst)",
+    "status": "Hvid trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "li-SlCxu",
+     "kilde": "lichess-temaer (544)",
+     "tema": "sacrifice",
+     "rating": 768,
+     "traek": 2
+    },
+    "markeret": "d3,f2",
+    "forTraekMarkeret": true,
+    "loest": "Løst! Offer. Vi finder dit niveau: 8 af 10.",
+    "knapEfter": "Øv ofre1 løst"
+   },
+   {
+    "tag": "intermezzo",
+    "knap": "Øv mellemtræk0 løst",
+    "forklaring": "Mellemtræk: Før du slår tilbage, spiller du et træk, modstanderen skal svare på.",
+    "duOever": "Du øver: Mellemtræk (0 løst)",
+    "status": "Sort trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "li-IXyqT",
+     "kilde": "lichess-temaer (544)",
+     "tema": "intermezzo",
+     "rating": 796,
+     "traek": 2
+    },
+    "markeret": "f1,f6",
+    "forTraekMarkeret": true,
+    "loest": "Løst! Mellemtræk. Vi finder dit niveau: 9 af 10.",
+    "knapEfter": "Øv mellemtræk1 løst"
+   },
+   {
+    "tag": "attackingF2F7",
+    "knap": "Øv angreb på f70 løst",
+    "forklaring": "Angreb på f7: f7 (og f2) er kun dækket af kongen i starten. Dér slår man til.",
+    "duOever": "Du øver: Angreb på f7 (0 løst)",
+    "status": "Sort trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "li-3NeVs",
+     "kilde": "lichess-temaer (544)",
+     "tema": "attackingF2F7",
+     "rating": 622,
+     "traek": 1
+    },
+    "markeret": "b1,d2",
+    "forTraekMarkeret": true,
+    "loest": "Løst! Angreb på f7. Dit niveau er fundet: 838.",
+    "knapEfter": "Øv angreb på f71 løst"
+   },
+   {
+    "tag": "promotion",
+    "knap": "Øv forvandling0 løst",
+    "forklaring": "Forvandling: Få en bonde hele vejen op og gør den til en dronning.",
+    "duOever": "Du øver: Forvandling (0 løst)",
+    "status": "Sort trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "li-TA6t1",
+     "kilde": "lichess-temaer (544)",
+     "tema": "promotion",
+     "rating": 807,
+     "traek": 3
+    },
+    "markeret": "e5,f3",
+    "forTraekMarkeret": true,
+    "loest": "Løst! Forvandling. Rating: 863 (+25).",
+    "knapEfter": "Øv forvandling1 løst"
+   },
+   {
+    "tag": "endgame",
+    "knap": "Øv slutspil0 løst",
+    "forklaring": "Slutspil: Få brikker tilbage. Konger og bønder bliver vigtige.",
+    "duOever": "Du øver: Slutspil (0 løst)",
+    "status": "Hvid trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "li-ocJNm",
+     "kilde": "lichess-temaer (544)",
+     "tema": "endgame",
+     "rating": 730,
+     "traek": 2
+    },
+    "markeret": "d5,e5",
+    "forTraekMarkeret": true,
+    "loest": "Løst! Slutspil. Rating: 880 (+17).",
+    "knapEfter": "Øv slutspil1 løst"
+   }
+  ],
+  "partier": [
+   {
+    "id": "opera-1858",
+    "titel": "Partiet i operaen (Paris 1858)",
+    "start": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -1917,
+     "bund": -1543,
+     "vinduH": 844,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Qxe6+",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet."
+    },
+    "elevTraek": 2,
+    "slut": "Løst! Præcis sådan spillede Paul Morphy.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Paul Morphy – hertugen af Braunschweig og grev Isouard, Paris 1858",
+     "tekst": "Paul Morphy spillede partiet i en loge i operaen i Paris i 1858 mod to adelsmænd, der rådede sammen. Det huskes, fordi det viser, hvad hurtig udvikling kan: Morphy fik alle brikker i spil, ofrede sin dronning og satte mat med de to brikker, han havde tilbage: et tårn og en løber.",
+     "iSyne": {
+      "top": 542,
+      "bund": 910,
+      "vinduH": 844,
+      "helt": false,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": true,
+     "parti": "udoedelige-1851"
+    },
+    "rul": 0
+   },
+   {
+    "id": "udoedelige-1851",
+    "titel": "Det udødelige parti (London 1851)",
+    "start": "Hvid trækker (Adolf Anderssen). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -1917,
+     "bund": -1543,
+     "vinduH": 844,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Ne6+",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Hvid trækker (Adolf Anderssen). Find det træk, der blev spillet."
+    },
+    "elevTraek": 2,
+    "slut": "Løst! Præcis sådan spillede Adolf Anderssen.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Adolf Anderssen – Lionel Kieseritzky, London 1851",
+     "tekst": "Adolf Anderssen spillede partiet mod Lionel Kieseritzky i London i 1851, som et venskabsparti under den første store internationale turnering. Det kaldes \"det udødelige parti\", fordi Anderssen ofrede begge tårne, en løber og til sidst dronningen og alligevel satte mat med de tre lette brikker, han havde tilbage.",
+     "iSyne": {
+      "top": 553,
+      "bund": 923,
+      "vinduH": 844,
+      "helt": false,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": true,
+     "parti": "stedsegroenne-1852"
+    },
+    "rul": 0
+   },
+   {
+    "id": "stedsegroenne-1852",
+    "titel": "Det stedsegrønne parti (Berlin 1852)",
+    "start": "Hvid trækker (Adolf Anderssen). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -1917,
+     "bund": -1543,
+     "vinduH": 844,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Bxe7",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Hvid trækker (Adolf Anderssen). Find det træk, der blev spillet."
+    },
+    "elevTraek": 4,
+    "slut": "Løst! Præcis sådan spillede Adolf Anderssen.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Adolf Anderssen – Jean Dufresne, Berlin 1852",
+     "tekst": "Adolf Anderssen spillede partiet mod Jean Dufresne i Berlin i 1852. Det kaldes \"det stedsegrønne parti\", fordi dronningeofret på d7 og matten med de to løbere stadig er lige smukke, uanset hvor mange gange man ser dem.",
+     "iSyne": {
+      "top": 595,
+      "bund": 923,
+      "vinduH": 844,
+      "helt": false,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": true,
+     "parti": "reti-tartakower-1910"
+    },
+    "rul": 0
+   },
+   {
+    "id": "reti-tartakower-1910",
+    "titel": "Dronningeofret på d8 (Wien 1910)",
+    "start": "Hvid trækker (Richard Réti). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -2261,
+     "bund": -1887,
+     "vinduH": 844,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Qxe4",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Hvid trækker (Richard Réti). Find det træk, der blev spillet."
+    },
+    "elevTraek": 3,
+    "slut": "Løst! Præcis sådan spillede Richard Réti.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Richard Réti – Savielly Tartakower, Wien 1910",
+     "tekst": "Richard Réti spillede partiet mod Savielly Tartakower i Wien i 1910. Det huskes som et af de korteste partier mellem to af tidens stærkeste spillere: Réti ofrede dronningen, og en dobbeltskak fra løber og tårn gav mat i 11. træk.",
+     "iSyne": {
+      "top": 589,
+      "bund": 917,
+      "vinduH": 844,
+      "helt": false,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": true,
+     "parti": "lasker-thomas-1912"
+    },
+    "rul": 0
+   },
+   {
+    "id": "lasker-thomas-1912",
+    "titel": "Kongejagten (London 1912)",
+    "start": "Hvid trækker (Edward Lasker). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -2261,
+     "bund": -1887,
+     "vinduH": 844,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Nxf6+",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Hvid trækker (Edward Lasker). Find det træk, der blev spillet."
+    },
+    "lang": "O-O-O#",
+    "elevTraek": 8,
+    "slut": "Løst! Præcis sådan spillede Edward Lasker.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Edward Lasker – George Thomas, London 1912",
+     "tekst": "Edward Lasker spillede partiet mod George Thomas i London i 1912. Det huskes for en af de mest berømte kongejagter: efter dronningeofret på h7 blev den sorte konge jaget fra g8 hele vejen ned til g1, hvor den blev sat mat.",
+     "iSyne": {
+      "top": 519,
+      "bund": 847,
+      "vinduH": 844,
+      "helt": false,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": true,
+     "parti": "lasker-bauer-1889"
+    },
+    "rul": 0
+   },
+   {
+    "id": "lasker-bauer-1889",
+    "titel": "To løbere ofres (Amsterdam 1889)",
+    "start": "Hvid trækker (Emanuel Lasker). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -2261,
+     "bund": -1887,
+     "vinduH": 844,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Qxh5",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Hvid trækker (Emanuel Lasker). Find det træk, der blev spillet."
+    },
+    "elevTraek": 8,
+    "slut": "Løst! Præcis sådan spillede Emanuel Lasker.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Emanuel Lasker – Johann Bauer, Amsterdam 1889",
+     "tekst": "Emanuel Lasker, der senere blev verdensmester i 27 år, spillede partiet mod Johann Bauer i Amsterdam i 1889. Det huskes, fordi begge løbere ofres på h7 og g7 for at rive kongens bønder væk. Siden hedder den kombination \"Laskers dobbelte løberoffer\".",
+     "iSyne": {
+      "top": 571,
+      "bund": 920,
+      "vinduH": 844,
+      "helt": false,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": true,
+     "parti": "steinitz-bardeleben-1895"
+    },
+    "rul": 0
+   },
+   {
+    "id": "steinitz-bardeleben-1895",
+    "titel": "Tårnet, der ikke kan slås (Hastings 1895)",
+    "start": "Hvid trækker (Wilhelm Steinitz). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -2282,
+     "bund": -1908,
+     "vinduH": 844,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Kh1",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Hvid trækker (Wilhelm Steinitz). Find det træk, der blev spillet."
+    },
+    "elevTraek": 4,
+    "slut": "Løst! Præcis sådan spillede Wilhelm Steinitz.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Wilhelm Steinitz – Curt von Bardeleben, Hastings 1895",
+     "tekst": "Wilhelm Steinitz, den første verdensmester, spillede partiet mod Curt von Bardeleben i Hastings i England i 1895. Det huskes for tårnet på e7, som sort ikke kan slå uden at blive sat mat. Von Bardeleben opgav ikke: han forlod bare salen og kom ikke tilbage.",
+     "iSyne": {
+      "top": 578,
+      "bund": 906,
+      "vinduH": 844,
+      "helt": false,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": true,
+     "parti": "rotlewi-rubinstein-1907"
+    },
+    "rul": 0
+   },
+   {
+    "id": "rotlewi-rubinstein-1907",
+    "titel": "Rubinsteins udødelige (Łódź 1907)",
+    "start": "Sort trækker (Akiba Rubinstein). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -2261,
+     "bund": -1887,
+     "vinduH": 844,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Bxe4+",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Sort trækker (Akiba Rubinstein). Find det træk, der blev spillet."
+    },
+    "elevTraek": 3,
+    "slut": "Løst! Præcis sådan spillede Akiba Rubinstein.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Georg Rotlewi – Akiba Rubinstein, Łódź 1907",
+     "tekst": "Akiba Rubinstein spillede partiet med de sorte brikker mod Georg Rotlewi i Łódź i Polen i 1907. Det kaldes \"Rubinsteins udødelige\": han lod sin dronning stå og blive slået, ofrede et tårn på d2 og lod de to løbere på de lange diagonaler gøre resten.",
+     "iSyne": {
+      "top": 578,
+      "bund": 906,
+      "vinduH": 844,
+      "helt": false,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": true,
+     "parti": "levitsky-marshall-1912"
+    },
+    "rul": 0
+   },
+   {
+    "id": "levitsky-marshall-1912",
+    "titel": "Guldmønterne (Breslau 1912)",
+    "start": "Sort trækker (Frank Marshall). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -2261,
+     "bund": -1887,
+     "vinduH": 844,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Rh4",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Sort trækker (Frank Marshall). Find det træk, der blev spillet."
+    },
+    "elevTraek": 1,
+    "slut": "Løst! Præcis sådan spillede Frank Marshall.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Stepan Levitsky – Frank Marshall, Breslau 1912",
+     "tekst": "Frank Marshall spillede partiet med de sorte brikker mod Stepan Levitsky i Breslau i 1912. Dronningen på g3 kan slås på tre måder, men alle taber. Ifølge historien blev tilskuerne så begejstrede, at de kastede guldmønter op på brættet.",
+     "iSyne": {
+      "top": 596,
+      "bund": 924,
+      "vinduH": 844,
+      "helt": false,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": true,
+     "parti": "larsen-spassky-1970"
+    },
+    "rul": 0
+   },
+   {
+    "id": "larsen-spassky-1970",
+    "titel": "Tårnofferet på h1 (Beograd 1970)",
+    "start": "Sort trækker (Boris Spasskij). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -2261,
+     "bund": -1887,
+     "vinduH": 844,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Rxd2",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Sort trækker (Boris Spasskij). Find det træk, der blev spillet."
+    },
+    "elevTraek": 4,
+    "slut": "Løst! Præcis sådan spillede Boris Spasskij.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Bent Larsen – Boris Spasskij, Beograd 1970",
+     "tekst": "Den danske stormester Bent Larsen spillede partiet mod verdensmester Boris Spasskij i Beograd i 1970, i matchen \"Verden mod Sovjetunionen\", hvor Larsen sad ved førstebrættet foran Bobby Fischer. Larsen tabte på 17 træk, men partiet huskes for Spasskijs tårnoffer på h1.",
+     "iSyne": {
+      "top": 560,
+      "bund": 857,
+      "vinduH": 844,
+      "helt": false,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": false,
+     "parti": ""
+    },
+    "rul": 0
+   }
+  ],
+  "kilde": "Gåderne med temaer er fra lichess.org's åbne gådedatabase (database.lichess.org, fri til alle, CC0).",
+  "kildeSynlig": true,
+  "licensTekst": true,
+  "knapper": [
+   {
+    "tema": "alle",
+    "tekst": "Som de kommer0 løst i alt",
+    "h": 59,
+    "w": 167
+   },
+   {
+    "tema": "mateIn1",
+    "tekst": "Øv mat i 10 løst",
+    "h": 59,
+    "w": 167
+   },
+   {
+    "tema": "mateIn2",
+    "tekst": "Øv mat i 20 løst",
+    "h": 79,
+    "w": 167
+   },
+   {
+    "tema": "backRankMate",
+    "tekst": "Øv mat på bagerste række0 løst",
+    "h": 79,
+    "w": 167
+   },
+   {
+    "tema": "fork",
+    "tekst": "Øv gafler0 løst",
+    "h": 59,
+    "w": 167
+   },
+   {
+    "tema": "pin",
+    "tekst": "Øv bindinger0 løst",
+    "h": 59,
+    "w": 167
+   },
+   {
+    "tema": "skewer",
+    "tekst": "Øv spyd0 løst",
+    "h": 79,
+    "w": 167
+   },
+   {
+    "tema": "discoveredAttack",
+    "tekst": "Øv afdækkede angreb0 løst",
+    "h": 79,
+    "w": 167
+   },
+   {
+    "tema": "sacrifice",
+    "tekst": "Øv ofre0 løst",
+    "h": 59,
+    "w": 167
+   },
+   {
+    "tema": "intermezzo",
+    "tekst": "Øv mellemtræk0 løst",
+    "h": 59,
+    "w": 167
+   },
+   {
+    "tema": "attackingF2F7",
+    "tekst": "Øv angreb på f70 løst",
+    "h": 59,
+    "w": 167
+   },
+   {
+    "tema": "promotion",
+    "tekst": "Øv forvandling0 løst",
+    "h": 59,
+    "w": 167
+   },
+   {
+    "tema": "endgame",
+    "tekst": "Øv slutspil0 løst",
+    "h": 59,
+    "w": 167
+   }
+  ],
+  "foldTitel": "Øv et tema",
+  "temaRul": 0,
+  "kendteFoer": "0 af 10 løst",
+  "kendteKnapper": [
+   {
+    "id": "opera-1858",
+    "tekst": "Partiet i operaenPaul Morphy – hertugen af Braunschweig og grev Isouard, Paris 1858",
+    "h": 76
+   },
+   {
+    "id": "udoedelige-1851",
+    "tekst": "Det udødelige partiAdolf Anderssen – Lionel Kieseritzky, London 1851",
+    "h": 59
+   },
+   {
+    "id": "stedsegroenne-1852",
+    "tekst": "Det stedsegrønne partiAdolf Anderssen – Jean Dufresne, Berlin 1852",
+    "h": 59
+   },
+   {
+    "id": "reti-tartakower-1910",
+    "tekst": "Dronningeofret på d8Richard Réti – Savielly Tartakower, Wien 1910",
+    "h": 59
+   },
+   {
+    "id": "lasker-thomas-1912",
+    "tekst": "KongejagtenEdward Lasker – George Thomas, London 1912",
+    "h": 59
+   },
+   {
+    "id": "lasker-bauer-1889",
+    "tekst": "To løbere ofresEmanuel Lasker – Johann Bauer, Amsterdam 1889",
+    "h": 59
+   },
+   {
+    "id": "steinitz-bardeleben-1895",
+    "tekst": "Tårnet, der ikke kan slåsWilhelm Steinitz – Curt von Bardeleben, Hastings 1895",
+    "h": 59
+   },
+   {
+    "id": "rotlewi-rubinstein-1907",
+    "tekst": "Rubinsteins udødeligeGeorg Rotlewi – Akiba Rubinstein, Łódź 1907",
+    "h": 59
+   },
+   {
+    "id": "levitsky-marshall-1912",
+    "tekst": "GuldmønterneStepan Levitsky – Frank Marshall, Breslau 1912",
+    "h": 59
+   },
+   {
+    "id": "larsen-spassky-1970",
+    "tekst": "Tårnofferet på h1Bent Larsen – Boris Spasskij, Beograd 1970",
+    "h": 59
+   }
+  ],
+  "kendteEfter": "10 af 10 løst",
+  "kendteGenindlaest": "10 af 10 løst",
+  "net": [],
+  "fejl": []
+ },
+ "1280": {
+  "temaer": [
+   {
+    "tag": "mateIn1",
+    "knap": "Øv mat i 10 løst",
+    "forklaring": "Mat i 1: Find det træk, der sætter mat med det samme.",
+    "duOever": "Du øver: Mat i 1 (0 løst)",
+    "status": "Hvid trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "278-0032",
+     "kilde": "egne (278)",
+     "tema": "mateIn1",
+     "rating": 720,
+     "traek": 1
+    },
+    "markeret": "",
+    "forTraekMarkeret": null,
+    "forkert": {
+     "san": "Bf7",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Hvid trækker. Find det bedste træk."
+    },
+    "loest": "Mat i 1. Løst, men med et forkert træk først. Vi finder dit niveau: 1 af 10. Din stime er i gang: 1 dag.",
+    "knapEfter": "Øv mat i 11 løst"
+   },
+   {
+    "tag": "mateIn2",
+    "knap": "Øv mat i 20 løst",
+    "forklaring": "Mat i 2: Mat i to træk, uanset hvad modstanderen svarer.",
+    "duOever": "Du øver: Mat i 2 (0 løst)",
+    "status": "Sort trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "06Bg4",
+     "kilde": "gammel lichess-bank (261)",
+     "tema": "mateIn2",
+     "rating": 604,
+     "traek": 2
+    },
+    "markeret": "",
+    "forTraekMarkeret": null,
+    "forkert": {
+     "san": "Rf7",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Sort trækker. Find det bedste træk."
+    },
+    "loest": "Mat i 2. Løst, men med et forkert træk først. Vi finder dit niveau: 2 af 10.",
+    "knapEfter": "Øv mat i 21 løst"
+   },
+   {
+    "tag": "backRankMate",
+    "knap": "Øv mat på bagerste række0 løst",
+    "forklaring": "Bagerste række: Kongen er spærret inde af sine egne bønder. Et tårn eller en dronning på bagerste række sætter mat.",
+    "duOever": "Du øver: Bagerste række (0 løst)",
+    "status": "Sort trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "li-x0rdr",
+     "kilde": "lichess-temaer (544)",
+     "tema": "backRankMate",
+     "rating": 648,
+     "traek": 3
+    },
+    "markeret": "d3,e4",
+    "forTraekMarkeret": true,
+    "forkert": {
+     "san": "Rd8",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Sort trækker. Find det bedste træk."
+    },
+    "loest": "Bagerste række. Løst, men med et forkert træk først. Vi finder dit niveau: 3 af 10.",
+    "knapEfter": "Øv mat på bagerste række1 løst"
+   },
+   {
+    "tag": "fork",
+    "knap": "Øv gafler0 løst",
+    "forklaring": "Gaffel: Én brik angriber to på én gang. Modstanderen kan kun redde den ene.",
+    "duOever": "Du øver: Gaffel (0 løst)",
+    "status": "Hvid trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "06ySG",
+     "kilde": "gammel lichess-bank (261)",
+     "tema": "fork",
+     "rating": 437,
+     "traek": 2
+    },
+    "markeret": "",
+    "forTraekMarkeret": null,
+    "loest": "Løst! Gaffel. Vi finder dit niveau: 4 af 10.",
+    "knapEfter": "Øv gafler1 løst"
+   },
+   {
+    "tag": "pin",
+    "knap": "Øv bindinger0 løst",
+    "forklaring": "Binding: En brik kan ikke flytte, fordi en mere værdifuld brik står bag den.",
+    "duOever": "Du øver: Binding (0 løst)",
+    "status": "Hvid trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "0NLTN",
+     "kilde": "gammel lichess-bank (261)",
+     "tema": "pin",
+     "rating": 685,
+     "traek": 2
+    },
+    "markeret": "",
+    "forTraekMarkeret": null,
+    "loest": "Løst! Binding. Vi finder dit niveau: 5 af 10.",
+    "knapEfter": "Øv bindinger1 løst"
+   },
+   {
+    "tag": "skewer",
+    "knap": "Øv spyd0 løst",
+    "forklaring": "Spyd: Den værdifulde brik står forrest. Når den flytter, slår du brikken bag den.",
+    "duOever": "Du øver: Spyd (0 løst)",
+    "status": "Hvid trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "li-XrhXj",
+     "kilde": "lichess-temaer (544)",
+     "tema": "skewer",
+     "rating": 653,
+     "traek": 2
+    },
+    "markeret": "a6,b6",
+    "forTraekMarkeret": true,
+    "loest": "Løst! Spyd. Vi finder dit niveau: 6 af 10.",
+    "knapEfter": "Øv spyd1 løst"
+   },
+   {
+    "tag": "discoveredAttack",
+    "knap": "Øv afdækkede angreb0 løst",
+    "forklaring": "Afdækket angreb: Én brik flytter væk og åbner linjen for en anden, der så angriber.",
+    "duOever": "Du øver: Afdækket angreb (0 løst)",
+    "status": "Hvid trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "li-lopBs",
+     "kilde": "lichess-temaer (544)",
+     "tema": "discoveredAttack",
+     "rating": 765,
+     "traek": 2
+    },
+    "markeret": "f6,g5",
+    "forTraekMarkeret": true,
+    "loest": "Løst! Afdækket angreb. Vi finder dit niveau: 7 af 10.",
+    "knapEfter": "Øv afdækkede angreb1 løst"
+   },
+   {
+    "tag": "sacrifice",
+    "knap": "Øv ofre0 løst",
+    "forklaring": "Offer: Giv materiale væk med vilje, fordi du får mere tilbage.",
+    "duOever": "Du øver: Offer (0 løst)",
+    "status": "Hvid trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "li-sZ0sQ",
+     "kilde": "lichess-temaer (544)",
+     "tema": "sacrifice",
+     "rating": 790,
+     "traek": 3
+    },
+    "markeret": "d3,d4",
+    "forTraekMarkeret": true,
+    "loest": "Løst! Offer. Vi finder dit niveau: 8 af 10.",
+    "knapEfter": "Øv ofre1 løst"
+   },
+   {
+    "tag": "intermezzo",
+    "knap": "Øv mellemtræk0 løst",
+    "forklaring": "Mellemtræk: Før du slår tilbage, spiller du et træk, modstanderen skal svare på.",
+    "duOever": "Du øver: Mellemtræk (0 løst)",
+    "status": "Hvid trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "li-LmJKq",
+     "kilde": "lichess-temaer (544)",
+     "tema": "intermezzo",
+     "rating": 819,
+     "traek": 2
+    },
+    "markeret": "a7,a8",
+    "forTraekMarkeret": true,
+    "loest": "Løst! Mellemtræk. Vi finder dit niveau: 9 af 10.",
+    "knapEfter": "Øv mellemtræk1 løst"
+   },
+   {
+    "tag": "attackingF2F7",
+    "knap": "Øv angreb på f70 løst",
+    "forklaring": "Angreb på f7: f7 (og f2) er kun dækket af kongen i starten. Dér slår man til.",
+    "duOever": "Du øver: Angreb på f7 (0 løst)",
+    "status": "Sort trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "li-uAQzr",
+     "kilde": "lichess-temaer (544)",
+     "tema": "attackingF2F7",
+     "rating": 722,
+     "traek": 1
+    },
+    "markeret": "a8,c7",
+    "forTraekMarkeret": true,
+    "loest": "Løst! Angreb på f7. Dit niveau er fundet: 856.",
+    "knapEfter": "Øv angreb på f71 løst"
+   },
+   {
+    "tag": "promotion",
+    "knap": "Øv forvandling0 løst",
+    "forklaring": "Forvandling: Få en bonde hele vejen op og gør den til en dronning.",
+    "duOever": "Du øver: Forvandling (0 løst)",
+    "status": "Hvid trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "li-cXBLA",
+     "kilde": "lichess-temaer (544)",
+     "tema": "promotion",
+     "rating": 793,
+     "traek": 2
+    },
+    "markeret": "d5,e5",
+    "forTraekMarkeret": true,
+    "loest": "Løst! Forvandling. Rating: 878 (+22).",
+    "knapEfter": "Øv forvandling1 løst"
+   },
+   {
+    "tag": "endgame",
+    "knap": "Øv slutspil0 løst",
+    "forklaring": "Slutspil: Få brikker tilbage. Konger og bønder bliver vigtige.",
+    "duOever": "Du øver: Slutspil (0 løst)",
+    "status": "Sort trækker. Find det bedste træk.",
+    "lichess": {
+     "id": "li-BrQFr",
+     "kilde": "lichess-temaer (544)",
+     "tema": "endgame",
+     "rating": 825,
+     "traek": 2
+    },
+    "markeret": "g4,g6",
+    "forTraekMarkeret": true,
+    "loest": "Løst! Slutspil. Rating: 900 (+22).",
+    "knapEfter": "Øv slutspil1 løst"
+   }
+  ],
+  "partier": [
+   {
+    "id": "opera-1858",
+    "titel": "Partiet i operaen (Paris 1858)",
+    "start": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -1331,
+     "bund": -795,
+     "vinduH": 800,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Qxe6+",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet."
+    },
+    "elevTraek": 2,
+    "slut": "Løst! Præcis sådan spillede Paul Morphy.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Paul Morphy – hertugen af Braunschweig og grev Isouard, Paris 1858",
+     "tekst": "Paul Morphy spillede partiet i en loge i operaen i Paris i 1858 mod to adelsmænd, der rådede sammen. Det huskes, fordi det viser, hvad hurtig udvikling kan: Morphy fik alle brikker i spil, ofrede sin dronning og satte mat med de to brikker, han havde tilbage: et tårn og en løber.",
+     "iSyne": {
+      "top": 522,
+      "bund": 809,
+      "vinduH": 800,
+      "helt": false,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": true,
+     "parti": "udoedelige-1851"
+    },
+    "rul": 0
+   },
+   {
+    "id": "udoedelige-1851",
+    "titel": "Det udødelige parti (London 1851)",
+    "start": "Hvid trækker (Adolf Anderssen). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -1331,
+     "bund": -795,
+     "vinduH": 800,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Qxf7",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Hvid trækker (Adolf Anderssen). Find det træk, der blev spillet."
+    },
+    "elevTraek": 2,
+    "slut": "Løst! Præcis sådan spillede Adolf Anderssen.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Adolf Anderssen – Lionel Kieseritzky, London 1851",
+     "tekst": "Adolf Anderssen spillede partiet mod Lionel Kieseritzky i London i 1851, som et venskabsparti under den første store internationale turnering. Det kaldes \"det udødelige parti\", fordi Anderssen ofrede begge tårne, en løber og til sidst dronningen og alligevel satte mat med de tre lette brikker, han havde tilbage.",
+     "iSyne": {
+      "top": 505,
+      "bund": 814,
+      "vinduH": 800,
+      "helt": false,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": true,
+     "parti": "stedsegroenne-1852"
+    },
+    "rul": 0
+   },
+   {
+    "id": "stedsegroenne-1852",
+    "titel": "Det stedsegrønne parti (Berlin 1852)",
+    "start": "Hvid trækker (Adolf Anderssen). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -1331,
+     "bund": -795,
+     "vinduH": 800,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Be2",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Hvid trækker (Adolf Anderssen). Find det træk, der blev spillet."
+    },
+    "elevTraek": 4,
+    "slut": "Løst! Præcis sådan spillede Adolf Anderssen.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Adolf Anderssen – Jean Dufresne, Berlin 1852",
+     "tekst": "Adolf Anderssen spillede partiet mod Jean Dufresne i Berlin i 1852. Det kaldes \"det stedsegrønne parti\", fordi dronningeofret på d7 og matten med de to løbere stadig er lige smukke, uanset hvor mange gange man ser dem.",
+     "iSyne": {
+      "top": 551,
+      "bund": 816,
+      "vinduH": 800,
+      "helt": false,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": true,
+     "parti": "reti-tartakower-1910"
+    },
+    "rul": 0
+   },
+   {
+    "id": "reti-tartakower-1910",
+    "titel": "Dronningeofret på d8 (Wien 1910)",
+    "start": "Hvid trækker (Richard Réti). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -1613,
+     "bund": -1077,
+     "vinduH": 800,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Qxe4",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Hvid trækker (Richard Réti). Find det træk, der blev spillet."
+    },
+    "elevTraek": 3,
+    "slut": "Løst! Præcis sådan spillede Richard Réti.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Richard Réti – Savielly Tartakower, Wien 1910",
+     "tekst": "Richard Réti spillede partiet mod Savielly Tartakower i Wien i 1910. Det huskes som et af de korteste partier mellem to af tidens stærkeste spillere: Réti ofrede dronningen, og en dobbeltskak fra løber og tårn gav mat i 11. træk.",
+     "iSyne": {
+      "top": 547,
+      "bund": 812,
+      "vinduH": 800,
+      "helt": false,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": true,
+     "parti": "lasker-thomas-1912"
+    },
+    "rul": 0
+   },
+   {
+    "id": "lasker-thomas-1912",
+    "titel": "Kongejagten (London 1912)",
+    "start": "Hvid trækker (Edward Lasker). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -1613,
+     "bund": -1077,
+     "vinduH": 800,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Nxf6+",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Hvid trækker (Edward Lasker). Find det træk, der blev spillet."
+    },
+    "lang": "O-O-O#",
+    "elevTraek": 8,
+    "slut": "Løst! Præcis sådan spillede Edward Lasker.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Edward Lasker – George Thomas, London 1912",
+     "tekst": "Edward Lasker spillede partiet mod George Thomas i London i 1912. Det huskes for en af de mest berømte kongejagter: efter dronningeofret på h7 blev den sorte konge jaget fra g8 hele vejen ned til g1, hvor den blev sat mat.",
+     "iSyne": {
+      "top": 535,
+      "bund": 800,
+      "vinduH": 800,
+      "helt": true,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": true,
+     "parti": "lasker-bauer-1889"
+    },
+    "rul": 0
+   },
+   {
+    "id": "lasker-bauer-1889",
+    "titel": "To løbere ofres (Amsterdam 1889)",
+    "start": "Hvid trækker (Emanuel Lasker). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -1613,
+     "bund": -1077,
+     "vinduH": 800,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Qxh5",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Hvid trækker (Emanuel Lasker). Find det træk, der blev spillet."
+    },
+    "elevTraek": 8,
+    "slut": "Løst! Præcis sådan spillede Emanuel Lasker.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Emanuel Lasker – Johann Bauer, Amsterdam 1889",
+     "tekst": "Emanuel Lasker, der senere blev verdensmester i 27 år, spillede partiet mod Johann Bauer i Amsterdam i 1889. Det huskes, fordi begge løbere ofres på h7 og g7 for at rive kongens bønder væk. Siden hedder den kombination \"Laskers dobbelte løberoffer\".",
+     "iSyne": {
+      "top": 513,
+      "bund": 800,
+      "vinduH": 800,
+      "helt": true,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": true,
+     "parti": "steinitz-bardeleben-1895"
+    },
+    "rul": 0
+   },
+   {
+    "id": "steinitz-bardeleben-1895",
+    "titel": "Tårnet, der ikke kan slås (Hastings 1895)",
+    "start": "Hvid trækker (Wilhelm Steinitz). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -1635,
+     "bund": -1099,
+     "vinduH": 800,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Qxd7+",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Hvid trækker (Wilhelm Steinitz). Find det træk, der blev spillet."
+    },
+    "elevTraek": 4,
+    "slut": "Løst! Præcis sådan spillede Wilhelm Steinitz.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Wilhelm Steinitz – Curt von Bardeleben, Hastings 1895",
+     "tekst": "Wilhelm Steinitz, den første verdensmester, spillede partiet mod Curt von Bardeleben i Hastings i England i 1895. Det huskes for tårnet på e7, som sort ikke kan slå uden at blive sat mat. Von Bardeleben opgav ikke: han forlod bare salen og kom ikke tilbage.",
+     "iSyne": {
+      "top": 516,
+      "bund": 803,
+      "vinduH": 800,
+      "helt": false,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": true,
+     "parti": "rotlewi-rubinstein-1907"
+    },
+    "rul": 0
+   },
+   {
+    "id": "rotlewi-rubinstein-1907",
+    "titel": "Rubinsteins udødelige (Łódź 1907)",
+    "start": "Sort trækker (Akiba Rubinstein). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -1635,
+     "bund": -1099,
+     "vinduH": 800,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Bxe4+",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Sort trækker (Akiba Rubinstein). Find det træk, der blev spillet."
+    },
+    "elevTraek": 3,
+    "slut": "Løst! Præcis sådan spillede Akiba Rubinstein.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Georg Rotlewi – Akiba Rubinstein, Łódź 1907",
+     "tekst": "Akiba Rubinstein spillede partiet med de sorte brikker mod Georg Rotlewi i Łódź i Polen i 1907. Det kaldes \"Rubinsteins udødelige\": han lod sin dronning stå og blive slået, ofrede et tårn på d2 og lod de to løbere på de lange diagonaler gøre resten.",
+     "iSyne": {
+      "top": 518,
+      "bund": 805,
+      "vinduH": 800,
+      "helt": false,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": true,
+     "parti": "levitsky-marshall-1912"
+    },
+    "rul": 0
+   },
+   {
+    "id": "levitsky-marshall-1912",
+    "titel": "Guldmønterne (Breslau 1912)",
+    "start": "Sort trækker (Frank Marshall). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -1635,
+     "bund": -1099,
+     "vinduH": 800,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Ne2+",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Sort trækker (Frank Marshall). Find det træk, der blev spillet."
+    },
+    "elevTraek": 1,
+    "slut": "Løst! Præcis sådan spillede Frank Marshall.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Stepan Levitsky – Frank Marshall, Breslau 1912",
+     "tekst": "Frank Marshall spillede partiet med de sorte brikker mod Stepan Levitsky i Breslau i 1912. Dronningen på g3 kan slås på tre måder, men alle taber. Ifølge historien blev tilskuerne så begejstrede, at de kastede guldmønter op på brættet.",
+     "iSyne": {
+      "top": 531,
+      "bund": 818,
+      "vinduH": 800,
+      "helt": false,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": true,
+     "parti": "larsen-spassky-1970"
+    },
+    "rul": 0
+   },
+   {
+    "id": "larsen-spassky-1970",
+    "titel": "Tårnofferet på h1 (Beograd 1970)",
+    "start": "Sort trækker (Boris Spasskij). Find det træk, der blev spillet.",
+    "duOeverSkjult": true,
+    "stilling": true,
+    "historieSkjult": true,
+    "braetISyne": {
+     "top": -1635,
+     "bund": -1099,
+     "vinduH": 800,
+     "helt": false,
+     "delvist": false
+    },
+    "forkert": {
+     "san": "Qf6",
+     "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+     "tilbage": true,
+     "efter": "Sort trækker (Boris Spasskij). Find det træk, der blev spillet."
+    },
+    "elevTraek": 4,
+    "slut": "Løst! Præcis sådan spillede Boris Spasskij.",
+    "historie": {
+     "synlig": true,
+     "overskrift": "Bent Larsen – Boris Spasskij, Beograd 1970",
+     "tekst": "Den danske stormester Bent Larsen spillede partiet mod verdensmester Boris Spasskij i Beograd i 1970, i matchen \"Verden mod Sovjetunionen\", hvor Larsen sad ved førstebrættet foran Bobby Fischer. Larsen tabte på 17 træk, men partiet huskes for Spasskijs tårnoffer på h1.",
+     "iSyne": {
+      "top": 536,
+      "bund": 803,
+      "vinduH": 800,
+      "helt": false,
+      "delvist": true
+     }
+    },
+    "historieRigtig": true,
+    "flueben": true,
+    "naeste": {
+     "synlig": false,
+     "parti": ""
+    },
+    "rul": 0
+   }
+  ],
+  "kilde": "Gåderne med temaer er fra lichess.org's åbne gådedatabase (database.lichess.org, fri til alle, CC0).",
+  "kildeSynlig": true,
+  "licensTekst": true,
+  "knapper": [
+   {
+    "tema": "alle",
+    "tekst": "Som de kommer0 løst i alt",
+    "h": 62,
+    "w": 203
+   },
+   {
+    "tema": "mateIn1",
+    "tekst": "Øv mat i 10 løst",
+    "h": 62,
+    "w": 203
+   },
+   {
+    "tema": "mateIn2",
+    "tekst": "Øv mat i 20 løst",
+    "h": 83,
+    "w": 203
+   },
+   {
+    "tema": "backRankMate",
+    "tekst": "Øv mat på bagerste række0 løst",
+    "h": 83,
+    "w": 203
+   },
+   {
+    "tema": "fork",
+    "tekst": "Øv gafler0 løst",
+    "h": 62,
+    "w": 203
+   },
+   {
+    "tema": "pin",
+    "tekst": "Øv bindinger0 løst",
+    "h": 62,
+    "w": 203
+   },
+   {
+    "tema": "skewer",
+    "tekst": "Øv spyd0 løst",
+    "h": 83,
+    "w": 203
+   },
+   {
+    "tema": "discoveredAttack",
+    "tekst": "Øv afdækkede angreb0 løst",
+    "h": 83,
+    "w": 203
+   },
+   {
+    "tema": "sacrifice",
+    "tekst": "Øv ofre0 løst",
+    "h": 62,
+    "w": 203
+   },
+   {
+    "tema": "intermezzo",
+    "tekst": "Øv mellemtræk0 løst",
+    "h": 62,
+    "w": 203
+   },
+   {
+    "tema": "attackingF2F7",
+    "tekst": "Øv angreb på f70 løst",
+    "h": 62,
+    "w": 203
+   },
+   {
+    "tema": "promotion",
+    "tekst": "Øv forvandling0 løst",
+    "h": 62,
+    "w": 203
+   },
+   {
+    "tema": "endgame",
+    "tekst": "Øv slutspil0 løst",
+    "h": 62,
+    "w": 203
+   }
+  ],
+  "foldTitel": "Øv et tema",
+  "temaRul": 0,
+  "kendteFoer": "0 af 10 løst",
+  "kendteKnapper": [
+   {
+    "id": "opera-1858",
+    "tekst": "Partiet i operaenPaul Morphy – hertugen af Braunschweig og grev Isouard, Paris 1858",
+    "h": 80
+   },
+   {
+    "id": "udoedelige-1851",
+    "tekst": "Det udødelige partiAdolf Anderssen – Lionel Kieseritzky, London 1851",
+    "h": 62
+   },
+   {
+    "id": "stedsegroenne-1852",
+    "tekst": "Det stedsegrønne partiAdolf Anderssen – Jean Dufresne, Berlin 1852",
+    "h": 62
+   },
+   {
+    "id": "reti-tartakower-1910",
+    "tekst": "Dronningeofret på d8Richard Réti – Savielly Tartakower, Wien 1910",
+    "h": 62
+   },
+   {
+    "id": "lasker-thomas-1912",
+    "tekst": "KongejagtenEdward Lasker – George Thomas, London 1912",
+    "h": 62
+   },
+   {
+    "id": "lasker-bauer-1889",
+    "tekst": "To løbere ofresEmanuel Lasker – Johann Bauer, Amsterdam 1889",
+    "h": 62
+   },
+   {
+    "id": "steinitz-bardeleben-1895",
+    "tekst": "Tårnet, der ikke kan slåsWilhelm Steinitz – Curt von Bardeleben, Hastings 1895",
+    "h": 62
+   },
+   {
+    "id": "rotlewi-rubinstein-1907",
+    "tekst": "Rubinsteins udødeligeGeorg Rotlewi – Akiba Rubinstein, Łódź 1907",
+    "h": 62
+   },
+   {
+    "id": "levitsky-marshall-1912",
+    "tekst": "GuldmønterneStepan Levitsky – Frank Marshall, Breslau 1912",
+    "h": 62
+   },
+   {
+    "id": "larsen-spassky-1970",
+    "tekst": "Tårnofferet på h1Bent Larsen – Boris Spasskij, Beograd 1970",
+    "h": 62
+   }
+  ],
+  "kendteEfter": "10 af 10 løst",
+  "kendteGenindlaest": "10 af 10 løst",
+  "net": [],
+  "fejl": []
+ },
+ "skak": "5e6756c",
+ "bredder": [
+  360,
+  390,
+  1280
+ ],
+ "tjek": [
+  {
+   "hvad": "360: licenslinjen under gaaderne (lichess.org, CC0) og i licensteksten",
+   "ok": true,
+   "data": "Gåderne med temaer er fra lichess.org's åbne gådedatabase (database.lichess.org, fri til alle, CC0)."
+  },
+  {
+   "hvad": "360: 13 temaknapper, alle paa dansk",
+   "ok": true,
+   "data": [
+    "Som de kommer0 løst i alt",
+    "Øv mat i 10 løst",
+    "Øv mat i 20 løst",
+    "Øv mat på bagerste række0 løst",
+    "Øv gafler0 løst",
+    "Øv bindinger0 løst",
+    "Øv spyd0 løst",
+    "Øv afdækkede angreb0 løst",
+    "Øv ofre0 løst",
+    "Øv mellemtræk0 løst",
+    "Øv angreb på f70 løst",
+    "Øv forvandling0 løst",
+    "Øv slutspil0 løst"
+   ]
+  },
+  {
+   "hvad": "360: temaknapperne er mindst 44 px hoeje",
+   "ok": true,
+   "data": 59
+  },
+  {
+   "hvad": "360: hvert tema giver en gaade med det tema (fundet i en af bankerne)",
+   "ok": true,
+   "data": [
+    "mateIn1:mateIn1 egne (278) 722",
+    "mateIn2:mateIn2 gammel lichess-bank (261) 682",
+    "backRankMate:backRankMate lichess-temaer (544) 648",
+    "fork:fork gammel lichess-bank (261) 477",
+    "pin:pin gammel lichess-bank (261) 688",
+    "skewer:skewer gammel lichess-bank (261) 567",
+    "discoveredAttack:discoveredAttack egne (278) 778",
+    "sacrifice:sacrifice lichess-temaer (544) 790",
+    "intermezzo:intermezzo lichess-temaer (544) 819",
+    "attackingF2F7:attackingF2F7 lichess-temaer (544) 736",
+    "promotion:promotion lichess-temaer (544) 793",
+    "endgame:endgame lichess-temaer (544) 792"
+   ]
+  },
+  {
+   "hvad": "360: \"Du øver: ...\" staar over braettet med temaets navn",
+   "ok": true,
+   "data": [
+    "Du øver: Mat i 1 (0 løst)",
+    "Du øver: Mat i 2 (0 løst)",
+    "Du øver: Bagerste række (0 løst)",
+    "Du øver: Gaffel (0 løst)",
+    "Du øver: Binding (0 løst)",
+    "Du øver: Spyd (0 løst)",
+    "Du øver: Afdækket angreb (0 løst)",
+    "Du øver: Offer (0 løst)",
+    "Du øver: Mellemtræk (0 løst)",
+    "Du øver: Angreb på f7 (0 løst)",
+    "Du øver: Forvandling (0 løst)",
+    "Du øver: Slutspil (0 løst)"
+   ]
+  },
+  {
+   "hvad": "360: modstanderens traek foer gaaden er markeret (kun lichess-temaerne har det)",
+   "ok": true,
+   "data": [
+    "mateIn1:null",
+    "mateIn2:null",
+    "backRankMate:true",
+    "fork:null",
+    "pin:null",
+    "skewer:null",
+    "discoveredAttack:null",
+    "sacrifice:true",
+    "intermezzo:true",
+    "attackingF2F7:true",
+    "promotion:true",
+    "endgame:true"
+   ]
+  },
+  {
+   "hvad": "360: alle 12 gaader loest, \"1 løst\" ved knappen",
+   "ok": true,
+   "data": [
+    "Øv mat i 11 løst",
+    "Øv mat i 21 løst",
+    "Øv mat på bagerste række1 løst",
+    "Øv gafler1 løst",
+    "Øv bindinger1 løst",
+    "Øv spyd1 løst",
+    "Øv afdækkede angreb1 løst",
+    "Øv ofre1 løst",
+    "Øv mellemtræk1 løst",
+    "Øv angreb på f71 løst",
+    "Øv forvandling1 løst",
+    "Øv slutspil1 løst"
+   ]
+  },
+  {
+   "hvad": "360: et forkert traek giver \"Ikke den vej\" og kan tages tilbage",
+   "ok": true
+  },
+  {
+   "hvad": "360: ingen vandret rulning",
+   "ok": true
+  },
+  {
+   "hvad": "360: 10 kendte partier, stillingen = partiet, \"Du øver\" skjult, historien skjult til loest",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "360: hvert parti loest, historien vises ordret, flueben",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "360: kongejagten godtager O-O-O# til sidst",
+   "ok": true
+  },
+  {
+   "hvad": "360: \"10 af 10 løst\" og husket efter genindlaesning",
+   "ok": true,
+   "data": [
+    "0 af 10 løst",
+    "10 af 10 løst",
+    "10 af 10 løst"
+   ]
+  },
+  {
+   "hvad": "360: uden net og uden fejl paa siden",
+   "ok": true,
+   "data": {
+    "net": 0,
+    "fejl": []
+   }
+  },
+  {
+   "hvad": "390: licenslinjen under gaaderne (lichess.org, CC0) og i licensteksten",
+   "ok": true,
+   "data": "Gåderne med temaer er fra lichess.org's åbne gådedatabase (database.lichess.org, fri til alle, CC0)."
+  },
+  {
+   "hvad": "390: 13 temaknapper, alle paa dansk",
+   "ok": true,
+   "data": [
+    "Som de kommer0 løst i alt",
+    "Øv mat i 10 løst",
+    "Øv mat i 20 løst",
+    "Øv mat på bagerste række0 løst",
+    "Øv gafler0 løst",
+    "Øv bindinger0 løst",
+    "Øv spyd0 løst",
+    "Øv afdækkede angreb0 løst",
+    "Øv ofre0 løst",
+    "Øv mellemtræk0 løst",
+    "Øv angreb på f70 løst",
+    "Øv forvandling0 løst",
+    "Øv slutspil0 løst"
+   ]
+  },
+  {
+   "hvad": "390: temaknapperne er mindst 44 px hoeje",
+   "ok": true,
+   "data": 59
+  },
+  {
+   "hvad": "390: hvert tema giver en gaade med det tema (fundet i en af bankerne)",
+   "ok": true,
+   "data": [
+    "mateIn1:mateIn1 gammel lichess-bank (261) 600",
+    "mateIn2:mateIn2 gammel lichess-bank (261) 597",
+    "backRankMate:backRankMate lichess-temaer (544) 648",
+    "fork:fork gammel lichess-bank (261) 437",
+    "pin:pin gammel lichess-bank (261) 688",
+    "skewer:skewer gammel lichess-bank (261) 621",
+    "discoveredAttack:discoveredAttack lichess-temaer (544) 752",
+    "sacrifice:sacrifice lichess-temaer (544) 768",
+    "intermezzo:intermezzo lichess-temaer (544) 796",
+    "attackingF2F7:attackingF2F7 lichess-temaer (544) 622",
+    "promotion:promotion lichess-temaer (544) 807",
+    "endgame:endgame lichess-temaer (544) 730"
+   ]
+  },
+  {
+   "hvad": "390: \"Du øver: ...\" staar over braettet med temaets navn",
+   "ok": true,
+   "data": [
+    "Du øver: Mat i 1 (0 løst)",
+    "Du øver: Mat i 2 (0 løst)",
+    "Du øver: Bagerste række (0 løst)",
+    "Du øver: Gaffel (0 løst)",
+    "Du øver: Binding (0 løst)",
+    "Du øver: Spyd (0 løst)",
+    "Du øver: Afdækket angreb (0 løst)",
+    "Du øver: Offer (0 løst)",
+    "Du øver: Mellemtræk (0 løst)",
+    "Du øver: Angreb på f7 (0 løst)",
+    "Du øver: Forvandling (0 løst)",
+    "Du øver: Slutspil (0 løst)"
+   ]
+  },
+  {
+   "hvad": "390: modstanderens traek foer gaaden er markeret (kun lichess-temaerne har det)",
+   "ok": true,
+   "data": [
+    "mateIn1:null",
+    "mateIn2:null",
+    "backRankMate:true",
+    "fork:null",
+    "pin:null",
+    "skewer:null",
+    "discoveredAttack:true",
+    "sacrifice:true",
+    "intermezzo:true",
+    "attackingF2F7:true",
+    "promotion:true",
+    "endgame:true"
+   ]
+  },
+  {
+   "hvad": "390: alle 12 gaader loest, \"1 løst\" ved knappen",
+   "ok": true,
+   "data": [
+    "Øv mat i 11 løst",
+    "Øv mat i 21 løst",
+    "Øv mat på bagerste række1 løst",
+    "Øv gafler1 løst",
+    "Øv bindinger1 løst",
+    "Øv spyd1 løst",
+    "Øv afdækkede angreb1 løst",
+    "Øv ofre1 løst",
+    "Øv mellemtræk1 løst",
+    "Øv angreb på f71 løst",
+    "Øv forvandling1 løst",
+    "Øv slutspil1 løst"
+   ]
+  },
+  {
+   "hvad": "390: et forkert traek giver \"Ikke den vej\" og kan tages tilbage",
+   "ok": true
+  },
+  {
+   "hvad": "390: ingen vandret rulning",
+   "ok": true
+  },
+  {
+   "hvad": "390: 10 kendte partier, stillingen = partiet, \"Du øver\" skjult, historien skjult til loest",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "390: hvert parti loest, historien vises ordret, flueben",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "390: kongejagten godtager O-O-O# til sidst",
+   "ok": true
+  },
+  {
+   "hvad": "390: \"10 af 10 løst\" og husket efter genindlaesning",
+   "ok": true,
+   "data": [
+    "0 af 10 løst",
+    "10 af 10 løst",
+    "10 af 10 løst"
+   ]
+  },
+  {
+   "hvad": "390: uden net og uden fejl paa siden",
+   "ok": true,
+   "data": {
+    "net": 0,
+    "fejl": []
+   }
+  },
+  {
+   "hvad": "1280: licenslinjen under gaaderne (lichess.org, CC0) og i licensteksten",
+   "ok": true,
+   "data": "Gåderne med temaer er fra lichess.org's åbne gådedatabase (database.lichess.org, fri til alle, CC0)."
+  },
+  {
+   "hvad": "1280: 13 temaknapper, alle paa dansk",
+   "ok": true,
+   "data": [
+    "Som de kommer0 løst i alt",
+    "Øv mat i 10 løst",
+    "Øv mat i 20 løst",
+    "Øv mat på bagerste række0 løst",
+    "Øv gafler0 løst",
+    "Øv bindinger0 løst",
+    "Øv spyd0 løst",
+    "Øv afdækkede angreb0 løst",
+    "Øv ofre0 løst",
+    "Øv mellemtræk0 løst",
+    "Øv angreb på f70 løst",
+    "Øv forvandling0 løst",
+    "Øv slutspil0 løst"
+   ]
+  },
+  {
+   "hvad": "1280: hvert tema giver en gaade med det tema (fundet i en af bankerne)",
+   "ok": true,
+   "data": [
+    "mateIn1:mateIn1 egne (278) 720",
+    "mateIn2:mateIn2 gammel lichess-bank (261) 604",
+    "backRankMate:backRankMate lichess-temaer (544) 648",
+    "fork:fork gammel lichess-bank (261) 437",
+    "pin:pin gammel lichess-bank (261) 685",
+    "skewer:skewer lichess-temaer (544) 653",
+    "discoveredAttack:discoveredAttack lichess-temaer (544) 765",
+    "sacrifice:sacrifice lichess-temaer (544) 790",
+    "intermezzo:intermezzo lichess-temaer (544) 819",
+    "attackingF2F7:attackingF2F7 lichess-temaer (544) 722",
+    "promotion:promotion lichess-temaer (544) 793",
+    "endgame:endgame lichess-temaer (544) 825"
+   ]
+  },
+  {
+   "hvad": "1280: \"Du øver: ...\" staar over braettet med temaets navn",
+   "ok": true,
+   "data": [
+    "Du øver: Mat i 1 (0 løst)",
+    "Du øver: Mat i 2 (0 løst)",
+    "Du øver: Bagerste række (0 løst)",
+    "Du øver: Gaffel (0 løst)",
+    "Du øver: Binding (0 løst)",
+    "Du øver: Spyd (0 løst)",
+    "Du øver: Afdækket angreb (0 løst)",
+    "Du øver: Offer (0 løst)",
+    "Du øver: Mellemtræk (0 løst)",
+    "Du øver: Angreb på f7 (0 løst)",
+    "Du øver: Forvandling (0 løst)",
+    "Du øver: Slutspil (0 løst)"
+   ]
+  },
+  {
+   "hvad": "1280: modstanderens traek foer gaaden er markeret (kun lichess-temaerne har det)",
+   "ok": true,
+   "data": [
+    "mateIn1:null",
+    "mateIn2:null",
+    "backRankMate:true",
+    "fork:null",
+    "pin:null",
+    "skewer:true",
+    "discoveredAttack:true",
+    "sacrifice:true",
+    "intermezzo:true",
+    "attackingF2F7:true",
+    "promotion:true",
+    "endgame:true"
+   ]
+  },
+  {
+   "hvad": "1280: alle 12 gaader loest, \"1 løst\" ved knappen",
+   "ok": true,
+   "data": [
+    "Øv mat i 11 løst",
+    "Øv mat i 21 løst",
+    "Øv mat på bagerste række1 løst",
+    "Øv gafler1 løst",
+    "Øv bindinger1 løst",
+    "Øv spyd1 løst",
+    "Øv afdækkede angreb1 løst",
+    "Øv ofre1 løst",
+    "Øv mellemtræk1 løst",
+    "Øv angreb på f71 løst",
+    "Øv forvandling1 løst",
+    "Øv slutspil1 løst"
+   ]
+  },
+  {
+   "hvad": "1280: et forkert traek giver \"Ikke den vej\" og kan tages tilbage",
+   "ok": true
+  },
+  {
+   "hvad": "1280: ingen vandret rulning",
+   "ok": true
+  },
+  {
+   "hvad": "1280: 10 kendte partier, stillingen = partiet, \"Du øver\" skjult, historien skjult til loest",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "1280: hvert parti loest, historien vises ordret, flueben",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "1280: kongejagten godtager O-O-O# til sidst",
+   "ok": true
+  },
+  {
+   "hvad": "1280: \"10 af 10 løst\" og husket efter genindlaesning",
+   "ok": true,
+   "data": [
+    "0 af 10 løst",
+    "10 af 10 løst",
+    "10 af 10 løst"
+   ]
+  },
+  {
+   "hvad": "1280: uden net og uden fejl paa siden",
+   "ok": true,
+   "data": {
+    "net": 0,
+    "fejl": []
+   }
+  }
+ ]
+}
