@@ -1,0 +1,260 @@
+{
+ "main": "287210d",
+ "klip": [
+  {
+   "bane": "squat",
+   "drossel": 1,
+   "ms": 1189,
+   "bytes": 108876,
+   "sha": "9a01db0de4e9fbff"
+  },
+  {
+   "bane": "squat",
+   "drossel": 1,
+   "ms": 87,
+   "bytes": 108876,
+   "sha": "9a01db0de4e9fbff"
+  },
+  {
+   "bane": "squat",
+   "drossel": 6,
+   "ms": 150,
+   "bytes": 108876,
+   "sha": "9a01db0de4e9fbff"
+  },
+  {
+   "bane": "squat",
+   "drossel": 20,
+   "ms": 656,
+   "bytes": 108876,
+   "sha": "9a01db0de4e9fbff"
+  },
+  {
+   "bane": "squatHurtigOp",
+   "drossel": 1,
+   "ms": 93,
+   "bytes": 98544,
+   "sha": "4c6cf12e2e5db99b"
+  },
+  {
+   "bane": "squatHurtigOp",
+   "drossel": 1,
+   "ms": 94,
+   "bytes": 98544,
+   "sha": "4c6cf12e2e5db99b"
+  },
+  {
+   "bane": "squatHurtigOp",
+   "drossel": 6,
+   "ms": 155,
+   "bytes": 98544,
+   "sha": "4c6cf12e2e5db99b"
+  },
+  {
+   "bane": "squatHurtigOp",
+   "drossel": 20,
+   "ms": 685,
+   "bytes": 98544,
+   "sha": "4c6cf12e2e5db99b"
+  },
+  {
+   "bane": "doedloeft",
+   "drossel": 1,
+   "ms": 88,
+   "bytes": 103884,
+   "sha": "7be17531796fb888"
+  },
+  {
+   "bane": "doedloeft",
+   "drossel": 1,
+   "ms": 95,
+   "bytes": 103884,
+   "sha": "7be17531796fb888"
+  },
+  {
+   "bane": "doedloeft",
+   "drossel": 6,
+   "ms": 156,
+   "bytes": 103884,
+   "sha": "7be17531796fb888"
+  },
+  {
+   "bane": "doedloeft",
+   "drossel": 20,
+   "ms": 654,
+   "bytes": 103884,
+   "sha": "7be17531796fb888"
+  },
+  {
+   "bane": "baenk",
+   "drossel": 1,
+   "ms": 91,
+   "bytes": 108600,
+   "sha": "b3f0642d6fac1034"
+  },
+  {
+   "bane": "baenk",
+   "drossel": 1,
+   "ms": 93,
+   "bytes": 108600,
+   "sha": "b3f0642d6fac1034"
+  },
+  {
+   "bane": "baenk",
+   "drossel": 6,
+   "ms": 183,
+   "bytes": 108600,
+   "sha": "b3f0642d6fac1034"
+  },
+  {
+   "bane": "baenk",
+   "drossel": 20,
+   "ms": 678,
+   "bytes": 108600,
+   "sha": "b3f0642d6fac1034"
+  }
+ ],
+ "tests": [
+  {
+   "navn": "main 1. gang",
+   "filer": [
+    "test/hop563.test.js",
+    "test/hop621.test.js"
+   ],
+   "s": 20,
+   "tests": 13,
+   "pass": 13,
+   "fail": 0,
+   "kode": 0
+  },
+  {
+   "navn": "main 2. gang",
+   "filer": [
+    "test/hop563.test.js",
+    "test/hop621.test.js"
+   ],
+   "s": 20,
+   "tests": 13,
+   "pass": 13,
+   "fail": 0,
+   "kode": 0
+  },
+  {
+   "navn": "4ca0c63 hop563 (realtid)",
+   "filer": [
+    "test/hop563.test.js"
+   ],
+   "s": 23,
+   "tests": 10,
+   "pass": 10,
+   "fail": 0,
+   "kode": 0
+  }
+ ],
+ "chrome": "154.0.8037.57",
+ "tjek": [
+  {
+   "hvad": "fastVideo: klippet er byte for byte det samme ubelastet (to gange) og med CPU'en drosslet 6x og 20x, for alle 4 baner (79 billeder)",
+   "ok": true,
+   "data": [
+    {
+     "bane": "squat",
+     "ens": true,
+     "sha": [
+      "9a01db0de4e9fbff"
+     ],
+     "ms": [
+      1189,
+      87,
+      150,
+      656
+     ]
+    },
+    {
+     "bane": "squatHurtigOp",
+     "ens": true,
+     "sha": [
+      "4c6cf12e2e5db99b"
+     ],
+     "ms": [
+      93,
+      94,
+      155,
+      685
+     ]
+    },
+    {
+     "bane": "doedloeft",
+     "ens": true,
+     "sha": [
+      "7be17531796fb888"
+     ],
+     "ms": [
+      88,
+      95,
+      156,
+      654
+     ]
+    },
+    {
+     "bane": "baenk",
+     "ens": true,
+     "sha": [
+      "b3f0642d6fac1034"
+     ],
+     "ms": [
+      91,
+      93,
+      183,
+      678
+     ]
+    }
+   ]
+  },
+  {
+   "hvad": "hop563 + hop621 paa main: groenne begge gange",
+   "ok": true,
+   "data": [
+    {
+     "navn": "main 1. gang",
+     "filer": [
+      "test/hop563.test.js",
+      "test/hop621.test.js"
+     ],
+     "s": 20,
+     "tests": 13,
+     "pass": 13,
+     "fail": 0,
+     "kode": 0
+    },
+    {
+     "navn": "main 2. gang",
+     "filer": [
+      "test/hop563.test.js",
+      "test/hop621.test.js"
+     ],
+     "s": 20,
+     "tests": 13,
+     "pass": 13,
+     "fail": 0,
+     "kode": 0
+    }
+   ]
+  },
+  {
+   "hvad": "den gamle hop563 (realtidsoptagelse) paa 4ca0c63 paa samme maskine, til sammenligning af tiden",
+   "ok": true,
+   "data": {
+    "navn": "4ca0c63 hop563 (realtid)",
+    "filer": [
+     "test/hop563.test.js"
+    ],
+    "s": 23,
+    "tests": 10,
+    "pass": 10,
+    "fail": 0,
+    "kode": 0
+   }
+  }
+ ]
+}
