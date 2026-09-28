@@ -1,0 +1,364 @@
+{
+ "opslag": {
+  "1": {
+   "titel": "Hvad jeg kigger efter i en squat",
+   "slides": 5,
+   "brud": [],
+   "slut": "Tallene er modellens, regnet på en referencekrop og ikke målt på en løfter. Modellen har ingen muskler og en stiv ryg, så om coret holder, kan den ikke vise. Entropi Coaching ligger på entropicoaching.dk.",
+   "sidsteAfsnitForbehold": true,
+   "antalPng": 5
+  },
+  "2": {
+   "titel": "Dødløft: stangen glider frem ved knæet",
+   "slides": 5,
+   "brud": [],
+   "slut": "Benene og skulderen står som i modellen, og kun stangen er flyttet. Modellen har ingen muskler, en stiv ryg og ingen fart, så procenterne viser retningen og den omtrentlige andel, ikke hvad en bestemt løfter skal gøre. Entropi Coaching ligger på entropicoaching.dk.",
+   "sidsteAfsnitForbehold": true,
+   "antalPng": 5
+  },
+  "3": {
+   "titel": "Bænkpres: buen og stangens vej",
+   "slides": 1,
+   "brud": [],
+   "slut": "Buen er i modellen en jævn bro fra skulderbladene til balderne. Modellen har ingen muskler og intet skub fra benene, og den siger intet om skuldersmerter eller skaderisiko. Figuren viser, hvad buen flytter, ikke hvilken bue der passer til en bestemt løfter. Entropi Coaching ligger på entropicoaching.dk.",
+   "sidsteAfsnitForbehold": true,
+   "antalPng": 1
+  },
+  "4": {
+   "titel": "De to fejl jeg ser oftest i squat",
+   "slides": 6,
+   "brud": [],
+   "slut": "Tallene er modellens, regnet på en referencekrop og ikke målt på en løfter. Modellen har ingen fast grænse for, hvornår en afvigelse er en fejl, og hvornår den er atletens bias. Entropi Coaching ligger på entropicoaching.dk.",
+   "sidsteAfsnitForbehold": true,
+   "antalPng": 6
+  },
+  "5": {
+   "titel": "Et løft giver mening i sin sammenhæng",
+   "slides": 6,
+   "brud": [],
+   "slut": "En enkelt video giver et øjebliksbillede, og en log kan ikke alene fortælle, hvorfor en vægt føles tungere end før. Hele teksten om, hvad en coach laver, når du ikke ser det, ligger på entropicoaching.dk.",
+   "sidsteAfsnitForbehold": true,
+   "antalPng": 6
+  },
+  "6": {
+   "titel": "Dødløft: konventionel og sumo i samme model",
+   "slides": 1,
+   "brud": [],
+   "slut": "Sumo er set fra siden, med standen 85 cm bred og fødderne 40° ud. Knæ, der skubbes ud, hofternes rotation og kræfterne til siden er ikke i modellen, og den har ingen muskler og en stiv ryg. Figuren viser, hvad standen flytter, ikke hvilken stil der passer til en bestemt løfter. Entropi Coaching ligger på entropicoaching.dk.",
+   "sidsteAfsnitForbehold": true,
+   "antalPng": 1
+  }
+ },
+ "laes": [
+  {
+   "bredde": 390,
+   "billeder": 24,
+   "indlaest": 24,
+   "vistB": [
+    358
+   ],
+   "kopi": 6,
+   "sidelaens": false,
+   "svar": true,
+   "tankestreg": false,
+   "jsFejl": []
+  },
+  {
+   "bredde": 1280,
+   "billeder": 24,
+   "indlaest": 24,
+   "vistB": [
+    568
+   ],
+   "kopi": 6,
+   "sidelaens": false,
+   "svar": true,
+   "tankestreg": false,
+   "jsFejl": []
+  }
+ ],
+ "tal4": [
+  {
+   "t": "3,7",
+   "iK7": true
+  },
+  {
+   "t": "2,9",
+   "iK7": true
+  },
+  {
+   "t": "29,1",
+   "iK7": true
+  },
+  {
+   "t": "23,0",
+   "iK7": true
+  },
+  {
+   "t": "15,7",
+   "iK7": true
+  },
+  {
+   "t": "21,7",
+   "iK7": true
+  },
+  {
+   "t": "30°",
+   "iK7": true
+  },
+  {
+   "t": "40°",
+   "iK7": true
+  },
+  {
+   "t": "64°",
+   "iK7": true
+  },
+  {
+   "t": "49°",
+   "iK7": true
+  },
+  {
+   "t": "31,1",
+   "iK7": true
+  },
+  {
+   "t": "13,6",
+   "iK7": true
+  }
+ ],
+ "tal1": {
+  "opslag": [
+   true,
+   true,
+   true
+  ],
+  "artikelKap1": [
+   true,
+   true,
+   true
+  ]
+ },
+ "tal3": {
+  "caTi": true,
+  "roererIkke": false,
+  "tiFem": false,
+  "legDrive": false,
+  "skub": true,
+  "hoejder": true
+ },
+ "tal2": {
+  "flytterUd": false,
+  "minus54": false,
+  "mindre54": true,
+  "slide5": "Modellen har ingen muskler, en stiv ryg og ingen fart. Proce",
+  "fejlBetyder": false
+ },
+ "urort": {
+  "foerste23": "2026-09-28T10:25:05.441Z",
+  "nyere": [],
+  "roert23": [
+   {
+    "p": "opslag-2/slide-01.png",
+    "aendret": true
+   },
+   {
+    "p": "opslag-2/slide-02.png",
+    "aendret": false
+   },
+   {
+    "p": "opslag-2/slide-03.png",
+    "aendret": false
+   },
+   {
+    "p": "opslag-2/slide-04.png",
+    "aendret": true
+   },
+   {
+    "p": "opslag-2/slide-05.png",
+    "aendret": true
+   },
+   {
+    "p": "opslag-3/slide-01.png",
+    "aendret": true
+   }
+  ]
+ },
+ "laesIndhold": {
+  "pngIndlejret": 24,
+  "pngAlle": 24,
+  "bt23": [
+   true,
+   true
+  ]
+ },
+ "tjek": [
+  {
+   "hvad": "0 tankestreger, opfordringer, dramatiske aabninger, \"Marc\", kilo og atletnavne i slides og billedtekster",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "Alle seks billedtekster slutter med en neutral henvisning til entropicoaching.dk",
+   "ok": true,
+   "data": [
+    " coret holder, kan den ikke vise. Entropi Coaching ligger på entropicoaching.dk.",
+    "hvad en bestemt løfter skal gøre. Entropi Coaching ligger på entropicoaching.dk.",
+    "der passer til en bestemt løfter. Entropi Coaching ligger på entropicoaching.dk.",
+    " og hvornår den er atletens bias. Entropi Coaching ligger på entropicoaching.dk.",
+    "sten om, hvad en coach laver, når du ikke ser det, ligger på entropicoaching.dk.",
+    "der passer til en bestemt løfter. Entropi Coaching ligger på entropicoaching.dk."
+   ]
+  },
+  {
+   "hvad": "Forbeholdet staar i billedtekstens sidste afsnit i alle seks",
+   "ok": true
+  },
+  {
+   "hvad": "24 PNG (5+5+1+6+6+1)",
+   "ok": true,
+   "data": [
+    5,
+    5,
+    1,
+    6,
+    6,
+    1
+   ]
+  },
+  {
+   "hvad": "Engelsk fagord i teksten (ingen efter 615)",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "Opslag 4: alle 12 tal staar i artiklens kapitel 7 (samme krop, 183 cm)",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "Opslag 1 bruger 183 cm-kroppens tal (1 / 21,7 / 23 cm), artiklens kapitel 1 den balancerede krops (0,9 / 20,5 / 21,4 cm)",
+   "ok": true,
+   "data": {
+    "opslag": [
+     true,
+     true,
+     true
+    ],
+    "artikelKap1": [
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "hvad": "Opslag 3 (I1): \"ca. 10 cm kortere\", ingen 10,5, \"roerer ikke\" slettet, \"skub fra benene\" i stedet for leg drive",
+   "ok": true,
+   "data": {
+    "caTi": true,
+    "roererIkke": false,
+    "tiFem": false,
+    "legDrive": false,
+    "skub": true,
+    "hoejder": true
+   }
+  },
+  {
+   "hvad": "Opslag 2 (I2, I3): ingen \"flytter ud\" og intet -54 %, \"54 % mindre\" i billedteksten, slide 5 starter med \"Modellen har ingen muskler\"",
+   "ok": true,
+   "data": {
+    "flytterUd": false,
+    "minus54": false,
+    "mindre54": true,
+    "slide5": "Modellen har ingen muskler, en stiv ryg og ingen fart. Proce",
+    "fejlBetyder": false
+   }
+  },
+  {
+   "hvad": "Opslag 1, 4, 5 og 6 er ikke roert efter kopien fra foer 615; slide 4 og 5 i nr. 2 og slide 1 i nr. 3 er andre end foer 615 (slide 1-3 i nr. 2 maa vaere ens)",
+   "ok": true,
+   "data": {
+    "foerste23": "2026-09-28T10:25:05.441Z",
+    "nyere": [],
+    "roert23": [
+     {
+      "p": "opslag-2/slide-01.png",
+      "aendret": true
+     },
+     {
+      "p": "opslag-2/slide-02.png",
+      "aendret": false
+     },
+     {
+      "p": "opslag-2/slide-03.png",
+      "aendret": false
+     },
+     {
+      "p": "opslag-2/slide-04.png",
+      "aendret": true
+     },
+     {
+      "p": "opslag-2/slide-05.png",
+      "aendret": true
+     },
+     {
+      "p": "opslag-3/slide-01.png",
+      "aendret": true
+     }
+    ]
+   }
+  },
+  {
+   "hvad": "LAES-INSTAGRAM viser alle 24 nuvaerende PNG byte for byte og de nye billedtekster 2 og 3",
+   "ok": true,
+   "data": {
+    "pngIndlejret": 24,
+    "pngAlle": 24,
+    "bt23": [
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "hvad": "LAES-INSTAGRAM 390: 24 billeder indlaest, 6 kopiknapper, svarformen staar, 0 JS-fejl, ingen sidelaens rulning, 0 tankestreger",
+   "ok": true,
+   "data": {
+    "bredde": 390,
+    "billeder": 24,
+    "indlaest": 24,
+    "vistB": [
+     358
+    ],
+    "kopi": 6,
+    "sidelaens": false,
+    "svar": true,
+    "tankestreg": false,
+    "jsFejl": []
+   }
+  },
+  {
+   "hvad": "LAES-INSTAGRAM 1280: 24 billeder indlaest, 6 kopiknapper, svarformen staar, 0 JS-fejl, ingen sidelaens rulning, 0 tankestreger",
+   "ok": true,
+   "data": {
+    "bredde": 1280,
+    "billeder": 24,
+    "indlaest": 24,
+    "vistB": [
+     568
+    ],
+    "kopi": 6,
+    "sidelaens": false,
+    "svar": true,
+    "tankestreg": false,
+    "jsFejl": []
+   }
+  },
+  {
+   "hvad": "LAES-INSTAGRAM: 0 kald ud af huset",
+   "ok": true,
+   "data": []
+  }
+ ]
+}
