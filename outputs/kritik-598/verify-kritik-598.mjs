@@ -44,16 +44,16 @@ for (const l of sh('git log --format=%B main..HEAD').split('\n')) ok(/^[\x20-\x7
 // --- blok 1: Maal dit billede --------------------------------------------------------------------
 const m = json('maal-598.json')
 if (m) {
-  ok(m.ver.main === 'af745da' && m.ver.site === '11c6169', `maalt paa loeftmodel ${m.ver.main} og site ${m.ver.site}`)
-  ok(m.tjek.length >= 22 && m.tjek.every((t) => t.ok), `maal-598: ${m.tjek.filter((t) => !t.ok).length} roede`)
+  ok(m.ver.main === '03c929e' && m.ver.site === '11c6169', `maalt paa loeftmodel ${m.ver.main} og site ${m.ver.site}`)
+  ok(m.tjek.length >= 23 && m.tjek.every((t) => t.ok), `maal-598: ${m.tjek.filter((t) => !t.ok).length} roede`)
   ok(m.eksterne.length === 0, 'maal-598: net')
   ok(m.mini.filter((x) => x.tekstfelter === 3).length === 4, 'maal-598: M1 er ikke 4 miniaturer med 3 felter')
   ok(m.figurside.s2tal.vej === 10.5 && m.figurside.vist.bueVej === 10.4, 'maal-598: M2 tallene')
 }
 const mm = tekst('MAAL.md')
 doc(mm, 'MAAL', /^Maal dit billede stadig klar til sitet: (ja|nej)$/, ['Hvad jeg målte', 'Hvad sitet skal have', 'Yantras punkter', 'Fund', 'Ærlige grænser'], ['M1', 'M2', 'M3'])
-if (mm) ok(/Setu skal ikke kopiere den nye udgave endnu/.test(mm) && mm.includes('af745da') && mm.includes('11c6169'), 'MAAL: Setu-dommen eller hasherne mangler')
-ok(sh(`git -C ${LM} rev-parse --short main`).trim() === 'af745da', 'loeftmodel main er flyttet fra af745da (maal igen)')
+if (mm) ok(/Setu skal ikke kopiere den nye udgave endnu/.test(mm) && mm.includes('af745da') && mm.includes('03c929e') && mm.includes('11c6169'), 'MAAL: Setu-dommen eller hasherne mangler')
+ok(sh(`git -C ${LM} rev-parse --short main`).trim() === '03c929e', 'loeftmodel main er flyttet fra 03c929e (maal igen)')
 
 // --- blok 2: skakken og rapporten ------------------------------------------------------------
 if (blok >= 2) {

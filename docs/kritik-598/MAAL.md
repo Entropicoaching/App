@@ -8,7 +8,7 @@ Hvorfor:
 - I dødløftets og bænkens miniaturer går der derfor tre mørke striber tværs over kroppen. I "stangen glider frem" ligger én af dem præcis over hånden og stangen, hvor fejlen vises.
 - Det er det første, en træner ser, når siden finder en fejl.
 
-Rettelsen er lille (fjern felterne i `src/miniature.js`). Bagefter kan Setu kopiere det hele i én kopi:
+Rettelsen er lille (fjern felterne i `src/miniature.js`). Bagefter kan Setu kopiere det hele i én kopi. Det gælder også Yantras 599 ("Gem billedet med tallene" og piletaster), som blev merget, mens jeg skrev, og som ingen kritik har set endnu:
 - `maal-billede/` hel
 - `baenk-figurer/index.html`, efter M2
 - `tre-loeft/` og `min-krop/` (DA7)
@@ -27,13 +27,15 @@ Bhishak, 28. sep 2026. Ordre 598.
 - `entropi-loeftmodel-dhruva` `main`, hentet med `git archive`. Træet er ikke rørt.
 - Main stod på `ed41442` (586 og 593 merget), da jeg begyndte. Mens jeg målte, blev 595 merget: **`af745da`**.
 - Jeg har målt på `af745da`. Dist er den samme som på `ordre-595` (`2449355`), og 595 ændrede kun `tre-loeft.js` og `min-krop.js`.
+- **Efter min første commit blev Yantras 599 merget: `03c929e`.** 599 ændrer kun `maal-billede.js` og `index.html` ("Gem billedet med tallene", piletasterne i videoen), ikke miniaturerne, figursiden eller tre-løft.
+- Jeg har kørt hele målingen igen på `03c929e`: 23/23, samme tal. 599's nye funktioner er **ikke vurderet**. Det ligger uden for ordren.
 - Yantras `docs/RAPPORT-dag-86.md`, `-87.md` og `-88.md` er læst.
 
 **Sitet:** `entropi-coaching-site-wt2`, grenen `vaerktoejer` @ `11c6169` (Setus 591), hentet med `git archive`. Sitets `maal-billede/` er blob for blob 580-udgaven.
 
 ## Hvad jeg målte
 
-`outputs/kritik-598/maal-598.mjs` giver **22/22 grønne tjek** (`maal-598.json`, `maal-598.log`, `M-*.png`).
+`outputs/kritik-598/maal-598.mjs` giver **23/23 grønne tjek** på `03c929e` (`maal-598.json`, `M-*.png`).
 
 **Siden er målt i sitets kopi, som den bliver, når Setu kopierer:**
 - `dist/maal-billede/` og `dist/baenk-figurer/` fra main er lagt ind over sitets kopi, sammen med `tre-loeft/` og `min-krop/`.
@@ -49,9 +51,10 @@ Bhishak, 28. sep 2026. Ordre 598.
 
 ## Hvad sitet skal have (for Setu)
 
-| Mappe | Sitet (`11c6169`) mod main (`af745da`) | Fra ordre |
+| Mappe | Sitet (`11c6169`) mod main (`03c929e`) | Fra ordre |
 |---|---|---|
 | `maal-billede/` | `maal-billede.js` ny, `miniaturer/` ny (8 SVG) | 593 |
+| `maal-billede/` | `maal-billede.js` og `index.html` igen (Gem billedet, piletaster; ikke vurderet) | 599 |
 | `baenk-figurer/` | `index.html` (BA1-sætningen) | 593 |
 | `tre-loeft/` | `tre-loeft.js` (DA7) | 595 |
 | `min-krop/` | `min-krop.js` (samme regnemodul, ingen synlig ændring) | 595 |

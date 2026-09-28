@@ -1,6 +1,6 @@
 {
  "ver": {
-  "main": "af745da",
+  "main": "03c929e",
   "o595": "2449355",
   "site": "11c6169",
   "godkendt585": "291f5bf"
@@ -9,6 +9,7 @@
   "maal-billede": {
    "siteMod291": [],
    "siteModMain": [
+    "index.html",
     "maal-billede.js",
     "miniaturer/bp-albue-ud.svg",
     "miniaturer/bp-hoejt-bryst.svg",
@@ -19,7 +20,10 @@
     "miniaturer/k7-kun-knae-bund.svg",
     "miniaturer/k7-kun-knae-sticking.svg"
    ],
-   "mainMod595": []
+   "mainMod595": [
+    "index.html",
+    "maal-billede.js"
+   ]
   },
   "baenk-figurer": {
    "siteMod291": [],
@@ -60,7 +64,10 @@
   "maalVideoUaendret": true,
   "o595Merget": "ja",
   "fra593": {
-   "maal-billede": [],
+   "maal-billede": [
+    "index.html",
+    "maal-billede.js"
+   ],
    "baenk-figurer": [],
    "tre-loeft": [
     "tre-loeft.js"
@@ -68,6 +75,22 @@
    "min-krop": [
     "min-krop.js"
    ],
+   "loeft-fejl": []
+  },
+  "nyeSiden595": [
+   "03c929e merge: ordre-599 (ORDRE 599, Yantra)",
+   "80ad78c Ordre 599, commit 3: skaermbilleder 390 og 1280, verificering, rapport dag 89",
+   "dd3ae30 Ordre 599, commit 2: piletasterne gaar eet billede i videoen",
+   "311e225 Ordre 599, commit 1: Gem billedet med tallene (PNG paa enheden, ogsaa foer og efter)"
+  ],
+  "fra595": {
+   "maal-billede": [
+    "index.html",
+    "maal-billede.js"
+   ],
+   "baenk-figurer": [],
+   "tre-loeft": [],
+   "min-krop": [],
    "loeft-fejl": []
   }
  },
@@ -260,10 +283,10 @@
      "ok": true,
      "alt": "Fejlfiguren kun knæene, modellens udførelse svagt bagved",
      "x": 31,
-     "y": 3720,
+     "y": 3744,
      "w": 96,
      "h": 129,
-     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+     "href": "http://127.0.0.1:59475/ny/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
      "linkStatus": 200
     }
    ],
@@ -286,10 +309,10 @@
      "ok": true,
      "alt": "Fejlfiguren hoften skudt for langt tilbage, modellens udførelse svagt bagved",
      "x": 31,
-     "y": 3742,
+     "y": 3766,
      "w": 96,
      "h": 129,
-     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
+     "href": "http://127.0.0.1:59475/ny/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
      "linkStatus": 200
     }
    ],
@@ -312,10 +335,10 @@
      "ok": true,
      "alt": "Fejlfiguren kun knæene, modellens udførelse svagt bagved",
      "x": 31,
-     "y": 4123,
+     "y": 4147,
      "w": 96,
      "h": 129,
-     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+     "href": "http://127.0.0.1:59475/ny/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
      "linkStatus": 200
     }
    ],
@@ -338,10 +361,10 @@
      "ok": true,
      "alt": "Fejlfiguren hoften skudt for langt tilbage, modellens udførelse svagt bagved",
      "x": 31,
-     "y": 4100,
+     "y": 4124,
      "w": 96,
      "h": 129,
-     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
+     "href": "http://127.0.0.1:59475/ny/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
      "linkStatus": 200
     }
    ],
@@ -364,10 +387,10 @@
      "ok": true,
      "alt": "Fejlfiguren hoften stiger først, modellens udførelse svagt bagved",
      "x": 31,
-     "y": 3955,
+     "y": 3979,
      "w": 96,
      "h": 129,
-     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#dl-hofte-foerst",
+     "href": "http://127.0.0.1:59475/ny/assets/vaerktoejer/loeft-fejl/index.html#dl-hofte-foerst",
      "linkStatus": 200
     }
    ],
@@ -390,10 +413,10 @@
      "ok": true,
      "alt": "Fejlfiguren stangen glider frem, modellens udførelse svagt bagved",
      "x": 31,
-     "y": 3984,
+     "y": 4008,
      "w": 96,
      "h": 129,
-     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+     "href": "http://127.0.0.1:59475/ny/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
      "linkStatus": 200
     }
    ],
@@ -416,10 +439,10 @@
      "ok": true,
      "alt": "Fejlfiguren stangen glider frem, modellens udførelse svagt bagved",
      "x": 31,
-     "y": 4116,
+     "y": 4140,
      "w": 96,
      "h": 129,
-     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+     "href": "http://127.0.0.1:59475/ny/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
      "linkStatus": 200
     }
    ],
@@ -442,10 +465,10 @@
      "ok": true,
      "alt": "Fejlfiguren stangen for højt, modellens udførelse svagt bagved",
      "x": 31,
-     "y": 3402,
+     "y": 3426,
      "w": 147,
      "h": 116,
-     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#bp-hoejt-bryst",
+     "href": "http://127.0.0.1:59475/ny/assets/vaerktoejer/loeft-fejl/index.html#bp-hoejt-bryst",
      "linkStatus": 200
     },
     {
@@ -453,10 +476,10 @@
      "ok": true,
      "alt": "Fejlfiguren albuen helt ude, modellens udførelse svagt bagved",
      "x": 185,
-     "y": 3402,
+     "y": 3426,
      "w": 147,
      "h": 116,
-     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#bp-albue-ud",
+     "href": "http://127.0.0.1:59475/ny/assets/vaerktoejer/loeft-fejl/index.html#bp-albue-ud",
      "linkStatus": 200
     }
    ],
@@ -479,10 +502,10 @@
      "ok": true,
      "alt": "Fejlfiguren kun knæene, modellens udførelse svagt bagved",
      "x": 31,
-     "y": 3775,
+     "y": 3799,
      "w": 96,
      "h": 129,
-     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+     "href": "http://127.0.0.1:59475/ny/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
      "linkStatus": 200
     }
    ],
@@ -505,10 +528,10 @@
      "ok": true,
      "alt": "Fejlfiguren hoften skudt for langt tilbage, modellens udførelse svagt bagved",
      "x": 31,
-     "y": 3797,
+     "y": 3821,
      "w": 96,
      "h": 129,
-     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
+     "href": "http://127.0.0.1:59475/ny/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
      "linkStatus": 200
     }
    ],
@@ -531,10 +554,10 @@
      "ok": true,
      "alt": "Fejlfiguren kun knæene, modellens udførelse svagt bagved",
      "x": 31,
-     "y": 4131,
+     "y": 4155,
      "w": 96,
      "h": 129,
-     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+     "href": "http://127.0.0.1:59475/ny/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
      "linkStatus": 200
     }
    ],
@@ -557,10 +580,10 @@
      "ok": true,
      "alt": "Fejlfiguren hoften skudt for langt tilbage, modellens udførelse svagt bagved",
      "x": 31,
-     "y": 4133,
+     "y": 4157,
      "w": 96,
      "h": 129,
-     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
+     "href": "http://127.0.0.1:59475/ny/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
      "linkStatus": 200
     }
    ],
@@ -583,10 +606,10 @@
      "ok": true,
      "alt": "Fejlfiguren hoften stiger først, modellens udførelse svagt bagved",
      "x": 31,
-     "y": 4010,
+     "y": 4034,
      "w": 96,
      "h": 129,
-     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#dl-hofte-foerst",
+     "href": "http://127.0.0.1:59475/ny/assets/vaerktoejer/loeft-fejl/index.html#dl-hofte-foerst",
      "linkStatus": 200
     }
    ],
@@ -609,10 +632,10 @@
      "ok": true,
      "alt": "Fejlfiguren stangen glider frem, modellens udførelse svagt bagved",
      "x": 31,
-     "y": 4016,
+     "y": 4040,
      "w": 96,
      "h": 129,
-     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+     "href": "http://127.0.0.1:59475/ny/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
      "linkStatus": 200
     }
    ],
@@ -635,10 +658,10 @@
      "ok": true,
      "alt": "Fejlfiguren stangen glider frem, modellens udførelse svagt bagved",
      "x": 31,
-     "y": 4174,
+     "y": 4198,
      "w": 96,
      "h": 129,
-     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+     "href": "http://127.0.0.1:59475/ny/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
      "linkStatus": 200
     }
    ],
@@ -661,10 +684,10 @@
      "ok": true,
      "alt": "Fejlfiguren stangen for højt, modellens udførelse svagt bagved",
      "x": 31,
-     "y": 3394,
+     "y": 3418,
      "w": 150,
      "h": 118,
-     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#bp-hoejt-bryst",
+     "href": "http://127.0.0.1:59475/ny/assets/vaerktoejer/loeft-fejl/index.html#bp-hoejt-bryst",
      "linkStatus": 200
     },
     {
@@ -672,10 +695,10 @@
      "ok": true,
      "alt": "Fejlfiguren albuen helt ude, modellens udførelse svagt bagved",
      "x": 187,
-     "y": 3394,
+     "y": 3418,
      "w": 150,
      "h": 118,
-     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#bp-albue-ud",
+     "href": "http://127.0.0.1:59475/ny/assets/vaerktoejer/loeft-fejl/index.html#bp-albue-ud",
      "linkStatus": 200
     }
    ],
@@ -701,7 +724,7 @@
      "y": 2639,
      "w": 96,
      "h": 129,
-     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+     "href": "http://127.0.0.1:59475/ny/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
      "linkStatus": 200
     }
    ],
@@ -727,7 +750,7 @@
      "y": 2661,
      "w": 96,
      "h": 129,
-     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
+     "href": "http://127.0.0.1:59475/ny/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
      "linkStatus": 200
     }
    ],
@@ -753,7 +776,7 @@
      "y": 2782,
      "w": 96,
      "h": 129,
-     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+     "href": "http://127.0.0.1:59475/ny/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
      "linkStatus": 200
     }
    ],
@@ -779,7 +802,7 @@
      "y": 2760,
      "w": 96,
      "h": 129,
-     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
+     "href": "http://127.0.0.1:59475/ny/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
      "linkStatus": 200
     }
    ],
@@ -805,7 +828,7 @@
      "y": 2769,
      "w": 96,
      "h": 129,
-     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#dl-hofte-foerst",
+     "href": "http://127.0.0.1:59475/ny/assets/vaerktoejer/loeft-fejl/index.html#dl-hofte-foerst",
      "linkStatus": 200
     }
    ],
@@ -831,7 +854,7 @@
      "y": 2769,
      "w": 96,
      "h": 129,
-     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+     "href": "http://127.0.0.1:59475/ny/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
      "linkStatus": 200
     }
    ],
@@ -857,7 +880,7 @@
      "y": 2791,
      "w": 96,
      "h": 129,
-     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+     "href": "http://127.0.0.1:59475/ny/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
      "linkStatus": 200
     }
    ],
@@ -883,7 +906,7 @@
      "y": 2207,
      "w": 150,
      "h": 118,
-     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#bp-hoejt-bryst",
+     "href": "http://127.0.0.1:59475/ny/assets/vaerktoejer/loeft-fejl/index.html#bp-hoejt-bryst",
      "linkStatus": 200
     },
     {
@@ -894,7 +917,7 @@
      "y": 2207,
      "w": 150,
      "h": 118,
-     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#bp-albue-ud",
+     "href": "http://127.0.0.1:59475/ny/assets/vaerktoejer/loeft-fejl/index.html#bp-albue-ud",
      "linkStatus": 200
     }
    ],
@@ -919,10 +942,10 @@
      "ok": false,
      "alt": "Fejlfiguren kun knæene, modellens udførelse svagt bagved",
      "x": 31,
-     "y": 3775,
+     "y": 3799,
      "w": 331,
      "h": 18,
-     "href": "http://127.0.0.1:62534/to/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+     "href": "http://127.0.0.1:59475/to/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
      "linkStatus": 200
     }
    ],
@@ -945,10 +968,10 @@
      "ok": false,
      "alt": "Fejlfiguren hoften skudt for langt tilbage, modellens udførelse svagt bagved",
      "x": 31,
-     "y": 3797,
+     "y": 3821,
      "w": 331,
      "h": 18,
-     "href": "http://127.0.0.1:62534/to/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
+     "href": "http://127.0.0.1:59475/to/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
      "linkStatus": 200
     }
    ],
@@ -971,10 +994,10 @@
      "ok": false,
      "alt": "Fejlfiguren kun knæene, modellens udførelse svagt bagved",
      "x": 31,
-     "y": 4131,
+     "y": 4155,
      "w": 331,
      "h": 18,
-     "href": "http://127.0.0.1:62534/to/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+     "href": "http://127.0.0.1:59475/to/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
      "linkStatus": 200
     }
    ],
@@ -997,10 +1020,10 @@
      "ok": false,
      "alt": "Fejlfiguren hoften skudt for langt tilbage, modellens udførelse svagt bagved",
      "x": 31,
-     "y": 4133,
+     "y": 4157,
      "w": 331,
      "h": 18,
-     "href": "http://127.0.0.1:62534/to/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
+     "href": "http://127.0.0.1:59475/to/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
      "linkStatus": 200
     }
    ],
@@ -1023,10 +1046,10 @@
      "ok": false,
      "alt": "Fejlfiguren hoften stiger først, modellens udførelse svagt bagved",
      "x": 31,
-     "y": 4010,
+     "y": 4034,
      "w": 331,
      "h": 18,
-     "href": "http://127.0.0.1:62534/to/assets/vaerktoejer/loeft-fejl/index.html#dl-hofte-foerst",
+     "href": "http://127.0.0.1:59475/to/assets/vaerktoejer/loeft-fejl/index.html#dl-hofte-foerst",
      "linkStatus": 200
     }
    ],
@@ -1049,10 +1072,10 @@
      "ok": false,
      "alt": "Fejlfiguren stangen glider frem, modellens udførelse svagt bagved",
      "x": 31,
-     "y": 4016,
+     "y": 4040,
      "w": 331,
      "h": 18,
-     "href": "http://127.0.0.1:62534/to/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+     "href": "http://127.0.0.1:59475/to/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
      "linkStatus": 200
     }
    ],
@@ -1075,10 +1098,10 @@
      "ok": false,
      "alt": "Fejlfiguren stangen glider frem, modellens udførelse svagt bagved",
      "x": 31,
-     "y": 4174,
+     "y": 4198,
      "w": 331,
      "h": 18,
-     "href": "http://127.0.0.1:62534/to/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+     "href": "http://127.0.0.1:59475/to/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
      "linkStatus": 200
     }
    ],
@@ -1101,10 +1124,10 @@
      "ok": false,
      "alt": "Fejlfiguren stangen for højt, modellens udførelse svagt bagved",
      "x": 31,
-     "y": 3394,
+     "y": 3418,
      "w": 163,
      "h": 18,
-     "href": "http://127.0.0.1:62534/to/assets/vaerktoejer/loeft-fejl/index.html#bp-hoejt-bryst",
+     "href": "http://127.0.0.1:59475/to/assets/vaerktoejer/loeft-fejl/index.html#bp-hoejt-bryst",
      "linkStatus": 200
     },
     {
@@ -1112,10 +1135,10 @@
      "ok": false,
      "alt": "Fejlfiguren albuen helt ude, modellens udførelse svagt bagved",
      "x": 200,
-     "y": 3394,
+     "y": 3418,
      "w": 162,
      "h": 18,
-     "href": "http://127.0.0.1:62534/to/assets/vaerktoejer/loeft-fejl/index.html#bp-albue-ud",
+     "href": "http://127.0.0.1:59475/to/assets/vaerktoejer/loeft-fejl/index.html#bp-albue-ud",
      "linkStatus": 200
     }
    ],
@@ -1263,8 +1286,8 @@
      "src": false,
      "readyState": 0,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 3.24
+     "knuder": 264,
+     "heapMB": 3.25
     },
     {
      "i": 2,
@@ -1282,8 +1305,8 @@
      "src": false,
      "readyState": 0,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 3.27
+     "knuder": 264,
+     "heapMB": 3.68
     },
     {
      "i": 3,
@@ -1301,8 +1324,8 @@
      "src": false,
      "readyState": 0,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 3.82
+     "knuder": 264,
+     "heapMB": 4.24
     },
     {
      "i": 4,
@@ -1320,8 +1343,8 @@
      "src": false,
      "readyState": 0,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 4.35
+     "knuder": 264,
+     "heapMB": 4.76
     },
     {
      "i": 5,
@@ -1339,8 +1362,8 @@
      "src": false,
      "readyState": 0,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 4.88
+     "knuder": 264,
+     "heapMB": 3.32
     },
     {
      "i": 6,
@@ -1358,8 +1381,8 @@
      "src": false,
      "readyState": 0,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 3.51
+     "knuder": 264,
+     "heapMB": 3.9
     },
     {
      "i": 7,
@@ -1377,8 +1400,8 @@
      "src": false,
      "readyState": 0,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 4.03
+     "knuder": 264,
+     "heapMB": 4.43
     },
     {
      "i": 8,
@@ -1396,8 +1419,8 @@
      "src": false,
      "readyState": 0,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 3.83
+     "knuder": 264,
+     "heapMB": 3.85
     },
     {
      "i": 9,
@@ -1415,8 +1438,8 @@
      "src": false,
      "readyState": 0,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 3.4
+     "knuder": 264,
+     "heapMB": 3.42
     },
     {
      "i": 10,
@@ -1434,8 +1457,8 @@
      "src": false,
      "readyState": 0,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 3.53
+     "knuder": 264,
+     "heapMB": 3.49
     },
     {
      "i": 11,
@@ -1453,8 +1476,8 @@
      "src": false,
      "readyState": 0,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 3.48
+     "knuder": 264,
+     "heapMB": 4.01
     },
     {
      "i": 12,
@@ -1472,8 +1495,8 @@
      "src": false,
      "readyState": 0,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 4.02
+     "knuder": 264,
+     "heapMB": 3.57
     }
    ],
    "net": 0,
@@ -1497,8 +1520,8 @@
      "src": true,
      "readyState": 4,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 3.14
+     "knuder": 264,
+     "heapMB": 3.16
     },
     {
      "i": 2,
@@ -1516,8 +1539,8 @@
      "src": true,
      "readyState": 4,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 3.56
+     "knuder": 264,
+     "heapMB": 3.58
     },
     {
      "i": 3,
@@ -1535,8 +1558,8 @@
      "src": true,
      "readyState": 4,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 4.07
+     "knuder": 264,
+     "heapMB": 4.08
     },
     {
      "i": 4,
@@ -1554,8 +1577,8 @@
      "src": true,
      "readyState": 4,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 4.51
+     "knuder": 264,
+     "heapMB": 4.53
     },
     {
      "i": 5,
@@ -1573,8 +1596,8 @@
      "src": true,
      "readyState": 4,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 4.95
+     "knuder": 264,
+     "heapMB": 4.98
     },
     {
      "i": 6,
@@ -1592,8 +1615,8 @@
      "src": true,
      "readyState": 4,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 3.52
+     "knuder": 264,
+     "heapMB": 3.53
     },
     {
      "i": 7,
@@ -1611,8 +1634,8 @@
      "src": true,
      "readyState": 4,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 3.97
+     "knuder": 264,
+     "heapMB": 3.98
     },
     {
      "i": 8,
@@ -1630,8 +1653,8 @@
      "src": true,
      "readyState": 4,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 3.74
+     "knuder": 264,
+     "heapMB": 3.76
     },
     {
      "i": 9,
@@ -1649,8 +1672,8 @@
      "src": true,
      "readyState": 4,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 4.21
+     "knuder": 264,
+     "heapMB": 4.23
     },
     {
      "i": 10,
@@ -1668,8 +1691,8 @@
      "src": true,
      "readyState": 4,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 3.67
+     "knuder": 264,
+     "heapMB": 4.66
     },
     {
      "i": 11,
@@ -1687,8 +1710,8 @@
      "src": true,
      "readyState": 4,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 3.57
+     "knuder": 264,
+     "heapMB": 5.13
     },
     {
      "i": 12,
@@ -1706,8 +1729,8 @@
      "src": true,
      "readyState": 4,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 3.39
+     "knuder": 264,
+     "heapMB": 3.63
     }
    ],
    "net": 0,
@@ -1731,8 +1754,8 @@
      "src": false,
      "readyState": 0,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 3.98
+     "knuder": 264,
+     "heapMB": 4.01
     },
     {
      "i": 2,
@@ -1750,8 +1773,8 @@
      "src": false,
      "readyState": 0,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 3.62
+     "knuder": 264,
+     "heapMB": 3.64
     },
     {
      "i": 3,
@@ -1769,8 +1792,8 @@
      "src": false,
      "readyState": 0,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 4.18
+     "knuder": 264,
+     "heapMB": 4.2
     },
     {
      "i": 4,
@@ -1788,8 +1811,8 @@
      "src": false,
      "readyState": 0,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 4.69
+     "knuder": 264,
+     "heapMB": 4.71
     },
     {
      "i": 5,
@@ -1807,8 +1830,8 @@
      "src": false,
      "readyState": 0,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 3.25
+     "knuder": 264,
+     "heapMB": 3.28
     },
     {
      "i": 6,
@@ -1826,8 +1849,8 @@
      "src": false,
      "readyState": 0,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 3.84
+     "knuder": 264,
+     "heapMB": 3.86
     },
     {
      "i": 7,
@@ -1845,8 +1868,8 @@
      "src": false,
      "readyState": 0,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 4.36
+     "knuder": 264,
+     "heapMB": 4.38
     },
     {
      "i": 8,
@@ -1864,8 +1887,8 @@
      "src": false,
      "readyState": 0,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 3.78
+     "knuder": 264,
+     "heapMB": 3.8
     },
     {
      "i": 9,
@@ -1883,8 +1906,8 @@
      "src": false,
      "readyState": 0,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 3.34
+     "knuder": 264,
+     "heapMB": 3.37
     },
     {
      "i": 10,
@@ -1902,8 +1925,8 @@
      "src": false,
      "readyState": 0,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 3.42
+     "knuder": 264,
+     "heapMB": 3.44
     },
     {
      "i": 11,
@@ -1921,8 +1944,8 @@
      "src": false,
      "readyState": 0,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 3.95
+     "knuder": 264,
+     "heapMB": 3.96
     },
     {
      "i": 12,
@@ -1940,8 +1963,8 @@
      "src": false,
      "readyState": 0,
      "videoer": 1,
-     "knuder": 254,
-     "heapMB": 3.5
+     "knuder": 264,
+     "heapMB": 3.52
     }
    ],
    "net": 0,
@@ -2024,15 +2047,15 @@
   {
    "b": 360,
    "imgs": [
-    "bp-hoejt-bryst.svg 147x116 @31,3402",
-    "bp-albue-ud.svg 147x116 @185,3402"
+    "bp-hoejt-bryst.svg 147x116 @31,3426",
+    "bp-albue-ud.svg 147x116 @185,3426"
    ]
   },
   {
    "b": 390,
    "imgs": [
-    "bp-hoejt-bryst.svg 150x118 @31,3394",
-    "bp-albue-ud.svg 150x118 @187,3394"
+    "bp-hoejt-bryst.svg 150x118 @31,3418",
+    "bp-albue-ud.svg 150x118 @187,3418"
    ]
   },
   {
@@ -2053,6 +2076,7 @@
    "hvad": "sitets maal-billede (11c6169) er stadig 580-udgaven (291f5bf, godkendt i 585); main har ny maal-billede.js og 8 miniaturer, som Setu skal kopiere",
    "ok": true,
    "data": [
+    "index.html",
     "maal-billede.js",
     "miniaturer/bp-albue-ud.svg",
     "miniaturer/bp-hoejt-bryst.svg",
@@ -2065,18 +2089,49 @@
    ]
   },
   {
-   "hvad": "595 er merget undervejs (main af745da); dist paa main = dist paa ordre-595, og 595 aendrede kun tre-loeft.js og min-krop.js (maal-billede, baenk-figurer og fejlsiderne = 593)",
+   "hvad": "595 er merget undervejs (dist paa main = ordre-595 undtagen det, der kom efter), og 595 aendrede kun tre-loeft.js og min-krop.js; maal-billede, baenk-figurer og fejlsiderne er 593's",
    "ok": true,
    "data": {
-    "maal-billede": [],
-    "baenk-figurer": [],
-    "tre-loeft": [
-     "tre-loeft.js"
+    "fra593": {
+     "maal-billede": [
+      "index.html",
+      "maal-billede.js"
+     ],
+     "baenk-figurer": [],
+     "tre-loeft": [
+      "tre-loeft.js"
+     ],
+     "min-krop": [
+      "min-krop.js"
+     ],
+     "loeft-fejl": []
+    },
+    "fra595": {
+     "maal-billede": [
+      "index.html",
+      "maal-billede.js"
+     ],
+     "baenk-figurer": [],
+     "tre-loeft": [],
+     "min-krop": [],
+     "loeft-fejl": []
+    }
+   }
+  },
+  {
+   "hvad": "efter 595 er main flyttet igen (03c929e): 4 commits; de aendrer kun maal-billede.js og index.html, ikke miniaturerne (ikke vurderet i denne ordre)",
+   "ok": true,
+   "data": {
+    "nye": [
+     "03c929e merge: ordre-599 (ORDRE 599, Yantra)",
+     "80ad78c Ordre 599, commit 3: skaermbilleder 390 og 1280, verificering, rapport dag 89",
+     "dd3ae30 Ordre 599, commit 2: piletasterne gaar eet billede i videoen",
+     "311e225 Ordre 599, commit 1: Gem billedet med tallene (PNG paa enheden, ogsaa foer og efter)"
     ],
-    "min-krop": [
-     "min-krop.js"
-    ],
-    "loeft-fejl": []
+    "maal": [
+     "index.html",
+     "maal-billede.js"
+    ]
    }
   },
   {
@@ -2147,15 +2202,15 @@
     {
      "b": 360,
      "imgs": [
-      "bp-hoejt-bryst.svg 147x116 @31,3402",
-      "bp-albue-ud.svg 147x116 @185,3402"
+      "bp-hoejt-bryst.svg 147x116 @31,3426",
+      "bp-albue-ud.svg 147x116 @185,3426"
      ]
     },
     {
      "b": 390,
      "imgs": [
-      "bp-hoejt-bryst.svg 150x118 @31,3394",
-      "bp-albue-ud.svg 150x118 @187,3394"
+      "bp-hoejt-bryst.svg 150x118 @31,3418",
+      "bp-albue-ud.svg 150x118 @187,3418"
      ]
     },
     {
@@ -2343,9 +2398,9 @@
    "hvad": "DOM-knuder staar stille fra runde 2 til 12, og JS-heapen vokser under 1 MB fra runde 2 til 12",
    "ok": true,
    "data": [
-    "390-luk: knuder 254->254, heap 3.27->4.02 MB",
-    "390-uden-luk: knuder 254->254, heap 3.56->3.39 MB",
-    "1280-luk: knuder 254->254, heap 3.62->3.5 MB"
+    "390-luk: knuder 264->264, heap 3.68->3.57 MB",
+    "390-uden-luk: knuder 264->264, heap 3.58->3.63 MB",
+    "1280-luk: knuder 264->264, heap 3.64->3.52 MB"
    ]
   },
   {
