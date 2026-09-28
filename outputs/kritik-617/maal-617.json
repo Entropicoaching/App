@@ -1,0 +1,1338 @@
+{
+ "ver": {
+  "site": "1169b5f",
+  "setu600": "1bd6672",
+  "lmMain": "287210d",
+  "kilde": "4ca0c63",
+  "med616": true,
+  "siteErNyere": true,
+  "siteSiden600": [
+   "1169b5f Ordre 620 blok 1: Maal dit billede, Min krop, De tre loeft og baenkens figurside fra loeftmodellens main 4ca0c63 (Yantras 611 og 616, Bhishak 603 og 610)"
+  ],
+  "lmSidenKilde": [
+   "287210d merge: ordre-621 (ORDRE 621, Yantra)"
+  ]
+ },
+ "kopi": {
+  "maal-billede": {
+   "filer": 10,
+   "modKilde": [],
+   "mangler": [],
+   "modLmMain": [
+    "index.html",
+    "maal-billede.js"
+   ]
+  },
+  "tre-loeft": {
+   "filer": 3,
+   "modKilde": [],
+   "mangler": [],
+   "modLmMain": []
+  },
+  "min-krop": {
+   "filer": 4,
+   "modKilde": [],
+   "mangler": [],
+   "modLmMain": []
+  },
+  "baenk-figurer": {
+   "filer": 10,
+   "modKilde": [],
+   "mangler": [],
+   "modLmMain": []
+  },
+  "loeft-fejl": {
+   "filer": 8,
+   "modKilde": [],
+   "mangler": [],
+   "modLmMain": []
+  },
+  "squat-figurer": {
+   "filer": 8,
+   "modKilde": [],
+   "mangler": [],
+   "modLmMain": []
+  },
+  "doedloeft-figurer": {
+   "filer": 12,
+   "modKilde": [],
+   "mangler": [],
+   "modLmMain": []
+  }
+ },
+ "mini": {
+  "ids": [
+   "dl-hofte-foerst",
+   "dl-stang-frem",
+   "bp-hoejt-bryst",
+   "bp-albue-ud",
+   "k7-kun-knae-bund",
+   "k7-kun-knae-sticking",
+   "k7-hofte-tilbage-bund",
+   "k7-hofte-tilbage-sticking"
+  ],
+  "filer": [
+   "bp-albue-ud.svg",
+   "bp-hoejt-bryst.svg",
+   "dl-hofte-foerst.svg",
+   "dl-stang-frem.svg",
+   "k7-hofte-tilbage-bund.svg",
+   "k7-hofte-tilbage-sticking.svg",
+   "k7-kun-knae-bund.svg",
+   "k7-kun-knae-sticking.svg"
+  ],
+  "hver": [
+   {
+    "f": "bp-albue-ud.svg",
+    "felter": 0,
+    "rektMoerk": 1,
+    "w": 150,
+    "h": 118,
+    "moerkPct": 78.69
+   },
+   {
+    "f": "bp-hoejt-bryst.svg",
+    "felter": 0,
+    "rektMoerk": 1,
+    "w": 150,
+    "h": 118,
+    "moerkPct": 78.76
+   },
+   {
+    "f": "dl-hofte-foerst.svg",
+    "felter": 0,
+    "rektMoerk": 1,
+    "w": 96,
+    "h": 130,
+    "moerkPct": 67.06
+   },
+   {
+    "f": "dl-stang-frem.svg",
+    "felter": 0,
+    "rektMoerk": 1,
+    "w": 96,
+    "h": 130,
+    "moerkPct": 77.63
+   },
+   {
+    "f": "k7-hofte-tilbage-bund.svg",
+    "felter": 0,
+    "rektMoerk": 1,
+    "w": 96,
+    "h": 130,
+    "moerkPct": 63.03
+   },
+   {
+    "f": "k7-hofte-tilbage-sticking.svg",
+    "felter": 0,
+    "rektMoerk": 1,
+    "w": 96,
+    "h": 130,
+    "moerkPct": 68.93
+   },
+   {
+    "f": "k7-kun-knae-bund.svg",
+    "felter": 0,
+    "rektMoerk": 1,
+    "w": 96,
+    "h": 130,
+    "moerkPct": 57.56
+   },
+   {
+    "f": "k7-kun-knae-sticking.svg",
+    "felter": 0,
+    "rektMoerk": 1,
+    "w": 96,
+    "h": 130,
+    "moerkPct": 71.46
+   }
+  ],
+  "som610": true
+ },
+ "sider": [
+  {
+   "sti": "/vaerktoejer/index.html",
+   "bredde": 390,
+   "titel": "Værktøjer | Entropi Coaching",
+   "robots": "noindex, nofollow",
+   "sidelaens": false,
+   "brudteBilleder": [],
+   "links": 13,
+   "doede": [],
+   "status": [],
+   "jsFejl": []
+  },
+  {
+   "sti": "/vaerktoejer/index.html",
+   "bredde": 1280,
+   "titel": "Værktøjer | Entropi Coaching",
+   "robots": "noindex, nofollow",
+   "sidelaens": false,
+   "brudteBilleder": [],
+   "links": 13,
+   "doede": [],
+   "status": [],
+   "jsFejl": []
+  },
+  {
+   "sti": "/assets/vaerktoejer/baenk-figurer/index.html",
+   "bredde": 390,
+   "titel": "Bænkpresset i modellen",
+   "robots": null,
+   "sidelaens": false,
+   "brudteBilleder": [],
+   "links": 9,
+   "doede": [],
+   "status": [],
+   "jsFejl": []
+  },
+  {
+   "sti": "/assets/vaerktoejer/baenk-figurer/index.html",
+   "bredde": 1280,
+   "titel": "Bænkpresset i modellen",
+   "robots": null,
+   "sidelaens": false,
+   "brudteBilleder": [],
+   "links": 9,
+   "doede": [],
+   "status": [],
+   "jsFejl": []
+  },
+  {
+   "sti": "/assets/vaerktoejer/doedloeft-figurer/index.html",
+   "bredde": 390,
+   "titel": "Dødløftet i modellen",
+   "robots": null,
+   "sidelaens": false,
+   "brudteBilleder": [],
+   "links": 11,
+   "doede": [],
+   "status": [],
+   "jsFejl": []
+  },
+  {
+   "sti": "/assets/vaerktoejer/doedloeft-figurer/index.html",
+   "bredde": 1280,
+   "titel": "Dødløftet i modellen",
+   "robots": null,
+   "sidelaens": false,
+   "brudteBilleder": [],
+   "links": 11,
+   "doede": [],
+   "status": [],
+   "jsFejl": []
+  },
+  {
+   "sti": "/assets/vaerktoejer/loeft-fejl/index.html",
+   "bredde": 390,
+   "titel": "Fejl i dødløft og bænk",
+   "robots": null,
+   "sidelaens": false,
+   "brudteBilleder": [],
+   "links": 7,
+   "doede": [],
+   "status": [],
+   "jsFejl": []
+  },
+  {
+   "sti": "/assets/vaerktoejer/loeft-fejl/index.html",
+   "bredde": 1280,
+   "titel": "Fejl i dødløft og bænk",
+   "robots": null,
+   "sidelaens": false,
+   "brudteBilleder": [],
+   "links": 7,
+   "doede": [],
+   "status": [],
+   "jsFejl": []
+  },
+  {
+   "sti": "/assets/vaerktoejer/maal-billede/index.html",
+   "bredde": 390,
+   "titel": "Mål dit billede",
+   "robots": null,
+   "sidelaens": false,
+   "brudteBilleder": [],
+   "links": 4,
+   "doede": [],
+   "status": [],
+   "jsFejl": []
+  },
+  {
+   "sti": "/assets/vaerktoejer/maal-billede/index.html",
+   "bredde": 1280,
+   "titel": "Mål dit billede",
+   "robots": null,
+   "sidelaens": false,
+   "brudteBilleder": [],
+   "links": 4,
+   "doede": [],
+   "status": [],
+   "jsFejl": []
+  },
+  {
+   "sti": "/assets/vaerktoejer/min-krop/index.html",
+   "bredde": 390,
+   "titel": "Min krop i de tre løft",
+   "robots": null,
+   "sidelaens": false,
+   "brudteBilleder": [],
+   "links": 2,
+   "doede": [],
+   "status": [],
+   "jsFejl": []
+  },
+  {
+   "sti": "/assets/vaerktoejer/min-krop/index.html",
+   "bredde": 1280,
+   "titel": "Min krop i de tre løft",
+   "robots": null,
+   "sidelaens": false,
+   "brudteBilleder": [],
+   "links": 2,
+   "doede": [],
+   "status": [],
+   "jsFejl": []
+  },
+  {
+   "sti": "/assets/vaerktoejer/min-krop/kort.html",
+   "bredde": 390,
+   "titel": "Min krop i de tre løft (kort)",
+   "robots": null,
+   "sidelaens": false,
+   "brudteBilleder": [],
+   "links": 3,
+   "doede": [],
+   "status": [],
+   "jsFejl": []
+  },
+  {
+   "sti": "/assets/vaerktoejer/min-krop/kort.html",
+   "bredde": 1280,
+   "titel": "Min krop i de tre løft (kort)",
+   "robots": null,
+   "sidelaens": false,
+   "brudteBilleder": [],
+   "links": 3,
+   "doede": [],
+   "status": [],
+   "jsFejl": []
+  },
+  {
+   "sti": "/assets/vaerktoejer/min-krop/mit-kort.html",
+   "bredde": 390,
+   "titel": "Mit kort: min krop i de tre løft",
+   "robots": null,
+   "sidelaens": false,
+   "brudteBilleder": [],
+   "links": 2,
+   "doede": [],
+   "status": [],
+   "jsFejl": []
+  },
+  {
+   "sti": "/assets/vaerktoejer/min-krop/mit-kort.html",
+   "bredde": 1280,
+   "titel": "Mit kort: min krop i de tre løft",
+   "robots": null,
+   "sidelaens": false,
+   "brudteBilleder": [],
+   "links": 2,
+   "doede": [],
+   "status": [],
+   "jsFejl": []
+  },
+  {
+   "sti": "/assets/vaerktoejer/tre-loeft/index.html",
+   "bredde": 390,
+   "titel": "De tre løft i modellen",
+   "robots": null,
+   "sidelaens": false,
+   "brudteBilleder": [],
+   "links": 1,
+   "doede": [],
+   "status": [],
+   "jsFejl": []
+  },
+  {
+   "sti": "/assets/vaerktoejer/tre-loeft/index.html",
+   "bredde": 1280,
+   "titel": "De tre løft i modellen",
+   "robots": null,
+   "sidelaens": false,
+   "brudteBilleder": [],
+   "links": 1,
+   "doede": [],
+   "status": [],
+   "jsFejl": []
+  },
+  {
+   "sti": "/assets/vaerktoejer/tre-loeft/indlejret.html",
+   "bredde": 390,
+   "titel": "De tre løft i modellen (indlejret)",
+   "robots": null,
+   "sidelaens": false,
+   "brudteBilleder": [],
+   "links": 1,
+   "doede": [],
+   "status": [],
+   "jsFejl": []
+  },
+  {
+   "sti": "/assets/vaerktoejer/tre-loeft/indlejret.html",
+   "bredde": 1280,
+   "titel": "De tre løft i modellen (indlejret)",
+   "robots": null,
+   "sidelaens": false,
+   "brudteBilleder": [],
+   "links": 1,
+   "doede": [],
+   "status": [],
+   "jsFejl": []
+  }
+ ],
+ "gem": [
+  {
+   "bredde": 390,
+   "foer": {
+    "fase": "dl-gulv",
+    "hoejde": "180",
+    "vaegt": "90",
+    "punkter": 7,
+    "w": 1000,
+    "note": null
+   },
+   "forslag": "maal-dl-gulv-img-4411.png",
+   "runder": [
+    {
+     "fase": "dl-gulv",
+     "hoejde": "180",
+     "vaegt": "90",
+     "punkter": 7,
+     "w": 1000,
+     "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+     "forslag": "maal-dl-gulv-img-4411.png",
+     "bytes": 248972,
+     "jsFejl": [],
+     "status": []
+    },
+    {
+     "fase": "dl-gulv",
+     "hoejde": "180",
+     "vaegt": "90",
+     "punkter": 7,
+     "w": 1000,
+     "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+     "forslag": "maal-dl-gulv-img-4411.png",
+     "bytes": 249128,
+     "jsFejl": [],
+     "status": []
+    },
+    {
+     "fase": "dl-gulv",
+     "hoejde": "180",
+     "vaegt": "90",
+     "punkter": 7,
+     "w": 1000,
+     "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+     "forslag": "maal-dl-gulv-img-4411.png",
+     "bytes": 249278,
+     "jsFejl": [],
+     "status": []
+    }
+   ]
+  },
+  {
+   "bredde": 1280,
+   "foer": {
+    "fase": "dl-gulv",
+    "hoejde": "180",
+    "vaegt": "90",
+    "punkter": 7,
+    "w": 1000,
+    "note": null
+   },
+   "forslag": "maal-dl-gulv-img-4411.png",
+   "runder": [
+    {
+     "fase": "dl-gulv",
+     "hoejde": "180",
+     "vaegt": "90",
+     "punkter": 7,
+     "w": 1000,
+     "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+     "forslag": "maal-dl-gulv-img-4411.png",
+     "bytes": 254951,
+     "jsFejl": [],
+     "status": []
+    },
+    {
+     "fase": "dl-gulv",
+     "hoejde": "180",
+     "vaegt": "90",
+     "punkter": 7,
+     "w": 1000,
+     "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+     "forslag": "maal-dl-gulv-img-4411.png",
+     "bytes": 255164,
+     "jsFejl": [],
+     "status": []
+    },
+    {
+     "fase": "dl-gulv",
+     "hoejde": "180",
+     "vaegt": "90",
+     "punkter": 7,
+     "w": 1000,
+     "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+     "forslag": "maal-dl-gulv-img-4411.png",
+     "bytes": 255390,
+     "jsFejl": [],
+     "status": []
+    }
+   ]
+  }
+ ],
+ "datoer": [
+  {
+   "bredde": 390,
+   "orden": "rigtig",
+   "foer": {
+    "advarsel": null,
+    "noteAdvarer": false,
+    "foer": "Før: IMG_4411.jpg (gemt 3. aug. 2026)",
+    "efter": "Efter: IMG_5120.jpg (gemt 28. sep. 2026)",
+    "tabel": [
+     [
+      "Torso fra lodrethofte til skulder",
+      "61,2°",
+      "74,1°",
+      "+12,9°grænse 8,0°"
+     ],
+     [
+      "Hoftevinkelskulder-hofte-knæ, 180° = strakt",
+      "51,1°",
+      "51,1°",
+      "≈0,0°grænse 11,0°"
+     ],
+     [
+      "Knævinkelhofte-knæ-ankel, 180° = strakt",
+      "98,9°",
+      "111,8°",
+      "+12,9°grænse 10,0°"
+     ],
+     [
+      "Skinneben fra lodret+ = knæet foran anklen",
+      "13,3°",
+      "13,3°",
+      "≈0,0°grænse 5,0°"
+     ],
+     [
+      "Stangen foran midtfodenvandret; − = bag midtfoden",
+      "3,0 cm",
+      "3,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Vandret afstand stang–hoftestangens lodlinje til hoften",
+      "40,4 cm",
+      "40,1 cm",
+      "−0,3 cmkræver samme kameraplads"
+     ],
+     [
+      "Skulderen foran stangenvandret",
+      "5,0 cm",
+      "5,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Hoftens højde over gulvetlodret, hoften over midtfoden",
+      "66,8 cm",
+      "78,2 cm",
+      "+11,3 cmgrænse 7,0 cm"
+     ]
+    ],
+    "saetning": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det fjerne nav i begge billeder (Sæt det fjerne nav). Uden det kræver de samme kameraplads (stativ, tape på gulvet, samme retning), fordi hver grad, kameraet står skråt, flytter stangens tal ca. 1,4 cm. De er ikke med i sætningen. Sætningen læser 5 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert sjette par med omhyggelige klik (oftere med hurtige)."
+   },
+   "jsFejl": [],
+   "status": []
+  },
+  {
+   "bredde": 390,
+   "orden": "forkert",
+   "foer": {
+    "advarsel": "Før er gemt 28. sep. 2026 og efter 3. aug. 2026, så før er det nyeste billede. Forskellen er efter minus før; står de i forkert rækkefølge, har hver forskel omvendt fortegn. Tryk Byt før og efter, hvis det ældste billede skal være før.",
+    "noteAdvarer": true,
+    "foer": "Før: IMG_5120.jpg (gemt 28. sep. 2026)",
+    "efter": "Efter: IMG_4411.jpg (gemt 3. aug. 2026)",
+    "tabel": [
+     [
+      "Torso fra lodrethofte til skulder",
+      "74,1°",
+      "61,2°",
+      "−12,9°grænse 8,0°"
+     ],
+     [
+      "Hoftevinkelskulder-hofte-knæ, 180° = strakt",
+      "51,1°",
+      "51,1°",
+      "≈0,0°grænse 11,0°"
+     ],
+     [
+      "Knævinkelhofte-knæ-ankel, 180° = strakt",
+      "111,8°",
+      "98,9°",
+      "−12,9°grænse 10,0°"
+     ],
+     [
+      "Skinneben fra lodret+ = knæet foran anklen",
+      "13,3°",
+      "13,3°",
+      "≈0,0°grænse 5,0°"
+     ],
+     [
+      "Stangen foran midtfodenvandret; − = bag midtfoden",
+      "3,0 cm",
+      "3,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Vandret afstand stang–hoftestangens lodlinje til hoften",
+      "40,1 cm",
+      "40,4 cm",
+      "+0,3 cmkræver samme kameraplads"
+     ],
+     [
+      "Skulderen foran stangenvandret",
+      "5,0 cm",
+      "5,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Hoftens højde over gulvetlodret, hoften over midtfoden",
+      "78,2 cm",
+      "66,8 cm",
+      "−11,3 cmgrænse 7,0 cm"
+     ]
+    ],
+    "saetning": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det fjerne nav i begge billeder (Sæt det fjerne nav). Uden det kræver de samme kameraplads (stativ, tape på gulvet, samme retning), fordi hver grad, kameraet står skråt, flytter stangens tal ca. 1,4 cm. De er ikke med i sætningen. Sætningen læser 5 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert sjette par med omhyggelige klik (oftere med hurtige)."
+   },
+   "byttet": {
+    "advarsel": null,
+    "noteAdvarer": true,
+    "foer": "Før: IMG_4411.jpg (gemt 3. aug. 2026)",
+    "efter": "Efter: IMG_5120.jpg (gemt 28. sep. 2026)",
+    "tabel": [
+     [
+      "Torso fra lodrethofte til skulder",
+      "61,2°",
+      "74,1°",
+      "+12,9°grænse 8,0°"
+     ],
+     [
+      "Hoftevinkelskulder-hofte-knæ, 180° = strakt",
+      "51,1°",
+      "51,1°",
+      "≈0,0°grænse 11,0°"
+     ],
+     [
+      "Knævinkelhofte-knæ-ankel, 180° = strakt",
+      "98,9°",
+      "111,8°",
+      "+12,9°grænse 10,0°"
+     ],
+     [
+      "Skinneben fra lodret+ = knæet foran anklen",
+      "13,3°",
+      "13,3°",
+      "≈0,0°grænse 5,0°"
+     ],
+     [
+      "Stangen foran midtfodenvandret; − = bag midtfoden",
+      "3,0 cm",
+      "3,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Vandret afstand stang–hoftestangens lodlinje til hoften",
+      "40,4 cm",
+      "40,1 cm",
+      "−0,3 cmkræver samme kameraplads"
+     ],
+     [
+      "Skulderen foran stangenvandret",
+      "5,0 cm",
+      "5,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Hoftens højde over gulvetlodret, hoften over midtfoden",
+      "66,8 cm",
+      "78,2 cm",
+      "+11,3 cmgrænse 7,0 cm"
+     ]
+    ],
+    "saetning": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det fjerne nav i begge billeder (Sæt det fjerne nav). Uden det kræver de samme kameraplads (stativ, tape på gulvet, samme retning), fordi hver grad, kameraet står skråt, flytter stangens tal ca. 1,4 cm. De er ikke med i sætningen. Sætningen læser 5 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert sjette par med omhyggelige klik (oftere med hurtige)."
+   },
+   "jsFejl": [],
+   "status": []
+  },
+  {
+   "bredde": 1280,
+   "orden": "rigtig",
+   "foer": {
+    "advarsel": null,
+    "noteAdvarer": false,
+    "foer": "Før: IMG_4411.jpg (gemt 3. aug. 2026)",
+    "efter": "Efter: IMG_5120.jpg (gemt 28. sep. 2026)",
+    "tabel": [
+     [
+      "Torso fra lodrethofte til skulder",
+      "61,2°",
+      "74,1°",
+      "+12,9°grænse 8,0°"
+     ],
+     [
+      "Hoftevinkelskulder-hofte-knæ, 180° = strakt",
+      "51,1°",
+      "51,1°",
+      "≈0,0°grænse 11,0°"
+     ],
+     [
+      "Knævinkelhofte-knæ-ankel, 180° = strakt",
+      "98,9°",
+      "111,8°",
+      "+12,9°grænse 10,0°"
+     ],
+     [
+      "Skinneben fra lodret+ = knæet foran anklen",
+      "13,3°",
+      "13,3°",
+      "≈0,0°grænse 5,0°"
+     ],
+     [
+      "Stangen foran midtfodenvandret; − = bag midtfoden",
+      "3,0 cm",
+      "3,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Vandret afstand stang–hoftestangens lodlinje til hoften",
+      "40,4 cm",
+      "40,1 cm",
+      "−0,3 cmkræver samme kameraplads"
+     ],
+     [
+      "Skulderen foran stangenvandret",
+      "5,0 cm",
+      "5,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Hoftens højde over gulvetlodret, hoften over midtfoden",
+      "66,8 cm",
+      "78,2 cm",
+      "+11,3 cmgrænse 7,0 cm"
+     ]
+    ],
+    "saetning": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det fjerne nav i begge billeder (Sæt det fjerne nav). Uden det kræver de samme kameraplads (stativ, tape på gulvet, samme retning), fordi hver grad, kameraet står skråt, flytter stangens tal ca. 1,4 cm. De er ikke med i sætningen. Sætningen læser 5 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert sjette par med omhyggelige klik (oftere med hurtige)."
+   },
+   "jsFejl": [],
+   "status": []
+  },
+  {
+   "bredde": 1280,
+   "orden": "forkert",
+   "foer": {
+    "advarsel": "Før er gemt 28. sep. 2026 og efter 3. aug. 2026, så før er det nyeste billede. Forskellen er efter minus før; står de i forkert rækkefølge, har hver forskel omvendt fortegn. Tryk Byt før og efter, hvis det ældste billede skal være før.",
+    "noteAdvarer": true,
+    "foer": "Før: IMG_5120.jpg (gemt 28. sep. 2026)",
+    "efter": "Efter: IMG_4411.jpg (gemt 3. aug. 2026)",
+    "tabel": [
+     [
+      "Torso fra lodrethofte til skulder",
+      "74,1°",
+      "61,2°",
+      "−12,9°grænse 8,0°"
+     ],
+     [
+      "Hoftevinkelskulder-hofte-knæ, 180° = strakt",
+      "51,1°",
+      "51,1°",
+      "≈0,0°grænse 11,0°"
+     ],
+     [
+      "Knævinkelhofte-knæ-ankel, 180° = strakt",
+      "111,8°",
+      "98,9°",
+      "−12,9°grænse 10,0°"
+     ],
+     [
+      "Skinneben fra lodret+ = knæet foran anklen",
+      "13,3°",
+      "13,3°",
+      "≈0,0°grænse 5,0°"
+     ],
+     [
+      "Stangen foran midtfodenvandret; − = bag midtfoden",
+      "3,0 cm",
+      "3,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Vandret afstand stang–hoftestangens lodlinje til hoften",
+      "40,1 cm",
+      "40,4 cm",
+      "+0,3 cmkræver samme kameraplads"
+     ],
+     [
+      "Skulderen foran stangenvandret",
+      "5,0 cm",
+      "5,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Hoftens højde over gulvetlodret, hoften over midtfoden",
+      "78,2 cm",
+      "66,8 cm",
+      "−11,3 cmgrænse 7,0 cm"
+     ]
+    ],
+    "saetning": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det fjerne nav i begge billeder (Sæt det fjerne nav). Uden det kræver de samme kameraplads (stativ, tape på gulvet, samme retning), fordi hver grad, kameraet står skråt, flytter stangens tal ca. 1,4 cm. De er ikke med i sætningen. Sætningen læser 5 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert sjette par med omhyggelige klik (oftere med hurtige)."
+   },
+   "byttet": {
+    "advarsel": null,
+    "noteAdvarer": true,
+    "foer": "Før: IMG_4411.jpg (gemt 3. aug. 2026)",
+    "efter": "Efter: IMG_5120.jpg (gemt 28. sep. 2026)",
+    "tabel": [
+     [
+      "Torso fra lodrethofte til skulder",
+      "61,2°",
+      "74,1°",
+      "+12,9°grænse 8,0°"
+     ],
+     [
+      "Hoftevinkelskulder-hofte-knæ, 180° = strakt",
+      "51,1°",
+      "51,1°",
+      "≈0,0°grænse 11,0°"
+     ],
+     [
+      "Knævinkelhofte-knæ-ankel, 180° = strakt",
+      "98,9°",
+      "111,8°",
+      "+12,9°grænse 10,0°"
+     ],
+     [
+      "Skinneben fra lodret+ = knæet foran anklen",
+      "13,3°",
+      "13,3°",
+      "≈0,0°grænse 5,0°"
+     ],
+     [
+      "Stangen foran midtfodenvandret; − = bag midtfoden",
+      "3,0 cm",
+      "3,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Vandret afstand stang–hoftestangens lodlinje til hoften",
+      "40,4 cm",
+      "40,1 cm",
+      "−0,3 cmkræver samme kameraplads"
+     ],
+     [
+      "Skulderen foran stangenvandret",
+      "5,0 cm",
+      "5,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Hoftens højde over gulvetlodret, hoften over midtfoden",
+      "66,8 cm",
+      "78,2 cm",
+      "+11,3 cmgrænse 7,0 cm"
+     ]
+    ],
+    "saetning": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det fjerne nav i begge billeder (Sæt det fjerne nav). Uden det kræver de samme kameraplads (stativ, tape på gulvet, samme retning), fordi hver grad, kameraet står skråt, flytter stangens tal ca. 1,4 cm. De er ikke med i sætningen. Sætningen læser 5 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert sjette par med omhyggelige klik (oftere med hurtige)."
+   },
+   "jsFejl": [],
+   "status": []
+  }
+ ],
+ "video": [
+  {
+   "skaerm": 390,
+   "fejl": null,
+   "synlig": true,
+   "klar": 4,
+   "bredde": 320,
+   "foer": 0,
+   "efter": 0.9,
+   "navn": "Video: klip-617.webm (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+   "brugt": {
+    "fase": "dl-gulv",
+    "hoejde": "",
+    "vaegt": "",
+    "punkter": 0,
+    "w": 320,
+    "note": null
+   },
+   "jsFejl": [],
+   "status": []
+  },
+  {
+   "skaerm": 1280,
+   "fejl": null,
+   "synlig": true,
+   "klar": 4,
+   "bredde": 320,
+   "foer": 0,
+   "efter": 0.9,
+   "navn": "Video: klip-617.webm (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+   "brugt": {
+    "fase": "dl-gulv",
+    "hoejde": "",
+    "vaegt": "",
+    "punkter": 0,
+    "w": 320,
+    "note": null
+   },
+   "jsFejl": [],
+   "status": []
+  }
+ ],
+ "ligner": [
+  {
+   "bredde": 390,
+   "hvad": "stangen 12 cm frem ved knaeet",
+   "synlig": true,
+   "tekst": "Ligner: stangen glider frem Stangen hænger ca. 13 cm længere fremme og ca. 13 cm længere fra knæet end i modellens knæhøjde; sådan står modellens figur, når stangen glider frem fra benene. Se fejlfigu",
+   "imgs": [
+    {
+     "src": "miniaturer/dl-stang-frem.svg",
+     "w": 96,
+     "ok": true
+    }
+   ],
+   "jsFejl": [],
+   "status": []
+  },
+  {
+   "bredde": 390,
+   "hvad": "hoften 36 px hoejere ved gulvet",
+   "synlig": true,
+   "tekst": "Ligner ikke \"hoften stiger først\" over målefejlen. Det udelukker ikke fejlen: lige fra siden overses den i ca. 3 af 100 billeder med omhyggelige klik og 7 af 100 med hurtige. Andre fejl tjekker siden ",
+   "imgs": [],
+   "jsFejl": [],
+   "status": []
+  },
+  {
+   "bredde": 1280,
+   "hvad": "stangen 12 cm frem ved knaeet",
+   "synlig": true,
+   "tekst": "Ligner: stangen glider frem Stangen hænger ca. 13 cm længere fremme og ca. 13 cm længere fra knæet end i modellens knæhøjde; sådan står modellens figur, når stangen glider frem fra benene. Se fejlfigu",
+   "imgs": [
+    {
+     "src": "miniaturer/dl-stang-frem.svg",
+     "w": 96,
+     "ok": true
+    }
+   ],
+   "jsFejl": [],
+   "status": []
+  },
+  {
+   "bredde": 1280,
+   "hvad": "hoften 36 px hoejere ved gulvet",
+   "synlig": true,
+   "tekst": "Ligner ikke \"hoften stiger først\" over målefejlen. Det udelukker ikke fejlen: lige fra siden overses den i ca. 3 af 100 billeder med omhyggelige klik og 7 af 100 med hurtige. Andre fejl tjekker siden ",
+   "imgs": [],
+   "jsFejl": [],
+   "status": []
+  }
+ ],
+ "aendret600": [
+  "assets/vaerktoejer/baenk-figurer/index.html",
+  "assets/vaerktoejer/maal-billede/index.html",
+  "assets/vaerktoejer/maal-billede/maal-billede.js",
+  "assets/vaerktoejer/maal-billede/miniaturer/bp-albue-ud.svg",
+  "assets/vaerktoejer/maal-billede/miniaturer/bp-hoejt-bryst.svg",
+  "assets/vaerktoejer/maal-billede/miniaturer/dl-hofte-foerst.svg",
+  "assets/vaerktoejer/maal-billede/miniaturer/dl-stang-frem.svg",
+  "assets/vaerktoejer/maal-billede/miniaturer/k7-hofte-tilbage-bund.svg",
+  "assets/vaerktoejer/maal-billede/miniaturer/k7-hofte-tilbage-sticking.svg",
+  "assets/vaerktoejer/maal-billede/miniaturer/k7-kun-knae-bund.svg",
+  "assets/vaerktoejer/maal-billede/miniaturer/k7-kun-knae-sticking.svg",
+  "assets/vaerktoejer/min-krop/min-krop.js",
+  "assets/vaerktoejer/tre-loeft/tre-loeft.js"
+ ],
+ "chrome": "154.0.8037.57",
+ "forside": {
+  "robots": "noindex, nofollow",
+  "sidstIMain": true,
+  "disclaimer": "Værktøjerne regner i din egen browser. Mål, billeder og videoer bliver hos dig, og intet sendes nogen steder hen. Står der en fejl i Mål dit billede, er det kun det, modellen viser i billedet, og ikke en dom over løftet.",
+  "afstandTilBund": 0,
+  "underDisclaimer": [],
+  "skrift": "11.52px"
+ },
+ "robotsTxt": "User-agent: *\r\nAllow: /\r\nDisallow: /assets/vaerktoejer/\r\n\r\nSitemap: https://entropicoaching.dk/sitemap.xml\r\n",
+ "robotsVaerktoej": [
+  "/vaerktoejer/index.html: noindex, nofollow",
+  "/baenk-figurer/index.html: null",
+  "/doedloeft-figurer/index.html: null",
+  "/loeft-fejl/index.html: null",
+  "/maal-billede/index.html: null",
+  "/min-krop/index.html: null",
+  "/min-krop/kort.html: null",
+  "/min-krop/mit-kort.html: null",
+  "/tre-loeft/index.html: null",
+  "/tre-loeft/indlejret.html: null"
+ ],
+ "m5": [
+  {
+   "hvad": "navn uden endelse og uden type",
+   "fase": "dl-gulv",
+   "hoejde": "180",
+   "vaegt": "90",
+   "punkter": 7,
+   "w": 1000,
+   "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+   "jsFejl": []
+  },
+  {
+   "hvad": "application/octet-stream, navnet download",
+   "fase": "dl-gulv",
+   "hoejde": "180",
+   "vaegt": "90",
+   "punkter": 7,
+   "w": 1000,
+   "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+   "jsFejl": []
+  },
+  {
+   "hvad": "PNG-bytes med navnet .jpg og typen image/jpeg",
+   "fase": "dl-gulv",
+   "hoejde": "180",
+   "vaegt": "90",
+   "punkter": 7,
+   "w": 1000,
+   "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+   "jsFejl": []
+  }
+ ],
+ "eksterne": [],
+ "mangler404": [],
+ "tjek": [
+  {
+   "hvad": "sitet (1169b5f) er Setus 1bd6672 eller nyere, og alt siden 607 (c9fc559) ligger under assets/vaerktoejer/",
+   "ok": true,
+   "data": {
+    "siden600": [
+     "1169b5f Ordre 620 blok 1: Maal dit billede, Min krop, De tre loeft og baenkens figurside fra loeftmodellens main 4ca0c63 (Yantras 611 og 616, Bhishak 603 og 610)"
+    ],
+    "aendret": [
+     "assets/vaerktoejer/baenk-figurer/index.html",
+     "assets/vaerktoejer/maal-billede/index.html",
+     "assets/vaerktoejer/maal-billede/maal-billede.js",
+     "assets/vaerktoejer/maal-billede/miniaturer/bp-albue-ud.svg",
+     "assets/vaerktoejer/maal-billede/miniaturer/bp-hoejt-bryst.svg",
+     "assets/vaerktoejer/maal-billede/miniaturer/dl-hofte-foerst.svg",
+     "assets/vaerktoejer/maal-billede/miniaturer/dl-stang-frem.svg",
+     "assets/vaerktoejer/maal-billede/miniaturer/k7-hofte-tilbage-bund.svg",
+     "assets/vaerktoejer/maal-billede/miniaturer/k7-hofte-tilbage-sticking.svg",
+     "assets/vaerktoejer/maal-billede/miniaturer/k7-kun-knae-bund.svg",
+     "assets/vaerktoejer/maal-billede/miniaturer/k7-kun-knae-sticking.svg",
+     "assets/vaerktoejer/min-krop/min-krop.js",
+     "assets/vaerktoejer/tre-loeft/tre-loeft.js"
+    ]
+   }
+  },
+  {
+   "hvad": "de 13 aendrede filer siden 607 (og alle andre i de syv mapper) er 4ca0c63's dist blob for blob; ingen fil mangler",
+   "ok": true,
+   "data": {
+    "maal-billede": "0 anderledes, 0 kun i dist",
+    "tre-loeft": "0 anderledes, 0 kun i dist",
+    "min-krop": "0 anderledes, 0 kun i dist",
+    "baenk-figurer": "0 anderledes, 0 kun i dist",
+    "loeft-fejl": "0 anderledes, 0 kun i dist",
+    "squat-figurer": "0 anderledes, 0 kun i dist",
+    "doedloeft-figurer": "0 anderledes, 0 kun i dist"
+   }
+  },
+  {
+   "hvad": "loeftmodellens main (287210d) mod sitet: de filer, der er anderledes (kun oplysning; tom, naar Setu har kopieret main)",
+   "ok": true,
+   "data": {
+    "nye": [
+     "287210d merge: ordre-621 (ORDRE 621, Yantra)"
+    ],
+    "maal": [
+     "index.html",
+     "maal-billede.js"
+    ],
+    "minKrop": [],
+    "treLoeft": [],
+    "baenk": []
+   }
+  },
+  {
+   "hvad": "10 sider paa 390 og 1280: 0 fejl 404 (hentet eller linket lokalt), 0 JS-fejl, ingen sidelaens rulning, ingen brudte billeder",
+   "ok": true,
+   "data": {
+    "sider": [
+     "/vaerktoejer/index.html",
+     "/assets/vaerktoejer/baenk-figurer/index.html",
+     "/assets/vaerktoejer/doedloeft-figurer/index.html",
+     "/assets/vaerktoejer/loeft-fejl/index.html",
+     "/assets/vaerktoejer/maal-billede/index.html",
+     "/assets/vaerktoejer/min-krop/index.html",
+     "/assets/vaerktoejer/min-krop/kort.html",
+     "/assets/vaerktoejer/min-krop/mit-kort.html",
+     "/assets/vaerktoejer/tre-loeft/index.html",
+     "/assets/vaerktoejer/tre-loeft/indlejret.html"
+    ],
+    "fejl404": [],
+    "js": [],
+    "sidelaens": [],
+    "links": 106
+   }
+  },
+  {
+   "hvad": "vaerktoejssiden: noindex, nofollow; disclaimeren fra 607 er sidste element i <main>, intet staar under den, og teksten er 607s",
+   "ok": true,
+   "data": {
+    "robots": "noindex, nofollow",
+    "sidstIMain": true,
+    "disclaimer": "Værktøjerne regner i din egen browser. Mål, billeder og videoer bliver hos dig, og intet sendes nogen steder hen. Står der en fejl i Mål dit billede, er det kun det, modellen viser i billedet, og ikke en dom over løftet.",
+    "afstandTilBund": 0,
+    "underDisclaimer": [],
+    "skrift": "11.52px"
+   }
+  },
+  {
+   "hvad": "vaerktoejerne selv (assets/vaerktoejer/*) har ingen robots-meta, men sitets robots.txt siger Disallow: /assets/vaerktoejer/, og vaerktoejssidens links har rel=nofollow",
+   "ok": true,
+   "data": {
+    "robotsTxt": "User-agent: *\r\nAllow: /\r\nDisallow: /assets/vaerktoejer/\r\n\r\nSitemap: https://entropicoaching.dk/sitemap.xml\r\n",
+    "meta": [
+     "/vaerktoejer/index.html: noindex, nofollow",
+     "/baenk-figurer/index.html: null",
+     "/doedloeft-figurer/index.html: null",
+     "/loeft-fejl/index.html: null",
+     "/maal-billede/index.html: null",
+     "/min-krop/index.html: null",
+     "/min-krop/kort.html: null",
+     "/min-krop/mit-kort.html: null",
+     "/tre-loeft/index.html: null",
+     "/tre-loeft/indlejret.html: null"
+    ]
+   }
+  },
+  {
+   "hvad": "miniaturerne paa sitet: 8 filer, 0 moerke tekstfelter (fill-opacity 0.78), og de er f3e0200s, som jeg i 610 maalte pixel for pixel uden felter",
+   "ok": true,
+   "data": [
+    "bp-albue-ud.svg: felter 0, 150x118",
+    "bp-hoejt-bryst.svg: felter 0, 150x118",
+    "dl-hofte-foerst.svg: felter 0, 96x130",
+    "dl-stang-frem.svg: felter 0, 96x130",
+    "k7-hofte-tilbage-bund.svg: felter 0, 96x130",
+    "k7-hofte-tilbage-sticking.svg: felter 0, 96x130",
+    "k7-kun-knae-bund.svg: felter 0, 96x130",
+    "k7-kun-knae-sticking.svg: felter 0, 96x130"
+   ]
+  },
+  {
+   "hvad": "alle id'er, \"Ligner\" kan vise (bp, dl og k7 bund/sticking), har en fil i sitets miniaturer/, og alle 8 indlaeses fra sitets sti",
+   "ok": true,
+   "data": [
+    "dl-hofte-foerst",
+    "dl-stang-frem",
+    "bp-hoejt-bryst",
+    "bp-albue-ud",
+    "k7-kun-knae-bund",
+    "k7-kun-knae-sticking",
+    "k7-hofte-tilbage-bund",
+    "k7-hofte-tilbage-sticking"
+   ]
+  },
+  {
+   "hvad": "\"Ligner\" i sitets kopi: stangen frem ved knaeet giver \"Stangen glider frem\" med miniaturen indlaest fra sitets miniaturer/ paa 390 og 1280",
+   "ok": true,
+   "data": [
+    {
+     "b": 390,
+     "hvad": "stangen 12 cm frem ved knaeet",
+     "tekst": "Ligner: stangen glider frem Stangen hænger ca. 13 cm længere fremme og ca. 13 cm længere f",
+     "imgs": [
+      {
+       "src": "miniaturer/dl-stang-frem.svg",
+       "w": 96,
+       "ok": true
+      }
+     ]
+    },
+    {
+     "b": 390,
+     "hvad": "hoften 36 px hoejere ved gulvet",
+     "tekst": "Ligner ikke \"hoften stiger først\" over målefejlen. Det udelukker ikke fejlen: lige fra sid",
+     "imgs": []
+    },
+    {
+     "b": 1280,
+     "hvad": "stangen 12 cm frem ved knaeet",
+     "tekst": "Ligner: stangen glider frem Stangen hænger ca. 13 cm længere fremme og ca. 13 cm længere f",
+     "imgs": [
+      {
+       "src": "miniaturer/dl-stang-frem.svg",
+       "w": 96,
+       "ok": true
+      }
+     ]
+    },
+    {
+     "b": 1280,
+     "hvad": "hoften 36 px hoejere ved gulvet",
+     "tekst": "Ligner ikke \"hoften stiger først\" over målefejlen. Det udelukker ikke fejlen: lige fra sid",
+     "imgs": []
+    }
+   ]
+  },
+  {
+   "hvad": "M5 lukket paa sitet (616): en uroert fil uden .png og uden image/png (eller som .jpg) aabnes som maalingen med 7 klik og noten",
+   "ok": true,
+   "data": [
+    "navn uden endelse og uden type: 7 klik, Gemt måling åbnet (gemt 28. sep. 2026): ",
+    "application/octet-stream, navnet download: 7 klik, Gemt måling åbnet (gemt 28. sep. 2026): ",
+    "PNG-bytes med navnet .jpg og typen image/jpeg: 7 klik, Gemt måling åbnet (gemt 28. sep. 2026): "
+   ]
+  },
+  {
+   "hvad": "gem og aabn igen i sitets kopi (390 og 1280, tre runder i frisk side): fase dl-gulv, 7 klik, hoejde 180, billedets bredde og \"Gemt maaling aabnet\" hver gang; 0 JS-fejl og 0 fejl 404",
+   "ok": true,
+   "data": [
+    {
+     "b": 390,
+     "fil": "maal-dl-gulv-img-4411.png",
+     "runder": [
+      "dl-gulv 7 klik 180 cm 1000 px, Gemt måling åbnet (gemt 28. sep. 2026): dødløft, v",
+      "dl-gulv 7 klik 180 cm 1000 px, Gemt måling åbnet (gemt 28. sep. 2026): dødløft, v",
+      "dl-gulv 7 klik 180 cm 1000 px, Gemt måling åbnet (gemt 28. sep. 2026): dødløft, v"
+     ]
+    },
+    {
+     "b": 1280,
+     "fil": "maal-dl-gulv-img-4411.png",
+     "runder": [
+      "dl-gulv 7 klik 180 cm 1000 px, Gemt måling åbnet (gemt 28. sep. 2026): dødløft, v",
+      "dl-gulv 7 klik 180 cm 1000 px, Gemt måling åbnet (gemt 28. sep. 2026): dødløft, v",
+      "dl-gulv 7 klik 180 cm 1000 px, Gemt måling åbnet (gemt 28. sep. 2026): dødløft, v"
+     ]
+    }
+   ]
+  },
+  {
+   "hvad": "foer og efter fra to filer i sitets kopi: datoen staar ved begge, hoftens raekke har en forskel, og Byt vender en forkert raekkefoelge til den rigtige tabel",
+   "ok": true,
+   "data": [
+    "390 rigtig: Før: IMG_4411.jpg (gemt 3. aug. 2026) | Efter: IMG_5120.jpg (gemt 28. sep. 2026) | hofte [\"Torso fra lodrethofte til skulder\",\"61,2°\",\"74,1°\",\"+12,9°grænse 8,0°\"]",
+    "390 forkert: Før: IMG_5120.jpg (gemt 28. sep. 2026) | Efter: IMG_4411.jpg (gemt 3. aug. 2026) | hofte [\"Torso fra lodrethofte til skulder\",\"74,1°\",\"61,2°\",\"−12,9°grænse 8,0°\"]",
+    "1280 rigtig: Før: IMG_4411.jpg (gemt 3. aug. 2026) | Efter: IMG_5120.jpg (gemt 28. sep. 2026) | hofte [\"Torso fra lodrethofte til skulder\",\"61,2°\",\"74,1°\",\"+12,9°grænse 8,0°\"]",
+    "1280 forkert: Før: IMG_5120.jpg (gemt 28. sep. 2026) | Efter: IMG_4411.jpg (gemt 3. aug. 2026) | hofte [\"Torso fra lodrethofte til skulder\",\"74,1°\",\"61,2°\",\"−12,9°grænse 8,0°\"]"
+   ]
+  },
+  {
+   "hvad": "M6 lukket paa sitet (616): en forkert raekkefoelge giver advarslen over tabellen (... saa foer er det nyeste billede ... Tryk Byt), en rigtig giver den ikke, og efter Byt er den vaek",
+   "ok": true,
+   "data": [
+    {
+     "b": 390,
+     "orden": "rigtig",
+     "advarsel": null,
+     "efterByt": null,
+     "noten": false,
+     "notenEfterByt": null
+    },
+    {
+     "b": 390,
+     "orden": "forkert",
+     "advarsel": "Før er gemt 28. sep. 2026 og efter 3. aug. 2026, så før er det nyeste billede. Forskellen er efter minus før; står de i forkert rækkefølge, har hver forskel omvendt fortegn. Tryk Byt før og efter, hvis det ældste billede skal være før.",
+     "efterByt": null,
+     "noten": true,
+     "notenEfterByt": true
+    },
+    {
+     "b": 1280,
+     "orden": "rigtig",
+     "advarsel": null,
+     "efterByt": null,
+     "noten": false,
+     "notenEfterByt": null
+    },
+    {
+     "b": 1280,
+     "orden": "forkert",
+     "advarsel": "Før er gemt 28. sep. 2026 og efter 3. aug. 2026, så før er det nyeste billede. Forskellen er efter minus før; står de i forkert rækkefølge, har hver forskel omvendt fortegn. Tryk Byt før og efter, hvis det ældste billede skal være før.",
+     "efterByt": null,
+     "noten": true,
+     "notenEfterByt": true
+    }
+   ]
+  },
+  {
+   "hvad": "fund M18 (kun oplysning): noten \"Gemt maaling aabnet\" over billedet siger ogsaa \"Foer er gemt senere end efter; tryk Byt\", og den staar der stadig efter Byt",
+   "ok": true,
+   "data": [
+    {
+     "b": 390,
+     "foer": true,
+     "efterByt": true
+    },
+    {
+     "b": 1280,
+     "foer": true,
+     "efterByt": true
+    }
+   ]
+  },
+  {
+   "hvad": "video i sitets kopi: et webm-klip lavet i browseren aabnes, kan spoles, og \"Brug billedet\" giver et billede paa 320 px at maale paa (390 og 1280), 0 JS-fejl",
+   "ok": true,
+   "data": [
+    {
+     "b": 390,
+     "video": 320,
+     "klar": 4,
+     "spolet": [
+      0,
+      0.9
+     ],
+     "brugt": 320,
+     "navn": "Video: klip-617.webm (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede."
+    },
+    {
+     "b": 1280,
+     "video": 320,
+     "klar": 4,
+     "spolet": [
+      0,
+      0.9
+     ],
+     "brugt": 320,
+     "navn": "Video: klip-617.webm (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede."
+    }
+   ]
+  },
+  {
+   "hvad": "alt, siderne proevede at hente udefra, er afbrudt og var kun skrifttypen; serveren svarede aldrig 404",
+   "ok": true,
+   "data": {
+    "eksterne": [],
+    "mangler404": []
+   }
+  }
+ ]
+}
