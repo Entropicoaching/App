@@ -1,0 +1,302 @@
+{
+  "fil": "C:/Users/Entropi/Desktop/NYT-I-APPEN.html",
+  "sha256": "15a6bc8645d40d694205af0340494d0a6764e72edfeca4b0fbcddaabc1278976",
+  "app": "391144e",
+  "koersler": [
+    {
+      "bredde": 390,
+      "farve": "light",
+      "ord": 324,
+      "tekst": "Entropi.\n\nNyt i appen\n\nDet meste er som før: samme forside, samme faner, og du logger stadig dine sæt med Godkendt i Dagens pas.\n\nSeptember 2026. Her er det, der er nyt.\n\n1\nVirker uden net\n\nDu kan logge dine sæt, selv om der ikke er net, fx i kælderen. Sættet gemmes på telefonen og står med ☁ sendes når du har net. Når du får net igen, sendes det af sig selv, én gang, med det tidspunkt du trykkede Godkendt.\n\nHar du brugt appen med net efter opdateringen, åbner den også uden net og viser Dagens pas.\n\n2\nNye rekorder bliver fejret\n\nSlår du dit bedste sæt på en øvelse, står det lige på sættet med en 🏆. Det kan være et højere beregnet max eller flere gentagelser på en vægt, du har løftet før. Bagefter står rekorden under Fremgang med dato.\n\n3\nDin uge\n\nNår et pas er klaret, spørger appen Hvordan gik det? Tryk 1 til 5, eller spring over.\n\nNår ugens sidste pas er klaret, står Din uge på forsiden: antal pas, samlet kg, ugens rekorder og dine egne vurderinger. Vil du, kan du skrive en linje til din coach om ugen.\n\n4\nFremgang på én linje\n\nOver grafen i Fremgang står nu én linje, fx Squat e1RM 117 kg, +9 kg siden uge 37. e1RM er dit beregnede max for én gentagelse. Tallene i grafen er større, så de kan læses.\n\n5\nKvittering, når du sender en video\n\nSender du en video i VideoCoach, får du én tydelig besked: Video modtaget ✓. Den bliver stående et par sekunder, så du kan nå at læse den.\n\n6\nDanske datoer\n\nDatoerne står på dansk, fx 28. sep ved dine rekorder. Din coach ser også dine pas med dansk dato og på den rigtige dag.\n\nLidt mere på Dagens pas: vægtfeltet starter på den vægt, din coach har anbefalet, og RPE og en note kan sættes direkte på sættet.\n\nDriller noget, så skriv til Marc.",
+      "skaerme": 4.72,
+      "sidelaens": 0,
+      "billeder": [
+        {
+          "ok": true,
+          "b": 324,
+          "alt": "Dagens pas uden net: to sæt er klaret, og der står 2 sendes når du har net."
+        },
+        {
+          "ok": true,
+          "b": 324,
+          "alt": "Dagens pas med linjen Ny rekord: Squat e1RM 117 kg, +3 kg."
+        },
+        {
+          "ok": true,
+          "b": 324,
+          "alt": "Kortet Din uge: 4 af 4 pas, samlet kg, ugens rekorder og dine vurderinger af hvert pas."
+        },
+        {
+          "ok": true,
+          "b": 324,
+          "alt": "Fremgang for squat: linjen over grafen og grafen med tal ved start og slut."
+        },
+        {
+          "ok": true,
+          "b": 324,
+          "alt": "VideoCoach efter Send: beskeden Video modtaget, din coach ser den, når han åbner den."
+        },
+        {
+          "ok": true,
+          "b": 324,
+          "alt": "Dine rekorder under Fremgang, hver med dato som 28. sep."
+        }
+      ],
+      "punkter": [
+        "1 Virker uden net",
+        "2 Nye rekorder bliver fejret",
+        "3 Din uge",
+        "4 Fremgang på én linje",
+        "5 Kvittering, når du sender en video",
+        "6 Danske datoer"
+      ],
+      "app": [
+        "☁ sendes når du har net",
+        "Hvordan gik det?",
+        "Din uge",
+        "Squat e1RM 117 kg, +9 kg siden uge 37",
+        "Video modtaget ✓",
+        "28. sep"
+      ],
+      "foerste": "Det meste er som før: samme forside, samme faner, og du logger stadig dine sæt med Godkendt i Dagens pas.",
+      "sidste": "Driller noget, så skriv til Marc.",
+      "broed": "17px",
+      "bg": "rgb(245, 242, 234)",
+      "tankestreg": false
+    },
+    {
+      "bredde": 390,
+      "farve": "dark",
+      "ord": 324,
+      "tekst": "Entropi.\n\nNyt i appen\n\nDet meste er som før: samme forside, samme faner, og du logger stadig dine sæt med Godkendt i Dagens pas.\n\nSeptember 2026. Her er det, der er nyt.\n\n1\nVirker uden net\n\nDu kan logge dine sæt, selv om der ikke er net, fx i kælderen. Sættet gemmes på telefonen og står med ☁ sendes når du har net. Når du får net igen, sendes det af sig selv, én gang, med det tidspunkt du trykkede Godkendt.\n\nHar du brugt appen med net efter opdateringen, åbner den også uden net og viser Dagens pas.\n\n2\nNye rekorder bliver fejret\n\nSlår du dit bedste sæt på en øvelse, står det lige på sættet med en 🏆. Det kan være et højere beregnet max eller flere gentagelser på en vægt, du har løftet før. Bagefter står rekorden under Fremgang med dato.\n\n3\nDin uge\n\nNår et pas er klaret, spørger appen Hvordan gik det? Tryk 1 til 5, eller spring over.\n\nNår ugens sidste pas er klaret, står Din uge på forsiden: antal pas, samlet kg, ugens rekorder og dine egne vurderinger. Vil du, kan du skrive en linje til din coach om ugen.\n\n4\nFremgang på én linje\n\nOver grafen i Fremgang står nu én linje, fx Squat e1RM 117 kg, +9 kg siden uge 37. e1RM er dit beregnede max for én gentagelse. Tallene i grafen er større, så de kan læses.\n\n5\nKvittering, når du sender en video\n\nSender du en video i VideoCoach, får du én tydelig besked: Video modtaget ✓. Den bliver stående et par sekunder, så du kan nå at læse den.\n\n6\nDanske datoer\n\nDatoerne står på dansk, fx 28. sep ved dine rekorder. Din coach ser også dine pas med dansk dato og på den rigtige dag.\n\nLidt mere på Dagens pas: vægtfeltet starter på den vægt, din coach har anbefalet, og RPE og en note kan sættes direkte på sættet.\n\nDriller noget, så skriv til Marc.",
+      "skaerme": 4.72,
+      "sidelaens": 0,
+      "billeder": [
+        {
+          "ok": true,
+          "b": 324,
+          "alt": "Dagens pas uden net: to sæt er klaret, og der står 2 sendes når du har net."
+        },
+        {
+          "ok": true,
+          "b": 324,
+          "alt": "Dagens pas med linjen Ny rekord: Squat e1RM 117 kg, +3 kg."
+        },
+        {
+          "ok": true,
+          "b": 324,
+          "alt": "Kortet Din uge: 4 af 4 pas, samlet kg, ugens rekorder og dine vurderinger af hvert pas."
+        },
+        {
+          "ok": true,
+          "b": 324,
+          "alt": "Fremgang for squat: linjen over grafen og grafen med tal ved start og slut."
+        },
+        {
+          "ok": true,
+          "b": 324,
+          "alt": "VideoCoach efter Send: beskeden Video modtaget, din coach ser den, når han åbner den."
+        },
+        {
+          "ok": true,
+          "b": 324,
+          "alt": "Dine rekorder under Fremgang, hver med dato som 28. sep."
+        }
+      ],
+      "punkter": [
+        "1 Virker uden net",
+        "2 Nye rekorder bliver fejret",
+        "3 Din uge",
+        "4 Fremgang på én linje",
+        "5 Kvittering, når du sender en video",
+        "6 Danske datoer"
+      ],
+      "app": [
+        "☁ sendes når du har net",
+        "Hvordan gik det?",
+        "Din uge",
+        "Squat e1RM 117 kg, +9 kg siden uge 37",
+        "Video modtaget ✓",
+        "28. sep"
+      ],
+      "foerste": "Det meste er som før: samme forside, samme faner, og du logger stadig dine sæt med Godkendt i Dagens pas.",
+      "sidste": "Driller noget, så skriv til Marc.",
+      "broed": "17px",
+      "bg": "rgb(21, 20, 18)",
+      "tankestreg": false
+    },
+    {
+      "bredde": 1280,
+      "farve": "light",
+      "ord": 324,
+      "tekst": "Entropi.\n\nNyt i appen\n\nDet meste er som før: samme forside, samme faner, og du logger stadig dine sæt med Godkendt i Dagens pas.\n\nSeptember 2026. Her er det, der er nyt.\n\n1\nVirker uden net\n\nDu kan logge dine sæt, selv om der ikke er net, fx i kælderen. Sættet gemmes på telefonen og står med ☁ sendes når du har net. Når du får net igen, sendes det af sig selv, én gang, med det tidspunkt du trykkede Godkendt.\n\nHar du brugt appen med net efter opdateringen, åbner den også uden net og viser Dagens pas.\n\n2\nNye rekorder bliver fejret\n\nSlår du dit bedste sæt på en øvelse, står det lige på sættet med en 🏆. Det kan være et højere beregnet max eller flere gentagelser på en vægt, du har løftet før. Bagefter står rekorden under Fremgang med dato.\n\n3\nDin uge\n\nNår et pas er klaret, spørger appen Hvordan gik det? Tryk 1 til 5, eller spring over.\n\nNår ugens sidste pas er klaret, står Din uge på forsiden: antal pas, samlet kg, ugens rekorder og dine egne vurderinger. Vil du, kan du skrive en linje til din coach om ugen.\n\n4\nFremgang på én linje\n\nOver grafen i Fremgang står nu én linje, fx Squat e1RM 117 kg, +9 kg siden uge 37. e1RM er dit beregnede max for én gentagelse. Tallene i grafen er større, så de kan læses.\n\n5\nKvittering, når du sender en video\n\nSender du en video i VideoCoach, får du én tydelig besked: Video modtaget ✓. Den bliver stående et par sekunder, så du kan nå at læse den.\n\n6\nDanske datoer\n\nDatoerne står på dansk, fx 28. sep ved dine rekorder. Din coach ser også dine pas med dansk dato og på den rigtige dag.\n\nLidt mere på Dagens pas: vægtfeltet starter på den vægt, din coach har anbefalet, og RPE og en note kan sættes direkte på sættet.\n\nDriller noget, så skriv til Marc.",
+      "skaerme": 4.4,
+      "sidelaens": 0,
+      "billeder": [
+        {
+          "ok": true,
+          "b": 386,
+          "alt": "Dagens pas uden net: to sæt er klaret, og der står 2 sendes når du har net."
+        },
+        {
+          "ok": true,
+          "b": 386,
+          "alt": "Dagens pas med linjen Ny rekord: Squat e1RM 117 kg, +3 kg."
+        },
+        {
+          "ok": true,
+          "b": 386,
+          "alt": "Kortet Din uge: 4 af 4 pas, samlet kg, ugens rekorder og dine vurderinger af hvert pas."
+        },
+        {
+          "ok": true,
+          "b": 386,
+          "alt": "Fremgang for squat: linjen over grafen og grafen med tal ved start og slut."
+        },
+        {
+          "ok": true,
+          "b": 386,
+          "alt": "VideoCoach efter Send: beskeden Video modtaget, din coach ser den, når han åbner den."
+        },
+        {
+          "ok": true,
+          "b": 386,
+          "alt": "Dine rekorder under Fremgang, hver med dato som 28. sep."
+        }
+      ],
+      "punkter": [
+        "1 Virker uden net",
+        "2 Nye rekorder bliver fejret",
+        "3 Din uge",
+        "4 Fremgang på én linje",
+        "5 Kvittering, når du sender en video",
+        "6 Danske datoer"
+      ],
+      "app": [
+        "☁ sendes når du har net",
+        "Hvordan gik det?",
+        "Din uge",
+        "Squat e1RM 117 kg, +9 kg siden uge 37",
+        "Video modtaget ✓",
+        "28. sep"
+      ],
+      "foerste": "Det meste er som før: samme forside, samme faner, og du logger stadig dine sæt med Godkendt i Dagens pas.",
+      "sidste": "Driller noget, så skriv til Marc.",
+      "broed": "17px",
+      "bg": "rgb(245, 242, 234)",
+      "tankestreg": false
+    },
+    {
+      "bredde": 1280,
+      "farve": "dark",
+      "ord": 324,
+      "tekst": "Entropi.\n\nNyt i appen\n\nDet meste er som før: samme forside, samme faner, og du logger stadig dine sæt med Godkendt i Dagens pas.\n\nSeptember 2026. Her er det, der er nyt.\n\n1\nVirker uden net\n\nDu kan logge dine sæt, selv om der ikke er net, fx i kælderen. Sættet gemmes på telefonen og står med ☁ sendes når du har net. Når du får net igen, sendes det af sig selv, én gang, med det tidspunkt du trykkede Godkendt.\n\nHar du brugt appen med net efter opdateringen, åbner den også uden net og viser Dagens pas.\n\n2\nNye rekorder bliver fejret\n\nSlår du dit bedste sæt på en øvelse, står det lige på sættet med en 🏆. Det kan være et højere beregnet max eller flere gentagelser på en vægt, du har løftet før. Bagefter står rekorden under Fremgang med dato.\n\n3\nDin uge\n\nNår et pas er klaret, spørger appen Hvordan gik det? Tryk 1 til 5, eller spring over.\n\nNår ugens sidste pas er klaret, står Din uge på forsiden: antal pas, samlet kg, ugens rekorder og dine egne vurderinger. Vil du, kan du skrive en linje til din coach om ugen.\n\n4\nFremgang på én linje\n\nOver grafen i Fremgang står nu én linje, fx Squat e1RM 117 kg, +9 kg siden uge 37. e1RM er dit beregnede max for én gentagelse. Tallene i grafen er større, så de kan læses.\n\n5\nKvittering, når du sender en video\n\nSender du en video i VideoCoach, får du én tydelig besked: Video modtaget ✓. Den bliver stående et par sekunder, så du kan nå at læse den.\n\n6\nDanske datoer\n\nDatoerne står på dansk, fx 28. sep ved dine rekorder. Din coach ser også dine pas med dansk dato og på den rigtige dag.\n\nLidt mere på Dagens pas: vægtfeltet starter på den vægt, din coach har anbefalet, og RPE og en note kan sættes direkte på sættet.\n\nDriller noget, så skriv til Marc.",
+      "skaerme": 4.4,
+      "sidelaens": 0,
+      "billeder": [
+        {
+          "ok": true,
+          "b": 386,
+          "alt": "Dagens pas uden net: to sæt er klaret, og der står 2 sendes når du har net."
+        },
+        {
+          "ok": true,
+          "b": 386,
+          "alt": "Dagens pas med linjen Ny rekord: Squat e1RM 117 kg, +3 kg."
+        },
+        {
+          "ok": true,
+          "b": 386,
+          "alt": "Kortet Din uge: 4 af 4 pas, samlet kg, ugens rekorder og dine vurderinger af hvert pas."
+        },
+        {
+          "ok": true,
+          "b": 386,
+          "alt": "Fremgang for squat: linjen over grafen og grafen med tal ved start og slut."
+        },
+        {
+          "ok": true,
+          "b": 386,
+          "alt": "VideoCoach efter Send: beskeden Video modtaget, din coach ser den, når han åbner den."
+        },
+        {
+          "ok": true,
+          "b": 386,
+          "alt": "Dine rekorder under Fremgang, hver med dato som 28. sep."
+        }
+      ],
+      "punkter": [
+        "1 Virker uden net",
+        "2 Nye rekorder bliver fejret",
+        "3 Din uge",
+        "4 Fremgang på én linje",
+        "5 Kvittering, når du sender en video",
+        "6 Danske datoer"
+      ],
+      "app": [
+        "☁ sendes når du har net",
+        "Hvordan gik det?",
+        "Din uge",
+        "Squat e1RM 117 kg, +9 kg siden uge 37",
+        "Video modtaget ✓",
+        "28. sep"
+      ],
+      "foerste": "Det meste er som før: samme forside, samme faner, og du logger stadig dine sæt med Godkendt i Dagens pas.",
+      "sidste": "Driller noget, så skriv til Marc.",
+      "broed": "17px",
+      "bg": "rgb(21, 20, 18)",
+      "tankestreg": false
+    }
+  ],
+  "citater": [
+    {
+      "citat": "☁ sendes når du har net",
+      "soegt": "sendes når du har net",
+      "fundet": [
+        "391144e:src/athlete/DagensPasCard.jsx:309:                return waiting > 0 ? <>{' '}<span data-venter-paa-net={waiting} style={{ color: '#c8923a', whiteSpace: 'nowrap' }}>· ☁ {waiting} sendes når du har net</span></> : null",
+        "391144e:src/athlete/DagensPasCard.jsx:415:                    <>{' '}<span data-venter-paa-net=\"1\" style={{ color: '#c8923a', whiteSpace: 'nowrap' }}>· ☁ sendes når du har net</span></>"
+      ]
+    },
+    {
+      "citat": "Hvordan gik det?",
+      "soegt": "Hvordan gik det?",
+      "fundet": [
+        "391144e:src/athlete/DagensPasCard.jsx:132:        {rateSession.title || 'Passet'} er klaret. Hvordan gik det?",
+        "391144e:src/offlineSetQueue.js:211:// \"Hvordan gik det? 1-5\" uden net gik tabt. Nu ligger vurderingen på telefonen"
+      ]
+    },
+    {
+      "citat": "Din uge",
+      "soegt": "Din uge",
+      "fundet": [
+        "391144e:src/athlete/DinUgeKort.jsx:40:      <div style={s.cardLabel}>Din uge</div>"
+      ]
+    },
+    {
+      "citat": "Squat e1RM 117 kg, +9 kg siden uge 37",
+      "soegt": "e1RM ${sidste.e1rm} kg, ${aendring} siden uge",
+      "fundet": [
+        "391144e:src/athlete/FremgangTab.jsx:64:  return `${navn} e1RM ${sidste.e1rm} kg, ${aendring} siden uge ${ugeNr(forste.uge)}`"
+      ]
+    },
+    {
+      "citat": "Video modtaget ✓",
+      "soegt": "Video modtaget ✓",
+      "fundet": [
+        "391144e:public/videocoach.html:7135:    say('Video modtaget ✓ · din coach ser den, når han åbner den');",
+        "391144e:public/videocoach.html:10421:      analyzing: [VC_ATHLETE_INSTANT ? 'Sporer sættet' : 'Video modtaget ✓',"
+      ]
+    },
+    {
+      "citat": "28. sep",
+      "soegt": "'sep'",
+      "fundet": [
+        "391144e:src/athlete/FremgangTab.jsx:114:const MDR = ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec']",
+        "391144e:src/danskDato.js:6:const MDR = ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec']",
+        "391144e:src/dashboard/AnalyseTab.jsx:561:                    const fmtPRDate = d => { const dt = new Date(d + 'T12:00:00'); return `${dt.getDate()} ${['jan','feb','mar','apr','maj','jun','jul','aug','sep','okt','nov','dec'][dt.getMonth()]} ${dt.getFullYear()}` }"
+      ]
+    }
+  ],
+  "net": 0,
+  "fejl": []
+}
