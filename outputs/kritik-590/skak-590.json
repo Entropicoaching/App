@@ -1,0 +1,1278 @@
+{
+ "skak": "890c033",
+ "ref": "main",
+ "A": {
+  "skak.html": {
+   "kb": 1581,
+   "farlige": [],
+   "laesKode": 0
+  },
+  "laerer.html": {
+   "kb": 311,
+   "farlige": [
+    "getUserMedia"
+   ],
+   "laesKode": 7
+  },
+  "billede": {
+   "laerer": [],
+   "skakLaeser": []
+  },
+  "unik": {
+   "mulige": "12^23 = 6624737266949237011120128",
+   "matematik": "6^7 = 279936",
+   "entydige577": 25,
+   "entydige590": 25
+  },
+  "tre": [
+   1,
+   4,
+   8,
+   11
+  ],
+  "temaer": {
+   "hangingPiece": {
+    "navn": "Hængende brik",
+    "i_alt": 85,
+    "under900": 40,
+    "letteste": 607,
+    "median900": 759,
+    "under700": 5
+   },
+   "deflection": {
+    "navn": "Aflede",
+    "i_alt": 85,
+    "under900": 40,
+    "letteste": 770,
+    "median900": 851,
+    "under700": 0
+   },
+   "attraction": {
+    "navn": "Lokke",
+    "i_alt": 85,
+    "under900": 40,
+    "letteste": 538,
+    "median900": 740,
+    "under700": 13
+   },
+   "trappedPiece": {
+    "navn": "Fanget brik",
+    "i_alt": 85,
+    "under900": 40,
+    "letteste": 645,
+    "median900": 856,
+    "under700": 1
+   },
+   "mateIn3": {
+    "navn": "Mat i 3",
+    "i_alt": 85,
+    "under900": 40,
+    "letteste": 674,
+    "median900": 786,
+    "under700": 3
+   }
+  }
+ },
+ "B": {
+  "390": {
+   "temaer": {
+    "hangingPiece": {
+     "navn": "Hængende brik",
+     "gaader": [
+      {
+       "elevRating": "?",
+       "gaadeRating": 607,
+       "valgt": "Du øver: Hængende brik (0 løst)",
+       "fundet": true,
+       "tema": "hangingPiece",
+       "forklaring": "Hængende brik: En brik står uden dækning. Slå den - den er gratis.",
+       "foersteTraek": "Qxd8#",
+       "rigtigtFoerste": true,
+       "status": "Løst! Slå den ubeskyttede. Vi finder dit niveau: 1 af 10. Din stime er i gang: 1 dag.",
+       "loest": true
+      },
+      {
+       "elevRating": "?",
+       "gaadeRating": 696,
+       "valgt": "Du øver: Hængende brik (1 løst)",
+       "fundet": true,
+       "tema": "hangingPiece",
+       "foersteTraek": "Qxf8#",
+       "rigtigtFoerste": true,
+       "status": "Løst! Slå den ubeskyttede. Vi finder dit niveau: 2 af 10.",
+       "loest": true
+      },
+      {
+       "elevRating": "?",
+       "gaadeRating": 722,
+       "valgt": "Du øver: Hængende brik (2 løst)",
+       "fundet": true,
+       "tema": "hangingPiece",
+       "foersteTraek": "Qxe1#",
+       "rigtigtFoerste": true,
+       "status": "Løst! Slå den ubeskyttede. Vi finder dit niveau: 3 af 10.",
+       "loest": true
+      }
+     ],
+     "knap": "Øv hængende brikker0 løst"
+    },
+    "deflection": {
+     "navn": "Aflede",
+     "gaader": [
+      {
+       "elevRating": "?",
+       "gaadeRating": 798,
+       "valgt": "Du øver: Aflede (0 løst)",
+       "fundet": true,
+       "tema": "deflection",
+       "forklaring": "Aflede: Tving en forsvarer væk fra det felt eller den brik, den skal passe på.",
+       "foersteTraek": "Qxc1",
+       "rigtigtFoerste": false,
+       "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+       "status": "Aflede. Løst, men med et forkert træk først. Vi finder dit niveau: 4 af 10. Den kommer igen i morgen.",
+       "loest": true
+      },
+      {
+       "elevRating": "?",
+       "gaadeRating": 848,
+       "valgt": "Du øver: Aflede (1 løst)",
+       "fundet": true,
+       "tema": "deflection",
+       "foersteTraek": "Qg3+",
+       "rigtigtFoerste": false,
+       "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+       "status": "Aflede. Løst, men med et forkert træk først. Vi finder dit niveau: 5 af 10. Den kommer igen i morgen.",
+       "loest": true
+      },
+      {
+       "elevRating": "?",
+       "gaadeRating": 826,
+       "valgt": "Du øver: Aflede (2 løst)",
+       "fundet": true,
+       "tema": "deflection",
+       "foersteTraek": "Qxf7+",
+       "rigtigtFoerste": false,
+       "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+       "status": "Aflede. Løst, men med et forkert træk først. Vi finder dit niveau: 6 af 10. Den kommer igen i morgen.",
+       "loest": true
+      }
+     ],
+     "knap": "Øv at aflede0 løst"
+    },
+    "attraction": {
+     "navn": "Lokke",
+     "gaader": [
+      {
+       "elevRating": "?",
+       "gaadeRating": 538,
+       "valgt": "Du øver: Lokke (0 løst)",
+       "fundet": true,
+       "tema": "attraction",
+       "forklaring": "Lokke: Lok en brik (tit kongen) hen på et felt, hvor den kan angribes.",
+       "foersteTraek": "Rxf8+",
+       "rigtigtFoerste": true,
+       "status": "Løst! Lokke. Vi finder dit niveau: 7 af 10.",
+       "loest": true
+      },
+      {
+       "elevRating": "?",
+       "gaadeRating": 671,
+       "valgt": "Du øver: Lokke (1 løst)",
+       "fundet": true,
+       "tema": "attraction",
+       "foersteTraek": "Rxf1+",
+       "rigtigtFoerste": true,
+       "status": "Løst! Lokke. Vi finder dit niveau: 8 af 10.",
+       "loest": true
+      },
+      {
+       "elevRating": "?",
+       "gaadeRating": 737,
+       "valgt": "Du øver: Lokke (2 løst)",
+       "fundet": true,
+       "tema": "attraction",
+       "foersteTraek": "Qxf8+",
+       "rigtigtFoerste": true,
+       "status": "Løst! Lokke. Vi finder dit niveau: 9 af 10.",
+       "loest": true
+      }
+     ],
+     "knap": "Øv at lokke0 løst"
+    },
+    "trappedPiece": {
+     "navn": "Fanget brik",
+     "gaader": [
+      {
+       "elevRating": "?",
+       "gaadeRating": 746,
+       "valgt": "Du øver: Fanget brik (0 løst)",
+       "fundet": true,
+       "tema": "trappedPiece",
+       "forklaring": "Fanget brik: En brik har ingen sikre felter at flygte til. Angrib den, så er den tabt.",
+       "foersteTraek": "Kxf7",
+       "rigtigtFoerste": true,
+       "status": "Løst! Fanget brik. Dit niveau er fundet: 840.",
+       "loest": true
+      },
+      {
+       "elevRating": "840",
+       "gaadeRating": 645,
+       "valgt": "Du øver: Fanget brik (1 løst)",
+       "fundet": true,
+       "tema": "trappedPiece",
+       "foersteTraek": "Kxf3",
+       "rigtigtFoerste": true,
+       "status": "Løst! Fanget brik. Rating: 853 (+13).",
+       "loest": true
+      },
+      {
+       "elevRating": "853",
+       "gaadeRating": 798,
+       "valgt": "Du øver: Fanget brik (2 løst)",
+       "fundet": true,
+       "tema": "trappedPiece",
+       "foersteTraek": "Ke4",
+       "rigtigtFoerste": false,
+       "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+       "status": "Fanget brik. Løst, men med et forkert træk først: 823 (−30). Den kommer igen i morgen.",
+       "loest": true
+      }
+     ],
+     "knap": "Øv fangede brikker0 løst"
+    },
+    "mateIn3": {
+     "navn": "Mat i 3",
+     "gaader": [
+      {
+       "elevRating": "823",
+       "gaadeRating": 771,
+       "valgt": "Du øver: Mat i 3 (0 løst)",
+       "fundet": true,
+       "tema": "mateIn3",
+       "forklaring": "Mat i 3: Mat i tre træk, uanset hvad modstanderen svarer.",
+       "foersteTraek": "Qxc8",
+       "rigtigtFoerste": false,
+       "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+       "status": "Mat i 3. Løst, men med et forkert træk først: 794 (−29). Den kommer igen i morgen.",
+       "loest": true
+      },
+      {
+       "elevRating": "794",
+       "gaadeRating": 731,
+       "valgt": "Du øver: Mat i 3 (1 løst)",
+       "fundet": true,
+       "tema": "mateIn3",
+       "foersteTraek": "h3",
+       "rigtigtFoerste": false,
+       "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+       "status": "Mat i 3. Løst, men med et forkert træk først: 766 (−28). Den kommer igen i morgen.",
+       "loest": true
+      },
+      {
+       "elevRating": "766",
+       "gaadeRating": 469,
+       "valgt": "Du øver: Mat i 3 (2 løst)",
+       "fundet": true,
+       "tema": "mateIn3",
+       "foersteTraek": "Rxe8+",
+       "rigtigtFoerste": true,
+       "status": "Løst! Mat i 3. Rating: 770 (+4).",
+       "loest": true
+      }
+     ],
+     "knap": "Øv mat i 30 løst"
+    }
+   },
+   "nyeRaekker": [
+    "Hængende brik 100 % rigtige · 3 forsøg denne uge: 100 % i 3 forsøg · sidste uge: ikke øvet Øv",
+    "Aflede 0 % rigtige · 3 forsøg denne uge: 0 % i 3 forsøg · sidste uge: ikke øvet Øv",
+    "Lokke 100 % rigtige · 3 forsøg denne uge: 100 % i 3 forsøg · sidste uge: ikke øvet Øv",
+    "Fanget brik 67 % rigtige · 3 forsøg denne uge: 67 % i 3 forsøg · sidste uge: ikke øvet Øv",
+    "Mat i 3 33 % rigtige · 3 forsøg denne uge: 33 % i 3 forsøg · sidste uge: ikke øvet Øv"
+   ],
+   "ugeSaetning": "Denne uge har du øvet 5 temaer i 15 forsøg.",
+   "qr": {
+    "ec": "Q",
+    "maske": 0,
+    "antal": 24,
+    "tekst": "88N9-R5VC-PFR0-00TB-SCB1",
+    "slut": 0
+   },
+   "kode": "88N9-R5VC-PFR0-00TB-SCB1",
+   "vaerdier": {
+    "fork": {
+     "kode": 5,
+     "forventet": 5
+    },
+    "pin": {
+     "kode": 10,
+     "forventet": 10
+    },
+    "mateIn1": {
+     "kode": 11,
+     "forventet": 11
+    },
+    "hangingPiece": {
+     "kode": 11,
+     "forventet": 11
+    },
+    "deflection": {
+     "kode": 1,
+     "forventet": 1
+    },
+    "attraction": {
+     "kode": 11,
+     "forventet": 11
+    },
+    "trappedPiece": {
+     "kode": 8,
+     "forventet": 8
+    },
+    "mateIn3": {
+     "kode": 4,
+     "forventet": 4
+    }
+   },
+   "lagerNoegler": [
+    "skak-gaade-fremgang-v1",
+    "skak-gentag-v1"
+   ],
+   "tid": {
+    "skak-gaade-fremgang-v1": {
+     "tidsstempler": 0,
+     "datoer": 3,
+     "uger": [
+      "\"uger\":{\"2961\":[3,3]}",
+      "\"uger\":{\"2961\":[3,0]}",
+      "\"uger\":{\"2961\":[3,3]}"
+     ]
+    }
+   },
+   "net": 0,
+   "fejl": []
+  },
+  "1280": {
+   "temaer": {
+    "hangingPiece": {
+     "navn": "Hængende brik",
+     "gaader": [
+      {
+       "elevRating": "?",
+       "gaadeRating": 607,
+       "valgt": "Du øver: Hængende brik (0 løst)",
+       "fundet": true,
+       "tema": "hangingPiece",
+       "forklaring": "Hængende brik: En brik står uden dækning. Slå den - den er gratis.",
+       "foersteTraek": "Qxd8#",
+       "rigtigtFoerste": true,
+       "status": "Løst! Slå den ubeskyttede. Vi finder dit niveau: 1 af 10. Din stime er i gang: 1 dag.",
+       "loest": true
+      },
+      {
+       "elevRating": "?",
+       "gaadeRating": 757,
+       "valgt": "Du øver: Hængende brik (1 løst)",
+       "fundet": true,
+       "tema": "hangingPiece",
+       "foersteTraek": "Qxd1+",
+       "rigtigtFoerste": true,
+       "status": "Løst! Slå den ubeskyttede. Vi finder dit niveau: 2 af 10.",
+       "loest": true
+      },
+      {
+       "elevRating": "?",
+       "gaadeRating": 784,
+       "valgt": "Du øver: Hængende brik (2 løst)",
+       "fundet": true,
+       "tema": "hangingPiece",
+       "foersteTraek": "Qxf1#",
+       "rigtigtFoerste": true,
+       "status": "Løst! Slå den ubeskyttede. Vi finder dit niveau: 3 af 10.",
+       "loest": true
+      }
+     ],
+     "knap": "Øv hængende brikker0 løst"
+    },
+    "deflection": {
+     "navn": "Aflede",
+     "gaader": [
+      {
+       "elevRating": "?",
+       "gaadeRating": 810,
+       "valgt": "Du øver: Aflede (0 løst)",
+       "fundet": true,
+       "tema": "deflection",
+       "forklaring": "Aflede: Tving en forsvarer væk fra det felt eller den brik, den skal passe på.",
+       "foersteTraek": "d6+",
+       "rigtigtFoerste": true,
+       "status": "Løst! Aflede. Vi finder dit niveau: 4 af 10.",
+       "loest": true
+      },
+      {
+       "elevRating": "?",
+       "gaadeRating": 819,
+       "valgt": "Du øver: Aflede (1 løst)",
+       "fundet": true,
+       "tema": "deflection",
+       "foersteTraek": "h4",
+       "rigtigtFoerste": false,
+       "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+       "status": "Aflede. Løst, men med et forkert træk først. Vi finder dit niveau: 5 af 10. Den kommer igen i morgen.",
+       "loest": true
+      },
+      {
+       "elevRating": "?",
+       "gaadeRating": 798,
+       "valgt": "Du øver: Aflede (2 løst)",
+       "fundet": true,
+       "tema": "deflection",
+       "foersteTraek": "Qxc1",
+       "rigtigtFoerste": false,
+       "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+       "status": "Aflede. Løst, men med et forkert træk først. Vi finder dit niveau: 6 af 10. Den kommer igen i morgen.",
+       "loest": true
+      }
+     ],
+     "knap": "Øv at aflede0 løst"
+    },
+    "attraction": {
+     "navn": "Lokke",
+     "gaader": [
+      {
+       "elevRating": "?",
+       "gaadeRating": 669,
+       "valgt": "Du øver: Lokke (0 løst)",
+       "fundet": true,
+       "tema": "attraction",
+       "forklaring": "Lokke: Lok en brik (tit kongen) hen på et felt, hvor den kan angribes.",
+       "foersteTraek": "Rxg1+",
+       "rigtigtFoerste": true,
+       "status": "Løst! Lokke. Vi finder dit niveau: 7 af 10.",
+       "loest": true
+      },
+      {
+       "elevRating": "?",
+       "gaadeRating": 738,
+       "valgt": "Du øver: Lokke (1 løst)",
+       "fundet": true,
+       "tema": "attraction",
+       "foersteTraek": "Rxf8+",
+       "rigtigtFoerste": true,
+       "status": "Løst! Lokke. Vi finder dit niveau: 8 af 10.",
+       "loest": true
+      },
+      {
+       "elevRating": "?",
+       "gaadeRating": 732,
+       "valgt": "Du øver: Lokke (2 løst)",
+       "fundet": true,
+       "tema": "attraction",
+       "foersteTraek": "Rxh7+",
+       "rigtigtFoerste": true,
+       "status": "Løst! Lokke. Vi finder dit niveau: 9 af 10.",
+       "loest": true
+      }
+     ],
+     "knap": "Øv at lokke0 løst"
+    },
+    "trappedPiece": {
+     "navn": "Fanget brik",
+     "gaader": [
+      {
+       "elevRating": "?",
+       "gaadeRating": 826,
+       "valgt": "Du øver: Fanget brik (0 løst)",
+       "fundet": true,
+       "tema": "trappedPiece",
+       "forklaring": "Fanget brik: En brik har ingen sikre felter at flygte til. Angrib den, så er den tabt.",
+       "foersteTraek": "h6",
+       "rigtigtFoerste": false,
+       "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+       "status": "Fanget brik. Løst, men med et forkert træk først. Dit niveau er fundet: 845. Den kommer igen i morgen.",
+       "loest": true
+      },
+      {
+       "elevRating": "845",
+       "gaadeRating": 729,
+       "valgt": "Du øver: Fanget brik (1 løst)",
+       "fundet": true,
+       "tema": "trappedPiece",
+       "foersteTraek": "Kb2",
+       "rigtigtFoerste": false,
+       "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+       "status": "Fanget brik. Løst, men med et forkert træk først: 811 (−34). Den kommer igen i morgen.",
+       "loest": true
+      },
+      {
+       "elevRating": "811",
+       "gaadeRating": 746,
+       "valgt": "Du øver: Fanget brik (2 løst)",
+       "fundet": true,
+       "tema": "trappedPiece",
+       "foersteTraek": "Kxf7",
+       "rigtigtFoerste": true,
+       "status": "Løst! Fanget brik. Rating: 831 (+20).",
+       "loest": true
+      }
+     ],
+     "knap": "Øv fangede brikker0 løst"
+    },
+    "mateIn3": {
+     "navn": "Mat i 3",
+     "gaader": [
+      {
+       "elevRating": "831",
+       "gaadeRating": 766,
+       "valgt": "Du øver: Mat i 3 (0 løst)",
+       "fundet": true,
+       "tema": "mateIn3",
+       "forklaring": "Mat i 3: Mat i tre træk, uanset hvad modstanderen svarer.",
+       "foersteTraek": "Qxd6",
+       "rigtigtFoerste": false,
+       "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+       "status": "Mat i 3. Løst, men med et forkert træk først: 803 (−28). Den kommer igen i morgen.",
+       "loest": true
+      },
+      {
+       "elevRating": "803",
+       "gaadeRating": 735,
+       "valgt": "Du øver: Mat i 3 (1 løst)",
+       "fundet": true,
+       "tema": "mateIn3",
+       "foersteTraek": "exd5",
+       "rigtigtFoerste": false,
+       "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+       "status": "Mat i 3. Løst, men med et forkert træk først: 776 (−27). Den kommer igen i morgen.",
+       "loest": true
+      },
+      {
+       "elevRating": "776",
+       "gaadeRating": 674,
+       "valgt": "Du øver: Mat i 3 (2 løst)",
+       "fundet": true,
+       "tema": "mateIn3",
+       "foersteTraek": "g5",
+       "rigtigtFoerste": false,
+       "besked": "Ikke den vej. Tag trækket tilbage og prøv igen.",
+       "status": "Mat i 3. Løst, men med et forkert træk først: 748 (−28). Den kommer igen i morgen.",
+       "loest": true
+      }
+     ],
+     "knap": "Øv mat i 30 løst"
+    }
+   },
+   "nyeRaekker": [
+    "Hængende brik 100 % rigtige · 3 forsøg denne uge: 100 % i 3 forsøg · sidste uge: ikke øvet Øv",
+    "Aflede 33 % rigtige · 3 forsøg denne uge: 33 % i 3 forsøg · sidste uge: ikke øvet Øv",
+    "Lokke 100 % rigtige · 3 forsøg denne uge: 100 % i 3 forsøg · sidste uge: ikke øvet Øv",
+    "Fanget brik 33 % rigtige · 3 forsøg denne uge: 33 % i 3 forsøg · sidste uge: ikke øvet Øv",
+    "Mat i 3 0 % rigtige · 3 forsøg denne uge: 0 % i 3 forsøg · sidste uge: ikke øvet Øv"
+   ],
+   "ugeSaetning": "Denne uge har du øvet 5 temaer i 15 forsøg.",
+   "qr": {
+    "ec": "Q",
+    "maske": 4,
+    "antal": 24,
+    "tekst": "82JJ-4P63-Q0R0-00TB-SD32",
+    "slut": 0
+   },
+   "kode": "82JJ-4P63-Q0R0-00TB-SD32",
+   "vaerdier": {
+    "fork": {
+     "kode": 5,
+     "forventet": 5
+    },
+    "pin": {
+     "kode": 10,
+     "forventet": 10
+    },
+    "mateIn1": {
+     "kode": 11,
+     "forventet": 11
+    },
+    "hangingPiece": {
+     "kode": 11,
+     "forventet": 11
+    },
+    "deflection": {
+     "kode": 4,
+     "forventet": 4
+    },
+    "attraction": {
+     "kode": 11,
+     "forventet": 11
+    },
+    "trappedPiece": {
+     "kode": 4,
+     "forventet": 4
+    },
+    "mateIn3": {
+     "kode": 1,
+     "forventet": 1
+    }
+   },
+   "lagerNoegler": [
+    "skak-gaade-fremgang-v1",
+    "skak-gentag-v1"
+   ],
+   "tid": {
+    "skak-gaade-fremgang-v1": {
+     "tidsstempler": 0,
+     "datoer": 3,
+     "uger": [
+      "\"uger\":{\"2961\":[3,3]}",
+      "\"uger\":{\"2961\":[3,1]}",
+      "\"uger\":{\"2961\":[3,3]}"
+     ]
+    }
+   },
+   "net": 0,
+   "fejl": []
+  }
+ },
+ "C": {
+  "390": {
+   "status": "25 koder læst.",
+   "forslag": "Klassens time: gafler19 af 25 har øvet gafler, i snit 44 % rigtige; 9 ligger under 50 %. Eleverne finder det i Gåder under \"Øv et tema\" (Øv gafler).Kun et forslag - du bestemmer timen.",
+   "en": {
+    "status": "1 kode læst.",
+    "forslag": "Klassens time: gafler1 af 1 har øvet gafler, i snit 40 % rigtige; 1 ligger under 50 %. Eleverne finder det i Gåder under \"Øv et tema\" (Øv gafler).Kun et forslag - du bestemmer timen.",
+    "linjer": [
+     "i snit 40 % · 1 af 1 har øvet",
+     "i snit 50 % · 1 af 1 har øvet",
+     "i snit 60 % · 1 af 1 har øvet",
+     "i snit 70 % · 1 af 1 har øvet"
+    ]
+   },
+   "x": {
+    "xss": null,
+    "img": 0,
+    "b": 0
+   },
+   "lang": "25 koder læst."
+  },
+  "1280": {
+   "status": "25 koder læst.",
+   "forslag": "Klassens time: gafler19 af 25 har øvet gafler, i snit 44 % rigtige; 9 ligger under 50 %. Eleverne finder det i Gåder under \"Øv et tema\" (Øv gafler).Kun et forslag - du bestemmer timen.",
+   "en": {
+    "status": "1 kode læst.",
+    "forslag": "Klassens time: gafler1 af 1 har øvet gafler, i snit 40 % rigtige; 1 ligger under 50 %. Eleverne finder det i Gåder under \"Øv et tema\" (Øv gafler).Kun et forslag - du bestemmer timen.",
+    "linjer": [
+     "i snit 40 % · 1 af 1 har øvet",
+     "i snit 50 % · 1 af 1 har øvet",
+     "i snit 60 % · 1 af 1 har øvet",
+     "i snit 70 % · 1 af 1 har øvet"
+    ]
+   },
+   "x": {
+    "xss": null,
+    "img": 0,
+    "b": 0
+   },
+   "lang": "25 koder læst."
+  }
+ },
+ "D": {
+  "390": {
+   "koder": [
+    "88N9-R5VC-PFR0-00TB-SCB1",
+    "82JJ-4P63-Q0R0-00TB-SD32",
+    "88N9-R5VC-PFR0-00TB-SCB1"
+   ],
+   "status": "3 koder scannet. Vis den næste.",
+   "efterStop": [
+    "ended"
+   ],
+   "koerer": [
+    "live"
+   ],
+   "efterFane": [
+    "ended",
+    "ended"
+   ],
+   "billede": {
+    "toDataURL": 0,
+    "toBlob": 0,
+    "optag": 0
+   },
+   "nyeNoegler": [],
+   "paaSiden": {
+    "canvas": 0,
+    "img": 0
+   },
+   "net": 0,
+   "fejl": []
+  },
+  "1280": {
+   "koder": [
+    "88N9-R5VC-PFR0-00TB-SCB1",
+    "82JJ-4P63-Q0R0-00TB-SD32",
+    "88N9-R5VC-PFR0-00TB-SCB1"
+   ],
+   "status": "3 koder scannet. Vis den næste.",
+   "efterStop": [
+    "ended"
+   ],
+   "koerer": [
+    "live"
+   ],
+   "efterFane": [
+    "ended",
+    "ended"
+   ],
+   "billede": {
+    "toDataURL": 0,
+    "toBlob": 0,
+    "optag": 0
+   },
+   "nyeNoegler": [],
+   "paaSiden": {
+    "canvas": 0,
+    "img": 0
+   },
+   "net": 0,
+   "fejl": []
+  },
+  "nej": "Kameraet må ikke bruges: browseren fik et nej, eller skolens indstillinger forbyder det. Tast koderne i feltet i stedet.",
+  "nejTast": "1 kode læst."
+ },
+ "E": {
+  "390": {
+   "sidst": 25,
+   "nu": 25,
+   "saetning": "Siden sidst blev klassen bedre til gafler: 44 % mod 27 % i snit.",
+   "iRes": [],
+   "uden": [
+    null,
+    null
+   ],
+   "med": [
+    25,
+    25
+   ],
+   "af": [
+    null,
+    null
+   ]
+  },
+  "1280": {
+   "sidst": 25,
+   "nu": 25,
+   "saetning": "Siden sidst blev klassen bedre til gafler: 44 % mod 27 % i snit.",
+   "iRes": [],
+   "uden": [
+    null,
+    null
+   ],
+   "med": [
+    25,
+    25
+   ],
+   "af": [
+    null,
+    null
+   ]
+  }
+ },
+ "tjek": [
+  {
+   "hvad": "A1 skak.html: ingen fetch, XHR, beacon, websocket, cookie, userAgent, geolocation eller kamera",
+   "ok": true,
+   "data": {
+    "skak": []
+   }
+  },
+  {
+   "hvad": "A1b laerer.html: kun kameraet (getUserMedia); ingen fetch/XHR/beacon/websocket/cookie og ingen toDataURL, toBlob, MediaRecorder eller createObjectURL",
+   "ok": true,
+   "data": {
+    "laerer": [
+     "getUserMedia"
+    ],
+    "billede": []
+   }
+  },
+  {
+   "hvad": "A1c skak.html har ingen QR-laeser og intet kamera",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "A2 skak.html kan ikke laese en kode (laesKode findes kun i laerer.html)",
+   "ok": true,
+   "data": {
+    "skak": 0,
+    "laerer": 7
+   }
+  },
+  {
+   "hvad": "A3 2.000 koder (udgave 1 og 2, smaa bogstaver, mellemrum) ind og ud giver de samme tal; udgave 1 faar 0 i de fem nye",
+   "ok": true,
+   "data": {
+    "rundt": 2000
+   }
+  },
+  {
+   "hvad": "A4 de fem nye temaer har hver 85 gaader og 40 under 900",
+   "ok": true,
+   "data": {
+    "hangingPiece": {
+     "navn": "Hængende brik",
+     "i_alt": 85,
+     "under900": 40,
+     "letteste": 607,
+     "median900": 759,
+     "under700": 5
+    },
+    "deflection": {
+     "navn": "Aflede",
+     "i_alt": 85,
+     "under900": 40,
+     "letteste": 770,
+     "median900": 851,
+     "under700": 0
+    },
+    "attraction": {
+     "navn": "Lokke",
+     "i_alt": 85,
+     "under900": 40,
+     "letteste": 538,
+     "median900": 740,
+     "under700": 13
+    },
+    "trappedPiece": {
+     "navn": "Fanget brik",
+     "i_alt": 85,
+     "under900": 40,
+     "letteste": 645,
+     "median900": 856,
+     "under700": 1
+    },
+    "mateIn3": {
+     "navn": "Mat i 3",
+     "i_alt": 85,
+     "under900": 40,
+     "letteste": 674,
+     "median900": 786,
+     "under700": 3
+    }
+   }
+  },
+  {
+   "hvad": "D1 390: QR-koden i Mit bibliotek baerer praecis koden og intet andet (min egen laeser: Q, maske 0)",
+   "ok": true,
+   "data": {
+    "qr": "88N9-R5VC-PFR0-00TB-SCB1",
+    "kode": "88N9-R5VC-PFR0-00TB-SCB1"
+   }
+  },
+  {
+   "hvad": "B1 390: koden er udgave 2 (20 tegn) og baerer elevens tal i gafler, bindinger, mat i 1 og de fem nye",
+   "ok": true,
+   "data": {
+    "fork": {
+     "kode": 5,
+     "forventet": 5
+    },
+    "pin": {
+     "kode": 10,
+     "forventet": 10
+    },
+    "mateIn1": {
+     "kode": 11,
+     "forventet": 11
+    },
+    "hangingPiece": {
+     "kode": 11,
+     "forventet": 11
+    },
+    "deflection": {
+     "kode": 1,
+     "forventet": 1
+    },
+    "attraction": {
+     "kode": 11,
+     "forventet": 11
+    },
+    "trappedPiece": {
+     "kode": 8,
+     "forventet": 8
+    },
+    "mateIn3": {
+     "kode": 4,
+     "forventet": 4
+    }
+   }
+  },
+  {
+   "hvad": "B2 390: at vise koden aendrer intet i lageret; teksten naevner intet navn eller dato",
+   "ok": true,
+   "data": {
+    "boks": "88N9-R5VC-PFR0-00TB-SCB1 Vis koden til din lærer: læreren kan scanne QR-koden med kameraet eller taste de 20 tegn. Den siger kun, hvor mange procent du har rigtige i hvert gådetema, i åbningerne og i "
+   }
+  },
+  {
+   "hvad": "B3 390: samme tal en maaned senere om aftenen og uden ugerne giver samme kode",
+   "ok": true,
+   "data": {
+    "k1": "88N9-R5VC-PFR0-00TB-SCB1",
+    "k2": "88N9-R5VC-PFR0-00TB-SCB1",
+    "k3": "88N9-R5VC-PFR0-00TB-SCB1"
+   }
+  },
+  {
+   "hvad": "B4 390: skak.html 0 netkald, 0 JS-fejl, ingen vandret rulning",
+   "ok": true,
+   "data": {
+    "net": [],
+    "fejl": []
+   }
+  },
+  {
+   "hvad": "D1 1280: QR-koden i Mit bibliotek baerer praecis koden og intet andet (min egen laeser: Q, maske 4)",
+   "ok": true,
+   "data": {
+    "qr": "82JJ-4P63-Q0R0-00TB-SD32",
+    "kode": "82JJ-4P63-Q0R0-00TB-SD32"
+   }
+  },
+  {
+   "hvad": "B1 1280: koden er udgave 2 (20 tegn) og baerer elevens tal i gafler, bindinger, mat i 1 og de fem nye",
+   "ok": true,
+   "data": {
+    "fork": {
+     "kode": 5,
+     "forventet": 5
+    },
+    "pin": {
+     "kode": 10,
+     "forventet": 10
+    },
+    "mateIn1": {
+     "kode": 11,
+     "forventet": 11
+    },
+    "hangingPiece": {
+     "kode": 11,
+     "forventet": 11
+    },
+    "deflection": {
+     "kode": 4,
+     "forventet": 4
+    },
+    "attraction": {
+     "kode": 11,
+     "forventet": 11
+    },
+    "trappedPiece": {
+     "kode": 4,
+     "forventet": 4
+    },
+    "mateIn3": {
+     "kode": 1,
+     "forventet": 1
+    }
+   }
+  },
+  {
+   "hvad": "B2 1280: at vise koden aendrer intet i lageret; teksten naevner intet navn eller dato",
+   "ok": true,
+   "data": {
+    "boks": "82JJ-4P63-Q0R0-00TB-SD32 Vis koden til din lærer: læreren kan scanne QR-koden med kameraet eller taste de 20 tegn. Den siger kun, hvor mange procent du har rigtige i hvert gådetema, i åbningerne og i "
+   }
+  },
+  {
+   "hvad": "B3 1280: samme tal en maaned senere om aftenen og uden ugerne giver samme kode",
+   "ok": true,
+   "data": {
+    "k1": "82JJ-4P63-Q0R0-00TB-SD32",
+    "k2": "82JJ-4P63-Q0R0-00TB-SD32",
+    "k3": "82JJ-4P63-Q0R0-00TB-SD32"
+   }
+  },
+  {
+   "hvad": "B4 1280: skak.html 0 netkald, 0 JS-fejl, ingen vandret rulning",
+   "ok": true,
+   "data": {
+    "net": [],
+    "fejl": []
+   }
+  },
+  {
+   "hvad": "C1 390: 25 syntetiske koder (20 udgave 2, 5 udgave 1; smaa bogstaver, mellemrum, O for 0): \"25 koder laest.\", 23 kompetencer, ingen enkelt kode i resultatet, intet gemt uden flueben",
+   "ok": true,
+   "data": {
+    "status": "25 koder læst.",
+    "forslag": "Klassens time: gafler19 af 25 har øvet gafler, i snit 44 % rigtige; 9 ligger under 50 %. Eleverne finder det i Gåder under \"Øv et tema\" (Øv gafler).Kun et forslag - du bestemmer timen.",
+    "kodeIRes": []
+   }
+  },
+  {
+   "hvad": "C2 390: med flueben gemt, taget af: slettet",
+   "ok": true
+  },
+  {
+   "hvad": "C3 390: HTML i feltet vises som tekst og koeres ikke",
+   "ok": true,
+   "data": {
+    "xss": null,
+    "img": 0,
+    "b": 0
+   }
+  },
+  {
+   "hvad": "C4 390: een kode alene viser den ene elevs procent pr. tema (siden har ingen mindste klasse)",
+   "ok": true,
+   "data": {
+    "status": "1 kode læst.",
+    "forslag": "Klassens time: gafler1 af 1 har øvet gafler, i snit 40 % rigtige; 1 ligger under 50 %. Eleverne finder det i Gåder under \"Øv et tema\" (Øv gafler).Kun et forslag - du bestemmer timen.",
+    "linjer": [
+     "i snit 40 % · 1 af 1 har øvet",
+     "i snit 50 % · 1 af 1 har øvet",
+     "i snit 60 % · 1 af 1 har øvet",
+     "i snit 70 % · 1 af 1 har øvet"
+    ]
+   }
+  },
+  {
+   "hvad": "C5 390: alle 25 koder sat ind i een lang linje uden mellemrum: \"25 koder laest.\"",
+   "ok": true,
+   "data": {
+    "lang": "25 koder læst."
+   }
+  },
+  {
+   "hvad": "C6 390: laerer.html 0 netkald, 0 JS-fejl, ingen vandret rulning",
+   "ok": true,
+   "data": {
+    "net": [],
+    "fejl": []
+   }
+  },
+  {
+   "hvad": "C1 1280: 25 syntetiske koder (20 udgave 2, 5 udgave 1; smaa bogstaver, mellemrum, O for 0): \"25 koder laest.\", 23 kompetencer, ingen enkelt kode i resultatet, intet gemt uden flueben",
+   "ok": true,
+   "data": {
+    "status": "25 koder læst.",
+    "forslag": "Klassens time: gafler19 af 25 har øvet gafler, i snit 44 % rigtige; 9 ligger under 50 %. Eleverne finder det i Gåder under \"Øv et tema\" (Øv gafler).Kun et forslag - du bestemmer timen.",
+    "kodeIRes": []
+   }
+  },
+  {
+   "hvad": "C2 1280: med flueben gemt, taget af: slettet",
+   "ok": true
+  },
+  {
+   "hvad": "C3 1280: HTML i feltet vises som tekst og koeres ikke",
+   "ok": true,
+   "data": {
+    "xss": null,
+    "img": 0,
+    "b": 0
+   }
+  },
+  {
+   "hvad": "C4 1280: een kode alene viser den ene elevs procent pr. tema (siden har ingen mindste klasse)",
+   "ok": true,
+   "data": {
+    "status": "1 kode læst.",
+    "forslag": "Klassens time: gafler1 af 1 har øvet gafler, i snit 40 % rigtige; 1 ligger under 50 %. Eleverne finder det i Gåder under \"Øv et tema\" (Øv gafler).Kun et forslag - du bestemmer timen.",
+    "linjer": [
+     "i snit 40 % · 1 af 1 har øvet",
+     "i snit 50 % · 1 af 1 har øvet",
+     "i snit 60 % · 1 af 1 har øvet",
+     "i snit 70 % · 1 af 1 har øvet"
+    ]
+   }
+  },
+  {
+   "hvad": "C5 1280: alle 25 koder sat ind i een lang linje uden mellemrum: \"25 koder laest.\"",
+   "ok": true,
+   "data": {
+    "lang": "25 koder læst."
+   }
+  },
+  {
+   "hvad": "C6 1280: laerer.html 0 netkald, 0 JS-fejl, ingen vandret rulning",
+   "ok": true,
+   "data": {
+    "net": [],
+    "fejl": []
+   }
+  },
+  {
+   "hvad": "D2 390: falsk kamera med A, B, A: feltet faar A, B, A (A to gange, efter en pause)",
+   "ok": true,
+   "data": {
+    "koder": [
+     "88N9-R5VC-PFR0-00TB-SCB1",
+     "82JJ-4P63-Q0R0-00TB-SD32",
+     "88N9-R5VC-PFR0-00TB-SCB1"
+    ],
+    "status": "3 koder scannet. Vis den næste."
+   }
+  },
+  {
+   "hvad": "D3 390: Stop og faneskift slukker kameraet (sporet \"ended\")",
+   "ok": true,
+   "data": {
+    "efterStop": [
+     "ended"
+    ],
+    "koerer": [
+     "live"
+    ],
+    "efterFane": [
+     "ended",
+     "ended"
+    ]
+   }
+  },
+  {
+   "hvad": "D4 390: intet billede gemmes: 0 toDataURL, 0 toBlob, 0 optagelser, intet nyt i lageret, intet lærred eller billede paa siden",
+   "ok": true,
+   "data": {
+    "billede": {
+     "toDataURL": 0,
+     "toBlob": 0,
+     "optag": 0
+    },
+    "nyeNoegler": [],
+    "paaSiden": {
+     "canvas": 0,
+     "img": 0
+    }
+   }
+  },
+  {
+   "hvad": "D5 390: kameraet: 0 netkald, 0 JS-fejl",
+   "ok": true,
+   "data": {
+    "net": [],
+    "fejl": []
+   }
+  },
+  {
+   "hvad": "D2 1280: falsk kamera med A, B, A: feltet faar A, B, A (A to gange, efter en pause)",
+   "ok": true,
+   "data": {
+    "koder": [
+     "88N9-R5VC-PFR0-00TB-SCB1",
+     "82JJ-4P63-Q0R0-00TB-SD32",
+     "88N9-R5VC-PFR0-00TB-SCB1"
+    ],
+    "status": "3 koder scannet. Vis den næste."
+   }
+  },
+  {
+   "hvad": "D3 1280: Stop og faneskift slukker kameraet (sporet \"ended\")",
+   "ok": true,
+   "data": {
+    "efterStop": [
+     "ended"
+    ],
+    "koerer": [
+     "live"
+    ],
+    "efterFane": [
+     "ended",
+     "ended"
+    ]
+   }
+  },
+  {
+   "hvad": "D4 1280: intet billede gemmes: 0 toDataURL, 0 toBlob, 0 optagelser, intet nyt i lageret, intet lærred eller billede paa siden",
+   "ok": true,
+   "data": {
+    "billede": {
+     "toDataURL": 0,
+     "toBlob": 0,
+     "optag": 0
+    },
+    "nyeNoegler": [],
+    "paaSiden": {
+     "canvas": 0,
+     "img": 0
+    }
+   }
+  },
+  {
+   "hvad": "D5 1280: kameraet: 0 netkald, 0 JS-fejl",
+   "ok": true,
+   "data": {
+    "net": [],
+    "fejl": []
+   }
+  },
+  {
+   "hvad": "D6 kameraet naegtet: beskeden siger \"tast\", og tastefeltet virker",
+   "ok": true,
+   "data": {
+    "nej": "Kameraet må ikke bruges: browseren fik et nej, eller skolens indstillinger forbyder det. Tast koderne i feltet i stedet.",
+    "tast": "1 kode læst."
+   }
+  },
+  {
+   "hvad": "E1 390: klassens fremgang med 25 + 25 syntetiske koder: een saetning, ingen enkelt kode i resultatet",
+   "ok": true,
+   "data": {
+    "saetning": "Siden sidst blev klassen bedre til gafler: 44 % mod 27 % i snit.",
+    "iRes": []
+   }
+  },
+  {
+   "hvad": "E2 390: begge saet gemmes kun med flueben og slettes, naar det tages af",
+   "ok": true,
+   "data": {
+    "uden": [
+     null,
+     null
+    ],
+    "med": [
+     25,
+     25
+    ],
+    "af": [
+     null,
+     null
+    ]
+   }
+  },
+  {
+   "hvad": "E3 390: 0 netkald, 0 JS-fejl",
+   "ok": true
+  },
+  {
+   "hvad": "E1 1280: klassens fremgang med 25 + 25 syntetiske koder: een saetning, ingen enkelt kode i resultatet",
+   "ok": true,
+   "data": {
+    "saetning": "Siden sidst blev klassen bedre til gafler: 44 % mod 27 % i snit.",
+    "iRes": []
+   }
+  },
+  {
+   "hvad": "E2 1280: begge saet gemmes kun med flueben og slettes, naar det tages af",
+   "ok": true,
+   "data": {
+    "uden": [
+     null,
+     null
+    ],
+    "med": [
+     25,
+     25
+    ],
+    "af": [
+     null,
+     null
+    ]
+   }
+  },
+  {
+   "hvad": "E3 1280: 0 netkald, 0 JS-fejl",
+   "ok": true
+  }
+ ],
+ "groen": 43,
+ "ialt": 43
+}

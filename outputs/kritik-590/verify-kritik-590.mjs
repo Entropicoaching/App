@@ -63,13 +63,13 @@ if (blok >= 2) {
   const s = json('skak-590.json')
   const r = tekst('RAPPORT-590.md')
   if (s) {
-    ok(s.skak === 'f7966e8', `skak maalt paa ${s.skak}`)
-    ok(s.ialt >= 24 && s.tjek.every((t) => t.ok), `skak-590: ${s.tjek.filter((t) => !t.ok).length} roede`)
+    ok(s.skak === '890c033', `skak maalt paa ${s.skak}`)
+    ok(s.ialt >= 43 && s.tjek.every((t) => t.ok), `skak-590: ${s.tjek.filter((t) => !t.ok).length} roede`)
     ok([390, 1280].every((b) => s.B[b].net === 0 && !s.B[b].fejl.length), 'skak-590: net eller JS-fejl')
   }
   if (ss) {
     ok(/^skakken klar til Marcs klasse: (ja|nej)$/.test(ss.split('\n')[0]), 'SKAK: foerste linje skal vaere "skakken klar til Marcs klasse: ja/nej"')
-    for (const h of ['Hvad jeg målte', 'Kompetence-koden', 'laerer.html med 25 syntetiske koder', 'De nye temaer', 'Persondata', 'Fund', 'Ærlige grænser']) ok(new RegExp(`^## ${h}`, 'm').test(ss), `SKAK: afsnit ${h} mangler`)
+    for (const h of ['Hvad jeg målte', 'Kompetence-koden', 'QR og kamera', 'laerer.html med 25 syntetiske koder', 'De nye temaer', 'Persondata', 'Fund', 'Ærlige grænser']) ok(new RegExp(`^## ${h}`, 'm').test(ss), `SKAK: afsnit ${h} mangler`)
     for (let n = 1; n <= 4; n++) ok(new RegExp(`^\\| S${n} \\|`, 'm').test(ss), `SKAK: S${n} mangler i fund-tabellen`)
     ok(!/[\u2013\u2014]/.test(ss), 'SKAK: tankestreg')
     ok(udenNavne(ss), 'SKAK: atletnavn')
@@ -81,7 +81,7 @@ if (blok >= 2) {
     ok(!/[\u2013\u2014]/.test(r), 'RAPPORT: tankestreg')
     ok(udenNavne(r), 'RAPPORT: atletnavn')
   }
-  ok(sh(`git -C ${SKAK} rev-parse --short main`).trim() === 'f7966e8', 'skak main er flyttet fra f7966e8 (maal igen)')
+  ok(sh(`git -C ${SKAK} rev-parse --short main`).trim() === '890c033', 'skak main er flyttet fra 890c033 (maal igen)')
 }
 
 if (fejl.length) { console.log(`ROED (${fejl.length}):\n- ` + fejl.join('\n- ')); process.exit(1) }
