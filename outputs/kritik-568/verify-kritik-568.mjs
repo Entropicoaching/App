@@ -63,8 +63,14 @@ if (blok >= 2) {
     ok(!/[\u2013\u2014]/.test(sk), 'SKAK: tankestreg')
   }
   if (s) {
-    ok(s.tjek.length >= 20 && s.tjek.every((t) => t.ok), `skak-568: ${s.tjek.filter((t) => !t.ok).length} tjek roede`)
-    ok(['360', '390', '1280'].every((w) => s.sider[w] && s.sider[w].eksterne.length === 0 && s.sider[w].sidefejl.length === 0), 'skak: net eller JS-fejl')
+    ok(s.skak === '04e25e7', `skak maalt paa ${s.skak}, ikke 04e25e7`)
+    ok(s.tjek.length >= 58 && s.tjek.every((t) => t.ok), `skak-568: ${s.tjek.filter((t) => !t.ok).length} tjek roede`)
+    ok(['360', '390', '1280'].every((w) => s.sider[w] && s.sider[w].net.length === 0 && s.sider[w].fejl.length === 0), 'skak: net eller JS-fejl')
+    ok(Object.values(s.k17).every((k) => k.net === 0 && !k.fejl.length) && Object.values(s.brikker).every((b) => b.net === 0 && !b.fejl.length) && !s.klasse.net.length && !s.klasse.fejl.length, 'skak: net eller JS-fejl i K17, #13 eller laerer')
+    ok(s.k17Fund.nyMaksLichessRating === 1048 && sk && sk.includes('1048'), 'K25: 1048')
+    ok(s.brikker['360'].braetISyne.felt[0] === -35 && sk && sk.includes('35 px over'), 'K26: 35 px')
+    for (const p of ['S-390-k13-opera.png', 'S-390-k13-gentag.png', 'S-390-k14-ooo.png', 'S-360x640-k13-gafler.png', 'S-360-13-efter-start.png', 'S-1280-13-klassens-koordinater.png']) ok(existsSync(path.join(HERE, p)), `${p} mangler`)
+    if (sk) for (const k of ['K24', 'K25', 'K26']) ok(new RegExp(`^\\| ${k} \\|`, 'm').test(sk), `SKAK: ${k} mangler i fund-tabellen`)
   }
   if (r) {
     ok(r.split('\n')[0].startsWith('Ordre 568'), 'RAPPORT: foerste linje skal starte med "Ordre 568"')

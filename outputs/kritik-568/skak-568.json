@@ -1,0 +1,2410 @@
+{
+ "skak": "04e25e7",
+ "sider": {
+  "360": {
+   "k13": {
+    "opera": {
+     "foer": {
+      "ok": false,
+      "braet": [
+       -1083,
+       -739
+      ],
+      "status": [
+       -1215,
+       -1164
+      ],
+      "vinduH": 780,
+      "statusTekst": "Sort trækker. Find det bedste træk."
+     },
+     "e100": {
+      "ok": true,
+      "braet": [
+       73,
+       417
+      ],
+      "status": [
+       6,
+       57
+      ],
+      "vinduH": 780,
+      "statusTekst": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet."
+     },
+     "e1200": {
+      "ok": true,
+      "braet": [
+       73,
+       417
+      ],
+      "status": [
+       6,
+       57
+      ],
+      "vinduH": 780,
+      "statusTekst": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet."
+     }
+    },
+    "kongejagt": {
+     "foer": {
+      "ok": false,
+      "braet": [
+       -1503,
+       -1159
+      ],
+      "status": [
+       -1570,
+       -1519
+      ],
+      "vinduH": 780,
+      "statusTekst": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet."
+     },
+     "e100": {
+      "ok": true,
+      "braet": [
+       95,
+       439
+      ],
+      "status": [
+       6,
+       79
+      ],
+      "vinduH": 780,
+      "statusTekst": "Hvid trækker (Edward Lasker). Find det træk, der blev spillet."
+     },
+     "e1200": {
+      "ok": true,
+      "braet": [
+       95,
+       439
+      ],
+      "status": [
+       6,
+       79
+      ],
+      "vinduH": 780,
+      "statusTekst": "Hvid trækker (Edward Lasker). Find det træk, der blev spillet."
+     }
+    },
+    "naeste": {
+     "foer": {
+      "ok": false,
+      "braet": [
+       -1880,
+       -1536
+      ],
+      "status": [
+       -1947,
+       -1896
+      ],
+      "vinduH": 780,
+      "statusTekst": "Løst! Lasker spillede Kd2#, men O-O-O# er også mat."
+     },
+     "e100": {
+      "ok": true,
+      "braet": [
+       73,
+       417
+      ],
+      "status": [
+       6,
+       57
+      ],
+      "vinduH": 780,
+      "statusTekst": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet."
+     },
+     "e1200": {
+      "ok": true,
+      "braet": [
+       73,
+       417
+      ],
+      "status": [
+       6,
+       57
+      ],
+      "vinduH": 780,
+      "statusTekst": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet."
+     }
+    },
+    "oevGafler": {
+     "foer": {
+      "ok": false,
+      "braet": [
+       -1039,
+       -695
+      ],
+      "status": [
+       -1106,
+       -1055
+      ],
+      "vinduH": 780,
+      "statusTekst": "Løst! Præcis sådan spillede Richard Réti."
+     },
+     "e100": {
+      "ok": true,
+      "braet": [
+       138,
+       482
+      ],
+      "status": [
+       6,
+       57
+      ],
+      "vinduH": 780,
+      "statusTekst": "Sort trækker. Find det bedste træk."
+     },
+     "e1200": {
+      "ok": true,
+      "braet": [
+       138,
+       482
+      ],
+      "status": [
+       6,
+       57
+      ],
+      "vinduH": 780,
+      "statusTekst": "Sort trækker. Find det bedste træk."
+     }
+    },
+    "bibliotekKnap": "#mit-bibliotek-grupper .mit-bib-knap",
+    "bibliotek": {
+     "foer": {
+      "ok": false,
+      "braet": [
+       -950,
+       -606
+      ],
+      "status": [
+       -1082,
+       -1031
+      ],
+      "vinduH": 780,
+      "statusTekst": "Hvid trækker. Find det bedste træk."
+     },
+     "e100": {
+      "ok": true,
+      "braet": [
+       138,
+       482
+      ],
+      "status": [
+       6,
+       57
+      ],
+      "vinduH": 780,
+      "statusTekst": "Hvid trækker. Find det bedste træk."
+     },
+     "e1200": {
+      "ok": true,
+      "braet": [
+       138,
+       482
+      ],
+      "status": [
+       6,
+       57
+      ],
+      "vinduH": 780,
+      "statusTekst": "Hvid trækker. Find det bedste træk."
+     }
+    },
+    "gentagVist": true,
+    "gentag": {
+     "foer": {
+      "ok": false,
+      "braet": [
+       -307,
+       37
+      ],
+      "status": [
+       -439,
+       -388
+      ],
+      "vinduH": 780,
+      "statusTekst": "Sort trækker. Find det bedste træk."
+     },
+     "e100": {
+      "ok": true,
+      "braet": [
+       138,
+       482
+      ],
+      "status": [
+       6,
+       57
+      ],
+      "vinduH": 780,
+      "statusTekst": "Sort trækker. Find det bedste træk."
+     },
+     "e1200": {
+      "ok": true,
+      "braet": [
+       138,
+       482
+      ],
+      "status": [
+       6,
+       57
+      ],
+      "vinduH": 780,
+      "statusTekst": "Sort trækker. Find det bedste træk."
+     }
+    },
+    "lavTelefonOpera": {
+     "foer": {
+      "ok": false,
+      "braet": [
+       -1153,
+       -809
+      ],
+      "status": [
+       -1285,
+       -1234
+      ],
+      "vinduH": 640,
+      "statusTekst": "Hvid trækker. Find det bedste træk."
+     },
+     "e100": {
+      "ok": true,
+      "braet": [
+       73,
+       417
+      ],
+      "status": [
+       6,
+       57
+      ],
+      "vinduH": 640,
+      "statusTekst": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet."
+     },
+     "e1200": {
+      "ok": true,
+      "braet": [
+       73,
+       417
+      ],
+      "status": [
+       6,
+       57
+      ],
+      "vinduH": 640,
+      "statusTekst": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet."
+     }
+    },
+    "lavTelefonGafler": {
+     "foer": {
+      "ok": false,
+      "braet": [
+       -1109,
+       -765
+      ],
+      "status": [
+       -1176,
+       -1125
+      ],
+      "vinduH": 640,
+      "statusTekst": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet."
+     },
+     "e100": {
+      "ok": true,
+      "braet": [
+       138,
+       482
+      ],
+      "status": [
+       6,
+       57
+      ],
+      "vinduH": 640,
+      "statusTekst": "Sort trækker. Find det bedste træk."
+     },
+     "e1200": {
+      "ok": true,
+      "braet": [
+       138,
+       482
+      ],
+      "status": [
+       6,
+       57
+      ],
+      "vinduH": 640,
+      "statusTekst": "Sort trækker. Find det bedste træk."
+     }
+    }
+   },
+   "net": [],
+   "fejl": [],
+   "k14": {
+    "ooo": "Løst! Lasker spillede Kd2#, men O-O-O# er også mat.",
+    "historie": true,
+    "tekst": "Edward Lasker spillede partiet mod George Thomas i London i 1912. Det huskes for en af de mest berømte kongejagter: efter dronningeofret på h7 blev den sorte konge jaget fra g8 hele vejen ned til g1, hvor den blev sat mat.",
+    "kd2": "Løst! Præcis sådan spillede Edward Lasker.",
+    "oooHint": "Løst (med hjælp)! Lasker spillede Kd2#, men O-O-O# er også mat."
+   },
+   "steinitz-bardeleben-1895": {
+    "status": "Løst! Præcis sådan spillede Wilhelm Steinitz.",
+    "tekst": "Wilhelm Steinitz, den første verdensmester, spillede partiet mod Curt von Bardeleben i Hastings i England i 1895. Det huskes for tårnet på e7, som sort ikke kan slå: slår kongen, bliver den jaget ud i et angreb, og slår dronningen, taber sort en officer. Von Bardeleben opgav ikke: han forlod bare salen og kom ikke tilbage."
+   },
+   "reti-tartakower-1910": {
+    "status": "Løst! Præcis sådan spillede Richard Réti.",
+    "tekst": "Richard Réti spillede partiet mod Savielly Tartakower i Wien i 1910. De var unge mestre på 21 og 23 år og blev senere blandt verdens bedste. Partiet huskes, fordi det er så kort: Réti ofrede dronningen på d8, gav dobbeltskak med løber og tårn i 10. træk og satte mat med løberen i 11. træk."
+   },
+   "gafler": [
+    {
+     "id": "0CyHx",
+     "status": "Gaffel. Løst, men med et forkert træk først. Vi finder dit niveau: 1 af 10. Din "
+    },
+    {
+     "ukendt": true
+    }
+   ],
+   "vandret": 0
+  },
+  "390": {
+   "k13": {
+    "opera": {
+     "foer": {
+      "ok": false,
+      "braet": [
+       -1041,
+       -667
+      ],
+      "status": [
+       -1173,
+       -1122
+      ],
+      "vinduH": 844,
+      "statusTekst": "Sort trækker. Find det bedste træk."
+     },
+     "e100": {
+      "ok": true,
+      "braet": [
+       73,
+       447
+      ],
+      "status": [
+       6,
+       57
+      ],
+      "vinduH": 844,
+      "statusTekst": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet."
+     },
+     "e1200": {
+      "ok": true,
+      "braet": [
+       73,
+       447
+      ],
+      "status": [
+       6,
+       57
+      ],
+      "vinduH": 844,
+      "statusTekst": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet."
+     }
+    },
+    "kongejagt": {
+     "foer": {
+      "ok": false,
+      "braet": [
+       -1444,
+       -1070
+      ],
+      "status": [
+       -1511,
+       -1460
+      ],
+      "vinduH": 844,
+      "statusTekst": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet."
+     },
+     "e100": {
+      "ok": true,
+      "braet": [
+       73,
+       447
+      ],
+      "status": [
+       6,
+       57
+      ],
+      "vinduH": 844,
+      "statusTekst": "Hvid trækker (Edward Lasker). Find det træk, der blev spillet."
+     },
+     "e1200": {
+      "ok": true,
+      "braet": [
+       73,
+       447
+      ],
+      "status": [
+       6,
+       57
+      ],
+      "vinduH": 844,
+      "statusTekst": "Hvid trækker (Edward Lasker). Find det træk, der blev spillet."
+     }
+    },
+    "naeste": {
+     "foer": {
+      "ok": false,
+      "braet": [
+       -1755,
+       -1381
+      ],
+      "status": [
+       -1822,
+       -1771
+      ],
+      "vinduH": 844,
+      "statusTekst": "Løst! Lasker spillede Kd2#, men O-O-O# er også mat."
+     },
+     "e100": {
+      "ok": true,
+      "braet": [
+       73,
+       447
+      ],
+      "status": [
+       6,
+       57
+      ],
+      "vinduH": 844,
+      "statusTekst": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet."
+     },
+     "e1200": {
+      "ok": true,
+      "braet": [
+       73,
+       447
+      ],
+      "status": [
+       6,
+       57
+      ],
+      "vinduH": 844,
+      "statusTekst": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet."
+     }
+    },
+    "oevGafler": {
+     "foer": {
+      "ok": false,
+      "braet": [
+       -997,
+       -623
+      ],
+      "status": [
+       -1064,
+       -1013
+      ],
+      "vinduH": 844,
+      "statusTekst": "Løst! Præcis sådan spillede Richard Réti."
+     },
+     "e100": {
+      "ok": true,
+      "braet": [
+       138,
+       512
+      ],
+      "status": [
+       6,
+       57
+      ],
+      "vinduH": 844,
+      "statusTekst": "Hvid trækker. Find det bedste træk."
+     },
+     "e1200": {
+      "ok": true,
+      "braet": [
+       138,
+       512
+      ],
+      "status": [
+       6,
+       57
+      ],
+      "vinduH": 844,
+      "statusTekst": "Hvid trækker. Find det bedste træk."
+     }
+    },
+    "bibliotekKnap": "#mit-bibliotek-grupper .mit-bib-knap",
+    "bibliotek": {
+     "foer": {
+      "ok": false,
+      "braet": [
+       -908,
+       -534
+      ],
+      "status": [
+       -1040,
+       -989
+      ],
+      "vinduH": 844,
+      "statusTekst": "Sort trækker. Find det bedste træk."
+     },
+     "e100": {
+      "ok": true,
+      "braet": [
+       138,
+       512
+      ],
+      "status": [
+       6,
+       57
+      ],
+      "vinduH": 844,
+      "statusTekst": "Sort trækker. Find det bedste træk."
+     },
+     "e1200": {
+      "ok": true,
+      "braet": [
+       138,
+       512
+      ],
+      "status": [
+       6,
+       57
+      ],
+      "vinduH": 844,
+      "statusTekst": "Sort trækker. Find det bedste træk."
+     }
+    },
+    "gentagVist": true,
+    "gentag": {
+     "foer": {
+      "ok": false,
+      "braet": [
+       -261,
+       113
+      ],
+      "status": [
+       -393,
+       -342
+      ],
+      "vinduH": 844,
+      "statusTekst": "Sort trækker. Find det bedste træk."
+     },
+     "e100": {
+      "ok": true,
+      "braet": [
+       138,
+       512
+      ],
+      "status": [
+       6,
+       57
+      ],
+      "vinduH": 844,
+      "statusTekst": "Hvid trækker. Find det bedste træk."
+     },
+     "e1200": {
+      "ok": true,
+      "braet": [
+       138,
+       512
+      ],
+      "status": [
+       6,
+       57
+      ],
+      "vinduH": 844,
+      "statusTekst": "Hvid trækker. Find det bedste træk."
+     }
+    }
+   },
+   "net": [],
+   "fejl": [],
+   "k14": {
+    "ooo": "Løst! Lasker spillede Kd2#, men O-O-O# er også mat.",
+    "historie": true,
+    "tekst": "Edward Lasker spillede partiet mod George Thomas i London i 1912. Det huskes for en af de mest berømte kongejagter: efter dronningeofret på h7 blev den sorte konge jaget fra g8 hele vejen ned til g1, hvor den blev sat mat.",
+    "kd2": "Løst! Præcis sådan spillede Edward Lasker.",
+    "oooHint": "Løst (med hjælp)! Lasker spillede Kd2#, men O-O-O# er også mat."
+   },
+   "steinitz-bardeleben-1895": {
+    "status": "Løst! Præcis sådan spillede Wilhelm Steinitz.",
+    "tekst": "Wilhelm Steinitz, den første verdensmester, spillede partiet mod Curt von Bardeleben i Hastings i England i 1895. Det huskes for tårnet på e7, som sort ikke kan slå: slår kongen, bliver den jaget ud i et angreb, og slår dronningen, taber sort en officer. Von Bardeleben opgav ikke: han forlod bare salen og kom ikke tilbage."
+   },
+   "reti-tartakower-1910": {
+    "status": "Løst! Præcis sådan spillede Richard Réti.",
+    "tekst": "Richard Réti spillede partiet mod Savielly Tartakower i Wien i 1910. De var unge mestre på 21 og 23 år og blev senere blandt verdens bedste. Partiet huskes, fordi det er så kort: Réti ofrede dronningen på d8, gav dobbeltskak med løber og tårn i 10. træk og satte mat med løberen i 11. træk."
+   },
+   "gafler": [
+    {
+     "id": "li-88LRO",
+     "status": "Gaffel. Løst, men med et forkert træk først. Vi finder dit niveau: 1 af 10. Din "
+    },
+    {
+     "ukendt": true
+    }
+   ],
+   "vandret": 0
+  },
+  "1280": {
+   "k13": {
+    "opera": {
+     "foer": {
+      "ok": false,
+      "braet": [
+       -325,
+       212
+      ],
+      "status": [
+       -471,
+       -439
+      ],
+      "vinduH": 800,
+      "statusTekst": "Sort trækker. Find det bedste træk."
+     },
+     "e100": {
+      "ok": true,
+      "braet": [
+       108,
+       644
+      ],
+      "status": [
+       6,
+       38
+      ],
+      "vinduH": 800,
+      "statusTekst": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet."
+     },
+     "e1200": {
+      "ok": true,
+      "braet": [
+       108,
+       644
+      ],
+      "status": [
+       6,
+       38
+      ],
+      "vinduH": 800,
+      "statusTekst": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet."
+     }
+    },
+    "kongejagt": {
+     "foer": {
+      "ok": false,
+      "braet": [
+       -792,
+       -256
+      ],
+      "status": [
+       -894,
+       -862
+      ],
+      "vinduH": 800,
+      "statusTekst": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet."
+     },
+     "e100": {
+      "ok": true,
+      "braet": [
+       108,
+       644
+      ],
+      "status": [
+       6,
+       38
+      ],
+      "vinduH": 800,
+      "statusTekst": "Hvid trækker (Edward Lasker). Find det træk, der blev spillet."
+     },
+     "e1200": {
+      "ok": true,
+      "braet": [
+       108,
+       644
+      ],
+      "status": [
+       6,
+       38
+      ],
+      "vinduH": 800,
+      "statusTekst": "Hvid trækker (Edward Lasker). Find det træk, der blev spillet."
+     }
+    },
+    "naeste": {
+     "foer": {
+      "ok": false,
+      "braet": [
+       -1082,
+       -546
+      ],
+      "status": [
+       -1184,
+       -1152
+      ],
+      "vinduH": 800,
+      "statusTekst": "Løst! Lasker spillede Kd2#, men O-O-O# er også mat."
+     },
+     "e100": {
+      "ok": true,
+      "braet": [
+       108,
+       644
+      ],
+      "status": [
+       6,
+       38
+      ],
+      "vinduH": 800,
+      "statusTekst": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet."
+     },
+     "e1200": {
+      "ok": true,
+      "braet": [
+       108,
+       644
+      ],
+      "status": [
+       6,
+       38
+      ],
+      "vinduH": 800,
+      "statusTekst": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet."
+     }
+    },
+    "oevGafler": {
+     "foer": {
+      "ok": false,
+      "braet": [
+       -322,
+       214
+      ],
+      "status": [
+       -424,
+       -392
+      ],
+      "vinduH": 800,
+      "statusTekst": "Løst! Præcis sådan spillede Richard Réti."
+     },
+     "e100": {
+      "ok": true,
+      "braet": [
+       152,
+       689
+      ],
+      "status": [
+       6,
+       38
+      ],
+      "vinduH": 800,
+      "statusTekst": "Sort trækker. Find det bedste træk."
+     },
+     "e1200": {
+      "ok": true,
+      "braet": [
+       152,
+       689
+      ],
+      "status": [
+       6,
+       38
+      ],
+      "vinduH": 800,
+      "statusTekst": "Sort trækker. Find det bedste træk."
+     }
+    },
+    "bibliotekKnap": "#mit-bibliotek-grupper .mit-bib-knap",
+    "bibliotek": {
+     "foer": {
+      "ok": false,
+      "braet": [
+       -383,
+       154
+      ],
+      "status": [
+       -529,
+       -497
+      ],
+      "vinduH": 800,
+      "statusTekst": "Hvid trækker. Find det bedste træk."
+     },
+     "e100": {
+      "ok": true,
+      "braet": [
+       152,
+       689
+      ],
+      "status": [
+       6,
+       38
+      ],
+      "vinduH": 800,
+      "statusTekst": "Sort trækker. Find det bedste træk."
+     },
+     "e1200": {
+      "ok": true,
+      "braet": [
+       152,
+       689
+      ],
+      "status": [
+       6,
+       38
+      ],
+      "vinduH": 800,
+      "statusTekst": "Sort trækker. Find det bedste træk."
+     }
+    },
+    "gentagVist": true,
+    "gentag": {
+     "foer": {
+      "ok": true,
+      "braet": [
+       237,
+       774
+      ],
+      "status": [
+       91,
+       123
+      ],
+      "vinduH": 800,
+      "statusTekst": "Sort trækker. Find det bedste træk."
+     },
+     "e100": {
+      "ok": true,
+      "braet": [
+       237,
+       774
+      ],
+      "status": [
+       91,
+       123
+      ],
+      "vinduH": 800,
+      "statusTekst": "Sort trækker. Find det bedste træk."
+     },
+     "e1200": {
+      "ok": true,
+      "braet": [
+       237,
+       774
+      ],
+      "status": [
+       91,
+       123
+      ],
+      "vinduH": 800,
+      "statusTekst": "Sort trækker. Find det bedste træk."
+     }
+    }
+   },
+   "net": [],
+   "fejl": [],
+   "k14": {
+    "ooo": "Løst! Lasker spillede Kd2#, men O-O-O# er også mat.",
+    "historie": true,
+    "tekst": "Edward Lasker spillede partiet mod George Thomas i London i 1912. Det huskes for en af de mest berømte kongejagter: efter dronningeofret på h7 blev den sorte konge jaget fra g8 hele vejen ned til g1, hvor den blev sat mat.",
+    "kd2": "Løst! Præcis sådan spillede Edward Lasker.",
+    "oooHint": "Løst (med hjælp)! Lasker spillede Kd2#, men O-O-O# er også mat."
+   },
+   "steinitz-bardeleben-1895": {
+    "status": "Løst! Præcis sådan spillede Wilhelm Steinitz.",
+    "tekst": "Wilhelm Steinitz, den første verdensmester, spillede partiet mod Curt von Bardeleben i Hastings i England i 1895. Det huskes for tårnet på e7, som sort ikke kan slå: slår kongen, bliver den jaget ud i et angreb, og slår dronningen, taber sort en officer. Von Bardeleben opgav ikke: han forlod bare salen og kom ikke tilbage."
+   },
+   "reti-tartakower-1910": {
+    "status": "Løst! Præcis sådan spillede Richard Réti.",
+    "tekst": "Richard Réti spillede partiet mod Savielly Tartakower i Wien i 1910. De var unge mestre på 21 og 23 år og blev senere blandt verdens bedste. Partiet huskes, fordi det er så kort: Réti ofrede dronningen på d8, gav dobbeltskak med løber og tårn i 10. træk og satte mat med løberen i 11. træk."
+   },
+   "gafler": [
+    {
+     "id": "0RYzv",
+     "status": "Gaffel. Løst, men med et forkert træk først. Vi finder dit niveau: 1 af 10. Din "
+    },
+    {
+     "ukendt": true
+    }
+   ],
+   "vandret": 0
+  }
+ },
+ "k17": {
+  "360-ny": {
+   "rating": "?",
+   "temaer": {
+    "mateIn1": {
+     "lichess": 14,
+     "forskellige": 17,
+     "liRating": [
+      770,
+      901
+     ],
+     "markeret": 14
+    },
+    "mateIn2": {
+     "lichess": 16,
+     "forskellige": 17,
+     "liRating": [
+      726,
+      934
+     ],
+     "markeret": 16
+    },
+    "fork": {
+     "lichess": 17,
+     "forskellige": 17,
+     "liRating": [
+      673,
+      1048
+     ],
+     "markeret": 17
+    },
+    "pin": {
+     "lichess": 11,
+     "forskellige": 19,
+     "liRating": [
+      823,
+      996
+     ],
+     "markeret": 11
+    },
+    "skewer": {
+     "lichess": 16,
+     "forskellige": 17,
+     "liRating": [
+      653,
+      936
+     ],
+     "markeret": 16
+    },
+    "discoveredAttack": {
+     "lichess": 19,
+     "forskellige": 16,
+     "liRating": [
+      752,
+      993
+     ],
+     "markeret": 19
+    }
+   },
+   "net": 0,
+   "fejl": []
+  },
+  "390-ny": {
+   "rating": "?",
+   "temaer": {
+    "mateIn1": {
+     "lichess": 17,
+     "forskellige": 16,
+     "liRating": [
+      770,
+      901
+     ],
+     "markeret": 17
+    },
+    "mateIn2": {
+     "lichess": 11,
+     "forskellige": 19,
+     "liRating": [
+      726,
+      1003
+     ],
+     "markeret": 11
+    },
+    "fork": {
+     "lichess": 13,
+     "forskellige": 18,
+     "liRating": [
+      673,
+      1048
+     ],
+     "markeret": 13
+    },
+    "pin": {
+     "lichess": 13,
+     "forskellige": 17,
+     "liRating": [
+      823,
+      895
+     ],
+     "markeret": 13
+    },
+    "skewer": {
+     "lichess": 17,
+     "forskellige": 17,
+     "liRating": [
+      653,
+      936
+     ],
+     "markeret": 17
+    },
+    "discoveredAttack": {
+     "lichess": 19,
+     "forskellige": 16,
+     "liRating": [
+      752,
+      993
+     ],
+     "markeret": 19
+    }
+   },
+   "net": 0,
+   "fejl": []
+  },
+  "1280-ny": {
+   "rating": "?",
+   "temaer": {
+    "mateIn1": {
+     "lichess": 15,
+     "forskellige": 18,
+     "liRating": [
+      770,
+      985
+     ],
+     "markeret": 15
+    },
+    "mateIn2": {
+     "lichess": 15,
+     "forskellige": 17,
+     "liRating": [
+      726,
+      1003
+     ],
+     "markeret": 15
+    },
+    "fork": {
+     "lichess": 15,
+     "forskellige": 17,
+     "liRating": [
+      673,
+      963
+     ],
+     "markeret": 15
+    },
+    "pin": {
+     "lichess": 16,
+     "forskellige": 17,
+     "liRating": [
+      823,
+      996
+     ],
+     "markeret": 16
+    },
+    "skewer": {
+     "lichess": 14,
+     "forskellige": 18,
+     "liRating": [
+      653,
+      898
+     ],
+     "markeret": 14
+    },
+    "discoveredAttack": {
+     "lichess": 19,
+     "forskellige": 16,
+     "liRating": [
+      752,
+      1038
+     ],
+     "markeret": 19
+    }
+   },
+   "net": 0,
+   "fejl": []
+  },
+  "390-1200": {
+   "rating": "1200",
+   "temaer": {
+    "mateIn1": {
+     "lichess": 12,
+     "forskellige": 20,
+     "liRating": [
+      850,
+      1228
+     ],
+     "markeret": 12
+    },
+    "mateIn2": {
+     "lichess": 16,
+     "forskellige": 17,
+     "liRating": [
+      868,
+      1240
+     ],
+     "markeret": 16
+    },
+    "fork": {
+     "lichess": 12,
+     "forskellige": 20,
+     "liRating": [
+      878,
+      1149
+     ],
+     "markeret": 12
+    },
+    "pin": {
+     "lichess": 9,
+     "forskellige": 19,
+     "liRating": [
+      996,
+      1212
+     ],
+     "markeret": 9
+    },
+    "skewer": {
+     "lichess": 11,
+     "forskellige": 18,
+     "liRating": [
+      1063,
+      1147
+     ],
+     "markeret": 11
+    },
+    "discoveredAttack": {
+     "lichess": 20,
+     "forskellige": 16,
+     "liRating": [
+      875,
+      1221
+     ],
+     "markeret": 20
+    }
+   },
+   "net": 0,
+   "fejl": []
+  },
+  "1280-1200": {
+   "rating": "1200",
+   "temaer": {
+    "mateIn1": {
+     "lichess": 16,
+     "forskellige": 17,
+     "liRating": [
+      885,
+      1218
+     ],
+     "markeret": 16
+    },
+    "mateIn2": {
+     "lichess": 14,
+     "forskellige": 18,
+     "liRating": [
+      873,
+      1189
+     ],
+     "markeret": 14
+    },
+    "fork": {
+     "lichess": 14,
+     "forskellige": 17,
+     "liRating": [
+      951,
+      1149
+     ],
+     "markeret": 14
+    },
+    "pin": {
+     "lichess": 14,
+     "forskellige": 18,
+     "liRating": [
+      864,
+      1237
+     ],
+     "markeret": 14
+    },
+    "skewer": {
+     "lichess": 13,
+     "forskellige": 20,
+     "liRating": [
+      850,
+      1147
+     ],
+     "markeret": 13
+    },
+    "discoveredAttack": {
+     "lichess": 20,
+     "forskellige": 16,
+     "liRating": [
+      861,
+      1221
+     ],
+     "markeret": 20
+    }
+   },
+   "net": 0,
+   "fejl": []
+  }
+ },
+ "dagens": {
+  "lige 28/9": {
+   "lichess": true,
+   "rating": 762,
+   "pl": "2kr3r/ppp2ppp/2B5/8/8/3qPQP1/PP2NPP1/R4K1R",
+   "titel": "Dagens gåde, 28. sep",
+   "dagNr": 20724,
+   "sammeForBegge": true
+  },
+  "ulige 29/9": {
+   "lichess": false,
+   "rating": 778,
+   "pl": "8/3Q2Q1/KP6/8/8/8/8/7k",
+   "titel": "Dagens gåde, 29. sep",
+   "dagNr": 20725,
+   "sammeForBegge": true
+  },
+  "lige 30/9": {
+   "lichess": true,
+   "rating": 736,
+   "pl": "r1b1k3/pp1p1pp1/2n2q2/4p3/1P2n3/2N1P1P1/1PP2P1P/R2QKB1R",
+   "titel": "Dagens gåde, 30. sep",
+   "dagNr": 20726,
+   "sammeForBegge": true
+  }
+ },
+ "tekster": {
+  "steinitz": {
+   "loesning": [
+    "Rxe7+",
+    "Kf8",
+    "Rf7+",
+    "Kg8",
+    "Rg7+",
+    "Kh8",
+    "Rxh7+"
+   ],
+   "sortKanSlaaE7Med": [
+    "Kxe7",
+    "Qxe7"
+   ],
+   "dxe7Txc8Txc8Dxc8": true,
+   "officererEfter": {
+    "hvid": 12,
+    "sort": 9
+   },
+   "foerste": "r1r1k3/pp1qn2p/5pp1/3p2N1/6Q1/8/PP3PPP/2R1R1K1 w - - 2 22"
+  },
+  "reti": {
+   "dronningOfferTraek": 9,
+   "dobbeltskakTraek": 10,
+   "dobbeltskakSan": "Bg5+",
+   "mat": true,
+   "matSan": "Bd8#",
+   "matTraek": 11,
+   "matBrik": "b",
+   "partiTraek": 16,
+   "loesning": [
+    "Qd8+",
+    "Kxd8",
+    "Bg5+",
+    "Kc7",
+    "Bd8#"
+   ]
+  },
+  "lasker": {
+   "sidsteILinjen": "Kd2#",
+   "matterISidsteStilling": [
+    "Kd2#",
+    "O-O-O#"
+   ]
+  }
+ },
+ "brikker": {
+  "360": {
+   "valg": true,
+   "brikker": 32,
+   "hjaelp": "Appen siger et felt, fx e4. Tryk på det - brikkerne står, som når et parti begynder, og der står ingen bogstaver og tal. Hvor mange når du på 30 sekunder?",
+   "felter": [
+    {
+     "felt": "d4",
+     "medBrik": false,
+     "fundet": "Fundet: 1"
+    },
+    {
+     "felt": "h3",
+     "medBrik": false,
+     "fundet": "Fundet: 2"
+    },
+    {
+     "felt": "a6",
+     "medBrik": false,
+     "fundet": "Fundet: 3"
+    },
+    {
+     "felt": "f7",
+     "medBrik": true,
+     "fundet": "Fundet: 4"
+    },
+    {
+     "felt": "d7",
+     "medBrik": true,
+     "fundet": "Fundet: 5"
+    },
+    {
+     "felt": "b6",
+     "medBrik": false,
+     "fundet": "Fundet: 6"
+    },
+    {
+     "felt": "d6",
+     "medBrik": false,
+     "fundet": "Fundet: 7"
+    },
+    {
+     "felt": "a7",
+     "medBrik": true,
+     "fundet": "Fundet: 8"
+    },
+    {
+     "felt": "h6",
+     "medBrik": false,
+     "fundet": "Fundet: 9"
+    },
+    {
+     "felt": "g4",
+     "medBrik": false,
+     "fundet": "Fundet: 10"
+    }
+   ],
+   "feltPx": 38,
+   "braetISyne": {
+    "braet": [
+     14,
+     324
+    ],
+    "felt": [
+     -35,
+     0
+    ],
+    "vinduH": 780,
+    "ok": false
+   },
+   "fundetTil": "Fundet: 10",
+   "medBrik": 3,
+   "net": 0,
+   "fejl": [],
+   "feltetOverSkaermen": true
+  },
+  "390": {
+   "valg": true,
+   "brikker": 32,
+   "hjaelp": "Appen siger et felt, fx e4. Tryk på det - brikkerne står, som når et parti begynder, og der står ingen bogstaver og tal. Hvor mange når du på 30 sekunder?",
+   "felter": [
+    {
+     "felt": "h7",
+     "medBrik": true,
+     "fundet": "Fundet: 1"
+    },
+    {
+     "felt": "c6",
+     "medBrik": false,
+     "fundet": "Fundet: 2"
+    },
+    {
+     "felt": "g4",
+     "medBrik": false,
+     "fundet": "Fundet: 3"
+    },
+    {
+     "felt": "g7",
+     "medBrik": true,
+     "fundet": "Fundet: 4"
+    },
+    {
+     "felt": "g6",
+     "medBrik": false,
+     "fundet": "Fundet: 5"
+    },
+    {
+     "felt": "f6",
+     "medBrik": false,
+     "fundet": "Fundet: 6"
+    },
+    {
+     "felt": "g4",
+     "medBrik": false,
+     "fundet": "Fundet: 7"
+    },
+    {
+     "felt": "a8",
+     "medBrik": true,
+     "fundet": "Fundet: 8"
+    },
+    {
+     "felt": "f1",
+     "medBrik": true,
+     "fundet": "Fundet: 9"
+    },
+    {
+     "felt": "f2",
+     "medBrik": true,
+     "fundet": "Fundet: 10"
+    }
+   ],
+   "feltPx": 42,
+   "braetISyne": {
+    "braet": [
+     48,
+     388
+    ],
+    "felt": [
+     -1,
+     34
+    ],
+    "vinduH": 844,
+    "ok": false
+   },
+   "fundetTil": "Fundet: 10",
+   "medBrik": 5,
+   "net": 0,
+   "fejl": [],
+   "feltetOverSkaermen": true
+  },
+  "1280": {
+   "valg": true,
+   "brikker": 32,
+   "hjaelp": "Appen siger et felt, fx e4. Tryk på det - brikkerne står, som når et parti begynder, og der står ingen bogstaver og tal. Hvor mange når du på 30 sekunder?",
+   "felter": [
+    {
+     "felt": "a6",
+     "medBrik": false,
+     "fundet": "Fundet: 1"
+    },
+    {
+     "felt": "g7",
+     "medBrik": true,
+     "fundet": "Fundet: 2"
+    },
+    {
+     "felt": "a2",
+     "medBrik": true,
+     "fundet": "Fundet: 3"
+    },
+    {
+     "felt": "b3",
+     "medBrik": false,
+     "fundet": "Fundet: 4"
+    },
+    {
+     "felt": "h3",
+     "medBrik": false,
+     "fundet": "Fundet: 5"
+    },
+    {
+     "felt": "d4",
+     "medBrik": false,
+     "fundet": "Fundet: 6"
+    },
+    {
+     "felt": "h3",
+     "medBrik": false,
+     "fundet": "Fundet: 7"
+    },
+    {
+     "felt": "b5",
+     "medBrik": false,
+     "fundet": "Fundet: 8"
+    },
+    {
+     "felt": "a5",
+     "medBrik": false,
+     "fundet": "Fundet: 9"
+    },
+    {
+     "felt": "f2",
+     "medBrik": true,
+     "fundet": "Fundet: 10"
+    }
+   ],
+   "feltPx": 44,
+   "braetISyne": {
+    "braet": [
+     0,
+     360
+    ],
+    "felt": [
+     -53,
+     -15
+    ],
+    "vinduH": 800,
+    "ok": false
+   },
+   "fundetTil": "Fundet: 10",
+   "medBrik": 3,
+   "net": 0,
+   "fejl": [],
+   "feltetOverSkaermen": true
+  }
+ },
+ "klasse": {
+  "net": [],
+  "fejl": [],
+  "stormRaekker": 1,
+  "urKoordinater": "0:30",
+  "fase": "Gør klar: Spil → Koordinater → Find feltet. Tryk Start, når der står Start!",
+  "koordinatRaekkerFoer": 0,
+  "ur": [
+   "4",
+   "Start!",
+   "Start!",
+   "0:18",
+   "0:08",
+   "0:00",
+   "0:00"
+  ],
+  "koordinatRaekker": 3,
+  "kolonne": "PladsBordFundet",
+  "projektor": {
+   "titel": "Klassens koordinater",
+   "foerst": "1.922 felter",
+   "tekst": "Start forfraFuld skærmLuk (Esc)Klassens koordinaterFind feltet 28/9 · 30 sekunder0:00Tiden er gået. Sig dit antal felter til læreren.Bedste borde1.922 felter2.417 felter3.19 felter"
+  },
+  "tilbageStorm": {
+   "ur": "3:00",
+   "raekker": 1
+  },
+  "tilbageKoordinater": {
+   "raekker": 3
+  },
+  "efterGenindlaes": {
+   "raekker": 3
+  },
+  "lagret": [
+   {
+    "k": "skak-laerer-klassestorm-v1",
+    "v": "{\"version\":1,\"dato\":\"2026-09-28\",\"tema\":\"blandet\",\"oevelse\":\"koordinater\",\"startKl\":null,\"resultater\":[{\"bord\":2,\"loeste\":11},{\"bord\":4,\"loeste\":17,\"oevelse\":\"koordinater\"},{\"bord\":9,\"loeste\":22,\"oevelse\":\"koordinater\"},{\"bord\":1,\"loeste\":9,\"oevelse\":\"koordinater\"}]}"
+   }
+  ]
+ },
+ "k17Fund": {
+  "nyMaksLichessRating": 1048,
+  "underHalvdelen": [
+   "390-1200 pin 9"
+  ]
+ },
+ "k17Resume": {
+  "nyMin": 11,
+  "nyMaks": 19,
+  "elev1200": [
+   12,
+   16,
+   12,
+   9,
+   11,
+   20,
+   16,
+   14,
+   14,
+   14,
+   13,
+   20
+  ]
+ },
+ "tjek": [
+  {
+   "hvad": "360: K13 \"opera\": braet og statuslinje paa skaermen 1,2 s efter trykket",
+   "ok": true,
+   "data": {
+    "foer": [
+     -1083,
+     -739
+    ],
+    "e100": [
+     73,
+     417
+    ],
+    "e1200": [
+     73,
+     417
+    ],
+    "h": 780,
+    "s": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet."
+   }
+  },
+  {
+   "hvad": "360: K13 \"kongejagt\": braet og statuslinje paa skaermen 1,2 s efter trykket",
+   "ok": true,
+   "data": {
+    "foer": [
+     -1503,
+     -1159
+    ],
+    "e100": [
+     95,
+     439
+    ],
+    "e1200": [
+     95,
+     439
+    ],
+    "h": 780,
+    "s": "Hvid trækker (Edward Lasker). Find det træk, der blev spillet."
+   }
+  },
+  {
+   "hvad": "360: K13 \"naeste\": braet og statuslinje paa skaermen 1,2 s efter trykket",
+   "ok": true,
+   "data": {
+    "foer": [
+     -1880,
+     -1536
+    ],
+    "e100": [
+     73,
+     417
+    ],
+    "e1200": [
+     73,
+     417
+    ],
+    "h": 780,
+    "s": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet."
+   }
+  },
+  {
+   "hvad": "360: K13 \"oevGafler\": braet og statuslinje paa skaermen 1,2 s efter trykket",
+   "ok": true,
+   "data": {
+    "foer": [
+     -1039,
+     -695
+    ],
+    "e100": [
+     138,
+     482
+    ],
+    "e1200": [
+     138,
+     482
+    ],
+    "h": 780,
+    "s": "Sort trækker. Find det bedste træk."
+   }
+  },
+  {
+   "hvad": "360: K13 \"bibliotek\": braet og statuslinje paa skaermen 1,2 s efter trykket",
+   "ok": true,
+   "data": {
+    "foer": [
+     -950,
+     -606
+    ],
+    "e100": [
+     138,
+     482
+    ],
+    "e1200": [
+     138,
+     482
+    ],
+    "h": 780,
+    "s": "Hvid trækker. Find det bedste træk."
+   }
+  },
+  {
+   "hvad": "360: K13 \"gentag\": braet og statuslinje paa skaermen 1,2 s efter trykket",
+   "ok": true,
+   "data": {
+    "foer": [
+     -307,
+     37
+    ],
+    "e100": [
+     138,
+     482
+    ],
+    "e1200": [
+     138,
+     482
+    ],
+    "h": 780,
+    "s": "Sort trækker. Find det bedste træk."
+   }
+  },
+  {
+   "hvad": "360: K14 O-O-O# -> \"Loest! Lasker spillede Kd2#, men O-O-O# er ogsaa mat.\" og historien vises",
+   "ok": true,
+   "data": "Løst! Lasker spillede Kd2#, men O-O-O# er også mat."
+  },
+  {
+   "hvad": "360: K14 Kd2# -> \"Praecis saadan spillede Edward Lasker.\"",
+   "ok": true,
+   "data": "Løst! Præcis sådan spillede Edward Lasker."
+  },
+  {
+   "hvad": "360: K14 med hint -> \"Loest (med hjaelp)! Lasker spillede Kd2#, men O-O-O# ...\"",
+   "ok": true,
+   "data": "Løst (med hjælp)! Lasker spillede Kd2#, men O-O-O# er også mat."
+  },
+  {
+   "hvad": "360: K15 Steinitz-teksten",
+   "ok": true,
+   "data": "Wilhelm Steinitz, den første verdensmester, spillede partiet mod Curt von Bardeleben i Hastings i England i 1895. Det huskes for tårnet på e7, som sort ikke kan slå: slår kongen, bliver den jaget ud i et angreb, og slår dronningen, taber sort en officer. Von Bardeleben opgav ikke: han forlod bare salen og kom ikke tilbage."
+  },
+  {
+   "hvad": "360: K16 Reti-teksten",
+   "ok": true,
+   "data": "Richard Réti spillede partiet mod Savielly Tartakower i Wien i 1910. De var unge mestre på 21 og 23 år og blev senere blandt verdens bedste. Partiet huskes, fordi det er så kort: Réti ofrede dronningen på d8, gav dobbeltskak med løber og tårn i 10. træk og satte mat med løberen i 11. træk."
+  },
+  {
+   "hvad": "360: 0 netkald, 0 JS-fejl, ingen vandret rulning",
+   "ok": true,
+   "data": {
+    "n": 0,
+    "f": [],
+    "v": 0
+   }
+  },
+  {
+   "hvad": "390: K13 \"opera\": braet og statuslinje paa skaermen 1,2 s efter trykket",
+   "ok": true,
+   "data": {
+    "foer": [
+     -1041,
+     -667
+    ],
+    "e100": [
+     73,
+     447
+    ],
+    "e1200": [
+     73,
+     447
+    ],
+    "h": 844,
+    "s": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet."
+   }
+  },
+  {
+   "hvad": "390: K13 \"kongejagt\": braet og statuslinje paa skaermen 1,2 s efter trykket",
+   "ok": true,
+   "data": {
+    "foer": [
+     -1444,
+     -1070
+    ],
+    "e100": [
+     73,
+     447
+    ],
+    "e1200": [
+     73,
+     447
+    ],
+    "h": 844,
+    "s": "Hvid trækker (Edward Lasker). Find det træk, der blev spillet."
+   }
+  },
+  {
+   "hvad": "390: K13 \"naeste\": braet og statuslinje paa skaermen 1,2 s efter trykket",
+   "ok": true,
+   "data": {
+    "foer": [
+     -1755,
+     -1381
+    ],
+    "e100": [
+     73,
+     447
+    ],
+    "e1200": [
+     73,
+     447
+    ],
+    "h": 844,
+    "s": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet."
+   }
+  },
+  {
+   "hvad": "390: K13 \"oevGafler\": braet og statuslinje paa skaermen 1,2 s efter trykket",
+   "ok": true,
+   "data": {
+    "foer": [
+     -997,
+     -623
+    ],
+    "e100": [
+     138,
+     512
+    ],
+    "e1200": [
+     138,
+     512
+    ],
+    "h": 844,
+    "s": "Hvid trækker. Find det bedste træk."
+   }
+  },
+  {
+   "hvad": "390: K13 \"bibliotek\": braet og statuslinje paa skaermen 1,2 s efter trykket",
+   "ok": true,
+   "data": {
+    "foer": [
+     -908,
+     -534
+    ],
+    "e100": [
+     138,
+     512
+    ],
+    "e1200": [
+     138,
+     512
+    ],
+    "h": 844,
+    "s": "Sort trækker. Find det bedste træk."
+   }
+  },
+  {
+   "hvad": "390: K13 \"gentag\": braet og statuslinje paa skaermen 1,2 s efter trykket",
+   "ok": true,
+   "data": {
+    "foer": [
+     -261,
+     113
+    ],
+    "e100": [
+     138,
+     512
+    ],
+    "e1200": [
+     138,
+     512
+    ],
+    "h": 844,
+    "s": "Hvid trækker. Find det bedste træk."
+   }
+  },
+  {
+   "hvad": "390: K14 O-O-O# -> \"Loest! Lasker spillede Kd2#, men O-O-O# er ogsaa mat.\" og historien vises",
+   "ok": true,
+   "data": "Løst! Lasker spillede Kd2#, men O-O-O# er også mat."
+  },
+  {
+   "hvad": "390: K14 Kd2# -> \"Praecis saadan spillede Edward Lasker.\"",
+   "ok": true,
+   "data": "Løst! Præcis sådan spillede Edward Lasker."
+  },
+  {
+   "hvad": "390: K14 med hint -> \"Loest (med hjaelp)! Lasker spillede Kd2#, men O-O-O# ...\"",
+   "ok": true,
+   "data": "Løst (med hjælp)! Lasker spillede Kd2#, men O-O-O# er også mat."
+  },
+  {
+   "hvad": "390: K15 Steinitz-teksten",
+   "ok": true,
+   "data": "Wilhelm Steinitz, den første verdensmester, spillede partiet mod Curt von Bardeleben i Hastings i England i 1895. Det huskes for tårnet på e7, som sort ikke kan slå: slår kongen, bliver den jaget ud i et angreb, og slår dronningen, taber sort en officer. Von Bardeleben opgav ikke: han forlod bare salen og kom ikke tilbage."
+  },
+  {
+   "hvad": "390: K16 Reti-teksten",
+   "ok": true,
+   "data": "Richard Réti spillede partiet mod Savielly Tartakower i Wien i 1910. De var unge mestre på 21 og 23 år og blev senere blandt verdens bedste. Partiet huskes, fordi det er så kort: Réti ofrede dronningen på d8, gav dobbeltskak med løber og tårn i 10. træk og satte mat med løberen i 11. træk."
+  },
+  {
+   "hvad": "390: 0 netkald, 0 JS-fejl, ingen vandret rulning",
+   "ok": true,
+   "data": {
+    "n": 0,
+    "f": [],
+    "v": 0
+   }
+  },
+  {
+   "hvad": "1280: K13 \"opera\": braet og statuslinje paa skaermen 1,2 s efter trykket",
+   "ok": true,
+   "data": {
+    "foer": [
+     -325,
+     212
+    ],
+    "e100": [
+     108,
+     644
+    ],
+    "e1200": [
+     108,
+     644
+    ],
+    "h": 800,
+    "s": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet."
+   }
+  },
+  {
+   "hvad": "1280: K13 \"kongejagt\": braet og statuslinje paa skaermen 1,2 s efter trykket",
+   "ok": true,
+   "data": {
+    "foer": [
+     -792,
+     -256
+    ],
+    "e100": [
+     108,
+     644
+    ],
+    "e1200": [
+     108,
+     644
+    ],
+    "h": 800,
+    "s": "Hvid trækker (Edward Lasker). Find det træk, der blev spillet."
+   }
+  },
+  {
+   "hvad": "1280: K13 \"naeste\": braet og statuslinje paa skaermen 1,2 s efter trykket",
+   "ok": true,
+   "data": {
+    "foer": [
+     -1082,
+     -546
+    ],
+    "e100": [
+     108,
+     644
+    ],
+    "e1200": [
+     108,
+     644
+    ],
+    "h": 800,
+    "s": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet."
+   }
+  },
+  {
+   "hvad": "1280: K13 \"oevGafler\": braet og statuslinje paa skaermen 1,2 s efter trykket",
+   "ok": true,
+   "data": {
+    "foer": [
+     -322,
+     214
+    ],
+    "e100": [
+     152,
+     689
+    ],
+    "e1200": [
+     152,
+     689
+    ],
+    "h": 800,
+    "s": "Sort trækker. Find det bedste træk."
+   }
+  },
+  {
+   "hvad": "1280: K13 \"bibliotek\": braet og statuslinje paa skaermen 1,2 s efter trykket",
+   "ok": true,
+   "data": {
+    "foer": [
+     -383,
+     154
+    ],
+    "e100": [
+     152,
+     689
+    ],
+    "e1200": [
+     152,
+     689
+    ],
+    "h": 800,
+    "s": "Sort trækker. Find det bedste træk."
+   }
+  },
+  {
+   "hvad": "1280: K13 \"gentag\": braet og statuslinje paa skaermen 1,2 s efter trykket",
+   "ok": true,
+   "data": {
+    "foer": [
+     237,
+     774
+    ],
+    "e100": [
+     237,
+     774
+    ],
+    "e1200": [
+     237,
+     774
+    ],
+    "h": 800,
+    "s": "Sort trækker. Find det bedste træk."
+   }
+  },
+  {
+   "hvad": "1280: K14 O-O-O# -> \"Loest! Lasker spillede Kd2#, men O-O-O# er ogsaa mat.\" og historien vises",
+   "ok": true,
+   "data": "Løst! Lasker spillede Kd2#, men O-O-O# er også mat."
+  },
+  {
+   "hvad": "1280: K14 Kd2# -> \"Praecis saadan spillede Edward Lasker.\"",
+   "ok": true,
+   "data": "Løst! Præcis sådan spillede Edward Lasker."
+  },
+  {
+   "hvad": "1280: K14 med hint -> \"Loest (med hjaelp)! Lasker spillede Kd2#, men O-O-O# ...\"",
+   "ok": true,
+   "data": "Løst (med hjælp)! Lasker spillede Kd2#, men O-O-O# er også mat."
+  },
+  {
+   "hvad": "1280: K15 Steinitz-teksten",
+   "ok": true,
+   "data": "Wilhelm Steinitz, den første verdensmester, spillede partiet mod Curt von Bardeleben i Hastings i England i 1895. Det huskes for tårnet på e7, som sort ikke kan slå: slår kongen, bliver den jaget ud i et angreb, og slår dronningen, taber sort en officer. Von Bardeleben opgav ikke: han forlod bare salen og kom ikke tilbage."
+  },
+  {
+   "hvad": "1280: K16 Reti-teksten",
+   "ok": true,
+   "data": "Richard Réti spillede partiet mod Savielly Tartakower i Wien i 1910. De var unge mestre på 21 og 23 år og blev senere blandt verdens bedste. Partiet huskes, fordi det er så kort: Réti ofrede dronningen på d8, gav dobbeltskak med løber og tårn i 10. træk og satte mat med løberen i 11. træk."
+  },
+  {
+   "hvad": "1280: 0 netkald, 0 JS-fejl, ingen vandret rulning",
+   "ok": true,
+   "data": {
+    "n": 0,
+    "f": [],
+    "v": 0
+   }
+  },
+  {
+   "hvad": "K13 paa 360 x 640: braettet paa skaermen efter operaen og \"Oev gafler\"",
+   "ok": true,
+   "data": [
+    {
+     "ok": true,
+     "braet": [
+      73,
+      417
+     ],
+     "status": [
+      6,
+      57
+     ],
+     "vinduH": 640,
+     "statusTekst": "Hvid trækker (Paul Morphy). Find det træk, der blev spillet."
+    },
+    {
+     "ok": true,
+     "braet": [
+      138,
+      482
+     ],
+     "status": [
+      6,
+      57
+     ],
+     "vinduH": 640,
+     "statusTekst": "Sort trækker. Find det bedste træk."
+    }
+   ]
+  },
+  {
+   "hvad": "K15 paa braettet: sort kan slaa e7 med kongen og dronningen; Dxe7 Txc8+ Txc8 Dxc8+ gaar",
+   "ok": true,
+   "data": {
+    "loesning": [
+     "Rxe7+",
+     "Kf8",
+     "Rf7+",
+     "Kg8",
+     "Rg7+",
+     "Kh8",
+     "Rxh7+"
+    ],
+    "sortKanSlaaE7Med": [
+     "Kxe7",
+     "Qxe7"
+    ],
+    "dxe7Txc8Txc8Dxc8": true,
+    "officererEfter": {
+     "hvid": 12,
+     "sort": 9
+    },
+    "foerste": "r1r1k3/pp1qn2p/5pp1/3p2N1/6Q1/8/PP3PPP/2R1R1K1 w - - 2 22"
+   }
+  },
+  {
+   "hvad": "K16 paa braettet: dronningen paa d8 i 9. traek, dobbeltskak i 10., mat med loeberen i 11.",
+   "ok": true,
+   "data": {
+    "dronningOfferTraek": 9,
+    "dobbeltskakTraek": 10,
+    "dobbeltskakSan": "Bg5+",
+    "mat": true,
+    "matSan": "Bd8#",
+    "matTraek": 11,
+    "matBrik": "b",
+    "partiTraek": 16,
+    "loesning": [
+     "Qd8+",
+     "Kxd8",
+     "Bg5+",
+     "Kc7",
+     "Bd8#"
+    ]
+   }
+  },
+  {
+   "hvad": "K14 paa braettet: Kd2# og O-O-O# er begge mat i sidste stilling",
+   "ok": true,
+   "data": {
+    "sidsteILinjen": "Kd2#",
+    "matterISidsteStilling": [
+     "Kd2#",
+     "O-O-O#"
+    ]
+   }
+  },
+  {
+   "hvad": "K17 360-ny: 93 af 120 (78 %) lichess over de seks temaer, mindst halvdelen i gennemsnit",
+   "ok": true,
+   "data": {
+    "mateIn1": 14,
+    "mateIn2": 16,
+    "fork": 17,
+    "pin": 11,
+    "skewer": 16,
+    "discoveredAttack": 19
+   }
+  },
+  {
+   "hvad": "K17 360-ny: modstanderens traek markeret i hver lichess-gaade",
+   "ok": true,
+   "data": {
+    "mateIn1": "14/14",
+    "mateIn2": "16/16",
+    "fork": "17/17",
+    "pin": "11/11",
+    "skewer": "16/16",
+    "discoveredAttack": "19/19"
+   }
+  },
+  {
+   "hvad": "K17 390-ny: 90 af 120 (75 %) lichess over de seks temaer, mindst halvdelen i gennemsnit",
+   "ok": true,
+   "data": {
+    "mateIn1": 17,
+    "mateIn2": 11,
+    "fork": 13,
+    "pin": 13,
+    "skewer": 17,
+    "discoveredAttack": 19
+   }
+  },
+  {
+   "hvad": "K17 390-ny: modstanderens traek markeret i hver lichess-gaade",
+   "ok": true,
+   "data": {
+    "mateIn1": "17/17",
+    "mateIn2": "11/11",
+    "fork": "13/13",
+    "pin": "13/13",
+    "skewer": "17/17",
+    "discoveredAttack": "19/19"
+   }
+  },
+  {
+   "hvad": "K17 1280-ny: 94 af 120 (78 %) lichess over de seks temaer, mindst halvdelen i gennemsnit",
+   "ok": true,
+   "data": {
+    "mateIn1": 15,
+    "mateIn2": 15,
+    "fork": 15,
+    "pin": 16,
+    "skewer": 14,
+    "discoveredAttack": 19
+   }
+  },
+  {
+   "hvad": "K17 1280-ny: modstanderens traek markeret i hver lichess-gaade",
+   "ok": true,
+   "data": {
+    "mateIn1": "15/15",
+    "mateIn2": "15/15",
+    "fork": "15/15",
+    "pin": "16/16",
+    "skewer": "14/14",
+    "discoveredAttack": "19/19"
+   }
+  },
+  {
+   "hvad": "K17 390-1200: 80 af 120 (67 %) lichess over de seks temaer, mindst halvdelen i gennemsnit; under 10 af 20: pin 9",
+   "ok": true,
+   "data": {
+    "mateIn1": 12,
+    "mateIn2": 16,
+    "fork": 12,
+    "pin": 9,
+    "skewer": 11,
+    "discoveredAttack": 20
+   }
+  },
+  {
+   "hvad": "K17 390-1200: modstanderens traek markeret i hver lichess-gaade",
+   "ok": true,
+   "data": {
+    "mateIn1": "12/12",
+    "mateIn2": "16/16",
+    "fork": "12/12",
+    "pin": "9/9",
+    "skewer": "11/11",
+    "discoveredAttack": "20/20"
+   }
+  },
+  {
+   "hvad": "K17 1280-1200: 91 af 120 (76 %) lichess over de seks temaer, mindst halvdelen i gennemsnit",
+   "ok": true,
+   "data": {
+    "mateIn1": 16,
+    "mateIn2": 14,
+    "fork": 14,
+    "pin": 14,
+    "skewer": 13,
+    "discoveredAttack": 20
+   }
+  },
+  {
+   "hvad": "K17 1280-1200: modstanderens traek markeret i hver lichess-gaade",
+   "ok": true,
+   "data": {
+    "mateIn1": "16/16",
+    "mateIn2": "14/14",
+    "fork": "14/14",
+    "pin": "14/14",
+    "skewer": "13/13",
+    "discoveredAttack": "20/20"
+   }
+  },
+  {
+   "hvad": "K17 fund: ny elev (800) fik lichess-gaader op til 1048 (rapporten: hoejst ca. 100 over), og 1 af 30 tema-koersler gav under 10 af 20",
+   "ok": true,
+   "data": {
+    "nyMaksLichessRating": 1048,
+    "underHalvdelen": [
+     "390-1200 pin 9"
+    ]
+   }
+  },
+  {
+   "hvad": "K17 dagens gaade: lichess paa de lige dage, samme for to elever paa samme dato",
+   "ok": true,
+   "data": {
+    "lige 28/9": {
+     "lichess": true,
+     "rating": 762,
+     "pl": "2kr3r/ppp2ppp/2B5/8/8/3qPQP1/PP2NPP1/R4K1R",
+     "titel": "Dagens gåde, 28. sep",
+     "dagNr": 20724,
+     "sammeForBegge": true
+    },
+    "ulige 29/9": {
+     "lichess": false,
+     "rating": 778,
+     "pl": "8/3Q2Q1/KP6/8/8/8/8/7k",
+     "titel": "Dagens gåde, 29. sep",
+     "dagNr": 20725,
+     "sammeForBegge": true
+    },
+    "lige 30/9": {
+     "lichess": true,
+     "rating": 736,
+     "pl": "r1b1k3/pp1p1pp1/2n2q2/4p3/1P2n3/2N1P1P1/1PP2P1P/R2QKB1R",
+     "titel": "Dagens gåde, 30. sep",
+     "dagNr": 20726,
+     "sammeForBegge": true
+    }
+   }
+  },
+  {
+   "hvad": "360: #13 \"Med brikkerne\": 32 brikker, 10 af 10 felter fundet med tryk (3 med en brik paa)",
+   "ok": true,
+   "data": {
+    "fundet": "Fundet: 10",
+    "feltPx": 38
+   }
+  },
+  {
+   "hvad": "390: #13 \"Med brikkerne\": 32 brikker, 10 af 10 felter fundet med tryk (5 med en brik paa)",
+   "ok": true,
+   "data": {
+    "fundet": "Fundet: 10",
+    "feltPx": 42
+   }
+  },
+  {
+   "hvad": "1280: #13 \"Med brikkerne\": 32 brikker, 10 af 10 felter fundet med tryk (3 med en brik paa)",
+   "ok": true,
+   "data": {
+    "fundet": "Fundet: 10",
+    "feltPx": 44
+   }
+  },
+  {
+   "hvad": "K26 fund: efter Start staar feltets navn helt eller delvis over skaermen, naar eleven har rullet ned til Start (360 og 1280 helt, 390 1 px)",
+   "ok": true,
+   "data": {
+    "360": {
+     "braet": [
+      14,
+      324
+     ],
+     "felt": [
+      -35,
+      0
+     ],
+     "vinduH": 780,
+     "ok": false
+    },
+    "390": {
+     "braet": [
+      48,
+      388
+     ],
+     "felt": [
+      -1,
+      34
+     ],
+     "vinduH": 844,
+     "ok": false
+    },
+    "1280": {
+     "braet": [
+      0,
+      360
+     ],
+     "felt": [
+      -53,
+      -15
+     ],
+     "vinduH": 800,
+     "ok": false
+    }
+   }
+  },
+  {
+   "hvad": "#13 klasseoevelsen: 0:30, faelles nedtaelling, 0:00, tre borde, projektoren \"Klassens koordinater\" med bord 9 foerst",
+   "ok": true,
+   "data": {
+    "ur": [
+     "4",
+     "Start!",
+     "Start!",
+     "0:18",
+     "0:08",
+     "0:00",
+     "0:00"
+    ],
+    "p": "Klassens koordinater",
+    "f": "1.922 felter"
+   }
+  },
+  {
+   "hvad": "#13 skift mellem oevelserne: stormens bord og koordinaternes tre bliver hvor de hoerer til",
+   "ok": true,
+   "data": {
+    "storm": [
+     1,
+     {
+      "ur": "3:00",
+      "raekker": 1
+     }
+    ],
+    "koord": [
+     0,
+     {
+      "raekker": 3
+     }
+    ]
+   }
+  }
+ ]
+}
