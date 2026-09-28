@@ -19,6 +19,8 @@ Filer kun under `docs/kritik-632/` og `outputs/kritik-632/`. Løftmodellen (`ent
 
 ## Hvad ændret
 
+Kun dokumenter og mine egne scripts. Ingen appkode, løftmodel eller site.
+
 ### Blok 1: løftmodellen (`MAAL.md`)
 
 Hele kritikken står i `docs/kritik-632/MAAL.md`. Kort:
