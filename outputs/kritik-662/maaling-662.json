@@ -1,0 +1,210 @@
+{
+  "390": {
+    "sidelaens": 0,
+    "hoejde": 4306,
+    "figurer": [
+      {
+        "alt": "Squat, low bar (bunden), 646",
+        "w": 175,
+        "h": 175,
+        "ok": true
+      },
+      {
+        "alt": "Squat, low bar (bunden), 654",
+        "w": 175,
+        "h": 175,
+        "ok": true
+      },
+      {
+        "alt": "Squat, high bar (bunden), 646",
+        "w": 175,
+        "h": 175,
+        "ok": true
+      },
+      {
+        "alt": "Squat, high bar (bunden), 654",
+        "w": 175,
+        "h": 175,
+        "ok": true
+      },
+      {
+        "alt": "Bænkpres, middel bue, stangen på brystet, 646",
+        "w": 175,
+        "h": 236,
+        "ok": true
+      },
+      {
+        "alt": "Bænkpres, middel bue, stangen på brystet, 654",
+        "w": 175,
+        "h": 236,
+        "ok": true
+      },
+      {
+        "alt": "Bænkpres, middel bue, lockout, 646",
+        "w": 175,
+        "h": 236,
+        "ok": true
+      },
+      {
+        "alt": "Bænkpres, middel bue, lockout, 654",
+        "w": 175,
+        "h": 236,
+        "ok": true
+      },
+      {
+        "alt": "Dødløft, konventionel, opstilling (fra siden), 646",
+        "w": 175,
+        "h": 236,
+        "ok": true
+      },
+      {
+        "alt": "Dødløft, konventionel, opstilling (fra siden), 654",
+        "w": 175,
+        "h": 236,
+        "ok": true
+      },
+      {
+        "alt": "Dødløft, konventionel, forfra, 646",
+        "w": 175,
+        "h": 145,
+        "ok": true
+      },
+      {
+        "alt": "Dødløft, konventionel, forfra, 654",
+        "w": 175,
+        "h": 145,
+        "ok": true
+      },
+      {
+        "alt": "Dødløft, sumo, opstilling (fra siden), 646",
+        "w": 175,
+        "h": 236,
+        "ok": true
+      },
+      {
+        "alt": "Dødløft, sumo, opstilling (fra siden), 654",
+        "w": 175,
+        "h": 236,
+        "ok": true
+      },
+      {
+        "alt": "Dødløft, sumo, forfra, 646",
+        "w": 175,
+        "h": 145,
+        "ok": true
+      },
+      {
+        "alt": "Dødløft, sumo, forfra, 654",
+        "w": 175,
+        "h": 145,
+        "ok": true
+      }
+    ],
+    "fejl": [],
+    "net": []
+  },
+  "1280": {
+    "sidelaens": 0,
+    "hoejde": 5975,
+    "figurer": [
+      {
+        "alt": "Squat, low bar (bunden), 646",
+        "w": 430,
+        "h": 430,
+        "ok": true
+      },
+      {
+        "alt": "Squat, low bar (bunden), 654",
+        "w": 430,
+        "h": 430,
+        "ok": true
+      },
+      {
+        "alt": "Squat, high bar (bunden), 646",
+        "w": 430,
+        "h": 430,
+        "ok": true
+      },
+      {
+        "alt": "Squat, high bar (bunden), 654",
+        "w": 430,
+        "h": 430,
+        "ok": true
+      },
+      {
+        "alt": "Bænkpres, middel bue, stangen på brystet, 646",
+        "w": 430,
+        "h": 581,
+        "ok": true
+      },
+      {
+        "alt": "Bænkpres, middel bue, stangen på brystet, 654",
+        "w": 430,
+        "h": 581,
+        "ok": true
+      },
+      {
+        "alt": "Bænkpres, middel bue, lockout, 646",
+        "w": 430,
+        "h": 581,
+        "ok": true
+      },
+      {
+        "alt": "Bænkpres, middel bue, lockout, 654",
+        "w": 430,
+        "h": 581,
+        "ok": true
+      },
+      {
+        "alt": "Dødløft, konventionel, opstilling (fra siden), 646",
+        "w": 430,
+        "h": 581,
+        "ok": true
+      },
+      {
+        "alt": "Dødløft, konventionel, opstilling (fra siden), 654",
+        "w": 430,
+        "h": 581,
+        "ok": true
+      },
+      {
+        "alt": "Dødløft, konventionel, forfra, 646",
+        "w": 430,
+        "h": 355,
+        "ok": true
+      },
+      {
+        "alt": "Dødløft, konventionel, forfra, 654",
+        "w": 430,
+        "h": 355,
+        "ok": true
+      },
+      {
+        "alt": "Dødløft, sumo, opstilling (fra siden), 646",
+        "w": 430,
+        "h": 581,
+        "ok": true
+      },
+      {
+        "alt": "Dødløft, sumo, opstilling (fra siden), 654",
+        "w": 430,
+        "h": 581,
+        "ok": true
+      },
+      {
+        "alt": "Dødløft, sumo, forfra, 646",
+        "w": 430,
+        "h": 355,
+        "ok": true
+      },
+      {
+        "alt": "Dødløft, sumo, forfra, 654",
+        "w": 430,
+        "h": 355,
+        "ok": true
+      }
+    ],
+    "fejl": [],
+    "net": []
+  }
+}
