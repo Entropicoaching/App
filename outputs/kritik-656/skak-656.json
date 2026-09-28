@@ -1,0 +1,446 @@
+{
+  "ver": {
+    "skak": "ea0e6f1"
+  },
+  "bredder": {
+    "360": {
+      "vandret": false,
+      "fane": {
+        "scrollY": 0,
+        "skaerm": 740,
+        "sideSkaerme": 3.5,
+        "startKort": {
+          "top": 908,
+          "bund": 1457
+        },
+        "dagensStorm": {
+          "top": 1260,
+          "bund": 1304
+        },
+        "stormStart": {
+          "top": 1312,
+          "bund": 1356
+        }
+      },
+      "startKort": {
+        "tekst": "Gåde-storm: 3 minutter Løs så mange gåder du kan. De starter lette og bliver sværere. Forkert træk koster 10 sekunder - rigtige i træk giver ekstra tid. Din rekord på denne enhed: 20 gåder (9 i træk). Tema Blandet Mat Gafler Spyd Bindinger Slutspil Alle: bedst 10 i dag · bedst 10 denne uge. Dagens storm (28/9) Tilfældig storm Dagens storm: hele klassen får de samme gåder i dag. Start, når læreren siger til. Tilfældig storm: dine egne gåder, uden kode.",
+        "ord": 79,
+        "tal": 8,
+        "knapper": 13,
+        "knapNavne": [
+          "Blandet",
+          "Mat",
+          "Gafler",
+          "Spyd",
+          "Bindinger",
+          "Slutspil",
+          "3 gåder",
+          "6 gåder",
+          "5 gåder",
+          "2 gåder",
+          "6 gåder (den nyeste)",
+          "Dagens storm (28/9)",
+          "Tilfældig storm"
+        ],
+        "hoejde": 549,
+        "top": 908
+      },
+      "alleLinje": {
+        "tekst": "Alle: bedst 10 i dag · bedst 10 denne uge.",
+        "linjer": 1,
+        "sidsteLinje": null
+      },
+      "soejler": {
+        "b": [
+          22,
+          22,
+          22,
+          22,
+          22
+        ],
+        "h": [
+          44,
+          44,
+          44,
+          44,
+          44
+        ],
+        "mellemrum": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "underNyeste": {
+          "boble": "6 gåder (den nyeste)",
+          "stormStartet": false
+        },
+        "mellemTo": "soejle",
+        "dagensKant": "knap-storm-dagens",
+        "luftTilDagens": 18
+      },
+      "slutKort": {
+        "tekst": "Tiden er gået! Du løste 5 gåder. Ny storm Tilbage til gåderne Ny Gafler-rekord! Din rekord på denne enhed: 20 gåder (9 i træk). Alle: bedst 10 i dag · bedst 10 denne uge. Gafler: bedst 5 i dag · bedst 5 denne uge · rekord 5. 0 forkerte træk (−0 s) Flest rigtige i træk: 5 (+3 s bonustid) Sværeste løste gåde: rating 549 Ingen forkerte træk. Flot!",
+        "ord": 66,
+        "tal": 13,
+        "knapper": 5,
+        "knapNavne": [
+          "Ny storm",
+          "Tilbage til gåderne",
+          "2 gåder",
+          "4 gåder",
+          "5 gåder (den nyeste)"
+        ],
+        "hoejde": 465,
+        "top": 823
+      },
+      "ros": {
+        "tekst": "Ny Gafler-rekord!",
+        "linjer": 1,
+        "sidsteLinje": null
+      },
+      "nyRekordAlle": false,
+      "temaLinje": {
+        "tekst": "Gafler: bedst 5 i dag · bedst 5 denne uge · rekord 5.",
+        "linjer": 2,
+        "sidsteLinje": "rekord 5."
+      },
+      "slutAlle": {
+        "tekst": "Alle: bedst 10 i dag · bedst 10 denne uge.",
+        "linjer": 1,
+        "sidsteLinje": null
+      }
+    },
+    "390": {
+      "vandret": false,
+      "fane": {
+        "scrollY": 0,
+        "skaerm": 844,
+        "sideSkaerme": 3.04,
+        "startKort": {
+          "top": 938,
+          "bund": 1467
+        },
+        "dagensStorm": {
+          "top": 1290,
+          "bund": 1334
+        },
+        "stormStart": {
+          "top": 1342,
+          "bund": 1386
+        }
+      },
+      "startKort": {
+        "tekst": "Gåde-storm: 3 minutter Løs så mange gåder du kan. De starter lette og bliver sværere. Forkert træk koster 10 sekunder - rigtige i træk giver ekstra tid. Din rekord på denne enhed: 20 gåder (9 i træk). Tema Blandet Mat Gafler Spyd Bindinger Slutspil Alle: bedst 10 i dag · bedst 10 denne uge. Dagens storm (28/9) Tilfældig storm Dagens storm: hele klassen får de samme gåder i dag. Start, når læreren siger til. Tilfældig storm: dine egne gåder, uden kode.",
+        "ord": 79,
+        "tal": 8,
+        "knapper": 13,
+        "knapNavne": [
+          "Blandet",
+          "Mat",
+          "Gafler",
+          "Spyd",
+          "Bindinger",
+          "Slutspil",
+          "3 gåder",
+          "6 gåder",
+          "5 gåder",
+          "2 gåder",
+          "6 gåder (den nyeste)",
+          "Dagens storm (28/9)",
+          "Tilfældig storm"
+        ],
+        "hoejde": 529,
+        "top": 938
+      },
+      "alleLinje": {
+        "tekst": "Alle: bedst 10 i dag · bedst 10 denne uge.",
+        "linjer": 1,
+        "sidsteLinje": null
+      },
+      "soejler": {
+        "b": [
+          22,
+          22,
+          22,
+          22,
+          22
+        ],
+        "h": [
+          44,
+          44,
+          44,
+          44,
+          44
+        ],
+        "mellemrum": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "underNyeste": {
+          "boble": "6 gåder (den nyeste)",
+          "stormStartet": false
+        },
+        "mellemTo": "soejle",
+        "dagensKant": "knap-storm-dagens",
+        "luftTilDagens": 18
+      },
+      "slutKort": {
+        "tekst": "Tiden er gået! Du løste 5 gåder. Ny storm Tilbage til gåderne Ny Gafler-rekord! Din rekord på denne enhed: 20 gåder (9 i træk). Alle: bedst 10 i dag · bedst 10 denne uge. Gafler: bedst 5 i dag · bedst 5 denne uge · rekord 5. 0 forkerte træk (−0 s) Flest rigtige i træk: 5 (+3 s bonustid) Sværeste løste gåde: rating 555 Ingen forkerte træk. Flot!",
+        "ord": 66,
+        "tal": 13,
+        "knapper": 5,
+        "knapNavne": [
+          "Ny storm",
+          "Tilbage til gåderne",
+          "2 gåder",
+          "4 gåder",
+          "5 gåder (den nyeste)"
+        ],
+        "hoejde": 393,
+        "top": 853
+      },
+      "ros": {
+        "tekst": "Ny Gafler-rekord!",
+        "linjer": 1,
+        "sidsteLinje": null
+      },
+      "nyRekordAlle": false,
+      "temaLinje": {
+        "tekst": "Gafler: bedst 5 i dag · bedst 5 denne uge · rekord 5.",
+        "linjer": 2,
+        "sidsteLinje": "rekord 5."
+      },
+      "slutAlle": {
+        "tekst": "Alle: bedst 10 i dag · bedst 10 denne uge.",
+        "linjer": 1,
+        "sidsteLinje": null
+      }
+    },
+    "1280": {
+      "vandret": false,
+      "fane": {
+        "scrollY": 0,
+        "skaerm": 800,
+        "sideSkaerme": 2.21,
+        "startKort": {
+          "top": 197,
+          "bund": 661
+        },
+        "dagensStorm": {
+          "top": 532,
+          "bund": 576
+        },
+        "stormStart": {
+          "top": 532,
+          "bund": 576
+        }
+      },
+      "startKort": {
+        "tekst": "Gåde-storm: 3 minutter Løs så mange gåder du kan. De starter lette og bliver sværere. Forkert træk koster 10 sekunder - rigtige i træk giver ekstra tid. Din rekord på denne enhed: 20 gåder (9 i træk). Tema Blandet Mat Gafler Spyd Bindinger Slutspil Alle: bedst 10 i dag · bedst 10 denne uge. Dagens storm (28/9) Tilfældig storm Dagens storm: hele klassen får de samme gåder i dag. Start, når læreren siger til. Tilfældig storm: dine egne gåder, uden kode.",
+        "ord": 79,
+        "tal": 8,
+        "knapper": 13,
+        "knapNavne": [
+          "Blandet",
+          "Mat",
+          "Gafler",
+          "Spyd",
+          "Bindinger",
+          "Slutspil",
+          "3 gåder",
+          "6 gåder",
+          "5 gåder",
+          "2 gåder",
+          "6 gåder (den nyeste)",
+          "Dagens storm (28/9)",
+          "Tilfældig storm"
+        ],
+        "hoejde": 464,
+        "top": 197
+      },
+      "alleLinje": {
+        "tekst": "Alle: bedst 10 i dag · bedst 10 denne uge.",
+        "linjer": 1,
+        "sidsteLinje": null
+      },
+      "soejler": {
+        "b": [
+          22,
+          22,
+          22,
+          22,
+          22
+        ],
+        "h": [
+          44,
+          44,
+          44,
+          44,
+          44
+        ],
+        "mellemrum": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "underNyeste": {
+          "boble": "6 gåder (den nyeste)",
+          "stormStartet": false
+        },
+        "mellemTo": "soejle",
+        "dagensKant": "knap-storm-dagens",
+        "luftTilDagens": 18
+      },
+      "slutKort": {
+        "tekst": "Tiden er gået! Du løste 5 gåder. Ny storm Tilbage til gåderne Ny Gafler-rekord! Din rekord på denne enhed: 20 gåder (9 i træk). Alle: bedst 10 i dag · bedst 10 denne uge. Gafler: bedst 5 i dag · bedst 5 denne uge · rekord 5. 0 forkerte træk (−0 s) Flest rigtige i træk: 5 (+3 s bonustid) Sværeste løste gåde: rating 555 Ingen forkerte træk. Flot!",
+        "ord": 66,
+        "tal": 13,
+        "knapper": 5,
+        "knapNavne": [
+          "Ny storm",
+          "Tilbage til gåderne",
+          "2 gåder",
+          "4 gåder",
+          "5 gåder (den nyeste)"
+        ],
+        "hoejde": 389,
+        "top": 197
+      },
+      "ros": {
+        "tekst": "Ny Gafler-rekord!",
+        "linjer": 1,
+        "sidsteLinje": null
+      },
+      "nyRekordAlle": false,
+      "temaLinje": {
+        "tekst": "Gafler: bedst 5 i dag · bedst 5 denne uge · rekord 5.",
+        "linjer": 1,
+        "sidsteLinje": null
+      },
+      "slutAlle": {
+        "tekst": "Alle: bedst 10 i dag · bedst 10 denne uge.",
+        "linjer": 1,
+        "sidsteLinje": null
+      }
+    },
+    "360x640": {
+      "vandret": false,
+      "fane": {
+        "scrollY": 0,
+        "skaerm": 640,
+        "sideSkaerme": 4.05,
+        "startKort": {
+          "top": 908,
+          "bund": 1457
+        },
+        "dagensStorm": {
+          "top": 1260,
+          "bund": 1304
+        },
+        "stormStart": {
+          "top": 1312,
+          "bund": 1356
+        }
+      },
+      "startKort": {
+        "tekst": "Gåde-storm: 3 minutter Løs så mange gåder du kan. De starter lette og bliver sværere. Forkert træk koster 10 sekunder - rigtige i træk giver ekstra tid. Din rekord på denne enhed: 20 gåder (9 i træk). Tema Blandet Mat Gafler Spyd Bindinger Slutspil Alle: bedst 10 i dag · bedst 10 denne uge. Dagens storm (28/9) Tilfældig storm Dagens storm: hele klassen får de samme gåder i dag. Start, når læreren siger til. Tilfældig storm: dine egne gåder, uden kode.",
+        "ord": 79,
+        "tal": 8,
+        "knapper": 13,
+        "knapNavne": [
+          "Blandet",
+          "Mat",
+          "Gafler",
+          "Spyd",
+          "Bindinger",
+          "Slutspil",
+          "3 gåder",
+          "6 gåder",
+          "5 gåder",
+          "2 gåder",
+          "6 gåder (den nyeste)",
+          "Dagens storm (28/9)",
+          "Tilfældig storm"
+        ],
+        "hoejde": 549,
+        "top": 908
+      },
+      "alleLinje": {
+        "tekst": "Alle: bedst 10 i dag · bedst 10 denne uge.",
+        "linjer": 1,
+        "sidsteLinje": null
+      },
+      "soejler": {
+        "b": [
+          22,
+          22,
+          22,
+          22,
+          22
+        ],
+        "h": [
+          44,
+          44,
+          44,
+          44,
+          44
+        ],
+        "mellemrum": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "underNyeste": {
+          "boble": "6 gåder (den nyeste)",
+          "stormStartet": false
+        },
+        "mellemTo": "soejle",
+        "dagensKant": "knap-storm-dagens",
+        "luftTilDagens": 18
+      },
+      "slutKort": {
+        "tekst": "Tiden er gået! Du løste 5 gåder. Ny storm Tilbage til gåderne Ny Gafler-rekord! Din rekord på denne enhed: 20 gåder (9 i træk). Alle: bedst 10 i dag · bedst 10 denne uge. Gafler: bedst 5 i dag · bedst 5 denne uge · rekord 5. 0 forkerte træk (−0 s) Flest rigtige i træk: 5 (+3 s bonustid) Sværeste løste gåde: rating 570 Ingen forkerte træk. Flot!",
+        "ord": 66,
+        "tal": 13,
+        "knapper": 5,
+        "knapNavne": [
+          "Ny storm",
+          "Tilbage til gåderne",
+          "2 gåder",
+          "4 gåder",
+          "5 gåder (den nyeste)"
+        ],
+        "hoejde": 465,
+        "top": 823
+      },
+      "ros": {
+        "tekst": "Ny Gafler-rekord!",
+        "linjer": 1,
+        "sidsteLinje": null
+      },
+      "nyRekordAlle": false,
+      "temaLinje": {
+        "tekst": "Gafler: bedst 5 i dag · bedst 5 denne uge · rekord 5.",
+        "linjer": 2,
+        "sidsteLinje": "rekord 5."
+      },
+      "slutAlle": {
+        "tekst": "Alle: bedst 10 i dag · bedst 10 denne uge.",
+        "linjer": 1,
+        "sidsteLinje": null
+      }
+    }
+  },
+  "fejl": [],
+  "net": 0,
+  "laerer": {
+    "ord": 90,
+    "start": "Lærerens side — Skak Klassens turnering Klassens storm Klassens koder Opgavebanken Klassens turnering Eleverne spiller mod hinanden på hver deres pc eller bræt. Du parrer runderne og skriver resultaterne her. Navnene bliver på denne pc og sendes ingen steder. Navne Fornavne eller kaldenavne, ét pr. linje. De bliver kun på denne pc og kan slettes med ét tryk. System Schweizisk: samme score mødes, i",
+    "skaerme": 1.17
+  }
+}
