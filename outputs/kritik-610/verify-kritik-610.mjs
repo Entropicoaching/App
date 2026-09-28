@@ -54,20 +54,20 @@ doc(mm, 'MAAL', /^Maal dit billede stadig klar til sitet: (ja|nej)$/, ['Hvad jeg
 if (mm) ok(mm.includes('f3e0200') && mm.includes('207d4ec') && mm.includes('c9fc559') && /Setu/.test(mm), 'MAAL: hasherne eller Setu mangler')
 ok(sh(`git -C ${LM} rev-parse --short main`).trim() === 'f3e0200', 'loeftmodel main er flyttet fra f3e0200 (maal igen)')
 
-// --- blok 2: matematikken og rapporten ------------------------------------------------------------
+// --- blok 2: skakken og rapporten ------------------------------------------------------------------
 if (blok >= 2) {
-  const koersler = ['m596-525', 'o602-525', 'm596-gaet-525', 'o602-gaet-525', 'm596-gaet-t3-731', 'o602-gaet-t3-731', 'm596-p0.4-525', 'o602-p0.4-525', 'o602-gaet-genindlaes-525']
-  for (const k of koersler) {
-    const j = json(`elev-610-${k}.json`)
-    if (!j) continue
-    ok(j.net === 0 && j.jsFejl === 0, `elev-610-${k}: net ${j.net}, JS-fejl ${j.jsFejl}`)
-    ok(j.spil === (k.startsWith('m596') ? 'c63394a' : 'bb5c678'), `elev-610-${k}: maalt paa ${j.spil}`)
+  const k = json('skak-610.json')
+  if (k) {
+    ok(k.skak === '246fe59', `skak-610 maalt paa ${k.skak}`)
+    ok(k.tjek.length >= 16 && k.tjek.every((t) => t.ok), `skak-610: ${k.tjek.filter((t) => !t.ok).length} roede`)
+    ok([360, 390, 1280].every((b) => k.U[b].net === 0 && !k.U[b].fejl.length && k.L[b].net === 0 && !k.L[b].fejl.length), 'skak-610: net eller JS-fejl')
   }
-  const mt = tekst('MATEMATIK.md')
-  doc(mt, 'MATEMATIK', /^matematikken stadig klar til Marcs klasse: (ja|nej)$/, ['Hvad jeg målte', 'Ganitas punkter', 'Fund', 'Ærlige grænser'], ['M7', 'M13', 'M14'])
+  ok(sh('git -C C:/Users/Entropi/Desktop/skak rev-parse --short main').trim() === '246fe59', 'skak main er flyttet fra 246fe59 (maal igen)')
+  const sk = tekst('SKAK.md')
+  doc(sk, 'SKAK', /^skakken stadig klar til Marcs klasse: (ja|nej)$/, ['Hvad jeg målte', 'Chaturangas punkter', 'Fund', 'Ærlige grænser'], ['S7', 'S8', 'S9', 'S5', 'S6'])
   const r = tekst('RAPPORT-610.md')
   doc(r, 'RAPPORT', /^Ordre 610/, ['Gren', 'Hvad ændret', 'Testresultat', 'Hvad er næste', 'Ærlige grænser'], [])
-  if (r) ok(/Yantra/.test(r) && /Setu/.test(r) && /Ganita/.test(r), 'RAPPORT: hvad Yantra, Setu og Ganita goer')
+  if (r) ok(/\*\*Yantra\*\*/.test(r) && /\*\*Setu:\*\*/.test(r) && /\*\*Chaturanga:\*\*/.test(r), 'RAPPORT: hvad Yantra, Setu og Chaturanga goer')
 }
 
 if (fejl.length) { console.log(`ROED (${fejl.length}):\n- ` + fejl.join('\n- ')); process.exit(1) }

@@ -1,0 +1,967 @@
+{
+ "skak": "246fe59",
+ "U": {
+  "360": {
+   "uge1": {
+    "find": "Fundet: 8",
+    "aabning": "Linjen er færdig: Italiensk parti: Hovedvarianten. 4 af 5 træk rigtigt i første forsøg. Øv den igen, så sidder den.",
+    "kendt": "Løst! Præcis sådan spillede Paul Morphy."
+   },
+   "bib1": {
+    "saetning": "Denne uge har du øvet 1 åbning, 1 koordinatøvelse og kendte partier i 10 forsøg.",
+    "find": "denne uge: 100 % i 8 forsøg · sidste uge: ikke øvet",
+    "findRaekke": "Find feltet 100 % rigtige · 8 forsøg denne uge: 100 % i 8 forsøg · sidste uge: ikke øvet Øv",
+    "findKlasse": "mit-bib-uge",
+    "aabning": "denne uge: 0 % i 1 forsøg · sidste uge: ikke øvet",
+    "aabningRaekke": "Italiensk parti hvid · 0 % rigtige · 1 forsøg denne uge: 0 % i 1 forsøg · sidste uge: ikke øvet Øv",
+    "kendte": "denne uge: 0 % i 1 forsøg · sidste uge: ikke øvet",
+    "kendteRaekke": "Kendte partier 1 af 10 løst · 0 % rigtige · 1 forsøg denne uge: 0 % i 1 forsøg · sidste uge: ikke øvet Øv",
+    "vandret": 0
+   },
+   "bib2foer": {
+    "saetning": "Du har ikke øvet noget denne uge endnu. Sidste uge står ved hver øvelse.",
+    "find": "denne uge: ikke øvet · sidste uge: 100 % i 8 forsøg",
+    "findRaekke": "Find feltet 100 % rigtige · 8 forsøg denne uge: ikke øvet · sidste uge: 100 % i 8 forsøg Øv",
+    "findKlasse": "mit-bib-uge",
+    "aabning": "denne uge: ikke øvet · sidste uge: 0 % i 1 forsøg",
+    "aabningRaekke": "Italiensk parti hvid · 0 % rigtige · 1 forsøg denne uge: ikke øvet · sidste uge: 0 % i 1 forsøg Øv",
+    "kendte": "denne uge: ikke øvet · sidste uge: 0 % i 1 forsøg",
+    "kendteRaekke": "Kendte partier 1 af 10 løst · 0 % rigtige · 1 forsøg denne uge: ikke øvet · sidste uge: 0 % i 1 forsøg Øv",
+    "vandret": 0
+   },
+   "uge2": {
+    "find": "Fundet: 18",
+    "aabning": "Perfekt! Du kan Italiensk parti: Hovedvarianten: alle 5 træk rigtigt i første forsøg.",
+    "kendt": "Løst! Præcis sådan spillede Adolf Anderssen."
+   },
+   "bib2": {
+    "saetning": "Denne uge har du øvet 1 åbning, 1 koordinatøvelse og kendte partier i 20 forsøg.",
+    "find": "denne uge: 100 % i 18 forsøg · sidste uge: 100 % i 8 forsøg",
+    "findRaekke": "Find feltet 100 % rigtige · 26 forsøg denne uge: 100 % i 18 forsøg · sidste uge: 100 % i 8 forsøg Øv",
+    "findKlasse": "mit-bib-uge samme",
+    "aabning": "denne uge: 100 % i 1 forsøg · sidste uge: 0 % i 1 forsøg",
+    "aabningRaekke": "Italiensk parti hvid · 50 % rigtige · 2 forsøg denne uge: 100 % i 1 forsøg · sidste uge: 0 % i 1 forsøg Øv",
+    "kendte": "denne uge: 100 % i 1 forsøg · sidste uge: 0 % i 1 forsøg",
+    "kendteRaekke": "Kendte partier 2 af 10 løst · 50 % rigtige · 2 forsøg denne uge: 100 % i 1 forsøg · sidste uge: 0 % i 1 forsøg Øv",
+    "vandret": 0
+   },
+   "lager": {
+    "koord": {
+     "find": {
+      "svar": 26,
+      "rigtige": 26,
+      "uger": {
+       "2960": [
+        8,
+        8
+       ],
+       "2961": [
+        18,
+        18
+       ]
+      }
+     },
+     "skriv": {
+      "svar": 0,
+      "rigtige": 0
+     },
+     "brik": {
+      "svar": 0,
+      "rigtige": 0
+     }
+    },
+    "aab": {
+     "w:e4 e5 Nf3 Nc6 Bc4 Bc5 c3 Nf6 d4": {
+      "navn": "Italiensk parti",
+      "farve": "w",
+      "oevet": 2,
+      "udenFejl": 1,
+      "sidst": 1790582448,
+      "uger": {
+       "2960": [
+        1,
+        0
+       ],
+       "2961": [
+        1,
+        1
+       ]
+      }
+     }
+    },
+    "kendte": {
+     "forsoeg": 2,
+     "rigtige": 1,
+     "uger": {
+      "2960": [
+       1,
+       0
+      ],
+      "2961": [
+       1,
+       1
+      ]
+     }
+    }
+   },
+   "datoerILager": 0,
+   "tidsstempler": [],
+   "kode": "8000-001J-5KHK-0000-01SZ",
+   "kodeUdenUger": "8000-001J-5KHK-0000-01SZ",
+   "net": 0,
+   "fejl": []
+  },
+  "390": {
+   "uge1": {
+    "find": "Fundet: 8",
+    "aabning": "Linjen er færdig: Italiensk parti: Hovedvarianten. 4 af 5 træk rigtigt i første forsøg. Øv den igen, så sidder den.",
+    "kendt": "Løst! Præcis sådan spillede Paul Morphy."
+   },
+   "bib1": {
+    "saetning": "Denne uge har du øvet 1 åbning, 1 koordinatøvelse og kendte partier i 10 forsøg.",
+    "find": "denne uge: 100 % i 8 forsøg · sidste uge: ikke øvet",
+    "findRaekke": "Find feltet 100 % rigtige · 8 forsøg denne uge: 100 % i 8 forsøg · sidste uge: ikke øvet Øv",
+    "findKlasse": "mit-bib-uge",
+    "aabning": "denne uge: 0 % i 1 forsøg · sidste uge: ikke øvet",
+    "aabningRaekke": "Italiensk parti hvid · 0 % rigtige · 1 forsøg denne uge: 0 % i 1 forsøg · sidste uge: ikke øvet Øv",
+    "kendte": "denne uge: 0 % i 1 forsøg · sidste uge: ikke øvet",
+    "kendteRaekke": "Kendte partier 1 af 10 løst · 0 % rigtige · 1 forsøg denne uge: 0 % i 1 forsøg · sidste uge: ikke øvet Øv",
+    "vandret": 0
+   },
+   "bib2foer": {
+    "saetning": "Du har ikke øvet noget denne uge endnu. Sidste uge står ved hver øvelse.",
+    "find": "denne uge: ikke øvet · sidste uge: 100 % i 8 forsøg",
+    "findRaekke": "Find feltet 100 % rigtige · 8 forsøg denne uge: ikke øvet · sidste uge: 100 % i 8 forsøg Øv",
+    "findKlasse": "mit-bib-uge",
+    "aabning": "denne uge: ikke øvet · sidste uge: 0 % i 1 forsøg",
+    "aabningRaekke": "Italiensk parti hvid · 0 % rigtige · 1 forsøg denne uge: ikke øvet · sidste uge: 0 % i 1 forsøg Øv",
+    "kendte": "denne uge: ikke øvet · sidste uge: 0 % i 1 forsøg",
+    "kendteRaekke": "Kendte partier 1 af 10 løst · 0 % rigtige · 1 forsøg denne uge: ikke øvet · sidste uge: 0 % i 1 forsøg Øv",
+    "vandret": 0
+   },
+   "uge2": {
+    "find": "Fundet: 18",
+    "aabning": "Perfekt! Du kan Italiensk parti: Hovedvarianten: alle 5 træk rigtigt i første forsøg.",
+    "kendt": "Løst! Præcis sådan spillede Adolf Anderssen."
+   },
+   "bib2": {
+    "saetning": "Denne uge har du øvet 1 åbning, 1 koordinatøvelse og kendte partier i 20 forsøg.",
+    "find": "denne uge: 100 % i 18 forsøg · sidste uge: 100 % i 8 forsøg",
+    "findRaekke": "Find feltet 100 % rigtige · 26 forsøg denne uge: 100 % i 18 forsøg · sidste uge: 100 % i 8 forsøg Øv",
+    "findKlasse": "mit-bib-uge samme",
+    "aabning": "denne uge: 100 % i 1 forsøg · sidste uge: 0 % i 1 forsøg",
+    "aabningRaekke": "Italiensk parti hvid · 50 % rigtige · 2 forsøg denne uge: 100 % i 1 forsøg · sidste uge: 0 % i 1 forsøg Øv",
+    "kendte": "denne uge: 100 % i 1 forsøg · sidste uge: 0 % i 1 forsøg",
+    "kendteRaekke": "Kendte partier 2 af 10 løst · 50 % rigtige · 2 forsøg denne uge: 100 % i 1 forsøg · sidste uge: 0 % i 1 forsøg Øv",
+    "vandret": 0
+   },
+   "lager": {
+    "koord": {
+     "find": {
+      "svar": 26,
+      "rigtige": 26,
+      "uger": {
+       "2960": [
+        8,
+        8
+       ],
+       "2961": [
+        18,
+        18
+       ]
+      }
+     },
+     "skriv": {
+      "svar": 0,
+      "rigtige": 0
+     },
+     "brik": {
+      "svar": 0,
+      "rigtige": 0
+     }
+    },
+    "aab": {
+     "w:e4 e5 Nf3 Nc6 Bc4 Bc5 c3 Nf6 d4": {
+      "navn": "Italiensk parti",
+      "farve": "w",
+      "oevet": 2,
+      "udenFejl": 1,
+      "sidst": 1790582448,
+      "uger": {
+       "2960": [
+        1,
+        0
+       ],
+       "2961": [
+        1,
+        1
+       ]
+      }
+     }
+    },
+    "kendte": {
+     "forsoeg": 2,
+     "rigtige": 1,
+     "uger": {
+      "2960": [
+       1,
+       0
+      ],
+      "2961": [
+       1,
+       1
+      ]
+     }
+    }
+   },
+   "datoerILager": 0,
+   "tidsstempler": [],
+   "kode": "8000-001J-5KHK-0000-01SZ",
+   "kodeUdenUger": "8000-001J-5KHK-0000-01SZ",
+   "net": 0,
+   "fejl": []
+  },
+  "1280": {
+   "uge1": {
+    "find": "Fundet: 8",
+    "aabning": "Linjen er færdig: Italiensk parti: Hovedvarianten. 4 af 5 træk rigtigt i første forsøg. Øv den igen, så sidder den.",
+    "kendt": "Løst! Præcis sådan spillede Paul Morphy."
+   },
+   "bib1": {
+    "saetning": "Denne uge har du øvet 1 åbning, 1 koordinatøvelse og kendte partier i 10 forsøg.",
+    "find": "denne uge: 100 % i 8 forsøg · sidste uge: ikke øvet",
+    "findRaekke": "Find feltet 100 % rigtige · 8 forsøg denne uge: 100 % i 8 forsøg · sidste uge: ikke øvet Øv",
+    "findKlasse": "mit-bib-uge",
+    "aabning": "denne uge: 0 % i 1 forsøg · sidste uge: ikke øvet",
+    "aabningRaekke": "Italiensk parti hvid · 0 % rigtige · 1 forsøg denne uge: 0 % i 1 forsøg · sidste uge: ikke øvet Øv",
+    "kendte": "denne uge: 0 % i 1 forsøg · sidste uge: ikke øvet",
+    "kendteRaekke": "Kendte partier 1 af 10 løst · 0 % rigtige · 1 forsøg denne uge: 0 % i 1 forsøg · sidste uge: ikke øvet Øv",
+    "vandret": 0
+   },
+   "bib2foer": {
+    "saetning": "Du har ikke øvet noget denne uge endnu. Sidste uge står ved hver øvelse.",
+    "find": "denne uge: ikke øvet · sidste uge: 100 % i 8 forsøg",
+    "findRaekke": "Find feltet 100 % rigtige · 8 forsøg denne uge: ikke øvet · sidste uge: 100 % i 8 forsøg Øv",
+    "findKlasse": "mit-bib-uge",
+    "aabning": "denne uge: ikke øvet · sidste uge: 0 % i 1 forsøg",
+    "aabningRaekke": "Italiensk parti hvid · 0 % rigtige · 1 forsøg denne uge: ikke øvet · sidste uge: 0 % i 1 forsøg Øv",
+    "kendte": "denne uge: ikke øvet · sidste uge: 0 % i 1 forsøg",
+    "kendteRaekke": "Kendte partier 1 af 10 løst · 0 % rigtige · 1 forsøg denne uge: ikke øvet · sidste uge: 0 % i 1 forsøg Øv",
+    "vandret": 0
+   },
+   "uge2": {
+    "find": "Fundet: 18",
+    "aabning": "Perfekt! Du kan Italiensk parti: Hovedvarianten: alle 5 træk rigtigt i første forsøg.",
+    "kendt": "Løst! Præcis sådan spillede Adolf Anderssen."
+   },
+   "bib2": {
+    "saetning": "Denne uge har du øvet 1 åbning, 1 koordinatøvelse og kendte partier i 20 forsøg.",
+    "find": "denne uge: 100 % i 18 forsøg · sidste uge: 100 % i 8 forsøg",
+    "findRaekke": "Find feltet 100 % rigtige · 26 forsøg denne uge: 100 % i 18 forsøg · sidste uge: 100 % i 8 forsøg Øv",
+    "findKlasse": "mit-bib-uge samme",
+    "aabning": "denne uge: 100 % i 1 forsøg · sidste uge: 0 % i 1 forsøg",
+    "aabningRaekke": "Italiensk parti hvid · 50 % rigtige · 2 forsøg denne uge: 100 % i 1 forsøg · sidste uge: 0 % i 1 forsøg Øv",
+    "kendte": "denne uge: 100 % i 1 forsøg · sidste uge: 0 % i 1 forsøg",
+    "kendteRaekke": "Kendte partier 2 af 10 løst · 50 % rigtige · 2 forsøg denne uge: 100 % i 1 forsøg · sidste uge: 0 % i 1 forsøg Øv",
+    "vandret": 0
+   },
+   "lager": {
+    "koord": {
+     "find": {
+      "svar": 26,
+      "rigtige": 26,
+      "uger": {
+       "2960": [
+        8,
+        8
+       ],
+       "2961": [
+        18,
+        18
+       ]
+      }
+     },
+     "skriv": {
+      "svar": 0,
+      "rigtige": 0
+     },
+     "brik": {
+      "svar": 0,
+      "rigtige": 0
+     }
+    },
+    "aab": {
+     "w:e4 e5 Nf3 Nc6 Bc4 Bc5 c3 Nf6 d4": {
+      "navn": "Italiensk parti",
+      "farve": "w",
+      "oevet": 2,
+      "udenFejl": 1,
+      "sidst": 1790582448,
+      "uger": {
+       "2960": [
+        1,
+        0
+       ],
+       "2961": [
+        1,
+        1
+       ]
+      }
+     }
+    },
+    "kendte": {
+     "forsoeg": 2,
+     "rigtige": 1,
+     "uger": {
+      "2960": [
+       1,
+       0
+      ],
+      "2961": [
+       1,
+       1
+      ]
+     }
+    }
+   },
+   "datoerILager": 0,
+   "tidsstempler": [],
+   "kode": "8000-001J-5KHK-0000-01SZ",
+   "kodeUdenUger": "8000-001J-5KHK-0000-01SZ",
+   "net": 0,
+   "fejl": []
+  },
+  "saetninger": {
+   "langsom -> hurtig, samme praecision (Find feltet 8/8 -> 18/18)": "Denne uge har du øvet 1 koordinatøvelse i 18 forsøg.",
+   "hurtig og sjusker lidt (10/10 -> 22/20) + gafler 3/5 -> 4/5": "Denne uge blev du bedre til gafler: 80 % mod 60 % sidste uge.",
+   "en runde Find feltet 12/13 + 3 gaader + 1 aabning": "Denne uge har du øvet 1 tema, 1 åbning og 1 koordinatøvelse i 17 forsøg."
+  }
+ },
+ "L": {
+  "360": {
+   "lukket": {
+    "status": "25 koder læst.",
+    "hoejde": 2977,
+    "skaerm": 780,
+    "summary": "Øvet af under halvdelen (11 kompetencer)",
+    "aaben": false,
+    "yFold": 2882,
+    "ySvagest": 1255,
+    "yFelt": 539,
+    "svagest": [
+     "Gaffeli snit 47 % · 20 af 25 har øvetIkke øvet: 5 · Under 50",
+     "Spydi snit 48 % · 18 af 25 har øvetIkke øvet: 7 · Under 50 %",
+     "Afdækket angrebi snit 54 % · 16 af 25 har øvetIkke øvet: 9 ·",
+     "Bindingi snit 62 % · 19 af 25 har øvetIkke øvet: 6 · Under 5",
+     "Åbninger som hvidi snit 67 % · 15 af 25 har øvetIkke øvet: 1",
+     "Forvandlingi snit 68 % · 14 af 25 har øvetIkke øvet: 11 · Un",
+     "Mat i 2i snit 69 % · 21 af 25 har øvetIkke øvet: 4 · Under 5",
+     "Skriv feltets navni snit 69 % · 14 af 25 har øvetIkke øvet: ",
+     "Hvor står brikken?i snit 69 % · 18 af 25 har øvetIkke øvet: ",
+     "Bagerste rækkei snit 75 % · 20 af 25 har øvetIkke øvet: 5 · ",
+     "Find felteti snit 80 % · 23 af 25 har øvetIkke øvet: 2 · Und",
+     "Mat i 1i snit 82 % · 22 af 25 har øvetIkke øvet: 3 · Under 5"
+    ],
+    "faa": [
+     "Slutspili snit 61 % · 12 af 25 har øvetIkke øvet: 13 · Under",
+     "Åbninger som sorti snit 57 % · 12 af 25 har øvetIkke øvet: 1",
+     "Angreb på f7i snit 63 % · 9 af 25 har øvetIkke øvet: 16 · Un",
+     "Offeri snit 44 % · 8 af 25 har øvetIkke øvet: 17 · Under 50 ",
+     "Kendte partieri snit 50 % · 8 af 25 har øvetIkke øvet: 17 · ",
+     "Hængende briki snit 80 % · 7 af 25 har øvetIkke øvet: 18 · U",
+     "Lokkei snit 62 % · 6 af 25 har øvetIkke øvet: 19 · Under 50 ",
+     "Mellemtræki snit 54 % · 5 af 25 har øvetIkke øvet: 20 · Unde",
+     "Mat i 3i snit 53 % · 3 af 25 har øvetIkke øvet: 22 · Under 5",
+     "Fanget briki snit 55 % · 2 af 25 har øvetIkke øvet: 23 · Und",
+     "Afledeingen af 25 har øvet det endnuIkke øvet: 25 · Under 50"
+    ],
+    "overskrifter": [
+     "Klassens koder",
+     "Klassens fremgang",
+     "Svagest først",
+     "Øvet af under halvdelen (11 kompetencer)"
+    ],
+    "vandret": 0
+   },
+   "aaben": {
+    "status": "25 koder læst.",
+    "hoejde": 4526,
+    "skaerm": 780,
+    "summary": "Øvet af under halvdelen (11 kompetencer)",
+    "aaben": true,
+    "yFold": 2882,
+    "ySvagest": 1255,
+    "yFelt": 539,
+    "svagest": [
+     "Gaffeli snit 47 % · 20 af 25 har øvetIkke øvet: 5 · Under 50",
+     "Spydi snit 48 % · 18 af 25 har øvetIkke øvet: 7 · Under 50 %",
+     "Afdækket angrebi snit 54 % · 16 af 25 har øvetIkke øvet: 9 ·",
+     "Bindingi snit 62 % · 19 af 25 har øvetIkke øvet: 6 · Under 5",
+     "Åbninger som hvidi snit 67 % · 15 af 25 har øvetIkke øvet: 1",
+     "Forvandlingi snit 68 % · 14 af 25 har øvetIkke øvet: 11 · Un",
+     "Mat i 2i snit 69 % · 21 af 25 har øvetIkke øvet: 4 · Under 5",
+     "Skriv feltets navni snit 69 % · 14 af 25 har øvetIkke øvet: ",
+     "Hvor står brikken?i snit 69 % · 18 af 25 har øvetIkke øvet: ",
+     "Bagerste rækkei snit 75 % · 20 af 25 har øvetIkke øvet: 5 · ",
+     "Find felteti snit 80 % · 23 af 25 har øvetIkke øvet: 2 · Und",
+     "Mat i 1i snit 82 % · 22 af 25 har øvetIkke øvet: 3 · Under 5"
+    ],
+    "faa": [
+     "Slutspili snit 61 % · 12 af 25 har øvetIkke øvet: 13 · Under",
+     "Åbninger som sorti snit 57 % · 12 af 25 har øvetIkke øvet: 1",
+     "Angreb på f7i snit 63 % · 9 af 25 har øvetIkke øvet: 16 · Un",
+     "Offeri snit 44 % · 8 af 25 har øvetIkke øvet: 17 · Under 50 ",
+     "Kendte partieri snit 50 % · 8 af 25 har øvetIkke øvet: 17 · ",
+     "Hængende briki snit 80 % · 7 af 25 har øvetIkke øvet: 18 · U",
+     "Lokkei snit 62 % · 6 af 25 har øvetIkke øvet: 19 · Under 50 ",
+     "Mellemtræki snit 54 % · 5 af 25 har øvetIkke øvet: 20 · Unde",
+     "Mat i 3i snit 53 % · 3 af 25 har øvetIkke øvet: 22 · Under 5",
+     "Fanget briki snit 55 % · 2 af 25 har øvetIkke øvet: 23 · Und",
+     "Afledeingen af 25 har øvet det endnuIkke øvet: 25 · Under 50"
+    ],
+    "overskrifter": [
+     "Klassens koder",
+     "Klassens fremgang",
+     "Svagest først",
+     "Øvet af under halvdelen (11 kompetencer)"
+    ],
+    "vandret": 0
+   },
+   "sumH": 71,
+   "mat3": "Mat i 3",
+   "mat3ISvagest": false,
+   "mat3IFold": true,
+   "net": 0,
+   "fejl": []
+  },
+  "390": {
+   "lukket": {
+    "status": "25 koder læst.",
+    "hoejde": 2902,
+    "skaerm": 844,
+    "summary": "Øvet af under halvdelen (11 kompetencer)",
+    "aaben": false,
+    "yFold": 2807,
+    "ySvagest": 1180,
+    "yFelt": 487,
+    "svagest": [
+     "Gaffeli snit 47 % · 20 af 25 har øvetIkke øvet: 5 · Under 50",
+     "Spydi snit 48 % · 18 af 25 har øvetIkke øvet: 7 · Under 50 %",
+     "Afdækket angrebi snit 54 % · 16 af 25 har øvetIkke øvet: 9 ·",
+     "Bindingi snit 62 % · 19 af 25 har øvetIkke øvet: 6 · Under 5",
+     "Åbninger som hvidi snit 67 % · 15 af 25 har øvetIkke øvet: 1",
+     "Forvandlingi snit 68 % · 14 af 25 har øvetIkke øvet: 11 · Un",
+     "Mat i 2i snit 69 % · 21 af 25 har øvetIkke øvet: 4 · Under 5",
+     "Skriv feltets navni snit 69 % · 14 af 25 har øvetIkke øvet: ",
+     "Hvor står brikken?i snit 69 % · 18 af 25 har øvetIkke øvet: ",
+     "Bagerste rækkei snit 75 % · 20 af 25 har øvetIkke øvet: 5 · ",
+     "Find felteti snit 80 % · 23 af 25 har øvetIkke øvet: 2 · Und",
+     "Mat i 1i snit 82 % · 22 af 25 har øvetIkke øvet: 3 · Under 5"
+    ],
+    "faa": [
+     "Slutspili snit 61 % · 12 af 25 har øvetIkke øvet: 13 · Under",
+     "Åbninger som sorti snit 57 % · 12 af 25 har øvetIkke øvet: 1",
+     "Angreb på f7i snit 63 % · 9 af 25 har øvetIkke øvet: 16 · Un",
+     "Offeri snit 44 % · 8 af 25 har øvetIkke øvet: 17 · Under 50 ",
+     "Kendte partieri snit 50 % · 8 af 25 har øvetIkke øvet: 17 · ",
+     "Hængende briki snit 80 % · 7 af 25 har øvetIkke øvet: 18 · U",
+     "Lokkei snit 62 % · 6 af 25 har øvetIkke øvet: 19 · Under 50 ",
+     "Mellemtræki snit 54 % · 5 af 25 har øvetIkke øvet: 20 · Unde",
+     "Mat i 3i snit 53 % · 3 af 25 har øvetIkke øvet: 22 · Under 5",
+     "Fanget briki snit 55 % · 2 af 25 har øvetIkke øvet: 23 · Und",
+     "Afledeingen af 25 har øvet det endnuIkke øvet: 25 · Under 50"
+    ],
+    "overskrifter": [
+     "Klassens koder",
+     "Klassens fremgang",
+     "Svagest først",
+     "Øvet af under halvdelen (11 kompetencer)"
+    ],
+    "vandret": 0
+   },
+   "aaben": {
+    "status": "25 koder læst.",
+    "hoejde": 4451,
+    "skaerm": 844,
+    "summary": "Øvet af under halvdelen (11 kompetencer)",
+    "aaben": true,
+    "yFold": 2807,
+    "ySvagest": 1180,
+    "yFelt": 487,
+    "svagest": [
+     "Gaffeli snit 47 % · 20 af 25 har øvetIkke øvet: 5 · Under 50",
+     "Spydi snit 48 % · 18 af 25 har øvetIkke øvet: 7 · Under 50 %",
+     "Afdækket angrebi snit 54 % · 16 af 25 har øvetIkke øvet: 9 ·",
+     "Bindingi snit 62 % · 19 af 25 har øvetIkke øvet: 6 · Under 5",
+     "Åbninger som hvidi snit 67 % · 15 af 25 har øvetIkke øvet: 1",
+     "Forvandlingi snit 68 % · 14 af 25 har øvetIkke øvet: 11 · Un",
+     "Mat i 2i snit 69 % · 21 af 25 har øvetIkke øvet: 4 · Under 5",
+     "Skriv feltets navni snit 69 % · 14 af 25 har øvetIkke øvet: ",
+     "Hvor står brikken?i snit 69 % · 18 af 25 har øvetIkke øvet: ",
+     "Bagerste rækkei snit 75 % · 20 af 25 har øvetIkke øvet: 5 · ",
+     "Find felteti snit 80 % · 23 af 25 har øvetIkke øvet: 2 · Und",
+     "Mat i 1i snit 82 % · 22 af 25 har øvetIkke øvet: 3 · Under 5"
+    ],
+    "faa": [
+     "Slutspili snit 61 % · 12 af 25 har øvetIkke øvet: 13 · Under",
+     "Åbninger som sorti snit 57 % · 12 af 25 har øvetIkke øvet: 1",
+     "Angreb på f7i snit 63 % · 9 af 25 har øvetIkke øvet: 16 · Un",
+     "Offeri snit 44 % · 8 af 25 har øvetIkke øvet: 17 · Under 50 ",
+     "Kendte partieri snit 50 % · 8 af 25 har øvetIkke øvet: 17 · ",
+     "Hængende briki snit 80 % · 7 af 25 har øvetIkke øvet: 18 · U",
+     "Lokkei snit 62 % · 6 af 25 har øvetIkke øvet: 19 · Under 50 ",
+     "Mellemtræki snit 54 % · 5 af 25 har øvetIkke øvet: 20 · Unde",
+     "Mat i 3i snit 53 % · 3 af 25 har øvetIkke øvet: 22 · Under 5",
+     "Fanget briki snit 55 % · 2 af 25 har øvetIkke øvet: 23 · Und",
+     "Afledeingen af 25 har øvet det endnuIkke øvet: 25 · Under 50"
+    ],
+    "overskrifter": [
+     "Klassens koder",
+     "Klassens fremgang",
+     "Svagest først",
+     "Øvet af under halvdelen (11 kompetencer)"
+    ],
+    "vandret": 0
+   },
+   "sumH": 71,
+   "mat3": "Mat i 3",
+   "mat3ISvagest": false,
+   "mat3IFold": true,
+   "net": 0,
+   "fejl": []
+  },
+  "1280": {
+   "lukket": {
+    "status": "25 koder læst.",
+    "hoejde": 2339,
+    "skaerm": 800,
+    "summary": "Øvet af under halvdelen (11 kompetencer)",
+    "aaben": false,
+    "yFold": 2270,
+    "ySvagest": 874,
+    "yFelt": 328,
+    "svagest": [
+     "Gaffeli snit 47 % · 20 af 25 har øvetIkke øvet: 5 · Under 50",
+     "Spydi snit 48 % · 18 af 25 har øvetIkke øvet: 7 · Under 50 %",
+     "Afdækket angrebi snit 54 % · 16 af 25 har øvetIkke øvet: 9 ·",
+     "Bindingi snit 62 % · 19 af 25 har øvetIkke øvet: 6 · Under 5",
+     "Åbninger som hvidi snit 67 % · 15 af 25 har øvetIkke øvet: 1",
+     "Forvandlingi snit 68 % · 14 af 25 har øvetIkke øvet: 11 · Un",
+     "Mat i 2i snit 69 % · 21 af 25 har øvetIkke øvet: 4 · Under 5",
+     "Skriv feltets navni snit 69 % · 14 af 25 har øvetIkke øvet: ",
+     "Hvor står brikken?i snit 69 % · 18 af 25 har øvetIkke øvet: ",
+     "Bagerste rækkei snit 75 % · 20 af 25 har øvetIkke øvet: 5 · ",
+     "Find felteti snit 80 % · 23 af 25 har øvetIkke øvet: 2 · Und",
+     "Mat i 1i snit 82 % · 22 af 25 har øvetIkke øvet: 3 · Under 5"
+    ],
+    "faa": [
+     "Slutspili snit 61 % · 12 af 25 har øvetIkke øvet: 13 · Under",
+     "Åbninger som sorti snit 57 % · 12 af 25 har øvetIkke øvet: 1",
+     "Angreb på f7i snit 63 % · 9 af 25 har øvetIkke øvet: 16 · Un",
+     "Offeri snit 44 % · 8 af 25 har øvetIkke øvet: 17 · Under 50 ",
+     "Kendte partieri snit 50 % · 8 af 25 har øvetIkke øvet: 17 · ",
+     "Hængende briki snit 80 % · 7 af 25 har øvetIkke øvet: 18 · U",
+     "Lokkei snit 62 % · 6 af 25 har øvetIkke øvet: 19 · Under 50 ",
+     "Mellemtræki snit 54 % · 5 af 25 har øvetIkke øvet: 20 · Unde",
+     "Mat i 3i snit 53 % · 3 af 25 har øvetIkke øvet: 22 · Under 5",
+     "Fanget briki snit 55 % · 2 af 25 har øvetIkke øvet: 23 · Und",
+     "Afledeingen af 25 har øvet det endnuIkke øvet: 25 · Under 50"
+    ],
+    "overskrifter": [
+     "Klassens koder",
+     "Klassens fremgang",
+     "Svagest først",
+     "Øvet af under halvdelen (11 kompetencer)"
+    ],
+    "vandret": 0
+   },
+   "aaben": {
+    "status": "25 koder læst.",
+    "hoejde": 3655,
+    "skaerm": 800,
+    "summary": "Øvet af under halvdelen (11 kompetencer)",
+    "aaben": true,
+    "yFold": 2270,
+    "ySvagest": 874,
+    "yFelt": 328,
+    "svagest": [
+     "Gaffeli snit 47 % · 20 af 25 har øvetIkke øvet: 5 · Under 50",
+     "Spydi snit 48 % · 18 af 25 har øvetIkke øvet: 7 · Under 50 %",
+     "Afdækket angrebi snit 54 % · 16 af 25 har øvetIkke øvet: 9 ·",
+     "Bindingi snit 62 % · 19 af 25 har øvetIkke øvet: 6 · Under 5",
+     "Åbninger som hvidi snit 67 % · 15 af 25 har øvetIkke øvet: 1",
+     "Forvandlingi snit 68 % · 14 af 25 har øvetIkke øvet: 11 · Un",
+     "Mat i 2i snit 69 % · 21 af 25 har øvetIkke øvet: 4 · Under 5",
+     "Skriv feltets navni snit 69 % · 14 af 25 har øvetIkke øvet: ",
+     "Hvor står brikken?i snit 69 % · 18 af 25 har øvetIkke øvet: ",
+     "Bagerste rækkei snit 75 % · 20 af 25 har øvetIkke øvet: 5 · ",
+     "Find felteti snit 80 % · 23 af 25 har øvetIkke øvet: 2 · Und",
+     "Mat i 1i snit 82 % · 22 af 25 har øvetIkke øvet: 3 · Under 5"
+    ],
+    "faa": [
+     "Slutspili snit 61 % · 12 af 25 har øvetIkke øvet: 13 · Under",
+     "Åbninger som sorti snit 57 % · 12 af 25 har øvetIkke øvet: 1",
+     "Angreb på f7i snit 63 % · 9 af 25 har øvetIkke øvet: 16 · Un",
+     "Offeri snit 44 % · 8 af 25 har øvetIkke øvet: 17 · Under 50 ",
+     "Kendte partieri snit 50 % · 8 af 25 har øvetIkke øvet: 17 · ",
+     "Hængende briki snit 80 % · 7 af 25 har øvetIkke øvet: 18 · U",
+     "Lokkei snit 62 % · 6 af 25 har øvetIkke øvet: 19 · Under 50 ",
+     "Mellemtræki snit 54 % · 5 af 25 har øvetIkke øvet: 20 · Unde",
+     "Mat i 3i snit 53 % · 3 af 25 har øvetIkke øvet: 22 · Under 5",
+     "Fanget briki snit 55 % · 2 af 25 har øvetIkke øvet: 23 · Und",
+     "Afledeingen af 25 har øvet det endnuIkke øvet: 25 · Under 50"
+    ],
+    "overskrifter": [
+     "Klassens koder",
+     "Klassens fremgang",
+     "Svagest først",
+     "Øvet af under halvdelen (11 kompetencer)"
+    ],
+    "vandret": 0
+   },
+   "sumH": 46,
+   "mat3": "Mat i 3",
+   "mat3ISvagest": false,
+   "mat3IFold": true,
+   "net": 0,
+   "fejl": []
+  }
+ },
+ "tjek": [
+  {
+   "hvad": "U0 ugeNummer: 21. og 28. sep. 2026 er to uger i traek, og ugerne tælles fortloebende fra 1970 (nytaar 2026/27 ogsaa: 28. dec. og 4. jan. er naboer)",
+   "ok": true,
+   "data": {
+    "uge1": 2960,
+    "uge2": 2961
+   }
+  },
+  {
+   "hvad": "U1 alt spillet i appen: uge 1 og uge 2 er gemt hver for sig ved Find feltet, Italiensk parti og de kendte partier (kun ugens nummer)",
+   "ok": true,
+   "data": {
+    "360": {
+     "koord": {
+      "svar": 26,
+      "rigtige": 26,
+      "uger": {
+       "2960": [
+        8,
+        8
+       ],
+       "2961": [
+        18,
+        18
+       ]
+      }
+     },
+     "aab": {
+      "navn": "Italiensk parti",
+      "farve": "w",
+      "oevet": 2,
+      "udenFejl": 1,
+      "sidst": 1790582448,
+      "uger": {
+       "2960": [
+        1,
+        0
+       ],
+       "2961": [
+        1,
+        1
+       ]
+      }
+     },
+     "kendte": {
+      "forsoeg": 2,
+      "rigtige": 1,
+      "uger": {
+       "2960": [
+        1,
+        0
+       ],
+       "2961": [
+        1,
+        1
+       ]
+      }
+     }
+    },
+    "390": {
+     "koord": {
+      "svar": 26,
+      "rigtige": 26,
+      "uger": {
+       "2960": [
+        8,
+        8
+       ],
+       "2961": [
+        18,
+        18
+       ]
+      }
+     },
+     "aab": {
+      "navn": "Italiensk parti",
+      "farve": "w",
+      "oevet": 2,
+      "udenFejl": 1,
+      "sidst": 1790582448,
+      "uger": {
+       "2960": [
+        1,
+        0
+       ],
+       "2961": [
+        1,
+        1
+       ]
+      }
+     },
+     "kendte": {
+      "forsoeg": 2,
+      "rigtige": 1,
+      "uger": {
+       "2960": [
+        1,
+        0
+       ],
+       "2961": [
+        1,
+        1
+       ]
+      }
+     }
+    },
+    "1280": {
+     "koord": {
+      "svar": 26,
+      "rigtige": 26,
+      "uger": {
+       "2960": [
+        8,
+        8
+       ],
+       "2961": [
+        18,
+        18
+       ]
+      }
+     },
+     "aab": {
+      "navn": "Italiensk parti",
+      "farve": "w",
+      "oevet": 2,
+      "udenFejl": 1,
+      "sidst": 1790582448,
+      "uger": {
+       "2960": [
+        1,
+        0
+       ],
+       "2961": [
+        1,
+        1
+       ]
+      }
+     },
+     "kendte": {
+      "forsoeg": 2,
+      "rigtige": 1,
+      "uger": {
+       "2960": [
+        1,
+        0
+       ],
+       "2961": [
+        1,
+        1
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "hvad": "U2 uge 1: \"denne uge\" ved alle tre, \"sidste uge: ikke oevet\"",
+   "ok": true,
+   "data": {
+    "saetning": "Denne uge har du øvet 1 åbning, 1 koordinatøvelse og kendte partier i 10 forsøg.",
+    "find": "denne uge: 100 % i 8 forsøg · sidste uge: ikke øvet",
+    "findRaekke": "Find feltet 100 % rigtige · 8 forsøg denne uge: 100 % i 8 forsøg · sidste uge: ikke øvet Øv",
+    "findKlasse": "mit-bib-uge",
+    "aabning": "denne uge: 0 % i 1 forsøg · sidste uge: ikke øvet",
+    "aabningRaekke": "Italiensk parti hvid · 0 % rigtige · 1 forsøg denne uge: 0 % i 1 forsøg · sidste uge: ikke øvet Øv",
+    "kendte": "denne uge: 0 % i 1 forsøg · sidste uge: ikke øvet",
+    "kendteRaekke": "Kendte partier 1 af 10 løst · 0 % rigtige · 1 forsøg denne uge: 0 % i 1 forsøg · sidste uge: ikke øvet Øv",
+    "vandret": 0
+   }
+  },
+  {
+   "hvad": "U3 mandag i uge 2, foer hun oever: uge 1 staar som \"sidste uge\" ved alle tre, og saetningen siger, at intet er oevet endnu",
+   "ok": true,
+   "data": {
+    "saetning": "Du har ikke øvet noget denne uge endnu. Sidste uge står ved hver øvelse.",
+    "find": "denne uge: ikke øvet · sidste uge: 100 % i 8 forsøg",
+    "findRaekke": "Find feltet 100 % rigtige · 8 forsøg denne uge: ikke øvet · sidste uge: 100 % i 8 forsøg Øv",
+    "findKlasse": "mit-bib-uge",
+    "aabning": "denne uge: ikke øvet · sidste uge: 0 % i 1 forsøg",
+    "aabningRaekke": "Italiensk parti hvid · 0 % rigtige · 1 forsøg denne uge: ikke øvet · sidste uge: 0 % i 1 forsøg Øv",
+    "kendte": "denne uge: ikke øvet · sidste uge: 0 % i 1 forsøg",
+    "kendteRaekke": "Kendte partier 1 af 10 løst · 0 % rigtige · 1 forsøg denne uge: ikke øvet · sidste uge: 0 % i 1 forsøg Øv",
+    "vandret": 0
+   }
+  },
+  {
+   "hvad": "U4 uge 2: \"denne uge / sidste uge\" er rigtigt ved alle tre (Find feltet 100 % i 18 mod 100 % i 8, aabningen og de kendte partier 100 % i 1 mod 0 % i 1)",
+   "ok": true,
+   "data": {
+    "saetning": "Denne uge har du øvet 1 åbning, 1 koordinatøvelse og kendte partier i 20 forsøg.",
+    "find": "denne uge: 100 % i 18 forsøg · sidste uge: 100 % i 8 forsøg",
+    "findRaekke": "Find feltet 100 % rigtige · 26 forsøg denne uge: 100 % i 18 forsøg · sidste uge: 100 % i 8 forsøg Øv",
+    "findKlasse": "mit-bib-uge samme",
+    "aabning": "denne uge: 100 % i 1 forsøg · sidste uge: 0 % i 1 forsøg",
+    "aabningRaekke": "Italiensk parti hvid · 50 % rigtige · 2 forsøg denne uge: 100 % i 1 forsøg · sidste uge: 0 % i 1 forsøg Øv",
+    "kendte": "denne uge: 100 % i 1 forsøg · sidste uge: 0 % i 1 forsøg",
+    "kendteRaekke": "Kendte partier 2 af 10 løst · 50 % rigtige · 2 forsøg denne uge: 100 % i 1 forsøg · sidste uge: 0 % i 1 forsøg Øv",
+    "vandret": 0
+   }
+  },
+  {
+   "hvad": "U5 fund S7: hun fandt 18 felter mod 8 paa samme 30 s (mere end dobbelt saa hurtig), men Find feltet siger 100 % mod 100 % uden pil, og saetningen naevner det ikke; farten, som er det, \"Find feltet\" oever, staar ingen steder",
+   "ok": true,
+   "data": {
+    "klasse": "mit-bib-uge samme",
+    "saetning": "Denne uge har du øvet 1 åbning, 1 koordinatøvelse og kendte partier i 20 forsøg.",
+    "raekke": "Find feltet 100 % rigtige · 26 forsøg denne uge: 100 % i 18 forsøg · sidste uge: 100 % i 8 forsøg Øv"
+   }
+  },
+  {
+   "hvad": "N1 saetningen i uge 2 laegger 18 feltsvar, 1 aabning og 1 kendt parti sammen: \"... i 20 forsoeg\"; 18 af de 20 er tryk paa et felt",
+   "ok": true,
+   "data": "Denne uge har du øvet 1 åbning, 1 koordinatøvelse og kendte partier i 20 forsøg."
+  },
+  {
+   "hvad": "U6 aabningen og de kendte partier: 0 % -> 100 % (et forsoeg hver uge) giver ingen pil og intet i saetningen (UGE_MIN 3)",
+   "ok": true,
+   "data": "Denne uge har du øvet 1 åbning, 1 koordinatøvelse og kendte partier i 20 forsøg."
+  },
+  {
+   "hvad": "U7 intet om tid i lageret ud over ugens nummer (ingen dato; tidsstempler kun hvor de var foer 604)",
+   "ok": true,
+   "data": {
+    "tidsstempler": []
+   }
+  },
+  {
+   "hvad": "U8 koden er den samme med og uden ugerne i de tre (ugerne kommer ikke med i koden)",
+   "ok": true,
+   "data": [
+    "360: 8000-001J-5KHK-0000-01SZ / 8000-001J-5KHK-0000-01SZ",
+    "390: 8000-001J-5KHK-0000-01SZ / 8000-001J-5KHK-0000-01SZ",
+    "1280: 8000-001J-5KHK-0000-01SZ / 8000-001J-5KHK-0000-01SZ"
+   ]
+  },
+  {
+   "hvad": "U9 skak.html: 0 netkald, 0 JS-fejl, ingen vandret rulning i Mit bibliotek (360, 390, 1280)",
+   "ok": true,
+   "data": [
+    {
+     "b": 360,
+     "net": 0,
+     "fejl": [],
+     "v": 0
+    },
+    {
+     "b": 390,
+     "net": 0,
+     "fejl": [],
+     "v": 0
+    },
+    {
+     "b": 1280,
+     "net": 0,
+     "fejl": [],
+     "v": 0
+    }
+   ]
+  },
+  {
+   "hvad": "N2 saetningen i tre almindelige uger (rene funktioner): hurtigere er ikke \"bedre\", og et par sjuskede feltsvar gaar foran en gaffel, der gik op",
+   "ok": true,
+   "data": {
+    "langsom -> hurtig, samme praecision (Find feltet 8/8 -> 18/18)": "Denne uge har du øvet 1 koordinatøvelse i 18 forsøg.",
+    "hurtig og sjusker lidt (10/10 -> 22/20) + gafler 3/5 -> 4/5": "Denne uge blev du bedre til gafler: 80 % mod 60 % sidste uge.",
+    "en runde Find feltet 12/13 + 3 gaader + 1 aabning": "Denne uge har du øvet 1 tema, 1 åbning og 1 koordinatøvelse i 17 forsøg."
+   }
+  },
+  {
+   "hvad": "L1 25 koder laest paa 360, 390 og 1280; \"Oevet af under halvdelen\" staar lukket med antallet i overskriften; tryk-feltet mindst 44 px",
+   "ok": true,
+   "data": [
+    {
+     "b": 360,
+     "s": "Øvet af under halvdelen (11 kompetencer)",
+     "h": 71
+    },
+    {
+     "b": 390,
+     "s": "Øvet af under halvdelen (11 kompetencer)",
+     "h": 71
+    },
+    {
+     "b": 1280,
+     "s": "Øvet af under halvdelen (11 kompetencer)",
+     "h": 46
+    }
+   ]
+  },
+  {
+   "hvad": "L2 siden er kortere med folden lukket; hoejden i skaerme",
+   "ok": true,
+   "data": [
+    "360: lukket 2977 px (3.8 skaerme), aaben 4526 px; folden 2882 px nede (3.7 skaerme)",
+    "390: lukket 2902 px (3.4 skaerme), aaben 4451 px; folden 2807 px nede (3.3 skaerme)",
+    "1280: lukket 2339 px (2.9 skaerme), aaben 3655 px; folden 2270 px nede (2.8 skaerme)"
+   ]
+  },
+  {
+   "hvad": "L3 Marc leder efter \"Mat i 3\": det staar ikke i \"Svagest foerst\", men i folden, som skal aabnes (overskriften siger antal, ikke hvilke)",
+   "ok": true,
+   "data": {
+    "svagest": [
+     "Gaffeli snit 47 % · 20 af 25 har øvetIkke øvet: 5 · Under 50",
+     "Spydi snit 48 % · 18 af 25 har øvetIkke øvet: 7 · Under 50 %",
+     "Afdækket angrebi snit 54 % · 16 af 25 har øvetIkke øvet: 9 ·",
+     "Bindingi snit 62 % · 19 af 25 har øvetIkke øvet: 6 · Under 5",
+     "Åbninger som hvidi snit 67 % · 15 af 25 har øvetIkke øvet: 1",
+     "Forvandlingi snit 68 % · 14 af 25 har øvetIkke øvet: 11 · Un",
+     "Mat i 2i snit 69 % · 21 af 25 har øvetIkke øvet: 4 · Under 5",
+     "Skriv feltets navni snit 69 % · 14 af 25 har øvetIkke øvet: ",
+     "Hvor står brikken?i snit 69 % · 18 af 25 har øvetIkke øvet: ",
+     "Bagerste rækkei snit 75 % · 20 af 25 har øvetIkke øvet: 5 · ",
+     "Find felteti snit 80 % · 23 af 25 har øvetIkke øvet: 2 · Und",
+     "Mat i 1i snit 82 % · 22 af 25 har øvetIkke øvet: 3 · Under 5"
+    ],
+    "faa": [
+     "Slutspili snit 61 % · 12 af 25 har øvetIkke øvet: 13 · Under",
+     "Åbninger som sorti snit 57 % · 12 af 25 har øvetIkke øvet: 1",
+     "Angreb på f7i snit 63 % · 9 af 25 har øvetIkke øvet: 16 · Un",
+     "Offeri snit 44 % · 8 af 25 har øvetIkke øvet: 17 · Under 50 ",
+     "Kendte partieri snit 50 % · 8 af 25 har øvetIkke øvet: 17 · ",
+     "Hængende briki snit 80 % · 7 af 25 har øvetIkke øvet: 18 · U",
+     "Lokkei snit 62 % · 6 af 25 har øvetIkke øvet: 19 · Under 50 ",
+     "Mellemtræki snit 54 % · 5 af 25 har øvetIkke øvet: 20 · Unde",
+     "Mat i 3i snit 53 % · 3 af 25 har øvetIkke øvet: 22 · Under 5",
+     "Fanget briki snit 55 % · 2 af 25 har øvetIkke øvet: 23 · Und",
+     "Afledeingen af 25 har øvet det endnuIkke øvet: 25 · Under 50"
+    ]
+   }
+  },
+  {
+   "hvad": "L4 laerer.html: 0 netkald, 0 JS-fejl, ingen vandret rulning",
+   "ok": true
+  }
+ ]
+}
