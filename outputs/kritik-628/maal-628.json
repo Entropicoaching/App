@@ -1,0 +1,1741 @@
+{
+ "ver": {
+  "main": "287210d",
+  "site": "1169b5f",
+  "foer": "4ca0c63",
+  "o621Merget": "ja",
+  "mainSiden616": [
+   "287210d merge: ordre-621 (ORDRE 621, Yantra)",
+   "944d888 Ordre 621, commit 3: skaermbilleder 390 og 1280, verificering, rapport dag 94",
+   "787f5a0 Ordre 621, commit 2: Uger - flere gemte maalinger paa een gang i datoorden med forskel fra den aeldste",
+   "db3d4c3 Ordre 621, commit 1: hop563 koder klippet med faste billedtider i stedet for realtidsoptagelse"
+  ],
+  "rapport95": false
+ },
+ "kopi": {
+  "maal-billede": {
+   "siteModFoer": [],
+   "siteModMain": [
+    "index.html",
+    "maal-billede.js"
+   ]
+  },
+  "baenk-figurer": {
+   "siteModFoer": [],
+   "siteModMain": []
+  },
+  "tre-loeft": {
+   "siteModFoer": [],
+   "siteModMain": []
+  },
+  "min-krop": {
+   "siteModFoer": [],
+   "siteModMain": []
+  },
+  "distSiden616": [
+   "dist/maal-billede/index.html",
+   "dist/maal-billede/maal-billede.js"
+  ]
+ },
+ "ui": [
+  {
+   "bredde": 390,
+   "knap": {
+    "top": 1541,
+    "hoejde": 44,
+    "side": 16645
+   },
+   "status": "8 målinger målt med kroppens længder som skala. Ikke med: IMG_0001.PNG har ingen gemt måling.",
+   "sek": [
+    {
+     "fase": "dl-gulv",
+     "titel": "Dødløft, ved gulvet",
+     "hoved": [
+      "Mål",
+      "3. aug. 20263 runder",
+      "10. aug. 20263 runder",
+      "17. aug. 20263 runder",
+      "24. aug. 20263 runder",
+      "31. aug. 20263 runder",
+      "7. sep. 20263 runder",
+      "14. sep. 20263 runder",
+      "21. sep. 20263 runder"
+     ],
+     "raekker": [
+      [
+       "Torso fra lodret",
+       "61,0°",
+       "62,4°≈+1,4°",
+       "62,2°≈+1,2°",
+       "62,2°≈+1,2°",
+       "64,2°≈+3,1°",
+       "64,6°≈+3,6°",
+       "66,7°+5,7°",
+       "66,5°+5,5°"
+      ],
+      [
+       "Hoftevinkel",
+       "50,0°",
+       "50,8°≈+0,8°",
+       "50,1°≈+0,1°",
+       "53,9°≈+3,8°",
+       "52,3°≈+2,3°",
+       "51,8°≈+1,7°",
+       "51,9°≈+1,9°",
+       "52,1°≈+2,1°"
+      ],
+      [
+       "Knævinkel",
+       "99,0°",
+       "100,0°≈+1,0°",
+       "98,9°≈−0,1°",
+       "102,6°≈+3,6°",
+       "102,0°≈+3,0°",
+       "103,0°≈+3,9°",
+       "104,2°≈+5,1°",
+       "106,6°+7,5°"
+      ],
+      [
+       "Skinneben fra lodret",
+       "12,0°",
+       "13,2°≈+1,2°",
+       "13,4°≈+1,4°",
+       "13,4°≈+1,4°",
+       "14,5°≈+2,5°",
+       "13,4°≈+1,4°",
+       "14,4°≈+2,4°",
+       "12,1°≈+0,1°"
+      ],
+      [
+       "Stangen foran midtfoden",
+       "2,5 cm",
+       "4,0 cm+1,6 cm, samme kameraplads",
+       "1,9 cm−0,5 cm, samme kameraplads",
+       "3,0 cm+0,5 cm, samme kameraplads",
+       "2,6 cm+0,1 cm, samme kameraplads",
+       "2,7 cm+0,3 cm, samme kameraplads",
+       "3,4 cm+1,0 cm, samme kameraplads",
+       "3,0 cm+0,6 cm, samme kameraplads"
+      ],
+      [
+       "Vandret afstand stang–hofte",
+       "41,3 cm",
+       "40,9 cm−0,4 cm, samme kameraplads",
+       "40,9 cm−0,3 cm, samme kameraplads",
+       "41,1 cm−0,2 cm, samme kameraplads",
+       "38,9 cm−2,4 cm, samme kameraplads",
+       "40,4 cm−0,9 cm, samme kameraplads",
+       "40,7 cm−0,5 cm, samme kameraplads",
+       "40,9 cm−0,3 cm, samme kameraplads"
+      ],
+      [
+       "Skulderen foran stangen",
+       "4,7 cm",
+       "3,9 cm−0,8 cm, samme kameraplads",
+       "4,4 cm−0,3 cm, samme kameraplads",
+       "4,3 cm−0,4 cm, samme kameraplads",
+       "5,7 cm+1,0 cm, samme kameraplads",
+       "7,1 cm+2,4 cm, samme kameraplads",
+       "4,0 cm−0,7 cm, samme kameraplads",
+       "4,3 cm−0,4 cm, samme kameraplads"
+      ],
+      [
+       "Hoftens højde over gulvet",
+       "66,0 cm",
+       "68,2 cm≈+2,3 cm",
+       "67,0 cm≈+1,0 cm",
+       "68,7 cm≈+2,7 cm",
+       "72,0 cm+6,1 cm",
+       "70,3 cm+4,3 cm",
+       "73,9 cm+7,9 cm",
+       "71,9 cm+5,9 cm"
+      ]
+     ],
+     "guld": 7,
+     "kamera": 21,
+     "saetning": "Nyeste (21. sep. 2026) mod ældste (3. aug. 2026). Før er den ældste og efter den nyeste: Efter: hoften højere (ca. 6 cm), knæet mere strakt (ca. 8°) og overkroppen mere foroverbøjet (ca. 6°). Stangens plads er ikke med: den kræver det fjerne nav i begge billeder. Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 3 gange og efter 3 gange.",
+     "rul": {
+      "klient": 345,
+      "fuld": 894,
+      "venstre": 23,
+      "hoejde": 632
+     },
+     "mindsteSkrift": 11.7333,
+     "foersteKolonne": 104,
+     "kolonneBredder": [
+      104,
+      94,
+      102,
+      102,
+      102,
+      102,
+      91,
+      99,
+      99
+     ],
+     "ude": ""
+    }
+   ],
+   "forklaring": "Under hver uges tal står forskellen fra den ældste uge. Guld er over rækkens grænse; ≈ er inden for målefejlen. Grænserne er de samme som i før og efter og bliver mindre, jo flere runder hvert billede er klikket. Hver kolonne er ét billede med sine egne klikfejl, og et kamera, der er flyttet en af ugerne, flytter tallene lige så meget som en ændret teknik. Om en ændring er bedre, er din vurdering. Datoen er den, enheden havde, da filen blev gemt.",
+   "forklaringTop": 2558,
+   "sideRul": 0,
+   "hoejde": "180",
+   "fase": "dl-gulv",
+   "rullet": {
+    "navnVenstre": 0,
+    "sidsteSes": true,
+    "synlige": [
+     "7. sep. 20263 ru",
+     "14. sep. 20263 r",
+     "21. sep. 20263 r"
+    ],
+    "foersteSes": false
+   },
+   "afstand": {
+    "tabelTopTilForklaring": 647,
+    "tabelHoejde": 632,
+    "skaerm": 844
+   },
+   "jsFejl": [],
+   "hofteRaekke": [
+    "Hoftens højde over gulvet",
+    "66,0 cm",
+    "68,2 cm≈+2,3 cm",
+    "67,0 cm≈+1,0 cm",
+    "68,7 cm≈+2,7 cm",
+    "72,0 cm+6,1 cm",
+    "70,3 cm+4,3 cm",
+    "73,9 cm+7,9 cm",
+    "71,9 cm+5,9 cm"
+   ]
+  },
+  {
+   "bredde": 1280,
+   "knap": {
+    "top": 1005,
+    "hoejde": 44,
+    "side": 6245
+   },
+   "status": "8 målinger målt med kroppens længder som skala. Ikke med: IMG_0001.PNG har ingen gemt måling.",
+   "sek": [
+    {
+     "fase": "dl-gulv",
+     "titel": "Dødløft, ved gulvet",
+     "hoved": [
+      "Mål",
+      "3. aug. 20263 runder",
+      "10. aug. 20263 runder",
+      "17. aug. 20263 runder",
+      "24. aug. 20263 runder",
+      "31. aug. 20263 runder",
+      "7. sep. 20263 runder",
+      "14. sep. 20263 runder",
+      "21. sep. 20263 runder"
+     ],
+     "raekker": [
+      [
+       "Torso fra lodret",
+       "61,0°",
+       "62,4°≈+1,4°",
+       "62,2°≈+1,2°",
+       "62,2°≈+1,2°",
+       "64,2°≈+3,1°",
+       "64,6°≈+3,6°",
+       "66,7°+5,7°",
+       "66,5°+5,5°"
+      ],
+      [
+       "Hoftevinkel",
+       "50,0°",
+       "50,8°≈+0,8°",
+       "50,1°≈+0,1°",
+       "53,9°≈+3,8°",
+       "52,3°≈+2,3°",
+       "51,8°≈+1,7°",
+       "51,9°≈+1,9°",
+       "52,1°≈+2,1°"
+      ],
+      [
+       "Knævinkel",
+       "99,0°",
+       "100,0°≈+1,0°",
+       "98,9°≈−0,1°",
+       "102,6°≈+3,6°",
+       "102,0°≈+3,0°",
+       "103,0°≈+3,9°",
+       "104,2°≈+5,1°",
+       "106,6°+7,5°"
+      ],
+      [
+       "Skinneben fra lodret",
+       "12,0°",
+       "13,2°≈+1,2°",
+       "13,4°≈+1,4°",
+       "13,4°≈+1,4°",
+       "14,5°≈+2,5°",
+       "13,4°≈+1,4°",
+       "14,4°≈+2,4°",
+       "12,1°≈+0,1°"
+      ],
+      [
+       "Stangen foran midtfoden",
+       "2,5 cm",
+       "4,0 cm+1,6 cm, samme kameraplads",
+       "1,9 cm−0,5 cm, samme kameraplads",
+       "3,0 cm+0,5 cm, samme kameraplads",
+       "2,6 cm+0,1 cm, samme kameraplads",
+       "2,7 cm+0,3 cm, samme kameraplads",
+       "3,4 cm+1,0 cm, samme kameraplads",
+       "3,0 cm+0,6 cm, samme kameraplads"
+      ],
+      [
+       "Vandret afstand stang–hofte",
+       "41,3 cm",
+       "40,9 cm−0,4 cm, samme kameraplads",
+       "40,9 cm−0,3 cm, samme kameraplads",
+       "41,1 cm−0,2 cm, samme kameraplads",
+       "38,9 cm−2,4 cm, samme kameraplads",
+       "40,4 cm−0,9 cm, samme kameraplads",
+       "40,7 cm−0,5 cm, samme kameraplads",
+       "40,9 cm−0,3 cm, samme kameraplads"
+      ],
+      [
+       "Skulderen foran stangen",
+       "4,7 cm",
+       "3,9 cm−0,8 cm, samme kameraplads",
+       "4,4 cm−0,3 cm, samme kameraplads",
+       "4,3 cm−0,4 cm, samme kameraplads",
+       "5,7 cm+1,0 cm, samme kameraplads",
+       "7,1 cm+2,4 cm, samme kameraplads",
+       "4,0 cm−0,7 cm, samme kameraplads",
+       "4,3 cm−0,4 cm, samme kameraplads"
+      ],
+      [
+       "Hoftens højde over gulvet",
+       "66,0 cm",
+       "68,2 cm≈+2,3 cm",
+       "67,0 cm≈+1,0 cm",
+       "68,7 cm≈+2,7 cm",
+       "72,0 cm+6,1 cm",
+       "70,3 cm+4,3 cm",
+       "73,9 cm+7,9 cm",
+       "71,9 cm+5,9 cm"
+      ]
+     ],
+     "guld": 7,
+     "kamera": 21,
+     "saetning": "Nyeste (21. sep. 2026) mod ældste (3. aug. 2026). Før er den ældste og efter den nyeste: Efter: hoften højere (ca. 6 cm), knæet mere strakt (ca. 8°) og overkroppen mere foroverbøjet (ca. 6°). Stangens plads er ikke med: den kræver det fjerne nav i begge billeder. Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 3 gange og efter 3 gange.",
+     "rul": {
+      "klient": 1042,
+      "fuld": 1042,
+      "venstre": 119,
+      "hoejde": 654
+     },
+     "mindsteSkrift": 13.3333,
+     "foersteKolonne": 107,
+     "kolonneBredder": [
+      107,
+      105,
+      121,
+      121,
+      121,
+      121,
+      110,
+      118,
+      119
+     ],
+     "ude": ""
+    }
+   ],
+   "forklaring": "Under hver uges tal står forskellen fra den ældste uge. Guld er over rækkens grænse; ≈ er inden for målefejlen. Grænserne er de samme som i før og efter og bliver mindre, jo flere runder hvert billede er klikket. Hver kolonne er ét billede med sine egne klikfejl, og et kamera, der er flyttet en af ugerne, flytter tallene lige så meget som en ændret teknik. Om en ændring er bedre, er din vurdering. Datoen er den, enheden havde, da filen blev gemt.",
+   "forklaringTop": 1878,
+   "sideRul": 0,
+   "hoejde": "180",
+   "fase": "dl-gulv",
+   "rullet": {
+    "navnVenstre": 0,
+    "sidsteSes": true,
+    "synlige": [
+     "3. aug. 20263 ru",
+     "10. aug. 20263 r",
+     "17. aug. 20263 r",
+     "24. aug. 20263 r",
+     "31. aug. 20263 r",
+     "7. sep. 20263 ru",
+     "14. sep. 20263 r",
+     "21. sep. 20263 r"
+    ],
+    "foersteSes": true
+   },
+   "afstand": {
+    "tabelTopTilForklaring": 668,
+    "tabelHoejde": 654,
+    "skaerm": 900
+   },
+   "jsFejl": [],
+   "hofteRaekke": [
+    "Hoftens højde over gulvet",
+    "66,0 cm",
+    "68,2 cm≈+2,3 cm",
+    "67,0 cm≈+1,0 cm",
+    "68,7 cm≈+2,7 cm",
+    "72,0 cm+6,1 cm",
+    "70,3 cm+4,3 cm",
+    "73,9 cm+7,9 cm",
+    "71,9 cm+5,9 cm"
+   ]
+  }
+ ],
+ "mc": {
+  "nul-2u-1r": {
+   "opt": {
+    "uger": 2,
+    "runder": 1
+   },
+   "n": 2000,
+   "celler": 5,
+   "guldMiddel": 0.15,
+   "guldAndelAfCeller": 3,
+   "nogetGuld": 12.7,
+   "raekkeGuldIHalvdelen": 12.7,
+   "nyesteGuld": 12.7,
+   "saetningSigerForskel": 12.7,
+   "toITraekNogetSted": 0,
+   "toITraekSidste": 0
+  },
+  "nul-2u-3r": {
+   "opt": {
+    "uger": 2,
+    "runder": 3
+   },
+   "n": 2000,
+   "celler": 5,
+   "guldMiddel": 0.11,
+   "guldAndelAfCeller": 2.2,
+   "nogetGuld": 9.2,
+   "raekkeGuldIHalvdelen": 9.2,
+   "nyesteGuld": 9.2,
+   "saetningSigerForskel": 9.2,
+   "toITraekNogetSted": 0,
+   "toITraekSidste": 0
+  },
+  "nul-8u-1r": {
+   "opt": {
+    "uger": 8,
+    "runder": 1
+   },
+   "n": 2000,
+   "celler": 35,
+   "guldMiddel": 0.96,
+   "guldAndelAfCeller": 2.7,
+   "nogetGuld": 46.9,
+   "raekkeGuldIHalvdelen": 2.3,
+   "nyesteGuld": 10.7,
+   "saetningSigerForskel": 10.7,
+   "toITraekNogetSted": 8.2,
+   "toITraekSidste": 1.8
+  },
+  "nul-8u-3r": {
+   "opt": {
+    "uger": 8,
+    "runder": 3
+   },
+   "n": 2000,
+   "celler": 35,
+   "guldMiddel": 0.78,
+   "guldAndelAfCeller": 2.2,
+   "nogetGuld": 40.9,
+   "raekkeGuldIHalvdelen": 1.6,
+   "nyesteGuld": 9.8,
+   "saetningSigerForskel": 9.8,
+   "toITraekNogetSted": 5.6,
+   "toITraekSidste": 1.5
+  },
+  "nul-12u-1r": {
+   "opt": {
+    "uger": 12,
+    "runder": 1
+   },
+   "n": 2000,
+   "celler": 55,
+   "guldMiddel": 1.56,
+   "guldAndelAfCeller": 2.8,
+   "nogetGuld": 59.4,
+   "raekkeGuldIHalvdelen": 2.3,
+   "nyesteGuld": 12.2,
+   "saetningSigerForskel": 12.2,
+   "toITraekNogetSted": 11.6,
+   "toITraekSidste": 2.4
+  },
+  "nul-12u-3r": {
+   "opt": {
+    "uger": 12,
+    "runder": 3
+   },
+   "n": 2000,
+   "celler": 55,
+   "guldMiddel": 1.19,
+   "guldAndelAfCeller": 2.2,
+   "nogetGuld": 49.6,
+   "raekkeGuldIHalvdelen": 1.3,
+   "nyesteGuld": 9.2,
+   "saetningSigerForskel": 9.2,
+   "toITraekNogetSted": 8.6,
+   "toITraekSidste": 1.5
+  },
+  "hofte5-fra-u5-8u-3r": {
+   "opt": {
+    "uger": 8,
+    "runder": 3,
+    "dyFra": 4,
+    "dy": 15
+   },
+   "n": 2000,
+   "celler": 35,
+   "guldMiddel": 6.86,
+   "guldAndelAfCeller": 19.6,
+   "nogetGuld": 98.6,
+   "raekkeGuldIHalvdelen": 48.2,
+   "nyesteGuld": 82.6,
+   "saetningSigerForskel": 82.6,
+   "toITraekNogetSted": 84.5,
+   "toITraekSidste": 65.3
+  },
+  "hofte5-fra-u5-12u-3r": {
+   "opt": {
+    "uger": 12,
+    "runder": 3,
+    "dyFra": 4,
+    "dy": 15
+   },
+   "n": 2000,
+   "celler": 55,
+   "guldMiddel": 13.52,
+   "guldAndelAfCeller": 24.6,
+   "nogetGuld": 99.8,
+   "raekkeGuldIHalvdelen": 70.3,
+   "nyesteGuld": 83.3,
+   "saetningSigerForskel": 83.3,
+   "toITraekNogetSted": 94.2,
+   "toITraekSidste": 68.8
+  }
+ },
+ "krop": {
+  "a": {
+   "status": "3 målinger målt med kroppens længder som skala.",
+   "hoejde": "180",
+   "fase": "dl-gulv",
+   "guld": [
+    0
+   ],
+   "data": [
+    {
+     "fase": "dl-gulv",
+     "raekker": [
+      {
+       "id": "torso",
+       "v": [
+        61.19368597319947,
+        62.17115034246017,
+        63.16654129227548
+       ],
+       "f": [
+        null,
+        0.9774643692607015,
+        1.972855319076011
+       ]
+      },
+      {
+       "id": "hofte",
+       "v": [
+        51.08264688415986,
+        51.297022541233304,
+        51.472329405039275
+       ],
+       "f": [
+        null,
+        0.21437565707344675,
+        0.38968252087941835
+       ]
+      },
+      {
+       "id": "knae",
+       "v": [
+        98.9270404874645,
+        100.11888051379863,
+        101.28957832741995
+       ],
+       "f": [
+        null,
+        1.191840026334134,
+        2.3625378399554506
+       ]
+      },
+      {
+       "id": "skinneben",
+       "v": [
+        13.34929236989483,
+        13.349292369894831,
+        13.34929236989483
+       ],
+       "f": [
+        null,
+        1.7763568394002505e-15,
+        0
+       ]
+      },
+      {
+       "id": "stangFraMidtfod",
+       "v": [
+        3.0000000000000004,
+        3.001834171865924,
+        3.0029385985915598
+       ],
+       "f": [
+        null,
+        0.001834171865923384,
+        0.002938598591559316
+       ]
+      },
+      {
+       "id": "stangHofte",
+       "v": [
+        40.42498585676144,
+        40.44970131400772,
+        40.464583458928935
+       ],
+       "f": [
+        null,
+        0.024715457246280437,
+        0.03959760216749686
+       ]
+      },
+      {
+       "id": "skulderForanStang",
+       "v": [
+        5,
+        5.003056953109874,
+        5.004897664319267
+       ],
+       "f": [
+        null,
+        0.003056953109873639,
+        0.004897664319266859
+       ]
+      },
+      {
+       "id": "hofteHoejde",
+       "v": [
+        66.8207421098855,
+        67.86220707558684,
+        68.88815428849689
+       ],
+       "f": [
+        null,
+        1.041464965701337,
+        2.0674121786113915
+       ]
+      }
+     ]
+    }
+   ],
+   "fejl": []
+  },
+  "b": {
+   "status": "3 målinger målt med kroppens længder som skala.",
+   "hoejde": "180",
+   "fase": "dl-gulv",
+   "guld": [
+    0
+   ],
+   "data": [
+    {
+     "fase": "dl-gulv",
+     "raekker": [
+      {
+       "id": "torso",
+       "v": [
+        61.19368597319947,
+        62.17115034246017,
+        63.16654129227548
+       ],
+       "f": [
+        null,
+        0.9774643692607015,
+        1.972855319076011
+       ]
+      },
+      {
+       "id": "hofte",
+       "v": [
+        51.08264688415986,
+        51.297022541233304,
+        51.472329405039275
+       ],
+       "f": [
+        null,
+        0.21437565707344675,
+        0.38968252087941835
+       ]
+      },
+      {
+       "id": "knae",
+       "v": [
+        98.9270404874645,
+        100.11888051379863,
+        101.28957832741995
+       ],
+       "f": [
+        null,
+        1.191840026334134,
+        2.3625378399554506
+       ]
+      },
+      {
+       "id": "skinneben",
+       "v": [
+        13.34929236989483,
+        13.349292369894831,
+        13.34929236989483
+       ],
+       "f": [
+        null,
+        1.7763568394002505e-15,
+        0
+       ]
+      },
+      {
+       "id": "stangFraMidtfod",
+       "v": [
+        3.0000000000000004,
+        3.001834171865924,
+        3.0029385985915598
+       ],
+       "f": [
+        null,
+        0.001834171865923384,
+        0.002938598591559316
+       ]
+      },
+      {
+       "id": "stangHofte",
+       "v": [
+        40.42498585676144,
+        40.44970131400772,
+        40.464583458928935
+       ],
+       "f": [
+        null,
+        0.024715457246280437,
+        0.03959760216749686
+       ]
+      },
+      {
+       "id": "skulderForanStang",
+       "v": [
+        5,
+        5.003056953109874,
+        5.004897664319267
+       ],
+       "f": [
+        null,
+        0.003056953109873639,
+        0.004897664319266859
+       ]
+      },
+      {
+       "id": "hofteHoejde",
+       "v": [
+        66.8207421098855,
+        67.86220707558684,
+        68.88815428849689
+       ],
+       "f": [
+        null,
+        1.041464965701337,
+        2.0674121786113915
+       ]
+      }
+     ]
+    }
+   ],
+   "fejl": []
+  },
+  "c": {
+   "status": "3 målinger målt med kroppens længder som skala.",
+   "hoejde": "165",
+   "fase": "dl-gulv",
+   "guld": [
+    0
+   ],
+   "data": [
+    {
+     "fase": "dl-gulv",
+     "raekker": [
+      {
+       "id": "torso",
+       "v": [
+        61.19368597319947,
+        62.171150342460166,
+        63.16654129227548
+       ],
+       "f": [
+        null,
+        0.9774643692606944,
+        1.972855319076011
+       ]
+      },
+      {
+       "id": "hofte",
+       "v": [
+        51.08264688415985,
+        51.29702254123329,
+        51.4723294050393
+       ],
+       "f": [
+        null,
+        0.21437565707343964,
+        0.38968252087944677
+       ]
+      },
+      {
+       "id": "knae",
+       "v": [
+        98.9270404874645,
+        100.11888051379864,
+        101.28957832741995
+       ],
+       "f": [
+        null,
+        1.1918400263341482,
+        2.3625378399554506
+       ]
+      },
+      {
+       "id": "skinneben",
+       "v": [
+        13.34929236989483,
+        13.34929236989483,
+        13.34929236989483
+       ],
+       "f": [
+        null,
+        0,
+        0
+       ]
+      },
+      {
+       "id": "stangFraMidtfod",
+       "v": [
+        2.7499999999999996,
+        2.7516813242104297,
+        2.752693715375596
+       ],
+       "f": [
+        null,
+        0.0016813242104301018,
+        0.0026937153755963728
+       ]
+      },
+      {
+       "id": "stangHofte",
+       "v": [
+        37.056237035364646,
+        37.07889287117373,
+        37.09253483735152
+       ],
+       "f": [
+        null,
+        0.022655835809082703,
+        0.036297801986876266
+       ]
+      },
+      {
+       "id": "skulderForanStang",
+       "v": [
+        4.583333333333332,
+        4.586135540350716,
+        4.587822858959327
+       ],
+       "f": [
+        null,
+        0.002802207017383651,
+        0.004489525625994695
+       ]
+      },
+      {
+       "id": "hofteHoejde",
+       "v": [
+        61.25234693406169,
+        62.20702315262125,
+        63.147474764455474
+       ],
+       "f": [
+        null,
+        0.9546762185595554,
+        1.8951278303937826
+       ]
+      }
+     ]
+    }
+   ],
+   "fejl": []
+  },
+  "d": {
+   "status": "3 målinger målt med kroppens længder som skala.",
+   "hoejde": "180",
+   "fase": "squat-bund",
+   "guld": [
+    0
+   ],
+   "data": [
+    {
+     "fase": "dl-gulv",
+     "raekker": [
+      {
+       "id": "torso",
+       "v": [
+        61.19368597319947,
+        62.17115034246017,
+        63.16654129227548
+       ],
+       "f": [
+        null,
+        0.9774643692607015,
+        1.972855319076011
+       ]
+      },
+      {
+       "id": "hofte",
+       "v": [
+        51.08264688415986,
+        51.297022541233304,
+        51.472329405039275
+       ],
+       "f": [
+        null,
+        0.21437565707344675,
+        0.38968252087941835
+       ]
+      },
+      {
+       "id": "knae",
+       "v": [
+        98.9270404874645,
+        100.11888051379863,
+        101.28957832741995
+       ],
+       "f": [
+        null,
+        1.191840026334134,
+        2.3625378399554506
+       ]
+      },
+      {
+       "id": "skinneben",
+       "v": [
+        13.34929236989483,
+        13.349292369894831,
+        13.34929236989483
+       ],
+       "f": [
+        null,
+        1.7763568394002505e-15,
+        0
+       ]
+      },
+      {
+       "id": "stangFraMidtfod",
+       "v": [
+        3.0000000000000004,
+        3.001834171865924,
+        3.0029385985915598
+       ],
+       "f": [
+        null,
+        0.001834171865923384,
+        0.002938598591559316
+       ]
+      },
+      {
+       "id": "stangHofte",
+       "v": [
+        40.42498585676144,
+        40.44970131400772,
+        40.464583458928935
+       ],
+       "f": [
+        null,
+        0.024715457246280437,
+        0.03959760216749686
+       ]
+      },
+      {
+       "id": "skulderForanStang",
+       "v": [
+        5,
+        5.003056953109874,
+        5.004897664319267
+       ],
+       "f": [
+        null,
+        0.003056953109873639,
+        0.004897664319266859
+       ]
+      },
+      {
+       "id": "hofteHoejde",
+       "v": [
+        66.8207421098855,
+        67.86220707558684,
+        68.88815428849689
+       ],
+       "f": [
+        null,
+        1.041464965701337,
+        2.0674121786113915
+       ]
+      }
+     ]
+    }
+   ],
+   "fejl": []
+  },
+  "e": {
+   "status": "3 målinger målt med kroppens længder som skala.",
+   "hoejde": "180",
+   "fase": "dl-gulv",
+   "guld": [
+    0
+   ],
+   "data": [
+    {
+     "fase": "dl-gulv",
+     "raekker": [
+      {
+       "id": "torso",
+       "v": [
+        61.19368597319947,
+        62.17115034246017,
+        63.16654129227548
+       ],
+       "f": [
+        null,
+        0.9774643692607015,
+        1.972855319076011
+       ]
+      },
+      {
+       "id": "hofte",
+       "v": [
+        51.08264688415986,
+        51.297022541233304,
+        51.472329405039275
+       ],
+       "f": [
+        null,
+        0.21437565707344675,
+        0.38968252087941835
+       ]
+      },
+      {
+       "id": "knae",
+       "v": [
+        98.9270404874645,
+        100.11888051379863,
+        101.28957832741995
+       ],
+       "f": [
+        null,
+        1.191840026334134,
+        2.3625378399554506
+       ]
+      },
+      {
+       "id": "skinneben",
+       "v": [
+        13.34929236989483,
+        13.349292369894831,
+        13.34929236989483
+       ],
+       "f": [
+        null,
+        1.7763568394002505e-15,
+        0
+       ]
+      },
+      {
+       "id": "stangFraMidtfod",
+       "v": [
+        3.0000000000000004,
+        3.001834171865924,
+        3.0029385985915598
+       ],
+       "f": [
+        null,
+        0.001834171865923384,
+        0.002938598591559316
+       ]
+      },
+      {
+       "id": "stangHofte",
+       "v": [
+        40.42498585676144,
+        40.44970131400772,
+        40.464583458928935
+       ],
+       "f": [
+        null,
+        0.024715457246280437,
+        0.03959760216749686
+       ]
+      },
+      {
+       "id": "skulderForanStang",
+       "v": [
+        5,
+        5.003056953109874,
+        5.004897664319267
+       ],
+       "f": [
+        null,
+        0.003056953109873639,
+        0.004897664319266859
+       ]
+      },
+      {
+       "id": "hofteHoejde",
+       "v": [
+        66.8207421098855,
+        67.86220707558684,
+        68.88815428849689
+       ],
+       "f": [
+        null,
+        1.041464965701337,
+        2.0674121786113915
+       ]
+      }
+     ]
+    }
+   ],
+   "fejl": []
+  },
+  "tal": {
+   "a": {
+    "status": "3 målinger målt med kroppens længder som skala.",
+    "hoejde": "180",
+    "fase": "dl-gulv",
+    "hofteHoejde": [
+     66.82,
+     67.86,
+     68.89
+    ],
+    "hofteForskel": [
+     null,
+     1.04,
+     2.07
+    ],
+    "torso": [
+     61.19,
+     62.17,
+     63.17
+    ]
+   },
+   "b": {
+    "status": "3 målinger målt med kroppens længder som skala.",
+    "hoejde": "180",
+    "fase": "dl-gulv",
+    "hofteHoejde": [
+     66.82,
+     67.86,
+     68.89
+    ],
+    "hofteForskel": [
+     null,
+     1.04,
+     2.07
+    ],
+    "torso": [
+     61.19,
+     62.17,
+     63.17
+    ]
+   },
+   "c": {
+    "status": "3 målinger målt med kroppens længder som skala.",
+    "hoejde": "165",
+    "fase": "dl-gulv",
+    "hofteHoejde": [
+     61.25,
+     62.21,
+     63.15
+    ],
+    "hofteForskel": [
+     null,
+     0.95,
+     1.9
+    ],
+    "torso": [
+     61.19,
+     62.17,
+     63.17
+    ]
+   },
+   "d": {
+    "status": "3 målinger målt med kroppens længder som skala.",
+    "hoejde": "180",
+    "fase": "squat-bund",
+    "hofteHoejde": [
+     66.82,
+     67.86,
+     68.89
+    ],
+    "hofteForskel": [
+     null,
+     1.04,
+     2.07
+    ],
+    "torso": [
+     61.19,
+     62.17,
+     63.17
+    ]
+   },
+   "e": {
+    "status": "3 målinger målt med kroppens længder som skala.",
+    "hoejde": "180",
+    "fase": "dl-gulv",
+    "hofteHoejde": [
+     66.82,
+     67.86,
+     68.89
+    ],
+    "hofteForskel": [
+     null,
+     1.04,
+     2.07
+    ],
+    "torso": [
+     61.19,
+     62.17,
+     63.17
+    ]
+   }
+  }
+ },
+ "andet": {
+  "fjorten": {
+   "status": "16 målinger målt med kroppens længder som skala.",
+   "sek": [
+    {
+     "fase": "dl-gulv",
+     "kolonner": 12,
+     "foerste": "3. aug. 20261 runde",
+     "sidste": "uden dato1 runde",
+     "ude": "3 uger mellem den ældste og de 11 nyeste er ikke vist (højst 12 kolonner)."
+    },
+    {
+     "fase": "squat-bund",
+     "kolonner": 1,
+     "foerste": "24. aug. 20261 runde",
+     "sidste": "24. aug. 20261 runde",
+     "ude": "Kun én uge i denne fase. Vælg mindst to målinger fra samme løft og fase."
+    }
+   ],
+   "sideRul": 0,
+   "jsFejl": []
+  },
+  "m18": {
+   "foer": "Gemt måling åbnet (gemt 3. aug. 2026): dødløft, ved gulvet, 7 klik. Klikkene og fasen står, som da den blev gemt; højden og vægten er dem, der allerede stod (tomme felter er udfyldt fra filen). Træk i et punkt for at flytte det. Før er gemt senere end efter; tryk Byt før og efter, hvis det ældste billede skal være før.",
+   "efterByt": "Gemt måling åbnet (gemt 3. aug. 2026): dødløft, ved gulvet, 7 klik. Klikkene og fasen står, som da den blev gemt; højden og vægten er dem, der allerede stod (tomme felter er udfyldt fra filen). Træk i et punkt for at flytte det. Før er gemt senere end efter; tryk Byt før og efter, hvis det ældste billede skal være før.",
+   "jsFejl": []
+  }
+ },
+ "chrome": "154.0.8037.57",
+ "basisMeta": {
+  "v": 1,
+  "gemt": "2026-09-28",
+  "faelles": {
+   "faseId": "dl-gulv",
+   "sumo": false,
+   "haele": "",
+   "hoejde": "180",
+   "vaegt": "90",
+   "skiveCm": 45,
+   "skalaValg": null,
+   "stangKg": 200,
+   "navSkoennet": false
+  },
+  "w": 1000,
+  "h": 1400,
+  "punkter": [
+   "stang",
+   "midtfod",
+   "ankel",
+   "knae",
+   "hofte",
+   "skulder",
+   "skalaA"
+  ],
+  "runder": 0
+ },
+ "mcSide": [
+  {
+   "seed": 11,
+   "nodeGuld": 0,
+   "sideGuld": 0,
+   "sideStatus": "12 målinger målt med kroppens længder som skala.",
+   "data0": [
+    63.842150729378154,
+    60.35466115637681,
+    60.046192989936465
+   ]
+  },
+  {
+   "seed": 12,
+   "nodeGuld": 6,
+   "sideGuld": 6,
+   "sideStatus": "12 målinger målt med kroppens længder som skala.",
+   "data0": [
+    62.31658627210019,
+    59.054383590580244,
+    61.557913429311704
+   ]
+  },
+  {
+   "seed": 13,
+   "nodeGuld": 0,
+   "sideGuld": 0,
+   "sideStatus": "12 målinger målt med kroppens længder som skala.",
+   "data0": [
+    62.280141357729576,
+    63.141908711716574,
+    61.486724167689
+   ]
+  }
+ ],
+ "eksterne": [],
+ "tjek": [
+  {
+   "hvad": "621 er merget (main 287210d); sitet (1169b5f) er blob for blob 4ca0c63 i alle fire mapper; i dist er kun maal-billede.js og index.html aendret siden",
+   "ok": true,
+   "data": {
+    "dist": [
+     "dist/maal-billede/index.html",
+     "dist/maal-billede/maal-billede.js"
+    ],
+    "siteModMain": [
+     "index.html",
+     "maal-billede.js"
+    ],
+    "rapport95": false
+   }
+  },
+  {
+   "hvad": "sidens egen Gem gav en maaling (v1, 1000x1400, 7 punkter, dl-gulv, 180 cm)",
+   "ok": true,
+   "data": {
+    "v": 1,
+    "gemt": "2026-09-28",
+    "faelles": {
+     "faseId": "dl-gulv",
+     "sumo": false,
+     "haele": "",
+     "hoejde": "180",
+     "vaegt": "90",
+     "skiveCm": 45,
+     "skalaValg": null,
+     "stangKg": 200,
+     "navSkoennet": false
+    },
+    "w": 1000,
+    "h": 1400,
+    "punkter": [
+     "stang",
+     "midtfod",
+     "ankel",
+     "knae",
+     "hofte",
+     "skulder",
+     "skalaA"
+    ],
+    "runder": 0
+   }
+  },
+  {
+   "hvad": "Uger (390 og 1280): 8 maalinger valgt i blandet orden (og et foto) staar i datoorden 3. aug. -> 21. sep.; fotoet siges (\"har ingen gemt maaling\"); filen uden endelse og type er med (M5)",
+   "ok": true,
+   "data": {
+    "datoer": [
+     "3. aug. 20263",
+     "10. aug. 20263",
+     "17. aug. 20263",
+     "24. aug. 20263",
+     "31. aug. 20263",
+     "7. sep. 20263",
+     "14. sep. 20263",
+     "21. sep. 20263"
+    ],
+    "status": "8 målinger målt med kroppens længder som skala. Ikke med: IMG_0001.PNG har ingen gemt måling."
+   }
+  },
+  {
+   "hvad": "Uger 390: siden ruller ikke sidelaens; tabellen ruller i sin egen boks, og maalets navn bliver staaende til venstre, naar den er rullet helt ud",
+   "ok": true,
+   "data": {
+    "rul": {
+     "klient": 345,
+     "fuld": 894,
+     "venstre": 23,
+     "hoejde": 632
+    },
+    "rullet": {
+     "navnVenstre": 0,
+     "sidsteSes": true,
+     "synlige": [
+      "7. sep. 20263 ru",
+      "14. sep. 20263 r",
+      "21. sep. 20263 r"
+     ],
+     "foersteSes": false
+    }
+   }
+  },
+  {
+   "hvad": "Uger 390: hvor meget ses ad gangen? (maalets navn + kolonner i boksen; mindste skrift; foerste kolonnes bredde)",
+   "ok": true,
+   "data": {
+    "klient": 345,
+    "fuld": 894,
+    "skaermeBred": 2.59,
+    "kolonner": [
+     104,
+     94,
+     102,
+     102,
+     102,
+     102,
+     91,
+     99,
+     99
+    ],
+    "mindsteSkrift": 11.7333,
+    "synligeRullet": [
+     "7. sep. 20263 ru",
+     "14. sep. 20263 r",
+     "21. sep. 20263 r"
+    ]
+   }
+  },
+  {
+   "hvad": "fund: \"fra den aeldste\" staar ikke i selve tabellen (hverken i kolonnernes hoved eller i cellerne); det staar i status over og i forklaringen under tabellen, og naar tabellen er rullet ud til de nyeste uger, er den aeldste uges kolonne ude af syne",
+   "ok": true,
+   "data": {
+    "hoved": "Mål | 3. aug. 20263 runder | 10. aug. 20263 runder | 17. aug. 20263 runder | 24. aug. 20263 runder | 31. aug. 20263 runder | 7. sep. 20263 runder | 14. sep. 20263 runder | 21. sep. 20263 runder",
+    "afstand": {
+     "tabelTopTilForklaring": 647,
+     "tabelHoejde": 632,
+     "skaerm": 844
+    },
+    "knap": {
+     "top": 1541,
+     "hoejde": 44,
+     "side": 16645
+    }
+   }
+  },
+  {
+   "hvad": "Uger: saetningen over tabellen er den nyeste mod den aeldste (\"Nyeste (21. sep. 2026) mod aeldste (3. aug. 2026)\")",
+   "ok": true,
+   "data": "Nyeste (21. sep. 2026) mod ældste (3. aug. 2026). Før er den ældste og efter den nyeste: Efter: hoften højere (ca. 6 cm), knæet mere strakt (ca. 8°) og overkroppen mere foroverbøjet (ca. 6°). Stangens plads er ikke med: den kræver det fjerne nav i begge billeder. Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 3 gange og efter 3 gange."
+  },
+  {
+   "hvad": "Uger: 0 JS-fejl paa 390 og 1280",
+   "ok": true
+  },
+  {
+   "hvad": "Monte Carlo (2000 forsoeg pr. linje, Yantras antagne klikfejl, SAMME stilling alle uger): to uger giver en guldcelle i 9.2 % (3 runder) og 12.7 % (1 runde), altsaa foer og efters egen rate (her uden stangens raekker, der kraever det fjerne nav)",
+   "ok": true,
+   "data": {
+    "to3": {
+     "opt": {
+      "uger": 2,
+      "runder": 3
+     },
+     "n": 2000,
+     "celler": 5,
+     "guldMiddel": 0.11,
+     "guldAndelAfCeller": 2.2,
+     "nogetGuld": 9.2,
+     "raekkeGuldIHalvdelen": 9.2,
+     "nyesteGuld": 9.2,
+     "saetningSigerForskel": 9.2,
+     "toITraekNogetSted": 0,
+     "toITraekSidste": 0
+    },
+    "to1": {
+     "opt": {
+      "uger": 2,
+      "runder": 1
+     },
+     "n": 2000,
+     "celler": 5,
+     "guldMiddel": 0.15,
+     "guldAndelAfCeller": 3,
+     "nogetGuld": 12.7,
+     "raekkeGuldIHalvdelen": 12.7,
+     "nyesteGuld": 12.7,
+     "saetningSigerForskel": 12.7,
+     "toITraekNogetSted": 0,
+     "toITraekSidste": 0
+    }
+   }
+  },
+  {
+   "hvad": "fund: med 8 og 12 uger uden aendring staar der guld et sted i tabellen i 40.9 % og 49.6 % af forsoegene (3 runder), 46.9 % og 59.4 % (1 runde); i 1.3 % (12 uger, 3 runder) lyser en hel raekke i mindst halvdelen af ugerne: guldet er spredte enkeltceller, ikke en raekke, der deler den aeldste uges klikfejl",
+   "ok": true,
+   "data": {
+    "u8r3": {
+     "opt": {
+      "uger": 8,
+      "runder": 3
+     },
+     "n": 2000,
+     "celler": 35,
+     "guldMiddel": 0.78,
+     "guldAndelAfCeller": 2.2,
+     "nogetGuld": 40.9,
+     "raekkeGuldIHalvdelen": 1.6,
+     "nyesteGuld": 9.8,
+     "saetningSigerForskel": 9.8,
+     "toITraekNogetSted": 5.6,
+     "toITraekSidste": 1.5
+    },
+    "u12r3": {
+     "opt": {
+      "uger": 12,
+      "runder": 3
+     },
+     "n": 2000,
+     "celler": 55,
+     "guldMiddel": 1.19,
+     "guldAndelAfCeller": 2.2,
+     "nogetGuld": 49.6,
+     "raekkeGuldIHalvdelen": 1.3,
+     "nyesteGuld": 9.2,
+     "saetningSigerForskel": 9.2,
+     "toITraekNogetSted": 8.6,
+     "toITraekSidste": 1.5
+    },
+    "u8r1": {
+     "opt": {
+      "uger": 8,
+      "runder": 1
+     },
+     "n": 2000,
+     "celler": 35,
+     "guldMiddel": 0.96,
+     "guldAndelAfCeller": 2.7,
+     "nogetGuld": 46.9,
+     "raekkeGuldIHalvdelen": 2.3,
+     "nyesteGuld": 10.7,
+     "saetningSigerForskel": 10.7,
+     "toITraekNogetSted": 8.2,
+     "toITraekSidste": 1.8
+    },
+    "u12r1": {
+     "opt": {
+      "uger": 12,
+      "runder": 1
+     },
+     "n": 2000,
+     "celler": 55,
+     "guldMiddel": 1.56,
+     "guldAndelAfCeller": 2.8,
+     "nogetGuld": 59.4,
+     "raekkeGuldIHalvdelen": 2.3,
+     "nyesteGuld": 12.2,
+     "saetningSigerForskel": 12.2,
+     "toITraekNogetSted": 11.6,
+     "toITraekSidste": 2.4
+    }
+   }
+  },
+  {
+   "hvad": "reglerne: kun nyeste mod aeldste i guld: 9.2 % falske (12 uger, 3 runder); guld kun naar de to nyeste uger begge er over i samme retning: 1.5 % falske; en hofte 5 cm hoejere fra uge 5 findes af nyeste i 83.3 % og af to-i-traek i 68.8 %",
+   "ok": true,
+   "data": {
+    "nul": {
+     "nyeste": 9.2,
+     "toSidste": 1.5,
+     "toNogetSted": 8.6
+    },
+    "hofte5": {
+     "opt": {
+      "uger": 12,
+      "runder": 3,
+      "dyFra": 4,
+      "dy": 15
+     },
+     "n": 2000,
+     "celler": 55,
+     "guldMiddel": 13.52,
+     "guldAndelAfCeller": 24.6,
+     "nogetGuld": 99.8,
+     "raekkeGuldIHalvdelen": 70.3,
+     "nyesteGuld": 83.3,
+     "saetningSigerForskel": 83.3,
+     "toITraekNogetSted": 94.2,
+     "toITraekSidste": 68.8
+    }
+   }
+  },
+  {
+   "hvad": "node-regningen er sidens: tre forsoeg (12 uger, 3 runder med klikfejl) givet siden som filer har det samme antal guldceller",
+   "ok": true,
+   "data": [
+    "11: node 0, side 0",
+    "12: node 6, side 6",
+    "13: node 0, side 0"
+   ]
+  },
+  {
+   "hvad": "faelles krop a/b: en fil gemt med en anden hoejde (175 i uge 2) maales med den aeldstes 180; tallene er de samme som med 180 i alle tre, og status siger intet om det",
+   "ok": true,
+   "data": {
+    "a": {
+     "status": "3 målinger målt med kroppens længder som skala.",
+     "hoejde": "180",
+     "fase": "dl-gulv",
+     "hofteHoejde": [
+      66.82,
+      67.86,
+      68.89
+     ],
+     "hofteForskel": [
+      null,
+      1.04,
+      2.07
+     ],
+     "torso": [
+      61.19,
+      62.17,
+      63.17
+     ]
+    },
+    "b": {
+     "status": "3 målinger målt med kroppens længder som skala.",
+     "hoejde": "180",
+     "fase": "dl-gulv",
+     "hofteHoejde": [
+      66.82,
+      67.86,
+      68.89
+     ],
+     "hofteForskel": [
+      null,
+      1.04,
+      2.07
+     ],
+     "torso": [
+      61.19,
+      62.17,
+      63.17
+     ]
+    }
+   }
+  },
+  {
+   "hvad": "faelles krop c (fund): staar der allerede 165 cm paa siden, maales alle tre ugers filer (gemt med 180) med 165: hoftens hoejde 61.25 mod 66.82 cm, forskellen 1.9 mod 2.07 cm; vinklerne er de samme; status siger \"kroppens laengder\" uden hoejden, og filernes 180 naevnes ikke",
+   "ok": true,
+   "data": {
+    "c": {
+     "status": "3 målinger målt med kroppens længder som skala.",
+     "hoejde": "165",
+     "fase": "dl-gulv",
+     "hofteHoejde": [
+      61.25,
+      62.21,
+      63.15
+     ],
+     "hofteForskel": [
+      null,
+      0.95,
+      1.9
+     ],
+     "torso": [
+      61.19,
+      62.17,
+      63.17
+     ]
+    }
+   }
+  },
+  {
+   "hvad": "faelles krop d/e: sidens egen fase (squattens bund mod doedloeftets gulv) aendrer intet i doedloeftets ugetabel",
+   "ok": true,
+   "data": {
+    "d": [
+     66.82,
+     67.86,
+     68.89
+    ],
+    "e": [
+     66.82,
+     67.86,
+     68.89
+    ],
+    "frisk": [
+     66.82,
+     67.86,
+     68.89
+    ],
+    "faser": [
+     "dl-gulv",
+     "squat-bund",
+     "dl-gulv"
+    ]
+   }
+  },
+  {
+   "hvad": "15 doedloeftuger (en uden dato) og en squat: to tabeller; doedloeftets har 12 kolonner (den aeldste og de 11 nyeste), \"uden dato\" sidst, og noten siger, hvor mange der er udeladt",
+   "ok": true,
+   "data": {
+    "status": "16 målinger målt med kroppens længder som skala.",
+    "sek": [
+     {
+      "fase": "dl-gulv",
+      "kolonner": 12,
+      "foerste": "3. aug. 20261 runde",
+      "sidste": "uden dato1 runde",
+      "ude": "3 uger mellem den ældste og de 11 nyeste er ikke vist (højst 12 kolonner)."
+     },
+     {
+      "fase": "squat-bund",
+      "kolonner": 1,
+      "foerste": "24. aug. 20261 runde",
+      "sidste": "24. aug. 20261 runde",
+      "ude": "Kun én uge i denne fase. Vælg mindst to målinger fra samme løft og fase."
+     }
+    ],
+    "sideRul": 0,
+    "jsFejl": []
+   }
+  },
+  {
+   "hvad": "M18 fra 617 staar stadig paa 621 (kun oplysning): efter Byt siger noten over billedet stadig \"tryk Byt\"",
+   "ok": true,
+   "data": {
+    "foer": "Gemt måling åbnet (gemt 3. aug. 2026): dødløft, ved gulvet, 7 klik. Klikkene og fasen står, som da den blev gemt; højden og vægten er dem, der allerede stod (tomme felter er udfyldt fra filen). Træk i et punkt for at flytte det. Før er gemt senere end efter; tryk Byt før og efter, hvis det ældste billede skal være før.",
+    "efterByt": "Gemt måling åbnet (gemt 3. aug. 2026): dødløft, ved gulvet, 7 klik. Klikkene og fasen står, som da den blev gemt; højden og vægten er dem, der allerede stod (tomme felter er udfyldt fra filen). Træk i et punkt for at flytte det. Før er gemt senere end efter; tryk Byt før og efter, hvis det ældste billede skal være før.",
+    "jsFejl": []
+   }
+  },
+  {
+   "hvad": "alt, siderne proevede at hente udefra, er afbrudt og var kun skrifttypen",
+   "ok": true,
+   "data": []
+  }
+ ]
+}
