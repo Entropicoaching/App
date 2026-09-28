@@ -74,7 +74,7 @@ if (blok >= 2) {
     ok(/Vaerktoejssiden klar til Marcs deploy: (ja|nej)/.test(r), 'RAPPORT: sitedommen')
     ok(/Maal dit billede stadig klar til sitet: (ja|nej)/.test(r), 'RAPPORT: maaldommen')
     doc(r, 'RAPPORT', /^Ordre 632/, ['Gren', 'Hvad ændret', 'Testresultat', 'Hvad er næste', 'Ærlige grænser'], [])
-    for (const n of ['Yantra', 'Setu']) ok(new RegExp(`\*\*${n}`).test(r.split('## Hvad er næste')[1] || ''), `RAPPORT: Hvad er naeste mangler ${n}`)
+    for (const n of ['Yantra', 'Setu']) ok((r.split('## Hvad er næste')[1] || '').includes(`**${n}`),`RAPPORT: Hvad er naeste mangler ${n}`)
   }
 }
 
