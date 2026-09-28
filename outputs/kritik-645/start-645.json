@@ -1,0 +1,1101 @@
+{
+ "sider": [
+  {
+   "bredde": 390,
+   "titel": "Start her",
+   "hoejde": 5406,
+   "sidelaens": false,
+   "kort": [
+    {
+     "overskrift": "1Appen til atleterne",
+     "y": 334,
+     "links": [
+      {
+       "href": "LAES-APP.html",
+       "tekst": "Åbn LAES-APP.html",
+       "y": 715,
+       "target": null
+      }
+     ],
+     "svar": [
+      "klar til app"
+     ]
+    },
+    {
+     "overskrift": "2Squat-artiklen",
+     "y": 929,
+     "links": [
+      {
+       "href": "LAES-SQUAT.html",
+       "tekst": "Åbn LAES-SQUAT.html",
+       "y": 1362,
+       "target": null
+      }
+     ],
+     "svar": [
+      "squat kapitel 6: ny",
+      "squat kapitel 6: gammel",
+      "squat udgiv 28. sep 2026",
+      "squat udgiv, men <nr>: <dit valg>"
+     ]
+    },
+    {
+     "overskrift": "3Værktøjssiden",
+     "y": 1791,
+     "links": [
+      {
+       "href": "LAES-VAERKTOEJER.html",
+       "tekst": "Åbn LAES-VAERKTOEJER.html",
+       "y": 2172,
+       "target": null
+      }
+     ],
+     "svar": [
+      "vaerktoejer udgiv",
+      "vaerktoejer ret:"
+     ]
+    },
+    {
+     "overskrift": "4Instagram, opslag 1-6 og 7-12",
+     "y": 2392,
+     "links": [
+      {
+       "href": "LAES-INSTAGRAM.html",
+       "tekst": "Åbn LAES-INSTAGRAM.html (1-6)",
+       "y": 2799,
+       "target": null
+      },
+      {
+       "href": "LAES-INSTAGRAM-2.html",
+       "tekst": "Åbn LAES-INSTAGRAM-2.html (7-12)",
+       "y": 2959,
+       "target": null
+      }
+     ],
+     "svar": [
+      "instagram ok 1-6",
+      "instagram ret N:",
+      "instagram ok 7-12"
+     ]
+    },
+    {
+     "overskrift": "5Filmklip til Mål dit billede",
+     "y": 3225,
+     "links": [
+      {
+       "href": "FILM-KLIP.html",
+       "tekst": "Åbn FILM-KLIP.html",
+       "y": 3659,
+       "target": null
+      }
+     ],
+     "svar": [
+      "film klip lagt: 1 2 3 4 5"
+     ]
+    },
+    {
+     "overskrift": "6Dødløft og bænk: de 18 svar",
+     "y": 3879,
+     "links": [
+      {
+       "href": "LAES-DOEDLOEFT-BAENK.html",
+       "tekst": "Åbn LAES-DOEDLOEFT-BAENK.html",
+       "y": 4234,
+       "target": null
+      }
+     ],
+     "svar": [
+      "dødløft: 1 2 3 4 5 6 7 8 9 10",
+      "bænk: 1 2 3 4 5 6 7 8",
+      "dødløft: 1b 2c 3 forslag 4a",
+      "dødløft: forslag",
+      "bænk: forslag"
+     ]
+    },
+    {
+     "overskrift": "7Matematik: M14",
+     "y": 4613,
+     "links": [
+      {
+       "href": "MARCS-VALG-MATEMATIK.html",
+       "tekst": "Åbn MARCS-VALG-MATEMATIK.html",
+       "y": 5021,
+       "target": null
+      }
+     ],
+     "svar": [
+      "M14 halvdelen"
+     ]
+    }
+   ],
+   "alleLinks": [
+    "LAES-APP.html",
+    "LAES-SQUAT.html",
+    "LAES-VAERKTOEJER.html",
+    "LAES-INSTAGRAM.html",
+    "LAES-INSTAGRAM-2.html",
+    "FILM-KLIP.html",
+    "LAES-DOEDLOEFT-BAENK.html",
+    "MARCS-VALG-MATEMATIK.html"
+   ],
+   "knapper": [
+    "Kopiér",
+    "Kopiér",
+    "Kopiér",
+    "Kopiér",
+    "Kopiér",
+    "Kopiér",
+    "Kopiér",
+    "Kopiér",
+    "Kopiér",
+    "Kopiér",
+    "Kopiér",
+    "Kopiér",
+    "Kopiér",
+    "Kopiér"
+   ],
+   "forsteSkaerm": "Start her: dagens sider, én ad gangen\n\nTil Marc. Syv opgaver i den rækkefølge, de bør tages. Hvert kort siger, hvad det er, hvad Bhishak har sagt, hvor lang tid det tager, og hvilken linje du skriver tilbage til Dhruva. Tryk Kopiér, og sæt linjen ind i chatten. Sæt flueben, når du er færdig; det huskes kun i denne browser.\n\n0 af 7 klaret\n\n1Appen til atleterne\nHvad\nAlt det nye i atleternes app (rek",
+   "instagram712IkkeJa": true,
+   "naevnerKritik": [
+    "kritik 464",
+    "kritik 622",
+    "kritik 632",
+    "kritik 639",
+    "kritik 631",
+    "kritik 617"
+   ],
+   "ordPaaSiden": {
+    "artikel": true,
+    "vaerktoej": true,
+    "instagram": true,
+    "ikkeOnline": false,
+    "entropicoachingDk": false
+   },
+   "jsFejl": [],
+   "skaerme": 6.9
+  },
+  {
+   "bredde": 1280,
+   "titel": "Start her",
+   "hoejde": 3693,
+   "sidelaens": false,
+   "kort": [
+    {
+     "overskrift": "1Appen til atleterne",
+     "y": 223,
+     "links": [
+      {
+       "href": "LAES-APP.html",
+       "tekst": "Åbn LAES-APP.html",
+       "y": 422,
+       "target": null
+      }
+     ],
+     "svar": [
+      "klar til app"
+     ]
+    },
+    {
+     "overskrift": "2Squat-artiklen",
+     "y": 613,
+     "links": [
+      {
+       "href": "LAES-SQUAT.html",
+       "tekst": "Åbn LAES-SQUAT.html",
+       "y": 838,
+       "target": null
+      }
+     ],
+     "svar": [
+      "squat kapitel 6: ny",
+      "squat kapitel 6: gammel",
+      "squat udgiv 28. sep 2026",
+      "squat udgiv, men <nr>: <dit valg>"
+     ]
+    },
+    {
+     "overskrift": "3Værktøjssiden",
+     "y": 1153,
+     "links": [
+      {
+       "href": "LAES-VAERKTOEJER.html",
+       "tekst": "Åbn LAES-VAERKTOEJER.html",
+       "y": 1378,
+       "target": null
+      }
+     ],
+     "svar": [
+      "vaerktoejer udgiv",
+      "vaerktoejer ret:"
+     ]
+    },
+    {
+     "overskrift": "4Instagram, opslag 1-6 og 7-12",
+     "y": 1598,
+     "links": [
+      {
+       "href": "LAES-INSTAGRAM.html",
+       "tekst": "Åbn LAES-INSTAGRAM.html (1-6)",
+       "y": 1850,
+       "target": null
+      },
+      {
+       "href": "LAES-INSTAGRAM-2.html",
+       "tekst": "Åbn LAES-INSTAGRAM-2.html (7-12)",
+       "y": 2010,
+       "target": null
+      }
+     ],
+     "svar": [
+      "instagram ok 1-6",
+      "instagram ret N:",
+      "instagram ok 7-12"
+     ]
+    },
+    {
+     "overskrift": "5Filmklip til Mål dit billede",
+     "y": 2253,
+     "links": [
+      {
+       "href": "FILM-KLIP.html",
+       "tekst": "Åbn FILM-KLIP.html",
+       "y": 2504,
+       "target": null
+      }
+     ],
+     "svar": [
+      "film klip lagt: 1 2 3 4 5"
+     ]
+    },
+    {
+     "overskrift": "6Dødløft og bænk: de 18 svar",
+     "y": 2680,
+     "links": [
+      {
+       "href": "LAES-DOEDLOEFT-BAENK.html",
+       "tekst": "Åbn LAES-DOEDLOEFT-BAENK.html",
+       "y": 2905,
+       "target": null
+      }
+     ],
+     "svar": [
+      "dødløft: 1 2 3 4 5 6 7 8 9 10",
+      "bænk: 1 2 3 4 5 6 7 8",
+      "dødløft: 1b 2c 3 forslag 4a",
+      "dødløft: forslag",
+      "bænk: forslag"
+     ]
+    },
+    {
+     "overskrift": "7Matematik: M14",
+     "y": 3196,
+     "links": [
+      {
+       "href": "MARCS-VALG-MATEMATIK.html",
+       "tekst": "Åbn MARCS-VALG-MATEMATIK.html",
+       "y": 3421,
+       "target": null
+      }
+     ],
+     "svar": [
+      "M14 halvdelen"
+     ]
+    }
+   ],
+   "alleLinks": [
+    "LAES-APP.html",
+    "LAES-SQUAT.html",
+    "LAES-VAERKTOEJER.html",
+    "LAES-INSTAGRAM.html",
+    "LAES-INSTAGRAM-2.html",
+    "FILM-KLIP.html",
+    "LAES-DOEDLOEFT-BAENK.html",
+    "MARCS-VALG-MATEMATIK.html"
+   ],
+   "knapper": [
+    "Kopiér",
+    "Kopiér",
+    "Kopiér",
+    "Kopiér",
+    "Kopiér",
+    "Kopiér",
+    "Kopiér",
+    "Kopiér",
+    "Kopiér",
+    "Kopiér",
+    "Kopiér",
+    "Kopiér",
+    "Kopiér",
+    "Kopiér"
+   ],
+   "forsteSkaerm": "Start her: dagens sider, én ad gangen\n\nTil Marc. Syv opgaver i den rækkefølge, de bør tages. Hvert kort siger, hvad det er, hvad Bhishak har sagt, hvor lang tid det tager, og hvilken linje du skriver tilbage til Dhruva. Tryk Kopiér, og sæt linjen ind i chatten. Sæt flueben, når du er færdig; det huskes kun i denne browser.\n\n0 af 7 klaret\n\n1Appen til atleterne\nHvad\nAlt det nye i atleternes app (rek",
+   "instagram712IkkeJa": true,
+   "naevnerKritik": [
+    "kritik 464",
+    "kritik 622",
+    "kritik 632",
+    "kritik 639",
+    "kritik 631",
+    "kritik 617"
+   ],
+   "ordPaaSiden": {
+    "artikel": true,
+    "vaerktoej": true,
+    "instagram": true,
+    "ikkeOnline": false,
+    "entropicoachingDk": false
+   },
+   "jsFejl": [],
+   "skaerme": 4.1
+  }
+ ],
+ "links": [
+  {
+   "href": "LAES-APP.html",
+   "findes": true,
+   "mb": 0.01,
+   "relativ": true,
+   "ms390": 143,
+   "s390": {
+    "url": "file:///C:/Users/Entropi/Desktop/LAES-APP.html",
+    "titel": "Appens push",
+    "billeder": 0,
+    "brudte": 0,
+    "tekstLaengde": 6164,
+    "jsFejl": []
+   },
+   "ms1280": 124,
+   "s1280": {
+    "url": "file:///C:/Users/Entropi/Desktop/LAES-APP.html",
+    "titel": "Appens push",
+    "billeder": 0,
+    "brudte": 0,
+    "tekstLaengde": 6164,
+    "jsFejl": []
+   }
+  },
+  {
+   "href": "LAES-SQUAT.html",
+   "findes": true,
+   "mb": 5.18,
+   "relativ": true,
+   "ms390": 425,
+   "s390": {
+    "url": "file:///C:/Users/Entropi/Desktop/LAES-SQUAT.html",
+    "titel": "Squat-artiklen: læs og vælg",
+    "billeder": 35,
+    "brudte": 0,
+    "tekstLaengde": 74216,
+    "jsFejl": []
+   },
+   "ms1280": 453,
+   "s1280": {
+    "url": "file:///C:/Users/Entropi/Desktop/LAES-SQUAT.html",
+    "titel": "Squat-artiklen: læs og vælg",
+    "billeder": 35,
+    "brudte": 0,
+    "tekstLaengde": 74329,
+    "jsFejl": []
+   }
+  },
+  {
+   "href": "LAES-VAERKTOEJER.html",
+   "findes": true,
+   "mb": 4.14,
+   "relativ": true,
+   "ms390": 230,
+   "s390": {
+    "url": "file:///C:/Users/Entropi/Desktop/LAES-VAERKTOEJER.html",
+    "titel": "Værktøjssiden: læs og vælg",
+    "billeder": 15,
+    "brudte": 0,
+    "tekstLaengde": 23426,
+    "jsFejl": []
+   },
+   "ms1280": 214,
+   "s1280": {
+    "url": "file:///C:/Users/Entropi/Desktop/LAES-VAERKTOEJER.html",
+    "titel": "Værktøjssiden: læs og vælg",
+    "billeder": 15,
+    "brudte": 0,
+    "tekstLaengde": 23426,
+    "jsFejl": []
+   }
+  },
+  {
+   "href": "LAES-INSTAGRAM.html",
+   "findes": true,
+   "mb": 2.79,
+   "relativ": true,
+   "ms390": 229,
+   "s390": {
+    "url": "file:///C:/Users/Entropi/Desktop/LAES-INSTAGRAM.html",
+    "titel": "Instagram: seks opslag",
+    "billeder": 24,
+    "brudte": 0,
+    "tekstLaengde": 7589,
+    "jsFejl": []
+   },
+   "ms1280": 211,
+   "s1280": {
+    "url": "file:///C:/Users/Entropi/Desktop/LAES-INSTAGRAM.html",
+    "titel": "Instagram: seks opslag",
+    "billeder": 24,
+    "brudte": 0,
+    "tekstLaengde": 7589,
+    "jsFejl": []
+   }
+  },
+  {
+   "href": "LAES-INSTAGRAM-2.html",
+   "findes": true,
+   "mb": 2.12,
+   "relativ": true,
+   "ms390": 185,
+   "s390": {
+    "url": "file:///C:/Users/Entropi/Desktop/LAES-INSTAGRAM-2.html",
+    "titel": "Instagram 7-12",
+    "billeder": 20,
+    "brudte": 0,
+    "tekstLaengde": 7669,
+    "jsFejl": []
+   },
+   "ms1280": 174,
+   "s1280": {
+    "url": "file:///C:/Users/Entropi/Desktop/LAES-INSTAGRAM-2.html",
+    "titel": "Instagram 7-12",
+    "billeder": 20,
+    "brudte": 0,
+    "tekstLaengde": 7669,
+    "jsFejl": []
+   }
+  },
+  {
+   "href": "FILM-KLIP.html",
+   "findes": true,
+   "mb": 0.02,
+   "relativ": true,
+   "ms390": 136,
+   "s390": {
+    "url": "file:///C:/Users/Entropi/Desktop/FILM-KLIP.html",
+    "titel": "Film fem klip",
+    "billeder": 0,
+    "brudte": 0,
+    "tekstLaengde": 4895,
+    "jsFejl": []
+   },
+   "ms1280": 141,
+   "s1280": {
+    "url": "file:///C:/Users/Entropi/Desktop/FILM-KLIP.html",
+    "titel": "Film fem klip",
+    "billeder": 0,
+    "brudte": 0,
+    "tekstLaengde": 4895,
+    "jsFejl": []
+   }
+  },
+  {
+   "href": "LAES-DOEDLOEFT-BAENK.html",
+   "findes": true,
+   "mb": 1.15,
+   "relativ": true,
+   "ms390": 306,
+   "s390": {
+    "url": "file:///C:/Users/Entropi/Desktop/LAES-DOEDLOEFT-BAENK.html",
+    "titel": "Dødløft og bænk: dine svar",
+    "billeder": 34,
+    "brudte": 0,
+    "tekstLaengde": 55453,
+    "jsFejl": []
+   },
+   "ms1280": 331,
+   "s1280": {
+    "url": "file:///C:/Users/Entropi/Desktop/LAES-DOEDLOEFT-BAENK.html",
+    "titel": "Dødløft og bænk: dine svar",
+    "billeder": 34,
+    "brudte": 0,
+    "tekstLaengde": 55453,
+    "jsFejl": []
+   }
+  },
+  {
+   "href": "MARCS-VALG-MATEMATIK.html",
+   "findes": true,
+   "mb": 0.01,
+   "relativ": true,
+   "ms390": 123,
+   "s390": {
+    "url": "file:///C:/Users/Entropi/Desktop/MARCS-VALG-MATEMATIK.html",
+    "titel": "Matematik: Marcs to valg",
+    "billeder": 0,
+    "brudte": 0,
+    "tekstLaengde": 5686,
+    "jsFejl": []
+   },
+   "ms1280": 122,
+   "s1280": {
+    "url": "file:///C:/Users/Entropi/Desktop/MARCS-VALG-MATEMATIK.html",
+    "titel": "Matematik: Marcs to valg",
+    "billeder": 0,
+    "brudte": 0,
+    "tekstLaengde": 5686,
+    "jsFejl": []
+   }
+  }
+ ],
+ "svar": [
+  {
+   "kort": "1Appen til atleterne",
+   "linje": "klar til app",
+   "ordret": false,
+   "skabelon": false,
+   "kilder": [
+    "LAES-APP.html"
+   ]
+  },
+  {
+   "kort": "2Squat-artiklen",
+   "linje": "squat kapitel 6: ny",
+   "ordret": true,
+   "skabelon": true,
+   "kilder": [
+    "LAES-SQUAT.html"
+   ]
+  },
+  {
+   "kort": "2Squat-artiklen",
+   "linje": "squat kapitel 6: gammel",
+   "ordret": true,
+   "skabelon": true,
+   "kilder": [
+    "LAES-SQUAT.html"
+   ]
+  },
+  {
+   "kort": "2Squat-artiklen",
+   "linje": "squat udgiv 28. sep 2026",
+   "ordret": false,
+   "skabelon": true,
+   "kilder": [
+    "LAES-SQUAT.html"
+   ]
+  },
+  {
+   "kort": "2Squat-artiklen",
+   "linje": "squat udgiv, men <nr>: <dit valg>",
+   "ordret": true,
+   "skabelon": true,
+   "kilder": [
+    "LAES-SQUAT.html"
+   ]
+  },
+  {
+   "kort": "3Værktøjssiden",
+   "linje": "vaerktoejer udgiv",
+   "ordret": true,
+   "skabelon": true,
+   "kilder": [
+    "LAES-VAERKTOEJER.html"
+   ]
+  },
+  {
+   "kort": "3Værktøjssiden",
+   "linje": "vaerktoejer ret:",
+   "ordret": true,
+   "skabelon": true,
+   "kilder": [
+    "LAES-VAERKTOEJER.html"
+   ]
+  },
+  {
+   "kort": "4Instagram, opslag 1-6 og 7-12",
+   "linje": "instagram ok 1-6",
+   "ordret": true,
+   "skabelon": true,
+   "kilder": [
+    "LAES-INSTAGRAM.html",
+    "LAES-INSTAGRAM-2.html"
+   ]
+  },
+  {
+   "kort": "4Instagram, opslag 1-6 og 7-12",
+   "linje": "instagram ret N:",
+   "ordret": true,
+   "skabelon": true,
+   "kilder": [
+    "LAES-INSTAGRAM.html",
+    "LAES-INSTAGRAM-2.html"
+   ]
+  },
+  {
+   "kort": "4Instagram, opslag 1-6 og 7-12",
+   "linje": "instagram ok 7-12",
+   "ordret": true,
+   "skabelon": true,
+   "kilder": [
+    "LAES-INSTAGRAM.html",
+    "LAES-INSTAGRAM-2.html"
+   ]
+  },
+  {
+   "kort": "5Filmklip til Mål dit billede",
+   "linje": "film klip lagt: 1 2 3 4 5",
+   "ordret": false,
+   "skabelon": false,
+   "kilder": [
+    "FILM-KLIP.html"
+   ]
+  },
+  {
+   "kort": "6Dødløft og bænk: de 18 svar",
+   "linje": "dødløft: 1 2 3 4 5 6 7 8 9 10",
+   "ordret": false,
+   "skabelon": true,
+   "kilder": [
+    "LAES-DOEDLOEFT-BAENK.html"
+   ]
+  },
+  {
+   "kort": "6Dødløft og bænk: de 18 svar",
+   "linje": "bænk: 1 2 3 4 5 6 7 8",
+   "ordret": false,
+   "skabelon": true,
+   "kilder": [
+    "LAES-DOEDLOEFT-BAENK.html"
+   ]
+  },
+  {
+   "kort": "6Dødløft og bænk: de 18 svar",
+   "linje": "dødløft: 1b 2c 3 forslag 4a",
+   "ordret": true,
+   "skabelon": true,
+   "kilder": [
+    "LAES-DOEDLOEFT-BAENK.html"
+   ]
+  },
+  {
+   "kort": "6Dødløft og bænk: de 18 svar",
+   "linje": "dødløft: forslag",
+   "ordret": true,
+   "skabelon": true,
+   "kilder": [
+    "LAES-DOEDLOEFT-BAENK.html"
+   ]
+  },
+  {
+   "kort": "6Dødløft og bænk: de 18 svar",
+   "linje": "bænk: forslag",
+   "ordret": false,
+   "skabelon": true,
+   "kilder": [
+    "LAES-DOEDLOEFT-BAENK.html"
+   ]
+  },
+  {
+   "kort": "7Matematik: M14",
+   "linje": "M14 halvdelen",
+   "ordret": false,
+   "skabelon": false,
+   "kilder": [
+    "MARCS-VALG-MATEMATIK.html"
+   ]
+  }
+ ],
+ "leder": {
+  "390": {
+   "squat": {
+    "overskrift": "Hele artiklen, som den ville blive udgivet",
+    "y": 25874,
+    "hoejde": 76550,
+    "andel": 0.34,
+    "genvejYderst": 927,
+    "skaerme": 33.2
+   },
+   "vaerktoej": {
+    "links": [],
+    "iframes": 0,
+    "billeder": 15,
+    "adresseSomTekst": [
+     "entropicoaching.dk/vaerktoejer/",
+     "entropicoaching.dk/viden.html",
+     "entropicoaching.dk/assets/vaerktoejer/maal-billede/index.html"
+    ],
+    "knapper": 0
+   },
+   "LAES-INSTAGRAM.html": {
+    "billeder": 24,
+    "foersteY": 1206,
+    "hoejde": 8737,
+    "skaermeTilFoerste": 1.5
+   },
+   "LAES-INSTAGRAM-2.html": {
+    "billeder": 20,
+    "foersteY": 1074,
+    "hoejde": 8742,
+    "skaermeTilFoerste": 1.4
+   }
+  },
+  "1280": {
+   "squat": {
+    "overskrift": "Hele artiklen, som den ville blive udgivet",
+    "y": 17035,
+    "hoejde": 56686,
+    "andel": 0.3,
+    "genvejYderst": 611,
+    "skaerme": 18.9
+   },
+   "vaerktoej": {
+    "links": [],
+    "iframes": 0,
+    "billeder": 15,
+    "adresseSomTekst": [
+     "entropicoaching.dk/vaerktoejer/",
+     "entropicoaching.dk/viden.html",
+     "entropicoaching.dk/assets/vaerktoejer/maal-billede/index.html"
+    ],
+    "knapper": 0
+   },
+   "LAES-INSTAGRAM.html": {
+    "billeder": 24,
+    "foersteY": 808,
+    "hoejde": 8855,
+    "skaermeTilFoerste": 0.9
+   },
+   "LAES-INSTAGRAM-2.html": {
+    "billeder": 20,
+    "foersteY": 789,
+    "hoejde": 8884,
+    "skaermeTilFoerste": 0.9
+   }
+  }
+ },
+ "kort": [
+  {
+   "overskrift": "1Appen til atleterne",
+   "y390": 334,
+   "links": [
+    {
+     "href": "LAES-APP.html",
+     "tekst": "Åbn LAES-APP.html",
+     "y": 715,
+     "target": null
+    }
+   ],
+   "svar": [
+    "klar til app"
+   ]
+  },
+  {
+   "overskrift": "2Squat-artiklen",
+   "y390": 929,
+   "links": [
+    {
+     "href": "LAES-SQUAT.html",
+     "tekst": "Åbn LAES-SQUAT.html",
+     "y": 1362,
+     "target": null
+    }
+   ],
+   "svar": [
+    "squat kapitel 6: ny",
+    "squat kapitel 6: gammel",
+    "squat udgiv 28. sep 2026",
+    "squat udgiv, men <nr>: <dit valg>"
+   ]
+  },
+  {
+   "overskrift": "3Værktøjssiden",
+   "y390": 1791,
+   "links": [
+    {
+     "href": "LAES-VAERKTOEJER.html",
+     "tekst": "Åbn LAES-VAERKTOEJER.html",
+     "y": 2172,
+     "target": null
+    }
+   ],
+   "svar": [
+    "vaerktoejer udgiv",
+    "vaerktoejer ret:"
+   ]
+  },
+  {
+   "overskrift": "4Instagram, opslag 1-6 og 7-12",
+   "y390": 2392,
+   "links": [
+    {
+     "href": "LAES-INSTAGRAM.html",
+     "tekst": "Åbn LAES-INSTAGRAM.html (1-6)",
+     "y": 2799,
+     "target": null
+    },
+    {
+     "href": "LAES-INSTAGRAM-2.html",
+     "tekst": "Åbn LAES-INSTAGRAM-2.html (7-12)",
+     "y": 2959,
+     "target": null
+    }
+   ],
+   "svar": [
+    "instagram ok 1-6",
+    "instagram ret N:",
+    "instagram ok 7-12"
+   ]
+  },
+  {
+   "overskrift": "5Filmklip til Mål dit billede",
+   "y390": 3225,
+   "links": [
+    {
+     "href": "FILM-KLIP.html",
+     "tekst": "Åbn FILM-KLIP.html",
+     "y": 3659,
+     "target": null
+    }
+   ],
+   "svar": [
+    "film klip lagt: 1 2 3 4 5"
+   ]
+  },
+  {
+   "overskrift": "6Dødløft og bænk: de 18 svar",
+   "y390": 3879,
+   "links": [
+    {
+     "href": "LAES-DOEDLOEFT-BAENK.html",
+     "tekst": "Åbn LAES-DOEDLOEFT-BAENK.html",
+     "y": 4234,
+     "target": null
+    }
+   ],
+   "svar": [
+    "dødløft: 1 2 3 4 5 6 7 8 9 10",
+    "bænk: 1 2 3 4 5 6 7 8",
+    "dødløft: 1b 2c 3 forslag 4a",
+    "dødløft: forslag",
+    "bænk: forslag"
+   ]
+  },
+  {
+   "overskrift": "7Matematik: M14",
+   "y390": 4613,
+   "links": [
+    {
+     "href": "MARCS-VALG-MATEMATIK.html",
+     "tekst": "Åbn MARCS-VALG-MATEMATIK.html",
+     "y": 5021,
+     "target": null
+    }
+   ],
+   "svar": [
+    "M14 halvdelen"
+   ]
+  }
+ ],
+ "kunPaaStart": [
+  "klar til app",
+  "film klip lagt: 1 2 3 4 5",
+  "M14 halvdelen"
+ ],
+ "svarKunPaaStart": [
+  {
+   "kort": "1Appen til atleterne",
+   "linje": "klar til app",
+   "skabelon": false
+  },
+  {
+   "kort": "2Squat-artiklen",
+   "linje": "squat udgiv 28. sep 2026",
+   "skabelon": true
+  },
+  {
+   "kort": "5Filmklip til Mål dit billede",
+   "linje": "film klip lagt: 1 2 3 4 5",
+   "skabelon": false
+  },
+  {
+   "kort": "6Dødløft og bænk: de 18 svar",
+   "linje": "dødløft: 1 2 3 4 5 6 7 8 9 10",
+   "skabelon": true
+  },
+  {
+   "kort": "6Dødløft og bænk: de 18 svar",
+   "linje": "bænk: 1 2 3 4 5 6 7 8",
+   "skabelon": true
+  },
+  {
+   "kort": "6Dødløft og bænk: de 18 svar",
+   "linje": "bænk: forslag",
+   "skabelon": true
+  },
+  {
+   "kort": "7Matematik: M14",
+   "linje": "M14 halvdelen",
+   "skabelon": false
+  }
+ ],
+ "domme": {
+  "instagram712IkkeJa": true,
+  "naevnerKritik": [
+   "kritik 464",
+   "kritik 622",
+   "kritik 632",
+   "kritik 639",
+   "kritik 631",
+   "kritik 617"
+  ]
+ },
+ "matematik": {
+  "beder": true,
+  "ingenRegel": true,
+  "m14": false
+ },
+ "squat": {
+  "udgivForslag": true,
+  "udgivMen": true,
+  "vent": true,
+  "udgivDato": false,
+  "kapitel6": true,
+  "datoErValg3": true
+ },
+ "eksterne": [],
+ "tjek": [
+  {
+   "hvad": "START-HER-MARC: 7 kort med link, 0 JS-fejl og ingen sidelaens rulning paa 390 og 1280",
+   "ok": true,
+   "data": [
+    {
+     "b": 390,
+     "kort": 7,
+     "skaerme": 6.9,
+     "hoejde": 5406
+    },
+    {
+     "b": 1280,
+     "kort": 7,
+     "skaerme": 4.1,
+     "hoejde": 3693
+    }
+   ]
+  },
+  {
+   "hvad": "alle links er relative, filen findes paa skrivebordet, og et tryk aabner den (titel, 0 brudte billeder, 0 JS-fejl) paa 390 og 1280",
+   "ok": true,
+   "data": [
+    "LAES-APP.html 0.01 MB, 143/124 ms, \"Appens push\"",
+    "LAES-SQUAT.html 5.18 MB, 425/453 ms, \"Squat-artiklen: læs og vælg\"",
+    "LAES-VAERKTOEJER.html 4.14 MB, 230/214 ms, \"Værktøjssiden: læs og vælg\"",
+    "LAES-INSTAGRAM.html 2.79 MB, 229/211 ms, \"Instagram: seks opslag\"",
+    "LAES-INSTAGRAM-2.html 2.12 MB, 185/174 ms, \"Instagram 7-12\"",
+    "FILM-KLIP.html 0.02 MB, 136/141 ms, \"Film fem klip\"",
+    "LAES-DOEDLOEFT-BAENK.html 1.15 MB, 306/331 ms, \"Dødløft og bænk: dine svar\"",
+    "MARCS-VALG-MATEMATIK.html 0.01 MB, 123/122 ms, \"Matematik: Marcs to valg\""
+   ]
+  },
+  {
+   "hvad": "svar-linjer, der hverken ordret eller som skabelon staar paa LAES-siden, kortet linker til: praecis klar til app, film klip lagt og M14 halvdelen (fund H3)",
+   "ok": true,
+   "data": [
+    "klar til app",
+    "film klip lagt: 1 2 3 4 5",
+    "M14 halvdelen"
+   ]
+  },
+  {
+   "hvad": "kortene naevner kritik 464, 622, 631, 632 og 639 og siger 7-12 ikke ja endnu (645 er efter siden; fund H4)",
+   "ok": true,
+   "data": {
+    "instagram712IkkeJa": true,
+    "naevnerKritik": [
+     "kritik 464",
+     "kritik 622",
+     "kritik 632",
+     "kritik 639",
+     "kritik 631",
+     "kritik 617"
+    ]
+   }
+  },
+  {
+   "hvad": "squat: START-HER-linjen \"squat udgiv 28. sep 2026\" er ikke en form paa LAES-SQUAT; den har squat udgiv forslag / udgiv, men / vent, og datoen er valg 3 (fund H2)",
+   "ok": true,
+   "data": {
+    "udgivForslag": true,
+    "udgivMen": true,
+    "vent": true,
+    "udgivDato": false,
+    "kapitel6": true,
+    "datoErValg3": true
+   }
+  },
+  {
+   "hvad": "matematik: MARCS-VALG-MATEMATIK beder om \"matematik: M2 ?, N1 ?\" og naevner ikke M14 (fund H5)",
+   "ok": true,
+   "data": {
+    "beder": true,
+    "ingenRegel": true,
+    "m14": false
+   }
+  },
+  {
+   "hvad": "LAES-SQUAT har \"Hele artiklen, som den ville blive udgivet\" (oplysning: hvor langt nede)",
+   "ok": true,
+   "data": {
+    "390": {
+     "overskrift": "Hele artiklen, som den ville blive udgivet",
+     "y": 25874,
+     "hoejde": 76550,
+     "andel": 0.34,
+     "genvejYderst": 927,
+     "skaerme": 33.2
+    },
+    "1280": {
+     "overskrift": "Hele artiklen, som den ville blive udgivet",
+     "y": 17035,
+     "hoejde": 56686,
+     "andel": 0.3,
+     "genvejYderst": 611,
+     "skaerme": 18.9
+    }
+   }
+  },
+  {
+   "hvad": "LAES-VAERKTOEJER (oplysning): links til vaerktoejet, iframes og adresser som tekst",
+   "ok": true,
+   "data": {
+    "links": [],
+    "iframes": 0,
+    "billeder": 15,
+    "adresseSomTekst": [
+     "entropicoaching.dk/vaerktoejer/",
+     "entropicoaching.dk/viden.html",
+     "entropicoaching.dk/assets/vaerktoejer/maal-billede/index.html"
+    ],
+    "knapper": 0
+   }
+  },
+  {
+   "hvad": "LAES-INSTAGRAM og -2: slides indlejret (oplysning: skaerme til foerste slide paa 390)",
+   "ok": true,
+   "data": {
+    "i1": {
+     "billeder": 24,
+     "foersteY": 1206,
+     "hoejde": 8737,
+     "skaermeTilFoerste": 1.5
+    },
+    "i2": {
+     "billeder": 20,
+     "foersteY": 1074,
+     "hoejde": 8742,
+     "skaermeTilFoerste": 1.4
+    }
+   }
+  },
+  {
+   "hvad": "0 kald ud af huset fra START-HER og LAES-siderne (alle afbrudt)",
+   "ok": true,
+   "data": []
+  }
+ ]
+}
