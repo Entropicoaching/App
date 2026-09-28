@@ -1,0 +1,5816 @@
+{
+ "spil": "eb87746",
+ "T": 1790582400000,
+ "proeve": {
+  "svar-390": {
+   "bredde": 390,
+   "redukt": false,
+   "foer": {
+    "chip": {
+     "top": 540,
+     "h": 26,
+     "w": 126,
+     "talPx": "15px",
+     "navnPx": "12px",
+     "bjaelkeW": 36,
+     "rolle": null,
+     "tag": "P",
+     "cursor": "default"
+    },
+    "knapTop": 652,
+    "skaerm": 844,
+    "opgaveTekstPx": "16px"
+   },
+   "chipFoer": {
+    "id": "broeker",
+    "tal": "0",
+    "tekst": "Brøker 0"
+   },
+   "xpFoer": "0 erfaring",
+   "efterTryk": {
+    "chip": {
+     "id": "broeker",
+     "tal": "0",
+     "tekst": "Brøker 0"
+    },
+    "xp": "0 erfaring"
+   },
+   "efterForkert": {
+    "chip": {
+     "id": "broeker",
+     "tal": "0",
+     "tekst": "Brøker 0"
+    },
+    "xp": "0 erfaring",
+    "flyvere": []
+   },
+   "film": [
+    {
+     "t": 2,
+     "tal": "0",
+     "fly": null,
+     "xp": null,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 20,
+     "tal": "0",
+     "fly": null,
+     "xp": null,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 35,
+     "tal": "0",
+     "fly": null,
+     "xp": null,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 53,
+     "tal": "0",
+     "fly": null,
+     "xp": null,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 71,
+     "tal": "0",
+     "fly": null,
+     "xp": null,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 85,
+     "tal": "0",
+     "fly": null,
+     "xp": null,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 103,
+     "tal": "0",
+     "fly": null,
+     "xp": null,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 120,
+     "tal": "0",
+     "fly": null,
+     "xp": null,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 135,
+     "tal": "0",
+     "fly": null,
+     "xp": null,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 164,
+     "tal": "0",
+     "fly": {
+      "y": 598,
+      "op": "1"
+     },
+     "xp": 598,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 173,
+     "tal": "0",
+     "fly": {
+      "y": 598,
+      "op": "1"
+     },
+     "xp": 598,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 187,
+     "tal": "0",
+     "fly": {
+      "y": 598,
+      "op": "1"
+     },
+     "xp": 463,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 202,
+     "tal": "0",
+     "fly": {
+      "y": 594,
+      "op": "0.999356"
+     },
+     "xp": 329,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 219,
+     "tal": "0",
+     "fly": {
+      "y": 589,
+      "op": "0.997497"
+     },
+     "xp": 201,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 236,
+     "tal": "0",
+     "fly": {
+      "y": 584,
+      "op": "0.994478"
+     },
+     "xp": 78,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 253,
+     "tal": "0",
+     "fly": {
+      "y": 579,
+      "op": "0.990377"
+     },
+     "xp": -37,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 269,
+     "tal": "0",
+     "fly": {
+      "y": 574,
+      "op": "0.98529"
+     },
+     "xp": -142,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 287,
+     "tal": "0",
+     "fly": {
+      "y": 569,
+      "op": "0.979213"
+     },
+     "xp": -239,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 303,
+     "tal": "0",
+     "fly": {
+      "y": 563,
+      "op": "0.972223"
+     },
+     "xp": -327,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 319,
+     "tal": "0",
+     "fly": {
+      "y": 558,
+      "op": "0.964369"
+     },
+     "xp": -405,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 336,
+     "tal": "0",
+     "fly": {
+      "y": 553,
+      "op": "0.955746"
+     },
+     "xp": -475,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 354,
+     "tal": "0",
+     "fly": {
+      "y": 548,
+      "op": "0.946289"
+     },
+     "xp": -537,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 369,
+     "tal": "0",
+     "fly": {
+      "y": 543,
+      "op": "0.936083"
+     },
+     "xp": -593,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 386,
+     "tal": "0",
+     "fly": {
+      "y": 538,
+      "op": "0.925229"
+     },
+     "xp": -642,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 403,
+     "tal": "0",
+     "fly": {
+      "y": 534,
+      "op": "0.913696"
+     },
+     "xp": -686,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 420,
+     "tal": "0",
+     "fly": {
+      "y": 530,
+      "op": "0.901437"
+     },
+     "xp": -725,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 435,
+     "tal": "0",
+     "fly": {
+      "y": 526,
+      "op": "0.888545"
+     },
+     "xp": -760,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 453,
+     "tal": "0",
+     "fly": {
+      "y": 522,
+      "op": "0.875042"
+     },
+     "xp": -792,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 470,
+     "tal": "0",
+     "fly": {
+      "y": 519,
+      "op": "0.861038"
+     },
+     "xp": -820,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 485,
+     "tal": "0",
+     "fly": {
+      "y": 516,
+      "op": "0.846383"
+     },
+     "xp": -845,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 503,
+     "tal": "0",
+     "fly": {
+      "y": 513,
+      "op": "0.83118"
+     },
+     "xp": -868,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 521,
+     "tal": "0",
+     "fly": {
+      "y": 511,
+      "op": "0.815445"
+     },
+     "xp": -889,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 536,
+     "tal": "0",
+     "fly": {
+      "y": 509,
+      "op": "0.799294"
+     },
+     "xp": -907,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 556,
+     "tal": "0",
+     "fly": {
+      "y": 506,
+      "op": "0.782547"
+     },
+     "xp": -923,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 601,
+     "tal": "0",
+     "fly": {
+      "y": 503,
+      "op": "0.747716"
+     },
+     "xp": -951,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 611,
+     "tal": "0",
+     "fly": {
+      "y": 502,
+      "op": "0.729662"
+     },
+     "xp": -963,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 620,
+     "tal": "0",
+     "fly": {
+      "y": 500,
+      "op": "0.711051"
+     },
+     "xp": -974,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 662,
+     "tal": "0",
+     "fly": {
+      "y": 498,
+      "op": "0.672639"
+     },
+     "xp": -992,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 672,
+     "tal": "0",
+     "fly": {
+      "y": 497,
+      "op": "0.65262"
+     },
+     "xp": -999,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 688,
+     "tal": "0",
+     "fly": {
+      "y": 496,
+      "op": "0.632552"
+     },
+     "xp": -1006,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 704,
+     "tal": "0",
+     "fly": {
+      "y": 495,
+      "op": "0.611712"
+     },
+     "xp": -1012,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 719,
+     "tal": "0",
+     "fly": {
+      "y": 494,
+      "op": "0.590723"
+     },
+     "xp": -1017,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 736,
+     "tal": "0",
+     "fly": {
+      "y": 494,
+      "op": "0.569215"
+     },
+     "xp": -1021,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 753,
+     "tal": "0",
+     "fly": {
+      "y": 493,
+      "op": "0.547451"
+     },
+     "xp": -1025,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 770,
+     "tal": "0",
+     "fly": {
+      "y": 492,
+      "op": "0.525172"
+     },
+     "xp": -1028,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 786,
+     "tal": "0",
+     "fly": {
+      "y": 492,
+      "op": "0.502649"
+     },
+     "xp": -1030,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 803,
+     "tal": "0",
+     "fly": {
+      "y": 492,
+      "op": "0.479611"
+     },
+     "xp": -1032,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 819,
+     "tal": "0",
+     "fly": {
+      "y": 491,
+      "op": "0.456195"
+     },
+     "xp": -1034,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 836,
+     "tal": "0",
+     "fly": {
+      "y": 491,
+      "op": "0.4324"
+     },
+     "xp": -1035,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 853,
+     "tal": "0",
+     "fly": {
+      "y": 491,
+      "op": "0.408225"
+     },
+     "xp": -1035,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 869,
+     "tal": "0",
+     "fly": {
+      "y": 490,
+      "op": "0.383814"
+     },
+     "xp": -1036,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 886,
+     "tal": "0",
+     "fly": {
+      "y": 490,
+      "op": "0.358865"
+     },
+     "xp": -1036,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 903,
+     "tal": "0",
+     "fly": {
+      "y": 490,
+      "op": "0.33367"
+     },
+     "xp": -1036,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 920,
+     "tal": "0",
+     "fly": {
+      "y": 490,
+      "op": "0.307908"
+     },
+     "xp": null,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 936,
+     "tal": "0",
+     "fly": {
+      "y": 490,
+      "op": "0.281708"
+     },
+     "xp": null,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 952,
+     "tal": "0",
+     "fly": {
+      "y": 490,
+      "op": "0.255194"
+     },
+     "xp": null,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 972,
+     "tal": "0",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 985,
+     "tal": "0",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1003,
+     "tal": "0",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1020,
+     "tal": "0",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1035,
+     "tal": "1",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1053,
+     "tal": "1",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1069,
+     "tal": "1",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1085,
+     "tal": "1",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1103,
+     "tal": "1",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1119,
+     "tal": "2",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1135,
+     "tal": "2",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1153,
+     "tal": "2",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1170,
+     "tal": "2",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1187,
+     "tal": "3",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1203,
+     "tal": "3",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1219,
+     "tal": "3",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1237,
+     "tal": "3",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1252,
+     "tal": "3",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1269,
+     "tal": "4",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1285,
+     "tal": "4",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1303,
+     "tal": "4",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1320,
+     "tal": "4",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1335,
+     "tal": "4",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1352,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1369,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1386,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1402,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1418,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1436,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1452,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1469,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1486,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1502,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1518,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1536,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1552,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1569,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1586,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1602,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1619,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1636,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1652,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1668,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1687,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1702,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1719,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1736,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1752,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1770,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1785,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1802,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    }
+   ],
+   "flyvere": [
+    "erfaring-flyver",
+    "faerdighed-flyver",
+    {
+     "t": 162,
+     "klasse": "erfaring-flyver",
+     "tekst": "+5"
+    },
+    {
+     "t": 162,
+     "klasse": "faerdighed-flyver",
+     "tekst": "+5"
+    }
+   ],
+   "chipEfter": {
+    "id": "broeker",
+    "tal": "5",
+    "tekst": "Brøker 5"
+   },
+   "xpEfter": "0 erfaring",
+   "animationerIalt": 0,
+   "naeste": [
+    {
+     "foer": "Brøker 5",
+     "efter": "Brøker 15"
+    },
+    {
+     "foer": "Brøker 15",
+     "efter": "Brøker 25"
+    },
+    {
+     "foer": "Brøker 25",
+     "efter": "Brøker 30"
+    }
+   ],
+   "sidefejl": [],
+   "vandret": true
+  },
+  "svar-390-rm": {
+   "bredde": 390,
+   "redukt": true,
+   "foer": {
+    "chip": {
+     "top": 544,
+     "h": 26,
+     "w": 126,
+     "talPx": "15px",
+     "navnPx": "12px",
+     "bjaelkeW": 36,
+     "rolle": null,
+     "tag": "P",
+     "cursor": "default"
+    },
+    "knapTop": 656,
+    "skaerm": 844,
+    "opgaveTekstPx": "16px"
+   },
+   "chipFoer": {
+    "id": "broeker",
+    "tal": "0",
+    "tekst": "Brøker 0"
+   },
+   "xpFoer": "0 erfaring",
+   "efterTryk": {
+    "chip": {
+     "id": "broeker",
+     "tal": "0",
+     "tekst": "Brøker 0"
+    },
+    "xp": "0 erfaring"
+   },
+   "efterForkert": {
+    "chip": {
+     "id": "broeker",
+     "tal": "0",
+     "tekst": "Brøker 0"
+    },
+    "xp": "0 erfaring",
+    "flyvere": []
+   },
+   "film": [
+    {
+     "t": 0,
+     "tal": "0",
+     "fly": null,
+     "xp": null,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 10,
+     "tal": "0",
+     "fly": null,
+     "xp": null,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 27,
+     "tal": "0",
+     "fly": null,
+     "xp": null,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 43,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 60,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 77,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 94,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 110,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 126,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 144,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 161,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 177,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 194,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 211,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 227,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 243,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 261,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 276,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 293,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 310,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 327,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 345,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 360,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 377,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 393,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 410,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 427,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 443,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 460,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 477,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 494,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 511,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 527,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 544,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 560,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 578,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 593,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 610,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 627,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 644,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 660,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 677,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 694,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 710,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 726,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 744,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 761,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 776,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 793,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 810,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 827,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 844,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 860,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 877,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 894,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 910,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 927,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 943,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 960,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 977,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 994,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1010,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1027,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1044,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1060,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1078,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1093,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1112,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1127,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1143,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1160,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1176,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1194,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1210,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1227,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1245,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1260,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1277,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1294,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1310,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1326,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1344,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1360,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1376,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1393,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1410,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1426,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1444,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1460,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1478,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1494,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1510,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1527,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1543,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1561,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1577,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1594,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1611,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1627,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1643,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1662,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1677,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1693,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1710,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1728,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1744,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1760,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1777,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1794,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1810,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    }
+   ],
+   "flyvere": [],
+   "chipEfter": {
+    "id": "broeker",
+    "tal": "5",
+    "tekst": "Brøker 5"
+   },
+   "xpEfter": "0 erfaring",
+   "animationerIalt": 0,
+   "naeste": [
+    {
+     "foer": "Brøker 5",
+     "efter": "Brøker 15"
+    },
+    {
+     "foer": "Brøker 15",
+     "efter": "Brøker 25"
+    },
+    {
+     "foer": "Brøker 25",
+     "efter": "Brøker 30"
+    }
+   ],
+   "sidefejl": [],
+   "vandret": true
+  },
+  "svar-1280": {
+   "bredde": 1280,
+   "redukt": false,
+   "foer": {
+    "chip": {
+     "top": 545,
+     "h": 26,
+     "w": 126,
+     "talPx": "15px",
+     "navnPx": "12px",
+     "bjaelkeW": 36,
+     "rolle": null,
+     "tag": "P",
+     "cursor": "default"
+    },
+    "knapTop": 633,
+    "skaerm": 900,
+    "opgaveTekstPx": "16px"
+   },
+   "chipFoer": {
+    "id": "broeker",
+    "tal": "0",
+    "tekst": "Brøker 0"
+   },
+   "xpFoer": "0 erfaring",
+   "efterTryk": {
+    "chip": {
+     "id": "broeker",
+     "tal": "0",
+     "tekst": "Brøker 0"
+    },
+    "xp": "0 erfaring"
+   },
+   "efterForkert": {
+    "chip": {
+     "id": "broeker",
+     "tal": "0",
+     "tekst": "Brøker 0"
+    },
+    "xp": "0 erfaring",
+    "flyvere": []
+   },
+   "film": [
+    {
+     "t": 3,
+     "tal": "0",
+     "fly": null,
+     "xp": null,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 20,
+     "tal": "0",
+     "fly": null,
+     "xp": null,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 36,
+     "tal": "0",
+     "fly": null,
+     "xp": null,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 53,
+     "tal": "0",
+     "fly": null,
+     "xp": null,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 70,
+     "tal": "0",
+     "fly": null,
+     "xp": null,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 109,
+     "tal": "0",
+     "fly": {
+      "y": 654,
+      "op": "1"
+     },
+     "xp": 654,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 115,
+     "tal": "0",
+     "fly": {
+      "y": 654,
+      "op": "1"
+     },
+     "xp": 654,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 121,
+     "tal": "0",
+     "fly": {
+      "y": 654,
+      "op": "1"
+     },
+     "xp": 654,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 171,
+     "tal": "0",
+     "fly": {
+      "y": 654,
+      "op": "1"
+     },
+     "xp": 355,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 189,
+     "tal": "0",
+     "fly": {
+      "y": 650,
+      "op": "0.999354"
+     },
+     "xp": 75,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 217,
+     "tal": "0",
+     "fly": {
+      "y": 647,
+      "op": "0.997492"
+     },
+     "xp": -52,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 236,
+     "tal": "0",
+     "fly": {
+      "y": 639,
+      "op": "0.990395"
+     },
+     "xp": -277,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 262,
+     "tal": "0",
+     "fly": {
+      "y": 635,
+      "op": "0.985278"
+     },
+     "xp": -375,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 288,
+     "tal": "0",
+     "fly": {
+      "y": 627,
+      "op": "0.972252"
+     },
+     "xp": -539,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 316,
+     "tal": "0",
+     "fly": {
+      "y": 623,
+      "op": "0.964401"
+     },
+     "xp": -609,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 343,
+     "tal": "0",
+     "fly": {
+      "y": 615,
+      "op": "0.946268"
+     },
+     "xp": -726,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 374,
+     "tal": "0",
+     "fly": {
+      "y": 607,
+      "op": "0.925272"
+     },
+     "xp": -818,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 397,
+     "tal": "0",
+     "fly": {
+      "y": 604,
+      "op": "0.913599"
+     },
+     "xp": -858,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 441,
+     "tal": "0",
+     "fly": {
+      "y": 595,
+      "op": "0.875095"
+     },
+     "xp": -952,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 466,
+     "tal": "0",
+     "fly": {
+      "y": 592,
+      "op": "0.861007"
+     },
+     "xp": -977,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 470,
+     "tal": "0",
+     "fly": {
+      "y": 590,
+      "op": "0.846441"
+     },
+     "xp": -1000,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 500,
+     "tal": "0",
+     "fly": {
+      "y": 588,
+      "op": "0.831147"
+     },
+     "xp": -1020,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 548,
+     "tal": "0",
+     "fly": {
+      "y": 583,
+      "op": "0.782612"
+     },
+     "xp": -1070,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 558,
+     "tal": "0",
+     "fly": {
+      "y": 581,
+      "op": "0.765381"
+     },
+     "xp": -1083,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 576,
+     "tal": "0",
+     "fly": {
+      "y": 580,
+      "op": "0.747677"
+     },
+     "xp": -1095,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 588,
+     "tal": "0",
+     "fly": {
+      "y": 579,
+      "op": "0.729622"
+     },
+     "xp": -1106,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 604,
+     "tal": "0",
+     "fly": {
+      "y": 578,
+      "op": "0.71101"
+     },
+     "xp": -1115,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 620,
+     "tal": "0",
+     "fly": {
+      "y": 577,
+      "op": "0.692075"
+     },
+     "xp": -1123,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 644,
+     "tal": "0",
+     "fly": {
+      "y": 576,
+      "op": "0.672596"
+     },
+     "xp": -1131,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 654,
+     "tal": "0",
+     "fly": {
+      "y": 575,
+      "op": "0.652817"
+     },
+     "xp": -1137,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 670,
+     "tal": "0",
+     "fly": {
+      "y": 574,
+      "op": "0.632385"
+     },
+     "xp": -1143,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 687,
+     "tal": "0",
+     "fly": {
+      "y": 574,
+      "op": "0.611792"
+     },
+     "xp": -1147,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 703,
+     "tal": "0",
+     "fly": {
+      "y": 573,
+      "op": "0.590677"
+     },
+     "xp": -1152,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 722,
+     "tal": "0",
+     "fly": {
+      "y": 572,
+      "op": "0.569169"
+     },
+     "xp": -1155,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 737,
+     "tal": "0",
+     "fly": {
+      "y": 572,
+      "op": "0.547404"
+     },
+     "xp": -1158,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 753,
+     "tal": "0",
+     "fly": {
+      "y": 572,
+      "op": "0.525258"
+     },
+     "xp": -1160,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 770,
+     "tal": "0",
+     "fly": {
+      "y": 571,
+      "op": "0.502463"
+     },
+     "xp": -1162,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 788,
+     "tal": "0",
+     "fly": {
+      "y": 571,
+      "op": "0.479561"
+     },
+     "xp": -1163,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 802,
+     "tal": "0",
+     "fly": {
+      "y": 571,
+      "op": "0.456286"
+     },
+     "xp": -1163,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 820,
+     "tal": "0",
+     "fly": {
+      "y": 570,
+      "op": "0.432349"
+     },
+     "xp": -1164,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 838,
+     "tal": "0",
+     "fly": {
+      "y": 570,
+      "op": "0.408318"
+     },
+     "xp": -1164,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 853,
+     "tal": "0",
+     "fly": {
+      "y": 570,
+      "op": "0.38376"
+     },
+     "xp": -1164,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 871,
+     "tal": "0",
+     "fly": {
+      "y": 570,
+      "op": "0.358962"
+     },
+     "xp": null,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 888,
+     "tal": "0",
+     "fly": {
+      "y": 570,
+      "op": "0.333615"
+     },
+     "xp": null,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 903,
+     "tal": "0",
+     "fly": {
+      "y": 570,
+      "op": "0.308008"
+     },
+     "xp": null,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 923,
+     "tal": "0",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 939,
+     "tal": "0",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 954,
+     "tal": "0",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 970,
+     "tal": "0",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 988,
+     "tal": "1",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1004,
+     "tal": "1",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1020,
+     "tal": "1",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1039,
+     "tal": "1",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1053,
+     "tal": "2",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1071,
+     "tal": "2",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1087,
+     "tal": "2",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1103,
+     "tal": "2",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1121,
+     "tal": "2",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1138,
+     "tal": "3",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1154,
+     "tal": "3",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1169,
+     "tal": "3",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1188,
+     "tal": "3",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1204,
+     "tal": "3",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1222,
+     "tal": "4",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1237,
+     "tal": "4",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1253,
+     "tal": "4",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1270,
+     "tal": "4",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1288,
+     "tal": "4",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1303,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1320,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1337,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1353,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1369,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1387,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1403,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1420,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1438,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1453,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1469,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1487,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1504,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1521,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1537,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1553,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1569,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1587,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1604,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "100%"
+    },
+    {
+     "t": 1623,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 1,
+     "fyld": "5%"
+    },
+    {
+     "t": 1637,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1653,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1670,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1687,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1703,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1720,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1738,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1754,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1770,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1787,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1803,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    }
+   ],
+   "flyvere": [
+    "erfaring-flyver",
+    "faerdighed-flyver",
+    {
+     "t": 106,
+     "klasse": "erfaring-flyver",
+     "tekst": "+5"
+    },
+    {
+     "t": 106,
+     "klasse": "faerdighed-flyver",
+     "tekst": "+5"
+    }
+   ],
+   "chipEfter": {
+    "id": "broeker",
+    "tal": "5",
+    "tekst": "Brøker 5"
+   },
+   "xpEfter": "0 erfaring",
+   "animationerIalt": 0,
+   "naeste": [
+    {
+     "foer": "Brøker 5",
+     "efter": "Brøker 15"
+    },
+    {
+     "foer": "Brøker 15",
+     "efter": "Brøker 25"
+    },
+    {
+     "foer": "Brøker 25",
+     "efter": "Brøker 30"
+    }
+   ],
+   "sidefejl": [],
+   "vandret": true
+  },
+  "svar-1280-rm": {
+   "bredde": 1280,
+   "redukt": true,
+   "foer": {
+    "chip": {
+     "top": 545,
+     "h": 26,
+     "w": 126,
+     "talPx": "15px",
+     "navnPx": "12px",
+     "bjaelkeW": 36,
+     "rolle": null,
+     "tag": "P",
+     "cursor": "default"
+    },
+    "knapTop": 633,
+    "skaerm": 900,
+    "opgaveTekstPx": "16px"
+   },
+   "chipFoer": {
+    "id": "broeker",
+    "tal": "0",
+    "tekst": "Brøker 0"
+   },
+   "xpFoer": "0 erfaring",
+   "efterTryk": {
+    "chip": {
+     "id": "broeker",
+     "tal": "0",
+     "tekst": "Brøker 0"
+    },
+    "xp": "0 erfaring"
+   },
+   "efterForkert": {
+    "chip": {
+     "id": "broeker",
+     "tal": "0",
+     "tekst": "Brøker 0"
+    },
+    "xp": "0 erfaring",
+    "flyvere": []
+   },
+   "film": [
+    {
+     "t": 3,
+     "tal": "0",
+     "fly": null,
+     "xp": null,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 16,
+     "tal": "0",
+     "fly": null,
+     "xp": null,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 32,
+     "tal": "0",
+     "fly": null,
+     "xp": null,
+     "nyt": null,
+     "anim": 0,
+     "fyld": "0%"
+    },
+    {
+     "t": 55,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 66,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 84,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 105,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 116,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 132,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 151,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 166,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 183,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 199,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 215,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 234,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 249,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 265,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 282,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 300,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 316,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 332,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 350,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 366,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 383,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 400,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 415,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 432,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 450,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 466,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 483,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 499,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 517,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 532,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 549,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 567,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 583,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 600,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 615,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 633,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 650,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 667,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 683,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 699,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 716,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 734,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 749,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 767,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 783,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 799,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 816,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 832,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 849,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 866,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 884,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 900,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 916,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 932,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 949,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 967,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 982,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 999,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1016,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1036,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1049,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1065,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1082,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1099,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1118,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1132,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1150,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1167,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1182,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1200,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1216,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1233,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1251,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1266,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1283,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1299,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1315,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1333,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1350,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1365,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1382,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1399,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1415,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1433,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1451,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1467,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1483,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1499,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1516,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1533,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1549,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1566,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1582,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1599,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1616,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1632,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1650,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1666,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1684,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1699,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1716,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1733,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1750,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1766,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1783,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1799,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    },
+    {
+     "t": 1817,
+     "tal": "5",
+     "fly": null,
+     "xp": null,
+     "nyt": "Nyt niveau i Brøker: Begynder",
+     "anim": 0,
+     "fyld": "5%"
+    }
+   ],
+   "flyvere": [],
+   "chipEfter": {
+    "id": "broeker",
+    "tal": "5",
+    "tekst": "Brøker 5"
+   },
+   "xpEfter": "0 erfaring",
+   "animationerIalt": 0,
+   "naeste": [
+    {
+     "foer": "Brøker 5",
+     "efter": "Brøker 15"
+    },
+    {
+     "foer": "Brøker 15",
+     "efter": "Brøker 25"
+    },
+    {
+     "foer": "Brøker 25",
+     "efter": "Brøker 30"
+    }
+   ],
+   "sidefejl": [],
+   "vandret": true
+  },
+  "nyt-niveau-390": {
+   "bredde": 390,
+   "redukt": false,
+   "skridt": [
+    {
+     "foer": "Brøker 70",
+     "efter": "Brøker 80",
+     "nyt": null,
+     "nytEfterMs": null,
+     "midt": {
+      "kant": "rgb(217, 197, 154)",
+      "bg": "rgb(249, 241, 220)",
+      "anim": []
+     },
+     "heltensBanner": false
+    },
+    {
+     "foer": "Brøker 80",
+     "efter": "Brøker 90",
+     "nyt": null,
+     "nytEfterMs": null,
+     "midt": {
+      "kant": "rgb(217, 197, 154)",
+      "bg": "rgb(249, 241, 220)",
+      "anim": []
+     },
+     "heltensBanner": false
+    },
+    {
+     "foer": "Brøker 90",
+     "efter": "Brøker 100",
+     "nyt": {
+      "tekst": "Nyt niveau i Brøker: Øvet",
+      "px": "13px",
+      "bund": 541,
+      "skaerm": 844
+     },
+     "nytEfterMs": 1381,
+     "midt": {
+      "kant": "rgb(74, 102, 49)",
+      "bg": "rgb(228, 235, 203)",
+      "anim": [
+       "faerdighed-niveau"
+      ]
+     },
+     "heltensBanner": false
+    },
+    {
+     "foer": "Brøker 100",
+     "efter": "Brøker 110",
+     "nyt": null,
+     "nytEfterMs": null,
+     "midt": {
+      "kant": "rgb(217, 197, 154)",
+      "bg": "rgb(249, 241, 220)",
+      "anim": []
+     },
+     "heltensBanner": false
+    }
+   ],
+   "billede": true,
+   "linjenEfterVidere": false,
+   "sidefejl": []
+  },
+  "nyt-niveau-390-rm": {
+   "bredde": 390,
+   "redukt": true,
+   "skridt": [
+    {
+     "foer": "Brøker 70",
+     "efter": "Brøker 80",
+     "nyt": null,
+     "nytEfterMs": null,
+     "midt": {
+      "kant": "rgb(217, 197, 154)",
+      "bg": "rgb(249, 241, 220)",
+      "anim": []
+     },
+     "heltensBanner": false
+    },
+    {
+     "foer": "Brøker 80",
+     "efter": "Brøker 90",
+     "nyt": null,
+     "nytEfterMs": null,
+     "midt": {
+      "kant": "rgb(217, 197, 154)",
+      "bg": "rgb(249, 241, 220)",
+      "anim": []
+     },
+     "heltensBanner": false
+    },
+    {
+     "foer": "Brøker 90",
+     "efter": "Brøker 100",
+     "nyt": {
+      "tekst": "Nyt niveau i Brøker: Øvet",
+      "px": "13px",
+      "bund": 541,
+      "skaerm": 844
+     },
+     "nytEfterMs": 449,
+     "midt": {
+      "kant": "rgb(74, 102, 49)",
+      "bg": "rgb(228, 235, 203)",
+      "anim": []
+     },
+     "heltensBanner": false
+    },
+    {
+     "foer": "Brøker 100",
+     "efter": "Brøker 110",
+     "nyt": null,
+     "nytEfterMs": null,
+     "midt": {
+      "kant": "rgb(217, 197, 154)",
+      "bg": "rgb(249, 241, 220)",
+      "anim": []
+     },
+     "heltensBanner": false
+    }
+   ],
+   "billede": true,
+   "linjenEfterVidere": false,
+   "sidefejl": []
+  },
+  "nyt-niveau-1280": {
+   "bredde": 1280,
+   "redukt": false,
+   "skridt": [
+    {
+     "foer": "Brøker 70",
+     "efter": "Brøker 80",
+     "nyt": null,
+     "nytEfterMs": null,
+     "midt": {
+      "kant": "rgb(217, 197, 154)",
+      "bg": "rgb(249, 241, 220)",
+      "anim": []
+     },
+     "heltensBanner": false
+    },
+    {
+     "foer": "Brøker 80",
+     "efter": "Brøker 90",
+     "nyt": null,
+     "nytEfterMs": null,
+     "midt": {
+      "kant": "rgb(217, 197, 154)",
+      "bg": "rgb(249, 241, 220)",
+      "anim": []
+     },
+     "heltensBanner": false
+    },
+    {
+     "foer": "Brøker 90",
+     "efter": "Brøker 100",
+     "nyt": {
+      "tekst": "Nyt niveau i Brøker: Øvet",
+      "px": "13px",
+      "bund": 638,
+      "skaerm": 900
+     },
+     "nytEfterMs": 866,
+     "midt": {
+      "kant": "rgb(74, 102, 49)",
+      "bg": "rgb(228, 235, 203)",
+      "anim": [
+       "faerdighed-niveau"
+      ]
+     },
+     "heltensBanner": false
+    },
+    {
+     "foer": "Brøker 100",
+     "efter": "Brøker 110",
+     "nyt": null,
+     "nytEfterMs": null,
+     "midt": {
+      "kant": "rgb(217, 197, 154)",
+      "bg": "rgb(249, 241, 220)",
+      "anim": []
+     },
+     "heltensBanner": false
+    }
+   ],
+   "billede": true,
+   "linjenEfterVidere": false,
+   "sidefejl": []
+  },
+  "nyt-niveau-1280-rm": {
+   "bredde": 1280,
+   "redukt": true,
+   "skridt": [
+    {
+     "foer": "Brøker 70",
+     "efter": "Brøker 80",
+     "nyt": null,
+     "nytEfterMs": null,
+     "midt": {
+      "kant": "rgb(217, 197, 154)",
+      "bg": "rgb(249, 241, 220)",
+      "anim": []
+     },
+     "heltensBanner": false
+    },
+    {
+     "foer": "Brøker 80",
+     "efter": "Brøker 90",
+     "nyt": null,
+     "nytEfterMs": null,
+     "midt": {
+      "kant": "rgb(217, 197, 154)",
+      "bg": "rgb(249, 241, 220)",
+      "anim": []
+     },
+     "heltensBanner": false
+    },
+    {
+     "foer": "Brøker 90",
+     "efter": "Brøker 100",
+     "nyt": {
+      "tekst": "Nyt niveau i Brøker: Øvet",
+      "px": "13px",
+      "bund": 638,
+      "skaerm": 900
+     },
+     "nytEfterMs": 1723,
+     "midt": {
+      "kant": "rgb(74, 102, 49)",
+      "bg": "rgb(228, 235, 203)",
+      "anim": []
+     },
+     "heltensBanner": false
+    },
+    {
+     "foer": "Brøker 100",
+     "efter": "Brøker 110",
+     "nyt": null,
+     "nytEfterMs": null,
+     "midt": {
+      "kant": "rgb(217, 197, 154)",
+      "bg": "rgb(249, 241, 220)",
+      "anim": []
+     },
+     "heltensBanner": false
+    }
+   ],
+   "billede": true,
+   "linjenEfterVidere": false,
+   "sidefejl": []
+  },
+  "oevHer": [
+   {
+    "tilstand": "nyt spil",
+    "raekker": [
+     {
+      "id": "broeker",
+      "point": 0,
+      "niveau": "Ikke begyndt",
+      "svagest": true,
+      "knap": "Gå til Møllen"
+     },
+     {
+      "id": "regn-broeker",
+      "point": 0,
+      "niveau": "Ikke begyndt",
+      "svagest": false,
+      "knap": null
+     },
+     {
+      "id": "enheder",
+      "point": 0,
+      "niveau": "Ikke begyndt",
+      "svagest": false,
+      "knap": null
+     },
+     {
+      "id": "areal",
+      "point": 0,
+      "niveau": "Ikke begyndt",
+      "svagest": false,
+      "knap": null
+     },
+     {
+      "id": "gange",
+      "point": 0,
+      "niveau": "Ikke begyndt",
+      "svagest": false,
+      "knap": null
+     },
+     {
+      "id": "dele",
+      "point": 0,
+      "niveau": "Ikke begyndt",
+      "svagest": false,
+      "knap": null
+     },
+     {
+      "id": "tid",
+      "point": 0,
+      "niveau": "Ikke begyndt",
+      "svagest": false,
+      "knap": null
+     }
+    ],
+    "svagest": "broeker (0)",
+    "oevHerAntal": 1,
+    "oevOrdAntal": 1,
+    "knapIsyne": {
+     "top": 1648,
+     "skaerm": 844,
+     "h": 44
+    },
+    "panel": "Vandmøllen ved åen MØLLEREN Tulle kommer ned ad vejen til Møllen. Mølleren står i døren, hvid af mel. Mølleren: \"Godt, du kom. Hjulet er gået i stå, og Ane, bagerkonen, har intet mel til morgenbrødet.\" Mølleren: \"Hjælp mig med »Lige store dele«, så kan vi male",
+    "stedNu": "moellen",
+    "opgaver": [
+     {
+      "faerdighed": "broeker",
+      "type": "del-af-helhed"
+     },
+     {
+      "faerdighed": "broeker",
+      "type": "del-af-helhed"
+     },
+     {
+      "faerdighed": "broeker",
+      "type": "del-af-helhed"
+     }
+    ],
+    "afFaerdigheden": 3,
+    "foersteErFaerdigheden": true,
+    "sidefejl": []
+   },
+   {
+    "tilstand": "dag 3 (Moellen 1-6, Grusgraven 1-2, seks quests)",
+    "raekker": [
+     {
+      "id": "broeker",
+      "point": 340,
+      "niveau": "Dygtig",
+      "svagest": false,
+      "knap": null
+     },
+     {
+      "id": "regn-broeker",
+      "point": 90,
+      "niveau": "Øvet",
+      "svagest": false,
+      "knap": null
+     },
+     {
+      "id": "enheder",
+      "point": 70,
+      "niveau": "Begynder",
+      "svagest": false,
+      "knap": null
+     },
+     {
+      "id": "areal",
+      "point": 0,
+      "niveau": "Ikke begyndt",
+      "svagest": false,
+      "knap": null
+     },
+     {
+      "id": "gange",
+      "point": 0,
+      "niveau": "Ikke begyndt",
+      "svagest": true,
+      "knap": "Gå til Landsbygaden"
+     },
+     {
+      "id": "dele",
+      "point": 0,
+      "niveau": "Ikke begyndt",
+      "svagest": false,
+      "knap": null
+     },
+     {
+      "id": "tid",
+      "point": 0,
+      "niveau": "Ikke begyndt",
+      "svagest": false,
+      "knap": null
+     }
+    ],
+    "svagest": "gange (0)",
+    "oevHerAntal": 1,
+    "oevOrdAntal": 1,
+    "knapIsyne": {
+     "top": 2226,
+     "skaerm": 844,
+     "h": 44
+    },
+    "panel": "Landsbygaden og købmanden KØBMANDEN Tulle kommer ind på Landsbygaden. Købmanden står i døren til butikken. Købmanden: \"Godt, du kom. Else venter på dig med »Æbler til gaden«.\" Købmanden: \"Klar »Tæl varerne« med mig først, så kan du hjælpe Else.\" Købmanden fort",
+    "stedNu": "marked",
+    "opgaver": [
+     {
+      "faerdighed": "gange",
+      "type": "pris"
+     },
+     {
+      "faerdighed": "dele",
+      "type": "del-handel"
+     },
+     {
+      "faerdighed": "gange",
+      "type": "kasser"
+     }
+    ],
+    "afFaerdigheden": 2,
+    "foersteErFaerdigheden": true,
+    "sidefejl": []
+   },
+   {
+    "tilstand": "Moellen 1-8 og Grusgraven 1-6 (alt der aabner resten)",
+    "raekker": [
+     {
+      "id": "broeker",
+      "point": 360,
+      "niveau": "Sikker",
+      "svagest": false,
+      "knap": null
+     },
+     {
+      "id": "regn-broeker",
+      "point": 170,
+      "niveau": "Dygtig",
+      "svagest": false,
+      "knap": null
+     },
+     {
+      "id": "enheder",
+      "point": 230,
+      "niveau": "Dygtig",
+      "svagest": false,
+      "knap": null
+     },
+     {
+      "id": "areal",
+      "point": 80,
+      "niveau": "Øvet",
+      "svagest": false,
+      "knap": null
+     },
+     {
+      "id": "gange",
+      "point": 20,
+      "niveau": "Begynder",
+      "svagest": false,
+      "knap": null
+     },
+     {
+      "id": "dele",
+      "point": 10,
+      "niveau": "Begynder",
+      "svagest": false,
+      "knap": null
+     },
+     {
+      "id": "tid",
+      "point": 0,
+      "niveau": "Ikke begyndt",
+      "svagest": true,
+      "knap": "Gå til Sporvognen"
+     }
+    ],
+    "svagest": "tid (0)",
+    "oevHerAntal": 1,
+    "oevOrdAntal": 1,
+    "knapIsyne": {
+     "top": 2454,
+     "skaerm": 844,
+     "h": 44
+    },
+    "panel": "Sporvognen på holdepladsen KONDUKTØREN Tulle kommer hen til Sporvognen. Konduktøren står ved holdepladsen med sit ur. Konduktøren fortæller De første sporvogne i Danmark blev trukket af heste. De kørte på skinner i Københavns gader for over 150 år siden. Lagt ",
+    "stedNu": "havn",
+    "opgaver": [
+     {
+      "faerdighed": "tid",
+      "type": "ankomst"
+     },
+     {
+      "faerdighed": "tid",
+      "type": "turtid"
+     },
+     {
+      "faerdighed": "tid",
+      "type": "tabel"
+     },
+     {
+      "faerdighed": "tid",
+      "type": "turtid"
+     },
+     {
+      "faerdighed": "tid",
+      "type": "tabel"
+     },
+     {
+      "faerdighed": "tid",
+      "type": "afgang-tilbage"
+     }
+    ],
+    "afFaerdigheden": 6,
+    "foersteErFaerdigheden": true,
+    "sidefejl": []
+   },
+   {
+    "tilstand": "elevens travl efter 20 min",
+    "raekker": [
+     {
+      "id": "broeker",
+      "point": 110,
+      "niveau": "Øvet",
+      "svagest": false,
+      "knap": null
+     },
+     {
+      "id": "regn-broeker",
+      "point": 0,
+      "niveau": "Ikke begyndt",
+      "svagest": false,
+      "knap": null
+     },
+     {
+      "id": "enheder",
+      "point": 0,
+      "niveau": "Ikke begyndt",
+      "svagest": true,
+      "knap": "Gå til Grusgraven"
+     },
+     {
+      "id": "areal",
+      "point": 0,
+      "niveau": "Ikke begyndt",
+      "svagest": false,
+      "knap": null
+     },
+     {
+      "id": "gange",
+      "point": 0,
+      "niveau": "Ikke begyndt",
+      "svagest": false,
+      "knap": null
+     },
+     {
+      "id": "dele",
+      "point": 0,
+      "niveau": "Ikke begyndt",
+      "svagest": false,
+      "knap": null
+     },
+     {
+      "id": "tid",
+      "point": 0,
+      "niveau": "Ikke begyndt",
+      "svagest": false,
+      "knap": null
+     }
+    ],
+    "svagest": "enheder (0)",
+    "oevHerAntal": 1,
+    "oevOrdAntal": 1,
+    "knapIsyne": {
+     "top": 1992,
+     "skaerm": 844,
+     "h": 44
+    },
+    "panel": "Grusgraven og den gamle gang GRUSGRAVEREN Tulle kommer ned i Grusgraven. Grusgraveren står ved den væltede tipvogn med en lineal i hånden. Grusgraveren: \"Godt, du kom. Hans, karl i grusgraven, venter på dig med »Sten til diget«.\" Grusgraveren: \"Klar »Læs linea",
+    "stedNu": "stenbrud",
+    "opgaver": [
+     {
+      "faerdighed": "enheder",
+      "type": "lineal"
+     },
+     {
+      "faerdighed": "enheder",
+      "type": "lineal"
+     },
+     {
+      "faerdighed": "enheder",
+      "type": "lineal"
+     }
+    ],
+    "afFaerdigheden": 3,
+    "foersteErFaerdigheden": true,
+    "sidefejl": []
+   },
+   {
+    "tilstand": "elevens foelger efter 20 min",
+    "raekker": [
+     {
+      "id": "broeker",
+      "point": 130,
+      "niveau": "Øvet",
+      "svagest": false,
+      "knap": null
+     },
+     {
+      "id": "regn-broeker",
+      "point": 0,
+      "niveau": "Ikke begyndt",
+      "svagest": false,
+      "knap": null
+     },
+     {
+      "id": "enheder",
+      "point": 0,
+      "niveau": "Ikke begyndt",
+      "svagest": true,
+      "knap": "Gå til Grusgraven"
+     },
+     {
+      "id": "areal",
+      "point": 0,
+      "niveau": "Ikke begyndt",
+      "svagest": false,
+      "knap": null
+     },
+     {
+      "id": "gange",
+      "point": 0,
+      "niveau": "Ikke begyndt",
+      "svagest": false,
+      "knap": null
+     },
+     {
+      "id": "dele",
+      "point": 0,
+      "niveau": "Ikke begyndt",
+      "svagest": false,
+      "knap": null
+     },
+     {
+      "id": "tid",
+      "point": 0,
+      "niveau": "Ikke begyndt",
+      "svagest": false,
+      "knap": null
+     }
+    ],
+    "svagest": "enheder (0)",
+    "oevHerAntal": 1,
+    "oevOrdAntal": 1,
+    "knapIsyne": {
+     "top": 1992,
+     "skaerm": 844,
+     "h": 44
+    },
+    "panel": "Grusgraven og den gamle gang GRUSGRAVEREN Tulle kommer ned i Grusgraven. Grusgraveren står ved den væltede tipvogn med en lineal i hånden. Grusgraveren: \"Godt, du kom. Hans, karl i grusgraven, venter på dig med »Sten til diget«.\" Grusgraveren: \"Klar »Læs linea",
+    "stedNu": "stenbrud",
+    "opgaver": [
+     {
+      "faerdighed": "enheder",
+      "type": "lineal"
+     },
+     {
+      "faerdighed": "enheder",
+      "type": "lineal"
+     },
+     {
+      "faerdighed": "enheder",
+      "type": "lineal"
+     }
+    ],
+    "afFaerdigheden": 3,
+    "foersteErFaerdigheden": true,
+    "sidefejl": []
+   }
+  ]
+ },
+ "elev": {
+  "travl-390": {
+   "rigtigeFoerste": 20,
+   "opgaver": 32,
+   "flyvere": 14,
+   "xpFlyvere": 27,
+   "foersteFlyver": 70,
+   "laengstUdenFlyver": 319,
+   "medianHul": 40,
+   "nytNiveau": [],
+   "heltNiveauOp": [
+    421,
+    688
+   ],
+   "samtidigMedHelten": 0,
+   "chipSidst": null,
+   "fald": false,
+   "jsFejl": 0
+  },
+  "travl-1280": {
+   "rigtigeFoerste": 20,
+   "opgaver": 32,
+   "flyvere": 14,
+   "xpFlyvere": 27,
+   "foersteFlyver": 70,
+   "laengstUdenFlyver": 319,
+   "medianHul": 40,
+   "nytNiveau": [],
+   "heltNiveauOp": [
+    421,
+    688,
+    1199
+   ],
+   "samtidigMedHelten": 0,
+   "chipSidst": null,
+   "fald": false,
+   "jsFejl": 0
+  },
+  "foelger-390": {
+   "rigtigeFoerste": 20,
+   "opgaver": 31,
+   "flyvere": 16,
+   "xpFlyvere": 27,
+   "foersteFlyver": 70,
+   "laengstUdenFlyver": 322,
+   "medianHul": 39,
+   "nytNiveau": [],
+   "heltNiveauOp": [
+    421,
+    683
+   ],
+   "samtidigMedHelten": 0,
+   "chipSidst": "Enheder og målestok 30",
+   "fald": false,
+   "jsFejl": 0
+  },
+  "foelger-1280": {
+   "rigtigeFoerste": 20,
+   "opgaver": 31,
+   "flyvere": 16,
+   "xpFlyvere": 27,
+   "foersteFlyver": 70,
+   "laengstUdenFlyver": 322,
+   "medianHul": 38,
+   "nytNiveau": [],
+   "heltNiveauOp": [
+    421,
+    683,
+    1205
+   ],
+   "samtidigMedHelten": 0,
+   "chipSidst": null,
+   "fald": false,
+   "jsFejl": 0
+  },
+  "travl-390-rm": {
+   "rigtigeFoerste": 20,
+   "opgaver": 32,
+   "flyvere": 0,
+   "xpFlyvere": 0,
+   "foersteFlyver": null,
+   "laengstUdenFlyver": 0,
+   "medianHul": null,
+   "nytNiveau": [
+    {
+     "t": 70,
+     "tekst": "Nyt niveau i Brøker: Begynder"
+    },
+    {
+     "t": 927,
+     "tekst": "Nyt niveau i Brøker: Øvet"
+    }
+   ],
+   "heltNiveauOp": [
+    421,
+    688
+   ],
+   "samtidigMedHelten": 0,
+   "chipSidst": null,
+   "fald": false,
+   "jsFejl": 0
+  },
+  "foelger-390-rm": {
+   "rigtigeFoerste": 20,
+   "opgaver": 31,
+   "flyvere": 0,
+   "xpFlyvere": 0,
+   "foersteFlyver": null,
+   "laengstUdenFlyver": 0,
+   "medianHul": null,
+   "nytNiveau": [
+    {
+     "t": 70,
+     "tekst": "Nyt niveau i Brøker: Begynder"
+    },
+    {
+     "t": 906,
+     "tekst": "Nyt niveau i Enheder og målestok: Begynder"
+    }
+   ],
+   "heltNiveauOp": [
+    421,
+    683
+   ],
+   "samtidigMedHelten": 0,
+   "chipSidst": "Enheder og målestok 30",
+   "fald": false,
+   "jsFejl": 0
+  }
+ },
+ "tjek": [
+  {
+   "hvad": "0 netkald og 0 JS-fejl i alle proever",
+   "ok": true,
+   "data": {
+    "net": 0,
+    "fejl": []
+   }
+  },
+  {
+   "hvad": "390: chippen er ingen knap, og 20 tryk + 10 s giver intet",
+   "ok": true,
+   "data": {
+    "foer": {
+     "id": "broeker",
+     "tal": "0",
+     "tekst": "Brøker 0"
+    },
+    "efter": {
+     "chip": {
+      "id": "broeker",
+      "tal": "0",
+      "tekst": "Brøker 0"
+     },
+     "xp": "0 erfaring"
+    }
+   }
+  },
+  {
+   "hvad": "390: et forkert svar giver ingen flyver og intet point",
+   "ok": true,
+   "data": {
+    "chip": {
+     "id": "broeker",
+     "tal": "0",
+     "tekst": "Brøker 0"
+    },
+    "xp": "0 erfaring",
+    "flyvere": []
+   }
+  },
+  {
+   "hvad": "390: et rigtigt svar sender to flyvere paa een gang (erfaringen og faerdigheden)",
+   "ok": true,
+   "data": [
+    "erfaring-flyver",
+    "faerdighed-flyver",
+    {
+     "t": 162,
+     "klasse": "erfaring-flyver",
+     "tekst": "+5"
+    },
+    {
+     "t": 162,
+     "klasse": "faerdighed-flyver",
+     "tekst": "+5"
+    }
+   ]
+  },
+  {
+   "hvad": "390: tallet staar stille, til flyveren er landet (0,8 s), og taeller saa op",
+   "ok": true,
+   "data": {
+    "tal": [
+     "0",
+     "1",
+     "2",
+     "3",
+     "4",
+     "5"
+    ],
+    "efter": {
+     "id": "broeker",
+     "tal": "5",
+     "tekst": "Brøker 5"
+    }
+   }
+  },
+  {
+   "hvad": "390 reduced-motion: ingen flyvere, ingen animation, tallet med det samme",
+   "ok": true,
+   "data": {
+    "flyvere": [],
+    "efter": {
+     "id": "broeker",
+     "tal": "5",
+     "tekst": "Brøker 5"
+    }
+   }
+  },
+  {
+   "hvad": "390: tre rigtige svar mere, tallet vokser hver gang",
+   "ok": true,
+   "data": [
+    {
+     "foer": "Brøker 5",
+     "efter": "Brøker 15"
+    },
+    {
+     "foer": "Brøker 15",
+     "efter": "Brøker 25"
+    },
+    {
+     "foer": "Brøker 25",
+     "efter": "Brøker 30"
+    }
+   ]
+  },
+  {
+   "hvad": "390: nyt niveau i Broeker (Oevet) ved 100 point, uden heltens banner",
+   "ok": true,
+   "data": [
+    {
+     "foer": "Brøker 70",
+     "efter": "Brøker 80",
+     "nyt": null,
+     "nytEfterMs": null,
+     "midt": {
+      "kant": "rgb(217, 197, 154)",
+      "bg": "rgb(249, 241, 220)",
+      "anim": []
+     },
+     "heltensBanner": false
+    },
+    {
+     "foer": "Brøker 80",
+     "efter": "Brøker 90",
+     "nyt": null,
+     "nytEfterMs": null,
+     "midt": {
+      "kant": "rgb(217, 197, 154)",
+      "bg": "rgb(249, 241, 220)",
+      "anim": []
+     },
+     "heltensBanner": false
+    },
+    {
+     "foer": "Brøker 90",
+     "efter": "Brøker 100",
+     "nyt": {
+      "tekst": "Nyt niveau i Brøker: Øvet",
+      "px": "13px",
+      "bund": 541,
+      "skaerm": 844
+     },
+     "nytEfterMs": 1381,
+     "midt": {
+      "kant": "rgb(74, 102, 49)",
+      "bg": "rgb(228, 235, 203)",
+      "anim": [
+       "faerdighed-niveau"
+      ]
+     },
+     "heltensBanner": false
+    },
+    {
+     "foer": "Brøker 100",
+     "efter": "Brøker 110",
+     "nyt": null,
+     "nytEfterMs": null,
+     "midt": {
+      "kant": "rgb(217, 197, 154)",
+      "bg": "rgb(249, 241, 220)",
+      "anim": []
+     },
+     "heltensBanner": false
+    }
+   ]
+  },
+  {
+   "hvad": "390-rm: nyt niveau i Broeker (Oevet) ved 100 point, uden heltens banner",
+   "ok": true,
+   "data": [
+    {
+     "foer": "Brøker 70",
+     "efter": "Brøker 80",
+     "nyt": null,
+     "nytEfterMs": null,
+     "midt": {
+      "kant": "rgb(217, 197, 154)",
+      "bg": "rgb(249, 241, 220)",
+      "anim": []
+     },
+     "heltensBanner": false
+    },
+    {
+     "foer": "Brøker 80",
+     "efter": "Brøker 90",
+     "nyt": null,
+     "nytEfterMs": null,
+     "midt": {
+      "kant": "rgb(217, 197, 154)",
+      "bg": "rgb(249, 241, 220)",
+      "anim": []
+     },
+     "heltensBanner": false
+    },
+    {
+     "foer": "Brøker 90",
+     "efter": "Brøker 100",
+     "nyt": {
+      "tekst": "Nyt niveau i Brøker: Øvet",
+      "px": "13px",
+      "bund": 541,
+      "skaerm": 844
+     },
+     "nytEfterMs": 449,
+     "midt": {
+      "kant": "rgb(74, 102, 49)",
+      "bg": "rgb(228, 235, 203)",
+      "anim": []
+     },
+     "heltensBanner": false
+    },
+    {
+     "foer": "Brøker 100",
+     "efter": "Brøker 110",
+     "nyt": null,
+     "nytEfterMs": null,
+     "midt": {
+      "kant": "rgb(217, 197, 154)",
+      "bg": "rgb(249, 241, 220)",
+      "anim": []
+     },
+     "heltensBanner": false
+    }
+   ]
+  },
+  {
+   "hvad": "1280: chippen er ingen knap, og 20 tryk + 10 s giver intet",
+   "ok": true,
+   "data": {
+    "foer": {
+     "id": "broeker",
+     "tal": "0",
+     "tekst": "Brøker 0"
+    },
+    "efter": {
+     "chip": {
+      "id": "broeker",
+      "tal": "0",
+      "tekst": "Brøker 0"
+     },
+     "xp": "0 erfaring"
+    }
+   }
+  },
+  {
+   "hvad": "1280: et forkert svar giver ingen flyver og intet point",
+   "ok": true,
+   "data": {
+    "chip": {
+     "id": "broeker",
+     "tal": "0",
+     "tekst": "Brøker 0"
+    },
+    "xp": "0 erfaring",
+    "flyvere": []
+   }
+  },
+  {
+   "hvad": "1280: et rigtigt svar sender to flyvere paa een gang (erfaringen og faerdigheden)",
+   "ok": true,
+   "data": [
+    "erfaring-flyver",
+    "faerdighed-flyver",
+    {
+     "t": 106,
+     "klasse": "erfaring-flyver",
+     "tekst": "+5"
+    },
+    {
+     "t": 106,
+     "klasse": "faerdighed-flyver",
+     "tekst": "+5"
+    }
+   ]
+  },
+  {
+   "hvad": "1280: tallet staar stille, til flyveren er landet (0,8 s), og taeller saa op",
+   "ok": true,
+   "data": {
+    "tal": [
+     "0",
+     "1",
+     "2",
+     "3",
+     "4",
+     "5"
+    ],
+    "efter": {
+     "id": "broeker",
+     "tal": "5",
+     "tekst": "Brøker 5"
+    }
+   }
+  },
+  {
+   "hvad": "1280 reduced-motion: ingen flyvere, ingen animation, tallet med det samme",
+   "ok": true,
+   "data": {
+    "flyvere": [],
+    "efter": {
+     "id": "broeker",
+     "tal": "5",
+     "tekst": "Brøker 5"
+    }
+   }
+  },
+  {
+   "hvad": "1280: tre rigtige svar mere, tallet vokser hver gang",
+   "ok": true,
+   "data": [
+    {
+     "foer": "Brøker 5",
+     "efter": "Brøker 15"
+    },
+    {
+     "foer": "Brøker 15",
+     "efter": "Brøker 25"
+    },
+    {
+     "foer": "Brøker 25",
+     "efter": "Brøker 30"
+    }
+   ]
+  },
+  {
+   "hvad": "1280: nyt niveau i Broeker (Oevet) ved 100 point, uden heltens banner",
+   "ok": true,
+   "data": [
+    {
+     "foer": "Brøker 70",
+     "efter": "Brøker 80",
+     "nyt": null,
+     "nytEfterMs": null,
+     "midt": {
+      "kant": "rgb(217, 197, 154)",
+      "bg": "rgb(249, 241, 220)",
+      "anim": []
+     },
+     "heltensBanner": false
+    },
+    {
+     "foer": "Brøker 80",
+     "efter": "Brøker 90",
+     "nyt": null,
+     "nytEfterMs": null,
+     "midt": {
+      "kant": "rgb(217, 197, 154)",
+      "bg": "rgb(249, 241, 220)",
+      "anim": []
+     },
+     "heltensBanner": false
+    },
+    {
+     "foer": "Brøker 90",
+     "efter": "Brøker 100",
+     "nyt": {
+      "tekst": "Nyt niveau i Brøker: Øvet",
+      "px": "13px",
+      "bund": 638,
+      "skaerm": 900
+     },
+     "nytEfterMs": 866,
+     "midt": {
+      "kant": "rgb(74, 102, 49)",
+      "bg": "rgb(228, 235, 203)",
+      "anim": [
+       "faerdighed-niveau"
+      ]
+     },
+     "heltensBanner": false
+    },
+    {
+     "foer": "Brøker 100",
+     "efter": "Brøker 110",
+     "nyt": null,
+     "nytEfterMs": null,
+     "midt": {
+      "kant": "rgb(217, 197, 154)",
+      "bg": "rgb(249, 241, 220)",
+      "anim": []
+     },
+     "heltensBanner": false
+    }
+   ]
+  },
+  {
+   "hvad": "1280-rm: nyt niveau i Broeker (Oevet) ved 100 point, uden heltens banner",
+   "ok": true,
+   "data": [
+    {
+     "foer": "Brøker 70",
+     "efter": "Brøker 80",
+     "nyt": null,
+     "nytEfterMs": null,
+     "midt": {
+      "kant": "rgb(217, 197, 154)",
+      "bg": "rgb(249, 241, 220)",
+      "anim": []
+     },
+     "heltensBanner": false
+    },
+    {
+     "foer": "Brøker 80",
+     "efter": "Brøker 90",
+     "nyt": null,
+     "nytEfterMs": null,
+     "midt": {
+      "kant": "rgb(217, 197, 154)",
+      "bg": "rgb(249, 241, 220)",
+      "anim": []
+     },
+     "heltensBanner": false
+    },
+    {
+     "foer": "Brøker 90",
+     "efter": "Brøker 100",
+     "nyt": {
+      "tekst": "Nyt niveau i Brøker: Øvet",
+      "px": "13px",
+      "bund": 638,
+      "skaerm": 900
+     },
+     "nytEfterMs": 1723,
+     "midt": {
+      "kant": "rgb(74, 102, 49)",
+      "bg": "rgb(228, 235, 203)",
+      "anim": []
+     },
+     "heltensBanner": false
+    },
+    {
+     "foer": "Brøker 100",
+     "efter": "Brøker 110",
+     "nyt": null,
+     "nytEfterMs": null,
+     "midt": {
+      "kant": "rgb(217, 197, 154)",
+      "bg": "rgb(249, 241, 220)",
+      "anim": []
+     },
+     "heltensBanner": false
+    }
+   ]
+  },
+  {
+   "hvad": "\"Oev her\": een knap pr. bibliotek, og hvert tryk lander paa et sted, hvor forloebet har faerdigheden",
+   "ok": true,
+   "data": [
+    {
+     "t": "nyt spil",
+     "svag": "broeker (0)",
+     "sted": "moellen",
+     "af": "3/3",
+     "foerst": true
+    },
+    {
+     "t": "dag 3 (Moellen 1-6, Grusgraven 1-2, seks quests)",
+     "svag": "gange (0)",
+     "sted": "marked",
+     "af": "2/3",
+     "foerst": true
+    },
+    {
+     "t": "Moellen 1-8 og Grusgraven 1-6 (alt der aabner resten)",
+     "svag": "tid (0)",
+     "sted": "havn",
+     "af": "6/6",
+     "foerst": true
+    },
+    {
+     "t": "elevens travl efter 20 min",
+     "svag": "enheder (0)",
+     "sted": "stenbrud",
+     "af": "3/3",
+     "foerst": true
+    },
+    {
+     "t": "elevens foelger efter 20 min",
+     "svag": "enheder (0)",
+     "sted": "stenbrud",
+     "af": "3/3",
+     "foerst": true
+    }
+   ]
+  },
+  {
+   "hvad": "elev 20 min: 0 net, 0 JS-fejl, chippens tal falder aldrig",
+   "ok": true,
+   "data": {
+    "net": 0,
+    "fejl": 0
+   }
+  },
+  {
+   "hvad": "elev 20 min-rm: 0 net, 0 JS-fejl, chippens tal falder aldrig",
+   "ok": true,
+   "data": {
+    "net": 0,
+    "fejl": 0
+   }
+  },
+  {
+   "hvad": "M1: paa 390 flyver erfaringens \"+N\" ud over skaermens top, mens faerdighedens flyver ca. 100 px op",
+   "ok": true,
+   "data": {
+    "xpSidst": -1036,
+    "flySidst": {
+     "y": 490,
+     "op": "0.255194"
+    }
+   }
+  },
+  {
+   "hvad": "M2: den travle tager Moellens forloeb 1 tre gange; over 5 min uden \"+N\" til Broeker, mens erfaringen floej",
+   "ok": true,
+   "data": {
+    "igen": 3,
+    "fra": 156,
+    "til": 475,
+    "xpIHul": 8
+   }
+  },
+  {
+   "hvad": "M2: foelgerens Enheder og maalestok er 30 i spillet og 0 efter genindlaesning",
+   "ok": true,
+   "data": {
+    "iSpillet": 30,
+    "efterGenindlaesning": 0
+   }
+  },
+  {
+   "hvad": "M3: \"Oev her\" ligger 2-3 skaerme nede i Min helt paa 390",
+   "ok": true,
+   "data": [
+    1648,
+    2226,
+    2454,
+    1992,
+    1992
+   ]
+  }
+ ],
+ "sider": [
+  {
+   "navn": "390",
+   "net": 0,
+   "fejl": []
+  },
+  {
+   "navn": "390-rm",
+   "net": 0,
+   "fejl": []
+  },
+  {
+   "navn": "1280",
+   "net": 0,
+   "fejl": []
+  },
+  {
+   "navn": "1280-rm",
+   "net": 0,
+   "fejl": []
+  },
+  {
+   "navn": "nyt-390",
+   "net": 0,
+   "fejl": []
+  },
+  {
+   "navn": "nyt-390-rm",
+   "net": 0,
+   "fejl": []
+  },
+  {
+   "navn": "nyt-1280",
+   "net": 0,
+   "fejl": []
+  },
+  {
+   "navn": "nyt-1280-rm",
+   "net": 0,
+   "fejl": []
+  },
+  {
+   "navn": "oev-nyt spil",
+   "net": 0,
+   "fejl": []
+  },
+  {
+   "navn": "oev-dag 3 (Moellen 1-6, Grusgraven 1-2, seks quests)",
+   "net": 0,
+   "fejl": []
+  },
+  {
+   "navn": "oev-Moellen 1-8 og Grusgraven 1-6 (alt der aabner resten)",
+   "net": 0,
+   "fejl": []
+  },
+  {
+   "navn": "oev-elevens travl efter 20 min",
+   "net": 0,
+   "fejl": []
+  },
+  {
+   "navn": "oev-elevens foelger efter 20 min",
+   "net": 0,
+   "fejl": []
+  }
+ ]
+}
