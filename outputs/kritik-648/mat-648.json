@@ -1,0 +1,1236 @@
+{
+  "ver": {
+    "foer": "31d22fd",
+    "efter": "471784d"
+  },
+  "skaerme": {
+    "foer-390": {
+      "kortet": {
+        "skaerm": {
+          "ord": 51,
+          "tal": 12,
+          "knapper": 7,
+          "knapNavne": [
+            "Min helt: se din figur og dit udstyr",
+            "Min helt",
+            "Åbn journalen",
+            "Questbogen 1 ny",
+            "Lyd: fra",
+            "Grusgraven 🔒 Mestr Møllens forløb 1-2",
+            "Sporvognen 🔒 Mestr Grusgravens forløb 1"
+          ],
+          "tekst": "2 | Tulle | Niveau | 2 | Næste niveau: mestr et forløb eller hjælp en person. | 30 | erfaring | Hoved | 2 | Hånd | 1 | Hjerte | 1 | Min helt | Åbn journalen | Questbogen | 1 ny | Kortet | 19 indbyggere | Lyd: fra | Møllerdrengen venter på dig: »Del ligeligt« hos Mølleren. | Grusgraven | 🔒 Mestr Møllens forløb 1-2 | Sporvognen | 🔒 Mestr Grusgravens forløb 1-2"
+        },
+        "side": {
+          "ord": 123,
+          "tal": 27,
+          "knapper": 13,
+          "knapNavne": [
+            "Min helt: se din figur og dit udstyr",
+            "Min helt",
+            "Åbn journalen",
+            "Questbogen 1 ny",
+            "Lyd: fra",
+            "Ane, bagerkonen har en quest: Mel til ba",
+            "Møllen",
+            "Kirken og Landsbygaden",
+            "Grusgraven 🔒 Mestr Møllens forløb 1-2",
+            "Sporvognen 🔒 Mestr Grusgravens forløb 1",
+            "4/5",
+            "5/4",
+            "1/5"
+          ],
+          "tekst": "2 | Tulle | Niveau | 2 | Næste niveau: mestr et forløb eller hjælp en person. | 30 | erfaring | Hoved | 2 | Hånd | 1 | Hjerte | 1 | Min helt | Åbn journalen | Questbogen | 1 ny | Kortet | 19 indbyggere | Lyd: fra | Møllerdrengen venter på dig: »Del ligeligt« hos Mølleren. | Skoven og Søen | ! | Møllen | Kirken og Landsbygaden | Grusgraven | 🔒 Mestr Møllens forløb 1-2 | Sporvognen | 🔒 Mestr Grusgravens forløb 1-2 | 2 | Vandmøllen ved åen | Mølleren | Forløb 2 af 8 | Del ligeligt | Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? | 0 af 4 opgaver løst · mestret ved 3 rigtige i første forsøg | Brøker | 60 | Bagerkonen deler 4 brød ligeligt mellem 5 karle på møllen. Hvor meget brød får hver karl? | 4/5 | 5/4 | 1/5 | Kortgrundlag: OpenStreetMap-bidragydere"
+        },
+        "skaerme": 2.33,
+        "vandret": false,
+        "scrollY": 0,
+        "foersteSvarY": 1701,
+        "opgaveY": 1613
+      },
+      "opgave": {
+        "skaerm": {
+          "ord": 65,
+          "tal": 14,
+          "knapper": 4,
+          "knapNavne": [
+            "Møllen",
+            "4/5",
+            "5/4",
+            "1/5"
+          ],
+          "tekst": "Møllen | Vandmøllen ved åen | Mølleren | Forløb 2 af 8 | Del ligeligt | Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? | 0 af 4 opgaver løst · mestret ved 3 rigtige i første forsøg | Brøker | 60 | Bagerkonen deler 4 brød ligeligt mellem 5 karle på møllen. Hvor meget brød får hver karl? | 4/5 | 5/4 | 1/5 | Kortgrundlag: OpenStreetMap-bidragydere"
+        },
+        "side": {
+          "ord": 123,
+          "tal": 27,
+          "knapper": 13,
+          "knapNavne": [
+            "Min helt: se din figur og dit udstyr",
+            "Min helt",
+            "Åbn journalen",
+            "Questbogen 1 ny",
+            "Lyd: fra",
+            "Ane, bagerkonen har en quest: Mel til ba",
+            "Møllen",
+            "Kirken og Landsbygaden",
+            "Grusgraven 🔒 Mestr Møllens forløb 1-2",
+            "Sporvognen 🔒 Mestr Grusgravens forløb 1",
+            "4/5",
+            "5/4",
+            "1/5"
+          ],
+          "tekst": "2 | Tulle | Niveau | 2 | Næste niveau: mestr et forløb eller hjælp en person. | 30 | erfaring | Hoved | 2 | Hånd | 1 | Hjerte | 1 | Min helt | Åbn journalen | Questbogen | 1 ny | Kortet | 19 indbyggere | Lyd: fra | Møllerdrengen venter på dig: »Del ligeligt« hos Mølleren. | Skoven og Søen | ! | Møllen | Kirken og Landsbygaden | Grusgraven | 🔒 Mestr Møllens forløb 1-2 | Sporvognen | 🔒 Mestr Grusgravens forløb 1-2 | 2 | Vandmøllen ved åen | Mølleren | Forløb 2 af 8 | Del ligeligt | Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? | 0 af 4 opgaver løst · mestret ved 3 rigtige i første forsøg | Brøker | 60 | Bagerkonen deler 4 brød ligeligt mellem 5 karle på møllen. Hvor meget brød får hver karl? | 4/5 | 5/4 | 1/5 | Kortgrundlag: OpenStreetMap-bidragydere"
+        },
+        "skaerme": 2.33,
+        "vandret": false,
+        "scrollY": 1124,
+        "foersteSvarY": 1701,
+        "opgaveY": 1613
+      },
+      "helt": {
+        "skaerm": {
+          "ord": 93,
+          "tal": 12,
+          "knapper": 1,
+          "knapNavne": [
+            "Gå til Møllen"
+          ],
+          "tekst": "Min helt | Tulle | Niveau | 2 | Næste niveau: mestr et forløb eller hjælp en person. | 30 | erfaring | Øv her | Brøker | er den færdighed, du har mindst af (60 point). Alle syv står i rygsækken længere nede. | Gå til Møllen | Udstyr | 1 | af 9 | Titler | 0 | Erfaring | 30 | Hoved | 2 | Hånd | 1 | Hjerte | 1 | Hjerte er de folk, du har hjulpet. Du har ikke hjulpet nogen endnu. | Dit udstyr | Det, du har, bærer din figur på kortet. Det grå kan du få. | På hovedet | 0 af 5 | 🔒 Bagerhuen | Hjælp Ane, bagerkonen, med »Brød til alle«."
+        },
+        "side": {
+          "ord": 406,
+          "tal": 35,
+          "knapper": 4,
+          "knapNavne": [
+            "Gå til Møllen",
+            "Gå til Møllen",
+            "Vis min kode",
+            "Tilbage til kortet"
+          ],
+          "tekst": "Min helt | Tulle | Niveau | 2 | Næste niveau: mestr et forløb eller hjælp en person. | 30 | erfaring | Øv her | Brøker | er den færdighed, du har mindst af (60 point). Alle syv står i rygsækken længere nede. | Gå til Møllen | Udstyr | 1 | af 9 | Titler | 0 | Erfaring | 30 | Hoved | 2 | Hånd | 1 | Hjerte | 1 | Hjerte er de folk, du har hjulpet. Du har ikke hjulpet nogen endnu. | Dit udstyr | Det, du har, bærer din figur på kortet. Det grå kan du få. | På hovedet | 0 af 5 | 🔒 Bagerhuen | Hjælp Ane, bagerkonen, med »Brød til alle«. | 🔒 Stråhatten | Hjælp Maren, landmålerens datter, med »Målepælene«. | 🔒 Strikhuen | Hjælp Kirsten, degnens kone, med »Kaffe efter kirken«. | 🔒 Konduktørkasketten | Hjælp Konduktøren med »Søbanens køreplan«. | 🔒 Bihatten | Hjælp Biavleren med »Honning på krukker«. | Om halsen | 0 af 1 | 🔒 Halstørklædet | Hjælp Søren, skomageren, med »Kassen skal stemme«. | I hånden | 1 af 3 | Målestokken | Ét ekstra forsøg på Grusgravens opgaver. | 🔒 Pengeposen | Klar alle forløb på Landsbygaden. | 🔒 Lygten | Klar alle forløb ved Sporvognen. | Rygsækken: mine færdigheder | Tallet vokser, når du løser opgaver af den slags, og du får en bonus, når forløbet eller questen er klaret. Det falder aldrig. | Brøker | 60 | point | Niveau 1 · | Begynder | · 140 til Øvet | lige store dele, del ligeligt, sammenlign, forlæng og forkort | Øv her | Gå til Møllen | Regn med brøker | 0 | point | Ikke begyndt | · Løs en opgave af den slags | læg sammen, træk fra, brøkdel af en mængde, fælles nævner, blandede tal | Enheder og målestok | 0 | point | Ikke begyndt | · Løs en opgave af den slags | linealen, mm, cm, m og km, regn om, kort i målestok | 🔒 Mestr Møllens forløb 1-2 | Areal og omkreds | 0 | point | Ikke begyndt | · Løs en opgave af den slags | hegnet rundt, pladsen indeni, hvilken er størst | 🔒 Mestr Møllens forløb 1-2 | Gange og priser | 0 | point | Ikke begyndt | · Løs en opgave af den slags | stykpris, byttepenge, kasser med lige mange i | 🔒 Kræver niveau 3: mestr to forløb | Del lige over | 0 | point | Ikke begyndt | · Løs en opgave af den slags | division: del en regning eller en bunke lige over | 🔒 Kræver niveau 3: mestr to forløb | Tid og klokken | 0 | point | Ikke begyndt | · Løs en opgave af den slags | afgang, ankomst, køretid og afgangstavlen | 🔒 Mestr Grusgravens forløb 1-2 | Vis min kode | Rygsækken: det har jeg lært | 0 af 23 sande ting om landsbyen før i tiden. | Rygsækken er tom endnu. Folk i landsbyen fortæller dig en sand ting om "
+        },
+        "skaerme": 3.73,
+        "vandret": false,
+        "scrollY": 0,
+        "foersteSvarY": null,
+        "opgaveY": null
+      },
+      "tilbage": {
+        "min-helt": {
+          "tekst": "Tilbage til kortet",
+          "y": 3041,
+          "x": 16
+        },
+        "journal": {
+          "tekst": "Tilbage til kortet",
+          "y": 811,
+          "x": 16
+        },
+        "questbog": {
+          "tekst": "Tilbage til kortet",
+          "y": 1082,
+          "x": 16
+        }
+      }
+    },
+    "foer-1280": {
+      "kortet": {
+        "skaerm": {
+          "ord": 51,
+          "tal": 12,
+          "knapper": 7,
+          "knapNavne": [
+            "Min helt: se din figur og dit udstyr",
+            "Min helt",
+            "Åbn journalen",
+            "Questbogen 1 ny",
+            "Lyd: fra",
+            "Grusgraven 🔒 Mestr Møllens forløb 1-2",
+            "Sporvognen 🔒 Mestr Grusgravens forløb 1"
+          ],
+          "tekst": "2 | Tulle | Niveau | 2 | Næste niveau: mestr et forløb eller hjælp en person. | 30 | erfaring | Hoved | 2 | Hånd | 1 | Hjerte | 1 | Min helt | Åbn journalen | Questbogen | 1 ny | Kortet | 19 indbyggere | Lyd: fra | Møllerdrengen venter på dig: »Del ligeligt« hos Mølleren. | Grusgraven | 🔒 Mestr Møllens forløb 1-2 | Sporvognen | 🔒 Mestr Grusgravens forløb 1-2"
+        },
+        "side": {
+          "ord": 123,
+          "tal": 27,
+          "knapper": 13,
+          "knapNavne": [
+            "Min helt: se din figur og dit udstyr",
+            "Min helt",
+            "Åbn journalen",
+            "Questbogen 1 ny",
+            "Lyd: fra",
+            "Ane, bagerkonen har en quest: Mel til ba",
+            "Møllen",
+            "Kirken og Landsbygaden",
+            "Grusgraven 🔒 Mestr Møllens forløb 1-2",
+            "Sporvognen 🔒 Mestr Grusgravens forløb 1",
+            "4/5",
+            "5/4",
+            "1/5"
+          ],
+          "tekst": "2 | Tulle | Niveau | 2 | Næste niveau: mestr et forløb eller hjælp en person. | 30 | erfaring | Hoved | 2 | Hånd | 1 | Hjerte | 1 | Min helt | Åbn journalen | Questbogen | 1 ny | Kortet | 19 indbyggere | Lyd: fra | Møllerdrengen venter på dig: »Del ligeligt« hos Mølleren. | Skoven og Søen | ! | Møllen | Kirken og Landsbygaden | Grusgraven | 🔒 Mestr Møllens forløb 1-2 | Sporvognen | 🔒 Mestr Grusgravens forløb 1-2 | 2 | Vandmøllen ved åen | Mølleren | Forløb 2 af 8 | Del ligeligt | Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? | 0 af 4 opgaver løst · mestret ved 3 rigtige i første forsøg | Brøker | 60 | Bagerkonen deler 4 brød ligeligt mellem 5 karle på møllen. Hvor meget brød får hver karl? | 4/5 | 5/4 | 1/5 | Kortgrundlag: OpenStreetMap-bidragydere"
+        },
+        "skaerme": 2.36,
+        "vandret": false,
+        "scrollY": 0,
+        "foersteSvarY": 1859,
+        "opgaveY": 1795
+      },
+      "opgave": {
+        "skaerm": {
+          "ord": 66,
+          "tal": 15,
+          "knapper": 4,
+          "knapNavne": [
+            "Møllen",
+            "4/5",
+            "5/4",
+            "1/5"
+          ],
+          "tekst": "Møllen | 2 | Vandmøllen ved åen | Mølleren | Forløb 2 af 8 | Del ligeligt | Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? | 0 af 4 opgaver løst · mestret ved 3 rigtige i første forsøg | Brøker | 60 | Bagerkonen deler 4 brød ligeligt mellem 5 karle på møllen. Hvor meget brød får hver karl? | 4/5 | 5/4 | 1/5 | Kortgrundlag: OpenStreetMap-bidragydere"
+        },
+        "side": {
+          "ord": 123,
+          "tal": 27,
+          "knapper": 13,
+          "knapNavne": [
+            "Min helt: se din figur og dit udstyr",
+            "Min helt",
+            "Åbn journalen",
+            "Questbogen 1 ny",
+            "Lyd: fra",
+            "Ane, bagerkonen har en quest: Mel til ba",
+            "Møllen",
+            "Kirken og Landsbygaden",
+            "Grusgraven 🔒 Mestr Møllens forløb 1-2",
+            "Sporvognen 🔒 Mestr Grusgravens forløb 1",
+            "4/5",
+            "5/4",
+            "1/5"
+          ],
+          "tekst": "2 | Tulle | Niveau | 2 | Næste niveau: mestr et forløb eller hjælp en person. | 30 | erfaring | Hoved | 2 | Hånd | 1 | Hjerte | 1 | Min helt | Åbn journalen | Questbogen | 1 ny | Kortet | 19 indbyggere | Lyd: fra | Møllerdrengen venter på dig: »Del ligeligt« hos Mølleren. | Skoven og Søen | ! | Møllen | Kirken og Landsbygaden | Grusgraven | 🔒 Mestr Møllens forløb 1-2 | Sporvognen | 🔒 Mestr Grusgravens forløb 1-2 | 2 | Vandmøllen ved åen | Mølleren | Forløb 2 af 8 | Del ligeligt | Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? | 0 af 4 opgaver løst · mestret ved 3 rigtige i første forsøg | Brøker | 60 | Bagerkonen deler 4 brød ligeligt mellem 5 karle på møllen. Hvor meget brød får hver karl? | 4/5 | 5/4 | 1/5 | Kortgrundlag: OpenStreetMap-bidragydere"
+        },
+        "skaerme": 2.36,
+        "vandret": false,
+        "scrollY": 1226,
+        "foersteSvarY": 1859,
+        "opgaveY": 1795
+      },
+      "helt": {
+        "skaerm": {
+          "ord": 109,
+          "tal": 12,
+          "knapper": 1,
+          "knapNavne": [
+            "Gå til Møllen"
+          ],
+          "tekst": "Min helt | Tulle | Niveau | 2 | Næste niveau: mestr et forløb eller hjælp en person. | 30 | erfaring | Øv her | Brøker | er den færdighed, du har mindst af (60 point). Alle syv står i rygsækken længere nede. | Gå til Møllen | Udstyr | 1 | af 9 | Titler | 0 | Erfaring | 30 | Hoved | 2 | Hånd | 1 | Hjerte | 1 | Hjerte er de folk, du har hjulpet. Du har ikke hjulpet nogen endnu. | Dit udstyr | Det, du har, bærer din figur på kortet. Det grå kan du få. | På hovedet | 0 af 5 | 🔒 Bagerhuen | Hjælp Ane, bagerkonen, med »Brød til alle«. | 🔒 Stråhatten | Hjælp Maren, landmålerens datter, med »Målepælene«. | 🔒 Strikhuen | Hjælp Kirsten, degnens kone, med »Kaffe efter kirken«."
+        },
+        "side": {
+          "ord": 406,
+          "tal": 35,
+          "knapper": 4,
+          "knapNavne": [
+            "Gå til Møllen",
+            "Gå til Møllen",
+            "Vis min kode",
+            "Tilbage til kortet"
+          ],
+          "tekst": "Min helt | Tulle | Niveau | 2 | Næste niveau: mestr et forløb eller hjælp en person. | 30 | erfaring | Øv her | Brøker | er den færdighed, du har mindst af (60 point). Alle syv står i rygsækken længere nede. | Gå til Møllen | Udstyr | 1 | af 9 | Titler | 0 | Erfaring | 30 | Hoved | 2 | Hånd | 1 | Hjerte | 1 | Hjerte er de folk, du har hjulpet. Du har ikke hjulpet nogen endnu. | Dit udstyr | Det, du har, bærer din figur på kortet. Det grå kan du få. | På hovedet | 0 af 5 | 🔒 Bagerhuen | Hjælp Ane, bagerkonen, med »Brød til alle«. | 🔒 Stråhatten | Hjælp Maren, landmålerens datter, med »Målepælene«. | 🔒 Strikhuen | Hjælp Kirsten, degnens kone, med »Kaffe efter kirken«. | 🔒 Konduktørkasketten | Hjælp Konduktøren med »Søbanens køreplan«. | 🔒 Bihatten | Hjælp Biavleren med »Honning på krukker«. | Om halsen | 0 af 1 | 🔒 Halstørklædet | Hjælp Søren, skomageren, med »Kassen skal stemme«. | I hånden | 1 af 3 | Målestokken | Ét ekstra forsøg på Grusgravens opgaver. | 🔒 Pengeposen | Klar alle forløb på Landsbygaden. | 🔒 Lygten | Klar alle forløb ved Sporvognen. | Rygsækken: mine færdigheder | Tallet vokser, når du løser opgaver af den slags, og du får en bonus, når forløbet eller questen er klaret. Det falder aldrig. | Brøker | 60 | point | Niveau 1 · | Begynder | · 140 til Øvet | lige store dele, del ligeligt, sammenlign, forlæng og forkort | Øv her | Gå til Møllen | Regn med brøker | 0 | point | Ikke begyndt | · Løs en opgave af den slags | læg sammen, træk fra, brøkdel af en mængde, fælles nævner, blandede tal | Enheder og målestok | 0 | point | Ikke begyndt | · Løs en opgave af den slags | linealen, mm, cm, m og km, regn om, kort i målestok | 🔒 Mestr Møllens forløb 1-2 | Areal og omkreds | 0 | point | Ikke begyndt | · Løs en opgave af den slags | hegnet rundt, pladsen indeni, hvilken er størst | 🔒 Mestr Møllens forløb 1-2 | Gange og priser | 0 | point | Ikke begyndt | · Løs en opgave af den slags | stykpris, byttepenge, kasser med lige mange i | 🔒 Kræver niveau 3: mestr to forløb | Del lige over | 0 | point | Ikke begyndt | · Løs en opgave af den slags | division: del en regning eller en bunke lige over | 🔒 Kræver niveau 3: mestr to forløb | Tid og klokken | 0 | point | Ikke begyndt | · Løs en opgave af den slags | afgang, ankomst, køretid og afgangstavlen | 🔒 Mestr Grusgravens forløb 1-2 | Vis min kode | Rygsækken: det har jeg lært | 0 af 23 sande ting om landsbyen før i tiden. | Rygsækken er tom endnu. Folk i landsbyen fortæller dig en sand ting om "
+        },
+        "skaerme": 3.25,
+        "vandret": false,
+        "scrollY": 0,
+        "foersteSvarY": null,
+        "opgaveY": null
+      },
+      "tilbage": {
+        "min-helt": {
+          "tekst": "Tilbage til kortet",
+          "y": 2815,
+          "x": 380
+        },
+        "journal": {
+          "tekst": "Tilbage til kortet",
+          "y": 767,
+          "x": 380
+        },
+        "questbog": {
+          "tekst": "Tilbage til kortet",
+          "y": 971,
+          "x": 380
+        }
+      }
+    },
+    "efter-390": {
+      "kortet": {
+        "skaerm": {
+          "ord": 53,
+          "tal": 12,
+          "knapper": 9,
+          "knapNavne": [
+            "Min helt: se din figur og dit udstyr",
+            "Hvad er Hoved, Hånd og Hjerte?",
+            "Min helt",
+            "Journalen",
+            "Questbogen 1 ny",
+            "Lyd: fra",
+            "Kirken og Landsbygaden",
+            "Grusgraven 🔒 Mestr Møllens forløb 1-2",
+            "Sporvognen 🔒 Mestr Grusgravens forløb 1"
+          ],
+          "tekst": "2 | Tulle | Niveau | 2 | Næste niveau: mestr et forløb eller hjælp en person. | 30 | erfaring | Hoved | 2 | Hånd | 1 | Hjerte | 1 | ? | Min helt | Journalen | Questbogen | 1 ny | Kortet | 19 indbyggere | Lyd: fra | Møllerdrengen venter på dig: »Del ligeligt« hos Mølleren. | Kirken og Landsbygaden | Grusgraven | 🔒 Mestr Møllens forløb 1-2 | Sporvognen | 🔒 Mestr Grusgravens forløb 1-2"
+        },
+        "side": {
+          "ord": 122,
+          "tal": 27,
+          "knapper": 14,
+          "knapNavne": [
+            "Min helt: se din figur og dit udstyr",
+            "Hvad er Hoved, Hånd og Hjerte?",
+            "Min helt",
+            "Journalen",
+            "Questbogen 1 ny",
+            "Lyd: fra",
+            "Ane, bagerkonen har en quest: Mel til ba",
+            "Møllen",
+            "Kirken og Landsbygaden",
+            "Grusgraven 🔒 Mestr Møllens forløb 1-2",
+            "Sporvognen 🔒 Mestr Grusgravens forløb 1",
+            "4/5",
+            "5/4",
+            "1/5"
+          ],
+          "tekst": "2 | Tulle | Niveau | 2 | Næste niveau: mestr et forløb eller hjælp en person. | 30 | erfaring | Hoved | 2 | Hånd | 1 | Hjerte | 1 | ? | Min helt | Journalen | Questbogen | 1 ny | Kortet | 19 indbyggere | Lyd: fra | Møllerdrengen venter på dig: »Del ligeligt« hos Mølleren. | Skoven og Søen | ! | Møllen | Kirken og Landsbygaden | Grusgraven | 🔒 Mestr Møllens forløb 1-2 | Sporvognen | 🔒 Mestr Grusgravens forløb 1-2 | 2 | Vandmøllen ved åen | Mølleren | Forløb 2 af 8 | Del ligeligt | Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? | 0 af 4 opgaver løst · mestret ved 3 rigtige i første forsøg | Brøker | 60 | Bagerkonen deler 4 brød ligeligt mellem 5 karle på møllen. Hvor meget brød får hver karl? | 4/5 | 5/4 | 1/5 | Kortgrundlag: OpenStreetMap-bidragydere"
+        },
+        "skaerme": 2.26,
+        "vandret": false,
+        "scrollY": 0,
+        "foersteSvarY": 1642,
+        "opgaveY": 1554
+      },
+      "opgave": {
+        "skaerm": {
+          "ord": 65,
+          "tal": 14,
+          "knapper": 4,
+          "knapNavne": [
+            "Møllen",
+            "4/5",
+            "5/4",
+            "1/5"
+          ],
+          "tekst": "Møllen | Vandmøllen ved åen | Mølleren | Forløb 2 af 8 | Del ligeligt | Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? | 0 af 4 opgaver løst · mestret ved 3 rigtige i første forsøg | Brøker | 60 | Bagerkonen deler 4 brød ligeligt mellem 5 karle på møllen. Hvor meget brød får hver karl? | 4/5 | 5/4 | 1/5 | Kortgrundlag: OpenStreetMap-bidragydere"
+        },
+        "side": {
+          "ord": 122,
+          "tal": 27,
+          "knapper": 14,
+          "knapNavne": [
+            "Min helt: se din figur og dit udstyr",
+            "Hvad er Hoved, Hånd og Hjerte?",
+            "Min helt",
+            "Journalen",
+            "Questbogen 1 ny",
+            "Lyd: fra",
+            "Ane, bagerkonen har en quest: Mel til ba",
+            "Møllen",
+            "Kirken og Landsbygaden",
+            "Grusgraven 🔒 Mestr Møllens forløb 1-2",
+            "Sporvognen 🔒 Mestr Grusgravens forløb 1",
+            "4/5",
+            "5/4",
+            "1/5"
+          ],
+          "tekst": "2 | Tulle | Niveau | 2 | Næste niveau: mestr et forløb eller hjælp en person. | 30 | erfaring | Hoved | 2 | Hånd | 1 | Hjerte | 1 | ? | Min helt | Journalen | Questbogen | 1 ny | Kortet | 19 indbyggere | Lyd: fra | Møllerdrengen venter på dig: »Del ligeligt« hos Mølleren. | Skoven og Søen | ! | Møllen | Kirken og Landsbygaden | Grusgraven | 🔒 Mestr Møllens forløb 1-2 | Sporvognen | 🔒 Mestr Grusgravens forløb 1-2 | 2 | Vandmøllen ved åen | Mølleren | Forløb 2 af 8 | Del ligeligt | Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? | 0 af 4 opgaver løst · mestret ved 3 rigtige i første forsøg | Brøker | 60 | Bagerkonen deler 4 brød ligeligt mellem 5 karle på møllen. Hvor meget brød får hver karl? | 4/5 | 5/4 | 1/5 | Kortgrundlag: OpenStreetMap-bidragydere"
+        },
+        "skaerme": 2.26,
+        "vandret": false,
+        "scrollY": 1065,
+        "foersteSvarY": 1642,
+        "opgaveY": 1554
+      },
+      "helt": {
+        "skaerm": {
+          "ord": 88,
+          "tal": 12,
+          "knapper": 3,
+          "knapNavne": [
+            "Tilbage til kortet",
+            "Gå til Møllen",
+            "Hvad er Hoved, Hånd og Hjerte?"
+          ],
+          "tekst": "Tilbage til kortet | Min helt | Tulle | Niveau | 2 | Næste niveau: mestr et forløb eller hjælp en person. | 30 | erfaring | Øv her | Brøker | er den færdighed, du har mindst af (60 point). Alle syv står i rygsækken længere nede. | Gå til Møllen | Udstyr | 1 | af 9 | Titler | 0 | Erfaring | 30 | Hoved | 2 | Hånd | 1 | Hjerte | 1 | ? | Hjerte er de folk, du har hjulpet. Du har ikke hjulpet nogen endnu. | Dit udstyr | Det, du har, bærer din figur på kortet. Det grå kan du få. | På hovedet | 0 af 5"
+        },
+        "side": {
+          "ord": 331,
+          "tal": 37,
+          "knapper": 7,
+          "knapNavne": [
+            "Tilbage til kortet",
+            "Gå til Møllen",
+            "Hvad er Hoved, Hånd og Hjerte?",
+            "Se 4 mere, du kan få",
+            "Se 1 mere, du kan få",
+            "Gå til Møllen",
+            "Vis min kode"
+          ],
+          "tekst": "Tilbage til kortet | Min helt | Tulle | Niveau | 2 | Næste niveau: mestr et forløb eller hjælp en person. | 30 | erfaring | Øv her | Brøker | er den færdighed, du har mindst af (60 point). Alle syv står i rygsækken længere nede. | Gå til Møllen | Udstyr | 1 | af 9 | Titler | 0 | Erfaring | 30 | Hoved | 2 | Hånd | 1 | Hjerte | 1 | ? | Hjerte er de folk, du har hjulpet. Du har ikke hjulpet nogen endnu. | Dit udstyr | Det, du har, bærer din figur på kortet. Det grå kan du få. | På hovedet | 0 af 5 | 🔒 Bagerhuen | Hjælp Ane, bagerkonen, med »Brød til alle«. | Se 4 mere, du kan få | 🔒 Stråhatten | Hjælp Maren, landmålerens datter, med »Målepælene«. | 🔒 Strikhuen | Hjælp Kirsten, degnens kone, med »Kaffe efter kirken«. | 🔒 Konduktørkasketten | Hjælp Konduktøren med »Søbanens køreplan«. | 🔒 Bihatten | Hjælp Biavleren med »Honning på krukker«. | Om halsen | 0 af 1 | 🔒 Halstørklædet | Hjælp Søren, skomageren, med »Kassen skal stemme«. | I hånden | 1 af 3 | Målestokken | Ét ekstra forsøg på Grusgravens opgaver. | 🔒 Pengeposen | Klar alle forløb på Landsbygaden. | Se 1 mere, du kan få | 🔒 Lygten | Klar alle forløb ved Sporvognen. | Rygsækken: mine færdigheder | Tallet vokser, når du løser opgaver af den slags, og du får en bonus, når forløbet eller questen er klaret. Det falder aldrig. | Brøker | 60 | point | Niveau 1 · | Begynder | · 140 til Øvet | lige store dele, del ligeligt, sammenlign, forlæng og forkort | Øv her | Gå til Møllen | Regn med brøker | 0 | point | Ikke begyndt | Enheder og målestok | 0 | point | Ikke begyndt | 🔒 Mestr Møllens forløb 1-2 | Areal og omkreds | 0 | point | Ikke begyndt | 🔒 Mestr Møllens forløb 1-2 | Gange og priser | 0 | point | Ikke begyndt | 🔒 Kræver niveau 3: mestr to forløb | Del lige over | 0 | point | Ikke begyndt | 🔒 Kræver niveau 3: mestr to forløb | Tid og klokken | 0 | point | Ikke begyndt | 🔒 Mestr Grusgravens forløb 1-2 | Vis min kode | Rygsækken: det har jeg lært | 0 af 23 sande ting om landsbyen før i tiden. | Rygsækken er tom endnu. Folk i landsbyen fortæller dig en sand ting om stedet, når du kommer, og når du har klaret et forløb."
+        },
+        "skaerme": 3.02,
+        "vandret": false,
+        "scrollY": 0,
+        "foersteSvarY": null,
+        "opgaveY": null
+      },
+      "tilbage": {
+        "min-helt": {
+          "tekst": "Tilbage til kortet",
+          "y": 24,
+          "x": 16
+        },
+        "journal": {
+          "tekst": "Tilbage til kortet",
+          "y": 24,
+          "x": 16
+        },
+        "questbog": {
+          "tekst": "Tilbage til kortet",
+          "y": 24,
+          "x": 16
+        }
+      }
+    },
+    "efter-1280": {
+      "kortet": {
+        "skaerm": {
+          "ord": 50,
+          "tal": 12,
+          "knapper": 8,
+          "knapNavne": [
+            "Min helt: se din figur og dit udstyr",
+            "Hvad er Hoved, Hånd og Hjerte?",
+            "Min helt",
+            "Journalen",
+            "Questbogen 1 ny",
+            "Lyd: fra",
+            "Grusgraven 🔒 Mestr Møllens forløb 1-2",
+            "Sporvognen 🔒 Mestr Grusgravens forløb 1"
+          ],
+          "tekst": "2 | Tulle | Niveau | 2 | Næste niveau: mestr et forløb eller hjælp en person. | 30 | erfaring | Hoved | 2 | Hånd | 1 | Hjerte | 1 | ? | Min helt | Journalen | Questbogen | 1 ny | Kortet | 19 indbyggere | Lyd: fra | Møllerdrengen venter på dig: »Del ligeligt« hos Mølleren. | Grusgraven | 🔒 Mestr Møllens forløb 1-2 | Sporvognen | 🔒 Mestr Grusgravens forløb 1-2"
+        },
+        "side": {
+          "ord": 122,
+          "tal": 27,
+          "knapper": 14,
+          "knapNavne": [
+            "Min helt: se din figur og dit udstyr",
+            "Hvad er Hoved, Hånd og Hjerte?",
+            "Min helt",
+            "Journalen",
+            "Questbogen 1 ny",
+            "Lyd: fra",
+            "Ane, bagerkonen har en quest: Mel til ba",
+            "Møllen",
+            "Kirken og Landsbygaden",
+            "Grusgraven 🔒 Mestr Møllens forløb 1-2",
+            "Sporvognen 🔒 Mestr Grusgravens forløb 1",
+            "4/5",
+            "5/4",
+            "1/5"
+          ],
+          "tekst": "2 | Tulle | Niveau | 2 | Næste niveau: mestr et forløb eller hjælp en person. | 30 | erfaring | Hoved | 2 | Hånd | 1 | Hjerte | 1 | ? | Min helt | Journalen | Questbogen | 1 ny | Kortet | 19 indbyggere | Lyd: fra | Møllerdrengen venter på dig: »Del ligeligt« hos Mølleren. | Skoven og Søen | ! | Møllen | Kirken og Landsbygaden | Grusgraven | 🔒 Mestr Møllens forløb 1-2 | Sporvognen | 🔒 Mestr Grusgravens forløb 1-2 | 2 | Vandmøllen ved åen | Mølleren | Forløb 2 af 8 | Del ligeligt | Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? | 0 af 4 opgaver løst · mestret ved 3 rigtige i første forsøg | Brøker | 60 | Bagerkonen deler 4 brød ligeligt mellem 5 karle på møllen. Hvor meget brød får hver karl? | 4/5 | 5/4 | 1/5 | Kortgrundlag: OpenStreetMap-bidragydere"
+        },
+        "skaerme": 2.3,
+        "vandret": false,
+        "scrollY": 0,
+        "foersteSvarY": 1801,
+        "opgaveY": 1737
+      },
+      "opgave": {
+        "skaerm": {
+          "ord": 66,
+          "tal": 15,
+          "knapper": 4,
+          "knapNavne": [
+            "Møllen",
+            "4/5",
+            "5/4",
+            "1/5"
+          ],
+          "tekst": "Møllen | 2 | Vandmøllen ved åen | Mølleren | Forløb 2 af 8 | Del ligeligt | Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? | 0 af 4 opgaver løst · mestret ved 3 rigtige i første forsøg | Brøker | 60 | Bagerkonen deler 4 brød ligeligt mellem 5 karle på møllen. Hvor meget brød får hver karl? | 4/5 | 5/4 | 1/5 | Kortgrundlag: OpenStreetMap-bidragydere"
+        },
+        "side": {
+          "ord": 122,
+          "tal": 27,
+          "knapper": 14,
+          "knapNavne": [
+            "Min helt: se din figur og dit udstyr",
+            "Hvad er Hoved, Hånd og Hjerte?",
+            "Min helt",
+            "Journalen",
+            "Questbogen 1 ny",
+            "Lyd: fra",
+            "Ane, bagerkonen har en quest: Mel til ba",
+            "Møllen",
+            "Kirken og Landsbygaden",
+            "Grusgraven 🔒 Mestr Møllens forløb 1-2",
+            "Sporvognen 🔒 Mestr Grusgravens forløb 1",
+            "4/5",
+            "5/4",
+            "1/5"
+          ],
+          "tekst": "2 | Tulle | Niveau | 2 | Næste niveau: mestr et forløb eller hjælp en person. | 30 | erfaring | Hoved | 2 | Hånd | 1 | Hjerte | 1 | ? | Min helt | Journalen | Questbogen | 1 ny | Kortet | 19 indbyggere | Lyd: fra | Møllerdrengen venter på dig: »Del ligeligt« hos Mølleren. | Skoven og Søen | ! | Møllen | Kirken og Landsbygaden | Grusgraven | 🔒 Mestr Møllens forløb 1-2 | Sporvognen | 🔒 Mestr Grusgravens forløb 1-2 | 2 | Vandmøllen ved åen | Mølleren | Forløb 2 af 8 | Del ligeligt | Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? | 0 af 4 opgaver løst · mestret ved 3 rigtige i første forsøg | Brøker | 60 | Bagerkonen deler 4 brød ligeligt mellem 5 karle på møllen. Hvor meget brød får hver karl? | 4/5 | 5/4 | 1/5 | Kortgrundlag: OpenStreetMap-bidragydere"
+        },
+        "skaerme": 2.3,
+        "vandret": false,
+        "scrollY": 1168,
+        "foersteSvarY": 1801,
+        "opgaveY": 1737
+      },
+      "helt": {
+        "skaerm": {
+          "ord": 115,
+          "tal": 15,
+          "knapper": 4,
+          "knapNavne": [
+            "Tilbage til kortet",
+            "Gå til Møllen",
+            "Hvad er Hoved, Hånd og Hjerte?",
+            "Se 4 mere, du kan få"
+          ],
+          "tekst": "Tilbage til kortet | Min helt | Tulle | Niveau | 2 | Næste niveau: mestr et forløb eller hjælp en person. | 30 | erfaring | Øv her | Brøker | er den færdighed, du har mindst af (60 point). Alle syv står i rygsækken længere nede. | Gå til Møllen | Udstyr | 1 | af 9 | Titler | 0 | Erfaring | 30 | Hoved | 2 | Hånd | 1 | Hjerte | 1 | ? | Hjerte er de folk, du har hjulpet. Du har ikke hjulpet nogen endnu. | Dit udstyr | Det, du har, bærer din figur på kortet. Det grå kan du få. | På hovedet | 0 af 5 | 🔒 Bagerhuen | Hjælp Ane, bagerkonen, med »Brød til alle«. | Se 4 mere, du kan få | 🔒 Stråhatten | Hjælp Maren, landmålerens datter, med »Målepælene«. | Om halsen | 0 af 1 | 🔒 Halstørklædet"
+        },
+        "side": {
+          "ord": 331,
+          "tal": 37,
+          "knapper": 7,
+          "knapNavne": [
+            "Tilbage til kortet",
+            "Gå til Møllen",
+            "Hvad er Hoved, Hånd og Hjerte?",
+            "Se 4 mere, du kan få",
+            "Se 1 mere, du kan få",
+            "Gå til Møllen",
+            "Vis min kode"
+          ],
+          "tekst": "Tilbage til kortet | Min helt | Tulle | Niveau | 2 | Næste niveau: mestr et forløb eller hjælp en person. | 30 | erfaring | Øv her | Brøker | er den færdighed, du har mindst af (60 point). Alle syv står i rygsækken længere nede. | Gå til Møllen | Udstyr | 1 | af 9 | Titler | 0 | Erfaring | 30 | Hoved | 2 | Hånd | 1 | Hjerte | 1 | ? | Hjerte er de folk, du har hjulpet. Du har ikke hjulpet nogen endnu. | Dit udstyr | Det, du har, bærer din figur på kortet. Det grå kan du få. | På hovedet | 0 af 5 | 🔒 Bagerhuen | Hjælp Ane, bagerkonen, med »Brød til alle«. | Se 4 mere, du kan få | 🔒 Stråhatten | Hjælp Maren, landmålerens datter, med »Målepælene«. | 🔒 Strikhuen | Hjælp Kirsten, degnens kone, med »Kaffe efter kirken«. | 🔒 Konduktørkasketten | Hjælp Konduktøren med »Søbanens køreplan«. | 🔒 Bihatten | Hjælp Biavleren med »Honning på krukker«. | Om halsen | 0 af 1 | 🔒 Halstørklædet | Hjælp Søren, skomageren, med »Kassen skal stemme«. | I hånden | 1 af 3 | Målestokken | Ét ekstra forsøg på Grusgravens opgaver. | 🔒 Pengeposen | Klar alle forløb på Landsbygaden. | Se 1 mere, du kan få | 🔒 Lygten | Klar alle forløb ved Sporvognen. | Rygsækken: mine færdigheder | Tallet vokser, når du løser opgaver af den slags, og du får en bonus, når forløbet eller questen er klaret. Det falder aldrig. | Brøker | 60 | point | Niveau 1 · | Begynder | · 140 til Øvet | lige store dele, del ligeligt, sammenlign, forlæng og forkort | Øv her | Gå til Møllen | Regn med brøker | 0 | point | Ikke begyndt | Enheder og målestok | 0 | point | Ikke begyndt | 🔒 Mestr Møllens forløb 1-2 | Areal og omkreds | 0 | point | Ikke begyndt | 🔒 Mestr Møllens forløb 1-2 | Gange og priser | 0 | point | Ikke begyndt | 🔒 Kræver niveau 3: mestr to forløb | Del lige over | 0 | point | Ikke begyndt | 🔒 Kræver niveau 3: mestr to forløb | Tid og klokken | 0 | point | Ikke begyndt | 🔒 Mestr Grusgravens forløb 1-2 | Vis min kode | Rygsækken: det har jeg lært | 0 af 23 sande ting om landsbyen før i tiden. | Rygsækken er tom endnu. Folk i landsbyen fortæller dig en sand ting om stedet, når du kommer, og når du har klaret et forløb."
+        },
+        "skaerme": 2.62,
+        "vandret": false,
+        "scrollY": 0,
+        "foersteSvarY": null,
+        "opgaveY": null
+      },
+      "tilbage": {
+        "min-helt": {
+          "tekst": "Tilbage til kortet",
+          "y": 24,
+          "x": 380
+        },
+        "journal": {
+          "tekst": "Tilbage til kortet",
+          "y": 24,
+          "x": 380
+        },
+        "questbog": {
+          "tekst": "Tilbage til kortet",
+          "y": 24,
+          "x": 380
+        }
+      }
+    }
+  },
+  "hhh": {
+    "foer-390": {
+      "findes": false,
+      "vises": false,
+      "top": null,
+      "hoejde": null,
+      "helPaaFoersteSkaerm": null,
+      "tekst": null,
+      "spoerg": null,
+      "talY": 176,
+      "foersteSvarY": 1701,
+      "skaermHoejde": 844,
+      "maal": {
+        "skaerm": {
+          "ord": 51,
+          "tal": 12,
+          "knapper": 7,
+          "knapNavne": [
+            "Min helt: se din figur og dit udstyr",
+            "Min helt",
+            "Åbn journalen",
+            "Questbogen 1 ny",
+            "Lyd: fra",
+            "Grusgraven 🔒 Mestr Møllens forløb 1-2",
+            "Sporvognen 🔒 Mestr Grusgravens forløb 1"
+          ],
+          "tekst": "2 | Tulle | Niveau | 2 | Næste niveau: mestr et forløb eller hjælp en person. | 30 | erfaring | Hoved | 2 | Hånd | 1 | Hjerte | 1 | Min helt | Åbn journalen | Questbogen | 1 ny | Kortet | 19 indbyggere | Lyd: fra | Møllerdrengen venter på dig: »Del ligeligt« hos Mølleren. | Grusgraven | 🔒 Mestr Møllens forløb 1-2 | Sporvognen | 🔒 Mestr Grusgravens forløb 1-2"
+        },
+        "side": {
+          "ord": 123,
+          "tal": 27,
+          "knapper": 13,
+          "knapNavne": [
+            "Min helt: se din figur og dit udstyr",
+            "Min helt",
+            "Åbn journalen",
+            "Questbogen 1 ny",
+            "Lyd: fra",
+            "Ane, bagerkonen har en quest: Mel til ba",
+            "Møllen",
+            "Kirken og Landsbygaden",
+            "Grusgraven 🔒 Mestr Møllens forløb 1-2",
+            "Sporvognen 🔒 Mestr Grusgravens forløb 1",
+            "4/5",
+            "5/4",
+            "1/5"
+          ],
+          "tekst": "2 | Tulle | Niveau | 2 | Næste niveau: mestr et forløb eller hjælp en person. | 30 | erfaring | Hoved | 2 | Hånd | 1 | Hjerte | 1 | Min helt | Åbn journalen | Questbogen | 1 ny | Kortet | 19 indbyggere | Lyd: fra | Møllerdrengen venter på dig: »Del ligeligt« hos Mølleren. | Skoven og Søen | ! | Møllen | Kirken og Landsbygaden | Grusgraven | 🔒 Mestr Møllens forløb 1-2 | Sporvognen | 🔒 Mestr Grusgravens forløb 1-2 | 2 | Vandmøllen ved åen | Mølleren | Forløb 2 af 8 | Del ligeligt | Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? | 0 af 4 opgaver løst · mestret ved 3 rigtige i første forsøg | Brøker | 60 | Bagerkonen deler 4 brød ligeligt mellem 5 karle på møllen. Hvor meget brød får hver karl? | 4/5 | 5/4 | 1/5 | Kortgrundlag: OpenStreetMap-bidragydere"
+        },
+        "skaerme": 2.33,
+        "vandret": false,
+        "scrollY": 0,
+        "foersteSvarY": 1701,
+        "opgaveY": 1613
+      }
+    },
+    "foer-1280": {
+      "findes": false,
+      "vises": false,
+      "top": null,
+      "hoejde": null,
+      "helPaaFoersteSkaerm": null,
+      "tekst": null,
+      "spoerg": null,
+      "talY": 168,
+      "foersteSvarY": 1859,
+      "skaermHoejde": 900,
+      "maal": {
+        "skaerm": {
+          "ord": 51,
+          "tal": 12,
+          "knapper": 7,
+          "knapNavne": [
+            "Min helt: se din figur og dit udstyr",
+            "Min helt",
+            "Åbn journalen",
+            "Questbogen 1 ny",
+            "Lyd: fra",
+            "Grusgraven 🔒 Mestr Møllens forløb 1-2",
+            "Sporvognen 🔒 Mestr Grusgravens forløb 1"
+          ],
+          "tekst": "2 | Tulle | Niveau | 2 | Næste niveau: mestr et forløb eller hjælp en person. | 30 | erfaring | Hoved | 2 | Hånd | 1 | Hjerte | 1 | Min helt | Åbn journalen | Questbogen | 1 ny | Kortet | 19 indbyggere | Lyd: fra | Møllerdrengen venter på dig: »Del ligeligt« hos Mølleren. | Grusgraven | 🔒 Mestr Møllens forløb 1-2 | Sporvognen | 🔒 Mestr Grusgravens forløb 1-2"
+        },
+        "side": {
+          "ord": 123,
+          "tal": 27,
+          "knapper": 13,
+          "knapNavne": [
+            "Min helt: se din figur og dit udstyr",
+            "Min helt",
+            "Åbn journalen",
+            "Questbogen 1 ny",
+            "Lyd: fra",
+            "Ane, bagerkonen har en quest: Mel til ba",
+            "Møllen",
+            "Kirken og Landsbygaden",
+            "Grusgraven 🔒 Mestr Møllens forløb 1-2",
+            "Sporvognen 🔒 Mestr Grusgravens forløb 1",
+            "4/5",
+            "5/4",
+            "1/5"
+          ],
+          "tekst": "2 | Tulle | Niveau | 2 | Næste niveau: mestr et forløb eller hjælp en person. | 30 | erfaring | Hoved | 2 | Hånd | 1 | Hjerte | 1 | Min helt | Åbn journalen | Questbogen | 1 ny | Kortet | 19 indbyggere | Lyd: fra | Møllerdrengen venter på dig: »Del ligeligt« hos Mølleren. | Skoven og Søen | ! | Møllen | Kirken og Landsbygaden | Grusgraven | 🔒 Mestr Møllens forløb 1-2 | Sporvognen | 🔒 Mestr Grusgravens forløb 1-2 | 2 | Vandmøllen ved åen | Mølleren | Forløb 2 af 8 | Del ligeligt | Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? | 0 af 4 opgaver løst · mestret ved 3 rigtige i første forsøg | Brøker | 60 | Bagerkonen deler 4 brød ligeligt mellem 5 karle på møllen. Hvor meget brød får hver karl? | 4/5 | 5/4 | 1/5 | Kortgrundlag: OpenStreetMap-bidragydere"
+        },
+        "skaerme": 2.36,
+        "vandret": false,
+        "scrollY": 0,
+        "foersteSvarY": 1859,
+        "opgaveY": 1795
+      }
+    },
+    "efter-390": {
+      "findes": true,
+      "vises": true,
+      "top": 266,
+      "hoejde": 285,
+      "helPaaFoersteSkaerm": true,
+      "tekst": "Hoved, Hånd og Hjerte Hoved er at tænke og regne. Det vokser, når et forløb ved Møllen, Kirken eller Sporvognen giver dig et nyt niveau. Hånd er at øve og gøre, fx at måle og handle. Den vokser, når et forløb i Grusgraven eller på Landsbygaden giver dig et nyt niveau. Hjerte er at hjælpe andre. Det vokser for hver person, du hjælper. Så går de med dig på kortet og kommer senere og hjælper dig. Forstået",
+      "spoerg": {
+        "b": 30,
+        "h": 30,
+        "x": 352,
+        "y": 166,
+        "overlapperKnap": 0
+      },
+      "talY": 176,
+      "foersteSvarY": 1937,
+      "skaermHoejde": 844,
+      "maal": {
+        "skaerm": {
+          "ord": 117,
+          "tal": 8,
+          "knapper": 8,
+          "knapNavne": [
+            "Min helt: se din figur og dit udstyr",
+            "Hvad er Hoved, Hånd og Hjerte?",
+            "Forstået",
+            "Min helt",
+            "Journalen",
+            "Questbogen 1 ny",
+            "Lyd: fra",
+            "Sporvognen 🔒 Mestr Grusgravens forløb 1"
+          ],
+          "tekst": "2 | Tulle | Niveau | 2 | Næste niveau: mestr et forløb eller hjælp en person. | 30 | erfaring | Hoved | 2 | Hånd | 1 | Hjerte | 1 | ? | Hoved, Hånd og Hjerte | Hoved | er at tænke og regne. Det vokser, når et forløb ved Møllen, Kirken eller Sporvognen giver dig et nyt niveau. | Hånd | er at øve og gøre, fx at måle og handle. Den vokser, når et forløb i Grusgraven eller på Landsbygaden giver dig et nyt niveau. | Hjerte | er at hjælpe andre. Det vokser for hver person, du hjælper. Så går de med dig på kortet og kommer senere og hjælper dig. | Forstået | Min helt | Journalen | Questbogen | 1 ny | Kortet | 19 indbyggere | Lyd: fra | Møllerdrengen venter på dig: »Del ligeligt« hos Mølleren."
+        },
+        "side": {
+          "ord": 199,
+          "tal": 27,
+          "knapper": 15,
+          "knapNavne": [
+            "Min helt: se din figur og dit udstyr",
+            "Hvad er Hoved, Hånd og Hjerte?",
+            "Forstået",
+            "Min helt",
+            "Journalen",
+            "Questbogen 1 ny",
+            "Lyd: fra",
+            "Ane, bagerkonen har en quest: Mel til ba",
+            "Møllen",
+            "Kirken og Landsbygaden",
+            "Grusgraven 🔒 Mestr Møllens forløb 1-2",
+            "Sporvognen 🔒 Mestr Grusgravens forløb 1",
+            "4/5",
+            "5/4",
+            "1/5"
+          ],
+          "tekst": "2 | Tulle | Niveau | 2 | Næste niveau: mestr et forløb eller hjælp en person. | 30 | erfaring | Hoved | 2 | Hånd | 1 | Hjerte | 1 | ? | Hoved, Hånd og Hjerte | Hoved | er at tænke og regne. Det vokser, når et forløb ved Møllen, Kirken eller Sporvognen giver dig et nyt niveau. | Hånd | er at øve og gøre, fx at måle og handle. Den vokser, når et forløb i Grusgraven eller på Landsbygaden giver dig et nyt niveau. | Hjerte | er at hjælpe andre. Det vokser for hver person, du hjælper. Så går de med dig på kortet og kommer senere og hjælper dig. | Forstået | Min helt | Journalen | Questbogen | 1 ny | Kortet | 19 indbyggere | Lyd: fra | Møllerdrengen venter på dig: »Del ligeligt« hos Mølleren. | Skoven og Søen | ! | Møllen | Kirken og Landsbygaden | Grusgraven | 🔒 Mestr Møllens forløb 1-2 | Sporvognen | 🔒 Mestr Grusgravens forløb 1-2 | 2 | Vandmøllen ved åen | Mølleren | Forløb 2 af 8 | Del ligeligt | Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? | 0 af 4 opgaver løst · mestret ved 3 rigtige i første forsøg | Brøker | 60 | Bagerkonen deler 4 brød ligeligt mellem 5 karle på møllen. Hvor meget brød får hver karl? | 4/5 | 5/4 | 1/5 | Kortgrundlag: OpenStreetMap-bidragydere"
+        },
+        "skaerme": 2.61,
+        "vandret": false,
+        "scrollY": 0,
+        "foersteSvarY": 1937,
+        "opgaveY": 1849
+      },
+      "minHelt": {
+        "findes": true,
+        "vises": true,
+        "top": 629,
+        "hoejde": 285,
+        "helPaaFoersteSkaerm": false,
+        "tekst": "Hoved, Hånd og Hjerte Hoved er at tænke og regne. Det vokser, når et forløb ved Møllen, Kirken eller Sporvognen giver dig et nyt niveau. Hånd er at øve og gøre, fx at måle og handle. Den vokser, når et forløb i Grusgraven eller på Landsbygaden giver dig et nyt niveau. Hjerte er at hjælpe andre. Det vokser for hver person, du hjælper. Så går de med dig på kortet og kommer senere og hjælper dig. Forstået",
+        "spoerg": {
+          "b": 30,
+          "h": 30,
+          "x": 352,
+          "y": 529,
+          "overlapperKnap": 0
+        },
+        "talY": 539,
+        "foersteSvarY": null,
+        "skaermHoejde": 844
+      }
+    },
+    "efter-1280": {
+      "findes": true,
+      "vises": true,
+      "top": 259,
+      "hoejde": 227,
+      "helPaaFoersteSkaerm": true,
+      "tekst": "Hoved, Hånd og Hjerte Hoved er at tænke og regne. Det vokser, når et forløb ved Møllen, Kirken eller Sporvognen giver dig et nyt niveau. Hånd er at øve og gøre, fx at måle og handle. Den vokser, når et forløb i Grusgraven eller på Landsbygaden giver dig et nyt niveau. Hjerte er at hjælpe andre. Det vokser for hver person, du hjælper. Så går de med dig på kortet og kommer senere og hjælper dig. Forstået",
+      "spoerg": {
+        "b": 30,
+        "h": 30,
+        "x": 878,
+        "y": 158,
+        "overlapperKnap": 0
+      },
+      "talY": 168,
+      "foersteSvarY": 2037,
+      "skaermHoejde": 900,
+      "maal": {
+        "skaerm": {
+          "ord": 122,
+          "tal": 10,
+          "knapper": 8,
+          "knapNavne": [
+            "Min helt: se din figur og dit udstyr",
+            "Hvad er Hoved, Hånd og Hjerte?",
+            "Forstået",
+            "Min helt",
+            "Journalen",
+            "Questbogen 1 ny",
+            "Lyd: fra",
+            "Sporvognen 🔒 Mestr Grusgravens forløb 1"
+          ],
+          "tekst": "2 | Tulle | Niveau | 2 | Næste niveau: mestr et forløb eller hjælp en person. | 30 | erfaring | Hoved | 2 | Hånd | 1 | Hjerte | 1 | ? | Hoved, Hånd og Hjerte | Hoved | er at tænke og regne. Det vokser, når et forløb ved Møllen, Kirken eller Sporvognen giver dig et nyt niveau. | Hånd | er at øve og gøre, fx at måle og handle. Den vokser, når et forløb i Grusgraven eller på Landsbygaden giver dig et nyt niveau. | Hjerte | er at hjælpe andre. Det vokser for hver person, du hjælper. Så går de med dig på kortet og kommer senere og hjælper dig. | Forstået | Min helt | Journalen | Questbogen | 1 ny | Kortet | 19 indbyggere | Lyd: fra | Møllerdrengen venter på dig: »Del ligeligt« hos Mølleren. | Sporvognen | 🔒 Mestr Grusgravens forløb 1-2"
+        },
+        "side": {
+          "ord": 199,
+          "tal": 27,
+          "knapper": 15,
+          "knapNavne": [
+            "Min helt: se din figur og dit udstyr",
+            "Hvad er Hoved, Hånd og Hjerte?",
+            "Forstået",
+            "Min helt",
+            "Journalen",
+            "Questbogen 1 ny",
+            "Lyd: fra",
+            "Ane, bagerkonen har en quest: Mel til ba",
+            "Møllen",
+            "Kirken og Landsbygaden",
+            "Grusgraven 🔒 Mestr Møllens forløb 1-2",
+            "Sporvognen 🔒 Mestr Grusgravens forløb 1",
+            "4/5",
+            "5/4",
+            "1/5"
+          ],
+          "tekst": "2 | Tulle | Niveau | 2 | Næste niveau: mestr et forløb eller hjælp en person. | 30 | erfaring | Hoved | 2 | Hånd | 1 | Hjerte | 1 | ? | Hoved, Hånd og Hjerte | Hoved | er at tænke og regne. Det vokser, når et forløb ved Møllen, Kirken eller Sporvognen giver dig et nyt niveau. | Hånd | er at øve og gøre, fx at måle og handle. Den vokser, når et forløb i Grusgraven eller på Landsbygaden giver dig et nyt niveau. | Hjerte | er at hjælpe andre. Det vokser for hver person, du hjælper. Så går de med dig på kortet og kommer senere og hjælper dig. | Forstået | Min helt | Journalen | Questbogen | 1 ny | Kortet | 19 indbyggere | Lyd: fra | Møllerdrengen venter på dig: »Del ligeligt« hos Mølleren. | Skoven og Søen | ! | Møllen | Kirken og Landsbygaden | Grusgraven | 🔒 Mestr Møllens forløb 1-2 | Sporvognen | 🔒 Mestr Grusgravens forløb 1-2 | 2 | Vandmøllen ved åen | Mølleren | Forløb 2 af 8 | Del ligeligt | Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? | 0 af 4 opgaver løst · mestret ved 3 rigtige i første forsøg | Brøker | 60 | Bagerkonen deler 4 brød ligeligt mellem 5 karle på møllen. Hvor meget brød får hver karl? | 4/5 | 5/4 | 1/5 | Kortgrundlag: OpenStreetMap-bidragydere"
+        },
+        "skaerme": 2.56,
+        "vandret": false,
+        "scrollY": 0,
+        "foersteSvarY": 2037,
+        "opgaveY": 1973
+      },
+      "minHelt": {
+        "findes": true,
+        "vises": true,
+        "top": 558,
+        "hoejde": 227,
+        "helPaaFoersteSkaerm": true,
+        "tekst": "Hoved, Hånd og Hjerte Hoved er at tænke og regne. Det vokser, når et forløb ved Møllen, Kirken eller Sporvognen giver dig et nyt niveau. Hånd er at øve og gøre, fx at måle og handle. Den vokser, når et forløb i Grusgraven eller på Landsbygaden giver dig et nyt niveau. Hjerte er at hjælpe andre. Det vokser for hver person, du hjælper. Så går de med dig på kortet og kommer senere og hjælper dig. Forstået",
+        "spoerg": {
+          "b": 30,
+          "h": 30,
+          "x": 878,
+          "y": 458,
+          "overlapperKnap": 0
+        },
+        "talY": 468,
+        "foersteSvarY": null,
+        "skaermHoejde": 900
+      }
+    }
+  },
+  "nyElev": {
+    "foer-390": {
+      "opret": {
+        "skaerm": {
+          "ord": 15,
+          "tal": 0,
+          "knapper": 6,
+          "knapNavne": [
+            "",
+            "Blå kittel",
+            "Mosgrøn kappe",
+            "Rødbrun kappe",
+            "Sennepsgul kappe",
+            "Start eventyret"
+          ],
+          "tekst": "Lav din figur | Navn | Udseende | Blå kittel | Mosgrøn kappe | Rødbrun kappe | Sennepsgul kappe | Start eventyret"
+        },
+        "side": {
+          "ord": 15,
+          "tal": 0,
+          "knapper": 6,
+          "knapNavne": [
+            "",
+            "Blå kittel",
+            "Mosgrøn kappe",
+            "Rødbrun kappe",
+            "Sennepsgul kappe",
+            "Start eventyret"
+          ],
+          "tekst": "Lav din figur | Navn | Udseende | Blå kittel | Mosgrøn kappe | Rødbrun kappe | Sennepsgul kappe | Start eventyret"
+        },
+        "skaerme": 1,
+        "vandret": false,
+        "scrollY": 0,
+        "foersteSvarY": null,
+        "opgaveY": null
+      },
+      "foersteSkaerm": {
+        "skaerm": {
+          "ord": 139,
+          "tal": 14,
+          "knapper": 3,
+          "knapNavne": [
+            "2/3",
+            "1/3",
+            "1/2"
+          ],
+          "tekst": "Mølleren | Tulle kommer ned ad vejen til Møllen. Mølleren står i døren, hvid af mel. | Mølleren: \"Godt, du kom. Hjulet er gået i stå, og Ane, bagerkonen, har intet mel til morgenbrødet.\" | Mølleren: \"Hjælp mig med »Lige store dele«, så kan vi male igen, og så kan du hjælpe Ane.\" | Forløb 1 af 8 | Lige store dele | Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt eller sået? | 🔒 | Ane, bagerkonen, venter med »Mel til bageren«. Klar »Lige store dele«, så står Ane med et ! ved møllen. | 0 af 3 opgaver løst · mestret ved 3 rigtige i første forsøg | Brøker | 0 | Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt? | 2/3 | 1/3 | 1/2 | Kortgrundlag: OpenStreetMap-bidragydere"
+        },
+        "side": {
+          "ord": 197,
+          "tal": 26,
+          "knapper": 12,
+          "knapNavne": [
+            "Min helt: se din figur og dit udstyr",
+            "Min helt",
+            "Åbn journalen",
+            "Questbogen",
+            "Lyd: fra",
+            "Møllen",
+            "Kirken og Landsbygaden",
+            "Grusgraven 🔒 Mestr Møllens forløb 1-2",
+            "Sporvognen 🔒 Mestr Grusgravens forløb 1",
+            "2/3",
+            "1/3",
+            "1/2"
+          ],
+          "tekst": "1 | Tulle | Niveau | 1 | Næste niveau: mestr et forløb eller hjælp en person. | 0 | erfaring | Hoved | 1 | Hånd | 1 | Hjerte | 1 | Min helt | Åbn journalen | Questbogen | Kortet | 12 indbyggere | Lyd: fra | Næste: »Lige store dele« hos Mølleren. | Skoven og Søen | Møllen | Kirken og Landsbygaden | Grusgraven | 🔒 Mestr Møllens forløb 1-2 | Sporvognen | 🔒 Mestr Grusgravens forløb 1-2 | 1 | Vandmøllen ved åen | Mølleren | Tulle kommer ned ad vejen til Møllen. Mølleren står i døren, hvid af mel. | Mølleren: \"Godt, du kom. Hjulet er gået i stå, og Ane, bagerkonen, har intet mel til morgenbrødet.\" | Mølleren: \"Hjælp mig med »Lige store dele«, så kan vi male igen, og så kan du hjælpe Ane.\" | Forløb 1 af 8 | Lige store dele | Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt eller sået? | 🔒 | Ane, bagerkonen, venter med »Mel til bageren«. Klar »Lige store dele«, så står Ane med et ! ved møllen. | 0 af 3 opgaver løst · mestret ved 3 rigtige i første forsøg | Brøker | 0 | Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt? | 2/3 | 1/3 | 1/2 | Kortgrundlag: OpenStreetMap-bidragydere"
+        },
+        "skaerme": 2.71,
+        "vandret": false,
+        "scrollY": 1365,
+        "foersteSvarY": 2021,
+        "opgaveY": 1909
+      },
+      "hhh": {
+        "findes": false,
+        "vises": false,
+        "top": null,
+        "hoejde": null,
+        "helPaaFoersteSkaerm": null,
+        "tekst": null,
+        "spoerg": null,
+        "talY": 176,
+        "foersteSvarY": 2021,
+        "skaermHoejde": 844
+      },
+      "aabning": {
+        "top": 1377,
+        "hoejde": 239
+      },
+      "flag": null,
+      "efterGenindlaes": null
+    },
+    "foer-1280": {
+      "opret": {
+        "skaerm": {
+          "ord": 15,
+          "tal": 0,
+          "knapper": 6,
+          "knapNavne": [
+            "",
+            "Blå kittel",
+            "Mosgrøn kappe",
+            "Rødbrun kappe",
+            "Sennepsgul kappe",
+            "Start eventyret"
+          ],
+          "tekst": "Lav din figur | Navn | Udseende | Blå kittel | Mosgrøn kappe | Rødbrun kappe | Sennepsgul kappe | Start eventyret"
+        },
+        "side": {
+          "ord": 15,
+          "tal": 0,
+          "knapper": 6,
+          "knapNavne": [
+            "",
+            "Blå kittel",
+            "Mosgrøn kappe",
+            "Rødbrun kappe",
+            "Sennepsgul kappe",
+            "Start eventyret"
+          ],
+          "tekst": "Lav din figur | Navn | Udseende | Blå kittel | Mosgrøn kappe | Rødbrun kappe | Sennepsgul kappe | Start eventyret"
+        },
+        "skaerme": 1,
+        "vandret": false,
+        "scrollY": 0,
+        "foersteSvarY": null,
+        "opgaveY": null
+      },
+      "foersteSkaerm": {
+        "skaerm": {
+          "ord": 142,
+          "tal": 14,
+          "knapper": 3,
+          "knapNavne": [
+            "2/3",
+            "1/3",
+            "1/2"
+          ],
+          "tekst": "Vandmøllen ved åen | Mølleren | Tulle kommer ned ad vejen til Møllen. Mølleren står i døren, hvid af mel. | Mølleren: \"Godt, du kom. Hjulet er gået i stå, og Ane, bagerkonen, har intet mel til morgenbrødet.\" | Mølleren: \"Hjælp mig med »Lige store dele«, så kan vi male igen, og så kan du hjælpe Ane.\" | Forløb 1 af 8 | Lige store dele | Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt eller sået? | 🔒 | Ane, bagerkonen, venter med »Mel til bageren«. Klar »Lige store dele«, så står Ane med et ! ved møllen. | 0 af 3 opgaver løst · mestret ved 3 rigtige i første forsøg | Brøker | 0 | Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt? | 2/3 | 1/3 | 1/2 | Kortgrundlag: OpenStreetMap-bidragydere"
+        },
+        "side": {
+          "ord": 197,
+          "tal": 26,
+          "knapper": 12,
+          "knapNavne": [
+            "Min helt: se din figur og dit udstyr",
+            "Min helt",
+            "Åbn journalen",
+            "Questbogen",
+            "Lyd: fra",
+            "Møllen",
+            "Kirken og Landsbygaden",
+            "Grusgraven 🔒 Mestr Møllens forløb 1-2",
+            "Sporvognen 🔒 Mestr Grusgravens forløb 1",
+            "2/3",
+            "1/3",
+            "1/2"
+          ],
+          "tekst": "1 | Tulle | Niveau | 1 | Næste niveau: mestr et forløb eller hjælp en person. | 0 | erfaring | Hoved | 1 | Hånd | 1 | Hjerte | 1 | Min helt | Åbn journalen | Questbogen | Kortet | 12 indbyggere | Lyd: fra | Næste: »Lige store dele« hos Mølleren. | Skoven og Søen | Møllen | Kirken og Landsbygaden | Grusgraven | 🔒 Mestr Møllens forløb 1-2 | Sporvognen | 🔒 Mestr Grusgravens forløb 1-2 | 1 | Vandmøllen ved åen | Mølleren | Tulle kommer ned ad vejen til Møllen. Mølleren står i døren, hvid af mel. | Mølleren: \"Godt, du kom. Hjulet er gået i stå, og Ane, bagerkonen, har intet mel til morgenbrødet.\" | Mølleren: \"Hjælp mig med »Lige store dele«, så kan vi male igen, og så kan du hjælpe Ane.\" | Forløb 1 af 8 | Lige store dele | Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt eller sået? | 🔒 | Ane, bagerkonen, venter med »Mel til bageren«. Klar »Lige store dele«, så står Ane med et ! ved møllen. | 0 af 3 opgaver løst · mestret ved 3 rigtige i første forsøg | Brøker | 0 | Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt? | 2/3 | 1/3 | 1/2 | Kortgrundlag: OpenStreetMap-bidragydere"
+        },
+        "skaerme": 2.66,
+        "vandret": false,
+        "scrollY": 1497,
+        "foersteSvarY": 2130,
+        "opgaveY": 2042
+      },
+      "hhh": {
+        "findes": false,
+        "vises": false,
+        "top": null,
+        "hoejde": null,
+        "helPaaFoersteSkaerm": null,
+        "tekst": null,
+        "spoerg": null,
+        "talY": 168,
+        "foersteSvarY": 2130,
+        "skaermHoejde": 900
+      },
+      "aabning": {
+        "top": 1643,
+        "hoejde": 171
+      },
+      "flag": null,
+      "efterGenindlaes": null
+    },
+    "efter-390": {
+      "opret": {
+        "skaerm": {
+          "ord": 15,
+          "tal": 0,
+          "knapper": 6,
+          "knapNavne": [
+            "",
+            "Blå kittel",
+            "Mosgrøn kappe",
+            "Rødbrun kappe",
+            "Sennepsgul kappe",
+            "Start eventyret"
+          ],
+          "tekst": "Lav din figur | Navn | Udseende | Blå kittel | Mosgrøn kappe | Rødbrun kappe | Sennepsgul kappe | Start eventyret"
+        },
+        "side": {
+          "ord": 15,
+          "tal": 0,
+          "knapper": 6,
+          "knapNavne": [
+            "",
+            "Blå kittel",
+            "Mosgrøn kappe",
+            "Rødbrun kappe",
+            "Sennepsgul kappe",
+            "Start eventyret"
+          ],
+          "tekst": "Lav din figur | Navn | Udseende | Blå kittel | Mosgrøn kappe | Rødbrun kappe | Sennepsgul kappe | Start eventyret"
+        },
+        "skaerme": 1,
+        "vandret": false,
+        "scrollY": 0,
+        "foersteSvarY": null,
+        "opgaveY": null
+      },
+      "foersteSkaerm": {
+        "skaerm": {
+          "ord": 138,
+          "tal": 14,
+          "knapper": 3,
+          "knapNavne": [
+            "2/3",
+            "1/3",
+            "1/2"
+          ],
+          "tekst": "Tulle kommer ned ad vejen til Møllen. Mølleren står i døren, hvid af mel. | Mølleren: \"Godt, du kom. Hjulet er gået i stå, og Ane, bagerkonen, har intet mel til morgenbrødet.\" | Mølleren: \"Hjælp mig med »Lige store dele«, så kan vi male igen, og så kan du hjælpe Ane.\" | Forløb 1 af 8 | Lige store dele | Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt eller sået? | 🔒 | Ane, bagerkonen, venter med »Mel til bageren«. Klar »Lige store dele«, så står Ane med et ! ved møllen. | 0 af 3 opgaver løst · mestret ved 3 rigtige i første forsøg | Brøker | 0 | Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt? | 2/3 | 1/3 | 1/2 | Kortgrundlag: OpenStreetMap-bidragydere"
+        },
+        "side": {
+          "ord": 273,
+          "tal": 26,
+          "knapper": 14,
+          "knapNavne": [
+            "Min helt: se din figur og dit udstyr",
+            "Hvad er Hoved, Hånd og Hjerte?",
+            "Forstået",
+            "Min helt",
+            "Journalen",
+            "Questbogen",
+            "Lyd: fra",
+            "Møllen",
+            "Kirken og Landsbygaden",
+            "Grusgraven 🔒 Mestr Møllens forløb 1-2",
+            "Sporvognen 🔒 Mestr Grusgravens forløb 1",
+            "2/3",
+            "1/3",
+            "1/2"
+          ],
+          "tekst": "1 | Tulle | Niveau | 1 | Næste niveau: mestr et forløb eller hjælp en person. | 0 | erfaring | Hoved | 1 | Hånd | 1 | Hjerte | 1 | ? | Hoved, Hånd og Hjerte | Hoved | er at tænke og regne. Det vokser, når et forløb ved Møllen, Kirken eller Sporvognen giver dig et nyt niveau. | Hånd | er at øve og gøre, fx at måle og handle. Den vokser, når et forløb i Grusgraven eller på Landsbygaden giver dig et nyt niveau. | Hjerte | er at hjælpe andre. Det vokser for hver person, du hjælper. Så går de med dig på kortet og kommer senere og hjælper dig. | Forstået | Min helt | Journalen | Questbogen | Kortet | 12 indbyggere | Lyd: fra | Næste: »Lige store dele« hos Mølleren. | Skoven og Søen | Møllen | Kirken og Landsbygaden | Grusgraven | 🔒 Mestr Møllens forløb 1-2 | Sporvognen | 🔒 Mestr Grusgravens forløb 1-2 | 1 | Vandmøllen ved åen | Mølleren | Tulle kommer ned ad vejen til Møllen. Mølleren står i døren, hvid af mel. | Mølleren: \"Godt, du kom. Hjulet er gået i stå, og Ane, bagerkonen, har intet mel til morgenbrødet.\" | Mølleren: \"Hjælp mig med »Lige store dele«, så kan vi male igen, og så kan du hjælpe Ane.\" | Forløb 1 af 8 | Lige store dele | Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt eller sået? | 🔒 | Ane, bagerkonen, venter med »Mel til bageren«. Klar »Lige store dele«, så står Ane med et ! ved møllen. | 0 af 3 opgaver løst · mestret ved 3 rigtige i første forsøg | Brøker | 0 | Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt? | 2/3 | 1/3 | 1/2 | Kortgrundlag: OpenStreetMap-bidragydere"
+        },
+        "skaerme": 3,
+        "vandret": false,
+        "scrollY": 1607,
+        "foersteSvarY": 2263,
+        "opgaveY": 2151
+      },
+      "hhh": {
+        "findes": true,
+        "vises": true,
+        "top": 266,
+        "hoejde": 285,
+        "helPaaFoersteSkaerm": false,
+        "tekst": "Hoved, Hånd og Hjerte Hoved er at tænke og regne. Det vokser, når et forløb ved Møllen, Kirken eller Sporvognen giver dig et nyt niveau. Hånd er at øve og gøre, fx at måle og handle. Den vokser, når et forløb i Grusgraven eller på Landsbygaden giver dig et nyt niveau. Hjerte er at hjælpe andre. Det vokser for hver person, du hjælper. Så går de med dig på kortet og kommer senere og hjælper dig. Forstået",
+        "spoerg": {
+          "b": 30,
+          "h": 30,
+          "x": 352,
+          "y": 166,
+          "overlapperKnap": 0
+        },
+        "talY": 176,
+        "foersteSvarY": 2263,
+        "skaermHoejde": 844
+      },
+      "aabning": {
+        "top": 1619,
+        "hoejde": 239
+      },
+      "flag": "1",
+      "efterGenindlaes": false
+    },
+    "efter-1280": {
+      "opret": {
+        "skaerm": {
+          "ord": 15,
+          "tal": 0,
+          "knapper": 6,
+          "knapNavne": [
+            "",
+            "Blå kittel",
+            "Mosgrøn kappe",
+            "Rødbrun kappe",
+            "Sennepsgul kappe",
+            "Start eventyret"
+          ],
+          "tekst": "Lav din figur | Navn | Udseende | Blå kittel | Mosgrøn kappe | Rødbrun kappe | Sennepsgul kappe | Start eventyret"
+        },
+        "side": {
+          "ord": 15,
+          "tal": 0,
+          "knapper": 6,
+          "knapNavne": [
+            "",
+            "Blå kittel",
+            "Mosgrøn kappe",
+            "Rødbrun kappe",
+            "Sennepsgul kappe",
+            "Start eventyret"
+          ],
+          "tekst": "Lav din figur | Navn | Udseende | Blå kittel | Mosgrøn kappe | Rødbrun kappe | Sennepsgul kappe | Start eventyret"
+        },
+        "skaerme": 1,
+        "vandret": false,
+        "scrollY": 0,
+        "foersteSvarY": null,
+        "opgaveY": null
+      },
+      "foersteSkaerm": {
+        "skaerm": {
+          "ord": 142,
+          "tal": 14,
+          "knapper": 3,
+          "knapNavne": [
+            "2/3",
+            "1/3",
+            "1/2"
+          ],
+          "tekst": "Vandmøllen ved åen | Mølleren | Tulle kommer ned ad vejen til Møllen. Mølleren står i døren, hvid af mel. | Mølleren: \"Godt, du kom. Hjulet er gået i stå, og Ane, bagerkonen, har intet mel til morgenbrødet.\" | Mølleren: \"Hjælp mig med »Lige store dele«, så kan vi male igen, og så kan du hjælpe Ane.\" | Forløb 1 af 8 | Lige store dele | Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt eller sået? | 🔒 | Ane, bagerkonen, venter med »Mel til bageren«. Klar »Lige store dele«, så står Ane med et ! ved møllen. | 0 af 3 opgaver løst · mestret ved 3 rigtige i første forsøg | Brøker | 0 | Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt? | 2/3 | 1/3 | 1/2 | Kortgrundlag: OpenStreetMap-bidragydere"
+        },
+        "side": {
+          "ord": 273,
+          "tal": 26,
+          "knapper": 14,
+          "knapNavne": [
+            "Min helt: se din figur og dit udstyr",
+            "Hvad er Hoved, Hånd og Hjerte?",
+            "Forstået",
+            "Min helt",
+            "Journalen",
+            "Questbogen",
+            "Lyd: fra",
+            "Møllen",
+            "Kirken og Landsbygaden",
+            "Grusgraven 🔒 Mestr Møllens forløb 1-2",
+            "Sporvognen 🔒 Mestr Grusgravens forløb 1",
+            "2/3",
+            "1/3",
+            "1/2"
+          ],
+          "tekst": "1 | Tulle | Niveau | 1 | Næste niveau: mestr et forløb eller hjælp en person. | 0 | erfaring | Hoved | 1 | Hånd | 1 | Hjerte | 1 | ? | Hoved, Hånd og Hjerte | Hoved | er at tænke og regne. Det vokser, når et forløb ved Møllen, Kirken eller Sporvognen giver dig et nyt niveau. | Hånd | er at øve og gøre, fx at måle og handle. Den vokser, når et forløb i Grusgraven eller på Landsbygaden giver dig et nyt niveau. | Hjerte | er at hjælpe andre. Det vokser for hver person, du hjælper. Så går de med dig på kortet og kommer senere og hjælper dig. | Forstået | Min helt | Journalen | Questbogen | Kortet | 12 indbyggere | Lyd: fra | Næste: »Lige store dele« hos Mølleren. | Skoven og Søen | Møllen | Kirken og Landsbygaden | Grusgraven | 🔒 Mestr Møllens forløb 1-2 | Sporvognen | 🔒 Mestr Grusgravens forløb 1-2 | 1 | Vandmøllen ved åen | Mølleren | Tulle kommer ned ad vejen til Møllen. Mølleren står i døren, hvid af mel. | Mølleren: \"Godt, du kom. Hjulet er gået i stå, og Ane, bagerkonen, har intet mel til morgenbrødet.\" | Mølleren: \"Hjælp mig med »Lige store dele«, så kan vi male igen, og så kan du hjælpe Ane.\" | Forløb 1 af 8 | Lige store dele | Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt eller sået? | 🔒 | Ane, bagerkonen, venter med »Mel til bageren«. Klar »Lige store dele«, så står Ane med et ! ved møllen. | 0 af 3 opgaver løst · mestret ved 3 rigtige i første forsøg | Brøker | 0 | Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt? | 2/3 | 1/3 | 1/2 | Kortgrundlag: OpenStreetMap-bidragydere"
+        },
+        "skaerme": 2.87,
+        "vandret": false,
+        "scrollY": 1680,
+        "foersteSvarY": 2312,
+        "opgaveY": 2224
+      },
+      "hhh": {
+        "findes": true,
+        "vises": true,
+        "top": 259,
+        "hoejde": 227,
+        "helPaaFoersteSkaerm": false,
+        "tekst": "Hoved, Hånd og Hjerte Hoved er at tænke og regne. Det vokser, når et forløb ved Møllen, Kirken eller Sporvognen giver dig et nyt niveau. Hånd er at øve og gøre, fx at måle og handle. Den vokser, når et forløb i Grusgraven eller på Landsbygaden giver dig et nyt niveau. Hjerte er at hjælpe andre. Det vokser for hver person, du hjælper. Så går de med dig på kortet og kommer senere og hjælper dig. Forstået",
+        "spoerg": {
+          "b": 30,
+          "h": 30,
+          "x": 878,
+          "y": 158,
+          "overlapperKnap": 0
+        },
+        "talY": 168,
+        "foersteSvarY": 2312,
+        "skaermHoejde": 900
+      },
+      "aabning": {
+        "top": 1826,
+        "hoejde": 171
+      },
+      "flag": "1",
+      "efterGenindlaes": false
+    }
+  },
+  "fejl": [],
+  "forklaring": [
+    {
+      "navn": "Hoved",
+      "tekst": "Hoved er at tænke og regne. Det vokser, når et forløb ved Møllen, Kirken eller Sporvognen giver dig et nyt niveau.",
+      "ord": 21
+    },
+    {
+      "navn": "Hånd",
+      "tekst": "Hånd er at øve og gøre, fx at måle og handle. Den vokser, når et forløb i Grusgraven eller på Landsbygaden giver dig et nyt niveau.",
+      "ord": 26
+    },
+    {
+      "navn": "Hjerte",
+      "tekst": "Hjerte er at hjælpe andre. Det vokser for hver person, du hjælper. Så går de med dig på kortet og kommer senere og hjælper dig.",
+      "ord": 25
+    }
+  ],
+  "laerer": [
+    "Hoved er at tænke og regne. Det vokser, når et forløb ved Møllen, Kirken eller Sporvognen giver dig et nyt niveau.",
+    "Hånd er at øve og gøre, fx at måle og handle. Den vokser, når et forløb i Grusgraven eller på Landsbygaden giver dig et nyt niveau.",
+    "Hjerte er at hjælpe andre. Det vokser for hver person, du hjælper. Så går de med dig på kortet og kommer senere og hjælper dig."
+  ],
+  "net": 0
+}
