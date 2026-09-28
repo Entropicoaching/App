@@ -1,0 +1,1601 @@
+{
+ "skak": "c358eeb",
+ "ref": "main",
+ "main": "c358eeb",
+ "merget623": "ja",
+ "merget629": "ja",
+ "S": {
+  "360": {
+   "gaader1": [
+    {
+     "fen": "2r5/p4pp1/7p/2k5/8/1Pp4P/2R1KPP1/8 w - - 7 32",
+     "fundet": true,
+     "tema": "skewer",
+     "traek": 3
+    },
+    {
+     "fen": "6k1/5ppp/1p6/p7/8/6KP/2Rr1PP1/4r3 w - - 0 34",
+     "fundet": true,
+     "tema": "mateIn3",
+     "traek": 5
+    }
+   ],
+   "bib1": {
+    "saetning": "Denne uge har du øvet 2 temaer (2 gåder), \"Find feltet\", 1 åbning (1 gang) og 1 kendt parti.",
+    "saetningLinjer": 3,
+    "find": "denne uge: bedst 10 felter (100 %) · sidste uge: ikke øvet",
+    "findKlasse": "mit-bib-uge",
+    "findRaekke": "Find feltet 100 % rigtige · 10 forsøg denne uge: bedst 10 felter (100 %) · sidste uge: ikke øvet Øv",
+    "vandret": 0
+   },
+   "bib2": {
+    "saetning": "Denne uge blev du hurtigere til \"Find feltet\": 20 felter på 30 s mod 10 sidste uge.",
+    "saetningLinjer": 3,
+    "find": "denne uge: bedst 20 felter (91 %) · sidste uge: bedst 10 felter (100 %)",
+    "findKlasse": "mit-bib-uge op",
+    "findRaekke": "Find feltet 94 % rigtige · 32 forsøg denne uge: bedst 20 felter (91 %) · sidste uge: bedst 10 felter (100 %) Øv",
+    "vandret": 0
+   },
+   "koord": {
+    "svar": 32,
+    "rigtige": 30,
+    "uger": {
+     "2960": [
+      10,
+      10,
+      10
+     ],
+     "2961": [
+      22,
+      20,
+      20
+     ]
+    }
+   },
+   "net": 0,
+   "fejl": []
+  },
+  "390": {
+   "gaader1": [
+    {
+     "fen": "r1b5/ppp1qk1p/5n1Q/3p1p2/8/2NP3P/PPn2PP1/1RB2K1R b - - 1 18",
+     "fundet": true,
+     "tema": "mateIn1",
+     "traek": 1
+    },
+    {
+     "fen": "8/1Q2Q3/8/3K4/8/8/8/k4B2 w - - 0 1",
+     "fundet": true,
+     "tema": "mateIn1",
+     "traek": 1
+    }
+   ],
+   "bib1": {
+    "saetning": "Denne uge har du øvet 1 tema (2 gåder), \"Find feltet\", 1 åbning (1 gang) og 1 kendt parti.",
+    "saetningLinjer": 3,
+    "find": "denne uge: bedst 10 felter (100 %) · sidste uge: ikke øvet",
+    "findKlasse": "mit-bib-uge",
+    "findRaekke": "Find feltet 100 % rigtige · 10 forsøg denne uge: bedst 10 felter (100 %) · sidste uge: ikke øvet Øv",
+    "vandret": 0
+   },
+   "bib2": {
+    "saetning": "Denne uge blev du hurtigere til \"Find feltet\": 20 felter på 30 s mod 10 sidste uge.",
+    "saetningLinjer": 2,
+    "find": "denne uge: bedst 20 felter (91 %) · sidste uge: bedst 10 felter (100 %)",
+    "findKlasse": "mit-bib-uge op",
+    "findRaekke": "Find feltet 94 % rigtige · 32 forsøg denne uge: bedst 20 felter (91 %) · sidste uge: bedst 10 felter (100 %) Øv",
+    "vandret": 0
+   },
+   "koord": {
+    "svar": 32,
+    "rigtige": 30,
+    "uger": {
+     "2960": [
+      10,
+      10,
+      10
+     ],
+     "2961": [
+      22,
+      20,
+      20
+     ]
+    }
+   },
+   "net": 0,
+   "fejl": []
+  },
+  "1280": {
+   "gaader1": [
+    {
+     "fen": "r2q1rk1/pnp2ppp/1p1p1n2/3PpN2/1P2P1QP/P1N5/2P2PP1/R4RK1 w - - 3 19",
+     "fundet": true,
+     "tema": "mateIn1",
+     "traek": 1
+    },
+    {
+     "fen": "8/5r2/8/8/8/8/3q4/4k1K1 b - - 0 1",
+     "fundet": true,
+     "tema": "mateIn1",
+     "traek": 1
+    }
+   ],
+   "bib1": {
+    "saetning": "Denne uge har du øvet 1 tema (2 gåder), \"Find feltet\", 1 åbning (1 gang) og 1 kendt parti.",
+    "saetningLinjer": 2,
+    "find": "denne uge: bedst 10 felter (100 %) · sidste uge: ikke øvet",
+    "findKlasse": "mit-bib-uge",
+    "findRaekke": "Find feltet 100 % rigtige · 10 forsøg denne uge: bedst 10 felter (100 %) · sidste uge: ikke øvet Øv",
+    "vandret": 0
+   },
+   "bib2": {
+    "saetning": "Denne uge blev du hurtigere til \"Find feltet\": 20 felter på 30 s mod 10 sidste uge.",
+    "saetningLinjer": 2,
+    "find": "denne uge: bedst 20 felter (91 %) · sidste uge: bedst 10 felter (100 %)",
+    "findKlasse": "mit-bib-uge op",
+    "findRaekke": "Find feltet 94 % rigtige · 32 forsøg denne uge: bedst 20 felter (91 %) · sidste uge: bedst 10 felter (100 %) Øv",
+    "vandret": 0
+   },
+   "koord": {
+    "svar": 32,
+    "rigtige": 30,
+    "uger": {
+     "2960": [
+      10,
+      10,
+      10
+     ],
+     "2961": [
+      22,
+      20,
+      20
+     ]
+    }
+   },
+   "net": 0,
+   "fejl": []
+  }
+ },
+ "T": {
+  "360": {
+   "r0 man 28/9 09:00 startkortet": {
+    "blandet": {
+     "rekord": "Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "tema": ""
+    },
+    "gaffel": {
+     "rekord": "Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "tema": "Gafler: rekord 7."
+    },
+    "kortBlandet": {
+     "hoejde": 485,
+     "linjeLinjer": 0,
+     "linjeUnderSegment": -462,
+     "linjeUnderValgt": -412,
+     "linjeISkaerm": true,
+     "segmentISkaerm": true,
+     "startKnapTop": 340,
+     "vandret": 0,
+     "over": [
+      "Gåde-storm: 3 minutter",
+      "Løs så mange gåder du kan. De starter lette og bli",
+      "Din rekord på denne enhed: 9 gåder (4 i træk).",
+      "Tema"
+     ]
+    },
+    "kortGaffel": {
+     "hoejde": 505,
+     "linjeLinjer": 1,
+     "linjeUnderSegment": 0,
+     "linjeUnderValgt": 50,
+     "linjeISkaerm": true,
+     "segmentISkaerm": true,
+     "startKnapTop": 360,
+     "vandret": 0,
+     "over": [
+      "Gåde-storm: 3 minutter",
+      "Løs så mange gåder du kan. De starter lette og bli",
+      "Din rekord på denne enhed: 9 gåder (4 i træk).",
+      "Tema"
+     ]
+    }
+   },
+   "r1 man 10:00 Gafler, 3": {
+    "start": {
+     "rekord": "Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "tema": "Gafler: rekord 7."
+    },
+    "loest": [
+     "fork",
+     "fork",
+     "fork"
+    ],
+    "app": 3,
+    "slut": {
+     "overskrift": "Tiden er gået! Du løste 3 gåder.",
+     "nyRekord": "",
+     "nyPeriode": "",
+     "rekord": "Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "perioder": "I alt: bedst 3 i dag · bedst 3 denne uge.",
+     "tema": "Gafler: bedst 3 i dag · bedst 3 denne uge · rekord 7."
+    },
+    "lager": {
+     "tema": "{\"gaffel\":{\"dag\":{\"dato\":\"2026-09-28\",\"loeste\":3},\"uge\":{\"uge\":2961,\"loeste\":3}}}",
+     "temaRekord": "{\"gaffel\":7}",
+     "rekord": "{\"loeste\":9,\"kombo\":4,\"dato\":\"2026-09-01\"}"
+    }
+   },
+   "r2 man 11:00 Gafler, 8": {
+    "start": {
+     "rekord": "Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "tema": "Gafler: bedst 3 i dag · bedst 3 denne uge · rekord 7."
+    },
+    "loest": [
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork"
+    ],
+    "app": 8,
+    "slut": {
+     "overskrift": "Tiden er gået! Du løste 8 gåder.",
+     "nyRekord": "",
+     "nyPeriode": "Din bedste Gafler-storm nogensinde!",
+     "rekord": "Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "perioder": "I alt: bedst 8 i dag · bedst 8 denne uge.",
+     "tema": "Gafler: bedst 8 i dag · bedst 8 denne uge · rekord 8."
+    },
+    "lager": {
+     "tema": "{\"gaffel\":{\"dag\":{\"dato\":\"2026-09-28\",\"loeste\":8},\"uge\":{\"uge\":2961,\"loeste\":8}}}",
+     "temaRekord": "{\"gaffel\":8}",
+     "rekord": "{\"loeste\":9,\"kombo\":4,\"dato\":\"2026-09-01\"}"
+    }
+   },
+   "r3 man 12:00 Gafler, 9 og Stop": {
+    "start": {
+     "rekord": "Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "tema": "Gafler: bedst 8 i dag · bedst 8 denne uge · rekord 8."
+    },
+    "loest": [
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork"
+    ],
+    "app": 9,
+    "slut": {
+     "overskrift": "Stormen er stoppet. Du løste 9 gåder.",
+     "nyRekord": "",
+     "nyPeriode": "",
+     "rekord": "En stoppet storm tæller ikke som rekord. Lad uret løbe ud næste gang. Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "perioder": "I alt: bedst 8 i dag · bedst 8 denne uge.",
+     "tema": "Gafler: bedst 8 i dag · bedst 8 denne uge · rekord 8."
+    },
+    "lager": {
+     "tema": "{\"gaffel\":{\"dag\":{\"dato\":\"2026-09-28\",\"loeste\":8},\"uge\":{\"uge\":2961,\"loeste\":8}}}",
+     "temaRekord": "{\"gaffel\":8}",
+     "rekord": "{\"loeste\":9,\"kombo\":4,\"dato\":\"2026-09-01\"}"
+    }
+   },
+   "r4 tir 29/9 10:00 Gafler, 10": {
+    "start": {
+     "rekord": "Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "tema": "Gafler: ingen storm i dag · bedst 8 denne uge · rekord 8."
+    },
+    "loest": [
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork"
+    ],
+    "app": 10,
+    "slut": {
+     "overskrift": "Tiden er gået! Du løste 10 gåder.",
+     "nyRekord": "Ny rekord på denne enhed!",
+     "nyPeriode": "",
+     "rekord": "",
+     "perioder": "I alt: bedst 10 i dag · bedst 10 denne uge.",
+     "tema": "Gafler: bedst 10 i dag · bedst 10 denne uge · rekord 10."
+    },
+    "lager": {
+     "tema": "{\"gaffel\":{\"dag\":{\"dato\":\"2026-09-29\",\"loeste\":10},\"uge\":{\"uge\":2961,\"loeste\":10}}}",
+     "temaRekord": "{\"gaffel\":10}",
+     "rekord": "{\"loeste\":10,\"kombo\":10,\"dato\":\"2026-09-29\"}"
+    }
+   },
+   "r5 man 5/10 00:30 startkortet": {
+    "blandet": {
+     "rekord": "Din rekord på denne enhed: 10 gåder (10 i træk).",
+     "tema": ""
+    },
+    "gaffel": {
+     "rekord": "Din rekord på denne enhed: 10 gåder (10 i træk).",
+     "tema": "Gafler: rekord 10."
+    },
+    "kortBlandet": {
+     "hoejde": 485,
+     "linjeLinjer": 0,
+     "linjeUnderSegment": -462,
+     "linjeUnderValgt": -412,
+     "linjeISkaerm": true,
+     "segmentISkaerm": true,
+     "startKnapTop": 340,
+     "vandret": 0,
+     "over": [
+      "Gåde-storm: 3 minutter",
+      "Løs så mange gåder du kan. De starter lette og bli",
+      "Din rekord på denne enhed: 10 gåder (10 i træk).",
+      "Tema"
+     ]
+    },
+    "kortGaffel": {
+     "hoejde": 505,
+     "linjeLinjer": 1,
+     "linjeUnderSegment": 0,
+     "linjeUnderValgt": 50,
+     "linjeISkaerm": true,
+     "segmentISkaerm": true,
+     "startKnapTop": 360,
+     "vandret": 0,
+     "over": [
+      "Gåde-storm: 3 minutter",
+      "Løs så mange gåder du kan. De starter lette og bli",
+      "Din rekord på denne enhed: 10 gåder (10 i træk).",
+      "Tema"
+     ]
+    }
+   },
+   "r6 man 5/10 10:00 Gafler, 2": {
+    "start": {
+     "rekord": "Din rekord på denne enhed: 10 gåder (10 i træk).",
+     "tema": "Gafler: rekord 10."
+    },
+    "loest": [
+     "fork",
+     "fork"
+    ],
+    "app": 2,
+    "slut": {
+     "overskrift": "Tiden er gået! Du løste 2 gåder.",
+     "nyRekord": "",
+     "nyPeriode": "",
+     "rekord": "Din rekord på denne enhed: 10 gåder (10 i træk).",
+     "perioder": "I alt: bedst 2 i dag · bedst 2 denne uge.",
+     "tema": "Gafler: bedst 2 i dag · bedst 2 denne uge · rekord 10."
+    },
+    "lager": {
+     "tema": "{\"gaffel\":{\"dag\":{\"dato\":\"2026-10-05\",\"loeste\":2},\"uge\":{\"uge\":2962,\"loeste\":2}}}",
+     "temaRekord": "{\"gaffel\":10}",
+     "rekord": "{\"loeste\":10,\"kombo\":10,\"dato\":\"2026-09-29\"}"
+    }
+   },
+   "r7 man 5/10 11:00 dagens storm med Gafler valgt, 11": {
+    "start": {
+     "rekord": "Din rekord på denne enhed: 10 gåder (10 i træk).",
+     "tema": "Gafler: bedst 2 i dag · bedst 2 denne uge · rekord 10."
+    },
+    "loest": [
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork"
+    ],
+    "app": 11,
+    "slut": {
+     "overskrift": "Tiden er gået! Du løste 11 gåder.",
+     "nyRekord": "Ny rekord på denne enhed!",
+     "nyPeriode": "",
+     "rekord": "",
+     "perioder": "I alt: bedst 11 i dag · bedst 11 denne uge.",
+     "tema": "Gafler: bedst 11 i dag · bedst 11 denne uge · rekord 11."
+    },
+    "lager": {
+     "tema": "{\"gaffel\":{\"dag\":{\"dato\":\"2026-10-05\",\"loeste\":11},\"uge\":{\"uge\":2962,\"loeste\":11}}}",
+     "temaRekord": "{\"gaffel\":11}",
+     "rekord": "{\"loeste\":11,\"kombo\":11,\"dato\":\"2026-10-05\"}"
+    }
+   },
+   "r8 man 5/10 12:00 Blandet, 3": {
+    "start": {
+     "rekord": "Din rekord på denne enhed: 11 gåder (11 i træk).",
+     "tema": "I alt: bedst 11 i dag · bedst 11 denne uge."
+    },
+    "loest": [
+     "hangingPiece",
+     "hangingPiece",
+     "mateIn2"
+    ],
+    "app": 3,
+    "slut": {
+     "overskrift": "Tiden er gået! Du løste 3 gåder.",
+     "nyRekord": "",
+     "nyPeriode": "",
+     "rekord": "Din rekord på denne enhed: 11 gåder (11 i træk).",
+     "perioder": "I alt: bedst 11 i dag · bedst 11 denne uge.",
+     "tema": ""
+    },
+    "lager": {
+     "tema": "{\"gaffel\":{\"dag\":{\"dato\":\"2026-10-05\",\"loeste\":11},\"uge\":{\"uge\":2962,\"loeste\":11}}}",
+     "temaRekord": "{\"gaffel\":11}",
+     "rekord": "{\"loeste\":11,\"kombo\":11,\"dato\":\"2026-10-05\"}"
+    }
+   },
+   "net": 0,
+   "fejl": [],
+   "dialoger": []
+  },
+  "390": {
+   "r0 man 28/9 09:00 startkortet": {
+    "blandet": {
+     "rekord": "Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "tema": ""
+    },
+    "gaffel": {
+     "rekord": "Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "tema": "Gafler: rekord 7."
+    },
+    "kortBlandet": {
+     "hoejde": 465,
+     "linjeLinjer": 0,
+     "linjeUnderSegment": -494,
+     "linjeUnderValgt": -444,
+     "linjeISkaerm": true,
+     "segmentISkaerm": true,
+     "startKnapTop": 340,
+     "vandret": 0,
+     "over": [
+      "Gåde-storm: 3 minutter",
+      "Løs så mange gåder du kan. De starter lette og bli",
+      "Din rekord på denne enhed: 9 gåder (4 i træk).",
+      "Tema"
+     ]
+    },
+    "kortGaffel": {
+     "hoejde": 485,
+     "linjeLinjer": 1,
+     "linjeUnderSegment": 0,
+     "linjeUnderValgt": 50,
+     "linjeISkaerm": true,
+     "segmentISkaerm": true,
+     "startKnapTop": 360,
+     "vandret": 0,
+     "over": [
+      "Gåde-storm: 3 minutter",
+      "Løs så mange gåder du kan. De starter lette og bli",
+      "Din rekord på denne enhed: 9 gåder (4 i træk).",
+      "Tema"
+     ]
+    }
+   },
+   "r1 man 10:00 Gafler, 3": {
+    "start": {
+     "rekord": "Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "tema": "Gafler: rekord 7."
+    },
+    "loest": [
+     "fork",
+     "fork",
+     "fork"
+    ],
+    "app": 3,
+    "slut": {
+     "overskrift": "Tiden er gået! Du løste 3 gåder.",
+     "nyRekord": "",
+     "nyPeriode": "",
+     "rekord": "Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "perioder": "I alt: bedst 3 i dag · bedst 3 denne uge.",
+     "tema": "Gafler: bedst 3 i dag · bedst 3 denne uge · rekord 7."
+    },
+    "lager": {
+     "tema": "{\"gaffel\":{\"dag\":{\"dato\":\"2026-09-28\",\"loeste\":3},\"uge\":{\"uge\":2961,\"loeste\":3}}}",
+     "temaRekord": "{\"gaffel\":7}",
+     "rekord": "{\"loeste\":9,\"kombo\":4,\"dato\":\"2026-09-01\"}"
+    }
+   },
+   "r2 man 11:00 Gafler, 8": {
+    "start": {
+     "rekord": "Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "tema": "Gafler: bedst 3 i dag · bedst 3 denne uge · rekord 7."
+    },
+    "loest": [
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork"
+    ],
+    "app": 8,
+    "slut": {
+     "overskrift": "Tiden er gået! Du løste 8 gåder.",
+     "nyRekord": "",
+     "nyPeriode": "Din bedste Gafler-storm nogensinde!",
+     "rekord": "Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "perioder": "I alt: bedst 8 i dag · bedst 8 denne uge.",
+     "tema": "Gafler: bedst 8 i dag · bedst 8 denne uge · rekord 8."
+    },
+    "lager": {
+     "tema": "{\"gaffel\":{\"dag\":{\"dato\":\"2026-09-28\",\"loeste\":8},\"uge\":{\"uge\":2961,\"loeste\":8}}}",
+     "temaRekord": "{\"gaffel\":8}",
+     "rekord": "{\"loeste\":9,\"kombo\":4,\"dato\":\"2026-09-01\"}"
+    }
+   },
+   "r3 man 12:00 Gafler, 9 og Stop": {
+    "start": {
+     "rekord": "Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "tema": "Gafler: bedst 8 i dag · bedst 8 denne uge · rekord 8."
+    },
+    "loest": [
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork"
+    ],
+    "app": 9,
+    "slut": {
+     "overskrift": "Stormen er stoppet. Du løste 9 gåder.",
+     "nyRekord": "",
+     "nyPeriode": "",
+     "rekord": "En stoppet storm tæller ikke som rekord. Lad uret løbe ud næste gang. Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "perioder": "I alt: bedst 8 i dag · bedst 8 denne uge.",
+     "tema": "Gafler: bedst 8 i dag · bedst 8 denne uge · rekord 8."
+    },
+    "lager": {
+     "tema": "{\"gaffel\":{\"dag\":{\"dato\":\"2026-09-28\",\"loeste\":8},\"uge\":{\"uge\":2961,\"loeste\":8}}}",
+     "temaRekord": "{\"gaffel\":8}",
+     "rekord": "{\"loeste\":9,\"kombo\":4,\"dato\":\"2026-09-01\"}"
+    }
+   },
+   "r4 tir 29/9 10:00 Gafler, 10": {
+    "start": {
+     "rekord": "Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "tema": "Gafler: ingen storm i dag · bedst 8 denne uge · rekord 8."
+    },
+    "loest": [
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork"
+    ],
+    "app": 10,
+    "slut": {
+     "overskrift": "Tiden er gået! Du løste 10 gåder.",
+     "nyRekord": "Ny rekord på denne enhed!",
+     "nyPeriode": "",
+     "rekord": "",
+     "perioder": "I alt: bedst 10 i dag · bedst 10 denne uge.",
+     "tema": "Gafler: bedst 10 i dag · bedst 10 denne uge · rekord 10."
+    },
+    "lager": {
+     "tema": "{\"gaffel\":{\"dag\":{\"dato\":\"2026-09-29\",\"loeste\":10},\"uge\":{\"uge\":2961,\"loeste\":10}}}",
+     "temaRekord": "{\"gaffel\":10}",
+     "rekord": "{\"loeste\":10,\"kombo\":10,\"dato\":\"2026-09-29\"}"
+    }
+   },
+   "r5 man 5/10 00:30 startkortet": {
+    "blandet": {
+     "rekord": "Din rekord på denne enhed: 10 gåder (10 i træk).",
+     "tema": ""
+    },
+    "gaffel": {
+     "rekord": "Din rekord på denne enhed: 10 gåder (10 i træk).",
+     "tema": "Gafler: rekord 10."
+    },
+    "kortBlandet": {
+     "hoejde": 465,
+     "linjeLinjer": 0,
+     "linjeUnderSegment": -494,
+     "linjeUnderValgt": -444,
+     "linjeISkaerm": true,
+     "segmentISkaerm": true,
+     "startKnapTop": 340,
+     "vandret": 0,
+     "over": [
+      "Gåde-storm: 3 minutter",
+      "Løs så mange gåder du kan. De starter lette og bli",
+      "Din rekord på denne enhed: 10 gåder (10 i træk).",
+      "Tema"
+     ]
+    },
+    "kortGaffel": {
+     "hoejde": 485,
+     "linjeLinjer": 1,
+     "linjeUnderSegment": 0,
+     "linjeUnderValgt": 50,
+     "linjeISkaerm": true,
+     "segmentISkaerm": true,
+     "startKnapTop": 360,
+     "vandret": 0,
+     "over": [
+      "Gåde-storm: 3 minutter",
+      "Løs så mange gåder du kan. De starter lette og bli",
+      "Din rekord på denne enhed: 10 gåder (10 i træk).",
+      "Tema"
+     ]
+    }
+   },
+   "r6 man 5/10 10:00 Gafler, 2": {
+    "start": {
+     "rekord": "Din rekord på denne enhed: 10 gåder (10 i træk).",
+     "tema": "Gafler: rekord 10."
+    },
+    "loest": [
+     "fork",
+     "fork"
+    ],
+    "app": 2,
+    "slut": {
+     "overskrift": "Tiden er gået! Du løste 2 gåder.",
+     "nyRekord": "",
+     "nyPeriode": "",
+     "rekord": "Din rekord på denne enhed: 10 gåder (10 i træk).",
+     "perioder": "I alt: bedst 2 i dag · bedst 2 denne uge.",
+     "tema": "Gafler: bedst 2 i dag · bedst 2 denne uge · rekord 10."
+    },
+    "lager": {
+     "tema": "{\"gaffel\":{\"dag\":{\"dato\":\"2026-10-05\",\"loeste\":2},\"uge\":{\"uge\":2962,\"loeste\":2}}}",
+     "temaRekord": "{\"gaffel\":10}",
+     "rekord": "{\"loeste\":10,\"kombo\":10,\"dato\":\"2026-09-29\"}"
+    }
+   },
+   "r7 man 5/10 11:00 dagens storm med Gafler valgt, 11": {
+    "start": {
+     "rekord": "Din rekord på denne enhed: 10 gåder (10 i træk).",
+     "tema": "Gafler: bedst 2 i dag · bedst 2 denne uge · rekord 10."
+    },
+    "loest": [
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork"
+    ],
+    "app": 11,
+    "slut": {
+     "overskrift": "Tiden er gået! Du løste 11 gåder.",
+     "nyRekord": "Ny rekord på denne enhed!",
+     "nyPeriode": "",
+     "rekord": "",
+     "perioder": "I alt: bedst 11 i dag · bedst 11 denne uge.",
+     "tema": "Gafler: bedst 11 i dag · bedst 11 denne uge · rekord 11."
+    },
+    "lager": {
+     "tema": "{\"gaffel\":{\"dag\":{\"dato\":\"2026-10-05\",\"loeste\":11},\"uge\":{\"uge\":2962,\"loeste\":11}}}",
+     "temaRekord": "{\"gaffel\":11}",
+     "rekord": "{\"loeste\":11,\"kombo\":11,\"dato\":\"2026-10-05\"}"
+    }
+   },
+   "r8 man 5/10 12:00 Blandet, 3": {
+    "start": {
+     "rekord": "Din rekord på denne enhed: 11 gåder (11 i træk).",
+     "tema": "I alt: bedst 11 i dag · bedst 11 denne uge."
+    },
+    "loest": [
+     "hangingPiece",
+     "hangingPiece",
+     "hangingPiece"
+    ],
+    "app": 3,
+    "slut": {
+     "overskrift": "Tiden er gået! Du løste 3 gåder.",
+     "nyRekord": "",
+     "nyPeriode": "",
+     "rekord": "Din rekord på denne enhed: 11 gåder (11 i træk).",
+     "perioder": "I alt: bedst 11 i dag · bedst 11 denne uge.",
+     "tema": ""
+    },
+    "lager": {
+     "tema": "{\"gaffel\":{\"dag\":{\"dato\":\"2026-10-05\",\"loeste\":11},\"uge\":{\"uge\":2962,\"loeste\":11}}}",
+     "temaRekord": "{\"gaffel\":11}",
+     "rekord": "{\"loeste\":11,\"kombo\":11,\"dato\":\"2026-10-05\"}"
+    }
+   },
+   "net": 0,
+   "fejl": [],
+   "dialoger": []
+  },
+  "1280": {
+   "r0 man 28/9 09:00 startkortet": {
+    "blandet": {
+     "rekord": "Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "tema": ""
+    },
+    "gaffel": {
+     "rekord": "Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "tema": "Gafler: rekord 7."
+    },
+    "kortBlandet": {
+     "hoejde": 398,
+     "linjeLinjer": 0,
+     "linjeUnderSegment": -456,
+     "linjeUnderValgt": -410,
+     "linjeISkaerm": true,
+     "segmentISkaerm": true,
+     "startKnapTop": 269,
+     "vandret": 0,
+     "over": [
+      "Gåde-storm: 3 minutter",
+      "Løs så mange gåder du kan. De starter lette og bli",
+      "Din rekord på denne enhed: 9 gåder (4 i træk).",
+      "Tema"
+     ]
+    },
+    "kortGaffel": {
+     "hoejde": 419,
+     "linjeLinjer": 1,
+     "linjeUnderSegment": 0,
+     "linjeUnderValgt": 46,
+     "linjeISkaerm": true,
+     "segmentISkaerm": true,
+     "startKnapTop": 290,
+     "vandret": 0,
+     "over": [
+      "Gåde-storm: 3 minutter",
+      "Løs så mange gåder du kan. De starter lette og bli",
+      "Din rekord på denne enhed: 9 gåder (4 i træk).",
+      "Tema"
+     ]
+    }
+   },
+   "r1 man 10:00 Gafler, 3": {
+    "start": {
+     "rekord": "Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "tema": "Gafler: rekord 7."
+    },
+    "loest": [
+     "fork",
+     "fork",
+     "fork"
+    ],
+    "app": 3,
+    "slut": {
+     "overskrift": "Tiden er gået! Du løste 3 gåder.",
+     "nyRekord": "",
+     "nyPeriode": "",
+     "rekord": "Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "perioder": "I alt: bedst 3 i dag · bedst 3 denne uge.",
+     "tema": "Gafler: bedst 3 i dag · bedst 3 denne uge · rekord 7."
+    },
+    "lager": {
+     "tema": "{\"gaffel\":{\"dag\":{\"dato\":\"2026-09-28\",\"loeste\":3},\"uge\":{\"uge\":2961,\"loeste\":3}}}",
+     "temaRekord": "{\"gaffel\":7}",
+     "rekord": "{\"loeste\":9,\"kombo\":4,\"dato\":\"2026-09-01\"}"
+    }
+   },
+   "r2 man 11:00 Gafler, 8": {
+    "start": {
+     "rekord": "Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "tema": "Gafler: bedst 3 i dag · bedst 3 denne uge · rekord 7."
+    },
+    "loest": [
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork"
+    ],
+    "app": 8,
+    "slut": {
+     "overskrift": "Tiden er gået! Du løste 8 gåder.",
+     "nyRekord": "",
+     "nyPeriode": "Din bedste Gafler-storm nogensinde!",
+     "rekord": "Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "perioder": "I alt: bedst 8 i dag · bedst 8 denne uge.",
+     "tema": "Gafler: bedst 8 i dag · bedst 8 denne uge · rekord 8."
+    },
+    "lager": {
+     "tema": "{\"gaffel\":{\"dag\":{\"dato\":\"2026-09-28\",\"loeste\":8},\"uge\":{\"uge\":2961,\"loeste\":8}}}",
+     "temaRekord": "{\"gaffel\":8}",
+     "rekord": "{\"loeste\":9,\"kombo\":4,\"dato\":\"2026-09-01\"}"
+    }
+   },
+   "r3 man 12:00 Gafler, 9 og Stop": {
+    "start": {
+     "rekord": "Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "tema": "Gafler: bedst 8 i dag · bedst 8 denne uge · rekord 8."
+    },
+    "loest": [
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork"
+    ],
+    "app": 9,
+    "slut": {
+     "overskrift": "Stormen er stoppet. Du løste 9 gåder.",
+     "nyRekord": "",
+     "nyPeriode": "",
+     "rekord": "En stoppet storm tæller ikke som rekord. Lad uret løbe ud næste gang. Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "perioder": "I alt: bedst 8 i dag · bedst 8 denne uge.",
+     "tema": "Gafler: bedst 8 i dag · bedst 8 denne uge · rekord 8."
+    },
+    "lager": {
+     "tema": "{\"gaffel\":{\"dag\":{\"dato\":\"2026-09-28\",\"loeste\":8},\"uge\":{\"uge\":2961,\"loeste\":8}}}",
+     "temaRekord": "{\"gaffel\":8}",
+     "rekord": "{\"loeste\":9,\"kombo\":4,\"dato\":\"2026-09-01\"}"
+    }
+   },
+   "r4 tir 29/9 10:00 Gafler, 10": {
+    "start": {
+     "rekord": "Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "tema": "Gafler: ingen storm i dag · bedst 8 denne uge · rekord 8."
+    },
+    "loest": [
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork"
+    ],
+    "app": 10,
+    "slut": {
+     "overskrift": "Tiden er gået! Du løste 10 gåder.",
+     "nyRekord": "Ny rekord på denne enhed!",
+     "nyPeriode": "",
+     "rekord": "",
+     "perioder": "I alt: bedst 10 i dag · bedst 10 denne uge.",
+     "tema": "Gafler: bedst 10 i dag · bedst 10 denne uge · rekord 10."
+    },
+    "lager": {
+     "tema": "{\"gaffel\":{\"dag\":{\"dato\":\"2026-09-29\",\"loeste\":10},\"uge\":{\"uge\":2961,\"loeste\":10}}}",
+     "temaRekord": "{\"gaffel\":10}",
+     "rekord": "{\"loeste\":10,\"kombo\":10,\"dato\":\"2026-09-29\"}"
+    }
+   },
+   "r5 man 5/10 00:30 startkortet": {
+    "blandet": {
+     "rekord": "Din rekord på denne enhed: 10 gåder (10 i træk).",
+     "tema": ""
+    },
+    "gaffel": {
+     "rekord": "Din rekord på denne enhed: 10 gåder (10 i træk).",
+     "tema": "Gafler: rekord 10."
+    },
+    "kortBlandet": {
+     "hoejde": 398,
+     "linjeLinjer": 0,
+     "linjeUnderSegment": -456,
+     "linjeUnderValgt": -410,
+     "linjeISkaerm": true,
+     "segmentISkaerm": true,
+     "startKnapTop": 269,
+     "vandret": 0,
+     "over": [
+      "Gåde-storm: 3 minutter",
+      "Løs så mange gåder du kan. De starter lette og bli",
+      "Din rekord på denne enhed: 10 gåder (10 i træk).",
+      "Tema"
+     ]
+    },
+    "kortGaffel": {
+     "hoejde": 419,
+     "linjeLinjer": 1,
+     "linjeUnderSegment": 0,
+     "linjeUnderValgt": 46,
+     "linjeISkaerm": true,
+     "segmentISkaerm": true,
+     "startKnapTop": 290,
+     "vandret": 0,
+     "over": [
+      "Gåde-storm: 3 minutter",
+      "Løs så mange gåder du kan. De starter lette og bli",
+      "Din rekord på denne enhed: 10 gåder (10 i træk).",
+      "Tema"
+     ]
+    }
+   },
+   "r6 man 5/10 10:00 Gafler, 2": {
+    "start": {
+     "rekord": "Din rekord på denne enhed: 10 gåder (10 i træk).",
+     "tema": "Gafler: rekord 10."
+    },
+    "loest": [
+     "fork",
+     "fork"
+    ],
+    "app": 2,
+    "slut": {
+     "overskrift": "Tiden er gået! Du løste 2 gåder.",
+     "nyRekord": "",
+     "nyPeriode": "",
+     "rekord": "Din rekord på denne enhed: 10 gåder (10 i træk).",
+     "perioder": "I alt: bedst 2 i dag · bedst 2 denne uge.",
+     "tema": "Gafler: bedst 2 i dag · bedst 2 denne uge · rekord 10."
+    },
+    "lager": {
+     "tema": "{\"gaffel\":{\"dag\":{\"dato\":\"2026-10-05\",\"loeste\":2},\"uge\":{\"uge\":2962,\"loeste\":2}}}",
+     "temaRekord": "{\"gaffel\":10}",
+     "rekord": "{\"loeste\":10,\"kombo\":10,\"dato\":\"2026-09-29\"}"
+    }
+   },
+   "r7 man 5/10 11:00 dagens storm med Gafler valgt, 11": {
+    "start": {
+     "rekord": "Din rekord på denne enhed: 10 gåder (10 i træk).",
+     "tema": "Gafler: bedst 2 i dag · bedst 2 denne uge · rekord 10."
+    },
+    "loest": [
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork",
+     "fork"
+    ],
+    "app": 11,
+    "slut": {
+     "overskrift": "Tiden er gået! Du løste 11 gåder.",
+     "nyRekord": "Ny rekord på denne enhed!",
+     "nyPeriode": "",
+     "rekord": "",
+     "perioder": "I alt: bedst 11 i dag · bedst 11 denne uge.",
+     "tema": "Gafler: bedst 11 i dag · bedst 11 denne uge · rekord 11."
+    },
+    "lager": {
+     "tema": "{\"gaffel\":{\"dag\":{\"dato\":\"2026-10-05\",\"loeste\":11},\"uge\":{\"uge\":2962,\"loeste\":11}}}",
+     "temaRekord": "{\"gaffel\":11}",
+     "rekord": "{\"loeste\":11,\"kombo\":11,\"dato\":\"2026-10-05\"}"
+    }
+   },
+   "r8 man 5/10 12:00 Blandet, 3": {
+    "start": {
+     "rekord": "Din rekord på denne enhed: 11 gåder (11 i træk).",
+     "tema": "I alt: bedst 11 i dag · bedst 11 denne uge."
+    },
+    "loest": [
+     "hangingPiece",
+     "mateIn1",
+     "mateIn1"
+    ],
+    "app": 3,
+    "slut": {
+     "overskrift": "Tiden er gået! Du løste 3 gåder.",
+     "nyRekord": "",
+     "nyPeriode": "",
+     "rekord": "Din rekord på denne enhed: 11 gåder (11 i træk).",
+     "perioder": "I alt: bedst 11 i dag · bedst 11 denne uge.",
+     "tema": ""
+    },
+    "lager": {
+     "tema": "{\"gaffel\":{\"dag\":{\"dato\":\"2026-10-05\",\"loeste\":11},\"uge\":{\"uge\":2962,\"loeste\":11}}}",
+     "temaRekord": "{\"gaffel\":11}",
+     "rekord": "{\"loeste\":11,\"kombo\":11,\"dato\":\"2026-10-05\"}"
+    }
+   },
+   "net": 0,
+   "fejl": [],
+   "dialoger": []
+  }
+ },
+ "H": {
+  "360": {
+   "temaer": {
+    "alle": 17,
+    "almindeligt": 0,
+    "brudt": []
+   },
+   "knapper": 18,
+   "bib": {
+    "alle": 56,
+    "almindeligt": 0,
+    "brudt": []
+   },
+   "net": 0,
+   "fejl": [],
+   "analyse": {
+    "alle": 5,
+    "almindeligt": 0,
+    "brudt": []
+   },
+   "analyseVandret": 0
+  },
+  "390": {
+   "temaer": {
+    "alle": 17,
+    "almindeligt": 0,
+    "brudt": []
+   },
+   "knapper": 18,
+   "bib": {
+    "alle": 56,
+    "almindeligt": 0,
+    "brudt": []
+   },
+   "net": 0,
+   "fejl": [],
+   "analyse": {
+    "alle": 5,
+    "almindeligt": 0,
+    "brudt": []
+   },
+   "analyseVandret": 0
+  },
+  "partiMat": true,
+  "temaer": 17
+ },
+ "L": {
+  "360": {
+   "status": "25 koder læst.",
+   "hoejde": 2572,
+   "skaerm": 780,
+   "summary": "Øvet af under halvdelen (14 kompetencer)",
+   "svagest": 9,
+   "vandret": 0,
+   "procent": {
+    "alle": 97,
+    "almindeligt": 0,
+    "brudt": []
+   },
+   "net": 0,
+   "fejl": []
+  },
+  "390": {
+   "status": "25 koder læst.",
+   "hoejde": 2497,
+   "skaerm": 844,
+   "summary": "Øvet af under halvdelen (14 kompetencer)",
+   "svagest": 9,
+   "vandret": 0,
+   "procent": {
+    "alle": 97,
+    "almindeligt": 0,
+    "brudt": []
+   },
+   "net": 0,
+   "fejl": []
+  },
+  "1280": {
+   "status": "25 koder læst.",
+   "hoejde": 1992,
+   "skaerm": 800,
+   "summary": "Øvet af under halvdelen (14 kompetencer)",
+   "svagest": 9,
+   "vandret": 0,
+   "procent": {
+    "alle": 97,
+    "almindeligt": 0,
+    "brudt": []
+   },
+   "net": 0,
+   "fejl": []
+  }
+ },
+ "tjek": [
+  {
+   "hvad": "S1 uge 1 i appen: 2 gaader loest fra banken (en gaade uden for banken springes over), Find feltet 10/10, Italiensk med eet forkert traek, et kendt parti med eet forkert traek",
+   "ok": true,
+   "data": [
+    [
+     "skewer",
+     "mateIn3"
+    ],
+    [
+     "mateIn1",
+     "mateIn1"
+    ],
+    [
+     "mateIn1",
+     "mateIn1"
+    ]
+   ]
+  },
+  {
+   "hvad": "S2 619 blok 1: ugesaetningen i uge 1 naevner alle fire slags hver for sig, uden \"forsoeg\" og uden \"koordinatoevelse\"",
+   "ok": true,
+   "data": {
+    "saetning": "Denne uge har du øvet 1 tema (2 gåder), \"Find feltet\", 1 åbning (1 gang) og 1 kendt parti."
+   }
+  },
+  {
+   "hvad": "S3 hvor lang er den? linjer paa 360, 390 og 1280",
+   "ok": true,
+   "data": [
+    "360: 3 linjer, 19 ord",
+    "390: 3 linjer, 19 ord",
+    "1280: 2 linjer, 19 ord"
+   ]
+  },
+  {
+   "hvad": "S4 S7 lukket: uge 2 med 20 rigtige og 2 forkerte mod 10/10 i uge 1: Find feltet viser antallet (\"bedst 20 felter (91 %) · sidste uge: bedst 10 felter (100 %)\") med pil op, og saetningen siger \"hurtigere til \"Find feltet\": 20 felter paa 30 s mod 10 sidste uge\", ikke \"gik lidt ned\"",
+   "ok": true,
+   "data": {
+    "find": "denne uge: bedst 20 felter (91 %) · sidste uge: bedst 10 felter (100 %)",
+    "klasse": "mit-bib-uge op",
+    "saetning": "Denne uge blev du hurtigere til \"Find feltet\": 20 felter på 30 s mod 10 sidste uge.",
+    "lager": {
+     "svar": 32,
+     "rigtige": 30,
+     "uger": {
+      "2960": [
+       10,
+       10,
+       10
+      ],
+      "2961": [
+       22,
+       20,
+       20
+      ]
+     }
+    }
+   }
+  },
+  {
+   "hvad": "S5 0 netkald, 0 JS-fejl, ingen vandret rulning i Mit bibliotek (360, 390, 1280)",
+   "ok": true,
+   "data": [
+    {
+     "b": 360,
+     "net": 0,
+     "fejl": []
+    },
+    {
+     "b": 390,
+     "net": 0,
+     "fejl": []
+    },
+    {
+     "b": 1280,
+     "net": 0,
+     "fejl": []
+    }
+   ]
+  },
+  {
+   "hvad": "T0 stormene er spillet i appen: alle gaader i Gafler-stormene er gafler, og appen talte det planlagte antal loeste",
+   "ok": true,
+   "data": [
+    {
+     "r1": "app 3, forsoeg 3 fork",
+     "r2": "app 8, forsoeg 8 fork",
+     "r3": "app 9, forsoeg 9 fork",
+     "r4": "app 10, forsoeg 10 fork",
+     "r6": "app 2, forsoeg 2 fork",
+     "r7": "app 11, forsoeg 11 fork"
+    },
+    {
+     "r1": "app 3, forsoeg 3 fork",
+     "r2": "app 8, forsoeg 8 fork",
+     "r3": "app 9, forsoeg 9 fork",
+     "r4": "app 10, forsoeg 10 fork",
+     "r6": "app 2, forsoeg 2 fork",
+     "r7": "app 11, forsoeg 11 fork"
+    },
+    {
+     "r1": "app 3, forsoeg 3 fork",
+     "r2": "app 8, forsoeg 8 fork",
+     "r3": "app 9, forsoeg 9 fork",
+     "r4": "app 10, forsoeg 10 fork",
+     "r6": "app 2, forsoeg 2 fork",
+     "r7": "app 11, forsoeg 11 fork"
+    }
+   ]
+  },
+  {
+   "hvad": "T1 en elev fra foer 629 (623: bedst 4 en dag, 7 i sidste uge): startkortet med Gafler siger med det samme \"Gafler: rekord 7.\" og under Blandet ingen linje",
+   "ok": true,
+   "data": {
+    "gaffel": {
+     "rekord": "Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "tema": "Gafler: rekord 7."
+    },
+    "blandet": {
+     "rekord": "Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "tema": ""
+    }
+   }
+  },
+  {
+   "hvad": "T2 r1 ugens foerste Gafler-storm (3): ingen ros; \"Gafler: bedst 3 i dag · bedst 3 denne uge · rekord 7.\"; lageret {\"gaffel\":7}",
+   "ok": true,
+   "data": {
+    "slut": {
+     "overskrift": "Tiden er gået! Du løste 3 gåder.",
+     "nyRekord": "",
+     "nyPeriode": "",
+     "rekord": "Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "perioder": "I alt: bedst 3 i dag · bedst 3 denne uge.",
+     "tema": "Gafler: bedst 3 i dag · bedst 3 denne uge · rekord 7."
+    },
+    "lager": "{\"gaffel\":7}"
+   }
+  },
+  {
+   "hvad": "T3 r2 8 slaar 623's 7: \"Din bedste Gafler-storm nogensinde!\" (ikke \"denne uge\"), ingen \"Ny rekord\" (over alle er 9), \"· rekord 8.\"",
+   "ok": true,
+   "data": {
+    "overskrift": "Tiden er gået! Du løste 8 gåder.",
+    "nyRekord": "",
+    "nyPeriode": "Din bedste Gafler-storm nogensinde!",
+    "rekord": "Din rekord på denne enhed: 9 gåder (4 i træk).",
+    "perioder": "I alt: bedst 8 i dag · bedst 8 denne uge.",
+    "tema": "Gafler: bedst 8 i dag · bedst 8 denne uge · rekord 8."
+   }
+  },
+  {
+   "hvad": "T4 r3 en stoppet storm med 9 loeste taeller ikke: ingen ros, lageret uaendret",
+   "ok": true,
+   "data": {
+    "slut": {
+     "overskrift": "Stormen er stoppet. Du løste 9 gåder.",
+     "nyRekord": "",
+     "nyPeriode": "",
+     "rekord": "En stoppet storm tæller ikke som rekord. Lad uret løbe ud næste gang. Din rekord på denne enhed: 9 gåder (4 i træk).",
+     "perioder": "I alt: bedst 8 i dag · bedst 8 denne uge.",
+     "tema": "Gafler: bedst 8 i dag · bedst 8 denne uge · rekord 8."
+    },
+    "lager": {
+     "tema": "{\"gaffel\":{\"dag\":{\"dato\":\"2026-09-28\",\"loeste\":8},\"uge\":{\"uge\":2961,\"loeste\":8}}}",
+     "temaRekord": "{\"gaffel\":8}",
+     "rekord": "{\"loeste\":9,\"kombo\":4,\"dato\":\"2026-09-01\"}"
+    }
+   }
+  },
+  {
+   "hvad": "T5 r4 tirsdag 10 slaar baade Gaflers 8 og rekorden over alle (9): \"Ny rekord paa denne enhed!\" alene, ingen \"Din bedste Gafler-storm nogensinde!\" oven i; \"· rekord 10.\"",
+   "ok": true,
+   "data": {
+    "overskrift": "Tiden er gået! Du løste 10 gåder.",
+    "nyRekord": "Ny rekord på denne enhed!",
+    "nyPeriode": "",
+    "rekord": "",
+    "perioder": "I alt: bedst 10 i dag · bedst 10 denne uge.",
+    "tema": "Gafler: bedst 10 i dag · bedst 10 denne uge · rekord 10."
+   }
+  },
+  {
+   "hvad": "T6 r5 ny uge (mandag 5/10 00:30): startkortet med Gafler siger \"Gafler: rekord 10.\", under Blandet ingen linje",
+   "ok": true,
+   "data": {
+    "gaffel": {
+     "rekord": "Din rekord på denne enhed: 10 gåder (10 i træk).",
+     "tema": "Gafler: rekord 10."
+    },
+    "blandet": {
+     "rekord": "Din rekord på denne enhed: 10 gåder (10 i træk).",
+     "tema": ""
+    }
+   }
+  },
+  {
+   "hvad": "T7 r6 ugens foerste (2): ingen ros; \"Gafler: bedst 2 i dag · bedst 2 denne uge · rekord 10.\"",
+   "ok": true,
+   "data": {
+    "overskrift": "Tiden er gået! Du løste 2 gåder.",
+    "nyRekord": "",
+    "nyPeriode": "",
+    "rekord": "Din rekord på denne enhed: 10 gåder (10 i træk).",
+    "perioder": "I alt: bedst 2 i dag · bedst 2 denne uge.",
+    "tema": "Gafler: bedst 2 i dag · bedst 2 denne uge · rekord 10."
+   }
+  },
+  {
+   "hvad": "T8 r7 dagens storm med Gafler valgt (11) taeller med i Gaflers linje og rekord, og i rekorden over alle",
+   "ok": true,
+   "data": {
+    "slut": {
+     "overskrift": "Tiden er gået! Du løste 11 gåder.",
+     "nyRekord": "Ny rekord på denne enhed!",
+     "nyPeriode": "",
+     "rekord": "",
+     "perioder": "I alt: bedst 11 i dag · bedst 11 denne uge.",
+     "tema": "Gafler: bedst 11 i dag · bedst 11 denne uge · rekord 11."
+    },
+    "lager": {
+     "tema": "{\"gaffel\":{\"dag\":{\"dato\":\"2026-10-05\",\"loeste\":11},\"uge\":{\"uge\":2962,\"loeste\":11}}}",
+     "temaRekord": "{\"gaffel\":11}",
+     "rekord": "{\"loeste\":11,\"kombo\":11,\"dato\":\"2026-10-05\"}"
+    },
+    "loest": 11
+   }
+  },
+  {
+   "hvad": "T9 r8 Blandet (3): slutkortet har \"I alt: ...\" og ingen temalinje; startkortet under Blandet siger \"I alt: bedst ... i dag · bedst ... denne uge.\" (S10)",
+   "ok": true,
+   "data": {
+    "start": {
+     "rekord": "Din rekord på denne enhed: 11 gåder (11 i træk).",
+     "tema": "I alt: bedst 11 i dag · bedst 11 denne uge."
+    },
+    "slut": {
+     "overskrift": "Tiden er gået! Du løste 3 gåder.",
+     "nyRekord": "",
+     "nyPeriode": "",
+     "rekord": "Din rekord på denne enhed: 11 gåder (11 i træk).",
+     "perioder": "I alt: bedst 11 i dag · bedst 11 denne uge.",
+     "tema": ""
+    }
+   }
+  },
+  {
+   "hvad": "T10 S10 startkortet: een linje under temavalget (ingen over), hoejden med Blandet og Gafler, og hvor linjen staar, naar man trykker paa Gafler",
+   "ok": true,
+   "data": [
+    {
+     "b": 360,
+     "blandet": {
+      "hoejde": 485,
+      "linjeLinjer": 0,
+      "linjeUnderSegment": -462,
+      "linjeUnderValgt": -412,
+      "linjeISkaerm": true,
+      "segmentISkaerm": true,
+      "startKnapTop": 340,
+      "vandret": 0,
+      "over": [
+       "Gåde-storm: 3 minutter",
+       "Løs så mange gåder du kan. De starter lette og bli",
+       "Din rekord på denne enhed: 9 gåder (4 i træk).",
+       "Tema"
+      ]
+     },
+     "gaffel": {
+      "hoejde": 505,
+      "linjeLinjer": 1,
+      "linjeUnderSegment": 0,
+      "linjeUnderValgt": 50,
+      "linjeISkaerm": true,
+      "segmentISkaerm": true,
+      "startKnapTop": 360,
+      "vandret": 0,
+      "over": [
+       "Gåde-storm: 3 minutter",
+       "Løs så mange gåder du kan. De starter lette og bli",
+       "Din rekord på denne enhed: 10 gåder (10 i træk).",
+       "Tema"
+      ]
+     }
+    },
+    {
+     "b": 390,
+     "blandet": {
+      "hoejde": 465,
+      "linjeLinjer": 0,
+      "linjeUnderSegment": -494,
+      "linjeUnderValgt": -444,
+      "linjeISkaerm": true,
+      "segmentISkaerm": true,
+      "startKnapTop": 340,
+      "vandret": 0,
+      "over": [
+       "Gåde-storm: 3 minutter",
+       "Løs så mange gåder du kan. De starter lette og bli",
+       "Din rekord på denne enhed: 9 gåder (4 i træk).",
+       "Tema"
+      ]
+     },
+     "gaffel": {
+      "hoejde": 485,
+      "linjeLinjer": 1,
+      "linjeUnderSegment": 0,
+      "linjeUnderValgt": 50,
+      "linjeISkaerm": true,
+      "segmentISkaerm": true,
+      "startKnapTop": 360,
+      "vandret": 0,
+      "over": [
+       "Gåde-storm: 3 minutter",
+       "Løs så mange gåder du kan. De starter lette og bli",
+       "Din rekord på denne enhed: 10 gåder (10 i træk).",
+       "Tema"
+      ]
+     }
+    },
+    {
+     "b": 1280,
+     "blandet": {
+      "hoejde": 398,
+      "linjeLinjer": 0,
+      "linjeUnderSegment": -456,
+      "linjeUnderValgt": -410,
+      "linjeISkaerm": true,
+      "segmentISkaerm": true,
+      "startKnapTop": 269,
+      "vandret": 0,
+      "over": [
+       "Gåde-storm: 3 minutter",
+       "Løs så mange gåder du kan. De starter lette og bli",
+       "Din rekord på denne enhed: 9 gåder (4 i træk).",
+       "Tema"
+      ]
+     },
+     "gaffel": {
+      "hoejde": 419,
+      "linjeLinjer": 1,
+      "linjeUnderSegment": 0,
+      "linjeUnderValgt": 46,
+      "linjeISkaerm": true,
+      "segmentISkaerm": true,
+      "startKnapTop": 290,
+      "vandret": 0,
+      "over": [
+       "Gåde-storm: 3 minutter",
+       "Løs så mange gåder du kan. De starter lette og bli",
+       "Din rekord på denne enhed: 10 gåder (10 i træk).",
+       "Tema"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "hvad": "T11 0 netkald, 0 JS-fejl, 0 dialoger, ingen vandret rulning",
+   "ok": true,
+   "data": [
+    {
+     "b": 360,
+     "net": 0,
+     "fejl": []
+    },
+    {
+     "b": 390,
+     "net": 0,
+     "fejl": []
+    },
+    {
+     "b": 1280,
+     "net": 0,
+     "fejl": []
+    }
+   ]
+  },
+  {
+   "hvad": "H1 \"Oev et tema\" med alle 17 temaer paa 360 og 390: hvert \"tal %\" har haardt mellemrum, og intet er brudt",
+   "ok": true,
+   "data": {
+    "360": {
+     "alle": 17,
+     "almindeligt": 0,
+     "brudt": []
+    },
+    "knapper": 18
+   }
+  },
+  {
+   "hvad": "H2 Mit bibliotek med alle temaer og Find feltet paa 360 og 390: samme",
+   "ok": true,
+   "data": {
+    "360": {
+     "alle": 56,
+     "almindeligt": 0,
+     "brudt": []
+    }
+   }
+  },
+  {
+   "hvad": "H3 analysen efter et langt parti mod computeren (47 halvtraek, mat: true) paa 360 og 390: hvert \"tal %\" samlet, ingen vandret rulning",
+   "ok": true,
+   "data": {
+    "360": {
+     "alle": 5,
+     "almindeligt": 0,
+     "brudt": []
+    },
+    "390": {
+     "alle": 5,
+     "almindeligt": 0,
+     "brudt": []
+    }
+   }
+  },
+  {
+   "hvad": "H4 0 netkald og 0 JS-fejl",
+   "ok": true,
+   "data": [
+    {
+     "b": 360,
+     "net": 0,
+     "fejl": []
+    },
+    {
+     "b": 390,
+     "net": 0,
+     "fejl": []
+    }
+   ]
+  },
+  {
+   "hvad": "L1 laerer.html: 25 koder laest paa 360, 390 og 1280, \"Svagest foerst\" og folden som i 610, 0 netkald, 0 JS-fejl, ingen vandret rulning",
+   "ok": true,
+   "data": [
+    {
+     "b": 360,
+     "s": "Øvet af under halvdelen (14 kompetencer)",
+     "h": "2572 px (3.3 skaerme)"
+    },
+    {
+     "b": 390,
+     "s": "Øvet af under halvdelen (14 kompetencer)",
+     "h": "2497 px (3.0 skaerme)"
+    },
+    {
+     "b": 1280,
+     "s": "Øvet af under halvdelen (14 kompetencer)",
+     "h": "1992 px (2.5 skaerme)"
+    }
+   ]
+  },
+  {
+   "hvad": "L2 laerersiden med alle folder aabne: hvert \"tal %\" har haardt mellemrum, og intet er brudt (360, 390, 1280)",
+   "ok": true,
+   "data": [
+    {
+     "b": 360,
+     "alle": 97,
+     "almindeligt": 0,
+     "brudt": []
+    },
+    {
+     "b": 390,
+     "alle": 97,
+     "almindeligt": 0,
+     "brudt": []
+    },
+    {
+     "b": 1280,
+     "alle": 97,
+     "almindeligt": 0,
+     "brudt": []
+    }
+   ]
+  }
+ ]
+}
