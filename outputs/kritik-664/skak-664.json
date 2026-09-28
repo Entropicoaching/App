@@ -1,0 +1,1262 @@
+{
+  "ver": {
+    "foer": "85a4236",
+    "efter": "66bbcaf"
+  },
+  "v": {
+    "foer": {
+      "360": {
+        "vandret": false,
+        "faner": {
+          "antal": 6,
+          "h": [
+            42,
+            42,
+            42,
+            42,
+            42,
+            42
+          ],
+          "b": [
+            113,
+            113,
+            113,
+            113,
+            113,
+            113
+          ],
+          "raekker": 2,
+          "mellem": 3.2,
+          "midtY": 95.59375,
+          "xer": [
+            64.265625,
+            179.9921875,
+            295.71875
+          ],
+          "bund": 139,
+          "trykMellem": [
+            "faner",
+            "faner",
+            "faner"
+          ]
+        },
+        "gaader": {
+          "braet": {
+            "top": 287,
+            "bund": 631,
+            "h": 740,
+            "over": 109
+          },
+          "smaa": [
+            "Bibliotek 113x42",
+            "Lær skak 113x42",
+            "Taktik 113x42",
+            "Spil 113x42",
+            "Gåder 113x42",
+            "Opstil 113x42"
+          ],
+          "scrollY": 0
+        },
+        "spil": {
+          "braet": {
+            "top": 417,
+            "bund": 761,
+            "h": 740,
+            "over": -21
+          },
+          "smaa": [
+            "Bibliotek 113x42",
+            "Lær skak 113x42",
+            "Taktik 113x42",
+            "Spil 113x42",
+            "Gåder 113x42",
+            "Opstil 113x42"
+          ],
+          "scrollY": 0,
+          "overBraettet": []
+        },
+        "startKort": {
+          "tekst": "Gåde-storm: 3 minutter Løs så mange gåder du kan. De starter lette og bliver sværere. Forkert træk koster 10 sekunder - rigtige i træk giver ekstra tid. Din rekord på denne enhed: 20 gåder (9 i træk). Tema Blandet Mat Gafler Spyd Bindinger Slutspil Gafler, bedst: i dag 4 · uge 4 · rekord 4. Dagens storm (28/9) Tilfældig storm Dagens storm: hele klassen får de samme gåder i dag. Start, når læreren siger til. Tilfældig storm: dine egne gåder, uden kode.",
+          "ord": 79,
+          "tal": 9,
+          "knapper": 10,
+          "knapNavne": [
+            "Blandet",
+            "Mat",
+            "Gafler",
+            "Spyd",
+            "Bindinger",
+            "Slutspil",
+            "2 gåder",
+            "4 gåder (den nyeste)",
+            "Dagens storm (28/9)",
+            "Tilfældig storm"
+          ],
+          "hoejde": 549,
+          "top": 888
+        },
+        "temaLinje": {
+          "tekst": "Gafler, bedst: i dag 4 · uge 4 · rekord 4.",
+          "linjer": 1,
+          "sidsteLinje": null
+        },
+        "slutD": {
+          "kort": {
+            "tekst": "Tiden er gået! Du løste 5 gåder. Ny storm Tilbage til gåderne Ny Gafler-rekord! Din rekord på denne enhed: 20 gåder (9 i træk). Alle, bedst: i dag 10 · uge 10. Gafler, bedst: i dag 5 · uge 5 · rekord 5. 0 forkerte træk (−0 s) Flest rigtige i træk: 5 (+3 s bonustid) Sværeste løste gåde: rating 555 Ingen forkerte træk. Flot!",
+            "ord": 62,
+            "tal": 13,
+            "knapper": 5,
+            "knapNavne": [
+              "Ny storm",
+              "Tilbage til gåderne",
+              "2 gåder",
+              "4 gåder",
+              "5 gåder (den nyeste)"
+            ],
+            "hoejde": 445,
+            "top": 823
+          },
+          "linjer": [
+            "Tiden er gået! Du løste 5 gåder.",
+            "Ny storm Tilbage til gåderne",
+            "Ny Gafler-rekord!",
+            "Din rekord på denne enhed: 20 gåder (9 i træk).",
+            "Alle, bedst: i dag 10 · uge 10.",
+            "Gafler, bedst: i dag 5 · uge 5 · rekord 5.",
+            "0 forkerte træk (−0 s)",
+            "Flest rigtige i træk: 5 (+3 s bonustid)",
+            "Sværeste løste gåde: rating 555",
+            "Ingen forkerte træk. Flot!"
+          ],
+          "rekordLinjer": 4,
+          "nulS": true
+        },
+        "slutE": {
+          "kort": {
+            "tekst": "Tiden er gået! Du løste 3 gåder. Ny storm Tilbage til gåderne Din rekord på denne enhed: 20 gåder (9 i træk). Alle, bedst: i dag 10 · uge 10. Gafler, bedst: i dag 12 · uge 12 · rekord 12. 1 forkert træk (−10 s) Flest rigtige i træk: 3 Sværeste løste gåde: rating 541 Her gik det galt - træn det i biblioteket Gaffel: 1 af 4 gik galt Træn: Gaffel med springeren Se løsningen på gåderne, der gik galt Gåde 1: Gaffel",
+            "ord": 81,
+            "tal": 15,
+            "knapper": 7,
+            "knapNavne": [
+              "Ny storm",
+              "Tilbage til gåderne",
+              "2 gåder",
+              "12 gåder",
+              "3 gåder (den nyeste)",
+              "Træn: Gaffel med springeren",
+              "Gåde 1: Gaffel"
+            ],
+            "hoejde": 549,
+            "top": 823
+          },
+          "linjer": [
+            "Tiden er gået! Du løste 3 gåder.",
+            "Ny storm Tilbage til gåderne",
+            "Din rekord på denne enhed: 20 gåder (9 i træk).",
+            "Alle, bedst: i dag 10 · uge 10.",
+            "Gafler, bedst: i dag 12 · uge 12 · rekord 12.",
+            "1 forkert træk (−10 s)",
+            "Flest rigtige i træk: 3",
+            "Sværeste løste gåde: rating 541",
+            "Her gik det galt - træn det i biblioteket",
+            "Gaffel: 1 af 4 gik galt Træn: Gaffel med springeren",
+            "Se løsningen på gåderne, der gik galt"
+          ],
+          "rekordLinjer": 3,
+          "nulS": false
+        }
+      },
+      "390": {
+        "vandret": false,
+        "faner": {
+          "antal": 6,
+          "h": [
+            42,
+            42,
+            42,
+            42,
+            42,
+            42
+          ],
+          "b": [
+            123,
+            123,
+            123,
+            123,
+            123,
+            123
+          ],
+          "raekker": 2,
+          "mellem": 3.2,
+          "midtY": 95.59375,
+          "xer": [
+            69.265625,
+            194.9921875,
+            320.71875
+          ],
+          "bund": 139,
+          "trykMellem": [
+            "faner",
+            "faner",
+            "faner"
+          ]
+        },
+        "gaader": {
+          "braet": {
+            "top": 287,
+            "bund": 661,
+            "h": 844,
+            "over": 183
+          },
+          "smaa": [
+            "Bibliotek 123x42",
+            "Lær skak 123x42",
+            "Taktik 123x42",
+            "Spil 123x42",
+            "Gåder 123x42",
+            "Opstil 123x42"
+          ],
+          "scrollY": 0
+        },
+        "spil": {
+          "braet": {
+            "top": 365,
+            "bund": 739,
+            "h": 844,
+            "over": 105
+          },
+          "smaa": [
+            "Bibliotek 123x42",
+            "Lær skak 123x42",
+            "Taktik 123x42",
+            "Spil 123x42",
+            "Gåder 123x42",
+            "Opstil 123x42"
+          ],
+          "scrollY": 0,
+          "overBraettet": []
+        },
+        "startKort": {
+          "tekst": "Gåde-storm: 3 minutter Løs så mange gåder du kan. De starter lette og bliver sværere. Forkert træk koster 10 sekunder - rigtige i træk giver ekstra tid. Din rekord på denne enhed: 20 gåder (9 i træk). Tema Blandet Mat Gafler Spyd Bindinger Slutspil Gafler, bedst: i dag 4 · uge 4 · rekord 4. Dagens storm (28/9) Tilfældig storm Dagens storm: hele klassen får de samme gåder i dag. Start, når læreren siger til. Tilfældig storm: dine egne gåder, uden kode.",
+          "ord": 79,
+          "tal": 9,
+          "knapper": 10,
+          "knapNavne": [
+            "Blandet",
+            "Mat",
+            "Gafler",
+            "Spyd",
+            "Bindinger",
+            "Slutspil",
+            "2 gåder",
+            "4 gåder (den nyeste)",
+            "Dagens storm (28/9)",
+            "Tilfældig storm"
+          ],
+          "hoejde": 529,
+          "top": 918
+        },
+        "temaLinje": {
+          "tekst": "Gafler, bedst: i dag 4 · uge 4 · rekord 4.",
+          "linjer": 1,
+          "sidsteLinje": null
+        },
+        "slutD": {
+          "kort": {
+            "tekst": "Tiden er gået! Du løste 5 gåder. Ny storm Tilbage til gåderne Ny Gafler-rekord! Din rekord på denne enhed: 20 gåder (9 i træk). Alle, bedst: i dag 10 · uge 10. Gafler, bedst: i dag 5 · uge 5 · rekord 5. 0 forkerte træk (−0 s) Flest rigtige i træk: 5 (+3 s bonustid) Sværeste løste gåde: rating 549 Ingen forkerte træk. Flot!",
+            "ord": 62,
+            "tal": 13,
+            "knapper": 5,
+            "knapNavne": [
+              "Ny storm",
+              "Tilbage til gåderne",
+              "2 gåder",
+              "4 gåder",
+              "5 gåder (den nyeste)"
+            ],
+            "hoejde": 373,
+            "top": 853
+          },
+          "linjer": [
+            "Tiden er gået! Du løste 5 gåder.",
+            "Ny storm Tilbage til gåderne",
+            "Ny Gafler-rekord!",
+            "Din rekord på denne enhed: 20 gåder (9 i træk).",
+            "Alle, bedst: i dag 10 · uge 10.",
+            "Gafler, bedst: i dag 5 · uge 5 · rekord 5.",
+            "0 forkerte træk (−0 s)",
+            "Flest rigtige i træk: 5 (+3 s bonustid)",
+            "Sværeste løste gåde: rating 549",
+            "Ingen forkerte træk. Flot!"
+          ],
+          "rekordLinjer": 4,
+          "nulS": true
+        },
+        "slutE": {
+          "kort": {
+            "tekst": "Tiden er gået! Du løste 3 gåder. Ny storm Tilbage til gåderne Din rekord på denne enhed: 20 gåder (9 i træk). Alle, bedst: i dag 10 · uge 10. Gafler, bedst: i dag 12 · uge 12 · rekord 12. 1 forkert træk (−10 s) Flest rigtige i træk: 3 Sværeste løste gåde: rating 545 Her gik det galt - træn det i biblioteket Gaffel: 1 af 4 gik galt Træn: Gaffel med springeren Se løsningen på gåderne, der gik galt Gåde 1: Gaffel",
+            "ord": 81,
+            "tal": 15,
+            "knapper": 7,
+            "knapNavne": [
+              "Ny storm",
+              "Tilbage til gåderne",
+              "2 gåder",
+              "12 gåder",
+              "3 gåder (den nyeste)",
+              "Træn: Gaffel med springeren",
+              "Gåde 1: Gaffel"
+            ],
+            "hoejde": 477,
+            "top": 853
+          },
+          "linjer": [
+            "Tiden er gået! Du løste 3 gåder.",
+            "Ny storm Tilbage til gåderne",
+            "Din rekord på denne enhed: 20 gåder (9 i træk).",
+            "Alle, bedst: i dag 10 · uge 10.",
+            "Gafler, bedst: i dag 12 · uge 12 · rekord 12.",
+            "1 forkert træk (−10 s)",
+            "Flest rigtige i træk: 3",
+            "Sværeste løste gåde: rating 545",
+            "Her gik det galt - træn det i biblioteket",
+            "Gaffel: 1 af 4 gik galt Træn: Gaffel med springeren",
+            "Se løsningen på gåderne, der gik galt"
+          ],
+          "rekordLinjer": 3,
+          "nulS": false
+        }
+      },
+      "1280": {
+        "vandret": false,
+        "faner": {
+          "antal": 6,
+          "h": [
+            44,
+            44,
+            44,
+            44,
+            44,
+            44
+          ],
+          "b": [
+            135,
+            135,
+            110,
+            87,
+            107,
+            106
+          ],
+          "raekker": 1,
+          "mellem": null,
+          "midtY": null,
+          "xer": [
+            211.6484375,
+            349.7578125,
+            475.40625,
+            577.09375,
+            677.5625,
+            787.6796875
+          ],
+          "bund": 70
+        },
+        "gaader": {
+          "braet": {
+            "top": 237,
+            "bund": 774,
+            "h": 800,
+            "over": 27
+          },
+          "smaa": [
+            "Grøn 40x44",
+            "Rød 40x44",
+            "Blå 40x44",
+            "Blandet 122x40",
+            "Mat 122x40",
+            "Gafler 122x40",
+            "Spyd 122x40",
+            "Bindinger 122x40",
+            "Slutspil 122x40",
+            "3 gåder 22x44",
+            "6 gåder 22x44",
+            "5 gåder 22x44",
+            "2 gåder 22x44",
+            "6 gåder (den nyeste) 22x44"
+          ],
+          "scrollY": 0
+        },
+        "spil": {
+          "braet": {
+            "top": 140,
+            "bund": 677,
+            "h": 800,
+            "over": 123
+          },
+          "smaa": [
+            "Mod en makker 201x40",
+            "Mod computeren 201x40",
+            "spil-lyd 13x13",
+            "spil-forhaand 13x13",
+            "Intet 56x40",
+            "3+0 56x40",
+            "4+0 56x40",
+            "5+0 56x40",
+            "10+0 56x40",
+            "5+3 56x40",
+            "Frit 56x40"
+          ],
+          "scrollY": 0,
+          "overBraettet": []
+        },
+        "startKort": {
+          "tekst": "Gåde-storm: 3 minutter Løs så mange gåder du kan. De starter lette og bliver sværere. Forkert træk koster 10 sekunder - rigtige i træk giver ekstra tid. Din rekord på denne enhed: 20 gåder (9 i træk). Tema Blandet Mat Gafler Spyd Bindinger Slutspil Gafler, bedst: i dag 4 · uge 4 · rekord 4. Dagens storm (28/9) Tilfældig storm Dagens storm: hele klassen får de samme gåder i dag. Start, når læreren siger til. Tilfældig storm: dine egne gåder, uden kode.",
+          "ord": 79,
+          "tal": 9,
+          "knapper": 10,
+          "knapNavne": [
+            "Blandet",
+            "Mat",
+            "Gafler",
+            "Spyd",
+            "Bindinger",
+            "Slutspil",
+            "2 gåder",
+            "4 gåder (den nyeste)",
+            "Dagens storm (28/9)",
+            "Tilfældig storm"
+          ],
+          "hoejde": 464,
+          "top": 197
+        },
+        "temaLinje": {
+          "tekst": "Gafler, bedst: i dag 4 · uge 4 · rekord 4.",
+          "linjer": 1,
+          "sidsteLinje": null
+        },
+        "slutD": {
+          "kort": {
+            "tekst": "Tiden er gået! Du løste 5 gåder. Ny storm Tilbage til gåderne Ny Gafler-rekord! Din rekord på denne enhed: 20 gåder (9 i træk). Alle, bedst: i dag 10 · uge 10. Gafler, bedst: i dag 5 · uge 5 · rekord 5. 0 forkerte træk (−0 s) Flest rigtige i træk: 5 (+3 s bonustid) Sværeste løste gåde: rating 565 Ingen forkerte træk. Flot!",
+            "ord": 62,
+            "tal": 13,
+            "knapper": 5,
+            "knapNavne": [
+              "Ny storm",
+              "Tilbage til gåderne",
+              "2 gåder",
+              "4 gåder",
+              "5 gåder (den nyeste)"
+            ],
+            "hoejde": 389,
+            "top": 197
+          },
+          "linjer": [
+            "Tiden er gået! Du løste 5 gåder.",
+            "Ny storm Tilbage til gåderne",
+            "Ny Gafler-rekord!",
+            "Din rekord på denne enhed: 20 gåder (9 i træk).",
+            "Alle, bedst: i dag 10 · uge 10.",
+            "Gafler, bedst: i dag 5 · uge 5 · rekord 5.",
+            "0 forkerte træk (−0 s)",
+            "Flest rigtige i træk: 5 (+3 s bonustid)",
+            "Sværeste løste gåde: rating 565",
+            "Ingen forkerte træk. Flot!"
+          ],
+          "rekordLinjer": 4,
+          "nulS": true
+        },
+        "slutE": {
+          "kort": {
+            "tekst": "Tiden er gået! Du løste 3 gåder. Ny storm Tilbage til gåderne Din rekord på denne enhed: 20 gåder (9 i træk). Alle, bedst: i dag 10 · uge 10. Gafler, bedst: i dag 12 · uge 12 · rekord 12. 1 forkert træk (−10 s) Flest rigtige i træk: 3 Sværeste løste gåde: rating 545 Her gik det galt - træn det i biblioteket Gaffel: 1 af 4 gik galt Træn: Gaffel med springeren Se løsningen på gåderne, der gik galt Gåde 1: Gaffel",
+            "ord": 81,
+            "tal": 15,
+            "knapper": 7,
+            "knapNavne": [
+              "Ny storm",
+              "Tilbage til gåderne",
+              "2 gåder",
+              "12 gåder",
+              "3 gåder (den nyeste)",
+              "Træn: Gaffel med springeren",
+              "Gåde 1: Gaffel"
+            ],
+            "hoejde": 496,
+            "top": 197
+          },
+          "linjer": [
+            "Tiden er gået! Du løste 3 gåder.",
+            "Ny storm Tilbage til gåderne",
+            "Din rekord på denne enhed: 20 gåder (9 i træk).",
+            "Alle, bedst: i dag 10 · uge 10.",
+            "Gafler, bedst: i dag 12 · uge 12 · rekord 12.",
+            "1 forkert træk (−10 s)",
+            "Flest rigtige i træk: 3",
+            "Sværeste løste gåde: rating 545",
+            "Her gik det galt - træn det i biblioteket",
+            "Gaffel: 1 af 4 gik galt Træn: Gaffel med springeren",
+            "Se løsningen på gåderne, der gik galt"
+          ],
+          "rekordLinjer": 3,
+          "nulS": false
+        }
+      },
+      "360x640": {
+        "vandret": false,
+        "faner": {
+          "antal": 6,
+          "h": [
+            42,
+            42,
+            42,
+            42,
+            42,
+            42
+          ],
+          "b": [
+            113,
+            113,
+            113,
+            113,
+            113,
+            113
+          ],
+          "raekker": 2,
+          "mellem": 3.2,
+          "midtY": 95.59375,
+          "xer": [
+            64.265625,
+            179.9921875,
+            295.71875
+          ],
+          "bund": 139,
+          "trykMellem": [
+            "faner",
+            "faner",
+            "faner"
+          ]
+        },
+        "gaader": {
+          "braet": {
+            "top": 287,
+            "bund": 631,
+            "h": 640,
+            "over": 9
+          },
+          "smaa": [
+            "Bibliotek 113x42",
+            "Lær skak 113x42",
+            "Taktik 113x42",
+            "Spil 113x42",
+            "Gåder 113x42",
+            "Opstil 113x42"
+          ],
+          "scrollY": 0
+        },
+        "spil": {
+          "braet": {
+            "top": 417,
+            "bund": 761,
+            "h": 640,
+            "over": -121
+          },
+          "smaa": [
+            "Bibliotek 113x42",
+            "Lær skak 113x42",
+            "Taktik 113x42",
+            "Spil 113x42",
+            "Gåder 113x42",
+            "Opstil 113x42"
+          ],
+          "scrollY": 0,
+          "overBraettet": []
+        },
+        "startKort": {
+          "tekst": "Gåde-storm: 3 minutter Løs så mange gåder du kan. De starter lette og bliver sværere. Forkert træk koster 10 sekunder - rigtige i træk giver ekstra tid. Din rekord på denne enhed: 20 gåder (9 i træk). Tema Blandet Mat Gafler Spyd Bindinger Slutspil Gafler, bedst: i dag 4 · uge 4 · rekord 4. Dagens storm (28/9) Tilfældig storm Dagens storm: hele klassen får de samme gåder i dag. Start, når læreren siger til. Tilfældig storm: dine egne gåder, uden kode.",
+          "ord": 79,
+          "tal": 9,
+          "knapper": 10,
+          "knapNavne": [
+            "Blandet",
+            "Mat",
+            "Gafler",
+            "Spyd",
+            "Bindinger",
+            "Slutspil",
+            "2 gåder",
+            "4 gåder (den nyeste)",
+            "Dagens storm (28/9)",
+            "Tilfældig storm"
+          ],
+          "hoejde": 549,
+          "top": 888
+        },
+        "temaLinje": {
+          "tekst": "Gafler, bedst: i dag 4 · uge 4 · rekord 4.",
+          "linjer": 1,
+          "sidsteLinje": null
+        },
+        "slutD": {
+          "kort": {
+            "tekst": "Tiden er gået! Du løste 5 gåder. Ny storm Tilbage til gåderne Ny Gafler-rekord! Din rekord på denne enhed: 20 gåder (9 i træk). Alle, bedst: i dag 10 · uge 10. Gafler, bedst: i dag 5 · uge 5 · rekord 5. 0 forkerte træk (−0 s) Flest rigtige i træk: 5 (+3 s bonustid) Sværeste løste gåde: rating 554 Ingen forkerte træk. Flot!",
+            "ord": 62,
+            "tal": 13,
+            "knapper": 5,
+            "knapNavne": [
+              "Ny storm",
+              "Tilbage til gåderne",
+              "2 gåder",
+              "4 gåder",
+              "5 gåder (den nyeste)"
+            ],
+            "hoejde": 445,
+            "top": 823
+          },
+          "linjer": [
+            "Tiden er gået! Du løste 5 gåder.",
+            "Ny storm Tilbage til gåderne",
+            "Ny Gafler-rekord!",
+            "Din rekord på denne enhed: 20 gåder (9 i træk).",
+            "Alle, bedst: i dag 10 · uge 10.",
+            "Gafler, bedst: i dag 5 · uge 5 · rekord 5.",
+            "0 forkerte træk (−0 s)",
+            "Flest rigtige i træk: 5 (+3 s bonustid)",
+            "Sværeste løste gåde: rating 554",
+            "Ingen forkerte træk. Flot!"
+          ],
+          "rekordLinjer": 4,
+          "nulS": true
+        },
+        "slutE": {
+          "kort": {
+            "tekst": "Tiden er gået! Du løste 3 gåder. Ny storm Tilbage til gåderne Din rekord på denne enhed: 20 gåder (9 i træk). Alle, bedst: i dag 10 · uge 10. Gafler, bedst: i dag 12 · uge 12 · rekord 12. 1 forkert træk (−10 s) Flest rigtige i træk: 3 Sværeste løste gåde: rating 545 Her gik det galt - træn det i biblioteket Gaffel: 1 af 4 gik galt Træn: Gaffel med springeren Se løsningen på gåderne, der gik galt Gåde 1: Gaffel",
+            "ord": 81,
+            "tal": 15,
+            "knapper": 7,
+            "knapNavne": [
+              "Ny storm",
+              "Tilbage til gåderne",
+              "2 gåder",
+              "12 gåder",
+              "3 gåder (den nyeste)",
+              "Træn: Gaffel med springeren",
+              "Gåde 1: Gaffel"
+            ],
+            "hoejde": 549,
+            "top": 823
+          },
+          "linjer": [
+            "Tiden er gået! Du løste 3 gåder.",
+            "Ny storm Tilbage til gåderne",
+            "Din rekord på denne enhed: 20 gåder (9 i træk).",
+            "Alle, bedst: i dag 10 · uge 10.",
+            "Gafler, bedst: i dag 12 · uge 12 · rekord 12.",
+            "1 forkert træk (−10 s)",
+            "Flest rigtige i træk: 3",
+            "Sværeste løste gåde: rating 545",
+            "Her gik det galt - træn det i biblioteket",
+            "Gaffel: 1 af 4 gik galt Træn: Gaffel med springeren",
+            "Se løsningen på gåderne, der gik galt"
+          ],
+          "rekordLinjer": 3,
+          "nulS": false
+        }
+      }
+    },
+    "efter": {
+      "360": {
+        "vandret": false,
+        "faner": {
+          "antal": 6,
+          "h": [
+            44,
+            44,
+            44,
+            44,
+            44,
+            44
+          ],
+          "b": [
+            113,
+            113,
+            113,
+            113,
+            113,
+            113
+          ],
+          "raekker": 2,
+          "mellem": 2,
+          "midtY": 97,
+          "xer": [
+            64.265625,
+            179.9921875,
+            295.71875
+          ],
+          "bund": 142,
+          "trykMellem": [
+            "faner",
+            "faner",
+            "faner"
+          ]
+        },
+        "gaader": {
+          "braet": {
+            "top": 290,
+            "bund": 634,
+            "h": 740,
+            "over": 106
+          },
+          "smaa": [],
+          "scrollY": 0
+        },
+        "spil": {
+          "braet": {
+            "top": 420,
+            "bund": 764,
+            "h": 740,
+            "over": -24
+          },
+          "smaa": [],
+          "scrollY": 0,
+          "overBraettet": []
+        },
+        "startKort": {
+          "tekst": "Gåde-storm: 3 minutter Løs så mange gåder du kan. De starter lette og bliver sværere. Forkert træk koster 10 sekunder - rigtige i træk giver ekstra tid. Din rekord på denne enhed: 20 gåder (9 i træk). Tema Blandet Mat Gafler Spyd Bindinger Slutspil Gafler, bedst: i dag 4 · uge 4 · rekord 4. Dagens storm (28/9) Tilfældig storm Dagens storm: hele klassen får de samme gåder i dag. Start, når læreren siger til. Tilfældig storm: dine egne gåder, uden kode.",
+          "ord": 79,
+          "tal": 9,
+          "knapper": 10,
+          "knapNavne": [
+            "Blandet",
+            "Mat",
+            "Gafler",
+            "Spyd",
+            "Bindinger",
+            "Slutspil",
+            "2 gåder",
+            "4 gåder (den nyeste)",
+            "Dagens storm (28/9)",
+            "Tilfældig storm"
+          ],
+          "hoejde": 549,
+          "top": 891
+        },
+        "temaLinje": {
+          "tekst": "Gafler, bedst: i dag 4 · uge 4 · rekord 4.",
+          "linjer": 1,
+          "sidsteLinje": null
+        },
+        "slutD": {
+          "kort": {
+            "tekst": "Tiden er gået! Du løste 5 gåder. Ny storm Tilbage til gåderne Ny Gafler-rekord! Gafler, bedst: i dag 5 · uge 5 · rekord 5. Flest rigtige i træk: 5 (+3 s bonustid) Sværeste løste gåde: rating 545 Ingen forkerte træk. Flot!",
+            "ord": 40,
+            "tal": 7,
+            "knapper": 5,
+            "knapNavne": [
+              "Ny storm",
+              "Tilbage til gåderne",
+              "2 gåder",
+              "4 gåder",
+              "5 gåder (den nyeste)"
+            ],
+            "hoejde": 348,
+            "top": 826
+          },
+          "linjer": [
+            "Tiden er gået! Du løste 5 gåder.",
+            "Ny storm Tilbage til gåderne",
+            "Ny Gafler-rekord!",
+            "Gafler, bedst: i dag 5 · uge 5 · rekord 5.",
+            "Flest rigtige i træk: 5 (+3 s bonustid)",
+            "Sværeste løste gåde: rating 545",
+            "Ingen forkerte træk. Flot!"
+          ],
+          "rekordLinjer": 2,
+          "nulS": false
+        },
+        "slutE": {
+          "kort": {
+            "tekst": "Tiden er gået! Du løste 3 gåder. Ny storm Tilbage til gåderne Gafler, bedst: i dag 12 · uge 12 · rekord 12. 1 forkert træk (−10 s) Flest rigtige i træk: 3 Sværeste løste gåde: rating 545 Her gik det galt - træn det i biblioteket Gaffel: 1 af 4 gik galt Træn: Gaffel med springeren Se løsningen på gåderne, der gik galt Gåde 1: Gaffel",
+            "ord": 64,
+            "tal": 11,
+            "knapper": 7,
+            "knapNavne": [
+              "Ny storm",
+              "Tilbage til gåderne",
+              "2 gåder",
+              "12 gåder",
+              "3 gåder (den nyeste)",
+              "Træn: Gaffel med springeren",
+              "Gåde 1: Gaffel"
+            ],
+            "hoejde": 473,
+            "top": 826
+          },
+          "linjer": [
+            "Tiden er gået! Du løste 3 gåder.",
+            "Ny storm Tilbage til gåderne",
+            "Gafler, bedst: i dag 12 · uge 12 · rekord 12.",
+            "1 forkert træk (−10 s)",
+            "Flest rigtige i træk: 3",
+            "Sværeste løste gåde: rating 545",
+            "Her gik det galt - træn det i biblioteket",
+            "Gaffel: 1 af 4 gik galt Træn: Gaffel med springeren",
+            "Se løsningen på gåderne, der gik galt"
+          ],
+          "rekordLinjer": 1,
+          "nulS": false
+        }
+      },
+      "390": {
+        "vandret": false,
+        "faner": {
+          "antal": 6,
+          "h": [
+            44,
+            44,
+            44,
+            44,
+            44,
+            44
+          ],
+          "b": [
+            123,
+            123,
+            123,
+            123,
+            123,
+            123
+          ],
+          "raekker": 2,
+          "mellem": 2,
+          "midtY": 97,
+          "xer": [
+            69.265625,
+            194.9921875,
+            320.71875
+          ],
+          "bund": 142,
+          "trykMellem": [
+            "faner",
+            "faner",
+            "faner"
+          ]
+        },
+        "gaader": {
+          "braet": {
+            "top": 290,
+            "bund": 664,
+            "h": 844,
+            "over": 180
+          },
+          "smaa": [],
+          "scrollY": 0
+        },
+        "spil": {
+          "braet": {
+            "top": 368,
+            "bund": 742,
+            "h": 844,
+            "over": 102
+          },
+          "smaa": [],
+          "scrollY": 0,
+          "overBraettet": []
+        },
+        "startKort": {
+          "tekst": "Gåde-storm: 3 minutter Løs så mange gåder du kan. De starter lette og bliver sværere. Forkert træk koster 10 sekunder - rigtige i træk giver ekstra tid. Din rekord på denne enhed: 20 gåder (9 i træk). Tema Blandet Mat Gafler Spyd Bindinger Slutspil Gafler, bedst: i dag 4 · uge 4 · rekord 4. Dagens storm (28/9) Tilfældig storm Dagens storm: hele klassen får de samme gåder i dag. Start, når læreren siger til. Tilfældig storm: dine egne gåder, uden kode.",
+          "ord": 79,
+          "tal": 9,
+          "knapper": 10,
+          "knapNavne": [
+            "Blandet",
+            "Mat",
+            "Gafler",
+            "Spyd",
+            "Bindinger",
+            "Slutspil",
+            "2 gåder",
+            "4 gåder (den nyeste)",
+            "Dagens storm (28/9)",
+            "Tilfældig storm"
+          ],
+          "hoejde": 529,
+          "top": 921
+        },
+        "temaLinje": {
+          "tekst": "Gafler, bedst: i dag 4 · uge 4 · rekord 4.",
+          "linjer": 1,
+          "sidsteLinje": null
+        },
+        "slutD": {
+          "kort": {
+            "tekst": "Tiden er gået! Du løste 5 gåder. Ny storm Tilbage til gåderne Ny Gafler-rekord! Gafler, bedst: i dag 5 · uge 5 · rekord 5. Flest rigtige i træk: 5 (+3 s bonustid) Sværeste løste gåde: rating 555 Ingen forkerte træk. Flot!",
+            "ord": 40,
+            "tal": 7,
+            "knapper": 5,
+            "knapNavne": [
+              "Ny storm",
+              "Tilbage til gåderne",
+              "2 gåder",
+              "4 gåder",
+              "5 gåder (den nyeste)"
+            ],
+            "hoejde": 296,
+            "top": 856
+          },
+          "linjer": [
+            "Tiden er gået! Du løste 5 gåder.",
+            "Ny storm Tilbage til gåderne",
+            "Ny Gafler-rekord!",
+            "Gafler, bedst: i dag 5 · uge 5 · rekord 5.",
+            "Flest rigtige i træk: 5 (+3 s bonustid)",
+            "Sværeste løste gåde: rating 555",
+            "Ingen forkerte træk. Flot!"
+          ],
+          "rekordLinjer": 2,
+          "nulS": false
+        },
+        "slutE": {
+          "kort": {
+            "tekst": "Tiden er gået! Du løste 3 gåder. Ny storm Tilbage til gåderne Gafler, bedst: i dag 12 · uge 12 · rekord 12. 1 forkert træk (−10 s) Flest rigtige i træk: 3 Sværeste løste gåde: rating 541 Her gik det galt - træn det i biblioteket Gaffel: 1 af 4 gik galt Træn: Gaffel med springeren Se løsningen på gåderne, der gik galt Gåde 1: Gaffel",
+            "ord": 64,
+            "tal": 11,
+            "knapper": 7,
+            "knapNavne": [
+              "Ny storm",
+              "Tilbage til gåderne",
+              "2 gåder",
+              "12 gåder",
+              "3 gåder (den nyeste)",
+              "Træn: Gaffel med springeren",
+              "Gåde 1: Gaffel"
+            ],
+            "hoejde": 421,
+            "top": 856
+          },
+          "linjer": [
+            "Tiden er gået! Du løste 3 gåder.",
+            "Ny storm Tilbage til gåderne",
+            "Gafler, bedst: i dag 12 · uge 12 · rekord 12.",
+            "1 forkert træk (−10 s)",
+            "Flest rigtige i træk: 3",
+            "Sværeste løste gåde: rating 541",
+            "Her gik det galt - træn det i biblioteket",
+            "Gaffel: 1 af 4 gik galt Træn: Gaffel med springeren",
+            "Se løsningen på gåderne, der gik galt"
+          ],
+          "rekordLinjer": 1,
+          "nulS": false
+        }
+      },
+      "1280": {
+        "vandret": false,
+        "faner": {
+          "antal": 6,
+          "h": [
+            44,
+            44,
+            44,
+            44,
+            44,
+            44
+          ],
+          "b": [
+            135,
+            135,
+            110,
+            87,
+            107,
+            106
+          ],
+          "raekker": 1,
+          "mellem": null,
+          "midtY": null,
+          "xer": [
+            211.6484375,
+            349.7578125,
+            475.40625,
+            577.09375,
+            677.5625,
+            787.6796875
+          ],
+          "bund": 70
+        },
+        "gaader": {
+          "braet": {
+            "top": 237,
+            "bund": 774,
+            "h": 800,
+            "over": 27
+          },
+          "smaa": [
+            "Grøn 40x44",
+            "Rød 40x44",
+            "Blå 40x44",
+            "Blandet 122x40",
+            "Mat 122x40",
+            "Gafler 122x40",
+            "Spyd 122x40",
+            "Bindinger 122x40",
+            "Slutspil 122x40",
+            "3 gåder 22x44",
+            "6 gåder 22x44",
+            "5 gåder 22x44",
+            "2 gåder 22x44",
+            "6 gåder (den nyeste) 22x44"
+          ],
+          "scrollY": 0
+        },
+        "spil": {
+          "braet": {
+            "top": 140,
+            "bund": 677,
+            "h": 800,
+            "over": 123
+          },
+          "smaa": [
+            "Mod en makker 201x40",
+            "Mod computeren 201x40",
+            "spil-lyd 13x13",
+            "spil-forhaand 13x13",
+            "Intet 56x40",
+            "3+0 56x40",
+            "4+0 56x40",
+            "5+0 56x40",
+            "10+0 56x40",
+            "5+3 56x40",
+            "Frit 56x40"
+          ],
+          "scrollY": 0,
+          "overBraettet": []
+        },
+        "startKort": {
+          "tekst": "Gåde-storm: 3 minutter Løs så mange gåder du kan. De starter lette og bliver sværere. Forkert træk koster 10 sekunder - rigtige i træk giver ekstra tid. Din rekord på denne enhed: 20 gåder (9 i træk). Tema Blandet Mat Gafler Spyd Bindinger Slutspil Gafler, bedst: i dag 4 · uge 4 · rekord 4. Dagens storm (28/9) Tilfældig storm Dagens storm: hele klassen får de samme gåder i dag. Start, når læreren siger til. Tilfældig storm: dine egne gåder, uden kode.",
+          "ord": 79,
+          "tal": 9,
+          "knapper": 10,
+          "knapNavne": [
+            "Blandet",
+            "Mat",
+            "Gafler",
+            "Spyd",
+            "Bindinger",
+            "Slutspil",
+            "2 gåder",
+            "4 gåder (den nyeste)",
+            "Dagens storm (28/9)",
+            "Tilfældig storm"
+          ],
+          "hoejde": 464,
+          "top": 197
+        },
+        "temaLinje": {
+          "tekst": "Gafler, bedst: i dag 4 · uge 4 · rekord 4.",
+          "linjer": 1,
+          "sidsteLinje": null
+        },
+        "slutD": {
+          "kort": {
+            "tekst": "Tiden er gået! Du løste 5 gåder. Ny storm Tilbage til gåderne Ny Gafler-rekord! Gafler, bedst: i dag 5 · uge 5 · rekord 5. Flest rigtige i træk: 5 (+3 s bonustid) Sværeste løste gåde: rating 545 Ingen forkerte træk. Flot!",
+            "ord": 40,
+            "tal": 7,
+            "knapper": 5,
+            "knapNavne": [
+              "Ny storm",
+              "Tilbage til gåderne",
+              "2 gåder",
+              "4 gåder",
+              "5 gåder (den nyeste)"
+            ],
+            "hoejde": 308,
+            "top": 197
+          },
+          "linjer": [
+            "Tiden er gået! Du løste 5 gåder.",
+            "Ny storm Tilbage til gåderne",
+            "Ny Gafler-rekord!",
+            "Gafler, bedst: i dag 5 · uge 5 · rekord 5.",
+            "Flest rigtige i træk: 5 (+3 s bonustid)",
+            "Sværeste løste gåde: rating 545",
+            "Ingen forkerte træk. Flot!"
+          ],
+          "rekordLinjer": 2,
+          "nulS": false
+        },
+        "slutE": {
+          "kort": {
+            "tekst": "Tiden er gået! Du løste 3 gåder. Ny storm Tilbage til gåderne Gafler, bedst: i dag 12 · uge 12 · rekord 12. 1 forkert træk (−10 s) Flest rigtige i træk: 3 Sværeste løste gåde: rating 545 Her gik det galt - træn det i biblioteket Gaffel: 1 af 4 gik galt Træn: Gaffel med springeren Se løsningen på gåderne, der gik galt Gåde 1: Gaffel",
+            "ord": 64,
+            "tal": 11,
+            "knapper": 7,
+            "knapNavne": [
+              "Ny storm",
+              "Tilbage til gåderne",
+              "2 gåder",
+              "12 gåder",
+              "3 gåder (den nyeste)",
+              "Træn: Gaffel med springeren",
+              "Gåde 1: Gaffel"
+            ],
+            "hoejde": 437,
+            "top": 197
+          },
+          "linjer": [
+            "Tiden er gået! Du løste 3 gåder.",
+            "Ny storm Tilbage til gåderne",
+            "Gafler, bedst: i dag 12 · uge 12 · rekord 12.",
+            "1 forkert træk (−10 s)",
+            "Flest rigtige i træk: 3",
+            "Sværeste løste gåde: rating 545",
+            "Her gik det galt - træn det i biblioteket",
+            "Gaffel: 1 af 4 gik galt Træn: Gaffel med springeren",
+            "Se løsningen på gåderne, der gik galt"
+          ],
+          "rekordLinjer": 1,
+          "nulS": false
+        }
+      },
+      "360x640": {
+        "vandret": false,
+        "faner": {
+          "antal": 6,
+          "h": [
+            44,
+            44,
+            44,
+            44,
+            44,
+            44
+          ],
+          "b": [
+            113,
+            113,
+            113,
+            113,
+            113,
+            113
+          ],
+          "raekker": 2,
+          "mellem": 2,
+          "midtY": 97,
+          "xer": [
+            64.265625,
+            179.9921875,
+            295.71875
+          ],
+          "bund": 142,
+          "trykMellem": [
+            "faner",
+            "faner",
+            "faner"
+          ]
+        },
+        "gaader": {
+          "braet": {
+            "top": 290,
+            "bund": 634,
+            "h": 640,
+            "over": 6
+          },
+          "smaa": [],
+          "scrollY": 0
+        },
+        "spil": {
+          "braet": {
+            "top": 420,
+            "bund": 764,
+            "h": 640,
+            "over": -124
+          },
+          "smaa": [],
+          "scrollY": 0,
+          "overBraettet": []
+        },
+        "startKort": {
+          "tekst": "Gåde-storm: 3 minutter Løs så mange gåder du kan. De starter lette og bliver sværere. Forkert træk koster 10 sekunder - rigtige i træk giver ekstra tid. Din rekord på denne enhed: 20 gåder (9 i træk). Tema Blandet Mat Gafler Spyd Bindinger Slutspil Gafler, bedst: i dag 4 · uge 4 · rekord 4. Dagens storm (28/9) Tilfældig storm Dagens storm: hele klassen får de samme gåder i dag. Start, når læreren siger til. Tilfældig storm: dine egne gåder, uden kode.",
+          "ord": 79,
+          "tal": 9,
+          "knapper": 10,
+          "knapNavne": [
+            "Blandet",
+            "Mat",
+            "Gafler",
+            "Spyd",
+            "Bindinger",
+            "Slutspil",
+            "2 gåder",
+            "4 gåder (den nyeste)",
+            "Dagens storm (28/9)",
+            "Tilfældig storm"
+          ],
+          "hoejde": 549,
+          "top": 891
+        },
+        "temaLinje": {
+          "tekst": "Gafler, bedst: i dag 4 · uge 4 · rekord 4.",
+          "linjer": 1,
+          "sidsteLinje": null
+        },
+        "slutD": {
+          "kort": {
+            "tekst": "Tiden er gået! Du løste 5 gåder. Ny storm Tilbage til gåderne Ny Gafler-rekord! Gafler, bedst: i dag 5 · uge 5 · rekord 5. Flest rigtige i træk: 5 (+3 s bonustid) Sværeste løste gåde: rating 545 Ingen forkerte træk. Flot!",
+            "ord": 40,
+            "tal": 7,
+            "knapper": 5,
+            "knapNavne": [
+              "Ny storm",
+              "Tilbage til gåderne",
+              "2 gåder",
+              "4 gåder",
+              "5 gåder (den nyeste)"
+            ],
+            "hoejde": 348,
+            "top": 826
+          },
+          "linjer": [
+            "Tiden er gået! Du løste 5 gåder.",
+            "Ny storm Tilbage til gåderne",
+            "Ny Gafler-rekord!",
+            "Gafler, bedst: i dag 5 · uge 5 · rekord 5.",
+            "Flest rigtige i træk: 5 (+3 s bonustid)",
+            "Sværeste løste gåde: rating 545",
+            "Ingen forkerte træk. Flot!"
+          ],
+          "rekordLinjer": 2,
+          "nulS": false
+        },
+        "slutE": {
+          "kort": {
+            "tekst": "Tiden er gået! Du løste 3 gåder. Ny storm Tilbage til gåderne Gafler, bedst: i dag 12 · uge 12 · rekord 12. 1 forkert træk (−10 s) Flest rigtige i træk: 3 Sværeste løste gåde: rating 545 Her gik det galt - træn det i biblioteket Gaffel: 1 af 4 gik galt Træn: Gaffel med springeren Se løsningen på gåderne, der gik galt Gåde 1: Gaffel",
+            "ord": 64,
+            "tal": 11,
+            "knapper": 7,
+            "knapNavne": [
+              "Ny storm",
+              "Tilbage til gåderne",
+              "2 gåder",
+              "12 gåder",
+              "3 gåder (den nyeste)",
+              "Træn: Gaffel med springeren",
+              "Gåde 1: Gaffel"
+            ],
+            "hoejde": 473,
+            "top": 826
+          },
+          "linjer": [
+            "Tiden er gået! Du løste 3 gåder.",
+            "Ny storm Tilbage til gåderne",
+            "Gafler, bedst: i dag 12 · uge 12 · rekord 12.",
+            "1 forkert træk (−10 s)",
+            "Flest rigtige i træk: 3",
+            "Sværeste løste gåde: rating 545",
+            "Her gik det galt - træn det i biblioteket",
+            "Gaffel: 1 af 4 gik galt Træn: Gaffel med springeren",
+            "Se løsningen på gåderne, der gik galt"
+          ],
+          "rekordLinjer": 1,
+          "nulS": false
+        }
+      }
+    }
+  },
+  "fejl": [],
+  "net": 0
+}
