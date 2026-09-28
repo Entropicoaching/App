@@ -1,0 +1,2355 @@
+{
+ "top": "ba44cb1",
+ "lmTop": "cc4dd7d",
+ "kilde": {
+  "maal-billede": {
+   "filer": 2,
+   "ens": true
+  },
+  "loeft-fejl": {
+   "filer": 8,
+   "ens": true
+  },
+  "squat-figurer": {
+   "filer": 8,
+   "ens": true
+  },
+  "doedloeft-figurer": {
+   "filer": 12,
+   "ens": true
+  },
+  "baenk-figurer": {
+   "filer": 10,
+   "ens": true
+  },
+  "min-krop": {
+   "filer": 4,
+   "ens": true
+  },
+  "tre-loeft": {
+   "filer": 3,
+   "ens": true
+  },
+  "main": {
+   "top": "cc4dd7d",
+   "afvig": [
+    {
+     "f": "maal-billede/index.html",
+     "dist": "9407627",
+     "site": "f15f10f"
+    },
+    {
+     "f": "maal-billede/maal-billede.js",
+     "dist": "2a5e8c0",
+     "site": "c3c8cc3"
+    }
+   ],
+   "commits": [
+    "cc4dd7d 2026-09-28 03:52:53 +0200 merge: ordre-571 (ORDRE 571, Yantra)",
+    "b2c65e0 2026-09-28 03:51:44 +0200 Ordre 571, commit 3: skaermbilleder 390 og 1280, rapport dag 84",
+    "14a5436 2026-09-28 03:40:23 +0200 Ordre 571, commit 2: V3 (to buer i Hop til) og V6 (4K)",
+    "c84753f 2026-09-28 03:28:01 +0200 Ordre 571, commit 1: billedrater (29,97, 25, 60 og variabel)"
+   ]
+  },
+  "ikkeKopieret": [
+   "bench-animation.js",
+   "deadlift-animation.js",
+   "deadlift-bane-animation.js",
+   "krop-panel.js",
+   "maalt-over-model.js",
+   "maalt-over-squat.js",
+   "marcs-doedloeft",
+   "squat-anatomi.js",
+   "squat-animation.js",
+   "squat-bane-animation.js",
+   "squat-fejlbilleder.js"
+  ],
+  "sidsteDistCommit": "b70d57e 2026-09-28"
+ },
+ "noindex": {
+  "meta": true,
+  "robots": true,
+  "robotsSiden": false,
+  "sitemap": false,
+  "linkerTil": []
+ },
+ "tekst": {
+  "om": "id=\"om-maal-billede\"> Mål dit billede måler ledvinklerne og stangens afstand til midtfoden i et billede fra siden og holder det op mod de fejl, modellen kender i den valgte fase. En video åbner kun i browseren og bliver på telefonen. Står der en fejl, er det kun det, modellen viser i billedet, og ikke en dom over løftet.",
+  "omSaetninger": 3,
+  "tankestreger": 0,
+  "udraab": 0,
+  "opfordring": [],
+  "fejl": [
+   "Mål dit billede måler ledvinklerne og stangens afstand til midtfoden i et billede fra siden og holder det op mod de fejl, modellen kender i den valgte fase.",
+   "Står der en fejl, er det kun det, modellen viser i billedet, og ikke en dom over løftet."
+  ],
+  "holdning": [],
+  "navne": false,
+  "guide": {
+   "baenkPaaSiden": {
+    "side": true,
+    "vejledning": true,
+    "filmKlip": true
+   },
+   "afstand": {
+    "side": "Et par meter væk og zoomet ind giver mindre perspektiv, så skiven og kroppen giver samme målestok.",
+    "vejledning": true
+   },
+   "maalestok": {
+    "side": true,
+    "vejledning": true
+   },
+   "skaermbillede": {
+    "side": true,
+    "vejledning": true
+   },
+   "kortetUdenVideo": true,
+   "atletSaetning": "Sætningen fra før og efter sendes kun til en atlet, når begge billeder er filmet fra samme kameraplads."
+  }
+ },
+ "sider": [
+  {
+   "url": "/vaerktoejer/",
+   "bredde": 360,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 0,
+   "tankestreger": 0,
+   "navne": false,
+   "robots": "noindex, nofollow"
+  },
+  {
+   "url": "/assets/vaerktoejer/maal-billede/index.html",
+   "bredde": 360,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 0,
+   "tankestreger": 1,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/assets/vaerktoejer/min-krop/index.html",
+   "bredde": 360,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 0,
+   "tankestreger": 8,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/assets/vaerktoejer/min-krop/kort.html",
+   "bredde": 360,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 0,
+   "tankestreger": 0,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/assets/vaerktoejer/min-krop/mit-kort.html",
+   "bredde": 360,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 0,
+   "tankestreger": 8,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/assets/vaerktoejer/tre-loeft/index.html",
+   "bredde": 360,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 0,
+   "tankestreger": 0,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/assets/vaerktoejer/tre-loeft/indlejret.html",
+   "bredde": 360,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 0,
+   "tankestreger": 0,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/assets/vaerktoejer/loeft-fejl/index.html",
+   "bredde": 360,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 8,
+   "tankestreger": 2,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/assets/vaerktoejer/squat-figurer/k7-kun-knae-bund.svg",
+   "bredde": 360,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 0,
+   "tankestreger": 0,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/assets/vaerktoejer/doedloeft-figurer/index.html",
+   "bredde": 360,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 11,
+   "tankestreger": 0,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/assets/vaerktoejer/baenk-figurer/index.html",
+   "bredde": 360,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 9,
+   "tankestreger": 0,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/vaerktoejer/",
+   "bredde": 390,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 0,
+   "tankestreger": 0,
+   "navne": false,
+   "robots": "noindex, nofollow"
+  },
+  {
+   "url": "/assets/vaerktoejer/maal-billede/index.html",
+   "bredde": 390,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 0,
+   "tankestreger": 1,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/assets/vaerktoejer/min-krop/index.html",
+   "bredde": 390,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 0,
+   "tankestreger": 8,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/assets/vaerktoejer/min-krop/kort.html",
+   "bredde": 390,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 0,
+   "tankestreger": 0,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/assets/vaerktoejer/min-krop/mit-kort.html",
+   "bredde": 390,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 0,
+   "tankestreger": 8,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/assets/vaerktoejer/tre-loeft/index.html",
+   "bredde": 390,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 0,
+   "tankestreger": 0,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/assets/vaerktoejer/tre-loeft/indlejret.html",
+   "bredde": 390,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 0,
+   "tankestreger": 0,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/assets/vaerktoejer/loeft-fejl/index.html",
+   "bredde": 390,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 8,
+   "tankestreger": 2,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/assets/vaerktoejer/squat-figurer/k7-kun-knae-bund.svg",
+   "bredde": 390,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 0,
+   "tankestreger": 0,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/assets/vaerktoejer/doedloeft-figurer/index.html",
+   "bredde": 390,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 11,
+   "tankestreger": 0,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/assets/vaerktoejer/baenk-figurer/index.html",
+   "bredde": 390,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 9,
+   "tankestreger": 0,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/vaerktoejer/",
+   "bredde": 1280,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 0,
+   "tankestreger": 0,
+   "navne": false,
+   "robots": "noindex, nofollow"
+  },
+  {
+   "url": "/assets/vaerktoejer/maal-billede/index.html",
+   "bredde": 1280,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 0,
+   "tankestreger": 1,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/assets/vaerktoejer/min-krop/index.html",
+   "bredde": 1280,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 0,
+   "tankestreger": 8,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/assets/vaerktoejer/min-krop/kort.html",
+   "bredde": 1280,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 0,
+   "tankestreger": 0,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/assets/vaerktoejer/min-krop/mit-kort.html",
+   "bredde": 1280,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 0,
+   "tankestreger": 8,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/assets/vaerktoejer/tre-loeft/index.html",
+   "bredde": 1280,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 0,
+   "tankestreger": 0,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/assets/vaerktoejer/tre-loeft/indlejret.html",
+   "bredde": 1280,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 0,
+   "tankestreger": 0,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/assets/vaerktoejer/loeft-fejl/index.html",
+   "bredde": 1280,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 8,
+   "tankestreger": 2,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/assets/vaerktoejer/squat-figurer/k7-kun-knae-bund.svg",
+   "bredde": 1280,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 0,
+   "tankestreger": 0,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/assets/vaerktoejer/doedloeft-figurer/index.html",
+   "bredde": 1280,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 11,
+   "tankestreger": 0,
+   "navne": false,
+   "robots": null
+  },
+  {
+   "url": "/assets/vaerktoejer/baenk-figurer/index.html",
+   "bredde": 1280,
+   "vandret": 0,
+   "fejl": [],
+   "konsol": [],
+   "brudte": [],
+   "billeder": 9,
+   "tankestreger": 0,
+   "navne": false,
+   "robots": null
+  }
+ ],
+ "links": {
+  "/style.css": 200,
+  "/favicon.svg": 200,
+  "/index.html": 200,
+  "/coaching.html": 200,
+  "/resultater.html": 200,
+  "/viden.html": 200,
+  "/om.html": 200,
+  "/assets/vaerktoejer/min-krop/index.html": 200,
+  "/assets/vaerktoejer/maal-billede/index.html": 200,
+  "/vaerktoejer/": 200,
+  "/assets/vaerktoejer/tre-loeft/index.html": 200,
+  "/privatliv.html": 200,
+  "/main.js": 200,
+  "/assets/vaerktoejer/loeft-fejl/index.html": 200,
+  "/assets/vaerktoejer/maal-billede/maal-billede.js": 200,
+  "/assets/vaerktoejer/min-krop/mit-kort.html": 200,
+  "/assets/vaerktoejer/min-krop/min-krop.js": 200,
+  "/assets/vaerktoejer/tre-loeft/tre-loeft.js": 200,
+  "/assets/vaerktoejer/loeft-fejl/dl-hofte-foerst-model.svg": 200,
+  "/assets/vaerktoejer/loeft-fejl/dl-hofte-foerst.svg": 200,
+  "/assets/vaerktoejer/loeft-fejl/dl-stang-frem-model.svg": 200,
+  "/assets/vaerktoejer/loeft-fejl/dl-stang-frem.svg": 200,
+  "/assets/vaerktoejer/loeft-fejl/bp-model.svg": 200,
+  "/assets/vaerktoejer/loeft-fejl/bp-albue-ud.svg": 200,
+  "/assets/vaerktoejer/loeft-fejl/bp-hoejt-bryst.svg": 200,
+  "/assets/vaerktoejer/doedloeft-figurer/dl-konventionel-opstilling.svg": 200,
+  "/assets/vaerktoejer/doedloeft-figurer/dl-konventionel-knaehoejde.svg": 200,
+  "/assets/vaerktoejer/doedloeft-figurer/dl-konventionel-lockout.svg": 200,
+  "/assets/vaerktoejer/doedloeft-figurer/dl-sumo-opstilling.svg": 200,
+  "/assets/vaerktoejer/doedloeft-figurer/dl-sumo-knaehoejde.svg": 200,
+  "/assets/vaerktoejer/doedloeft-figurer/dl-sumo-lockout.svg": 200,
+  "/assets/vaerktoejer/doedloeft-figurer/dl-klip-start.svg": 200,
+  "/assets/vaerktoejer/doedloeft-figurer/dl-klip-foer-knae.svg": 200,
+  "/assets/vaerktoejer/doedloeft-figurer/dl-klip-knaehoejde.svg": 200,
+  "/assets/vaerktoejer/doedloeft-figurer/dl-klip-efter-knae.svg": 200,
+  "/assets/vaerktoejer/doedloeft-figurer/dl-klip-lockout.svg": 200,
+  "/assets/vaerktoejer/baenk-figurer/baenk-bryst.svg": 200,
+  "/assets/vaerktoejer/baenk-figurer/baenk-midt.svg": 200,
+  "/assets/vaerktoejer/baenk-figurer/baenk-lockout.svg": 200,
+  "/assets/vaerktoejer/baenk-figurer/baenk-bue-lille.svg": 200,
+  "/assets/vaerktoejer/baenk-figurer/baenk-bue-middel.svg": 200,
+  "/assets/vaerktoejer/baenk-figurer/baenk-bue-stor.svg": 200,
+  "/assets/vaerktoejer/baenk-figurer/baenk-greb-smal.svg": 200,
+  "/assets/vaerktoejer/baenk-figurer/baenk-greb-middel.svg": 200,
+  "/assets/vaerktoejer/baenk-figurer/baenk-greb-bred.svg": 200
+ },
+ "ligner": [
+  {
+   "id": "sq-bund-model",
+   "fase": "squat-bund",
+   "sumo": false,
+   "kg": 140,
+   "forvent": "ingen",
+   "bredde": 360,
+   "status": "ingen",
+   "fejl": null,
+   "tekst": "Ligner ikke \"kun knæene\" eller \"hoften skudt for langt tilbage\" over målefejlen. Det udelukker ikke fejlen: lige fra siden overses \"hoften tilbage\" i ca. 5 af 100 billeder med omhyggelige klik, 14 af 100 med hurtige og hvert andet med tæerne 30° ud. Andre fejl tjekker siden ikke.",
+   "synlig": true,
+   "hoejre": 344,
+   "hoejde": 155,
+   "links": [],
+   "ord": 48,
+   "linkStatus": [],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sq-bund-kun-knae",
+   "fase": "squat-bund",
+   "sumo": false,
+   "kg": 140,
+   "forvent": "ligner",
+   "bredde": 360,
+   "status": "ligner",
+   "fejl": "sq-kun-knae-bund",
+   "tekst": "Ligner: kun knæene Skinnebenet hælder ca. 17° mere frem end i modellens bund med gennemsnittet for din højde og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen. Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. Modellen regner med hælen i feltet \"Sko med hæle\" (0 = fladt). Står feltet på 0, men løfteren har sko med 2 cm hæl, ligner modellens egen squat \"kun knæene\" i ca. hvert andet til femte billede. I modellens fejlfigur letter hælen i bunden; billedet har intet punkt på hælen, så det kan siden ikke se. Telefonen holdt i hånden (ca. 140 cm, vippet ned mod hoften) lægger skinnebenet ca. 3° frem i billedet; det ligner lidt \"kun knæene\" og skjuler \"hoften tilbage\". Film i hoftehøjde. Se fejlen i hele opturen, med modellens udførelse svagt bagved",
+   "synlig": true,
+   "hoejre": 344,
+   "hoejde": 685,
+   "links": [
+    "http://127.0.0.1:57760/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/squat-figurer/k7-kun-knae-bund.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg"
+   ],
+   "ord": 148,
+   "linkStatus": [
+    {
+     "l": "/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/squat-figurer/k7-kun-knae-bund.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+     "s": 200,
+     "anker": true
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sq-bund-hofte-tilbage",
+   "fase": "squat-bund",
+   "sumo": false,
+   "kg": 140,
+   "forvent": "ligner",
+   "bredde": 360,
+   "status": "ligner",
+   "fejl": "sq-hofte-tilbage-bund",
+   "tekst": "Ligner: hoften skudt for langt tilbage Torsoen hælder ca. 16° mere frem og skinnebenet står ca. 10° mere lodret end i modellens bund med gennemsnittet for din højde; sådan står modellens figur, når hoften skydes for langt tilbage. Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. En bred fodstilling med tæerne ud får skinnebenet til at se mere lodret ud fra siden (ca. 4-5° ved 30° ud), men torsoen ser samtidig mere oprejst ud; derfor kræver reglen også torsoen. Et kamera skråt forfra skjuler fejlen. I sko med hæl regner modellen med samme ankelbøjning som i fladt fodtøj; det er et valg, ikke målt. Holder løfteren i stedet torsoen, ligner en rigtig bund \"hoften skudt for langt tilbage\", så læs \"hoften tilbage\" i sko med forsigtighed; i bunden med over 1 cm hæl og ved sticking point fra 2,5 cm er den kun et hint. Telefonen holdt i hånden (ca. 140 cm, vippet ned mod hoften) lægger skinnebenet ca. 3° frem i billedet; det ligner lidt \"kun knæene\" og skjuler \"hoften tilbage\". Film i hoftehøjde. Se fejlen i hele opturen, med modellens udførelse svagt bagved",
+   "synlig": true,
+   "hoejre": 344,
+   "hoejde": 817,
+   "links": [
+    "http://127.0.0.1:57760/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-bund.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg"
+   ],
+   "ord": 195,
+   "linkStatus": [
+    {
+     "l": "/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-bund.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
+     "s": 200,
+     "anker": true
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sq-midt-model",
+   "fase": "squat-midt",
+   "sumo": false,
+   "kg": 140,
+   "forvent": "ingen",
+   "bredde": 360,
+   "status": "ingen",
+   "fejl": null,
+   "tekst": "Ligner ikke \"kun knæene\" eller \"hoften skudt for langt tilbage\" over målefejlen. Det udelukker ikke fejlen: lige fra siden overses \"kun knæene\" i ca. hvert tredje billede med omhyggelige klik, hvert andet med hurtige og 9 af 10 med tæerne 30° ud. Andre fejl tjekker siden ikke.",
+   "synlig": true,
+   "hoejre": 344,
+   "hoejde": 155,
+   "links": [],
+   "ord": 47,
+   "linkStatus": [],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sq-midt-kun-knae",
+   "fase": "squat-midt",
+   "sumo": false,
+   "kg": 140,
+   "forvent": "ligner",
+   "bredde": 360,
+   "status": "ligner",
+   "fejl": "sq-kun-knae-midt",
+   "tekst": "Ligner: kun knæene Skinnebenet hælder ca. 9° mere frem og knæet er ca. 11° mere bøjet end i modellens sticking point med gennemsnittet for din højde og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen. Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. Modellen regner med hælen i feltet \"Sko med hæle\" (0 = fladt). Står feltet på 0, men løfteren har sko med 2 cm hæl, ligner modellens egen squat \"kun knæene\" i ca. hvert andet til femte billede. I modellens fejlfigur letter hælen i bunden; billedet har intet punkt på hælen, så det kan siden ikke se. Telefonen holdt i hånden (ca. 140 cm, vippet ned mod hoften) lægger skinnebenet ca. 3° frem i billedet; det ligner lidt \"kun knæene\" og skjuler \"hoften tilbage\". Film i hoftehøjde. Se fejlen i hele opturen, med modellens udførelse svagt bagved",
+   "synlig": true,
+   "hoejre": 344,
+   "hoejde": 709,
+   "links": [
+    "http://127.0.0.1:57760/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/squat-figurer/k7-kun-knae-sticking.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg"
+   ],
+   "ord": 156,
+   "linkStatus": [
+    {
+     "l": "/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/squat-figurer/k7-kun-knae-sticking.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+     "s": 200,
+     "anker": true
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "dl-gulv-model",
+   "fase": "dl-gulv",
+   "sumo": false,
+   "kg": 200,
+   "forvent": "ingen",
+   "bredde": 360,
+   "status": "ingen",
+   "fejl": null,
+   "tekst": "Ligner ikke \"hoften stiger først\" over målefejlen. Det udelukker ikke fejlen: lige fra siden overses den i ca. 3 af 100 billeder med omhyggelige klik og 7 af 100 med hurtige. Andre fejl tjekker siden ikke.",
+   "synlig": true,
+   "hoejre": 344,
+   "hoejde": 110,
+   "links": [],
+   "ord": 36,
+   "linkStatus": [],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "dl-hofte-foerst",
+   "fase": "dl-gulv",
+   "sumo": false,
+   "kg": 200,
+   "forvent": "ligner",
+   "bredde": 360,
+   "status": "ligner",
+   "fejl": "dl-hofte-foerst",
+   "tekst": "Ligner: hoften stiger først Skinnebenet står ca. 14° mere lodret og knæet er ca. 29° mere strakt end i modellens udførelse med gennemsnittet for din højde; sådan står modellens figur, når knæene strækkes, før stangen slipper gulvet. Reglen gælder kun lige over gulvet: i modellen strækkes knæet, så snart stangen slipper, og 5-8 cm oppe ligner modellens egen bane fejlen. Siden tjekker derfor kun billeder, hvor stangen står højst ca. 2 cm højere end i modellen. Står kameraet tættere end ca. 3 m, ser stangen lavere ud, end den er; med skiven klikket stopper siden dér. I sumo er grænsen ca. 1 cm, og kameraet må højst stå ca. 4° skråt. Se fejlfiguren og hvad modellen ikke kan sige om den",
+   "synlig": true,
+   "hoejre": 344,
+   "hoejde": 621,
+   "links": [
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/index.html#dl-hofte-foerst",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/dl-hofte-foerst.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/index.html#dl-hofte-foerst"
+   ],
+   "ord": 121,
+   "linkStatus": [
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/index.html#dl-hofte-foerst",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/dl-hofte-foerst.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/index.html#dl-hofte-foerst",
+     "s": 200,
+     "anker": true
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "dl-knae-model",
+   "fase": "dl-knae",
+   "sumo": false,
+   "kg": 200,
+   "forvent": "ingen",
+   "bredde": 360,
+   "status": "ingen",
+   "fejl": null,
+   "tekst": "Ligner ikke \"stangen glider frem\" over målefejlen. Det udelukker ikke fejlen: lige fra siden overses den i ca. 4 af 100 billeder med omhyggelige klik og hvert femte med hurtige. Andre fejl tjekker siden ikke.",
+   "synlig": true,
+   "hoejre": 344,
+   "hoejde": 110,
+   "links": [],
+   "ord": 35,
+   "linkStatus": [],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "dl-stang-frem",
+   "fase": "dl-knae",
+   "sumo": false,
+   "kg": 200,
+   "forvent": "ligner",
+   "bredde": 360,
+   "status": "ligner",
+   "fejl": "dl-stang-frem",
+   "tekst": "Ligner: stangen glider frem Stangen hænger ca. 6 cm længere fremme og ca. 6 cm længere fra knæet end i modellens knæhøjde; sådan står modellens figur, når stangen glider frem fra benene. Se fejlfiguren og hvad modellen ikke kan sige om den",
+   "synlig": true,
+   "hoejre": 344,
+   "hoejde": 369,
+   "links": [
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/dl-stang-frem.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem"
+   ],
+   "ord": 42,
+   "linkStatus": [
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/dl-stang-frem.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+     "s": 200,
+     "anker": true
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sumo-knae-model",
+   "fase": "dl-knae",
+   "sumo": true,
+   "kg": 200,
+   "forvent": "ingen",
+   "bredde": 360,
+   "status": "ingen",
+   "fejl": null,
+   "tekst": "Ligner ikke \"stangen glider frem\" i modellens sumo over målefejlen. Det udelukker ikke fejlen: lige fra siden overses den i ca. 1 af 100 billeder med omhyggelige klik og 11 af 100 med hurtige. Andre fejl tjekker siden ikke.",
+   "synlig": true,
+   "hoejre": 344,
+   "hoejde": 110,
+   "links": [],
+   "ord": 39,
+   "linkStatus": [],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sumo-stang-frem",
+   "fase": "dl-knae",
+   "sumo": true,
+   "kg": 200,
+   "forvent": "ligner",
+   "bredde": 360,
+   "status": "ligner",
+   "fejl": "dl-stang-frem",
+   "tekst": "Ligner: stangen glider frem Stangen hænger ca. 7 cm længere fremme og ca. 7 cm længere fra knæet end i modellens sumo ved knæhøjde, set fra siden; sådan står modellens sumo, når stangen glider frem fra benene. Se fejlfiguren og hvad modellen ikke kan sige om den",
+   "synlig": true,
+   "hoejre": 344,
+   "hoejde": 369,
+   "links": [
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/dl-stang-frem.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem"
+   ],
+   "ord": 47,
+   "linkStatus": [
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/dl-stang-frem.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+     "s": 200,
+     "anker": true
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "bp-bryst-model",
+   "fase": "baenk-bryst",
+   "sumo": false,
+   "kg": 100,
+   "forvent": "ingen",
+   "bredde": 360,
+   "status": "ingen",
+   "fejl": null,
+   "tekst": "Ligner ikke \"stangen for højt\" eller \"albuen helt ude\" over målefejlen. Det udelukker ikke fejlen: lige fra siden overses \"albuen helt ude\" i ca. hvert andet billede med omhyggelige og hurtige klik. Andre fejl tjekker siden ikke.",
+   "synlig": true,
+   "hoejre": 344,
+   "hoejde": 110,
+   "links": [],
+   "ord": 37,
+   "linkStatus": [],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "bp-bue-75",
+   "fase": "baenk-bryst",
+   "sumo": false,
+   "kg": 100,
+   "forvent": "usikker-fase",
+   "bredde": 360,
+   "status": "usikker-fase",
+   "fejl": null,
+   "tekst": "Billedet kan ikke tjekkes for fejl: stangen står ca. 10 cm højere over skulderen end i modellens bryst: billedet er ikke fra brystet, eller buen er større end modellens, og en større bue flytter stangen mod halsen, så den ligner \"stangen for højt\".",
+   "synlig": true,
+   "hoejre": 344,
+   "hoejde": 132,
+   "links": [],
+   "ord": 43,
+   "linkStatus": [],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "bp-hoejt-bryst",
+   "fase": "baenk-bryst",
+   "sumo": false,
+   "kg": 100,
+   "forvent": "ligner",
+   "bredde": 360,
+   "status": "ligner",
+   "fejl": "bp-hoejt-bryst",
+   "tekst": "Ligner: stangen for højt eller albuen helt ude Stangen rører ca. 15 cm nærmere halsen end i modellen; det gør den i modellen både, når stangen lander for højt, og når albuen står helt ude, og fra siden kan billedet ikke se albuen. Skulderpunktet bærer reglen. Skuldrene trukket langt ned mod hofterne og et skulderklik, der sidder 2-3 cm forkert (armen dækker leddet på bænken), trækker samme vej som \"stangen for højt\": med skulderen 3 cm nærmere hofterne end i modellen gav modellens egen bue fejlen i ca. 3-6 af 100 billeder lige fra siden og i ca. hvert tiende 10° skråt. Klik skulderleddet, ikke knoglespidsen, og læs \"stangen for højt\" med forsigtighed hos en løfter, der trækker skuldrene langt ned. Se fejlfigurenerne og hvad modellen ikke kan sige om dem",
+   "synlig": true,
+   "hoejre": 344,
+   "hoejde": 644,
+   "links": [
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/index.html#bp-hoejt-bryst",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/bp-hoejt-bryst.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/index.html#bp-albue-ud",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/bp-albue-ud.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/index.html#bp-hoejt-bryst"
+   ],
+   "ord": 131,
+   "linkStatus": [
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/index.html#bp-hoejt-bryst",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/bp-hoejt-bryst.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/index.html#bp-albue-ud",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/bp-albue-ud.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/index.html#bp-hoejt-bryst",
+     "s": 200,
+     "anker": true
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sq-bund-model",
+   "fase": "squat-bund",
+   "sumo": false,
+   "kg": 140,
+   "forvent": "ingen",
+   "bredde": 390,
+   "status": "ingen",
+   "fejl": null,
+   "tekst": "Ligner ikke \"kun knæene\" eller \"hoften skudt for langt tilbage\" over målefejlen. Det udelukker ikke fejlen: lige fra siden overses \"hoften tilbage\" i ca. 5 af 100 billeder med omhyggelige klik, 14 af 100 med hurtige og hvert andet med tæerne 30° ud. Andre fejl tjekker siden ikke.",
+   "synlig": true,
+   "hoejre": 374,
+   "hoejde": 132,
+   "links": [],
+   "ord": 48,
+   "linkStatus": [],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sq-bund-kun-knae",
+   "fase": "squat-bund",
+   "sumo": false,
+   "kg": 140,
+   "forvent": "ligner",
+   "bredde": 390,
+   "status": "ligner",
+   "fejl": "sq-kun-knae-bund",
+   "tekst": "Ligner: kun knæene Skinnebenet hælder ca. 17° mere frem end i modellens bund med gennemsnittet for din højde og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen. Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. Modellen regner med hælen i feltet \"Sko med hæle\" (0 = fladt). Står feltet på 0, men løfteren har sko med 2 cm hæl, ligner modellens egen squat \"kun knæene\" i ca. hvert andet til femte billede. I modellens fejlfigur letter hælen i bunden; billedet har intet punkt på hælen, så det kan siden ikke se. Telefonen holdt i hånden (ca. 140 cm, vippet ned mod hoften) lægger skinnebenet ca. 3° frem i billedet; det ligner lidt \"kun knæene\" og skjuler \"hoften tilbage\". Film i hoftehøjde. Se fejlen i hele opturen, med modellens udførelse svagt bagved",
+   "synlig": true,
+   "hoejre": 374,
+   "hoejde": 749,
+   "links": [
+    "http://127.0.0.1:57760/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/squat-figurer/k7-kun-knae-bund.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg"
+   ],
+   "ord": 148,
+   "linkStatus": [
+    {
+     "l": "/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/squat-figurer/k7-kun-knae-bund.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+     "s": 200,
+     "anker": true
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sq-bund-hofte-tilbage",
+   "fase": "squat-bund",
+   "sumo": false,
+   "kg": 140,
+   "forvent": "ligner",
+   "bredde": 390,
+   "status": "ligner",
+   "fejl": "sq-hofte-tilbage-bund",
+   "tekst": "Ligner: hoften skudt for langt tilbage Torsoen hælder ca. 16° mere frem og skinnebenet står ca. 10° mere lodret end i modellens bund med gennemsnittet for din højde; sådan står modellens figur, når hoften skydes for langt tilbage. Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. En bred fodstilling med tæerne ud får skinnebenet til at se mere lodret ud fra siden (ca. 4-5° ved 30° ud), men torsoen ser samtidig mere oprejst ud; derfor kræver reglen også torsoen. Et kamera skråt forfra skjuler fejlen. I sko med hæl regner modellen med samme ankelbøjning som i fladt fodtøj; det er et valg, ikke målt. Holder løfteren i stedet torsoen, ligner en rigtig bund \"hoften skudt for langt tilbage\", så læs \"hoften tilbage\" i sko med forsigtighed; i bunden med over 1 cm hæl og ved sticking point fra 2,5 cm er den kun et hint. Telefonen holdt i hånden (ca. 140 cm, vippet ned mod hoften) lægger skinnebenet ca. 3° frem i billedet; det ligner lidt \"kun knæene\" og skjuler \"hoften tilbage\". Film i hoftehøjde. Se fejlen i hele opturen, med modellens udførelse svagt bagved",
+   "synlig": true,
+   "hoejre": 374,
+   "hoejde": 903,
+   "links": [
+    "http://127.0.0.1:57760/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-bund.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg"
+   ],
+   "ord": 195,
+   "linkStatus": [
+    {
+     "l": "/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-bund.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
+     "s": 200,
+     "anker": true
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sq-midt-model",
+   "fase": "squat-midt",
+   "sumo": false,
+   "kg": 140,
+   "forvent": "ingen",
+   "bredde": 390,
+   "status": "ingen",
+   "fejl": null,
+   "tekst": "Ligner ikke \"kun knæene\" eller \"hoften skudt for langt tilbage\" over målefejlen. Det udelukker ikke fejlen: lige fra siden overses \"kun knæene\" i ca. hvert tredje billede med omhyggelige klik, hvert andet med hurtige og 9 af 10 med tæerne 30° ud. Andre fejl tjekker siden ikke.",
+   "synlig": true,
+   "hoejre": 374,
+   "hoejde": 132,
+   "links": [],
+   "ord": 47,
+   "linkStatus": [],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sq-midt-kun-knae",
+   "fase": "squat-midt",
+   "sumo": false,
+   "kg": 140,
+   "forvent": "ligner",
+   "bredde": 390,
+   "status": "ligner",
+   "fejl": "sq-kun-knae-midt",
+   "tekst": "Ligner: kun knæene Skinnebenet hælder ca. 9° mere frem og knæet er ca. 11° mere bøjet end i modellens sticking point med gennemsnittet for din højde og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen. Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. Modellen regner med hælen i feltet \"Sko med hæle\" (0 = fladt). Står feltet på 0, men løfteren har sko med 2 cm hæl, ligner modellens egen squat \"kun knæene\" i ca. hvert andet til femte billede. I modellens fejlfigur letter hælen i bunden; billedet har intet punkt på hælen, så det kan siden ikke se. Telefonen holdt i hånden (ca. 140 cm, vippet ned mod hoften) lægger skinnebenet ca. 3° frem i billedet; det ligner lidt \"kun knæene\" og skjuler \"hoften tilbage\". Film i hoftehøjde. Se fejlen i hele opturen, med modellens udførelse svagt bagved",
+   "synlig": true,
+   "hoejre": 374,
+   "hoejde": 797,
+   "links": [
+    "http://127.0.0.1:57760/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/squat-figurer/k7-kun-knae-sticking.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg"
+   ],
+   "ord": 156,
+   "linkStatus": [
+    {
+     "l": "/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/squat-figurer/k7-kun-knae-sticking.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+     "s": 200,
+     "anker": true
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "dl-gulv-model",
+   "fase": "dl-gulv",
+   "sumo": false,
+   "kg": 200,
+   "forvent": "ingen",
+   "bredde": 390,
+   "status": "ingen",
+   "fejl": null,
+   "tekst": "Ligner ikke \"hoften stiger først\" over målefejlen. Det udelukker ikke fejlen: lige fra siden overses den i ca. 3 af 100 billeder med omhyggelige klik og 7 af 100 med hurtige. Andre fejl tjekker siden ikke.",
+   "synlig": true,
+   "hoejre": 374,
+   "hoejde": 88,
+   "links": [],
+   "ord": 36,
+   "linkStatus": [],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "dl-hofte-foerst",
+   "fase": "dl-gulv",
+   "sumo": false,
+   "kg": 200,
+   "forvent": "ligner",
+   "bredde": 390,
+   "status": "ligner",
+   "fejl": "dl-hofte-foerst",
+   "tekst": "Ligner: hoften stiger først Skinnebenet står ca. 14° mere lodret og knæet er ca. 29° mere strakt end i modellens udførelse med gennemsnittet for din højde; sådan står modellens figur, når knæene strækkes, før stangen slipper gulvet. Reglen gælder kun lige over gulvet: i modellen strækkes knæet, så snart stangen slipper, og 5-8 cm oppe ligner modellens egen bane fejlen. Siden tjekker derfor kun billeder, hvor stangen står højst ca. 2 cm højere end i modellen. Står kameraet tættere end ca. 3 m, ser stangen lavere ud, end den er; med skiven klikket stopper siden dér. I sumo er grænsen ca. 1 cm, og kameraet må højst stå ca. 4° skråt. Se fejlfiguren og hvad modellen ikke kan sige om den",
+   "synlig": true,
+   "hoejre": 374,
+   "hoejde": 596,
+   "links": [
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/index.html#dl-hofte-foerst",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/dl-hofte-foerst.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/index.html#dl-hofte-foerst"
+   ],
+   "ord": 121,
+   "linkStatus": [
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/index.html#dl-hofte-foerst",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/dl-hofte-foerst.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/index.html#dl-hofte-foerst",
+     "s": 200,
+     "anker": true
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "dl-knae-model",
+   "fase": "dl-knae",
+   "sumo": false,
+   "kg": 200,
+   "forvent": "ingen",
+   "bredde": 390,
+   "status": "ingen",
+   "fejl": null,
+   "tekst": "Ligner ikke \"stangen glider frem\" over målefejlen. Det udelukker ikke fejlen: lige fra siden overses den i ca. 4 af 100 billeder med omhyggelige klik og hvert femte med hurtige. Andre fejl tjekker siden ikke.",
+   "synlig": true,
+   "hoejre": 374,
+   "hoejde": 110,
+   "links": [],
+   "ord": 35,
+   "linkStatus": [],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "dl-stang-frem",
+   "fase": "dl-knae",
+   "sumo": false,
+   "kg": 200,
+   "forvent": "ligner",
+   "bredde": 390,
+   "status": "ligner",
+   "fejl": "dl-stang-frem",
+   "tekst": "Ligner: stangen glider frem Stangen hænger ca. 6 cm længere fremme og ca. 6 cm længere fra knæet end i modellens knæhøjde; sådan står modellens figur, når stangen glider frem fra benene. Se fejlfiguren og hvad modellen ikke kan sige om den",
+   "synlig": true,
+   "hoejre": 374,
+   "hoejde": 279,
+   "links": [
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/dl-stang-frem.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem"
+   ],
+   "ord": 42,
+   "linkStatus": [
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/dl-stang-frem.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+     "s": 200,
+     "anker": true
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sumo-knae-model",
+   "fase": "dl-knae",
+   "sumo": true,
+   "kg": 200,
+   "forvent": "ingen",
+   "bredde": 390,
+   "status": "ingen",
+   "fejl": null,
+   "tekst": "Ligner ikke \"stangen glider frem\" i modellens sumo over målefejlen. Det udelukker ikke fejlen: lige fra siden overses den i ca. 1 af 100 billeder med omhyggelige klik og 11 af 100 med hurtige. Andre fejl tjekker siden ikke.",
+   "synlig": true,
+   "hoejre": 374,
+   "hoejde": 110,
+   "links": [],
+   "ord": 39,
+   "linkStatus": [],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sumo-stang-frem",
+   "fase": "dl-knae",
+   "sumo": true,
+   "kg": 200,
+   "forvent": "ligner",
+   "bredde": 390,
+   "status": "ligner",
+   "fejl": "dl-stang-frem",
+   "tekst": "Ligner: stangen glider frem Stangen hænger ca. 7 cm længere fremme og ca. 7 cm længere fra knæet end i modellens sumo ved knæhøjde, set fra siden; sådan står modellens sumo, når stangen glider frem fra benene. Se fejlfiguren og hvad modellen ikke kan sige om den",
+   "synlig": true,
+   "hoejre": 374,
+   "hoejde": 303,
+   "links": [
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/dl-stang-frem.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem"
+   ],
+   "ord": 47,
+   "linkStatus": [
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/dl-stang-frem.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+     "s": 200,
+     "anker": true
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "bp-bryst-model",
+   "fase": "baenk-bryst",
+   "sumo": false,
+   "kg": 100,
+   "forvent": "ingen",
+   "bredde": 390,
+   "status": "ingen",
+   "fejl": null,
+   "tekst": "Ligner ikke \"stangen for højt\" eller \"albuen helt ude\" over målefejlen. Det udelukker ikke fejlen: lige fra siden overses \"albuen helt ude\" i ca. hvert andet billede med omhyggelige og hurtige klik. Andre fejl tjekker siden ikke.",
+   "synlig": true,
+   "hoejre": 374,
+   "hoejde": 110,
+   "links": [],
+   "ord": 37,
+   "linkStatus": [],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "bp-bue-75",
+   "fase": "baenk-bryst",
+   "sumo": false,
+   "kg": 100,
+   "forvent": "usikker-fase",
+   "bredde": 390,
+   "status": "usikker-fase",
+   "fejl": null,
+   "tekst": "Billedet kan ikke tjekkes for fejl: stangen står ca. 10 cm højere over skulderen end i modellens bryst: billedet er ikke fra brystet, eller buen er større end modellens, og en større bue flytter stangen mod halsen, så den ligner \"stangen for højt\".",
+   "synlig": true,
+   "hoejre": 374,
+   "hoejde": 110,
+   "links": [],
+   "ord": 43,
+   "linkStatus": [],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "bp-hoejt-bryst",
+   "fase": "baenk-bryst",
+   "sumo": false,
+   "kg": 100,
+   "forvent": "ligner",
+   "bredde": 390,
+   "status": "ligner",
+   "fejl": "bp-hoejt-bryst",
+   "tekst": "Ligner: stangen for højt eller albuen helt ude Stangen rører ca. 15 cm nærmere halsen end i modellen; det gør den i modellen både, når stangen lander for højt, og når albuen står helt ude, og fra siden kan billedet ikke se albuen. Skulderpunktet bærer reglen. Skuldrene trukket langt ned mod hofterne og et skulderklik, der sidder 2-3 cm forkert (armen dækker leddet på bænken), trækker samme vej som \"stangen for højt\": med skulderen 3 cm nærmere hofterne end i modellen gav modellens egen bue fejlen i ca. 3-6 af 100 billeder lige fra siden og i ca. hvert tiende 10° skråt. Klik skulderleddet, ikke knoglespidsen, og læs \"stangen for højt\" med forsigtighed hos en løfter, der trækker skuldrene langt ned. Se fejlfigurenerne og hvad modellen ikke kan sige om dem",
+   "synlig": true,
+   "hoejre": 374,
+   "hoejde": 598,
+   "links": [
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/index.html#bp-hoejt-bryst",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/bp-hoejt-bryst.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/index.html#bp-albue-ud",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/bp-albue-ud.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/index.html#bp-hoejt-bryst"
+   ],
+   "ord": 131,
+   "linkStatus": [
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/index.html#bp-hoejt-bryst",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/bp-hoejt-bryst.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/index.html#bp-albue-ud",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/bp-albue-ud.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/index.html#bp-hoejt-bryst",
+     "s": 200,
+     "anker": true
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sq-bund-model",
+   "fase": "squat-bund",
+   "sumo": false,
+   "kg": 140,
+   "forvent": "ingen",
+   "bredde": 1280,
+   "status": "ingen",
+   "fejl": null,
+   "tekst": "Ligner ikke \"kun knæene\" eller \"hoften skudt for langt tilbage\" over målefejlen. Det udelukker ikke fejlen: lige fra siden overses \"hoften tilbage\" i ca. 5 af 100 billeder med omhyggelige klik, 14 af 100 med hurtige og hvert andet med tæerne 30° ud. Andre fejl tjekker siden ikke.",
+   "synlig": true,
+   "hoejre": 1174,
+   "hoejde": 44,
+   "links": [],
+   "ord": 48,
+   "linkStatus": [],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sq-bund-kun-knae",
+   "fase": "squat-bund",
+   "sumo": false,
+   "kg": 140,
+   "forvent": "ligner",
+   "bredde": 1280,
+   "status": "ligner",
+   "fejl": "sq-kun-knae-bund",
+   "tekst": "Ligner: kun knæene Skinnebenet hælder ca. 17° mere frem end i modellens bund med gennemsnittet for din højde og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen. Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. Modellen regner med hælen i feltet \"Sko med hæle\" (0 = fladt). Står feltet på 0, men løfteren har sko med 2 cm hæl, ligner modellens egen squat \"kun knæene\" i ca. hvert andet til femte billede. I modellens fejlfigur letter hælen i bunden; billedet har intet punkt på hælen, så det kan siden ikke se. Telefonen holdt i hånden (ca. 140 cm, vippet ned mod hoften) lægger skinnebenet ca. 3° frem i billedet; det ligner lidt \"kun knæene\" og skjuler \"hoften tilbage\". Film i hoftehøjde. Se fejlen i hele opturen, med modellens udførelse svagt bagved",
+   "synlig": true,
+   "hoejre": 1174,
+   "hoejde": 254,
+   "links": [
+    "http://127.0.0.1:57760/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/squat-figurer/k7-kun-knae-bund.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg"
+   ],
+   "ord": 148,
+   "linkStatus": [
+    {
+     "l": "/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/squat-figurer/k7-kun-knae-bund.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+     "s": 200,
+     "anker": true
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sq-bund-hofte-tilbage",
+   "fase": "squat-bund",
+   "sumo": false,
+   "kg": 140,
+   "forvent": "ligner",
+   "bredde": 1280,
+   "status": "ligner",
+   "fejl": "sq-hofte-tilbage-bund",
+   "tekst": "Ligner: hoften skudt for langt tilbage Torsoen hælder ca. 16° mere frem og skinnebenet står ca. 10° mere lodret end i modellens bund med gennemsnittet for din højde; sådan står modellens figur, når hoften skydes for langt tilbage. Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. En bred fodstilling med tæerne ud får skinnebenet til at se mere lodret ud fra siden (ca. 4-5° ved 30° ud), men torsoen ser samtidig mere oprejst ud; derfor kræver reglen også torsoen. Et kamera skråt forfra skjuler fejlen. I sko med hæl regner modellen med samme ankelbøjning som i fladt fodtøj; det er et valg, ikke målt. Holder løfteren i stedet torsoen, ligner en rigtig bund \"hoften skudt for langt tilbage\", så læs \"hoften tilbage\" i sko med forsigtighed; i bunden med over 1 cm hæl og ved sticking point fra 2,5 cm er den kun et hint. Telefonen holdt i hånden (ca. 140 cm, vippet ned mod hoften) lægger skinnebenet ca. 3° frem i billedet; det ligner lidt \"kun knæene\" og skjuler \"hoften tilbage\". Film i hoftehøjde. Se fejlen i hele opturen, med modellens udførelse svagt bagved",
+   "synlig": true,
+   "hoejre": 1174,
+   "hoejde": 276,
+   "links": [
+    "http://127.0.0.1:57760/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-bund.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg"
+   ],
+   "ord": 195,
+   "linkStatus": [
+    {
+     "l": "/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-bund.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
+     "s": 200,
+     "anker": true
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sq-midt-model",
+   "fase": "squat-midt",
+   "sumo": false,
+   "kg": 140,
+   "forvent": "ingen",
+   "bredde": 1280,
+   "status": "ingen",
+   "fejl": null,
+   "tekst": "Ligner ikke \"kun knæene\" eller \"hoften skudt for langt tilbage\" over målefejlen. Det udelukker ikke fejlen: lige fra siden overses \"kun knæene\" i ca. hvert tredje billede med omhyggelige klik, hvert andet med hurtige og 9 af 10 med tæerne 30° ud. Andre fejl tjekker siden ikke.",
+   "synlig": true,
+   "hoejre": 1174,
+   "hoejde": 44,
+   "links": [],
+   "ord": 47,
+   "linkStatus": [],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sq-midt-kun-knae",
+   "fase": "squat-midt",
+   "sumo": false,
+   "kg": 140,
+   "forvent": "ligner",
+   "bredde": 1280,
+   "status": "ligner",
+   "fejl": "sq-kun-knae-midt",
+   "tekst": "Ligner: kun knæene Skinnebenet hælder ca. 9° mere frem og knæet er ca. 11° mere bøjet end i modellens sticking point med gennemsnittet for din højde og low bar; sådan står modellens figur, når knæene går frem og hoften bliver under stangen. Modellens skinneben er et valg ved IPF-dybde, ikke et resultat, så reglen måler afstanden til modellens valgte udførelse. Modellen regner med hælen i feltet \"Sko med hæle\" (0 = fladt). Står feltet på 0, men løfteren har sko med 2 cm hæl, ligner modellens egen squat \"kun knæene\" i ca. hvert andet til femte billede. I modellens fejlfigur letter hælen i bunden; billedet har intet punkt på hælen, så det kan siden ikke se. Telefonen holdt i hånden (ca. 140 cm, vippet ned mod hoften) lægger skinnebenet ca. 3° frem i billedet; det ligner lidt \"kun knæene\" og skjuler \"hoften tilbage\". Film i hoftehøjde. Se fejlen i hele opturen, med modellens udførelse svagt bagved",
+   "synlig": true,
+   "hoejre": 1174,
+   "hoejde": 254,
+   "links": [
+    "http://127.0.0.1:57760/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/squat-figurer/k7-kun-knae-sticking.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg"
+   ],
+   "ord": 156,
+   "linkStatus": [
+    {
+     "l": "/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/squat-figurer/k7-kun-knae-sticking.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+     "s": 200,
+     "anker": true
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "dl-gulv-model",
+   "fase": "dl-gulv",
+   "sumo": false,
+   "kg": 200,
+   "forvent": "ingen",
+   "bredde": 1280,
+   "status": "ingen",
+   "fejl": null,
+   "tekst": "Ligner ikke \"hoften stiger først\" over målefejlen. Det udelukker ikke fejlen: lige fra siden overses den i ca. 3 af 100 billeder med omhyggelige klik og 7 af 100 med hurtige. Andre fejl tjekker siden ikke.",
+   "synlig": true,
+   "hoejre": 1174,
+   "hoejde": 44,
+   "links": [],
+   "ord": 36,
+   "linkStatus": [],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "dl-hofte-foerst",
+   "fase": "dl-gulv",
+   "sumo": false,
+   "kg": 200,
+   "forvent": "ligner",
+   "bredde": 1280,
+   "status": "ligner",
+   "fejl": "dl-hofte-foerst",
+   "tekst": "Ligner: hoften stiger først Skinnebenet står ca. 14° mere lodret og knæet er ca. 29° mere strakt end i modellens udførelse med gennemsnittet for din højde; sådan står modellens figur, når knæene strækkes, før stangen slipper gulvet. Reglen gælder kun lige over gulvet: i modellen strækkes knæet, så snart stangen slipper, og 5-8 cm oppe ligner modellens egen bane fejlen. Siden tjekker derfor kun billeder, hvor stangen står højst ca. 2 cm højere end i modellen. Står kameraet tættere end ca. 3 m, ser stangen lavere ud, end den er; med skiven klikket stopper siden dér. I sumo er grænsen ca. 1 cm, og kameraet må højst stå ca. 4° skråt. Se fejlfiguren og hvad modellen ikke kan sige om den",
+   "synlig": true,
+   "hoejre": 1174,
+   "hoejde": 209,
+   "links": [
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/index.html#dl-hofte-foerst",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/dl-hofte-foerst.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/index.html#dl-hofte-foerst"
+   ],
+   "ord": 121,
+   "linkStatus": [
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/index.html#dl-hofte-foerst",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/dl-hofte-foerst.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/index.html#dl-hofte-foerst",
+     "s": 200,
+     "anker": true
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "dl-knae-model",
+   "fase": "dl-knae",
+   "sumo": false,
+   "kg": 200,
+   "forvent": "ingen",
+   "bredde": 1280,
+   "status": "ingen",
+   "fejl": null,
+   "tekst": "Ligner ikke \"stangen glider frem\" over målefejlen. Det udelukker ikke fejlen: lige fra siden overses den i ca. 4 af 100 billeder med omhyggelige klik og hvert femte med hurtige. Andre fejl tjekker siden ikke.",
+   "synlig": true,
+   "hoejre": 1174,
+   "hoejde": 44,
+   "links": [],
+   "ord": 35,
+   "linkStatus": [],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "dl-stang-frem",
+   "fase": "dl-knae",
+   "sumo": false,
+   "kg": 200,
+   "forvent": "ligner",
+   "bredde": 1280,
+   "status": "ligner",
+   "fejl": "dl-stang-frem",
+   "tekst": "Ligner: stangen glider frem Stangen hænger ca. 6 cm længere fremme og ca. 6 cm længere fra knæet end i modellens knæhøjde; sådan står modellens figur, når stangen glider frem fra benene. Se fejlfiguren og hvad modellen ikke kan sige om den",
+   "synlig": true,
+   "hoejre": 1174,
+   "hoejde": 183,
+   "links": [
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/dl-stang-frem.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem"
+   ],
+   "ord": 42,
+   "linkStatus": [
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/dl-stang-frem.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+     "s": 200,
+     "anker": true
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sumo-knae-model",
+   "fase": "dl-knae",
+   "sumo": true,
+   "kg": 200,
+   "forvent": "ingen",
+   "bredde": 1280,
+   "status": "ingen",
+   "fejl": null,
+   "tekst": "Ligner ikke \"stangen glider frem\" i modellens sumo over målefejlen. Det udelukker ikke fejlen: lige fra siden overses den i ca. 1 af 100 billeder med omhyggelige klik og 11 af 100 med hurtige. Andre fejl tjekker siden ikke.",
+   "synlig": true,
+   "hoejre": 1174,
+   "hoejde": 44,
+   "links": [],
+   "ord": 39,
+   "linkStatus": [],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sumo-stang-frem",
+   "fase": "dl-knae",
+   "sumo": true,
+   "kg": 200,
+   "forvent": "ligner",
+   "bredde": 1280,
+   "status": "ligner",
+   "fejl": "dl-stang-frem",
+   "tekst": "Ligner: stangen glider frem Stangen hænger ca. 7 cm længere fremme og ca. 7 cm længere fra knæet end i modellens sumo ved knæhøjde, set fra siden; sådan står modellens sumo, når stangen glider frem fra benene. Se fejlfiguren og hvad modellen ikke kan sige om den",
+   "synlig": true,
+   "hoejre": 1174,
+   "hoejde": 183,
+   "links": [
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/dl-stang-frem.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem"
+   ],
+   "ord": 47,
+   "linkStatus": [
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/dl-stang-frem.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+     "s": 200,
+     "anker": true
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "bp-bryst-model",
+   "fase": "baenk-bryst",
+   "sumo": false,
+   "kg": 100,
+   "forvent": "ingen",
+   "bredde": 1280,
+   "status": "ingen",
+   "fejl": null,
+   "tekst": "Ligner ikke \"stangen for højt\" eller \"albuen helt ude\" over målefejlen. Det udelukker ikke fejlen: lige fra siden overses \"albuen helt ude\" i ca. hvert andet billede med omhyggelige og hurtige klik. Andre fejl tjekker siden ikke.",
+   "synlig": true,
+   "hoejre": 1174,
+   "hoejde": 44,
+   "links": [],
+   "ord": 37,
+   "linkStatus": [],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "bp-bue-75",
+   "fase": "baenk-bryst",
+   "sumo": false,
+   "kg": 100,
+   "forvent": "usikker-fase",
+   "bredde": 1280,
+   "status": "usikker-fase",
+   "fejl": null,
+   "tekst": "Billedet kan ikke tjekkes for fejl: stangen står ca. 10 cm højere over skulderen end i modellens bryst: billedet er ikke fra brystet, eller buen er større end modellens, og en større bue flytter stangen mod halsen, så den ligner \"stangen for højt\".",
+   "synlig": true,
+   "hoejre": 1174,
+   "hoejde": 44,
+   "links": [],
+   "ord": 43,
+   "linkStatus": [],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "bp-hoejt-bryst",
+   "fase": "baenk-bryst",
+   "sumo": false,
+   "kg": 100,
+   "forvent": "ligner",
+   "bredde": 1280,
+   "status": "ligner",
+   "fejl": "bp-hoejt-bryst",
+   "tekst": "Ligner: stangen for højt eller albuen helt ude Stangen rører ca. 15 cm nærmere halsen end i modellen; det gør den i modellen både, når stangen lander for højt, og når albuen står helt ude, og fra siden kan billedet ikke se albuen. Skulderpunktet bærer reglen. Skuldrene trukket langt ned mod hofterne og et skulderklik, der sidder 2-3 cm forkert (armen dækker leddet på bænken), trækker samme vej som \"stangen for højt\": med skulderen 3 cm nærmere hofterne end i modellen gav modellens egen bue fejlen i ca. 3-6 af 100 billeder lige fra siden og i ca. hvert tiende 10° skråt. Klik skulderleddet, ikke knoglespidsen, og læs \"stangen for højt\" med forsigtighed hos en løfter, der trækker skuldrene langt ned. Se fejlfigurenerne og hvad modellen ikke kan sige om dem",
+   "synlig": true,
+   "hoejre": 1174,
+   "hoejde": 232,
+   "links": [
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/index.html#bp-hoejt-bryst",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/bp-hoejt-bryst.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/index.html#bp-albue-ud",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/bp-albue-ud.svg",
+    "http://127.0.0.1:57760/assets/vaerktoejer/loeft-fejl/index.html#bp-hoejt-bryst"
+   ],
+   "ord": 131,
+   "linkStatus": [
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/index.html#bp-hoejt-bryst",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/bp-hoejt-bryst.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/index.html#bp-albue-ud",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/bp-albue-ud.svg",
+     "s": 200,
+     "anker": true
+    },
+    {
+     "l": "/assets/vaerktoejer/loeft-fejl/index.html#bp-hoejt-bryst",
+     "s": 200,
+     "anker": true
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  }
+ ],
+ "tryk": [
+  {
+   "bredde": 390,
+   "status": "ligner",
+   "tekst": "Ligner: kun knæene Skinnebenet hælder ca. 17° mere frem end i modellens bund med gennemsnittet for din højde og low bar;",
+   "n": 6,
+   "maksAfstandPx": 0.8,
+   "fejl": []
+  },
+  {
+   "bredde": 1280,
+   "status": "ligner",
+   "tekst": "Ligner: kun knæene Skinnebenet hælder ca. 17° mere frem end i modellens bund med gennemsnittet for din højde og low bar;",
+   "n": 6,
+   "maksAfstandPx": 0.3,
+   "fejl": []
+  }
+ ],
+ "video": [
+  {
+   "bredde": 360,
+   "aabnet": true,
+   "aabnMs": 115,
+   "tilbageSlaaetFra": true,
+   "nr0": 0,
+   "nr1": 1,
+   "nr4": 4,
+   "nr3": 3,
+   "vist": 396,
+   "brugMs": 174,
+   "foto": 396,
+   "tekstVideo": "Video: sq30.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede. Dødløft gulv: Det sidste billede, før skiverne slipper gulvet. ◀ 1 billede 13,20 s 1 billede ▶ Brug dette billede Luk videoen Klik navet i videoen Hop til løftet fra gulvet Hop til løftet fra gulvet: tryk Klik navet i videoen og så på navet i et billede, hvor stangen står på gulvet, og igen i to billeder lige efter, at den har sluppet. Siden regner baglæns til det sidste billede på gulvet. Videoen bliver i din browser. Den sendes ingen steder hen, og intet gemmes.",
+   "vandret": 0,
+   "ulaeselig": {
+    "ok": true,
+    "ms": 55,
+    "besked": "Videoen kunne ikke læses i denne browser. Prøv en MP4 eller MOV fra telefonen, eller tag et skærmbillede."
+   },
+   "hevc": {
+    "ok": true,
+    "ms": 14,
+    "besked": "Videoen kunne ikke læses i denne browser. Prøv en MP4 eller MOV fra telefonen, eller tag et skærmbillede."
+   },
+   "eksterneEfter": 0,
+   "fejl": []
+  },
+  {
+   "bredde": 390,
+   "aabnet": true,
+   "aabnMs": 102,
+   "tilbageSlaaetFra": true,
+   "nr0": 0,
+   "nr1": 1,
+   "nr4": 4,
+   "nr3": 3,
+   "vist": 396,
+   "brugMs": 177,
+   "foto": 396,
+   "tekstVideo": "Video: sq30.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede. Dødløft gulv: Det sidste billede, før skiverne slipper gulvet. ◀ 1 billede 13,20 s 1 billede ▶ Brug dette billede Luk videoen Klik navet i videoen Hop til løftet fra gulvet Hop til løftet fra gulvet: tryk Klik navet i videoen og så på navet i et billede, hvor stangen står på gulvet, og igen i to billeder lige efter, at den har sluppet. Siden regner baglæns til det sidste billede på gulvet. Videoen bliver i din browser. Den sendes ingen steder hen, og intet gemmes.",
+   "vandret": 0,
+   "ulaeselig": {
+    "ok": true,
+    "ms": 54,
+    "besked": "Videoen kunne ikke læses i denne browser. Prøv en MP4 eller MOV fra telefonen, eller tag et skærmbillede."
+   },
+   "hevc": {
+    "ok": true,
+    "ms": 13,
+    "besked": "Videoen kunne ikke læses i denne browser. Prøv en MP4 eller MOV fra telefonen, eller tag et skærmbillede."
+   },
+   "eksterneEfter": 0,
+   "fejl": []
+  },
+  {
+   "bredde": 1280,
+   "aabnet": true,
+   "aabnMs": 138,
+   "tilbageSlaaetFra": true,
+   "nr0": 0,
+   "nr1": 1,
+   "nr4": 4,
+   "nr3": 3,
+   "vist": 396,
+   "brugMs": 312,
+   "foto": 396,
+   "tekstVideo": "Video: sq30.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede. Dødløft gulv: Det sidste billede, før skiverne slipper gulvet. ◀ 1 billede 13,20 s 1 billede ▶ Brug dette billede Luk videoen Klik navet i videoen Hop til løftet fra gulvet Hop til løftet fra gulvet: tryk Klik navet i videoen og så på navet i et billede, hvor stangen står på gulvet, og igen i to billeder lige efter, at den har sluppet. Siden regner baglæns til det sidste billede på gulvet. Videoen bliver i din browser. Den sendes ingen steder hen, og intet gemmes.",
+   "vandret": 0,
+   "ulaeselig": {
+    "ok": true,
+    "ms": 61,
+    "besked": "Videoen kunne ikke læses i denne browser. Prøv en MP4 eller MOV fra telefonen, eller tag et skærmbillede."
+   },
+   "hevc": {
+    "ok": true,
+    "ms": 17,
+    "besked": "Videoen kunne ikke læses i denne browser. Prøv en MP4 eller MOV fra telefonen, eller tag et skærmbillede."
+   },
+   "eksterneEfter": 0,
+   "fejl": []
+  }
+ ],
+ "lignerLaengde": [
+  {
+   "id": "sq-bund-kun-knae",
+   "ord": 148,
+   "px": 749,
+   "skaerme": 1
+  },
+  {
+   "id": "sq-bund-hofte-tilbage",
+   "ord": 195,
+   "px": 903,
+   "skaerme": 1.2
+  },
+  {
+   "id": "sq-midt-kun-knae",
+   "ord": 156,
+   "px": 797,
+   "skaerme": 1
+  },
+  {
+   "id": "dl-hofte-foerst",
+   "ord": 121,
+   "px": 596,
+   "skaerme": 0.8
+  },
+  {
+   "id": "dl-stang-frem",
+   "ord": 42,
+   "px": 279,
+   "skaerme": 0.4
+  },
+  {
+   "id": "sumo-stang-frem",
+   "ord": 47,
+   "px": 303,
+   "skaerme": 0.4
+  },
+  {
+   "id": "bp-hoejt-bryst",
+   "ord": 131,
+   "px": 598,
+   "skaerme": 0.8
+  }
+ ],
+ "eksterne": [],
+ "tjek": [
+  {
+   "hvad": "de syv mapper paa ba44cb1 er blob for blob = dist paa 37c9a27 (Setus kilde, 47 filer)",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "W0: loeftmodellens main er flyttet til cc4dd7d under kritikken (Yantra 571, merget 03:52); 2 filer i maal-billede er nye paa main og ikke paa grenen",
+   "ok": true,
+   "data": {
+    "top": "cc4dd7d",
+    "afvig": [
+     {
+      "f": "maal-billede/index.html",
+      "dist": "9407627",
+      "site": "f15f10f"
+     },
+     {
+      "f": "maal-billede/maal-billede.js",
+      "dist": "2a5e8c0",
+      "site": "c3c8cc3"
+     }
+    ],
+    "commits": [
+     "cc4dd7d 2026-09-28 03:52:53 +0200 merge: ordre-571 (ORDRE 571, Yantra)",
+     "b2c65e0 2026-09-28 03:51:44 +0200 Ordre 571, commit 3: skaermbilleder 390 og 1280, rapport dag 84",
+     "14a5436 2026-09-28 03:40:23 +0200 Ordre 571, commit 2: V3 (to buer i Hop til) og V6 (4K)",
+     "c84753f 2026-09-28 03:28:01 +0200 Ordre 571, commit 1: billedrater (29,97, 25, 60 og variabel)"
+    ]
+   }
+  },
+  {
+   "hvad": "det eneste i dist, der ikke er kopieret, er marcs-doedloeft og de loese artikel-scripts (ingen ny mappe paa main)",
+   "ok": true,
+   "data": [
+    "bench-animation.js",
+    "deadlift-animation.js",
+    "deadlift-bane-animation.js",
+    "krop-panel.js",
+    "maalt-over-model.js",
+    "maalt-over-squat.js",
+    "marcs-doedloeft",
+    "squat-anatomi.js",
+    "squat-animation.js",
+    "squat-bane-animation.js",
+    "squat-fejlbilleder.js"
+   ]
+  },
+  {
+   "hvad": "stadig noindex: meta noindex, nofollow paa /vaerktoejer/, robots.txt udelukker /assets/vaerktoejer/, intet i sitemap, ingen side paa sitet linker til den",
+   "ok": true,
+   "data": {
+    "meta": true,
+    "robots": true,
+    "robotsSiden": false,
+    "sitemap": false,
+    "linkerTil": []
+   }
+  },
+  {
+   "hvad": "teksten over filmeguiden (#om-maal-billede): 3 saetninger, siger hvad den maaler, at videoen bliver paa telefonen, og at \"fejl\" kun er det, modellen viser",
+   "ok": true,
+   "data": "id=\"om-maal-billede\"> Mål dit billede måler ledvinklerne og stangens afstand til midtfoden i et billede fra siden og holder det op mod de fejl, modellen kender i den valgte fase. En video åbner kun i browseren og bliver på telefonen. Står der en fejl, er det kun det, modellen viser i billedet, og ikke en dom over løftet."
+  },
+  {
+   "hvad": "vaerktoejssidens main: 0 tankestreger, 0 udraabstegn, 0 opfordringer (Ansoeg staar kun i sitets menu), 0 holdningsord, 0 atletnavne",
+   "ok": true,
+   "data": {
+    "opf": [],
+    "hold": []
+   }
+  },
+  {
+   "hvad": "\"fejl\" bruges kun om det, modellen viser (eller om at et flyttet kamera flytter tallene)",
+   "ok": true,
+   "data": [
+    "Mål dit billede måler ledvinklerne og stangens afstand til midtfoden i et billede fra siden og holder det op mod de fejl, modellen kender i den valgte fase.",
+    "Står der en fejl, er det kun det, modellen viser i billedet, og ikke en dom over løftet."
+   ]
+  },
+  {
+   "hvad": "W1: filmeguiden siger \"Til baenkpres laegges telefonen ned paa siden\"; vejledningen siger lodret og FILM-KLIP \"paa hoejkant\"",
+   "ok": true,
+   "data": {
+    "side": true,
+    "vejledning": true,
+    "filmKlip": true
+   }
+  },
+  {
+   "hvad": "W2: filmeguiden siger \"Skiven er maalestokken\" og \"et par meter vaek\"; vejledningen siger kroppens laengder og 3-4 m",
+   "ok": true,
+   "data": {
+    "side": "Et par meter væk og zoomet ind giver mindre perspektiv, så skiven og kroppen giver samme målestok.",
+    "vejledning": true
+   }
+  },
+  {
+   "hvad": "W3: filmeguiden siger \"tag et skaermbillede\", og kortet naevner kun stillbilleder, selv om siden nu aabner videoen",
+   "ok": true
+  },
+  {
+   "hvad": "11 sider x 3 bredder: 0 sidelaens rulning, 0 JS-fejl, 0 brudte billeder, 0 atletnavne",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "45 lokale links og filer fulgt: 0 fejl 404 (ud over browserens egen /favicon.ico)",
+   "ok": true,
+   "data": {
+    "s404": [],
+    "links": []
+   }
+  },
+  {
+   "hvad": "14 tilfaelde x 3 bredder: linjen giver det, modellen tegnede (Ligner ved fejlfiguren, Ligner ikke ved modellens egen stilling, ikke tjekket ved stor bue), synlig og inden for skaermen",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "\"Ligner ikke\"-linjen: navngiver det tjekkede, \"Det udelukker ikke fejlen\", \"Andre fejl tjekker siden ikke\", hoejst 50 ord, ingen parentes",
+   "ok": true,
+   "data": [
+    "sq-bund-model: 48 ord",
+    "sq-midt-model: 47 ord",
+    "dl-gulv-model: 36 ord",
+    "dl-knae-model: 35 ord",
+    "sumo-knae-model: 39 ord",
+    "bp-bryst-model: 37 ord"
+   ]
+  },
+  {
+   "hvad": "\"Ligner\"-linjen naevner fejlen og har et link til fejlfiguren; alle fejlfigur-links giver 200 og ankeret findes (0 fejl 404)",
+   "ok": true,
+   "data": [
+    {
+     "id": "sq-bund-kun-knae",
+     "links": [
+      "/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+      "/assets/vaerktoejer/squat-figurer/k7-kun-knae-bund.svg",
+      "/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg"
+     ]
+    },
+    {
+     "id": "sq-bund-hofte-tilbage",
+     "links": [
+      "/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
+      "/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-bund.svg",
+      "/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg"
+     ]
+    },
+    {
+     "id": "sq-midt-kun-knae",
+     "links": [
+      "/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+      "/assets/vaerktoejer/squat-figurer/k7-kun-knae-sticking.svg",
+      "/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg"
+     ]
+    },
+    {
+     "id": "dl-hofte-foerst",
+     "links": [
+      "/assets/vaerktoejer/loeft-fejl/index.html#dl-hofte-foerst",
+      "/assets/vaerktoejer/loeft-fejl/dl-hofte-foerst.svg",
+      "/assets/vaerktoejer/loeft-fejl/index.html#dl-hofte-foerst"
+     ]
+    },
+    {
+     "id": "dl-stang-frem",
+     "links": [
+      "/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+      "/assets/vaerktoejer/loeft-fejl/dl-stang-frem.svg",
+      "/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem"
+     ]
+    },
+    {
+     "id": "sumo-stang-frem",
+     "links": [
+      "/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+      "/assets/vaerktoejer/loeft-fejl/dl-stang-frem.svg",
+      "/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem"
+     ]
+    },
+    {
+     "id": "bp-hoejt-bryst",
+     "links": [
+      "/assets/vaerktoejer/loeft-fejl/index.html#bp-hoejt-bryst",
+      "/assets/vaerktoejer/loeft-fejl/bp-hoejt-bryst.svg",
+      "/assets/vaerktoejer/loeft-fejl/index.html#bp-albue-ud",
+      "/assets/vaerktoejer/loeft-fejl/bp-albue-ud.svg",
+      "/assets/vaerktoejer/loeft-fejl/index.html#bp-hoejt-bryst"
+     ]
+    }
+   ]
+  },
+  {
+   "hvad": "ingen linje siger \"uden fejl\", \"korrekt\" eller \"god teknik\"",
+   "ok": true
+  },
+  {
+   "hvad": "W4: \"Ligner\"-linjerne er 42-195 ord; paa 390 fylder de laengste over en skaerm (L10 graensede kun \"Ligner ikke\")",
+   "ok": true,
+   "data": [
+    {
+     "id": "sq-bund-kun-knae",
+     "ord": 148,
+     "px": 749,
+     "skaerme": 1
+    },
+    {
+     "id": "sq-bund-hofte-tilbage",
+     "ord": 195,
+     "px": 903,
+     "skaerme": 1.2
+    },
+    {
+     "id": "sq-midt-kun-knae",
+     "ord": 156,
+     "px": 797,
+     "skaerme": 1
+    },
+    {
+     "id": "dl-hofte-foerst",
+     "ord": 121,
+     "px": 596,
+     "skaerme": 0.8
+    },
+    {
+     "id": "dl-stang-frem",
+     "ord": 42,
+     "px": 279,
+     "skaerme": 0.4
+    },
+    {
+     "id": "sumo-stang-frem",
+     "ord": 47,
+     "px": 303,
+     "skaerme": 0.4
+    },
+    {
+     "id": "bp-hoejt-bryst",
+     "ord": 131,
+     "px": 598,
+     "skaerme": 0.8
+    }
+   ]
+  },
+  {
+   "hvad": "W5: stavefejl \"fejlfigurenerne\" i baenkens Ligner-link (teksten bygges i bundtet = dist)",
+   "ok": true
+  },
+  {
+   "hvad": "W6: baenkens Ligner-linje siger \"Klik skulderleddet, ikke knoglespidsen\"; vejledningens klikliste siger knoglespidsen (acromion), \"ikke midt i leddet\", samme punkt som i Min krop",
+   "ok": true
+  },
+  {
+   "hvad": "seks punkter trykket med fingeren (390) og musen (1280) paa \"kun knaeene\" i bunden: 6 punkter sat inden for 3 billedpixel af tegningen, og linjen siger Ligner",
+   "ok": true,
+   "data": [
+    {
+     "bredde": 390,
+     "status": "ligner",
+     "tekst": "Ligner: kun knæene Skinnebenet hælder ca. 17° mere frem end i modellens bund med gennemsnittet for din højde og low bar;",
+     "n": 6,
+     "maksAfstandPx": 0.8,
+     "fejl": []
+    },
+    {
+     "bredde": 1280,
+     "status": "ligner",
+     "tekst": "Ligner: kun knæene Skinnebenet hælder ca. 17° mere frem end i modellens bund med gennemsnittet for din højde og low bar;",
+     "n": 6,
+     "maksAfstandPx": 0.3,
+     "fejl": []
+    }
+   ]
+  },
+  {
+   "hvad": "videoen aabnes paa 360, 390 og 1280; tilbage er slaaet fra ved 0 s",
+   "ok": true,
+   "data": [
+    {
+     "b": 360,
+     "ms": 115,
+     "nr0": 0
+    },
+    {
+     "b": 390,
+     "ms": 102,
+     "nr0": 0
+    },
+    {
+     "b": 1280,
+     "ms": 138,
+     "nr0": 0
+    }
+   ]
+  },
+  {
+   "hvad": "V4 lukket: foerste tryk fra 0 s flytter eet billede; 3 tryk mere giver billede 4, eet tilbage billede 3",
+   "ok": true,
+   "data": [
+    [
+     1,
+     4,
+     3
+    ],
+    [
+     1,
+     4,
+     3
+    ],
+    [
+     1,
+     4,
+     3
+    ]
+   ]
+  },
+  {
+   "hvad": "\"Brug dette billede\" laegger praecis det viste billede i klik-trinnet",
+   "ok": true,
+   "data": [
+    {
+     "b": 360,
+     "vist": 396,
+     "foto": 396,
+     "ms": 174
+    },
+    {
+     "b": 390,
+     "vist": 396,
+     "foto": 396,
+     "ms": 177
+    },
+    {
+     "b": 1280,
+     "vist": 396,
+     "foto": 396,
+     "ms": 312
+    }
+   ]
+  },
+  {
+   "hvad": "V2 lukket: et klip, browseren ikke kan laese, giver beskeden paa under 2 s (tilfaeldige bytes og HEVC i headless Chromium)",
+   "ok": true,
+   "data": [
+    {
+     "b": 360,
+     "u": 55,
+     "hevc": 14,
+     "hevcBesked": "Videoen kunne ikke læses i denne browser. Prøv en MP4 eller "
+    },
+    {
+     "b": 390,
+     "u": 54,
+     "hevc": 13,
+     "hevcBesked": "Videoen kunne ikke læses i denne browser. Prøv en MP4 eller "
+    },
+    {
+     "b": 1280,
+     "u": 61,
+     "hevc": 17,
+     "hevcBesked": "Videoen kunne ikke læses i denne browser. Prøv en MP4 eller "
+    }
+   ]
+  },
+  {
+   "hvad": "V1 og V5: \"et par billeder til begge sider\" staar, \"brug skyderen\" er vaek (vejledningen og bundtet)",
+   "ok": true
+  },
+  {
+   "hvad": "videoen: 0 kald ud af huset, 0 JS-fejl, 0 sidelaens rulning",
+   "ok": true,
+   "data": [
+    {
+     "b": 360,
+     "net": 0,
+     "f": []
+    },
+    {
+     "b": 390,
+     "net": 0,
+     "f": []
+    },
+    {
+     "b": 1280,
+     "net": 0,
+     "f": []
+    }
+   ]
+  },
+  {
+   "hvad": "alt, siderne proevede at hente udefra, er afbrudt og var kun skrifttypen",
+   "ok": true,
+   "data": []
+  }
+ ]
+}
