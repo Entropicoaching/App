@@ -1,0 +1,2158 @@
+{
+ "ver": {
+  "main": "f3e0200",
+  "o608": "d8921bd",
+  "site": "c9fc559",
+  "kritik603": "207d4ec",
+  "godkendt585": "291f5bf",
+  "o608Merget": "ja",
+  "mainSiden603": [
+   "f3e0200 merge: ordre-608 (ORDRE 608, Yantra)",
+   "d8921bd Ordre 608, commit 3: skaermbilleder 390 og 1280, verificering, rapport dag 91",
+   "82fbc53 Ordre 608, commit 2: en gemt maaling, siden ikke kan bruge, siger det (Bhishak 603, M4)",
+   "a8eaf44 Ordre 608, commit 1: miniaturerne uden tekstens moerke bund (Bhishak 598/603, M1)"
+  ],
+  "rapport91": true
+ },
+ "kopi": {
+  "maal-billede": {
+   "siteMod291": [],
+   "siteModMain": [
+    "index.html",
+    "maal-billede.js",
+    "miniaturer/bp-albue-ud.svg",
+    "miniaturer/bp-hoejt-bryst.svg",
+    "miniaturer/dl-hofte-foerst.svg",
+    "miniaturer/dl-stang-frem.svg",
+    "miniaturer/k7-hofte-tilbage-bund.svg",
+    "miniaturer/k7-hofte-tilbage-sticking.svg",
+    "miniaturer/k7-kun-knae-bund.svg",
+    "miniaturer/k7-kun-knae-sticking.svg"
+   ],
+   "mainMod603": [
+    "maal-billede.js",
+    "miniaturer/bp-albue-ud.svg",
+    "miniaturer/bp-hoejt-bryst.svg",
+    "miniaturer/dl-hofte-foerst.svg",
+    "miniaturer/dl-stang-frem.svg"
+   ],
+   "o608ModMain": []
+  },
+  "baenk-figurer": {
+   "siteMod291": [],
+   "siteModMain": [
+    "index.html"
+   ],
+   "mainMod603": [],
+   "o608ModMain": []
+  },
+  "tre-loeft": {
+   "siteMod291": [],
+   "siteModMain": [
+    "tre-loeft.js"
+   ],
+   "mainMod603": [],
+   "o608ModMain": []
+  },
+  "min-krop": {
+   "siteMod291": [],
+   "siteModMain": [
+    "min-krop.js"
+   ],
+   "mainMod603": [],
+   "o608ModMain": []
+  },
+  "loeft-fejl": {
+   "siteMod291": [],
+   "siteModMain": [],
+   "mainMod603": [],
+   "o608ModMain": []
+  },
+  "squat-figurer": {
+   "siteMod291": [],
+   "siteModMain": [],
+   "mainMod603": [],
+   "o608ModMain": []
+  },
+  "doedloeft-figurer": {
+   "siteMod291": [],
+   "siteModMain": [],
+   "mainMod603": [],
+   "o608ModMain": []
+  }
+ },
+ "m1": {
+  "bp-albue-ud.svg": {
+   "main": {
+    "felter": 3,
+    "tekster": 0,
+    "linjer": 41
+   },
+   "o608": {
+    "felter": 0,
+    "tekster": 0,
+    "linjer": 38
+   },
+   "ens": false,
+   "px": {
+    "w": 150,
+    "h": 118,
+    "aendret": 7.86,
+    "lysereI608": 61,
+    "egenForskel": 0
+   },
+   "kunFelterVaek": true,
+   "viewBox": [
+    "0 218.36 393.61 309.64",
+    "3.19 218.36 393.61 309.64"
+   ],
+   "andre": 2
+  },
+  "bp-hoejt-bryst.svg": {
+   "main": {
+    "felter": 3,
+    "tekster": 0,
+    "linjer": 41
+   },
+   "o608": {
+    "felter": 0,
+    "tekster": 0,
+    "linjer": 38
+   },
+   "ens": false,
+   "px": {
+    "w": 150,
+    "h": 118,
+    "aendret": 8.74,
+    "lysereI608": 64.4,
+    "egenForskel": 0
+   },
+   "kunFelterVaek": true,
+   "viewBox": [
+    "0 218.36 393.61 309.64",
+    "3.19 218.36 393.61 309.64"
+   ],
+   "andre": 2
+  },
+  "dl-hofte-foerst.svg": {
+   "main": {
+    "felter": 3,
+    "tekster": 0,
+    "linjer": 46
+   },
+   "o608": {
+    "felter": 0,
+    "tekster": 0,
+    "linjer": 43
+   },
+   "ens": false,
+   "px": {
+    "w": 96,
+    "h": 130,
+    "aendret": 4.74,
+    "lysereI608": 100,
+    "egenForskel": 0
+   },
+   "kunFelterVaek": true,
+   "viewBox": [
+    "22.96 124.52 298.54 404.27",
+    "22.96 124.52 298.54 404.27"
+   ],
+   "andre": 0
+  },
+  "dl-stang-frem.svg": {
+   "main": {
+    "felter": 3,
+    "tekster": 0,
+    "linjer": 46
+   },
+   "o608": {
+    "felter": 0,
+    "tekster": 0,
+    "linjer": 43
+   },
+   "ens": false,
+   "px": {
+    "w": 96,
+    "h": 130,
+    "aendret": 3.28,
+    "lysereI608": 100,
+    "egenForskel": 0
+   },
+   "kunFelterVaek": true,
+   "viewBox": [
+    "36.73 110.39 317.01 429.29",
+    "36.73 110.39 317.01 429.29"
+   ],
+   "andre": 0
+  },
+  "k7-hofte-tilbage-bund.svg": {
+   "main": {
+    "felter": 0,
+    "tekster": 0,
+    "linjer": 36
+   },
+   "o608": {
+    "felter": 0,
+    "tekster": 0,
+    "linjer": 36
+   },
+   "ens": true,
+   "px": {
+    "w": 96,
+    "h": 130,
+    "aendret": 0,
+    "lysereI608": null,
+    "egenForskel": 0
+   },
+   "kunFelterVaek": true,
+   "viewBox": [
+    "73.6 194.17 255.12 345.48",
+    "73.6 194.17 255.12 345.48"
+   ],
+   "andre": 0
+  },
+  "k7-hofte-tilbage-sticking.svg": {
+   "main": {
+    "felter": 0,
+    "tekster": 0,
+    "linjer": 36
+   },
+   "o608": {
+    "felter": 0,
+    "tekster": 0,
+    "linjer": 36
+   },
+   "ens": true,
+   "px": {
+    "w": 96,
+    "h": 130,
+    "aendret": 0,
+    "lysereI608": null,
+    "egenForskel": 0
+   },
+   "kunFelterVaek": true,
+   "viewBox": [
+    "49 121.71 301.99 408.95",
+    "49 121.71 301.99 408.95"
+   ],
+   "andre": 0
+  },
+  "k7-kun-knae-bund.svg": {
+   "main": {
+    "felter": 0,
+    "tekster": 0,
+    "linjer": 38
+   },
+   "o608": {
+    "felter": 0,
+    "tekster": 0,
+    "linjer": 38
+   },
+   "ens": true,
+   "px": {
+    "w": 96,
+    "h": 130,
+    "aendret": 0,
+    "lysereI608": null,
+    "egenForskel": 0
+   },
+   "kunFelterVaek": true,
+   "viewBox": [
+    "86.52 203.16 246.5 333.8",
+    "86.52 203.16 246.5 333.8"
+   ],
+   "andre": 0
+  },
+  "k7-kun-knae-sticking.svg": {
+   "main": {
+    "felter": 0,
+    "tekster": 0,
+    "linjer": 38
+   },
+   "o608": {
+    "felter": 0,
+    "tekster": 0,
+    "linjer": 38
+   },
+   "ens": true,
+   "px": {
+    "w": 96,
+    "h": 130,
+    "aendret": 0,
+    "lysereI608": null,
+    "egenForskel": 0
+   },
+   "kunFelterVaek": true,
+   "viewBox": [
+    "64.78 121.71 306.65 415.25",
+    "64.78 121.71 306.65 415.25"
+   ],
+   "andre": 0
+  }
+ },
+ "tele": [
+  {
+   "rod": "m601",
+   "hvad": "uroert fil",
+   "som": {
+    "name": "maal-dl-gulv-img-4411.png",
+    "mimeType": "image/png"
+   },
+   "bytes": 253131,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "enTr",
+    "IEND"
+   ],
+   "aabnetSomMaaling": true,
+   "fase": "dl-gulv",
+   "hoejde": "180",
+   "punkter": 7,
+   "w": 1000,
+   "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+   "navn": "Billede: IMG_4411.jpg (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m601",
+   "hvad": "kun billedets egne dele (et program, der \"optimerer\" eller skriver PNG'et om)",
+   "som": {
+    "name": "maal-dl-gulv-img-4411.png",
+    "mimeType": "image/png"
+   },
+   "bytes": 240921,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "IEND"
+   ],
+   "aabnetSomMaaling": false,
+   "fase": "dl-gulv",
+   "hoejde": "",
+   "punkter": 0,
+   "w": 1200,
+   "note": null,
+   "navn": "Billede: maal-dl-gulv-img-4411.png (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m601",
+   "hvad": "tegnet om og gemt som PNG igen (redigeret, beskaaret, skaermbillede)",
+   "som": {
+    "name": "maal-dl-gulv-img-4411.png",
+    "mimeType": "image/png"
+   },
+   "bytes": 240921,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "IEND"
+   ],
+   "aabnetSomMaaling": false,
+   "fase": "dl-gulv",
+   "hoejde": "",
+   "punkter": 0,
+   "w": 1200,
+   "note": null,
+   "navn": "Billede: maal-dl-gulv-img-4411.png (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m601",
+   "hvad": "som JPEG (chat-app, \"Mest kompatibel\", HEIC->JPEG)",
+   "som": {
+    "name": "IMG_0412.JPG",
+    "mimeType": "image/jpeg"
+   },
+   "bytes": 127329,
+   "dele": [],
+   "aabnetSomMaaling": false,
+   "fase": "dl-gulv",
+   "hoejde": "",
+   "punkter": 0,
+   "w": 1200,
+   "note": null,
+   "navn": "Billede: IMG_0412.JPG (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m601",
+   "hvad": "med ekstra metadata foer IDAT (eXIf, XMP, iDOT, tEXt, tIME)",
+   "som": {
+    "name": "maal-dl-gulv-img-4411.png",
+    "mimeType": "image/png"
+   },
+   "bytes": 253284,
+   "dele": [
+    "IHDR",
+    "eXIf",
+    "iTXt",
+    "iDOT",
+    "tEXt",
+    "tIME",
+    "IDAT",
+    "enTr",
+    "IEND"
+   ],
+   "aabnetSomMaaling": true,
+   "fase": "dl-gulv",
+   "hoejde": "180",
+   "punkter": 7,
+   "w": 1000,
+   "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+   "navn": "Billede: IMG_4411.jpg (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m601",
+   "hvad": "maalingen flyttet foer billedet (enTr foer IDAT)",
+   "som": {
+    "name": "maal-dl-gulv-img-4411.png",
+    "mimeType": "image/png"
+   },
+   "bytes": 253131,
+   "dele": [
+    "IHDR",
+    "enTr",
+    "IDAT",
+    "IEND"
+   ],
+   "aabnetSomMaaling": true,
+   "fase": "dl-gulv",
+   "hoejde": "180",
+   "punkter": 7,
+   "w": 1000,
+   "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+   "navn": "Billede: IMG_4411.jpg (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m601",
+   "hvad": "navnet IMG_0412.PNG uden type",
+   "som": {
+    "name": "IMG_0412.PNG",
+    "mimeType": ""
+   },
+   "bytes": 253131,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "enTr",
+    "IEND"
+   ],
+   "aabnetSomMaaling": true,
+   "fase": "dl-gulv",
+   "hoejde": "180",
+   "punkter": 7,
+   "w": 1000,
+   "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+   "navn": "Billede: IMG_4411.jpg (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m601",
+   "hvad": "navn uden endelse, type image/png",
+   "som": {
+    "name": "1000012345",
+    "mimeType": "image/png"
+   },
+   "bytes": 253131,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "enTr",
+    "IEND"
+   ],
+   "aabnetSomMaaling": true,
+   "fase": "dl-gulv",
+   "hoejde": "180",
+   "punkter": 7,
+   "w": 1000,
+   "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+   "navn": "Billede: IMG_4411.jpg (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m601",
+   "hvad": "navn uden endelse og uden type",
+   "som": {
+    "name": "1000012345",
+    "mimeType": ""
+   },
+   "bytes": 253131,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "enTr",
+    "IEND"
+   ],
+   "aabnetSomMaaling": false,
+   "fase": "dl-gulv",
+   "hoejde": "",
+   "punkter": 0,
+   "w": 1200,
+   "note": null,
+   "navn": "Billede: 1000012345 (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m601",
+   "hvad": "application/octet-stream, navnet download",
+   "som": {
+    "name": "download",
+    "mimeType": "application/octet-stream"
+   },
+   "bytes": 253131,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "enTr",
+    "IEND"
+   ],
+   "aabnetSomMaaling": false,
+   "fase": "dl-gulv",
+   "hoejde": "",
+   "punkter": 0,
+   "w": 1200,
+   "note": null,
+   "navn": "Billede: download (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m601",
+   "hvad": "PNG-bytes med navnet .jpg og typen image/jpeg",
+   "som": {
+    "name": "maal.jpg",
+    "mimeType": "image/jpeg"
+   },
+   "bytes": 253131,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "enTr",
+    "IEND"
+   ],
+   "aabnetSomMaaling": false,
+   "fase": "dl-gulv",
+   "hoejde": "",
+   "punkter": 0,
+   "w": 1200,
+   "note": null,
+   "navn": "Billede: maal.jpg (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m601",
+   "hvad": "M4 oedelagt CRC",
+   "som": {
+    "name": "maal-dl-gulv-img-4411.png",
+    "mimeType": "image/png"
+   },
+   "bytes": 253131,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "enTr",
+    "IEND"
+   ],
+   "aabnetSomMaaling": false,
+   "fase": "dl-gulv",
+   "hoejde": "",
+   "punkter": 0,
+   "w": 1200,
+   "note": null,
+   "navn": "Billede: maal-dl-gulv-img-4411.png (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m601",
+   "hvad": "M4 afkortet fil",
+   "som": {
+    "name": "maal-dl-gulv-img-4411.png",
+    "mimeType": "image/png"
+   },
+   "bytes": 151878,
+   "dele": [
+    "IHDR",
+    "IDAT"
+   ],
+   "aabnetSomMaaling": false,
+   "fase": "dl-gulv",
+   "hoejde": "",
+   "punkter": 0,
+   "w": 1200,
+   "note": null,
+   "navn": "Billede: maal-dl-gulv-img-4411.png (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m601",
+   "hvad": "M4 afkortet i maalingen",
+   "som": {
+    "name": "maal-dl-gulv-img-4411.png",
+    "mimeType": "image/png"
+   },
+   "bytes": 242909,
+   "dele": [
+    "IHDR",
+    "IDAT"
+   ],
+   "aabnetSomMaaling": false,
+   "fase": "dl-gulv",
+   "hoejde": "",
+   "punkter": 0,
+   "w": 1200,
+   "note": null,
+   "navn": "Billede: maal-dl-gulv-img-4411.png (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m601",
+   "hvad": "M4 version 2",
+   "som": {
+    "name": "maal-dl-gulv-img-4411.png",
+    "mimeType": "image/png"
+   },
+   "bytes": 253131,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "enTr",
+    "IEND"
+   ],
+   "aabnetSomMaaling": false,
+   "fase": "dl-gulv",
+   "hoejde": "",
+   "punkter": 0,
+   "w": 1200,
+   "note": null,
+   "navn": "Billede: maal-dl-gulv-img-4411.png (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m601",
+   "hvad": "M4 ukendt fase",
+   "som": {
+    "name": "maal-dl-gulv-img-4411.png",
+    "mimeType": "image/png"
+   },
+   "bytes": 253132,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "enTr",
+    "IEND"
+   ],
+   "aabnetSomMaaling": false,
+   "fase": "dl-gulv",
+   "hoejde": "",
+   "punkter": 0,
+   "w": 1200,
+   "note": null,
+   "navn": "Billede: maal-dl-gulv-img-4411.png (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m601",
+   "hvad": "M4 forkert stoerrelse",
+   "som": {
+    "name": "maal-dl-gulv-img-4411.png",
+    "mimeType": "image/png"
+   },
+   "bytes": 253131,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "enTr",
+    "IEND"
+   ],
+   "aabnetSomMaaling": true,
+   "fase": "dl-gulv",
+   "hoejde": "180",
+   "punkter": 7,
+   "w": 1000,
+   "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+   "navn": "Billede: IMG_4411.jpg (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m601",
+   "hvad": "M4 dato 2026-13-45",
+   "som": {
+    "name": "maal-dl-gulv-img-4411.png",
+    "mimeType": "image/png"
+   },
+   "bytes": 253131,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "enTr",
+    "IEND"
+   ],
+   "aabnetSomMaaling": true,
+   "fase": "dl-gulv",
+   "hoejde": "180",
+   "punkter": 7,
+   "w": 1000,
+   "note": "Gemt måling åbnet (gemt 45.  2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+   "navn": "Billede: IMG_4411.jpg (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m608",
+   "hvad": "uroert fil",
+   "som": {
+    "name": "maal-dl-gulv-img-4411.png",
+    "mimeType": "image/png"
+   },
+   "bytes": 253131,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "enTr",
+    "IEND"
+   ],
+   "aabnetSomMaaling": true,
+   "fase": "dl-gulv",
+   "hoejde": "180",
+   "punkter": 7,
+   "w": 1000,
+   "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+   "navn": "Billede: IMG_4411.jpg (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m608",
+   "hvad": "kun billedets egne dele (et program, der \"optimerer\" eller skriver PNG'et om)",
+   "som": {
+    "name": "maal-dl-gulv-img-4411.png",
+    "mimeType": "image/png"
+   },
+   "bytes": 240921,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "IEND"
+   ],
+   "aabnetSomMaaling": false,
+   "fase": "dl-gulv",
+   "hoejde": "",
+   "punkter": 0,
+   "w": 1200,
+   "note": null,
+   "navn": "Billede: maal-dl-gulv-img-4411.png (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m608",
+   "hvad": "tegnet om og gemt som PNG igen (redigeret, beskaaret, skaermbillede)",
+   "som": {
+    "name": "maal-dl-gulv-img-4411.png",
+    "mimeType": "image/png"
+   },
+   "bytes": 240921,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "IEND"
+   ],
+   "aabnetSomMaaling": false,
+   "fase": "dl-gulv",
+   "hoejde": "",
+   "punkter": 0,
+   "w": 1200,
+   "note": null,
+   "navn": "Billede: maal-dl-gulv-img-4411.png (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m608",
+   "hvad": "som JPEG (chat-app, \"Mest kompatibel\", HEIC->JPEG)",
+   "som": {
+    "name": "IMG_0412.JPG",
+    "mimeType": "image/jpeg"
+   },
+   "bytes": 127329,
+   "dele": [],
+   "aabnetSomMaaling": false,
+   "fase": "dl-gulv",
+   "hoejde": "",
+   "punkter": 0,
+   "w": 1200,
+   "note": null,
+   "navn": "Billede: IMG_0412.JPG (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m608",
+   "hvad": "med ekstra metadata foer IDAT (eXIf, XMP, iDOT, tEXt, tIME)",
+   "som": {
+    "name": "maal-dl-gulv-img-4411.png",
+    "mimeType": "image/png"
+   },
+   "bytes": 253284,
+   "dele": [
+    "IHDR",
+    "eXIf",
+    "iTXt",
+    "iDOT",
+    "tEXt",
+    "tIME",
+    "IDAT",
+    "enTr",
+    "IEND"
+   ],
+   "aabnetSomMaaling": true,
+   "fase": "dl-gulv",
+   "hoejde": "180",
+   "punkter": 7,
+   "w": 1000,
+   "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+   "navn": "Billede: IMG_4411.jpg (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m608",
+   "hvad": "maalingen flyttet foer billedet (enTr foer IDAT)",
+   "som": {
+    "name": "maal-dl-gulv-img-4411.png",
+    "mimeType": "image/png"
+   },
+   "bytes": 253131,
+   "dele": [
+    "IHDR",
+    "enTr",
+    "IDAT",
+    "IEND"
+   ],
+   "aabnetSomMaaling": true,
+   "fase": "dl-gulv",
+   "hoejde": "180",
+   "punkter": 7,
+   "w": 1000,
+   "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+   "navn": "Billede: IMG_4411.jpg (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m608",
+   "hvad": "navnet IMG_0412.PNG uden type",
+   "som": {
+    "name": "IMG_0412.PNG",
+    "mimeType": ""
+   },
+   "bytes": 253131,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "enTr",
+    "IEND"
+   ],
+   "aabnetSomMaaling": true,
+   "fase": "dl-gulv",
+   "hoejde": "180",
+   "punkter": 7,
+   "w": 1000,
+   "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+   "navn": "Billede: IMG_4411.jpg (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m608",
+   "hvad": "navn uden endelse, type image/png",
+   "som": {
+    "name": "1000012345",
+    "mimeType": "image/png"
+   },
+   "bytes": 253131,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "enTr",
+    "IEND"
+   ],
+   "aabnetSomMaaling": true,
+   "fase": "dl-gulv",
+   "hoejde": "180",
+   "punkter": 7,
+   "w": 1000,
+   "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+   "navn": "Billede: IMG_4411.jpg (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m608",
+   "hvad": "navn uden endelse og uden type",
+   "som": {
+    "name": "1000012345",
+    "mimeType": ""
+   },
+   "bytes": 253131,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "enTr",
+    "IEND"
+   ],
+   "aabnetSomMaaling": false,
+   "fase": "dl-gulv",
+   "hoejde": "",
+   "punkter": 0,
+   "w": 1200,
+   "note": null,
+   "navn": "Billede: 1000012345 (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m608",
+   "hvad": "application/octet-stream, navnet download",
+   "som": {
+    "name": "download",
+    "mimeType": "application/octet-stream"
+   },
+   "bytes": 253131,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "enTr",
+    "IEND"
+   ],
+   "aabnetSomMaaling": false,
+   "fase": "dl-gulv",
+   "hoejde": "",
+   "punkter": 0,
+   "w": 1200,
+   "note": null,
+   "navn": "Billede: download (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m608",
+   "hvad": "PNG-bytes med navnet .jpg og typen image/jpeg",
+   "som": {
+    "name": "maal.jpg",
+    "mimeType": "image/jpeg"
+   },
+   "bytes": 253131,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "enTr",
+    "IEND"
+   ],
+   "aabnetSomMaaling": false,
+   "fase": "dl-gulv",
+   "hoejde": "",
+   "punkter": 0,
+   "w": 1200,
+   "note": null,
+   "navn": "Billede: maal.jpg (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m608",
+   "hvad": "M4 oedelagt CRC",
+   "som": {
+    "name": "maal-dl-gulv-img-4411.png",
+    "mimeType": "image/png"
+   },
+   "bytes": 253131,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "enTr",
+    "IEND"
+   ],
+   "aabnetSomMaaling": false,
+   "fase": "dl-gulv",
+   "hoejde": "",
+   "punkter": 0,
+   "w": 1200,
+   "note": "Filen har en gemt måling, som siden ikke kan læse; billedet er åbnet uden klik. Filen er måske ødelagt eller skrevet om af et andet program.",
+   "navn": "Billede: maal-dl-gulv-img-4411.png (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m608",
+   "hvad": "M4 afkortet fil",
+   "som": {
+    "name": "maal-dl-gulv-img-4411.png",
+    "mimeType": "image/png"
+   },
+   "bytes": 151878,
+   "dele": [
+    "IHDR",
+    "IDAT"
+   ],
+   "aabnetSomMaaling": false,
+   "fase": "dl-gulv",
+   "hoejde": "",
+   "punkter": 0,
+   "w": 1200,
+   "note": null,
+   "navn": "Billede: maal-dl-gulv-img-4411.png (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m608",
+   "hvad": "M4 afkortet i maalingen",
+   "som": {
+    "name": "maal-dl-gulv-img-4411.png",
+    "mimeType": "image/png"
+   },
+   "bytes": 242909,
+   "dele": [
+    "IHDR",
+    "IDAT"
+   ],
+   "aabnetSomMaaling": false,
+   "fase": "dl-gulv",
+   "hoejde": "",
+   "punkter": 0,
+   "w": 1200,
+   "note": "Filen har en gemt måling, som siden ikke kan læse; billedet er åbnet uden klik. Filen er måske ødelagt eller skrevet om af et andet program.",
+   "navn": "Billede: maal-dl-gulv-img-4411.png (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m608",
+   "hvad": "M4 version 2",
+   "som": {
+    "name": "maal-dl-gulv-img-4411.png",
+    "mimeType": "image/png"
+   },
+   "bytes": 253131,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "enTr",
+    "IEND"
+   ],
+   "aabnetSomMaaling": false,
+   "fase": "dl-gulv",
+   "hoejde": "",
+   "punkter": 0,
+   "w": 1200,
+   "note": "Filen har en gemt måling fra en nyere udgave af siden, som denne udgave ikke kan læse; billedet er åbnet uden klik.",
+   "navn": "Billede: maal-dl-gulv-img-4411.png (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m608",
+   "hvad": "M4 ukendt fase",
+   "som": {
+    "name": "maal-dl-gulv-img-4411.png",
+    "mimeType": "image/png"
+   },
+   "bytes": 253132,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "enTr",
+    "IEND"
+   ],
+   "aabnetSomMaaling": false,
+   "fase": "dl-gulv",
+   "hoejde": "",
+   "punkter": 0,
+   "w": 1200,
+   "note": "Filen har en gemt måling, som siden ikke kan læse; billedet er åbnet uden klik. Filen er måske ødelagt eller skrevet om af et andet program.",
+   "navn": "Billede: maal-dl-gulv-img-4411.png (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m608",
+   "hvad": "M4 forkert stoerrelse",
+   "som": {
+    "name": "maal-dl-gulv-img-4411.png",
+    "mimeType": "image/png"
+   },
+   "bytes": 253131,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "enTr",
+    "IEND"
+   ],
+   "aabnetSomMaaling": false,
+   "fase": "dl-gulv",
+   "hoejde": "",
+   "punkter": 0,
+   "w": 1200,
+   "note": "Filen har en gemt måling, som siden ikke kan læse; billedet er åbnet uden klik. Filen er måske ødelagt eller skrevet om af et andet program.",
+   "navn": "Billede: maal-dl-gulv-img-4411.png (kun i din browser)",
+   "jsFejl": []
+  },
+  {
+   "rod": "m608",
+   "hvad": "M4 dato 2026-13-45",
+   "som": {
+    "name": "maal-dl-gulv-img-4411.png",
+    "mimeType": "image/png"
+   },
+   "bytes": 253131,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "enTr",
+    "IEND"
+   ],
+   "aabnetSomMaaling": true,
+   "fase": "dl-gulv",
+   "hoejde": "180",
+   "punkter": 7,
+   "w": 1000,
+   "note": "Gemt måling åbnet: dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+   "navn": "Billede: IMG_4411.jpg (kun i din browser)",
+   "jsFejl": []
+  }
+ ],
+ "tekst": {
+  "gemnote": "Et PNG med billedet, modellen, tabellen og grænserne gemmes på din egen enhed, så du kan sende det til atleten. Intet sendes herfra. Filen har også målingen i sig (billedet, klikkene, fasen, højden og vægten): åbn den her igen med Vælg billede, så står klikkene, som da du gemte. En chat-app, der komprimerer billedet, smider målingen væk; gem selve filen.",
+  "gemnoteSynlig": true,
+  "gemnoteBredde": 358,
+  "intet": "Intet gemmes, og intet sendes. Billederne (også før og efter) og punkterne findes kun, mens siden er åben. Min krops mål læses fra din egen browser og ændres ikke. Kun når du selv trykker Gem billedet med tallene (eller Gem før og efter med tallene), laver siden ét PNG med billedet, modellen, tabellen og grænserne og gemmer det på din egen enhed. Det sendes heller ikke nogen steder hen. Filen har også målingen i sig: billedet uden klik, klikkene, fasen, højden, vægten og stangens vægt. Åbner du filen her igen med Vælg billede, står målingen, som den blev gemt, og du kan trække i punkterne igen. Send derfor kun filen til nogen, der må se de tal. En chat-app, der komprimerer billedet, smider målingen væk (billedet ser ens ud); det er kun selve filen, der kan åbnes igen.",
+  "knap": "Gem billedet med tallene",
+  "gemnoteSomI603": true
+ },
+ "datoer": [
+  {
+   "rod": "m608",
+   "bredde": 390,
+   "orden": "rigtig",
+   "foer": {
+    "foer": "Før: IMG_4411.jpg (gemt 3. aug. 2026)",
+    "efter": "Efter: IMG_5120.jpg (gemt 28. sep. 2026)",
+    "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene og fasen står, som da den blev gemt; højden og vægten er dem, der allerede stod (tomme felter er udfyldt fra filen). Træk i et punkt for at flytte det.",
+    "tabel": [
+     [
+      "Torso fra lodrethofte til skulder",
+      "61,2°",
+      "74,1°",
+      "+12,9°grænse 8,0°"
+     ],
+     [
+      "Hoftevinkelskulder-hofte-knæ, 180° = strakt",
+      "51,1°",
+      "51,1°",
+      "≈0,0°grænse 11,0°"
+     ],
+     [
+      "Knævinkelhofte-knæ-ankel, 180° = strakt",
+      "98,9°",
+      "111,8°",
+      "+12,9°grænse 10,0°"
+     ],
+     [
+      "Skinneben fra lodret+ = knæet foran anklen",
+      "13,3°",
+      "13,3°",
+      "≈0,0°grænse 5,0°"
+     ],
+     [
+      "Stangen foran midtfodenvandret; − = bag midtfoden",
+      "3,0 cm",
+      "3,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Vandret afstand stang–hoftestangens lodlinje til hoften",
+      "40,4 cm",
+      "40,1 cm",
+      "−0,3 cmkræver samme kameraplads"
+     ],
+     [
+      "Skulderen foran stangenvandret",
+      "5,0 cm",
+      "5,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Hoftens højde over gulvetlodret, hoften over midtfoden",
+      "66,8 cm",
+      "78,2 cm",
+      "+11,3 cmgrænse 7,0 cm"
+     ]
+    ],
+    "saetning": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det fjerne nav i begge billeder (Sæt det fjerne nav). Uden det kræver de samme kameraplads (stativ, tape på gulvet, samme retning), fordi hver grad, kameraet står skråt, flytter stangens tal ca. 1,4 cm. De er ikke med i sætningen. Sætningen læser 5 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert sjette par med omhyggelige klik (oftere med hurtige).",
+    "advarer": false
+   },
+   "bytPlads": {
+    "hoejde": 44,
+    "bredde": 129,
+    "afstandTilEfter": 8,
+    "samme_linje": true,
+    "synligVedTallene": false,
+    "aktiv": true
+   },
+   "jsFejl": []
+  },
+  {
+   "rod": "m608",
+   "bredde": 390,
+   "orden": "forkert",
+   "foer": {
+    "foer": "Før: IMG_5120.jpg (gemt 28. sep. 2026)",
+    "efter": "Efter: IMG_4411.jpg (gemt 3. aug. 2026)",
+    "note": "Gemt måling åbnet (gemt 3. aug. 2026): dødløft, ved gulvet, 7 klik. Klikkene og fasen står, som da den blev gemt; højden og vægten er dem, der allerede stod (tomme felter er udfyldt fra filen). Træk i et punkt for at flytte det.",
+    "tabel": [
+     [
+      "Torso fra lodrethofte til skulder",
+      "74,1°",
+      "61,2°",
+      "−12,9°grænse 8,0°"
+     ],
+     [
+      "Hoftevinkelskulder-hofte-knæ, 180° = strakt",
+      "51,1°",
+      "51,1°",
+      "≈0,0°grænse 11,0°"
+     ],
+     [
+      "Knævinkelhofte-knæ-ankel, 180° = strakt",
+      "111,8°",
+      "98,9°",
+      "−12,9°grænse 10,0°"
+     ],
+     [
+      "Skinneben fra lodret+ = knæet foran anklen",
+      "13,3°",
+      "13,3°",
+      "≈0,0°grænse 5,0°"
+     ],
+     [
+      "Stangen foran midtfodenvandret; − = bag midtfoden",
+      "3,0 cm",
+      "3,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Vandret afstand stang–hoftestangens lodlinje til hoften",
+      "40,1 cm",
+      "40,4 cm",
+      "+0,3 cmkræver samme kameraplads"
+     ],
+     [
+      "Skulderen foran stangenvandret",
+      "5,0 cm",
+      "5,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Hoftens højde over gulvetlodret, hoften over midtfoden",
+      "78,2 cm",
+      "66,8 cm",
+      "−11,3 cmgrænse 7,0 cm"
+     ]
+    ],
+    "saetning": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det fjerne nav i begge billeder (Sæt det fjerne nav). Uden det kræver de samme kameraplads (stativ, tape på gulvet, samme retning), fordi hver grad, kameraet står skråt, flytter stangens tal ca. 1,4 cm. De er ikke med i sætningen. Sætningen læser 5 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert sjette par med omhyggelige klik (oftere med hurtige).",
+    "advarer": false
+   },
+   "bytPlads": {
+    "hoejde": 44,
+    "bredde": 129,
+    "afstandTilEfter": 8,
+    "samme_linje": true,
+    "synligVedTallene": false,
+    "aktiv": true
+   },
+   "byttet": {
+    "foer": "Før: IMG_4411.jpg (gemt 3. aug. 2026)",
+    "efter": "Efter: IMG_5120.jpg (gemt 28. sep. 2026)",
+    "note": "Gemt måling åbnet (gemt 3. aug. 2026): dødløft, ved gulvet, 7 klik. Klikkene og fasen står, som da den blev gemt; højden og vægten er dem, der allerede stod (tomme felter er udfyldt fra filen). Træk i et punkt for at flytte det.",
+    "tabel": [
+     [
+      "Torso fra lodrethofte til skulder",
+      "61,2°",
+      "74,1°",
+      "+12,9°grænse 8,0°"
+     ],
+     [
+      "Hoftevinkelskulder-hofte-knæ, 180° = strakt",
+      "51,1°",
+      "51,1°",
+      "≈0,0°grænse 11,0°"
+     ],
+     [
+      "Knævinkelhofte-knæ-ankel, 180° = strakt",
+      "98,9°",
+      "111,8°",
+      "+12,9°grænse 10,0°"
+     ],
+     [
+      "Skinneben fra lodret+ = knæet foran anklen",
+      "13,3°",
+      "13,3°",
+      "≈0,0°grænse 5,0°"
+     ],
+     [
+      "Stangen foran midtfodenvandret; − = bag midtfoden",
+      "3,0 cm",
+      "3,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Vandret afstand stang–hoftestangens lodlinje til hoften",
+      "40,4 cm",
+      "40,1 cm",
+      "−0,3 cmkræver samme kameraplads"
+     ],
+     [
+      "Skulderen foran stangenvandret",
+      "5,0 cm",
+      "5,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Hoftens højde over gulvetlodret, hoften over midtfoden",
+      "66,8 cm",
+      "78,2 cm",
+      "+11,3 cmgrænse 7,0 cm"
+     ]
+    ],
+    "saetning": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det fjerne nav i begge billeder (Sæt det fjerne nav). Uden det kræver de samme kameraplads (stativ, tape på gulvet, samme retning), fordi hver grad, kameraet står skråt, flytter stangens tal ca. 1,4 cm. De er ikke med i sætningen. Sætningen læser 5 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert sjette par med omhyggelige klik (oftere med hurtige).",
+    "advarer": false
+   },
+   "jsFejl": []
+  },
+  {
+   "rod": "m608",
+   "bredde": 1280,
+   "orden": "rigtig",
+   "foer": {
+    "foer": "Før: IMG_4411.jpg (gemt 3. aug. 2026)",
+    "efter": "Efter: IMG_5120.jpg (gemt 28. sep. 2026)",
+    "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene og fasen står, som da den blev gemt; højden og vægten er dem, der allerede stod (tomme felter er udfyldt fra filen). Træk i et punkt for at flytte det.",
+    "tabel": [
+     [
+      "Torso fra lodrethofte til skulder",
+      "61,2°",
+      "74,1°",
+      "+12,9°grænse 8,0°"
+     ],
+     [
+      "Hoftevinkelskulder-hofte-knæ, 180° = strakt",
+      "51,1°",
+      "51,1°",
+      "≈0,0°grænse 11,0°"
+     ],
+     [
+      "Knævinkelhofte-knæ-ankel, 180° = strakt",
+      "98,9°",
+      "111,8°",
+      "+12,9°grænse 10,0°"
+     ],
+     [
+      "Skinneben fra lodret+ = knæet foran anklen",
+      "13,3°",
+      "13,3°",
+      "≈0,0°grænse 5,0°"
+     ],
+     [
+      "Stangen foran midtfodenvandret; − = bag midtfoden",
+      "3,0 cm",
+      "3,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Vandret afstand stang–hoftestangens lodlinje til hoften",
+      "40,4 cm",
+      "40,1 cm",
+      "−0,3 cmkræver samme kameraplads"
+     ],
+     [
+      "Skulderen foran stangenvandret",
+      "5,0 cm",
+      "5,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Hoftens højde over gulvetlodret, hoften over midtfoden",
+      "66,8 cm",
+      "78,2 cm",
+      "+11,3 cmgrænse 7,0 cm"
+     ]
+    ],
+    "saetning": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det fjerne nav i begge billeder (Sæt det fjerne nav). Uden det kræver de samme kameraplads (stativ, tape på gulvet, samme retning), fordi hver grad, kameraet står skråt, flytter stangens tal ca. 1,4 cm. De er ikke med i sætningen. Sætningen læser 5 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert sjette par med omhyggelige klik (oftere med hurtige).",
+    "advarer": false
+   },
+   "bytPlads": {
+    "hoejde": 44,
+    "bredde": 129,
+    "afstandTilEfter": 8,
+    "samme_linje": true,
+    "synligVedTallene": false,
+    "aktiv": true
+   },
+   "jsFejl": []
+  },
+  {
+   "rod": "m608",
+   "bredde": 1280,
+   "orden": "forkert",
+   "foer": {
+    "foer": "Før: IMG_5120.jpg (gemt 28. sep. 2026)",
+    "efter": "Efter: IMG_4411.jpg (gemt 3. aug. 2026)",
+    "note": "Gemt måling åbnet (gemt 3. aug. 2026): dødløft, ved gulvet, 7 klik. Klikkene og fasen står, som da den blev gemt; højden og vægten er dem, der allerede stod (tomme felter er udfyldt fra filen). Træk i et punkt for at flytte det.",
+    "tabel": [
+     [
+      "Torso fra lodrethofte til skulder",
+      "74,1°",
+      "61,2°",
+      "−12,9°grænse 8,0°"
+     ],
+     [
+      "Hoftevinkelskulder-hofte-knæ, 180° = strakt",
+      "51,1°",
+      "51,1°",
+      "≈0,0°grænse 11,0°"
+     ],
+     [
+      "Knævinkelhofte-knæ-ankel, 180° = strakt",
+      "111,8°",
+      "98,9°",
+      "−12,9°grænse 10,0°"
+     ],
+     [
+      "Skinneben fra lodret+ = knæet foran anklen",
+      "13,3°",
+      "13,3°",
+      "≈0,0°grænse 5,0°"
+     ],
+     [
+      "Stangen foran midtfodenvandret; − = bag midtfoden",
+      "3,0 cm",
+      "3,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Vandret afstand stang–hoftestangens lodlinje til hoften",
+      "40,1 cm",
+      "40,4 cm",
+      "+0,3 cmkræver samme kameraplads"
+     ],
+     [
+      "Skulderen foran stangenvandret",
+      "5,0 cm",
+      "5,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Hoftens højde over gulvetlodret, hoften over midtfoden",
+      "78,2 cm",
+      "66,8 cm",
+      "−11,3 cmgrænse 7,0 cm"
+     ]
+    ],
+    "saetning": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det fjerne nav i begge billeder (Sæt det fjerne nav). Uden det kræver de samme kameraplads (stativ, tape på gulvet, samme retning), fordi hver grad, kameraet står skråt, flytter stangens tal ca. 1,4 cm. De er ikke med i sætningen. Sætningen læser 5 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert sjette par med omhyggelige klik (oftere med hurtige).",
+    "advarer": false
+   },
+   "bytPlads": {
+    "hoejde": 44,
+    "bredde": 129,
+    "afstandTilEfter": 8,
+    "samme_linje": true,
+    "synligVedTallene": false,
+    "aktiv": true
+   },
+   "byttet": {
+    "foer": "Før: IMG_4411.jpg (gemt 3. aug. 2026)",
+    "efter": "Efter: IMG_5120.jpg (gemt 28. sep. 2026)",
+    "note": "Gemt måling åbnet (gemt 3. aug. 2026): dødløft, ved gulvet, 7 klik. Klikkene og fasen står, som da den blev gemt; højden og vægten er dem, der allerede stod (tomme felter er udfyldt fra filen). Træk i et punkt for at flytte det.",
+    "tabel": [
+     [
+      "Torso fra lodrethofte til skulder",
+      "61,2°",
+      "74,1°",
+      "+12,9°grænse 8,0°"
+     ],
+     [
+      "Hoftevinkelskulder-hofte-knæ, 180° = strakt",
+      "51,1°",
+      "51,1°",
+      "≈0,0°grænse 11,0°"
+     ],
+     [
+      "Knævinkelhofte-knæ-ankel, 180° = strakt",
+      "98,9°",
+      "111,8°",
+      "+12,9°grænse 10,0°"
+     ],
+     [
+      "Skinneben fra lodret+ = knæet foran anklen",
+      "13,3°",
+      "13,3°",
+      "≈0,0°grænse 5,0°"
+     ],
+     [
+      "Stangen foran midtfodenvandret; − = bag midtfoden",
+      "3,0 cm",
+      "3,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Vandret afstand stang–hoftestangens lodlinje til hoften",
+      "40,4 cm",
+      "40,1 cm",
+      "−0,3 cmkræver samme kameraplads"
+     ],
+     [
+      "Skulderen foran stangenvandret",
+      "5,0 cm",
+      "5,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Hoftens højde over gulvetlodret, hoften over midtfoden",
+      "66,8 cm",
+      "78,2 cm",
+      "+11,3 cmgrænse 7,0 cm"
+     ]
+    ],
+    "saetning": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det fjerne nav i begge billeder (Sæt det fjerne nav). Uden det kræver de samme kameraplads (stativ, tape på gulvet, samme retning), fordi hver grad, kameraet står skråt, flytter stangens tal ca. 1,4 cm. De er ikke med i sætningen. Sætningen læser 5 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert sjette par med omhyggelige klik (oftere med hurtige).",
+    "advarer": false
+   },
+   "jsFejl": []
+  },
+  {
+   "rod": "m601",
+   "bredde": 390,
+   "orden": "rigtig",
+   "foer": {
+    "foer": "Før: IMG_4411.jpg (gemt 3. aug. 2026)",
+    "efter": "Efter: IMG_5120.jpg (gemt 28. sep. 2026)",
+    "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene og fasen står, som da den blev gemt; højden og vægten er dem, der allerede stod (tomme felter er udfyldt fra filen). Træk i et punkt for at flytte det.",
+    "tabel": [
+     [
+      "Torso fra lodrethofte til skulder",
+      "61,2°",
+      "74,1°",
+      "+12,9°grænse 8,0°"
+     ],
+     [
+      "Hoftevinkelskulder-hofte-knæ, 180° = strakt",
+      "51,1°",
+      "51,1°",
+      "≈0,0°grænse 11,0°"
+     ],
+     [
+      "Knævinkelhofte-knæ-ankel, 180° = strakt",
+      "98,9°",
+      "111,8°",
+      "+12,9°grænse 10,0°"
+     ],
+     [
+      "Skinneben fra lodret+ = knæet foran anklen",
+      "13,3°",
+      "13,3°",
+      "≈0,0°grænse 5,0°"
+     ],
+     [
+      "Stangen foran midtfodenvandret; − = bag midtfoden",
+      "3,0 cm",
+      "3,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Vandret afstand stang–hoftestangens lodlinje til hoften",
+      "40,4 cm",
+      "40,1 cm",
+      "−0,3 cmkræver samme kameraplads"
+     ],
+     [
+      "Skulderen foran stangenvandret",
+      "5,0 cm",
+      "5,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Hoftens højde over gulvetlodret, hoften over midtfoden",
+      "66,8 cm",
+      "78,2 cm",
+      "+11,3 cmgrænse 7,0 cm"
+     ]
+    ],
+    "saetning": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det fjerne nav i begge billeder (Sæt det fjerne nav). Uden det kræver de samme kameraplads (stativ, tape på gulvet, samme retning), fordi hver grad, kameraet står skråt, flytter stangens tal ca. 1,4 cm. De er ikke med i sætningen. Sætningen læser 5 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert sjette par med omhyggelige klik (oftere med hurtige).",
+    "advarer": false
+   },
+   "bytPlads": {
+    "hoejde": 44,
+    "bredde": 129,
+    "afstandTilEfter": 8,
+    "samme_linje": true,
+    "synligVedTallene": false,
+    "aktiv": true
+   },
+   "jsFejl": []
+  },
+  {
+   "rod": "m601",
+   "bredde": 390,
+   "orden": "forkert",
+   "foer": {
+    "foer": "Før: IMG_5120.jpg (gemt 28. sep. 2026)",
+    "efter": "Efter: IMG_4411.jpg (gemt 3. aug. 2026)",
+    "note": "Gemt måling åbnet (gemt 3. aug. 2026): dødløft, ved gulvet, 7 klik. Klikkene og fasen står, som da den blev gemt; højden og vægten er dem, der allerede stod (tomme felter er udfyldt fra filen). Træk i et punkt for at flytte det.",
+    "tabel": [
+     [
+      "Torso fra lodrethofte til skulder",
+      "74,1°",
+      "61,2°",
+      "−12,9°grænse 8,0°"
+     ],
+     [
+      "Hoftevinkelskulder-hofte-knæ, 180° = strakt",
+      "51,1°",
+      "51,1°",
+      "≈0,0°grænse 11,0°"
+     ],
+     [
+      "Knævinkelhofte-knæ-ankel, 180° = strakt",
+      "111,8°",
+      "98,9°",
+      "−12,9°grænse 10,0°"
+     ],
+     [
+      "Skinneben fra lodret+ = knæet foran anklen",
+      "13,3°",
+      "13,3°",
+      "≈0,0°grænse 5,0°"
+     ],
+     [
+      "Stangen foran midtfodenvandret; − = bag midtfoden",
+      "3,0 cm",
+      "3,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Vandret afstand stang–hoftestangens lodlinje til hoften",
+      "40,1 cm",
+      "40,4 cm",
+      "+0,3 cmkræver samme kameraplads"
+     ],
+     [
+      "Skulderen foran stangenvandret",
+      "5,0 cm",
+      "5,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Hoftens højde over gulvetlodret, hoften over midtfoden",
+      "78,2 cm",
+      "66,8 cm",
+      "−11,3 cmgrænse 7,0 cm"
+     ]
+    ],
+    "saetning": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det fjerne nav i begge billeder (Sæt det fjerne nav). Uden det kræver de samme kameraplads (stativ, tape på gulvet, samme retning), fordi hver grad, kameraet står skråt, flytter stangens tal ca. 1,4 cm. De er ikke med i sætningen. Sætningen læser 5 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert sjette par med omhyggelige klik (oftere med hurtige).",
+    "advarer": false
+   },
+   "bytPlads": {
+    "hoejde": 44,
+    "bredde": 129,
+    "afstandTilEfter": 8,
+    "samme_linje": true,
+    "synligVedTallene": false,
+    "aktiv": true
+   },
+   "byttet": {
+    "foer": "Før: IMG_4411.jpg (gemt 3. aug. 2026)",
+    "efter": "Efter: IMG_5120.jpg (gemt 28. sep. 2026)",
+    "note": "Gemt måling åbnet (gemt 3. aug. 2026): dødløft, ved gulvet, 7 klik. Klikkene og fasen står, som da den blev gemt; højden og vægten er dem, der allerede stod (tomme felter er udfyldt fra filen). Træk i et punkt for at flytte det.",
+    "tabel": [
+     [
+      "Torso fra lodrethofte til skulder",
+      "61,2°",
+      "74,1°",
+      "+12,9°grænse 8,0°"
+     ],
+     [
+      "Hoftevinkelskulder-hofte-knæ, 180° = strakt",
+      "51,1°",
+      "51,1°",
+      "≈0,0°grænse 11,0°"
+     ],
+     [
+      "Knævinkelhofte-knæ-ankel, 180° = strakt",
+      "98,9°",
+      "111,8°",
+      "+12,9°grænse 10,0°"
+     ],
+     [
+      "Skinneben fra lodret+ = knæet foran anklen",
+      "13,3°",
+      "13,3°",
+      "≈0,0°grænse 5,0°"
+     ],
+     [
+      "Stangen foran midtfodenvandret; − = bag midtfoden",
+      "3,0 cm",
+      "3,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Vandret afstand stang–hoftestangens lodlinje til hoften",
+      "40,4 cm",
+      "40,1 cm",
+      "−0,3 cmkræver samme kameraplads"
+     ],
+     [
+      "Skulderen foran stangenvandret",
+      "5,0 cm",
+      "5,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Hoftens højde over gulvetlodret, hoften over midtfoden",
+      "66,8 cm",
+      "78,2 cm",
+      "+11,3 cmgrænse 7,0 cm"
+     ]
+    ],
+    "saetning": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det fjerne nav i begge billeder (Sæt det fjerne nav). Uden det kræver de samme kameraplads (stativ, tape på gulvet, samme retning), fordi hver grad, kameraet står skråt, flytter stangens tal ca. 1,4 cm. De er ikke med i sætningen. Sætningen læser 5 rækker, så to billeder af samme stilling giver alligevel en forskel i sætningen i ca. hvert sjette par med omhyggelige klik (oftere med hurtige).",
+    "advarer": false
+   },
+   "jsFejl": []
+  }
+ ],
+ "byt": [],
+ "chrome": "154.0.8037.57",
+ "accept": "image/*",
+ "eksterne": [],
+ "tjek": [
+  {
+   "hvad": "608 er merget: main (f3e0200) = 207d4ec + ordre-608 (d8921bd); rapport dag 91 ligger paa main; i dist er kun maal-billede.js og de fire miniaturer i baenken og doedloeftet aendret siden 603",
+   "ok": true,
+   "data": {
+    "nye": [
+     "f3e0200 merge: ordre-608 (ORDRE 608, Yantra)",
+     "d8921bd Ordre 608, commit 3: skaermbilleder 390 og 1280, verificering, rapport dag 91",
+     "82fbc53 Ordre 608, commit 2: en gemt maaling, siden ikke kan bruge, siger det (Bhishak 603, M4)",
+     "a8eaf44 Ordre 608, commit 1: miniaturerne uden tekstens moerke bund (Bhishak 598/603, M1)"
+    ],
+    "maal": [
+     "maal-billede.js",
+     "miniaturer/bp-albue-ud.svg",
+     "miniaturer/bp-hoejt-bryst.svg",
+     "miniaturer/dl-hofte-foerst.svg",
+     "miniaturer/dl-stang-frem.svg"
+    ]
+   }
+  },
+  {
+   "hvad": "sitets maal-billede (c9fc559) er stadig 580-udgaven (291f5bf); tre-loeft, min-krop og baenk-figurer er stadig ikke kopieret",
+   "ok": true,
+   "data": {
+    "maal": [
+     "index.html",
+     "maal-billede.js",
+     "miniaturer/bp-albue-ud.svg",
+     "miniaturer/bp-hoejt-bryst.svg",
+     "miniaturer/dl-hofte-foerst.svg",
+     "miniaturer/dl-stang-frem.svg",
+     "miniaturer/k7-hofte-tilbage-bund.svg",
+     "miniaturer/k7-hofte-tilbage-sticking.svg",
+     "miniaturer/k7-kun-knae-bund.svg",
+     "miniaturer/k7-kun-knae-sticking.svg"
+    ],
+    "treLoeft": [
+     "tre-loeft.js"
+    ],
+    "minKrop": [
+     "min-krop.js"
+    ],
+    "baenk": [
+     "index.html"
+    ]
+   }
+  },
+  {
+   "hvad": "M1 lukket paa main (608): 0 moerke tekstfelter i alle otte; baenkens og doedloeftets fire er aendret, squattens fire er byte for byte de samme",
+   "ok": true,
+   "data": [
+    "bp-albue-ud.svg: felter 3->0, aendret 7.86%",
+    "bp-hoejt-bryst.svg: felter 3->0, aendret 8.74%",
+    "dl-hofte-foerst.svg: felter 3->0, aendret 4.74%",
+    "dl-stang-frem.svg: felter 3->0, aendret 3.28%",
+    "k7-hofte-tilbage-bund.svg: felter 0->0, aendret 0%",
+    "k7-hofte-tilbage-sticking.svg: felter 0->0, aendret 0%",
+    "k7-kun-knae-bund.svg: felter 0->0, aendret 0%",
+    "k7-kun-knae-sticking.svg: felter 0->0, aendret 0%"
+   ]
+  },
+  {
+   "hvad": "608: miniaturerne er 601s uden de tre felter, linje for linje, og tegnet pixel for pixel de samme som 601s uden felterne (0 pixels forskel, altsaa 0 % daekket); kun svg-hovedet og baggrunden er ellers anderledes (baenkens viewBox flyttet 3,19 enheder, ca. 1,2 px ved 150 px, fordi feltet ved kanten er vaek); doedloeftets aendrede pixels er alle blevet lysere",
+   "ok": true,
+   "data": [
+    "bp-albue-ud.svg: viewBox 0 218.36 393.61 309.64 -> 3.19 218.36 393.61 309.64, andre linjer 2, egen forskel 0 px, lysere 61%",
+    "bp-hoejt-bryst.svg: viewBox 0 218.36 393.61 309.64 -> 3.19 218.36 393.61 309.64, andre linjer 2, egen forskel 0 px, lysere 64.4%",
+    "dl-hofte-foerst.svg: viewBox 22.96 124.52 298.54 404.27 -> 22.96 124.52 298.54 404.27, andre linjer 0, egen forskel 0 px, lysere 100%",
+    "dl-stang-frem.svg: viewBox 36.73 110.39 317.01 429.29 -> 36.73 110.39 317.01 429.29, andre linjer 0, egen forskel 0 px, lysere 100%",
+    "k7-hofte-tilbage-bund.svg: viewBox 73.6 194.17 255.12 345.48 -> 73.6 194.17 255.12 345.48, andre linjer 0, egen forskel 0 px, lysere null%",
+    "k7-hofte-tilbage-sticking.svg: viewBox 49 121.71 301.99 408.95 -> 49 121.71 301.99 408.95, andre linjer 0, egen forskel 0 px, lysere null%",
+    "k7-kun-knae-bund.svg: viewBox 86.52 203.16 246.5 333.8 -> 86.52 203.16 246.5 333.8, andre linjer 0, egen forskel 0 px, lysere null%",
+    "k7-kun-knae-sticking.svg: viewBox 64.78 121.71 306.65 415.25 -> 64.78 121.71 306.65 415.25, andre linjer 0, egen forskel 0 px, lysere null%"
+   ]
+  },
+  {
+   "hvad": "punkt 1 (main): den uroerte fil, ekstra metadata foer IDAT (eXIf, XMP, iDOT, tEXt, tIME) og maalingen flyttet foer billedet aabnes alle som maalingen (7 klik, noten); ogsaa IMG_0412.PNG uden type og et navn uden endelse med typen image/png",
+   "ok": true,
+   "data": [
+    "uroert fil: maaling",
+    "kun billedets egne dele (et program, der \"optimerer\" eller skriver PNG'et om): billede 1200 px, 0 klik",
+    "tegnet om og gemt som PNG igen (redigeret, beskaaret, skaermbillede): billede 1200 px, 0 klik",
+    "som JPEG (chat-app, \"Mest kompatibel\", HEIC->JPEG): billede 1200 px, 0 klik",
+    "med ekstra metadata foer IDAT (eXIf, XMP, iDOT, tEXt, tIME): maaling",
+    "maalingen flyttet foer billedet (enTr foer IDAT): maaling",
+    "navnet IMG_0412.PNG uden type: maaling",
+    "navn uden endelse, type image/png: maaling",
+    "navn uden endelse og uden type: billede 1200 px, 0 klik",
+    "application/octet-stream, navnet download: billede 1200 px, 0 klik",
+    "PNG-bytes med navnet .jpg og typen image/jpeg: billede 1200 px, 0 klik",
+    "M4 oedelagt CRC: billede 1200 px, 0 klik, note",
+    "M4 afkortet fil: billede 1200 px, 0 klik",
+    "M4 afkortet i maalingen: billede 1200 px, 0 klik, note",
+    "M4 version 2: billede 1200 px, 0 klik, note",
+    "M4 ukendt fase: billede 1200 px, 0 klik, note",
+    "M4 forkert stoerrelse: billede 1200 px, 0 klik, note",
+    "M4 dato 2026-13-45: maaling"
+   ]
+  },
+  {
+   "hvad": "punkt 1 (main): fjernes delen (kun billedets dele, tegnet om, JPEG), aabnes filen som et almindeligt billede uden klik og uden besked, ogsaa efter 608 (der er intet spor at finde)",
+   "ok": true,
+   "data": [
+    {
+     "k": "kun billedets egne dele",
+     "w": 1200,
+     "note": null
+    },
+    {
+     "k": "tegnet om og gemt som PNG igen",
+     "w": 1200,
+     "note": null
+    },
+    {
+     "k": "som JPEG",
+     "w": 1200,
+     "note": null
+    }
+   ]
+  },
+  {
+   "hvad": "fund M5 (601 og main): en uroert fil, som vaelgeren giver uden .png i navnet og uden typen image/png, aabnes som et almindeligt billede uden klik og uden note; laesFil kigger paa navn og type, ikke paa filens foerste 8 bytes",
+   "ok": true,
+   "data": [
+    {
+     "k": "navn uden endelse og uden type",
+     "klik": 0,
+     "note": null
+    },
+    {
+     "k": "application/octet-stream, navnet download",
+     "klik": 0,
+     "note": null
+    },
+    {
+     "k": "PNG-bytes med navnet .jpg og typen image/jpeg",
+     "klik": 0,
+     "note": null
+    }
+   ]
+  },
+  {
+   "hvad": "M4 paa 601 (som i 603): fire ubrugelige maalinger aabnes stille som et almindeligt billede, og en med forkert stoerrelse aabnes med 7 klik paa forkerte steder",
+   "ok": true,
+   "data": [
+    {
+     "k": "M4 oedelagt CRC",
+     "p": 0,
+     "w": 1200,
+     "note": ""
+    },
+    {
+     "k": "M4 afkortet i maalingen",
+     "p": 0,
+     "w": 1200,
+     "note": ""
+    },
+    {
+     "k": "M4 version 2",
+     "p": 0,
+     "w": 1200,
+     "note": ""
+    },
+    {
+     "k": "M4 ukendt fase",
+     "p": 0,
+     "w": 1200,
+     "note": ""
+    },
+    {
+     "k": "M4 forkert stoerrelse",
+     "p": 7,
+     "w": 1000,
+     "note": "Gemt måling åbnet (gemt 28. sep. 2026): "
+    }
+   ]
+  },
+  {
+   "hvad": "M4 lukket paa main (608): de fem aabnes som billedet uden klik, og noten siger \"Filen har en gemt maaling, som siden ikke kan laese\" (version 2: \"fra en nyere udgave\"); datoen 2026-13-45 smides vaek, og maalingen bruges med sine 7 klik",
+   "ok": true,
+   "data": [
+    {
+     "k": "M4 oedelagt CRC",
+     "p": 0,
+     "note": "Filen har en gemt måling, som siden ikke kan læse; billedet er åbnet uden klik. Filen er måske ødelagt eller s"
+    },
+    {
+     "k": "M4 afkortet i maalingen",
+     "p": 0,
+     "note": "Filen har en gemt måling, som siden ikke kan læse; billedet er åbnet uden klik. Filen er måske ødelagt eller s"
+    },
+    {
+     "k": "M4 version 2",
+     "p": 0,
+     "note": "Filen har en gemt måling fra en nyere udgave af siden, som denne udgave ikke kan læse; billedet er åbnet uden "
+    },
+    {
+     "k": "M4 ukendt fase",
+     "p": 0,
+     "note": "Filen har en gemt måling, som siden ikke kan læse; billedet er åbnet uden klik. Filen er måske ødelagt eller s"
+    },
+    {
+     "k": "M4 forkert stoerrelse",
+     "p": 0,
+     "note": "Filen har en gemt måling, som siden ikke kan læse; billedet er åbnet uden klik. Filen er måske ødelagt eller s"
+    },
+    {
+     "k": "M4 dato 2026-13-45",
+     "p": 7,
+     "note": "Gemt måling åbnet: dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. "
+    }
+   ]
+  },
+  {
+   "hvad": "M4: en fil, der er skaaret over i selve billedet (60 %), har intet spor af maalingen tilbage og aabnes som et halvt billede uden note, baade 601 og main",
+   "ok": true,
+   "data": {
+    "main": [
+     "IHDR",
+     "IDAT"
+    ],
+    "w": 1200
+   }
+  },
+  {
+   "hvad": "punkt 1: 0 JS-fejl i alle varianter (main og 608)",
+   "ok": true,
+   "data": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "hvad": "punkt 2: noten under Gem siger, at filen har billedet, klikkene, fasen, hoejden og vaegten, og at en chat-app smider maalingen vaek; \"Intet gemmes\" siger det samme; teksten er den, jeg vurderede i 603",
+   "ok": true,
+   "data": {
+    "gemnote": "Et PNG med billedet, modellen, tabellen og grænserne gemmes på din egen enhed, så du kan sende det til atleten. Intet sendes herfra. Filen har også målingen i sig (billedet, klikkene, fasen, højden og vægten): åbn den her igen med Vælg billede, så står klikkene, som da du gemte. En chat-app, der komprimerer billedet, smider målingen væk; gem selve filen.",
+    "gemnoteSynlig": true,
+    "gemnoteBredde": 358,
+    "intet": "Intet gemmes, og intet sendes. Billederne (også før og efter) og punkterne findes kun, mens siden er åben. Min krops mål læses fra din egen browser og ændres ikke. Kun når du selv trykker Gem billedet med tallene (eller Gem før og efter med tallene), laver siden ét PNG med billedet, modellen, tabellen og grænserne og gemmer det på din egen enhed. Det sendes heller ikke nogen steder hen. Filen har også målingen i sig: billedet uden klik, klikkene, fasen, højden, vægten og stangens vægt. Åbner du filen her igen med Vælg billede, står målingen, som den blev gemt, og du kan trække i punkterne igen. Send derfor kun filen til nogen, der må se de tal. En chat-app, der komprimerer billedet, smider målingen væk (billedet ser ens ud); det er kun selve filen, der kan åbnes igen.",
+    "knap": "Gem billedet med tallene",
+    "gemnoteSomI603": true
+   }
+  },
+  {
+   "hvad": "punkt 3: begge billeder fra filer: datoen staar ved begge (\"Foer: ... (gemt 3. aug. 2026)\", \"Efter: ... (gemt 28. sep. 2026)\")",
+   "ok": true,
+   "data": [
+    "m608 390 rigtig: Før: IMG_4411.jpg (gemt 3. aug. 2026) | Efter: IMG_5120.jpg (gemt 28. sep. 2026)",
+    "m608 390 forkert: Før: IMG_5120.jpg (gemt 28. sep. 2026) | Efter: IMG_4411.jpg (gemt 3. aug. 2026)",
+    "m608 1280 rigtig: Før: IMG_4411.jpg (gemt 3. aug. 2026) | Efter: IMG_5120.jpg (gemt 28. sep. 2026)",
+    "m608 1280 forkert: Før: IMG_5120.jpg (gemt 28. sep. 2026) | Efter: IMG_4411.jpg (gemt 3. aug. 2026)",
+    "m601 390 rigtig: Før: IMG_4411.jpg (gemt 3. aug. 2026) | Efter: IMG_5120.jpg (gemt 28. sep. 2026)",
+    "m601 390 forkert: Før: IMG_5120.jpg (gemt 28. sep. 2026) | Efter: IMG_4411.jpg (gemt 3. aug. 2026)"
+   ]
+  },
+  {
+   "hvad": "punkt 3, fund M6: aabnes uge 8 under Foer og uge 1 under Efter, staar datoerne baglaens (28. sep. foer 3. aug.) uden et ord fra siden; forskellen og saetningen er vendt; Byt retter det",
+   "ok": true,
+   "data": [
+    {
+     "rod": "m608",
+     "b": 390,
+     "foer": "Før: IMG_5120.jpg (gemt 28. sep. 2026)",
+     "efter": "Efter: IMG_4411.jpg (gemt 3. aug. 2026)",
+     "hofteForkert": [
+      "Torso fra lodrethofte til skulder",
+      "74,1°",
+      "61,2°",
+      "−12,9°grænse 8,0°"
+     ],
+     "hofteRigtig": [
+      "Torso fra lodrethofte til skulder",
+      "61,2°",
+      "74,1°",
+      "+12,9°grænse 8,0°"
+     ],
+     "saetning": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder "
+    },
+    {
+     "rod": "m608",
+     "b": 1280,
+     "foer": "Før: IMG_5120.jpg (gemt 28. sep. 2026)",
+     "efter": "Efter: IMG_4411.jpg (gemt 3. aug. 2026)",
+     "hofteForkert": [
+      "Torso fra lodrethofte til skulder",
+      "74,1°",
+      "61,2°",
+      "−12,9°grænse 8,0°"
+     ],
+     "hofteRigtig": [
+      "Torso fra lodrethofte til skulder",
+      "61,2°",
+      "74,1°",
+      "+12,9°grænse 8,0°"
+     ],
+     "saetning": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder "
+    },
+    {
+     "rod": "m601",
+     "b": 390,
+     "foer": "Før: IMG_5120.jpg (gemt 28. sep. 2026)",
+     "efter": "Efter: IMG_4411.jpg (gemt 3. aug. 2026)",
+     "hofteForkert": [
+      "Torso fra lodrethofte til skulder",
+      "74,1°",
+      "61,2°",
+      "−12,9°grænse 8,0°"
+     ],
+     "hofteRigtig": [
+      "Torso fra lodrethofte til skulder",
+      "61,2°",
+      "74,1°",
+      "+12,9°grænse 8,0°"
+     ],
+     "saetning": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder "
+    }
+   ]
+  },
+  {
+   "hvad": "punkt 3: Byt staar paa linje med Foer og Efter, 8 px fra Efter, er slaaet til og 44 px hoej; den er ikke i skaermen, naar tallene er (man ruller op til den)",
+   "ok": true,
+   "data": [
+    {
+     "rod": "m608",
+     "b": 390,
+     "o": "rigtig",
+     "hoejde": 44,
+     "bredde": 129,
+     "afstandTilEfter": 8,
+     "samme_linje": true,
+     "synligVedTallene": false,
+     "aktiv": true
+    },
+    {
+     "rod": "m608",
+     "b": 390,
+     "o": "forkert",
+     "hoejde": 44,
+     "bredde": 129,
+     "afstandTilEfter": 8,
+     "samme_linje": true,
+     "synligVedTallene": false,
+     "aktiv": true
+    },
+    {
+     "rod": "m608",
+     "b": 1280,
+     "o": "rigtig",
+     "hoejde": 44,
+     "bredde": 129,
+     "afstandTilEfter": 8,
+     "samme_linje": true,
+     "synligVedTallene": false,
+     "aktiv": true
+    },
+    {
+     "rod": "m608",
+     "b": 1280,
+     "o": "forkert",
+     "hoejde": 44,
+     "bredde": 129,
+     "afstandTilEfter": 8,
+     "samme_linje": true,
+     "synligVedTallene": false,
+     "aktiv": true
+    },
+    {
+     "rod": "m601",
+     "b": 390,
+     "o": "rigtig",
+     "hoejde": 44,
+     "bredde": 129,
+     "afstandTilEfter": 8,
+     "samme_linje": true,
+     "synligVedTallene": false,
+     "aktiv": true
+    },
+    {
+     "rod": "m601",
+     "b": 390,
+     "o": "forkert",
+     "hoejde": 44,
+     "bredde": 129,
+     "afstandTilEfter": 8,
+     "samme_linje": true,
+     "synligVedTallene": false,
+     "aktiv": true
+    }
+   ]
+  },
+  {
+   "hvad": "punkt 3: 0 JS-fejl",
+   "ok": true
+  },
+  {
+   "hvad": "alt, siderne proevede at hente udefra, er afbrudt og var kun skrifttypen",
+   "ok": true,
+   "data": []
+  }
+ ]
+}
