@@ -1,0 +1,2386 @@
+{
+ "ver": {
+  "main": "af745da",
+  "o595": "2449355",
+  "site": "11c6169",
+  "godkendt585": "291f5bf"
+ },
+ "kopi": {
+  "maal-billede": {
+   "siteMod291": [],
+   "siteModMain": [
+    "maal-billede.js",
+    "miniaturer/bp-albue-ud.svg",
+    "miniaturer/bp-hoejt-bryst.svg",
+    "miniaturer/dl-hofte-foerst.svg",
+    "miniaturer/dl-stang-frem.svg",
+    "miniaturer/k7-hofte-tilbage-bund.svg",
+    "miniaturer/k7-hofte-tilbage-sticking.svg",
+    "miniaturer/k7-kun-knae-bund.svg",
+    "miniaturer/k7-kun-knae-sticking.svg"
+   ],
+   "mainMod595": []
+  },
+  "baenk-figurer": {
+   "siteMod291": [],
+   "siteModMain": [
+    "index.html"
+   ],
+   "mainMod595": []
+  },
+  "tre-loeft": {
+   "siteMod291": [],
+   "siteModMain": [
+    "tre-loeft.js"
+   ],
+   "mainMod595": []
+  },
+  "min-krop": {
+   "siteMod291": [],
+   "siteModMain": [
+    "min-krop.js"
+   ],
+   "mainMod595": []
+  },
+  "loeft-fejl": {
+   "siteMod291": [],
+   "siteModMain": [],
+   "mainMod595": []
+  },
+  "squat-figurer": {
+   "siteMod291": [],
+   "siteModMain": [],
+   "mainMod595": []
+  },
+  "doedloeft-figurer": {
+   "siteMod291": [],
+   "siteModMain": [],
+   "mainMod595": []
+  },
+  "maalVideoUaendret": true,
+  "o595Merget": "ja",
+  "fra593": {
+   "maal-billede": [],
+   "baenk-figurer": [],
+   "tre-loeft": [
+    "tre-loeft.js"
+   ],
+   "min-krop": [
+    "min-krop.js"
+   ],
+   "loeft-fejl": []
+  }
+ },
+ "mini": [
+  {
+   "f": "bp-albue-ud.svg",
+   "w": 150,
+   "h": 118,
+   "tekst": false,
+   "pxPrEnhed": 0.381,
+   "tekstfelter": 3,
+   "maksFlytPx": 9.8,
+   "flytPx": [
+    0,
+    0,
+    9.8,
+    9.8
+   ],
+   "skjult": {
+    "figur": 32524,
+    "skjult": 1874,
+    "andel": 5.8,
+    "cssPx2": 208
+   }
+  },
+  {
+   "f": "bp-hoejt-bryst.svg",
+   "w": 150,
+   "h": 118,
+   "tekst": false,
+   "pxPrEnhed": 0.381,
+   "tekstfelter": 3,
+   "maksFlytPx": 15.1,
+   "flytPx": [
+    0,
+    0,
+    15.1,
+    15.1
+   ],
+   "skjult": {
+    "figur": 32519,
+    "skjult": 3102,
+    "andel": 9.5,
+    "cssPx2": 345
+   }
+  },
+  {
+   "f": "dl-hofte-foerst.svg",
+   "w": 96,
+   "h": 130,
+   "tekst": false,
+   "pxPrEnhed": 0.322,
+   "tekstfelter": 3,
+   "maksFlytPx": 13.7,
+   "flytPx": [
+    11.3,
+    13.7,
+    0,
+    0,
+    0
+   ],
+   "skjult": {
+    "figur": 35935,
+    "skjult": 3745,
+    "andel": 10.4,
+    "cssPx2": 416
+   }
+  },
+  {
+   "f": "dl-stang-frem.svg",
+   "w": 96,
+   "h": 130,
+   "tekst": false,
+   "pxPrEnhed": 0.303,
+   "tekstfelter": 3,
+   "maksFlytPx": 5.6,
+   "flytPx": [
+    0,
+    0.4,
+    5.6,
+    5.6,
+    5.6
+   ],
+   "skjult": {
+    "figur": 23637,
+    "skjult": 3365,
+    "andel": 14.2,
+    "cssPx2": 374
+   }
+  },
+  {
+   "f": "k7-hofte-tilbage-bund.svg",
+   "w": 96,
+   "h": 130,
+   "tekst": false,
+   "pxPrEnhed": 0.376,
+   "tekstfelter": 0,
+   "maksFlytPx": 9.5,
+   "flytPx": [
+    4.8,
+    9.3,
+    9.5,
+    4.8
+   ],
+   "skjult": {
+    "figur": 41229,
+    "skjult": 0,
+    "andel": 0,
+    "cssPx2": 0
+   }
+  },
+  {
+   "f": "k7-hofte-tilbage-sticking.svg",
+   "w": 96,
+   "h": 130,
+   "tekst": false,
+   "pxPrEnhed": 0.318,
+   "tekstfelter": 0,
+   "maksFlytPx": 13.8,
+   "flytPx": [
+    12.2,
+    13.8,
+    13.6,
+    12.2
+   ],
+   "skjult": {
+    "figur": 34431,
+    "skjult": 0,
+    "andel": 0,
+    "cssPx2": 0
+   }
+  },
+  {
+   "f": "k7-kun-knae-bund.svg",
+   "w": 96,
+   "h": 130,
+   "tekst": false,
+   "pxPrEnhed": 0.389,
+   "tekstfelter": 0,
+   "maksFlytPx": 15.2,
+   "flytPx": [
+    7.1,
+    15.1,
+    15.2,
+    7.1
+   ],
+   "skjult": {
+    "figur": 47056,
+    "skjult": 0,
+    "andel": 0,
+    "cssPx2": 0
+   }
+  },
+  {
+   "f": "k7-kun-knae-sticking.svg",
+   "w": 96,
+   "h": 130,
+   "tekst": false,
+   "pxPrEnhed": 0.313,
+   "tekstfelter": 0,
+   "maksFlytPx": 7.7,
+   "flytPx": [
+    7.7,
+    6.6,
+    6.9,
+    7.7
+   ],
+   "skjult": {
+    "figur": 31814,
+    "skjult": 0,
+    "andel": 0,
+    "cssPx2": 0
+   }
+  }
+ ],
+ "ligner": [
+  {
+   "id": "sq-bund-kun-knae",
+   "bredde": 360,
+   "status": "ligner",
+   "fejl": "sq-kun-knae-bund",
+   "tekst": "Ligner: kun knæene Skinnebenet hælder ca. 17° mere frem end i modellens bund med gennemsnittet for din højde og low bar; sådan står modellens figur, når knæene ",
+   "boks": {
+    "l": 16,
+    "r": 344
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/k7-kun-knae-bund.svg",
+     "ok": true,
+     "alt": "Fejlfiguren kun knæene, modellens udførelse svagt bagved",
+     "x": 31,
+     "y": 3720,
+     "w": 96,
+     "h": 129,
+     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sq-bund-hofte-tilbage",
+   "bredde": 360,
+   "status": "ligner",
+   "fejl": "sq-hofte-tilbage-bund",
+   "tekst": "Ligner: hoften skudt for langt tilbage Torsoen hælder ca. 16° mere frem og skinnebenet står ca. 10° mere lodret end i modellens bund med gennemsnittet for din h",
+   "boks": {
+    "l": 16,
+    "r": 344
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/k7-hofte-tilbage-bund.svg",
+     "ok": true,
+     "alt": "Fejlfiguren hoften skudt for langt tilbage, modellens udførelse svagt bagved",
+     "x": 31,
+     "y": 3742,
+     "w": 96,
+     "h": 129,
+     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sq-midt-kun-knae",
+   "bredde": 360,
+   "status": "ligner",
+   "fejl": "sq-kun-knae-midt",
+   "tekst": "Ligner: kun knæene Skinnebenet hælder ca. 9° mere frem og knæet er ca. 11° mere bøjet end i modellens sticking point med gennemsnittet for din højde og low bar;",
+   "boks": {
+    "l": 16,
+    "r": 344
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/k7-kun-knae-sticking.svg",
+     "ok": true,
+     "alt": "Fejlfiguren kun knæene, modellens udførelse svagt bagved",
+     "x": 31,
+     "y": 4123,
+     "w": 96,
+     "h": 129,
+     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sq-midt-hofte-tilbage",
+   "bredde": 360,
+   "status": "ligner",
+   "fejl": "sq-hofte-tilbage-midt",
+   "tekst": "Ligner: hoften skudt for langt tilbage Torsoen hælder ca. 31° mere frem og skinnebenet står ca. 18° mere lodret end i modellens sticking point med gennemsnittet",
+   "boks": {
+    "l": 16,
+    "r": 344
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/k7-hofte-tilbage-sticking.svg",
+     "ok": true,
+     "alt": "Fejlfiguren hoften skudt for langt tilbage, modellens udførelse svagt bagved",
+     "x": 31,
+     "y": 4100,
+     "w": 96,
+     "h": 129,
+     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "dl-hofte-foerst",
+   "bredde": 360,
+   "status": "ligner",
+   "fejl": "dl-hofte-foerst",
+   "tekst": "Ligner: hoften stiger først Skinnebenet står ca. 14° mere lodret og knæet er ca. 29° mere strakt end i modellens udførelse med gennemsnittet for din højde; såda",
+   "boks": {
+    "l": 16,
+    "r": 344
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/dl-hofte-foerst.svg",
+     "ok": true,
+     "alt": "Fejlfiguren hoften stiger først, modellens udførelse svagt bagved",
+     "x": 31,
+     "y": 3955,
+     "w": 96,
+     "h": 129,
+     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#dl-hofte-foerst",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "dl-stang-frem",
+   "bredde": 360,
+   "status": "ligner",
+   "fejl": "dl-stang-frem",
+   "tekst": "Ligner: stangen glider frem Stangen hænger ca. 6 cm længere fremme og ca. 6 cm længere fra knæet end i modellens knæhøjde; sådan står modellens figur, når stang",
+   "boks": {
+    "l": 16,
+    "r": 344
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/dl-stang-frem.svg",
+     "ok": true,
+     "alt": "Fejlfiguren stangen glider frem, modellens udførelse svagt bagved",
+     "x": 31,
+     "y": 3984,
+     "w": 96,
+     "h": 129,
+     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sumo-stang-frem",
+   "bredde": 360,
+   "status": "ligner",
+   "fejl": "dl-stang-frem",
+   "tekst": "Ligner: stangen glider frem Stangen hænger ca. 7 cm længere fremme og ca. 7 cm længere fra knæet end i modellens sumo ved knæhøjde, set fra siden; sådan står mo",
+   "boks": {
+    "l": 16,
+    "r": 344
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/dl-stang-frem.svg",
+     "ok": true,
+     "alt": "Fejlfiguren stangen glider frem, modellens udførelse svagt bagved",
+     "x": 31,
+     "y": 4116,
+     "w": 96,
+     "h": 129,
+     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "bp-hoejt-bryst",
+   "bredde": 360,
+   "status": "ligner",
+   "fejl": "bp-hoejt-bryst",
+   "tekst": "Ligner: stangen for højt eller albuen helt ude Stangen rører ca. 15 cm nærmere halsen end i modellen; det gør den i modellen både, når stangen lander for højt, ",
+   "boks": {
+    "l": 16,
+    "r": 344
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/bp-hoejt-bryst.svg",
+     "ok": true,
+     "alt": "Fejlfiguren stangen for højt, modellens udførelse svagt bagved",
+     "x": 31,
+     "y": 3402,
+     "w": 147,
+     "h": 116,
+     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#bp-hoejt-bryst",
+     "linkStatus": 200
+    },
+    {
+     "src": "miniaturer/bp-albue-ud.svg",
+     "ok": true,
+     "alt": "Fejlfiguren albuen helt ude, modellens udførelse svagt bagved",
+     "x": 185,
+     "y": 3402,
+     "w": 147,
+     "h": 116,
+     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#bp-albue-ud",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sq-bund-kun-knae",
+   "bredde": 390,
+   "status": "ligner",
+   "fejl": "sq-kun-knae-bund",
+   "tekst": "Ligner: kun knæene Skinnebenet hælder ca. 17° mere frem end i modellens bund med gennemsnittet for din højde og low bar; sådan står modellens figur, når knæene ",
+   "boks": {
+    "l": 16,
+    "r": 374
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/k7-kun-knae-bund.svg",
+     "ok": true,
+     "alt": "Fejlfiguren kun knæene, modellens udførelse svagt bagved",
+     "x": 31,
+     "y": 3775,
+     "w": 96,
+     "h": 129,
+     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sq-bund-hofte-tilbage",
+   "bredde": 390,
+   "status": "ligner",
+   "fejl": "sq-hofte-tilbage-bund",
+   "tekst": "Ligner: hoften skudt for langt tilbage Torsoen hælder ca. 16° mere frem og skinnebenet står ca. 10° mere lodret end i modellens bund med gennemsnittet for din h",
+   "boks": {
+    "l": 16,
+    "r": 374
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/k7-hofte-tilbage-bund.svg",
+     "ok": true,
+     "alt": "Fejlfiguren hoften skudt for langt tilbage, modellens udførelse svagt bagved",
+     "x": 31,
+     "y": 3797,
+     "w": 96,
+     "h": 129,
+     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sq-midt-kun-knae",
+   "bredde": 390,
+   "status": "ligner",
+   "fejl": "sq-kun-knae-midt",
+   "tekst": "Ligner: kun knæene Skinnebenet hælder ca. 9° mere frem og knæet er ca. 11° mere bøjet end i modellens sticking point med gennemsnittet for din højde og low bar;",
+   "boks": {
+    "l": 16,
+    "r": 374
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/k7-kun-knae-sticking.svg",
+     "ok": true,
+     "alt": "Fejlfiguren kun knæene, modellens udførelse svagt bagved",
+     "x": 31,
+     "y": 4131,
+     "w": 96,
+     "h": 129,
+     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sq-midt-hofte-tilbage",
+   "bredde": 390,
+   "status": "ligner",
+   "fejl": "sq-hofte-tilbage-midt",
+   "tekst": "Ligner: hoften skudt for langt tilbage Torsoen hælder ca. 31° mere frem og skinnebenet står ca. 18° mere lodret end i modellens sticking point med gennemsnittet",
+   "boks": {
+    "l": 16,
+    "r": 374
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/k7-hofte-tilbage-sticking.svg",
+     "ok": true,
+     "alt": "Fejlfiguren hoften skudt for langt tilbage, modellens udførelse svagt bagved",
+     "x": 31,
+     "y": 4133,
+     "w": 96,
+     "h": 129,
+     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "dl-hofte-foerst",
+   "bredde": 390,
+   "status": "ligner",
+   "fejl": "dl-hofte-foerst",
+   "tekst": "Ligner: hoften stiger først Skinnebenet står ca. 14° mere lodret og knæet er ca. 29° mere strakt end i modellens udførelse med gennemsnittet for din højde; såda",
+   "boks": {
+    "l": 16,
+    "r": 374
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/dl-hofte-foerst.svg",
+     "ok": true,
+     "alt": "Fejlfiguren hoften stiger først, modellens udførelse svagt bagved",
+     "x": 31,
+     "y": 4010,
+     "w": 96,
+     "h": 129,
+     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#dl-hofte-foerst",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "dl-stang-frem",
+   "bredde": 390,
+   "status": "ligner",
+   "fejl": "dl-stang-frem",
+   "tekst": "Ligner: stangen glider frem Stangen hænger ca. 6 cm længere fremme og ca. 6 cm længere fra knæet end i modellens knæhøjde; sådan står modellens figur, når stang",
+   "boks": {
+    "l": 16,
+    "r": 374
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/dl-stang-frem.svg",
+     "ok": true,
+     "alt": "Fejlfiguren stangen glider frem, modellens udførelse svagt bagved",
+     "x": 31,
+     "y": 4016,
+     "w": 96,
+     "h": 129,
+     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sumo-stang-frem",
+   "bredde": 390,
+   "status": "ligner",
+   "fejl": "dl-stang-frem",
+   "tekst": "Ligner: stangen glider frem Stangen hænger ca. 7 cm længere fremme og ca. 7 cm længere fra knæet end i modellens sumo ved knæhøjde, set fra siden; sådan står mo",
+   "boks": {
+    "l": 16,
+    "r": 374
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/dl-stang-frem.svg",
+     "ok": true,
+     "alt": "Fejlfiguren stangen glider frem, modellens udførelse svagt bagved",
+     "x": 31,
+     "y": 4174,
+     "w": 96,
+     "h": 129,
+     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "bp-hoejt-bryst",
+   "bredde": 390,
+   "status": "ligner",
+   "fejl": "bp-hoejt-bryst",
+   "tekst": "Ligner: stangen for højt eller albuen helt ude Stangen rører ca. 15 cm nærmere halsen end i modellen; det gør den i modellen både, når stangen lander for højt, ",
+   "boks": {
+    "l": 16,
+    "r": 374
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/bp-hoejt-bryst.svg",
+     "ok": true,
+     "alt": "Fejlfiguren stangen for højt, modellens udførelse svagt bagved",
+     "x": 31,
+     "y": 3394,
+     "w": 150,
+     "h": 118,
+     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#bp-hoejt-bryst",
+     "linkStatus": 200
+    },
+    {
+     "src": "miniaturer/bp-albue-ud.svg",
+     "ok": true,
+     "alt": "Fejlfiguren albuen helt ude, modellens udførelse svagt bagved",
+     "x": 187,
+     "y": 3394,
+     "w": 150,
+     "h": 118,
+     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#bp-albue-ud",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sq-bund-kun-knae",
+   "bredde": 1280,
+   "status": "ligner",
+   "fejl": "sq-kun-knae-bund",
+   "tekst": "Ligner: kun knæene Skinnebenet hælder ca. 17° mere frem end i modellens bund med gennemsnittet for din højde og low bar; sådan står modellens figur, når knæene ",
+   "boks": {
+    "l": 106,
+    "r": 1174
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/k7-kun-knae-bund.svg",
+     "ok": true,
+     "alt": "Fejlfiguren kun knæene, modellens udførelse svagt bagved",
+     "x": 121,
+     "y": 2639,
+     "w": 96,
+     "h": 129,
+     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sq-bund-hofte-tilbage",
+   "bredde": 1280,
+   "status": "ligner",
+   "fejl": "sq-hofte-tilbage-bund",
+   "tekst": "Ligner: hoften skudt for langt tilbage Torsoen hælder ca. 16° mere frem og skinnebenet står ca. 10° mere lodret end i modellens bund med gennemsnittet for din h",
+   "boks": {
+    "l": 106,
+    "r": 1174
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/k7-hofte-tilbage-bund.svg",
+     "ok": true,
+     "alt": "Fejlfiguren hoften skudt for langt tilbage, modellens udførelse svagt bagved",
+     "x": 121,
+     "y": 2661,
+     "w": 96,
+     "h": 129,
+     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sq-midt-kun-knae",
+   "bredde": 1280,
+   "status": "ligner",
+   "fejl": "sq-kun-knae-midt",
+   "tekst": "Ligner: kun knæene Skinnebenet hælder ca. 9° mere frem og knæet er ca. 11° mere bøjet end i modellens sticking point med gennemsnittet for din højde og low bar;",
+   "boks": {
+    "l": 106,
+    "r": 1174
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/k7-kun-knae-sticking.svg",
+     "ok": true,
+     "alt": "Fejlfiguren kun knæene, modellens udførelse svagt bagved",
+     "x": 121,
+     "y": 2782,
+     "w": 96,
+     "h": 129,
+     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sq-midt-hofte-tilbage",
+   "bredde": 1280,
+   "status": "ligner",
+   "fejl": "sq-hofte-tilbage-midt",
+   "tekst": "Ligner: hoften skudt for langt tilbage Torsoen hælder ca. 31° mere frem og skinnebenet står ca. 18° mere lodret end i modellens sticking point med gennemsnittet",
+   "boks": {
+    "l": 106,
+    "r": 1174
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/k7-hofte-tilbage-sticking.svg",
+     "ok": true,
+     "alt": "Fejlfiguren hoften skudt for langt tilbage, modellens udførelse svagt bagved",
+     "x": 121,
+     "y": 2760,
+     "w": 96,
+     "h": 129,
+     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "dl-hofte-foerst",
+   "bredde": 1280,
+   "status": "ligner",
+   "fejl": "dl-hofte-foerst",
+   "tekst": "Ligner: hoften stiger først Skinnebenet står ca. 14° mere lodret og knæet er ca. 29° mere strakt end i modellens udførelse med gennemsnittet for din højde; såda",
+   "boks": {
+    "l": 106,
+    "r": 1174
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/dl-hofte-foerst.svg",
+     "ok": true,
+     "alt": "Fejlfiguren hoften stiger først, modellens udførelse svagt bagved",
+     "x": 121,
+     "y": 2769,
+     "w": 96,
+     "h": 129,
+     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#dl-hofte-foerst",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "dl-stang-frem",
+   "bredde": 1280,
+   "status": "ligner",
+   "fejl": "dl-stang-frem",
+   "tekst": "Ligner: stangen glider frem Stangen hænger ca. 6 cm længere fremme og ca. 6 cm længere fra knæet end i modellens knæhøjde; sådan står modellens figur, når stang",
+   "boks": {
+    "l": 106,
+    "r": 1174
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/dl-stang-frem.svg",
+     "ok": true,
+     "alt": "Fejlfiguren stangen glider frem, modellens udførelse svagt bagved",
+     "x": 121,
+     "y": 2769,
+     "w": 96,
+     "h": 129,
+     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sumo-stang-frem",
+   "bredde": 1280,
+   "status": "ligner",
+   "fejl": "dl-stang-frem",
+   "tekst": "Ligner: stangen glider frem Stangen hænger ca. 7 cm længere fremme og ca. 7 cm længere fra knæet end i modellens sumo ved knæhøjde, set fra siden; sådan står mo",
+   "boks": {
+    "l": 106,
+    "r": 1174
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/dl-stang-frem.svg",
+     "ok": true,
+     "alt": "Fejlfiguren stangen glider frem, modellens udførelse svagt bagved",
+     "x": 121,
+     "y": 2791,
+     "w": 96,
+     "h": 129,
+     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "bp-hoejt-bryst",
+   "bredde": 1280,
+   "status": "ligner",
+   "fejl": "bp-hoejt-bryst",
+   "tekst": "Ligner: stangen for højt eller albuen helt ude Stangen rører ca. 15 cm nærmere halsen end i modellen; det gør den i modellen både, når stangen lander for højt, ",
+   "boks": {
+    "l": 106,
+    "r": 1174
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/bp-hoejt-bryst.svg",
+     "ok": true,
+     "alt": "Fejlfiguren stangen for højt, modellens udførelse svagt bagved",
+     "x": 121,
+     "y": 2207,
+     "w": 150,
+     "h": 118,
+     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#bp-hoejt-bryst",
+     "linkStatus": 200
+    },
+    {
+     "src": "miniaturer/bp-albue-ud.svg",
+     "ok": true,
+     "alt": "Fejlfiguren albuen helt ude, modellens udførelse svagt bagved",
+     "x": 277,
+     "y": 2207,
+     "w": 150,
+     "h": 118,
+     "href": "http://127.0.0.1:62534/ny/assets/vaerktoejer/loeft-fejl/index.html#bp-albue-ud",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  }
+ ],
+ "toFiler": [
+  {
+   "id": "sq-bund-kun-knae",
+   "bredde": 390,
+   "status": "ligner",
+   "fejl": "sq-kun-knae-bund",
+   "tekst": "Ligner: kun knæene Skinnebenet hælder ca. 17° mere frem end i modellens bund med gennemsnittet for din højde og low bar; sådan står modellens figur, når knæene ",
+   "boks": {
+    "l": 16,
+    "r": 374
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/k7-kun-knae-bund.svg",
+     "ok": false,
+     "alt": "Fejlfiguren kun knæene, modellens udførelse svagt bagved",
+     "x": 31,
+     "y": 3775,
+     "w": 331,
+     "h": 18,
+     "href": "http://127.0.0.1:62534/to/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sq-bund-hofte-tilbage",
+   "bredde": 390,
+   "status": "ligner",
+   "fejl": "sq-hofte-tilbage-bund",
+   "tekst": "Ligner: hoften skudt for langt tilbage Torsoen hælder ca. 16° mere frem og skinnebenet står ca. 10° mere lodret end i modellens bund med gennemsnittet for din h",
+   "boks": {
+    "l": 16,
+    "r": 374
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/k7-hofte-tilbage-bund.svg",
+     "ok": false,
+     "alt": "Fejlfiguren hoften skudt for langt tilbage, modellens udførelse svagt bagved",
+     "x": 31,
+     "y": 3797,
+     "w": 331,
+     "h": 18,
+     "href": "http://127.0.0.1:62534/to/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sq-midt-kun-knae",
+   "bredde": 390,
+   "status": "ligner",
+   "fejl": "sq-kun-knae-midt",
+   "tekst": "Ligner: kun knæene Skinnebenet hælder ca. 9° mere frem og knæet er ca. 11° mere bøjet end i modellens sticking point med gennemsnittet for din højde og low bar;",
+   "boks": {
+    "l": 16,
+    "r": 374
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/k7-kun-knae-sticking.svg",
+     "ok": false,
+     "alt": "Fejlfiguren kun knæene, modellens udførelse svagt bagved",
+     "x": 31,
+     "y": 4131,
+     "w": 331,
+     "h": 18,
+     "href": "http://127.0.0.1:62534/to/assets/vaerktoejer/squat-figurer/k7-kun-knae-optur.svg",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sq-midt-hofte-tilbage",
+   "bredde": 390,
+   "status": "ligner",
+   "fejl": "sq-hofte-tilbage-midt",
+   "tekst": "Ligner: hoften skudt for langt tilbage Torsoen hælder ca. 31° mere frem og skinnebenet står ca. 18° mere lodret end i modellens sticking point med gennemsnittet",
+   "boks": {
+    "l": 16,
+    "r": 374
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/k7-hofte-tilbage-sticking.svg",
+     "ok": false,
+     "alt": "Fejlfiguren hoften skudt for langt tilbage, modellens udførelse svagt bagved",
+     "x": 31,
+     "y": 4133,
+     "w": 331,
+     "h": 18,
+     "href": "http://127.0.0.1:62534/to/assets/vaerktoejer/squat-figurer/k7-hofte-tilbage-optur.svg",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "dl-hofte-foerst",
+   "bredde": 390,
+   "status": "ligner",
+   "fejl": "dl-hofte-foerst",
+   "tekst": "Ligner: hoften stiger først Skinnebenet står ca. 14° mere lodret og knæet er ca. 29° mere strakt end i modellens udførelse med gennemsnittet for din højde; såda",
+   "boks": {
+    "l": 16,
+    "r": 374
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/dl-hofte-foerst.svg",
+     "ok": false,
+     "alt": "Fejlfiguren hoften stiger først, modellens udførelse svagt bagved",
+     "x": 31,
+     "y": 4010,
+     "w": 331,
+     "h": 18,
+     "href": "http://127.0.0.1:62534/to/assets/vaerktoejer/loeft-fejl/index.html#dl-hofte-foerst",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "dl-stang-frem",
+   "bredde": 390,
+   "status": "ligner",
+   "fejl": "dl-stang-frem",
+   "tekst": "Ligner: stangen glider frem Stangen hænger ca. 6 cm længere fremme og ca. 6 cm længere fra knæet end i modellens knæhøjde; sådan står modellens figur, når stang",
+   "boks": {
+    "l": 16,
+    "r": 374
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/dl-stang-frem.svg",
+     "ok": false,
+     "alt": "Fejlfiguren stangen glider frem, modellens udførelse svagt bagved",
+     "x": 31,
+     "y": 4016,
+     "w": 331,
+     "h": 18,
+     "href": "http://127.0.0.1:62534/to/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "sumo-stang-frem",
+   "bredde": 390,
+   "status": "ligner",
+   "fejl": "dl-stang-frem",
+   "tekst": "Ligner: stangen glider frem Stangen hænger ca. 7 cm længere fremme og ca. 7 cm længere fra knæet end i modellens sumo ved knæhøjde, set fra siden; sådan står mo",
+   "boks": {
+    "l": 16,
+    "r": 374
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/dl-stang-frem.svg",
+     "ok": false,
+     "alt": "Fejlfiguren stangen glider frem, modellens udførelse svagt bagved",
+     "x": 31,
+     "y": 4174,
+     "w": 331,
+     "h": 18,
+     "href": "http://127.0.0.1:62534/to/assets/vaerktoejer/loeft-fejl/index.html#dl-stang-frem",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  },
+  {
+   "id": "bp-hoejt-bryst",
+   "bredde": 390,
+   "status": "ligner",
+   "fejl": "bp-hoejt-bryst",
+   "tekst": "Ligner: stangen for højt eller albuen helt ude Stangen rører ca. 15 cm nærmere halsen end i modellen; det gør den i modellen både, når stangen lander for højt, ",
+   "boks": {
+    "l": 16,
+    "r": 374
+   },
+   "imgs": [
+    {
+     "src": "miniaturer/bp-hoejt-bryst.svg",
+     "ok": false,
+     "alt": "Fejlfiguren stangen for højt, modellens udførelse svagt bagved",
+     "x": 31,
+     "y": 3394,
+     "w": 163,
+     "h": 18,
+     "href": "http://127.0.0.1:62534/to/assets/vaerktoejer/loeft-fejl/index.html#bp-hoejt-bryst",
+     "linkStatus": 200
+    },
+    {
+     "src": "miniaturer/bp-albue-ud.svg",
+     "ok": false,
+     "alt": "Fejlfiguren albuen helt ude, modellens udførelse svagt bagved",
+     "x": 200,
+     "y": 3394,
+     "w": 162,
+     "h": 18,
+     "href": "http://127.0.0.1:62534/to/assets/vaerktoejer/loeft-fejl/index.html#bp-albue-ud",
+     "linkStatus": 200
+    }
+   ],
+   "vandret": 0,
+   "jsFejl": []
+  }
+ ],
+ "figurside": {
+  "s1": "Stangen rører brystets højeste punkt i alle tre. Med mere bue ligger stangen højere over bænken (25,2, 29,0 og 32,9 cm), men ikke hele vejen længere mod fødderne: målt fra skulderleddet rører stangen 22,1, 25,1 og 24,1 cm mod fødderne, altså 3,0 cm længere mod fødderne fra lille til middel og 1,0 cm nærmere halsen fra middel til stor.",
+  "s1ord": 59,
+  "s2": "Fra lille til stor bue (middel greb) bliver vejen 10,5 cm kortere og skulderens momentarm 1,7 cm længere, fordi stangen rører 2,0 cm længere mod fødderne fra skulderleddet.",
+  "s2b": "Fra smalt til bredt greb (middel bue) bliver vejen 3,8 cm kortere, skulderens momentarm 7,6 cm længere og albuens 8,2 cm kortere.",
+  "s2tal": {
+   "vej": 10.5,
+   "msk": 1.7,
+   "fod": 2
+  },
+  "s2btal": {
+   "vej": 3.8,
+   "msk": 7.6,
+   "alb": 8.2
+  },
+  "figurer": {
+   "bue-lille": {
+    "skulder": 22.1,
+    "albue": 6.4,
+    "vej": 46.2,
+    "iAltSkulder": 25.8,
+    "iAltAlbue": 6.4
+   },
+   "bue-middel": {
+    "skulder": 25.1,
+    "albue": 5,
+    "vej": 41.8,
+    "iAltSkulder": 28.4,
+    "iAltAlbue": 5
+   },
+   "bue-stor": {
+    "skulder": 24.1,
+    "albue": 7.1,
+    "vej": 35.8,
+    "iAltSkulder": 27.6,
+    "iAltAlbue": 7.1
+   },
+   "greb-smal": {
+    "skulder": 25.1,
+    "albue": 7.6,
+    "vej": 43,
+    "iAltSkulder": 25.6,
+    "iAltAlbue": 7.6
+   },
+   "greb-middel": {
+    "skulder": 25.1,
+    "albue": 5,
+    "vej": 41.8,
+    "iAltSkulder": 28.4,
+    "iAltAlbue": 5
+   },
+   "greb-bred": {
+    "skulder": 25.1,
+    "albue": 0.6,
+    "vej": 39.2,
+    "iAltSkulder": 33.2,
+    "iAltAlbue": 0.6
+   }
+  },
+  "vist": {
+   "bueVej": 10.4,
+   "bueMsk": 1.8,
+   "bueFod": 2,
+   "grebVej": 3.8,
+   "grebMsk": 7.6,
+   "grebAlb": 7
+  }
+ },
+ "da7": {
+  "linjer": 411,
+  "medTal": 318,
+  "fejl": [],
+  "eksempler": [
+   "Kortere lårben: torsoen hælder 7° mindre ved opstillingen (62° → 55°).",
+   "Længere arme: hoften bøjer 9° mindre ved opstillingen (51° → 60°)."
+  ],
+  "animation": {
+   "n": 108,
+   "afvig": 18,
+   "negativ": 0,
+   "eks": [
+    {
+     "l": "Overkroppen hælder 4.8° mindre ved start i sumo end i konven",
+     "siger": 4.8,
+     "vist": 4.9,
+     "neg": false
+    },
+    {
+     "l": "Overkroppen hælder 4.8° mindre ved start i sumo end i konven",
+     "siger": 4.8,
+     "vist": 4.9,
+     "neg": false
+    },
+    {
+     "l": "Overkroppen hælder 4.8° mindre ved start i sumo end i konven",
+     "siger": 4.8,
+     "vist": 4.9,
+     "neg": false
+    },
+    {
+     "l": "Overkroppen hælder 5.0° mindre ved start i sumo end i konven",
+     "siger": 5,
+     "vist": 4.9,
+     "neg": false
+    }
+   ]
+  },
+  "sideLinje": [
+   {
+    "forud": "lange-arme",
+    "l": "Længere arme: hoften bøjer 9° mindre ved opstillingen (51° → 60°).",
+    "ok": true
+   },
+   {
+    "forud": "korte-laar",
+    "l": "Kortere lårben: torsoen hælder 7° mindre ved opstillingen (62° → 55°).",
+    "ok": true
+   }
+  ],
+  "sideFejl": []
+ },
+ "klip": {
+  "390-luk": {
+   "runder": [
+    {
+     "i": 1,
+     "klip": "sqvfr.mov",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 0,
+     "lavet": 1,
+     "src": false,
+     "readyState": 0,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 3.24
+    },
+    {
+     "i": 2,
+     "klip": "sq4k.mp4",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 0,
+     "lavet": 2,
+     "src": false,
+     "readyState": 0,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 3.27
+    },
+    {
+     "i": 3,
+     "klip": "sqhevc.mov",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 0,
+     "lavet": 3,
+     "src": false,
+     "readyState": 0,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 3.82
+    },
+    {
+     "i": 4,
+     "klip": "sq2997.mp4",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 0,
+     "lavet": 4,
+     "src": false,
+     "readyState": 0,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 4.35
+    },
+    {
+     "i": 5,
+     "klip": "sqvfr.mp4",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 0,
+     "lavet": 5,
+     "src": false,
+     "readyState": 0,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 4.88
+    },
+    {
+     "i": 6,
+     "klip": "sq2997.mov",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 0,
+     "lavet": 6,
+     "src": false,
+     "readyState": 0,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 3.51
+    },
+    {
+     "i": 7,
+     "klip": "sqvfr.mov",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 0,
+     "lavet": 7,
+     "src": false,
+     "readyState": 0,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 4.03
+    },
+    {
+     "i": 8,
+     "klip": "sq4k.mp4",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 0,
+     "lavet": 8,
+     "src": false,
+     "readyState": 0,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 3.83
+    },
+    {
+     "i": 9,
+     "klip": "sqhevc.mov",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 0,
+     "lavet": 9,
+     "src": false,
+     "readyState": 0,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 3.4
+    },
+    {
+     "i": 10,
+     "klip": "sq2997.mp4",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 0,
+     "lavet": 10,
+     "src": false,
+     "readyState": 0,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 3.53
+    },
+    {
+     "i": 11,
+     "klip": "sqvfr.mp4",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 0,
+     "lavet": 11,
+     "src": false,
+     "readyState": 0,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 3.48
+    },
+    {
+     "i": 12,
+     "klip": "sq2997.mov",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 0,
+     "lavet": 12,
+     "src": false,
+     "readyState": 0,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 4.02
+    }
+   ],
+   "net": 0,
+   "fejl": []
+  },
+  "390-uden-luk": {
+   "runder": [
+    {
+     "i": 1,
+     "klip": "sqvfr.mov",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 1,
+     "lavet": 1,
+     "src": true,
+     "readyState": 4,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 3.14
+    },
+    {
+     "i": 2,
+     "klip": "sq4k.mp4",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 1,
+     "lavet": 2,
+     "src": true,
+     "readyState": 4,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 3.56
+    },
+    {
+     "i": 3,
+     "klip": "sqhevc.mov",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 1,
+     "lavet": 3,
+     "src": true,
+     "readyState": 4,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 4.07
+    },
+    {
+     "i": 4,
+     "klip": "sq2997.mp4",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 1,
+     "lavet": 4,
+     "src": true,
+     "readyState": 4,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 4.51
+    },
+    {
+     "i": 5,
+     "klip": "sqvfr.mp4",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 1,
+     "lavet": 5,
+     "src": true,
+     "readyState": 4,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 4.95
+    },
+    {
+     "i": 6,
+     "klip": "sq2997.mov",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 1,
+     "lavet": 6,
+     "src": true,
+     "readyState": 4,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 3.52
+    },
+    {
+     "i": 7,
+     "klip": "sqvfr.mov",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 1,
+     "lavet": 7,
+     "src": true,
+     "readyState": 4,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 3.97
+    },
+    {
+     "i": 8,
+     "klip": "sq4k.mp4",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 1,
+     "lavet": 8,
+     "src": true,
+     "readyState": 4,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 3.74
+    },
+    {
+     "i": 9,
+     "klip": "sqhevc.mov",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 1,
+     "lavet": 9,
+     "src": true,
+     "readyState": 4,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 4.21
+    },
+    {
+     "i": 10,
+     "klip": "sq2997.mp4",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 1,
+     "lavet": 10,
+     "src": true,
+     "readyState": 4,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 3.67
+    },
+    {
+     "i": 11,
+     "klip": "sqvfr.mp4",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 1,
+     "lavet": 11,
+     "src": true,
+     "readyState": 4,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 3.57
+    },
+    {
+     "i": 12,
+     "klip": "sq2997.mov",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 1,
+     "lavet": 12,
+     "src": true,
+     "readyState": 4,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 3.39
+    }
+   ],
+   "net": 0,
+   "fejl": []
+  },
+  "1280-luk": {
+   "runder": [
+    {
+     "i": 1,
+     "klip": "sqvfr.mov",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 0,
+     "lavet": 1,
+     "src": false,
+     "readyState": 0,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 3.98
+    },
+    {
+     "i": 2,
+     "klip": "sq4k.mp4",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 0,
+     "lavet": 2,
+     "src": false,
+     "readyState": 0,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 3.62
+    },
+    {
+     "i": 3,
+     "klip": "sqhevc.mov",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 0,
+     "lavet": 3,
+     "src": false,
+     "readyState": 0,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 4.18
+    },
+    {
+     "i": 4,
+     "klip": "sq2997.mp4",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 0,
+     "lavet": 4,
+     "src": false,
+     "readyState": 0,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 4.69
+    },
+    {
+     "i": 5,
+     "klip": "sqvfr.mp4",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 0,
+     "lavet": 5,
+     "src": false,
+     "readyState": 0,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 3.25
+    },
+    {
+     "i": 6,
+     "klip": "sq2997.mov",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 0,
+     "lavet": 6,
+     "src": false,
+     "readyState": 0,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 3.84
+    },
+    {
+     "i": 7,
+     "klip": "sqvfr.mov",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 0,
+     "lavet": 7,
+     "src": false,
+     "readyState": 0,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 4.36
+    },
+    {
+     "i": 8,
+     "klip": "sq4k.mp4",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 0,
+     "lavet": 8,
+     "src": false,
+     "readyState": 0,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 3.78
+    },
+    {
+     "i": 9,
+     "klip": "sqhevc.mov",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 0,
+     "lavet": 9,
+     "src": false,
+     "readyState": 0,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 3.34
+    },
+    {
+     "i": 10,
+     "klip": "sq2997.mp4",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 0,
+     "lavet": 10,
+     "src": false,
+     "readyState": 0,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 3.42
+    },
+    {
+     "i": 11,
+     "klip": "sqvfr.mp4",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 0,
+     "lavet": 11,
+     "src": false,
+     "readyState": 0,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 3.95
+    },
+    {
+     "i": 12,
+     "klip": "sq2997.mov",
+     "aabnet": true,
+     "nr": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "foto": 3,
+     "blob": 0,
+     "lavet": 12,
+     "src": false,
+     "readyState": 0,
+     "videoer": 1,
+     "knuder": 254,
+     "heapMB": 3.5
+    }
+   ],
+   "net": 0,
+   "fejl": []
+  }
+ },
+ "v7": {
+  "Chrome 154": {
+   "version": "154.0.8037.57",
+   "nr": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24
+   ],
+   "spring": 0
+  },
+  "Chromium 151": {
+   "version": "151.0.7922.34",
+   "nr": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25
+   ],
+   "spring": 1
+  }
+ },
+ "miniFelter": [
+  "bp-albue-ud.svg: 3",
+  "bp-hoejt-bryst.svg: 3",
+  "dl-hofte-foerst.svg: 3",
+  "dl-stang-frem.svg: 3"
+ ],
+ "chrome": "154.0.8037.57",
+ "skjultMaks": 14.2,
+ "baenkPar": [
+  {
+   "b": 360,
+   "imgs": [
+    "bp-hoejt-bryst.svg 147x116 @31,3402",
+    "bp-albue-ud.svg 147x116 @185,3402"
+   ]
+  },
+  {
+   "b": 390,
+   "imgs": [
+    "bp-hoejt-bryst.svg 150x118 @31,3394",
+    "bp-albue-ud.svg 150x118 @187,3394"
+   ]
+  },
+  {
+   "b": 1280,
+   "imgs": [
+    "bp-hoejt-bryst.svg 150x118 @121,2207",
+    "bp-albue-ud.svg 150x118 @277,2207"
+   ]
+  }
+ ],
+ "baenkBredde360": [
+  147,
+  147
+ ],
+ "eksterne": [],
+ "tjek": [
+  {
+   "hvad": "sitets maal-billede (11c6169) er stadig 580-udgaven (291f5bf, godkendt i 585); main har ny maal-billede.js og 8 miniaturer, som Setu skal kopiere",
+   "ok": true,
+   "data": [
+    "maal-billede.js",
+    "miniaturer/bp-albue-ud.svg",
+    "miniaturer/bp-hoejt-bryst.svg",
+    "miniaturer/dl-hofte-foerst.svg",
+    "miniaturer/dl-stang-frem.svg",
+    "miniaturer/k7-hofte-tilbage-bund.svg",
+    "miniaturer/k7-hofte-tilbage-sticking.svg",
+    "miniaturer/k7-kun-knae-bund.svg",
+    "miniaturer/k7-kun-knae-sticking.svg"
+   ]
+  },
+  {
+   "hvad": "595 er merget undervejs (main af745da); dist paa main = dist paa ordre-595, og 595 aendrede kun tre-loeft.js og min-krop.js (maal-billede, baenk-figurer og fejlsiderne = 593)",
+   "ok": true,
+   "data": {
+    "maal-billede": [],
+    "baenk-figurer": [],
+    "tre-loeft": [
+     "tre-loeft.js"
+    ],
+    "min-krop": [
+     "min-krop.js"
+    ],
+    "loeft-fejl": []
+   }
+  },
+  {
+   "hvad": "videoens kode (src/maalVideo.js) er uaendret siden 291f5bf",
+   "ok": true
+  },
+  {
+   "hvad": "8 miniaturer, ingen <text>, staaende 96 x 130 og baenkens liggende 150 x 118",
+   "ok": true,
+   "data": [
+    "bp-albue-ud.svg 150x118",
+    "bp-hoejt-bryst.svg 150x118",
+    "dl-hofte-foerst.svg 96x130",
+    "dl-stang-frem.svg 96x130",
+    "k7-hofte-tilbage-bund.svg 96x130",
+    "k7-hofte-tilbage-sticking.svg 96x130",
+    "k7-kun-knae-bund.svg 96x130",
+    "k7-kun-knae-sticking.svg 96x130"
+   ]
+  },
+  {
+   "hvad": "fejlen flytter et led eller en skive mindst 4 CSS-px fra modellens udfoerelse i hver miniature (fejlen kan ses i tegningen)",
+   "ok": true,
+   "data": [
+    "bp-albue-ud.svg: 9.8 px",
+    "bp-hoejt-bryst.svg: 15.1 px",
+    "dl-hofte-foerst.svg: 13.7 px",
+    "dl-stang-frem.svg: 5.6 px",
+    "k7-hofte-tilbage-bund.svg: 9.5 px",
+    "k7-hofte-tilbage-sticking.svg: 13.8 px",
+    "k7-kun-knae-bund.svg: 15.2 px",
+    "k7-kun-knae-sticking.svg: 7.7 px"
+   ]
+  },
+  {
+   "hvad": "teksten er taget ud, men tekstens moerke baggrundsfelter (fill-opacity 0,78) er ikke: hvor mange miniaturer har dem, og hvor meget af figuren skjuler de?",
+   "ok": true,
+   "data": [
+    "bp-albue-ud.svg: 3 felter, 5.8 % af figuren skjult (208 CSS-px2)",
+    "bp-hoejt-bryst.svg: 3 felter, 9.5 % af figuren skjult (345 CSS-px2)",
+    "dl-hofte-foerst.svg: 3 felter, 10.4 % af figuren skjult (416 CSS-px2)",
+    "dl-stang-frem.svg: 3 felter, 14.2 % af figuren skjult (374 CSS-px2)",
+    "k7-hofte-tilbage-bund.svg: 0 felter, 0 % af figuren skjult (0 CSS-px2)",
+    "k7-hofte-tilbage-sticking.svg: 0 felter, 0 % af figuren skjult (0 CSS-px2)",
+    "k7-kun-knae-bund.svg: 0 felter, 0 % af figuren skjult (0 CSS-px2)",
+    "k7-kun-knae-sticking.svg: 0 felter, 0 % af figuren skjult (0 CSS-px2)"
+   ]
+  },
+  {
+   "hvad": "M1 (fund): i doedloeftets og baenkens miniaturer skjuler de tilbageblevne tekstfelter en del af figuren",
+   "ok": true,
+   "data": [
+    "bp-albue-ud.svg: 5.8 %",
+    "bp-hoejt-bryst.svg: 9.5 %",
+    "dl-hofte-foerst.svg: 10.4 %",
+    "dl-stang-frem.svg: 14.2 %"
+   ]
+  },
+  {
+   "hvad": "8 fejlstillinger x 3 bredder i sitets kopi: Ligner, hver miniature hentet fra miniaturer/, inden for boksen, link til den hele figur 200, 0 vandret rul, 0 JS-fejl",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "baenkens to miniaturer staar side om side (samme top) paa 360, 390 og 1280; bredde i CSS-px",
+   "ok": true,
+   "data": [
+    {
+     "b": 360,
+     "imgs": [
+      "bp-hoejt-bryst.svg 147x116 @31,3402",
+      "bp-albue-ud.svg 147x116 @185,3402"
+     ]
+    },
+    {
+     "b": 390,
+     "imgs": [
+      "bp-hoejt-bryst.svg 150x118 @31,3394",
+      "bp-albue-ud.svg 150x118 @187,3394"
+     ]
+    },
+    {
+     "b": 1280,
+     "imgs": [
+      "bp-hoejt-bryst.svg 150x118 @121,2207",
+      "bp-albue-ud.svg 150x118 @277,2207"
+     ]
+    }
+   ]
+  },
+  {
+   "hvad": "kopieres kun index.html og maal-billede.js (uden miniaturer/), er alle miniaturer brudte: kun alt-teksten staar",
+   "ok": true,
+   "data": [
+    {
+     "id": "sq-bund-kun-knae",
+     "brudt": 1,
+     "alt": "Fejlfiguren kun knæene, modellens udførelse svagt bagved"
+    },
+    {
+     "id": "sq-bund-hofte-tilbage",
+     "brudt": 1,
+     "alt": "Fejlfiguren hoften skudt for langt tilbage, modellens udførelse svagt bagved"
+    },
+    {
+     "id": "sq-midt-kun-knae",
+     "brudt": 1,
+     "alt": "Fejlfiguren kun knæene, modellens udførelse svagt bagved"
+    },
+    {
+     "id": "sq-midt-hofte-tilbage",
+     "brudt": 1,
+     "alt": "Fejlfiguren hoften skudt for langt tilbage, modellens udførelse svagt bagved"
+    },
+    {
+     "id": "dl-hofte-foerst",
+     "brudt": 1,
+     "alt": "Fejlfiguren hoften stiger først, modellens udførelse svagt bagved"
+    },
+    {
+     "id": "dl-stang-frem",
+     "brudt": 1,
+     "alt": "Fejlfiguren stangen glider frem, modellens udførelse svagt bagved"
+    },
+    {
+     "id": "sumo-stang-frem",
+     "brudt": 1,
+     "alt": "Fejlfiguren stangen glider frem, modellens udførelse svagt bagved"
+    },
+    {
+     "id": "bp-hoejt-bryst",
+     "brudt": 2,
+     "alt": "Fejlfiguren stangen for højt, modellens udførelse svagt bagved"
+    }
+   ]
+  },
+  {
+   "hvad": "BA1 lukket: foerste saetning har figurernes tal (22,1 / 25,1 / 24,1 cm fra skulderleddet) og de to skridt regnet af de viste tal (3,0 og 1,0), ikke \"laengere mod foedderne\" hele vejen",
+   "ok": true,
+   "data": {
+    "s1": "Stangen rører brystets højeste punkt i alle tre. Med mere bue ligger stangen højere over bænken (25,2, 29,0 og 32,9 cm), men ikke hele vejen længere mod fødderne: målt fra skulderleddet rører stangen 22,1, 25,1 og 24,1 cm mod fødderne, altså 3,0 cm længere mod fødderne fra lille til middel og 1,0 cm nærmere halsen fra middel til stor.",
+    "ord": 59
+   }
+  },
+  {
+   "hvad": "M2 (fund, DA7-slags): naeste saetning paa figursiden regner forskellene af urundede tal og passer ikke med figurernes viste tal",
+   "ok": true,
+   "data": {
+    "siger": {
+     "bue": {
+      "vej": 10.5,
+      "msk": 1.7,
+      "fod": 2
+     },
+     "greb": {
+      "vej": 3.8,
+      "msk": 7.6,
+      "alb": 8.2
+     }
+    },
+    "figurerneGiver": {
+     "bueVej": 10.4,
+     "bueMsk": 1.8,
+     "bueFod": 2,
+     "grebVej": 3.8,
+     "grebMsk": 7.6,
+     "grebAlb": 7
+    }
+   }
+  },
+  {
+   "hvad": "DA7 lukket paa ordre-595: 411 linjer (alle kropstyper og 120 af mine skruede kroppe i alle stillinger): tallet er forskellen af parentesens viste tal, og ordet har samme retning",
+   "ok": true,
+   "data": {
+    "medTal": 318,
+    "fejl": [],
+    "eks": [
+     "Kortere lårben: torsoen hælder 7° mindre ved opstillingen (62° → 55°).",
+     "Længere arme: hoften bøjer 9° mindre ved opstillingen (51° → 60°)."
+    ]
+   }
+  },
+  {
+   "hvad": "DA7: de to saetninger fra 582 siger nu 9 og 7 grader",
+   "ok": true,
+   "data": [
+    "Kortere lårben: torsoen hælder 7° mindre ved opstillingen (62° → 55°).",
+    "Længere arme: hoften bøjer 9° mindre ved opstillingen (51° → 60°)."
+   ]
+  },
+  {
+   "hvad": "DA7-nabo (lav, ikke paa sitet): dist/deadlift-animation.js regner \"Sumo giver X cm kortere\" og \"hælder X° mindre\" af urundede tal; hvor ofte afviger det fra parentesen, og vender fortegnet?",
+   "ok": true,
+   "data": {
+    "n": 108,
+    "afvig": 18,
+    "negativ": 0,
+    "eks": [
+     {
+      "l": "Overkroppen hælder 4.8° mindre ved start i sumo end i konven",
+      "siger": 4.8,
+      "vist": 4.9,
+      "neg": false
+     },
+     {
+      "l": "Overkroppen hælder 4.8° mindre ved start i sumo end i konven",
+      "siger": 4.8,
+      "vist": 4.9,
+      "neg": false
+     },
+     {
+      "l": "Overkroppen hælder 4.8° mindre ved start i sumo end i konven",
+      "siger": 4.8,
+      "vist": 4.9,
+      "neg": false
+     },
+     {
+      "l": "Overkroppen hælder 5.0° mindre ved start i sumo end i konven",
+      "siger": 5,
+      "vist": 4.9,
+      "neg": false
+     }
+    ]
+   }
+  },
+  {
+   "hvad": "i browseren (390, touch, sitets kopi med 595): Dødløft, Lange arme / Korte lårben, Opstilling viser 9 og 7 grader, 0 JS-fejl",
+   "ok": true,
+   "data": {
+    "linje": [
+     {
+      "forud": "lange-arme",
+      "l": "Længere arme: hoften bøjer 9° mindre ved opstillingen (51° → 60°).",
+      "ok": true
+     },
+     {
+      "forud": "korte-laar",
+      "l": "Kortere lårben: torsoen hælder 7° mindre ved opstillingen (62° → 55°).",
+      "ok": true
+     }
+    ],
+    "fejl": []
+   }
+  },
+  {
+   "hvad": "12 klip efter hinanden i samme fane (VFR-MOV, 4K, HEVC, 29,97, VFR-MP4, MOV), 390 og 1280: hvert klip aabner, 3 tryk er 0,1,2,3, fotoet er det viste billede",
+   "ok": true,
+   "data": [
+    "390-luk: 0123/3 0123/3 0123/3 0123/3 0123/3 0123/3 0123/3 0123/3 0123/3 0123/3 0123/3 0123/3",
+    "390-uden-luk: 0123/3 0123/3 0123/3 0123/3 0123/3 0123/3 0123/3 0123/3 0123/3 0123/3 0123/3 0123/3",
+    "1280-luk: 0123/3 0123/3 0123/3 0123/3 0123/3 0123/3 0123/3 0123/3 0123/3 0123/3 0123/3 0123/3"
+   ]
+  },
+  {
+   "hvad": "med Luk videoen: 0 levende video-blob-URL'er og readyState 0 efter hver runde; uden Luk: hoejst 1 (det aabne klip); altid 1 video",
+   "ok": true,
+   "data": [
+    "390-luk: blob 000000000000, rs 000000000000",
+    "390-uden-luk: blob 111111111111, rs 444444444444",
+    "1280-luk: blob 000000000000, rs 000000000000"
+   ]
+  },
+  {
+   "hvad": "DOM-knuder staar stille fra runde 2 til 12, og JS-heapen vokser under 1 MB fra runde 2 til 12",
+   "ok": true,
+   "data": [
+    "390-luk: knuder 254->254, heap 3.27->4.02 MB",
+    "390-uden-luk: knuder 254->254, heap 3.56->3.39 MB",
+    "1280-luk: knuder 254->254, heap 3.62->3.5 MB"
+   ]
+  },
+  {
+   "hvad": "klip efter klip: 0 netkald, 0 JS-fejl",
+   "ok": true,
+   "data": [
+    {
+     "n": "390-luk",
+     "net": 0,
+     "f": []
+    },
+    {
+     "n": "390-uden-luk",
+     "net": 0,
+     "f": []
+    },
+    {
+     "n": "1280-luk",
+     "net": 0,
+     "f": []
+    }
+   ]
+  },
+  {
+   "hvad": "V7: i Chrome 154 er 24 tryk frem i min VFR-MP4 praecis 0-24 med den nye maal-billede; i Chromium 151 springer et tryk stadig (browserens afkoder, som i 582)",
+   "ok": true,
+   "data": {
+    "c154": "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24",
+    "c151": "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,20,21,22,23,24,25"
+   }
+  },
+  {
+   "hvad": "alt, siderne proevede at hente udefra, er afbrudt og var kun skrifttypen",
+   "ok": true,
+   "data": []
+  }
+ ]
+}
