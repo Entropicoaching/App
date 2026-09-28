@@ -1,0 +1,815 @@
+{
+ "grene": {
+  "dl": {
+   "gren": "artikel-doedloeft",
+   "foer": "1793972",
+   "fil": "artikel-doedloeft.html",
+   "top": "1c85d55"
+  },
+  "bp": {
+   "gren": "artikel-baenk",
+   "foer": "fb0cefa",
+   "fil": "artikel-baenk.html",
+   "top": "d33a6f1"
+  }
+ },
+ "loeftmodelMain": "cc4dd7d",
+ "navneTjekket": 3,
+ "da": {
+  "DA1": {
+   "raekkerIArtikel": [],
+   "raekkerPaaMain": 7,
+   "knaeProcent": [],
+   "stangKolonne": false,
+   "billedtekster": [
+    [
+     true,
+     true
+    ],
+    [
+     true,
+     true
+    ],
+    [
+     true,
+     true
+    ]
+   ],
+   "bagud": true,
+   "gamle": [],
+   "svar": true,
+   "knaeOrd": true,
+   "knaeModelRaekke": {
+    "artikel": "0 %",
+    "main": "–"
+   }
+  },
+  "DA2": {
+   "alle": [
+    "10-15 % for højt for det målte træk i kapitel 6 (et skøn).",
+    "10-15 % for høje for det målte træk i kapitel 6 (et skøn), fordi modellens ryg er mere vandret end dér (11° ved gulvet, 8° ved knæet).",
+    "10-15 % for høje for det målte træk i kapitel 6 (et skøn); forholdet mellem stillingerne holder."
+   ],
+   "rigtigt": 0,
+   "kap1": true,
+   "main": true
+  },
+  "DA3": {
+   "gammel": false,
+   "afledt": true,
+   "iForbeholdet": true
+  },
+  "DA4": {
+   "afledt": true,
+   "steder": [
+    "<title>",
+    "og:title",
+    "twitter:title",
+    "\"headline\""
+   ]
+  },
+  "DA5": true,
+  "DA6": {
+   "svar": true,
+   "main": true,
+   "overskriftOmKlippet": true
+  },
+  "DA8": {
+   "html": [],
+   "css": [],
+   "squatStilark": [
+    [
+     "artikel-skabelon.css",
+     1
+    ],
+    [
+     "artikel-opslag.css",
+     19
+    ]
+   ]
+  },
+  "DA12": {
+   "artikel": true
+  }
+ },
+ "ba": {
+  "BA1": {
+   "model": {
+    "lille": "22,1",
+    "middel": "25,1",
+    "stor": "24,1"
+   },
+   "tekst": true,
+   "svar": true,
+   "gamle": [],
+   "bp5": true,
+   "vip": true,
+   "figursidenPaaMain": true
+  },
+  "BA2": {
+   "tekst": true,
+   "gamle": []
+  },
+  "BA4": true,
+  "BA5": true,
+  "BA6": true,
+  "BA7": [],
+  "BA9": true
+ },
+ "ipf": {
+  "hentet": true,
+  "sha256": "cf3aac6c4a231918217a3155a9fc34b766e35d6f8ec2bbf6da8af59ec1b37145",
+  "bytes": 7507335,
+  "saetninger": {
+   "DA12 4.3 pkt. 4": "If the bar settles as the shoulders come back (slightly downward on completion) this should not be reason to disqualify the lift.",
+   "BA6 4.2 pkt. 2": "Foot movement is permissible but must remain flat on the platform. During the set-up on the bench, the athlete is not allowed to place his/her feet on the bench.",
+   "BA6 4.2.1 pkt. 2": "any raising movement of the head, shoulders, or buttocks, from the bench, or lateral movement of hands on the bar.",
+   "BA6 4.2.1 pkt. 6": "or the bar is touching the belt.",
+   "BA6 4.2.1 pkt. 9": "Any contact of the lifter's feet with the bench or its supports. Lifting of the feet is not allowed. Foot movement is permissible but must remain flat on the platform."
+  },
+  "fundet": {
+   "DA12 4.3 pkt. 4": true,
+   "BA6 4.2 pkt. 2": true,
+   "BA6 4.2.1 pkt. 2": true,
+   "BA6 4.2.1 pkt. 6": true,
+   "BA6 4.2.1 pkt. 9": true
+  },
+  "trykteSider": {
+   "4.3 pkt. 4": "25",
+   "4.2 pkt. 2": "22",
+   "4.2.1": "24"
+  },
+  "uddragLinjer": 40,
+  "uddragIkkeIPdf": []
+ },
+ "laesFund": {
+  "gamleKladde": [],
+  "nyeRettelser": [],
+  "forslagDl2": true,
+  "forslagBp7": true
+ },
+ "ordret": {
+  "dl": {
+   "artikel": 417,
+   "iLaes": 421,
+   "manglerILaes": [],
+   "kunILaes": [
+    "Dødløftartiklen, som den ser ud nu",
+    "Artiklen på grenen artikel-doedloeft (1c85d55), uden ændringer. De gule, stiplede felter er dine spørgsmål og de afledte markeringer; læseren ser dem ikke. De indlejrede figurer i kapitel 4 er stillbilleder, fordi de kræver sitet for at virke. Foldene \"Gå dybere\" kan åbnes. Skrifterne er telefonens egne, ikke sitets.",
+    "Læsesiden: figuren kan indstilles på sitet. Her står den, som den åbner.",
+    "Læsesiden: figuren kan indstilles på sitet. Her står den, som den åbner."
+   ]
+  },
+  "bp": {
+   "artikel": 326,
+   "iLaes": 330,
+   "manglerILaes": [],
+   "kunILaes": [
+    "Bænkartiklen, som den ser ud nu",
+    "Artiklen på grenen artikel-baenk (d33a6f1), uden ændringer. Samme forbehold som dødløftartiklen.",
+    "Læsesiden: figuren kan indstilles på sitet. Her står den, som den åbner.",
+    "Læsesiden: figuren kan indstilles på sitet. Her står den, som den åbner."
+   ]
+  }
+ },
+ "status": {
+  "DA7": "Længere arme: hoften bøjer 8° mindre ved opstillingen (51° → 60°).",
+  "DA9_BA8": "maal-billede paa grenene er ikke main (se tjekket nedenfor)",
+  "DA11_BA10": {
+   "tabeller390": 13,
+   "bredereEndBoksen": 13,
+   "kap7dl": [
+    [
+     480,
+     318
+    ],
+    [
+     480,
+     318
+    ]
+   ]
+  },
+  "linjerAendret575": {
+   "dl": [
+    20,
+    19
+   ],
+   "bp": [
+    14,
+    13
+   ]
+  },
+  "maalBilledeAfviger": [
+   "index.html",
+   "maal-billede.js"
+  ]
+ },
+ "tjek": [
+  {
+   "hvad": "grenene: artikel-doedloeft 1c85d55 (efter 1793972) og artikel-baenk d33a6f1 (efter fb0cefa); hver roerer kun sin artikel og det faelles stilark",
+   "ok": true,
+   "data": {
+    "dl": [
+     "artikel-doedloeft.html",
+     "assets/artikel-doedloeft.css"
+    ],
+    "bp": [
+     "artikel-baenk.html",
+     "assets/artikel-doedloeft.css"
+    ]
+   }
+  },
+  {
+   "hvad": "assets/artikel-doedloeft.css er samme blob paa begge grene (ingen konflikt ved merge)",
+   "ok": true,
+   "data": [
+    "89383080",
+    "89383080"
+   ]
+  },
+  {
+   "hvad": "loeftmodellens main cc4dd7d indeholder 37c9a27, og fejlsiden, figurerne, tre-loeft, min krop, litteraturen og baenkmodellen er uaendrede siden",
+   "ok": true
+  },
+  {
+   "hvad": "DA1: kap. 7 har fejlsidens 7 tabelraekker, knaeet i ord, ingen knae-procent, ingen \"Stang fra midtfod\"-kolonne",
+   "ok": true,
+   "data": {
+    "raekkerIArtikel": [],
+    "raekkerPaaMain": 7,
+    "knaeProcent": [],
+    "stangKolonne": false,
+    "billedtekster": [
+     [
+      true,
+      true
+     ],
+     [
+      true,
+      true
+     ],
+     [
+      true,
+      true
+     ]
+    ],
+    "bagud": true,
+    "gamle": [],
+    "svar": true,
+    "knaeOrd": true,
+    "knaeModelRaekke": {
+     "artikel": "0 %",
+     "main": "–"
+    }
+   }
+  },
+  {
+   "hvad": "DA1: de tre billedtekst-saetninger og saetningen om bagud (+24 % / +57 %) staar ordret paa fejlsiden paa main",
+   "ok": true,
+   "data": [
+    [
+     true,
+     true
+    ],
+    [
+     true,
+     true
+    ],
+    [
+     true,
+     true
+    ]
+   ]
+  },
+  {
+   "hvad": "DA1: svar-linjerne siger det samme som fejlsiden, og intet af 476-teksten er tilbage",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "DA2: \"10-15 %\" staar 3 steder, alle \"for det maalte traek i kapitel 6 (et skoen)\", og \"et rigtigt loeft\" er vaek",
+   "ok": true,
+   "data": [
+    "10-15 % for højt for det målte træk i kapitel 6 (et skøn).",
+    "10-15 % for høje for det målte træk i kapitel 6 (et skøn), fordi modellens ryg er mere vandret end dér (11° ved gulvet, 8° ved knæet).",
+    "10-15 % for høje for det målte træk i kapitel 6 (et skøn); forholdet mellem stillingerne holder."
+   ]
+  },
+  {
+   "hvad": "DA3: forbeholdets bisaetning er taget ud og staar som dl-2 afledt i forbeholdet",
+   "ok": true,
+   "data": {
+    "gammel": false,
+    "afledt": true,
+    "iForbeholdet": true
+   }
+  },
+  {
+   "hvad": "DA4: titlen er markeret dl-1 afledt; \"individuel variation i traekket\" staar i title, og:, twitter: og JSON-LD",
+   "ok": true,
+   "data": {
+    "afledt": true,
+    "steder": [
+     "<title>",
+     "og:title",
+     "twitter:title",
+     "\"headline\""
+    ]
+   }
+  },
+  {
+   "hvad": "DA5: lockout-saetningen er betinget",
+   "ok": true
+  },
+  {
+   "hvad": "DA6: svar-linjen siger \"ca. 4 cm\" (main 4,2); \"3-4 cm\" i overskriften og dl-2 er klippets 3,8 cm, ikke modellens",
+   "ok": true,
+   "data": {
+    "svar": true,
+    "main": true,
+    "overskriftOmKlippet": true
+   }
+  },
+  {
+   "hvad": "DA8: ingen interne navne eller ordrenumre i artiklens html eller artikel-doedloeft.css (squat-stilarkene har dem stadig)",
+   "ok": true,
+   "data": {
+    "html": [],
+    "css": [],
+    "squatStilark": [
+     [
+      "artikel-skabelon.css",
+      1
+     ],
+     [
+      "artikel-opslag.css",
+      19
+     ]
+    ]
+   }
+  },
+  {
+   "hvad": "BA1: modellen har stangen 22,1 / 25,1 / 24,1 cm mod foedderne; teksten siger +3 og -1 cm, svar-linjen og bp-5 er rettet",
+   "ok": true,
+   "data": {
+    "model": {
+     "lille": "22,1",
+     "middel": "25,1",
+     "stor": "24,1"
+    },
+    "tekst": true,
+    "svar": true,
+    "gamle": [],
+    "bp5": true,
+    "vip": true,
+    "figursidenPaaMain": true
+   }
+  },
+  {
+   "hvad": "BA2: albuens 9 cm er \"et modelvalg og et skoen, ikke en maaling\", og vurderingen fra 457 er vaek",
+   "ok": true,
+   "data": {
+    "tekst": true,
+    "gamle": []
+   }
+  },
+  {
+   "hvad": "BA4, BA5, BA9: \"I modellen lander\", titlen bp-1 afledt, \"grebet kan flytte sig med albuen\"",
+   "ok": true
+  },
+  {
+   "hvad": "BA7: ingen interne navne eller ordrenumre i baenkartiklens html",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "DA12 og BA6: saetningerne staar ordret i regelbogens PDF (v3), og artiklernes danske gengivelse og kildelinjer passer",
+   "ok": true,
+   "data": {
+    "fundet": {
+     "DA12 4.3 pkt. 4": true,
+     "BA6 4.2 pkt. 2": true,
+     "BA6 4.2.1 pkt. 2": true,
+     "BA6 4.2.1 pkt. 6": true,
+     "BA6 4.2.1 pkt. 9": true
+    },
+    "sider": {
+     "4.3 pkt. 4": "25",
+     "4.2 pkt. 2": "22",
+     "4.2.1": "24"
+    }
+   }
+  },
+  {
+   "hvad": "Setus uddrag: alle 40 linjer staar ordret i PDF'en",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "laesesiden: de 18 \"Staar i teksten\" er ordret artiklernes 10 + 8 [MARC], med nummeret",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "laesesiden: ingen tekst fra kladden, alle 575-rettelser er med, forslagene til doedloeft 2 og baenk 7 er opdateret",
+   "ok": true,
+   "data": {
+    "gamleKladde": [],
+    "nyeRettelser": [],
+    "forslagDl2": true,
+    "forslagBp7": true
+   }
+  },
+  {
+   "hvad": "laesesiden: alle 417 + 326 tekstblokke i artiklerne staar ordret i laesesidens to artikler; ud over dem kun laesesidens egne noter (grenens hash, stillbillederne)",
+   "ok": true,
+   "data": {
+    "dl": [
+     [],
+     [
+      "Dødløftartiklen, som den ser ud nu",
+      "Artiklen på grenen artikel-doedloeft (1c85d55), uden ændringer. De gule, stiplede felter er dine spørgsmål og de afledte markeringer; læseren ser dem ikke. De indlejrede figurer i kapitel 4 er stillbilleder, fordi de kræver sitet for at virke. Foldene \"Gå dybere\" kan åbnes. Skrifterne er telefonens egne, ikke sitets.",
+      "Læsesiden: figuren kan indstilles på sitet. Her står den, som den åbner.",
+      "Læsesiden: figuren kan indstilles på sitet. Her står den, som den åbner."
+     ]
+    ],
+    "bp": [
+     [],
+     [
+      "Bænkartiklen, som den ser ud nu",
+      "Artiklen på grenen artikel-baenk (d33a6f1), uden ændringer. Samme forbehold som dødløftartiklen.",
+      "Læsesiden: figuren kan indstilles på sitet. Her står den, som den åbner.",
+      "Læsesiden: figuren kan indstilles på sitet. Her står den, som den åbner."
+     ]
+    ]
+   }
+  },
+  {
+   "hvad": "DA7 (Yantra): tre-loefts linje paa main siger stadig \"8° mindre (51° → 60°)\"",
+   "ok": true,
+   "data": "Længere arme: hoften bøjer 8° mindre ved opstillingen (51° → 60°)."
+  },
+  {
+   "hvad": "dl 390: ingen vandret rul, 0 JS-fejl, 0 404, 0 tankestreger, 0 synlige [MARC, 0 atletnavne, 0 interne navne, 17 billeder hele",
+   "ok": true,
+   "data": {
+    "f": [],
+    "h": [],
+    "t": 0,
+    "m": 0
+   }
+  },
+  {
+   "hvad": "dl 390: kun skrifttypen forsoeger at gaa ud af huset; uden skjul-marc 14 synlige, stadig uden vandret rul",
+   "ok": true,
+   "data": [
+    "fonts.googleapis.com"
+   ]
+  },
+  {
+   "hvad": "bp 390: ingen vandret rul, 0 JS-fejl, 0 404, 0 tankestreger, 0 synlige [MARC, 0 atletnavne, 0 interne navne, 13 billeder hele",
+   "ok": true,
+   "data": {
+    "f": [],
+    "h": [],
+    "t": 0,
+    "m": 0
+   }
+  },
+  {
+   "hvad": "bp 390: kun skrifttypen forsoeger at gaa ud af huset; uden skjul-marc 11 synlige, stadig uden vandret rul",
+   "ok": true,
+   "data": [
+    "fonts.googleapis.com"
+   ]
+  },
+  {
+   "hvad": "dl 1280: ingen vandret rul, 0 JS-fejl, 0 404, 0 tankestreger, 0 synlige [MARC, 0 atletnavne, 0 interne navne, 17 billeder hele",
+   "ok": true,
+   "data": {
+    "f": [],
+    "h": [],
+    "t": 0,
+    "m": 0
+   }
+  },
+  {
+   "hvad": "dl 1280: kun skrifttypen forsoeger at gaa ud af huset; uden skjul-marc 14 synlige, stadig uden vandret rul",
+   "ok": true,
+   "data": [
+    "fonts.googleapis.com"
+   ]
+  },
+  {
+   "hvad": "bp 1280: ingen vandret rul, 0 JS-fejl, 0 404, 0 tankestreger, 0 synlige [MARC, 0 atletnavne, 0 interne navne, 13 billeder hele",
+   "ok": true,
+   "data": {
+    "f": [],
+    "h": [],
+    "t": 0,
+    "m": 0
+   }
+  },
+  {
+   "hvad": "bp 1280: kun skrifttypen forsoeger at gaa ud af huset; uden skjul-marc 11 synlige, stadig uden vandret rul",
+   "ok": true,
+   "data": [
+    "fonts.googleapis.com"
+   ]
+  },
+  {
+   "hvad": "laesesiden 390: ingen vandret rul, 0 JS-fejl, 0 tankestreger, 0 atletnavne, intet ud af huset ud over skrifter",
+   "ok": true,
+   "data": {
+    "artikel": "laes",
+    "bredde": 390,
+    "sidefejl": [],
+    "eksterne": [],
+    "vandret": true,
+    "tankestreger": 0,
+    "atletnavne": 0
+   }
+  },
+  {
+   "hvad": "laesesiden 1280: ingen vandret rul, 0 JS-fejl, 0 tankestreger, 0 atletnavne, intet ud af huset ud over skrifter",
+   "ok": true,
+   "data": {
+    "artikel": "laes",
+    "bredde": 1280,
+    "sidefejl": [],
+    "eksterne": [],
+    "vandret": true,
+    "tankestreger": 0,
+    "atletnavne": 0
+   }
+  },
+  {
+   "hvad": "laesetid: doedloeft 2348 ord = 18.1 min (siden 18), baenk 2268 ord = 17.4 min (siden 17)",
+   "ok": true
+  },
+  {
+   "hvad": "DA9/BA8: Maal dit billede paa grenene er stadig ikke main (index.html og maal-billede.js)",
+   "ok": true,
+   "data": [
+    "index.html",
+    "maal-billede.js"
+   ]
+  },
+  {
+   "hvad": "DA11/BA10: 13 af 13 tabeller er stadig bredere end boksen paa 390 (de ruller selv)",
+   "ok": true,
+   "data": {
+    "tabeller390": 13,
+    "bredereEndBoksen": 13,
+    "kap7dl": [
+     [
+      480,
+      318
+     ],
+     [
+      480,
+      318
+     ]
+    ]
+   }
+  }
+ ],
+ "sider": [
+  {
+   "artikel": "dl",
+   "bredde": 390,
+   "sidefejl": [],
+   "http404": [],
+   "eksterne": [
+    "fonts.googleapis.com"
+   ],
+   "vandret": true,
+   "tankestreger": 0,
+   "synligMarc": 0,
+   "atletnavne": 0,
+   "interneNavne": 0,
+   "billeder": 0,
+   "antalBilleder": 17,
+   "tabeller": [
+    {
+     "kap": "kap-momentarme",
+     "bred": 480,
+     "boks": 347
+    },
+    {
+     "kap": "kap-virkeligheden",
+     "bred": 480,
+     "boks": 318
+    },
+    {
+     "kap": "kap-virkeligheden",
+     "bred": 480,
+     "boks": 318
+    },
+    {
+     "kap": "kap-virkeligheden",
+     "bred": 480,
+     "boks": 318
+    },
+    {
+     "kap": "kap-virkeligheden",
+     "bred": 480,
+     "boks": 318
+    },
+    {
+     "kap": "kap-virkeligheden",
+     "bred": 480,
+     "boks": 318
+    },
+    {
+     "kap": "kap-fejlbilleder",
+     "bred": 480,
+     "boks": 318
+    },
+    {
+     "kap": "kap-fejlbilleder",
+     "bred": 480,
+     "boks": 318
+    }
+   ],
+   "marcSynlige": 14,
+   "vandretMedMarc": true,
+   "ord": 2348,
+   "laesetidSiden": "18"
+  },
+  {
+   "artikel": "bp",
+   "bredde": 390,
+   "sidefejl": [],
+   "http404": [],
+   "eksterne": [
+    "fonts.googleapis.com"
+   ],
+   "vandret": true,
+   "tankestreger": 0,
+   "synligMarc": 0,
+   "atletnavne": 0,
+   "interneNavne": 0,
+   "billeder": 0,
+   "antalBilleder": 13,
+   "tabeller": [
+    {
+     "kap": "kap-momentarme",
+     "bred": 480,
+     "boks": 347
+    },
+    {
+     "kap": "kap-variant",
+     "bred": 480,
+     "boks": 347
+    },
+    {
+     "kap": "kap-variant",
+     "bred": 480,
+     "boks": 318
+    },
+    {
+     "kap": "kap-fejlbilleder",
+     "bred": 480,
+     "boks": 318
+    },
+    {
+     "kap": "kap-fejlbilleder",
+     "bred": 480,
+     "boks": 318
+    }
+   ],
+   "marcSynlige": 11,
+   "vandretMedMarc": true,
+   "ord": 2268,
+   "laesetidSiden": "17"
+  },
+  {
+   "artikel": "laes",
+   "bredde": 390,
+   "sidefejl": [],
+   "eksterne": [],
+   "vandret": true,
+   "tankestreger": 0,
+   "atletnavne": 0
+  },
+  {
+   "artikel": "dl",
+   "bredde": 1280,
+   "sidefejl": [],
+   "http404": [],
+   "eksterne": [
+    "fonts.googleapis.com"
+   ],
+   "vandret": true,
+   "tankestreger": 0,
+   "synligMarc": 0,
+   "atletnavne": 0,
+   "interneNavne": 0,
+   "billeder": 0,
+   "antalBilleder": 17,
+   "tabeller": [
+    {
+     "kap": "kap-momentarme",
+     "bred": 597,
+     "boks": 653
+    },
+    {
+     "kap": "kap-virkeligheden",
+     "bred": 563,
+     "boks": 619
+    },
+    {
+     "kap": "kap-virkeligheden",
+     "bred": 563,
+     "boks": 619
+    },
+    {
+     "kap": "kap-virkeligheden",
+     "bred": 563,
+     "boks": 619
+    },
+    {
+     "kap": "kap-virkeligheden",
+     "bred": 563,
+     "boks": 619
+    },
+    {
+     "kap": "kap-virkeligheden",
+     "bred": 563,
+     "boks": 619
+    },
+    {
+     "kap": "kap-fejlbilleder",
+     "bred": 563,
+     "boks": 619
+    },
+    {
+     "kap": "kap-fejlbilleder",
+     "bred": 563,
+     "boks": 619
+    }
+   ],
+   "marcSynlige": 14,
+   "vandretMedMarc": true,
+   "ord": 2348,
+   "laesetidSiden": "18"
+  },
+  {
+   "artikel": "bp",
+   "bredde": 1280,
+   "sidefejl": [],
+   "http404": [],
+   "eksterne": [
+    "fonts.googleapis.com"
+   ],
+   "vandret": true,
+   "tankestreger": 0,
+   "synligMarc": 0,
+   "atletnavne": 0,
+   "interneNavne": 0,
+   "billeder": 0,
+   "antalBilleder": 13,
+   "tabeller": [
+    {
+     "kap": "kap-momentarme",
+     "bred": 597,
+     "boks": 653
+    },
+    {
+     "kap": "kap-variant",
+     "bred": 597,
+     "boks": 653
+    },
+    {
+     "kap": "kap-variant",
+     "bred": 563,
+     "boks": 619
+    },
+    {
+     "kap": "kap-fejlbilleder",
+     "bred": 563,
+     "boks": 619
+    },
+    {
+     "kap": "kap-fejlbilleder",
+     "bred": 563,
+     "boks": 619
+    }
+   ],
+   "marcSynlige": 11,
+   "vandretMedMarc": true,
+   "ord": 2268,
+   "laesetidSiden": "17"
+  },
+  {
+   "artikel": "laes",
+   "bredde": 1280,
+   "sidefejl": [],
+   "eksterne": [],
+   "vandret": true,
+   "tankestreger": 0,
+   "atletnavne": 0
+  }
+ ]
+}
