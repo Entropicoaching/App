@@ -1,0 +1,892 @@
+{
+ "gren": "artikel-doedloeft",
+ "top": "1793972",
+ "loeftmodelMain": "ede9fd0",
+ "navneTjekket": 3,
+ "fund": {
+  "DA1": {
+   "knaeProcentIArtikel": [
+    "−92 %",
+    "+102 %",
+    "+132 %",
+    "+162 %"
+   ],
+   "knaeProcentPaaMain": [],
+   "mainSigerIOrd": true,
+   "ofteIArtikel": true,
+   "mainSiger": true,
+   "bagudPaaMain": true,
+   "bagudIArtikel": false,
+   "rettetI": "ae48739"
+  },
+  "DA2": {
+   "artikel": [
+    "for et rigtigt løft af samme vægt",
+    "for et rigtigt løft",
+    "Modellen hælder torsoen mere end et målt træk"
+   ],
+   "distSiger": true,
+   "escamillaTorsoLO": true
+  },
+  "DA3": {
+   "forbehold": true,
+   "dl2Mulighed": true,
+   "forbeholdMarc": false
+  },
+  "DA4": {
+   "titel": true,
+   "markeret": false,
+   "dl1c": true
+  },
+  "DA5": {
+   "saetning": true,
+   "klippetsLockout": true
+  },
+  "DA6": {
+   "saetning": true,
+   "distKraever": true,
+   "treCm": true
+  },
+  "DA8": {
+   "kommentarNavne": [
+    "ORDRE 477",
+    "Ordre 429",
+    "Ordre 462",
+    "Ordre 468",
+    "Bhishak",
+    "Ordre 457",
+    "ORDRE 482",
+    "Ordre 476",
+    "Yantra",
+    "ORDRE 561"
+   ],
+   "jsKommentar": true
+  },
+  "DA9": {
+   "maalBilledeAfvigerFraMain": [
+    "index.html",
+    "maal-billede.js"
+   ]
+  },
+  "DA10": {
+   "laesesidenErKladden": true,
+   "gamleTal": true,
+   "artiklenNu": true
+  }
+ },
+ "tjek": [
+  {
+   "hvad": "21 tal-saetninger staar i artiklen og i loeftmodellens main",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "17 figurer = dist paa main, kun navn, title/desc og lockoutmomentet skiftet",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "tre-loeft og min-krop paa grenen = dist paa main",
+   "ok": true,
+   "data": {
+    "tre-loeft": [],
+    "min-krop": [],
+    "maal-billede": [
+     "index.html",
+     "maal-billede.js"
+    ]
+   }
+  },
+  {
+   "hvad": "12 [MARC]-steder: dl-1 til dl-10 een gang hver og 2 afledte",
+   "ok": true,
+   "data": [
+    "dl-1",
+    "dl-1 dl-3 afledt",
+    "dl-4",
+    "dl-6",
+    "dl-10",
+    "dl-8",
+    "dl-7",
+    "dl-2",
+    "dl-9",
+    "dl-5",
+    "dl-3",
+    "dl-4 dl-5 dl-7 dl-8 afledt"
+   ]
+  },
+  {
+   "hvad": "de 10 spoergsmaal staar ordret som \"Staar i teksten\" paa laesesiden",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "DA1: kap. 7 har knaeets procenter og \"ofte\", som main fjernede i 493",
+   "ok": true,
+   "data": {
+    "knaeProcentIArtikel": [
+     "−92 %",
+     "+102 %",
+     "+132 %",
+     "+162 %"
+    ],
+    "knaeProcentPaaMain": [],
+    "mainSigerIOrd": true,
+    "ofteIArtikel": true,
+    "mainSiger": true,
+    "bagudPaaMain": true,
+    "bagudIArtikel": false,
+    "rettetI": "ae48739"
+   }
+  },
+  {
+   "hvad": "DA2: \"for et rigtigt loeft\" mod dist \"for et loeft som Marcs (et skoen)\" og Escamilla 79 grader",
+   "ok": true,
+   "data": {
+    "artikel": [
+     "for et rigtigt løft af samme vægt",
+     "for et rigtigt løft",
+     "Modellen hælder torsoen mere end et målt træk"
+    ],
+    "distSiger": true,
+    "escamillaTorsoLO": true
+   }
+  },
+  {
+   "hvad": "DA3: forbeholdet svarer paa dl-2 paa forhaand",
+   "ok": true,
+   "data": {
+    "forbehold": true,
+    "dl2Mulighed": true,
+    "forbeholdMarc": false
+   }
+  },
+  {
+   "hvad": "DA4: titlen \"individuel variation\" er umaerket",
+   "ok": true,
+   "data": {
+    "titel": true,
+    "markeret": false,
+    "dl1c": true
+   }
+  },
+  {
+   "hvad": "DA5: lockout-saetningen om at laene sig tilbage, og klippets lockout",
+   "ok": true,
+   "data": {
+    "saetning": true,
+    "klippetsLockout": true
+   }
+  },
+  {
+   "hvad": "DA6: \"3-4 cm\" mod distens 4,2 cm",
+   "ok": true,
+   "data": {
+    "saetning": true,
+    "distKraever": true,
+    "treCm": true
+   }
+  },
+  {
+   "hvad": "DA8: interne navne i sidens kildekode (kommentarer)",
+   "ok": true,
+   "data": {
+    "kommentarNavne": [
+     "ORDRE 477",
+     "Ordre 429",
+     "Ordre 462",
+     "Ordre 468",
+     "Bhishak",
+     "Ordre 457",
+     "ORDRE 482",
+     "Ordre 476",
+     "Yantra",
+     "ORDRE 561"
+    ],
+    "jsKommentar": true
+   }
+  },
+  {
+   "hvad": "DA9: Maal dit billede paa grenen er ikke main",
+   "ok": true,
+   "data": {
+    "maalBilledeAfvigerFraMain": [
+     "index.html",
+     "maal-billede.js"
+    ]
+   }
+  },
+  {
+   "hvad": "DA10: laesesiden viser kladden fra foer 561",
+   "ok": true,
+   "data": {
+    "laesesidenErKladden": true,
+    "gamleTal": true,
+    "artiklenNu": true
+   }
+  },
+  {
+   "hvad": "laesetid: 2346 ord / 130 = 18.0 min, siden siger 18",
+   "ok": true,
+   "data": {
+    "ord": 2346
+   }
+  },
+  {
+   "hvad": "kap. 4 = tre-loeft paa main: 67,8/61,5, 59,6/51,4 og vej 6,0 cm kortere, 91,0/99,9",
+   "ok": true,
+   "data": {
+    "gennemsnit": {
+     "knae": "99,9",
+     "hofte": "51,4",
+     "torso": "61,5",
+     "vej": "55,0",
+     "linje": ""
+    },
+    "lange-laar": {
+     "knae": "104,3",
+     "hofte": "49,6",
+     "torso": "67,8",
+     "vej": "59,3",
+     "linje": "Længere lårben: torsoen hælder 6° mere ved opstillingen (62° → 68°)."
+    },
+    "lange-arme": {
+     "knae": "104,6",
+     "hofte": "59,6",
+     "torso": "58,1",
+     "vej": "49,0",
+     "linje": "Længere arme: hoften bøjer 8° mindre ved opstillingen (51° → 60°)."
+    },
+    "lang-torso": {
+     "knae": "91,0",
+     "hofte": "47,2",
+     "torso": "56,8",
+     "vej": "60,1",
+     "linje": "Længere torso: knæet bøjer 9° mere ved opstillingen (100° → 91°)."
+    }
+   }
+  },
+  {
+   "hvad": "DA7: tre-loefts egen linje siger 8 grader, men viser 51 -> 60",
+   "ok": true,
+   "data": "Længere arme: hoften bøjer 8° mindre ved opstillingen (51° → 60°)."
+  },
+  {
+   "hvad": "390: ingen vandret rul, 0 JS-fejl, 0 404, 0 tankestreger, 0 synlige [MARC, 0 atletnavne, 0 interne navne",
+   "ok": true,
+   "data": {
+    "e": [
+     "fonts.googleapis.com"
+    ],
+    "f": [],
+    "h": [],
+    "t": 0,
+    "m": 0
+   }
+  },
+  {
+   "hvad": "390: kun skrifttypen forsoeger at gaa ud af huset",
+   "ok": true,
+   "data": [
+    "fonts.googleapis.com"
+   ]
+  },
+  {
+   "hvad": "390: 17 billeder vist, 0 brudte, ingen bredere end skaermen",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "390: begge rammer har indhold og hoejde",
+   "ok": true,
+   "data": [
+    [
+     "tre-loeft-doedloeft",
+     810
+    ],
+    [
+     "min-krop-kort",
+     1011
+    ]
+   ]
+  },
+  {
+   "hvad": "390: 8 tabeller; bredere end boksen: 8, og de ruller selv (ikke skaaret af)",
+   "ok": true,
+   "data": [
+    {
+     "kap": "kap-momentarme",
+     "kolonner": 5,
+     "bred": 480,
+     "boks": 347,
+     "overflowX": "auto",
+     "rullerSelv": true
+    },
+    {
+     "kap": "kap-virkeligheden",
+     "kolonner": 5,
+     "bred": 480,
+     "boks": 318,
+     "overflowX": "auto",
+     "rullerSelv": true
+    },
+    {
+     "kap": "kap-virkeligheden",
+     "kolonner": 5,
+     "bred": 480,
+     "boks": 318,
+     "overflowX": "auto",
+     "rullerSelv": true
+    },
+    {
+     "kap": "kap-virkeligheden",
+     "kolonner": 5,
+     "bred": 480,
+     "boks": 318,
+     "overflowX": "auto",
+     "rullerSelv": true
+    },
+    {
+     "kap": "kap-virkeligheden",
+     "kolonner": 5,
+     "bred": 480,
+     "boks": 318,
+     "overflowX": "auto",
+     "rullerSelv": true
+    },
+    {
+     "kap": "kap-virkeligheden",
+     "kolonner": 5,
+     "bred": 480,
+     "boks": 318,
+     "overflowX": "auto",
+     "rullerSelv": true
+    },
+    {
+     "kap": "kap-fejlbilleder",
+     "kolonner": 6,
+     "bred": 480,
+     "boks": 318,
+     "overflowX": "auto",
+     "rullerSelv": true
+    },
+    {
+     "kap": "kap-fejlbilleder",
+     "kolonner": 7,
+     "bred": 480,
+     "boks": 318,
+     "overflowX": "auto",
+     "rullerSelv": true
+    }
+   ]
+  },
+  {
+   "hvad": "390: uden skjul-marc ses alle 12, stadig uden vandret rul",
+   "ok": true
+  },
+  {
+   "hvad": "1280: ingen vandret rul, 0 JS-fejl, 0 404, 0 tankestreger, 0 synlige [MARC, 0 atletnavne, 0 interne navne",
+   "ok": true,
+   "data": {
+    "e": [
+     "fonts.googleapis.com"
+    ],
+    "f": [],
+    "h": [],
+    "t": 0,
+    "m": 0
+   }
+  },
+  {
+   "hvad": "1280: kun skrifttypen forsoeger at gaa ud af huset",
+   "ok": true,
+   "data": [
+    "fonts.googleapis.com"
+   ]
+  },
+  {
+   "hvad": "1280: 17 billeder vist, 0 brudte, ingen bredere end skaermen",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "1280: begge rammer har indhold og hoejde",
+   "ok": true,
+   "data": [
+    [
+     "tre-loeft-doedloeft",
+     857
+    ],
+    [
+     "min-krop-kort",
+     1076
+    ]
+   ]
+  },
+  {
+   "hvad": "1280: 8 tabeller; bredere end boksen: 0, og de ruller selv (ikke skaaret af)",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "1280: uden skjul-marc ses alle 12, stadig uden vandret rul",
+   "ok": true
+  }
+ ],
+ "sider": [
+  {
+   "bredde": 390,
+   "sidefejl": [],
+   "http404": [],
+   "eksterne": [
+    "fonts.googleapis.com"
+   ],
+   "vandret": true,
+   "skaerme": 38.3,
+   "tankestreger": 0,
+   "synligMarc": 0,
+   "marcSkjult": true,
+   "atletnavne": 0,
+   "interneNavne": 0,
+   "billeder": [
+    {
+     "src": "assets/doedloeft-figurer/dl-konventionel-opstilling.svg",
+     "ok": true,
+     "bred": 324
+    },
+    {
+     "src": "assets/doedloeft-figurer/dl-konventionel-knaehoejde.svg",
+     "ok": true,
+     "bred": 324
+    },
+    {
+     "src": "assets/doedloeft-figurer/dl-konventionel-lockout.svg",
+     "ok": true,
+     "bred": 324
+    },
+    {
+     "src": "assets/doedloeft-figurer/dl-sumo-opstilling.svg",
+     "ok": true,
+     "bred": 316
+    },
+    {
+     "src": "assets/doedloeft-figurer/dl-sumo-knaehoejde.svg",
+     "ok": true,
+     "bred": 316
+    },
+    {
+     "src": "assets/doedloeft-figurer/dl-sumo-lockout.svg",
+     "ok": true,
+     "bred": 316
+    },
+    {
+     "src": "assets/doedloeft-figurer/dl-klip-start.svg",
+     "ok": true,
+     "bred": 316
+    },
+    {
+     "src": "assets/doedloeft-figurer/dl-klip-foer-knae.svg",
+     "ok": true,
+     "bred": 316
+    },
+    {
+     "src": "assets/doedloeft-figurer/dl-klip-knaehoejde.svg",
+     "ok": true,
+     "bred": 316
+    },
+    {
+     "src": "assets/doedloeft-figurer/dl-klip-efter-knae.svg",
+     "ok": true,
+     "bred": 316
+    },
+    {
+     "src": "assets/doedloeft-figurer/dl-klip-lockout.svg",
+     "ok": true,
+     "bred": 316
+    },
+    {
+     "src": "assets/doedloeft-figurer/dl-klip-stang-frem-gulv.svg",
+     "ok": true,
+     "bred": 316
+    },
+    {
+     "src": "assets/doedloeft-figurer/dl-klip-stang-frem-knae.svg",
+     "ok": true,
+     "bred": 316
+    },
+    {
+     "src": "assets/loeft-fejl/dl-hofte-foerst-model.svg",
+     "ok": true,
+     "bred": 316
+    },
+    {
+     "src": "assets/loeft-fejl/dl-hofte-foerst.svg",
+     "ok": true,
+     "bred": 316
+    },
+    {
+     "src": "assets/loeft-fejl/dl-stang-frem-model.svg",
+     "ok": true,
+     "bred": 316
+    },
+    {
+     "src": "assets/loeft-fejl/dl-stang-frem.svg",
+     "ok": true,
+     "bred": 316
+    }
+   ],
+   "rammer": [
+    {
+     "id": "tre-loeft-doedloeft",
+     "h": 810,
+     "tekst": "Længere arme: hoften bøjer 8° mindre ved opstillingen (51° → 60°). Højde 178 cm Kropsvægt 85 kg Lår 100 % · 43,6 cm Skinneben 100 % · 43,8 cm Torso 100 % · 51,3 cm Arme 110 % · 65,0 cm Stang 270 kg Mo"
+    },
+    {
+     "id": "min-krop-kort",
+     "h": 1011,
+     "tekst": "Højde cm Lår cm Skinneben cm Overkrop cm Overarm cm Underarm cm Kropsvægt kg Tryk på et felt for at se, hvor du måler fra og til. Tag alle mål på samme side af kroppen. Brug gennemsnit ud fra højden G"
+    }
+   ],
+   "tabeller": [
+    {
+     "kap": "kap-momentarme",
+     "kolonner": 5,
+     "bred": 480,
+     "boks": 347,
+     "overflowX": "auto",
+     "rullerSelv": true
+    },
+    {
+     "kap": "kap-virkeligheden",
+     "kolonner": 5,
+     "bred": 480,
+     "boks": 318,
+     "overflowX": "auto",
+     "rullerSelv": true
+    },
+    {
+     "kap": "kap-virkeligheden",
+     "kolonner": 5,
+     "bred": 480,
+     "boks": 318,
+     "overflowX": "auto",
+     "rullerSelv": true
+    },
+    {
+     "kap": "kap-virkeligheden",
+     "kolonner": 5,
+     "bred": 480,
+     "boks": 318,
+     "overflowX": "auto",
+     "rullerSelv": true
+    },
+    {
+     "kap": "kap-virkeligheden",
+     "kolonner": 5,
+     "bred": 480,
+     "boks": 318,
+     "overflowX": "auto",
+     "rullerSelv": true
+    },
+    {
+     "kap": "kap-virkeligheden",
+     "kolonner": 5,
+     "bred": 480,
+     "boks": 318,
+     "overflowX": "auto",
+     "rullerSelv": true
+    },
+    {
+     "kap": "kap-fejlbilleder",
+     "kolonner": 6,
+     "bred": 480,
+     "boks": 318,
+     "overflowX": "auto",
+     "rullerSelv": true
+    },
+    {
+     "kap": "kap-fejlbilleder",
+     "kolonner": 7,
+     "bred": 480,
+     "boks": 318,
+     "overflowX": "auto",
+     "rullerSelv": true
+    }
+   ],
+   "knapper": [
+    48,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44
+   ],
+   "treLoeft": {
+    "gennemsnit": {
+     "knae": "99,9",
+     "hofte": "51,4",
+     "torso": "61,5",
+     "vej": "55,0",
+     "linje": ""
+    },
+    "lange-laar": {
+     "knae": "104,3",
+     "hofte": "49,6",
+     "torso": "67,8",
+     "vej": "59,3",
+     "linje": "Længere lårben: torsoen hælder 6° mere ved opstillingen (62° → 68°)."
+    },
+    "lange-arme": {
+     "knae": "104,6",
+     "hofte": "59,6",
+     "torso": "58,1",
+     "vej": "49,0",
+     "linje": "Længere arme: hoften bøjer 8° mindre ved opstillingen (51° → 60°)."
+    },
+    "lang-torso": {
+     "knae": "91,0",
+     "hofte": "47,2",
+     "torso": "56,8",
+     "vej": "60,1",
+     "linje": "Længere torso: knæet bøjer 9° mere ved opstillingen (100° → 91°)."
+    }
+   },
+   "marcSynligeUdenKlasse": 12,
+   "vandretMedMarc": true
+  },
+  {
+   "bredde": 1280,
+   "sidefejl": [],
+   "http404": [],
+   "eksterne": [
+    "fonts.googleapis.com"
+   ],
+   "vandret": true,
+   "skaerme": 26.3,
+   "tankestreger": 0,
+   "synligMarc": 0,
+   "marcSkjult": true,
+   "atletnavne": 0,
+   "interneNavne": 0,
+   "billeder": [
+    {
+     "src": "assets/doedloeft-figurer/dl-konventionel-opstilling.svg",
+     "ok": true,
+     "bred": 320
+    },
+    {
+     "src": "assets/doedloeft-figurer/dl-konventionel-knaehoejde.svg",
+     "ok": true,
+     "bred": 320
+    },
+    {
+     "src": "assets/doedloeft-figurer/dl-konventionel-lockout.svg",
+     "ok": true,
+     "bred": 320
+    },
+    {
+     "src": "assets/doedloeft-figurer/dl-sumo-opstilling.svg",
+     "ok": true,
+     "bred": 286
+    },
+    {
+     "src": "assets/doedloeft-figurer/dl-sumo-knaehoejde.svg",
+     "ok": true,
+     "bred": 286
+    },
+    {
+     "src": "assets/doedloeft-figurer/dl-sumo-lockout.svg",
+     "ok": true,
+     "bred": 286
+    },
+    {
+     "src": "assets/doedloeft-figurer/dl-klip-start.svg",
+     "ok": true,
+     "bred": 286
+    },
+    {
+     "src": "assets/doedloeft-figurer/dl-klip-foer-knae.svg",
+     "ok": true,
+     "bred": 286
+    },
+    {
+     "src": "assets/doedloeft-figurer/dl-klip-knaehoejde.svg",
+     "ok": true,
+     "bred": 286
+    },
+    {
+     "src": "assets/doedloeft-figurer/dl-klip-efter-knae.svg",
+     "ok": true,
+     "bred": 286
+    },
+    {
+     "src": "assets/doedloeft-figurer/dl-klip-lockout.svg",
+     "ok": true,
+     "bred": 286
+    },
+    {
+     "src": "assets/doedloeft-figurer/dl-klip-stang-frem-gulv.svg",
+     "ok": true,
+     "bred": 286
+    },
+    {
+     "src": "assets/doedloeft-figurer/dl-klip-stang-frem-knae.svg",
+     "ok": true,
+     "bred": 286
+    },
+    {
+     "src": "assets/loeft-fejl/dl-hofte-foerst-model.svg",
+     "ok": true,
+     "bred": 286
+    },
+    {
+     "src": "assets/loeft-fejl/dl-hofte-foerst.svg",
+     "ok": true,
+     "bred": 286
+    },
+    {
+     "src": "assets/loeft-fejl/dl-stang-frem-model.svg",
+     "ok": true,
+     "bred": 286
+    },
+    {
+     "src": "assets/loeft-fejl/dl-stang-frem.svg",
+     "ok": true,
+     "bred": 286
+    }
+   ],
+   "rammer": [
+    {
+     "id": "tre-loeft-doedloeft",
+     "h": 857,
+     "tekst": "Længere arme: hoften bøjer 8° mindre ved opstillingen (51° → 60°). Højde 178 cm Kropsvægt 85 kg Lår 100 % · 43,6 cm Skinneben 100 % · 43,8 cm Torso 100 % · 51,3 cm Arme 110 % · 65,0 cm Stang 270 kg Mo"
+    },
+    {
+     "id": "min-krop-kort",
+     "h": 1076,
+     "tekst": "Højde cm Lår cm Skinneben cm Overkrop cm Overarm cm Underarm cm Kropsvægt kg Tryk på et felt for at se, hvor du måler fra og til. Tag alle mål på samme side af kroppen. Brug gennemsnit ud fra højden G"
+    }
+   ],
+   "tabeller": [
+    {
+     "kap": "kap-momentarme",
+     "kolonner": 5,
+     "bred": 597,
+     "boks": 653,
+     "overflowX": "auto",
+     "rullerSelv": false
+    },
+    {
+     "kap": "kap-virkeligheden",
+     "kolonner": 5,
+     "bred": 563,
+     "boks": 619,
+     "overflowX": "auto",
+     "rullerSelv": false
+    },
+    {
+     "kap": "kap-virkeligheden",
+     "kolonner": 5,
+     "bred": 563,
+     "boks": 619,
+     "overflowX": "auto",
+     "rullerSelv": false
+    },
+    {
+     "kap": "kap-virkeligheden",
+     "kolonner": 5,
+     "bred": 563,
+     "boks": 619,
+     "overflowX": "auto",
+     "rullerSelv": false
+    },
+    {
+     "kap": "kap-virkeligheden",
+     "kolonner": 5,
+     "bred": 563,
+     "boks": 619,
+     "overflowX": "auto",
+     "rullerSelv": false
+    },
+    {
+     "kap": "kap-virkeligheden",
+     "kolonner": 5,
+     "bred": 563,
+     "boks": 619,
+     "overflowX": "auto",
+     "rullerSelv": false
+    },
+    {
+     "kap": "kap-fejlbilleder",
+     "kolonner": 6,
+     "bred": 563,
+     "boks": 619,
+     "overflowX": "auto",
+     "rullerSelv": false
+    },
+    {
+     "kap": "kap-fejlbilleder",
+     "kolonner": 7,
+     "bred": 563,
+     "boks": 619,
+     "overflowX": "auto",
+     "rullerSelv": false
+    }
+   ],
+   "knapper": [
+    48,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44
+   ],
+   "treLoeft": {
+    "gennemsnit": {
+     "knae": "99,9",
+     "hofte": "51,4",
+     "torso": "61,5",
+     "vej": "55,0",
+     "linje": ""
+    },
+    "lange-laar": {
+     "knae": "104,3",
+     "hofte": "49,6",
+     "torso": "67,8",
+     "vej": "59,3",
+     "linje": "Længere lårben: torsoen hælder 6° mere ved opstillingen (62° → 68°)."
+    },
+    "lange-arme": {
+     "knae": "104,6",
+     "hofte": "59,6",
+     "torso": "58,1",
+     "vej": "49,0",
+     "linje": "Længere arme: hoften bøjer 8° mindre ved opstillingen (51° → 60°)."
+    },
+    "lang-torso": {
+     "knae": "91,0",
+     "hofte": "47,2",
+     "torso": "56,8",
+     "vej": "60,1",
+     "linje": "Længere torso: knæet bøjer 9° mere ved opstillingen (100° → 91°)."
+    }
+   },
+   "marcSynligeUdenKlasse": 12,
+   "vandretMedMarc": true
+  }
+ ]
+}
