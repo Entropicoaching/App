@@ -1,0 +1,582 @@
+{
+ "ver": {
+  "gren": "f3c1684",
+  "gammel": "25d6a41"
+ },
+ "visninger": [
+  {
+   "hvilken": "ny",
+   "bredde": 390,
+   "imgs": [
+    {
+     "src": "k6-bund-maalt.svg",
+     "ok": true,
+     "w": 324
+    },
+    {
+     "src": "k6-sticking-maalt.svg",
+     "ok": true,
+     "w": 324
+    }
+   ],
+   "tabeller": [
+    {
+     "tabelB": 640,
+     "rammeB": 350,
+     "ruller": true,
+     "captionB": 640,
+     "modelKolSynligUdenRul": false
+    },
+    {
+     "tabelB": 640,
+     "rammeB": 350,
+     "ruller": true,
+     "captionB": 640,
+     "modelKolSynligUdenRul": false
+    }
+   ],
+   "ord": 674,
+   "sidelaens": false,
+   "mount": false,
+   "marcSynlig": false,
+   "mit": false,
+   "jsFejl": [],
+   "png": "Q-390-ny-k6.png"
+  },
+  {
+   "hvilken": "ny",
+   "bredde": 1280,
+   "imgs": [
+    {
+     "src": "k6-bund-maalt.svg",
+     "ok": true,
+     "w": 230
+    },
+    {
+     "src": "k6-sticking-maalt.svg",
+     "ok": true,
+     "w": 230
+    }
+   ],
+   "tabeller": [
+    {
+     "tabelB": 656,
+     "rammeB": 656,
+     "ruller": false,
+     "captionB": 656,
+     "modelKolSynligUdenRul": true
+    },
+    {
+     "tabelB": 656,
+     "rammeB": 656,
+     "ruller": false,
+     "captionB": 656,
+     "modelKolSynligUdenRul": true
+    }
+   ],
+   "ord": 674,
+   "sidelaens": false,
+   "mount": false,
+   "marcSynlig": false,
+   "mit": false,
+   "jsFejl": [],
+   "png": "Q-1280-ny-k6.png"
+  },
+  {
+   "hvilken": "gammel",
+   "bredde": 390,
+   "imgs": [
+    {
+     "src": "1-start-model1.svg",
+     "ok": true,
+     "w": 169
+    },
+    {
+     "src": "2-foer-knae-model1.svg",
+     "ok": true,
+     "w": 165
+    },
+    {
+     "src": "3-knaehoejde-model1.svg",
+     "ok": true,
+     "w": 153
+    },
+    {
+     "src": "4-efter-knae-model1.svg",
+     "ok": true,
+     "w": 103
+    },
+    {
+     "src": "5-lockout-model1.svg",
+     "ok": true,
+     "w": 103
+    }
+   ],
+   "tabeller": [
+    {
+     "tabelB": 326,
+     "rammeB": 350,
+     "ruller": false,
+     "captionB": null,
+     "modelKolSynligUdenRul": null
+    },
+    {
+     "tabelB": 640,
+     "rammeB": 350,
+     "ruller": true,
+     "captionB": 640,
+     "modelKolSynligUdenRul": false
+    }
+   ],
+   "ord": 776,
+   "sidelaens": false,
+   "mount": true,
+   "marcSynlig": false,
+   "mit": true,
+   "jsFejl": [],
+   "png": "Q-390-gammel-k6.png"
+  },
+  {
+   "hvilken": "gammel",
+   "bredde": 1280,
+   "imgs": [
+    {
+     "src": "1-start-model1.svg",
+     "ok": true,
+     "w": 169
+    },
+    {
+     "src": "2-foer-knae-model1.svg",
+     "ok": true,
+     "w": 165
+    },
+    {
+     "src": "3-knaehoejde-model1.svg",
+     "ok": true,
+     "w": 153
+    },
+    {
+     "src": "4-efter-knae-model1.svg",
+     "ok": true,
+     "w": 103
+    },
+    {
+     "src": "5-lockout-model1.svg",
+     "ok": true,
+     "w": 103
+    }
+   ],
+   "tabeller": [
+    {
+     "tabelB": 632,
+     "rammeB": 656,
+     "ruller": false,
+     "captionB": null,
+     "modelKolSynligUdenRul": null
+    },
+    {
+     "tabelB": 656,
+     "rammeB": 656,
+     "ruller": false,
+     "captionB": 656,
+     "modelKolSynligUdenRul": true
+    }
+   ],
+   "ord": 776,
+   "sidelaens": false,
+   "mount": true,
+   "marcSynlig": false,
+   "mit": true,
+   "jsFejl": [],
+   "png": "Q-1280-gammel-k6.png"
+  }
+ ],
+ "laes": [
+  {
+   "bredde": 390,
+   "figs": [
+    {
+     "lbl": "Ny: en low bar-squat",
+     "ok": true,
+     "natur": [
+      350,
+      4527
+     ],
+     "vist": [
+      356,
+      4605
+     ],
+     "rulH": 622,
+     "kanRulle": true,
+     "x": 16,
+     "y": 1142
+    },
+    {
+     "lbl": "Gammel: dødløftet",
+     "ok": true,
+     "natur": [
+      350,
+      7408
+     ],
+     "vist": [
+      356,
+      7535
+     ],
+     "rulH": 622,
+     "kanRulle": true,
+     "x": 16,
+     "y": 1844
+    }
+   ],
+   "svar": [
+    "squat kapitel 6: ny",
+    "squat kapitel 6: gammel"
+   ],
+   "sidelaens": false,
+   "svarOeverst": true,
+   "vaerdiSkala": [
+    1.02,
+    1.02
+   ],
+   "jsFejl": [],
+   "png": "Q-390-laes-squat-k6.png"
+  },
+  {
+   "bredde": 1280,
+   "figs": [
+    {
+     "lbl": "Ny: en low bar-squat",
+     "ok": true,
+     "natur": [
+      350,
+      4527
+     ],
+     "vist": [
+      335,
+      4333
+     ],
+     "rulH": 718,
+     "kanRulle": true,
+     "x": 296,
+     "y": 827
+    },
+    {
+     "lbl": "Gammel: dødløftet",
+     "ok": true,
+     "natur": [
+      350,
+      7408
+     ],
+     "vist": [
+      335,
+      7091
+     ],
+     "rulH": 718,
+     "kanRulle": true,
+     "x": 647,
+     "y": 827
+    }
+   ],
+   "svar": [
+    "squat kapitel 6: ny",
+    "squat kapitel 6: gammel"
+   ],
+   "sidelaens": false,
+   "svarOeverst": true,
+   "vaerdiSkala": [
+    0.96,
+    0.96
+   ],
+   "jsFejl": [],
+   "png": "Q-1280-laes-squat-k6.png"
+  }
+ ],
+ "tekst": {
+  "marc": [
+   754
+  ],
+  "tankestreg": [],
+  "jegIK6": [],
+  "jegIAlt": 24,
+  "opfordring": [],
+  "metaK6": [
+   487,
+   488,
+   526
+  ],
+  "forbeholdK6Broed": [
+   488,
+   496,
+   515,
+   527
+  ],
+  "gulMidtfod": [
+   492
+  ],
+  "orangeMidtfod": [
+   82
+  ]
+ },
+ "chrome": "154.0.8037.57",
+ "eksterne": [
+  "https://fonts.googleapis.com/css2"
+ ],
+ "f404": [],
+ "tjek": [
+  {
+   "hvad": "Ingen \"Marc\"/\"Marcs\" i artiklens synlige tekst foer forfatterlinjen (linje 41-749)",
+   "ok": true,
+   "data": [
+    754
+   ]
+  },
+  {
+   "hvad": "0 tankestreger i synlig tekst",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "Kapitel 6 (484-544) har ingen jeg-form (hverken \"Marcs\" eller \"jeg/mit\")",
+   "ok": true,
+   "data": {
+    "jegIK6": [],
+    "jegIAlt": 24
+   }
+  },
+  {
+   "hvad": "Kapitel 6: forbehold i broedteksten over \"Gaa dybere\" (linjenumre)",
+   "ok": true,
+   "data": [
+    488,
+    496,
+    515,
+    527
+   ]
+  },
+  {
+   "hvad": "Midtfoden kaldes \"gule streg\" i kapitel 6 og \"orange maerke\" i kapitel 1 (samme farve #c8923a)",
+   "ok": true,
+   "data": {
+    "gul": [
+     492
+    ],
+    "orange": [
+     82
+    ]
+   }
+  },
+  {
+   "hvad": "Ny kapitel 6 390: to figurer indlaest, 0 JS-fejl, ingen sidelaens rulning, intet \"Marc\" i broedteksten",
+   "ok": true,
+   "data": {
+    "imgs": [
+     {
+      "src": "k6-bund-maalt.svg",
+      "ok": true,
+      "w": 324
+     },
+     {
+      "src": "k6-sticking-maalt.svg",
+      "ok": true,
+      "w": 324
+     }
+    ],
+    "ord": 674
+   }
+  },
+  {
+   "hvad": "Ny kapitel 6 1280: to figurer indlaest, 0 JS-fejl, ingen sidelaens rulning, intet \"Marc\" i broedteksten",
+   "ok": true,
+   "data": {
+    "imgs": [
+     {
+      "src": "k6-bund-maalt.svg",
+      "ok": true,
+      "w": 230
+     },
+     {
+      "src": "k6-sticking-maalt.svg",
+      "ok": true,
+      "w": 230
+     }
+    ],
+    "ord": 674
+   }
+  },
+  {
+   "hvad": "Gammel kapitel 6 (25d6a41) 390: indlejringen tegnes, \"Mit eget klip\"/\"mit maalte skelet\" staar, 0 JS-fejl",
+   "ok": true,
+   "data": {
+    "imgs": 5,
+    "ord": 776,
+    "jsFejl": []
+   }
+  },
+  {
+   "hvad": "Gammel kapitel 6 (25d6a41) 1280: indlejringen tegnes, \"Mit eget klip\"/\"mit maalte skelet\" staar, 0 JS-fejl",
+   "ok": true,
+   "data": {
+    "imgs": 5,
+    "ord": 776,
+    "jsFejl": []
+   }
+  },
+  {
+   "hvad": "Ny kapitel 6 paa 390: tabellerne ruller sidelaens i deres ramme, Model-kolonnen og tabelteksten er uden for skaermen uden rul",
+   "ok": true,
+   "data": [
+    {
+     "tabelB": 640,
+     "rammeB": 350,
+     "ruller": true,
+     "captionB": 640,
+     "modelKolSynligUdenRul": false
+    },
+    {
+     "tabelB": 640,
+     "rammeB": 350,
+     "ruller": true,
+     "captionB": 640,
+     "modelKolSynligUdenRul": false
+    }
+   ]
+  },
+  {
+   "hvad": "Ny kapitel 6 paa 1280: tabellerne ruller ikke",
+   "ok": true,
+   "data": [
+    {
+     "tabelB": 656,
+     "rammeB": 656,
+     "ruller": false,
+     "captionB": 656,
+     "modelKolSynligUdenRul": true
+    },
+    {
+     "tabelB": 656,
+     "rammeB": 656,
+     "ruller": false,
+     "captionB": 656,
+     "modelKolSynligUdenRul": true
+    }
+   ]
+  },
+  {
+   "hvad": "LAES-SQUAT 390: ny og gammel kapitel 6 begge indlaest og rullbare, svarlinjerne \"squat kapitel 6: ny/gammel\" staar oeverst, 0 JS-fejl, ingen sidelaens rulning",
+   "ok": true,
+   "data": {
+    "figs": [
+     {
+      "lbl": "Ny: en low bar-squat",
+      "ok": true,
+      "natur": [
+       350,
+       4527
+      ],
+      "vist": [
+       356,
+       4605
+      ],
+      "rulH": 622,
+      "kanRulle": true,
+      "x": 16,
+      "y": 1142
+     },
+     {
+      "lbl": "Gammel: dødløftet",
+      "ok": true,
+      "natur": [
+       350,
+       7408
+      ],
+      "vist": [
+       356,
+       7535
+      ],
+      "rulH": 622,
+      "kanRulle": true,
+      "x": 16,
+      "y": 1844
+     }
+    ],
+    "svar": [
+     "squat kapitel 6: ny",
+     "squat kapitel 6: gammel"
+    ]
+   }
+  },
+  {
+   "hvad": "LAES-SQUAT 1280: ny og gammel kapitel 6 begge indlaest og rullbare, svarlinjerne \"squat kapitel 6: ny/gammel\" staar oeverst, 0 JS-fejl, ingen sidelaens rulning",
+   "ok": true,
+   "data": {
+    "figs": [
+     {
+      "lbl": "Ny: en low bar-squat",
+      "ok": true,
+      "natur": [
+       350,
+       4527
+      ],
+      "vist": [
+       335,
+       4333
+      ],
+      "rulH": 718,
+      "kanRulle": true,
+      "x": 296,
+      "y": 827
+     },
+     {
+      "lbl": "Gammel: dødløftet",
+      "ok": true,
+      "natur": [
+       350,
+       7408
+      ],
+      "vist": [
+       335,
+       7091
+      ],
+      "rulH": 718,
+      "kanRulle": true,
+      "x": 647,
+      "y": 827
+     }
+    ],
+    "svar": [
+     "squat kapitel 6: ny",
+     "squat kapitel 6: gammel"
+    ]
+   }
+  },
+  {
+   "hvad": "LAES-SQUAT 390: de to kapitler staar under hinanden (ikke side om side), billederne er 350 px brede skaermbilleder vist 1:1 (1x, bloede paa en 3x-telefon)",
+   "ok": true,
+   "data": {
+    "skala": [
+     1.02,
+     1.02
+    ],
+    "natur": [
+     [
+      350,
+      4527
+     ],
+     [
+      350,
+      7408
+     ]
+    ]
+   }
+  },
+  {
+   "hvad": "Alt net uden for den lokale server afbrudt; 0 fejl 404",
+   "ok": true,
+   "data": {
+    "afbrudt": [
+     "https://fonts.googleapis.com/css2"
+    ]
+   }
+  }
+ ]
+}

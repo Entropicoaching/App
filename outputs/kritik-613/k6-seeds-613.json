@@ -1,0 +1,218 @@
+{
+ "seeds": 200,
+ "N": 5,
+ "faser": {
+  "squat-bund": {
+   "modellens bund": {
+    "raekker": {
+     "torso": {
+      "navn": "Torso fra lodret",
+      "model": 48.54030271155895,
+      "udenKlik": 48.669177299991134,
+      "inden": 189,
+      "klikSD": 2.4806079976804645,
+      "middelAfv": 0.03613497838930005,
+      "andelInden": 0.945
+     },
+     "hofte": {
+      "navn": "Hoftevinkel",
+      "model": 37.62305492262494,
+      "udenKlik": 37.49418033419275,
+      "inden": 181,
+      "klikSD": 2.1823916339345724,
+      "middelAfv": -0.11503241696549434,
+      "andelInden": 0.905
+     },
+     "knae": {
+      "navn": "Knævinkel",
+      "model": 46.163357634183896,
+      "udenKlik": 45.78079666520093,
+      "inden": 178,
+      "klikSD": 2.486356106309362,
+      "middelAfv": -0.5599380989460321,
+      "andelInden": 0.89
+     },
+     "stangFraMidtfod": {
+      "navn": "Stangen foran midtfoden",
+      "model": -1.0141178510959072,
+      "udenKlik": -1.0059438582868063,
+      "inden": 185,
+      "klikSD": 0.9410442100187265,
+      "middelAfv": 0.023915293743671788,
+      "andelInden": 0.925
+     },
+     "stangHofte": {
+      "navn": "Vandret afstand stang–hofte",
+      "model": 21.73738892542871,
+      "udenKlik": 21.791566127552393,
+      "inden": 181,
+      "klikSD": 1.2360262880567305,
+      "middelAfv": 0.0036032194884220914,
+      "andelInden": 0.905
+     }
+    },
+    "klik": 1000,
+    "lignerKunKnae": 0,
+    "ingenFund": 1000
+   },
+   "kun knæene": {
+    "raekker": {
+     "torso": {
+      "navn": "Torso fra lodret",
+      "model": 48.54030271155895,
+      "udenKlik": 39.75661568922503,
+      "inden": 0,
+      "klikSD": 2.3925254967545992,
+      "middelAfv": -8.871212379926215,
+      "andelInden": 0
+     },
+     "hofte": {
+      "navn": "Hoftevinkel",
+      "model": 37.62305492262494,
+      "udenKlik": 46.40674194495885,
+      "inden": 0,
+      "klikSD": 2.2577078879189387,
+      "middelAfv": 8.792278433569813,
+      "andelInden": 0
+     },
+     "knae": {
+      "navn": "Knævinkel",
+      "model": 46.163357634183896,
+      "udenKlik": 29.57615122595644,
+      "inden": 0,
+      "klikSD": 2.4203092865866673,
+      "middelAfv": -16.739889750194568,
+      "andelInden": 0
+     },
+     "stangFraMidtfod": {
+      "navn": "Stangen foran midtfoden",
+      "model": -1.0141178510959072,
+      "udenKlik": 2.915275441735433,
+      "inden": 0,
+      "klikSD": 0.9516498833872209,
+      "middelAfv": 3.9421477179630595,
+      "andelInden": 0
+     },
+     "stangHofte": {
+      "navn": "Vandret afstand stang–hofte",
+      "model": 21.73738892542871,
+      "udenKlik": 15.686637809200763,
+      "inden": 0,
+      "klikSD": 1.3154471056309767,
+      "middelAfv": -6.099637297901439,
+      "andelInden": 0
+     }
+    },
+    "klik": 1000,
+    "lignerKunKnae": 999,
+    "ingenFund": 1
+   }
+  },
+  "squat-midt": {
+   "modellens sticking point": {
+    "raekker": {
+     "torso": {
+      "navn": "Torso fra lodret",
+      "model": 39.09006893232214,
+      "udenKlik": 39.106934720364556,
+      "inden": 188,
+      "klikSD": 2.3803544660634457,
+      "middelAfv": -0.07000973224832403,
+      "andelInden": 0.94
+     },
+     "hofte": {
+      "navn": "Hoftevinkel",
+      "model": 73.72656825633851,
+      "udenKlik": 73.70970246829609,
+      "inden": 182,
+      "klikSD": 2.688097473598487,
+      "middelAfv": -0.0013740043891721143,
+      "andelInden": 0.91
+     },
+     "knae": {
+      "navn": "Knævinkel",
+      "model": 70.33773568671693,
+      "udenKlik": 69.92186715200639,
+      "inden": 182,
+      "klikSD": 2.637434646360389,
+      "middelAfv": -0.5824555526440196,
+      "andelInden": 0.91
+     },
+     "stangFraMidtfod": {
+      "navn": "Stangen foran midtfoden",
+      "model": -2.591527671745796,
+      "udenKlik": -2.568101668815006,
+      "inden": 184,
+      "klikSD": 0.9420150980988466,
+      "middelAfv": 0.040026223292248427,
+      "andelInden": 0.92
+     },
+     "stangHofte": {
+      "navn": "Vandret afstand stang–hofte",
+      "model": 15.287664158133536,
+      "udenKlik": 15.31063657096072,
+      "inden": 181,
+      "klikSD": 1.3175675510429978,
+      "middelAfv": -0.021957747592466346,
+      "andelInden": 0.905
+     }
+    },
+    "klik": 1000,
+    "lignerKunKnae": 0,
+    "ingenFund": 1000
+   },
+   "kun knæene": {
+    "raekker": {
+     "torso": {
+      "navn": "Torso fra lodret",
+      "model": 39.09006893232214,
+      "udenKlik": 40.28000312803915,
+      "inden": 160,
+      "klikSD": 2.3939655418248535,
+      "middelAfv": 1.1021872057749562,
+      "andelInden": 0.8
+     },
+     "hofte": {
+      "navn": "Hoftevinkel",
+      "model": 73.72656825633851,
+      "udenKlik": 71.06226940651833,
+      "inden": 105,
+      "klikSD": 2.648397877396642,
+      "middelAfv": -2.648746233761363,
+      "andelInden": 0.525
+     },
+     "knae": {
+      "navn": "Knævinkel",
+      "model": 70.33773568671693,
+      "udenKlik": 59.65570111556079,
+      "inden": 0,
+      "klikSD": 2.571124450317005,
+      "middelAfv": -10.836273369874991,
+      "andelInden": 0
+     },
+     "stangFraMidtfod": {
+      "navn": "Stangen foran midtfoden",
+      "model": -2.591527671745796,
+      "udenKlik": 3.304835324463139,
+      "inden": 0,
+      "klikSD": 0.9517390677652122,
+      "middelAfv": 5.908895961016381,
+      "andelInden": 0
+     },
+     "stangHofte": {
+      "navn": "Vandret afstand stang–hofte",
+      "model": 15.287664158133536,
+      "udenKlik": 16.122090324666914,
+      "inden": 152,
+      "klikSD": 1.3102921473963018,
+      "middelAfv": 0.787779722627294,
+      "andelInden": 0.76
+     }
+    },
+    "klik": 1000,
+    "lignerKunKnae": 852,
+    "ingenFund": 148
+   }
+  }
+ }
+}
