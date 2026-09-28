@@ -1,0 +1,491 @@
+{
+ "opslag": {
+  "7": {
+   "titel": "Den naturlige position i squat",
+   "slides": 5,
+   "brud": [],
+   "slut": " den enkelte. Entropi Coaching ligger på entropicoaching.dk.",
+   "sidsteAfsnitForbehold": true,
+   "sidsteSlideForbehold": true,
+   "btTegn": 827,
+   "laengsteSlide": 172,
+   "antalPng": 5
+  },
+  "8": {
+   "titel": "Dødløft: hoften stiger, før stangen slipper gulvet",
+   "slides": 5,
+   "brud": [],
+   "slut": "yggen runder. Entropi Coaching ligger på entropicoaching.dk.",
+   "sidsteAfsnitForbehold": true,
+   "sidsteSlideForbehold": true,
+   "btTegn": 915,
+   "laengsteSlide": 179,
+   "antalPng": 5
+  },
+  "9": {
+   "titel": "Bænkpres: grebets bredde",
+   "slides": 1,
+   "brud": [],
+   "slut": "stemt løfter. Entropi Coaching ligger på entropicoaching.dk.",
+   "sidsteAfsnitForbehold": true,
+   "sidsteSlideForbehold": true,
+   "btTegn": 727,
+   "laengsteSlide": 148,
+   "antalPng": 1
+  },
+  "10": {
+   "titel": "Bias, goblet squat og stangens plads",
+   "slides": 4,
+   "brud": [],
+   "slut": "løfters bias. Entropi Coaching ligger på entropicoaching.dk.",
+   "sidsteAfsnitForbehold": true,
+   "sidsteSlideForbehold": true,
+   "btTegn": 652,
+   "laengsteSlide": 188,
+   "antalPng": 4
+  },
+  "11": {
+   "titel": "Dødløft: tre stillinger i samme løft",
+   "slides": 1,
+   "brud": [],
+   "slut": "il den næste. Entropi Coaching ligger på entropicoaching.dk.",
+   "sidsteAfsnitForbehold": true,
+   "sidsteSlideForbehold": true,
+   "btTegn": 652,
+   "laengsteSlide": 163,
+   "antalPng": 1
+  },
+  "12": {
+   "titel": "Bænkpres: stangens vej op",
+   "slides": 4,
+   "brud": [],
+   "slut": "om skuldrene. Entropi Coaching ligger på entropicoaching.dk.",
+   "sidsteAfsnitForbehold": true,
+   "sidsteSlideForbehold": true,
+   "btTegn": 653,
+   "laengsteSlide": 154,
+   "antalPng": 4
+  }
+ },
+ "laes": [
+  {
+   "bredde": 390,
+   "billeder": 20,
+   "indlaest": 20,
+   "vistB": [
+    358
+   ],
+   "kopi": 6,
+   "sidelaens": false,
+   "svar": true,
+   "tankestreg": false,
+   "naevner16": true,
+   "jsFejl": []
+  },
+  {
+   "bredde": 1280,
+   "billeder": 20,
+   "indlaest": 20,
+   "vistB": [
+    568
+   ],
+   "kopi": 6,
+   "sidelaens": false,
+   "svar": true,
+   "tankestreg": false,
+   "naevner16": true,
+   "jsFejl": []
+  }
+ ],
+ "marc": [
+  {
+   "nr": "7",
+   "hvad": "naturlige position",
+   "iSvar": true
+  },
+  {
+   "nr": "7",
+   "hvad": "stagnation og til værre skader",
+   "iSvar": true
+  },
+  {
+   "nr": "7",
+   "hvad": "hvad der føles bedre",
+   "iSvar": true
+  },
+  {
+   "nr": "7",
+   "hvad": "godkendt(es) i konkurrence",
+   "iSvar": true
+  },
+  {
+   "nr": "7",
+   "hvad": "ingen fast regel for knæ og fodstilling",
+   "iSvar": true
+  },
+  {
+   "nr": "7",
+   "hvad": "nettet og Instagram",
+   "iSvar": true
+  },
+  {
+   "nr": "10",
+   "hvad": "egne bias",
+   "iSvar": true
+  },
+  {
+   "nr": "10",
+   "hvad": "bygge de svage punkter op",
+   "iSvar": true
+  },
+  {
+   "nr": "10",
+   "hvad": "goblet squat afslører bias",
+   "iSvar": true
+  },
+  {
+   "nr": "10",
+   "hvad": "bias mod lowbar",
+   "iSvar": true
+  },
+  {
+   "nr": "10",
+   "hvad": "mobilitet eller tidligere skader",
+   "iSvar": true
+  }
+ ],
+ "jegForm7": {
+  "arbejderMedSomCoach": true,
+  "svarSiger": true,
+  "positionenDenEnkeltes": true
+ },
+ "tal": {
+  "8": {
+   "mangler": [],
+   "egne": [
+    {
+     "v": "61°",
+     "iTekst": true,
+     "iKilde": true
+    },
+    {
+     "v": "75°",
+     "iTekst": true,
+     "iKilde": true
+    },
+    {
+     "v": "41,0",
+     "iTekst": true,
+     "iKilde": true
+    },
+    {
+     "v": "24,7",
+     "iTekst": true,
+     "iKilde": true
+    }
+   ]
+  },
+  "9": {
+   "mangler": [],
+   "egne": []
+  },
+  "11": {
+   "mangler": [],
+   "egne": []
+  },
+  "12": {
+   "mangler": [],
+   "egne": []
+  }
+ },
+ "midt08": {
+  "i08": true,
+  "titler": [
+   "Bænkpres · midt i opturen (Marcs mål i modellen, middel bue, middel greb)"
+  ],
+  "tekster": [
+   "skulder 0,8 cm",
+   "albue 16,3 cm",
+   "vej 41,8 cm",
+   "forfra: greb 64 cm",
+   "Bænkpres · midt i opturen",
+   "albue 83° · overarm 45° ud, 21° op",
+   "momentarm i alt: skulder 13,4 · albue 18,6 cm",
+   "moment pr. arm: skulder 66 · albue 91 Nm"
+  ]
+ },
+ "regn8": {
+  "hofte": 0.117,
+  "laend": 0.126
+ },
+ "sammeFigur": [
+  {
+   "fil": "squat-figurer/k7-reference-bund.svg",
+   "crop624": "[70,180,280,355]",
+   "crop606": "[70,180,280,355]"
+  },
+  {
+   "fil": "doedloeft-figurer/dl-konventionel-opstilling.svg",
+   "crop624": "[40,95,330,440]",
+   "crop606": "[60,232,300,308]"
+  }
+ ],
+ "sammeSaetning": [
+  {
+   "nr": "10",
+   "s": "Figuren er løftmodellens squat i bunden med stangen lavt på ryggen, tegnet på en referencekrop og ikke en løfter."
+  }
+ ],
+ "skabelon": {
+  "nr3": "Tre buer i modellens bænkpres, med samme greb og stangen på brystet. Jo større bue, jo kortere vej fra brystet til lockout.",
+  "nr9": "Tre greb i modellens bænkpres, set forfra med stangen på brystet. Jo bredere greb, jo længere ud står overarmen, og jo kortere er vejen til lockout."
+ },
+ "laesIndhold": {
+  "pngIndlejret": 20,
+  "pngAlle": 20,
+  "bt": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "tjek": [
+  {
+   "hvad": "0 tankestreger, opfordringer, dramatiske aabninger, meta, \"Marc\", kilo, Nm, atletnavne, minusprocenter og \"vaegten flytter\" i slides og billedtekster",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "0 engelske fagord uden for Marcs egne (bias, lowbar, goblet squat og lockout er hans eller 1-6's)",
+   "ok": true
+  },
+  {
+   "hvad": "Alle seks billedtekster slutter med \"Entropi Coaching ligger paa entropicoaching.dk.\"",
+   "ok": true,
+   "data": [
+    " den enkelte. Entropi Coaching ligger på entropicoaching.dk.",
+    "yggen runder. Entropi Coaching ligger på entropicoaching.dk.",
+    "stemt løfter. Entropi Coaching ligger på entropicoaching.dk.",
+    "løfters bias. Entropi Coaching ligger på entropicoaching.dk.",
+    "il den næste. Entropi Coaching ligger på entropicoaching.dk.",
+    "om skuldrene. Entropi Coaching ligger på entropicoaching.dk."
+   ]
+  },
+  {
+   "hvad": "Forbeholdet staar i billedtekstens sidste afsnit i alle seks og paa sidste slide i de fire karruseller (enkeltbillederne 9 og 11 har det kun i billedteksten, som 3 og 6)",
+   "ok": true,
+   "data": {
+    "7": [
+     true,
+     true
+    ],
+    "8": [
+     true,
+     true
+    ],
+    "9": [
+     true,
+     true
+    ],
+    "10": [
+     true,
+     true
+    ],
+    "11": [
+     true,
+     true
+    ],
+    "12": [
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "hvad": "20 PNG (5+5+1+4+1+4)",
+   "ok": true,
+   "data": [
+    5,
+    5,
+    1,
+    4,
+    1,
+    4
+   ]
+  },
+  {
+   "hvad": "Billedtekster under 2200 tegn (Instagrams graense) og slidetekst under 200 tegn",
+   "ok": true,
+   "data": [
+    [
+     827,
+     172
+    ],
+    [
+     915,
+     179
+    ],
+    [
+     727,
+     148
+    ],
+    [
+     652,
+     188
+    ],
+    [
+     652,
+     163
+    ],
+    [
+     653,
+     154
+    ]
+   ]
+  },
+  {
+   "hvad": "Opslag 7 og 10: hvert af Marcs udsagn staar i SVAR-squat.md",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "Opslag 8, 9, 11 og 12: tallene staar i loeftmodellens figursider (loeft-fejl, baenk-figurer, doedloeft-figurer)",
+   "ok": true,
+   "data": {
+    "8": {
+     "mangler": [],
+     "egne": [
+      {
+       "v": "61°",
+       "iTekst": true,
+       "iKilde": true
+      },
+      {
+       "v": "75°",
+       "iTekst": true,
+       "iKilde": true
+      },
+      {
+       "v": "41,0",
+       "iTekst": true,
+       "iKilde": true
+      },
+      {
+       "v": "24,7",
+       "iTekst": true,
+       "iKilde": true
+      }
+     ]
+    },
+    "9": {
+     "mangler": [],
+     "egne": []
+    },
+    "11": {
+     "mangler": [],
+     "egne": []
+    },
+    "12": {
+     "mangler": [],
+     "egne": []
+    }
+   }
+  },
+  {
+   "hvad": "Opslag 8: 45,8/41,0 = ca. +12 % og 27,8/24,7 = ca. +13 % (regnet efter)",
+   "ok": true,
+   "data": {
+    "hofte": 0.117,
+    "laend": 0.126
+   }
+  },
+  {
+   "hvad": "Opslag 9: 43,0 - 39,2 = 3,8 cm, og 64 er midt imellem 47 og 81",
+   "ok": true
+  },
+  {
+   "hvad": "Fund I8 holder (gentagelse af 1-6): 10 bruger squatfiguren fra 1 med samme beskaering og figursaetningen fra 1; 11 bruger opstillingsfiguren fra 6; intet andet",
+   "ok": true,
+   "data": {
+    "figur": [
+     {
+      "fil": "squat-figurer/k7-reference-bund.svg",
+      "crop624": "[70,180,280,355]",
+      "crop606": "[70,180,280,355]"
+     },
+     {
+      "fil": "doedloeft-figurer/dl-konventionel-opstilling.svg",
+      "crop624": "[40,95,330,440]",
+      "crop606": "[60,232,300,308]"
+     }
+    ],
+    "saetning": [
+     {
+      "nr": "10",
+      "s": "Figuren er løftmodellens squat i bunden med stangen lavt på ryggen, tegnet på en referencekrop og ikke en løfter."
+     }
+    ]
+   }
+  },
+  {
+   "hvad": "LAES-INSTAGRAM-2 viser alle 20 nuvaerende PNG byte for byte og de seks billedtekster",
+   "ok": true,
+   "data": {
+    "pngIndlejret": 20,
+    "pngAlle": 20,
+    "bt": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "hvad": "LAES-INSTAGRAM-2 390: 20 billeder indlaest, 6 kopiknapper, svarformen staar, 0 JS-fejl, ingen sidelaens rulning, 0 tankestreger",
+   "ok": true,
+   "data": {
+    "bredde": 390,
+    "billeder": 20,
+    "indlaest": 20,
+    "vistB": [
+     358
+    ],
+    "kopi": 6,
+    "sidelaens": false,
+    "svar": true,
+    "tankestreg": false,
+    "naevner16": true,
+    "jsFejl": []
+   }
+  },
+  {
+   "hvad": "LAES-INSTAGRAM-2 1280: 20 billeder indlaest, 6 kopiknapper, svarformen staar, 0 JS-fejl, ingen sidelaens rulning, 0 tankestreger",
+   "ok": true,
+   "data": {
+    "bredde": 1280,
+    "billeder": 20,
+    "indlaest": 20,
+    "vistB": [
+     568
+    ],
+    "kopi": 6,
+    "sidelaens": false,
+    "svar": true,
+    "tankestreg": false,
+    "naevner16": true,
+    "jsFejl": []
+   }
+  },
+  {
+   "hvad": "LAES-INSTAGRAM-2: 0 kald ud af huset",
+   "ok": true,
+   "data": []
+  }
+ ]
+}
