@@ -1,0 +1,3993 @@
+{
+ "loeftmodel": "291f5bf",
+ "klip": {
+  "sq2997.mp4": {
+   "mb": 57.6,
+   "billeder": 899,
+   "codec": "h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 1080x1920, 15348 kb/s, 29.97 fps, 29.97 tbr, 30k tbn (default)\r",
+   "mellemrumUs": [
+    33366,
+    33367
+   ]
+  },
+  "sq2997.mov": {
+   "mb": 57.6,
+   "billeder": 899,
+   "codec": "h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 1080x1920, 15348 kb/s, 29.97 fps, 29.97 tbr, 600 tbn (default)\r",
+   "mellemrumUs": [
+    33333,
+    35000
+   ]
+  },
+  "sqvfr.mp4": {
+   "mb": 57.2,
+   "billeder": 796,
+   "codec": "h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 1080x1920, 15078 kb/s, 26.21 fps, 30 tbr, 90k tbn (default)\r",
+   "mellemrumUs": [
+    31322,
+    66678
+   ]
+  },
+  "sqvfr.mov": {
+   "mb": 57.2,
+   "billeder": 796,
+   "codec": "h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 1080x1920, 15076 kb/s, 26.21 fps, 30 tbr, 600 tbn (default)\r",
+   "mellemrumUs": [
+    30000,
+    66667
+   ]
+  },
+  "sq4k.mp4": {
+   "mb": 31.6,
+   "billeder": 180,
+   "codec": "h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 2160x3840, 42029 kb/s, 29.97 fps, 29.97 tbr, 30k tbn (default)\r",
+   "mellemrumUs": [
+    33366,
+    33367
+   ]
+  },
+  "sqhevc.mov": {
+   "mb": 4.8,
+   "billeder": 180,
+   "codec": "hevc (Main) (hvc1 / 0x31637668), yuv420p(tv, progressive), 1080x1920, 6332 kb/s, 29.97 fps, 29.97 tbr, 600 tbn (default)\r",
+   "mellemrumUs": [
+    33333,
+    35000
+   ]
+  }
+ },
+ "reps": [
+  {
+   "navn": "jaevn",
+   "start": 2,
+   "ned": 1.2,
+   "pause": 0,
+   "op": 1,
+   "bund": {
+    "fra": 3.2,
+    "til": 3.2
+   }
+  },
+  {
+   "navn": "hurtig op",
+   "start": 7,
+   "ned": 1.5,
+   "pause": 0,
+   "op": 0.8,
+   "bund": {
+    "fra": 8.5,
+    "til": 8.5
+   }
+  },
+  {
+   "navn": "grind",
+   "start": 12,
+   "ned": 1,
+   "pause": 0,
+   "op": 2.2,
+   "bund": {
+    "fra": 13,
+    "til": 13
+   }
+  },
+  {
+   "navn": "pause",
+   "start": 18,
+   "ned": 1.3,
+   "pause": 0.6,
+   "op": 1,
+   "bund": {
+    "fra": 19.3,
+    "til": 19.900000000000002
+   }
+  },
+  {
+   "navn": "dyk",
+   "start": 24,
+   "ned": 0.8,
+   "pause": 0,
+   "op": 1.4,
+   "bund": {
+    "fra": 24.8,
+    "til": 24.8
+   }
+  }
+ ],
+ "A": {
+  "390 sq2997.mp4": {
+   "aabn": {
+    "ms": 85,
+    "ok": true,
+    "w": 1080,
+    "h": 1920,
+    "rs": 4,
+    "tid": "0,00 s",
+    "trinnote": "Et tryk går præcis ét billede frem eller tilbage: browseren siger tiden på hvert billede, også i 29,97 billeder/s og en telefons skiftende billedrate.",
+    "videostor": "",
+    "navn": "Video: sq2997.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "liste": "Hop til løftet fra gulvet: tryk Klik navet i videoen og så på navet i et billede, hvor stangen står på gulvet, og igen i to billeder lige efter, at den har sluppet. Siden regner baglæns til det sidste billede på gulvet.",
+    "billedNavn": "Intet billede valgt."
+   },
+   "foerste": 0,
+   "tilbageSlaaetFra": true,
+   "frem": [
+    {
+     "ms": 146,
+     "n": 1
+    },
+    {
+     "ms": 45,
+     "n": 2
+    },
+    {
+     "ms": 14,
+     "n": 3
+    },
+    {
+     "ms": 15,
+     "n": 4
+    },
+    {
+     "ms": 14,
+     "n": 5
+    },
+    {
+     "ms": 23,
+     "n": 6
+    },
+    {
+     "ms": 15,
+     "n": 7
+    },
+    {
+     "ms": 15,
+     "n": 8
+    },
+    {
+     "ms": 15,
+     "n": 9
+    },
+    {
+     "ms": 15,
+     "n": 10
+    },
+    {
+     "ms": 15,
+     "n": 11
+    },
+    {
+     "ms": 15,
+     "n": 12
+    },
+    {
+     "ms": 15,
+     "n": 13
+    },
+    {
+     "ms": 15,
+     "n": 14
+    },
+    {
+     "ms": 16,
+     "n": 15
+    },
+    {
+     "ms": 16,
+     "n": 16
+    },
+    {
+     "ms": 15,
+     "n": 17
+    },
+    {
+     "ms": 15,
+     "n": 18
+    },
+    {
+     "ms": 15,
+     "n": 19
+    },
+    {
+     "ms": 15,
+     "n": 20
+    },
+    {
+     "ms": 14,
+     "n": 21
+    },
+    {
+     "ms": 15,
+     "n": 22
+    },
+    {
+     "ms": 16,
+     "n": 23
+    },
+    {
+     "ms": 15,
+     "n": 24
+    }
+   ],
+   "tid": {
+    "vist": "0,80 s",
+    "facit": "0,80 s"
+   },
+   "skyder": [
+    {
+     "k0": 290,
+     "facitStart": 290,
+     "start": 290,
+     "frem": [
+      291,
+      292,
+      293,
+      294,
+      295,
+      296,
+      297,
+      298
+     ],
+     "tilbage": [
+      297,
+      296,
+      295,
+      294,
+      293,
+      292
+     ],
+     "ms": [
+      14,
+      15,
+      15,
+      15,
+      15,
+      15,
+      16,
+      16,
+      17,
+      15,
+      15,
+      15,
+      15,
+      15
+     ],
+     "mellemrumMs": [
+      33.4,
+      33.4,
+      33.4,
+      33.4,
+      33.4,
+      33.4,
+      33.4,
+      33.4
+     ]
+    },
+    {
+     "k0": 250,
+     "facitStart": 250,
+     "start": 250,
+     "frem": [
+      251,
+      252,
+      253,
+      254,
+      255,
+      256,
+      257,
+      258
+     ],
+     "tilbage": [
+      257,
+      256,
+      255,
+      254,
+      253,
+      252
+     ],
+     "ms": [
+      16,
+      15,
+      15,
+      15,
+      16,
+      15,
+      15,
+      15,
+      16,
+      16,
+      15,
+      15,
+      16,
+      16
+     ],
+     "mellemrumMs": [
+      33.4,
+      33.4,
+      33.4,
+      33.4,
+      33.4,
+      33.4,
+      33.4,
+      33.4
+     ]
+    }
+   ],
+   "brug": {
+    "vist": 252,
+    "foto": 252,
+    "ms": 120,
+    "navn": "Billede: sq2997.mp4, 8,41 s (kun i din browser)"
+   },
+   "fejl": []
+  },
+  "390 sq2997.mov": {
+   "aabn": {
+    "ms": 56,
+    "ok": true,
+    "w": 1080,
+    "h": 1920,
+    "rs": 4,
+    "tid": "0,00 s",
+    "trinnote": "Et tryk går præcis ét billede frem eller tilbage: browseren siger tiden på hvert billede, også i 29,97 billeder/s og en telefons skiftende billedrate.",
+    "videostor": "",
+    "navn": "Video: sq2997.mov (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "liste": "Hop til løftet fra gulvet: tryk Klik navet i videoen og så på navet i et billede, hvor stangen står på gulvet, og igen i to billeder lige efter, at den har sluppet. Siden regner baglæns til det sidste billede på gulvet.",
+    "billedNavn": "Intet billede valgt."
+   },
+   "foerste": 0,
+   "tilbageSlaaetFra": true,
+   "frem": [
+    {
+     "ms": 106,
+     "n": 1
+    },
+    {
+     "ms": 47,
+     "n": 2
+    },
+    {
+     "ms": 15,
+     "n": 3
+    },
+    {
+     "ms": 15,
+     "n": 4
+    },
+    {
+     "ms": 14,
+     "n": 5
+    },
+    {
+     "ms": 15,
+     "n": 6
+    },
+    {
+     "ms": 23,
+     "n": 7
+    },
+    {
+     "ms": 14,
+     "n": 8
+    },
+    {
+     "ms": 15,
+     "n": 9
+    },
+    {
+     "ms": 15,
+     "n": 10
+    },
+    {
+     "ms": 14,
+     "n": 11
+    },
+    {
+     "ms": 15,
+     "n": 12
+    },
+    {
+     "ms": 16,
+     "n": 13
+    },
+    {
+     "ms": 15,
+     "n": 14
+    },
+    {
+     "ms": 16,
+     "n": 15
+    },
+    {
+     "ms": 15,
+     "n": 16
+    },
+    {
+     "ms": 15,
+     "n": 17
+    },
+    {
+     "ms": 15,
+     "n": 18
+    },
+    {
+     "ms": 14,
+     "n": 19
+    },
+    {
+     "ms": 15,
+     "n": 20
+    },
+    {
+     "ms": 15,
+     "n": 21
+    },
+    {
+     "ms": 14,
+     "n": 22
+    },
+    {
+     "ms": 15,
+     "n": 23
+    },
+    {
+     "ms": 15,
+     "n": 24
+    }
+   ],
+   "tid": {
+    "vist": "0,80 s",
+    "facit": "0,80 s"
+   },
+   "skyder": [
+    {
+     "k0": 290,
+     "facitStart": 290,
+     "start": 290,
+     "frem": [
+      291,
+      292,
+      293,
+      294,
+      295,
+      296,
+      297,
+      298
+     ],
+     "tilbage": [
+      297,
+      296,
+      295,
+      294,
+      293,
+      292
+     ],
+     "ms": [
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      16,
+      15,
+      16,
+      15,
+      15,
+      16,
+      15,
+      15
+     ],
+     "mellemrumMs": [
+      33.3,
+      33.3,
+      33.3,
+      33.3,
+      33.3,
+      33.3,
+      33.3,
+      33.3
+     ]
+    },
+    {
+     "k0": 250,
+     "facitStart": 250,
+     "start": 250,
+     "frem": [
+      251,
+      252,
+      253,
+      254,
+      255,
+      256,
+      257,
+      258
+     ],
+     "tilbage": [
+      257,
+      256,
+      255,
+      254,
+      253,
+      252
+     ],
+     "ms": [
+      15,
+      15,
+      15,
+      16,
+      16,
+      15,
+      15,
+      16,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15
+     ],
+     "mellemrumMs": [
+      33.3,
+      33.3,
+      33.3,
+      33.3,
+      33.3,
+      33.3,
+      33.3,
+      33.3
+     ]
+    }
+   ],
+   "brug": {
+    "vist": 252,
+    "foto": 252,
+    "ms": 94,
+    "navn": "Billede: sq2997.mov, 8,41 s (kun i din browser)"
+   },
+   "fejl": []
+  },
+  "390 sqvfr.mp4": {
+   "aabn": {
+    "ms": 69,
+    "ok": true,
+    "w": 1080,
+    "h": 1920,
+    "rs": 4,
+    "tid": "0,00 s",
+    "trinnote": "Et tryk går præcis ét billede frem eller tilbage: browseren siger tiden på hvert billede, også i 29,97 billeder/s og en telefons skiftende billedrate.",
+    "videostor": "",
+    "navn": "Video: sqvfr.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "liste": "Hop til løftet fra gulvet: tryk Klik navet i videoen og så på navet i et billede, hvor stangen står på gulvet, og igen i to billeder lige efter, at den har sluppet. Siden regner baglæns til det sidste billede på gulvet.",
+    "billedNavn": "Intet billede valgt."
+   },
+   "foerste": 0,
+   "tilbageSlaaetFra": true,
+   "frem": [
+    {
+     "ms": 92,
+     "n": 1
+    },
+    {
+     "ms": 53,
+     "n": 2
+    },
+    {
+     "ms": 14,
+     "n": 3
+    },
+    {
+     "ms": 15,
+     "n": 4
+    },
+    {
+     "ms": 15,
+     "n": 5
+    },
+    {
+     "ms": 15,
+     "n": 6
+    },
+    {
+     "ms": 14,
+     "n": 7
+    },
+    {
+     "ms": 15,
+     "n": 8
+    },
+    {
+     "ms": 45,
+     "n": 9
+    },
+    {
+     "ms": 15,
+     "n": 10
+    },
+    {
+     "ms": 14,
+     "n": 11
+    },
+    {
+     "ms": 15,
+     "n": 12
+    },
+    {
+     "ms": 15,
+     "n": 13
+    },
+    {
+     "ms": 16,
+     "n": 14
+    },
+    {
+     "ms": 15,
+     "n": 15
+    },
+    {
+     "ms": 15,
+     "n": 16
+    },
+    {
+     "ms": 16,
+     "n": 17
+    },
+    {
+     "ms": 45,
+     "n": 18
+    },
+    {
+     "ms": 16,
+     "n": 19
+    },
+    {
+     "ms": 14,
+     "n": 20
+    },
+    {
+     "ms": 15,
+     "n": 21
+    },
+    {
+     "ms": 15,
+     "n": 22
+    },
+    {
+     "ms": 15,
+     "n": 23
+    },
+    {
+     "ms": 15,
+     "n": 24
+    }
+   ],
+   "tid": {
+    "vist": "0,87 s",
+    "facit": "0,87 s"
+   },
+   "skyder": [
+    {
+     "k0": 290,
+     "facitStart": 290,
+     "start": 290,
+     "frem": [
+      291,
+      292,
+      293,
+      294,
+      295,
+      296,
+      297,
+      298
+     ],
+     "tilbage": [
+      297,
+      296,
+      295,
+      294,
+      293,
+      292
+     ],
+     "ms": [
+      30,
+      39,
+      39,
+      46,
+      47,
+      46,
+      83,
+      46,
+      15,
+      17,
+      15,
+      15,
+      17,
+      16
+     ],
+     "mellemrumMs": [
+      41.7,
+      41.7,
+      41.7,
+      41.7,
+      41.7,
+      41.7,
+      66.7,
+      41.7
+     ]
+    },
+    {
+     "k0": 250,
+     "facitStart": 250,
+     "start": 250,
+     "frem": [
+      251,
+      252,
+      253,
+      254,
+      255,
+      256,
+      257,
+      258
+     ],
+     "tilbage": [
+      257,
+      256,
+      255,
+      254,
+      253,
+      252
+     ],
+     "ms": [
+      23,
+      47,
+      22,
+      31,
+      23,
+      24,
+      31,
+      31,
+      15,
+      15,
+      16,
+      16,
+      15,
+      15
+     ],
+     "mellemrumMs": [
+      41.7,
+      66.7,
+      41.7,
+      41.7,
+      41.7,
+      41.7,
+      41.7,
+      41.7
+     ]
+    }
+   ],
+   "brug": {
+    "vist": 252,
+    "foto": 252,
+    "ms": 91,
+    "navn": "Billede: sqvfr.mp4, 9,43 s (kun i din browser)"
+   },
+   "fejl": []
+  },
+  "390 sqvfr.mov": {
+   "aabn": {
+    "ms": 56,
+    "ok": true,
+    "w": 1080,
+    "h": 1920,
+    "rs": 4,
+    "tid": "0,00 s",
+    "trinnote": "Et tryk går præcis ét billede frem eller tilbage: browseren siger tiden på hvert billede, også i 29,97 billeder/s og en telefons skiftende billedrate.",
+    "videostor": "",
+    "navn": "Video: sqvfr.mov (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "liste": "Hop til løftet fra gulvet: tryk Klik navet i videoen og så på navet i et billede, hvor stangen står på gulvet, og igen i to billeder lige efter, at den har sluppet. Siden regner baglæns til det sidste billede på gulvet.",
+    "billedNavn": "Intet billede valgt."
+   },
+   "foerste": 0,
+   "tilbageSlaaetFra": true,
+   "frem": [
+    {
+     "ms": 87,
+     "n": 1
+    },
+    {
+     "ms": 61,
+     "n": 2
+    },
+    {
+     "ms": 15,
+     "n": 3
+    },
+    {
+     "ms": 15,
+     "n": 4
+    },
+    {
+     "ms": 15,
+     "n": 5
+    },
+    {
+     "ms": 15,
+     "n": 6
+    },
+    {
+     "ms": 14,
+     "n": 7
+    },
+    {
+     "ms": 15,
+     "n": 8
+    },
+    {
+     "ms": 40,
+     "n": 9
+    },
+    {
+     "ms": 14,
+     "n": 10
+    },
+    {
+     "ms": 14,
+     "n": 11
+    },
+    {
+     "ms": 14,
+     "n": 12
+    },
+    {
+     "ms": 14,
+     "n": 13
+    },
+    {
+     "ms": 15,
+     "n": 14
+    },
+    {
+     "ms": 16,
+     "n": 15
+    },
+    {
+     "ms": 15,
+     "n": 16
+    },
+    {
+     "ms": 15,
+     "n": 17
+    },
+    {
+     "ms": 46,
+     "n": 18
+    },
+    {
+     "ms": 14,
+     "n": 19
+    },
+    {
+     "ms": 14,
+     "n": 20
+    },
+    {
+     "ms": 15,
+     "n": 21
+    },
+    {
+     "ms": 16,
+     "n": 22
+    },
+    {
+     "ms": 15,
+     "n": 23
+    },
+    {
+     "ms": 15,
+     "n": 24
+    }
+   ],
+   "tid": {
+    "vist": "0,87 s",
+    "facit": "0,87 s"
+   },
+   "skyder": [
+    {
+     "k0": 290,
+     "facitStart": 290,
+     "start": 290,
+     "frem": [
+      291,
+      292,
+      293,
+      294,
+      295,
+      296,
+      297,
+      298
+     ],
+     "tilbage": [
+      297,
+      296,
+      295,
+      294,
+      293,
+      292
+     ],
+     "ms": [
+      37,
+      37,
+      39,
+      45,
+      47,
+      46,
+      83,
+      47,
+      15,
+      16,
+      15,
+      15,
+      16,
+      15
+     ],
+     "mellemrumMs": [
+      41.7,
+      41.7,
+      41.7,
+      41.7,
+      41.7,
+      41.7,
+      66.7,
+      41.7
+     ]
+    },
+    {
+     "k0": 250,
+     "facitStart": 250,
+     "start": 250,
+     "frem": [
+      251,
+      252,
+      253,
+      254,
+      255,
+      256,
+      257,
+      258
+     ],
+     "tilbage": [
+      257,
+      256,
+      255,
+      254,
+      253,
+      252
+     ],
+     "ms": [
+      23,
+      39,
+      32,
+      32,
+      32,
+      31,
+      31,
+      30,
+      16,
+      16,
+      16,
+      16,
+      15,
+      16
+     ],
+     "mellemrumMs": [
+      41.7,
+      66.7,
+      41.7,
+      41.7,
+      41.7,
+      41.7,
+      41.7,
+      41.7
+     ]
+    }
+   ],
+   "brug": {
+    "vist": 252,
+    "foto": 252,
+    "ms": 102,
+    "navn": "Billede: sqvfr.mov, 9,43 s (kun i din browser)"
+   },
+   "fejl": []
+  },
+  "1280 sq2997.mp4": {
+   "aabn": {
+    "ms": 60,
+    "ok": true,
+    "w": 1080,
+    "h": 1920,
+    "rs": 4,
+    "tid": "0,00 s",
+    "trinnote": "Et tryk går præcis ét billede frem eller tilbage: browseren siger tiden på hvert billede, også i 29,97 billeder/s og en telefons skiftende billedrate.",
+    "videostor": "",
+    "navn": "Video: sq2997.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "liste": "Hop til løftet fra gulvet: tryk Klik navet i videoen og så på navet i et billede, hvor stangen står på gulvet, og igen i to billeder lige efter, at den har sluppet. Siden regner baglæns til det sidste billede på gulvet.",
+    "billedNavn": "Intet billede valgt."
+   },
+   "foerste": 0,
+   "tilbageSlaaetFra": true,
+   "frem": [
+    {
+     "ms": 66,
+     "n": 1
+    },
+    {
+     "ms": 45,
+     "n": 2
+    },
+    {
+     "ms": 14,
+     "n": 3
+    },
+    {
+     "ms": 14,
+     "n": 4
+    },
+    {
+     "ms": 14,
+     "n": 5
+    },
+    {
+     "ms": 15,
+     "n": 6
+    },
+    {
+     "ms": 14,
+     "n": 7
+    },
+    {
+     "ms": 13,
+     "n": 8
+    },
+    {
+     "ms": 11,
+     "n": 9
+    },
+    {
+     "ms": 15,
+     "n": 10
+    },
+    {
+     "ms": 14,
+     "n": 11
+    },
+    {
+     "ms": 14,
+     "n": 12
+    },
+    {
+     "ms": 13,
+     "n": 13
+    },
+    {
+     "ms": 14,
+     "n": 14
+    },
+    {
+     "ms": 13,
+     "n": 15
+    },
+    {
+     "ms": 13,
+     "n": 16
+    },
+    {
+     "ms": 14,
+     "n": 17
+    },
+    {
+     "ms": 13,
+     "n": 18
+    },
+    {
+     "ms": 14,
+     "n": 19
+    },
+    {
+     "ms": 14,
+     "n": 20
+    },
+    {
+     "ms": 14,
+     "n": 21
+    },
+    {
+     "ms": 13,
+     "n": 22
+    },
+    {
+     "ms": 14,
+     "n": 23
+    },
+    {
+     "ms": 14,
+     "n": 24
+    }
+   ],
+   "tid": {
+    "vist": "0,80 s",
+    "facit": "0,80 s"
+   },
+   "skyder": [
+    {
+     "k0": 290,
+     "facitStart": 290,
+     "start": 290,
+     "frem": [
+      291,
+      292,
+      293,
+      294,
+      295,
+      296,
+      297,
+      298
+     ],
+     "tilbage": [
+      297,
+      296,
+      295,
+      294,
+      293,
+      292
+     ],
+     "ms": [
+      10,
+      14,
+      13,
+      14,
+      14,
+      15,
+      15,
+      14,
+      13,
+      14,
+      14,
+      15,
+      14,
+      14
+     ],
+     "mellemrumMs": [
+      33.4,
+      33.4,
+      33.4,
+      33.4,
+      33.4,
+      33.4,
+      33.4,
+      33.4
+     ]
+    },
+    {
+     "k0": 250,
+     "facitStart": 250,
+     "start": 250,
+     "frem": [
+      251,
+      252,
+      253,
+      254,
+      255,
+      256,
+      257,
+      258
+     ],
+     "tilbage": [
+      257,
+      256,
+      255,
+      254,
+      253,
+      252
+     ],
+     "ms": [
+      14,
+      14,
+      13,
+      14,
+      15,
+      14,
+      15,
+      14,
+      15,
+      14,
+      14,
+      15,
+      15,
+      14
+     ],
+     "mellemrumMs": [
+      33.4,
+      33.4,
+      33.4,
+      33.4,
+      33.4,
+      33.4,
+      33.4,
+      33.4
+     ]
+    }
+   ],
+   "brug": {
+    "vist": 252,
+    "foto": 252,
+    "ms": 80,
+    "navn": "Billede: sq2997.mp4, 8,41 s (kun i din browser)"
+   },
+   "fejl": []
+  },
+  "1280 sq2997.mov": {
+   "aabn": {
+    "ms": 53,
+    "ok": true,
+    "w": 1080,
+    "h": 1920,
+    "rs": 4,
+    "tid": "0,00 s",
+    "trinnote": "Et tryk går præcis ét billede frem eller tilbage: browseren siger tiden på hvert billede, også i 29,97 billeder/s og en telefons skiftende billedrate.",
+    "videostor": "",
+    "navn": "Video: sq2997.mov (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "liste": "Hop til løftet fra gulvet: tryk Klik navet i videoen og så på navet i et billede, hvor stangen står på gulvet, og igen i to billeder lige efter, at den har sluppet. Siden regner baglæns til det sidste billede på gulvet.",
+    "billedNavn": "Intet billede valgt."
+   },
+   "foerste": 0,
+   "tilbageSlaaetFra": true,
+   "frem": [
+    {
+     "ms": 113,
+     "n": 1
+    },
+    {
+     "ms": 46,
+     "n": 2
+    },
+    {
+     "ms": 13,
+     "n": 3
+    },
+    {
+     "ms": 13,
+     "n": 4
+    },
+    {
+     "ms": 13,
+     "n": 5
+    },
+    {
+     "ms": 14,
+     "n": 6
+    },
+    {
+     "ms": 13,
+     "n": 7
+    },
+    {
+     "ms": 14,
+     "n": 8
+    },
+    {
+     "ms": 14,
+     "n": 9
+    },
+    {
+     "ms": 14,
+     "n": 10
+    },
+    {
+     "ms": 13,
+     "n": 11
+    },
+    {
+     "ms": 14,
+     "n": 12
+    },
+    {
+     "ms": 13,
+     "n": 13
+    },
+    {
+     "ms": 14,
+     "n": 14
+    },
+    {
+     "ms": 14,
+     "n": 15
+    },
+    {
+     "ms": 13,
+     "n": 16
+    },
+    {
+     "ms": 14,
+     "n": 17
+    },
+    {
+     "ms": 13,
+     "n": 18
+    },
+    {
+     "ms": 13,
+     "n": 19
+    },
+    {
+     "ms": 13,
+     "n": 20
+    },
+    {
+     "ms": 14,
+     "n": 21
+    },
+    {
+     "ms": 15,
+     "n": 22
+    },
+    {
+     "ms": 14,
+     "n": 23
+    },
+    {
+     "ms": 13,
+     "n": 24
+    }
+   ],
+   "tid": {
+    "vist": "0,80 s",
+    "facit": "0,80 s"
+   },
+   "skyder": [
+    {
+     "k0": 290,
+     "facitStart": 290,
+     "start": 290,
+     "frem": [
+      291,
+      292,
+      293,
+      294,
+      295,
+      296,
+      297,
+      298
+     ],
+     "tilbage": [
+      297,
+      296,
+      295,
+      294,
+      293,
+      292
+     ],
+     "ms": [
+      15,
+      15,
+      14,
+      13,
+      14,
+      14,
+      13,
+      13,
+      14,
+      15,
+      13,
+      14,
+      14,
+      13
+     ],
+     "mellemrumMs": [
+      33.3,
+      33.3,
+      33.3,
+      33.3,
+      33.3,
+      33.3,
+      33.3,
+      33.3
+     ]
+    },
+    {
+     "k0": 250,
+     "facitStart": 250,
+     "start": 250,
+     "frem": [
+      251,
+      252,
+      253,
+      254,
+      255,
+      256,
+      257,
+      258
+     ],
+     "tilbage": [
+      257,
+      256,
+      255,
+      254,
+      253,
+      252
+     ],
+     "ms": [
+      15,
+      13,
+      14,
+      13,
+      14,
+      14,
+      15,
+      15,
+      14,
+      15,
+      14,
+      15,
+      13,
+      14
+     ],
+     "mellemrumMs": [
+      33.3,
+      33.3,
+      33.3,
+      33.3,
+      33.3,
+      33.3,
+      33.3,
+      33.3
+     ]
+    }
+   ],
+   "brug": {
+    "vist": 252,
+    "foto": 252,
+    "ms": 94,
+    "navn": "Billede: sq2997.mov, 8,41 s (kun i din browser)"
+   },
+   "fejl": []
+  },
+  "1280 sqvfr.mp4": {
+   "aabn": {
+    "ms": 70,
+    "ok": true,
+    "w": 1080,
+    "h": 1920,
+    "rs": 4,
+    "tid": "0,00 s",
+    "trinnote": "Et tryk går præcis ét billede frem eller tilbage: browseren siger tiden på hvert billede, også i 29,97 billeder/s og en telefons skiftende billedrate.",
+    "videostor": "",
+    "navn": "Video: sqvfr.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "liste": "Hop til løftet fra gulvet: tryk Klik navet i videoen og så på navet i et billede, hvor stangen står på gulvet, og igen i to billeder lige efter, at den har sluppet. Siden regner baglæns til det sidste billede på gulvet.",
+    "billedNavn": "Intet billede valgt."
+   },
+   "foerste": 0,
+   "tilbageSlaaetFra": true,
+   "frem": [
+    {
+     "ms": 81,
+     "n": 1
+    },
+    {
+     "ms": 60,
+     "n": 2
+    },
+    {
+     "ms": 14,
+     "n": 3
+    },
+    {
+     "ms": 14,
+     "n": 4
+    },
+    {
+     "ms": 14,
+     "n": 5
+    },
+    {
+     "ms": 14,
+     "n": 6
+    },
+    {
+     "ms": 13,
+     "n": 7
+    },
+    {
+     "ms": 14,
+     "n": 8
+    },
+    {
+     "ms": 29,
+     "n": 9
+    },
+    {
+     "ms": 13,
+     "n": 10
+    },
+    {
+     "ms": 14,
+     "n": 11
+    },
+    {
+     "ms": 13,
+     "n": 12
+    },
+    {
+     "ms": 13,
+     "n": 13
+    },
+    {
+     "ms": 13,
+     "n": 14
+    },
+    {
+     "ms": 14,
+     "n": 15
+    },
+    {
+     "ms": 14,
+     "n": 16
+    },
+    {
+     "ms": 14,
+     "n": 17
+    },
+    {
+     "ms": 45,
+     "n": 18
+    },
+    {
+     "ms": 14,
+     "n": 19
+    },
+    {
+     "ms": 14,
+     "n": 20
+    },
+    {
+     "ms": 15,
+     "n": 21
+    },
+    {
+     "ms": 14,
+     "n": 22
+    },
+    {
+     "ms": 14,
+     "n": 23
+    },
+    {
+     "ms": 14,
+     "n": 24
+    }
+   ],
+   "tid": {
+    "vist": "0,87 s",
+    "facit": "0,87 s"
+   },
+   "skyder": [
+    {
+     "k0": 290,
+     "facitStart": 290,
+     "start": 290,
+     "frem": [
+      291,
+      292,
+      293,
+      294,
+      295,
+      296,
+      297,
+      298
+     ],
+     "tilbage": [
+      297,
+      296,
+      295,
+      294,
+      293,
+      292
+     ],
+     "ms": [
+      34,
+      37,
+      35,
+      43,
+      44,
+      45,
+      84,
+      45,
+      13,
+      15,
+      13,
+      14,
+      14,
+      13
+     ],
+     "mellemrumMs": [
+      41.7,
+      41.7,
+      41.7,
+      41.7,
+      41.7,
+      41.7,
+      66.7,
+      41.7
+     ]
+    },
+    {
+     "k0": 250,
+     "facitStart": 250,
+     "start": 250,
+     "frem": [
+      251,
+      252,
+      253,
+      254,
+      255,
+      256,
+      257,
+      258
+     ],
+     "tilbage": [
+      257,
+      256,
+      255,
+      254,
+      253,
+      252
+     ],
+     "ms": [
+      28,
+      44,
+      29,
+      30,
+      30,
+      30,
+      29,
+      30,
+      14,
+      13,
+      14,
+      14,
+      14,
+      15
+     ],
+     "mellemrumMs": [
+      41.7,
+      66.7,
+      41.7,
+      41.7,
+      41.7,
+      41.7,
+      41.7,
+      41.7
+     ]
+    }
+   ],
+   "brug": {
+    "vist": 252,
+    "foto": 252,
+    "ms": 85,
+    "navn": "Billede: sqvfr.mp4, 9,43 s (kun i din browser)"
+   },
+   "fejl": []
+  },
+  "1280 sqvfr.mov": {
+   "aabn": {
+    "ms": 55,
+    "ok": true,
+    "w": 1080,
+    "h": 1920,
+    "rs": 4,
+    "tid": "0,00 s",
+    "trinnote": "Et tryk går præcis ét billede frem eller tilbage: browseren siger tiden på hvert billede, også i 29,97 billeder/s og en telefons skiftende billedrate.",
+    "videostor": "",
+    "navn": "Video: sqvfr.mov (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "liste": "Hop til løftet fra gulvet: tryk Klik navet i videoen og så på navet i et billede, hvor stangen står på gulvet, og igen i to billeder lige efter, at den har sluppet. Siden regner baglæns til det sidste billede på gulvet.",
+    "billedNavn": "Intet billede valgt."
+   },
+   "foerste": 0,
+   "tilbageSlaaetFra": true,
+   "frem": [
+    {
+     "ms": 92,
+     "n": 1
+    },
+    {
+     "ms": 60,
+     "n": 2
+    },
+    {
+     "ms": 14,
+     "n": 3
+    },
+    {
+     "ms": 14,
+     "n": 4
+    },
+    {
+     "ms": 14,
+     "n": 5
+    },
+    {
+     "ms": 13,
+     "n": 6
+    },
+    {
+     "ms": 13,
+     "n": 7
+    },
+    {
+     "ms": 13,
+     "n": 8
+    },
+    {
+     "ms": 45,
+     "n": 9
+    },
+    {
+     "ms": 15,
+     "n": 10
+    },
+    {
+     "ms": 14,
+     "n": 11
+    },
+    {
+     "ms": 14,
+     "n": 12
+    },
+    {
+     "ms": 13,
+     "n": 13
+    },
+    {
+     "ms": 13,
+     "n": 14
+    },
+    {
+     "ms": 14,
+     "n": 15
+    },
+    {
+     "ms": 13,
+     "n": 16
+    },
+    {
+     "ms": 13,
+     "n": 17
+    },
+    {
+     "ms": 44,
+     "n": 18
+    },
+    {
+     "ms": 12,
+     "n": 19
+    },
+    {
+     "ms": 15,
+     "n": 20
+    },
+    {
+     "ms": 14,
+     "n": 21
+    },
+    {
+     "ms": 16,
+     "n": 22
+    },
+    {
+     "ms": 14,
+     "n": 23
+    },
+    {
+     "ms": 14,
+     "n": 24
+    }
+   ],
+   "tid": {
+    "vist": "0,87 s",
+    "facit": "0,87 s"
+   },
+   "skyder": [
+    {
+     "k0": 290,
+     "facitStart": 290,
+     "start": 290,
+     "frem": [
+      291,
+      292,
+      293,
+      294,
+      295,
+      296,
+      297,
+      298
+     ],
+     "tilbage": [
+      297,
+      296,
+      295,
+      294,
+      293,
+      292
+     ],
+     "ms": [
+      37,
+      38,
+      36,
+      44,
+      44,
+      51,
+      84,
+      46,
+      14,
+      13,
+      13,
+      13,
+      14,
+      14
+     ],
+     "mellemrumMs": [
+      41.7,
+      41.7,
+      41.7,
+      41.7,
+      41.7,
+      41.7,
+      66.7,
+      41.7
+     ]
+    },
+    {
+     "k0": 250,
+     "facitStart": 250,
+     "start": 250,
+     "frem": [
+      251,
+      252,
+      253,
+      254,
+      255,
+      256,
+      257,
+      258
+     ],
+     "tilbage": [
+      257,
+      256,
+      255,
+      254,
+      253,
+      252
+     ],
+     "ms": [
+      29,
+      44,
+      20,
+      22,
+      30,
+      30,
+      29,
+      30,
+      14,
+      15,
+      13,
+      14,
+      13,
+      13
+     ],
+     "mellemrumMs": [
+      41.7,
+      66.7,
+      41.7,
+      41.7,
+      41.7,
+      41.7,
+      41.7,
+      41.7
+     ]
+    }
+   ],
+   "brug": {
+    "vist": 252,
+    "foto": 252,
+    "ms": 89,
+    "navn": "Billede: sqvfr.mov, 9,43 s (kun i din browser)"
+   },
+   "fejl": []
+  }
+ },
+ "B": {
+  "390 sq2997.mp4": {
+   "to klik 10 %": {
+    "jaevn": {
+     "klikket": [
+      85,
+      104
+     ],
+     "maerker": 2,
+     "n": 95,
+     "fejl": -1,
+     "metode": "midt",
+     "ms": 110,
+     "liste": "Navet klikket ved 2,84 s, 3,47 s. Siden hopper midt imellem de to. Går stangen hurtigere op end ned, eller omvendt, ligger bunden et par billeder ved siden af, så tjek et par billeder til begge sider. Klik to billeder på hver side af bunden, ét tæt på bunden og ét højere oppe, så regner siden nedturen og opturen hver for sig."
+    },
+    "hurtig op": {
+     "klikket": [
+      241,
+      261
+     ],
+     "maerker": 2,
+     "n": 251,
+     "fejl": -4,
+     "metode": "midt",
+     "ms": 134,
+     "liste": "Navet klikket ved 8,04 s, 8,71 s. Siden hopper midt imellem de to. Går stangen hurtigere op end ned, eller omvendt, ligger bunden et par billeder ved siden af, så tjek et par billeder til begge sider. Klik to billeder på hver side af bunden, ét tæt på bunden og ét højere oppe, så regner siden nedturen og opturen hver for sig."
+    },
+    "grind": {
+     "klikket": [
+      381,
+      408
+     ],
+     "maerker": 2,
+     "n": 395,
+     "fejl": 5,
+     "metode": "midt",
+     "ms": 39,
+     "liste": "Navet klikket ved 12,71 s, 13,61 s. Siden hopper midt imellem de to. Går stangen hurtigere op end ned, eller omvendt, ligger bunden et par billeder ved siden af, så tjek et par billeder til begge sider. Klik to billeder på hver side af bunden, ét tæt på bunden og ét højere oppe, så regner siden nedturen og opturen hver for sig."
+    },
+    "pause": {
+     "klikket": [
+      567,
+      605
+     ],
+     "maerker": 2,
+     "n": 586,
+     "fejl": 0,
+     "metode": "midt",
+     "ms": 16,
+     "liste": "Navet klikket ved 18,92 s, 20,19 s. Siden hopper midt imellem de to. Går stangen hurtigere op end ned, eller omvendt, ligger bunden et par billeder ved siden af, så tjek et par billeder til begge sider. Klik to billeder på hver side af bunden, ét tæt på bunden og ét højere oppe, så regner siden nedturen og opturen hver for sig."
+    },
+    "dyk": {
+     "klikket": [
+      736,
+      755
+     ],
+     "maerker": 2,
+     "n": 746,
+     "fejl": 3,
+     "metode": "midt",
+     "ms": 109,
+     "liste": "Navet klikket ved 24,56 s, 25,19 s. Siden hopper midt imellem de to. Går stangen hurtigere op end ned, eller omvendt, ligger bunden et par billeder ved siden af, så tjek et par billeder til begge sider. Klik to billeder på hver side af bunden, ét tæt på bunden og ét højere oppe, så regner siden nedturen og opturen hver for sig."
+    }
+   },
+   "tekstens raad: 10 % og 30 % paa hver side": {
+    "jaevn": {
+     "klikket": [
+      77,
+      85,
+      104,
+      111
+     ],
+     "maerker": 4,
+     "n": 96,
+     "fejl": 0,
+     "metode": "to-buer",
+     "ms": 25,
+     "liste": "Navet klikket ved 2,57 s, 2,84 s, 3,47 s, 3,70 s. Siden lægger én bue gennem klikkene på vej ned og en anden gennem dem på vej op og hopper til der, hvor de mødes i bunden; tjek med et billede frem og tilbage."
+    },
+    "hurtig op": {
+     "klikket": [
+      231,
+      241,
+      261,
+      266
+     ],
+     "maerker": 4,
+     "n": 255,
+     "fejl": 0,
+     "metode": "to-buer",
+     "ms": 41,
+     "liste": "Navet klikket ved 7,71 s, 8,04 s, 8,71 s, 8,88 s. Siden lægger én bue gennem klikkene på vej ned og en anden gennem dem på vej op og hopper til der, hvor de mødes i bunden; tjek med et billede frem og tilbage."
+    },
+    "grind": {
+     "klikket": [
+      374,
+      381,
+      408,
+      422
+     ],
+     "maerker": 4,
+     "n": 390,
+     "fejl": 0,
+     "metode": "to-buer",
+     "ms": 54,
+     "liste": "Navet klikket ved 12,48 s, 12,71 s, 13,61 s, 14,08 s. Siden lægger én bue gennem klikkene på vej ned og en anden gennem dem på vej op og hopper til der, hvor de mødes i bunden; tjek med et billede frem og tilbage."
+    },
+    "pause": {
+     "klikket": [
+      558,
+      567,
+      605,
+      611
+     ],
+     "maerker": 4,
+     "n": 588,
+     "fejl": 0,
+     "metode": "to-buer",
+     "ms": 17,
+     "liste": "Navet klikket ved 18,62 s, 18,92 s, 20,19 s, 20,39 s. Siden lægger én bue gennem klikkene på vej ned og en anden gennem dem på vej op og hopper til der, hvor de mødes i bunden; tjek med et billede frem og tilbage."
+    },
+    "dyk": {
+     "klikket": [
+      731,
+      736,
+      755,
+      764
+     ],
+     "maerker": 4,
+     "n": 743,
+     "fejl": 0,
+     "metode": "to-buer",
+     "ms": 17,
+     "liste": "Navet klikket ved 24,39 s, 24,56 s, 25,19 s, 25,49 s. Siden lægger én bue gennem klikkene på vej ned og en anden gennem dem på vej op og hopper til der, hvor de mødes i bunden; tjek med et billede frem og tilbage."
+    }
+   },
+   "en traener: 3 % og 40 % ned, 8 % og 25 % op": {
+    "jaevn": {
+     "klikket": [
+      74,
+      90,
+      103,
+      109
+     ],
+     "maerker": 4,
+     "n": 96,
+     "fejl": 0,
+     "metode": "to-buer",
+     "ms": 28,
+     "liste": "Navet klikket ved 2,47 s, 3,00 s, 3,44 s, 3,64 s. Siden lægger én bue gennem klikkene på vej ned og en anden gennem dem på vej op og hopper til der, hvor de mødes i bunden; tjek med et billede frem og tilbage."
+    },
+    "hurtig op": {
+     "klikket": [
+      228,
+      247,
+      260,
+      265
+     ],
+     "maerker": 4,
+     "n": 255,
+     "fejl": 0,
+     "metode": "to-buer",
+     "ms": 38,
+     "liste": "Navet klikket ved 7,61 s, 8,24 s, 8,68 s, 8,84 s. Siden lægger én bue gennem klikkene på vej ned og en anden gennem dem på vej op og hopper til der, hvor de mødes i bunden; tjek med et billede frem og tilbage."
+    },
+    "grind": {
+     "klikket": [
+      371,
+      384,
+      406,
+      419
+     ],
+     "maerker": 4,
+     "n": 390,
+     "fejl": 0,
+     "metode": "to-buer",
+     "ms": 31,
+     "liste": "Navet klikket ved 12,38 s, 12,81 s, 13,55 s, 13,98 s. Siden lægger én bue gennem klikkene på vej ned og en anden gennem dem på vej op og hopper til der, hvor de mødes i bunden; tjek med et billede frem og tilbage."
+    },
+    "pause": {
+     "klikket": [
+      555,
+      572,
+      604,
+      610
+     ],
+     "maerker": 4,
+     "n": 589,
+     "fejl": 0,
+     "metode": "to-buer",
+     "ms": 17,
+     "liste": "Navet klikket ved 18,52 s, 19,09 s, 20,15 s, 20,35 s. Siden lægger én bue gennem klikkene på vej ned og en anden gennem dem på vej op og hopper til der, hvor de mødes i bunden; tjek med et billede frem og tilbage."
+    },
+    "dyk": {
+     "klikket": [
+      729,
+      739,
+      754,
+      762
+     ],
+     "maerker": 4,
+     "n": 743,
+     "fejl": 0,
+     "metode": "to-buer",
+     "ms": 16,
+     "liste": "Navet klikket ved 24,32 s, 24,66 s, 25,16 s, 25,43 s. Siden lægger én bue gennem klikkene på vej ned og en anden gennem dem på vej op og hopper til der, hvor de mødes i bunden; tjek med et billede frem og tilbage."
+    }
+   },
+   "tre klik: 10 % ned, 10 % og 30 % op": {
+    "jaevn": {
+     "klikket": [
+      85,
+      104,
+      111
+     ],
+     "maerker": 3,
+     "n": 95,
+     "fejl": -1,
+     "metode": "parabel",
+     "ms": 16,
+     "liste": "Navet klikket ved 2,84 s, 3,47 s, 3,70 s. Siden lægger én bue gennem klikkene og hopper til dens bund. Buen er lige stejl på begge sider, så den rammer ikke bedre end to klik. Klik to billeder på hver side af bunden, ét tæt på bunden og ét højere oppe, så regner siden nedturen og opturen hver for sig."
+    },
+    "hurtig op": {
+     "klikket": [
+      241,
+      261,
+      266
+     ],
+     "maerker": 3,
+     "n": 252,
+     "fejl": -3,
+     "metode": "parabel",
+     "ms": 23,
+     "liste": "Navet klikket ved 8,04 s, 8,71 s, 8,88 s. Siden lægger én bue gennem klikkene og hopper til dens bund. Buen er lige stejl på begge sider, så den rammer ikke bedre end to klik. Klik to billeder på hver side af bunden, ét tæt på bunden og ét højere oppe, så regner siden nedturen og opturen hver for sig."
+    },
+    "grind": {
+     "klikket": [
+      381,
+      408,
+      422
+     ],
+     "maerker": 3,
+     "n": 395,
+     "fejl": 5,
+     "metode": "parabel",
+     "ms": 39,
+     "liste": "Navet klikket ved 12,71 s, 13,61 s, 14,08 s. Siden lægger én bue gennem klikkene og hopper til dens bund. Buen er lige stejl på begge sider, så den rammer ikke bedre end to klik. Klik to billeder på hver side af bunden, ét tæt på bunden og ét højere oppe, så regner siden nedturen og opturen hver for sig."
+    },
+    "pause": {
+     "klikket": [
+      567,
+      605,
+      611
+     ],
+     "maerker": 3,
+     "n": 586,
+     "fejl": 0,
+     "metode": "parabel",
+     "ms": 15,
+     "liste": "Navet klikket ved 18,92 s, 20,19 s, 20,39 s. Siden lægger én bue gennem klikkene og hopper til dens bund. Buen er lige stejl på begge sider, så den rammer ikke bedre end to klik. Klik to billeder på hver side af bunden, ét tæt på bunden og ét højere oppe, så regner siden nedturen og opturen hver for sig."
+    },
+    "dyk": {
+     "klikket": [
+      736,
+      755,
+      764
+     ],
+     "maerker": 3,
+     "n": 746,
+     "fejl": 3,
+     "metode": "parabel",
+     "ms": 15,
+     "liste": "Navet klikket ved 24,56 s, 25,19 s, 25,49 s. Siden lægger én bue gennem klikkene og hopper til dens bund. Buen er lige stejl på begge sider, så den rammer ikke bedre end to klik. Klik to billeder på hver side af bunden, ét tæt på bunden og ét højere oppe, så regner siden nedturen og opturen hver for sig."
+    }
+   }
+  },
+  "390 sqvfr.mov": {
+   "to klik 10 %": {
+    "jaevn": {
+     "klikket": [
+      77,
+      94
+     ],
+     "maerker": 2,
+     "n": 86,
+     "fejl": -1,
+     "metode": "midt",
+     "ms": 301,
+     "liste": "Navet klikket ved 2,84 s, 3,47 s. Siden hopper midt imellem de to. Går stangen hurtigere op end ned, eller omvendt, ligger bunden et par billeder ved siden af, så tjek et par billeder til begge sider. Klik to billeder på hver side af bunden, ét tæt på bunden og ét højere oppe, så regner siden nedturen og opturen hver for sig."
+    },
+    "hurtig op": {
+     "klikket": [
+      218,
+      235
+     ],
+     "maerker": 2,
+     "n": 226,
+     "fejl": -4,
+     "metode": "midt",
+     "ms": 261,
+     "liste": "Navet klikket ved 8,07 s, 8,70 s. Siden hopper midt imellem de to. Går stangen hurtigere op end ned, eller omvendt, ligger bunden et par billeder ved siden af, så tjek et par billeder til begge sider. Klik to billeder på hver side af bunden, ét tæt på bunden og ét højere oppe, så regner siden nedturen og opturen hver for sig."
+    },
+    "grind": {
+     "klikket": [
+      326,
+      346
+     ],
+     "maerker": 2,
+     "n": 336,
+     "fejl": 3,
+     "metode": "midt",
+     "ms": 15,
+     "liste": "Navet klikket ved 12,71 s, 13,60 s. Siden hopper midt imellem de to. Går stangen hurtigere op end ned, eller omvendt, ligger bunden et par billeder ved siden af, så tjek et par billeder til begge sider. Klik to billeder på hver side af bunden, ét tæt på bunden og ét højere oppe, så regner siden nedturen og opturen hver for sig."
+    },
+    "pause": {
+     "klikket": [
+      486,
+      521
+     ],
+     "maerker": 2,
+     "n": 503,
+     "fejl": 0,
+     "metode": "midt",
+     "ms": 190,
+     "liste": "Navet klikket ved 18,89 s, 20,16 s. Siden hopper midt imellem de to. Går stangen hurtigere op end ned, eller omvendt, ligger bunden et par billeder ved siden af, så tjek et par billeder til begge sider. Klik to billeder på hver side af bunden, ét tæt på bunden og ét højere oppe, så regner siden nedturen og opturen hver for sig."
+    },
+    "dyk": {
+     "klikket": [
+      639,
+      656
+     ],
+     "maerker": 2,
+     "n": 648,
+     "fejl": 2,
+     "metode": "midt",
+     "ms": 161,
+     "liste": "Navet klikket ved 24,57 s, 25,16 s. Siden hopper midt imellem de to. Går stangen hurtigere op end ned, eller omvendt, ligger bunden et par billeder ved siden af, så tjek et par billeder til begge sider. Klik to billeder på hver side af bunden, ét tæt på bunden og ét højere oppe, så regner siden nedturen og opturen hver for sig."
+    }
+   },
+   "tekstens raad: 10 % og 30 % paa hver side": {
+    "jaevn": {
+     "klikket": [
+      70,
+      77,
+      94,
+      100
+     ],
+     "maerker": 4,
+     "n": 87,
+     "fejl": 0,
+     "metode": "to-buer",
+     "ms": 26,
+     "liste": "Navet klikket ved 2,57 s, 2,84 s, 3,47 s, 3,70 s. Siden lægger én bue gennem klikkene på vej ned og en anden gennem dem på vej op og hopper til der, hvor de mødes i bunden; tjek med et billede frem og tilbage."
+    },
+    "hurtig op": {
+     "klikket": [
+      209,
+      218,
+      235,
+      240
+     ],
+     "maerker": 4,
+     "n": 230,
+     "fejl": 0,
+     "metode": "to-buer",
+     "ms": 18,
+     "liste": "Navet klikket ved 7,74 s, 8,07 s, 8,70 s, 8,88 s. Siden lægger én bue gennem klikkene på vej ned og en anden gennem dem på vej op og hopper til der, hvor de mødes i bunden; tjek med et billede frem og tilbage."
+    },
+    "grind": {
+     "klikket": [
+      321,
+      326,
+      346,
+      357
+     ],
+     "maerker": 4,
+     "n": 333,
+     "fejl": 0,
+     "metode": "to-buer",
+     "ms": 45,
+     "liste": "Navet klikket ved 12,48 s, 12,71 s, 13,60 s, 14,08 s. Siden lægger én bue gennem klikkene på vej ned og en anden gennem dem på vej op og hopper til der, hvor de mødes i bunden; tjek med et billede frem og tilbage."
+    },
+    "pause": {
+     "klikket": [
+      479,
+      486,
+      521,
+      527
+     ],
+     "maerker": 4,
+     "n": 506,
+     "fejl": 0,
+     "metode": "to-buer",
+     "ms": 102,
+     "liste": "Navet klikket ved 18,63 s, 18,89 s, 20,16 s, 20,40 s. Siden lægger én bue gennem klikkene på vej ned og en anden gennem dem på vej op og hopper til der, hvor de mødes i bunden; tjek med et billede frem og tilbage."
+    },
+    "dyk": {
+     "klikket": [
+      634,
+      639,
+      656,
+      665
+     ],
+     "maerker": 4,
+     "n": 646,
+     "fejl": 0,
+     "metode": "to-buer",
+     "ms": 17,
+     "liste": "Navet klikket ved 24,36 s, 24,57 s, 25,16 s, 25,50 s. Siden lægger én bue gennem klikkene på vej ned og en anden gennem dem på vej op og hopper til der, hvor de mødes i bunden; tjek med et billede frem og tilbage."
+    }
+   },
+   "en traener: 3 % og 40 % ned, 8 % og 25 % op": {
+    "jaevn": {
+     "klikket": [
+      67,
+      81,
+      93,
+      98
+     ],
+     "maerker": 4,
+     "n": 87,
+     "fejl": 0,
+     "metode": "to-buer",
+     "ms": 70,
+     "liste": "Navet klikket ved 2,47 s, 3,00 s, 3,44 s, 3,60 s. Siden lægger én bue gennem klikkene på vej ned og en anden gennem dem på vej op og hopper til der, hvor de mødes i bunden; tjek med et billede frem og tilbage."
+    },
+    "hurtig op": {
+     "klikket": [
+      206,
+      223,
+      235,
+      239
+     ],
+     "maerker": 4,
+     "n": 230,
+     "fejl": 0,
+     "metode": "to-buer",
+     "ms": 17,
+     "liste": "Navet klikket ved 7,60 s, 8,23 s, 8,70 s, 8,84 s. Siden lægger én bue gennem klikkene på vej ned og en anden gennem dem på vej op og hopper til der, hvor de mødes i bunden; tjek med et billede frem og tilbage."
+    },
+    "grind": {
+     "klikket": [
+      319,
+      329,
+      345,
+      355
+     ],
+     "maerker": 4,
+     "n": 333,
+     "fejl": 0,
+     "metode": "to-buer",
+     "ms": 55,
+     "liste": "Navet klikket ved 12,39 s, 12,84 s, 13,55 s, 13,99 s. Siden lægger én bue gennem klikkene på vej ned og en anden gennem dem på vej op og hopper til der, hvor de mødes i bunden; tjek med et billede frem og tilbage."
+    },
+    "pause": {
+     "klikket": [
+      476,
+      492,
+      520,
+      525
+     ],
+     "maerker": 4,
+     "n": 506,
+     "fejl": 0,
+     "metode": "to-buer",
+     "ms": 17,
+     "liste": "Navet klikket ved 18,50 s, 19,09 s, 20,13 s, 20,33 s. Siden lægger én bue gennem klikkene på vej ned og en anden gennem dem på vej op og hopper til der, hvor de mødes i bunden; tjek med et billede frem og tilbage."
+    },
+    "dyk": {
+     "klikket": [
+      632,
+      642,
+      655,
+      663
+     ],
+     "maerker": 4,
+     "n": 646,
+     "fejl": 0,
+     "metode": "to-buer",
+     "ms": 15,
+     "liste": "Navet klikket ved 24,30 s, 24,66 s, 25,13 s, 25,43 s. Siden lægger én bue gennem klikkene på vej ned og en anden gennem dem på vej op og hopper til der, hvor de mødes i bunden; tjek med et billede frem og tilbage."
+    }
+   },
+   "tre klik: 10 % ned, 10 % og 30 % op": {
+    "jaevn": {
+     "klikket": [
+      77,
+      94,
+      100
+     ],
+     "maerker": 3,
+     "n": 86,
+     "fejl": -1,
+     "metode": "parabel",
+     "ms": 16,
+     "liste": "Navet klikket ved 2,84 s, 3,47 s, 3,70 s. Siden lægger én bue gennem klikkene og hopper til dens bund. Buen er lige stejl på begge sider, så den rammer ikke bedre end to klik. Klik to billeder på hver side af bunden, ét tæt på bunden og ét højere oppe, så regner siden nedturen og opturen hver for sig."
+    },
+    "hurtig op": {
+     "klikket": [
+      218,
+      235,
+      240
+     ],
+     "maerker": 3,
+     "n": 227,
+     "fejl": -3,
+     "metode": "parabel",
+     "ms": 62,
+     "liste": "Navet klikket ved 8,07 s, 8,70 s, 8,88 s. Siden lægger én bue gennem klikkene og hopper til dens bund. Buen er lige stejl på begge sider, så den rammer ikke bedre end to klik. Klik to billeder på hver side af bunden, ét tæt på bunden og ét højere oppe, så regner siden nedturen og opturen hver for sig."
+    },
+    "grind": {
+     "klikket": [
+      326,
+      346,
+      357
+     ],
+     "maerker": 3,
+     "n": 337,
+     "fejl": 4,
+     "metode": "parabel",
+     "ms": 23,
+     "liste": "Navet klikket ved 12,71 s, 13,60 s, 14,08 s. Siden lægger én bue gennem klikkene og hopper til dens bund. Buen er lige stejl på begge sider, så den rammer ikke bedre end to klik. Klik to billeder på hver side af bunden, ét tæt på bunden og ét højere oppe, så regner siden nedturen og opturen hver for sig."
+    },
+    "pause": {
+     "klikket": [
+      486,
+      521,
+      527
+     ],
+     "maerker": 3,
+     "n": 504,
+     "fejl": 0,
+     "metode": "parabel",
+     "ms": 154,
+     "liste": "Navet klikket ved 18,89 s, 20,16 s, 20,40 s. Siden lægger én bue gennem klikkene og hopper til dens bund. Buen er lige stejl på begge sider, så den rammer ikke bedre end to klik. Klik to billeder på hver side af bunden, ét tæt på bunden og ét højere oppe, så regner siden nedturen og opturen hver for sig."
+    },
+    "dyk": {
+     "klikket": [
+      639,
+      656,
+      665
+     ],
+     "maerker": 3,
+     "n": 648,
+     "fejl": 2,
+     "metode": "parabel",
+     "ms": 157,
+     "liste": "Navet klikket ved 24,57 s, 25,16 s, 25,50 s. Siden lægger én bue gennem klikkene og hopper til dens bund. Buen er lige stejl på begge sider, så den rammer ikke bedre end to klik. Klik to billeder på hver side af bunden, ét tæt på bunden og ét højere oppe, så regner siden nedturen og opturen hver for sig."
+    }
+   }
+  },
+  "1280 sq2997.mp4": {
+   "tekstens raad: 10 % og 30 % paa hver side": {
+    "jaevn": {
+     "klikket": [
+      77,
+      85,
+      104,
+      111
+     ],
+     "maerker": 4,
+     "n": 96,
+     "fejl": 0,
+     "metode": "to-buer",
+     "ms": 177,
+     "liste": "Navet klikket ved 2,57 s, 2,84 s, 3,47 s, 3,70 s. Siden lægger én bue gennem klikkene på vej ned og en anden gennem dem på vej op og hopper til der, hvor de mødes i bunden; tjek med et billede frem og tilbage."
+    },
+    "hurtig op": {
+     "klikket": [
+      231,
+      241,
+      261,
+      266
+     ],
+     "maerker": 4,
+     "n": 255,
+     "fejl": 0,
+     "metode": "to-buer",
+     "ms": 149,
+     "liste": "Navet klikket ved 7,71 s, 8,04 s, 8,71 s, 8,88 s. Siden lægger én bue gennem klikkene på vej ned og en anden gennem dem på vej op og hopper til der, hvor de mødes i bunden; tjek med et billede frem og tilbage."
+    },
+    "grind": {
+     "klikket": [
+      374,
+      381,
+      408,
+      422
+     ],
+     "maerker": 4,
+     "n": 390,
+     "fejl": 0,
+     "metode": "to-buer",
+     "ms": 31,
+     "liste": "Navet klikket ved 12,48 s, 12,71 s, 13,61 s, 14,08 s. Siden lægger én bue gennem klikkene på vej ned og en anden gennem dem på vej op og hopper til der, hvor de mødes i bunden; tjek med et billede frem og tilbage."
+    },
+    "pause": {
+     "klikket": [
+      558,
+      567,
+      605,
+      611
+     ],
+     "maerker": 4,
+     "n": 588,
+     "fejl": 0,
+     "metode": "to-buer",
+     "ms": 16,
+     "liste": "Navet klikket ved 18,62 s, 18,92 s, 20,19 s, 20,39 s. Siden lægger én bue gennem klikkene på vej ned og en anden gennem dem på vej op og hopper til der, hvor de mødes i bunden; tjek med et billede frem og tilbage."
+    },
+    "dyk": {
+     "klikket": [
+      731,
+      736,
+      755,
+      764
+     ],
+     "maerker": 4,
+     "n": 743,
+     "fejl": 0,
+     "metode": "to-buer",
+     "ms": 14,
+     "liste": "Navet klikket ved 24,39 s, 24,56 s, 25,19 s, 25,49 s. Siden lægger én bue gennem klikkene på vej ned og en anden gennem dem på vej op og hopper til der, hvor de mødes i bunden; tjek med et billede frem og tilbage."
+    }
+   },
+   "to klik 10 %": {
+    "jaevn": {
+     "klikket": [
+      85,
+      104
+     ],
+     "maerker": 2,
+     "n": 94,
+     "fejl": -2,
+     "metode": "midt",
+     "ms": 13,
+     "liste": "Navet klikket ved 2,84 s, 3,47 s. Siden hopper midt imellem de to. Går stangen hurtigere op end ned, eller omvendt, ligger bunden et par billeder ved siden af, så tjek et par billeder til begge sider. Klik to billeder på hver side af bunden, ét tæt på bunden og ét højere oppe, så regner siden nedturen og opturen hver for sig."
+    },
+    "hurtig op": {
+     "klikket": [
+      241,
+      261
+     ],
+     "maerker": 2,
+     "n": 251,
+     "fejl": -4,
+     "metode": "midt",
+     "ms": 14,
+     "liste": "Navet klikket ved 8,04 s, 8,71 s. Siden hopper midt imellem de to. Går stangen hurtigere op end ned, eller omvendt, ligger bunden et par billeder ved siden af, så tjek et par billeder til begge sider. Klik to billeder på hver side af bunden, ét tæt på bunden og ét højere oppe, så regner siden nedturen og opturen hver for sig."
+    },
+    "grind": {
+     "klikket": [
+      381,
+      408
+     ],
+     "maerker": 2,
+     "n": 394,
+     "fejl": 4,
+     "metode": "midt",
+     "ms": 13,
+     "liste": "Navet klikket ved 12,71 s, 13,61 s. Siden hopper midt imellem de to. Går stangen hurtigere op end ned, eller omvendt, ligger bunden et par billeder ved siden af, så tjek et par billeder til begge sider. Klik to billeder på hver side af bunden, ét tæt på bunden og ét højere oppe, så regner siden nedturen og opturen hver for sig."
+    },
+    "pause": {
+     "klikket": [
+      567,
+      605
+     ],
+     "maerker": 2,
+     "n": 586,
+     "fejl": 0,
+     "metode": "midt",
+     "ms": 14,
+     "liste": "Navet klikket ved 18,92 s, 20,19 s. Siden hopper midt imellem de to. Går stangen hurtigere op end ned, eller omvendt, ligger bunden et par billeder ved siden af, så tjek et par billeder til begge sider. Klik to billeder på hver side af bunden, ét tæt på bunden og ét højere oppe, så regner siden nedturen og opturen hver for sig."
+    },
+    "dyk": {
+     "klikket": [
+      736,
+      755
+     ],
+     "maerker": 2,
+     "n": 745,
+     "fejl": 2,
+     "metode": "midt",
+     "ms": 14,
+     "liste": "Navet klikket ved 24,56 s, 25,19 s. Siden hopper midt imellem de to. Går stangen hurtigere op end ned, eller omvendt, ligger bunden et par billeder ved siden af, så tjek et par billeder til begge sider. Klik to billeder på hver side af bunden, ét tæt på bunden og ét højere oppe, så regner siden nedturen og opturen hver for sig."
+    }
+   }
+  },
+  "traenerMetoder": [
+   "to-buer",
+   "to-buer",
+   "to-buer",
+   "to-buer",
+   "to-buer"
+  ],
+  "regnet": {
+   "tekst +-1 %": {
+    "jaevn": {
+     "brugtPct": 90,
+     "forTaetPct": 10,
+     "median": 0,
+     "p90": 1,
+     "maks": 2,
+     "toKlikMedian": 7,
+     "toKlikP90": 9
+    },
+    "hurtig op": {
+     "brugtPct": 89,
+     "forTaetPct": 11,
+     "median": 0,
+     "p90": 1,
+     "maks": 2,
+     "toKlikMedian": 10,
+     "toKlikP90": 12
+    },
+    "grind": {
+     "brugtPct": 90,
+     "forTaetPct": 10,
+     "median": 1,
+     "p90": 1,
+     "maks": 2,
+     "toKlikMedian": 2,
+     "toKlikP90": 4
+    },
+    "pause": {
+     "brugtPct": 91,
+     "forTaetPct": 9,
+     "median": 0,
+     "p90": 0,
+     "maks": 0,
+     "toKlikMedian": 0,
+     "toKlikP90": 0
+    },
+    "dyk": {
+     "brugtPct": 88,
+     "forTaetPct": 12,
+     "median": 0,
+     "p90": 1,
+     "maks": 2,
+     "toKlikMedian": 2,
+     "toKlikP90": 4
+    }
+   },
+   "tekst +-2 %": {
+    "jaevn": {
+     "brugtPct": 87,
+     "forTaetPct": 13,
+     "median": 1,
+     "p90": 2,
+     "maks": 4,
+     "toKlikMedian": 7,
+     "toKlikP90": 9
+    },
+    "hurtig op": {
+     "brugtPct": 90,
+     "forTaetPct": 10,
+     "median": 1,
+     "p90": 2,
+     "maks": 3,
+     "toKlikMedian": 10,
+     "toKlikP90": 12
+    },
+    "grind": {
+     "brugtPct": 90,
+     "forTaetPct": 9,
+     "median": 1,
+     "p90": 2,
+     "maks": 4,
+     "toKlikMedian": 2,
+     "toKlikP90": 4
+    },
+    "pause": {
+     "brugtPct": 88,
+     "forTaetPct": 12,
+     "median": 0,
+     "p90": 0,
+     "maks": 0,
+     "toKlikMedian": 0,
+     "toKlikP90": 0
+    },
+    "dyk": {
+     "brugtPct": 89,
+     "forTaetPct": 11,
+     "median": 1,
+     "p90": 2,
+     "maks": 3,
+     "toKlikMedian": 2,
+     "toKlikP90": 4
+    }
+   },
+   "tilfaeldig 5-40 % +-1 %": {
+    "jaevn": {
+     "brugtPct": 47,
+     "forTaetPct": 39,
+     "median": 1,
+     "p90": 2,
+     "maks": 4,
+     "toKlikMedian": 3,
+     "toKlikP90": 5
+    },
+    "hurtig op": {
+     "brugtPct": 47,
+     "forTaetPct": 41,
+     "median": 1,
+     "p90": 2,
+     "maks": 5,
+     "toKlikMedian": 5,
+     "toKlikP90": 8
+    },
+    "grind": {
+     "brugtPct": 49,
+     "forTaetPct": 36,
+     "median": 1,
+     "p90": 2,
+     "maks": 5,
+     "toKlikMedian": 7,
+     "toKlikP90": 12
+    },
+    "pause": {
+     "brugtPct": 45,
+     "forTaetPct": 39,
+     "median": 0,
+     "p90": 0,
+     "maks": 0,
+     "toKlikMedian": 0,
+     "toKlikP90": 0
+    },
+    "dyk": {
+     "brugtPct": 51,
+     "forTaetPct": 33,
+     "median": 1,
+     "p90": 1,
+     "maks": 3,
+     "toKlikMedian": 4,
+     "toKlikP90": 7
+    }
+   }
+  }
+ },
+ "C": {
+  "390 x1": {
+   "aabn": {
+    "ms": 61,
+    "ok": true,
+    "w": 1080,
+    "h": 1920,
+    "rs": 4,
+    "tid": "0,00 s",
+    "trinnote": "Et tryk går præcis ét billede frem eller tilbage: browseren siger tiden på hvert billede, også i 29,97 billeder/s og en telefons skiftende billedrate.",
+    "videostor": "",
+    "navn": "Video: sq2997.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "liste": "Hop til løftet fra gulvet: tryk Klik navet i videoen og så på navet i et billede, hvor stangen står på gulvet, og igen i to billeder lige efter, at den har sluppet. Siden regner baglæns til det sidste billede på gulvet.",
+    "billedNavn": "Intet billede valgt."
+   },
+   "frem": [
+    {
+     "ms": 71,
+     "n": 1
+    },
+    {
+     "ms": 41,
+     "n": 2
+    },
+    {
+     "ms": 15,
+     "n": 3
+    },
+    {
+     "ms": 15,
+     "n": 4
+    },
+    {
+     "ms": 15,
+     "n": 5
+    },
+    {
+     "ms": 15,
+     "n": 6
+    },
+    {
+     "ms": 15,
+     "n": 7
+    },
+    {
+     "ms": 14,
+     "n": 8
+    },
+    {
+     "ms": 14,
+     "n": 9
+    },
+    {
+     "ms": 15,
+     "n": 10
+    },
+    {
+     "ms": 15,
+     "n": 11
+    },
+    {
+     "ms": 15,
+     "n": 12
+    },
+    {
+     "ms": 15,
+     "n": 13
+    },
+    {
+     "ms": 16,
+     "n": 14
+    },
+    {
+     "ms": 15,
+     "n": 15
+    },
+    {
+     "ms": 15,
+     "n": 16
+    },
+    {
+     "ms": 15,
+     "n": 17
+    },
+    {
+     "ms": 15,
+     "n": 18
+    },
+    {
+     "ms": 15,
+     "n": 19
+    },
+    {
+     "ms": 15,
+     "n": 20
+    },
+    {
+     "ms": 15,
+     "n": 21
+    },
+    {
+     "ms": 15,
+     "n": 22
+    },
+    {
+     "ms": 15,
+     "n": 23
+    },
+    {
+     "ms": 15,
+     "n": 24
+    }
+   ],
+   "tilbage": [
+    {
+     "ms": 16,
+     "n": 23
+    },
+    {
+     "ms": 14,
+     "n": 22
+    },
+    {
+     "ms": 14,
+     "n": 21
+    },
+    {
+     "ms": 15,
+     "n": 20
+    },
+    {
+     "ms": 16,
+     "n": 19
+    },
+    {
+     "ms": 15,
+     "n": 18
+    }
+   ],
+   "hop": {
+    "klikket": [
+     231,
+     241,
+     261,
+     266
+    ],
+    "maerker": 4,
+    "n": 255,
+    "fejl": 0,
+    "metode": "to-buer",
+    "ms": 39,
+    "liste": "Navet klikket ved 7,71 s, 8,04 s, 8,71 s, 8,88 s. Siden lægger én bue gennem klikkene på vej ned og en anden gennem dem på vej op og hopper til der, hvor de mødes i bunden; tjek med et billede frem og tilbage."
+   },
+   "brug": {
+    "ms": 109,
+    "n": 255
+   },
+   "opsummering": {
+    "aabnMs": 61,
+    "foerste5": [
+     71,
+     41,
+     15,
+     15,
+     15
+    ],
+    "senereMedian": 15,
+    "senereMaks": 16,
+    "tilbageMedian": 15,
+    "hopMs": 39,
+    "brugMs": 109
+   }
+  },
+  "390 x4": {
+   "aabn": {
+    "ms": 189,
+    "ok": true,
+    "w": 1080,
+    "h": 1920,
+    "rs": 4,
+    "tid": "0,00 s",
+    "trinnote": "Et tryk går præcis ét billede frem eller tilbage: browseren siger tiden på hvert billede, også i 29,97 billeder/s og en telefons skiftende billedrate.",
+    "videostor": "",
+    "navn": "Video: sq2997.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "liste": "Hop til løftet fra gulvet: tryk Klik navet i videoen og så på navet i et billede, hvor stangen står på gulvet, og igen i to billeder lige efter, at den har sluppet. Siden regner baglæns til det sidste billede på gulvet.",
+    "billedNavn": "Intet billede valgt."
+   },
+   "frem": [
+    {
+     "ms": 168,
+     "n": 1
+    },
+    {
+     "ms": 64,
+     "n": 2
+    },
+    {
+     "ms": 24,
+     "n": 3
+    },
+    {
+     "ms": 17,
+     "n": 4
+    },
+    {
+     "ms": 22,
+     "n": 5
+    },
+    {
+     "ms": 22,
+     "n": 6
+    },
+    {
+     "ms": 16,
+     "n": 7
+    },
+    {
+     "ms": 16,
+     "n": 8
+    },
+    {
+     "ms": 16,
+     "n": 9
+    },
+    {
+     "ms": 16,
+     "n": 10
+    },
+    {
+     "ms": 23,
+     "n": 11
+    },
+    {
+     "ms": 16,
+     "n": 12
+    },
+    {
+     "ms": 17,
+     "n": 13
+    },
+    {
+     "ms": 16,
+     "n": 14
+    },
+    {
+     "ms": 25,
+     "n": 15
+    },
+    {
+     "ms": 20,
+     "n": 16
+    },
+    {
+     "ms": 16,
+     "n": 17
+    },
+    {
+     "ms": 16,
+     "n": 18
+    },
+    {
+     "ms": 24,
+     "n": 19
+    },
+    {
+     "ms": 17,
+     "n": 20
+    },
+    {
+     "ms": 25,
+     "n": 21
+    },
+    {
+     "ms": 25,
+     "n": 22
+    },
+    {
+     "ms": 24,
+     "n": 23
+    },
+    {
+     "ms": 18,
+     "n": 24
+    }
+   ],
+   "tilbage": [
+    {
+     "ms": 24,
+     "n": 23
+    },
+    {
+     "ms": 17,
+     "n": 22
+    },
+    {
+     "ms": 16,
+     "n": 21
+    },
+    {
+     "ms": 24,
+     "n": 20
+    },
+    {
+     "ms": 17,
+     "n": 19
+    },
+    {
+     "ms": 21,
+     "n": 18
+    }
+   ],
+   "hop": {
+    "klikket": [
+     231,
+     241,
+     261,
+     266
+    ],
+    "maerker": 4,
+    "n": 255,
+    "fejl": 0,
+    "metode": "to-buer",
+    "ms": 52,
+    "liste": "Navet klikket ved 7,71 s, 8,04 s, 8,71 s, 8,88 s. Siden lægger én bue gennem klikkene på vej ned og en anden gennem dem på vej op og hopper til der, hvor de mødes i bunden; tjek med et billede frem og tilbage."
+   },
+   "brug": {
+    "ms": 457,
+    "n": 255
+   },
+   "opsummering": {
+    "aabnMs": 189,
+    "foerste5": [
+     168,
+     64,
+     24,
+     17,
+     22
+    ],
+    "senereMedian": 17,
+    "senereMaks": 25,
+    "tilbageMedian": 17,
+    "hopMs": 52,
+    "brugMs": 457
+   }
+  }
+ },
+ "D": {
+  "390 x1": {
+   "mem": {
+    "tom": 810,
+    "aaben": 1272,
+    "efterBrug": 1423,
+    "efterLuk": 1372
+   },
+   "aabn": {
+    "ms": 124,
+    "ok": true,
+    "w": 2160,
+    "h": 3840,
+    "rs": 4,
+    "tid": "0,00 s",
+    "trinnote": "Et tryk går præcis ét billede frem eller tilbage: browseren siger tiden på hvert billede, også i 29,97 billeder/s og en telefons skiftende billedrate.",
+    "videostor": "Videoen er 2160 × 3840. Billedet til klik-trinnet tages ned til 1080 × 1920 (som et 1080p-klip), hvilket er nok til klikkene og fylder ca. 25 % af et foto i fuld størrelse i telefonens hukommelse.",
+    "navn": "Video: sq4k.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "liste": "Hop til løftet fra gulvet: tryk Klik navet i videoen og så på navet i et billede, hvor stangen står på gulvet, og igen i to billeder lige efter, at den har sluppet. Siden regner baglæns til det sidste billede på gulvet.",
+    "billedNavn": "Intet billede valgt."
+   },
+   "frem": [
+    {
+     "ms": 183,
+     "n": 1
+    },
+    {
+     "ms": 141,
+     "n": 2
+    },
+    {
+     "ms": 23,
+     "n": 3
+    },
+    {
+     "ms": 23,
+     "n": 4
+    },
+    {
+     "ms": 22,
+     "n": 5
+    },
+    {
+     "ms": 23,
+     "n": 6
+    },
+    {
+     "ms": 23,
+     "n": 7
+    },
+    {
+     "ms": 24,
+     "n": 8
+    },
+    {
+     "ms": 23,
+     "n": 9
+    },
+    {
+     "ms": 24,
+     "n": 10
+    }
+   ],
+   "brug": [
+    {
+     "vist": 30,
+     "foto": 30,
+     "ms": 137,
+     "dim": [
+      1080,
+      1920
+     ]
+    },
+    {
+     "vist": 90,
+     "foto": 90,
+     "ms": 101,
+     "dim": [
+      1080,
+      1920
+     ]
+    },
+    {
+     "vist": 150,
+     "foto": 150,
+     "ms": 96,
+     "dim": [
+      1080,
+      1920
+     ]
+    }
+   ],
+   "opsummering": {
+    "aabnMs": 124,
+    "foerste3": [
+     183,
+     141,
+     23
+    ],
+    "senereMedian": 23,
+    "brugMs": [
+     137,
+     101,
+     96
+    ],
+    "mem": {
+     "tom": 810,
+     "aaben": 1272,
+     "efterBrug": 1423,
+     "efterLuk": 1372
+    }
+   }
+  },
+  "390 x4": {
+   "mem": {
+    "tom": 1338,
+    "aaben": 1616,
+    "efterBrug": 1650,
+    "efterLuk": 1608
+   },
+   "aabn": {
+    "ms": 314,
+    "ok": true,
+    "w": 2160,
+    "h": 3840,
+    "rs": 4,
+    "tid": "0,00 s",
+    "trinnote": "Et tryk går præcis ét billede frem eller tilbage: browseren siger tiden på hvert billede, også i 29,97 billeder/s og en telefons skiftende billedrate.",
+    "videostor": "Videoen er 2160 × 3840. Billedet til klik-trinnet tages ned til 1080 × 1920 (som et 1080p-klip), hvilket er nok til klikkene og fylder ca. 25 % af et foto i fuld størrelse i telefonens hukommelse.",
+    "navn": "Video: sq4k.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "liste": "Hop til løftet fra gulvet: tryk Klik navet i videoen og så på navet i et billede, hvor stangen står på gulvet, og igen i to billeder lige efter, at den har sluppet. Siden regner baglæns til det sidste billede på gulvet.",
+    "billedNavn": "Intet billede valgt."
+   },
+   "frem": [
+    {
+     "ms": 241,
+     "n": 1
+    },
+    {
+     "ms": 144,
+     "n": 2
+    },
+    {
+     "ms": 25,
+     "n": 3
+    },
+    {
+     "ms": 23,
+     "n": 4
+    },
+    {
+     "ms": 31,
+     "n": 5
+    },
+    {
+     "ms": 30,
+     "n": 6
+    },
+    {
+     "ms": 25,
+     "n": 7
+    },
+    {
+     "ms": 25,
+     "n": 8
+    },
+    {
+     "ms": 30,
+     "n": 9
+    },
+    {
+     "ms": 26,
+     "n": 10
+    }
+   ],
+   "brug": [
+    {
+     "vist": 30,
+     "foto": 30,
+     "ms": 450,
+     "dim": [
+      1080,
+      1920
+     ]
+    },
+    {
+     "vist": 90,
+     "foto": 90,
+     "ms": 424,
+     "dim": [
+      1080,
+      1920
+     ]
+    },
+    {
+     "vist": 150,
+     "foto": 150,
+     "ms": 436,
+     "dim": [
+      1080,
+      1920
+     ]
+    }
+   ],
+   "opsummering": {
+    "aabnMs": 314,
+    "foerste3": [
+     241,
+     144,
+     25
+    ],
+    "senereMedian": 26,
+    "brugMs": [
+     450,
+     424,
+     436
+    ],
+    "mem": {
+     "tom": 1338,
+     "aaben": 1616,
+     "efterBrug": 1650,
+     "efterLuk": 1608
+    }
+   }
+  }
+ },
+ "E": {
+  "390 sqhevc.mov": {
+   "ms": 63,
+   "ok": true,
+   "w": 1080,
+   "h": 1920,
+   "rs": 4,
+   "tid": "0,00 s",
+   "trinnote": "Et tryk går præcis ét billede frem eller tilbage: browseren siger tiden på hvert billede, også i 29,97 billeder/s og en telefons skiftende billedrate.",
+   "videostor": "",
+   "navn": "Video: sqhevc.mov (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+   "liste": "Hop til løftet fra gulvet: tryk Klik navet i videoen og så på navet i et billede, hvor stangen står på gulvet, og igen i to billeder lige efter, at den har sluppet. Siden regner baglæns til det sidste billede på gulvet.",
+   "billedNavn": "Intet billede valgt.",
+   "frem": [
+    1,
+    2,
+    3,
+    4,
+    5
+   ]
+  }
+ },
+ "F": {
+  "versionChromium": "151.0.7922.34",
+  "versionChrome": "154.0.8037.57",
+  "soeg": [
+   0.6717,
+   0.6868,
+   0.704,
+   0.7187,
+   0.7353,
+   0.752
+  ],
+  "chrome": {
+   "vist": [
+    18,
+    18,
+    19,
+    19,
+    20,
+    20
+   ],
+   "frem": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24
+   ]
+  },
+  "chromium": {
+   "vist": [
+    18,
+    18,
+    18,
+    18,
+    18,
+    20
+   ],
+   "frem": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25
+   ]
+  }
+ },
+ "chrome": "154.0.8037.57",
+ "net": 0,
+ "tjek": [
+  {
+   "hvad": "A 390 sq2997.mp4: 24 tryk frem = billede 1-24, fra skyderen 8 frem og 6 tilbage (290 og 250) eet billede pr. tryk, tiden er billedets egen, fotoet = det viste",
+   "ok": true,
+   "data": {
+    "note": "Et tryk går præcis ét billede frem eller tilbage: browseren ",
+    "frem": "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24",
+    "sky": [
+     [
+      290,
+      290,
+      "291,292,293,294,295,296,297,298",
+      "297,296,295,294,293,292",
+      "33.4/33.4/33.4/33.4/33.4/33.4/33.4/33.4"
+     ],
+     [
+      250,
+      250,
+      "251,252,253,254,255,256,257,258",
+      "257,256,255,254,253,252",
+      "33.4/33.4/33.4/33.4/33.4/33.4/33.4/33.4"
+     ]
+    ],
+    "tid": {
+     "vist": "0,80 s",
+     "facit": "0,80 s"
+    },
+    "brug": {
+     "vist": 252,
+     "foto": 252,
+     "ms": 120,
+     "navn": "Billede: sq2997.mp4, 8,41 s (kun i din browser)"
+    },
+    "ms": {
+     "foerste3": [
+      146,
+      45,
+      14
+     ],
+     "median": 15,
+     "maks": 23
+    }
+   }
+  },
+  {
+   "hvad": "A 390 sq2997.mov: 24 tryk frem = billede 1-24, fra skyderen 8 frem og 6 tilbage (290 og 250) eet billede pr. tryk, tiden er billedets egen, fotoet = det viste",
+   "ok": true,
+   "data": {
+    "note": "Et tryk går præcis ét billede frem eller tilbage: browseren ",
+    "frem": "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24",
+    "sky": [
+     [
+      290,
+      290,
+      "291,292,293,294,295,296,297,298",
+      "297,296,295,294,293,292",
+      "33.3/33.3/33.3/33.3/33.3/33.3/33.3/33.3"
+     ],
+     [
+      250,
+      250,
+      "251,252,253,254,255,256,257,258",
+      "257,256,255,254,253,252",
+      "33.3/33.3/33.3/33.3/33.3/33.3/33.3/33.3"
+     ]
+    ],
+    "tid": {
+     "vist": "0,80 s",
+     "facit": "0,80 s"
+    },
+    "brug": {
+     "vist": 252,
+     "foto": 252,
+     "ms": 94,
+     "navn": "Billede: sq2997.mov, 8,41 s (kun i din browser)"
+    },
+    "ms": {
+     "foerste3": [
+      106,
+      47,
+      15
+     ],
+     "median": 15,
+     "maks": 23
+    }
+   }
+  },
+  {
+   "hvad": "A 390 sqvfr.mp4: 24 tryk frem = billede 1-24, fra skyderen 8 frem og 6 tilbage (290 og 250) eet billede pr. tryk, tiden er billedets egen, fotoet = det viste",
+   "ok": true,
+   "data": {
+    "note": "Et tryk går præcis ét billede frem eller tilbage: browseren ",
+    "frem": "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24",
+    "sky": [
+     [
+      290,
+      290,
+      "291,292,293,294,295,296,297,298",
+      "297,296,295,294,293,292",
+      "41.7/41.7/41.7/41.7/41.7/41.7/66.7/41.7"
+     ],
+     [
+      250,
+      250,
+      "251,252,253,254,255,256,257,258",
+      "257,256,255,254,253,252",
+      "41.7/66.7/41.7/41.7/41.7/41.7/41.7/41.7"
+     ]
+    ],
+    "tid": {
+     "vist": "0,87 s",
+     "facit": "0,87 s"
+    },
+    "brug": {
+     "vist": 252,
+     "foto": 252,
+     "ms": 91,
+     "navn": "Billede: sqvfr.mp4, 9,43 s (kun i din browser)"
+    },
+    "ms": {
+     "foerste3": [
+      92,
+      53,
+      14
+     ],
+     "median": 15,
+     "maks": 45
+    }
+   }
+  },
+  {
+   "hvad": "A 390 sqvfr.mov: 24 tryk frem = billede 1-24, fra skyderen 8 frem og 6 tilbage (290 og 250) eet billede pr. tryk, tiden er billedets egen, fotoet = det viste",
+   "ok": true,
+   "data": {
+    "note": "Et tryk går præcis ét billede frem eller tilbage: browseren ",
+    "frem": "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24",
+    "sky": [
+     [
+      290,
+      290,
+      "291,292,293,294,295,296,297,298",
+      "297,296,295,294,293,292",
+      "41.7/41.7/41.7/41.7/41.7/41.7/66.7/41.7"
+     ],
+     [
+      250,
+      250,
+      "251,252,253,254,255,256,257,258",
+      "257,256,255,254,253,252",
+      "41.7/66.7/41.7/41.7/41.7/41.7/41.7/41.7"
+     ]
+    ],
+    "tid": {
+     "vist": "0,87 s",
+     "facit": "0,87 s"
+    },
+    "brug": {
+     "vist": 252,
+     "foto": 252,
+     "ms": 102,
+     "navn": "Billede: sqvfr.mov, 9,43 s (kun i din browser)"
+    },
+    "ms": {
+     "foerste3": [
+      87,
+      61,
+      15
+     ],
+     "median": 15,
+     "maks": 46
+    }
+   }
+  },
+  {
+   "hvad": "A 1280 sq2997.mp4: 24 tryk frem = billede 1-24, fra skyderen 8 frem og 6 tilbage (290 og 250) eet billede pr. tryk, tiden er billedets egen, fotoet = det viste",
+   "ok": true,
+   "data": {
+    "note": "Et tryk går præcis ét billede frem eller tilbage: browseren ",
+    "frem": "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24",
+    "sky": [
+     [
+      290,
+      290,
+      "291,292,293,294,295,296,297,298",
+      "297,296,295,294,293,292",
+      "33.4/33.4/33.4/33.4/33.4/33.4/33.4/33.4"
+     ],
+     [
+      250,
+      250,
+      "251,252,253,254,255,256,257,258",
+      "257,256,255,254,253,252",
+      "33.4/33.4/33.4/33.4/33.4/33.4/33.4/33.4"
+     ]
+    ],
+    "tid": {
+     "vist": "0,80 s",
+     "facit": "0,80 s"
+    },
+    "brug": {
+     "vist": 252,
+     "foto": 252,
+     "ms": 80,
+     "navn": "Billede: sq2997.mp4, 8,41 s (kun i din browser)"
+    },
+    "ms": {
+     "foerste3": [
+      66,
+      45,
+      14
+     ],
+     "median": 14,
+     "maks": 15
+    }
+   }
+  },
+  {
+   "hvad": "A 1280 sq2997.mov: 24 tryk frem = billede 1-24, fra skyderen 8 frem og 6 tilbage (290 og 250) eet billede pr. tryk, tiden er billedets egen, fotoet = det viste",
+   "ok": true,
+   "data": {
+    "note": "Et tryk går præcis ét billede frem eller tilbage: browseren ",
+    "frem": "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24",
+    "sky": [
+     [
+      290,
+      290,
+      "291,292,293,294,295,296,297,298",
+      "297,296,295,294,293,292",
+      "33.3/33.3/33.3/33.3/33.3/33.3/33.3/33.3"
+     ],
+     [
+      250,
+      250,
+      "251,252,253,254,255,256,257,258",
+      "257,256,255,254,253,252",
+      "33.3/33.3/33.3/33.3/33.3/33.3/33.3/33.3"
+     ]
+    ],
+    "tid": {
+     "vist": "0,80 s",
+     "facit": "0,80 s"
+    },
+    "brug": {
+     "vist": 252,
+     "foto": 252,
+     "ms": 94,
+     "navn": "Billede: sq2997.mov, 8,41 s (kun i din browser)"
+    },
+    "ms": {
+     "foerste3": [
+      113,
+      46,
+      13
+     ],
+     "median": 14,
+     "maks": 15
+    }
+   }
+  },
+  {
+   "hvad": "A 1280 sqvfr.mp4: 24 tryk frem = billede 1-24, fra skyderen 8 frem og 6 tilbage (290 og 250) eet billede pr. tryk, tiden er billedets egen, fotoet = det viste",
+   "ok": true,
+   "data": {
+    "note": "Et tryk går præcis ét billede frem eller tilbage: browseren ",
+    "frem": "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24",
+    "sky": [
+     [
+      290,
+      290,
+      "291,292,293,294,295,296,297,298",
+      "297,296,295,294,293,292",
+      "41.7/41.7/41.7/41.7/41.7/41.7/66.7/41.7"
+     ],
+     [
+      250,
+      250,
+      "251,252,253,254,255,256,257,258",
+      "257,256,255,254,253,252",
+      "41.7/66.7/41.7/41.7/41.7/41.7/41.7/41.7"
+     ]
+    ],
+    "tid": {
+     "vist": "0,87 s",
+     "facit": "0,87 s"
+    },
+    "brug": {
+     "vist": 252,
+     "foto": 252,
+     "ms": 85,
+     "navn": "Billede: sqvfr.mp4, 9,43 s (kun i din browser)"
+    },
+    "ms": {
+     "foerste3": [
+      81,
+      60,
+      14
+     ],
+     "median": 14,
+     "maks": 45
+    }
+   }
+  },
+  {
+   "hvad": "A 1280 sqvfr.mov: 24 tryk frem = billede 1-24, fra skyderen 8 frem og 6 tilbage (290 og 250) eet billede pr. tryk, tiden er billedets egen, fotoet = det viste",
+   "ok": true,
+   "data": {
+    "note": "Et tryk går præcis ét billede frem eller tilbage: browseren ",
+    "frem": "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24",
+    "sky": [
+     [
+      290,
+      290,
+      "291,292,293,294,295,296,297,298",
+      "297,296,295,294,293,292",
+      "41.7/41.7/41.7/41.7/41.7/41.7/66.7/41.7"
+     ],
+     [
+      250,
+      250,
+      "251,252,253,254,255,256,257,258",
+      "257,256,255,254,253,252",
+      "41.7/66.7/41.7/41.7/41.7/41.7/41.7/41.7"
+     ]
+    ],
+    "tid": {
+     "vist": "0,87 s",
+     "facit": "0,87 s"
+    },
+    "brug": {
+     "vist": 252,
+     "foto": 252,
+     "ms": 89,
+     "navn": "Billede: sqvfr.mov, 9,43 s (kun i din browser)"
+    },
+    "ms": {
+     "foerste3": [
+      92,
+      60,
+      14
+     ],
+     "median": 14,
+     "maks": 45
+    }
+   }
+  },
+  {
+   "hvad": "B 390 sq2997.mp4: alle klik landede (20 hop), to buer med tekstens raad i alle fem squats, og de rammer inden for 1 billede",
+   "ok": true,
+   "data": {
+    "to klik 10 %": "jaevn:-1/midt hurtig op:-4/midt grind:5/midt pause:0/midt dyk:3/midt",
+    "tekstens raad: 10 % ": "jaevn:0/to-buer hurtig op:0/to-buer grind:0/to-buer pause:0/to-buer dyk:0/to-buer",
+    "en traener: 3 % og 4": "jaevn:0/to-buer hurtig op:0/to-buer grind:0/to-buer pause:0/to-buer dyk:0/to-buer",
+    "tre klik: 10 % ned, ": "jaevn:-1/parabel hurtig op:-3/parabel grind:5/parabel pause:0/parabel dyk:3/parabel"
+   }
+  },
+  {
+   "hvad": "B 390 sqvfr.mov: alle klik landede (20 hop), to buer med tekstens raad i alle fem squats, og de rammer inden for 1 billede",
+   "ok": true,
+   "data": {
+    "to klik 10 %": "jaevn:-1/midt hurtig op:-4/midt grind:3/midt pause:0/midt dyk:2/midt",
+    "tekstens raad: 10 % ": "jaevn:0/to-buer hurtig op:0/to-buer grind:0/to-buer pause:0/to-buer dyk:0/to-buer",
+    "en traener: 3 % og 4": "jaevn:0/to-buer hurtig op:0/to-buer grind:0/to-buer pause:0/to-buer dyk:0/to-buer",
+    "tre klik: 10 % ned, ": "jaevn:-1/parabel hurtig op:-3/parabel grind:4/parabel pause:0/parabel dyk:2/parabel"
+   }
+  },
+  {
+   "hvad": "B 1280 sq2997.mp4: alle klik landede (10 hop), to buer med tekstens raad i alle fem squats, og de rammer inden for 1 billede",
+   "ok": true,
+   "data": {
+    "tekstens raad: 10 % ": "jaevn:0/to-buer hurtig op:0/to-buer grind:0/to-buer pause:0/to-buer dyk:0/to-buer",
+    "to klik 10 %": "jaevn:-2/midt hurtig op:-4/midt grind:4/midt pause:0/midt dyk:2/midt"
+   }
+  },
+  {
+   "hvad": "B: med tekstens raad er to buer bedre end to klik i \"hurtig op\", \"grind\" og \"dyk\" (390, 29,97)",
+   "ok": true,
+   "data": [
+    [
+     "jaevn",
+     -1,
+     0
+    ],
+    [
+     "hurtig op",
+     -4,
+     0
+    ],
+    [
+     "grind",
+     5,
+     0
+    ],
+    [
+     "pause",
+     0,
+     0
+    ],
+    [
+     "dyk",
+     3,
+     0
+    ]
+   ]
+  },
+  {
+   "hvad": "B: tre klik siger \"rammer ikke bedre end to klik\" og beder om to paa hver side",
+   "ok": true,
+   "data": "Navet klikket ved 2,84 s, 3,47 s, 3,70 s. Siden lægger én bue gennem klikkene og hopper til dens bund. Buen er lige stejl på begge sider, så den rammer ikke bedre end to klik. Klik to billeder på hver side af bunden, ét tæt på bunden og ét højere oppe, så regner siden nedturen og opturen hver for sig."
+  },
+  {
+   "hvad": "B regnet: en traener, der foelger teksten (+-1 %), faar to buer i mindst 80 % af forsoegene i alle fem squats, median hoejst 1 billede",
+   "ok": true,
+   "data": {
+    "tekst +-1 %": "jaevn:90%/0/1/2 (2 klik 7/9) hurtig op:89%/0/1/2 (2 klik 10/12) grind:90%/1/1/2 (2 klik 2/4) pause:91%/0/0/0 (2 klik 0/0) dyk:88%/0/1/2 (2 klik 2/4)",
+    "tekst +-2 %": "jaevn:87%/1/2/4 (2 klik 7/9) hurtig op:90%/1/2/3 (2 klik 10/12) grind:90%/1/2/4 (2 klik 2/4) pause:88%/0/0/0 (2 klik 0/0) dyk:89%/1/2/3 (2 klik 2/4)",
+    "tilfaeldig 5-40 % +-1 %": "jaevn:47%/1/2/4 (2 klik 3/5) hurtig op:47%/1/2/5 (2 klik 5/8) grind:49%/1/2/5 (2 klik 7/12) pause:45%/0/0/0 (2 klik 0/0) dyk:51%/1/1/3 (2 klik 4/7)"
+   }
+  },
+  {
+   "hvad": "C 390 x1: 24 frem og 6 tilbage er eet billede pr. tryk; hoppet og fotoet virker",
+   "ok": true,
+   "data": {
+    "aabnMs": 61,
+    "foerste5": [
+     71,
+     41,
+     15,
+     15,
+     15
+    ],
+    "senereMedian": 15,
+    "senereMaks": 16,
+    "tilbageMedian": 15,
+    "hopMs": 39,
+    "brugMs": 109
+   }
+  },
+  {
+   "hvad": "C 390 x4: 24 frem og 6 tilbage er eet billede pr. tryk; hoppet og fotoet virker",
+   "ok": true,
+   "data": {
+    "aabnMs": 189,
+    "foerste5": [
+     168,
+     64,
+     24,
+     17,
+     22
+    ],
+    "senereMedian": 17,
+    "senereMaks": 25,
+    "tilbageMedian": 17,
+    "hopMs": 52,
+    "brugMs": 457
+   }
+  },
+  {
+   "hvad": "D 4K 390 x1: aabner, linjen siger 1080 x 1920, 10 tryk = billede 1-10, fotoet er 1080 x 1920 og det viste billede",
+   "ok": true,
+   "data": {
+    "aabnMs": 124,
+    "foerste3": [
+     183,
+     141,
+     23
+    ],
+    "senereMedian": 23,
+    "brugMs": [
+     137,
+     101,
+     96
+    ],
+    "mem": {
+     "tom": 810,
+     "aaben": 1272,
+     "efterBrug": 1423,
+     "efterLuk": 1372
+    },
+    "linje": "Videoen er 2160 × 3840. Billedet til klik-trinnet tages ned til 1080 × 1920 (som et 1080p-klip), hvilket er nok til klikkene og fylder ca. 25 % af et foto i fuld størrelse i telefonens hukommelse."
+   }
+  },
+  {
+   "hvad": "D 4K 390 x4: aabner, linjen siger 1080 x 1920, 10 tryk = billede 1-10, fotoet er 1080 x 1920 og det viste billede",
+   "ok": true,
+   "data": {
+    "aabnMs": 314,
+    "foerste3": [
+     241,
+     144,
+     25
+    ],
+    "senereMedian": 26,
+    "brugMs": [
+     450,
+     424,
+     436
+    ],
+    "mem": {
+     "tom": 1338,
+     "aaben": 1616,
+     "efterBrug": 1650,
+     "efterLuk": 1608
+    },
+    "linje": "Videoen er 2160 × 3840. Billedet til klik-trinnet tages ned til 1080 × 1920 (som et 1080p-klip), hvilket er nok til klikkene og fylder ca. 25 % af et foto i fuld størrelse i telefonens hukommelse."
+   }
+  },
+  {
+   "hvad": "E HEVC-MOV 390: aabner og trinene gaar eet billede",
+   "ok": true,
+   "data": {
+    "ms": 63,
+    "navn": "Video: sqhevc.mov (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede."
+   }
+  },
+  {
+   "hvad": "F: i Playwrights Chromium 151.0.7922.34 vises billede 19 i VFR-MP4'en aldrig (heller ikke ved en soegning midt i det), saa et tryk gaar 18 -> 20; i Chrome 154.0.8037.57 vises det, og trykket gaar 18 -> 19",
+   "ok": true,
+   "data": {
+    "chrome": [
+     18,
+     18,
+     19,
+     19,
+     20,
+     20
+    ],
+    "chromium": [
+     18,
+     18,
+     18,
+     18,
+     18,
+     20
+    ],
+    "chromiumFrem": [
+     16,
+     17,
+     18,
+     20,
+     21
+    ]
+   }
+  },
+  {
+   "hvad": "ingen netkald (alt andet end file/data/blob afvist og talt)",
+   "ok": true,
+   "data": 0
+  }
+ ]
+}

@@ -64,7 +64,7 @@ if (blok >= 2) {
     ingenStreg(vv, 'VIDEO')
   }
   if (v) {
-    ok(v.loeftmodel === 'cc4dd7d', `video maalt paa ${v.loeftmodel}`)
+    ok(v.loeftmodel === '291f5bf', `video maalt paa ${v.loeftmodel}`)
     ok(v.tjek.length >= 12 && v.tjek.every((t) => t.ok), `video-582: ${v.tjek.filter((t) => !t.ok).length} tjek roede`)
     ok(v.net === 0, `video: ${v.net} netkald`)
   }
