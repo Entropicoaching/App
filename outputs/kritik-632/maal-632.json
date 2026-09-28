@@ -1,0 +1,3477 @@
+{
+ "ver": {
+  "main": "2ccb0bb",
+  "site": "1169b5f",
+  "k628": "287210d",
+  "o627Merget": "ja",
+  "o630Merget": "ja",
+  "mainSiden628": [
+   "2ccb0bb merge: ordre-630 (ORDRE 630, Yantra)",
+   "c266353 merge: ordre-627 (ORDRE 627, Yantra)"
+  ],
+  "rapporter": [
+   "docs/RAPPORT-dag-95.md",
+   "docs/RAPPORT-dag-96.md"
+  ]
+ },
+ "kopi": {
+  "maal-billede": {
+   "siteModMain": [
+    "index.html",
+    "maal-billede.js"
+   ],
+   "siteMod4ca": []
+  },
+  "baenk-figurer": {
+   "siteModMain": [],
+   "siteMod4ca": []
+  },
+  "tre-loeft": {
+   "siteModMain": [],
+   "siteMod4ca": []
+  },
+  "min-krop": {
+   "siteModMain": [],
+   "siteMod4ca": []
+  },
+  "distSiden628": [
+   "dist/maal-billede/index.html",
+   "dist/maal-billede/maal-billede.js"
+  ],
+  "distSiden4ca": [
+   "dist/maal-billede/index.html",
+   "dist/maal-billede/maal-billede.js"
+  ]
+ },
+ "m18": [
+  {
+   "bredde": 390,
+   "orden": "omvendt",
+   "foer": {
+    "note": "Gemt måling åbnet (gemt 3. aug. 2026): dødløft, ved gulvet, 7 klik. Klikkene og fasen står, som da den blev gemt; højden og vægten er dem, der allerede stod (tomme felter er udfyldt fra filen). Træk i et punkt for at flytte det. Før er gemt senere end efter; tryk Byt før og efter, hvis det ældste billede skal være før.",
+    "advarsel": "Før er gemt 21. sep. 2026 og efter 3. aug. 2026, så før er det nyeste billede. Forskellen er efter minus før; står de i forkert rækkefølge, har hver forskel omvendt fortegn. Tryk Byt før og efter, hvis det ældste billede skal være før."
+   },
+   "byt1": {
+    "note": "Gemt måling åbnet (gemt 3. aug. 2026): dødløft, ved gulvet, 7 klik. Klikkene og fasen står, som da den blev gemt; højden og vægten er dem, der allerede stod (tomme felter er udfyldt fra filen). Træk i et punkt for at flytte det. Før og efter er byttet, så det ældste billede nu er før.",
+    "advarsel": null
+   },
+   "byt2": {
+    "note": "Gemt måling åbnet (gemt 3. aug. 2026): dødløft, ved gulvet, 7 klik. Klikkene og fasen står, som da den blev gemt; højden og vægten er dem, der allerede stod (tomme felter er udfyldt fra filen). Træk i et punkt for at flytte det. Før er gemt senere end efter; tryk Byt før og efter, hvis det ældste billede skal være før.",
+    "advarsel": "Før er gemt 21. sep. 2026 og efter 3. aug. 2026, så før er det nyeste billede. Forskellen er efter minus før; står de i forkert rækkefølge, har hver forskel omvendt fortegn. Tryk Byt før og efter, hvis det ældste billede skal være før."
+   },
+   "jsFejl": []
+  },
+  {
+   "bredde": 390,
+   "orden": "rigtig",
+   "foer": {
+    "note": "Gemt måling åbnet (gemt 21. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene og fasen står, som da den blev gemt; højden og vægten er dem, der allerede stod (tomme felter er udfyldt fra filen). Træk i et punkt for at flytte det.",
+    "advarsel": null
+   },
+   "byt1": {
+    "note": "Gemt måling åbnet (gemt 21. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene og fasen står, som da den blev gemt; højden og vægten er dem, der allerede stod (tomme felter er udfyldt fra filen). Træk i et punkt for at flytte det. Før er gemt senere end efter; tryk Byt før og efter, hvis det ældste billede skal være før.",
+    "advarsel": "Før er gemt 21. sep. 2026 og efter 3. aug. 2026, så før er det nyeste billede. Forskellen er efter minus før; står de i forkert rækkefølge, har hver forskel omvendt fortegn. Tryk Byt før og efter, hvis det ældste billede skal være før."
+   },
+   "byt2": {
+    "note": "Gemt måling åbnet (gemt 21. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene og fasen står, som da den blev gemt; højden og vægten er dem, der allerede stod (tomme felter er udfyldt fra filen). Træk i et punkt for at flytte det. Før og efter er byttet, så det ældste billede nu er før.",
+    "advarsel": null
+   },
+   "jsFejl": []
+  },
+  {
+   "bredde": 1280,
+   "orden": "omvendt",
+   "foer": {
+    "note": "Gemt måling åbnet (gemt 3. aug. 2026): dødløft, ved gulvet, 7 klik. Klikkene og fasen står, som da den blev gemt; højden og vægten er dem, der allerede stod (tomme felter er udfyldt fra filen). Træk i et punkt for at flytte det. Før er gemt senere end efter; tryk Byt før og efter, hvis det ældste billede skal være før.",
+    "advarsel": "Før er gemt 21. sep. 2026 og efter 3. aug. 2026, så før er det nyeste billede. Forskellen er efter minus før; står de i forkert rækkefølge, har hver forskel omvendt fortegn. Tryk Byt før og efter, hvis det ældste billede skal være før."
+   },
+   "byt1": {
+    "note": "Gemt måling åbnet (gemt 3. aug. 2026): dødløft, ved gulvet, 7 klik. Klikkene og fasen står, som da den blev gemt; højden og vægten er dem, der allerede stod (tomme felter er udfyldt fra filen). Træk i et punkt for at flytte det. Før og efter er byttet, så det ældste billede nu er før.",
+    "advarsel": null
+   },
+   "byt2": {
+    "note": "Gemt måling åbnet (gemt 3. aug. 2026): dødløft, ved gulvet, 7 klik. Klikkene og fasen står, som da den blev gemt; højden og vægten er dem, der allerede stod (tomme felter er udfyldt fra filen). Træk i et punkt for at flytte det. Før er gemt senere end efter; tryk Byt før og efter, hvis det ældste billede skal være før.",
+    "advarsel": "Før er gemt 21. sep. 2026 og efter 3. aug. 2026, så før er det nyeste billede. Forskellen er efter minus før; står de i forkert rækkefølge, har hver forskel omvendt fortegn. Tryk Byt før og efter, hvis det ældste billede skal være før."
+   },
+   "jsFejl": []
+  },
+  {
+   "bredde": 1280,
+   "orden": "rigtig",
+   "foer": {
+    "note": "Gemt måling åbnet (gemt 21. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene og fasen står, som da den blev gemt; højden og vægten er dem, der allerede stod (tomme felter er udfyldt fra filen). Træk i et punkt for at flytte det.",
+    "advarsel": null
+   },
+   "byt1": {
+    "note": "Gemt måling åbnet (gemt 21. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene og fasen står, som da den blev gemt; højden og vægten er dem, der allerede stod (tomme felter er udfyldt fra filen). Træk i et punkt for at flytte det. Før er gemt senere end efter; tryk Byt før og efter, hvis det ældste billede skal være før.",
+    "advarsel": "Før er gemt 21. sep. 2026 og efter 3. aug. 2026, så før er det nyeste billede. Forskellen er efter minus før; står de i forkert rækkefølge, har hver forskel omvendt fortegn. Tryk Byt før og efter, hvis det ældste billede skal være før."
+   },
+   "byt2": {
+    "note": "Gemt måling åbnet (gemt 21. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene og fasen står, som da den blev gemt; højden og vægten er dem, der allerede stod (tomme felter er udfyldt fra filen). Træk i et punkt for at flytte det. Før og efter er byttet, så det ældste billede nu er før.",
+    "advarsel": null
+   },
+   "jsFejl": []
+  }
+ ],
+ "ui": [
+  {
+   "navn": "enkelt",
+   "bredde": 390,
+   "status": "8 målinger målt med kroppens længder som skala.",
+   "sek": [
+    {
+     "fase": "dl-gulv",
+     "hoved": [
+      "Målforskel fra 3. aug. 2026",
+      "3. aug. 20261 runde",
+      "10. aug. 20261 runde",
+      "17. aug. 20261 runde",
+      "24. aug. 20261 runde",
+      "31. aug. 20261 runde",
+      "7. sep. 20261 runde",
+      "14. sep. 20261 runde",
+      "21. sep. 20261 runde"
+     ],
+     "fra": "Målforskel fra 3. aug. 2026",
+     "fraSmaa": 11.7333,
+     "raekker": [
+      {
+       "id": "torso",
+       "navn": "Torso fra lodret",
+       "celler": [
+        {
+         "tekst": "61,2°",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "61,2°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "75,6°+14,4°",
+         "guld": false,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(237, 234, 226)",
+         "vaegt": "400"
+        },
+        {
+         "tekst": "61,2°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "61,2°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "75,6°+14,4°",
+         "guld": true,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(200, 146, 58)",
+         "vaegt": "700"
+        },
+        {
+         "tekst": "75,6°+14,4°",
+         "guld": true,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(200, 146, 58)",
+         "vaegt": "700"
+        },
+        {
+         "tekst": "75,6°+14,4°",
+         "guld": true,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(200, 146, 58)",
+         "vaegt": "700"
+        }
+       ]
+      },
+      {
+       "id": "hofte",
+       "navn": "Hoftevinkel",
+       "celler": [
+        {
+         "tekst": "51,1°",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "51,1°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "50,7°≈−0,3°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "51,1°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "51,1°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "50,7°≈−0,3°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "50,7°≈−0,3°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "50,7°≈−0,3°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        }
+       ]
+      },
+      {
+       "id": "knae",
+       "navn": "Knævinkel",
+       "celler": [
+        {
+         "tekst": "98,9°",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "98,9°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "113,0°+14,1°",
+         "guld": false,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(237, 234, 226)",
+         "vaegt": "400"
+        },
+        {
+         "tekst": "98,9°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "98,9°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "113,0°+14,1°",
+         "guld": true,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(200, 146, 58)",
+         "vaegt": "700"
+        },
+        {
+         "tekst": "113,0°+14,1°",
+         "guld": true,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(200, 146, 58)",
+         "vaegt": "700"
+        },
+        {
+         "tekst": "113,0°+14,1°",
+         "guld": true,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(200, 146, 58)",
+         "vaegt": "700"
+        }
+       ]
+      },
+      {
+       "id": "skinneben",
+       "navn": "Skinneben fra lodret",
+       "celler": [
+        {
+         "tekst": "13,3°",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "13,3°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "13,3°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "13,3°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "13,3°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "13,3°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "13,3°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "13,3°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        }
+       ]
+      },
+      {
+       "id": "stangFraMidtfod",
+       "navn": "Stangen foran midtfoden",
+       "celler": [
+        {
+         "tekst": "3,0 cm",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "3,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "3,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "3,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "3,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "3,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "3,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "3,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        }
+       ]
+      },
+      {
+       "id": "stangHofte",
+       "navn": "Vandret afstand stang–hofte",
+       "celler": [
+        {
+         "tekst": "40,4 cm",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "40,4 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "40,0 cm−0,5 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "40,4 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "40,4 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "40,0 cm−0,5 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "40,0 cm−0,5 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "40,0 cm−0,5 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        }
+       ]
+      },
+      {
+       "id": "skulderForanStang",
+       "navn": "Skulderen foran stangen",
+       "celler": [
+        {
+         "tekst": "5,0 cm",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "5,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "4,9 cm−0,1 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "5,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "5,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "4,9 cm−0,1 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "4,9 cm−0,1 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "4,9 cm−0,1 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        }
+       ]
+      },
+      {
+       "id": "hofteHoejde",
+       "navn": "Hoftens højde over gulvet",
+       "celler": [
+        {
+         "tekst": "66,8 cm",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "66,8 cm≈0,0 cm",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "79,2 cm+12,4 cm",
+         "guld": false,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(237, 234, 226)",
+         "vaegt": "400"
+        },
+        {
+         "tekst": "66,8 cm≈0,0 cm",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "66,8 cm≈0,0 cm",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "79,2 cm+12,4 cm",
+         "guld": true,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(200, 146, 58)",
+         "vaegt": "700"
+        },
+        {
+         "tekst": "79,2 cm+12,4 cm",
+         "guld": true,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(200, 146, 58)",
+         "vaegt": "700"
+        },
+        {
+         "tekst": "79,2 cm+12,4 cm",
+         "guld": true,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(200, 146, 58)",
+         "vaegt": "700"
+        }
+       ]
+      }
+     ],
+     "guld": 9,
+     "over": 12,
+     "saetning": "Nyeste (21. sep. 2026) mod ældste (3. aug. 2026). Før er den ældste og efter den nyeste: Efter: overkroppen mere foroverbøjet (ca. 14°), hoften højere (ca. 12 cm) og knæet mere strakt (ca. 14°). Stangens plads er ikke med: den kræver det fjerne nav i begge billeder. Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang.",
+     "rul": {
+      "klient": 345,
+      "fuld": 894,
+      "hoejde": 632
+     }
+    }
+   ],
+   "forklaring": "Under hver uges tal står forskellen fra den ældste uge, også når tabellen er rullet, så den ældste ikke ses; datoen står under Mål. Guld er over rækkens grænse to uger i træk i samme retning. Uden guld og uden ≈ er over grænsen i én uge alene; det kan være et tilfælde. ≈ er inden for målefejlen. Grænserne er de samme som i før og efter og bliver mindre, jo flere runder hvert billede er klikket. Hver kolonne er ét billede med sine egne klikfejl, og et kamera, der er flyttet en af ugerne, flytter tallene lige så meget som en ændret teknik. Om en ændring er bedre, er din vurdering. Datoen er den, enheden havde, da filen blev gemt. Tabellen har 35 forskelle. Hver har ca. 5 % risiko for at stå over grænsen, selv om stillingen er den samme, så ca. 2 af dem kan gøre det alene ved et tilfælde. Derfor står en forskel først i guld, når ugen før eller efter også er over grænsen i samme retning. Det sker langt sjældnere ved et tilfælde, men ikke aldrig.",
+   "sideRul": 0,
+   "gemKnap": true,
+   "rullet": {
+    "fraVenstre": 0,
+    "fraTekst": "Målforskel fra 3. aug. 2026",
+    "fraBredde": 104,
+    "synlige": [
+     "7. sep. 20261 ",
+     "14. sep. 20261",
+     "21. sep. 20261"
+    ],
+    "aeldsteSes": false
+   },
+   "png": {
+    "navn": "maal-dl-gulv-uger-2026-09-21.png",
+    "w": 1200,
+    "h": 2648,
+    "bytes": 650193,
+    "enTr": false
+   },
+   "jsFejl": []
+  },
+  {
+   "navn": "enkelt",
+   "bredde": 1280,
+   "status": "8 målinger målt med kroppens længder som skala.",
+   "sek": [
+    {
+     "fase": "dl-gulv",
+     "hoved": [
+      "Målforskel fra 3. aug. 2026",
+      "3. aug. 20261 runde",
+      "10. aug. 20261 runde",
+      "17. aug. 20261 runde",
+      "24. aug. 20261 runde",
+      "31. aug. 20261 runde",
+      "7. sep. 20261 runde",
+      "14. sep. 20261 runde",
+      "21. sep. 20261 runde"
+     ],
+     "fra": "Målforskel fra 3. aug. 2026",
+     "fraSmaa": 13.3333,
+     "raekker": [
+      {
+       "id": "torso",
+       "navn": "Torso fra lodret",
+       "celler": [
+        {
+         "tekst": "61,2°",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "61,2°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "75,6°+14,4°",
+         "guld": false,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(237, 234, 226)",
+         "vaegt": "400"
+        },
+        {
+         "tekst": "61,2°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "61,2°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "75,6°+14,4°",
+         "guld": true,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(200, 146, 58)",
+         "vaegt": "700"
+        },
+        {
+         "tekst": "75,6°+14,4°",
+         "guld": true,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(200, 146, 58)",
+         "vaegt": "700"
+        },
+        {
+         "tekst": "75,6°+14,4°",
+         "guld": true,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(200, 146, 58)",
+         "vaegt": "700"
+        }
+       ]
+      },
+      {
+       "id": "hofte",
+       "navn": "Hoftevinkel",
+       "celler": [
+        {
+         "tekst": "51,1°",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "51,1°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "50,7°≈−0,3°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "51,1°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "51,1°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "50,7°≈−0,3°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "50,7°≈−0,3°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "50,7°≈−0,3°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        }
+       ]
+      },
+      {
+       "id": "knae",
+       "navn": "Knævinkel",
+       "celler": [
+        {
+         "tekst": "98,9°",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "98,9°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "113,0°+14,1°",
+         "guld": false,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(237, 234, 226)",
+         "vaegt": "400"
+        },
+        {
+         "tekst": "98,9°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "98,9°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "113,0°+14,1°",
+         "guld": true,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(200, 146, 58)",
+         "vaegt": "700"
+        },
+        {
+         "tekst": "113,0°+14,1°",
+         "guld": true,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(200, 146, 58)",
+         "vaegt": "700"
+        },
+        {
+         "tekst": "113,0°+14,1°",
+         "guld": true,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(200, 146, 58)",
+         "vaegt": "700"
+        }
+       ]
+      },
+      {
+       "id": "skinneben",
+       "navn": "Skinneben fra lodret",
+       "celler": [
+        {
+         "tekst": "13,3°",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "13,3°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "13,3°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "13,3°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "13,3°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "13,3°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "13,3°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "13,3°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        }
+       ]
+      },
+      {
+       "id": "stangFraMidtfod",
+       "navn": "Stangen foran midtfoden",
+       "celler": [
+        {
+         "tekst": "3,0 cm",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "3,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "3,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "3,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "3,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "3,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "3,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "3,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        }
+       ]
+      },
+      {
+       "id": "stangHofte",
+       "navn": "Vandret afstand stang–hofte",
+       "celler": [
+        {
+         "tekst": "40,4 cm",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "40,4 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "40,0 cm−0,5 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "40,4 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "40,4 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "40,0 cm−0,5 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "40,0 cm−0,5 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "40,0 cm−0,5 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        }
+       ]
+      },
+      {
+       "id": "skulderForanStang",
+       "navn": "Skulderen foran stangen",
+       "celler": [
+        {
+         "tekst": "5,0 cm",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "5,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "4,9 cm−0,1 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "5,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "5,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "4,9 cm−0,1 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "4,9 cm−0,1 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "4,9 cm−0,1 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        }
+       ]
+      },
+      {
+       "id": "hofteHoejde",
+       "navn": "Hoftens højde over gulvet",
+       "celler": [
+        {
+         "tekst": "66,8 cm",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "66,8 cm≈0,0 cm",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "79,2 cm+12,4 cm",
+         "guld": false,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(237, 234, 226)",
+         "vaegt": "400"
+        },
+        {
+         "tekst": "66,8 cm≈0,0 cm",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "66,8 cm≈0,0 cm",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "79,2 cm+12,4 cm",
+         "guld": true,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(200, 146, 58)",
+         "vaegt": "700"
+        },
+        {
+         "tekst": "79,2 cm+12,4 cm",
+         "guld": true,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(200, 146, 58)",
+         "vaegt": "700"
+        },
+        {
+         "tekst": "79,2 cm+12,4 cm",
+         "guld": true,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(200, 146, 58)",
+         "vaegt": "700"
+        }
+       ]
+      }
+     ],
+     "guld": 9,
+     "over": 12,
+     "saetning": "Nyeste (21. sep. 2026) mod ældste (3. aug. 2026). Før er den ældste og efter den nyeste: Efter: overkroppen mere foroverbøjet (ca. 14°), hoften højere (ca. 12 cm) og knæet mere strakt (ca. 14°). Stangens plads er ikke med: den kræver det fjerne nav i begge billeder. Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang.",
+     "rul": {
+      "klient": 1042,
+      "fuld": 1042,
+      "hoejde": 678
+     }
+    }
+   ],
+   "forklaring": "Under hver uges tal står forskellen fra den ældste uge, også når tabellen er rullet, så den ældste ikke ses; datoen står under Mål. Guld er over rækkens grænse to uger i træk i samme retning. Uden guld og uden ≈ er over grænsen i én uge alene; det kan være et tilfælde. ≈ er inden for målefejlen. Grænserne er de samme som i før og efter og bliver mindre, jo flere runder hvert billede er klikket. Hver kolonne er ét billede med sine egne klikfejl, og et kamera, der er flyttet en af ugerne, flytter tallene lige så meget som en ændret teknik. Om en ændring er bedre, er din vurdering. Datoen er den, enheden havde, da filen blev gemt. Tabellen har 35 forskelle. Hver har ca. 5 % risiko for at stå over grænsen, selv om stillingen er den samme, så ca. 2 af dem kan gøre det alene ved et tilfælde. Derfor står en forskel først i guld, når ugen før eller efter også er over grænsen i samme retning. Det sker langt sjældnere ved et tilfælde, men ikke aldrig.",
+   "sideRul": 0,
+   "gemKnap": true,
+   "rullet": {
+    "fraVenstre": 0,
+    "fraTekst": "Målforskel fra 3. aug. 2026",
+    "fraBredde": 107,
+    "synlige": [
+     "3. aug. 20261 ",
+     "10. aug. 20261",
+     "17. aug. 20261",
+     "24. aug. 20261",
+     "31. aug. 20261",
+     "7. sep. 20261 ",
+     "14. sep. 20261",
+     "21. sep. 20261"
+    ],
+    "aeldsteSes": true
+   },
+   "png": {
+    "navn": "maal-dl-gulv-uger-2026-09-21.png",
+    "w": 1200,
+    "h": 2648,
+    "bytes": 650193,
+    "enTr": false
+   },
+   "jsFejl": []
+  },
+  {
+   "navn": "nyeste",
+   "bredde": 390,
+   "status": "8 målinger målt med kroppens længder som skala.",
+   "sek": [
+    {
+     "fase": "dl-gulv",
+     "hoved": [
+      "Målforskel fra 3. aug. 2026",
+      "3. aug. 20261 runde",
+      "10. aug. 20261 runde",
+      "17. aug. 20261 runde",
+      "24. aug. 20261 runde",
+      "31. aug. 20261 runde",
+      "7. sep. 20261 runde",
+      "14. sep. 20261 runde",
+      "21. sep. 20261 runde"
+     ],
+     "fra": "Målforskel fra 3. aug. 2026",
+     "fraSmaa": 11.7333,
+     "raekker": [
+      {
+       "id": "torso",
+       "navn": "Torso fra lodret",
+       "celler": [
+        {
+         "tekst": "61,2°",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "61,2°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "61,2°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "61,2°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "61,2°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "61,2°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "61,2°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "75,6°+14,4°",
+         "guld": false,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(237, 234, 226)",
+         "vaegt": "400"
+        }
+       ]
+      },
+      {
+       "id": "hofte",
+       "navn": "Hoftevinkel",
+       "celler": [
+        {
+         "tekst": "51,1°",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "51,1°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "51,1°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "51,1°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "51,1°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "51,1°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "51,1°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "50,7°≈−0,3°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        }
+       ]
+      },
+      {
+       "id": "knae",
+       "navn": "Knævinkel",
+       "celler": [
+        {
+         "tekst": "98,9°",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "98,9°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "98,9°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "98,9°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "98,9°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "98,9°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "98,9°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "113,0°+14,1°",
+         "guld": false,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(237, 234, 226)",
+         "vaegt": "400"
+        }
+       ]
+      },
+      {
+       "id": "skinneben",
+       "navn": "Skinneben fra lodret",
+       "celler": [
+        {
+         "tekst": "13,3°",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "13,3°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "13,3°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "13,3°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "13,3°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "13,3°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "13,3°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "13,3°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        }
+       ]
+      },
+      {
+       "id": "stangFraMidtfod",
+       "navn": "Stangen foran midtfoden",
+       "celler": [
+        {
+         "tekst": "3,0 cm",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "3,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "3,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "3,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "3,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "3,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "3,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "3,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        }
+       ]
+      },
+      {
+       "id": "stangHofte",
+       "navn": "Vandret afstand stang–hofte",
+       "celler": [
+        {
+         "tekst": "40,4 cm",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "40,4 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "40,4 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "40,4 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "40,4 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "40,4 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "40,4 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "40,0 cm−0,5 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        }
+       ]
+      },
+      {
+       "id": "skulderForanStang",
+       "navn": "Skulderen foran stangen",
+       "celler": [
+        {
+         "tekst": "5,0 cm",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "5,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "5,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "5,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "5,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "5,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "5,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "4,9 cm−0,1 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        }
+       ]
+      },
+      {
+       "id": "hofteHoejde",
+       "navn": "Hoftens højde over gulvet",
+       "celler": [
+        {
+         "tekst": "66,8 cm",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "66,8 cm≈0,0 cm",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "66,8 cm≈0,0 cm",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "66,8 cm≈0,0 cm",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "66,8 cm≈0,0 cm",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "66,8 cm≈0,0 cm",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "66,8 cm≈0,0 cm",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "79,2 cm+12,4 cm",
+         "guld": false,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(237, 234, 226)",
+         "vaegt": "400"
+        }
+       ]
+      }
+     ],
+     "guld": 0,
+     "over": 3,
+     "saetning": "Nyeste (21. sep. 2026) mod ældste (3. aug. 2026). Før er den ældste og efter den nyeste: Efter: overkroppen mere foroverbøjet (ca. 14°), hoften højere (ca. 12 cm) og knæet mere strakt (ca. 14°). Stangens plads er ikke med: den kræver det fjerne nav i begge billeder. Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang.",
+     "rul": {
+      "klient": 345,
+      "fuld": 894,
+      "hoejde": 590
+     }
+    }
+   ],
+   "forklaring": "Under hver uges tal står forskellen fra den ældste uge, også når tabellen er rullet, så den ældste ikke ses; datoen står under Mål. Guld er over rækkens grænse to uger i træk i samme retning. Uden guld og uden ≈ er over grænsen i én uge alene; det kan være et tilfælde. ≈ er inden for målefejlen. Grænserne er de samme som i før og efter og bliver mindre, jo flere runder hvert billede er klikket. Hver kolonne er ét billede med sine egne klikfejl, og et kamera, der er flyttet en af ugerne, flytter tallene lige så meget som en ændret teknik. Om en ændring er bedre, er din vurdering. Datoen er den, enheden havde, da filen blev gemt. Tabellen har 35 forskelle. Hver har ca. 5 % risiko for at stå over grænsen, selv om stillingen er den samme, så ca. 2 af dem kan gøre det alene ved et tilfælde. Derfor står en forskel først i guld, når ugen før eller efter også er over grænsen i samme retning. Det sker langt sjældnere ved et tilfælde, men ikke aldrig.",
+   "sideRul": 0,
+   "gemKnap": true,
+   "rullet": {
+    "fraVenstre": 0,
+    "fraTekst": "Målforskel fra 3. aug. 2026",
+    "fraBredde": 104,
+    "synlige": [
+     "7. sep. 20261 ",
+     "14. sep. 20261",
+     "21. sep. 20261"
+    ],
+    "aeldsteSes": false
+   },
+   "png": {
+    "navn": "maal-dl-gulv-uger-2026-09-21.png",
+    "w": 1200,
+    "h": 2468,
+    "bytes": 602341,
+    "enTr": false
+   },
+   "jsFejl": []
+  },
+  {
+   "navn": "nyeste",
+   "bredde": 1280,
+   "status": "8 målinger målt med kroppens længder som skala.",
+   "sek": [
+    {
+     "fase": "dl-gulv",
+     "hoved": [
+      "Målforskel fra 3. aug. 2026",
+      "3. aug. 20261 runde",
+      "10. aug. 20261 runde",
+      "17. aug. 20261 runde",
+      "24. aug. 20261 runde",
+      "31. aug. 20261 runde",
+      "7. sep. 20261 runde",
+      "14. sep. 20261 runde",
+      "21. sep. 20261 runde"
+     ],
+     "fra": "Målforskel fra 3. aug. 2026",
+     "fraSmaa": 13.3333,
+     "raekker": [
+      {
+       "id": "torso",
+       "navn": "Torso fra lodret",
+       "celler": [
+        {
+         "tekst": "61,2°",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "61,2°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "61,2°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "61,2°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "61,2°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "61,2°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "61,2°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "75,6°+14,4°",
+         "guld": false,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(237, 234, 226)",
+         "vaegt": "400"
+        }
+       ]
+      },
+      {
+       "id": "hofte",
+       "navn": "Hoftevinkel",
+       "celler": [
+        {
+         "tekst": "51,1°",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "51,1°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "51,1°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "51,1°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "51,1°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "51,1°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "51,1°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "50,7°≈−0,3°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        }
+       ]
+      },
+      {
+       "id": "knae",
+       "navn": "Knævinkel",
+       "celler": [
+        {
+         "tekst": "98,9°",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "98,9°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "98,9°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "98,9°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "98,9°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "98,9°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "98,9°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "113,0°+14,1°",
+         "guld": false,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(237, 234, 226)",
+         "vaegt": "400"
+        }
+       ]
+      },
+      {
+       "id": "skinneben",
+       "navn": "Skinneben fra lodret",
+       "celler": [
+        {
+         "tekst": "13,3°",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "13,3°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "13,3°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "13,3°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "13,3°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "13,3°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "13,3°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "13,3°≈0,0°",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        }
+       ]
+      },
+      {
+       "id": "stangFraMidtfod",
+       "navn": "Stangen foran midtfoden",
+       "celler": [
+        {
+         "tekst": "3,0 cm",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "3,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "3,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "3,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "3,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "3,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "3,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "3,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        }
+       ]
+      },
+      {
+       "id": "stangHofte",
+       "navn": "Vandret afstand stang–hofte",
+       "celler": [
+        {
+         "tekst": "40,4 cm",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "40,4 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "40,4 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "40,4 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "40,4 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "40,4 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "40,4 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "40,0 cm−0,5 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        }
+       ]
+      },
+      {
+       "id": "skulderForanStang",
+       "navn": "Skulderen foran stangen",
+       "celler": [
+        {
+         "tekst": "5,0 cm",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "5,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "5,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "5,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "5,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "5,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "5,0 cm0,0 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "4,9 cm−0,1 cm, samme kameraplads",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        }
+       ]
+      },
+      {
+       "id": "hofteHoejde",
+       "navn": "Hoftens højde over gulvet",
+       "celler": [
+        {
+         "tekst": "66,8 cm",
+         "guld": false,
+         "over": false,
+         "inden": false,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "66,8 cm≈0,0 cm",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "66,8 cm≈0,0 cm",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "66,8 cm≈0,0 cm",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "66,8 cm≈0,0 cm",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "66,8 cm≈0,0 cm",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "66,8 cm≈0,0 cm",
+         "guld": false,
+         "over": false,
+         "inden": true,
+         "farve": null,
+         "vaegt": null
+        },
+        {
+         "tekst": "79,2 cm+12,4 cm",
+         "guld": false,
+         "over": true,
+         "inden": false,
+         "farve": "rgb(237, 234, 226)",
+         "vaegt": "400"
+        }
+       ]
+      }
+     ],
+     "guld": 0,
+     "over": 3,
+     "saetning": "Nyeste (21. sep. 2026) mod ældste (3. aug. 2026). Før er den ældste og efter den nyeste: Efter: overkroppen mere foroverbøjet (ca. 14°), hoften højere (ca. 12 cm) og knæet mere strakt (ca. 14°). Stangens plads er ikke med: den kræver det fjerne nav i begge billeder. Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang.",
+     "rul": {
+      "klient": 1042,
+      "fuld": 1042,
+      "hoejde": 678
+     }
+    }
+   ],
+   "forklaring": "Under hver uges tal står forskellen fra den ældste uge, også når tabellen er rullet, så den ældste ikke ses; datoen står under Mål. Guld er over rækkens grænse to uger i træk i samme retning. Uden guld og uden ≈ er over grænsen i én uge alene; det kan være et tilfælde. ≈ er inden for målefejlen. Grænserne er de samme som i før og efter og bliver mindre, jo flere runder hvert billede er klikket. Hver kolonne er ét billede med sine egne klikfejl, og et kamera, der er flyttet en af ugerne, flytter tallene lige så meget som en ændret teknik. Om en ændring er bedre, er din vurdering. Datoen er den, enheden havde, da filen blev gemt. Tabellen har 35 forskelle. Hver har ca. 5 % risiko for at stå over grænsen, selv om stillingen er den samme, så ca. 2 af dem kan gøre det alene ved et tilfælde. Derfor står en forskel først i guld, når ugen før eller efter også er over grænsen i samme retning. Det sker langt sjældnere ved et tilfælde, men ikke aldrig.",
+   "sideRul": 0,
+   "gemKnap": true,
+   "rullet": {
+    "fraVenstre": 0,
+    "fraTekst": "Målforskel fra 3. aug. 2026",
+    "fraBredde": 107,
+    "synlige": [
+     "3. aug. 20261 ",
+     "10. aug. 20261",
+     "17. aug. 20261",
+     "24. aug. 20261",
+     "31. aug. 20261",
+     "7. sep. 20261 ",
+     "14. sep. 20261",
+     "21. sep. 20261"
+    ],
+    "aeldsteSes": true
+   },
+   "png": {
+    "navn": "maal-dl-gulv-uger-2026-09-21.png",
+    "w": 1200,
+    "h": 2468,
+    "bytes": 602341,
+    "enTr": false
+   },
+   "jsFejl": []
+  }
+ ],
+ "png": {
+  "tolv": {
+   "navn": "maal-dl-gulv-uger-2026-10-19.png",
+   "w": 1200,
+   "h": 3714,
+   "enTr": false
+  },
+  "telefon": {
+   "cssBredde": 390,
+   "cssHoejde": 861,
+   "skaerme": 1.02
+  },
+  "jsFejl": [],
+  "otte": {
+   "navn": "maal-dl-gulv-uger-2026-09-21.png",
+   "w": 1200,
+   "h": 2648,
+   "enTr": false,
+   "blokke": 2,
+   "overLinjer": 9,
+   "sidensGuld": 9,
+   "fraKolonne": [
+    "Mål, forskel fra 3. aug. 2026",
+    "Mål, forskel fra 3. aug. 2026"
+   ]
+  },
+  "skrift": {
+   "celle": 7.8,
+   "noter": 6.8,
+   "titel": 11.1,
+   "sidensMindste": 11.7
+  }
+ },
+ "mc": {
+  "nul-2u-1r": {
+   "uger": 2,
+   "runder": 1,
+   "n": 2000,
+   "celler": 5,
+   "guldMiddel": 0,
+   "overMiddel": 0.15,
+   "overAndelAfCeller": 3,
+   "nogetGuld": 0,
+   "overUdenGuld": 12.7,
+   "guldHofte": 0,
+   "overHofte": 4.8,
+   "nyesteGuld": 0,
+   "hofteNyesteGuld": 0,
+   "hofteNyesteOver": 4.8,
+   "saetning": 12.7,
+   "saetningHofte": 2.5,
+   "guld3iRaekke": 0
+  },
+  "nul-2u-3r": {
+   "uger": 2,
+   "runder": 3,
+   "n": 2000,
+   "celler": 5,
+   "guldMiddel": 0,
+   "overMiddel": 0.11,
+   "overAndelAfCeller": 2.2,
+   "nogetGuld": 0,
+   "overUdenGuld": 9.2,
+   "guldHofte": 0,
+   "overHofte": 3.3,
+   "nyesteGuld": 0,
+   "hofteNyesteGuld": 0,
+   "hofteNyesteOver": 3.3,
+   "saetning": 9.2,
+   "saetningHofte": 1.6,
+   "guld3iRaekke": 0
+  },
+  "nul-8u-1r": {
+   "uger": 8,
+   "runder": 1,
+   "n": 2000,
+   "celler": 35,
+   "guldMiddel": 0.24,
+   "overMiddel": 0.96,
+   "overAndelAfCeller": 2.7,
+   "nogetGuld": 8.2,
+   "overUdenGuld": 44.3,
+   "guldHofte": 3.6,
+   "overHofte": 21.4,
+   "nyesteGuld": 1.8,
+   "hofteNyesteGuld": 0.8,
+   "hofteNyesteOver": 4.2,
+   "saetning": 10.7,
+   "saetningHofte": 2.4,
+   "guld3iRaekke": 2.6
+  },
+  "nul-8u-3r": {
+   "uger": 8,
+   "runder": 3,
+   "n": 2000,
+   "celler": 35,
+   "guldMiddel": 0.16,
+   "overMiddel": 0.78,
+   "overAndelAfCeller": 2.2,
+   "nogetGuld": 5.6,
+   "overUdenGuld": 39.7,
+   "guldHofte": 1.9,
+   "overHofte": 16.8,
+   "nyesteGuld": 1.5,
+   "hofteNyesteGuld": 0.5,
+   "hofteNyesteOver": 3.4,
+   "saetning": 9.8,
+   "saetningHofte": 2,
+   "guld3iRaekke": 1.8
+  },
+  "nul-12u-1r": {
+   "uger": 12,
+   "runder": 1,
+   "n": 2000,
+   "celler": 55,
+   "guldMiddel": 0.39,
+   "overMiddel": 1.56,
+   "overAndelAfCeller": 2.8,
+   "nogetGuld": 11.6,
+   "overUdenGuld": 57.8,
+   "guldHofte": 4.7,
+   "overHofte": 30.6,
+   "nyesteGuld": 2.4,
+   "hofteNyesteGuld": 0.9,
+   "hofteNyesteOver": 4.7,
+   "saetning": 12.2,
+   "saetningHofte": 2,
+   "guld3iRaekke": 4.3
+  },
+  "nul-12u-3r": {
+   "uger": 12,
+   "runder": 3,
+   "n": 2000,
+   "celler": 55,
+   "guldMiddel": 0.26,
+   "overMiddel": 1.19,
+   "overAndelAfCeller": 2.2,
+   "nogetGuld": 8.6,
+   "overUdenGuld": 47.9,
+   "guldHofte": 3.1,
+   "overHofte": 22.4,
+   "nyesteGuld": 1.5,
+   "hofteNyesteGuld": 0.6,
+   "hofteNyesteOver": 3.3,
+   "saetning": 9.2,
+   "saetningHofte": 1.7,
+   "guld3iRaekke": 2.9
+  },
+  "hofte5-fra-u5-8u-3r": {
+   "uger": 8,
+   "runder": 3,
+   "n": 2000,
+   "celler": 35,
+   "guldMiddel": 5.01,
+   "overMiddel": 6.86,
+   "overAndelAfCeller": 19.6,
+   "nogetGuld": 84.5,
+   "overUdenGuld": 82,
+   "guldHofte": 62.3,
+   "overHofte": 89.3,
+   "nyesteGuld": 65.3,
+   "hofteNyesteGuld": 42.9,
+   "hofteNyesteOver": 59.4,
+   "saetning": 82.6,
+   "saetningHofte": 59.4,
+   "guld3iRaekke": 62.3
+  },
+  "hofte5-fra-u5-12u-3r": {
+   "uger": 12,
+   "runder": 3,
+   "n": 2000,
+   "celler": 55,
+   "guldMiddel": 10.66,
+   "overMiddel": 13.52,
+   "overAndelAfCeller": 24.6,
+   "nogetGuld": 94.2,
+   "overUdenGuld": 92.6,
+   "guldHofte": 77.5,
+   "overHofte": 94.9,
+   "nyesteGuld": 68.8,
+   "hofteNyesteGuld": 45.9,
+   "hofteNyesteOver": 61.4,
+   "saetning": 83.3,
+   "saetningHofte": 61.4,
+   "guld3iRaekke": 85.9
+  },
+  "hofte5-fra-u5-12u-1r": {
+   "uger": 12,
+   "runder": 1,
+   "n": 2000,
+   "celler": 55,
+   "guldMiddel": 3.18,
+   "overMiddel": 5.89,
+   "overAndelAfCeller": 10.7,
+   "nogetGuld": 56.1,
+   "overUdenGuld": 90.5,
+   "guldHofte": 37.5,
+   "overHofte": 75.5,
+   "nyesteGuld": 22.9,
+   "hofteNyesteGuld": 13.8,
+   "hofteNyesteOver": 27.1,
+   "saetning": 45.8,
+   "saetningHofte": 27.1,
+   "guld3iRaekke": 36.1
+  },
+  "hofte5-kun-nyeste-12u-3r": {
+   "uger": 12,
+   "runder": 3,
+   "n": 2000,
+   "celler": 55,
+   "guldMiddel": 0.29,
+   "overMiddel": 2.7,
+   "overAndelAfCeller": 4.9,
+   "nogetGuld": 9.1,
+   "overUdenGuld": 91.3,
+   "guldHofte": 3.9,
+   "overHofte": 70,
+   "nyesteGuld": 3.8,
+   "hofteNyesteGuld": 1.6,
+   "hofteNyesteOver": 60.9,
+   "saetning": 83.3,
+   "saetningHofte": 60.9,
+   "guld3iRaekke": 3
+  },
+  "hofte5-de-to-nyeste-12u-3r": {
+   "uger": 12,
+   "runder": 3,
+   "n": 2000,
+   "celler": 55,
+   "guldMiddel": 2.45,
+   "overMiddel": 4.22,
+   "overAndelAfCeller": 7.7,
+   "nogetGuld": 67.6,
+   "overUdenGuld": 84.6,
+   "guldHofte": 44.8,
+   "overHofte": 82.8,
+   "nyesteGuld": 65.8,
+   "hofteNyesteGuld": 43.5,
+   "hofteNyesteOver": 60.5,
+   "saetning": 83.3,
+   "saetningHofte": 60.5,
+   "guld3iRaekke": 6.5
+  },
+  "hofte5-een-uge-midt-12u-3r": {
+   "uger": 12,
+   "runder": 3,
+   "n": 2000,
+   "celler": 55,
+   "guldMiddel": 0.38,
+   "overMiddel": 2.79,
+   "overAndelAfCeller": 5.1,
+   "nogetGuld": 13.2,
+   "overUdenGuld": 91.8,
+   "guldHofte": 5.8,
+   "overHofte": 69.8,
+   "nyesteGuld": 1.6,
+   "hofteNyesteGuld": 0.6,
+   "hofteNyesteOver": 4,
+   "saetning": 9.9,
+   "saetningHofte": 2.6,
+   "guld3iRaekke": 3.8
+  },
+  "hofte-glidende-0-5-12u-3r": {
+   "uger": 12,
+   "runder": 3,
+   "n": 2000,
+   "celler": 55,
+   "guldMiddel": 4.99,
+   "overMiddel": 7.61,
+   "overAndelAfCeller": 13.8,
+   "nogetGuld": 74.7,
+   "overUdenGuld": 91.5,
+   "guldHofte": 53.5,
+   "overHofte": 81.2,
+   "nyesteGuld": 61.7,
+   "hofteNyesteGuld": 41,
+   "hofteNyesteOver": 60.7,
+   "saetning": 83.5,
+   "saetningHofte": 60.7,
+   "guld3iRaekke": 54.8
+  }
+ },
+ "andet": {
+  "m18Laengde": 285,
+  "enkeltCeller": {
+   "hoftensHoejde": [
+    "66,8 cm",
+    "66,8 cm≈0,0 cm",
+    "79,2 cm+12,4 cm [over]",
+    "66,8 cm≈0,0 cm",
+    "66,8 cm≈0,0 cm",
+    "79,2 cm+12,4 cm [guld]",
+    "79,2 cm+12,4 cm [guld]",
+    "79,2 cm+12,4 cm [guld]"
+   ],
+   "hoftevinkel": [
+    "51,1°",
+    "51,1°≈0,0°",
+    "50,7°≈−0,3°",
+    "51,1°≈0,0°",
+    "51,1°≈0,0°",
+    "50,7°≈−0,3°",
+    "50,7°≈−0,3°",
+    "50,7°≈−0,3°"
+   ]
+  },
+  "enkeltStil": {
+   "over": {
+    "tekst": "79,2 cm+12,4 cm",
+    "guld": false,
+    "over": true,
+    "inden": false,
+    "farve": "rgb(237, 234, 226)",
+    "vaegt": "400"
+   },
+   "guld": {
+    "tekst": "79,2 cm+12,4 cm",
+    "guld": true,
+    "over": true,
+    "inden": false,
+    "farve": "rgb(200, 146, 58)",
+    "vaegt": "700"
+   },
+   "inden": {
+    "tekst": "66,8 cm≈0,0 cm",
+    "guld": false,
+    "over": false,
+    "inden": true,
+    "farve": null,
+    "vaegt": null
+   }
+  },
+  "nyeste": {
+   "saetning": "Nyeste (21. sep. 2026) mod ældste (3. aug. 2026). Før er den ældste og efter den nyeste: Efter: overkroppen mere foroverbøjet (ca. 14°), hoften højere (ca. 12 cm) og knæet mere strakt (ca. 14°). Stangens plads er ikke med: den kræver det fjerne nav i begge billeder. Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang.",
+   "sidste": {
+    "tekst": "79,2 cm+12,4 cm",
+    "guld": false,
+    "over": true,
+    "inden": false,
+    "farve": "rgb(237, 234, 226)",
+    "vaegt": "400"
+   },
+   "guld": 0,
+   "over": 3
+  },
+  "udenDato": "Målforskel fra den ældste",
+  "m21": {
+   "status": "3 målinger målt med kroppens længder som skala.",
+   "kamera": "2,8 cm0,0 cm, samme kameraplads"
+  }
+ },
+ "chrome": "154.0.8037.57",
+ "mcSide": [
+  {
+   "seed": 11,
+   "node": [
+    0,
+    0
+   ],
+   "side": [
+    0,
+    0
+   ]
+  },
+  {
+   "seed": 12,
+   "node": [
+    5,
+    6
+   ],
+   "side": [
+    5,
+    6
+   ]
+  },
+  {
+   "seed": 13,
+   "node": [
+    0,
+    0
+   ],
+   "side": [
+    0,
+    0
+   ]
+  },
+  {
+   "seed": 14,
+   "node": [
+    6,
+    8
+   ],
+   "side": [
+    6,
+    8
+   ]
+  },
+  {
+   "seed": 15,
+   "node": [
+    5,
+    8
+   ],
+   "side": [
+    5,
+    8
+   ]
+  }
+ ],
+ "eksterne": [],
+ "tjek": [
+  {
+   "hvad": "627 og 630 er merget (main 2ccb0bb), rapport dag 95 og 96 ligger paa main; i dist er kun maal-billede.js og index.html aendret siden 628 (287210d) og siden sitets 4ca0c63",
+   "ok": true,
+   "data": {
+    "nye": [
+     "2ccb0bb merge: ordre-630 (ORDRE 630, Yantra)",
+     "c266353 merge: ordre-627 (ORDRE 627, Yantra)"
+    ],
+    "dist": [
+     "dist/maal-billede/index.html",
+     "dist/maal-billede/maal-billede.js"
+    ]
+   }
+  },
+  {
+   "hvad": "sitet (1169b5f) er stadig blob for blob 4ca0c63 i alle fire mapper (Setus 625 er ikke committet); mod main er kun de to filer anderledes",
+   "ok": true,
+   "data": {
+    "site": "1169b5f",
+    "maal": [
+     "index.html",
+     "maal-billede.js"
+    ]
+   }
+  },
+  {
+   "hvad": "M18 lukket (390 og 1280): omvendt -> noten og advarslen siger \"tryk Byt\"; efter Byt siger noten \"Foer og efter er byttet, saa det aeldste billede nu er foer.\" og advarslen er vaek; Byt tilbage -> \"tryk Byt\" igen",
+   "ok": true,
+   "data": [
+    {
+     "foer": "Før er gemt senere end efter; tryk Byt før og efter, hvis det ældste billede skal være før.",
+     "byt1": "Før og efter er byttet, så det ældste billede nu er før.",
+     "byt2": "Før er gemt senere end efter; tryk Byt før og efter, hvis det ældste billede skal være før.",
+     "advarsel": [
+      "Før er gemt 21. sep. 2026 og efter 3. aug. 2026, så før er det nyeste billede. Forskellen er efter minus før; står de i forkert rækkefølge, har hver forskel omvendt fortegn. Tryk Byt før og efter, hvis det ældste billede skal være før.",
+      null,
+      "Før er gemt 21. sep. 2026 og efter 3. aug. 2026, så før er det nyeste billede. Forskellen er efter minus før; står de i forkert rækkefølge, har hver forskel omvendt fortegn. Tryk Byt før og efter, hvis det ældste billede skal være før."
+     ]
+    }
+   ]
+  },
+  {
+   "hvad": "M18: rigtig raekkefoelge -> ingen \"Byt\" i noten; traeneren trykker Byt ved en fejl -> noten og advarslen siger nu \"gemt senere end efter; tryk Byt\"; tilbage -> \"Foer og efter er byttet, saa det aeldste billede nu er foer\" (sandt) og ingen advarsel",
+   "ok": true,
+   "data": [
+    {
+     "foer": "",
+     "byt1": "Før er gemt senere end efter; tryk Byt før og efter, hvis det ældste billede skal være før.",
+     "byt2": "Før og efter er byttet, så det ældste billede nu er før."
+    }
+   ]
+  },
+  {
+   "hvad": "Uger (390 og 1280): uge 3 alene over graensen staar uden guld og uden ≈ (data-over), uge 6-8 staar i guld (data-guld); ingen celle i uge 2, 4, 5 er over",
+   "ok": true,
+   "data": {
+    "hoftensHoejde": [
+     "66,8 cm",
+     "66,8 cm≈0,0 cm",
+     "79,2 cm+12,4 cm [over]",
+     "66,8 cm≈0,0 cm",
+     "66,8 cm≈0,0 cm",
+     "79,2 cm+12,4 cm [guld]",
+     "79,2 cm+12,4 cm [guld]",
+     "79,2 cm+12,4 cm [guld]"
+    ],
+    "hoftevinkel": [
+     "51,1°",
+     "51,1°≈0,0°",
+     "50,7°≈−0,3°",
+     "51,1°≈0,0°",
+     "51,1°≈0,0°",
+     "50,7°≈−0,3°",
+     "50,7°≈−0,3°",
+     "50,7°≈−0,3°"
+    ]
+   }
+  },
+  {
+   "hvad": "fund: en enkelt uge over graensen skilles fra \"inden for maalefejlen\" kun ved at ≈ mangler; tallet har samme farve og vaegt som en celle inden for (ingen egen markering), og 13 cm hoften op i een uge staar lige saa stille som 0 cm",
+   "ok": true,
+   "data": {
+    "over": {
+     "tekst": "79,2 cm+12,4 cm",
+     "guld": false,
+     "over": true,
+     "inden": false,
+     "farve": "rgb(237, 234, 226)",
+     "vaegt": "400"
+    },
+    "guld": {
+     "tekst": "79,2 cm+12,4 cm",
+     "guld": true,
+     "over": true,
+     "inden": false,
+     "farve": "rgb(200, 146, 58)",
+     "vaegt": "700"
+    },
+    "inden": {
+     "tekst": "66,8 cm≈0,0 cm",
+     "guld": false,
+     "over": false,
+     "inden": true,
+     "farve": null,
+     "vaegt": null
+    }
+   }
+  },
+  {
+   "hvad": "M20 lukket (390 og 1280): den faste celle siger \"Maal forskel fra 3. aug. 2026\", og rullet helt ud paa 390 staar den stadig til venstre, mens den aeldste kolonne er ude af syne",
+   "ok": true,
+   "data": {
+    "fra": "Målforskel fra 3. aug. 2026",
+    "skrift": 11.7333,
+    "rullet": {
+     "fraVenstre": 0,
+     "fraTekst": "Målforskel fra 3. aug. 2026",
+     "fraBredde": 104,
+     "synlige": [
+      "7. sep. 20261 ",
+      "14. sep. 20261",
+      "21. sep. 20261"
+     ],
+     "aeldsteSes": false
+    }
+   }
+  },
+  {
+   "hvad": "den nyeste uge alene (13 cm): saetningen over tabellen siger \"hoften hoejere\", men cellen staar uden guld, og tabellen har 0 guld; de to siger forskelligt om samme uge",
+   "ok": true,
+   "data": {
+    "saetning": "Nyeste (21. sep. 2026) mod ældste (3. aug. 2026). Før er den ældste og efter den nyeste: Efter: overkroppen mere foroverbøjet (ca. 14°), hoften højere (ca. 12 cm) og knæet mere strakt (ca. 14°). Stangens plads er ikke med: den kræver det fjerne nav i begge billeder. Gælder kun, hvis de to billeder er fra samme kameraplads (stativ, tape på gulvet); før er klikket 1 gang og efter 1 gang.",
+    "sidste": {
+     "tekst": "79,2 cm+12,4 cm",
+     "guld": false,
+     "over": true,
+     "inden": false,
+     "farve": "rgb(237, 234, 226)",
+     "vaegt": "400"
+    },
+    "guld": 0,
+    "over": 3
+   }
+  },
+  {
+   "hvad": "Uger: siden ruller ikke sidelaens (390 og 1280) og 0 JS-fejl",
+   "ok": true,
+   "data": [
+    "enkelt 390: rul 0, tabel 894/345 x 632",
+    "enkelt 1280: rul 0, tabel 1042/1042 x 678",
+    "nyeste 390: rul 0, tabel 894/345 x 590",
+    "nyeste 1280: rul 0, tabel 1042/1042 x 678"
+   ]
+  },
+  {
+   "hvad": "det gemte PNG: 8 uger = 1200x2648 i 2 blokke, 12 uger = 1200x3714; ingen maaling i filen; samme guld som siden (9 = 9); hver blok siger \"forskel fra 3. aug. 2026\"",
+   "ok": true,
+   "data": {
+    "otte": {
+     "navn": "maal-dl-gulv-uger-2026-09-21.png",
+     "w": 1200,
+     "h": 2648,
+     "enTr": false,
+     "blokke": 2,
+     "overLinjer": 9,
+     "sidensGuld": 9,
+     "fraKolonne": [
+      "Mål, forskel fra 3. aug. 2026",
+      "Mål, forskel fra 3. aug. 2026"
+     ]
+    },
+    "tolv": {
+     "navn": "maal-dl-gulv-uger-2026-10-19.png",
+     "w": 1200,
+     "h": 3714,
+     "enTr": false
+    }
+   }
+  },
+  {
+   "hvad": "fund: vist i fuld bredde paa en telefon (390) er PNG'et 861 css-px hoejt (1.02 skaerme), cellernes tal 7.8 px og noterne 6.8 px (sidens mindste er 11,7); man skal zoome ca. 1,5-2x for at laese tallene",
+   "ok": true,
+   "data": {
+    "telefon": {
+     "cssBredde": 390,
+     "cssHoejde": 861,
+     "skaerme": 1.02
+    },
+    "skrift": {
+     "celle": 7.8,
+     "noter": 6.8,
+     "titel": 11.1,
+     "sidensMindste": 11.7
+    }
+   }
+  },
+  {
+   "hvad": "M19 lukket (min Monte Carlo, 2000 forsoeg, sidens krop som skala, samme frø som 628): SAMME stilling alle uger giver guld et sted i 5.6 % (8 uger) og 8.6 % (12 uger) med 3 runder, 8.2 % og 11.6 % med 1 runde (628: 41-59 %); 2 uger 0 %",
+   "ok": true,
+   "data": {
+    "nul8": {
+     "uger": 8,
+     "runder": 3,
+     "n": 2000,
+     "celler": 35,
+     "guldMiddel": 0.16,
+     "overMiddel": 0.78,
+     "overAndelAfCeller": 2.2,
+     "nogetGuld": 5.6,
+     "overUdenGuld": 39.7,
+     "guldHofte": 1.9,
+     "overHofte": 16.8,
+     "nyesteGuld": 1.5,
+     "hofteNyesteGuld": 0.5,
+     "hofteNyesteOver": 3.4,
+     "saetning": 9.8,
+     "saetningHofte": 2,
+     "guld3iRaekke": 1.8
+    },
+    "nul12": {
+     "uger": 12,
+     "runder": 3,
+     "n": 2000,
+     "celler": 55,
+     "guldMiddel": 0.26,
+     "overMiddel": 1.19,
+     "overAndelAfCeller": 2.2,
+     "nogetGuld": 8.6,
+     "overUdenGuld": 47.9,
+     "guldHofte": 3.1,
+     "overHofte": 22.4,
+     "nyesteGuld": 1.5,
+     "hofteNyesteGuld": 0.6,
+     "hofteNyesteOver": 3.3,
+     "saetning": 9.2,
+     "saetningHofte": 1.7,
+     "guld3iRaekke": 2.9
+    },
+    "nul12r1": {
+     "uger": 12,
+     "runder": 1,
+     "n": 2000,
+     "celler": 55,
+     "guldMiddel": 0.39,
+     "overMiddel": 1.56,
+     "overAndelAfCeller": 2.8,
+     "nogetGuld": 11.6,
+     "overUdenGuld": 57.8,
+     "guldHofte": 4.7,
+     "overHofte": 30.6,
+     "nyesteGuld": 2.4,
+     "hofteNyesteGuld": 0.9,
+     "hofteNyesteOver": 4.7,
+     "saetning": 12.2,
+     "saetningHofte": 2,
+     "guld3iRaekke": 4.3
+    }
+   }
+  },
+  {
+   "hvad": "M19: hoften 5 cm op fra uge 5 findes stadig: guld et sted 94.2 % og i hoftens egen raekke 77.5 % (12 uger, 3 runder); 8 uger 62.3 %; 12 uger 1 runde 37.5 %",
+   "ok": true,
+   "data": {
+    "h12": {
+     "uger": 12,
+     "runder": 3,
+     "n": 2000,
+     "celler": 55,
+     "guldMiddel": 10.66,
+     "overMiddel": 13.52,
+     "overAndelAfCeller": 24.6,
+     "nogetGuld": 94.2,
+     "overUdenGuld": 92.6,
+     "guldHofte": 77.5,
+     "overHofte": 94.9,
+     "nyesteGuld": 68.8,
+     "hofteNyesteGuld": 45.9,
+     "hofteNyesteOver": 61.4,
+     "saetning": 83.3,
+     "saetningHofte": 61.4,
+     "guld3iRaekke": 85.9
+    },
+    "h8": {
+     "uger": 8,
+     "runder": 3,
+     "n": 2000,
+     "celler": 35,
+     "guldMiddel": 5.01,
+     "overMiddel": 6.86,
+     "overAndelAfCeller": 19.6,
+     "nogetGuld": 84.5,
+     "overUdenGuld": 82,
+     "guldHofte": 62.3,
+     "overHofte": 89.3,
+     "nyesteGuld": 65.3,
+     "hofteNyesteGuld": 42.9,
+     "hofteNyesteOver": 59.4,
+     "saetning": 82.6,
+     "saetningHofte": 59.4,
+     "guld3iRaekke": 62.3
+    },
+    "h12r1": {
+     "uger": 12,
+     "runder": 1,
+     "n": 2000,
+     "celler": 55,
+     "guldMiddel": 3.18,
+     "overMiddel": 5.89,
+     "overAndelAfCeller": 10.7,
+     "nogetGuld": 56.1,
+     "overUdenGuld": 90.5,
+     "guldHofte": 37.5,
+     "overHofte": 75.5,
+     "nyesteGuld": 22.9,
+     "hofteNyesteGuld": 13.8,
+     "hofteNyesteOver": 27.1,
+     "saetning": 45.8,
+     "saetningHofte": 27.1,
+     "guld3iRaekke": 36.1
+    }
+   }
+  },
+  {
+   "hvad": "den nyeste uge: 5 cm kun i den nyeste giver hoftens celle over graensen i 60.9 % og i guld i 1.6 %, mens saetningen siger \"hoften hoejere\" i 60.9 %; de to nyeste: guld i 43.5 %",
+   "ok": true,
+   "data": {
+    "kunNyeste": {
+     "uger": 12,
+     "runder": 3,
+     "n": 2000,
+     "celler": 55,
+     "guldMiddel": 0.29,
+     "overMiddel": 2.7,
+     "overAndelAfCeller": 4.9,
+     "nogetGuld": 9.1,
+     "overUdenGuld": 91.3,
+     "guldHofte": 3.9,
+     "overHofte": 70,
+     "nyesteGuld": 3.8,
+     "hofteNyesteGuld": 1.6,
+     "hofteNyesteOver": 60.9,
+     "saetning": 83.3,
+     "saetningHofte": 60.9,
+     "guld3iRaekke": 3
+    },
+    "deTo": {
+     "uger": 12,
+     "runder": 3,
+     "n": 2000,
+     "celler": 55,
+     "guldMiddel": 2.45,
+     "overMiddel": 4.22,
+     "overAndelAfCeller": 7.7,
+     "nogetGuld": 67.6,
+     "overUdenGuld": 84.6,
+     "guldHofte": 44.8,
+     "overHofte": 82.8,
+     "nyesteGuld": 65.8,
+     "hofteNyesteGuld": 43.5,
+     "hofteNyesteOver": 60.5,
+     "saetning": 83.3,
+     "saetningHofte": 60.5,
+     "guld3iRaekke": 6.5
+    }
+   }
+  },
+  {
+   "hvad": "resten af tabellen uden aendring: over graensen uden guld (en enkelt uge) staar et sted i 47.9 % af tabellerne (12 uger, 3 runder); 2.2 % af cellerne er over (siden siger \"ca. 5 %\"); af den falske guld er 2.9 % af tabellerne en raekke med 3+ guld i samme retning (den aeldstes klikfejl)",
+   "ok": true,
+   "data": {
+    "nul12": {
+     "uger": 12,
+     "runder": 3,
+     "n": 2000,
+     "celler": 55,
+     "guldMiddel": 0.26,
+     "overMiddel": 1.19,
+     "overAndelAfCeller": 2.2,
+     "nogetGuld": 8.6,
+     "overUdenGuld": 47.9,
+     "guldHofte": 3.1,
+     "overHofte": 22.4,
+     "nyesteGuld": 1.5,
+     "hofteNyesteGuld": 0.6,
+     "hofteNyesteOver": 3.3,
+     "saetning": 9.2,
+     "saetningHofte": 1.7,
+     "guld3iRaekke": 2.9
+    },
+    "nul12r1": {
+     "uger": 12,
+     "runder": 1,
+     "n": 2000,
+     "celler": 55,
+     "guldMiddel": 0.39,
+     "overMiddel": 1.56,
+     "overAndelAfCeller": 2.8,
+     "nogetGuld": 11.6,
+     "overUdenGuld": 57.8,
+     "guldHofte": 4.7,
+     "overHofte": 30.6,
+     "nyesteGuld": 2.4,
+     "hofteNyesteGuld": 0.9,
+     "hofteNyesteOver": 4.7,
+     "saetning": 12.2,
+     "saetningHofte": 2,
+     "guld3iRaekke": 4.3
+    },
+    "glidende": {
+     "uger": 12,
+     "runder": 3,
+     "n": 2000,
+     "celler": 55,
+     "guldMiddel": 4.99,
+     "overMiddel": 7.61,
+     "overAndelAfCeller": 13.8,
+     "nogetGuld": 74.7,
+     "overUdenGuld": 91.5,
+     "guldHofte": 53.5,
+     "overHofte": 81.2,
+     "nyesteGuld": 61.7,
+     "hofteNyesteGuld": 41,
+     "hofteNyesteOver": 60.7,
+     "saetning": 83.5,
+     "saetningHofte": 60.7,
+     "guld3iRaekke": 54.8
+    },
+    "eenMidt": {
+     "uger": 12,
+     "runder": 3,
+     "n": 2000,
+     "celler": 55,
+     "guldMiddel": 0.38,
+     "overMiddel": 2.79,
+     "overAndelAfCeller": 5.1,
+     "nogetGuld": 13.2,
+     "overUdenGuld": 91.8,
+     "guldHofte": 5.8,
+     "overHofte": 69.8,
+     "nyesteGuld": 1.6,
+     "hofteNyesteGuld": 0.6,
+     "hofteNyesteOver": 4,
+     "saetning": 9.9,
+     "saetningHofte": 2.6,
+     "guld3iRaekke": 3.8
+    }
+   }
+  },
+  {
+   "hvad": "node-regningen er sidens: fem forsoeg (12 uger, 3 runder med klikfejl, to med hoften op fra uge 7) givet siden som filer har samme antal guld og over",
+   "ok": true,
+   "data": [
+    "11: node 0,0, side 0,0",
+    "12: node 5,6, side 5,6",
+    "13: node 0,0, side 0,0",
+    "14: node 6,8, side 6,8",
+    "15: node 5,8, side 5,8"
+   ]
+  },
+  {
+   "hvad": "M20 uden datoer: den faste celle siger \"forskel fra den aeldste\"",
+   "ok": true,
+   "data": "Målforskel fra den ældste"
+  },
+  {
+   "hvad": "M21 og M22 staar (kun oplysning, Yantra valgte dem fra): 165 cm paa siden naevnes ikke i status; stangens celler siger stadig \"samme kameraplads\"",
+   "ok": true,
+   "data": {
+    "status": "3 målinger målt med kroppens længder som skala.",
+    "kamera": "2,8 cm0,0 cm, samme kameraplads"
+   }
+  },
+  {
+   "hvad": "alt, siderne proevede at hente udefra, er afbrudt og var kun skrifttypen",
+   "ok": true,
+   "data": []
+  }
+ ]
+}
