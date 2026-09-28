@@ -1,0 +1,138 @@
+{
+  "390": {
+    "sidelaens": 0,
+    "hoejde": 2881,
+    "figurer": [
+      {
+        "alt": "Squat, low bar (bunden), før",
+        "w": 175,
+        "h": 210,
+        "ok": true
+      },
+      {
+        "alt": "Squat, low bar (bunden), nu",
+        "w": 175,
+        "h": 210,
+        "ok": true
+      },
+      {
+        "alt": "Squat, high bar (bunden), før",
+        "w": 175,
+        "h": 210,
+        "ok": true
+      },
+      {
+        "alt": "Squat, high bar (bunden), nu",
+        "w": 175,
+        "h": 210,
+        "ok": true
+      },
+      {
+        "alt": "Bænkpres, middel bue, stangen på brystet, før",
+        "w": 175,
+        "h": 236,
+        "ok": true
+      },
+      {
+        "alt": "Bænkpres, middel bue, stangen på brystet, nu",
+        "w": 175,
+        "h": 236,
+        "ok": true
+      },
+      {
+        "alt": "Dødløft, konventionel, opstilling, før",
+        "w": 175,
+        "h": 236,
+        "ok": true
+      },
+      {
+        "alt": "Dødløft, konventionel, opstilling, nu",
+        "w": 175,
+        "h": 236,
+        "ok": true
+      },
+      {
+        "alt": "Dødløft, sumo, opstilling, før",
+        "w": 175,
+        "h": 236,
+        "ok": true
+      },
+      {
+        "alt": "Dødløft, sumo, opstilling, nu",
+        "w": 175,
+        "h": 236,
+        "ok": true
+      }
+    ],
+    "fejl": [],
+    "net": []
+  },
+  "1280": {
+    "sidelaens": 0,
+    "hoejde": 4127,
+    "figurer": [
+      {
+        "alt": "Squat, low bar (bunden), før",
+        "w": 430,
+        "h": 516,
+        "ok": true
+      },
+      {
+        "alt": "Squat, low bar (bunden), nu",
+        "w": 430,
+        "h": 516,
+        "ok": true
+      },
+      {
+        "alt": "Squat, high bar (bunden), før",
+        "w": 430,
+        "h": 516,
+        "ok": true
+      },
+      {
+        "alt": "Squat, high bar (bunden), nu",
+        "w": 430,
+        "h": 516,
+        "ok": true
+      },
+      {
+        "alt": "Bænkpres, middel bue, stangen på brystet, før",
+        "w": 430,
+        "h": 581,
+        "ok": true
+      },
+      {
+        "alt": "Bænkpres, middel bue, stangen på brystet, nu",
+        "w": 430,
+        "h": 581,
+        "ok": true
+      },
+      {
+        "alt": "Dødløft, konventionel, opstilling, før",
+        "w": 430,
+        "h": 581,
+        "ok": true
+      },
+      {
+        "alt": "Dødløft, konventionel, opstilling, nu",
+        "w": 430,
+        "h": 581,
+        "ok": true
+      },
+      {
+        "alt": "Dødløft, sumo, opstilling, før",
+        "w": 430,
+        "h": 581,
+        "ok": true
+      },
+      {
+        "alt": "Dødløft, sumo, opstilling, nu",
+        "w": 430,
+        "h": 581,
+        "ok": true
+      }
+    ],
+    "fejl": [],
+    "net": []
+  }
+}
