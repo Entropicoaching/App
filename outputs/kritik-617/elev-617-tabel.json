@@ -1,0 +1,1522 @@
+[
+ {
+  "koersel": "foer-m40-311",
+  "spil": "c096c38",
+  "variant": "travl",
+  "bredde": 390,
+  "m20": {
+   "niveau": "4",
+   "hhh": "4-1-1",
+   "hjulpet": 0,
+   "tilbage": 0,
+   "opgaver": 33,
+   "forloeb": 4
+  },
+  "m40": {
+   "niveau": "8½",
+   "hhh": "8-1-1",
+   "hjulpet": 3,
+   "opgaver": 66,
+   "rigtigeFoerste": 48,
+   "forloeb": 8,
+   "broeker": 550
+  },
+  "fortsaet": 2,
+  "valgBegge": "2/2",
+  "sjov": [],
+  "tilbageSet": 0,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 0,
+   "foelger": null,
+   "gaest": null
+  },
+  "rul": 11,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "foer-m40-311",
+  "spil": "c096c38",
+  "variant": "hjaelper",
+  "bredde": 390,
+  "m20": {
+   "niveau": "3½",
+   "hhh": "3-1-1",
+   "hjulpet": 3,
+   "tilbage": 0,
+   "opgaver": 31,
+   "forloeb": 3
+  },
+  "m40": {
+   "niveau": "10",
+   "hhh": "3-8-1",
+   "hjulpet": 6,
+   "opgaver": 68,
+   "rigtigeFoerste": 50,
+   "forloeb": 8,
+   "broeker": 280
+  },
+  "fortsaet": 0,
+  "valgBegge": "5/5",
+  "sjov": [],
+  "tilbageSet": 0,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 0,
+   "foelger": null,
+   "gaest": null
+  },
+  "rul": 13,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "foer-m40-525",
+  "spil": "c096c38",
+  "variant": "travl",
+  "bredde": 390,
+  "m20": {
+   "niveau": "4",
+   "hhh": "4-1-1",
+   "hjulpet": 0,
+   "tilbage": 0,
+   "opgaver": 32,
+   "forloeb": 3
+  },
+  "m40": {
+   "niveau": "9",
+   "hhh": "9-1-1",
+   "hjulpet": 0,
+   "opgaver": 66,
+   "rigtigeFoerste": 44,
+   "forloeb": 8,
+   "broeker": 400
+  },
+  "fortsaet": 2,
+  "valgBegge": "2/2",
+  "sjov": [],
+  "tilbageSet": 0,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 0,
+   "foelger": null,
+   "gaest": null
+  },
+  "rul": 17,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "foer-m40-525",
+  "spil": "c096c38",
+  "variant": "travl",
+  "bredde": 1280,
+  "m20": {
+   "niveau": "4",
+   "hhh": "4-1-1",
+   "hjulpet": 0,
+   "tilbage": 0,
+   "opgaver": 32,
+   "forloeb": 3
+  },
+  "m40": {
+   "niveau": "9",
+   "hhh": "9-1-1",
+   "hjulpet": 0,
+   "opgaver": 66,
+   "rigtigeFoerste": 44,
+   "forloeb": 8,
+   "broeker": 400
+  },
+  "fortsaet": 2,
+  "valgBegge": "2/2",
+  "sjov": [],
+  "tilbageSet": 0,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 0,
+   "foelger": null,
+   "gaest": null
+  },
+  "rul": 11,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "foer-m40-525",
+  "spil": "c096c38",
+  "variant": "hjaelper",
+  "bredde": 390,
+  "m20": {
+   "niveau": "3",
+   "hhh": "3-1-1",
+   "hjulpet": 2,
+   "tilbage": 0,
+   "opgaver": 31,
+   "forloeb": 2
+  },
+  "m40": {
+   "niveau": "6",
+   "hhh": "4-3-1",
+   "hjulpet": 4,
+   "opgaver": 58,
+   "rigtigeFoerste": 37,
+   "forloeb": 4,
+   "broeker": 260
+  },
+  "fortsaet": 0,
+  "valgBegge": "4/4",
+  "sjov": [],
+  "tilbageSet": 0,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 0,
+   "foelger": null,
+   "gaest": null
+  },
+  "rul": 15,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "foer-m40-525",
+  "spil": "c096c38",
+  "variant": "hjaelper",
+  "bredde": 1280,
+  "m20": {
+   "niveau": "4",
+   "hhh": "3-2-1",
+   "hjulpet": 2,
+   "tilbage": 0,
+   "opgaver": 31,
+   "forloeb": 3
+  },
+  "m40": {
+   "niveau": "6",
+   "hhh": "4-3-1",
+   "hjulpet": 4,
+   "opgaver": 58,
+   "rigtigeFoerste": 37,
+   "forloeb": 4,
+   "broeker": 260
+  },
+  "fortsaet": 0,
+  "valgBegge": "4/4",
+  "sjov": [],
+  "tilbageSet": 0,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 0,
+   "foelger": null,
+   "gaest": null
+  },
+  "rul": 9,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "foer-m40-731",
+  "spil": "c096c38",
+  "variant": "travl",
+  "bredde": 390,
+  "m20": {
+   "niveau": "5",
+   "hhh": "5-1-1",
+   "hjulpet": 0,
+   "tilbage": 0,
+   "opgaver": 33,
+   "forloeb": 4
+  },
+  "m40": {
+   "niveau": "7",
+   "hhh": "7-1-1",
+   "hjulpet": 0,
+   "opgaver": 68,
+   "rigtigeFoerste": 44,
+   "forloeb": 6,
+   "broeker": 370
+  },
+  "fortsaet": 2,
+  "valgBegge": "2/2",
+  "sjov": [],
+  "tilbageSet": 0,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 0,
+   "foelger": null,
+   "gaest": null
+  },
+  "rul": 10,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "foer-m40-731",
+  "spil": "c096c38",
+  "variant": "hjaelper",
+  "bredde": 390,
+  "m20": {
+   "niveau": "4½",
+   "hhh": "3-2-1",
+   "hjulpet": 3,
+   "tilbage": 0,
+   "opgaver": 29,
+   "forloeb": 3
+  },
+  "m40": {
+   "niveau": "7",
+   "hhh": "3-5-1",
+   "hjulpet": 5,
+   "opgaver": 62,
+   "rigtigeFoerste": 42,
+   "forloeb": 5,
+   "broeker": 260
+  },
+  "fortsaet": 0,
+  "valgBegge": "5/5",
+  "sjov": [],
+  "tilbageSet": 0,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 0,
+   "foelger": null,
+   "gaest": null
+  },
+  "rul": 11,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "foer-m40-gaet-525",
+  "spil": "c096c38",
+  "variant": "travl",
+  "bredde": 390,
+  "m20": {
+   "niveau": "2",
+   "hhh": "2-1-1",
+   "hjulpet": 0,
+   "tilbage": 0,
+   "opgaver": 280,
+   "forloeb": 6
+  },
+  "m40": {
+   "niveau": "4",
+   "hhh": "2-1-3",
+   "hjulpet": 2,
+   "opgaver": 554,
+   "rigtigeFoerste": 120,
+   "forloeb": 14,
+   "broeker": 455
+  },
+  "fortsaet": 2,
+  "valgBegge": "2/2",
+  "sjov": [],
+  "tilbageSet": 0,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 0,
+   "foelger": null,
+   "gaest": null
+  },
+  "rul": 161,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 475
+ },
+ {
+  "koersel": "foer-m40-gaet-525",
+  "spil": "c096c38",
+  "variant": "hjaelper",
+  "bredde": 390,
+  "m20": {
+   "niveau": "3½",
+   "hhh": "3-1-1",
+   "hjulpet": 5,
+   "tilbage": 0,
+   "opgaver": 274,
+   "forloeb": 7
+  },
+  "m40": {
+   "niveau": "3½",
+   "hhh": "3-1-1",
+   "hjulpet": 6,
+   "opgaver": 559,
+   "rigtigeFoerste": 133,
+   "forloeb": 9,
+   "broeker": 445
+  },
+  "fortsaet": 0,
+  "valgBegge": "8/8",
+  "sjov": [],
+  "tilbageSet": 0,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 0,
+   "foelger": null,
+   "gaest": null
+  },
+  "rul": 139,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 431
+ },
+ {
+  "koersel": "foer-m40-p0.4-525",
+  "spil": "c096c38",
+  "variant": "travl",
+  "bredde": 390,
+  "m20": {
+   "niveau": "1",
+   "hhh": "1-1-1",
+   "hjulpet": 0,
+   "tilbage": 0,
+   "opgaver": 30,
+   "forloeb": 2
+  },
+  "m40": {
+   "niveau": "2",
+   "hhh": "2-1-1",
+   "hjulpet": 0,
+   "opgaver": 60,
+   "rigtigeFoerste": 27,
+   "forloeb": 4,
+   "broeker": 190
+  },
+  "fortsaet": 2,
+  "valgBegge": "2/2",
+  "sjov": [],
+  "tilbageSet": 0,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 0,
+   "foelger": null,
+   "gaest": null
+  },
+  "rul": 22,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "foer-m40-p0.4-525",
+  "spil": "c096c38",
+  "variant": "hjaelper",
+  "bredde": 390,
+  "m20": {
+   "niveau": "2",
+   "hhh": "2-1-1",
+   "hjulpet": 0,
+   "tilbage": 0,
+   "opgaver": 30,
+   "forloeb": 2
+  },
+  "m40": {
+   "niveau": "4",
+   "hhh": "4-1-1",
+   "hjulpet": 0,
+   "opgaver": 59,
+   "rigtigeFoerste": 27,
+   "forloeb": 4,
+   "broeker": 295
+  },
+  "fortsaet": 0,
+  "valgBegge": "4/4",
+  "sjov": [],
+  "tilbageSet": 0,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 0,
+   "foelger": null,
+   "gaest": null
+  },
+  "rul": 20,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "m605-m40-311",
+  "spil": "4630a20",
+  "variant": "travl",
+  "bredde": 390,
+  "m20": {
+   "niveau": "4",
+   "hhh": "4-1-1",
+   "hjulpet": 0,
+   "tilbage": 0,
+   "opgaver": 32,
+   "forloeb": 4
+  },
+  "m40": {
+   "niveau": "9½",
+   "hhh": "8-1-3",
+   "hjulpet": 2,
+   "opgaver": 64,
+   "rigtigeFoerste": 46,
+   "forloeb": 8,
+   "broeker": 490
+  },
+  "fortsaet": 2,
+  "valgBegge": "2/2",
+  "sjov": [
+   "2:36 ged (49 ord, samme skaerm, bid 1, Hjælp Ane, \"!\" 1)",
+   "17:23 bier (41 ord, samme skaerm, bid 1, Hjælp Niels, \"!\" 2)"
+  ],
+  "tilbageSet": 0,
+  "lappet": 1,
+  "kort": {
+   "gedebid": 0,
+   "foelger": "ane",
+   "gaest": "bier"
+  },
+  "rul": 12,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "m605-m40-311",
+  "spil": "4630a20",
+  "variant": "hjaelper",
+  "bredde": 390,
+  "m20": {
+   "niveau": "5",
+   "hhh": "3-1-3",
+   "hjulpet": 2,
+   "tilbage": 2,
+   "opgaver": 29,
+   "forloeb": 3
+  },
+  "m40": {
+   "niveau": "13½",
+   "hhh": "3-4-7",
+   "hjulpet": 6,
+   "opgaver": 61,
+   "rigtigeFoerste": 44,
+   "forloeb": 6,
+   "broeker": 280
+  },
+  "fortsaet": 0,
+  "valgBegge": "5/5",
+  "sjov": [],
+  "tilbageSet": 5,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 0,
+   "foelger": "soeren",
+   "gaest": null
+  },
+  "rul": 11,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "m605-m40-525",
+  "spil": "4630a20",
+  "variant": "travl",
+  "bredde": 390,
+  "m20": {
+   "niveau": "3",
+   "hhh": "3-1-1",
+   "hjulpet": 0,
+   "tilbage": 0,
+   "opgaver": 32,
+   "forloeb": 2
+  },
+  "m40": {
+   "niveau": "8",
+   "hhh": "8-1-1",
+   "hjulpet": 0,
+   "opgaver": 66,
+   "rigtigeFoerste": 44,
+   "forloeb": 7,
+   "broeker": 390
+  },
+  "fortsaet": 2,
+  "valgBegge": "2/2",
+  "sjov": [
+   "7:44 ged (49 ord, samme skaerm, bid 1, Hjælp Ane, \"!\" 1)",
+   "21:13 bier (41 ord, samme skaerm, bid 1, Hjælp Niels, \"!\" 2)"
+  ],
+  "tilbageSet": 0,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 1,
+   "foelger": null,
+   "gaest": "bier"
+  },
+  "rul": 16,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "m605-m40-525",
+  "spil": "4630a20",
+  "variant": "travl",
+  "bredde": 1280,
+  "m20": {
+   "niveau": "3",
+   "hhh": "3-1-1",
+   "hjulpet": 0,
+   "tilbage": 0,
+   "opgaver": 32,
+   "forloeb": 2
+  },
+  "m40": {
+   "niveau": "9",
+   "hhh": "9-1-1",
+   "hjulpet": 0,
+   "opgaver": 66,
+   "rigtigeFoerste": 44,
+   "forloeb": 8,
+   "broeker": 400
+  },
+  "fortsaet": 2,
+  "valgBegge": "2/2",
+  "sjov": [
+   "7:41 ged (49 ord, samme skaerm, bid 1, Hjælp Ane, \"!\" 1)",
+   "20:58 bier (41 ord, samme skaerm, bid 1, Hjælp Niels, \"!\" 2)"
+  ],
+  "tilbageSet": 0,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 1,
+   "foelger": null,
+   "gaest": "bier"
+  },
+  "rul": 10,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "m605-m40-525",
+  "spil": "4630a20",
+  "variant": "hjaelper",
+  "bredde": 390,
+  "m20": {
+   "niveau": "4½",
+   "hhh": "3-1-3",
+   "hjulpet": 2,
+   "tilbage": 1,
+   "opgaver": 29,
+   "forloeb": 2
+  },
+  "m40": {
+   "niveau": "9",
+   "hhh": "3-3-5",
+   "hjulpet": 4,
+   "opgaver": 55,
+   "rigtigeFoerste": 35,
+   "forloeb": 4,
+   "broeker": 260
+  },
+  "fortsaet": 0,
+  "valgBegge": "4/4",
+  "sjov": [],
+  "tilbageSet": 2,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 0,
+   "foelger": "inger",
+   "gaest": null
+  },
+  "rul": 12,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "m605-m40-525",
+  "spil": "4630a20",
+  "variant": "hjaelper",
+  "bredde": 1280,
+  "m20": {
+   "niveau": "4½",
+   "hhh": "3-1-3",
+   "hjulpet": 2,
+   "tilbage": 1,
+   "opgaver": 29,
+   "forloeb": 2
+  },
+  "m40": {
+   "niveau": "9",
+   "hhh": "3-3-5",
+   "hjulpet": 4,
+   "opgaver": 55,
+   "rigtigeFoerste": 35,
+   "forloeb": 4,
+   "broeker": 260
+  },
+  "fortsaet": 0,
+  "valgBegge": "4/4",
+  "sjov": [],
+  "tilbageSet": 2,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 0,
+   "foelger": "inger",
+   "gaest": null
+  },
+  "rul": 8,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "m605-m40-731",
+  "spil": "4630a20",
+  "variant": "travl",
+  "bredde": 390,
+  "m20": {
+   "niveau": "5",
+   "hhh": "5-1-1",
+   "hjulpet": 0,
+   "tilbage": 0,
+   "opgaver": 31,
+   "forloeb": 4
+  },
+  "m40": {
+   "niveau": "7",
+   "hhh": "7-1-1",
+   "hjulpet": 0,
+   "opgaver": 67,
+   "rigtigeFoerste": 44,
+   "forloeb": 6,
+   "broeker": 370
+  },
+  "fortsaet": 2,
+  "valgBegge": "2/2",
+  "sjov": [
+   "4:13 ged (49 ord, samme skaerm, bid 1, Hjælp Ane, \"!\" 1)",
+   "17:09 bier (41 ord, samme skaerm, bid 1, Hjælp Niels, \"!\" 2)"
+  ],
+  "tilbageSet": 0,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 1,
+   "foelger": null,
+   "gaest": "bier"
+  },
+  "rul": 10,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "m605-m40-731",
+  "spil": "4630a20",
+  "variant": "travl",
+  "bredde": 1280,
+  "m20": {
+   "niveau": "5",
+   "hhh": "5-1-1",
+   "hjulpet": 0,
+   "tilbage": 0,
+   "opgaver": 31,
+   "forloeb": 4
+  },
+  "m40": {
+   "niveau": "7",
+   "hhh": "7-1-1",
+   "hjulpet": 0,
+   "opgaver": 67,
+   "rigtigeFoerste": 44,
+   "forloeb": 6,
+   "broeker": 370
+  },
+  "fortsaet": 2,
+  "valgBegge": "2/2",
+  "sjov": [
+   "4:13 ged (49 ord, samme skaerm, bid 1, Hjælp Ane, \"!\" 1)",
+   "17:06 bier (41 ord, samme skaerm, bid 1, Hjælp Niels, \"!\" 2)"
+  ],
+  "tilbageSet": 0,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 1,
+   "foelger": null,
+   "gaest": "bier"
+  },
+  "rul": 6,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "m605-m40-731",
+  "spil": "4630a20",
+  "variant": "hjaelper",
+  "bredde": 390,
+  "m20": {
+   "niveau": "5½",
+   "hhh": "3-2-3",
+   "hjulpet": 2,
+   "tilbage": 1,
+   "opgaver": 28,
+   "forloeb": 3
+  },
+  "m40": {
+   "niveau": "10",
+   "hhh": "3-4-5",
+   "hjulpet": 4,
+   "opgaver": 60,
+   "rigtigeFoerste": 42,
+   "forloeb": 5,
+   "broeker": 260
+  },
+  "fortsaet": 0,
+  "valgBegge": "5/5",
+  "sjov": [],
+  "tilbageSet": 3,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 0,
+   "foelger": "else",
+   "gaest": null
+  },
+  "rul": 11,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "m605-m40-731",
+  "spil": "4630a20",
+  "variant": "hjaelper",
+  "bredde": 1280,
+  "m20": {
+   "niveau": "5½",
+   "hhh": "3-2-3",
+   "hjulpet": 2,
+   "tilbage": 1,
+   "opgaver": 28,
+   "forloeb": 3
+  },
+  "m40": {
+   "niveau": "10",
+   "hhh": "3-4-5",
+   "hjulpet": 4,
+   "opgaver": 61,
+   "rigtigeFoerste": 42,
+   "forloeb": 5,
+   "broeker": 260
+  },
+  "fortsaet": 0,
+  "valgBegge": "5/5",
+  "sjov": [],
+  "tilbageSet": 3,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 0,
+   "foelger": "else",
+   "gaest": null
+  },
+  "rul": 6,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "m605-m40-gaet-525",
+  "spil": "4630a20",
+  "variant": "travl",
+  "bredde": 390,
+  "m20": {
+   "niveau": "2",
+   "hhh": "2-1-1",
+   "hjulpet": 0,
+   "tilbage": 0,
+   "opgaver": 281,
+   "forloeb": 6
+  },
+  "m40": {
+   "niveau": "6",
+   "hhh": "4-1-3",
+   "hjulpet": 2,
+   "opgaver": 554,
+   "rigtigeFoerste": 120,
+   "forloeb": 14,
+   "broeker": 455
+  },
+  "fortsaet": 2,
+  "valgBegge": "2/2",
+  "sjov": [
+   "3:42 ged (49 ord, samme skaerm, bid 1, Hjælp Ane, \"!\" 1)",
+   "10:52 bier (41 ord, samme skaerm, bid 1, Hjælp Niels, \"!\" 2)"
+  ],
+  "tilbageSet": 2,
+  "lappet": 1,
+  "kort": {
+   "gedebid": 0,
+   "foelger": "niels",
+   "gaest": null
+  },
+  "rul": 159,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 475
+ },
+ {
+  "koersel": "m605-m40-gaet-525",
+  "spil": "4630a20",
+  "variant": "hjaelper",
+  "bredde": 390,
+  "m20": {
+   "niveau": "7½",
+   "hhh": "3-1-6",
+   "hjulpet": 5,
+   "tilbage": 3,
+   "opgaver": 273,
+   "forloeb": 7
+  },
+  "m40": {
+   "niveau": "9",
+   "hhh": "3-1-7",
+   "hjulpet": 6,
+   "opgaver": 558,
+   "rigtigeFoerste": 133,
+   "forloeb": 9,
+   "broeker": 445
+  },
+  "fortsaet": 0,
+  "valgBegge": "8/8",
+  "sjov": [],
+  "tilbageSet": 5,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 0,
+   "foelger": "else",
+   "gaest": null
+  },
+  "rul": 139,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 429
+ },
+ {
+  "koersel": "m605-m40-p0.4-525",
+  "spil": "4630a20",
+  "variant": "travl",
+  "bredde": 390,
+  "m20": {
+   "niveau": "1",
+   "hhh": "1-1-1",
+   "hjulpet": 0,
+   "tilbage": 0,
+   "opgaver": 30,
+   "forloeb": 2
+  },
+  "m40": {
+   "niveau": "2",
+   "hhh": "2-1-1",
+   "hjulpet": 0,
+   "opgaver": 59,
+   "rigtigeFoerste": 27,
+   "forloeb": 4,
+   "broeker": 190
+  },
+  "fortsaet": 2,
+  "valgBegge": "2/2",
+  "sjov": [
+   "6:32 ged (49 ord, samme skaerm, bid 1, Hjælp Ane, \"!\" 1)",
+   "25:13 bier (41 ord, samme skaerm, bid 1, Hjælp Niels, \"!\" 2)"
+  ],
+  "tilbageSet": 0,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 1,
+   "foelger": null,
+   "gaest": "bier"
+  },
+  "rul": 21,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "m605-m40-p0.4-525",
+  "spil": "4630a20",
+  "variant": "hjaelper",
+  "bredde": 390,
+  "m20": {
+   "niveau": "2",
+   "hhh": "2-1-1",
+   "hjulpet": 0,
+   "tilbage": 0,
+   "opgaver": 30,
+   "forloeb": 2
+  },
+  "m40": {
+   "niveau": "4",
+   "hhh": "4-1-1",
+   "hjulpet": 0,
+   "opgaver": 59,
+   "rigtigeFoerste": 27,
+   "forloeb": 4,
+   "broeker": 295
+  },
+  "fortsaet": 0,
+  "valgBegge": "4/4",
+  "sjov": [],
+  "tilbageSet": 0,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 0,
+   "foelger": null,
+   "gaest": null
+  },
+  "rul": 20,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "m605-m40-reduceret-731",
+  "spil": "4630a20",
+  "variant": "travl",
+  "bredde": 390,
+  "m20": {
+   "niveau": "5",
+   "hhh": "5-1-1",
+   "hjulpet": 0,
+   "tilbage": 0,
+   "opgaver": 31,
+   "forloeb": 4
+  },
+  "m40": {
+   "niveau": "7",
+   "hhh": "7-1-1",
+   "hjulpet": 0,
+   "opgaver": 67,
+   "rigtigeFoerste": 44,
+   "forloeb": 6,
+   "broeker": 370
+  },
+  "fortsaet": 2,
+  "valgBegge": "2/2",
+  "sjov": [
+   "4:13 ged (49 ord, samme skaerm, bid 1, Hjælp Ane, \"!\" 1)",
+   "17:09 bier (41 ord, samme skaerm, bid 1, Hjælp Niels, \"!\" 2)"
+  ],
+  "tilbageSet": 0,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 1,
+   "foelger": null,
+   "gaest": "bier"
+  },
+  "rul": 10,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "m605-m40-reduceret-731",
+  "spil": "4630a20",
+  "variant": "hjaelper",
+  "bredde": 390,
+  "m20": {
+   "niveau": "5½",
+   "hhh": "3-2-3",
+   "hjulpet": 2,
+   "tilbage": 1,
+   "opgaver": 28,
+   "forloeb": 3
+  },
+  "m40": {
+   "niveau": "10",
+   "hhh": "3-4-5",
+   "hjulpet": 4,
+   "opgaver": 60,
+   "rigtigeFoerste": 42,
+   "forloeb": 5,
+   "broeker": 260
+  },
+  "fortsaet": 0,
+  "valgBegge": "5/5",
+  "sjov": [],
+  "tilbageSet": 3,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 0,
+   "foelger": "else",
+   "gaest": null
+  },
+  "rul": 11,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "m612-m20-gaet-525",
+  "spil": "42e0ae2",
+  "variant": "travl",
+  "bredde": 390,
+  "m20": {
+   "niveau": "2",
+   "hhh": "2-1-1",
+   "hjulpet": 0,
+   "tilbage": 0,
+   "opgaver": 281,
+   "forloeb": 6
+  },
+  "m40": {
+   "niveau": "2",
+   "hhh": "2-1-1",
+   "hjulpet": 0,
+   "opgaver": 281,
+   "rigtigeFoerste": 75,
+   "forloeb": 6,
+   "broeker": 360
+  },
+  "fortsaet": 2,
+  "valgBegge": "2/2",
+  "sjov": [
+   "3:44 ged (49 ord, samme skaerm, bid 1, Hjælp Ane, \"!\" 1)",
+   "10:52 bier (41 ord, samme skaerm, bid 1, Hjælp Niels, \"!\" 2)"
+  ],
+  "tilbageSet": 0,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 1,
+   "foelger": null,
+   "gaest": null
+  },
+  "rul": 77,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 180
+ },
+ {
+  "koersel": "m612-m20-gaet-525",
+  "spil": "42e0ae2",
+  "variant": "hjaelper",
+  "bredde": 390,
+  "m20": {
+   "niveau": "7½",
+   "hhh": "3-1-6",
+   "hjulpet": 5,
+   "tilbage": 3,
+   "opgaver": 273,
+   "forloeb": 7
+  },
+  "m40": {
+   "niveau": "7½",
+   "hhh": "3-1-6",
+   "hjulpet": 5,
+   "opgaver": 273,
+   "rigtigeFoerste": 83,
+   "forloeb": 7,
+   "broeker": 580
+  },
+  "fortsaet": 0,
+  "valgBegge": "6/6",
+  "sjov": [],
+  "tilbageSet": 3,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 0,
+   "foelger": "hans",
+   "gaest": null
+  },
+  "rul": 80,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 140
+ },
+ {
+  "koersel": "m612-m20-gaet-731",
+  "spil": "42e0ae2",
+  "variant": "travl",
+  "bredde": 390,
+  "m20": {
+   "niveau": "1",
+   "hhh": "1-1-1",
+   "hjulpet": 0,
+   "tilbage": 0,
+   "opgaver": 269,
+   "forloeb": 1
+  },
+  "m40": {
+   "niveau": "1",
+   "hhh": "1-1-1",
+   "hjulpet": 0,
+   "opgaver": 269,
+   "rigtigeFoerste": 36,
+   "forloeb": 1,
+   "broeker": 120
+  },
+  "fortsaet": 1,
+  "valgBegge": "1/1",
+  "sjov": [
+   "16:11 ged (49 ord, samme skaerm, bid 1, Hjælp Ane, \"!\" 1)"
+  ],
+  "tilbageSet": 0,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 1,
+   "foelger": null,
+   "gaest": null
+  },
+  "rul": 91,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 318
+ },
+ {
+  "koersel": "m612-m20-gaet-731",
+  "spil": "42e0ae2",
+  "variant": "hjaelper",
+  "bredde": 390,
+  "m20": {
+   "niveau": "1",
+   "hhh": "1-1-1",
+   "hjulpet": 0,
+   "tilbage": 0,
+   "opgaver": 271,
+   "forloeb": 2
+  },
+  "m40": {
+   "niveau": "1",
+   "hhh": "1-1-1",
+   "hjulpet": 0,
+   "opgaver": 271,
+   "rigtigeFoerste": 44,
+   "forloeb": 2,
+   "broeker": 210
+  },
+  "fortsaet": 0,
+  "valgBegge": "2/2",
+  "sjov": [],
+  "tilbageSet": 0,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 0,
+   "foelger": null,
+   "gaest": null
+  },
+  "rul": 91,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 295
+ },
+ {
+  "koersel": "m612-m20-p0.4-525",
+  "spil": "42e0ae2",
+  "variant": "travl",
+  "bredde": 390,
+  "m20": {
+   "niveau": "1",
+   "hhh": "1-1-1",
+   "hjulpet": 0,
+   "tilbage": 0,
+   "opgaver": 30,
+   "forloeb": 2
+  },
+  "m40": {
+   "niveau": "1",
+   "hhh": "1-1-1",
+   "hjulpet": 0,
+   "opgaver": 30,
+   "rigtigeFoerste": 13,
+   "forloeb": 2,
+   "broeker": 165
+  },
+  "fortsaet": 1,
+  "valgBegge": "1/1",
+  "sjov": [
+   "6:35 ged (49 ord, samme skaerm, bid 1, Hjælp Ane, \"!\" 1)"
+  ],
+  "tilbageSet": 0,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 1,
+   "foelger": null,
+   "gaest": null
+  },
+  "rul": 9,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "m612-m20-p0.4-525",
+  "spil": "42e0ae2",
+  "variant": "hjaelper",
+  "bredde": 390,
+  "m20": {
+   "niveau": "2",
+   "hhh": "2-1-1",
+   "hjulpet": 0,
+   "tilbage": 0,
+   "opgaver": 31,
+   "forloeb": 2
+  },
+  "m40": {
+   "niveau": "2",
+   "hhh": "2-1-1",
+   "hjulpet": 0,
+   "opgaver": 31,
+   "rigtigeFoerste": 13,
+   "forloeb": 2,
+   "broeker": 155
+  },
+  "fortsaet": 0,
+  "valgBegge": "2/2",
+  "sjov": [],
+  "tilbageSet": 0,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 0,
+   "foelger": null,
+   "gaest": null
+  },
+  "rul": 8,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "o612-m40-525",
+  "spil": "26c3a37",
+  "variant": "travl",
+  "bredde": 390,
+  "m20": {
+   "niveau": "3",
+   "hhh": "3-1-1",
+   "hjulpet": 0,
+   "tilbage": 0,
+   "opgaver": 32,
+   "forloeb": 2
+  },
+  "m40": {
+   "niveau": "8",
+   "hhh": "8-1-1",
+   "hjulpet": 0,
+   "opgaver": 66,
+   "rigtigeFoerste": 44,
+   "forloeb": 7,
+   "broeker": 390
+  },
+  "fortsaet": 2,
+  "valgBegge": "2/2",
+  "sjov": [
+   "7:44 ged (49 ord, samme skaerm, bid 1, Hjælp Ane, \"!\" 1)",
+   "21:10 bier (41 ord, samme skaerm, bid 1, Hjælp Niels, \"!\" 2)"
+  ],
+  "tilbageSet": 0,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 1,
+   "foelger": null,
+   "gaest": "bier"
+  },
+  "rul": 15,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "o612-m40-525",
+  "spil": "26c3a37",
+  "variant": "hjaelper",
+  "bredde": 390,
+  "m20": {
+   "niveau": "4½",
+   "hhh": "3-1-3",
+   "hjulpet": 2,
+   "tilbage": 1,
+   "opgaver": 29,
+   "forloeb": 2
+  },
+  "m40": {
+   "niveau": "9",
+   "hhh": "3-3-5",
+   "hjulpet": 4,
+   "opgaver": 55,
+   "rigtigeFoerste": 35,
+   "forloeb": 4,
+   "broeker": 260
+  },
+  "fortsaet": 0,
+  "valgBegge": "4/4",
+  "sjov": [],
+  "tilbageSet": 2,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 0,
+   "foelger": "inger",
+   "gaest": null
+  },
+  "rul": 12,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "o612-m40-gaet-525",
+  "spil": "26c3a37",
+  "variant": "travl",
+  "bredde": 390,
+  "m20": {
+   "niveau": "2",
+   "hhh": "2-1-1",
+   "hjulpet": 0,
+   "tilbage": 0,
+   "opgaver": 281,
+   "forloeb": 6
+  },
+  "m40": {
+   "niveau": "6",
+   "hhh": "4-1-3",
+   "hjulpet": 2,
+   "opgaver": 554,
+   "rigtigeFoerste": 120,
+   "forloeb": 14,
+   "broeker": 630
+  },
+  "fortsaet": 2,
+  "valgBegge": "2/2",
+  "sjov": [
+   "3:44 ged (49 ord, samme skaerm, bid 1, Hjælp Ane, \"!\" 1)",
+   "10:52 bier (41 ord, samme skaerm, bid 1, Hjælp Niels, \"!\" 2)"
+  ],
+  "tilbageSet": 2,
+  "lappet": 1,
+  "kort": {
+   "gedebid": 0,
+   "foelger": "niels",
+   "gaest": null
+  },
+  "rul": 158,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 475
+ },
+ {
+  "koersel": "o612-m40-gaet-525",
+  "spil": "26c3a37",
+  "variant": "hjaelper",
+  "bredde": 390,
+  "m20": {
+   "niveau": "7½",
+   "hhh": "3-1-6",
+   "hjulpet": 5,
+   "tilbage": 3,
+   "opgaver": 273,
+   "forloeb": 7
+  },
+  "m40": {
+   "niveau": "9",
+   "hhh": "3-1-7",
+   "hjulpet": 6,
+   "opgaver": 558,
+   "rigtigeFoerste": 133,
+   "forloeb": 9,
+   "broeker": 610
+  },
+  "fortsaet": 0,
+  "valgBegge": "8/8",
+  "sjov": [],
+  "tilbageSet": 5,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 0,
+   "foelger": "else",
+   "gaest": null
+  },
+  "rul": 138,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 429
+ },
+ {
+  "koersel": "o612-m40-p0.4-525",
+  "spil": "26c3a37",
+  "variant": "travl",
+  "bredde": 390,
+  "m20": {
+   "niveau": "1",
+   "hhh": "1-1-1",
+   "hjulpet": 0,
+   "tilbage": 0,
+   "opgaver": 30,
+   "forloeb": 2
+  },
+  "m40": {
+   "niveau": "2",
+   "hhh": "2-1-1",
+   "hjulpet": 0,
+   "opgaver": 59,
+   "rigtigeFoerste": 27,
+   "forloeb": 4,
+   "broeker": 300
+  },
+  "fortsaet": 2,
+  "valgBegge": "2/2",
+  "sjov": [
+   "6:35 ged (49 ord, samme skaerm, bid 1, Hjælp Ane, \"!\" 1)",
+   "25:16 bier (41 ord, samme skaerm, bid 1, Hjælp Niels, \"!\" 2)"
+  ],
+  "tilbageSet": 0,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 1,
+   "foelger": null,
+   "gaest": "bier"
+  },
+  "rul": 21,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ },
+ {
+  "koersel": "o612-m40-p0.4-525",
+  "spil": "26c3a37",
+  "variant": "hjaelper",
+  "bredde": 390,
+  "m20": {
+   "niveau": "2",
+   "hhh": "2-1-1",
+   "hjulpet": 0,
+   "tilbage": 0,
+   "opgaver": 31,
+   "forloeb": 2
+  },
+  "m40": {
+   "niveau": "4",
+   "hhh": "4-1-1",
+   "hjulpet": 0,
+   "opgaver": 59,
+   "rigtigeFoerste": 27,
+   "forloeb": 4,
+   "broeker": 355
+  },
+  "fortsaet": 0,
+  "valgBegge": "4/4",
+  "sjov": [],
+  "tilbageSet": 0,
+  "lappet": 0,
+  "kort": {
+   "gedebid": 0,
+   "foelger": null,
+   "gaest": null
+  },
+  "rul": 16,
+  "jsFejl": 0,
+  "net": 0,
+  "ukendt": 0
+ }
+]
