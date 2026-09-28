@@ -1,0 +1,2878 @@
+{
+ "spil": "c096c38",
+ "ref": "c096c38",
+ "tag": "foer",
+ "seed": 525,
+ "T": 1790582400000,
+ "model": {
+  "P": [
+   0.4,
+   0.6,
+   0.5
+  ],
+  "SEK": {
+   "ord": 0.4,
+   "taenk": 10,
+   "tryk": 2,
+   "rul": 3
+  },
+  "GRAENSE": 2400,
+  "GAET": false,
+  "GENINDLAES": false
+ },
+ "bredder": [
+  390
+ ],
+ "flyvere": 41,
+ "faerdighed": [
+  {
+   "variant": "travl",
+   "bredde": 390,
+   "rigtigeFoerste": 27,
+   "chip": [
+    [
+     "broeker",
+     0
+    ],
+    [
+     "broeker",
+     5
+    ],
+    [
+     "broeker",
+     10
+    ],
+    [
+     "broeker",
+     15
+    ],
+    [
+     "broeker",
+     30
+    ],
+    [
+     "broeker",
+     40
+    ],
+    [
+     "broeker",
+     45
+    ],
+    [
+     "broeker",
+     70
+    ],
+    [
+     "broeker",
+     80
+    ],
+    [
+     "broeker",
+     90
+    ],
+    [
+     "broeker",
+     95
+    ],
+    [
+     "broeker",
+     105
+    ],
+    [
+     "broeker",
+     150
+    ],
+    [
+     "broeker",
+     155
+    ],
+    [
+     "broeker",
+     160
+    ],
+    [
+     "broeker",
+     165
+    ],
+    [
+     "regn-broeker",
+     0
+    ],
+    [
+     "regn-broeker",
+     10
+    ],
+    [
+     "broeker",
+     190
+    ]
+   ],
+   "flyvere": 19,
+   "tekster": [
+    "+5 Brøker",
+    "+5 Brøker",
+    "+5 Brøker",
+    "+15 Brøker",
+    "+10 Brøker",
+    "+5 Brøker",
+    "+25 Brøker",
+    "+10 Brøker"
+   ],
+   "chipSidst": "Brøker 190"
+  },
+  {
+   "variant": "foelger",
+   "bredde": 390,
+   "rigtigeFoerste": 27,
+   "chip": [
+    [
+     "broeker",
+     0
+    ],
+    [
+     "broeker",
+     5
+    ],
+    [
+     "broeker",
+     10
+    ],
+    [
+     "broeker",
+     15
+    ],
+    [
+     "broeker",
+     30
+    ],
+    [
+     "broeker",
+     40
+    ],
+    [
+     "broeker",
+     45
+    ],
+    [
+     "broeker",
+     55
+    ],
+    [
+     "broeker",
+     60
+    ],
+    [
+     "broeker",
+     65
+    ],
+    [
+     "broeker",
+     125
+    ],
+    [
+     "broeker",
+     130
+    ],
+    [
+     "broeker",
+     140
+    ],
+    [
+     "broeker",
+     150
+    ],
+    [
+     "broeker",
+     205
+    ],
+    [
+     "broeker",
+     210
+    ],
+    [
+     "broeker",
+     215
+    ],
+    [
+     "broeker",
+     220
+    ],
+    [
+     "broeker",
+     230
+    ],
+    [
+     "broeker",
+     295
+    ]
+   ],
+   "flyvere": 22,
+   "tekster": [
+    "+5 Brøker",
+    "+5 Brøker",
+    "+5 Brøker",
+    "+15 Brøker",
+    "+10 Brøker",
+    "+5 Brøker",
+    "+10 Brøker",
+    "+5 Brøker"
+   ],
+   "chipSidst": "Brøker 295"
+  }
+ ],
+ "udgaver": {
+  "travl": {
+   "390": {
+    "opgaver": 60,
+    "rigtigeFoerste": 27,
+    "ukendt": 0,
+    "foersteNiveauOp": {
+     "t": "24:10",
+     "opgaverFoer": 37
+    },
+    "foerstePerson": {
+     "t": "0:38",
+     "art": "aabning",
+     "opgaverFoer": 0
+    },
+    "foersteHjaelp": null,
+    "aabning": {
+     "ord": 49,
+     "scenenOgKnappenPaaEenSkaerm": true,
+     "aabningTop": 8,
+     "knapBund": 696
+    },
+    "sammeForloebIgen": 11,
+    "laerer": 7,
+    "taetPaa": 4,
+    "igenTekster": [
+     "0 af 3 + laerer",
+     "1 af 3 + laerer",
+     "1 af 4 + laerer",
+     "1 af 4 + laerer",
+     "2 af 4 + taet paa",
+     "2 af 4 + taet paa",
+     "1 af 4 + laerer",
+     "0 af 4 + laerer",
+     "1 af 4 + laerer",
+     "2 af 4 + taet paa",
+     "2 af 4 + taet paa"
+    ],
+    "quests": 0,
+    "klaret": [],
+    "niveau": 2,
+    "hoved": 2,
+    "haand": 1,
+    "hjerte": 1,
+    "udstyr": "Udstyr 1 af 9 Titler 0 Erfaring 365",
+    "steder": [
+     "moellen"
+    ],
+    "nytStedSagt": 2,
+    "fortsaet": 2,
+    "valgBegge": [
+     true,
+     true
+    ],
+    "sjov": [],
+    "tilbageSet": 0,
+    "lappet": 0,
+    "snap": {
+     "t": 1206,
+     "opgaver": 30,
+     "rigtigeFoerste": 13,
+     "niveau": 1,
+     "niveauPoint": 0,
+     "hoved": 1,
+     "haand": 1,
+     "hjerte": 1,
+     "klaret": [],
+     "tilbage": [],
+     "forloeb": 2
+    },
+    "kort": {
+     "gedebid": 0,
+     "foelger": null,
+     "gaest": null
+    },
+    "historieAndel": 44,
+    "laengstUdenNyt": "14:05",
+    "rul": 22,
+    "jsFejl": 0,
+    "vandretOk": true,
+    "m5": {
+     "toTredjeModToFemtedele": 0,
+     "oftestTal": "2 og 4",
+     "oftestAntal": 4,
+     "sammeTekstIgen": 1
+    },
+    "ankomster": [],
+    "grusgraven": null,
+    "hansSagt": null,
+    "hansQuest": null
+   }
+  },
+  "foelger": {
+   "390": {
+    "opgaver": 59,
+    "rigtigeFoerste": 27,
+    "ukendt": 0,
+    "foersteNiveauOp": {
+     "t": "18:04",
+     "opgaverFoer": 28
+    },
+    "foerstePerson": {
+     "t": "0:38",
+     "art": "aabning",
+     "opgaverFoer": 0
+    },
+    "foersteHjaelp": {
+     "t": "6:07",
+     "opgaverFoer": 9
+    },
+    "aabning": {
+     "ord": 49,
+     "scenenOgKnappenPaaEenSkaerm": true,
+     "aabningTop": 8,
+     "knapBund": 696
+    },
+    "sammeForloebIgen": 8,
+    "laerer": 4,
+    "taetPaa": 4,
+    "igenTekster": [
+     "0 af 3 + laerer",
+     "1 af 3 + laerer",
+     "1 af 4 + laerer",
+     "2 af 4 + taet paa",
+     "2 af 4 + taet paa",
+     "1 af 4 + laerer",
+     "2 af 4 + taet paa",
+     "2 af 4 + taet paa"
+    ],
+    "quests": 0,
+    "klaret": [],
+    "niveau": 4,
+    "hoved": 4,
+    "haand": 1,
+    "hjerte": 1,
+    "udstyr": "Udstyr 1 af 9 Titler 1 Erfaring 355",
+    "steder": [
+     "moellen"
+    ],
+    "nytStedSagt": 0,
+    "fortsaet": 0,
+    "valgBegge": [
+     true,
+     true,
+     true,
+     true
+    ],
+    "sjov": [],
+    "tilbageSet": 0,
+    "lappet": 0,
+    "snap": {
+     "t": 1202,
+     "opgaver": 30,
+     "rigtigeFoerste": 13,
+     "niveau": 2,
+     "niveauPoint": 0,
+     "hoved": 2,
+     "haand": 1,
+     "hjerte": 1,
+     "klaret": [],
+     "tilbage": [],
+     "forloeb": 2
+    },
+    "kort": {
+     "gedebid": 0,
+     "foelger": null,
+     "gaest": null
+    },
+    "historieAndel": 43,
+    "laengstUdenNyt": "12:59",
+    "rul": 20,
+    "jsFejl": 0,
+    "vandretOk": true,
+    "m5": {
+     "toTredjeModToFemtedele": 0,
+     "oftestTal": "2 og 4",
+     "oftestAntal": 9,
+     "sammeTekstIgen": 1
+    },
+    "ankomster": [],
+    "grusgraven": null,
+    "hansSagt": null,
+    "hansQuest": null
+   }
+  }
+ },
+ "jsFejl": 0,
+ "net": 0,
+ "reduceret": false,
+ "slut": [
+  {
+   "variant": "travl",
+   "bredde": 390,
+   "bibliotek": [
+    {
+     "id": "broeker",
+     "point": 190,
+     "niveau": "Begynder",
+     "oev": null
+    },
+    {
+     "id": "regn-broeker",
+     "point": 20,
+     "niveau": "Begynder",
+     "oev": null
+    },
+    {
+     "id": "enheder",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": "stenbrud"
+    },
+    {
+     "id": "areal",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    },
+    {
+     "id": "gange",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    },
+    {
+     "id": "dele",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    },
+    {
+     "id": "tid",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    }
+   ],
+   "oevHerTop": {
+    "tekst": "Øv her Enheder og målestok er den færdighed, du har mindst af (0 point). Når du kommer til Grusgraven, kan du øve enheder og målestok dér. Alle syv står i rygsækken længere nede. Gå til Grusgraven",
+    "bund": 426,
+    "skaerm": 844
+   },
+   "oevePoint": {
+    "moellen-5|regn-broeker": 20
+   },
+   "questFremdrift": {
+    "moellen": [
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false
+    ],
+    "stenbrud": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "marked": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "landsby": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "havn": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "klaret": [],
+   "figur": {
+    "navn": "Tulle",
+    "udseendeId": "terra",
+    "niveau": 2,
+    "niveauPoint": 0,
+    "erfaring": 365,
+    "hoved": 2,
+    "haand": 1,
+    "hjerte": 1
+   }
+  },
+  {
+   "variant": "foelger",
+   "bredde": 390,
+   "bibliotek": [
+    {
+     "id": "broeker",
+     "point": 295,
+     "niveau": "Øvet",
+     "oev": null
+    },
+    {
+     "id": "regn-broeker",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": "moellen"
+    },
+    {
+     "id": "enheder",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    },
+    {
+     "id": "areal",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    },
+    {
+     "id": "gange",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    },
+    {
+     "id": "dele",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    },
+    {
+     "id": "tid",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    }
+   ],
+   "oevHerTop": {
+    "tekst": "Øv her Regn med brøker er den færdighed, du har mindst af (0 point). Alle syv står i rygsækken længere nede. Gå til Møllen",
+    "bund": 384,
+    "skaerm": 844
+   },
+   "oevePoint": {
+    "bog:mel-til-bageren|broeker": 15,
+    "bog:aenderne|broeker": 10
+   },
+   "questFremdrift": {
+    "moellen": [
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false
+    ],
+    "stenbrud": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "marked": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "landsby": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "havn": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "klaret": [],
+   "figur": {
+    "navn": "Tulle",
+    "udseendeId": "terra",
+    "niveau": 4,
+    "niveauPoint": 0,
+    "erfaring": 355,
+    "hoved": 4,
+    "haand": 1,
+    "hjerte": 1
+   }
+  }
+ ],
+ "koersler": [
+  {
+   "snap": {
+    "t": 1206,
+    "opgaver": 30,
+    "rigtigeFoerste": 13,
+    "niveau": 1,
+    "niveauPoint": 0,
+    "hoved": 1,
+    "haand": 1,
+    "hjerte": 1,
+    "klaret": [],
+    "tilbage": [],
+    "forloeb": 2
+   },
+   "kort": {
+    "gedebid": 0,
+    "foelger": null,
+    "gaest": null
+   },
+   "tid": {
+    "flyvere": [
+     {
+      "t": 70,
+      "chip": "Brøker 0"
+     },
+     {
+      "t": 103,
+      "chip": "Brøker 5"
+     },
+     {
+      "t": 137,
+      "chip": "Brøker 10"
+     },
+     {
+      "t": 362,
+      "chip": "Brøker 30"
+     },
+     {
+      "t": 391,
+      "chip": "Brøker 30"
+     },
+     {
+      "t": 423,
+      "chip": "Brøker 40"
+     },
+     {
+      "t": 1041,
+      "chip": "Brøker 70"
+     },
+     {
+      "t": 1087,
+      "chip": "Brøker 70"
+     },
+     {
+      "t": 1107,
+      "chip": "Brøker 80"
+     },
+     {
+      "t": 1137,
+      "chip": "Brøker 90"
+     },
+     {
+      "t": 1361,
+      "chip": "Brøker 95"
+     },
+     {
+      "t": 1440,
+      "chip": "Brøker 105"
+     },
+     {
+      "t": 1452,
+      "chip": null
+     },
+     {
+      "t": 1513,
+      "chip": "Brøker 150"
+     },
+     {
+      "t": 1552,
+      "chip": "Brøker 155"
+     },
+     {
+      "t": 1638,
+      "chip": "Brøker 160"
+     },
+     {
+      "t": 2364,
+      "chip": "Regn med brøker 0"
+     },
+     {
+      "t": 2364,
+      "chip": "Regn med brøker 0"
+     },
+     {
+      "t": 2386,
+      "chip": "Regn med brøker 10"
+     }
+    ],
+    "xp": [
+     190,
+     225,
+     248,
+     292,
+     316,
+     339,
+     571,
+     600,
+     638,
+     672,
+     726,
+     746,
+     769,
+     926,
+     949,
+     969,
+     1239,
+     1273,
+     1293,
+     1338,
+     1761,
+     1836,
+     1882,
+     1974,
+     1993,
+     2037,
+     2128,
+     2147,
+     2191,
+     2279,
+     2298
+    ],
+    "nytNiveau": [
+     {
+      "t": 70,
+      "tekst": "Nyt niveau i Brøker: Begynder (nu 5)"
+     },
+     {
+      "t": 2364,
+      "tekst": "Nyt niveau i Regn med brøker: Begynder (nu 10)"
+     }
+    ],
+    "bonus": [
+     {
+      "t": 341,
+      "tekst": "Bonus i rygsækken: +15 Brøker (nu 15)"
+     },
+     {
+      "t": 362,
+      "tekst": "Bonus i rygsækken: +15 Brøker (nu 30)"
+     },
+     {
+      "t": 971,
+      "tekst": "Bonus i rygsækken: +25 Brøker (nu 45)"
+     },
+     {
+      "t": 1442,
+      "tekst": "Bonus i rygsækken: +35 Brøker (nu 115)"
+     },
+     {
+      "t": 1452,
+      "tekst": "Bonus i rygsækken: +35 Brøker (nu 150)"
+     },
+     {
+      "t": 2300,
+      "tekst": "Bonus i rygsækken: +25 Brøker (nu 165)"
+     }
+    ],
+    "loft": [],
+    "halv": [
+     {
+      "t": 190,
+      "tekst": "Brøker står stille: 0 af dine 4 svar i forløbet var rigtige i første forsøg. Tallet vokser igen, når mindst halvdelen er."
+     },
+     {
+      "t": 571,
+      "tekst": "Brøker står stille: 2 af dine 5 svar i forløbet var rigtige i første forsøg. Tallet vokser igen, når mindst halvdelen er."
+     },
+     {
+      "t": 1239,
+      "tekst": "Brøker står stille: 2 af dine 6 svar i forløbet var rigtige i første forsøg. Tallet vokser igen, når mindst halvdelen er."
+     },
+     {
+      "t": 1761,
+      "tekst": "Brøker står stille: 0 af dine 6 svar i forløbet var rigtige i første forsøg. Tallet vokser igen, når mindst halvdelen er."
+     }
+    ],
+    "bonusHalv": [
+     {
+      "t": 341,
+      "tekst": "Halv værdi, af samme grund som niveauet herunder."
+     },
+     {
+      "t": 971,
+      "tekst": "Halv værdi, af samme grund som niveauet herunder."
+     },
+     {
+      "t": 2300,
+      "tekst": "Halv værdi, af samme grund som niveauet herunder."
+     }
+    ],
+    "genindlaest": 0
+   },
+   "faerdighed": {
+    "chip": [
+     [
+      "broeker",
+      0
+     ],
+     [
+      "broeker",
+      5
+     ],
+     [
+      "broeker",
+      10
+     ],
+     [
+      "broeker",
+      15
+     ],
+     [
+      "broeker",
+      30
+     ],
+     [
+      "broeker",
+      40
+     ],
+     [
+      "broeker",
+      45
+     ],
+     [
+      "broeker",
+      70
+     ],
+     [
+      "broeker",
+      80
+     ],
+     [
+      "broeker",
+      90
+     ],
+     [
+      "broeker",
+      95
+     ],
+     [
+      "broeker",
+      105
+     ],
+     [
+      "broeker",
+      150
+     ],
+     [
+      "broeker",
+      155
+     ],
+     [
+      "broeker",
+      160
+     ],
+     [
+      "broeker",
+      165
+     ],
+     [
+      "regn-broeker",
+      0
+     ],
+     [
+      "regn-broeker",
+      10
+     ],
+     [
+      "broeker",
+      190
+     ]
+    ],
+    "flyvere": 19,
+    "tekster": [
+     "+5 Brøker",
+     "+5 Brøker",
+     "+5 Brøker",
+     "+15 Brøker",
+     "+10 Brøker",
+     "+5 Brøker",
+     "+25 Brøker",
+     "+10 Brøker",
+     "+10 Brøker",
+     "+5 Brøker",
+     "+10 Brøker",
+     "+10 Brøker",
+     "+35 Brøker",
+     "+5 Brøker",
+     "+5 Brøker",
+     "+5 Brøker",
+     "+25 Brøker",
+     "+10 Regn med brøker",
+     "+10 Regn med brøker"
+    ],
+    "chipSidst": "Brøker 190"
+   },
+   "variant": "travl",
+   "bredde": 390,
+   "ur": {
+    "s": 2422,
+    "rul": 22
+   },
+   "opg": {
+    "antal": 60,
+    "rigtigeFoerste": 27,
+    "loesning": 9,
+    "foresloeg": 105,
+    "ukendt": 0,
+    "ord": 1137
+   },
+   "historieOrd": {
+    "tak": 0,
+    "hvil": 0,
+    "replik": 73,
+    "mestring": 481,
+    "bogPanel": 0,
+    "niveau": 22,
+    "aabning": 49,
+    "byVaagner": 159,
+    "nytSted": 94
+   },
+   "foersteSkaerm": {
+    "opgaveTop": 1902,
+    "skaermHoejde": 844,
+    "sideHoejde": 2281
+   },
+   "naesteFejl": "Ikke helt. Hint 1 af 2: 1/2 sammenligner de fyldte med resten. En brøk af helheden skal have ALLE 3 sække i nævneren.",
+   "log": [
+    {
+     "t": 18,
+     "art": "start",
+     "opgaveTop": 1902,
+     "skaermHoejde": 844,
+     "sideHoejde": 2281
+    },
+    {
+     "t": 38,
+     "art": "aabning",
+     "tekst": "Tulle kommer ned ad vejen til Møllen. Mølleren står i døren, hvid af mel. Mølleren: \"Godt, du kom. Hjulet er gået i stå, og Ane, bagerkonen, har intet mel til morgenbrødet.\" Mølleren: \"Hjælp mig med »Lige store dele«, så kan vi male igen, og så kan du hjælpe Ane.\"",
+     "aabningTop": 8,
+     "knapBund": 696,
+     "skaerm": 844
+    },
+    {
+     "t": 57,
+     "art": "opgave",
+     "nr": 1,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Tulle kommer ned ad vejen til Møllen. Mølleren står i døren, hvid af mel. Mølleren: \"Godt, du kom. Hjulet er gået i stå, og Ane, bag",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 91,
+     "art": "opgave",
+     "nr": 2,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 124,
+     "art": "opgave",
+     "nr": 3,
+     "tekst": "Bageren har skåret en kageplade i 12 lige store stykker, og 8 er spist: ▰▰▰▰▰▰▰▰▱▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 158,
+     "art": "opgave",
+     "nr": 4,
+     "tekst": "Mølleren har delt sin mark i 5 lige store stykker, og 1 er sået: ▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 176,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 0 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 211,
+     "art": "opgave",
+     "nr": 5,
+     "tekst": "Bageren har skåret en kageplade i 4 lige store stykker, og 2 er spist: ▰▰▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 246,
+     "art": "opgave",
+     "nr": 6,
+     "tekst": "Mølleren har delt sin mark i 12 lige store stykker, og 4 er sået: ▰▰▰▰▱▱▱▱▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 268,
+     "art": "opgave",
+     "nr": 7,
+     "tekst": "Bageren har bagt 5 lige store brød, og 4 er solgt: ▰▰▰▰▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 287,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 314,
+     "art": "opgave",
+     "nr": 8,
+     "tekst": "Mølleren har 7 lige store sække på vognen, og 2 er fyldt med mel: ▰▰▱▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 337,
+     "art": "opgave",
+     "nr": 9,
+     "tekst": "Bageren har skåret en kageplade i 7 lige store stykker, og 6 er spist: ▰▰▰▰▰▰▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 350,
+     "art": "replik",
+     "tekst": "Forløbet »Lige store dele« er klaret. Mølleren: \"Nu ved du, hvad en brøk er: nogle af de lige store dele af en helhed.\"",
+     "udraab": [
+      {
+       "quest": "mel-til-bageren",
+       "iSyne": false,
+       "px": -406
+      },
+      {
+       "questbogKnap": "Questbogen 1 ny"
+      }
+     ]
+    },
+    {
+     "t": 360,
+     "art": "byVaagner",
+     "tekst": "BYEN VÅGNER Kværnhjulet drejer igen Indbyggere: 16 (før 12) Møllerdrengen: \"Hjulet går! Nu skal melet bare deles ligeligt.\" Ny opgave: Del ligeligt Se det på kortet"
+    },
+    {
+     "t": 360,
+     "art": "fortsaet",
+     "tekst": "Fortsæt hos Mølleren",
+     "hjaelpOgsaa": "Hjælp Ane"
+    },
+    {
+     "t": 373,
+     "art": "byVaagner",
+     "tekst": "BYEN VÅGNER Kværnhjulet drejer igen Indbyggere: 19 (før 12) Møllerdrengen: \"Hjulet går! Nu skal melet bare deles ligeligt.\" Ny opgave: Del ligeligt Se det på kortet"
+    },
+    {
+     "t": 389,
+     "art": "opgave",
+     "nr": 10,
+     "tekst": "Bagerkonen deler 4 brød ligeligt mellem 5 karle på møllen. Hvor meget brød får hver karl?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløbet »Lige store dele« er klaret. Mølleren: \"Nu ved du, hvad en brøk er: nogle af de lige store dele af en helhed.\" Bonus i rygs",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 409,
+     "art": "opgave",
+     "nr": 11,
+     "tekst": "Bagerkonen deler 2 kager ligeligt mellem 4 børn. Hvor meget kage får hvert barn?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 1 af 4 ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 443,
+     "art": "opgave",
+     "nr": 12,
+     "tekst": "Bageren har bagt 6 lige store brød, og 2 er solgt: ▰▰▱▱▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 2 af 4 ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 474,
+     "art": "loesning",
+     "tekst": "Løsningen: 2 af 6 lige store brød er solgt: brøken 2/6, som forkortes til 1/3."
+    },
+    {
+     "t": 492,
+     "art": "opgave",
+     "nr": 13,
+     "tekst": "Mølledrengen deler 3 æbler ligeligt mellem 5 børn. Hvor meget æble får hvert barn?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 3 af 4 ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 552,
+     "art": "opgave",
+     "nr": 14,
+     "tekst": "Bagerkonen deler 1 kage ligeligt mellem 3 børn. Hvor meget kage får hvert barn?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 0 af 4 ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 569,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 4 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 589,
+     "art": "opgave",
+     "nr": 15,
+     "tekst": "Møllerkonen deler 1 æble ligeligt mellem 5 børn. Hvor meget æble får hvert barn?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 1 af 4 ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 621,
+     "art": "opgave",
+     "nr": 16,
+     "tekst": "Mølleren har 4 lige store sække på vognen, og 2 er fyldt med mel: ▰▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 2 af 4 ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 656,
+     "art": "opgave",
+     "nr": 17,
+     "tekst": "Bagerkonen deler 4 brød ligeligt mellem 6 karle på møllen. Hvor meget brød får hver karl?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 3 af 4 ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 689,
+     "art": "opgave",
+     "nr": 18,
+     "tekst": "Møllerkonen deler 3 æbler ligeligt mellem 4 børn. Hvor meget æble får hvert barn?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 0 af 4 ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 708,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 4 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 744,
+     "art": "opgave",
+     "nr": 19,
+     "tekst": "Mølledrengen deler 2 sække mel ligeligt mellem 5 bagere. Hvor meget mel får hver bager?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 1 af 4 ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 767,
+     "art": "opgave",
+     "nr": 20,
+     "tekst": "Mølleren har 5 lige store sække på vognen, og 3 er fyldt med mel: ▰▰▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 2 af 4 ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 787,
+     "art": "opgave",
+     "nr": 21,
+     "tekst": "Mølledrengen deler 3 æbler ligeligt mellem 6 børn. Hvor meget æble får hvert barn?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 3 af 4 ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 848,
+     "art": "opgave",
+     "nr": 22,
+     "tekst": "Mølleren deler 2 sække mel ligeligt mellem 3 bagere. Hvor meget mel får hver bager?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 0 af 4 ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 864,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 2 af 4 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Mølleren: \"Tæt på. Én rigtig mere, så har du det.\""
+    },
+    {
+     "t": 924,
+     "art": "opgave",
+     "nr": 23,
+     "tekst": "Bagerkonen deler 1 kage ligeligt mellem 4 børn. Hvor meget kage får hvert barn?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 1 af 4 ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 947,
+     "art": "opgave",
+     "nr": 24,
+     "tekst": "Bageren har skåret en kageplade i 5 lige store stykker, og 2 er spist: ▰▰▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 2 af 4 ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 967,
+     "art": "opgave",
+     "nr": 25,
+     "tekst": "Bageren deler 2 brød ligeligt mellem 6 karle på møllen. Hvor meget brød får hver karl?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 3 af 4 ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 978,
+     "art": "replik",
+     "tekst": "Forløbet »Del ligeligt« er klaret. Mølleren: \"Tak skal du have. Nu har alle fået lige meget.\"",
+     "udraab": [
+      {
+       "quest": "mel-til-bageren",
+       "iSyne": false,
+       "px": -65
+      },
+      {
+       "questbogKnap": "Questbogen 1 ny"
+      }
+     ]
+    },
+    {
+     "t": 992,
+     "art": "byVaagner",
+     "tekst": "BYEN VÅGNER Kornvognen kører Indbyggere: 20 (før 19) Kusken: \"Alle har fået deres del. Bageren vil have det bedste mel, men hvilken portion er størst?\" Ny opgave: Hvilken portion er størst? Se det på kortet"
+    },
+    {
+     "t": 1007,
+     "art": "nyt-sted",
+     "tekst": "NYT STED Grusgraven er åben: Grusgraveren venter. Grusgraveren: \"Ingen har målt noget her i årevis. Tag din lineal frem: kan du læse, hvor lang en ting er, også når den ikke ligger fra 0?\" Gå til Grusgraven"
+    },
+    {
+     "t": 1026,
+     "art": "opgave",
+     "nr": 26,
+     "tekst": "Én dag delte mølleren en sæk i 6 lige store dele, en anden dag i 3 lige store dele. Hvilken portion var størst?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløbet »Del ligeligt« er klaret. Mølleren: \"Tak skal du have. Nu har alle fået lige meget.\" Bonus i rygsækken: +25 Brøker (nu 45) ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1064,
+     "art": "loesning",
+     "tekst": "Løsningen: Jo flere dele en sæk deles i, jo mindre bliver hver del. 1/3 er større end 1/6."
+    },
+    {
+     "t": 1085,
+     "art": "opgave",
+     "nr": 27,
+     "tekst": "En bonde kører korn til møllen. Mølleren kan tage 3/4 sæk eller 3/5 sæk som betaling for at male. Hvilken betaling er størst?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 3 af 8 Hvilken portion er størst? To delinger, ét spørgsmål: hvem fik mest? Pas på, flere dele er ikke altid mere. 🔒 Niels, ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1105,
+     "art": "opgave",
+     "nr": 28,
+     "tekst": "Bageren deler 2 brød ligeligt mellem 4 karle på møllen. Hvor meget brød får hver karl?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 3 af 8 Hvilken portion er størst? To delinger, ét spørgsmål: hvem fik mest? Pas på, flere dele er ikke altid mere. 🔒 Niels, ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1125,
+     "art": "opgave",
+     "nr": 29,
+     "tekst": "Mølledrengen bar 9/10 sæk om formiddagen og 1/10 sæk om eftermiddagen. Hvornår bar han mest?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 3 af 8 Hvilken portion er størst? To delinger, ét spørgsmål: hvem fik mest? Pas på, flere dele er ikke altid mere. 🔒 Niels, ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1158,
+     "art": "opgave",
+     "nr": 30,
+     "tekst": "Mølledrengen hælder en sæk mel i 3 lige store poser og en anden sæk i 5 lige store poser. Hvilken pose rummer mest?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 3 af 8 Hvilken portion er størst? To delinger, ét spørgsmål: hvem fik mest? Pas på, flere dele er ikke altid mere. 🔒 Niels, ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1174,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 2 af 4 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Mølleren: \"Tæt på. Én rigtig mere, så har du det.\""
+    },
+    {
+     "t": 1206,
+     "art": "snap",
+     "opgaver": 30,
+     "rigtigeFoerste": 13,
+     "niveau": 1,
+     "niveauPoint": 0,
+     "hoved": 1,
+     "haand": 1,
+     "hjerte": 1,
+     "klaret": [],
+     "tilbage": [],
+     "forloeb": 2
+    },
+    {
+     "t": 1211,
+     "art": "loesning",
+     "tekst": "Løsningen: Jo flere dele en sæk deles i, jo mindre bliver hver del. 1/3 er større end 1/5."
+    },
+    {
+     "t": 1226,
+     "art": "opgave",
+     "nr": 31,
+     "tekst": "Hvilken portion er størst: 3/4 sæk eller 3/8 sæk?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 3 af 8 Hvilken portion er størst? To delinger, ét spørgsmål: hvem fik mest? Pas på, flere dele er ikke altid mere. 🔒 Niels, ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1257,
+     "art": "opgave",
+     "nr": 32,
+     "tekst": "Mølleren deler 2 sække mel ligeligt mellem 5 bagere. Hvor meget mel får hver bager?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 3 af 8 Hvilken portion er størst? To delinger, ét spørgsmål: hvem fik mest? Pas på, flere dele er ikke altid mere. 🔒 Niels, ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1291,
+     "art": "opgave",
+     "nr": 33,
+     "tekst": "Om mandagen malede mølleren 1/12 sæk, om tirsdagen 7/12 sæk. Hvilken dag malede han mest?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 3 af 8 Hvilken portion er størst? To delinger, ét spørgsmål: hvem fik mest? Pas på, flere dele er ikke altid mere. 🔒 Niels, ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1314,
+     "art": "opgave",
+     "nr": 34,
+     "tekst": "Mølledrengen hælder en sæk mel i 6 lige store poser og en anden sæk i 4 lige store poser. Hvilken pose rummer mest?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 3 af 8 Hvilken portion er størst? To delinger, ét spørgsmål: hvem fik mest? Pas på, flere dele er ikke altid mere. 🔒 Niels, ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1333,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 4 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 1359,
+     "art": "opgave",
+     "nr": 35,
+     "tekst": "En bonde kører korn til møllen. Mølleren kan tage 3/10 sæk eller 3/8 sæk som betaling for at male. Hvilken betaling er størst?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 3 af 8 Hvilken portion er størst? To delinger, ét spørgsmål: hvem fik mest? Pas på, flere dele er ikke altid mere. 🔒 Niels, ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1379,
+     "art": "opgave",
+     "nr": 36,
+     "tekst": "Mølledrengen deler 3 æbler ligeligt mellem 5 børn. Hvor meget æble får hvert barn?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 3 af 8 Hvilken portion er størst? To delinger, ét spørgsmål: hvem fik mest? Pas på, flere dele er ikke altid mere. 🔒 Niels, ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1420,
+     "art": "loesning",
+     "tekst": "Løsningen: 3 æbler delt i 5 lige store dele giver brøken 3/5, og den kan ikke forkortes."
+    },
+    {
+     "t": 1438,
+     "art": "opgave",
+     "nr": 37,
+     "tekst": "Mølledrengen bar 2/5 sæk om formiddagen og 4/5 sæk om eftermiddagen. Hvornår bar han mest?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 3 af 8 Hvilken portion er størst? To delinger, ét spørgsmål: hvem fik mest? Pas på, flere dele er ikke altid mere. 🔒 Niels, ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1450,
+     "art": "niveau-op",
+     "tekst": "NIVEAU OP! Niveau 2 Du mestrede »Hvilken portion er størst?« hos Mølleren. Din figur er blevet klogere: Hoved er nu 2. Fedt!"
+    },
+    {
+     "t": 1459,
+     "art": "replik",
+     "tekst": "Forløbet »Hvilken portion er størst?« er klaret. Mølleren: \"Nu ved du, at flere dele giver mindre dele.\"",
+     "udraab": [
+      {
+       "quest": "mel-til-bageren",
+       "iSyne": false,
+       "px": -406
+      },
+      {
+       "quest": "aenderne",
+       "iSyne": false,
+       "px": -263
+      },
+      {
+       "questbogKnap": "Questbogen 2 nye"
+      }
+     ]
+    },
+    {
+     "t": 1475,
+     "art": "byVaagner",
+     "tekst": "BYEN VÅGNER Bagerens ovn er tændt Indbyggere: 38 (før 27) Bageren: \"Der dufter af brød igen! Men broen over åen er rådden, så jeg kan ikke køre brødet ud.\" Ny opgave: Samme mel, nye poser Se det på kortet"
+    },
+    {
+     "t": 1475,
+     "art": "fortsaet",
+     "tekst": "Fortsæt hos Mølleren",
+     "hjaelpOgsaa": "Hjælp Niels"
+    },
+    {
+     "t": 1497,
+     "art": "opgave",
+     "nr": 38,
+     "tekst": "Mølledrengen har 1/2 sæk mel. Han hælder det i poser, der hver rummer 1/6 sæk. Hvor mange sjettedele sæk er det? Skriv det som en brøk.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløbet »Hvilken portion er størst?« er klaret. Mølleren: \"Nu ved du, at flere dele giver mindre dele.\" Bonus i rygsækken: +35 Brøk",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1536,
+     "art": "opgave",
+     "nr": 39,
+     "tekst": "Mølledrengen har 1/2 sæk mel. Han hælder det i poser, der hver rummer 1/12 sæk. Hvor mange tolvtedele sæk er det? Skriv det som en brøk.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1569,
+     "art": "opgave",
+     "nr": 40,
+     "tekst": "Mølledrengen skal bære enten 3/8 sæk eller 3/4 sæk. Hvilken portion er størst?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1625,
+     "art": "opgave",
+     "nr": 41,
+     "tekst": "Mølleren har skrevet 2/10 sæk i regnebogen. Forkort brøken så meget som muligt.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1660,
+     "art": "opgave",
+     "nr": 42,
+     "tekst": "Bageren har 1/2 sæk mel. Han hælder det i poser, der hver rummer 1/8 sæk. Hvor mange ottendedele sæk er det? Skriv det som en brøk.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1677,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 0 af 4 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 1719,
+     "art": "loesning",
+     "tekst": "Løsningen: Gang både tæller og nævner med 4: 1·4 = 4 og 2·4 = 8. 1/2 sæk er 4/8 sæk, altså 4 poser."
+    },
+    {
+     "t": 1742,
+     "art": "opgave",
+     "nr": 43,
+     "tekst": "Mølledrengen har 1/2 sæk mel. Han hælder det i poser, der hver rummer 1/10 sæk. Hvor mange tiendedele sæk er det? Skriv det som en brøk.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1776,
+     "art": "opgave",
+     "nr": 44,
+     "tekst": "Hvilken portion er størst: 5/8 sæk eller 5/12 sæk?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1817,
+     "art": "loesning",
+     "tekst": "Løsningen: Jo flere dele en sæk deles i, jo mindre bliver hver del. 5/8 er større end 5/12."
+    },
+    {
+     "t": 1834,
+     "art": "opgave",
+     "nr": 45,
+     "tekst": "Mølledrengen har skrevet 10/12 sæk i regnebogen. Forkort brøken så meget som muligt.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1858,
+     "art": "opgave",
+     "nr": 46,
+     "tekst": "Mølledrengen har 3/4 sæk mel. Han hælder det i poser, der hver rummer 1/8 sæk. Hvor mange ottendedele sæk er det? Skriv det som en brøk.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1877,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 4 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 1905,
+     "art": "opgave",
+     "nr": 47,
+     "tekst": "Mølledrengen har 1/5 sæk mel. Han hælder det i poser, der hver rummer 1/10 sæk. Hvor mange tiendedele sæk er det? Skriv det som en brøk.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1944,
+     "art": "loesning",
+     "tekst": "Løsningen: Gang både tæller og nævner med 2: 1·2 = 2 og 5·2 = 10. 1/5 sæk er 2/10 sæk, altså 2 poser."
+    },
+    {
+     "t": 1961,
+     "art": "opgave",
+     "nr": 48,
+     "tekst": "Mølledrengen skal bære enten 3/10 sæk eller 3/4 sæk. Hvilken portion er størst?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1991,
+     "art": "opgave",
+     "nr": 49,
+     "tekst": "Bageren har skrevet 2/12 sæk i regnebogen. Forkort brøken så meget som muligt.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 2016,
+     "art": "opgave",
+     "nr": 50,
+     "tekst": "Bageren har 1/2 sæk mel. Han hælder det i poser, der hver rummer 1/4 sæk. Hvor mange fjerdedele sæk er det? Skriv det som en brøk.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 2032,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 2 af 4 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Mølleren: \"Tæt på. Én rigtig mere, så har du det.\""
+    },
+    {
+     "t": 2059,
+     "art": "opgave",
+     "nr": 51,
+     "tekst": "Bageren har 1/4 sæk mel. Han hælder det i poser, der hver rummer 1/8 sæk. Hvor mange ottendedele sæk er det? Skriv det som en brøk.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 2098,
+     "art": "loesning",
+     "tekst": "Løsningen: Gang både tæller og nævner med 2: 1·2 = 2 og 4·2 = 8. 1/4 sæk er 2/8 sæk, altså 2 poser."
+    },
+    {
+     "t": 2114,
+     "art": "opgave",
+     "nr": 52,
+     "tekst": "Hvilken portion er størst: 3/8 sæk eller 3/5 sæk?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 2145,
+     "art": "opgave",
+     "nr": 53,
+     "tekst": "Mølledrengen har skrevet 2/6 sæk i regnebogen. Forkort brøken så meget som muligt.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 2170,
+     "art": "opgave",
+     "nr": 54,
+     "tekst": "Bageren har 2/3 sæk mel. Han hælder det i poser, der hver rummer 1/6 sæk. Hvor mange sjettedele sæk er det? Skriv det som en brøk.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 2186,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 2 af 4 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Mølleren: \"Tæt på. Én rigtig mere, så har du det.\""
+    },
+    {
+     "t": 2213,
+     "art": "opgave",
+     "nr": 55,
+     "tekst": "Mølledrengen har 2/3 sæk mel. Han hælder det i poser, der hver rummer 1/12 sæk. Hvor mange tolvtedele sæk er det? Skriv det som en brøk.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 2255,
+     "art": "loesning",
+     "tekst": "Løsningen: Gang både tæller og nævner med 4: 2·4 = 8 og 3·4 = 12. 2/3 sæk er 8/12 sæk, altså 8 poser."
+    },
+    {
+     "t": 2277,
+     "art": "opgave",
+     "nr": 56,
+     "tekst": "To sække mel er lige store. Bageren kan få 3/8 af den ene sæk eller 3/10 af den anden sæk. Hvilken portion er størst?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 2296,
+     "art": "opgave",
+     "nr": 57,
+     "tekst": "Mølleren har skrevet 8/12 sæk i regnebogen. Forkort brøken så meget som muligt.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 2307,
+     "art": "replik",
+     "tekst": "Forløbet »Samme mel, nye poser« er klaret. Mølleren: \"Du kan forlænge og forkorte: samme mængde, andet navn.\"",
+     "udraab": [
+      {
+       "quest": "mel-til-bageren",
+       "iSyne": false,
+       "px": -115
+      },
+      {
+       "quest": "aenderne",
+       "iSyne": true,
+       "px": 28
+      },
+      {
+       "questbogKnap": "Questbogen 2 nye"
+      }
+     ]
+    },
+    {
+     "t": 2320,
+     "art": "byVaagner",
+     "tekst": "BYEN VÅGNER Broen over åen er repareret Indbyggere: 39 (før 38) Tømreren: \"Broen holder. Nu mangler vi lys langs vejen, før det bliver mørkt.\" Ny opgave: Sæk på sæk Se det på kortet"
+    },
+    {
+     "t": 2343,
+     "art": "nyt-sted",
+     "tekst": "NYE STEDER Grusgraven er åben: Grusgraveren venter. Grusgraveren: \"Ingen har målt noget her i årevis. Tag din lineal frem: kan du læse, hvor lang en ting er, også når den ikke ligger fra 0?\" Gå til Grusgraven Kirken er åben: Degnen venter. Degnen: \"Før klokken kalder til time, lad os se, hvad du husker.\" Gå til Kirken"
+    },
+    {
+     "t": 2359,
+     "art": "opgave",
+     "nr": 58,
+     "tekst": "Mølleren havde 3/5 sæk mel og solgte 1/5 sæk til bageren. Hvor meget er der tilbage?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløbet »Samme mel, nye poser« er klaret. Mølleren: \"Du kan forlænge og forkorte: samme mængde, andet navn.\" Bonus i rygsækken: +25",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 2384,
+     "art": "opgave",
+     "nr": 59,
+     "tekst": "Mølleren maler 1/10 sæk rugmel før middag og 3/10 sæk efter middag. Hvor meget har han malet i alt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 5 af 8 Sæk på sæk Morgenens korn skal lægges til, og det solgte skal trækkes fra. Vil du holde regnskab? 1 af 5 opgaver løst ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 2408,
+     "art": "opgave",
+     "nr": 60,
+     "tekst": "Mølleren har 2/5 sæk mel. Han hælder det i poser, der hver rummer 1/10 sæk. Hvor mange tiendedele sæk er det? Skriv det som en brøk.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 5 af 8 Sæk på sæk Morgenens korn skal lægges til, og det solgte skal trækkes fra. Vil du holde regnskab? 2 af 5 opgaver løst ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 2422,
+     "art": "slut"
+    }
+   ],
+   "hoved": "2 Tulle Niveau 2 Næste niveau: mestr et forløb. 365 erfaring",
+   "vandret": true,
+   "sidefejl": [],
+   "billeder": [
+    "E-foer-525-travl-390-00-opret.png",
+    "E-foer-525-travl-390-01-foerste-skaerm.png",
+    "E-foer-525-travl-390-03-aabning.png",
+    "E-foer-525-travl-390-02-foerste-opgave.png",
+    "E-foer-525-travl-390-10-hint.png",
+    "E-foer-525-travl-390-11-samme-forloeb-igen.png",
+    "E-foer-525-travl-390-2x-replik.png",
+    "E-foer-525-travl-390-2x-byVaagner.png",
+    "E-foer-525-travl-390-25-kort-efter-forloeb.png",
+    "E-foer-525-travl-390-25-kort-efter-forloeb.png",
+    "E-foer-525-travl-390-26-nyt-sted.png",
+    "E-foer-525-travl-390-20-niveau-op.png",
+    "E-foer-525-travl-390-40-kortet-efter-30-min.png",
+    "E-foer-525-travl-390-50-min-helt.png",
+    "E-foer-525-travl-390-51-questbog.png"
+   ]
+  },
+  {
+   "snap": {
+    "t": 1202,
+    "opgaver": 30,
+    "rigtigeFoerste": 13,
+    "niveau": 2,
+    "niveauPoint": 0,
+    "hoved": 2,
+    "haand": 1,
+    "hjerte": 1,
+    "klaret": [],
+    "tilbage": [],
+    "forloeb": 2
+   },
+   "kort": {
+    "gedebid": 0,
+    "foelger": null,
+    "gaest": null
+   },
+   "tid": {
+    "flyvere": [
+     {
+      "t": 70,
+      "chip": "Brøker 0"
+     },
+     {
+      "t": 103,
+      "chip": "Brøker 5"
+     },
+     {
+      "t": 137,
+      "chip": "Brøker 10"
+     },
+     {
+      "t": 367,
+      "chip": "Brøker 30"
+     },
+     {
+      "t": 389,
+      "chip": "Brøker 30"
+     },
+     {
+      "t": 424,
+      "chip": "Brøker 40"
+     },
+     {
+      "t": 573,
+      "chip": "Brøker 45"
+     },
+     {
+      "t": 605,
+      "chip": "Brøker 55"
+     },
+     {
+      "t": 637,
+      "chip": "Brøker 60"
+     },
+     {
+      "t": 1074,
+      "chip": "Brøker 65"
+     },
+     {
+      "t": 1086,
+      "chip": null
+     },
+     {
+      "t": 1286,
+      "chip": "Brøker 125"
+     },
+     {
+      "t": 1309,
+      "chip": "Brøker 130"
+     },
+     {
+      "t": 1329,
+      "chip": "Brøker 140"
+     },
+     {
+      "t": 1349,
+      "chip": "Brøker 150"
+     },
+     {
+      "t": 1364,
+      "chip": null
+     },
+     {
+      "t": 1596,
+      "chip": "Brøker 205"
+     },
+     {
+      "t": 1685,
+      "chip": "Brøker 210"
+     },
+     {
+      "t": 1799,
+      "chip": "Brøker 215"
+     },
+     {
+      "t": 1872,
+      "chip": "Brøker 220"
+     },
+     {
+      "t": 2330,
+      "chip": "Brøker 230"
+     },
+     {
+      "t": 2343,
+      "chip": null
+     }
+    ],
+    "xp": [
+     190,
+     225,
+     248,
+     292,
+     316,
+     339,
+     687,
+     715,
+     739,
+     759,
+     919,
+     939,
+     978,
+     1053,
+     1143,
+     1234,
+     1468,
+     1505,
+     1917,
+     2008,
+     2027,
+     2071,
+     2167,
+     2186,
+     2229,
+     2311,
+     2389,
+     2413
+    ],
+    "nytNiveau": [
+     {
+      "t": 70,
+      "tekst": "Nyt niveau i Brøker: Begynder (nu 5)"
+     }
+    ],
+    "bonus": [
+     {
+      "t": 341,
+      "tekst": "Bonus i rygsækken: +15 Brøker (nu 15)"
+     },
+     {
+      "t": 1076,
+      "tekst": "Bonus i rygsækken: +50 Brøker (nu 75)"
+     },
+     {
+      "t": 1086,
+      "tekst": "Bonus i rygsækken: +50 Brøker (nu 125)"
+     },
+     {
+      "t": 1351,
+      "tekst": "Bonus i rygsækken: +45 Brøker (nu 160, nyt niveau: Øvet)"
+     },
+     {
+      "t": 1364,
+      "tekst": "Bonus i rygsækken: +45 Brøker (nu 205, nyt niveau: Øvet)"
+     },
+     {
+      "t": 2332,
+      "tekst": "Bonus i rygsækken: +55 Brøker (nu 240)"
+     },
+     {
+      "t": 2343,
+      "tekst": "Bonus i rygsækken: +55 Brøker (nu 295)"
+     }
+    ],
+    "loft": [],
+    "halv": [
+     {
+      "t": 190,
+      "tekst": "Brøker står stille: 0 af dine 4 svar i forløbet var rigtige i første forsøg. Tallet vokser igen, når mindst halvdelen er."
+     },
+     {
+      "t": 687,
+      "tekst": "Brøker står stille: 1 af dine 5 svar i forløbet var rigtige i første forsøg. Tallet vokser igen, når mindst halvdelen er."
+     },
+     {
+      "t": 1143,
+      "tekst": "Brøker står stille: 1 af dine 4 svar i forløbet var rigtige i første forsøg. Tallet vokser igen, når mindst halvdelen er."
+     },
+     {
+      "t": 1917,
+      "tekst": "Brøker står stille: 2 af dine 5 svar i forløbet var rigtige i første forsøg. Tallet vokser igen, når mindst halvdelen er."
+     }
+    ],
+    "bonusHalv": [
+     {
+      "t": 341,
+      "tekst": "Halv værdi, af samme grund som niveauet herunder."
+     }
+    ],
+    "genindlaest": 0
+   },
+   "faerdighed": {
+    "chip": [
+     [
+      "broeker",
+      0
+     ],
+     [
+      "broeker",
+      5
+     ],
+     [
+      "broeker",
+      10
+     ],
+     [
+      "broeker",
+      15
+     ],
+     [
+      "broeker",
+      30
+     ],
+     [
+      "broeker",
+      40
+     ],
+     [
+      "broeker",
+      45
+     ],
+     [
+      "broeker",
+      55
+     ],
+     [
+      "broeker",
+      60
+     ],
+     [
+      "broeker",
+      65
+     ],
+     [
+      "broeker",
+      125
+     ],
+     [
+      "broeker",
+      130
+     ],
+     [
+      "broeker",
+      140
+     ],
+     [
+      "broeker",
+      150
+     ],
+     [
+      "broeker",
+      205
+     ],
+     [
+      "broeker",
+      210
+     ],
+     [
+      "broeker",
+      215
+     ],
+     [
+      "broeker",
+      220
+     ],
+     [
+      "broeker",
+      230
+     ],
+     [
+      "broeker",
+      295
+     ]
+    ],
+    "flyvere": 22,
+    "tekster": [
+     "+5 Brøker",
+     "+5 Brøker",
+     "+5 Brøker",
+     "+15 Brøker",
+     "+10 Brøker",
+     "+5 Brøker",
+     "+10 Brøker",
+     "+5 Brøker",
+     "+5 Brøker",
+     "+10 Brøker",
+     "+50 Brøker",
+     "+5 Brøker",
+     "+10 Brøker",
+     "+10 Brøker",
+     "+10 Brøker",
+     "+45 Brøker",
+     "+5 Brøker",
+     "+5 Brøker",
+     "+5 Brøker",
+     "+10 Brøker",
+     "+10 Brøker",
+     "+55 Brøker"
+    ],
+    "chipSidst": "Brøker 295"
+   },
+   "variant": "foelger",
+   "bredde": 390,
+   "ur": {
+    "s": 2413,
+    "rul": 20
+   },
+   "opg": {
+    "antal": 59,
+    "rigtigeFoerste": 27,
+    "loesning": 9,
+    "foresloeg": 104,
+    "ukendt": 0,
+    "ord": 1193
+   },
+   "historieOrd": {
+    "tak": 0,
+    "hvil": 142,
+    "replik": 73,
+    "mestring": 337,
+    "bogPanel": 80,
+    "niveau": 70,
+    "aabning": 49,
+    "byVaagner": 133
+   },
+   "foersteSkaerm": {
+    "opgaveTop": 1902,
+    "skaermHoejde": 844,
+    "sideHoejde": 2281
+   },
+   "naesteFejl": "Ikke helt. Hint 1 af 2: 1/2 sammenligner de fyldte med resten. En brøk af helheden skal have ALLE 3 sække i nævneren.",
+   "log": [
+    {
+     "t": 18,
+     "art": "start",
+     "opgaveTop": 1902,
+     "skaermHoejde": 844,
+     "sideHoejde": 2281
+    },
+    {
+     "t": 38,
+     "art": "aabning",
+     "tekst": "Tulle kommer ned ad vejen til Møllen. Mølleren står i døren, hvid af mel. Mølleren: \"Godt, du kom. Hjulet er gået i stå, og Ane, bagerkonen, har intet mel til morgenbrødet.\" Mølleren: \"Hjælp mig med »Lige store dele«, så kan vi male igen, og så kan du hjælpe Ane.\"",
+     "aabningTop": 8,
+     "knapBund": 696,
+     "skaerm": 844
+    },
+    {
+     "t": 57,
+     "art": "opgave",
+     "nr": 1,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Tulle kommer ned ad vejen til Møllen. Mølleren står i døren, hvid af mel. Mølleren: \"Godt, du kom. Hjulet er gået i stå, og Ane, bag",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 91,
+     "art": "opgave",
+     "nr": 2,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 124,
+     "art": "opgave",
+     "nr": 3,
+     "tekst": "Bageren har skåret en kageplade i 12 lige store stykker, og 8 er spist: ▰▰▰▰▰▰▰▰▱▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 158,
+     "art": "opgave",
+     "nr": 4,
+     "tekst": "Mølleren har delt sin mark i 5 lige store stykker, og 1 er sået: ▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 176,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 0 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 211,
+     "art": "opgave",
+     "nr": 5,
+     "tekst": "Bageren har skåret en kageplade i 4 lige store stykker, og 2 er spist: ▰▰▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 246,
+     "art": "opgave",
+     "nr": 6,
+     "tekst": "Mølleren har delt sin mark i 12 lige store stykker, og 4 er sået: ▰▰▰▰▱▱▱▱▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 268,
+     "art": "opgave",
+     "nr": 7,
+     "tekst": "Bageren har bagt 5 lige store brød, og 4 er solgt: ▰▰▰▰▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 287,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 314,
+     "art": "opgave",
+     "nr": 8,
+     "tekst": "Mølleren har 7 lige store sække på vognen, og 2 er fyldt med mel: ▰▰▱▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 337,
+     "art": "opgave",
+     "nr": 9,
+     "tekst": "Bageren har skåret en kageplade i 7 lige store stykker, og 6 er spist: ▰▰▰▰▰▰▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 350,
+     "art": "replik",
+     "tekst": "Forløbet »Lige store dele« er klaret. Mølleren: \"Nu ved du, hvad en brøk er: nogle af de lige store dele af en helhed.\"",
+     "udraab": [
+      {
+       "quest": "mel-til-bageren",
+       "iSyne": false,
+       "px": -406
+      },
+      {
+       "questbogKnap": "Questbogen 1 ny"
+      }
+     ]
+    },
+    {
+     "t": 360,
+     "art": "byVaagner",
+     "tekst": "BYEN VÅGNER Kværnhjulet drejer igen Indbyggere: 15 (før 12) Møllerdrengen: \"Hjulet går! Nu skal melet bare deles ligeligt.\" Ny opgave: Del ligeligt Se det på kortet"
+    },
+    {
+     "t": 360,
+     "art": "klaret-hjaelp",
+     "quest": "mel-til-bageren",
+     "fortsaetOgsaa": true,
+     "iSyne": false
+    },
+    {
+     "t": 367,
+     "art": "hjaelper",
+     "quest": "mel-til-bageren",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Mel til bageren Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe mølleren med at dele sækkene? Belønning: Melsække ved møllen 0 af 3 opgaver løst · Ane vil se 2 rigtige i første forsøg Brøker 30 Ane har 4 lige store melkrukker på hylden i bageriet, og 2 er fyldt med mel: ▰▰▱▱. Hvor stor en del af krukker"
+    },
+    {
+     "t": 387,
+     "art": "opgave",
+     "nr": 10,
+     "tekst": "Ane har 4 lige store melkrukker på hylden i bageriet, og 2 er fyldt med mel: ▰▰▱▱. Hvor stor en del af krukkerne er fyldt?",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Mel til bageren Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 411,
+     "art": "opgave",
+     "nr": 11,
+     "tekst": "Ane skal bruge 5 lige store sække mel til morgenbrødet. Mølleren har fyldt 1 af dem: ▰▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Mel til bageren Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 447,
+     "art": "opgave",
+     "nr": 12,
+     "tekst": "Ane har hældt en sæk mel i 6 lige store poser, og 2 af poserne er brugt til dejen: ▰▰▱▱▱▱. Hvor stor en del af melet er brugt?",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Mel til bageren Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 478,
+     "art": "loesning",
+     "tekst": "Løsningen: 2 af 6 lige store poser er brugt: brøken 2/6, som forkortes til 1/3."
+    },
+    {
+     "t": 494,
+     "art": "hvil",
+     "tekst": "Ane: \"Du fik dem alle løst! 1 af 3 sad i første forsøg. Næste gang vil jeg gerne se 2. Klar »Del ligeligt« hos Mølleren lige her under, så har jeg nye tal til dig.\""
+    },
+    {
+     "t": 510,
+     "art": "opgave",
+     "nr": 13,
+     "tekst": "Bagerkonen deler 4 brød ligeligt mellem 5 karle på møllen. Hvor meget brød får hver karl?",
+     "panel": "Ane: \"Du fik dem alle løst! 1 af 3 sad i første forsøg. Næste gang vil jeg gerne se 2. Klar »Del ligeligt« hos Mølleren lige her under, så har jeg nye tal til d",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 571,
+     "art": "opgave",
+     "nr": 14,
+     "tekst": "Bagerkonen deler 2 kager ligeligt mellem 4 børn. Hvor meget kage får hvert barn?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 🔒 Ane,",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 593,
+     "art": "opgave",
+     "nr": 15,
+     "tekst": "Bageren har bagt 6 lige store brød, og 2 er solgt: ▰▰▱▱▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 🔒 Ane,",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 623,
+     "art": "opgave",
+     "nr": 16,
+     "tekst": "Mølledrengen deler 3 æbler ligeligt mellem 5 børn. Hvor meget æble får hvert barn?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 🔒 Ane,",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 655,
+     "art": "opgave",
+     "nr": 17,
+     "tekst": "Bagerkonen deler 1 kage ligeligt mellem 3 børn. Hvor meget kage får hvert barn?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 🔒 Ane,",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 672,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 4 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 704,
+     "art": "opgave",
+     "nr": 18,
+     "tekst": "Møllerkonen deler 1 æble ligeligt mellem 5 børn. Hvor meget æble får hvert barn?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 🔒 Ane,",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 737,
+     "art": "opgave",
+     "nr": 19,
+     "tekst": "Mølleren har 4 lige store sække på vognen, og 2 er fyldt med mel: ▰▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 🔒 Ane,",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 757,
+     "art": "opgave",
+     "nr": 20,
+     "tekst": "Bagerkonen deler 4 brød ligeligt mellem 6 karle på møllen. Hvor meget brød får hver karl?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 🔒 Ane,",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 777,
+     "art": "opgave",
+     "nr": 21,
+     "tekst": "Møllerkonen deler 3 æbler ligeligt mellem 4 børn. Hvor meget æble får hvert barn?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 🔒 Ane,",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 793,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 2 af 4 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Mølleren: \"Tæt på. Én rigtig mere, så har du det.\""
+    },
+    {
+     "t": 854,
+     "art": "opgave",
+     "nr": 22,
+     "tekst": "Mølledrengen deler 2 sække mel ligeligt mellem 5 bagere. Hvor meget mel får hver bager?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 🔒 Ane,",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 917,
+     "art": "opgave",
+     "nr": 23,
+     "tekst": "Mølleren har 5 lige store sække på vognen, og 3 er fyldt med mel: ▰▰▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 🔒 Ane,",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 937,
+     "art": "opgave",
+     "nr": 24,
+     "tekst": "Mølledrengen deler 3 æbler ligeligt mellem 6 børn. Hvor meget æble får hvert barn?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 🔒 Ane,",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 957,
+     "art": "opgave",
+     "nr": 25,
+     "tekst": "Mølleren deler 2 sække mel ligeligt mellem 3 bagere. Hvor meget mel får hver bager?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 🔒 Ane,",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 973,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 2 af 4 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Mølleren: \"Tæt på. Én rigtig mere, så har du det.\""
+    },
+    {
+     "t": 996,
+     "art": "opgave",
+     "nr": 26,
+     "tekst": "Bagerkonen deler 1 kage ligeligt mellem 4 børn. Hvor meget kage får hvert barn?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 🔒 Ane,",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1030,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 kage delt i 4 lige store dele giver brøken 1/4, og den kan ikke forkortes."
+    },
+    {
+     "t": 1051,
+     "art": "opgave",
+     "nr": 27,
+     "tekst": "Bageren har skåret en kageplade i 5 lige store stykker, og 2 er spist: ▰▰▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 🔒 Ane,",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1072,
+     "art": "opgave",
+     "nr": 28,
+     "tekst": "Bageren deler 2 brød ligeligt mellem 6 karle på møllen. Hvor meget brød får hver karl?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 2 af 8 Del ligeligt Melet skal ud til bagerne, og brødet og kagen skal deles. Kan du hjælpe mig med at dele ligeligt? 🔒 Ane,",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1084,
+     "art": "niveau-op",
+     "tekst": "NIVEAU OP! Niveau 2 Du mestrede »Del ligeligt« hos Mølleren. Din figur er blevet klogere: Hoved er nu 2. Fedt!"
+    },
+    {
+     "t": 1092,
+     "art": "replik",
+     "tekst": "Forløbet »Del ligeligt« er klaret. Mølleren: \"Tak skal du have. Nu har alle fået lige meget.\"",
+     "udraab": [
+      {
+       "quest": "mel-til-bageren",
+       "iSyne": false,
+       "px": -406
+      },
+      {
+       "questbogKnap": "Questbogen 1 ny"
+      }
+     ]
+    },
+    {
+     "t": 1106,
+     "art": "byVaagner",
+     "tekst": "BYEN VÅGNER Kornvognen kører Indbyggere: 27 (før 19) Kusken: \"Alle har fået deres del. Bageren vil have det bedste mel, men hvilken portion er størst?\" Ny opgave: Hvilken portion er størst? Se det på kortet"
+    },
+    {
+     "t": 1106,
+     "art": "klaret-hjaelp",
+     "quest": "mel-til-bageren",
+     "fortsaetOgsaa": true,
+     "iSyne": true
+    },
+    {
+     "t": 1110,
+     "art": "hjaelper",
+     "quest": "mel-til-bageren",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Mel til bageren Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe mølleren med at dele sækkene? Belønning: Melsække ved møllen 0 af 3 opgaver løst · Ane vil se 2 rigtige i første forsøg Brøker 125 Ane skal bruge 4 lige store sække mel til morgenbrødet. Mølleren har fyldt 2 af dem: ▰▰▱▱. Hvor stor en del a"
+    },
+    {
+     "t": 1130,
+     "art": "opgave",
+     "nr": 29,
+     "tekst": "Ane skal bruge 4 lige store sække mel til morgenbrødet. Mølleren har fyldt 2 af dem: ▰▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Mel til bageren Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1165,
+     "art": "opgave",
+     "nr": 30,
+     "tekst": "Ane har 4 lige store melkrukker på hylden i bageriet, og 2 er fyldt med mel: ▰▰▱▱. Hvor stor en del af krukkerne er fyldt?",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Mel til bageren Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1202,
+     "art": "loesning",
+     "tekst": "Løsningen: 2 af 4 lige store krukker er fyldt: brøken 2/4, som forkortes til 1/2."
+    },
+    {
+     "t": 1202,
+     "art": "snap",
+     "opgaver": 30,
+     "rigtigeFoerste": 13,
+     "niveau": 2,
+     "niveauPoint": 0,
+     "hoved": 2,
+     "haand": 1,
+     "hjerte": 1,
+     "klaret": [],
+     "tilbage": [],
+     "forloeb": 2
+    },
+    {
+     "t": 1223,
+     "art": "opgave",
+     "nr": 31,
+     "tekst": "Ane har formet 4 lige store brød af dejen, og 3 er bagt: ▰▰▰▱. Hvor stor en del af brødene er bagt?",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Mel til bageren Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1250,
+     "art": "hvil",
+     "tekst": "Ane: \"Du fik dem alle løst! Ingen sad i første forsøg. Næste gang vil jeg gerne se 2. Klar »Hvilken portion er størst?« hos Mølleren lige her under, så har jeg nye tal til dig.\""
+    },
+    {
+     "t": 1269,
+     "art": "opgave",
+     "nr": 32,
+     "tekst": "Én dag delte mølleren en sæk i 6 lige store dele, en anden dag i 3 lige store dele. Hvilken portion var størst?",
+     "panel": "Ane: \"Du fik dem alle løst! Ingen sad i første forsøg. Næste gang vil jeg gerne se 2. Klar »Hvilken portion er størst?« hos Mølleren lige her under, så har jeg ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1307,
+     "art": "opgave",
+     "nr": 33,
+     "tekst": "En bonde kører korn til møllen. Mølleren kan tage 3/4 sæk eller 3/5 sæk som betaling for at male. Hvilken betaling er størst?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 3 af 8 Hvilken portion er størst? To delinger, ét spørgsmål: hvem fik mest? Pas på, flere dele er ikke altid mere. 🔒 Ane, ba",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1327,
+     "art": "opgave",
+     "nr": 34,
+     "tekst": "Bageren deler 2 brød ligeligt mellem 4 karle på møllen. Hvor meget brød får hver karl?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 3 af 8 Hvilken portion er størst? To delinger, ét spørgsmål: hvem fik mest? Pas på, flere dele er ikke altid mere. 🔒 Ane, ba",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1347,
+     "art": "opgave",
+     "nr": 35,
+     "tekst": "Mølledrengen bar 9/10 sæk om formiddagen og 1/10 sæk om eftermiddagen. Hvornår bar han mest?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 3 af 8 Hvilken portion er størst? To delinger, ét spørgsmål: hvem fik mest? Pas på, flere dele er ikke altid mere. 🔒 Ane, ba",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1362,
+     "art": "niveau-op",
+     "tekst": "NIVEAU OP! Niveau 3 · Lærling Du mestrede »Hvilken portion er størst?« hos Mølleren. Din figur er blevet klogere: Hoved er nu 3. Du er nu lærling. Fedt!"
+    },
+    {
+     "t": 1371,
+     "art": "replik",
+     "tekst": "Forløbet »Hvilken portion er størst?« er klaret. Mølleren: \"Nu ved du, at flere dele giver mindre dele.\"",
+     "udraab": [
+      {
+       "quest": "mel-til-bageren",
+       "iSyne": false,
+       "px": -406
+      },
+      {
+       "quest": "aenderne",
+       "iSyne": false,
+       "px": -263
+      },
+      {
+       "questbogKnap": "Questbogen 2 nye"
+      }
+     ]
+    },
+    {
+     "t": 1387,
+     "art": "byVaagner",
+     "tekst": "BYEN VÅGNER Bagerens ovn er tændt Indbyggere: 38 (før 27) Bageren: \"Der dufter af brød igen! Men broen over åen er rådden, så jeg kan ikke køre brødet ud.\" Ny opgave: Samme mel, nye poser Se det på kortet"
+    },
+    {
+     "t": 1387,
+     "art": "klaret-hjaelp",
+     "quest": "mel-til-bageren",
+     "fortsaetOgsaa": true,
+     "iSyne": true
+    },
+    {
+     "t": 1390,
+     "art": "hjaelper",
+     "quest": "mel-til-bageren",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Mel til bageren Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe mølleren med at dele sækkene? Belønning: Melsække ved møllen 0 af 3 opgaver løst · Ane vil se 2 rigtige i første forsøg Brøker 205 Ane har hældt en sæk mel i 3 lige store poser, og 2 af poserne er brugt til dejen: ▰▰▱. Hvor stor en del af m"
+    },
+    {
+     "t": 1412,
+     "art": "opgave",
+     "nr": 36,
+     "tekst": "Ane har hældt en sæk mel i 3 lige store poser, og 2 af poserne er brugt til dejen: ▰▰▱. Hvor stor en del af melet er brugt?",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Mel til bageren Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1444,
+     "art": "loesning",
+     "tekst": "Løsningen: 2 af 3 lige store poser er brugt: brøken 2/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 1466,
+     "art": "opgave",
+     "nr": 37,
+     "tekst": "Ane har 8 lige store melkrukker på hylden i bageriet, og 2 er fyldt med mel: ▰▰▱▱▱▱▱▱. Hvor stor en del af krukkerne er fyldt?",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Mel til bageren Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1492,
+     "art": "opgave",
+     "nr": 38,
+     "tekst": "Ane har hældt en sæk mel i 4 lige store poser, og 2 af poserne er brugt til dejen: ▰▰▱▱. Hvor stor en del af melet er brugt?",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Mel til bageren Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1522,
+     "art": "hvil",
+     "tekst": "Ane: \"Du fik dem alle løst! 1 af 3 sad i første forsøg. Næste gang vil jeg gerne se 2. Klar »Samme mel, nye poser« hos Mølleren lige her under, så har jeg nye tal til dig.\""
+    },
+    {
+     "t": 1522,
+     "art": "ser-udraab",
+     "quest": "aenderne"
+    },
+    {
+     "t": 1562,
+     "art": "hjaelper",
+     "quest": "aenderne",
+     "panel": "Ane: \"Du fik dem alle løst! 1 af 3 sad i første forsøg. Næste gang vil jeg gerne se 2. Klar »Samme mel, nye poser« hos Mølleren lige her under, så har jeg nye tal til dig.\" Vandmøllen ved åen Quest fra questbogen Læg questen væk NIELS, MØLLERENS DRENG Ænderne i åen Far siger, jeg først må fodre ænderne, når jeg kan se, hvilken portion der er størst. Vil du øve med mig? Belønning: Ænder i åen 0 af "
+    },
+    {
+     "t": 1583,
+     "art": "opgave",
+     "nr": 39,
+     "tekst": "Niels deler en pose korn i 4 lige store portioner til ænderne. Hans søster deler en lige så stor pose i 5 portioner. Hvilken portion er stør",
+     "panel": "Ane: \"Du fik dem alle løst! 1 af 3 sad i første forsøg. Næste gang vil jeg gerne se 2. Klar »Samme mel, nye poser« hos Mølleren lige her under, så har jeg nye t",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1616,
+     "art": "opgave",
+     "nr": 40,
+     "tekst": "Far siger, at ænderne må få enten 3/5 pose eller 3/4 pose korn i dag. Hvilken portion er størst?",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk NIELS, MØLLERENS DRENG Ænderne i åen Far siger, jeg først må fodre ænderne, når jeg kan se, hvilken port",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1670,
+     "art": "opgave",
+     "nr": 41,
+     "tekst": "Niels deler 2 brød ligeligt mellem 4 ænder i åen. Hvor meget brød får hver and?",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk NIELS, MØLLERENS DRENG Ænderne i åen Far siger, jeg først må fodre ænderne, når jeg kan se, hvilken port",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1701,
+     "art": "hvil",
+     "tekst": "Niels: \"Du fik dem alle løst! Ingen sad i første forsøg. Næste gang vil jeg gerne se 2. Klar »Samme mel, nye poser« hos Mølleren lige her under, så har jeg nye tal til dig.\""
+    },
+    {
+     "t": 1721,
+     "art": "opgave",
+     "nr": 42,
+     "tekst": "Mølledrengen har 1/2 sæk mel. Han hælder det i poser, der hver rummer 1/6 sæk. Hvor mange sjettedele sæk er det? Skriv det som en brøk.",
+     "panel": "Niels: \"Du fik dem alle løst! Ingen sad i første forsøg. Næste gang vil jeg gerne se 2. Klar »Samme mel, nye poser« hos Mølleren lige her under, så har jeg nye ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1760,
+     "art": "loesning",
+     "tekst": "Løsningen: Gang både tæller og nævner med 3: 1·3 = 3 og 2·3 = 6. 1/2 sæk er 3/6 sæk, altså 3 poser."
+    },
+    {
+     "t": 1783,
+     "art": "opgave",
+     "nr": 43,
+     "tekst": "Mølledrengen har 1/2 sæk mel. Han hælder det i poser, der hver rummer 1/12 sæk. Hvor mange tolvtedele sæk er det? Skriv det som en brøk.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1816,
+     "art": "opgave",
+     "nr": 44,
+     "tekst": "Mølledrengen skal bære enten 3/8 sæk eller 3/4 sæk. Hvilken portion er størst?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1853,
+     "art": "loesning",
+     "tekst": "Løsningen: Jo flere dele en sæk deles i, jo mindre bliver hver del. 3/4 er større end 3/8."
+    },
+    {
+     "t": 1870,
+     "art": "opgave",
+     "nr": 45,
+     "tekst": "Mølleren har skrevet 2/10 sæk i regnebogen. Forkort brøken så meget som muligt.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1895,
+     "art": "opgave",
+     "nr": 46,
+     "tekst": "Bageren har 1/2 sæk mel. Han hælder det i poser, der hver rummer 1/8 sæk. Hvor mange ottendedele sæk er det? Skriv det som en brøk.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1912,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 4 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 1939,
+     "art": "opgave",
+     "nr": 47,
+     "tekst": "Mølledrengen har 1/2 sæk mel. Han hælder det i poser, der hver rummer 1/10 sæk. Hvor mange tiendedele sæk er det? Skriv det som en brøk.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1978,
+     "art": "loesning",
+     "tekst": "Løsningen: Gang både tæller og nævner med 5: 1·5 = 5 og 2·5 = 10. 1/2 sæk er 5/10 sæk, altså 5 poser."
+    },
+    {
+     "t": 1994,
+     "art": "opgave",
+     "nr": 48,
+     "tekst": "Hvilken portion er størst: 5/8 sæk eller 5/12 sæk?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 2025,
+     "art": "opgave",
+     "nr": 49,
+     "tekst": "Mølledrengen har skrevet 10/12 sæk i regnebogen. Forkort brøken så meget som muligt.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 2050,
+     "art": "opgave",
+     "nr": 50,
+     "tekst": "Mølledrengen har 3/4 sæk mel. Han hælder det i poser, der hver rummer 1/8 sæk. Hvor mange ottendedele sæk er det? Skriv det som en brøk.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 2066,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 2 af 4 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Mølleren: \"Tæt på. Én rigtig mere, så har du det.\""
+    },
+    {
+     "t": 2093,
+     "art": "opgave",
+     "nr": 51,
+     "tekst": "Mølledrengen har 1/5 sæk mel. Han hælder det i poser, der hver rummer 1/10 sæk. Hvor mange tiendedele sæk er det? Skriv det som en brøk.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 2132,
+     "art": "loesning",
+     "tekst": "Løsningen: Gang både tæller og nævner med 2: 1·2 = 2 og 5·2 = 10. 1/5 sæk er 2/10 sæk, altså 2 poser."
+    },
+    {
+     "t": 2152,
+     "art": "opgave",
+     "nr": 52,
+     "tekst": "Mølledrengen skal bære enten 3/10 sæk eller 3/4 sæk. Hvilken portion er størst?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 2184,
+     "art": "opgave",
+     "nr": 53,
+     "tekst": "Bageren har skrevet 2/12 sæk i regnebogen. Forkort brøken så meget som muligt.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 2208,
+     "art": "opgave",
+     "nr": 54,
+     "tekst": "Bageren har 1/2 sæk mel. Han hælder det i poser, der hver rummer 1/4 sæk. Hvor mange fjerdedele sæk er det? Skriv det som en brøk.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 2224,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 2 af 4 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Mølleren: \"Tæt på. Én rigtig mere, så har du det.\""
+    },
+    {
+     "t": 2252,
+     "art": "opgave",
+     "nr": 55,
+     "tekst": "Bageren har 1/4 sæk mel. Han hælder det i poser, der hver rummer 1/8 sæk. Hvor mange ottendedele sæk er det? Skriv det som en brøk.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 2294,
+     "art": "loesning",
+     "tekst": "Løsningen: Gang både tæller og nævner med 2: 1·2 = 2 og 4·2 = 8. 1/4 sæk er 2/8 sæk, altså 2 poser."
+    },
+    {
+     "t": 2309,
+     "art": "opgave",
+     "nr": 56,
+     "tekst": "Hvilken portion er størst: 3/8 sæk eller 3/5 sæk?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 2328,
+     "art": "opgave",
+     "nr": 57,
+     "tekst": "Mølledrengen har skrevet 2/6 sæk i regnebogen. Forkort brøken så meget som muligt.",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 4 af 8 Samme mel, nye poser Jeg hælder melet over i mindre poser. Det er stadig lige meget mel, men brøken ser anderledes ud.",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 2341,
+     "art": "niveau-op",
+     "tekst": "NIVEAU OP! Niveau 4 Du mestrede »Samme mel, nye poser« hos Mølleren. Din figur er blevet klogere: Hoved er nu 4. Fedt!"
+    },
+    {
+     "t": 2350,
+     "art": "replik",
+     "tekst": "Forløbet »Samme mel, nye poser« er klaret. Mølleren: \"Du kan forlænge og forkorte: samme mængde, andet navn.\"",
+     "udraab": [
+      {
+       "quest": "mel-til-bageren",
+       "iSyne": false,
+       "px": -406
+      },
+      {
+       "quest": "aenderne",
+       "iSyne": false,
+       "px": -263
+      },
+      {
+       "questbogKnap": "Questbogen 2 nye"
+      }
+     ]
+    },
+    {
+     "t": 2363,
+     "art": "byVaagner",
+     "tekst": "BYEN VÅGNER Broen over åen er repareret Indbyggere: 50 (før 38) Tømreren: \"Broen holder. Nu mangler vi lys langs vejen, før det bliver mørkt.\" Ny opgave: Sæk på sæk Se det på kortet"
+    },
+    {
+     "t": 2363,
+     "art": "klaret-hjaelp",
+     "quest": "mel-til-bageren",
+     "fortsaetOgsaa": true,
+     "iSyne": true
+    },
+    {
+     "t": 2367,
+     "art": "hjaelper",
+     "quest": "mel-til-bageren",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Mel til bageren Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe mølleren med at dele sækkene? Belønning: Melsække ved møllen 0 af 3 opgaver løst · Ane vil se 2 rigtige i første forsøg Brøker 295 Ane skal bruge 3 lige store sække mel til morgenbrødet. Mølleren har fyldt 1 af dem: ▰▱▱. Hvor stor en del af"
+    },
+    {
+     "t": 2387,
+     "art": "opgave",
+     "nr": 58,
+     "tekst": "Ane skal bruge 3 lige store sække mel til morgenbrødet. Mølleren har fyldt 1 af dem: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Mel til bageren Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 2411,
+     "art": "opgave",
+     "nr": 59,
+     "tekst": "Ane har 6 lige store melkrukker på hylden i bageriet, og 3 er fyldt med mel: ▰▰▰▱▱▱. Hvor stor en del af krukkerne er fyldt?",
+     "panel": "Vandmøllen ved åen Quest fra questbogen Læg questen væk ANE, BAGERKONEN Mel til bageren Ovnen er varm, men jeg har ikke mel nok til morgenbrødet. Vil du hjælpe ",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 2413,
+     "art": "slut"
+    }
+   ],
+   "hoved": "4 Tulle Niveau 4 · Lærling Næste niveau: mestr et forløb. 355 erfaring",
+   "vandret": true,
+   "sidefejl": [],
+   "billeder": [
+    "E-foer-525-foelger-390-00-opret.png",
+    "E-foer-525-foelger-390-01-foerste-skaerm.png",
+    "E-foer-525-foelger-390-03-aabning.png",
+    "E-foer-525-foelger-390-02-foerste-opgave.png",
+    "E-foer-525-foelger-390-10-hint.png",
+    "E-foer-525-foelger-390-11-samme-forloeb-igen.png",
+    "E-foer-525-foelger-390-2x-replik.png",
+    "E-foer-525-foelger-390-2x-byVaagner.png",
+    "E-foer-525-foelger-390-25-kort-efter-forloeb.png",
+    "E-foer-525-foelger-390-31-quest-i-panelet.png",
+    "E-foer-525-foelger-390-2x-hvil.png",
+    "E-foer-525-foelger-390-20-niveau-op.png",
+    "E-foer-525-foelger-390-30-questbog.png",
+    "E-foer-525-foelger-390-40-kortet-efter-30-min.png",
+    "E-foer-525-foelger-390-50-min-helt.png",
+    "E-foer-525-foelger-390-51-questbog.png"
+   ]
+  }
+ ],
+ "dag2": [],
+ "dag3": []
+}
