@@ -1,0 +1,2457 @@
+{
+ "ver": {
+  "main": "207d4ec",
+  "o601": "ee5479f",
+  "site": "11c6169",
+  "godkendt585": "291f5bf",
+  "kritik598": "03c929e",
+  "o601Commits": [],
+  "o601Merget": "ja",
+  "nyeSiden598": [
+   "207d4ec merge: ordre-601 (ORDRE 601, Yantra)",
+   "ee5479f Ordre 601, commit 3: skaermbilleder 390 og 1280, verificering, rapport dag 90",
+   "37bfac6 Ordre 601, commit 2: foer og efter fra en gemt fil, datoen ved billedet, Byt foer og efter",
+   "d80f167 Ordre 601, commit 1: det gemte billede kan aabnes igen (maalingen ligger i PNG'et)"
+  ]
+ },
+ "kopi": {
+  "maal-billede": {
+   "siteMod291": [],
+   "siteModMain": [
+    "index.html",
+    "maal-billede.js",
+    "miniaturer/bp-albue-ud.svg",
+    "miniaturer/bp-hoejt-bryst.svg",
+    "miniaturer/dl-hofte-foerst.svg",
+    "miniaturer/dl-stang-frem.svg",
+    "miniaturer/k7-hofte-tilbage-bund.svg",
+    "miniaturer/k7-hofte-tilbage-sticking.svg",
+    "miniaturer/k7-kun-knae-bund.svg",
+    "miniaturer/k7-kun-knae-sticking.svg"
+   ],
+   "siteMod601": [
+    "index.html",
+    "maal-billede.js",
+    "miniaturer/bp-albue-ud.svg",
+    "miniaturer/bp-hoejt-bryst.svg",
+    "miniaturer/dl-hofte-foerst.svg",
+    "miniaturer/dl-stang-frem.svg",
+    "miniaturer/k7-hofte-tilbage-bund.svg",
+    "miniaturer/k7-hofte-tilbage-sticking.svg",
+    "miniaturer/k7-kun-knae-bund.svg",
+    "miniaturer/k7-kun-knae-sticking.svg"
+   ],
+   "mainMod598": [
+    "index.html",
+    "maal-billede.js"
+   ],
+   "o601ModMain": []
+  },
+  "baenk-figurer": {
+   "siteMod291": [],
+   "siteModMain": [
+    "index.html"
+   ],
+   "siteMod601": [
+    "index.html"
+   ],
+   "mainMod598": [],
+   "o601ModMain": []
+  },
+  "tre-loeft": {
+   "siteMod291": [],
+   "siteModMain": [
+    "tre-loeft.js"
+   ],
+   "siteMod601": [
+    "tre-loeft.js"
+   ],
+   "mainMod598": [],
+   "o601ModMain": []
+  },
+  "min-krop": {
+   "siteMod291": [],
+   "siteModMain": [
+    "min-krop.js"
+   ],
+   "siteMod601": [
+    "min-krop.js"
+   ],
+   "mainMod598": [],
+   "o601ModMain": []
+  },
+  "loeft-fejl": {
+   "siteMod291": [],
+   "siteModMain": [],
+   "siteMod601": [],
+   "mainMod598": [],
+   "o601ModMain": []
+  },
+  "squat-figurer": {
+   "siteMod291": [],
+   "siteModMain": [],
+   "siteMod601": [],
+   "mainMod598": [],
+   "o601ModMain": []
+  },
+  "doedloeft-figurer": {
+   "siteMod291": [],
+   "siteModMain": [],
+   "siteMod601": [],
+   "mainMod598": [],
+   "o601ModMain": []
+  },
+  "distMainMod601": ""
+ },
+ "m123": {
+  "main": {
+   "M1felter": {
+    "bp-albue-ud.svg": 3,
+    "bp-hoejt-bryst.svg": 3,
+    "dl-hofte-foerst.svg": 3,
+    "dl-stang-frem.svg": 3,
+    "k7-hofte-tilbage-bund.svg": 0,
+    "k7-hofte-tilbage-sticking.svg": 0,
+    "k7-kun-knae-bund.svg": 0,
+    "k7-kun-knae-sticking.svg": 0
+   },
+   "M1miniatureJsRoert": "",
+   "M2": {
+    "vej105": true,
+    "msk17": true,
+    "albue82": true
+   },
+   "M3roert": ""
+  },
+  "o601": {
+   "M1felter": {
+    "bp-albue-ud.svg": 3,
+    "bp-hoejt-bryst.svg": 3,
+    "dl-hofte-foerst.svg": 3,
+    "dl-stang-frem.svg": 3,
+    "k7-hofte-tilbage-bund.svg": 0,
+    "k7-hofte-tilbage-sticking.svg": 0,
+    "k7-kun-knae-bund.svg": 0,
+    "k7-kun-knae-sticking.svg": 0
+   },
+   "M1miniatureJsRoert": "",
+   "M2": {
+    "vej105": true,
+    "msk17": true,
+    "albue82": true
+   },
+   "M3roert": ""
+  }
+ },
+ "gem": [
+  {
+   "rod": "m599",
+   "bredde": 390,
+   "forslag": "maal-dl-gulv-uge-1-doedloeft.png",
+   "bytes": 234779,
+   "bredde_px": 1200,
+   "hoejde_px": 1629,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "IEND"
+   ],
+   "alleCrcOk": true,
+   "knap": {
+    "tekst": "Gem billedet med tallene",
+    "w": 196,
+    "h": 44,
+    "note": "Et PNG med billedet, modellen, tabellen og grænserne gemmes på din egen enhed, så du kan sende det til atleten. Intet sendes herfra."
+   },
+   "sidensTabel": [
+    [
+     "Torso fra lodretModellens ryg er ét stift stykke og stod ved gulvet 8-10° mere vandret end et filmet løft (462, ét løft).",
+     "≈61,2°",
+     "61,2°"
+    ],
+    [
+     "Hoftevinkel",
+     "≈51,1°",
+     "51,1°"
+    ],
+    [
+     "Knævinkel",
+     "≈98,9°",
+     "98,9°"
+    ],
+    [
+     "Skinneben fra lodret",
+     "≈13,3°",
+     "13,3°"
+    ],
+    [
+     "Stangen foran midtfodenModellens tal er dér, hvor krop og stang tilsammen står over midtfoden. Det flytter sig med stangens vægt.",
+     "≈3,0 cm",
+     "4,2 cm"
+    ]
+   ],
+   "indRaekker": [
+    [
+     "Torso fra lodret",
+     "≈ 61,2°",
+     "61,2°"
+    ],
+    [
+     "Hoftevinkel",
+     "≈ 51,1°",
+     "51,1°"
+    ],
+    [
+     "Knævinkel",
+     "≈ 98,9°",
+     "98,9°"
+    ],
+    [
+     "Skinneben fra lodret",
+     "≈ 13,3°",
+     "13,3°"
+    ],
+    [
+     "Stangen foran midtfoden",
+     "≈ 3,0 cm",
+     "4,2 cm"
+    ]
+   ],
+   "tabelEns": true,
+   "noter": [
+    "Skalaen er kroppens længder.",
+    "Grå: modellen, gennemsnitlige proportioner for 180,0 cm og 90,0 kg",
+    "Blå: dine klik i billedet",
+    "≈ ved billedets tal: billedet og modellen er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+    "Stangens plads og skulderen foran stangen er ikke med som modeltal: modellen sætter stangen 3 cm foran midtfoden ved gulvet og over midtfoden ved knæhøjde og skulderen 5 og 12 cm foran stangen. Figuren viser de valg. Ingen tal i Nm: størrelsen er modellens.",
+    "Modellen regner med kroppens længder, masse, balance og momenter. Den viser ikke muskler. Billedets tal er klik i ét foto, ikke en måling af leddene."
+   ],
+   "titel": "Målt i billedet: dødløft, ved gulvet",
+   "billedTekster": [
+    "Billedet med dine klik (blå)",
+    "Modellen i samme fase, skala og lodlinje"
+   ],
+   "synligKrop": {
+    "hoejde": true,
+    "vaegt": true
+   },
+   "enTr": null,
+   "net": 0,
+   "lagerFoer": {
+    "local": [],
+    "session": []
+   },
+   "lagerEfter": {
+    "local": [],
+    "session": []
+   },
+   "jsFejl": []
+  },
+  {
+   "rod": "m599",
+   "bredde": 1280,
+   "forslag": "maal-dl-gulv-uge-1-doedloeft.png",
+   "bytes": 240921,
+   "bredde_px": 1200,
+   "hoejde_px": 1629,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "IEND"
+   ],
+   "alleCrcOk": true,
+   "knap": {
+    "tekst": "Gem billedet med tallene",
+    "w": 196,
+    "h": 44,
+    "note": "Et PNG med billedet, modellen, tabellen og grænserne gemmes på din egen enhed, så du kan sende det til atleten. Intet sendes herfra."
+   },
+   "sidensTabel": [
+    [
+     "Torso fra lodretModellens ryg er ét stift stykke og stod ved gulvet 8-10° mere vandret end et filmet løft (462, ét løft).",
+     "≈61,2°",
+     "61,2°"
+    ],
+    [
+     "Hoftevinkel",
+     "≈51,1°",
+     "51,1°"
+    ],
+    [
+     "Knævinkel",
+     "≈98,9°",
+     "98,9°"
+    ],
+    [
+     "Skinneben fra lodret",
+     "≈13,3°",
+     "13,3°"
+    ],
+    [
+     "Stangen foran midtfodenModellens tal er dér, hvor krop og stang tilsammen står over midtfoden. Det flytter sig med stangens vægt.",
+     "≈3,0 cm",
+     "4,2 cm"
+    ]
+   ],
+   "indRaekker": [
+    [
+     "Torso fra lodret",
+     "≈ 61,2°",
+     "61,2°"
+    ],
+    [
+     "Hoftevinkel",
+     "≈ 51,1°",
+     "51,1°"
+    ],
+    [
+     "Knævinkel",
+     "≈ 98,9°",
+     "98,9°"
+    ],
+    [
+     "Skinneben fra lodret",
+     "≈ 13,3°",
+     "13,3°"
+    ],
+    [
+     "Stangen foran midtfoden",
+     "≈ 3,0 cm",
+     "4,2 cm"
+    ]
+   ],
+   "tabelEns": true,
+   "noter": [
+    "Skalaen er kroppens længder.",
+    "Grå: modellen, gennemsnitlige proportioner for 180,0 cm og 90,0 kg",
+    "Blå: dine klik i billedet",
+    "≈ ved billedets tal: billedet og modellen er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+    "Stangens plads og skulderen foran stangen er ikke med som modeltal: modellen sætter stangen 3 cm foran midtfoden ved gulvet og over midtfoden ved knæhøjde og skulderen 5 og 12 cm foran stangen. Figuren viser de valg. Ingen tal i Nm: størrelsen er modellens.",
+    "Modellen regner med kroppens længder, masse, balance og momenter. Den viser ikke muskler. Billedets tal er klik i ét foto, ikke en måling af leddene."
+   ],
+   "titel": "Målt i billedet: dødløft, ved gulvet",
+   "billedTekster": [
+    "Billedet med dine klik (blå)",
+    "Modellen i samme fase, skala og lodlinje"
+   ],
+   "synligKrop": {
+    "hoejde": true,
+    "vaegt": true
+   },
+   "enTr": null,
+   "net": 0,
+   "lagerFoer": {
+    "local": [],
+    "session": []
+   },
+   "lagerEfter": {
+    "local": [],
+    "session": []
+   },
+   "jsFejl": []
+  },
+  {
+   "rod": "m601",
+   "bredde": 390,
+   "forslag": "maal-dl-gulv-uge-1-doedloeft.png",
+   "bytes": 246996,
+   "bredde_px": 1200,
+   "hoejde_px": 1629,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "enTr",
+    "IEND"
+   ],
+   "alleCrcOk": true,
+   "knap": {
+    "tekst": "Gem billedet med tallene",
+    "w": 196,
+    "h": 44,
+    "note": "Et PNG med billedet, modellen, tabellen og grænserne gemmes på din egen enhed, så du kan sende det til atleten. Intet sendes herfra. Filen har også målingen i sig (billedet, klikkene, fasen, højden og vægten): åbn den her igen med Vælg billede, så står klikkene, som da du gemte. En chat-app, der komprimerer billedet, smider målingen væk; gem selve filen."
+   },
+   "sidensTabel": [
+    [
+     "Torso fra lodretModellens ryg er ét stift stykke og stod ved gulvet 8-10° mere vandret end et filmet løft (462, ét løft).",
+     "≈61,2°",
+     "61,2°"
+    ],
+    [
+     "Hoftevinkel",
+     "≈51,1°",
+     "51,1°"
+    ],
+    [
+     "Knævinkel",
+     "≈98,9°",
+     "98,9°"
+    ],
+    [
+     "Skinneben fra lodret",
+     "≈13,3°",
+     "13,3°"
+    ],
+    [
+     "Stangen foran midtfodenModellens tal er dér, hvor krop og stang tilsammen står over midtfoden. Det flytter sig med stangens vægt.",
+     "≈3,0 cm",
+     "4,2 cm"
+    ]
+   ],
+   "indRaekker": [
+    [
+     "Torso fra lodret",
+     "≈ 61,2°",
+     "61,2°"
+    ],
+    [
+     "Hoftevinkel",
+     "≈ 51,1°",
+     "51,1°"
+    ],
+    [
+     "Knævinkel",
+     "≈ 98,9°",
+     "98,9°"
+    ],
+    [
+     "Skinneben fra lodret",
+     "≈ 13,3°",
+     "13,3°"
+    ],
+    [
+     "Stangen foran midtfoden",
+     "≈ 3,0 cm",
+     "4,2 cm"
+    ]
+   ],
+   "tabelEns": true,
+   "noter": [
+    "Skalaen er kroppens længder.",
+    "Grå: modellen, gennemsnitlige proportioner for 180,0 cm og 90,0 kg",
+    "Blå: dine klik i billedet",
+    "≈ ved billedets tal: billedet og modellen er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+    "Stangens plads og skulderen foran stangen er ikke med som modeltal: modellen sætter stangen 3 cm foran midtfoden ved gulvet og over midtfoden ved knæhøjde og skulderen 5 og 12 cm foran stangen. Figuren viser de valg. Ingen tal i Nm: størrelsen er modellens.",
+    "Modellen regner med kroppens længder, masse, balance og momenter. Den viser ikke muskler. Billedets tal er klik i ét foto, ikke en måling af leddene."
+   ],
+   "titel": "Målt i billedet: dødløft, ved gulvet",
+   "billedTekster": [
+    "Billedet med dine klik (blå)",
+    "Modellen i samme fase, skala og lodlinje"
+   ],
+   "synligKrop": {
+    "hoejde": true,
+    "vaegt": true
+   },
+   "enTr": {
+    "magi": "entropi-maal-billede",
+    "crcOk": true,
+    "bytes": 12205,
+    "noegler": [
+     "v",
+     "gemt",
+     "faelles",
+     "pladser"
+    ],
+    "faelles": {
+     "faseId": "dl-gulv",
+     "sumo": false,
+     "haele": "",
+     "hoejde": "180",
+     "vaegt": "90",
+     "skiveCm": 45,
+     "skalaValg": null,
+     "stangKg": 200,
+     "navSkoennet": false
+    },
+    "gemt": "2026-09-28",
+    "plads": [
+     {
+      "type": "image/jpeg",
+      "w": 1000,
+      "h": 1400,
+      "navn": "Uge 1 dødløft.png",
+      "punkter": 7,
+      "runder": [],
+      "retning": null
+     }
+    ],
+    "jpeg": [
+     {
+      "n": 11611,
+      "soi": true,
+      "dele": [
+       {
+        "m": "e0",
+        "id": "JFIF.\u0001"
+       },
+       {
+        "m": "e2",
+        "id": "ICC_PR"
+       },
+       {
+        "m": "db",
+        "id": ".\u0003\u0002\u0002\u0002\u0002"
+       },
+       {
+        "m": "db",
+        "id": "\u0001\u0003\u0003\u0003\u0004\u0003"
+       },
+       {
+        "m": "c0",
+        "id": "\b\u0005x\u0003è\u0003"
+       },
+       {
+        "m": "c4",
+        "id": ".\u0001\u0001.\u0003\u0001"
+       },
+       {
+        "m": "c4",
+        "id": "\u0010\u0001...\u000b"
+       },
+       {
+        "m": "c4",
+        "id": "\u0001\u0001.\u0002\u0003\u0001"
+       },
+       {
+        "m": "c4",
+        "id": "\u0011\u0001.\u0001\u0001\u0004"
+       }
+      ]
+     }
+    ]
+   },
+   "net": 0,
+   "lagerFoer": {
+    "local": [],
+    "session": []
+   },
+   "lagerEfter": {
+    "local": [],
+    "session": []
+   },
+   "jsFejl": []
+  },
+  {
+   "rod": "m601",
+   "bredde": 1280,
+   "forslag": "maal-dl-gulv-uge-1-doedloeft.png",
+   "bytes": 253138,
+   "bredde_px": 1200,
+   "hoejde_px": 1629,
+   "dele": [
+    "IHDR",
+    "IDAT",
+    "enTr",
+    "IEND"
+   ],
+   "alleCrcOk": true,
+   "knap": {
+    "tekst": "Gem billedet med tallene",
+    "w": 196,
+    "h": 44,
+    "note": "Et PNG med billedet, modellen, tabellen og grænserne gemmes på din egen enhed, så du kan sende det til atleten. Intet sendes herfra. Filen har også målingen i sig (billedet, klikkene, fasen, højden og vægten): åbn den her igen med Vælg billede, så står klikkene, som da du gemte. En chat-app, der komprimerer billedet, smider målingen væk; gem selve filen."
+   },
+   "sidensTabel": [
+    [
+     "Torso fra lodretModellens ryg er ét stift stykke og stod ved gulvet 8-10° mere vandret end et filmet løft (462, ét løft).",
+     "≈61,2°",
+     "61,2°"
+    ],
+    [
+     "Hoftevinkel",
+     "≈51,1°",
+     "51,1°"
+    ],
+    [
+     "Knævinkel",
+     "≈98,9°",
+     "98,9°"
+    ],
+    [
+     "Skinneben fra lodret",
+     "≈13,3°",
+     "13,3°"
+    ],
+    [
+     "Stangen foran midtfodenModellens tal er dér, hvor krop og stang tilsammen står over midtfoden. Det flytter sig med stangens vægt.",
+     "≈3,0 cm",
+     "4,2 cm"
+    ]
+   ],
+   "indRaekker": [
+    [
+     "Torso fra lodret",
+     "≈ 61,2°",
+     "61,2°"
+    ],
+    [
+     "Hoftevinkel",
+     "≈ 51,1°",
+     "51,1°"
+    ],
+    [
+     "Knævinkel",
+     "≈ 98,9°",
+     "98,9°"
+    ],
+    [
+     "Skinneben fra lodret",
+     "≈ 13,3°",
+     "13,3°"
+    ],
+    [
+     "Stangen foran midtfoden",
+     "≈ 3,0 cm",
+     "4,2 cm"
+    ]
+   ],
+   "tabelEns": true,
+   "noter": [
+    "Skalaen er kroppens længder.",
+    "Grå: modellen, gennemsnitlige proportioner for 180,0 cm og 90,0 kg",
+    "Blå: dine klik i billedet",
+    "≈ ved billedets tal: billedet og modellen er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+    "Stangens plads og skulderen foran stangen er ikke med som modeltal: modellen sætter stangen 3 cm foran midtfoden ved gulvet og over midtfoden ved knæhøjde og skulderen 5 og 12 cm foran stangen. Figuren viser de valg. Ingen tal i Nm: størrelsen er modellens.",
+    "Modellen regner med kroppens længder, masse, balance og momenter. Den viser ikke muskler. Billedets tal er klik i ét foto, ikke en måling af leddene."
+   ],
+   "titel": "Målt i billedet: dødløft, ved gulvet",
+   "billedTekster": [
+    "Billedet med dine klik (blå)",
+    "Modellen i samme fase, skala og lodlinje"
+   ],
+   "synligKrop": {
+    "hoejde": true,
+    "vaegt": true
+   },
+   "enTr": {
+    "magi": "entropi-maal-billede",
+    "crcOk": true,
+    "bytes": 12205,
+    "noegler": [
+     "v",
+     "gemt",
+     "faelles",
+     "pladser"
+    ],
+    "faelles": {
+     "faseId": "dl-gulv",
+     "sumo": false,
+     "haele": "",
+     "hoejde": "180",
+     "vaegt": "90",
+     "skiveCm": 45,
+     "skalaValg": null,
+     "stangKg": 200,
+     "navSkoennet": false
+    },
+    "gemt": "2026-09-28",
+    "plads": [
+     {
+      "type": "image/jpeg",
+      "w": 1000,
+      "h": 1400,
+      "navn": "Uge 1 dødløft.png",
+      "punkter": 7,
+      "runder": [],
+      "retning": null
+     }
+    ],
+    "jpeg": [
+     {
+      "n": 11611,
+      "soi": true,
+      "dele": [
+       {
+        "m": "e0",
+        "id": "JFIF.\u0001"
+       },
+       {
+        "m": "e2",
+        "id": "ICC_PR"
+       },
+       {
+        "m": "db",
+        "id": ".\u0003\u0002\u0002\u0002\u0002"
+       },
+       {
+        "m": "db",
+        "id": "\u0001\u0003\u0003\u0003\u0004\u0003"
+       },
+       {
+        "m": "c0",
+        "id": "\b\u0005x\u0003è\u0003"
+       },
+       {
+        "m": "c4",
+        "id": ".\u0001\u0001.\u0003\u0001"
+       },
+       {
+        "m": "c4",
+        "id": "\u0010\u0001...\u000b"
+       },
+       {
+        "m": "c4",
+        "id": "\u0001\u0001.\u0002\u0003\u0001"
+       },
+       {
+        "m": "c4",
+        "id": "\u0011\u0001.\u0001\u0001\u0004"
+       }
+      ]
+     }
+    ]
+   },
+   "net": 0,
+   "lagerFoer": {
+    "local": [],
+    "session": []
+   },
+   "lagerEfter": {
+    "local": [],
+    "session": []
+   },
+   "jsFejl": []
+  }
+ ],
+ "aaben": [
+  {
+   "bredde": 390,
+   "fase": "dl-gulv",
+   "sumo": false,
+   "hoejde": "180",
+   "vaegt": "90",
+   "kg": "200",
+   "punkter": {
+    "stang": {
+     "x": 609,
+     "y": 1232.5
+    },
+    "midtfod": {
+     "x": 600,
+     "y": 1300
+    },
+    "ankel": {
+     "x": 579.48,
+     "y": 1278.94
+    },
+    "knae": {
+     "x": 610.1510146676252,
+     "y": 1149.6892574131261
+    },
+    "hofte": {
+     "x": 487.7250424297157,
+     "y": 1099.5377736703435
+    },
+    "skulder": {
+     "x": 624,
+     "y": 1024.6004242428571
+    },
+    "skalaA": {
+     "x": 609,
+     "y": 1165
+    }
+   },
+   "w": 1000,
+   "h": 1400,
+   "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+   "navn": "Billede: Uge 1 dødløft.png (kun i din browser)",
+   "rul": 0,
+   "tabelEns": true,
+   "punkterEns": true,
+   "jsFejl": [],
+   "lager": {
+    "local": [],
+    "session": []
+   }
+  },
+  {
+   "bredde": 1280,
+   "fase": "dl-gulv",
+   "sumo": false,
+   "hoejde": "180",
+   "vaegt": "90",
+   "kg": "200",
+   "punkter": {
+    "stang": {
+     "x": 609,
+     "y": 1232.5
+    },
+    "midtfod": {
+     "x": 600,
+     "y": 1300
+    },
+    "ankel": {
+     "x": 579.48,
+     "y": 1278.94
+    },
+    "knae": {
+     "x": 610.1510146676252,
+     "y": 1149.6892574131261
+    },
+    "hofte": {
+     "x": 487.7250424297157,
+     "y": 1099.5377736703435
+    },
+    "skulder": {
+     "x": 624,
+     "y": 1024.6004242428571
+    },
+    "skalaA": {
+     "x": 609,
+     "y": 1165
+    }
+   },
+   "w": 1000,
+   "h": 1400,
+   "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+   "navn": "Billede: Uge 1 dødløft.png (kun i din browser)",
+   "rul": 0,
+   "tabelEns": true,
+   "punkterEns": true,
+   "jsFejl": [],
+   "lager": {
+    "local": [],
+    "session": []
+   }
+  }
+ ],
+ "gen": {
+  "gen": [
+   {
+    "n": 1,
+    "jpeg": 11651,
+    "fil": 254958,
+    "punkterEns": true,
+    "afvigFraGen1": 0,
+    "maxAfvig": 0
+   },
+   {
+    "n": 2,
+    "jpeg": 11695,
+    "fil": 255171,
+    "punkterEns": true,
+    "afvigFraGen1": 0.007,
+    "maxAfvig": 5
+   },
+   {
+    "n": 3,
+    "jpeg": 11712,
+    "fil": 255397,
+    "punkterEns": true,
+    "afvigFraGen1": 0.011,
+    "maxAfvig": 7
+   },
+   {
+    "n": 4,
+    "jpeg": 11703,
+    "fil": 255422,
+    "punkterEns": true,
+    "afvigFraGen1": 0.015,
+    "maxAfvig": 9
+   },
+   {
+    "n": 5,
+    "jpeg": 11704,
+    "fil": 255636,
+    "punkterEns": true,
+    "afvigFraGen1": 0.016,
+    "maxAfvig": 9
+   },
+   {
+    "n": 6,
+    "jpeg": 11701,
+    "fil": 255818,
+    "punkterEns": true,
+    "afvigFraGen1": 0.018,
+    "maxAfvig": 10
+   },
+   {
+    "n": 7,
+    "jpeg": 11710,
+    "fil": 255801,
+    "punkterEns": true,
+    "afvigFraGen1": 0.02,
+    "maxAfvig": 10
+   },
+   {
+    "n": 8,
+    "jpeg": 11711,
+    "fil": 255800,
+    "punkterEns": true,
+    "afvigFraGen1": 0.021,
+    "maxAfvig": 12
+   }
+  ],
+  "jsFejl": []
+ },
+ "exif": {
+  "kildeHarExif": true,
+  "gemtJpegDele": [
+   {
+    "m": "e0",
+    "id": "JFIF.\u0001"
+   },
+   {
+    "m": "e2",
+    "id": "ICC_PR"
+   },
+   {
+    "m": "db",
+    "id": ".\u0003\u0002\u0002\u0002\u0002"
+   },
+   {
+    "m": "db",
+    "id": "\u0001\u0003\u0003\u0003\u0004\u0003"
+   },
+   {
+    "m": "c0",
+    "id": "\b\u0005x\u0003è\u0003"
+   },
+   {
+    "m": "c4",
+    "id": ".\u0001\u0001..."
+   },
+   {
+    "m": "c4",
+    "id": "\u0010\u0001...."
+   },
+   {
+    "m": "c4",
+    "id": "\u0001\u0001\u0001\u0001.."
+   },
+   {
+    "m": "c4",
+    "id": "\u0011\u0001...."
+   }
+  ],
+  "maerkeIFil": false,
+  "jsFejl": []
+ },
+ "stor": [
+  {
+   "w": 4032,
+   "h": 3024,
+   "fil": 6882266,
+   "jpeg": 6212215,
+   "gemtW": 4032,
+   "gemtH": 3024,
+   "msGem": 402,
+   "tabelEns": true,
+   "foer": [
+    "Torso fra lodretModellens ryg er ét stift stykke og stod ved gulvet 8-10° mere vandret end et filmet løft (462, ét løft). ≈61,2°",
+    "Hoftevinkel ≈51,1°",
+    "Knævinkel ≈98,9°",
+    "Skinneben fra lodret ≈13,3°",
+    "Stangen foran midtfodenModellens tal er dér, hvor krop og stang tilsammen står over midtfoden. Det flytter sig med stangens vægt. ≈3,0 cm"
+   ],
+   "efter": [
+    "Torso fra lodretModellens ryg er ét stift stykke og stod ved gulvet 8-10° mere vandret end et filmet løft (462, ét løft). ≈61,2°",
+    "Hoftevinkel ≈51,1°",
+    "Knævinkel ≈98,9°",
+    "Skinneben fra lodret ≈13,3°",
+    "Stangen foran midtfodenModellens tal er dér, hvor krop og stang tilsammen står over midtfoden. Det flytter sig med stangens vægt. ≈3,0 cm"
+   ],
+   "jsFejl": []
+  },
+  {
+   "w": 6000,
+   "h": 4000,
+   "fil": 7709767,
+   "jpeg": 7099094,
+   "gemtW": 4899,
+   "gemtH": 3266,
+   "msGem": 685,
+   "tabelEns": true,
+   "foer": [
+    "Torso fra lodretModellens ryg er ét stift stykke og stod ved gulvet 8-10° mere vandret end et filmet løft (462, ét løft). ≈61,2°",
+    "Hoftevinkel ≈51,1°",
+    "Knævinkel ≈98,9°",
+    "Skinneben fra lodret ≈13,3°",
+    "Stangen foran midtfodenModellens tal er dér, hvor krop og stang tilsammen står over midtfoden. Det flytter sig med stangens vægt. ≈3,0 cm"
+   ],
+   "efter": [
+    "Torso fra lodretModellens ryg er ét stift stykke og stod ved gulvet 8-10° mere vandret end et filmet løft (462, ét løft). ≈61,2°",
+    "Hoftevinkel ≈51,1°",
+    "Knævinkel ≈98,9°",
+    "Skinneben fra lodret ≈13,3°",
+    "Stangen foran midtfodenModellens tal er dér, hvor krop og stang tilsammen står over midtfoden. Det flytter sig med stangens vægt. ≈3,0 cm"
+   ],
+   "jsFejl": []
+  }
+ ],
+ "fjendtlig": [
+  {
+   "xss": null,
+   "injiceret": 0,
+   "foertekst": "Før",
+   "navn": "Billede: fjendtlig-oedelagt-crc.png (kun i din browser)",
+   "note": null,
+   "punkter": 0,
+   "w": 1200,
+   "h": 1629,
+   "hoejde": "",
+   "vaegt": "",
+   "tabel": 0,
+   "heapMB": 3.8,
+   "variant": "oedelagt-crc",
+   "ms": 1252,
+   "jsFejl": []
+  },
+  {
+   "xss": null,
+   "injiceret": 0,
+   "foertekst": "Før",
+   "navn": "Billede: fjendtlig-afkortet.png (kun i din browser)",
+   "note": null,
+   "punkter": 0,
+   "w": 1200,
+   "h": 1629,
+   "hoejde": "",
+   "vaegt": "",
+   "tabel": 0,
+   "heapMB": 4.2,
+   "variant": "afkortet",
+   "ms": 1242,
+   "jsFejl": []
+  },
+  {
+   "xss": null,
+   "injiceret": 0,
+   "foertekst": "Før",
+   "navn": "Billede: img src=x onerror=\"window.__xss=1\"\"'&amp;buge 1/b (kun i din browser)",
+   "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+   "punkter": 7,
+   "w": 1000,
+   "h": 1400,
+   "hoejde": "180",
+   "vaegt": "90",
+   "tabel": 5,
+   "heapMB": 3.9,
+   "variant": "navn-html",
+   "ms": 1238,
+   "jsFejl": []
+  },
+  {
+   "xss": null,
+   "injiceret": 0,
+   "foertekst": "Før",
+   "navn": "Billede: Uge 1 dødløft.png (kun i din browser)",
+   "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+   "punkter": 7,
+   "w": 1000,
+   "h": 1400,
+   "hoejde": "",
+   "vaegt": "",
+   "tabel": 5,
+   "heapMB": 3.9,
+   "variant": "hoejde-html",
+   "ms": 1239,
+   "jsFejl": []
+  },
+  {
+   "xss": null,
+   "injiceret": 0,
+   "foertekst": "Før",
+   "navn": "Billede: Uge 1 dødløft.png (kun i din browser)",
+   "note": "Gemt måling åbnet (gemt 45.  2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+   "punkter": 7,
+   "w": 1000,
+   "h": 1400,
+   "hoejde": "180",
+   "vaegt": "90",
+   "tabel": 5,
+   "heapMB": 3.9,
+   "variant": "dato-13-45",
+   "ms": 1246,
+   "jsFejl": []
+  },
+  {
+   "xss": null,
+   "injiceret": 0,
+   "foertekst": "Før",
+   "navn": "Billede: Uge 1 dødløft.png (kun i din browser)",
+   "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+   "punkter": 7,
+   "w": 1000,
+   "h": 1400,
+   "hoejde": "180",
+   "vaegt": "90",
+   "tabel": 5,
+   "heapMB": 3.9,
+   "variant": "forkert-stoerrelse",
+   "ms": 1239,
+   "jsFejl": []
+  },
+  {
+   "xss": null,
+   "injiceret": 0,
+   "foertekst": "Før",
+   "navn": "Billede: Uge 1 dødløft.png (kun i din browser)",
+   "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+   "punkter": 7,
+   "w": 8000,
+   "h": 8000,
+   "hoejde": "180",
+   "vaegt": "90",
+   "tabel": 5,
+   "heapMB": 4,
+   "variant": "andet-billede-8000",
+   "ms": 1381,
+   "jsFejl": []
+  },
+  {
+   "xss": null,
+   "injiceret": 0,
+   "foertekst": "Før",
+   "navn": "Billede: fjendtlig-type-html.png (kun i din browser)",
+   "note": null,
+   "punkter": 0,
+   "w": 1200,
+   "h": 1629,
+   "hoejde": "",
+   "vaegt": "",
+   "tabel": 0,
+   "heapMB": 4.4,
+   "variant": "type-html",
+   "ms": 1242,
+   "jsFejl": []
+  },
+  {
+   "xss": null,
+   "injiceret": 0,
+   "foertekst": "Før",
+   "navn": "Billede: fjendtlig-version-2.png (kun i din browser)",
+   "note": null,
+   "punkter": 0,
+   "w": 1200,
+   "h": 1629,
+   "hoejde": "",
+   "vaegt": "",
+   "tabel": 0,
+   "heapMB": 3.8,
+   "variant": "version-2",
+   "ms": 1242,
+   "jsFejl": []
+  }
+ ],
+ "foerEfter": [
+  {
+   "bredde": 390,
+   "foerNote": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+   "foer1": {
+    "foer": "Før: Uge 1 dødløft.png (gemt 28. sep. 2026)",
+    "efter": "Efter: Uge 8 dødløft.png",
+    "tabel": [
+     [
+      "Torso fra lodrethofte til skulder",
+      "61,2°",
+      "68,0°",
+      "≈+6,9°grænse 8,0°"
+     ],
+     [
+      "Hoftevinkelskulder-hofte-knæ, 180° = strakt",
+      "51,1°",
+      "51,8°",
+      "≈+0,7°grænse 11,0°"
+     ],
+     [
+      "Knævinkelhofte-knæ-ankel, 180° = strakt",
+      "98,9°",
+      "106,5°",
+      "≈+7,5°grænse 10,0°"
+     ],
+     [
+      "Skinneben fra lodret+ = knæet foran anklen",
+      "13,3°",
+      "13,3°",
+      "≈0,0°grænse 5,0°"
+     ],
+     [
+      "Stangen foran midtfodenvandret; − = bag midtfoden",
+      "3,0 cm",
+      "3,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Vandret afstand stang–hoftestangens lodlinje til hoften",
+      "40,4 cm",
+      "40,4 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Skulderen foran stangenvandret",
+      "5,0 cm",
+      "5,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Hoftens højde over gulvetlodret, hoften over midtfoden",
+      "66,8 cm",
+      "73,5 cm",
+      "≈+6,6 cmgrænse 7,0 cm"
+     ]
+    ],
+    "saetning": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det",
+    "byt": true
+   },
+   "byttet": {
+    "foer": "Før: Uge 8 dødløft.png",
+    "efter": "Efter: Uge 1 dødløft.png (gemt 28. sep. 2026)",
+    "tabel": [
+     [
+      "Torso fra lodrethofte til skulder",
+      "68,0°",
+      "61,2°",
+      "≈−6,9°grænse 8,0°"
+     ],
+     [
+      "Hoftevinkelskulder-hofte-knæ, 180° = strakt",
+      "51,8°",
+      "51,1°",
+      "≈−0,7°grænse 11,0°"
+     ],
+     [
+      "Knævinkelhofte-knæ-ankel, 180° = strakt",
+      "106,5°",
+      "98,9°",
+      "≈−7,5°grænse 10,0°"
+     ],
+     [
+      "Skinneben fra lodret+ = knæet foran anklen",
+      "13,3°",
+      "13,3°",
+      "≈0,0°grænse 5,0°"
+     ],
+     [
+      "Stangen foran midtfodenvandret; − = bag midtfoden",
+      "3,0 cm",
+      "3,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Vandret afstand stang–hoftestangens lodlinje til hoften",
+      "40,4 cm",
+      "40,4 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Skulderen foran stangenvandret",
+      "5,0 cm",
+      "5,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Hoftens højde over gulvetlodret, hoften over midtfoden",
+      "73,5 cm",
+      "66,8 cm",
+      "≈−6,6 cmgrænse 7,0 cm"
+     ]
+    ],
+    "saetning": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det",
+    "byt": true
+   },
+   "tilbage": {
+    "foer": "Før: Uge 1 dødløft.png (gemt 28. sep. 2026)",
+    "efter": "Efter: Uge 8 dødløft.png",
+    "tabel": [
+     [
+      "Torso fra lodrethofte til skulder",
+      "61,2°",
+      "68,0°",
+      "≈+6,9°grænse 8,0°"
+     ],
+     [
+      "Hoftevinkelskulder-hofte-knæ, 180° = strakt",
+      "51,1°",
+      "51,8°",
+      "≈+0,7°grænse 11,0°"
+     ],
+     [
+      "Knævinkelhofte-knæ-ankel, 180° = strakt",
+      "98,9°",
+      "106,5°",
+      "≈+7,5°grænse 10,0°"
+     ],
+     [
+      "Skinneben fra lodret+ = knæet foran anklen",
+      "13,3°",
+      "13,3°",
+      "≈0,0°grænse 5,0°"
+     ],
+     [
+      "Stangen foran midtfodenvandret; − = bag midtfoden",
+      "3,0 cm",
+      "3,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Vandret afstand stang–hoftestangens lodlinje til hoften",
+      "40,4 cm",
+      "40,4 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Skulderen foran stangenvandret",
+      "5,0 cm",
+      "5,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Hoftens højde over gulvetlodret, hoften over midtfoden",
+      "66,8 cm",
+      "73,5 cm",
+      "≈+6,6 cmgrænse 7,0 cm"
+     ]
+    ],
+    "saetning": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det",
+    "byt": true
+   },
+   "hofte": {
+    "foer": [
+     "Torso fra lodrethofte til skulder",
+     "61,2°",
+     "68,0°",
+     "≈+6,9°grænse 8,0°"
+    ],
+    "byttet": [
+     "Torso fra lodrethofte til skulder",
+     "68,0°",
+     "61,2°",
+     "≈−6,9°grænse 8,0°"
+    ]
+   },
+   "fil": {
+    "forslag": "maal-dl-gulv-foer-efter.png",
+    "bytes": 359817,
+    "pladser": [
+     "foer Uge 1 dødløft.png 7",
+     "efter Uge 8 dødløft.png 7"
+    ]
+   },
+   "aabnet": {
+    "note": "Gemt før og efter åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, før 1 runde og efter 1 runde. Klikkene, fasen, højden og vægten står, som da de blev gemt.",
+    "foer": "Før: Uge 1 dødløft.png (gemt 28. sep. 2026)",
+    "efter": "Efter: Uge 8 dødløft.png (gemt 28. sep. 2026)",
+    "tabel": [
+     [
+      "Torso fra lodrethofte til skulder",
+      "61,2°",
+      "68,0°",
+      "≈+6,9°grænse 8,0°"
+     ],
+     [
+      "Hoftevinkelskulder-hofte-knæ, 180° = strakt",
+      "51,1°",
+      "51,8°",
+      "≈+0,7°grænse 11,0°"
+     ],
+     [
+      "Knævinkelhofte-knæ-ankel, 180° = strakt",
+      "98,9°",
+      "106,5°",
+      "≈+7,5°grænse 10,0°"
+     ],
+     [
+      "Skinneben fra lodret+ = knæet foran anklen",
+      "13,3°",
+      "13,3°",
+      "≈0,0°grænse 5,0°"
+     ],
+     [
+      "Stangen foran midtfodenvandret; − = bag midtfoden",
+      "3,0 cm",
+      "3,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Vandret afstand stang–hoftestangens lodlinje til hoften",
+      "40,4 cm",
+      "40,4 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Skulderen foran stangenvandret",
+      "5,0 cm",
+      "5,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Hoftens højde over gulvetlodret, hoften over midtfoden",
+      "66,8 cm",
+      "73,5 cm",
+      "≈+6,6 cmgrænse 7,0 cm"
+     ]
+    ]
+   },
+   "aabnetEns": true,
+   "andenFase": {
+    "note": "Den gemte måling er dødløft, ved gulvet, men før-billedet er squat, bunden. Fasen er fælles for de to, så målingen er ikke åbnet.",
+    "fase": "squat-bund",
+    "efterPunkter": 0,
+    "efterBillede": 0
+   },
+   "jsFejl": []
+  },
+  {
+   "bredde": 1280,
+   "foerNote": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+   "foer1": {
+    "foer": "Før: Uge 1 dødløft.png (gemt 28. sep. 2026)",
+    "efter": "Efter: Uge 8 dødløft.png",
+    "tabel": [
+     [
+      "Torso fra lodrethofte til skulder",
+      "61,2°",
+      "68,0°",
+      "≈+6,9°grænse 8,0°"
+     ],
+     [
+      "Hoftevinkelskulder-hofte-knæ, 180° = strakt",
+      "51,1°",
+      "51,8°",
+      "≈+0,7°grænse 11,0°"
+     ],
+     [
+      "Knævinkelhofte-knæ-ankel, 180° = strakt",
+      "98,9°",
+      "106,5°",
+      "≈+7,5°grænse 10,0°"
+     ],
+     [
+      "Skinneben fra lodret+ = knæet foran anklen",
+      "13,3°",
+      "13,3°",
+      "≈0,0°grænse 5,0°"
+     ],
+     [
+      "Stangen foran midtfodenvandret; − = bag midtfoden",
+      "3,0 cm",
+      "3,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Vandret afstand stang–hoftestangens lodlinje til hoften",
+      "40,4 cm",
+      "40,4 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Skulderen foran stangenvandret",
+      "5,0 cm",
+      "5,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Hoftens højde over gulvetlodret, hoften over midtfoden",
+      "66,8 cm",
+      "73,5 cm",
+      "≈+6,6 cmgrænse 7,0 cm"
+     ]
+    ],
+    "saetning": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det",
+    "byt": true
+   },
+   "byttet": {
+    "foer": "Før: Uge 8 dødløft.png",
+    "efter": "Efter: Uge 1 dødløft.png (gemt 28. sep. 2026)",
+    "tabel": [
+     [
+      "Torso fra lodrethofte til skulder",
+      "68,0°",
+      "61,2°",
+      "≈−6,9°grænse 8,0°"
+     ],
+     [
+      "Hoftevinkelskulder-hofte-knæ, 180° = strakt",
+      "51,8°",
+      "51,1°",
+      "≈−0,7°grænse 11,0°"
+     ],
+     [
+      "Knævinkelhofte-knæ-ankel, 180° = strakt",
+      "106,5°",
+      "98,9°",
+      "≈−7,5°grænse 10,0°"
+     ],
+     [
+      "Skinneben fra lodret+ = knæet foran anklen",
+      "13,3°",
+      "13,3°",
+      "≈0,0°grænse 5,0°"
+     ],
+     [
+      "Stangen foran midtfodenvandret; − = bag midtfoden",
+      "3,0 cm",
+      "3,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Vandret afstand stang–hoftestangens lodlinje til hoften",
+      "40,4 cm",
+      "40,4 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Skulderen foran stangenvandret",
+      "5,0 cm",
+      "5,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Hoftens højde over gulvetlodret, hoften over midtfoden",
+      "73,5 cm",
+      "66,8 cm",
+      "≈−6,6 cmgrænse 7,0 cm"
+     ]
+    ],
+    "saetning": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det",
+    "byt": true
+   },
+   "tilbage": {
+    "foer": "Før: Uge 1 dødløft.png (gemt 28. sep. 2026)",
+    "efter": "Efter: Uge 8 dødløft.png",
+    "tabel": [
+     [
+      "Torso fra lodrethofte til skulder",
+      "61,2°",
+      "68,0°",
+      "≈+6,9°grænse 8,0°"
+     ],
+     [
+      "Hoftevinkelskulder-hofte-knæ, 180° = strakt",
+      "51,1°",
+      "51,8°",
+      "≈+0,7°grænse 11,0°"
+     ],
+     [
+      "Knævinkelhofte-knæ-ankel, 180° = strakt",
+      "98,9°",
+      "106,5°",
+      "≈+7,5°grænse 10,0°"
+     ],
+     [
+      "Skinneben fra lodret+ = knæet foran anklen",
+      "13,3°",
+      "13,3°",
+      "≈0,0°grænse 5,0°"
+     ],
+     [
+      "Stangen foran midtfodenvandret; − = bag midtfoden",
+      "3,0 cm",
+      "3,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Vandret afstand stang–hoftestangens lodlinje til hoften",
+      "40,4 cm",
+      "40,4 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Skulderen foran stangenvandret",
+      "5,0 cm",
+      "5,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Hoftens højde over gulvetlodret, hoften over midtfoden",
+      "66,8 cm",
+      "73,5 cm",
+      "≈+6,6 cmgrænse 7,0 cm"
+     ]
+    ],
+    "saetning": "Forskel = efter minus før. ≈ ved forskellen: inden for målefejlen. Hver række har sin egen grænse, ca. to gange spredningen på forskellen mellem to billeder af samme stilling. Hoften og knæet spreder mest, fordi hoftepunktet sidder i begge vinkler. Før er klikket 1 gang og efter 1 gang; klik hvert billede 3 gange (Klik billedet igen), så bliver grænserne ca. 40 % mindre. Stangens rækker kræver det",
+    "byt": true
+   },
+   "hofte": {
+    "foer": [
+     "Torso fra lodrethofte til skulder",
+     "61,2°",
+     "68,0°",
+     "≈+6,9°grænse 8,0°"
+    ],
+    "byttet": [
+     "Torso fra lodrethofte til skulder",
+     "68,0°",
+     "61,2°",
+     "≈−6,9°grænse 8,0°"
+    ]
+   },
+   "fil": {
+    "forslag": "maal-dl-gulv-foer-efter.png",
+    "bytes": 362468,
+    "pladser": [
+     "foer Uge 1 dødløft.png 7",
+     "efter Uge 8 dødløft.png 7"
+    ]
+   },
+   "aabnet": {
+    "note": "Gemt før og efter åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, før 1 runde og efter 1 runde. Klikkene, fasen, højden og vægten står, som da de blev gemt.",
+    "foer": "Før: Uge 1 dødløft.png (gemt 28. sep. 2026)",
+    "efter": "Efter: Uge 8 dødløft.png (gemt 28. sep. 2026)",
+    "tabel": [
+     [
+      "Torso fra lodrethofte til skulder",
+      "61,2°",
+      "68,0°",
+      "≈+6,9°grænse 8,0°"
+     ],
+     [
+      "Hoftevinkelskulder-hofte-knæ, 180° = strakt",
+      "51,1°",
+      "51,8°",
+      "≈+0,7°grænse 11,0°"
+     ],
+     [
+      "Knævinkelhofte-knæ-ankel, 180° = strakt",
+      "98,9°",
+      "106,5°",
+      "≈+7,5°grænse 10,0°"
+     ],
+     [
+      "Skinneben fra lodret+ = knæet foran anklen",
+      "13,3°",
+      "13,3°",
+      "≈0,0°grænse 5,0°"
+     ],
+     [
+      "Stangen foran midtfodenvandret; − = bag midtfoden",
+      "3,0 cm",
+      "3,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Vandret afstand stang–hoftestangens lodlinje til hoften",
+      "40,4 cm",
+      "40,4 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Skulderen foran stangenvandret",
+      "5,0 cm",
+      "5,0 cm",
+      "0,0 cmkræver samme kameraplads"
+     ],
+     [
+      "Hoftens højde over gulvetlodret, hoften over midtfoden",
+      "66,8 cm",
+      "73,5 cm",
+      "≈+6,6 cmgrænse 7,0 cm"
+     ]
+    ]
+   },
+   "aabnetEns": true,
+   "andenFase": {
+    "note": "Den gemte måling er dødløft, ved gulvet, men før-billedet er squat, bunden. Fasen er fælles for de to, så målingen er ikke åbnet.",
+    "fase": "squat-bund",
+    "efterPunkter": 0,
+    "efterBillede": 0
+   },
+   "jsFejl": []
+  }
+ ],
+ "taster": [
+  {
+   "rod": "m599",
+   "bredde": 1280,
+   "nr": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    4
+   ],
+   "skyder": 5,
+   "hoejdefelt": 5,
+   "udenfor": 5,
+   "shift": 5,
+   "hold": {
+    "fra": 5,
+    "til": 17,
+    "maksKoe": 2
+   },
+   "noteSynlig": true,
+   "efterLuk": [
+    false,
+    false
+   ],
+   "jsFejl": []
+  },
+  {
+   "rod": "m599",
+   "bredde": 390,
+   "nr": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    4
+   ],
+   "skyder": 5,
+   "hoejdefelt": 5,
+   "udenfor": 5,
+   "shift": 5,
+   "hold": {
+    "fra": 5,
+    "til": 15,
+    "maksKoe": 2
+   },
+   "noteSynlig": false,
+   "efterLuk": [
+    false,
+    false
+   ],
+   "jsFejl": []
+  },
+  {
+   "rod": "m601",
+   "bredde": 1280,
+   "nr": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    4
+   ],
+   "skyder": 5,
+   "hoejdefelt": 5,
+   "udenfor": 5,
+   "shift": 5,
+   "hold": {
+    "fra": 5,
+    "til": 17,
+    "maksKoe": 2
+   },
+   "noteSynlig": true,
+   "efterLuk": [
+    false,
+    false
+   ],
+   "jsFejl": []
+  },
+  {
+   "rod": "m601",
+   "bredde": 390,
+   "nr": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    4
+   ],
+   "skyder": 5,
+   "hoejdefelt": 5,
+   "udenfor": 5,
+   "shift": 5,
+   "hold": {
+    "fra": 5,
+    "til": 10,
+    "maksKoe": 2
+   },
+   "noteSynlig": false,
+   "efterLuk": [
+    false,
+    false
+   ],
+   "jsFejl": []
+  }
+ ],
+ "dl": {},
+ "chrome": "154.0.8037.57",
+ "skjult": {
+  "hoejdeSynlig": true,
+  "vaegtSynlig": true,
+  "navnSynligt": false,
+  "noter": [
+   "Skalaen er kroppens længder.",
+   "Grå: modellen, gennemsnitlige proportioner for 180,0 cm og 90,0 kg",
+   "Blå: dine klik i billedet",
+   "≈ ved billedets tal: billedet og modellen er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+   "Stangens plads og skulderen foran stangen er ikke med som modeltal: modellen sætter stangen 3 cm foran midtfoden ved gulvet og over midtfoden ved knæhøjde og skulderen 5 og 12 cm foran stangen. Figuren viser de valg. Ingen tal i Nm: størrelsen er modellens.",
+   "Modellen regner med kroppens længder, masse, balance og momenter. Den viser ikke muskler. Billedets tal er klik i ét foto, ikke en måling af leddene."
+  ]
+ },
+ "fundFil": {
+  "dato": "Gemt måling åbnet (gemt 45.  2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+  "stoerrelse": {
+   "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+   "w": 1000,
+   "h": 1400,
+   "punkter": 7,
+   "tabel": 5
+  },
+  "stort": {
+   "ms": 1381,
+   "w": 8000,
+   "heap": 4,
+   "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det."
+  }
+ },
+ "eksterne": [],
+ "tjek": [
+  {
+   "hvad": "601 (ee5479f) er merget paa main (207d4ec); dist paa main = dist paa ordre-601; siden 598 (03c929e) er kun maal-billede/index.html og maal-billede.js aendret i dist",
+   "ok": true,
+   "data": {
+    "nye": [
+     "207d4ec merge: ordre-601 (ORDRE 601, Yantra)",
+     "ee5479f Ordre 601, commit 3: skaermbilleder 390 og 1280, verificering, rapport dag 90",
+     "37bfac6 Ordre 601, commit 2: foer og efter fra en gemt fil, datoen ved billedet, Byt foer og efter",
+     "d80f167 Ordre 601, commit 1: det gemte billede kan aabnes igen (maalingen ligger i PNG'et)"
+    ],
+    "maal": [
+     "index.html",
+     "maal-billede.js"
+    ]
+   }
+  },
+  {
+   "hvad": "sitets maal-billede (11c6169) er stadig 580-udgaven (291f5bf); tre-loeft og min-krop er stadig ikke kopieret (W7)",
+   "ok": true,
+   "data": {
+    "maal": [
+     "index.html",
+     "maal-billede.js",
+     "miniaturer/bp-albue-ud.svg",
+     "miniaturer/bp-hoejt-bryst.svg",
+     "miniaturer/dl-hofte-foerst.svg",
+     "miniaturer/dl-stang-frem.svg",
+     "miniaturer/k7-hofte-tilbage-bund.svg",
+     "miniaturer/k7-hofte-tilbage-sticking.svg",
+     "miniaturer/k7-kun-knae-bund.svg",
+     "miniaturer/k7-kun-knae-sticking.svg"
+    ],
+    "treLoeft": [
+     "tre-loeft.js"
+    ],
+    "minKrop": [
+     "min-krop.js"
+    ],
+    "baenk": [
+     "index.html"
+    ]
+   }
+  },
+  {
+   "hvad": "M1 (middel) staar: dødløftets og baenkens fire miniaturer har stadig tre moerke tekstfelter hver, paa main og paa ordre-601 (src/miniature.js og miniaturer/ uroert siden 598)",
+   "ok": true,
+   "data": {
+    "main": {
+     "bp-albue-ud.svg": 3,
+     "bp-hoejt-bryst.svg": 3,
+     "dl-hofte-foerst.svg": 3,
+     "dl-stang-frem.svg": 3,
+     "k7-hofte-tilbage-bund.svg": 0,
+     "k7-hofte-tilbage-sticking.svg": 0,
+     "k7-kun-knae-bund.svg": 0,
+     "k7-kun-knae-sticking.svg": 0
+    },
+    "o601": {
+     "bp-albue-ud.svg": 3,
+     "bp-hoejt-bryst.svg": 3,
+     "dl-hofte-foerst.svg": 3,
+     "dl-stang-frem.svg": 3,
+     "k7-hofte-tilbage-bund.svg": 0,
+     "k7-hofte-tilbage-sticking.svg": 0,
+     "k7-kun-knae-bund.svg": 0,
+     "k7-kun-knae-sticking.svg": 0
+    }
+   }
+  },
+  {
+   "hvad": "M2 (lav) staar: baenkens figurside siger stadig 10,5 / 1,7 / 8,2 cm (main og ordre-601)",
+   "ok": true,
+   "data": {
+    "vej105": true,
+    "msk17": true,
+    "albue82": true
+   }
+  },
+  {
+   "hvad": "M3 (lav) staar: deadlift-animation uroert siden 598",
+   "ok": true
+  },
+  {
+   "hvad": "Gem (den rigtige knap) paa 390 og 1280, 599 og 601: en fil hentes, PNG 1200 px bred, navnet maal-dl-gulv-uge-1-doedloeft.png, alle PNG-deles CRC rigtig",
+   "ok": true,
+   "data": [
+    "m599 390: maal-dl-gulv-uge-1-doedloeft.png 1200x1629 234779 B IHDR,IDAT,IEND",
+    "m599 1280: maal-dl-gulv-uge-1-doedloeft.png 1200x1629 240921 B IHDR,IDAT,IEND",
+    "m601 390: maal-dl-gulv-uge-1-doedloeft.png 1200x1629 246996 B IHDR,IDAT,enTr,IEND",
+    "m601 1280: maal-dl-gulv-uge-1-doedloeft.png 1200x1629 253138 B IHDR,IDAT,enTr,IEND"
+   ]
+  },
+  {
+   "hvad": "det gemte billedes tabel er sidens tabel (samme raekker og tal)",
+   "ok": true,
+   "data": [
+    {
+     "r": "m599 390",
+     "ens": true,
+     "side": [
+      "Torso fra lodretModellens ryg er ét stift stykke og stod ved gulvet 8-10° mere vandret end et filmet løft (462, ét løft). | ≈61,2° | 61,2°",
+      "Hoftevinkel | ≈51,1° | 51,1°",
+      "Knævinkel | ≈98,9° | 98,9°",
+      "Skinneben fra lodret | ≈13,3° | 13,3°",
+      "Stangen foran midtfodenModellens tal er dér, hvor krop og stang tilsammen står over midtfoden. Det flytter sig med stangens vægt. | ≈3,0 cm | 4,2 cm"
+     ],
+     "fil": [
+      "Torso fra lodret | ≈ 61,2° | 61,2°",
+      "Hoftevinkel | ≈ 51,1° | 51,1°",
+      "Knævinkel | ≈ 98,9° | 98,9°",
+      "Skinneben fra lodret | ≈ 13,3° | 13,3°",
+      "Stangen foran midtfoden | ≈ 3,0 cm | 4,2 cm"
+     ]
+    },
+    {
+     "r": "m599 1280",
+     "ens": true,
+     "side": [
+      "Torso fra lodretModellens ryg er ét stift stykke og stod ved gulvet 8-10° mere vandret end et filmet løft (462, ét løft). | ≈61,2° | 61,2°",
+      "Hoftevinkel | ≈51,1° | 51,1°",
+      "Knævinkel | ≈98,9° | 98,9°",
+      "Skinneben fra lodret | ≈13,3° | 13,3°",
+      "Stangen foran midtfodenModellens tal er dér, hvor krop og stang tilsammen står over midtfoden. Det flytter sig med stangens vægt. | ≈3,0 cm | 4,2 cm"
+     ],
+     "fil": [
+      "Torso fra lodret | ≈ 61,2° | 61,2°",
+      "Hoftevinkel | ≈ 51,1° | 51,1°",
+      "Knævinkel | ≈ 98,9° | 98,9°",
+      "Skinneben fra lodret | ≈ 13,3° | 13,3°",
+      "Stangen foran midtfoden | ≈ 3,0 cm | 4,2 cm"
+     ]
+    },
+    {
+     "r": "m601 390",
+     "ens": true,
+     "side": [
+      "Torso fra lodretModellens ryg er ét stift stykke og stod ved gulvet 8-10° mere vandret end et filmet løft (462, ét løft). | ≈61,2° | 61,2°",
+      "Hoftevinkel | ≈51,1° | 51,1°",
+      "Knævinkel | ≈98,9° | 98,9°",
+      "Skinneben fra lodret | ≈13,3° | 13,3°",
+      "Stangen foran midtfodenModellens tal er dér, hvor krop og stang tilsammen står over midtfoden. Det flytter sig med stangens vægt. | ≈3,0 cm | 4,2 cm"
+     ],
+     "fil": [
+      "Torso fra lodret | ≈ 61,2° | 61,2°",
+      "Hoftevinkel | ≈ 51,1° | 51,1°",
+      "Knævinkel | ≈ 98,9° | 98,9°",
+      "Skinneben fra lodret | ≈ 13,3° | 13,3°",
+      "Stangen foran midtfoden | ≈ 3,0 cm | 4,2 cm"
+     ]
+    },
+    {
+     "r": "m601 1280",
+     "ens": true,
+     "side": [
+      "Torso fra lodretModellens ryg er ét stift stykke og stod ved gulvet 8-10° mere vandret end et filmet løft (462, ét løft). | ≈61,2° | 61,2°",
+      "Hoftevinkel | ≈51,1° | 51,1°",
+      "Knævinkel | ≈98,9° | 98,9°",
+      "Skinneben fra lodret | ≈13,3° | 13,3°",
+      "Stangen foran midtfodenModellens tal er dér, hvor krop og stang tilsammen står over midtfoden. Det flytter sig med stangens vægt. | ≈3,0 cm | 4,2 cm"
+     ],
+     "fil": [
+      "Torso fra lodret | ≈ 61,2° | 61,2°",
+      "Hoftevinkel | ≈ 51,1° | 51,1°",
+      "Knævinkel | ≈ 98,9° | 98,9°",
+      "Skinneben fra lodret | ≈ 13,3° | 13,3°",
+      "Stangen foran midtfoden | ≈ 3,0 cm | 4,2 cm"
+     ]
+    }
+   ]
+  },
+  {
+   "hvad": "intet sendes og intet i lageret: 0 netkald, lageret tomt foer og efter Gem, 0 JS-fejl",
+   "ok": true,
+   "data": [
+    {
+     "r": "m599",
+     "b": 390,
+     "net": 0,
+     "lager": {
+      "local": [],
+      "session": []
+     },
+     "f": []
+    },
+    {
+     "r": "m599",
+     "b": 1280,
+     "net": 0,
+     "lager": {
+      "local": [],
+      "session": []
+     },
+     "f": []
+    },
+    {
+     "r": "m601",
+     "b": 390,
+     "net": 0,
+     "lager": {
+      "local": [],
+      "session": []
+     },
+     "f": []
+    },
+    {
+     "r": "m601",
+     "b": 1280,
+     "net": 0,
+     "lager": {
+      "local": [],
+      "session": []
+     },
+     "f": []
+    }
+   ]
+  },
+  {
+   "hvad": "599: filen har kun billedets egne dele (IHDR, IDAT, IEND), ingen maaling",
+   "ok": true,
+   "data": [
+    "IHDR",
+    "IDAT",
+    "IEND"
+   ]
+  },
+  {
+   "hvad": "601: filen har en enTr-del med maalingen (min egen laeser): fase, sumo, haele, hoejde, vaegt, stangens vaegt, skala, billedets navn, datoen og billedet som JPEG",
+   "ok": true,
+   "data": {
+    "faelles": {
+     "faseId": "dl-gulv",
+     "sumo": false,
+     "haele": "",
+     "hoejde": "180",
+     "vaegt": "90",
+     "skiveCm": 45,
+     "skalaValg": null,
+     "stangKg": 200,
+     "navSkoennet": false
+    },
+    "gemt": "2026-09-28",
+    "navn": "Uge 1 dødløft.png",
+    "jpeg": [
+     11611
+    ],
+    "enTrBytes": 12205,
+    "fil": 253138
+   }
+  },
+  {
+   "hvad": "hvad filen baerer, som billedet ikke viser: hoejden og vaegten staar synligt i noterne (180,0 cm og 90,0 kg); skjult er kun datoen, fotoets filnavn og fotoet uden klik",
+   "ok": true,
+   "data": {
+    "hoejdeSynlig": true,
+    "vaegtSynlig": true,
+    "navnSynligt": false,
+    "noter": [
+     "Skalaen er kroppens længder.",
+     "Grå: modellen, gennemsnitlige proportioner for 180,0 cm og 90,0 kg",
+     "Blå: dine klik i billedet",
+     "≈ ved billedets tal: billedet og modellen er inden for målefejlen. Læs kun forskelle over ca. 4° eller 3 cm mellem billedet og modellen: 2 cm fejl i et klik flytter hoften ca. 3°, knæet 4-5° og stangen 2 cm.",
+     "Stangens plads og skulderen foran stangen er ikke med som modeltal: modellen sætter stangen 3 cm foran midtfoden ved gulvet og over midtfoden ved knæhøjde og skulderen 5 og 12 cm foran stangen. Figuren viser de valg. Ingen tal i Nm: størrelsen er modellens.",
+     "Modellen regner med kroppens længder, masse, balance og momenter. Den viser ikke muskler. Billedets tal er klik i ét foto, ikke en måling af leddene."
+    ]
+   }
+  },
+  {
+   "hvad": "601: den gemte fil aabnes igen (390 og 1280): samme klik, fase, hoejde, vaegt, stangens vaegt og samme tabel; noten siger datoen; 0 JS-fejl, lageret tomt",
+   "ok": true,
+   "data": [
+    {
+     "b": 390,
+     "p": true,
+     "t": true,
+     "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det."
+    },
+    {
+     "b": 1280,
+     "p": true,
+     "t": true,
+     "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det."
+    }
+   ]
+  },
+  {
+   "hvad": "601: 8 uger i traek (aabn og gem igen): klikkene staar, og billedet i filen bliver ikke maerkbart daarligere (middel afvigelse fra uge 1 under 2 af 255)",
+   "ok": true,
+   "data": [
+    "1: jpeg 11651 B, afvig 0 (maks 0)",
+    "2: jpeg 11695 B, afvig 0.007 (maks 5)",
+    "3: jpeg 11712 B, afvig 0.011 (maks 7)",
+    "4: jpeg 11703 B, afvig 0.015 (maks 9)",
+    "5: jpeg 11704 B, afvig 0.016 (maks 9)",
+    "6: jpeg 11701 B, afvig 0.018 (maks 10)",
+    "7: jpeg 11710 B, afvig 0.02 (maks 10)",
+    "8: jpeg 11711 B, afvig 0.021 (maks 12)"
+   ]
+  },
+  {
+   "hvad": "601: et fotos EXIF (her en syntetisk GPS-tekst) foelger ikke med ind i den gemte fil; billedet er tegnet om",
+   "ok": true,
+   "data": {
+    "kildeHarExif": true,
+    "gemtJpegDele": [
+     {
+      "m": "e0",
+      "id": "JFIF.\u0001"
+     },
+     {
+      "m": "e2",
+      "id": "ICC_PR"
+     },
+     {
+      "m": "db",
+      "id": ".\u0003\u0002\u0002\u0002\u0002"
+     },
+     {
+      "m": "db",
+      "id": "\u0001\u0003\u0003\u0003\u0004\u0003"
+     },
+     {
+      "m": "c0",
+      "id": "\b\u0005x\u0003è\u0003"
+     },
+     {
+      "m": "c4",
+      "id": ".\u0001\u0001..."
+     },
+     {
+      "m": "c4",
+      "id": "\u0010\u0001...."
+     },
+     {
+      "m": "c4",
+      "id": "\u0001\u0001\u0001\u0001.."
+     },
+     {
+      "m": "c4",
+      "id": "\u0011\u0001...."
+     }
+    ],
+    "maerkeIFil": false,
+    "jsFejl": []
+   }
+  },
+  {
+   "hvad": "601: store fotos: 24 mio. pixels gemmes under Safaris graense (16,7 mio.); tabellen er den samme efter aabning; filens stoerrelse",
+   "ok": true,
+   "data": [
+    "4032x3024: gemt 4032x3024, fil 6.88 MB, 402 ms, tabel ens true; foer Torso fra lodretModellens ryg er ét stift stykke og stod ved gulvet 8-10° mere vandret end et filmet løft (462, ét løft). ≈61,2° / Hoftevinkel ≈51,1° / Knævinkel ≈98,9° / Skinneben fra lodret ≈13,3° / Stangen foran midtfodenModellens tal er dér, hvor krop og stang tilsammen står over midtfoden. Det flytter sig med stangens vægt. ≈3,0 cm; efter Torso fra lodretModellens ryg er ét stift stykke og stod ved gulvet 8-10° mere vandret end et filmet løft (462, ét løft). ≈61,2° / Hoftevinkel ≈51,1° / Knævinkel ≈98,9° / Skinneben fra lodret ≈13,3° / Stangen foran midtfodenModellens tal er dér, hvor krop og stang tilsammen står over midtfoden. Det flytter sig med stangens vægt. ≈3,0 cm",
+    "6000x4000: gemt 4899x3266, fil 7.71 MB, 685 ms, tabel ens true; foer Torso fra lodretModellens ryg er ét stift stykke og stod ved gulvet 8-10° mere vandret end et filmet løft (462, ét løft). ≈61,2° / Hoftevinkel ≈51,1° / Knævinkel ≈98,9° / Skinneben fra lodret ≈13,3° / Stangen foran midtfodenModellens tal er dér, hvor krop og stang tilsammen står over midtfoden. Det flytter sig med stangens vægt. ≈3,0 cm; efter Torso fra lodretModellens ryg er ét stift stykke og stod ved gulvet 8-10° mere vandret end et filmet løft (462, ét løft). ≈61,2° / Hoftevinkel ≈51,1° / Knævinkel ≈98,9° / Skinneben fra lodret ≈13,3° / Stangen foran midtfodenModellens tal er dér, hvor krop og stang tilsammen står over midtfoden. Det flytter sig med stangens vægt. ≈3,0 cm"
+   ]
+  },
+  {
+   "hvad": "601, fjendtlige filer: ingen kode koerer (0 xss), intet HTML sprøjtes ind, navnet vises som tekst uden < >, hoejden afvises",
+   "ok": true,
+   "data": [
+    {
+     "v": "oedelagt-crc",
+     "p": 0,
+     "w": 1200,
+     "jsFejl": 0
+    },
+    {
+     "v": "afkortet",
+     "p": 0,
+     "w": 1200,
+     "jsFejl": 0
+    },
+    {
+     "v": "navn-html",
+     "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. K",
+     "navn": "Billede: img src=x onerror=\"window.__xss=1\"\"'&amp;buge 1/b (kun i din browser)",
+     "p": 7,
+     "w": 1000,
+     "jsFejl": 0
+    },
+    {
+     "v": "hoejde-html",
+     "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. K",
+     "p": 7,
+     "w": 1000,
+     "jsFejl": 0
+    },
+    {
+     "v": "dato-13-45",
+     "note": "Gemt måling åbnet (gemt 45.  2026): dødløft, ved gulvet, 7 klik. Klikk",
+     "p": 7,
+     "w": 1000,
+     "jsFejl": 0
+    },
+    {
+     "v": "forkert-stoerrelse",
+     "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. K",
+     "p": 7,
+     "w": 1000,
+     "jsFejl": 0
+    },
+    {
+     "v": "andet-billede-8000",
+     "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. K",
+     "p": 7,
+     "w": 8000,
+     "jsFejl": 0
+    },
+    {
+     "v": "type-html",
+     "p": 0,
+     "w": 1200,
+     "jsFejl": 0
+    },
+    {
+     "v": "version-2",
+     "p": 0,
+     "w": 1200,
+     "jsFejl": 0
+    }
+   ]
+  },
+  {
+   "hvad": "601: oedelagt CRC og afkortet fil aabnes som et almindeligt billede uden klik (ingen note, ingen JS-fejl)",
+   "ok": true,
+   "data": {
+    "crc": {
+     "xss": null,
+     "injiceret": 0,
+     "foertekst": "Før",
+     "navn": "Billede: fjendtlig-oedelagt-crc.png (kun i din browser)",
+     "note": null,
+     "punkter": 0,
+     "w": 1200,
+     "h": 1629,
+     "hoejde": "",
+     "vaegt": "",
+     "tabel": 0,
+     "heapMB": 3.8,
+     "variant": "oedelagt-crc",
+     "ms": 1252,
+     "jsFejl": []
+    },
+    "afkortet": {
+     "xss": null,
+     "injiceret": 0,
+     "foertekst": "Før",
+     "navn": "Billede: fjendtlig-afkortet.png (kun i din browser)",
+     "note": null,
+     "punkter": 0,
+     "w": 1200,
+     "h": 1629,
+     "hoejde": "",
+     "vaegt": "",
+     "tabel": 0,
+     "heapMB": 4.2,
+     "variant": "afkortet",
+     "ms": 1242,
+     "jsFejl": []
+    }
+   }
+  },
+  {
+   "hvad": "601, laveste slags: en fil med en umulig dato eller et billede, hvis stoerrelse ikke passer med filens tal, aabnes alligevel (kun en fil lavet uden for siden)",
+   "ok": true,
+   "data": {
+    "dato": "Gemt måling åbnet (gemt 45.  2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+    "stoerrelse": {
+     "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det.",
+     "w": 1000,
+     "h": 1400,
+     "punkter": 7,
+     "tabel": 5
+    },
+    "stort": {
+     "ms": 1381,
+     "w": 8000,
+     "heap": 4,
+     "note": "Gemt måling åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, 7 klik. Klikkene, fasen, højden og vægten står, som da den blev gemt. Træk i et punkt for at flytte det."
+    }
+   }
+  },
+  {
+   "hvad": "601: uge 1 fra en gemt fil under Foer: billedteksten har datoen (\"Foer: Uge 1 dødløft.png (gemt 28. sep. 2026)\"), og Byt er slaaet til, naar begge er der",
+   "ok": true,
+   "data": [
+    "390: Før: Uge 1 dødløft.png (gemt 28. sep. 2026) | Efter: Uge 8 dødløft.png",
+    "1280: Før: Uge 1 dødløft.png (gemt 28. sep. 2026) | Efter: Uge 8 dødløft.png"
+   ]
+  },
+  {
+   "hvad": "601: Byt foer og efter vender billedteksterne og forskellens fortegn (hoften), og Byt igen giver det samme som foer",
+   "ok": true,
+   "data": [
+    {
+     "b": 390,
+     "hofte": {
+      "foer": [
+       "Torso fra lodrethofte til skulder",
+       "61,2°",
+       "68,0°",
+       "≈+6,9°grænse 8,0°"
+      ],
+      "byttet": [
+       "Torso fra lodrethofte til skulder",
+       "68,0°",
+       "61,2°",
+       "≈−6,9°grænse 8,0°"
+      ]
+     }
+    },
+    {
+     "b": 1280,
+     "hofte": {
+      "foer": [
+       "Torso fra lodrethofte til skulder",
+       "61,2°",
+       "68,0°",
+       "≈+6,9°grænse 8,0°"
+      ],
+      "byttet": [
+       "Torso fra lodrethofte til skulder",
+       "68,0°",
+       "61,2°",
+       "≈−6,9°grænse 8,0°"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "hvad": "601: Gem foer og efter med tallene giver een fil med begge; aabnet i en ny side staar begge med samme tabel og dato",
+   "ok": true,
+   "data": [
+    {
+     "b": 390,
+     "fil": {
+      "forslag": "maal-dl-gulv-foer-efter.png",
+      "bytes": 359817,
+      "pladser": [
+       "foer Uge 1 dødløft.png 7",
+       "efter Uge 8 dødløft.png 7"
+      ]
+     },
+     "note": "Gemt før og efter åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, før 1 runde og efter 1 runde. Klikkene, fasen, højden og vægten står, som da de blev gemt.",
+     "foer": "Før: Uge 1 dødløft.png (gemt 28. sep. 2026)",
+     "efter": "Efter: Uge 8 dødløft.png (gemt 28. sep. 2026)"
+    },
+    {
+     "b": 1280,
+     "fil": {
+      "forslag": "maal-dl-gulv-foer-efter.png",
+      "bytes": 362468,
+      "pladser": [
+       "foer Uge 1 dødløft.png 7",
+       "efter Uge 8 dødløft.png 7"
+      ]
+     },
+     "note": "Gemt før og efter åbnet (gemt 28. sep. 2026): dødløft, ved gulvet, før 1 runde og efter 1 runde. Klikkene, fasen, højden og vægten står, som da de blev gemt.",
+     "foer": "Før: Uge 1 dødløft.png (gemt 28. sep. 2026)",
+     "efter": "Efter: Uge 8 dødløft.png (gemt 28. sep. 2026)"
+    }
+   ]
+  },
+  {
+   "hvad": "601: en gemt maaling fra en anden fase aabnes ikke ved siden af et billede (noten siger hvorfor, Efter er uroert); 0 JS-fejl",
+   "ok": true,
+   "data": [
+    {
+     "note": "Den gemte måling er dødløft, ved gulvet, men før-billedet er squat, bunden. Fasen er fælles for de to, så målingen er ikke åbnet.",
+     "fase": "squat-bund",
+     "efterPunkter": 0,
+     "efterBillede": 0
+    },
+    {
+     "note": "Den gemte måling er dødløft, ved gulvet, men før-billedet er squat, bunden. Fasen er fælles for de to, så målingen er ikke åbnet.",
+     "fase": "squat-bund",
+     "efterPunkter": 0,
+     "efterBillede": 0
+    }
+   ]
+  },
+  {
+   "hvad": "599: → fem gange og ← en gang er 0,1,2,3,4,5,4 i mit VFR-klip; med skyderen i fokus et billede (5); i hoejdefeltet, paa en knap uden for siden og med Shift intet (main og 601, 1280 og 390)",
+   "ok": true,
+   "data": [
+    "m599 1280: 0,1,2,3,4,5,4 skyder 5 felt 5 ude 5 shift 5",
+    "m599 390: 0,1,2,3,4,5,4 skyder 5 felt 5 ude 5 shift 5",
+    "m601 1280: 0,1,2,3,4,5,4 skyder 5 felt 5 ude 5 shift 5",
+    "m601 390: 0,1,2,3,4,5,4 skyder 5 felt 5 ude 5 shift 5"
+   ]
+  },
+  {
+   "hvad": "599: en holdt tast (12 gentagelser) har hoejst 2 trin i koe og gaar et billede pr. trin; efter Luk er piletasterne sidens egne igen (ikke forhindret); 0 JS-fejl",
+   "ok": true,
+   "data": [
+    {
+     "r": "m599",
+     "b": 1280,
+     "hold": {
+      "fra": 5,
+      "til": 17,
+      "maksKoe": 2
+     },
+     "efterLuk": [
+      false,
+      false
+     ],
+     "note": true
+    },
+    {
+     "r": "m599",
+     "b": 390,
+     "hold": {
+      "fra": 5,
+      "til": 15,
+      "maksKoe": 2
+     },
+     "efterLuk": [
+      false,
+      false
+     ],
+     "note": false
+    },
+    {
+     "r": "m601",
+     "b": 1280,
+     "hold": {
+      "fra": 5,
+      "til": 17,
+      "maksKoe": 2
+     },
+     "efterLuk": [
+      false,
+      false
+     ],
+     "note": true
+    },
+    {
+     "r": "m601",
+     "b": 390,
+     "hold": {
+      "fra": 5,
+      "til": 10,
+      "maksKoe": 2
+     },
+     "efterLuk": [
+      false,
+      false
+     ],
+     "note": false
+    }
+   ]
+  },
+  {
+   "hvad": "alt, siderne proevede at hente udefra, er afbrudt og var kun skrifttypen",
+   "ok": true,
+   "data": []
+  }
+ ]
+}

@@ -1,0 +1,2746 @@
+{
+ "spil": "bb5c678",
+ "ref": "ordre-602",
+ "tag": "o602",
+ "seed": 731,
+ "T": 1808380800000,
+ "model": {
+  "P": [
+   0.7,
+   0.6,
+   0.5
+  ],
+  "SEK": {
+   "ord": 0,
+   "taenk": 3,
+   "tryk": 3,
+   "rul": 1
+  },
+  "GRAENSE": 1200,
+  "GAET": true,
+  "GENINDLAES": false
+ },
+ "bredder": [
+  390
+ ],
+ "flyvere": 8,
+ "faerdighed": [
+  {
+   "variant": "travl",
+   "bredde": 390,
+   "rigtigeFoerste": 14,
+   "chip": [
+    [
+     "broeker",
+     0
+    ],
+    [
+     "broeker",
+     5
+    ],
+    [
+     "broeker",
+     15
+    ],
+    [
+     "broeker",
+     25
+    ],
+    [
+     "broeker",
+     35
+    ]
+   ],
+   "flyvere": 4,
+   "tekster": [
+    "+5 Brøker",
+    "+10 Brøker",
+    "+10 Brøker",
+    "+10 Brøker"
+   ],
+   "chipSidst": "Brøker 35"
+  },
+  {
+   "variant": "foelger",
+   "bredde": 390,
+   "rigtigeFoerste": 14,
+   "chip": [
+    [
+     "broeker",
+     0
+    ],
+    [
+     "broeker",
+     5
+    ],
+    [
+     "broeker",
+     15
+    ],
+    [
+     "broeker",
+     25
+    ],
+    [
+     "broeker",
+     35
+    ]
+   ],
+   "flyvere": 4,
+   "tekster": [
+    "+5 Brøker",
+    "+10 Brøker",
+    "+10 Brøker",
+    "+10 Brøker"
+   ],
+   "chipSidst": "Brøker 35"
+  }
+ ],
+ "udgaver": {
+  "travl": {
+   "390": {
+    "opgaver": 96,
+    "rigtigeFoerste": 14,
+    "ukendt": 103,
+    "foersteNiveauOp": null,
+    "foerstePerson": {
+     "t": "0:14",
+     "art": "aabning",
+     "opgaverFoer": 0
+    },
+    "foersteHjaelp": null,
+    "aabning": {
+     "ord": 49,
+     "scenenOgKnappenPaaEenSkaerm": true,
+     "aabningTop": 8,
+     "knapBund": 696
+    },
+    "sammeForloebIgen": 31,
+    "laerer": 26,
+    "taetPaa": 5,
+    "igenTekster": [
+     "1 af 3 + laerer",
+     "2 af 3 + taet paa",
+     "1 af 3 + laerer",
+     "0 af 3 + laerer",
+     "2 af 3 + taet paa",
+     "0 af 3 + laerer",
+     "1 af 3 + laerer",
+     "1 af 3 + laerer",
+     "1 af 3 + laerer",
+     "1 af 3 + laerer",
+     "0 af 3 + laerer",
+     "1 af 3 + laerer",
+     "1 af 3 + laerer",
+     "1 af 3 + laerer",
+     "1 af 3 + laerer",
+     "0 af 3 + laerer",
+     "1 af 3 + laerer",
+     "1 af 3 + laerer",
+     "0 af 3 + laerer",
+     "2 af 3 + taet paa",
+     "1 af 3 + laerer",
+     "1 af 3 + laerer",
+     "2 af 3 + taet paa",
+     "0 af 3 + laerer",
+     "1 af 3 + laerer",
+     "0 af 3 + laerer",
+     "2 af 3 + taet paa",
+     "1 af 3 + laerer",
+     "0 af 3 + laerer",
+     "1 af 3 + laerer",
+     "1 af 3 + laerer"
+    ],
+    "quests": 0,
+    "klaret": [],
+    "niveau": 1,
+    "hoved": 1,
+    "haand": 1,
+    "hjerte": 1,
+    "udstyr": "Udstyr 0 af 9 Titler 0 Erfaring 475",
+    "steder": [
+     "moellen"
+    ],
+    "nytStedSagt": 0,
+    "fortsaet": 0,
+    "historieAndel": 41,
+    "laengstUdenNyt": "19:46",
+    "rul": 31,
+    "jsFejl": 0,
+    "vandretOk": true,
+    "m5": {
+     "toTredjeModToFemtedele": 0,
+     "oftestTal": "3 og 6",
+     "oftestAntal": 4,
+     "sammeTekstIgen": 5
+    },
+    "ankomster": [],
+    "grusgraven": null,
+    "hansSagt": null,
+    "hansQuest": null
+   }
+  },
+  "foelger": {
+   "390": {
+    "opgaver": 96,
+    "rigtigeFoerste": 14,
+    "ukendt": 103,
+    "foersteNiveauOp": null,
+    "foerstePerson": {
+     "t": "0:14",
+     "art": "aabning",
+     "opgaverFoer": 0
+    },
+    "foersteHjaelp": null,
+    "aabning": {
+     "ord": 49,
+     "scenenOgKnappenPaaEenSkaerm": true,
+     "aabningTop": 8,
+     "knapBund": 696
+    },
+    "sammeForloebIgen": 31,
+    "laerer": 26,
+    "taetPaa": 5,
+    "igenTekster": [
+     "1 af 3 + laerer",
+     "2 af 3 + taet paa",
+     "1 af 3 + laerer",
+     "0 af 3 + laerer",
+     "2 af 3 + taet paa",
+     "0 af 3 + laerer",
+     "1 af 3 + laerer",
+     "1 af 3 + laerer",
+     "1 af 3 + laerer",
+     "1 af 3 + laerer",
+     "0 af 3 + laerer",
+     "1 af 3 + laerer",
+     "1 af 3 + laerer",
+     "1 af 3 + laerer",
+     "1 af 3 + laerer",
+     "0 af 3 + laerer",
+     "1 af 3 + laerer",
+     "1 af 3 + laerer",
+     "0 af 3 + laerer",
+     "2 af 3 + taet paa",
+     "1 af 3 + laerer",
+     "1 af 3 + laerer",
+     "2 af 3 + taet paa",
+     "0 af 3 + laerer",
+     "1 af 3 + laerer",
+     "0 af 3 + laerer",
+     "2 af 3 + taet paa",
+     "1 af 3 + laerer",
+     "0 af 3 + laerer",
+     "1 af 3 + laerer",
+     "1 af 3 + laerer"
+    ],
+    "quests": 0,
+    "klaret": [],
+    "niveau": 1,
+    "hoved": 1,
+    "haand": 1,
+    "hjerte": 1,
+    "udstyr": "Udstyr 0 af 9 Titler 0 Erfaring 475",
+    "steder": [
+     "moellen"
+    ],
+    "nytStedSagt": 0,
+    "fortsaet": 0,
+    "historieAndel": 41,
+    "laengstUdenNyt": "19:46",
+    "rul": 31,
+    "jsFejl": 0,
+    "vandretOk": true,
+    "m5": {
+     "toTredjeModToFemtedele": 0,
+     "oftestTal": "3 og 6",
+     "oftestAntal": 4,
+     "sammeTekstIgen": 5
+    },
+    "ankomster": [],
+    "grusgraven": null,
+    "hansSagt": null,
+    "hansQuest": null
+   }
+  }
+ },
+ "jsFejl": 0,
+ "net": 0,
+ "reduceret": false,
+ "slut": [
+  {
+   "variant": "travl",
+   "bredde": 390,
+   "bibliotek": [
+    {
+     "id": "broeker",
+     "point": 35,
+     "niveau": "Begynder",
+     "oev": "moellen"
+    },
+    {
+     "id": "regn-broeker",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    },
+    {
+     "id": "enheder",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    },
+    {
+     "id": "areal",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    },
+    {
+     "id": "gange",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    },
+    {
+     "id": "dele",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    },
+    {
+     "id": "tid",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    }
+   ],
+   "oevHerTop": {
+    "tekst": "Øv her Brøker er den færdighed, du har mindst af (35 point). Alle syv står i rygsækken længere nede. Gå til Møllen",
+    "bund": 384,
+    "skaerm": 844
+   },
+   "oevePoint": {
+    "moellen-1|broeker": 35
+   },
+   "questFremdrift": {
+    "moellen": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "stenbrud": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "marked": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "landsby": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "havn": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "klaret": [],
+   "figur": {
+    "navn": "Tulle",
+    "udseendeId": "terra",
+    "niveau": 1,
+    "niveauPoint": 0,
+    "erfaring": 475,
+    "hoved": 1,
+    "haand": 1,
+    "hjerte": 1
+   }
+  },
+  {
+   "variant": "foelger",
+   "bredde": 390,
+   "bibliotek": [
+    {
+     "id": "broeker",
+     "point": 35,
+     "niveau": "Begynder",
+     "oev": "moellen"
+    },
+    {
+     "id": "regn-broeker",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    },
+    {
+     "id": "enheder",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    },
+    {
+     "id": "areal",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    },
+    {
+     "id": "gange",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    },
+    {
+     "id": "dele",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    },
+    {
+     "id": "tid",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    }
+   ],
+   "oevHerTop": {
+    "tekst": "Øv her Brøker er den færdighed, du har mindst af (35 point). Alle syv står i rygsækken længere nede. Gå til Møllen",
+    "bund": 384,
+    "skaerm": 844
+   },
+   "oevePoint": {
+    "moellen-1|broeker": 35
+   },
+   "questFremdrift": {
+    "moellen": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "stenbrud": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "marked": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "landsby": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "havn": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "klaret": [],
+   "figur": {
+    "navn": "Tulle",
+    "udseendeId": "terra",
+    "niveau": 1,
+    "niveauPoint": 0,
+    "erfaring": 475,
+    "hoved": 1,
+    "haand": 1,
+    "hjerte": 1
+   }
+  }
+ ],
+ "koersler": [
+  {
+   "tid": {
+    "flyvere": [
+     {
+      "t": 23,
+      "chip": "Brøker 0"
+     },
+     {
+      "t": 48,
+      "chip": "Brøker 5"
+     },
+     {
+      "t": 57,
+      "chip": "Brøker 15"
+     },
+     {
+      "t": 78,
+      "chip": "Brøker 25"
+     }
+    ],
+    "xp": [
+     69,
+     90,
+     114,
+     142,
+     166,
+     175,
+     218,
+     230,
+     240,
+     267,
+     277,
+     289,
+     329,
+     341,
+     383,
+     427,
+     454,
+     463,
+     472,
+     512,
+     524,
+     552,
+     577,
+     590,
+     617,
+     630,
+     654,
+     664,
+     676,
+     704,
+     732,
+     742,
+     751,
+     763,
+     776,
+     788,
+     797,
+     807,
+     819,
+     831,
+     841,
+     850,
+     862,
+     889,
+     901,
+     913,
+     925,
+     934,
+     962,
+     974,
+     987,
+     996,
+     1005,
+     1018,
+     1042,
+     1071,
+     1083,
+     1124,
+     1151,
+     1160,
+     1170,
+     1182
+    ],
+    "nytNiveau": [
+     {
+      "t": 23,
+      "tekst": "Nyt niveau i Brøker: Begynder (nu 5)"
+     }
+    ],
+    "bonus": [],
+    "loft": [],
+    "halv": [
+     {
+      "t": 69,
+      "tekst": "Brøker står stille: 2 af dine 5 svar i forløbet var rigtige i første forsøg. Tallet vokser igen, når mindst halvdelen er."
+     },
+     {
+      "t": 90,
+      "tekst": "Brøker står stille: 3 af dine 7 svar i forløbet var rigtige i første forsøg. Tallet vokser igen, når mindst halvdelen er."
+     }
+    ],
+    "bonusHalv": [],
+    "genindlaest": 0
+   },
+   "faerdighed": {
+    "chip": [
+     [
+      "broeker",
+      0
+     ],
+     [
+      "broeker",
+      5
+     ],
+     [
+      "broeker",
+      15
+     ],
+     [
+      "broeker",
+      25
+     ],
+     [
+      "broeker",
+      35
+     ]
+    ],
+    "flyvere": 4,
+    "tekster": [
+     "+5 Brøker",
+     "+10 Brøker",
+     "+10 Brøker",
+     "+10 Brøker"
+    ],
+    "chipSidst": "Brøker 35"
+   },
+   "variant": "travl",
+   "bredde": 390,
+   "ur": {
+    "s": 1200,
+    "rul": 31
+   },
+   "opg": {
+    "antal": 96,
+    "rigtigeFoerste": 14,
+    "loesning": 0,
+    "foresloeg": 193,
+    "ukendt": 103,
+    "ord": 2145
+   },
+   "historieOrd": {
+    "tak": 0,
+    "hvil": 0,
+    "replik": 0,
+    "mestring": 1443,
+    "bogPanel": 0,
+    "niveau": 0,
+    "aabning": 49
+   },
+   "foersteSkaerm": {
+    "opgaveTop": 1902,
+    "skaermHoejde": 844,
+    "sideHoejde": 2281
+   },
+   "naesteFejl": "Ikke helt. Hint 1 af 2: 3/3 er én hel, men kun nogle af brødene er solgt. Tæl alle 6 brød: det er nævneren.",
+   "log": [
+    {
+     "t": 14,
+     "art": "start",
+     "opgaveTop": 1902,
+     "skaermHoejde": 844,
+     "sideHoejde": 2281
+    },
+    {
+     "t": 14,
+     "art": "aabning",
+     "tekst": "Tulle kommer ned ad vejen til Møllen. Mølleren står i døren, hvid af mel. Mølleren: \"Godt, du kom. Hjulet er gået i stå, og Ane, bagerkonen, har intet mel til morgenbrødet.\" Mølleren: \"Hjælp mig med »Lige store dele«, så kan vi male igen, og så kan du hjælpe Ane.\"",
+     "aabningTop": 8,
+     "knapBund": 696,
+     "skaerm": 844
+    },
+    {
+     "t": 17,
+     "art": "opgave",
+     "nr": 1,
+     "tekst": "Bageren har bagt 6 lige store brød, og 3 er solgt: ▰▰▰▱▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Tulle kommer ned ad vejen til Møllen. Mølleren står i døren, hvid af mel. Mølleren: \"Godt, du kom. Hjulet er gået i stå, og Ane, bag",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 29,
+     "art": "opgave",
+     "nr": 2,
+     "tekst": "Bageren har bagt 7 lige store brød, og 4 er solgt: ▰▰▰▰▱▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 45,
+     "art": "opgave",
+     "nr": 3,
+     "tekst": "Mølleren har delt sin mark i 12 lige store stykker, og 7 er sået: ▰▰▰▰▰▰▰▱▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 54,
+     "art": "opgave",
+     "nr": 4,
+     "tekst": "Bageren har skåret en kageplade i 5 lige store stykker, og 1 er spist: ▰▱▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 54,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 63,
+     "art": "opgave",
+     "nr": 5,
+     "tekst": "Mølleren har 8 lige store sække på vognen, og 6 er fyldt med mel: ▰▰▰▰▰▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 75,
+     "art": "opgave",
+     "nr": 6,
+     "tekst": "Bageren har skåret en kageplade i 7 lige store stykker, og 2 er spist: ▰▰▱▱▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 84,
+     "art": "opgave",
+     "nr": 7,
+     "tekst": "Bageren har skåret en kageplade i 3 lige store stykker, og 1 er spist: ▰▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 84,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 2 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Mølleren: \"Tæt på. Én rigtig mere, så har du det.\""
+    },
+    {
+     "t": 96,
+     "art": "opgave",
+     "nr": 8,
+     "tekst": "Mølleren har delt sin mark i 8 lige store stykker, og 4 er sået: ▰▰▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 111,
+     "art": "opgave",
+     "nr": 9,
+     "tekst": "Mølleren har delt sin mark i 12 lige store stykker, og 3 er sået: ▰▰▰▱▱▱▱▱▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 120,
+     "art": "opgave",
+     "nr": 10,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 120,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 136,
+     "art": "opgave",
+     "nr": 11,
+     "tekst": "Mølleren har 4 lige store sække på vognen, og 2 er fyldt med mel: ▰▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 148,
+     "art": "opgave",
+     "nr": 12,
+     "tekst": "Mølleren har 12 lige store sække på vognen, og 9 er fyldt med mel: ▰▰▰▰▰▰▰▰▰▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 163,
+     "art": "opgave",
+     "nr": 13,
+     "tekst": "Mølleren har delt sin mark i 5 lige store stykker, og 2 er sået: ▰▰▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 163,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 0 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 172,
+     "art": "opgave",
+     "nr": 14,
+     "tekst": "Bageren har bagt 5 lige store brød, og 3 er solgt: ▰▰▰▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 181,
+     "art": "opgave",
+     "nr": 15,
+     "tekst": "Bageren har skåret en kageplade i 8 lige store stykker, og 2 er spist: ▰▰▱▱▱▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 196,
+     "art": "opgave",
+     "nr": 16,
+     "tekst": "Mølleren har 6 lige store sække på vognen, og 5 er fyldt med mel: ▰▰▰▰▰▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 196,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 2 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Mølleren: \"Tæt på. Én rigtig mere, så har du det.\""
+    },
+    {
+     "t": 212,
+     "art": "opgave",
+     "nr": 17,
+     "tekst": "Mølleren har 7 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 224,
+     "art": "opgave",
+     "nr": 18,
+     "tekst": "Mølleren har delt sin mark i 7 lige store stykker, og 5 er sået: ▰▰▰▰▰▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 236,
+     "art": "opgave",
+     "nr": 19,
+     "tekst": "Mølleren har 5 lige store sække på vognen, og 4 er fyldt med mel: ▰▰▰▰▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 236,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 0 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 246,
+     "art": "opgave",
+     "nr": 20,
+     "tekst": "Mølleren har 4 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 261,
+     "art": "opgave",
+     "nr": 21,
+     "tekst": "Mølleren har 12 lige store sække på vognen, og 8 er fyldt med mel: ▰▰▰▰▰▰▰▰▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 273,
+     "art": "opgave",
+     "nr": 22,
+     "tekst": "Bageren har skåret en kageplade i 3 lige store stykker, og 2 er spist: ▰▰▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 273,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 283,
+     "art": "opgave",
+     "nr": 23,
+     "tekst": "Bageren har bagt 6 lige store brød, og 4 er solgt: ▰▰▰▰▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 295,
+     "art": "opgave",
+     "nr": 24,
+     "tekst": "Bageren har bagt 9 lige store brød, og 6 er solgt: ▰▰▰▰▰▰▱▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 310,
+     "art": "opgave",
+     "nr": 25,
+     "tekst": "Mølleren har 6 lige store sække på vognen, og 3 er fyldt med mel: ▰▰▰▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 310,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 326,
+     "art": "opgave",
+     "nr": 26,
+     "tekst": "Bageren har skåret en kageplade i 4 lige store stykker, og 3 er spist: ▰▰▰▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 335,
+     "art": "opgave",
+     "nr": 27,
+     "tekst": "Bageren har bagt 9 lige store brød, og 8 er solgt: ▰▰▰▰▰▰▰▰▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 347,
+     "art": "opgave",
+     "nr": 28,
+     "tekst": "Mølleren har 5 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 347,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 364,
+     "art": "opgave",
+     "nr": 29,
+     "tekst": "Bageren har skåret en kageplade i 8 lige store stykker, og 1 er spist: ▰▱▱▱▱▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 380,
+     "art": "opgave",
+     "nr": 30,
+     "tekst": "Bageren har bagt 10 lige store brød, og 8 er solgt: ▰▰▰▰▰▰▰▰▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 389,
+     "art": "opgave",
+     "nr": 31,
+     "tekst": "Bageren har skåret en kageplade i 3 lige store stykker, og 1 er spist: ▰▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 389,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 406,
+     "art": "opgave",
+     "nr": 32,
+     "tekst": "Mølleren har 7 lige store sække på vognen, og 4 er fyldt med mel: ▰▰▰▰▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 421,
+     "art": "opgave",
+     "nr": 33,
+     "tekst": "Bageren har skåret en kageplade i 11 lige store stykker, og 3 er spist: ▰▰▰▱▱▱▱▱▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 433,
+     "art": "opgave",
+     "nr": 34,
+     "tekst": "Bageren har bagt 6 lige store brød, og 1 er solgt: ▰▱▱▱▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 433,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 0 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 448,
+     "art": "opgave",
+     "nr": 35,
+     "tekst": "Mølleren har 7 lige store sække på vognen, og 2 er fyldt med mel: ▰▰▱▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 460,
+     "art": "opgave",
+     "nr": 36,
+     "tekst": "Bageren har bagt 10 lige store brød, og 2 er solgt: ▰▰▱▱▱▱▱▱▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 469,
+     "art": "opgave",
+     "nr": 37,
+     "tekst": "Mølleren har 6 lige store sække på vognen, og 2 er fyldt med mel: ▰▰▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 469,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 478,
+     "art": "opgave",
+     "nr": 38,
+     "tekst": "Mølleren har 8 lige store sække på vognen, og 4 er fyldt med mel: ▰▰▰▰▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 493,
+     "art": "opgave",
+     "nr": 39,
+     "tekst": "Mølleren har delt sin mark i 11 lige store stykker, og 5 er sået: ▰▰▰▰▰▱▱▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 508,
+     "art": "opgave",
+     "nr": 40,
+     "tekst": "Mølleren har delt sin mark i 4 lige store stykker, og 2 er sået: ▰▰▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 508,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 518,
+     "art": "opgave",
+     "nr": 41,
+     "tekst": "Bageren har skåret en kageplade i 7 lige store stykker, og 6 er spist: ▰▰▰▰▰▰▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 530,
+     "art": "opgave",
+     "nr": 42,
+     "tekst": "Mølleren har delt sin mark i 12 lige store stykker, og 10 er sået: ▰▰▰▰▰▰▰▰▰▰▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 545,
+     "art": "opgave",
+     "nr": 43,
+     "tekst": "Mølleren har 5 lige store sække på vognen, og 2 er fyldt med mel: ▰▰▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 545,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 558,
+     "art": "opgave",
+     "nr": 44,
+     "tekst": "Bageren har bagt 8 lige store brød, og 6 er solgt: ▰▰▰▰▰▰▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 574,
+     "art": "opgave",
+     "nr": 45,
+     "tekst": "Mølleren har delt sin mark i 8 lige store stykker, og 2 er sået: ▰▰▱▱▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 583,
+     "art": "opgave",
+     "nr": 46,
+     "tekst": "Mølleren har delt sin mark i 5 lige store stykker, og 3 er sået: ▰▰▰▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 583,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 596,
+     "art": "opgave",
+     "nr": 47,
+     "tekst": "Mølleren har 8 lige store sække på vognen, og 7 er fyldt med mel: ▰▰▰▰▰▰▰▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 611,
+     "art": "opgave",
+     "nr": 48,
+     "tekst": "Mølleren har 9 lige store sække på vognen, og 3 er fyldt med mel: ▰▰▰▱▱▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 623,
+     "art": "opgave",
+     "nr": 49,
+     "tekst": "Bageren har skåret en kageplade i 4 lige store stykker, og 1 er spist: ▰▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 623,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 0 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 636,
+     "art": "opgave",
+     "nr": 50,
+     "tekst": "Bageren har skåret en kageplade i 7 lige store stykker, og 5 er spist: ▰▰▰▰▰▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 651,
+     "art": "opgave",
+     "nr": 51,
+     "tekst": "Mølleren har 12 lige store sække på vognen, og 4 er fyldt med mel: ▰▰▰▰▱▱▱▱▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 660,
+     "art": "opgave",
+     "nr": 52,
+     "tekst": "Bageren har skåret en kageplade i 6 lige store stykker, og 4 er spist: ▰▰▰▰▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 660,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 670,
+     "art": "opgave",
+     "nr": 53,
+     "tekst": "Bageren har skåret en kageplade i 5 lige store stykker, og 4 er spist: ▰▰▰▰▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 682,
+     "art": "opgave",
+     "nr": 54,
+     "tekst": "Bageren har bagt 11 lige store brød, og 10 er solgt: ▰▰▰▰▰▰▰▰▰▰▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 697,
+     "art": "opgave",
+     "nr": 55,
+     "tekst": "Bageren har skåret en kageplade i 6 lige store stykker, og 3 er spist: ▰▰▰▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 697,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 710,
+     "art": "opgave",
+     "nr": 56,
+     "tekst": "Bageren har skåret en kageplade i 7 lige store stykker, og 1 er spist: ▰▱▱▱▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 726,
+     "art": "opgave",
+     "nr": 57,
+     "tekst": "Bageren har bagt 11 lige store brød, og 6 er solgt: ▰▰▰▰▰▰▱▱▱▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 738,
+     "art": "opgave",
+     "nr": 58,
+     "tekst": "Bageren har bagt 3 lige store brød, og 2 er solgt: ▰▰▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 738,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 0 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 748,
+     "art": "opgave",
+     "nr": 59,
+     "tekst": "Mølleren har 4 lige store sække på vognen, og 3 er fyldt med mel: ▰▰▰▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 757,
+     "art": "opgave",
+     "nr": 60,
+     "tekst": "Mølleren har 9 lige store sække på vognen, og 2 er fyldt med mel: ▰▰▱▱▱▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 769,
+     "art": "opgave",
+     "nr": 61,
+     "tekst": "Bageren har bagt 3 lige store brød, og 1 er solgt: ▰▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 769,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 2 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Mølleren: \"Tæt på. Én rigtig mere, så har du det.\""
+    },
+    {
+     "t": 782,
+     "art": "opgave",
+     "nr": 62,
+     "tekst": "Bageren har bagt 5 lige store brød, og 1 er solgt: ▰▱▱▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 794,
+     "art": "opgave",
+     "nr": 63,
+     "tekst": "Bageren har bagt 12 lige store brød, og 9 er solgt: ▰▰▰▰▰▰▰▰▰▱▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 803,
+     "art": "opgave",
+     "nr": 64,
+     "tekst": "Bageren har skåret en kageplade i 6 lige store stykker, og 2 er spist: ▰▰▱▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 803,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 813,
+     "art": "opgave",
+     "nr": 65,
+     "tekst": "Bageren har skåret en kageplade i 7 lige store stykker, og 3 er spist: ▰▰▰▱▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 825,
+     "art": "opgave",
+     "nr": 66,
+     "tekst": "Mølleren har delt sin mark i 11 lige store stykker, og 2 er sået: ▰▰▱▱▱▱▱▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 837,
+     "art": "opgave",
+     "nr": 67,
+     "tekst": "Bageren har skåret en kageplade i 4 lige store stykker, og 2 er spist: ▰▰▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 837,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 847,
+     "art": "opgave",
+     "nr": 68,
+     "tekst": "Bageren har bagt 8 lige store brød, og 4 er solgt: ▰▰▰▰▱▱▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 856,
+     "art": "opgave",
+     "nr": 69,
+     "tekst": "Mølleren har 9 lige store sække på vognen, og 6 er fyldt med mel: ▰▰▰▰▰▰▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 868,
+     "art": "opgave",
+     "nr": 70,
+     "tekst": "Mølleren har delt sin mark i 5 lige store stykker, og 3 er sået: ▰▰▰▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 868,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 2 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Mølleren: \"Tæt på. Én rigtig mere, så har du det.\""
+    },
+    {
+     "t": 883,
+     "art": "opgave",
+     "nr": 71,
+     "tekst": "Mølleren har delt sin mark i 8 lige store stykker, og 5 er sået: ▰▰▰▰▰▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 895,
+     "art": "opgave",
+     "nr": 72,
+     "tekst": "Mølleren har delt sin mark i 11 lige store stykker, og 8 er sået: ▰▰▰▰▰▰▰▰▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 907,
+     "art": "opgave",
+     "nr": 73,
+     "tekst": "Bageren har bagt 5 lige store brød, og 2 er solgt: ▰▰▱▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 907,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 0 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 919,
+     "art": "opgave",
+     "nr": 74,
+     "tekst": "Mølleren har delt sin mark i 7 lige store stykker, og 6 er sået: ▰▰▰▰▰▰▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 931,
+     "art": "opgave",
+     "nr": 75,
+     "tekst": "Bageren har skåret en kageplade i 6 lige store stykker, og 5 er spist: ▰▰▰▰▰▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 940,
+     "art": "opgave",
+     "nr": 76,
+     "tekst": "Bageren har skåret en kageplade i 6 lige store stykker, og 1 er spist: ▰▱▱▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 940,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 956,
+     "art": "opgave",
+     "nr": 77,
+     "tekst": "Bageren har bagt 7 lige store brød, og 4 er solgt: ▰▰▰▰▱▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 968,
+     "art": "opgave",
+     "nr": 78,
+     "tekst": "Bageren har skåret en kageplade i 11 lige store stykker, og 9 er spist: ▰▰▰▰▰▰▰▰▰▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 980,
+     "art": "opgave",
+     "nr": 79,
+     "tekst": "Bageren har skåret en kageplade i 4 lige store stykker, og 1 er spist: ▰▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 980,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 0 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 993,
+     "art": "opgave",
+     "nr": 80,
+     "tekst": "Mølleren har delt sin mark i 8 lige store stykker, og 1 er sået: ▰▱▱▱▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1002,
+     "art": "opgave",
+     "nr": 81,
+     "tekst": "Mølleren har delt sin mark i 9 lige store stykker, og 3 er sået: ▰▰▰▱▱▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1011,
+     "art": "opgave",
+     "nr": 82,
+     "tekst": "Mølleren har delt sin mark i 5 lige store stykker, og 4 er sået: ▰▰▰▰▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1011,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 2 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Mølleren: \"Tæt på. Én rigtig mere, så har du det.\""
+    },
+    {
+     "t": 1024,
+     "art": "opgave",
+     "nr": 83,
+     "tekst": "Mølleren har 8 lige store sække på vognen, og 2 er fyldt med mel: ▰▰▱▱▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1039,
+     "art": "opgave",
+     "nr": 84,
+     "tekst": "Bageren har skåret en kageplade i 10 lige store stykker, og 5 er spist: ▰▰▰▰▰▱▱▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1048,
+     "art": "opgave",
+     "nr": 85,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 4 er sået: ▰▰▰▰▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1048,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 1065,
+     "art": "opgave",
+     "nr": 86,
+     "tekst": "Bageren har bagt 7 lige store brød, og 5 er solgt: ▰▰▰▰▰▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1077,
+     "art": "opgave",
+     "nr": 87,
+     "tekst": "Mølleren har delt sin mark i 11 lige store stykker, og 4 er sået: ▰▰▰▰▱▱▱▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1089,
+     "art": "opgave",
+     "nr": 88,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 2 er fyldt med mel: ▰▰▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1089,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 0 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 1106,
+     "art": "opgave",
+     "nr": 89,
+     "tekst": "Bageren har skåret en kageplade i 8 lige store stykker, og 6 er spist: ▰▰▰▰▰▰▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1121,
+     "art": "opgave",
+     "nr": 90,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 3 er sået: ▰▰▰▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1130,
+     "art": "opgave",
+     "nr": 91,
+     "tekst": "Mølleren har delt sin mark i 3 lige store stykker, og 1 er sået: ▰▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1130,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 1145,
+     "art": "opgave",
+     "nr": 92,
+     "tekst": "Mølleren har delt sin mark i 5 lige store stykker, og 1 er sået: ▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1157,
+     "art": "opgave",
+     "nr": 93,
+     "tekst": "Bageren har bagt 12 lige store brød, og 3 er solgt: ▰▰▰▱▱▱▱▱▱▱▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1166,
+     "art": "opgave",
+     "nr": 94,
+     "tekst": "Mølleren har 6 lige store sække på vognen, og 2 er fyldt med mel: ▰▰▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1166,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 1176,
+     "art": "opgave",
+     "nr": 95,
+     "tekst": "Mølleren har 7 lige store sække på vognen, og 3 er fyldt med mel: ▰▰▰▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1188,
+     "art": "opgave",
+     "nr": 96,
+     "tekst": "Mølleren har delt sin mark i 11 lige store stykker, og 1 er sået: ▰▱▱▱▱▱▱▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1200,
+     "art": "slut"
+    }
+   ],
+   "hoved": "1 Tulle Niveau 1 Næste niveau: mestr et forløb. 475 erfaring",
+   "vandret": true,
+   "sidefejl": [],
+   "billeder": [
+    "E-o602-731-travl-390-00-opret.png",
+    "E-o602-731-travl-390-01-foerste-skaerm.png",
+    "E-o602-731-travl-390-03-aabning.png",
+    "E-o602-731-travl-390-02-foerste-opgave.png",
+    "E-o602-731-travl-390-10-hint.png",
+    "E-o602-731-travl-390-11-samme-forloeb-igen.png",
+    "E-o602-731-travl-390-40-kortet-efter-30-min.png",
+    "E-o602-731-travl-390-50-min-helt.png",
+    "E-o602-731-travl-390-51-questbog.png"
+   ]
+  },
+  {
+   "tid": {
+    "flyvere": [
+     {
+      "t": 23,
+      "chip": "Brøker 0"
+     },
+     {
+      "t": 48,
+      "chip": "Brøker 5"
+     },
+     {
+      "t": 57,
+      "chip": "Brøker 15"
+     },
+     {
+      "t": 78,
+      "chip": "Brøker 25"
+     }
+    ],
+    "xp": [
+     69,
+     90,
+     114,
+     142,
+     166,
+     175,
+     218,
+     230,
+     240,
+     267,
+     277,
+     289,
+     329,
+     341,
+     383,
+     427,
+     454,
+     463,
+     472,
+     512,
+     524,
+     552,
+     577,
+     590,
+     617,
+     630,
+     654,
+     664,
+     676,
+     704,
+     732,
+     742,
+     751,
+     763,
+     776,
+     788,
+     797,
+     807,
+     819,
+     831,
+     841,
+     850,
+     862,
+     889,
+     901,
+     913,
+     925,
+     934,
+     962,
+     974,
+     987,
+     996,
+     1005,
+     1018,
+     1042,
+     1071,
+     1083,
+     1124,
+     1151,
+     1160,
+     1170,
+     1182
+    ],
+    "nytNiveau": [
+     {
+      "t": 23,
+      "tekst": "Nyt niveau i Brøker: Begynder (nu 5)"
+     }
+    ],
+    "bonus": [],
+    "loft": [],
+    "halv": [
+     {
+      "t": 69,
+      "tekst": "Brøker står stille: 2 af dine 5 svar i forløbet var rigtige i første forsøg. Tallet vokser igen, når mindst halvdelen er."
+     },
+     {
+      "t": 90,
+      "tekst": "Brøker står stille: 3 af dine 7 svar i forløbet var rigtige i første forsøg. Tallet vokser igen, når mindst halvdelen er."
+     }
+    ],
+    "bonusHalv": [],
+    "genindlaest": 0
+   },
+   "faerdighed": {
+    "chip": [
+     [
+      "broeker",
+      0
+     ],
+     [
+      "broeker",
+      5
+     ],
+     [
+      "broeker",
+      15
+     ],
+     [
+      "broeker",
+      25
+     ],
+     [
+      "broeker",
+      35
+     ]
+    ],
+    "flyvere": 4,
+    "tekster": [
+     "+5 Brøker",
+     "+10 Brøker",
+     "+10 Brøker",
+     "+10 Brøker"
+    ],
+    "chipSidst": "Brøker 35"
+   },
+   "variant": "foelger",
+   "bredde": 390,
+   "ur": {
+    "s": 1200,
+    "rul": 31
+   },
+   "opg": {
+    "antal": 96,
+    "rigtigeFoerste": 14,
+    "loesning": 0,
+    "foresloeg": 193,
+    "ukendt": 103,
+    "ord": 2145
+   },
+   "historieOrd": {
+    "tak": 0,
+    "hvil": 0,
+    "replik": 0,
+    "mestring": 1443,
+    "bogPanel": 0,
+    "niveau": 0,
+    "aabning": 49
+   },
+   "foersteSkaerm": {
+    "opgaveTop": 1902,
+    "skaermHoejde": 844,
+    "sideHoejde": 2281
+   },
+   "naesteFejl": "Ikke helt. Hint 1 af 2: 3/3 er én hel, men kun nogle af brødene er solgt. Tæl alle 6 brød: det er nævneren.",
+   "log": [
+    {
+     "t": 14,
+     "art": "start",
+     "opgaveTop": 1902,
+     "skaermHoejde": 844,
+     "sideHoejde": 2281
+    },
+    {
+     "t": 14,
+     "art": "aabning",
+     "tekst": "Tulle kommer ned ad vejen til Møllen. Mølleren står i døren, hvid af mel. Mølleren: \"Godt, du kom. Hjulet er gået i stå, og Ane, bagerkonen, har intet mel til morgenbrødet.\" Mølleren: \"Hjælp mig med »Lige store dele«, så kan vi male igen, og så kan du hjælpe Ane.\"",
+     "aabningTop": 8,
+     "knapBund": 696,
+     "skaerm": 844
+    },
+    {
+     "t": 17,
+     "art": "opgave",
+     "nr": 1,
+     "tekst": "Bageren har bagt 6 lige store brød, og 3 er solgt: ▰▰▰▱▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Tulle kommer ned ad vejen til Møllen. Mølleren står i døren, hvid af mel. Mølleren: \"Godt, du kom. Hjulet er gået i stå, og Ane, bag",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 29,
+     "art": "opgave",
+     "nr": 2,
+     "tekst": "Bageren har bagt 7 lige store brød, og 4 er solgt: ▰▰▰▰▱▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 45,
+     "art": "opgave",
+     "nr": 3,
+     "tekst": "Mølleren har delt sin mark i 12 lige store stykker, og 7 er sået: ▰▰▰▰▰▰▰▱▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 54,
+     "art": "opgave",
+     "nr": 4,
+     "tekst": "Bageren har skåret en kageplade i 5 lige store stykker, og 1 er spist: ▰▱▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 54,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 63,
+     "art": "opgave",
+     "nr": 5,
+     "tekst": "Mølleren har 8 lige store sække på vognen, og 6 er fyldt med mel: ▰▰▰▰▰▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 75,
+     "art": "opgave",
+     "nr": 6,
+     "tekst": "Bageren har skåret en kageplade i 7 lige store stykker, og 2 er spist: ▰▰▱▱▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 84,
+     "art": "opgave",
+     "nr": 7,
+     "tekst": "Bageren har skåret en kageplade i 3 lige store stykker, og 1 er spist: ▰▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 84,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 2 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Mølleren: \"Tæt på. Én rigtig mere, så har du det.\""
+    },
+    {
+     "t": 96,
+     "art": "opgave",
+     "nr": 8,
+     "tekst": "Mølleren har delt sin mark i 8 lige store stykker, og 4 er sået: ▰▰▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 111,
+     "art": "opgave",
+     "nr": 9,
+     "tekst": "Mølleren har delt sin mark i 12 lige store stykker, og 3 er sået: ▰▰▰▱▱▱▱▱▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 120,
+     "art": "opgave",
+     "nr": 10,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 120,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 136,
+     "art": "opgave",
+     "nr": 11,
+     "tekst": "Mølleren har 4 lige store sække på vognen, og 2 er fyldt med mel: ▰▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 148,
+     "art": "opgave",
+     "nr": 12,
+     "tekst": "Mølleren har 12 lige store sække på vognen, og 9 er fyldt med mel: ▰▰▰▰▰▰▰▰▰▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 163,
+     "art": "opgave",
+     "nr": 13,
+     "tekst": "Mølleren har delt sin mark i 5 lige store stykker, og 2 er sået: ▰▰▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 163,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 0 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 172,
+     "art": "opgave",
+     "nr": 14,
+     "tekst": "Bageren har bagt 5 lige store brød, og 3 er solgt: ▰▰▰▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 181,
+     "art": "opgave",
+     "nr": 15,
+     "tekst": "Bageren har skåret en kageplade i 8 lige store stykker, og 2 er spist: ▰▰▱▱▱▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 196,
+     "art": "opgave",
+     "nr": 16,
+     "tekst": "Mølleren har 6 lige store sække på vognen, og 5 er fyldt med mel: ▰▰▰▰▰▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 196,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 2 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Mølleren: \"Tæt på. Én rigtig mere, så har du det.\""
+    },
+    {
+     "t": 212,
+     "art": "opgave",
+     "nr": 17,
+     "tekst": "Mølleren har 7 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 224,
+     "art": "opgave",
+     "nr": 18,
+     "tekst": "Mølleren har delt sin mark i 7 lige store stykker, og 5 er sået: ▰▰▰▰▰▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 236,
+     "art": "opgave",
+     "nr": 19,
+     "tekst": "Mølleren har 5 lige store sække på vognen, og 4 er fyldt med mel: ▰▰▰▰▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 236,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 0 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 246,
+     "art": "opgave",
+     "nr": 20,
+     "tekst": "Mølleren har 4 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 261,
+     "art": "opgave",
+     "nr": 21,
+     "tekst": "Mølleren har 12 lige store sække på vognen, og 8 er fyldt med mel: ▰▰▰▰▰▰▰▰▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 273,
+     "art": "opgave",
+     "nr": 22,
+     "tekst": "Bageren har skåret en kageplade i 3 lige store stykker, og 2 er spist: ▰▰▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 273,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 283,
+     "art": "opgave",
+     "nr": 23,
+     "tekst": "Bageren har bagt 6 lige store brød, og 4 er solgt: ▰▰▰▰▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 295,
+     "art": "opgave",
+     "nr": 24,
+     "tekst": "Bageren har bagt 9 lige store brød, og 6 er solgt: ▰▰▰▰▰▰▱▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 310,
+     "art": "opgave",
+     "nr": 25,
+     "tekst": "Mølleren har 6 lige store sække på vognen, og 3 er fyldt med mel: ▰▰▰▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 310,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 326,
+     "art": "opgave",
+     "nr": 26,
+     "tekst": "Bageren har skåret en kageplade i 4 lige store stykker, og 3 er spist: ▰▰▰▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 335,
+     "art": "opgave",
+     "nr": 27,
+     "tekst": "Bageren har bagt 9 lige store brød, og 8 er solgt: ▰▰▰▰▰▰▰▰▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 347,
+     "art": "opgave",
+     "nr": 28,
+     "tekst": "Mølleren har 5 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 347,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 364,
+     "art": "opgave",
+     "nr": 29,
+     "tekst": "Bageren har skåret en kageplade i 8 lige store stykker, og 1 er spist: ▰▱▱▱▱▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 380,
+     "art": "opgave",
+     "nr": 30,
+     "tekst": "Bageren har bagt 10 lige store brød, og 8 er solgt: ▰▰▰▰▰▰▰▰▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 389,
+     "art": "opgave",
+     "nr": 31,
+     "tekst": "Bageren har skåret en kageplade i 3 lige store stykker, og 1 er spist: ▰▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 389,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 406,
+     "art": "opgave",
+     "nr": 32,
+     "tekst": "Mølleren har 7 lige store sække på vognen, og 4 er fyldt med mel: ▰▰▰▰▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 421,
+     "art": "opgave",
+     "nr": 33,
+     "tekst": "Bageren har skåret en kageplade i 11 lige store stykker, og 3 er spist: ▰▰▰▱▱▱▱▱▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 433,
+     "art": "opgave",
+     "nr": 34,
+     "tekst": "Bageren har bagt 6 lige store brød, og 1 er solgt: ▰▱▱▱▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 433,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 0 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 448,
+     "art": "opgave",
+     "nr": 35,
+     "tekst": "Mølleren har 7 lige store sække på vognen, og 2 er fyldt med mel: ▰▰▱▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 460,
+     "art": "opgave",
+     "nr": 36,
+     "tekst": "Bageren har bagt 10 lige store brød, og 2 er solgt: ▰▰▱▱▱▱▱▱▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 469,
+     "art": "opgave",
+     "nr": 37,
+     "tekst": "Mølleren har 6 lige store sække på vognen, og 2 er fyldt med mel: ▰▰▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 469,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 478,
+     "art": "opgave",
+     "nr": 38,
+     "tekst": "Mølleren har 8 lige store sække på vognen, og 4 er fyldt med mel: ▰▰▰▰▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 493,
+     "art": "opgave",
+     "nr": 39,
+     "tekst": "Mølleren har delt sin mark i 11 lige store stykker, og 5 er sået: ▰▰▰▰▰▱▱▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 508,
+     "art": "opgave",
+     "nr": 40,
+     "tekst": "Mølleren har delt sin mark i 4 lige store stykker, og 2 er sået: ▰▰▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 508,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 518,
+     "art": "opgave",
+     "nr": 41,
+     "tekst": "Bageren har skåret en kageplade i 7 lige store stykker, og 6 er spist: ▰▰▰▰▰▰▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 530,
+     "art": "opgave",
+     "nr": 42,
+     "tekst": "Mølleren har delt sin mark i 12 lige store stykker, og 10 er sået: ▰▰▰▰▰▰▰▰▰▰▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 545,
+     "art": "opgave",
+     "nr": 43,
+     "tekst": "Mølleren har 5 lige store sække på vognen, og 2 er fyldt med mel: ▰▰▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 545,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 558,
+     "art": "opgave",
+     "nr": 44,
+     "tekst": "Bageren har bagt 8 lige store brød, og 6 er solgt: ▰▰▰▰▰▰▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 574,
+     "art": "opgave",
+     "nr": 45,
+     "tekst": "Mølleren har delt sin mark i 8 lige store stykker, og 2 er sået: ▰▰▱▱▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 583,
+     "art": "opgave",
+     "nr": 46,
+     "tekst": "Mølleren har delt sin mark i 5 lige store stykker, og 3 er sået: ▰▰▰▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 583,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 596,
+     "art": "opgave",
+     "nr": 47,
+     "tekst": "Mølleren har 8 lige store sække på vognen, og 7 er fyldt med mel: ▰▰▰▰▰▰▰▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 611,
+     "art": "opgave",
+     "nr": 48,
+     "tekst": "Mølleren har 9 lige store sække på vognen, og 3 er fyldt med mel: ▰▰▰▱▱▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 623,
+     "art": "opgave",
+     "nr": 49,
+     "tekst": "Bageren har skåret en kageplade i 4 lige store stykker, og 1 er spist: ▰▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 623,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 0 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 636,
+     "art": "opgave",
+     "nr": 50,
+     "tekst": "Bageren har skåret en kageplade i 7 lige store stykker, og 5 er spist: ▰▰▰▰▰▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 651,
+     "art": "opgave",
+     "nr": 51,
+     "tekst": "Mølleren har 12 lige store sække på vognen, og 4 er fyldt med mel: ▰▰▰▰▱▱▱▱▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 660,
+     "art": "opgave",
+     "nr": 52,
+     "tekst": "Bageren har skåret en kageplade i 6 lige store stykker, og 4 er spist: ▰▰▰▰▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 660,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 670,
+     "art": "opgave",
+     "nr": 53,
+     "tekst": "Bageren har skåret en kageplade i 5 lige store stykker, og 4 er spist: ▰▰▰▰▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 682,
+     "art": "opgave",
+     "nr": 54,
+     "tekst": "Bageren har bagt 11 lige store brød, og 10 er solgt: ▰▰▰▰▰▰▰▰▰▰▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 697,
+     "art": "opgave",
+     "nr": 55,
+     "tekst": "Bageren har skåret en kageplade i 6 lige store stykker, og 3 er spist: ▰▰▰▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 697,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 710,
+     "art": "opgave",
+     "nr": 56,
+     "tekst": "Bageren har skåret en kageplade i 7 lige store stykker, og 1 er spist: ▰▱▱▱▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 726,
+     "art": "opgave",
+     "nr": 57,
+     "tekst": "Bageren har bagt 11 lige store brød, og 6 er solgt: ▰▰▰▰▰▰▱▱▱▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 738,
+     "art": "opgave",
+     "nr": 58,
+     "tekst": "Bageren har bagt 3 lige store brød, og 2 er solgt: ▰▰▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 738,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 0 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 748,
+     "art": "opgave",
+     "nr": 59,
+     "tekst": "Mølleren har 4 lige store sække på vognen, og 3 er fyldt med mel: ▰▰▰▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 757,
+     "art": "opgave",
+     "nr": 60,
+     "tekst": "Mølleren har 9 lige store sække på vognen, og 2 er fyldt med mel: ▰▰▱▱▱▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 769,
+     "art": "opgave",
+     "nr": 61,
+     "tekst": "Bageren har bagt 3 lige store brød, og 1 er solgt: ▰▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 769,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 2 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Mølleren: \"Tæt på. Én rigtig mere, så har du det.\""
+    },
+    {
+     "t": 782,
+     "art": "opgave",
+     "nr": 62,
+     "tekst": "Bageren har bagt 5 lige store brød, og 1 er solgt: ▰▱▱▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 794,
+     "art": "opgave",
+     "nr": 63,
+     "tekst": "Bageren har bagt 12 lige store brød, og 9 er solgt: ▰▰▰▰▰▰▰▰▰▱▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 803,
+     "art": "opgave",
+     "nr": 64,
+     "tekst": "Bageren har skåret en kageplade i 6 lige store stykker, og 2 er spist: ▰▰▱▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 803,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 813,
+     "art": "opgave",
+     "nr": 65,
+     "tekst": "Bageren har skåret en kageplade i 7 lige store stykker, og 3 er spist: ▰▰▰▱▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 825,
+     "art": "opgave",
+     "nr": 66,
+     "tekst": "Mølleren har delt sin mark i 11 lige store stykker, og 2 er sået: ▰▰▱▱▱▱▱▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 837,
+     "art": "opgave",
+     "nr": 67,
+     "tekst": "Bageren har skåret en kageplade i 4 lige store stykker, og 2 er spist: ▰▰▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 837,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 847,
+     "art": "opgave",
+     "nr": 68,
+     "tekst": "Bageren har bagt 8 lige store brød, og 4 er solgt: ▰▰▰▰▱▱▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 856,
+     "art": "opgave",
+     "nr": 69,
+     "tekst": "Mølleren har 9 lige store sække på vognen, og 6 er fyldt med mel: ▰▰▰▰▰▰▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 868,
+     "art": "opgave",
+     "nr": 70,
+     "tekst": "Mølleren har delt sin mark i 5 lige store stykker, og 3 er sået: ▰▰▰▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 868,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 2 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Mølleren: \"Tæt på. Én rigtig mere, så har du det.\""
+    },
+    {
+     "t": 883,
+     "art": "opgave",
+     "nr": 71,
+     "tekst": "Mølleren har delt sin mark i 8 lige store stykker, og 5 er sået: ▰▰▰▰▰▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 895,
+     "art": "opgave",
+     "nr": 72,
+     "tekst": "Mølleren har delt sin mark i 11 lige store stykker, og 8 er sået: ▰▰▰▰▰▰▰▰▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 907,
+     "art": "opgave",
+     "nr": 73,
+     "tekst": "Bageren har bagt 5 lige store brød, og 2 er solgt: ▰▰▱▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 907,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 0 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 919,
+     "art": "opgave",
+     "nr": 74,
+     "tekst": "Mølleren har delt sin mark i 7 lige store stykker, og 6 er sået: ▰▰▰▰▰▰▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 931,
+     "art": "opgave",
+     "nr": 75,
+     "tekst": "Bageren har skåret en kageplade i 6 lige store stykker, og 5 er spist: ▰▰▰▰▰▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 940,
+     "art": "opgave",
+     "nr": 76,
+     "tekst": "Bageren har skåret en kageplade i 6 lige store stykker, og 1 er spist: ▰▱▱▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 940,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 956,
+     "art": "opgave",
+     "nr": 77,
+     "tekst": "Bageren har bagt 7 lige store brød, og 4 er solgt: ▰▰▰▰▱▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 968,
+     "art": "opgave",
+     "nr": 78,
+     "tekst": "Bageren har skåret en kageplade i 11 lige store stykker, og 9 er spist: ▰▰▰▰▰▰▰▰▰▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 980,
+     "art": "opgave",
+     "nr": 79,
+     "tekst": "Bageren har skåret en kageplade i 4 lige store stykker, og 1 er spist: ▰▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 980,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 0 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 993,
+     "art": "opgave",
+     "nr": 80,
+     "tekst": "Mølleren har delt sin mark i 8 lige store stykker, og 1 er sået: ▰▱▱▱▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1002,
+     "art": "opgave",
+     "nr": 81,
+     "tekst": "Mølleren har delt sin mark i 9 lige store stykker, og 3 er sået: ▰▰▰▱▱▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1011,
+     "art": "opgave",
+     "nr": 82,
+     "tekst": "Mølleren har delt sin mark i 5 lige store stykker, og 4 er sået: ▰▰▰▰▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1011,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 2 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Mølleren: \"Tæt på. Én rigtig mere, så har du det.\""
+    },
+    {
+     "t": 1024,
+     "art": "opgave",
+     "nr": 83,
+     "tekst": "Mølleren har 8 lige store sække på vognen, og 2 er fyldt med mel: ▰▰▱▱▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1039,
+     "art": "opgave",
+     "nr": 84,
+     "tekst": "Bageren har skåret en kageplade i 10 lige store stykker, og 5 er spist: ▰▰▰▰▰▱▱▱▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1048,
+     "art": "opgave",
+     "nr": 85,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 4 er sået: ▰▰▰▰▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1048,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 1065,
+     "art": "opgave",
+     "nr": 86,
+     "tekst": "Bageren har bagt 7 lige store brød, og 5 er solgt: ▰▰▰▰▰▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1077,
+     "art": "opgave",
+     "nr": 87,
+     "tekst": "Mølleren har delt sin mark i 11 lige store stykker, og 4 er sået: ▰▰▰▰▱▱▱▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1089,
+     "art": "opgave",
+     "nr": 88,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 2 er fyldt med mel: ▰▰▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1089,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 0 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 1106,
+     "art": "opgave",
+     "nr": 89,
+     "tekst": "Bageren har skåret en kageplade i 8 lige store stykker, og 6 er spist: ▰▰▰▰▰▰▱▱. Hvor stor en del af kagen er spist?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1121,
+     "art": "opgave",
+     "nr": 90,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 3 er sået: ▰▰▰▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1130,
+     "art": "opgave",
+     "nr": 91,
+     "tekst": "Mølleren har delt sin mark i 3 lige store stykker, og 1 er sået: ▰▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1130,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 1145,
+     "art": "opgave",
+     "nr": 92,
+     "tekst": "Mølleren har delt sin mark i 5 lige store stykker, og 1 er sået: ▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1157,
+     "art": "opgave",
+     "nr": 93,
+     "tekst": "Bageren har bagt 12 lige store brød, og 3 er solgt: ▰▰▰▱▱▱▱▱▱▱▱▱. Hvor stor en del af brødene er solgt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1166,
+     "art": "opgave",
+     "nr": 94,
+     "tekst": "Mølleren har 6 lige store sække på vognen, og 2 er fyldt med mel: ▰▰▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1166,
+     "art": "samme-forloeb-igen",
+     "tekst": "Du kom igennem, og 1 af 3 var rigtige i første forsøg. Mølleren vil se mindst 3, før forløbet tæller som klaret. Her er det samme forløb med nye tal. Det er ikke første gang: spørg din lærer eller sidemanden om trinnet, før du går i gang igen."
+    },
+    {
+     "t": 1176,
+     "art": "opgave",
+     "nr": 95,
+     "tekst": "Mølleren har 7 lige store sække på vognen, og 3 er fyldt med mel: ▰▰▰▱▱▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1188,
+     "art": "opgave",
+     "nr": 96,
+     "tekst": "Mølleren har delt sin mark i 11 lige store stykker, og 1 er sået: ▰▱▱▱▱▱▱▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1200,
+     "art": "slut"
+    }
+   ],
+   "hoved": "1 Tulle Niveau 1 Næste niveau: mestr et forløb. 475 erfaring",
+   "vandret": true,
+   "sidefejl": [],
+   "billeder": [
+    "E-o602-731-foelger-390-00-opret.png",
+    "E-o602-731-foelger-390-01-foerste-skaerm.png",
+    "E-o602-731-foelger-390-03-aabning.png",
+    "E-o602-731-foelger-390-02-foerste-opgave.png",
+    "E-o602-731-foelger-390-10-hint.png",
+    "E-o602-731-foelger-390-11-samme-forloeb-igen.png",
+    "E-o602-731-foelger-390-40-kortet-efter-30-min.png",
+    "E-o602-731-foelger-390-50-min-helt.png",
+    "E-o602-731-foelger-390-51-questbog.png"
+   ]
+  }
+ ],
+ "dag2": [],
+ "dag3": []
+}
