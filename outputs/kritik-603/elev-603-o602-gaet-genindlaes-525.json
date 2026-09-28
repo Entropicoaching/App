@@ -1,0 +1,5806 @@
+{
+ "spil": "bb5c678",
+ "ref": "ordre-602",
+ "tag": "o602",
+ "seed": 525,
+ "T": 1790582400000,
+ "model": {
+  "P": [
+   0.7,
+   0.6,
+   0.5
+  ],
+  "SEK": {
+   "ord": 0,
+   "taenk": 1,
+   "tryk": 1,
+   "rul": 1
+  },
+  "GRAENSE": 1200,
+  "GAET": true,
+  "GENINDLAES": true
+ },
+ "bredder": [
+  390
+ ],
+ "flyvere": 0,
+ "faerdighed": [
+  {
+   "variant": "travl",
+   "bredde": 390,
+   "rigtigeFoerste": 49,
+   "chip": [
+    [
+     "broeker",
+     50
+    ]
+   ],
+   "flyvere": 0,
+   "tekster": [],
+   "chipSidst": "Brøker 50"
+  },
+  {
+   "variant": "foelger",
+   "bredde": 390,
+   "rigtigeFoerste": 49,
+   "chip": [
+    [
+     "broeker",
+     50
+    ]
+   ],
+   "flyvere": 0,
+   "tekster": [],
+   "chipSidst": "Brøker 50"
+  }
+ ],
+ "udgaver": {
+  "travl": {
+   "390": {
+    "opgaver": 146,
+    "rigtigeFoerste": 49,
+    "ukendt": 0,
+    "foersteNiveauOp": null,
+    "foerstePerson": {
+     "t": "0:10",
+     "art": "aabning",
+     "opgaverFoer": 0
+    },
+    "foersteHjaelp": null,
+    "aabning": {
+     "ord": 49,
+     "scenenOgKnappenPaaEenSkaerm": true,
+     "aabningTop": 8,
+     "knapBund": 696
+    },
+    "sammeForloebIgen": 0,
+    "laerer": 0,
+    "taetPaa": 0,
+    "igenTekster": [],
+    "quests": 0,
+    "klaret": [],
+    "niveau": 1,
+    "hoved": 1,
+    "haand": 1,
+    "hjerte": 1,
+    "udstyr": "Udstyr 0 af 9 Titler 0 Erfaring 745",
+    "steder": [
+     "moellen"
+    ],
+    "nytStedSagt": 0,
+    "fortsaet": 0,
+    "historieAndel": 1,
+    "laengstUdenNyt": "19:50",
+    "rul": 25,
+    "jsFejl": 0,
+    "vandretOk": true,
+    "m5": {
+     "toTredjeModToFemtedele": 0,
+     "oftestTal": "1 og 3",
+     "oftestAntal": 73,
+     "sammeTekstIgen": 144
+    },
+    "ankomster": [],
+    "grusgraven": null,
+    "hansSagt": null,
+    "hansQuest": null
+   }
+  },
+  "foelger": {
+   "390": {
+    "opgaver": 146,
+    "rigtigeFoerste": 49,
+    "ukendt": 0,
+    "foersteNiveauOp": null,
+    "foerstePerson": {
+     "t": "0:10",
+     "art": "aabning",
+     "opgaverFoer": 0
+    },
+    "foersteHjaelp": null,
+    "aabning": {
+     "ord": 49,
+     "scenenOgKnappenPaaEenSkaerm": true,
+     "aabningTop": 8,
+     "knapBund": 696
+    },
+    "sammeForloebIgen": 0,
+    "laerer": 0,
+    "taetPaa": 0,
+    "igenTekster": [],
+    "quests": 0,
+    "klaret": [],
+    "niveau": 1,
+    "hoved": 1,
+    "haand": 1,
+    "hjerte": 1,
+    "udstyr": "Udstyr 0 af 9 Titler 0 Erfaring 745",
+    "steder": [
+     "moellen"
+    ],
+    "nytStedSagt": 0,
+    "fortsaet": 0,
+    "historieAndel": 1,
+    "laengstUdenNyt": "19:50",
+    "rul": 25,
+    "jsFejl": 0,
+    "vandretOk": true,
+    "m5": {
+     "toTredjeModToFemtedele": 0,
+     "oftestTal": "1 og 3",
+     "oftestAntal": 73,
+     "sammeTekstIgen": 144
+    },
+    "ankomster": [],
+    "grusgraven": null,
+    "hansSagt": null,
+    "hansQuest": null
+   }
+  }
+ },
+ "jsFejl": 0,
+ "net": 0,
+ "reduceret": false,
+ "slut": [
+  {
+   "variant": "travl",
+   "bredde": 390,
+   "bibliotek": [
+    {
+     "id": "broeker",
+     "point": 50,
+     "niveau": "Begynder",
+     "oev": "moellen"
+    },
+    {
+     "id": "regn-broeker",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    },
+    {
+     "id": "enheder",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    },
+    {
+     "id": "areal",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    },
+    {
+     "id": "gange",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    },
+    {
+     "id": "dele",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    },
+    {
+     "id": "tid",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    }
+   ],
+   "oevHerTop": {
+    "tekst": "Øv her Brøker er den færdighed, du har mindst af (50 point). Alle syv står i rygsækken længere nede. Gå til Møllen",
+    "bund": 384,
+    "skaerm": 844
+   },
+   "oevePoint": {
+    "moellen-1|broeker": 50
+   },
+   "questFremdrift": {
+    "moellen": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "stenbrud": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "marked": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "landsby": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "havn": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "klaret": [],
+   "figur": {
+    "navn": "Tulle",
+    "udseendeId": "terra",
+    "niveau": 1,
+    "niveauPoint": 0,
+    "erfaring": 745,
+    "hoved": 1,
+    "haand": 1,
+    "hjerte": 1
+   }
+  },
+  {
+   "variant": "foelger",
+   "bredde": 390,
+   "bibliotek": [
+    {
+     "id": "broeker",
+     "point": 50,
+     "niveau": "Begynder",
+     "oev": "moellen"
+    },
+    {
+     "id": "regn-broeker",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    },
+    {
+     "id": "enheder",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    },
+    {
+     "id": "areal",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    },
+    {
+     "id": "gange",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    },
+    {
+     "id": "dele",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    },
+    {
+     "id": "tid",
+     "point": 0,
+     "niveau": "Ikke begyndt",
+     "oev": null
+    }
+   ],
+   "oevHerTop": {
+    "tekst": "Øv her Brøker er den færdighed, du har mindst af (50 point). Alle syv står i rygsækken længere nede. Gå til Møllen",
+    "bund": 384,
+    "skaerm": 844
+   },
+   "oevePoint": {
+    "moellen-1|broeker": 50
+   },
+   "questFremdrift": {
+    "moellen": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "stenbrud": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "marked": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "landsby": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "havn": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "klaret": [],
+   "figur": {
+    "navn": "Tulle",
+    "udseendeId": "terra",
+    "niveau": 1,
+    "niveauPoint": 0,
+    "erfaring": 745,
+    "hoved": 1,
+    "haand": 1,
+    "hjerte": 1
+   }
+  }
+ ],
+ "koersler": [
+  {
+   "tid": {
+    "flyvere": [
+     {
+      "t": 13,
+      "chip": "Brøker 0"
+     },
+     {
+      "t": 23,
+      "chip": "Brøker 5"
+     },
+     {
+      "t": 28,
+      "chip": "Brøker 10"
+     },
+     {
+      "t": 38,
+      "chip": "Brøker 20"
+     },
+     {
+      "t": 43,
+      "chip": "Brøker 25"
+     },
+     {
+      "t": 71,
+      "chip": "Brøker 35"
+     },
+     {
+      "t": 106,
+      "chip": "Brøker 45"
+     }
+    ],
+    "xp": [
+     122,
+     138,
+     144,
+     153,
+     170,
+     176,
+     186,
+     191,
+     201,
+     207,
+     216,
+     222,
+     231,
+     237,
+     254,
+     291,
+     309,
+     338,
+     354,
+     360,
+     378,
+     387,
+     392,
+     402,
+     407,
+     435,
+     441,
+     450,
+     456,
+     474,
+     483,
+     508,
+     517,
+     541,
+     577,
+     606,
+     623,
+     628,
+     664,
+     674,
+     691,
+     707,
+     732,
+     742,
+     748,
+     766,
+     776,
+     782,
+     800,
+     810,
+     815,
+     824,
+     840,
+     845,
+     854,
+     859,
+     877,
+     887,
+     892,
+     901,
+     907,
+     916,
+     922,
+     939,
+     949,
+     954,
+     963,
+     968,
+     978,
+     984,
+     1001,
+     1010,
+     1016,
+     1026,
+     1031,
+     1040,
+     1046,
+     1064,
+     1074,
+     1079,
+     1088,
+     1093,
+     1110,
+     1119,
+     1135,
+     1140,
+     1150,
+     1155,
+     1165,
+     1171,
+     1181,
+     1187,
+     1197
+    ],
+    "nytNiveau": [
+     {
+      "t": 13,
+      "tekst": "Nyt niveau i Brøker: Begynder (nu 5)"
+     }
+    ],
+    "bonus": [],
+    "loft": [
+     {
+      "t": 106,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 122,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 138,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 144,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 153,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 170,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 176,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 186,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 191,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 201,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 207,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 216,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 222,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 231,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 237,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 254,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 291,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 309,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 338,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 354,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 360,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 378,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 387,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 392,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 402,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 407,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 435,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 441,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 450,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 456,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 474,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 483,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 508,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 517,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 541,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 577,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 606,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 623,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 628,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 664,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 674,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 691,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 707,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 732,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 742,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 748,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 766,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 776,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 782,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 800,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 810,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 815,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 824,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 840,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 845,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 854,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 859,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 877,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 887,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 892,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 901,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 907,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 916,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 922,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 939,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 949,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 954,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 963,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 968,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 978,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 984,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1001,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1010,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1016,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1026,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1031,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1040,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1046,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1064,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1074,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1079,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1088,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1093,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1110,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1119,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1135,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1140,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1150,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1155,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1165,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1171,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1181,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1187,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1197,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     }
+    ],
+    "halv": [],
+    "bonusHalv": [],
+    "genindlaest": 146
+   },
+   "faerdighed": {
+    "chip": [
+     [
+      "broeker",
+      50
+     ]
+    ],
+    "flyvere": 0,
+    "tekster": [],
+    "chipSidst": "Brøker 50"
+   },
+   "variant": "travl",
+   "bredde": 390,
+   "ur": {
+    "s": 1200,
+    "rul": 25
+   },
+   "opg": {
+    "antal": 146,
+    "rigtigeFoerste": 49,
+    "loesning": 73,
+    "foresloeg": 508,
+    "ukendt": 0,
+    "ord": 3358
+   },
+   "historieOrd": {
+    "tak": 0,
+    "hvil": 0,
+    "replik": 0,
+    "mestring": 0,
+    "bogPanel": 0,
+    "niveau": 0,
+    "aabning": 49
+   },
+   "foersteSkaerm": {
+    "opgaveTop": 1902,
+    "skaermHoejde": 844,
+    "sideHoejde": 2281
+   },
+   "naesteFejl": "Ikke helt. Hint 1 af 2: 1/2 sammenligner de fyldte med resten. En brøk af helheden skal have ALLE 3 sække i nævneren.",
+   "log": [
+    {
+     "t": 10,
+     "art": "start",
+     "opgaveTop": 1902,
+     "skaermHoejde": 844,
+     "sideHoejde": 2281
+    },
+    {
+     "t": 10,
+     "art": "aabning",
+     "tekst": "Tulle kommer ned ad vejen til Møllen. Mølleren står i døren, hvid af mel. Mølleren: \"Godt, du kom. Hjulet er gået i stå, og Ane, bagerkonen, har intet mel til morgenbrødet.\" Mølleren: \"Hjælp mig med »Lige store dele«, så kan vi male igen, og så kan du hjælpe Ane.\"",
+     "aabningTop": 8,
+     "knapBund": 696,
+     "skaerm": 844
+    },
+    {
+     "t": 11,
+     "art": "opgave",
+     "nr": 1,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Tulle kommer ned ad vejen til Møllen. Mølleren står i døren, hvid af mel. Mølleren: \"Godt, du kom. Hjulet er gået i stå, og Ane, bag",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 16,
+     "art": "genindlaest"
+    },
+    {
+     "t": 19,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 21,
+     "art": "opgave",
+     "nr": 2,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 26,
+     "art": "genindlaest"
+    },
+    {
+     "t": 27,
+     "art": "opgave",
+     "nr": 3,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 31,
+     "art": "genindlaest"
+    },
+    {
+     "t": 34,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 36,
+     "art": "opgave",
+     "nr": 4,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 41,
+     "art": "genindlaest"
+    },
+    {
+     "t": 42,
+     "art": "opgave",
+     "nr": 5,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 46,
+     "art": "genindlaest"
+    },
+    {
+     "t": 49,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 51,
+     "art": "opgave",
+     "nr": 6,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 58,
+     "art": "genindlaest"
+    },
+    {
+     "t": 59,
+     "art": "opgave",
+     "nr": 7,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 65,
+     "art": "genindlaest"
+    },
+    {
+     "t": 68,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 70,
+     "art": "opgave",
+     "nr": 8,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 74,
+     "art": "genindlaest"
+    },
+    {
+     "t": 75,
+     "art": "opgave",
+     "nr": 9,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 81,
+     "art": "genindlaest"
+    },
+    {
+     "t": 84,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 86,
+     "art": "opgave",
+     "nr": 10,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 93,
+     "art": "genindlaest"
+    },
+    {
+     "t": 94,
+     "art": "opgave",
+     "nr": 11,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 100,
+     "art": "genindlaest"
+    },
+    {
+     "t": 103,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 105,
+     "art": "opgave",
+     "nr": 12,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 109,
+     "art": "genindlaest"
+    },
+    {
+     "t": 110,
+     "art": "opgave",
+     "nr": 13,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 116,
+     "art": "genindlaest"
+    },
+    {
+     "t": 119,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 121,
+     "art": "opgave",
+     "nr": 14,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 125,
+     "art": "genindlaest"
+    },
+    {
+     "t": 126,
+     "art": "opgave",
+     "nr": 15,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 132,
+     "art": "genindlaest"
+    },
+    {
+     "t": 135,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 137,
+     "art": "opgave",
+     "nr": 16,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 141,
+     "art": "genindlaest"
+    },
+    {
+     "t": 142,
+     "art": "opgave",
+     "nr": 17,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 147,
+     "art": "genindlaest"
+    },
+    {
+     "t": 150,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 152,
+     "art": "opgave",
+     "nr": 18,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 156,
+     "art": "genindlaest"
+    },
+    {
+     "t": 157,
+     "art": "opgave",
+     "nr": 19,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 163,
+     "art": "genindlaest"
+    },
+    {
+     "t": 166,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 168,
+     "art": "opgave",
+     "nr": 20,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 173,
+     "art": "genindlaest"
+    },
+    {
+     "t": 174,
+     "art": "opgave",
+     "nr": 21,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 179,
+     "art": "genindlaest"
+    },
+    {
+     "t": 182,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 184,
+     "art": "opgave",
+     "nr": 22,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 189,
+     "art": "genindlaest"
+    },
+    {
+     "t": 190,
+     "art": "opgave",
+     "nr": 23,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 194,
+     "art": "genindlaest"
+    },
+    {
+     "t": 197,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 199,
+     "art": "opgave",
+     "nr": 24,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 204,
+     "art": "genindlaest"
+    },
+    {
+     "t": 205,
+     "art": "opgave",
+     "nr": 25,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 210,
+     "art": "genindlaest"
+    },
+    {
+     "t": 213,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 215,
+     "art": "opgave",
+     "nr": 26,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 219,
+     "art": "genindlaest"
+    },
+    {
+     "t": 220,
+     "art": "opgave",
+     "nr": 27,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 225,
+     "art": "genindlaest"
+    },
+    {
+     "t": 228,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 230,
+     "art": "opgave",
+     "nr": 28,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 234,
+     "art": "genindlaest"
+    },
+    {
+     "t": 235,
+     "art": "opgave",
+     "nr": 29,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 240,
+     "art": "genindlaest"
+    },
+    {
+     "t": 243,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 245,
+     "art": "opgave",
+     "nr": 30,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 252,
+     "art": "genindlaest"
+    },
+    {
+     "t": 253,
+     "art": "opgave",
+     "nr": 31,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 257,
+     "art": "genindlaest"
+    },
+    {
+     "t": 260,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 262,
+     "art": "opgave",
+     "nr": 32,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 269,
+     "art": "genindlaest"
+    },
+    {
+     "t": 270,
+     "art": "opgave",
+     "nr": 33,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 276,
+     "art": "genindlaest"
+    },
+    {
+     "t": 279,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 281,
+     "art": "opgave",
+     "nr": 34,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 288,
+     "art": "genindlaest"
+    },
+    {
+     "t": 289,
+     "art": "opgave",
+     "nr": 35,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 294,
+     "art": "genindlaest"
+    },
+    {
+     "t": 297,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 299,
+     "art": "opgave",
+     "nr": 36,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 306,
+     "art": "genindlaest"
+    },
+    {
+     "t": 307,
+     "art": "opgave",
+     "nr": 37,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 312,
+     "art": "genindlaest"
+    },
+    {
+     "t": 315,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 317,
+     "art": "opgave",
+     "nr": 38,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 324,
+     "art": "genindlaest"
+    },
+    {
+     "t": 325,
+     "art": "opgave",
+     "nr": 39,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 331,
+     "art": "genindlaest"
+    },
+    {
+     "t": 334,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 336,
+     "art": "opgave",
+     "nr": 40,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 341,
+     "art": "genindlaest"
+    },
+    {
+     "t": 342,
+     "art": "opgave",
+     "nr": 41,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 348,
+     "art": "genindlaest"
+    },
+    {
+     "t": 351,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 353,
+     "art": "opgave",
+     "nr": 42,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 357,
+     "art": "genindlaest"
+    },
+    {
+     "t": 358,
+     "art": "opgave",
+     "nr": 43,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 363,
+     "art": "genindlaest"
+    },
+    {
+     "t": 366,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 368,
+     "art": "opgave",
+     "nr": 44,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 375,
+     "art": "genindlaest"
+    },
+    {
+     "t": 376,
+     "art": "opgave",
+     "nr": 45,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 381,
+     "art": "genindlaest"
+    },
+    {
+     "t": 384,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 386,
+     "art": "opgave",
+     "nr": 46,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 390,
+     "art": "genindlaest"
+    },
+    {
+     "t": 391,
+     "art": "opgave",
+     "nr": 47,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 395,
+     "art": "genindlaest"
+    },
+    {
+     "t": 398,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 400,
+     "art": "opgave",
+     "nr": 48,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 405,
+     "art": "genindlaest"
+    },
+    {
+     "t": 406,
+     "art": "opgave",
+     "nr": 49,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 410,
+     "art": "genindlaest"
+    },
+    {
+     "t": 413,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 415,
+     "art": "opgave",
+     "nr": 50,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 422,
+     "art": "genindlaest"
+    },
+    {
+     "t": 423,
+     "art": "opgave",
+     "nr": 51,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 429,
+     "art": "genindlaest"
+    },
+    {
+     "t": 432,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 434,
+     "art": "opgave",
+     "nr": 52,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 438,
+     "art": "genindlaest"
+    },
+    {
+     "t": 439,
+     "art": "opgave",
+     "nr": 53,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 444,
+     "art": "genindlaest"
+    },
+    {
+     "t": 447,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 449,
+     "art": "opgave",
+     "nr": 54,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 453,
+     "art": "genindlaest"
+    },
+    {
+     "t": 454,
+     "art": "opgave",
+     "nr": 55,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 459,
+     "art": "genindlaest"
+    },
+    {
+     "t": 462,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 464,
+     "art": "opgave",
+     "nr": 56,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 471,
+     "art": "genindlaest"
+    },
+    {
+     "t": 472,
+     "art": "opgave",
+     "nr": 57,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 477,
+     "art": "genindlaest"
+    },
+    {
+     "t": 480,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 482,
+     "art": "opgave",
+     "nr": 58,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 486,
+     "art": "genindlaest"
+    },
+    {
+     "t": 487,
+     "art": "opgave",
+     "nr": 59,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 493,
+     "art": "genindlaest"
+    },
+    {
+     "t": 496,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 498,
+     "art": "opgave",
+     "nr": 60,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 505,
+     "art": "genindlaest"
+    },
+    {
+     "t": 506,
+     "art": "opgave",
+     "nr": 61,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 511,
+     "art": "genindlaest"
+    },
+    {
+     "t": 514,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 516,
+     "art": "opgave",
+     "nr": 62,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 520,
+     "art": "genindlaest"
+    },
+    {
+     "t": 521,
+     "art": "opgave",
+     "nr": 63,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 527,
+     "art": "genindlaest"
+    },
+    {
+     "t": 530,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 532,
+     "art": "opgave",
+     "nr": 64,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 539,
+     "art": "genindlaest"
+    },
+    {
+     "t": 540,
+     "art": "opgave",
+     "nr": 65,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 544,
+     "art": "genindlaest"
+    },
+    {
+     "t": 547,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 549,
+     "art": "opgave",
+     "nr": 66,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 556,
+     "art": "genindlaest"
+    },
+    {
+     "t": 557,
+     "art": "opgave",
+     "nr": 67,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 563,
+     "art": "genindlaest"
+    },
+    {
+     "t": 566,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 568,
+     "art": "opgave",
+     "nr": 68,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 575,
+     "art": "genindlaest"
+    },
+    {
+     "t": 576,
+     "art": "opgave",
+     "nr": 69,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 580,
+     "art": "genindlaest"
+    },
+    {
+     "t": 583,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 585,
+     "art": "opgave",
+     "nr": 70,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 592,
+     "art": "genindlaest"
+    },
+    {
+     "t": 593,
+     "art": "opgave",
+     "nr": 71,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 599,
+     "art": "genindlaest"
+    },
+    {
+     "t": 602,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 604,
+     "art": "opgave",
+     "nr": 72,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 609,
+     "art": "genindlaest"
+    },
+    {
+     "t": 610,
+     "art": "opgave",
+     "nr": 73,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 616,
+     "art": "genindlaest"
+    },
+    {
+     "t": 619,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 621,
+     "art": "opgave",
+     "nr": 74,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 626,
+     "art": "genindlaest"
+    },
+    {
+     "t": 627,
+     "art": "opgave",
+     "nr": 75,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 631,
+     "art": "genindlaest"
+    },
+    {
+     "t": 634,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 636,
+     "art": "opgave",
+     "nr": 76,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 643,
+     "art": "genindlaest"
+    },
+    {
+     "t": 644,
+     "art": "opgave",
+     "nr": 77,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 650,
+     "art": "genindlaest"
+    },
+    {
+     "t": 653,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 655,
+     "art": "opgave",
+     "nr": 78,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 662,
+     "art": "genindlaest"
+    },
+    {
+     "t": 663,
+     "art": "opgave",
+     "nr": 79,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 667,
+     "art": "genindlaest"
+    },
+    {
+     "t": 670,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 672,
+     "art": "opgave",
+     "nr": 80,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 677,
+     "art": "genindlaest"
+    },
+    {
+     "t": 678,
+     "art": "opgave",
+     "nr": 81,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 684,
+     "art": "genindlaest"
+    },
+    {
+     "t": 687,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 689,
+     "art": "opgave",
+     "nr": 82,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 694,
+     "art": "genindlaest"
+    },
+    {
+     "t": 695,
+     "art": "opgave",
+     "nr": 83,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 701,
+     "art": "genindlaest"
+    },
+    {
+     "t": 704,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 706,
+     "art": "opgave",
+     "nr": 84,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 710,
+     "art": "genindlaest"
+    },
+    {
+     "t": 711,
+     "art": "opgave",
+     "nr": 85,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 717,
+     "art": "genindlaest"
+    },
+    {
+     "t": 720,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 722,
+     "art": "opgave",
+     "nr": 86,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 729,
+     "art": "genindlaest"
+    },
+    {
+     "t": 730,
+     "art": "opgave",
+     "nr": 87,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 735,
+     "art": "genindlaest"
+    },
+    {
+     "t": 738,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 740,
+     "art": "opgave",
+     "nr": 88,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 745,
+     "art": "genindlaest"
+    },
+    {
+     "t": 746,
+     "art": "opgave",
+     "nr": 89,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 751,
+     "art": "genindlaest"
+    },
+    {
+     "t": 754,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 756,
+     "art": "opgave",
+     "nr": 90,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 763,
+     "art": "genindlaest"
+    },
+    {
+     "t": 764,
+     "art": "opgave",
+     "nr": 91,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 769,
+     "art": "genindlaest"
+    },
+    {
+     "t": 772,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 774,
+     "art": "opgave",
+     "nr": 92,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 779,
+     "art": "genindlaest"
+    },
+    {
+     "t": 780,
+     "art": "opgave",
+     "nr": 93,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 785,
+     "art": "genindlaest"
+    },
+    {
+     "t": 788,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 790,
+     "art": "opgave",
+     "nr": 94,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 797,
+     "art": "genindlaest"
+    },
+    {
+     "t": 798,
+     "art": "opgave",
+     "nr": 95,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 803,
+     "art": "genindlaest"
+    },
+    {
+     "t": 806,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 808,
+     "art": "opgave",
+     "nr": 96,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 813,
+     "art": "genindlaest"
+    },
+    {
+     "t": 814,
+     "art": "opgave",
+     "nr": 97,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 818,
+     "art": "genindlaest"
+    },
+    {
+     "t": 821,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 823,
+     "art": "opgave",
+     "nr": 98,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 827,
+     "art": "genindlaest"
+    },
+    {
+     "t": 828,
+     "art": "opgave",
+     "nr": 99,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 834,
+     "art": "genindlaest"
+    },
+    {
+     "t": 837,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 839,
+     "art": "opgave",
+     "nr": 100,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 843,
+     "art": "genindlaest"
+    },
+    {
+     "t": 844,
+     "art": "opgave",
+     "nr": 101,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 848,
+     "art": "genindlaest"
+    },
+    {
+     "t": 851,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 853,
+     "art": "opgave",
+     "nr": 102,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 857,
+     "art": "genindlaest"
+    },
+    {
+     "t": 858,
+     "art": "opgave",
+     "nr": 103,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 862,
+     "art": "genindlaest"
+    },
+    {
+     "t": 865,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 867,
+     "art": "opgave",
+     "nr": 104,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 874,
+     "art": "genindlaest"
+    },
+    {
+     "t": 875,
+     "art": "opgave",
+     "nr": 105,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 880,
+     "art": "genindlaest"
+    },
+    {
+     "t": 883,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 885,
+     "art": "opgave",
+     "nr": 106,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 890,
+     "art": "genindlaest"
+    },
+    {
+     "t": 891,
+     "art": "opgave",
+     "nr": 107,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 895,
+     "art": "genindlaest"
+    },
+    {
+     "t": 898,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 900,
+     "art": "opgave",
+     "nr": 108,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 904,
+     "art": "genindlaest"
+    },
+    {
+     "t": 905,
+     "art": "opgave",
+     "nr": 109,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 910,
+     "art": "genindlaest"
+    },
+    {
+     "t": 913,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 915,
+     "art": "opgave",
+     "nr": 110,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 919,
+     "art": "genindlaest"
+    },
+    {
+     "t": 920,
+     "art": "opgave",
+     "nr": 111,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 925,
+     "art": "genindlaest"
+    },
+    {
+     "t": 928,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 930,
+     "art": "opgave",
+     "nr": 112,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 937,
+     "art": "genindlaest"
+    },
+    {
+     "t": 938,
+     "art": "opgave",
+     "nr": 113,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 942,
+     "art": "genindlaest"
+    },
+    {
+     "t": 945,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 947,
+     "art": "opgave",
+     "nr": 114,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 952,
+     "art": "genindlaest"
+    },
+    {
+     "t": 953,
+     "art": "opgave",
+     "nr": 115,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 957,
+     "art": "genindlaest"
+    },
+    {
+     "t": 960,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 962,
+     "art": "opgave",
+     "nr": 116,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 966,
+     "art": "genindlaest"
+    },
+    {
+     "t": 967,
+     "art": "opgave",
+     "nr": 117,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 971,
+     "art": "genindlaest"
+    },
+    {
+     "t": 974,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 976,
+     "art": "opgave",
+     "nr": 118,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 981,
+     "art": "genindlaest"
+    },
+    {
+     "t": 982,
+     "art": "opgave",
+     "nr": 119,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 987,
+     "art": "genindlaest"
+    },
+    {
+     "t": 990,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 992,
+     "art": "opgave",
+     "nr": 120,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 999,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1000,
+     "art": "opgave",
+     "nr": 121,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1004,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1007,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 1009,
+     "art": "opgave",
+     "nr": 122,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1013,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1014,
+     "art": "opgave",
+     "nr": 123,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1019,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1022,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 1024,
+     "art": "opgave",
+     "nr": 124,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1029,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1030,
+     "art": "opgave",
+     "nr": 125,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1034,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1037,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 1039,
+     "art": "opgave",
+     "nr": 126,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1043,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1044,
+     "art": "opgave",
+     "nr": 127,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1049,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1052,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 1054,
+     "art": "opgave",
+     "nr": 128,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1061,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1062,
+     "art": "opgave",
+     "nr": 129,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1067,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1070,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 1072,
+     "art": "opgave",
+     "nr": 130,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1077,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1078,
+     "art": "opgave",
+     "nr": 131,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1082,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1085,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 1087,
+     "art": "opgave",
+     "nr": 132,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1091,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1092,
+     "art": "opgave",
+     "nr": 133,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1096,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1099,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 1101,
+     "art": "opgave",
+     "nr": 134,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1108,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1109,
+     "art": "opgave",
+     "nr": 135,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1113,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1116,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 1118,
+     "art": "opgave",
+     "nr": 136,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1122,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1123,
+     "art": "opgave",
+     "nr": 137,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1129,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1132,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 1134,
+     "art": "opgave",
+     "nr": 138,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1138,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1139,
+     "art": "opgave",
+     "nr": 139,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1143,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1146,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 1148,
+     "art": "opgave",
+     "nr": 140,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1153,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1154,
+     "art": "opgave",
+     "nr": 141,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1158,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1161,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 1163,
+     "art": "opgave",
+     "nr": 142,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1168,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1169,
+     "art": "opgave",
+     "nr": 143,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1174,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1177,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 1179,
+     "art": "opgave",
+     "nr": 144,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1184,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1185,
+     "art": "opgave",
+     "nr": 145,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1190,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1193,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 1195,
+     "art": "opgave",
+     "nr": 146,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1200,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1200,
+     "art": "slut"
+    }
+   ],
+   "hoved": "1 Tulle Niveau 1 Næste niveau: mestr et forløb. 745 erfaring",
+   "vandret": true,
+   "sidefejl": [],
+   "billeder": [
+    "E-o602-525-travl-390-00-opret.png",
+    "E-o602-525-travl-390-01-foerste-skaerm.png",
+    "E-o602-525-travl-390-03-aabning.png",
+    "E-o602-525-travl-390-02-foerste-opgave.png",
+    "E-o602-525-travl-390-10-hint.png",
+    "E-o602-525-travl-390-40-kortet-efter-30-min.png",
+    "E-o602-525-travl-390-50-min-helt.png",
+    "E-o602-525-travl-390-51-questbog.png"
+   ]
+  },
+  {
+   "tid": {
+    "flyvere": [
+     {
+      "t": 13,
+      "chip": "Brøker 0"
+     },
+     {
+      "t": 23,
+      "chip": "Brøker 5"
+     },
+     {
+      "t": 28,
+      "chip": "Brøker 10"
+     },
+     {
+      "t": 38,
+      "chip": "Brøker 20"
+     },
+     {
+      "t": 43,
+      "chip": "Brøker 25"
+     },
+     {
+      "t": 71,
+      "chip": "Brøker 35"
+     },
+     {
+      "t": 106,
+      "chip": "Brøker 45"
+     }
+    ],
+    "xp": [
+     122,
+     138,
+     144,
+     153,
+     170,
+     176,
+     186,
+     191,
+     201,
+     207,
+     216,
+     222,
+     231,
+     237,
+     254,
+     291,
+     309,
+     338,
+     354,
+     360,
+     378,
+     387,
+     392,
+     402,
+     407,
+     435,
+     441,
+     450,
+     456,
+     474,
+     483,
+     508,
+     517,
+     541,
+     577,
+     606,
+     623,
+     628,
+     664,
+     674,
+     691,
+     707,
+     732,
+     742,
+     748,
+     766,
+     776,
+     782,
+     800,
+     810,
+     815,
+     824,
+     840,
+     845,
+     854,
+     859,
+     877,
+     887,
+     892,
+     901,
+     907,
+     916,
+     922,
+     939,
+     949,
+     954,
+     963,
+     968,
+     978,
+     984,
+     1001,
+     1010,
+     1016,
+     1026,
+     1031,
+     1040,
+     1046,
+     1064,
+     1074,
+     1079,
+     1088,
+     1093,
+     1110,
+     1119,
+     1135,
+     1140,
+     1150,
+     1155,
+     1165,
+     1171,
+     1181,
+     1187,
+     1197
+    ],
+    "nytNiveau": [
+     {
+      "t": 13,
+      "tekst": "Nyt niveau i Brøker: Begynder (nu 5)"
+     }
+    ],
+    "bonus": [],
+    "loft": [
+     {
+      "t": 106,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 122,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 138,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 144,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 153,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 170,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 176,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 186,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 191,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 201,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 207,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 216,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 222,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 231,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 237,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 254,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 291,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 309,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 338,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 354,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 360,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 378,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 387,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 392,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 402,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 407,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 435,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 441,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 450,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 456,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 474,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 483,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 508,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 517,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 541,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 577,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 606,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 623,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 628,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 664,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 674,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 691,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 707,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 732,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 742,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 748,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 766,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 776,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 782,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 800,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 810,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 815,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 824,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 840,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 845,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 854,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 859,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 877,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 887,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 892,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 901,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 907,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 916,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 922,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 939,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 949,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 954,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 963,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 968,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 978,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 984,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1001,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1010,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1016,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1026,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1031,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1040,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1046,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1064,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1074,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1079,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1088,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1093,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1110,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1119,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1135,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1140,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1150,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1155,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1165,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1171,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1181,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1187,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     },
+     {
+      "t": 1197,
+      "tekst": "Brøker vokser igen, når du klarer forløbet. Så kommer en bonus."
+     }
+    ],
+    "halv": [],
+    "bonusHalv": [],
+    "genindlaest": 146
+   },
+   "faerdighed": {
+    "chip": [
+     [
+      "broeker",
+      50
+     ]
+    ],
+    "flyvere": 0,
+    "tekster": [],
+    "chipSidst": "Brøker 50"
+   },
+   "variant": "foelger",
+   "bredde": 390,
+   "ur": {
+    "s": 1200,
+    "rul": 25
+   },
+   "opg": {
+    "antal": 146,
+    "rigtigeFoerste": 49,
+    "loesning": 73,
+    "foresloeg": 508,
+    "ukendt": 0,
+    "ord": 3358
+   },
+   "historieOrd": {
+    "tak": 0,
+    "hvil": 0,
+    "replik": 0,
+    "mestring": 0,
+    "bogPanel": 0,
+    "niveau": 0,
+    "aabning": 49
+   },
+   "foersteSkaerm": {
+    "opgaveTop": 1902,
+    "skaermHoejde": 844,
+    "sideHoejde": 2281
+   },
+   "naesteFejl": "Ikke helt. Hint 1 af 2: 1/2 sammenligner de fyldte med resten. En brøk af helheden skal have ALLE 3 sække i nævneren.",
+   "log": [
+    {
+     "t": 10,
+     "art": "start",
+     "opgaveTop": 1902,
+     "skaermHoejde": 844,
+     "sideHoejde": 2281
+    },
+    {
+     "t": 10,
+     "art": "aabning",
+     "tekst": "Tulle kommer ned ad vejen til Møllen. Mølleren står i døren, hvid af mel. Mølleren: \"Godt, du kom. Hjulet er gået i stå, og Ane, bagerkonen, har intet mel til morgenbrødet.\" Mølleren: \"Hjælp mig med »Lige store dele«, så kan vi male igen, og så kan du hjælpe Ane.\"",
+     "aabningTop": 8,
+     "knapBund": 696,
+     "skaerm": 844
+    },
+    {
+     "t": 11,
+     "art": "opgave",
+     "nr": 1,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Tulle kommer ned ad vejen til Møllen. Mølleren står i døren, hvid af mel. Mølleren: \"Godt, du kom. Hjulet er gået i stå, og Ane, bag",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 16,
+     "art": "genindlaest"
+    },
+    {
+     "t": 19,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 21,
+     "art": "opgave",
+     "nr": 2,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 26,
+     "art": "genindlaest"
+    },
+    {
+     "t": 27,
+     "art": "opgave",
+     "nr": 3,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 31,
+     "art": "genindlaest"
+    },
+    {
+     "t": 34,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 36,
+     "art": "opgave",
+     "nr": 4,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 41,
+     "art": "genindlaest"
+    },
+    {
+     "t": 42,
+     "art": "opgave",
+     "nr": 5,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 46,
+     "art": "genindlaest"
+    },
+    {
+     "t": 49,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 51,
+     "art": "opgave",
+     "nr": 6,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 58,
+     "art": "genindlaest"
+    },
+    {
+     "t": 59,
+     "art": "opgave",
+     "nr": 7,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 65,
+     "art": "genindlaest"
+    },
+    {
+     "t": 68,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 70,
+     "art": "opgave",
+     "nr": 8,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 74,
+     "art": "genindlaest"
+    },
+    {
+     "t": 75,
+     "art": "opgave",
+     "nr": 9,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 81,
+     "art": "genindlaest"
+    },
+    {
+     "t": 84,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 86,
+     "art": "opgave",
+     "nr": 10,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 93,
+     "art": "genindlaest"
+    },
+    {
+     "t": 94,
+     "art": "opgave",
+     "nr": 11,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 100,
+     "art": "genindlaest"
+    },
+    {
+     "t": 103,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 105,
+     "art": "opgave",
+     "nr": 12,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 109,
+     "art": "genindlaest"
+    },
+    {
+     "t": 110,
+     "art": "opgave",
+     "nr": 13,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 116,
+     "art": "genindlaest"
+    },
+    {
+     "t": 119,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 121,
+     "art": "opgave",
+     "nr": 14,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 125,
+     "art": "genindlaest"
+    },
+    {
+     "t": 126,
+     "art": "opgave",
+     "nr": 15,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 132,
+     "art": "genindlaest"
+    },
+    {
+     "t": 135,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 137,
+     "art": "opgave",
+     "nr": 16,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 141,
+     "art": "genindlaest"
+    },
+    {
+     "t": 142,
+     "art": "opgave",
+     "nr": 17,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 147,
+     "art": "genindlaest"
+    },
+    {
+     "t": 150,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 152,
+     "art": "opgave",
+     "nr": 18,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 156,
+     "art": "genindlaest"
+    },
+    {
+     "t": 157,
+     "art": "opgave",
+     "nr": 19,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 163,
+     "art": "genindlaest"
+    },
+    {
+     "t": 166,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 168,
+     "art": "opgave",
+     "nr": 20,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 173,
+     "art": "genindlaest"
+    },
+    {
+     "t": 174,
+     "art": "opgave",
+     "nr": 21,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 179,
+     "art": "genindlaest"
+    },
+    {
+     "t": 182,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 184,
+     "art": "opgave",
+     "nr": 22,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 189,
+     "art": "genindlaest"
+    },
+    {
+     "t": 190,
+     "art": "opgave",
+     "nr": 23,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 194,
+     "art": "genindlaest"
+    },
+    {
+     "t": 197,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 199,
+     "art": "opgave",
+     "nr": 24,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 204,
+     "art": "genindlaest"
+    },
+    {
+     "t": 205,
+     "art": "opgave",
+     "nr": 25,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 210,
+     "art": "genindlaest"
+    },
+    {
+     "t": 213,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 215,
+     "art": "opgave",
+     "nr": 26,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 219,
+     "art": "genindlaest"
+    },
+    {
+     "t": 220,
+     "art": "opgave",
+     "nr": 27,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 225,
+     "art": "genindlaest"
+    },
+    {
+     "t": 228,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 230,
+     "art": "opgave",
+     "nr": 28,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 234,
+     "art": "genindlaest"
+    },
+    {
+     "t": 235,
+     "art": "opgave",
+     "nr": 29,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 240,
+     "art": "genindlaest"
+    },
+    {
+     "t": 243,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 245,
+     "art": "opgave",
+     "nr": 30,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 252,
+     "art": "genindlaest"
+    },
+    {
+     "t": 253,
+     "art": "opgave",
+     "nr": 31,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 257,
+     "art": "genindlaest"
+    },
+    {
+     "t": 260,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 262,
+     "art": "opgave",
+     "nr": 32,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 269,
+     "art": "genindlaest"
+    },
+    {
+     "t": 270,
+     "art": "opgave",
+     "nr": 33,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 276,
+     "art": "genindlaest"
+    },
+    {
+     "t": 279,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 281,
+     "art": "opgave",
+     "nr": 34,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 288,
+     "art": "genindlaest"
+    },
+    {
+     "t": 289,
+     "art": "opgave",
+     "nr": 35,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 294,
+     "art": "genindlaest"
+    },
+    {
+     "t": 297,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 299,
+     "art": "opgave",
+     "nr": 36,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 306,
+     "art": "genindlaest"
+    },
+    {
+     "t": 307,
+     "art": "opgave",
+     "nr": 37,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 312,
+     "art": "genindlaest"
+    },
+    {
+     "t": 315,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 317,
+     "art": "opgave",
+     "nr": 38,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 324,
+     "art": "genindlaest"
+    },
+    {
+     "t": 325,
+     "art": "opgave",
+     "nr": 39,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 331,
+     "art": "genindlaest"
+    },
+    {
+     "t": 334,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 336,
+     "art": "opgave",
+     "nr": 40,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 341,
+     "art": "genindlaest"
+    },
+    {
+     "t": 342,
+     "art": "opgave",
+     "nr": 41,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 348,
+     "art": "genindlaest"
+    },
+    {
+     "t": 351,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 353,
+     "art": "opgave",
+     "nr": 42,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 357,
+     "art": "genindlaest"
+    },
+    {
+     "t": 358,
+     "art": "opgave",
+     "nr": 43,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 363,
+     "art": "genindlaest"
+    },
+    {
+     "t": 366,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 368,
+     "art": "opgave",
+     "nr": 44,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 375,
+     "art": "genindlaest"
+    },
+    {
+     "t": 376,
+     "art": "opgave",
+     "nr": 45,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 381,
+     "art": "genindlaest"
+    },
+    {
+     "t": 384,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 386,
+     "art": "opgave",
+     "nr": 46,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 390,
+     "art": "genindlaest"
+    },
+    {
+     "t": 391,
+     "art": "opgave",
+     "nr": 47,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 395,
+     "art": "genindlaest"
+    },
+    {
+     "t": 398,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 400,
+     "art": "opgave",
+     "nr": 48,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 405,
+     "art": "genindlaest"
+    },
+    {
+     "t": 406,
+     "art": "opgave",
+     "nr": 49,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 410,
+     "art": "genindlaest"
+    },
+    {
+     "t": 413,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 415,
+     "art": "opgave",
+     "nr": 50,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 422,
+     "art": "genindlaest"
+    },
+    {
+     "t": 423,
+     "art": "opgave",
+     "nr": 51,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 429,
+     "art": "genindlaest"
+    },
+    {
+     "t": 432,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 434,
+     "art": "opgave",
+     "nr": 52,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 438,
+     "art": "genindlaest"
+    },
+    {
+     "t": 439,
+     "art": "opgave",
+     "nr": 53,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 444,
+     "art": "genindlaest"
+    },
+    {
+     "t": 447,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 449,
+     "art": "opgave",
+     "nr": 54,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 453,
+     "art": "genindlaest"
+    },
+    {
+     "t": 454,
+     "art": "opgave",
+     "nr": 55,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 459,
+     "art": "genindlaest"
+    },
+    {
+     "t": 462,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 464,
+     "art": "opgave",
+     "nr": 56,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 471,
+     "art": "genindlaest"
+    },
+    {
+     "t": 472,
+     "art": "opgave",
+     "nr": 57,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 477,
+     "art": "genindlaest"
+    },
+    {
+     "t": 480,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 482,
+     "art": "opgave",
+     "nr": 58,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 486,
+     "art": "genindlaest"
+    },
+    {
+     "t": 487,
+     "art": "opgave",
+     "nr": 59,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 493,
+     "art": "genindlaest"
+    },
+    {
+     "t": 496,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 498,
+     "art": "opgave",
+     "nr": 60,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 505,
+     "art": "genindlaest"
+    },
+    {
+     "t": 506,
+     "art": "opgave",
+     "nr": 61,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 511,
+     "art": "genindlaest"
+    },
+    {
+     "t": 514,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 516,
+     "art": "opgave",
+     "nr": 62,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 520,
+     "art": "genindlaest"
+    },
+    {
+     "t": 521,
+     "art": "opgave",
+     "nr": 63,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 527,
+     "art": "genindlaest"
+    },
+    {
+     "t": 530,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 532,
+     "art": "opgave",
+     "nr": 64,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 539,
+     "art": "genindlaest"
+    },
+    {
+     "t": 540,
+     "art": "opgave",
+     "nr": 65,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 544,
+     "art": "genindlaest"
+    },
+    {
+     "t": 547,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 549,
+     "art": "opgave",
+     "nr": 66,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 556,
+     "art": "genindlaest"
+    },
+    {
+     "t": 557,
+     "art": "opgave",
+     "nr": 67,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 563,
+     "art": "genindlaest"
+    },
+    {
+     "t": 566,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 568,
+     "art": "opgave",
+     "nr": 68,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 575,
+     "art": "genindlaest"
+    },
+    {
+     "t": 576,
+     "art": "opgave",
+     "nr": 69,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 580,
+     "art": "genindlaest"
+    },
+    {
+     "t": 583,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 585,
+     "art": "opgave",
+     "nr": 70,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 592,
+     "art": "genindlaest"
+    },
+    {
+     "t": 593,
+     "art": "opgave",
+     "nr": 71,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 599,
+     "art": "genindlaest"
+    },
+    {
+     "t": 602,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 604,
+     "art": "opgave",
+     "nr": 72,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 609,
+     "art": "genindlaest"
+    },
+    {
+     "t": 610,
+     "art": "opgave",
+     "nr": 73,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 616,
+     "art": "genindlaest"
+    },
+    {
+     "t": 619,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 621,
+     "art": "opgave",
+     "nr": 74,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 626,
+     "art": "genindlaest"
+    },
+    {
+     "t": 627,
+     "art": "opgave",
+     "nr": 75,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 631,
+     "art": "genindlaest"
+    },
+    {
+     "t": 634,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 636,
+     "art": "opgave",
+     "nr": 76,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 643,
+     "art": "genindlaest"
+    },
+    {
+     "t": 644,
+     "art": "opgave",
+     "nr": 77,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 650,
+     "art": "genindlaest"
+    },
+    {
+     "t": 653,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 655,
+     "art": "opgave",
+     "nr": 78,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 662,
+     "art": "genindlaest"
+    },
+    {
+     "t": 663,
+     "art": "opgave",
+     "nr": 79,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 667,
+     "art": "genindlaest"
+    },
+    {
+     "t": 670,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 672,
+     "art": "opgave",
+     "nr": 80,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 677,
+     "art": "genindlaest"
+    },
+    {
+     "t": 678,
+     "art": "opgave",
+     "nr": 81,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 684,
+     "art": "genindlaest"
+    },
+    {
+     "t": 687,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 689,
+     "art": "opgave",
+     "nr": 82,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 694,
+     "art": "genindlaest"
+    },
+    {
+     "t": 695,
+     "art": "opgave",
+     "nr": 83,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 701,
+     "art": "genindlaest"
+    },
+    {
+     "t": 704,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 706,
+     "art": "opgave",
+     "nr": 84,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 710,
+     "art": "genindlaest"
+    },
+    {
+     "t": 711,
+     "art": "opgave",
+     "nr": 85,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 717,
+     "art": "genindlaest"
+    },
+    {
+     "t": 720,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 722,
+     "art": "opgave",
+     "nr": 86,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 729,
+     "art": "genindlaest"
+    },
+    {
+     "t": 730,
+     "art": "opgave",
+     "nr": 87,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 735,
+     "art": "genindlaest"
+    },
+    {
+     "t": 738,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 740,
+     "art": "opgave",
+     "nr": 88,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 745,
+     "art": "genindlaest"
+    },
+    {
+     "t": 746,
+     "art": "opgave",
+     "nr": 89,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 751,
+     "art": "genindlaest"
+    },
+    {
+     "t": 754,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 756,
+     "art": "opgave",
+     "nr": 90,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 763,
+     "art": "genindlaest"
+    },
+    {
+     "t": 764,
+     "art": "opgave",
+     "nr": 91,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 769,
+     "art": "genindlaest"
+    },
+    {
+     "t": 772,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 774,
+     "art": "opgave",
+     "nr": 92,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 779,
+     "art": "genindlaest"
+    },
+    {
+     "t": 780,
+     "art": "opgave",
+     "nr": 93,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 785,
+     "art": "genindlaest"
+    },
+    {
+     "t": 788,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 790,
+     "art": "opgave",
+     "nr": 94,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 797,
+     "art": "genindlaest"
+    },
+    {
+     "t": 798,
+     "art": "opgave",
+     "nr": 95,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 803,
+     "art": "genindlaest"
+    },
+    {
+     "t": 806,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 808,
+     "art": "opgave",
+     "nr": 96,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 813,
+     "art": "genindlaest"
+    },
+    {
+     "t": 814,
+     "art": "opgave",
+     "nr": 97,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 818,
+     "art": "genindlaest"
+    },
+    {
+     "t": 821,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 823,
+     "art": "opgave",
+     "nr": 98,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 827,
+     "art": "genindlaest"
+    },
+    {
+     "t": 828,
+     "art": "opgave",
+     "nr": 99,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 834,
+     "art": "genindlaest"
+    },
+    {
+     "t": 837,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 839,
+     "art": "opgave",
+     "nr": 100,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 843,
+     "art": "genindlaest"
+    },
+    {
+     "t": 844,
+     "art": "opgave",
+     "nr": 101,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 848,
+     "art": "genindlaest"
+    },
+    {
+     "t": 851,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 853,
+     "art": "opgave",
+     "nr": 102,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 857,
+     "art": "genindlaest"
+    },
+    {
+     "t": 858,
+     "art": "opgave",
+     "nr": 103,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 862,
+     "art": "genindlaest"
+    },
+    {
+     "t": 865,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 867,
+     "art": "opgave",
+     "nr": 104,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 874,
+     "art": "genindlaest"
+    },
+    {
+     "t": 875,
+     "art": "opgave",
+     "nr": 105,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 880,
+     "art": "genindlaest"
+    },
+    {
+     "t": 883,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 885,
+     "art": "opgave",
+     "nr": 106,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 890,
+     "art": "genindlaest"
+    },
+    {
+     "t": 891,
+     "art": "opgave",
+     "nr": 107,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 895,
+     "art": "genindlaest"
+    },
+    {
+     "t": 898,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 900,
+     "art": "opgave",
+     "nr": 108,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 904,
+     "art": "genindlaest"
+    },
+    {
+     "t": 905,
+     "art": "opgave",
+     "nr": 109,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 910,
+     "art": "genindlaest"
+    },
+    {
+     "t": 913,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 915,
+     "art": "opgave",
+     "nr": 110,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 919,
+     "art": "genindlaest"
+    },
+    {
+     "t": 920,
+     "art": "opgave",
+     "nr": 111,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 925,
+     "art": "genindlaest"
+    },
+    {
+     "t": 928,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 930,
+     "art": "opgave",
+     "nr": 112,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 937,
+     "art": "genindlaest"
+    },
+    {
+     "t": 938,
+     "art": "opgave",
+     "nr": 113,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 942,
+     "art": "genindlaest"
+    },
+    {
+     "t": 945,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 947,
+     "art": "opgave",
+     "nr": 114,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 952,
+     "art": "genindlaest"
+    },
+    {
+     "t": 953,
+     "art": "opgave",
+     "nr": 115,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 957,
+     "art": "genindlaest"
+    },
+    {
+     "t": 960,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 962,
+     "art": "opgave",
+     "nr": 116,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 966,
+     "art": "genindlaest"
+    },
+    {
+     "t": 967,
+     "art": "opgave",
+     "nr": 117,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 971,
+     "art": "genindlaest"
+    },
+    {
+     "t": 974,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 976,
+     "art": "opgave",
+     "nr": 118,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 981,
+     "art": "genindlaest"
+    },
+    {
+     "t": 982,
+     "art": "opgave",
+     "nr": 119,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 987,
+     "art": "genindlaest"
+    },
+    {
+     "t": 990,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 992,
+     "art": "opgave",
+     "nr": 120,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 999,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1000,
+     "art": "opgave",
+     "nr": 121,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1004,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1007,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 1009,
+     "art": "opgave",
+     "nr": 122,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1013,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1014,
+     "art": "opgave",
+     "nr": 123,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1019,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1022,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 1024,
+     "art": "opgave",
+     "nr": 124,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1029,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1030,
+     "art": "opgave",
+     "nr": 125,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1034,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1037,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 1039,
+     "art": "opgave",
+     "nr": 126,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1043,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1044,
+     "art": "opgave",
+     "nr": 127,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1049,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1052,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 1054,
+     "art": "opgave",
+     "nr": 128,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1061,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1062,
+     "art": "opgave",
+     "nr": 129,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1067,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1070,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 1072,
+     "art": "opgave",
+     "nr": 130,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1077,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1078,
+     "art": "opgave",
+     "nr": 131,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1082,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1085,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 1087,
+     "art": "opgave",
+     "nr": 132,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1091,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1092,
+     "art": "opgave",
+     "nr": 133,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1096,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1099,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 1101,
+     "art": "opgave",
+     "nr": 134,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1108,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1109,
+     "art": "opgave",
+     "nr": 135,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1113,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1116,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 1118,
+     "art": "opgave",
+     "nr": 136,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1122,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1123,
+     "art": "opgave",
+     "nr": 137,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1129,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1132,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 1134,
+     "art": "opgave",
+     "nr": 138,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1138,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1139,
+     "art": "opgave",
+     "nr": 139,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1143,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1146,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 1148,
+     "art": "opgave",
+     "nr": 140,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1153,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1154,
+     "art": "opgave",
+     "nr": 141,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1158,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1161,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 1163,
+     "art": "opgave",
+     "nr": 142,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1168,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1169,
+     "art": "opgave",
+     "nr": 143,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1174,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1177,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 1179,
+     "art": "opgave",
+     "nr": 144,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1184,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1185,
+     "art": "opgave",
+     "nr": 145,
+     "tekst": "Mølleren har 3 lige store sække på vognen, og 1 er fyldt med mel: ▰▱▱. Hvor stor en del af sækkene er fyldt?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1190,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1193,
+     "art": "loesning",
+     "tekst": "Løsningen: 1 af 3 lige store sække er fyldt: brøken 1/3, og den kan ikke forkortes."
+    },
+    {
+     "t": 1195,
+     "art": "opgave",
+     "nr": 146,
+     "tekst": "Mølleren har delt sin mark i 6 lige store stykker, og 2 er sået: ▰▰▱▱▱▱. Hvor stor en del af marken er sået?",
+     "panel": "Vandmøllen ved åen MØLLEREN Forløb 1 af 8 Lige store dele Kagen, sækkene og marken er delt i lige store dele. Kan du se, hvor stor en del der er spist, fyldt el",
+     "hvem": "Vandmøllen ved åen"
+    },
+    {
+     "t": 1200,
+     "art": "genindlaest"
+    },
+    {
+     "t": 1200,
+     "art": "slut"
+    }
+   ],
+   "hoved": "1 Tulle Niveau 1 Næste niveau: mestr et forløb. 745 erfaring",
+   "vandret": true,
+   "sidefejl": [],
+   "billeder": [
+    "E-o602-525-foelger-390-00-opret.png",
+    "E-o602-525-foelger-390-01-foerste-skaerm.png",
+    "E-o602-525-foelger-390-03-aabning.png",
+    "E-o602-525-foelger-390-02-foerste-opgave.png",
+    "E-o602-525-foelger-390-10-hint.png",
+    "E-o602-525-foelger-390-40-kortet-efter-30-min.png",
+    "E-o602-525-foelger-390-50-min-helt.png",
+    "E-o602-525-foelger-390-51-questbog.png"
+   ]
+  }
+ ],
+ "dag2": [],
+ "dag3": []
+}
