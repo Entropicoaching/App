@@ -1,0 +1,837 @@
+{
+ "ref": "af963d8",
+ "sider": {
+  "360-light": {
+   "side": 360,
+   "klient": 360,
+   "hoejde": 3112,
+   "skaerm": 780,
+   "skaerme": 4,
+   "skaermeTilSidstValg": 3.4,
+   "mindstePx": 12.8,
+   "mindsteKontrast": {
+    "e": "Eleven mærker:",
+    "px": 16,
+    "k": 5.1
+   },
+   "ord": 593,
+   "valg": [
+    {
+     "id": "m2",
+     "idag": "I dag: en ny figur har 1 i alle tre. Ét af tallene stiger, hver gang figuren stiger et niveau, men tallene åbner ikke noget. Den travle ender med 7-1-1, følgeren med 3-3-1.",
+     "muligheder": [
+      {
+       "bogstav": "A",
+       "titel": "A Hvert tal får en betydning Mit forslag",
+       "forslag": true,
+       "maerker": [
+        "Eleven mærker: under \"Min helt\" står, at Hjerte er \"de folk, du har hjulpet\". Den travle (hjulpet 0) har Hjerte 1, følgeren (hjulpet 3) har Hjerte 4. En grund til at hjælpe, uden en ny regel.",
+        "Vil du hellere starte på 0 (Hjerte = præcis antal hjulpne)? Skriv M2 A0."
+       ],
+       "advarsel": null,
+       "tekst": "A Hvert tal får en betydning Mit forslag Hoved og Hånd tæller mestrede forløb (regning og måling). Hjerte tæller de personer, hun har hjulpet. Alle tre starter stadig på 1, så tallet er én mere end det, hun har gjort: Hjerte 1 = har ikke hjulpet nogen endnu. Eleven mærker: under \"Min helt\" står, at Hjerte er \"de folk, du har hjulpet\". Den travle (hjulpet 0) har Hjerte 1, følgeren (hjulpet 3) har Hjerte 4. En grund til at hjælpe, uden en ny regel. Vil du hellere starte på 0 (Hjerte = præcis antal hjulpne)? Skriv M2 A0."
+      },
+      {
+       "bogstav": "B",
+       "titel": "B Tallene åbner noget",
+       "forslag": false,
+       "maerker": [
+        "Eleven mærker: fx åbner Hjerte 3 Bigården. Tallene betyder noget på kortet, men det er en regel mere, og en elev, der kun har været ét sted, kan sidde fast."
+       ],
+       "advarsel": null,
+       "tekst": "B Tallene åbner noget Eleven mærker: fx åbner Hjerte 3 Bigården. Tallene betyder noget på kortet, men det er en regel mere, og en elev, der kun har været ét sted, kan sidde fast."
+      },
+      {
+       "bogstav": "C",
+       "titel": "C Tallene tages af skærmen",
+       "forslag": false,
+       "maerker": [
+        "Eleven mærker: mindre at læse; kun niveau og titel står tilbage. Hun mister intet, hun kunne bruge."
+       ],
+       "advarsel": null,
+       "tekst": "C Tallene tages af skærmen Eleven mærker: mindre at læse; kun niveau og titel står tilbage. Hun mister intet, hun kunne bruge."
+      }
+     ]
+    },
+    {
+     "id": "n1",
+     "idag": "I dag: den travle trykker \"Fortsæt\" hver gang, hjælper ingen og når niveau 7 (titel Svend). Følgeren hjælper tre og når niveau 5. Titler: Lærling fra niveau 3, Svend 5, Mester 8, Stormester 11.",
+     "muligheder": [
+      {
+       "bogstav": "A",
+       "titel": "A Titlen kræver hjælp",
+       "forslag": false,
+       "maerker": [
+        "Eleven mærker: hun kan stadig vælge \"Fortsæt\", men den stolte titel følger eventyret."
+       ],
+       "advarsel": "Men: en elev, der i dag er Svend eller Mester uden at have hjulpet nogen, mister titlen. Næste gang hun åbner spillet, står der \"Lærling\" igen. Niveauet og alt, hun har klaret, er urørt; kun ordet skifter.",
+       "tekst": "A Titlen kræver hjælp Niveauet stiger som i dag, men Svend kræver også én hjulpet person, Mester tre, Stormester seks. Indtil da: \"Niveau 7 · Lærling. Svend: hjælp én person i landsbyen\". Eleven mærker: hun kan stadig vælge \"Fortsæt\", men den stolte titel følger eventyret. Men: en elev, der i dag er Svend eller Mester uden at have hjulpet nogen, mister titlen. Næste gang hun åbner spillet, står der \"Lærling\" igen. Niveauet og alt, hun har klaret, er urørt; kun ordet skifter."
+      },
+      {
+       "bogstav": "A+",
+       "titel": "A+ Som A, men ingen mister en titel Mit forslag",
+       "forslag": true,
+       "maerker": [
+        "Eleven mærker: det samme som A fremover, men ingen rykker ned. Den travle forbliver Svend, men bliver ikke Mester, før hun har hjulpet tre.",
+        "Spillet husker den højeste titel i det gemte spil på elevens egen computer. Intet sendes nogen steder."
+       ],
+       "advarsel": null,
+       "tekst": "A+ Som A, men ingen mister en titel Mit forslag Den titel, figuren har den dag, ændringen kommer, bliver stående. Kravet om hjælp gælder kun de titler, hun får derefter. Eleven mærker: det samme som A fremover, men ingen rykker ned. Den travle forbliver Svend, men bliver ikke Mester, før hun har hjulpet tre. Spillet husker den højeste titel i det gemte spil på elevens egen computer. Intet sendes nogen steder."
+      },
+      {
+       "bogstav": "B",
+       "titel": "B \"Fortsæt\" én gang pr. person",
+       "forslag": false,
+       "maerker": [
+        "Eleven mærker: hun kan springe over én gang; derefter er \"Hjælp Ane\" den eneste knap. Hun føres ind i eventyret, men valget bliver mindre frit."
+       ],
+       "advarsel": null,
+       "tekst": "B \"Fortsæt\" én gang pr. person Eleven mærker: hun kan springe over én gang; derefter er \"Hjælp Ane\" den eneste knap. Hun føres ind i eventyret, men valget bliver mindre frit."
+      },
+      {
+       "bogstav": "C",
+       "titel": "C At hjælpe giver et helt niveau (i dag et halvt)",
+       "forslag": false,
+       "maerker": [
+        "Eleven mærker: at hjælpe betaler sig som et forløb; følgeren når niveau 6-7. Men niveauet stiger hurtigere for alle og siger mindre om, hvad hun kan."
+       ],
+       "advarsel": null,
+       "tekst": "C At hjælpe giver et helt niveau (i dag et halvt) Eleven mærker: at hjælpe betaler sig som et forløb; følgeren når niveau 6-7. Men niveauet stiger hurtigere for alle og siger mindre om, hvad hun kan."
+      }
+     ]
+    }
+   ],
+   "forslag": [
+    "Mit forslag",
+    "Mit forslag"
+   ],
+   "svar": "matematik: M2 A, N1 A+",
+   "maerkeForslagPx": 12.8,
+   "net": [],
+   "jsFejl": []
+  },
+  "390-light": {
+   "side": 390,
+   "klient": 390,
+   "hoejde": 3008,
+   "skaerm": 780,
+   "skaerme": 3.9,
+   "skaermeTilSidstValg": 3.3,
+   "mindstePx": 12.8,
+   "mindsteKontrast": {
+    "e": "Eleven mærker:",
+    "px": 16,
+    "k": 5.1
+   },
+   "ord": 593,
+   "valg": [
+    {
+     "id": "m2",
+     "idag": "I dag: en ny figur har 1 i alle tre. Ét af tallene stiger, hver gang figuren stiger et niveau, men tallene åbner ikke noget. Den travle ender med 7-1-1, følgeren med 3-3-1.",
+     "muligheder": [
+      {
+       "bogstav": "A",
+       "titel": "A Hvert tal får en betydning Mit forslag",
+       "forslag": true,
+       "maerker": [
+        "Eleven mærker: under \"Min helt\" står, at Hjerte er \"de folk, du har hjulpet\". Den travle (hjulpet 0) har Hjerte 1, følgeren (hjulpet 3) har Hjerte 4. En grund til at hjælpe, uden en ny regel.",
+        "Vil du hellere starte på 0 (Hjerte = præcis antal hjulpne)? Skriv M2 A0."
+       ],
+       "advarsel": null,
+       "tekst": "A Hvert tal får en betydning Mit forslag Hoved og Hånd tæller mestrede forløb (regning og måling). Hjerte tæller de personer, hun har hjulpet. Alle tre starter stadig på 1, så tallet er én mere end det, hun har gjort: Hjerte 1 = har ikke hjulpet nogen endnu. Eleven mærker: under \"Min helt\" står, at Hjerte er \"de folk, du har hjulpet\". Den travle (hjulpet 0) har Hjerte 1, følgeren (hjulpet 3) har Hjerte 4. En grund til at hjælpe, uden en ny regel. Vil du hellere starte på 0 (Hjerte = præcis antal hjulpne)? Skriv M2 A0."
+      },
+      {
+       "bogstav": "B",
+       "titel": "B Tallene åbner noget",
+       "forslag": false,
+       "maerker": [
+        "Eleven mærker: fx åbner Hjerte 3 Bigården. Tallene betyder noget på kortet, men det er en regel mere, og en elev, der kun har været ét sted, kan sidde fast."
+       ],
+       "advarsel": null,
+       "tekst": "B Tallene åbner noget Eleven mærker: fx åbner Hjerte 3 Bigården. Tallene betyder noget på kortet, men det er en regel mere, og en elev, der kun har været ét sted, kan sidde fast."
+      },
+      {
+       "bogstav": "C",
+       "titel": "C Tallene tages af skærmen",
+       "forslag": false,
+       "maerker": [
+        "Eleven mærker: mindre at læse; kun niveau og titel står tilbage. Hun mister intet, hun kunne bruge."
+       ],
+       "advarsel": null,
+       "tekst": "C Tallene tages af skærmen Eleven mærker: mindre at læse; kun niveau og titel står tilbage. Hun mister intet, hun kunne bruge."
+      }
+     ]
+    },
+    {
+     "id": "n1",
+     "idag": "I dag: den travle trykker \"Fortsæt\" hver gang, hjælper ingen og når niveau 7 (titel Svend). Følgeren hjælper tre og når niveau 5. Titler: Lærling fra niveau 3, Svend 5, Mester 8, Stormester 11.",
+     "muligheder": [
+      {
+       "bogstav": "A",
+       "titel": "A Titlen kræver hjælp",
+       "forslag": false,
+       "maerker": [
+        "Eleven mærker: hun kan stadig vælge \"Fortsæt\", men den stolte titel følger eventyret."
+       ],
+       "advarsel": "Men: en elev, der i dag er Svend eller Mester uden at have hjulpet nogen, mister titlen. Næste gang hun åbner spillet, står der \"Lærling\" igen. Niveauet og alt, hun har klaret, er urørt; kun ordet skifter.",
+       "tekst": "A Titlen kræver hjælp Niveauet stiger som i dag, men Svend kræver også én hjulpet person, Mester tre, Stormester seks. Indtil da: \"Niveau 7 · Lærling. Svend: hjælp én person i landsbyen\". Eleven mærker: hun kan stadig vælge \"Fortsæt\", men den stolte titel følger eventyret. Men: en elev, der i dag er Svend eller Mester uden at have hjulpet nogen, mister titlen. Næste gang hun åbner spillet, står der \"Lærling\" igen. Niveauet og alt, hun har klaret, er urørt; kun ordet skifter."
+      },
+      {
+       "bogstav": "A+",
+       "titel": "A+ Som A, men ingen mister en titel Mit forslag",
+       "forslag": true,
+       "maerker": [
+        "Eleven mærker: det samme som A fremover, men ingen rykker ned. Den travle forbliver Svend, men bliver ikke Mester, før hun har hjulpet tre.",
+        "Spillet husker den højeste titel i det gemte spil på elevens egen computer. Intet sendes nogen steder."
+       ],
+       "advarsel": null,
+       "tekst": "A+ Som A, men ingen mister en titel Mit forslag Den titel, figuren har den dag, ændringen kommer, bliver stående. Kravet om hjælp gælder kun de titler, hun får derefter. Eleven mærker: det samme som A fremover, men ingen rykker ned. Den travle forbliver Svend, men bliver ikke Mester, før hun har hjulpet tre. Spillet husker den højeste titel i det gemte spil på elevens egen computer. Intet sendes nogen steder."
+      },
+      {
+       "bogstav": "B",
+       "titel": "B \"Fortsæt\" én gang pr. person",
+       "forslag": false,
+       "maerker": [
+        "Eleven mærker: hun kan springe over én gang; derefter er \"Hjælp Ane\" den eneste knap. Hun føres ind i eventyret, men valget bliver mindre frit."
+       ],
+       "advarsel": null,
+       "tekst": "B \"Fortsæt\" én gang pr. person Eleven mærker: hun kan springe over én gang; derefter er \"Hjælp Ane\" den eneste knap. Hun føres ind i eventyret, men valget bliver mindre frit."
+      },
+      {
+       "bogstav": "C",
+       "titel": "C At hjælpe giver et helt niveau (i dag et halvt)",
+       "forslag": false,
+       "maerker": [
+        "Eleven mærker: at hjælpe betaler sig som et forløb; følgeren når niveau 6-7. Men niveauet stiger hurtigere for alle og siger mindre om, hvad hun kan."
+       ],
+       "advarsel": null,
+       "tekst": "C At hjælpe giver et helt niveau (i dag et halvt) Eleven mærker: at hjælpe betaler sig som et forløb; følgeren når niveau 6-7. Men niveauet stiger hurtigere for alle og siger mindre om, hvad hun kan."
+      }
+     ]
+    }
+   ],
+   "forslag": [
+    "Mit forslag",
+    "Mit forslag"
+   ],
+   "svar": "matematik: M2 A, N1 A+",
+   "maerkeForslagPx": 12.8,
+   "net": [],
+   "jsFejl": []
+  },
+  "390-dark": {
+   "side": 390,
+   "klient": 390,
+   "hoejde": 3008,
+   "skaerm": 780,
+   "skaerme": 3.9,
+   "skaermeTilSidstValg": 3.3,
+   "mindstePx": 12.8,
+   "mindsteKontrast": {
+    "e": "I dag: en ny figur har 1 i all",
+    "px": 16,
+    "k": 6.1
+   },
+   "ord": 593,
+   "valg": [
+    {
+     "id": "m2",
+     "idag": "I dag: en ny figur har 1 i alle tre. Ét af tallene stiger, hver gang figuren stiger et niveau, men tallene åbner ikke noget. Den travle ender med 7-1-1, følgeren med 3-3-1.",
+     "muligheder": [
+      {
+       "bogstav": "A",
+       "titel": "A Hvert tal får en betydning Mit forslag",
+       "forslag": true,
+       "maerker": [
+        "Eleven mærker: under \"Min helt\" står, at Hjerte er \"de folk, du har hjulpet\". Den travle (hjulpet 0) har Hjerte 1, følgeren (hjulpet 3) har Hjerte 4. En grund til at hjælpe, uden en ny regel.",
+        "Vil du hellere starte på 0 (Hjerte = præcis antal hjulpne)? Skriv M2 A0."
+       ],
+       "advarsel": null,
+       "tekst": "A Hvert tal får en betydning Mit forslag Hoved og Hånd tæller mestrede forløb (regning og måling). Hjerte tæller de personer, hun har hjulpet. Alle tre starter stadig på 1, så tallet er én mere end det, hun har gjort: Hjerte 1 = har ikke hjulpet nogen endnu. Eleven mærker: under \"Min helt\" står, at Hjerte er \"de folk, du har hjulpet\". Den travle (hjulpet 0) har Hjerte 1, følgeren (hjulpet 3) har Hjerte 4. En grund til at hjælpe, uden en ny regel. Vil du hellere starte på 0 (Hjerte = præcis antal hjulpne)? Skriv M2 A0."
+      },
+      {
+       "bogstav": "B",
+       "titel": "B Tallene åbner noget",
+       "forslag": false,
+       "maerker": [
+        "Eleven mærker: fx åbner Hjerte 3 Bigården. Tallene betyder noget på kortet, men det er en regel mere, og en elev, der kun har været ét sted, kan sidde fast."
+       ],
+       "advarsel": null,
+       "tekst": "B Tallene åbner noget Eleven mærker: fx åbner Hjerte 3 Bigården. Tallene betyder noget på kortet, men det er en regel mere, og en elev, der kun har været ét sted, kan sidde fast."
+      },
+      {
+       "bogstav": "C",
+       "titel": "C Tallene tages af skærmen",
+       "forslag": false,
+       "maerker": [
+        "Eleven mærker: mindre at læse; kun niveau og titel står tilbage. Hun mister intet, hun kunne bruge."
+       ],
+       "advarsel": null,
+       "tekst": "C Tallene tages af skærmen Eleven mærker: mindre at læse; kun niveau og titel står tilbage. Hun mister intet, hun kunne bruge."
+      }
+     ]
+    },
+    {
+     "id": "n1",
+     "idag": "I dag: den travle trykker \"Fortsæt\" hver gang, hjælper ingen og når niveau 7 (titel Svend). Følgeren hjælper tre og når niveau 5. Titler: Lærling fra niveau 3, Svend 5, Mester 8, Stormester 11.",
+     "muligheder": [
+      {
+       "bogstav": "A",
+       "titel": "A Titlen kræver hjælp",
+       "forslag": false,
+       "maerker": [
+        "Eleven mærker: hun kan stadig vælge \"Fortsæt\", men den stolte titel følger eventyret."
+       ],
+       "advarsel": "Men: en elev, der i dag er Svend eller Mester uden at have hjulpet nogen, mister titlen. Næste gang hun åbner spillet, står der \"Lærling\" igen. Niveauet og alt, hun har klaret, er urørt; kun ordet skifter.",
+       "tekst": "A Titlen kræver hjælp Niveauet stiger som i dag, men Svend kræver også én hjulpet person, Mester tre, Stormester seks. Indtil da: \"Niveau 7 · Lærling. Svend: hjælp én person i landsbyen\". Eleven mærker: hun kan stadig vælge \"Fortsæt\", men den stolte titel følger eventyret. Men: en elev, der i dag er Svend eller Mester uden at have hjulpet nogen, mister titlen. Næste gang hun åbner spillet, står der \"Lærling\" igen. Niveauet og alt, hun har klaret, er urørt; kun ordet skifter."
+      },
+      {
+       "bogstav": "A+",
+       "titel": "A+ Som A, men ingen mister en titel Mit forslag",
+       "forslag": true,
+       "maerker": [
+        "Eleven mærker: det samme som A fremover, men ingen rykker ned. Den travle forbliver Svend, men bliver ikke Mester, før hun har hjulpet tre.",
+        "Spillet husker den højeste titel i det gemte spil på elevens egen computer. Intet sendes nogen steder."
+       ],
+       "advarsel": null,
+       "tekst": "A+ Som A, men ingen mister en titel Mit forslag Den titel, figuren har den dag, ændringen kommer, bliver stående. Kravet om hjælp gælder kun de titler, hun får derefter. Eleven mærker: det samme som A fremover, men ingen rykker ned. Den travle forbliver Svend, men bliver ikke Mester, før hun har hjulpet tre. Spillet husker den højeste titel i det gemte spil på elevens egen computer. Intet sendes nogen steder."
+      },
+      {
+       "bogstav": "B",
+       "titel": "B \"Fortsæt\" én gang pr. person",
+       "forslag": false,
+       "maerker": [
+        "Eleven mærker: hun kan springe over én gang; derefter er \"Hjælp Ane\" den eneste knap. Hun føres ind i eventyret, men valget bliver mindre frit."
+       ],
+       "advarsel": null,
+       "tekst": "B \"Fortsæt\" én gang pr. person Eleven mærker: hun kan springe over én gang; derefter er \"Hjælp Ane\" den eneste knap. Hun føres ind i eventyret, men valget bliver mindre frit."
+      },
+      {
+       "bogstav": "C",
+       "titel": "C At hjælpe giver et helt niveau (i dag et halvt)",
+       "forslag": false,
+       "maerker": [
+        "Eleven mærker: at hjælpe betaler sig som et forløb; følgeren når niveau 6-7. Men niveauet stiger hurtigere for alle og siger mindre om, hvad hun kan."
+       ],
+       "advarsel": null,
+       "tekst": "C At hjælpe giver et helt niveau (i dag et halvt) Eleven mærker: at hjælpe betaler sig som et forløb; følgeren når niveau 6-7. Men niveauet stiger hurtigere for alle og siger mindre om, hvad hun kan."
+      }
+     ]
+    }
+   ],
+   "forslag": [
+    "Mit forslag",
+    "Mit forslag"
+   ],
+   "svar": "matematik: M2 A, N1 A+",
+   "maerkeForslagPx": 12.8,
+   "net": [],
+   "jsFejl": []
+  },
+  "1280-light": {
+   "side": 1280,
+   "klient": 1280,
+   "hoejde": 1978,
+   "skaerm": 900,
+   "skaerme": 2.2,
+   "skaermeTilSidstValg": 1.9,
+   "mindstePx": 12.8,
+   "mindsteKontrast": {
+    "e": "Eleven mærker:",
+    "px": 16,
+    "k": 5.1
+   },
+   "ord": 593,
+   "valg": [
+    {
+     "id": "m2",
+     "idag": "I dag: en ny figur har 1 i alle tre. Ét af tallene stiger, hver gang figuren stiger et niveau, men tallene åbner ikke noget. Den travle ender med 7-1-1, følgeren med 3-3-1.",
+     "muligheder": [
+      {
+       "bogstav": "A",
+       "titel": "A Hvert tal får en betydning Mit forslag",
+       "forslag": true,
+       "maerker": [
+        "Eleven mærker: under \"Min helt\" står, at Hjerte er \"de folk, du har hjulpet\". Den travle (hjulpet 0) har Hjerte 1, følgeren (hjulpet 3) har Hjerte 4. En grund til at hjælpe, uden en ny regel.",
+        "Vil du hellere starte på 0 (Hjerte = præcis antal hjulpne)? Skriv M2 A0."
+       ],
+       "advarsel": null,
+       "tekst": "A Hvert tal får en betydning Mit forslag Hoved og Hånd tæller mestrede forløb (regning og måling). Hjerte tæller de personer, hun har hjulpet. Alle tre starter stadig på 1, så tallet er én mere end det, hun har gjort: Hjerte 1 = har ikke hjulpet nogen endnu. Eleven mærker: under \"Min helt\" står, at Hjerte er \"de folk, du har hjulpet\". Den travle (hjulpet 0) har Hjerte 1, følgeren (hjulpet 3) har Hjerte 4. En grund til at hjælpe, uden en ny regel. Vil du hellere starte på 0 (Hjerte = præcis antal hjulpne)? Skriv M2 A0."
+      },
+      {
+       "bogstav": "B",
+       "titel": "B Tallene åbner noget",
+       "forslag": false,
+       "maerker": [
+        "Eleven mærker: fx åbner Hjerte 3 Bigården. Tallene betyder noget på kortet, men det er en regel mere, og en elev, der kun har været ét sted, kan sidde fast."
+       ],
+       "advarsel": null,
+       "tekst": "B Tallene åbner noget Eleven mærker: fx åbner Hjerte 3 Bigården. Tallene betyder noget på kortet, men det er en regel mere, og en elev, der kun har været ét sted, kan sidde fast."
+      },
+      {
+       "bogstav": "C",
+       "titel": "C Tallene tages af skærmen",
+       "forslag": false,
+       "maerker": [
+        "Eleven mærker: mindre at læse; kun niveau og titel står tilbage. Hun mister intet, hun kunne bruge."
+       ],
+       "advarsel": null,
+       "tekst": "C Tallene tages af skærmen Eleven mærker: mindre at læse; kun niveau og titel står tilbage. Hun mister intet, hun kunne bruge."
+      }
+     ]
+    },
+    {
+     "id": "n1",
+     "idag": "I dag: den travle trykker \"Fortsæt\" hver gang, hjælper ingen og når niveau 7 (titel Svend). Følgeren hjælper tre og når niveau 5. Titler: Lærling fra niveau 3, Svend 5, Mester 8, Stormester 11.",
+     "muligheder": [
+      {
+       "bogstav": "A",
+       "titel": "A Titlen kræver hjælp",
+       "forslag": false,
+       "maerker": [
+        "Eleven mærker: hun kan stadig vælge \"Fortsæt\", men den stolte titel følger eventyret."
+       ],
+       "advarsel": "Men: en elev, der i dag er Svend eller Mester uden at have hjulpet nogen, mister titlen. Næste gang hun åbner spillet, står der \"Lærling\" igen. Niveauet og alt, hun har klaret, er urørt; kun ordet skifter.",
+       "tekst": "A Titlen kræver hjælp Niveauet stiger som i dag, men Svend kræver også én hjulpet person, Mester tre, Stormester seks. Indtil da: \"Niveau 7 · Lærling. Svend: hjælp én person i landsbyen\". Eleven mærker: hun kan stadig vælge \"Fortsæt\", men den stolte titel følger eventyret. Men: en elev, der i dag er Svend eller Mester uden at have hjulpet nogen, mister titlen. Næste gang hun åbner spillet, står der \"Lærling\" igen. Niveauet og alt, hun har klaret, er urørt; kun ordet skifter."
+      },
+      {
+       "bogstav": "A+",
+       "titel": "A+ Som A, men ingen mister en titel Mit forslag",
+       "forslag": true,
+       "maerker": [
+        "Eleven mærker: det samme som A fremover, men ingen rykker ned. Den travle forbliver Svend, men bliver ikke Mester, før hun har hjulpet tre.",
+        "Spillet husker den højeste titel i det gemte spil på elevens egen computer. Intet sendes nogen steder."
+       ],
+       "advarsel": null,
+       "tekst": "A+ Som A, men ingen mister en titel Mit forslag Den titel, figuren har den dag, ændringen kommer, bliver stående. Kravet om hjælp gælder kun de titler, hun får derefter. Eleven mærker: det samme som A fremover, men ingen rykker ned. Den travle forbliver Svend, men bliver ikke Mester, før hun har hjulpet tre. Spillet husker den højeste titel i det gemte spil på elevens egen computer. Intet sendes nogen steder."
+      },
+      {
+       "bogstav": "B",
+       "titel": "B \"Fortsæt\" én gang pr. person",
+       "forslag": false,
+       "maerker": [
+        "Eleven mærker: hun kan springe over én gang; derefter er \"Hjælp Ane\" den eneste knap. Hun føres ind i eventyret, men valget bliver mindre frit."
+       ],
+       "advarsel": null,
+       "tekst": "B \"Fortsæt\" én gang pr. person Eleven mærker: hun kan springe over én gang; derefter er \"Hjælp Ane\" den eneste knap. Hun føres ind i eventyret, men valget bliver mindre frit."
+      },
+      {
+       "bogstav": "C",
+       "titel": "C At hjælpe giver et helt niveau (i dag et halvt)",
+       "forslag": false,
+       "maerker": [
+        "Eleven mærker: at hjælpe betaler sig som et forløb; følgeren når niveau 6-7. Men niveauet stiger hurtigere for alle og siger mindre om, hvad hun kan."
+       ],
+       "advarsel": null,
+       "tekst": "C At hjælpe giver et helt niveau (i dag et halvt) Eleven mærker: at hjælpe betaler sig som et forløb; følgeren når niveau 6-7. Men niveauet stiger hurtigere for alle og siger mindre om, hvad hun kan."
+      }
+     ]
+    }
+   ],
+   "forslag": [
+    "Mit forslag",
+    "Mit forslag"
+   ],
+   "svar": "matematik: M2 A, N1 A+",
+   "maerkeForslagPx": 12.8,
+   "net": [],
+   "jsFejl": []
+  }
+ },
+ "magenTilKopi": true,
+ "scripts": 0,
+ "fagord": {
+  "forløb": 3,
+  "mestre": 1,
+  "mestrede": 1,
+  "model-elev": 1,
+  "Bhishak": 2,
+  "Ganita": 4,
+  "Dhruva": 1,
+  "quest": 0,
+  "M2": 3,
+  "N1": 2,
+  "N8": 1,
+  "Bigården": 1,
+  "Grusgraven": 2,
+  "Min helt": 1,
+  "niveau": 11,
+  "titel": 6
+ },
+ "kunIMd": {
+  "hvilketTalStiger": true,
+  "mestretDefineret": true,
+  "forslagetsGrundM2": true,
+  "forslagetsGrundN1": true
+ },
+ "elev552": [
+  {
+   "terning": "525",
+   "travl": {
+    "niveau": 7,
+    "titel": "Svend",
+    "hjulpet": 0
+   },
+   "foelger": {
+    "niveau": 5,
+    "titel": "Svend",
+    "hjulpet": 3
+   }
+  },
+  {
+   "terning": "7",
+   "travl": {
+    "niveau": 8,
+    "titel": "Mester",
+    "hjulpet": 0
+   },
+   "foelger": {
+    "niveau": 4,
+    "titel": "Lærling",
+    "hjulpet": 3
+   }
+  },
+  {
+   "terning": "42",
+   "travl": {
+    "niveau": 9,
+    "titel": "Mester",
+    "hjulpet": 0
+   },
+   "foelger": {
+    "niveau": 8,
+    "titel": "Mester",
+    "hjulpet": 5
+   }
+  },
+  {
+   "terning": "1234",
+   "travl": {
+    "niveau": 7,
+    "titel": "Svend",
+    "hjulpet": 0
+   },
+   "foelger": {
+    "niveau": 4,
+    "titel": "Lærling",
+    "hjulpet": 3
+   }
+  }
+ ],
+ "kode": {
+  "m2Start": [
+   1,
+   1,
+   1
+  ],
+  "travl": [
+   7,
+   7,
+   1,
+   1,
+   "Svend"
+  ],
+  "foelger": [
+   5,
+   3,
+   3,
+   1,
+   1,
+   "Svend"
+  ],
+  "titler": [
+   [
+    2,
+    null
+   ],
+   [
+    3,
+    "Lærling"
+   ],
+   [
+    4,
+    "Lærling"
+   ],
+   [
+    5,
+    "Svend"
+   ],
+   [
+    7,
+    "Svend"
+   ],
+   [
+    8,
+    "Mester"
+   ],
+   [
+    10,
+    "Mester"
+   ],
+   [
+    11,
+    "Stormester"
+   ]
+  ],
+  "questHalvtNiveau": 0.5,
+  "hansFoersteKraever": {
+   "forloeb": [
+    "stenbrud",
+    1
+   ]
+  },
+  "bigaardenKraever": {
+   "forloeb": [
+    "moellen",
+    6
+   ],
+   "quests": [
+    "aebleskiver"
+   ]
+  }
+ },
+ "tjek": [
+  {
+   "hvad": "Siden paa skrivebordet er magen til kopien i matematik main (outputs/557)",
+   "ok": true
+  },
+  {
+   "hvad": "Ingen scripts, links eller eksterne filer; intet net; ingen JS-fejl",
+   "ok": true
+  },
+  {
+   "hvad": "Ingen vandret rulning paa 360, 390 (lys og moerk) og 1280",
+   "ok": true,
+   "data": [
+    [
+     "360-light",
+     360,
+     4
+    ],
+    [
+     "390-light",
+     390,
+     3.9
+    ],
+    [
+     "390-dark",
+     390,
+     3.9
+    ],
+    [
+     "1280-light",
+     1280,
+     2.2
+    ]
+   ]
+  },
+  {
+   "hvad": "Kontrast mindst 4,5 og skrift mindst 12 px, lyst og moerkt",
+   "ok": true,
+   "data": [
+    [
+     "360-light",
+     {
+      "e": "Eleven mærker:",
+      "px": 16,
+      "k": 5.1
+     },
+     12.8
+    ],
+    [
+     "390-light",
+     {
+      "e": "Eleven mærker:",
+      "px": 16,
+      "k": 5.1
+     },
+     12.8
+    ],
+    [
+     "390-dark",
+     {
+      "e": "I dag: en ny figur har 1 i all",
+      "px": 16,
+      "k": 6.1
+     },
+     12.8
+    ],
+    [
+     "1280-light",
+     {
+      "e": "Eleven mærker:",
+      "px": 16,
+      "k": 5.1
+     },
+     12.8
+    ]
+   ]
+  },
+  {
+   "hvad": "Hvert valg (M2 A-C, N1 A, A+, B, C) har \"Eleven mærker\"",
+   "ok": true,
+   "data": [
+    "A",
+    "B",
+    "C",
+    "A",
+    "A+",
+    "B",
+    "C"
+   ]
+  },
+  {
+   "hvad": "N6: N1 A siger, at titlen forsvinder (\"mister titlen\", \"Lærling\" igen)",
+   "ok": true
+  },
+  {
+   "hvad": "N7: M2 A siger, at Hjerte starter paa 1 (Hjerte 1 = har ikke hjulpet nogen), og A0 er naevnt",
+   "ok": true
+  },
+  {
+   "hvad": "Forslaget er maerket (\"Mit forslag\") paa een mulighed pr. valg: M2 A og N1 A+",
+   "ok": true
+  },
+  {
+   "hvad": "Eksemplet paa et svar er praecis Ganitas forslag",
+   "ok": true,
+   "data": "matematik: M2 A, N1 A+"
+  },
+  {
+   "hvad": "Siden siger ikke, hvem \"mit\" er, foer foden (\"Ganita, ordre 557\")",
+   "ok": true
+  },
+  {
+   "hvad": "M2 A siger ikke, hvad der sker med tallene hos en elev, der allerede spiller (regnes de om?)",
+   "ok": true,
+   "data": "A Hvert tal får en betydning Mit forslag Hoved og Hånd tæller mestrede forløb (regning og måling). Hjerte tæller de personer, hun har hjulpet. Alle tre starter stadig på 1, så tallet er én mere end det, hun har gjort: Hjerte 1 = har ikke hjulpet nogen endnu. Eleven mærker: under \"Min helt\" står, at Hjerte er \"de folk, du har hjulpet\". Den travle (hjulpet 0) har Hjerte 1, følgeren (hjulpet 3) har Hjerte 4. En grund til at hjælpe, uden en ny regel. Vil du hellere starte på 0 (Hjerte = præcis antal hjulpne)? Skriv M2 A0."
+  },
+  {
+   "hvad": "M2 A0 siger, at den travle faar Hjerte 0, men ikke at en elev, der spiller, ser tallet falde fra 1 til 0",
+   "ok": true
+  },
+  {
+   "hvad": "Kode: en ny figur har 1-1-1",
+   "ok": true,
+   "data": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "hvad": "Kode: seks mestrede forloeb ved Moellen giver 7-1-1, niveau 7, Svend",
+   "ok": true,
+   "data": [
+    7,
+    7,
+    1,
+    1,
+    "Svend"
+   ]
+  },
+  {
+   "hvad": "Kode: tre forloeb og tre hjulpne giver niveau 5 med et halvt niveau i vente, Hjerte 1",
+   "ok": true,
+   "data": [
+    5,
+    3,
+    3,
+    1,
+    1,
+    "Svend"
+   ]
+  },
+  {
+   "hvad": "Kode: titlerne fra niveau 3, 5, 8 og 11",
+   "ok": true
+  },
+  {
+   "hvad": "Kode: at hjaelpe (en quest) giver et halvt niveau i dag (N1 C)",
+   "ok": true
+  },
+  {
+   "hvad": "Kode: Hans' foerste opgave kraever Grusgravens forloeb 1 (N8); Bigaarden kraever Moellens forloeb 6 og Anes aebleskiver (M2 B \"i dag\")",
+   "ok": true,
+   "data": [
+    {
+     "forloeb": [
+      "stenbrud",
+      1
+     ]
+    },
+    {
+     "forloeb": [
+      "moellen",
+      6
+     ],
+     "quests": [
+      "aebleskiver"
+     ]
+    }
+   ]
+  },
+  {
+   "hvad": "Elev-552 (terning 525): den travle niveau 7 Svend, foelgeren niveau 5 og hjulpet 3, som siden siger",
+   "ok": true
+  },
+  {
+   "hvad": "Elev-552 over fire terninger: den travle 7-9 (Svend eller Mester), foelgeren 4-8; siden naevner kun terning 525",
+   "ok": true,
+   "data": [
+    {
+     "terning": "525",
+     "travl": {
+      "niveau": 7,
+      "titel": "Svend",
+      "hjulpet": 0
+     },
+     "foelger": {
+      "niveau": 5,
+      "titel": "Svend",
+      "hjulpet": 3
+     }
+    },
+    {
+     "terning": "7",
+     "travl": {
+      "niveau": 8,
+      "titel": "Mester",
+      "hjulpet": 0
+     },
+     "foelger": {
+      "niveau": 4,
+      "titel": "Lærling",
+      "hjulpet": 3
+     }
+    },
+    {
+     "terning": "42",
+     "travl": {
+      "niveau": 9,
+      "titel": "Mester",
+      "hjulpet": 0
+     },
+     "foelger": {
+      "niveau": 8,
+      "titel": "Mester",
+      "hjulpet": 5
+     }
+    },
+    {
+     "terning": "1234",
+     "travl": {
+      "niveau": 7,
+      "titel": "Svend",
+      "hjulpet": 0
+     },
+     "foelger": {
+      "niveau": 4,
+      "titel": "Lærling",
+      "hjulpet": 3
+     }
+    }
+   ]
+  }
+ ]
+}

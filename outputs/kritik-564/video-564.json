@@ -1,0 +1,2946 @@
+{
+ "ref": "296b9bf",
+ "klip": {
+  "sq30.mp4": {
+   "mb": 57.5
+  },
+  "sq30.mov": {
+   "mb": 57.5
+  },
+  "sq30.webm": {
+   "mb": 71.1
+  },
+  "sq30-60.mp4": {
+   "mb": 61.9
+  },
+  "sq30-25.mp4": {
+   "mb": 55.4
+  },
+  "sq30-hevc.mp4": {
+   "mb": 9.5
+  },
+  "sq5-4k.mp4": {
+   "mb": 25.8
+  }
+ },
+ "reps": [
+  {
+   "navn": "jaevn",
+   "start": 2,
+   "ned": 1.2,
+   "pause": 0,
+   "op": 1,
+   "bund": {
+    "fra": 3.2,
+    "til": 3.2
+   }
+  },
+  {
+   "navn": "hurtig op",
+   "start": 7,
+   "ned": 1.5,
+   "pause": 0,
+   "op": 0.8,
+   "bund": {
+    "fra": 8.5,
+    "til": 8.5
+   }
+  },
+  {
+   "navn": "grind",
+   "start": 12,
+   "ned": 1,
+   "pause": 0,
+   "op": 2.2,
+   "bund": {
+    "fra": 13,
+    "til": 13
+   }
+  },
+  {
+   "navn": "pause",
+   "start": 18,
+   "ned": 1.3,
+   "pause": 0.6,
+   "op": 1,
+   "bund": {
+    "fra": 19.3,
+    "til": 19.900000000000002
+   }
+  },
+  {
+   "navn": "dyk",
+   "start": 24,
+   "ned": 0.8,
+   "pause": 0,
+   "op": 1.4,
+   "bund": {
+    "fra": 24.8,
+    "til": 24.8
+   }
+  }
+ ],
+ "sider": {
+  "360": {
+   "mobil": true,
+   "cpu": 1,
+   "sideMs": 96,
+   "mem": {
+    "tom": {
+     "heap": 3.5,
+     "proces": 93
+    },
+    "aaben": {
+     "heap": 2.5,
+     "proces": 182,
+     "blobMB": 57.5303
+    },
+    "brugt3": {
+     "heap": 3.1,
+     "proces": 268,
+     "blobMB": 57.5303,
+     "blobs": 1
+    },
+    "lukket": {
+     "heap": 4,
+     "proces": 151,
+     "blobMB": 0
+    }
+   },
+   "aabn": {
+    "ms": 96,
+    "ok": true,
+    "boks": true,
+    "t": 0,
+    "varighed": 30,
+    "vw": 1080,
+    "vh": 1920,
+    "rs": 4,
+    "soeger": false,
+    "tid": "0,00 s",
+    "skyderMax": "30",
+    "navn": "Video: sq30.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "billedNavn": "",
+    "blobs": 1,
+    "blobMB": 57.5303,
+    "frem": false,
+    "tilbage": true,
+    "nummer": 0
+   },
+   "layout": {
+    "knapper": [
+     {
+      "hvad": "Tid i videoen",
+      "h": 44,
+      "w": 307
+     },
+     {
+      "hvad": "Et billede tilbage",
+      "h": 44,
+      "w": 102
+     },
+     {
+      "hvad": "Et billede frem",
+      "h": 44,
+      "w": 102
+     },
+     {
+      "hvad": "Brug dette billede",
+      "h": 44,
+      "w": 151
+     },
+     {
+      "hvad": "Luk videoen",
+      "h": 44,
+      "w": 108
+     },
+     {
+      "hvad": "Klik navet i videoen",
+      "h": 44,
+      "w": 158
+     },
+     {
+      "hvad": "Hop til laveste punkt",
+      "h": 44,
+      "w": 166
+     }
+    ],
+    "video": {
+     "w": 307,
+     "h": 468
+    },
+    "skaerm": 780,
+    "videoSynligVedKnapper": 100,
+    "brugUnderFrem": 54,
+    "videoTilNavknap": 678,
+    "videoTilHop": 730,
+    "navTilNavknap": 359,
+    "side": 360,
+    "klient": 360
+   },
+   "skyder": [
+    {
+     "t": 15,
+     "tid": "15,00 s",
+     "bredde": 307,
+     "sPrPx": 0.103
+    },
+    {
+     "t": 26.999,
+     "tid": "27,00 s",
+     "bredde": 307,
+     "sPrPx": 0.103
+    }
+   ],
+   "skyderNummer": 809,
+   "trin": {
+    "frem fra 0": {
+     "spring": [
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+     ],
+     "ms": {
+      "median": 80,
+      "max": 96
+     }
+    },
+    "frem fra skyderen": {
+     "spring": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+     ],
+     "ms": {
+      "median": 89,
+      "max": 161
+     }
+    },
+    "tilbage": {
+     "spring": [
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1
+     ],
+     "ms": {
+      "median": 88,
+      "max": 150
+     }
+    }
+   },
+   "tidMod": {
+    "tid": "0,66 s",
+    "nummer": 19,
+    "t": 0.66
+   },
+   "brug": [
+    {
+     "t": 3.2,
+     "vist": 96,
+     "foto": 96,
+     "ms": 88,
+     "wall": 169,
+     "w": 1080,
+     "h": 1920,
+     "navn": "sq30.mp4, 3,20 s",
+     "boksSynlig": true
+    },
+    {
+     "t": 8.5,
+     "vist": 255,
+     "foto": 255,
+     "ms": 90,
+     "wall": 165,
+     "w": 1080,
+     "h": 1920,
+     "navn": "sq30.mp4, 8,50 s",
+     "boksSynlig": true
+    },
+    {
+     "t": 24.8,
+     "vist": 744,
+     "foto": 744,
+     "ms": 85,
+     "wall": 164,
+     "w": 1080,
+     "h": 1920,
+     "navn": "sq30.mp4, 24,80 s",
+     "boksSynlig": true
+    }
+   ],
+   "faser": {
+    "squat-bund": {
+     "tekst": "Squat bund: Hofterne lavest: billedet lige før stangen vender i bunden.",
+     "hop": true,
+     "liste": "Hop til laveste punkt: tryk Klik navet i videoen og så på navet i et billede på vej ned, og igen i et billede i samme højde på vej op. Siden hopper midt imellem."
+    },
+    "squat-midt": {
+     "tekst": "Squat, sticking point (en tredjedel op): Stangen en tredjedel af vejen op fra bunden, ofte der hvor den går langsomst.",
+     "hop": true,
+     "liste": "Hop til laveste punkt: tryk Klik navet i videoen og så på navet i et billede på vej ned, og igen i et billede i samme højde på vej op. Siden hopper midt imellem."
+    },
+    "dl-gulv": {
+     "tekst": "Dødløft gulv: Det sidste billede, før skiverne slipper gulvet.",
+     "hop": false,
+     "liste": ""
+    },
+    "dl-knae": {
+     "tekst": "Dødløft knæ: Stangen lige ud for knæet på vej op.",
+     "hop": false,
+     "liste": ""
+    },
+    "baenk-bryst": {
+     "tekst": "Bænk bryst: Stangen lavest, hvor den rører brystet.",
+     "hop": true,
+     "liste": "Hop til laveste punkt: tryk Klik navet i videoen og så på navet i et billede på vej ned, og igen i et billede i samme højde på vej op. Siden hopper midt imellem."
+    },
+    "baenk-midt": {
+     "tekst": "Bænk midt: Stangen halvvejs mellem brystet og strakte arme på vej op.",
+     "hop": true,
+     "liste": "Hop til laveste punkt: tryk Klik navet i videoen og så på navet i et billede på vej ned, og igen i et billede i samme højde på vej op. Siden hopper midt imellem."
+    }
+   },
+   "hop": [
+    {
+     "rep": "jaevn",
+     "klikBilleder": [
+      83,
+      107
+     ],
+     "maerker": [
+      {
+       "t": 2.783,
+       "y": 1175
+      },
+      {
+       "t": 3.583,
+       "y": 1171
+      }
+     ],
+     "navUdenforSkaermen": true,
+     "landet": 95,
+     "bund": [
+      96,
+      96
+     ],
+     "fejl": -1,
+     "tekst": "Navet klikket ved 2,78 s, 3,58 s. Siden hopper midt imellem de to; opturen er tit hurtigere end nedturen, så gå et billede eller to tilbage og se efter."
+    },
+    {
+     "rep": "hurtig op",
+     "klikBilleder": [
+      239,
+      263
+     ],
+     "maerker": [
+      {
+       "t": 7.983,
+       "y": 1178
+      },
+      {
+       "t": 8.783,
+       "y": 1193
+      }
+     ],
+     "navUdenforSkaermen": true,
+     "landet": 251,
+     "bund": [
+      255,
+      255
+     ],
+     "fejl": -4,
+     "tekst": "Navet klikket ved 7,98 s, 8,78 s. Siden hopper midt imellem de to; opturen er tit hurtigere end nedturen, så gå et billede eller to tilbage og se efter."
+    },
+    {
+     "rep": "grind",
+     "klikBilleder": [
+      379,
+      413
+     ],
+     "maerker": [
+      {
+       "t": 12.65,
+       "y": 1171
+      },
+      {
+       "t": 13.783,
+       "y": 1183
+      }
+     ],
+     "navUdenforSkaermen": false,
+     "landet": 396,
+     "bund": [
+      390,
+      390
+     ],
+     "fejl": 6,
+     "tekst": "Navet klikket ved 12,65 s, 13,78 s. Siden hopper midt imellem de to; opturen er tit hurtigere end nedturen, så gå et billede eller to tilbage og se efter."
+    },
+    {
+     "rep": "pause",
+     "klikBilleder": [
+      565,
+      608
+     ],
+     "maerker": [
+      {
+       "t": 18.85,
+       "y": 1176
+      },
+      {
+       "t": 20.283,
+       "y": 1171
+      }
+     ],
+     "navUdenforSkaermen": false,
+     "landet": 586,
+     "bund": [
+      579,
+      597
+     ],
+     "fejl": 0,
+     "tekst": "Navet klikket ved 18,85 s, 20,28 s. Siden hopper midt imellem de to; opturen er tit hurtigere end nedturen, så gå et billede eller to tilbage og se efter."
+    },
+    {
+     "rep": "dyk",
+     "klikBilleder": [
+      736,
+      759
+     ],
+     "maerker": [
+      {
+       "t": 24.55,
+       "y": 1193
+      },
+      {
+       "t": 25.317,
+       "y": 1177
+      }
+     ],
+     "navUdenforSkaermen": false,
+     "landet": 748,
+     "bund": [
+      744,
+      744
+     ],
+     "fejl": 4,
+     "tekst": "Navet klikket ved 24,55 s, 25,32 s. Siden hopper midt imellem de to; opturen er tit hurtigere end nedturen, så gå et billede eller to tilbage og se efter."
+    }
+   ],
+   "luk": {
+    "boks": false,
+    "t": 0,
+    "varighed": null,
+    "vw": 0,
+    "vh": 0,
+    "rs": 0,
+    "soeger": false,
+    "tid": "24,93 s",
+    "skyderMax": "30",
+    "navn": "Video: sq30.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "billedNavn": "sq30.mp4, 24,80 s",
+    "blobs": 0,
+    "blobMB": 0,
+    "frem": false,
+    "tilbage": false,
+    "fotoStaar": true
+   },
+   "igen": {
+    "ms": 87,
+    "ok": true,
+    "boks": true,
+    "t": 0,
+    "varighed": 30,
+    "vw": 1080,
+    "vh": 1920,
+    "rs": 4,
+    "soeger": false,
+    "tid": "0,00 s",
+    "skyderMax": "30",
+    "navn": "Video: sq30.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "billedNavn": "sq30.mp4, 24,80 s",
+    "blobs": 1,
+    "blobMB": 57.5303,
+    "frem": false,
+    "tilbage": true
+   },
+   "net": [
+    "file:///C:/Users/Entropi/AppData/Local/Temp/kritik-564-loeftmodel-296b9bf/dist/maal-billede/index.html",
+    "file:///C:/Users/Entropi/AppData/Local/Temp/kritik-564-loeftmodel-296b9bf/dist/maal-billede/maal-billede.js"
+   ],
+   "efterHentet": [],
+   "jsFejl": []
+  },
+  "390": {
+   "mobil": true,
+   "cpu": 1,
+   "sideMs": 85,
+   "mem": {
+    "tom": {
+     "heap": 3.4,
+     "proces": 93
+    },
+    "aaben": {
+     "heap": 2.5,
+     "proces": 184,
+     "blobMB": 57.5303
+    },
+    "brugt3": {
+     "heap": 3.3,
+     "proces": 276,
+     "blobMB": 57.5303,
+     "blobs": 1
+    },
+    "lukket": {
+     "heap": 5.6,
+     "proces": 154,
+     "blobMB": 0
+    }
+   },
+   "aabn": {
+    "ms": 78,
+    "ok": true,
+    "boks": true,
+    "t": 0,
+    "varighed": 30,
+    "vw": 1080,
+    "vh": 1920,
+    "rs": 4,
+    "soeger": false,
+    "tid": "0,00 s",
+    "skyderMax": "30",
+    "navn": "Video: sq30.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "billedNavn": "",
+    "blobs": 1,
+    "blobMB": 57.5303,
+    "frem": false,
+    "tilbage": true,
+    "nummer": 0
+   },
+   "layout": {
+    "knapper": [
+     {
+      "hvad": "Tid i videoen",
+      "h": 44,
+      "w": 337
+     },
+     {
+      "hvad": "Et billede tilbage",
+      "h": 44,
+      "w": 102
+     },
+     {
+      "hvad": "Et billede frem",
+      "h": 44,
+      "w": 102
+     },
+     {
+      "hvad": "Brug dette billede",
+      "h": 44,
+      "w": 151
+     },
+     {
+      "hvad": "Luk videoen",
+      "h": 44,
+      "w": 108
+     },
+     {
+      "hvad": "Klik navet i videoen",
+      "h": 44,
+      "w": 158
+     },
+     {
+      "hvad": "Hop til laveste punkt",
+      "h": 44,
+      "w": 166
+     }
+    ],
+    "video": {
+     "w": 337,
+     "h": 468
+    },
+    "skaerm": 780,
+    "videoSynligVedKnapper": 100,
+    "brugUnderFrem": 54,
+    "videoTilNavknap": 678,
+    "videoTilHop": 678,
+    "navTilNavknap": 359,
+    "side": 390,
+    "klient": 390
+   },
+   "skyder": [
+    {
+     "t": 15,
+     "tid": "15,00 s",
+     "bredde": 337,
+     "sPrPx": 0.094
+    },
+    {
+     "t": 26.999,
+     "tid": "27,00 s",
+     "bredde": 337,
+     "sPrPx": 0.094
+    }
+   ],
+   "skyderNummer": 809,
+   "trin": {
+    "frem fra 0": {
+     "spring": [
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+     ],
+     "ms": {
+      "median": 76,
+      "max": 112
+     }
+    },
+    "frem fra skyderen": {
+     "spring": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+     ],
+     "ms": {
+      "median": 94,
+      "max": 155
+     }
+    },
+    "tilbage": {
+     "spring": [
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1
+     ],
+     "ms": {
+      "median": 90,
+      "max": 159
+     }
+    }
+   },
+   "tidMod": {
+    "tid": "0,66 s",
+    "nummer": 19,
+    "t": 0.66
+   },
+   "brug": [
+    {
+     "t": 3.2,
+     "vist": 96,
+     "foto": 96,
+     "ms": 93,
+     "wall": 174,
+     "w": 1080,
+     "h": 1920,
+     "navn": "sq30.mp4, 3,20 s",
+     "boksSynlig": true
+    },
+    {
+     "t": 8.5,
+     "vist": 255,
+     "foto": 255,
+     "ms": 90,
+     "wall": 169,
+     "w": 1080,
+     "h": 1920,
+     "navn": "sq30.mp4, 8,50 s",
+     "boksSynlig": true
+    },
+    {
+     "t": 24.8,
+     "vist": 744,
+     "foto": 744,
+     "ms": 87,
+     "wall": 168,
+     "w": 1080,
+     "h": 1920,
+     "navn": "sq30.mp4, 24,80 s",
+     "boksSynlig": true
+    }
+   ],
+   "faser": {
+    "squat-bund": {
+     "tekst": "Squat bund: Hofterne lavest: billedet lige før stangen vender i bunden.",
+     "hop": true,
+     "liste": "Hop til laveste punkt: tryk Klik navet i videoen og så på navet i et billede på vej ned, og igen i et billede i samme højde på vej op. Siden hopper midt imellem."
+    },
+    "squat-midt": {
+     "tekst": "Squat, sticking point (en tredjedel op): Stangen en tredjedel af vejen op fra bunden, ofte der hvor den går langsomst.",
+     "hop": true,
+     "liste": "Hop til laveste punkt: tryk Klik navet i videoen og så på navet i et billede på vej ned, og igen i et billede i samme højde på vej op. Siden hopper midt imellem."
+    },
+    "dl-gulv": {
+     "tekst": "Dødløft gulv: Det sidste billede, før skiverne slipper gulvet.",
+     "hop": false,
+     "liste": ""
+    },
+    "dl-knae": {
+     "tekst": "Dødløft knæ: Stangen lige ud for knæet på vej op.",
+     "hop": false,
+     "liste": ""
+    },
+    "baenk-bryst": {
+     "tekst": "Bænk bryst: Stangen lavest, hvor den rører brystet.",
+     "hop": true,
+     "liste": "Hop til laveste punkt: tryk Klik navet i videoen og så på navet i et billede på vej ned, og igen i et billede i samme højde på vej op. Siden hopper midt imellem."
+    },
+    "baenk-midt": {
+     "tekst": "Bænk midt: Stangen halvvejs mellem brystet og strakte arme på vej op.",
+     "hop": true,
+     "liste": "Hop til laveste punkt: tryk Klik navet i videoen og så på navet i et billede på vej ned, og igen i et billede i samme højde på vej op. Siden hopper midt imellem."
+    }
+   },
+   "hop": [
+    {
+     "rep": "jaevn",
+     "klikBilleder": [
+      83,
+      107
+     ],
+     "maerker": [
+      {
+       "t": 2.783,
+       "y": 1175
+      },
+      {
+       "t": 3.583,
+       "y": 1171
+      }
+     ],
+     "navUdenforSkaermen": true,
+     "landet": 95,
+     "bund": [
+      96,
+      96
+     ],
+     "fejl": -1,
+     "tekst": "Navet klikket ved 2,78 s, 3,58 s. Siden hopper midt imellem de to; opturen er tit hurtigere end nedturen, så gå et billede eller to tilbage og se efter."
+    },
+    {
+     "rep": "hurtig op",
+     "klikBilleder": [
+      239,
+      263
+     ],
+     "maerker": [
+      {
+       "t": 7.983,
+       "y": 1178
+      },
+      {
+       "t": 8.783,
+       "y": 1193
+      }
+     ],
+     "navUdenforSkaermen": true,
+     "landet": 251,
+     "bund": [
+      255,
+      255
+     ],
+     "fejl": -4,
+     "tekst": "Navet klikket ved 7,98 s, 8,78 s. Siden hopper midt imellem de to; opturen er tit hurtigere end nedturen, så gå et billede eller to tilbage og se efter."
+    },
+    {
+     "rep": "grind",
+     "klikBilleder": [
+      379,
+      413
+     ],
+     "maerker": [
+      {
+       "t": 12.65,
+       "y": 1171
+      },
+      {
+       "t": 13.783,
+       "y": 1183
+      }
+     ],
+     "navUdenforSkaermen": true,
+     "landet": 396,
+     "bund": [
+      390,
+      390
+     ],
+     "fejl": 6,
+     "tekst": "Navet klikket ved 12,65 s, 13,78 s. Siden hopper midt imellem de to; opturen er tit hurtigere end nedturen, så gå et billede eller to tilbage og se efter."
+    },
+    {
+     "rep": "pause",
+     "klikBilleder": [
+      565,
+      608
+     ],
+     "maerker": [
+      {
+       "t": 18.85,
+       "y": 1176
+      },
+      {
+       "t": 20.283,
+       "y": 1171
+      }
+     ],
+     "navUdenforSkaermen": true,
+     "landet": 586,
+     "bund": [
+      579,
+      597
+     ],
+     "fejl": 0,
+     "tekst": "Navet klikket ved 18,85 s, 20,28 s. Siden hopper midt imellem de to; opturen er tit hurtigere end nedturen, så gå et billede eller to tilbage og se efter."
+    },
+    {
+     "rep": "dyk",
+     "klikBilleder": [
+      736,
+      759
+     ],
+     "maerker": [
+      {
+       "t": 24.55,
+       "y": 1193
+      },
+      {
+       "t": 25.317,
+       "y": 1177
+      }
+     ],
+     "navUdenforSkaermen": true,
+     "landet": 748,
+     "bund": [
+      744,
+      744
+     ],
+     "fejl": 4,
+     "tekst": "Navet klikket ved 24,55 s, 25,32 s. Siden hopper midt imellem de to; opturen er tit hurtigere end nedturen, så gå et billede eller to tilbage og se efter."
+    }
+   ],
+   "luk": {
+    "boks": false,
+    "t": 0,
+    "varighed": null,
+    "vw": 0,
+    "vh": 0,
+    "rs": 0,
+    "soeger": false,
+    "tid": "24,93 s",
+    "skyderMax": "30",
+    "navn": "Video: sq30.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "billedNavn": "sq30.mp4, 24,80 s",
+    "blobs": 0,
+    "blobMB": 0,
+    "frem": false,
+    "tilbage": false,
+    "fotoStaar": true
+   },
+   "igen": {
+    "ms": 188,
+    "ok": true,
+    "boks": true,
+    "t": 0,
+    "varighed": 30,
+    "vw": 1080,
+    "vh": 1920,
+    "rs": 4,
+    "soeger": false,
+    "tid": "0,00 s",
+    "skyderMax": "30",
+    "navn": "Video: sq30.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "billedNavn": "sq30.mp4, 24,80 s",
+    "blobs": 1,
+    "blobMB": 57.5303,
+    "frem": false,
+    "tilbage": true
+   },
+   "net": [
+    "file:///C:/Users/Entropi/AppData/Local/Temp/kritik-564-loeftmodel-296b9bf/dist/maal-billede/index.html",
+    "file:///C:/Users/Entropi/AppData/Local/Temp/kritik-564-loeftmodel-296b9bf/dist/maal-billede/maal-billede.js"
+   ],
+   "efterHentet": [],
+   "jsFejl": []
+  },
+  "1280": {
+   "mobil": false,
+   "cpu": 1,
+   "sideMs": 223,
+   "mem": {
+    "tom": {
+     "heap": 3.4,
+     "proces": 99
+    },
+    "aaben": {
+     "heap": 2.5,
+     "proces": 185,
+     "blobMB": 57.5303
+    },
+    "brugt3": {
+     "heap": 3,
+     "proces": 252,
+     "blobMB": 57.5303,
+     "blobs": 1
+    },
+    "lukket": {
+     "heap": 7,
+     "proces": 128,
+     "blobMB": 0
+    }
+   },
+   "aabn": {
+    "ms": 237,
+    "ok": true,
+    "boks": true,
+    "t": 0,
+    "varighed": 30,
+    "vw": 1080,
+    "vh": 1920,
+    "rs": 4,
+    "soeger": false,
+    "tid": "0,00 s",
+    "skyderMax": "30",
+    "navn": "Video: sq30.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "billedNavn": "",
+    "blobs": 1,
+    "blobMB": 57.5303,
+    "frem": false,
+    "tilbage": true,
+    "nummer": 0
+   },
+   "layout": {
+    "knapper": [
+     {
+      "hvad": "Tid i videoen",
+      "h": 44,
+      "w": 1047
+     },
+     {
+      "hvad": "Et billede tilbage",
+      "h": 44,
+      "w": 102
+     },
+     {
+      "hvad": "Et billede frem",
+      "h": 44,
+      "w": 102
+     },
+     {
+      "hvad": "Brug dette billede",
+      "h": 44,
+      "w": 151
+     },
+     {
+      "hvad": "Luk videoen",
+      "h": 44,
+      "w": 108
+     },
+     {
+      "hvad": "Klik navet i videoen",
+      "h": 44,
+      "w": 158
+     },
+     {
+      "hvad": "Hop til laveste punkt",
+      "h": 44,
+      "w": 166
+     }
+    ],
+    "video": {
+     "w": 1047,
+     "h": 540
+    },
+    "skaerm": 900,
+    "videoSynligVedKnapper": 100,
+    "brugUnderFrem": 54,
+    "videoTilNavknap": 750,
+    "videoTilHop": 750,
+    "navTilNavknap": 382,
+    "side": 1280,
+    "klient": 1280
+   },
+   "skyder": [
+    {
+     "t": 15,
+     "tid": "15,00 s",
+     "bredde": 1047,
+     "sPrPx": 0.029
+    },
+    {
+     "t": 27,
+     "tid": "27,00 s",
+     "bredde": 1047,
+     "sPrPx": 0.029
+    }
+   ],
+   "skyderNummer": 810,
+   "trin": {
+    "frem fra 0": {
+     "spring": [
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+     ],
+     "ms": {
+      "median": 160,
+      "max": 319
+     }
+    },
+    "frem fra skyderen": {
+     "spring": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+     ],
+     "ms": {
+      "median": 207,
+      "max": 494
+     }
+    },
+    "tilbage": {
+     "spring": [
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1
+     ],
+     "ms": {
+      "median": 184,
+      "max": 591
+     }
+    }
+   },
+   "tidMod": {
+    "tid": "0,66 s",
+    "nummer": 19,
+    "t": 0.66
+   },
+   "brug": [
+    {
+     "t": 3.2,
+     "vist": 96,
+     "foto": 96,
+     "ms": 132,
+     "wall": 246,
+     "w": 1080,
+     "h": 1920,
+     "navn": "sq30.mp4, 3,20 s",
+     "boksSynlig": true
+    },
+    {
+     "t": 8.5,
+     "vist": 255,
+     "foto": 255,
+     "ms": 170,
+     "wall": 285,
+     "w": 1080,
+     "h": 1920,
+     "navn": "sq30.mp4, 8,50 s",
+     "boksSynlig": true
+    },
+    {
+     "t": 24.8,
+     "vist": 744,
+     "foto": 744,
+     "ms": 118,
+     "wall": 207,
+     "w": 1080,
+     "h": 1920,
+     "navn": "sq30.mp4, 24,80 s",
+     "boksSynlig": true
+    }
+   ],
+   "faser": {
+    "squat-bund": {
+     "tekst": "Squat bund: Hofterne lavest: billedet lige før stangen vender i bunden.",
+     "hop": true,
+     "liste": "Hop til laveste punkt: tryk Klik navet i videoen og så på navet i et billede på vej ned, og igen i et billede i samme højde på vej op. Siden hopper midt imellem."
+    },
+    "squat-midt": {
+     "tekst": "Squat, sticking point (en tredjedel op): Stangen en tredjedel af vejen op fra bunden, ofte der hvor den går langsomst.",
+     "hop": true,
+     "liste": "Hop til laveste punkt: tryk Klik navet i videoen og så på navet i et billede på vej ned, og igen i et billede i samme højde på vej op. Siden hopper midt imellem."
+    },
+    "dl-gulv": {
+     "tekst": "Dødløft gulv: Det sidste billede, før skiverne slipper gulvet.",
+     "hop": false,
+     "liste": ""
+    },
+    "dl-knae": {
+     "tekst": "Dødløft knæ: Stangen lige ud for knæet på vej op.",
+     "hop": false,
+     "liste": ""
+    },
+    "baenk-bryst": {
+     "tekst": "Bænk bryst: Stangen lavest, hvor den rører brystet.",
+     "hop": true,
+     "liste": "Hop til laveste punkt: tryk Klik navet i videoen og så på navet i et billede på vej ned, og igen i et billede i samme højde på vej op. Siden hopper midt imellem."
+    },
+    "baenk-midt": {
+     "tekst": "Bænk midt: Stangen halvvejs mellem brystet og strakte arme på vej op.",
+     "hop": true,
+     "liste": "Hop til laveste punkt: tryk Klik navet i videoen og så på navet i et billede på vej ned, og igen i et billede i samme højde på vej op. Siden hopper midt imellem."
+    }
+   },
+   "hop": [
+    {
+     "rep": "jaevn",
+     "klikBilleder": [
+      83,
+      107
+     ],
+     "maerker": [
+      {
+       "t": 2.783,
+       "y": 1175
+      },
+      {
+       "t": 3.583,
+       "y": 1171
+      }
+     ],
+     "navUdenforSkaermen": true,
+     "landet": 95,
+     "bund": [
+      96,
+      96
+     ],
+     "fejl": -1,
+     "tekst": "Navet klikket ved 2,78 s, 3,58 s. Siden hopper midt imellem de to; opturen er tit hurtigere end nedturen, så gå et billede eller to tilbage og se efter."
+    },
+    {
+     "rep": "hurtig op",
+     "klikBilleder": [
+      239,
+      263
+     ],
+     "maerker": [
+      {
+       "t": 7.983,
+       "y": 1178
+      },
+      {
+       "t": 8.783,
+       "y": 1193
+      }
+     ],
+     "navUdenforSkaermen": false,
+     "landet": 251,
+     "bund": [
+      255,
+      255
+     ],
+     "fejl": -4,
+     "tekst": "Navet klikket ved 7,98 s, 8,78 s. Siden hopper midt imellem de to; opturen er tit hurtigere end nedturen, så gå et billede eller to tilbage og se efter."
+    },
+    {
+     "rep": "grind",
+     "klikBilleder": [
+      379,
+      413
+     ],
+     "maerker": [
+      {
+       "t": 12.65,
+       "y": 1171
+      },
+      {
+       "t": 13.783,
+       "y": 1183
+      }
+     ],
+     "navUdenforSkaermen": false,
+     "landet": 396,
+     "bund": [
+      390,
+      390
+     ],
+     "fejl": 6,
+     "tekst": "Navet klikket ved 12,65 s, 13,78 s. Siden hopper midt imellem de to; opturen er tit hurtigere end nedturen, så gå et billede eller to tilbage og se efter."
+    },
+    {
+     "rep": "pause",
+     "klikBilleder": [
+      565,
+      608
+     ],
+     "maerker": [
+      {
+       "t": 18.85,
+       "y": 1176
+      },
+      {
+       "t": 20.283,
+       "y": 1171
+      }
+     ],
+     "navUdenforSkaermen": false,
+     "landet": 586,
+     "bund": [
+      579,
+      597
+     ],
+     "fejl": 0,
+     "tekst": "Navet klikket ved 18,85 s, 20,28 s. Siden hopper midt imellem de to; opturen er tit hurtigere end nedturen, så gå et billede eller to tilbage og se efter."
+    },
+    {
+     "rep": "dyk",
+     "klikBilleder": [
+      736,
+      759
+     ],
+     "maerker": [
+      {
+       "t": 24.55,
+       "y": 1193
+      },
+      {
+       "t": 25.317,
+       "y": 1177
+      }
+     ],
+     "navUdenforSkaermen": false,
+     "landet": 748,
+     "bund": [
+      744,
+      744
+     ],
+     "fejl": 4,
+     "tekst": "Navet klikket ved 24,55 s, 25,32 s. Siden hopper midt imellem de to; opturen er tit hurtigere end nedturen, så gå et billede eller to tilbage og se efter."
+    }
+   ],
+   "luk": {
+    "boks": false,
+    "t": 0,
+    "varighed": null,
+    "vw": 0,
+    "vh": 0,
+    "rs": 0,
+    "soeger": false,
+    "tid": "24,93 s",
+    "skyderMax": "30",
+    "navn": "Video: sq30.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "billedNavn": "sq30.mp4, 24,80 s",
+    "blobs": 0,
+    "blobMB": 0,
+    "frem": false,
+    "tilbage": false,
+    "fotoStaar": true
+   },
+   "igen": {
+    "ms": 179,
+    "ok": true,
+    "boks": true,
+    "t": 0,
+    "varighed": 30,
+    "vw": 1080,
+    "vh": 1920,
+    "rs": 4,
+    "soeger": false,
+    "tid": "0,00 s",
+    "skyderMax": "30",
+    "navn": "Video: sq30.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "billedNavn": "sq30.mp4, 24,80 s",
+    "blobs": 1,
+    "blobMB": 57.5303,
+    "frem": false,
+    "tilbage": true
+   },
+   "net": [
+    "file:///C:/Users/Entropi/AppData/Local/Temp/kritik-564-loeftmodel-296b9bf/dist/maal-billede/index.html",
+    "file:///C:/Users/Entropi/AppData/Local/Temp/kritik-564-loeftmodel-296b9bf/dist/maal-billede/maal-billede.js"
+   ],
+   "efterHentet": [],
+   "jsFejl": []
+  },
+  "390x4": {
+   "mobil": true,
+   "cpu": 4,
+   "sideMs": 2864,
+   "mem": {
+    "tom": {
+     "heap": 3.5,
+     "proces": 91
+    },
+    "aaben": {
+     "heap": 2.5,
+     "proces": 182,
+     "blobMB": 57.5303
+    },
+    "brugt3": {
+     "heap": 3.3,
+     "proces": 307,
+     "blobMB": 57.5303,
+     "blobs": 1
+    },
+    "lukket": {
+     "heap": 5,
+     "proces": 172,
+     "blobMB": 0
+    }
+   },
+   "aabn": {
+    "ms": 837,
+    "ok": true,
+    "boks": true,
+    "t": 0,
+    "varighed": 30,
+    "vw": 1080,
+    "vh": 1920,
+    "rs": 4,
+    "soeger": false,
+    "tid": "0,00 s",
+    "skyderMax": "30",
+    "navn": "Video: sq30.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "billedNavn": "",
+    "blobs": 1,
+    "blobMB": 57.5303,
+    "frem": false,
+    "tilbage": true,
+    "nummer": 0
+   },
+   "layout": {
+    "knapper": [
+     {
+      "hvad": "Tid i videoen",
+      "h": 44,
+      "w": 337
+     },
+     {
+      "hvad": "Et billede tilbage",
+      "h": 44,
+      "w": 102
+     },
+     {
+      "hvad": "Et billede frem",
+      "h": 44,
+      "w": 102
+     },
+     {
+      "hvad": "Brug dette billede",
+      "h": 44,
+      "w": 151
+     },
+     {
+      "hvad": "Luk videoen",
+      "h": 44,
+      "w": 108
+     },
+     {
+      "hvad": "Klik navet i videoen",
+      "h": 44,
+      "w": 158
+     },
+     {
+      "hvad": "Hop til laveste punkt",
+      "h": 44,
+      "w": 166
+     }
+    ],
+    "video": {
+     "w": 337,
+     "h": 468
+    },
+    "skaerm": 780,
+    "videoSynligVedKnapper": 100,
+    "brugUnderFrem": 54,
+    "videoTilNavknap": 678,
+    "videoTilHop": 678,
+    "navTilNavknap": 359,
+    "side": 390,
+    "klient": 390
+   },
+   "skyder": [
+    {
+     "t": 15,
+     "tid": "15,00 s",
+     "bredde": 337,
+     "sPrPx": 0.094
+    },
+    {
+     "t": 26.999,
+     "tid": "27,00 s",
+     "bredde": 337,
+     "sPrPx": 0.094
+    }
+   ],
+   "skyderNummer": 809,
+   "trin": {
+    "frem fra 0": {
+     "spring": [
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+     ],
+     "ms": {
+      "median": 94,
+      "max": 112
+     }
+    },
+    "frem fra skyderen": {
+     "spring": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+     ],
+     "ms": {
+      "median": 94,
+      "max": 160
+     }
+    },
+    "tilbage": {
+     "spring": [
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      -1
+     ],
+     "ms": {
+      "median": 94,
+      "max": 167
+     }
+    }
+   },
+   "tidMod": {
+    "tid": "0,66 s",
+    "nummer": 19,
+    "t": 0.66
+   },
+   "brug": [
+    {
+     "t": 3.2,
+     "vist": 96,
+     "foto": 96,
+     "ms": 390,
+     "wall": 480,
+     "w": 1080,
+     "h": 1920,
+     "navn": "sq30.mp4, 3,20 s",
+     "boksSynlig": true
+    },
+    {
+     "t": 8.5,
+     "vist": 255,
+     "foto": 255,
+     "ms": 505,
+     "wall": 599,
+     "w": 1080,
+     "h": 1920,
+     "navn": "sq30.mp4, 8,50 s",
+     "boksSynlig": true
+    },
+    {
+     "t": 24.8,
+     "vist": 744,
+     "foto": 744,
+     "ms": 359,
+     "wall": 439,
+     "w": 1080,
+     "h": 1920,
+     "navn": "sq30.mp4, 24,80 s",
+     "boksSynlig": true
+    }
+   ],
+   "faser": {
+    "squat-bund": {
+     "tekst": "Squat bund: Hofterne lavest: billedet lige før stangen vender i bunden.",
+     "hop": true,
+     "liste": "Hop til laveste punkt: tryk Klik navet i videoen og så på navet i et billede på vej ned, og igen i et billede i samme højde på vej op. Siden hopper midt imellem."
+    },
+    "squat-midt": {
+     "tekst": "Squat, sticking point (en tredjedel op): Stangen en tredjedel af vejen op fra bunden, ofte der hvor den går langsomst.",
+     "hop": true,
+     "liste": "Hop til laveste punkt: tryk Klik navet i videoen og så på navet i et billede på vej ned, og igen i et billede i samme højde på vej op. Siden hopper midt imellem."
+    },
+    "dl-gulv": {
+     "tekst": "Dødløft gulv: Det sidste billede, før skiverne slipper gulvet.",
+     "hop": false,
+     "liste": ""
+    },
+    "dl-knae": {
+     "tekst": "Dødløft knæ: Stangen lige ud for knæet på vej op.",
+     "hop": false,
+     "liste": ""
+    },
+    "baenk-bryst": {
+     "tekst": "Bænk bryst: Stangen lavest, hvor den rører brystet.",
+     "hop": true,
+     "liste": "Hop til laveste punkt: tryk Klik navet i videoen og så på navet i et billede på vej ned, og igen i et billede i samme højde på vej op. Siden hopper midt imellem."
+    },
+    "baenk-midt": {
+     "tekst": "Bænk midt: Stangen halvvejs mellem brystet og strakte arme på vej op.",
+     "hop": true,
+     "liste": "Hop til laveste punkt: tryk Klik navet i videoen og så på navet i et billede på vej ned, og igen i et billede i samme højde på vej op. Siden hopper midt imellem."
+    }
+   },
+   "hop": [
+    {
+     "rep": "jaevn",
+     "klikBilleder": [
+      83,
+      107
+     ],
+     "maerker": [
+      {
+       "t": 2.783,
+       "y": 1175
+      },
+      {
+       "t": 3.583,
+       "y": 1171
+      }
+     ],
+     "navUdenforSkaermen": true,
+     "landet": 95,
+     "bund": [
+      96,
+      96
+     ],
+     "fejl": -1,
+     "tekst": "Navet klikket ved 2,78 s, 3,58 s. Siden hopper midt imellem de to; opturen er tit hurtigere end nedturen, så gå et billede eller to tilbage og se efter."
+    },
+    {
+     "rep": "hurtig op",
+     "klikBilleder": [
+      239,
+      263
+     ],
+     "maerker": [
+      {
+       "t": 7.983,
+       "y": 1178
+      },
+      {
+       "t": 8.783,
+       "y": 1193
+      }
+     ],
+     "navUdenforSkaermen": true,
+     "landet": 251,
+     "bund": [
+      255,
+      255
+     ],
+     "fejl": -4,
+     "tekst": "Navet klikket ved 7,98 s, 8,78 s. Siden hopper midt imellem de to; opturen er tit hurtigere end nedturen, så gå et billede eller to tilbage og se efter."
+    },
+    {
+     "rep": "grind",
+     "klikBilleder": [
+      379,
+      413
+     ],
+     "maerker": [
+      {
+       "t": 12.65,
+       "y": 1171
+      },
+      {
+       "t": 13.783,
+       "y": 1183
+      }
+     ],
+     "navUdenforSkaermen": true,
+     "landet": 396,
+     "bund": [
+      390,
+      390
+     ],
+     "fejl": 6,
+     "tekst": "Navet klikket ved 12,65 s, 13,78 s. Siden hopper midt imellem de to; opturen er tit hurtigere end nedturen, så gå et billede eller to tilbage og se efter."
+    },
+    {
+     "rep": "pause",
+     "klikBilleder": [
+      565,
+      608
+     ],
+     "maerker": [
+      {
+       "t": 18.85,
+       "y": 1176
+      },
+      {
+       "t": 20.283,
+       "y": 1171
+      }
+     ],
+     "navUdenforSkaermen": true,
+     "landet": 586,
+     "bund": [
+      579,
+      597
+     ],
+     "fejl": 0,
+     "tekst": "Navet klikket ved 18,85 s, 20,28 s. Siden hopper midt imellem de to; opturen er tit hurtigere end nedturen, så gå et billede eller to tilbage og se efter."
+    },
+    {
+     "rep": "dyk",
+     "klikBilleder": [
+      736,
+      759
+     ],
+     "maerker": [
+      {
+       "t": 24.55,
+       "y": 1193
+      },
+      {
+       "t": 25.317,
+       "y": 1177
+      }
+     ],
+     "navUdenforSkaermen": true,
+     "landet": 748,
+     "bund": [
+      744,
+      744
+     ],
+     "fejl": 4,
+     "tekst": "Navet klikket ved 24,55 s, 25,32 s. Siden hopper midt imellem de to; opturen er tit hurtigere end nedturen, så gå et billede eller to tilbage og se efter."
+    }
+   ],
+   "luk": {
+    "boks": false,
+    "t": 0,
+    "varighed": null,
+    "vw": 0,
+    "vh": 0,
+    "rs": 0,
+    "soeger": false,
+    "tid": "24,93 s",
+    "skyderMax": "30",
+    "navn": "Video: sq30.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "billedNavn": "sq30.mp4, 24,80 s",
+    "blobs": 0,
+    "blobMB": 0,
+    "frem": false,
+    "tilbage": false,
+    "fotoStaar": true
+   },
+   "igen": {
+    "ms": 129,
+    "ok": true,
+    "boks": true,
+    "t": 0,
+    "varighed": 30,
+    "vw": 1080,
+    "vh": 1920,
+    "rs": 4,
+    "soeger": false,
+    "tid": "0,00 s",
+    "skyderMax": "30",
+    "navn": "Video: sq30.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "billedNavn": "sq30.mp4, 24,80 s",
+    "blobs": 1,
+    "blobMB": 57.5303,
+    "frem": false,
+    "tilbage": true
+   },
+   "net": [
+    "file:///C:/Users/Entropi/AppData/Local/Temp/kritik-564-loeftmodel-296b9bf/dist/maal-billede/index.html",
+    "file:///C:/Users/Entropi/AppData/Local/Temp/kritik-564-loeftmodel-296b9bf/dist/maal-billede/maal-billede.js"
+   ],
+   "efterHentet": [],
+   "jsFejl": []
+  }
+ },
+ "telefonHoejde": {
+  "360x640": {
+   "knapper": [
+    {
+     "hvad": "Tid i videoen",
+     "h": 44,
+     "w": 307
+    },
+    {
+     "hvad": "Et billede tilbage",
+     "h": 44,
+     "w": 102
+    },
+    {
+     "hvad": "Et billede frem",
+     "h": 44,
+     "w": 102
+    },
+    {
+     "hvad": "Brug dette billede",
+     "h": 44,
+     "w": 151
+    },
+    {
+     "hvad": "Luk videoen",
+     "h": 44,
+     "w": 108
+    },
+    {
+     "hvad": "Klik navet i videoen",
+     "h": 44,
+     "w": 158
+    },
+    {
+     "hvad": "Hop til laveste punkt",
+     "h": 44,
+     "w": 166
+    }
+   ],
+   "video": {
+    "w": 307,
+    "h": 384
+   },
+   "skaerm": 640,
+   "videoSynligVedKnapper": 100,
+   "brugUnderFrem": 54,
+   "videoTilNavknap": 594,
+   "videoTilHop": 646,
+   "navTilNavknap": 332,
+   "side": 360,
+   "klient": 360
+  },
+  "390x664": {
+   "knapper": [
+    {
+     "hvad": "Tid i videoen",
+     "h": 44,
+     "w": 337
+    },
+    {
+     "hvad": "Et billede tilbage",
+     "h": 44,
+     "w": 102
+    },
+    {
+     "hvad": "Et billede frem",
+     "h": 44,
+     "w": 102
+    },
+    {
+     "hvad": "Brug dette billede",
+     "h": 44,
+     "w": 151
+    },
+    {
+     "hvad": "Luk videoen",
+     "h": 44,
+     "w": 108
+    },
+    {
+     "hvad": "Klik navet i videoen",
+     "h": 44,
+     "w": 158
+    },
+    {
+     "hvad": "Hop til laveste punkt",
+     "h": 44,
+     "w": 166
+    }
+   ],
+   "video": {
+    "w": 337,
+    "h": 398
+   },
+   "skaerm": 664,
+   "videoSynligVedKnapper": 100,
+   "brugUnderFrem": 54,
+   "videoTilNavknap": 608,
+   "videoTilHop": 608,
+   "navTilNavknap": 337,
+   "side": 390,
+   "klient": 390
+  }
+ },
+ "andre": {
+  "sq30.mov": {
+   "aabn": {
+    "ms": 80,
+    "ok": true,
+    "boks": true,
+    "t": 0,
+    "varighed": 30,
+    "vw": 1080,
+    "vh": 1920,
+    "rs": 4,
+    "soeger": false,
+    "tid": "0,00 s",
+    "skyderMax": "30",
+    "navn": "Video: sq30.mov (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "billedNavn": "",
+    "blobs": 1,
+    "blobMB": 57.472202,
+    "frem": false,
+    "tilbage": true
+   },
+   "besked": "Video: sq30.mov (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+   "spring": [
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "brugMs": 166,
+   "brugRigtigt": true,
+   "mem": {
+    "heap": 4,
+    "proces": 221,
+    "blobMB": 57.472202
+   },
+   "memLukket": {
+    "heap": 2.9,
+    "proces": 122,
+    "blobMB": 0
+   },
+   "efterHentet": [],
+   "jsFejl": []
+  },
+  "sq30.webm": {
+   "aabn": {
+    "ms": 59,
+    "ok": true,
+    "boks": true,
+    "t": 0,
+    "varighed": 30,
+    "vw": 1080,
+    "vh": 1920,
+    "rs": 4,
+    "soeger": false,
+    "tid": "0,00 s",
+    "skyderMax": "30",
+    "navn": "Video: sq30.webm (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "billedNavn": "",
+    "blobs": 1,
+    "blobMB": 71.105219,
+    "frem": false,
+    "tilbage": true
+   },
+   "besked": "Video: sq30.webm (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+   "spring": [
+    1,
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "brugMs": 158,
+   "brugRigtigt": true,
+   "mem": {
+    "heap": 4,
+    "proces": 214,
+    "blobMB": 71.105219
+   },
+   "memLukket": {
+    "heap": 4.1,
+    "proces": 135,
+    "blobMB": 0
+   },
+   "efterHentet": [],
+   "jsFejl": []
+  },
+  "sq30-60.mp4": {
+   "aabn": {
+    "ms": 65,
+    "ok": true,
+    "boks": true,
+    "t": 0,
+    "varighed": 30,
+    "vw": 1080,
+    "vh": 1920,
+    "rs": 4,
+    "soeger": false,
+    "tid": "0,00 s",
+    "skyderMax": "30",
+    "navn": "Video: sq30-60.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "billedNavn": "",
+    "blobs": 1,
+    "blobMB": 61.938684,
+    "frem": false,
+    "tilbage": true
+   },
+   "besked": "Video: sq30-60.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+   "spring": [
+    1,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2
+   ],
+   "brugMs": 198,
+   "brugRigtigt": true,
+   "mem": {
+    "heap": 3.9,
+    "proces": 230,
+    "blobMB": 61.938684
+   },
+   "memLukket": {
+    "heap": 2.9,
+    "proces": 126,
+    "blobMB": 0
+   },
+   "efterHentet": [],
+   "jsFejl": []
+  },
+  "sq30-25.mp4": {
+   "aabn": {
+    "ms": 95,
+    "ok": true,
+    "boks": true,
+    "t": 0,
+    "varighed": 30,
+    "vw": 1080,
+    "vh": 1920,
+    "rs": 4,
+    "soeger": false,
+    "tid": "0,00 s",
+    "skyderMax": "30",
+    "navn": "Video: sq30-25.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "billedNavn": "",
+    "blobs": 1,
+    "blobMB": 55.422935,
+    "frem": false,
+    "tilbage": true
+   },
+   "besked": "Video: sq30-25.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+   "spring": [
+    0,
+    1,
+    1,
+    1,
+    1,
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0
+   ],
+   "brugMs": 168,
+   "brugRigtigt": true,
+   "mem": {
+    "heap": 3.2,
+    "proces": 228,
+    "blobMB": 55.422935
+   },
+   "memLukket": {
+    "heap": 3.3,
+    "proces": 134,
+    "blobMB": 0
+   },
+   "efterHentet": [],
+   "jsFejl": []
+  },
+  "sq30-hevc.mp4": {
+   "aabn": {
+    "ms": 15016,
+    "ok": true,
+    "boks": true,
+    "t": 0,
+    "varighed": null,
+    "vw": 0,
+    "vh": 0,
+    "rs": 0,
+    "soeger": false,
+    "tid": "0,00 s",
+    "skyderMax": "0",
+    "navn": "Videoen kunne ikke læses i denne browser. Prøv en MP4 eller MOV fra telefonen, eller tag et skærmbillede.",
+    "billedNavn": "",
+    "blobs": 1,
+    "blobMB": 9.464716,
+    "frem": false,
+    "tilbage": false
+   },
+   "besked": "Videoen kunne ikke læses i denne browser. Prøv en MP4 eller MOV fra telefonen, eller tag et skærmbillede.",
+   "efterHentet": [],
+   "jsFejl": []
+  },
+  "sq5-4k.mp4": {
+   "aabn": {
+    "ms": 313,
+    "ok": true,
+    "boks": true,
+    "t": 0,
+    "varighed": 5,
+    "vw": 2160,
+    "vh": 3840,
+    "rs": 4,
+    "soeger": false,
+    "tid": "0,00 s",
+    "skyderMax": "5",
+    "navn": "Video: sq5-4k.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "billedNavn": "",
+    "blobs": 1,
+    "blobMB": 25.775234,
+    "frem": false,
+    "tilbage": true
+   },
+   "besked": "Video: sq5-4k.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+   "spring": [
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "brugMs": 369,
+   "brugRigtigt": true,
+   "mem": {
+    "heap": 4.1,
+    "proces": 617,
+    "blobMB": 25.775234
+   },
+   "memLukket": {
+    "heap": 2.9,
+    "proces": 171,
+    "blobMB": 0
+   },
+   "efterHentet": [],
+   "jsFejl": []
+  },
+  "sq30.mov x4": {
+   "aabn": {
+    "ms": 144,
+    "ok": true,
+    "boks": true,
+    "t": 0,
+    "varighed": 30,
+    "vw": 1080,
+    "vh": 1920,
+    "rs": 4,
+    "soeger": false,
+    "tid": "0,00 s",
+    "skyderMax": "30",
+    "navn": "Video: sq30.mov (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "billedNavn": "",
+    "blobs": 1,
+    "blobMB": 57.472202,
+    "frem": false,
+    "tilbage": true
+   },
+   "besked": "Video: sq30.mov (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+   "spring": [
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "brugMs": 557,
+   "brugRigtigt": true,
+   "mem": {
+    "heap": 3.9,
+    "proces": 222,
+    "blobMB": 57.472202
+   },
+   "memLukket": {
+    "heap": 4,
+    "proces": 143,
+    "blobMB": 0
+   },
+   "efterHentet": [],
+   "jsFejl": []
+  },
+  "sq30-hevc.mp4 x4": {
+   "aabn": {
+    "ms": 15037,
+    "ok": true,
+    "boks": true,
+    "t": 0,
+    "varighed": null,
+    "vw": 0,
+    "vh": 0,
+    "rs": 0,
+    "soeger": false,
+    "tid": "0,00 s",
+    "skyderMax": "0",
+    "navn": "Videoen kunne ikke læses i denne browser. Prøv en MP4 eller MOV fra telefonen, eller tag et skærmbillede.",
+    "billedNavn": "",
+    "blobs": 1,
+    "blobMB": 9.464716,
+    "frem": false,
+    "tilbage": false
+   },
+   "besked": "Videoen kunne ikke læses i denne browser. Prøv en MP4 eller MOV fra telefonen, eller tag et skærmbillede.",
+   "efterHentet": [],
+   "jsFejl": []
+  },
+  "sq5-4k.mp4 x4": {
+   "aabn": {
+    "ms": 441,
+    "ok": true,
+    "boks": true,
+    "t": 0,
+    "varighed": 5,
+    "vw": 2160,
+    "vh": 3840,
+    "rs": 4,
+    "soeger": false,
+    "tid": "0,00 s",
+    "skyderMax": "5",
+    "navn": "Video: sq5-4k.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+    "billedNavn": "",
+    "blobs": 1,
+    "blobMB": 25.775234,
+    "frem": false,
+    "tilbage": true
+   },
+   "besked": "Video: sq5-4k.mp4 (kun i din browser). Find øjeblikket med skyderen og knapperne, og tryk Brug dette billede.",
+   "spring": [
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "brugMs": 1433,
+   "brugRigtigt": true,
+   "mem": {
+    "heap": 4,
+    "proces": 581,
+    "blobMB": 25.775234
+   },
+   "memLukket": {
+    "heap": 2.9,
+    "proces": 127,
+    "blobMB": 0
+   },
+   "efterHentet": [],
+   "jsFejl": []
+  }
+ },
+ "hopRegnet": [
+  {
+   "rep": "jaevn",
+   "nedOp": "1.2/1",
+   "median": -1,
+   "min": -3,
+   "max": 0,
+   "retning": "foer bunden",
+   "ramt": 57,
+   "raadHjaelper": 0,
+   "raadSkader": 87,
+   "parabel3": -2,
+   "parabel5": -2
+  },
+  {
+   "rep": "hurtig op",
+   "nedOp": "1.5/0.8",
+   "median": -4,
+   "min": -8,
+   "max": -1,
+   "retning": "foer bunden",
+   "ramt": 2,
+   "raadHjaelper": 0,
+   "raadSkader": 100,
+   "parabel3": -5,
+   "parabel5": -5
+  },
+  {
+   "rep": "grind",
+   "nedOp": "1/2.2",
+   "median": 7,
+   "min": 2,
+   "max": 11,
+   "retning": "efter bunden",
+   "ramt": 0,
+   "raadHjaelper": 100,
+   "raadSkader": 0,
+   "parabel3": 7,
+   "parabel5": 8
+  },
+  {
+   "rep": "pause",
+   "nedOp": "1.3/1",
+   "median": 0,
+   "min": 0,
+   "max": 0,
+   "retning": "i bunden",
+   "ramt": 100,
+   "raadHjaelper": 0,
+   "raadSkader": 0,
+   "parabel3": 0,
+   "parabel5": 0
+  },
+  {
+   "rep": "dyk",
+   "nedOp": "0.8/1.4",
+   "median": 3,
+   "min": 0,
+   "max": 6,
+   "retning": "efter bunden",
+   "ramt": 13,
+   "raadHjaelper": 98,
+   "raadSkader": 0,
+   "parabel3": 3,
+   "parabel5": 3
+  }
+ ],
+ "tjek": [
+  {
+   "hvad": "Aabn 30 s MP4 (1080 x 1920, 57 MB): videoen vises med varighed og skyder paa alle fire",
+   "ok": true,
+   "data": [
+    [
+     "360",
+     96
+    ],
+    [
+     "390",
+     78
+    ],
+    [
+     "1280",
+     237
+    ],
+    [
+     "390x4",
+     837
+    ]
+   ]
+  },
+  {
+   "hvad": "Skyderen med finger/mus: 50 % og 90 % rammer 15 s og 27 s (+-0,5 s)",
+   "ok": true,
+   "data": [
+    [
+     "360",
+     [
+      {
+       "t": 15,
+       "tid": "15,00 s",
+       "bredde": 307,
+       "sPrPx": 0.103
+      },
+      {
+       "t": 26.999,
+       "tid": "27,00 s",
+       "bredde": 307,
+       "sPrPx": 0.103
+      }
+     ]
+    ],
+    [
+     "390",
+     [
+      {
+       "t": 15,
+       "tid": "15,00 s",
+       "bredde": 337,
+       "sPrPx": 0.094
+      },
+      {
+       "t": 26.999,
+       "tid": "27,00 s",
+       "bredde": 337,
+       "sPrPx": 0.094
+      }
+     ]
+    ],
+    [
+     "1280",
+     [
+      {
+       "t": 15,
+       "tid": "15,00 s",
+       "bredde": 1047,
+       "sPrPx": 0.029
+      },
+      {
+       "t": 27,
+       "tid": "27,00 s",
+       "bredde": 1047,
+       "sPrPx": 0.029
+      }
+     ]
+    ],
+    [
+     "390x4",
+     [
+      {
+       "t": 15,
+       "tid": "15,00 s",
+       "bredde": 337,
+       "sPrPx": 0.094
+      },
+      {
+       "t": 26.999,
+       "tid": "27,00 s",
+       "bredde": 337,
+       "sPrPx": 0.094
+      }
+     ]
+    ]
+   ]
+  },
+  {
+   "hvad": "Et billede frem fra skyderens sted: hvert tryk flytter praecis 1 billede (30 billeder/s)",
+   "ok": true,
+   "data": [
+    [
+     "360",
+     "11111111111111111111"
+    ],
+    [
+     "390",
+     "11111111111111111111"
+    ],
+    [
+     "1280",
+     "11111111111111111111"
+    ],
+    [
+     "390x4",
+     "11111111111111111111"
+    ]
+   ]
+  },
+  {
+   "hvad": "Et billede tilbage: hvert tryk flytter praecis 1 billede",
+   "ok": true,
+   "data": [
+    [
+     "360",
+     "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+    ],
+    [
+     "390",
+     "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+    ],
+    [
+     "1280",
+     "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+    ],
+    [
+     "390x4",
+     "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+    ]
+   ]
+  },
+  {
+   "hvad": "Et billede frem fra 0 s: foerste tryk flytter 0 billeder (0,033 s er foer billede 1 ved 1/30 s), derefter 1 pr. tryk",
+   "ok": true,
+   "data": [
+    [
+     "360",
+     "01111111111111111111"
+    ],
+    [
+     "390",
+     "01111111111111111111"
+    ],
+    [
+     "1280",
+     "01111111111111111111"
+    ],
+    [
+     "390x4",
+     "01111111111111111111"
+    ]
+   ]
+  },
+  {
+   "hvad": "Alle synlige knapper og skyderen i videoboksen er mindst 44 px hoeje",
+   "ok": true,
+   "data": [
+    [
+     "360",
+     [
+      "Tid i videoen:307x44",
+      "Et billede tilbage:102x44",
+      "Et billede frem:102x44",
+      "Brug dette billede:151x44",
+      "Luk videoen:108x44",
+      "Klik navet i videoen:158x44",
+      "Hop til laveste punkt:166x44"
+     ]
+    ],
+    [
+     "390",
+     [
+      "Tid i videoen:337x44",
+      "Et billede tilbage:102x44",
+      "Et billede frem:102x44",
+      "Brug dette billede:151x44",
+      "Luk videoen:108x44",
+      "Klik navet i videoen:158x44",
+      "Hop til laveste punkt:166x44"
+     ]
+    ],
+    [
+     "1280",
+     [
+      "Tid i videoen:1047x44",
+      "Et billede tilbage:102x44",
+      "Et billede frem:102x44",
+      "Brug dette billede:151x44",
+      "Luk videoen:108x44",
+      "Klik navet i videoen:158x44",
+      "Hop til laveste punkt:166x44"
+     ]
+    ],
+    [
+     "390x4",
+     [
+      "Tid i videoen:337x44",
+      "Et billede tilbage:102x44",
+      "Et billede frem:102x44",
+      "Brug dette billede:151x44",
+      "Luk videoen:108x44",
+      "Klik navet i videoen:158x44",
+      "Hop til laveste punkt:166x44"
+     ]
+    ]
+   ]
+  },
+  {
+   "hvad": "Brug dette billede: fotoet er praecis det viste billede, i videoens egne pixels",
+   "ok": true,
+   "data": [
+    [
+     "360",
+     [
+      "96->96 88ms",
+      "255->255 90ms",
+      "744->744 85ms"
+     ]
+    ],
+    [
+     "390",
+     [
+      "96->96 93ms",
+      "255->255 90ms",
+      "744->744 87ms"
+     ]
+    ],
+    [
+     "1280",
+     [
+      "96->96 132ms",
+      "255->255 170ms",
+      "744->744 118ms"
+     ]
+    ],
+    [
+     "390x4",
+     [
+      "96->96 390ms",
+      "255->255 505ms",
+      "744->744 359ms"
+     ]
+    ]
+   ]
+  },
+  {
+   "hvad": "Fase-hjaelpen: seks saetninger; hop kun i squat og baenk",
+   "ok": true,
+   "data": {
+    "squat-bund": {
+     "tekst": "Squat bund: Hofterne lavest: billedet lige før stangen vender i bunden.",
+     "hop": true,
+     "liste": "Hop til laveste punkt: tryk Klik navet i videoen og så på navet i et billede på vej ned, og igen i et billede i samme højde på vej op. Siden hopper midt imellem."
+    },
+    "squat-midt": {
+     "tekst": "Squat, sticking point (en tredjedel op): Stangen en tredjedel af vejen op fra bunden, ofte der hvor den går langsomst.",
+     "hop": true,
+     "liste": "Hop til laveste punkt: tryk Klik navet i videoen og så på navet i et billede på vej ned, og igen i et billede i samme højde på vej op. Siden hopper midt imellem."
+    },
+    "dl-gulv": {
+     "tekst": "Dødløft gulv: Det sidste billede, før skiverne slipper gulvet.",
+     "hop": false,
+     "liste": ""
+    },
+    "dl-knae": {
+     "tekst": "Dødløft knæ: Stangen lige ud for knæet på vej op.",
+     "hop": false,
+     "liste": ""
+    },
+    "baenk-bryst": {
+     "tekst": "Bænk bryst: Stangen lavest, hvor den rører brystet.",
+     "hop": true,
+     "liste": "Hop til laveste punkt: tryk Klik navet i videoen og så på navet i et billede på vej ned, og igen i et billede i samme højde på vej op. Siden hopper midt imellem."
+    },
+    "baenk-midt": {
+     "tekst": "Bænk midt: Stangen halvvejs mellem brystet og strakte arme på vej op.",
+     "hop": true,
+     "liste": "Hop til laveste punkt: tryk Klik navet i videoen og så på navet i et billede på vej ned, og igen i et billede i samme højde på vej op. Siden hopper midt imellem."
+    }
+   }
+  },
+  {
+   "hvad": "Hop til laveste punkt (to klik i 15 % hoejde): -1, -4, +6, 0 og +4 billeder fra bunden i de fem squats, ens paa alle fire",
+   "ok": true,
+   "data": [
+    [
+     "360",
+     [
+      "jaevn:-1",
+      "hurtig op:-4",
+      "grind:6",
+      "pause:0",
+      "dyk:4"
+     ]
+    ],
+    [
+     "390",
+     [
+      "jaevn:-1",
+      "hurtig op:-4",
+      "grind:6",
+      "pause:0",
+      "dyk:4"
+     ]
+    ],
+    [
+     "1280",
+     [
+      "jaevn:-1",
+      "hurtig op:-4",
+      "grind:6",
+      "pause:0",
+      "dyk:4"
+     ]
+    ],
+    [
+     "390x4",
+     [
+      "jaevn:-1",
+      "hurtig op:-4",
+      "grind:6",
+      "pause:0",
+      "dyk:4"
+     ]
+    ]
+   ]
+  },
+  {
+   "hvad": "Hop-teksten siger \"gaa et billede eller to tilbage\" efter to klik; regnet over 54 klikpar skader raadet i \"jaevn\" og \"hurtig op\" (opturen hurtigst) og hjaelper kun, naar opturen er langsomst",
+   "ok": true,
+   "data": [
+    [
+     "jaevn",
+     "1.2/1",
+     -1,
+     0,
+     87
+    ],
+    [
+     "hurtig op",
+     "1.5/0.8",
+     -4,
+     0,
+     100
+    ],
+    [
+     "grind",
+     "1/2.2",
+     7,
+     100,
+     0
+    ],
+    [
+     "pause",
+     "1.3/1",
+     0,
+     0,
+     0
+    ],
+    [
+     "dyk",
+     "0.8/1.4",
+     3,
+     98,
+     0
+    ]
+   ]
+  },
+  {
+   "hvad": "Parabel med tre eller fem klik hjaelper ikke paa \"hurtig op\" og \"grind\" (klik i samme hoejder)",
+   "ok": true,
+   "data": [
+    [
+     "jaevn",
+     -2,
+     -2
+    ],
+    [
+     "hurtig op",
+     -5,
+     -5
+    ],
+    [
+     "grind",
+     7,
+     8
+    ],
+    [
+     "pause",
+     0,
+     0
+    ],
+    [
+     "dyk",
+     3,
+     3
+    ]
+   ]
+  },
+  {
+   "hvad": "Luk videoen: boksen vaek, videoens objekt-URL frigivet, fotoet bliver",
+   "ok": true,
+   "data": [
+    [
+     "360",
+     0,
+     0
+    ],
+    [
+     "390",
+     0,
+     0
+    ],
+    [
+     "1280",
+     0,
+     0
+    ],
+    [
+     "390x4",
+     0,
+     0
+    ]
+   ]
+  },
+  {
+   "hvad": "Samme fil kan aabnes igen efter Luk videoen",
+   "ok": true
+  },
+  {
+   "hvad": "Ingen netkald efter siden er hentet (heller ikke naar videoen aabnes, spoles og bruges); ingen JS-fejl",
+   "ok": true,
+   "data": [
+    [
+     "360",
+     2,
+     []
+    ],
+    [
+     "390",
+     2,
+     []
+    ],
+    [
+     "1280",
+     2,
+     []
+    ],
+    [
+     "390x4",
+     2,
+     []
+    ]
+   ]
+  },
+  {
+   "hvad": "Ingen vandret rulning med videoen aaben",
+   "ok": true
+  },
+  {
+   "hvad": "MOV (QuickTime-beholder, H.264) aabnes og bruges",
+   "ok": true,
+   "data": 80
+  },
+  {
+   "hvad": "60 billeder/s: 2 billeder pr. tryk; 25 billeder/s: nogle tryk flytter 0; skyderen er 0,09-0,10 s pr. px paa telefonen (3 billeder ved 30/s)",
+   "ok": true,
+   "data": [
+    "122222222222",
+    "011110111110",
+    0.103,
+    0.094
+   ]
+  },
+  {
+   "hvad": "HEVC: beskeden kommer foerst efter 15 s (siden venter paa loadedmetadata til tiden er gaaet)",
+   "ok": true,
+   "data": 15016
+  },
+  {
+   "hvad": "HEVC som Chrome ikke kan afkode: siden siger det og raader til MP4/MOV eller skaermbillede",
+   "ok": true,
+   "data": [
+    15016,
+    "Videoen kunne ikke læses i denne browser. Prøv en MP4 eller MOV fra telefonen, eller tag et skærmbillede."
+   ]
+  },
+  {
+   "hvad": "4K (2160 x 3840): aabnes og Brug dette billede giver det rigtige billede",
+   "ok": true,
+   "data": [
+    369,
+    {
+     "heap": 4.1,
+     "proces": 617,
+     "blobMB": 25.775234
+    }
+   ]
+  },
+  {
+   "hvad": "Aeldre telefon (4x CPU): aabn under 5 s, et tryk under 1 s, Brug dette billede under 3 s",
+   "ok": true,
+   "data": [
+    837,
+    {
+     "median": 94,
+     "max": 160
+    },
+    [
+     390,
+     505,
+     359
+    ]
+   ]
+  }
+ ]
+}
