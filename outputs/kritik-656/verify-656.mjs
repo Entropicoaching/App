@@ -79,12 +79,21 @@ if (blok >= 2) {
     ok(s.net === 0 && s.fejl.length === 0, 'skak-656: net eller JS-fejl')
     ok([360, 390, 1280].every((b) => s.bredder[b]), 'skak-656: en bredde mangler')
     ok(Object.values(s.bredder).every((x) => !x.vandret), 'skak-656: vandret rulning')
+    for (const [b, x] of Object.entries(s.bredder)) {
+      ok(x.alleLinje?.tekst.startsWith('Alle:') && x.alleLinje.linjer === 1, `skak-656 ${b}: "Alle:"-linjen ikke paa een linje`)
+      ok(x.soejler.b.every((v) => v === 22) && x.soejler.h.every((v) => v === 44), `skak-656 ${b}: soejlerne er ikke 22 x 44`)
+      ok(/den nyeste/.test(x.soejler.underNyeste.boble) && !x.soejler.underNyeste.stormStartet, `skak-656 ${b}: tryk under den nyeste`)
+      ok(x.soejler.dagensKant === 'knap-storm-dagens', `skak-656 ${b}: Dagens storm rammes ikke i kanten`)
+      ok(x.ros?.tekst === 'Ny Gafler-rekord!' && !x.nyRekordAlle, `skak-656 ${b}: slutkortets ros`)
+      ok(/Din rekord på denne enhed: 20/.test(x.slutKort.tekst) && /−0 s/.test(x.slutKort.tekst), `skak-656 ${b}: S13/S14 holder ikke`)
+      ok(x.temaLinje.linjer === (String(b).startsWith('360') || b === '390' ? 2 : 1), `skak-656 ${b}: temalinjens linjer (#33)`)
+    }
   }
   const d2 = tekst('SKAK.md')
   if (d2) {
     ok(/^Skakken stadig klar til Marcs klasse: (ja|nej)$/.test(d2.split('\n')[0]), 'SKAK: foerste linje')
     ok(/Ville Marc skamme sig/.test(d2), 'SKAK: Marcs skam-spoergsmaal')
-    doc(d2, 'SKAK', ['Hvad jeg målte', 'Stormens ord', 'Søjlerne', 'Marc foran klassen', 'Det, der stadig er rodet', 'Fund', 'Ærlige grænser'], [])
+    doc(d2, 'SKAK', ['Hvad jeg målte', 'Stormens ord', 'Søjlerne', 'Marc foran klassen', 'Det, der stadig er rodet', 'Fund', 'Ærlige grænser'], ['S13', 'S14', 'S15', 'S16'])
   }
   const r = tekst('RAPPORT-656.md')
   if (r) {
