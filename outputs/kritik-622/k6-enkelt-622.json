@@ -1,0 +1,263 @@
+{
+ "seeds": 200,
+ "N": 5,
+ "faser": {
+  "squat-bund": {
+   "modellens bund": {
+    "klik": 1000,
+    "raekker": {
+     "torso": {
+      "tabel": "inden",
+      "tabel2SD": "inden",
+      "klikSD": 2.2641286023954974,
+      "afvUdenKlik": 0.1288745884321827,
+      "enigeEnkelt": 699,
+      "enigeEnkelt2SD": 951,
+      "andelEnige": 0.699,
+      "andelEnige2SD": 0.951,
+      "dommenAendres2SD": false
+     },
+     "hofte": {
+      "tabel": "inden",
+      "tabel2SD": "inden",
+      "klikSD": 2.3327129619338196,
+      "afvUdenKlik": -0.1288745884321898,
+      "enigeEnkelt": 660,
+      "enigeEnkelt2SD": 963,
+      "andelEnige": 0.66,
+      "andelEnige2SD": 0.963,
+      "dommenAendres2SD": false
+     },
+     "knae": {
+      "tabel": "inden",
+      "tabel2SD": "inden",
+      "klikSD": 2.5907809140276186,
+      "afvUdenKlik": -0.38256096898296477,
+      "enigeEnkelt": 681,
+      "enigeEnkelt2SD": 943,
+      "andelEnige": 0.681,
+      "andelEnige2SD": 0.943,
+      "dommenAendres2SD": false
+     },
+     "stangFraMidtfod": {
+      "tabel": "inden",
+      "tabel2SD": "inden",
+      "klikSD": 1.001851269389035,
+      "afvUdenKlik": 0.008173992809100916,
+      "enigeEnkelt": 677,
+      "enigeEnkelt2SD": 954,
+      "andelEnige": 0.677,
+      "andelEnige2SD": 0.954,
+      "dommenAendres2SD": false
+     },
+     "stangHofte": {
+      "tabel": "inden",
+      "tabel2SD": "inden",
+      "klikSD": 1.2589201686800175,
+      "afvUdenKlik": 0.05417720212368238,
+      "enigeEnkelt": 672,
+      "enigeEnkelt2SD": 954,
+      "andelEnige": 0.672,
+      "andelEnige2SD": 0.954,
+      "dommenAendres2SD": false
+     }
+    },
+    "alleFemSomTabellen": 0.191,
+    "alleFemSomTabellen2SD": 0.801
+   },
+   "kun knæene": {
+    "klik": 1000,
+    "raekker": {
+     "torso": {
+      "tabel": "uden",
+      "tabel2SD": "uden",
+      "klikSD": 2.251565342815248,
+      "afvUdenKlik": -8.783687022333922,
+      "enigeEnkelt": 999,
+      "enigeEnkelt2SD": 971,
+      "andelEnige": 0.999,
+      "andelEnige2SD": 0.971,
+      "dommenAendres2SD": false
+     },
+     "hofte": {
+      "tabel": "uden",
+      "tabel2SD": "uden",
+      "klikSD": 2.4651918068043055,
+      "afvUdenKlik": 8.783687022333915,
+      "enigeEnkelt": 994,
+      "enigeEnkelt2SD": 942,
+      "andelEnige": 0.994,
+      "andelEnige2SD": 0.942,
+      "dommenAendres2SD": false
+     },
+     "knae": {
+      "tabel": "uden",
+      "tabel2SD": "uden",
+      "klikSD": 2.4758798974464375,
+      "afvUdenKlik": -16.587206408227456,
+      "enigeEnkelt": 1000,
+      "enigeEnkelt2SD": 1000,
+      "andelEnige": 1,
+      "andelEnige2SD": 1,
+      "dommenAendres2SD": false
+     },
+     "stangFraMidtfod": {
+      "tabel": "uden",
+      "tabel2SD": "uden",
+      "klikSD": 1.0032048100185151,
+      "afvUdenKlik": 3.92939329283134,
+      "enigeEnkelt": 999,
+      "enigeEnkelt2SD": 977,
+      "andelEnige": 0.999,
+      "andelEnige2SD": 0.977,
+      "dommenAendres2SD": false
+     },
+     "stangHofte": {
+      "tabel": "uden",
+      "tabel2SD": "uden",
+      "klikSD": 1.3463457645214314,
+      "afvUdenKlik": -6.050751116227948,
+      "enigeEnkelt": 1000,
+      "enigeEnkelt2SD": 997,
+      "andelEnige": 1,
+      "andelEnige2SD": 0.997,
+      "dommenAendres2SD": false
+     }
+    },
+    "alleFemSomTabellen": 0.992,
+    "alleFemSomTabellen2SD": 0.902
+   }
+  },
+  "squat-midt": {
+   "modellens sticking point": {
+    "klik": 1000,
+    "raekker": {
+     "torso": {
+      "tabel": "inden",
+      "tabel2SD": "inden",
+      "klikSD": 2.2456165649344575,
+      "afvUdenKlik": 0.01686578804241634,
+      "enigeEnkelt": 685,
+      "enigeEnkelt2SD": 947,
+      "andelEnige": 0.685,
+      "andelEnige2SD": 0.947,
+      "dommenAendres2SD": false
+     },
+     "hofte": {
+      "tabel": "inden",
+      "tabel2SD": "inden",
+      "klikSD": 2.9304570741843516,
+      "afvUdenKlik": -0.016865788042423446,
+      "enigeEnkelt": 679,
+      "enigeEnkelt2SD": 957,
+      "andelEnige": 0.679,
+      "andelEnige2SD": 0.957,
+      "dommenAendres2SD": false
+     },
+     "knae": {
+      "tabel": "inden",
+      "tabel2SD": "inden",
+      "klikSD": 2.82824252359854,
+      "afvUdenKlik": -0.4158685347105404,
+      "enigeEnkelt": 682,
+      "enigeEnkelt2SD": 946,
+      "andelEnige": 0.682,
+      "andelEnige2SD": 0.946,
+      "dommenAendres2SD": false
+     },
+     "stangFraMidtfod": {
+      "tabel": "inden",
+      "tabel2SD": "inden",
+      "klikSD": 1.0045833801708928,
+      "afvUdenKlik": 0.023426002930790002,
+      "enigeEnkelt": 684,
+      "enigeEnkelt2SD": 955,
+      "andelEnige": 0.684,
+      "andelEnige2SD": 0.955,
+      "dommenAendres2SD": false
+     },
+     "stangHofte": {
+      "tabel": "inden",
+      "tabel2SD": "inden",
+      "klikSD": 1.3536964082501703,
+      "afvUdenKlik": 0.02297241282718332,
+      "enigeEnkelt": 679,
+      "enigeEnkelt2SD": 955,
+      "andelEnige": 0.679,
+      "andelEnige2SD": 0.955,
+      "dommenAendres2SD": false
+     }
+    },
+    "alleFemSomTabellen": 0.211,
+    "alleFemSomTabellen2SD": 0.806
+   },
+   "kun knæene": {
+    "klik": 1000,
+    "raekker": {
+     "torso": {
+      "tabel": "inden",
+      "tabel2SD": "inden",
+      "klikSD": 2.248522673015266,
+      "afvUdenKlik": 1.189934195717008,
+      "enigeEnkelt": 639,
+      "enigeEnkelt2SD": 929,
+      "andelEnige": 0.639,
+      "andelEnige2SD": 0.929,
+      "dommenAendres2SD": false
+     },
+     "hofte": {
+      "tabel": "inden",
+      "tabel2SD": "inden",
+      "klikSD": 2.884289300555251,
+      "afvUdenKlik": -2.6642988498201845,
+      "enigeEnkelt": 489,
+      "enigeEnkelt2SD": 859,
+      "andelEnige": 0.489,
+      "andelEnige2SD": 0.859,
+      "dommenAendres2SD": false
+     },
+     "knae": {
+      "tabel": "uden",
+      "tabel2SD": "uden",
+      "klikSD": 2.7352930469884407,
+      "afvUdenKlik": -10.682034571156137,
+      "enigeEnkelt": 998,
+      "enigeEnkelt2SD": 979,
+      "andelEnige": 0.998,
+      "andelEnige2SD": 0.979,
+      "dommenAendres2SD": false
+     },
+     "stangFraMidtfod": {
+      "tabel": "uden",
+      "tabel2SD": "uden",
+      "klikSD": 1.0026372009022366,
+      "afvUdenKlik": 5.896362996208936,
+      "enigeEnkelt": 1000,
+      "enigeEnkelt2SD": 1000,
+      "andelEnige": 1,
+      "andelEnige2SD": 1,
+      "dommenAendres2SD": false
+     },
+     "stangHofte": {
+      "tabel": "inden",
+      "tabel2SD": "inden",
+      "klikSD": 1.3414615344933423,
+      "afvUdenKlik": 0.8344261665333779,
+      "enigeEnkelt": 629,
+      "enigeEnkelt2SD": 913,
+      "andelEnige": 0.629,
+      "andelEnige2SD": 0.913,
+      "dommenAendres2SD": false
+     }
+    },
+    "alleFemSomTabellen": 0.305,
+    "alleFemSomTabellen2SD": 0.769
+   }
+  }
+ },
+ "artikel": {
+  "squat-bund": 5,
+  "squat-midt": 5,
+  "afvigelser": []
+ }
+}

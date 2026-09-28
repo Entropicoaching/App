@@ -1,0 +1,953 @@
+{
+ "ver": {
+  "gren": "9ae75d5",
+  "foer615": "f3c1684"
+ },
+ "visninger": [
+  {
+   "hvilken": "ny",
+   "bredde": 390,
+   "imgs": [
+    {
+     "src": "k6-bund-maalt.svg",
+     "ok": true,
+     "w": 324
+    },
+    {
+     "src": "k6-sticking-maalt.svg",
+     "ok": true,
+     "w": 324
+    }
+   ],
+   "tabeller": [
+    {
+     "tabelB": 350,
+     "rammeB": 350,
+     "ruller": false,
+     "udenfor": [],
+     "kol": [
+      {
+       "t": "Led",
+       "b": 112
+      },
+      {
+       "t": "Kun knæene",
+       "b": 119
+      },
+      {
+       "t": "Modellens squat",
+       "b": 119
+      }
+     ],
+     "px": {
+      "maalt": 10.9,
+      "afv": 10.2,
+      "model": 10.2,
+      "caption": 10.9,
+      "led": 10.9
+     },
+     "hoejde": 381
+    },
+    {
+     "tabelB": 350,
+     "rammeB": 350,
+     "ruller": false,
+     "udenfor": [],
+     "kol": [
+      {
+       "t": "Led",
+       "b": 112
+      },
+      {
+       "t": "Kun knæene",
+       "b": 119
+      },
+      {
+       "t": "Modellens squat",
+       "b": 119
+      }
+     ],
+     "px": {
+      "maalt": 10.9,
+      "afv": 10.2,
+      "model": 10.2,
+      "caption": 10.9,
+      "led": 10.9
+     },
+     "hoejde": 381
+    }
+   ],
+   "ord": 831,
+   "sidelaens": false,
+   "marcSynlig": false,
+   "broed": 15.5,
+   "jsFejl": [],
+   "png": "Q-390-ny-k6.png"
+  },
+  {
+   "hvilken": "ny",
+   "bredde": 1280,
+   "imgs": [
+    {
+     "src": "k6-bund-maalt.svg",
+     "ok": true,
+     "w": 230
+    },
+    {
+     "src": "k6-sticking-maalt.svg",
+     "ok": true,
+     "w": 230
+    }
+   ],
+   "tabeller": [
+    {
+     "tabelB": 656,
+     "rammeB": 656,
+     "ruller": false,
+     "udenfor": [],
+     "kol": [
+      {
+       "t": "Led",
+       "b": 210
+      },
+      {
+       "t": "Kun knæene",
+       "b": 223
+      },
+      {
+       "t": "Modellens squat",
+       "b": 223
+      }
+     ],
+     "px": {
+      "maalt": 11.5,
+      "afv": 10.2,
+      "model": 10.2,
+      "caption": 10.9,
+      "led": 11.5
+     },
+     "hoejde": 326
+    },
+    {
+     "tabelB": 656,
+     "rammeB": 656,
+     "ruller": false,
+     "udenfor": [],
+     "kol": [
+      {
+       "t": "Led",
+       "b": 210
+      },
+      {
+       "t": "Kun knæene",
+       "b": 223
+      },
+      {
+       "t": "Modellens squat",
+       "b": 223
+      }
+     ],
+     "px": {
+      "maalt": 11.5,
+      "afv": 10.2,
+      "model": 10.2,
+      "caption": 10.9,
+      "led": 11.5
+     },
+     "hoejde": 326
+    }
+   ],
+   "ord": 831,
+   "sidelaens": false,
+   "marcSynlig": false,
+   "broed": 15.5,
+   "jsFejl": [],
+   "png": "Q-1280-ny-k6.png"
+  },
+  {
+   "hvilken": "foer615",
+   "bredde": 390,
+   "imgs": [
+    {
+     "src": "k6-bund-maalt.svg",
+     "ok": true,
+     "w": 324
+    },
+    {
+     "src": "k6-sticking-maalt.svg",
+     "ok": true,
+     "w": 324
+    }
+   ],
+   "tabeller": [
+    {
+     "tabelB": 640,
+     "rammeB": 350,
+     "ruller": true,
+     "udenfor": [
+      "Modellens squat, målt",
+      "Kun knæene, målt",
+      "Model",
+      "47,4 ± 1,4°afvigelse -1,2°, in",
+      "39,7 ± 2,7°afvigelse -8,8°, ud",
+      "48,5°",
+      "37,4 ± 2,7°afvigelse -0,3°, in",
+      "47,5 ± 2,0°afvigelse 9,9°, ude",
+      "37,6°",
+      "43,9 ± 1,0°afvigelse -2,3°, ud",
+      "29,2 ± 2,6°afvigelse -17,0°, u",
+      "46,2°",
+      "-0,6 ± 0,9 cmafvigelse 0,4 cm,",
+      "3,1 ± 0,5 cmafvigelse 4,1 cm, ",
+      "-1,0 cm",
+      "21,6 ± 1,3 cmafvigelse -0,1 cm",
+      "15,1 ± 1,4 cmafvigelse -6,6 cm",
+      "21,7 cm"
+     ],
+     "kol": [
+      {
+       "t": "Led",
+       "b": 203
+      },
+      {
+       "t": "Modellens squat, målt",
+       "b": 189
+      },
+      {
+       "t": "Kun knæene, målt",
+       "b": 183
+      },
+      {
+       "t": "Model",
+       "b": 66
+      }
+     ],
+     "px": {
+      "maalt": 11.5,
+      "afv": 10.2,
+      "model": null,
+      "caption": 10.9,
+      "led": 11.5
+     },
+     "hoejde": 344
+    },
+    {
+     "tabelB": 640,
+     "rammeB": 350,
+     "ruller": true,
+     "udenfor": [
+      "Modellens squat, målt",
+      "Kun knæene, målt",
+      "Model",
+      "36,9 ± 1,7°afvigelse -2,2°, ud",
+      "38,9 ± 1,8°afvigelse -0,2°, in",
+      "39,1°",
+      "74,4 ± 1,9°afvigelse 0,6°, ind",
+      "72,4 ± 1,8°afvigelse -1,4°, in",
+      "73,7°",
+      "68,3 ± 3,4°afvigelse -2,0°, in",
+      "57,2 ± 2,0°afvigelse -13,2°, u",
+      "70,3°",
+      "-2,5 ± 0,3 cmafvigelse 0,1 cm,",
+      "3,0 ± 0,6 cmafvigelse 5,6 cm, ",
+      "-2,6 cm",
+      "14,8 ± 0,7 cmafvigelse -0,4 cm",
+      "16,0 ± 1,1 cmafvigelse 0,7 cm,",
+      "15,3 cm"
+     ],
+     "kol": [
+      {
+       "t": "Led",
+       "b": 203
+      },
+      {
+       "t": "Modellens squat, målt",
+       "b": 189
+      },
+      {
+       "t": "Kun knæene, målt",
+       "b": 183
+      },
+      {
+       "t": "Model",
+       "b": 66
+      }
+     ],
+     "px": {
+      "maalt": 11.5,
+      "afv": 10.2,
+      "model": null,
+      "caption": 10.9,
+      "led": 11.5
+     },
+     "hoejde": 344
+    }
+   ],
+   "ord": 1007,
+   "sidelaens": false,
+   "marcSynlig": false,
+   "broed": 15.5,
+   "jsFejl": [],
+   "png": "Q-390-foer615-k6.png"
+  },
+  {
+   "hvilken": "foer615",
+   "bredde": 1280,
+   "imgs": [
+    {
+     "src": "k6-bund-maalt.svg",
+     "ok": true,
+     "w": 230
+    },
+    {
+     "src": "k6-sticking-maalt.svg",
+     "ok": true,
+     "w": 230
+    }
+   ],
+   "tabeller": [
+    {
+     "tabelB": 656,
+     "rammeB": 656,
+     "ruller": false,
+     "udenfor": [],
+     "kol": [
+      {
+       "t": "Led",
+       "b": 208
+      },
+      {
+       "t": "Modellens squat, målt",
+       "b": 193
+      },
+      {
+       "t": "Kun knæene, målt",
+       "b": 187
+      },
+      {
+       "t": "Model",
+       "b": 67
+      }
+     ],
+     "px": {
+      "maalt": 11.5,
+      "afv": 10.2,
+      "model": null,
+      "caption": 10.9,
+      "led": 11.5
+     },
+     "hoejde": 344
+    },
+    {
+     "tabelB": 656,
+     "rammeB": 656,
+     "ruller": false,
+     "udenfor": [],
+     "kol": [
+      {
+       "t": "Led",
+       "b": 208
+      },
+      {
+       "t": "Modellens squat, målt",
+       "b": 193
+      },
+      {
+       "t": "Kun knæene, målt",
+       "b": 187
+      },
+      {
+       "t": "Model",
+       "b": 67
+      }
+     ],
+     "px": {
+      "maalt": 11.5,
+      "afv": 10.2,
+      "model": null,
+      "caption": 10.9,
+      "led": 11.5
+     },
+     "hoejde": 344
+    }
+   ],
+   "ord": 1007,
+   "sidelaens": false,
+   "marcSynlig": false,
+   "broed": 15.5,
+   "jsFejl": [],
+   "png": "Q-1280-foer615-k6.png"
+  }
+ ],
+ "laes": [
+  {
+   "bredde": 390,
+   "figs": [
+    {
+     "lbl": "Ny: en low bar-squat",
+     "ok": true,
+     "natur": [
+      1050,
+      12441
+     ],
+     "vist": 356,
+     "kanRulle": true,
+     "x": 16,
+     "y": 1224
+    },
+    {
+     "lbl": "Gammel: dødløftet",
+     "ok": true,
+     "natur": [
+      1050,
+      22224
+     ],
+     "vist": 356,
+     "kanRulle": true,
+     "x": 16,
+     "y": 1925
+    }
+   ],
+   "svar": [
+    "squat kapitel 6: ny",
+    "squat kapitel 6: gammel"
+   ],
+   "sidelaens": false,
+   "svarOeverst": true,
+   "skala": [
+    2.95,
+    2.95
+   ],
+   "jsFejl": []
+  },
+  {
+   "bredde": 1280,
+   "figs": [
+    {
+     "lbl": "Ny: en low bar-squat",
+     "ok": true,
+     "natur": [
+      1050,
+      12441
+     ],
+     "vist": 335,
+     "kanRulle": true,
+     "x": 296,
+     "y": 854
+    },
+    {
+     "lbl": "Gammel: dødløftet",
+     "ok": true,
+     "natur": [
+      1050,
+      22224
+     ],
+     "vist": 335,
+     "kanRulle": true,
+     "x": 647,
+     "y": 854
+    }
+   ],
+   "svar": [
+    "squat kapitel 6: ny",
+    "squat kapitel 6: gammel"
+   ],
+   "sidelaens": false,
+   "svarOeverst": true,
+   "skala": [
+    3.13,
+    3.13
+   ],
+   "jsFejl": []
+  }
+ ],
+ "tekst": {
+  "k6": [
+   484,
+   542
+  ],
+  "forbehold": [
+   709,
+   715
+  ],
+  "marc": [],
+  "tankestreg": [],
+  "jegIK6": [
+   488
+  ],
+  "svarlinje": [
+   {
+    "n": 487,
+    "t": "Målingen skiller kun knæene fra modellens squat på knæet og stangen over midtfoden, og i bunden også på torsoen og hoften."
+   }
+  ],
+  "metaK6": [],
+  "forbeholdK6Broed": [],
+  "forbeholdNederst": [
+   {
+    "f": "ikke en løfter",
+    "ok": true
+   },
+   {
+    "f": "ikke hvad en bestemt løfter gør",
+    "ok": true
+   },
+   {
+    "f": "\"inden for\" betyder ikke, at modellen rammer",
+    "ok": true
+   },
+   {
+    "f": "klikfejlen og ét kamera",
+    "ok": true
+   },
+   {
+    "f": "usikkerheden i målingen",
+    "ok": true
+   }
+  ],
+  "gul": [],
+  "orange": [
+   492
+  ],
+  "alleKlik": [],
+  "andele": {
+   "a999": [
+    507,
+    535
+   ],
+   "a852": [
+    526,
+    535
+   ]
+  },
+  "runderTusind": [
+   507,
+   526,
+   535
+  ],
+  "runderToHundrede": [
+   533
+  ],
+  "promise": [
+   488
+  ],
+  "laesetid": "44"
+ },
+ "chrome": "154.0.8037.57",
+ "laesTekst": {
+  "v2Forældet": true,
+  "v2ScriptForaeldet": true,
+  "hovedMeta": true,
+  "promiseSynligForMarc": true,
+  "helArtikelGammel": true
+ },
+ "eksterne": [
+  "https://fonts.googleapis.com/css2"
+ ],
+ "f404": [],
+ "tjek": [
+  {
+   "hvad": "Ingen \"Marc\"/\"Marcs\" i artiklens synlige tekst foer forfatterlinjen (41-748)",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "0 tankestreger i synlig tekst",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "Kapitel 6 har jeg-form (Q3) og \"Indtil mit eget klip\" staar der",
+   "ok": true,
+   "data": {
+    "jeg": [
+     488
+    ],
+    "promise": [
+     488
+    ]
+   }
+  },
+  {
+   "hvad": "Svarlinjen i kapitel 6 er et fund, ingen \"Metoden vises\" (Q3)",
+   "ok": true,
+   "data": [
+    {
+     "n": 487,
+     "t": "Målingen skiller kun knæene fra modellens squat på knæet og stangen over midtfoden, og i bunden også på torsoen og hoften."
+    }
+   ]
+  },
+  {
+   "hvad": "Kapitel 6: ingen forbehold i broedteksten, og Forbehold nederst rummer alle fem (Q4)",
+   "ok": true,
+   "data": {
+    "broed": [],
+    "nederst": [
+     {
+      "f": "ikke en løfter",
+      "ok": true
+     },
+     {
+      "f": "ikke hvad en bestemt løfter gør",
+      "ok": true
+     },
+     {
+      "f": "\"inden for\" betyder ikke, at modellen rammer",
+      "ok": true
+     },
+     {
+      "f": "klikfejlen og ét kamera",
+      "ok": true
+     },
+     {
+      "f": "usikkerheden i målingen",
+      "ok": true
+     }
+    ]
+   }
+  },
+  {
+   "hvad": "Midtfoden er \"orange streg\", ingen \"gule streg\" (Q5)",
+   "ok": true,
+   "data": {
+    "gul": [],
+    "orange": [
+     492
+    ]
+   }
+  },
+  {
+   "hvad": "Ingen \"alle fem/ti klik\"; 999 og 852 af 1000 staar (Q2)",
+   "ok": true,
+   "data": {
+    "a999": [
+     507,
+     535
+    ],
+    "a852": [
+     526,
+     535
+    ]
+   }
+  },
+  {
+   "hvad": "R2: \"runder\" bruges om to ting: \"af 1000 runder\" (en runde = eet klik) og \"200 runder af fem\" (en runde = fem klik)",
+   "ok": true,
+   "data": {
+    "tusind": [
+     507,
+     526,
+     535
+    ],
+    "toHundrede": [
+     533
+    ]
+   }
+  },
+  {
+   "hvad": "Kapitel 6 (9ae75d5) 390: to figurer indlaest, 0 JS-fejl, ingen sidelaens rulning, intet \"Marc\" i broedteksten",
+   "ok": true,
+   "data": {
+    "imgs": [
+     {
+      "src": "k6-bund-maalt.svg",
+      "ok": true,
+      "w": 324
+     },
+     {
+      "src": "k6-sticking-maalt.svg",
+      "ok": true,
+      "w": 324
+     }
+    ],
+    "ord": 831
+   }
+  },
+  {
+   "hvad": "Kapitel 6 390: tabellerne ruller ikke, ingen celle uden for rammen, \"Kun knaeene\" er anden kolonne (Q1)",
+   "ok": true,
+   "data": [
+    {
+     "b": 350,
+     "ramme": 350,
+     "kol": [
+      {
+       "t": "Led",
+       "b": 112
+      },
+      {
+       "t": "Kun knæene",
+       "b": 119
+      },
+      {
+       "t": "Modellens squat",
+       "b": 119
+      }
+     ],
+     "px": {
+      "maalt": 10.9,
+      "afv": 10.2,
+      "model": 10.2,
+      "caption": 10.9,
+      "led": 10.9
+     }
+    },
+    {
+     "b": 350,
+     "ramme": 350,
+     "kol": [
+      {
+       "t": "Led",
+       "b": 112
+      },
+      {
+       "t": "Kun knæene",
+       "b": 119
+      },
+      {
+       "t": "Modellens squat",
+       "b": 119
+      }
+     ],
+     "px": {
+      "maalt": 10.9,
+      "afv": 10.2,
+      "model": 10.2,
+      "caption": 10.9,
+      "led": 10.9
+     }
+    }
+   ]
+  },
+  {
+   "hvad": "Kapitel 6 (9ae75d5) 1280: to figurer indlaest, 0 JS-fejl, ingen sidelaens rulning, intet \"Marc\" i broedteksten",
+   "ok": true,
+   "data": {
+    "imgs": [
+     {
+      "src": "k6-bund-maalt.svg",
+      "ok": true,
+      "w": 230
+     },
+     {
+      "src": "k6-sticking-maalt.svg",
+      "ok": true,
+      "w": 230
+     }
+    ],
+    "ord": 831
+   }
+  },
+  {
+   "hvad": "Kapitel 6 1280: tabellerne ruller ikke, ingen celle uden for rammen, \"Kun knaeene\" er anden kolonne (Q1)",
+   "ok": true,
+   "data": [
+    {
+     "b": 656,
+     "ramme": 656,
+     "kol": [
+      {
+       "t": "Led",
+       "b": 210
+      },
+      {
+       "t": "Kun knæene",
+       "b": 223
+      },
+      {
+       "t": "Modellens squat",
+       "b": 223
+      }
+     ],
+     "px": {
+      "maalt": 11.5,
+      "afv": 10.2,
+      "model": 10.2,
+      "caption": 10.9,
+      "led": 11.5
+     }
+    },
+    {
+     "b": 656,
+     "ramme": 656,
+     "kol": [
+      {
+       "t": "Led",
+       "b": 210
+      },
+      {
+       "t": "Kun knæene",
+       "b": 223
+      },
+      {
+       "t": "Modellens squat",
+       "b": 223
+      }
+     ],
+     "px": {
+      "maalt": 11.5,
+      "afv": 10.2,
+      "model": 10.2,
+      "caption": 10.9,
+      "led": 11.5
+     }
+    }
+   ]
+  },
+  {
+   "hvad": "Foer 615 (f3c1684) paa 390: tabellerne rullede (Q1 var rigtig)",
+   "ok": true,
+   "data": [
+    {
+     "b": 640,
+     "ramme": 350
+    },
+    {
+     "b": 640,
+     "ramme": 350
+    }
+   ]
+  },
+  {
+   "hvad": "R4: paa 390 er tabellernes mindste skrift (afvigelse og model) under 11 px, broedteksten til sammenligning",
+   "ok": true,
+   "data": {
+    "tabel": {
+     "maalt": 10.9,
+     "afv": 10.2,
+     "model": 10.2,
+     "caption": 10.9,
+     "led": 10.9
+    },
+    "broed": 15.5
+   }
+  },
+  {
+   "hvad": "R3: LAES-SQUAT valg 2 (U6) siger stadig, at den nye linje er \"Metoden vises her paa en low bar-squat.\" og naevner 607's script",
+   "ok": true,
+   "data": {
+    "v2Forældet": true,
+    "v2ScriptForaeldet": true,
+    "hovedMeta": true,
+    "promiseSynligForMarc": true,
+    "helArtikelGammel": true
+   }
+  },
+  {
+   "hvad": "LAES-SQUAT 390: ny og gammel indlaest og rullbare, svarlinjerne oeverst, 0 JS-fejl, ingen sidelaens rulning, billederne mindst 2,9x (Q7)",
+   "ok": true,
+   "data": {
+    "figs": [
+     {
+      "lbl": "Ny: en low bar-squat",
+      "ok": true,
+      "natur": [
+       1050,
+       12441
+      ],
+      "vist": 356,
+      "kanRulle": true,
+      "x": 16,
+      "y": 1224
+     },
+     {
+      "lbl": "Gammel: dødløftet",
+      "ok": true,
+      "natur": [
+       1050,
+       22224
+      ],
+      "vist": 356,
+      "kanRulle": true,
+      "x": 16,
+      "y": 1925
+     }
+    ],
+    "skala": [
+     2.95,
+     2.95
+    ],
+    "svar": [
+     "squat kapitel 6: ny",
+     "squat kapitel 6: gammel"
+    ]
+   }
+  },
+  {
+   "hvad": "LAES-SQUAT 1280: ny og gammel indlaest og rullbare, svarlinjerne oeverst, 0 JS-fejl, ingen sidelaens rulning, billederne mindst 2,9x (Q7)",
+   "ok": true,
+   "data": {
+    "figs": [
+     {
+      "lbl": "Ny: en low bar-squat",
+      "ok": true,
+      "natur": [
+       1050,
+       12441
+      ],
+      "vist": 335,
+      "kanRulle": true,
+      "x": 296,
+      "y": 854
+     },
+     {
+      "lbl": "Gammel: dødløftet",
+      "ok": true,
+      "natur": [
+       1050,
+       22224
+      ],
+      "vist": 335,
+      "kanRulle": true,
+      "x": 647,
+      "y": 854
+     }
+    ],
+    "skala": [
+     3.13,
+     3.13
+    ],
+    "svar": [
+     "squat kapitel 6: ny",
+     "squat kapitel 6: gammel"
+    ]
+   }
+  },
+  {
+   "hvad": "LAES-SQUAT: under hinanden paa 390, side om side paa 1280",
+   "ok": true,
+   "data": {
+    "l390": [
+     [
+      16,
+      1224
+     ],
+     [
+      16,
+      1925
+     ]
+    ],
+    "l1280": [
+     [
+      296,
+      854
+     ],
+     [
+      647,
+      854
+     ]
+    ]
+   }
+  },
+  {
+   "hvad": "Alt net uden for den lokale server afbrudt; 0 fejl 404",
+   "ok": true,
+   "data": {
+    "afbrudt": [
+     "https://fonts.googleapis.com/css2"
+    ]
+   }
+  }
+ ]
+}
