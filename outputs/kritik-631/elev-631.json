@@ -1,0 +1,520 @@
+{
+ "profiler": [
+  {
+   "ref": "edd01b5",
+   "elev": "gaetter",
+   "variant": "travl",
+   "m20": "2",
+   "m40": "6",
+   "hjerte40": 3,
+   "venner40": 0,
+   "forbi": 2
+  },
+  {
+   "ref": "edd01b5",
+   "elev": "gaetter",
+   "variant": "hjaelper",
+   "m20": "7½",
+   "m40": "9",
+   "hjerte40": 7,
+   "venner40": 0,
+   "forbi": 5
+  },
+  {
+   "ref": "edd01b5",
+   "elev": "svag aerlig",
+   "variant": "travl",
+   "m20": "1",
+   "m40": "2",
+   "hjerte40": 1,
+   "venner40": 0,
+   "forbi": 0
+  },
+  {
+   "ref": "edd01b5",
+   "elev": "svag aerlig",
+   "variant": "hjaelper",
+   "m20": "2",
+   "m40": "4",
+   "hjerte40": 1,
+   "venner40": 0,
+   "forbi": 0
+  },
+  {
+   "ref": "edd01b5",
+   "elev": "dygtig",
+   "variant": "travl",
+   "m20": "7",
+   "m40": "12½",
+   "hjerte40": 6,
+   "venner40": 0,
+   "forbi": 0
+  },
+  {
+   "ref": "edd01b5",
+   "elev": "dygtig",
+   "variant": "hjaelper",
+   "m20": "7½",
+   "m40": "15½",
+   "hjerte40": 5,
+   "venner40": 0,
+   "forbi": 4
+  },
+  {
+   "ref": "e5e0573",
+   "elev": "gaetter",
+   "variant": "travl",
+   "m20": "2",
+   "m40": "6½",
+   "hjerte40": 4,
+   "venner40": 3,
+   "forbi": 3
+  },
+  {
+   "ref": "e5e0573",
+   "elev": "gaetter",
+   "variant": "hjaelper",
+   "m20": "8",
+   "m40": "14",
+   "hjerte40": 11,
+   "venner40": 10,
+   "forbi": 9
+  },
+  {
+   "ref": "e5e0573",
+   "elev": "svag aerlig",
+   "variant": "travl",
+   "m20": "1",
+   "m40": "2",
+   "hjerte40": 1,
+   "venner40": 0,
+   "forbi": 0
+  },
+  {
+   "ref": "e5e0573",
+   "elev": "svag aerlig",
+   "variant": "hjaelper",
+   "m20": "2½",
+   "m40": "5",
+   "hjerte40": 3,
+   "venner40": 2,
+   "forbi": 2
+  },
+  {
+   "ref": "e5e0573",
+   "elev": "dygtig",
+   "variant": "travl",
+   "m20": "7",
+   "m40": "12½",
+   "hjerte40": 6,
+   "venner40": 5,
+   "forbi": 0
+  },
+  {
+   "ref": "e5e0573",
+   "elev": "dygtig",
+   "variant": "hjaelper",
+   "m20": "7½",
+   "m40": "15½",
+   "hjerte40": 5,
+   "venner40": 4,
+   "forbi": 4
+  }
+ ],
+ "m14": {
+  "main": "1 / 3",
+  "o626": "1 / 3",
+  "diff": "ingen",
+  "rigtigtFoerste": [
+   {
+    "e": "gaetter",
+    "v": "travl",
+    "side": [
+     200,
+     554
+    ],
+    "pct": 36
+   },
+   {
+    "e": "gaetter",
+    "v": "hjaelper",
+    "side": [
+     215,
+     549
+    ],
+    "pct": 39
+   },
+   {
+    "e": "svag aerlig",
+    "v": "travl",
+    "side": [
+     27,
+     59
+    ],
+    "pct": 46
+   },
+   {
+    "e": "svag aerlig",
+    "v": "hjaelper",
+    "side": [
+     25,
+     57
+    ],
+    "pct": 44
+   },
+   {
+    "e": "dygtig",
+    "v": "travl",
+    "side": [
+     51,
+     59
+    ],
+    "pct": 86
+   },
+   {
+    "e": "dygtig",
+    "v": "hjaelper",
+    "side": [
+     60,
+     70
+    ],
+    "pct": 86
+   }
+  ]
+ },
+ "tjek": [
+  {
+   "hvad": "12 profiler med terning 525 (3 elever x travl/hjaelper x main/626) og 4 med 731 (gaetteren); 0 JS-fejl, 0 net",
+   "ok": true,
+   "data": [
+    {
+     "ref": "edd01b5",
+     "elev": "gaetter",
+     "variant": "travl",
+     "m20": "2",
+     "m40": "6",
+     "hjerte40": 3,
+     "venner40": 0,
+     "forbi": 2
+    },
+    {
+     "ref": "edd01b5",
+     "elev": "gaetter",
+     "variant": "hjaelper",
+     "m20": "7½",
+     "m40": "9",
+     "hjerte40": 7,
+     "venner40": 0,
+     "forbi": 5
+    },
+    {
+     "ref": "edd01b5",
+     "elev": "svag aerlig",
+     "variant": "travl",
+     "m20": "1",
+     "m40": "2",
+     "hjerte40": 1,
+     "venner40": 0,
+     "forbi": 0
+    },
+    {
+     "ref": "edd01b5",
+     "elev": "svag aerlig",
+     "variant": "hjaelper",
+     "m20": "2",
+     "m40": "4",
+     "hjerte40": 1,
+     "venner40": 0,
+     "forbi": 0
+    },
+    {
+     "ref": "edd01b5",
+     "elev": "dygtig",
+     "variant": "travl",
+     "m20": "7",
+     "m40": "12½",
+     "hjerte40": 6,
+     "venner40": 0,
+     "forbi": 0
+    },
+    {
+     "ref": "edd01b5",
+     "elev": "dygtig",
+     "variant": "hjaelper",
+     "m20": "7½",
+     "m40": "15½",
+     "hjerte40": 5,
+     "venner40": 0,
+     "forbi": 4
+    },
+    {
+     "ref": "e5e0573",
+     "elev": "gaetter",
+     "variant": "travl",
+     "m20": "2",
+     "m40": "6½",
+     "hjerte40": 4,
+     "venner40": 3,
+     "forbi": 3
+    },
+    {
+     "ref": "e5e0573",
+     "elev": "gaetter",
+     "variant": "hjaelper",
+     "m20": "8",
+     "m40": "14",
+     "hjerte40": 11,
+     "venner40": 10,
+     "forbi": 9
+    },
+    {
+     "ref": "e5e0573",
+     "elev": "svag aerlig",
+     "variant": "travl",
+     "m20": "1",
+     "m40": "2",
+     "hjerte40": 1,
+     "venner40": 0,
+     "forbi": 0
+    },
+    {
+     "ref": "e5e0573",
+     "elev": "svag aerlig",
+     "variant": "hjaelper",
+     "m20": "2½",
+     "m40": "5",
+     "hjerte40": 3,
+     "venner40": 2,
+     "forbi": 2
+    },
+    {
+     "ref": "e5e0573",
+     "elev": "dygtig",
+     "variant": "travl",
+     "m20": "7",
+     "m40": "12½",
+     "hjerte40": 6,
+     "venner40": 5,
+     "forbi": 0
+    },
+    {
+     "ref": "e5e0573",
+     "elev": "dygtig",
+     "variant": "hjaelper",
+     "m20": "7½",
+     "m40": "15½",
+     "hjerte40": 5,
+     "venner40": 4,
+     "forbi": 4
+    }
+   ]
+  },
+  {
+   "hvad": "M15 foer (main): den svage aerlige hjaelper har Hjerte 1, 0 venner og 0 \"kommer forbi\" efter 40 min",
+   "ok": true,
+   "data": {
+    "niveau": "4",
+    "hjerte": 1
+   }
+  },
+  {
+   "hvad": "M15 efter (626): hun faar venner, \"Tak, fordi du blev ved\" under hvilen, Hjerte over 1 og mindst een \"kommer forbi\"",
+   "ok": true,
+   "data": {
+    "venner": 2,
+    "hjerte": 3,
+    "venLinjer": [
+     "8:23",
+     "28:50"
+    ],
+    "forbi": [
+     "18:42",
+     "40:00"
+    ]
+   }
+  },
+  {
+   "hvad": "M15: hjaelperen ligger over den travle svage aerlige efter 20 og 40 min (626), og over sig selv paa main efter 40",
+   "ok": true,
+   "data": {
+    "h20": "2½",
+    "t20": "1",
+    "h40": "5",
+    "t40": "2",
+    "main40": "4"
+   }
+  },
+  {
+   "hvad": "626: hjaelperen ligger ikke under den travle for nogen elev efter 20 eller 40 min (terning 525)",
+   "ok": true,
+   "data": [
+    {
+     "e": "gaetter",
+     "m": 20,
+     "h": "8",
+     "t": "2"
+    },
+    {
+     "e": "gaetter",
+     "m": 40,
+     "h": "14",
+     "t": "6½"
+    },
+    {
+     "e": "svag aerlig",
+     "m": 20,
+     "h": "2½",
+     "t": "1"
+    },
+    {
+     "e": "svag aerlig",
+     "m": 40,
+     "h": "5",
+     "t": "2"
+    },
+    {
+     "e": "dygtig",
+     "m": 20,
+     "h": "7½",
+     "t": "7"
+    },
+    {
+     "e": "dygtig",
+     "m": 40,
+     "h": "15½",
+     "t": "12½"
+    }
+   ]
+  },
+  {
+   "hvad": "Den dygtige (90 %) er den samme paa main og 626 (niveau, Hjerte, Broeker)",
+   "ok": true,
+   "data": {
+    "main": [
+     "15½",
+     5
+    ],
+    "o626": [
+     "15½",
+     5
+    ]
+   }
+  },
+  {
+   "hvad": "M17 er ikke lukket, men vaerre (FUND M18): gaetteren, der hjaelper, faar flere niveauer paa 626 end paa main (525) og flere venner end den svage aerlige",
+   "ok": true,
+   "data": {
+    "main": [
+     "7½",
+     "9",
+     7
+    ],
+    "o626": [
+     "8",
+     "14",
+     11,
+     10,
+     7,
+     9
+    ],
+    "svag626": [
+     "5",
+     2
+    ]
+   }
+  },
+  {
+   "hvad": "M17: gaetteren, der hjaelper, ligger langt over den svage aerlige hjaelper paa 626 (525) og taet paa den dygtige",
+   "ok": true,
+   "data": {
+    "gaetter": "14",
+    "svag": "5",
+    "dygtig": "15½"
+   }
+  },
+  {
+   "hvad": "Terning 731: gaetteren faar ogsaa mere paa 626 (venner uden klaret)",
+   "ok": true,
+   "data": {
+    "main": "3½",
+    "o626": "4½",
+    "venner": 3,
+    "hjulpet": 1
+   }
+  },
+  {
+   "hvad": "M14: graensen er uroert (HEL_VAERDI_ANDEL = 1 / 3 paa main og 626, ingen aendring i src/faerdigheder.js)",
+   "ok": true,
+   "data": {
+    "main": "1 / 3",
+    "o626": "1 / 3",
+    "diff": "ingen",
+    "rigtigtFoerste": [
+     {
+      "e": "gaetter",
+      "v": "travl",
+      "side": [
+       200,
+       554
+      ],
+      "pct": 36
+     },
+     {
+      "e": "gaetter",
+      "v": "hjaelper",
+      "side": [
+       215,
+       549
+      ],
+      "pct": 39
+     },
+     {
+      "e": "svag aerlig",
+      "v": "travl",
+      "side": [
+       27,
+       59
+      ],
+      "pct": 46
+     },
+     {
+      "e": "svag aerlig",
+      "v": "hjaelper",
+      "side": [
+       25,
+       57
+      ],
+      "pct": 44
+     },
+     {
+      "e": "dygtig",
+      "v": "travl",
+      "side": [
+       51,
+       59
+      ],
+      "pct": 86
+     },
+     {
+      "e": "dygtig",
+      "v": "hjaelper",
+      "side": [
+       60,
+       70
+      ],
+      "pct": 86
+     }
+    ]
+   }
+  },
+  {
+   "hvad": "626 er ikke merget, ordre-626 staar paa e5e0573 (kun blok 1, M15), og RAPPORT-626 findes ikke committet",
+   "ok": true,
+   "data": {
+    "ref626": "e5e0573",
+    "merget": false,
+    "rapport": false
+   }
+  }
+ ]
+}
