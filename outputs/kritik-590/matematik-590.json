@@ -1,0 +1,414 @@
+{
+ "spil": "a615468",
+ "ref": "a615468",
+ "A": {
+  "eksempler": [
+   {
+    "q": "moellen-1",
+    "f": "broeker",
+    "efter1000": 50,
+    "klaret": 60
+   },
+   {
+    "q": "bog:mel-til-bageren",
+    "f": "broeker",
+    "efter1000": 50,
+    "klaret": 60
+   }
+  ],
+  "skoen": {
+   "broeker": {
+    "uden": 760,
+    "niveauUden": "Sikker",
+    "maks": 980
+   },
+   "regn-broeker": {
+    "uden": 440,
+    "niveauUden": "Sikker",
+    "maks": 520
+   },
+   "enheder": {
+    "uden": 680,
+    "niveauUden": "Sikker",
+    "maks": 840
+   },
+   "areal": {
+    "uden": 530,
+    "niveauUden": "Sikker",
+    "maks": 680
+   },
+   "gange": {
+    "uden": 510,
+    "niveauUden": "Sikker",
+    "maks": 660
+   },
+   "dele": {
+    "uden": 170,
+    "niveauUden": "Dygtig",
+    "maks": 300
+   },
+   "tid": {
+    "uden": 560,
+    "niveauUden": "Sikker",
+    "maks": 660
+   }
+  },
+  "prSvar": {
+   "klaretFoersteHug": 20,
+   "omTagTilLoft": 10
+  }
+ },
+ "B": {
+  "forventet": [
+   3,
+   2,
+   1,
+   0,
+   0,
+   0,
+   0
+  ],
+  "spil.html": {
+   "kb": 409,
+   "farlige": [],
+   "http": [
+    "http://www.w3.org/2000/svg"
+   ]
+  },
+  "laerer.html": {
+   "kb": 252,
+   "farlige": [],
+   "http": []
+  }
+ },
+ "R": {
+  "kode": {
+   "390": {
+    "kode": "400C-VBEP",
+    "felt": "400C-VBEP Vis koden til din lærer. Den siger kun dit niveau i de syv færdigheder: intet navn, og alle med de samme niveauer har den samme kode.",
+    "jsFejl": []
+   },
+   "1280": {
+    "kode": "400C-VBEP",
+    "felt": "400C-VBEP Vis koden til din lærer. Den siger kun dit niveau i de syv færdigheder: intet navn, og alle med de samme niveauer har den samme kode.",
+    "jsFejl": []
+   }
+  },
+  "laerer": {
+   "390": {
+    "status": "25 koder læst.",
+    "forslag": "ØV SAMMEN Landsbygaden (Landsbygaden og købmanden) Her træner klassen Del lige over, den færdighed, klassen er svagest i blandt dem, de fleste er begyndt på. Stedet skal være åbent i elevens spil (kræver niveau 3: mestr to forløb); koden siger ikke, hvem der har åbnet det.",
+    "en": {
+     "status": "1 kode læst.",
+     "overskrift": "Svagest først (1 elev)",
+     "tal": [
+      "Ikke begyndt 0 Begynder 1 Øvet 0 Dygtig 0 Sikker 0 Fuldlært 0",
+      "Ikke begyndt 0 Begynder 1 Øvet 0 Dygtig 0 Sikker 0 Fuldlært 0",
+      "Ikke begyndt 0 Begynder 1 Øvet 0 Dygtig 0 Sikker 0 Fuldlært 0",
+      "Ikke begyndt 0 Begynder 0 Øvet 1 Dygtig 0 Sikker 0 Fuldlært 0",
+      "Ikke begyndt 0 Begynder 0 Øvet 0 Dygtig 1 Sikker 0 Fuldlært 0",
+      "Ikke begyndt 0 Begynder 0 Øvet 0 Dygtig 1 Sikker 0 Fuldlært 0",
+      "Ikke begyndt 0 Begynder 0 Øvet 0 Dygtig 0 Sikker 1 Fuldlært 0"
+     ]
+    },
+    "elevDataFoer": false,
+    "questbogViser": true,
+    "xss": {
+     "xss": null,
+     "img": 0,
+     "b": 0,
+     "status": "1 kode læst. 4 kunne ikke læses: <img (skal have 8 tegn, har 4), src=x (skal have 8 tegn, har 5), onerror=\"window.__xss=1\"> (skal have 8 tegn, har 25), <b>fed</b> (skal have 8 tegn, har 10). Bed eleven vise koden igen."
+    }
+   },
+   "1280": {
+    "status": "25 koder læst.",
+    "forslag": "ØV SAMMEN Landsbygaden (Landsbygaden og købmanden) Her træner klassen Del lige over, den færdighed, klassen er svagest i blandt dem, de fleste er begyndt på. Stedet skal være åbent i elevens spil (kræver niveau 3: mestr to forløb); koden siger ikke, hvem der har åbnet det.",
+    "en": {
+     "status": "1 kode læst.",
+     "overskrift": "Svagest først (1 elev)",
+     "tal": [
+      "Ikke begyndt 0 Begynder 1 Øvet 0 Dygtig 0 Sikker 0 Fuldlært 0",
+      "Ikke begyndt 0 Begynder 1 Øvet 0 Dygtig 0 Sikker 0 Fuldlært 0",
+      "Ikke begyndt 0 Begynder 1 Øvet 0 Dygtig 0 Sikker 0 Fuldlært 0",
+      "Ikke begyndt 0 Begynder 0 Øvet 1 Dygtig 0 Sikker 0 Fuldlært 0",
+      "Ikke begyndt 0 Begynder 0 Øvet 0 Dygtig 1 Sikker 0 Fuldlært 0",
+      "Ikke begyndt 0 Begynder 0 Øvet 0 Dygtig 1 Sikker 0 Fuldlært 0",
+      "Ikke begyndt 0 Begynder 0 Øvet 0 Dygtig 0 Sikker 1 Fuldlært 0"
+     ]
+    },
+    "elevDataFoer": false,
+    "questbogViser": true,
+    "xss": {
+     "xss": null,
+     "img": 0,
+     "b": 0,
+     "status": "1 kode læst. 4 kunne ikke læses: <img (skal have 8 tegn, har 4), src=x (skal have 8 tegn, har 5), onerror=\"window.__xss=1\"> (skal have 8 tegn, har 25), <b>fed</b> (skal have 8 tegn, har 10). Bed eleven vise koden igen."
+    }
+   }
+  },
+  "unik574": {
+   "entydige": 25,
+   "forskellige": 25
+  },
+  "unik590": {
+   "entydige": 23,
+   "forskellige": 24
+  }
+ },
+ "net": 0,
+ "tjek": [
+  {
+   "navn": "A1 1.000 rigtige i et forloeb, der ikke klares, giver hoejst vaerdien minus 10 (alle forloeb og quests)",
+   "ok": true,
+   "data": [
+    {
+     "q": "moellen-1",
+     "f": "broeker",
+     "efter1000": 50,
+     "klaret": 60
+    },
+    {
+     "q": "bog:mel-til-bageren",
+     "f": "broeker",
+     "efter1000": 50,
+     "klaret": 60
+    }
+   ]
+  },
+  {
+   "navn": "A2 Moellens forloeb 1 klaret og taget om 1.000 gange: Broeker staar stille",
+   "ok": true,
+   "data": {
+    "foer": 60,
+    "efter": 60
+   }
+  },
+  {
+   "navn": "A3 Kun Moellens forloeb 1 om og om igen: Broeker 50, stadig Begynder (Oevet kraever 200)",
+   "ok": true,
+   "data": {
+    "kunM1": 50,
+    "graenser": [
+     0,
+     1,
+     200,
+     460,
+     700,
+     980
+    ]
+   }
+  },
+  {
+   "navn": "A4 oevePoint 99999 i det gemte spil renses til loftet (50), ukendte noegler smides",
+   "ok": true,
+   "data": {
+    "moellen-1|broeker": 50
+   }
+  },
+  {
+   "navn": "A5 At klare giver flere point pr. rigtigt svar (20) end at tage om (10); om-tag kan ikke betale sig",
+   "ok": true,
+   "data": {
+    "klaretFoersteHug": 20,
+    "omTagTilLoft": 10
+   }
+  },
+  {
+   "navn": "B1 spil.html og laerer.html: ingen fetch, XHR, beacon, websocket, cookie, userAgent eller geolocation",
+   "ok": true,
+   "data": {
+    "spil": [],
+    "laerer": []
+   }
+  },
+  {
+   "navn": "B2 390: koden i rygsaekken laeses til rygsaekkens 7 niveauer",
+   "ok": true,
+   "data": {
+    "kode": "400C-VBEP",
+    "niveauer": [
+     3,
+     2,
+     1,
+     0,
+     0,
+     0,
+     0
+    ],
+    "forventet": [
+     3,
+     2,
+     1,
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "navn": "B3 390: at vise koden aendrer intet i lageret, og feltet naevner intet navn",
+   "ok": true,
+   "data": {
+    "felt": "400C-VBEP Vis koden til din lærer. Den siger kun dit niveau i de syv færdigheder: intet navn, og alle med de samme niveauer har den samme kode."
+   }
+  },
+  {
+   "navn": "B4 390: andet navn, anden figur og andet ur giver samme kode",
+   "ok": true,
+   "data": {
+    "a": "400C-VBEP",
+    "b": "400C-VBEP"
+   }
+  },
+  {
+   "navn": "B2 1280: koden i rygsaekken laeses til rygsaekkens 7 niveauer",
+   "ok": true,
+   "data": {
+    "kode": "400C-VBEP",
+    "niveauer": [
+     3,
+     2,
+     1,
+     0,
+     0,
+     0,
+     0
+    ],
+    "forventet": [
+     3,
+     2,
+     1,
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "navn": "B3 1280: at vise koden aendrer intet i lageret, og feltet naevner intet navn",
+   "ok": true,
+   "data": {
+    "felt": "400C-VBEP Vis koden til din lærer. Den siger kun dit niveau i de syv færdigheder: intet navn, og alle med de samme niveauer har den samme kode."
+   }
+  },
+  {
+   "navn": "B4 1280: andet navn, anden figur og andet ur giver samme kode",
+   "ok": true,
+   "data": {
+    "a": "400C-VBEP",
+    "b": "400C-VBEP"
+   }
+  },
+  {
+   "navn": "B5 390: 25 syntetiske koder (smaa bogstaver, mellemrum, O for 0): \"25 koder laest.\", 7 raekker, ingen enkelt kode i resultatet, intet gemt uden flueben",
+   "ok": true,
+   "data": {
+    "status": "25 koder læst.",
+    "forslag": "ØV SAMMEN Landsbygaden (Landsbygaden og købmanden) Her træner klassen Del lige over, den færdighed, klassen er svagest i blandt dem, de fleste er begyndt på. Stedet skal være åbent i elevens spil (kræver niveau 3: mestr to forløb); koden siger ikke, hvem der har åbnet det.",
+    "kodeIResultat": []
+   }
+  },
+  {
+   "navn": "B6 390: med flueben gemt i denne browser, taget af: slettet",
+   "ok": true,
+   "data": null
+  },
+  {
+   "navn": "B7 390: HTML i feltet vises som tekst og koeres ikke",
+   "ok": true,
+   "data": {
+    "xss": null,
+    "img": 0,
+    "b": 0,
+    "status": "1 kode læst. 4 kunne ikke læses: <img (skal have 8 tegn, har 4), src=x (skal have 8 tegn, har 5), onerror=\"window.__xss=1\"> (skal have 8 tegn, har 25), <b>fed</b> (skal have 8 tegn, har 10). Bed eleven vise koden igen."
+   }
+  },
+  {
+   "navn": "B8 390: een kode alene viser den ene elevs niveau i alle 7 (siden har ingen mindste klasse)",
+   "ok": true,
+   "data": {
+    "status": "1 kode læst.",
+    "overskrift": "Svagest først (1 elev)",
+    "tal": [
+     "Ikke begyndt 0 Begynder 1 Øvet 0 Dygtig 0 Sikker 0 Fuldlært 0",
+     "Ikke begyndt 0 Begynder 1 Øvet 0 Dygtig 0 Sikker 0 Fuldlært 0",
+     "Ikke begyndt 0 Begynder 1 Øvet 0 Dygtig 0 Sikker 0 Fuldlært 0",
+     "Ikke begyndt 0 Begynder 0 Øvet 1 Dygtig 0 Sikker 0 Fuldlært 0",
+     "Ikke begyndt 0 Begynder 0 Øvet 0 Dygtig 1 Sikker 0 Fuldlært 0",
+     "Ikke begyndt 0 Begynder 0 Øvet 0 Dygtig 1 Sikker 0 Fuldlært 0",
+     "Ikke begyndt 0 Begynder 0 Øvet 0 Dygtig 0 Sikker 1 Fuldlært 0"
+    ]
+   }
+  },
+  {
+   "navn": "B9 390: elevens gemte spil paa samme computer: figurens navn staar ikke paa laerer.html",
+   "ok": true,
+   "data": null
+  },
+  {
+   "navn": "B10 390: ingen vandret rulning, 0 JS-fejl, 0 dialoger",
+   "ok": true,
+   "data": []
+  },
+  {
+   "navn": "B5 1280: 25 syntetiske koder (smaa bogstaver, mellemrum, O for 0): \"25 koder laest.\", 7 raekker, ingen enkelt kode i resultatet, intet gemt uden flueben",
+   "ok": true,
+   "data": {
+    "status": "25 koder læst.",
+    "forslag": "ØV SAMMEN Landsbygaden (Landsbygaden og købmanden) Her træner klassen Del lige over, den færdighed, klassen er svagest i blandt dem, de fleste er begyndt på. Stedet skal være åbent i elevens spil (kræver niveau 3: mestr to forløb); koden siger ikke, hvem der har åbnet det.",
+    "kodeIResultat": []
+   }
+  },
+  {
+   "navn": "B6 1280: med flueben gemt i denne browser, taget af: slettet",
+   "ok": true,
+   "data": null
+  },
+  {
+   "navn": "B7 1280: HTML i feltet vises som tekst og koeres ikke",
+   "ok": true,
+   "data": {
+    "xss": null,
+    "img": 0,
+    "b": 0,
+    "status": "1 kode læst. 4 kunne ikke læses: <img (skal have 8 tegn, har 4), src=x (skal have 8 tegn, har 5), onerror=\"window.__xss=1\"> (skal have 8 tegn, har 25), <b>fed</b> (skal have 8 tegn, har 10). Bed eleven vise koden igen."
+   }
+  },
+  {
+   "navn": "B8 1280: een kode alene viser den ene elevs niveau i alle 7 (siden har ingen mindste klasse)",
+   "ok": true,
+   "data": {
+    "status": "1 kode læst.",
+    "overskrift": "Svagest først (1 elev)",
+    "tal": [
+     "Ikke begyndt 0 Begynder 1 Øvet 0 Dygtig 0 Sikker 0 Fuldlært 0",
+     "Ikke begyndt 0 Begynder 1 Øvet 0 Dygtig 0 Sikker 0 Fuldlært 0",
+     "Ikke begyndt 0 Begynder 1 Øvet 0 Dygtig 0 Sikker 0 Fuldlært 0",
+     "Ikke begyndt 0 Begynder 0 Øvet 1 Dygtig 0 Sikker 0 Fuldlært 0",
+     "Ikke begyndt 0 Begynder 0 Øvet 0 Dygtig 1 Sikker 0 Fuldlært 0",
+     "Ikke begyndt 0 Begynder 0 Øvet 0 Dygtig 1 Sikker 0 Fuldlært 0",
+     "Ikke begyndt 0 Begynder 0 Øvet 0 Dygtig 0 Sikker 1 Fuldlært 0"
+    ]
+   }
+  },
+  {
+   "navn": "B9 1280: elevens gemte spil paa samme computer: figurens navn staar ikke paa laerer.html",
+   "ok": true,
+   "data": null
+  },
+  {
+   "navn": "B10 1280: ingen vandret rulning, 0 JS-fejl, 0 dialoger",
+   "ok": true,
+   "data": []
+  },
+  {
+   "navn": "B11 0 netkald i alle koersler",
+   "ok": true,
+   "data": []
+  }
+ ],
+ "groen": 25,
+ "ialt": 25
+}
