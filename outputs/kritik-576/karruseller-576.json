@@ -1,0 +1,701 @@
+{
+ "lmTop": "cc4dd7d",
+ "karruseller": {
+  "1": {
+   "slides": 8,
+   "png": [
+    {
+     "f": "slide-01.png",
+     "w": 1080,
+     "h": 1350
+    },
+    {
+     "f": "slide-02.png",
+     "w": 1080,
+     "h": 1350
+    },
+    {
+     "f": "slide-03.png",
+     "w": 1080,
+     "h": 1350
+    },
+    {
+     "f": "slide-04.png",
+     "w": 1080,
+     "h": 1350
+    },
+    {
+     "f": "slide-05.png",
+     "w": 1080,
+     "h": 1350
+    },
+    {
+     "f": "slide-06.png",
+     "w": 1080,
+     "h": 1350
+    },
+    {
+     "f": "slide-07.png",
+     "w": 1080,
+     "h": 1350
+    },
+    {
+     "f": "slide-08.png",
+     "w": 1080,
+     "h": 1350
+    }
+   ],
+   "billedtekst": "Mål dit billede måler ét billede af et løft fra siden. Du klikker seks punkter på knoglerne, stangen, midtfoden, anklen, knæet, hoften og skulderen, og siden sætter ledvinklerne, overkroppens hældning og stangens afstand til midtfoden ved siden af modellen i samme fase. Under tabellen står én linje. \"Ligner\" står kun, når tallene flytter sig samme vej som en af modellens tegnede fejl og mere end klikfejlen. Billedet og videoen bliver på telefonen, i browseren, og sendes ingen steder hen.\n\nModellen har ingen muskler og en stiv ryg. Den kan kun se det, den selv viser, og kun i et billede filmet lige fra siden, og \"Ligner ikke\" betyder ikke uden fejl. Punkterne er skøn, så forskelle under ca. 4° eller 3 cm kan klikkene selv give. Mål dit billede og artiklerne om de tre løft ligger på entropicoaching.dk.",
+   "bogstaver": 811,
+   "tankestreger": 0,
+   "navne": false,
+   "opfordring": [],
+   "drama": false,
+   "meta": [],
+   "forbeholdNederst": true,
+   "forbeholdSlides": 2,
+   "slut": "Mål dit billede og artiklerne om de tre løft ligger på entropicoaching.dk."
+  },
+  "2": {
+   "slides": 6,
+   "png": [
+    {
+     "f": "slide-01.png",
+     "w": 1080,
+     "h": 1350
+    },
+    {
+     "f": "slide-02.png",
+     "w": 1080,
+     "h": 1350
+    },
+    {
+     "f": "slide-03.png",
+     "w": 1080,
+     "h": 1350
+    },
+    {
+     "f": "slide-04.png",
+     "w": 1080,
+     "h": 1350
+    },
+    {
+     "f": "slide-05.png",
+     "w": 1080,
+     "h": 1350
+    },
+    {
+     "f": "slide-06.png",
+     "w": 1080,
+     "h": 1350
+    }
+   ],
+   "billedtekst": "Et løft kan måles fra en video, når telefonen står det rigtige sted. Den står på et stativ ude til siden, ud for stangen, på højkant og lige, og peger langs stangen. I squat og dødløft står den i hoftehøjde, hvor hoften er, når du står oprejst, og i bænkpres i bænkens højde. Afstanden er 3-4 m i squat, mindst 3 m i dødløft, præcis 3 m i sumo og 3 m i bænkpres. Kan navet i den fjerne skive ikke ses, flyttes stativet ca. ½ m frem uden at dreje telefonen, i sumo højst ca. 20 cm. Tape på gulvet ved stativets ben giver samme kameraplads næste gang.\n\nTelefonen i hånden, vippet ned mod hoften, lægger skinnebenet ca. 3° frem i billedet, og et kamera skråt forfra flytter vinklerne flere grader. Et flyttet kamera flytter tallene lige så meget som en ændret teknik, og forskelle under ca. 4° eller 3 cm kan være målefejl. Vejledningen og Mål dit billede ligger på entropicoaching.dk.",
+   "bogstaver": 882,
+   "tankestreger": 0,
+   "navne": false,
+   "opfordring": [],
+   "drama": false,
+   "meta": [],
+   "forbeholdNederst": true,
+   "forbeholdSlides": 1,
+   "slut": "Vejledningen og Mål dit billede ligger på entropicoaching.dk."
+  }
+ },
+ "sandhed": [
+  {
+   "nr": 1,
+   "hvor": "slide 1",
+   "paaSlide": true,
+   "iKilden": true
+  },
+  {
+   "nr": 1,
+   "hvor": "slide 2",
+   "paaSlide": true,
+   "iKilden": true
+  },
+  {
+   "nr": 1,
+   "hvor": "slide 4",
+   "paaSlide": true,
+   "iKilden": true
+  },
+  {
+   "nr": 1,
+   "hvor": "slide 5",
+   "paaSlide": true,
+   "iKilden": true
+  },
+  {
+   "nr": 1,
+   "hvor": "slide 6",
+   "paaSlide": true,
+   "iKilden": true
+  },
+  {
+   "nr": 1,
+   "hvor": "slide 7",
+   "paaSlide": true,
+   "iKilden": true
+  },
+  {
+   "nr": 1,
+   "hvor": "slide 8",
+   "paaSlide": true,
+   "iKilden": true
+  },
+  {
+   "nr": 2,
+   "hvor": "slide 1",
+   "paaSlide": true,
+   "iKilden": true
+  },
+  {
+   "nr": 2,
+   "hvor": "slide 2",
+   "paaSlide": true,
+   "iKilden": true
+  },
+  {
+   "nr": 2,
+   "hvor": "slide 3",
+   "paaSlide": true,
+   "iKilden": true
+  },
+  {
+   "nr": 2,
+   "hvor": "slide 4",
+   "paaSlide": true,
+   "iKilden": true
+  },
+  {
+   "nr": 2,
+   "hvor": "slide 5",
+   "paaSlide": true,
+   "iKilden": true
+  },
+  {
+   "nr": 2,
+   "hvor": "slide 6",
+   "paaSlide": true,
+   "iKilden": true
+  },
+  {
+   "nr": 1,
+   "hvor": "billedtekst",
+   "paaSlide": true,
+   "iKilden": true
+  },
+  {
+   "nr": 2,
+   "hvor": "billedtekst",
+   "paaSlide": true,
+   "iKilden": true
+  }
+ ],
+ "vaerktoejet": {
+  "langeLaar": {
+   "tab": [
+    [
+     "Mål",
+     "Billedet",
+     "Model"
+    ],
+    [
+     "Torso fra lodret",
+     "≈51,8°",
+     "49,2°"
+    ],
+    [
+     "Hoftevinkel",
+     "≈34,6°",
+     "36,9°"
+    ],
+    [
+     "Knævinkel",
+     "41,4°",
+     "46,1°"
+    ],
+    [
+     "Stangen foran midtfodenI modellen står krop og stang i balance over midtfoden.",
+     "−0,7 cm",
+     "skriv stangens vægt"
+    ],
+    [
+     "Vandret afstand stang–hofte",
+     "≈22,3 cm",
+     "21,3 cm"
+    ]
+   ],
+   "ligner": {
+    "status": "ingen",
+    "tekst": "Ligner ikke \"kun knæene\" eller \"hoften skudt for langt tilbage\" over målefejlen. Det udelukker ikke fejlen: lige fra siden overses \"hoften tilbage\" i ca. 5 af 100 billeder med omhyggelige klik, 14 af 100 med hurtige og hvert andet med tæerne 30° ud. Andre fejl tjekker siden ikke."
+   },
+   "under": "Målt i billedet: squat, bunden Atleten vender mod højre i billedet (fundet af, at hoften står bag midtfoden). Skala fra kroppens længder (kroppen for 178,0 cm): den antager, at skinneben, lår og overkrop ligger i billedets plan. Tryk evt. på skivens øverste kant for en kontrol. Mål Billedet Torso fra lodret hofte til skulder 51,8° Hoftevinkel skulder-hofte-knæ, 180° = strakt 34,6° Knævinkel hofte-knæ-ankel, 180° = strakt 41,4° Skinneben fra lodret + = knæet foran anklen 45,0° Stangen foran midtfoden vandret; − = bag midtfoden −0,7 cm Vandret afstand stang–hofte stangens lodlinje til hoften 22,3 cm"
+  },
+  "raekker": [
+   "Mål",
+   "Torso fra lodret",
+   "Hoftevinkel",
+   "Knævinkel",
+   "Stangen foran midtfodenI modellen står krop og stang i balance over midtfoden.",
+   "Vandret afstand stang–hofte"
+  ],
+  "knae": [
+   "Knævinkel",
+   "41,4°",
+   "46,1°"
+  ],
+  "stang": [
+   "Stangen foran midtfodenI modellen står krop og stang i balance over midtfoden.",
+   "−0,7 cm",
+   "skriv stangens vægt"
+  ]
+ },
+ "sitet": {
+  "vaerktoejer": false,
+  "artikler": [
+   "artikel-doedloeft-kropsbygning.html",
+   "artikel-doedloeft-stangbane.html"
+  ],
+  "treLoeftArtikler": []
+ },
+ "laesbar": {
+  "1": [
+   {
+    "f": "slide-01.html",
+    "tekster": 21,
+    "mindstePx": 30,
+    "mindsteTelefonPx": 10.8,
+    "hvad": "Mål dit billede",
+    "lavKontrast": 6.7,
+    "kant": 51,
+    "slideTekstPx": 46
+   },
+   {
+    "f": "slide-02.html",
+    "tekster": 9,
+    "mindstePx": 30,
+    "mindsteTelefonPx": 10.8,
+    "hvad": "Mål dit billede",
+    "lavKontrast": 6.7,
+    "kant": 51,
+    "slideTekstPx": 46
+   },
+   {
+    "f": "slide-03.html",
+    "tekster": 29,
+    "mindstePx": 30,
+    "mindsteTelefonPx": 10.8,
+    "hvad": "Mål dit billede",
+    "lavKontrast": 6.7,
+    "kant": 51,
+    "slideTekstPx": 46
+   },
+   {
+    "f": "slide-04.html",
+    "tekster": 8,
+    "mindstePx": 30,
+    "mindsteTelefonPx": 10.8,
+    "hvad": "Mål dit billede",
+    "lavKontrast": 6.7,
+    "kant": 51,
+    "slideTekstPx": 46
+   },
+   {
+    "f": "slide-05.html",
+    "tekster": 4,
+    "mindstePx": 30,
+    "mindsteTelefonPx": 10.8,
+    "hvad": "Mål dit billede",
+    "lavKontrast": 6.7,
+    "kant": 51,
+    "slideTekstPx": 46
+   },
+   {
+    "f": "slide-06.html",
+    "tekster": 7,
+    "mindstePx": 30,
+    "mindsteTelefonPx": 10.8,
+    "hvad": "Mål dit billede",
+    "lavKontrast": 6.7,
+    "kant": 51,
+    "slideTekstPx": 46
+   },
+   {
+    "f": "slide-07.html",
+    "tekster": 3,
+    "mindstePx": 30,
+    "mindsteTelefonPx": 10.8,
+    "hvad": "Mål dit billede",
+    "lavKontrast": 6.7,
+    "kant": 51,
+    "slideTekstPx": 56
+   },
+   {
+    "f": "slide-08.html",
+    "tekster": 3,
+    "mindstePx": 30,
+    "mindsteTelefonPx": 10.8,
+    "hvad": "Mål dit billede",
+    "lavKontrast": 6.7,
+    "kant": 51,
+    "slideTekstPx": 56
+   }
+  ],
+  "2": [
+   {
+    "f": "slide-01.html",
+    "tekster": 5,
+    "mindstePx": 30,
+    "mindsteTelefonPx": 10.8,
+    "hvad": "Film dit løft",
+    "lavKontrast": 6.7,
+    "kant": 51,
+    "slideTekstPx": 46
+   },
+   {
+    "f": "slide-02.html",
+    "tekster": 11,
+    "mindstePx": 30,
+    "mindsteTelefonPx": 10.8,
+    "hvad": "Film dit løft",
+    "lavKontrast": 6.7,
+    "kant": 51,
+    "slideTekstPx": 46
+   },
+   {
+    "f": "slide-03.html",
+    "tekster": 5,
+    "mindstePx": 30,
+    "mindsteTelefonPx": 10.8,
+    "hvad": "Film dit løft",
+    "lavKontrast": 6.7,
+    "kant": 51,
+    "slideTekstPx": 46
+   },
+   {
+    "f": "slide-04.html",
+    "tekster": 5,
+    "mindstePx": 30,
+    "mindsteTelefonPx": 10.8,
+    "hvad": "Film dit løft",
+    "lavKontrast": 6.7,
+    "kant": 51,
+    "slideTekstPx": 46
+   },
+   {
+    "f": "slide-05.html",
+    "tekster": 6,
+    "mindstePx": 30,
+    "mindsteTelefonPx": 10.8,
+    "hvad": "Film dit løft",
+    "lavKontrast": 6.7,
+    "kant": 51,
+    "slideTekstPx": 46
+   },
+   {
+    "f": "slide-06.html",
+    "tekster": 3,
+    "mindstePx": 30,
+    "mindsteTelefonPx": 10.8,
+    "hvad": "Film dit løft",
+    "lavKontrast": 6.7,
+    "kant": 51,
+    "slideTekstPx": 56
+   }
+  ]
+ },
+ "fejlfigur": {
+  "modelSkinnebenMere": 16,
+  "modelTorsoMere": -8.3,
+  "setu": 10,
+  "regel": 8
+ },
+ "filer": {
+  "billedtekst-1.txt": "33636747a2e53f1ac02f5baffcca40d63220653bdcfb73f1d7015993361731e9",
+  "billedtekst-2.txt": "eafb754767d31bab803947c840e856cc0171c1bf4c0719c910a271651307e8fd",
+  "karrusel-1-maal-dit-billede/html/slide-01.html": "81d1f37a2ccf09d8b8f4b9065db9ff6518c4aeaac06f16bdc51dc89c372525c5",
+  "karrusel-1-maal-dit-billede/html/slide-02.html": "e84db0f766b980a1022bbb1197c0c81c825730a2a3289b3095bcbfb4e446cf30",
+  "karrusel-1-maal-dit-billede/html/slide-03.html": "dd5bcc01e427a064eba59bb4e42c2bd8a35b1bf29962ad33679d612fcbdb4b2c",
+  "karrusel-1-maal-dit-billede/html/slide-04.html": "f008a4e12e00c9e2d18dc1110b13538661a0a7ca2b1e8556db08a6a1252d9377",
+  "karrusel-1-maal-dit-billede/html/slide-05.html": "4862a722ccf36d533c3a4125fb42a8a37950b2b0195ecc11212ba53051d5accc",
+  "karrusel-1-maal-dit-billede/html/slide-06.html": "2c3a1365607b859cec2804d74021a353b09ae350d3e875371ef84d654237b90d",
+  "karrusel-1-maal-dit-billede/html/slide-07.html": "e00204c8c2782916cc8860f3420907cfeb5fec865f0fd47be3457a17d15946d8",
+  "karrusel-1-maal-dit-billede/html/slide-08.html": "e82f12df8c74ed256ad351cc0820832e3bcfa2d7fc2b70c040b8d50fb8d8ec0d",
+  "karrusel-1-maal-dit-billede/slide-01.png": "630111dea263502a8964a6a399b6d6cc3d349f6d12bf794804914d52ec75cdcd",
+  "karrusel-1-maal-dit-billede/slide-02.png": "a73bf7ef821a67c2f870658b9a4796044683a89b5942a1aea1d401626a78b162",
+  "karrusel-1-maal-dit-billede/slide-03.png": "5fa1e0fac5bb86fac43e2e3ad94f4c0aee2521ec3c93efa61ed8be8617bcb59f",
+  "karrusel-1-maal-dit-billede/slide-04.png": "93db6182e95aa3c65b6f57c4f896052d8b2a7970087a20b3c2f3f684d470c503",
+  "karrusel-1-maal-dit-billede/slide-05.png": "5fc2861a759db1f275991a27c30c24f080bd68383db7c21c71177c4a5eba2473",
+  "karrusel-1-maal-dit-billede/slide-06.png": "f26c18dfffb27aa3cf5d9239d577af7cce0131976f8385e4daeebe6e5890fee7",
+  "karrusel-1-maal-dit-billede/slide-07.png": "553810dfe0d8d502f97eef8b9ebbc503433c17a562079508f60534c9b45514c9",
+  "karrusel-1-maal-dit-billede/slide-08.png": "256f61e5beaa859870da635ba09bebd3f221dd8255e827c914c39dd1236f01fa",
+  "karrusel-2-film-dit-loeft/html/slide-01.html": "d28ce53d13b90d940a553fe15b5d0aaa62c39c745aa8cdf64dc14f661c4c760a",
+  "karrusel-2-film-dit-loeft/html/slide-02.html": "a346c55852a4a8ca0171911c17cf3e08098efc14d87d2998f97c261f5e2b784a",
+  "karrusel-2-film-dit-loeft/html/slide-03.html": "5217c53cc2003052cd045afef9c56b71eb5467eca2886c200db5f1f4a02c0967",
+  "karrusel-2-film-dit-loeft/html/slide-04.html": "0d301314fbf77ed45bd01b168216e2353aac31f411bb775c2959b26b3a517a4d",
+  "karrusel-2-film-dit-loeft/html/slide-05.html": "addc7b576bfe8083cad51e040181f9edbf1abad7ef0947bb0f005a0017164e4b",
+  "karrusel-2-film-dit-loeft/html/slide-06.html": "bb58163784900f3134a148bb1fb3472333b2d56c249a9dfc0584ebc76c589812",
+  "karrusel-2-film-dit-loeft/slide-01.png": "a2c8b4b378ab9bf9cfcb2b085b5b3709d3e6ab4fd09dbffa4f4ed0d761e1f914",
+  "karrusel-2-film-dit-loeft/slide-02.png": "8dedcf8c795e5453a37eef78c182273de9b36ac2427241155edd74c6f5119d04",
+  "karrusel-2-film-dit-loeft/slide-03.png": "eec08ba1e3a9eb69528fb05129519c7ba9d7c00342ce13229465220fafb58c15",
+  "karrusel-2-film-dit-loeft/slide-04.png": "d8538c9a7ac7a98df87950dae8f8a23d5534fd05ccb85b86b86111152be850f2",
+  "karrusel-2-film-dit-loeft/slide-05.png": "4c468bc17e30de03a0e9deea1ab7a6d780978e64338619c6fde53d92674e82b9",
+  "karrusel-2-film-dit-loeft/slide-06.png": "756d97e6bfb7c4294bc47584eb9a2520b339db185df07b9a689b67fa617f367e",
+  "kroppe.json": "960a2bbf07c4b2735002749dea0904cc40a6861498d3227f33cd8dad752892b0",
+  "lav.mjs": "d5294457fcccc3d23442df389f8c87bec1f221f5e1b71fdf7fbb306f1aa91b27",
+  "RAPPORT-573.md": "31258157c55661f3e63a607f181da2389e762141b2de775444fa257be8a6dd52",
+  "slides.mjs": "e0e2990d2ea1fec4b14997f9ac0698220d2b8a0dac8434e45f39fef948b8623b",
+  "tegn.mjs": "cd13ca22d5346cfe31519ff8407f036793f71a5d5841910ec715281cef281d6d",
+  "tjek.mjs": "0f9c291bda7bfb07e4fd3778dadb757c1efab4698dd89f65cc73824cc0575d0f"
+ },
+ "tjek": [
+  {
+   "hvad": "K1: 8 slides, alle 8 PNG 1080 x 1350",
+   "ok": true,
+   "data": [
+    "1080x1350",
+    "1080x1350",
+    "1080x1350",
+    "1080x1350",
+    "1080x1350",
+    "1080x1350",
+    "1080x1350",
+    "1080x1350"
+   ]
+  },
+  {
+   "hvad": "K1: 0 tankestreger, 0 atletnavne, ingen opfordring, ingen dramatisk aabning, ingen meta (slides, tegninger og billedtekst)",
+   "ok": true,
+   "data": {
+    "opf": [],
+    "meta": []
+   }
+  },
+  {
+   "hvad": "K1: forbeholdene staar paa de sidste slides og ikke foer",
+   "ok": true
+  },
+  {
+   "hvad": "K1: billedteksten slutter med en neutral henvisning til entropicoaching.dk (\"Mål dit billede og artiklerne om de tre løft ligger på entropicoaching.dk.\")",
+   "ok": true
+  },
+  {
+   "hvad": "K2: 6 slides, alle 6 PNG 1080 x 1350",
+   "ok": true,
+   "data": [
+    "1080x1350",
+    "1080x1350",
+    "1080x1350",
+    "1080x1350",
+    "1080x1350",
+    "1080x1350"
+   ]
+  },
+  {
+   "hvad": "K2: 0 tankestreger, 0 atletnavne, ingen opfordring, ingen dramatisk aabning, ingen meta (slides, tegninger og billedtekst)",
+   "ok": true,
+   "data": {
+    "opf": [],
+    "meta": []
+   }
+  },
+  {
+   "hvad": "K2: forbeholdene staar paa de sidste slides og ikke foer",
+   "ok": true
+  },
+  {
+   "hvad": "K2: billedteksten slutter med en neutral henvisning til entropicoaching.dk (\"Vejledningen og Mål dit billede ligger på entropicoaching.dk.\")",
+   "ok": true
+  },
+  {
+   "hvad": "K1: al tekst mindst 30 px i 1080 (ca. 10,8 px paa en 390 px telefon), kontrast mindst 4,5, mindst 40 px fra kanten",
+   "ok": true,
+   "data": [
+    [
+     "01",
+     30,
+     6.7,
+     51
+    ],
+    [
+     "02",
+     30,
+     6.7,
+     51
+    ],
+    [
+     "03",
+     30,
+     6.7,
+     51
+    ],
+    [
+     "04",
+     30,
+     6.7,
+     51
+    ],
+    [
+     "05",
+     30,
+     6.7,
+     51
+    ],
+    [
+     "06",
+     30,
+     6.7,
+     51
+    ],
+    [
+     "07",
+     30,
+     6.7,
+     51
+    ],
+    [
+     "08",
+     30,
+     6.7,
+     51
+    ]
+   ]
+  },
+  {
+   "hvad": "K2: al tekst mindst 30 px i 1080 (ca. 10,8 px paa en 390 px telefon), kontrast mindst 4,5, mindst 40 px fra kanten",
+   "ok": true,
+   "data": [
+    [
+     "01",
+     30,
+     6.7,
+     51
+    ],
+    [
+     "02",
+     30,
+     6.7,
+     51
+    ],
+    [
+     "03",
+     30,
+     6.7,
+     51
+    ],
+    [
+     "04",
+     30,
+     6.7,
+     51
+    ],
+    [
+     "05",
+     30,
+     6.7,
+     51
+    ],
+    [
+     "06",
+     30,
+     6.7,
+     51
+    ]
+   ]
+  },
+  {
+   "hvad": "15 paastande paa slides og i billedteksterne staar som skrevet og passer med vejledningen (main cc4dd7d) eller FILM-KLIP",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "K3 (fund): Maal dit billede har ingen skinneben-raekke i squattens tabel for samme krop; slide 3 viser skinneben 45 mod 40 (+5, guld), som er Min krops/modellens valg",
+   "ok": true,
+   "data": {
+    "raekker": [
+     "Mål",
+     "Torso fra lodret",
+     "Hoftevinkel",
+     "Knævinkel",
+     "Stangen foran midtfodenI modellen står krop og stang i balance over midtfoden.",
+     "Vandret afstand stang–hofte"
+    ]
+   }
+  },
+  {
+   "hvad": "slide 3 knaeet (41,4 mod 46,1), hoften (34,6 mod 36,9) og overkroppen (51,8 mod 49,2) staar ogsaa i vaerktoejet for samme krop",
+   "ok": true,
+   "data": [
+    [
+     "Mål",
+     "Billedet",
+     "Model"
+    ],
+    [
+     "Torso fra lodret",
+     "≈51,8°",
+     "49,2°"
+    ],
+    [
+     "Hoftevinkel",
+     "≈34,6°",
+     "36,9°"
+    ],
+    [
+     "Knævinkel",
+     "41,4°",
+     "46,1°"
+    ],
+    [
+     "Stangen foran midtfodenI modellen står krop og stang i balance over midtfoden.",
+     "−0,7 cm",
+     "skriv stangens vægt"
+    ],
+    [
+     "Vandret afstand stang–hofte",
+     "≈22,3 cm",
+     "21,3 cm"
+    ]
+   ]
+  },
+  {
+   "hvad": "K3 (fund): vaerktoejet viser stangen -0,7 cm (bag midtfoden) og ingen modelvaerdi uden stangens vaegt; slide 3 viser 0,7 mod 0,8 cm",
+   "ok": true,
+   "data": [
+    "Stangen foran midtfodenI modellen står krop og stang i balance over midtfoden.",
+    "−0,7 cm",
+    "skriv stangens vægt"
+   ]
+  },
+  {
+   "hvad": "Maal dit billede siger \"Ligner ikke\" om den tegnede krop med lange laar (den er modellens egen udfoerelse)",
+   "ok": true,
+   "data": "Ligner ikke \"kun knæene\" eller \"hoften skudt for langt tilbage\" over målefejlen. Det udelukker ikke fejlen: lige fra sid"
+  },
+  {
+   "hvad": "K4 (fund): slide 4's \"kun knaeene\" er tegnet med skinnebenet 10 grader frem; modellens egen fejlfigur har det ca. 17 grader frem og hoften under stangen; reglen siger 8",
+   "ok": true,
+   "data": {
+    "modelSkinnebenMere": 16,
+    "modelTorsoMere": -8.3,
+    "setu": 10,
+    "regel": 8
+   }
+  },
+  {
+   "hvad": "K1 (fund): billedtekst 1 siger \"Maal dit billede og artiklerne om de tre loeft ligger paa entropicoaching.dk\"; paa sitets main ligger i dag hverken vaerktoejssiden eller de tre loeft-artikler",
+   "ok": true,
+   "data": {
+    "vaerktoejer": false,
+    "artikler": [
+     "artikel-doedloeft-kropsbygning.html",
+     "artikel-doedloeft-stangbane.html"
+    ],
+    "treLoeftArtikler": []
+   }
+  }
+ ]
+}
