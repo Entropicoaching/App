@@ -1,0 +1,824 @@
+{
+ "gren": "artikel-baenk",
+ "top": "fb0cefa",
+ "loeftmodelMain": "37c9a27",
+ "navneTjekket": 3,
+ "fund": {
+  "BA1": {
+   "stangModFoedder": {
+    "lille": "22,1",
+    "middel": "25,1",
+    "stor": "24,1"
+   },
+   "skulderIAlt": {
+    "lille": "25,8",
+    "middel": "28,4",
+    "stor": "27,6"
+   },
+   "artikel": [
+    "Med mere bue kommer brystets top højere op og længere mod fødderne",
+    "og stangen rører længere mod fødderne",
+    "fordi stangen rører længere mod fødderne"
+   ],
+   "distSiger": true
+  },
+  "BA2": {
+   "artikel": true,
+   "koden": true,
+   "laesesiden": true,
+   "bp7": true
+  },
+  "BA3": {
+   "laesesidenErKladden": true,
+   "gamleTal": true,
+   "artiklenNu": true
+  },
+  "BA4": {
+   "overskrift": true,
+   "albueUd": "9,8",
+   "valgt": true
+  },
+  "BA5": {
+   "titel": true,
+   "markeret": false
+  },
+  "BA6": {
+   "artikel": true,
+   "udtraekHar": [
+    "pkt. 3",
+    "pkt. 4",
+    "pkt. 5",
+    "pkt. 7",
+    "pkt. 11"
+   ],
+   "udtraekHarIkke": [
+    "pkt. 2 \"",
+    "pkt. 6 \"",
+    "pkt. 9 \""
+   ],
+   "foedderFlytte": false
+  },
+  "BA7": {
+   "kommentarNavne": [
+    "ORDRE 482",
+    "Ordre 434",
+    "Ordre 468",
+    "Ordre 476",
+    "Ordre 554",
+    "Bhishak",
+    "Ordre 457",
+    "ORDRE 566",
+    "Ordre 561"
+   ],
+   "jsKommentar": true
+  },
+  "BA8": {
+   "maalBilledeAfvigerFraMain": [
+    "index.html",
+    "maal-billede.js"
+   ]
+  },
+  "BA9": {
+   "ofte": true,
+   "paaMain": true
+  }
+ },
+ "tjek": [
+  {
+   "hvad": "21 tal-saetninger staar i artiklen og passer med loeftmodellens main (37c9a27)",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "12 figurer = dist paa main, kun \"Marcs maal\" -> \"183 cm\" i svg/title/desc; 12 brugt",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "tre-loeft og min-krop paa grenen = dist paa main",
+   "ok": true,
+   "data": {
+    "tre-loeft": [],
+    "min-krop": [],
+    "maal-billede": [
+     "index.html",
+     "maal-billede.js"
+    ]
+   }
+  },
+  {
+   "hvad": "10 [MARC]-steder: bp-1 til bp-8 een gang hver og 2 afledte",
+   "ok": true,
+   "data": [
+    "bp-1",
+    "bp-1 bp-2 afledt",
+    "bp-4",
+    "bp-7",
+    "bp-8",
+    "bp-5",
+    "bp-6",
+    "bp-3",
+    "bp-2",
+    "bp-3 bp-4 bp-5 bp-6 bp-7 bp-8 afledt"
+   ]
+  },
+  {
+   "hvad": "de 8 spoergsmaal staar ordret som \"Staar i teksten\" paa laesesiden (felt 11-18)",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "hvert spoergsmaal staar ved det, det spoerger om",
+   "ok": true,
+   "data": {
+    "bp-4": "fase-bryst",
+    "bp-7": "fase-midt",
+    "bp-8": "kap-segmentmodellen",
+    "bp-5": "buen",
+    "bp-6": "grebet",
+    "bp-3": "kap-fejlbilleder",
+    "bp-2": "hvad-jeg-kigger-efter"
+   }
+  },
+  {
+   "hvad": "BA1: mere bue -> \"laengere mod foedderne\", men middel -> stor er 1,0 cm mod halsen",
+   "ok": true,
+   "data": {
+    "stangModFoedder": {
+     "lille": "22,1",
+     "middel": "25,1",
+     "stor": "24,1"
+    },
+    "skulderIAlt": {
+     "lille": "25,8",
+     "middel": "28,4",
+     "stor": "27,6"
+    },
+    "artikel": [
+     "Med mere bue kommer brystets top højere op og længere mod fødderne",
+     "og stangen rører længere mod fødderne",
+     "fordi stangen rører længere mod fødderne"
+    ],
+    "distSiger": true
+   }
+  },
+  {
+   "hvad": "BA2: \"8-10 cm ud er vurderet\" er min dom fra 457, umaerket over bp-7",
+   "ok": true,
+   "data": {
+    "artikel": true,
+    "koden": true,
+    "laesesiden": true,
+    "bp7": true
+   }
+  },
+  {
+   "hvad": "BA3: laesesiden viser baenk-kladden med tallene fra foer 493",
+   "ok": true,
+   "data": {
+    "laesesidenErKladden": true,
+    "gamleTal": true,
+    "artiklenNu": true
+   }
+  },
+  {
+   "hvad": "BA4: kap. 7 \"I baenken lander stangen 10-15 cm\" om en valgt stoerrelse",
+   "ok": true,
+   "data": {
+    "overskrift": true,
+    "albueUd": "9,8",
+    "valgt": true
+   }
+  },
+  {
+   "hvad": "BA5: titlen \"individuel variation\" er umaerket",
+   "ok": true,
+   "data": {
+    "titel": true,
+    "markeret": false
+   }
+  },
+  {
+   "hvad": "BA6: IPF 4.2.1 pkt. 2, 6 og 9 og \"foedderne maa flytte sig\" staar ikke i uddraget",
+   "ok": true,
+   "data": {
+    "artikel": true,
+    "udtraekHar": [
+     "pkt. 3",
+     "pkt. 4",
+     "pkt. 5",
+     "pkt. 7",
+     "pkt. 11"
+    ],
+    "udtraekHarIkke": [
+     "pkt. 2 \"",
+     "pkt. 6 \"",
+     "pkt. 9 \""
+    ],
+    "foedderFlytte": false
+   }
+  },
+  {
+   "hvad": "BA7: interne navne i sidens kildekode (kommentarer)",
+   "ok": true,
+   "data": {
+    "kommentarNavne": [
+     "ORDRE 482",
+     "Ordre 434",
+     "Ordre 468",
+     "Ordre 476",
+     "Ordre 554",
+     "Bhishak",
+     "Ordre 457",
+     "ORDRE 566",
+     "Ordre 561"
+    ],
+    "jsKommentar": true
+   }
+  },
+  {
+   "hvad": "BA8: Maal dit billede paa grenen er ikke main",
+   "ok": true,
+   "data": {
+    "maalBilledeAfvigerFraMain": [
+     "index.html",
+     "maal-billede.js"
+    ]
+   }
+  },
+  {
+   "hvad": "BA9: \"en loefter flytter ofte grebet med albuen\" (fejlsidens, paa main)",
+   "ok": true,
+   "data": {
+    "ofte": true,
+    "paaMain": true
+   }
+  },
+  {
+   "hvad": "laesetid: 2266 ord / 130 = 17.4 min, siden siger 17",
+   "ok": true,
+   "data": {
+    "ord": 2266
+   }
+  },
+  {
+   "hvad": "kap. 4 = tre-loeft paa grenen: albue 66,4 / 59,4 / 72,2 og vej +6,1 cm",
+   "ok": true,
+   "data": {
+    "gennemsnit": {
+     "albue": "66,4",
+     "vej": "40,1",
+     "linje": ""
+    },
+    "lange-laar": {
+     "albue": "66,4",
+     "vej": "40,1",
+     "linje": "Længere lårben: flytter næsten intet i bænkpres på brystet i modellen."
+    },
+    "lange-arme": {
+     "albue": "59,4",
+     "vej": "46,2",
+     "linje": "Længere arme: stangens vej bliver 6,1 cm længere (40,1 → 46,2 cm)."
+    },
+    "lang-torso": {
+     "albue": "72,2",
+     "vej": "39,5",
+     "linje": "Længere torso: albuen bøjer 6° mindre på brystet (66° → 72°)."
+    }
+   }
+  },
+  {
+   "hvad": "390: ingen vandret rul, 0 JS-fejl, 0 404, 0 tankestreger, 0 synlige [MARC/[ ], 0 atletnavne, 0 interne navne, 0 \"man skal\"",
+   "ok": true,
+   "data": {
+    "e": [
+     "fonts.googleapis.com"
+    ],
+    "f": [],
+    "h": [],
+    "t": 0,
+    "m": 0
+   }
+  },
+  {
+   "hvad": "390: kun skrifttypen forsoeger at gaa ud af huset",
+   "ok": true,
+   "data": [
+    "fonts.googleapis.com"
+   ]
+  },
+  {
+   "hvad": "390: 13 billeder vist med alt-tekst, 0 brudte, ingen bredere end skaermen",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "390: begge rammer har indhold og hoejde",
+   "ok": true,
+   "data": [
+    [
+     "tre-loeft-baenk",
+     810
+    ],
+    [
+     "min-krop-kort",
+     1011
+    ]
+   ]
+  },
+  {
+   "hvad": "390: 5 tabeller; bredere end boksen: 5, og de ruller selv (ikke skaaret af)",
+   "ok": true,
+   "data": [
+    {
+     "kap": "kap-momentarme",
+     "kolonner": 5,
+     "bred": 480,
+     "boks": 347,
+     "overflowX": "auto",
+     "rullerSelv": true
+    },
+    {
+     "kap": "kap-variant",
+     "kolonner": 3,
+     "bred": 480,
+     "boks": 347,
+     "overflowX": "auto",
+     "rullerSelv": true
+    },
+    {
+     "kap": "kap-variant",
+     "kolonner": 7,
+     "bred": 480,
+     "boks": 318,
+     "overflowX": "auto",
+     "rullerSelv": true
+    },
+    {
+     "kap": "kap-fejlbilleder",
+     "kolonner": 5,
+     "bred": 480,
+     "boks": 318,
+     "overflowX": "auto",
+     "rullerSelv": true
+    },
+    {
+     "kap": "kap-fejlbilleder",
+     "kolonner": 5,
+     "bred": 480,
+     "boks": 318,
+     "overflowX": "auto",
+     "rullerSelv": true
+    }
+   ]
+  },
+  {
+   "hvad": "390: foldenes knapper mindst 44 px",
+   "ok": true,
+   "data": [
+    44,
+    48
+   ]
+  },
+  {
+   "hvad": "390: uden skjul-marc ses alle 10, stadig uden vandret rul",
+   "ok": true
+  },
+  {
+   "hvad": "1280: ingen vandret rul, 0 JS-fejl, 0 404, 0 tankestreger, 0 synlige [MARC/[ ], 0 atletnavne, 0 interne navne, 0 \"man skal\"",
+   "ok": true,
+   "data": {
+    "e": [
+     "fonts.googleapis.com"
+    ],
+    "f": [],
+    "h": [],
+    "t": 0,
+    "m": 0
+   }
+  },
+  {
+   "hvad": "1280: kun skrifttypen forsoeger at gaa ud af huset",
+   "ok": true,
+   "data": [
+    "fonts.googleapis.com"
+   ]
+  },
+  {
+   "hvad": "1280: 13 billeder vist med alt-tekst, 0 brudte, ingen bredere end skaermen",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "1280: begge rammer har indhold og hoejde",
+   "ok": true,
+   "data": [
+    [
+     "tre-loeft-baenk",
+     857
+    ],
+    [
+     "min-krop-kort",
+     1076
+    ]
+   ]
+  },
+  {
+   "hvad": "1280: 5 tabeller; bredere end boksen: 0, og de ruller selv (ikke skaaret af)",
+   "ok": true,
+   "data": []
+  },
+  {
+   "hvad": "1280: foldenes knapper mindst 44 px",
+   "ok": true,
+   "data": [
+    44,
+    48
+   ]
+  },
+  {
+   "hvad": "1280: uden skjul-marc ses alle 10, stadig uden vandret rul",
+   "ok": true
+  }
+ ],
+ "sider": [
+  {
+   "bredde": 390,
+   "sidefejl": [],
+   "http404": [],
+   "eksterne": [
+    "fonts.googleapis.com"
+   ],
+   "vandret": true,
+   "skaerme": 34.5,
+   "tankestreger": 0,
+   "synligMarc": 0,
+   "marcSkjult": true,
+   "atletnavne": 0,
+   "interneNavne": 0,
+   "manSkal": 0,
+   "billeder": [
+    {
+     "src": "assets/baenk-figurer/baenk-bryst.svg",
+     "ok": true,
+     "bred": 324,
+     "alt": 208
+    },
+    {
+     "src": "assets/baenk-figurer/baenk-midt.svg",
+     "ok": true,
+     "bred": 324,
+     "alt": 203
+    },
+    {
+     "src": "assets/baenk-figurer/baenk-lockout.svg",
+     "ok": true,
+     "bred": 324,
+     "alt": 162
+    },
+    {
+     "src": "assets/baenk-figurer/baenk-bue-lille.svg",
+     "ok": true,
+     "bred": 316,
+     "alt": 58
+    },
+    {
+     "src": "assets/baenk-figurer/baenk-bue-middel.svg",
+     "ok": true,
+     "bred": 316,
+     "alt": 30
+    },
+    {
+     "src": "assets/baenk-figurer/baenk-bue-stor.svg",
+     "ok": true,
+     "bred": 316,
+     "alt": 57
+    },
+    {
+     "src": "assets/baenk-figurer/baenk-greb-smal.svg",
+     "ok": true,
+     "bred": 316,
+     "alt": 60
+    },
+    {
+     "src": "assets/baenk-figurer/baenk-greb-middel.svg",
+     "ok": true,
+     "bred": 316,
+     "alt": 31
+    },
+    {
+     "src": "assets/baenk-figurer/baenk-greb-bred.svg",
+     "ok": true,
+     "bred": 316,
+     "alt": 60
+    },
+    {
+     "src": "assets/loeft-fejl/bp-model.svg",
+     "ok": true,
+     "bred": 316,
+     "alt": 65
+    },
+    {
+     "src": "assets/loeft-fejl/bp-albue-ud.svg",
+     "ok": true,
+     "bred": 316,
+     "alt": 122
+    },
+    {
+     "src": "assets/loeft-fejl/bp-model.svg",
+     "ok": true,
+     "bred": 316,
+     "alt": 65
+    },
+    {
+     "src": "assets/loeft-fejl/bp-hoejt-bryst.svg",
+     "ok": true,
+     "bred": 316,
+     "alt": 133
+    }
+   ],
+   "rammer": [
+    {
+     "id": "tre-loeft-baenk",
+     "h": 810,
+     "tekst": "Længere arme: stangens vej bliver 6,1 cm længere (40,1 → 46,2 cm). Højde 178 cm Kropsvægt 85 kg Lår 100 % · 43,6 cm Skinneben 100 % · 43,8 cm Torso 100 % · 51,3 cm Arme 110 % · 65,0 cm Stang 100 kg Modellen regner på segmentlængder, masse, balance og momenter, statisk og set fra siden. Den har ingen"
+    },
+    {
+     "id": "min-krop-kort",
+     "h": 1011,
+     "tekst": "Højde cm Lår cm Skinneben cm Overkrop cm Overarm cm Underarm cm Kropsvægt kg Tryk på et felt for at se, hvor du måler fra og til. Tag alle mål på samme side af kroppen. Brug gennemsnit ud fra højden Glem mine mål Mit kort Squat Dødløft Bænkpres Bunden Sticking point Lockout Dine proportioner flytter"
+    }
+   ],
+   "tabeller": [
+    {
+     "kap": "kap-momentarme",
+     "kolonner": 5,
+     "bred": 480,
+     "boks": 347,
+     "overflowX": "auto",
+     "rullerSelv": true
+    },
+    {
+     "kap": "kap-variant",
+     "kolonner": 3,
+     "bred": 480,
+     "boks": 347,
+     "overflowX": "auto",
+     "rullerSelv": true
+    },
+    {
+     "kap": "kap-variant",
+     "kolonner": 7,
+     "bred": 480,
+     "boks": 318,
+     "overflowX": "auto",
+     "rullerSelv": true
+    },
+    {
+     "kap": "kap-fejlbilleder",
+     "kolonner": 5,
+     "bred": 480,
+     "boks": 318,
+     "overflowX": "auto",
+     "rullerSelv": true
+    },
+    {
+     "kap": "kap-fejlbilleder",
+     "kolonner": 5,
+     "bred": 480,
+     "boks": 318,
+     "overflowX": "auto",
+     "rullerSelv": true
+    }
+   ],
+   "knapper": [
+    48,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44
+   ],
+   "treLoeft": {
+    "gennemsnit": {
+     "albue": "66,4",
+     "vej": "40,1",
+     "linje": ""
+    },
+    "lange-laar": {
+     "albue": "66,4",
+     "vej": "40,1",
+     "linje": "Længere lårben: flytter næsten intet i bænkpres på brystet i modellen."
+    },
+    "lange-arme": {
+     "albue": "59,4",
+     "vej": "46,2",
+     "linje": "Længere arme: stangens vej bliver 6,1 cm længere (40,1 → 46,2 cm)."
+    },
+    "lang-torso": {
+     "albue": "72,2",
+     "vej": "39,5",
+     "linje": "Længere torso: albuen bøjer 6° mindre på brystet (66° → 72°)."
+    }
+   },
+   "marcSynligeUdenKlasse": 10,
+   "vandretMedMarc": true
+  },
+  {
+   "bredde": 1280,
+   "sidefejl": [],
+   "http404": [],
+   "eksterne": [
+    "fonts.googleapis.com"
+   ],
+   "vandret": true,
+   "skaerme": 24.2,
+   "tankestreger": 0,
+   "synligMarc": 0,
+   "marcSkjult": true,
+   "atletnavne": 0,
+   "interneNavne": 0,
+   "manSkal": 0,
+   "billeder": [
+    {
+     "src": "assets/baenk-figurer/baenk-bryst.svg",
+     "ok": true,
+     "bred": 320,
+     "alt": 208
+    },
+    {
+     "src": "assets/baenk-figurer/baenk-midt.svg",
+     "ok": true,
+     "bred": 320,
+     "alt": 203
+    },
+    {
+     "src": "assets/baenk-figurer/baenk-lockout.svg",
+     "ok": true,
+     "bred": 320,
+     "alt": 162
+    },
+    {
+     "src": "assets/baenk-figurer/baenk-bue-lille.svg",
+     "ok": true,
+     "bred": 286,
+     "alt": 58
+    },
+    {
+     "src": "assets/baenk-figurer/baenk-bue-middel.svg",
+     "ok": true,
+     "bred": 286,
+     "alt": 30
+    },
+    {
+     "src": "assets/baenk-figurer/baenk-bue-stor.svg",
+     "ok": true,
+     "bred": 286,
+     "alt": 57
+    },
+    {
+     "src": "assets/baenk-figurer/baenk-greb-smal.svg",
+     "ok": true,
+     "bred": 286,
+     "alt": 60
+    },
+    {
+     "src": "assets/baenk-figurer/baenk-greb-middel.svg",
+     "ok": true,
+     "bred": 286,
+     "alt": 31
+    },
+    {
+     "src": "assets/baenk-figurer/baenk-greb-bred.svg",
+     "ok": true,
+     "bred": 286,
+     "alt": 60
+    },
+    {
+     "src": "assets/loeft-fejl/bp-model.svg",
+     "ok": true,
+     "bred": 286,
+     "alt": 65
+    },
+    {
+     "src": "assets/loeft-fejl/bp-albue-ud.svg",
+     "ok": true,
+     "bred": 286,
+     "alt": 122
+    },
+    {
+     "src": "assets/loeft-fejl/bp-model.svg",
+     "ok": true,
+     "bred": 286,
+     "alt": 65
+    },
+    {
+     "src": "assets/loeft-fejl/bp-hoejt-bryst.svg",
+     "ok": true,
+     "bred": 286,
+     "alt": 133
+    }
+   ],
+   "rammer": [
+    {
+     "id": "tre-loeft-baenk",
+     "h": 857,
+     "tekst": "Længere arme: stangens vej bliver 6,1 cm længere (40,1 → 46,2 cm). Højde 178 cm Kropsvægt 85 kg Lår 100 % · 43,6 cm Skinneben 100 % · 43,8 cm Torso 100 % · 51,3 cm Arme 110 % · 65,0 cm Stang 100 kg Modellen regner på segmentlængder, masse, balance og momenter, statisk og set fra siden. Den har ingen"
+    },
+    {
+     "id": "min-krop-kort",
+     "h": 1076,
+     "tekst": "Højde cm Lår cm Skinneben cm Overkrop cm Overarm cm Underarm cm Kropsvægt kg Tryk på et felt for at se, hvor du måler fra og til. Tag alle mål på samme side af kroppen. Brug gennemsnit ud fra højden Glem mine mål Mit kort Squat Dødløft Bænkpres Bunden Sticking point Lockout Dine proportioner flytter"
+    }
+   ],
+   "tabeller": [
+    {
+     "kap": "kap-momentarme",
+     "kolonner": 5,
+     "bred": 597,
+     "boks": 653,
+     "overflowX": "auto",
+     "rullerSelv": false
+    },
+    {
+     "kap": "kap-variant",
+     "kolonner": 3,
+     "bred": 597,
+     "boks": 653,
+     "overflowX": "auto",
+     "rullerSelv": false
+    },
+    {
+     "kap": "kap-variant",
+     "kolonner": 7,
+     "bred": 563,
+     "boks": 619,
+     "overflowX": "auto",
+     "rullerSelv": false
+    },
+    {
+     "kap": "kap-fejlbilleder",
+     "kolonner": 5,
+     "bred": 563,
+     "boks": 619,
+     "overflowX": "auto",
+     "rullerSelv": false
+    },
+    {
+     "kap": "kap-fejlbilleder",
+     "kolonner": 5,
+     "bred": 563,
+     "boks": 619,
+     "overflowX": "auto",
+     "rullerSelv": false
+    }
+   ],
+   "knapper": [
+    48,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44
+   ],
+   "treLoeft": {
+    "gennemsnit": {
+     "albue": "66,4",
+     "vej": "40,1",
+     "linje": ""
+    },
+    "lange-laar": {
+     "albue": "66,4",
+     "vej": "40,1",
+     "linje": "Længere lårben: flytter næsten intet i bænkpres på brystet i modellen."
+    },
+    "lange-arme": {
+     "albue": "59,4",
+     "vej": "46,2",
+     "linje": "Længere arme: stangens vej bliver 6,1 cm længere (40,1 → 46,2 cm)."
+    },
+    "lang-torso": {
+     "albue": "72,2",
+     "vej": "39,5",
+     "linje": "Længere torso: albuen bøjer 6° mindre på brystet (66° → 72°)."
+    }
+   },
+   "marcSynligeUdenKlasse": 10,
+   "vandretMedMarc": true
+  }
+ ]
+}
