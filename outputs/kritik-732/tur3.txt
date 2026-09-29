@@ -1,0 +1,12 @@
+360x560 status foer/efter "Find det bedste træk." "Ikke den vej. Tag trækket tilbage og prøv igen."
+360x560 braet 215-495 strimmel 502-546 hint 502-546 fortryd 502-546
+360x560 laer braet 207-487 tekst 155-192 titel 136-155 besked 0-0
+360x560 laertekst ["Brættet","Felterne har navne: bogstav for linjen (a-h), tal for rækken (1-8). Klik e4."]
+390x844 status foer/efter "Find det bedste træk." "Ikke den vej. Tag trækket tilbage og prøv igen."
+390x844 braet 290-664 strimmel 670-714 hint 670-714 fortryd 670-714
+390x844 laer braet 292-666 tekst 230-272 titel 207-227 besked 0-0
+390x844 laertekst ["Brættet","Felterne har navne: bogstav for linjen (a-h), tal for rækken (1-8). Klik e4."]
+1280x800 status foer/efter "Find det bedste træk." "Ikke den vej. Tag trækket tilbage og prøv igen."
+1280x800 braet 237-774 strimmel 0-0 hint 0-0 fortryd 0-0
+1280x800 laer braet 210-709 tekst 167-189 titel 142-163 besked 0-0
+1280x800 laertekst ["Brættet","Felterne har navne: bogstav for linjen (a-h), tal for rækken (1-8). Klik e4."]
