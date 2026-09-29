@@ -2,9 +2,13 @@ MMORPG-følelse: halvvejs. Rodet: ja (opgaveskærmen på 390 viser 12 tal og 9 k
 
 # Rapport 721: matematikspillet som det står nu, set med en 11-årigs og en lærers øjne
 
+## Gren
+
+`kritik-721`, lavet fra `main`. Commit 1 `dde9684c`: skærmbilleder og script. Commit 2: denne rapport. 
+
 ## Hvad ændret
 
-Gren: `kritik-721` fra `main`. Ingen kode ændret, kun kritik. Jeg hentede spillet fra matematik-træets `main` (efter Ganitas 708) med `git archive` til en midlertidig mappe og spillede den syntetiske elev "Tulle" headless på 390 (touch) og 1280 (mus) med `outputs/kritik-721/mat-721.mjs`: ny elev, tre opgaver, niveau op (banneret), et klaret forløb og Min helt. Skærmbilleder og `mat-721.json` ligger i `outputs/kritik-721/` (`M721-390-*` og `M721-1280-*`). Commits: `dde9684c` (billeder og script) og denne rapport.
+Ingen kode ændret, kun kritik. Jeg hentede spillet fra matematik-træets `main` (efter Ganitas 708) med `git archive` til en midlertidig mappe og spillede den syntetiske elev "Tulle" headless på 390 (touch) og 1280 (mus) med `outputs/kritik-721/mat-721.mjs`: ny elev, tre opgaver, niveau op (banneret), et klaret forløb og Min helt. Skærmbilleder og `mat-721.json` ligger i `outputs/kritik-721/` (`M721-390-*` og `M721-1280-*`). Commits: `dde9684c` (billeder og script) og denne rapport.
 
 Ganitas 708 og 700 læst (Hvad ændret, Hvad er næste); min egen seneste matematik-kritik er 717.
 
@@ -18,13 +22,16 @@ Ganitas 708 og 700 læst (Hvad ændret, Hvad er næste); min egen seneste matema
 
 **4. Er mine seneste fund lukket (kritik 717)?** Delvist. (a) Banner og klaret siger det samme: ikke lukket; 708 ryddede klaret-kortet (8 til 4 blokke), men banneret og klaret-kortet står stadig efter hinanden (`M721-390-6-niveauop.png`). (b) Hånd og Hjerte med ord, eleven ikke kender: ikke lukket; teksten står som før, og "Forstået"-kortet ligger stadig over "Din opgave nu". (c) Helten bliver kun større: delvist; forsiden vokser nu (96 px til 116 px ved niveau 15, ifølge 708), men der er stadig ingen ny tegnet ting mellem trinnene.
 
-## Ærlige grænser og testresultat
+## Ærlige grænser
 
-- Ingen kode ændret, så ingen lint eller verify-scripts. Måling: `outputs/kritik-721/mat-721.json`, 0 netkald og 0 JS-fejl på 390 og 1280.
 - Kun syntetisk elev, headless Chromium med låst ur og `Math.random`; jeg har ikke set en rigtig 11-årig spille. "Forstår en 11-årig" er min vurdering af teksten, ikke en test.
 - Tælle-animationen vurderer jeg ud af tre billeder efter svaret (150, 650 og efter 1500 ms); en kort animation mellem billederne kan jeg have overset.
 - Hjerte-vejen (at hjælpe en person) er ikke spillet; "godt menneske"-svaret bygger kun på ærlig mod gættende elev.
 - Tal er talt på synlige tekstnoder i første skærmhøjde; klaret-skærmens tal (14) er første skærmhøjde, ikke hele siden.
+
+## Testresultat
+
+Ingen kode ændret, så ingen lint eller verify-scripts. Måling: `outputs/kritik-721/mat-721.json`, 0 netkald og 0 JS-fejl på 390 og 1280.
 
 ## Hvad er næste
 
