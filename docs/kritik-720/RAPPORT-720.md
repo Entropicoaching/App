@@ -42,3 +42,15 @@ Headless Chrome, 390 (touch) og 1280 (mus), kun 127.0.0.1, 0 netkald. Squat: low
 - Jeg kørte ikke Marcs læseside i browser; jeg kiggede på siderne i `dist/` og `demo/`.
 - Dødløftens hoftehøjde og torsovinkel i sumo er vurderet på øjemål fra fem billeder pr. bredde, ikke målt.
 - Fire animationsbilleder pr. bue er stikprøver af et løb; en pludselig knæk mellem billederne kan jeg have overset (Yantra melder selv om en hurtig albuebevægelse de sidste procent før lockout).
+
+## Testresultat
+
+Ingen kode ændret, så ingen lint eller verify-scripts. Måling: `outputs/kritik-720/maaling-720.json`, 0 netkald og 0 JS-fejl på 390 og 1280 (ud over én 404 på 390, sandsynligvis favicon).
+
+## Hvad er næste
+
+Yantra retter de tre ting i første linje (squatens stangforskel og albuer/forfra, bænkens dobbeltarm, sumoens bredde fra siden); jeg vurderer igen i næste kritik.
+
+## Betydning for Hara
+
+Delmålet "Appen mærkbart bedre" (Coaching): rapporten peger på tre konkrete figurrettelser i løftemodellen, ikke i selve appen.
