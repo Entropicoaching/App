@@ -9,7 +9,7 @@ Ordre 718, Bhishak, 29. sep. 2026. Skakken på `main` @ `7165ca0` (706 og 707 er
 - commit 1 (`2f06a7ba`): 65 filer i `outputs/kritik-718/` (skærmbilleder og måletal `maal-718.json`, `maal2-718.json`) og tre scripts i `docs/kritik-718/` (`elevtur-718.mjs`, `elevtur2-718.mjs`, `elevtur3-718.mjs`).
 - commit 2: denne rapport.
 
-## Hvad blev ændret
+## Hvad ændret
 
 Intet i skakken. Dommen er skrevet ud fra det, der er committet på `main`.
 
