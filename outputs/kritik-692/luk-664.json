@@ -1,0 +1,103 @@
+{
+  "v": {
+    "360x740": {
+      "startKort": "Gåde-storm: 3 minutter Løs så mange gåder du kan. De starter lette og bliver sværere. Forkert træk koster 10 sekunder. Rigtige i træk giver ekstra tid. Gafler, bedst: i dag 4 · uge 4 · rekord 4. Tema Blandet Mat Gafler Spyd Bindinger Slutspil Dine sidste stormer Dagens storm (28/9) Tilfældig storm Dagens storm: hele klassen får de samme gåder i dag. Start, når læreren siger til. Tilfældig storm: dine egne gåder, uden kode.",
+      "temaLinje": "",
+      "historik": {
+        "id": "storm-tema-historik",
+        "tekst": "Dine sidste stormer"
+      },
+      "gaffelOrd": [
+        "Gafler"
+      ],
+      "faner": {
+        "h": 45,
+        "raekker": 2,
+        "mellem": 0,
+        "midtY": 97,
+        "x": [
+          65.328125,
+          179.9921875,
+          294.65625
+        ],
+        "trykMellem": [
+          "fane-spil",
+          "fane-gaader",
+          "fane-opstil"
+        ]
+      },
+      "spilBraet": {
+        "top": 321,
+        "bund": 665,
+        "h": 740,
+        "over": 75
+      }
+    },
+    "390x844": {
+      "startKort": "Gåde-storm: 3 minutter Løs så mange gåder du kan. De starter lette og bliver sværere. Forkert træk koster 10 sekunder. Rigtige i træk giver ekstra tid. Gafler, bedst: i dag 4 · uge 4 · rekord 4. Tema Blandet Mat Gafler Spyd Bindinger Slutspil Dine sidste stormer Dagens storm (28/9) Tilfældig storm Dagens storm: hele klassen får de samme gåder i dag. Start, når læreren siger til. Tilfældig storm: dine egne gåder, uden kode.",
+      "temaLinje": "",
+      "historik": {
+        "id": "storm-tema-historik",
+        "tekst": "Dine sidste stormer"
+      },
+      "gaffelOrd": [
+        "Gafler"
+      ],
+      "faner": {
+        "h": 45,
+        "raekker": 2,
+        "mellem": 0,
+        "midtY": 97,
+        "x": [
+          70.328125,
+          194.9921875,
+          319.65625
+        ],
+        "trykMellem": [
+          "fane-spil",
+          "fane-gaader",
+          "fane-opstil"
+        ]
+      },
+      "spilBraet": {
+        "top": 321,
+        "bund": 695,
+        "h": 844,
+        "over": 149
+      }
+    },
+    "1280x800": {
+      "startKort": "Gåde-storm: 3 minutter Løs så mange gåder du kan. De starter lette og bliver sværere. Forkert træk koster 10 sekunder. Rigtige i træk giver ekstra tid. Gafler, bedst: i dag 4 · uge 4 · rekord 4. Tema Blandet Mat Gafler Spyd Bindinger Slutspil Dine sidste stormer Dagens storm (28/9) Tilfældig storm Dagens storm: hele klassen får de samme gåder i dag. Start, når læreren siger til. Tilfældig storm: dine egne gåder, uden kode.",
+      "temaLinje": "",
+      "historik": {
+        "id": "storm-tema-historik",
+        "tekst": "Dine sidste stormer"
+      },
+      "gaffelOrd": [
+        "Gafler"
+      ],
+      "faner": {
+        "h": 44,
+        "raekker": 1,
+        "mellem": null,
+        "midtY": null,
+        "x": [
+          211.6484375,
+          349.7578125,
+          475.40625,
+          577.09375,
+          677.5625,
+          787.6796875
+        ]
+      },
+      "spilBraet": {
+        "top": 140,
+        "bund": 677,
+        "h": 800,
+        "over": 123
+      }
+    }
+  },
+  "fejl": [],
+  "net": 0
+}
