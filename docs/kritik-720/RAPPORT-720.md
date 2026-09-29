@@ -8,7 +8,9 @@ Bhishak, 29. sep. 2026. Kritiker; jeg har ikke rørt løftemodellen eller sitet.
 
 `kritik-720`, lavet med `git checkout -b kritik-720 main`. Commit 1: skærmbilleder og scripts. Commit 2: denne rapport. Læst: Yantras `docs/RAPPORT-dag-110.md` (ordre 703, `main` @ 8bc340c, hentet med `git archive`), første linje af min egen kritik 702, og Marcs læseside `LAES-MODELLER-3.html` (kun læst, ikke åbnet i browser; jeg har set de samme figurer i `dist/` og `demo/`).
 
-## Hvad jeg gjorde
+## Hvad ændret
+
+Ingen kode ændret; kun nye filer under `docs/kritik-720/` og `outputs/kritik-720/`.
 
 Headless Chrome, 390 (touch) og 1280 (mus), kun 127.0.0.1, 0 netkald. Squat: low bar og high bar, bunden, sticking og lockout i De tre løft, samt animationen (fem billeder pr. stang). Bænk: de stille figurer (bryst, midt, lockout) og animationen med lille, middel og stor bue (fire billeder hver) plus billedet med de tre buer. Dødløft: opstilling i De tre løft og animationen for konventionel og sumo med stand 65,6, 73,8 og 82 cm (fem billeder hver). Alle billeder ligger i `outputs/kritik-720/` (`S720-`, `T720-`, `A720-`), scripts `tur-720.mjs`, `squat-stang-720.mjs`, `server-720.mjs`. JS-fejl: 0 ud over en 404 på 390 (favicon).
 
