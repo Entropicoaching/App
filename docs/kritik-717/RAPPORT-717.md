@@ -4,6 +4,10 @@ MMORPG-følelse: halvvejs. Rodet: ja (mindre end i 698, men klaret-skærmen vise
 
 Bhishak, 29. sep. 2026. Kritiker; jeg har ikke rørt matematikspillet. Syntetisk elev "Tulle", ingen elevdata, ingen push, ingen merges.
 
+## Gren
+
+`kritik-717`, lavet med `git checkout -b kritik-717 main`. Commits: `69c2115b` (skærmbilleder og script), `ffacc112` (rapport) og en tredje, der tilføjer dette felt. Ingen push, ingen merge.
+
 ## Hvad jeg gjorde
 
 - Hentede `main` fra `C:\Users\Entropi\Desktop\matematik` (`634d0a8`, ordre 700 er merget) med `git archive --format=zip` til en midlertidig mappe (tar kunne ikke læse formatet på Windows) og kørte det derfra.
